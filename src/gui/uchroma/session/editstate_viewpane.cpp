@@ -37,7 +37,6 @@ bool EditState::changeViewPane(const List<EditStateData>& data, bool revert)
 	// Variables
 	bool result = false, add;
 	int i;
-	double d;
 	QString s;
 	Collection* collection;
 

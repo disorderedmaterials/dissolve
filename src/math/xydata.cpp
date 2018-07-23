@@ -974,7 +974,7 @@ double XYData::error(XYData ref) const
 // Load data from specified LineParser, using columns specified
 bool XYData::load(LineParser& parser, int xcol, int ycol)
 {
-	int success, nCols = -1;
+	int success;
 	clear();
 	while (!parser.eofOrBlank())
 	{

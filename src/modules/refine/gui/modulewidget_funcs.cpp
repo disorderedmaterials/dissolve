@@ -223,7 +223,6 @@ void RefineModuleWidget::setGraphDataTargets(RefineModule* module)
 {
 	if (!module) return;
 
-	const int nTypes = dissolve_.atomTypeList().nItems();
 	int n, m;
 	CharString blockData;
 

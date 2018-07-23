@@ -103,7 +103,7 @@ void UChromaFullWindow::on_CollectionAddButton_clicked(bool checked)
 {
 	beginEditStateGroup("add new collection");
 
-	Collection* collection = addCollection();
+	addCollection();
 
 	endEditStateGroup();
 

@@ -56,7 +56,7 @@ bool ChecksModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		procPool.assignProcessesToGroups(cfg->processPool());
 
 		// Get reference to relevant module data
-		GenericList& moduleData = configurationLocal_ ? cfg->moduleData() : dissolve.processingModuleData();
+		//GenericList& moduleData = configurationLocal_ ? cfg->moduleData() : dissolve.processingModuleData();
 
 		// Retrieve control parameters from Configuration
 		const double angleThreshold = keywords_.asDouble("AngleThreshold");

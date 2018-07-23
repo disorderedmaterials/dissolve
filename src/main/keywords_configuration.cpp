@@ -74,7 +74,6 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 {
 	Messenger::print("\nParsing %s block '%s'...\n", InputBlocks::inputBlock(InputBlocks::ConfigurationBlock), cfg->name());
 
-	Sample* sam;
 	Species* sp;
 	Module* masterInstance, *module;
 	CharString niceName;

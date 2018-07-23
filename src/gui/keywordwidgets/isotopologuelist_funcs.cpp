@@ -84,7 +84,6 @@ void IsotopologueListKeywordWidget::isotopologueTable_itemChanged(QTableWidgetIt
 	// Column of passed item tells us the type of data we need to change
 	Configuration* cfg = isoRef->configuration();
 	Species* sp = isoRef->species();
-	SpeciesInfo* spInfo;
 	Isotopologue* iso;
 	switch (w->column())
 	{

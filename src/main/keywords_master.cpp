@@ -57,16 +57,11 @@ bool MasterBlock::parse(LineParser& parser, Dissolve* dissolve)
 {
 	Messenger::print("\nParsing %s block...\n", InputBlocks::inputBlock(InputBlocks::MasterBlock));
 
-	int el;
 	CharString arg1, arg2;
-	AtomType* at;
-	Parameters* params;
 	MasterIntra* masterIntra;
-	SpeciesGrain* sg;
 	SpeciesBond::BondFunction bf;
 	SpeciesAngle::AngleFunction af;
 	SpeciesTorsion::TorsionFunction tf;
-	Isotope* tope;
 	bool blockDone = false, error = false;
 
 	while (!parser.eofOrBlank())

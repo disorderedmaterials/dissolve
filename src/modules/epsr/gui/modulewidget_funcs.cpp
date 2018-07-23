@@ -257,7 +257,6 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 {
 	if (!module) return;
 
-	const int nTypes = dissolve_.atomTypeList().nItems();
 	int n, m;
 	CharString blockData;
 

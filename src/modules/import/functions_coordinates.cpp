@@ -150,7 +150,7 @@ bool ImportModule::readEPSRCoordinates(LineParser& parser, Array< Vec3<double> >
 	// n+6: atom1, atom2 (bonds of rotation 'axis')
 	// n+7: list of headgroup atoms that are rotated
 	int atomOffset = 0;
-	int nAtoms, nRestraints, currentArg, partnerId;
+	int nAtoms, nRestraints, currentArg;
 	Vec3<double> com, delta;
 	for (int m=0; m<nMols; m++)
 	{
@@ -184,7 +184,7 @@ bool ImportModule::readEPSRCoordinates(LineParser& parser, Array< Vec3<double> >
 					if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 					currentArg = 0;
 				}
-				partnerId = parser.argi(currentArg) - 1;
+				//partnerId = parser.argi(currentArg) - 1;
 				currentArg += 2;
 
 				// Create new bond between these atoms (only if the partnerId is less than the current atom index)  **IGNORED**

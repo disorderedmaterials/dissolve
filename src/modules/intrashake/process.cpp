@@ -106,7 +106,7 @@ bool IntraShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		int shake, nBondAttempts = 0, nAngleAttempts = 0, nTorsionAttempts = 0, nBondAccepted = 0, nAngleAccepted = 0, nTorsionAccepted = 0;
 		int molId, terminus;
-		bool accept, changesBroadcastRequired;
+		bool accept;
 		double ppEnergy, newPPEnergy, intraEnergy, newIntraEnergy, delta, totalDelta = 0.0;
 		Vec3<double> vji, vjk, v;
 		Matrix3 transform;

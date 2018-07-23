@@ -44,11 +44,6 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	bool found;
 
 	/*
-	 * Set Module data target
-	 */
-	GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : dissolve.processingModuleData();
-
-	/*
 	 * Get Keyword Options
 	 */
 	const RefineModule::MatrixAugmentationStyle augmentationStyle = RefineModule::matrixAugmentationStyle(keywords_.asString("Augmentation"));
@@ -59,7 +54,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	const int phiRSmoothM = keywords_.asInt("DeltaPhiRSmoothM");
 	const double errorStabilityThreshold = keywords_.asDouble("ErrorStabilityThreshold");
 	const int errorStabilityWindow = keywords_.asInt("ErrorStabilityWindow");
-	const double gaussianAccuracy = keywords_.asDouble("GaussianAccuracy");
+	//const double gaussianAccuracy = keywords_.asDouble("GaussianAccuracy");
 	const RefineModule::PotentialInversionMethod inversionMethod = RefineModule::potentialInversionMethod(keywords_.asString("InversionMethod"));
 	const double globalMinimumRadius = keywords_.asDouble("MinimumRadius");
 	const double globalMaximumRadius = keywords_.asDouble("MaximumRadius");
@@ -479,7 +474,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		
 		const double ppRange = dissolve.pairPotentialRange();
 		const double ppDelta = dissolve.pairPotentialDelta();
-		double weight, absInt, scaleFactor;
+		double weight;
 		XYData cr;
 		Array<double> crgr;
 		i = 0;

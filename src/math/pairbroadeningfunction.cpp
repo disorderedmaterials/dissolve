@@ -207,7 +207,6 @@ CharString PairBroadeningFunction::parameterSummary() const
 BroadeningFunction PairBroadeningFunction::broadeningFunction(AtomType* at1, AtomType* at2)
 {
 	BroadeningFunction result;
-	double fwhm;
 
 	switch (function_)
 	{

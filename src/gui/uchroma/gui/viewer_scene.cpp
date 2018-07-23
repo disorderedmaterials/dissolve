@@ -108,8 +108,8 @@ void UChromaViewer::renderFullScene(int xOffset, int yOffset)
 	// Set some colours
 	GLfloat colourBlack[4] = { 0.0, 0.0, 0.0, 1.0 };
 	GLfloat colourGray[4] = { 0.8, 0.8, 0.8, 1.0 };
-	GLfloat colourBlue[4] = { 0.88, 0.95, 1.0, 1.0 };
-	GLfloat colourWhite[4] = { 1.0, 1.0, 1.0, 1.0 };
+// 	GLfloat colourBlue[4] = { 0.88, 0.95, 1.0, 1.0 };
+// 	GLfloat colourWhite[4] = { 1.0, 1.0, 1.0, 1.0 };
 
 	// Loop over defined viewpanes
 	GLdouble clipPlaneBottom[4] = { 0.0, 1.0, 0.0, 0.0 }, clipPlaneTop[4] = { 0.0, -1.0, 0.0, 0.0 };
@@ -474,8 +474,8 @@ QPixmap UChromaViewer::generateImage(int imageWidth, int imageHeight)
 	painter.drawRect(0,0,imageWidth, imageHeight);
 
 	// Calculate scale factors for ViewLayout, so that the context width/height is scaled to the desired image size
-	double xScale = double(imageWidth) / double(tileWidth);
-	double yScale = double(imageHeight) / double(tileHeight);
+// 	double xScale = double(imageWidth) / double(tileWidth);
+// 	double yScale = double(imageHeight) / double(tileHeight);
 	int nX = imageWidth / tileWidth + ((imageWidth %tileWidth) ? 1 : 0);
 	int nY = imageHeight / tileHeight + ((imageHeight %tileHeight) ? 1 : 0);
 

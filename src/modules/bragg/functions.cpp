@@ -61,8 +61,8 @@ bool BraggModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cfg,
 	int nAtoms = cfg->nAtoms();
 	Atom** atoms = cfg->atoms().array();
 
-	int n, m, h, k, l, hAbs, kAbs, lAbs, typeI, typeJ;
-	double* cosTermsH, *sinTermsH, *cosTermsK, *sinTermsK, *cosTermsL, *sinTermsL, *cosTerms, *sinTerms;
+	int n, m, h, k, l, kAbs, lAbs;
+	double* cosTermsH, *sinTermsH, *cosTermsK, *sinTermsK, *cosTermsL, *sinTermsL;
 	double hkCos, hkSin, hklCos, hklSin;
 
 	// Create a timer
@@ -297,15 +297,14 @@ bool BraggModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cfg,
 // Calculate unweighted Bragg partials from calculated peak data
 bool BraggModule::calculateUnweightedBraggSQ(ProcessPool& procPool, Configuration* cfg, Array< BraggPeak >& braggPeaks, PartialSet& partialsq, const BroadeningFunction& broadening)
 {
-	double factor, qCentre, inten, q, x;
+	double factor, qCentre, inten;
 	int nTypes = partialsq.nAtomTypes();
 	AtomTypeList atomTypes = partialsq.atomTypes();
 	int nPeaks = braggPeaks.nItems();
-	double qDelta = partialsq.partial(0,0).x(1) - partialsq.partial(0,0).x(0);
+	//double qDelta = partialsq.partial(0,0).x(1) - partialsq.partial(0,0).x(0);
 
 	// Print out a bit of info first
 	Messenger::print("Partials: Calculating Bragg contributions to S(Q)...\n");
-	double fwhm = 0.0;
 	// BRAGG TODO
 	Messenger::error("BROADENING OF BRAGG SCATTERING IS CURRENTLY DISABLED - FIX ME!\n");
 // 	if (broadeningType == BraggModule::NoBroadening) Messenger::warn("Partials: No broadening will be applied to Bragg contributions.\n");
@@ -338,7 +337,7 @@ bool BraggModule::calculateUnweightedBraggSQ(ProcessPool& procPool, Configuratio
 				for (int m=0; m<braggSQ.nPoints(); ++m)
 				{
 					// Get q value from array
-					q = braggSQ.x(m);
+					//q = braggSQ.x(m);
 
 					// No broadening
 // 					if (broadeningType == BraggModule::NoBroadening)

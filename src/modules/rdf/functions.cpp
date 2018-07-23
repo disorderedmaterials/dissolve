@@ -42,7 +42,6 @@ bool RDFModule::calculateGRTestSerial(Configuration* cfg, PartialSet& partialSet
 	Atom** atoms = cfg->atoms().array();
 	int ii, jj, typeI;
 	double distance;
-	double rbin = 1.0 / cfg->rdfBinWidth();
 	Vec3<double> rI;
 
 	for (ii = 0; ii < cfg->nAtoms()-1; ++ii)
@@ -159,7 +158,7 @@ bool RDFModule::calculateGRSimple(ProcessPool& procPool, Configuration* cfg, Par
 bool RDFModule::calculateGRCells(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet)
 {
 	Atom* i, *j;
-	int n, m, ii, jj, nI, nJ, typeI, typeJ;
+	int n, m, ii, jj, nI, nJ, typeI;
 	Cell* cellI, *cellJ;
 	double distance, rdfRange = cfg->rdfRange();
 	Vec3<double> rI;

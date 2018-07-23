@@ -153,7 +153,6 @@ void ForcefieldTab::updateBondsTableRow(int row, MasterIntra* masterBond, bool c
 void ForcefieldTab::updateAnglesTableRow(int row, MasterIntra* masterAngle, bool createItems)
 {
 	QTableWidgetItem* item;
-	QComboBox* combo;
 
 	// Name
 	if (createItems)
@@ -193,7 +192,6 @@ void ForcefieldTab::updateAnglesTableRow(int row, MasterIntra* masterAngle, bool
 void ForcefieldTab::updateTorsionsTableRow(int row, MasterIntra* masterTorsion, bool createItems)
 {
 	QTableWidgetItem* item;
-	QComboBox* combo;
 
 	// Name
 	if (createItems)

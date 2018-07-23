@@ -764,7 +764,7 @@ int ProcessPool::twoBodyLoopEnd(int nItems) const
 
 	// Diagonal Atoms - For calculation of upper-diagonal half of any two-body interaction matrix
 	double rnproc = 1.0 / worldRanks_.nItems(), area = 1.0;
-	int startAtom = 0, finishAtom;
+	int finishAtom;
 
 	// Loop over processes
 	for (int process = 0; process<worldRanks_.nItems(); ++process)
@@ -780,9 +780,6 @@ int ProcessPool::twoBodyLoopEnd(int nItems) const
 			Messenger::printVerbose("Assigned two-body outer loop final index of %i for process with pool rank %i.\n", finishAtom, process);
 			return finishAtom;
 		}
-
-		// Update startAtom
-		startAtom = finishAtom+1;
 	}
 	
 	return -1;
@@ -1796,7 +1793,6 @@ bool ProcessPool::assemble(Array<double>& array, int nData, Array<double>& rootD
 // Broadcast logical 'true' decision to all processes (Master only)
 bool ProcessPool::decideTrue(int rootRank, ProcessPool::CommunicatorType commType)
 {
-	bool decision = true;
 #ifdef PARALLEL
 	if (!broadcast(decision, rootRank, commType)) return Messenger::error("Error telling processes to proceed.\n");
 #endif
@@ -1806,7 +1802,6 @@ bool ProcessPool::decideTrue(int rootRank, ProcessPool::CommunicatorType commTyp
 // Broadcast logical 'false' decision to all processes (Master only)
 bool ProcessPool::decideFalse(int rootRank, ProcessPool::CommunicatorType commType)
 {
-	bool decision = false;
 #ifdef PARALLEL
 	if (!broadcast(decision, rootRank, commType)) return Messenger::error("Error telling processes to stop.\n");
 #endif

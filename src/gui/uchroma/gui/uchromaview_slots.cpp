@@ -38,7 +38,6 @@
 
 void UChromaViewWidget::on_actionFileExportImage_triggered(bool checked)
 {
-	static bool firstRun = true;
 	if (saveImageDialog_.getImageDetails(double(ui.MainView->width()) / double(ui.MainView->height())))
 	{
 		// Check to see if existing image file already exists
@@ -54,8 +53,6 @@ void UChromaViewWidget::on_actionFileExportImage_triggered(bool checked)
 		QPixmap pixmap = ui.MainView->generateImage(imageWidth, imageHeight);
 		pixmap.save(imageExportFileName(), imageFormatExtension(imageExportFormat()), -1);
 	}
-
-	firstRun = false;
 }
 
 /*

@@ -71,8 +71,8 @@ Vec3<double> Cuboid::maxima() const
 // Return whether 2D coordinates are within projection of cuboid
 bool Cuboid::isPointWithinProjection(int x, int y, Matrix4 viewMatrix, Matrix4 projectionMatrix, const GLuint* viewPort)
 {
-	Vec3<double> a, b, c, d;
-	double rectArea, testArea;
+// 	Vec3<double> a, b, c, d;
+// 	double rectArea, testArea;
 	// XY plane at maximum Z
 // 	a = UChromaMath::glModelToScreen(Vec3<double>(minima_.x, minima_.y, minima_.z), viewMatrix, projectionMatrix, viewPort);
 // 	b.set(maxima_.x, minima_.y, minima_.z);

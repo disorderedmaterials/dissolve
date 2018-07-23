@@ -328,11 +328,13 @@ void UChromaBase::doubleClickInteraction(int mouseX, int mouseY)
 	clickedObject_ = viewer_->objectAtQueryCoordinates();
 	clickedObjectInfo_ = viewer_->infoAtQueryCoordinates();
 
-	int i;
+//	int i;
 	switch (clickedObject_)
 	{
+		case (UChromaViewer::NoObject):
+			break;
 		case (UChromaViewer::AxisLineObject):
-			i = clickedObjectInfo_.asInteger();
+//			i = clickedObjectInfo_.asInteger();
 // 			axesWindow_.updateAndShow();
 // 			axesWindow_.ui.AxesTabs->setCurrentIndex(i);
 // 			axesWindow_.ui.

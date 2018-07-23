@@ -44,7 +44,7 @@ bool EPSRModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 		if (!readPCof(dissolve, procPool, pcofFile)) return Messenger::error("Failed to read in potential coefficients from EPSR pcof file.\n");
 
 		// Get some control parameters
-		const double ereq = keywords_.asDouble("EReq");
+		//const double ereq = keywords_.asDouble("EReq");
 		int ncoeffp = keywords_.asInt("NCoeffP");
 		double rmaxpt = keywords_.asDouble("RMaxPT");
 		double rminpt = keywords_.asDouble("RMinPT");
@@ -78,11 +78,6 @@ bool EPSRModule::hasProcessing()
 bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {
 	int i, j;
-
-	/*
-	 * Set Module data target
-	 */
-	GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : dissolve.processingModuleData();
 
 	/*
 	 * Get Keyword Options
@@ -144,7 +139,6 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	/*
 	 * Calculate difference functions and current percentage errors in calculated vs reference target data
 	 */
-	int nUnstableData = 0;
 	allTargetsIterator.restart();
 	while (Module* module = allTargetsIterator.iterate())
 	{
@@ -223,10 +217,6 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Retrieve the simulated data for the target Module
 		const PartialSet& weightedSQ = GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "WeightedSQ", module->uniqueName(), PartialSet(), &found);
 		if (!found) return Messenger::error("Could not locate WeightedSQ for target '%s'.\n", module->uniqueName());
-
-		// Retrieve the density for this dataset
-		double rho = GenericListHelper<
-		double>::value(dissolve.processingModuleData(), "EffectiveRho", module->uniqueName(), 0.0);
 
 		// Get difference and fit function objects
 		XYData& deltaFQ = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), CharString("DeltaFQ_%s", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
@@ -319,7 +309,6 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	Array3D<double> fluctuationCoefficients(nAtomTypes, nAtomTypes, ncoeffp);
 	fluctuationCoefficients = 0.0;
 
-	bool created;
 	for (ModuleGroup* group = targetGroups_.first(); group != NULL; group = group->next)
 	{
 		Messenger::print("Generating dPhiR from target group '%s'...\n", group->name());

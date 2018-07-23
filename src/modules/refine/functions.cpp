@@ -68,7 +68,7 @@ XYData RefineModule::calculateCR(const XYData& sq, double normFactor, double rMi
 	windowFunction.setUp(sq);
 
 	// Get delta0
-	const double delta0 = PI / sq.xLast();
+	//const double delta0 = PI / sq.xLast();
 
 	int nQ = sq.nPoints();
 

@@ -67,9 +67,6 @@ bool EnergyModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Set up process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());
 
-		// Get reference to relevant module data
-		GenericList& moduleData = configurationLocal_ ? cfg->moduleData() : dissolve.processingModuleData();
-
 		// Retrieve control parameters from Configuration
 		const bool saveData = keywords_.asBool("Save");
 		const double stabilityThreshold = keywords_.asDouble("StabilityThreshold");
@@ -109,7 +106,7 @@ bool EnergyModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			double correctInterEnergy = 0.0, correctIntraEnergy = 0.0;
 
 			double r, angle;
-			Atom* i, *j, *k;
+			Atom* i, *j;
 			Vec3<double> vecji, vecjk, veckl;
 			Molecule* molN, *molM;
 			const Box* box = cfg->box();

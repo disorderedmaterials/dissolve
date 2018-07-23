@@ -620,12 +620,10 @@ double EnergyKernel::energy(const Grain* grain, bool excludeIgtJ, ProcessPool::D
 	if (grain == NULL) return 0.0;
 
 	double totalEnergy = 0.0;
-	int i, j, nAtoms = grain->nAtoms();
+	int i;
 	Vec3<double> rI;
-	Molecule* grainMol = grain->molecule();
 	Atom* ii;
 	Cell* cellI;
-	double scale;
 
 	// Loop over grain atoms
 	if (excludeIgtJ) for (i = 0; i<grain->nAtoms(); ++i)
@@ -792,7 +790,6 @@ double EnergyKernel::energy(const Torsion* t)
 {
 	Vec3<double> vecji, vecjk, veckl, xpj, xpk, dcos_dxpj, dcos_dxpk, temp, force;
 	Matrix3 dxpj_dij, dxpj_dkj, dxpk_dkj, dxpk_dlk;
-	double magxpj, magxpk, dp, phi, du_dphi;
 	
 	// Grab pointers to atoms involved in angle
 	Atom* i = t->i(), *j = t->j(), *k = t->k(), *l = t->l();

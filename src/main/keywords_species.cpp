@@ -67,7 +67,6 @@ bool SpeciesBlock::parse(LineParser& parser, Dissolve* dissolve, Species* specie
 	CharString arg1, arg2;
 	AtomType* at;
 	Isotopologue* iso;
-	Parameters* params;
 	SpeciesAngle* a;
 	SpeciesAtom* i;
 	SpeciesBond* b;

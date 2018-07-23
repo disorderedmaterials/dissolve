@@ -36,8 +36,6 @@ bool EditState::changeCollection(const List<EditStateData>& data, bool revert)
 
 	// Variables
 	bool result = false;
-	int i;
-	double d;
 	CharString s;
 
 	switch (targetQuantity_)

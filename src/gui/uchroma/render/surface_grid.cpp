@@ -31,7 +31,6 @@ void Surface::constructGrid(PrimitiveList& primitiveList, const Axes& axes, cons
 	// Get extents of displayData to use based on current axes limits
 	Vec3<int> minIndex, maxIndex;
 	if (!calculateExtents(axes, displayAbscissa, displayData, minIndex, maxIndex)) return;
-	int nZ = (maxIndex.z - minIndex.z) + 1;
 
 	// Copy and transform abscissa values (still in data space) into axes coordinates
 	Array<double> x(displayAbscissa, minIndex.x, maxIndex.x);

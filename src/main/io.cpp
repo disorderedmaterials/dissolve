@@ -78,7 +78,7 @@ bool Dissolve::loadSpecies(const char* filename)
 	
 	// Add the default (natural) Isotopologue
 	Messenger::print("Adding natural isotopologue...\n");
-	Isotopologue* iso = newSpecies->addIsotopologue("Natural");
+	newSpecies->addIsotopologue("Natural");
 
 	return true;
 }
@@ -95,7 +95,6 @@ bool Dissolve::loadInput(const char* filename)
 
 	// Variables
 	Configuration* cfg;
-	Data* data;
 	Module* module, *masterInstance;
 	CharString niceName;
 	Species* sp;

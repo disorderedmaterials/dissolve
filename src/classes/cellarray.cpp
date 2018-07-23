@@ -57,7 +57,7 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 	
 	const int minCellsPerSide = 3;
 	const double tolerance = 0.01;
-	int n, m, x, y, z;
+	int n, x, y, z;
 	
 	box_ = box;
 

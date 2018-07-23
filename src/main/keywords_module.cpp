@@ -60,13 +60,8 @@ bool ModuleBlock::parse(LineParser& parser, Dissolve* dissolve, Module* module, 
 	Messenger::print("\nParsing %s block '%s'...\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock), module->name());
 
 	Configuration* targetCfg;
-	Parameters* params;
-	Species* sp;
-	Data* data;
-	Isotopologue* tope;
 	CharString varName, dataName;
 	bool blockDone = false, error = false;
-	int argIndex;
 	
 	while (!parser.eofOrBlank())
 	{

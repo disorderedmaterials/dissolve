@@ -302,7 +302,6 @@ void ForceKernel::forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool
 // Calculate forces between Cell and its neighbours
 void ForceKernel::forces(Cell* cell, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy)
 {
-	OrderedPointerArray<Atom>& centralAtoms = cell->atoms();
 	Vec3<double> rJ, v;
 	Cell* otherCell;
 
@@ -339,7 +338,6 @@ void ForceKernel::forces(const Atom* i, Cell* cell, int flags, ProcessPool::Divi
 	
 	// Grab some information on the supplied atom
 	Molecule* moleculeI = i->molecule();
-	const Vec3<double> rI = i->r();
 
 	// Grab the array of Atoms in the supplied Cell
 	OrderedPointerArray<Atom>& otherAtoms = cell->atoms();
@@ -517,12 +515,10 @@ void ForceKernel::forces(const Grain* grain, bool excludeIgtJ, ProcessPool::Divi
 	}
 #endif
 
-	int i, j, nAtoms = grain->nAtoms();
+	int i;
 	Vec3<double> rI;
-	Molecule* grainMol = grain->molecule();
 	Atom* ii;
 	Cell* cellI;
-	double scale;
 
 	// Loop over grain atoms
 	if (excludeIgtJ) for (i = 0; i<grain->nAtoms(); ++i)
@@ -598,7 +594,7 @@ void ForceKernel::forces(const Bond* b)
 // Calculate Angle forces
 void ForceKernel::forces(const Angle* a)
 {
-	double distance, angle, force, dp, magji, magjk;
+	double angle, force, dp, magji, magjk;
 	Vec3<double> vecji, vecjk, forcei, forcek;
 
 	// Grab pointers to atoms involved in angle

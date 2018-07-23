@@ -244,12 +244,10 @@ template <class T> class PrAxis
 		int j;
 		int jj;
 		int k;
-		int kk;
 		int kt;
 		const int kt_max = 30;
 		int l;
 		int l2;
-		int ll2;
 		double s;
 		int skip;
 		double temp;
@@ -2054,7 +2052,6 @@ template <class T> class PrAxis
 		double fx;
 		double h;
 		int i;
-		int ii;
 		bool illc;
 		int j;
 		int jsearch;

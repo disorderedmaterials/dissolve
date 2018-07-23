@@ -221,7 +221,7 @@ void ModuleChart::mouseMoveEvent(QMouseEvent* event)
 		layOutWidgets(true);
 
 		// Begin the drag event
-		Qt::DropAction dropAction = drag->exec(Qt::MoveAction);
+		//Qt::DropAction dropAction = drag->exec(Qt::MoveAction);
 	// 	if (dropAction 
 	// 	...
 
@@ -523,8 +523,7 @@ void ModuleChart::layOutWidgets(bool animateWidgets)
 	 */
 
 	const int maxWidth = width() - minSpacing_;
-	int colCount;
-	int totalColumnWidth, lastNCols = 0;
+	int colCount, totalColumnWidth;
 	const int maxColumns = displayBlocks_.nItems();
 
 	for (nColumns_ = maxColumns; nColumns_ >= 1; --nColumns_)

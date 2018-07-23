@@ -28,7 +28,7 @@ Vec3<double> Surface::constructVertexNormals(const Array<double>& abscissa, int 
 	Vec3<double> normals;
 
 	// Grab references to first target array
-	const Array<double>& y = targetDataSet->y();
+	//const Array<double>& y = targetDataSet->y();
 
 	// Check whether previous / next slice information is available
 	if ((previousDataSet == NULL) && (nextDataSet == NULL))

@@ -52,11 +52,7 @@ Configuration* Dissolve::findConfiguration(const char* name, bool useNiceName) c
 // Write Configuration through specified LineParser
 bool Dissolve::writeConfiguration(Configuration* cfg, LineParser& parser)
 {
-	Species* sp;
 	int molId;
-	Angle* a;
-	Bond* b;
-	Torsion* t;
 	SpeciesAngle* spa;
 	SpeciesBond* spb;
 	SpeciesTorsion* spt;
@@ -91,7 +87,7 @@ bool Dissolve::writeConfiguration(Configuration* cfg, LineParser& parser)
 	if (!parser.writeLineF("%i  # nAngles\n", cfg->nAngles())) return false;
 	for (int n=0; n<cfg->nAngles(); ++n)
 	{
-		a = cfg->angle(n);
+		Angle* a = cfg->angle(n);
 		molId = a->molecule() ? a->molecule()->arrayIndex() : -1;
 		spa = a->speciesAngle();
 		if (!parser.writeLineF("%i %i %i %i %i %i\n", a->i()->arrayIndex(), a->j()->arrayIndex(), a->k()->arrayIndex(), molId, species_.indexOf(spa->parent()), spa->parent()->angleIndex(spa))) return false;
@@ -101,7 +97,7 @@ bool Dissolve::writeConfiguration(Configuration* cfg, LineParser& parser)
 	if (!parser.writeLineF("%i  # nTorsions\n", cfg->nTorsions())) return false;
 	for (int n=0; n<cfg->nTorsions(); ++n)
 	{
-		t = cfg->torsion(n);
+		Torsion* t = cfg->torsion(n);
 		molId = t->molecule() ? t->molecule()->arrayIndex() : -1;
 		spt = t->speciesTorsion();
 		if (!parser.writeLineF("%i %i %i %i %i %i %i\n", t->i()->arrayIndex(), t->j()->arrayIndex(), t->k()->arrayIndex(), t->l()->arrayIndex(), molId, species_.indexOf(spt->parent()), spt->parent()->torsionIndex(spt))) return false;
@@ -113,7 +109,6 @@ bool Dissolve::writeConfiguration(Configuration* cfg, LineParser& parser)
 // Read Configuration through specified LineParser
 bool Dissolve::readConfiguration(Configuration* cfg, LineParser& parser)
 {
-	Species* sp;
 	Molecule* mol;
 	Grain* grain;
 	AtomType* atomType;
@@ -139,8 +134,6 @@ bool Dissolve::readConfiguration(Configuration* cfg, LineParser& parser)
 	// Read in Atoms
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	int nAtoms = parser.argi(0);
-	AtomTypeData* atd;
-	int localIndex;
 	for (int n=0; n<nAtoms; ++n)
 	{
 		// Each line contains type, coordinates, charge, mol ID, and grain ID

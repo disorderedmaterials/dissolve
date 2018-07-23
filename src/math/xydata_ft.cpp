@@ -67,7 +67,7 @@ bool XYData::sineFT(double normFactor, double wMin, double wStep, double wMax, W
 	// Set up window function for the present data
 	windowFunction.setUp(*this);
 
-	int n, m;
+	int m;
 	const int nX = x_.nItems();
 	double window, broaden;
 
