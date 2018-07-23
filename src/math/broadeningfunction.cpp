@@ -173,7 +173,7 @@ bool BroadeningFunction::set(LineParser& parser, int startArg)
 			parameters_[1] = parser.argd(startArg+2);
 			break;
 		default:
-			Messenger::error("Function form '%s' not accounted for in set(LineParser&,int).\n", BroadeningFunction::functionType(funcType));
+			Messenger::error("Function form '%s' not accounted for in BroadeningFunction::set(LineParser&,int).\n", BroadeningFunction::functionType(funcType));
 			return false;
 	}
 
@@ -264,7 +264,7 @@ void BroadeningFunction::setUpDependentParameters()
 			parameters_[5] = 1.0 / parameters_[3];
 			break;
 		default:
-			Messenger::error("Function form '%s' not accounted for in setUpDependentParameters().\n", BroadeningFunction::functionType(function_));
+			Messenger::error("Function form '%s' not accounted for in BroadeningFunction::setUpDependentParameters().\n", BroadeningFunction::functionType(function_));
 	}
 }
 
