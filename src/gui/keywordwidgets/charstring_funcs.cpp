@@ -53,7 +53,6 @@ CharStringKeywordWidget::CharStringKeywordWidget(QWidget* parent, ModuleKeywordB
 	connect(this, SIGNAL(currentTextChanged(QString)), this, SLOT(myCurrentTextChanged(QString)));
 }
 
-
 /*
  * Signals / Slots
  */
