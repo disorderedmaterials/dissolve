@@ -147,6 +147,9 @@ QString NumberFormat::format(double number)
 			else if (useUpperCaseExponent_) result += QString::number(x.mantissa(), 'f', nDecimals_) + "E" + QString::number(x.exponent());
 			else result += QString::number(x.mantissa(), 'f', nDecimals_) + "e" + QString::number(x.exponent());
 			break;
+		default:
+			result += QString::number(number);
+			break;
 	}
 
 	return result;
