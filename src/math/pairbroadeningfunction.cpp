@@ -230,7 +230,6 @@ BroadeningFunction PairBroadeningFunction::broadeningFunction(AtomType* at1, Ato
 			// 1/c
 			parameters_[2] = 1.0 / parameters_[1];
 			break;
-			break;
 		default:
 			Messenger::error("Function form '%s' not accounted for in setUpDependentParameters().\n", PairBroadeningFunction::functionType(function_));
 	}
