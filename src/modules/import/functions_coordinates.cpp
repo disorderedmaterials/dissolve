@@ -118,8 +118,8 @@ bool ImportModule::readEPSRCoordinates(LineParser& parser, Array< Vec3<double> >
 	int nMols = parser.argi(0);
 	if (parser.nArgs() == 3)
 	{
-		Messenger::print("File has a cubic cell");
 		double boxSize = parser.argd(1);
+		Messenger::print("File has a cubic cell (side length %f Angstroms)", boxSize);
 // 		targetModel()->setCell(Vec3<double>(boxSize,boxSize,boxSize), Vec3<double>(90,90,90));
 	}
 	else
