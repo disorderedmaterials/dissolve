@@ -437,36 +437,32 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		if (created) minimumRadii.initialise(nTypes, nTypes, true);
 		if (autoMinimumRadii)
 		{
-			RefListIterator<Configuration,bool> configIterator(configs);
-			while (Configuration* cfg = configIterator.iterate())
+			// Define a fraction of the determined g(r) non-zero point that will become our radius limit
+			const double rFraction = 0.95;
+			const double thresholdValue = 0.1;
+			i = 0;
+			for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
 			{
-				// Define a fraction of the determined g(r) non-zero point that will become our radius limit
-				const double rFraction = 0.95;
-				const double thresholdValue = 0.1;
-				i = 0;
-				for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+				j = i;
+				for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 				{
-					j = i;
-					for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
+					// Grab unbound g(r)
+					XYData& gr = summedUnweightedGR.unboundPartial(i, j);
+
+					// Find first non-zero (above the threshold value) point in g(r)
+					int n;
+					for (n=0; n<gr.nPoints(); ++n) if (gr.y(n) > thresholdValue) break;
+					if (n < gr.nPoints())
 					{
-						// Grab unbound g(r)
-						XYData& gr = summedUnweightedGR.unboundPartial(i, j);
-
-						// Find first non-zero (above the threshold value) point in g(r)
-						int n;
-						for (n=0; n<gr.nPoints(); ++n) if (gr.y(n) > thresholdValue) break;
-						if (n < gr.nPoints())
-						{
-							double x = gr.x(n) * rFraction;
-							if (x < globalMinimumRadius) minimumRadii.ref(i,j) = globalMinimumRadius;
-							else if (x < globalMaximumRadius) minimumRadii.ref(i,j) = x;
-							else minimumRadii.ref(i,j) = globalMaximumRadius;
-							
-						}
+						double x = gr.x(n) * rFraction;
+						if (x < globalMinimumRadius) minimumRadii.ref(i,j) = globalMinimumRadius;
+						else if (x < globalMaximumRadius) minimumRadii.ref(i,j) = x;
 						else minimumRadii.ref(i,j) = globalMaximumRadius;
-
-						Messenger::print("Minimum radius for %s-%s interatomic potential determined to be %f Angstroms.\n", at1->name(), at2->name(), minimumRadii.value(i,j));
+						
 					}
+					else minimumRadii.ref(i,j) = globalMaximumRadius;
+
+					Messenger::print("Minimum radius for %s-%s interatomic potential determined to be %f Angstroms.\n", at1->name(), at2->name(), minimumRadii.value(i,j));
 				}
 			}
 		}
