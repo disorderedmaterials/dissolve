@@ -87,6 +87,7 @@ void CharStringKeywordWidget::updateValue()
 
 	// Set the new index
 	int index = keyword_->indexOfValid(newValue);
+	setCurrentIndex(index);
 
 	refreshing_ = false;
 }
