@@ -65,8 +65,8 @@ bool RDFModule::calculateGRSimple(ProcessPool& procPool, Configuration* cfg, Par
 	int n, m, nTypes, typeI, typeJ, i, j, nPoints;
 
 	// Construct local arrays of atom type positions
-	Messenger::printVerbose("Constructing local partial working arrays for %i types.\n", nTypes);
 	nTypes = partialSet.nAtomTypes();
+	Messenger::printVerbose("Constructing local partial working arrays for %i types.\n", nTypes);
 	const Box* box = cfg->box();
 	Vec3<double>* r[nTypes];
 	int maxr[nTypes], nr[nTypes];
