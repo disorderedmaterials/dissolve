@@ -25,6 +25,7 @@
 #include "module/module.h"
 #include "classes/partialset.h"
 #include "classes/braggpeak.h"
+#include "math/pairbroadeningfunction.h"
 
 // Forward Declarations
 class Dissolve;
@@ -127,7 +128,7 @@ class RDFModule : public Module
 	// (Re)calculate partial g(r) for the specified Configuration
 	bool calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule::PartialsMethod method, bool allIntra, bool& alreadyUpToDate);
 	// Calculate smoothed/broadened partial g(r) from supplied partials
-	static bool calculateUnweightedGR(const PartialSet& originalgr, PartialSet& weightedgr, BroadeningFunction intraBroadening, int smoothing);
+	static bool calculateUnweightedGR(const PartialSet& originalgr, PartialSet& weightedgr, PairBroadeningFunction intraBroadening, int smoothing);
 	// Return effective density for specified Module's target Configurations
 	static double summedRho(Module* module, GenericList& processingModuleData);
 	// Sum unweighted g(r) over the supplied Module's target Configurations

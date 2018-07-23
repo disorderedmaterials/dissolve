@@ -111,6 +111,13 @@ void ModuleKeywordsWidget::setUp(DissolveWindow* dissolveWindow, Module* module)
 			widget = isotopologueListWidget;
 			base = isotopologueListWidget;
 		}
+		else if (keyword->type() == ModuleKeywordBase::PairBroadeningFunctionData)
+		{
+			PairBroadeningFunctionKeywordWidget* pairBroadeningFunctionWidget = new PairBroadeningFunctionKeywordWidget(NULL, keyword, moduleData, module->uniqueName());
+			connect(pairBroadeningFunctionWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
+			widget = pairBroadeningFunctionWidget;
+			base = pairBroadeningFunctionWidget;
+		}
 		else if (keyword->type() == ModuleKeywordBase::WindowFunctionData)
 		{
 			WindowFunctionKeywordWidget* windowFunctionWidget = new WindowFunctionKeywordWidget(NULL, keyword, moduleData, module->uniqueName());

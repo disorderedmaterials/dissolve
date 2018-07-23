@@ -6,6 +6,7 @@ add_library(keywordtypes
   double.cpp
   int.cpp
   isotopologuelist.cpp
+  pairbroadeningfunction.cpp
   windowfunction.cpp
 
   bool.h
@@ -15,6 +16,7 @@ add_library(keywordtypes
   double.h
   int.h
   isotopologuelist.h
+  pairbroadeningfunction.h
   windowfunction.h
 )
 

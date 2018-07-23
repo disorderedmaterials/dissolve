@@ -500,35 +500,39 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 }
 
 // Calculate smoothed/broadened partial g(r) from supplied partials
-bool RDFModule::calculateUnweightedGR(const PartialSet& originalgr, PartialSet& unweightedgr, BroadeningFunction intraBroadening, int smoothing)
+bool RDFModule::calculateUnweightedGR(const PartialSet& originalgr, PartialSet& unweightedgr, PairBroadeningFunction intraBroadening, int smoothing)
 {
 	// Copy data
 	unweightedgr = originalgr;
 
-	int typeI, typeJ;
-	for (typeI=0; typeI<unweightedgr.nAtomTypes(); ++typeI)
+	AtomTypeData* typeI = unweightedgr.atomTypes().first();
+	for (int i=0; i<unweightedgr.nAtomTypes(); ++i, typeI = typeI->next)
 	{
-		for (typeJ=typeI; typeJ<unweightedgr.nAtomTypes(); ++typeJ)
+		AtomTypeData* typeJ = typeI;
+		for (int j=i; j<unweightedgr.nAtomTypes(); ++j, typeJ = typeJ->next)
 		{
 			// Broaden bound partials?
-			if (intraBroadening.function() != BroadeningFunction::NoFunction)
+			if (intraBroadening.function() != PairBroadeningFunction::NoFunction)
 			{
+				// Set up the broadening function for these AtomTypes
+				BroadeningFunction function = intraBroadening.broadeningFunction(typeI->atomType(), typeJ->atomType());
+
 				// Remove bound part from full partial
-				unweightedgr.partial(typeI, typeJ).addInterpolated(unweightedgr.boundPartial(typeI, typeJ), -1.0);
+				unweightedgr.partial(i, j).addInterpolated(unweightedgr.boundPartial(i, j), -1.0);
 
 				// Convolute the bound partial with the broadening function
-				unweightedgr.boundPartial(typeI, typeJ).convolveNormalised(intraBroadening);
+				unweightedgr.boundPartial(i, j).convolveNormalised(function);
 
 				// Add the broadened bound partial back into the full partial array
-				unweightedgr.partial(typeI, typeJ).addInterpolated(unweightedgr.boundPartial(typeI, typeJ), 1.0);
+				unweightedgr.partial(i, j).addInterpolated(unweightedgr.boundPartial(i, j), 1.0);
 			}
 
 			// Smooth partials if requested
 			if (smoothing > 0)
 			{
-				unweightedgr.partial(typeI,typeJ).movingAverage(smoothing);
-				unweightedgr.boundPartial(typeI,typeJ).movingAverage(smoothing);
-				unweightedgr.unboundPartial(typeI,typeJ).movingAverage(smoothing);
+				unweightedgr.partial(i,j).movingAverage(smoothing);
+				unweightedgr.boundPartial(i,j).movingAverage(smoothing);
+				unweightedgr.unboundPartial(i,j).movingAverage(smoothing);
 			}
 		}
 	}

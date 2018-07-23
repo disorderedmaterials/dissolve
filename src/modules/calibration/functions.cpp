@@ -39,14 +39,14 @@ CalibrationModuleCostFunctions::CalibrationModuleCostFunctions(Dissolve& dissolv
 // Cost function for intraBroadening minimisation
 double CalibrationModuleCostFunctions::intraBroadeningCost(const Array<double>& alpha)
 {
-	// Store alpha parameters in the BroadeningFunction in the associated RDF modules
+	// Store alpha parameters in the PairBroadeningFunction in the associated RDF modules
 	int alphaIndex = 0;
 	const int nAlpha = alpha.nItems();
 	RefListIterator<Module,bool> rdfModuleIterator(intraBroadeningModules_);
 	while (Module* rdfModule = rdfModuleIterator.iterate())
 	{
-		// Retrieve the BroadeningFunction
-		BroadeningFunction& broadening = KeywordListHelper<BroadeningFunction>::retrieve(rdfModule->keywords(), "IntraBroadening", BroadeningFunction());
+		// Retrieve the PairBroadeningFunction
+		PairBroadeningFunction& broadening = KeywordListHelper<PairBroadeningFunction>::retrieve(rdfModule->keywords(), "IntraBroadening", PairBroadeningFunction());
 
 		// Set its parameters from the alpha array
 		for (int n=0; n<broadening.nParameters(); ++n)
@@ -59,9 +59,6 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(const Array<double>& 
 			broadening.parameters()[n] = alpha.value(alphaIndex);
 			++alphaIndex;
 		}
-
-		// Need to update any dependent values
-		broadening.setUpDependentParameters();
 
 		// Recalculate the UnweightedGR for all Configurations targeted by the RDFModule
 		int smoothing = rdfModule->keywords().asInt("Smoothing");

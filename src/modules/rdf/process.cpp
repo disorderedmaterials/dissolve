@@ -62,7 +62,7 @@ bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		Messenger::error("RDF: Invalid averaging scheme '%s' found.\n", keywords_.asString("AveragingScheme"));
 		return false;
 	}
-	const BroadeningFunction& intraBroadening = KeywordListHelper<BroadeningFunction>::retrieve(keywords_, "IntraBroadening", BroadeningFunction());
+	const PairBroadeningFunction& intraBroadening = KeywordListHelper<PairBroadeningFunction>::retrieve(keywords_, "IntraBroadening", PairBroadeningFunction());
 	RDFModule::PartialsMethod method = RDFModule::partialsMethod(keywords_.asString("Method"));
 	if (method == RDFModule::nPartialsMethods)
 	{
@@ -79,14 +79,14 @@ bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	Messenger::print("RDF: Use of all pairs in intramolecular partials is %s.\n", DissolveSys::onOff(allIntra));
 	if (averaging <= 1) Messenger::print("RDF: No averaging of partials will be performed.\n");
 	else Messenger::print("RDF: Partials will be averaged over %i sets (scheme = %s).\n", averaging, RDFModule::averagingScheme(averagingScheme));
-	if (intraBroadening.function() == BroadeningFunction::NoFunction) Messenger::print("RDF: No broadening will be applied to intramolecular g(r).");
-	else Messenger::print("RDF: Broadening to be applied to intramolecular g(r) is %s (%s).", BroadeningFunction::functionType(intraBroadening.function()), intraBroadening.parameterSummary().get());
+	if (intraBroadening.function() == PairBroadeningFunction::NoFunction) Messenger::print("RDF: No broadening will be applied to intramolecular g(r).");
+	else Messenger::print("RDF: Broadening to be applied to intramolecular g(r) is %s (%s).", PairBroadeningFunction::functionType(intraBroadening.function()), intraBroadening.parameterSummary().get());
 	Messenger::print("RDF: Calculation method is '%s'.\n", RDFModule::partialsMethod(method));
 	Messenger::print("RDF: Save data is %s.\n", DissolveSys::onOff(saveData));
 	Messenger::print("RDF: Degree of smoothing to apply to calculated partial g(r) is %i (%s).\n", smoothing, DissolveSys::onOff(smoothing > 0));
 	Messenger::print("\n");
 
-	
+
 	/*
 	 * Regardless of whether we are a main processing task (summing some combination of Configuration's partials) or multiple independent Configurations,
 	 * we must loop over the specified targetConfigurations_ and calculate the partials for each.

@@ -89,8 +89,8 @@ bool CalibrationModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		rdfModuleIterator.restart();
 		while (Module* module = rdfModuleIterator.iterate())
 		{
-			// Retrieve the BroadeningFunction
-			BroadeningFunction& broadening = KeywordListHelper<BroadeningFunction>::retrieve(module->keywords(), "IntraBroadening", BroadeningFunction());
+			// Retrieve the PairBroadeningFunction
+			PairBroadeningFunction& broadening = KeywordListHelper<PairBroadeningFunction>::retrieve(module->keywords(), "IntraBroadening", PairBroadeningFunction());
 
 			// Add its parameters to our minimiser
 			for (int n=0; n<broadening.nParameters(); ++n) broadeningMinimiser.addTarget(broadening.parameters()[n]);
@@ -102,15 +102,12 @@ bool CalibrationModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		Messenger::print("Total error over all specified datasets is %f%%.\n", error);
 
 		// Make sure that we re-broaden the RDFs and NeutronSQ data by the correct (optimal) values before we leave
-		// Store alpha parameters in the BroadeningFunction in the associated RDF modules
+		// Store alpha parameters in the PairBroadeningFunction in the associated RDF modules
 		rdfModuleIterator.restart();
 		while (Module* rdfModule = rdfModuleIterator.iterate())
 		{
-			// Retrieve the BroadeningFunction
-			BroadeningFunction& broadening = KeywordListHelper<BroadeningFunction>::retrieve(rdfModule->keywords(), "IntraBroadening", BroadeningFunction());
-
-			// Need to update any dependent values
-			broadening.setUpDependentParameters();
+			// Retrieve the PairBroadeningFunction
+			PairBroadeningFunction& broadening = KeywordListHelper<PairBroadeningFunction>::retrieve(rdfModule->keywords(), "IntraBroadening", PairBroadeningFunction());
 
 			Messenger::print("Optimal IntraBroadening parameters for '%s' are now: %s\n", rdfModule->uniqueName(), broadening.parameterSummary().get());
 
