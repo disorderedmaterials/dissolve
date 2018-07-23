@@ -40,7 +40,7 @@ class SpeciesIntra
 	// Constructor
 	SpeciesIntra();
 	// Destructor
-	~SpeciesIntra();
+	virtual ~SpeciesIntra();
 
 
 	/*

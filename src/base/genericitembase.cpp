@@ -21,6 +21,16 @@
 
 #include "base/genericitembase.h"
 
+// Constructor
+GenericItemBase::GenericItemBase()
+{
+}
+
+// Destructor
+GenericItemBase::~GenericItemBase()
+{
+}
+
 /*
  * I/O
  */

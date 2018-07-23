@@ -30,6 +30,13 @@
 // Base function templates for a Class that is to be used as a GenericItem
 class GenericItemBase
 {
+	public:
+	// Constructor
+	GenericItemBase();
+	// Destructor
+	virtual ~GenericItemBase();
+
+
 	/*
 	 * Item Class
 	 */
