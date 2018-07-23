@@ -109,12 +109,12 @@ template <class T> class MonteCarloMinimiser
 		if (parameterSmoothingM_%2 == 0) --parameterSmoothingM_;
 	}
 	// Set acceptance memory length
-	int setAcceptanceMemoryLength(int length)
+	void setAcceptanceMemoryLength(int length)
 	{
 		acceptanceMemoryLength_ = length;
 	}
 	// Target acceptance ratio
-	double setTargetAcceptanceRatio(double ratio)
+	void setTargetAcceptanceRatio(double ratio)
 	{
 		targetAcceptanceRatio_ = ratio;
 	}

@@ -106,8 +106,8 @@ bool CollectionGroup::isEmpty()
 	return collections_.nItems() == 0;
 }
 
-// Whether vertical shifting is enabled in this group
-bool CollectionGroup::setVerticalShift(bool enabled, double verticalShift)
+// Set whether vertical shifting is enabled in this group
+void CollectionGroup::setVerticalShift(bool enabled, double verticalShift)
 {
 	hasVerticalShift_ = enabled;
 	verticalShift_ = verticalShift;
@@ -230,7 +230,7 @@ const ColourDefinition& CollectionGroupManager::colourDefinition(Collection* col
 }
 
 // Cycle vertical shift applied to CollectionGroups
-int CollectionGroupManager::cycleVerticalShifts()
+void CollectionGroupManager::cycleVerticalShifts()
 {
 	verticalShift_ = (CollectionGroupManager::VerticalShift) ((verticalShift_+1)%nVerticalShifts);
 

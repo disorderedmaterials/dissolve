@@ -48,7 +48,7 @@ DoubleExp::DoubleExp(double mantissa, int exponent)
 }
 
 // Assignment from single value
-DoubleExp& DoubleExp::operator=(double d)
+void DoubleExp::operator=(double d)
 {
 	set(d);
 }

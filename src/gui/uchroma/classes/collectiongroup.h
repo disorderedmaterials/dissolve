@@ -73,8 +73,8 @@ class CollectionGroup : public ListItem<CollectionGroup>
 	bool usedByCollection(Collection* collection);
 	// Return whether the group is empty
 	bool isEmpty();
-	// Whether vertical shifting is enabled in this group
-	bool setVerticalShift(bool enabled, double verticalShift);
+	// Set whether vertical shifting is enabled in this group
+	void setVerticalShift(bool enabled, double verticalShift);
 	// Whether vertical shifting is enabled in this group
 	bool hasVerticalShift();
 	// Return shift (in vertical axis) to apply to Collections
@@ -134,7 +134,7 @@ class CollectionGroupManager
 	// Return colour definition for specified Collection
 	const ColourDefinition& colourDefinition(Collection* collection);
 	// Cycle vertical shift applied to CollectionGroups
-	int cycleVerticalShifts();
+	void cycleVerticalShifts();
 	// Set vertical shift applied to CollectionGroups
 	void setVerticalShift(VerticalShift shiftType);
 	// Return current vertical shift type

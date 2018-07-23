@@ -41,7 +41,7 @@ class DoubleExp
 	 */
 	public:
 	// Assignment Operator
-	DoubleExp& operator=(double d);
+	void operator=(double d);
 	// Equality Operator
 	bool operator==(const double other);
 	// Inequality Operator

@@ -302,7 +302,7 @@ bool SVD::decompose(const Array2D<double>& A, Array2D<double>& U, Array2D<double
 }
 
 // Test SVD
-bool SVD::test()
+void SVD::test()
 {
 	Array2D<double> A, U, V, S, I, Ut, Vt;
 
