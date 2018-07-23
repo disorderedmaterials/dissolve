@@ -61,7 +61,7 @@ void Surface::constructFull(PrimitiveList& primitiveList, const Axes& axes, cons
 	Array<DisplayDataSet::DataPointType> typeA, typeB, typeC;
 	Array< Vec4<GLfloat> > colourA, colourB;
 	QColor colour;
-	double zA, zB, zC;
+	double zA, zB = 0.0, zC = 0.0;
 	Vec3<double> nrm(0.0, 1.0, 0.0);
 
 	// Construct first slice data and set initial min/max values

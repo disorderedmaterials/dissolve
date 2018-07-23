@@ -725,8 +725,8 @@ double FitKernel::rmsError(Array<double>& alpha)
 bool FitKernel::minimise(Array<double>& alpha)
 {
 	// Call the minimiser
-	bool result;
-	double randomMin, randomMax;
+	bool result = false;
+	double randomMin = 0.0, randomMax = 0.0;
 	switch (method_)
 	{
 		// Steepest Descent
@@ -859,7 +859,7 @@ bool FitKernel::fit(bool startFromUnity)
 	}
 
 	// Loop over defined DataSpaceRanges (including those in any reference variables)
-	bool result;
+	bool result = false;
 	for (currentFitRange_ = fitSpace_.dataSpaceRanges(); currentFitRange_ != NULL; currentFitRange_ = currentFitRange_->next)
 	{
 		Messenger::print("Fitting range (%e < x < %e) (%e < z < %e)\n", currentFitRange_->xStart(), currentFitRange_->xEnd(), currentFitRange_->zStart(), currentFitRange_->zEnd());
