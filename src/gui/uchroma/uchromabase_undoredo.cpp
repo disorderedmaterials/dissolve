@@ -43,6 +43,8 @@ EditStateGroup* UChromaBase::beginEditStateGroup(const char* format, ...)
 	currentEditState_ = NULL;
 
 	va_end(arguments);
+
+	return currentEditStateGroup_;
 }
 
 // Add edit state to group

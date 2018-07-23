@@ -647,6 +647,9 @@ ProcessPool::DivisionStrategy ProcessPool::subDivisionStrategy(ProcessPool::Divi
 			Messenger::error("Strategy is PoolProcessesStrategy, and so can't subdivide any further. Results may be incorrect!\n");
 			return PoolProcessesStrategy;
 	}
+
+	// Default
+	return PoolProcessesStrategy;
 }
 
 // Return starting index for loop using specified strategy
@@ -685,6 +688,9 @@ int ProcessPool::strategyNDivisions(ProcessPool::DivisionStrategy strategy) cons
 		case (PoolProcessesStrategy):
 			return 1;
 	}
+
+	// Default
+	return 1;
 }
 
 // Return index of this process within the specified strategy
@@ -701,6 +707,9 @@ int ProcessPool::strategyProcessIndex(ProcessPool::DivisionStrategy strategy) co
 		case (PoolProcessesStrategy):
 			return 0;
 	}
+
+	// Default
+	return 0;
 }
 
 // Return best strategy (by process or by pool) for this process pool
