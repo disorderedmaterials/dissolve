@@ -38,7 +38,7 @@
 #include <QLabel>
 
 // Constructor
-ModuleControlWidget::ModuleControlWidget(DissolveWindow* dissolveWindow, Module* module, const char* title, bool showTopControls) : SubWidget(dissolveWindow, title), dissolveWindow_(dissolveWindow), dissolve_(dissolveWindow->dissolve()), module_(module)
+ModuleControlWidget::ModuleControlWidget(DissolveWindow* dissolveWindow, Module* module, const char* title, bool showTopControls) : SubWidget(dissolveWindow, title), module_(module), dissolveWindow_(dissolveWindow), dissolve_(dissolveWindow->dissolve())
 {
 	// Set up user interface
 	ui.setupUi(this);

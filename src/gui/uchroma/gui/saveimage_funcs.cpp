@@ -24,7 +24,7 @@
 #include <QFileDialog>
 
 // Constructor
-SaveImageDialog::SaveImageDialog(UChromaBase& uChromaBase, QWidget* parent) : uChromaBase_(uChromaBase), QDialog(parent)
+SaveImageDialog::SaveImageDialog(UChromaBase& uChromaBase, QWidget* parent) : QDialog(parent), uChromaBase_(uChromaBase)
 {
 	ui.setupUi(this);
 	

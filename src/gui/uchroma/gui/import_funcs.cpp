@@ -24,7 +24,7 @@
 #include <QFileDialog>
 
 // Constructor
-ImportDialog::ImportDialog(UChromaBase& uChromaBase, QWidget* parent) : uChromaBase_(uChromaBase), QDialog(parent)
+ImportDialog::ImportDialog(UChromaBase& uChromaBase, QWidget* parent) : QDialog(parent), uChromaBase_(uChromaBase)
 {
 	// Call the main creation function
 	ui.setupUi(this);

@@ -29,7 +29,7 @@
  */
 
 // Constructor
-EditViewLayoutDialog::EditViewLayoutDialog(UChromaBase& uChromaBase, QWidget* parent) : uChromaBase_(uChromaBase), QDialog(parent), layout_(uChromaBase)
+EditViewLayoutDialog::EditViewLayoutDialog(UChromaBase& uChromaBase, QWidget* parent) : QDialog(parent), uChromaBase_(uChromaBase), layout_(uChromaBase)
 {
 	ui.setupUi(this);
 

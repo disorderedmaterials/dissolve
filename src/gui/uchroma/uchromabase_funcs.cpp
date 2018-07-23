@@ -25,7 +25,7 @@
 CharString UChromaBase::viewerFontFileName_;
 
 // Constructor
-UChromaBase::UChromaBase(QWidget* parent) : parent_(parent), viewLayout_(*this),
+UChromaBase::UChromaBase(QWidget* parent) : parent_(parent), 
 	axesWindow_(*this, parent),
 	dataWindow_(*this, parent),
 	styleWindow_(*this, parent),
@@ -34,7 +34,8 @@ UChromaBase::UChromaBase(QWidget* parent) : parent_(parent), viewLayout_(*this),
 	createCollectionDialog_(*this, parent),
 	importDialog_(*this, parent),
 	editFitKernelDialog_(*this, parent),
-	saveImageDialog_(*this, parent)
+	saveImageDialog_(*this, parent),
+	viewLayout_(*this)
 {
 	// Window
 	refreshing_ = false;

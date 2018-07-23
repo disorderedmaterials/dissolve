@@ -22,7 +22,7 @@
 #include "gui/modulechartblock.h"
 
 // Constructor
-ModuleChartBlock::ModuleChartBlock(DissolveWindow* dissolveWindow, Dissolve& dissolve) : dissolveWindow_(dissolveWindow), dissolve_(dissolve), ListItem<ModuleChartBlock>()
+ModuleChartBlock::ModuleChartBlock(DissolveWindow* dissolveWindow, Dissolve& dissolve) : ListItem<ModuleChartBlock>(), dissolveWindow_(dissolveWindow), dissolve_(dissolve)
 {
 	refreshing_ = false;
 }

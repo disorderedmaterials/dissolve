@@ -32,7 +32,7 @@
 const bool DND = false;
 
 // Constructor
-RegionalDistributor::RegionalDistributor(const DynamicArray<Molecule>& moleculeArray, const CellArray& cellArray, ProcessPool& procPool, ProcessPool::DivisionStrategy strategy) : cellArray_(cellArray), moleculeArray_(moleculeArray), originalStrategy_(strategy), processPool_(procPool)
+RegionalDistributor::RegionalDistributor(const DynamicArray<Molecule>& moleculeArray, const CellArray& cellArray, ProcessPool& procPool, ProcessPool::DivisionStrategy strategy) :  processPool_(procPool), originalStrategy_(strategy), cellArray_(cellArray), moleculeArray_(moleculeArray)
 {
 	// Core
 	currentStrategy_ = originalStrategy_;

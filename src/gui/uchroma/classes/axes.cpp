@@ -32,7 +32,7 @@ template<class Axes> int ObjectStore<Axes>::objectType_ = ObjectInfo::UChromaAxe
 template<class Axes> const char* ObjectStore<Axes>::objectTypeName_ = "UChromaAxes";
 
 // Constructor
-Axes::Axes(ViewPane& parent) : parent_(parent), ObjectStore<Axes>(this)
+Axes::Axes(ViewPane& parent) : ObjectStore<Axes>(this), parent_(parent)
 {
 	// Definition
 	limitMin_.zero();
@@ -128,7 +128,7 @@ Axes::~Axes()
 }
 
 // Copy constructor
-Axes::Axes(const Axes& source) : parent_(parent_), ObjectStore<Axes>(this)
+Axes::Axes(const Axes& source) : ObjectStore<Axes>(this), parent_(source.parent_)
 {
 	(*this) = source;
 }

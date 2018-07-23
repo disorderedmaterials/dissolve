@@ -36,7 +36,7 @@ double OperateBGSubDialog::zRangeMax_ = 10.0;
 int OperateBGSubDialog::subtractionMethod_ = 0;
 
 // Constructor
-OperateBGSubDialog::OperateBGSubDialog(UChromaBase& uChromaBase, QWidget* parent) : uChromaBase_(uChromaBase), QDialog(parent)
+OperateBGSubDialog::OperateBGSubDialog(UChromaBase& uChromaBase, QWidget* parent) : QDialog(parent), uChromaBase_(uChromaBase)
 {
 	ui.setupUi(this);
 

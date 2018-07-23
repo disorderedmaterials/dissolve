@@ -765,7 +765,7 @@ template <class T> class ListIterator
 {
 	public:
 	// Constructor
-	ListIterator<T>(const List<T>& source, bool reverse = false) : targetList_(source), reverse_(reverse)
+	ListIterator<T>(const List<T>& source, bool reverse = false) : reverse_(reverse), targetList_(source)
 	{
 		finished_ = false;
 		currentItem_ = NULL;

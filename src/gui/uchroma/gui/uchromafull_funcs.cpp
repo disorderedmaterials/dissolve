@@ -27,7 +27,7 @@
 #include <QSettings>
 
 // Constructor
-UChromaFullWindow::UChromaFullWindow(QMainWindow *parent) : UChromaBase(this), QMainWindow(parent), viewTypeActionGroup_(this)
+UChromaFullWindow::UChromaFullWindow(QMainWindow *parent) : QMainWindow(parent), UChromaBase(this), viewTypeActionGroup_(this)
 {
 	// Initialise the icon resource
 	Q_INIT_RESOURCE(icons);

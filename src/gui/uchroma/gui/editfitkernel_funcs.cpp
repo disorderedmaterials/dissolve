@@ -30,7 +30,7 @@
 #include <QMessageBox>
 
 // Constructor
-EditFitKernelDialog::EditFitKernelDialog(UChromaBase& uChromaBase, QWidget* parent) : uChromaBase_(uChromaBase), QDialog(parent), fitKernelBackup_(uChromaBase)
+EditFitKernelDialog::EditFitKernelDialog(UChromaBase& uChromaBase, QWidget* parent) : QDialog(parent), uChromaBase_(uChromaBase), fitKernelBackup_(uChromaBase)
 {
 	ui.setupUi(this);
 

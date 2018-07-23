@@ -34,7 +34,7 @@
  */
 
 // Constructor
-DataWindow::DataWindow(UChromaBase& uChromaBase, QWidget* parent) : uChromaBase_(uChromaBase), QWidget(parent)
+DataWindow::DataWindow(UChromaBase& uChromaBase, QWidget* parent) : QWidget(parent), uChromaBase_(uChromaBase)
 {
 	ui.setupUi(this);
 

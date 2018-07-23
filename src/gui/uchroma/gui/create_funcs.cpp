@@ -25,7 +25,7 @@
 #include "gui/uchroma/expression/variable.h"
 
 // Constructor
-CreateCollectionDialog::CreateCollectionDialog(UChromaBase& uChromaBase, QWidget* parent) : uChromaBase_(uChromaBase), QDialog(parent)
+CreateCollectionDialog::CreateCollectionDialog(UChromaBase& uChromaBase, QWidget* parent) : QDialog(parent), uChromaBase_(uChromaBase)
 {
 	ui.setupUi(this);
 

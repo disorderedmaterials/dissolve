@@ -32,7 +32,7 @@
  */
 
 // Constructor
-AxesWindow::AxesWindow(UChromaBase& uChromaBase, QWidget* parent) : uChromaBase_(uChromaBase), QWidget(parent)
+AxesWindow::AxesWindow(UChromaBase& uChromaBase, QWidget* parent) : QWidget(parent), uChromaBase_(uChromaBase)
 {
 	ui.setupUi(this);
 

@@ -620,7 +620,7 @@ template <class T, class D> class RefListIterator
 {
 	public:
 	// Constructor
-	RefListIterator<T,D>(const RefList<T,D>& source, bool reverse = false) : targetRefList_(source), reverse_(reverse)
+	RefListIterator<T,D>(const RefList<T,D>& source, bool reverse = false) : reverse_(reverse), targetRefList_(source)
 	{
 		finished_ = false;
 		currentItem_ = NULL;

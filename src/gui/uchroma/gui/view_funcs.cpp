@@ -28,7 +28,7 @@
  */
 
 // Constructor
-ViewWindow::ViewWindow(UChromaBase& uChromaBase, QWidget* parent) : uChromaBase_(uChromaBase), QWidget(parent)
+ViewWindow::ViewWindow(UChromaBase& uChromaBase, QWidget* parent) : QWidget(parent), uChromaBase_(uChromaBase)
 {
 	ui.setupUi(this);
 

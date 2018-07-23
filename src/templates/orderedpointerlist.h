@@ -586,7 +586,7 @@ template <class T> class OrderedPointerListIterator
 {
 	public:
 	// Constructor
-	OrderedPointerListIterator<T>(const OrderedPointerList<T>& source, bool reverse = false) : targetList_(source), reverse_(reverse)
+	OrderedPointerListIterator<T>(const OrderedPointerList<T>& source, bool reverse = false) : reverse_(reverse), targetList_(source)
 	{
 		finished_ = false;
 		currentItem_ = NULL;
