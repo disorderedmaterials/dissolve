@@ -424,7 +424,7 @@ bool RegionalDistributor::assignMolecule(const Molecule* mol, int processOrGroup
 
 	// For the read-only Cells, we just need to set relevant ownership in the cellLockOwners_ array
 	OrderedPointerListIterator<Cell> readOnlyCellIterator(readOnlyCells);
-	while (readOnlyCell = readOnlyCellIterator.iterate())
+	while ((readOnlyCell = readOnlyCellIterator.iterate()))
 	{
 		cellIndex = readOnlyCell->index();
 
