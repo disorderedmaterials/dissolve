@@ -19,8 +19,8 @@ do
   esac
 done
 
-DUQS=../src/duq-serial
-DUQP=../src/duq
+DUQS=../src/dissolve-serial
+DUQP=../src/dissolve
 export DUQDATA=../../data
 if [ ! -e $DUQS ]
 then
