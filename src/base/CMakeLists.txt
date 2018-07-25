@@ -15,12 +15,8 @@ add_library(base
   processgroup.cpp
   processpool.cpp
   ptable.cpp
-  sampleddouble.cpp
   sysfunc.cpp
   timer.cpp
-  xydata.cpp
-  xydata_ft.cpp
-  xydata_interp.cpp
   
   charstring.h
   constants.h
@@ -39,10 +35,8 @@ add_library(base
   processgroup.h
   processpool.h
   ptable.h
-  sampleddouble.h
   sysfunc.h
   timer.h
-  xydata.h
 )
 
 include_directories(
