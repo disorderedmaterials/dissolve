@@ -22,6 +22,7 @@
 #include "classes/isotopologue.h"
 #include "classes/species.h"
 #include "classes/atomtype.h"
+#include "data/isotopes.h"
 #include "base/processpool.h"
 
 // Constructor
@@ -121,7 +122,7 @@ void Isotopologue::update(const List<AtomType>& atomTypes)
 			oldItems.cut(rli);
 			isotopes_.own(rli);
 		}
-		else isotopes_.add(at, PeriodicTable::element(at->element()).isotope(Isotope::NaturalIsotope));
+		else isotopes_.add(at, Isotopes::naturalIsotope(at->element()));
 	}
 }
 

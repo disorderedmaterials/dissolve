@@ -23,6 +23,7 @@
 #include "classes/masterintra.h"
 #include "classes/atomtype.h"
 #include "classes/box.h"
+#include "data/isotopes.h"
 #include "base/lineparser.h"
 #include "base/processpool.h"
 #include <string.h>
@@ -82,12 +83,12 @@ bool Species::checkSetup(const List<AtomType>& atomTypes)
 	{
 		if (i->atomType() == NULL)
 		{
-			Messenger::error("Atom %i (%s) has no associated AtomType.\n", i->userIndex(), PeriodicTable::element(i->element()).symbol());
+			Messenger::error("Atom %i (%s) has no associated AtomType.\n", i->userIndex(), i->element()->symbol());
 			++nErrors;
 		}
 		else if (!atomTypes.contains(i->atomType()))
 		{
-			Messenger::error("Atom %i (%s) references a non-existent AtomType.\n", i->userIndex(), PeriodicTable::element(i->element()).symbol());
+			Messenger::error("Atom %i (%s) references a non-existent AtomType.\n", i->userIndex(), i->element()->symbol());
 			++nErrors;
 		}
 	}
@@ -114,7 +115,7 @@ bool Species::checkSetup(const List<AtomType>& atomTypes)
 	{
 		if (ri->data > 1)
 		{
-			Messenger::error("SpeciesAtom %i (%s) is present in more than one (%i) GrainDefinition.\n", ri->item->userIndex(), PeriodicTable::element(ri->item->element()).symbol(), ri->data);
+			Messenger::error("SpeciesAtom %i (%s) is present in more than one (%i) GrainDefinition.\n", ri->item->userIndex(), ri->item->element()->symbol(), ri->data);
 			++nErrors;
 		}
 // 		else if (ri->data == 0)
@@ -130,7 +131,7 @@ bool Species::checkSetup(const List<AtomType>& atomTypes)
 	{
 		if ((i->nBonds() == 0) && (atoms_.nItems() > 1))
 		{
-			Messenger::error("SpeciesAtom %i (%s) participates in no Bonds, but is part of a multi-atom Species.\n", i->userIndex(), PeriodicTable::element(i->element()).symbol());
+			Messenger::error("SpeciesAtom %i (%s) participates in no Bonds, but is part of a multi-atom Species.\n", i->userIndex(), i->element()->symbol());
 			++nErrors;
 		}
 		
@@ -168,7 +169,7 @@ bool Species::checkSetup(const List<AtomType>& atomTypes)
 				Messenger::error("Isotopologue '%s' does not refer to an elemental Isotope for AtomType '%s'.\n", iso->name(), atomType->name());
 				++nErrors;
 			}
-			else if (!PeriodicTable::element(atomType->element()).hasIsotope(isotopeIterator.currentData()->A()))
+			else if (!Isotopes::isotope(atomType->element(), isotopeIterator.currentData()->A()))
 			{
 				Messenger::error("Isotopologue '%s' does not refer to a suitable Isotope for AtomType '%s'.\n", iso->name(), atomType->name());
 				++nErrors;
@@ -188,7 +189,7 @@ void Species::print()
 	for (int n=0; n<nAtoms(); ++n)
 	{
 		SpeciesAtom* i = atoms_[n];
-		Messenger::print("    %4i  %3s  %4s (%2i)  %12.4e  %12.4e  %12.4e  %12.4e\n", n+1, PeriodicTable::element(i->element()).symbol(), i->atomType()->name(), i->atomType()->index(), i->r().x, i->r().y, i->r().z, i->charge());
+		Messenger::print("    %4i  %3s  %4s (%2i)  %12.4e  %12.4e  %12.4e  %12.4e\n", n+1, i->element()->symbol(), i->atomType()->name(), i->atomType()->index(), i->r().x, i->r().y, i->r().z, i->charge());
 	}
 
 	if (nBonds() > 0)

@@ -27,7 +27,7 @@
 #include "templates/mpilistitem.h"
 
 // Forward Declarations
-class Isotope;
+class Element;
 
 /*
  * AtomType Definition
@@ -48,7 +48,7 @@ class AtomType : public MPIListItem<AtomType>
 	// Name
 	CharString name_;
 	// Associated Element
-	int element_;
+	Element* element_;
 	// Interaction Parameters
 	Parameters parameters_;
 	// Whether this AtomType is exchangeable
@@ -62,9 +62,9 @@ class AtomType : public MPIListItem<AtomType>
 	// Return name of AtomType
 	const char* name() const;
 	// Set atomic element
-	void setElement(int el);
+	void setElement(Element* el);
 	// Return atomic Element
-	int element() const;
+	Element* element() const;
 	// Return interaction Parameters
 	Parameters& parameters();
 	// Set whether this AtomType is exchangeable

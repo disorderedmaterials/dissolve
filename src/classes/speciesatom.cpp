@@ -27,7 +27,7 @@
 // Constructor
 SpeciesAtom::SpeciesAtom() : ListItem<SpeciesAtom>()
 {
-	element_ = 0;
+	element_ = NULL;
 	charge_ = 0.0;
 	atomType_ = NULL;
 	grain_ = NULL;
@@ -53,27 +53,27 @@ Species* SpeciesAtom::parent()
 }
 
 // Set basic SpeciesAtom properties
-void SpeciesAtom::set(int element, double rx, double ry, double rz)
+void SpeciesAtom::set(Element* element, double rx, double ry, double rz)
 {
 	element_ = element;
 	r_.set(rx, ry, rz);
 }
 
 // Set basic SpeciesAtom properties
-void SpeciesAtom::set(int element, const Vec3<double> r)
+void SpeciesAtom::set(Element* element, const Vec3<double> r)
 {
 	element_ = element;
 	r_ = r;
 }
 
 // Set atomic element
-void SpeciesAtom::setElement(int el)
+void SpeciesAtom::setElement(Element* el)
 {
 	element_ = el;
 }
 
 // Return atomic element
-int SpeciesAtom::element() const
+Element* SpeciesAtom::element() const
 {
 	return element_;
 }

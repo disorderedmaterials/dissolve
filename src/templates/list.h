@@ -413,7 +413,7 @@ template <class T> class List
 	 */
 	public:
 	// Find list index of supplied item
-	int indexOf(T* item) const
+	int indexOf(const T* item) const
 	{
 		int result = 0;
 		for (T* i = listHead_; i != NULL; i = i->next)

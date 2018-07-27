@@ -22,11 +22,10 @@
 #include "classes/atomtypelist.h"
 #include "classes/atomtype.h"
 #include "classes/isotopedata.h"
+#include "data/isotopes.h"
 #include "base/constants.h"
-#include "base/isotope.h"
 #include "base/lineparser.h"
 #include "base/messenger.h"
-#include "base/ptable.h"
 #include "base/processpool.h"
 #include "base/sysfunc.h"
 #include "templates/broadcastlist.h"
@@ -154,7 +153,7 @@ void AtomTypeData::naturalise()
 	// Clear the isotopes list and add on the natural isotope, keeping the current population
 	isotopes_.clear();
 	IsotopeData* topeData = isotopes_.add();
-	topeData->initialise(PeriodicTable::element(atomType_->element()).hasIsotope(Isotope::NaturalIsotope));
+	topeData->initialise(Isotopes::naturalIsotope(atomType_->element()));
 	topeData->add(population_);
 	topeData->finalise(population_);
 	boundCoherent_ = topeData->isotope()->boundCoherent();

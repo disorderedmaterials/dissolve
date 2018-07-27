@@ -175,7 +175,7 @@ endif(GUI)
 set(BASIC_LINK_LIBS
 
   # Main libs
-  main classes module keywordtypes base math
+  main classes module keywordtypes base math data
 
   # Modules
   atomshakemodule

@@ -89,8 +89,6 @@ class Weights : public GenericItemBase
 	void createFromIsotopologues();
 	// Reduce data to be naturally-weighted
 	void naturalise();
-	// Set (sole) Isotope for specified AtomType and recalculate matrices
-	bool setAtomTypeIsotope(AtomType* atomType, Isotope* isotope);
 	// Return AtomTypeList
 	AtomTypeList& atomTypes();
 	// Return number of used AtomTypes

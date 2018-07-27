@@ -23,11 +23,14 @@
 #define DISSOLVE_ISOTOPOLOGUE_H
 
 #include "base/charstring.h"
-#include "base/ptable.h"
+#include "data/elements.h"
+#include "templates/list.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
 class AtomType;
+class Isotope;
+class ProcessPool;
 class Species;
 
 /*

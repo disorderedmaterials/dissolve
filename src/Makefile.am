@@ -4,11 +4,11 @@
 
 EXTRA_DIST = version.h
 
-SUBDIRS = base classes main math module templates
+SUBDIRS = base classes data main math module templates
 
 noinst_LTLIBRARIES = libdissolve.la
 libdissolve_la_SOURCES = 
-libdissolve_la_LIBADD = main/libmain.la module/libmodule.la module/keywordtypes/libkeywordtypes.la modules/libmodules.la classes/libclasses.la base/libbase.la math/libmath.la @MPI_LDLIBS@
+libdissolve_la_LIBADD = main/libmain.la module/libmodule.la module/keywordtypes/libkeywordtypes.la modules/libmodules.la classes/libclasses.la base/libbase.la math/libmath.la data/libdata.la @MPI_LDLIBS@
 libdissolve_la_LDFLAGS = -static
 
 #
@@ -37,7 +37,7 @@ dissolve_serial_CPPFLAGS = @DISSOLVE_CFLAGS@
 
 endif
 
-# Target 'monitor'
+# Target 'dissolve-gui'
 if BUILDGUI
 
 bin_PROGRAMS += dissolve-gui

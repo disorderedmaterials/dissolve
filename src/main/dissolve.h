@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_DISSOLVE_H
 #define DISSOLVE_DISSOLVE_H
 
-#include "base/ptable.h"
+#include "data/elements.h"
 #include "module/module.h"
 #include "classes/configuration.h"
 #include "classes/pairpotential.h"
@@ -75,8 +75,8 @@ class Dissolve
 	List<AtomType>& atomTypes_;
 	
 	public:
-	// Add AtomType
-	AtomType* addAtomType(int el);
+	// Add AtomType with specified Element
+	AtomType* addAtomType(Element* el);
 	// Return number of AtomTypes in list
 	int nAtomTypes() const;
 	// Return first AtomType in list
@@ -321,8 +321,6 @@ class Dissolve
 	SampledDouble saveRestartTimes_;
 
 	public:
-	// Load datafiles
-	bool loadDataFiles();
 	// Load Species from specified file
 	bool loadSpecies(const char* filename);
 	// Load input file

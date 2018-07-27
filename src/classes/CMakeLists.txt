@@ -24,6 +24,7 @@ add_library(classes
   configuration_contents.cpp
   configuration_upkeep.cpp
   distributor.cpp
+  empiricalformula.cpp
   energykernel.cpp
   forcekernel.cpp
   grain.cpp
@@ -76,6 +77,7 @@ add_library(classes
   changestore.h
   configuration.h
   distributor.h
+  empiricalformula.h
   energykernel.h
   forcekernel.h
   grain.h

@@ -271,7 +271,7 @@ template <class T, class D> class OrderedPointerDataArray
 		return false;
 	}
 	// Return array index of pointer within the list
-	int indexOf(T* ptr) const
+	int indexOf(const T* ptr) const
 	{
 		for (int n=0; n<nItems_; ++n) if (items_[n] == ptr) return n;
 

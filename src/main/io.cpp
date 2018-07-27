@@ -23,40 +23,12 @@
 #include "main/keywords.h"
 #include "classes/atomtype.h"
 #include "classes/species.h"
+#include "data/isotopes.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "templates/genericlisthelper.h"
 #include "version.h"
 #include <string.h>
-
-// Load datafiles
-bool Dissolve::loadDataFiles()
-{
-	// Get basic path for data files
-	CharString dataPath;
-	if (!getenv("DISSOLVEDATA"))
-	{
-		Messenger::print("Environment variable DISSOLVEDATA not set - using './data' as the default.\n");
-		dataPath = "./data";
-	}
-	else
-	{
-		dataPath = getenv("DISSOLVEDATA");
-		Messenger::print("Looking for datafiles in '%s'...\n", dataPath.get());
-	}
-
-	CharString filename;
-
-	// Load elements data
-	filename.sprintf("%s/elements.txt", dataPath.get());
-	if (!periodicTable.loadElements(filename)) return false;
-
-	// Load isotope data
-	filename.sprintf("%s/sears91.txt", dataPath.get());
-	if (!periodicTable.loadIsotopes(filename)) return false;
-
-	return true;
-}
 
 // Load Species from specified file
 bool Dissolve::loadSpecies(const char* filename)
@@ -277,8 +249,8 @@ bool Dissolve::saveInput(const char* filename)
 		for (SpeciesAtom* i = sp->firstAtom(); i != NULL; i = i->next)
 		{
 			++count;
-			if (pairPotentialsIncludeCoulomb_) parser.writeLineF("  %s  %3i  %3s  %8.3f  %8.3f  %8.3f  '%s'\n", SpeciesBlock::keyword(SpeciesBlock::AtomKeyword), count, periodicTable.element(i->element()).symbol(), i->r().x, i->r().y, i->r().z, i->atomType() == NULL ? "???" : i->atomType()->name());
-			else parser.writeLineF("  %s  %3i  %3s  %8.3f  %8.3f  %8.3f  '%s'  %8.3f\n", SpeciesBlock::keyword(SpeciesBlock::AtomKeyword), count, periodicTable.element(i->element()).symbol(), i->r().x, i->r().y, i->r().z, i->atomType() == NULL ? "???" : i->atomType()->name(), i->charge());
+			if (pairPotentialsIncludeCoulomb_) parser.writeLineF("  %s  %3i  %3s  %8.3f  %8.3f  %8.3f  '%s'\n", SpeciesBlock::keyword(SpeciesBlock::AtomKeyword), count, i->element()->symbol(), i->r().x, i->r().y, i->r().z, i->atomType() == NULL ? "???" : i->atomType()->name());
+			else parser.writeLineF("  %s  %3i  %3s  %8.3f  %8.3f  %8.3f  '%s'  %8.3f\n", SpeciesBlock::keyword(SpeciesBlock::AtomKeyword), count, i->element()->symbol(), i->r().x, i->r().y, i->r().z, i->atomType() == NULL ? "???" : i->atomType()->name(), i->charge());
 		}
 
 		// Bonds

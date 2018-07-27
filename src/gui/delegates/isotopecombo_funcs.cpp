@@ -20,7 +20,7 @@
 */
 
 #include "gui/delegates/isotopecombo.hui"
-#include "base/element.h"
+#include "data/isotopes.h"
 #include "templates/list.h"
 #include "templates/variantpointer.h"
 #include <QTableWidgetItem>
@@ -45,8 +45,8 @@ QWidget* IsotopeComboDelegate::createEditor(QWidget* parent, const QStyleOptionV
 	if (isotope)
 	{
 		// Populate combo with all possible Isotopes for this Element
-		Element* element = isotope->element();
-		ListIterator<Isotope> isotopeIterator(element->isotopes());
+		const Element& element = isotope->element();
+		ListIterator<Isotope> isotopeIterator(Isotopes::isotopes(element.Z()));
 		while (Isotope* tope = isotopeIterator.iterate()) editor->addItem(textForIsotope(tope));
 	}
 	else Messenger::error("IsotopeComboDelegate::createEditor() - Did not find an Isotope* in the associated QModelIndex.\n");
@@ -64,7 +64,7 @@ void IsotopeComboDelegate::setEditorData(QWidget* editor, const QModelIndex& ind
 	Isotope* isotope = (Isotope*) VariantPointer<Isotope>(index.data(Qt::UserRole));
 	if (isotope)
 	{
-		comboBox->setCurrentIndex(isotope->element()->isotopeIndex(isotope));
+		comboBox->setCurrentIndex(isotope->index());
 	}
 	else Messenger::error("IsotopeComboDelegate::createEditor() - Did not find an Isotope* in the associated QModelIndex.\n");
 // 	QString value = index.model()->data(index, Qt::EditRole).toString();
@@ -81,8 +81,8 @@ void IsotopeComboDelegate::setModelData(QWidget* editor, QAbstractItemModel* mod
 	if (isotope)
 	{
 		// Get parent Element, and find index of new Isotope
-		Element* element = isotope->element();
-		isotope = element->isotope(comboBox->currentIndex());
+		const Element& element = isotope->element();
+		isotope = Isotopes::isotopeAtIndex(element.Z(), comboBox->currentIndex());
 
 		// Set the Isotope pointer in the model
 		model->setData(index, VariantPointer<Isotope>(isotope), Qt::UserRole);
@@ -105,10 +105,6 @@ QString IsotopeComboDelegate::textForIsotope(Isotope* isotope)
 {
 	if (!isotope) return "NULL";
 
-	// Special cases
-	if (isotope->A() == Isotope::NaturalIsotope) return QString("Natural (bc = %1)").arg(isotope->boundCoherent());
-	else if (isotope->A() == Isotope::ZeroIsotope) return QString("Zero (bc = %1)").arg(isotope->boundCoherent());
-	else if (isotope->A() == Isotope::InverseIsotope) return QString("Inverse (bc = %1)").arg(isotope->boundCoherent());
-
-	return QString("%1 (bc = %2)").arg(isotope->A()).arg(isotope->boundCoherent());
+	if (isotope->A() == 0) return QString("Natural (bc = %1)").arg(isotope->boundCoherent());
+	else return QString("%1 (bc = %2)").arg(isotope->A()).arg(isotope->boundCoherent());
 }

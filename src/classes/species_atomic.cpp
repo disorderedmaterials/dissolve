@@ -20,9 +20,10 @@
 */
 
 #include "classes/species.h"
+#include "data/atomicmass.h"
 
 // Add a new atom to the Species
-SpeciesAtom* Species::addAtom(int element, double rx, double ry, double rz)
+SpeciesAtom* Species::addAtom(Element* element, double rx, double ry, double rz)
 {
 	SpeciesAtom* i = atoms_.add();
 	i->setParent(this);
@@ -110,7 +111,7 @@ bool Species::isAtomSelected(SpeciesAtom* i) const
 }
 
 // Change element of specified Atom
-void Species::changeAtomElement(SpeciesAtom* i, int el, AtomType* at)
+void Species::changeAtomElement(SpeciesAtom* i, int Z, AtomType* at)
 {
 	// Check for NULL pointer
 	if (i == NULL)
@@ -120,7 +121,7 @@ void Species::changeAtomElement(SpeciesAtom* i, int el, AtomType* at)
 	}
 	
 	// First, change element within Atom (if necessary)
-	if (i->element() != el) i->setElement(el);
+	if (i->element()->Z() != Z) i->setElement(Elements::elementPointer(Z));
 	else return;
 	
 	// Now, must assign an AtomType. Isotopologue data should be updated after this function!
@@ -131,6 +132,6 @@ void Species::changeAtomElement(SpeciesAtom* i, int el, AtomType* at)
 double Species::mass() const
 {
 	double m = 0.0;
-	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next) m += PeriodicTable::element(i->element()).isotope(Isotope::NaturalIsotope)->atomicWeight();
+	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next) m += AtomicMass::mass(i->element());
 	return m;
 }

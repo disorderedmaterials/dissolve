@@ -27,6 +27,7 @@
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/forcekernel.h"
+#include "data/atomicmass.h"
 #include "base/timer.h"
 #include "base/lineparser.h"
 #include "templates/genericlisthelper.h"
@@ -130,7 +131,7 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			}
 
 			// Grab atom mass for future use
-			mass[n] = PeriodicTable::element(atoms[n]->element()).isotope(0)->atomicWeight();
+			mass[n] = AtomicMass::mass(atoms[n]->element());
 
 			// Calculate total velocity and mass over all atoms
 			vCom += v[n] * mass[n];
@@ -294,7 +295,7 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					for (int n=0; n<cfg->nAtoms(); ++n)
 					{
 						Atom* i = atoms[n];
-						if (!trajParser.writeLineF("%-3s   %10.3f  %10.3f  %10.3f\n", PeriodicTable::element(i->element()).symbol(), i->r().x, i->r().y, i->r().z))
+						if (!trajParser.writeLineF("%-3s   %10.3f  %10.3f  %10.3f\n", i->element()->symbol(), i->r().x, i->r().y, i->r().z))
 						{
 							procPool.decideFalse();
 							return false;

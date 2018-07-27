@@ -78,7 +78,7 @@ class Species : public ListItem<Species>
 	
 	public:
 	// Add a new Atom to the Species
-	SpeciesAtom* addAtom(int element = 0, double rx = 0.0, double ry = 0.0, double rz = 0.0);
+	SpeciesAtom* addAtom(Element* element = NULL, double rx = 0.0, double ry = 0.0, double rz = 0.0);
 	// Return the number of atoms in the species
 	int nAtoms() const;
 	// Return the first atom in the Species
@@ -102,7 +102,7 @@ class Species : public ListItem<Species>
 	// Return whether specified Atom is selected
 	bool isAtomSelected(SpeciesAtom* i) const;
 	// Change element of specified Atom
-	void changeAtomElement(SpeciesAtom* i, int el, AtomType* at);
+	void changeAtomElement(SpeciesAtom* i, int Z, AtomType* at);
 	// Return total atomic mass of Species
 	double mass() const;
 

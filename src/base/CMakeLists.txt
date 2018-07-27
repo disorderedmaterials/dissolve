@@ -1,11 +1,9 @@
 add_library(base
   charstring.cpp
-  element.cpp
   genericitem.cpp
   genericitembase.cpp
   genericlist.cpp
   geometry.cpp
-  isotope.cpp
   lineparser.cpp
   messenger.cpp
   outputhandler.cpp
@@ -14,18 +12,15 @@ add_library(base
   plainvaluelist.cpp
   processgroup.cpp
   processpool.cpp
-  ptable.cpp
   sysfunc.cpp
   timer.cpp
   
   charstring.h
   constants.h
-  element.h
   genericitem.h
   genericitembase.h
   genericlist.h
   geometry.h
-  isotope.h
   lineparser.h
   messenger.h
   outputhandler.h
@@ -34,7 +29,6 @@ add_library(base
   plainvaluelist.h
   processgroup.h
   processpool.h
-  ptable.h
   sysfunc.h
   timer.h
 )

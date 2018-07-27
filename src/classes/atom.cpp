@@ -46,7 +46,7 @@ Atom::~Atom()
 void Atom::clear()
 {
 	// Properties
-	element_ = 0;
+	element_ = NULL;
 	charge_ = 0.0;
 	localTypeIndex_ = -1;
 	masterTypeIndex_ = -1;
@@ -63,27 +63,27 @@ void Atom::clear()
  */
 
 // Set basic Atom properties
-void Atom::set(int element, double rx, double ry, double rz)
+void Atom::set(Element* element, double rx, double ry, double rz)
 {
 	element_ = element;
 	r_.set(rx, ry, rz);
 }
 
 // Set basic Atom properties
-void Atom::set(int element, const Vec3<double> r)
+void Atom::set(Element* element, const Vec3<double> r)
 {
 	element_ = element;
 	r_ = r;
 }
 
 // Set atomic element
-void Atom::setElement(int el)
+void Atom::setElement(Element* el)
 {
 	element_ = el;
 }
 
 // Return atomic element
-int Atom::element() const
+Element* Atom::element() const
 {
 	return element_;
 }

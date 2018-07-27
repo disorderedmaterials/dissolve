@@ -20,10 +20,10 @@
 */
 
 #include "classes/isotopedata.h"
-#include "base/isotope.h"
+#include "data/isotopes.h"
 #include "base/lineparser.h"
 #include "base/messenger.h"
-#include "base/ptable.h"
+#include "data/elements.h"
 #include "base/processpool.h"
 
 // Constructor
@@ -112,14 +112,14 @@ double IsotopeData::fraction() const
 // Write data through specified LineParser
 bool IsotopeData::write(LineParser& parser)
 {
-	return parser.writeLineF("%i %i %i %f\n", isotope_->element()->z(), isotope_->A(), population_, fraction_);
+	return parser.writeLineF("%i %i %i %f\n", isotope_->Z(), isotope_->A(), population_, fraction_);
 }
 
 // Read data through specified LineParser
 bool IsotopeData::read(LineParser& parser)
 {
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-	isotope_ = PeriodicTable::element(parser.argi(0)).hasIsotope(parser.argi(1));
+	isotope_ = Isotopes::isotope(parser.argi(0), parser.argi(1));
 	population_ = parser.argi(2);
 	fraction_ = parser.argd(3);
 	return true;

@@ -22,6 +22,7 @@
 #include "classes/weights.h"
 #include "classes/species.h"
 #include "classes/atomtype.h"
+#include "data/isotopes.h"
 #include "base/processpool.h"
 #include "base/lineparser.h"
 #include "templates/listio.h"
@@ -197,27 +198,6 @@ void Weights::naturalise()
 	calculateWeightingMatrices();
 
 	valid_ = true;
-}
-
-// Set (sole) Isotope for specified AtomType and recalculate matrices
-bool Weights::setAtomTypeIsotope(AtomType* atomType, Isotope* isotope)
-{
-	// First, make sure the AtomType is in our list
-	AtomTypeData* atd = atomTypes_.atomTypeData(atomType);
-	if (!atd) return Messenger::error("AtomType '%s' is not in the Weights' list.\n", atomType->name());
-
-	// Make sure the Isotope specified is related to the AtomType's element
-	if (!PeriodicTable::element(atomType->element()).hasIsotope(isotope->A())) return Messenger::error("Specified AtomType (%s) and Isotope (A = %i) are incompatible.\n", atomType->name(), isotope->A());
-
-	// Set a single Isotope for this AtomType, maintaining the population
-	atd->setSingleIsotope(isotope);
-
-	atd = atomTypes_.atomTypeData(atomTypes_.atomType(1));
-	atd->setSingleIsotope(PeriodicTable::element(atd->atomType()->element()).hasIsotope(-2));
-
-	calculateWeightingMatrices();
-
-	return true;
 }
 
 // Return AtomTypeList

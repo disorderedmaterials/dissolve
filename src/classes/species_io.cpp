@@ -20,6 +20,7 @@
 */
 
 #include "classes/species.h"
+#include "data/elements.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include <string.h>
@@ -58,7 +59,8 @@ bool Species::loadFromXYZ(const char* filename)
 	int nAtoms = parser.argi(0);
 	parser.readNextLine(LineParser::Defaults);
 	name_ = parser.line();
-	int el, success;
+	int success;
+	Element* el;
 	for (int n=0; n<nAtoms; ++n)
 	{
 		success = parser.getArgsDelim(LineParser::Defaults);
@@ -68,8 +70,7 @@ bool Species::loadFromXYZ(const char* filename)
 			Messenger::error("Couldn't read Atom %i from file '%s'\n", n+1, filename);
 			return false;
 		}
-		el = PeriodicTable::find(parser.argc(0));
-		if (el == -1) el = 0;
+		el = Elements::elementPointer(parser.argc(0));
 		SpeciesAtom* i = addAtom(el, parser.argd(1), parser.argd(2),parser.argd(3));
 		if (parser.hasArg(4)) i->setCharge(parser.argd(4));
 	}

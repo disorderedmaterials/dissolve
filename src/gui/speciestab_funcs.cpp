@@ -90,7 +90,7 @@ void SpeciesTab::updateAtomTableRow(int row, SpeciesAtom* speciesAtom, bool crea
 		ui.AtomTable->setItem(row, 0, item);
 	}
 	else item = ui.AtomTable->item(row, 0);
-	item->setText(PeriodicTable::element(speciesAtom->element()).name());
+	item->setText(speciesAtom->element()->name());
 
 	// Coordinates
 	for (int n=0; n<3; ++n)

@@ -38,7 +38,7 @@ class PairBroadeningFunction : public GenericItemBase
 {
 	public:
 	// Function Types
-	enum FunctionType { NoFunction, GaussianFunction, Youngs2018v1, nFunctionTypes };
+	enum FunctionType { NoFunction, GaussianFunction, YoungsA, YoungsB, YoungsC, nFunctionTypes };
 	// Return FunctionType from supplied string
 	static FunctionType functionType(const char* s);
 	// Return FunctionType name

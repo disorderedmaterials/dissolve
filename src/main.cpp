@@ -159,23 +159,6 @@ int main(int argc, char **argv)
 	Messenger::print("This is free software, and you are welcome to redistribute it under certain conditions.\n");
 	Messenger::print("For more details read the GPL at <http://www.gnu.org/copyleft/gpl.html>.\n");
 
-	// Load external datafiles (master only)
-	Messenger::banner("Load External Data");
-	if (!MPIRunMaster(dissolve.worldPool(), dissolve.loadDataFiles()))
-	{
-		ProcessPool::finalise();
-		Messenger::ceaseRedirect();
-		return 1;
-	}
-
-	// Broadcast periodic table (including isotope and parameter data)
-	if (!periodicTable.broadcast(dissolve.worldPool()))
-	{
-		ProcessPool::finalise();
-		Messenger::ceaseRedirect();
-		return 1;
-	}
-
 	// Register modules and print info
 	Messenger::banner("Register Modules");
 	ModuleRegistry moduleRegistry;

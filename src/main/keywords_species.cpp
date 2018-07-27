@@ -23,6 +23,7 @@
 #include "main/dissolve.h"
 #include "classes/atomtype.h"
 #include "classes/species.h"
+#include "data/isotopes.h"
 #include "base/sysfunc.h"
 #include "base/lineparser.h"
 
@@ -63,7 +64,7 @@ bool SpeciesBlock::parse(LineParser& parser, Dissolve* dissolve, Species* specie
 {
 	Messenger::print("\nParsing %s '%s'\n", InputBlocks::inputBlock(InputBlocks::SpeciesBlock), species->name());
 
-	int el;
+	Element* el;
 	CharString arg1, arg2;
 	AtomType* at;
 	Isotopologue* iso;
@@ -147,11 +148,11 @@ bool SpeciesBlock::parse(LineParser& parser, Dissolve* dissolve, Species* specie
 				a->setUp();
 				break;
 			case (SpeciesBlock::AtomKeyword):
-				el = PeriodicTable::find(parser.argc(2));
-				if (el == -1)
+				el = Elements::elementPointer(parser.argc(2));
+				if (el->Z() == 0)
 				{
 					Messenger::error("Unrecognised element symbol '%s' found in %s keyword.\n", parser.argc(2), SpeciesBlock::keyword(SpeciesBlock::AtomKeyword));
-					el = 0;
+					el = NULL;
 					error = true;
 					break;
 				}
@@ -279,12 +280,12 @@ bool SpeciesBlock::parse(LineParser& parser, Dissolve* dissolve, Species* specie
 						break;
 					}
 
-					// Is supplied isotope valid for the AtomType's element?
+					// Is the supplied isotope valid for the AtomType's element?
 					el = at->element();
-					tope = PeriodicTable::element(el).hasIsotope(arg2.asInteger());
+					tope = Isotopes::isotope(el, arg2.asInteger());
 					if (tope == NULL)
 					{
-						Messenger::error("No such Isotope (%i) for element %s (AtomType '%s') in Isotopologue '%s', Species '%s'\n", arg2.asInteger(), PeriodicTable::element(el).symbol(), at->name(), iso->name(), species->name());
+						Messenger::error("No such Isotope (%i) for element %s (AtomType '%s') in Isotopologue '%s', Species '%s'\n", arg2.asInteger(), el->symbol(), at->name(), iso->name(), species->name());
 						error = true;
 						break;
 					}

@@ -1,5 +1,6 @@
 add_subdirectory(base)
 add_subdirectory(classes)
+add_subdirectory(data)
 add_subdirectory(main)
 add_subdirectory(math)
 add_subdirectory(module)

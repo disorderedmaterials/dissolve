@@ -29,6 +29,7 @@
 
 // Forward Declarations
 class AtomType;
+class Element;
 class Species;
 class SpeciesBond;
 class SpeciesGrain;
@@ -53,7 +54,7 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	// Parent Species
 	Species* parent_;
 	// Atomic Element
-	int element_;
+	Element* element_;
 	// Coordinates
 	Vec3<double> r_;
 	// Charge (if contained in file)
@@ -69,13 +70,13 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	// Return species parent
 	Species* parent();
 	// Set basic atom properties
-	void set(int element, double rx, double ry, double rz);
+	void set(Element* element, double rx, double ry, double rz);
 	// Set basic atom properties
-	void set(int element, const Vec3<double> r);
+	void set(Element* element, const Vec3<double> r);
 	// Set atomic element
-	void setElement(int el);
+	void setElement(Element* el);
 	// Return atomic element
-	int element() const;
+	Element* element() const;
 	// Return coordinates (read-only)
 	const Vec3<double>& r() const;
 	// Set charge of Atom

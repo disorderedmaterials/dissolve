@@ -29,6 +29,7 @@
 #include "classes/weights.h"
 #include "classes/atomtype.h"
 #include "classes/partialset.h"
+#include "data/isotopes.h"
 #include "base/sysfunc.h"
 #include "templates/genericlisthelper.h"
 #include "templates/array3d.h"
@@ -415,7 +416,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 			{
 				// Weight in the matrix will be based on the natural isotope and the summed concentration weight
-				double factor = PeriodicTable::element(at1->element()).isotope(Isotope::NaturalIsotope)->boundCoherent() * PeriodicTable::element(at2->element()).isotope(Isotope::NaturalIsotope)->boundCoherent() * 0.01;
+				double factor = Isotopes::naturalIsotope(at1->element())->boundCoherent() * Isotopes::naturalIsotope(at2->element())->boundCoherent() * 0.01;
 				factor *= combinedCWeights.value(i,j);
 
 				// Copy the unweighted data and wight weight it according to the natural isotope / concentration factor calculated above

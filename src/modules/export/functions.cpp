@@ -24,7 +24,7 @@
 #include "classes/atomtype.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "base/ptable.h"
+#include "data/atomicmass.h"
 #include "base/lineparser.h"
 
 // Write Configuration as XYZ
@@ -38,7 +38,7 @@ bool ExportModule::writeConfigurationXYZ(LineParser& parser, Configuration* cfg,
 	for (int n=0; n<cfg->nAtoms(); ++n)
 	{
 		Atom* i = cfg->atom(n);
-		if (!parser.writeLineF("%-3s   %15.9f  %15.9f  %15.9f\n", PeriodicTable::element(i->element()).symbol(), i->r().x, i->r().y, i->r().z)) return false;
+		if (!parser.writeLineF("%-3s   %15.9f  %15.9f  %15.9f\n", i->element()->symbol(), i->r().x, i->r().y, i->r().z)) return false;
 	}
 
 	return true;
@@ -69,7 +69,7 @@ bool ExportModule::writeConfigurationDLPOLY(LineParser& parser, Configuration* c
 	for (int n=0; n<cfg->nAtoms(); ++n)
 	{
 		Atom* i = cfg->atom(n);
-		parser.writeLineF("%-6s%10i%20.10f\n%20.12f%20.12f%20.12f\n", cfg->type(i->localTypeIndex())->name(), n+1, PeriodicTable::element(i->element()).isotope(0)->atomicWeight(), i->r().x, i->r().y, i->r().z);
+		parser.writeLineF("%-6s%10i%20.10f\n%20.12f%20.12f%20.12f\n", cfg->type(i->localTypeIndex())->name(), n+1, AtomicMass::mass(i->element()), i->r().x, i->r().y, i->r().z);
 	}
 
 	return true;

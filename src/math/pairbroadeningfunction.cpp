@@ -20,9 +20,11 @@
 */
 
 #include "math/pairbroadeningfunction.h"
+#include "data/atomicmass.h"
 #include "base/lineparser.h"
 #include "base/processpool.h"
 #include "base/sysfunc.h"
+#include "classes/atomtype.h"
 #include "templates/enumhelpers.h"
 
 // Constructor
@@ -49,12 +51,14 @@ void PairBroadeningFunction::operator=(const PairBroadeningFunction& source)
 	for (int n=0; n<MAXPAIRBROADENINGPARAMS; ++n) parameters_[n] = source.parameters_[n];
 }
 
-const char* PairBroadeningFunctionKeywords[] = { "None", "Gaussian", "Youngs2018v1" };
+const char* PairBroadeningFunctionKeywords[] = { "None", "Gaussian", "YoungsA", "YoungsB", "YoungsC" };
 int PairBroadeningFunctionNParameters[] = { 0, 1, 0 };
 
 const char* PairBroadeningFunctionParameters[][MAXPAIRBROADENINGPARAMS] = {
 	{ "", "", "", "", "", "",},
 	{ "FWHM", "", "", "", "", "",},
+	{ "", "", "", "", "", "",},
+	{ "", "", "", "", "", "",},
 	{ "", "", "", "", "", "",}
 };
 
@@ -88,7 +92,9 @@ const char* PairBroadeningFunction::functionDescription(FunctionType func)
 		case (PairBroadeningFunction::GaussianFunction):
 			return "Gaussian-shape Broadening)";
 			break;
-		case (PairBroadeningFunction::Youngs2018v1):
+		case (PairBroadeningFunction::YoungsA):
+		case (PairBroadeningFunction::YoungsB):
+		case (PairBroadeningFunction::YoungsC):
 			return "Something made up";
 			break;
 		default:
@@ -111,8 +117,6 @@ void PairBroadeningFunction::set(PairBroadeningFunction::FunctionType function, 
 	parameters_[3] = p4;
 	parameters_[4] = p5;
 	parameters_[5] = p6;
-
-	// Setting up dependent parameters cannot be done here, as we do not know the AtomTypes involved in the pair
 }
 
 // Set function data from LineParser source
@@ -146,7 +150,9 @@ bool PairBroadeningFunction::set(LineParser& parser, int startArg)
 			// FWHM
 			parameters_[0] = parser.argd(startArg+1);
 			break;
-		case (PairBroadeningFunction::Youngs2018v1):
+		case (PairBroadeningFunction::YoungsA):
+		case (PairBroadeningFunction::YoungsB):
+		case (PairBroadeningFunction::YoungsC):
 			break;
 		default:
 			Messenger::error("Function form '%s' not accounted for in PairBroadeningFunction::set(LineParser&,int).\n", PairBroadeningFunction::functionType(funcType));
@@ -219,11 +225,13 @@ BroadeningFunction PairBroadeningFunction::broadeningFunction(AtomType* at1, Ato
 			 */
 			result.set(BroadeningFunction::GaussianFunction, parameters_[0]);
 			break;
-		case (PairBroadeningFunction::Youngs2018v1):
+		case (PairBroadeningFunction::YoungsA):
 			/*
 			 * Set up a Gaussian function, with FWHM depending on the AtomTypes provided.
 			 */
-			parameters_[0] = 0.20;
+			// Calculate reduced mass
+			parameters_[0] = AtomicMass::mass(at1->element());
+			printf("MASSES %f %f\n", AtomicMass::mass(at1->element()), AtomicMass::mass(at2->element()));
 
 			// c (calculated from FWHM)
 			parameters_[1] = parameters_[0] / TWOSQRT2LN2;
@@ -246,7 +254,9 @@ double PairBroadeningFunction::y(double x, double omega) const
 			return 1.0;
 			break;
 		case (PairBroadeningFunction::GaussianFunction):
-		case (PairBroadeningFunction::Youngs2018v1):
+		case (PairBroadeningFunction::YoungsA):
+		case (PairBroadeningFunction::YoungsB):
+		case (PairBroadeningFunction::YoungsC):
 			/*
 			 * Unnormalised Gaussian with no prefactor, centred at zero
 			 * 

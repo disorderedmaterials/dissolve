@@ -28,13 +28,13 @@
  * Atom Types
  */
 
-// Add AtomType definition
-AtomType* Dissolve::addAtomType(int el)
+// Add AtomType with specified Element
+AtomType* Dissolve::addAtomType(Element* el)
 {
 	AtomType* at = atomTypes_.add();
 
 	// Create a suitable name...
-	at->setName(uniqueAtomTypeName(PeriodicTable::element(el).symbol()));
+	at->setName(uniqueAtomTypeName(el->symbol()));
 	at->setElement(el);
 	at->setIndex(atomTypes_.nItems() - 1);
 

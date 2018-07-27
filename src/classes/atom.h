@@ -32,6 +32,7 @@
 class Angle;
 class Bond;
 class Cell;
+class Element;
 class Grain;
 class Molecule;
 class ProcessPool;
@@ -68,17 +69,17 @@ class Atom : public DynamicArrayObject<Atom>
 	// Charge on atom
 	double charge_;
 	// Atomic Element
-	int element_;
+	Element* element_;
 
 	public:
 	// Set basic atom properties
-	void set(int element, double rx, double ry, double rz);
+	void set(Element* element, double rx, double ry, double rz);
 	// Set basic atom properties
-	void set(int element, const Vec3<double> r);
+	void set(Element* element, const Vec3<double> r);
 	// Set atomic element
-	void setElement(int el);
+	void setElement(Element* el);
 	// Return atomic element
-	int element() const;
+	Element* element() const;
 	// Return coordinates
 	const Vec3<double>& r() const;
 	// Return x-coordinate

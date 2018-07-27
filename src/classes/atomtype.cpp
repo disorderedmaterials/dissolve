@@ -20,14 +20,14 @@
 */
 
 #include "classes/atomtype.h"
-#include "base/ptable.h"
+#include "data/elements.h"
 #include "base/processpool.h"
 #include <string.h>
 
 // Constructor
 AtomType::AtomType() : MPIListItem<AtomType>()
 {
-	element_ = 0;
+	element_ = NULL;
 	name_ = "XX";
 	exchangeable_ = false;
 }
@@ -54,13 +54,13 @@ const char* AtomType::name() const
 }
 
 // Set atomic element
-void AtomType::setElement(int el)
+void AtomType::setElement(Element* el)
 {
 	element_ = el;
 }
 
 // Return atomic element
-int AtomType::element() const
+Element* AtomType::element() const
 {
 	return element_;
 }

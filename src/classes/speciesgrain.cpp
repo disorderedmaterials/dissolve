@@ -23,7 +23,7 @@
 #include "classes/speciesangle.h"
 #include "classes/speciesatom.h"
 #include "classes/speciesbond.h"
-#include "base/ptable.h"
+#include "classes/empiricalformula.h"
 #include "base/processpool.h"
 
 // Constructor
@@ -110,9 +110,10 @@ RefListItem<SpeciesAtom,int>* SpeciesGrain::atom(int n)
 // Return empirical name of SpeciesGrain from constituent Atoms
 const char* SpeciesGrain::nameFromAtoms()
 {
-	PeriodicTable::resetEmpiricalFormula();
-	for (RefListItem<SpeciesAtom,int>* ri = atoms_.first(); ri != NULL; ri = ri->next) PeriodicTable::addToEmpirical(ri->item->element());
-	return PeriodicTable::empiricalFormula();
+	static EmpiricalFormula formula;
+	formula.reset();
+	for (RefListItem<SpeciesAtom,int>* ri = atoms_.first(); ri != NULL; ri = ri->next) formula.add(ri->item->element());
+	return formula.formula();
 }
 
 /*

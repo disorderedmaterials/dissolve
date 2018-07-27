@@ -21,7 +21,7 @@
 
 #include "classes/speciesbond.h"
 #include "classes/speciesatom.h"
-#include "base/ptable.h"
+#include "data/atomicmass.h"
 #include "base/processpool.h"
 #include "base/sysfunc.h"
 #include "templates/enumhelpers.h"
@@ -164,15 +164,15 @@ void SpeciesBond::setUp()
 	if (form() == SpeciesBond::EPSRForm)
 	{
 		// Work out omega-squared(ab) from mass of natural isotopes
-		double massI = periodicTable.element(i_->element()).isotope(0)->atomicWeight();
-		double massJ = periodicTable.element(j_->element()).isotope(0)->atomicWeight();
+		double massI = AtomicMass::mass(i_->element());
+		double massJ = AtomicMass::mass(j_->element());
 		parameters_[2] = params[1] / sqrt((massI + massJ) / (massI * massJ));
 	}
 	else if (form() == SpeciesBond::SoftHarmonicForm)
 	{
 		// Work out omega-squared(ab) from mass of natural isotopes
-		double massI = periodicTable.element(i_->element()).isotope(0)->atomicWeight();
-		double massJ = periodicTable.element(j_->element()).isotope(0)->atomicWeight();
+		double massI = AtomicMass::mass(i_->element());
+		double massJ = AtomicMass::mass(j_->element());
 		parameters_[3] = params[1] / sqrt((massI + massJ) / (massI * massJ));
 	}
 }

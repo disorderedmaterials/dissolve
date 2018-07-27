@@ -22,11 +22,11 @@
 #ifndef DISSOLVE_ISOTOPECOMBODELEGATE_H
 #define DISSOLVE_ISOTOPECOMBODELEGATE_H
 
+#include "data/isotopes.h"
 #include <QtWidgets/QItemDelegate>
 #include <QModelIndex>
 #include <QObject>
 #include <QComboBox>
-#include "base/isotope.h"
 
 // Delegate class, providing list of Isotopes for one element in a QComboBox
 class IsotopeComboDelegate : public QItemDelegate

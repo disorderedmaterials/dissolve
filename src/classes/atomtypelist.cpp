@@ -22,8 +22,9 @@
 #include "classes/atomtypelist.h"
 #include "classes/atomtype.h"
 #include "classes/isotopedata.h"
+#include "data/elements.h"
+#include "data/isotopes.h"
 #include "base/lineparser.h"
-#include "base/ptable.h"
 #include "base/processpool.h"
 #include "templates/broadcastlist.h"
 #include "templates/listio.h"
@@ -161,7 +162,7 @@ void AtomTypeList::print() const
 		// If there are isotopes defined, print them
 		if (atd->isotopeData())
 		{
-			Messenger::print("%c %-8s  %-3s    -     %-10i  %8.6f (of world) %6.3f\n", exch, atd->atomTypeName(), PeriodicTable::element(atd->atomType()->element()).symbol(), atd->population(), atd->fraction(), atd->boundCoherent());
+			Messenger::print("%c %-8s  %-3s    -     %-10i  %8.6f (of world) %6.3f\n", exch, atd->atomTypeName(), atd->atomType()->element()->symbol(), atd->population(), atd->fraction(), atd->boundCoherent());
 
 			for (IsotopeData* topeData = atd->isotopeData(); topeData != NULL; topeData = topeData->next)
 			{
@@ -169,7 +170,7 @@ void AtomTypeList::print() const
 			}
 
 		}
-		else Messenger::print("%c %-8s  %-3s          %-10i  %8.6f     --- N/A ---\n", exch, atd->atomTypeName(), PeriodicTable::element(atd->atomType()->element()).symbol(), atd->population(), atd->fraction());
+		else Messenger::print("%c %-8s  %-3s          %-10i  %8.6f     --- N/A ---\n", exch, atd->atomTypeName(), atd->atomType()->element()->symbol(), atd->population(), atd->fraction());
 
 		Messenger::print("  -------------------------------------------------------------\n");	
 	}
