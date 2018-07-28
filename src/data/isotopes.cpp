@@ -43,7 +43,7 @@ Isotope::Isotope(int z, const char* symbol, int A, const char* spin, double mass
 	totalXS_ = totalxs;
 	absorptionXS_ = absxs;
 
-	// Add this isotope to it's parent element's list
+	// Add this isotope to its parent element's list
 	Isotopes::registerIsotope(this, z);
 }
 
