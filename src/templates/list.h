@@ -43,12 +43,17 @@ template <class T> class List
 		listTail_ = NULL;
 		nItems_ = 0;
 		regenerate_ = true;
+		disownOnDestruction_ = false;
 		items_ = NULL;
 	}
 	// Destructor
 	~List()
 	{
-		clear();
+		if (disownOnDestruction_)
+		{
+			while (listHead_) takeFirst();
+		}
+		else clear();
 	}
 	// Copy Constructor
 	List<T>(const List<T>& source)
@@ -57,6 +62,7 @@ template <class T> class List
 		listTail_ = NULL;
 		nItems_ = 0;
 		regenerate_ = true;
+		disownOnDestruction_ = false;
 		items_ = NULL;
 		(*this) = source;
 	}
@@ -75,6 +81,8 @@ template <class T> class List
 			newitem->next = NULL;
 			own(newitem);
 		}
+
+		disownOnDestruction_ = source.disownOnDestruction_;
 
 		return *this;
 	}
@@ -132,6 +140,8 @@ template <class T> class List
 	T** items_;
 	// Array regeneration flag
 	bool regenerate_;
+	// Whether to only disown items on destruction, rather than delete them
+	bool disownOnDestruction_;
 
 	public:
 	// Clear the list
@@ -173,6 +183,11 @@ template <class T> class List
 	T* last() const
 	{
 		return listTail_;
+	}
+	// Set whether to only disown items on destruction, rather than delete them
+	void setDisownOnDestruction(bool dod)
+	{
+		disownOnDestruction_ =dod;
 	}
 
 
