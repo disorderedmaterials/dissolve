@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SEARS91DATA_H
-#define DISSOLVE_SEARS91DATA_H
+#ifndef DISSOLVE_ISOTOPESDATA_H
+#define DISSOLVE_ISOTOPESDATA_H
 
 #include "data/elements.h"
 #include "templates/array.h"
@@ -83,10 +83,12 @@ class Isotope : public ElementReference, public ListItem<Isotope>
 class Isotopes : public Elements
 {
 	private:
-	// Return isotope data for specified Z and A
-	static Isotope& isotopeData(int Z, int A, bool reportNotFound = true);
 	// Isotope data, grouped by element
-	static Array< List<Isotope> > isotopesByElement_;
+	static Array< List<Isotope> > isotopesByElementPrivate_;
+
+	private:
+	// Return isotope data for specified Element
+	static List<Isotope>& isotopesByElement(int Z);
 
 	public:
 	// Register specified Isotope to given Element

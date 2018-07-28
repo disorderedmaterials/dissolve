@@ -23,7 +23,7 @@
 #include "base/messenger.h"
 
 // Static Singletons
-Array< List<Isotope> > Isotopes::isotopesByElement_;
+Array< List<Isotope> > Isotopes::isotopesByElementPrivate_;
 
 /*
  * Isotopic Neutron Scattering Data
@@ -116,12 +116,15 @@ double Isotope::absorptionXS() const
 }
 
 /*
- * Atomic Mass Helper Class
+ * Isotopes (Sears '91) Helper Class
  */
 
-// Return isotope data for specified Z and A
-Isotope& Isotopes::isotopeData(int Z, int A, bool reportNotFound)
+// Return isotope data, grouped by element
+List<Isotope>& Isotopes::isotopesByElement(int Z)
 {
+	// Has the master array been initialised yet? If not, do it now, before the Sears data is constructed
+	if (isotopesByElementPrivate_.nItems() == 0) isotopesByElementPrivate_.initialise(Elements::nElements());
+
 	/*
 	 * Neutron Scattering Lengths and Cross Sections
 	 * 
@@ -520,27 +523,23 @@ Isotope& Isotopes::isotopeData(int Z, int A, bool reportNotFound)
 
 	if ((Z < 0) || (Z > nElements()))
 	{
-		if (reportNotFound) Messenger::error("Isotopes::isotope() - Element with Z=%i is out of range!\n", Z);
-		return sears91Data[0];
+		Messenger::error("Isotopes::isotopesByElement() - Element with Z=%i is out of range!\n", Z);
+		return isotopesByElementPrivate_[0];
 	}
 
-	// Search through the 
-	return sears91Data[Z];
+	return isotopesByElementPrivate_[Z];
 }
 
 // Register specified Isotope to given Element
 void Isotopes::registerIsotope(Isotope* isotope, int Z)
 {
-	// Has the master array been initialised yet? If not, do it now
-	if (isotopesByElement_.nItems() == 0) isotopesByElement_.initialise(Elements::nElements());
-
-	isotopesByElement_[Z].own(isotope);
+	isotopesByElementPrivate_[Z].own(isotope);
 }
 
 // Return Isotope with specified A for given Element (if it exists)
 Isotope* Isotopes::isotope(int Z, int A)
 {
-	for (Isotope* isotope = isotopesByElement_[Z].first(); isotope != NULL; isotope = isotope->next) if (isotope->A() == A) return isotope;
+	for (Isotope* isotope = isotopesByElement(Z).first(); isotope != NULL; isotope = isotope->next) if (isotope->A() == A) return isotope;
 
 	return NULL;
 }
@@ -560,21 +559,13 @@ Isotope* Isotopes::isotope(Element* el, int A)
 // Return List of all isotopes available for specified Element
 const List<Isotope>& Isotopes::isotopes(int Z)
 {
-#ifdef CHECKS
-	if ((Z < 0) || (Z > nElements()))
-	{
-		Messenger::error("Isotopes::isotopes() - Element with Z=%i is out of range!\n", Z);
-		return isotopesByElement_[0];
-	}
-#endif
-
-	return isotopesByElement_[Z];
+	return isotopesByElement(Z);
 }
 
 // Return Isotope with specified index (if it exists) in its parent Element
 Isotope* Isotopes::isotopeAtIndex(int Z, int index)
 {
-	return isotopesByElement_[Z][index];
+	return isotopesByElement(Z)[index];
 }
 
 // Return natural Isotope for given Element
