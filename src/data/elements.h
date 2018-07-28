@@ -79,6 +79,8 @@ class ElementReference
 	public:
 	// Constructor
 	ElementReference(int Z, const char* symbol);
+	// Destructor
+	virtual ~ElementReference();
 
 	private:
 	// Referenced Element

@@ -273,6 +273,11 @@ ElementReference::ElementReference(int z, const char* symbol) : element_(Element
 	if (!DissolveSys::sameString(symbol, element_.symbol())) Messenger::error("ElementReference::ElementReference() - Data is corrupted: element with Z = %i should have symbol '%s' but we were given the symbol '%s').\n", z, element_.symbol(), symbol);
 }
 
+// Destructor
+ElementReference::~ElementReference()
+{
+}
+
 // Return referenced element
 const Element& ElementReference::element() const
 {
