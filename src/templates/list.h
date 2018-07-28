@@ -157,7 +157,7 @@ template <class T> class List
 		nItems_ = 0;
 		regenerate_ = true;
 	}
-	// Create empty list of size N
+	// Create empty list of specified size
 	void createEmpty(int size)
 	{
 		clear();
