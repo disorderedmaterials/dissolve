@@ -33,7 +33,7 @@ bool Messenger::muted_ = false;
 bool Messenger::verbose_ = false;
 bool Messenger::redirect_ = false;
 bool Messenger::masterOnly_ = false;
-LineParser* Messenger::parser_ = new LineParser;
+LineParser Messenger::parser_; //= new LineParser;
 char Messenger::text_[8096];
 char Messenger::workingText_[8096];
 OutputHandler* Messenger::outputHandler_ = NULL;
@@ -285,7 +285,7 @@ void Messenger::setOutputHandler(OutputHandler* outputHandler)
 void Messenger::outputText(const char* text)
 {
 	// If we are redirecting to files, use the parser_
-	if (redirect_) parser_->writeLineF("%s", text);
+	if (redirect_) parser_.writeLineF("%s", text);
 	else
 	{
 		// Not redirecting - has an OutputHandler been defined?
@@ -301,8 +301,8 @@ void Messenger::outputText(const char* text)
 // Enable redirection of all messaging to specified file
 bool Messenger::enableRedirect(const char* filename)
 {
-	parser_->openOutput(filename, true);
-	if (!parser_->isFileGoodForWriting())
+	parser_.openOutput(filename, true);
+	if (!parser_.isFileGoodForWriting())
 	{
 		Messenger::print("Couldn't open output file '%s' for writing.\n", filename);
 		return false;
@@ -315,6 +315,6 @@ bool Messenger::enableRedirect(const char* filename)
 // Cease redirection of messaging to file
 void Messenger::ceaseRedirect()
 {
-	parser_->closeFiles();
+	parser_.closeFiles();
 	redirect_ = false;
 }

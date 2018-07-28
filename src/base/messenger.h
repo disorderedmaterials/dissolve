@@ -113,7 +113,7 @@ class Messenger
 	// Whether file redirection is enabled
 	static bool redirect_;
 	// Local LineParser for file redirection
-	static LineParser* parser_;
+	static LineParser parser_;
 	
 	public:
 	// Enable redirection of all messaging to specified file
