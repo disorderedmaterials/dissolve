@@ -361,8 +361,6 @@ class Dissolve
 	private:
 	// Parallel strategy for Configuration work
 	ParallelStrategy parallelStrategy_;
-	// Pool containing all available processes
-	ProcessPool worldPool_;
 
 	public:
 	// Set parallel strategy for Configuration work

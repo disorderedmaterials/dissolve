@@ -195,7 +195,7 @@ bool Dissolve::readConfiguration(Configuration* cfg, LineParser& parser)
 		torsion->setSpeciesTorsion(species_[parser.argi(5)]->torsion(parser.argi(6)));
 	}
 
-	cfg->finaliseAfterLoad(worldPool_, pairPotentialRange_, nBoxNormalisationPoints_);
+	cfg->finaliseAfterLoad(worldPool(), pairPotentialRange_, nBoxNormalisationPoints_);
 
 	return true;
 }

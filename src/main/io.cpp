@@ -59,7 +59,7 @@ bool Dissolve::loadSpecies(const char* filename)
 bool Dissolve::loadInput(const char* filename)
 {
 	// Open file and check that we're OK to proceed reading from it (master only...)
-	LineParser parser(&worldPool_);
+	LineParser parser(&worldPool());
 	if (!parser.openInput(filename)) return false;
 
 	// Clear all existing data before we begin
@@ -476,7 +476,7 @@ bool Dissolve::loadRestart(const char* filename)
 	restartFilename_ = filename;
 
 	// Open file and check that we're OK to proceed reading from it (master only...)
-	LineParser parser(&worldPool_);
+	LineParser parser(&worldPool());
 	if (!parser.openInput(restartFilename_)) return false;
 
 	// Variables
@@ -577,7 +577,7 @@ bool Dissolve::loadRestart(const char* filename)
 	}
 	
 	// Done
-	if (worldPool_.isWorldMaster()) parser.closeFiles();
+	if (worldPool().isWorldMaster()) parser.closeFiles();
 
 	return (!error);
 }

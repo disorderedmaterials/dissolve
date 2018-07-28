@@ -60,11 +60,11 @@ bool Dissolve::setUpSimulation()
 				if (cfg->nAtoms() == 0)
 				{
 					// No atoms, so presumably no data was read from the restart file. Set the Configuration up in the normal way (but without randomising molecules)
-					if (!cfg->initialise(worldPool_, false, pairPotentialRange_, nBoxNormalisationPoints_)) return false;
+					if (!cfg->initialise(worldPool(), false, pairPotentialRange_, nBoxNormalisationPoints_)) return false;
 				}
 
 				Messenger::print("Loading initial coordinates from file '%s'...\n", cfg->inputCoordinatesFile());
-				LineParser inputFileParser(&worldPool_);
+				LineParser inputFileParser(&worldPool());
 				if (!inputFileParser.openInput(cfg->inputCoordinatesFile())) return false;
 				if (!cfg->loadCoordinates(inputFileParser, cfg->inputCoordinatesFormat())) return false;
 				inputFileParser.closeFiles();
@@ -74,7 +74,7 @@ bool Dissolve::setUpSimulation()
 		else if (cfg->nAtoms() == 0)
 		{
 			// Set up the Configuration from the Species populations
-			if (!cfg->initialise(worldPool_, true, pairPotentialRange_, nBoxNormalisationPoints_)) return false;
+			if (!cfg->initialise(worldPool(), true, pairPotentialRange_, nBoxNormalisationPoints_)) return false;
 		}
 		else Messenger::print("Configuration loaded from the restart file.\n");
 
@@ -356,7 +356,7 @@ bool Dissolve::setUpSimulation()
 		{
 			Module* module = modRef->module();
 
-			if (!module->setUp(*this, worldPool_)) return false;
+			if (!module->setUp(*this, worldPool())) return false;
 		}
 	}
 	// Loop over processing modules 
@@ -365,7 +365,7 @@ bool Dissolve::setUpSimulation()
 	{
 		Module* module = modRef->module();
 
-		if (!module->setUp(*this, worldPool_)) return false;
+		if (!module->setUp(*this, worldPool())) return false;
 	}
 
 	Messenger::print("*** Defined Species\n");

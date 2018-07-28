@@ -51,6 +51,7 @@ Dissolve::ParallelStrategy Dissolve::parallelStrategy()
 ProcessPool& Dissolve::worldPool()
 {
 	static bool firstRun = true;
+	static ProcessPool world;
 
 	// If this is the first time we've been called, construct the pool
 	if (firstRun)
@@ -58,11 +59,11 @@ ProcessPool& Dissolve::worldPool()
 		// Assemble list of (world) process ranks for the pool
 		Array<int> ranks;
 		for (int n=0; n<ProcessPool::nWorldProcesses(); ++n) ranks.add(n);
-		worldPool_.setUp("World", ranks);
+		world.setUp("World", ranks);
 		firstRun = false;
 	}
 
-	return worldPool_;
+	return world;
 }
 
 // Set up communications

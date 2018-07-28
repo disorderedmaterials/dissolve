@@ -187,7 +187,7 @@ bool Dissolve::iterate(int nIterations)
 		}
 
 		// Write heartbeat file
-		if (worldPool_.isMaster())
+		if (worldPool().isMaster())
 		{
 			Messenger::print("Write heartbeat file...");
 
@@ -211,7 +211,7 @@ bool Dissolve::iterate(int nIterations)
 			Messenger::heading("'%s'", module->name());
 
 			// Execute the pre-processing stage
-			if (!module->executePreProcessing(*this, worldPool_))
+			if (!module->executePreProcessing(*this, worldPool()))
 			{
 				Messenger::error("Module '%s' experienced problems. Exiting now.\n", module->name());
 				return false;
@@ -220,7 +220,7 @@ bool Dissolve::iterate(int nIterations)
 
 		// Sync up all processes
 		Messenger::printVerbose("Waiting for other processes at end of pre-processing...\n");
-		worldPool_.wait(ProcessPool::PoolProcessesCommunicator);
+		worldPool().wait(ProcessPool::PoolProcessesCommunicator);
 
 
 		/*
@@ -233,7 +233,7 @@ bool Dissolve::iterate(int nIterations)
 		for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
 		{
 			// Check for failure of one or more processes / processing tasks
-			if (!worldPool_.allTrue(result))
+			if (!worldPool().allTrue(result))
 			{
 				Messenger::error("One or more processes experienced failures. Exiting now.\n");
 				return false;
@@ -270,7 +270,7 @@ bool Dissolve::iterate(int nIterations)
 
 		// Sync up all processes
 		Messenger::printVerbose("Waiting for other processes at end of Configuration processing...\n");
-		worldPool_.wait(ProcessPool::PoolProcessesCommunicator);
+		worldPool().wait(ProcessPool::PoolProcessesCommunicator);
 
 
 		/*
@@ -281,19 +281,19 @@ bool Dissolve::iterate(int nIterations)
 		for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
 		{
 			Messenger::printVerbose("Broadcasting data for Configuration '%s'...\n", cfg->name());
-			if (!cfg->broadcastCoordinates(worldPool_, cfg->processPool().rootWorldRank())) return false;
+			if (!cfg->broadcastCoordinates(worldPool(), cfg->processPool().rootWorldRank())) return false;
 
 			Messenger::printVerbose("Broadcasting Module data for Configuration '%s'...\n", cfg->name());
-			if (!cfg->moduleData().broadcast(worldPool_, cfg->processPool().rootWorldRank())) return false;
+			if (!cfg->moduleData().broadcast(worldPool(), cfg->processPool().rootWorldRank())) return false;
 		}
 
 		// Sync up all processes
 		Messenger::printVerbose("Waiting for other processes at end of data reassembly...\n");
-		worldPool_.wait(ProcessPool::PoolProcessesCommunicator);
+		worldPool().wait(ProcessPool::PoolProcessesCommunicator);
 
 	
 		/*
-		 *  4)	Run processing Modules (using worldPool_).
+		 *  4)	Run processing Modules (using the world pool).
 		 */
 		if (mainProcessingModules_.nModules() > 0) Messenger::banner("Main Processing");
 		processingIterator.restart();
@@ -305,7 +305,7 @@ bool Dissolve::iterate(int nIterations)
 
 			Messenger::heading("%s (%s)", module->name(), module->uniqueName());
 
-			result = module->executeMainProcessing(*this, worldPool_);
+			result = module->executeMainProcessing(*this, worldPool());
 
 			if (!result)
 			{
@@ -316,11 +316,11 @@ bool Dissolve::iterate(int nIterations)
 
 		// Sync up all processes
 		Messenger::printVerbose("Waiting for other processes at end of main processing...\n");
-		worldPool_.wait(ProcessPool::PoolProcessesCommunicator);
+		worldPool().wait(ProcessPool::PoolProcessesCommunicator);
 
 
 		/*
-		 *  5)	Perform post-processing tasks (using worldPool_).
+		 *  5)	Perform post-processing tasks (using the world pool).
 		 */
 		if (postProcessingTasks_.nModules() > 0) Messenger::banner("Post-Processing");
 		postIterator.restart();
@@ -334,7 +334,7 @@ bool Dissolve::iterate(int nIterations)
 			Messenger::print("Module '%s'\n", module->name());
 
 			// Execute the post-processing stage
-			if (!module->executePostProcessing(*this, worldPool_))
+			if (!module->executePostProcessing(*this, worldPool()))
 			{
 				Messenger::error("Module '%s' experienced problems. Exiting now.\n", module->name());
 				return false;
@@ -343,13 +343,13 @@ bool Dissolve::iterate(int nIterations)
 
 		// Sync up all processes
 		Messenger::printVerbose("Waiting for other processes at end of post-processing...\n");
-		worldPool_.wait(ProcessPool::PoolProcessesCommunicator);
+		worldPool().wait(ProcessPool::PoolProcessesCommunicator);
 
 
 		/*
 		 *  6)	Write restart / ensemble data.
 		 */
-		if (worldPool_.isMaster() && (restartFileFrequency_ > 0) && (iteration_%restartFileFrequency_ == 0))
+		if (worldPool().isMaster() && (restartFileFrequency_ > 0) && (iteration_%restartFileFrequency_ == 0))
 		{
 			Messenger::banner("Write Restart File");
 
@@ -378,7 +378,7 @@ bool Dissolve::iterate(int nIterations)
 			if (DissolveSys::fileExists(restartFileBackup) && (remove(restartFileBackup) != 0))
 			{
 				Messenger::error("Could not remove old restart file backup.\n");
-				worldPool_.decideFalse();
+				worldPool().decideFalse();
 				return false;
 			}
 
@@ -386,7 +386,7 @@ bool Dissolve::iterate(int nIterations)
 			if (DissolveSys::fileExists(restartFilename_) && (rename(restartFilename_, restartFileBackup) != 0))
 			{
 				Messenger::error("Could not rename current restart file.\n");
-				worldPool_.decideFalse();
+				worldPool().decideFalse();
 				return false;
 			}
 
@@ -397,7 +397,7 @@ bool Dissolve::iterate(int nIterations)
 			if (!saveRestart(restartFilename_))
 			{
 				Messenger::error("Failed to write restart file.\n");
-				worldPool_.decideFalse();
+				worldPool().decideFalse();
 				return false;
 			}
 
@@ -421,27 +421,27 @@ bool Dissolve::iterate(int nIterations)
 					if (!ensembleParser.appendOutput(ensembleFile.get()))
 					{
 						ensembleParser.closeFiles();
-						worldPool_.decideFalse();
+						worldPool().decideFalse();
 						return false;
 					}
 					else if (!ExportModule::writeConfigurationXYZ(ensembleParser, cfg, cfg->name()))
 					{
 						Messenger::print("Export: Failed to append Configuration ensemble output file.\n");
 						ensembleParser.closeFiles();
-						worldPool_.decideFalse();
+						worldPool().decideFalse();
 						return false;
 					}
 				}
 			}
 
 			// All good. Carry on!
-			worldPool_.decideTrue();
+			worldPool().decideTrue();
 		}
-		else if (worldPool_.isSlave() && (restartFileFrequency_ > 0) && (iteration_%restartFileFrequency_ == 0) && (!worldPool_.decision())) return false;
+		else if (worldPool().isSlave() && (restartFileFrequency_ > 0) && (iteration_%restartFileFrequency_ == 0) && (!worldPool().decision())) return false;
 
 		// Sync up all processes
 		Messenger::printVerbose("Waiting for other processes at end of data write section...\n");
-		worldPool_.wait(ProcessPool::PoolProcessesCommunicator);
+		worldPool().wait(ProcessPool::PoolProcessesCommunicator);
 
 
 		Messenger::banner("END OF MAIN LOOP ITERATION %10i         %s", iteration_, DissolveSys::currentTimeAndDate());
