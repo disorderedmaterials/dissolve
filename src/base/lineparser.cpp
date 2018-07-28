@@ -342,7 +342,7 @@ void LineParser::rewind()
 bool LineParser::eofOrBlank() const
 {
 	// If no process pool is defined, or we are the master, do the check
-	bool result;
+	bool result = false;
 	if ((!processPool_) || processPool_->isMaster())
 	{
 		if (inputStream() == NULL) return true;
@@ -355,7 +355,7 @@ bool LineParser::eofOrBlank() const
 		
 		// Skip through whitespace, searching for 'hard' character
 		char c;
-		result  = true;
+		result = true;
 		do
 		{
 			inputStream()->get(c);
@@ -393,7 +393,7 @@ LineParser::ParseReturnValue LineParser::readNextLine(int optionMask)
 		// Returns : 0=ok, 1=error, -1=eof
 		if (fileInput_ && (inputFile_ == NULL))
 		{
-			printf("Error: No input file open for LineParser::readNextLine.\n");
+			Messenger::error("No input file open for LineParser::readNextLine.\n");
 			result = LineParser::Fail;
 		}
 		else if (inputStream()->eof()) result = LineParser::EndOfFile;
@@ -434,7 +434,7 @@ LineParser::ParseReturnValue LineParser::readNextLine(int optionMask)
 			}
 			line_[lineLength_] = '\0';
 			++lastLineNo_;
-// 			Messenger::print("Line from file is: [%s]\n", line_);
+			Messenger::printVerbose("Line from file is: [%s]\n", line_);
 
 			// Remove comments from line
 			if (optionMask&LineParser::StripComments) DissolveSys::removeComments(line_);
