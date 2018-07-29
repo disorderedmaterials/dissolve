@@ -1,6 +1,6 @@
 /*
 	*** XY Data - Fourier Transforms
-	*** src/base/xydata_ft.cpp
+	*** src/math/xydata_ft.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.

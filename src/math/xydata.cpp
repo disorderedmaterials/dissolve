@@ -1,6 +1,6 @@
 /*
 	*** XY Data
-	*** src/base/xydata.cpp
+	*** src/math/xydata.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.

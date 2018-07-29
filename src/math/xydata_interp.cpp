@@ -1,6 +1,6 @@
 /*
 	*** XY Data - Interpolation
-	*** src/base/xydata_interp.cpp
+	*** src/math/xydata_interp.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.

@@ -1,6 +1,6 @@
 /*
 	*** SampledDouble
-	*** src/base/sampleddouble.cpp
+	*** src/math/sampleddouble.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
