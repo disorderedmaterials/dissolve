@@ -225,8 +225,8 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	 * File I/O
 	 */
 	public:
-	// Load data from specified file
-	bool load(const char* filename);
+	// Load data from specified file, using columns specified
+	bool load(const char* filename, int xcol = 0, int ycol = 1);
 	// Load data from specified LineParser, using columns specified
 	bool load(LineParser& parser, int xcol = 0, int ycol = 1);
 	// Save data to specified file

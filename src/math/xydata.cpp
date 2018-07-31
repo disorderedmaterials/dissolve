@@ -995,13 +995,13 @@ bool XYData::load(LineParser& parser, int xcol, int ycol)
 		addPoint(parser.argd(xcol), parser.argd(ycol));
 	}
 	
-	Messenger::printVerbose("Loaded %i points from '%s' (columns %i and %i).\n", nPoints(), parser.inputFilename(), xcol+1, ycol+1);
+	Messenger::printVerbose("Read %i points from '%s' (columns %i and %i).\n", nPoints(), parser.inputFilename(), xcol+1, ycol+1);
 	
 	return true;
 }
 
 // Load data from specified file
-bool XYData::load(const char* filename)
+bool XYData::load(const char* filename, int xcol, int ycol)
 {
 	// Open file and check that we're OK to proceed reading from it
 	LineParser parser;
@@ -1012,27 +1012,11 @@ bool XYData::load(const char* filename)
 		return false;
 	}
 
-	int success, nCols = -1;
-	clear();
-	while (!parser.eofOrBlank())
-	{
-		success = parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks);
-		if (success != 0)
-		{
-			parser.closeFiles();
-			Messenger::error("Error reading from file '%s'.\n", filename);
-			return false;
-		}
+	bool result = load(parser, xcol, ycol);
 
-		addPoint(parser.argd(0), parser.argd(1));
-	}
-	
 	parser.closeFiles();
 	
-	if (nCols == 3) Messenger::print("Loaded %i points from file '%s' (including spline coefficients).\n", nPoints(), filename);
-	else Messenger::print("Loaded %i points from file '%s'.\n", nPoints(), filename);
-	
-	return true;
+	return result;
 }
 
 // Save data to specified file
