@@ -67,8 +67,8 @@ int IsotopologueReferenceListModuleKeyword::maxArguments()
 	return 4;
 }
 
-// Parse arguments from supplied LineParser, starting at argument offset specified
-bool IsotopologueReferenceListModuleKeyword::parseArguments(LineParser& parser, int startArg)
+// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
+bool IsotopologueReferenceListModuleKeyword::parseArguments(LineParser& parser, int startArg, ProcessPool& procPool)
 {
 	// Find target Configuration (first argument)
 	Configuration* cfg = NULL;

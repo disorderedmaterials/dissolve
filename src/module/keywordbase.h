@@ -91,8 +91,8 @@ class ModuleKeywordBase : public ListItem<ModuleKeywordBase>
 	virtual int minArguments() = 0;
 	// Return maxnimum number of arguments accepted
 	virtual int maxArguments() = 0;
-	// Parse arguments from supplied LineParser, starting at argument offset specified
-	virtual bool parseArguments(LineParser& parser, int startArg) = 0;
+	// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
+	virtual bool parseArguments(LineParser& parser, int startArg, ProcessPool& procPool) = 0;
 	// Write keyword data to specified LineParser
 	virtual bool write(LineParser& parser, const char* prefix) = 0;
 

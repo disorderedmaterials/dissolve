@@ -65,8 +65,8 @@ int BroadeningFunctionModuleKeyword::maxArguments()
 	return MAXBROADENINGFUNCTIONPARAMS;
 }
 
-// Parse arguments from supplied LineParser, starting at argument offset specified
-bool BroadeningFunctionModuleKeyword::parseArguments(LineParser& parser, int startArg)
+// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
+bool BroadeningFunctionModuleKeyword::parseArguments(LineParser& parser, int startArg, ProcessPool& procPool)
 {
 	bool result = data_.set(parser, startArg);
 	if (result) set_ = true;

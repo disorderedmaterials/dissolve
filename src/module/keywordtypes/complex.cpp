@@ -70,8 +70,8 @@ int ComplexModuleKeyword::maxArguments()
 	return maxArguments_;
 }
 
-// Parse arguments from supplied LineParser, starting at argument offset specified
-bool ComplexModuleKeyword::parseArguments(LineParser& parser, int startArg)
+// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
+bool ComplexModuleKeyword::parseArguments(LineParser& parser, int startArg, ProcessPool& procPool)
 {
 	return false;
 }

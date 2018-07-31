@@ -19,6 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "main/dissolve.h"
 #include "module/module.h"
 #include "classes/configuration.h"
 #include "base/lineparser.h"
@@ -207,8 +208,8 @@ int Module::parseKeyword(LineParser& parser, Dissolve* dissolve, GenericList& ta
 			return 0;
 		}
 
-		// All OK, so pass the current line to it for parsing
-		if (!keyword->parseArguments(parser, 1))
+		// All OK, so parse the keyword
+		if (!keyword->parseArguments(parser, 1, dissolve->worldPool()))
 		{
 			Messenger::error("Failed to parse arguments for Module keyword '%s'.\n", keyword->keyword());
 			return 0;

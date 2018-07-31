@@ -69,8 +69,8 @@ class ComplexModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<
 	int minArguments();
 	// Return maximum number of arguments accepted
 	int maxArguments();
-	// Parse arguments from supplied LineParser, starting at argument offset specified
-	bool parseArguments(LineParser& parser, int startArg);
+	// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
+	bool parseArguments(LineParser& parser, int startArg, ProcessPool& procPool);
 	// Write keyword data to specified LineParser
 	bool write(LineParser& parser, const char* prefix);
 };

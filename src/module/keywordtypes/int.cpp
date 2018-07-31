@@ -105,8 +105,8 @@ int IntegerModuleKeyword::maxArguments()
 	return 1;
 }
 
-// Parse arguments from supplied LineParser, starting at argument offset specified
-bool IntegerModuleKeyword::parseArguments(LineParser& parser, int startArg)
+// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
+bool IntegerModuleKeyword::parseArguments(LineParser& parser, int startArg, ProcessPool& procPool)
 {
 	if (parser.hasArg(startArg))
 	{
