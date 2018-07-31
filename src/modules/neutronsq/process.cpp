@@ -147,6 +147,7 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	if (qBroadening.function() == BroadeningFunction::NoFunction) Messenger::print("NeutronSQ: No broadening will be applied to calculated S(Q).");
 	else Messenger::print("NeutronSQ: Broadening to be applied in calculated S(Q) is %s (%s).", BroadeningFunction::functionType(qBroadening.function()), qBroadening.parameterSummary().get());
 	Messenger::print("NeutronSQ: Save data is %s.\n", DissolveSys::onOff(saveData));
+	if (testMode) Messenger::print("NeutronSQ: Test mode is enabled (threshold = %f%%).", testThreshold);
 	Messenger::print("\n");
 
 

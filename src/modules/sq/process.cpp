@@ -69,6 +69,8 @@ bool SQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	if (qBroadening.function() == BroadeningFunction::NoFunction) Messenger::print("SQ: No broadening will be applied to calculated S(Q).");
 	else Messenger::print("SQ: Broadening to be applied in calculated S(Q) is %s (%s).", BroadeningFunction::functionType(qBroadening.function()), qBroadening.parameterSummary().get());
 	Messenger::print("SQ: Save data is %s.\n", DissolveSys::onOff(saveData));
+	if (testMode) Messenger::print("SQ: Test mode is enabled (threshold = %f%%).", testThreshold);
+	Messenger::print("\n");
 
 	/*
 	 * Loop over target Configurations and Fourier transform their UnweightedGR into the UnweightedSQ.
