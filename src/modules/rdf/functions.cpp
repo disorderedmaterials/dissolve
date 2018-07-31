@@ -705,40 +705,30 @@ bool RDFModule::testReferencePartials(PartialSet& setA, PartialSet& setB, double
 		{
 			// Full partial
 			error = setA.partial(n,m).error(setB.partial(n,m));
-			{
-				Messenger::print("Test reference full partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-				if (error > testThreshold) return false;
-			}
+			Messenger::print("Test reference full partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+			if (error > testThreshold) return false;
 
 			// Bound partial
 			error = setA.boundPartial(n,m).error(setB.boundPartial(n,m));
-			{
-				Messenger::print("Test reference bound partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-				if (error > testThreshold) return false;
-			}
+			Messenger::print("Test reference bound partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+			if (error > testThreshold) return false;
 
 			// Unbound reference
 			error = setA.unboundPartial(n,m).error(setB.unboundPartial(n,m));
-			{
-				Messenger::print("Test reference unbound partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-				if (error > testThreshold) return false;
-			}
+			Messenger::print("Test reference unbound partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+			if (error > testThreshold) return false;
 
 			// Bragg reference
 			error = setA.braggPartial(n,m).error(setB.braggPartial(n,m));
-			{
-				Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-				if (error > testThreshold) return false;
-			}
+			Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+			if (error > testThreshold) return false;
 		}
 	}
 
 	// Total reference data supplied?
 	error = setA.total().error(setB.total());
-	{
-		Messenger::print("Test reference total has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-		if (error > testThreshold) return false;
-	}
+	Messenger::print("Test reference total has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+	if (error > testThreshold) return false;
 
 	return true;
 }
@@ -749,6 +739,7 @@ bool RDFModule::testReferencePartials(GenericList& sourceModuleData, const char*
 	// We'll do a loop over all possible named test datasets that we expect to find with the given prefix and all combinations of atom type names.
 
 	CharString dataName;
+	double error;
 
 	// Get a copy of the AtomTypeList to work from
 	AtomTypeList atomTypes = partials.atomTypes();
@@ -762,44 +753,36 @@ bool RDFModule::testReferencePartials(GenericList& sourceModuleData, const char*
 			dataName = CharString("%s-%s-%s", dataPrefix, typeI->atomTypeName(), typeJ->atomTypeName());
 			if (sourceModuleData.contains(dataName, sourceModuleUniqueName))
 			{
-				double error = partials.partial(n,m).error(GenericListHelper<XYData>::value(sourceModuleData, dataName, sourceModuleUniqueName));
-				{
-					Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-					if (error > testThreshold) return false;
-				}
+				error = partials.partial(n,m).error(GenericListHelper<XYData>::value(sourceModuleData, dataName, sourceModuleUniqueName));
+				Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+				if (error > testThreshold) return false;
 			}
 
 			// Bound partial reference data supplied?
 			dataName = CharString("%s-%s-%s-bound", dataPrefix, typeI->atomTypeName(), typeJ->atomTypeName());
 			if (sourceModuleData.contains(dataName, sourceModuleUniqueName))
 			{
-				double error = partials.boundPartial(n,m).error(GenericListHelper<XYData>::value(sourceModuleData, dataName, sourceModuleUniqueName));
-				{
-					Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-					if (error > testThreshold) return false;
-				}
+				error = partials.boundPartial(n,m).error(GenericListHelper<XYData>::value(sourceModuleData, dataName, sourceModuleUniqueName));
+				Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+				if (error > testThreshold) return false;
 			}
 
 			// Unbound reference data supplied?
 			dataName = CharString("%s-%s-%s-unbound", dataPrefix, typeI->atomTypeName(), typeJ->atomTypeName());
 			if (sourceModuleData.contains(dataName, sourceModuleUniqueName))
 			{
-				double error = partials.unboundPartial(n,m).error(GenericListHelper<XYData>::value(sourceModuleData, dataName, sourceModuleUniqueName));
-				{
-					Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-					if (error > testThreshold) return false;
-				}
+				error = partials.unboundPartial(n,m).error(GenericListHelper<XYData>::value(sourceModuleData, dataName, sourceModuleUniqueName));
+				Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+				if (error > testThreshold) return false;
 			}
 
 			// Bragg reference data supplied?
 			dataName = CharString("%s-%s-%s-bragg", dataPrefix, typeI->atomTypeName(), typeJ->atomTypeName());
 			if (sourceModuleData.contains(dataName, sourceModuleUniqueName))
 			{
-				double error = partials.braggPartial(n,m).error(GenericListHelper<XYData>::value(sourceModuleData, dataName, sourceModuleUniqueName));
-				{
-					Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-					if (error > testThreshold) return false;
-				}
+				error = partials.braggPartial(n,m).error(GenericListHelper<XYData>::value(sourceModuleData, dataName, sourceModuleUniqueName));
+				Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+				if (error > testThreshold) return false;
 			}
 		}
 	}
@@ -808,11 +791,9 @@ bool RDFModule::testReferencePartials(GenericList& sourceModuleData, const char*
 	dataName = CharString("%s-total", dataPrefix);
 	if (sourceModuleData.contains(dataName, sourceModuleUniqueName))
 	{
-		double error = partials.total().error(GenericListHelper<XYData>::value(sourceModuleData, dataName, sourceModuleUniqueName));
-		{
-			Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-			if (error > testThreshold) return false;
-		}
+		error = partials.total().error(GenericListHelper<XYData>::value(sourceModuleData, dataName, sourceModuleUniqueName));
+		Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+		if (error > testThreshold) return false;
 	}
 
 	return true;
