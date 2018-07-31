@@ -87,8 +87,6 @@ class PairBroadeningFunction : public GenericItemBase
 	CharString parameterSummary() const;
 	// Return a BroadeningFunction tailored to the specified AtomType pair
 	BroadeningFunction broadeningFunction(AtomType* at1, AtomType* at2);
-	// Return value of function given parameter
-	double y(double x, double omega) const;
 
 
 	/*

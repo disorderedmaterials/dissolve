@@ -229,53 +229,19 @@ BroadeningFunction PairBroadeningFunction::broadeningFunction(AtomType* at1, Ato
 			/*
 			 * Set up a Gaussian function, with FWHM depending on the AtomTypes provided.
 			 */
-			// Calculate reduced mass
-			parameters_[0] = AtomicMass::mass(at1->element());
-			printf("MASSES %f %f\n", AtomicMass::mass(at1->element()), AtomicMass::mass(at2->element()));
+			// Calculate reduced mass (store in parameters_[1])
+			parameters_[1] = sqrt((AtomicMass::mass(at1->element()) * AtomicMass::mass(at2->element())) / (AtomicMass::mass(at1->element()) + AtomicMass::mass(at2->element())));
 
-			// c (calculated from FWHM)
-			parameters_[1] = parameters_[0] / TWOSQRT2LN2;
-			// 1/c
-			parameters_[2] = 1.0 / parameters_[1];
+			// Calculate final broadening
+			parameters_[0] = 1.0 / (2.0 * sqrt(2.0) * parameters_[1]);
+
+			result.set(BroadeningFunction::GaussianFunction, parameters_[0]);
 			break;
 		default:
 			Messenger::error("Function form '%s' not accounted for in setUpDependentParameters().\n", PairBroadeningFunction::functionType(function_));
 	}
 
 	return result;
-}
-
-// Return value of function given parameters x and omega
-double PairBroadeningFunction::y(double x, double omega) const
-{
-	switch (function_)
-	{
-		case (PairBroadeningFunction::NoFunction):
-			return 1.0;
-			break;
-		case (PairBroadeningFunction::GaussianFunction):
-		case (PairBroadeningFunction::YoungsA):
-		case (PairBroadeningFunction::YoungsB):
-		case (PairBroadeningFunction::YoungsC):
-			/*
-			 * Unnormalised Gaussian with no prefactor, centred at zero
-			 * 
-			 * Parameters:  0 = FWHM
-			 * 		1 = c     	(precalculated from FWHM)
-			 * 		2 = 1.0 / c
-			 * 
-			 * 	      (     x * x   ) 			  FWHM
-			 * f(x) = exp ( - --------- )      where c = --------------
-			 * 	      (   2 * c * c )		     2 sqrt(2 ln 2) 
-			 */
-			return exp(-(0.5 * x*x * parameters_[2]*parameters_[2]));
-			break;
-		default:
-			Messenger::warn("PairBroadeningFunction::value() - Function id %i not accounted for.\n", function_);
-			break;
-	}
-
-	return 0.0;
 }
 
 /*
