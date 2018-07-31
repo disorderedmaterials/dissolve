@@ -229,12 +229,12 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		deltaFQ.clear();
 		const Array<double> x1 = referenceData.constArrayX();
 		const Array<double> y1 = referenceData.constArrayY();
-		XYData simulatedSQ = weightedSQ.constTotal();
+		XYData simulatedFQ = weightedSQ.constTotal();
 
 		// Determine allowable range for fit, based on requested values and limits of generated / simulated datasets
 		double deltaSQMin = qMin, deltaSQMax = (qMax < 0.0 ? x1.last() : qMax);
-		if ((deltaSQMin < x1.first()) || (deltaSQMin < simulatedSQ.xFirst())) deltaSQMin = max(x1.first(), simulatedSQ.xFirst());
-		if ((deltaSQMax > x1.last()) || (deltaSQMax > simulatedSQ.xLast())) deltaSQMax = min(x1.last(), simulatedSQ.xLast());
+		if ((deltaSQMin < x1.first()) || (deltaSQMin < simulatedFQ.xFirst())) deltaSQMin = max(x1.first(), simulatedFQ.xFirst());
+		if ((deltaSQMax > x1.last()) || (deltaSQMax > simulatedFQ.xLast())) deltaSQMax = min(x1.last(), simulatedFQ.xLast());
 
 		double x;
 		for (int n=0; n<x1.nItems(); ++n)
@@ -245,7 +245,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			// If this x value is below the minimum Q value we are fitting, set the difference to zero. Otherwise, store the "inverse" value ([sim - exp], for consistency with EPSR)
 			if (x < deltaSQMin) deltaFQ.addPoint(x, 0.0);
 			else if (x > deltaSQMax) break;
-			else deltaFQ.addPoint(x, simulatedSQ.interpolated(x) - y1.value(n));
+			else deltaFQ.addPoint(x, simulatedFQ.interpolated(x) - y1.value(n));
 		}
 
 		/*
