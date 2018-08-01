@@ -155,7 +155,10 @@ template <class T> class ModuleKeywordData
 		return -1;
 	}
 	// Validate supplied value
-	virtual bool isValid(T value) = 0;
+	virtual bool isValid(T value)
+	{
+		return true;
+	}
 };
 
 #endif
