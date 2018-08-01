@@ -224,7 +224,21 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	/*
 	 * File I/O
 	 */
+	private:
+	// Filename from which the data was loaded (if any)
+	CharString sourceFilename_;
+	// Column used for X values when read from file (if relevant)
+	int xColumn_;
+	// Column used for Y values when read from file (if relevant)
+	int yColumn_;
+
 	public:
+	// Return filename from which the data was loaded (if any)
+	const char* sourceFilename() const;
+	// Return column used for X values when read from file (if relevant)
+	int xColumn() const;
+	// Return column used for Y values when read from file (if relevant)
+	int yColumn() const;
 	// Load data from specified LineParser, using columns specified
 	bool load(LineParser& parser, int xcol = 0, int ycol = 1);
 	// Load data from specified file, using columns specified

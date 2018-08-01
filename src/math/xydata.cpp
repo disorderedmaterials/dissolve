@@ -40,6 +40,8 @@ template<class XYData> const char* ObjectStore<XYData>::objectTypeName_ = "XYDat
 XYData::XYData() : ListItem<XYData>(), ObjectStore<XYData>(this) 
 {
 	name_ = "Untitled";
+	xColumn_ = -1;
+	yColumn_ = -1;
 	interpolationInterval_ = -1;
 	interpolationScheme_ = NoInterpolation;
 	z_ = 0.0;
@@ -971,6 +973,24 @@ double XYData::error(XYData ref) const
  * File I/O
  */
 
+// Return filename from which the data was loaded (if any)
+const char* XYData::sourceFilename() const
+{
+	return sourceFilename_.get();
+}
+
+// Return column used for X values when read from file (if relevant)
+int XYData::xColumn() const
+{
+	return xColumn_;
+}
+
+// Return column used for Y values when read from file (if relevant)
+int XYData::yColumn() const
+{
+	return yColumn_;
+}
+
 // Load data from specified LineParser, using columns specified
 bool XYData::load(LineParser& parser, int xcol, int ycol)
 {
@@ -994,9 +1014,9 @@ bool XYData::load(LineParser& parser, int xcol, int ycol)
 
 		addPoint(parser.argd(xcol), parser.argd(ycol));
 	}
-	
+
 	Messenger::printVerbose("Read %i points from '%s' (columns %i and %i).\n", nPoints(), parser.inputFilename(), xcol+1, ycol+1);
-	
+
 	return true;
 }
 
@@ -1015,7 +1035,11 @@ bool XYData::load(const char* filename, int xcol, int ycol)
 	bool result = load(parser, xcol, ycol);
 
 	parser.closeFiles();
-	
+
+	sourceFilename_ = filename;
+	xColumn_ = xcol;
+	yColumn_ = ycol;
+
 	return result;
 }
 
@@ -1034,7 +1058,11 @@ bool XYData::load(ProcessPool& pool, const char* filename, int xcol, int ycol)
 	bool result = load(parser, xcol, ycol);
 
 	parser.closeFiles();
-	
+
+	sourceFilename_ = filename;
+	xColumn_ = xcol;
+	yColumn_ = ycol;
+
 	return result;
 }
 
@@ -1095,7 +1123,11 @@ const char* XYData::itemClassName()
 // Write data through specified LineParser
 bool XYData::write(LineParser& parser)
 {
-	if (!parser.writeLineF("%s\n", name_.get())) return false;
+	if (sourceFilename_.isEmpty())
+	{
+		if (!parser.writeLineF("'%s'\n", name_.get())) return false;
+	}
+	else if (!parser.writeLineF("'%s'  '%s'  %i  %i\n", name_.get(), sourceFilename_.get(), xColumn_, yColumn_)) return false;
 	if (!parser.writeLineF("%s\n", objectName())) return false;
 	if (!parser.writeLineF("%f\n", z_)) return false;
 	if (!parser.writeLineF("%i\n", nPoints())) return false;
@@ -1107,7 +1139,14 @@ bool XYData::write(LineParser& parser)
 bool XYData::read(LineParser& parser)
 {
 	clear();
-	if (parser.readNextLine(LineParser::Defaults, name_) != LineParser::Success) return false;
+
+	if (parser.getArgsDelim(LineParser::UseQuotes) != LineParser::Success) return false;
+	name_ = parser.argc(0);
+	if (parser.hasArg(1)) sourceFilename_ = parser.argc(1);
+	else sourceFilename_.clear();
+	xColumn_ = parser.hasArg(2) ? parser.argi(2) : -1;
+	yColumn_ = parser.hasArg(3) ? parser.argi(3) : -1;
+
 	if (parser.readNextLine(LineParser::Defaults) != LineParser::Success) return false;
 	setObjectName(parser.line());
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
