@@ -187,27 +187,27 @@ template <class A> class Array2D
 		// Copy old data back in
 		for (int n=0; n<oldArray.nRows_; ++n)
 		{
-			for (int m=0; m<oldArray.nColumns_; ++m) ref(n,m) = oldArray.value(n,m);
+			for (int m=0; m<oldArray.nColumns_; ++m) at(n,m) = oldArray.at(n,m);
 		}
 	}
 	// Set row
 	void setRow(int row, A value)
 	{
-		for (int n=0; n<nColumns_; ++n) ref(row, n) = value;
+		for (int n=0; n<nColumns_; ++n) at(row, n) = value;
 	}
 	// Return specified element as reference
-	A& ref(int row, int column)
+	A& at(int row, int column)
 	{
 #ifdef CHECKS
 		static A dummy;
 		if ((row < 0) || (row >= nRows_))
 		{
-			Messenger::print("OUT_OF_RANGE - Row number (%i) is out of range in Array2D::ref() (nRows = %i).\n", row, nRows_);
+			Messenger::print("OUT_OF_RANGE - Row number (%i) is out of range in Array2D::at() (nRows = %i).\n", row, nRows_);
 			return dummy;
 		}
 		if ((column < 0) || (column >= nColumns_))
 		{
-			Messenger::print("OUT_OF_RANGE - Column number (%i) is out of range in Array2D::ref() (nColumns = %i).\n", column, nColumns_);
+			Messenger::print("OUT_OF_RANGE - Column number (%i) is out of range in Array2D::at() (nColumns = %i).\n", column, nColumns_);
 			return dummy;
 		}
 #endif
@@ -218,19 +218,19 @@ template <class A> class Array2D
 		}
 		else return array_[rowOffsets_[row] + column];
 	}
-	// Return specified element as value
-	A value(int row, int column) const
+	// Return specified element as const reference
+	A& constAt(int row, int column) const
 	{
 #ifdef CHECKS
 		static A dummy;
 		if ((row < 0) || (row >= nRows_))
 		{
-			Messenger::print("OUT_OF_RANGE - Row number (%i) is out of range in Array2D::value() (nRows = %i).\n", row, nRows_);
+			Messenger::print("OUT_OF_RANGE - Row number (%i) is out of range in Array2D::constAt() (nRows = %i).\n", row, nRows_);
 			return dummy;
 		}
 		if ((column < 0) || (column >= nColumns_))
 		{
-			Messenger::print("OUT_OF_RANGE - Column number (%i) is out of range in Array2D::value() (nColumns = %i).\n", column, nColumns_);
+			Messenger::print("OUT_OF_RANGE - Column number (%i) is out of range in Array2D::constAt() (nColumns = %i).\n", column, nColumns_);
 			return dummy;
 		}
 #endif
@@ -242,18 +242,18 @@ template <class A> class Array2D
 		else return array_[rowOffsets_[row] + column];
 	}
 	// Return address of specified element
-	A* ptr(int row, int column)
+	A* pointerAt(int row, int column)
 	{
 #ifdef CHECKS
 		static A dummy;
 		if ((row < 0) || (row >= nRows_))
 		{
-			Messenger::print("OUT_OF_RANGE - Row number (%i) is out of range in Array2D::ptr() (nRows = %i).\n", row, nRows_);
+			Messenger::print("OUT_OF_RANGE - Row number (%i) is out of range in Array2D::pointerAt() (nRows = %i).\n", row, nRows_);
 			return &dummy;
 		}
 		if ((column < 0) || (column >= nColumns_))
 		{
-			Messenger::print("OUT_OF_RANGE - Column number (%i) is out of range in Array2D::ptr() (nColumns = %i).\n", column, nColumns_);
+			Messenger::print("OUT_OF_RANGE - Column number (%i) is out of range in Array2D::pointerAt() (nColumns = %i).\n", column, nColumns_);
 			return &dummy;
 		}
 #endif
@@ -264,7 +264,7 @@ template <class A> class Array2D
 		}
 		else return &array_[rowOffsets_[row] + column];
 	}
-	// Returun whether the array is halved
+	// Return whether the array is halved
 	bool halved() const
 	{
 		return half_;
@@ -336,8 +336,8 @@ template <class A> class Array2D
 				// Calculate dot product of rowA (in matrix A (this)) and columnB in matrix B
 				// The number of elements equals nColumns in A (== nRows in B)
 				x = 0.0;
-				for (i = 0; i<nColumns_; ++i) x += value(rowA, i) * B.value(i, colB);
-				C.ref(rowA, colB) = x;
+				for (i = 0; i<nColumns_; ++i) x += constAt(rowA, i) * B.constAt(i, colB);
+				C.at(rowA, colB) = x;
 			}
 		}
 
@@ -357,7 +357,7 @@ template <class A> class Array2D
 		for (int row = 0; row < nRows_; ++row)
 		{
 			line.sprintf("R%2i :", row);
-			for (int column = 0; column < nColumns_; ++column) line.strcatf(" %e", value(row, column));
+			for (int column = 0; column < nColumns_; ++column) line.strcatf(" %e", constAt(row, column));
 			Messenger::print("%s\n", line.get());
 		}
 	}
@@ -372,7 +372,7 @@ template <class A> class Array2D
 		Array2D<A> result(nColumns_, nRows_);
 		for (int r=0; r<nRows_; ++r)
 		{
-			for (int c=0; c<nColumns_; ++c) result.ref(c,r) = value(r,c);
+			for (int c=0; c<nColumns_; ++c) result.at(c,r) = constAt(r,c);
 		}
 		return result;
 	}

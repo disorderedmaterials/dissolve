@@ -90,10 +90,10 @@ bool PartialSet::setUpPartials(const AtomTypeList& atomTypes, const char* prefix
 		for (int m=n; m<nTypes; ++m, at2 = at2->next)
 		{
 			title.sprintf("%s-%s-%s-%s.%s", prefix, tag, at1->atomTypeName(), at2->atomTypeName(), suffix);
-			partials_.ref(n,m).setName(title.get());
-			boundPartials_.ref(n,m).setName(title.get());
-			unboundPartials_.ref(n,m).setName(title.get());
-			braggPartials_.ref(n,m).setName(title.get());
+			partials_.at(n,m).setName(title.get());
+			boundPartials_.at(n,m).setName(title.get());
+			unboundPartials_.at(n,m).setName(title.get());
+			braggPartials_.at(n,m).setName(title.get());
 		}
 	}
 
@@ -121,9 +121,9 @@ void PartialSet::setUpHistograms(double rdfRange, double binWidth)
 		for (int m=n; m<nTypes; ++m)
 		{
 			// Histogram arrays for g(r)
-			fullHistograms_.ref(n,m).initialise(0.0, rdfRange, binWidth);
-			boundHistograms_.ref(n,m).initialise(0.0, rdfRange, binWidth);
-			unboundHistograms_.ref(n,m).initialise(0.0, rdfRange, binWidth);
+			fullHistograms_.at(n,m).initialise(0.0, rdfRange, binWidth);
+			boundHistograms_.at(n,m).initialise(0.0, rdfRange, binWidth);
+			unboundHistograms_.at(n,m).initialise(0.0, rdfRange, binWidth);
 		}
 	}
 }
@@ -136,14 +136,14 @@ void PartialSet::reset()
 	{
 		for (int m=n; m<nTypes; ++m)
 		{
-			fullHistograms_.ref(n,m).reset();
-			boundHistograms_.ref(n,m).reset();
-			unboundHistograms_.ref(n,m).reset();
+			fullHistograms_.at(n,m).reset();
+			boundHistograms_.at(n,m).reset();
+			unboundHistograms_.at(n,m).reset();
 
-			partials_.ref(n,m).arrayY() = 0.0;
-			boundPartials_.ref(n,m).arrayY() = 0.0;
-			unboundPartials_.ref(n,m).arrayY() = 0.0;
-			braggPartials_.ref(n,m).arrayY() = 0.0;
+			partials_.at(n,m).arrayY() = 0.0;
+			boundPartials_.at(n,m).arrayY() = 0.0;
+			unboundPartials_.at(n,m).arrayY() = 0.0;
+			braggPartials_.at(n,m).arrayY() = 0.0;
 		}
 	}
 	total_.arrayY() = 0.0;
@@ -178,49 +178,67 @@ const char* PartialSet::fingerprint() const
 // Return full histogram specified
 Histogram& PartialSet::fullHistogram(int i, int j)
 {
-	return fullHistograms_.ref(i, j);
+	return fullHistograms_.at(i, j);
 }
 
 // Return bound histogram specified
 Histogram& PartialSet::boundHistogram(int i, int j)
 {
-	return boundHistograms_.ref(i, j);
+	return boundHistograms_.at(i, j);
 }
 
 // Return unbound histogram specified
 Histogram& PartialSet::unboundHistogram(int i, int j)
 {
-	return unboundHistograms_.ref(i, j);
+	return unboundHistograms_.at(i, j);
 }
 
 // Return full atom-atom partial specified
 XYData& PartialSet::partial(int i, int j)
 {
-	return partials_.ref(i, j);
+	return partials_.at(i, j);
 }
 
-// Return copy of full atom-atom partial specified
-XYData PartialSet::constPartial(int i, int j) const
+// Return full atom-atom partial specified (const)
+XYData& PartialSet::constPartial(int i, int j) const
 {
-	return partials_.value(i, j);
+	return partials_.constAt(i, j);
 }
 
 // Return atom-atom partial for pairs not joined by bonds or angles
 XYData& PartialSet::unboundPartial(int i, int j)
 {
-	return unboundPartials_.ref(i, j);
+	return unboundPartials_.at(i, j);
+}
+
+// Return atom-atom partial for pairs not joined by bonds or angles (const)
+XYData& PartialSet::constUnboundPartial(int i, int j) const
+{
+	return unboundPartials_.constAt(i, j);
 }
 
 // Return atom-atom partial for pairs joined by bonds or angles
 XYData& PartialSet::boundPartial(int i, int j)
 {
-	return boundPartials_.ref(i, j);
+	return boundPartials_.at(i, j);
 }
 
-// Return atom-atom Bragg partial for pairs joined by bonds or angles
+// Return atom-atom partial for pairs joined by bonds or angles (const)
+XYData& PartialSet::constBoundPartial(int i, int j) const
+{
+	return boundPartials_.constAt(i, j);
+}
+
+// Return atom-atom Bragg partial
 XYData& PartialSet::braggPartial(int i, int j)
 {
-	return braggPartials_.ref(i, j);
+	return braggPartials_.at(i, j);
+}
+
+// Return atom-atom Bragg partial (const)
+XYData& PartialSet::constBraggPartial(int i, int j) const
+{
+	return braggPartials_.constAt(i, j);
 }
 
 // Sum partials into total
@@ -234,7 +252,7 @@ void PartialSet::formTotal(bool applyConcentrationWeights)
 	}
 
 	// Copy x and y arrays from one of the partials, and zero the latter
-	total_.templateFrom(partials_.ref(0,0));
+	total_.templateFrom(partials_.at(0,0));
 	total_.arrayY() = 0.0;
 
 	int typeI, typeJ;
@@ -252,7 +270,7 @@ void PartialSet::formTotal(bool applyConcentrationWeights)
 			}
 
 			// Add contribution from partial (bound + unbound)
-			total_.addY(partials_.ref(typeI,typeJ).arrayY(), factor);
+			total_.addY(partials_.at(typeI,typeJ).arrayY(), factor);
 			// TODO Does not include contributions from Bragg partials
 		}
 	}
@@ -284,7 +302,7 @@ bool PartialSet::save()
 		for (typeJ=typeI; typeJ<nTypes; ++typeJ)
 		{
 			// Open file and check that we're OK to proceed writing to it
-			const char* filename = partials_.ref(typeI, typeJ).name();
+			const char* filename = partials_.at(typeI, typeJ).name();
 			Messenger::printVerbose("Writing partial file '%s'...\n", filename);
 
 			parser.openOutput(filename, true);
@@ -294,10 +312,10 @@ bool PartialSet::save()
 				return false;
 			}
 			
-			XYData& full = partials_.ref(typeI,typeJ);
-			XYData& bound = boundPartials_.ref(typeI,typeJ);
-			XYData& unbound = unboundPartials_.ref(typeI,typeJ);
-			XYData& bragg = braggPartials_.ref(typeI,typeJ);
+			XYData& full = partials_.at(typeI,typeJ);
+			XYData& bound = boundPartials_.at(typeI,typeJ);
+			XYData& unbound = unboundPartials_.at(typeI,typeJ);
+			XYData& bragg = braggPartials_.at(typeI,typeJ);
 			parser.writeLineF("# %-14s  %-16s  %-16s  %-16s  %-16s\n", abscissaUnits_.get(), "Full", "Bound", "Unbound", "Bragg"); 
 			for (n=0; n<full.nPoints(); ++n) parser.writeLineF("%16.9e  %16.9e  %16.9e  %16.9e  %16.9e\n", full.x(n), full.y(n), bound.y(n), unbound.y(n), n < bragg.nPoints() ? bragg.y(n) : 0.0);
 			parser.closeFiles();
@@ -325,10 +343,10 @@ void PartialSet::setObjectNames(const char* prefix, const char* suffix)
 		at2 = at1;
 		for (typeJ=typeI; typeJ<nTypes; ++typeJ, at2 = at2->next)
 		{
-			partials_.ref(typeI,typeJ).setObjectName(CharString("%s//%s-%s//Full%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
-			boundPartials_.ref(typeI,typeJ).setObjectName(CharString("%s//%s-%s//Bound%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
-			unboundPartials_.ref(typeI,typeJ).setObjectName(CharString("%s//%s-%s//Unbound%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
-			braggPartials_.ref(typeI,typeJ).setObjectName(CharString("%s//%s-%s//Bragg%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
+			partials_.at(typeI,typeJ).setObjectName(CharString("%s//%s-%s//Full%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
+			boundPartials_.at(typeI,typeJ).setObjectName(CharString("%s//%s-%s//Bound%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
+			unboundPartials_.at(typeI,typeJ).setObjectName(CharString("%s//%s-%s//Unbound%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
+			braggPartials_.at(typeI,typeJ).setObjectName(CharString("%s//%s-%s//Bragg%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
 		}
 	}
 
@@ -355,10 +373,10 @@ void PartialSet::setFileNames(const char* prefix, const char* tag, const char* s
 		for (int m=n; m<nTypes; ++m, at2 = at2->next)
 		{
 			title.sprintf("%s-%s-%s-%s.%s", prefix, tag, at1->atomTypeName(), at2->atomTypeName(), suffix);
-			partials_.ref(n,m).setName(title.get());
-			boundPartials_.ref(n,m).setName(title.get());
-			unboundPartials_.ref(n,m).setName(title.get());
-			braggPartials_.ref(n,m).setName(title.get());
+			partials_.at(n,m).setName(title.get());
+			boundPartials_.at(n,m).setName(title.get());
+			unboundPartials_.at(n,m).setName(title.get());
+			braggPartials_.at(n,m).setName(title.get());
 		}
 	}
 
@@ -383,9 +401,9 @@ void PartialSet::adjust(double delta)
 		at2 = at1;
 		for (m=n; m<nTypes; ++m, at2 = at2->next)
 		{
-			partials_.ref(n, m).arrayY() += delta;
-			boundPartials_.ref(n, m).arrayY() += delta;
-			unboundPartials_.ref(n, m).arrayY() += delta;
+			partials_.at(n, m).arrayY() += delta;
+			boundPartials_.at(n, m).arrayY() += delta;
+			unboundPartials_.at(n, m).arrayY() += delta;
 		}
 	}
 
@@ -404,9 +422,9 @@ void PartialSet::formPartials(double boxVolume, XYData& boxNormalisation)
 		at2 = at1;
 		for (m=n; m<nTypes; ++m, at2 = at2->next)
 		{
-			calculateRDF(partials_.ref(n, m), fullHistograms_.ref(n, m), boxVolume, at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0, boxNormalisation);
-			calculateRDF(boundPartials_.ref(n, m), boundHistograms_.ref(n, m), boxVolume, at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0, boxNormalisation);
-			calculateRDF(unboundPartials_.ref(n, m), unboundHistograms_.ref(n, m), boxVolume, at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0, boxNormalisation);
+			calculateRDF(partials_.at(n, m), fullHistograms_.at(n, m), boxVolume, at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0, boxNormalisation);
+			calculateRDF(boundPartials_.at(n, m), boundHistograms_.at(n, m), boxVolume, at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0, boxNormalisation);
+			calculateRDF(unboundPartials_.at(n, m), unboundHistograms_.at(n, m), boxVolume, at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0, boxNormalisation);
 		}
 	}
 }
@@ -439,9 +457,9 @@ bool PartialSet::addPartials(PartialSet& source, double weighting)
 			}
 
 			// Grab source partials
-			partials_.ref(localI, localJ).addInterpolated(source.partial(typeI, typeJ), weighting);
-			boundPartials_.ref(localI, localJ).addInterpolated(source.boundPartial(typeI, typeJ), weighting);
-			unboundPartials_.ref(localI, localJ).addInterpolated(source.unboundPartial(typeI, typeJ), weighting);
+			partials_.at(localI, localJ).addInterpolated(source.partial(typeI, typeJ), weighting);
+			boundPartials_.at(localI, localJ).addInterpolated(source.boundPartial(typeI, typeJ), weighting);
+			unboundPartials_.at(localI, localJ).addInterpolated(source.unboundPartial(typeI, typeJ), weighting);
 		}
 	}
 
@@ -463,9 +481,9 @@ void PartialSet::reweightPartials(double factor)
 		at2 = at1;
 		for (m=n; m<nTypes; ++m, at2 = at2->next)
 		{
-			partials_.ref(n, m).arrayY() *= factor;
-			boundPartials_.ref(n, m).arrayY() *= factor;
-			unboundPartials_.ref(n, m).arrayY() *= factor;
+			partials_.at(n, m).arrayY() *= factor;
+			boundPartials_.at(n, m).arrayY() *= factor;
+			unboundPartials_.at(n, m).arrayY() *= factor;
 		}
 	}
 
@@ -508,7 +526,7 @@ XYData PartialSet::generateTotal(Weights& weights) const
 	}
 
 	// Copy x and y arrays from one of the partials, and zero the latter
-	total.templateFrom(partials_.value(0,0));
+	total.templateFrom(partials_.constAt(0,0));
 	total.arrayY() = 0.0;
 
 	int typeI, typeJ;
@@ -516,7 +534,7 @@ XYData PartialSet::generateTotal(Weights& weights) const
 	{
 		for (typeJ=typeI; typeJ<nTypes; ++typeJ)
 		{
-			total.addY(partials_.value(typeI,typeJ).arrayY(), weights.fullWeight(typeI, typeJ));
+			total.addY(partials_.constAt(typeI,typeJ).arrayY(), weights.fullWeight(typeI, typeJ));
 		}
 	}
 
@@ -564,10 +582,10 @@ bool PartialSet::write(LineParser& parser)
 	{
 		for (int typeJ=typeI; typeJ<nTypes; ++typeJ)
 		{
-			if (!partials_.ref(typeI, typeJ).write(parser)) return false;
-			if (!boundPartials_.ref(typeI, typeJ).write(parser)) return false;
-			if (!unboundPartials_.ref(typeI, typeJ).write(parser)) return false;
-			if (!braggPartials_.ref(typeI, typeJ).write(parser)) return false;
+			if (!partials_.at(typeI, typeJ).write(parser)) return false;
+			if (!boundPartials_.at(typeI, typeJ).write(parser)) return false;
+			if (!unboundPartials_.at(typeI, typeJ).write(parser)) return false;
+			if (!braggPartials_.at(typeI, typeJ).write(parser)) return false;
 		}
 	}
 	if (!total_.write(parser)) return false;
@@ -594,10 +612,10 @@ bool PartialSet::read(LineParser& parser)
 	{
 		for (int typeJ=typeI; typeJ<nTypes; ++typeJ)
 		{
-			if (!partials_.ref(typeI, typeJ).read(parser)) return false;
-			if (!boundPartials_.ref(typeI, typeJ).read(parser)) return false;
-			if (!unboundPartials_.ref(typeI, typeJ).read(parser)) return false;
-			if (!braggPartials_.ref(typeI, typeJ).read(parser)) return false;
+			if (!partials_.at(typeI, typeJ).read(parser)) return false;
+			if (!boundPartials_.at(typeI, typeJ).read(parser)) return false;
+			if (!unboundPartials_.at(typeI, typeJ).read(parser)) return false;
+			if (!braggPartials_.at(typeI, typeJ).read(parser)) return false;
 		}
 	}
 	if (!total_.read(parser)) return false;

@@ -257,14 +257,14 @@ void PoissonFit::updatePrecalculatedFunctions(FunctionSpace::SpaceType space, do
 	{
 		for (int n=0; n<nPoissons_; ++n)
 		{
-			for (int m=0; m<referenceData_.nPoints(); ++m) functions_.ref(n, m) = C * poisson(referenceData_.x(m), n);
+			for (int m=0; m<referenceData_.nPoints(); ++m) functions_.at(n, m) = C * poisson(referenceData_.x(m), n);
 		}
 	}
 	else 
 	{
 		for (int n=0; n<nPoissons_; ++n)
 		{
-			for (int m=0; m<referenceData_.nPoints(); ++m) functions_.ref(n, m) = C * poissonFT(m, n);
+			for (int m=0; m<referenceData_.nPoints(); ++m) functions_.at(n, m) = C * poissonFT(m, n);
 		}
 	}
 }
@@ -475,7 +475,7 @@ double PoissonFit::costTabulatedC(const Array<double>& alpha)
 		y = approximateData_.y(i);
 
 		// Add in contributions from our Gaussians
-		for (int n=0; n<nAlpha; ++n) y += functions_.value(alphaIndex_[n], i) * alpha.value(n);
+		for (int n=0; n<nAlpha; ++n) y += functions_.at(alphaIndex_[n], i) * alpha.value(n);
 
 		dy = referenceData_.y(i) - y;
 		sose += dy*dy;

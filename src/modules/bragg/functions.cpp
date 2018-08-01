@@ -183,12 +183,12 @@ bool BraggModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cfg,
 		rI.z = v.x*rAxes[6] + v.y*rAxes[7] + v.z*rAxes[8];
 
 		// Grab pointers to cos/sin arrays for atom
-		cosTermsH = braggAtomVectorXCos.ptr(n, 0);
-		cosTermsK = braggAtomVectorYCos.ptr(n, 0);
-		cosTermsL = braggAtomVectorZCos.ptr(n, 0);
-		sinTermsH = braggAtomVectorXSin.ptr(n, braggMaximumHKL.x);
-		sinTermsK = braggAtomVectorYSin.ptr(n, braggMaximumHKL.y);
-		sinTermsL = braggAtomVectorZSin.ptr(n, braggMaximumHKL.z);
+		cosTermsH = braggAtomVectorXCos.pointerAt(n, 0);
+		cosTermsK = braggAtomVectorYCos.pointerAt(n, 0);
+		cosTermsL = braggAtomVectorZCos.pointerAt(n, 0);
+		sinTermsH = braggAtomVectorXSin.pointerAt(n, braggMaximumHKL.x);
+		sinTermsK = braggAtomVectorYSin.pointerAt(n, braggMaximumHKL.y);
+		sinTermsL = braggAtomVectorZSin.pointerAt(n, braggMaximumHKL.z);
 
 		// Initialise zero and first terms
 		cosTermsH[0] = 1.0;
@@ -246,12 +246,12 @@ bool BraggModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cfg,
 	{
 		// Grab localTypeIndex and array pointers for this atom
 		localTypeIndex = atoms[n]->localTypeIndex();
-		cosTermsH = braggAtomVectorXCos.ptr(n, 0);
-		cosTermsK = braggAtomVectorYCos.ptr(n, 0);
-		cosTermsL = braggAtomVectorZCos.ptr(n, 0);
-		sinTermsH = braggAtomVectorXSin.ptr(n, braggMaximumHKL.x);
-		sinTermsK = braggAtomVectorYSin.ptr(n, braggMaximumHKL.y);
-		sinTermsL = braggAtomVectorZSin.ptr(n, braggMaximumHKL.z);
+		cosTermsH = braggAtomVectorXCos.pointerAt(n, 0);
+		cosTermsK = braggAtomVectorYCos.pointerAt(n, 0);
+		cosTermsL = braggAtomVectorZCos.pointerAt(n, 0);
+		sinTermsH = braggAtomVectorXSin.pointerAt(n, braggMaximumHKL.x);
+		sinTermsK = braggAtomVectorYSin.pointerAt(n, braggMaximumHKL.y);
+		sinTermsL = braggAtomVectorZSin.pointerAt(n, braggMaximumHKL.z);
 
 		// Loop over k-vectors
 		for (m = 0; m < nKVectors; ++m)

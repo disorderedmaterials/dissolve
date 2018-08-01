@@ -90,8 +90,8 @@ void DataSpaceRange::set(Collection* collection, int abscissaFirst, int abscissa
 		const Array<DisplayDataSet::DataPointType>& yType = dataSets[n+displayDataSetStart_]->yType();
 		for (int i=0; i<nPoints_; ++i)
 		{
-			yReference_.ref(i,n) = y.value(i+abscissaStart_);
-			if (!referenceDataOnly) yTypes_.ref(i,n) = yType.value(i+abscissaStart_);
+			yReference_.at(i,n) = y.value(i+abscissaStart_);
+			if (!referenceDataOnly) yTypes_.at(i,n) = yType.value(i+abscissaStart_);
 		}
 	}
 }
@@ -197,7 +197,7 @@ double DataSpaceRange::zEnd()
 // Return reference y value specified
 double DataSpaceRange::referenceY(int xIndex, int zIndex)
 {
-	return yReference_.ref(xIndex, zIndex);
+	return yReference_.at(xIndex, zIndex);
 }
 
 // Return minimum of reference y values
@@ -223,7 +223,7 @@ double DataSpaceRange::referenceYMax()
 // Return calculated y value specified
 double DataSpaceRange::calculatedY(int xIndex, int zIndex)
 {
-	return yCalculated_.ref(xIndex, zIndex);
+	return yCalculated_.at(xIndex, zIndex);
 }
 
 // Copy values from stored source collection, using index data provided
@@ -280,7 +280,7 @@ bool DataSpaceRange::copyValues(IndexData xIndex, IndexData zIndex)
 			else if (xIndex.type() == IndexData::RelativeIndex) actualX = abscissaStart_+x+xIndex.offset();
 
 			// Check index of x against valid abscissa range
-			if ((x >= 0) && (x < nAbscissaPoints)) yReference_.ref(x, z) = yRef.value(actualX);
+			if ((x >= 0) && (x < nAbscissaPoints)) yReference_.at(x, z) = yRef.value(actualX);
 		}
 	}
 
@@ -309,7 +309,7 @@ bool DataSpaceRange::calculateValues(Expression& equation, Variable* xVariable, 
 		for (int i=0; i<nPoints_; ++i)
 		{
 			// Nothing to do if this point does not exist...
-			if (yTypes_.ref(i,n) == DisplayDataSet::NoPoint) continue;
+			if (yTypes_.at(i,n) == DisplayDataSet::NoPoint) continue;
 
 			// Set x variable value
 			xVariable->set(x_.value(i));
@@ -318,7 +318,7 @@ bool DataSpaceRange::calculateValues(Expression& equation, Variable* xVariable, 
 			for (RefListItem<ReferenceVariable,bool>* ri = usedReferences.first(); ri != NULL; ri = ri->next) ri->item->updateValue(i, n);
 
 			// Calculate and store y value
-			yCalculated_.ref(i,n) = equation.execute(success);
+			yCalculated_.at(i,n) = equation.execute(success);
 			if (!success) return false;
 		}
 	}
@@ -338,9 +338,9 @@ double DataSpaceRange::sosError()
 		for (int i=0; i<nPoints_; ++i)
 		{
 			// Nothing to do if this point does not exist...
-			if (yTypes_.ref(i,n) == DisplayDataSet::NoPoint) continue;
+			if (yTypes_.at(i,n) == DisplayDataSet::NoPoint) continue;
 			
-			yDiff = yReference_.ref(i,n) - yCalculated_.ref(i,n);
+			yDiff = yReference_.at(i,n) - yCalculated_.at(i,n);
 
 			sos += yDiff * yDiff;
 		}
@@ -367,7 +367,7 @@ void DataSpaceRange::addCalculatedValues(Collection* target)
 		for (int i=0; i<nPoints_; ++i)
 		{
 			dataSet->setX(i+abscissaStart_, x_.value(i));
-			dataSet->setY(i+abscissaStart_, yCalculated_.ref(i,n));
+			dataSet->setY(i+abscissaStart_, yCalculated_.at(i,n));
 		}
 	}
 }

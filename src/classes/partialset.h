@@ -98,14 +98,20 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	Histogram& unboundHistogram(int i, int j);
 	// Return full atom-atom partial specified
 	XYData& partial(int i, int j);
-	// Return copy of full atom-atom partial specified
-	XYData constPartial(int i, int j) const;
+	// Return full atom-atom partial specified (const)
+	XYData& constPartial(int i, int j) const;
 	// Return atom-atom partial for pairs not joined by bonds or angles
 	XYData& unboundPartial(int i, int j);
+	// Return atom-atom partial for pairs not joined by bonds or angles (const)
+	XYData& constUnboundPartial(int i, int j) const;
 	// Return atom-atom partial for pairs joined by bonds or angles
 	XYData& boundPartial(int i, int j);
-	// Return atom-atom Bragg partial for pairs joined by bonds or angles
+	// Return atom-atom partial for pairs joined by bonds or angles (const)
+	XYData& constBoundPartial(int i, int j) const;
+	// Return atom-atom Bragg partial
 	XYData& braggPartial(int i, int j);
+	// Return atom-atom Bragg partial (const)
+	XYData& constBraggPartial(int i, int j) const;
 	// Sum partials into total
 	void formTotal(bool applyConcentrationWeights);
 	// Return total function

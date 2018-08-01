@@ -62,7 +62,7 @@ int ScatteringMatrix::pairWeightInverse(AtomType* typeI, AtomType* typeJ, int da
 	 */
 
 	int index = pairIndex(typeI, typeJ);
-	return inverseA_.value(index, dataIndex);
+	return inverseA_.constAt(index, dataIndex);
 }
 
 // Print the matrix
@@ -81,7 +81,7 @@ void ScatteringMatrix::print() const
 	for (int row = 0; row < data_.nItems(); ++row)
 	{
 		line.clear();
-		for (int n=0; n<A_.nColumns(); ++n) line.strcatf("%10f ", A_.value(row, n));
+		for (int n=0; n<A_.nColumns(); ++n) line.strcatf("%10f ", A_.constAt(row, n));
 		Messenger::print("%s  %s\n", line.get(), data_.value(row).name());
 	}
 }
@@ -102,7 +102,7 @@ void ScatteringMatrix::printInverse() const
 	for (int col = 0; col < inverseA_.nColumns(); ++col)
 	{
 		line.clear();
-		for (int row=0; row<inverseA_.nRows(); ++row) line.strcatf("%10f ", inverseA_.value(row, col));
+		for (int row=0; row<inverseA_.nRows(); ++row) line.strcatf("%10f ", inverseA_.constAt(row, col));
 		Messenger::print("%s  %s\n", line.get(), data_.value(col).name());
 	}
 }
@@ -136,7 +136,7 @@ void ScatteringMatrix::generatePartials(Array2D<XYData>& generatedSQ)
 		// We multiply any contribution by the stored factor (in the RefList's data variable).
 		for (int m=0; m<data_.nItems(); ++m)
 		{
-			partials[n].addInterpolated(data_[m], inverseA_.value(n, m) * factors_[m]);
+			partials[n].addInterpolated(data_[m], inverseA_.constAt(n, m) * factors_[m]);
 		}
 	}
 }
@@ -233,7 +233,7 @@ bool ScatteringMatrix::addReferenceData(const XYData& data, Weights& weights, do
 			}
 
 			// Now have the local column index of the AtomType pair in our matrix A_...
-			A_.ref(rowIndex, colIndex) = weights.fullWeight(n, m) * factor;
+			A_.at(rowIndex, colIndex) = weights.fullWeight(n, m) * factor;
 		}
 	}
 
@@ -260,7 +260,7 @@ bool ScatteringMatrix::addPartialReferenceData(XYData& data, AtomType* at1, Atom
 
 	// Now have the local column index of the AtomType pair in our matrix A_...
 	A_.setRow(rowIndex, 0.0);
-	A_.ref(rowIndex, colIndex) = weight * factor;
+	A_.at(rowIndex, colIndex) = weight * factor;
 
 	// Add reference data and its associated factor
 	data_.add(data);

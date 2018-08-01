@@ -82,13 +82,13 @@ bool PotentialMap::initialise(const List<AtomType>& masterAtomTypes, const List<
 		if (indexI == indexJ)
 		{
 			Messenger::print("Linking self-interaction PairPotential for '%s' (index %i,%i in matrix).\n", pot->atomTypeI()->name(), indexI, indexJ);
-			potentialMatrix_.ref(indexI,indexI) = pot;
+			potentialMatrix_.at(indexI,indexI) = pot;
 		}
 		else
 		{
 			Messenger::print("Linking PairPotential between '%s' and '%s' (indices %i,%i and %i,%i in matrix).\n", pot->atomTypeI()->name(), pot->atomTypeJ()->name(), indexI, indexJ, indexJ, indexI);
-			potentialMatrix_.ref(indexI, indexJ) = pot;
-			potentialMatrix_.ref(indexJ, indexI) = pot;
+			potentialMatrix_.at(indexI, indexJ) = pot;
+			potentialMatrix_.at(indexJ, indexI) = pot;
 		}
 	}
 
@@ -129,7 +129,7 @@ double PotentialMap::energy(const Atom* i, const Atom* j, double r) const
 	}
 #endif
 	// Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the interpolated potential
-	PairPotential* pp = potentialMatrix_.value(i->masterTypeIndex(), j->masterTypeIndex());
+	PairPotential* pp = potentialMatrix_.constAt(i->masterTypeIndex(), j->masterTypeIndex());
 	if (pp->includeCoulomb()) return pp->energy(r);
 	else return (pp->energy(r) + pp->analyticCoulombEnergy(i->charge() * j->charge(), r));
 }
@@ -154,7 +154,7 @@ double PotentialMap::analyticEnergy(const Atom* i, const Atom* j, double r) cons
 		return 0.0;
 	}
 #endif
-	return potentialMatrix_.value(i->masterTypeIndex(), j->masterTypeIndex())->analyticEnergy(r);
+	return potentialMatrix_.constAt(i->masterTypeIndex(), j->masterTypeIndex())->analyticEnergy(r);
 }
 
 // Return force between Atom types at squared distance specified
@@ -178,7 +178,7 @@ double PotentialMap::force(const Atom* i, const Atom* j, double r) const
 	}
 #endif
 	// Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the interpolated potential
-	PairPotential* pp = potentialMatrix_.value(i->masterTypeIndex(), j->masterTypeIndex());
+	PairPotential* pp = potentialMatrix_.constAt(i->masterTypeIndex(), j->masterTypeIndex());
 	if (pp->includeCoulomb()) return pp->force(r);
 	else return (pp->force(r) + pp->analyticCoulombForce(i->charge() * j->charge(), r));
 }
@@ -203,5 +203,5 @@ double PotentialMap::analyticForce(const Atom* i, const Atom* j, double r) const
 		return 0.0;
 	}
 #endif
-	return potentialMatrix_.value(i->masterTypeIndex(), j->masterTypeIndex())->analyticForce(r);
+	return potentialMatrix_.constAt(i->masterTypeIndex(), j->masterTypeIndex())->analyticForce(r);
 }

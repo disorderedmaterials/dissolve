@@ -338,7 +338,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		for (AtomType* at1 = dissolve.atomTypes(); at1 != NULL; at1 = at1->next, ++i)
 		{
 			j = i;
-			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j) combinedUnweightedSQ.ref(i,j).setObjectName(CharString("%s//UnweightedSQ//%s//%s-%s", uniqueName(), group->name(), at1->name(), at2->name()));
+			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j) combinedUnweightedSQ.at(i,j).setObjectName(CharString("%s//UnweightedSQ//%s//%s-%s", uniqueName(), group->name(), at1->name(), at2->name()));
 		}
 
 		// Realise storage for generated S(Q), and initialise a scattering matrix
@@ -381,10 +381,10 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					double globalJ = atd2->atomType()->index();
 
 					XYData partialIJ = unweightedSQ.constPartial(i,j);
-					combinedUnweightedSQ.ref(globalI, globalJ ).addInterpolated(partialIJ, factor);
-					combinedRho.ref(globalI, globalJ) += rho * factor;
-					combinedFactor.ref(globalI, globalJ) += factor;
-					combinedCWeights.ref(globalI, globalJ) += weights.concentrationWeight(i,j);
+					combinedUnweightedSQ.at(globalI, globalJ ).addInterpolated(partialIJ, factor);
+					combinedRho.at(globalI, globalJ) += rho * factor;
+					combinedFactor.at(globalI, globalJ) += factor;
+					combinedCWeights.at(globalI, globalJ) += weights.concentrationWeight(i,j);
 				}
 			}
 		}
@@ -394,9 +394,9 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		{
 			for (j=i; j<nAtomTypes; ++j)
 			{
-				combinedUnweightedSQ.ref(i,j) /= combinedFactor.value(i,j);
-				combinedRho.ref(i,j) /= combinedFactor.value(i,j);
-				combinedCWeights.ref(i,j) /= combinedFactor.value(i,j);
+				combinedUnweightedSQ.at(i,j) /= combinedFactor.constAt(i,j);
+				combinedRho.at(i,j) /= combinedFactor.constAt(i,j);
+				combinedCWeights.at(i,j) /= combinedFactor.constAt(i,j);
 			}
 		}
 
@@ -417,10 +417,10 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			{
 				// Weight in the matrix will be based on the natural isotope and the summed concentration weight
 				double factor = Isotopes::naturalIsotope(at1->element())->boundCoherent() * Isotopes::naturalIsotope(at2->element())->boundCoherent() * 0.01;
-				factor *= combinedCWeights.value(i,j);
+				factor *= combinedCWeights.constAt(i,j);
 
 				// Copy the unweighted data and wight weight it according to the natural isotope / concentration factor calculated above
-				XYData data = combinedUnweightedSQ.ref(i, j);
+				XYData data = combinedUnweightedSQ.at(i, j);
 				data.arrayY() *= factor;
 				data.setName(CharString("Simulated %s-%s", at1->name(), at2->name()));
 
@@ -461,12 +461,12 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 			{
 				// Grab experimental g(r) container and make sure its object name is set
-				XYData& expGR = generatedGR.ref(i,j);
+				XYData& expGR = generatedGR.at(i,j);
 				expGR.setObjectName(CharString("%s//GeneratedGR//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
 
 				// Copy experimental S(Q) and FT it
-				expGR = generatedSQ.ref(i,j);
-				expGR.sineFT(1.0 / (2 * PI * PI * combinedRho.ref(i,j)), 0.0, 0.05, 30.0, WindowFunction(WindowFunction::Lorch0Window));
+				expGR = generatedSQ.at(i,j);
+				expGR.sineFT(1.0 / (2 * PI * PI * combinedRho.at(i,j)), 0.0, 0.05, 30.0, WindowFunction(WindowFunction::Lorch0Window));
 				expGR.arrayY() += 1.0;
 			}
 		}
@@ -503,7 +503,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					if (i != j) weight *= 0.5;
 
 					// Apply the (1.0/rho) factor here, since our expansion function normalisations don't contain it
-					weight /= combinedRho.ref(i,j);
+					weight /= combinedRho.at(i,j);
 
 					// Store fluctuation coefficients ready for addition to potential coefficients later on.
 					for (int n=0; n<ncoeffp; ++n) fluctuationCoefficients.ref(i, j, n) += weight * fitCoefficients.value(n);
@@ -528,7 +528,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			j = i;
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 			{
-				Array<double>& potCoeff = coefficients.ref(i, j);
+				Array<double>& potCoeff = coefficients.at(i, j);
 				for (int n=0; n<ncoeffp; ++n) potCoeff[n] += fluctuationCoefficients.value(i, j, n);
 			}
 		}

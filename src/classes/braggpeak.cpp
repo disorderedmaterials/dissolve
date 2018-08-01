@@ -91,7 +91,7 @@ void BraggPeak::resetIntensities()
 // Add intensity between specified atomtypes
 void BraggPeak::addIntensity(int typeI, int typeJ, double intensity)
 {
-	intensities_.ref(typeI, typeJ) += intensity;
+	intensities_.at(typeI, typeJ) += intensity;
 }
 
 // Scale intensities between all atom types by factor provided
@@ -109,7 +109,7 @@ void BraggPeak::scaleIntensity(double factor)
 // Return literal intensity between specified atom types for this peak
 double BraggPeak::intensity(int typeI, int typeJ)
 {
-	return intensities_.value(typeI, typeJ);
+	return intensities_.at(typeI, typeJ);
 }
 
 // Increment number of k-vectors by specified amount

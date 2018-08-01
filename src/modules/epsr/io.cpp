@@ -155,7 +155,7 @@ bool EPSRModule::readPCof(Dissolve& dissolve, ProcessPool& procPool, const char*
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return Messenger::error("Failed to read ??? and ??? from pcof file.\n");
 
 		// Grab the coefficient storage from the module data and read the coefficients in - they will all be on one single line in the file.
-		Array<double>& coefficients = potentialCoefficients.ref(at1->index(), at2->index());
+		Array<double>& coefficients = potentialCoefficients.at(at1->index(), at2->index());
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return Messenger::error("Failed to read coefficients from pcof file.\n");
 		if (parser.nArgs() != ncoeffp) return Messenger::error("Number of potential coefficients (%i) does not match ncoeffp (%i).\n", parser.nArgs(), ncoeffp);
 		for (int i=0; i<ncoeffp; ++i) coefficients[i] = parser.argd(i);

@@ -72,60 +72,60 @@ bool SVD::decompose(const Array2D<double>& A, Array2D<double>& U, Array2D<double
 		scale = 0.0;
 		if(i < nRows)
 		{
-			for(k=i;k<nRows;k++) scale += fabs(U.value(k,i));
+			for(k=i;k<nRows;k++) scale += fabs(U.constAt(k,i));
 			if(scale != 0.0)
 			{
 				for(k=i;k<nRows;k++)
 				{
-				U.ref(k,i) /= scale;
-				s += U.value(k,i) * U.value(k,i);
+				U.at(k,i) /= scale;
+				s += U.constAt(k,i) * U.constAt(k,i);
 				}
 
-				f = U.value(i,i);
+				f = U.constAt(i,i);
 				g = -DissolveMath::sgn(sqrt(s),f);
 				h = f * g - s;
-				U.ref(i,i) = f - g;
+				U.at(i,i) = f - g;
 
 				for(j=l;j<nCols;j++)
 				{
-					for(s=0.0,k=i;k<nRows;k++) s += U.value(k,i) * U.value(k,j);
+					for(s=0.0,k=i;k<nRows;k++) s += U.constAt(k,i) * U.constAt(k,j);
 					f = s / h;
-					for(k=i;k<nRows;k++) U.ref(k,j) += f * U.value(k,i);
+					for(k=i;k<nRows;k++) U.at(k,j) += f * U.constAt(k,i);
 				}
-				for(k=i;k<nRows;k++) U.ref(k,i) *= scale;
+				for(k=i;k<nRows;k++) U.at(k,i) *= scale;
 			}
 		}
-		S.ref(i,i) = scale * g;
+		S.at(i,i) = scale * g;
 		g = 0.0;
 		s = 0.0;
 		scale = 0.0;
 		if(i < nRows && i != nCols-1)
 		{
-			for(k=l;k<nCols;k++) scale += fabs(U.value(i,k));
+			for(k=l;k<nCols;k++) scale += fabs(U.constAt(i,k));
 			if (scale)
 			{
 				for(k=l;k<nCols;k++)
 				{
-					U.ref(i,k) /= scale;
-					s += U.value(i,k) * U.value(i,k);
+					U.at(i,k) /= scale;
+					s += U.constAt(i,k) * U.constAt(i,k);
 				}
-				f = U.value(i,l);
+				f = U.constAt(i,l);
 				g = - DissolveMath::sgn(sqrt(s),f);
 				h = f * g - s;
-				U.ref(i,l) = f - g;
-				for(k=l;k<nCols;k++) rv1[k] = U.value(i,k) / h;
+				U.at(i,l) = f - g;
+				for(k=l;k<nCols;k++) rv1[k] = U.constAt(i,k) / h;
 				if (i != (nRows - 1))
 				{
 					for(j=l;j<nRows;j++)
 					{
-						for(s=0.0,k=l;k<nCols;k++) s += U.value(j,k) * U.value(i,k);
-						for(k=l;k<nCols;k++) U.ref(j,k) += s * rv1[k];
+						for(s=0.0,k=l;k<nCols;k++) s += U.constAt(j,k) * U.constAt(i,k);
+						for(k=l;k<nCols;k++) U.at(j,k) += s * rv1[k];
 					}
 				}
-				for(k=l;k<nCols;k++) U.ref(i,k) *= scale;
+				for(k=l;k<nCols;k++) U.at(i,k) *= scale;
 			}
 		}
-		anorm = max(anorm, (fabs(S.value(i,i)) + fabs(rv1[i])));
+		anorm = max(anorm, (fabs(S.constAt(i,i)) + fabs(rv1[i])));
 	}
 
 	// Accumulate right-hand transformation
@@ -135,21 +135,21 @@ bool SVD::decompose(const Array2D<double>& A, Array2D<double>& U, Array2D<double
 		{
 			if (g)
 			{
-				for(j=l;j<nCols;j++) Vt.ref(j,i) = (U.value(i,j) / U.value(i,l)) / g;
+				for(j=l;j<nCols;j++) Vt.at(j,i) = (U.constAt(i,j) / U.constAt(i,l)) / g;
 				for(j=l;j<nCols;j++)
 				{
-					for(s=0.0,k=l;k<nCols;k++) s += U.value(i,k) * Vt.value(k,j);
-					for(k=l;k<nCols;k++) Vt.ref(k,j) += s * Vt.value(k,i);
+					for(s=0.0,k=l;k<nCols;k++) s += U.constAt(i,k) * Vt.constAt(k,j);
+					for(k=l;k<nCols;k++) Vt.at(k,j) += s * Vt.constAt(k,i);
 				}
 			}
 
 			for(j=l;j<nCols;j++)
 			{
-				Vt.ref(i,j) = 0.0;
-				Vt.ref(j,i) = 0.0;
+				Vt.at(i,j) = 0.0;
+				Vt.at(j,i) = 0.0;
 			}
 		}
-		Vt.ref(i,i) = 1.0;
+		Vt.at(i,i) = 1.0;
 		g = rv1[i];
 		l = i;
 	}
@@ -159,8 +159,8 @@ bool SVD::decompose(const Array2D<double>& A, Array2D<double>& U, Array2D<double
 	for(i=nCols - 1;i >= 0;i--)
 	{
 		l = i + 1;
-		g = S.value(i,i);
-		if (i < (nCols-1)) for(j=l;j<nCols;j++) U.ref(i,j) = 0.0;
+		g = S.constAt(i,i);
+		if (i < (nCols-1)) for(j=l;j<nCols;j++) U.at(i,j) = 0.0;
 		if (g)
 		{
 			g = 1.0 / g;
@@ -168,19 +168,19 @@ bool SVD::decompose(const Array2D<double>& A, Array2D<double>& U, Array2D<double
 			{
 				for(j=l;j<nCols;j++)
 				{
-					for (s=0.0,k=l;k<nRows;k++) s += U.value(k,i) * U.value(k,j);
-					f = (s / U.value(i,i)) * g;
-					for (k=i;k<nRows;k++) U.ref(k,j) += f * U.value(k,i);
+					for (s=0.0,k=l;k<nRows;k++) s += U.constAt(k,i) * U.constAt(k,j);
+					f = (s / U.constAt(i,i)) * g;
+					for (k=i;k<nRows;k++) U.at(k,j) += f * U.constAt(k,i);
 				}
 			}
-			for(j=i;j<nRows;j++) U.ref(j,i) *= g;
+			for(j=i;j<nRows;j++) U.at(j,i) *= g;
 		}
 		else
 		{
-			for(j=i;j<nRows;j++) U.ref(j,i) = 0.0;
+			for(j=i;j<nRows;j++) U.at(j,i) = 0.0;
 		}
 
-		++U.ref(i,i);
+		++U.at(i,i);
 	}
 
 	// Diagonalise the bidiagonal form
@@ -197,7 +197,7 @@ bool SVD::decompose(const Array2D<double>& A, Array2D<double>& U, Array2D<double
 					flag =  0;
 					break;
 				}
-				if((fabs(S.value(nm,nm)) + anorm) == anorm) break;
+				if((fabs(S.constAt(nm,nm)) + anorm) == anorm) break;
 			}
 			if(flag)
 			{
@@ -210,38 +210,38 @@ bool SVD::decompose(const Array2D<double>& A, Array2D<double>& U, Array2D<double
 				// 	  rv1[i] = c * rv1[i];
 					if((fabs(f) + anorm) != anorm)
 					{
-						g = S.value(i,i);
+						g = S.constAt(i,i);
 						h = pythag(f,g);
-						S.ref(i,i) = h;
+						S.at(i,i) = h;
 						h = 1.0 / h;
 						c = g * h;
 						s = -f * h;
 						for(j=0;j<nRows;j++)
 						{
-							y = U.value(j,nm);
-							z = U.value(j,i);
-							U.ref(j,nm) = y * c + z * s;
-							U.ref(j,i) = z * c - y * s;
+							y = U.constAt(j,nm);
+							z = U.constAt(j,i);
+							U.at(j,nm) = y * c + z * s;
+							U.at(j,i) = z * c - y * s;
 						}
 					}
 				}
 			}
-			z = S.value(k,k);
+			z = S.constAt(k,k);
 			if (l == k)
 			{
 				if(z < 0.0)
 				{
-					S.ref(k,k) = -z;
-					for(j=0;j<nCols;j++) Vt.ref(j,k) = -Vt.value(j,k);
+					S.at(k,k) = -z;
+					for(j=0;j<nCols;j++) Vt.at(j,k) = -Vt.constAt(j,k);
 				}
 				break;
 			}
 			if(its == 29) return Messenger::error("DissolveMath::svd() - No convergence in 30 iterations.\n");
 
 			// Shift from bottom 2x2 minor
-			x = S.value(l,l);
+			x = S.constAt(l,l);
 			nm = k-1;
-			y = S.value(nm,nm);
+			y = S.constAt(nm,nm);
 			g = rv1[nm];
 			h = rv1[k];
 			f = ((y - z) * (y + z) + (g - h) * (g + h)) / (2.0 * h * y);
@@ -253,7 +253,7 @@ bool SVD::decompose(const Array2D<double>& A, Array2D<double>& U, Array2D<double
 			{
 				i = j+1;
 				g = rv1[i];
-				y = S.value(i,i);
+				y = S.constAt(i,i);
 				h = s * g;
 				g = c * g;
 				z = pythag(f,h);
@@ -266,13 +266,13 @@ bool SVD::decompose(const Array2D<double>& A, Array2D<double>& U, Array2D<double
 				y *= c;
 				for(jj=0;jj<nCols;jj++)
 				{
-					x = Vt.value(jj,j);
-					z = Vt.value(jj,i);
-					Vt.ref(jj,j) = x * c + z * s;
-					Vt.ref(jj,i) = z * c - x * s;
+					x = Vt.constAt(jj,j);
+					z = Vt.constAt(jj,i);
+					Vt.at(jj,j) = x * c + z * s;
+					Vt.at(jj,i) = z * c - x * s;
 				}
 				z = pythag(f,h);
-				S.ref(j,j) = z;
+				S.at(j,j) = z;
 				if(z)
 				{
 					z = 1.0 / z;
@@ -283,15 +283,15 @@ bool SVD::decompose(const Array2D<double>& A, Array2D<double>& U, Array2D<double
 				x = c * y - s * g;
 				for(jj=0;jj < nRows;jj++)
 				{
-					y = U.value(jj,j);
-					z = U.value(jj,i);
-					U.ref(jj,j) = y * c + z * s;
-					U.ref(jj,i) = z * c - y * s;
+					y = U.constAt(jj,j);
+					z = U.constAt(jj,i);
+					U.at(jj,j) = y * c + z * s;
+					U.at(jj,i) = z * c - y * s;
 				}
 			}
 			rv1[l] = 0.0;
 			rv1[k] = f;
-			S.ref(k,k) = x;
+			S.at(k,k) = x;
 		}
 	}
 
@@ -312,9 +312,9 @@ void SVD::test()
 	 */
 	A.initialise(3,3);
 	A = 0.0;
-	A.ref(0,0) = 1.0;
-	A.ref(1,1) = 1.0;
-	A.ref(2,2) = 1.0;
+	A.at(0,0) = 1.0;
+	A.at(1,1) = 1.0;
+	A.at(2,2) = 1.0;
 	A.print("A");
 	decompose(A, U, S, V);
 	U.print("U");
@@ -336,10 +336,10 @@ void SVD::test()
 	 */
 	A.initialise(5,4);
 	A = 0.0;
-	A.ref(0,0) = 1.0;
-	A.ref(4,0) = 2.0;
-	A.ref(2,1) = 3.0;
-	A.ref(1,3) = 2.0;
+	A.at(0,0) = 1.0;
+	A.at(4,0) = 2.0;
+	A.at(2,1) = 3.0;
+	A.at(1,3) = 2.0;
 	A.print("A");
 	decompose(A, U, S, V);
 	U.print("U");
@@ -374,7 +374,7 @@ bool SVD::pseudoinverse(Array2D<double>& A)
 	for (int n=0; n<A.nRows(); ++n)
 	{
 		// TODO Need better double comparison here
-		for (int m=0; m<A.nColumns(); ++m) if (fabs(A.value(n,m)-A2.value(n,m)) > 1.0e-9) return Messenger::error("DissolveMath::pseudoinverse() - SVD does not appear to be valid.\n");
+		for (int m=0; m<A.nColumns(); ++m) if (fabs(A.constAt(n,m)-A2.constAt(n,m)) > 1.0e-9) return Messenger::error("DissolveMath::pseudoinverse() - SVD does not appear to be valid.\n");
 	}
 // 	A.print("Original A");
 // 	A2.print("Recombined A");
@@ -382,7 +382,7 @@ bool SVD::pseudoinverse(Array2D<double>& A)
 	// Take the diagonal single-value matrix S and form its pseudoinverse.
 	// This amounts to taking each non-zero diagonal element and replacing it with its reciprocal
 	Array2D<double> Splus = S;
-	for (int n=0; n<S.nRows(); ++n) if (fabs(Splus.value(n,n)) > 1.0e-16) Splus.ref(n,n) = 1.0 / Splus.value(n,n);
+	for (int n=0; n<S.nRows(); ++n) if (fabs(Splus.constAt(n,n)) > 1.0e-16) Splus.at(n,n) = 1.0 / Splus.constAt(n,n);
 
 	// Transpose U and Vt to get Ut and V, and multiply
 	A = Vt.transposed() * Splus * U.transposed();

@@ -232,14 +232,14 @@ void GaussFit::updatePrecalculatedFunctions(FunctionSpace::SpaceType space, doub
 	{
 		for (int n=0; n<nGaussians_; ++n)
 		{
-			for (int m=0; m<referenceData_.nPoints(); ++m) functions_.ref(n, m) = gaussian(referenceData_.x(m), x_[n], A, fwhm_[n]);
+			for (int m=0; m<referenceData_.nPoints(); ++m) functions_.at(n, m) = gaussian(referenceData_.x(m), x_[n], A, fwhm_[n]);
 		}
 	}
 	else 
 	{
 		for (int n=0; n<nGaussians_; ++n)
 		{
-			for (int m=0; m<referenceData_.nPoints(); ++m) functions_.ref(n, m) = gaussianFT(referenceData_.x(m), x_[n], A, fwhm_[n]);
+			for (int m=0; m<referenceData_.nPoints(); ++m) functions_.at(n, m) = gaussianFT(referenceData_.x(m), x_[n], A, fwhm_[n]);
 		}
 	}
 }
@@ -694,7 +694,7 @@ double GaussFit::costTabulatedA(const Array<double>& alpha)
 		y = approximateData_.y(i);
 
 		// Add in contributions from our Gaussians
-		for (int n=0; n<nAlpha; ++n) y += functions_.value(alphaIndex_[n], i) * alpha.value(n);
+		for (int n=0; n<nAlpha; ++n) y += functions_.at(alphaIndex_[n], i) * alpha.value(n);
 
 		dy = referenceData_.y(i) - y;
 		sose += dy*dy;

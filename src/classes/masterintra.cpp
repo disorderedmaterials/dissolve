@@ -66,17 +66,17 @@ void MasterIntra::initialiseUsageArray(int nAtomTypes)
 // Return usage between specified pair of AtomType indices
 int MasterIntra::usageCount(int idI, int idJ)
 {
-	return usageCounts_.value(idI, idJ);
+	return usageCounts_.at(idI, idJ);
 }
 
 // Register single usage of this term by the specified AtomType pair
 void MasterIntra::registerUsage(int idI, int idJ)
 {
-	++usageCounts_.ref(idI, idJ);
+	++usageCounts_.at(idI, idJ);
 }
 
 // Unregister single usage of this term by the specified AtomType pair
 void MasterIntra::unregisterUsage(int idI, int idJ)
 {
-	--usageCounts_.ref(idI, idJ);
+	--usageCounts_.at(idI, idJ);
 }

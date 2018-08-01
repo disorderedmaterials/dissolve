@@ -233,7 +233,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		for (AtomType* at1 = dissolve.atomTypes(); at1 != NULL; at1 = at1->next, ++i)
 		{
 			j = i;
-			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j) combinedUnweightedSQ.ref(i,j).setObjectName(CharString("%s//UnweightedSQ//%s//%s-%s", uniqueName(), group->name(), at1->name(), at2->name()));
+			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j) combinedUnweightedSQ.at(i,j).setObjectName(CharString("%s//UnweightedSQ//%s//%s-%s", uniqueName(), group->name(), at1->name(), at2->name()));
 		}
 
 		// Realise storage for generated S(Q), and reinitialise the scattering matrix
@@ -274,10 +274,10 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					double globalJ = atd2->atomType()->index();
 
 					XYData partialIJ = unweightedSQ.constPartial(i,j);
-					combinedUnweightedSQ.ref(globalI, globalJ ).addInterpolated(partialIJ, factor);
-					combinedRho.ref(globalI, globalJ) += rho * factor;
-					combinedFactor.ref(globalI, globalJ) += factor;
-					combinedCWeights.ref(globalI, globalJ) += weights.concentrationWeight(i,j);
+					combinedUnweightedSQ.at(globalI, globalJ ).addInterpolated(partialIJ, factor);
+					combinedRho.at(globalI, globalJ) += rho * factor;
+					combinedFactor.at(globalI, globalJ) += factor;
+					combinedCWeights.at(globalI, globalJ) += weights.concentrationWeight(i,j);
 				}
 			}
 		}
@@ -287,9 +287,9 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		{
 			for (j=i; j<dissolve.nAtomTypes(); ++j)
 			{
-				combinedUnweightedSQ.ref(i,j) /= combinedFactor.value(i,j);
-				combinedRho.ref(i,j) /= combinedFactor.value(i,j);
-				combinedCWeights.ref(i,j) /= combinedFactor.value(i,j);
+				combinedUnweightedSQ.at(i,j) /= combinedFactor.constAt(i,j);
+				combinedRho.at(i,j) /= combinedFactor.constAt(i,j);
+				combinedCWeights.at(i,j) /= combinedFactor.constAt(i,j);
 			}
 		}
 
@@ -312,10 +312,10 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				{
 					// Weight in the matrix will be based on the natural isotope and the summed concentration weight
 					double factor = Isotopes::naturalIsotope(at1->element())->boundCoherent() * Isotopes::naturalIsotope(at2->element())->boundCoherent() * 0.01;
-					factor *= combinedCWeights.value(i,j);
+					factor *= combinedCWeights.constAt(i,j);
 
 					// Copy the unweighted data and wight weight it according to the natural isotope / concentration factor calculated above
-					XYData data = combinedUnweightedSQ.ref(i, j);
+					XYData data = combinedUnweightedSQ.at(i, j);
 					data.arrayY() *= factor;
 					data.setName(CharString("Simulated %s-%s", at1->name(), at2->name()));
 
@@ -356,12 +356,12 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 			{
 				// Grab experimental g(r) contained and make sure its object name is set
-				XYData& expGR = generatedGR.ref(i,j);
+				XYData& expGR = generatedGR.at(i,j);
 				expGR.setObjectName(CharString("%s//GeneratedGR//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
 
 				// Copy experimental S(Q) and FT it
-				expGR = generatedSQ.ref(i,j);
-				expGR.sineFT(1.0 / (2 * PI * PI * combinedRho.ref(i,j)), 0.0, 0.05, 30.0, WindowFunction(WindowFunction::Lorch0Window));
+				expGR = generatedSQ.at(i,j);
+				expGR.sineFT(1.0 / (2 * PI * PI * combinedRho.at(i,j)), 0.0, 0.05, 30.0, WindowFunction(WindowFunction::Lorch0Window));
 				expGR.arrayY() += 1.0;
 			}
 		}
@@ -386,16 +386,16 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 			{
 				// Grab difference partial and make sure its object name is set
-				XYData& dSQ = deltaSQ.ref(i, j);
+				XYData& dSQ = deltaSQ.at(i, j);
 				dSQ.setObjectName(CharString("%s//DeltaSQ//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
 
 				// Reset the difference partial
 				dSQ.clear();
 
 				// Create the difference partial
-				const Array<double> x1 = generatedSQ.ref(i, j).constArrayX();
-				const Array<double> y1 = generatedSQ.ref(i, j).constArrayY();
-				XYData& simulatedSQ = combinedUnweightedSQ.ref(i,j);
+				const Array<double> x1 = generatedSQ.at(i, j).constArrayX();
+				const Array<double> y1 = generatedSQ.at(i, j).constArrayY();
+				XYData& simulatedSQ = combinedUnweightedSQ.at(i,j);
 
 				// Determine allowable range for fit, based on requested values and limits of generated / simulated datasets
 				double deltaSQMin = qMin, deltaSQMax = (qMax < 0.0 ? x1.last() : qMax);
@@ -415,7 +415,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				}
 
 				// Calculate current error between experimental and simulation partials and sum it into our array
-				globalCombinedErrors.ref(i, j) += refSQTrimmed.error(simulatedSQ);
+				globalCombinedErrors.at(i, j) += refSQTrimmed.error(simulatedSQ);
 			}
 		}
 
@@ -456,14 +456,14 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					if (n < gr.nPoints())
 					{
 						double x = gr.x(n) * rFraction;
-						if (x < globalMinimumRadius) minimumRadii.ref(i,j) = globalMinimumRadius;
-						else if (x < globalMaximumRadius) minimumRadii.ref(i,j) = x;
-						else minimumRadii.ref(i,j) = globalMaximumRadius;
+						if (x < globalMinimumRadius) minimumRadii.at(i,j) = globalMinimumRadius;
+						else if (x < globalMaximumRadius) minimumRadii.at(i,j) = x;
+						else minimumRadii.at(i,j) = globalMaximumRadius;
 						
 					}
-					else minimumRadii.ref(i,j) = globalMaximumRadius;
+					else minimumRadii.at(i,j) = globalMaximumRadius;
 
-					Messenger::print("Minimum radius for %s-%s interatomic potential determined to be %f Angstroms.\n", at1->name(), at2->name(), minimumRadii.value(i,j));
+					Messenger::print("Minimum radius for %s-%s interatomic potential determined to be %f Angstroms.\n", at1->name(), at2->name(), minimumRadii.constAt(i,j));
 				}
 			}
 		}
@@ -481,12 +481,12 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 			{
 				// Grab potential perturbation container, clear it, and make sure its object name is set
-				XYData& dPhiR = groupDeltaPhiR.ref(i, j);
+				XYData& dPhiR = groupDeltaPhiR.at(i, j);
 				dPhiR.clear();
 				dPhiR.setObjectName(CharString("%s//DeltaPhiR//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
 
 				// Grab delta g(r) container and make sure its object name is set
-				XYData& inversion = groupDeltaGR.ref(i, j);
+				XYData& inversion = groupDeltaGR.at(i, j);
 				inversion.setObjectName(CharString("%s//Inversion//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
 
 				// Set the default weighting factor for the pair potential addition
@@ -509,8 +509,8 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				if (inversionMethod == RefineModule::DirectFourierPotentialInversion)
 				{
 					// Copy the delta S(Q) and do the inverse FT to get the delta [g(r) - 1]
-					inversion = deltaSQ.ref(i, j);
-					inversion.sineFT(1.0 / (2 * PI * PI * combinedRho.ref(i,j)), ppDelta, ppDelta, ppRange, windowFunction);
+					inversion = deltaSQ.at(i, j);
+					inversion.sineFT(1.0 / (2 * PI * PI * combinedRho.at(i,j)), ppDelta, ppDelta, ppRange, windowFunction);
 
 					dPhiR = inversion;
 					dPhiR.arrayY() *= -1.0;
@@ -518,7 +518,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				else if (inversionMethod == RefineModule::DirectGaussianPotentialInversion)
 				{
 					// Perform a Gaussian fit and do the inverse FT to get the delta [g(r) - 1]
-					GaussFit gaussFit(deltaSQ.ref(i, j));
+					GaussFit gaussFit(deltaSQ.at(i, j));
 					double error = 999.999; //gaussFit.constructReciprocal();
 					Messenger::print("Fitted function has error of %f%% with original delta S(Q) (nGaussians = %i).\n", error, gaussFit.nGaussians());
 
@@ -530,15 +530,15 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					// DEBUG
 					if (false)
 					{
-						deltaSQ.ref(i, j).save(CharString("%s-%s.orig", at1->name(), at2->name()));
+						deltaSQ.at(i, j).save(CharString("%s-%s.orig", at1->name(), at2->name()));
 						gaussFit.approximation().save(CharString("%s-%s.approx", at1->name(), at2->name()));
 						gaussFit.saveCoefficients(CharString("%s-%s.coeff", at1->name(), at2->name()));
 // 						gaussFit.saveFTGaussians(CharString("%s-%s", at1->name(), at2->name()), 0.01);
-						gaussFit.approximation(FunctionSpace::RealSpace, 1.0 / (2 * PI * PI * combinedRho.ref(i,j)), ppDelta, ppDelta, ppRange).save(CharString("%s-%s.ft", at1->name(), at2->name()));
+						gaussFit.approximation(FunctionSpace::RealSpace, 1.0 / (2 * PI * PI * combinedRho.at(i,j)), ppDelta, ppDelta, ppRange).save(CharString("%s-%s.ft", at1->name(), at2->name()));
 					}
 
 					// Fourier transform the approximation, and store this as our inversion
-					inversion = gaussFit.approximation(FunctionSpace::RealSpace, 1.0 / (2 * PI * PI * combinedRho.ref(i,j)), ppDelta, ppDelta, ppRange);
+					inversion = gaussFit.approximation(FunctionSpace::RealSpace, 1.0 / (2 * PI * PI * combinedRho.at(i,j)), ppDelta, ppDelta, ppRange);
 					dPhiR = inversion;
 					dPhiR.arrayY() *= -1.0;
 				}
@@ -562,7 +562,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					 */
 
 					// Calculate c(r) from the delta S(Q)
-					cr = calculateCR(deltaSQ.ref(i, j), 1.0 / (2.0*PI*PI*combinedRho.ref(i,j)), ppDelta, ppDelta, ppRange, windowFunction);
+					cr = calculateCR(deltaSQ.at(i, j), 1.0 / (2.0*PI*PI*combinedRho.at(i,j)), ppDelta, ppDelta, ppRange, windowFunction);
 
 					// inversion contains the FT of the delta S(Q), and oscillates around zero.
 					// Scale the data to have a maximum deviation from zero of 1.0, so that we avoid any possibility to get NaNs when taking the ln later on
@@ -612,7 +612,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				else return Messenger::error("Potential inversion method %i not accounted for.\n", inversionMethod);
 
 				// Apply smooth zeroing of potential up to the minimum distance, and truncate at the end
-				double minimumRadius = minimumRadii.value(i,j);
+				double minimumRadius = minimumRadii.constAt(i,j);
 				const double truncationStart = minimumRadius - truncationWidth;
 				double r;
 				Array<double>& y = dPhiR.arrayY();
@@ -647,7 +647,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		{
 			XYData& partialErrors = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), CharString("PartialError_%s-%s", at1->name(), at2->name()), uniqueName_, GenericItem::InRestartFileFlag);
 			// TODO This will be a straight sum of errors over groups, and may not be entirely representative? Needs to be weighted?
-			partialErrors.addPoint(dissolve.iteration(), globalCombinedErrors.value(i,j));
+			partialErrors.addPoint(dissolve.iteration(), globalCombinedErrors.constAt(i,j));
 		}
 	}
 
@@ -691,7 +691,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 						return false;
 					}
 
-					pp->adjustUAdditional(groupDeltaPhiR.value(i,j));
+					pp->adjustUAdditional(groupDeltaPhiR.constAt(i,j));
 				}
 			}
 		}

@@ -96,7 +96,7 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve& dissolve, EPSRModule::Exp
 		j = i;
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 		{
-			Array<double>& potCoeff = coefficients.ref(i, j);
+			Array<double>& potCoeff = coefficients.at(i, j);
 
 			// Regenerate empirical potential from the stored coefficients
 			XYData ep;
@@ -153,7 +153,7 @@ double EPSRModule::absEnergyEP(Dissolve& dissolve)
 		int j = i;
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 		{
-			Array<double>& potCoeff = coefficients.ref(i, j);
+			Array<double>& potCoeff = coefficients.at(i, j);
 
 			double cMin = potCoeff.value(0);
 			double cMax = cMin;

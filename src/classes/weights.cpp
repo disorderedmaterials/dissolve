@@ -154,9 +154,9 @@ void Weights::calculateWeightingMatrices()
 			cj = at2->fraction();
 			bj = at2->boundCoherent() * 0.1;
 
-			concentrationMatrix_.ref(typeI,typeJ) = ci * cj;
-			boundCoherentMatrix_.ref(typeI,typeJ) = bi * bj;
-			fullMatrix_.ref(typeI,typeJ) = ci * cj * bi * bj * (typeI == typeJ ? 1 : 2);
+			concentrationMatrix_.at(typeI,typeJ) = ci * cj;
+			boundCoherentMatrix_.at(typeI,typeJ) = bi * bj;
+			fullMatrix_.at(typeI,typeJ) = ci * cj * bi * bj * (typeI == typeJ ? 1 : 2);
 		}
 	}
 
@@ -215,19 +215,19 @@ int Weights::nUsedTypes() const
 // Return concentration weighting for types i and j
 double Weights::concentrationWeight(int i, int j) const
 {
-	return concentrationMatrix_.value(i, j);
+	return concentrationMatrix_.constAt(i, j);
 }
 
 // Return full weighting, including atomic concentration, bound coherent scattering weights, and i != j weighting for types i and j
 double Weights::fullWeight(int i, int j) const
 {
-	return fullMatrix_.value(i, j);
+	return fullMatrix_.constAt(i, j);
 }
 
 // Return bound coherent scattering weighting for types i and j
 double Weights::boundCoherentWeight(int i, int j) const
 {
-	return boundCoherentMatrix_.value(i, j);
+	return boundCoherentMatrix_.constAt(i, j);
 }
 
 // Return full scattering weights matrix (ci * cj * bi * bj * (i == j ? 1 : 2))
