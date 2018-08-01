@@ -104,7 +104,7 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 
 	// F(r) Graph
 	
-	FRGraph_ = ui.GRPlotWidget;
+	FRGraph_ = ui.FRPlotWidget;
 
 	// Start a new, empty session
 	FRGraph_->startNewSession(true);
@@ -271,14 +271,21 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 		// Calculated data from associated module
 		if (DissolveSys::sameString(targetModule->name(), "NeutronSQ"))
 		{
+			// F(Q)
 			blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated'; Source XYData '%s//WeightedSQ//Total'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName());
 			FQGraph_->addCollectionFromBlock(blockData);
 
+			// F(Q) diff w.r.t. reference
 			blockData.sprintf("Collection '%s Diff'; Group '%s'; LineStyle  1.0 'Dots'; DataSet '%s Error'; Source XYData '%s//Difference//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
 			FQGraph_->addCollectionFromBlock(blockData);
 
+			// Error of fit between F(Q) and reference
 			blockData.sprintf("Collection '%s Calc'; Group '%s'; DataSet '%s Error'; Source XYData '%s//Error//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
 			errorsGraph_->addCollectionFromBlock(blockData);
+
+			// Simulated F(r) (from FT of the calculated F(Q))
+			blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated'; Source XYData '%s//WeightedGR//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
+			FRGraph_->addCollectionFromBlock(blockData);
 		}
 
 		// Delta F(Q) and fit
@@ -287,6 +294,7 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 
 		blockData.sprintf("Collection '%s Fit'; Group '%s'; LineStyle  1.0 'Quarter Dash'; DataSet '%s Fit'; Source XYData '%s//DeltaFQFit//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
 		FQFitGraph_->addCollectionFromBlock(blockData);
+
 	}
 
 	// Loop over groups
