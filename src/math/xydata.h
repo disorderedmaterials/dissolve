@@ -70,7 +70,7 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	// Create new X data and empty Y data
 	void createEmpty(double xDelta, double xMax, bool halfBins = true);
 	// Copy existing X and Y data
-	void copyData(XYData& source);
+	void copyData(const XYData& source);
 	// Copy existing X data and generate empty Y
 	void templateFrom(const XYData& source);
 	// Return current array size

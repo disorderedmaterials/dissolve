@@ -113,7 +113,7 @@ void XYData::createEmpty(double xDelta, double xMax, bool halfBins)
 }
 
 // Copy existing X and Y data
-void XYData::copyData(XYData& source)
+void XYData::copyData(const XYData& source)
 {
 	x_ = source.x_;
 	y_ = source.y_;
