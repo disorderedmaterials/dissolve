@@ -1019,6 +1019,25 @@ bool XYData::load(const char* filename, int xcol, int ycol)
 	return result;
 }
 
+// Load data from specified file through ProcessPool, using columns specified
+bool XYData::load(ProcessPool& pool, const char* filename, int xcol, int ycol)
+{
+	// Open file across ProcessPool and check that we're OK to proceed reading from it
+	LineParser parser(&pool);
+
+	if ((!parser.openInput(filename)) || (!parser.isFileGoodForReading()))
+	{
+		Messenger::error("Couldn't open file '%s' for reading.\n", filename);
+		return false;
+	}
+
+	bool result = load(parser, xcol, ycol);
+
+	parser.closeFiles();
+	
+	return result;
+}
+
 // Save data to specified file
 bool XYData::save(const char* filename) const
 {
