@@ -8,6 +8,7 @@ add_library(keywordtypes
   isotopologuelist.cpp
   pairbroadeningfunction.cpp
   windowfunction.cpp
+  xydatastore.cpp
 
   bool.h
   broadeningfunction.h
@@ -18,6 +19,7 @@ add_library(keywordtypes
   isotopologuelist.h
   pairbroadeningfunction.h
   windowfunction.h
+  xydatastore.h
 )
 
 include_directories(

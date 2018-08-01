@@ -41,5 +41,6 @@
 #include "module/keywordtypes/isotopologuelist.h"
 #include "module/keywordtypes/pairbroadeningfunction.h"
 #include "module/keywordtypes/windowfunction.h"
+#include "module/keywordtypes/xydatastore.h"
 
 #endif

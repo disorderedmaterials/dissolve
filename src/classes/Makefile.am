@@ -17,6 +17,7 @@ libclasses_la_SOURCES += regionaldistributor.cpp
 libclasses_la_SOURCES += scaledenergykernel.cpp scatteringmatrix.cpp species.cpp species_atomic.cpp species_grains.cpp species_intra.cpp species_io.cpp species_isotopologues.cpp species_transform.cpp speciesangle.cpp speciesatom.cpp speciesbond.cpp speciesgrain.cpp speciesinfo.cpp speciesintra.cpp speciestorsion.cpp species_io.cpp
 libclasses_la_SOURCES += torsion.cpp
 libclasses_la_SOURCES += weights.cpp
+libclasses_la_SOURCES += xydatastore.cpp
 
 noinst_HEADERS = angle.h atom.h atomtype.h atomtypedata.h atomtypelist.h
 noinst_HEADERS += bond.h box.h braggpeak.h
@@ -34,5 +35,6 @@ noinst_HEADERS += regionaldistributor.h
 noinst_HEADERS += scaledenergykernel.h scatteringmatrix.h species.h speciesangle.h speciesatom.h speciesbond.h speciesgrain.h speciesinfo.h speciesintra.h speciestorsion.h
 noinst_HEADERS += torsion.h
 noinst_HEADERS += weights.h
+noinst_HEADERS += xydatastore.h
 
 AM_CPPFLAGS = -I../ @DISSOLVE_CFLAGS@

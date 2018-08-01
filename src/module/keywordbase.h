@@ -27,14 +27,14 @@
 #include "templates/listitem.h"
 
 // Forward Declarations
-/* none */
+class ProcessPool;
 
 // Module Keyword Base Class
 class ModuleKeywordBase : public ListItem<ModuleKeywordBase>
 {
 	public:
 	// Keyword Data Type
-	enum KeywordDataType { ComplexData, BoolData, IntegerData, DoubleData, CharStringData, BroadeningFunctionData, IsotopologueListData, PairBroadeningFunctionData, WindowFunctionData };
+	enum KeywordDataType { ComplexData, BoolData, IntegerData, DoubleData, CharStringData, BroadeningFunctionData, IsotopologueListData, PairBroadeningFunctionData, WindowFunctionData, XYDataStoreData };
 	// Constructor
 	ModuleKeywordBase(KeywordDataType type);
 	// Destructor

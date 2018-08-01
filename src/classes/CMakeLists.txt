@@ -60,6 +60,7 @@ add_library(classes
   species_transform.cpp
   torsion.cpp
   weights.cpp
+  xydatastore.cpp
   
   angle.h
   atom.h
@@ -108,6 +109,7 @@ add_library(classes
   speciestorsion.h
   torsion.h
   weights.h
+  xydatastore.h
   )
 
 include_directories(
