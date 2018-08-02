@@ -85,8 +85,10 @@ class AtomTypeList : public GenericItemBase
 	 * Access
 	 */
 	public:
-	// Return index of AtomType/Isotope in list
+	// Return index of AtomType in list
 	int indexOf(AtomType* atomtype) const;
+	// Return index of names AtomType in list
+	int indexOf(const char* name) const;
 	// Return total population of all types in list
 	int totalPopulation() const;
 	// Finalise list, calculating fractional populations etc.

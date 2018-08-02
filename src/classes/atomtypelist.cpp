@@ -26,6 +26,7 @@
 #include "data/isotopes.h"
 #include "base/lineparser.h"
 #include "base/processpool.h"
+#include "base/sysfunc.h"
 #include "templates/broadcastlist.h"
 #include "templates/listio.h"
 #include <string.h>
@@ -180,7 +181,7 @@ void AtomTypeList::print() const
  * Access
  */
 
-// Return index of AtomType/Isotope in list
+// Return index of AtomType in list
 int AtomTypeList::indexOf(AtomType* atomtype) const
 {
 	int count = 0;
@@ -189,6 +190,20 @@ int AtomTypeList::indexOf(AtomType* atomtype) const
 		if (atd->atomType() == atomtype) return count;
 		++count;
 	}
+
+	return -1;
+}
+
+// Return index of names AtomType in list
+int AtomTypeList::indexOf(const char* name) const
+{
+	int count = 0;
+	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next)
+	{
+		if (DissolveSys::sameString(atd->atomType()->name(), name)) return count;
+		++count;
+	}
+
 	return -1;
 }
 
