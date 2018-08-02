@@ -88,7 +88,7 @@ bool SQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Does a PartialSet already exist for this Configuration?
 		bool wasCreated;
 		PartialSet& unweightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", "SQ", GenericItem::InRestartFileFlag, &wasCreated);
-		if (wasCreated) unweightedsq.setUpPartials(unweightedgr.atomTypes(), cfg->niceName(), "unweighted", "sq", "Q, 1/Angstroms");
+		if (wasCreated) unweightedsq.setUpPartials(unweightedgr.atomTypes(), CharString("%s-%s", cfg->niceName(), uniqueName()), "unweighted", "sq", "Q, 1/Angstroms");
 
 		// Is the PartialSet already up-to-date?
 		if (DissolveSys::sameString(unweightedsq.fingerprint(), CharString("%i", cfg->moduleData().version("UnweightedGR"))))

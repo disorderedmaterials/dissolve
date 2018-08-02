@@ -167,7 +167,7 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Does a PartialSet for the unweighted S(Q) already exist for this Configuration?
 		PartialSet& unweightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", NULL, GenericItem::InRestartFileFlag, &created);
-		if (created) unweightedsq.setUpPartials(unweightedgr.atomTypes(), cfg->niceName(), "unweighted", "sq", "Q, 1/Angstroms");
+		if (created) unweightedsq.setUpPartials(unweightedgr.atomTypes(), CharString("%s-%s", cfg->niceName(), uniqueName()), "unweighted", "sq", "Q, 1/Angstroms");
 
 		// Is the PartialSet already up-to-date? Do we force its calculation anyway?
 		bool& forceCalculation = GenericListHelper<bool>::retrieve(cfg->moduleData(), "_ForceNeutronSQ", NULL, false);
@@ -219,7 +219,7 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Does a PartialSet for the unweighted S(Q) already exist for this Configuration?
 		PartialSet& weightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedSQ", NULL, GenericItem::InRestartFileFlag, &created);
-		if (created) weightedsq.setUpPartials(unweightedsq.atomTypes(), cfg->niceName(), "weighted", "sq", "Q, 1/Angstroms");
+		if (created) weightedsq.setUpPartials(unweightedsq.atomTypes(), CharString("%s-%s", cfg->niceName(), uniqueName()), "weighted", "sq", "Q, 1/Angstroms");
 
 		// Calculate weighted S(Q)
 		calculateWeightedSQ(unweightedsq, weightedsq, weights, normalisation);
@@ -241,10 +241,13 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	// Sum the partials from the associated Configurations
 	if (!SQModule::sumUnweightedSQ(procPool, this, dissolve.processingModuleData(), summedUnweightedSQ)) return false;
 
+	// Save data if requested
+	if (saveData && (!MPIRunMaster(procPool, summedUnweightedSQ.save()))) return false;
 
 	// Create/retrieve PartialSet for summed partial S(Q)
 	PartialSet& summedWeightedSQ = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "WeightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
 	summedWeightedSQ = summedUnweightedSQ;
+	summedWeightedSQ.setFileNames(uniqueName_, "weighted", "sq");
 	summedWeightedSQ.setObjectNames(CharString("%s//%s", uniqueName_.get(), "WeightedSQ"));
 
 	// Calculate weighted S(Q)

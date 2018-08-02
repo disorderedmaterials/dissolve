@@ -31,27 +31,31 @@
 // Generate S(Q) from supplied g(r)
 bool SQModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, const PartialSet& unweightedgr, PartialSet& unweightedsq, double qMin, double qDelta, double qMax, double rho, const WindowFunction& windowFunction, const BroadeningFunction& broadening)
 {
-	// Copy partial g(r) into our new S(Q) object
-	unweightedsq = unweightedgr;
+	// Copy partial g(r) into our new S(Q) object - it should have been initialised already, so we will just check its size
+	if (unweightedgr.nAtomTypes() != unweightedsq.nAtomTypes()) return Messenger::error("SQModule::calculateUnweightedSQ - sizes of supplied partial sets are different.\n");
 
 	// Subtract 1.0 from the full and unbound partials so as to give (g(r)-1) and FT into S(Q)
 	// Don't subtract 1.0 from the bound partials
 	// TODO Parallelise this
 	procPool.resetAccumulatedTime();
 	Timer timer;
-	timer.start();	int nTypes = unweightedgr.nAtomTypes();
+	timer.start();
+	int nTypes = unweightedgr.nAtomTypes();
 	for (int n=0; n<nTypes; ++n)
 	{
 		for (int m=n; m<nTypes; ++m)
 		{
 			// Total partial
+			unweightedsq.partial(n,m).copyData(unweightedgr.constPartial(n,m));
 			unweightedsq.partial(n,m).arrayY() -= 1.0;
 			if (!unweightedsq.partial(n,m).sineFT(4.0*PI*rho, qMin, qDelta, qMax, windowFunction, broadening)) return false;
 
 			// Bound partial
+			unweightedsq.boundPartial(n,m).copyData(unweightedgr.constBoundPartial(n,m));
 			if (!unweightedsq.boundPartial(n,m).sineFT(4.0*PI*rho, qMin, qDelta, qMax, windowFunction, broadening)) return false;
 
 			// Unbound partial
+			unweightedsq.unboundPartial(n,m).copyData(unweightedgr.constUnboundPartial(n,m));
 			unweightedsq.unboundPartial(n,m).arrayY() -= 1.0;
 			if (!unweightedsq.unboundPartial(n,m).sineFT(4.0*PI*rho, qMin, qDelta, qMax, windowFunction, broadening)) return false;
 
