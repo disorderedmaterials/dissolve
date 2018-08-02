@@ -122,7 +122,7 @@ bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		if (testMode)
 		{
 			Messenger::print("\nTesting calculated g(r) without smoothing / broadening against supplied datasets (if any)...\n");
-			if (!testReferencePartials(moduleData, uniqueName(), originalgr, "TestReferenceGR-original", testThreshold)) return false;
+			if (!testReferencePartials(testData_, testThreshold, originalgr, "OriginalGR")) return false;
 		}
 
 		// Form unweighted g(r) from original g(r), applying any requested smoothing / broadening

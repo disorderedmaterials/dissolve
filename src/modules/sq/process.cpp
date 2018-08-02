@@ -114,13 +114,6 @@ bool SQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			newSet = unweightedsq;
 			newSet.setObjectNames(CharString("%s//UnweightedSQ", uniqueName_.get()));
 		}
-
-		// Test unweighted S(Q)?
-		if (testMode && configurationLocal_)
-		{
-			Messenger::print("\nTesting calculated unweighted S(Q) data against supplied datasets (if any)...\n");
-			if (!RDFModule::testReferencePartials(moduleData, uniqueName(), unweightedsq, "TestReferenceSQ-unweighted", testThreshold)) return false;
-		}
 	}
 
 	// Create/retrieve PartialSet for summed partial S(Q)
@@ -129,19 +122,18 @@ bool SQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	// Sum the partials from the associated Configurations
 	if (!sumUnweightedSQ(procPool, this, dissolve.processingModuleData(), summedUnweightedSQ)) return false;
 
-	// Test unweighted S(Q)?
-	if (testMode)
-	{
-		Messenger::print("\nTesting calculated unweighted S(Q) data against supplied datasets (if any)...\n");
-		if (!RDFModule::testReferencePartials(moduleData, uniqueName(), summedUnweightedSQ, "TestReferenceSQ-unweighted", testThreshold)) return false;
-	}
-
 	// Create/retrieve PartialSet for summed unweighted g(r)
 	PartialSet& summedUnweightedGR = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedGR", uniqueName_, GenericItem::InRestartFileFlag);
 
 	// Sum the partials from the associated Configurations
 	if (!RDFModule::sumUnweightedGR(procPool, this, dissolve.processingModuleData(), summedUnweightedGR)) return false;
 
+	// Test?
+	if (testMode)
+	{
+		Messenger::print("\nTesting calculated S(Q) (and g(r)) data against supplied datasets (if any)...\n");
+		if (!RDFModule::testReferencePartials(testData_, testThreshold, summedUnweightedSQ, "UnweightedSQ", summedUnweightedGR, "UnweightedGR")) return false;
+	}
+
 	return true;
 }
-

@@ -24,8 +24,7 @@
 
 #include "module/module.h"
 #include "classes/partialset.h"
-#include "classes/isotopologuereference.h"
-#include "classes/braggpeak.h"
+#include "classes/xydatastore.h"
 
 // Forward Declarations
 class PartialSet;
@@ -98,6 +97,10 @@ class SQModule : public Module
 	/*
 	 * Members / Functions
 	 */
+	private:
+	// Test data
+	XYDataStore testData_;
+
 	public:
 	// Calculate unweighted S(Q) from unweighted g(r)
 	static bool calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, const PartialSet& unweightedgr, PartialSet& unweightedsq, double qMin, double qDelta, double qMax, double rho, const WindowFunction& windowFunction, const BroadeningFunction& broadening);

@@ -72,29 +72,13 @@ void RDFModule::setUpKeywords()
 	keywords_.add(new BoolModuleKeyword(false), "Save", "Whether to save partials to disk after calculation", "<True|False>");
 	keywords_.add(new IntegerModuleKeyword(0, 0, 100), "Smoothing", "Specifies the degree of smoothing 'n' to apply to calculated g(r), where 2n+1 controls the length in the applied Spline smooth");
 	keywords_.add(new BoolModuleKeyword(false), "Test", "Test calculated total and partials against supplied reference data", "<True|False>");
-	keywords_.add(new ComplexModuleKeyword(2,4), "TestReference", "Specify g(r)/S(Q) test reference data", "<filename> <target> [xcol] [ycol]");
+	keywords_.add(new XYDataStoreModuleKeyword(testData_), "TestReference", "Specify test reference data", "<filename> <target> [xcol] [ycol]");
 	keywords_.add(new DoubleModuleKeyword(0.1, 1.0e-5), "TestThreshold", "Test threshold (%%error) above which test fails", "<threshold[0.1]>");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 int RDFModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
-	if (DissolveSys::sameString(parser.argc(0), "TestReference"))
-	{
-		Messenger::print("Reading test reference g(r) / G(r) / S(Q) / F(Q) data...\n");
-
-		// Realise an XYData to store the reference data in
-		XYData& data = GenericListHelper<XYData>::realise(targetList, CharString("TestReference%s", parser.argc(2)), uniqueName());
-
-		// Fourth and fifth arguments are x and y columns respectively (defaulting to 0,1 if not given)
-		int xcol = parser.hasArg(3) ? parser.argi(3)-1 : 0;
-		int ycol = parser.hasArg(4) ? parser.argi(4)-1 : 1;
-
-		LineParser fileParser(&dissolve->worldPool());
-		if ((!fileParser.openInput(parser.argc(1))) || (!data.load(fileParser, xcol, ycol))) return false;
-	}
-	else return -1;
-
-	return true;
+	return -1;
 }
 

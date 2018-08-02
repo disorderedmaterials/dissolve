@@ -183,19 +183,12 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Transform g(r) into S(Q)
 		if (!SQModule::calculateUnweightedSQ(procPool, cfg, unweightedgr, unweightedsq, qMin, qDelta, qMax, cfg->atomicDensity(), windowFunction, qBroadening)) return false;
 
-		// Set names of resources (XYData) within the PartialSet
+		// Set names of resources (XYData) within the PartialSet, and tag it with the fingerprint from the source unweighted g(r)
 		unweightedsq.setObjectNames(CharString("%s//%s//%s", cfg->niceName(), "NeutronSQ", "UnweightedSQ"));
 		unweightedsq.setFingerprint(CharString("%i", cfg->moduleData().version("UnweightedGR")));
 
 		// Save data if requested
 		if (saveData && (!MPIRunMaster(procPool, unweightedsq.save()))) return false;
-
-		// Test unweighted S(Q)?
-		if (testMode)
-		{
-			Messenger::print("\nTesting calculated unweighted S(Q) data against supplied datasets (if any)...\n");
-			if (!RDFModule::testReferencePartials(moduleData, uniqueName(), unweightedsq, "TestReferenceSQ-unweighted", testThreshold)) return false;
-		}
 
 		// Construct weights matrix based on Isotopologue specifications in some Module (specified by mixSource) and the populations of AtomTypes in the Configuration
 		Weights weights;
@@ -238,13 +231,6 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Save data if requested
 		if (saveData && (!MPIRunMaster(procPool, weightedsq.save()))) return false;
-
-		// Test weighted S(Q)?
-		if (testMode)
-		{
-			Messenger::print("\nTesting calculated weighted S(Q) data against supplied datasets (if any)...\n");
-			if (!RDFModule::testReferencePartials(moduleData, uniqueName(), weightedsq, "TestReferenceSQ-weighted", testThreshold)) return false;
-		}
 	}
 
 	/*
@@ -257,12 +243,6 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	// Sum the partials from the associated Configurations
 	if (!SQModule::sumUnweightedSQ(procPool, this, dissolve.processingModuleData(), summedUnweightedSQ)) return false;
 
-	// Test unweighted S(Q)?
-	if (testMode)
-	{
-		Messenger::print("\nTesting calculated unweighted S(Q) data against supplied datasets (if any)...\n");
-		if (!RDFModule::testReferencePartials(moduleData, uniqueName(), summedUnweightedSQ, "TestReferenceSQ-unweighted", testThreshold)) return false;
-	}
 
 	// Create/retrieve PartialSet for summed partial S(Q)
 	PartialSet& summedWeightedSQ = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "WeightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
@@ -294,13 +274,12 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	// Save data if requested
 	if (saveData && (!MPIRunMaster(procPool, summedWeightedSQ.save()))) return false;
 
-	// Test weighted S(Q)?
+	// Test?
 	if (testMode)
 	{
-		Messenger::print("\nTesting calculated weighted S(Q) data against supplied datasets (if any)...\n");
-		if (!RDFModule::testReferencePartials(moduleData, uniqueName(), summedWeightedSQ, "TestReferenceSQ-weighted", testThreshold)) return false;
+		Messenger::print("\nTesting calculated weighted and unweighted S(Q) data against supplied datasets (if any)...\n");
+		if (!RDFModule::testReferencePartials(testData_, testThreshold, summedWeightedSQ, "WeightedSQ", summedUnweightedSQ, "UnweightedSQ")) return false;
 	}
-
+	
 	return true;
 }
-

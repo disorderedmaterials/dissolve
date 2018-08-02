@@ -23,6 +23,7 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "classes/speciesinfo.h"
+#include "base/lineparser.h"
 
 // Calculate weighted g(r) from supplied unweighted g(r) and Weights
 bool NeutronSQModule::calculateWeightedGR(PartialSet& unweightedgr, PartialSet& weightedgr, Weights& weights, NeutronSQModule::NormalisationType normalisation)

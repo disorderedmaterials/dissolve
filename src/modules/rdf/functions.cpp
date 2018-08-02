@@ -733,67 +733,89 @@ bool RDFModule::testReferencePartials(PartialSet& setA, PartialSet& setB, double
 	return true;
 }
 
-// Test reference data against calculated partials set
-bool RDFModule::testReferencePartials(GenericList& sourceModuleData, const char* sourceModuleUniqueName, PartialSet& partials, const char* dataPrefix, double testThreshold)
+// Test calculated partial against supplied reference data
+bool RDFModule::testReferencePartial(const PartialSet& partials, double testThreshold, const XYData& testData, const char* typeIorTotal, const char* typeJ, const char* target)
 {
-	// We'll do a loop over all possible named test datasets that we expect to find with the given prefix and all combinations of atom type names.
-
-	CharString dataName;
-	double error;
-
-	// Get a copy of the AtomTypeList to work from
-	AtomTypeList atomTypes = partials.atomTypes();
-	AtomTypeData* typeI = atomTypes.first();
-	for (int n=0; n<atomTypes.nItems(); ++n, typeI = typeI->next)
+	// We either expect two AtomType names and a target next, or the target 'total'
+	bool testResult = false;
+	if (DissolveSys::sameString(typeIorTotal, "total") && (typeJ == NULL) && (target == NULL))
 	{
-		AtomTypeData* typeJ = typeI;
-		for (int m = n; m <atomTypes.nItems(); ++m, typeJ = typeJ->next)
-		{
-			// Full partial (bound + unbound) reference data supplied?
-			dataName = CharString("%s-%s-%s", dataPrefix, typeI->atomTypeName(), typeJ->atomTypeName());
-			if (sourceModuleData.contains(dataName, sourceModuleUniqueName))
-			{
-				error = partials.partial(n,m).error(GenericListHelper<XYData>::value(sourceModuleData, dataName, sourceModuleUniqueName));
-				Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-				if (error > testThreshold) return false;
-			}
+		double error = partials.constTotal().error(testData);
+		testResult = (error <= testThreshold);
+		Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", testData.name(), error, testResult ? "OK" : "NOT OK", testThreshold);
+	}
+	else
+	{
+		// Get indices of AtomTypes
+		int indexI = partials.atomTypes().indexOf(typeIorTotal);
+		int indexJ  = partials.atomTypes().indexOf(typeJ);
+		if ((indexI == -1) || (indexJ == -1)) return Messenger::error("Unrecognised test data name '%s'.\n", testData.name());
 
-			// Bound partial reference data supplied?
-			dataName = CharString("%s-%s-%s-bound", dataPrefix, typeI->atomTypeName(), typeJ->atomTypeName());
-			if (sourceModuleData.contains(dataName, sourceModuleUniqueName))
-			{
-				error = partials.boundPartial(n,m).error(GenericListHelper<XYData>::value(sourceModuleData, dataName, sourceModuleUniqueName));
-				Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-				if (error > testThreshold) return false;
-			}
+		// AtomTypes are valid, so check the 'target'
+		double error = -1.0;
+		if (DissolveSys::sameString(target, "bound")) error = partials.constBoundPartial(indexI, indexJ).error(testData);
+		else if (DissolveSys::sameString(target, "unbound")) error = partials.constUnboundPartial(indexI, indexJ).error(testData);
+		else if (DissolveSys::sameString(target, "full")) error = partials.constPartial(indexI, indexJ).error(testData);
+		else return Messenger::error("Unrecognised test data name '%s'.\n", testData.name());
 
-			// Unbound reference data supplied?
-			dataName = CharString("%s-%s-%s-unbound", dataPrefix, typeI->atomTypeName(), typeJ->atomTypeName());
-			if (sourceModuleData.contains(dataName, sourceModuleUniqueName))
-			{
-				error = partials.unboundPartial(n,m).error(GenericListHelper<XYData>::value(sourceModuleData, dataName, sourceModuleUniqueName));
-				Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-				if (error > testThreshold) return false;
-			}
-
-			// Bragg reference data supplied?
-			dataName = CharString("%s-%s-%s-bragg", dataPrefix, typeI->atomTypeName(), typeJ->atomTypeName());
-			if (sourceModuleData.contains(dataName, sourceModuleUniqueName))
-			{
-				error = partials.braggPartial(n,m).error(GenericListHelper<XYData>::value(sourceModuleData, dataName, sourceModuleUniqueName));
-				Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-				if (error > testThreshold) return false;
-			}
-		}
+		testResult = (error <= testThreshold);
+		Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", testData.name(), error, testResult ? "OK" : "NOT OK", testThreshold);
 	}
 
-	// Total reference data supplied?
-	dataName = CharString("%s-total", dataPrefix);
-	if (sourceModuleData.contains(dataName, sourceModuleUniqueName))
+	return testResult;
+}
+
+// Test calculated vs reference data (two source sets)
+bool RDFModule::testReferencePartials(const XYDataStore& testData, double testThreshold, const PartialSet& partials, const char* prefix)
+{
+	LineParser parser;
+
+	// Loop over supplied test data and see if we can locate it amongst our PartialSets
+	ListIterator<XYData> dataIterator(testData.data());
+	while (XYData* data = dataIterator.iterate())
 	{
-		error = partials.total().error(GenericListHelper<XYData>::value(sourceModuleData, dataName, sourceModuleUniqueName));
-		Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-		if (error > testThreshold) return false;
+		// Grab the name, replace hyphens with '-', and parse the string into arguments
+		CharString dataName = data->name();
+		dataName.replace('-', ' ');
+		parser.getArgsDelim(LineParser::Defaults, dataName);
+
+		// Sanity check on number of arguments
+		if (parser.nArgs() == 0) return Messenger::error("Test data has no name?");
+
+		// Check first argument to check it has the corect prefix
+		if (!DissolveSys::sameString(prefix, parser.argc(0))) return Messenger::error("Unrecognised test data name '%s'.\n", data->name());
+
+		if (!testReferencePartial(partials, testThreshold, *data, parser.argc(1), parser.hasArg(2) ? parser.argc(2) : NULL, parser.hasArg(3) ? parser.argc(3) : NULL)) return false;
+	}
+
+	return true;
+}
+
+// Test calculated vs reference data (two source sets)
+bool RDFModule::testReferencePartials(const XYDataStore& testData, double testThreshold, const PartialSet& partialsA, const char* prefixA, const PartialSet& partialsB, const char* prefixB)
+{
+	LineParser parser;
+
+	// Loop over supplied test data and see if we can locate it amongst our PartialSets
+	ListIterator<XYData> dataIterator(testData.data());
+	while (XYData* data = dataIterator.iterate())
+	{
+		// Grab the name, replace hyphens with '-', and parse the string into arguments
+		CharString dataName = data->name();
+		dataName.replace('-', ' ');
+		parser.getArgsDelim(LineParser::Defaults, dataName);
+
+		// Sanity check on number of arguments
+		if (parser.nArgs() == 0) return Messenger::error("Test data has no name?");
+
+		// Check first argument to determine PartialSet, then pass on the data
+		bool setA = false;
+		if (DissolveSys::sameString(prefixA, parser.argc(0))) setA = true;
+		else if (DissolveSys::sameString(prefixB, parser.argc(0))) setA = false;
+		else return Messenger::error("Unrecognised test data name '%s'.\n", data->name());
+		const PartialSet& targetSet = (setA ? partialsA : partialsB);
+
+		if (!testReferencePartial(targetSet, testThreshold, *data, parser.argc(1), parser.hasArg(2) ? parser.argc(2) : NULL, parser.hasArg(3) ? parser.argc(3) : NULL)) return false;
 	}
 
 	return true;

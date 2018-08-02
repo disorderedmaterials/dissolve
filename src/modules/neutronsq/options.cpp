@@ -59,7 +59,7 @@ void NeutronSQModule::setUpKeywords()
 	keywords_.add(new DoubleModuleKeyword(-1.0, -1.0), "ReferenceRemoveAverage", "Q value at which to form average level to be subtracted from reference data before use (-1 for no subtraction)");
 	keywords_.add(new BoolModuleKeyword(false), "Save", "Whether to save partials to disk after calculation", "<True|False>");
 	keywords_.add(new BoolModuleKeyword(false), "Test", "Test calculated total and partials against supplied reference data", "<True|False>");
-	keywords_.add(new ComplexModuleKeyword(2,4), "TestReference", "Specify S(Q) test reference data", "<filename> <target> [xcol] [ycol]");
+	keywords_.add(new XYDataStoreModuleKeyword(testData_), "TestReference", "Test reference data", "<filename> <target> [xcol] [ycol]");
 	keywords_.add(new DoubleModuleKeyword(0.1, 1.0e-5), "TestThreshold", "Test threshold (%%error) above which test fails", "<threshold[0.1]>");
 	keywords_.add(new WindowFunctionModuleKeyword(WindowFunction(WindowFunction::Lorch0Window)), "WindowFunction", "Window function to apply when Fourier-transforming g(r) to S(Q)");
 }
@@ -86,20 +86,6 @@ int NeutronSQModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser&
 		}
 
 		GenericListHelper<double>::add(targetList, CharString("Weight_%s", targetCfg->niceName()), uniqueName()) = parser.argd(2);
-	}
-	else if (DissolveSys::sameString(parser.argc(0), "TestReference"))
-	{
-		Messenger::print("Reading test reference S(Q) / F(Q) data...\n");
-
-		// Realise an XYData to store the reference data in
-		XYData& data = GenericListHelper<XYData>::realise(targetList, CharString("TestReference%s", parser.argc(2)), uniqueName());
-
-		// Fourth and fifth arguments are x and y columns respectively (defaulting to 0,1 if not given)
-		int xcol = parser.hasArg(3) ? parser.argi(3)-1 : 0;
-		int ycol = parser.hasArg(4) ? parser.argi(4)-1 : 1;
-
-		LineParser fileParser(&dissolve->worldPool());
-		if ((!fileParser.openInput(parser.argc(1))) || (!data.load(fileParser, xcol, ycol))) return false;
 	}
 	else return -1;
 

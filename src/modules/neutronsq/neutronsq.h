@@ -25,7 +25,7 @@
 #include "module/module.h"
 #include "classes/partialset.h"
 #include "classes/isotopologuereference.h"
-#include "classes/braggpeak.h"
+#include "classes/xydatastore.h"
 
 // Forward Declarations
 class PartialSet;
@@ -120,6 +120,10 @@ class NeutronSQModule : public Module
 	/*
 	 * Members / Functions
 	 */
+	private:
+	// Test data
+	XYDataStore testData_;
+
 	public:
 	// Calculate weighted g(r) from supplied unweighted g(r) and Weights
 	bool calculateWeightedGR(PartialSet& unweightedgr, PartialSet& weightedgr, Weights& weights, NeutronSQModule::NormalisationType normalisation);

@@ -24,7 +24,7 @@
 
 #include "module/module.h"
 #include "classes/partialset.h"
-#include "classes/braggpeak.h"
+#include "classes/xydatastore.h"
 #include "math/pairbroadeningfunction.h"
 
 // Forward Declarations
@@ -115,6 +115,10 @@ class RDFModule : public Module
 	 * Members / Functions
 	 */
 	private:
+	// Test data
+	XYDataStore testData_;
+
+	private:
 	// Calculate partial g(r) in serial with simple double-loop
 	bool calculateGRTestSerial(Configuration* cfg, PartialSet& partialSet);
 	// Calculate partial g(r) with optimised double-loop
@@ -137,8 +141,12 @@ class RDFModule : public Module
 	static bool sumUnweightedGR(ProcessPool& procPool, Module* parentModule, ModuleGroup* moduleGroup, GenericList& processingModuleData, PartialSet& summedUnweightedGR);
 	// Test supplied PartialSets against each other
 	static bool testReferencePartials(PartialSet& setA, PartialSet& setB, double testThreshold);
-	// Test reference data against calculated PartialSet set
-	static bool testReferencePartials(GenericList& sourceModuleData, const char* sourceModuleUniqueName, PartialSet& partialgr, const char* dataPrefix, double testThreshold);
+	// Test calculated partial against supplied reference data
+	static bool testReferencePartial(const PartialSet& partials, double testThreshold, const XYData& testData, const char* typeIorTotal, const char* typeJ = NULL, const char* target = NULL);
+	// Test calculated vs reference data (two source sets)
+	static bool testReferencePartials(const XYDataStore& testData, double testThreshold, const PartialSet& partials, const char* prefix);
+	// Test calculated vs reference data (two source sets)
+	static bool testReferencePartials(const XYDataStore& testData, double testThreshold, const PartialSet& partialsA, const char* prefixA, const PartialSet& partialsB, const char* prefixB);
 
 
 	/*
