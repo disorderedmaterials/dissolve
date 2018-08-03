@@ -30,7 +30,7 @@ Module  NeutronSQ
   Frequency  1
   TestThreshold  0.04
   Test  On
-  TestReference  'epsr_qdep0.1/argon.EPSR.u01'  SQ-weighted-total  1  2
+  TestReference  'epsr_qdep0.1/argon.EPSR.u01'  WeightedSQ-total  1  2
 EndModule
 
 Module SanityCheck

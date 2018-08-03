@@ -34,14 +34,14 @@ Configuration  'Box-noBragg'
     #                                            2        4        6
 
     # Partial g(r)
-    TestReference  'epsr_noBragg/mgo.EPSR.g01'  GR-original-Mg-Mg-unbound  1  2
-    TestReference  'epsr_noBragg/mgo.EPSR.g01'  GR-original-Mg-OX-unbound  1  4
-    TestReference  'epsr_noBragg/mgo.EPSR.g01'  GR-original-OX-OX-unbound  1  6
+    TestReference  'epsr_noBragg/mgo.EPSR.g01'  OriginalGR-Mg-Mg-unbound  1  2
+    TestReference  'epsr_noBragg/mgo.EPSR.g01'  OriginalGR-Mg-OX-unbound  1  4
+    TestReference  'epsr_noBragg/mgo.EPSR.g01'  OriginalGR-OX-OX-unbound  1  6
 
     # Partial S(Q)
-    TestReference  'epsr_noBragg/mgo.EPSR.f01'  SQ-unweighted-Mg-Mg-unbound  1  2
-    TestReference  'epsr_noBragg/mgo.EPSR.f01'  SQ-unweighted-Mg-OX-unbound  1  4
-    TestReference  'epsr_noBragg/mgo.EPSR.f01'  SQ-unweighted-OX-OX-unbound  1  6
+    TestReference  'epsr_noBragg/mgo.EPSR.f01'  UnweightedSQ-Mg-Mg-unbound  1  2
+    TestReference  'epsr_noBragg/mgo.EPSR.f01'  UnweightedSQ-Mg-OX-unbound  1  4
+    TestReference  'epsr_noBragg/mgo.EPSR.f01'  UnweightedSQ-OX-OX-unbound  1  6
   EndModule
 EndConfiguration
 

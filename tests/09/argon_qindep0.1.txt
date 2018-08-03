@@ -29,7 +29,7 @@ Module  NeutronSQ
   WindowFunction  None
   Frequency  1
   Test  On
-  TestReference  'epsr_qindep0.1/argon.EPSR.u01'  SQ-weighted-total  1  2
+  TestReference  'epsr_qindep0.1/argon.EPSR.u01'  WeightedSQ-total  1  2
 EndModule
 
 Module SanityCheck
