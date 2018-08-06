@@ -146,10 +146,10 @@ bool IsotopologueMix::setIsotopologue(Isotopologue* iso, double relPop)
 	return true;
 }
 
-// Return first Isotopologue component
-RefListItem<Isotopologue,double>* IsotopologueMix::isotopologues() const
+// Return Isotopologue components
+const RefList<Isotopologue,double>& IsotopologueMix::isotopologues() const
 {
-	return mix_.first();
+	return mix_;
 }
 
 // Return nth Isotopologue component

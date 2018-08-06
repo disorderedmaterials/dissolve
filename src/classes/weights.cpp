@@ -109,10 +109,11 @@ void Weights::print() const
 	Messenger::print("  ------------------------------------------------------\n");
 	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next)
 	{
-		for (RefListItem<Isotopologue,double>* tope = mix->isotopologues(); tope != NULL; tope = tope->next)
+		RefListIterator<Isotopologue,double> topeIterator(mix->isotopologues());
+		while (Isotopologue* tope = topeIterator.iterate())
 		{
-			if (tope == mix->isotopologues()) Messenger::print("  %-15s  %-15s  %-10i  %f\n", mix->species()->name(), tope->item->name(), mix->speciesPopulation(), tope->data);
-			else Messenger::print("                   %-15s              %f\n", tope->item->name(), tope->data);
+			if (topeIterator.isFirst()) Messenger::print("  %-15s  %-15s  %-10i  %f\n", mix->species()->name(), tope->name(), mix->speciesPopulation(), topeIterator.currentData());
+			else Messenger::print("                   %-15s              %f\n", tope->name(), topeIterator.currentData());
 		}
 	}
 
@@ -173,13 +174,14 @@ void Weights::createFromIsotopologues()
 	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next)
 	{
 		// We must now loop over the Isotopologues in the mixture
-		for (RefListItem<Isotopologue,double>* tope = mix->isotopologues(); tope != NULL; tope = tope->next)
+		RefListIterator<Isotopologue,double> topeIterator(mix->isotopologues());
+		while (Isotopologue* tope = topeIterator.iterate())
 		{
 			// Loop over Atoms in the Species, searching for the AtomType/Isotope entry in the isotopes list of the Isotopologue
 			for (SpeciesAtom* i = mix->species()->firstAtom(); i != NULL; i = i->next)
 			{
-				Isotope* iso = tope->item->atomTypeIsotope(i->atomType());
-				atomTypes_.addIsotope(i->atomType(), iso, tope->data*mix->speciesPopulation());
+				Isotope* iso = tope->atomTypeIsotope(i->atomType());
+				atomTypes_.addIsotope(i->atomType(), iso, topeIterator.currentData() * mix->speciesPopulation());
 			}
 		}
 	}

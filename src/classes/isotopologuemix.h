@@ -72,8 +72,8 @@ class IsotopologueMix : public MPIListItem<IsotopologueMix>, public GenericItemB
 	bool setIsotopologue(Isotopologue* iso, double relPop);
 	// Remove Isotopologue component from list
 	bool removeIsotopologue(Isotopologue* iso);
-	// Return first Isotopologue component
-	RefListItem<Isotopologue,double>* isotopologues() const;
+	// Return Isotopologue components
+	const RefList<Isotopologue,double>& isotopologues() const;
 	// Return nth Isotopologue component
 	RefListItem<Isotopologue,double>* isotopologue(int n);
 	// Return number of Isotopologues in mix
