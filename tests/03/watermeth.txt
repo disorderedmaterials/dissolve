@@ -60,9 +60,6 @@ Configuration  'Mix'
 
   # Calculate and test g(r)
   Module  RDF
-    # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
-    AllIntra  true
-
     # Save  On
     Frequency  1
   

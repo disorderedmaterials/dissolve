@@ -63,7 +63,6 @@ const char* RDFModule::averagingScheme(RDFModule::AveragingScheme as)
 void RDFModule::setUpKeywords()
 {
 	frequency_ = 5;
-	keywords_.add(new BoolModuleKeyword(true), "AllIntra", "All atom pairs in molecules contribute to intra partials, not just those that are in a bond, angle, or torsion", "<True|False*>");
 	keywords_.add(new IntegerModuleKeyword(5, 0), "Averaging", "Number of historical partial sets to combine into final partials", "<N[5]>");
 	keywords_.add(new CharStringModuleKeyword("Simple", RDFModule::nAveragingSchemes, AveragingSchemeKeywords), "AveragingScheme", "Weighting scheme to use when averaging partials", "<scheme[Exponential]>");
 	keywords_.add(new BoolModuleKeyword(false), "InternalTest", "Perform internal check of calculated partials (relative to Test method)");

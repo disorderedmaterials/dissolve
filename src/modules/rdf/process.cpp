@@ -54,7 +54,6 @@ bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 	GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : dissolve.processingModuleData();
 
-	const bool allIntra = keywords_.asBool("AllIntra");
 	const int averaging = keywords_.asInt("Averaging");
 	RDFModule::AveragingScheme averagingScheme = RDFModule::averagingScheme(keywords_.asString("AveragingScheme"));
 	if (averagingScheme == RDFModule::nAveragingSchemes)
@@ -69,6 +68,7 @@ bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		Messenger::error("RDF: Invalid calculation method '%s' found.\n", keywords_.asString("Method"));
 		return false;
 	}
+	const bool allIntra = true;
 	const bool internalTest = keywords_.asBool("InternalTest");
 	const bool saveData = keywords_.asBool("Save");
 	const int smoothing = keywords_.asInt("Smoothing");
@@ -76,7 +76,6 @@ bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	const double testThreshold = keywords_.asDouble("TestThreshold");
 
 	// Print argument/parameter summary
-	Messenger::print("RDF: Use of all pairs in intramolecular partials is %s.\n", DissolveSys::onOff(allIntra));
 	if (averaging <= 1) Messenger::print("RDF: No averaging of partials will be performed.\n");
 	else Messenger::print("RDF: Partials will be averaged over %i sets (scheme = %s).\n", averaging, RDFModule::averagingScheme(averagingScheme));
 	if (intraBroadening.function() == PairBroadeningFunction::NoFunction) Messenger::print("RDF: No broadening will be applied to intramolecular g(r).");
