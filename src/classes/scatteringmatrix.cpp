@@ -233,7 +233,7 @@ bool ScatteringMatrix::addReferenceData(const XYData& data, Weights& weights, do
 			}
 
 			// Now have the local column index of the AtomType pair in our matrix A_...
-			A_.at(rowIndex, colIndex) = weights.fullWeight(n, m) * factor;
+			A_.at(rowIndex, colIndex) = weights.weight(n, m) * factor;
 		}
 	}
 

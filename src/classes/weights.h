@@ -67,12 +67,14 @@ class Weights : public GenericItemBase
 	private:
 	// Type list derived from Species referenced in isotopologueMixtures_
 	AtomTypeList atomTypes_;
-	// Atom concentration weights matrix (ci * cj)
-	Array2D<double> concentrationMatrix_;
-	// Bound coherent weights matrix (bi * bj)
-	Array2D<double> boundCoherentMatrix_;
-	// Full weights matrix (ci * cj * bi * bj * (i == j ? 1 : 2))
-	Array2D<double> fullMatrix_;
+	// Concentration product matrix (ci * cj)
+	Array2D<double> concentrationProducts_;
+	// Bound coherent product matrix (bi * bj)
+	Array2D<double> boundCoherentProducts_;
+	// Full scattering weights
+	Array2D<double> weights_;
+	// Bound scattering weights
+	Array2D<double> boundWeights_;
 	// Bound coherent average squared scattering (<b>**2)
 	double boundCoherentSquareOfAverage_;
 	// Bound coherent squared average scattering (<b**2>)
@@ -93,14 +95,18 @@ class Weights : public GenericItemBase
 	AtomTypeList& atomTypes();
 	// Return number of used AtomTypes
 	int nUsedTypes() const;
-	// Return concentration weighting for types i and j
-	double concentrationWeight(int i, int j) const;
-	// Return bound coherent scattering weighting for types i and j
-	double boundCoherentWeight(int i, int j) const;
-	// Return full weighting, including atomic concentration, bound coherent scattering weights, and i != j weighting for types i and j
-	double fullWeight(int i, int j) const;
-	// Return full scattering weights matrix (ci * cj * bi * bj * (i == j ? 1 : 2))
-	Array2D<double>& fullWeightsMatrix();
+	// Return concentration product for types i and j
+	double concentrationProduct(int i, int j) const;
+	// Return bound coherent scattering product for types i and j
+	double boundCoherentProduct(int i, int j) const;
+	// Return full weighting for types i and j (ci * cj * bi * bj * [2-dij])
+	double weight(int i, int j) const;
+	// Return bound weighting for types i and j
+	double boundWeight(int i, int j) const;
+	// Return full scattering weights matrix
+	Array2D<double>& weights();
+	// Return full bound scattering weights matrix
+	Array2D<double>& boundWeights();
 	// Return bound coherent average squared scattering (<b>**2)
 	double boundCoherentSquareOfAverage() const;
 	// Return bound coherent squared average scattering (<b**2>)

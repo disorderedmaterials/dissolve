@@ -384,7 +384,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					combinedUnweightedSQ.at(globalI, globalJ ).addInterpolated(partialIJ, factor);
 					combinedRho.at(globalI, globalJ) += rho * factor;
 					combinedFactor.at(globalI, globalJ) += factor;
-					combinedCWeights.at(globalI, globalJ) += weights.concentrationWeight(i,j);
+					combinedCWeights.at(globalI, globalJ) += weights.concentrationProduct(i,j);
 				}
 			}
 		}

@@ -49,9 +49,10 @@ void Weights::operator=(const Weights& source)
 	// Isotopologue Mix
 	isotopologueMixtures_ = source.isotopologueMixtures_;
 	atomTypes_ = source.atomTypes_;
-	boundCoherentMatrix_= source.boundCoherentMatrix_;
-	concentrationMatrix_ = source.concentrationMatrix_;
-	fullMatrix_ = source.fullMatrix_;
+	boundCoherentProducts_= source.boundCoherentProducts_;
+	concentrationProducts_ = source.concentrationProducts_;
+	weights_ = source.weights_;
+	boundWeights_ = source.boundWeights_;
 	boundCoherentSquareOfAverage_ = source.boundCoherentSquareOfAverage_;
 	boundCoherentAverageOfSquares_ = source.boundCoherentAverageOfSquares_;
 	valid_ = source.valid_;
@@ -66,9 +67,10 @@ void Weights::clear()
 {
 	isotopologueMixtures_.clear();
 	atomTypes_.clear();
-	concentrationMatrix_.clear();
-	boundCoherentMatrix_.clear();
-	fullMatrix_.clear();
+	concentrationProducts_.clear();
+	boundCoherentProducts_.clear();
+	weights_.clear();
+	boundWeights_.clear();
 	boundCoherentSquareOfAverage_ = 0.0;
 	boundCoherentAverageOfSquares_ = 0.0;
 	valid_ = false;
@@ -133,35 +135,135 @@ void Weights::calculateWeightingMatrices()
 {
 	// Create weights matrices and calculate average scattering lengths
 	// Note: Multiplier of 0.1 on b terms converts from units of fm (1e-11 m) to barn (1e-12 m)
-	concentrationMatrix_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
-	boundCoherentMatrix_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
-	fullMatrix_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
+	concentrationProducts_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
+	boundCoherentProducts_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
+	weights_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
+	boundWeights_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
 	boundCoherentAverageOfSquares_ = 0.0;
 	boundCoherentSquareOfAverage_ = 0.0;
+
 	double ci, cj, bi, bj;
-	AtomTypeData* at1 = atomTypes_.first(), *at2;
-	for (int typeI=0; typeI<atomTypes_.nItems(); ++typeI, at1 = at1->next)
+
+	// Determine atomic concentration products, bound coherent products, and full scattering weights
+	AtomTypeData* atd1 = atomTypes_.first(), *atd2;
+	for (int typeI=0; typeI<atomTypes_.nItems(); ++typeI, atd1 = atd1->next)
 	{
-		ci = at1->fraction();
-		bi = at1->boundCoherent() * 0.1;
+		ci = atd1->fraction();
+		bi = atd1->boundCoherent() * 0.1;
 
 		// Update average scattering values
 		boundCoherentSquareOfAverage_ += ci*bi;
 		boundCoherentAverageOfSquares_ += ci*bi*bi;
 
-		at2 = at1;
-		for (int typeJ=typeI; typeJ<atomTypes_.nItems(); ++typeJ, at2 = at2->next)
+		atd2 = atd1;
+		for (int typeJ=typeI; typeJ<atomTypes_.nItems(); ++typeJ, atd2 = atd2->next)
 		{
-			cj = at2->fraction();
-			bj = at2->boundCoherent() * 0.1;
+			cj = atd2->fraction();
+			bj = atd2->boundCoherent() * 0.1;
 
-			concentrationMatrix_.at(typeI,typeJ) = ci * cj;
-			boundCoherentMatrix_.at(typeI,typeJ) = bi * bj;
-			fullMatrix_.at(typeI,typeJ) = ci * cj * bi * bj * (typeI == typeJ ? 1 : 2);
+			concentrationProducts_.at(typeI,typeJ) = ci * cj;
+			boundCoherentProducts_.at(typeI,typeJ) = bi * bj;
+			weights_.at(typeI,typeJ) = ci * cj * bi * bj * (typeI == typeJ ? 1 : 2);
 		}
 	}
 
+	// Finalise <b>**2
 	boundCoherentSquareOfAverage_ *= boundCoherentSquareOfAverage_;
+
+	// Determine bound (intramolecular) scattering weights
+
+	// Loop over defined Isotopologues in our defining mixtures, summing terms from (intramolecular) pairs of Atoms
+	boundWeights_ = 0.0;
+	Array2D<double> intraNorm(atomTypes_.nItems(), atomTypes_.nItems(), true);
+	Array2D<bool> intraFlag(atomTypes_.nItems(), atomTypes_.nItems(), true);
+	Array2D<bool> globalFlag(atomTypes_.nItems(), atomTypes_.nItems(), true);
+	intraNorm = 0.0;
+	globalFlag = false;
+	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next)
+	{
+		// Get weighting for associated Species population
+		double speciesWeight = double(mix->speciesPopulation());
+
+		// Using the underlying Species, set a multiplying matrix of 1's and zeroes that state the AtomType interactions we have present
+		Species* sp = mix->species();
+		const int nAtoms = sp->nAtoms();
+		intraFlag = false;
+		for (int i = 0; i<nAtoms; ++i)
+		{
+			// Get AtomType for this Atom and find it in our local AtomTypeList
+			int typeI = atomTypes_.indexOf(sp->atom(i)->atomType());
+			if (typeI == -1) Messenger::error("Failed to find AtomType '%s' in local Weights.\n", sp->atom(i)->atomType()->name());
+			for (int j = i; j<nAtoms; ++j)
+			{
+				// Get AtomType for this Atom and find it in our local AtomTypeList
+				int typeJ = atomTypes_.indexOf(sp->atom(j)->atomType());
+
+				intraFlag.at(typeI, typeJ) = true;
+			}
+		}
+
+		// Loop over Isotopologues defined for this mixture
+		RefListIterator<Isotopologue,double> topeIterator(mix->isotopologues());
+		while (Isotopologue* tope = topeIterator.iterate())
+		{
+			// Sum the scattering lengths of each pair of AtomTypes, weighted by the speciesWeight and the fractional Isotopologue weight in the mix.
+			double weight = speciesWeight * topeIterator.currentData();
+
+			atd1 = atomTypes_.first();
+			for (int typeI=0; typeI<atomTypes_.nItems(); ++typeI, atd1 = atd1->next)
+			{
+				// If this AtomType is exchangeable, add the averaged scattering length from the local AtomTypesList instead of its actual isotopic length.
+				if (atd1->exchangeable()) bi = atd1->boundCoherent();
+				else
+				{
+					// Get the Isotope associated to this AtomType in the current Isotopologue
+					Isotope* isotope = tope->atomTypeIsotope(atd1->atomType());
+					bi = isotope->boundCoherent();
+				}
+				bi *= 0.1;
+
+				atd2 = atd1;
+				for (int typeJ=typeI; typeJ<atomTypes_.nItems(); ++typeJ, atd2 = atd2->next)
+				{
+					// Check to see if this interaction is present in the current Species
+					if (!intraFlag.at(typeI, typeJ)) continue;
+
+					// If this AtomType is exchangeable, add the averaged scattering length from the local AtomTypesList instead of its actual isotopic length.
+					if (atd2->exchangeable()) bj = atd2->boundCoherent();
+					else
+					{
+						// Get the Isotope associated to this AtomType in the current Isotopologue
+						Isotope* isotope = tope->atomTypeIsotope(atd2->atomType());
+						bj = isotope->boundCoherent();
+					}
+					bj *= 0.1;
+
+					boundWeights_.at(typeI,typeJ) += weight * bi * bj;
+					intraNorm.at(typeI,typeJ) += weight;
+					globalFlag.at(typeI, typeJ) = true;
+				}
+			}
+		}
+	}
+
+	// Normalise the boundWeights_ array, and multiply by atomic concentrations and Kronecker delta
+	atd1 = atomTypes_.first();
+	for (int typeI=0; typeI<atomTypes_.nItems(); ++typeI, atd1 = atd1->next)
+	{
+		ci = atd1->fraction();
+
+		atd2 = atd1;
+		for (int typeJ=typeI; typeJ<atomTypes_.nItems(); ++typeJ, atd2 = atd2->next)
+		{
+			// Skip this pair if there are no such intramolecular interactions
+			if (!globalFlag.at(typeI, typeJ)) continue;
+
+			cj = atd2->fraction();
+
+			boundWeights_.at(typeI, typeJ) /= intraNorm.at(typeI, typeJ);
+			boundWeights_.at(typeI, typeJ) *= ci * cj * (typeI == typeJ ? 1 : 2);
+		}
+	}
 }
 
 // Create AtomType list and matrices based on stored IsotopologueMix information
@@ -214,28 +316,40 @@ int Weights::nUsedTypes() const
 	return atomTypes_.nItems();
 }
 
-// Return concentration weighting for types i and j
-double Weights::concentrationWeight(int i, int j) const
+// Return concentration product for types i and j
+double Weights::concentrationProduct(int i, int j) const
 {
-	return concentrationMatrix_.constAt(i, j);
+	return concentrationProducts_.constAt(i, j);
 }
 
-// Return full weighting, including atomic concentration, bound coherent scattering weights, and i != j weighting for types i and j
-double Weights::fullWeight(int i, int j) const
+// Return bound coherent scattering product for types i 
+double Weights::boundCoherentProduct(int i, int j) const
 {
-	return fullMatrix_.constAt(i, j);
+	return boundCoherentProducts_.constAt(i, j);
 }
 
-// Return bound coherent scattering weighting for types i and j
-double Weights::boundCoherentWeight(int i, int j) const
+// Return full weighting for types i and j (ci * cj * bi * bj * [2-dij])
+double Weights::weight(int i, int j) const
 {
-	return boundCoherentMatrix_.constAt(i, j);
+	return weights_.constAt(i, j);
 }
 
-// Return full scattering weights matrix (ci * cj * bi * bj * (i == j ? 1 : 2))
-Array2D<double>& Weights::fullWeightsMatrix()
+// Return full bound weighting for types i and j
+double Weights::boundWeight(int i, int j) const
 {
-	return fullMatrix_;
+	return boundWeights_.constAt(i, j);
+}
+
+// Return full weights matrix
+Array2D<double>& Weights::weights()
+{
+	return weights_;
+}
+
+// Return full bound scattering weights matrix
+Array2D<double>& Weights::boundWeights()
+{
+	return boundWeights_;
 }
 
 // Return bound coherent average squared scattering (<b>**2)
@@ -276,9 +390,10 @@ bool Weights::write(LineParser& parser)
 	if (!ListIO<IsotopologueMix>::write(isotopologueMixtures_, parser)) return false;
 
 	// Write arrays using static methods in the relevant GenericItemContainer
-	if (!GenericItemContainer< Array2D<double> >::write(concentrationMatrix_, parser)) return false;
-	if (!GenericItemContainer< Array2D<double> >::write(boundCoherentMatrix_, parser)) return false;
-	if (!GenericItemContainer< Array2D<double> >::write(fullMatrix_, parser)) return false;
+	if (!GenericItemContainer< Array2D<double> >::write(concentrationProducts_, parser)) return false;
+	if (!GenericItemContainer< Array2D<double> >::write(boundCoherentProducts_, parser)) return false;
+	if (!GenericItemContainer< Array2D<double> >::write(weights_, parser)) return false;
+	if (!GenericItemContainer< Array2D<double> >::write(boundWeights_, parser)) return false;
 
 	// Write averages
 	if (!parser.writeLineF("%f %f\n", boundCoherentAverageOfSquares_, boundCoherentSquareOfAverage_)) return false;
@@ -298,9 +413,10 @@ bool Weights::read(LineParser& parser)
 	if (!ListIO<IsotopologueMix>::read(isotopologueMixtures_, parser)) return false;
 
 	// Read arrays using static methods in the relevant GenericItemContainer
-	if (!GenericItemContainer< Array2D<double> >::read(concentrationMatrix_, parser)) return false;
-	if (!GenericItemContainer< Array2D<double> >::read(boundCoherentMatrix_, parser)) return false;
-	if (!GenericItemContainer< Array2D<double> >::read(fullMatrix_, parser)) return false;
+	if (!GenericItemContainer< Array2D<double> >::read(concentrationProducts_, parser)) return false;
+	if (!GenericItemContainer< Array2D<double> >::read(boundCoherentProducts_, parser)) return false;
+	if (!GenericItemContainer< Array2D<double> >::read(weights_, parser)) return false;
+	if (!GenericItemContainer< Array2D<double> >::read(boundWeights_, parser)) return false;
 
 	// Read averages
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
@@ -321,9 +437,10 @@ bool Weights::broadcast(ProcessPool& procPool, int root)
 	BroadcastList<IsotopologueMix> isoMixBroadcaster(procPool, root, isotopologueMixtures_);
 	if (isoMixBroadcaster.failed()) return false;
 	if (!atomTypes_.broadcast(procPool, root)) return false;
-	if (!procPool.broadcast(concentrationMatrix_, root)) return false;
-	if (!procPool.broadcast(boundCoherentMatrix_, root)) return false;
-	if (!procPool.broadcast(fullMatrix_, root)) return false;
+	if (!procPool.broadcast(concentrationProducts_, root)) return false;
+	if (!procPool.broadcast(boundCoherentProducts_, root)) return false;
+	if (!procPool.broadcast(weights_, root)) return false;
+	if (!procPool.broadcast(boundWeights_, root)) return false;
 	if (!procPool.broadcast(boundCoherentAverageOfSquares_, root)) return false;
 	if (!procPool.broadcast(boundCoherentSquareOfAverage_, root)) return false;
 	if (!procPool.broadcast(valid_, root)) return false;
@@ -336,9 +453,10 @@ bool Weights::equality(ProcessPool& procPool)
 {
 #ifdef PARALLEL
 	if (!atomTypes_.equality(procPool)) return Messenger::error("Weights AtomTypes are not equivalent.\n");
-	if (!procPool.equality(concentrationMatrix_)) return Messenger::error("Weights concentration matrix is not equivalent.\n");
-	if (!procPool.equality(boundCoherentMatrix_)) return Messenger::error("Weights bound coherent matrix is not equivalent.\n");
-	if (!procPool.equality(fullMatrix_)) return Messenger::error("Weights full matrix is not equivalent.\n");
+	if (!procPool.equality(concentrationProducts_)) return Messenger::error("Weights concentration matrix is not equivalent.\n");
+	if (!procPool.equality(boundCoherentProducts_)) return Messenger::error("Weights bound coherent matrix is not equivalent.\n");
+	if (!procPool.equality(weights_)) return Messenger::error("Unbound weights matrix is not equivalent.\n");
+	if (!procPool.equality(boundWeights_)) return Messenger::error("Bound weights matrix is not equivalent.\n");
 	if (!procPool.equality(boundCoherentAverageOfSquares_)) return Messenger::error("Weights bound coherent average of squares is not equivalent (process %i has %e).\n", procPool.poolRank(), boundCoherentAverageOfSquares_);
 	if (!procPool.equality(boundCoherentSquareOfAverage_)) return Messenger::error("Weights bound coherent square of average is not equivalent (process %i has %e).\n", procPool.poolRank(), boundCoherentSquareOfAverage_);
 	if (!procPool.equality(valid_)) return Messenger::error("Weights validity is not equivalent (process %i has %i).\n", procPool.poolRank(), valid_);

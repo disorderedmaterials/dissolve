@@ -33,21 +33,26 @@ bool NeutronSQModule::calculateWeightedGR(PartialSet& unweightedgr, PartialSet& 
 	{
 		for (typeJ=typeI; typeJ<unweightedgr.nAtomTypes(); ++typeJ)
 		{
-			// Weight S(Q), Bragg S(Q) and full partial S(Q)
-			double factor = weights.fullWeight(typeI, typeJ);
+			double weight = weights.weight(typeI, typeJ);
+			double boundWeight = weights.boundWeight(typeI, typeJ);
 
-			weightedgr.partial(typeI, typeJ).copyData(unweightedgr.partial(typeI, typeJ));
-			weightedgr.partial(typeI, typeJ).arrayY() -= 1.0;
-			weightedgr.partial(typeI, typeJ).arrayY() *= factor;
+			// Bound (intramolecular) partial (multiplied by the bound term weight)
 			weightedgr.boundPartial(typeI, typeJ).copyData(unweightedgr.boundPartial(typeI, typeJ));
-			weightedgr.boundPartial(typeI, typeJ).arrayY() *= factor;
+			weightedgr.boundPartial(typeI, typeJ).arrayY() *= boundWeight;
+
+			// Unbound partial (multiplied by the full weight)
 			weightedgr.unboundPartial(typeI, typeJ).copyData(unweightedgr.unboundPartial(typeI, typeJ));
 			weightedgr.unboundPartial(typeI, typeJ).arrayY() -= 1.0;
-			weightedgr.unboundPartial(typeI, typeJ).arrayY() *= factor;
+			weightedgr.unboundPartial(typeI, typeJ).arrayY() *= weight;
+
+			// Full partial, summing bound and unbound terms
+			weightedgr.partial(typeI, typeJ).copyData(weightedgr.unboundPartial(typeI, typeJ));
+			weightedgr.partial(typeI, typeJ) += weightedgr.boundPartial(typeI, typeJ);
+
 			weightedgr.braggPartial(typeI, typeJ).copyData(unweightedgr.braggPartial(typeI, typeJ));
 			// TODO Subtract 1.0 from Bragg partials before weighting?
 			weightedgr.braggPartial(typeI, typeJ).arrayY() -= 1.0;
-			weightedgr.braggPartial(typeI, typeJ).arrayY() *= factor;
+			weightedgr.braggPartial(typeI, typeJ).arrayY() *= weight;
 		}
 	}
 
@@ -68,16 +73,23 @@ bool NeutronSQModule::calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& 
 		for (typeJ=typeI; typeJ<unweightedsq.nAtomTypes(); ++typeJ)
 		{
 			// Weight S(Q), Bragg S(Q) and full partial S(Q)
-			double factor = weights.fullWeight(typeI, typeJ);
+			double weight = weights.weight(typeI, typeJ);
+			double boundWeight = weights.boundWeight(typeI, typeJ);
 
-			weightedsq.partial(typeI, typeJ).copyData(unweightedsq.partial(typeI, typeJ));
-			weightedsq.partial(typeI, typeJ).arrayY() *= factor;
+			// Bound (intramolecular) partial (multiplied by the bound term weight)
 			weightedsq.boundPartial(typeI, typeJ).copyData(unweightedsq.boundPartial(typeI, typeJ));
-			weightedsq.boundPartial(typeI, typeJ).arrayY() *= factor;
+			weightedsq.boundPartial(typeI, typeJ).arrayY() *= boundWeight;
+
+			// Unbound partial (multiplied by the full weight)
 			weightedsq.unboundPartial(typeI, typeJ).copyData(unweightedsq.unboundPartial(typeI, typeJ));
-			weightedsq.unboundPartial(typeI, typeJ).arrayY() *= factor;
+			weightedsq.unboundPartial(typeI, typeJ).arrayY() *= weight;
+
+			// Full partial (sum of bound and unbound terms)
+			weightedsq.partial(typeI, typeJ).copyData(weightedsq.unboundPartial(typeI, typeJ));
+			weightedsq.partial(typeI, typeJ) += weightedsq.boundPartial(typeI, typeJ);
+
 			weightedsq.braggPartial(typeI, typeJ).copyData(unweightedsq.braggPartial(typeI, typeJ));
-			weightedsq.braggPartial(typeI, typeJ).arrayY() *= factor;
+			weightedsq.braggPartial(typeI, typeJ).arrayY() *= weight;
 		}
 	}
 
