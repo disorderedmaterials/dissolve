@@ -681,12 +681,12 @@ template <class T, class D> class RefListIterator
 		currentItem_ = NULL;
 	}
 	// Return whether we are on the first item in the list
-	bool first()
+	bool isFirst()
 	{
 		return (currentItem_ == targetRefList_.first());
 	}
 	// Return whether we are on the last item in the list
-	bool last()
+	bool isLast()
 	{
 		return (currentItem_ == targetRefList_.last());
 	}

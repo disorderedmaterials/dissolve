@@ -129,7 +129,7 @@ void ModuleChartModuleBlock::updateControls()
 	RefListIterator<Configuration,bool> configIterator(module_->targetConfigurations());
 	while (Configuration* cfg = configIterator.iterate())
 	{
-		if (configIterator.first()) toolTip.strcatf("%s", cfg->name());
+		if (configIterator.isFirst()) toolTip.strcatf("%s", cfg->name());
 		else toolTip.strcatf(", %s", cfg->name());
 	}
 	ui.HeaderFrame->setToolTip(toolTip.get());

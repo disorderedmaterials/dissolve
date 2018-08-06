@@ -92,7 +92,7 @@ void ModuleChart::paintEvent(QPaintEvent* event)
 	while (ModuleChartBlock* block = blockIterator.iterate())
 	{
 		// If this is the last block then there is nothing more to do
-		if (blockIterator.last()) break;
+		if (blockIterator.isLast()) break;
 
 		// Peek the next block
 		ModuleChartBlock* nextBlock = blockIterator.peek();
@@ -567,7 +567,7 @@ void ModuleChart::layOutWidgets(bool animateWidgets)
 			if ((totalColumnWidth > maxWidth) && (nColumns_ > 1)) break;
 
 			// Added this widget OK - if it was the last one in the list, we have found a suitable number of columns
-			if (blockIterator.last()) break;
+			if (blockIterator.isLast()) break;
 			
 			// Not the end of the list, so increase column count and check against the current nColumns_
 			++colCount;
