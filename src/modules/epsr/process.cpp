@@ -79,6 +79,7 @@ bool EPSRModule::hasProcessing()
 bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {
 	int i, j;
+	CharString testDataName;
 
 	/*
 	 * Get Keyword Options
@@ -98,6 +99,8 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	const double qMin = keywords_.asDouble("QMin");
 	double rmaxpt = keywords_.asDouble("RMaxPT");
 	double rminpt = keywords_.asDouble("RMinPT");
+	const bool testMode = keywords_.asBool("Test");
+	const double testThreshold = keywords_.asDouble("TestThreshold");
 
 	// EPSR constants
 	const int mcoeff = 200;
@@ -115,6 +118,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	else Messenger::print("EPSR: Perturbations to interatomic potentials will be generated only (current potentials will not be modified).\n");
 	if (onlyWhenEnergyStable) Messenger::print("EPSR: Potential refinement will only be performed if all related Configuration energies are stable.\n");
 	Messenger::print("EPSR: Range for potential generation is %f < Q < %f Angstroms**-1.\n", qMin, qMax);
+	if (testMode) Messenger::print("EPSR: Test mode is enabled (threshold = %f%%).", testThreshold);
 	Messenger::print("\n");
 
 
@@ -204,6 +208,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 	/*
 	 * Calculate difference functions for each experimental dataset and fit them.
+	 * Also calculate the simulated F(r) - for consistency with EPSR, this is the inverse FT of the simulated F(Q), rather than the directly-calculated function
 	 */
 
 	allTargetsIterator.restart();
@@ -297,6 +302,24 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			fitCoefficients = coeffMinimiser.C();
 
 			deltaFQFit = coeffMinimiser.approximation();
+		}
+
+		// Calculate F(r)
+		XYData& simulatedFR = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), "SimulatedFR", module->uniqueName(), GenericItem::InRestartFileFlag);
+		simulatedFR.setObjectName(CharString("%s//SimulatedFR//%s", uniqueName_.get(), module->uniqueName()));
+		simulatedFR = simulatedFQ;
+		simulatedFR.sineFT(1.0 / (2*PI*PI*GenericListHelper<double>::value(dissolve.processingModuleData(), "EffectiveRho", module->uniqueName(), 0.0)), 0.0, 0.03, 30.0, WindowFunction(WindowFunction::Lorch0Window));
+
+		// Test Mode
+		if (testMode)
+		{
+			testDataName = CharString("WeightedFR-%s-total", module->uniqueName());
+			if (testData_.contains(testDataName))
+			{
+				double error = simulatedFR.error(testData_.data(testDataName));
+				Messenger::print("Simulated F(r) reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", testDataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+				if (error > testThreshold) return false;
+			}
 		}
 	}
 

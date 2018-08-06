@@ -40,7 +40,6 @@ const char* EPSRModule::expansionFunctionType(EPSRModule::ExpansionFunctionType 
 	return ExpansionFunctionTypeKeywords[eft];
 }
 
-
 // Set up keywords for Module
 void EPSRModule::setUpKeywords()
 {
@@ -62,6 +61,9 @@ void EPSRModule::setUpKeywords()
 	keywords_.add(new DoubleModuleKeyword(30.0, -1.0), "QMax", "Maximum Q value over which to generate potentials from total scattering data");
 	keywords_.add(new DoubleModuleKeyword(0.5, -1.0), "QMin", "Minimum Q value over which to generate potentials from total scattering data");
 	keywords_.add(new ComplexModuleKeyword(1,2), "Target", "Add specified Module (and it's Reference data) as a fitting target", "<ModuleName> [GroupName]");
+	keywords_.add(new BoolModuleKeyword(false), "Test", "Test against supplied reference data", "<True|False>");
+	keywords_.add(new XYDataStoreModuleKeyword(testData_), "TestReference", "Specify test reference data", "<filename> <target> [xcol] [ycol]");
+	keywords_.add(new DoubleModuleKeyword(0.1, 1.0e-5), "TestThreshold", "Test threshold (%%error) above which test fails", "<threshold[0.1]>");
 	keywords_.add(new DoubleModuleKeyword(1.0, 0.0, 10.0), "Weighting", "Fractional (maximal) amounts of generated perturbations to apply to pair potentials");
 }
 
