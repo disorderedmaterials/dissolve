@@ -55,7 +55,7 @@ Species* IsotopologueMix::species() const
 }
 
 // Return associated Species population
-int IsotopologueMix::speciesPopulation()
+int IsotopologueMix::speciesPopulation() const
 {
 	return speciesPopulation_;
 }

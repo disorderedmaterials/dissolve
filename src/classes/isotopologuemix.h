@@ -61,7 +61,7 @@ class IsotopologueMix : public MPIListItem<IsotopologueMix>, public GenericItemB
 	// Return associated Species
 	Species* species() const;
 	// Return associated Species population
-	int speciesPopulation();
+	int speciesPopulation() const;
 	// Update Isotopologue RefList
 	void update();
 	// Add next available Isotopologue to list
