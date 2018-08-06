@@ -101,6 +101,7 @@ class Module : public ListItem<Module>
 	// Return colour used in visual representation of Module
 	const int* colour() const;
 
+
 	/*
 	 * Keywords
 	 */
