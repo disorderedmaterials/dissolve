@@ -217,8 +217,8 @@ class Configuration : public ListItem<Configuration>
 	DynamicArray<Torsion>& torsions();
 	// Return nth Torsion
 	Torsion* torsion(int n);
-	// Return specified type
-	AtomType* type(int index);
+	// Return specified used type
+	AtomType* usedAtomType(int index);
 	// Return first AtomTypeData for this Configuration
 	AtomTypeData* usedAtomTypes();
 	// Return AtomTypeList for this Configuration

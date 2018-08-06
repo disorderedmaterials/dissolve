@@ -471,8 +471,8 @@ Torsion* Configuration::torsion(int n)
 	return torsions_[n];
 }
 
-// Return specified type
-AtomType* Configuration::type(int index)
+// Return specified used type
+AtomType* Configuration::usedAtomType(int index)
 {
 	return usedAtomTypes_.atomType(index);
 }
