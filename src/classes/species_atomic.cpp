@@ -110,24 +110,6 @@ bool Species::isAtomSelected(SpeciesAtom* i) const
 	return selectedAtoms_.contains(i);
 }
 
-// Change element of specified Atom
-void Species::changeAtomElement(SpeciesAtom* i, int Z, AtomType* at)
-{
-	// Check for NULL pointer
-	if (i == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL Atom pointer passed to Species::changeAtomElement.\n");
-		return;
-	}
-	
-	// First, change element within Atom (if necessary)
-	if (i->element()->Z() != Z) i->setElement(Elements::elementPointer(Z));
-	else return;
-	
-	// Now, must assign an AtomType. Isotopologue data should be updated after this function!
-	i->setAtomType(at);
-}
-
 // Return total atomic mass of Species
 double Species::mass() const
 {

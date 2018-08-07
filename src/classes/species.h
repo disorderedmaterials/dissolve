@@ -101,8 +101,6 @@ class Species : public ListItem<Species>
 	int nSelectedAtoms() const;
 	// Return whether specified Atom is selected
 	bool isAtomSelected(SpeciesAtom* i) const;
-	// Change element of specified Atom
-	void changeAtomElement(SpeciesAtom* i, int Z, AtomType* at);
 	// Return total atomic mass of Species
 	double mass() const;
 
