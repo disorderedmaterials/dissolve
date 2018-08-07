@@ -22,8 +22,7 @@
 #ifndef DISSOLVE_SPECIES_H
 #define DISSOLVE_SPECIES_H
 
-#include "templates/list.h"
-#include "templates/array2d.h"
+#include "classes/atomtypelist.h"
 #include "classes/speciesangle.h"
 #include "classes/speciesatom.h"
 #include "classes/speciesbond.h"
@@ -75,6 +74,8 @@ class Species : public ListItem<Species>
 	List<SpeciesAtom> atoms_;
 	// List of selected Atoms
 	RefList<SpeciesAtom,int> selectedAtoms_;
+	// List of AtomTypes, and their populations, used in the Species
+	AtomTypeList usedAtomTypes_;
 	
 	public:
 	// Add a new Atom to the Species
@@ -103,6 +104,10 @@ class Species : public ListItem<Species>
 	bool isAtomSelected(SpeciesAtom* i) const;
 	// Return total atomic mass of Species
 	double mass() const;
+	// Update used AtomTypeList
+	void updateUsedAtomTypes();
+	// Return used AtomTypesList
+	const AtomTypeList& usedAtomTypes();
 
 
 	/*

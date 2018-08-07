@@ -117,3 +117,16 @@ double Species::mass() const
 	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next) m += AtomicMass::mass(i->element());
 	return m;
 }
+
+// Update used AtomTypeList
+void Species::updateUsedAtomTypes()
+{
+	usedAtomTypes_.clear();
+	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next) usedAtomTypes_.add(i->atomType(), 1);
+}
+
+// Return used AtomTypesList
+const AtomTypeList& Species::usedAtomTypes()
+{
+	return usedAtomTypes_;
+}
