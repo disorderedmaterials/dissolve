@@ -119,7 +119,7 @@ bool Dissolve::readConfiguration(Configuration* cfg, LineParser& parser)
 	// Clear current contents of Configuration
 	cfg->clear();
 
-	// Read configuration anme, nMolecules, and nGrains, and initalise those arrays
+	// Read configuration name, nMolecules, and nGrains, and initialise those arrays
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	cfg->setName(parser.argc(0));
 	cfg->initialise(parser.argi(1), parser.argi(2)); 
