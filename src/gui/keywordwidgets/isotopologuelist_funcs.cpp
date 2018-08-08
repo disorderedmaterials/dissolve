@@ -215,7 +215,7 @@ void IsotopologueListKeywordWidget::updateWidgetValues()
 	refreshing_ = true;
 
 	// Update the table
-	TableWidgetUpdater<IsotopologueListKeywordWidget,IsotopologueReference> tableUpdater(ui.IsotopologueTable, keyword_->references(), this, &IsotopologueListKeywordWidget::updateTableRow);
+	TableWidgetUpdater<IsotopologueListKeywordWidget,IsotopologueReference> tableUpdater(ui.IsotopologueTable, keyword_->data(), this, &IsotopologueListKeywordWidget::updateTableRow);
 	ui.IsotopologueTable->resizeColumnsToContents();
 
 	refreshing_ = false;

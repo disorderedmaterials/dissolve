@@ -31,7 +31,7 @@
 /* none */
 
 // Keyword with IsotopologueReference Data
-class IsotopologueListModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<IsotopologueReference>
+class IsotopologueListModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData< List<IsotopologueReference>& >
 {
 	public:
 	// Constructor
@@ -43,15 +43,9 @@ class IsotopologueListModuleKeyword : public ModuleKeywordBase, public ModuleKey
 	/*
 	 * Data
 	 */
-	private:
-	// List of IsotopologueReferences upon which we are operating
-	List<IsotopologueReference>& references_;
-
 	public:
 	// Return whether the current data value has ever been set
 	bool isSet();
-	// Return list of references
-	List<IsotopologueReference>& references();
 
 
 	/*

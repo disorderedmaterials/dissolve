@@ -26,7 +26,7 @@
 #include "templates/genericlisthelper.h"
 
 // Constructor
-IsotopologueListModuleKeyword::IsotopologueListModuleKeyword(List<IsotopologueReference>& references) : ModuleKeywordBase(ModuleKeywordBase::IsotopologueListData), ModuleKeywordData<IsotopologueReference>(IsotopologueReference()), references_(references)
+IsotopologueListModuleKeyword::IsotopologueListModuleKeyword(List<IsotopologueReference>& references) : ModuleKeywordBase(ModuleKeywordBase::IsotopologueListData), ModuleKeywordData< List<IsotopologueReference>& >(references)
 {
 }
 
@@ -43,12 +43,6 @@ IsotopologueListModuleKeyword::~IsotopologueListModuleKeyword()
 bool IsotopologueListModuleKeyword::isSet()
 {
 	return set_;
-}
-
-// Return list of references
-List<IsotopologueReference>& IsotopologueListModuleKeyword::references()
-{
-	return references_;
 }
 
 /*
@@ -90,7 +84,7 @@ bool IsotopologueListModuleKeyword::parseArguments(LineParser& parser, int start
 	if (!iso) return Messenger::error("Error defining Isotopologue reference - no Isotopologue named '%s' exists for Species '%s'.\n", parser.argc(startArg+2), sp->name());
 
 	// Add the data to the list
-	IsotopologueReference* isoRef = references_.add();
+	IsotopologueReference* isoRef = data_.add();
 	isoRef->set(cfg, sp, iso, parser.argd(startArg+3));
 	
 	set_ = true;
@@ -102,7 +96,7 @@ bool IsotopologueListModuleKeyword::parseArguments(LineParser& parser, int start
 bool IsotopologueListModuleKeyword::write(LineParser& parser, const char* prefix)
 {
 	// Loop over list of IsotopologueReferences
-	ListIterator<IsotopologueReference> refIterator(references_);
+	ListIterator<IsotopologueReference> refIterator(data_);
 	while (IsotopologueReference* ref = refIterator.iterate())
 	{
 		if (!parser.writeLineF("%s%s  '%s'  '%s'  '%s'  %f\n", prefix, keyword(), ref->configuration()->name(), ref->species()->name(), ref->isotopologue()->name(), ref->weight())) return false;
