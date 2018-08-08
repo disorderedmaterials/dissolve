@@ -97,6 +97,13 @@ void ModuleKeywordsWidget::setUp(DissolveWindow* dissolveWindow, Module* module)
 			widget = boolWidget;
 			base = boolWidget;
 		}
+		else if (keyword->type() == ModuleKeywordBase::AtomTypeSelectionData)
+		{
+			AtomTypeSelectionKeywordWidget* atomTypeSelectionWidget = new AtomTypeSelectionKeywordWidget(NULL, keyword, moduleData, module->uniqueName());
+			connect(atomTypeSelectionWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
+			widget = atomTypeSelectionWidget;
+			base = atomTypeSelectionWidget;
+		}
 		else if (keyword->type() == ModuleKeywordBase::BroadeningFunctionData)
 		{
 			BroadeningFunctionKeywordWidget* broadeningFunctionWidget = new BroadeningFunctionKeywordWidget(NULL, keyword, moduleData, module->uniqueName());

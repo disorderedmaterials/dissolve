@@ -22,6 +22,7 @@
 // General include for all KeywordWidget types
 #include "gui/keywordwidgets/base.h"
 #include "gui/keywordwidgets/bool.hui"
+#include "gui/keywordwidgets/atomtypeselection.h"
 #include "gui/keywordwidgets/broadeningfunction.h"
 #include "gui/keywordwidgets/charstring.hui"
 #include "gui/keywordwidgets/double.hui"
