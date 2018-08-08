@@ -115,6 +115,9 @@ const Array<CharString>& CharStringModuleKeyword::validationList()
 // Validate supplied value
 bool CharStringModuleKeyword::isValid(CharString value)
 {
+	// If there is no validation list, we always accept the value
+	if (validValues_.nItems() == 0) return true;
+
 	for (int n=0; n<validValues_.nItems(); ++n) if (DissolveSys::sameString(value, validValues_[n])) return true;
 
 	return false;
