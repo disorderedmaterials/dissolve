@@ -274,10 +274,6 @@ void Weights::calculateWeightingMatrices()
 			boundWeights_.at(typeI, typeJ) *= ci * cj * (typeI == typeJ ? 1 : 2);
 		}
 	}
-
-	intraNorm.print();
-	boundWeights_.print();
-	weights_.print();
 }
 
 // Create AtomType list and matrices based on stored IsotopologueMix information
