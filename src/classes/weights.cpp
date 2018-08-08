@@ -171,7 +171,6 @@ void Weights::calculateWeightingMatrices()
 	boundCoherentSquareOfAverage_ *= boundCoherentSquareOfAverage_;
 
 	// Determine bound (intramolecular) scattering weights
-
 	// Loop over defined Isotopologues in our defining mixtures, summing terms from (intramolecular) pairs of Atoms
 	boundWeights_ = 0.0;
 	Array2D<double> intraNorm(atomTypes_.nItems(), atomTypes_.nItems(), true);
@@ -184,19 +183,23 @@ void Weights::calculateWeightingMatrices()
 		// Get weighting for associated Species population
 		double speciesWeight = double(mix->speciesPopulation());
 
-		// Using the underlying Species, set a multiplying matrix of 1's and zeroes that state the AtomType interactions we have present
+		// Using the underlying Species, construct a flag matrix which states the AtomType interactions we have present
 		Species* sp = mix->species();
+		const AtomTypeList& speciesAtomTypes = sp->usedAtomTypes();
 		const int nAtoms = sp->nAtoms();
 		intraFlag = false;
-		for (int i = 0; i<nAtoms; ++i)
+		for (atd1 = speciesAtomTypes.first(); atd1 != NULL; atd1 = atd1->next)
 		{
-			// Get AtomType for this Atom and find it in our local AtomTypeList
-			int typeI = atomTypes_.indexOf(sp->atom(i)->atomType());
-			if (typeI == -1) Messenger::error("Failed to find AtomType '%s' in local Weights.\n", sp->atom(i)->atomType()->name());
-			for (int j = i; j<nAtoms; ++j)
+			// Find this AtomType in our local AtomTypeList
+			int typeI = atomTypes_.indexOf(atd1->atomType());
+			if (typeI == -1) Messenger::error("Failed to find AtomType '%s' in local Weights.\n", atd1->atomTypeName());
+
+			// Inner loop
+			for (atd2 = atd1; atd2 != NULL; atd2 = atd2->next)
 			{
 				// Get AtomType for this Atom and find it in our local AtomTypeList
-				int typeJ = atomTypes_.indexOf(sp->atom(j)->atomType());
+				int typeJ = atomTypes_.indexOf(atd2->atomType());
+				if (typeJ == -1) Messenger::error("Failed to find AtomType '%s' in local Weights.\n", atd2->atomTypeName());
 
 				intraFlag.at(typeI, typeJ) = true;
 			}
@@ -209,11 +212,14 @@ void Weights::calculateWeightingMatrices()
 			// Sum the scattering lengths of each pair of AtomTypes, weighted by the speciesWeight and the fractional Isotopologue weight in the mix.
 			double weight = speciesWeight * topeIterator.currentData();
 
-			atd1 = atomTypes_.first();
-			for (int typeI=0; typeI<atomTypes_.nItems(); ++typeI, atd1 = atd1->next)
+			for (atd1 = speciesAtomTypes.first(); atd1 != NULL; atd1 = atd1->next)
 			{
+				// Get the local index of this AtomType, as well as its pointer
+				int typeI = atomTypes_.indexOf(atd1->atomType());
+				AtomTypeData* localI = atomTypes_[typeI];
+
 				// If this AtomType is exchangeable, add the averaged scattering length from the local AtomTypesList instead of its actual isotopic length.
-				if (atd1->exchangeable()) bi = atd1->boundCoherent();
+				if (localI->exchangeable()) bi = localI->boundCoherent();
 				else
 				{
 					// Get the Isotope associated to this AtomType in the current Isotopologue
@@ -222,14 +228,18 @@ void Weights::calculateWeightingMatrices()
 				}
 				bi *= 0.1;
 
-				atd2 = atd1;
-				for (int typeJ=typeI; typeJ<atomTypes_.nItems(); ++typeJ, atd2 = atd2->next)
+				// Inner loop
+				for (atd2 = atd1; atd2 != NULL; atd2 = atd2->next)
 				{
+					// Get the local index of this AtomType, as well as its pointer
+					int typeJ = atomTypes_.indexOf(atd2->atomType());
+					AtomTypeData* localJ = atomTypes_[typeJ];
+
 					// Check to see if this interaction is present in the current Species
 					if (!intraFlag.at(typeI, typeJ)) continue;
 
 					// If this AtomType is exchangeable, add the averaged scattering length from the local AtomTypesList instead of its actual isotopic length.
-					if (atd2->exchangeable()) bj = atd2->boundCoherent();
+					if (localJ->exchangeable()) bj = localJ->boundCoherent();
 					else
 					{
 						// Get the Isotope associated to this AtomType in the current Isotopologue
