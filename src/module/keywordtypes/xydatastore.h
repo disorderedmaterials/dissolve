@@ -30,7 +30,7 @@
 /* none */
 
 // Keyword with a store of XYData
-class XYDataStoreModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<XYData>
+class XYDataStoreModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<XYDataStore&>
 {
 	public:
 	// Constructor
@@ -42,15 +42,9 @@ class XYDataStoreModuleKeyword : public ModuleKeywordBase, public ModuleKeywordD
 	/*
 	 * Data
 	 */
-	private:
-	// XYDataStore upon which we are operating
-	XYDataStore& dataStore_;
-
 	public:
 	// Return whether the current data value has ever been set
 	bool isSet();
-	// Return data store
-	XYDataStore& dataStore();
 
 
 	/*

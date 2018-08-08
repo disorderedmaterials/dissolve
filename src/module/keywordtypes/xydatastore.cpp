@@ -23,7 +23,7 @@
 #include "base/lineparser.h"
 
 // Constructor
-XYDataStoreModuleKeyword::XYDataStoreModuleKeyword(XYDataStore& dataStore) : ModuleKeywordBase(ModuleKeywordBase::XYDataStoreData), ModuleKeywordData<XYData>(XYData()), dataStore_(dataStore)
+XYDataStoreModuleKeyword::XYDataStoreModuleKeyword(XYDataStore& dataStore) : ModuleKeywordBase(ModuleKeywordBase::XYDataStoreData), ModuleKeywordData<XYDataStore&>(dataStore)
 {
 }
 
@@ -40,12 +40,6 @@ XYDataStoreModuleKeyword::~XYDataStoreModuleKeyword()
 bool XYDataStoreModuleKeyword::isSet()
 {
 	return set_;
-}
-
-// Return data store
-XYDataStore& XYDataStoreModuleKeyword::dataStore()
-{
-	return dataStore_;
 }
 
 /*
@@ -75,7 +69,7 @@ bool XYDataStoreModuleKeyword::parseArguments(LineParser& parser, int startArg, 
 	int xcol = parser.hasArg(startArg+2) ? parser.argi(startArg+2)-1 : 0;
 	int ycol = parser.hasArg(startArg+3) ? parser.argi(startArg+3)-1 : 1;
 
-	if (!dataStore_.add(procPool, parser.argc(startArg), parser.argc(startArg+1), xcol, ycol))
+	if (!data_.add(procPool, parser.argc(startArg), parser.argc(startArg+1), xcol, ycol))
 	{
 		Messenger::error("Failed to add test data.\n");
 		return false;
@@ -90,7 +84,7 @@ bool XYDataStoreModuleKeyword::parseArguments(LineParser& parser, int startArg, 
 bool XYDataStoreModuleKeyword::write(LineParser& parser, const char* prefix)
 {
 	// Loop over list of XYData
-	ListIterator<XYData> dataIterator(dataStore_.data());
+	ListIterator<XYData> dataIterator(data_.data());
 	while (XYData* data = dataIterator.iterate())
 	{
 		if (!parser.writeLineF("%s%s  '%s'  '%s'  '%s'  %f\n", prefix, keyword(), data->sourceFilename(), data->name(), data->xColumn(), data->yColumn())) return false;
