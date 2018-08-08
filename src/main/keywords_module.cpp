@@ -116,9 +116,10 @@ bool ModuleBlock::parse(LineParser& parser, Dissolve* dissolve, Module* module, 
 		{
 			// Might be a keyword defined in the Module itself?
 			int result = module->parseKeyword(parser, dissolve, targetList, module->uniqueName());
-			if (result != 1)
+			if (result == 0) error = true;
+			else if (result == -1)
 			{
-				if (result == -1) Messenger::error("Unrecognised %s block keyword '%s' found, and the Module '%s' contains no option with this name.\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock), parser.argc(0), module->name());
+				Messenger::error("Unrecognised %s block keyword '%s' found, and the Module '%s' contains no option with this name.\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock), parser.argc(0), module->name());
 				module->printValidKeywords();
 				error = true;
 			}
