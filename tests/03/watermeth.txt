@@ -116,7 +116,6 @@ Configuration  'Mix'
 
   # Sample Structure Factor Calculations
   Module  NeutronSQ  'HHH'
-    # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
     QMin 0.05
     QBroadening  OmegaDependentGaussian  0.02    # For SLS
     WindowFunction  None
@@ -181,7 +180,6 @@ Configuration  'Mix'
   EndModule
   
   Module  NeutronSQ  'H5H'
-    # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
     QMin 0.05
     QBroadening  OmegaDependentGaussian  0.02    # For SLS
     WindowFunction  None
@@ -201,7 +199,6 @@ Configuration  'Mix'
   EndModule
   
   Module  NeutronSQ  'DHH'
-    # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
     QMin 0.05
     QBroadening  OmegaDependentGaussian  0.02    # For SLS
     WindowFunction  None
@@ -220,7 +217,6 @@ Configuration  'Mix'
   EndModule
   
   Module  NeutronSQ  'HDH'
-    # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
     QMin 0.05
     QBroadening  OmegaDependentGaussian  0.02    # For SLS
     WindowFunction  None
@@ -239,7 +235,6 @@ Configuration  'Mix'
   EndModule
   
   Module  NeutronSQ  'HHD'
-    # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
     QMin 0.05
     QBroadening  OmegaDependentGaussian  0.02    # For SLS
     WindowFunction  None
@@ -258,7 +253,6 @@ Configuration  'Mix'
   EndModule
   
   Module  NeutronSQ  'DDH'
-    # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
     QMin 0.05
     QBroadening  OmegaDependentGaussian  0.02    # For SLS
     WindowFunction  None
@@ -277,7 +271,6 @@ Configuration  'Mix'
   EndModule
   
   Module  NeutronSQ  'HDD'
-    # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
     QMin 0.05
     QBroadening  OmegaDependentGaussian  0.02    # For SLS
     WindowFunction  None
@@ -296,7 +289,6 @@ Configuration  'Mix'
   EndModule
   
   Module  NeutronSQ  'DDD'
-    # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
     QMin 0.05
     QBroadening  OmegaDependentGaussian  0.02    # For SLS
     WindowFunction  None
