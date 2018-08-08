@@ -1,6 +1,6 @@
 /*
 	*** Module Keyword - CharString
-	*** src/modules/modulekeyword_charstring.h
+	*** src/module/keywordtypes/charstring.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.

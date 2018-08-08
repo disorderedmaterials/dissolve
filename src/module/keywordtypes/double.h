@@ -1,6 +1,6 @@
 /*
 	*** Module Keyword - Double
-	*** src/modules/modulekeyword_double.h
+	*** src/module/keywordtypes/double.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.

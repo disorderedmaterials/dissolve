@@ -1,6 +1,6 @@
 /*
 	*** Module Keyword - Complex
-	*** src/modules/modulekeyword_complex.cpp
+	*** src/module/keywordtypes/complex.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.

@@ -1,6 +1,6 @@
 /*
 	*** Module Keyword - Integer
-	*** src/modules/modulekeyword_int.cpp
+	*** src/module/keywordtypes/int.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.

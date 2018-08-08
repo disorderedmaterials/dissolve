@@ -1,6 +1,6 @@
 /*
 	*** Module Keyword - CharString
-	*** src/modules/modulekeyword_charstring.cpp
+	*** src/module/keywordtypes/charstring.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.

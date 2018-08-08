@@ -1,6 +1,6 @@
 /*
 	*** Module Keyword - Bool
-	*** src/modules/modulekeyword_bool.cpp
+	*** src/module/keywordtypes/bool.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
