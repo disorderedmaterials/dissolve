@@ -165,7 +165,7 @@ void Dissolve::updateCurrentPairPotentials()
 }
 
 // Generate any missing PairPotentials using the supplied short-range form
-void Dissolve::generateMissingPairPotentials(PairPotential::ShortRangeType srType)
+bool Dissolve::generateMissingPairPotentials(PairPotential::ShortRangeType srType)
 {
 	// Loop over all atomtype pairs and generate any missing potentials
 	for (AtomType* at1 = atomTypes_.first(); at1 != NULL; at1 = at1->next)
@@ -185,7 +185,9 @@ void Dissolve::generateMissingPairPotentials(PairPotential::ShortRangeType srTyp
 			}
 
 			pot->setShortRangeType(srType);
-			pot->setParameters(at1, at2);
+			if (!pot->setParameters(at1, at2)) return false;
 		}
 	}
+
+	return true;
 }

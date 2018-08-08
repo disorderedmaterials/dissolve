@@ -172,7 +172,7 @@ bool PairPotentialsBlock::parse(LineParser& parser, Dissolve* dissolve)
 					break;
 				}
 
-				dissolve->generateMissingPairPotentials(srType);
+				if (!dissolve->generateMissingPairPotentials(srType)) error = true;
 				break;
 			case (PairPotentialsBlock::IncludeCoulombKeyword):
 				dissolve->setPairPotentialsIncludeCoulomb(parser.argb(1));

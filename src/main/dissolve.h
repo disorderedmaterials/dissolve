@@ -216,7 +216,7 @@ class Dissolve
 	// Update all currently-defined PairPotentials
 	void updateCurrentPairPotentials();
 	// Generate any missing PairPotentials using the supplied short-range form
-	void generateMissingPairPotentials(PairPotential::ShortRangeType srType);
+	bool generateMissingPairPotentials(PairPotential::ShortRangeType srType);
 
 
 	/*
