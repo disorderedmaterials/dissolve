@@ -214,7 +214,7 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Create, print, and store weights
 		Messenger::print("Isotopologue and isotope composition for Configuration '%s':\n\n", cfg->name());
-		weights.createFromIsotopologues();
+		weights.createFromIsotopologues(exchangeableTypes_);
 		weights.print();
 
 		// Does a PartialSet for the unweighted S(Q) already exist for this Configuration?

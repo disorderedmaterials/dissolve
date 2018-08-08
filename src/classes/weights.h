@@ -88,7 +88,7 @@ class Weights : public GenericItemBase
 
 	public:
 	// Create AtomType list and matrices based on stored IsotopologueMix information
-	void createFromIsotopologues();
+	void createFromIsotopologues(const AtomTypeList& exchangeableTypes);
 	// Reduce data to be naturally-weighted
 	void naturalise();
 	// Return AtomTypeList

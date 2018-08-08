@@ -79,6 +79,8 @@ class NeutronSQModule : public Module
 	private:
 	// Isotopologue references
 	List<IsotopologueReference> isotopologues_;
+	// Exchangeable AtomTypes
+	AtomTypeList exchangeableTypes_;
 
 	protected:
 	// Set up keywords for Module

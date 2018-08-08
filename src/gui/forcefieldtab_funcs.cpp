@@ -242,25 +242,14 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, AtomType* atomType, bool cr
 	else item = ui.AtomTypesTable->item(row, 0);
 	item->setText(atomType->name());
 
-	// Exchangeable flag
-	if (createItems)
-	{
-		item = new QTableWidgetItem;
-		item->setData(Qt::UserRole, VariantPointer<AtomType>(atomType));
-		item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-		ui.AtomTypesTable->setItem(row, 1, item);
-	}
-	else item = ui.AtomTypesTable->item(row, 1);
-	item->setCheckState(atomType->exchangeable() ? Qt::Checked : Qt::Unchecked);
-
 	// Charge
 	if (createItems)
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<AtomType>(atomType));
-		ui.AtomTypesTable->setItem(row, 2, item);
+		ui.AtomTypesTable->setItem(row, 1, item);
 	}
-	else item = ui.AtomTypesTable->item(row, 2);
+	else item = ui.AtomTypesTable->item(row, 1);
 	item->setText(QString::number(atomType->parameters().charge()));
 
 	// Parameters
@@ -270,9 +259,9 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, AtomType* atomType, bool cr
 		{
 			item = new QTableWidgetItem;
 			item->setData(Qt::UserRole, VariantPointer<AtomType>(atomType));
-			ui.AtomTypesTable->setItem(row, n+3, item);
+			ui.AtomTypesTable->setItem(row, n+2, item);
 		}
-		else item = ui.AtomTypesTable->item(row, n+3);
+		else item = ui.AtomTypesTable->item(row, n+2);
 		item->setText(QString::number(atomType->parameters().parameter(n)));
 	}
 }
@@ -427,22 +416,17 @@ void ForcefieldTab::on_AtomTypesTable_itemChanged(QTableWidgetItem* w)
 			atomType->setName(qPrintable(w->text()));
 			dissolveWindow_->setModified();
 			break;
-		// Exchangeable flag
-		case (1):
-			atomType->setExchangeable(w->checkState() == Qt::Checked);
-			dissolveWindow_->setModified();
-			break;
 		// Charge
-		case (2):
+		case (1):
 			atomType->parameters().setCharge(w->text().toDouble());
 			dissolveWindow_->setModified();
 			break;
 		// Parameters
+		case (2):
 		case (3):
 		case (4):
 		case (5):
-		case (6):
-			atomType->parameters().setParameter(w->column()-3, w->text().toDouble());
+			atomType->parameters().setParameter(w->column()-2, w->text().toDouble());
 			dissolveWindow_->setModified();
 			break;
 		default:

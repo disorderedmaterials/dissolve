@@ -52,6 +52,8 @@ class AtomTypeData : public MPIListItem<AtomTypeData>
 	int listIndex_;
 	// Reference AtomType
 	AtomType* atomType_;
+	// Whether the AtomType has been marked as exchangeable
+	bool exchangeable_;
 	// Isotopes information (if any)
 	List<IsotopeData> isotopes_;
 	// Total integer population
@@ -74,6 +76,8 @@ class AtomTypeData : public MPIListItem<AtomTypeData>
 	int listIndex() const;
 	// Return reference AtomType
 	AtomType* atomType() const;
+	// Set exchangeable flag
+	void setAsExchangeable();
 	// Return whether the associated AtomType is exchangeable
 	bool exchangeable() const;
 	// Finalise, calculating fractional populations etc.

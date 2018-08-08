@@ -87,6 +87,7 @@ Module  NeutronSQ  'HDO'
   Configuration  'Bulk'
   Isotopologue  'Bulk'  'Water'  'Protiated'  0.5
   Isotopologue  'Bulk'  'Water'  'Deuteriated'  0.5
+  Exchangeable  HW
   # Save  On
   TestThreshold  0.11
   Frequency  1

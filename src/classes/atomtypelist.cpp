@@ -53,14 +53,33 @@ void AtomTypeList::operator=(const AtomTypeList& source)
 	types_ = source.types_;
 }
 
+// Array access operator
+AtomTypeData* AtomTypeList::operator[](int n)
+{
+#ifdef CHECKS
+	if ((n < 0) || (n >= types_.nItems()))
+	{
+		Messenger::print("OUT_OF_RANGE - Specified index %i out of range in AtomTypeList::operator[].\n", n);
+		return NULL;
+	}
+#endif
+	return types_[n];
+}
+
 /*
- * List
+ * Type List
  */
 
 // Clear all data
 void AtomTypeList::clear()
 {
 	types_.clear();
+}
+
+// Zero populations of all types in the list
+void AtomTypeList::zero()
+{
+	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next) atd->zeroPopulations();
 }
 
 // Add the specified AtomType to the list, returning the index of the AtomType in the list
@@ -83,22 +102,6 @@ AtomTypeData* AtomTypeList::add(AtomType* atomType, int population)
 	return atd;
 }
 
-// Add/increase this AtomType/Isotope pair
-void AtomTypeList::addIsotope(AtomType* atomType, Isotope* tope, int popAdd)
-{
-	AtomTypeData* atd = add(atomType, 0);
-	
-	// Add / increase isotope population
-	if (tope != NULL) atd->add(tope, popAdd);
-}
-
-// Make all AtomTypeData in the list reference only their natural isotope
-void AtomTypeList::naturalise()
-{
-	// Loop over AtomTypes in the source list
-	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next) atd->naturalise();
-}
-
 // Add the AtomTypes in the supplied list into this one, increasing populations etc.
 void AtomTypeList::add(const AtomTypeList& source)
 {
@@ -110,6 +113,61 @@ void AtomTypeList::add(const AtomTypeList& source)
 		// Now add Isotope data
 		for (IsotopeData* topeData = newType->isotopeData(); topeData != NULL; topeData = topeData->next) atd->add(topeData->isotope(), topeData->population());
 	}
+}
+
+// Add/increase this AtomType/Isotope pair
+void AtomTypeList::addIsotope(AtomType* atomType, Isotope* tope, int popAdd)
+{
+	AtomTypeData* atd = add(atomType, 0);
+	
+	// Add / increase isotope population
+	if (tope != NULL) atd->add(tope, popAdd);
+}
+
+// Finalise list, calculating fractional populations etc.
+void AtomTypeList::finalise()
+{
+	// Finalise AtomTypeData
+	int total = totalPopulation();
+	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next) atd->finalise(total);
+}
+
+// Finalise list, calculating fractional populations etc., and accounting for exchangeable sites in boundCoherent values
+void AtomTypeList::finalise(const AtomTypeList& exchangeable)
+{
+	// Perform basic tasks
+	finalise();
+
+	// Account for exchangeable atoms - form the average bound coherent scattering over all exchangeable atoms
+	double totalFraction = 0.0, boundCoherent = 0.0;
+	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next)
+	{
+		// If this type is not exchangable, move on
+		if (!exchangeable.contains(atd->atomType())) continue;
+
+		// Sum total atomic fraction and weighted bound coherent scattering length
+		totalFraction += atd->fraction();
+		boundCoherent += atd->fraction() * atd->boundCoherent();
+	}
+	boundCoherent /= totalFraction;
+
+	// Now go back through the list and set the new scattering length for exchangeable components
+	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next)
+	{
+		// If this type is not exchangable, move on
+		if (!exchangeable.contains(atd->atomType())) continue;
+
+		// Set the bound coherent scattering length of this component to the average of all exchangable components
+		atd->setBoundCoherent(boundCoherent);
+		atd->setAsExchangeable();
+	}
+}
+
+// Make all AtomTypeData in the list reference only their natural isotope
+void AtomTypeList::naturalise()
+{
+	// Loop over AtomTypes in the source list
+	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next) atd->naturalise();
 }
 
 // Check for presence of AtomType in list
@@ -133,12 +191,6 @@ bool AtomTypeList::contains(AtomType* atomType, Isotope* tope)
 	return false;
 }
 
-// Zero populations of all types in the list
-void AtomTypeList::zero()
-{
-	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next) atd->zeroPopulations();
-}
-
 // Return number of AtomType/Isotopes in list
 int AtomTypeList::nItems() const
 {
@@ -151,35 +203,11 @@ AtomTypeData* AtomTypeList::first() const
 	return types_.first();
 }
 
-// Print AtomType populations
-void AtomTypeList::print() const
+// Return types list
+const List<AtomTypeData>& AtomTypeList::types() const
 {
-	Messenger::print("  AtomType  El  Isotope  Population  Fraction           bc (fm)\n");
-	Messenger::print("  -------------------------------------------------------------\n");
-	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next)
-	{
-		char exch = atd->exchangeable() ? 'E' : ' ';
-
-		// If there are isotopes defined, print them
-		if (atd->isotopeData())
-		{
-			Messenger::print("%c %-8s  %-3s    -     %-10i  %8.6f (of world) %6.3f\n", exch, atd->atomTypeName(), atd->atomType()->element()->symbol(), atd->population(), atd->fraction(), atd->boundCoherent());
-
-			for (IsotopeData* topeData = atd->isotopeData(); topeData != NULL; topeData = topeData->next)
-			{
-				Messenger::print("                   %-3i   %-10i  %8.6f (of type)  %6.3f\n", topeData->isotope()->A(), topeData->population(), topeData->fraction(), topeData->isotope()->boundCoherent());
-			}
-
-		}
-		else Messenger::print("%c %-8s  %-3s          %-10i  %8.6f     --- N/A ---\n", exch, atd->atomTypeName(), atd->atomType()->element()->symbol(), atd->population(), atd->fraction());
-
-		Messenger::print("  -------------------------------------------------------------\n");	
-	}
+	return types_;
 }
-
-/*
- * Access
- */
 
 // Return index of AtomType in list
 int AtomTypeList::indexOf(AtomType* atomtype) const
@@ -215,27 +243,6 @@ int AtomTypeList::totalPopulation() const
 	return total;
 }
 
-// Finalise list, calculating fractional populations etc.
-void AtomTypeList::finalise()
-{
-	// Finalise AtomTypeData
-	int total = totalPopulation();
-	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next) atd->finalise(total);
-
-	// Account for exchangeable atoms - form the average bound coherent scattering over all exchangeable atoms
-	double totalFraction = 0.0, boundCoherent = 0.0;
-	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next)
-	{
-		if (!atd->atomType()->exchangeable()) continue;
-		totalFraction += atd->fraction();
-		boundCoherent += atd->fraction() * atd->boundCoherent();
-	}
-	boundCoherent /= totalFraction;
-
-	// Now go back through the list and set the new scattering length for exchangeable components
-	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next) if (atd->atomType()->exchangeable()) atd->setBoundCoherent(boundCoherent);
-}
-
 // Return nth referenced AtomType
 AtomType* AtomTypeList::atomType(int n)
 {
@@ -257,17 +264,30 @@ AtomTypeData* AtomTypeList::atomTypeData(AtomType* atomType)
 	return NULL;
 }
 
-// Array access operator
-AtomTypeData* AtomTypeList::operator[](int n)
+// Print AtomType populations
+void AtomTypeList::print() const
 {
-#ifdef CHECKS
-	if ((n < 0) || (n >= types_.nItems()))
+	Messenger::print("  AtomType  El  Isotope  Population  Fraction           bc (fm)\n");
+	Messenger::print("  -------------------------------------------------------------\n");
+	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next)
 	{
-		Messenger::print("OUT_OF_RANGE - Specified index %i out of range in AtomTypeList::atomType().\n");
-		return NULL;
+		char exch = atd->exchangeable() ? 'E' : ' ';
+
+		// If there are isotopes defined, print them
+		if (atd->isotopeData())
+		{
+			Messenger::print("%c %-8s  %-3s    -     %-10i  %8.6f (of world) %6.3f\n", exch, atd->atomTypeName(), atd->atomType()->element()->symbol(), atd->population(), atd->fraction(), atd->boundCoherent());
+
+			for (IsotopeData* topeData = atd->isotopeData(); topeData != NULL; topeData = topeData->next)
+			{
+				Messenger::print("                   %-3i   %-10i  %8.6f (of type)  %6.3f\n", topeData->isotope()->A(), topeData->population(), topeData->fraction(), topeData->isotope()->boundCoherent());
+			}
+
+		}
+		else Messenger::print("%c %-8s  %-3s          %-10i  %8.6f     --- N/A ---\n", exch, atd->atomTypeName(), atd->atomType()->element()->symbol(), atd->population(), atd->fraction());
+
+		Messenger::print("  -------------------------------------------------------------\n");	
 	}
-#endif
-	return types_[n];
 }
 
 /*

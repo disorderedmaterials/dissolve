@@ -48,6 +48,7 @@ void NeutronSQModule::setUpKeywords()
 {
 	frequency_ = 5;
 	keywords_.add(new ComplexModuleKeyword(2,2), "ConfigurationWeight", "Sets the relative weight of the specified Configuration in construction of the structure factors", "<Configuration Name> <weight>");
+	keywords_.add(new AtomTypeSelectionModuleKeyword(exchangeableTypes_, targetConfigurations_), "Exchangeable", "Specify AtomTypes that are exchangeable", "<AtomType> [AtomType...]");
 	keywords_.add(new IsotopologueListModuleKeyword(isotopologues_), "Isotopologue", "Set Isotopologue (and its population) to use for a particular Species in a given Configuration");
 	keywords_.add(new CharStringModuleKeyword("None", NeutronSQModule::nNormalisationTypes, NormalisationTypeKeywords), "Normalisation", "Normalisation to apply to total weighted F(Q)");
 	keywords_.add(new DoubleModuleKeyword(0.05, 1.0e-5), "QDelta", "Step size in Q for S(Q) calculation");

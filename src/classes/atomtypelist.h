@@ -24,18 +24,13 @@
 
 #include "classes/atomtypedata.h"
 #include "templates/list.h"
-#include "templates/array.h"
 #include "base/genericitembase.h"
 
 // Forward Declarations
 class AtomType;
 class Isotope;
 
-/*
- * AtomTypeList
- * 
- * Contains a list of AtomTypes referenced using a List<> of AtomTypData, and optionally containing Isotope and population information.
- */
+// AtomTypeList
 class AtomTypeList : public GenericItemBase
 {
 	public:
@@ -47,6 +42,8 @@ class AtomTypeList : public GenericItemBase
 	AtomTypeList(const AtomTypeList& source);
 	// Assignment Operator
 	void operator=(const AtomTypeList& source);
+	// Array access operator
+	AtomTypeData* operator[](int n);
 
 
 	/*
@@ -59,46 +56,42 @@ class AtomTypeList : public GenericItemBase
 	public:
 	// Clear all data
 	void clear();
+	// Zero populations of all types in the list
+	void zero();
 	// Add the specified AtomType to the list, returning the AtomTypeData
 	AtomTypeData* add(AtomType* atomType, int popAdd = 0);
-	// Add/increase this AtomType/Isotope pair, returning the index of the AtomType in the list
-	void addIsotope(AtomType* atomType, Isotope* tope = NULL, int popAdd = 0);
-	// Make all AtomTypeData in the list reference only their natural isotope
-	void naturalise();
 	// Add the AtomTypes in the supplied list into this one, increasing populations etc.
 	void add(const AtomTypeList& source);
+	// Add/increase this AtomType/Isotope pair, returning the index of the AtomType in the list
+	void addIsotope(AtomType* atomType, Isotope* tope = NULL, int popAdd = 0);
+	// Finalise list, calculating fractional populations etc.
+	void finalise();
+	// Finalise list, calculating fractional populations etc., and accounting for exchangeable sites in boundCoherent values
+	void finalise(const AtomTypeList& exchangeable);
+	// Make all AtomTypeData in the list reference only their natural isotope
+	void naturalise();
 	// Check for presence of AtomType in list
 	bool contains(AtomType* atomType) const;
 	// Check for presence of AtomType/Isotope pair in list
 	bool contains(AtomType* atomType, Isotope* tope);
-	// Zero populations of all types in the list
-	void zero();
 	// Return number of AtomType/Isotopes in list
 	int nItems() const;
 	// Return first item in list
 	AtomTypeData* first() const;
-	// Print AtomType populations
-	void print() const;
-
-
-	/*
-	 * Access
-	 */
-	public:
+	// Return types list
+	const List<AtomTypeData>& types() const;
 	// Return index of AtomType in list
 	int indexOf(AtomType* atomtype) const;
 	// Return index of names AtomType in list
 	int indexOf(const char* name) const;
 	// Return total population of all types in list
 	int totalPopulation() const;
-	// Finalise list, calculating fractional populations etc.
-	void finalise();
 	// Return nth referenced AtomType
 	AtomType* atomType(int n);
 	// Return AtomTypeData for specified AtomType
 	AtomTypeData* atomTypeData(AtomType* atomType);
-	// Array access operator
-	AtomTypeData* operator[](int n);
+	// Print AtomType populations
+	void print() const;
 
 
 	/*

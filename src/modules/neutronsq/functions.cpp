@@ -140,7 +140,7 @@ bool NeutronSQModule::calculateSummedWeights(Weights& summedWeights) const
 	}
 
 	// Finalise the Weights
-	summedWeights.createFromIsotopologues();
+	summedWeights.createFromIsotopologues(exchangeableTypes_);
 
 	return true;
 }

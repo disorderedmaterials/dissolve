@@ -35,6 +35,7 @@
 AtomTypeData::AtomTypeData() : MPIListItem<AtomTypeData>()
 {
 	atomType_ = NULL;
+	exchangeable_ = false;
 	population_ = 0;
 	fraction_ = 0.0;
 	boundCoherent_ = 0.0;
@@ -50,6 +51,7 @@ AtomTypeData::AtomTypeData(const AtomTypeData& source)
 void AtomTypeData::operator=(const AtomTypeData& source)
 {
 	atomType_ = source.atomType_;
+	exchangeable_ = source.exchangeable_;
 	isotopes_ = source.isotopes_;
 	population_ = source.population_;
 	fraction_ = source.fraction_;
@@ -65,11 +67,7 @@ bool AtomTypeData::initialise(int listIndex, AtomType* atomType, int population)
 {
 	listIndex_ = listIndex;
 	atomType_ = atomType;
-	if (atomType == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL AtomType pointer passed to AtomTypeData::initialise().\n");
-		return false;
-	}
+	if (atomType == NULL) return Messenger::error("NULL_POINTER - NULL AtomType pointer passed to AtomTypeData::initialise().\n");
 
 	population_ = population;
 	fraction_ = 0.0;
@@ -127,10 +125,16 @@ AtomType* AtomTypeData::atomType() const
 	return atomType_;
 }
 
+// Set exchangeable flag
+void AtomTypeData::setAsExchangeable()
+{
+	exchangeable_ = true;
+}
+
 // Return whether the associated AtomType is exchangeable
 bool AtomTypeData::exchangeable() const
 {
-	return atomType_ ? atomType_->exchangeable() : false;
+	return exchangeable_;
 }
 
 // Finalise, calculating fractional populations etc.

@@ -122,6 +122,7 @@ Configuration  'Mix'
     WindowFunction  None
     Isotopologue  'Mix'  'Water'  'Protiated'  1.0
     Isotopologue  'Mix'  'Methanol'  'Protiated'  1.0
+    Exchangeable  HW  HO
     # Save  On
     Frequency  1
   
@@ -187,6 +188,7 @@ Configuration  'Mix'
     Isotopologue  'Mix'  'Water'  'Protiated'  1.0
     Isotopologue  'Mix'  'Methanol'  'Protiated'  0.5
     Isotopologue  'Mix'  'Methanol'  'OD-MethylH'  0.5
+    Exchangeable  HW  HO
     #  Save  On
     Frequency  1
   
@@ -205,6 +207,7 @@ Configuration  'Mix'
     WindowFunction  None
     Isotopologue  'Mix'  'Water'  'Deuteriated'  1.0
     Isotopologue  'Mix'  'Methanol'  'Protiated'  1.0
+    Exchangeable  HW  HO
     #  Save  On
     Frequency  1
   
@@ -223,6 +226,7 @@ Configuration  'Mix'
     WindowFunction  None
     Isotopologue  'Mix'  'Water'  'Protiated'  1.0
     Isotopologue  'Mix'  'Methanol'  'OD-MethylH'  1.0
+    Exchangeable  HW  HO
     #  Save  On
     Frequency  1
   
@@ -241,6 +245,7 @@ Configuration  'Mix'
     WindowFunction  None
     Isotopologue  'Mix'  'Water'  'Protiated'  1.0
     Isotopologue  'Mix'  'Methanol'  'MethylD-OH'  1.0
+    Exchangeable  HW  HO
     #  Save  On
     Frequency  1
   
@@ -259,6 +264,7 @@ Configuration  'Mix'
     WindowFunction  None
     Isotopologue  'Mix'  'Water'  'Deuteriated'  1.0
     Isotopologue  'Mix'  'Methanol'  'OD-MethylH'  1.0
+    Exchangeable  HW  HO
     #  Save  On
     Frequency  1
   
@@ -277,6 +283,7 @@ Configuration  'Mix'
     WindowFunction  None
     Isotopologue  'Mix'  'Water'  'Protiated'  1.0
     Isotopologue  'Mix'  'Methanol'  'Deuteriated'  1.0
+    Exchangeable  HW  HO
     #  Save  On
     Frequency  1
   
@@ -295,6 +302,7 @@ Configuration  'Mix'
     WindowFunction  None
     Isotopologue  'Mix'  'Water'  'Deuteriated'  1.0
     Isotopologue  'Mix'  'Methanol'  'Deuteriated'  1.0
+    Exchangeable  HW  HO
     #  Save  On
     Frequency  1
   
@@ -314,8 +322,13 @@ EndModule
 PairPotentials
   Range  15.000000
   Delta  0.050000
+  Parameters  'OW'  -0.82      0.6503    3.165492
+  Parameters  'HW'  0.41       0.0       0.0
+  Parameters  'CT'  -0.18      0.276     3.55
+  Parameters  'HC'  0.06       0.126     2.5
+  Parameters  'OH'  -0.68	0.711	3.12
+  Parameters  'HO'  -0.48	0.126	2.4
   GenerateAll  'LJ'
-  Exchangeable  HW  HO
 EndPairPotentials
 
 Simulation

@@ -264,15 +264,20 @@ void Weights::calculateWeightingMatrices()
 			boundWeights_.at(typeI, typeJ) *= ci * cj * (typeI == typeJ ? 1 : 2);
 		}
 	}
+
+	intraNorm.print();
+	boundWeights_.print();
+	weights_.print();
 }
 
 // Create AtomType list and matrices based on stored IsotopologueMix information
-void Weights::createFromIsotopologues()
+void Weights::createFromIsotopologues(const AtomTypeList& exchangeableTypes)
 {
 	// Loop over IsotopologueMix entries and ensure relative populations of Isotopologues sum to 1.0
 	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next) mix->normalise();
 
 	// Fill atomTypes_ list with AtomType populations, based on IsotopologueMix relative populations and associated Species populations
+	atomTypes_.clear();
 	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next)
 	{
 		// We must now loop over the Isotopologues in the mixture
@@ -287,7 +292,7 @@ void Weights::createFromIsotopologues()
 			}
 		}
 	}
-	atomTypes_.finalise();
+	atomTypes_.finalise(exchangeableTypes);
 
 	calculateWeightingMatrices();
 

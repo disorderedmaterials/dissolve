@@ -71,19 +71,6 @@ Parameters& AtomType::parameters()
 	return parameters_;
 }
 
-
-// Set whether this AtomType is exchangeable
-void AtomType::setExchangeable(bool b)
-{
-	exchangeable_ = b;
-}
-
-// Return whether this AtomType is exchangeable
-bool AtomType::exchangeable() const
-{
-	return exchangeable_;
-}
-
 // Set index of this type in the main type index
 void AtomType::setIndex(int id)
 {
