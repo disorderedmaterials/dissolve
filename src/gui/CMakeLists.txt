@@ -14,6 +14,7 @@ SET(gui_MOC_HDRS
   modulechartmoduleblock.h
   modulekeywordswidget.h
   modulecontrolwidget.h
+  moduleeditor.h
   moduletab.h
   modulewidget.h
   pairpotentialwidget.h
@@ -39,6 +40,7 @@ SET(gui_UIS
   modulechartinsertionblock.ui
   modulechartmoduleblock.ui
   modulecontrolwidget.ui
+  moduleeditor.ui
   moduletab.ui
   pairpotentialwidget.ui
   paletteblock.ui
@@ -64,6 +66,7 @@ SET(gui_SRCS
   modulechartinsertionblock_funcs.cpp
   modulechartmoduleblock_funcs.cpp
   modulecontrolwidget_funcs.cpp
+  moduleeditor_funcs.cpp
   modulekeywordswidget_funcs.cpp
   modulepalette_funcs.cpp
   moduletab_funcs.cpp

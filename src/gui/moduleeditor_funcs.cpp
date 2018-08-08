@@ -1,6 +1,6 @@
 /*
 	*** Module Editor Functions
-	*** src/gui/widgets/moduleeditor_funcs.cpp
+	*** src/gui/moduleeditor_funcs.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/widgets/moduleeditor.h"
+#include "gui/moduleeditor.h"
 #include "gui/gui.h"
 #include "gui/modulechart.hui"
 #include "gui/modulepalette.hui"

@@ -137,7 +137,7 @@
   <customwidget>
    <class>ModuleEditor</class>
    <extends>QWidget</extends>
-   <header>gui/widgets/moduleeditor.h</header>
+   <header>gui/moduleeditor.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
