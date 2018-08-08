@@ -47,8 +47,6 @@ class XYDataStoreModuleKeyword : public ModuleKeywordBase, public ModuleKeywordD
 	XYDataStore& dataStore_;
 
 	public:
-	// Duplicate the keyword's data in the supplied GenericList
-	void duplicateInList(GenericList& targetList, const char* prefix);
 	// Return whether the current data value has ever been set
 	bool isSet();
 	// Return data store

@@ -39,12 +39,6 @@ AtomTypeSelectionModuleKeyword::~AtomTypeSelectionModuleKeyword()
  * Data
  */
 
-// Duplicate the keyword's data in the supplied GenericList
-void AtomTypeSelectionModuleKeyword::duplicateInList(GenericList& targetList, const char* prefix)
-{
-// 	GenericListHelper<IsotopologueReference>::realise(targetList, keyword(), prefix, genericItemFlags()) = data_;
-}
-
 // Return whether the current data value has ever been set
 bool AtomTypeSelectionModuleKeyword::isSet()
 {

@@ -54,12 +54,6 @@ DoubleModuleKeyword::~DoubleModuleKeyword()
  * Data
  */
 
-// Duplicate the keyword's data in the supplied GenericList
-void DoubleModuleKeyword::duplicateInList(GenericList& targetList, const char* prefix)
-{
-	GenericListHelper<double>::realise(targetList, keyword(), prefix, genericItemFlags()) = data_;
-}
-
 // Return whether the current data value has ever been set
 bool DoubleModuleKeyword::isSet()
 {

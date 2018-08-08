@@ -76,14 +76,6 @@ class ModuleKeywordBase : public ListItem<ModuleKeywordBase>
 
 
 	/*
-	 * Data
-	 */
-	public:
-	// Duplicate the keyword's data in the supplied GenericList
-	virtual void duplicateInList(GenericList& targetList, const char* prefix) = 0;
-
-
-	/*
 	 * Arguments
 	 */
 	public:

@@ -48,8 +48,6 @@ class AtomTypeSelectionModuleKeyword : public ModuleKeywordBase, public ModuleKe
 	RefList<Configuration,bool>& sourceConfigurations_;
 
 	public:
-	// Duplicate the keyword's data in the supplied GenericList
-	void duplicateInList(GenericList& targetList, const char* prefix);
 	// Return whether the current data value has ever been set
 	bool isSet();
 	// Check selection and make sure it is consistent based on the source Configurations
