@@ -31,6 +31,7 @@ EndModule
 PairPotentials
   Range  15.000000
   Delta  0.050000
+  Parameters  'Ar'  0.0  0.0  0.0
   GenerateAll  'LJ'
 EndPairPotentials
 
