@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1009</width>
-    <height>790</height>
+    <width>984</width>
+    <height>681</height>
    </rect>
   </property>
   <property name="font">
@@ -18,7 +18,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_4">
+  <layout class="QHBoxLayout" name="horizontalLayout_3">
    <property name="spacing">
     <number>4</number>
    </property>
@@ -733,29 +733,21 @@
     </layout>
    </item>
    <item>
-    <widget class="QScrollArea" name="ModuleScroll">
+    <widget class="QTabWidget" name="Tabs">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>4</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="autoFillBackground">
-      <bool>false</bool>
+     <property name="currentIndex">
+      <number>0</number>
      </property>
-     <property name="widgetResizable">
-      <bool>true</bool>
-     </property>
-     <widget class="QWidget" name="scrollAreaWidgetContents">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>721</width>
-        <height>780</height>
-       </rect>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <widget class="QWidget" name="ModulesTab">
+      <attribute name="title">
+       <string>Modules</string>
+      </attribute>
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
        <property name="spacing">
         <number>4</number>
        </property>
@@ -772,14 +764,14 @@
         <number>4</number>
        </property>
        <item>
-        <layout class="QHBoxLayout" name="ModuleWidgetLayout">
-         <property name="spacing">
-          <number>4</number>
+        <widget class="ModuleEditor" name="ModulePanel" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
-         <property name="sizeConstraint">
-          <enum>QLayout::SetDefaultConstraint</enum>
-         </property>
-        </layout>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -792,6 +784,12 @@
    <class>TExponentialSpin</class>
    <extends>QDoubleSpinBox</extends>
    <header>gui/widgets/texponentialspin.hui</header>
+  </customwidget>
+  <customwidget>
+   <class>ModuleEditor</class>
+   <extends>QWidget</extends>
+   <header>gui/moduleeditor.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

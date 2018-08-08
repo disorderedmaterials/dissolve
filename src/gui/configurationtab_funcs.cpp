@@ -51,8 +51,8 @@ ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dis
 	// Populate coordinates file format combo
 	ComboPopulator(ui.CoordinatesFileFormatCombo, ImportModuleFormats::nCoordinateFormats, ImportModuleFormats::niceCoordinateFormats());
 
-// 	// Add current Module widgets to layout
-// 	addModuleWidgets(configuration_->modules().modules(), subWidgets_, ui.ModuleWidgetLayout, true);
+	// Set up the ModuleEditor
+	ui.ModulePanel->setUp(dissolveWindow, cfg->modules());
 }
 
 ConfigurationTab::~ConfigurationTab()
