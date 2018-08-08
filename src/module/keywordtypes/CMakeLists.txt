@@ -1,4 +1,5 @@
 add_library(keywordtypes
+  atomtypeselection.cpp
   bool.cpp
   broadeningfunction.cpp
   charstring.cpp
@@ -10,6 +11,7 @@ add_library(keywordtypes
   windowfunction.cpp
   xydatastore.cpp
 
+  atomtypeselection.h
   bool.h
   broadeningfunction.h
   charstring.h

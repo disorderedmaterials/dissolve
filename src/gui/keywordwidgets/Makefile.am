@@ -24,6 +24,7 @@ clean-local:
 libkeywordwidgets_la_SOURCES = base.cpp
 libkeywordwidgets_la_SOURCES += dropdown.ui dropwidget.hui dropdown_funcs.cpp dropwidget_funcs.cpp
 
+libkeywordwidgets_la_SOURCES += atomtypeselection.ui atomtypeselection_funcs.cpp
 libkeywordwidgets_la_SOURCES += bool.hui bool_funcs.cpp
 libkeywordwidgets_la_SOURCES += broadeningfunction.ui broadeningfunction_funcs.cpp
 libkeywordwidgets_la_SOURCES += charstring.hui charstring_funcs.cpp
@@ -33,6 +34,6 @@ libkeywordwidgets_la_SOURCES += isotopologuelist.ui isotopologuelist_funcs.cpp
 libkeywordwidgets_la_SOURCES += pairbroadeningfunction.ui pairbroadeningfunction_funcs.cpp
 libkeywordwidgets_la_SOURCES += windowfunction.hui windowfunction_funcs.cpp
 
-noinst_HEADERS = base.h broadeningfunction.h dropdown.h isotopologuelist.h pairbroadeningfunction.h
+noinst_HEADERS = atomtypeselection.h base.h broadeningfunction.h dropdown.h isotopologuelist.h pairbroadeningfunction.h
 
 AM_CPPFLAGS = -I$(top_srcdir)/src @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@

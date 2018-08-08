@@ -3,6 +3,7 @@
 
 # Meta-Objects
 SET(keywordwidgets_MOC_HDRS
+  atomtypeselection.h
   broadeningfunction.h
   isotopologuelist.h
   pairbroadeningfunction.h
@@ -19,6 +20,7 @@ QT5_WRAP_CPP(keywordwidgets_MOC_SRCS ${keywordwidgets_MOC_HDRS})
 
 # User Interface Files
 SET(keywordwidgets_UIS
+  atomtypeselection.ui
   broadeningfunction.ui
   dropdown.ui
   isotopologuelist.ui
@@ -30,6 +32,7 @@ QT5_WRAP_UI(keywordwidgets_UIS_H ${keywordwidgets_UIS})
 SET(keywordwidgets_SRCS
   base.cpp
 
+  atomtypeselection_funcs.cpp
   bool_funcs.cpp
   broadeningfunction_funcs.cpp
   charstring_funcs.cpp
