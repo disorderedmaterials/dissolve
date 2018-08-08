@@ -76,14 +76,11 @@ bool SQModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, 
 // Sum unweighted S(Q) over the supplied Module's target Configurations
 bool SQModule::sumUnweightedSQ(ProcessPool& procPool, Module* module, GenericList& moduleData, PartialSet& summedUnweightedSQ)
 {
-	// Create an AtomTypeList containing the sum of atom types over all target configurations
+	// Create an AtomTypeList containing all AtomTypes present in all target configurations
 	AtomTypeList combinedAtomTypes;
 	RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
 	while (Configuration* cfg = configIterator.iterate()) combinedAtomTypes.add(cfg->usedAtomTypesList());
-
-	// Finalise and print the combined AtomTypes matrix
 	combinedAtomTypes.finalise();
-	combinedAtomTypes.print();
 
 	// Set up PartialSet container
 	summedUnweightedSQ.setUpPartials(combinedAtomTypes, module->uniqueName(), "unweighted", "sq", "Q, 1/Angstroms");
