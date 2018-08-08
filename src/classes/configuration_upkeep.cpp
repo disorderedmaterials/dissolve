@@ -1,6 +1,6 @@
 /*
-	*** Dissolve Methods - Upkeep
-	*** src/main/methods_upkeep.cpp
+	*** Configuration - Upkeep
+	*** src/classes/configuration_upkeep.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
