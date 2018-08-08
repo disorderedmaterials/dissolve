@@ -240,6 +240,7 @@ bool SpeciesBlock::parse(LineParser& parser, Dissolve* dissolve, Species* specie
 				}
 				break;
 			case (SpeciesBlock::EndSpeciesKeyword):
+				species->updateUsedAtomTypes();
 				species->addNaturalIsotopologue();
 				species->updateGrains();
 				species->centreAtOrigin();
