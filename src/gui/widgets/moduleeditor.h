@@ -1,6 +1,6 @@
 /*
-	*** Processing Tab
-	*** src/gui/processingtab.h
+	*** Module Editor
+	*** src/gui/widgets/moduleeditor.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,58 +19,64 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PROCESSINGTAB_H
-#define DISSOLVE_PROCESSINGTAB_H
+#ifndef DISSOLVE_MODULEEDITOR_H
+#define DISSOLVE_MODULEEDITOR_H
 
-#include "gui/ui_processingtab.h"
-#include "gui/maintab.h"
-#include "gui/widgets/subwidget.h"
+#include "gui/ui_moduleeditor.h"
 
 // Forward Declarations
+class DissolveWindow;
+class LineParser;
 class ModuleChart;
+class ModuleList;
 class ModulePalette;
 
-// Processing Tab
-class ProcessingTab : public QWidget, public MainTab
+// ModuleEditor
+class ModuleEditor : public QWidget
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
 	public:
 	// Constructor / Destructor
-	ProcessingTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title);
-	~ProcessingTab();
+	ModuleEditor(QWidget* parent = NULL);
+	~ModuleEditor();
 	// Main form declaration
-	Ui::ProcessingTab ui;
+	Ui::ModuleEditor ui;
 
 
 	/*
-	 * Data
+	 * Setup
 	 */
 	public:
-	// Return tab type
-	const char* tabType() const;
+	// Setup up the ModuleEditor for the specified Module list
+	bool setUp(DissolveWindow* dissolveWindow, ModuleList& moduleList);
 
-
-	/*
-	 * Widgets
-	 */
-	public slots:
-	void on_WriteRestartFileCheck_clicked(bool checked);
-	void on_RestartFrequencySpin_valueChanged(int value);
-	void on_SetRandomSeedCheck_clicked(bool checked);
-	void on_RandomSeedSpin_valueChanged(int value);
 
 	/*
 	 * Update
 	 */
-	protected:
-	// Update controls in tab
+	private:
+	// Whether the widget is currently refreshing
+	bool refreshing_;
+
+	public:
+	// Update controls
 	void updateControls();
-	// Disable sensitive controls within tab, ready for main code to run
+	// Disable sensitive controls within widget, ready for main code to run
 	void disableSensitiveControls();
-	// Enable sensitive controls within tab, ready for main code to run
+	// Enable sensitive controls within widget, ready for main code to run
 	void enableSensitiveControls();
+
+
+	/*
+	 * Widget Functions
+	 */
+	private:
+	// Chart widget being displayed
+	ModuleChart* chartWidget_;
+	// Palette widget
+	ModulePalette* paletteWidget_;
 
 
 	/*

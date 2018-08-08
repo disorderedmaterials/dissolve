@@ -21,19 +21,19 @@ SUFFIXES: .ui .hui .qrc
 clean-local:
 	-rm -f ui_* *.o moc_*.cpp colourbutton.cpp gradientbar.cpp mimetreewidget.cpp supertabbar.cpp supertabwidget.cpp texponentialspin.cpp tmenubutton.cpp tpopupwidget.cpp
 
-libwidgets_la_SOURCES = nocontrols.ui
+libwidgets_la_SOURCES = moduleeditor.ui nocontrols.ui
 libwidgets_la_SOURCES += colourbutton.hui gradientbar.hui mimetreewidget.hui supertabbar.hui supertabwidget.hui texponentialspin.hui tmenubutton.hui tpopupwidget.hui
 
 libwidgets_la_SOURCES += colourbutton_funcs.cpp
 libwidgets_la_SOURCES += gradientbar_funcs.cpp
-libwidgets_la_SOURCES += mimestrings.cpp mimetreewidget_funcs.cpp mimetreewidgetitem.cpp
+libwidgets_la_SOURCES += mimestrings.cpp mimetreewidget_funcs.cpp mimetreewidgetitem.cpp moduleeditor_funcs.cpp
 libwidgets_la_SOURCES += nocontrols_funcs.cpp
 libwidgets_la_SOURCES += subwidget.cpp subwindow.cpp supertabbar_funcs.cpp supertabwidget_funcs.cpp
 libwidgets_la_SOURCES += texponentialspin_funcs.cpp
 libwidgets_la_SOURCES += tmenubutton_funcs.cpp tmenubuttongroup.cpp tpopupwidget_funcs.cpp
 
 
-noinst_HEADERS = mimestrings.h mimetreewidgetitem.h
+noinst_HEADERS = mimestrings.h mimetreewidgetitem.h moduleeditor.h
 noinst_HEADERS += nocontrols.h
 noinst_HEADERS += subwidget.h subwindow.h
 noinst_HEADERS += tmenubuttongroup.h

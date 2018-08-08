@@ -5,6 +5,7 @@
 SET(widgets_MOC_HDRS
   mimestrings.h
   mimetreewidgetitem.h
+  moduleeditor.h
   nocontrols.h
   subwidget.h
   subwindow.h
@@ -23,6 +24,7 @@ QT5_WRAP_CPP(widgets_MOC_SRCS ${widgets_MOC_HDRS})
 
 # User Interface Files
 SET(widgets_UIS
+  moduleeditor.ui
   nocontrols.ui
 )
 QT5_WRAP_UI(widgets_UIS_H ${widgets_UIS})
@@ -34,6 +36,7 @@ SET(widgets_SRCS
   mimestrings.cpp
   mimetreewidget_funcs.cpp
   mimetreewidgetitem.cpp
+  moduleeditor_funcs.cpp
   nocontrols_funcs.cpp
   subwidget.cpp
   subwindow.cpp

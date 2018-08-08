@@ -30,17 +30,7 @@ ProcessingTab::ProcessingTab(DissolveWindow* dissolveWindow, Dissolve& dissolve,
 {
 	ui.setupUi(this);
 
-	// Create a ModuleChart widget and set its source list
-	chartWidget_ = new ModuleChart(dissolveWindow, dissolve_.mainProcessingModules());
-	chartWidget_->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
-	ui.ModuleScrollArea->setWidget(chartWidget_);
-
-	// Create a ModulePalette widget
-	paletteWidget_ = new ModulePalette(dissolveWindow);
-	ui.PaletteScrollArea->setWidget(paletteWidget_);
-
-	// Hide palette group initially
-	ui.PaletteGroup->setVisible(false);
+	ui.ModulePanel->setUp(dissolveWindow, dissolve_.mainProcessingModules());
 
 	refreshing_ = false;
 }
@@ -62,11 +52,6 @@ const char* ProcessingTab::tabType() const
 /*
  * Widgets
  */
-
-void ProcessingTab::on_TogglePaletteButton_clicked(bool checked)
-{
-	ui.PaletteGroup->setVisible(checked);
-}
 
 void ProcessingTab::on_WriteRestartFileCheck_clicked(bool checked)
 {
@@ -118,7 +103,7 @@ void ProcessingTab::updateControls()
 	ui.SetRandomSeedCheck->setChecked(dissolve_.seed() != -1);
 	ui.RandomSeedSpin->setValue(dissolve_.seed() == -1 ? 0 : dissolve_.seed());
 
-	chartWidget_->updateControls();
+	ui.ModulePanel->updateControls();
 
 	refreshing_ = false;
 }
@@ -126,13 +111,13 @@ void ProcessingTab::updateControls()
 // Disable sensitive controls within tab, ready for main code to run
 void ProcessingTab::disableSensitiveControls()
 {
-	chartWidget_->disableSensitiveControls();
+	ui.ModulePanel->disableSensitiveControls();
 }
 
 // Enable sensitive controls within tab, ready for main code to run
 void ProcessingTab::enableSensitiveControls()
 {
-	chartWidget_->enableSensitiveControls();
+	ui.ModulePanel->enableSensitiveControls();
 }
 
 /*
@@ -142,11 +127,15 @@ void ProcessingTab::enableSensitiveControls()
 // Write widget state through specified LineParser
 bool ProcessingTab::writeState(LineParser& parser)
 {
+	if (!ui.ModulePanel->writeState(parser)) return false;
+
 	return true;
 }
 
 // Read widget state through specified LineParser
 bool ProcessingTab::readState(LineParser& parser)
 {
+	if (!ui.ModulePanel->readState(parser)) return false;
+
 	return true;
 }

@@ -667,3 +667,19 @@ void ModuleChart::recalculateLayout()
 {
 	layOutWidgets(false);
 }
+
+/*
+ * State I/O
+ */
+
+// Write widget state through specified LineParser
+bool ModuleChart::writeState(LineParser& parser)
+{
+	return true;
+}
+
+// Read widget state through specified LineParser
+bool ModuleChart::readState(LineParser& parser)
+{
+	return true;
+}
