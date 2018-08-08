@@ -52,7 +52,15 @@ class CharStringModuleKeyword : public ModuleKeywordBase, public ModuleKeywordDa
 	/*
 	 * Data Validation
 	 */
+	private:
+	// List of valid values (if appropriate)
+	Array<CharString> validValues_;
+
 	public:
+	// Return whether a validation list has been set
+	bool hasValidationList();
+	// Return validation list
+	const Array<CharString>& validationList();
 	// Validate supplied value
 	bool isValid(CharString value);
 

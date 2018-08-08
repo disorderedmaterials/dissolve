@@ -35,13 +35,14 @@ CharStringKeywordWidget::CharStringKeywordWidget(QWidget* parent, ModuleKeywordB
 		{
 			// Populate the combo with the allowed values
 			const Array<CharString>& items = keyword_->validationList();
-			for (int n=0; n<items.nItems(); ++n) addItem(items.value(n).get());
+			for (int n=0; n<items.nItems(); ++n)
+			{
+				addItem(items.value(n).get());
+				if (DissolveSys::sameString(keyword_->asString(), items.value(n))) setCurrentIndex(n);
+			}
 
 			// Turn off editability
 			setEditable(false);
-
-			// Set the current value
-			setCurrentIndex(keyword_->indexOfValid(keyword_->asString()));
 		}
 		else
 		{
@@ -76,8 +77,8 @@ void CharStringKeywordWidget::updateValue()
 {
 	refreshing_ = true;
 
-	CharString newValue;
 	// Check to see if the associated Keyword may have been stored/updated in the specified moduleData
+	CharString newValue;
 	if ((keyword_->genericItemFlags()&GenericItem::InRestartFileFlag) && moduleData_.contains(keyword_->keyword(), modulePrefix_))
 	{
 		// Retrieve the item from the list
@@ -85,9 +86,16 @@ void CharStringKeywordWidget::updateValue()
 	}
 	else newValue = keyword_->asString();
 
-	// Set the new index
-	int index = keyword_->indexOfValid(newValue);
-	setCurrentIndex(index);
+	// If we have a validation list, set the new index
+	if (keyword_->hasValidationList())
+	{
+		const Array<CharString>& items = keyword_->validationList();
+		for (int n=0; n<items.nItems(); ++n) if (DissolveSys::sameString(keyword_->asString(), items.value(n)))
+		{
+			setCurrentIndex(n);
+			break;
+		}
+	}
 
 	refreshing_ = false;
 }

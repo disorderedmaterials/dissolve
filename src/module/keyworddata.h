@@ -34,12 +34,8 @@ template <class T> class ModuleKeywordData
 {
 	public:
 	// Constructor
-	ModuleKeywordData(T data)
+	ModuleKeywordData(T data) : data_(data)
 	{
-		data_ = data;
-		listLimit_ = false;
-		minimumLimit_ = false;
-		maximumLimit_ = false;
 		set_ = false;
 	}
 
@@ -81,79 +77,7 @@ template <class T> class ModuleKeywordData
 	/*
 	 * Data Validation
 	 */
-	protected:
-	// Validation limits to apply (if any)
-	bool minimumLimit_, maximumLimit_, listLimit_;
-	// Validation range (if appropriate)
-	T min_, max_;
-	// Validation List (if appropriate)
-	Array<T> allowedValues_;
-
-	protected:
-	// Set validation range
-	void setValidationRange(T minValue, T maxValue)
-	{
-		minimumLimit_ = true;
-		min_ = minValue;
-		maximumLimit_ = true;
-		max_ = maxValue;
-	}
-	// Set minimum validation limit
-	void setValidationMin(T minValue)
-	{
-		minimumLimit_ = true;
-		min_ = minValue;
-	}
-	// Set maximum validation limit
-	void setValidationMax(T maxValue)
-	{
-		maximumLimit_ = true;
-		max_ = maxValue;
-	}
-	// Set validation list
-	void setValidationList(Array<T> allowedValues)
-	{
-		listLimit_ = true;
-		allowedValues_ = allowedValues;
-	}
-
 	public:
-	// Return whether a minimum validation limit has been set
-	bool hasValidationMin()
-	{
-		return minimumLimit_;
-	}
-	// Return validation minimum limit
-	T validationMin()
-	{
-		return min_;
-	}
-	// Return whether a maximum validation limit has been set
-	bool hasValidationMax()
-	{
-		return maximumLimit_;
-	}
-	// Return validation maximum limit
-	T validationMax()
-	{
-		return max_;
-	}
-	// Return whether a validation list has been set
-	bool hasValidationList()
-	{
-		return listLimit_;
-	}
-	// Return validation list
-	const Array<T>& validationList()
-	{
-		return allowedValues_;
-	}
-	// Return index of supplied value in validation list (if it is valid)
-	int indexOfValid(T value)
-	{
-		for (int n=0; n<allowedValues_.nItems(); ++n) if (value == allowedValues_[n]) return n;
-		return -1;
-	}
 	// Validate supplied value
 	virtual bool isValid(T value)
 	{

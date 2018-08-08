@@ -53,7 +53,21 @@ class DoubleModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<d
 	/*
 	 * Data Validation
 	 */
+	private:
+	// Validation limits to apply (if any)
+	bool minimumLimit_, maximumLimit_;
+	// Validation range (if appropriate)
+	double min_, max_;
+
 	public:
+	// Return whether a minimum validation limit has been set
+	bool hasValidationMin();
+	// Return validation minimum limit
+	double validationMin();
+	// Return whether a maximum validation limit has been set
+	bool hasValidationMax();
+	// Return validation maximum limit
+	double validationMax();
 	// Validate supplied value
 	bool isValid(double value);
 

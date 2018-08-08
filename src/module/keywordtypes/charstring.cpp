@@ -30,11 +30,8 @@ CharStringModuleKeyword::CharStringModuleKeyword(CharString value) : ModuleKeywo
 
 CharStringModuleKeyword::CharStringModuleKeyword(CharString value, int nOptions, const char** options) : ModuleKeywordBase(ModuleKeywordBase::CharStringData), ModuleKeywordData<CharString>(value)
 {
-	// Create an Array of the values first
-	Array<CharString> valueArray;
-	for (int n=0; n<nOptions; ++n) valueArray.add(options[n]);
-
-	setValidationList(valueArray);
+	// Set our array of valid values
+	for (int n=0; n<nOptions; ++n) validValues_.add(options[n]);
 }
 
 // Destructor
@@ -81,9 +78,9 @@ bool CharStringModuleKeyword::parseArguments(LineParser& parser, int startArg, P
 	{
 		if (!setData(parser.argc(startArg)))
 		{
-			CharString validValues;
-			for (int n=0; n<allowedValues_.nItems(); ++n) validValues += CharString(n == 0 ? "%s" : ", %s", allowedValues_[n].get());
-			Messenger::error("Value '%s' is not valid for this keyword.\nValid values are:  %s", data_.get(), validValues.get());
+			CharString validValueString;
+			for (int n=0; n<validValues_.nItems(); ++n) validValueString += CharString(n == 0 ? "%s" : ", %s", validValues_[n].get());
+			Messenger::error("Value '%s' is not valid for this keyword.\nValid values are:  %s", data_.get(), validValueString.get());
 
 			return false;
 		}
@@ -103,30 +100,24 @@ bool CharStringModuleKeyword::write(LineParser& parser, const char* prefix)
  * Validation
  */
 
+// Return whether a validation list has been set
+bool CharStringModuleKeyword::hasValidationList()
+{
+	return (validValues_.nItems() > 0);
+}
+
+// Return validation list
+const Array<CharString>& CharStringModuleKeyword::validationList()
+{
+	return validValues_;
+}
+
 // Validate supplied value
 bool CharStringModuleKeyword::isValid(CharString value)
 {
-	if (listLimit_)
-	{
-		for (int n=0; n<allowedValues_.nItems(); ++n) if (DissolveSys::sameString(value,allowedValues_[n])) return true;
-		return false;
-	}
-	else
-	{
-		// Check minimum limit
-		if (minimumLimit_)
-		{
-			if (value < min_) return false;
-		}
+	for (int n=0; n<validValues_.nItems(); ++n) if (DissolveSys::sameString(value, validValues_[n])) return true;
 
-		// Check maximum limit
-		if (maximumLimit_)
-		{
-			if (value > max_) return false;
-		}
-	}
-
-	return true;
+	return false;
 }
 
 /*

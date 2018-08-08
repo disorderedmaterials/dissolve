@@ -26,16 +26,23 @@
 // Constructors
 IntegerModuleKeyword::IntegerModuleKeyword(int value) : ModuleKeywordBase(ModuleKeywordBase::IntegerData), ModuleKeywordData<int>(value)
 {
+	minimumLimit_ = false;
+	maximumLimit_ = false;
 }
 
 IntegerModuleKeyword::IntegerModuleKeyword(int value, int minValue) : ModuleKeywordBase(ModuleKeywordBase::IntegerData), ModuleKeywordData<int>(value)
 {
-	setValidationMin(minValue);
+	minimumLimit_ = true;
+	min_ = minValue;
+	maximumLimit_ = false;
 }
 
 IntegerModuleKeyword::IntegerModuleKeyword(int value, int minValue, int maxValue) : ModuleKeywordBase(ModuleKeywordBase::IntegerData), ModuleKeywordData<int>(value)
 {
-	setValidationRange(minValue, maxValue);
+	minimumLimit_ = true;
+	min_ = minValue;
+	maximumLimit_ = true;
+	max_ = maxValue;
 }
 
 // Destructor
@@ -63,27 +70,43 @@ bool IntegerModuleKeyword::isSet()
  * Data Validation
  */
 
+// Return whether a minimum validation limit has been set
+bool IntegerModuleKeyword::hasValidationMin()
+{
+	return minimumLimit_;
+}
+
+// Return validation minimum limit
+int IntegerModuleKeyword::validationMin()
+{
+	return min_;
+}
+
+// Return whether a maximum validation limit has been set
+bool IntegerModuleKeyword::hasValidationMax()
+{
+	return maximumLimit_;
+}
+
+// Return validation maximum limit
+int IntegerModuleKeyword::validationMax()
+{
+	return max_;
+}
+
 // Validate supplied value
 bool IntegerModuleKeyword::isValid(int value)
 {
-	if (listLimit_)
+	// Check minimum limit
+	if (minimumLimit_)
 	{
-		for (int n=0; n<allowedValues_.nItems(); ++n) if (value == allowedValues_[n]) return true;
-		return false;
+		if (value < min_) return false;
 	}
-	else
-	{
-		// Check minimum limit
-		if (minimumLimit_)
-		{
-			if (value < min_) return false;
-		}
 
-		// Check maximum limit
-		if (maximumLimit_)
-		{
-			if (value > max_) return false;
-		}
+	// Check maximum limit
+	if (maximumLimit_)
+	{
+		if (value > max_) return false;
 	}
 
 	return true;
@@ -112,13 +135,7 @@ bool IntegerModuleKeyword::parseArguments(LineParser& parser, int startArg, Proc
 	{
 		if (!setData(parser.argi(startArg)))
 		{
-			if (listLimit_)
-			{
-				CharString validValues;
-				for (int n=0; n<allowedValues_.nItems(); ++n) validValues += CharString(n == 0 ? "%i" : ", %i", allowedValues_[n]);
-				Messenger::error("Value '%i' is not valid for this keyword.\nValid values are:  %s", data_, validValues.get());
-			}
-			else if (minimumLimit_ && maximumLimit_) Messenger::error("Value %i is out of range for keyword. Valid range is %i <= n <= %i.\n", data_, min_, max_);
+			if (minimumLimit_ && maximumLimit_) Messenger::error("Value %i is out of range for keyword. Valid range is %i <= n <= %i.\n", data_, min_, max_);
 			else if (minimumLimit_) Messenger::error("Value %i is out of range for keyword. Valid range is %i <= n.\n", data_, min_);
 			else Messenger::error("Value %i is out of range for keyword. Valid range is n <= %i.\n", data_, max_);
 

@@ -53,7 +53,21 @@ class IntegerModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<
 	/*
 	 * Data Validation
 	 */
+	private:
+	// Validation limits to apply (if any)
+	bool minimumLimit_, maximumLimit_;
+	// Validation range (if appropriate)
+	int min_, max_;
+
 	public:
+	// Return whether a minimum validation limit has been set
+	bool hasValidationMin();
+	// Return validation minimum limit
+	int validationMin();
+	// Return whether a maximum validation limit has been set
+	bool hasValidationMax();
+	// Return validation maximum limit
+	int validationMax();
 	// Validate supplied value
 	bool isValid(int value);
 
