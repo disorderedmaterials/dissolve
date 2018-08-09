@@ -90,7 +90,7 @@ const char* PairBroadeningFunction::functionDescription(FunctionType func)
 			return "No Broadening";
 			break;
 		case (PairBroadeningFunction::GaussianFunction):
-			return "Gaussian-shape Broadening)";
+			return "Gaussian Broadening";
 			break;
 		case (PairBroadeningFunction::YoungsA):
 		case (PairBroadeningFunction::YoungsB):
