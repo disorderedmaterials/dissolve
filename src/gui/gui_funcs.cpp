@@ -132,9 +132,8 @@ bool DissolveWindow::openFile(const char* inputFile, bool ignoreRestartFile, boo
 	refreshing_ = true;
 
 	// Add on necessary tabs
-	addCoreTabs();
-	ListIterator<Configuration> configIterator(dissolve_.configurations());
-	while (Configuration* cfg = configIterator.iterate()) addConfigurationTab(cfg);
+	addTabs();
+
 	refreshing_ = false;
 
 	// Does a window state exist for this input file?

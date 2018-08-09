@@ -185,10 +185,10 @@ class DissolveWindow : public QMainWindow
 	private:
 	// Clear all tabs
 	void clearAllTabs();
-	// Add core tabs
-	void addCoreTabs();
-	// Add tab for specified Configuration target
-	void addConfigurationTab(Configuration* cfg);
+	// Add all necessary tabs, including those for current Configurations
+	void addTabs();
+	// Add new tab for specified Configuration target
+	MainTab* addConfigurationTab(Configuration* cfg);
 	// Add on an empty workspace tab
 	MainTab* addWorkspaceTab(const char* title);
 	// Find tab with title specified

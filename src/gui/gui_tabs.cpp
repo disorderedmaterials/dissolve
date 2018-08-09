@@ -26,6 +26,7 @@
 #include "gui/processingtab.h"
 #include "gui/speciestab.h"
 #include "gui/workspacetab.h"
+#include "main/dissolve.h"
 #include "classes/configuration.h"
 #include <QInputDialog>
 
@@ -76,19 +77,26 @@ void DissolveWindow::clearAllTabs()
 	tabs_.clear();
 }
 
-// Add core tabs
-void DissolveWindow::addCoreTabs()
+// Add all necessary tabs, including those for current Configurations
+void DissolveWindow::addTabs()
 {
+	// Forcefield
 	forcefieldTab_ = new ForcefieldTab(this, dissolve_, ui.MainTabs, "Forcefield");
 	tabs_.own(forcefieldTab_);
 	ui.MainTabs->setTabTextColour(forcefieldTab_->page(), QColor(189, 68, 0));
 	ui.MainTabs->setTabIcon(forcefieldTab_->page(), QIcon(":/tabs/icons/tabs_ff.svg"));
 
+	// Species
 	speciesTab_ = new SpeciesTab(this, dissolve_, ui.MainTabs, "Species");
 	tabs_.own(speciesTab_);
 	ui.MainTabs->setTabTextColour(speciesTab_->page(), QColor(0, 81, 0));
 	ui.MainTabs->setTabIcon(speciesTab_->page(), QIcon(":/tabs/icons/tabs_species.svg"));
 
+	// Configurations
+	ListIterator<Configuration> configIterator(dissolve_.configurations());
+	while (Configuration* cfg = configIterator.iterate()) addConfigurationTab(cfg);
+
+	// Main Processing
 	mainProcessingTab_ = new ProcessingTab(this, dissolve_, ui.MainTabs, "Main Processing");
 	tabs_.own(mainProcessingTab_);
 	ui.MainTabs->setTabTextColour(mainProcessingTab_->page(), QColor(11, 36, 118));
@@ -96,12 +104,14 @@ void DissolveWindow::addCoreTabs()
 }
 
 // Add tab for specified Configuration target
-void DissolveWindow::addConfigurationTab(Configuration* cfg)
+MainTab* DissolveWindow::addConfigurationTab(Configuration* cfg)
 {
 	MainTab* tab = new ConfigurationTab(this, dissolve_, ui.MainTabs, cfg->name(), cfg);
 	tabs_.own(tab);
 
 	ui.MainTabs->setTabIcon(tab->page(), QIcon(":/tabs/icons/tabs_configuration.svg"));
+
+	return tab;
 }
 
 // Add on an empty workspace tab
