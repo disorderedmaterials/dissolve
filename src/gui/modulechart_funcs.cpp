@@ -652,7 +652,8 @@ void ModuleChart::layOutWidgets(bool animateWidgets)
 	// Calculate size hint
 	// Our requested width is the left-most edge of the left-most column, plus the width of the column, plus the spacing.
 	// Our requested height is the top-most edge of the last row, plus the height of the row, plus the spacing.
-	sizeHint_ = QSize(lefts_.last() + widths_.last() + minSpacing_, tops_.last() + heights_.last() + minSpacing_);
+	if (displayBlocks_.nItems() == 0) sizeHint_ = QSize(0,0);
+	else sizeHint_ = QSize(lefts_.last() + widths_.last() + minSpacing_, tops_.last() + heights_.last() + minSpacing_);
 
 	// Finalise minimum size hint - we just need to add on the surrounding margins
 	minimumSizeHint_ += QSize(2*minSpacing_, 2*minSpacing_);
