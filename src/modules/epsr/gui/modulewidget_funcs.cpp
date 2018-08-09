@@ -283,8 +283,12 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 			blockData.sprintf("Collection '%s Calc'; Group '%s'; DataSet '%s Error'; Source XYData '%s//Error//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
 			errorsGraph_->addCollectionFromBlock(blockData);
 
+			// Reference F(r) (from direct FT of input data)
+			blockData.sprintf("Collection '%s Exp'; Group '%s'; LineStyle 1.0 Solid; DataSet 'Reference'; Source XYData '%s//ReferenceDataFT'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName());
+			FRGraph_->addCollectionFromBlock(blockData);
+
 			// Simulated F(r) (from FT of the calculated F(Q))
-			blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated'; Source XYData '%s//WeightedGR//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
+			blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated'; Source XYData '%s//SimulatedFR//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
 			FRGraph_->addCollectionFromBlock(blockData);
 		}
 
