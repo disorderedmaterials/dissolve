@@ -112,9 +112,13 @@ void AtomTypeSelectionKeywordWidget::updateWidgetValues()
 // Update keyword data based on widget values
 void AtomTypeSelectionKeywordWidget::updateKeywordData()
 {
-	// Get widget data
-// 	AtomTypeList broadeningFunction;
-// 	broadeningFunction.set(func, ui.Parameter0Spin->value(), ui.Parameter1Spin->value(), ui.Parameter2Spin->value(), ui.Parameter3Spin->value(), ui.Parameter4Spin->value(), ui.Parameter5Spin->value());
+	// Loop over items in the QListWidget, adding the associated AtomTypes for any that are checked
+	AtomTypeList newSelection;
+	for (int n=0; n<ui.SelectionList->count(); ++n)
+	{
+		QListWidgetItem* item = ui.SelectionList->item(n);
+		if (item->checkState() == Qt::Checked) newSelection.add( (AtomType*) VariantPointer<AtomType>(item->data(Qt::UserRole)));
+	}
+	keyword_->setData(newSelection);
 
-// 	keyword_->setData(broadeningFunction);
 }
