@@ -11,6 +11,7 @@ SET(gui_MOC_HDRS
   modulechartblock.h
   modulecharthotspot.h
   modulechartinsertionblock.h
+  modulechartmetrics.h
   modulechartmoduleblock.h
   modulekeywordswidget.h
   modulecontrolwidget.h

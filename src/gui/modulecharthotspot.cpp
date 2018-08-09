@@ -27,7 +27,7 @@ ModuleChartHotSpot::ModuleChartHotSpot() : ListItem<ModuleChartHotSpot>()
 {
 	row_ = -1;
 	type_ = ModuleChartHotSpot::nHotSpotTypes;
-	blockIndexAfter_ = -1;
+	moduleBlockAfter_ = NULL;
 }
 
 ModuleChartHotSpot::~ModuleChartHotSpot()
@@ -39,12 +39,12 @@ ModuleChartHotSpot::~ModuleChartHotSpot()
  */
 
 // Set area information
-void ModuleChartHotSpot::set(int row, HotSpotType type, QRect geometry, int blockIndexAfter)
+void ModuleChartHotSpot::set(int row, HotSpotType type, QRect geometry, ModuleChartModuleBlock* moduleBlockAfter)
 {
 	row_ = row;
 	type_ = type;
 	geometry_ = geometry;
-	blockIndexAfter_ = blockIndexAfter;
+	moduleBlockAfter_ = moduleBlockAfter;
 }
 
 // Return row in which the hotspot exists
@@ -77,8 +77,8 @@ bool ModuleChartHotSpot::contains(QPoint p) const
 	return geometry_.contains(p);
 }
 
-// Return displayed block index immediately after the hotspot
-int ModuleChartHotSpot::blockIndexAfter() const
+// Return pointer to ModuleChartModuleBlock immediately after the hot spot
+ModuleChartModuleBlock* ModuleChartHotSpot::moduleBlockAfter() const
 {
-	return blockIndexAfter_;
+	return moduleBlockAfter_;
 }

@@ -20,6 +20,7 @@
 */
 
 #include "gui/modulechartmoduleblock.h"
+#include "gui/modulechartmetrics.h"
 #include "gui/gui.h"
 #include "gui/keywordwidgets.h"
 #include "main/dissolve.h"
@@ -32,41 +33,26 @@ ModuleChartModuleBlock::ModuleChartModuleBlock(QWidget* parent, DissolveWindow* 
 	// Set up user interface
 	ui.setupUi(this);
 
-	setAutoFillBackground(true);
+	// Set necessary values on the widget itself
+	ModuleChartMetrics metrics;
+	setContentsMargins(metrics.blockMargins());
+// 	setAutoFillBackground(true);
+
+	// Hide the keywords control frame to start with
 	ui.KeywordsControlFrame->setVisible(false);
 
+	// Set ModuleReference and Module pointers
 	moduleReference_ = modRef;
-
 	module_ = moduleReference_ ? moduleReference_->module() : NULL;
 
-	initialiseWindow(module_);
+	// Set up our keywords widget
+	ui.KeywordsWidget->setUp(dissolveWindow_, module_);
 
 	updateControls();
 }
 
 ModuleChartModuleBlock::~ModuleChartModuleBlock()
 {
-}
-
-// Initialise window
-void ModuleChartModuleBlock::initialiseWindow(Module* module)
-{
-	// Set information panel contents
-	if (module)
-	{
-		CharString topText("%s (%s)", module->name(), module->uniqueName());
-		ui.TopLabel->setText(topText.get());
-		CharString bottomText("Runs @ %s", module->frequencyDetails(dissolve_.iteration()));
-		ui.BottomLabel->setText(bottomText.get());
-	}
-	else
-	{
-		ui.TopLabel->setText("? (?) @ ?");
-		ui.BottomLabel->setText("Runs @ ");
-	}
-
-	// Set up our keywords widget
-	ui.KeywordsWidget->setUp(dissolveWindow_, module_);
 }
 
 /*
@@ -88,15 +74,33 @@ void ModuleChartModuleBlock::paintEvent(QPaintEvent* event)
 {
 	if (!module_) return;
 
+	ModuleChartMetrics metrics;
+
 	QPainter painter(this);
+	
+	QPen borderPen;
+	borderPen.setWidth(metrics.blockBorderWidth());
+	painter.setPen(borderPen);
+
+	QPainterPath borderPath;
+	borderPath.moveTo(metrics.blockBorderMidPoint(), metrics.blockBorderMidPoint());
+	borderPath.lineTo(metrics.blockBorderMidPoint(), metrics.blockDentOffset());
+	borderPath.arcTo(metrics.blockBorderMidPoint() - metrics.blockDentRadius(), metrics.blockDentOffset()+metrics.blockBorderMidPoint(), metrics.blockDentRadius()*2, metrics.blockDentRadius()*2, 90, -180);
+	borderPath.lineTo(metrics.blockBorderMidPoint(), height() - metrics.blockBorderWidth());
+	borderPath.lineTo(width()-metrics.blockBorderWidth(), height() - metrics.blockBorderWidth());
+	borderPath.lineTo(width()-metrics.blockBorderWidth(), metrics.blockBorderMidPoint());
+	borderPath.closeSubpath();
 
 	const int* colour = module_->colour();
-	QColor blockColour(colour[0], colour[1], colour[2], 50);
-
+	QColor blockColour = QColor(colour[0], colour[1], colour[2]).lighter(200);
 	QLinearGradient linearGrad(QPointF(0, 0), QPointF(100, 50));
 	linearGrad.setColorAt(0, blockColour);
-	linearGrad.setColorAt(1, QColor(0,0,0,0));
-	painter.fillRect(QRect(0, 0, width(), height()), linearGrad);
+	linearGrad.setColorAt(1, Qt::white);
+	painter.setBrush(linearGrad);
+// 	painter.setBrush(Qt::white);
+
+	// Ready - draw the border + fill!
+	painter.drawPath(borderPath);
 }
 
 /*
@@ -124,6 +128,12 @@ void ModuleChartModuleBlock::updateControls()
 {
 	if (!module_) return;
 
+	// Set information panel contents
+	CharString topText("%s (%s)", module_->name(), module_->uniqueName());
+	ui.TopLabel->setText(topText.get());
+	CharString bottomText("Runs @ %s", module_->frequencyDetails(dissolve_.iteration()));
+	ui.BottomLabel->setText(bottomText.get());
+	
 	// Make sure tooltip on HeaderFrame is up-to-date
 	CharString toolTip("Targets: ");
 	RefListIterator<Configuration,bool> configIterator(module_->targetConfigurations());

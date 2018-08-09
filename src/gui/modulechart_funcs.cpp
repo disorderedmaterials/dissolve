@@ -20,6 +20,7 @@
 */
 
 #include "gui/modulechart.hui"
+#include "gui/modulechartmetrics.h"
 #include "gui/modulechartinsertionblock.h"
 #include "gui/gui.h"
 #include "module/list.h"
@@ -50,6 +51,10 @@ ModuleChart::ModuleChart(DissolveWindow* dissolveWindow, ModuleList& modules, QW
 	insertionWidget_ = NULL;
 	currentHotSpotIndex_ = -1;
 
+	// Create the insertion widget if we don't already have one
+	insertionWidget_ = new ModuleChartInsertionBlock(this, dissolveWindow_);
+	insertionWidget_->setVisible(false);
+
 	updateControls();
 }
 
@@ -64,6 +69,9 @@ ModuleChart::~ModuleChart()
 // Paint event
 void ModuleChart::paintEvent(QPaintEvent* event)
 {
+	// Create a metrics object
+	ModuleChartMetrics metrics;
+
 	// Draw suitable connecting lines between widgets, illustrating the execution path of the code
 	QPainter painter(this);
 
@@ -73,18 +81,11 @@ void ModuleChart::paintEvent(QPaintEvent* event)
 
 	// Set up some QPens
 	QPen solidPen(Qt::black);
-	solidPen.setWidth(2.0);
+	solidPen.setWidth(metrics.blockBorderWidth());
 	QPen dottedPen(Qt::gray);
-	dottedPen.setWidth(2.0);
+	dottedPen.setWidth(metrics.blockBorderWidth());
 	dottedPen.setStyle(Qt::DotLine);
 	dottedPen.setCapStyle(Qt::RoundCap);
-
-	// Set up a simple path representing an arrow
-	QPainterPath rightArrow;
-	rightArrow.moveTo(50,50);
-	rightArrow.lineTo(-5, 3);
-	rightArrow.lineTo(-5, -3);
-	rightArrow.closeSubpath();
 
 	int col = 0, row = 0;
 	QPoint p1, p2;
@@ -106,9 +107,11 @@ void ModuleChart::paintEvent(QPaintEvent* event)
 		if (col < (nColumns_-1))
 		{
 			painter.setPen(solidPen);
-			p1 = mapFromGlobal(block->globalRightHandWidgetAnchor());
-			p2 = mapFromGlobal(nextBlock->globalLeftHandWidgetAnchor());
+			p1 = QPoint(lefts_[col]+widths_[col], tops_[row]+metrics.blockBorderWidth()/2 + metrics.blockDentOffset() + metrics.blockDentRadius());
+			p2 = QPoint(lefts_[col+1]+metrics.blockBorderWidth()/2, p1.y());
 			painter.drawLine(p1, p2);
+			painter.setBrush(Qt::black);
+			painter.drawEllipse(p2, metrics.blockDentRadius()-metrics.blockBorderWidth()-1, metrics.blockDentRadius()-metrics.blockBorderWidth()-1);
 		}
 		else
 		{
@@ -117,7 +120,7 @@ void ModuleChart::paintEvent(QPaintEvent* event)
 			painter.setPen(dottedPen);
 
 			// Move out into the right-hand margin, making sure we are outside the widest widget in the column
-			p1 = mapFromGlobal(block->globalRightHandWidgetAnchor());
+			p1 = QPoint(lefts_[col]+widths_[col], tops_[row]+metrics.blockBorderWidth()/2 + metrics.blockDentOffset() + metrics.blockDentRadius());
 			p2 = p1 + QPoint(widths_[col] - block->widgetWidth() + minSpacing_/2, 0);
 			painter.drawLine(p1, p2);
 
@@ -130,12 +133,16 @@ void ModuleChart::paintEvent(QPaintEvent* event)
 			painter.drawLine(p1, p2);
 
 			// Drop down to the next widget's level
-			QPoint p3 = mapFromGlobal(nextBlock->globalLeftHandWidgetAnchor());
+			QPoint p3 = QPoint(lefts_[0]+metrics.blockBorderWidth()/2, tops_[row+1]+metrics.blockBorderWidth()/2 + metrics.blockDentOffset() + metrics.blockDentRadius());
 			p1 = QPoint(p2.x(), p3.y());
 			painter.drawLine(p2, p1);
 
 			// And finally on to the widget's left-hand-side
 			painter.drawLine(p1, p3);
+
+			// Finish by drawing the dot joiner
+			painter.setBrush(Qt::gray);
+			painter.drawEllipse(p3, metrics.blockDentRadius()-metrics.blockBorderWidth()-1, metrics.blockDentRadius()-metrics.blockBorderWidth()-1);
 		}
 
 		++col;
@@ -220,8 +227,10 @@ void ModuleChart::mouseMoveEvent(QMouseEvent* event)
 		// Recalculate the layout
 		layOutWidgets(true);
 
+		repaint();
+
 		// Begin the drag event
-		//Qt::DropAction dropAction = drag->exec(Qt::MoveAction);
+		Qt::DropAction dropAction = drag->exec(Qt::MoveAction);
 	// 	if (dropAction 
 	// 	...
 
@@ -294,6 +303,8 @@ void ModuleChart::dragMoveEvent(QDragMoveEvent* event)
 			layOutWidgets(true);
 		}
 
+		repaint();
+
 		return;
 	}
 
@@ -320,7 +331,7 @@ void ModuleChart::dropEvent(QDropEvent* event)
 	if (event->mimeData()->hasFormat("image/x-dissolve-moduleblock"))
 	{
 		// Check for a current hot spot and ensure we have a current draggedBlock_
-		printf("Current hotspot index = %i\n", currentHotSpotIndex_);
+		printf("Current hotspot index = %i (after = %p)\n", currentHotSpotIndex_, displayBlocks_[currentHotSpotIndex_]);
 		ModuleChartHotSpot* hotSpot = (currentHotSpotIndex_ == -1 ? NULL : hotSpots_[currentHotSpotIndex_]);
 		if ((!hotSpot) || (!draggedBlock_))
 		{
@@ -334,24 +345,17 @@ void ModuleChart::dropEvent(QDropEvent* event)
 		if (targetReference->parentList())
 		{
 			// Get the ModuleRefernce before which we are going to move the targetReference
-			if (hotSpot->blockIndexAfter() >= displayBlocks_.nItems())
+			if (hotSpot->moduleBlockAfter() == NULL)
 			{
 				// No next block, so move widget to the end of the list
 				targetReference->parentList()->modules().moveBefore(targetReference, NULL);
 			}
 			else
 			{
-				// Get the block 
-				RefListItem<ModuleChartBlock,ModuleChartModuleBlock*>* blockAfter = displayBlocks_[hotSpot->blockIndexAfter()];
-				printf("ModuleChartModuleBlock before which we are going to move the reference = %p\n", blockAfter);
+				ModuleReference* beforeReference = hotSpot->moduleBlockAfter()->moduleReference();
+				targetReference->parentList()->modules().moveBefore(targetReference, beforeReference);
 
-				if (blockAfter && blockAfter->data)
-				{
-					ModuleReference* beforeReference = blockAfter->data->moduleReference();
-					targetReference->parentList()->modules().moveBefore(targetReference, beforeReference);
-
-					updateControls();
-				}
+				updateControls();
 			}
 
 // 			? displayBlocks_[hotSpot->blockIndexAfter()]->data : NULL;
@@ -405,6 +409,10 @@ void ModuleChart::recreateDisplayWidgets()
 	 * If there is a current draggedBlock_, exclude this from the display list.
 	 */
 
+	// Get the current hotSpot, if there is one - we will add a placeholder widget for it
+	ModuleChartHotSpot* hotSpot = currentHotSpotIndex_ != -1 ? hotSpots_[currentHotSpotIndex_] : NULL;
+	insertionWidget_->setVisible(hotSpot);
+
 	RefListIterator<ModuleChartModuleBlock,bool> moduleChartModuleBlockIterator(moduleWidgets_);
 	while (ModuleChartModuleBlock* block = moduleChartModuleBlockIterator.iterate())
 	{
@@ -412,29 +420,36 @@ void ModuleChart::recreateDisplayWidgets()
 		if (block == draggedBlock_) block->setVisible(false);
 		else
 		{
+			// If there is a valid hotspot, check if this is the block before which it should appear.
+			if (hotSpot && (hotSpot->moduleBlockAfter() == block))
+			{
+				displayBlocks_.add(insertionWidget_, NULL);
+			}
+
 			// Make the block visible, and add the original pointer to the block as the RefListItem data
 			block->setVisible(true);
 			displayBlocks_.add(block, block);
 		}
 	}
 
-	// If there is a current hotSpot, add in a suitable placeholder widget to the list
-	if (currentHotSpotIndex_ != -1)
-	{
-		// Grab the current hotspot
-		ModuleChartHotSpot* hotSpot = hotSpots_[currentHotSpotIndex_];
-		if (!hotSpot) return;
-
-		// Create the insertion widget if we don't already have one
-		if (!insertionWidget_) insertionWidget_ = new ModuleChartInsertionBlock(this, dissolveWindow_);
-		insertionWidget_->setVisible(true);
-
-		// Get the current index
-		// Insert the widget into the appropriate point in the list
-		RefListItem<ModuleChartBlock,ModuleChartModuleBlock*>* item = displayBlocks_.addBefore(displayBlocks_[hotSpot->blockIndexAfter()], insertionWidget_);
-		item->data = hotSpot->blockIndexAfter() >= moduleWidgets_.nItems() ? NULL : moduleWidgets_[hotSpot->blockIndexAfter()]->item;
-	}
-	else if (insertionWidget_) insertionWidget_->setVisible(false);
+// 	// If there is a current hotSpot, add in a suitable placeholder widget to the list
+// 	if (currentHotSpotIndex_ != -1)
+// 	{
+// 		// Grab the current hotspot
+// 		ModuleChartHotSpot* hotSpot = hotSpots_[currentHotSpotIndex_];
+// 		if (!hotSpot) return;
+// 
+// 		// Create the insertion widget if we don't already have one
+// 		if (!insertionWidget_) insertionWidget_ = new ModuleChartInsertionBlock(this, dissolveWindow_);
+// 		insertionWidget_->setVisible(true);
+// 
+// 		// Get the index of the ModuleChartBlock on the di
+// 		// Insert the widget into the appropriate point in the list
+// 		RefListItem<ModuleChartBlock,ModuleChartModuleBlock*>* item = displayBlocks_.addBefore(displayBlocks_[hotSpot->blockIndexAfter()], insertionWidget_);
+// // 		item->data = hotSpot->blockIndexAfter() >= moduleWidgets_.nItems() ? NULL : moduleWidgets_[hotSpot->blockIndexAfter()]->item;
+// 		item->data = NULL;
+// 	}
+// 	else if (insertionWidget_) insertionWidget_->setVisible(false);
 }
 
 // Find ModuleChartModuleBlock displaying specified ModuleReference
@@ -609,6 +624,10 @@ void ModuleChart::layOutWidgets(bool animateWidgets)
 			// Do we still have a valid display widget to consider?
 			if (ModuleChartBlock* block = blockIterator.iterate())
 			{
+				// Set next block and get its ModuleChartModuleBlock pointer
+				ModuleChartBlock* nextBlock = blockIterator.peek();
+				ModuleChartModuleBlock* nextModuleBlock = nextBlock ? blockIterator.peekData() : NULL;
+
 				// Get the width and height of this block
 				int blockWidth = block->widgetWidth();
 				int blockHeight = block->widgetHeight();
@@ -617,13 +636,14 @@ void ModuleChart::layOutWidgets(bool animateWidgets)
 				if (blockHeight > rowMaxHeight) rowMaxHeight = blockHeight;
 
 				// Set the widget's geometry based on these coordinates and its SizeHint - we give it all the space it needs
-				if (animateWidgets)
+				if (animateWidgets && (block->blockType() != ModuleChartBlock::InsertionBlockType))
 				{
 					QPropertyAnimation *animation = new QPropertyAnimation(block->widget(), "geometry");
 					animation->setDuration(100);
 					animation->setEndValue(QRect(left, top, blockWidth, blockHeight));
 					animation->start();
 				}
+				else if (block->blockType() == ModuleChartBlock::InsertionBlockType) block->setWidgetGeometry(left, top, widths_[col], blockHeight);
 				else block->setWidgetGeometry(left, top, blockWidth, blockHeight);
 
 				// Store max width in our minimum size hint
@@ -631,8 +651,8 @@ void ModuleChart::layOutWidgets(bool animateWidgets)
 
 				// Work out hot spot for insertion before this block - if it is a ModuleChartInsertionBlock, extend the hotspot to cover the whole area
 				ModuleChartHotSpot* hotSpot = hotSpots_.add();
-				if (block->blockType() == ModuleChartBlock::InsertionBlockType) hotSpot->set(row, ModuleChartHotSpot::ModuleInsertionHotSpot, QRect(left-minSpacing_, top, minSpacing_+blockWidth, blockHeight), blockCount++);
-				else hotSpot->set(row, ModuleChartHotSpot::ModuleInsertionHotSpot, QRect(left-minSpacing_, top, minSpacing_, blockHeight), blockCount++);
+				if (block->blockType() == ModuleChartBlock::InsertionBlockType) hotSpot->set(row, ModuleChartHotSpot::ModuleInsertionHotSpot, QRect(left-minSpacing_, top, minSpacing_+blockWidth, blockHeight), nextModuleBlock);
+				else hotSpot->set(row, ModuleChartHotSpot::ModuleInsertionHotSpot, QRect(left-minSpacing_, top, minSpacing_, blockHeight), blockIterator.currentData());
 			}
 
 			// Increase left-hand coordinate

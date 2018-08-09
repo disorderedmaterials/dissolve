@@ -99,7 +99,7 @@ void ModulePalette::mouseMoveEvent(QMouseEvent* event)
 	drag->setPixmap(draggedModule_->grab());
 
 	// Begin the drag event
-	//Qt::DropAction dropAction = drag->exec(Qt::MoveAction);
+	Qt::DropAction dropAction = drag->exec(Qt::MoveAction);
 // 	if (dropAction 
 // 	...
 }

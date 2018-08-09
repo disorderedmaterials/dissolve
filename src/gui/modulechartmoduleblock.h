@@ -45,8 +45,6 @@ class ModuleChartModuleBlock : public QWidget, public ModuleChartBlock
 	~ModuleChartModuleBlock();
 	// Main form declaration
 	Ui::ModuleChartModuleWidget ui;
-	// Initialise window
-	void initialiseWindow(Module* module);
 
 
 	/*
