@@ -45,6 +45,14 @@ class ModuleChartInsertionBlock : public QWidget, public ModuleChartBlock
 
 
 	/*
+	 * QWidget Reimplementations
+	 */
+	protected:
+	// Paint event
+	void paintEvent(QPaintEvent* event);
+
+
+	/*
 	 * Block Type
 	 */
 	public:

@@ -156,15 +156,11 @@ void ModuleChart::paintEvent(QPaintEvent* event)
 		block = nextBlock;
 	}
 
-	// Highlight current HotSpot, if there is one
-	painter.setPen(Qt::NoPen);
-	if (currentHotSpotIndex_ != -1)
+	// TEST - Highlight all hotspots
+	if (false)
 	{
-		// Get the hot spot from the list
-		ModuleChartHotSpot* hotSpot = hotSpots_[currentHotSpotIndex_];
-
-		// If a Module insertion or addition hotspot, highlight the area in yellow
-		if (hotSpot->type() == ModuleChartHotSpot::ModuleInsertionHotSpot) painter.fillRect(hotSpot->geometry(), QBrush(QColor(200,200,0,50)));
+		ListIterator<ModuleChartHotSpot> hotSpotIterator(hotSpots_);
+		while (ModuleChartHotSpot* hotSpot = hotSpotIterator.iterate()) painter.fillRect(hotSpot->geometry(), QBrush(QColor(200,200,0,50)));
 	}
 }
 
@@ -315,7 +311,7 @@ void ModuleChart::dragMoveEvent(QDragMoveEvent* event)
 	currentHotSpotIndex_ = hotSpots_.indexOf(spotUnderMouse);
 
 	// There is a hotspot here - do we need to recalculate the layout?
-	if ((spotUnderMouse->type() == ModuleChartHotSpot::ModuleInsertionHotSpot) || (spotUnderMouse->type() == ModuleChartHotSpot::ModuleInsertionHotSpot))
+	if (spotUnderMouse->type() == ModuleChartHotSpot::ModuleInsertionHotSpot)
 	{
 		recreateDisplayWidgets();
 
@@ -331,7 +327,6 @@ void ModuleChart::dropEvent(QDropEvent* event)
 	if (event->mimeData()->hasFormat("image/x-dissolve-moduleblock"))
 	{
 		// Check for a current hot spot and ensure we have a current draggedBlock_
-		printf("Current hotspot index = %i (after = %p)\n", currentHotSpotIndex_, displayBlocks_[currentHotSpotIndex_]);
 		ModuleChartHotSpot* hotSpot = (currentHotSpotIndex_ == -1 ? NULL : hotSpots_[currentHotSpotIndex_]);
 		if ((!hotSpot) || (!draggedBlock_))
 		{
@@ -344,7 +339,7 @@ void ModuleChart::dropEvent(QDropEvent* event)
 		ModuleReference* targetReference = draggedBlock_->moduleReference();
 		if (targetReference->parentList())
 		{
-			// Get the ModuleRefernce before which we are going to move the targetReference
+			// Get the ModuleReference before which we are going to move the targetReference
 			if (hotSpot->moduleBlockAfter() == NULL)
 			{
 				// No next block, so move widget to the end of the list
@@ -354,19 +349,21 @@ void ModuleChart::dropEvent(QDropEvent* event)
 			{
 				ModuleReference* beforeReference = hotSpot->moduleBlockAfter()->moduleReference();
 				targetReference->parentList()->modules().moveBefore(targetReference, beforeReference);
-
-				updateControls();
 			}
 
-// 			? displayBlocks_[hotSpot->blockIndexAfter()]->data : NULL;
+			updateControls();
 
-			// Move the dragged Module into its new position
+			// Widgets are almost in the right place, so don't animate anything
+			resetAfterDrop(false);
 		}
 		else printf("ModuleReference from dragged block has no parent list, so can't move it.\n");
 	}
-	else event->ignore();
+	else
+	{
+		event->ignore();
 
-	resetAfterDrop();
+		resetAfterDrop();
+	}
 }
 
 /*
@@ -382,14 +379,14 @@ ModuleChartHotSpot* ModuleChart::hotSpotAt(QPoint pos)
 }
 
 // Reset after drop
-void ModuleChart::resetAfterDrop()
+void ModuleChart::resetAfterDrop(bool animateWidgets)
 {
 	currentHotSpotIndex_ = -1;
 	draggedBlock_ = NULL;
 
 	recreateDisplayWidgets();
 
-	layOutWidgets(true);
+	layOutWidgets(animateWidgets);
 
 	repaint();
 }
@@ -431,6 +428,9 @@ void ModuleChart::recreateDisplayWidgets()
 			displayBlocks_.add(block, block);
 		}
 	}
+
+	// Hotspot might be after the last displayed widget, so check here...
+	if (hotSpot && (hotSpot->moduleBlockAfter() == NULL)) displayBlocks_.add(insertionWidget_, NULL);
 }
 
 // Find ModuleChartModuleBlock displaying specified ModuleReference
@@ -475,10 +475,6 @@ void ModuleChart::updateControls()
 			newModuleWidgets.add(mcmBlock);
 		}
 	}
-
-	// Any items remaining in the moduleWidgets_ list must now be deleted? TODO
-// 	RefListIterator<ModuleChartModuleBlock,bool> removalIterator(moduleWidgets_);
-// 	while (ModuleChartModuleBlock* block = removalIterator.iterate()) 
 
 	// Copy the new RefList
 	moduleWidgets_ = newModuleWidgets;
@@ -582,7 +578,7 @@ void ModuleChart::layOutWidgets(bool animateWidgets)
 	// nRows should always be correct
 	if (nColumns_ == 0) nColumns_ = 1;
 
-	// Work out row / column top-lefts
+	// Work out row / column top-lefts, and adjust spacing between widgets to fill entire horizontal space
 	tops_.clear();
 	lefts_.clear();
 	heights_.clear();
@@ -624,16 +620,38 @@ void ModuleChart::layOutWidgets(bool animateWidgets)
 					animation->setEndValue(QRect(left, top, blockWidth, blockHeight));
 					animation->start();
 				}
-				else if (block->blockType() == ModuleChartBlock::InsertionBlockType) block->setWidgetGeometry(left, top, widths_[col], blockHeight);
+				else if (block->blockType() == ModuleChartBlock::InsertionBlockType)
+				{
+					/*
+					 * If the insertion point is not the first block on the row, set its height to be the same as the previous block.
+					 * If it is the first block on the line, and there is a valid block after, set its height to be the same as the next block.
+					 * Otherwise, set to its minimum height.
+					 */
+					if (col > 0) block->setWidgetGeometry(left, top, widths_[col], blockIterator.peekPrevious()->widgetHeight());
+					else if (col < (nColumns_-1)) block->setWidgetGeometry(left, top, widths_[col], blockIterator.peek()->widgetHeight());
+					block->setWidgetGeometry(left, top, widths_[col], 64);
+					
+				}
 				else block->setWidgetGeometry(left, top, blockWidth, blockHeight);
 
 				// Store max width in our minimum size hint
 				if (rowMaxHeight > minimumSizeHint_.height()) minimumSizeHint_ = QSize(0, rowMaxHeight);
 
-				// Work out hot spot for insertion before this block - if it is a ModuleChartInsertionBlock, extend the hotspot to cover the whole area
+				/*
+				 * Work out hot spot for insertion before this block.
+				 * If the current block is a ModuleChartInsertionBlock, extend the hotspot to cover the area including this block.
+				 */
 				ModuleChartHotSpot* hotSpot = hotSpots_.add();
-				if (block->blockType() == ModuleChartBlock::InsertionBlockType) hotSpot->set(row, ModuleChartHotSpot::ModuleInsertionHotSpot, QRect(left-minSpacing_, top, minSpacing_+blockWidth, blockHeight), nextModuleBlock);
-				else hotSpot->set(row, ModuleChartHotSpot::ModuleInsertionHotSpot, QRect(left-minSpacing_, top, minSpacing_, blockHeight), blockIterator.currentData());
+				if (block->blockType() == ModuleChartBlock::InsertionBlockType) hotSpot->set(row, ModuleChartHotSpot::ModuleInsertionHotSpot, QRect(left-minSpacing_, top, minSpacing_+widths_[col], rowMaxHeight), nextModuleBlock);
+				else hotSpot->set(row, ModuleChartHotSpot::ModuleInsertionHotSpot, QRect(left-minSpacing_, top, minSpacing_, rowMaxHeight), blockIterator.currentData());
+
+				// If this is the last block (but not an insertion block) add on a final hotspot
+				if (blockIterator.isLast() && (block->blockType() != ModuleChartBlock::InsertionBlockType))
+				{
+					ModuleChartHotSpot* hotSpot = hotSpots_.add();
+					if (col == (nColumns_-1)) hotSpot->set(row, ModuleChartHotSpot::ModuleInsertionHotSpot, QRect(left+widths_[col], top, minSpacing_, blockHeight), NULL);
+					else hotSpot->set(row, ModuleChartHotSpot::ModuleInsertionHotSpot, QRect(left+widths_[col], top, minSpacing_+widths_[col+1], blockHeight), NULL);
+				}
 			}
 
 			// Increase left-hand coordinate

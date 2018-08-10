@@ -108,7 +108,7 @@ class ModuleChart : public QWidget
 	// Return drop hotspot, if any, under specified point
 	ModuleChartHotSpot* hotSpotAt(QPoint pos);
 	// Reset after drop
-	void resetAfterDrop();
+	void resetAfterDrop(bool animateWidgets = true);
 
 
 	/*

@@ -20,6 +20,7 @@
 */
 
 #include "gui/modulechartinsertionblock.h"
+#include "gui/modulechartmetrics.h"
 #include "gui/gui.h"
 #include "gui/keywordwidgets.h"
 #include "main/dissolve.h"
@@ -36,6 +37,37 @@ ModuleChartInsertionBlock::ModuleChartInsertionBlock(QWidget* parent, DissolveWi
 
 ModuleChartInsertionBlock::~ModuleChartInsertionBlock()
 {
+}
+
+/*
+ * QWidget Reimplementations
+ */
+
+// Paint event
+void ModuleChartInsertionBlock::paintEvent(QPaintEvent* event)
+{
+	ModuleChartMetrics metrics;
+
+	QPainter painter(this);
+	
+	QPen borderPen;
+	borderPen.setWidth(metrics.blockBorderWidth());
+	borderPen.setStyle(Qt::DashLine);
+	painter.setPen(borderPen);
+
+	QPainterPath borderPath;
+	borderPath.moveTo(metrics.blockBorderMidPoint(), metrics.blockBorderMidPoint());
+	borderPath.lineTo(metrics.blockBorderMidPoint(), metrics.blockDentOffset());
+	borderPath.arcTo(metrics.blockBorderMidPoint() - metrics.blockDentRadius(), metrics.blockDentOffset()+metrics.blockBorderMidPoint(), metrics.blockDentRadius()*2, metrics.blockDentRadius()*2, 90, -180);
+	borderPath.lineTo(metrics.blockBorderMidPoint(), height() - metrics.blockBorderWidth());
+	borderPath.lineTo(width()-metrics.blockBorderWidth(), height() - metrics.blockBorderWidth());
+	borderPath.lineTo(width()-metrics.blockBorderWidth(), metrics.blockBorderMidPoint());
+	borderPath.closeSubpath();
+
+// 	painter.setBrush(Qt::white);
+
+	// Ready - draw the border + fill!
+	painter.drawPath(borderPath);
 }
 
 /*
