@@ -431,25 +431,6 @@ void ModuleChart::recreateDisplayWidgets()
 			displayBlocks_.add(block, block);
 		}
 	}
-
-// 	// If there is a current hotSpot, add in a suitable placeholder widget to the list
-// 	if (currentHotSpotIndex_ != -1)
-// 	{
-// 		// Grab the current hotspot
-// 		ModuleChartHotSpot* hotSpot = hotSpots_[currentHotSpotIndex_];
-// 		if (!hotSpot) return;
-// 
-// 		// Create the insertion widget if we don't already have one
-// 		if (!insertionWidget_) insertionWidget_ = new ModuleChartInsertionBlock(this, dissolveWindow_);
-// 		insertionWidget_->setVisible(true);
-// 
-// 		// Get the index of the ModuleChartBlock on the di
-// 		// Insert the widget into the appropriate point in the list
-// 		RefListItem<ModuleChartBlock,ModuleChartModuleBlock*>* item = displayBlocks_.addBefore(displayBlocks_[hotSpot->blockIndexAfter()], insertionWidget_);
-// // 		item->data = hotSpot->blockIndexAfter() >= moduleWidgets_.nItems() ? NULL : moduleWidgets_[hotSpot->blockIndexAfter()]->item;
-// 		item->data = NULL;
-// 	}
-// 	else if (insertionWidget_) insertionWidget_->setVisible(false);
 }
 
 // Find ModuleChartModuleBlock displaying specified ModuleReference
