@@ -94,19 +94,3 @@ void ModuleChartInsertionBlock::setWidgetGeometry(int left, int top, int width, 
 {
 	setGeometry(left, top, width, height);
 }
-
-// Return right-hand-side flow anchor point
-QPoint ModuleChartInsertionBlock::globalRightHandWidgetAnchor() const
-{
-	QPoint X = mapToGlobal(rect().topRight() + QPoint(1, 0));
-	QPoint Y = mapToGlobal(ui.MainFrame->rect().topRight()) + QPoint(0, ui.MainFrame->height()/2);
-	return QPoint(X.x(), Y.y());
-}
-
-// Return left-hand-side flow anchor point
-QPoint ModuleChartInsertionBlock::globalLeftHandWidgetAnchor() const
-{
-	QPoint X = mapToGlobal(rect().topLeft() + QPoint(-1, 0));
-	QPoint Y = mapToGlobal(ui.MainFrame->rect().topLeft()) + QPoint(0, ui.MainFrame->height()/2);
-	return QPoint(X.x(), Y.y());
-}

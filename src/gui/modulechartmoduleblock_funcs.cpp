@@ -227,19 +227,3 @@ void ModuleChartModuleBlock::setWidgetGeometry(int left, int top, int width, int
 {
 	setGeometry(left, top, width, height);
 }
-
-// Return right-hand-side flow anchor point
-QPoint ModuleChartModuleBlock::globalRightHandWidgetAnchor() const
-{
-	QPoint X = mapToGlobal(rect().topRight() + QPoint(1, 0));
-	QPoint Y = mapToGlobal(ui.HeaderFrame->rect().topRight()) + QPoint(0, ui.HeaderFrame->height()/2);
-	return QPoint(X.x(), Y.y());
-}
-
-// Return left-hand-side flow anchor point
-QPoint ModuleChartModuleBlock::globalLeftHandWidgetAnchor() const
-{
-	QPoint X = mapToGlobal(rect().topLeft() + QPoint(-1, 0));
-	QPoint Y = mapToGlobal(ui.HeaderFrame->rect().topLeft()) + QPoint(0, ui.HeaderFrame->height()/2);
-	return QPoint(X.x(), Y.y());
-}

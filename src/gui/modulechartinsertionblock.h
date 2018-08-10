@@ -76,11 +76,6 @@ class ModuleChartInsertionBlock : public QWidget, public ModuleChartBlock
 	int widgetHeight() const;
 	// Set underlying widget geometry
 	void setWidgetGeometry(int left, int top, int width, int height);
-	// Return right-hand-side widget anchor point
-	QPoint globalRightHandWidgetAnchor() const;
-	// Return left-hand-side widget anchor point
-	QPoint globalLeftHandWidgetAnchor() const;
-
 };
 
 #endif

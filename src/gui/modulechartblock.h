@@ -85,10 +85,6 @@ class ModuleChartBlock : public ListItem<ModuleChartBlock>
 	virtual int widgetHeight() const = 0;
 	// Set underlying widget geometry
 	virtual void setWidgetGeometry(int left, int top, int width, int height) = 0;
-	// Return right-hand-side underlying widget anchor point
-	virtual QPoint globalRightHandWidgetAnchor() const = 0;
-	// Return left-hand-side underlying widget anchor point
-	virtual QPoint globalLeftHandWidgetAnchor() const = 0;
 };
 
 #endif
