@@ -63,6 +63,27 @@ class ModuleChartMetrics
 	{
 		return 7;
 	}
+
+
+	/*
+	 * Module Chart
+	 */
+	public:
+	// Inner margin around widgets
+	static int chartMargin()
+	{
+		return 32;
+	}
+	// Minimum spacing between columns
+	static int chartMinimumColumnSpacing()
+	{
+		return 32;
+	}
+	// Spacing between rows
+	static int chartRowSpacing()
+	{
+		return 32;
+	}
 };
 
 #endif

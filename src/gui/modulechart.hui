@@ -145,8 +145,8 @@ class ModuleChart : public QWidget
 	 * Widget Layout
 	 */
 	private:
-	// Minimum spacing between widgets / extremes of chart view
-	int minSpacing_;
+	// Spacing between widgets / extremes of chart view
+	int columnSpacing_;
 	// Current number of columns of widgets
 	int nColumns_;
 	// Current number of rows of widgets

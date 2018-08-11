@@ -37,7 +37,7 @@ ModuleChart::ModuleChart(DissolveWindow* dissolveWindow, ModuleList& modules, QW
 	dissolveWindow_ = dissolveWindow;
 
 	// Layout
-	minSpacing_ = 32;
+	columnSpacing_ = 32;
 	nColumns_ = 1;
 	nRows_ = 0;
 	horizontalSpacing_ = 0;
@@ -116,12 +116,12 @@ void ModuleChart::paintEvent(QPaintEvent* event)
 		else
 		{
 			// Work out the mid-line y-coordinate to follow, between the two rows
-			int yMid = tops_[row+1] - minSpacing_/2;
+			int yMid = tops_[row+1] - metrics.chartRowSpacing()/2;
 			painter.setPen(dottedPen);
 
 			// Move out into the right-hand margin, making sure we are outside the widest widget in the column
 			p1 = QPoint(lefts_[col]+widths_[col], tops_[row]+metrics.blockBorderWidth()/2 + metrics.blockDentOffset() + metrics.blockDentRadius());
-			p2 = p1 + QPoint(widths_[col] - block->widgetWidth() + minSpacing_/2, 0);
+			p2 = p1 + QPoint(widths_[col] - block->widgetWidth() + metrics.chartMinimumColumnSpacing()/2, 0);
 			painter.drawLine(p1, p2);
 
 			// Move down to the midpoint between rows
@@ -129,7 +129,7 @@ void ModuleChart::paintEvent(QPaintEvent* event)
 			painter.drawLine(p2, p1);
 
 			// Move back across to the left-hand-side margin
-			p2 = QPoint(minSpacing_/2, p1.y());
+			p2 = QPoint(metrics.chartMinimumColumnSpacing()/2, p1.y());
 			painter.drawLine(p1, p2);
 
 			// Drop down to the next widget's level
@@ -514,7 +514,12 @@ void ModuleChart::layOutWidgets(bool animateWidgets)
 	 * Start by trying to lay out everything on one line. If this doesn't fit, decrease the number of columns and try again.
 	 */
 
-	const int maxWidth = width() - minSpacing_;
+	ModuleChartMetrics metrics;
+
+	// Reset column spacing before we begin
+	columnSpacing_ = metrics.chartMinimumColumnSpacing();
+
+	const int maxWidth = width() - metrics.chartMargin()*2;
 	int colCount, totalColumnWidth;
 	const int maxColumns = displayBlocks_.nItems();
 
@@ -539,7 +544,8 @@ void ModuleChart::layOutWidgets(bool animateWidgets)
 			if (nRows_ == 1)
 			{
 				widths_.add(blockWidth);
-				totalColumnWidth += blockWidth + minSpacing_;
+				totalColumnWidth += blockWidth;
+				if (colCount > 0) totalColumnWidth += columnSpacing_;
 
 				// Store max width in our minimum size hint
 				if (blockWidth > minimumSizeHint_.width()) minimumSizeHint_ = QSize(blockWidth, 0);
@@ -578,12 +584,17 @@ void ModuleChart::layOutWidgets(bool animateWidgets)
 	// nRows should always be correct
 	if (nColumns_ == 0) nColumns_ = 1;
 
+	// Determine new spacing between columns
+	totalColumnWidth = 0;
+	for (int n = 0; n<nColumns_; ++n) totalColumnWidth += widths_[n];
+	columnSpacing_ = nColumns_ == 1 ? 0 : (maxWidth - totalColumnWidth) / (nColumns_ - 1);
+
 	// Work out row / column top-lefts, and adjust spacing between widgets to fill entire horizontal space
 	tops_.clear();
 	lefts_.clear();
 	heights_.clear();
 	hotSpots_.clear();
-	int top = minSpacing_, rowMaxHeight;
+	int top = metrics.chartMargin(), rowMaxHeight;
 	int blockCount = 0;
 	RefListIterator<ModuleChartBlock,ModuleChartModuleBlock*> blockIterator(displayBlocks_);
 	for (int row = 0; row < nRows_; ++row)
@@ -591,7 +602,7 @@ void ModuleChart::layOutWidgets(bool animateWidgets)
 		// Add the top coordinate of this row to our array
 		tops_.add(top);
 
-		int left = minSpacing_;
+		int left = metrics.chartMargin();
 		rowMaxHeight = 0;
 		for (int col = 0; col < nColumns_; ++col)
 		{
@@ -642,27 +653,27 @@ void ModuleChart::layOutWidgets(bool animateWidgets)
 				 * If the current block is a ModuleChartInsertionBlock, extend the hotspot to cover the area including this block.
 				 */
 				ModuleChartHotSpot* hotSpot = hotSpots_.add();
-				if (block->blockType() == ModuleChartBlock::InsertionBlockType) hotSpot->set(row, ModuleChartHotSpot::ModuleInsertionHotSpot, QRect(left-minSpacing_, top, minSpacing_+widths_[col], rowMaxHeight), nextModuleBlock);
-				else hotSpot->set(row, ModuleChartHotSpot::ModuleInsertionHotSpot, QRect(left-minSpacing_, top, minSpacing_, rowMaxHeight), blockIterator.currentData());
+				if (block->blockType() == ModuleChartBlock::InsertionBlockType) hotSpot->set(row, ModuleChartHotSpot::ModuleInsertionHotSpot, QRect(left-columnSpacing_, top, columnSpacing_+widths_[col], rowMaxHeight), nextModuleBlock);
+				else hotSpot->set(row, ModuleChartHotSpot::ModuleInsertionHotSpot, QRect(left-columnSpacing_, top, columnSpacing_, rowMaxHeight), blockIterator.currentData());
 
 				// If this is the last block (but not an insertion block) add on a final hotspot
 				if (blockIterator.isLast() && (block->blockType() != ModuleChartBlock::InsertionBlockType))
 				{
 					ModuleChartHotSpot* hotSpot = hotSpots_.add();
-					if (col == (nColumns_-1)) hotSpot->set(row, ModuleChartHotSpot::ModuleInsertionHotSpot, QRect(left+widths_[col], top, minSpacing_, blockHeight), NULL);
-					else hotSpot->set(row, ModuleChartHotSpot::ModuleInsertionHotSpot, QRect(left+widths_[col], top, minSpacing_+widths_[col+1], blockHeight), NULL);
+					if (col == (nColumns_-1)) hotSpot->set(row, ModuleChartHotSpot::ModuleInsertionHotSpot, QRect(left+widths_[col], top, columnSpacing_, blockHeight), NULL);
+					else hotSpot->set(row, ModuleChartHotSpot::ModuleInsertionHotSpot, QRect(left+widths_[col], top, columnSpacing_+widths_[col+1], blockHeight), NULL);
 				}
 			}
 
 			// Increase left-hand coordinate
-			left += widths_[col] + minSpacing_;
+			left += widths_[col] + columnSpacing_;
 		}
 
 		// Store the row height
 		heights_.add(rowMaxHeight);
 
 		// Increase top-side coordinate
-		top += rowMaxHeight + minSpacing_;
+		top += rowMaxHeight + metrics.chartRowSpacing();
 	}
 
 	// Loop over defined hotspots and set the correct heights based on their row indices
@@ -672,10 +683,10 @@ void ModuleChart::layOutWidgets(bool animateWidgets)
 	// Our requested width is the left-most edge of the left-most column, plus the width of the column, plus the spacing.
 	// Our requested height is the top-most edge of the last row, plus the height of the row, plus the spacing.
 	if (displayBlocks_.nItems() == 0) sizeHint_ = QSize(0,0);
-	else sizeHint_ = QSize(lefts_.last() + widths_.last() + minSpacing_, tops_.last() + heights_.last() + minSpacing_);
+	else sizeHint_ = QSize(metrics.chartMargin() + lefts_.last() + widths_.last(), metrics.chartMargin() + tops_.last() + heights_.last());
 
 	// Finalise minimum size hint - we just need to add on the surrounding margins
-	minimumSizeHint_ += QSize(2*minSpacing_, 2*minSpacing_);
+	minimumSizeHint_ += QSize(2*metrics.chartMargin(), 2*metrics.chartMargin());
 
 	updateGeometry();
 
