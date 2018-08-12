@@ -178,28 +178,16 @@ class Module : public ListItem<Module>
 	 * Processing
 	 */
 	private:
-	// Run pre-processing stage
-	virtual bool preProcess(Dissolve& dissolve, ProcessPool& procPool);
 	// Run main processing
 	virtual bool process(Dissolve& dissolve, ProcessPool& procPool);
-	// Run post-processing stage
-	virtual bool postProcess(Dissolve& dissolve, ProcessPool& procPool);
 
 	public:
-	// Whether the Module has a pre-processing stage
-	virtual bool hasPreProcessing();
 	// Whether the Module has a processing stage
 	virtual bool hasProcessing();
-	// Whether the Module has a post-processing stage
-	virtual bool hasPostProcessing();
 	// Run set-up stage
 	virtual bool setUp(Dissolve& dissolve, ProcessPool& procPool);
-	// Run pre-processing stage
-	bool executePreProcessing(Dissolve& dissolve, ProcessPool& procPool);
 	// Run main processing stage
 	bool executeMainProcessing(Dissolve& dissolve, ProcessPool& procPool);
-	// Run post-processing stage
-	bool executePostProcessing(Dissolve& dissolve, ProcessPool& procPool);
 
 
 	/*

@@ -353,26 +353,8 @@ bool Module::configurationLocal()
  * Processing
  */
 
-// Run pre-processing stage
-bool Module::preProcess(Dissolve& dissolve, ProcessPool& procPool)
-{
-	return false;
-}
-
 // Run main processing
 bool Module::process(Dissolve& dissolve, ProcessPool& procPool)
-{
-	return false;
-}
-
-// Run post-processing stage
-bool Module::postProcess(Dissolve& dissolve, ProcessPool& procPool)
-{
-	return false;
-}
-
-// Whether the Module has a pre-processing stage
-bool Module::hasPreProcessing()
 {
 	return false;
 }
@@ -383,23 +365,10 @@ bool Module::hasProcessing()
 	return false;
 }
 
-// Whether the Module has a post-processing stage
-bool Module::hasPostProcessing()
-{
-	return false;
-}
-
 // Run set-up stage
 bool Module::setUp(Dissolve& dissolve, ProcessPool& procPool)
 {
 	return true;
-}
-
-// Run pre-processing stage
-bool Module::executePreProcessing(Dissolve& dissolve, ProcessPool& procPool)
-{
-	// No pre-run hooks, and no post-run hooks as-yet, so just return result
-	return preProcess(dissolve, procPool);
 }
 
 // Run main processing stage
@@ -417,13 +386,6 @@ bool Module::executeMainProcessing(Dissolve& dissolve, ProcessPool& procPool)
 	processTimes_ << timer.secondsElapsed();
 
 	return result;
-}
-
-// Run post-processing stage
-bool Module::executePostProcessing(Dissolve& dissolve, ProcessPool& procPool)
-{
-	// No pre-run hooks, and no post-run hooks as-yet, so just return result
-	return postProcess(dissolve, procPool);
 }
 
 /*

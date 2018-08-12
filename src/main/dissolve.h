@@ -249,28 +249,18 @@ class Dissolve
 	int seed_;
 	// Frequency at which to write restart file
 	int restartFileFrequency_;
-	// List of Modules with pre-processing tasks to perform
-	ModuleList preProcessingTasks_;
 	// List of main processing Modules to run
 	ModuleList mainProcessingModules_;
 	// List of analysis processing Modules to run
 	ModuleList analysisProcessingModules_;
 	// Data associated with main processing Modules
 	GenericList processingModuleData_;
-	// List of Modules with post-processing tasks to perform
-	ModuleList postProcessingTasks_;
 	// Current simulation step
 	int iteration_;
 	// Number of iterations performed
 	int nIterationsPerformed_;
 	// Main loop timer
 	Timer mainLoopTimer_;
-
-	private:
-	// Find first occurrence of named Module in pre-processing tasks
-	Module* findPreProcessingTask(const char* name);
-	// Find first occurrence of named Module in post-processing tasks
-	Module* findPostProcessingTask(const char* name);
 
 	public:
 	// Set number of test points to use when calculating Box normalisation arrays

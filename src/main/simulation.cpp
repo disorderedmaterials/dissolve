@@ -27,22 +27,6 @@
 #include <cstdio>
 
 /*
- * Private Functions
- */
-
-// Find first occurrence of named Module in pre-processing tasks
-Module* Dissolve::findPreProcessingTask(const char* name)
-{
-	return preProcessingTasks_.find(name);
-}
-
-// Find first occurrence of named Module in post-processing tasks
-Module* Dissolve::findPostProcessingTask(const char* name)
-{
-	return postProcessingTasks_.find(name);
-}
-
-/*
  * Public Functions
  */
 
@@ -106,12 +90,11 @@ bool Dissolve::iterate(int nIterations)
 	/*
 	 * This is the main program loop. We perform the following steps:
 	 *
-	 *  1)	Run all Module pre-processing tasks using all processes available (worldPool_)
-	 *  2)	Run all Modules assigned to Configurations using individual parallel strategies for Configurations
-	 *  3)	Reassemble Configuration data on all processes
-	 *  4)	Run all processing Modules using all processes available (worldPool_)
-	 *  5)	Run any Module post-processing tasks using all processes available (worldPool_)
-	 *  6)	Write restart file (master process only)
+	 *  1)	Run all Modules assigned to Configurations using individual parallel strategies for Configurations
+	 *  2)	Reassemble Configuration data on all processes
+	 *  3)	Run all processing Modules using all processes available (worldPool_)
+	 *  4)	Run analysis processing Modules
+	 *  5)	Write restart file (master process only)
 	 */
 
 	if (!setUp_) return Messenger::error("Simulation has not been set up.\n");
@@ -131,18 +114,6 @@ bool Dissolve::iterate(int nIterations)
 		 *  0)	Print schedule of tasks to run, and write heartbeat file
 		 */
 		double thisTime = 0.0;
-		Messenger::print("Pre-Processing\n");
-		if (preProcessingTasks_.nModules() == 0) Messenger::print("  (( No Tasks ))\n");
-		ListIterator<ModuleReference> preIterator(preProcessingTasks_.modules());
-		while (ModuleReference* modRef = preIterator.iterate())
-		{
-			Module* module = modRef->module();
-
-			Messenger::print("      --> %-20s  (%s)\n", module->name(), module->frequencyDetails(iteration_));
-
-			thisTime += module->processTimes().mean();
-		}
-		Messenger::print("\n");
 
 		Messenger::print("Configuration Processing\n");
 		for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
@@ -174,18 +145,6 @@ bool Dissolve::iterate(int nIterations)
 		}
 		Messenger::print("\n");
 
-		Messenger::print("Post-Processing\n");
-		if (postProcessingTasks_.nModules() == 0) Messenger::print("  (( No Tasks ))\n");
-		ListIterator<ModuleReference> postIterator(postProcessingTasks_.modules());
-		while (ModuleReference* modRef = postIterator.iterate())
-		{
-			Module* module = modRef->module();
-			
-			Messenger::print("      --> %-20s  (%s)\n", module->name(), module->frequencyDetails(iteration_));
-
-			thisTime += module->processTimes().mean();
-		}
-
 		// Write heartbeat file
 		if (worldPool().isMaster())
 		{
@@ -198,33 +157,7 @@ bool Dissolve::iterate(int nIterations)
 
 
 		/*
-		 *  1) 	Perform pre-processing tasks (using worldPool_).
-		 */
-		if (preProcessingTasks_.nModules() > 0) Messenger::banner("Pre-Processing");
-		preIterator.restart();
-		while (ModuleReference* modRef = preIterator.iterate())
-		{
-			Module* module = modRef->module();
-
-			if (!module->runThisIteration(iteration_)) continue;
-
-			Messenger::heading("'%s'", module->name());
-
-			// Execute the pre-processing stage
-			if (!module->executePreProcessing(*this, worldPool()))
-			{
-				Messenger::error("Module '%s' experienced problems. Exiting now.\n", module->name());
-				return false;
-			}
-		}
-
-		// Sync up all processes
-		Messenger::printVerbose("Waiting for other processes at end of pre-processing...\n");
-		worldPool().wait(ProcessPool::PoolProcessesCommunicator);
-
-
-		/*
-		 *  2)	Loop over Configurations and run their modules in the sequence in which they are defined.
+		 *  1)	Loop over Configurations and run their modules in the sequence in which they are defined.
 		 * 	If a process is not involved in the Configuration's ProcessPool, it can move on.
 		 */
 		Messenger::banner("Configuration Processing");
@@ -274,7 +207,7 @@ bool Dissolve::iterate(int nIterations)
 
 
 		/*
-		 *  3)	Reassemble data on all nodes.
+		 *  2)	Reassemble data on all nodes.
 		 */
 		Messenger::banner("Reassemble Data");
 		// Loop over Configurations
@@ -293,7 +226,7 @@ bool Dissolve::iterate(int nIterations)
 
 	
 		/*
-		 *  4)	Run processing Modules (using the world pool).
+		 *  3)	Run processing Modules (using the world pool).
 		 */
 		if (mainProcessingModules_.nModules() > 0) Messenger::banner("Main Processing");
 		processingIterator.restart();
@@ -320,34 +253,7 @@ bool Dissolve::iterate(int nIterations)
 
 
 		/*
-		 *  5)	Perform post-processing tasks (using the world pool).
-		 */
-		if (postProcessingTasks_.nModules() > 0) Messenger::banner("Post-Processing");
-		postIterator.restart();
-		while (ModuleReference* modRef = postIterator.iterate())
-		{
-			Module* module = modRef->module();
-
-			if (!module->runThisIteration(iteration_)) continue;
-
-			Messenger::print("\n");
-			Messenger::print("Module '%s'\n", module->name());
-
-			// Execute the post-processing stage
-			if (!module->executePostProcessing(*this, worldPool()))
-			{
-				Messenger::error("Module '%s' experienced problems. Exiting now.\n", module->name());
-				return false;
-			}
-		}
-
-		// Sync up all processes
-		Messenger::printVerbose("Waiting for other processes at end of post-processing...\n");
-		worldPool().wait(ProcessPool::PoolProcessesCommunicator);
-
-
-		/*
-		 *  6)	Write restart / ensemble data.
+		 *  5)	Write restart / ensemble data.
 		 */
 		if (worldPool().isMaster() && (restartFileFrequency_ > 0) && (iteration_%restartFileFrequency_ == 0))
 		{

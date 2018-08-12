@@ -221,114 +221,10 @@ bool Dissolve::setUpSimulation()
 		}
 	}
 
-	/*
-	 * Construct Pre/Post-Process Lists
-	 */
-
-	Messenger::print("*** Creating Pre/Post-Processing task list...\n");
-	// Loop over configurations
-	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
-	{
-		// Loop over Modules, checking for those that have pre- or post-processing steps
-		ListIterator<ModuleReference> moduleIterator(cfg->modules().modules());
-		while (ModuleReference* modRef = moduleIterator.iterate())
-		{
-			Module* module = modRef->module();
-
-			// Pre-Processing
-			if (module->hasPreProcessing())
-			{
-				// If the Module's instance type is UniqueInstance, check that it is not already in the list
-				if (module->instanceType() == Module::UniqueInstance)
-				{
-					Module* oldModule = findPreProcessingTask(module->name());
-					if (!oldModule) preProcessingTasks_.add(module);
-				}
-				else preProcessingTasks_.add(module);
-			}
-
-			// Post-Processing
-			if (module->hasPostProcessing())
-			{
-				// If the Module's instance type is UniqueInstance, check that it is not already in the list
-				if (module->instanceType() == Module::UniqueInstance)
-				{
-					Module* oldModule = findPostProcessingTask(module->name());
-					if (!oldModule) postProcessingTasks_.add(module);
-				}
-				else postProcessingTasks_.add(module);
-			}
-		}
-	}
-	// Loop over processing modules and add pre/post tasks
-	ListIterator<ModuleReference> processingIterator(mainProcessingModules_.modules());
-	while (ModuleReference* modRef = processingIterator.iterate())
-	{
-		Module* module = modRef->module();
-
-		// Pre-Processing
-		if (module->hasPreProcessing())
-		{
-			// If the Module's instance type is UniqueInstance, check that it is not already in the list
-			if (module->instanceType() == Module::UniqueInstance)
-			{
-				Module* oldModule = findPreProcessingTask(module->name());
-				if (!oldModule) preProcessingTasks_.add(module);
-			}
-			else preProcessingTasks_.add(module);
-		}
-
-		// Post-Processing
-		if (module->hasPostProcessing())
-		{
-			// If the Module's instance type is UniqueInstance, check that it is not already in the list
-			if (module->instanceType() == Module::UniqueInstance)
-			{
-				Module* oldModule = findPostProcessingTask(module->name());
-				if (!oldModule) postProcessingTasks_.add(module);
-			}
-			else postProcessingTasks_.add(module);
-		}
-	}
-
-	if (preProcessingTasks_.nModules() == 0) Messenger::print("No pre-processing tasks found.\n");
-	else Messenger::print("%i pre-processing %s found.\n", preProcessingTasks_.nModules(), preProcessingTasks_.nModules() == 1 ? "task" : "tasks");
-	ListIterator<ModuleReference> preProcessingIterator(preProcessingTasks_.modules());
-	while (ModuleReference* modRef = preProcessingIterator.iterate())
-	{
-		Module* module = modRef->module();
-
-		Messenger::print("    %s:\n", module->name());
-		if (module->nConfigurationTargets() == 0) Messenger::print("      No Configuration targets.\n");
-		else
-		{
-			Messenger::print("      %i Configuration %s:\n", module->nConfigurationTargets(), module->nConfigurationTargets() == 1 ? "target" : "targets");
-			RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
-			while (Configuration* cfg = configIterator.iterate()) Messenger::print("      --> %s\n", cfg->name());
-		}
-	}
-
 	if (mainProcessingModules_.nModules() == 0) Messenger::print("No main processing Modules found.\n");
 	else Messenger::print("%i main processing %s found.\n", mainProcessingModules_.nModules(), mainProcessingModules_.nModules() == 1 ? "Module" : "Modules");
 	ListIterator<ModuleReference> mainProcessingIterator(mainProcessingModules_.modules());
 	while (ModuleReference* modRef = mainProcessingIterator.iterate())
-	{
-		Module* module = modRef->module();
-
-		Messenger::print("    %s:\n", module->name());
-		if (module->nConfigurationTargets() == 0) Messenger::print("      No Configuration targets.\n");
-		else
-		{
-			Messenger::print("      %i Configuration %s:\n", module->nConfigurationTargets(), module->nConfigurationTargets() == 1 ? "target" : "targets");
-			RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
-			while (Configuration* cfg = configIterator.iterate()) Messenger::print("      --> %s\n", cfg->name());
-		}
-	}
-
-	if (postProcessingTasks_.nModules() == 0) Messenger::print("No post-processing tasks found.\n");
-	else Messenger::print("%i post-processing %s found.\n", postProcessingTasks_.nModules(), postProcessingTasks_.nModules() == 1 ? "task" : "tasks");
-	ListIterator<ModuleReference> postProcessingIterator(postProcessingTasks_.modules());
-	while (ModuleReference* modRef = postProcessingIterator.iterate())
 	{
 		Module* module = modRef->module();
 
@@ -347,6 +243,7 @@ bool Dissolve::setUpSimulation()
 	 */
 
 	Messenger::print("*** Performing Module set-up...\n");
+
 	// Loop over configurations
 	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
 	{
@@ -359,14 +256,19 @@ bool Dissolve::setUpSimulation()
 			if (!module->setUp(*this, worldPool())) return false;
 		}
 	}
+
 	// Loop over processing modules 
-	processingIterator.restart();
+	ListIterator<ModuleReference> processingIterator(mainProcessingModules_.modules());
 	while (ModuleReference* modRef = processingIterator.iterate())
 	{
 		Module* module = modRef->module();
 
 		if (!module->setUp(*this, worldPool())) return false;
 	}
+
+	/*
+	 * Print Defined Species
+	 */
 
 	Messenger::print("*** Defined Species\n");
 	for (Species* sp = species_.first(); sp != NULL; sp = sp->next)
