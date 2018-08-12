@@ -55,7 +55,7 @@ int MasterBlock::nArguments(MasterBlock::MasterKeyword id)
 // Parse Master block
 bool MasterBlock::parse(LineParser& parser, Dissolve* dissolve)
 {
-	Messenger::print("\nParsing %s block...\n", InputBlocks::inputBlock(InputBlocks::MasterBlock));
+	Messenger::print("\nParsing %s block...\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::MasterBlockKeyword));
 
 	CharString arg1, arg2;
 	MasterIntra* masterIntra;
@@ -164,12 +164,12 @@ bool MasterBlock::parse(LineParser& parser, Dissolve* dissolve)
 				else error = true;
 				break;
 			case (MasterBlock::nMasterKeywords):
-				Messenger::error("Unrecognised %s block keyword '%s' found.\n", InputBlocks::inputBlock(InputBlocks::MasterBlock), parser.argc(0));
-				InputBlocks::printValidKeywords(InputBlocks::MasterBlock);
+				Messenger::error("Unrecognised %s block keyword '%s' found.\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::MasterBlockKeyword), parser.argc(0));
+				MainInputKeywords::printValidBlockKeywords(MainInputKeywords::MasterBlockKeyword);
 				error = true;
 				break;
 			default:
-				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", InputBlocks::inputBlock(InputBlocks::MasterBlock), MasterBlock::keyword(masterKeyword));
+				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::MasterBlockKeyword), MasterBlock::keyword(masterKeyword));
 				error = true;
 				break;
 		}

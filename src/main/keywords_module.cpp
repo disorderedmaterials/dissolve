@@ -57,7 +57,7 @@ int ModuleBlock::nArguments(ModuleBlock::ModuleKeyword id)
 // Parse Module block
 bool ModuleBlock::parse(LineParser& parser, Dissolve* dissolve, Module* module, GenericList& targetList, bool moduleInConfiguration)
 {
-	Messenger::print("\nParsing %s block '%s'...\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock), module->name());
+	Messenger::print("\nParsing %s block '%s'...\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::ModuleBlockKeyword), module->name());
 
 	Configuration* targetCfg;
 	CharString varName, dataName;
@@ -98,7 +98,7 @@ bool ModuleBlock::parse(LineParser& parser, Dissolve* dissolve, Module* module, 
 				module->setEnabled(false);
 				break;
 			case (ModuleBlock::EndModuleKeyword):
-				Messenger::print("Found end of %s block.\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock));
+				Messenger::print("Found end of %s block.\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::ModuleBlockKeyword));
 				blockDone = true;
 				break;
 			case (ModuleBlock::FrequencyKeyword):
@@ -108,7 +108,7 @@ bool ModuleBlock::parse(LineParser& parser, Dissolve* dissolve, Module* module, 
 				// Never used, since it is accounted for in the beginning 'if'
 				break;
 			default:
-				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock), ModuleBlock::keyword(modKeyword));
+				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::ModuleBlockKeyword), ModuleBlock::keyword(modKeyword));
 				error = true;
 				break;
 		}
@@ -119,7 +119,7 @@ bool ModuleBlock::parse(LineParser& parser, Dissolve* dissolve, Module* module, 
 			if (result == 0) error = true;
 			else if (result == -1)
 			{
-				Messenger::error("Unrecognised %s block keyword '%s' found, and the Module '%s' contains no option with this name.\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock), parser.argc(0), module->name());
+				Messenger::error("Unrecognised %s block keyword '%s' found, and the Module '%s' contains no option with this name.\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::ModuleBlockKeyword), parser.argc(0), module->name());
 				module->printValidKeywords();
 				error = true;
 			}

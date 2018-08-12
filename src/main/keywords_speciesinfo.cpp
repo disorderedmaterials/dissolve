@@ -88,7 +88,7 @@ bool SpeciesInfoBlock::parse(LineParser& parser, Dissolve* dissolve, SpeciesInfo
 				break;
 			case (SpeciesInfoBlock::nSpeciesInfoKeywords):
 				Messenger::error("Unrecognised %s block keyword '%s' found.\n", ConfigurationBlock::keyword(ConfigurationBlock::SpeciesInfoKeyword), parser.argc(0));
-				InputBlocks::printValidKeywords(InputBlocks::SpeciesInfoBlock);
+				MainInputKeywords::printValidBlockKeywords(MainInputKeywords::SpeciesInfoBlockKeyword);
 				error = true;
 				break;
 			default:

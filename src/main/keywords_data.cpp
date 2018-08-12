@@ -55,7 +55,7 @@ int DataBlock::nArguments(DataBlock::DataKeyword id)
 // Parse Data block
 bool DataBlock::parse(LineParser& parser, Dissolve* dissolve, Data* data)
 {
-	Messenger::print("\nParsing %s block '%s'...\n", InputBlocks::inputBlock(InputBlocks::DataBlock), data->name());
+	Messenger::print("\nParsing %s block '%s'...\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::DataBlock), data->name());
 
 	bool blockDone = false, error = false;
 	Data::DataType dt;
@@ -80,7 +80,7 @@ bool DataBlock::parse(LineParser& parser, Dissolve* dissolve, Data* data)
 				data->setAssociatedModuleName(parser.argc(1));
 				break;
 			case (DataBlock::EndDataKeyword):
-				Messenger::print("Found end of %s block.\n", InputBlocks::inputBlock(InputBlocks::DataBlock));
+				Messenger::print("Found end of %s block.\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::DataBlock));
 				blockDone = true;
 				break;
 			case (DataBlock::FileKeyword):
@@ -102,12 +102,12 @@ bool DataBlock::parse(LineParser& parser, Dissolve* dissolve, Data* data)
 				data->setType(dt);
 				break;
 			case (DataBlock::nDataKeywords):
-				Messenger::error("Unrecognised %s block keyword '%s' found.\n", InputBlocks::inputBlock(InputBlocks::ConfigurationBlock), parser.argc(0));
-				InputBlocks::printValidKeywords(InputBlocks::DataBlock);
+				Messenger::error("Unrecognised %s block keyword '%s' found.\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::ConfigurationBlockKeyword), parser.argc(0));
+				MainInputKeywords::printValidBlockKeywords(MainInputKeywords::DataBlock);
 				error = true;
 				break;
 			default:
-				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", InputBlocks::inputBlock(InputBlocks::DataBlock), DataBlock::keyword(dataKeyword));
+				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::DataBlock), DataBlock::keyword(dataKeyword));
 				error = true;
 				break;
 		}

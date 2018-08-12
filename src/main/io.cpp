@@ -70,17 +70,17 @@ bool Dissolve::loadInput(const char* filename)
 	Module* module, *masterInstance;
 	CharString niceName;
 	Species* sp;
-	InputBlocks::InputBlock block;
+	MainInputKeywords::MainInputKeyword kwd;
 	bool error = false;
 
 	while (!parser.eofOrBlank())
 	{
 		// Master will read the next line from the file, and broadcast it to slaves (who will then parse it)
 		if (parser.getArgsDelim(LineParser::SkipBlanks+LineParser::StripComments+LineParser::UseQuotes) != LineParser::Success) break;
-		block = InputBlocks::inputBlock(parser.argc(0));
-		switch (block)
+		kwd = MainInputKeywords::mainInputKeyword(parser.argc(0));
+		switch (kwd)
 		{
-			case (InputBlocks::ConfigurationBlock):
+			case (MainInputKeywords::ConfigurationBlockKeyword):
 				// Check to see if a Configuration with this name already exists...
 				if (findConfiguration(parser.argc(1)))
 				{
@@ -93,10 +93,10 @@ bool Dissolve::loadInput(const char* filename)
 				Messenger::print("Created Configuration '%s'...\n", cfg->name());
 				if (!ConfigurationBlock::parse(parser, this, cfg)) error = true;
 				break;
-			case (InputBlocks::MasterBlock):
+			case (MainInputKeywords::MasterBlockKeyword):
 				if (!MasterBlock::parse(parser, this)) error = true;
 				break;
-			case (InputBlocks::ModuleBlock):
+			case (MainInputKeywords::ModuleBlockKeyword):
 				// The argument following the keyword is the module name
 				masterInstance = ModuleList::findMasterInstance(parser.argc(1));
 				if (!masterInstance)
@@ -143,13 +143,13 @@ bool Dissolve::loadInput(const char* filename)
 				// Now finished parsing the Module block, so must update targets and auto-add Modules if necessary
 				if (!module->updateDependentTargets(mainProcessingModules_, autoAddDependentModules_, processingModuleData_)) error = true;
 				break;
-			case (InputBlocks::PairPotentialsBlock):
+			case (MainInputKeywords::PairPotentialsBlockKeyword):
 				if (!PairPotentialsBlock::parse(parser, this)) error = true;
 				break;
-			case (InputBlocks::SimulationBlock):
+			case (MainInputKeywords::SimulationBlockKeyword):
 				if (!SimulationBlock::parse(parser, this)) error = true;
 				break;
-			case (InputBlocks::SpeciesBlock):
+			case (MainInputKeywords::SpeciesBlockKeyword):
 				// Check to see if a Species with this name already exists...
 				if (findSpecies(parser.argc(1)))
 				{
@@ -161,12 +161,12 @@ bool Dissolve::loadInput(const char* filename)
 				sp->setName(parser.argc(1));
 				if (!SpeciesBlock::parse(parser, this, sp)) error = true;
 				break;
-			case (InputBlocks::nInputBlocks):
+			case (MainInputKeywords::nMainInputKeywords):
 				Messenger::error("Unrecognised input block found - '%s'\n", parser.argc(0));
 				error = true;
 				break;
 			default:
-				printf("DEV_OOPS - Input block keyword '%s' not accounted for.\n", InputBlocks::inputBlock(block));
+				printf("DEV_OOPS - Input block keyword '%s' not accounted for.\n", MainInputKeywords::mainInputKeyword(kwd));
 				error = true;
 				break;
 		}
@@ -210,7 +210,7 @@ bool Dissolve::saveInput(const char* filename)
 	if (masterBonds_.nItems() || masterAngles_.nItems() || masterTorsions_.nItems())
 	{
 		parser.writeBannerComment("Master Terms");
-		parser.writeLineF("\n%s\n", InputBlocks::inputBlock(InputBlocks::MasterBlock));
+		parser.writeLineF("\n%s\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::MasterBlockKeyword));
 				  
 		for (MasterIntra* b = masterBonds_.first(); b != NULL; b = b->next)
 		{
@@ -241,7 +241,7 @@ bool Dissolve::saveInput(const char* filename)
 	parser.writeBannerComment("Define Species");
 	for (Species* sp = species_.first(); sp != NULL; sp = sp->next)
 	{
-		parser.writeLineF("\n%s '%s'\n", InputBlocks::inputBlock(InputBlocks::SpeciesBlock), sp->name());
+		parser.writeLineF("\n%s '%s'\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::SpeciesBlockKeyword), sp->name());
 		
 		// Atoms
 		parser.writeLineF("  # Atoms\n");
@@ -334,7 +334,7 @@ bool Dissolve::saveInput(const char* filename)
 
 	// Write PairPotentials block
 	parser.writeBannerComment("Pair Potentials");
-	parser.writeLineF("\n%s\n", InputBlocks::inputBlock(InputBlocks::PairPotentialsBlock));
+	parser.writeLineF("\n%s\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::PairPotentialsBlockKeyword));
 
 	// Atom Type Parameters
 	parser.writeLineF("  # Atom Type Parameters\n");
@@ -363,7 +363,7 @@ bool Dissolve::saveInput(const char* filename)
 	parser.writeBannerComment("Define Configurations");
 	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
 	{
-		parser.writeLineF("\n%s  '%s'\n", InputBlocks::inputBlock(InputBlocks::ConfigurationBlock), cfg->name());
+		parser.writeLineF("\n%s  '%s'\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::ConfigurationBlockKeyword), cfg->name());
 		parser.writeLineF("  %s  %i\n", ConfigurationBlock::keyword(ConfigurationBlock::MultiplierKeyword), cfg->multiplier());
 		parser.writeLineF("  %s  %f  %s\n", ConfigurationBlock::keyword(ConfigurationBlock::DensityKeyword), cfg->density(), cfg->densityIsAtomic() ? "atoms/A3" : "g/cm3");
 		parser.writeLineF("  %s  %f  %f  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::CellLengthsKeyword), cfg->relativeBoxLengths().x, cfg->relativeBoxLengths().y, cfg->relativeBoxLengths().z);
@@ -433,7 +433,7 @@ bool Dissolve::saveInput(const char* filename)
 	{
 		Module* module = modRef->module();
 
-		parser.writeLineF("\n%s  %s  '%s'\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock), module->name(), module->uniqueName());
+		parser.writeLineF("\n%s  %s  '%s'\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::ModuleBlockKeyword), module->name(), module->uniqueName());
 
 		// Write frequency and disabled keywords
 		parser.writeLineF("  Frequency  %i\n", module->frequency());
@@ -460,7 +460,7 @@ bool Dissolve::saveInput(const char* filename)
 
 	// Write Simulation block
 	parser.writeBannerComment("Simulation");
-	parser.writeLineF("\n%s\n", InputBlocks::inputBlock(InputBlocks::SimulationBlock));
+	parser.writeLineF("\n%s\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::SimulationBlockKeyword));
 	parser.writeLineF("  %s  %i\n", SimulationBlock::keyword(SimulationBlock::BoxNormalisationPointsKeyword), nBoxNormalisationPoints_);
 	parser.writeLineF("  %s  %i\n", SimulationBlock::keyword(SimulationBlock::SeedKeyword), seed_);
 	parser.writeLineF("%s\n\n", SimulationBlock::keyword(SimulationBlock::EndSimulationKeyword));

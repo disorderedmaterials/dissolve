@@ -60,7 +60,7 @@ int PairPotentialsBlock::nArguments(PairPotentialsBlock::PairPotentialsKeyword i
 // Parse PairPotentials block
 bool PairPotentialsBlock::parse(LineParser& parser, Dissolve* dissolve)
 {
-	Messenger::print("\nParsing %s block...\n", InputBlocks::inputBlock(InputBlocks::PairPotentialsBlock));
+	Messenger::print("\nParsing %s block...\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::PairPotentialsBlockKeyword));
 
 	AtomType* at1, *at2;
 	PairPotential* pot;
@@ -96,7 +96,7 @@ bool PairPotentialsBlock::parse(LineParser& parser, Dissolve* dissolve)
 				dissolve->setPairPotentialDelta(parser.argd(1));
 				break;
 			case (PairPotentialsBlock::EndPairPotentialsKeyword):
-				Messenger::print("Found end of %s block.\n", InputBlocks::inputBlock(InputBlocks::PairPotentialsBlock));
+				Messenger::print("Found end of %s block.\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::PairPotentialsBlockKeyword));
 				blockDone = true;
 				break;
 			case (PairPotentialsBlock::GenerateKeyword):
@@ -194,12 +194,12 @@ bool PairPotentialsBlock::parse(LineParser& parser, Dissolve* dissolve)
 				PairPotential::setShortRangeTruncationWidth(parser.argd(1));
 				break;
 			case (PairPotentialsBlock::nPairPotentialsKeywords):
-				Messenger::error("Unrecognised %s block keyword '%s' found.\n", InputBlocks::inputBlock(InputBlocks::PairPotentialsBlock), parser.argc(0));
-				InputBlocks::printValidKeywords(InputBlocks::PairPotentialsBlock);
+				Messenger::error("Unrecognised %s block keyword '%s' found.\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::PairPotentialsBlockKeyword), parser.argc(0));
+				MainInputKeywords::printValidBlockKeywords(MainInputKeywords::PairPotentialsBlockKeyword);
 				error = true;
 				break;
 			default:
-				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", InputBlocks::inputBlock(InputBlocks::PairPotentialsBlock), PairPotentialsBlock::keyword(ppKeyword));
+				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::PairPotentialsBlockKeyword), PairPotentialsBlock::keyword(ppKeyword));
 				error = true;
 				break;
 		}

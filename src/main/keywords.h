@@ -46,31 +46,31 @@ class KeywordData
 };
 
 /*
- * Main Keyword Blocks
+ * Main Input Keywords
  */
-namespace InputBlocks
+namespace MainInputKeywords
 {
 	/*
-	 * Input Block Keywords
+	 * Main Input Keywords
 	 */
-	// Input File Block Keyword Enum
-	enum InputBlock
+	// Input File Keyword Enum
+	enum MainInputKeyword
 	{
-		ConfigurationBlock,		/* 'Configuration' - Defines a single Configuration for use in the simulation */
-		MasterBlock,			/* 'Master' - Contains master intramolecular terms for use in Species */
-		ModuleBlock,			/* 'Module' - Sets up a Module to run after Configuration processing */
-		PairPotentialsBlock,		/* 'PairPotentials' - Contains definitions of the PairPotentials for the simulation */
-		SimulationBlock,		/* 'Simulation' - Setting of simulation variables affecting the calculation */
-		SpeciesBlock,			/* 'Species' - Begins a definition of a Species */
-		SpeciesInfoBlock,		/* 'SpeciesInfo' - Defines a Species for inclusion into a Configuration */
-		nInputBlocks			/* Number of defined InputBlock keywords */
+		ConfigurationBlockKeyword,		/* 'Configuration' - Defines a single Configuration for use in the simulation */
+		MasterBlockKeyword,			/* 'Master' - Contains master intramolecular terms for use in Species */
+		ModuleBlockKeyword,			/* 'Module' - Sets up a Module to run after Configuration processing */
+		PairPotentialsBlockKeyword,		/* 'PairPotentials' - Contains definitions of the PairPotentials for the simulation */
+		SimulationBlockKeyword,			/* 'Simulation' - Setting of simulation variables affecting the calculation */
+		SpeciesBlockKeyword,			/* 'Species' - Begins a definition of a Species */
+		SpeciesInfoBlockKeyword,		/* 'SpeciesInfo' - Defines a Species for inclusion into a Configuration */
+		nMainInputKeywords			/* Number of defined MainInputKeyword keywords */
 	};
-	// Convert text string to InputBlock
-	InputBlock inputBlock(const char* s);
-	// Convert InputBlock to text string
-	const char* inputBlock(InputBlock id);
-	// Print list of valid keywords for InputBlock specified
-	void printValidKeywords(InputBlock block);
+	// Convert text string to MainInputKeyword
+	MainInputKeyword mainInputKeyword(const char* s);
+	// Convert MainInputKeyword to text string
+	const char* mainInputKeyword(MainInputKeyword id);
+	// Print list of valid keywords for the block specified
+	void printValidBlockKeywords(MainInputKeyword block);
 };
 
 
