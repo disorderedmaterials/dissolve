@@ -93,6 +93,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	const double qMin = keywords_.asDouble("QMin");
 	double rmaxpt = keywords_.asDouble("RMaxPT");
 	double rminpt = keywords_.asDouble("RMinPT");
+	const bool saveData = keywords_.asBool("Save");
 	const bool testMode = keywords_.asBool("Test");
 	const double testThreshold = keywords_.asDouble("TestThreshold");
 
@@ -112,6 +113,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	else Messenger::print("EPSR: Perturbations to interatomic potentials will be generated only (current potentials will not be modified).\n");
 	if (onlyWhenEnergyStable) Messenger::print("EPSR: Potential refinement will only be performed if all related Configuration energies are stable.\n");
 	Messenger::print("EPSR: Range for potential generation is %f < Q < %f Angstroms**-1.\n", qMin, qMax);
+	Messenger::print("EPSR: Save data is %s.\n", DissolveSys::onOff(saveData));
 	if (testMode) Messenger::print("EPSR: Test mode is enabled (threshold = %f%%).", testThreshold);
 	Messenger::print("\n");
 
@@ -369,7 +371,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		{
 			bool found;
 
-			// Retrieve the reference data and associated Weights matrix and source unweighted partials
+			// Retrieve the reference data, associated Weights matrix and source unweighted and weighted partials
 			const XYData& referenceData = GenericListHelper<XYData>::value(dissolve.processingModuleData(), "ReferenceData", module->uniqueName(), XYData(), &found);
 			if (!found) return Messenger::error("Could not locate ReferenceData for target '%s'.\n", module->uniqueName());
 
@@ -379,12 +381,19 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			const PartialSet& unweightedSQ = GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "UnweightedSQ", module->uniqueName(), PartialSet(), &found);
 			if (!found) return Messenger::error("Could not locate UnweightedSQ for target '%s'.\n", module->uniqueName());
 
+			const PartialSet& weightedSQ = GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "WeightedSQ", module->uniqueName(), PartialSet(), &found);
+			if (!found) return Messenger::error("Could not locate WeightedSQ for target '%s'.\n", module->uniqueName());
+
 			double rho = GenericListHelper<
 			double>::value(dissolve.processingModuleData(), "EffectiveRho", module->uniqueName(), 0.0, &found);
 			if (!found) return Messenger::error("Could not locate EffectiveRho for target '%s'.\n", module->uniqueName());
 
+			// Subtract intramolecular total from the reference data - this will enter into the ScatteringMatrix
+			XYData refMinusIntra = referenceData, boundTotal = weightedSQ.boundTotal(false);
+			refMinusIntra.addInterpolated(boundTotal, -1.0);
+
 			// Add a row to our scattering matrix
-			if (!scatteringMatrix.addReferenceData(referenceData, weights, feedback)) return Messenger::error("Failed to add target data '%s' to weights matrix.\n", module->uniqueName());
+			if (!scatteringMatrix.addReferenceData(refMinusIntra, weights, feedback)) return Messenger::error("Failed to add target data '%s' to weights matrix.\n", module->uniqueName());
 
 			// Sum up the unweighted partials and density from this target
 			double factor = 1.0;
@@ -397,7 +406,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					double globalI = atd1->atomType()->index();
 					double globalJ = atd2->atomType()->index();
 
-					XYData partialIJ = unweightedSQ.constPartial(i,j);
+					XYData partialIJ = unweightedSQ.constUnboundPartial(i,j);
 					combinedUnweightedSQ.at(globalI, globalJ ).addInterpolated(partialIJ, factor);
 					combinedRho.at(globalI, globalJ) += rho * factor;
 					combinedFactor.at(globalI, globalJ) += factor;
@@ -432,17 +441,12 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			j = i;
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 			{
-				// Weight in the matrix will be based on the natural isotope and the summed concentration weight
-				double factor = Isotopes::naturalIsotope(at1->element())->boundCoherent() * Isotopes::naturalIsotope(at2->element())->boundCoherent() * 0.01;
-				factor *= combinedCWeights.constAt(i,j);
-
 				// Copy the unweighted data and wight weight it according to the natural isotope / concentration factor calculated above
 				XYData data = combinedUnweightedSQ.at(i, j);
-				data.arrayY() *= factor;
 				data.setName(CharString("Simulated %s-%s", at1->name(), at2->name()));
 
-				// Add this partial data to the scattering matrix
-				if (!scatteringMatrix.addPartialReferenceData(data, at1, at2, factor, (1.0 - feedback))) return Messenger::error("EPSR: Failed to augment scattering matrix with partial %s-%s.\n", at1->name(), at2->name());
+				// Add this partial data to the scattering matrix - its factored weight will be (1.0 - feedback)
+				if (!scatteringMatrix.addPartialReferenceData(data, at1, at2, 1.0, (1.0 - feedback))) return Messenger::error("EPSR: Failed to augment scattering matrix with partial %s-%s.\n", at1->name(), at2->name());
 			}
 		}
 
@@ -462,8 +466,34 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		 * Generate S(Q) from completed scattering matrix
 		 */
 
-		// Generate the scattering matrix 
 		scatteringMatrix.generatePartials(generatedSQ);
+
+		// Save data?
+		if (saveData)
+		{
+			XYData* generatedArray = generatedSQ.linearArray();
+			for (int n=0; n<generatedSQ.linearArraySize(); ++n) generatedArray[n].save(generatedArray[n].name());
+		}
+
+		// Test Mode
+		if (testMode)
+		{
+			i = 0;
+			for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+			{
+				j = i;
+				for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
+				{
+					testDataName = CharString("GeneratedSQ-%s-%s", at1->name(), at2->name());
+					if (testData_.contains(testDataName))
+					{
+						double error = generatedSQ.at(i,j).error(testData_.data(testDataName));
+						Messenger::print("Generated S(Q) reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", testDataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+						if (error > testThreshold) return false;
+					}
+				}
+			}
+		}
 
 		/*
 		 * Calculate g(r) from generatedSQ

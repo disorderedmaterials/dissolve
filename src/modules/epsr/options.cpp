@@ -60,6 +60,7 @@ void EPSRModule::setUpKeywords()
 	keywords_.add(new DoubleModuleKeyword(-1.0), "RMinPT", "Radius at which potential truncation begins (-1.0 to set to 2.0 Angstroms under rmaxpt)");
 	keywords_.add(new DoubleModuleKeyword(30.0, -1.0), "QMax", "Maximum Q value over which to generate potentials from total scattering data");
 	keywords_.add(new DoubleModuleKeyword(0.5, -1.0), "QMin", "Minimum Q value over which to generate potentials from total scattering data");
+	keywords_.add(new BoolModuleKeyword(false), "Save", "Whether to save data to disk after calculation", "<True|False>");
 	keywords_.add(new ComplexModuleKeyword(1,2), "Target", "Add specified Module (and it's Reference data) as a fitting target", "<ModuleName> [GroupName]");
 	keywords_.add(new BoolModuleKeyword(false), "Test", "Test against supplied reference data", "<True|False>");
 	keywords_.add(new XYDataStoreModuleKeyword(testData_), "TestReference", "Specify test reference data", "<filename> <target> [xcol] [ycol]");
