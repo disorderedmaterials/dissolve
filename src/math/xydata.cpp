@@ -148,12 +148,12 @@ void XYData::setPoint(int index, double x, double y)
 #ifdef CHECKS
 	if ((index < 0) || (index >= x_.nItems()))
 	{
-		Messenger::print("OUT_OF_RANGE - Index %i is out of range for x_ array in XYData::setPoint().\n", index);
+		Messenger::error("OUT_OF_RANGE - Index %i is out of range for x_ array in XYData::setPoint().\n", index);
 		return;
 	}
 	if ((index < 0) || (index >= y_.nItems()))
 	{
-		Messenger::print("OUT_OF_RANGE - Index %i is out of range for y_ array in XYData::setPoint().\n", index);
+		Messenger::error("OUT_OF_RANGE - Index %i is out of range for y_ array in XYData::setPoint().\n", index);
 		return;
 	}
 #endif
@@ -174,7 +174,7 @@ void XYData::setX(int index, double x)
 #ifdef CHECKS
 	if ((index < 0) || (index >= x_.nItems()))
 	{
-		Messenger::print("OUT_OF_RANGE - Index %i is out of range for x_ array in XYData::setX().\n", index);
+		Messenger::error("OUT_OF_RANGE - Index %i is out of range for x_ array in XYData::setX().\n", index);
 		return;
 	}
 #endif
@@ -188,7 +188,7 @@ void XYData::addX(int index, double delta)
 #ifdef CHECKS
 	if ((index < 0) || (index >= x_.nItems()))
 	{
-		Messenger::print("OUT_OF_RANGE - Index %i is out of range for x_ array in XYData::addX().\n", index);
+		Messenger::error("OUT_OF_RANGE - Index %i is out of range for x_ array in XYData::addX().\n", index);
 		return;
 	}
 #endif
@@ -202,7 +202,7 @@ double XYData::x(int index) const
 #ifdef CHECKS
 	if ((index < 0) || (index >= x_.nItems()))
 	{
-		Messenger::print("OUT_OF_RANGE - Index %i is out of range for x_ array in XYData::x().\n", index);
+		Messenger::error("OUT_OF_RANGE - Index %i is out of range for x_ array in XYData::x().\n", index);
 		return 0.0;
 	}
 #endif
@@ -228,7 +228,7 @@ void XYData::setY(int index, double y)
 #ifdef CHECKS
 	if ((index < 0) || (index >= y_.nItems()))
 	{
-		Messenger::print("OUT_OF_RANGE - Index %i is out of range for y_ array in XYData::setY().\n", index);
+		Messenger::error("OUT_OF_RANGE - Index %i is out of range for y_ array in XYData::setY().\n", index);
 		return;
 	}
 #endif
@@ -242,7 +242,7 @@ void XYData::addY(int index, double delta)
 #ifdef CHECKS
 	if ((index < 0) || (index >= y_.nItems()))
 	{
-		Messenger::print("OUT_OF_RANGE - Index %i is out of range for y_ array in XYData::addY().\n", index);
+		Messenger::error("OUT_OF_RANGE - Index %i is out of range for y_ array in XYData::addY().\n", index);
 		return;
 	}
 #endif
@@ -255,7 +255,7 @@ bool XYData::addY(const Array<double>& source, double factor)
 {
 	if (y_.nItems() != source.nItems())
 	{
-		Messenger::print("BAD_USAGE - Can't add Y values from source array, since the number of items differs (%i vs %i).\n", y_.nItems(), source.nItems());
+		Messenger::error("BAD_USAGE - Can't add Y values from source array, since the number of items differs (%i vs %i).\n", y_.nItems(), source.nItems());
 		return false;
 	}
 
@@ -270,7 +270,7 @@ void XYData::multiplyY(int index, double factor)
 #ifdef CHECKS
 	if ((index < 0) || (index >= y_.nItems()))
 	{
-		Messenger::print("OUT_OF_RANGE - Index %i is out of range for y_ array in XYData::multiplyY().\n", index);
+		Messenger::error("OUT_OF_RANGE - Index %i is out of range for y_ array in XYData::multiplyY().\n", index);
 		return;
 	}
 #endif
@@ -284,7 +284,7 @@ double XYData::y(int index) const
 #ifdef CHECKS
 	if ((index < 0) || (index >= y_.nItems()))
 	{
-		Messenger::print("OUT_OF_RANGE - Index %i is out of range for y_ array in XYData::y().\n", index);
+		Messenger::error("OUT_OF_RANGE - Index %i is out of range for y_ array in XYData::y().\n", index);
 		return 0.0;
 	}
 #endif
