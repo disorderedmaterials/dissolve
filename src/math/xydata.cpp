@@ -629,7 +629,7 @@ double XYData::lastGradient(int nSamples, double* yMean) const
 // Compute integral of the data
 double XYData::integral() const
 {
-	double total = 0.0, y0 = y_.first(), y1, x0 = x_.first(), x1;
+	double total = 0.0, y0 = y_.firstValue(), y1, x0 = x_.firstValue(), x1;
 	for (int n=1; n<x_.nItems(); ++n)
 	{
 		x1 = x_.value(n);
@@ -645,7 +645,7 @@ double XYData::integral() const
 double XYData::absIntegral() const
 {
 	if (nPoints() < 2) return 0.0;
-	double total = 0.0, y0 = y_.first(), y1, x0 = x_.first(), x1;
+	double total = 0.0, y0 = y_.firstValue(), y1, x0 = x_.firstValue(), x1;
 	for (int n=1; n<x_.nItems(); ++n)
 	{
 		x1 = x_.value(n);

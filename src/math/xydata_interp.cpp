@@ -352,8 +352,8 @@ double XYData::interpolated(double xValue, int interval)
 // Approximate data at specified x value using three-point interpolation
 double XYData::approximate(double xValue) const
 {
-	if (xValue < x_.first()) return y_.first();
-	if (xValue > x_.last()) return y_.last();
+	if (xValue < x_.firstValue()) return y_.firstValue();
+	if (xValue > x_.lastValue()) return y_.lastValue();
 
 	// Perform binary chop search
 	int left = 0;

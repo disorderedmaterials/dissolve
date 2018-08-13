@@ -254,6 +254,48 @@ template <class A> class Array : public ListItem< Array<A> >
 #endif
 		return array_[n];
 	}
+	// Return first value in array
+	const A firstValue() const
+	{
+		if (nItems_ == 0)
+		{
+			Messenger::print("OUT_OF_RANGE - No first item to return in Array.\n");
+			return A();
+		}
+		return array_[0];
+	}
+	// Return last value in array
+	const A lastValue() const
+	{
+		if (nItems_ == 0)
+		{
+			Messenger::print("OUT_OF_RANGE - No last item to return in Array.\n");
+			return A();
+		}
+		return array_[nItems_-1];
+	}
+	// Return first item in array
+	A& first()
+	{
+		if (nItems_ == 0)
+		{
+			static A dummy;
+			Messenger::print("OUT_OF_RANGE - No first item to return in Array.\n");
+			return dummy;
+		}
+		return array_[0];
+	}
+	// Return last item in array
+	A& last()
+	{
+		if (nItems_ == 0)
+		{
+			static A dummy;
+			Messenger::print("OUT_OF_RANGE - No last item to return in Array.\n");
+			return dummy;
+		}
+		return array_[nItems_-1];
+	}
 
 
 	/*
@@ -279,26 +321,6 @@ template <class A> class Array : public ListItem< Array<A> >
 	Array<A> operator+(const Array<A> array) { Array<A> result(nItems_); for (int n=0; n<nItems_; ++n) result[n] = array_[n] + array.value(n); return result; }
 	// Operator* (multiplication)
 	Array<A> operator*(const A value) { Array<A> result = *this; result *= value; return result; }
-	// Return first value in array
-	A first() const
-	{
-		if (nItems_ == 0)
-		{
-			Messenger::print("OUT_OF_RANGE - No first item to return in Array.\n");
-			return A();
-		}
-		return array_[0];
-	}
-	// Return last value in array
-	A last() const
-	{
-		if (nItems_ == 0)
-		{
-			Messenger::print("OUT_OF_RANGE - No last item to return in Array.\n");
-			return A();
-		}
-		return array_[nItems_-1];
-	}
 
 
 	/*

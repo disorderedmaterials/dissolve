@@ -392,9 +392,9 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				XYData& simulatedSQ = combinedUnweightedSQ.at(i,j);
 
 				// Determine allowable range for fit, based on requested values and limits of generated / simulated datasets
-				double deltaSQMin = qMin, deltaSQMax = (qMax < 0.0 ? x1.last() : qMax);
-				if ((deltaSQMin < x1.first()) || (deltaSQMin < simulatedSQ.xFirst())) deltaSQMin = max(x1.first(), simulatedSQ.xFirst());
-				if ((deltaSQMax > x1.last()) || (deltaSQMax > simulatedSQ.xLast())) deltaSQMax = min(x1.last(), simulatedSQ.xLast());
+				double deltaSQMin = qMin, deltaSQMax = (qMax < 0.0 ? x1.lastValue() : qMax);
+				if ((deltaSQMin < x1.firstValue()) || (deltaSQMin < simulatedSQ.xFirst())) deltaSQMin = max(x1.firstValue(), simulatedSQ.xFirst());
+				if ((deltaSQMax > x1.lastValue()) || (deltaSQMax > simulatedSQ.xLast())) deltaSQMax = min(x1.lastValue(), simulatedSQ.xLast());
 
 				XYData refSQTrimmed;
 				double x;

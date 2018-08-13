@@ -230,10 +230,10 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		const Array<double> y1 = referenceData.constArrayY();
 		XYData simulatedFQ = weightedSQ.constTotal();
 
-		// Determine allowable range for fit, based on requested values and limits of generated / simulated datasets
-		double deltaSQMin = qMin, deltaSQMax = (qMax < 0.0 ? x1.last() : qMax);
-		if ((deltaSQMin < x1.first()) || (deltaSQMin < simulatedFQ.xFirst())) deltaSQMin = max(x1.first(), simulatedFQ.xFirst());
-		if ((deltaSQMax > x1.last()) || (deltaSQMax > simulatedFQ.xLast())) deltaSQMax = min(x1.last(), simulatedFQ.xLast());
+		// Determine allowable range for fit, based on requested values and limits of generated / simulated datasets.
+		double deltaSQMin = qMin, deltaSQMax = (qMax < 0.0 ? x1.lastValue() : qMax);
+		if ((deltaSQMin < x1.firstValue()) || (deltaSQMin < simulatedFQ.xFirst())) deltaSQMin = max(x1.firstValue(), simulatedFQ.xFirst());
+		if ((deltaSQMax > x1.lastValue()) || (deltaSQMax > simulatedFQ.xLast())) deltaSQMax = min(x1.lastValue(), simulatedFQ.xLast());
 
 		double x;
 		for (int n=0; n<x1.nItems(); ++n)
