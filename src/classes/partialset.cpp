@@ -288,6 +288,72 @@ XYData PartialSet::constTotal() const
 	return total_;
 }
 
+// Calculate and return total bound function
+XYData PartialSet::boundTotal(bool applyConcentrationWeights) const
+{
+	const int nTypes = atomTypes_.nItems();
+	if (nTypes == 0) return XYData();
+
+	XYData bound;
+	bound.templateFrom(boundPartials_.constAt(0,0));
+
+	int typeI, typeJ;
+	AtomTypeData* atd1 = atomTypes_.first();
+	for (typeI=0; typeI<nTypes; ++typeI, atd1 = atd1->next)
+	{
+		AtomTypeData* atd2 = atd1;
+		for (typeJ=typeI; typeJ<nTypes; ++typeJ, atd2 = atd2->next)
+		{
+			// Calculate weighting factor if requested
+			double factor = 1.0;
+			if (applyConcentrationWeights)
+			{
+				double ci = atd1->fraction();
+				double cj = atd2->fraction();
+				factor *= ci * cj * (typeI == typeJ ? 1.0 : 2.0);
+			}
+
+			// Add contribution
+			bound.addY(boundPartials_.constAt(typeI,typeJ).arrayY(), factor);
+		}
+	}
+
+	return bound;
+}
+
+// Calculate and return total unbound function
+XYData PartialSet::unboundTotal(bool applyConcentrationWeights) const
+{
+	const int nTypes = atomTypes_.nItems();
+	if (nTypes == 0) return XYData();
+
+	XYData unbound;
+	unbound.templateFrom(boundPartials_.constAt(0,0));
+
+	int typeI, typeJ;
+	AtomTypeData* atd1 = atomTypes_.first();
+	for (typeI=0; typeI<nTypes; ++typeI, atd1 = atd1->next)
+	{
+		AtomTypeData* atd2 = atd1;
+		for (typeJ=typeI; typeJ<nTypes; ++typeJ, atd2 = atd2->next)
+		{
+			// Calculate weighting factor if requested
+			double factor = 1.0;
+			if (applyConcentrationWeights)
+			{
+				double ci = atd1->fraction();
+				double cj = atd2->fraction();
+				factor *= ci * cj * (typeI == typeJ ? 1.0 : 2.0);
+			}
+
+			// Add contribution
+			unbound.addY(unboundPartials_.constAt(typeI,typeJ).arrayY(), factor);
+		}
+	}
+
+	return unbound;
+}
+
 // Save all partials and total
 bool PartialSet::save()
 {

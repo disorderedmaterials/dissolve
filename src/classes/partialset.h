@@ -118,6 +118,10 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	XYData& total();
 	// Return copy of total function
 	XYData constTotal() const;
+	// Calculate and return total bound function
+	XYData boundTotal(bool applyConcentrationWeights) const;
+	// Calculate and return total unbound function
+	XYData unboundTotal(bool applyConcentrationWeights) const;
 	// Save all partials and total
 	bool save();
 	// Name all object based on the supplied prefix
