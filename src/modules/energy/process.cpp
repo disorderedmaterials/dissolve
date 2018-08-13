@@ -37,12 +37,6 @@ bool EnergyModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	return true;
 }
 
-// Return whether the Module has a processing stage
-bool EnergyModule::hasProcessing()
-{
-	return true;
-}
-
 // Run main processing
 bool EnergyModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {

@@ -27,12 +27,6 @@
 #include "classes/weights.h"
 #include "templates/genericlisthelper.h"
 
-// Return whether the Module has a processing stage
-bool RDFModule::hasProcessing()
-{
-	return true;
-}
-
 // Run main processing
 bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {

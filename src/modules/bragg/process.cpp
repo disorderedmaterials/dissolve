@@ -27,12 +27,6 @@
 #include "classes/weights.h"
 #include "templates/genericlisthelper.h"
 
-// Return whether the Module has a processing stage
-bool BraggModule::hasProcessing()
-{
-	return true;
-}
-
 // Run main processing
 bool BraggModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {

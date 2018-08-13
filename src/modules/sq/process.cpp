@@ -26,12 +26,6 @@
 #include "modules/rdf/rdf.h"
 #include "templates/genericlisthelper.h"
 
-// Return whether the Module has a processing stage
-bool SQModule::hasProcessing()
-{
-	return true;
-}
-
 // Run main processing
 bool SQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {

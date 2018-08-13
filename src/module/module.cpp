@@ -359,12 +359,6 @@ bool Module::process(Dissolve& dissolve, ProcessPool& procPool)
 	return false;
 }
 
-// Whether the Module has a processing stage
-bool Module::hasProcessing()
-{
-	return false;
-}
-
 // Run set-up stage
 bool Module::setUp(Dissolve& dissolve, ProcessPool& procPool)
 {
@@ -372,7 +366,7 @@ bool Module::setUp(Dissolve& dissolve, ProcessPool& procPool)
 }
 
 // Run main processing stage
-bool Module::executeMainProcessing(Dissolve& dissolve, ProcessPool& procPool)
+bool Module::executeProcessing(Dissolve& dissolve, ProcessPool& procPool)
 {
 	// Begin timer
 	Timer timer;

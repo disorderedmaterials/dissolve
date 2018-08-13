@@ -85,7 +85,7 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(const Array<double>& 
 
 		// Run the NeutronSQModule (quietly)
 		Messenger::mute();
-		module->executeMainProcessing(dissolve_, processPool_);
+		module->executeProcessing(dissolve_, processPool_);
 		Messenger::unMute();
 
 		// Grab target data and compare 

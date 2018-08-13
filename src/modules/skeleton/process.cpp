@@ -23,12 +23,6 @@
 #include "main/dissolve.h"
 #include "base/sysfunc.h"
 
-// Return whether the Module has a processing stage
-bool SkeletonModule::hasProcessing()
-{
-	return true;
-}
-
 // Run main processing
 bool SkeletonModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {

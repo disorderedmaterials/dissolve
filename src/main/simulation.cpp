@@ -194,7 +194,7 @@ bool Dissolve::iterate(int nIterations)
 
 				Messenger::heading("%s (%s)", module->name(), module->uniqueName());
 
-				result = module->executeMainProcessing(*this, cfg->processPool());
+				result = module->executeProcessing(*this, cfg->processPool());
 
 				if (!result) return false;
 			}
@@ -238,7 +238,7 @@ bool Dissolve::iterate(int nIterations)
 
 			Messenger::heading("%s (%s)", module->name(), module->uniqueName());
 
-			result = module->executeMainProcessing(*this, worldPool());
+			result = module->executeProcessing(*this, worldPool());
 
 			if (!result)
 			{

@@ -24,12 +24,6 @@
 #include "classes/box.h"
 #include "base/sysfunc.h"
 
-// Return whether the Module has a processing stage
-bool ChecksModule::hasProcessing()
-{
-	return true;
-}
-
 // Run main processing
 bool ChecksModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {

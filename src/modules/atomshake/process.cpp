@@ -31,12 +31,6 @@
 #include "base/timer.h"
 #include "templates/genericlisthelper.h"
 
-// Return whether the Module has a processing stage
-bool AtomShakeModule::hasProcessing()
-{
-	return true;
-}
-
 // Run main processing
 bool AtomShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {

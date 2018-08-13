@@ -179,15 +179,13 @@ class Module : public ListItem<Module>
 	 */
 	private:
 	// Run main processing
-	virtual bool process(Dissolve& dissolve, ProcessPool& procPool);
+	virtual bool process(Dissolve& dissolve, ProcessPool& procPool) = 0;
 
 	public:
-	// Whether the Module has a processing stage
-	virtual bool hasProcessing();
 	// Run set-up stage
 	virtual bool setUp(Dissolve& dissolve, ProcessPool& procPool);
 	// Run main processing stage
-	bool executeMainProcessing(Dissolve& dissolve, ProcessPool& procPool);
+	bool executeProcessing(Dissolve& dissolve, ProcessPool& procPool);
 
 
 	/*

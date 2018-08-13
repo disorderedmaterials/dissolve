@@ -32,12 +32,6 @@
 #include "base/lineparser.h"
 #include "templates/genericlisthelper.h"
 
-// Return whether the Module has a processing stage
-bool MDModule::hasProcessing()
-{
-	return true;
-}
-
 // Run main processing
 bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {

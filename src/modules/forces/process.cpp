@@ -28,12 +28,6 @@
 #include "base/lineparser.h"
 #include "templates/genericlisthelper.h"
 
-// Return whether the Module has a processing stage
-bool ForcesModule::hasProcessing()
-{
-	return true;
-}
-
 // Run main processing
 bool ForcesModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {

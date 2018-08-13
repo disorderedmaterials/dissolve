@@ -32,12 +32,6 @@
 #include "base/timer.h"
 #include "templates/genericlisthelper.h"
 
-// Return whether the Module has a processing stage
-bool MolShakeModule::hasProcessing()
-{
-	return true;
-}
-
 // Run main processing
 bool MolShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {

@@ -23,12 +23,6 @@
 #include "main/dissolve.h"
 #include "base/sysfunc.h"
 
-// Return whether the Module has a processing stage
-bool TestModule::hasProcessing()
-{
-	return true;
-}
-
 // Run main processing
 bool TestModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {

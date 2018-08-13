@@ -27,12 +27,6 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Return whether the Module has a processing stage
-bool ImportModule::hasProcessing()
-{
-	return true;
-}
-
 // Run main processing
 bool ImportModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {

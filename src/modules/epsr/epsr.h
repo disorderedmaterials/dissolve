@@ -111,8 +111,6 @@ class EPSRModule : public Module
 	public:
 	// Run set-up stage
 	bool setUp(Dissolve& dissolve, ProcessPool& procPool);
-	// Whether the Module has a processing stage
-	bool hasProcessing();
 
 
 	/*

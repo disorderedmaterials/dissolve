@@ -69,12 +69,6 @@ bool EPSRModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	return true;
 }
 
-// Return whether the Module has a processing stage
-bool EPSRModule::hasProcessing()
-{
-	return true;
-}
-
 // Run main processing
 bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {

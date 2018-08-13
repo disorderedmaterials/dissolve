@@ -24,12 +24,6 @@
 #include "classes/atomtype.h"
 #include "base/sysfunc.h"
 
-// Return whether the Module has a processing stage
-bool SanityCheckModule::hasProcessing()
-{
-	return true;
-}
-
 // Run main processing
 bool SanityCheckModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {

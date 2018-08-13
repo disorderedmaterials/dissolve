@@ -28,12 +28,6 @@
 #include "templates/genericlisthelper.h"
 #include "math/praxis.h"
 
-// Return whether the Module has a processing stage
-bool CalibrationModule::hasProcessing()
-{
-	return true;
-}
-
 // Run main processing
 bool CalibrationModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {
@@ -132,7 +126,7 @@ bool CalibrationModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 			// Run the NeutronSQModule (quietly)
 			Messenger::mute();
-			module->executeMainProcessing(dissolve, procPool);
+			module->executeProcessing(dissolve, procPool);
 			Messenger::unMute();
 		}
 	}

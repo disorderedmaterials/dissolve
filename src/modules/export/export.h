@@ -90,10 +90,6 @@ class ExportModule : public Module
 	// Run main processing
 	bool process(Dissolve& dissolve, ProcessPool& procPool);
 
-	public:
-	// Whether the Module has a processing stage
-	bool hasProcessing();
-
 
 	/*
 	 * Static Functions

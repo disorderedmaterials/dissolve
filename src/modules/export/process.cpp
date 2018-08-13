@@ -27,12 +27,6 @@
 #include "base/sysfunc.h"
 #include "base/lineparser.h"
 
-// Return whether the Module has a processing stage
-bool ExportModule::hasProcessing()
-{
-	return true;
-}
-
 // Run main processing
 bool ExportModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {
