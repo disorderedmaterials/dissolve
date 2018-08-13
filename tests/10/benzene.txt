@@ -203,12 +203,18 @@ Module  EPSR
   Target  '5050'
   OnlyWhenEnergyStable  False
   Frequency  1
+  NPitss  10
+  Feedback  0.9
 
   Test  on
-  TestThreshold  0.2
-  # -- Total neutron-weighted F(r)
+  TestThreshold  0.9
+  # -- Total neutron-weighted F(r) (needs threshold of 0.2)
   TestReference  'epsr25/benzene.EPSR.x01'  WeightedFR-C6H6-total  1  2
   TestReference  'epsr25/benzene.EPSR.x01'  WeightedFR-C6D6-total  1  4
   TestReference  'epsr25/benzene.EPSR.x01'  WeightedFR-5050-total  1  6
+  # -- Partial S(Q) derived from experiment via matrix inversion (threshold of 0.82)
+  TestReference  'epsr25/benzene.EPSR.q01'  GeneratedSQ-CA-CA  1  2
+  TestReference  'epsr25/benzene.EPSR.q01'  GeneratedSQ-CA-HA  1  4
+  TestReference  'epsr25/benzene.EPSR.q01'  GeneratedSQ-HA-HA  1  6
 EndModule
 
