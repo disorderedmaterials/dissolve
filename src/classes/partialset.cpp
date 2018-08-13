@@ -274,8 +274,6 @@ void PartialSet::formTotal(bool applyConcentrationWeights)
 			// TODO Does not include contributions from Bragg partials
 		}
 	}
-
-	total_.interpolate(XYData::SplineInterpolation);
 }
 
 // Return total function
