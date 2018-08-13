@@ -88,7 +88,7 @@ EndModule
 # 3) Calculate g(r) for the Configuration
 Module RDF
   Configuration  'Bulk'
-  IntraBroadening  ScaledGaussian  0.138  0.152
+  IntraBroadening  Gaussian  0.12
 EndModule
 
 # 4) Calculate neutron-weighted S(Q) for the H2O sample
@@ -106,6 +106,7 @@ Module NeutronSQ 'HDO'
   Configuration  'Bulk'
   Isotopologue  'Bulk'  'Water'  'Deuteriated'  0.5
   Isotopologue  'Bulk'  'Water'  'Natural'  0.5
+  Exchangeable  HW
   Reference  'data/SLS18500-HDO5050.mdcs01'
 EndModule
 
@@ -123,11 +124,11 @@ Module Energy
 EndModule
 
 # 8) Refine potentials
-Module  Refine
+Module  EPSR
   Target  'H2O'
   Target  'D2O'
   Target  'HDO'
   Frequency  5
-  PhiMax  30.0
+  EReq  30.0
 EndModule
 

@@ -139,7 +139,7 @@ EndModule
 # 3) Calculate RDFs
 Module  RDF  'RDFs'
   Configuration  'Liquid'
-  IntraBroadening  ScaledGaussian  0.13  0.15
+  IntraBroadening  Gaussian  0.13
 EndModule
 
 # 4) Calculate S(Q) for the C6H6 sample
@@ -173,12 +173,13 @@ Module Energy
 EndModule
 
 # 8) Refine potentials
-Module  Refine
+Module  EPSR
   Target  'C6H6'
   Target  'C6D6'
   Target  '5050'
-  OnlyWhenEnergyStable  False
+  OnlyWhenEnergyStable  True
   Frequency  5
+  EReq  30.0
 EndModule
 
 Simulation
