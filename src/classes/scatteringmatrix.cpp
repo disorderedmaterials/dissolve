@@ -133,10 +133,9 @@ void ScatteringMatrix::generatePartials(Array2D<XYData>& generatedSQ)
 	for (int n=0; n<A_.nColumns(); ++n)
 	{
 		// Add in contribution from each datset (row).
-		// We multiply any contribution by the stored factor (in the RefList's data variable).
 		for (int m=0; m<data_.nItems(); ++m)
 		{
-			partials[n].addInterpolated(data_[m], inverseA_.constAt(n, m) * factors_[m]);
+			partials[n].addInterpolated(data_[m], inverseA_.constAt(n, m));
 		}
 	}
 }
@@ -183,7 +182,7 @@ void ScatteringMatrix::initialise(const List<AtomType>& types, Array2D<XYData>& 
 	int index = 0;
 	for (Pair<AtomType*,AtomType*>* pair = typePairs_.first(); pair != NULL; pair = pair->next)
 	{
-		partials[index].setName(CharString("ScatteringMatrixPartial-%s-%s-%s.sq", pair->a->name(), pair->b->name(), groupName));
+		partials[index].setName(CharString("GeneratedSQ-%s-%s-%s.sq", pair->a->name(), pair->b->name(), groupName));
 		partials[index].setObjectName(CharString("%s//GeneratedSQ//%s//%s-%s", objectNamePrefix, groupName, pair->a->name(), pair->b->name()));
 		++index;
 	}
@@ -206,12 +205,12 @@ bool ScatteringMatrix::finalise()
 }
 
 // Add reference data
-bool ScatteringMatrix::addReferenceData(const XYData& data, Weights& weights, double factor)
+bool ScatteringMatrix::addReferenceData(const XYData& weightedData, Weights& dataWeights, double factor)
 {
-	// Make sure that there are valid scattering weights in the supplied Data
-	if (!weights.isValid())
+	// Make sure that the scattering weights are valid
+	if (!dataWeights.isValid())
 	{
-		return Messenger::error("Reference data '%s' does not have valid scattering weights.\n", data.name());
+		return Messenger::error("Reference data '%s' does not have valid scattering weights.\n", weightedData.name());
 	}
 
 	// Extend the scattering matrix by one row
@@ -219,8 +218,8 @@ bool ScatteringMatrix::addReferenceData(const XYData& data, Weights& weights, do
 	const int rowIndex = A_.nRows() - 1;
 
 	// Set coefficients in A_
-	const int nUsedTypes = weights.nUsedTypes();
-	AtomTypeList& usedTypes = weights.atomTypes();
+	const int nUsedTypes = dataWeights.nUsedTypes();
+	AtomTypeList& usedTypes = dataWeights.atomTypes();
 	for (int n=0; n<nUsedTypes; ++n)
 	{
 		for (int m=n; m<nUsedTypes; ++m)
@@ -233,19 +232,19 @@ bool ScatteringMatrix::addReferenceData(const XYData& data, Weights& weights, do
 			}
 
 			// Now have the local column index of the AtomType pair in our matrix A_...
-			A_.at(rowIndex, colIndex) = weights.weight(n, m) * factor;
+			A_.at(rowIndex, colIndex) = dataWeights.weight(n, m) * factor;
 		}
 	}
 
 	// Add reference data and its associated factor
-	data_.add(data);
-	factors_.add(factor);
+	data_.add(weightedData);
+	data_.last().arrayY() *= factor;
 
 	return true;
 }
 
-// Add reference partial data between specified AtomTypes
-bool ScatteringMatrix::addPartialReferenceData(XYData& data, AtomType* at1, AtomType* at2, double weight, double factor)
+// Add reference partial data between specified AtomTypes, applying optional factor to the weight and the data itself
+bool ScatteringMatrix::addPartialReferenceData(XYData& weightedData, AtomType* at1, AtomType* at2, double dataWeight, double factor)
 {
 	// Extend the scattering matrix by one row
 	A_.addRow(typePairs_.nItems());
@@ -260,11 +259,11 @@ bool ScatteringMatrix::addPartialReferenceData(XYData& data, AtomType* at1, Atom
 
 	// Now have the local column index of the AtomType pair in our matrix A_...
 	A_.setRow(rowIndex, 0.0);
-	A_.at(rowIndex, colIndex) = weight * factor;
+	A_.at(rowIndex, colIndex) = dataWeight * factor;
 
 	// Add reference data and its associated factor
-	data_.add(data);
-	factors_.add(factor);
+	data_.add(weightedData);
+	data_.last().arrayY() *= factor;
 
 	return true;
 }
