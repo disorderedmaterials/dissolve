@@ -117,6 +117,7 @@ Configuration  'Liquid'
   Multiplier  200
   SpeciesInfo  'Benzene'  1.0
   SizeFactor  10.0
+  #InputCoordinates  'xyz'  equilibrated.xyz
 EndConfiguration
 
 
@@ -129,11 +130,11 @@ Module MolShake
   Configuration  'Liquid'
 EndModule
 
-# 2) Perform intramolecular shake of bonds and angles
-Module IntraShake
+# 2) Perform molecular dynamics
+Module MD
   Configuration  'Liquid'
-  AdjustTorsions  False
-  Frequency  5
+  Frequency  10
+  NSteps  50
 EndModule
 
 # 3) Calculate RDFs
@@ -182,6 +183,3 @@ Module  EPSR
   EReq  30.0
 EndModule
 
-Simulation
-  Seed  888
-EndSimulation
