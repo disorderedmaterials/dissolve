@@ -582,7 +582,11 @@ void ModuleChart::layOutWidgets(bool animateWidgets)
 
 	// If we get to this point and there are zero columns, there wasn't enough width to fit a single column of widgets in, but we still need one!
 	// nRows should always be correct
-	if (nColumns_ == 0) nColumns_ = 1;
+	if (nColumns_ == 0)
+	{
+		nColumns_ = 1;
+		widths_.add(width() - 2*metrics.chartMargin());
+	}
 
 	// Determine new spacing between columns
 	totalColumnWidth = 0;
