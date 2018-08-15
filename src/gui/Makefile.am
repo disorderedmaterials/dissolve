@@ -25,7 +25,8 @@ clean-local:
 
 libgui_la_SOURCES = icons.qrc
 
-libgui_la_SOURCES += gui.ui analysistab.ui configurationtab.ui forcefieldtab.ui modulechartinsertionblock.ui modulechartmoduleblock.ui modulecontrolwidget.ui moduleeditor.ui moduletab.ui pairpotentialwidget.ui paletteblock.ui processingtab.ui speciestab.ui workspacetab.ui
+libgui_la_SOURCES += modulechartinsertionblock.ui modulechartmoduleblock.ui modulecontrolwidget.ui moduleeditor.ui paletteblock.ui
+libgui_la_SOURCES += gui.ui analysistab.ui configurationtab.ui forcefieldtab.ui moduletab.ui pairpotentialwidget.ui processingtab.ui speciestab.ui workspacetab.ui
 
 libgui_la_SOURCES += modulechart.hui modulepalette.hui outputhandler.hui thread.hui
 
