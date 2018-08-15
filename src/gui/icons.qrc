@@ -6,6 +6,9 @@
     <file>icons/file_save.svg</file>
     <file>icons/file_saveas.svg</file>
   </qresource>
+  <qresource prefix="wizard">
+    <file>icons/wizard.svg</file>
+  </qresource>
   <qresource prefix="images">
     <file>images/squares.jpg</file>
   </qresource>

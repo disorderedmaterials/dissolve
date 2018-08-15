@@ -46,6 +46,9 @@ DissolveWindow::DissolveWindow(Dissolve& dissolve) : QMainWindow(NULL), dissolve
 	connect(ui.MainTabs, SIGNAL(tabBarDoubleClicked(int)), this, SLOT(mainTabsDoubleClicked(int)));
 	dissolveState_ = StoppedState;
 
+	// Hide the Wizard by default
+	ui.WizardStack->setVisible(false);
+
 	refreshing_ = false;
 	modified_ = false;
 
