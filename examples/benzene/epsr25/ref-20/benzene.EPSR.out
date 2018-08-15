@@ -1,0 +1,25 @@
+
+  EPSR version 25: 2016-02-24      
+
+  Trial no.     5      Iteration no.     1      No. of configurations in sum     1
+  Chi-square  0.117272E-02 R-space coeff.:  0.183032E-03 Abs. empirical energy:   0.200000E+02
+  Quality factor  0.685354E-03 Control level, baseline and threshold:  0.000000E+00  0.000000E+00  0.500000E+00
+  Pair energies: repulsive  0.122088E+02 harmonic  0.350713E+02 per molecule
+  Tethered energy:  0.000000E+00 per molecule
+  Three-body energy:  0.000000E+00 per molecule
+  Three-body pressure:  0.000000E+00 kbar
+  No. of .erg lines:    1846 Average gradient of quality factor:  0.000000E+00
+  Sizefactor    1.00000 Number density  0.81041E-01
+  Net charge =    0.00000
+  R-factor for data file  1:  0.4146E-03
+  R-factor for data file  2:  0.1138E-02
+  R-factor for data file  3:  0.1966E-02
+  Noise in average g(r)  0.185607E+02
+  Intermolecular energy and U_pol  0.122088E+02  0.000000E+00 kJ/mole
+  Intermolecular pressure  0.988018E+01 kbar
+  Average dipole moment and std.  0.876229E+00  0.418012E+00 D
+  Av. intermolecular energy  0.114980E+02+- 0.577750E+00 kJ/mole
+  Av. intermolecular pressure  0.985917E+01+- 0.226016E+00 kbar
+  Number of rejects in MOLFIT:-
+       0       0     200     200
+       0       0     157     151
