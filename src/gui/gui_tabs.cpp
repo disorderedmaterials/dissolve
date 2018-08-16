@@ -28,6 +28,7 @@
 #include "gui/workspacetab.h"
 #include "main/dissolve.h"
 #include "classes/configuration.h"
+#include "classes/species.h"
 #include <QInputDialog>
 
 void DissolveWindow::on_MainTabs_currentChanged(int index)
@@ -77,8 +78,8 @@ void DissolveWindow::clearAllTabs()
 	tabs_.clear();
 }
 
-// Add all necessary tabs, including those for current Configurations
-void DissolveWindow::addTabs()
+// Add all tabs necessary to represent the current setup
+void DissolveWindow::addAllTabs()
 {
 	// Forcefield
 	forcefieldTab_ = new ForcefieldTab(this, dissolve_, ui.MainTabs, "Forcefield");
@@ -87,10 +88,8 @@ void DissolveWindow::addTabs()
 	ui.MainTabs->setTabIcon(forcefieldTab_->page(), QIcon(":/tabs/icons/tabs_ff.svg"));
 
 	// Species
-	speciesTab_ = new SpeciesTab(this, dissolve_, ui.MainTabs, "Species");
-	tabs_.own(speciesTab_);
-	ui.MainTabs->setTabTextColour(speciesTab_->page(), QColor(0, 81, 0));
-	ui.MainTabs->setTabIcon(speciesTab_->page(), QIcon(":/tabs/icons/tabs_species.svg"));
+	ListIterator<Species> speciesIterator(dissolve_.species());
+	while (Species* sp = speciesIterator.iterate()) addSpeciesTab(sp);
 
 	// Configurations
 	ListIterator<Configuration> configIterator(dissolve_.configurations());
@@ -101,6 +100,17 @@ void DissolveWindow::addTabs()
 	tabs_.own(mainProcessingTab_);
 	ui.MainTabs->setTabTextColour(mainProcessingTab_->page(), QColor(11, 36, 118));
 	ui.MainTabs->setTabIcon(mainProcessingTab_->page(), QIcon(":/tabs/icons/tabs_flow.svg"));
+}
+
+// Add new tab for specified Species target
+MainTab* DissolveWindow::addSpeciesTab(Species* sp)
+{
+	MainTab* tab = new SpeciesTab(this, dissolve_, ui.MainTabs, sp->name(), sp);
+	tabs_.own(tab);
+	ui.MainTabs->setTabTextColour(tab->page(), QColor(0, 81, 0));
+	ui.MainTabs->setTabIcon(tab->page(), QIcon(":/tabs/icons/tabs_species.svg"));
+
+	return tab;
 }
 
 // Add tab for specified Configuration target

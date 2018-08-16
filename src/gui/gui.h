@@ -35,6 +35,7 @@ class BrowserWidget;
 class Configuration;
 class Dissolve;
 class QMdiSubWindow;
+class Species;
 
 class DissolveWindow : public QMainWindow
 {
@@ -185,8 +186,10 @@ class DissolveWindow : public QMainWindow
 	private:
 	// Clear all tabs
 	void clearAllTabs();
-	// Add all necessary tabs, including those for current Configurations
-	void addTabs();
+	// Add all tabs necessary to represent the current setup
+	void addAllTabs();
+	// Add new tab for specified Species target
+	MainTab* addSpeciesTab(Species* sp);
 	// Add new tab for specified Configuration target
 	MainTab* addConfigurationTab(Configuration* cfg);
 	// Add on an empty workspace tab

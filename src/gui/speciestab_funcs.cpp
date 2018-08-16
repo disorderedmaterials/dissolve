@@ -35,11 +35,13 @@
 #include <QListWidgetItem>
 
 // Constructor / Destructor
-SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title) : MainTab(dissolveWindow, dissolve, parent, title, this)
+SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, Species* species) : MainTab(dissolveWindow, dissolve, parent, CharString("Species: %s", title), this)
 {
 	ui.setupUi(this);
 
 	refreshing_ = true;
+
+	species_ = species;
 
 	// Set item delegates in tables
 	// -- SpeciesAtomTable
@@ -287,18 +289,13 @@ void SpeciesTab::updateControls()
 {
 	refreshing_ = true;
 
-	// Species List
-	ListWidgetUpdater<SpeciesTab,Species> speciesUpdater(ui.SpeciesList, dissolve_.species());
-
-	Species* species = currentSpecies();
-
 	// SpeciesAtom Table
-	if (!species) ui.AtomTable->clearContents();
-	else TableWidgetUpdater<SpeciesTab,SpeciesAtom> speciesAtomUpdater(ui.AtomTable, species->atoms(), this, &SpeciesTab::updateAtomTableRow);
+	if (!species_) ui.AtomTable->clearContents();
+	else TableWidgetUpdater<SpeciesTab,SpeciesAtom> speciesAtomUpdater(ui.AtomTable, species_->atoms(), this, &SpeciesTab::updateAtomTableRow);
 
 	// Isotopologues List
-	if (!species) ui.IsotopologueList->clear();
-	else ListWidgetUpdater<SpeciesTab,Isotopologue> isotopologueUpdater(ui.IsotopologueList, species->isotopologues());
+	if (!species_) ui.IsotopologueList->clear();
+	else ListWidgetUpdater<SpeciesTab,Isotopologue> isotopologueUpdater(ui.IsotopologueList, species_->isotopologues());
 
 	Isotopologue* isotopologue = currentIsotopologue();
 
@@ -308,7 +305,7 @@ void SpeciesTab::updateControls()
 	ui.IsotopeTable->resizeColumnsToContents();
 
 	// Intramolecular terms
-	if (!species)
+	if (!species_)
 	{
 		ui.BondTable->clearContents();
 		ui.AngleTable->clearContents();
@@ -316,18 +313,15 @@ void SpeciesTab::updateControls()
 	}
 	else
 	{
-		TableWidgetUpdater<SpeciesTab,SpeciesBond> bondUpdater(ui.BondTable, species->bonds(), this, &SpeciesTab::updateBondTableRow);
-		TableWidgetUpdater<SpeciesTab,SpeciesAngle> angleUpdater(ui.AngleTable, species->angles(), this, &SpeciesTab::updateAngleTableRow);
-		TableWidgetUpdater<SpeciesTab,SpeciesTorsion> torsionUpdater(ui.TorsionTable, species->torsions(), this, &SpeciesTab::updateTorsionTableRow);
+		TableWidgetUpdater<SpeciesTab,SpeciesBond> bondUpdater(ui.BondTable, species_->bonds(), this, &SpeciesTab::updateBondTableRow);
+		TableWidgetUpdater<SpeciesTab,SpeciesAngle> angleUpdater(ui.AngleTable, species_->angles(), this, &SpeciesTab::updateAngleTableRow);
+		TableWidgetUpdater<SpeciesTab,SpeciesTorsion> torsionUpdater(ui.TorsionTable, species_->torsions(), this, &SpeciesTab::updateTorsionTableRow);
 	}
 	ui.BondTable->resizeColumnsToContents();
 	ui.AngleTable->resizeColumnsToContents();
 	ui.TorsionTable->resizeColumnsToContents();
 
 	refreshing_ = false;
-
-	// If no current Species it selected, set one now
-	if ((ui.SpeciesList->currentRow() == -1) && (ui.SpeciesList->count() > 0)) ui.SpeciesList->setCurrentRow(0);
 }
 
 // Disable sensitive controls within tab, ready for main code to run
@@ -344,32 +338,12 @@ void SpeciesTab::enableSensitiveControls()
  * Signals / Slots
  */
 
-// Return currently-selected Species
-Species* SpeciesTab::currentSpecies()
-{
-	QListWidgetItem* item = ui.SpeciesList->currentItem();
-	if (!item) return NULL;
-	return (Species*) VariantPointer<Species>(item->data(Qt::UserRole));
-}
-
 // Return currently-selected Isotopologue
 Isotopologue* SpeciesTab::currentIsotopologue()
 {
 	QListWidgetItem* item = ui.IsotopologueList->currentItem();
 	if (!item) return NULL;
 	return (Isotopologue*) VariantPointer<Isotopologue>(item->data(Qt::UserRole));
-}
-
-void SpeciesTab::on_SpeciesList_currentRowChanged(int row)
-{
-	if (refreshing_) return;
-
-	// Clear relevant tables here to make things more efficient
-	ui.AtomTable->clearContents();
-	ui.IsotopologueList->clear();
-	ui.IsotopeTable->clearContents();
-
-	updateControls();
 }
 
 void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem* w)
@@ -470,11 +444,7 @@ void SpeciesTab::on_IsotopeTable_itemChanged(QTableWidgetItem* w)
 
 void SpeciesTab::on_BondTable_itemChanged(QTableWidgetItem* w)
 {
-	if (refreshing_) return;
-
-	// Get current Species
-	Species* species = currentSpecies();
-	if (!species) return;
+	if (refreshing_ || (!species_)) return;
 
 	// Get target SpeciesBond from the passed widget
 	SpeciesBond* speciesBond = w ? VariantPointer<SpeciesBond>(w->data(Qt::UserRole)) : NULL;
@@ -491,7 +461,7 @@ void SpeciesTab::on_BondTable_itemChanged(QTableWidgetItem* w)
 			// Get both atom indices and set the atoms in the interaction
 			i = ui.BondTable->item(w->row(), 0)->text().toInt() - 1;
 			j = ui.BondTable->item(w->row(), 1)->text().toInt() - 1;
-			if (species->reconnectBond(speciesBond, i, j))
+			if (species_->reconnectBond(speciesBond, i, j))
 			{
 				updateRow = true;
 				dissolveWindow_->setModified();
@@ -538,11 +508,7 @@ void SpeciesTab::on_BondTable_itemChanged(QTableWidgetItem* w)
 
 void SpeciesTab::on_AngleTable_itemChanged(QTableWidgetItem* w)
 {
-	if (refreshing_) return;
-
-	// Get current Species
-	Species* species = currentSpecies();
-	if (!species) return;
+	if (refreshing_ || (!species_)) return;
 
 	// Get target SpeciesAngle from the passed widget
 	SpeciesAngle* speciesAngle = w ? VariantPointer<SpeciesAngle>(w->data(Qt::UserRole)) : NULL;
@@ -561,7 +527,7 @@ void SpeciesTab::on_AngleTable_itemChanged(QTableWidgetItem* w)
 			i = ui.BondTable->item(w->row(), 0)->text().toInt() - 1;
 			j = ui.BondTable->item(w->row(), 1)->text().toInt() - 1;
 			k = ui.BondTable->item(w->row(), 2)->text().toInt() - 1;
-			if (species->reconnectAngle(speciesAngle, i, j, k))
+			if (species_->reconnectAngle(speciesAngle, i, j, k))
 			{
 				updateRow = true;
 				dissolveWindow_->setModified();
@@ -608,11 +574,7 @@ void SpeciesTab::on_AngleTable_itemChanged(QTableWidgetItem* w)
 
 void SpeciesTab::on_TorsionTable_itemChanged(QTableWidgetItem* w)
 {
-	if (refreshing_) return;
-
-	// Get current Species
-	Species* species = currentSpecies();
-	if (!species) return;
+	if (refreshing_ || (!species_)) return;
 
 	// Get target SpeciesTorsion from the passed widget
 	SpeciesTorsion* speciesTorsion = w ? VariantPointer<SpeciesTorsion>(w->data(Qt::UserRole)) : NULL;
@@ -633,7 +595,7 @@ void SpeciesTab::on_TorsionTable_itemChanged(QTableWidgetItem* w)
 			j = ui.BondTable->item(w->row(), 1)->text().toInt() - 1;
 			k = ui.BondTable->item(w->row(), 2)->text().toInt() - 1;
 			l = ui.BondTable->item(w->row(), 3)->text().toInt() - 1;
-			if (species->reconnectTorsion(speciesTorsion, i, j, k, l))
+			if (species_->reconnectTorsion(speciesTorsion, i, j, k, l))
 			{
 				updateRow = true;
 				dissolveWindow_->setModified();

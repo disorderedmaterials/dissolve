@@ -135,7 +135,7 @@ bool DissolveWindow::openFile(const char* inputFile, bool ignoreRestartFile, boo
 	refreshing_ = true;
 
 	// Add on necessary tabs
-	addTabs();
+	addAllTabs();
 
 	refreshing_ = false;
 

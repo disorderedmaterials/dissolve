@@ -43,7 +43,7 @@ class SpeciesTab : public QWidget, public MainTab
 
 	public:
 	// Constructor / Destructor
-	SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title);
+	SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, Species* species);
 	~SpeciesTab();
 	// Main form declaration
 	Ui::SpeciesTab ui;
@@ -55,6 +55,14 @@ class SpeciesTab : public QWidget, public MainTab
 	public:
 	// Return tab type
 	const char* tabType() const;
+
+
+	/*
+	 * Target
+	 */
+	private:
+	// Species data to display
+	Species* species_;
 
 
 	/*
@@ -85,13 +93,10 @@ class SpeciesTab : public QWidget, public MainTab
 	 * Signals / Slots
 	 */
 	private:
-	// Return currently-selected Species
-	Species* currentSpecies();
 	// Return currently-selected Isotopologue
 	Isotopologue* currentIsotopologue();
 
 	private slots:
-	void on_SpeciesList_currentRowChanged(int row);
 	void on_AtomTable_itemChanged(QTableWidgetItem* w);
 	void on_IsotopologueList_currentRowChanged(int row);
 	void on_IsotopeTable_itemChanged(QTableWidgetItem* w);
