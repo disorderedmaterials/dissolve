@@ -938,7 +938,24 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="Wizard0NextButton_2">
+               <widget class="QPushButton" name="Wizard1PrevButton">
+                <property name="text">
+                 <string>Prev</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="icons.qrc">
+                  <normaloff>:/general/icons/general_arrowleft.svg</normaloff>:/general/icons/general_arrowleft.svg</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>16</width>
+                  <height>16</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="Wizard1NextButton">
                 <property name="text">
                  <string>Next</string>
                 </property>
