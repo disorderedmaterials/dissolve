@@ -38,6 +38,8 @@ ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dis
 {
 	ui.setupUi(this);
 
+	refreshing_ = true;
+
 	configuration_ = cfg;
 
 	// Set item delegates for tables
@@ -50,6 +52,8 @@ ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dis
 
 	// Populate coordinates file format combo
 	ComboPopulator(ui.CoordinatesFileFormatCombo, ImportModuleFormats::nCoordinateFormats, ImportModuleFormats::niceCoordinateFormats());
+
+	refreshing_ = false;
 
 	// Set up the ModuleEditor
 	ui.ModulePanel->setUp(dissolveWindow, cfg->modules());

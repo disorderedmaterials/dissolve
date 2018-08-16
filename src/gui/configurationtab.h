@@ -56,6 +56,7 @@ class ConfigurationTab : public QWidget, public MainTab
 	 * Target
 	 */
 	private:
+	// Configuration data to display
 	Configuration* configuration_;
 
 
