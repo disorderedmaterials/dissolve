@@ -122,7 +122,7 @@ const char* Species::uniqueIsotopologueName(const char* base, Isotopologue* excl
 // Search for Isotopologue by name
 Isotopologue* Species::findIsotopologue(const char* name) const
 {
-	for (Isotopologue *iso = isotopologues_.first(); iso != NULL; iso = iso->next) if (strcmp(name,iso->name()) == 0) return iso;
+	for (Isotopologue *iso = isotopologues_.first(); iso != NULL; iso = iso->next) if (DissolveSys::sameString(name, iso->name())) return iso;
 	return NULL;
 }
 
