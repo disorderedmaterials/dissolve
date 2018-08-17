@@ -86,6 +86,7 @@ bool XYData::sineFT(double normFactor, double wMin, double wStep, double wMax, W
 		for (m=0; m<nX-1; ++m)
 		{
 			deltaX = x_[m+1] - x_[m];
+
 			// Get window value at this position in the function
 			window = windowFunction.y(x_[m], omega);
 
