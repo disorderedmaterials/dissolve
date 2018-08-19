@@ -37,6 +37,7 @@ KeywordData SpeciesBlockData[] = {
 	{ "EndSpecies",			0,	"Ends the current Species definition" },
 	{ "Grain",			1,	"Define a Grain within the Species " },
 	{ "Isotopologue",		1,	"Add an isotopologue to the Species" },
+	{ "Site",			1,	"Define an analysis site for the Species" },
 	{ "Torsion",			5,	"Define a torsion interaction within the Species" }
 };
 
@@ -73,6 +74,7 @@ bool SpeciesBlock::parse(LineParser& parser, Dissolve* dissolve, Species* specie
 	SpeciesBond* b;
 	SpeciesTorsion* t;
 	SpeciesGrain* sg;
+	SpeciesSite* site;
 	SpeciesBond::BondFunction bf;
 	SpeciesAngle::AngleFunction af;
 	SpeciesTorsion::TorsionFunction tf;
@@ -298,6 +300,19 @@ bool SpeciesBlock::parse(LineParser& parser, Dissolve* dissolve, Species* specie
 						break;
 					}
 				}
+				break;
+			case (SpeciesBlock::SiteKeyword):
+				// First argument is the name of the site to create - make sure it doesn't exist already
+				site = species->findSite(parser.argc(1));
+				if (site)
+				{
+					Messenger::error("The site '%s' already exists on Species '%s', and cannot be redefined.\n", parser.argc(1), species->name());
+					error = true;
+					break;
+				}
+
+				site = species->addSite(parser.argc(1));
+				if (!SiteBlock::parse(parser, dissolve, site)) error = true;
 				break;
 			case (SpeciesBlock::TorsionKeyword):
 				// Check the functional form specified - if it starts with '@' it is a reference to master parameters

@@ -45,6 +45,9 @@ void MainInputKeywords::printValidBlockKeywords(MainInputKeywords::MainInputKeyw
 		case (MainInputKeywords::SimulationBlockKeyword):
 			for (n=0; n<SimulationBlock::nSimulationKeywords; ++n) Messenger::print("  %s", SimulationBlock::keyword( (SimulationBlock::SimulationKeyword) n ));
 			break;
+		case (MainInputKeywords::SiteBlockKeyword):
+			for (n=0; n<SiteBlock::nSiteKeywords; ++n) Messenger::print("  %s", SiteBlock::keyword( (SiteBlock::SiteKeyword) n ));
+			break;
 		case (MainInputKeywords::SpeciesBlockKeyword):
 			for (n=0; n<SpeciesBlock::nSpeciesKeywords; ++n) Messenger::print("  %s", SpeciesBlock::keyword( (SpeciesBlock::SpeciesKeyword) n ));
 			break;
@@ -63,7 +66,7 @@ void MainInputKeywords::printValidBlockKeywords(MainInputKeywords::MainInputKeyw
  */
 
 // Main Input Keywords
-const char* MainInputKeywordKeywords[] = { "Configuration", "Master", "Module", "PairPotentials", "Simulation", "Species", "SpeciesInfo" };
+const char* MainInputKeywordKeywords[] = { "Configuration", "Master", "Module", "PairPotentials", "Simulation", "Site", "Species", "SpeciesInfo" };
 
 // Convert text string to MainInputKeyword
 MainInputKeywords::MainInputKeyword MainInputKeywords::mainInputKeyword(const char* s)

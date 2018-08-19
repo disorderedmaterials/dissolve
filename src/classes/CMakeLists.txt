@@ -52,11 +52,13 @@ add_library(classes
   speciesgrain.cpp
   speciesinfo.cpp
   speciesintra.cpp
+  speciessite.cpp
   speciestorsion.cpp
   species_grains.cpp
   species_intra.cpp
   species_io.cpp
   species_isotopologues.cpp
+  species_site.cpp
   species_transform.cpp
   torsion.cpp
   weights.cpp
@@ -106,6 +108,7 @@ add_library(classes
   speciesgrain.h
   speciesinfo.h
   speciesintra.h
+  speciessite.h
   speciestorsion.h
   torsion.h
   weights.h

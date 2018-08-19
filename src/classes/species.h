@@ -28,6 +28,7 @@
 #include "classes/speciesbond.h"
 #include "classes/speciestorsion.h"
 #include "classes/speciesgrain.h"
+#include "classes/speciessite.h"
 #include "classes/isotopologue.h"
 #include "base/charstring.h"
 
@@ -240,6 +241,30 @@ class Species : public ListItem<Species>
 	Isotopologue* findIsotopologue(const char* name) const;
 	// Return index of specified Isotopologue
 	int indexOfIsotopologue(Isotopologue* iso) const;
+
+
+	/*
+	 * Site
+	 */
+	private:
+	// List of defined sites
+	List<SpeciesSite> sites_;
+
+	public:
+	// Add a new SpeciesSite to this Species
+	SpeciesSite* addSite(const char* name = NULL);
+	// Remove specified SpeciesSite
+	void removeSite(SpeciesSite* site);
+	// Return number of defined SpeciesSites
+	int nSites() const;
+	// Return SpeciesSite List
+	const List<SpeciesSite>& sites() const;
+	// Return nth SpeciesSite defined
+	SpeciesSite* site(int n);
+	// Generate unique site name with base name provided
+	const char* uniqueSiteName(const char* baseName, SpeciesSite* exclude = NULL) const;
+	// Search for SpeciesSite by name
+	SpeciesSite* findSite(const char* name) const;
 
 
 	/*
