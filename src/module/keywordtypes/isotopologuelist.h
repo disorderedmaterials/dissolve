@@ -49,14 +49,6 @@ class IsotopologueListModuleKeyword : public ModuleKeywordBase, public ModuleKey
 
 
 	/*
-	 * Data Validation
-	 */
-	public:
-	// Validate supplied value
-	bool isValid(IsotopologueReference value);
-
-
-	/*
 	 * Arguments
 	 */
 	public:
