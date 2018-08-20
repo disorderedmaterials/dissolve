@@ -1,6 +1,7 @@
 add_library(math
   broadeningfunction.cpp
   cuboid.cpp
+  # data1d.cpp
   doubleexp.cpp
   gaussfit.cpp
   gj.cpp
@@ -9,12 +10,17 @@ add_library(math
   matrix4.cpp
   pairbroadeningfunction.cpp
   poissonfit.cpp
+  sampleddouble.cpp
   svd.cpp
   windowfunction.cpp
+  xydata.cpp
+  xydata_ft.cpp
+  xydata_interp.cpp
 
   broadeningfunction.h
   constants.h
   cuboid.h
+  # data1d.h
   doubleexp.h
   functionspace.h
   gaussfit.h
@@ -26,8 +32,11 @@ add_library(math
   pairbroadeningfunction.h
   poissonfit.h
   praxis.h
+  sampleddouble.h
+  sd.h
   svd.h
   windowfunction.h
+  xydata.h
 )
 
 include_directories(
