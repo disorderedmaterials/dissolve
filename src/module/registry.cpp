@@ -20,6 +20,7 @@
 */
 
 #include "module/registry.h"
+#include "modules/analyse/analyse.h"
 #include "modules/atomshake/atomshake.h"
 #include "modules/checks/checks.h"
 #include "modules/energy/energy.h"
@@ -45,6 +46,7 @@
 // Constructor
 ModuleRegistry::ModuleRegistry()
 {
+	ModuleRegistrar<AnalyseModule> analyseRegistrar;
 	ModuleRegistrar<AtomShakeModule> atomShakeRegistrar;
 	ModuleRegistrar<CalibrationModule> calibrationRegistrar;
 	ModuleRegistrar<ChecksModule> checksRegistrar;

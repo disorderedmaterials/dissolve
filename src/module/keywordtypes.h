@@ -36,6 +36,7 @@
 #include "module/keywordtypes/complex.h"
 
 // Classes
+#include "module/keywordtypes/analyser.h"
 #include "module/keywordtypes/atomtypeselection.h"
 #include "module/keywordtypes/charstring.h"
 #include "module/keywordtypes/broadeningfunction.h"

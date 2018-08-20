@@ -44,6 +44,7 @@ add_library(classes
   regionaldistributor.cpp
   scaledenergykernel.cpp
   scatteringmatrix.cpp
+  sitestack.cpp
   speciesangle.cpp
   speciesatom.cpp
   species_atomic.cpp
@@ -101,6 +102,7 @@ add_library(classes
   regionaldistributor.h
   scaledenergykernel.h
   scatteringmatrix.h
+  sitestack.h
   species.h
   speciesangle.h
   speciesatom.h

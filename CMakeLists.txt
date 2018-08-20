@@ -175,9 +175,10 @@ endif(GUI)
 set(BASIC_LINK_LIBS
 
   # Main libs
-  main classes module keywordtypes base math data
+  main classes module analyse analysisnodes keywordtypes base math data
 
   # Modules
+  analysemodule
   atomshakemodule
   braggmodule
   calibrationmodule
@@ -215,6 +216,7 @@ target_link_libraries( ${target_name}
   ${BASIC_LINK_LIBS}
 
   # Module 'nogui' libs
+  analysemodulenogui
   atomshakemodulenogui
   braggmodulenogui
   calibrationmodulenogui
@@ -240,6 +242,7 @@ if(GUI)
     ${BASIC_LINK_LIBS}
 
     # Module gui libs
+    analysemodulegui
     atomshakemodulegui
     braggmodulegui
     calibrationmodulegui
