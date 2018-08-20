@@ -1,6 +1,6 @@
 /*
-	*** Analysis Base Node
-	*** src/analyse/nodes/node.cpp
+	*** Site Context
+	*** src/analyse/sitecontext.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,37 +19,37 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "analyse/nodes/node.h"
+#include "analyse/sitecontext.h"
 #include "base/sysfunc.h"
 
 // Constructor
-AnalysisNode::AnalysisNode() : ListItem<AnalysisNode>()
+SiteContext::SiteContext()
 {
 }
 
 // Destructor
-AnalysisNode::~AnalysisNode()
+SiteContext::~SiteContext()
 {
 }
 
 /*
- * Node Types
+ * Stack References
  */
 
-
-// Control keywords
-const char* NodeTypes[] = { "Exclude", "Select", "Sequence" };
-
-// Convert string to node type
-AnalysisNode::NodeType AnalysisNode::nodeType(const char* s)
+// Add reference to specified SiteStack
+SiteReference* SiteContext::add(SiteStack& siteStack, const char* name)
 {
-	for (int nt=0; nt < AnalysisNode::nNodeTypes; ++nt) if (DissolveSys::sameString(s, NodeTypes[nt])) return (AnalysisNode::NodeType) nt;
+	SiteReference* ref = new SiteReference(siteStack, name);
 
-	return AnalysisNode::nNodeTypes;
+	references_.own(ref);
+
+	return ref;
 }
 
-// Convert node type to string
-const char* AnalysisNode::nodeType(AnalysisNode::NodeType nt)
+// Retrieve named reference, if it exists
+SiteReference* SiteContext::reference(const char* name) const
 {
-	return NodeTypes[nt];
+	for (SiteReference* ref = references_.first(); ref != NULL; ref = ref->next) if (DissolveSys::sameString(ref->name(), name)) return ref;
+
+	return NULL;
 }

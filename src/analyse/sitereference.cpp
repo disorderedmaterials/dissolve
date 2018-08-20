@@ -1,6 +1,6 @@
 /*
-	*** Analysis Base Node
-	*** src/analyse/nodes/node.cpp
+	*** Site Reference
+	*** src/analyse/sitereference.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,37 +19,22 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "analyse/nodes/node.h"
-#include "base/sysfunc.h"
+#include "analyse/sitereference.h"
 
 // Constructor
-AnalysisNode::AnalysisNode() : ListItem<AnalysisNode>()
+SiteReference::SiteReference(SiteStack& siteStack, const char* name) : ListItem<SiteReference>(), siteStack_(siteStack)
 {
+	name_ = name;
 }
 
-// Destructor
-AnalysisNode::~AnalysisNode()
+// Return referenced stack of sites
+SiteStack& SiteReference::siteStack() const
 {
+	return siteStack_;
 }
 
-/*
- * Node Types
- */
-
-
-// Control keywords
-const char* NodeTypes[] = { "Exclude", "Select", "Sequence" };
-
-// Convert string to node type
-AnalysisNode::NodeType AnalysisNode::nodeType(const char* s)
+// Return name of this site stack (in the context of an Analyser)
+const char* SiteReference::name() const
 {
-	for (int nt=0; nt < AnalysisNode::nNodeTypes; ++nt) if (DissolveSys::sameString(s, NodeTypes[nt])) return (AnalysisNode::NodeType) nt;
-
-	return AnalysisNode::nNodeTypes;
-}
-
-// Convert node type to string
-const char* AnalysisNode::nodeType(AnalysisNode::NodeType nt)
-{
-	return NodeTypes[nt];
+	return name_.get();
 }

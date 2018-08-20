@@ -46,8 +46,6 @@ class SiteStack : public ListItem<SiteStack>
 	 * Target
 	 */
 	private:
-	// Name used to reference this site
-	CharString name_;
 	// Target Configuration from which we will determine sites
 	Configuration* configuration_;
 	// Target SpeciesSite
@@ -55,7 +53,7 @@ class SiteStack : public ListItem<SiteStack>
 
 	public:
 	// Initialise for specified Configuration and site
-	bool initialise(const char* name, Configuration* cfg, SpeciesSite* site);
+	bool initialise(Configuration* cfg, SpeciesSite* site);
 
 
 	/*

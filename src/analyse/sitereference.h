@@ -1,6 +1,6 @@
 /*
-	*** Analyser
-	*** src/analyse/analyser.h
+	*** Site Reference
+	*** src/analyse/sitereference.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,52 +19,33 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ANALYSER_H
-#define DISSOLVE_ANALYSER_H
+#ifndef DISSOLVE_SITEREFERENCE_H
+#define DISSOLVE_SITEREFERENCE_H
 
-#include "analyse/nodes/sequence.h"
-#include "analyse/sitecontextstack.h"
+#include "base/charstring.h"
+#include "templates/list.h"
 
 // Forward Declarations
-class Configuration;
-class LineParser;
+class SiteStack;
 
-// Analyser
-class Analyser
+// Site Reference
+class SiteReference : public ListItem<SiteReference>
 {
 	public:
 	// Constructor
-	Analyser();
-	// Destructor
-	virtual ~Analyser();
+	SiteReference(SiteStack& siteStack, const char* name);
 
-
-	/*
-	 * Data
-	 */
 	private:
-	// Sequence node from which the analysis starts
-	AnalysisSequenceNode rootSequence_;
-	// Site context stack
-	SiteContextStack contextStack_;
+	// Referenced stack of sites
+	SiteStack& siteStack_;
+	// Name of this site stack (in the context of an Analyser)
+	CharString name_;
 
-
-	/*
-	 * Execute
-	 */
 	public:
-	// Run analysis for specified Configuration
-	bool execute(Configuration* cfg);
-
-
-	/*
-	 * Read / Write
-	 */
-	public:
-	// Read structure from specified LineParser
-	bool read(LineParser& parser);
-	// Write structure to specified LineParser
-	bool write(LineParser& parser, const char* prefix);
+	// Return referenced stack of sites
+	SiteStack& siteStack() const;
+	// Return name of this site stack (in the context of an Analyser)
+	const char* name() const;
 };
 
 #endif

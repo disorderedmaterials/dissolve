@@ -21,6 +21,7 @@
 
 #include "analyse/nodes/sequence.h"
 #include "analyse/nodes/nodes.h"
+#include "analyse/sitecontextstack.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
@@ -28,6 +29,8 @@
 AnalysisSequenceNode::AnalysisSequenceNode(const char* blockTerminationKeyword) : AnalysisNode()
 {
 	blockTerminationKeyword_ = blockTerminationKeyword;
+
+	type_ = AnalysisNode::SequenceNode;
 }
 
 // Destructor
@@ -61,12 +64,14 @@ const char* AnalysisSequenceNode::sequenceNodeKeyword(AnalysisSequenceNode::Sequ
  */
 
 // Read structure from specified LineParser
-bool AnalysisSequenceNode::read(LineParser& parser)
+bool AnalysisSequenceNode::read(LineParser& parser, SiteContextStack& contextStack)
 {
+	// The sequence node constructs a new context...
+	contextStack.push();
+
 	// Read until we encounter the block-ending keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
 	{
-		printf("LKJlkjlk\n");
 		// Read and parse the next line
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
@@ -86,6 +91,9 @@ bool AnalysisSequenceNode::read(LineParser& parser)
 		AnalysisNode::NodeType nt = AnalysisNode::nodeType(parser.argc(0));
 		switch (nt)
 		{
+			case (AnalysisNode::ExcludeNode):
+				newNode = new AnalysisExcludeNode;
+				break;
 			case (AnalysisNode::SelectNode):
 				newNode = new AnalysisSelectNode;
 				break;
@@ -104,8 +112,11 @@ bool AnalysisSequenceNode::read(LineParser& parser)
 		sequence_.own(newNode);
 
 		// Read the new node
-		if (!newNode->read(parser)) return Messenger::error("Failed to read analysis sequence.\n");
+		if (!newNode->read(parser, contextStack)) return Messenger::error("Failed to read analysis sequence.\n");
 	}
+
+	// Remove our context, since it is now 'out-of-scope'
+	if (!contextStack.pop()) return Messenger::error("Internal error while removing context layer for AnalysisSequenceNode.\n");
 
 	return true;
 }

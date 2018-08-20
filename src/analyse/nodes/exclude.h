@@ -1,6 +1,6 @@
 /*
-	*** Analysis Node - Select
-	*** src/analyse/nodes/select.h
+	*** Analysis Node - Exclude
+	*** src/analyse/nodes/exclude.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,25 +19,23 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ANALYSISSELECT_H
-#define DISSOLVE_ANALYSISSELECT_H
+#ifndef DISSOLVE_ANALYSISEXCLUDE_H
+#define DISSOLVE_ANALYSISEXCLUDE_H
 
 #include "analyse/nodes/node.h"
-#include "base/charstring.h"
 
 // Forward Declarations
-class AnalysisSequenceNode;
-class Species;
-class SpeciesSite;
+class LineParser;
+class SiteContextStack;
 
-// Select Node
-class AnalysisSelectNode : public AnalysisNode
+// Analysis Base Node
+class AnalysisExcludeNode : public AnalysisNode
 {
 	public:
 	// Constructor
-	AnalysisSelectNode();
+	AnalysisExcludeNode();
 	// Destructor
-	~AnalysisSelectNode();
+	~AnalysisExcludeNode();
 
 
 	/*
@@ -45,23 +43,11 @@ class AnalysisSelectNode : public AnalysisNode
 	 */
 	public:
 	// Node Keywords
-	enum SelectNodeKeyword { EndSelectKeyword, ForEachKeyword, SiteKeyword, nSelectNodeKeywords };
+	enum ExcludeNodeKeyword { EndExcludeKeyword, SameSiteKeyword, nExcludeNodeKeywords };
 	// Convert string to control keyword
-	static SelectNodeKeyword selectNodeKeyword(const char* s);
+	static ExcludeNodeKeyword excludeNodeKeyword(const char* s);
 	// Convert control keyword to string
-	static const char* selectNodeKeyword(SelectNodeKeyword nk);
-
-
-	/*
-	 * Data
-	 */
-	private:
-	// Species in which the site is located
-	Species* species_;
-	// Target site within parent Species
-	SpeciesSite* site_;
-	// Branch for ForEach (if defined)
-	AnalysisSequenceNode* forEachBranch_;
+	static const char* excludeNodeKeyword(ExcludeNodeKeyword nk);
 
 
 	/*

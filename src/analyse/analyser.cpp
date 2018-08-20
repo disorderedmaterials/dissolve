@@ -33,6 +33,15 @@ Analyser::~Analyser()
 {
 }
 
+/*
+ * Execute
+ */
+
+// Run analysis for specified Configuration
+bool Analyser::execute(Configuration* cfg)
+{
+	// Clear the 
+}
 
 /*
  * Read / Write
@@ -41,7 +50,10 @@ Analyser::~Analyser()
 // Read structure from specified LineParser
 bool Analyser::read(LineParser& parser)
 {
-	return rootSequence_.read(parser);
+	// Make sure the context stack is clear to begin with
+	contextStack_.clear();
+
+	return rootSequence_.read(parser, contextStack_);
 }
 
 // Write structure to specified LineParser

@@ -20,17 +20,25 @@
 */
 
 #include "analyse/nodes/select.h"
+#include "analyse/nodes/sequence.h"
+#include "analyse/sitecontextstack.h"
+#include "analyse/sitereference.h"
+#include "classes/species.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
 // Constructor
 AnalysisSelectNode::AnalysisSelectNode() : AnalysisNode()
 {
+	forEachBranch_ = NULL;
+
+	type_ = AnalysisNode::SelectNode;
 }
 
 // Destructor
 AnalysisSelectNode::~AnalysisSelectNode()
 {
+	if (forEachBranch_) delete forEachBranch_;
 }
 
 /*
@@ -38,7 +46,7 @@ AnalysisSelectNode::~AnalysisSelectNode()
  */
 
 // Node Keywords
-const char* SelectNodeKeywords[] = { "_DUMMY_" };
+const char* SelectNodeKeywords[] = { "EndSelect", "ForEach", "Site" };
 
 // Convert string to node keyword
 AnalysisSelectNode::SelectNodeKeyword AnalysisSelectNode::selectNodeKeyword(const char* s)
@@ -59,9 +67,15 @@ const char* AnalysisSelectNode::selectNodeKeyword(AnalysisSelectNode::SelectNode
  */
 
 // Read structure from specified LineParser
-bool AnalysisSelectNode::read(LineParser& parser)
+bool AnalysisSelectNode::read(LineParser& parser, SiteContextStack& contextStack)
 {
-	// Read until we encounter the EndAnalyser keyword, or we fail for some reason
+	// The current line in the parser may contain a specific label for the sites we are to select...
+	CharString siteLabel = (parser.nArgs() == 2 ? parser.argc(1) : contextStack.nextGenericName());
+
+	// Keep track of the 
+	SiteReference* siteRef = NULL;
+
+	// Read until we encounter the EndSelect keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
 	{
 		// Read and parse the next line
@@ -71,6 +85,40 @@ bool AnalysisSelectNode::read(LineParser& parser)
 		SelectNodeKeyword nk = selectNodeKeyword(parser.argc(0));
 		switch (nk)
 		{
+			case (SelectNodeKeyword::EndSelectKeyword):
+				return true;
+			case (SelectNodeKeyword::ForEachKeyword):
+				// Check that a ForEach branch hasn't already been defined
+				if (forEachBranch_) return Messenger::error("Only one ForEach branch may be defined.\n");
+
+				// Create and parse a new branch
+				forEachBranch_ = new AnalysisSequenceNode("EndForEach");
+				if (!forEachBranch_->read(parser, contextStack)) return false;
+				break;
+			case (SelectNodeKeyword::SiteKeyword):
+				// If we already have a site reference, bail out now
+				if (siteRef) return Messenger::error("The '%s' keyword must appear exactly once in a Select node.\n", selectNodeKeyword(SelectNodeKeyword::SiteKeyword));
+
+				// First argument is the target Species, second is a site within it
+				// Find the named Species
+				for (species_ = List<Species>::masterInstance().first(); species_ != NULL; species_ = species_->next)
+				{
+					if (!DissolveSys::sameString(species_->name(), parser.argc(1))) continue;
+
+					// Found the Species, so see if it has a site with the correct name
+					site_ = species_->findSite(parser.argc(2));
+					if (!site_) return Messenger::error("Species '%s' contains no site named '%s'.\n", species_->name(), parser.argc(2));
+
+					// Create a new SiteReference
+					siteRef = contextStack.addDummyToCurrent(siteLabel);
+					if (!siteRef) return Messenger::error("Error creating site reference.\n");
+
+					Messenger::printVerbose("Select node %p uses site label '%s'.\n", this, siteLabel.get());
+					break;
+				}
+				// If we reach here and don't have a siteRef pointer, we couldn't find the named Species
+				if (!siteRef) return Messenger::error("Couldn't find named Species '%s'.\n", parser.argc(1));
+				break;
 			case (SelectNodeKeyword::nSelectNodeKeywords):
 				return Messenger::error("Unrecognised Select node keyword '%s' found.\n", parser.argc(0));
 				break;

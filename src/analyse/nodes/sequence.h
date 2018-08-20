@@ -68,7 +68,7 @@ class AnalysisSequenceNode : public AnalysisNode
 
 	public:
 	// Read structure from specified LineParser
-	bool read(LineParser& parser);
+	bool read(LineParser& parser, SiteContextStack& contextStack);
 	// Write structure to specified LineParser
 	bool write(LineParser& parser, const char* prefix);
 };
