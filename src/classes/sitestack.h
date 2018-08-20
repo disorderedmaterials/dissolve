@@ -23,6 +23,7 @@
 #define DISSOLVE_SITESTACK_H
 
 #include "math/matrix3.h"
+#include "base/charstring.h"
 #include "templates/array.h"
 #include "templates/listitem.h"
 
