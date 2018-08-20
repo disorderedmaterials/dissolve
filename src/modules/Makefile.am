@@ -14,7 +14,10 @@ libmoduledummywidgets_la_LDFLAGS = -static
 libmoduledummywidgets_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@ @DISSOLVE_READLINE@
 
 # Module targets
-SUBDIRS = atomshake
+SUBDIRS = analyse
+libmodules_la_LIBADD += analyse/libanalyse.la
+libmoduledummywidgets_la_LIBADD += analyse/libmodulewidget.la
+SUBDIRS += atomshake
 libmodules_la_LIBADD += atomshake/libatomshake.la
 libmoduledummywidgets_la_LIBADD += atomshake/libmodulewidget.la
 SUBDIRS += bragg
@@ -75,6 +78,7 @@ libmodulewidgets_la_LDFLAGS = -static
 
 libmodulewidgets_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@ @DISSOLVE_READLINE@ @GUI_INCLUDES@
 
+libmodulewidgets_la_LIBADD += analyse/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += atomshake/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += calibration/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += energy/gui/libmodulewidget.la

@@ -44,6 +44,7 @@ add_library(classes
   regionaldistributor.cpp
   scaledenergykernel.cpp
   scatteringmatrix.cpp
+  sitestack.cpp
   speciesangle.cpp
   speciesatom.cpp
   species_atomic.cpp
@@ -52,11 +53,13 @@ add_library(classes
   speciesgrain.cpp
   speciesinfo.cpp
   speciesintra.cpp
+  speciessite.cpp
   speciestorsion.cpp
   species_grains.cpp
   species_intra.cpp
   species_io.cpp
   species_isotopologues.cpp
+  species_site.cpp
   species_transform.cpp
   torsion.cpp
   weights.cpp
@@ -99,6 +102,7 @@ add_library(classes
   regionaldistributor.h
   scaledenergykernel.h
   scatteringmatrix.h
+  sitestack.h
   species.h
   speciesangle.h
   speciesatom.h
@@ -106,6 +110,7 @@ add_library(classes
   speciesgrain.h
   speciesinfo.h
   speciesintra.h
+  speciessite.h
   speciestorsion.h
   torsion.h
   weights.h

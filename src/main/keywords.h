@@ -32,6 +32,7 @@ class Module;
 class GenericList;
 class Data;
 class SpeciesInfo;
+class SpeciesSite;
 
 // Keyword Data
 class KeywordData
@@ -61,6 +62,7 @@ namespace MainInputKeywords
 		ModuleBlockKeyword,			/* 'Module' - Sets up a Module to run after Configuration processing */
 		PairPotentialsBlockKeyword,		/* 'PairPotentials' - Contains definitions of the PairPotentials for the simulation */
 		SimulationBlockKeyword,			/* 'Simulation' - Setting of simulation variables affecting the calculation */
+		SiteBlockKeyword,			/* 'Site' - Defines an analysis site within a Species */
 		SpeciesBlockKeyword,			/* 'Species' - Begins a definition of a Species */
 		SpeciesInfoBlockKeyword,		/* 'SpeciesInfo' - Defines a Species for inclusion into a Configuration */
 		nMainInputKeywords			/* Number of defined MainInputKeyword keywords */
@@ -249,6 +251,31 @@ namespace SimulationBlock
 
 
 /*
+ * Site Block Keywords
+ */
+namespace SiteBlock
+{
+	// Site Block Keyword Enum
+	enum SiteKeyword
+	{
+		EndSiteKeyword,			/* 'EndSite' - Signals the end of the Site */
+		OriginKeyword,			/* 'Origin' - Set the atom indices whose average coordinates reflect the site origin */
+		XAxisKeyword,			/* 'XAxis' - Define one or more atoms whose average coordinates reflect the direction of the x axis */
+		YAxisKeyword,			/* 'YAxis' - Define one or more atoms whose average coordinates reflect the direction of the y axis */
+		nSiteKeywords			/* Number of keywords defined for this block */
+	};
+	// Convert text string to SiteKeyword
+	SiteKeyword keyword(const char* s);
+	// Convert SiteKeyword to text string
+	const char* keyword(SiteKeyword id);
+	// Return expected number of expected arguments
+	int nArguments(SiteKeyword id);
+	// Parse Site block
+	bool parse(LineParser& parser, Dissolve* dissolve, SpeciesSite* site);
+};
+
+
+/*
  * Species Block Keywords
  */
 namespace SpeciesBlock
@@ -264,6 +291,7 @@ namespace SpeciesBlock
 		EndSpeciesKeyword,		/* 'EndSpecies' - Signals the end of the current Species */
 		GrainKeyword,			/* 'Grain' - Defines a Grain containing a number of Atoms */
 		IsotopologueKeyword,		/* 'Isotopologue' - Add an isotopologue to the Species */
+		SiteKeyword,			/* 'Site' - Define an analysis site within the Species */
 		TorsionKeyword,			/* 'Torsion' - Define a Torsion interaction between four atoms */
 		nSpeciesKeywords		/* Number of keywords defined for this block */
 	};

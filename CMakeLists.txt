@@ -175,14 +175,16 @@ endif(GUI)
 set(BASIC_LINK_LIBS
 
   # Main libs
-  main classes module keywordtypes base math data
+  main classes module analyse analysisnodes keywordtypes base math data
 
   # Modules
+  analysemodule
   atomshakemodule
   braggmodule
   calibrationmodule
   checksmodule
   energymodule
+  epsrmodule
   exportmodule
   forcesmodule
   importmodule
@@ -214,10 +216,12 @@ target_link_libraries( ${target_name}
   ${BASIC_LINK_LIBS}
 
   # Module 'nogui' libs
+  analysemodulenogui
   atomshakemodulenogui
   braggmodulenogui
   calibrationmodulenogui
   energymodulenogui
+  epsrmodulenogui
   neutronsqmodulenogui
   rdfmodulenogui
   refinemodulenogui
@@ -238,10 +242,12 @@ if(GUI)
     ${BASIC_LINK_LIBS}
 
     # Module gui libs
+    analysemodulegui
     atomshakemodulegui
     braggmodulegui
     calibrationmodulegui
     energymodulegui
+    epsrmodulegui
     neutronsqmodulegui
     rdfmodulegui
     refinemodulegui

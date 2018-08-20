@@ -31,6 +31,7 @@
 #include "classes/molecule.h"
 #include "classes/histogram.h"
 #include "classes/speciesinfo.h"
+#include "classes/sitestack.h"
 #include "module/list.h"
 #include "modules/import/formats.h"
 #include "math/xydata.h"
@@ -405,6 +406,14 @@ class Configuration : public ListItem<Configuration>
 	void setEnsembleFrequency(int frequency);
 	// Return frequency at which to append ensemble
 	int ensembleFrequency() const;
+
+
+	/*
+	 * Site Stacks
+	 */
+	private:
+	// List of current SiteStacks
+	List<SiteStack> siteStacks_;
 
 
 	/*

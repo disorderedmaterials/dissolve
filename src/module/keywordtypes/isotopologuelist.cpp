@@ -104,13 +104,3 @@ bool IsotopologueListModuleKeyword::write(LineParser& parser, const char* prefix
 
 	return true;
 }
-
-/*
- * Validation
- */
-
-// Validate supplied value
-bool IsotopologueListModuleKeyword::isValid(IsotopologueReference value)
-{
-	return true;
-}

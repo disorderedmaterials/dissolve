@@ -1,4 +1,5 @@
 add_library(keywordtypes
+  analyser.cpp
   atomtypeselection.cpp
   bool.cpp
   broadeningfunction.cpp
@@ -11,6 +12,7 @@ add_library(keywordtypes
   windowfunction.cpp
   xydatastore.cpp
 
+  analyser.h
   atomtypeselection.h
   bool.h
   broadeningfunction.h

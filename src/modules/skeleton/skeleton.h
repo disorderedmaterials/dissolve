@@ -30,10 +30,6 @@
 // Skeleton Module
 class SkeletonModule : public Module
 {
-	/*
-	 * Module for testing various functions
-	 */
-
 	public:
 	// Constructor
 	SkeletonModule();
