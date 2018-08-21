@@ -63,12 +63,14 @@ class SiteContextStack
 	int nReferencesAdded_;
 
 	public:
-	// Add new SiteStack reference to the topmost context layer, with name specified
+	// Add new node/site reference to the topmost context layer, with name specified
 	bool addToCurrent(AnalysisNode* localNode, const char* name);
 	// Return next available generic name
 	const char* nextGenericName() const;
-	// Return if named reference exists
-	bool hasReference(const char* name) const;
+	// Return if named site exists somewhere on the stack
+	bool hasSite(const char* name) const;
+	// Return node for named site (if it exists)
+	AnalysisNode* siteNode(const char* name) const;
 };
 
 #endif

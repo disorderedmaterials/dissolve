@@ -64,7 +64,7 @@ bool SiteContextStack::pop()
  * Reference Management
  */
 
-// Add new SiteStack reference to the topmost context layer, with name specified
+// Add new node/site reference to the topmost context layer, with name specified
 bool SiteContextStack::addToCurrent(AnalysisNode* localNode, const char* name)
 {
 	// Check that we have a context to add to
@@ -75,7 +75,7 @@ bool SiteContextStack::addToCurrent(AnalysisNode* localNode, const char* name)
 	}
 
 	// Check that the name is valid
-	if (hasReference(name))
+	if (hasSite(name))
 	{
 		Messenger::error("A site reference with name '%s' already exists.\n", name);
 		return false;
@@ -84,7 +84,9 @@ bool SiteContextStack::addToCurrent(AnalysisNode* localNode, const char* name)
 	// Increase the general counter for new references, and add it
 	++nReferencesAdded_;
 
-	return stack_.last().add(localNode, name);
+	stack_.last().add(localNode, name);
+
+	return true;
 }
 
 // Return next available generic name
@@ -99,14 +101,26 @@ const char* SiteContextStack::nextGenericName() const
 	return result.get();
 }
 
-// Return if named reference exists
-bool SiteContextStack::hasReference(const char* name) const
+// Return if named site exists somewhere on the stack
+bool SiteContextStack::hasSite(const char* name) const
 {
 	for (int n=0; n<stack_.nItems(); ++n)
 	{
-		RefListIterator<AnalysisNode,CharString> contextIterator(stack_.value(n));
+		RefListIterator<AnalysisNode,CharString> contextIterator(stack_.constValue(n));
 		while (AnalysisNode* node = contextIterator.iterate()) if (DissolveSys::sameString(contextIterator.currentData(), name)) return true;
 	}
 
 	return false;
+}
+
+	// Return node for named site (if it exists)
+AnalysisNode* SiteContextStack::siteNode(const char* name) const
+{
+	for (int n=0; n<stack_.nItems(); ++n)
+	{
+		RefListIterator<AnalysisNode,CharString> contextIterator(stack_.constValue(n));
+		while (AnalysisNode* node = contextIterator.iterate()) if (DissolveSys::sameString(contextIterator.currentData(), name)) return node;
+	}
+
+	return NULL;
 }
