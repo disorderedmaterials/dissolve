@@ -26,6 +26,7 @@
 
 // Forward Declarations
 class LineParser;
+class Site;
 class SiteContextStack;
 
 // Analysis Base Node
@@ -56,6 +57,18 @@ class AnalysisNode : public ListItem<AnalysisNode>
 	public:
 	// Return node type
 	NodeType type() const;
+
+
+	/*
+	 * Site Information
+	 */
+	public:
+	// Return whether the node has available site information
+	virtual bool hasSites() const;
+	// Return the number of available sites, if any
+	virtual int nSites() const;
+	// Return current site
+	virtual const Site& currentSite() const;
 
 
 	/*

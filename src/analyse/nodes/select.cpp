@@ -31,6 +31,8 @@
 AnalysisSelectNode::AnalysisSelectNode() : AnalysisNode()
 {
 	forEachBranch_ = NULL;
+	species_ = NULL;
+	speciesSite_ = NULL;
 
 	type_ = AnalysisNode::SelectNode;
 }
@@ -103,13 +105,13 @@ bool AnalysisSelectNode::read(LineParser& parser, SiteContextStack& contextStack
 					if (!DissolveSys::sameString(species_->name(), parser.argc(1))) continue;
 
 					// Found the Species, so see if it has a site with the correct name
-					site_ = species_->findSite(parser.argc(2));
-					if (!site_) return Messenger::error("Species '%s' contains no site named '%s'.\n", species_->name(), parser.argc(2));
+					speciesSite_ = species_->findSite(parser.argc(2));
+					if (!speciesSite_) return Messenger::error("Species '%s' contains no site named '%s'.\n", species_->name(), parser.argc(2));
 
 					// Create a new SiteReference
 					if (!contextStack.addToCurrent(this, siteLabel)) return Messenger::error("Error creating site reference.\n");
 
-					Messenger::printVerbose("Select node %p uses site label '%s'.\n", this, siteLabel.get());
+					Messenger::printVerbose("Select node %p uses site label '%s' ('%s' in Species '%s').\n", this, siteLabel.get(), speciesSite_->name(), species_->name());
 					break;
 				}
 				// If we reach here and don't have a siteRef pointer, we couldn't find the named Species

@@ -22,8 +22,7 @@
 #ifndef DISSOLVE_SITESTACK_H
 #define DISSOLVE_SITESTACK_H
 
-#include "math/matrix3.h"
-#include "base/charstring.h"
+#include "classes/site.h"
 #include "templates/array.h"
 #include "templates/listitem.h"
 
@@ -49,7 +48,7 @@ class SiteStack : public ListItem<SiteStack>
 	// Target Configuration from which we will determine sites
 	Configuration* configuration_;
 	// Target SpeciesSite
-	SpeciesSite* site_;
+	SpeciesSite* speciesSite_;
 
 	public:
 	// Initialise for specified Configuration and site
@@ -65,13 +64,11 @@ class SiteStack : public ListItem<SiteStack>
 	// Whether the stack contains associate Molecule information
 	bool sitesInMolecules_;
 	// Whether the current stack contains local axes information
-	bool sitesHaveAxes_;
-	// Site origins
-	Array< Vec3<double> > origins_;
-	// Molecules to which sites are related (if relevant)
-	Array<Molecule*> molecules_;
-	// Local axes (if available)
-	Array<Matrix3> axes_;
+	bool sitesHaveOrientation_;
+	// Basic site array (if no local axes are defined)
+	Array<Site> simpleSites_;
+	// Oriented site array (if local axes are defined)
+	Array<OrientedSite> orientedSites_;
 
 	public:
 	// Return number of sites in the stack
@@ -79,13 +76,9 @@ class SiteStack : public ListItem<SiteStack>
 	// Return whether the stack contains associate Molecule information
 	bool sitesInMolecules() const;
 	// Return whether the current stack contains local axes information
-	bool sitesHaveAxes() const;
-	// Return site origins
-	const Array< Vec3<double>& >& origins() const;
-	// Molecules to which sites are related (if relevant)
-	const Array<Molecule*>& molecules() const;
-	// Local axes (if available)
-	const Array<Matrix3>& axes() const;
+	bool sitesHaveOrientation() const;
+	// Return site with index specified
+	const Site& site(int index) const;
 };
 
 #endif

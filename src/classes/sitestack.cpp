@@ -25,11 +25,10 @@
 // Constructor
 SiteStack::SiteStack() : ListItem<SiteStack>()
 {
-	site_ = NULL;
 	configuration_ = NULL;
 	nSites_ = 0;
 	sitesInMolecules_ = false;
-	sitesHaveAxes_ = false;
+	sitesHaveOrientation_ = false;
 }
 
 // Destructor

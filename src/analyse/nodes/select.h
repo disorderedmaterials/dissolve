@@ -59,7 +59,7 @@ class AnalysisSelectNode : public AnalysisNode
 	// Species in which the site is located
 	Species* species_;
 	// Target site within parent Species
-	SpeciesSite* site_;
+	SpeciesSite* speciesSite_;
 	// Branch for ForEach (if defined)
 	AnalysisSequenceNode* forEachBranch_;
 
