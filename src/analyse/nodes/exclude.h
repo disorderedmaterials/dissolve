@@ -29,7 +29,7 @@
 class LineParser;
 class SiteContextStack;
 
-// Analysis Base Node
+// Analysis Node - Exclude
 class AnalysisExcludeNode : public AnalysisNode
 {
 	public:
