@@ -40,7 +40,7 @@ AnalysisNode::~AnalysisNode()
 
 
 // Control keywords
-const char* NodeTypes[] = { "Exclude", "Select", "Sequence" };
+const char* NodeTypes[] = { "Collect", "Exclude", "Select", "Sequence" };
 
 // Convert string to node type
 AnalysisNode::NodeType AnalysisNode::nodeType(const char* s)

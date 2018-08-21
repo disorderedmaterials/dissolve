@@ -26,6 +26,7 @@
  * Include all analysis node types at once.
  */
 
+#include "analyse/nodes/collect.h"
 #include "analyse/nodes/exclude.h"
 #include "analyse/nodes/select.h"
 #include "analyse/nodes/sequence.h"

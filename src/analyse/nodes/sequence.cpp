@@ -91,6 +91,9 @@ bool AnalysisSequenceNode::read(LineParser& parser, SiteContextStack& contextSta
 		AnalysisNode::NodeType nt = AnalysisNode::nodeType(parser.argc(0));
 		switch (nt)
 		{
+			case (AnalysisNode::CollectNode):
+				newNode = new AnalysisCollectNode;
+				break;
 			case (AnalysisNode::ExcludeNode):
 				newNode = new AnalysisExcludeNode;
 				break;
