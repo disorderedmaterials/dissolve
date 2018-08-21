@@ -61,7 +61,7 @@ int XYDataStoreModuleKeyword::maxArguments()
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool XYDataStoreModuleKeyword::parseArguments(LineParser& parser, int startArg, ProcessPool& procPool)
+bool XYDataStoreModuleKeyword::read(LineParser& parser, int startArg, ProcessPool& procPool)
 {
 	Messenger::print("Reading test data '%s' from file '%s'...\n", parser.argc(startArg), parser.argc(startArg+1));
 

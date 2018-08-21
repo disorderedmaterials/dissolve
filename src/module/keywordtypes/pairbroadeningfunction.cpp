@@ -60,7 +60,7 @@ int PairBroadeningFunctionModuleKeyword::maxArguments()
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool PairBroadeningFunctionModuleKeyword::parseArguments(LineParser& parser, int startArg, ProcessPool& procPool)
+bool PairBroadeningFunctionModuleKeyword::read(LineParser& parser, int startArg, ProcessPool& procPool)
 {
 	bool result = data_.set(parser, startArg);
 	if (result) set_ = true;

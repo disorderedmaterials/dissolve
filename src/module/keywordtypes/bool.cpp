@@ -66,7 +66,7 @@ int BoolModuleKeyword::maxArguments()
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool BoolModuleKeyword::parseArguments(LineParser& parser, int startArg, ProcessPool& procPool)
+bool BoolModuleKeyword::read(LineParser& parser, int startArg, ProcessPool& procPool)
 {
 	if (parser.hasArg(startArg))
 	{

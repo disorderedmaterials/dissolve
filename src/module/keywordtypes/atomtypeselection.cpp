@@ -98,7 +98,7 @@ int AtomTypeSelectionModuleKeyword::maxArguments()
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool AtomTypeSelectionModuleKeyword::parseArguments(LineParser& parser, int startArg, ProcessPool& procPool)
+bool AtomTypeSelectionModuleKeyword::read(LineParser& parser, int startArg, ProcessPool& procPool)
 {
 	// Make sure our list is up-to-date
 	checkSelection();

@@ -123,7 +123,7 @@ int DoubleModuleKeyword::maxArguments()
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool DoubleModuleKeyword::parseArguments(LineParser& parser, int startArg, ProcessPool& procPool)
+bool DoubleModuleKeyword::read(LineParser& parser, int startArg, ProcessPool& procPool)
 {
 	if (parser.hasArg(startArg))
 	{
