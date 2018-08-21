@@ -72,9 +72,6 @@ bool AnalysisSelectNode::read(LineParser& parser, SiteContextStack& contextStack
 	// The current line in the parser may contain a specific label for the sites we are to select...
 	CharString siteLabel = (parser.nArgs() == 2 ? parser.argc(1) : contextStack.nextGenericName());
 
-	// Keep track of the 
-	SiteReference* siteRef = NULL;
-
 	// Read until we encounter the EndSelect keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
 	{
@@ -96,8 +93,8 @@ bool AnalysisSelectNode::read(LineParser& parser, SiteContextStack& contextStack
 				if (!forEachBranch_->read(parser, contextStack)) return false;
 				break;
 			case (SelectNodeKeyword::SiteKeyword):
-				// If we already have a site reference, bail out now
-				if (siteRef) return Messenger::error("The '%s' keyword must appear exactly once in a Select node.\n", selectNodeKeyword(SelectNodeKeyword::SiteKeyword));
+				// If we already have a species/site reference, bail out now
+				if (species_) return Messenger::error("The '%s' keyword must appear exactly once in a Select node.\n", selectNodeKeyword(SelectNodeKeyword::SiteKeyword));
 
 				// First argument is the target Species, second is a site within it
 				// Find the named Species
@@ -110,14 +107,13 @@ bool AnalysisSelectNode::read(LineParser& parser, SiteContextStack& contextStack
 					if (!site_) return Messenger::error("Species '%s' contains no site named '%s'.\n", species_->name(), parser.argc(2));
 
 					// Create a new SiteReference
-					siteRef = contextStack.addDummyToCurrent(siteLabel);
-					if (!siteRef) return Messenger::error("Error creating site reference.\n");
+					if (!contextStack.addToCurrent(this, siteLabel)) return Messenger::error("Error creating site reference.\n");
 
 					Messenger::printVerbose("Select node %p uses site label '%s'.\n", this, siteLabel.get());
 					break;
 				}
 				// If we reach here and don't have a siteRef pointer, we couldn't find the named Species
-				if (!siteRef) return Messenger::error("Couldn't find named Species '%s'.\n", parser.argc(1));
+				if (!species_) return Messenger::error("Couldn't find named Species '%s'.\n", parser.argc(1));
 				break;
 			case (SelectNodeKeyword::nSelectNodeKeywords):
 				return Messenger::error("Unrecognised Select node keyword '%s' found.\n", parser.argc(0));

@@ -20,7 +20,7 @@
 */
 
 #include "analyse/sitecontextstack.h"
-#include "classes/sitestack.h"
+#include "base/sysfunc.h"
 
 // Constructor
 SiteContextStack::SiteContextStack()
@@ -47,7 +47,7 @@ void SiteContextStack::clear()
 // Push new context layer on to the stack
 void SiteContextStack::push()
 {
-	stack_.add();
+	stack_.add(RefList<AnalysisNode,CharString>());
 }
 
 // Pop topmost context layer from the stack
@@ -65,33 +65,26 @@ bool SiteContextStack::pop()
  */
 
 // Add new SiteStack reference to the topmost context layer, with name specified
-SiteReference* SiteContextStack::addToCurrent(SiteStack& siteStack, const char* name)
+bool SiteContextStack::addToCurrent(AnalysisNode* localNode, const char* name)
 {
 	// Check that we have a context to add to
 	if (stack_.nItems() == 0)
 	{
 		Messenger::error("No context to add new site reference '%s' to.\n", name);
-		return NULL;
+		return false;
 	}
 
 	// Check that the name is valid
-	if (reference(name))
+	if (hasReference(name))
 	{
 		Messenger::error("A site reference with name '%s' already exists.\n", name);
-		return NULL;
+		return false;
 	}
 
 	// Increase the general counter for new references, and add it
 	++nReferencesAdded_;
 
-	return stack_.last()->add(siteStack, name);
-}
-
-// Add dummy reference to the topmost context layer, with name specified 
-SiteReference* SiteContextStack::addDummyToCurrent(const char* name)
-{
-	static SiteStack dummy;
-	return addToCurrent(dummy, name);
+	return stack_.last().add(localNode, name);
 }
 
 // Return next available generic name
@@ -106,14 +99,14 @@ const char* SiteContextStack::nextGenericName() const
 	return result.get();
 }
 
-// Return named reference, if it exists
-SiteReference* SiteContextStack::reference(const char* name) const
+// Return if named reference exists
+bool SiteContextStack::hasReference(const char* name) const
 {
-	for (SiteContext* context = stack_.first(); context != NULL; context = context->next)
+	for (int n=0; n<stack_.nItems(); ++n)
 	{
-		SiteReference* ref = context->reference(name);
-		if (ref) return ref;
+		RefListIterator<AnalysisNode,CharString> contextIterator(stack_.value(n));
+		while (AnalysisNode* node = contextIterator.iterate()) if (DissolveSys::sameString(contextIterator.currentData(), name)) return true;
 	}
 
-	return NULL;
+	return false;
 }

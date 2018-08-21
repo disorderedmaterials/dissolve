@@ -22,11 +22,12 @@
 #ifndef DISSOLVE_SITECONTEXTSTACK_H
 #define DISSOLVE_SITECONTEXTSTACK_H
 
-#include "analyse/sitecontext.h"
-#include "templates/list.h"
+#include "base/charstring.h"
+#include "templates/array.h"
+#include "templates/reflist.h"
 
 // Forward Declarations
-/* none */
+class AnalysisNode;
 
 // Site Context Stack
 class SiteContextStack
@@ -43,7 +44,7 @@ class SiteContextStack
 	 */
 	private:
 	// Site context stack
-	List<SiteContext> stack_;
+	Array< RefList<AnalysisNode,CharString> > stack_;
 
 	public:
 	// Clear all layers from stack
@@ -63,13 +64,11 @@ class SiteContextStack
 
 	public:
 	// Add new SiteStack reference to the topmost context layer, with name specified
-	SiteReference* addToCurrent(SiteStack& siteStack, const char* name);
-	// Add dummy reference to the topmost context layer, with name specified 
-	SiteReference* addDummyToCurrent(const char* name);
+	bool addToCurrent(AnalysisNode* localNode, const char* name);
 	// Return next available generic name
 	const char* nextGenericName() const;
-	// Return named reference, if it exists
-	SiteReference* reference(const char* name) const;
+	// Return if named reference exists
+	bool hasReference(const char* name) const;
 };
 
 #endif
