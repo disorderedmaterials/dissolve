@@ -20,6 +20,7 @@
 */
 
 #include "analyse/nodes/exclude.h"
+#include "analyse/sitecontextstack.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
@@ -40,7 +41,7 @@ AnalysisExcludeNode::~AnalysisExcludeNode()
  */
 
 // Node Keywords
-const char* ExcludeNodeKeywords[] = { "EndExclude", "SameSite" };
+const char* ExcludeNodeKeywords[] = { "EndExclude", "SameSpecies" };
 
 // Convert string to node keyword
 AnalysisExcludeNode::ExcludeNodeKeyword AnalysisExcludeNode::excludeNodeKeyword(const char* s)
@@ -63,6 +64,8 @@ const char* AnalysisExcludeNode::excludeNodeKeyword(AnalysisExcludeNode::Exclude
 // Read structure from specified LineParser
 bool AnalysisExcludeNode::read(LineParser& parser, SiteContextStack& contextStack)
 {
+	int index;
+
 	// Read until we encounter the EndExclude keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
 	{
@@ -75,7 +78,21 @@ bool AnalysisExcludeNode::read(LineParser& parser, SiteContextStack& contextStac
 		{
 			case (ExcludeNodeKeyword::EndExcludeKeyword):
 				return true;
-			case (ExcludeNodeKeyword::SameSiteKeyword):
+			case (ExcludeNodeKeyword::SameSpeciesKeyword):
+				index = sameSpecies_.last() ? sameSpecies_.last()->data+1 : 0;
+				for (int n=1; n<parser.nArgs(); ++n)
+				{
+					// If we find a '|' increase the index counter and continue
+					if (DissolveSys::sameString("|", parser.argc(n)))
+					{
+						++index;
+						continue;
+					}
+
+					// Each argument should be a named site on the stack, so find it...
+					if (!contextStack.hasSite(parser.argc(n))) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(n), excludeNodeKeyword(ExcludeNodeKeyword::SameSpeciesKeyword));
+					else sameSpecies_.add(contextStack.siteNode(parser.argc(n)), index);
+				}
 				break;
 			case (ExcludeNodeKeyword::nExcludeNodeKeywords):
 				return Messenger::error("Unrecognised Exclude node keyword '%s' found.\n", parser.argc(0));

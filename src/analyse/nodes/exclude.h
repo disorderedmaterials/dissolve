@@ -23,6 +23,7 @@
 #define DISSOLVE_ANALYSISEXCLUDE_H
 
 #include "analyse/nodes/node.h"
+#include "templates/reflist.h"
 
 // Forward Declarations
 class LineParser;
@@ -43,11 +44,21 @@ class AnalysisExcludeNode : public AnalysisNode
 	 */
 	public:
 	// Node Keywords
-	enum ExcludeNodeKeyword { EndExcludeKeyword, SameSiteKeyword, nExcludeNodeKeywords };
+	enum ExcludeNodeKeyword { EndExcludeKeyword, SameSpeciesKeyword, nExcludeNodeKeywords };
 	// Convert string to control keyword
 	static ExcludeNodeKeyword excludeNodeKeyword(const char* s);
 	// Convert control keyword to string
 	static const char* excludeNodeKeyword(ExcludeNodeKeyword nk);
+
+
+	/*
+	 * Data
+	 */
+	private:
+	// Whether to disallow sites present on the same Species
+	bool disallowSameSpecies_;
+	// Sites (nodes) to compare sites to compare when disallowing same Species
+	RefList<AnalysisNode,int> sameSpecies_;
 
 
 	/*
