@@ -229,7 +229,7 @@ template <class A> class Array : public ListItem< Array<A> >
 	 * Set / Get
 	 */
 	public:
-	// Return nth item in array
+	// Return reference to nth item in array
 	A& operator[](int n)
 	{
 #ifdef CHECKS
@@ -250,6 +250,19 @@ template <class A> class Array : public ListItem< Array<A> >
 		{
 			Messenger::print("OUT_OF_RANGE - Array index %i is out of range in Array::value() (nItems = %i).\n", n, nItems_);
 			return A();
+		}
+#endif
+		return array_[n];
+	}
+	// Return nth item as const reference
+	A& constValue(int n) const
+	{
+#ifdef CHECKS
+		if ((n < 0) || (n >= nItems_))
+		{
+			static A dummy;
+			Messenger::print("OUT_OF_RANGE - Array index %i is out of range in Array::constValue() (nItems = %i).\n", n, nItems_);
+			return dummy;
 		}
 #endif
 		return array_[n];
