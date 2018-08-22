@@ -166,7 +166,7 @@ class Configuration : public ListItem<Configuration>
 	Molecule* addMolecule(Species* sp);
 	// Return number of Molecules in Configuration
 	int nMolecules() const;
-	// Return first Molecule
+	// Return array of Molecules
 	DynamicArray<Molecule>& molecules();
 	// Return nth Molecule
 	Molecule* molecule(int n);

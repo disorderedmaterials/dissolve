@@ -245,7 +245,7 @@ int Configuration::nMolecules() const
 	return molecules_.nItems();
 }
 
-// Return first Molecule
+// Return array of Molecules
 DynamicArray<Molecule>& Configuration::molecules()
 {
 	return molecules_;
