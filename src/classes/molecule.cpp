@@ -30,6 +30,8 @@
 // Constructor
 Molecule::Molecule() : DynamicArrayObject<Molecule>()
 {
+	species_ = NULL;
+
 	// Set sensible defaults for Arrays
 	atoms_.setChunkSize(2);
 	grains_.setChunkSize(2);
@@ -60,6 +62,18 @@ void Molecule::clear()
 /*
  * Atoms / Grains
  */
+
+// Set Species which the Molecule represents
+void Molecule::setSpecies(Species* sp)
+{
+	species_ = sp;
+}
+
+// Return Species which the Molecule represents
+Species* Molecule::species() const
+{
+	return species_;
+}
 
 // Add Atom to Molecule
 void Molecule::addAtom(Atom* i)

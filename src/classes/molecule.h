@@ -66,6 +66,8 @@ class Molecule : public DynamicArrayObject<Molecule>
 	 * Contents
 	 */
 	private:
+	// Species which the Molecule represents
+	Species* species_;
 	// Array of pointers to Atoms
 	Array<Atom*> atoms_;
 	// Array of Grain pointers
@@ -78,6 +80,10 @@ class Molecule : public DynamicArrayObject<Molecule>
 	Array<Torsion*> torsions_;
 
 	public:
+	// Set Species which the Molecule represents
+	void setSpecies(Species* sp);
+	// Return Species which the Molecule represents
+	Species* species() const;
 	// Add Atom to Molecule
 	void addAtom(Atom* i);
 	// Return size of Atom array

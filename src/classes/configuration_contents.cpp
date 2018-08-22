@@ -156,8 +156,9 @@ bool Configuration::finaliseAfterLoad(ProcessPool& procPool, double pairPotentia
 // Add Molecule to Configuration based on the supplied Species
 Molecule* Configuration::addMolecule(Species* sp)
 {
-	// Create the new Molecule object
+	// Create the new Molecule object and set its Species pointer
 	Molecule* newMolecule = molecules_.add();
+	newMolecule->setSpecies(sp);
 
 	// Add Atoms from Species to the Molecule
 	SpeciesAtom* spi = sp->firstAtom();
