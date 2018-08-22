@@ -52,6 +52,8 @@ Molecule::~Molecule()
 // Clear object, ready for re-use
 void Molecule::clear()
 {
+	species_ = NULL;
+
 	atoms_.clear();
 	grains_.clear();
 	bonds_.clear();
