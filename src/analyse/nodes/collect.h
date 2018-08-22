@@ -24,6 +24,7 @@
 
 #include "analyse/nodes/node.h"
 #include "base/charstring.h"
+#include "templates/array.h"
 #include "templates/reflist.h"
 #include "templates/vector3.h"
 
@@ -62,8 +63,8 @@ class AnalysisCollectNode : public AnalysisNode
 	 * Node Keywords
 	 */
 	public:
-	// Node Keywords
-	enum CollectNodeKeyword { EndCollectKeyword, XLabelKeyword, XObservableKeyword, XRangeKeyword, nCollectNodeKeywords };
+	// Node Keywords (note ordering to allow efficient data setting)
+	enum CollectNodeKeyword { EndCollectKeyword, XLabelKeyword, YLabelKeyword, ZLabelKeyword, XObservableKeyword, YObservableKeyword, ZObservableKeyword, XRangeKeyword, YRangeKeyword, ZRangeKeyword, nCollectNodeKeywords };
 	// Convert string to control keyword
 	static CollectNodeKeyword collectNodeKeyword(const char* s);
 	// Convert control keyword to string
@@ -75,17 +76,25 @@ class AnalysisCollectNode : public AnalysisNode
 	 */
 	private:
 	// Observables to bin
-	Observable xObservable_, yObservable_, zObservable_;
+	Observable observables_[3];
 	// Nodes (sites) to use for observable calculation
-	RefList<AnalysisNode,int> xSites_, ySites_, zSites_;
+	Array<AnalysisNode*> sites_[3];
 	// Axis labels
-	CharString xLabel_, yLabel_, zLabel_;
+	CharString axisLabels_[3];
 	// Range minima
 	Vec3<double> minima_;
 	// Range maxima
 	Vec3<double> maxima_;
 	// Bin widths
 	Vec3<double> binWidths_;
+
+
+	/*
+	 * Execute
+	 */
+	public:
+	// Execute node, targetting the supplied Configuration
+	AnalysisNode::NodeExecutionResult execute(Configuration* cfg);
 
 
 	/*

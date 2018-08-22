@@ -29,6 +29,9 @@
 AnalysisExcludeNode::AnalysisExcludeNode() : AnalysisNode()
 {
 	type_ = AnalysisNode::ExcludeNode;
+
+	sameSiteA_ = NULL;
+	sameSiteB_ = NULL;
 }
 
 // Destructor
@@ -41,7 +44,7 @@ AnalysisExcludeNode::~AnalysisExcludeNode()
  */
 
 // Node Keywords
-const char* ExcludeNodeKeywords[] = { "EndExclude", "SameSpecies" };
+const char* ExcludeNodeKeywords[] = { "EndExclude", "SameSite" };
 
 // Convert string to node keyword
 AnalysisExcludeNode::ExcludeNodeKeyword AnalysisExcludeNode::excludeNodeKeyword(const char* s)
@@ -58,14 +61,28 @@ const char* AnalysisExcludeNode::excludeNodeKeyword(AnalysisExcludeNode::Exclude
 }
 
 /*
+ * Execute
+ */
+
+// Execute node, targetting the supplied Configuration
+AnalysisNode::NodeExecutionResult AnalysisExcludeNode::execute(Configuration* cfg)
+{
+	// Check any defined exclusion rules
+	if (disallowSameSite_)
+	{
+		if (&sameSiteA_->currentSite() == &sameSiteB_->currentSite()) return AnalysisNode::SomethingElse;
+	}
+
+	return AnalysisNode::Success;
+}
+
+/*
  * Read / Write
  */
 
 // Read structure from specified LineParser
 bool AnalysisExcludeNode::read(LineParser& parser, SiteContextStack& contextStack)
 {
-	int index;
-
 	// Read until we encounter the EndExclude keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
 	{
@@ -78,21 +95,16 @@ bool AnalysisExcludeNode::read(LineParser& parser, SiteContextStack& contextStac
 		{
 			case (ExcludeNodeKeyword::EndExcludeKeyword):
 				return true;
-			case (ExcludeNodeKeyword::SameSpeciesKeyword):
-				index = sameSpecies_.last() ? sameSpecies_.last()->data+1 : 0;
-				for (int n=1; n<parser.nArgs(); ++n)
-				{
-					// If we find a '|' increase the index counter and continue
-					if (DissolveSys::sameString("|", parser.argc(n)))
-					{
-						++index;
-						continue;
-					}
+			case (ExcludeNodeKeyword::SameSiteKeyword):
+				if (parser.nArgs() != 3) return Messenger::error("The %s keyword expects exactly two arguments.\n", excludeNodeKeyword(ExcludeNodeKeyword::SameSiteKeyword));
 
-					// Each argument should be a named site on the stack, so find it...
-					if (!contextStack.hasSite(parser.argc(n))) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(n), excludeNodeKeyword(ExcludeNodeKeyword::SameSpeciesKeyword));
-					else sameSpecies_.add(contextStack.siteNode(parser.argc(n)), index);
-				}
+				// First Site argument
+				if (!contextStack.hasSite(parser.argc(1))) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(1), excludeNodeKeyword(ExcludeNodeKeyword::SameSiteKeyword));
+				else sameSiteA_ = contextStack.siteNode(parser.argc(1));
+
+				// First Site argument
+				if (!contextStack.hasSite(parser.argc(2))) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(2), excludeNodeKeyword(ExcludeNodeKeyword::SameSiteKeyword));
+				else sameSiteB_ = contextStack.siteNode(parser.argc(2));
 				break;
 			case (ExcludeNodeKeyword::nExcludeNodeKeywords):
 				return Messenger::error("Unrecognised Exclude node keyword '%s' found.\n", parser.argc(0));

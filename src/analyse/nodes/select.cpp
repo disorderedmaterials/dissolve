@@ -23,6 +23,7 @@
 #include "analyse/nodes/sequence.h"
 #include "analyse/sitecontextstack.h"
 #include "analyse/sitereference.h"
+#include "classes/configuration.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
@@ -30,9 +31,10 @@
 // Constructor
 AnalysisSelectNode::AnalysisSelectNode() : AnalysisNode()
 {
-	forEachBranch_ = NULL;
 	species_ = NULL;
 	speciesSite_ = NULL;
+	forEachBranch_ = NULL;
+	currentForEachSite_ = -1;
 
 	type_ = AnalysisNode::SelectNode;
 }
@@ -62,6 +64,60 @@ AnalysisSelectNode::SelectNodeKeyword AnalysisSelectNode::selectNodeKeyword(cons
 const char* AnalysisSelectNode::selectNodeKeyword(AnalysisSelectNode::SelectNodeKeyword nk)
 {
 	return SelectNodeKeywords[nk];
+}
+
+/*
+ * Site Information
+ */
+
+// Return whether the node has available site information
+bool AnalysisSelectNode::hasSites() const
+{
+	return true;
+}
+
+// Return the number of available sites, if any
+int AnalysisSelectNode::nSites() const
+{
+	return (siteStack_ ? siteStack_->nSites() : 0);
+}
+
+// Return current site
+const Site& AnalysisSelectNode::currentSite() const
+{
+	static Site dummy;
+
+	if (!siteStack_) return dummy;
+
+	return (currentForEachSite_ == -1 ? dummy : siteStack_->site(currentForEachSite_));
+}
+
+/*
+ * Execute
+ */
+
+// Execute node, targetting the supplied Configuration
+AnalysisNode::NodeExecutionResult AnalysisSelectNode::execute(Configuration* cfg)
+{
+	// First, get our SiteStack from the supplied Configuration
+	siteStack_ = cfg->siteStack(speciesSite_);
+	if (siteStack_ == NULL) return AnalysisNode::Failure;
+
+	printf("THERE ARE %i sites in my stack.\n", siteStack_->nSites());
+
+	currentForEachSite_ = (siteStack_->nSites() > 0 ? siteStack_->nSites() : -1);
+
+	// If a ForEach branch has been defined, process it for each of our sites in turn. Otherwise, we're done
+	if (forEachBranch_)
+	{
+		for (currentForEachSite_ = 0; currentForEachSite_ < siteStack_->nSites(); ++currentForEachSite_)
+		{
+			// If the branch fails at any point, return failure here.  Otherwise, continue the loop
+			if (forEachBranch_->execute(cfg) == AnalysisNode::Failure) return AnalysisNode::Failure;
+		}
+	}
+
+	return AnalysisNode::Success;
 }
 
 /*

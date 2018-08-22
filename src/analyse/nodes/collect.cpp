@@ -21,6 +21,8 @@
 
 #include "analyse/nodes/collect.h"
 #include "analyse/sitecontextstack.h"
+#include "classes/box.h"
+#include "classes/configuration.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
@@ -30,9 +32,9 @@ AnalysisCollectNode::AnalysisCollectNode() : AnalysisNode()
 {
 	type_ = AnalysisNode::CollectNode;
 
-	xObservable_ = nObservables;
-	yObservable_ = nObservables;
-	zObservable_ = nObservables;
+	observables_[0] = nObservables;
+	observables_[1] = nObservables;
+	observables_[2] = nObservables;
 	minima_.set(0.0, 0.0, 0.0);
 	maxima_.set(10.0, 10.0, 10.0);
 	binWidths_.set(0.1, 0.1, 0.1);
@@ -68,8 +70,8 @@ const char* AnalysisCollectNode::observable(AnalysisCollectNode::Observable obs)
  * Node Keywords
  */
 
-// Node Keywords
-const char* CollectNodeKeywords[] = { "EndCollect", "XAxisLabel", "XObservable", "XRange" };
+// Node Keywords (note ordering to allow efficient data setting)
+const char* CollectNodeKeywords[] = { "EndCollect", "XAxisLabel", "YAxisLabel", "ZAxisLabel", "XObservable", "YObservable", "ZObservable", "XRange", "YRange", "ZRange" };
 
 // Convert string to node keyword
 AnalysisCollectNode::CollectNodeKeyword AnalysisCollectNode::collectNodeKeyword(const char* s)
@@ -83,6 +85,37 @@ AnalysisCollectNode::CollectNodeKeyword AnalysisCollectNode::collectNodeKeyword(
 const char* AnalysisCollectNode::collectNodeKeyword(AnalysisCollectNode::CollectNodeKeyword nk)
 {
 	return CollectNodeKeywords[nk];
+}
+
+/*
+ * Execute
+ */
+
+// Execute node, targetting the supplied Configuration
+AnalysisNode::NodeExecutionResult AnalysisCollectNode::execute(Configuration* cfg)
+{
+	Vec3<double> observedValues;
+
+	// Calculate defined observables
+	for (int obs = 0; obs < 3; ++obs)
+	{
+		if (observables_[obs] == AnalysisCollectNode::nObservables) continue;
+
+		switch (observables_[obs])
+		{
+			case (AnalysisCollectNode::nObservables):
+				continue;
+				break;
+			case (AnalysisCollectNode::DistanceObservable):
+				cfg->box()->minimumDistance(sites_[obs][0]->currentSite().origin(), sites_[obs][1]->currentSite().origin());
+				break;
+			default:
+				Messenger::error("Nobody's perfect - the developer has forgotten to add how to collect an observable of type '%s'.\n", observable(observables_[obs]));
+				return AnalysisNode::Failure;
+		}
+	}
+
+	return AnalysisNode::Success;
 }
 
 /*
@@ -107,27 +140,33 @@ bool AnalysisCollectNode::read(LineParser& parser, SiteContextStack& contextStac
 			case (CollectNodeKeyword::EndCollectKeyword):
 				return true;
 			case (CollectNodeKeyword::XLabelKeyword):
-				xLabel_ = parser.argc(1);
+			case (CollectNodeKeyword::YLabelKeyword):
+			case (CollectNodeKeyword::ZLabelKeyword):
+				axisLabels_[nk-CollectNodeKeyword::XObservableKeyword] = parser.argc(1);
 				break;
 			case (CollectNodeKeyword::XObservableKeyword):
+			case (CollectNodeKeyword::YObservableKeyword):
+			case (CollectNodeKeyword::ZObservableKeyword):
 				// Determine observable from supplied argument
-				xObservable_ = observable(parser.argc(1));
-				if (xObservable_ == AnalysisCollectNode::nObservables) return Messenger::error("Unrecognised observable '%s' given to %s keyword.\n", parser.argc(1), collectNodeKeyword(CollectNodeKeyword::XObservableKeyword));
+				observables_[nk-CollectNodeKeyword::XObservableKeyword] = observable(parser.argc(1));
+				if (observables_[nk-CollectNodeKeyword::XObservableKeyword] == AnalysisCollectNode::nObservables) return Messenger::error("Unrecognised observable '%s' given to %s keyword.\n", parser.argc(1), collectNodeKeyword(nk));
 
 				// Read node (site) names
 				for (int n=2; n<parser.nArgs(); ++n)
 				{
 					// Each argument should be a named site on the stack, so find it...
 					if (!contextStack.hasSite(parser.argc(n))) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(n), collectNodeKeyword(CollectNodeKeyword::XObservableKeyword));
-					else xSites_.add(contextStack.siteNode(parser.argc(n)));
+					else sites_[nk-CollectNodeKeyword::XObservableKeyword].add(contextStack.siteNode(parser.argc(n)));
 				}
 				break;
 			case (CollectNodeKeyword::XRangeKeyword):
+			case (CollectNodeKeyword::YRangeKeyword):
+			case (CollectNodeKeyword::ZRangeKeyword):
 				// Check that we have the right number of arguments first...
 				if (parser.nArgs() != 4) return Messenger::error("Collect node keyword '%s' expects exactly three arguments (%i given).\n", collectNodeKeyword(CollectNodeKeyword::XObservableKeyword), parser.nArgs() - 1);
-				minima_.set(0, parser.argd(1));
-				maxima_.set(0, parser.argd(2));
-				binWidths_.set(0, parser.argd(3));
+				minima_.set(nk-CollectNodeKeyword::XObservableKeyword, parser.argd(1));
+				maxima_.set(nk-CollectNodeKeyword::XObservableKeyword, parser.argd(2));
+				binWidths_.set(nk-CollectNodeKeyword::XObservableKeyword, parser.argd(3));
 				break;
 			case (CollectNodeKeyword::nCollectNodeKeywords):
 				return Messenger::error("Unrecognised Collect node keyword '%s' found.\n", parser.argc(0));

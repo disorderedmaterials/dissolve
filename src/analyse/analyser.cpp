@@ -20,6 +20,7 @@
 */
 
 #include "analyse/analyser.h"
+#include "classes/configuration.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
@@ -40,7 +41,24 @@ Analyser::~Analyser()
 // Run analysis for specified Configuration
 bool Analyser::execute(Configuration* cfg)
 {
-	// Clear the 
+	// Check that the Configuration has changed before we do any more analysis on it
+	RefListItem<Configuration,int>* ri = configurationPoints_.contains(cfg);
+	if (ri)
+	{
+		// A Configuration we've processed before - check the index
+		if (cfg->coordinateIndex() == ri->data)
+		{
+			Messenger::warn("Refusing to analyse Configuration '%s' since it has not changed.\n", cfg->name());
+			return true;
+		}
+		else ri->data = cfg->coordinateIndex();
+	}
+	else configurationPoints_.add(cfg, cfg->coordinateIndex());
+
+	// Execute the root sequence
+	bool result = rootSequence_.execute(cfg);
+
+	return result;
 }
 
 /*

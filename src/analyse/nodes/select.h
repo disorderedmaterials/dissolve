@@ -27,6 +27,7 @@
 
 // Forward Declarations
 class AnalysisSequenceNode;
+class SiteStack;
 class Species;
 class SpeciesSite;
 
@@ -60,8 +61,32 @@ class AnalysisSelectNode : public AnalysisNode
 	Species* species_;
 	// Target site within parent Species
 	SpeciesSite* speciesSite_;
+	// Stack containing our selected sites
+	const SiteStack* siteStack_;
 	// Branch for ForEach (if defined)
 	AnalysisSequenceNode* forEachBranch_;
+	// Current Site index in ForEach branch
+	int currentForEachSite_;
+
+
+	/*
+	 * Site Information
+	 */
+	public:
+	// Return whether the node has available site information
+	bool hasSites() const;
+	// Return the number of available sites, if any
+	int nSites() const;
+	// Return current site
+	const Site& currentSite() const;
+
+
+	/*
+	 * Execute
+	 */
+	public:
+	// Execute node, targetting the supplied Configuration
+	AnalysisNode::NodeExecutionResult execute(Configuration* cfg);
 
 
 	/*

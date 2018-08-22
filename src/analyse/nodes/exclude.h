@@ -44,7 +44,7 @@ class AnalysisExcludeNode : public AnalysisNode
 	 */
 	public:
 	// Node Keywords
-	enum ExcludeNodeKeyword { EndExcludeKeyword, SameSpeciesKeyword, nExcludeNodeKeywords };
+	enum ExcludeNodeKeyword { EndExcludeKeyword, SameSiteKeyword, nExcludeNodeKeywords };
 	// Convert string to control keyword
 	static ExcludeNodeKeyword excludeNodeKeyword(const char* s);
 	// Convert control keyword to string
@@ -55,10 +55,18 @@ class AnalysisExcludeNode : public AnalysisNode
 	 * Data
 	 */
 	private:
-	// Whether to disallow sites present on the same Species
-	bool disallowSameSpecies_;
-	// Sites (nodes) to compare sites to compare when disallowing same Species
-	RefList<AnalysisNode,int> sameSpecies_;
+	// Whether to disallow Sites being the same
+	bool disallowSameSite_;
+	// Trio of nodes (sites) to compare when disallowing same Sites
+	AnalysisNode* sameSiteA_, *sameSiteB_, *sameSiteC_;
+
+
+	/*
+	 * Execute
+	 */
+	public:
+	// Execute node, targetting the supplied Configuration
+	AnalysisNode::NodeExecutionResult execute(Configuration* cfg);
 
 
 	/*

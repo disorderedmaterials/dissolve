@@ -60,6 +60,29 @@ const char* AnalysisSequenceNode::sequenceNodeKeyword(AnalysisSequenceNode::Sequ
 }
 
 /*
+ * Execute
+ */
+
+// Execute node, targetting the supplied Configuration
+AnalysisNode::NodeExecutionResult AnalysisSequenceNode::execute(Configuration* cfg)
+{
+	AnalysisNode::NodeExecutionResult result = AnalysisNode::Success;
+
+	// Loop over nodes in the list, executing each in turn
+	ListIterator<AnalysisNode> nodeIterator(sequence_);
+	while (AnalysisNode* node = nodeIterator.iterate())
+	{
+		// Get the result of executing the node
+		result = node->execute(cfg);
+
+		// If the result is not Success, don't process any more nodes
+		if (result != AnalysisNode::Success) break;
+	}
+
+	return result;
+}
+
+/*
  * Read / Write
  */
 

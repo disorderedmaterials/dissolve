@@ -26,11 +26,6 @@
 // Run main processing
 bool AnalyseModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {
-	/*
-	 * This is a XXX routine.
-	 * XXX
-	 */
-
 	// Check for zero Configuration targets
 	if (targetConfigurations_.nItems() == 0)
 	{
@@ -47,9 +42,10 @@ bool AnalyseModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Set up process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());
 
-		// MODULE CODE
+		// Execute the analysis
+		if (!analyser_.execute(cfg)) return Messenger::error("Analysis failed.\n");
 	}
 
-	return false;
+	return true;
 }
 

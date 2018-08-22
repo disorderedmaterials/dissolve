@@ -25,6 +25,7 @@
 #include "templates/listitem.h"
 
 // Forward Declarations
+class Configuration;
 class LineParser;
 class Site;
 class SiteContextStack;
@@ -77,6 +78,8 @@ class AnalysisNode : public ListItem<AnalysisNode>
 	public:
 	// Node execution result
 	enum NodeExecutionResult { Failure, Success, SomethingElse };
+	// Execute node, targetting the supplied Configuration
+	virtual NodeExecutionResult execute(Configuration* cfg) = 0;
 
 
 	/*

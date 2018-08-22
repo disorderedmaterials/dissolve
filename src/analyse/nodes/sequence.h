@@ -60,6 +60,14 @@ class AnalysisSequenceNode : public AnalysisNode
 
 
 	/*
+	 * Execute
+	 */
+	public:
+	// Execute node, targetting the supplied Configuration
+	AnalysisNode::NodeExecutionResult execute(Configuration* cfg);
+
+
+	/*
 	 * Read / Write
 	 */
 	private:

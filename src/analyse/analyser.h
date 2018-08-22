@@ -50,6 +50,10 @@ class Analyser
 	/*
 	 * Execute
 	 */
+	private:
+	// List of Configurations and the coordinate indices at which they were last analysed
+	RefList<Configuration,int> configurationPoints_;
+
 	public:
 	// Run analysis for specified Configuration
 	bool execute(Configuration* cfg);
