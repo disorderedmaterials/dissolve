@@ -81,9 +81,19 @@ bool SpeciesSite::addOriginAtom(int atomIndex)
 }
 
 // Return list of origin atoms
-const RefList<SpeciesAtom,int>& SpeciesSite::originAtoms()
+const RefList<SpeciesAtom,bool>& SpeciesSite::originAtoms()
 {
 	return originAtoms_;
+}
+
+// Return integer array of indices from which the origin should be formed
+Array<int> SpeciesSite::originAtomIndices() const
+{
+	Array<int> indices;
+	RefListIterator<SpeciesAtom,bool> atomIterator(originAtoms_);
+	while (SpeciesAtom* atom = atomIterator.iterate()) indices.add(atom->index());
+
+	return indices;
 }
 
 // Add x-axis atom
@@ -109,9 +119,19 @@ bool SpeciesSite::addXAxisAtom(int atomIndex)
 }
 
 // Return list of x-axis atoms
-const RefList<SpeciesAtom,int>& SpeciesSite::xAxisAtoms()
+const RefList<SpeciesAtom,bool>& SpeciesSite::xAxisAtoms()
 {
 	return xAxisAtoms_;
+}
+
+// Return integer array of indices from which x-axis should be formed
+Array<int> SpeciesSite::xAxisAtomIndices() const
+{
+	Array<int> indices;
+	RefListIterator<SpeciesAtom,bool> atomIterator(xAxisAtoms_);
+	while (SpeciesAtom* atom = atomIterator.iterate()) indices.add(atom->index());
+
+	return indices;
 }
 
 // Add y-axis atom
@@ -137,7 +157,24 @@ bool SpeciesSite::addYAxisAtom(int atomIndex)
 }
 
 // Return list of y-axis atoms
-const RefList<SpeciesAtom,int>& SpeciesSite::yAxisAtoms()
+const RefList<SpeciesAtom,bool>& SpeciesSite::yAxisAtoms()
 {
 	return yAxisAtoms_;
+}
+
+// Return integer array of indices from which y-axis should be formed
+Array<int> SpeciesSite::yAxisAtomIndices() const
+{
+	Array<int> indices;
+	RefListIterator<SpeciesAtom,bool> atomIterator(yAxisAtoms_);
+	while (SpeciesAtom* atom = atomIterator.iterate()) indices.add(atom->index());
+
+	return indices;
+}
+
+// Return whether the site has defined axes sites
+bool SpeciesSite::hasAxes() const
+{
+	if ((xAxisAtoms_.nItems() == 0) || (yAxisAtoms_.nItems() == 0)) return false;
+	return true;
 }

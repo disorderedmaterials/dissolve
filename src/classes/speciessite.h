@@ -23,6 +23,7 @@
 #define DISSOLVE_SPECIESSITE_H
 
 #include "base/charstring.h"
+#include "templates/array.h"
 #include "templates/list.h"
 #include "templates/listitem.h"
 #include "templates/vector3.h"
@@ -53,13 +54,11 @@ class SpeciesSite : public ListItem<SpeciesSite>
 	// Parent Species
 	Species* parent_;
 	// List of SpeciesAtoms whose average position is the origin of the site
-	RefList<SpeciesAtom,int> originAtoms_;
-	// Whether the site has an axes definition
-	bool axes_;
+	RefList<SpeciesAtom,bool> originAtoms_;
 	// SpeciesAtom(s) that indicate the x axis with the origin
-	RefList<SpeciesAtom,int> xAxisAtoms_;
+	RefList<SpeciesAtom,bool> xAxisAtoms_;
 	// SpeciesAtom(s) that indicate the y axis with the origin, after orthogonalisation
-	RefList<SpeciesAtom,int> yAxisAtoms_;
+	RefList<SpeciesAtom,bool> yAxisAtoms_;
 
 	public:
 	// Set name of site
@@ -75,19 +74,27 @@ class SpeciesSite : public ListItem<SpeciesSite>
 	// Add origin atom from index
 	bool addOriginAtom(int atomIndex);
 	// Return list of origin atoms
-	const RefList<SpeciesAtom,int>& originAtoms();
+	const RefList<SpeciesAtom,bool>& originAtoms();
+	// Return integer array of indices from which the origin should be formed
+	Array<int> originAtomIndices() const;
 	// Add x-axis atom
 	bool addXAxisAtom(SpeciesAtom* xAxisAtom);
 	// Add x-axis atom from index
 	bool addXAxisAtom(int atomIndex);
 	// Return list of x-axis atoms
-	const RefList<SpeciesAtom,int>& xAxisAtoms();
+	const RefList<SpeciesAtom,bool>& xAxisAtoms();
+	// Return integer array of indices from which x-axis should be formed
+	Array<int> xAxisAtomIndices() const;
 	// Add y-axis atom
 	bool addYAxisAtom(SpeciesAtom* yAxisAtom);
 	// Add y-axis atom from indey
 	bool addYAxisAtom(int atomIndex);
 	// Return list of y-axis atoms
-	const RefList<SpeciesAtom,int>& yAxisAtoms();
+	const RefList<SpeciesAtom,bool>& yAxisAtoms();
+	// Return integer array of indices from which y-axis should be formed
+	Array<int> yAxisAtomIndices() const;
+	// Return whether the site has defined axes sites
+	bool hasAxes() const;
 };
 
 #endif
