@@ -25,6 +25,7 @@
 // Constructor
 SiteContextStack::SiteContextStack()
 {
+	nReferencesAdded_ = 0;
 }
 
 // Destructor
