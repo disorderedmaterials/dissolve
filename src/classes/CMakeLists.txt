@@ -22,6 +22,7 @@ add_library(classes
   configuration_box.cpp
   configuration_composition.cpp
   configuration_contents.cpp
+  configuration_sites.cpp
   configuration_upkeep.cpp
   distributor.cpp
   empiricalformula.cpp

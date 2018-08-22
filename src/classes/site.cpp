@@ -27,9 +27,10 @@
  */
 
 // Constructor
-Site::Site()
+Site::Site(Molecule* molecule, Vec3<double> origin)
 {
-	molecule_ = NULL;
+	molecule_ = molecule;
+	origin_ = origin;
 }
 
 // Destructor
@@ -68,8 +69,11 @@ const Matrix3& Site::axes() const
  */
 
 // Constructor
-OrientedSite::OrientedSite() : Site()
+OrientedSite::OrientedSite(Molecule* molecule, Vec3<double> origin, Vec3<double> xAxis, Vec3<double> yAxis, Vec3<double> zAxis) : Site(molecule, origin)
 {
+	axes_.setColumn(0, xAxis);
+	axes_.setColumn(1, yAxis);
+	axes_.setColumn(2, zAxis);
 }
 
 // Destructor

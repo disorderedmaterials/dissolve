@@ -32,7 +32,7 @@ class Site
 {
 	public:
 	// Constructor
-	Site();
+	Site(Molecule* molecule = NULL, Vec3<double> origin = Vec3<double>());
 	// Destructor
 	virtual ~Site();
 
@@ -40,10 +40,10 @@ class Site
 	/*
 	 * Site Definition
 	 */
-	private:
+	protected:
 	// Site origin
 	Vec3<double> origin_;
-	// Molecules to which sites is related (if relevant)
+	// Molecule to which site is related (if relevant)
 	Molecule* molecule_;
 
 	public:
@@ -62,7 +62,7 @@ class OrientedSite : public Site
 {
 	public:
 	// Constructor
-	OrientedSite();
+	OrientedSite(Molecule* molecule = NULL, Vec3<double> origin = Vec3<double>(), Vec3<double> xAxis = Vec3<double>(), Vec3<double> yAxis = Vec3<double>(), Vec3<double> zAxis = Vec3<double>());
 	// Destructor
 	~OrientedSite();
 

@@ -415,6 +415,10 @@ class Configuration : public ListItem<Configuration>
 	// List of current SiteStacks
 	List<SiteStack> siteStacks_;
 
+	public:
+	// Calculate / retrieve stack of sites for specified SpeciesSite
+	const SiteStack* siteStack(SpeciesSite* site);
+
 
 	/*
 	 * Parallel Comms
