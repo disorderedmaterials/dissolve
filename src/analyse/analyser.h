@@ -45,8 +45,6 @@ class Analyser
 	private:
 	// Sequence node from which the analysis starts
 	AnalysisSequenceNode rootSequence_;
-	// Site context stack
-	SiteContextStack contextStack_;
 
 
 	/*

@@ -50,10 +50,8 @@ bool Analyser::execute(Configuration* cfg)
 // Read structure from specified LineParser
 bool Analyser::read(LineParser& parser)
 {
-	// Make sure the context stack is clear to begin with
-	contextStack_.clear();
-
-	return rootSequence_.read(parser, contextStack_);
+	SiteContextStack contextStack;
+	return rootSequence_.read(parser, contextStack);
 }
 
 // Write structure to specified LineParser
