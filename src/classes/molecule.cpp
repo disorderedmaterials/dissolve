@@ -107,13 +107,13 @@ Atom* Molecule::atom(int n) const
 		Messenger::print("OUT_OF_RANGE - Atom index %i is out of range in Molecule::atom().\n", n);
 		return NULL;
 	}
-	if (atoms_.value(n) == NULL)
+	if (atoms_.constAt(n) == NULL)
 	{
 		Messenger::print("NULL_POINTER - The pointer to Atom %i in Molecule::atom() is NULL.\n", n);
 		return NULL;
 	}
 #endif
-	return atoms_.value(n);
+	return atoms_.constAt(n);
 }
 
 // Add Grain to Molecule
@@ -168,7 +168,7 @@ Bond** Molecule::bonds()
 // Return nth Bond pointer
 Bond* Molecule::bond(int n) const
 {
-	return bonds_.value(n);
+	return bonds_.constAt(n);
 }
 
 // Add Angle to Molecule
@@ -195,7 +195,7 @@ Angle** Molecule::angles()
 // Return nth Angle pointer
 Angle* Molecule::angle(int n) const
 {
-	return angles_.value(n);
+	return angles_.constAt(n);
 }
 
 // Add Torsion to Molecule
@@ -222,7 +222,7 @@ Torsion** Molecule::torsions()
 // Return nth Torsion pointer
 Torsion* Molecule::torsion(int n) const
 {
-	return torsions_.value(n);
+	return torsions_.constAt(n);
 }
 
 /*

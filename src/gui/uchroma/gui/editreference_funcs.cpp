@@ -287,7 +287,7 @@ void EditReferenceDialog::updateLabels()
 	if (refreshing_) return;
 
 	const Array<double>& abscissa = reference_.sourceCollection()->displayAbscissa();
-	ui.XFixedLabel->setText("(X = " + QString::number(abscissa.value(ui.XFixedSpin->value())) + ")");
+	ui.XFixedLabel->setText("(X = " + QString::number(abscissa.constAt(ui.XFixedSpin->value())) + ")");
 
 	// Z Source
 	DataSet* dataSet = reference_.sourceCollection()->nDataSets() == 0 ? NULL : reference_.sourceCollection()->dataSet(ui.ZDataSetCombo->currentIndex());

@@ -243,25 +243,26 @@ template <class A> class Array : public ListItem< Array<A> >
 		return array_[n];
 	}
 	// Return single value
-	A value(int n) const
-	{
-#ifdef CHECKS
-		if ((n < 0) || (n >= nItems_))
-		{
-			Messenger::print("OUT_OF_RANGE - Array index %i is out of range in Array::value() (nItems = %i).\n", n, nItems_);
-			return A();
-		}
-#endif
-		return array_[n];
-	}
-	// Return nth item as const reference
-	A& constValue(int n) const
+	A& at(int n) const
 	{
 #ifdef CHECKS
 		if ((n < 0) || (n >= nItems_))
 		{
 			static A dummy;
-			Messenger::print("OUT_OF_RANGE - Array index %i is out of range in Array::constValue() (nItems = %i).\n", n, nItems_);
+			Messenger::print("OUT_OF_RANGE - Array index %i is out of range in Array::at() (nItems = %i).\n", n, nItems_);
+			return dummy;
+		}
+#endif
+		return array_[n];
+	}
+	// Return nth item as const reference
+	A& constAt(int n) const
+	{
+#ifdef CHECKS
+		if ((n < 0) || (n >= nItems_))
+		{
+			static A dummy;
+			Messenger::print("OUT_OF_RANGE - Array index %i is out of range in Array::constAt() (nItems = %i).\n", n, nItems_);
 			return dummy;
 		}
 #endif
@@ -319,7 +320,7 @@ template <class A> class Array : public ListItem< Array<A> >
 	void operator=(const A value) { for (int n=0; n<nItems_; ++n) array_[n] = value; }
 	// Operator+= (add to all)
 	void operator+=(const A value) { for (int n=0; n<nItems_; ++n) array_[n] += value; }
-	void operator+=(const Array<A> array) { for (int n=0; n<nItems_; ++n) array_[n] += array.value(n); }
+	void operator+=(const Array<A> array) { for (int n=0; n<nItems_; ++n) array_[n] += array.constAt(n); }
 	// Operator-= (subtract from all)
 	void operator-=(const A value) { for (int n=0; n<nItems_; ++n) array_[n] -= value; }
 	// Operator*= (multiply all)
@@ -328,10 +329,10 @@ template <class A> class Array : public ListItem< Array<A> >
 	void operator/=(const A value) { for (int n=0; n<nItems_; ++n) array_[n] /= value; }
 	// Operator- (subtraction)
 	Array<A> operator-(const A value) { Array<A> result = *this; result -= value; return result; }
-	Array<A> operator-(const Array<A> array) { Array<A> result(nItems_); for (int n=0; n<nItems_; ++n) result[n] = array_[n] - array.value(n); return result; }
+	Array<A> operator-(const Array<A> array) { Array<A> result(nItems_); for (int n=0; n<nItems_; ++n) result[n] = array_[n] - array.constAt(n); return result; }
 	// Operator+ (addition)
 	Array<A> operator+(const A value) { Array<A> result = *this; result += value; return result; }
-	Array<A> operator+(const Array<A> array) { Array<A> result(nItems_); for (int n=0; n<nItems_; ++n) result[n] = array_[n] + array.value(n); return result; }
+	Array<A> operator+(const Array<A> array) { Array<A> result(nItems_); for (int n=0; n<nItems_; ++n) result[n] = array_[n] + array.constAt(n); return result; }
 	// Operator* (multiplication)
 	Array<A> operator*(const A value) { Array<A> result = *this; result *= value; return result; }
 

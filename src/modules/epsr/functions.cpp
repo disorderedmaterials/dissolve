@@ -155,12 +155,12 @@ double EPSRModule::absEnergyEP(Dissolve& dissolve)
 		{
 			Array<double>& potCoeff = coefficients.at(i, j);
 
-			double cMin = potCoeff.value(0);
+			double cMin = potCoeff.constAt(0);
 			double cMax = cMin;
 			for (int n=1; n<potCoeff.nItems(); ++n)
 			{
-				if (potCoeff.value(n) < cMin) cMin = potCoeff.value(n);
-				if (potCoeff.value(n) > cMax) cMax = potCoeff.value(n); 
+				if (potCoeff.constAt(n) < cMin) cMin = potCoeff.constAt(n);
+				if (potCoeff.constAt(n) > cMax) cMax = potCoeff.constAt(n); 
 			}
 
 			double range = cMax - cMin;

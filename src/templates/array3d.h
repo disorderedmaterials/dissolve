@@ -127,47 +127,47 @@ template <class A> class Array3D
 		if ((nX > 0) && (nY > 0) && (nZ > 0)) resize(nX, nY, nZ);
 // 		else printf("BAD_USAGE - Zero or negative row/column size(s) given to Array3D::initialise() (r=%i, c=%i)\n", nrows, ncolumns);
 	}
-	// Return specified element as reference
-	A& ref(int x, int y, int z)
+	// Return specified element as modifiable reference
+	A& at(int x, int y, int z)
 	{
 #ifdef CHECKS
 		static A dummy;
 		if ((x < 0) || (x >= nX_))
 		{
-			Messenger::print("OUT_OF_RANGE - X index (%i) is out of range in Array3D::ref() (nX_ = %i).\n", x, nX_);
+			Messenger::print("OUT_OF_RANGE - X index (%i) is out of range in Array3D::at() (nX_ = %i).\n", x, nX_);
 			return dummy;
 		}
 		if ((y < 0) || (y >= nY_))
 		{
-			Messenger::print("OUT_OF_RANGE - Y index (%i) is out of range in Array3D::ref() (nY_ = %i).\n", y, nY_);
+			Messenger::print("OUT_OF_RANGE - Y index (%i) is out of range in Array3D::at() (nY_ = %i).\n", y, nY_);
 			return dummy;
 		}
 		if ((z < 0) || (z >= nZ_))
 		{
-			Messenger::print("OUT_OF_RANGE - Z index (%i) is out of range in Array3D::ref() (nZ_ = %i).\n", z, nZ_);
+			Messenger::print("OUT_OF_RANGE - Z index (%i) is out of range in Array3D::at() (nZ_ = %i).\n", z, nZ_);
 			return dummy;
 		}
 #endif
 		return array_[sliceOffsets_[z] + y*nX_ + x];
 	}
-	// Return specified element as value
-	A value(int x, int y, int z) const
+	// Return specified element as const-reference
+	A& constAt(int x, int y, int z) const
 	{
 #ifdef CHECKS
 		static A dummy;
 		if ((x < 0) || (x >= nX_))
 		{
-			Messenger::print("OUT_OF_RANGE - X index (%i) is out of range in Array3D::value() (nX_ = %i).\n", x, nX_);
+			Messenger::print("OUT_OF_RANGE - X index (%i) is out of range in Array3D::constAt() (nX_ = %i).\n", x, nX_);
 			return dummy;
 		}
 		if ((y < 0) || (y >= nY_))
 		{
-			Messenger::print("OUT_OF_RANGE - Y index (%i) is out of range in Array3D::value() (nY_ = %i).\n", y, nY_);
+			Messenger::print("OUT_OF_RANGE - Y index (%i) is out of range in Array3D::constAt() (nY_ = %i).\n", y, nY_);
 			return dummy;
 		}
 		if ((z < 0) || (z >= nZ_))
 		{
-			Messenger::print("OUT_OF_RANGE - Z index (%i) is out of range in Array3D::value() (nZ_ = %i).\n", z, nZ_);
+			Messenger::print("OUT_OF_RANGE - Z index (%i) is out of range in Array3D::constAt() (nZ_ = %i).\n", z, nZ_);
 			return dummy;
 		}
 #endif

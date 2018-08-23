@@ -200,27 +200,6 @@ bool RegionalDistributor::cycle()
 		Messenger::printVerbose("Distributor cycle %i : Process/Group %i has %i Molecules asigned to it over %i locked Cells.\n", nCycles_, processOrGroup, assignedMolecules_[processOrGroup].nItems(), lockedCells_[processOrGroup].nItems());
 	}
 
-	// TEST
-	if (processOrGroupIndex_ == -22)
-	{
-		Array3D<double> pdens(cellArray_.divisions().x, cellArray_.divisions().y, cellArray_.divisions().z);
-		pdens = 0.0;
-		for (int n=0; n<cellArray_.nCells(); ++n)
-		{
-			Vec3<int> v = cellArray_.cell(n)->gridReference();
-			if (cellStatusFlags_[n] == RegionalDistributor::LockedForEditingFlag) pdens.ref(v.x, v.y, v.z) = cellLockOwners_[n] + 1.0;
-		}
-
-		LineParser parser;
-		parser.openOutput(CharString("newdist.%i.pdens", nCycles_));
-		parser.writeLineF("%i  %i  %i\n", cellArray_.divisions().x, cellArray_.divisions().y, cellArray_.divisions().z);
-		parser.writeLineF("%f  0.0  0.0  0.0  %f  0.0  0.0  0.0  %f\n", cellArray_.realCellSize().x, cellArray_.realCellSize().y, cellArray_.realCellSize().z); 
-		parser.writeLineF("0.0  0.0  0.0\n");
-		parser.writeLineF("zyx\n");
-		for (int n=0; n<cellArray_.nCells(); ++n) parser.writeLineF("%f\n", pdens.linearArray()[n]);
-		parser.closeFiles();
-	}
-
 // 	XXX Check for balanced load (molecules/atoms)
 	return true;
 }
@@ -238,18 +217,18 @@ ProcessPool::DivisionStrategy RegionalDistributor::currentStrategy()
 // Return whether the specified processOrGroup can lock the given Cell index
 bool RegionalDistributor::canLockCellForEditing(int processOrGroup, int cellIndex)
 {
-	CellStatusFlag cellStatusFlag = cellStatusFlags_.value(cellIndex);
+	CellStatusFlag cellStatusFlag = cellStatusFlags_.constAt(cellIndex);
 
-	if (DND) Messenger::print(" -- Checking ability to lock Cell index %i for process/group %i: status = %i\n", cellIndex, processOrGroup, cellStatusFlags_.value(cellIndex));
+	if (DND) Messenger::print(" -- Checking ability to lock Cell index %i for process/group %i: status = %i\n", cellIndex, processOrGroup, cellStatusFlags_.constAt(cellIndex));
 
 	// If the Cell is flagged as unused, return true
 	if (cellStatusFlag == RegionalDistributor::UnusedFlag) return true;
 
 	// If the Cell is flagged as 'LockedForEditing', and not by this processOrGroup, return false. If we have locked it, return true.
-	if (cellStatusFlag == RegionalDistributor::LockedForEditingFlag) return (cellLockOwners_.value(cellIndex) == processOrGroup);
+	if (cellStatusFlag == RegionalDistributor::LockedForEditingFlag) return (cellLockOwners_.constAt(cellIndex) == processOrGroup);
 
 	// If the Cell is flagged as 'ReadByOne', but not by this processOrGroup, return false (if we are the sole reader, we can lock it)
-	if (cellStatusFlag == RegionalDistributor::ReadByOneFlag) return (cellLockOwners_.value(cellIndex) == processOrGroup);
+	if (cellStatusFlag == RegionalDistributor::ReadByOneFlag) return (cellLockOwners_.constAt(cellIndex) == processOrGroup);
 
 	// If the Cell is flagged as 'ReadByMany', there is no chance of locking it, so return false.
 	if (cellStatusFlag == RegionalDistributor::ReadByManyFlag) return false;
@@ -316,7 +295,7 @@ bool RegionalDistributor::assignMolecule(const Molecule* mol, int processOrGroup
 		const Array<Cell*>& adjacentCells = primaryCells[c]->adjacentCellNeighbours();
 		for (int n=0; n<adjacentCells.nItems(); ++n)
 		{
-			secondaryCell = adjacentCells.value(n);
+			secondaryCell = adjacentCells.constAt(n);
 			cellIndex = secondaryCell->index();
 
 			// Make sure we can lock this Cell for editing, unless we have locked it already...

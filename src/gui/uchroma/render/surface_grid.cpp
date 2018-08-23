@@ -83,11 +83,11 @@ void Surface::constructGrid(PrimitiveList& primitiveList, const Axes& axes, cons
 			for (n=0; n<nLimit; ++n)
 			{
 				i = offset+n;
-				if (yType.value(n) != DisplayDataSet::NoPoint)
+				if (yType.constAt(n) != DisplayDataSet::NoPoint)
 				{
 					// A value exists here, so define a vertex
-					colourScale.colour(yLogarithmic ? pow(10.0, y.value(n) / yStretch) : y.value(n) / yStretch, colour);
-					verticesB[n] = currentPrimitive->defineVertex(x.value(i), y.value(n), z, nrm, colour);
+					colourScale.colour(yLogarithmic ? pow(10.0, y.constAt(n) / yStretch) : y.constAt(n) / yStretch, colour);
+					verticesB[n] = currentPrimitive->defineVertex(x.constAt(i), y.constAt(n), z, nrm, colour);
 
 					// If the previous vertex on this row also exists, draw a line here
 					if ((n != 0) && (verticesB[n-1] != -1)) currentPrimitive->defineIndices(verticesB[n-1], verticesB[n]);

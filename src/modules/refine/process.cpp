@@ -400,12 +400,12 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				double x;
 				for (int n=0; n<x1.nItems(); ++n)
 				{
-					x = x1.value(n);
+					x = x1.constAt(n);
 					if (x < deltaSQMin) continue;
 					if (x > deltaSQMax) break;
-					refSQTrimmed.addPoint(x, y1.value(n));
+					refSQTrimmed.addPoint(x, y1.constAt(n));
 
-					dSQ.addPoint(x, y1.value(n) - simulatedSQ.interpolated(x));
+					dSQ.addPoint(x, y1.constAt(n) - simulatedSQ.interpolated(x));
 				}
 
 				// Calculate current error between experimental and simulation partials and sum it into our array

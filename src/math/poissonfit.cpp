@@ -46,7 +46,7 @@ void PoissonFit::generateApproximation(FunctionSpace::SpaceType space)
 	approximateData_.templateFrom(referenceData_);
 
 	// Sum defined functions
-	for (int n=0; n<nPoissons_; ++n) addFunction(approximateData_, space, C_.value(n), n);
+	for (int n=0; n<nPoissons_; ++n) addFunction(approximateData_, space, C_.constAt(n), n);
 }
 
 // Add contribution to specified XYData
@@ -78,13 +78,13 @@ double PoissonFit::poisson(const double x, const int nIndex) const
 	 */
 
 	 // Calculate natural log of denominator in prefactor
-	double lnFactor = log(fourPiSigmaRCubed_) + lnNPlusTwoFactorial_.value(nIndex);
+	double lnFactor = log(fourPiSigmaRCubed_) + lnNPlusTwoFactorial_.constAt(nIndex);
 
 	// At x == 0 only the first function (with nIndex == 0) contributes - all others are zero
 	double exponent = - (x / sigmaR_) - lnFactor - (rBroad_*x);
 	if (x > 0.0)
 	{
-		exponent += n_.value(nIndex) * log(x/sigmaR_);
+		exponent += n_.constAt(nIndex) * log(x/sigmaR_);
 	}
 	else if (nIndex != 0) return 0.0;
 
@@ -106,13 +106,13 @@ double PoissonFit::poissonFT(const int qIndex, const int nIndex) const
 	 * where a = arctan(Q*sigma).
 	 */
 
-	const int n = n_.value(nIndex);
+	const int n = n_.constAt(nIndex);
 
-	double na = n * arcTanQSigma_.value(qIndex);
+	double na = n * arcTanQSigma_.constAt(qIndex);
 
-	double factor = 1.0 / ( (n+2) * pow(sqrtOnePlusQSqSigmaSq_.value(qIndex), n+4) );
+	double factor = 1.0 / ( (n+2) * pow(sqrtOnePlusQSqSigmaSq_.constAt(qIndex), n+4) );
 
-	double value = 2.0 * cos(na) + (oneMinusQSqSigmaSq_.value(qIndex) / (referenceData_.x(qIndex)*sigmaQ_))*sin(na);
+	double value = 2.0 * cos(na) + (oneMinusQSqSigmaSq_.constAt(qIndex) / (referenceData_.x(qIndex)*sigmaQ_))*sin(na);
 
 	return factor * value;
 }
@@ -136,7 +136,7 @@ XYData PoissonFit::approximation(FunctionSpace::SpaceType space, double preFacto
 	}
 
 	// Loop over defined functions
-	for (int n=0; n<nPoissons_; ++n) addFunction(ft, space, C_.value(n), n);
+	for (int n=0; n<nPoissons_; ++n) addFunction(ft, space, C_.constAt(n), n);
 
 	ft.arrayY() *= preFactor;
 
@@ -194,7 +194,7 @@ bool PoissonFit::saveCoefficients(const char* filename) const
 	if (!parser.openOutput(filename)) return false;
 
 	parser.writeLineF("#   C\n");
-	for (int n=0; n<nPoissons_; ++n) parser.writeLineF("%f\n", C_.value(n));
+	for (int n=0; n<nPoissons_; ++n) parser.writeLineF("%f\n", C_.constAt(n));
 
 	parser.closeFiles();
 
@@ -215,9 +215,9 @@ void PoissonFit::preCalculateTerms()
 	arcTanQSigma_.initialise(referenceData_.nPoints());
 	for (int n=0; n<referenceData_.nPoints(); ++n)
 	{
-		sqrtOnePlusQSqSigmaSq_[n] = sqrt(1.0 + Q.value(n)*Q.value(n) * sigmaQ_*sigmaQ_);
-		oneMinusQSqSigmaSq_[n] = 1.0 - Q.value(n)*Q.value(n) * sigmaQ_*sigmaQ_;
-		arcTanQSigma_[n] = atan(Q.value(n)*sigmaQ_);
+		sqrtOnePlusQSqSigmaSq_[n] = sqrt(1.0 + Q.constAt(n)*Q.constAt(n) * sigmaQ_*sigmaQ_);
+		oneMinusQSqSigmaSq_[n] = 1.0 - Q.constAt(n)*Q.constAt(n) * sigmaQ_*sigmaQ_;
+		arcTanQSigma_[n] = atan(Q.constAt(n)*sigmaQ_);
 	}
 
 	/*
@@ -450,7 +450,7 @@ double PoissonFit::costAnalyticC(const Array<double>& alpha)
 		for (int n=0; n<alpha.nItems(); ++n)
 		{
 			nIndex = alphaIndex_[n];
-			C = alpha.value(n);
+			C = alpha.constAt(n);
 
 			y += (alphaSpace_ == FunctionSpace::RealSpace ? C * poisson(x, nIndex) : C * poissonFT(i, nIndex));
 		}
@@ -475,7 +475,7 @@ double PoissonFit::costTabulatedC(const Array<double>& alpha)
 		y = approximateData_.y(i);
 
 		// Add in contributions from our Gaussians
-		for (int n=0; n<nAlpha; ++n) y += functions_.at(alphaIndex_[n], i) * alpha.value(n);
+		for (int n=0; n<nAlpha; ++n) y += functions_.at(alphaIndex_[n], i) * alpha.constAt(n);
 
 		dy = referenceData_.y(i) - y;
 		sose += dy*dy;

@@ -112,7 +112,7 @@ void Surface::constructSurfaceStrip(const Array<double>& x, const Array<double>&
 	{
 		for (n=0; n<nX; ++n)
 		{
-			colour = colourScale.colour(pow(10.0, y.value(n) / yScale));
+			colour = colourScale.colour(pow(10.0, y.constAt(n) / yScale));
 			colours.add(Vec4<GLfloat>(colour.redF(), colour.greenF(), colour.blueF(), colour.alphaF()));
 		}
 	}
@@ -120,7 +120,7 @@ void Surface::constructSurfaceStrip(const Array<double>& x, const Array<double>&
 	{
 		for (n=0; n<nX; ++n)
 		{
-			colour = colourScale.colour(y.value(n) / yScale);
+			colour = colourScale.colour(y.constAt(n) / yScale);
 			colours.add(Vec4<GLfloat>(colour.redF(), colour.greenF(), colour.blueF(), colour.alphaF()));
 		}
 	}
@@ -134,8 +134,8 @@ void Surface::constructSurfaceStrip(const Array<double>& x, const Array<double>&
 		dz = zPrev - zNext;
 
 		// -- First point
-		v1.set(x.value(1) - x.value(0), y.value(1) - y.value(0), 0);
-		v2.set(0.0, yNext.value(0) - yPrev.value(0), dz);
+		v1.set(x.constAt(1) - x.constAt(0), y.constAt(1) - y.constAt(0), 0);
+		v2.set(0.0, yNext.constAt(0) - yPrev.constAt(0), dz);
 		normals.add(v1 * v2);
 // 		v3 = v1 * v2;
 // 		v3.normalise();
@@ -144,8 +144,8 @@ void Surface::constructSurfaceStrip(const Array<double>& x, const Array<double>&
 		// -- Points 1 to N-2
 		for (n=1; n< nX -1; ++n)
 		{
-			v1.set(x.value(n+1) - x.value(n-1), y.value(n+1) - y.value(n-1), 0.0);
-			v2.set(0.0, yNext.value(n) - yPrev.value(n), dz);
+			v1.set(x.constAt(n+1) - x.constAt(n-1), y.constAt(n+1) - y.constAt(n-1), 0.0);
+			v2.set(0.0, yNext.constAt(n) - yPrev.constAt(n), dz);
 			normals.add(v1 * v2);
 // 			v3 = v1 * v2;
 // 			v3.normalise();
@@ -153,8 +153,8 @@ void Surface::constructSurfaceStrip(const Array<double>& x, const Array<double>&
 // 			printf("Norm %i = (%f %f %f) * (%f %f %f) = (%f %f %f\n", n, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z, v3.x, v3.y, v3.z);
 		}
 		// -- Last point
-		v1.set(x.value(nX -1) - x.value(nX -2), y.value(nX -1) - y.value(nX -2), 0.0);
-		v2.set(0.0, yPrev.value(nX -1) - yNext.value(nX -1), dz);
+		v1.set(x.constAt(nX -1) - x.constAt(nX -2), y.constAt(nX -1) - y.constAt(nX -2), 0.0);
+		v2.set(0.0, yPrev.constAt(nX -1) - yNext.constAt(nX -1), dz);
 		normals.add(v1 * v2);
 // 		v3 = v1 * v2;
 // 		v3.normalise();
@@ -167,8 +167,8 @@ void Surface::constructSurfaceStrip(const Array<double>& x, const Array<double>&
 		dz = zPrev - z;
 
 		// -- First point
-		v1.set(x.value(1) - x.value(0), y.value(1) - y.value(0), 0.0);
-		v2.set(0.0, y.value(0) - yPrev.value(0), dz);
+		v1.set(x.constAt(1) - x.constAt(0), y.constAt(1) - y.constAt(0), 0.0);
+		v2.set(0.0, y.constAt(0) - yPrev.constAt(0), dz);
 		normals.add(v1 * v2);
 // 		v3 = v1 * v2;
 // 		v3.normalise();
@@ -177,8 +177,8 @@ void Surface::constructSurfaceStrip(const Array<double>& x, const Array<double>&
 		// -- Points 1 to N-2
 		for (n=1; n< nX -1; ++n)
 		{
-			v1.set(x.value(n+1) - x.value(n-1), y.value(n+1) - y.value(n-1), 0.0);
-			v2.set(0.0, y.value(n) - yPrev.value(n), dz);
+			v1.set(x.constAt(n+1) - x.constAt(n-1), y.constAt(n+1) - y.constAt(n-1), 0.0);
+			v2.set(0.0, y.constAt(n) - yPrev.constAt(n), dz);
 			normals.add(v1 * v2);
 // 			v3 = v1 * v2;
 // 			v3.normalise();
@@ -186,8 +186,8 @@ void Surface::constructSurfaceStrip(const Array<double>& x, const Array<double>&
 // 			printf("Last %i = (%f %f %f) * (%f %f %f) = (%f %f %f\n", n, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z, v3.x, v3.y, v3.z);
 		}
 		// -- Last point
-		v1.set(x.value(nX-1) - x.value(nX-2), y.value(nX-1) - y.value(nX-2), 0.0);
-		v2.set(0.0, y.value(nX -1) - yPrev.value(nX -1), dz);
+		v1.set(x.constAt(nX-1) - x.constAt(nX-2), y.constAt(nX-1) - y.constAt(nX-2), 0.0);
+		v2.set(0.0, y.constAt(nX -1) - yPrev.constAt(nX -1), dz);
 		normals.add(v1 * v2);
 // 		v3 = v1 * v2;
 // 		v3.normalise();
@@ -200,8 +200,8 @@ void Surface::constructSurfaceStrip(const Array<double>& x, const Array<double>&
 		dz = z - zNext;
 
 		// -- First point
-		v1.set(x.value(1) - x.value(0), y.value(1) - y.value(0), 0.0);
-		v2.set(0.0, yNext.value(0) - y.value(0), dz);
+		v1.set(x.constAt(1) - x.constAt(0), y.constAt(1) - y.constAt(0), 0.0);
+		v2.set(0.0, yNext.constAt(0) - y.constAt(0), dz);
 		normals.add(v1 * v2);
 // 		v3 = v1 * v2;
 // 		v3.normalise();
@@ -210,8 +210,8 @@ void Surface::constructSurfaceStrip(const Array<double>& x, const Array<double>&
 		// -- Points 1 to N-2
 		for (n=1; n< nX -1; ++n)
 		{
-			v1.set(x.value(n+1) - x.value(n-1), y.value(n+1) - y.value(n-1), 0.0);
-			v2.set(0.0, yNext.value(n) - y.value(n), dz);
+			v1.set(x.constAt(n+1) - x.constAt(n-1), y.constAt(n+1) - y.constAt(n-1), 0.0);
+			v2.set(0.0, yNext.constAt(n) - y.constAt(n), dz);
 			normals.add(v1 * v2);
 // 			v3 = v1 * v2;
 // 			v3.normalise();
@@ -219,8 +219,8 @@ void Surface::constructSurfaceStrip(const Array<double>& x, const Array<double>&
 // 			printf("Frst %i = (%f %f %f) * (%f %f %f) = (%f %f %f)\n", n, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z, v3.x, v3.y, v3.z);
 		}
 		// -- Last point
-		v1.set(x.value(nX-1) - x.value(nX-2), y.value(nX-1) - y.value(nX-2), 0.0);
-		v2.set(0.0, yNext.value(nX -1) - y.value(nX -1), dz);
+		v1.set(x.constAt(nX-1) - x.constAt(nX-2), y.constAt(nX-1) - y.constAt(nX-2), 0.0);
+		v2.set(0.0, yNext.constAt(nX -1) - y.constAt(nX -1), dz);
 		normals.add(v1 * v2);
 // 		v3 = v1 * v2;
 // 		v3.normalise();
@@ -250,9 +250,9 @@ bool Surface::calculateExtents(const Axes& axes, const Array<double>& abscissa, 
 	Vec3<double> axisMax(axes.max(0), axes.max(1), axes.max(2));
 
 	// Get x index limits
-	for (minIndex.x = 0; minIndex.x < abscissa.nItems(); ++minIndex.x) if (abscissa.value(minIndex.x) >= axisMin.x) break;
+	for (minIndex.x = 0; minIndex.x < abscissa.nItems(); ++minIndex.x) if (abscissa.constAt(minIndex.x) >= axisMin.x) break;
 	if (minIndex.x == abscissa.nItems()) return false;
-	for (maxIndex.x = abscissa.nItems()-1; maxIndex.x >= 0; --maxIndex.x) if (abscissa.value(maxIndex.x) <= axisMax.x) break;
+	for (maxIndex.x = abscissa.nItems()-1; maxIndex.x >= 0; --maxIndex.x) if (abscissa.constAt(maxIndex.x) <= axisMax.x) break;
 	if (maxIndex.x < 0) return false;
 
 	// Get z index limits

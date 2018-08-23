@@ -725,9 +725,9 @@ void EditFitKernelDialog::updateLabels()
 	const Array<double>& abscissa = sourceCollection->displayAbscissa();
 	if (abscissa.nItems() > 0)
 	{
-		ui.XPointSingleLabel->setText("(X = " + QString::number(abscissa.value(ui.XPointSingleSpin->value())) + ")");
-		ui.XPointMinLabel->setText("(X = " + QString::number(abscissa.value(ui.XPointMinSpin->value())) + ")");
-		ui.XPointMaxLabel->setText("(X = " + QString::number(abscissa.value(ui.XPointMaxSpin->value())) + ")");
+		ui.XPointSingleLabel->setText("(X = " + QString::number(abscissa.constAt(ui.XPointSingleSpin->value())) + ")");
+		ui.XPointMinLabel->setText("(X = " + QString::number(abscissa.constAt(ui.XPointMinSpin->value())) + ")");
+		ui.XPointMaxLabel->setText("(X = " + QString::number(abscissa.constAt(ui.XPointMaxSpin->value())) + ")");
 	}
 	else
 	{

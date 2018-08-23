@@ -206,7 +206,7 @@ double XYData::x(int index) const
 		return 0.0;
 	}
 #endif
-	return x_.value(index);
+	return x_.constAt(index);
 }
 
 // Return x Array
@@ -259,7 +259,7 @@ bool XYData::addY(const Array<double>& source, double factor)
 		return false;
 	}
 
-	for (int n=0; n<y_.nItems(); ++n) y_[n] += source.value(n)*factor;
+	for (int n=0; n<y_.nItems(); ++n) y_[n] += source.constAt(n)*factor;
 	interpolationInterval_ = -1;
 	return true;
 }
@@ -288,7 +288,7 @@ double XYData::y(int index) const
 		return 0.0;
 	}
 #endif
-	return y_.value(index);
+	return y_.constAt(index);
 }
 
 // Return y Array
@@ -385,12 +385,12 @@ XYData XYData::operator+(const XYData& source) const
 	for (int n=0; n<x_.nItems(); ++n)
 	{
 		// Check x values
-		if (fabs(x_.value(n) - source.x_.value(n)) > OPTOLERANCE)
+		if (fabs(x_.constAt(n) - source.x_.constAt(n)) > OPTOLERANCE)
 		{
 			Messenger::error("Can't + these XYData, since the x axes are different.\n");
 			return newData;
 		}
-		newData.y_[n] += source.y_.value(n);
+		newData.y_[n] += source.y_.constAt(n);
 	}
 	
 	newData.interpolationInterval_ = -1;
@@ -418,12 +418,12 @@ void XYData::operator+=(const XYData& source)
 	for (int n=0; n<x_.nItems(); ++n)
 	{
 		// Check x values
-		if (fabs(x_.value(n) - source.x_.value(n)) > OPTOLERANCE)
+		if (fabs(x_.constAt(n) - source.x_.constAt(n)) > OPTOLERANCE)
 		{
 			Messenger::error("Can't += these XYData, since the x axes are different.\n");
 			return;
 		}
-		y_[n] += source.y_.value(n);
+		y_[n] += source.y_.constAt(n);
 	}
 
 	interpolationInterval_ = -1;
@@ -453,12 +453,12 @@ XYData XYData::operator-(const XYData& source) const
 	for (int n=0; n<x_.nItems(); ++n)
 	{
 		// Check x values
-		if (fabs(x_.value(n) - source.x_.value(n)) > OPTOLERANCE)
+		if (fabs(x_.constAt(n) - source.x_.constAt(n)) > OPTOLERANCE)
 		{
 			Messenger::error("Can't - these XYData, since the x axes are different.\n");
 			return newData;
 		}
-		newData.y_[n] -= source.y_.value(n);
+		newData.y_[n] -= source.y_.constAt(n);
 	}
 	
 	newData.interpolationInterval_ = -1;
@@ -483,12 +483,12 @@ void XYData::operator-=(const XYData& source)
 	for (int n=0; n<x_.nItems(); ++n)
 	{
 		// Check x values
-		if (fabs(x_.value(n) - source.x_.value(n)) > OPTOLERANCE)
+		if (fabs(x_.constAt(n) - source.x_.constAt(n)) > OPTOLERANCE)
 		{
 			Messenger::error("Can't -= these XYData, since the x axes are different.\n");
 			return;
 		}
-		y_[n] -= source.y_.value(n);
+		y_[n] -= source.y_.constAt(n);
 	}
 
 	interpolationInterval_ = -1;
@@ -525,8 +525,8 @@ void XYData::operator/=(const double factor)
 double XYData::xMin() const
 {
 	if (x_.nItems() == 0) return 0.0;
-	double result = x_.value(0);
-	for (int n=1; n<x_.nItems(); ++n) if (x_.value(n) < result) result = x_.value(n);
+	double result = x_.constAt(0);
+	for (int n=1; n<x_.nItems(); ++n) if (x_.constAt(n) < result) result = x_.constAt(n);
 	return result;
 }
 
@@ -534,29 +534,29 @@ double XYData::xMin() const
 double XYData::xMax() const
 {
 	if (x_.nItems() == 0) return 0.0;
-	double result = x_.value(0);
-	for (int n=1; n<x_.nItems(); ++n) if (x_.value(n) > result) result = x_.value(n);
+	double result = x_.constAt(0);
+	for (int n=1; n<x_.nItems(); ++n) if (x_.constAt(n) > result) result = x_.constAt(n);
 	return result;
 }
 
 // Return first x value in data
 double XYData::xFirst() const
 {
-	return x_.value(0);
+	return x_.constAt(0);
 }
 
 // Return last x value in data
 double XYData::xLast() const
 {
-	return x_.value(x_.nItems()-1);
+	return x_.constAt(x_.nItems()-1);
 }
 
 // Return minumum y value in data
 double XYData::yMin() const
 {
 	if (y_.nItems() == 0) return 0.0;
-	double result = y_.value(0);
-	for (int n=1; n<y_.nItems(); ++n) if (y_.value(n) < result) result = y_.value(n);
+	double result = y_.constAt(0);
+	for (int n=1; n<y_.nItems(); ++n) if (y_.constAt(n) < result) result = y_.constAt(n);
 	return result;
 }
 
@@ -564,8 +564,8 @@ double XYData::yMin() const
 double XYData::yMax() const
 {
 	if (y_.nItems() == 0) return 0.0;
-	double result = y_.value(0);
-	for (int n=1; n<y_.nItems(); ++n) if (y_.value(n) > result) result = y_.value(n);
+	double result = y_.constAt(0);
+	for (int n=1; n<y_.nItems(); ++n) if (y_.constAt(n) > result) result = y_.constAt(n);
 	return result;
 }
 
@@ -632,8 +632,8 @@ double XYData::integral() const
 	double total = 0.0, y0 = y_.firstValue(), y1, x0 = x_.firstValue(), x1;
 	for (int n=1; n<x_.nItems(); ++n)
 	{
-		x1 = x_.value(n);
-		y1 = y_.value(n);
+		x1 = x_.constAt(n);
+		y1 = y_.constAt(n);
 		total += (x1 - x0) * (y0 + y1) * 0.5;
 		x0 = x1;
 		y0 = y1;
@@ -648,8 +648,8 @@ double XYData::absIntegral() const
 	double total = 0.0, y0 = y_.firstValue(), y1, x0 = x_.firstValue(), x1;
 	for (int n=1; n<x_.nItems(); ++n)
 	{
-		x1 = x_.value(n);
-		y1 = y_.value(n);
+		x1 = x_.constAt(n);
+		y1 = y_.constAt(n);
 		total += fabs((x1 - x0) * (y0 + y1) * 0.5);
 		x0 = x1;
 		y0 = y1;
@@ -662,7 +662,7 @@ double XYData::sumOfSquares() const
 {
 	double total = 0.0;
 
-	for (int n=0; n<y_.nItems(); ++n) total += y_.value(n)*y_.value(n);
+	for (int n=0; n<y_.nItems(); ++n) total += y_.constAt(n)*y_.constAt(n);
 
 	return total;
 }
@@ -850,7 +850,7 @@ void XYData::addInterpolated(XYData& source, double weighting)
 		y_ = source.constArrayY();
 		y_ *= weighting;
 	}
-	else for (int n=0; n<x_.nItems(); ++n) addY(n, source.interpolated(x_.value(n)) * weighting);
+	else for (int n=0; n<x_.nItems(); ++n) addY(n, source.interpolated(x_.constAt(n)) * weighting);
 }
 
 // Subtract average level from data, forming average from supplied x value
@@ -888,7 +888,7 @@ double XYData::rmse(XYData ref) const
 	for (int n=0; n<x_.nItems(); ++n)
 	{
 		// Grab x value
-		x = x_.value(n);
+		x = x_.constAt(n);
 
 		// Is our x value lower than the lowest x value of the reference data?
 		if (x < ref.xFirst()) continue;
@@ -900,7 +900,7 @@ double XYData::rmse(XYData ref) const
 		if (nPointsConsidered == 0) firstX = x;
 
 		// Sum squared error
-		delta = y_.value(n) - ref.interpolated(x);
+		delta = y_.constAt(n) - ref.interpolated(x);
 		rmse += delta*delta;
 		lastX = x;
 		++nPointsConsidered;
@@ -932,7 +932,7 @@ double XYData::error(XYData ref) const
 	for (int n=0; n<x_.nItems(); ++n)
 	{
 		// Grab x value
-		x = x_.value(n);
+		x = x_.constAt(n);
 
 		// Is our x value lower than the lowest x value of the reference data?
 		if (x < ref.xFirst()) continue;
@@ -943,15 +943,15 @@ double XYData::error(XYData ref) const
 		// Is this the first point considered?
 		if (nPointsConsidered == 0) firstX = x;
 
-		y = y_.value(n);
+		y = y_.constAt(n);
 
 		// Accumulate numerator - sum of forecast errors
 		sume += fabs(y - ref.interpolated(x));
 		sumy += fabs(ref.interpolated(x));
 
 		// Accumulate denominator - one-step naive forecast (backwards forecast for first point)
-		if (nPointsConsidered > 0) sumf += fabs(y - y_.value(n-1));
-		else if (n < x_.nItems()-1) sumf += fabs(y - y_.value(n+1));
+		if (nPointsConsidered > 0) sumf += fabs(y - y_.constAt(n-1));
+		else if (n < x_.nItems()-1) sumf += fabs(y - y_.constAt(n+1));
 
 		lastX = x;
 		++nPointsConsidered;
@@ -1079,7 +1079,7 @@ bool XYData::save(const char* filename) const
 		return false;
 	}
 	
-	for (int n = 0; n<x_.nItems(); ++n) parser.writeLineF("%16.10e  %16.10e\n", x_.value(n), y_.value(n));
+	for (int n = 0; n<x_.nItems(); ++n) parser.writeLineF("%16.10e  %16.10e\n", x_.constAt(n), y_.constAt(n));
 	parser.closeFiles();
 
 	return true;
@@ -1098,7 +1098,7 @@ bool XYData::saveWithInterpolation(const char* filename)
 		return false;
 	}
 	
-	for (int n=0; n<x_.nItems(); ++n) parser.writeLineF("%16.10e  %16.10e  %16.10e\n", x_.value(n), y_.value(n), interpolated(x_.value(n)));
+	for (int n=0; n<x_.nItems(); ++n) parser.writeLineF("%16.10e  %16.10e  %16.10e\n", x_.constAt(n), y_.constAt(n), interpolated(x_.constAt(n)));
 	parser.closeFiles();
 
 	return true;
@@ -1107,7 +1107,7 @@ bool XYData::saveWithInterpolation(const char* filename)
 // Dump contents
 void XYData::dump()
 {
-	for (int n=0; n<x_.nItems(); ++n) Messenger::print("%16.10e  %16.10e  %16.10e\n", x_.value(n), y_.value(n), interpolated(x_.value(n)));
+	for (int n=0; n<x_.nItems(); ++n) Messenger::print("%16.10e  %16.10e  %16.10e\n", x_.constAt(n), y_.constAt(n), interpolated(x_.constAt(n)));
 }
 
 /*
@@ -1131,7 +1131,7 @@ bool XYData::write(LineParser& parser)
 	if (!parser.writeLineF("%s\n", objectName())) return false;
 	if (!parser.writeLineF("%f\n", z_)) return false;
 	if (!parser.writeLineF("%i\n", nPoints())) return false;
-	for (int n=0; n<nPoints(); ++n) if (!parser.writeLineF("%16.9e %16.9e\n", x_.value(n), y_.value(n))) return false;
+	for (int n=0; n<nPoints(); ++n) if (!parser.writeLineF("%16.9e %16.9e\n", x_.constAt(n), y_.constAt(n))) return false;
 	return true;
 }
 

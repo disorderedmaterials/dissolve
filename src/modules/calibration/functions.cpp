@@ -56,7 +56,7 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(const Array<double>& 
 				Messenger::error("Parameters required by BroadeningFunctions exceeds number available in alpha array.\n");
 				return 100.0;
 			}
-			broadening.parameters()[n] = alpha.value(alphaIndex);
+			broadening.parameters()[n] = alpha.constAt(alphaIndex);
 			++alphaIndex;
 		}
 

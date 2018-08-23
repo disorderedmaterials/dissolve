@@ -107,7 +107,7 @@ bool SiteContextStack::hasSite(const char* name) const
 {
 	for (int n=0; n<stack_.nItems(); ++n)
 	{
-		RefListIterator<AnalysisNode,CharString> contextIterator(stack_.constValue(n));
+		RefListIterator<AnalysisNode,CharString> contextIterator(stack_.constAt(n));
 		while (AnalysisNode* node = contextIterator.iterate()) if (DissolveSys::sameString(contextIterator.currentData(), name)) return true;
 	}
 
@@ -119,7 +119,7 @@ AnalysisNode* SiteContextStack::siteNode(const char* name) const
 {
 	for (int n=0; n<stack_.nItems(); ++n)
 	{
-		RefListIterator<AnalysisNode,CharString> contextIterator(stack_.constValue(n));
+		RefListIterator<AnalysisNode,CharString> contextIterator(stack_.constAt(n));
 		while (AnalysisNode* node = contextIterator.iterate()) if (DissolveSys::sameString(contextIterator.currentData(), name)) return node;
 	}
 

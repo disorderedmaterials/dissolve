@@ -80,7 +80,7 @@ template <> class GenericItemContainer< Array2D< Array<double> > > : public Gene
 			parser.writeLineF("%i\n", arrayData.nItems());
 			for (int m=0; m<arrayData.nItems(); ++m)
 			{
-				if (!parser.writeLineF("%16.9e\n", arrayData.value(m))) return false;
+				if (!parser.writeLineF("%16.9e\n", arrayData.constAt(m))) return false;
 			}
 		}
 		return true;

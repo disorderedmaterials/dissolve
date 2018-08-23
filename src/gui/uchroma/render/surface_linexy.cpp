@@ -74,11 +74,11 @@ void Surface::constructLineXY(PrimitiveList& primitiveList, const Axes& axes, co
 		for (n=0; n<nX; ++n)
 		{
 			// Define vertex index for this point (if one exists)
-			if (yType.value(n) != DisplayDataSet::NoPoint)
+			if (yType.constAt(n) != DisplayDataSet::NoPoint)
 			{
-				colourScale.colour(yLogarithmic ? pow(10.0, y.value(n) / yStretch) : y.value(n) / yStretch, colour);
+				colourScale.colour(yLogarithmic ? pow(10.0, y.constAt(n) / yStretch) : y.constAt(n) / yStretch, colour);
 				//printf("LINEXY Colour %i %i = %f %f %f %f\n", slice, n, colour[0], colour[1], colour[2], colour[3]);
-				vertexB = currentPrimitive->defineVertex(x.value(n), y.value(n), z, nrm, colour);
+				vertexB = currentPrimitive->defineVertex(x.constAt(n), y.constAt(n), z, nrm, colour);
 			}
 			else vertexB = -1;
 

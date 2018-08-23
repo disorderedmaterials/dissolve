@@ -71,7 +71,7 @@ void DataSpaceRange::set(Collection* collection, int abscissaFirst, int abscissa
 	DisplayDataSet** dataSets = collection->displayData().array();
 
 	// Store x values
-	for (int n=0; n<nPoints_; ++n) x_.add(abscissa.value(n+abscissaStart_));
+	for (int n=0; n<nPoints_; ++n) x_.add(abscissa.constAt(n+abscissaStart_));
 
 	// Store z values
 	for (int n=0; n<nDataSets_; ++n) z_.add(dataSets[n+displayDataSetStart_]->z());
@@ -90,8 +90,8 @@ void DataSpaceRange::set(Collection* collection, int abscissaFirst, int abscissa
 		const Array<DisplayDataSet::DataPointType>& yType = dataSets[n+displayDataSetStart_]->yType();
 		for (int i=0; i<nPoints_; ++i)
 		{
-			yReference_.at(i,n) = y.value(i+abscissaStart_);
-			if (!referenceDataOnly) yTypes_.at(i,n) = yType.value(i+abscissaStart_);
+			yReference_.at(i,n) = y.constAt(i+abscissaStart_);
+			if (!referenceDataOnly) yTypes_.at(i,n) = yType.constAt(i+abscissaStart_);
 		}
 	}
 }
@@ -280,7 +280,7 @@ bool DataSpaceRange::copyValues(IndexData xIndex, IndexData zIndex)
 			else if (xIndex.type() == IndexData::RelativeIndex) actualX = abscissaStart_+x+xIndex.offset();
 
 			// Check index of x against valid abscissa range
-			if ((x >= 0) && (x < nAbscissaPoints)) yReference_.at(x, z) = yRef.value(actualX);
+			if ((x >= 0) && (x < nAbscissaPoints)) yReference_.at(x, z) = yRef.constAt(actualX);
 		}
 	}
 
@@ -303,7 +303,7 @@ bool DataSpaceRange::calculateValues(Expression& equation, Variable* xVariable, 
 	for (int n=0; n<nDataSets_; ++n)
 	{
 		// Set z value
-		zVariable->set(z_.value(n));
+		zVariable->set(z_.constAt(n));
 
 		// Loop over abscissa values
 		for (int i=0; i<nPoints_; ++i)
@@ -312,7 +312,7 @@ bool DataSpaceRange::calculateValues(Expression& equation, Variable* xVariable, 
 			if (yTypes_.at(i,n) == DisplayDataSet::NoPoint) continue;
 
 			// Set x variable value
-			xVariable->set(x_.value(i));
+			xVariable->set(x_.constAt(i));
 
 			// Generate reference values
 			for (RefListItem<ReferenceVariable,bool>* ri = usedReferences.first(); ri != NULL; ri = ri->next) ri->item->updateValue(i, n);
@@ -366,7 +366,7 @@ void DataSpaceRange::addCalculatedValues(Collection* target)
 		// Loop over x values
 		for (int i=0; i<nPoints_; ++i)
 		{
-			dataSet->setX(i+abscissaStart_, x_.value(i));
+			dataSet->setX(i+abscissaStart_, x_.constAt(i));
 			dataSet->setY(i+abscissaStart_, yCalculated_.at(i,n));
 		}
 	}

@@ -328,18 +328,18 @@ double XYData::interpolated(double xValue, int interval)
 	{
 		if (interval >= (x_.nItems()-1)) return y_.last();
 
-		double delta = (xValue - x_.value(interval)) / interpolationH_.value(interval);
-		return y_.value(interval) + delta * interpolationA_.value(interval);
+		double delta = (xValue - x_.constAt(interval)) / interpolationH_.constAt(interval);
+		return y_.constAt(interval) + delta * interpolationA_.constAt(interval);
 	}
 	else if (interpolationScheme_ == XYData::ThreePointInterpolation)
 	{
 		if (interval >= (x_.nItems()-3)) return y_.last();
 
-		double ppp = (xValue - x_.value(interval)) / interpolationH_.value(interval);
+		double ppp = (xValue - x_.constAt(interval)) / interpolationH_.constAt(interval);
 
-		double vk0 = y_.value(interval);
-		double vk1 = y_.value(interval+1);
-		double vk2 = y_.value(interval+2);
+		double vk0 = y_.constAt(interval);
+		double vk1 = y_.constAt(interval+1);
+		double vk2 = y_.constAt(interval+2);
 		double t1=vk0+(vk1-vk0)*ppp;
 		double t2=vk1+(vk2-vk1)*(ppp-1.0);
 // 		printf("%f %20.14e %20.14e %20.14e %20.14e %20.14e\n", xValue, vk0, vk1, vk2, ppp, t1+(t2-t1)*ppp*0.5); 
@@ -361,16 +361,16 @@ double XYData::approximate(double xValue) const
 	while ((right-left) > 1)
 	{
 		i = (right+left) / 2;
-		if (x_.value(i) > xValue) right = i;
+		if (x_.constAt(i) > xValue) right = i;
 		else left = i;
 	}
 // 	printf("L/R = %i/%i : %f < %f < %f\n", left, right, x_.value(left), xValue, x_.value(right));
 
-	double ppp = (xValue - x_.value(left)) / (x_.value(right) - x_.value(left));
+	double ppp = (xValue - x_.constAt(left)) / (x_.constAt(right) - x_.constAt(left));
 
-	double vk0 = y_.value(left);
-	double vk1 = y_.value(left+1);
-	double vk2 = y_.value(left+2);
+	double vk0 = y_.constAt(left);
+	double vk1 = y_.constAt(left+1);
+	double vk2 = y_.constAt(left+2);
 
 	double t1=vk0+(vk1-vk0)*ppp;
 	double t2=vk1+(vk2-vk1)*(ppp-1.0);

@@ -108,25 +108,25 @@ void Surface::constructFull(PrimitiveList& primitiveList, const Axes& axes, cons
 
 		// Set initial bit, and generate initial vertices
 		nBit = 0;
-		if (typeA.value(0) == DisplayDataSet::NoPoint)
+		if (typeA.constAt(0) == DisplayDataSet::NoPoint)
 		{
 			nBit += 4;
 			vertexAn = -1;
 		}
-		else vertexAn = currentPrimitive->defineVertex(x.value(0), yA.value(0), zA, normA[0], colourA[0]);
-		if (typeB.value(0) == DisplayDataSet::NoPoint)
+		else vertexAn = currentPrimitive->defineVertex(x.constAt(0), yA.constAt(0), zA, normA[0], colourA[0]);
+		if (typeB.constAt(0) == DisplayDataSet::NoPoint)
 		{
 			nBit += 8;
 			vertexBn = -1;
 		}
-		else vertexBn = currentPrimitive->defineVertex(x.value(0), yB.value(0), zB, normB[0], colourB[0]);
+		else vertexBn = currentPrimitive->defineVertex(x.constAt(0), yB.constAt(0), zB, normB[0], colourB[0]);
 
 		for (int n=0; n<nX-1; ++n)
 		{
 			// Construct bit for n+1
 			nPlusOneBit = 0;
-			if (typeA.value(n+1) == DisplayDataSet::NoPoint) nPlusOneBit += 1;
-			if (typeB.value(n+1) == DisplayDataSet::NoPoint) nPlusOneBit += 2;
+			if (typeA.constAt(n+1) == DisplayDataSet::NoPoint) nPlusOneBit += 1;
+			if (typeB.constAt(n+1) == DisplayDataSet::NoPoint) nPlusOneBit += 2;
 			totalBit = nBit + nPlusOneBit;
 
 			// Reset indices for current (n+1) column
@@ -137,43 +137,43 @@ void Surface::constructFull(PrimitiveList& primitiveList, const Axes& axes, cons
 			if (totalBit == 0)
 			{
 				// Draw both
-				if (vertexAn == -1) vertexAn = currentPrimitive->defineVertex(x.value(n), yA.value(n), zA, normA[n], colourA[n]);
-				if (vertexBn == -1) vertexBn = currentPrimitive->defineVertex(x.value(n), yB.value(n), zB, normB[n], colourB[n]);
-				vertexAnPlusOne = currentPrimitive->defineVertex(x.value(n+1), yA.value(n+1), zA, normA[n+1], colourA[n+1]);
-				vertexBnPlusOne = currentPrimitive->defineVertex(x.value(n+1), yB.value(n+1), zB, normB[n+1], colourB[n+1]);
+				if (vertexAn == -1) vertexAn = currentPrimitive->defineVertex(x.constAt(n), yA.constAt(n), zA, normA[n], colourA[n]);
+				if (vertexBn == -1) vertexBn = currentPrimitive->defineVertex(x.constAt(n), yB.constAt(n), zB, normB[n], colourB[n]);
+				vertexAnPlusOne = currentPrimitive->defineVertex(x.constAt(n+1), yA.constAt(n+1), zA, normA[n+1], colourA[n+1]);
+				vertexBnPlusOne = currentPrimitive->defineVertex(x.constAt(n+1), yB.constAt(n+1), zB, normB[n+1], colourB[n+1]);
 				currentPrimitive->defineIndices(vertexAn, vertexAnPlusOne, vertexBnPlusOne);
 				currentPrimitive->defineIndices(vertexAn, vertexBn, vertexBnPlusOne);
 			}
 			else if (totalBit == 1)
 			{
 				// Bottom left corner only
-				if (vertexAn == -1) vertexAn = currentPrimitive->defineVertex(x.value(n), yA.value(n), zA, normA[n], colourA[n]);
-				if (vertexBn == -1) vertexBn = currentPrimitive->defineVertex(x.value(n), yB.value(n), zB, normB[n], colourB[n]);
-				vertexBnPlusOne = currentPrimitive->defineVertex(x.value(n+1), yB.value(n+1), zB, normB[n+1], colourB[n+1]);
+				if (vertexAn == -1) vertexAn = currentPrimitive->defineVertex(x.constAt(n), yA.constAt(n), zA, normA[n], colourA[n]);
+				if (vertexBn == -1) vertexBn = currentPrimitive->defineVertex(x.constAt(n), yB.constAt(n), zB, normB[n], colourB[n]);
+				vertexBnPlusOne = currentPrimitive->defineVertex(x.constAt(n+1), yB.constAt(n+1), zB, normB[n+1], colourB[n+1]);
 				currentPrimitive->defineIndices(vertexAn, vertexBnPlusOne, vertexBn);
 			}
 			else if (totalBit == 2)
 			{
 				// Top left corner only
-				if (vertexAn == -1) vertexAn = currentPrimitive->defineVertex(x.value(n), yA.value(n), zA, normA[n], colourA[n]);
-				if (vertexBn == -1) vertexBn = currentPrimitive->defineVertex(x.value(n), yB.value(n), zB, normB[n], colourB[n]);
-				vertexAnPlusOne = currentPrimitive->defineVertex(x.value(n+1), yA.value(n+1), zA, normA[n+1], colourA[n]);
+				if (vertexAn == -1) vertexAn = currentPrimitive->defineVertex(x.constAt(n), yA.constAt(n), zA, normA[n], colourA[n]);
+				if (vertexBn == -1) vertexBn = currentPrimitive->defineVertex(x.constAt(n), yB.constAt(n), zB, normB[n], colourB[n]);
+				vertexAnPlusOne = currentPrimitive->defineVertex(x.constAt(n+1), yA.constAt(n+1), zA, normA[n+1], colourA[n]);
 				currentPrimitive->defineIndices(vertexAn, vertexAnPlusOne, vertexBn);
 			}
 			else if (totalBit == 4)
 			{
 				// Bottom right corner only
-				if (vertexBn == -1) vertexBn = currentPrimitive->defineVertex(x.value(n), yB.value(n), zB, normB[n], colourB[n]);
-				vertexAnPlusOne = currentPrimitive->defineVertex(x.value(n+1), yA.value(n+1), zA, normA[n+1], colourA[n+1]);
-				vertexBnPlusOne = currentPrimitive->defineVertex(x.value(n+1), yB.value(n+1), zB, normB[n+1], colourB[n+1]);
+				if (vertexBn == -1) vertexBn = currentPrimitive->defineVertex(x.constAt(n), yB.constAt(n), zB, normB[n], colourB[n]);
+				vertexAnPlusOne = currentPrimitive->defineVertex(x.constAt(n+1), yA.constAt(n+1), zA, normA[n+1], colourA[n+1]);
+				vertexBnPlusOne = currentPrimitive->defineVertex(x.constAt(n+1), yB.constAt(n+1), zB, normB[n+1], colourB[n+1]);
 				currentPrimitive->defineIndices(vertexAnPlusOne, vertexBnPlusOne, vertexBn);
 			}
 			else if (totalBit == 8)
 			{
 				// Top right corner only
-				if (vertexAn == -1) vertexAn = currentPrimitive->defineVertex(x.value(n), yA.value(n), zA, normA[n], colourA[n]);
-				vertexAnPlusOne = currentPrimitive->defineVertex(x.value(n+1), yA.value(n+1), zA, normA[n+1], colourA[n+1]);
-				vertexBnPlusOne = currentPrimitive->defineVertex(x.value(n+1), yB.value(n+1), zB, normB[n+1], colourB[n+1]);
+				if (vertexAn == -1) vertexAn = currentPrimitive->defineVertex(x.constAt(n), yA.constAt(n), zA, normA[n], colourA[n]);
+				vertexAnPlusOne = currentPrimitive->defineVertex(x.constAt(n+1), yA.constAt(n+1), zA, normA[n+1], colourA[n+1]);
+				vertexBnPlusOne = currentPrimitive->defineVertex(x.constAt(n+1), yB.constAt(n+1), zB, normB[n+1], colourB[n+1]);
 				currentPrimitive->defineIndices(vertexAn, vertexAnPlusOne, vertexBnPlusOne);
 			}
 

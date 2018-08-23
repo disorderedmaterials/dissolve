@@ -138,7 +138,7 @@ template <class T> class PrAxis
 		{
 			for ( i = 0; i < n; i++ )
 			{
-				t[i] = alpha.value(i) + l * v[i+jsearch*n];
+				t[i] = alpha.constAt(i) + l * v[i+jsearch*n];
 			}
 		}
 	//
@@ -152,7 +152,7 @@ template <class T> class PrAxis
 	
 			for ( i = 0; i < n; i++ )
 			{
-				t[i] = qa * q0[i] + qb * alpha.value(i) + qc * q1[i];
+				t[i] = qa * q0[i] + qb * alpha.constAt(i) + qc * q1[i];
 			}
 		}
 	//

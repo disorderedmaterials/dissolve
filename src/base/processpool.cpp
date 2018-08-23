@@ -202,8 +202,8 @@ int ProcessPool::poolRank() const
 bool ProcessPool::isMaster(ProcessPool::CommunicatorType commType) const
 {
 	if (commType == ProcessPool::PoolProcessesCommunicator) return (poolRank_ == 0);
-	else if (commType == ProcessPool::GroupProcessesCommunicator) return (groupLeaders_.value(groupIndex_) == poolRank_);
-	else if (commType == ProcessPool::GroupLeadersCommunicator) return (groupLeaders_.value(0) == poolRank_);
+	else if (commType == ProcessPool::GroupProcessesCommunicator) return (groupLeaders_.constAt(groupIndex_) == poolRank_);
+	else if (commType == ProcessPool::GroupLeadersCommunicator) return (groupLeaders_.constAt(0) == poolRank_);
 
 	return false;
 }
@@ -212,8 +212,8 @@ bool ProcessPool::isMaster(ProcessPool::CommunicatorType commType) const
 bool ProcessPool::isSlave(ProcessPool::CommunicatorType commType) const
 {
 	if (commType == ProcessPool::PoolProcessesCommunicator) return (poolRank_ != 0);
-	else if (commType == ProcessPool::GroupProcessesCommunicator) return (groupLeaders_.value(groupIndex_) != poolRank_);
-	else if (commType == ProcessPool::GroupLeadersCommunicator) return (groupLeaders_.value(0) != poolRank_);
+	else if (commType == ProcessPool::GroupProcessesCommunicator) return (groupLeaders_.constAt(groupIndex_) != poolRank_);
+	else if (commType == ProcessPool::GroupLeadersCommunicator) return (groupLeaders_.constAt(0) != poolRank_);
 
 	return true;
 }
@@ -227,7 +227,7 @@ bool ProcessPool::isMe(int poolIndex) const
 // Return whether this pool involves this process
 bool ProcessPool::involvesMe() const
 {
-	for (int n=0; n<worldRanks_.nItems(); ++n) if (worldRanks_.value(n) == worldRank_) return true;
+	for (int n=0; n<worldRanks_.nItems(); ++n) if (worldRanks_.constAt(n) == worldRank_) return true;
 	return false;
 }
 
@@ -327,7 +327,7 @@ int ProcessPool::nProcesses() const
 // Return root (first) world rank of this pool
 int ProcessPool::rootWorldRank() const
 {
-	return worldRanks_.value(0);
+	return worldRanks_.constAt(0);
 }
 
 // Determine how many simultaneous processes (groups) we can have at once, based on the Cell divisions
@@ -593,7 +593,7 @@ int ProcessPool::nProcessesInGroup(int groupId) const
 		return 0;
 	}
 #endif
-	return processGroups_.value(groupId).nProcesses();
+	return processGroups_.at(groupId).nProcesses();
 }
 
 // Return array of pool ranks in specified group
@@ -606,7 +606,7 @@ int* ProcessPool::poolRanksInGroup(int groupId) const
 		return 0;
 	}
 #endif
-	return processGroups_.value(groupId).poolRanks().array();
+	return processGroups_.at(groupId).poolRanks().array();
 }
 
 // Return whether group data is modifiable

@@ -100,7 +100,7 @@ template <> class GenericItemContainer< Array< Vec3<int> > > : public GenericIte
 		// Verify array size first
 		if (!procPool.equality(data.nItems())) return false;
 		// Keep it simple (and slow) and check/send one value at a time
-		for (int n=0; n<data.nItems(); ++n) if (!procPool.equality(data.value(n))) return false;
+		for (int n=0; n<data.nItems(); ++n) if (!procPool.equality(data.constAt(n))) return false;
 		return true;
 	}
 };

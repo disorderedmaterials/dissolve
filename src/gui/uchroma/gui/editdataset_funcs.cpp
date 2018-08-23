@@ -82,11 +82,11 @@ bool EditDataSetDialog::call(DataSet* target)
 	QTableWidgetItem* item;
 	for (int n=0; n<dataSet_.data().nPoints(); ++n)
 	{
-		item = new QTableWidgetItem(QString::number(x.value(n)));
+		item = new QTableWidgetItem(QString::number(x.constAt(n)));
 		item->setFlags(Qt::ItemIsSelectable);
 		ui.DataTable->setItem(n, 0, item);
 
-		item = new QTableWidgetItem(QString::number(y.value(n)));
+		item = new QTableWidgetItem(QString::number(y.constAt(n)));
 		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
 		ui.DataTable->setItem(n, 1, item);
 	}

@@ -310,8 +310,8 @@ void Collection::addDataSet(const Array<double>& abscissa, DisplayDataSet* sourc
 	// Loop over points, adding points as we go (and pruning truly empty points if necessary)
 	for (int n=0; n<abscissa.nItems(); ++n)
 	{
-		if (pruneEmpty && (yType.value(n) == DisplayDataSet::NoPoint)) continue;
-		dataSet->addPoint(abscissa.value(n), y.value(n));
+		if (pruneEmpty && (yType.constAt(n) == DisplayDataSet::NoPoint)) continue;
+		dataSet->addPoint(abscissa.constAt(n), y.constAt(n));
 	}
 
 	++dataVersion_;
@@ -749,16 +749,16 @@ int Collection::closestBin(int axis, double value)
 	{
 		// Check display data abscissa for closest value
 		int midIndex, loIndex = 0, hiIndex = displayAbscissa_.nItems() - 1;
-		if (value < displayAbscissa_.value(0)) return 0;
-		if (value > displayAbscissa_.value(hiIndex)) return hiIndex;
+		if (value < displayAbscissa_.constAt(0)) return 0;
+		if (value > displayAbscissa_.constAt(hiIndex)) return hiIndex;
 		// Binary... chop!
 		while ((hiIndex - loIndex) > 1)
 		{
 			midIndex = (hiIndex + loIndex) / 2;
-			if (displayAbscissa_.value(midIndex) <= value) loIndex = midIndex;
+			if (displayAbscissa_.constAt(midIndex) <= value) loIndex = midIndex;
 			else hiIndex = midIndex;
 		}
-		if (fabs(displayAbscissa_.value(loIndex) - value) < fabs(displayAbscissa_.value(hiIndex) - value)) return loIndex;
+		if (fabs(displayAbscissa_.constAt(loIndex) - value) < fabs(displayAbscissa_.constAt(hiIndex) - value)) return loIndex;
 		else return hiIndex;
 	}
 	else if (axis == 1)
@@ -800,8 +800,8 @@ void Collection::getSlice(int axis, int bin)
 		DataSet* newDataSet = currentSlice_->addDataSet();
 
 		// Slice at fixed X - the bin will be an index from the displayAbscissa_ / displayData_ data.
-		for (DisplayDataSet* displayDataSet = displayData_.first(); displayDataSet != NULL; displayDataSet = displayDataSet->next) newDataSet->addPoint(displayDataSet->z(), displayDataSet->y().value(bin));
-		currentSlice_->setName(CharString("X = %f", displayAbscissa_.value(bin)));
+		for (DisplayDataSet* displayDataSet = displayData_.first(); displayDataSet != NULL; displayDataSet = displayDataSet->next) newDataSet->addPoint(displayDataSet->z(), displayDataSet->y().constAt(bin));
+		currentSlice_->setName(CharString("X = %f", displayAbscissa_.constAt(bin)));
 	}
 	else if (axis == 1)
 	{
@@ -1319,7 +1319,7 @@ void Collection::updateDisplayData()
 		}
 
 		// Now add data to surfaceDataSet
-		for (int n=0; n<array[0].nItems(); ++n) surfaceDataSet->addPoint(array[0].value(n), array[1].value(n));
+		for (int n=0; n<array[0].nItems(); ++n) surfaceDataSet->addPoint(array[0].constAt(n), array[1].constAt(n));
 	}
 
 	// Construct common x scale for data, and create y value data
@@ -1388,7 +1388,7 @@ void Collection::updateDisplayData()
 		for (m = 0; m < displayAbscissa_.nItems(); ++m)
 		{
 			// If this point is a real value, interpolate up to here from the last real point (if one exists and it is more than one element away)
-			if (yType.value(m) == DisplayDataSet::RealPoint)
+			if (yType.constAt(m) == DisplayDataSet::RealPoint)
 			{
 				if (lastReal == -1) lastReal = m;
 				else if ((m - lastReal) == 1) lastReal = m;
@@ -1396,11 +1396,11 @@ void Collection::updateDisplayData()
 				{
 					// Interpolate from 'lastReal' index up to here
 					xWidth = displayAbscissa_[m] - displayAbscissa_[lastReal]; 
-					yWidth = y.value(m) - y.value(lastReal);
+					yWidth = y.constAt(m) - y.constAt(lastReal);
 					for (o = lastReal+1; o<=m; ++o)
 					{
 						position = (displayAbscissa_[o] - displayAbscissa_[lastReal]) / xWidth;
-						slices[n]->setY(o, y.value(lastReal) + yWidth*position, DisplayDataSet::InterpolatedPoint);
+						slices[n]->setY(o, y.constAt(lastReal) + yWidth*position, DisplayDataSet::InterpolatedPoint);
 					}
 				}
 				lastReal = m;
@@ -1505,7 +1505,7 @@ bool Collection::exportData(const char* fileName)
 		{
 			const Array<double>& x = dataSet->data().constArrayX();
 			const Array<double>& y = dataSet->data().constArrayY();
-			parser.writeLineF("%e  %e\n", x.value(n), y.value(n));
+			parser.writeLineF("%e  %e\n", x.constAt(n), y.constAt(n));
 		}
 		parser.writeLineF("\n");
 	}

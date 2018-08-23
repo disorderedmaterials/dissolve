@@ -105,13 +105,13 @@ Atom* Grain::atom(int n) const
 		Messenger::print("OUT_OF_RANGE - Atom index (%i) given to Grain::atom() is out of range (nAtoms = %i).\n", n, nAtoms());
 		return NULL;
 	}
-	if (atoms_.value(n) == NULL)
+	if (atoms_.constAt(n) == NULL)
 	{
 		Messenger::print("NULL_POINTER - Atom pointer pointer for index %i in Grain::atom() is NULL.\n", n);
 		return &dummy;
 	}
 #endif
-	return atoms_.value(n);
+	return atoms_.constAt(n);
 }
 
 /*

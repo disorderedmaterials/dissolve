@@ -68,11 +68,11 @@ void Surface::constructLineZY(PrimitiveList& primitiveList, const Axes& axes, co
 			dataSet = dataSets[slice];
 
 			// Define vertex index for this point (if one exists)
-			if (dataSet->yType().value(n) != DisplayDataSet::NoPoint)
+			if (dataSet->yType().constAt(n) != DisplayDataSet::NoPoint)
 			{
-				y = axes.transformY(dataSet->y().value(n+minIndex.x));
+				y = axes.transformY(dataSet->y().constAt(n+minIndex.x));
 				colourScale.colour(yLogarithmic ? pow(10.0, y / yStretch) : y / yStretch, colour);
-				vertexB = currentPrimitive->defineVertex(x.value(n), y, axes.transformZ(dataSet->z()), nrm, colour);
+				vertexB = currentPrimitive->defineVertex(x.constAt(n), y, axes.transformZ(dataSet->z()), nrm, colour);
 			}
 			else vertexB = -1;
 

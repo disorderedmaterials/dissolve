@@ -377,7 +377,7 @@ template <class T> class DynamicArray
 			return NULL;
 		}
 
-		return array_.value(index);
+		return array_.constAt(index);
 	}
 };
 

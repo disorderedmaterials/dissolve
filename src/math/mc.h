@@ -44,13 +44,13 @@ template <class T> class MonteCarloMinimiser
 	Array<double> currentTargetValues()
 	{
 		Array<double> values;
-		for (int n=0; n<targets_.nItems(); ++n) values.add(*targets_.value(n));
+		for (int n=0; n<targets_.nItems(); ++n) values.add(*targets_.constAt(n));
 		return values;
 	}
 	// Set Array of fit target values
 	void setCurrentTargetValues(Array<double> values)
 	{
-		for (int n=0; n<targets_.nItems(); ++n) (*targets_.value(n)) = values.value(n);
+		for (int n=0; n<targets_.nItems(); ++n) (*targets_.at(n)) = values.constAt(n);
 	}
 	// Smooth current parameter set
 	void smoothParameters()

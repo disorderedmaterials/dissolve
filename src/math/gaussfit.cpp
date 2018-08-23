@@ -44,7 +44,7 @@ void GaussFit::generateApproximation(FunctionSpace::SpaceType space)
 	approximateData_.templateFrom(referenceData_);
 
 	// Sum defined Gaussians
-	for (int n=0; n<nGaussians_; ++n) addFunction(approximateData_, space, x_.value(n), A_.value(n), fwhm_.value(n));
+	for (int n=0; n<nGaussians_; ++n) addFunction(approximateData_, space, x_.constAt(n), A_.constAt(n), fwhm_.constAt(n));
 }
 
 // Add contribution to specified XYData
@@ -131,7 +131,7 @@ bool GaussFit::saveCoefficients(const char* filename) const
 	if (!parser.openOutput(filename)) return false;
 
 	parser.writeLineF("#  x  A  FWHM\n");
-	for (int n=0; n<nGaussians_; ++n) parser.writeLineF("%f  %f  %f\n", x_.value(n), A_.value(n), fwhm_.value(n));
+	for (int n=0; n<nGaussians_; ++n) parser.writeLineF("%f  %f  %f\n", x_.constAt(n), A_.constAt(n), fwhm_.constAt(n));
 
 	parser.closeFiles();
 
@@ -143,7 +143,7 @@ void GaussFit::printCoefficients() const
 {
 	Messenger::print("Fitted nGaussians = %i:\n", nGaussians_);
 	Messenger::print(" Gauss     A         x         FWHM\n");
-	for (int n=0; n<nGaussians_; ++n) Messenger::print("  %4i  =  %f %f %f\n", n, A_.value(n), x_.value(n), fwhm_.value(n));
+	for (int n=0; n<nGaussians_; ++n) Messenger::print("  %4i  =  %f %f %f\n", n, A_.constAt(n), x_.constAt(n), fwhm_.constAt(n));
 }
 
 // Save Fourier-transformed Gaussians to individual files
@@ -155,9 +155,9 @@ bool GaussFit::saveFTGaussians(const char* filenamePrefix, double xStep) const
 		LineParser parser;
 		if (!parser.openOutput(CharString("%s-%03i.gauss", filenamePrefix, n))) return false;
 
-		double xCentre = x_.value(n);
-		double A = A_.value(n);
-		double fwhm = fwhm_.value(n);
+		double xCentre = x_.constAt(n);
+		double A = A_.constAt(n);
+		double fwhm = fwhm_.constAt(n);
 		if (!parser.writeLineF("#  x=%f  A=%f  fwhm=%f\n", xCentre, A, fwhm)) return false;
 
 		double x = referenceData_.xFirst();
@@ -191,7 +191,7 @@ XYData GaussFit::approximation(FunctionSpace::SpaceType space, double preFactor,
 	}
 
 	// Loop over defined Gaussians
-	for (int n=0; n<nGaussians_; ++n) addFunction(ft, space, x_.value(n), A_.value(n), fwhm_.value(n)*fwhmFactor);
+	for (int n=0; n<nGaussians_; ++n) addFunction(ft, space, x_.constAt(n), A_.constAt(n), fwhm_.constAt(n)*fwhmFactor);
 
 	ft.arrayY() *= preFactor;
 
@@ -554,7 +554,7 @@ double GaussFit::costAnalyticA(const Array<double>& alpha)
 		for (int n=0; n<alpha.nItems(); ++n)
 		{
 			g = alphaIndex_[n];
-			A = alpha.value(n);
+			A = alpha.constAt(n);
 
 			y += functionValue(alphaSpace_, x, x_[g], A, fwhm_[g]);
 		}
@@ -588,8 +588,8 @@ double GaussFit::costAnalyticAF(const Array<double>& alpha)
 		for (int n=0; n<nGauss; ++n)
 		{
 			xCentre = x_[alphaIndex_[n]];
-			A = alpha.value(n*2);
-			fwhm = alpha.value(n*2+1);
+			A = alpha.constAt(n*2);
+			fwhm = alpha.constAt(n*2+1);
 
 			// Must check for FWHM approaching zero and penalise accordingly
 			if (fabs(fwhm) < 1.0e-5) ++multiplier;
@@ -625,8 +625,8 @@ double GaussFit::costAnalyticAX(const Array<double>& alpha)
 		// Add in contributions from our Gaussians
 		for (int n=0; n<nGauss; ++n)
 		{
-			A = alpha.value(n*2);
-			xCentre = alpha.value(n*2+1);
+			A = alpha.constAt(n*2);
+			xCentre = alpha.constAt(n*2+1);
 			fwhm = fwhm_[alphaIndex_[n]];
 
 			// Must check for FWHM approaching zero and penalise accordingly
@@ -663,9 +663,9 @@ double GaussFit::costAnalyticAFX(const Array<double>& alpha)
 		// Add in contributions from our Gaussians
 		for (int n=0; n<nGauss; ++n)
 		{
-			A = alpha.value(n*2);
-			fwhm = alpha.value(n*2+1);
-			xCentre = alpha.value(n*2+2);
+			A = alpha.constAt(n*2);
+			fwhm = alpha.constAt(n*2+1);
+			xCentre = alpha.constAt(n*2+2);
 
 			// Must check for FWHM approaching zero and penalise accordingly
 			if (fabs(fwhm) < 1.0e-5) ++multiplier;
@@ -694,7 +694,7 @@ double GaussFit::costTabulatedA(const Array<double>& alpha)
 		y = approximateData_.y(i);
 
 		// Add in contributions from our Gaussians
-		for (int n=0; n<nAlpha; ++n) y += functions_.at(alphaIndex_[n], i) * alpha.value(n);
+		for (int n=0; n<nAlpha; ++n) y += functions_.at(alphaIndex_[n], i) * alpha.constAt(n);
 
 		dy = referenceData_.y(i) - y;
 		sose += dy*dy;

@@ -75,7 +75,7 @@ template <> class GenericItemContainer< Array<double> > : public GenericItem
 		parser.writeLineF("%i\n", thisData.nItems());
 		for (int n=0; n<thisData.nItems(); ++n)
 		{
-			if (!parser.writeLineF("%16.9e\n", thisData.value(n))) return false;
+			if (!parser.writeLineF("%16.9e\n", thisData.constAt(n))) return false;
 		}
 		return true;
 	}

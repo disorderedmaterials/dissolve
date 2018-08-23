@@ -582,8 +582,8 @@ bool FitKernel::initialiseDataSpace()
 	const Array<double>& abscissa = sourceCollection_->displayAbscissa();
 	if (xRange_ == FitKernel::AbsoluteRange)
 	{
-		for (firstXPoint = 0; firstXPoint < (abscissa.nItems()-1); ++firstXPoint) if (abscissa.value(firstXPoint) >= absoluteXMin_) break;
-		for (lastXPoint = abscissa.nItems()-1; lastXPoint > 0; --lastXPoint) if (abscissa.value(lastXPoint) <= absoluteXMax_) break;
+		for (firstXPoint = 0; firstXPoint < (abscissa.nItems()-1); ++firstXPoint) if (abscissa.constAt(firstXPoint) >= absoluteXMin_) break;
+		for (lastXPoint = abscissa.nItems()-1; lastXPoint > 0; --lastXPoint) if (abscissa.constAt(lastXPoint) <= absoluteXMax_) break;
 	}
 	else if (xRange_ == FitKernel::SinglePointRange)
 	{
@@ -679,7 +679,7 @@ double FitKernel::sosError(const Array<double>& alpha)
 {
 	// Poke current values back into the equation variables
 	int n = 0;
-	for (RefListItem<EquationVariable,bool>* ri = fitVariables_.first(); ri != NULL; ri = ri->next) ri->item->variable()->set(alpha.value(n++));
+	for (RefListItem<EquationVariable,bool>* ri = fitVariables_.first(); ri != NULL; ri = ri->next) ri->item->variable()->set(alpha.constAt(n++));
 	
 	// Generate new data from current variable values
 	if (!currentFitRange_->calculateValues(equation_, xVariable_, zVariable_, usedReferences_)) return -1.0;
@@ -702,8 +702,8 @@ double FitKernel::sosError(const Array<double>& alpha)
 		// Grab variable from reflist item
 		fitVar = ri->item;
 
-		if (fitVar->minimumLimitEnabled() && (alpha.value(n) < fitVar->minimumLimit())) penalty += pow(fitVar->minimumLimit() - alpha.value(n), 2.0) * 1000.0;
-		if (fitVar->maximumLimitEnabled() && (alpha.value(n) > fitVar->maximumLimit())) penalty += pow(alpha.value(n) - fitVar->maximumLimit(), 2.0) * 1000.0;
+		if (fitVar->minimumLimitEnabled() && (alpha.constAt(n) < fitVar->minimumLimit())) penalty += pow(fitVar->minimumLimit() - alpha.constAt(n), 2.0) * 1000.0;
+		if (fitVar->maximumLimitEnabled() && (alpha.constAt(n) > fitVar->maximumLimit())) penalty += pow(alpha.constAt(n) - fitVar->maximumLimit(), 2.0) * 1000.0;
 	}
 
 	return sos * penalty;

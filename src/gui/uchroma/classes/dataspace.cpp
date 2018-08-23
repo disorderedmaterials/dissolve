@@ -111,7 +111,7 @@ bool DataSpace::initialise(Collection* sourceCollection, int xIndexMin, int xInd
 
 	if (orthogonal_)
 	{
-		Messenger::print("Setting up orthogonal (ZY) data over %e < x < %e and %e < z < %e\n", abscissa.value(abscissaStart_), abscissa.value(abscissaEnd_), sourceCollection_->dataSet(displayDataSetStart_)->data().constZ(), sourceCollection_->dataSet(displayDataSetEnd_)->data().constZ());
+		Messenger::print("Setting up orthogonal (ZY) data over %e < x < %e and %e < z < %e\n", abscissa.constAt(abscissaStart_), abscissa.constAt(abscissaEnd_), sourceCollection_->dataSet(displayDataSetStart_)->data().constZ(), sourceCollection_->dataSet(displayDataSetEnd_)->data().constZ());
 
 		if (global_)
 		{
@@ -129,7 +129,7 @@ bool DataSpace::initialise(Collection* sourceCollection, int xIndexMin, int xInd
 	else
 	{
 		// Source data is normal XY slices from the current collection
-		Messenger::print("Setting up normal (XY) data over %e < x < %e and %e < z < %e\n", abscissa.value(abscissaStart_), abscissa.value(abscissaEnd_), sourceCollection_->dataSet(displayDataSetStart_)->data().constZ(), sourceCollection_->dataSet(displayDataSetEnd_)->data().constZ());
+		Messenger::print("Setting up normal (XY) data over %e < x < %e and %e < z < %e\n", abscissa.constAt(abscissaStart_), abscissa.constAt(abscissaEnd_), sourceCollection_->dataSet(displayDataSetStart_)->data().constZ(), sourceCollection_->dataSet(displayDataSetEnd_)->data().constZ());
 
 		if (global_)
 		{

@@ -167,5 +167,5 @@ bool SiteStack::sitesHaveOrientation() const
 // Return site with index specified
 const Site& SiteStack::site(int index) const
 {
-	return (sitesHaveOrientation_ ? orientedSites_.constValue(index) : sites_.constValue(index));
+	return (sitesHaveOrientation_ ? orientedSites_.constAt(index) : sites_.constAt(index));
 }

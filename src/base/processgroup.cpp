@@ -51,9 +51,9 @@ Array<int>& ProcessGroup::worldRanks()
 }
 
 // Return nth world rank of group processes
-int ProcessGroup::worldRank(int n)
+int ProcessGroup::worldRank(int n) const
 {
-	return worldRanks_.value(n);
+	return worldRanks_.constAt(n);
 }
 
 // Return pool ranks of group processes
@@ -63,7 +63,7 @@ Array<int>& ProcessGroup::poolRanks()
 }
 
 // Return nth pool rank of group processes
-int ProcessGroup::poolRank(int n)
+int ProcessGroup::poolRank(int n) const
 {
-	return poolRanks_.value(n);
+	return poolRanks_.constAt(n);
 }

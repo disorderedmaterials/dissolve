@@ -60,11 +60,11 @@ class ProcessGroup : public ListItem<ProcessGroup>
 	// Return world ranks of group processes
 	Array<int>& worldRanks();
 	// Return nth world rank of group processes
-	int worldRank(int n);
+	int worldRank(int n) const;
 	// Return pool ranks of group processes
 	Array<int>& poolRanks();
 	// Return nth pool rank of group processes
-	int poolRank(int n);
+	int poolRank(int n) const;
 };
 
 #endif

@@ -37,8 +37,8 @@ CharStringKeywordWidget::CharStringKeywordWidget(QWidget* parent, ModuleKeywordB
 			const Array<CharString>& items = keyword_->validationList();
 			for (int n=0; n<items.nItems(); ++n)
 			{
-				addItem(items.value(n).get());
-				if (DissolveSys::sameString(keyword_->asString(), items.value(n))) setCurrentIndex(n);
+				addItem(items.constAt(n).get());
+				if (DissolveSys::sameString(keyword_->asString(), items.constAt(n))) setCurrentIndex(n);
 			}
 
 			// Turn off editability
@@ -90,7 +90,7 @@ void CharStringKeywordWidget::updateValue()
 	if (keyword_->hasValidationList())
 	{
 		const Array<CharString>& items = keyword_->validationList();
-		for (int n=0; n<items.nItems(); ++n) if (DissolveSys::sameString(keyword_->asString(), items.value(n)))
+		for (int n=0; n<items.nItems(); ++n) if (DissolveSys::sameString(keyword_->asString(), items.constAt(n)))
 		{
 			setCurrentIndex(n);
 			break;

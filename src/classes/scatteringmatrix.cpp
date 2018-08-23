@@ -82,7 +82,7 @@ void ScatteringMatrix::print() const
 	{
 		line.clear();
 		for (int n=0; n<A_.nColumns(); ++n) line.strcatf("%10f ", A_.constAt(row, n));
-		Messenger::print("%s  %s\n", line.get(), data_.value(row).name());
+		Messenger::print("%s  %s\n", line.get(), data_.constAt(row).name());
 	}
 }
 
@@ -103,7 +103,7 @@ void ScatteringMatrix::printInverse() const
 	{
 		line.clear();
 		for (int row=0; row<inverseA_.nRows(); ++row) line.strcatf("%10f ", inverseA_.constAt(row, col));
-		Messenger::print("%s  %s\n", line.get(), data_.value(col).name());
+		Messenger::print("%s  %s\n", line.get(), data_.constAt(col).name());
 	}
 }
 

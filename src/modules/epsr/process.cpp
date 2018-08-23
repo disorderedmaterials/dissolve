@@ -241,12 +241,12 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		for (int n=0; n<x1.nItems(); ++n)
 		{
 			// Grab experimental data x value
-			x = x1.value(n);
+			x = x1.constAt(n);
 
 			// If this x value is below the minimum Q value we are fitting, set the difference to zero. Otherwise, store the "inverse" value ([sim - exp], for consistency with EPSR)
 			if (x < deltaSQMin) deltaFQ.addPoint(x, 0.0);
 			else if (x > deltaSQMax) break;
-			else deltaFQ.addPoint(x, simulatedFQ.interpolated(x) - y1.value(n));
+			else deltaFQ.addPoint(x, simulatedFQ.interpolated(x) - y1.constAt(n));
 		}
 
 		/*
@@ -553,7 +553,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					weight /= combinedRho.at(i,j);
 
 					// Store fluctuation coefficients ready for addition to potential coefficients later on.
-					for (int n=0; n<ncoeffp; ++n) fluctuationCoefficients.ref(i, j, n) += weight * fitCoefficients.value(n);
+					for (int n=0; n<ncoeffp; ++n) fluctuationCoefficients.at(i, j, n) += weight * fitCoefficients.constAt(n);
 				}
 			}
 
@@ -576,7 +576,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 			{
 				Array<double>& potCoeff = coefficients.at(i, j);
-				for (int n=0; n<ncoeffp; ++n) potCoeff[n] += fluctuationCoefficients.value(i, j, n);
+				for (int n=0; n<ncoeffp; ++n) potCoeff[n] += fluctuationCoefficients.constAt(i, j, n);
 			}
 		}
 

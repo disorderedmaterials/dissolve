@@ -280,8 +280,8 @@ double RefineModule::costFunction3Exp(const Array<double>& alpha)
 	const double windowDelta = 0.01;
 	double sos = 0.0, delta, func;
 	int nPoints = 0;
-	double x = alpha.value(0) - window;
-	const double xMax = alpha.value(0) + window;
+	double x = alpha.constAt(0) - window;
+	const double xMax = alpha.constAt(0) + window;
 	while (x <= xMax)
 	{
 		// Check x against limits of function
@@ -293,13 +293,13 @@ double RefineModule::costFunction3Exp(const Array<double>& alpha)
 		else if (x > fitData_.xLast()) break;
 
 		// Evaluate the function
-		func = fitEquation(x, alpha.value(0), alpha.value(1), alpha.value(2), alpha.value(3), alpha.value(4), alpha.value(5));
+		func = fitEquation(x, alpha.constAt(0), alpha.constAt(1), alpha.constAt(2), alpha.constAt(3), alpha.constAt(4), alpha.constAt(5));
 		delta = fitData_.interpolated(x) - func;
 		sos += delta*delta;
 		++nPoints;
 
-		// Add on penalty for alpha.value(0] (the x intercept) straying too far from the starting value
-		delta = fabs(xCentreStart_ - alpha.value(0)) - xCentreDeltaLimit_;
+		// Add on penalty for alpha.constAt(0] (the x intercept) straying too far from the starting value
+		delta = fabs(xCentreStart_ - alpha.constAt(0)) - xCentreDeltaLimit_;
 		if (delta > 0.0) sos += (delta * 10000.0)*(delta * 10000.0);
 
 		x += windowDelta;
@@ -328,8 +328,8 @@ double RefineModule::costFunction2Exp(const Array<double>& alpha)
 	const double windowDelta = 0.01;
 	double sos = 0.0, delta, func;
 	int nPoints = 0;
-	double x = alpha.value(0) - window;
-	const double xMax = alpha.value(0) + window;
+	double x = alpha.constAt(0) - window;
+	const double xMax = alpha.constAt(0) + window;
 	while (x <= xMax)
 	{
 		// Check x against limits of function
@@ -341,13 +341,13 @@ double RefineModule::costFunction2Exp(const Array<double>& alpha)
 		else if (x > fitData_.xLast()) break;
 
 		// Evaluate the function
-		func = fitEquation(x, alpha.value(0), alpha.value(1), alpha.value(2), alpha.value(3), 0.0, alpha.value(4));
+		func = fitEquation(x, alpha.constAt(0), alpha.constAt(1), alpha.constAt(2), alpha.constAt(3), 0.0, alpha.constAt(4));
 		delta = fitData_.interpolated(x) - func;
 		sos += delta*delta;
 		++nPoints;
 
-		// Add on penalty for alpha.value(0] (the x intercept) straying too far from the starting value
-		delta = fabs(xCentreStart_ - alpha.value(0)) - xCentreDeltaLimit_;
+		// Add on penalty for alpha[0] (the x intercept) straying too far from the starting value
+		delta = fabs(xCentreStart_ - alpha.constAt(0)) - xCentreDeltaLimit_;
 		if (delta > 0.0) sos += (delta * 10000.0)*(delta * 10000.0);
 
 		x += windowDelta;
