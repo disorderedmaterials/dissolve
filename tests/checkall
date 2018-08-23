@@ -84,6 +84,9 @@ do
 			TARGETPROCS="S"
 		else
 			echo "NOPARALLEL found, but no serial binary available. Test will be skipped..."
+
+			# Move up to base directory and continue
+			cd ../
 			continue
 		fi
 	fi
