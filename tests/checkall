@@ -24,8 +24,8 @@ DUQP=../src/dissolve
 export DUQDATA=../../data
 if [ ! -e $DUQS ]
 then
-	echo "Couldn't find serial binary."
-	exit 1
+	echo "Couldn't find serial binary, so no serial tests will be performed."
+	DUQS="NO"
 fi
 if [ ! -e $DUQP ]
 then
@@ -33,16 +33,25 @@ then
 	DUQP="NO"
 fi
 
+if [ "$DUQS" != "NO" ] && [ "$DUQP" != "NO" ]
+then
+	echo "No binaries available to perform tests!"
+	exit 1
+fi
+
 # Do we have a parallel exe?
 PARALLEL="FALSE"
-PROCS="S 1 2 3 4"
+PROCS=""
+if [ "$DUQS" != "NO" ]
+then
+	echo "Serial version available - serial tests will be performed."
+	PROCS="S"
+fi
 if [ "$DUQP" != "NO" ]
 then
 	echo "Parallel version available - checks will be performed over ($PROCS) processes."
 	PARALLEL="TRUE"
-else
-	echo "Tests will be performed in serial mode only."
-	PROCS="S"
+	PROCS="$PROCS 1 2 3 4"
 fi
 
 # Loop over all test directories, or supplied dirs
@@ -67,10 +76,16 @@ do
 
 	# Check for the presence of flag files
 	TARGETPROCS=$PROCS
-	if [ -e NOPARALLEL ] && [ "$PROCS" != "S" ]
+	if [ -e NOPARALLEL ]
 	then
-		echo "NOPARALLEL found - test will be performed in serial mode only."
-		TARGETPROCS="1"
+		if [ "$DUQS" != "NO" ]
+		then
+			echo "NOPARALLEL found - test will be performed in serial mode only."
+			TARGETPROCS="S"
+		else
+			echo "NOPARALLEL found, but no serial binary available. Test will be skipped..."
+			continue
+		fi
 	fi
 	
 	# Loop over all input files (*.txt)
