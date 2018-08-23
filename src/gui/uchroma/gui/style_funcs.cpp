@@ -23,6 +23,7 @@
 #include "gui/uchroma/uchromabase.h"
 #include "templates/reflist.h"
 #include <QColorDialog>
+#include <QButtonGroup>
 
 /*
  * Window Functions

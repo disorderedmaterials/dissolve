@@ -137,12 +137,12 @@ bool IsotopeData::broadcast(ProcessPool& procPool, int root)
 	int Z, A;
 	if (procPool.poolRank() == root)
 	{
-		Z = isotope_->element()->z();
+		Z = isotope_->element().Z();
 		A = isotope_->A();
 	}
 	procPool.broadcast(Z, root);
 	procPool.broadcast(A, root);
-	isotope_ = PeriodicTable::element(Z).hasIsotope(A);
+	isotope_ = Isotopes::isotope(Z, A);
 
 	procPool.broadcast(population_, root);
 	procPool.broadcast(fraction_, root);
@@ -154,7 +154,7 @@ bool IsotopeData::broadcast(ProcessPool& procPool, int root)
 bool IsotopeData::equality(ProcessPool& procPool)
 {
 #ifdef PARALLEL
-	if (!procPool.equality(isotope_->element()->z())) return Messenger::error("IsotopeData element z is not equivalent (process %i has '%s').\n", procPool.poolRank(), isotope_->element()->z());
+	if (!procPool.equality(isotope_->element().Z())) return Messenger::error("IsotopeData element z is not equivalent (process %i has '%s').\n", procPool.poolRank(), isotope_->element().Z());
 	if (!procPool.equality(isotope_->A())) return Messenger::error("IsotopeData isotope A is not equivalent (process %i has %i).\n", procPool.poolRank(), isotope_->A());
 	if (!procPool.equality(population_)) return Messenger::error("IsotopeData population is not equivalent (process %i has %i).\n", procPool.poolRank(), population_);
 	if (!procPool.equality(fraction_)) return Messenger::error("IsotopeData fraction is not equivalent (process %i has %e).\n", procPool.poolRank(), fraction_);

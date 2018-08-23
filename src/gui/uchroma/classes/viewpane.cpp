@@ -410,7 +410,7 @@ void ViewPane::removeCollectionTarget(Collection* collection)
 	TargetData* target = collectionIsTarget(collection);
 	if (!target)
 	{
-		Messenger::printVerbose("Internal Error: Tried to remove collection '%s' from pane '%s', but it is not a target there.\n", qPrintable(collection->name()), qPrintable(name_));
+		Messenger::printVerbose("Internal Error: Tried to remove collection '%s' from pane '%s', but it is not a target there.\n", collection->name(), name_.get());
 		return;
 	}
 

@@ -337,20 +337,3 @@ void Atom::translateCoordinates(double dx, double dy, double dz)
 {
 	setCoordinates(r_+Vec3<double>(dx,dy,dz));
 }
-
-/*
- * Parallel Comms
- */
-
-// Broadcast data from Master to all Slaves
-bool Atom::broadcast(ProcessPool& procPool)
-{
-#ifdef PARALLEL
-	if (!procPool.broadcast(&element_, 1)) return false;
-	if (!procPool.broadcast(r_)) return false;
-	if (!procPool.broadcast(&charge_, 1)) return false;
-	if (!procPool.broadcast(&localTypeIndex_, 1)) return false;
-	if (!procPool.broadcast(&masterTypeIndex_, 1)) return false;
-#endif
-	return true;
-}

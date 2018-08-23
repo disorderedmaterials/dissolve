@@ -25,7 +25,7 @@
 #include <string.h>
 
 // Constructor
-AtomType::AtomType() : MPIListItem<AtomType>()
+AtomType::AtomType() : ListItem<AtomType>()
 {
 	element_ = NULL;
 	name_ = "XX";
@@ -81,27 +81,4 @@ void AtomType::setIndex(int id)
 int AtomType::index() const
 {
 	return index_;
-}
-
-/*
- * Parallel Comms
- */
-
-// Broadcast data from Master to all Slaves
-bool AtomType::broadcast(ProcessPool& procPool, int root)
-{
-#ifdef PARALLEL
-	// Send name
-	procPool.broadcast(name_, root);
-	
-	// Send element
-	procPool.broadcast(element_,root);
-	
-	// Send Parameters
-	parameters_.broadcast(procPool, root);
-
-	// Send exchangeable flag
-	procPool.broadcast(exchangeable_, root);
-#endif
-	return true;
 }

@@ -130,7 +130,7 @@ Collection* UChromaBase::addCollectionFromLocator(const char* locator, Collectio
 	if (locatorParts.count() == 0)
 	{
 		Collection* collection = addCollection(collectionName, listIndex);
-		printf("Added collectionFromLocator '%s', its objectId is %i\n", qPrintable(collectionName), collection->objectId());
+		printf("Added collectionFromLocator '%s', its objectId is %i\n", collectionName.get(), collection->objectId());
 		return collection;
 	}
 

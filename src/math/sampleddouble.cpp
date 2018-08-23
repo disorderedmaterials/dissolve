@@ -119,3 +119,31 @@ bool SampledDouble::read(LineParser& parser)
 
 	return true;
 }
+
+/*
+ * Parallel Comms
+ */
+
+// Broadcast data
+bool SampledDouble::broadcast(ProcessPool& procPool, int rootRank)
+{
+#ifdef PARALLEL
+	if (!procPool.broadcast(value_, rootRank)) return false;
+	if (!procPool.broadcast(count_, rootRank)) return false;
+	if (!procPool.broadcast(mean_, rootRank)) return false;
+	if (!procPool.broadcast(m2_, rootRank)) return false;
+#endif
+	return true;
+}
+
+// Check equality of all data
+bool SampledDouble::equality(ProcessPool& procPool)
+{
+#ifdef PARALLEL
+	if (!procPool.equality(value_)) return Messenger::error("SampledDouble y value is not equivalent (process %i has %e).\n", procPool.poolRank(), value_);
+	if (!procPool.equality(count_)) return Messenger::error("SampledDouble count is not equivalent (process %i has %i).\n", procPool.poolRank(), count_);
+	if (!procPool.equality(mean_)) return Messenger::error("SampledDouble mean value is not equivalent (process %i has %e).\n", procPool.poolRank(), mean_);
+	if (!procPool.equality(m2_)) return Messenger::error("SampledDouble m2 value is not equivalent (process %i has %e).\n", procPool.poolRank(), m2_);
+#endif
+	return true;
+}

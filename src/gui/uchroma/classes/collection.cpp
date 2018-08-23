@@ -1118,7 +1118,7 @@ Collection* Collection::currentSlice()
 // Add FitKernel, if one does not exist
 void Collection::addFitKernel()
 {
-	if (fitKernel_)	Messenger::warn("Attempted to add a new FitKernel to collection '%s', but one already exists.\n", qPrintable(name_));
+	if (fitKernel_)	Messenger::warn("Attempted to add a new FitKernel to collection '%s', but one already exists.\n", name_.get());
 	else fitKernel_ = new FitKernel(*uChromaBase_);
 	fitKernel_->setSourceCollection(parent_);
 	fitKernel_->setDestinationCollection(this);
@@ -1496,7 +1496,7 @@ bool Collection::exportData(const char* fileName)
 
 	if (!parser.isFileGoodForWriting()) return false;
 
-	parser.writeLineF("# Exported data: '%s'\n", qPrintable(name_));
+	parser.writeLineF("# Exported data: '%s'\n", name_.get());
 
 	for (DataSet* dataSet = dataSets_.first(); dataSet != NULL; dataSet = dataSet->next)
 	{

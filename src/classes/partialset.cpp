@@ -672,10 +672,10 @@ bool PartialSet::broadcast(ProcessPool& procPool, int rootRank)
 	{
 		for (int typeJ=typeI; typeJ<nTypes; ++typeJ)
 		{
-			partials_.ref(typeI, typeJ).broadcast(procPool, rootRank);
-			boundPartials_.ref(typeI, typeJ).broadcast(procPool, rootRank);
-			unboundPartials_.ref(typeI, typeJ).broadcast(procPool, rootRank);
-			braggPartials_.ref(typeI, typeJ).broadcast(procPool, rootRank);
+			partials_.at(typeI, typeJ).broadcast(procPool, rootRank);
+			boundPartials_.at(typeI, typeJ).broadcast(procPool, rootRank);
+			unboundPartials_.at(typeI, typeJ).broadcast(procPool, rootRank);
+			braggPartials_.at(typeI, typeJ).broadcast(procPool, rootRank);
 		}
 	}
 	total_.broadcast(procPool, rootRank);
@@ -693,10 +693,10 @@ bool PartialSet::equality(ProcessPool& procPool)
 	{
 		for (int typeJ=typeI; typeJ<nTypes; ++typeJ)
 		{
-			if (!partials_.ref(typeI, typeJ).equality(procPool)) return Messenger::error("PartialSet full partial %i-%i is not equivalent.\n", typeI, typeJ);
-			if (!boundPartials_.ref(typeI, typeJ).equality(procPool)) return Messenger::error("PartialSet bound partial %i-%i is not equivalent.\n", typeI, typeJ);
-			if (!unboundPartials_.ref(typeI, typeJ).equality(procPool)) return Messenger::error("PartialSet unbound partial %i-%i is not equivalent.\n", typeI, typeJ);
-			if (!braggPartials_.ref(typeI, typeJ).equality(procPool)) return Messenger::error("PartialSet Bragg partial %i-%i is not equivalent.\n", typeI, typeJ);
+			if (!partials_.at(typeI, typeJ).equality(procPool)) return Messenger::error("PartialSet full partial %i-%i is not equivalent.\n", typeI, typeJ);
+			if (!boundPartials_.at(typeI, typeJ).equality(procPool)) return Messenger::error("PartialSet bound partial %i-%i is not equivalent.\n", typeI, typeJ);
+			if (!unboundPartials_.at(typeI, typeJ).equality(procPool)) return Messenger::error("PartialSet unbound partial %i-%i is not equivalent.\n", typeI, typeJ);
+			if (!braggPartials_.at(typeI, typeJ).equality(procPool)) return Messenger::error("PartialSet Bragg partial %i-%i is not equivalent.\n", typeI, typeJ);
 		}
 	}
 	if (!total_.equality(procPool)) return Messenger::error("PartialSet total sum is not equivalent.\n");

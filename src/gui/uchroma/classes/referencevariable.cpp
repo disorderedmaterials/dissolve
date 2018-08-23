@@ -98,7 +98,7 @@ bool ReferenceVariable::updateVariable()
 {
 	if (!variable_) return false;
 	if (name_ == variable_->name()) return false;
-	variable_->setName(qPrintable(name_));
+	variable_->setName(name_);
 	return true;
 }
 

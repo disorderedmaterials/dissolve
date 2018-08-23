@@ -25,6 +25,9 @@
 #include "base/genericitembase.h"
 #include <ctime>
 
+// Forward Declarations
+class ProcessPool;
+
 // Double value with sampling
 class SampledDouble : public GenericItemBase
 {
@@ -83,6 +86,16 @@ class SampledDouble : public GenericItemBase
 	bool write(LineParser& parser);
 	// Read data through specified LineParser
 	bool read(LineParser& parser);
+
+
+	/*
+	 * Parallel Comms
+	 */
+	public:
+	// Broadcast data
+	bool broadcast(ProcessPool& procPool, int rootRank);
+	// Check equality of all data
+	bool equality(ProcessPool& procPool);
 };
 
 #endif

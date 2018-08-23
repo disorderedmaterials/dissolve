@@ -24,7 +24,7 @@
 
 #include "base/charstring.h"
 #include "base/parameters.h"
-#include "templates/mpilistitem.h"
+#include "templates/listitem.h"
 
 // Forward Declarations
 class Element;
@@ -32,7 +32,7 @@ class Element;
 /*
  * AtomType Definition
  */
-class AtomType : public MPIListItem<AtomType>
+class AtomType : public ListItem<AtomType>
 {
 	public:
 	// Constructor
@@ -71,14 +71,6 @@ class AtomType : public MPIListItem<AtomType>
 	void setIndex(int id);
 	// Return index of this type in the master type index
 	int index() const;
-
-
-	/*
-	 * Parallel Comms
-	 */
-	public:
-	// Broadcast data from Master to all Slaves
-	bool broadcast(ProcessPool& procPool, int root = 0);
 };
 
 #endif

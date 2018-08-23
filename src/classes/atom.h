@@ -174,14 +174,6 @@ class Atom : public DynamicArrayObject<Atom>
 	void translateCoordinates(const Vec3<double>& delta);
 	// Translate coordinates
 	void translateCoordinates(double dx, double dy, double dz);
-
-
-	/*
-	 * Parallel Comms
-	 */
-	public:
-	// Broadcast data from Master to all Slaves
-	bool broadcast(ProcessPool& procPool);
 };
 
 #endif

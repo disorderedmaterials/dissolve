@@ -143,14 +143,6 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	void setCoordinates(const Vec3<double>& newr);
 	// Translate coordinates
 	void translateCoordinates(const Vec3<double>& delta);
-
-
-	/*
-	 * Parallel Comms
-	 */
-	public:
-	// Broadcast data from Master to all Slaves
-	bool broadcast(ProcessPool& procPool, const List<AtomType>& atomTypes);
 };
 
 #endif

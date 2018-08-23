@@ -151,7 +151,7 @@ bool DataSet::refreshData(QDir sourceDir)
 		// Check file exists
 		if (!QFile::exists(sourceDir.absoluteFilePath(sourceFileName_.get())))
 		{
-			Messenger::error("File '%s' not found.\n", qPrintable(sourceFileName_));
+			Messenger::error("File '%s' not found.\n", sourceFileName_.get());
 			return false;
 		}
 

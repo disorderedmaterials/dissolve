@@ -278,11 +278,19 @@ void LineParser::closeFiles()
 // Return whether current file source is good for reading
 bool LineParser::isFileGoodForReading() const
 {
-	if (fileInput_ && (inputFile_ == NULL)) return false;
-	else if (fileInput_ && (!inputFile_->is_open())) return false;
-	else if ((!fileInput_) && (!inputStrings_)) return false;
+	// Master performs the checks
+	bool result = true;
+	if ((!processPool_) || processPool_->isMaster())
+	{
+		if (fileInput_ && (inputFile_ == NULL)) result = false;
+		else if (fileInput_ && (!inputFile_->is_open())) result = false;
+		else if ((!fileInput_) && (!inputStrings_)) result = false;
+	}
 
-	return true;
+	// Broadcast result of open
+	if (processPool_ && (!processPool_->broadcast(result))) return false;
+
+	return result;
 }
 
 // Return whether current file source is good for writing

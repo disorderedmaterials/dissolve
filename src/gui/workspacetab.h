@@ -27,6 +27,7 @@
 
 // Forward Declarations
 class TMdiArea;
+class QMenu;
 
 // Workspace Tab
 class WorkspaceTab : public QWidget, public MainTab

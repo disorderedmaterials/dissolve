@@ -83,14 +83,6 @@ class Isotopologue : public ListItem<Isotopologue>
 	const RefList<AtomType,Isotope*>& isotopes() const;
 	// Return nth Atom/Isotope pair
 	RefListItem<AtomType,Isotope*>* isotope(int n);
-
-
-	/*
-	 * Parallel Comms
-	 */
-	public:
-	// Broadcast data from Master to all Slaves
-	bool broadcast(ProcessPool& procPool, const List<AtomType>& atomTypes);
 };
 
 #endif

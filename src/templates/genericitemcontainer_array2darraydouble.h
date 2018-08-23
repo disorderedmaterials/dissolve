@@ -180,9 +180,9 @@ template <> class GenericItemContainer< Array2D< Array<double> > > : public Gene
 	{
 #ifdef PARALLEL
 		// Verify array size and state first
-		if (!procPool.equality(data.nRows())) return Messenger::error("Array2D<double> nRows are not equal (process %i has %i).\n", procPool.poolRank(), array.nRows());
-		if (!procPool.equality(data.nColumns())) return Messenger::error("Array2D<double> nColumns are not equal (process %i has %i).\n", procPool.poolRank(), array.nColumns());
-		if (!procPool.equality(data.halved())) return Messenger::error("Array2D<double> half-status are not equivalent (process %i has %i).\n", procPool.poolRank(), array.halved());
+		if (!procPool.equality(data.nRows())) return Messenger::error("Array2D<double> nRows are not equal (process %i has %i).\n", procPool.poolRank(), data.nRows());
+		if (!procPool.equality(data.nColumns())) return Messenger::error("Array2D<double> nColumns are not equal (process %i has %i).\n", procPool.poolRank(), data.nColumns());
+		if (!procPool.equality(data.halved())) return Messenger::error("Array2D<double> half-status are not equivalent (process %i has %i).\n", procPool.poolRank(), data.halved());
 
 		// Keep it simple (and slow) and check/send one object at a time
 		for (int n=0; n<data.linearArraySize(); ++n) if (!procPool.equality(data.linearArray()[n])) return Messenger::error("Array<double> index %i is not equivalent (process %i.\n", procPool.poolRank());
