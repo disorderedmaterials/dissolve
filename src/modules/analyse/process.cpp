@@ -42,8 +42,11 @@ bool AnalyseModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Set up process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());
 
+		// Create data prefix
+		CharString dataPrefix("%s_%s", uniqueName(), cfg->niceName());
+
 		// Execute the analysis
-		if (!analyser_.execute(cfg)) return Messenger::error("Analysis failed.\n");
+		if (!analyser_.execute(procPool, cfg, dataPrefix, dissolve.processingModuleData())) return Messenger::error("Analysis failed.\n");
 	}
 
 	return true;

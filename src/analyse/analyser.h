@@ -28,6 +28,7 @@
 // Forward Declarations
 class Configuration;
 class LineParser;
+class ProcessPool;
 
 // Analyser
 class Analyser
@@ -55,8 +56,8 @@ class Analyser
 	RefList<Configuration,int> configurationPoints_;
 
 	public:
-	// Run analysis for specified Configuration
-	bool execute(Configuration* cfg);
+	// Run analysis for specified Configuration, storing / retrieving generated data from supplied list 
+	bool execute(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList);
 
 
 	/*

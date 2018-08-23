@@ -91,8 +91,17 @@ const char* AnalysisCollectNode::collectNodeKeyword(AnalysisCollectNode::Collect
  * Execute
  */
 
+// Prepare any necessary data, ready for execution
+bool AnalysisCollectNode::prepare(Configuration* cfg, const char* dataPrefix, GenericList& targetList)
+{
+	// Need to check the supplied list for existing data with our name on it. If it's not present, set it up now.
+	
+
+	return true;
+}
+
 // Execute node, targetting the supplied Configuration
-AnalysisNode::NodeExecutionResult AnalysisCollectNode::execute(Configuration* cfg)
+AnalysisNode::NodeExecutionResult AnalysisCollectNode::execute(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList)
 {
 	Vec3<double> observedValues;
 

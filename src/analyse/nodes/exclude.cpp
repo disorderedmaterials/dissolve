@@ -64,8 +64,14 @@ const char* AnalysisExcludeNode::excludeNodeKeyword(AnalysisExcludeNode::Exclude
  * Execute
  */
 
+// Prepare any necessary data, ready for execution
+bool AnalysisExcludeNode::prepare(Configuration* cfg, const char* dataPrefix, GenericList& targetList)
+{
+	return true;
+}
+
 // Execute node, targetting the supplied Configuration
-AnalysisNode::NodeExecutionResult AnalysisExcludeNode::execute(Configuration* cfg)
+AnalysisNode::NodeExecutionResult AnalysisExcludeNode::execute(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList)
 {
 	// Check any defined exclusion rules
 	if (disallowSameSite_)

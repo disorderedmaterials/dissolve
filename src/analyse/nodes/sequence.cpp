@@ -63,8 +63,14 @@ const char* AnalysisSequenceNode::sequenceNodeKeyword(AnalysisSequenceNode::Sequ
  * Execute
  */
 
+// Prepare any necessary data, ready for execution
+bool AnalysisSequenceNode::prepare(Configuration* cfg, const char* dataPrefix, GenericList& targetList)
+{
+	return true;
+}
+
 // Execute node, targetting the supplied Configuration
-AnalysisNode::NodeExecutionResult AnalysisSequenceNode::execute(Configuration* cfg)
+AnalysisNode::NodeExecutionResult AnalysisSequenceNode::execute(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList)
 {
 	AnalysisNode::NodeExecutionResult result = AnalysisNode::Success;
 
@@ -73,7 +79,7 @@ AnalysisNode::NodeExecutionResult AnalysisSequenceNode::execute(Configuration* c
 	while (AnalysisNode* node = nodeIterator.iterate())
 	{
 		// Get the result of executing the node
-		result = node->execute(cfg);
+		result = node->execute(procPool, cfg, dataPrefix, targetList);
 
 		// If the result is not Success, don't process any more nodes
 		if (result != AnalysisNode::Success) break;

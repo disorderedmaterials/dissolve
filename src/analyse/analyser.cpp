@@ -38,8 +38,8 @@ Analyser::~Analyser()
  * Execute
  */
 
-// Run analysis for specified Configuration
-bool Analyser::execute(Configuration* cfg)
+// Run analysis for specified Configuration, storing / retrieving generated data from supplied list
+bool Analyser::execute(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList)
 {
 	// Check that the Configuration has changed before we do any more analysis on it
 	RefListItem<Configuration,int>* ri = configurationPoints_.contains(cfg);
@@ -55,8 +55,11 @@ bool Analyser::execute(Configuration* cfg)
 	}
 	else configurationPoints_.add(cfg, cfg->coordinateIndex());
 
+	// Prepare the nodes
+	if (!rootSequence_.prepare(cfg, dataPrefix, targetList)) return Messenger::error("Failed to prepare analysis sequence for execution.\n");
+
 	// Execute the root sequence
-	bool result = rootSequence_.execute(cfg);
+	bool result = rootSequence_.execute(procPool, cfg, dataPrefix, targetList);
 
 	return result;
 }

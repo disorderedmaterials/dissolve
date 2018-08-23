@@ -26,7 +26,9 @@
 
 // Forward Declarations
 class Configuration;
+class GenericList;
 class LineParser;
+class ProcessPool;
 class Site;
 class SiteContextStack;
 
@@ -78,8 +80,10 @@ class AnalysisNode : public ListItem<AnalysisNode>
 	public:
 	// Node execution result
 	enum NodeExecutionResult { Failure, Success, SomethingElse };
+	// Prepare any necessary data, ready for execution
+	virtual bool prepare(Configuration* cfg, const char* dataPrefix, GenericList& targetList) = 0;
 	// Execute node, targetting the supplied Configuration
-	virtual NodeExecutionResult execute(Configuration* cfg) = 0;
+	virtual NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList) = 0;
 
 
 	/*

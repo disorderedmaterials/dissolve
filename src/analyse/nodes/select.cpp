@@ -96,8 +96,14 @@ const Site& AnalysisSelectNode::currentSite() const
  * Execute
  */
 
+// Prepare any necessary data, ready for execution
+bool AnalysisSelectNode::prepare(Configuration* cfg, const char* dataPrefix, GenericList& targetList)
+{
+	return true;
+}
+
 // Execute node, targetting the supplied Configuration
-AnalysisNode::NodeExecutionResult AnalysisSelectNode::execute(Configuration* cfg)
+AnalysisNode::NodeExecutionResult AnalysisSelectNode::execute(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList)
 {
 	// First, get our SiteStack from the supplied Configuration
 	siteStack_ = cfg->siteStack(speciesSite_);
@@ -110,10 +116,11 @@ AnalysisNode::NodeExecutionResult AnalysisSelectNode::execute(Configuration* cfg
 	// If a ForEach branch has been defined, process it for each of our sites in turn. Otherwise, we're done
 	if (forEachBranch_)
 	{
+		// TODO Parallelise FIRST select only.
 		for (currentForEachSite_ = 0; currentForEachSite_ < siteStack_->nSites(); ++currentForEachSite_)
 		{
 			// If the branch fails at any point, return failure here.  Otherwise, continue the loop
-			if (forEachBranch_->execute(cfg) == AnalysisNode::Failure) return AnalysisNode::Failure;
+			if (forEachBranch_->execute(procPool, cfg, dataPrefix, targetList) == AnalysisNode::Failure) return AnalysisNode::Failure;
 		}
 	}
 
