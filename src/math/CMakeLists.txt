@@ -1,10 +1,10 @@
 add_library(math
   broadeningfunction.cpp
   cuboid.cpp
-  # data1d.cpp
   doubleexp.cpp
   gaussfit.cpp
   gj.cpp
+  histogram1d.cpp
   mathfunc.cpp
   matrix3.cpp
   matrix4.cpp
@@ -20,11 +20,11 @@ add_library(math
   broadeningfunction.h
   constants.h
   cuboid.h
-  # data1d.h
   doubleexp.h
   functionspace.h
   gaussfit.h
   gj.h
+  histogram1d.h
   mathfunc.h
   matrix3.h
   matrix4.h

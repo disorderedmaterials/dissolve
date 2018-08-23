@@ -42,6 +42,7 @@ class ObjectInfo
 	enum ObjectType
 	{
 		NoObject = 0,
+		Histogram1DObject,
 		XYDataObject,
 		UChromaAxesObject,
 		UChromaCollectionObject,

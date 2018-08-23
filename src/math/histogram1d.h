@@ -1,6 +1,6 @@
 /*
 	*** 1-Dimensional Binned Data With Statistics
-	*** src/math/data1d.h
+	*** src/math/histogram1d.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DATA1D_H
-#define DISSOLVE_DATA1D_H
+#ifndef DISSOLVE_HISTOGRAM1D_H
+#define DISSOLVE_HISTOGRAM1D_H
 
 #include "base/charstring.h"
 #include "math/sampleddouble.h"
@@ -30,22 +30,22 @@
 // Forward Declarations
 class ProcessPool;
 
-// Data1D
-class Data1D : public ListItem<Data1D>, public ObjectStore<Data1D>, public GenericItemBase
+// Histogram1D
+class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D>, public GenericItemBase
 {
 	public:
 	// Constructor
-	Data1D();
+	Histogram1D();
 	// Destructor
-	~Data1D();
+	~Histogram1D();
 	// Copy Constructor
-	Data1D(const Data1D& source);
+	Histogram1D(const Histogram1D& source);
 	// Clear data
 	void clear();
 	
 
 	/*
-	 * Data
+	 * Histogram Data
 	 */
 	private:
 	// Minimum x value for data (hard left-edge of first bin)
@@ -56,18 +56,20 @@ class Data1D : public ListItem<Data1D>, public ObjectStore<Data1D>, public Gener
 	double binWidth_;
 	// Number of bins
 	int nBins_;
-	// Array of y values
-	Array<SampledDouble> y_;
-	// Number of values sampled over entire y array
-	int nSamples_;
-	// Normalisation factor
-	double normalisationFactor_;
+	// Array of bin centres
+	Array<double> x_;
+	// Current bin populations
+	Array<int> y_;
+	// Number of values binned over entire y array
+	int nBinned_;
 
 	public:
 	// Initialise with specified bin range
 	void initialise(double xMin, double xMax, double binWidth);
-	// Reset all accumulated data
-	void reset();
+	// Reset histogram bins
+	void resetBins();
+	// Reset all data
+	void resetAll();
 	// Return minimum x value
 	double xMin() const;
 	// Return maximum x value
@@ -76,14 +78,26 @@ class Data1D : public ListItem<Data1D>, public ObjectStore<Data1D>, public Gener
 	double binWidth() const;
 	// Return number of bins
 	int nBins() const;
-	// Accumulate value at specified x
-	void add(double x, double y);
+	// Increase bin value at specified x
+	void bin(double x, int n = 1);
 	// Return Array of x centre-bin values
 	const Array<double>& x() const;
-	// Return y Array
-	Array<SampledDouble>& y();
-	// Return y Array (const)
-	const Array<SampledDouble>& constY() const;
+
+
+	/*
+	 * Statistics
+	 */
+	private:
+	// Array of accumulated y values
+	Array<SampledDouble> yAccumulated_;
+
+	public:
+	// Add current histogram populations in to statistics
+	void accumulate();
+	// Return statistics array
+	Array<SampledDouble>& yAccumulated();
+	// Return statistics array (const)
+	const Array<SampledDouble>& yAccumulated() const;
 
 
 	/*
@@ -91,11 +105,7 @@ class Data1D : public ListItem<Data1D>, public ObjectStore<Data1D>, public Gener
 	 */
 	public:
 	// Assignment Operator
-	void operator=(const Data1D& source);
-	// Operator *=
-	void operator*=(const double factor);
-	// Operator /=
-	void operator/=(const double factor);
+	void operator=(const Histogram1D& source);
 
 
 	/*
