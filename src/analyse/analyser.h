@@ -23,7 +23,7 @@
 #define DISSOLVE_ANALYSER_H
 
 #include "analyse/nodes/sequence.h"
-#include "analyse/sitecontextstack.h"
+#include "analyse/nodecontextstack.h"
 
 // Forward Declarations
 class Configuration;

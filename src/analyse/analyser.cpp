@@ -59,9 +59,12 @@ bool Analyser::execute(ProcessPool& procPool, Configuration* cfg, const char* da
 	if (!rootSequence_.prepare(cfg, dataPrefix, targetList)) return Messenger::error("Failed to prepare analysis sequence for execution.\n");
 
 	// Execute the root sequence
-	bool result = rootSequence_.execute(procPool, cfg, dataPrefix, targetList);
+	if (!rootSequence_.execute(procPool, cfg, dataPrefix, targetList)) return Messenger::error("Failed to execute analysis sequence.\n");
 
-	return result;
+	// Finalise any nodes that need it
+	if (!rootSequence_.finalise(cfg, dataPrefix, targetList)) return Messenger::error("Failed to finalise analysis sequence after execution.\n");
+
+	return true;
 }
 
 /*
@@ -71,7 +74,7 @@ bool Analyser::execute(ProcessPool& procPool, Configuration* cfg, const char* da
 // Read structure from specified LineParser
 bool Analyser::read(LineParser& parser)
 {
-	SiteContextStack contextStack;
+	NodeContextStack contextStack;
 	return rootSequence_.read(parser, contextStack);
 }
 

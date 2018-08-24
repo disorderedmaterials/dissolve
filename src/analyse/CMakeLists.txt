@@ -2,11 +2,11 @@ add_subdirectory(nodes)
 
 add_library(analyse
   analyser.cpp
-  sitecontextstack.cpp
+  nodecontextstack.cpp
   sitereference.cpp
   
   analyser.h
-  sitecontextstack.h
+  nodecontextstack.h
   sitereference.h
 )
 

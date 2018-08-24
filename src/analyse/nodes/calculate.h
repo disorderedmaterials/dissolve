@@ -1,6 +1,6 @@
 /*
-	*** Analysis Node - Select
-	*** src/analyse/nodes/select.h
+	*** Analysis Node - Calculate
+	*** src/analyse/nodes/calculate.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,25 +19,23 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ANALYSISSELECT_H
-#define DISSOLVE_ANALYSISSELECT_H
+#ifndef DISSOLVE_ANALYSISCALCULATE_H
+#define DISSOLVE_ANALYSISCALCULATE_H
 
 #include "analyse/nodes/node.h"
+#include "templates/array.h"
 
 // Forward Declarations
-class AnalysisSequenceNode;
-class SiteStack;
-class Species;
-class SpeciesSite;
+class AnalysisSelectNode;
 
 // Select Node
-class AnalysisSelectNode : public AnalysisNode
+class AnalysisCalculateNode : public AnalysisNode
 {
 	public:
 	// Constructor
-	AnalysisSelectNode();
+	AnalysisCalculateNode();
 	// Destructor
-	~AnalysisSelectNode();
+	~AnalysisCalculateNode();
 
 
 	/*
@@ -45,41 +43,46 @@ class AnalysisSelectNode : public AnalysisNode
 	 */
 	public:
 	// Node Keywords
-	enum SelectNodeKeyword { EndSelectKeyword, ForEachKeyword, SiteKeyword, nSelectNodeKeywords };
+	enum CalculateNodeKeyword { AngleKeyword, DistanceKeyword, EndCalculateKeyword, nCalculateNodeKeywords };
 	// Convert string to control keyword
-	static SelectNodeKeyword selectNodeKeyword(const char* s);
+	static CalculateNodeKeyword calculateNodeKeyword(const char* s);
 	// Convert control keyword to string
-	static const char* selectNodeKeyword(SelectNodeKeyword nk);
+	static const char* calculateNodeKeyword(CalculateNodeKeyword nk);
 
 
 	/*
-	 * Data
-	 */
-	private:
-	// Species in which the site is located
-	Species* species_;
-	// Target site within parent Species
-	SpeciesSite* speciesSite_;
-	// Stack containing our selected sites
-	const SiteStack* siteStack_;
-	// Branch for ForEach (if defined)
-	AnalysisSequenceNode* forEachBranch_;
-	// Range of site indices selected
-	int firstSiteIndex_, lastSiteIndex_;
-	// Current Site index
-	int currentSiteIndex_;
-
-
-	/*
-	 * Site Information
+	 * Observables
 	 */
 	public:
-	// Return whether the node has available site information
-	bool hasSites() const;
-	// Return the number of available sites, if any
-	int nSites() const;
-	// Return current site
-	const Site* currentSite() const;
+	// Observables
+	enum Observable
+	{
+		AngleObservable,		/* 'Angle' - Angle formed between three sites */
+		DistanceObservable,		/* 'Distance' - Distance between two sites */
+		nObservables			/* Number of observables in list */
+	};
+	// Convert string to Observable
+	static Observable observable(const char* s);
+	// Convert Observable to string
+	static const char* observable(Observable obs);
+	// Number of sites required to calculate Observable
+	static int observableNSites(Observable obs);
+
+
+	/*
+	 * Observable Target
+	 */
+	private:
+	// Target observable to calculate
+	Observable observable_;
+	// Nodes (sites) to use for observable calculation
+	AnalysisSelectNode* sites_[4];
+	// Last calculate value of observable
+	double value_;
+
+	public:
+	// Return last calculated value of observable
+	double value() const;
 
 
 	/*
@@ -90,8 +93,6 @@ class AnalysisSelectNode : public AnalysisNode
 	bool prepare(Configuration* cfg, const char* dataPrefix, GenericList& targetList);
 	// Execute node, targetting the supplied Configuration
 	AnalysisNode::NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList);
-	// Finalise any necessary data after execution
-	bool finalise(Configuration* cfg, const char* dataPrefix, GenericList& targetList);
 
 
 	/*

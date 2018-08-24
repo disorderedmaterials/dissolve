@@ -26,8 +26,9 @@
 #include "templates/reflist.h"
 
 // Forward Declarations
+class AnalysisSelectNode;
 class LineParser;
-class SiteContextStack;
+class NodeContextStack;
 
 // Analysis Node - Exclude
 class AnalysisExcludeNode : public AnalysisNode
@@ -58,15 +59,13 @@ class AnalysisExcludeNode : public AnalysisNode
 	// Whether to disallow Sites being the same
 	bool disallowSameSite_;
 	// Trio of nodes (sites) to compare when disallowing same Sites
-	AnalysisNode* sameSiteA_, *sameSiteB_, *sameSiteC_;
+	AnalysisSelectNode* sameSiteA_, *sameSiteB_, *sameSiteC_;
 
 
 	/*
 	 * Execute
 	 */
 	public:
-	// Prepare any necessary data, ready for execution
-	bool prepare(Configuration* cfg, const char* dataPrefix, GenericList& targetList);
 	// Execute node, targetting the supplied Configuration
 	AnalysisNode::NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList);
 
@@ -76,7 +75,7 @@ class AnalysisExcludeNode : public AnalysisNode
 	 */
 	public:
 	// Read structure from specified LineParser
-	bool read(LineParser& parser, SiteContextStack& contextStack);
+	bool read(LineParser& parser, NodeContextStack& contextStack);
 	// Write structure to specified LineParser
 	bool write(LineParser& parser, const char* prefix);
 };

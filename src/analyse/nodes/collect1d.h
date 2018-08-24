@@ -1,6 +1,6 @@
 /*
-	*** Analysis Node - Collect
-	*** src/analyse/nodes/collect.h
+	*** Analysis Node - Collect1D
+	*** src/analyse/nodes/collect1d.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -25,68 +25,54 @@
 #include "analyse/nodes/node.h"
 #include "base/charstring.h"
 #include "templates/array.h"
+#include "templates/array2d.h"
 #include "templates/reflist.h"
 #include "templates/vector3.h"
 
 // Forward Declarations
+class AnalysisCalculateNode;
+class Histogram1D;
 class LineParser;
-class SiteContextStack;
+class NodeContextStack;
 
 // Analysis Node - Collect
-class AnalysisCollectNode : public AnalysisNode
+class AnalysisCollect1DNode : public AnalysisNode
 {
 	public:
 	// Constructor
-	AnalysisCollectNode();
+	AnalysisCollect1DNode();
 	// Destructor
-	~AnalysisCollectNode();
-
-
-	/*
-	 * Observable Quantities
-	 */
-	public:
-	// Observable Quantities
-	enum Observable
-	{
-		AngleObservable,		/* 'Angle' - Angle formed between three sites */
-		DistanceObservable,		/* 'Distance' - Distance between two sites */
-		nObservables			/* Number of observables in list */
-	};
-	// Convert string to Observable
-	static Observable observable(const char* s);
-	// Convert Observable to string
-	static const char* observable(Observable obs);
+	~AnalysisCollect1DNode();
 
 
 	/*
 	 * Node Keywords
 	 */
 	public:
-	// Node Keywords (note ordering to allow efficient data setting)
-	enum CollectNodeKeyword { EndCollectKeyword, XLabelKeyword, YLabelKeyword, ZLabelKeyword, XObservableKeyword, YObservableKeyword, ZObservableKeyword, XRangeKeyword, YRangeKeyword, ZRangeKeyword, nCollectNodeKeywords };
+	// Node Keywords
+	enum Collect1DNodeKeyword { EndCollect1DKeyword, LabelXKeyword, LabelYKeyword, QuantityXKeyword, RangeXKeyword, nCollect1DNodeKeywords };
 	// Convert string to control keyword
-	static CollectNodeKeyword collectNodeKeyword(const char* s);
+	static Collect1DNodeKeyword collect1DNodeKeyword(const char* s);
 	// Convert control keyword to string
-	static const char* collectNodeKeyword(CollectNodeKeyword nk);
+	static const char* collect1DNodeKeyword(Collect1DNodeKeyword nk);
 
 
 	/*
 	 * Data
 	 */
 	private:
-	// Observables to bin
-	Observable observables_[3];
-	// Nodes (sites) to use for observable calculation
-	Array<AnalysisNode*> sites_[3];
+	// Observable to bin
+	AnalysisCalculateNode* observable_;
+	// Histogram in which to bin data
+	Histogram1D* histogram_;
 	// Axis labels
 	CharString axisLabels_[3];
-	// Range minima
-	Vec3<double> minima_;
-	// Range maxima
-	Vec3<double> maxima_;
-	// Bin widths
-	Vec3<double> binWidths_;
+	// Range minimum
+	double minimum_;
+	// Range maximum
+	double maximum_;
+	// Bin width
+	double binWidth_;
 
 
 	/*
@@ -97,6 +83,8 @@ class AnalysisCollectNode : public AnalysisNode
 	bool prepare(Configuration* cfg, const char* dataPrefix, GenericList& targetList);
 	// Execute node, targetting the supplied Configuration
 	AnalysisNode::NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList);
+	// Finalise any necessary data after execution
+	bool finalise(Configuration* cfg, const char* dataPrefix, GenericList& targetList);
 
 
 	/*
@@ -104,7 +92,7 @@ class AnalysisCollectNode : public AnalysisNode
 	 */
 	public:
 	// Read structure from specified LineParser
-	bool read(LineParser& parser, SiteContextStack& contextStack);
+	bool read(LineParser& parser, NodeContextStack& contextStack);
 	// Write structure to specified LineParser
 	bool write(LineParser& parser, const char* prefix);
 };

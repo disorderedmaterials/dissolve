@@ -38,9 +38,8 @@ AnalysisNode::~AnalysisNode()
  * Node Types
  */
 
-
 // Control keywords
-const char* NodeTypes[] = { "Collect", "Exclude", "Select", "Sequence" };
+const char* NodeTypes[] = { "Calculate", "Collect1D", "Exclude", "Select", "Sequence" };
 
 // Convert string to node type
 AnalysisNode::NodeType AnalysisNode::nodeType(const char* s)
@@ -56,26 +55,45 @@ const char* AnalysisNode::nodeType(AnalysisNode::NodeType nt)
 	return NodeTypes[nt];
 }
 
+// Return node type
+AnalysisNode::NodeType AnalysisNode::type() const
+{
+	return type_;
+}
+
+// Set node name (and nice name)
+void AnalysisNode::setName(const char* name)
+{
+	name_ = name;
+
+	// Generate a nice name (i.e. no spaces, slashes etc.)
+	niceName_ = DissolveSys::niceName(name_);
+}
+
+// Return node name
+const char* AnalysisNode::name() const
+{
+	return name_.get();
+}
+
+// Return nice node name
+const char* AnalysisNode::niceName() const
+{
+	return niceName_.get();
+}
+
 /*
- * Site Stack
+ * Execute
  */
 
-// Return number of sites available 
-bool AnalysisNode::hasSites() const
+// Prepare any necessary data, ready for execution
+bool AnalysisNode::prepare(Configuration* cfg, const char* dataPrefix, GenericList& targetList)
 {
-	return false;
+	return AnalysisNode::Success;
 }
 
-// Return the number of available sites, if any
-int AnalysisNode::nSites() const
+// Finalise any necessary data after execution
+bool AnalysisNode::finalise(Configuration* cfg, const char* dataPrefix, GenericList& targetList)
 {
-	return 0;
-}
-
-// Return current site
-const Site& AnalysisNode::currentSite() const
-{
-	static Site dummy;
-	Messenger::warn("Returning empty Site since this node has no Site information associated to it.\n");
-	return dummy;
+	return AnalysisNode::Success;
 }

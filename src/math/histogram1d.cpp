@@ -89,7 +89,7 @@ void Histogram1D::initialise(double xMin, double xMax, double binWidth)
 
 	// Create centre-bin array
 	double xCentre = xMin + binWidth_*0.5;
-	for (int n=0; n<nBins_; ++n, xCentre += binWidth_) x_.add(xCentre);
+	for (int n=0; n<nBins_; ++n, xCentre += binWidth_) x_[n] = xCentre;
 }
 
 // Reset histogram bins
@@ -131,10 +131,46 @@ int Histogram1D::nBins() const
 	return nBins_;
 }
 
+// Increase bin value at specified x
+void Histogram1D::bin(double x, int n)
+{
+	// Calculate target bin
+	int bin = (x - xMin_) / binWidth_;
+
+	// Check bin range
+	if ((bin < 0) || (bin >= nBins_)) return;
+
+	y_[bin] += n;
+}
+
 // Return Array of x centre-bin values
 const Array<double>& Histogram1D::x() const
 {
 	return x_;
+}
+
+/*
+ * Statistics
+ */
+
+// Add current histogram populations in to statistics
+void Histogram1D::accumulate()
+{
+	for (int n=0; n<nBins_; ++n) yAccumulated_[n] += y_[n];
+
+	for (int n=0; n<nBins_; ++n) printf(" %f  %f\n", x_[n], yAccumulated_[n].value());
+}
+
+// Return statistics array
+Array<SampledDouble>& Histogram1D::yAccumulated()
+{
+	return yAccumulated_;
+}
+
+// Return statistics array (const)
+const Array<SampledDouble>& Histogram1D::yAccumulated() const
+{
+	return yAccumulated_;
 }
 
 /*

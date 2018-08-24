@@ -1,11 +1,13 @@
 add_library(analysisnodes
-  collect.cpp
+  calculate.cpp
+  collect1d.cpp
   exclude.cpp
   node.cpp
   select.cpp
   sequence.cpp
 
-  collect.h
+  calculate.h
+  collect1d.h
   exclude.h
   node.h
   nodes.h

@@ -21,7 +21,7 @@
 
 #include "analyse/nodes/select.h"
 #include "analyse/nodes/sequence.h"
-#include "analyse/sitecontextstack.h"
+#include "analyse/nodecontextstack.h"
 #include "analyse/sitereference.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
@@ -34,7 +34,9 @@ AnalysisSelectNode::AnalysisSelectNode() : AnalysisNode()
 	species_ = NULL;
 	speciesSite_ = NULL;
 	forEachBranch_ = NULL;
-	currentForEachSite_ = -1;
+	currentSiteIndex_ = -1;
+	firstSiteIndex_ = -1;
+	lastSiteIndex_ = -1;
 
 	type_ = AnalysisNode::SelectNode;
 }
@@ -83,13 +85,11 @@ int AnalysisSelectNode::nSites() const
 }
 
 // Return current site
-const Site& AnalysisSelectNode::currentSite() const
+const Site* AnalysisSelectNode::currentSite() const
 {
-	static Site dummy;
+	if (!siteStack_) return NULL;
 
-	if (!siteStack_) return dummy;
-
-	return (currentForEachSite_ == -1 ? dummy : siteStack_->site(currentForEachSite_));
+	return (currentSiteIndex_ == -1 ? NULL : &siteStack_->site(currentSiteIndex_));
 }
 
 /*
@@ -99,7 +99,8 @@ const Site& AnalysisSelectNode::currentSite() const
 // Prepare any necessary data, ready for execution
 bool AnalysisSelectNode::prepare(Configuration* cfg, const char* dataPrefix, GenericList& targetList)
 {
-	return true;
+	// If one exists, prepare the ForEach branch nodes
+	if (forEachBranch_) return forEachBranch_->prepare(cfg, dataPrefix, targetList);
 }
 
 // Execute node, targetting the supplied Configuration
@@ -109,15 +110,28 @@ AnalysisNode::NodeExecutionResult AnalysisSelectNode::execute(ProcessPool& procP
 	siteStack_ = cfg->siteStack(speciesSite_);
 	if (siteStack_ == NULL) return AnalysisNode::Failure;
 
-	printf("THERE ARE %i sites in my stack.\n", siteStack_->nSites());
-
-	currentForEachSite_ = (siteStack_->nSites() > 0 ? siteStack_->nSites() : -1);
+	// Set our site range and the initial site
+	if (siteStack_->nSites() == 0)
+	{
+		firstSiteIndex_ = -1;
+		lastSiteIndex_ = -1;
+		currentSiteIndex_ = -1;
+	}
+// 	else if (sameMolecule_)
+// 	{
+// 	}
+	else
+	{
+		firstSiteIndex_ = 0;
+		lastSiteIndex_ = siteStack_->nSites() - 1;
+		currentSiteIndex_ = 0;
+	}
 
 	// If a ForEach branch has been defined, process it for each of our sites in turn. Otherwise, we're done
 	if (forEachBranch_)
 	{
 		// TODO Parallelise FIRST select only.
-		for (currentForEachSite_ = 0; currentForEachSite_ < siteStack_->nSites(); ++currentForEachSite_)
+		for (currentSiteIndex_ = firstSiteIndex_; currentSiteIndex_ <= lastSiteIndex_; ++currentSiteIndex_)
 		{
 			// If the branch fails at any point, return failure here.  Otherwise, continue the loop
 			if (forEachBranch_->execute(procPool, cfg, dataPrefix, targetList) == AnalysisNode::Failure) return AnalysisNode::Failure;
@@ -127,15 +141,25 @@ AnalysisNode::NodeExecutionResult AnalysisSelectNode::execute(ProcessPool& procP
 	return AnalysisNode::Success;
 }
 
+// Finalise any necessary data after execution
+bool AnalysisSelectNode::finalise(Configuration* cfg, const char* dataPrefix, GenericList& targetList)
+{
+	// If one exists, prepare the ForEach branch nodes
+	if (forEachBranch_) return forEachBranch_->finalise(cfg, dataPrefix, targetList);
+}
+
 /*
  * Read / Write
  */
 
 // Read structure from specified LineParser
-bool AnalysisSelectNode::read(LineParser& parser, SiteContextStack& contextStack)
+bool AnalysisSelectNode::read(LineParser& parser, NodeContextStack& contextStack)
 {
-	// The current line in the parser may contain a specific label for the sites we are to select...
-	CharString siteLabel = (parser.nArgs() == 2 ? parser.argc(1) : contextStack.nextGenericName());
+	// The current line in the parser may contain a specific label for the sites we are to select, which we set as our node name
+	setName(parser.nArgs() == 2 ? parser.argc(1) : contextStack.nextSelectName());
+
+	// Add ourselves to the context stack
+	if (!contextStack.add(this)) return Messenger::error("Error adding Select node '%s' to context stack.\n", name());
 
 	// Read until we encounter the EndSelect keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
@@ -171,13 +195,10 @@ bool AnalysisSelectNode::read(LineParser& parser, SiteContextStack& contextStack
 					speciesSite_ = species_->findSite(parser.argc(2));
 					if (!speciesSite_) return Messenger::error("Species '%s' contains no site named '%s'.\n", species_->name(), parser.argc(2));
 
-					// Create a new SiteReference
-					if (!contextStack.addToCurrent(this, siteLabel)) return Messenger::error("Error creating site reference.\n");
-
-					Messenger::printVerbose("Select node %p uses site label '%s' ('%s' in Species '%s').\n", this, siteLabel.get(), speciesSite_->name(), species_->name());
+					Messenger::printVerbose("Select node %p uses site label '%s' ('%s' in Species '%s').\n", this, name(), speciesSite_->name(), species_->name());
 					break;
 				}
-				// If we reach here and don't have a siteRef pointer, we couldn't find the named Species
+				// If we reach here and don't have a valid species_ pointer, we couldn't find the named Species
 				if (!species_) return Messenger::error("Couldn't find named Species '%s'.\n", parser.argc(1));
 				break;
 			case (SelectNodeKeyword::nSelectNodeKeywords):

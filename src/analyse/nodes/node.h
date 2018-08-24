@@ -22,6 +22,7 @@
 #ifndef DISSOLVE_ANALYSISNODE_H
 #define DISSOLVE_ANALYSISNODE_H
 
+#include "base/charstring.h"
 #include "templates/listitem.h"
 
 // Forward Declarations
@@ -30,7 +31,7 @@ class GenericList;
 class LineParser;
 class ProcessPool;
 class Site;
-class SiteContextStack;
+class NodeContextStack;
 
 // Analysis Base Node
 class AnalysisNode : public ListItem<AnalysisNode>
@@ -47,11 +48,17 @@ class AnalysisNode : public ListItem<AnalysisNode>
 	 */
 	public:
 	// Available Node Types
-	enum NodeType { CollectNode, ExcludeNode, SelectNode, SequenceNode, nNodeTypes };
+	enum NodeType { CalculateNode, Collect1DNode, ExcludeNode, SelectNode, SequenceNode, nNodeTypes };
 	// Convert string to node type
 	static NodeType nodeType(const char* s);
 	// Convert node type to string
 	static const char* nodeType(NodeType nt);
+
+	private:
+	// Node name
+	CharString name_;
+	// Node nice name
+	CharString niceName_;
 
 	protected:
 	// Node type
@@ -60,18 +67,12 @@ class AnalysisNode : public ListItem<AnalysisNode>
 	public:
 	// Return node type
 	NodeType type() const;
-
-
-	/*
-	 * Site Information
-	 */
-	public:
-	// Return whether the node has available site information
-	virtual bool hasSites() const;
-	// Return the number of available sites, if any
-	virtual int nSites() const;
-	// Return current site
-	virtual const Site& currentSite() const;
+	// Set node name (and nice name)
+	void setName(const char* name);
+	// Return node name
+	const char* name() const;
+	// Return node nice name
+	const char* niceName() const;
 
 
 	/*
@@ -81,9 +82,11 @@ class AnalysisNode : public ListItem<AnalysisNode>
 	// Node execution result
 	enum NodeExecutionResult { Failure, Success, SomethingElse };
 	// Prepare any necessary data, ready for execution
-	virtual bool prepare(Configuration* cfg, const char* dataPrefix, GenericList& targetList) = 0;
+	virtual bool prepare(Configuration* cfg, const char* dataPrefix, GenericList& targetList);
 	// Execute node, targetting the supplied Configuration
 	virtual NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList) = 0;
+	// Finalise any necessary data after execution
+	virtual bool finalise(Configuration* cfg, const char* dataPrefix, GenericList& targetList);
 
 
 	/*
@@ -91,7 +94,7 @@ class AnalysisNode : public ListItem<AnalysisNode>
 	 */
 	public:
 	// Read structure from specified LineParser
-	virtual bool read(LineParser& parser, SiteContextStack& contextStack) = 0;
+	virtual bool read(LineParser& parser, NodeContextStack& contextStack) = 0;
 	// Write structure to specified LineParser
 	virtual bool write(LineParser& parser, const char* prefix) = 0;
 };

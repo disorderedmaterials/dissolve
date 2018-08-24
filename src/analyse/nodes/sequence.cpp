@@ -21,7 +21,7 @@
 
 #include "analyse/nodes/sequence.h"
 #include "analyse/nodes/nodes.h"
-#include "analyse/sitecontextstack.h"
+#include "analyse/nodecontextstack.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
@@ -66,6 +66,10 @@ const char* AnalysisSequenceNode::sequenceNodeKeyword(AnalysisSequenceNode::Sequ
 // Prepare any necessary data, ready for execution
 bool AnalysisSequenceNode::prepare(Configuration* cfg, const char* dataPrefix, GenericList& targetList)
 {
+	// Loop over nodes in the list, preparing each in turn
+	ListIterator<AnalysisNode> nodeIterator(sequence_);
+	while (AnalysisNode* node = nodeIterator.iterate()) if (!node->prepare(cfg, dataPrefix, targetList)) return false;
+
 	return true;
 }
 
@@ -88,12 +92,22 @@ AnalysisNode::NodeExecutionResult AnalysisSequenceNode::execute(ProcessPool& pro
 	return result;
 }
 
+// Finalise any necessary data after execution
+bool AnalysisSequenceNode::finalise(Configuration* cfg, const char* dataPrefix, GenericList& targetList)
+{
+	// Loop over nodes in the list, finalising each in turn
+	ListIterator<AnalysisNode> nodeIterator(sequence_);
+	while (AnalysisNode* node = nodeIterator.iterate()) if (!node->finalise(cfg, dataPrefix, targetList)) return false;
+
+	return true;
+}
+
 /*
  * Read / Write
  */
 
 // Read structure from specified LineParser
-bool AnalysisSequenceNode::read(LineParser& parser, SiteContextStack& contextStack)
+bool AnalysisSequenceNode::read(LineParser& parser, NodeContextStack& contextStack)
 {
 	// The sequence node constructs a new context...
 	contextStack.push();
@@ -120,8 +134,11 @@ bool AnalysisSequenceNode::read(LineParser& parser, SiteContextStack& contextSta
 		AnalysisNode::NodeType nt = AnalysisNode::nodeType(parser.argc(0));
 		switch (nt)
 		{
-			case (AnalysisNode::CollectNode):
-				newNode = new AnalysisCollectNode;
+			case (AnalysisNode::CalculateNode):
+				newNode = new AnalysisCalculateNode;
+				break;
+			case (AnalysisNode::Collect1DNode):
+				newNode = new AnalysisCollect1DNode;
 				break;
 			case (AnalysisNode::ExcludeNode):
 				newNode = new AnalysisExcludeNode;
