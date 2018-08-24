@@ -51,7 +51,7 @@ bool RDFModule::calculateGRTestSerial(Configuration* cfg, PartialSet& partialSet
 		for (jj = ii+1; jj < cfg->nAtoms(); ++jj)
 		{
 			distance = box->minimumDistance(rI, atoms[jj]->r());
-			partialSet.fullHistogram(typeI, atoms[jj]->localTypeIndex()).add(distance);
+			partialSet.fullHistogram(typeI, atoms[jj]->localTypeIndex()).bin(distance);
 		}
 	}
 
@@ -94,7 +94,7 @@ bool RDFModule::calculateGRSimple(ProcessPool& procPool, Configuration* cfg, Par
 
 	// Loop over assigned Atoms
 	Vec3<double> centre, *ri, *rj, mim;
-	int* histogram;
+	long int* histogram;
 	double rbin = 1.0 / cfg->rdfBinWidth();
 
 	// Loop context is to use all processes in Pool as one group
@@ -107,7 +107,7 @@ bool RDFModule::calculateGRSimple(ProcessPool& procPool, Configuration* cfg, Par
 	for (typeI = 0; typeI<nTypes; ++typeI)
 	{
 		ri = r[typeI];
-		histogram = partialSet.fullHistogram(typeI,typeI).histogram().array();
+		histogram = partialSet.fullHistogram(typeI,typeI).bins();
 		bins = binss[typeI];
 		nPoints = partialSet.fullHistogram(typeI,typeI).nBins();
 		for (i=start; i < maxr[typeI]; i += stride)
@@ -132,7 +132,7 @@ bool RDFModule::calculateGRSimple(ProcessPool& procPool, Configuration* cfg, Par
 			if ((nr[typeI] == nr[typeJ]) && (typeI > typeJ)) continue;
 
 			rj = r[typeJ];
-			histogram = partialSet.fullHistogram(typeI,typeJ).histogram().array();
+			histogram = partialSet.fullHistogram(typeI,typeJ).bins();
 			bins = binss[typeJ];
 			nPoints = partialSet.fullHistogram(typeI,typeJ).nBins();
 			for (i=start; i < maxr[typeI]; i += stride)
@@ -189,7 +189,7 @@ bool RDFModule::calculateGRCells(ProcessPool& procPool, Configuration* cfg, Part
 
 				// No need to perform MIM since we're in the same cell
 				distance = (i->r() - j->r()).magnitude();
-				partialSet.fullHistogram(typeI,j->localTypeIndex()).add(distance);
+				partialSet.fullHistogram(typeI,j->localTypeIndex()).bin(distance);
 			}
 		}
 
@@ -216,7 +216,7 @@ bool RDFModule::calculateGRCells(ProcessPool& procPool, Configuration* cfg, Part
 					{
 						j = atomsJ[jj];
 						distance = box->minimumDistance(j, rI);
-						partialSet.fullHistogram(typeI, j->localTypeIndex()).add(distance);
+						partialSet.fullHistogram(typeI, j->localTypeIndex()).bin(distance);
 					}
 				}
 			}
@@ -232,7 +232,7 @@ bool RDFModule::calculateGRCells(ProcessPool& procPool, Configuration* cfg, Part
 					{
 						j = atomsJ[jj];
 						distance = (rI - j->r()).magnitude();
-						partialSet.fullHistogram(typeI, j->localTypeIndex()).add(distance);
+						partialSet.fullHistogram(typeI, j->localTypeIndex()).bin(distance);
 					}
 				}
 			}
@@ -411,7 +411,7 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 
 					if (cellArray.useMim(i->cell(), j->cell())) distance = box->minimumDistance(i, j);
 					else distance = (i->r() - j->r()).magnitude();
-					originalgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).add(distance);
+					originalgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
 				}
 			}
 		}
@@ -429,7 +429,7 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 			j = b->j();
 			if (cellArray.useMim(i->cell(), j->cell())) distance = box->minimumDistance(i, j);
 			else distance = (i->r() - j->r()).magnitude();
-			originalgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).add(distance);
+			originalgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
 		}
 
 		// Angles
@@ -446,7 +446,7 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 			// Determine whether we need to apply minimum image between 'j-i' and 'j-k'
 			if (cellArray.useMim(i->cell(), k->cell())) distance = box->minimumDistance(i, k);
 			else distance = (i->r() - k->r()).magnitude();
-			originalgr.boundHistogram(i->localTypeIndex(), k->localTypeIndex()).add(distance);
+			originalgr.boundHistogram(i->localTypeIndex(), k->localTypeIndex()).bin(distance);
 		}
 	}
 	timer.stop();
@@ -454,10 +454,9 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 
 	/*
 	 * Sum histogram data
+	 * Note that merging/summation of cross-term data (i.e. [n][m] with [m][n]) is not necessary since the partials matrix knows
+	 * that (i,j) == (j,i) as it is stored as a half-matrix in the Array2D object.
 	 */
-
-	// Note that merging/summation of cross-term data (i.e. [n][m] with [m][n]) is not necessary since the partials matrix knows
-	// that (i,j) == (j,i) as it is stored as a half-matrix in the Array2D object.
 
 	int typeI, typeJ;
 	procPool.resetAccumulatedTime();
@@ -475,7 +474,7 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 
 			// Create unbound histogram from total and bound data
 			originalgr.unboundHistogram(typeI, typeJ) = originalgr.fullHistogram(typeI, typeJ);
-			originalgr.unboundHistogram(typeI, typeJ).addHistogramData(originalgr.boundHistogram(typeI, typeJ), -1.0);
+			originalgr.unboundHistogram(typeI, typeJ).add(originalgr.boundHistogram(typeI, typeJ), -1.0);
 		}
 	}
 

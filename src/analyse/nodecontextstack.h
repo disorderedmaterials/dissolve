@@ -78,6 +78,14 @@ class NodeContextStack
 	bool hasCalculateNode(const char* name) const;
 	// Return named Calculate node (if it exists)
 	AnalysisCalculateNode* calculateNode(const char* name) const;
+
+
+	/*
+	 * Plottable Data
+	 */
+	private:
+	// Plottables available from the analysis
+// 	RefList<
 };
 
 #endif

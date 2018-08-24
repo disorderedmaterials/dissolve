@@ -285,6 +285,8 @@ class ProcessPool
 	bool broadcast(bool& source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Broadcast Array<int>
 	bool broadcast(Array<int>& array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	// Broadcast Array<long int>
+	bool broadcast(Array<long int>& array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Broadcast Array<double>
 	bool broadcast(Array<double>& array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Broadcast Array< Vec3<int> >
@@ -307,6 +309,8 @@ class ProcessPool
 	bool allSum(double* source, int count, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Reduce (sum) int data to all processes
 	bool allSum(int* source, int count, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	// Reduce (sum) int data to all processes
+	bool allSum(long int* source, int count, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Reduce (sum) double data over processes relevant to specifeid strategy
 	bool allSum(double* source, int count, ProcessPool::DivisionStrategy strategy);
 	// Reduce (sum) int data over processes relevant to specifeid strategy

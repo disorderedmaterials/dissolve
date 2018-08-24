@@ -1199,6 +1199,63 @@ bool ProcessPool::broadcast(Array<int>& array, int rootRank, ProcessPool::Commun
 	return true;
 }
 
+
+// Broadcast Array<long int>
+bool ProcessPool::broadcast(Array<long int>& array, int rootRank, ProcessPool::CommunicatorType commType)
+{
+#ifdef PARALLEL
+	timer_.start();
+
+	int length;
+	if (poolRank_ == rootRank)
+	{
+		// Broadcast array length first...
+		length = array.nItems();
+		if (MPI_Bcast(&length, 1, MPI_LONG, rootRank, communicator(commType)) != MPI_SUCCESS)
+		{
+			Messenger::print("Failed to broadcast Array<long int> size from root rank %i (world rank %i).\n", rootRank, worldRanks_[rootRank]);
+			return false;
+		}
+
+		// Now broadcast Array data
+		if (length > 0)
+		{
+			if (MPI_Bcast(array.array(), length, MPI_LONG, rootRank, communicator(commType)) != MPI_SUCCESS)
+			{
+				Messenger::print("Failed to broadcast Array<long int> data from root rank %i (world rank %i).\n", rootRank, worldRanks_[rootRank]);
+				return false;
+			}
+		}
+	}
+	else
+	{
+		// Slaves receive the length, and then create and receive the array
+		// Length first...
+		if (MPI_Bcast(&length, 1, MPI_LONG, rootRank, communicator(commType)) != MPI_SUCCESS)
+		{
+			Messenger::print("Slave %i (world rank %i) failed to receive Array<long int> size from root rank %i.\n", poolRank_, worldRank_, rootRank);
+			return false;
+		}
+
+		if (length > 0)
+		{
+			// Create array of specified size
+			array.initialise(length);
+
+			if (MPI_Bcast(array.array(), length, MPI_LONG, rootRank, communicator(commType)) != MPI_SUCCESS)
+			{
+				Messenger::print("Slave %i (world rank %i) failed to receive Array<long int> data from root rank %i.\n", poolRank_, worldRank_, rootRank);
+				return false;
+			}
+		}
+		else array.clear();
+	}
+
+	timer_.accumulate();
+#endif
+	return true;
+}
+
 // Broadcast Array<double>
 bool ProcessPool::broadcast(Array<double>& array, int rootRank, ProcessPool::CommunicatorType commType)
 {
@@ -1609,6 +1666,23 @@ bool ProcessPool::allSum(int* source, int count, ProcessPool::CommunicatorType c
 	int buffer[count];
 	if ((commType == ProcessPool::GroupLeadersCommunicator) && (!groupLeader())) return true;
 	if (MPI_Allreduce(source, &buffer, count, MPI_INTEGER, MPI_SUM, communicator(commType)) != MPI_SUCCESS) return false;
+
+	// Put reduced data back into original buffer
+	for (int n=0; n<count; ++n) source[n] = buffer[n];
+	timer_.accumulate();
+#endif
+	return true;
+}
+
+// Reduce (sum) long int data to all processes
+bool allSum(long int* source, int count, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator)
+{
+#ifdef PARALLEL
+	timer_.start();
+	int buffer[count];
+	if ((commType == ProcessPool::GroupLeadersCommunicator) && (!groupLeader())) return true;
+	if (MPI_Allreduce(source, &buffer, count, MPI_LONG, MPI_SUM, communicator(commType)) != MPI_SUCCESS) return false;
+
 	// Put reduced data back into original buffer
 	for (int n=0; n<count; ++n) source[n] = buffer[n];
 	timer_.accumulate();

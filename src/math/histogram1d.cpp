@@ -49,13 +49,14 @@ Histogram1D::Histogram1D(const Histogram1D& source) : ObjectStore<Histogram1D>(t
 // Clear Data
 void Histogram1D::clear()
 {
-	xMin_ = 0.0;
-	xMax_ = 0.0;
+	minimum_ = 0.0;
+	maximum_ = 0.0;
 	binWidth_ = 0.0;
 	nBins_ = 0;
 	nBinned_ = 0;
-	x_.clear();
-	y_.clear();
+	nMissed_ = 0;
+	bins_.clear();
+	binCentres_.clear();
 	yAccumulated_.clear();
 }
 
@@ -69,54 +70,56 @@ void Histogram1D::initialise(double xMin, double xMax, double binWidth)
 	clear();
 
 	// Store xMin and binWidth
-	xMin_ = xMin;
+	minimum_ = xMin;
 	binWidth_ = binWidth;
 
-	// Clamp xMax_ to nearest bin boundary (not less than the supplied xMax)
-	double range = xMax - xMin_;
+	// Clamp maximum_ to nearest bin boundary (not less than the supplied xMax)
+	double range = xMax - minimum_;
 	nBins_ = range / binWidth_;
-	if ((xMin_ + nBins_*binWidth_) < xMax)
+	if ((minimum_ + nBins_*binWidth_) < xMax)
 	{
 		++nBins_;
-		xMax_ = xMin_ + nBins_*binWidth_;
+		maximum_ = minimum_ + nBins_*binWidth_;
 	}
-	else xMax_ = xMax;
+	else maximum_ = xMax;
 
 	// Create the arrays
-	x_.initialise(nBins_);
-	y_.initialise(nBins_);
+	binCentres_.initialise(nBins_);
+	bins_.initialise(nBins_);
 	yAccumulated_.initialise(nBins_);
 
 	// Create centre-bin array
 	double xCentre = xMin + binWidth_*0.5;
-	for (int n=0; n<nBins_; ++n, xCentre += binWidth_) x_[n] = xCentre;
+	for (int n=0; n<nBins_; ++n, xCentre += binWidth_) bins_[n] = xCentre;
 }
 
 // Reset histogram bins
 void Histogram1D::resetBins()
 {
-	y_ = 0;
+	bins_ = 0;
 	nBinned_ = 0;
+	nMissed_ = 0;
 }
 
 // Reset all accumulated data
 void Histogram1D::resetAll()
 {
-	y_ = 0;
+	bins_ = 0;
 	yAccumulated_ = 0.0;
 	nBinned_ = 0;
+	nMissed_ = 0;
 }
 
-// Return minimum x value
-double Histogram1D::xMin() const
+// Return minimum value for data (hard left-edge of first bin)
+double Histogram1D::minimum() const
 {
-	return xMin_;
+	return minimum_;
 }
 
-// Return maximum x value
-double Histogram1D::xMax() const
+// Return maximum value for data (hard right-edge of last bin, adjusted to match bin width if necessary)
+double Histogram1D::maximum() const
 {
-	return xMax_;
+	return maximum_;
 }
 
 // Return bin width
@@ -131,22 +134,44 @@ int Histogram1D::nBins() const
 	return nBins_;
 }
 
-// Increase bin value at specified x
-void Histogram1D::bin(double x, int n)
+// Bin specified value
+void Histogram1D::bin(double x)
 {
 	// Calculate target bin
-	int bin = (x - xMin_) / binWidth_;
+	int bin = (x - minimum_) / binWidth_;
 
 	// Check bin range
-	if ((bin < 0) || (bin >= nBins_)) return;
+	if ((bin < 0) || (bin >= nBins_))
+	{
+		++nMissed_;
+		return;
+	}
 
-	y_[bin] += n;
+	++bins_[bin];
+	++nBinned_;
 }
 
 // Return Array of x centre-bin values
-const Array<double>& Histogram1D::x() const
+const Array<double>& Histogram1D::binCentres() const
 {
-	return x_;
+	return binCentres_;
+}
+
+// Return histogram data
+Array<long int>& Histogram1D::bins()
+{
+	return bins_;
+}
+
+// Add source histogram data into local array
+void Histogram1D::add(Histogram1D& other, int factor)
+{
+	if (nBins_ != other.nBins_)
+	{
+		Messenger::print("BAD_USAGE - Can't add Histogram1D data since arrays are not the same size (%i vs %i).\n", nBins_, other.nBins_);
+		return;
+	}
+	for (int n=0; n<nBins_; ++n) bins_[n] += other.bins_[n] * factor;
 }
 
 /*
@@ -156,15 +181,7 @@ const Array<double>& Histogram1D::x() const
 // Add current histogram populations in to statistics
 void Histogram1D::accumulate()
 {
-	for (int n=0; n<nBins_; ++n) yAccumulated_[n] += y_[n];
-
-	for (int n=0; n<nBins_; ++n) printf(" %f  %f\n", x_[n], yAccumulated_[n].value());
-}
-
-// Return statistics array
-Array<SampledDouble>& Histogram1D::yAccumulated()
-{
-	return yAccumulated_;
+	for (int n=0; n<nBins_; ++n) yAccumulated_[n] += bins_[n];
 }
 
 // Return statistics array (const)
@@ -180,14 +197,15 @@ const Array<SampledDouble>& Histogram1D::yAccumulated() const
 // Operator =
 void Histogram1D::operator=(const Histogram1D& source)
 {
-	xMin_ = source.xMin_;
-	xMax_ = source.xMax_;
+	minimum_ = source.minimum_;
+	maximum_ = source.maximum_;
 	nBins_ = source.nBins_;
 	binWidth_ = source.binWidth_;
 	nBinned_ = source.nBinned_;
-	x_ = source.x_;
+	nMissed_ = source.nMissed_;
 	yAccumulated_ = source.yAccumulated_;
-	y_ = source.y_;
+	bins_ = source.bins_;
+	binCentres_ = source.binCentres_;
 }
 
 /*
@@ -204,7 +222,7 @@ const char* Histogram1D::itemClassName()
 bool Histogram1D::write(LineParser& parser)
 {
 	if (!parser.writeLineF("%s\n", objectName())) return false;
-	if (!parser.writeLineF("%f %f %f\n", xMin_, xMax_, binWidth_)) return false;
+	if (!parser.writeLineF("%f %f %f\n", minimum_, maximum_, binWidth_)) return false;
 	if (!parser.writeLineF("%i\n", nBinned_)) return false;
 	for (int n=0; n<nBins_; ++n) if (!yAccumulated_.at(n).write(parser)) return false;
 	return true;
@@ -233,23 +251,34 @@ bool Histogram1D::read(LineParser& parser)
  * Parallel Comms
  */
 
+// Sum histogram data onto all processes
+bool Histogram1D::allSum(ProcessPool& procPool)
+{
+#ifdef PARALLEL
+	if (!procPool.allSum(bins_, nBins_)) return false;
+#endif
+
+	return true;
+}
+
 // Broadcast data
 bool Histogram1D::broadcast(ProcessPool& procPool, int rootRank)
 {
-#ifdef PARALLEL
+// #ifdef PARALLEL
 	// Range data
-	if (!procPool.broadcast(xMin_, rootRank)) return false;
-	if (!procPool.broadcast(xMax_, rootRank)) return false;
+	if (!procPool.broadcast(minimum_, rootRank)) return false;
+	if (!procPool.broadcast(maximum_, rootRank)) return false;
 	if (!procPool.broadcast(binWidth_, rootRank)) return false;
 	if (!procPool.broadcast(nBins_, rootRank)) return false;
 
 	// Data
 	if (!procPool.broadcast(nBinned_, rootRank)) return false;
-	if (!procPool.broadcast(x_, rootRank)) return false;
-	if (!procPool.broadcast(y_, rootRank)) return false;
+	if (!procPool.broadcast(nMissed_, rootRank)) return false;
+	if (!procPool.broadcast(binCentres_, rootRank)) return false;
+	if (!procPool.broadcast(bins_, rootRank)) return false;
 	if (procPool.poolRank() != rootRank) yAccumulated_.initialise(nBins_);
 	for (int n=0; n<nBins_; ++n) if (!yAccumulated_[n].broadcast(procPool, rootRank)) return false;
-#endif
+// #endif
 	return true;
 }
 
@@ -258,13 +287,14 @@ bool Histogram1D::equality(ProcessPool& procPool)
 {
 #ifdef PARALLEL
 	// Check number of items in arrays first
-	if (!procPool.equality(xMin_)) return Messenger::error("Histogram1D xMin is not equivalent (process %i has %e).\n", procPool.poolRank(), xMin_);
-	if (!procPool.equality(xMax_)) return Messenger::error("Histogram1D xMax is not equivalent (process %i has %e).\n", procPool.poolRank(), xMax_);
+	if (!procPool.equality(minimum_)) return Messenger::error("Histogram1D minimum value is not equivalent (process %i has %e).\n", procPool.poolRank(), minimum_);
+	if (!procPool.equality(maximum_)) return Messenger::error("Histogram1D maximum value is not equivalent (process %i has %e).\n", procPool.poolRank(), maximum_);
 	if (!procPool.equality(binWidth_)) return Messenger::error("Histogram1D bin width is not equivalent (process %i has %e).\n", procPool.poolRank(), binWidth_);
 	if (!procPool.equality(nBins_)) return Messenger::error("Histogram1D number of bins is not equivalent (process %i has %i).\n", procPool.poolRank(), nBins_);
-	if (!procPool.equality(x_)) return Messenger::error("Histogram1D x values not equivalent.\n");
-	if (!procPool.equality(y_)) return Messenger::error("Histogram1D y values not equivalent.\n");
-	if (!procPool.equality(nBinned_)) return Messenger::error("Histogram1D nunmber of binned values is not equivalent (process %i has %i).\n", procPool.poolRank(), nBinned_);
+	if (!procPool.equality(binCentres_)) return Messenger::error("Histogram1D bin centre values not equivalent.\n");
+	if (!procPool.equality(bins_)) return Messenger::error("Histogram1D bin values not equivalent.\n");
+	if (!procPool.equality(nBinned_)) return Messenger::error("Histogram1D nunmber of binned values is not equivalent (process %i has %li).\n", procPool.poolRank(), nBinned_);
+	if (!procPool.equality(nMissed_)) return Messenger::error("Histogram1D nunmber of binned values is not equivalent (process %i has %li).\n", procPool.poolRank(), nBinned_);
 	for (int n=0; n<nBins_; ++n) if (!yAccumulated_[n].equality(procPool)) return Messenger::error("Histogram1D accumulated y values not equivalent.\n");
 #endif
 	return true;

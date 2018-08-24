@@ -136,9 +136,9 @@ void PartialSet::reset()
 	{
 		for (int m=n; m<nTypes; ++m)
 		{
-			fullHistograms_.at(n,m).reset();
-			boundHistograms_.at(n,m).reset();
-			unboundHistograms_.at(n,m).reset();
+			fullHistograms_.at(n,m).resetAll();
+			boundHistograms_.at(n,m).resetAll();
+			unboundHistograms_.at(n,m).resetAll();
 
 			partials_.at(n,m).arrayY() = 0.0;
 			boundPartials_.at(n,m).arrayY() = 0.0;
@@ -176,19 +176,19 @@ const char* PartialSet::fingerprint() const
 }
 
 // Return full histogram specified
-Histogram& PartialSet::fullHistogram(int i, int j)
+Histogram1D& PartialSet::fullHistogram(int i, int j)
 {
 	return fullHistograms_.at(i, j);
 }
 
 // Return bound histogram specified
-Histogram& PartialSet::boundHistogram(int i, int j)
+Histogram1D& PartialSet::boundHistogram(int i, int j)
 {
 	return boundHistograms_.at(i, j);
 }
 
 // Return unbound histogram specified
-Histogram& PartialSet::unboundHistogram(int i, int j)
+Histogram1D& PartialSet::unboundHistogram(int i, int j)
 {
 	return unboundHistograms_.at(i, j);
 }
@@ -555,11 +555,11 @@ void PartialSet::reweightPartials(double factor)
 }
 
 // Calculate and return RDF from supplied Histogram and normalisation data
-void PartialSet::calculateRDF(XYData& destination, Histogram& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, XYData& boxNormalisation)
+void PartialSet::calculateRDF(XYData& destination, Histogram1D& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, XYData& boxNormalisation)
 {
 	int nBins = histogram.nBins();
-	double delta = histogram.delta();
-	Array<int>& histo = histogram.histogram();
+	double delta = histogram.binWidth();
+	const Array<long int>& bins = histogram.bins();
 
 	destination.clear();
 
@@ -570,7 +570,7 @@ void PartialSet::calculateRDF(XYData& destination, Histogram& histogram, double 
 		factor = nCentres * (shellVolume * numberDensity);
 		normalisation = (multiplier / factor) * boxNormalisation.interpolated(r+delta*0.5);
 
-		destination.addPoint(r, histo[n]*normalisation);
+		destination.addPoint(r, bins.constAt(n)*normalisation);
 
 		r += delta;
 		lowerShellLimit += delta;

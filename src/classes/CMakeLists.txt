@@ -29,7 +29,6 @@ add_library(classes
   energykernel.cpp
   forcekernel.cpp
   grain.cpp
-  histogram.cpp
   intra.cpp
   isotopedata.cpp
   isotopologue.cpp
@@ -87,7 +86,6 @@ add_library(classes
   energykernel.h
   forcekernel.h
   grain.h
-  histogram.h
   intra.h
   isotopedata.h
   isotopologue.h

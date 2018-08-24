@@ -22,9 +22,9 @@
 #ifndef DISSOLVE_PARTIALSET_H
 #define DISSOLVE_PARTIALSET_H
 
-#include "classes/histogram.h"
 #include "classes/atomtypelist.h"
 #include "classes/weights.h"
+#include "math/histogram1d.h"
 #include "math/xydata.h"
 #include "templates/list.h"
 #include "templates/array2d.h"
@@ -53,11 +53,11 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	// Abscissa units for contained data
 	CharString abscissaUnits_;
 	// Histograms used for calculating full atom-atom partials in r
-	Array2D<Histogram> fullHistograms_;
+	Array2D<Histogram1D> fullHistograms_;
 	// Histograms used for calculating bound atom-atom partials in r
-	Array2D<Histogram> boundHistograms_;
+	Array2D<Histogram1D> boundHistograms_;
 	// Histograms used for deriving unbound atom-atom partials in r
-	Array2D<Histogram> unboundHistograms_;
+	Array2D<Histogram1D> unboundHistograms_;
 	// Pair matrix, containing full atom-atom partial
 	Array2D<XYData> partials_;
 	// Unbound matrix, containing atom-atom partial of pairs not joined by bonds or angles
@@ -91,11 +91,11 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	// Return fingerprint of partials
 	const char* fingerprint() const;
 	// Return full histogram specified
-	Histogram& fullHistogram(int i, int j);
+	Histogram1D& fullHistogram(int i, int j);
 	// Return bound histogram specified
-	Histogram& boundHistogram(int i, int j);
+	Histogram1D& boundHistogram(int i, int j);
 	// Return unbound histogram specified
-	Histogram& unboundHistogram(int i, int j);
+	Histogram1D& unboundHistogram(int i, int j);
 	// Return full atom-atom partial specified
 	XYData& partial(int i, int j);
 	// Return full atom-atom partial specified (const)
@@ -147,7 +147,7 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	// Re-weight partials (including total) with supplied weighting factor
 	void reweightPartials(double factor);
 	// Calculate RDF from supplied Histogram and normalisation data
-	static void calculateRDF(XYData& destination, Histogram& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, XYData& boxNormalisation);
+	static void calculateRDF(XYData& destination, Histogram1D& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, XYData& boxNormalisation);
 
 
 	/*

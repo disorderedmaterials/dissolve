@@ -30,7 +30,7 @@
 // Forward Declarations
 class ProcessPool;
 
-// Histogram1D
+// One-Dimensional Histogram
 class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D>, public GenericItemBase
 {
 	public:
@@ -48,40 +48,46 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
 	 * Histogram Data
 	 */
 	private:
-	// Minimum x value for data (hard left-edge of first bin)
-	double xMin_;
-	// Maximum x value for data (hard right-edge of last bin, adjusted to match bin width if necessary)
-	double xMax_;
+	// Minimum value for data (hard left-edge of first bin)
+	double minimum_;
+	// Maximum value for data (hard right-edge of last bin, adjusted to match bin width if necessary)
+	double maximum_;
 	// Bin width
 	double binWidth_;
 	// Number of bins
 	int nBins_;
+	// Histogram bins
+	Array<long int> bins_;
 	// Array of bin centres
-	Array<double> x_;
-	// Current bin populations
-	Array<int> y_;
-	// Number of values binned over entire y array
-	int nBinned_;
+	Array<double> binCentres_;
+	// Number of values binned over all bins
+	long int nBinned_;
+	// Number of points missed (out of bin range)
+	long int nMissed_;
 
 	public:
 	// Initialise with specified bin range
-	void initialise(double xMin, double xMax, double binWidth);
+	void initialise(double minimum, double maximum, double binWidth);
 	// Reset histogram bins
 	void resetBins();
 	// Reset all data
 	void resetAll();
-	// Return minimum x value
-	double xMin() const;
-	// Return maximum x value
-	double xMax() const;
+	// Return minimum value for data (hard left-edge of first bin)
+	double minimum() const;
+	// Return maximum value for data (hard right-edge of last bin, adjusted to match bin width if necessary)
+	double maximum() const;
 	// Return bin width
 	double binWidth() const;
 	// Return number of bins
 	int nBins() const;
-	// Increase bin value at specified x
-	void bin(double x, int n = 1);
+	// Bin specified value
+	void bin(double x);
 	// Return Array of x centre-bin values
-	const Array<double>& x() const;
+	const Array<double>& binCentres() const;
+	// Return histogram data
+	Array<long int>& bins();
+	// Add source histogram data into local array
+	void add(Histogram1D& other, int factor = 1);
 
 
 	/*
@@ -94,8 +100,6 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
 	public:
 	// Add current histogram populations in to statistics
 	void accumulate();
-	// Return statistics array
-	Array<SampledDouble>& yAccumulated();
 	// Return statistics array (const)
 	const Array<SampledDouble>& yAccumulated() const;
 
@@ -124,6 +128,8 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
 	 * Parallel Comms
 	 */
 	public:
+	// Sum histogram data onto all processes
+	bool allSum(ProcessPool& procPool);
 	// Broadcast data
 	bool broadcast(ProcessPool& procPool, int rootRank = 0);
 	// Check item equality
