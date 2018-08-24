@@ -88,6 +88,9 @@ bool AnalysisCollect1DNode::prepare(Configuration* cfg, const char* dataPrefix, 
 	// Store a pointer to the data
 	histogram_ = &data;
 
+	// Zero the histogram bins ready for the new calculation pass
+	histogram_->resetBins();
+
 	return true;
 }
 
