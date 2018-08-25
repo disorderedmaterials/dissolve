@@ -1,5 +1,5 @@
 /*
-	*** 1-Dimensional Binned Data With Statistics
+	*** 1-Dimensional Histogram
 	*** src/math/histogram1d.h
 	Copyright T. Youngs 2012-2018
 
@@ -22,8 +22,7 @@
 #ifndef DISSOLVE_HISTOGRAM1D_H
 #define DISSOLVE_HISTOGRAM1D_H
 
-#include "base/charstring.h"
-#include "math/sampleddouble.h"
+#include "base/genericitembase.h"
 #include "templates/array.h"
 #include "templates/objectstore.h"
 
@@ -68,10 +67,8 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
 	public:
 	// Initialise with specified bin range
 	void initialise(double minimum, double maximum, double binWidth);
-	// Reset histogram bins
-	void resetBins();
-	// Reset all data
-	void resetAll();
+	// Zero histogram
+	void zero();
 	// Return minimum value for data (hard left-edge of first bin)
 	double minimum() const;
 	// Return maximum value for data (hard right-edge of last bin, adjusted to match bin width if necessary)
@@ -88,20 +85,6 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
 	Array<long int>& bins();
 	// Add source histogram data into local array
 	void add(Histogram1D& other, int factor = 1);
-
-
-	/*
-	 * Statistics
-	 */
-	private:
-	// Array of accumulated y values
-	Array<SampledDouble> yAccumulated_;
-
-	public:
-	// Add current histogram populations in to statistics
-	void accumulate();
-	// Return statistics array (const)
-	const Array<SampledDouble>& yAccumulated() const;
 
 
 	/*

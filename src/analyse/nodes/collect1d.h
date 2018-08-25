@@ -24,6 +24,7 @@
 
 #include "analyse/nodes/node.h"
 #include "base/charstring.h"
+#include "math/histogram1d.h"
 #include "templates/array.h"
 #include "templates/array2d.h"
 #include "templates/reflist.h"
@@ -31,7 +32,7 @@
 
 // Forward Declarations
 class AnalysisCalculateNode;
-class Histogram1D;
+class Data1D;
 class LineParser;
 class NodeContextStack;
 
@@ -64,7 +65,9 @@ class AnalysisCollect1DNode : public AnalysisNode
 	// Observable to bin
 	AnalysisCalculateNode* observable_;
 	// Histogram in which to bin data
-	Histogram1D* histogram_;
+	Histogram1D histogram_;
+	// Data into which histograms are accumulated
+	Data1D* data_;
 	// Axis labels
 	CharString axisLabels_[3];
 	// Range minimum

@@ -136,9 +136,9 @@ void PartialSet::reset()
 	{
 		for (int m=n; m<nTypes; ++m)
 		{
-			fullHistograms_.at(n,m).resetAll();
-			boundHistograms_.at(n,m).resetAll();
-			unboundHistograms_.at(n,m).resetAll();
+			fullHistograms_.at(n,m).zero();
+			boundHistograms_.at(n,m).zero();
+			unboundHistograms_.at(n,m).zero();
 
 			partials_.at(n,m).arrayY() = 0.0;
 			boundPartials_.at(n,m).arrayY() = 0.0;

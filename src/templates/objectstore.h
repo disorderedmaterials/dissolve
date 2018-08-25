@@ -22,8 +22,9 @@
 #ifndef DISSOLVE_OBJECTSTORE_H
 #define DISSOLVE_OBJECTSTORE_H
 
-#include "templates/reflist.h"
+#include "base/charstring.h"
 #include "base/sysfunc.h"
+#include "templates/reflist.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -42,6 +43,7 @@ class ObjectInfo
 	enum ObjectType
 	{
 		NoObject = 0,
+		Data1DObject,
 		Histogram1DObject,
 		XYDataObject,
 		UChromaAxesObject,

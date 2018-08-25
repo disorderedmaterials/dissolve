@@ -1,5 +1,5 @@
 /*
-	*** 1-Dimensional Binned Data With Statistics
+	*** 1-Dimensional Histogram
 	*** src/math/histogram1d.cpp
 	Copyright T. Youngs 2012-2018
 
@@ -57,7 +57,6 @@ void Histogram1D::clear()
 	nMissed_ = 0;
 	bins_.clear();
 	binCentres_.clear();
-	yAccumulated_.clear();
 }
 
 /*
@@ -86,26 +85,16 @@ void Histogram1D::initialise(double xMin, double xMax, double binWidth)
 	// Create the arrays
 	binCentres_.initialise(nBins_);
 	bins_.initialise(nBins_);
-	yAccumulated_.initialise(nBins_);
 
 	// Create centre-bin array
 	double xCentre = xMin + binWidth_*0.5;
 	for (int n=0; n<nBins_; ++n, xCentre += binWidth_) bins_[n] = xCentre;
 }
 
-// Reset histogram bins
-void Histogram1D::resetBins()
+// Zero histogram
+void Histogram1D::zero()
 {
 	bins_ = 0;
-	nBinned_ = 0;
-	nMissed_ = 0;
-}
-
-// Reset all accumulated data
-void Histogram1D::resetAll()
-{
-	bins_ = 0;
-	yAccumulated_ = 0.0;
 	nBinned_ = 0;
 	nMissed_ = 0;
 }
@@ -175,22 +164,6 @@ void Histogram1D::add(Histogram1D& other, int factor)
 }
 
 /*
- * Statistics
- */
-
-// Add current histogram populations in to statistics
-void Histogram1D::accumulate()
-{
-	for (int n=0; n<nBins_; ++n) yAccumulated_[n] += bins_[n];
-}
-
-// Return statistics array (const)
-const Array<SampledDouble>& Histogram1D::yAccumulated() const
-{
-	return yAccumulated_;
-}
-
-/*
  * Operators
  */
 
@@ -203,7 +176,6 @@ void Histogram1D::operator=(const Histogram1D& source)
 	binWidth_ = source.binWidth_;
 	nBinned_ = source.nBinned_;
 	nMissed_ = source.nMissed_;
-	yAccumulated_ = source.yAccumulated_;
 	bins_ = source.bins_;
 	binCentres_ = source.binCentres_;
 }
@@ -224,7 +196,7 @@ bool Histogram1D::write(LineParser& parser)
 	if (!parser.writeLineF("%s\n", objectName())) return false;
 	if (!parser.writeLineF("%f %f %f\n", minimum_, maximum_, binWidth_)) return false;
 	if (!parser.writeLineF("%i\n", nBinned_)) return false;
-	for (int n=0; n<nBins_; ++n) if (!yAccumulated_.at(n).write(parser)) return false;
+	for (int n=0; n<nBins_; ++n) if (!parser.writeLineF("%li\n", bins_.at(n))) return false;
 	return true;
 }
 
@@ -242,7 +214,11 @@ bool Histogram1D::read(LineParser& parser)
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	nBinned_ = parser.argi(0);
 
-	for (int n=0; n<nBins_; ++n) if (!yAccumulated_.at(n).read(parser)) return false;
+	for (int n=0; n<nBins_; ++n)
+	{
+		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+		bins_[n] = parser.argli(0);
+	}
 
 	return true;
 }
@@ -276,8 +252,6 @@ bool Histogram1D::broadcast(ProcessPool& procPool, int rootRank)
 	if (!procPool.broadcast(nMissed_, rootRank)) return false;
 	if (!procPool.broadcast(binCentres_, rootRank)) return false;
 	if (!procPool.broadcast(bins_, rootRank)) return false;
-	if (procPool.poolRank() != rootRank) yAccumulated_.initialise(nBins_);
-	for (int n=0; n<nBins_; ++n) if (!yAccumulated_[n].broadcast(procPool, rootRank)) return false;
 // #endif
 	return true;
 }
@@ -295,7 +269,6 @@ bool Histogram1D::equality(ProcessPool& procPool)
 	if (!procPool.equality(bins_)) return Messenger::error("Histogram1D bin values not equivalent.\n");
 	if (!procPool.equality(nBinned_)) return Messenger::error("Histogram1D nunmber of binned values is not equivalent (process %i has %li).\n", procPool.poolRank(), nBinned_);
 	if (!procPool.equality(nMissed_)) return Messenger::error("Histogram1D nunmber of binned values is not equivalent (process %i has %li).\n", procPool.poolRank(), nBinned_);
-	for (int n=0; n<nBins_; ++n) if (!yAccumulated_[n].equality(procPool)) return Messenger::error("Histogram1D accumulated y values not equivalent.\n");
 #endif
 	return true;
 }
