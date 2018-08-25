@@ -157,16 +157,6 @@ bool Data1D::read(LineParser& parser)
  * Parallel Comms
  */
 
-// Sum histogram data onto all processes
-bool Data1D::allSum(ProcessPool& procPool)
-{
-#ifdef PARALLEL
-	if (!procPool.allSum(bins_, nBins_)) return false;
-#endif
-
-	return true;
-}
-
 // Broadcast data
 bool Data1D::broadcast(ProcessPool& procPool, int rootRank)
 {

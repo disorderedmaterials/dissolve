@@ -91,8 +91,6 @@ class Data1D : public ListItem<Data1D>, public ObjectStore<Data1D>, public Gener
 	 * Parallel Comms
 	 */
 	public:
-	// Sum histogram data onto all processes
-	bool allSum(ProcessPool& procPool);
 	// Broadcast data
 	bool broadcast(ProcessPool& procPool, int rootRank = 0);
 	// Check item equality
