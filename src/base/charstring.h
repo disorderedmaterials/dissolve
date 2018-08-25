@@ -127,6 +127,8 @@ class CharString : public ListItem<CharString>
 	double asDouble() const;
 	// Returns contents as integer
 	int asInteger() const;
+	// Returns contents as long integer
+	long int asLongInteger() const;
 	// Returns contents as bool
 	bool asBool() const;
 	// Returns true if the string contains a number

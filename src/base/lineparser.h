@@ -218,6 +218,8 @@ class LineParser
 	const char* argc(int i);
 	// Returns the specified argument as an integer
 	int argi(int i);
+	// Returns the specified argument as a long integer
+	long int argli(int i);
 	// Returns the specified argument as a double
 	double argd(int i);
 	// Returns the specified argument as a bool

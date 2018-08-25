@@ -358,6 +358,12 @@ int CharString::asInteger() const
 	return (data_ != NULL ? atoi(data_) : 0);
 }
 
+// Returns contents as long integer
+long int CharString::asLongInteger() const
+{
+	return (data_ != NULL ? atol(data_) : 0);
+}
+
 // Return as bool
 bool CharString::asBool() const
 {

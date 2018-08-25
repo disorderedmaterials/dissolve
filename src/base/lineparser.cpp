@@ -1108,6 +1108,17 @@ int LineParser::argi(int i)
 	return arguments_[i]->asInteger();
 }
 
+// Returns the specified argument as a long integer
+long int LineParser::argli(int i)
+{
+	if ((i < 0) || (i >= nArgs()))
+	{
+		printf("Warning: Argument %i is out of range - returning 0...\n", i);
+		return 0;
+	}
+	return arguments_[i]->asLongInteger();
+}
+
 // Returns the specified argument as a double
 double LineParser::argd(int i)
 {
