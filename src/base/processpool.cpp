@@ -821,6 +821,29 @@ bool ProcessPool::receive(int& value, int sourceWorldRank, ProcessPool::Communic
 	return true;
 }
 
+// Send single long integer value to target process
+bool ProcessPool::send(long int value, int targetWorldRank, ProcessPool::CommunicatorType commType)
+{
+#ifdef PARALLEL
+	timer_.start();
+	if (MPI_Send(&value, 1, MPI_LONG, targetWorldRank, 0, communicator(commType)) != MPI_SUCCESS) return false;
+	timer_.accumulate();
+#endif
+	return true;
+}
+
+// Receive single long integer value from source process
+bool ProcessPool::receive(long int& value, int sourceWorldRank, ProcessPool::CommunicatorType commType)
+{
+#ifdef PARALLEL
+	timer_.start();
+	MPI_Status status;
+	if (MPI_Recv(&value, 1, MPI_LONG, sourceWorldRank, 0, communicator(commType), &status) != MPI_SUCCESS) return false;
+	timer_.accumulate();
+#endif
+	return true;
+}
+
 // Send single double value to target process
 bool ProcessPool::send(double value, int targetWorldRank, ProcessPool::CommunicatorType commType)
 {
@@ -1675,7 +1698,7 @@ bool ProcessPool::allSum(int* source, int count, ProcessPool::CommunicatorType c
 }
 
 // Reduce (sum) long int data to all processes
-bool allSum(long int* source, int count, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator)
+bool ProcessPool::allSum(long int* source, int count, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	timer_.start();
@@ -1948,6 +1971,35 @@ bool ProcessPool::equality(int i, ProcessPool::CommunicatorType commType)
 			{
 				decideFalse(0, commType);
 				return Messenger::error("Integer value is not equivalent (process %i has %i).\n", poolRank_, i);
+			}
+		}
+		decideTrue(0, commType);
+	}
+	
+#endif
+	return true;
+}
+
+// Check equality of long integer value across involved processes
+bool ProcessPool::equality(long int i, ProcessPool::CommunicatorType commType)
+{
+#ifdef PARALLEL
+	bool result;
+	if (poolRank_ != 0)
+	{
+		if (!send(i, 0, commType)) return false;
+		if (!decision(0, commType)) return Messenger::error("Long integer value is not equivalent (process %i has %li).\n", poolRank_, i);
+	}
+	else
+	{
+		long int j;
+		for (int n = 1; n<nProcesses(); ++n)
+		{
+			if (!receive(j, n, commType)) return false;
+			if (i != j)
+			{
+				decideFalse(0, commType);
+				return Messenger::error("Long integer value is not equivalent (process %i has %li).\n", poolRank_, i);
 			}
 		}
 		decideTrue(0, commType);

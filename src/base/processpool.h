@@ -239,6 +239,10 @@ class ProcessPool
 	bool send(int value, int targetRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Receive single integer from source rank within the specified communicator
 	bool receive(int& value, int sourceRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	// Send single long integer value to target rank within the specified communicator 
+	bool send(long int value, int targetRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	// Receive single long integer from source rank within the specified communicator
+	bool receive(long int& value, int sourceRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Send single double value to target rank within the specified communicator
 	bool send(double value, int targetRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Receive single double value from source rank within the specified communicator
@@ -345,6 +349,8 @@ class ProcessPool
 	bool equality(bool b, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Check equality of integer value across involved processes
 	bool equality(int i, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	// Check equality of long integer value across involved processes
+	bool equality(long int i, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Check equality of double value across involved processes
 	bool equality(double x, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Check equality of CharString value across involved processes
