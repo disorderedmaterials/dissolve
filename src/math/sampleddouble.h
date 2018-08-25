@@ -54,6 +54,8 @@ class SampledDouble : public GenericItemBase
 	double value() const;
 	// Accumulate current value into statistics
 	void accumulate();
+	// Accumulate specified value into statistics
+	void accumulate(double value);
 	// Return number of samples contributing to averages etc.
 	int count() const;
 	// Return mean of sampled data

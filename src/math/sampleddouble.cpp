@@ -45,10 +45,18 @@ double SampledDouble::value() const
 // Accumulate current value into statistics
 void SampledDouble::accumulate()
 {
+	accumulate(value_);
+}
+
+// Accumulate specified value into statistics
+void SampledDouble::accumulate(double value)
+{
+	// Accumulate value using Welford's online algorithm
 	++count_;
-	double delta = value_ - mean_;
+	double delta = value - mean_;
 	mean_ += delta / count_;
-	m2_ += delta * (value_ - mean_);
+	m2_ += delta * (value - mean_);
+
 }
 
 // Return number of samples contributing to averages etc.
