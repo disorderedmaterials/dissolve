@@ -234,8 +234,8 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Determine allowable range for fit, based on requested values and limits of generated / simulated datasets.
 		double deltaSQMin = qMin, deltaSQMax = (qMax < 0.0 ? x1.lastValue() : qMax);
-		if ((deltaSQMin < x1.firstValue()) || (deltaSQMin < simulatedFQ.xFirst())) deltaSQMin = max(x1.firstValue(), simulatedFQ.xFirst());
-		if ((deltaSQMax > x1.lastValue()) || (deltaSQMax > simulatedFQ.xLast())) deltaSQMax = min(x1.lastValue(), simulatedFQ.xLast());
+		if ((deltaSQMin < x1.firstValue()) || (deltaSQMin < simulatedFQ.xMin())) deltaSQMin = max(x1.firstValue(), simulatedFQ.xMin());
+		if ((deltaSQMax > x1.lastValue()) || (deltaSQMax > simulatedFQ.xMax())) deltaSQMax = min(x1.lastValue(), simulatedFQ.xMax());
 
 		double x;
 		for (int n=0; n<x1.nItems(); ++n)

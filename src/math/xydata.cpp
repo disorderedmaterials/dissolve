@@ -100,18 +100,6 @@ void XYData::initialise(int size)
 	z_ = 0.0;
 }
 
-// Create new X data and empty Y data
-void XYData::createEmpty(double xDelta, double xMax, bool halfBins)
-{
-	clear();
-	double x = (halfBins ? 0.5*xDelta : 0.0);
-	while (x <= xMax)
-	{
-		addPoint(x, 0.0);
-		x += xDelta;
-	}
-}
-
 // Copy existing X and Y data
 void XYData::copyData(const XYData& source)
 {
@@ -136,32 +124,6 @@ void XYData::templateFrom(const XYData& source)
 	interpolationInterval_ = -1;
 }
 
-// Return current array size
-int XYData::arraySize()
-{
-	return x_.nItems();
-}
-
-// Set specified data point
-void XYData::setPoint(int index, double x, double y)
-{
-#ifdef CHECKS
-	if ((index < 0) || (index >= x_.nItems()))
-	{
-		Messenger::error("OUT_OF_RANGE - Index %i is out of range for x_ array in XYData::setPoint().\n", index);
-		return;
-	}
-	if ((index < 0) || (index >= y_.nItems()))
-	{
-		Messenger::error("OUT_OF_RANGE - Index %i is out of range for y_ array in XYData::setPoint().\n", index);
-		return;
-	}
-#endif
-	x_[index] = x;
-	y_[index] = y;
-	interpolationInterval_ = -1;
-}
-
 // Return number of defined datapoints
 int XYData::nPoints() const
 {
@@ -179,20 +141,6 @@ void XYData::setX(int index, double x)
 	}
 #endif
 	x_[index] = x;
-	interpolationInterval_ = -1;
-}
-
-// Add to x value
-void XYData::addX(int index, double delta)
-{
-#ifdef CHECKS
-	if ((index < 0) || (index >= x_.nItems()))
-	{
-		Messenger::error("OUT_OF_RANGE - Index %i is out of range for x_ array in XYData::addX().\n", index);
-		return;
-	}
-#endif
-	x_[index] += delta;
 	interpolationInterval_ = -1;
 }
 
@@ -521,34 +469,16 @@ void XYData::operator/=(const double factor)
  * Limits
  */
 
-// Return minumum x value in data
+// Return minimum (first) x value in data
 double XYData::xMin() const
 {
-	if (x_.nItems() == 0) return 0.0;
-	double result = x_.constAt(0);
-	for (int n=1; n<x_.nItems(); ++n) if (x_.constAt(n) < result) result = x_.constAt(n);
-	return result;
+	return x_.firstValue();
 }
 
-// Return maxumum x value in data
+// Return maximum (last) x value in data
 double XYData::xMax() const
 {
-	if (x_.nItems() == 0) return 0.0;
-	double result = x_.constAt(0);
-	for (int n=1; n<x_.nItems(); ++n) if (x_.constAt(n) > result) result = x_.constAt(n);
-	return result;
-}
-
-// Return first x value in data
-double XYData::xFirst() const
-{
-	return x_.constAt(0);
-}
-
-// Return last x value in data
-double XYData::xLast() const
-{
-	return x_.constAt(x_.nItems()-1);
+	return x_.lastValue();
 }
 
 // Return minumum y value in data
@@ -567,24 +497,6 @@ double XYData::yMax() const
 	double result = y_.constAt(0);
 	for (int n=1; n<y_.nItems(); ++n) if (y_.constAt(n) > result) result = y_.constAt(n);
 	return result;
-}
-
-// Trim data to X-range specified
-void XYData::trim(double minX, double maxX)
-{
-	// Copy old data first...
-	Array<double> oldX = x_;
-	Array<double> oldY = y_;
-	x_.forgetData();
-	y_.forgetData();
-	for (int n=0; n<oldX.nItems(); ++n)
-	{
-		if (oldX[n] < minX) continue;
-		if (oldX[n] > maxX) break;
-		addPoint(oldX[n], oldY[n]);
-	}
-
-	interpolationInterval_ = -1;
 }
 
 /*
@@ -715,36 +627,6 @@ void XYData::medianFilter(int length)
 	
 	// Store new values
 	y_ = newY;
-
-	interpolationInterval_ = -1;
-}
-
-// Rebin data onto uniform x axis
-void XYData::rebin(double deltaX)
-{
-	// If deltaX is negative, work out a deltaX to use
-	if (deltaX < 0.0)
-	{
-		deltaX = 0.0;
-		for (int n=1; n<x_.nItems(); ++n) deltaX += x_[n]-x_[n-1];
-		deltaX /= x_.nItems()-1;
-		deltaX *= 0.5;
-	}
-
-	// Interpolate the existing data
-	interpolate(XYData::LinearInterpolation);
-
-	// Generate new data
-	XYData rebinnedData;
-	double x = 0.0, xLimit = xMax();
-	while (x < xLimit)
-	{
-		rebinnedData.addPoint(x, interpolated(x));
-		x += deltaX;
-	}
-
-	// Overwrite old data
-	(*this) = rebinnedData;
 
 	interpolationInterval_ = -1;
 }
@@ -891,10 +773,10 @@ double XYData::rmse(XYData ref) const
 		x = x_.constAt(n);
 
 		// Is our x value lower than the lowest x value of the reference data?
-		if (x < ref.xFirst()) continue;
+		if (x < ref.xMin()) continue;
 
 		// Is our x value higher than the last x value of the reference data?
-		if (x > ref.xLast()) break;
+		if (x > ref.xMax()) break;
 
 		// Is this the first point considered?
 		if (nPointsConsidered == 0) firstX = x;
@@ -935,10 +817,10 @@ double XYData::error(XYData ref) const
 		x = x_.constAt(n);
 
 		// Is our x value lower than the lowest x value of the reference data?
-		if (x < ref.xFirst()) continue;
+		if (x < ref.xMin()) continue;
 
 		// Is our x value higher than the last x value of the reference data?
-		if (x > ref.xLast()) break;
+		if (x > ref.xMax()) break;
 
 		// Is this the first point considered?
 		if (nPointsConsidered == 0) firstX = x;
@@ -1102,12 +984,6 @@ bool XYData::saveWithInterpolation(const char* filename)
 	parser.closeFiles();
 
 	return true;
-}
-
-// Dump contents
-void XYData::dump()
-{
-	for (int n=0; n<x_.nItems(); ++n) Messenger::print("%16.10e  %16.10e  %16.10e\n", x_.constAt(n), y_.constAt(n), interpolated(x_.constAt(n)));
 }
 
 /*

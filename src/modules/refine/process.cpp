@@ -393,8 +393,8 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 				// Determine allowable range for fit, based on requested values and limits of generated / simulated datasets
 				double deltaSQMin = qMin, deltaSQMax = (qMax < 0.0 ? x1.lastValue() : qMax);
-				if ((deltaSQMin < x1.firstValue()) || (deltaSQMin < simulatedSQ.xFirst())) deltaSQMin = max(x1.firstValue(), simulatedSQ.xFirst());
-				if ((deltaSQMax > x1.lastValue()) || (deltaSQMax > simulatedSQ.xLast())) deltaSQMax = min(x1.lastValue(), simulatedSQ.xLast());
+				if ((deltaSQMin < x1.firstValue()) || (deltaSQMin < simulatedSQ.xMin())) deltaSQMin = max(x1.firstValue(), simulatedSQ.xMin());
+				if ((deltaSQMax > x1.lastValue()) || (deltaSQMax > simulatedSQ.xMax())) deltaSQMax = min(x1.lastValue(), simulatedSQ.xMax());
 
 				XYData refSQTrimmed;
 				double x;

@@ -149,7 +149,7 @@ void GaussFit::printCoefficients() const
 // Save Fourier-transformed Gaussians to individual files
 bool GaussFit::saveFTGaussians(const char* filenamePrefix, double xStep) const
 {
-	double xDelta = (xStep < 0.0 ? referenceData_.x(1) - referenceData_.xFirst() : xStep);
+	double xDelta = (xStep < 0.0 ? referenceData_.x(1) - referenceData_.xMin() : xStep);
 	for (int n=0; n<nGaussians_; ++n)
 	{
 		LineParser parser;
@@ -160,8 +160,8 @@ bool GaussFit::saveFTGaussians(const char* filenamePrefix, double xStep) const
 		double fwhm = fwhm_.constAt(n);
 		if (!parser.writeLineF("#  x=%f  A=%f  fwhm=%f\n", xCentre, A, fwhm)) return false;
 
-		double x = referenceData_.xFirst();
-		while (x < referenceData_.xLast())
+		double x = referenceData_.xMin();
+		while (x < referenceData_.xMax())
 		{
 			parser.writeLineF("%f  %f\n", x, gaussianFT(x, xCentre, A, fwhm));
 			x += xDelta;

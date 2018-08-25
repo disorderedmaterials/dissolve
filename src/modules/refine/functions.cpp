@@ -285,12 +285,12 @@ double RefineModule::costFunction3Exp(const Array<double>& alpha)
 	while (x <= xMax)
 	{
 		// Check x against limits of function
-		if (x < fitData_.xFirst())
+		if (x < fitData_.xMin())
 		{
 			x += windowDelta;
 			continue;
 		}
-		else if (x > fitData_.xLast()) break;
+		else if (x > fitData_.xMax()) break;
 
 		// Evaluate the function
 		func = fitEquation(x, alpha.constAt(0), alpha.constAt(1), alpha.constAt(2), alpha.constAt(3), alpha.constAt(4), alpha.constAt(5));
@@ -333,12 +333,12 @@ double RefineModule::costFunction2Exp(const Array<double>& alpha)
 	while (x <= xMax)
 	{
 		// Check x against limits of function
-		if (x < fitData_.xFirst())
+		if (x < fitData_.xMin())
 		{
 			x += windowDelta;
 			continue;
 		}
-		else if (x > fitData_.xLast()) break;
+		else if (x > fitData_.xMax()) break;
 
 		// Evaluate the function
 		func = fitEquation(x, alpha.constAt(0), alpha.constAt(1), alpha.constAt(2), alpha.constAt(3), 0.0, alpha.constAt(4));

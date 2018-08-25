@@ -67,22 +67,14 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	void reset();
 	// Initialise arrays to specified size
 	void initialise(int size);
-	// Create new X data and empty Y data
-	void createEmpty(double xDelta, double xMax, bool halfBins = true);
 	// Copy existing X and Y data
 	void copyData(const XYData& source);
 	// Copy existing X data and generate empty Y
 	void templateFrom(const XYData& source);
-	// Return current array size
-	int arraySize();
-	// Set data point 
-	void setPoint(int index, double x, double y);
 	// Return number of defined datapoints
 	int nPoints() const;
 	// Set x value
 	void setX(int index, double x);
-	// Add to x value
-	void addX(int index, double delta);
 	// Return x value specified
 	double x(int index) const;
 	// Return x Array
@@ -147,20 +139,14 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	 * Limits
 	 */
 	public:
-	// Return minumum x value in data
+	// Return minimum (first) x value in data
 	double xMin() const;
-	// Return maxumum x value in data
+	// Return maximum (last) x value in data
 	double xMax() const;
-	// Return first x value in data
-	double xFirst() const;
-	// Return last x value in data
-	double xLast() const;
 	// Return minumum y value in data
 	double yMin() const;
 	// Return maxumum y value in data
 	double yMax() const;
-	// Trim data to X-range specified
-	void trim(double minX, double maxX);
 
 
 	/*
@@ -189,8 +175,6 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	public:
 	// Apply median filter to data
 	void medianFilter(int length);
-	// Rebin data onto uniform x axis
-	void rebin(double deltaX = -1.0);
 	// Perform moving average smoothing
 	void movingAverage(int avgSize);
 	// Apply Kolmogorov–Zurbenko filter
@@ -249,8 +233,6 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	bool save(const char* filename) const;
 	// Save data and interpolation to specified file
 	bool saveWithInterpolation(const char* filename);
-	// Dump contents
-	void dump();
 
 
 	/*
