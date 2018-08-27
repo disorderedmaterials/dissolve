@@ -3,9 +3,12 @@ add_library(math
   cuboid.cpp
   data1d.cpp
   doubleexp.cpp
+  error.cpp
+  filters.cpp
   gaussfit.cpp
   gj.cpp
   histogram1d.cpp
+  interpolater.cpp
   mathfunc.cpp
   matrix3.cpp
   matrix4.cpp
@@ -16,17 +19,19 @@ add_library(math
   windowfunction.cpp
   xydata.cpp
   xydata_ft.cpp
-  xydata_interp.cpp
 
   broadeningfunction.h
   constants.h
   cuboid.h
   data1d.h
   doubleexp.h
+  error.h
+  filters.h
   functionspace.h
   gaussfit.h
   gj.h
   histogram1d.h
+  interpolater.h
   mathfunc.h
   matrix3.h
   matrix4.h

@@ -29,7 +29,7 @@ List<Module> RefineModule::instances_;
  */
 
 // Constructor
-RefineModule::RefineModule() : Module()
+RefineModule::RefineModule() : Module(), interpolatedFitData_(fitData_)
 {
 	// Add to instances list and set unique name for this instance
 	instances_.own(this);

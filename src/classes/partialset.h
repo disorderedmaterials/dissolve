@@ -31,6 +31,7 @@
 
 // Forward Declarations
 class Configuration;
+class Interpolater;
 
 // Set of Partials
 class PartialSet : public ListItem<PartialSet>, public GenericItemBase
@@ -141,13 +142,13 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 
 	public:
 	// Form partials from stored Histogram data
-	void formPartials(double boxVolume, XYData& boxNormalisation);
+	void formPartials(double boxVolume, Interpolater& boxNormalisation);
 	// Add in partials from source PartialSet to our own, with specified weighting
 	bool addPartials(PartialSet& source, double weighting);
 	// Re-weight partials (including total) with supplied weighting factor
 	void reweightPartials(double factor);
 	// Calculate RDF from supplied Histogram and normalisation data
-	static void calculateRDF(XYData& destination, Histogram1D& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, XYData& boxNormalisation);
+	static void calculateRDF(XYData& destination, Histogram1D& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, Interpolater& boxNormalisation);
 
 
 	/*

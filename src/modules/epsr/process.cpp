@@ -23,6 +23,7 @@
 #include "main/dissolve.h"
 #include "modules/energy/energy.h"
 #include "modules/rdf/rdf.h"
+#include "math/error.h"
 #include "math/gaussfit.h"
 #include "math/poissonfit.h"
 #include "classes/scatteringmatrix.h"
@@ -170,13 +171,13 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			}
 			XYData calcSQTotal = calcSQ.constTotal();
 
-			error = referenceData.error(calcSQTotal);
+			error = Error::percent(referenceData, calcSQTotal);
 
 			// Calculate difference
 			XYData& differenceData = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), CharString("DifferenceData_%s", module->uniqueName()), uniqueName(), GenericItem::InRestartFileFlag);
 			differenceData.setObjectName(CharString("%s//Difference//%s", uniqueName_.get(), module->uniqueName()));
 			differenceData = referenceData;
-			differenceData.addInterpolated(calcSQTotal, -1.0);
+			Interpolater::addInterpolated(differenceData, calcSQTotal, -1.0);
 		}
 		else return Messenger::error("Unrecognised Module type '%s', so can't calculate error.", module->name());
 
@@ -231,6 +232,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		const Array<double> x1 = referenceData.constArrayX();
 		const Array<double> y1 = referenceData.constArrayY();
 		XYData simulatedFQ = weightedSQ.constTotal();
+		Interpolater interpolatedSimFQ(simulatedFQ);
 
 		// Determine allowable range for fit, based on requested values and limits of generated / simulated datasets.
 		double deltaSQMin = qMin, deltaSQMax = (qMax < 0.0 ? x1.lastValue() : qMax);
@@ -246,7 +248,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			// If this x value is below the minimum Q value we are fitting, set the difference to zero. Otherwise, store the "inverse" value ([sim - exp], for consistency with EPSR)
 			if (x < deltaSQMin) deltaFQ.addPoint(x, 0.0);
 			else if (x > deltaSQMax) break;
-			else deltaFQ.addPoint(x, simulatedFQ.interpolated(x) - y1.constAt(n));
+			else deltaFQ.addPoint(x, interpolatedSimFQ.y(x) - y1.constAt(n));
 		}
 
 		/*
@@ -312,7 +314,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			testDataName = CharString("WeightedFR-%s-total", module->uniqueName());
 			if (testData_.contains(testDataName))
 			{
-				double error = simulatedFR.error(testData_.data(testDataName));
+				double error = Error::percent(simulatedFR, testData_.data(testDataName));
 				Messenger::print("Simulated F(r) reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", testDataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 				if (error > testThreshold) return false;
 			}
@@ -390,7 +392,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 			// Subtract intramolecular total from the reference data - this will enter into the ScatteringMatrix
 			XYData refMinusIntra = referenceData, boundTotal = weightedSQ.boundTotal(false);
-			refMinusIntra.addInterpolated(boundTotal, -1.0);
+			Interpolater::addInterpolated(refMinusIntra, boundTotal, -1.0);
 
 			// Add a row to our scattering matrix
 			if (!scatteringMatrix.addReferenceData(refMinusIntra, weights, feedback)) return Messenger::error("Failed to add target data '%s' to weights matrix.\n", module->uniqueName());
@@ -407,7 +409,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					double globalJ = atd2->atomType()->index();
 
 					XYData partialIJ = unweightedSQ.constUnboundPartial(i,j);
-					combinedUnweightedSQ.at(globalI, globalJ ).addInterpolated(partialIJ, factor);
+					Interpolater::addInterpolated(combinedUnweightedSQ.at(globalI, globalJ ), partialIJ, factor);
 					combinedRho.at(globalI, globalJ) += rho * factor;
 					combinedFactor.at(globalI, globalJ) += factor;
 					combinedCWeights.at(globalI, globalJ) += weights.concentrationProduct(i,j);
@@ -487,7 +489,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					testDataName = CharString("GeneratedSQ-%s-%s", at1->name(), at2->name());
 					if (testData_.contains(testDataName))
 					{
-						double error = generatedSQ.at(i,j).error(testData_.data(testDataName));
+						double error = Error::percent(generatedSQ.at(i,j), testData_.data(testDataName));
 						Messenger::print("Generated S(Q) reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", testDataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 						if (error > testThreshold) return false;
 					}

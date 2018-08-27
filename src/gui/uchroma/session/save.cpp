@@ -168,7 +168,7 @@ bool UChromaBase::writeDataSetBlock(LineParser& parser, DataSet* dataSet, int in
 	if (dataSet->dataSource() == DataSet::InternalSource)
 	{
 		parser.writeLineF("%s    %s\n", indent, UChromaBase::dataSetKeyword(UChromaBase::DataKeyword));
-		for (int n=0; n< dataSet->data().nPoints(); ++n) parser.writeLineF("%s      %f  %f\n", indent, dataSet->data().x(n), dataSet->data().y(n));
+		for (int n=0; n< dataSet->data().nPoints(); ++n) parser.writeLineF("%s      %f  %f\n", indent, dataSet->data().constX(n), dataSet->data().constY(n));
 		parser.writeLineF("%s    End%s\n", indent, UChromaBase::dataSetKeyword(UChromaBase::DataKeyword));
 	}
 	parser.writeLineF("%s  %s\n", indent, UChromaBase::dataSetKeyword(UChromaBase::EndDataSetKeyword));

@@ -37,7 +37,7 @@ PairPotential::ShortRangeTruncationScheme PairPotential::shortRangeTruncationSch
 double PairPotential::shortRangeTruncationWidth_ = 2.0;
 
 // Constructor
-PairPotential::PairPotential() : ListItem<PairPotential>()
+PairPotential::PairPotential() : ListItem<PairPotential>(), uFullInterpolation_(uFull_), dUFullInterpolation_(dUFull_)
 {
 	for (int n=0; n<MAXSRPARAMETERS; ++n) parameters_[n] = 0.0;
 	chargeI_ = 0.0;
@@ -480,8 +480,8 @@ void PairPotential::calculateUFull()
 	// ...add on uAdditional...
 	uFull_ += uAdditional_;
 
-	// ...and interpolate it
-	uFull_.interpolate(XYData::ThreePointInterpolation);
+	// ...and update its interpolation
+	uFullInterpolation_.interpolate(Interpolater::ThreePointInterpolation);
 }
 
 // Calculate derivative of potential
@@ -503,23 +503,23 @@ void PairPotential::calculateDUFull()
 		if ((n == 1) || (n == (nPoints_-2)))
 		{
 			// Three-point 
-			dUFull_.setY(n, -(uFull_.y(n-1) - uFull_.y(n+1)) / (2*delta_));
+			dUFull_.setY(n, -(uFull_.constY(n-1) - uFull_.constY(n+1)) / (2*delta_));
 		}
 		else
 		{
 			// Five-point stencil
-			fprime = -uFull_.y(n+2) + 8*uFull_.y(n+1) - 8*uFull_.y(n-1) + uFull_.y(n-2);
+			fprime = -uFull_.constY(n+2) + 8*uFull_.constY(n+1) - 8*uFull_.constY(n-1) + uFull_.constY(n-2);
 			fprime /= 12*delta_;
 			dUFull_.setY(n, fprime);
 		}
 	}
 	
 	// Set first and last points
-	dUFull_.setY(0, 10.0*dUFull_.y(1));
-	dUFull_.setY(nPoints_-1, dUFull().y(nPoints_-2));
+	dUFull_.setY(0, 10.0*dUFull_.constY(1));
+	dUFull_.setY(nPoints_-1, dUFull_.constY(nPoints_-2));
 
-	// Interpolate it
-	dUFull_.interpolate(XYData::ThreePointInterpolation);
+	// Update interpolation
+	dUFullInterpolation_.interpolate(Interpolater::ThreePointInterpolation);
 }
 
 // Set up and generate initial potential
@@ -588,10 +588,7 @@ void PairPotential::calculateUOriginal(bool recalculateUFull)
 	}
 
 	// Since the first point (at zero) risks being a nan, set it to ten times the second point instead
-	uOriginal_.setY(0, 10.0*uOriginal_.y(1));
-
-	// Create a spline interpolation of the original potential
-	uOriginal_.interpolate(XYData::ThreePointInterpolation);
+	uOriginal_.setY(0, 10.0*uOriginal_.constY(1));
 
 	// Update full potential (if not the first generation of the potential)
 	if (recalculateUFull) calculateUFull();
@@ -610,7 +607,7 @@ double PairPotential::energy(double r)
 #endif
 
 	// Return interpolated value
-	return uFull_.interpolated(r, r*rDelta_);
+	return uFullInterpolation_.y(r, r*rDelta_);
 }
 
 // Return analytic potential at specified r
@@ -650,7 +647,7 @@ double PairPotential::force(double r)
 #endif
 
 	// Return interpolated value
-	return dUFull_.interpolated(r, r*rDelta_);
+	return dUFullInterpolation_.y(r, r*rDelta_);
 }
 
 // Return analytic derivative of potential at specified r
@@ -722,7 +719,8 @@ void PairPotential::setUAdditional(XYData& newUAdditional)
 // Adjust additional potential, and recalculate UFull and dUFull
 void PairPotential::adjustUAdditional(XYData u, double factor)
 {
-	uAdditional_.addInterpolated(u, factor);
+	// Interpolate the supplied data 'u' and add it to the additional potential
+	Interpolater::addInterpolated(uAdditional_, u, factor);
 
 	calculateUFull();
 	calculateDUFull();
@@ -749,7 +747,7 @@ bool PairPotential::save(const char* filename)
 	parser.writeLineF("#%9s  %12s  %12s  %12s  %12s  %12s  %12s\n", "", "Full", "Derivative", "Original", "Additional", "Exact(Orig)", "Exact(Deriv)");
 	parser.writeLineF("#%9s  %12s  %12s  %12s  %12s  %12s  %12s  %12s  %12s\n", "r(Angs)", "U(kJ/mol)", "dU(kJ/mol/Ang)", "U(kJ/mol)", "U(kJ/mol)", "U(kJ/mol)", "dU(kJ/mol/Ang)", "rFine(Angs)", "Derivative");
 	double fineDelta = delta_*0.05;
-	for (int n = 0; n<nPoints_; ++n) parser.writeLineF("%10.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e\n", uOriginal_.x(n), uFull_.y(n), dUFull_.y(n), uOriginal_.y(n), uAdditional_.interpolated(uOriginal_.x(n)), analyticEnergy(uOriginal_.x(n)), analyticForce(uOriginal_.x(n)), fineDelta*n, dUFull_.x(fineDelta*n));
+	for (int n = 0; n<nPoints_; ++n) parser.writeLineF("%10.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e\n", uOriginal_.constX(n), uFull_.constY(n), dUFull_.constY(n), uOriginal_.constY(n), uAdditional_.constY(n), analyticEnergy(uOriginal_.constX(n)), analyticForce(uOriginal_.constX(n)), fineDelta*n, dUFull_.constX(fineDelta*n));
 
 	parser.closeFiles();
 

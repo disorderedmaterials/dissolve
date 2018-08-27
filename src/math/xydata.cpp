@@ -42,8 +42,6 @@ XYData::XYData() : ListItem<XYData>(), ObjectStore<XYData>(this)
 	name_ = "Untitled";
 	xColumn_ = -1;
 	yColumn_ = -1;
-	interpolationInterval_ = -1;
-	interpolationScheme_ = NoInterpolation;
 	z_ = 0.0;
 }
 
@@ -63,19 +61,6 @@ void XYData::clear()
 {
 	x_.clear();
 	y_.clear();
-	clearInterpolationArrays();
-}
-
-// Clear interpolation arrays
-void XYData::clearInterpolationArrays()
-{
-	interpolationA_.clear();
-	interpolationB_.clear();
-	interpolationC_.clear();
-	interpolationD_.clear();
-	interpolationH_.clear();
-	interpolationInterval_ = -1;
-	interpolationScheme_ = NoInterpolation;
 }
 
 /*
@@ -88,7 +73,6 @@ void XYData::reset()
 	for (int n=0; n<x_.nItems(); ++n) x_[n] = 0.0;
 	for (int n=0; n<y_.nItems(); ++n) y_[n] = 0.0;
 	z_ = 0.0;
-	interpolationInterval_ = -1;
 }
 
 // Initialise arrays to specified size
@@ -106,13 +90,6 @@ void XYData::copyData(const XYData& source)
 	x_ = source.x_;
 	y_ = source.y_;
 	z_ = source.z_;
-	interpolationA_ = source.interpolationA_;
-	interpolationB_ = source.interpolationB_;
-	interpolationC_ = source.interpolationC_;
-	interpolationD_ = source.interpolationD_;
-	interpolationH_ = source.interpolationH_;
-	interpolationInterval_ = source.interpolationInterval_;
-	interpolationScheme_ = source.interpolationScheme_;
 }
 
 // Copy existing X data and generate empty Y
@@ -121,7 +98,6 @@ void XYData::templateFrom(const XYData& source)
 	x_ = source.x_;
 	y_.initialise(x_.nItems());
 	y_ = 0.0;
-	interpolationInterval_ = -1;
 }
 
 // Return number of defined datapoints
@@ -141,16 +117,29 @@ void XYData::setX(int index, double x)
 	}
 #endif
 	x_[index] = x;
-	interpolationInterval_ = -1;
 }
 
 // Return x value specified
-double XYData::x(int index) const
+double& XYData::x(int index)
 {
 #ifdef CHECKS
 	if ((index < 0) || (index >= x_.nItems()))
 	{
+		static double dummy;
 		Messenger::error("OUT_OF_RANGE - Index %i is out of range for x_ array in XYData::x().\n", index);
+		return dummy;
+	}
+#endif
+	return x_[index];
+}
+
+// Return x value specified (const)
+double XYData::constX(int index) const
+{
+#ifdef CHECKS
+	if ((index < 0) || (index >= x_.nItems()))
+	{
+		Messenger::error("OUT_OF_RANGE - Index %i is out of range for x_ array in XYData::constX().\n", index);
 		return 0.0;
 	}
 #endif
@@ -160,7 +149,6 @@ double XYData::x(int index) const
 // Return x Array
 Array<double>& XYData::arrayX()
 {
-	interpolationInterval_ = -1;
 	return x_;
 }
 
@@ -181,7 +169,6 @@ void XYData::setY(int index, double y)
 	}
 #endif
 	y_[index] = y;
-	interpolationInterval_ = -1;
 }
 
 // Add to y value
@@ -195,7 +182,6 @@ void XYData::addY(int index, double delta)
 	}
 #endif
 	y_[index] += delta;
-	interpolationInterval_ = -1;
 }
 
 // Add to y array
@@ -208,7 +194,6 @@ bool XYData::addY(const Array<double>& source, double factor)
 	}
 
 	for (int n=0; n<y_.nItems(); ++n) y_[n] += source.constAt(n)*factor;
-	interpolationInterval_ = -1;
 	return true;
 }
 
@@ -223,16 +208,29 @@ void XYData::multiplyY(int index, double factor)
 	}
 #endif
 	y_[index] *= factor;
-	interpolationInterval_ = -1;
 }
 
 // Return y value specified
-double XYData::y(int index) const
+double& XYData::y(int index)
 {
 #ifdef CHECKS
 	if ((index < 0) || (index >= y_.nItems()))
 	{
+		static double dummy;
 		Messenger::error("OUT_OF_RANGE - Index %i is out of range for y_ array in XYData::y().\n", index);
+		return dummy;
+	}
+#endif
+	return y_[index];
+}
+
+// Return y value specified (const)
+double XYData::constY(int index) const
+{
+#ifdef CHECKS
+	if ((index < 0) || (index >= y_.nItems()))
+	{
+		Messenger::error("OUT_OF_RANGE - Index %i is out of range for y_ array in XYData::constY().\n", index);
 		return 0.0;
 	}
 #endif
@@ -242,7 +240,6 @@ double XYData::y(int index) const
 // Return y Array
 Array<double>& XYData::arrayY()
 {
-	interpolationInterval_ = -1;
 	return y_;
 }
 
@@ -281,7 +278,6 @@ void XYData::addPoint(double x, double y)
 {
 	x_.add(x);
 	y_.add(y);
-	interpolationInterval_ = -1;
 }
 
 // Set name of data
@@ -306,13 +302,6 @@ void XYData::operator=(const XYData& source)
 	x_ = source.x_;
 	y_ = source.y_;
 	z_ = source.z_;
-	interpolationA_ = source.interpolationA_;
-	interpolationB_ = source.interpolationB_;
-	interpolationC_ = source.interpolationC_;
-	interpolationD_ = source.interpolationD_;
-	interpolationH_ = source.interpolationH_;
-	interpolationInterval_ = source.interpolationInterval_;
-	interpolationScheme_ = source.interpolationScheme_;
 	name_ = source.name_;
 }
 
@@ -340,8 +329,6 @@ XYData XYData::operator+(const XYData& source) const
 		}
 		newData.y_[n] += source.y_.constAt(n);
 	}
-	
-	newData.interpolationInterval_ = -1;
 	
 	return newData;
 }
@@ -373,15 +360,12 @@ void XYData::operator+=(const XYData& source)
 		}
 		y_[n] += source.y_.constAt(n);
 	}
-
-	interpolationInterval_ = -1;
 }
 
 // Operator +=
 void XYData::operator+=(const double dy)
 {
 	for (int n=0; n<x_.nItems(); ++n) y_[n] += dy;
-	interpolationInterval_ = -1;
 }
 
 // Operator -
@@ -408,8 +392,6 @@ XYData XYData::operator-(const XYData& source) const
 		}
 		newData.y_[n] -= source.y_.constAt(n);
 	}
-	
-	newData.interpolationInterval_ = -1;
 	
 	return newData;
 }
@@ -438,15 +420,12 @@ void XYData::operator-=(const XYData& source)
 		}
 		y_[n] -= source.y_.constAt(n);
 	}
-
-	interpolationInterval_ = -1;
 }
 
 // Operator -=
 void XYData::operator-=(const double dy)
 {
 	for (int n=0; n<x_.nItems(); ++n) y_[n] -= dy;
-	interpolationInterval_ = -1;
 }
 
 // Operator *=
@@ -454,7 +433,6 @@ void XYData::operator*=(const double factor)
 {
 	// Multiply current data
 	for (int n=0; n<x_.nItems(); ++n) y_[n] *= factor;
-	interpolationInterval_ = -1;
 }
 
 // Operator /=
@@ -462,7 +440,6 @@ void XYData::operator/=(const double factor)
 {
 	// Divide current data
 	for (int n=0; n<x_.nItems(); ++n) y_[n] /= factor;
-	interpolationInterval_ = -1;
 }
 
 /*
@@ -514,7 +491,7 @@ double XYData::lastGradient(int nSamples, double* yMean) const
 	for (int n=nPoints()-nSamples; n<nPoints(); ++n)
 	{
 		xBar += n;
-		yBar += y(n);
+		yBar += y_.constAt(n);
 	}
 	xBar /= nSamples;
 	yBar /= nSamples;
@@ -523,8 +500,8 @@ double XYData::lastGradient(int nSamples, double* yMean) const
 	for (int n=nPoints()-nSamples; n<nPoints(); ++n)
 	{
 		Sx += (n - xBar)*(n - xBar);
-		Sy += (y(n) - yBar)*(y(n) - yBar);
-		Sxy += (n - xBar) * (y(n) - yBar);
+		Sy += (y_.constAt(n) - yBar)*(y_.constAt(n) - yBar);
+		Sxy += (n - xBar) * (y_.constAt(n) - yBar);
 	}
 
 	// Set yMean value (if a variable was provided)
@@ -627,8 +604,6 @@ void XYData::medianFilter(int length)
 	
 	// Store new values
 	y_ = newY;
-
-	interpolationInterval_ = -1;
 }
 
 // Perform moving average smoothing
@@ -663,8 +638,6 @@ void XYData::movingAverage(int avgSize)
 	}
 
 	y_ = newY;
-
-	interpolationInterval_ = -1;
 }
 
 // Apply Kolmogorov–Zurbenko filter
@@ -698,8 +671,6 @@ void XYData::convolve(BroadeningFunction function)
 	}
 
 	y_ = newY;
-
-	interpolationInterval_ = -1;
 }
 
 // Perform point-wise convolution of this data with the supplied BroadeningFunction, normalising to the original integral of the function
@@ -718,21 +689,6 @@ void XYData::convolveNormalised(BroadeningFunction function)
 	double newIntegral = absIntegral();
 
 	y_ *= (originalIntegral / newIntegral);
-
-	interpolationInterval_ = -1;
-}
-
-// Add interpolated data
-void XYData::addInterpolated(XYData& source, double weighting)
-{
-	// If there is currently no data, just copy the source data
-	if (x_.nItems() == 0)
-	{
-		x_ = source.constArrayX();
-		y_ = source.constArrayY();
-		y_ *= weighting;
-	}
-	else for (int n=0; n<x_.nItems(); ++n) addY(n, source.interpolated(x_.constAt(n)) * weighting);
 }
 
 // Subtract average level from data, forming average from supplied x value
@@ -751,104 +707,6 @@ double XYData::subtractAverage(double xStart)
 	y_ -= sum / nPoints;
 
 	return sum / nPoints;
-}
-
-/*
- * Similarity
- */
-
-// Return RMSE of current data with (interpolated) reference data
-double XYData::rmse(XYData ref) const
-{
-	// First, generate interpolation of reference data if it needs it
-	if (ref.interpolationScheme_ == XYData::NoInterpolation) ref.interpolate(XYData::SplineInterpolation);
-
-	// Generate RMSE over actual values of our data
-	double rmse = 0.0, delta;
-	double firstX = 0.0, lastX = 0.0, x;
-	int nPointsConsidered = 0;
-	for (int n=0; n<x_.nItems(); ++n)
-	{
-		// Grab x value
-		x = x_.constAt(n);
-
-		// Is our x value lower than the lowest x value of the reference data?
-		if (x < ref.xMin()) continue;
-
-		// Is our x value higher than the last x value of the reference data?
-		if (x > ref.xMax()) break;
-
-		// Is this the first point considered?
-		if (nPointsConsidered == 0) firstX = x;
-
-		// Sum squared error
-		delta = y_.constAt(n) - ref.interpolated(x);
-		rmse += delta*delta;
-		lastX = x;
-		++nPointsConsidered;
-	}
-
-	// Finalise RMSE and summarise result
-	rmse = sqrt(rmse/nPointsConsidered);
-	Messenger::print("RMSE between datasets is %15.9e over %15.9e < x < %15.9e (%i points).\n", rmse, firstX, lastX, nPointsConsidered);
-
-	return rmse;
-}
-
-// Return percentage error between this and reference data
-double XYData::error(XYData ref) const
-{
-	// First, generate interpolation of reference data if it needs it
-	if (ref.interpolationScheme_ == XYData::NoInterpolation) ref.interpolate(XYData::SplineInterpolation);
-
-	/*
-	 * Generate error estimate over actual values of our own data
-	 * We will calculate the mean absolute percentage error (MAPE) as well as the simple sum of errors divided by sum of reference data.
-	 * We do both, and return the higher of the two, since the MAPE is not a good measure when considering very spiky data (since the
-	 * on-step forecast is often worse than the actual error of the predicted value.
-	 */
-	
-	double sume = 0.0, sumf = 0.0, sumy = 0.0;
-	double firstX = 0.0, lastX = 0.0, x, y;
-	int nPointsConsidered = 0;
-	for (int n=0; n<x_.nItems(); ++n)
-	{
-		// Grab x value
-		x = x_.constAt(n);
-
-		// Is our x value lower than the lowest x value of the reference data?
-		if (x < ref.xMin()) continue;
-
-		// Is our x value higher than the last x value of the reference data?
-		if (x > ref.xMax()) break;
-
-		// Is this the first point considered?
-		if (nPointsConsidered == 0) firstX = x;
-
-		y = y_.constAt(n);
-
-		// Accumulate numerator - sum of forecast errors
-		sume += fabs(y - ref.interpolated(x));
-		sumy += fabs(ref.interpolated(x));
-
-		// Accumulate denominator - one-step naive forecast (backwards forecast for first point)
-		if (nPointsConsidered > 0) sumf += fabs(y - y_.constAt(n-1));
-		else if (n < x_.nItems()-1) sumf += fabs(y - y_.constAt(n+1));
-
-		lastX = x;
-		++nPointsConsidered;
-	}
-
-	// Finalise MAPE and summarise result
-	double denominator;
-	// Normalisation to N/(N-1) not performed when using one-step backwards forecast for first point.
-// 	if (sumf > 0.0) denominator = (double(nPointsConsidered) / double(nPointsConsidered-1)) * sumf;
-	if (sumf > 0.0) denominator = sumf;
-	else denominator = 1.0;
-	double mape = sume / denominator;
-	Messenger::printVerbose("MAPE between datasets is %7.3f%% over %15.9e < x < %15.9e (%i points), d(|Y|)/sum(|Y|) = %7.3f%%.\n", mape, firstX, lastX, nPointsConsidered, sume/sumy);
-
-	return max(mape,sume/sumy);
 }
 
 /*
@@ -967,25 +825,6 @@ bool XYData::save(const char* filename) const
 	return true;
 }
 
-// Save data and interpolation to specified file
-bool XYData::saveWithInterpolation(const char* filename)
-{
-	// Open file and check that we're OK to proceed writing to it
-	LineParser parser;
-
-	parser.openOutput(filename, true);
-	if (!parser.isFileGoodForWriting())
-	{
-		Messenger::error("Couldn't open file '%s' for writing.\n", filename);
-		return false;
-	}
-	
-	for (int n=0; n<x_.nItems(); ++n) parser.writeLineF("%16.10e  %16.10e  %16.10e\n", x_.constAt(n), y_.constAt(n), interpolated(x_.constAt(n)));
-	parser.closeFiles();
-
-	return true;
-}
-
 /*
  * GenericItemBase Implementations
  */
@@ -1049,14 +888,6 @@ bool XYData::broadcast(ProcessPool& procPool, int rootRank)
 	if (!procPool.broadcast(x_, rootRank)) return false;
 	if (!procPool.broadcast(y_, rootRank)) return false;
 	if (!procPool.broadcast(z_, rootRank)) return false;
-
-	// Spline data
-	if (!procPool.broadcast(interpolationA_, rootRank)) return false;
-	if (!procPool.broadcast(interpolationB_, rootRank)) return false;
-	if (!procPool.broadcast(interpolationC_, rootRank)) return false;
-	if (!procPool.broadcast(interpolationD_, rootRank)) return false;
-	if (!procPool.broadcast(interpolationH_, rootRank)) return false;
-	if (!procPool.broadcast(interpolationInterval_, rootRank)) return false;
 
 	// Axis/title information
 	if (!procPool.broadcast(name_, rootRank)) return false;

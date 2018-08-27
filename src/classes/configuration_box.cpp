@@ -263,10 +263,10 @@ bool Configuration::setUpBox(ProcessPool& procPool, double ppRange, int nExpecte
 				if (procPool.isMaster()) boxNormalisation_.save(boxNormalisationFileName_);
 			}
 		}
-
-		// Interpolate the Box normalisation array
-		boxNormalisation_.interpolate(XYData::LinearInterpolation);
 	}
+
+	// Update the Box normalisation interpolation
+	boxNormalisationInterpolation_.interpolate(Interpolater::LinearInterpolation);
 
 	return true;
 }
@@ -298,6 +298,13 @@ const XYData& Configuration::boxNormalisation() const
 {
 	return boxNormalisation_;
 }
+
+// Return interpolation of Box normalisation function
+Interpolater& Configuration::boxNormalisationInterpolation()
+{
+	return boxNormalisationInterpolation_;
+}
+
 
 // Return cell array
 CellArray& Configuration::cells()

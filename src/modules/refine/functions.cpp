@@ -62,7 +62,7 @@ XYData RefineModule::calculateCR(const XYData& sq, double normFactor, double rMi
 	XYData cr;
 
 	// Assume deltQ is the difference between the first two points
-	double deltaQ = sq.x(1) - sq.x(0);
+	double deltaQ = sq.constX(1) - sq.constX(0);
 
 	// Set up window function
 	windowFunction.setUp(sq);
@@ -81,12 +81,12 @@ XYData RefineModule::calculateCR(const XYData& sq, double normFactor, double rMi
 		for (int m=0; m<nQ; ++m)
 		{
 			// Get window value at this point in the function
-			window = windowFunction.y(sq.x(m), omega);
+			window = windowFunction.y(sq.constX(m), omega);
 
 			// Calculate broadening
-			broaden = (unbroaden ? 1.0 / broadening.yFT(sq.x(m), omega) : broadening.yFT(sq.x(m), omega));
+			broaden = (unbroaden ? 1.0 / broadening.yFT(sq.constX(m), omega) : broadening.yFT(sq.constX(m), omega));
 
-			ft += broaden * window * sq.y(m) * deltaQ * ((sin(sq.x(m)*omega) * sq.x(m)) / (sq.y(m)+1.0));
+			ft += broaden * window * sq.constY(m) * deltaQ * ((sin(sq.constX(m)*omega) * sq.constX(m)) / (sq.constY(m)+1.0));
 		}
 
 		// Normalise
@@ -142,6 +142,7 @@ bool RefineModule::modifyBondTerms(Dissolve& dissolve, const XYData& deltaGR, At
 	minimiserLR.addTarget(AR);
 
 	fitData_ = deltaGR;
+	interpolatedFitData_.interpolate();
 	xCentreDeltaLimit_ = 0.1;
 
 	// Set up the deltaBond data
@@ -294,7 +295,7 @@ double RefineModule::costFunction3Exp(const Array<double>& alpha)
 
 		// Evaluate the function
 		func = fitEquation(x, alpha.constAt(0), alpha.constAt(1), alpha.constAt(2), alpha.constAt(3), alpha.constAt(4), alpha.constAt(5));
-		delta = fitData_.interpolated(x) - func;
+		delta = interpolatedFitData_.y(x) - func;
 		sos += delta*delta;
 		++nPoints;
 
@@ -342,7 +343,7 @@ double RefineModule::costFunction2Exp(const Array<double>& alpha)
 
 		// Evaluate the function
 		func = fitEquation(x, alpha.constAt(0), alpha.constAt(1), alpha.constAt(2), alpha.constAt(3), 0.0, alpha.constAt(4));
-		delta = fitData_.interpolated(x) - func;
+		delta = interpolatedFitData_.y(x) - func;
 		sos += delta*delta;
 		++nPoints;
 

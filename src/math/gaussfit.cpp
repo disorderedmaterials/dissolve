@@ -21,6 +21,7 @@
 
 #include "math/xydata.h"
 #include "base/lineparser.h"
+#include "math/error.h"
 #include "math/gaussfit.h"
 #include "math/mc.h"
 #include "math/praxis.h"
@@ -149,7 +150,7 @@ void GaussFit::printCoefficients() const
 // Save Fourier-transformed Gaussians to individual files
 bool GaussFit::saveFTGaussians(const char* filenamePrefix, double xStep) const
 {
-	double xDelta = (xStep < 0.0 ? referenceData_.x(1) - referenceData_.xMin() : xStep);
+	double xDelta = (xStep < 0.0 ? referenceData_.constX(1) - referenceData_.constX(0) : xStep);
 	for (int n=0; n<nGaussians_; ++n)
 	{
 		LineParser parser;
@@ -304,7 +305,7 @@ double GaussFit::sweepFitA(FunctionSpace::SpaceType space, double xMin, int samp
 	// Calculate the approximate function
 	generateApproximation(space);
 
-	return referenceData_.error(approximateData_);
+	return Error::percent(referenceData_, approximateData_);
 }
 
 // Construct suitable representation with minimal Gaussians automatically
@@ -477,7 +478,7 @@ double GaussFit::constructReciprocal(double rMin, double rMax, int nGaussians, d
 
 	// Regenerate approximation and calculate percentage error of fit
 	generateApproximation(FunctionSpace::ReciprocalSpace);
-	currentError_ = referenceData_.error(approximateData_);
+	currentError_ = Error::percent(referenceData_, approximateData_);
 
 	return currentError_;
 }
@@ -523,11 +524,10 @@ double GaussFit::constructReciprocal(double rMin, double rMax, const Array<doubl
 
 	// Regenerate approximation and calculate percentage error of fit
 	generateApproximation(FunctionSpace::ReciprocalSpace);
-	currentError_ = referenceData_.error(approximateData_);
+	currentError_ = Error::percent(referenceData_, approximateData_);
 
 	return currentError_;
 }
-
 
 /*
  * Cost Function Callbacks

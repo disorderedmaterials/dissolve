@@ -22,6 +22,7 @@
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "base/processpool.h"
+#include "math/interpolater.h"
 #include "math/xydata.h"
 #include <string.h>
 
@@ -291,11 +292,11 @@ bool Box::calculateRDFNormalisation(ProcessPool& procPool, XYData& boxNorm, doub
 	// Normalise histogram data, and scale by volume and binWidth ratio
 	y /= double(nPointsPerProcess*procPool.nProcesses());
 	y *= volume_ * (rdfBinWidth / binWidth);
-	normData.interpolate(XYData::SplineInterpolation);
 
-	// Now we have the interpolated data, create the proper interpolated data
+	// Interpolate the normalisation data, and create the final function
 	nBins = rdfRange/rdfBinWidth;
 	boxNorm.clear();
+	Interpolater boxNormInterp(normData);
 
 	// Rescale against expected volume for spherical shells
 	double shellVolume, r = 0.0, maxHalf = inscribedSphereRadius(), x = 0.5*rdfBinWidth;
@@ -306,15 +307,11 @@ bool Box::calculateRDFNormalisation(ProcessPool& procPool, XYData& boxNorm, doub
 		else
 		{
 			shellVolume = (4.0/3.0)*PI*(pow(r+rdfBinWidth,3.0) - pow(r,3.0));
-			boxNorm.addPoint(x,  shellVolume / normData.interpolated(x));
-// 			boxNorm[n] = normData.interpolated(r);
+			boxNorm.addPoint(x,  shellVolume / boxNormInterp.y(x));
 		}
 		r += rdfBinWidth;
 		x += rdfBinWidth;
 	}
-
-	// Interpolate normalisation array
-	boxNorm.interpolate(XYData::SplineInterpolation);
 
 	return true;
 }

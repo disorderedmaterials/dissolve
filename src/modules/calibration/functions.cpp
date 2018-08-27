@@ -23,6 +23,7 @@
 #include "main/dissolve.h"
 #include "modules/rdf/rdf.h"
 #include "math/broadeningfunction.h"
+#include "math/error.h"
 #include "classes/configuration.h"
 #include "classes/partialset.h"
 #include "templates/genericlisthelper.h"
@@ -95,14 +96,14 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(const Array<double>& 
 			// Grab WeightedSQ and ReferenceData and compare
 			const PartialSet& weightedSQ = GenericListHelper<PartialSet>::value(dissolve_.processingModuleData(), "WeightedSQ", module->uniqueName());
 			const XYData& referenceData = GenericListHelper<XYData>::value(dissolve_.processingModuleData(), "ReferenceData", module->uniqueName());
-			totalError += weightedSQ.constTotal().error(referenceData);
+			totalError += Error::percent(weightedSQ.constTotal(), referenceData);
 		}
 		if ((target == CalibrationModule::IntraBroadeningTargetBoth) || (target == CalibrationModule::IntraBroadeningTargetGR))
 		{
 			// Grab WeightedGR and ReferenceDataFT and compare
 			const PartialSet& weightedGR = GenericListHelper<PartialSet>::value(dissolve_.processingModuleData(), "WeightedGR", module->uniqueName());
 			const XYData& referenceDataFT = GenericListHelper<XYData>::value(dissolve_.processingModuleData(), "ReferenceDataFT", module->uniqueName());
-			totalError += weightedGR.constTotal().error(referenceDataFT);
+			totalError += Error::percent(weightedGR.constTotal(), referenceDataFT);
 		}
 	}
 

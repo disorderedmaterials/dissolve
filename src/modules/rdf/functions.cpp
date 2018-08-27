@@ -22,6 +22,7 @@
 #include "modules/rdf/rdf.h"
 #include "main/dissolve.h"
 #include "module/group.h"
+#include "math/error.h"
 #include "classes/atomtype.h"
 #include "classes/configuration.h"
 #include "classes/atom.h"
@@ -478,9 +479,10 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 		}
 	}
 
+	printf("1 kjkjkjkj\n");
 	// Transform histogram data into radial distribution functions
-	XYData boxNorm = cfg->boxNormalisation();
-	originalgr.formPartials(box->volume(), boxNorm);
+	originalgr.formPartials(box->volume(), cfg->boxNormalisationInterpolation());
+	printf("2 kjkjkjkj\n");
 
 	// Sum total functions
 	originalgr.formTotal(true);
@@ -516,13 +518,13 @@ bool RDFModule::calculateUnweightedGR(const PartialSet& originalgr, PartialSet& 
 				BroadeningFunction function = intraBroadening.broadeningFunction(typeI->atomType(), typeJ->atomType());
 
 				// Remove bound part from full partial
-				unweightedgr.partial(i, j).addInterpolated(unweightedgr.boundPartial(i, j), -1.0);
+				unweightedgr.partial(i, j) -= unweightedgr.boundPartial(i, j);
 
 				// Convolute the bound partial with the broadening function
 				unweightedgr.boundPartial(i, j).convolveNormalised(function);
 
 				// Add the broadened bound partial back into the full partial array
-				unweightedgr.partial(i, j).addInterpolated(unweightedgr.boundPartial(i, j), 1.0);
+				unweightedgr.partial(i, j) += unweightedgr.boundPartial(i, j) ;
 			}
 
 			// Smooth partials if requested
@@ -703,29 +705,29 @@ bool RDFModule::testReferencePartials(PartialSet& setA, PartialSet& setB, double
 		for (int m = n; m <atomTypes.nItems(); ++m, typeJ = typeJ->next)
 		{
 			// Full partial
-			error = setA.partial(n,m).error(setB.partial(n,m));
+			error = Error::percent(setA.partial(n,m), setB.partial(n,m));
 			Messenger::print("Test reference full partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 			if (error > testThreshold) return false;
 
 			// Bound partial
-			error = setA.boundPartial(n,m).error(setB.boundPartial(n,m));
+			error = Error::percent(setA.boundPartial(n,m), setB.boundPartial(n,m));
 			Messenger::print("Test reference bound partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 			if (error > testThreshold) return false;
 
 			// Unbound reference
-			error = setA.unboundPartial(n,m).error(setB.unboundPartial(n,m));
+			error = Error::percent(setA.unboundPartial(n,m), setB.unboundPartial(n,m));
 			Messenger::print("Test reference unbound partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 			if (error > testThreshold) return false;
 
 			// Bragg reference
-			error = setA.braggPartial(n,m).error(setB.braggPartial(n,m));
+			error = Error::percent(setA.braggPartial(n,m), setB.braggPartial(n,m));
 			Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 			if (error > testThreshold) return false;
 		}
 	}
 
 	// Total reference data supplied?
-	error = setA.total().error(setB.total());
+	error = Error::percent(setA.total(), setB.total());
 	Messenger::print("Test reference total has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 	if (error > testThreshold) return false;
 
@@ -739,7 +741,7 @@ bool RDFModule::testReferencePartial(const PartialSet& partials, double testThre
 	bool testResult = false;
 	if (DissolveSys::sameString(typeIorTotal, "total") && (typeJ == NULL) && (target == NULL))
 	{
-		double error = partials.constTotal().error(testData);
+		double error = Error::percent(partials.constTotal(), testData);
 		testResult = (error <= testThreshold);
 		Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", testData.name(), error, testResult ? "OK" : "NOT OK", testThreshold);
 	}
@@ -752,9 +754,9 @@ bool RDFModule::testReferencePartial(const PartialSet& partials, double testThre
 
 		// AtomTypes are valid, so check the 'target'
 		double error = -1.0;
-		if (DissolveSys::sameString(target, "bound")) error = partials.constBoundPartial(indexI, indexJ).error(testData);
-		else if (DissolveSys::sameString(target, "unbound")) error = partials.constUnboundPartial(indexI, indexJ).error(testData);
-		else if (DissolveSys::sameString(target, "full")) error = partials.constPartial(indexI, indexJ).error(testData);
+		if (DissolveSys::sameString(target, "bound")) error = Error::percent(partials.constBoundPartial(indexI, indexJ), testData);
+		else if (DissolveSys::sameString(target, "unbound")) error = Error::percent(partials.constUnboundPartial(indexI, indexJ), testData);
+		else if (DissolveSys::sameString(target, "full")) error = Error::percent(partials.constPartial(indexI, indexJ), testData);
 		else return Messenger::error("Unrecognised test data name '%s'.\n", testData.name());
 
 		testResult = (error <= testThreshold);

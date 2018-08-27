@@ -1702,7 +1702,7 @@ bool ProcessPool::allSum(long int* source, int count, ProcessPool::CommunicatorT
 {
 #ifdef PARALLEL
 	timer_.start();
-	int buffer[count];
+	long int buffer[count];
 	if ((commType == ProcessPool::GroupLeadersCommunicator) && (!groupLeader())) return true;
 	if (MPI_Allreduce(source, &buffer, count, MPI_LONG, MPI_SUM, communicator(commType)) != MPI_SUCCESS) return false;
 

@@ -21,6 +21,7 @@
 
 #include "math/xydata.h"
 #include "base/lineparser.h"
+#include "math/error.h"
 #include "math/poissonfit.h"
 #include "math/mc.h"
 #include "math/praxis.h"
@@ -112,7 +113,7 @@ double PoissonFit::poissonFT(const int qIndex, const int nIndex) const
 
 	double factor = 1.0 / ( (n+2) * pow(sqrtOnePlusQSqSigmaSq_.constAt(qIndex), n+4) );
 
-	double value = 2.0 * cos(na) + (oneMinusQSqSigmaSq_.constAt(qIndex) / (referenceData_.x(qIndex)*sigmaQ_))*sin(na);
+	double value = 2.0 * cos(na) + (oneMinusQSqSigmaSq_.constAt(qIndex) / (referenceData_.constX(qIndex)*sigmaQ_))*sin(na);
 
 	return factor * value;
 }
@@ -331,7 +332,7 @@ double PoissonFit::sweepFitC(FunctionSpace::SpaceType space, double xMin, int sa
 	// Calculate the approximate function
 	generateApproximation(space);
 
-	return referenceData_.error(approximateData_);
+	return Error::percent(referenceData_, approximateData_);
 }
 
 // Construct suitable representation using given number of Poissons spaced evenly in real space up to rMax (those below rMin will be zeroed)
@@ -375,7 +376,7 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, int nPoissons, 
 
 	// Regenerate approximation and calculate percentage error of fit
 	generateApproximation(FunctionSpace::ReciprocalSpace);
-	currentError_ = referenceData_.error(approximateData_);
+	currentError_ = Error::percent(referenceData_, approximateData_);
 
 	return currentError_;
 }
@@ -420,7 +421,7 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, Array<double> c
 
 	// Regenerate approximation and calculate percentage error of fit
 	generateApproximation(FunctionSpace::ReciprocalSpace);
-	currentError_ = referenceData_.error(approximateData_);
+	currentError_ = Error::percent(referenceData_, approximateData_);
 
 	return currentError_;
 }

@@ -34,6 +34,7 @@
 #include "module/list.h"
 #include "modules/import/formats.h"
 #include "math/histogram1d.h"
+#include "math/interpolater.h"
 #include "math/xydata.h"
 #include "base/processpool.h"
 #include "base/genericlist.h"
@@ -256,6 +257,8 @@ class Configuration : public ListItem<Configuration>
 	CharString boxNormalisationFileName_;
 	// Normalisation function for Box shape/extent in radial distribution functions
 	XYData boxNormalisation_;
+	// Interpolation of Box normalisation function
+	Interpolater boxNormalisationInterpolation_;
 	// Cell array
 	CellArray cells_;
 
@@ -300,6 +303,8 @@ class Configuration : public ListItem<Configuration>
 	bool loadBoxNormalisationFile();
 	// Return current Box normalisation array
 	const XYData& boxNormalisation() const;
+	// Return interpolation of Box normalisation function
+	Interpolater& boxNormalisationInterpolation();
 	// Return cell array
 	CellArray& cells();
 

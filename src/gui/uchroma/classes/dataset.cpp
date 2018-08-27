@@ -317,10 +317,10 @@ double DataSet::averageY(double xMin, double xMax) const
 	int nAdded = 0;
 	for (int n=0; n<data_.nPoints(); ++n)
 	{
-		if (data_.x(n) < xMin) continue;
-		else if (data_.x(n) > xMax) break;
+		if (data_.constX(n) < xMin) continue;
+		else if (data_.constX(n) > xMax) break;
 		++nAdded;
-		result += data_.y(n);
+		result += data_.constY(n);
 	}
 	return (nAdded == 0 ? 0.0 : result / nAdded);
 }

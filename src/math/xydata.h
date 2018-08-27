@@ -45,8 +45,6 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	XYData(const XYData& source);
 	// Clear data
 	void clear();
-	// Clear interpolation arrays
-	void clearInterpolationArrays();
 	
 
 	/*
@@ -76,7 +74,9 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	// Set x value
 	void setX(int index, double x);
 	// Return x value specified
-	double x(int index) const;
+	double& x(int index);
+	// Return x value specified (const)
+	double constX(int index) const;
 	// Return x Array
 	Array<double>& arrayX();
 	// Return x Array (const)
@@ -90,7 +90,9 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	// Multiply y value
 	void multiplyY(int index, double factor);
 	// Return y value specified
-	double y(int index) const;
+	double& y(int index);
+	// Return y value specified (const)
+	double constY(int index) const;
 	// Return y Array
 	Array<double>& arrayY();
 	// Return y Array (const)
@@ -189,20 +191,8 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	void convolve(BroadeningFunction function);
 	// Perform point-wise convolution of this data with the supplied BroadeningFunction, normalising to the original integral of the function
 	void convolveNormalised(BroadeningFunction function);
-	// Add interpolated data
-	void addInterpolated(XYData& source, double weighting = 1.0);
 	// Subtract average level from data, forming average from supplied x value
 	double subtractAverage(double xStart);
-
-
-	/*
-	 * Similarity
-	 */
-	public:
-	// Return RMSE of current data with (interpolated) reference data
-	double rmse(XYData ref) const;
-	// Return percentage error between this and reference data
-	double error(XYData ref) const;
 
 
 	/*
@@ -231,8 +221,6 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	bool load(ProcessPool& pool, const char* filename, int xcol = 0, int ycol = 1);
 	// Save data to specified file
 	bool save(const char* filename) const;
-	// Save data and interpolation to specified file
-	bool saveWithInterpolation(const char* filename);
 
 
 	/*
@@ -245,51 +233,6 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	public:
 	// Perform Fourier sine transform of current distribution function, over range specified, and with specified window and broadening functions applied
 	bool sineFT(double normFactor, double wMin, double wStep, double wMax, WindowFunction windowFunction = WindowFunction(), BroadeningFunction broadening = BroadeningFunction());
-
-
-	/*
-	 * Interpolation
-	 */
-	public:
-	// Interpolation Schemes
-	enum InterpolationScheme
-	{
-		NoInterpolation,
-		SplineInterpolation,
-		/* ConstrainedSplineInterpolation, */  // Removed for now as it produces spurious features in some fits.
-		LinearInterpolation,
-		ThreePointInterpolation
-	};
-
-	private:
-	// Array of parameters for interpolations (if created)
-	Array<double> interpolationA_, interpolationB_, interpolationC_, interpolationD_, interpolationH_;
-	// Interval of last interpolated point
-	int interpolationInterval_;
-	// Interpolation scheme currently employed
-	InterpolationScheme interpolationScheme_;
-
-	private:
-	// Prepare natural spline interpolation of data
-	void interpolateSpline();
-	// Prepare constrained natural spline interpolation of data
-	void interpolateConstrainedSpline();
-	// Prepare linear interpolation of data
-	void interpolateLinear();
-	// Prepare three-point interpolation of data
-	void interpolateThreePoint();
-
-	public:
-	// Calculate interpolation of current data using the supplied scheme
-	void interpolate(InterpolationScheme scheme);
-	// Return interpolated y value for supplied x
-	double interpolated(double xValue);
-	// Return interpolated y value for supplied x, specifying containing interval
-	double interpolated(double xValue, int interval);
-	// Approximate data at specified x value using three-point interpolation
-	double approximate(double xValue) const;
-	// Expand the current data, adding n interpolated points in-between the original values
-	void expand(int nExtraPoints);
 
 
 	/*

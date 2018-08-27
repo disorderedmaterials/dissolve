@@ -23,6 +23,7 @@
 #include "gui/uchroma/classes/viewpane.h"
 #include "gui/uchroma/uchromabase.h"
 #include "gui/uchroma/kernels/fit.h"
+#include "math/interpolater.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include <limits>
@@ -1303,12 +1304,13 @@ void Collection::updateDisplayData()
 		Array<double> array[2];
 		if (interpolate_.x)
 		{
-			dataSet->transformedData().interpolate(XYData::SplineInterpolation);
+			Interpolater interpolated(dataSet->transformedData());
+// 			dataSet->transformedData().interpolate(XYData::SplineInterpolation);
 			double x = dataSet->transformedData().arrayX().first();
 			while (x <= dataSet->transformedData().arrayX().last())
 			{
 				array[0].add(x);
-				array[1].add(dataSet->transformedData().interpolated(x));
+				array[1].add(interpolated.y(x));
 				x += interpolationStep_.x;
 			}
 		}

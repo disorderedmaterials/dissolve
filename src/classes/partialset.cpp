@@ -381,7 +381,7 @@ bool PartialSet::save()
 			XYData& unbound = unboundPartials_.at(typeI,typeJ);
 			XYData& bragg = braggPartials_.at(typeI,typeJ);
 			parser.writeLineF("# %-14s  %-16s  %-16s  %-16s  %-16s\n", abscissaUnits_.get(), "Full", "Bound", "Unbound", "Bragg"); 
-			for (n=0; n<full.nPoints(); ++n) parser.writeLineF("%16.9e  %16.9e  %16.9e  %16.9e  %16.9e\n", full.x(n), full.y(n), bound.y(n), unbound.y(n), n < bragg.nPoints() ? bragg.y(n) : 0.0);
+			for (n=0; n<full.nPoints(); ++n) parser.writeLineF("%16.9e  %16.9e  %16.9e  %16.9e  %16.9e\n", full.constX(n), full.constY(n), bound.constY(n), unbound.constY(n), n < bragg.nPoints() ? bragg.constY(n) : 0.0);
 			parser.closeFiles();
 		}
 	}
@@ -475,7 +475,7 @@ void PartialSet::adjust(double delta)
 }
 
 // Form partials from stored Histogram data
-void PartialSet::formPartials(double boxVolume, XYData& boxNormalisation)
+void PartialSet::formPartials(double boxVolume, Interpolater& boxNormalisation)
 {
 	int n, m;
 	int nTypes = atomTypes_.nItems();
@@ -520,15 +520,15 @@ bool PartialSet::addPartials(PartialSet& source, double weighting)
 				return false;
 			}
 
-			// Grab source partials
-			partials_.at(localI, localJ).addInterpolated(source.partial(typeI, typeJ), weighting);
-			boundPartials_.at(localI, localJ).addInterpolated(source.boundPartial(typeI, typeJ), weighting);
-			unboundPartials_.at(localI, localJ).addInterpolated(source.unboundPartial(typeI, typeJ), weighting);
+			// Add interpolated source partials to our set
+			Interpolater::addInterpolated(partials_.at(localI, localJ), source.partial(typeI, typeJ), weighting);
+			Interpolater::addInterpolated(boundPartials_.at(localI, localJ), source.boundPartial(typeI, typeJ), weighting);
+			Interpolater::addInterpolated(unboundPartials_.at(localI, localJ), source.unboundPartial(typeI, typeJ), weighting);
 		}
 	}
 
 	// Add total function
-	total_.addInterpolated(source.total(), weighting);
+	Interpolater::addInterpolated(total_, source.total(), weighting);
 
 	return true;
 }
@@ -555,7 +555,7 @@ void PartialSet::reweightPartials(double factor)
 }
 
 // Calculate and return RDF from supplied Histogram and normalisation data
-void PartialSet::calculateRDF(XYData& destination, Histogram1D& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, XYData& boxNormalisation)
+void PartialSet::calculateRDF(XYData& destination, Histogram1D& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, Interpolater& boxNormalisation)
 {
 	int nBins = histogram.nBins();
 	double delta = histogram.binWidth();
@@ -568,7 +568,7 @@ void PartialSet::calculateRDF(XYData& destination, Histogram1D& histogram, doubl
 	{
 		shellVolume = (4.0/3.0)*PI*(pow(lowerShellLimit+delta,3.0) - pow(lowerShellLimit,3.0));
 		factor = nCentres * (shellVolume * numberDensity);
-		normalisation = (multiplier / factor) * boxNormalisation.interpolated(r+delta*0.5);
+		normalisation = (multiplier / factor) * boxNormalisation.y(r+delta*0.5);
 
 		destination.addPoint(r, bins.constAt(n)*normalisation);
 

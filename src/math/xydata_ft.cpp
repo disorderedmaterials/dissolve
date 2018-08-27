@@ -109,8 +109,6 @@ bool XYData::sineFT(double normFactor, double wMin, double wStep, double wMax, W
 	// Apply normalisation factor
 	y_ *= normFactor;
 
-	interpolationInterval_ = -1;
-
 	return true;
 }
 

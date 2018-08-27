@@ -33,7 +33,7 @@
 #include "modules/export/export.h"
 
 // Constructor
-Configuration::Configuration() : ListItem<Configuration>()
+Configuration::Configuration() : ListItem<Configuration>(), boxNormalisationInterpolation_(boxNormalisation_)
 {
 	// Composition
 	multiplier_ = 1;
