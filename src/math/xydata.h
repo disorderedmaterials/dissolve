@@ -160,30 +160,6 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 
 
 	/*
-	 * Filtering
-	 */
-	public:
-	// Apply median filter to data
-	void medianFilter(int length);
-	// Perform moving average smoothing
-	void movingAverage(int avgSize);
-	// Apply Kolmogorov–Zurbenko filter
-	void kolmogorovZurbenkoFilter(int k, int m);
-
-
-	/*
-	 * Manipulation
-	 */
-	public:
-	// Perform point-wise convolution of this data with the supplied BroadeningFunction
-	void convolve(BroadeningFunction function);
-	// Perform point-wise convolution of this data with the supplied BroadeningFunction, normalising to the original integral of the function
-	void convolveNormalised(BroadeningFunction function);
-	// Subtract average level from data, forming average from supplied x value
-	double subtractAverage(double xStart);
-
-
-	/*
 	 * File I/O
 	 */
 	private:

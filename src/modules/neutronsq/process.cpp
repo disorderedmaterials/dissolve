@@ -26,6 +26,7 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "classes/weights.h"
+#include "math/filters.h"
 #include "modules/rdf/rdf.h"
 #include "modules/sq/sq.h"
 #include "templates/genericlisthelper.h"
@@ -52,7 +53,7 @@ bool NeutronSQModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 		double removeAverage = keywords_.asDouble("ReferenceRemoveAverage");
 		if (removeAverage >= 0.0)
 		{
-			double level = referenceData.subtractAverage(removeAverage);
+			double level = Filters::subtractAverage(referenceData, removeAverage);
 			Messenger::print("NeutronSQ: Removed average level of %f from reference data, forming average over x >= %f.\n", level, removeAverage);
 		}
 

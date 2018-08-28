@@ -23,6 +23,7 @@
 #include "main/dissolve.h"
 #include "module/group.h"
 #include "math/error.h"
+#include "math/filters.h"
 #include "classes/atomtype.h"
 #include "classes/configuration.h"
 #include "classes/atom.h"
@@ -521,7 +522,7 @@ bool RDFModule::calculateUnweightedGR(const PartialSet& originalgr, PartialSet& 
 				unweightedgr.partial(i, j) -= unweightedgr.boundPartial(i, j);
 
 				// Convolute the bound partial with the broadening function
-				unweightedgr.boundPartial(i, j).convolveNormalised(function);
+				Filters::convolveNormalised(unweightedgr.boundPartial(i, j), function);
 
 				// Add the broadened bound partial back into the full partial array
 				unweightedgr.partial(i, j) += unweightedgr.boundPartial(i, j) ;
@@ -530,9 +531,9 @@ bool RDFModule::calculateUnweightedGR(const PartialSet& originalgr, PartialSet& 
 			// Smooth partials if requested
 			if (smoothing > 0)
 			{
-				unweightedgr.partial(i,j).movingAverage(smoothing);
-				unweightedgr.boundPartial(i,j).movingAverage(smoothing);
-				unweightedgr.unboundPartial(i,j).movingAverage(smoothing);
+				Filters::movingAverage(unweightedgr.partial(i,j), smoothing);
+				Filters::movingAverage(unweightedgr.boundPartial(i,j), smoothing);
+				Filters::movingAverage(unweightedgr.unboundPartial(i,j), smoothing);
 			}
 		}
 	}

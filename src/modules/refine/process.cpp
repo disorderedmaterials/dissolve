@@ -24,6 +24,7 @@
 #include "modules/energy/energy.h"
 #include "modules/rdf/rdf.h"
 #include "math/error.h"
+#include "math/filters.h"
 #include "math/gaussfit.h"
 #include "math/integrator.h"
 #include "classes/scatteringmatrix.h"
@@ -622,7 +623,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				}
 
 				// Smooth phi(r)?
-				if (smoothPhiR) dPhiR.kolmogorovZurbenkoFilter(phiRSmoothK, phiRSmoothM);
+				if (smoothPhiR) Filters::kolmogorovZurbenkoFilter(dPhiR, phiRSmoothK, phiRSmoothM);
 
 				// Make sure we go smoothly to zero at the limit of the potential
 				for (int n=0; n<dPhiR.nPoints(); ++n) dPhiR.multiplyY(n, 1.0 - double(n)/(dPhiR.nPoints()-1));

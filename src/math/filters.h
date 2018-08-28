@@ -22,6 +22,8 @@
 #ifndef DISSOLVE_FILTERS_H
 #define DISSOLVE_FILTERS_H
 
+#include "math/broadeningfunction.h"
+
 // Forward Declarations
 class XYData;
 
@@ -29,14 +31,18 @@ class XYData;
 class Filters
 {
 	public:
-	// Apply median filter
-	static void median(XYData& data, int length);
-	// Perform moving average smoothing
+	// Apply median filter to data
+	static void medianFilter(XYData& data, int length);
+	// Perform moving average smoothing on data
 	static void movingAverage(XYData& data, int avgSize);
-	// Apply Kolmogorov–Zurbenko filter
-	static void kolmogorovZurbenko(XYData& data, int k, int m);
-	// Rebin onto uniform x axis
-	static void reBin(XYData& data, double deltaX);
+	// Apply Kolmogorov–Zurbenko filter to data
+	static void kolmogorovZurbenkoFilter(XYData& data, int k, int m);
+	// Perform point-wise convolution of data with the supplied BroadeningFunction
+	static void convolve(XYData& data, BroadeningFunction function);
+	// Perform point-wise convolution of data with the supplied BroadeningFunction, normalising to the original integral of the function
+	static void convolveNormalised(XYData& data, BroadeningFunction function);
+	// Subtract average level (starting at supplied x value) from data
+	static double subtractAverage(XYData& data, double xStart);
 };
 
 #endif

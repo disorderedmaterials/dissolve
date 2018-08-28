@@ -20,42 +20,48 @@
 */
 
 #include "math/filters.h"
+#include "math/integrator.h"
+#include "math/xydata.h"
+#include "templates/array.h"
 
 // Apply median filter to data
-void Filters::median(XYData& data, int length)
+void Filters::medianFilter(XYData& data, int length)
 {
-	double data[length], avg, result;
+	// Grab y array
+	Array<double>& y = data.arrayY();
+
+	double window[length], avg, result;
 	int m, i = length/2, n = length/2, miny, maxy;
-	Array<double> newY(x_.nItems());
+	Array<double> newY(data.nPoints());
 	
 	// Set boundary values
 	for (m=0; m<n; ++m)
 	{
-		newY[m] = y_[m];
-		newY[x_.nItems()-1-m] = y_[m];
+		newY[m] = y[m];
+		newY[data.nPoints()-1-m] = y[data.nPoints()-1-m];
 	}
 
 	// Now loop over remaining points
-	while (n < (x_.nItems()-i))
+	while (n < (data.nPoints()-i))
 	{
 		// Grab data values, and determine min/max values
 		miny = 0;
 		maxy = 0;
 		for (m=-i; m<=i; ++m)
 		{
-			data[m+i] = y_[n+m];
-			if (data[m+i] < data[miny]) miny = m+i;
-			if (data[m+i] > data[maxy]) maxy = m+i;
+			window[m+i] = y[n+m];
+			if (window[m+i] < window[miny]) miny = m+i;
+			if (window[m+i] > window[maxy]) maxy = m+i;
 		}
 
-		// Determine median value (without sorting)
-		// First, calculate average value
+		// Determine median value without sorting. First, calculate average value...
 		avg = 0.0;
-		for (m=0; m<length; ++m) if ((m != miny) && (m != maxy)) avg += data[m];
+		for (m=0; m<length; ++m) if ((m != miny) && (m != maxy)) avg += window[m];
 		avg /= length-2;
+
 		// Now find value closest to the average
-		result = data[0];
-		for (m=0; m<length; ++m) if ((m != miny) && (m != maxy) && (fabs(data[m]-avg) < fabs(result-avg))) result = data[m];
+		result = window[0];
+		for (m=0; m<length; ++m) if ((m != miny) && (m != maxy) && (fabs(window[m]-avg) < fabs(result-avg))) result = window[m];
 		
 		// Store median value
 		newY[n] = result;
@@ -64,80 +70,116 @@ void Filters::median(XYData& data, int length)
 	}
 	
 	// Store new values
-	y_ = newY;
-
-	interpolationInterval_ = -1;
+	y = newY;
 }
 
-// Moving average smoothing
+// Perform moving average smoothing
 void Filters::movingAverage(XYData& data, int avgSize)
 {
+	// Grab y array
+	Array<double>& y = data.arrayY();
+
 	// Make sure avgSize is odd
 	if (avgSize%2 == 0) --avgSize;
 
-	Array<double> newY(x_.nItems());
+	Array<double> newY(data.nPoints());
 	newY = 0.0;
 	int n, m, i = avgSize/2;
 
 	// Left-most region of data
 	for (n=0; n<i; ++n)
 	{
-		for (m=0; m<=n+i; ++m) newY[n] += y_[m];
+		for (m=0; m<=n+i; ++m) newY[n] += y[m];
 		newY[n] /= (i + 1 + n);
 	}
 
 	// Central region (full average width available)
-	for (n=i; n < x_.nItems()-i; ++n)
+	for (n=i; n < data.nPoints()-i; ++n)
 	{
-		for (m=n-i; m <= n+i; ++m) newY[n] += y_[m];
+		for (m=n-i; m <= n+i; ++m) newY[n] += y[m];
 		newY[n] /= avgSize;
 	}
 
 	// Right-most region of data
-	for (n=x_.nItems()-i; n<x_.nItems(); ++n)
+	for (n=data.nPoints()-i; n<data.nPoints(); ++n)
 	{
-		for (m=n-i; m<x_.nItems(); ++m) newY[n] += y_[m];
-		newY[n] /= (x_.nItems() - n + i + 1);
+		for (m=n-i; m<data.nPoints(); ++m) newY[n] += y[m];
+		newY[n] /= (data.nPoints() - n + i + 1);
 	}
 
-	y_ = newY;
-
-	interpolationInterval_ = -1;
+	y = newY;
 }
 
-// Kolmogorov–Zurbenko filter
-void Filters::kolmogorovZurbenko(XYData& data, int k, int m)
+// Apply Kolmogorov–Zurbenko filter
+void Filters::kolmogorovZurbenkoFilter(XYData& data, int k, int m)
 {
 	for (int iteration=0; iteration<k; ++iteration) movingAverage(data, m);
 }
 
-
-// Rebin onto uniform x axis
-void Filters::reBin(XYData& data, double deltaX)
+// Perform point-wise convolution of this data with the supplied BroadeningFunction
+void Filters::convolve(XYData& data, BroadeningFunction function)
 {
-	// If deltaX is negative, work out a deltaX to use
-	if (deltaX < 0.0)
+	// Grab x and y arrays
+	const Array<double>& x = data.constArrayX();
+	Array<double>& y = data.arrayY();
+
+	Array<double> newY(data.nPoints());
+
+	// Outer loop over existing data points
+	double xCentre, xBroad;
+	for (int n=0; n<x.nItems(); ++n)
 	{
-		deltaX = 0.0;
-		for (int n=1; n<x_.nItems(); ++n) deltaX += x_[n]-x_[n-1];
-		deltaX /= x_.nItems()-1;
-		deltaX *= 0.5;
+		// Grab x value as our current xCentre
+		xCentre = x.constAt(n);
+
+		// Inner loop over whole array
+		for (int m=0; m<x.nItems(); ++m)
+		{
+			xBroad = x.constAt(m) - xCentre;
+			newY[m] += y.constAt(n) * function.y(xBroad, 0.0);
+		}
 	}
 
-	// Interpolate the existing data
-	interpolate(XYData::LinearInterpolation);
+	y = newY;
+}
 
-	// Generate new data
-	XYData rebinnedData;
-	double x = 0.0, xLimit = xMax();
-	while (x < xLimit)
+// Perform point-wise convolution of this data with the supplied BroadeningFunction, normalising to the original integral of the function
+void Filters::convolveNormalised(XYData& data, BroadeningFunction function)
+{
+	// Calculate the original integral
+	double originalIntegral = Integrator::absIntegral(data);
+
+	// If the original integral is zero, nothing to do
+	if (originalIntegral == 0.0) return;
+
+	// Convolve the function
+	convolve(data, function);
+
+	// Calculate the new integral
+	double newIntegral = Integrator::absIntegral(data);
+
+	data.arrayY() *= (originalIntegral / newIntegral);
+}
+
+// Subtract average level from data, forming average from supplied x value
+double Filters::subtractAverage(XYData& data, double xStart)
+{
+	// Grab x and y arrays
+	const Array<double>& x = data.constArrayX();
+	Array<double>& y = data.arrayY();
+
+	double sum = 0.0;
+	int nPoints = 0;
+	for (int n=0; n<x.nItems(); ++n)
 	{
-		rebinnedData.addPoint(x, interpolated(x));
-		x += deltaX;
+		if (x.constAt(n) >= xStart)
+		{
+			sum += y[n];
+			++nPoints;
+		}
 	}
 
-	// Overwrite old data
-	(*this) = rebinnedData;
+	y -= sum / nPoints;
 
-	interpolationInterval_ = -1;
+	return sum / nPoints;
 }
