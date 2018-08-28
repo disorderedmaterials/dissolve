@@ -22,7 +22,7 @@
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "base/processpool.h"
-#include "math/interpolater.h"
+#include "math/interpolator.h"
 #include "math/xydata.h"
 #include <string.h>
 
@@ -296,7 +296,7 @@ bool Box::calculateRDFNormalisation(ProcessPool& procPool, XYData& boxNorm, doub
 	// Interpolate the normalisation data, and create the final function
 	nBins = rdfRange/rdfBinWidth;
 	boxNorm.clear();
-	Interpolater boxNormInterp(normData);
+	Interpolator boxNormInterp(normData);
 
 	// Rescale against expected volume for spherical shells
 	double shellVolume, r = 0.0, maxHalf = inscribedSphereRadius(), x = 0.5*rdfBinWidth;

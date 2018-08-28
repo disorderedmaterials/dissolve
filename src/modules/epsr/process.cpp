@@ -177,7 +177,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			XYData& differenceData = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), CharString("DifferenceData_%s", module->uniqueName()), uniqueName(), GenericItem::InRestartFileFlag);
 			differenceData.setObjectName(CharString("%s//Difference//%s", uniqueName_.get(), module->uniqueName()));
 			differenceData = referenceData;
-			Interpolater::addInterpolated(differenceData, calcSQTotal, -1.0);
+			Interpolator::addInterpolated(differenceData, calcSQTotal, -1.0);
 		}
 		else return Messenger::error("Unrecognised Module type '%s', so can't calculate error.", module->name());
 
@@ -232,7 +232,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		const Array<double> x1 = referenceData.constArrayX();
 		const Array<double> y1 = referenceData.constArrayY();
 		XYData simulatedFQ = weightedSQ.constTotal();
-		Interpolater interpolatedSimFQ(simulatedFQ);
+		Interpolator interpolatedSimFQ(simulatedFQ);
 
 		// Determine allowable range for fit, based on requested values and limits of generated / simulated datasets.
 		double deltaSQMin = qMin, deltaSQMax = (qMax < 0.0 ? x1.lastValue() : qMax);
@@ -392,7 +392,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 			// Subtract intramolecular total from the reference data - this will enter into the ScatteringMatrix
 			XYData refMinusIntra = referenceData, boundTotal = weightedSQ.boundTotal(false);
-			Interpolater::addInterpolated(refMinusIntra, boundTotal, -1.0);
+			Interpolator::addInterpolated(refMinusIntra, boundTotal, -1.0);
 
 			// Add a row to our scattering matrix
 			if (!scatteringMatrix.addReferenceData(refMinusIntra, weights, feedback)) return Messenger::error("Failed to add target data '%s' to weights matrix.\n", module->uniqueName());
@@ -409,7 +409,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					double globalJ = atd2->atomType()->index();
 
 					XYData partialIJ = unweightedSQ.constUnboundPartial(i,j);
-					Interpolater::addInterpolated(combinedUnweightedSQ.at(globalI, globalJ ), partialIJ, factor);
+					Interpolator::addInterpolated(combinedUnweightedSQ.at(globalI, globalJ ), partialIJ, factor);
 					combinedRho.at(globalI, globalJ) += rho * factor;
 					combinedFactor.at(globalI, globalJ) += factor;
 					combinedCWeights.at(globalI, globalJ) += weights.concentrationProduct(i,j);

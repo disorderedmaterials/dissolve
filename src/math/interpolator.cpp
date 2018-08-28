@@ -1,6 +1,6 @@
 /*
-	*** Interpolater
-	*** src/math/interpolater.cpp
+	*** Interpolator
+	*** src/math/interpolator.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,15 +19,15 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "math/interpolater.h"
+#include "math/interpolator.h"
 #include "math/xydata.h"
 
 // Constructors
-Interpolater::Interpolater(const Array<double>& x, const Array<double>& y, InterpolationScheme scheme) : x_(x), y_(x)
+Interpolator::Interpolator(const Array<double>& x, const Array<double>& y, InterpolationScheme scheme) : x_(x), y_(x)
 {
 	interpolate(scheme);
 }
-Interpolater::Interpolater(const XYData& source, InterpolationScheme scheme) : x_(source.constArrayX()), y_(source.constArrayY())
+Interpolator::Interpolator(const XYData& source, InterpolationScheme scheme) : x_(source.constArrayX()), y_(source.constArrayY())
 {
 	interpolate(scheme);
 }
@@ -35,12 +35,16 @@ Interpolater::Interpolater(const XYData& source, InterpolationScheme scheme) : x
 
 
 // Destructor
-Interpolater::~Interpolater()
+Interpolator::~Interpolator()
 {
 }
 
+/*
+ * Interpolation
+ */
+
 // Construct natural spline interpolation of data
-void Interpolater::interpolateSpline()
+void Interpolator::interpolateSpline()
 {
 	/* For a set of N points {x(i),y(i)} for i = 0 - (N-1), the i'th interval can be represented by a cubic spline
 	 * 
@@ -210,7 +214,7 @@ void Interpolater::interpolateSpline()
 }
 
 // Prepare constrained natural spline interpolation of data
-void Interpolater::interpolateConstrainedSpline()
+void Interpolator::interpolateConstrainedSpline()
 {
 	/*
 	 * Constrained Spline fit
@@ -258,7 +262,7 @@ void Interpolater::interpolateConstrainedSpline()
 }
 
 // Prepare linear interpolation of data
-void Interpolater::interpolateLinear()
+void Interpolator::interpolateLinear()
 {
 	// Calculate y interval array 'a'
 	a_.initialise(y_.nItems()-1);
@@ -268,13 +272,13 @@ void Interpolater::interpolateLinear()
 }
 
 // Prepare linear interpolation of data
-void Interpolater::interpolateThreePoint()
+void Interpolator::interpolateThreePoint()
 {
 	lastInterval_ = 0;
 }
 
 // Regenerate using specified scheme
-void Interpolater::interpolate(Interpolater::InterpolationScheme scheme)
+void Interpolator::interpolate(Interpolator::InterpolationScheme scheme)
 {
 	// Calculate interval array 'h'
 	h_.initialise(x_.nItems()-1);
@@ -282,24 +286,24 @@ void Interpolater::interpolate(Interpolater::InterpolationScheme scheme)
 
 	scheme_ = scheme;
 
-	if (scheme_ == Interpolater::SplineInterpolation) interpolateSpline();
-// 	else if (scheme_ == Interpolater::ConstrainedSplineInterpolation) interpolateConstrainedSpline();
-	else if (scheme_ == Interpolater::LinearInterpolation) interpolateLinear();
-	else if (scheme_ == Interpolater::ThreePointInterpolation) interpolateThreePoint();
+	if (scheme_ == Interpolator::SplineInterpolation) interpolateSpline();
+// 	else if (scheme_ == Interpolator::ConstrainedSplineInterpolation) interpolateConstrainedSpline();
+	else if (scheme_ == Interpolator::LinearInterpolation) interpolateLinear();
+	else if (scheme_ == Interpolator::ThreePointInterpolation) interpolateThreePoint();
 }
 
 // Return spline interpolated y value for supplied x
-double Interpolater::y(double x)
+double Interpolator::y(double x)
 {
 	// Do we need to (re)generate the interpolation?
 	if (lastInterval_ == -1)
 	{
 		// Do we know what the interpolation scheme is?
-		if (scheme_ != Interpolater::NoInterpolation) interpolate(scheme_);
+		if (scheme_ != Interpolator::NoInterpolation) interpolate(scheme_);
 		else
 		{
 			// No existing interpolation scheme, so use Spline by default
-			interpolate(Interpolater::SplineInterpolation);
+			interpolate(Interpolator::SplineInterpolation);
 		}
 	}
 
@@ -317,11 +321,11 @@ double Interpolater::y(double x)
 }
 
 // Return spline interpolated y value for supplied x, specifying containing interval
-double Interpolater::y(double x, int interval)
+double Interpolator::y(double x, int interval)
 {
 	if (interval < 0) return y_.firstValue();
 
-	if (scheme_ == Interpolater::SplineInterpolation)
+	if (scheme_ == Interpolator::SplineInterpolation)
 	{
 		if (x >= x_.lastValue()) return y_.lastValue();
 
@@ -329,20 +333,20 @@ double Interpolater::y(double x, int interval)
 		double hh = h*h;
 		return a_[interval] + b_[interval]*h + c_[interval]*hh + d_[interval]*hh*h;
 	}
-//	else if (scheme_ == Interpolater::ConstrainedSplineInterpolation)
+//	else if (scheme_ == Interpolator::ConstrainedSplineInterpolation)
 //	{
 //		double h = x;
 //		double hh = h*h;
 //		return a_[interval] + b_[interval]*h + c_[interval]*hh + d_[interval]*hh*h;
 //	}
-	else if (scheme_ == Interpolater::LinearInterpolation)
+	else if (scheme_ == Interpolator::LinearInterpolation)
 	{
 		if (interval >= (x_.nItems()-1)) return y_.lastValue();
 
 		double delta = (x - x_.constAt(interval)) / h_.constAt(interval);
 		return y_.constAt(interval) + delta * a_.constAt(interval);
 	}
-	else if (scheme_ == Interpolater::ThreePointInterpolation)
+	else if (scheme_ == Interpolator::ThreePointInterpolation)
 	{
 		if (interval >= (x_.nItems()-3)) return y_.lastValue();
 
@@ -365,7 +369,7 @@ double Interpolater::y(double x, int interval)
  */
 
 // Approximate data at specified x value using three-point interpolation
-double Interpolater::approximate(const XYData& data, double x)
+double Interpolator::approximate(const XYData& data, double x)
 {
 	// Grab xand y arrays
 	const Array<double>& xData = data.constArrayX();
@@ -398,7 +402,7 @@ double Interpolater::approximate(const XYData& data, double x)
 }
 
 // Add interpolated data B to data A, with supplied multiplication factor
-void Interpolater::addInterpolated(XYData& A, const XYData& B, double factor)
+void Interpolator::addInterpolated(XYData& A, const XYData& B, double factor)
 {
 	// Grab x and y arrays from data A
 	Array<double>& aX = A.arrayX();
@@ -414,7 +418,7 @@ void Interpolater::addInterpolated(XYData& A, const XYData& B, double factor)
 	else
 	{
 		// Generate interpolation of data B
-		Interpolater interpolatedB(B);
+		Interpolator interpolatedB(B);
 
 		for (int n=0; n<aX.nItems(); ++n) aY[n] += interpolatedB.y(aX.constAt(n)) * factor;
 	}

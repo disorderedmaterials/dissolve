@@ -22,7 +22,7 @@
 #include "classes/scatteringmatrix.h"
 #include "classes/atomtype.h"
 #include "classes/weights.h"
-#include "math/interpolater.h"
+#include "math/interpolator.h"
 #include "math/svd.h"
 
 // Constructor
@@ -136,7 +136,7 @@ void ScatteringMatrix::generatePartials(Array2D<XYData>& generatedSQ)
 		// Add in contribution from each datset (row).
 		for (int m=0; m<data_.nItems(); ++m)
 		{
-			Interpolater::addInterpolated(partials[n], data_[m], inverseA_.constAt(n, m));
+			Interpolator::addInterpolated(partials[n], data_[m], inverseA_.constAt(n, m));
 		}
 	}
 }

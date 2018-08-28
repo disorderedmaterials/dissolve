@@ -145,7 +145,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				XYData& differenceData = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), CharString("DifferenceData_%s", module->uniqueName()), uniqueName());
 				differenceData.setObjectName(CharString("%s//Difference//%s", uniqueName_.get(), module->uniqueName()));
 				differenceData = referenceData;
-				Interpolater::addInterpolated(differenceData, calcSQTotal, -1.0);
+				Interpolator::addInterpolated(differenceData, calcSQTotal, -1.0);
 			}
 			else return Messenger::error("Unrecognised Module type '%s', so can't calculate error.", module->name());
 
@@ -269,7 +269,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					double globalJ = atd2->atomType()->index();
 
 					XYData partialIJ = unweightedSQ.constPartial(i,j);
-					Interpolater::addInterpolated(combinedUnweightedSQ.at(globalI, globalJ), partialIJ, factor);
+					Interpolator::addInterpolated(combinedUnweightedSQ.at(globalI, globalJ), partialIJ, factor);
 					combinedRho.at(globalI, globalJ) += rho * factor;
 					combinedFactor.at(globalI, globalJ) += factor;
 					combinedCWeights.at(globalI, globalJ) += weights.concentrationProduct(i,j);
@@ -391,7 +391,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				const Array<double> x1 = generatedSQ.at(i, j).constArrayX();
 				const Array<double> y1 = generatedSQ.at(i, j).constArrayY();
 				XYData& simulatedSQ = combinedUnweightedSQ.at(i,j);
-				Interpolater interpolatedSimSQ(simulatedSQ);
+				Interpolator interpolatedSimSQ(simulatedSQ);
 
 				// Determine allowable range for fit, based on requested values and limits of generated / simulated datasets
 				double deltaSQMin = qMin, deltaSQMax = (qMax < 0.0 ? x1.lastValue() : qMax);

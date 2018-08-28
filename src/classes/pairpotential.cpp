@@ -481,7 +481,7 @@ void PairPotential::calculateUFull()
 	uFull_ += uAdditional_;
 
 	// ...and update its interpolation
-	uFullInterpolation_.interpolate(Interpolater::ThreePointInterpolation);
+	uFullInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
 }
 
 // Calculate derivative of potential
@@ -519,7 +519,7 @@ void PairPotential::calculateDUFull()
 	dUFull_.setY(nPoints_-1, dUFull_.constY(nPoints_-2));
 
 	// Update interpolation
-	dUFullInterpolation_.interpolate(Interpolater::ThreePointInterpolation);
+	dUFullInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
 }
 
 // Set up and generate initial potential
@@ -720,7 +720,7 @@ void PairPotential::setUAdditional(XYData& newUAdditional)
 void PairPotential::adjustUAdditional(XYData u, double factor)
 {
 	// Interpolate the supplied data 'u' and add it to the additional potential
-	Interpolater::addInterpolated(uAdditional_, u, factor);
+	Interpolator::addInterpolated(uAdditional_, u, factor);
 
 	calculateUFull();
 	calculateDUFull();

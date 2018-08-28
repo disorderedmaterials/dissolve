@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_PAIRPOTENTIAL_H
 #define DISSOLVE_PAIRPOTENTIAL_H
 
-#include "math/interpolater.h"
+#include "math/interpolator.h"
 #include "math/xydata.h"
 #include "base/parameters.h"
 #include "templates/list.h"
@@ -186,11 +186,11 @@ class PairPotential : public ListItem<PairPotential>
 	// Full potential (original plus additional), used in simulations
 	XYData uFull_;
 	// Interpolation of full potential
-	Interpolater uFullInterpolation_;
+	Interpolator uFullInterpolation_;
 	// Tabulated derivative of full potential
 	XYData dUFull_;
 	// Interpolation of derivative of full potential
-	Interpolater dUFullInterpolation_;
+	Interpolator dUFullInterpolation_;
 	
 	private:
 	// Return analytic short range potential energy

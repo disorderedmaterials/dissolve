@@ -25,7 +25,7 @@
 #include "module/module.h"
 #include "module/group.h"
 #include "classes/scatteringmatrix.h"
-#include "math/interpolater.h"
+#include "math/interpolator.h"
 
 // Forward Declarations
 class AtomType;
@@ -136,7 +136,7 @@ class RefineModule : public Module
 	// Current data being fit by modifyBondTerms
 	XYData fitData_;
 	// Interpolation of current data being fit by modifyBondTerms
-	Interpolater interpolatedFitData_;
+	Interpolator interpolatedFitData_;
 	// Starting position and maximum delta to allow on the x-intercept while fitting
 	double xCentreStart_, xCentreDeltaLimit_;
 

@@ -1,6 +1,6 @@
 /*
-	*** Interpolater
-	*** src/math/interpolater.h
+	*** Interpolator
+	*** src/math/interpolator.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,16 +19,16 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_INTERPOLATER_H
-#define DISSOLVE_INTERPOLATER_H
+#ifndef DISSOLVE_INTERPOLATOR_H
+#define DISSOLVE_INTERPOLATOR_H
 
 #include "templates/array.h"
 
 // Forward Declarations
 class XYData;
 
-// Interpolater
-class Interpolater
+// Interpolator
+class Interpolator
 {
 	public:
 	// Interpolation Schemes
@@ -41,10 +41,10 @@ class Interpolater
 		ThreePointInterpolation
 	};
 	// Constructors
-	Interpolater(const Array<double>& x, const Array<double>& y, InterpolationScheme scheme = SplineInterpolation);
-	Interpolater(const XYData& source, InterpolationScheme scheme = SplineInterpolation);
+	Interpolator(const Array<double>& x, const Array<double>& y, InterpolationScheme scheme = SplineInterpolation);
+	Interpolator(const XYData& source, InterpolationScheme scheme = SplineInterpolation);
 	// Destructor
-	~Interpolater();
+	~Interpolator();
 
 
 	/*

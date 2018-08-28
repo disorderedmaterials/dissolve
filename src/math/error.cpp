@@ -20,7 +20,7 @@
 */
 
 #include "math/error.h"
-#include "math/interpolater.h"
+#include "math/interpolator.h"
 #include "math/xydata.h"
 #include <algorithm>
 
@@ -30,7 +30,7 @@ using namespace std;
 double Error::rmse(const XYData& A, const XYData& B, bool quiet)
 {
 	// First, generate interpolation of data B
-	Interpolater interpolatedB(B);
+	Interpolator interpolatedB(B);
 
 	// Grab x and y arrays from data A
 	const Array<double>& aX = A.constArrayX();
@@ -72,7 +72,7 @@ double Error::rmse(const XYData& A, const XYData& B, bool quiet)
 double Error::percent(const XYData& A, const XYData& B, bool quiet)
 {
 	// First, generate interpolation of data B
-	Interpolater interpolatedB(B);
+	Interpolator interpolatedB(B);
 
 	// Grab x and y arrays from data A
 	const Array<double>& aX = A.constArrayX();

@@ -475,7 +475,7 @@ void PartialSet::adjust(double delta)
 }
 
 // Form partials from stored Histogram data
-void PartialSet::formPartials(double boxVolume, Interpolater& boxNormalisation)
+void PartialSet::formPartials(double boxVolume, Interpolator& boxNormalisation)
 {
 	int n, m;
 	int nTypes = atomTypes_.nItems();
@@ -521,14 +521,14 @@ bool PartialSet::addPartials(PartialSet& source, double weighting)
 			}
 
 			// Add interpolated source partials to our set
-			Interpolater::addInterpolated(partials_.at(localI, localJ), source.partial(typeI, typeJ), weighting);
-			Interpolater::addInterpolated(boundPartials_.at(localI, localJ), source.boundPartial(typeI, typeJ), weighting);
-			Interpolater::addInterpolated(unboundPartials_.at(localI, localJ), source.unboundPartial(typeI, typeJ), weighting);
+			Interpolator::addInterpolated(partials_.at(localI, localJ), source.partial(typeI, typeJ), weighting);
+			Interpolator::addInterpolated(boundPartials_.at(localI, localJ), source.boundPartial(typeI, typeJ), weighting);
+			Interpolator::addInterpolated(unboundPartials_.at(localI, localJ), source.unboundPartial(typeI, typeJ), weighting);
 		}
 	}
 
 	// Add total function
-	Interpolater::addInterpolated(total_, source.total(), weighting);
+	Interpolator::addInterpolated(total_, source.total(), weighting);
 
 	return true;
 }
@@ -555,7 +555,7 @@ void PartialSet::reweightPartials(double factor)
 }
 
 // Calculate and return RDF from supplied Histogram and normalisation data
-void PartialSet::calculateRDF(XYData& destination, Histogram1D& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, Interpolater& boxNormalisation)
+void PartialSet::calculateRDF(XYData& destination, Histogram1D& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, Interpolator& boxNormalisation)
 {
 	int nBins = histogram.nBins();
 	double delta = histogram.binWidth();

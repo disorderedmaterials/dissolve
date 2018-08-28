@@ -266,7 +266,7 @@ bool Configuration::setUpBox(ProcessPool& procPool, double ppRange, int nExpecte
 	}
 
 	// Update the Box normalisation interpolation
-	boxNormalisationInterpolation_.interpolate(Interpolater::LinearInterpolation);
+	boxNormalisationInterpolation_.interpolate(Interpolator::LinearInterpolation);
 
 	return true;
 }
@@ -300,7 +300,7 @@ const XYData& Configuration::boxNormalisation() const
 }
 
 // Return interpolation of Box normalisation function
-Interpolater& Configuration::boxNormalisationInterpolation()
+Interpolator& Configuration::boxNormalisationInterpolation()
 {
 	return boxNormalisationInterpolation_;
 }
