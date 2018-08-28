@@ -8,6 +8,7 @@ add_library(math
   gaussfit.cpp
   gj.cpp
   histogram1d.cpp
+  integrator.cpp
   interpolator.cpp
   mathfunc.cpp
   matrix3.cpp
@@ -31,6 +32,7 @@ add_library(math
   gaussfit.h
   gj.h
   histogram1d.h
+  integrator.h
   interpolator.h
   mathfunc.h
   matrix3.h

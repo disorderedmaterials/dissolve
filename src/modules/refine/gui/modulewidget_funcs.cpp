@@ -23,6 +23,7 @@
 #include "gui/uchroma/gui/uchromaview.h"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
+#include "math/integrator.h"
 #include "modules/refine/refine.h"
 #include "classes/atomtype.h"
 #include "templates/variantpointer.h"
@@ -151,7 +152,7 @@ void RefineModuleWidget::updateControls()
 	// Set controls on Overview page
 	double phiLevel = 0.0;
 	ListIterator<PairPotential> ppIterator(dissolve_.pairPotentials());
-	while (PairPotential* pp = ppIterator.iterate()) phiLevel += pp->uAdditional().absIntegral();
+	while (PairPotential* pp = ppIterator.iterate()) phiLevel += Integrator::absIntegral(pp->uAdditional());
 	ui.PhiLevelSpin->setValue(phiLevel);
 
 	// Ensure that any displayed data are up-to-date

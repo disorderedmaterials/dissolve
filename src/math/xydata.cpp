@@ -20,6 +20,7 @@
 */
 
 #include "base/processpool.h"
+#include "math/integrator.h"
 #include "math/xydata.h"
 #include "base/messenger.h"
 #include "base/lineparser.h"
@@ -512,51 +513,6 @@ double XYData::lastGradient(int nSamples, double* yMean) const
 }
 
 /*
- * Integration
- */
-
-// Compute integral of the data
-double XYData::integral() const
-{
-	double total = 0.0, y0 = y_.firstValue(), y1, x0 = x_.firstValue(), x1;
-	for (int n=1; n<x_.nItems(); ++n)
-	{
-		x1 = x_.constAt(n);
-		y1 = y_.constAt(n);
-		total += (x1 - x0) * (y0 + y1) * 0.5;
-		x0 = x1;
-		y0 = y1;
-	}
-	return total;
-}
-
-// Compute absolute integral of the data
-double XYData::absIntegral() const
-{
-	if (nPoints() < 2) return 0.0;
-	double total = 0.0, y0 = y_.firstValue(), y1, x0 = x_.firstValue(), x1;
-	for (int n=1; n<x_.nItems(); ++n)
-	{
-		x1 = x_.constAt(n);
-		y1 = y_.constAt(n);
-		total += fabs((x1 - x0) * (y0 + y1) * 0.5);
-		x0 = x1;
-		y0 = y1;
-	}
-	return total;
-}
-
-// Return sum of squares of all y values
-double XYData::sumOfSquares() const
-{
-	double total = 0.0;
-
-	for (int n=0; n<y_.nItems(); ++n) total += y_.constAt(n)*y_.constAt(n);
-
-	return total;
-}
-
-/*
  * Filtering
  */
 
@@ -677,7 +633,7 @@ void XYData::convolve(BroadeningFunction function)
 void XYData::convolveNormalised(BroadeningFunction function)
 {
 	// Calculate the original integral
-	double originalIntegral = absIntegral();
+	double originalIntegral = Integrator::absIntegral(*this);
 
 	// If the original integral is zero, nothing to do
 	if (originalIntegral == 0.0) return;
@@ -686,7 +642,7 @@ void XYData::convolveNormalised(BroadeningFunction function)
 	convolve(function);
 
 	// Calculate the new integral
-	double newIntegral = absIntegral();
+	double newIntegral = Integrator::absIntegral(*this);
 
 	y_ *= (originalIntegral / newIntegral);
 }

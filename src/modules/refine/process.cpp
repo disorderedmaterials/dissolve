@@ -25,6 +25,7 @@
 #include "modules/rdf/rdf.h"
 #include "math/error.h"
 #include "math/gaussfit.h"
+#include "math/integrator.h"
 #include "classes/scatteringmatrix.h"
 #include "classes/weights.h"
 #include "classes/atomtype.h"
@@ -708,7 +709,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			if (!pp) continue;
 
 			// Calculate phi magnitude for this pair potential
-			double phiMag = pp->uAdditional().absIntegral();
+			double phiMag = Integrator::absIntegral(pp->uAdditional());
 
 			// Clamp it?
 			if (modifyPotential && (phiMax > 0.0) && (phiMag > phiMax))

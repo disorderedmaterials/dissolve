@@ -24,6 +24,7 @@
 #include "gui/uchroma/gui/uchromaview.h"
 #include "gui/widgets/subwindow.h"
 #include "main/dissolve.h"
+#include "math/integrator.h"
 #include "classes/pairpotential.h"
 #include "classes/configuration.h"
 #include "base/lineparser.h"
@@ -161,7 +162,8 @@ void PairPotentialWidget::updateControls()
 		initialiseWindow(lastPairPotential_);
 	}
 
-	ui.UAdditionalMagnitudeLabel->setText(lastPairPotential_ ? QString("%1 kJ/mol %2").arg(lastPairPotential_->uAdditional().absIntegral()).arg(QChar(0xc5)) : "N/A");
+	double integral = Integrator::absIntegral(lastPairPotential_->uAdditional());
+	ui.UAdditionalMagnitudeLabel->setText(lastPairPotential_ ? QString("%1 kJ/mol %2").arg(integral).arg(QChar(0xc5)) : "N/A");
 
 	refreshing_ = false;
 }
