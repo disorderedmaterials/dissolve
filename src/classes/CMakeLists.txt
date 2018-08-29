@@ -24,6 +24,7 @@ add_library(classes
   configuration_contents.cpp
   configuration_sites.cpp
   configuration_upkeep.cpp
+  datastore.cpp
   distributor.cpp
   empiricalformula.cpp
   energykernel.cpp
@@ -64,7 +65,6 @@ add_library(classes
   species_transform.cpp
   torsion.cpp
   weights.cpp
-  xydatastore.cpp
   
   angle.h
   atom.h
@@ -81,6 +81,7 @@ add_library(classes
   changedata.h
   changestore.h
   configuration.h
+  datastore.h
   distributor.h
   empiricalformula.h
   energykernel.h
@@ -115,7 +116,6 @@ add_library(classes
   speciestorsion.h
   torsion.h
   weights.h
-  xydatastore.h
   )
 
 include_directories(

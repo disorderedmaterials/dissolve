@@ -24,7 +24,7 @@
 
 #include "module/module.h"
 #include "classes/partialset.h"
-#include "classes/xydatastore.h"
+#include "classes/datastore.h"
 
 // Forward Declarations
 class PartialSet;
@@ -95,7 +95,7 @@ class SQModule : public Module
 	 */
 	private:
 	// Test data
-	XYDataStore testData_;
+	DataStore testData_;
 
 	public:
 	// Calculate unweighted S(Q) from unweighted g(r)

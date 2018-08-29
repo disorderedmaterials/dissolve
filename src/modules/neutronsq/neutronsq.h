@@ -25,7 +25,7 @@
 #include "module/module.h"
 #include "classes/partialset.h"
 #include "classes/isotopologuereference.h"
-#include "classes/xydatastore.h"
+#include "classes/datastore.h"
 
 // Forward Declarations
 class PartialSet;
@@ -122,7 +122,7 @@ class NeutronSQModule : public Module
 	 */
 	private:
 	// Test data
-	XYDataStore testData_;
+	DataStore testData_;
 
 	public:
 	// Calculate weighted g(r) from supplied unweighted g(r) and Weights

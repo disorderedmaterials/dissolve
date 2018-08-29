@@ -60,7 +60,7 @@ void NeutronSQModule::setUpKeywords()
 	keywords_.add(new DoubleModuleKeyword(-1.0, -1.0), "ReferenceRemoveAverage", "Q value at which to form average level to be subtracted from reference data before use (-1 for no subtraction)");
 	keywords_.add(new BoolModuleKeyword(false), "Save", "Whether to save partials to disk after calculation", "<True|False>");
 	keywords_.add(new BoolModuleKeyword(false), "Test", "Test calculated total and partials against supplied reference data", "<True|False>");
-	keywords_.add(new XYDataStoreModuleKeyword(testData_), "TestReference", "Test reference data", "<filename> <target> [xcol] [ycol]");
+	keywords_.add(new DataStoreModuleKeyword(testData_), "TestReference", "Test reference data", "<filename> <target> [xcol] [ycol]");
 	keywords_.add(new DoubleModuleKeyword(0.1, 1.0e-5), "TestThreshold", "Test threshold (%%error) above which test fails", "<threshold[0.1]>");
 	keywords_.add(new WindowFunctionModuleKeyword(WindowFunction(WindowFunction::Lorch0Window)), "WindowFunction", "Window function to apply when Fourier-transforming g(r) to S(Q)");
 }

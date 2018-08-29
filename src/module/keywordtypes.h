@@ -27,22 +27,18 @@
  * It simply includes all other derived classes and specialisations.
  */
 
-// PODs
-#include "module/keywordtypes/bool.h"
-#include "module/keywordtypes/double.h"
-#include "module/keywordtypes/int.h"
-
-// Complex
-#include "module/keywordtypes/complex.h"
-
 // Classes
 #include "module/keywordtypes/analyser.h"
 #include "module/keywordtypes/atomtypeselection.h"
-#include "module/keywordtypes/charstring.h"
+#include "module/keywordtypes/bool.h"
 #include "module/keywordtypes/broadeningfunction.h"
+#include "module/keywordtypes/charstring.h"
+#include "module/keywordtypes/complex.h"
+#include "module/keywordtypes/datastore.h"
+#include "module/keywordtypes/double.h"
+#include "module/keywordtypes/int.h"
 #include "module/keywordtypes/isotopologuelist.h"
 #include "module/keywordtypes/pairbroadeningfunction.h"
 #include "module/keywordtypes/windowfunction.h"
-#include "module/keywordtypes/xydatastore.h"
 
 #endif

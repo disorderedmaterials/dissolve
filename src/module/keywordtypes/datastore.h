@@ -1,6 +1,6 @@
 /*
-	*** Module Keyword - XYData Store
-	*** src/modules/keywordtypes/xydatastore.h
+	*** Module Keyword - Data Store
+	*** src/modules/keywordtypes/datastore.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,24 +19,24 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEKEYWORD_XYDATASTORE_H
-#define DISSOLVE_MODULEKEYWORD_XYDATASTORE_H
+#ifndef DISSOLVE_MODULEKEYWORD_DATASTORE_H
+#define DISSOLVE_MODULEKEYWORD_DATASTORE_H
 
 #include "module/keyworddata.h"
 #include "module/keywordbase.h"
-#include "classes/xydatastore.h"
+#include "classes/datastore.h"
 
 // Forward Declarations
 /* none */
 
-// Keyword with a store of XYData
-class XYDataStoreModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<XYDataStore&>
+// Keyword with a store of data
+class DataStoreModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<DataStore&>
 {
 	public:
 	// Constructor
-	XYDataStoreModuleKeyword(XYDataStore& dataStore);
+	DataStoreModuleKeyword(DataStore& dataStore);
 	// Destructor
-	~XYDataStoreModuleKeyword();
+	~DataStoreModuleKeyword();
 
 
 	/*

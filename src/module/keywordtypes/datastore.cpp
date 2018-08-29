@@ -1,6 +1,6 @@
 /*
-	*** Module Keyword - Test Data Store
-	*** src/modules/keywordtypes/testdatastore.cpp
+	*** Module Keyword - Data Store
+	*** src/modules/keywordtypes/datastore.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,16 +19,16 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "module/keywordtypes/xydatastore.h"
+#include "module/keywordtypes/datastore.h"
 #include "base/lineparser.h"
 
 // Constructor
-XYDataStoreModuleKeyword::XYDataStoreModuleKeyword(XYDataStore& dataStore) : ModuleKeywordBase(ModuleKeywordBase::XYDataStoreData), ModuleKeywordData<XYDataStore&>(dataStore)
+DataStoreModuleKeyword::DataStoreModuleKeyword(DataStore& dataStore) : ModuleKeywordBase(ModuleKeywordBase::DataStoreData), ModuleKeywordData<DataStore&>(dataStore)
 {
 }
 
 // Destructor
-XYDataStoreModuleKeyword::~XYDataStoreModuleKeyword()
+DataStoreModuleKeyword::~DataStoreModuleKeyword()
 {
 }
 
@@ -37,7 +37,7 @@ XYDataStoreModuleKeyword::~XYDataStoreModuleKeyword()
  */
 
 // Return whether the current data value has ever been set
-bool XYDataStoreModuleKeyword::isSet()
+bool DataStoreModuleKeyword::isSet()
 {
 	return set_;
 }
@@ -47,21 +47,21 @@ bool XYDataStoreModuleKeyword::isSet()
  */
 
 // Return minimum number of arguments accepted
-int XYDataStoreModuleKeyword::minArguments()
+int DataStoreModuleKeyword::minArguments()
 {
 	// Must have filename and name of data
 	return 2;
 }
 
 // Return maximum number of arguments accepted
-int XYDataStoreModuleKeyword::maxArguments()
+int DataStoreModuleKeyword::maxArguments()
 {
 	// Filename, name of data, x column, y column
 	return 4;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool XYDataStoreModuleKeyword::read(LineParser& parser, int startArg, ProcessPool& procPool)
+bool DataStoreModuleKeyword::read(LineParser& parser, int startArg, ProcessPool& procPool)
 {
 	Messenger::print("Reading test data '%s' from file '%s'...\n", parser.argc(startArg), parser.argc(startArg+1));
 
@@ -69,9 +69,9 @@ bool XYDataStoreModuleKeyword::read(LineParser& parser, int startArg, ProcessPoo
 	int xcol = parser.hasArg(startArg+2) ? parser.argi(startArg+2)-1 : 0;
 	int ycol = parser.hasArg(startArg+3) ? parser.argi(startArg+3)-1 : 1;
 
-	if (!data_.add(procPool, parser.argc(startArg), parser.argc(startArg+1), xcol, ycol))
+	if (!data_.addData1D(procPool, parser.argc(startArg), parser.argc(startArg+1), xcol, ycol))
 	{
-		Messenger::error("Failed to add test data.\n");
+		Messenger::error("Failed to add data.\n");
 		return false;
 	}
 
@@ -81,13 +81,14 @@ bool XYDataStoreModuleKeyword::read(LineParser& parser, int startArg, ProcessPoo
 }
 
 // Write keyword data to specified LineParser
-bool XYDataStoreModuleKeyword::write(LineParser& parser, const char* prefix)
+bool DataStoreModuleKeyword::write(LineParser& parser, const char* prefix)
 {
-	// Loop over list of XYData
-	ListIterator<XYData> dataIterator(data_.data());
+	// Loop over list of one-dimensional data
+	RefListIterator<XYData,FileReference> dataIterator(data_.data1DReferences());
 	while (XYData* data = dataIterator.iterate())
 	{
-		if (!parser.writeLineF("%s%s  '%s'  '%s'  '%s'  %f\n", prefix, keyword(), data->sourceFilename(), data->name(), data->xColumn(), data->yColumn())) return false;
+		FileReference ref = dataIterator.currentData();
+		if (!parser.writeLineF("%s%s  '%s'  '%s'  '%s'  %f\n", prefix, keyword(), ref.filename(), data->name(), ref.xColumn(), ref.yColumn())) return false;
 	}
 
 	return true;

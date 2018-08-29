@@ -24,7 +24,7 @@
 
 #include "module/module.h"
 #include "module/group.h"
-#include "classes/xydatastore.h"
+#include "classes/datastore.h"
 #include "math/xydata.h"
 #include "templates/array3d.h"
 
@@ -118,7 +118,7 @@ class EPSRModule : public Module
 	 */
 	private:
 	// Test datasets (if any)
-	XYDataStore testData_;
+	DataStore testData_;
 	// List of target Modules to be targetted in refinement process
 	RefList<Module,bool> targets_;
 	// Target groups

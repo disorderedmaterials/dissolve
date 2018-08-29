@@ -5,12 +5,12 @@ add_library(keywordtypes
   broadeningfunction.cpp
   charstring.cpp
   complex.cpp
+  datastore.cpp
   double.cpp
   int.cpp
   isotopologuelist.cpp
   pairbroadeningfunction.cpp
   windowfunction.cpp
-  xydatastore.cpp
 
   analyser.h
   atomtypeselection.h
@@ -18,12 +18,12 @@ add_library(keywordtypes
   broadeningfunction.h
   charstring.h
   complex.h
+  datastore.h
   double.h
   int.h
   isotopologuelist.h
   pairbroadeningfunction.h
   windowfunction.h
-  xydatastore.h
 )
 
 include_directories(
