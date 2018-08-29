@@ -25,6 +25,7 @@
 #include "modules/rdf/rdf.h"
 #include "math/error.h"
 #include "math/filters.h"
+#include "math/ft.h"
 #include "math/gaussfit.h"
 #include "math/integrator.h"
 #include "classes/scatteringmatrix.h"
@@ -358,7 +359,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 				// Copy experimental S(Q) and FT it
 				expGR = generatedSQ.at(i,j);
-				expGR.sineFT(1.0 / (2 * PI * PI * combinedRho.at(i,j)), 0.0, 0.05, 30.0, WindowFunction(WindowFunction::Lorch0Window));
+				Fourier::sineFT(expGR, 1.0 / (2 * PI * PI * combinedRho.at(i,j)), 0.0, 0.05, 30.0, WindowFunction(WindowFunction::Lorch0Window));
 				expGR.arrayY() += 1.0;
 			}
 		}
@@ -508,7 +509,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				{
 					// Copy the delta S(Q) and do the inverse FT to get the delta [g(r) - 1]
 					inversion = deltaSQ.at(i, j);
-					inversion.sineFT(1.0 / (2 * PI * PI * combinedRho.at(i,j)), ppDelta, ppDelta, ppRange, windowFunction);
+					Fourier::sineFT(inversion, 1.0 / (2 * PI * PI * combinedRho.at(i,j)), ppDelta, ppDelta, ppRange, windowFunction);
 
 					dPhiR = inversion;
 					dPhiR.arrayY() *= -1.0;

@@ -1,6 +1,6 @@
 /*
-	*** XY Data - Fourier Transforms
-	*** src/math/xydata_ft.cpp
+	*** Fourier Transforms
+	*** src/math/ft.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,23 +19,17 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "math/ft.h"
 #include "math/xydata.h"
 #include "base/sysfunc.h"
 
 // Make some checks before doing transform
-bool XYData::checkBeforeTransform()
+bool Fourier::checkBeforeTransform(XYData& data)
 {
 	// Enough data to do transform?
-	if (x_.nItems() < 5)
+	if (data.nPoints() < 5)
 	{
-		Messenger::error("Not enough X data points (%i) in XYData. Can't do transform.\n", x_.nItems());
-		return false;
-	}
-	
-	// X and Y arrays match?
-	if (x_.nItems() != y_.nItems())
-	{
-		Messenger::error("X and Y array sizes do not match (%i vs %i) in XYData. Can't do transform.\n", x_.nItems(), y_.nItems());
+		Messenger::error("Not enough X data points (%i) in XYData. Can't do transform.\n", data.nPoints());
 		return false;
 	}
 
@@ -43,7 +37,7 @@ bool XYData::checkBeforeTransform()
 }
 
 // Perform Fourier sine transform of current distribution function, over range specified, and with specified broadening function, modification function, and window applied (if requested)
-bool XYData::sineFT(double normFactor, double wMin, double wStep, double wMax, WindowFunction windowFunction, BroadeningFunction broadening)
+bool Fourier::sineFT(XYData& data, double normFactor, double wMin, double wStep, double wMax, WindowFunction windowFunction, BroadeningFunction broadening)
 {
 	/*
 	 * Perform sine Fourier transform of current data. Function has no notion of forward or backwards transforms - normalisation and broadening functions must
@@ -62,20 +56,24 @@ bool XYData::sineFT(double normFactor, double wMin, double wStep, double wMax, W
 	 */
 
 	// Okay to continue with transform?
-	if (!checkBeforeTransform()) return false;
+	if (!checkBeforeTransform(data)) return false;
 
 	// Set up window function for the present data
-	windowFunction.setUp(*this);
+	windowFunction.setUp(data);
+
+	// Grab x and y arrays
+	const Array<double>& x = data.constArrayX();
+	Array<double>& y = data.arrayY();
 
 	int m;
-	const int nX = x_.nItems();
+	const int nX = x.nItems();
 	double window, broaden;
 
 	// Create working array
 	XYData sineft;
 
 	// Assume deltaX is the difference between the first two points
-	double deltaX = x_[1] - x_[0];
+	double deltaX = x.constAt(1) - x.constAt(0);
 
 	// Perform Fourier sine transform, apply general and omega-dependent broadening, as well as window function
 	double ft;
@@ -85,15 +83,15 @@ bool XYData::sineFT(double normFactor, double wMin, double wStep, double wMax, W
 		ft = 0.0;
 		for (m=0; m<nX-1; ++m)
 		{
-			deltaX = x_[m+1] - x_[m];
+			deltaX = x.constAt(m+1) - x.constAt(m);
 
 			// Get window value at this position in the function
-			window = windowFunction.y(x_[m], omega);
+			window = windowFunction.y(x.constAt(m), omega);
 
 			// Calculate broadening
-			broaden = broadening.yFT(x_[m], omega);
+			broaden = broadening.yFT(x.constAt(m), omega);
 
-			ft += sin(x_[m]*omega) * x_[m] * broaden * window * y_[m] * deltaX;
+			ft += sin(x.constAt(m)*omega) * x.constAt(m) * broaden * window * y[m] * deltaX;
 		}
 
 		// Normalise
@@ -104,10 +102,10 @@ bool XYData::sineFT(double normFactor, double wMin, double wStep, double wMax, W
 	}
 
 	// Transfer working arrays to this object
-	copyData(sineft);
+	data.copyData(sineft);
 
 	// Apply normalisation factor
-	y_ *= normFactor;
+	y *= normFactor;
 
 	return true;
 }

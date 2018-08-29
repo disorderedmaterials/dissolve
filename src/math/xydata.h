@@ -188,18 +188,6 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 
 
 	/*
-	 * Fourier Transforms
-	 */
-	private:
-	// Make some checks before doing transform
-	bool checkBeforeTransform();
-
-	public:
-	// Perform Fourier sine transform of current distribution function, over range specified, and with specified window and broadening functions applied
-	bool sineFT(double normFactor, double wMin, double wStep, double wMax, WindowFunction windowFunction = WindowFunction(), BroadeningFunction broadening = BroadeningFunction());
-
-
-	/*
 	 * GenericItemBase Implementations
 	 */
 	public:

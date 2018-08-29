@@ -24,6 +24,7 @@
 #include "modules/energy/energy.h"
 #include "modules/rdf/rdf.h"
 #include "math/error.h"
+#include "math/ft.h"
 #include "math/gaussfit.h"
 #include "math/poissonfit.h"
 #include "classes/scatteringmatrix.h"
@@ -306,7 +307,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		XYData& simulatedFR = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), "SimulatedFR", module->uniqueName(), GenericItem::InRestartFileFlag);
 		simulatedFR.setObjectName(CharString("%s//SimulatedFR//%s", uniqueName_.get(), module->uniqueName()));
 		simulatedFR = simulatedFQ;
-		simulatedFR.sineFT(1.0 / (2*PI*PI*GenericListHelper<double>::value(dissolve.processingModuleData(), "EffectiveRho", module->uniqueName(), 0.0)), 0.0, 0.03, 30.0, WindowFunction(WindowFunction::Lorch0Window));
+		Fourier::sineFT(simulatedFR, 1.0 / (2*PI*PI*GenericListHelper<double>::value(dissolve.processingModuleData(), "EffectiveRho", module->uniqueName(), 0.0)), 0.0, 0.03, 30.0, WindowFunction(WindowFunction::Lorch0Window));
 
 		// Test Mode
 		if (testMode)
@@ -515,7 +516,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 				// Copy experimental S(Q) and FT it
 				expGR = generatedSQ.at(i,j);
-				expGR.sineFT(1.0 / (2 * PI * PI * combinedRho.at(i,j)), 0.0, 0.05, 30.0, WindowFunction(WindowFunction::Lorch0Window));
+				Fourier::sineFT(expGR, 1.0 / (2 * PI * PI * combinedRho.at(i,j)), 0.0, 0.05, 30.0, WindowFunction(WindowFunction::Lorch0Window));
 				expGR.arrayY() += 1.0;
 			}
 		}

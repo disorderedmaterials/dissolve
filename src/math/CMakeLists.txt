@@ -5,6 +5,7 @@ add_library(math
   doubleexp.cpp
   error.cpp
   filters.cpp
+  ft.cpp
   gaussfit.cpp
   gj.cpp
   histogram1d.cpp
@@ -19,7 +20,6 @@ add_library(math
   svd.cpp
   windowfunction.cpp
   xydata.cpp
-  xydata_ft.cpp
 
   broadeningfunction.h
   constants.h
@@ -28,6 +28,7 @@ add_library(math
   doubleexp.h
   error.h
   filters.h
+  ft.h
   functionspace.h
   gaussfit.h
   gj.h
