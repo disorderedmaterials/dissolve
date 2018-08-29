@@ -152,7 +152,7 @@ void RefineModuleWidget::updateControls()
 	// Set controls on Overview page
 	double phiLevel = 0.0;
 	ListIterator<PairPotential> ppIterator(dissolve_.pairPotentials());
-	while (PairPotential* pp = ppIterator.iterate()) phiLevel += Integrator::absIntegral(pp->uAdditional());
+	while (PairPotential* pp = ppIterator.iterate()) phiLevel += Integrator::absTrapezoid(pp->uAdditional());
 	ui.PhiLevelSpin->setValue(phiLevel);
 
 	// Ensure that any displayed data are up-to-date

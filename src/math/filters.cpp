@@ -147,7 +147,7 @@ void Filters::convolve(XYData& data, BroadeningFunction function)
 void Filters::convolveNormalised(XYData& data, BroadeningFunction function)
 {
 	// Calculate the original integral
-	double originalIntegral = Integrator::absIntegral(data);
+	double originalIntegral = Integrator::absTrapezoid(data);
 
 	// If the original integral is zero, nothing to do
 	if (originalIntegral == 0.0) return;
@@ -156,7 +156,7 @@ void Filters::convolveNormalised(XYData& data, BroadeningFunction function)
 	convolve(data, function);
 
 	// Calculate the new integral
-	double newIntegral = Integrator::absIntegral(data);
+	double newIntegral = Integrator::absTrapezoid(data);
 
 	data.arrayY() *= (originalIntegral / newIntegral);
 }

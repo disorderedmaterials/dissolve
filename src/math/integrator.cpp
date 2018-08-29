@@ -27,8 +27,8 @@
  * Static Functions
  */
 
-// Compute integral of supplied data
-double Integrator::integral(const XYData& data)
+// Compute integral of supplied data via trapezoid rule
+double Integrator::trapezoid(const XYData& data)
 {
 	// Check for insufficient data
 	if (data.nPoints() < 2) return 0.0;
@@ -49,8 +49,8 @@ double Integrator::integral(const XYData& data)
 	return total;
 }
 
-// Compute absolute integral of supplied data
-double Integrator::absIntegral(const XYData& data)
+// Compute absolute integral of supplied data via trapezoid rule
+double Integrator::absTrapezoid(const XYData& data)
 {
 	// Check for insufficient data
 	if (data.nPoints() < 2) return 0.0;

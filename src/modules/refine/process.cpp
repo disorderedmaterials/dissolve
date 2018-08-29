@@ -712,7 +712,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			if (!pp) continue;
 
 			// Calculate phi magnitude for this pair potential
-			double phiMag = Integrator::absIntegral(pp->uAdditional());
+			double phiMag = Integrator::absTrapezoid(pp->uAdditional());
 
 			// Clamp it?
 			if (modifyPotential && (phiMax > 0.0) && (phiMag > phiMax))

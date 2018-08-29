@@ -32,10 +32,10 @@ class Integrator
 	 * Static Functions
 	 */
 	public:
-	// Compute integral of supplied data
-	static double integral(const XYData& data);
-	// Compute absolute integral of supplied data
-	static double absIntegral(const XYData& data);
+	// Compute integral of supplied data via trapezoid rule
+	static double trapezoid(const XYData& data);
+	// Compute absolute integral of supplied data via trapezoid rule
+	static double absTrapezoid(const XYData& data);
 	// Return sum of squares of all y values in supplied data
 	static double sumOfSquares(const XYData& data);
 };

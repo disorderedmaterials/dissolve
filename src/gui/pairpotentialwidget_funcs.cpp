@@ -162,7 +162,7 @@ void PairPotentialWidget::updateControls()
 		initialiseWindow(lastPairPotential_);
 	}
 
-	double integral = Integrator::absIntegral(lastPairPotential_->uAdditional());
+	double integral = Integrator::absTrapezoid(lastPairPotential_->uAdditional());
 	ui.UAdditionalMagnitudeLabel->setText(lastPairPotential_ ? QString("%1 kJ/mol %2").arg(integral).arg(QChar(0xc5)) : "N/A");
 
 	refreshing_ = false;
