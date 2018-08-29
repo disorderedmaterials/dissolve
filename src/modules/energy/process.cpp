@@ -21,6 +21,7 @@
 
 #include "modules/energy/energy.h"
 #include "main/dissolve.h"
+#include "math/regression.h"
 #include "classes/species.h"
 #include "classes/box.h"
 #include "base/sysfunc.h"
@@ -324,7 +325,7 @@ bool EnergyModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			else
 			{
 				double yMean;
-				grad = totalEnergyArray.lastGradient(stabilityWindow, &yMean);
+				grad = Regression::linear(totalEnergyArray, stabilityWindow, yMean);
 				double thresholdValue = fabs(stabilityThreshold*yMean);
 				stable = fabs(grad) < thresholdValue;
 

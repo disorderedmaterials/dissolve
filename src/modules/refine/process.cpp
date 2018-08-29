@@ -28,6 +28,7 @@
 #include "math/ft.h"
 #include "math/gaussfit.h"
 #include "math/integrator.h"
+#include "math/regression.h"
 #include "classes/scatteringmatrix.h"
 #include "classes/weights.h"
 #include "classes/atomtype.h"
@@ -161,7 +162,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			else
 			{
 				double yMean;
-				double grad = errors.lastGradient(errorStabilityWindow, &yMean);
+				double grad = Regression::linear(errors, errorStabilityWindow, yMean);
 				double thresholdValue = fabs(errorStabilityThreshold*yMean);
 				if (fabs(grad) > thresholdValue) ++nUnstableData;
 
@@ -672,7 +673,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 						if (partialErrors.nPoints() >= errorStabilityWindow)
 						{
 							double yMean;
-							double grad = partialErrors.lastGradient(errorStabilityWindow, &yMean);
+							double grad = Regression::linear(partialErrors, errorStabilityWindow, yMean);
 							double thresholdValue = fabs(0.001*yMean);
 							if (fabs(grad) < thresholdValue)
 							{
