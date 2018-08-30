@@ -86,13 +86,13 @@ bool NeutronSQModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 		// Store the reference data in processing
 		referenceData.setName(uniqueName());
 		XYData& storedData = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), "ReferenceData", uniqueName(), GenericItem::InRestartFileFlag);
-		storedData.setObjectName(CharString("%s//ReferenceData", uniqueName()));
+		storedData.setObjectTag(CharString("%s//ReferenceData", uniqueName()));
 		storedData = referenceData;
 
 		// Calculate and store the FT of the reference data in processing
 		referenceData.setName(uniqueName());
 		XYData& storedDataFT = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), "ReferenceDataFT", uniqueName(), GenericItem::InRestartFileFlag);
-		storedDataFT.setObjectName(CharString("%s//ReferenceDataFT", uniqueName()));
+		storedDataFT.setObjectTag(CharString("%s//ReferenceDataFT", uniqueName()));
 		storedDataFT = referenceData;
 		Fourier::sineFT(storedDataFT, 1.0 / (2.0 * PI * PI * RDFModule::summedRho(this, dissolve.processingModuleData())), 0.05, 0.05, 30.0, WindowFunction(WindowFunction::Lorch0Window));
 	}
@@ -178,7 +178,7 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		if (!SQModule::calculateUnweightedSQ(procPool, cfg, unweightedgr, unweightedsq, qMin, qDelta, qMax, cfg->atomicDensity(), windowFunction, qBroadening)) return false;
 
 		// Set names of resources (XYData) within the PartialSet, and tag it with the fingerprint from the source unweighted g(r)
-		unweightedsq.setObjectNames(CharString("%s//%s//%s", cfg->niceName(), "NeutronSQ", "UnweightedSQ"));
+		unweightedsq.setObjectTags(CharString("%s//%s//%s", cfg->niceName(), "NeutronSQ", "UnweightedSQ"));
 		unweightedsq.setFingerprint(CharString("%i", cfg->moduleData().version("UnweightedGR")));
 
 		// Save data if requested
@@ -221,7 +221,7 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		calculateWeightedSQ(unweightedsq, weightedsq, weights, normalisation);
 
 		// Set names of resources (XYData) within the PartialSet
-		weightedsq.setObjectNames(CharString("%s//%s//%s", cfg->niceName(), uniqueName_.get(), "WeightedSQ"));
+		weightedsq.setObjectTags(CharString("%s//%s//%s", cfg->niceName(), uniqueName_.get(), "WeightedSQ"));
 
 		// Save data if requested
 		if (saveData && (!MPIRunMaster(procPool, weightedsq.save()))) return false;
@@ -244,7 +244,7 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	PartialSet& summedWeightedSQ = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "WeightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
 	summedWeightedSQ = summedUnweightedSQ;
 	summedWeightedSQ.setFileNames(uniqueName_, "weighted", "sq");
-	summedWeightedSQ.setObjectNames(CharString("%s//%s", uniqueName_.get(), "WeightedSQ"));
+	summedWeightedSQ.setObjectTags(CharString("%s//%s", uniqueName_.get(), "WeightedSQ"));
 
 	// Calculate weighted S(Q)
 	Messenger::print("Isotopologue and isotope composition over all Configurations used in '%s':\n\n", uniqueName_.get());
@@ -263,7 +263,7 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	// Create/retrieve PartialSet for summed weighted g(r)
 	PartialSet& summedWeightedGR = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "WeightedGR", uniqueName_, GenericItem::InRestartFileFlag, &created);
 	if (created) summedWeightedGR.setUpPartials(summedUnweightedSQ.atomTypes(), uniqueName_, "weighted", "gr", "r, Angstroms");
-	summedWeightedGR.setObjectNames(CharString("%s//%s", uniqueName_.get(), "WeightedGR"));
+	summedWeightedGR.setObjectTags(CharString("%s//%s", uniqueName_.get(), "WeightedGR"));
 
 	// Calculate weighted g(r)
 	calculateWeightedGR(summedUnweightedGR, summedWeightedGR, summedWeights, normalisation);

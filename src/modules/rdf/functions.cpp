@@ -294,13 +294,13 @@ bool RDFModule::performGRAveraging(GenericList& moduleData, const char* name, co
 
 			// Grab it, and rename the resources within
 			PartialSet& previousPartials = GenericListHelper<PartialSet>::retrieve(moduleData, CharString("%s_%i", name, n+1), prefix);
-			previousPartials.setObjectNames(currentPartials.objectNamePrefix(), CharString("Avg%i", n+1));
+			previousPartials.setObjectTags(currentPartials.objectNamePrefix(), CharString("Avg%i", n+1));
 		}
 
 		// Store the current PartialSet as the earliest data (1)
 		PartialSet& recentPartials = GenericListHelper<PartialSet>::realise(moduleData, CharString("%s_1", name), prefix, GenericItem::InRestartFileFlag);
 		recentPartials = currentPartials;
-		recentPartials.setObjectNames(currentPartials.objectNamePrefix(), "Avg1");
+		recentPartials.setObjectTags(currentPartials.objectNamePrefix(), "Avg1");
 		++nStored;
 	}
 
@@ -573,7 +573,7 @@ bool RDFModule::sumUnweightedGR(ProcessPool& procPool, Module* module, GenericLi
 
 	// Set up PartialSet container
 	summedUnweightedGR.setUpPartials(combinedAtomTypes, module->uniqueName(), "unweighted", "gr", "r, Angstroms");
-	summedUnweightedGR.setObjectNames(CharString("%s//UnweightedGR", module->uniqueName()));
+	summedUnweightedGR.setObjectTags(CharString("%s//UnweightedGR", module->uniqueName()));
 
 	// Determine total weighting factors and combined density over all Configurations, and set up a Configuration/weight RefList for simplicity
 	RefList<Configuration,double> configWeights;
@@ -663,7 +663,7 @@ bool RDFModule::sumUnweightedGR(ProcessPool& procPool, Module* parentModule, Mod
 
 	// Set up PartialSet container
 	summedUnweightedGR.setUpPartials(combinedAtomTypes, parentModule->uniqueName(), "unweighted", "gr", "r, Angstroms");
-	summedUnweightedGR.setObjectNames(CharString("%s//UnweightedGR//%s", parentModule->uniqueName(), moduleGroup->name()));
+	summedUnweightedGR.setObjectTags(CharString("%s//UnweightedGR//%s", parentModule->uniqueName(), moduleGroup->name()));
 
 	// Sum Configurations into the PartialSet
 	CharString fingerprint;

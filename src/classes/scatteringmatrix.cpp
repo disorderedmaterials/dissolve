@@ -184,7 +184,7 @@ void ScatteringMatrix::initialise(const List<AtomType>& types, Array2D<XYData>& 
 	for (Pair<AtomType*,AtomType*>* pair = typePairs_.first(); pair != NULL; pair = pair->next)
 	{
 		partials[index].setName(CharString("GeneratedSQ-%s-%s-%s.sq", pair->a->name(), pair->b->name(), groupName));
-		partials[index].setObjectName(CharString("%s//GeneratedSQ//%s//%s-%s", objectNamePrefix, groupName, pair->a->name(), pair->b->name()));
+		partials[index].setObjectTag(CharString("%s//GeneratedSQ//%s//%s-%s", objectNamePrefix, groupName, pair->a->name(), pair->b->name()));
 		++index;
 	}
 }

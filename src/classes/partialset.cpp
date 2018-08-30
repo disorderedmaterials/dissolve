@@ -391,7 +391,7 @@ bool PartialSet::save()
 }
 
 // Name all object based on the supplied prefix
-void PartialSet::setObjectNames(const char* prefix, const char* suffix)
+void PartialSet::setObjectTags(const char* prefix, const char* suffix)
 {
 	// Set up suffix (if any)
 	CharString actualSuffix;
@@ -407,14 +407,14 @@ void PartialSet::setObjectNames(const char* prefix, const char* suffix)
 		at2 = at1;
 		for (typeJ=typeI; typeJ<nTypes; ++typeJ, at2 = at2->next)
 		{
-			partials_.at(typeI,typeJ).setObjectName(CharString("%s//%s-%s//Full%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
-			boundPartials_.at(typeI,typeJ).setObjectName(CharString("%s//%s-%s//Bound%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
-			unboundPartials_.at(typeI,typeJ).setObjectName(CharString("%s//%s-%s//Unbound%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
-			braggPartials_.at(typeI,typeJ).setObjectName(CharString("%s//%s-%s//Bragg%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
+			partials_.at(typeI,typeJ).setObjectTag(CharString("%s//%s-%s//Full%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
+			boundPartials_.at(typeI,typeJ).setObjectTag(CharString("%s//%s-%s//Bound%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
+			unboundPartials_.at(typeI,typeJ).setObjectTag(CharString("%s//%s-%s//Unbound%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
+			braggPartials_.at(typeI,typeJ).setObjectTag(CharString("%s//%s-%s//Bragg%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
 		}
 	}
 
-	total_.setObjectName(CharString("%s//Total%s", prefix, actualSuffix.get()));
+	total_.setObjectTag(CharString("%s//Total%s", prefix, actualSuffix.get()));
 }
 
 // Return prefix applied to object names

@@ -298,24 +298,24 @@ bool EnergyModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			// Store current energies in the Configuration in case somebody else needs them
 			XYData& interData = GenericListHelper<XYData>::realise(cfg->moduleData(), "Inter", uniqueName(), GenericItem::InRestartFileFlag);
 			interData.addPoint(dissolve.iteration(), interEnergy);
-			interData.setObjectName(CharString("%s//%s//Inter", cfg->niceName(), uniqueName()));
+			interData.setObjectTag(CharString("%s//%s//Inter", cfg->niceName(), uniqueName()));
 			XYData& intraData = GenericListHelper<XYData>::realise(cfg->moduleData(), "Intra", uniqueName(), GenericItem::InRestartFileFlag);
 			intraData.addPoint(dissolve.iteration(), intraEnergy);
-			intraData.setObjectName(CharString("%s//%s//Intra", cfg->niceName(), uniqueName()));
+			intraData.setObjectTag(CharString("%s//%s//Intra", cfg->niceName(), uniqueName()));
 			XYData& bondData = GenericListHelper<XYData>::realise(cfg->moduleData(), "Bond", uniqueName(), GenericItem::InRestartFileFlag);
 			bondData.addPoint(dissolve.iteration(), bondEnergy);
-			bondData.setObjectName(CharString("%s//%s//Bond", cfg->niceName(), uniqueName()));
+			bondData.setObjectTag(CharString("%s//%s//Bond", cfg->niceName(), uniqueName()));
 			XYData& angleData = GenericListHelper<XYData>::realise(cfg->moduleData(), "Angle", uniqueName(), GenericItem::InRestartFileFlag);
 			angleData.addPoint(dissolve.iteration(), angleEnergy);
-			angleData.setObjectName(CharString("%s//%s//Angle", cfg->niceName(), uniqueName()));
+			angleData.setObjectTag(CharString("%s//%s//Angle", cfg->niceName(), uniqueName()));
 			XYData& torsionData = GenericListHelper<XYData>::realise(cfg->moduleData(), "Torsion", uniqueName(), GenericItem::InRestartFileFlag);
 			torsionData.addPoint(dissolve.iteration(), torsionEnergy);
-			torsionData.setObjectName(CharString("%s//%s//Torsion", cfg->niceName(), uniqueName()));
+			torsionData.setObjectTag(CharString("%s//%s//Torsion", cfg->niceName(), uniqueName()));
 
 			// Append to arrays of total energies
 			XYData& totalEnergyArray = GenericListHelper<XYData>::realise(cfg->moduleData(), "Total", uniqueName(), GenericItem::InRestartFileFlag);
 			totalEnergyArray.addPoint(dissolve.iteration(), interEnergy+intraEnergy);
-			totalEnergyArray.setObjectName(CharString("%s//%s//Total", cfg->niceName(), uniqueName()));
+			totalEnergyArray.setObjectTag(CharString("%s//%s//Total", cfg->niceName(), uniqueName()));
 
 			// Determine stability of energy
 			// Check number of points already stored for the Configuration

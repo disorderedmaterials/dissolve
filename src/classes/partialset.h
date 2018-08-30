@@ -126,7 +126,7 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	// Save all partials and total
 	bool save();
 	// Name all object based on the supplied prefix
-	void setObjectNames(const char* prefix, const char* suffix = NULL);
+	void setObjectTags(const char* prefix, const char* suffix = NULL);
 	// Return prefix applied to object names
 	const char* objectNamePrefix() const;
 	// Set underlying XYData file names

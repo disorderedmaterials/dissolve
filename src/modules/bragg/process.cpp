@@ -72,7 +72,7 @@ bool BraggModule::process(Dissolve& dissolve, ProcessPool& procPool)
 //		const PartialSet& unweightedgr = GenericListHelper<PartialSet>::value(cfg->moduleData(), "Intensities", "Bragg");
 
 // 		// Set names of resources (XYData) within the PartialSet
-// 		unweightedgr.setObjectNames(CharString("%s//%s//%s", cfg->niceName(), "Bragg", "UnweightedGR"));
+// 		unweightedgr.setObjectTags(CharString("%s//%s//%s", cfg->niceName(), "Bragg", "UnweightedGR"));
 // 
 // 		// If we are associated to a local Configuration, copy the partial data over to the processing module list
 // 		if (configurationLocal_) GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedGR", uniqueName_) = unweightedgr;
@@ -94,7 +94,7 @@ bool BraggModule::process(Dissolve& dissolve, ProcessPool& procPool)
 // // 		Configuration* refConfig = targetConfigurations_.firstItem();
 // // 		PartialSet& unweightedgr = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedGR", uniqueName_, GenericItem::InRestartFileFlag);
 // // 		unweightedgr.setUp(combinedAtomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), uniqueName(), "unweighted", "rdf", "r, Angstroms");
-// // 		unweightedgr.setObjectNames(CharString("%s//UnweightedGR", uniqueName_.get()));
+// // 		unweightedgr.setObjectTags(CharString("%s//UnweightedGR", uniqueName_.get()));
 // // 
 // // 		// Loop over Configurations again, summing into the PartialSet we have just set up
 // // 		// We will keep a running total of the weights associated with each Configuration, and re-weight the entire set of partials at the end.

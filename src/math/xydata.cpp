@@ -485,7 +485,7 @@ const char* XYData::itemClassName()
 bool XYData::write(LineParser& parser)
 {
 	if (!parser.writeLineF("'%s'\n", name_.get())) return false;
-	if (!parser.writeLineF("%s\n", objectName())) return false;
+	if (!parser.writeLineF("%s\n", objectTag())) return false;
 	if (!parser.writeLineF("%i\n", nPoints())) return false;
 	for (int n=0; n<nPoints(); ++n) if (!parser.writeLineF("%16.9e %16.9e\n", x_.constAt(n), y_.constAt(n))) return false;
 	return true;
@@ -500,7 +500,7 @@ bool XYData::read(LineParser& parser)
 	name_ = parser.argc(0);
 
 	if (parser.readNextLine(LineParser::Defaults) != LineParser::Success) return false;
-	setObjectName(parser.line());
+	setObjectTag(parser.line());
 
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	int np = parser.argi(0);

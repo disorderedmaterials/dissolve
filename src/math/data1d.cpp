@@ -120,7 +120,7 @@ const char* Data1D::itemClassName()
 // Write data through specified LineParser
 bool Data1D::write(LineParser& parser)
 {
-	if (!parser.writeLineF("%s\n", objectName())) return false;
+	if (!parser.writeLineF("%s\n", objectTag())) return false;
 	if (!parser.writeLineF("%i\n", xAxis_.nItems())) return false;
 	for (int n=0; n<xAxis_.nItems(); ++n)
 	{
@@ -136,7 +136,7 @@ bool Data1D::read(LineParser& parser)
 	clear();
 
 	if (parser.readNextLine(LineParser::Defaults) != LineParser::Success) return false;
-	setObjectName(parser.line());
+	setObjectTag(parser.line());
 
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	int nPoints = parser.argi(0);

@@ -147,7 +147,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	{
 		// Realise the error array and make sure its object name is set
 		XYData& errors = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), CharString("Error_%s", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
-		errors.setObjectName(CharString("%s//Error//%s", uniqueName_.get(), module->uniqueName()));
+		errors.setObjectTag(CharString("%s//Error//%s", uniqueName_.get(), module->uniqueName()));
 
 		// Calculate our error based on the type of Module
 		double error = 100.0;
@@ -176,7 +176,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 			// Calculate difference
 			XYData& differenceData = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), CharString("DifferenceData_%s", module->uniqueName()), uniqueName(), GenericItem::InRestartFileFlag);
-			differenceData.setObjectName(CharString("%s//Difference//%s", uniqueName_.get(), module->uniqueName()));
+			differenceData.setObjectTag(CharString("%s//Difference//%s", uniqueName_.get(), module->uniqueName()));
 			differenceData = referenceData;
 			Interpolator::addInterpolated(differenceData, calcSQTotal, -1.0);
 		}
@@ -225,8 +225,8 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Get difference and fit function objects
 		XYData& deltaFQ = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), CharString("DeltaFQ_%s", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
 		XYData& deltaFQFit = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), CharString("DeltaFQFit_%s", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
-		deltaFQ.setObjectName(CharString("%s//DeltaFQ//%s", uniqueName_.get(), module->uniqueName()));
-		deltaFQFit.setObjectName(CharString("%s//DeltaFQFit//%s", uniqueName_.get(), module->uniqueName()));
+		deltaFQ.setObjectTag(CharString("%s//DeltaFQ//%s", uniqueName_.get(), module->uniqueName()));
+		deltaFQFit.setObjectTag(CharString("%s//DeltaFQFit//%s", uniqueName_.get(), module->uniqueName()));
 
 		// Create the difference partial
 		deltaFQ.clear();
@@ -305,7 +305,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Calculate F(r)
 		XYData& simulatedFR = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), "SimulatedFR", module->uniqueName(), GenericItem::InRestartFileFlag);
-		simulatedFR.setObjectName(CharString("%s//SimulatedFR//%s", uniqueName_.get(), module->uniqueName()));
+		simulatedFR.setObjectTag(CharString("%s//SimulatedFR//%s", uniqueName_.get(), module->uniqueName()));
 		simulatedFR = simulatedFQ;
 		Fourier::sineFT(simulatedFR, 1.0 / (2*PI*PI*GenericListHelper<double>::value(dissolve.processingModuleData(), "EffectiveRho", module->uniqueName(), 0.0)), 0.0, 0.03, 30.0, WindowFunction(WindowFunction::Lorch0Window));
 
@@ -360,7 +360,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		for (AtomType* at1 = dissolve.atomTypes(); at1 != NULL; at1 = at1->next, ++i)
 		{
 			j = i;
-			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j) combinedUnweightedSQ.at(i,j).setObjectName(CharString("%s//UnweightedSQ//%s//%s-%s", uniqueName(), group->name(), at1->name(), at2->name()));
+			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j) combinedUnweightedSQ.at(i,j).setObjectTag(CharString("%s//UnweightedSQ//%s//%s-%s", uniqueName(), group->name(), at1->name(), at2->name()));
 		}
 
 		// Realise storage for generated S(Q), and initialise a scattering matrix
@@ -512,7 +512,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			{
 				// Grab experimental g(r) container and make sure its object name is set
 				XYData& expGR = generatedGR.at(i,j);
-				expGR.setObjectName(CharString("%s//GeneratedGR//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
+				expGR.setObjectTag(CharString("%s//GeneratedGR//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
 
 				// Copy experimental S(Q) and FT it
 				expGR = generatedSQ.at(i,j);
@@ -625,7 +625,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 	// Realise the phiMag array and make sure its object name is set
 	XYData& phiArray = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), "EPMag", uniqueName_, GenericItem::InRestartFileFlag);
-	phiArray.setObjectName(CharString("%s//EPMag", uniqueName_.get()));
+	phiArray.setObjectTag(CharString("%s//EPMag", uniqueName_.get()));
 	phiArray.addPoint(dissolve.iteration(), energabs);
 
 	return true;

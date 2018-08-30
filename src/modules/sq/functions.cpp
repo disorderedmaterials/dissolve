@@ -85,7 +85,7 @@ bool SQModule::sumUnweightedSQ(ProcessPool& procPool, Module* module, GenericLis
 
 	// Set up PartialSet container
 	summedUnweightedSQ.setUpPartials(combinedAtomTypes, module->uniqueName(), "unweighted", "sq", "Q, 1/Angstroms");
-	summedUnweightedSQ.setObjectNames(CharString("%s//UnweightedSQ", module->uniqueName()));
+	summedUnweightedSQ.setObjectTags(CharString("%s//UnweightedSQ", module->uniqueName()));
 
 	// Loop over Configurations again, summing into the PartialSet we have just set up
 	// We will keep a running total of the weights associated with each Configuration, and re-weight the entire set of partials at the end.

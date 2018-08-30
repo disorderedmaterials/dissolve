@@ -199,16 +199,16 @@ void PairPotential::setXYDataNames()
 	}
 
 	uFull_.setName(CharString("%s-%s", atomTypeI_->name(), atomTypeJ_->name()));
-	uFull_.setObjectName(CharString("PairPotential//%s-%s//Full", atomTypeI_->name(), atomTypeJ_->name()));
+	uFull_.setObjectTag(CharString("PairPotential//%s-%s//Full", atomTypeI_->name(), atomTypeJ_->name()));
 
 	uAdditional_.setName(CharString("%s-%s (Add)", atomTypeI_->name(), atomTypeJ_->name()));
-	uAdditional_.setObjectName(CharString("PairPotential//%s-%s//Additional", atomTypeI_->name(), atomTypeJ_->name()));
+	uAdditional_.setObjectTag(CharString("PairPotential//%s-%s//Additional", atomTypeI_->name(), atomTypeJ_->name()));
 
 	uOriginal_.setName(CharString("%s-%s (Orig)", atomTypeI_->name(), atomTypeJ_->name()));
-	uOriginal_.setObjectName(CharString("PairPotential//%s-%s//Original", atomTypeI_->name(), atomTypeJ_->name()));
+	uOriginal_.setObjectTag(CharString("PairPotential//%s-%s//Original", atomTypeI_->name(), atomTypeJ_->name()));
 
 	dUFull_.setName(CharString("%s-%s (dU/dr)", atomTypeI_->name(), atomTypeJ_->name()));
-	dUFull_.setObjectName(CharString("PairPotential//%s-%s//Force", atomTypeI_->name(), atomTypeJ_->name()));
+	dUFull_.setObjectTag(CharString("PairPotential//%s-%s//Force", atomTypeI_->name(), atomTypeJ_->name()));
 }
 
 // Set source parameters from AtomTypes

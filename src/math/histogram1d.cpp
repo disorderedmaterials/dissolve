@@ -193,7 +193,7 @@ const char* Histogram1D::itemClassName()
 // Write data through specified LineParser
 bool Histogram1D::write(LineParser& parser)
 {
-	if (!parser.writeLineF("%s\n", objectName())) return false;
+	if (!parser.writeLineF("%s\n", objectTag())) return false;
 	if (!parser.writeLineF("%f %f %f\n", minimum_, maximum_, binWidth_)) return false;
 	if (!parser.writeLineF("%i\n", nBinned_)) return false;
 	for (int n=0; n<nBins_; ++n) if (!parser.writeLineF("%li\n", bins_.at(n))) return false;
@@ -206,7 +206,7 @@ bool Histogram1D::read(LineParser& parser)
 	clear();
 
 	if (parser.readNextLine(LineParser::Defaults) != LineParser::Success) return false;
-	setObjectName(parser.line());
+	setObjectTag(parser.line());
 
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	initialise(parser.argd(0), parser.argd(1), parser.argd(2));
