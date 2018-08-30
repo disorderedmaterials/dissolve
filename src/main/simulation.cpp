@@ -128,7 +128,7 @@ bool Dissolve::iterate(int nIterations)
 				Messenger::print("      --> %20s  (%s)\n", module->name(), module->enabled() ? module->frequencyDetails(iteration_) : "Disabled");
 
 				// TODO This will estimate wrongly for anything other than Sequential Processing
-				thisTime += module->processTimes().mean();
+				thisTime += module->processTimes().value();
 			}
 		}
 		Messenger::print("\n");
@@ -141,7 +141,7 @@ bool Dissolve::iterate(int nIterations)
 			
 			Messenger::print("      --> %20s  (%s)\n", module->name(), module->frequencyDetails(iteration_));
 
-			thisTime += module->processTimes().mean();
+			thisTime += module->processTimes().value();
 		}
 		Messenger::print("\n");
 
@@ -308,7 +308,7 @@ bool Dissolve::iterate(int nIterations)
 			}
 
 			saveRestartTimer.stop();
-			saveRestartTimes_ << saveRestartTimer.secondsElapsed();
+			saveRestartTimes_ += saveRestartTimer.secondsElapsed();
 
 			/*
 			 * Configuration Data
@@ -381,7 +381,7 @@ void Dissolve::printTiming()
 			Module* module = modRef->module();
 
 			SampledDouble timingInfo = module->processTimes();
-			Messenger::print("      --> %30s  %6.1f s/iteration (%i iterations)\n", CharString("%s (%s)", module->name(), module->uniqueName()).get(), timingInfo.mean(), timingInfo.count());
+			Messenger::print("      --> %30s  %6.1f s/iteration (%i iterations)\n", CharString("%s (%s)", module->name(), module->uniqueName()).get(), timingInfo.value(), timingInfo.count());
 		}
 	}
 	Messenger::print("\n");
@@ -393,9 +393,9 @@ void Dissolve::printTiming()
 		Module* module = modRef->module();
 
 		SampledDouble timingInfo = module->processTimes();
-		Messenger::print("      --> %30s  %6.1f s/iteration (%i iterations)\n", CharString("%s (%s)", module->name(), module->uniqueName()).get(), timingInfo.mean(), timingInfo.count());
+		Messenger::print("      --> %30s  %6.1f s/iteration (%i iterations)\n", CharString("%s (%s)", module->name(), module->uniqueName()).get(), timingInfo.value(), timingInfo.count());
 	}
-	Messenger::print("      --> %30s  %6.1f s/write     (%i writes)\n", "Restart File", saveRestartTimes_.mean(), saveRestartTimes_.count());
+	Messenger::print("      --> %30s  %6.1f s/write     (%i writes)\n", "Restart File", saveRestartTimes_.value(), saveRestartTimes_.count());
 	Messenger::print("\n");
 
 

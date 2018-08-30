@@ -377,7 +377,7 @@ bool Module::executeProcessing(Dissolve& dissolve, ProcessPool& procPool)
 
 	// Accumulate timing information
 	timer.stop();
-	processTimes_ << timer.secondsElapsed();
+	processTimes_ += timer.secondsElapsed();
 
 	return result;
 }

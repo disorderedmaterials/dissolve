@@ -26,7 +26,6 @@
 // Constructor
 SampledDouble::SampledDouble()
 {
-	value_ = 0.0;
 	count_ = 0;
 	mean_ = 0.0;
 	m2_ = 0.0;
@@ -36,26 +35,10 @@ SampledDouble::SampledDouble()
  * Data
  */
 
-// Return current value
+// Return current (mean) value
 double SampledDouble::value() const
 {
-	return value_;
-}
-
-// Accumulate current value into statistics
-void SampledDouble::accumulate()
-{
-	accumulate(value_);
-}
-
-// Accumulate specified value into statistics
-void SampledDouble::accumulate(double value)
-{
-	// Accumulate value using Welford's online algorithm
-	++count_;
-	double delta = value - mean_;
-	mean_ += delta / count_;
-	m2_ += delta * (value - mean_);
+	return mean_;
 }
 
 // Return number of samples contributing to averages etc.
@@ -64,7 +47,7 @@ int SampledDouble::count() const
 	return count_;
 }
 
-// Return mean of sampled data
+// Return mean (current) value
 double SampledDouble::mean() const
 {
 	return mean_;
@@ -89,14 +72,78 @@ double SampledDouble::stDev() const
 // Conversion (double)
 SampledDouble::operator double&()
 {
-	return value_;
+	return mean_;
 }
 
-// <<
-void SampledDouble::operator<<(double x)
+// Assigment
+void SampledDouble::operator=(double x)
 {
-	value_ = x;
-	accumulate();
+	// Clear any existing statistics and set new value
+	count_ = 1;
+	m2_ = 0.0;
+	mean_ = x;
+}
+
+// Assigment
+void SampledDouble::operator=(const SampledDouble& source)
+{
+	count_ = source.count_;
+	mean_ = source.mean_;
+	m2_ = source.m2_;
+}
+
+// Operator +=
+void SampledDouble::operator+=(double x)
+{
+	// Accumulate value using Welford's online algorithm
+	// B. P. Welford, "Note on a method for calculating corrected sums of squares and products", Technometrics, 4(3), 419–420 (1962).
+
+	// Increase sample size counter
+	++count_;
+
+	// Determine difference between supplied value and current mean
+	const double delta = x - mean_;
+
+	// Accumulate mean
+	mean_ += delta / count_;
+
+	// Accumulate m2 using deltas of new value with old and new mean
+	m2_ += delta * (x - mean_);
+}
+
+// Operator +=
+void SampledDouble::operator+=(const SampledDouble& source)
+{
+	// Accumulate other values using parallel algorithm of Chan
+	// T. F. Chan, G. H. Golub, R. J. LeVeque, "Updating Formulae and a Pairwise Algorithm for Computing Sample Variances.", Technical Report STAN-CS-79-773, Department of Computer Science, Stanford University (1979).
+
+	// Nothing to do if there are no samples in the source data
+	if (source.count_ == 0) return;
+
+	// Determine difference in mean values between samples B and A and reciprocal of total counts
+	const double deltaMean = source.value() - mean_;
+	const double rCountNew = 1.0 / (count_ + source.count_);
+
+	// Calculate new mean
+	mean_ += deltaMean * source.count_ * rCountNew;
+
+	// Calculate new M2
+	m2_ += source.m2_ + deltaMean * deltaMean * count_ * source.count_ * rCountNew;
+
+	// Set new count
+	count_ += source.count_;
+}
+
+// Operator *=
+void SampledDouble::operator*=(double x)
+{
+	// Apply factor to mean and m2_
+	mean_ *= x;
+}
+
+// Operator /=
+void SampledDouble::operator/=(double x)
+{
 }
 
 /*
@@ -112,17 +159,16 @@ const char* SampledDouble::itemClassName()
 // Write data through specified LineParser
 bool SampledDouble::write(LineParser& parser)
 {
-	return parser.writeLineF("%f  %i  %f  %f\n", value_, count_, mean_, m2_);
+	return parser.writeLineF("%f  %i  %f\n", mean_, count_, m2_);
 }
 
 // Read data through specified LineParser
 bool SampledDouble::read(LineParser& parser)
 {
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-	value_ = parser.argd(0);
+	mean_ = parser.argd(0);
 	count_ = parser.argi(1);
-	mean_ = parser.argd(2);
-	m2_ = parser.argd(3);
+	m2_ = parser.argd(2);
 
 	return true;
 }
@@ -135,7 +181,6 @@ bool SampledDouble::read(LineParser& parser)
 bool SampledDouble::broadcast(ProcessPool& procPool, int rootRank)
 {
 #ifdef PARALLEL
-	if (!procPool.broadcast(value_, rootRank)) return false;
 	if (!procPool.broadcast(count_, rootRank)) return false;
 	if (!procPool.broadcast(mean_, rootRank)) return false;
 	if (!procPool.broadcast(m2_, rootRank)) return false;
@@ -147,7 +192,6 @@ bool SampledDouble::broadcast(ProcessPool& procPool, int rootRank)
 bool SampledDouble::equality(ProcessPool& procPool)
 {
 #ifdef PARALLEL
-	if (!procPool.equality(value_)) return Messenger::error("SampledDouble y value is not equivalent (process %i has %e).\n", procPool.poolRank(), value_);
 	if (!procPool.equality(count_)) return Messenger::error("SampledDouble count is not equivalent (process %i has %i).\n", procPool.poolRank(), count_);
 	if (!procPool.equality(mean_)) return Messenger::error("SampledDouble mean value is not equivalent (process %i has %e).\n", procPool.poolRank(), mean_);
 	if (!procPool.equality(m2_)) return Messenger::error("SampledDouble m2 value is not equivalent (process %i has %e).\n", procPool.poolRank(), m2_);

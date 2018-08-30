@@ -40,25 +40,19 @@ class SampledDouble : public GenericItemBase
 	 * Data
 	 */
 	private:
-	// Current value 
-	double value_;
 	// Sample size contributing to averages etc.
 	int count_;
-	// Mean of sampled data
+	// Mean of sampled data (i.e. current value)
 	double mean_;
 	// Aggregate of squared distance from mean
 	double m2_;
 
 	public:
-	// Return current value
+	// Return current (mean) value
 	double value() const;
-	// Accumulate current value into statistics
-	void accumulate();
-	// Accumulate specified value into statistics
-	void accumulate(double value);
 	// Return number of samples contributing to averages etc.
 	int count() const;
-	// Return mean of sampled data
+	// Return mean (current) value
 	double mean() const;
 	// Return variance of sampled data
 	double variance() const;
@@ -70,12 +64,20 @@ class SampledDouble : public GenericItemBase
 	 * Operators
 	 */
 	public:
-	// Assigment
-	void operator=(double x);
 	// Conversion (double)
 	operator double&();
-	// <<
-	void operator<<(double x);
+	// Assigment
+	void operator=(double x);
+	// Assigment
+	void operator=(const SampledDouble& source);
+	// Operator +=
+	void operator+=(double x);
+	// Operator +=
+	void operator+=(const SampledDouble& source);
+	// Operator *=
+	void operator*=(double factor);
+	// Operator /=
+	void operator/=(double factor);
 
 
 	/*
