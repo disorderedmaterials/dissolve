@@ -105,19 +105,6 @@ int XYData::nPoints() const
 	return x_.nItems();
 }
 
-// Set x value
-void XYData::setX(int index, double x)
-{
-#ifdef CHECKS
-	if ((index < 0) || (index >= x_.nItems()))
-	{
-		Messenger::error("OUT_OF_RANGE - Index %i is out of range for x_ array in XYData::setX().\n", index);
-		return;
-	}
-#endif
-	x_[index] = x;
-}
-
 // Return x value specified
 double& XYData::x(int index)
 {
@@ -157,58 +144,6 @@ const Array<double>& XYData::constArrayX() const
 	return x_;
 }
 
-// Set y value
-void XYData::setY(int index, double y)
-{
-#ifdef CHECKS
-	if ((index < 0) || (index >= y_.nItems()))
-	{
-		Messenger::error("OUT_OF_RANGE - Index %i is out of range for y_ array in XYData::setY().\n", index);
-		return;
-	}
-#endif
-	y_[index] = y;
-}
-
-// Add to y value
-void XYData::addY(int index, double delta)
-{
-#ifdef CHECKS
-	if ((index < 0) || (index >= y_.nItems()))
-	{
-		Messenger::error("OUT_OF_RANGE - Index %i is out of range for y_ array in XYData::addY().\n", index);
-		return;
-	}
-#endif
-	y_[index] += delta;
-}
-
-// Add to y array
-bool XYData::addY(const Array<double>& source, double factor)
-{
-	if (y_.nItems() != source.nItems())
-	{
-		Messenger::error("BAD_USAGE - Can't add Y values from source array, since the number of items differs (%i vs %i).\n", y_.nItems(), source.nItems());
-		return false;
-	}
-
-	for (int n=0; n<y_.nItems(); ++n) y_[n] += source.constAt(n)*factor;
-	return true;
-}
-
-// Multiply y value
-void XYData::multiplyY(int index, double factor)
-{
-#ifdef CHECKS
-	if ((index < 0) || (index >= y_.nItems()))
-	{
-		Messenger::error("OUT_OF_RANGE - Index %i is out of range for y_ array in XYData::multiplyY().\n", index);
-		return;
-	}
-#endif
-	y_[index] *= factor;
-}
-
 // Return y value specified
 double& XYData::y(int index)
 {
@@ -246,12 +181,6 @@ Array<double>& XYData::arrayY()
 const Array<double>& XYData::constArrayY() const
 {
 	return y_;
-}
-
-// Set z value
-void XYData::setZ(double z)
-{
-	z_ = z;
 }
 
 // Add to z value

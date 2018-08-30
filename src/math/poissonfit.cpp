@@ -55,12 +55,12 @@ void PoissonFit::addFunction(XYData& data, FunctionSpace::SpaceType space, doubl
 {
 	if (space == FunctionSpace::RealSpace)
 	{
-		for (int m=0; m<data.nPoints(); ++m) data.addY(m, C * poisson(data.x(m), nIndex));
+		for (int m=0; m<data.nPoints(); ++m) data.y(m) += C * poisson(data.x(m), nIndex);
 	}
 	else
 	{
 		// We assume here that the supplied 'data' has abscissa consistent with the precalculated data
-		for (int m=0; m<data.nPoints(); ++m) data.addY(m, C * poissonFT(m, nIndex));
+		for (int m=0; m<data.nPoints(); ++m) data.y(m) += C * poissonFT(m, nIndex);
 	}
 }
 

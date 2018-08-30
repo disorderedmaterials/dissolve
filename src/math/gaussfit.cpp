@@ -54,11 +54,11 @@ void GaussFit::addFunction(XYData& data, FunctionSpace::SpaceType space, double 
 	// Functional form of function to add depends on whether we're fitting Gaussians or FTs of Gaussians
 	if (space == FunctionSpace::RealSpace)
 	{
-		for (int m=0; m<data.nPoints(); ++m) data.addY(m, gaussian(data.x(m), xCentre, A, fwhm));
+		for (int m=0; m<data.nPoints(); ++m) data.y(m) += gaussian(data.x(m), xCentre, A, fwhm);
 	}
 	else
 	{
-		for (int m=0; m<data.nPoints(); ++m) data.addY(m, gaussianFT(data.x(m), xCentre, A, fwhm));
+		for (int m=0; m<data.nPoints(); ++m) data.y(m) += gaussianFT(data.x(m), xCentre, A, fwhm);
 	}
 }
 
@@ -392,8 +392,8 @@ double GaussFit::constructReal(double requiredError, int maxGaussians)
 					{
 						x = referenceData_.x(m);
 						y = gaussian(x, trialX, trialA, trialFWHM);
-						approximateData_.addY(m, y);
-						referenceDelta.addY(m, -y);
+						approximateData_.y(m) += y;
+						referenceDelta.y(m) -= y;
 					}
 
 					// Check on error / nGaussians

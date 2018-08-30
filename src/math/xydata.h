@@ -71,8 +71,6 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	void templateFrom(const XYData& source);
 	// Return number of defined datapoints
 	int nPoints() const;
-	// Set x value
-	void setX(int index, double x);
 	// Return x value specified
 	double& x(int index);
 	// Return x value specified (const)
@@ -81,14 +79,6 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	Array<double>& arrayX();
 	// Return x Array (const)
 	const Array<double>& constArrayX() const;
-	// Set y value
-	void setY(int index, double y);
-	// Add to y value
-	void addY(int index, double delta);
-	// Add to y array
-	bool addY(const Array<double>& source, double factor = 1.0);
-	// Multiply y value
-	void multiplyY(int index, double factor);
 	// Return y value specified
 	double& y(int index);
 	// Return y value specified (const)
@@ -97,8 +87,6 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	Array<double>& arrayY();
 	// Return y Array (const)
 	const Array<double>& constArrayY() const;
-	// Set z value
-	void setZ(double z);
 	// Add to z value
 	void addZ(double delta);
 	// Return z value

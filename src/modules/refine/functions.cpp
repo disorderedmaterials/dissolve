@@ -360,7 +360,7 @@ double RefineModule::costFunction2Exp(const Array<double>& alpha)
 // Sum fitting equation with the specified parameters into the specified XYData
 void RefineModule::sumFitEquation(XYData& target, double xCentre, double delta, double width, double AL, double AC, double AR)
 {
-	for (int n=0; n<target.nPoints(); ++n) target.addY(n, fitEquation(target.x(n), xCentre, delta, width, AL, AC, AR));
+	for (int n=0; n<target.nPoints(); ++n) target.y(n) += fitEquation(target.x(n), xCentre, delta, width, AL, AC, AR);
 }
 
 // Return list of target Modules / data for fitting process

@@ -270,7 +270,7 @@ void PartialSet::formTotal(bool applyConcentrationWeights)
 			}
 
 			// Add contribution from partial (bound + unbound)
-			total_.addY(partials_.at(typeI,typeJ).arrayY(), factor);
+			total_.arrayY() += partials_.at(typeI,typeJ).arrayY() * factor;
 			// TODO Does not include contributions from Bragg partials
 		}
 	}
@@ -314,7 +314,7 @@ XYData PartialSet::boundTotal(bool applyConcentrationWeights) const
 			}
 
 			// Add contribution
-			bound.addY(boundPartials_.constAt(typeI,typeJ).arrayY(), factor);
+			bound.arrayY() += boundPartials_.constAt(typeI,typeJ).arrayY() * factor;
 		}
 	}
 
@@ -347,7 +347,7 @@ XYData PartialSet::unboundTotal(bool applyConcentrationWeights) const
 			}
 
 			// Add contribution
-			unbound.addY(unboundPartials_.constAt(typeI,typeJ).arrayY(), factor);
+			unbound.arrayY() += unboundPartials_.constAt(typeI,typeJ).arrayY() * factor;
 		}
 	}
 

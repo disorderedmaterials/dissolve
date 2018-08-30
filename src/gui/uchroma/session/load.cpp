@@ -454,7 +454,7 @@ bool UChromaBase::readDataSetBlock(LineParser& parser, DataSet* dataSet, Collect
 					return false;
 				}
 				// Set the Z of the newly-read data (in case it has already been set in the DataSet) and copy
-				data.setZ(dataSet->z());
+				data.z() = dataSet->z();
 				dataSet->setData(data);
 				break;
 			case (UChromaBase::EndDataSetKeyword):
@@ -493,7 +493,7 @@ bool UChromaBase::readDataSetBlock(LineParser& parser, DataSet* dataSet, Collect
 				}
 				break;
 			case (UChromaBase::ZKeyword):
-				data.setZ(parser.argd(1));
+				data.z() = parser.argd(1);
 				collection->setDataSetZ(dataSet, parser.argd(1));
 				break;
 			// Unrecognised Keyword

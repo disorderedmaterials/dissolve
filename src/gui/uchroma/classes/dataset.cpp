@@ -167,7 +167,7 @@ bool DataSet::refreshData(QDir sourceDir)
 			// Store the current z, copy the data, then re-set z
 			double z = data_.z();
 			setData(*sourceData);
-			data_.setZ(z);
+			data_.z() = z;
 		}
 		else
 		{
@@ -238,8 +238,8 @@ void DataSet::transform(Transformer& xTransformer, Transformer& yTransformer, Tr
 	else transformedData_.arrayY() = data_.arrayY();
 
 	// Z
-	if (zTransformer.enabled()) transformedData_.setZ(zTransformer.transform(0.0, 0.0, data_.z()));
-	else transformedData_.setZ(data_.z());
+	if (zTransformer.enabled()) transformedData_.z() = zTransformer.transform(0.0, 0.0, data_.z());
+	else transformedData_.z() = data_.z();
 }
 
 // Return transformed data
@@ -279,7 +279,7 @@ void DataSet::addPoint(double x, double y)
 // Set x value
 void DataSet::setX(int index, double newX)
 {
-	data_.setX(index, newX);
+	data_.x(index) = newX;
 
 	notifyParent();
 }
@@ -287,7 +287,7 @@ void DataSet::setX(int index, double newX)
 // Set y value
 void DataSet::setY(int index, double newY)
 {
-	data_.setY(index, newY);
+	data_.y(index) = newY;
 
 	notifyParent();
 }
@@ -295,7 +295,7 @@ void DataSet::setY(int index, double newY)
 // Set z data
 void DataSet::setZ(double z)
 {
-	data_.setZ(z);
+	data_.z() = z;
 
 	notifyParent();
 }

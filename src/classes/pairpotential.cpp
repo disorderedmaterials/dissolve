@@ -503,20 +503,20 @@ void PairPotential::calculateDUFull()
 		if ((n == 1) || (n == (nPoints_-2)))
 		{
 			// Three-point 
-			dUFull_.setY(n, -(uFull_.constY(n-1) - uFull_.constY(n+1)) / (2*delta_));
+			dUFull_.y(n) = -(uFull_.constY(n-1) - uFull_.constY(n+1)) / (2*delta_);
 		}
 		else
 		{
 			// Five-point stencil
 			fprime = -uFull_.constY(n+2) + 8*uFull_.constY(n+1) - 8*uFull_.constY(n-1) + uFull_.constY(n-2);
 			fprime /= 12*delta_;
-			dUFull_.setY(n, fprime);
+			dUFull_.y(n) = fprime; 
 		}
 	}
 	
 	// Set first and last points
-	dUFull_.setY(0, 10.0*dUFull_.constY(1));
-	dUFull_.setY(nPoints_-1, dUFull_.constY(nPoints_-2));
+	dUFull_.y(0) = 10.0*dUFull_.constY(1);
+	dUFull_.y(nPoints_-1) = dUFull_.constY(nPoints_-2);
 
 	// Update interpolation
 	dUFullInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
@@ -575,20 +575,20 @@ void PairPotential::calculateUOriginal(bool recalculateUFull)
 	for (int n=1; n<nPoints_; ++n)
 	{
 		r = n*delta_;
-		uOriginal_.setX(n, r);
+		uOriginal_.x(n) = r;
 
 		// Construct potential
-		uOriginal_.setY(n, 0.0);
+		uOriginal_.y(n) = 0.0;
 
 		// Short-range potential contribution
-		uOriginal_.addY(n, analyticShortRangeEnergy(r, shortRangeType_));
+		uOriginal_.y(n) += analyticShortRangeEnergy(r, shortRangeType_);
 		
 		// -- Add Coulomb contribution
-		if (includeCoulomb_) uOriginal_.addY(n, analyticCoulombEnergy(chargeI_*chargeJ_, r));
+		if (includeCoulomb_) uOriginal_.y(n) += analyticCoulombEnergy(chargeI_*chargeJ_, r);
 	}
 
 	// Since the first point (at zero) risks being a nan, set it to ten times the second point instead
-	uOriginal_.setY(0, 10.0*uOriginal_.constY(1));
+	uOriginal_.y(0) = 10.0*uOriginal_.constY(1);
 
 	// Update full potential (if not the first generation of the potential)
 	if (recalculateUFull) calculateUFull();
