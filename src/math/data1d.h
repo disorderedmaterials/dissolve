@@ -47,10 +47,10 @@ class Data1D : public ListItem<Data1D>, public ObjectStore<Data1D>, public Gener
 	 * Data
 	 */
 	private:
-	// X axis array
-	Array<double> xAxis_;
-	// Accumulated values along x
-	Array<SampledDouble> values_;
+	// X array
+	Array<double> x_;
+	// Accumulated values at each x
+	Array<SampledDouble> y_;
 
 	public:
 	// Initialise to be consistent with supplied Histogram1D object
@@ -59,12 +59,10 @@ class Data1D : public ListItem<Data1D>, public ObjectStore<Data1D>, public Gener
 	void zero();
 	// Accumulate specified histogram data
 	void accumulate(const Histogram1D& source);
-	// Return number of values along x
-	int nX() const;
 	// Return x axis Array
-	const Array<double>& xAxis() const;
-	// Return Array of accumulated x values
-	const Array<SampledDouble>& values() const;
+	const Array<double>& x() const;
+	// Return Array of accumulated values
+	const Array<SampledDouble>& y() const;
 
 
 	/*
