@@ -333,8 +333,10 @@ template <class A> class Array : public ListItem< Array<A> >
 	// Operator+ (addition)
 	Array<A> operator+(const A value) { Array<A> result = *this; result += value; return result; }
 	Array<A> operator+(const Array<A> array) { Array<A> result(nItems_); for (int n=0; n<nItems_; ++n) result[n] = array_[n] + array.constAt(n); return result; }
-	// Operator* (multiplication)
+	// Operator* (multiply all and return new)
 	Array<A> operator*(const A value) { Array<A> result = *this; result *= value; return result; }
+	// Operator/ (divide all and return new)
+	Array<A> operator/(const A value) { Array<A> result = *this; result /= value; return result; }
 
 
 	/*
