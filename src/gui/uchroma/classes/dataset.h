@@ -81,6 +81,10 @@ class DataSet : public ListItem<DataSet>
 	XYData data_;
 	// Transformed data
 	XYData transformedData_;
+	// Z value of data
+	double z_;
+	// Transformed Z value of data
+	double transformedZ_;
 	// Source XYData object name
 	CharString sourceXYData_;
 
@@ -111,12 +115,14 @@ class DataSet : public ListItem<DataSet>
 	const Array<double>& x() const;
 	// Return Y array from data
 	const Array<double>& y() const;
-	// Return z value from data
-	double z() const;
+	// Return z value
+	double& z();
 	// Transform original data with supplied transformers
 	void transform(Transformer& xTransformer, Transformer& yTransformer, Transformer& zTransformer);
 	// Return transformed data
-	XYData& transformedData();
+	const XYData& transformedData() const;
+	// Return transformed z value
+	double transformedZ() const;
 
 
 	/*

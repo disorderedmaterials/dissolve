@@ -453,8 +453,7 @@ bool UChromaBase::readDataSetBlock(LineParser& parser, DataSet* dataSet, Collect
 					Messenger::print("Error : Unterminated 'Data' block in dataSet '%s'.\n", qPrintable(dataSet->name()));
 					return false;
 				}
-				// Set the Z of the newly-read data (in case it has already been set in the DataSet) and copy
-				data.z() = dataSet->z();
+
 				dataSet->setData(data);
 				break;
 			case (UChromaBase::EndDataSetKeyword):
@@ -493,7 +492,6 @@ bool UChromaBase::readDataSetBlock(LineParser& parser, DataSet* dataSet, Collect
 				}
 				break;
 			case (UChromaBase::ZKeyword):
-				data.z() = parser.argd(1);
 				collection->setDataSetZ(dataSet, parser.argd(1));
 				break;
 			// Unrecognised Keyword

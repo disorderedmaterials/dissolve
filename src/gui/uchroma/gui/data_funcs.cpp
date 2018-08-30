@@ -327,7 +327,7 @@ void DataWindow::updateControls(bool force)
 		ui.DataSetsTable->setItem(count, 1, item);
 
 		// Create Z value item
-		item = new QTableWidgetItem(QString::number(dataSet->data().constZ()));
+		item = new QTableWidgetItem(QString::number(dataSet->z()));
 		item->setData(Qt::UserRole, VariantPointer<DataSet>(dataSet));
 		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
 		ui.DataSetsTable->setItem(count, 2, item);

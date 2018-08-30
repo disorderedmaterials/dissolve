@@ -41,7 +41,6 @@ template<class XYData> const char* ObjectStore<XYData>::objectTypeName_ = "XYDat
 XYData::XYData() : ListItem<XYData>(), ObjectStore<XYData>(this) 
 {
 	name_ = "Untitled";
-	z_ = 0.0;
 }
 
 // Destructor
@@ -71,7 +70,6 @@ void XYData::reset()
 {
 	for (int n=0; n<x_.nItems(); ++n) x_[n] = 0.0;
 	for (int n=0; n<y_.nItems(); ++n) y_[n] = 0.0;
-	z_ = 0.0;
 }
 
 // Initialise arrays to specified size
@@ -80,7 +78,6 @@ void XYData::initialise(int size)
 	clear();
 	x_.initialise(size);
 	y_.initialise(size);
-	z_ = 0.0;
 }
 
 // Copy existing X and Y data
@@ -88,7 +85,6 @@ void XYData::copyData(const XYData& source)
 {
 	x_ = source.x_;
 	y_ = source.y_;
-	z_ = source.z_;
 }
 
 // Copy existing X data and generate empty Y
@@ -183,24 +179,6 @@ const Array<double>& XYData::constArrayY() const
 	return y_;
 }
 
-// Add to z value
-void XYData::addZ(double delta)
-{
-	z_ += delta;
-}
-
-// Return z value
-double& XYData::z()
-{
-	return z_;
-}
-
-// Return z value (const)
-double XYData::constZ() const
-{
-	return z_;
-}
-
 // Add new data point
 void XYData::addPoint(double x, double y)
 {
@@ -229,7 +207,6 @@ void XYData::operator=(const XYData& source)
 {
 	x_ = source.x_;
 	y_ = source.y_;
-	z_ = source.z_;
 	name_ = source.name_;
 }
 
@@ -509,7 +486,6 @@ bool XYData::write(LineParser& parser)
 {
 	if (!parser.writeLineF("'%s'\n", name_.get())) return false;
 	if (!parser.writeLineF("%s\n", objectName())) return false;
-	if (!parser.writeLineF("%f\n", z_)) return false;
 	if (!parser.writeLineF("%i\n", nPoints())) return false;
 	for (int n=0; n<nPoints(); ++n) if (!parser.writeLineF("%16.9e %16.9e\n", x_.constAt(n), y_.constAt(n))) return false;
 	return true;
@@ -525,9 +501,6 @@ bool XYData::read(LineParser& parser)
 
 	if (parser.readNextLine(LineParser::Defaults) != LineParser::Success) return false;
 	setObjectName(parser.line());
-
-	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-	z_ = parser.argd(0);
 
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	int np = parser.argi(0);
@@ -550,7 +523,6 @@ bool XYData::broadcast(ProcessPool& procPool, int rootRank)
 	// XY(Z) data
 	if (!procPool.broadcast(x_, rootRank)) return false;
 	if (!procPool.broadcast(y_, rootRank)) return false;
-	if (!procPool.broadcast(z_, rootRank)) return false;
 
 	// Axis/title information
 	if (!procPool.broadcast(name_, rootRank)) return false;
@@ -569,7 +541,6 @@ bool XYData::equality(ProcessPool& procPool)
 		if (!procPool.equality(x_[n])) return Messenger::error("XYData x value %i is not equivalent (process %i has %e).\n", n, procPool.poolRank(), x_[n]);
 		if (!procPool.equality(y_[n])) return Messenger::error("XYData y value %i is not equivalent (process %i has %e).\n", n, procPool.poolRank(), y_[n]);
 	}
-	if (!procPool.equality(z_)) return Messenger::error("XYData z value is not equivalent (process %i has %e).\n", procPool.poolRank(), z_);
 #endif
 	return true;
 }

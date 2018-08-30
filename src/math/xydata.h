@@ -55,8 +55,6 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	Array<double> x_;
 	// Array of y values
 	Array<double> y_;
-	// Z value
-	double z_;
 	// Name
 	CharString name_;
 
@@ -87,12 +85,6 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	Array<double>& arrayY();
 	// Return y Array (const)
 	const Array<double>& constArrayY() const;
-	// Add to z value
-	void addZ(double delta);
-	// Return z value
-	double& z();
-	// Return z value (const)
-	double constZ() const;
 	// Add new data point
 	void addPoint(double x, double y);
 	// Set name of data

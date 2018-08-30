@@ -162,13 +162,7 @@ bool DataSet::refreshData(QDir sourceDir)
 	{
 		// Locate the data...
 		XYData* sourceData = XYData::findObject(sourceXYData_);
-		if (sourceData)
-		{
-			// Store the current z, copy the data, then re-set z
-			double z = data_.z();
-			setData(*sourceData);
-			data_.z() = z;
-		}
+		if (sourceData) setData(*sourceData);
 		else
 		{
 			Messenger::printVerbose("Couldn't locate data '%s' for display.\n", sourceXYData_.get());
@@ -221,31 +215,37 @@ const Array<double>& DataSet::y() const
 }
 
 // Return z value from data
-double DataSet::z() const
+double& DataSet::z()
 {
-	return data_.constZ();
+	return z_;
 }
 
 // Transform original data with supplied transformers
 void DataSet::transform(Transformer& xTransformer, Transformer& yTransformer, Transformer& zTransformer)
 {
 	// X
-	if (xTransformer.enabled()) transformedData_.arrayX() = xTransformer.transformArray(data_.arrayX(), data_.arrayY(), data_.z(), 0);
+	if (xTransformer.enabled()) transformedData_.arrayX() = xTransformer.transformArray(data_.arrayX(), data_.arrayY(), z_, 0);
 	else transformedData_.arrayX() = data_.arrayX();
 
 	// Y
-	if (yTransformer.enabled()) transformedData_.arrayY() = yTransformer.transformArray(data_.arrayX(), data_.arrayY(), data_.z(), 1);
+	if (yTransformer.enabled()) transformedData_.arrayY() = yTransformer.transformArray(data_.arrayX(), data_.arrayY(), z_, 1);
 	else transformedData_.arrayY() = data_.arrayY();
 
 	// Z
-	if (zTransformer.enabled()) transformedData_.z() = zTransformer.transform(0.0, 0.0, data_.z());
-	else transformedData_.z() = data_.z();
+	if (zTransformer.enabled()) transformedZ_ = zTransformer.transform(0.0, 0.0, z_);
+	else transformedZ_ = z_;
 }
 
 // Return transformed data
-XYData& DataSet::transformedData()
+const XYData& DataSet::transformedData() const
 {
 	return transformedData_;
+}
+
+// Return transformed z value
+double DataSet::transformedZ() const
+{
+	return transformedZ_;
 }
 
 /*
@@ -295,7 +295,7 @@ void DataSet::setY(int index, double newY)
 // Set z data
 void DataSet::setZ(double z)
 {
-	data_.z() = z;
+	z_ = z;
 
 	notifyParent();
 }
@@ -305,7 +305,7 @@ void DataSet::addConstantValue(int axis, double value)
 {
 	if (axis == 0) data_.arrayX() += value;
 	else if (axis == 1) data_.arrayY() += value;
-	else if (axis == 2) data_.addZ(value);
+	else if (axis == 2) z_ += value;
 
 	notifyParent();
 }

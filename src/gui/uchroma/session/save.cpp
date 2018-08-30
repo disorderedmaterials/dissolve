@@ -164,7 +164,7 @@ bool UChromaBase::writeDataSetBlock(LineParser& parser, DataSet* dataSet, int in
 	if (dataSet->dataSource() == DataSet::FileSource) parser.writeLineF("%s    %s %s '%s'\n", indent, UChromaBase::dataSetKeyword(UChromaBase::SourceKeyword), DataSet::dataSource(dataSet->dataSource()), dataSet->sourceFileName());
 	else if (dataSet->dataSource() == DataSet::XYDataSource)  parser.writeLineF("%s    %s %s '%s'\n", indent, UChromaBase::dataSetKeyword(UChromaBase::SourceKeyword), DataSet::dataSource(dataSet->dataSource()), dataSet->sourceXYData());
 	else parser.writeLineF("%s    %s %s\n", indent, UChromaBase::dataSetKeyword(UChromaBase::SourceKeyword), DataSet::dataSource(dataSet->dataSource()));
-	parser.writeLineF("%s    %s %f\n", indent, UChromaBase::dataSetKeyword(UChromaBase::ZKeyword), dataSet->data().constZ());
+	parser.writeLineF("%s    %s %f\n", indent, UChromaBase::dataSetKeyword(UChromaBase::ZKeyword), dataSet->z());
 	if (dataSet->dataSource() == DataSet::InternalSource)
 	{
 		parser.writeLineF("%s    %s\n", indent, UChromaBase::dataSetKeyword(UChromaBase::DataKeyword));

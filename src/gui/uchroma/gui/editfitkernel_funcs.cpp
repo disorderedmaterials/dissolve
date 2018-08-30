@@ -740,11 +740,11 @@ void EditFitKernelDialog::updateLabels()
 	if (sourceCollection->nDataSets() > 0)
 	{
 		DataSet* dataSet = sourceCollection->nDataSets() == 0 ? NULL : sourceCollection->dataSet(ui.ZDataSetCombo->currentIndex());
-		ui.ZDataSetSingleLabel->setText("(Z = " + (dataSet ? QString::number(dataSet->data().constZ()) + ")" : "?)"));
+		ui.ZDataSetSingleLabel->setText("(Z = " + (dataSet ? QString::number(dataSet->z()) + ")" : "?)"));
 		dataSet = sourceCollection->nDataSets() == 0 ? NULL : sourceCollection->dataSet(ui.ZDataSetMinSpin->value()-1);
-		ui.ZDataSetMinLabel->setText("(Z = " + (dataSet ? QString::number(dataSet->data().constZ()) + ")" : "?)"));
+		ui.ZDataSetMinLabel->setText("(Z = " + (dataSet ? QString::number(dataSet->z()) + ")" : "?)"));
 		dataSet = sourceCollection->nDataSets() == 0 ? NULL : sourceCollection->dataSet(ui.ZDataSetMaxSpin->value()-1);
-		ui.ZDataSetMaxLabel->setText("(Z = " + (dataSet ? QString::number(dataSet->data().constZ()) + ")" : "?)"));
+		ui.ZDataSetMaxLabel->setText("(Z = " + (dataSet ? QString::number(dataSet->z()) + ")" : "?)"));
 	}
 	else
 	{

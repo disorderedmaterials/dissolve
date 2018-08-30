@@ -600,8 +600,8 @@ bool FitKernel::initialiseDataSpace()
 	int firstZPoint = 0, lastZPoint = 0;
 	if (zRange_ == FitKernel::AbsoluteRange)
 	{
-		for (firstZPoint = 0; firstZPoint < (sourceCollection_->nDataSets()-1); ++firstZPoint) if (sourceCollection_->dataSet(firstZPoint)->data().constZ() >= absoluteZMin_) break;
-		for (lastZPoint = sourceCollection_->nDataSets()-1; lastZPoint > 0; --lastZPoint) if (sourceCollection_->dataSet(lastZPoint)->data().constZ() <= absoluteZMax_) break;
+		for (firstZPoint = 0; firstZPoint < (sourceCollection_->nDataSets()-1); ++firstZPoint) if (sourceCollection_->dataSet(firstZPoint)->z() >= absoluteZMin_) break;
+		for (lastZPoint = sourceCollection_->nDataSets()-1; lastZPoint > 0; --lastZPoint) if (sourceCollection_->dataSet(lastZPoint)->z() <= absoluteZMax_) break;
 	}
 	else if (zRange_ == FitKernel::SinglePointRange)
 	{

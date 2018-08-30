@@ -480,10 +480,8 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 		}
 	}
 
-	printf("1 kjkjkjkj\n");
 	// Transform histogram data into radial distribution functions
 	originalgr.formPartials(box->volume(), cfg->boxNormalisationInterpolation());
-	printf("2 kjkjkjkj\n");
 
 	// Sum total functions
 	originalgr.formTotal(true);

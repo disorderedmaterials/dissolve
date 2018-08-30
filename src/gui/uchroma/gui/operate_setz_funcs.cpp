@@ -155,7 +155,7 @@ bool OperateSetZDialog::setZFromEquation()
 	for (DataSet* dataSet = targetCollection_->dataSets(); dataSet != NULL; dataSet = dataSet->next)
 	{
 		indexVariable_->set(count);
-		zVariable_->set(dataSet->data().constZ());
+		zVariable_->set(dataSet->z());
 		double newZ = equation_.execute(success);
 		if (!success)
 		{
@@ -216,7 +216,7 @@ bool OperateSetZDialog::setZFromSourceFiles()
 				if (extractedTime.isValid())
 				{
 					dataSet->setZ(referenceTime.secsTo(extractedTime));
-					if ((earliest == 0) || (dataSet->data().constZ() < earliest)) earliest = dataSet->data().constZ();
+					if ((earliest == 0) || (dataSet->z() < earliest)) earliest = dataSet->z();
 				}
 				else
 				{
@@ -231,7 +231,7 @@ bool OperateSetZDialog::setZFromSourceFiles()
 	// Offset values if we were using date/time
 	if (ui.FromSourceFilesDateTimeCheck->isChecked())
 	{
-		for (DataSet* dataSet = targetCollection_->dataSets(); dataSet != NULL; dataSet = dataSet->next) targetCollection_->setDataSetZ(dataSet, dataSet->data().constZ() - earliest);
+		for (DataSet* dataSet = targetCollection_->dataSets(); dataSet != NULL; dataSet = dataSet->next) targetCollection_->setDataSetZ(dataSet, dataSet->z() - earliest);
 	}
 
 	// Any failures?
@@ -266,11 +266,11 @@ bool OperateSetZDialog::setZFromTimeStamps()
 		}
 		dataSet->setZ(referenceTime.secsTo(fileInfo.lastModified()));
 
-		if ((earliest == 0) || (dataSet->data().constZ() < earliest)) earliest = dataSet->data().constZ();
+		if ((earliest == 0) || (dataSet->z() < earliest)) earliest = dataSet->z();
 	}
 	
 	// Set correct offset
-	for (DataSet* dataSet = targetCollection_->dataSets(); dataSet != NULL; dataSet = dataSet->next) targetCollection_->setDataSetZ(dataSet, dataSet->data().constZ() - earliest);
+	for (DataSet* dataSet = targetCollection_->dataSets(); dataSet != NULL; dataSet = dataSet->next) targetCollection_->setDataSetZ(dataSet, dataSet->z() - earliest);
 
 	return true;
 }

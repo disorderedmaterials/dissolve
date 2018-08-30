@@ -291,5 +291,5 @@ void EditReferenceDialog::updateLabels()
 
 	// Z Source
 	DataSet* dataSet = reference_.sourceCollection()->nDataSets() == 0 ? NULL : reference_.sourceCollection()->dataSet(ui.ZDataSetCombo->currentIndex());
-	ui.ZFixedLabel->setText("(Z = " + (dataSet ? QString::number(dataSet->data().constZ()) + ")" : "?)"));
+	ui.ZFixedLabel->setText("(Z = " + (dataSet ? QString::number(dataSet->z()) + ")" : "?)"));
 }
