@@ -230,8 +230,8 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Create the difference partial
 		deltaFQ.clear();
-		const Array<double> x1 = referenceData.constArrayX();
-		const Array<double> y1 = referenceData.constArrayY();
+		const Array<double> x1 = referenceData.constX();
+		const Array<double> y1 = referenceData.constY();
 		XYData simulatedFQ = weightedSQ.constTotal();
 		Interpolator interpolatedSimFQ(simulatedFQ);
 
@@ -517,7 +517,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				// Copy experimental S(Q) and FT it
 				expGR = generatedSQ.at(i,j);
 				Fourier::sineFT(expGR, 1.0 / (2 * PI * PI * combinedRho.at(i,j)), 0.0, 0.05, 30.0, WindowFunction(WindowFunction::Lorch0Window));
-				expGR.arrayY() += 1.0;
+				expGR.y() += 1.0;
 			}
 		}
 

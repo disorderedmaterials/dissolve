@@ -439,7 +439,7 @@ bool UChromaBase::readDataSetBlock(LineParser& parser, DataSet* dataSet, Collect
 		switch (dataSetKwd)
 		{
 			case (UChromaBase::DataKeyword):
-				data.reset();
+				data.clear();
 				foundEnd = false;
 				do
 				{

@@ -145,8 +145,8 @@ bool DataSet::refreshData(QDir sourceDir)
 	else if (dataSource_ == DataSet::FileSource)
 	{
 		// Clear any existing data
-		data_.arrayX().clear();
-		data_.arrayY().clear();
+		data_.x().clear();
+		data_.y().clear();
 
 		// Check file exists
 		if (!QFile::exists(sourceDir.absoluteFilePath(sourceFileName_.get())))
@@ -166,8 +166,8 @@ bool DataSet::refreshData(QDir sourceDir)
 		else
 		{
 			Messenger::printVerbose("Couldn't locate data '%s' for display.\n", sourceXYData_.get());
-			data_.arrayX().clear();
-			data_.arrayY().clear();
+			data_.x().clear();
+			data_.y().clear();
 
 			notifyParent();
 
@@ -205,13 +205,13 @@ const XYData& DataSet::data() const
 // Return X array from data
 const Array<double>& DataSet::x() const
 {
-	return data_.constArrayX();
+	return data_.constX();
 }
 
 // Return Y array from data
 const Array<double>& DataSet::y() const
 {
-	return data_.constArrayY();
+	return data_.constY();
 }
 
 // Return z value from data
@@ -224,12 +224,12 @@ double& DataSet::z()
 void DataSet::transform(Transformer& xTransformer, Transformer& yTransformer, Transformer& zTransformer)
 {
 	// X
-	if (xTransformer.enabled()) transformedData_.arrayX() = xTransformer.transformArray(data_.arrayX(), data_.arrayY(), z_, 0);
-	else transformedData_.arrayX() = data_.arrayX();
+	if (xTransformer.enabled()) transformedData_.x() = xTransformer.transformArray(data_.x(), data_.y(), z_, 0);
+	else transformedData_.x() = data_.x();
 
 	// Y
-	if (yTransformer.enabled()) transformedData_.arrayY() = yTransformer.transformArray(data_.arrayX(), data_.arrayY(), z_, 1);
-	else transformedData_.arrayY() = data_.arrayY();
+	if (yTransformer.enabled()) transformedData_.y() = yTransformer.transformArray(data_.x(), data_.y(), z_, 1);
+	else transformedData_.y() = data_.y();
 
 	// Z
 	if (zTransformer.enabled()) transformedZ_ = zTransformer.transform(0.0, 0.0, z_);
@@ -255,7 +255,7 @@ double DataSet::transformedZ() const
 // Reset (zero) data
 void DataSet::resetData()
 {
-	data_.arrayX() = 0.0;
+	data_.x() = 0.0;
 
 	notifyParent();
 }
@@ -303,8 +303,8 @@ void DataSet::setZ(double z)
 // Add to specified axis value
 void DataSet::addConstantValue(int axis, double value)
 {
-	if (axis == 0) data_.arrayX() += value;
-	else if (axis == 1) data_.arrayY() += value;
+	if (axis == 0) data_.x() += value;
+	else if (axis == 1) data_.y() += value;
 	else if (axis == 2) z_ += value;
 
 	notifyParent();

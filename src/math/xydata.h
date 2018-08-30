@@ -59,8 +59,6 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	CharString name_;
 
 	public:
-	// Reset arrays to zero
-	void reset();
 	// Initialise arrays to specified size
 	void initialise(int size);
 	// Copy existing X and Y data
@@ -74,17 +72,17 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	// Return x value specified (const)
 	double constX(int index) const;
 	// Return x Array
-	Array<double>& arrayX();
+	Array<double>& x();
 	// Return x Array (const)
-	const Array<double>& constArrayX() const;
+	const Array<double>& constX() const;
 	// Return y value specified
 	double& y(int index);
 	// Return y value specified (const)
 	double constY(int index) const;
 	// Return y Array
-	Array<double>& arrayY();
+	Array<double>& y();
 	// Return y Array (const)
-	const Array<double>& constArrayY() const;
+	const Array<double>& constY() const;
 	// Add new data point
 	void addPoint(double x, double y);
 	// Set name of data

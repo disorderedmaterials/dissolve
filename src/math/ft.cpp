@@ -62,8 +62,8 @@ bool Fourier::sineFT(XYData& data, double normFactor, double wMin, double wStep,
 	windowFunction.setUp(data);
 
 	// Grab x and y arrays
-	const Array<double>& x = data.constArrayX();
-	Array<double>& y = data.arrayY();
+	const Array<double>& x = data.constX();
+	Array<double>& y = data.y();
 
 	int m;
 	const int nX = x.nItems();

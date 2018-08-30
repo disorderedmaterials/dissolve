@@ -65,13 +65,6 @@ void XYData::clear()
  * Data
  */
 
-// Reset arrays to zero
-void XYData::reset()
-{
-	for (int n=0; n<x_.nItems(); ++n) x_[n] = 0.0;
-	for (int n=0; n<y_.nItems(); ++n) y_[n] = 0.0;
-}
-
 // Initialise arrays to specified size
 void XYData::initialise(int size)
 {
@@ -129,13 +122,13 @@ double XYData::constX(int index) const
 }
 
 // Return x Array
-Array<double>& XYData::arrayX()
+Array<double>& XYData::x()
 {
 	return x_;
 }
 
 // Return x Array (const)
-const Array<double>& XYData::constArrayX() const
+const Array<double>& XYData::constX() const
 {
 	return x_;
 }
@@ -168,13 +161,13 @@ double XYData::constY(int index) const
 }
 
 // Return y Array
-Array<double>& XYData::arrayY()
+Array<double>& XYData::y()
 {
 	return y_;
 }
 
 // Return y Array (const)
-const Array<double>& XYData::constArrayY() const
+const Array<double>& XYData::constY() const
 {
 	return y_;
 }

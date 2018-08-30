@@ -97,7 +97,7 @@ XYData RefineModule::calculateCR(const XYData& sq, double normFactor, double rMi
 	}
 
 	// Apply normalisation factor
-	cr.arrayY() *= normFactor;
+	cr.y() *= normFactor;
 
 	return cr;
 }
@@ -147,7 +147,7 @@ bool RefineModule::modifyBondTerms(Dissolve& dissolve, const XYData& deltaGR, At
 
 	// Set up the deltaBond data
 	deltaBond = deltaGR;
-	deltaBond.arrayY() = 0.0;
+	deltaBond.y() = 0.0;
 
 	// Loop over reference list of MasterIntra
 	RefListIterator<MasterIntra,double> bondIterator(masterBonds);

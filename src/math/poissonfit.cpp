@@ -139,7 +139,7 @@ XYData PoissonFit::approximation(FunctionSpace::SpaceType space, double preFacto
 	// Loop over defined functions
 	for (int n=0; n<nPoissons_; ++n) addFunction(ft, space, C_.constAt(n), n);
 
-	ft.arrayY() *= preFactor;
+	ft.y() *= preFactor;
 
 	return ft;
 }
@@ -210,7 +210,7 @@ bool PoissonFit::saveCoefficients(const char* filename) const
 void PoissonFit::preCalculateTerms()
 {
 	// Factors involving Q
-	const Array<double>& Q = referenceData_.constArrayX();
+	const Array<double>& Q = referenceData_.constX();
 	sqrtOnePlusQSqSigmaSq_.initialise(referenceData_.nPoints());
 	oneMinusQSqSigmaSq_.initialise(referenceData_.nPoints());
 	arcTanQSigma_.initialise(referenceData_.nPoints());

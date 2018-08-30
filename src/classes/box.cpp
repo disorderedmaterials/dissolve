@@ -265,8 +265,8 @@ bool Box::calculateRDFNormalisation(ProcessPool& procPool, XYData& boxNorm, doub
 	int bin, nBins = rdfRange / binWidth;
 	XYData normData;
 	normData.initialise(nBins);
-	Array<double>& y = normData.arrayY();
-	for (int n=0; n<nBins; ++n) normData.arrayX()[n] = (n+0.5)*binWidth;
+	Array<double>& y = normData.y();
+	for (int n=0; n<nBins; ++n) normData.x()[n] = (n+0.5)*binWidth;
 	
 	Vec3<double> centre = axes_*Vec3<double>(0.5,0.5,0.5);
 

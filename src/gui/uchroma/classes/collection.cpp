@@ -1316,8 +1316,8 @@ void Collection::updateDisplayData()
 		}
 		else
 		{
-			array[0] = dataSet->transformedData().constArrayX();
-			array[1] = dataSet->transformedData().constArrayY();
+			array[0] = dataSet->transformedData().constX();
+			array[1] = dataSet->transformedData().constY();
 		}
 
 		// Now add data to surfaceDataSet
@@ -1505,8 +1505,8 @@ bool Collection::exportData(const char* fileName)
 		parser.writeLineF("# Z = %e\n", dataSet->z());
 		for (int n=0; n<dataSet->data().nPoints(); ++n)
 		{
-			const Array<double>& x = dataSet->data().constArrayX();
-			const Array<double>& y = dataSet->data().constArrayY();
+			const Array<double>& x = dataSet->data().constX();
+			const Array<double>& y = dataSet->data().constY();
 			parser.writeLineF("%e  %e\n", x.constAt(n), y.constAt(n));
 		}
 		parser.writeLineF("\n");

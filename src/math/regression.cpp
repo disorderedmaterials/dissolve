@@ -34,8 +34,8 @@ double Regression::linear(const XYData& data, int nSamples)
 double Regression::linear(const XYData& data, int nSamples, double& yBar)
 {
 	// Grab data arrays
-	const Array<double>& x = data.constArrayX();
-	const Array<double>& y = data.constArrayY();
+	const Array<double>& x = data.constX();
+	const Array<double>& y = data.constY();
 
 	double Sxx = 0.0, Syy = 0.0, Sxy = 0.0;
 	double xBar = 0.0;

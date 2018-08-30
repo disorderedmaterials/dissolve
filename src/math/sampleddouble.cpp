@@ -56,7 +56,6 @@ void SampledDouble::accumulate(double value)
 	double delta = value - mean_;
 	mean_ += delta / count_;
 	m2_ += delta * (value - mean_);
-
 }
 
 // Return number of samples contributing to averages etc.

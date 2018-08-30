@@ -315,7 +315,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 					// Copy the unweighted data and wight weight it according to the natural isotope / concentration factor calculated above
 					XYData data = combinedUnweightedSQ.at(i, j);
-					data.arrayY() *= factor;
+					data.y() *= factor;
 					data.setName(CharString("Simulated %s-%s", at1->name(), at2->name()));
 
 					// Add this partial data to the scattering matrix
@@ -361,7 +361,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				// Copy experimental S(Q) and FT it
 				expGR = generatedSQ.at(i,j);
 				Fourier::sineFT(expGR, 1.0 / (2 * PI * PI * combinedRho.at(i,j)), 0.0, 0.05, 30.0, WindowFunction(WindowFunction::Lorch0Window));
-				expGR.arrayY() += 1.0;
+				expGR.y() += 1.0;
 			}
 		}
 
@@ -392,8 +392,8 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				dSQ.clear();
 
 				// Create the difference partial
-				const Array<double> x1 = generatedSQ.at(i, j).constArrayX();
-				const Array<double> y1 = generatedSQ.at(i, j).constArrayY();
+				const Array<double> x1 = generatedSQ.at(i, j).constX();
+				const Array<double> y1 = generatedSQ.at(i, j).constY();
 				XYData& simulatedSQ = combinedUnweightedSQ.at(i,j);
 				Interpolator interpolatedSimSQ(simulatedSQ);
 
@@ -513,7 +513,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					Fourier::sineFT(inversion, 1.0 / (2 * PI * PI * combinedRho.at(i,j)), ppDelta, ppDelta, ppRange, windowFunction);
 
 					dPhiR = inversion;
-					dPhiR.arrayY() *= -1.0;
+					dPhiR.y() *= -1.0;
 				}
 				else if (inversionMethod == RefineModule::DirectGaussianPotentialInversion)
 				{
@@ -540,7 +540,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					// Fourier transform the approximation, and store this as our inversion
 					inversion = gaussFit.approximation(FunctionSpace::RealSpace, 1.0 / (2 * PI * PI * combinedRho.at(i,j)), ppDelta, ppDelta, ppRange);
 					dPhiR = inversion;
-					dPhiR.arrayY() *= -1.0;
+					dPhiR.y() *= -1.0;
 				}
 				else if (inversionMethod == RefineModule::PercusYevickPotentialInversion)
 				{
@@ -615,7 +615,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				double minimumRadius = minimumRadii.constAt(i,j);
 				const double truncationStart = minimumRadius - truncationWidth;
 				double r;
-				Array<double>& y = dPhiR.arrayY();
+				Array<double>& y = dPhiR.y();
 				for (int n=0; n<dPhiR.nPoints(); ++n)
 				{
 					r = dPhiR.x(n);
@@ -631,7 +631,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				for (int n=0; n<dPhiR.nPoints(); ++n) dPhiR.y(n) *= 1.0 - double(n)/(dPhiR.nPoints()-1);
 
 				// Apply factor to additional potential
-				dPhiR.arrayY() *= weight;
+				dPhiR.y() *= weight;
 			}
 		}
 	}
@@ -718,7 +718,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			if (modifyPotential && (phiMax > 0.0) && (phiMag > phiMax))
 			{
 				double factor = phiMax / phiMag;
-				pp->uAdditional().arrayY() *= factor;
+				pp->uAdditional().y() *= factor;
 				phiMag = phiMax;
 			}
 

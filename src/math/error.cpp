@@ -33,8 +33,8 @@ double Error::rmse(const XYData& A, const XYData& B, bool quiet)
 	Interpolator interpolatedB(B);
 
 	// Grab x and y arrays from data A
-	const Array<double>& aX = A.constArrayX();
-	const Array<double>& aY = A.constArrayY();
+	const Array<double>& aX = A.constX();
+	const Array<double>& aY = A.constY();
 
 	// Generate RMSE at x values of A
 	double rmse = 0.0, delta;
@@ -75,8 +75,8 @@ double Error::percent(const XYData& A, const XYData& B, bool quiet)
 	Interpolator interpolatedB(B);
 
 	// Grab x and y arrays from data A
-	const Array<double>& aX = A.constArrayX();
-	const Array<double>& aY = A.constArrayY();
+	const Array<double>& aX = A.constX();
+	const Array<double>& aY = A.constY();
 
 	/*
 	 * Generate error estimate over actual values of our own data

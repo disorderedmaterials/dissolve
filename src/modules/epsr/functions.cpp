@@ -179,7 +179,7 @@ void EPSRModule::truncate(XYData& data, double rMin, double rMax)
 {
 	// Replicates the EPSR25 truncate(xx,rminpt,rmaxpt) function applied over a whole dataset.
 	double x;
-	Array<double>& y = data.arrayY();
+	Array<double>& y = data.y();
 	const double decay = rMax - rMin;
 	for (int n=0; n<data.nPoints(); ++n)
 	{

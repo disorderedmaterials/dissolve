@@ -113,8 +113,8 @@ XYData GaussFit::Ax() const
 {
 	XYData data;
 
-	data.arrayX() = x_;
-	data.arrayY() = A_;
+	data.x() = x_;
+	data.y() = A_;
 
 	return data;
 }
@@ -194,7 +194,7 @@ XYData GaussFit::approximation(FunctionSpace::SpaceType space, double preFactor,
 	// Loop over defined Gaussians
 	for (int n=0; n<nGaussians_; ++n) addFunction(ft, space, x_.constAt(n), A_.constAt(n), fwhm_.constAt(n)*fwhmFactor);
 
-	ft.arrayY() *= preFactor;
+	ft.y() *= preFactor;
 
 	return ft;
 }

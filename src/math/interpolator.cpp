@@ -27,7 +27,7 @@ Interpolator::Interpolator(const Array<double>& x, const Array<double>& y, Inter
 {
 	interpolate(scheme);
 }
-Interpolator::Interpolator(const XYData& source, InterpolationScheme scheme) : x_(source.constArrayX()), y_(source.constArrayY())
+Interpolator::Interpolator(const XYData& source, InterpolationScheme scheme) : x_(source.constX()), y_(source.constY())
 {
 	interpolate(scheme);
 }
@@ -372,15 +372,15 @@ double Interpolator::y(double x, int interval)
 double Interpolator::approximate(const XYData& data, double x)
 {
 	// Grab xand y arrays
-	const Array<double>& xData = data.constArrayX();
-	const Array<double>& yData = data.constArrayY();
+	const Array<double>& xData = data.constX();
+	const Array<double>& yData = data.constY();
 
 	if (x < xData.firstValue()) return yData.firstValue();
 	if (x > xData.lastValue()) return yData.lastValue();
 
 	// Perform binary chop search
 	int left = 0;
-	int i, right = data.constArrayX().nItems() - 1;
+	int i, right = data.constX().nItems() - 1;
 	while ((right-left) > 1)
 	{
 		i = (right+left) / 2;
@@ -405,14 +405,14 @@ double Interpolator::approximate(const XYData& data, double x)
 void Interpolator::addInterpolated(XYData& A, const XYData& B, double factor)
 {
 	// Grab x and y arrays from data A
-	Array<double>& aX = A.arrayX();
-	Array<double>& aY = A.arrayY();
+	Array<double>& aX = A.x();
+	Array<double>& aY = A.y();
 
 	// If there is currently no data in A, just copy the arrays from B
 	if (aX.nItems() == 0)
 	{
-		aX = B.constArrayX();
-		aY = B.constArrayY();
+		aX = B.constX();
+		aY = B.constY();
 		aY *= factor;
 	}
 	else

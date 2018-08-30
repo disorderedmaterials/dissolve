@@ -551,7 +551,7 @@ bool PairPotential::setUp(double maxR, double delta, bool includeCoulomb)
 
 	// Set additional potential to zero (or load it - TODO) and update full potential
 	uAdditional_ = uOriginal_;
-	uAdditional_.arrayY() = 0.0;
+	uAdditional_.y() = 0.0;
 	calculateUFull();
 
 	// Generate derivative data
@@ -701,7 +701,7 @@ XYData& PairPotential::uAdditional()
 // Zero additional potential
 void PairPotential::resetUAdditional()
 {
-	uAdditional_.arrayY() = 0.0;
+	uAdditional_.y() = 0.0;
 
 	calculateUFull();
 	calculateDUFull();
