@@ -22,6 +22,7 @@
 #ifndef DISSOLVE_DATA1D_H
 #define DISSOLVE_DATA1D_H
 
+#include "math/plottable.h"
 #include "math/sampleddouble.h"
 #include "templates/array.h"
 #include "templates/objectstore.h"
@@ -30,7 +31,7 @@
 class Histogram1D;
 
 // One-Dimensional Data
-class Data1D : public ListItem<Data1D>, public ObjectStore<Data1D>, public GenericItemBase
+class Data1D : public Plottable, public ListItem<Data1D>, public ObjectStore<Data1D>, public GenericItemBase
 {
 	public:
 	// Constructor
@@ -71,6 +72,40 @@ class Data1D : public ListItem<Data1D>, public ObjectStore<Data1D>, public Gener
 	public:
 	// Assignment Operator
 	void operator=(const Data1D& source);
+	// Operator +
+// 	Data1D operator+(const Data1D& source) const;
+	// Operator +=
+// 	void operator+=(const Data1D& source);
+	// Operator +=
+// 	void operator+=(const double dy);
+	// Operator -
+// 	Data1D operator-(const Data1D& source) const;
+	// Operator -=
+// 	void operator-=(const Data1D& source);
+	// Operator -=
+// 	void operator-=(const double dy);
+	// Operator *=
+// 	void operator*=(const double factor);
+	// Operator /=
+// 	void operator/=(const double factor);
+
+
+	/*
+	 * Plottable Implementation
+	 */
+	public:
+	// Return type of plottable
+	PlottableType plottableType() const;
+	// Return number of points along x axis
+	int nXAxisPoints() const;
+	// Return x axis value specified
+	double xAxis(int index) const;
+	// Return minimum (first) x axis point
+	double xAxisMin() const;
+	// Return maximum (last) x axis point
+	double xAxisMax() const;
+	// Return x axis Array
+	const Array<double>& xAxis() const;
 
 
 	/*

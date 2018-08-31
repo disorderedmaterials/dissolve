@@ -102,6 +102,46 @@ void Data1D::operator=(const Data1D& source)
 }
 
 /*
+ * Plottable Implementation
+ */
+
+// Return type of plottable
+Plottable::PlottableType Data1D::plottableType() const
+{
+	return Plottable::OneAxisPlottable;
+}
+
+// Return number of points along x axis
+int Data1D::nXAxisPoints() const
+{
+	return x_.nItems();
+}
+
+// Return x axis value specified
+double Data1D::xAxis(int index) const
+{
+	return x_.constAt(index);
+}
+
+// Return minimum (first) x axis point
+double Data1D::xAxisMin() const
+{
+	return x_.firstValue();
+}
+
+// Return maximum (last) x axis point
+double Data1D::xAxisMax() const
+{
+	return x_.lastValue();
+}
+
+// Return x axis Array
+const Array<double>& Data1D::xAxis() const
+{
+	return x_;
+}
+
+/*
  * GenericItemBase Implementations
  */
 

@@ -15,6 +15,7 @@ add_library(math
   matrix3.cpp
   matrix4.cpp
   pairbroadeningfunction.cpp
+  plottable.cpp
   poissonfit.cpp
   regression.cpp
   sampleddouble.cpp
@@ -41,6 +42,7 @@ add_library(math
   matrix4.h
   mc.h
   pairbroadeningfunction.h
+  plottable.h
   poissonfit.h
   praxis.h
   regression.h
