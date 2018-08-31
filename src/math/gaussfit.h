@@ -26,24 +26,24 @@
 #include "templates/array.h"
 
 // Forward Declarations
-class XYData;
+class Data1D;
 
 // Gaussian Function Approximation
 class GaussFit
 {
 	public:
 	// Constructor / Destructor
-	GaussFit(const XYData& referenceData);
+	GaussFit(const Data1D& referenceData);
 
 
 	/*
 	 * Data
 	 */
 	private:
-	// Reference XYData to which we are performing the fit
-	XYData referenceData_;
+	// Reference Data1D to which we are performing the fit
+	Data1D referenceData_;
 	// Approximate (fitted) data
-	XYData approximateData_;
+	Data1D approximateData_;
 	// Number of Gaussians used in fit
 	int nGaussians_;
 	// Function centres
@@ -56,8 +56,8 @@ class GaussFit
 	private:
 	// Generate full approximation from current parameters
 	void generateApproximation(FunctionSpace::SpaceType space);
-	// Add contribution to specified XYData
-	void addFunction(XYData& data, FunctionSpace::SpaceType space, double xCentre, double A, double fwhm) const;
+	// Add contribution to specified Data1D
+	void addFunction(Data1D& data, FunctionSpace::SpaceType space, double xCentre, double A, double fwhm) const;
 	// Return value of Gaussian at specified x value
 	double gaussian(double x, double xCentre, double A, double FWHM) const;
 	// Return Fourier transform of Gaussian at specified x value
@@ -67,9 +67,9 @@ class GaussFit
 
 	public:
 	// Return approximate function
-	const XYData& approximation() const;
+	const Data1D& approximation() const;
 	// Calculate and return approximate function in requested space
-	XYData approximation(FunctionSpace::SpaceType space, double factor, double xMin, double xStep, double xMax, double fwhmFactor = 1.0) const;
+	Data1D approximation(FunctionSpace::SpaceType space, double factor, double xMin, double xStep, double xMax, double fwhmFactor = 1.0) const;
 	// Set coefficients from supplied values
 	void set(double rMax, const Array<double>& A, double sigma);
 	// Return number of Gaussians in fit
@@ -78,8 +78,8 @@ class GaussFit
 	const Array<double>& x() const;
 	// Return current amplitudes
 	const Array<double>& A() const;
-	// Return amplitudes (and xCentres) as XYData
-	XYData Ax() const;
+	// Return amplitudes (and xCentres) as Data1D
+	Data1D Ax() const;
 	// Return current full-width half-maximum values
 	const Array<double>& fwhm() const;
 	// Save coefficients to specified file

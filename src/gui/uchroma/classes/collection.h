@@ -92,10 +92,10 @@ class Collection : public ListItem<Collection>, public ObjectStore<Collection>
 	DataSet* addDataSet();
 	// Add dataset at specified z
 	DataSet* addDataSet(double z);
-	// Add dataset from supplied XYData
-	DataSet* addDataSet(XYData& data, double z = 0.0);
-	// Add dataset from supplied XYData
-	DataSet* addDataSetWithReference(XYData* data, double z = 0.0);
+	// Add dataset from supplied Data1D
+	DataSet* addDataSet(Data1D& data, double z = 0.0);
+	// Add dataset from supplied Data1D
+	DataSet* addDataSetWithReference(Data1D* data, double z = 0.0);
 	// Add dataset, copying from supplied DataSet
 	void addDataSet(DataSet* source);
 	// Add dataset, copying from supplied DisplayDataSet

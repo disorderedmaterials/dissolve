@@ -26,24 +26,24 @@
 #include "templates/array.h"
 
 // Forward Declarations
-class XYData;
+class Data1D;
 
 // Poisson Function Approximation to Q-Space Data (replicating EPSR's methodology)
 class PoissonFit
 {
 	public:
 	// Constructor / Destructor
-	PoissonFit(const XYData& referenceData);
+	PoissonFit(const Data1D& referenceData);
 
 
 	/*
 	 * Data
 	 */
 	private:
-	// Reference XYData to which we are performing the fit
-	XYData referenceData_;
+	// Reference Data1D to which we are performing the fit
+	Data1D referenceData_;
 	// Approximate (fitted) data
-	XYData approximateData_;
+	Data1D approximateData_;
 	// Width coefficient for functions in real-space
 	double sigmaR_;
 	// Width coefficient for functions in reciprocal-space
@@ -70,8 +70,8 @@ class PoissonFit
 	private:
 	// Generate full approximation from current parameters
 	void generateApproximation(FunctionSpace::SpaceType space);
-	// Add contribution to specified XYData
-	void addFunction(XYData& data, FunctionSpace::SpaceType space, double C, const int nIndex) const;
+	// Add contribution to specified Data1D
+	void addFunction(Data1D& data, FunctionSpace::SpaceType space, double C, const int nIndex) const;
 	// Return value of Poisson function at x value given specified power index
 	double poisson(const double x, const int nIndex) const;
 	// Return Fourier transform of Poisson function at Q index given specified power index
@@ -79,9 +79,9 @@ class PoissonFit
 
 	public:
 	// Return approximate function
-	const XYData& approximation() const;
+	const Data1D& approximation() const;
 	// Calculate and return approximate function in requested space
-	XYData approximation(FunctionSpace::SpaceType space, double factor, double xMin, double xStep, double xMax) const; 
+	Data1D approximation(FunctionSpace::SpaceType space, double factor, double xMin, double xStep, double xMax) const; 
 	// Set coefficients from supplied values
 	void set(FunctionSpace::SpaceType space, double rMax, Array<double> coefficients, double sigmaQ = 0.02, double sigmaR = 0.08);
 	// Return number of Poisson functions in fit

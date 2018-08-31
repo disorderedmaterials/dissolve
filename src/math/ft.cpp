@@ -20,16 +20,16 @@
 */
 
 #include "math/ft.h"
-#include "math/xydata.h"
+#include "math/data1d.h"
 #include "base/sysfunc.h"
 
 // Make some checks before doing transform
-bool Fourier::checkBeforeTransform(XYData& data)
+bool Fourier::checkBeforeTransform(Data1D& data)
 {
 	// Enough data to do transform?
 	if (data.nDataPoints() < 5)
 	{
-		Messenger::error("Not enough X data points (%i) in XYData. Can't do transform.\n", data.nDataPoints());
+		Messenger::error("Not enough X data points (%i) in Data1D. Can't do transform.\n", data.nDataPoints());
 		return false;
 	}
 
@@ -37,7 +37,7 @@ bool Fourier::checkBeforeTransform(XYData& data)
 }
 
 // Perform Fourier sine transform of current distribution function, over range specified, and with specified broadening function, modification function, and window applied (if requested)
-bool Fourier::sineFT(XYData& data, double normFactor, double wMin, double wStep, double wMax, WindowFunction windowFunction, BroadeningFunction broadening)
+bool Fourier::sineFT(Data1D& data, double normFactor, double wMin, double wStep, double wMax, WindowFunction windowFunction, BroadeningFunction broadening)
 {
 	/*
 	 * Perform sine Fourier transform of current data. Function has no notion of forward or backwards transforms - normalisation and broadening functions must
@@ -70,7 +70,7 @@ bool Fourier::sineFT(XYData& data, double normFactor, double wMin, double wStep,
 	double window, broaden;
 
 	// Create working array
-	XYData sineft;
+	Data1D sineft;
 
 	// Assume deltaX is the difference between the first two points
 	double deltaX = x.constAt(1) - x.constAt(0);
@@ -111,7 +111,7 @@ bool Fourier::sineFT(XYData& data, double normFactor, double wMin, double wStep,
 }
 
 // // Fourier transform current data, applying line-width broadening in real-space using the modified Lorch function
-// bool XYData::transformLorch(double atomicDensity, double step, double rMax, double beta, double delta0, bool qToR)
+// bool Data1D::transformLorch(double atomicDensity, double step, double rMax, double beta, double delta0, bool qToR)
 // {
 // 	/*
 // 	 * Fourier transforms from Q to r-space, or r to Q-space, employing the modified Lorch function as described by Soper in

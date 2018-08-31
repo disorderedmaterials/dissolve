@@ -671,8 +671,8 @@ class UChromaBase
 	void addEditStateData(bool newData, const char* name, const char* value);
 	// Add data to current EditState  (from Collection*)
 	void addEditStateData(bool newData, const char* name, Collection* value);
-	// Add data to current EditState  (from XYData*)
-	void addEditStateData(bool newData, const char* name, XYData* value);
+	// Add data to current EditState  (from Data1D*)
+	void addEditStateData(bool newData, const char* name, Data1D* value);
 	// Add data to current EditState  (from LineStyle&)
 	void addEditStateData(bool newData, const char* name, LineStyle& value);
 	// End the new edit state group

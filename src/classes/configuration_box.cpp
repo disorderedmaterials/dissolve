@@ -294,7 +294,7 @@ const char* Configuration::boxNormalisationFileName() const
 }
 
 // Return current Box normalisation array
-const XYData& Configuration::boxNormalisation() const
+const Data1D& Configuration::boxNormalisation() const
 {
 	return boxNormalisation_;
 }

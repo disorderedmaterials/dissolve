@@ -138,7 +138,7 @@ class RDFModule : public Module
 	// Test supplied PartialSets against each other
 	static bool testReferencePartials(PartialSet& setA, PartialSet& setB, double testThreshold);
 	// Test calculated partial against supplied reference data
-	static bool testReferencePartial(const PartialSet& partials, double testThreshold, const XYData& testData, const char* typeIorTotal, const char* typeJ = NULL, const char* target = NULL);
+	static bool testReferencePartial(const PartialSet& partials, double testThreshold, const Data1D& testData, const char* typeIorTotal, const char* typeJ = NULL, const char* target = NULL);
 	// Test calculated vs reference data (two source sets)
 	static bool testReferencePartials(const DataStore& testData, double testThreshold, const PartialSet& partials, const char* prefix);
 	// Test calculated vs reference data (two source sets)

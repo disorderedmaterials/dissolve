@@ -23,7 +23,7 @@
 #define DISSOLVE_INTEGRATOR_H
 
 // Forward Declarations
-class XYData;
+class Data1D;
 
 // Integrator
 class Integrator
@@ -33,11 +33,11 @@ class Integrator
 	 */
 	public:
 	// Compute integral of supplied data via trapezoid rule
-	static double trapezoid(const XYData& data);
+	static double trapezoid(const Data1D& data);
 	// Compute absolute integral of supplied data via trapezoid rule
-	static double absTrapezoid(const XYData& data);
+	static double absTrapezoid(const Data1D& data);
 	// Return sum of squares of all y values in supplied data
-	static double sumOfSquares(const XYData& data);
+	static double sumOfSquares(const Data1D& data);
 };
 
 #endif

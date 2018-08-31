@@ -142,7 +142,7 @@ void RDFModuleWidget::setGraphDataTargets(RDFModule* module)
 	while (Configuration* cfg = configIterator.iterate())
 	{
 		// Add calculated total G(r)
-		blockData.sprintf("Collection '%s'; Group 'Calc'; DataSet 'Calculated'; Source XYData '%s//UnweightedGR//Total'; EndDataSet; EndCollection", cfg->niceName(), cfg->niceName());
+		blockData.sprintf("Collection '%s'; Group 'Calc'; DataSet 'Calculated'; Source Data1D '%s//UnweightedGR//Total'; EndDataSet; EndCollection", cfg->niceName(), cfg->niceName());
 		totalsGraph_->addCollectionFromBlock(blockData);
 	}
 }
@@ -167,15 +167,15 @@ void RDFModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 			CharString id("%s-%s", at1->name(), at2->name());
 
 			// Full partial
-			blockData.sprintf("Collection '%s'; Group '%s'; DataSet 'Calculated %s'; Source XYData '%s//UnweightedGR//%s-%s//Full'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), currentConfiguration_->niceName(), at1->name(), at2->name());
+			blockData.sprintf("Collection '%s'; Group '%s'; DataSet 'Calculated %s'; Source Data1D '%s//UnweightedGR//%s-%s//Full'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), currentConfiguration_->niceName(), at1->name(), at2->name());
 			partialsGraph_->addCollectionFromBlock(blockData);
 
 			// Bound partial
-			blockData.sprintf("Collection '%s Bound'; Group '%s'; LineStyle 1.0 'Half Dash'; DataSet 'Calculated %s'; Source XYData '%s//UnweightedGR//%s-%s//Bound'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), currentConfiguration_->niceName(), at1->name(), at2->name());
+			blockData.sprintf("Collection '%s Bound'; Group '%s'; LineStyle 1.0 'Half Dash'; DataSet 'Calculated %s'; Source Data1D '%s//UnweightedGR//%s-%s//Bound'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), currentConfiguration_->niceName(), at1->name(), at2->name());
 			partialsGraph_->addCollectionFromBlock(blockData);
 
 			// Unbound partial
-			blockData.sprintf("Collection '%s Unbound'; Group '%s'; LineStyle 1.0 Dots; DataSet 'Calculated %s'; Source XYData '%s//UnweightedGR//%s-%s//Unbound'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), currentConfiguration_->niceName(), at1->name(), at2->name());
+			blockData.sprintf("Collection '%s Unbound'; Group '%s'; LineStyle 1.0 Dots; DataSet 'Calculated %s'; Source Data1D '%s//UnweightedGR//%s-%s//Unbound'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), currentConfiguration_->niceName(), at1->name(), at2->name());
 			partialsGraph_->addCollectionFromBlock(blockData);
 		}
 	}

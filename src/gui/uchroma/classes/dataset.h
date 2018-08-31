@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_UCHROMADATASET_H
 #define DISSOLVE_UCHROMADATASET_H
 
-#include "math/xydata.h"
+#include "math/data1d.h"
 #include "gui/uchroma/classes/transformer.h"
 #include "templates/listitem.h"
 #include <QDir>
@@ -42,7 +42,7 @@ class DataSet : public ListItem<DataSet>
 	// Assignment operator
 	void operator=(const DataSet& source);
 	// Data Sources
-	enum DataSource { FileSource, InternalSource, XYDataSource, nDataSources };
+	enum DataSource { FileSource, InternalSource, Data1DSource, nDataSources };
 	// Convert text string to DataSource
 	static DataSource dataSource(const char* s);
 	// Convert DataSource to text string
@@ -78,15 +78,15 @@ class DataSet : public ListItem<DataSet>
 	// Name
 	CharString name_;
 	// Data
-	XYData data_;
+	Data1D data_;
 	// Transformed data
-	XYData transformedData_;
+	Data1D transformedData_;
 	// Z value of data
 	double z_;
 	// Transformed Z value of data
 	double transformedZ_;
-	// Source XYData object name
-	CharString sourceXYData_;
+	// Source Data1D object name
+	CharString sourceData1D_;
 
 	public:
 	// Set source of data
@@ -101,16 +101,16 @@ class DataSet : public ListItem<DataSet>
 	void setName(const char* name);
 	// Return name
 	const char* name();
-	// Set data from supplied XYData
-	void setData(XYData& source);
-	// Set data from supplied XYData
+	// Set data from supplied Data1D
+	void setData(Data1D& source);
+	// Set data from supplied Data1D
 	void setSourceData(const char* xyDataObjectName);
-	// Return source XYData, if any
-	const char* sourceXYData() const;
+	// Return source Data1D, if any
+	const char* sourceData1D() const;
 	// Refresh source data (if not internal)
 	bool refreshData(QDir sourceDir = QDir());
 	// Return data
-	const XYData& data() const;
+	const Data1D& data() const;
 	// Return X array from data
 	const Array<double>& x() const;
 	// Return Y array from data
@@ -120,7 +120,7 @@ class DataSet : public ListItem<DataSet>
 	// Transform original data with supplied transformers
 	void transform(Transformer& xTransformer, Transformer& yTransformer, Transformer& zTransformer);
 	// Return transformed data
-	const XYData& transformedData() const;
+	const Data1D& transformedData() const;
 	// Return transformed z value
 	double transformedZ() const;
 

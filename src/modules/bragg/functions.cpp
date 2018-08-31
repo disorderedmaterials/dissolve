@@ -320,7 +320,7 @@ bool BraggModule::calculateUnweightedBraggSQ(ProcessPool& procPool, Configuratio
 	{
 		for (int typeJ = typeI; typeJ < nTypes; ++typeJ)
 		{
-			XYData& braggSQ = partialsq.braggPartial(typeI, typeJ);
+			Data1D& braggSQ = partialsq.braggPartial(typeI, typeJ);
 
 			// Loop over defined Bragg peaks
 			for (int n=0; n<nPeaks; ++n)
@@ -333,7 +333,7 @@ bool BraggModule::calculateUnweightedBraggSQ(ProcessPool& procPool, Configuratio
 // 				tempBraggSQ.addY(qCentre/braggQDelta, inten);
 				if (inten > 0.01) printf("BRG  %i  %i  %i  %f  %f\n", typeI, typeJ, n, qCentre, inten);
 
-				// Loop over points in braggSQ XYData (which will provide our Q values)
+				// Loop over points in braggSQ Data1D (which will provide our Q values)
 				for (int m=0; m<braggSQ.nDataPoints(); ++m)
 				{
 					// Get q value from array
@@ -382,11 +382,11 @@ bool BraggModule::calculateUnweightedBraggSQ(ProcessPool& procPool, Configuratio
 // 		{
 // 			// Grab references:
 // 			// -- Full atom pair-pair structure factors (bound + unbound)
-// 			XYData& pairSQ = pairSQMatrix_.ref(typeI,typeJ);
+// 			Data1D& pairSQ = pairSQMatrix_.ref(typeI,typeJ);
 // 			// -- Bragg partial structure factors
-// 			XYData& braggSQ = braggSQMatrix_.ref(typeI,typeJ);
+// 			Data1D& braggSQ = braggSQMatrix_.ref(typeI,typeJ);
 // 			// -- Full partial structure factors (destination)
-// 			XYData& partialSQ = partialSQMatrix_.ref(typeI,typeJ);
+// 			Data1D& partialSQ = partialSQMatrix_.ref(typeI,typeJ);
 // 
 // 			// Copy atomic pair S(Q) information
 // 			partialSQ = pairSQ;

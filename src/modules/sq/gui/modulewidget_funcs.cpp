@@ -180,35 +180,35 @@ void SQModuleWidget::setGraphDataTargets(SQModule* module)
 			 * Partial g(r)
 			 */
 
-			blockData.sprintf("Collection '%s'; Group '%s'; DataSet 'Calculated %s'; Source XYData '%s//UnweightedGR//%s-%s//Full'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), at1->name(), at2->name());
+			blockData.sprintf("Collection '%s'; Group '%s'; DataSet 'Calculated %s'; Source Data1D '%s//UnweightedGR//%s-%s//Full'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), at1->name(), at2->name());
 			partialGRGraph_->addCollectionFromBlock(blockData);
 
 			/*
 			 * Partial S(Q)
 			 */
 
-			blockData.sprintf("Collection '%s'; Group '%s'; DataSet 'Calculated %s'; Source XYData '%s//UnweightedSQ//%s-%s//Full'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), at1->name(), at2->name());
+			blockData.sprintf("Collection '%s'; Group '%s'; DataSet 'Calculated %s'; Source Data1D '%s//UnweightedSQ//%s-%s//Full'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), at1->name(), at2->name());
 			partialSQGraph_->addCollectionFromBlock(blockData);
 		}
 	}
 
 	// Add calculated total G(r)
-	blockData.sprintf("Collection 'G(r)'; Group 'Calc'; DataSet 'Calculated'; Source XYData '%s//WeightedGR//Total'; EndDataSet; EndCollection", module_->uniqueName());
+	blockData.sprintf("Collection 'G(r)'; Group 'Calc'; DataSet 'Calculated'; Source Data1D '%s//WeightedGR//Total'; EndDataSet; EndCollection", module_->uniqueName());
 	totalGRGraph_->addCollectionFromBlock(blockData);
 
 	// Add calculate total F(Q)
-	blockData.sprintf("Collection 'F(Q)'; Group 'Calc'; DataSet 'Calculated'; Source XYData '%s//WeightedSQ//Total'; EndDataSet; EndCollection", module_->uniqueName());
+	blockData.sprintf("Collection 'F(Q)'; Group 'Calc'; DataSet 'Calculated'; Source Data1D '%s//WeightedSQ//Total'; EndDataSet; EndCollection", module_->uniqueName());
 	totalSQGraph_->addCollectionFromBlock(blockData);
 
 	// Add on reference data if present
 	if (module->keywords().find("Reference"))
 	{
 		// Add FT of reference data total G(r)
-		blockData.sprintf("Collection 'Reference'; Group 'Reference'; DataSet 'Reference'; Source XYData '%s//ReferenceDataFT'; EndDataSet; EndCollection", module_->uniqueName());
+		blockData.sprintf("Collection 'Reference'; Group 'Reference'; DataSet 'Reference'; Source Data1D '%s//ReferenceDataFT'; EndDataSet; EndCollection", module_->uniqueName());
 		totalGRGraph_->addCollectionFromBlock(blockData);
 
 		// Add calculate total F(Q)
-		blockData.sprintf("Collection 'Reference'; Group 'Reference'; DataSet 'Reference'; Source XYData '%s//ReferenceData'; EndDataSet; EndCollection", module_->uniqueName());
+		blockData.sprintf("Collection 'Reference'; Group 'Reference'; DataSet 'Reference'; Source Data1D '%s//ReferenceData'; EndDataSet; EndCollection", module_->uniqueName());
 		totalSQGraph_->addCollectionFromBlock(blockData);
 	}
 }

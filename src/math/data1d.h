@@ -1,5 +1,5 @@
 /*
-	*** 1-Dimensional Data With Statistics
+	*** 1-Dimensional Data
 	*** src/math/data1d.h
 	Copyright T. Youngs 2012-2018
 
@@ -23,7 +23,6 @@
 #define DISSOLVE_DATA1D_H
 
 #include "math/plottable.h"
-#include "math/sampleddouble.h"
 #include "templates/array.h"
 #include "templates/objectstore.h"
 
@@ -51,14 +50,12 @@ class Data1D : public Plottable, public ListItem<Data1D>, public ObjectStore<Dat
 	// X array
 	Array<double> x_;
 	// Accumulated values at each x
-	Array<SampledDouble> y_;
+	Array<double> y_;
 
 	public:
 	// Initialise arrays to specified size
 	void initialise(int size);
-	// Initialise to be consistent with supplied Data1D object
-	void initialise(const Histogram1D& source);
-	// Initialise to be consistent with supplied Histogram1D object
+	// Initialise to be consistent in size and x axis with supplied object
 	void initialise(const Data1D& source);
 	// Copy arrays from supplied object
 	void copyArrays(const Data1D& source);
@@ -77,13 +74,13 @@ class Data1D : public Plottable, public ListItem<Data1D>, public ObjectStore<Dat
 	// Return x Array (const)
 	const Array<double>& constX() const;
 	// Return y value specified
-	SampledDouble& y(int index);
+	double& y(int index);
 	// Return y value specified (const)
-	SampledDouble constY(int index) const;
+	double constY(int index) const;
 	// Return y Array
-	Array<SampledDouble>& y();
+	Array<double>& y();
 	// Return y Array (const)
-	const Array<SampledDouble>& constY() const;
+	const Array<double>& constY() const;
 
 
 	/*
@@ -92,22 +89,18 @@ class Data1D : public Plottable, public ListItem<Data1D>, public ObjectStore<Dat
 	public:
 	// Assignment Operator
 	void operator=(const Data1D& source);
-	// Operator +
-// 	Data1D operator+(const Data1D& source) const;
 	// Operator +=
-// 	void operator+=(const Data1D& source);
+	void operator+=(const Data1D& source);
 	// Operator +=
-// 	void operator+=(const double dy);
-	// Operator -
-// 	Data1D operator-(const Data1D& source) const;
+	void operator+=(const double dy);
 	// Operator -=
-// 	void operator-=(const Data1D& source);
+	void operator-=(const Data1D& source);
 	// Operator -=
-// 	void operator-=(const double dy);
+	void operator-=(const double dy);
 	// Operator *=
-// 	void operator*=(const double factor);
+	void operator*=(const double factor);
 	// Operator /=
-// 	void operator/=(const double factor);
+	void operator/=(const double factor);
 
 
 	/*
@@ -142,6 +135,10 @@ class Data1D : public Plottable, public ListItem<Data1D>, public ObjectStore<Dat
 	const Array<double>& xAxis() const;
 	// Return number of datapoints present in whole dataset
 	int nDataPoints() const;
+	// Return minimum value over all data points
+	double minValue() const;
+	// Return maximum value over all data points
+	double maxValue() const;
 
 
 	/*

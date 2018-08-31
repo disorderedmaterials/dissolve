@@ -25,7 +25,7 @@
 #include <QDialog>
 #include <QObject>
 #include "gui/uchroma/gui/ui_editfitkernel.h"
-#include "math/xydata.h"
+#include "math/data1d.h"
 #include "gui/uchroma/classes/equationvariable.h"
 #include "gui/uchroma/kernels/fit.h"
 #include "gui/uchroma/expression/expression.h"

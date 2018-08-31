@@ -45,7 +45,6 @@ class ObjectInfo
 		NoObject = 0,
 		Data1DObject,
 		Histogram1DObject,
-		XYDataObject,
 		UChromaAxesObject,
 		UChromaCollectionObject,
 		UChromaViewPaneObject,

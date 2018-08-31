@@ -118,19 +118,19 @@ void PairPotentialWidget::setDataTargets(PairPotential* pp)
 		CharString blockData;
 
 		// Full potential
-		blockData.sprintf("Collection 'Full'; ColourSingle 0 0 0 255; LineStyle 1.0 Solid; DataSet 'Full'; Source XYData %s; EndDataSet; EndCollection", pp->uFull().objectTag());
+		blockData.sprintf("Collection 'Full'; ColourSingle 0 0 0 255; LineStyle 1.0 Solid; DataSet 'Full'; Source Data1D %s; EndDataSet; EndCollection", pp->uFull().objectTag());
 		uChromaView_->addCollectionFromBlock(blockData);
 
 		// Original potential
-		blockData.sprintf("Collection 'Original'; ColourSingle 200 0 0 255; LineStyle 1.0 'Half Dash'; DataSet 'Full'; Source XYData %s; EndDataSet; EndCollection", pp->uOriginal().objectTag());
+		blockData.sprintf("Collection 'Original'; ColourSingle 200 0 0 255; LineStyle 1.0 'Half Dash'; DataSet 'Full'; Source Data1D %s; EndDataSet; EndCollection", pp->uOriginal().objectTag());
 		uChromaView_->addCollectionFromBlock(blockData);
 
 		// Additional potential
-		blockData.sprintf("Collection 'Additional'; ColourSingle 0 0 200 255; LineStyle 1.0 'Dots'; DataSet 'Full'; Source XYData %s; EndDataSet; EndCollection", pp->uAdditional().objectTag());
+		blockData.sprintf("Collection 'Additional'; ColourSingle 0 0 200 255; LineStyle 1.0 'Dots'; DataSet 'Full'; Source Data1D %s; EndDataSet; EndCollection", pp->uAdditional().objectTag());
 		uChromaView_->addCollectionFromBlock(blockData);
 
 		// Full potential
-		blockData.sprintf("Collection 'Force'; Visible False; ColourSingle 0 200 0 255; LineStyle 1.0 Solid; DataSet 'Full'; Source XYData %s; EndDataSet; EndCollection", pp->dUFull().objectTag());
+		blockData.sprintf("Collection 'Force'; Visible False; ColourSingle 0 200 0 255; LineStyle 1.0 Solid; DataSet 'Full'; Source Data1D %s; EndDataSet; EndCollection", pp->dUFull().objectTag());
 		uChromaView_->addCollectionFromBlock(blockData);
 	}
 }

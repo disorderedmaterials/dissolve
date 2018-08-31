@@ -56,10 +56,10 @@ bool RefineModule::addTarget(const char* moduleTarget, const char* group)
 }
 
 // Calculate c(r) from supplied S(Q)
-XYData RefineModule::calculateCR(const XYData& sq, double normFactor, double rMin, double rStep, double rMax, WindowFunction windowFunction, BroadeningFunction broadening, bool unbroaden)
+Data1D RefineModule::calculateCR(const Data1D& sq, double normFactor, double rMin, double rStep, double rMax, WindowFunction windowFunction, BroadeningFunction broadening, bool unbroaden)
 {
 	// Create working array
-	XYData cr;
+	Data1D cr;
 
 	// Assume deltQ is the difference between the first two points
 	double deltaQ = sq.constX(1) - sq.constX(0);
@@ -103,7 +103,7 @@ XYData RefineModule::calculateCR(const XYData& sq, double normFactor, double rMi
 }
 
 // Determine modification to bonds based on supplied delta g(r), returning features extracted from deltaGR
-bool RefineModule::modifyBondTerms(Dissolve& dissolve, const XYData& deltaGR, AtomType* typeI, AtomType* typeJ, XYData& deltaBond)
+bool RefineModule::modifyBondTerms(Dissolve& dissolve, const Data1D& deltaGR, AtomType* typeI, AtomType* typeJ, Data1D& deltaBond)
 {
 	// exp(-(((x-r)-delta)**2)/width**2)-exp(-(((x-r)+delta)**2)/width**2) w l
 
@@ -286,12 +286,12 @@ double RefineModule::costFunction3Exp(const Array<double>& alpha)
 	while (x <= xMax)
 	{
 		// Check x against limits of function
-		if (x < fitData_.xMin())
+		if (x < fitData_.constX().firstValue())
 		{
 			x += windowDelta;
 			continue;
 		}
-		else if (x > fitData_.xMax()) break;
+		else if (x > fitData_.constX().lastValue()) break;
 
 		// Evaluate the function
 		func = fitEquation(x, alpha.constAt(0), alpha.constAt(1), alpha.constAt(2), alpha.constAt(3), alpha.constAt(4), alpha.constAt(5));
@@ -334,12 +334,12 @@ double RefineModule::costFunction2Exp(const Array<double>& alpha)
 	while (x <= xMax)
 	{
 		// Check x against limits of function
-		if (x < fitData_.xMin())
+		if (x < fitData_.constX().firstValue())
 		{
 			x += windowDelta;
 			continue;
 		}
-		else if (x > fitData_.xMax()) break;
+		else if (x > fitData_.constX().lastValue()) break;
 
 		// Evaluate the function
 		func = fitEquation(x, alpha.constAt(0), alpha.constAt(1), alpha.constAt(2), alpha.constAt(3), 0.0, alpha.constAt(4));
@@ -357,8 +357,8 @@ double RefineModule::costFunction2Exp(const Array<double>& alpha)
 	return sos;
 }
 
-// Sum fitting equation with the specified parameters into the specified XYData
-void RefineModule::sumFitEquation(XYData& target, double xCentre, double delta, double width, double AL, double AC, double AR)
+// Sum fitting equation with the specified parameters into the specified Data1D
+void RefineModule::sumFitEquation(Data1D& target, double xCentre, double delta, double width, double AL, double AC, double AR)
 {
 	for (int n=0; n<target.nDataPoints(); ++n) target.y(n) += fitEquation(target.x(n), xCentre, delta, width, AL, AC, AR);
 }

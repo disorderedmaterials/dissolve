@@ -30,7 +30,7 @@
 // Forward Declarations
 class LineParser;
 class ProcessPool;
-class XYData;
+class Data1D;
 
 // Window Function
 class WindowFunction : public GenericItemBase
@@ -88,7 +88,7 @@ class WindowFunction : public GenericItemBase
 	// Return short summary of function parameters
 	CharString parameterSummary() const;
 	// Set-up function for specified data
-	bool setUp(const XYData& data);
+	bool setUp(const Data1D& data);
 	// Return value of function given parameters x (current abscissa value) and omega (target abscissa value)
 	double y(double x, double omega) const;
 

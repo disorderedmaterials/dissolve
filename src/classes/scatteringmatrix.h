@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_SCATTERINGMATRIX_H
 #define DISSOLVE_SCATTERINGMATRIX_H
 
-#include "math/xydata.h"
+#include "math/data1d.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
 #include "templates/pair.h"
@@ -57,7 +57,7 @@ class ScatteringMatrix
 	// Inverse of coefficients matrix
 	Array2D<double> inverseA_;
 	// Reference data (B) (n * 1)
-	Array<XYData> data_;
+	Array<Data1D> data_;
 
 	public:
 	// Return number of reference AtomType pairs
@@ -71,7 +71,7 @@ class ScatteringMatrix
 	// Print the inverse matrix
 	void printInverse() const;
 	// Generate partials from reference data using inverse matrix
-	void generatePartials(Array2D<XYData>& generatedSQ);
+	void generatePartials(Array2D<Data1D>& generatedSQ);
 	// Return if the scattering matrix is underdetermined
 	bool underDetermined() const;
 	// Return the product of inverseA_ and A_ (which should be the identity matrix)
@@ -82,13 +82,13 @@ class ScatteringMatrix
 	 */
 	public:
 	// Initialise from supplied list of AtomTypes
-	void initialise(const List<AtomType>& types, Array2D<XYData>& generatedSQ, const char* objectNamePrefix, const char* groupName);
+	void initialise(const List<AtomType>& types, Array2D<Data1D>& generatedSQ, const char* objectNamePrefix, const char* groupName);
 	// Finalise
 	bool finalise();
 	// Add reference data with its associated Weights, applying optional factor to those weights and the data itself
-	bool addReferenceData(const XYData& weightedData, Weights& dataWeights, double factor = 1.0);
+	bool addReferenceData(const Data1D& weightedData, Weights& dataWeights, double factor = 1.0);
 	// Add reference partial data between specified AtomTypes, applying optional factor to the weight and the data itself
-	bool addPartialReferenceData(XYData& weightedData, AtomType* at1, AtomType* at2, double dataWeight, double factor = 1.0);
+	bool addPartialReferenceData(Data1D& weightedData, AtomType* at1, AtomType* at2, double dataWeight, double factor = 1.0);
 };
 
 #endif

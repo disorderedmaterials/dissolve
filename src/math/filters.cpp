@@ -21,11 +21,11 @@
 
 #include "math/filters.h"
 #include "math/integrator.h"
-#include "math/xydata.h"
+#include "math/data1d.h"
 #include "templates/array.h"
 
 // Apply median filter to data
-void Filters::medianFilter(XYData& data, int length)
+void Filters::medianFilter(Data1D& data, int length)
 {
 	// Grab y array
 	Array<double>& y = data.y();
@@ -74,7 +74,7 @@ void Filters::medianFilter(XYData& data, int length)
 }
 
 // Perform moving average smoothing
-void Filters::movingAverage(XYData& data, int avgSize)
+void Filters::movingAverage(Data1D& data, int avgSize)
 {
 	// Grab y array
 	Array<double>& y = data.y();
@@ -111,13 +111,13 @@ void Filters::movingAverage(XYData& data, int avgSize)
 }
 
 // Apply Kolmogorov–Zurbenko filter
-void Filters::kolmogorovZurbenkoFilter(XYData& data, int k, int m)
+void Filters::kolmogorovZurbenkoFilter(Data1D& data, int k, int m)
 {
 	for (int iteration=0; iteration<k; ++iteration) movingAverage(data, m);
 }
 
 // Perform point-wise convolution of this data with the supplied BroadeningFunction
-void Filters::convolve(XYData& data, BroadeningFunction function)
+void Filters::convolve(Data1D& data, BroadeningFunction function)
 {
 	// Grab x and y arrays
 	const Array<double>& x = data.constX();
@@ -144,7 +144,7 @@ void Filters::convolve(XYData& data, BroadeningFunction function)
 }
 
 // Perform point-wise convolution of this data with the supplied BroadeningFunction, normalising to the original integral of the function
-void Filters::convolveNormalised(XYData& data, BroadeningFunction function)
+void Filters::convolveNormalised(Data1D& data, BroadeningFunction function)
 {
 	// Calculate the original integral
 	double originalIntegral = Integrator::absTrapezoid(data);
@@ -162,7 +162,7 @@ void Filters::convolveNormalised(XYData& data, BroadeningFunction function)
 }
 
 // Subtract average level from data, forming average from supplied x value
-double Filters::subtractAverage(XYData& data, double xStart)
+double Filters::subtractAverage(Data1D& data, double xStart)
 {
 	// Grab x and y arrays
 	const Array<double>& x = data.constX();

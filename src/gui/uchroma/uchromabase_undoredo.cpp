@@ -140,12 +140,12 @@ void UChromaBase::addEditStateData(bool newData, const char* name, Collection* v
 	else currentEditState_->addOldData()->set(name, value);
 }
 
-// Add data to current EditState  (from XYData*)
-void UChromaBase::addEditStateData(bool newData, const char* name, XYData* value)
+// Add data to current EditState  (from Data1D*)
+void UChromaBase::addEditStateData(bool newData, const char* name, Data1D* value)
 {
 	if (!currentEditState_)
 	{
-		printf("Internal Error: Attempted to addEditStateData(XYData*) with no currentEditState_.\n");
+		printf("Internal Error: Attempted to addEditStateData(Data1D*) with no currentEditState_.\n");
 		return;
 	}
 	if (newData) currentEditState_->addNewData()->set(name, value);

@@ -24,7 +24,7 @@
 
 #include "templates/genericitemcontainer.h"
 #include "base/dummyclass.h"
-#include "math/xydata.h"
+#include "math/data1d.h"
 
 // GenericItemContainer< Array2D<DummyClass> >
 template <> class GenericItemContainer< Array2D<DummyClass> > : public GenericItem
@@ -43,7 +43,7 @@ template <> class GenericItemContainer< Array2D<DummyClass> > : public GenericIt
 	// Create a new GenericItem containing same class as current type
 	GenericItem* createItem(const char* className, const char* name, int flags = 0)
 	{
-		if (DissolveSys::sameString(className, "Array2D<XYData>")) return new GenericItemContainer< Array2D<XYData> >(name, flags);
+		if (DissolveSys::sameString(className, "Array2D<Data1D>")) return new GenericItemContainer< Array2D<Data1D> >(name, flags);
 		return NULL;
 	}
 

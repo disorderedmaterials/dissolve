@@ -93,17 +93,17 @@ Collection& EditState::collectionData(const char* name, const List<EditStateData
 	return dummy;
 }
 
-// Search for specified XYData data in list
-XYData& EditState::data2DData(const char* name, const List<EditStateData>& dataList, bool& result)
+// Search for specified Data1D data in list
+Data1D& EditState::data2DData(const char* name, const List<EditStateData>& dataList, bool& result)
 {
 	result = true;
 	for (EditStateData* data = dataList.first(); data != NULL; data = data->next)
 	{
-		if (data->type() != EditStateData::XYDataData) continue;
-		if (data->isName(name)) return data->asXYData();
+		if (data->type() != EditStateData::Data1DData) continue;
+		if (data->isName(name)) return data->asData1D();
 	}
-	printf("Internal Error: No stored XYData data exists named '%s'.\n", name);
-	static XYData dummy;
+	printf("Internal Error: No stored Data1D data exists named '%s'.\n", name);
+	static Data1D dummy;
 	result = false;
 	return dummy;
 }

@@ -296,24 +296,24 @@ bool EnergyModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			Messenger::print("Intramolecular contributions are - bonds = %15.9e kJ/mol, angles = %15.9e kJ/mol, torsions = %15.9e kJ/mol.\n", bondEnergy, angleEnergy, torsionEnergy);
 
 			// Store current energies in the Configuration in case somebody else needs them
-			XYData& interData = GenericListHelper<XYData>::realise(cfg->moduleData(), "Inter", uniqueName(), GenericItem::InRestartFileFlag);
+			Data1D& interData = GenericListHelper<Data1D>::realise(cfg->moduleData(), "Inter", uniqueName(), GenericItem::InRestartFileFlag);
 			interData.addPoint(dissolve.iteration(), interEnergy);
 			interData.setObjectTag(CharString("%s//%s//Inter", cfg->niceName(), uniqueName()));
-			XYData& intraData = GenericListHelper<XYData>::realise(cfg->moduleData(), "Intra", uniqueName(), GenericItem::InRestartFileFlag);
+			Data1D& intraData = GenericListHelper<Data1D>::realise(cfg->moduleData(), "Intra", uniqueName(), GenericItem::InRestartFileFlag);
 			intraData.addPoint(dissolve.iteration(), intraEnergy);
 			intraData.setObjectTag(CharString("%s//%s//Intra", cfg->niceName(), uniqueName()));
-			XYData& bondData = GenericListHelper<XYData>::realise(cfg->moduleData(), "Bond", uniqueName(), GenericItem::InRestartFileFlag);
+			Data1D& bondData = GenericListHelper<Data1D>::realise(cfg->moduleData(), "Bond", uniqueName(), GenericItem::InRestartFileFlag);
 			bondData.addPoint(dissolve.iteration(), bondEnergy);
 			bondData.setObjectTag(CharString("%s//%s//Bond", cfg->niceName(), uniqueName()));
-			XYData& angleData = GenericListHelper<XYData>::realise(cfg->moduleData(), "Angle", uniqueName(), GenericItem::InRestartFileFlag);
+			Data1D& angleData = GenericListHelper<Data1D>::realise(cfg->moduleData(), "Angle", uniqueName(), GenericItem::InRestartFileFlag);
 			angleData.addPoint(dissolve.iteration(), angleEnergy);
 			angleData.setObjectTag(CharString("%s//%s//Angle", cfg->niceName(), uniqueName()));
-			XYData& torsionData = GenericListHelper<XYData>::realise(cfg->moduleData(), "Torsion", uniqueName(), GenericItem::InRestartFileFlag);
+			Data1D& torsionData = GenericListHelper<Data1D>::realise(cfg->moduleData(), "Torsion", uniqueName(), GenericItem::InRestartFileFlag);
 			torsionData.addPoint(dissolve.iteration(), torsionEnergy);
 			torsionData.setObjectTag(CharString("%s//%s//Torsion", cfg->niceName(), uniqueName()));
 
 			// Append to arrays of total energies
-			XYData& totalEnergyArray = GenericListHelper<XYData>::realise(cfg->moduleData(), "Total", uniqueName(), GenericItem::InRestartFileFlag);
+			Data1D& totalEnergyArray = GenericListHelper<Data1D>::realise(cfg->moduleData(), "Total", uniqueName(), GenericItem::InRestartFileFlag);
 			totalEnergyArray.addPoint(dissolve.iteration(), interEnergy+intraEnergy);
 			totalEnergyArray.setObjectTag(CharString("%s//%s//Total", cfg->niceName(), uniqueName()));
 
@@ -335,7 +335,7 @@ bool EnergyModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			// Set variable in Configuration
 			GenericListHelper<double>::realise(cfg->moduleData(), "EnergyGradient", "", GenericItem::InRestartFileFlag) = grad;
 			GenericListHelper<bool>::realise(cfg->moduleData(), "EnergyStable", "", GenericItem::InRestartFileFlag) = stable;
-			GenericListHelper<XYData>::realise(cfg->moduleData(), "EnergyStability", "", GenericItem::InRestartFileFlag).addPoint(dissolve.iteration(), stable);
+			GenericListHelper<Data1D>::realise(cfg->moduleData(), "EnergyStability", "", GenericItem::InRestartFileFlag).addPoint(dissolve.iteration(), stable);
 
 			// If writing to a file, append it here
 			if (saveData)

@@ -25,24 +25,24 @@
 #include "math/broadeningfunction.h"
 
 // Forward Declarations
-class XYData;
+class Data1D;
 
 // Filters
 class Filters
 {
 	public:
 	// Apply median filter to data
-	static void medianFilter(XYData& data, int length);
+	static void medianFilter(Data1D& data, int length);
 	// Perform moving average smoothing on data
-	static void movingAverage(XYData& data, int avgSize);
+	static void movingAverage(Data1D& data, int avgSize);
 	// Apply Kolmogorov–Zurbenko filter to data
-	static void kolmogorovZurbenkoFilter(XYData& data, int k, int m);
+	static void kolmogorovZurbenkoFilter(Data1D& data, int k, int m);
 	// Perform point-wise convolution of data with the supplied BroadeningFunction
-	static void convolve(XYData& data, BroadeningFunction function);
+	static void convolve(Data1D& data, BroadeningFunction function);
 	// Perform point-wise convolution of data with the supplied BroadeningFunction, normalising to the original integral of the function
-	static void convolveNormalised(XYData& data, BroadeningFunction function);
+	static void convolveNormalised(Data1D& data, BroadeningFunction function);
 	// Subtract average level (starting at supplied x value) from data
-	static double subtractAverage(XYData& data, double xStart);
+	static double subtractAverage(Data1D& data, double xStart);
 };
 
 #endif

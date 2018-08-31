@@ -43,7 +43,7 @@ class EditStateData : public ListItem<EditStateData>
 	 */
 	public:
 	// Data Type
-	enum EditStateDataType { IntegerData, DoubleData, StringData, XYDataData, LineStyleData, CollectionData, nDataTypes };
+	enum EditStateDataType { IntegerData, DoubleData, StringData, Data1DData, LineStyleData, CollectionData, nDataTypes };
 
 	private:
 	// Name of contained data
@@ -60,8 +60,8 @@ class EditStateData : public ListItem<EditStateData>
 	Collection dataCollection_;
 	// Associated LineStyle data
 	LineStyle dataLineStyle_;
-	// Associated XYData data
-	XYData dataXYData_;
+	// Associated Data1D data
+	Data1D dataData1D_;
 
 	public:
 	// Set data (int)
@@ -72,8 +72,8 @@ class EditStateData : public ListItem<EditStateData>
 	void set(const char* name, const char* value);
 	// Set data (from Collection*)
 	void set(const char* name, Collection* value);
-	// Set data (from XYData*)
-	void set(const char* name, XYData* value);
+	// Set data (from Data1D*)
+	void set(const char* name, Data1D* value);
 	// Set data (from LineStyle&)
 	void set(const char* name, LineStyle& value);
 	// Return whether name of contained data matches that supplied
@@ -86,8 +86,8 @@ class EditStateData : public ListItem<EditStateData>
 	double asDouble();
 	// Return string value
 	const char* asString();
-	// Return reference to XYData value
-	XYData& asXYData();
+	// Return reference to Data1D value
+	Data1D& asData1D();
 	// Return reference to Collection value
 	Collection& asCollection();
 	// Return LineStyle value

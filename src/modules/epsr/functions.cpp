@@ -99,7 +99,7 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve& dissolve, EPSRModule::Exp
 			Array<double>& potCoeff = coefficients.at(i, j);
 
 			// Regenerate empirical potential from the stored coefficients
-			XYData ep;
+			Data1D ep;
 			if (functionType == EPSRModule::GaussianExpansionFunction)
 			{
 				// Construct our fitting object and generate the potential using it
@@ -175,7 +175,7 @@ double EPSRModule::absEnergyEP(Dissolve& dissolve)
 }
 
 // Truncate the supplied data
-void EPSRModule::truncate(XYData& data, double rMin, double rMax)
+void EPSRModule::truncate(Data1D& data, double rMin, double rMax)
 {
 	// Replicates the EPSR25 truncate(xx,rminpt,rmaxpt) function applied over a whole dataset.
 	double x;

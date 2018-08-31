@@ -21,7 +21,6 @@ add_library(math
   sampleddouble.cpp
   svd.cpp
   windowfunction.cpp
-  xydata.cpp
 
   broadeningfunction.h
   constants.h
@@ -50,7 +49,6 @@ add_library(math
   sd.h
   svd.h
   windowfunction.h
-  xydata.h
 )
 
 include_directories(

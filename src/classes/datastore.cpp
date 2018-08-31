@@ -75,7 +75,7 @@ DataStore::~DataStore()
 bool DataStore::addData1D(const char* filename, const char* name, int xColumn, int yColumn)
 {
 	// Create new data
-	XYData* data = data1D_.add();
+	Data1D* data = data1D_.add();
 	data->setName(name);
 
 	// Add reference
@@ -88,7 +88,7 @@ bool DataStore::addData1D(const char* filename, const char* name, int xColumn, i
 bool DataStore::addData1D(ProcessPool& pool, const char* filename, const char* name, int xColumn, int yColumn)
 {
 	// Create new data
-	XYData* data = data1D_.add();
+	Data1D* data = data1D_.add();
 	data->setName(name);
 
 	// Add reference
@@ -100,31 +100,31 @@ bool DataStore::addData1D(ProcessPool& pool, const char* filename, const char* n
 // Check to see if the named one-dimensional data is present in the store
 bool DataStore::containsData1D(const char* name) const
 {
-	ListIterator<XYData> dataIterator(data1D_);
-	while (XYData* data = dataIterator.iterate()) if (DissolveSys::sameString(name, data->name())) return true;
+	ListIterator<Data1D> dataIterator(data1D_);
+	while (Data1D* data = dataIterator.iterate()) if (DissolveSys::sameString(name, data->name())) return true;
 
 	return false;
 }
 
 // Return named one-dimensional data
-const XYData& DataStore::data1D(const char* name) const
+const Data1D& DataStore::data1D(const char* name) const
 {
-	ListIterator<XYData> dataIterator(data1D_);
-	while (XYData* xyData = dataIterator.iterate()) if (DissolveSys::sameString(name, xyData->name())) return (*xyData);
+	ListIterator<Data1D> dataIterator(data1D_);
+	while (Data1D* xyData = dataIterator.iterate()) if (DissolveSys::sameString(name, xyData->name())) return (*xyData);
 
-	static XYData dummy;
-	Messenger::warn("Data named '%s' was requested from DataStore, but it does not exist. Return an empty XYData...\n", name);
+	static Data1D dummy;
+	Messenger::warn("Data named '%s' was requested from DataStore, but it does not exist. Return an empty Data1D...\n", name);
 	return dummy;
 }
 
 // Return list of all one-dimensional data
-const List<XYData>& DataStore::data1D() const
+const List<Data1D>& DataStore::data1D() const
 {
 	return data1D_;
 }
 
 // Return list of all one-dimensional data references
-const RefList<XYData,FileReference>& DataStore::data1DReferences() const
+const RefList<Data1D,FileReference>& DataStore::data1DReferences() const
 {
 	return data1DReferences_;
 }

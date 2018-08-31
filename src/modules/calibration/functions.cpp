@@ -95,14 +95,14 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(const Array<double>& 
 		{
 			// Grab WeightedSQ and ReferenceData and compare
 			const PartialSet& weightedSQ = GenericListHelper<PartialSet>::value(dissolve_.processingModuleData(), "WeightedSQ", module->uniqueName());
-			const XYData& referenceData = GenericListHelper<XYData>::value(dissolve_.processingModuleData(), "ReferenceData", module->uniqueName());
+			const Data1D& referenceData = GenericListHelper<Data1D>::value(dissolve_.processingModuleData(), "ReferenceData", module->uniqueName());
 			totalError += Error::percent(weightedSQ.constTotal(), referenceData);
 		}
 		if ((target == CalibrationModule::IntraBroadeningTargetBoth) || (target == CalibrationModule::IntraBroadeningTargetGR))
 		{
 			// Grab WeightedGR and ReferenceDataFT and compare
 			const PartialSet& weightedGR = GenericListHelper<PartialSet>::value(dissolve_.processingModuleData(), "WeightedGR", module->uniqueName());
-			const XYData& referenceDataFT = GenericListHelper<XYData>::value(dissolve_.processingModuleData(), "ReferenceDataFT", module->uniqueName());
+			const Data1D& referenceDataFT = GenericListHelper<Data1D>::value(dissolve_.processingModuleData(), "ReferenceDataFT", module->uniqueName());
 			totalError += Error::percent(weightedGR.constTotal(), referenceDataFT);
 		}
 	}

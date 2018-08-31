@@ -112,7 +112,7 @@ bool Dissolve::setUpSimulation()
 			CharString itemName("Potential_%s-%s_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ());
 
 			if (!processingModuleData_.contains(itemName, "Dissolve")) continue;
-			pot->setUAdditional(GenericListHelper<XYData>::retrieve(processingModuleData_, itemName, "Dissolve", XYData()));
+			pot->setUAdditional(GenericListHelper<Data1D>::retrieve(processingModuleData_, itemName, "Dissolve", Data1D()));
 
 		}
 	}

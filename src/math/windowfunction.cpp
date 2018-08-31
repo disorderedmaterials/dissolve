@@ -23,7 +23,7 @@
 #include "base/lineparser.h"
 #include "base/processpool.h"
 #include "base/sysfunc.h"
-#include "math/xydata.h"
+#include "math/data1d.h"
 #include "templates/enumhelpers.h"
 
 // Constructor
@@ -196,10 +196,10 @@ CharString WindowFunction::parameterSummary() const
 }
 
 // Set-up function for specified data
-bool WindowFunction::setUp(const XYData& data)
+bool WindowFunction::setUp(const Data1D& data)
 {
 	// Store maximum x value of data
-	xMax_ = data.xMax();
+	xMax_ = data.constX().lastValue();
 
 	switch (function_)
 	{

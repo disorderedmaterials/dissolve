@@ -42,7 +42,7 @@ bool NeutronSQModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	if (!referenceFile.isEmpty())
 	{
 		// Load the data
-		XYData referenceData;
+		Data1D referenceData;
 		LineParser parser(&procPool);
 		if ((!parser.openInput(referenceFile)) || (!referenceData.load(parser, 0, 1)))
 		{
@@ -85,13 +85,13 @@ bool NeutronSQModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Store the reference data in processing
 		referenceData.setName(uniqueName());
-		XYData& storedData = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), "ReferenceData", uniqueName(), GenericItem::InRestartFileFlag);
+		Data1D& storedData = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "ReferenceData", uniqueName(), GenericItem::InRestartFileFlag);
 		storedData.setObjectTag(CharString("%s//ReferenceData", uniqueName()));
 		storedData = referenceData;
 
 		// Calculate and store the FT of the reference data in processing
 		referenceData.setName(uniqueName());
-		XYData& storedDataFT = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), "ReferenceDataFT", uniqueName(), GenericItem::InRestartFileFlag);
+		Data1D& storedDataFT = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "ReferenceDataFT", uniqueName(), GenericItem::InRestartFileFlag);
 		storedDataFT.setObjectTag(CharString("%s//ReferenceDataFT", uniqueName()));
 		storedDataFT = referenceData;
 		Fourier::sineFT(storedDataFT, 1.0 / (2.0 * PI * PI * RDFModule::summedRho(this, dissolve.processingModuleData())), 0.05, 0.05, 30.0, WindowFunction(WindowFunction::Lorch0Window));
@@ -177,7 +177,7 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Transform g(r) into S(Q)
 		if (!SQModule::calculateUnweightedSQ(procPool, cfg, unweightedgr, unweightedsq, qMin, qDelta, qMax, cfg->atomicDensity(), windowFunction, qBroadening)) return false;
 
-		// Set names of resources (XYData) within the PartialSet, and tag it with the fingerprint from the source unweighted g(r)
+		// Set names of resources (Data1D) within the PartialSet, and tag it with the fingerprint from the source unweighted g(r)
 		unweightedsq.setObjectTags(CharString("%s//%s//%s", cfg->niceName(), "NeutronSQ", "UnweightedSQ"));
 		unweightedsq.setFingerprint(CharString("%i", cfg->moduleData().version("UnweightedGR")));
 
@@ -220,7 +220,7 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Calculate weighted S(Q)
 		calculateWeightedSQ(unweightedsq, weightedsq, weights, normalisation);
 
-		// Set names of resources (XYData) within the PartialSet
+		// Set names of resources (Data1D) within the PartialSet
 		weightedsq.setObjectTags(CharString("%s//%s//%s", cfg->niceName(), uniqueName_.get(), "WeightedSQ"));
 
 		// Save data if requested

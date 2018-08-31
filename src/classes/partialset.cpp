@@ -136,9 +136,9 @@ void PartialSet::reset()
 	{
 		for (int m=n; m<nTypes; ++m)
 		{
-			fullHistograms_.at(n,m).zero();
-			boundHistograms_.at(n,m).zero();
-			unboundHistograms_.at(n,m).zero();
+			fullHistograms_.at(n,m).zeroBins();
+			boundHistograms_.at(n,m).zeroBins();
+			unboundHistograms_.at(n,m).zeroBins();
 
 			partials_.at(n,m).y() = 0.0;
 			boundPartials_.at(n,m).y() = 0.0;
@@ -194,49 +194,49 @@ Histogram1D& PartialSet::unboundHistogram(int i, int j)
 }
 
 // Return full atom-atom partial specified
-XYData& PartialSet::partial(int i, int j)
+Data1D& PartialSet::partial(int i, int j)
 {
 	return partials_.at(i, j);
 }
 
 // Return full atom-atom partial specified (const)
-XYData& PartialSet::constPartial(int i, int j) const
+Data1D& PartialSet::constPartial(int i, int j) const
 {
 	return partials_.constAt(i, j);
 }
 
 // Return atom-atom partial for pairs not joined by bonds or angles
-XYData& PartialSet::unboundPartial(int i, int j)
+Data1D& PartialSet::unboundPartial(int i, int j)
 {
 	return unboundPartials_.at(i, j);
 }
 
 // Return atom-atom partial for pairs not joined by bonds or angles (const)
-XYData& PartialSet::constUnboundPartial(int i, int j) const
+Data1D& PartialSet::constUnboundPartial(int i, int j) const
 {
 	return unboundPartials_.constAt(i, j);
 }
 
 // Return atom-atom partial for pairs joined by bonds or angles
-XYData& PartialSet::boundPartial(int i, int j)
+Data1D& PartialSet::boundPartial(int i, int j)
 {
 	return boundPartials_.at(i, j);
 }
 
 // Return atom-atom partial for pairs joined by bonds or angles (const)
-XYData& PartialSet::constBoundPartial(int i, int j) const
+Data1D& PartialSet::constBoundPartial(int i, int j) const
 {
 	return boundPartials_.constAt(i, j);
 }
 
 // Return atom-atom Bragg partial
-XYData& PartialSet::braggPartial(int i, int j)
+Data1D& PartialSet::braggPartial(int i, int j)
 {
 	return braggPartials_.at(i, j);
 }
 
 // Return atom-atom Bragg partial (const)
-XYData& PartialSet::constBraggPartial(int i, int j) const
+Data1D& PartialSet::constBraggPartial(int i, int j) const
 {
 	return braggPartials_.constAt(i, j);
 }
@@ -252,7 +252,7 @@ void PartialSet::formTotal(bool applyConcentrationWeights)
 	}
 
 	// Copy x and y arrays from one of the partials, and zero the latter
-	total_.templateFrom(partials_.at(0,0));
+	total_.initialise(partials_.at(0,0));
 	total_.y() = 0.0;
 
 	int typeI, typeJ;
@@ -277,25 +277,25 @@ void PartialSet::formTotal(bool applyConcentrationWeights)
 }
 
 // Return total function
-XYData& PartialSet::total()
+Data1D& PartialSet::total()
 {
 	return total_;
 }
 
 // Return copy of total function
-XYData PartialSet::constTotal() const
+Data1D PartialSet::constTotal() const
 {
 	return total_;
 }
 
 // Calculate and return total bound function
-XYData PartialSet::boundTotal(bool applyConcentrationWeights) const
+Data1D PartialSet::boundTotal(bool applyConcentrationWeights) const
 {
 	const int nTypes = atomTypes_.nItems();
-	if (nTypes == 0) return XYData();
+	if (nTypes == 0) return Data1D();
 
-	XYData bound;
-	bound.templateFrom(boundPartials_.constAt(0,0));
+	Data1D bound;
+	bound.initialise(boundPartials_.constAt(0,0));
 
 	int typeI, typeJ;
 	AtomTypeData* atd1 = atomTypes_.first();
@@ -322,13 +322,13 @@ XYData PartialSet::boundTotal(bool applyConcentrationWeights) const
 }
 
 // Calculate and return total unbound function
-XYData PartialSet::unboundTotal(bool applyConcentrationWeights) const
+Data1D PartialSet::unboundTotal(bool applyConcentrationWeights) const
 {
 	const int nTypes = atomTypes_.nItems();
-	if (nTypes == 0) return XYData();
+	if (nTypes == 0) return Data1D();
 
-	XYData unbound;
-	unbound.templateFrom(boundPartials_.constAt(0,0));
+	Data1D unbound;
+	unbound.initialise(boundPartials_.constAt(0,0));
 
 	int typeI, typeJ;
 	AtomTypeData* atd1 = atomTypes_.first();
@@ -376,10 +376,10 @@ bool PartialSet::save()
 				return false;
 			}
 			
-			XYData& full = partials_.at(typeI,typeJ);
-			XYData& bound = boundPartials_.at(typeI,typeJ);
-			XYData& unbound = unboundPartials_.at(typeI,typeJ);
-			XYData& bragg = braggPartials_.at(typeI,typeJ);
+			Data1D& full = partials_.at(typeI,typeJ);
+			Data1D& bound = boundPartials_.at(typeI,typeJ);
+			Data1D& unbound = unboundPartials_.at(typeI,typeJ);
+			Data1D& bragg = braggPartials_.at(typeI,typeJ);
 			parser.writeLineF("# %-14s  %-16s  %-16s  %-16s  %-16s\n", abscissaUnits_.get(), "Full", "Bound", "Unbound", "Bragg"); 
 			for (n=0; n<full.nDataPoints(); ++n) parser.writeLineF("%16.9e  %16.9e  %16.9e  %16.9e  %16.9e\n", full.constX(n), full.constY(n), bound.constY(n), unbound.constY(n), n < bragg.nDataPoints() ? bragg.constY(n) : 0.0);
 			parser.closeFiles();
@@ -423,7 +423,7 @@ const char* PartialSet::objectNamePrefix() const
 	return objectNamePrefix_.get();
 }
 
-// Set underlying XYData file names
+// Set underlying Data1D file names
 void PartialSet::setFileNames(const char* prefix, const char* tag, const char* suffix)
 {
 	int nTypes = atomTypes_.nItems();
@@ -555,7 +555,7 @@ void PartialSet::reweightPartials(double factor)
 }
 
 // Calculate and return RDF from supplied Histogram and normalisation data
-void PartialSet::calculateRDF(XYData& destination, Histogram1D& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, Interpolator& boxNormalisation)
+void PartialSet::calculateRDF(Data1D& destination, Histogram1D& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, Interpolator& boxNormalisation)
 {
 	int nBins = histogram.nBins();
 	double delta = histogram.binWidth();
@@ -613,7 +613,7 @@ bool PartialSet::write(LineParser& parser)
 	// Write out AtomTypes first
 	atomTypes_.write(parser);
 	int nTypes = atomTypes_.nItems();
-	// Write individual XYData
+	// Write individual Data1D
 	for (int typeI=0; typeI<nTypes; ++typeI)
 	{
 		for (int typeJ=typeI; typeJ<nTypes; ++typeJ)
@@ -643,7 +643,7 @@ bool PartialSet::read(LineParser& parser)
 	unboundPartials_.initialise(nTypes, nTypes, true);
 	braggPartials_.initialise(nTypes, nTypes, true);
 
-	// Read individual XYData
+	// Read individual Data1D
 	for (int typeI=0; typeI<nTypes; ++typeI)
 	{
 		for (int typeJ=typeI; typeJ<nTypes; ++typeJ)

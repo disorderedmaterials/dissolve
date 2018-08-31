@@ -20,14 +20,14 @@
 */
 
 #include "math/interpolator.h"
-#include "math/xydata.h"
+#include "math/data1d.h"
 
 // Constructors
 Interpolator::Interpolator(const Array<double>& x, const Array<double>& y, InterpolationScheme scheme) : x_(x), y_(x)
 {
 	interpolate(scheme);
 }
-Interpolator::Interpolator(const XYData& source, InterpolationScheme scheme) : x_(source.constX()), y_(source.constY())
+Interpolator::Interpolator(const Data1D& source, InterpolationScheme scheme) : x_(source.constX()), y_(source.constY())
 {
 	interpolate(scheme);
 }
@@ -369,7 +369,7 @@ double Interpolator::y(double x, int interval)
  */
 
 // Approximate data at specified x value using three-point interpolation
-double Interpolator::approximate(const XYData& data, double x)
+double Interpolator::approximate(const Data1D& data, double x)
 {
 	// Grab xand y arrays
 	const Array<double>& xData = data.constX();
@@ -402,7 +402,7 @@ double Interpolator::approximate(const XYData& data, double x)
 }
 
 // Add interpolated data B to data A, with supplied multiplication factor
-void Interpolator::addInterpolated(XYData& A, const XYData& B, double factor)
+void Interpolator::addInterpolated(Data1D& A, const Data1D& B, double factor)
 {
 	// Grab x and y arrays from data A
 	Array<double>& aX = A.x();

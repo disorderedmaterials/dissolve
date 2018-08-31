@@ -23,7 +23,7 @@
 #define DISSOLVE_ERROR_H
 
 // Forward Declarations
-class XYData;
+class Data1D;
 
 // Error Calculation
 class Error
@@ -33,9 +33,9 @@ class Error
 	 */
 	public:
 	// Return RMSE between supplied data
-	static double rmse(const XYData& A, const XYData& B, bool quiet = false);
+	static double rmse(const Data1D& A, const Data1D& B, bool quiet = false);
 	// Return percentage error between supplied data
-	static double percent(const XYData& A, const XYData& B, bool quiet = false);
+	static double percent(const Data1D& A, const Data1D& B, bool quiet = false);
 };
 
 #endif

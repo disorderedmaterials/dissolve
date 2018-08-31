@@ -70,12 +70,12 @@ void EditStateData::set(const char* name, Collection* value)
 	dataCollection_ = (*value);
 }
 
-// Set data (from XYData*)
-void EditStateData::set(const char* name, XYData* value)
+// Set data (from Data1D*)
+void EditStateData::set(const char* name, Data1D* value)
 {
 	name_ = name;
-	type_ = EditStateData::XYDataData;
-	dataXYData_ = (*value);
+	type_ = EditStateData::Data1DData;
+	dataData1D_ = (*value);
 }
 
 // Set data (from LineStyle&)
@@ -122,12 +122,12 @@ const char* EditStateData::asString()
 	return "NULL";
 }
 
-// Return XYData value
-XYData& EditStateData::asXYData()
+// Return Data1D value
+Data1D& EditStateData::asData1D()
 {
-	if (type_ == EditStateData::XYDataData) return dataXYData_;
-	else printf("Internal Error - Can't convert type %i into a XYData.\n", type_);
-	return dataXYData_;
+	if (type_ == EditStateData::Data1DData) return dataData1D_;
+	else printf("Internal Error - Can't convert type %i into a Data1D.\n", type_);
+	return dataData1D_;
 }
 
 // Return Collection value

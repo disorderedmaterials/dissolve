@@ -109,7 +109,7 @@ void ScatteringMatrix::printInverse() const
 }
 
 // Generate partials from reference data using the inverse coefficients matrix
-void ScatteringMatrix::generatePartials(Array2D<XYData>& generatedSQ)
+void ScatteringMatrix::generatePartials(Array2D<Data1D>& generatedSQ)
 {
 	/*
 	 * Currently our scattering matrix / data look as follows:
@@ -125,7 +125,7 @@ void ScatteringMatrix::generatePartials(Array2D<XYData>& generatedSQ)
 	 */
 
 	// Get linear array from generatedSQ
-	XYData* partials = generatedSQ.linearArray();
+	Data1D* partials = generatedSQ.linearArray();
 
 	// Clear current partials
 	for (int n=0; n<generatedSQ.linearArraySize(); ++n) partials[n].clear();
@@ -158,7 +158,7 @@ Array2D<double> ScatteringMatrix::matrixProduct() const
  */
 
 // Initialise from supplied list of AtomTypes
-void ScatteringMatrix::initialise(const List<AtomType>& types, Array2D<XYData>& generatedSQ, const char* objectNamePrefix, const char* groupName)
+void ScatteringMatrix::initialise(const List<AtomType>& types, Array2D<Data1D>& generatedSQ, const char* objectNamePrefix, const char* groupName)
 {
 	// Clear coefficients matrix and its inverse_, and empty our typePairs_ and data_ lists
 	A_.clear();
@@ -179,7 +179,7 @@ void ScatteringMatrix::initialise(const List<AtomType>& types, Array2D<XYData>& 
 
 	// Create partials array
 	generatedSQ.initialise(types.nItems(), types.nItems(), true);
-	XYData* partials = generatedSQ.linearArray();
+	Data1D* partials = generatedSQ.linearArray();
 	int index = 0;
 	for (Pair<AtomType*,AtomType*>* pair = typePairs_.first(); pair != NULL; pair = pair->next)
 	{
@@ -206,7 +206,7 @@ bool ScatteringMatrix::finalise()
 }
 
 // Add reference data
-bool ScatteringMatrix::addReferenceData(const XYData& weightedData, Weights& dataWeights, double factor)
+bool ScatteringMatrix::addReferenceData(const Data1D& weightedData, Weights& dataWeights, double factor)
 {
 	// Make sure that the scattering weights are valid
 	if (!dataWeights.isValid())
@@ -245,7 +245,7 @@ bool ScatteringMatrix::addReferenceData(const XYData& weightedData, Weights& dat
 }
 
 // Add reference partial data between specified AtomTypes, applying optional factor to the weight and the data itself
-bool ScatteringMatrix::addPartialReferenceData(XYData& weightedData, AtomType* at1, AtomType* at2, double dataWeight, double factor)
+bool ScatteringMatrix::addPartialReferenceData(Data1D& weightedData, AtomType* at1, AtomType* at2, double dataWeight, double factor)
 {
 	// Extend the scattering matrix by one row
 	A_.addRow(typePairs_.nItems());

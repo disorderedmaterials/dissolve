@@ -162,7 +162,7 @@ bool UChromaBase::writeDataSetBlock(LineParser& parser, DataSet* dataSet, int in
 
 	parser.writeLineF("%s  %s '%s'\n", indent, UChromaBase::collectionKeyword(UChromaBase::DataSetDefinitionKeyword), dataSet->name());
 	if (dataSet->dataSource() == DataSet::FileSource) parser.writeLineF("%s    %s %s '%s'\n", indent, UChromaBase::dataSetKeyword(UChromaBase::SourceKeyword), DataSet::dataSource(dataSet->dataSource()), dataSet->sourceFileName());
-	else if (dataSet->dataSource() == DataSet::XYDataSource)  parser.writeLineF("%s    %s %s '%s'\n", indent, UChromaBase::dataSetKeyword(UChromaBase::SourceKeyword), DataSet::dataSource(dataSet->dataSource()), dataSet->sourceXYData());
+	else if (dataSet->dataSource() == DataSet::Data1DSource)  parser.writeLineF("%s    %s %s '%s'\n", indent, UChromaBase::dataSetKeyword(UChromaBase::SourceKeyword), DataSet::dataSource(dataSet->dataSource()), dataSet->sourceData1D());
 	else parser.writeLineF("%s    %s %s\n", indent, UChromaBase::dataSetKeyword(UChromaBase::SourceKeyword), DataSet::dataSource(dataSet->dataSource()));
 	parser.writeLineF("%s    %s %f\n", indent, UChromaBase::dataSetKeyword(UChromaBase::ZKeyword), dataSet->z());
 	if (dataSet->dataSource() == DataSet::InternalSource)

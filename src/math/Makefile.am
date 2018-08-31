@@ -13,7 +13,6 @@ libmath_la_SOURCES += pairbroadeningfunction.cpp plottable.cpp poissonfit.cpp
 libmath_la_SOURCES += regression.cpp 
 libmath_la_SOURCES += sampleddouble.cpp svd.cpp
 libmath_la_SOURCES += windowfunction.cpp
-libmath_la_SOURCES += xydata.cpp
 
 noinst_HEADERS = broadeningfunction.h
 noinst_HEADERS += constants.h cuboid.h

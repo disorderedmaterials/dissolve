@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "math/xydata.h"
+#include "math/data1d.h"
 #include "base/lineparser.h"
 #include "math/error.h"
 #include "math/poissonfit.h"
@@ -27,7 +27,7 @@
 #include "math/praxis.h"
 
 // Constructor
-PoissonFit::PoissonFit(const XYData& referenceData) : expMax_(25.0)
+PoissonFit::PoissonFit(const Data1D& referenceData) : expMax_(25.0)
 {
 	referenceData_ = referenceData;
 
@@ -44,14 +44,14 @@ PoissonFit::PoissonFit(const XYData& referenceData) : expMax_(25.0)
 // Generate full approximation from current parameters
 void PoissonFit::generateApproximation(FunctionSpace::SpaceType space)
 {
-	approximateData_.templateFrom(referenceData_);
+	approximateData_.initialise(referenceData_);
 
 	// Sum defined functions
 	for (int n=0; n<nPoissons_; ++n) addFunction(approximateData_, space, C_.constAt(n), n);
 }
 
-// Add contribution to specified XYData
-void PoissonFit::addFunction(XYData& data, FunctionSpace::SpaceType space, double C, const int nIndex) const
+// Add contribution to specified Data1D
+void PoissonFit::addFunction(Data1D& data, FunctionSpace::SpaceType space, double C, const int nIndex) const
 {
 	if (space == FunctionSpace::RealSpace)
 	{
@@ -119,16 +119,16 @@ double PoissonFit::poissonFT(const int qIndex, const int nIndex) const
 }
 
 // Return approximate function
-const XYData& PoissonFit::approximation() const
+const Data1D& PoissonFit::approximation() const
 {
 	return approximateData_;
 }
 
 
 // Calculate and return approximate function in requested space
-XYData PoissonFit::approximation(FunctionSpace::SpaceType space, double preFactor, double xMin, double xStep, double xMax) const
+Data1D PoissonFit::approximation(FunctionSpace::SpaceType space, double preFactor, double xMin, double xStep, double xMax) const
 {
-	XYData ft;
+	Data1D ft;
 	double x = xMin;
 	while (x <= xMax)
 	{
@@ -353,7 +353,7 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, int nPoissons, 
 	updatePrecalculatedFunctions(FunctionSpace::ReciprocalSpace);
 
 	// Clear the approximate data
-	approximateData_.templateFrom(referenceData_);
+	approximateData_.initialise(referenceData_);
 
 	// Perform Monte Carlo minimisation on the amplitudes
 	MonteCarloMinimiser<PoissonFit> poissonMinimiser(*this, &PoissonFit::costTabulatedC);
@@ -398,7 +398,7 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, Array<double> c
 	updatePrecalculatedFunctions(FunctionSpace::ReciprocalSpace);
 
 	// Clear the approximate data
-	approximateData_.templateFrom(referenceData_);
+	approximateData_.initialise(referenceData_);
 
 	// Perform Monte Carlo minimisation on the amplitudes
 	MonteCarloMinimiser<PoissonFit> poissonMinimiser(*this, &PoissonFit::costTabulatedC);

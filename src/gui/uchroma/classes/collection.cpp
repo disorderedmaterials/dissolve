@@ -248,8 +248,8 @@ DataSet* Collection::addDataSet(double z)
 	return dataSet;
 }
 
-// Add dataset from supplied XYData
-DataSet* Collection::addDataSet(XYData& data, double z)
+// Add dataset from supplied Data1D
+DataSet* Collection::addDataSet(Data1D& data, double z)
 {
 	DataSet* dataSet = dataSets_.add();
 	dataSet->setParent(this);
@@ -262,8 +262,8 @@ DataSet* Collection::addDataSet(XYData& data, double z)
 	return dataSet;
 }
 
-// Add dataset from supplied XYData
-DataSet* Collection::addDataSetWithReference(XYData* data, double z)
+// Add dataset from supplied Data1D
+DataSet* Collection::addDataSetWithReference(Data1D* data, double z)
 {
 	DataSet* dataSet = dataSets_.add();
 	dataSet->setParent(this);
@@ -713,7 +713,7 @@ void Collection::yRangeOverX(double xMin, double xMax, double& yMin, double& yMa
 	bool first = true;
 	for (DataSet* dataSet = dataSets_.first(); dataSet != NULL; dataSet = dataSet->next)
 	{
-		const XYData& data = dataSet->transformedData();
+		const Data1D& data = dataSet->transformedData();
 		for (int n=0; n<data.nDataPoints(); ++n)
 		{
 			if (data.constX(n) < xMin) continue;
@@ -1148,17 +1148,17 @@ void Collection::updateLimitsAndTransforms()
 	{
 		// Grab first dataset and set initial values
 		DataSet* dataSet = dataSets_.first();
-		dataMin_.set(dataSet->data().xMin(), dataSet->data().yMin(), dataSet->z());
-		dataMax_.set(dataSet->data().xMax(), dataSet->data().yMax(), dataSet->z());
+		dataMin_.set(dataSet->data().constX().firstValue(), dataSet->data().minValue(), dataSet->z());
+		dataMax_.set(dataSet->data().constX().lastValue(), dataSet->data().maxValue(), dataSet->z());
 		double mmin, mmax;
 		for (dataSet = dataSet->next; dataSet != NULL; dataSet = dataSet->next)
 		{
-			mmin = dataSet->data().xMin();
-			mmax = dataSet->data().xMax();
+			mmin = dataSet->data().constX().firstValue();
+			mmax = dataSet->data().constX().lastValue();
 			if (mmin < dataMin_.x) dataMin_.x = mmin;
 			if (mmax > dataMax_.x) dataMax_.x = mmax;
-			mmin = dataSet->data().yMin();
-			mmax = dataSet->data().yMax();
+			mmin = dataSet->data().minValue();
+			mmax = dataSet->data().maxValue();
 			if (mmin < dataMin_.y) dataMin_.y = mmin;
 			if (mmax > dataMax_.y) dataMax_.y = mmax;
 			if (dataSet->z() < dataMin_.z) dataMin_.z = dataSet->z();
@@ -1177,17 +1177,17 @@ void Collection::updateLimitsAndTransforms()
 	
 	// Grab first dataset and set initial values
 	DataSet* dataSet = dataSets_.first();
-	transformMin_.set(dataSet->transformedData().xMin(), dataSet->transformedData().yMin(), dataSet->transformedZ());
-	transformMax_.set(dataSet->transformedData().xMax(), dataSet->transformedData().yMax(), dataSet->transformedZ());
+	transformMin_.set(dataSet->transformedData().constX().firstValue(), dataSet->transformedData().minValue(), dataSet->transformedZ());
+	transformMax_.set(dataSet->transformedData().constX().lastValue(), dataSet->transformedData().maxValue(), dataSet->transformedZ());
 	double mmin, mmax;
 	for (dataSet = dataSet->next; dataSet != NULL; dataSet = dataSet->next)
 	{
-		mmin = dataSet->transformedData().xMin();
-		mmax = dataSet->transformedData().xMax();
+		mmin = dataSet->transformedData().constX().firstValue();
+		mmax = dataSet->transformedData().constX().lastValue();
 		if (mmin < transformMin_.x) transformMin_.x = mmin;
 		if (mmax > transformMax_.x) transformMax_.x = mmax;
-		mmin = dataSet->transformedData().yMin();
-		mmax = dataSet->transformedData().yMax();
+		mmin = dataSet->transformedData().minValue();
+		mmax = dataSet->transformedData().maxValue();
 		if (mmin < transformMin_.y) transformMin_.y = mmin;
 		if (mmax > transformMax_.y) transformMax_.y = mmax;
 		if (dataSet->transformedZ() < transformMin_.z) transformMin_.z = dataSet->transformedZ();
@@ -1198,7 +1198,7 @@ void Collection::updateLimitsAndTransforms()
 	for (dataSet = dataSets_.first(); dataSet != NULL; dataSet = dataSet->next)
 	{
 		// Loop over XY points in data, searching for first positive, non-zero value
-		const XYData& data = dataSet->transformedData();
+		const Data1D& data = dataSet->transformedData();
 		for (int n=0; n<data.nDataPoints(); ++n)
 		{
 			// X
@@ -1282,8 +1282,8 @@ void Collection::updateDisplayData()
 	// Make sure transforms are up to date
 	updateLimitsAndTransforms();
 
-	// Clear old displayData_ and create temporary XYData list for display data construction
-	List<XYData> transformedData;
+	// Clear old displayData_ and create temporary Data1D list for display data construction
+	List<Data1D> transformedData;
 	displayData_.clear();
 
 	// Loop over slices, apply any transforms (X or Y) and check limits
@@ -1296,7 +1296,7 @@ void Collection::updateDisplayData()
 		double z = dataSet->transformedZ();
 
 		// Add new item to transformedData and displayData_ arrays
-		XYData* surfaceDataSet = transformedData.add();
+		Data1D* surfaceDataSet = transformedData.add();
 		DisplayDataSet* displayDataSet = displayData_.add();
 		displayDataSet->setZ(z);
 
@@ -1305,9 +1305,9 @@ void Collection::updateDisplayData()
 		if (interpolate_.x)
 		{
 			Interpolator interpolated(dataSet->transformedData());
-// 			dataSet->transformedData().interpolate(XYData::SplineInterpolation);
-			double x = dataSet->transformedData().xMin();
-			while (x <= dataSet->transformedData().xMax())
+// 			dataSet->transformedData().interpolate(Data1D::SplineInterpolation);
+			double x = dataSet->transformedData().constX().firstValue();
+			while (x <= dataSet->transformedData().constX().lastValue())
 			{
 				array[0].add(x);
 				array[1].add(interpolated.y(x));
@@ -1327,7 +1327,7 @@ void Collection::updateDisplayData()
 	// Construct common x scale for data, and create y value data
 	// We have already pruned out those slices with no data points, so no checks for this are necessary
 	int n, nFinished = 0, nTransformedDataSets = transformedData.nItems();
-	XYData** data = transformedData.array();
+	Data1D** data = transformedData.array();
 	double lowest;
 
 	// -- Set up initial array indices and nFinished count

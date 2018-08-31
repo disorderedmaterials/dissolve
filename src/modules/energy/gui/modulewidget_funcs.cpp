@@ -72,7 +72,7 @@ void EnergyModuleWidget::updateControls()
 	QPalette labelPalette = ui.StableLabel->palette();
 	if (currentConfiguration_)
 	{
-		const XYData& totalEnergyArray = GenericListHelper<XYData>::value(currentConfiguration_->moduleData(), "Total", module_->uniqueName(), XYData());
+		const Data1D& totalEnergyArray = GenericListHelper<Data1D>::value(currentConfiguration_->moduleData(), "Total", module_->uniqueName(), Data1D());
 		if (totalEnergyArray.nDataPoints() < stabilityWindow) ui.GradientValueLabel->setText("N/A");
 		else
 		{
@@ -164,17 +164,17 @@ void EnergyModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 
 	// Set data targets
 	CharString blockData;
-	blockData.sprintf("Collection 'Total'; Group 'Total'; LineStyle 1.0 Solid; DataSet 'Total'; Source XYData 'XYData@%s//%s//Total'; EndDataSet; EndCollection", currentConfiguration_->niceName(), module_->uniqueName());
+	blockData.sprintf("Collection 'Total'; Group 'Total'; LineStyle 1.0 Solid; DataSet 'Total'; Source Data1D 'Data1D@%s//%s//Total'; EndDataSet; EndCollection", currentConfiguration_->niceName(), module_->uniqueName());
 	energyGraph_->addCollectionFromBlock(blockData);
-	blockData.sprintf("Collection 'Inter'; Group 'Inter'; LineStyle 1.0 Solid; DataSet 'Inter'; Source XYData 'XYData@%s//%s//Inter'; EndDataSet; EndCollection", currentConfiguration_->niceName(), module_->uniqueName());
+	blockData.sprintf("Collection 'Inter'; Group 'Inter'; LineStyle 1.0 Solid; DataSet 'Inter'; Source Data1D 'Data1D@%s//%s//Inter'; EndDataSet; EndCollection", currentConfiguration_->niceName(), module_->uniqueName());
 	energyGraph_->addCollectionFromBlock(blockData);
-	blockData.sprintf("Collection 'Intra'; Group 'Intra'; LineStyle 1.0 Solid; DataSet 'Intra'; Source XYData 'XYData@%s//%s//Intra'; EndDataSet; EndCollection", currentConfiguration_->niceName(), module_->uniqueName());
+	blockData.sprintf("Collection 'Intra'; Group 'Intra'; LineStyle 1.0 Solid; DataSet 'Intra'; Source Data1D 'Data1D@%s//%s//Intra'; EndDataSet; EndCollection", currentConfiguration_->niceName(), module_->uniqueName());
 	energyGraph_->addCollectionFromBlock(blockData);
-	blockData.sprintf("Collection 'Bond'; Group 'Bond'; LineStyle 1.0 Solid; DataSet 'Bond'; Source XYData 'XYData@%s//%s//Bond'; EndDataSet; EndCollection", currentConfiguration_->niceName(), module_->uniqueName());
+	blockData.sprintf("Collection 'Bond'; Group 'Bond'; LineStyle 1.0 Solid; DataSet 'Bond'; Source Data1D 'Data1D@%s//%s//Bond'; EndDataSet; EndCollection", currentConfiguration_->niceName(), module_->uniqueName());
 	energyGraph_->addCollectionFromBlock(blockData);
-	blockData.sprintf("Collection 'Angle'; Group 'Angle'; LineStyle 1.0 Solid; DataSet 'Angle'; Source XYData 'XYData@%s//%s//Angle'; EndDataSet; EndCollection", currentConfiguration_->niceName(), module_->uniqueName());
+	blockData.sprintf("Collection 'Angle'; Group 'Angle'; LineStyle 1.0 Solid; DataSet 'Angle'; Source Data1D 'Data1D@%s//%s//Angle'; EndDataSet; EndCollection", currentConfiguration_->niceName(), module_->uniqueName());
 	energyGraph_->addCollectionFromBlock(blockData);
-	blockData.sprintf("Collection 'Torsion'; Group 'Torsion'; LineStyle 1.0 Solid; DataSet 'Torsion'; Source XYData 'XYData@%s//%s//Torsion'; EndDataSet; EndCollection", currentConfiguration_->niceName(), module_->uniqueName());
+	blockData.sprintf("Collection 'Torsion'; Group 'Torsion'; LineStyle 1.0 Solid; DataSet 'Torsion'; Source Data1D 'Data1D@%s//%s//Torsion'; EndDataSet; EndCollection", currentConfiguration_->niceName(), module_->uniqueName());
 	energyGraph_->addCollectionFromBlock(blockData);
 
 	updateControls();

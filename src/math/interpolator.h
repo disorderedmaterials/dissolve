@@ -25,7 +25,7 @@
 #include "templates/array.h"
 
 // Forward Declarations
-class XYData;
+class Data1D;
 
 // Interpolator
 class Interpolator
@@ -42,7 +42,7 @@ class Interpolator
 	};
 	// Constructors
 	Interpolator(const Array<double>& x, const Array<double>& y, InterpolationScheme scheme = SplineInterpolation);
-	Interpolator(const XYData& source, InterpolationScheme scheme = SplineInterpolation);
+	Interpolator(const Data1D& source, InterpolationScheme scheme = SplineInterpolation);
 	// Destructor
 	~Interpolator();
 
@@ -86,9 +86,9 @@ class Interpolator
 	 */
 	public:
 	// Approximate y at specified x value using three-point interpolation of supplied data
-	static double approximate(const XYData& data, double x);
+	static double approximate(const Data1D& data, double x);
 	// Add interpolated data B to data A, with supplied multiplication factor
-	static void addInterpolated(XYData& A, const XYData& B, double factor = 1.0);
+	static void addInterpolated(Data1D& A, const Data1D& B, double factor = 1.0);
 };
 
 #endif

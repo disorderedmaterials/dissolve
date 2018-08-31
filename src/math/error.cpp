@@ -21,13 +21,13 @@
 
 #include "math/error.h"
 #include "math/interpolator.h"
-#include "math/xydata.h"
+#include "math/data1d.h"
 #include <algorithm>
 
 using namespace std;
 
 // Return RMSE between supplied data
-double Error::rmse(const XYData& A, const XYData& B, bool quiet)
+double Error::rmse(const Data1D& A, const Data1D& B, bool quiet)
 {
 	// First, generate interpolation of data B
 	Interpolator interpolatedB(B);
@@ -46,10 +46,10 @@ double Error::rmse(const XYData& A, const XYData& B, bool quiet)
 		x = aX.constAt(n);
 
 		// Is our x value lower than the lowest x value of the reference data?
-		if (x < B.xMin()) continue;
+		if (x < B.constX().firstValue()) continue;
 
 		// Is our x value higher than the last x value of the reference data?
-		if (x > B.xMax()) break;
+		if (x > B.constX().lastValue()) break;
 
 		// Is this the first point considered?
 		if (nPointsConsidered == 0) firstX = x;
@@ -69,7 +69,7 @@ double Error::rmse(const XYData& A, const XYData& B, bool quiet)
 }
 
 // Return percentage error between supplied data
-double Error::percent(const XYData& A, const XYData& B, bool quiet)
+double Error::percent(const Data1D& A, const Data1D& B, bool quiet)
 {
 	// First, generate interpolation of data B
 	Interpolator interpolatedB(B);
@@ -95,10 +95,10 @@ double Error::percent(const XYData& A, const XYData& B, bool quiet)
 		x = aX.constAt(n);
 
 		// Is our x value lower than the lowest x value of the reference data?
-		if (x < B.xMin()) continue;
+		if (x < B.constX().firstValue()) continue;
 
 		// Is our x value higher than the last x value of the reference data?
-		if (x > B.xMax()) break;
+		if (x > B.constX().lastValue()) break;
 
 		// Is this the first point considered?
 		if (nPointsConsidered == 0) firstX = x;

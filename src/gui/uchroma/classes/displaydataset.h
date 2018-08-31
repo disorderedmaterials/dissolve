@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_UCHROMADISPLAYDATASET_H
 #define DISSOLVE_UCHROMADISPLAYDATASET_H
 
-#include "math/xydata.h"
+#include "math/data1d.h"
 #include "templates/list.h"
 
 // Display DataSet

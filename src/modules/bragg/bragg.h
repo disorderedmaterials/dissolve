@@ -23,6 +23,7 @@
 #define DISSOLVE_BRAGGMODULE_H
 
 #include "module/module.h"
+#include "math/broadeningfunction.h"
 #include "classes/partialset.h"
 #include "classes/isotopologuereference.h"
 #include "classes/braggpeak.h"

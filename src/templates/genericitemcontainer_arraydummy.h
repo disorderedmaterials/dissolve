@@ -42,7 +42,7 @@ template <> class GenericItemContainer< Array<DummyClass> > : public GenericItem
 	// Create a new GenericItem containing same class as current type
 	GenericItem* createItem(const char* className, const char* name, int flags = 0)
 	{
-		if (DissolveSys::sameString(className, "Array<XYData>")) return new GenericItemContainer< Array<XYData> >(name, flags);
+		if (DissolveSys::sameString(className, "Array<Data1D>")) return new GenericItemContainer< Array<Data1D> >(name, flags);
 		return NULL;
 	}
 

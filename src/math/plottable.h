@@ -43,7 +43,7 @@ class Plottable
 		ThreeDimensionalPlottable	/* Contains data points plotted againas three axes */
 	};
 
-	private:
+	protected:
 	// Name of plottable
 	CharString name_;
 
@@ -90,8 +90,12 @@ class Plottable
 	virtual double value(int xIndex, int yIndex, int zIndex) const;
 	// Return three-dimensional values Array
 	virtual const Array3D<double>& values3D() const;
-	// Return number of datapoints present in whole dataset
+	// Return number of data points present in the whole dataset
 	virtual int nDataPoints() const = 0;
+	// Return minimum value over all data points
+	virtual double minValue() const = 0;
+	// Return maximum value over all data points
+	virtual double maxValue() const = 0;
 };
 
 #endif

@@ -23,7 +23,7 @@
 #include "gui/uchroma/classes/collection.h"
 
 // Data Sources
-const char* DataSourceKeywords[] = { "File", "Internal", "XYData" };
+const char* DataSourceKeywords[] = { "File", "Internal", "Data1D" };
 
 // Convert text string to SettingsKeyword
 DataSet::DataSource DataSet::dataSource(const char* s)
@@ -45,7 +45,7 @@ DataSet::DataSet() : ListItem<DataSet>()
 	dataSource_ = DataSet::InternalSource;
 	name_ = "New DataSet";
 	parent_ = NULL;
-	sourceXYData_ = NULL;
+	sourceData1D_ = NULL;
 }
 
 // Destructor
@@ -67,7 +67,7 @@ void DataSet::operator=(const DataSet& source)
 	data_ = source.data_;
 	transformedData_ = source.transformedData_;
 	dataSource_ = source.dataSource_;
-	sourceXYData_ = source.sourceXYData_;
+	sourceData1D_ = source.sourceData1D_;
 }
 
 /*
@@ -120,10 +120,10 @@ const char* DataSet::sourceFileName()
 	return sourceFileName_.get();
 }
 
-// Return source XYData, if any
-const char* DataSet::sourceXYData() const
+// Return source Data1D, if any
+const char* DataSet::sourceData1D() const
 {
-	return sourceXYData_.get();
+	return sourceData1D_.get();
 }
 
 // Set associated data name
@@ -158,14 +158,14 @@ bool DataSet::refreshData(QDir sourceDir)
 		// Read in the data
 		return data_.load(qPrintable(sourceDir.absoluteFilePath(sourceFileName_.get())));
 	}
-	else if (dataSource_ == DataSet::XYDataSource)
+	else if (dataSource_ == DataSet::Data1DSource)
 	{
 		// Locate the data...
-		XYData* sourceData = XYData::findObject(sourceXYData_);
+		Data1D* sourceData = Data1D::findObject(sourceData1D_);
 		if (sourceData) setData(*sourceData);
 		else
 		{
-			Messenger::printVerbose("Couldn't locate data '%s' for display.\n", sourceXYData_.get());
+			Messenger::printVerbose("Couldn't locate data '%s' for display.\n", sourceData1D_.get());
 			data_.x().clear();
 			data_.y().clear();
 
@@ -178,26 +178,26 @@ bool DataSet::refreshData(QDir sourceDir)
 	return true;
 }
 
-// Set data from supplied XYData
-void DataSet::setData(XYData& source)
+// Set data from supplied Data1D
+void DataSet::setData(Data1D& source)
 {
 	data_ = source;
 
 	notifyParent();
 }
 
-// Set data from supplied XYData
+// Set data from supplied Data1D
 void DataSet::setSourceData(const char* xyDataObjectName)
 {
-	sourceXYData_ = xyDataObjectName;
+	sourceData1D_ = xyDataObjectName;
 
-	dataSource_ = DataSet::XYDataSource;
+	dataSource_ = DataSet::Data1DSource;
 
 	refreshData();
 }
 
 // Return data
-const XYData& DataSet::data() const
+const Data1D& DataSet::data() const
 {
 	return data_;
 }
@@ -237,7 +237,7 @@ void DataSet::transform(Transformer& xTransformer, Transformer& yTransformer, Tr
 }
 
 // Return transformed data
-const XYData& DataSet::transformedData() const
+const Data1D& DataSet::transformedData() const
 {
 	return transformedData_;
 }

@@ -94,7 +94,7 @@ bool SQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Transform g(r) into S(Q)
 		if (!calculateUnweightedSQ(procPool, cfg, unweightedgr, unweightedsq, qMin, qDelta, qMax, cfg->atomicDensity(), windowFunction, qBroadening)) return false;
 
-		// Set names of resources (XYData) within the PartialSet
+		// Set names of resources (Data1D) within the PartialSet
 		unweightedsq.setObjectTags(CharString("%s//%s//%s", cfg->niceName(), "SQ", "UnweightedSQ"));
 		unweightedsq.setFingerprint(CharString("%i", cfg->moduleData().version("UnweightedGR")));
 

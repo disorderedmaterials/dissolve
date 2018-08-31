@@ -20,18 +20,18 @@
 */
 
 #include "math/regression.h"
-#include "math/xydata.h"
+#include "math/data1d.h"
 #include "templates/array.h"
 
 // Return gradient of last n points
-double Regression::linear(const XYData& data, int nSamples)
+double Regression::linear(const Data1D& data, int nSamples)
 {
 	double yMean;
 	return linear(data, nSamples, yMean);
 }
 
 // Return gradient of last n points, along with average y value
-double Regression::linear(const XYData& data, int nSamples, double& yBar)
+double Regression::linear(const Data1D& data, int nSamples, double& yBar)
 {
 	// Grab data arrays
 	const Array<double>& x = data.constX();

@@ -146,7 +146,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	while (Module* module = allTargetsIterator.iterate())
 	{
 		// Realise the error array and make sure its object name is set
-		XYData& errors = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), CharString("Error_%s", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
+		Data1D& errors = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), CharString("Error_%s", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
 		errors.setObjectTag(CharString("%s//Error//%s", uniqueName_.get(), module->uniqueName()));
 
 		// Calculate our error based on the type of Module
@@ -155,8 +155,8 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		{
 			bool found;
 
-			// Retrieve the ReferenceData from the Module (as XYData)
-			const XYData& referenceData = GenericListHelper<XYData>::value(dissolve.processingModuleData(), "ReferenceData", module->uniqueName(), XYData(), &found);
+			// Retrieve the ReferenceData from the Module (as Data1D)
+			const Data1D& referenceData = GenericListHelper<Data1D>::value(dissolve.processingModuleData(), "ReferenceData", module->uniqueName(), Data1D(), &found);
 			if (!found)
 			{
 				Messenger::warn("Could not locate ReferenceData for target '%s'.\n", module->uniqueName());
@@ -170,12 +170,12 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				Messenger::warn("Could not locate associated weighted neutron PartialSet for target '%s'.\n", module->uniqueName());
 				return false;
 			}
-			XYData calcSQTotal = calcSQ.constTotal();
+			Data1D calcSQTotal = calcSQ.constTotal();
 
 			error = Error::percent(referenceData, calcSQTotal);
 
 			// Calculate difference
-			XYData& differenceData = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), CharString("DifferenceData_%s", module->uniqueName()), uniqueName(), GenericItem::InRestartFileFlag);
+			Data1D& differenceData = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), CharString("DifferenceData_%s", module->uniqueName()), uniqueName(), GenericItem::InRestartFileFlag);
 			differenceData.setObjectTag(CharString("%s//Difference//%s", uniqueName_.get(), module->uniqueName()));
 			differenceData = referenceData;
 			Interpolator::addInterpolated(differenceData, calcSQTotal, -1.0);
@@ -215,7 +215,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		bool found;
 
 		// Retrieve the reference (experimental) data for the target Module
-		const XYData& referenceData = GenericListHelper<XYData>::value(dissolve.processingModuleData(), "ReferenceData", module->uniqueName(), XYData(), &found);
+		const Data1D& referenceData = GenericListHelper<Data1D>::value(dissolve.processingModuleData(), "ReferenceData", module->uniqueName(), Data1D(), &found);
 		if (!found) return Messenger::error("Could not locate ReferenceData for target '%s'.\n", module->uniqueName());
 
 		// Retrieve the simulated data for the target Module
@@ -223,8 +223,8 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		if (!found) return Messenger::error("Could not locate WeightedSQ for target '%s'.\n", module->uniqueName());
 
 		// Get difference and fit function objects
-		XYData& deltaFQ = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), CharString("DeltaFQ_%s", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
-		XYData& deltaFQFit = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), CharString("DeltaFQFit_%s", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
+		Data1D& deltaFQ = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), CharString("DeltaFQ_%s", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
+		Data1D& deltaFQFit = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), CharString("DeltaFQFit_%s", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
 		deltaFQ.setObjectTag(CharString("%s//DeltaFQ//%s", uniqueName_.get(), module->uniqueName()));
 		deltaFQFit.setObjectTag(CharString("%s//DeltaFQFit//%s", uniqueName_.get(), module->uniqueName()));
 
@@ -232,13 +232,13 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		deltaFQ.clear();
 		const Array<double> x1 = referenceData.constX();
 		const Array<double> y1 = referenceData.constY();
-		XYData simulatedFQ = weightedSQ.constTotal();
+		Data1D simulatedFQ = weightedSQ.constTotal();
 		Interpolator interpolatedSimFQ(simulatedFQ);
 
 		// Determine allowable range for fit, based on requested values and limits of generated / simulated datasets.
 		double deltaSQMin = qMin, deltaSQMax = (qMax < 0.0 ? x1.lastValue() : qMax);
-		if ((deltaSQMin < x1.firstValue()) || (deltaSQMin < simulatedFQ.xMin())) deltaSQMin = max(x1.firstValue(), simulatedFQ.xMin());
-		if ((deltaSQMax > x1.lastValue()) || (deltaSQMax > simulatedFQ.xMax())) deltaSQMax = min(x1.lastValue(), simulatedFQ.xMax());
+		if ((deltaSQMin < x1.firstValue()) || (deltaSQMin < simulatedFQ.constX().firstValue())) deltaSQMin = max(x1.firstValue(), simulatedFQ.constX().firstValue());
+		if ((deltaSQMax > x1.lastValue()) || (deltaSQMax > simulatedFQ.constX().lastValue())) deltaSQMax = min(x1.lastValue(), simulatedFQ.constX().lastValue());
 
 		double x;
 		for (int n=0; n<x1.nItems(); ++n)
@@ -304,7 +304,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		}
 
 		// Calculate F(r)
-		XYData& simulatedFR = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), "SimulatedFR", module->uniqueName(), GenericItem::InRestartFileFlag);
+		Data1D& simulatedFR = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "SimulatedFR", module->uniqueName(), GenericItem::InRestartFileFlag);
 		simulatedFR.setObjectTag(CharString("%s//SimulatedFR//%s", uniqueName_.get(), module->uniqueName()));
 		simulatedFR = simulatedFQ;
 		Fourier::sineFT(simulatedFR, 1.0 / (2*PI*PI*GenericListHelper<double>::value(dissolve.processingModuleData(), "EffectiveRho", module->uniqueName(), 0.0)), 0.0, 0.03, 30.0, WindowFunction(WindowFunction::Lorch0Window));
@@ -345,7 +345,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		 */
 
 		// Create temporary storage for our summed UnweightedSQ, and related quantities such as density and sum factors
-		Array2D<XYData>& combinedUnweightedSQ = GenericListHelper< Array2D<XYData> >::realise(dissolve.processingModuleData(), "UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+		Array2D<Data1D>& combinedUnweightedSQ = GenericListHelper< Array2D<Data1D> >::realise(dissolve.processingModuleData(), "UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
 		Array2D<double> combinedRho, combinedFactor, combinedCWeights;
 		combinedUnweightedSQ.initialise(nAtomTypes, nAtomTypes, true);
 		combinedRho.initialise(nAtomTypes, nAtomTypes, true);
@@ -364,7 +364,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		}
 
 		// Realise storage for generated S(Q), and initialise a scattering matrix
-		Array2D<XYData>& generatedSQ = GenericListHelper< Array2D<XYData> >::realise(dissolve.processingModuleData(), "GeneratedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+		Array2D<Data1D>& generatedSQ = GenericListHelper< Array2D<Data1D> >::realise(dissolve.processingModuleData(), "GeneratedSQ", uniqueName_, GenericItem::InRestartFileFlag);
 		ScatteringMatrix scatteringMatrix;
 		scatteringMatrix.initialise(dissolve.atomTypeList(), generatedSQ, uniqueName_, group->name());
 
@@ -375,7 +375,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			bool found;
 
 			// Retrieve the reference data, associated Weights matrix and source unweighted and weighted partials
-			const XYData& referenceData = GenericListHelper<XYData>::value(dissolve.processingModuleData(), "ReferenceData", module->uniqueName(), XYData(), &found);
+			const Data1D& referenceData = GenericListHelper<Data1D>::value(dissolve.processingModuleData(), "ReferenceData", module->uniqueName(), Data1D(), &found);
 			if (!found) return Messenger::error("Could not locate ReferenceData for target '%s'.\n", module->uniqueName());
 
 			Weights& weights = GenericListHelper<Weights>::retrieve(dissolve.processingModuleData(), "FullWeights", module->uniqueName(), Weights(), &found);
@@ -392,7 +392,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			if (!found) return Messenger::error("Could not locate EffectiveRho for target '%s'.\n", module->uniqueName());
 
 			// Subtract intramolecular total from the reference data - this will enter into the ScatteringMatrix
-			XYData refMinusIntra = referenceData, boundTotal = weightedSQ.boundTotal(false);
+			Data1D refMinusIntra = referenceData, boundTotal = weightedSQ.boundTotal(false);
 			Interpolator::addInterpolated(refMinusIntra, boundTotal, -1.0);
 
 			// Add a row to our scattering matrix
@@ -409,7 +409,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					double globalI = atd1->atomType()->index();
 					double globalJ = atd2->atomType()->index();
 
-					XYData partialIJ = unweightedSQ.constUnboundPartial(i,j);
+					Data1D partialIJ = unweightedSQ.constUnboundPartial(i,j);
 					Interpolator::addInterpolated(combinedUnweightedSQ.at(globalI, globalJ ), partialIJ, factor);
 					combinedRho.at(globalI, globalJ) += rho * factor;
 					combinedFactor.at(globalI, globalJ) += factor;
@@ -445,7 +445,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 			{
 				// Copy the unweighted data and wight weight it according to the natural isotope / concentration factor calculated above
-				XYData data = combinedUnweightedSQ.at(i, j);
+				Data1D data = combinedUnweightedSQ.at(i, j);
 				data.setName(CharString("Simulated %s-%s", at1->name(), at2->name()));
 
 				// Add this partial data to the scattering matrix - its factored weight will be (1.0 - feedback)
@@ -474,7 +474,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Save data?
 		if (saveData)
 		{
-			XYData* generatedArray = generatedSQ.linearArray();
+			Data1D* generatedArray = generatedSQ.linearArray();
 			for (int n=0; n<generatedSQ.linearArraySize(); ++n) generatedArray[n].save(generatedArray[n].name());
 		}
 
@@ -502,7 +502,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		 * Calculate g(r) from generatedSQ
 		 */
 
-		Array2D<XYData>& generatedGR = GenericListHelper< Array2D<XYData> >::realise(dissolve.processingModuleData(), "GeneratedGR", uniqueName_, GenericItem::InRestartFileFlag);
+		Array2D<Data1D>& generatedGR = GenericListHelper< Array2D<Data1D> >::realise(dissolve.processingModuleData(), "GeneratedGR", uniqueName_, GenericItem::InRestartFileFlag);
 		generatedGR.initialise(dissolve.atomTypeList().nItems(), dissolve.atomTypeList().nItems(), true);
 		i = 0;
 		for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
@@ -511,7 +511,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 			{
 				// Grab experimental g(r) container and make sure its object name is set
-				XYData& expGR = generatedGR.at(i,j);
+				Data1D& expGR = generatedGR.at(i,j);
 				expGR.setObjectTag(CharString("%s//GeneratedGR//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
 
 				// Copy experimental S(Q) and FT it
@@ -624,7 +624,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	else energabs = absEnergyEP(dissolve);
 
 	// Realise the phiMag array and make sure its object name is set
-	XYData& phiArray = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), "EPMag", uniqueName_, GenericItem::InRestartFileFlag);
+	Data1D& phiArray = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "EPMag", uniqueName_, GenericItem::InRestartFileFlag);
 	phiArray.setObjectTag(CharString("%s//EPMag", uniqueName_.get()));
 	phiArray.addPoint(dissolve.iteration(), energabs);
 

@@ -24,6 +24,8 @@
 
 #include "module/module.h"
 #include "module/group.h"
+#include "math/broadeningfunction.h"
+#include "math/windowfunction.h"
 #include "classes/scatteringmatrix.h"
 #include "math/interpolator.h"
 
@@ -132,9 +134,9 @@ class RefineModule : public Module
 	// Full scattering matrix containing reference dat
 	ScatteringMatrix scatteringMatrix_;
 	// Simulated data added as reference data
-	Array<XYData> simulatedReferenceData_;
+	Array<Data1D> simulatedReferenceData_;
 	// Current data being fit by modifyBondTerms
-	XYData fitData_;
+	Data1D fitData_;
 	// Interpolation of current data being fit by modifyBondTerms
 	Interpolator interpolatedFitData_;
 	// Starting position and maximum delta to allow on the x-intercept while fitting
@@ -144,17 +146,17 @@ class RefineModule : public Module
 	// Add Module target to specified group
 	bool addTarget(const char* moduleTarget, const char* group);
 	// Calculate c(r) from supplied S(Q)
-	XYData calculateCR(const XYData& sq, double normFactor, double rMin, double rStep, double rMax, WindowFunction windowFunction = WindowFunction(), BroadeningFunction broadening = BroadeningFunction(), bool unbroaden = false);
+	Data1D calculateCR(const Data1D& sq, double normFactor, double rMin, double rStep, double rMax, WindowFunction windowFunction = WindowFunction(), BroadeningFunction broadening = BroadeningFunction(), bool unbroaden = false);
 	// Determine modification to bonds based on supplied delta g(r)
-	bool modifyBondTerms(Dissolve& dissolve, const XYData& deltaGR, AtomType* typeI, AtomType* typeJ, XYData& deltaBond);
+	bool modifyBondTerms(Dissolve& dissolve, const Data1D& deltaGR, AtomType* typeI, AtomType* typeJ, Data1D& deltaBond);
 	// Return value of fit equation given specified parameters
 	inline double fitEquation(double x, double xCentre, double delta, double widthSquared, double AL, double AC, double AR);
 	// Two-exponential, 5-parameter cost function for modifyBondTerms() fitting
 	double costFunction2Exp(const Array<double>& alpha);
 	// Three-exponential, 6-parameter cost function for modifyBondTerms() fitting
 	double costFunction3Exp(const Array<double>& alpha);
-	// Sum fitting equation with the specified parameters into the specified XYData
-	void sumFitEquation(XYData& target, double xCentre, double delta, double widthSquared, double AL, double AC, double AR);
+	// Sum fitting equation with the specified parameters into the specified Data1D
+	void sumFitEquation(Data1D& target, double xCentre, double delta, double widthSquared, double AL, double AC, double AR);
 
 	public:
 	// Return list of target Modules / data for fitting process

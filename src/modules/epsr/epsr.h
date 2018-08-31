@@ -25,7 +25,7 @@
 #include "module/module.h"
 #include "module/group.h"
 #include "classes/datastore.h"
-#include "math/xydata.h"
+#include "math/data1d.h"
 #include "templates/array3d.h"
 
 // Forward Declarations
@@ -124,7 +124,7 @@ class EPSRModule : public Module
 	// Target groups
 	List<ModuleGroup> targetGroups_;
 	// Simulated data added as reference data
-	Array<XYData> simulatedReferenceData_;
+	Array<Data1D> simulatedReferenceData_;
 
 	private:
 	// Add Module target to specified group
@@ -142,7 +142,7 @@ class EPSRModule : public Module
 	// Calculate absolute energy of empirical potentials
 	double absEnergyEP(Dissolve& dissolve);
 	// Truncate the supplied data
-	void truncate(XYData& data, double rMin, double rMax);
+	void truncate(Data1D& data, double rMin, double rMax);
 
 
 	/*

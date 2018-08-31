@@ -123,8 +123,8 @@ class EditState : public ListItem<EditState>
 	const char* stringData(const char* name, const List<EditStateData>& dataList, bool& result);
 	// Search for specified Collection data in list
 	Collection& collectionData(const char* name, const List<EditStateData>& dataList, bool& result);
-	// Search for specified XYData data in list
-	XYData& data2DData(const char* name, const List<EditStateData>& dataList, bool& result);
+	// Search for specified Data1D data in list
+	Data1D& data2DData(const char* name, const List<EditStateData>& dataList, bool& result);
 	// Search for specified LineStyle data in list
 	LineStyle lineStyleData(const char* name, const List<EditStateData>& dataList, bool& result);
 

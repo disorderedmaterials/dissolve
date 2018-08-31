@@ -183,18 +183,18 @@ PairPotential::CoulombTruncationScheme PairPotential::coulombTruncationScheme()
  * Source Parameters
  */
 
-// Set XYData names from source AtomTypes
-void PairPotential::setXYDataNames()
+// Set Data1D names from source AtomTypes
+void PairPotential::setData1DNames()
 {
 	// Check for NULL pointers
 	if (atomTypeI_ == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL AtomType pointer (atomTypeI_) found in PairPotential::setXYDataNames().\n");
+		Messenger::error("NULL_POINTER - NULL AtomType pointer (atomTypeI_) found in PairPotential::setData1DNames().\n");
 		return;
 	}
 	if (atomTypeJ_ == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL AtomType pointer (atomTypeJ_) found in PairPotential::setXYDataNames().\n");
+		Messenger::error("NULL_POINTER - NULL AtomType pointer (atomTypeJ_) found in PairPotential::setData1DNames().\n");
 		return;
 	}
 
@@ -228,7 +228,7 @@ bool PairPotential::setParameters(AtomType* typeI, AtomType* typeJ)
 	
 	atomTypeI_ = typeI;
 	atomTypeJ_ = typeJ;
-	setXYDataNames();
+	setData1DNames();
 	Parameters& paramsI = atomTypeI_->parameters();
 	Parameters& paramsJ = atomTypeJ_->parameters();
 
@@ -293,7 +293,7 @@ void PairPotential::setAtomTypes(AtomType* typeI, AtomType* typeJ)
 
 	atomTypeI_ = typeI;
 	atomTypeJ_ = typeJ;
-	setXYDataNames();
+	setData1DNames();
 }
 
 // Return first AtomType name
@@ -487,7 +487,7 @@ void PairPotential::calculateUFull()
 // Calculate derivative of potential
 void PairPotential::calculateDUFull()
 {
-	dUFull_.templateFrom(uFull_);
+	dUFull_.initialise(uFull_);
 
 	if (nPoints_ < 2) return;
 
@@ -549,7 +549,7 @@ bool PairPotential::setUp(double maxR, double delta, bool includeCoulomb)
 	uOriginal_.initialise(nPoints_);
 	calculateUOriginal(false);
 
-	// Set additional potential to zero (or load it - TODO) and update full potential
+	// Set additional potential to zero and update full potential
 	uAdditional_ = uOriginal_;
 	uAdditional_.y() = 0.0;
 	calculateUFull();
@@ -675,25 +675,25 @@ double PairPotential::analyticCoulombForce(double qiqj, double r, PairPotential:
 }
 
 // Return full tabulated potential (original plus additional)
-XYData& PairPotential::uFull()
+Data1D& PairPotential::uFull()
 {
 	return uFull_;
 }
 
 // Return full tabulated derivative
-XYData& PairPotential::dUFull()
+Data1D& PairPotential::dUFull()
 {
 	return dUFull_;
 }
 
 // Return original potential
-XYData& PairPotential::uOriginal()
+Data1D& PairPotential::uOriginal()
 {
 	return uOriginal_;
 }
 
 // Return additional potential
-XYData& PairPotential::uAdditional()
+Data1D& PairPotential::uAdditional()
 {
 	return uAdditional_;
 }
@@ -708,7 +708,7 @@ void PairPotential::resetUAdditional()
 }
 
 // Set additional potential
-void PairPotential::setUAdditional(XYData& newUAdditional)
+void PairPotential::setUAdditional(Data1D& newUAdditional)
 {
 	uAdditional_ = newUAdditional;
 
@@ -717,7 +717,7 @@ void PairPotential::setUAdditional(XYData& newUAdditional)
 }
 
 // Adjust additional potential, and recalculate UFull and dUFull
-void PairPotential::adjustUAdditional(XYData u, double factor)
+void PairPotential::adjustUAdditional(Data1D u, double factor)
 {
 	// Interpolate the supplied data 'u' and add it to the additional potential
 	Interpolator::addInterpolated(uAdditional_, u, factor);

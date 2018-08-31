@@ -23,6 +23,8 @@
 #define DISSOLVE_SQMODULE_H
 
 #include "module/module.h"
+#include "math/broadeningfunction.h"
+#include "math/windowfunction.h"
 #include "classes/partialset.h"
 #include "classes/datastore.h"
 

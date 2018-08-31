@@ -116,7 +116,7 @@ void Dissolve::registerGenericItems()
 	GenericItem::addItemClass(new GenericItemContainer<KVector>(KVector::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<IsotopologueMix>(IsotopologueMix::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<PartialSet>(PartialSet::itemClassName()));
-	GenericItem::addItemClass(new GenericItemContainer<XYData>(XYData::itemClassName()));
+	GenericItem::addItemClass(new GenericItemContainer<Data1D>(Data1D::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<Weights>(Weights::itemClassName()));
 }
 

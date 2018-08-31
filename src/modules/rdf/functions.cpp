@@ -734,7 +734,7 @@ bool RDFModule::testReferencePartials(PartialSet& setA, PartialSet& setB, double
 }
 
 // Test calculated partial against supplied reference data
-bool RDFModule::testReferencePartial(const PartialSet& partials, double testThreshold, const XYData& testData, const char* typeIorTotal, const char* typeJ, const char* target)
+bool RDFModule::testReferencePartial(const PartialSet& partials, double testThreshold, const Data1D& testData, const char* typeIorTotal, const char* typeJ, const char* target)
 {
 	// We either expect two AtomType names and a target next, or the target 'total'
 	bool testResult = false;
@@ -771,8 +771,8 @@ bool RDFModule::testReferencePartials(const DataStore& testData, double testThre
 	LineParser parser;
 
 	// Loop over supplied test data and see if we can locate it amongst our PartialSets
-	ListIterator<XYData> dataIterator(testData.data1D());
-	while (XYData* data = dataIterator.iterate())
+	ListIterator<Data1D> dataIterator(testData.data1D());
+	while (Data1D* data = dataIterator.iterate())
 	{
 		// Grab the name, replace hyphens with '-', and parse the string into arguments
 		CharString dataName = data->name();
@@ -797,8 +797,8 @@ bool RDFModule::testReferencePartials(const DataStore& testData, double testThre
 	LineParser parser;
 
 	// Loop over supplied test data and see if we can locate it amongst our PartialSets
-	ListIterator<XYData> dataIterator(testData.data1D());
-	while (XYData* data = dataIterator.iterate())
+	ListIterator<Data1D> dataIterator(testData.data1D());
+	while (Data1D* data = dataIterator.iterate())
 	{
 		// Grab the name, replace hyphens with '-', and parse the string into arguments
 		CharString dataName = data->name();

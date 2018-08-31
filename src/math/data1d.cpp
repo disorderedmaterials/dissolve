@@ -58,35 +58,31 @@ void Data1D::clear()
  * Data
  */
 
-// Initialise to be consistent with supplied Histogram1D object
-void Data1D::initialise(const Histogram1D& source)
+// Initialise arrays to specified size
+void Data1D::initialise(int size)
 {
-	clear();
+	x_.initialise(size);
+	y_.initialise(size);
+}
 
-	x_ = source.binCentres();
+// Initialise to be consistent in size and x axis with supplied object
+void Data1D::initialise(const Data1D& source)
+{
+	x_ = source.x_;
 	y_.initialise(x_.nItems());
+}
+
+// Copy arrays from supplied object
+void Data1D::copyArrays(const Data1D& source)
+{
+	x_ = source.x_;
+	y_ = source.y_;
 }
 
 // Zero values array
 void Data1D::zero()
 {
-	y_ = SampledDouble();
-}
-
-// Accumulate specified histogram data
-void Data1D::accumulate(const Histogram1D& source)
-{
-	// Check array sizes
-	if (x_.nItems() == 0) initialise(source);
-	else if (x_.nItems() != source.nBins())
-	{
-		Messenger::error("Can't add Histogram data - arrays are of different size.\n");
-		return;
-	}
-	else
-	{
-		for (int n=0; n<y_.nItems(); ++n) y_[n] += source.constBin(n);
-	}
+	y_ = 0.0;
 }
 
 // Add new data point
@@ -95,7 +91,6 @@ void Data1D::addPoint(double x, double y)
 	x_.add(x);
 	y_.add(y);
 }
-
 
 // Return x value specified
 double& Data1D::x(int index)
@@ -137,12 +132,12 @@ const Array<double>& Data1D::constX() const
 }
 
 // Return y value specified
-SampledDouble& Data1D::y(int index)
+double& Data1D::y(int index)
 {
 #ifdef CHECKS
 	if ((index < 0) || (index >= y_.nItems()))
 	{
-		static SampledDouble dummy;
+		static double dummy;
 		Messenger::error("OUT_OF_RANGE - Index %i is out of range for y_ array in Data1D::y().\n", index);
 		return dummy;
 	}
@@ -151,7 +146,7 @@ SampledDouble& Data1D::y(int index)
 }
 
 // Return y value specified (const)
-SampledDouble Data1D::constY(int index) const
+double Data1D::constY(int index) const
 {
 #ifdef CHECKS
 	if ((index < 0) || (index >= y_.nItems()))
@@ -164,13 +159,13 @@ SampledDouble Data1D::constY(int index) const
 }
 
 // Return y Array
-Array<SampledDouble>& Data1D::y()
+Array<double>& Data1D::y()
 {
 	return y_;
 }
 
 // Return y Array (const)
-const Array<SampledDouble>& Data1D::constY() const
+const Array<double>& Data1D::constY() const
 {
 	return y_;
 }
@@ -182,8 +177,98 @@ const Array<SampledDouble>& Data1D::constY() const
 // Operator =
 void Data1D::operator=(const Data1D& source)
 {
+	name_ = source.name_;
 	x_ = source.x_;
 	y_ = source.y_;
+}
+
+// Operator +=
+void Data1D::operator+=(const Data1D& source)
+{
+	// If no data is present, simply copy the other arrays
+	if (x_.nItems() == 0)
+	{
+		copyArrays(source);
+		return;
+	}
+
+	// Check array sizes
+	if (x_.nItems() != source.x_.nItems())
+	{
+		Messenger::error("Can't += these Data1D together since they are of differing sizes.\n");
+		return;
+	}
+
+	// Loop over points, summing them into our array
+	for (int n=0; n<x_.nItems(); ++n)
+	{
+#ifdef CHECKS
+		// Check x values for consistency
+		if (fabs(x_[n] - source.constX(n)) > 1.0e-6)
+		{
+			Messenger::error("Failed to += these Data1D together since the x arrays are different (at point %i, x are %e and %e).\n", n, x_[n], source.constX(n));
+			return;
+		}
+#endif
+		y_[n] += source.constY(n);
+	}
+}
+
+// Operator +=
+void Data1D::operator+=(const double dy)
+{
+	for (int n=0; n<y_.nItems(); ++n) y_[n] += dy;
+}
+
+// Operator -=
+void Data1D::operator-=(const Data1D& source)
+{
+	// If no data is present, simply copy the other arrays and negate the y array
+	if (x_.nItems() == 0)
+	{
+		copyArrays(source);
+		for (int n=0; n<y_.nItems(); ++n) y_[n] = -y_[n];
+		return;
+	}
+
+	// Check array sizes
+	if (x_.nItems() != source.x_.nItems())
+	{
+		Messenger::error("Can't -= these Data1D together since they are of differing sizes.\n");
+		return;
+	}
+
+	// Loop over points, summing them into our array
+	for (int n=0; n<x_.nItems(); ++n)
+	{
+#ifdef CHECKS
+		// Check x values for consistency
+		if (fabs(x_[n] - source.constX(n)) > 1.0e-6)
+		{
+			Messenger::error("Failed to -= these Data1D together since the x arrays are different (at point %i, x are %e and %e).\n", n, x_[n], source.constX(n));
+			return;
+		}
+#endif
+		y_[n] -= source.constY(n);
+	}
+}
+
+// Operator -=
+void Data1D::operator-=(const double dy)
+{
+	for (int n=0; n<y_.nItems(); ++n) y_[n] -= dy;
+}
+
+// Operator *=
+void Data1D::operator*=(const double factor)
+{
+	for (int n=0; n<y_.nItems(); ++n) y_[n] *= factor;
+}
+
+// Operator /=
+void Data1D::operator/=(const double factor)
+{
+	for (int n=0; n<y_.nItems(); ++n) y_[n] /= factor;
 }
 
 /*
@@ -322,6 +407,28 @@ int Data1D::nDataPoints() const
 	return x_.nItems();
 }
 
+// Return minimum value over all data points
+double Data1D::minValue() const
+{
+	if (y_.nItems() == 0) return 0.0;
+
+	double value = y_.constAt(0);
+	for (int n=1; n<y_.nItems(); ++n) if (y_.constAt(n) < value) value = y_.constAt(n);
+
+	return value;
+}
+
+// Return maximum value over all data points
+double Data1D::maxValue() const
+{
+	if (y_.nItems() == 0) return 0.0;
+
+	double value = y_.constAt(0);
+	for (int n=1; n<y_.nItems(); ++n) if (y_.constAt(n) > value) value = y_.constAt(n);
+
+	return value;
+}
+
 /*
  * GenericItemBase Implementations
  */
@@ -337,11 +444,8 @@ bool Data1D::write(LineParser& parser)
 {
 	if (!parser.writeLineF("%s\n", objectTag())) return false;
 	if (!parser.writeLineF("%i\n", x_.nItems())) return false;
-	for (int n=0; n<x_.nItems(); ++n)
-	{
-		if (!parser.writeLineF("%f\n", x_[n])) return false;
-		if (!y_.at(n).write(parser)) return false;
-	}
+	for (int n=0; n<x_.nItems(); ++n) if (!parser.writeLineF("%f  %f\n", x_[n], y_[n])) return false;
+
 	return true;
 }
 
@@ -362,7 +466,7 @@ bool Data1D::read(LineParser& parser)
 	{
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 		x_[n] = parser.argd(0);
-		if (!y_[n].read(parser)) return false;
+		y_[n] = parser.argd(1);
 	}
 
 	return true;
@@ -377,7 +481,7 @@ bool Data1D::broadcast(ProcessPool& procPool, int rootRank)
 {
 #ifdef PARALLEL
 	if (!procPool.broadcast(x_, rootRank)) return false;
-	for (int n=0; n<y_.nItems(); ++n) if (!y_[n].broadcast(procPool, rootRank)) return false;
+	if (!procPool.broadcast(y_, rootRank)) return false;
 #endif
 	return true;
 }
@@ -387,7 +491,7 @@ bool Data1D::equality(ProcessPool& procPool)
 {
 #ifdef PARALLEL
 	if (!procPool.equality(x_)) return Messenger::error("Data1D x axis values not equivalent.\n");
-	for (int n=0; n<y_.nItems(); ++n) if (!y_[n].equality(procPool)) return Messenger::error("Data1D values not equivalent.\n");
+	if (!procPool.equality(y_)) return Messenger::error("Data1D y axis values not equivalent.\n");
 #endif
 	return true;
 }

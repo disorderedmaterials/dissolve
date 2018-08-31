@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "math/xydata.h"
+#include "math/data1d.h"
 #include "base/lineparser.h"
 #include "math/error.h"
 #include "math/gaussfit.h"
@@ -27,7 +27,7 @@
 #include "math/praxis.h"
 
 // Constructor
-GaussFit::GaussFit(const XYData& referenceData)
+GaussFit::GaussFit(const Data1D& referenceData)
 {
 	referenceData_ = referenceData;
 
@@ -42,14 +42,14 @@ GaussFit::GaussFit(const XYData& referenceData)
 // Generate full approximation from current parameters
 void GaussFit::generateApproximation(FunctionSpace::SpaceType space)
 {
-	approximateData_.templateFrom(referenceData_);
+	approximateData_.initialise(referenceData_);
 
 	// Sum defined Gaussians
 	for (int n=0; n<nGaussians_; ++n) addFunction(approximateData_, space, x_.constAt(n), A_.constAt(n), fwhm_.constAt(n));
 }
 
-// Add contribution to specified XYData
-void GaussFit::addFunction(XYData& data, FunctionSpace::SpaceType space, double xCentre, double A, double fwhm) const
+// Add contribution to specified Data1D
+void GaussFit::addFunction(Data1D& data, FunctionSpace::SpaceType space, double xCentre, double A, double fwhm) const
 {
 	// Functional form of function to add depends on whether we're fitting Gaussians or FTs of Gaussians
 	if (space == FunctionSpace::RealSpace)
@@ -108,10 +108,10 @@ const Array<double>& GaussFit::A() const
 	return A_;
 }
 
-// Return amplitudes (and xCentres) as XYData
-XYData GaussFit::Ax() const
+// Return amplitudes (and xCentres) as Data1D
+Data1D GaussFit::Ax() const
 {
-	XYData data;
+	Data1D data;
 
 	data.x() = x_;
 	data.y() = A_;
@@ -161,8 +161,8 @@ bool GaussFit::saveFTGaussians(const char* filenamePrefix, double xStep) const
 		double fwhm = fwhm_.constAt(n);
 		if (!parser.writeLineF("#  x=%f  A=%f  fwhm=%f\n", xCentre, A, fwhm)) return false;
 
-		double x = referenceData_.xMin();
-		while (x < referenceData_.xMax())
+		double x = referenceData_.constX().firstValue();
+		while (x < referenceData_.constX().lastValue())
 		{
 			parser.writeLineF("%f  %f\n", x, gaussianFT(x, xCentre, A, fwhm));
 			x += xDelta;
@@ -175,15 +175,15 @@ bool GaussFit::saveFTGaussians(const char* filenamePrefix, double xStep) const
 }
 
 // Return approximate function
-const XYData& GaussFit::approximation() const
+const Data1D& GaussFit::approximation() const
 {
 	return approximateData_;
 }
 
 // Calculate and return approximate function in requested space
-XYData GaussFit::approximation(FunctionSpace::SpaceType space, double preFactor, double xMin, double xStep, double xMax, double fwhmFactor) const
+Data1D GaussFit::approximation(FunctionSpace::SpaceType space, double preFactor, double xMin, double xStep, double xMax, double fwhmFactor) const
 {
-	XYData ft;
+	Data1D ft;
 	double x = xMin;
 	while (x <= xMax)
 	{
@@ -316,12 +316,12 @@ double GaussFit::constructReal(double requiredError, int maxGaussians)
 	A_.clear();
 	fwhm_.clear();
 	nGaussians_ = 0;
-	approximateData_.templateFrom(referenceData_);
+	approximateData_.initialise(referenceData_);
 
 	const int regionWidth = 5, regionDelta = regionWidth / 2;
 	int lastSign = 0;
 	double gradient, trialX, trialA, trialFWHM, lastX;
-	XYData referenceDelta;
+	Data1D referenceDelta;
 
 	// Set starting error
 	currentError_ = 100.0;
@@ -443,7 +443,7 @@ double GaussFit::constructReciprocal(double rMin, double rMax, int nGaussians, d
 	A_.clear();
 	fwhm_.clear();
 	nGaussians_ = nGaussians;
-	approximateData_.templateFrom(referenceData_);
+	approximateData_.initialise(referenceData_);
 
 	double x, gDelta = rMax/nGaussians_;
 	for (int n=0; n<nGaussians_; ++n)
@@ -491,7 +491,7 @@ double GaussFit::constructReciprocal(double rMin, double rMax, const Array<doubl
 	x_.clear();
 	fwhm_.clear();
 	nGaussians_ = A_.nItems();
-	approximateData_.templateFrom(referenceData_);
+	approximateData_.initialise(referenceData_);
 	double x, gDelta = rMax/nGaussians_;
 	for (int n=0; n<nGaussians_; ++n)
 	{

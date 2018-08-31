@@ -423,7 +423,7 @@ bool UChromaBase::readDataSetBlock(LineParser& parser, DataSet* dataSet, Collect
 {
 	bool foundEnd;
 	DataSet::DataSource source;
-	XYData data;
+	Data1D data;
 	while (!parser.eofOrBlank())
 	{
 		// Get line from file
@@ -478,16 +478,16 @@ bool UChromaBase::readDataSetBlock(LineParser& parser, DataSet* dataSet, Collect
 						return false;
 					}
 				}
-				else if (source == DataSet::XYDataSource)
+				else if (source == DataSet::Data1DSource)
 				{
 					if (!parser.hasArg(2))
 					{
-						Messenger::error("Object name for XYData expected, but none found.\n");
+						Messenger::error("Object name for Data1D expected, but none found.\n");
 						return false;
 					}
-					// Locate XYData
-					XYData* sourceXYData = XYData::findObject(parser.argc(2));
-					if (!sourceXYData) Messenger::printVerbose("Couldn't locate specified XYData object (%s).\n", parser.argc(2));
+					// Locate Data1D
+					Data1D* sourceData1D = Data1D::findObject(parser.argc(2));
+					if (!sourceData1D) Messenger::printVerbose("Couldn't locate specified Data1D object (%s).\n", parser.argc(2));
 					dataSet->setSourceData(parser.argc(2));
 				}
 				break;

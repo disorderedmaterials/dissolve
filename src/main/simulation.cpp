@@ -269,7 +269,7 @@ bool Dissolve::iterate(int nIterations)
 			// Pair Potentials
 			for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next)
 			{
-				GenericListHelper<XYData>::realise(processingModuleData_, CharString("Potential_%s-%s_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ()), "Dissolve", GenericItem::InRestartFileFlag) = pot->uAdditional();
+				GenericListHelper<Data1D>::realise(processingModuleData_, CharString("Potential_%s-%s_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ()), "Dissolve", GenericItem::InRestartFileFlag) = pot->uAdditional();
 			}
 
 			/*

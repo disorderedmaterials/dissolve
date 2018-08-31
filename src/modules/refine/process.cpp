@@ -119,15 +119,15 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		while (Module* module = targetIterator.iterate())
 		{
 			// Realise the error array and make sure its object name is set
-			XYData& errors = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), CharString("Error_%s", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
+			Data1D& errors = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), CharString("Error_%s", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
 			errors.setObjectTag(CharString("%s//Error//%s", uniqueName_.get(), module->uniqueName()));
 
 			// Calculate our error based on the type of Module
 			double error = 100.0;
 			if (DissolveSys::sameString(module->name(), "NeutronSQ"))
 			{
-				// Retrieve the ReferenceData from the Module (as XYData)
-				const XYData& referenceData = GenericListHelper<XYData>::value(dissolve.processingModuleData(), "ReferenceData", module->uniqueName(), XYData(), &found);
+				// Retrieve the ReferenceData from the Module (as Data1D)
+				const Data1D& referenceData = GenericListHelper<Data1D>::value(dissolve.processingModuleData(), "ReferenceData", module->uniqueName(), Data1D(), &found);
 				if (!found)
 				{
 					Messenger::warn("Could not locate ReferenceData for target '%s'.\n", module->uniqueName());
@@ -141,12 +141,12 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					Messenger::warn("Could not locate associated weighted neutron PartialSet for target '%s'.\n", module->uniqueName());
 					return false;
 				}
-				XYData calcSQTotal = calcSQ.constTotal();
+				Data1D calcSQTotal = calcSQ.constTotal();
 
 				error = Error::percent(referenceData, calcSQTotal);
 
 				// Calculate difference
-				XYData& differenceData = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), CharString("DifferenceData_%s", module->uniqueName()), uniqueName());
+				Data1D& differenceData = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), CharString("DifferenceData_%s", module->uniqueName()), uniqueName());
 				differenceData.setObjectTag(CharString("%s//Difference//%s", uniqueName_.get(), module->uniqueName()));
 				differenceData = referenceData;
 				Interpolator::addInterpolated(differenceData, calcSQTotal, -1.0);
@@ -217,7 +217,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		 */
 
 		// Create temporary storage for our summed UnweightedSQ, and related quantities such as density and sum factors
-		Array2D<XYData>& combinedUnweightedSQ = GenericListHelper< Array2D<XYData> >::realise(dissolve.processingModuleData(), "UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+		Array2D<Data1D>& combinedUnweightedSQ = GenericListHelper< Array2D<Data1D> >::realise(dissolve.processingModuleData(), "UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
 		Array2D<double> combinedRho, combinedFactor, combinedCWeights;
 		combinedUnweightedSQ.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
 		combinedRho.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
@@ -236,7 +236,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		}
 
 		// Realise storage for generated S(Q), and reinitialise the scattering matrix
-		Array2D<XYData>&  generatedSQ = GenericListHelper< Array2D<XYData> >::realise(dissolve.processingModuleData(), "GeneratedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+		Array2D<Data1D>&  generatedSQ = GenericListHelper< Array2D<Data1D> >::realise(dissolve.processingModuleData(), "GeneratedSQ", uniqueName_, GenericItem::InRestartFileFlag);
 		scatteringMatrix_.initialise(dissolve.atomTypeList(), generatedSQ, uniqueName_, group->name());
 
 		// Get factor with which to add data, based on the requested AugmentationStyle
@@ -248,7 +248,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		while (Module* module = targetIterator.iterate())
 		{
 			// Retrieve the reference data and associated Weights matrix and source unweighted partials
-			const XYData& referenceData = GenericListHelper<XYData>::value(dissolve.processingModuleData(), "ReferenceData", module->uniqueName(), XYData(), &found);
+			const Data1D& referenceData = GenericListHelper<Data1D>::value(dissolve.processingModuleData(), "ReferenceData", module->uniqueName(), Data1D(), &found);
 			if (!found) return Messenger::error("Could not locate ReferenceData for target '%s'.\n", module->uniqueName());
 			Weights& weights = GenericListHelper<Weights>::retrieve(dissolve.processingModuleData(), "FullWeights", module->uniqueName(), Weights(), &found);
 			if (!found) return Messenger::error("Could not locate Weights for target '%s'.\n", module->uniqueName());
@@ -272,7 +272,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					double globalI = atd1->atomType()->index();
 					double globalJ = atd2->atomType()->index();
 
-					XYData partialIJ = unweightedSQ.constPartial(i,j);
+					Data1D partialIJ = unweightedSQ.constPartial(i,j);
 					Interpolator::addInterpolated(combinedUnweightedSQ.at(globalI, globalJ), partialIJ, factor);
 					combinedRho.at(globalI, globalJ) += rho * factor;
 					combinedFactor.at(globalI, globalJ) += factor;
@@ -314,7 +314,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					factor *= combinedCWeights.constAt(i,j);
 
 					// Copy the unweighted data and wight weight it according to the natural isotope / concentration factor calculated above
-					XYData data = combinedUnweightedSQ.at(i, j);
+					Data1D data = combinedUnweightedSQ.at(i, j);
 					data.y() *= factor;
 					data.setName(CharString("Simulated %s-%s", at1->name(), at2->name()));
 
@@ -346,7 +346,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		 * Calculate g(r) from generatedSQ
 		 */
 
-		Array2D<XYData>& generatedGR = GenericListHelper< Array2D<XYData> >::realise(dissolve.processingModuleData(), "GeneratedGR", uniqueName_, GenericItem::InRestartFileFlag);
+		Array2D<Data1D>& generatedGR = GenericListHelper< Array2D<Data1D> >::realise(dissolve.processingModuleData(), "GeneratedGR", uniqueName_, GenericItem::InRestartFileFlag);
 		generatedGR.initialise(dissolve.atomTypeList().nItems(), dissolve.atomTypeList().nItems(), true);
 		i = 0;
 		for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
@@ -355,7 +355,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 			{
 				// Grab experimental g(r) contained and make sure its object name is set
-				XYData& expGR = generatedGR.at(i,j);
+				Data1D& expGR = generatedGR.at(i,j);
 				expGR.setObjectTag(CharString("%s//GeneratedGR//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
 
 				// Copy experimental S(Q) and FT it
@@ -375,7 +375,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		/*
 		 * Construct matrix of difference partials (deltaSQ) for all AtomTypes
 		 */
-		Array2D<XYData>& deltaSQ = GenericListHelper< Array2D<XYData> >::realise(dissolve.processingModuleData(), "DeltaSQ", uniqueName_, GenericItem::InRestartFileFlag, &created);
+		Array2D<Data1D>& deltaSQ = GenericListHelper< Array2D<Data1D> >::realise(dissolve.processingModuleData(), "DeltaSQ", uniqueName_, GenericItem::InRestartFileFlag, &created);
 		if (created) deltaSQ.initialise(nTypes, nTypes, true);
 
 		i = 0;
@@ -385,7 +385,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 			{
 				// Grab difference partial and make sure its object name is set
-				XYData& dSQ = deltaSQ.at(i, j);
+				Data1D& dSQ = deltaSQ.at(i, j);
 				dSQ.setObjectTag(CharString("%s//DeltaSQ//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
 
 				// Reset the difference partial
@@ -394,15 +394,15 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				// Create the difference partial
 				const Array<double> x1 = generatedSQ.at(i, j).constX();
 				const Array<double> y1 = generatedSQ.at(i, j).constY();
-				XYData& simulatedSQ = combinedUnweightedSQ.at(i,j);
+				Data1D& simulatedSQ = combinedUnweightedSQ.at(i,j);
 				Interpolator interpolatedSimSQ(simulatedSQ);
 
 				// Determine allowable range for fit, based on requested values and limits of generated / simulated datasets
 				double deltaSQMin = qMin, deltaSQMax = (qMax < 0.0 ? x1.lastValue() : qMax);
-				if ((deltaSQMin < x1.firstValue()) || (deltaSQMin < simulatedSQ.xMin())) deltaSQMin = max(x1.firstValue(), simulatedSQ.xMin());
-				if ((deltaSQMax > x1.lastValue()) || (deltaSQMax > simulatedSQ.xMax())) deltaSQMax = min(x1.lastValue(), simulatedSQ.xMax());
+				if ((deltaSQMin < x1.firstValue()) || (deltaSQMin < simulatedSQ.constX().firstValue())) deltaSQMin = max(x1.firstValue(), simulatedSQ.constX().firstValue());
+				if ((deltaSQMax > x1.lastValue()) || (deltaSQMax > simulatedSQ.constX().lastValue())) deltaSQMax = min(x1.lastValue(), simulatedSQ.constX().lastValue());
 
-				XYData refSQTrimmed;
+				Data1D refSQTrimmed;
 				double x;
 				for (int n=0; n<x1.nItems(); ++n)
 				{
@@ -423,13 +423,13 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		 * Create perturbations to interatomic potentials
 		 */
 		const double weighting = keywords_.asDouble("Weighting");
-		Array2D<XYData>& groupDeltaPhiR = GenericListHelper< Array2D<XYData> >::realise(dissolve.processingModuleData(), CharString("DeltaPhiR_%s", group->name()), uniqueName_, GenericItem::InRestartFileFlag, &created);
+		Array2D<Data1D>& groupDeltaPhiR = GenericListHelper< Array2D<Data1D> >::realise(dissolve.processingModuleData(), CharString("DeltaPhiR_%s", group->name()), uniqueName_, GenericItem::InRestartFileFlag, &created);
 		if (created) groupDeltaPhiR.initialise(nTypes, nTypes, true);
-		Array2D<XYData>& groupDeltaGR = GenericListHelper< Array2D<XYData> >::realise(dissolve.processingModuleData(), CharString("DeltaGR_%s", group->name()), uniqueName_, GenericItem::InRestartFileFlag, &created);
+		Array2D<Data1D>& groupDeltaGR = GenericListHelper< Array2D<Data1D> >::realise(dissolve.processingModuleData(), CharString("DeltaGR_%s", group->name()), uniqueName_, GenericItem::InRestartFileFlag, &created);
 		if (created) groupDeltaGR.initialise(nTypes, nTypes, true);
 	// 	if (modifyBonds)
 	// 	{
-	// 		Array2D<XYData>& deltaGRBond = GenericListHelper< Array2D<XYData> >::realise(dissolve.processingModuleData(), "DeltaGRBond", uniqueName_, GenericItem::InRestartFileFlag, &created);
+	// 		Array2D<Data1D>& deltaGRBond = GenericListHelper< Array2D<Data1D> >::realise(dissolve.processingModuleData(), "DeltaGRBond", uniqueName_, GenericItem::InRestartFileFlag, &created);
 	// 		if (created) deltaGRBond.initialise(nTypes, nTypes, true);
 	// 	}
 
@@ -448,7 +448,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 				{
 					// Grab unbound g(r)
-					XYData& gr = summedUnweightedGR.unboundPartial(i, j);
+					Data1D& gr = summedUnweightedGR.unboundPartial(i, j);
 
 					// Find first non-zero (above the threshold value) point in g(r)
 					int n;
@@ -472,7 +472,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		const double ppRange = dissolve.pairPotentialRange();
 		const double ppDelta = dissolve.pairPotentialDelta();
 		double weight;
-		XYData cr;
+		Data1D cr;
 		Array<double> crgr;
 		i = 0;
 		for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
@@ -481,12 +481,12 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 			{
 				// Grab potential perturbation container, clear it, and make sure its object name is set
-				XYData& dPhiR = groupDeltaPhiR.at(i, j);
+				Data1D& dPhiR = groupDeltaPhiR.at(i, j);
 				dPhiR.clear();
 				dPhiR.setObjectTag(CharString("%s//DeltaPhiR//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
 
 				// Grab delta g(r) container and make sure its object name is set
-				XYData& inversion = groupDeltaGR.at(i, j);
+				Data1D& inversion = groupDeltaGR.at(i, j);
 				inversion.setObjectTag(CharString("%s//Inversion//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
 
 				// Set the default weighting factor for the pair potential addition
@@ -497,8 +497,8 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	// 			if (modifyBonds)
 	// 			{
 	// 				// Grab the deltaGRBond container and make sure its object name is set
-	// 				Array2D<XYData>& deltaGRBonds = GenericListHelper< Array2D<XYData> >::retrieve(dissolve.processingModuleData(), "DeltaGRBond", uniqueName_);
-	// 				XYData& deltaGRBond = deltaGRBonds.ref(i,j);
+	// 				Array2D<Data1D>& deltaGRBonds = GenericListHelper< Array2D<Data1D> >::retrieve(dissolve.processingModuleData(), "DeltaGRBond", uniqueName_);
+	// 				Data1D& deltaGRBond = deltaGRBonds.ref(i,j);
 	// 				deltaGRBond.setObjectTag(CharString("%s//DeltaGRBond//%s-%s", uniqueName_.get(), at1->name(), at2->name()));
 	// 
 	// 				if (!modifyBondTerms(dissolve, dGR, at1, at2, deltaGRBond)) return false;
@@ -645,7 +645,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		j = i;
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 		{
-			XYData& partialErrors = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), CharString("PartialError_%s-%s", at1->name(), at2->name()), uniqueName_, GenericItem::InRestartFileFlag);
+			Data1D& partialErrors = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), CharString("PartialError_%s-%s", at1->name(), at2->name()), uniqueName_, GenericItem::InRestartFileFlag);
 			// TODO This will be a straight sum of errors over groups, and may not be entirely representative? Needs to be weighted?
 			partialErrors.addPoint(dissolve.iteration(), globalCombinedErrors.constAt(i,j));
 		}
@@ -658,7 +658,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		{
 			// Get the delta phi(r) data for this group
 			if (!dissolve.processingModuleData().contains(CharString("DeltaPhiR_%s", group->name()), uniqueName())) return Messenger::error("Could not locate delta phi(r) data for group '%s'.\n", group->name());
-			const Array2D<XYData>& groupDeltaPhiR = GenericListHelper< Array2D<XYData> >::value(dissolve.processingModuleData(), CharString("DeltaPhiR_%s", group->name()), uniqueName_, Array2D<XYData>());
+			const Array2D<Data1D>& groupDeltaPhiR = GenericListHelper< Array2D<Data1D> >::value(dissolve.processingModuleData(), CharString("DeltaPhiR_%s", group->name()), uniqueName_, Array2D<Data1D>());
 
 			i = 0;
 			for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
@@ -669,7 +669,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					// Assess error of partial if requested, and decide whether to adjust potential
 					if (onlyWhenErrorStable)
 					{
-						const XYData& partialErrors = GenericListHelper<XYData>::value(dissolve.processingModuleData(), CharString("PartialError_%s-%s", at1->name(), at2->name()), uniqueName_);
+						const Data1D& partialErrors = GenericListHelper<Data1D>::value(dissolve.processingModuleData(), CharString("PartialError_%s-%s", at1->name(), at2->name()), uniqueName_);
 						if (partialErrors.nDataPoints() >= errorStabilityWindow)
 						{
 							double yMean;
@@ -730,7 +730,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	Messenger::print("Current magnitude of additional phi(r) over all pair potentials is %12.4e kJ/mol/Angstrom.\n", phiMagTot);
 
 	// Realise the phiMag array and make sure its object name is set
-	XYData& phiArray = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), "PhiMag", uniqueName_, GenericItem::InRestartFileFlag);
+	Data1D& phiArray = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "PhiMag", uniqueName_, GenericItem::InRestartFileFlag);
 	phiArray.setObjectTag(CharString("%s//PhiMag", uniqueName_.get()));
 	phiArray.addPoint(dissolve.iteration(), phiMagTot);
 

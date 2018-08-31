@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_DATASTORE_H
 #define DISSOLVE_DATASTORE_H
 
-#include "math/xydata.h"
+#include "math/data1d.h"
 #include "templates/list.h"
 
 // Forward Declarations
@@ -77,9 +77,9 @@ class DataStore
 	 */
 	private:
 	// List of contained one-dimensional data
-	List<XYData> data1D_;
-	// References for XYData and associated file information
-	RefList<XYData,FileReference> data1DReferences_;
+	List<Data1D> data1D_;
+	// References for Data1D and associated file information
+	RefList<Data1D,FileReference> data1DReferences_;
 
 	public:
 	// Load one-dimensional data into store
@@ -89,11 +89,11 @@ class DataStore
 	// Check to see if the named one-dimensional data is present in the store
 	bool containsData1D(const char* name) const;
 	// Return named one-dimensional data
-	const XYData& data1D(const char* name) const;
+	const Data1D& data1D(const char* name) const;
 	// Return list of all one-dimensional data
-	const List<XYData>& data1D() const;
+	const List<Data1D>& data1D() const;
 	// Return list of all one-dimensional data references
-	const RefList<XYData,FileReference>& data1DReferences() const;
+	const RefList<Data1D,FileReference>& data1DReferences() const;
 };
 
 #endif

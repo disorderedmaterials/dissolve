@@ -265,38 +265,38 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 	while (Module* targetModule = targetIterator.iterate())
 	{
 		// Reference data
-		blockData.sprintf("Collection '%s Exp'; Group '%s'; LineStyle 1.0 Solid; DataSet 'Reference'; Source XYData '%s//ReferenceData'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName());
+		blockData.sprintf("Collection '%s Exp'; Group '%s'; LineStyle 1.0 Solid; DataSet 'Reference'; Source Data1D '%s//ReferenceData'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName());
 		FQGraph_->addCollectionFromBlock(blockData);
 
 		// Calculated data from associated module
 		if (DissolveSys::sameString(targetModule->name(), "NeutronSQ"))
 		{
 			// F(Q)
-			blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated'; Source XYData '%s//WeightedSQ//Total'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName());
+			blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated'; Source Data1D '%s//WeightedSQ//Total'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName());
 			FQGraph_->addCollectionFromBlock(blockData);
 
 			// F(Q) diff w.r.t. reference
-			blockData.sprintf("Collection '%s Diff'; Group '%s'; LineStyle  1.0 'Dots'; DataSet '%s Error'; Source XYData '%s//Difference//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
+			blockData.sprintf("Collection '%s Diff'; Group '%s'; LineStyle  1.0 'Dots'; DataSet '%s Error'; Source Data1D '%s//Difference//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
 			FQGraph_->addCollectionFromBlock(blockData);
 
 			// Error of fit between F(Q) and reference
-			blockData.sprintf("Collection '%s Calc'; Group '%s'; DataSet '%s Error'; Source XYData '%s//Error//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
+			blockData.sprintf("Collection '%s Calc'; Group '%s'; DataSet '%s Error'; Source Data1D '%s//Error//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
 			errorsGraph_->addCollectionFromBlock(blockData);
 
 			// Reference F(r) (from direct FT of input data)
-			blockData.sprintf("Collection '%s Exp'; Group '%s'; LineStyle 1.0 Solid; DataSet 'Reference'; Source XYData '%s//ReferenceDataFT'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName());
+			blockData.sprintf("Collection '%s Exp'; Group '%s'; LineStyle 1.0 Solid; DataSet 'Reference'; Source Data1D '%s//ReferenceDataFT'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName());
 			FRGraph_->addCollectionFromBlock(blockData);
 
 			// Simulated F(r) (from FT of the calculated F(Q))
-			blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated'; Source XYData '%s//SimulatedFR//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
+			blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated'; Source Data1D '%s//SimulatedFR//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
 			FRGraph_->addCollectionFromBlock(blockData);
 		}
 
 		// Delta F(Q) and fit
-		blockData.sprintf("Collection '%s Delta'; Group '%s'; DataSet '%s Delta'; Source XYData '%s//DeltaFQ//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
+		blockData.sprintf("Collection '%s Delta'; Group '%s'; DataSet '%s Delta'; Source Data1D '%s//DeltaFQ//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
 		FQFitGraph_->addCollectionFromBlock(blockData);
 
-		blockData.sprintf("Collection '%s Fit'; Group '%s'; LineStyle  1.0 'Quarter Dash'; DataSet '%s Fit'; Source XYData '%s//DeltaFQFit//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
+		blockData.sprintf("Collection '%s Fit'; Group '%s'; LineStyle  1.0 'Quarter Dash'; DataSet '%s Fit'; Source Data1D '%s//DeltaFQFit//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
 		FQFitGraph_->addCollectionFromBlock(blockData);
 
 	}
@@ -318,15 +318,15 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 				 */
 
 				// Experimentally-determined unweighted partial
-				blockData.sprintf("Collection '%s Exp'; Group '%s'; DataSet 'Experimental %s'; Source XYData '%s//GeneratedSQ//%s//%s-%s'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
+				blockData.sprintf("Collection '%s Exp'; Group '%s'; DataSet 'Experimental %s'; Source Data1D '%s//GeneratedSQ//%s//%s-%s'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
 				SQGraph_->addCollectionFromBlock(blockData);
 
 				// Calculated / summed partial
-				blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated %s'; Source XYData '%s//UnweightedSQ//%s//%s-%s'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
+				blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated %s'; Source Data1D '%s//UnweightedSQ//%s//%s-%s'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
 				SQGraph_->addCollectionFromBlock(blockData);
 
 				// Deltas
-				blockData.sprintf("Collection '%s Diff'; Group '%s'; LineStyle 1.0 'Dots'; DataSet 'Delta %s'; Source XYData '%s//DeltaSQ//%s//%s-%s'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
+				blockData.sprintf("Collection '%s Diff'; Group '%s'; LineStyle 1.0 'Dots'; DataSet 'Delta %s'; Source Data1D '%s//DeltaSQ//%s//%s-%s'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
 				SQGraph_->addCollectionFromBlock(blockData);
 
 				/*
@@ -334,11 +334,11 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 				 */
 
 				// Experimentally-determined unweighted partial
-				blockData.sprintf("Collection '%s Exp'; Group '%s'; DataSet 'Experimental %s'; Source XYData '%s//GeneratedGR//%s//%s-%s'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
+				blockData.sprintf("Collection '%s Exp'; Group '%s'; DataSet 'Experimental %s'; Source Data1D '%s//GeneratedGR//%s//%s-%s'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
 				GRGraph_->addCollectionFromBlock(blockData);
 
 				// Calculated partial
-				blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated %s'; Source XYData '%s//UnweightedGR//%s//%s-%s//Full'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
+				blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated %s'; Source Data1D '%s//UnweightedGR//%s//%s-%s//Full'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
 				GRGraph_->addCollectionFromBlock(blockData);
 			}
 		}
@@ -353,13 +353,13 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 			CharString id("%s-%s", at1->name(), at2->name());
 
 			// Generated potential
-			blockData.sprintf("Collection '%s phi(r)'; Group '%s'; DataSet '%s phi(r)'; Source XYData 'PairPotential//%s-%s//Additional'; EndDataSet; EndCollection", id.get(), id.get(), id.get(),  at1->name(), at2->name());
+			blockData.sprintf("Collection '%s phi(r)'; Group '%s'; DataSet '%s phi(r)'; Source Data1D 'PairPotential//%s-%s//Additional'; EndDataSet; EndCollection", id.get(), id.get(), id.get(),  at1->name(), at2->name());
 			phiRGraph_->addCollectionFromBlock(blockData);
 		}
 	}
 
 	// Add phi magnitude data
-	blockData.sprintf("Collection 'EPMag'; Group 'EPMag'; DataSet 'EPMag'; Source XYData '%s//EPMag'; EndDataSet; EndCollection", module_->uniqueName());
+	blockData.sprintf("Collection 'EPMag'; Group 'EPMag'; DataSet 'EPMag'; Source Data1D '%s//EPMag'; EndDataSet; EndCollection", module_->uniqueName());
 	phiMagGraph_->addCollectionFromBlock(blockData);
 }
 

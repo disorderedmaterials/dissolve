@@ -20,7 +20,7 @@
 */
 
 #include "math/integrator.h"
-#include "math/xydata.h"
+#include "math/data1d.h"
 #include "templates/array.h"
 
 /*
@@ -28,7 +28,7 @@
  */
 
 // Compute integral of supplied data via trapezoid rule
-double Integrator::trapezoid(const XYData& data)
+double Integrator::trapezoid(const Data1D& data)
 {
 	// Check for insufficient data
 	if (data.nDataPoints() < 2) return 0.0;
@@ -50,7 +50,7 @@ double Integrator::trapezoid(const XYData& data)
 }
 
 // Compute absolute integral of supplied data via trapezoid rule
-double Integrator::absTrapezoid(const XYData& data)
+double Integrator::absTrapezoid(const Data1D& data)
 {
 	// Check for insufficient data
 	if (data.nDataPoints() < 2) return 0.0;
@@ -72,7 +72,7 @@ double Integrator::absTrapezoid(const XYData& data)
 }
 
 // Return sum of squares of all y values in supplied data
-double Integrator::sumOfSquares(const XYData& data)
+double Integrator::sumOfSquares(const Data1D& data)
 {
 	// Grab data array
 	const Array<double>& y = data.constY();

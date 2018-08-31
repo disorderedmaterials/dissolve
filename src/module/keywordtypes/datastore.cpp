@@ -84,8 +84,8 @@ bool DataStoreModuleKeyword::read(LineParser& parser, int startArg, ProcessPool&
 bool DataStoreModuleKeyword::write(LineParser& parser, const char* prefix)
 {
 	// Loop over list of one-dimensional data
-	RefListIterator<XYData,FileReference> dataIterator(data_.data1DReferences());
-	while (XYData* data = dataIterator.iterate())
+	RefListIterator<Data1D,FileReference> dataIterator(data_.data1DReferences());
+	while (Data1D* data = dataIterator.iterate())
 	{
 		FileReference ref = dataIterator.currentData();
 		if (!parser.writeLineF("%s%s  '%s'  '%s'  '%s'  %f\n", prefix, keyword(), ref.filename(), data->name(), ref.xColumn(), ref.yColumn())) return false;

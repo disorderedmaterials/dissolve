@@ -25,7 +25,7 @@
 #include "classes/atomtypelist.h"
 #include "classes/weights.h"
 #include "math/histogram1d.h"
-#include "math/xydata.h"
+#include "math/data1d.h"
 #include "templates/list.h"
 #include "templates/array2d.h"
 
@@ -60,15 +60,15 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	// Histograms used for deriving unbound atom-atom partials in r
 	Array2D<Histogram1D> unboundHistograms_;
 	// Pair matrix, containing full atom-atom partial
-	Array2D<XYData> partials_;
+	Array2D<Data1D> partials_;
 	// Unbound matrix, containing atom-atom partial of pairs not joined by bonds or angles
-	Array2D<XYData> unboundPartials_;
+	Array2D<Data1D> unboundPartials_;
 	// Bound matrix, containing atom-atom partial of pairs joined by bonds or angles
-	Array2D<XYData> boundPartials_;
+	Array2D<Data1D> boundPartials_;
 	// Bragg matrix, derived from summation of HKL terms
-	Array2D<XYData> braggPartials_;
+	Array2D<Data1D> braggPartials_;
 	// Total function
-	XYData total_;
+	Data1D total_;
 	// Prefix applied to object names
 	CharString objectNamePrefix_;
 
@@ -98,38 +98,38 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	// Return unbound histogram specified
 	Histogram1D& unboundHistogram(int i, int j);
 	// Return full atom-atom partial specified
-	XYData& partial(int i, int j);
+	Data1D& partial(int i, int j);
 	// Return full atom-atom partial specified (const)
-	XYData& constPartial(int i, int j) const;
+	Data1D& constPartial(int i, int j) const;
 	// Return atom-atom partial for pairs not joined by bonds or angles
-	XYData& unboundPartial(int i, int j);
+	Data1D& unboundPartial(int i, int j);
 	// Return atom-atom partial for pairs not joined by bonds or angles (const)
-	XYData& constUnboundPartial(int i, int j) const;
+	Data1D& constUnboundPartial(int i, int j) const;
 	// Return atom-atom partial for pairs joined by bonds or angles
-	XYData& boundPartial(int i, int j);
+	Data1D& boundPartial(int i, int j);
 	// Return atom-atom partial for pairs joined by bonds or angles (const)
-	XYData& constBoundPartial(int i, int j) const;
+	Data1D& constBoundPartial(int i, int j) const;
 	// Return atom-atom Bragg partial
-	XYData& braggPartial(int i, int j);
+	Data1D& braggPartial(int i, int j);
 	// Return atom-atom Bragg partial (const)
-	XYData& constBraggPartial(int i, int j) const;
+	Data1D& constBraggPartial(int i, int j) const;
 	// Sum partials into total
 	void formTotal(bool applyConcentrationWeights);
 	// Return total function
-	XYData& total();
+	Data1D& total();
 	// Return copy of total function
-	XYData constTotal() const;
+	Data1D constTotal() const;
 	// Calculate and return total bound function
-	XYData boundTotal(bool applyConcentrationWeights) const;
+	Data1D boundTotal(bool applyConcentrationWeights) const;
 	// Calculate and return total unbound function
-	XYData unboundTotal(bool applyConcentrationWeights) const;
+	Data1D unboundTotal(bool applyConcentrationWeights) const;
 	// Save all partials and total
 	bool save();
 	// Name all object based on the supplied prefix
 	void setObjectTags(const char* prefix, const char* suffix = NULL);
 	// Return prefix applied to object names
 	const char* objectNamePrefix() const;
-	// Set underlying XYData file names
+	// Set underlying Data1D file names
 	void setFileNames(const char* prefix, const char* tag, const char* suffix);
 
 
@@ -148,7 +148,7 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	// Re-weight partials (including total) with supplied weighting factor
 	void reweightPartials(double factor);
 	// Calculate RDF from supplied Histogram and normalisation data
-	static void calculateRDF(XYData& destination, Histogram1D& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, Interpolator& boxNormalisation);
+	static void calculateRDF(Data1D& destination, Histogram1D& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, Interpolator& boxNormalisation);
 
 
 	/*
