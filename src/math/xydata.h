@@ -62,11 +62,11 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	// Initialise arrays to specified size
 	void initialise(int size);
 	// Copy existing X and Y data
-	void copyData(const XYData& source);
+	void copyArrays(const XYData& source);
 	// Copy existing X data and generate empty Y
 	void templateFrom(const XYData& source);
 	// Return number of defined datapoints
-	int nPoints() const;
+	int nDataPoints() const;
 	// Return x value specified
 	double& x(int index);
 	// Return x value specified (const)

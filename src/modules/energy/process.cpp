@@ -321,7 +321,7 @@ bool EnergyModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			// Check number of points already stored for the Configuration
 			double grad = 0.0;
 			bool stable = false;
-			if (stabilityWindow > totalEnergyArray.nPoints()) Messenger::print("Too few points to assess stability.\n");
+			if (stabilityWindow > totalEnergyArray.nDataPoints()) Messenger::print("Too few points to assess stability.\n");
 			else
 			{
 				double yMean;

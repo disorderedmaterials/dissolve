@@ -240,7 +240,7 @@ bool Configuration::setUpBox(ProcessPool& procPool, double ppRange, int nExpecte
 		}
 
 		// Did we successfully load the file?
-		if (boxNormalisation_.nPoints() <= 1)
+		if (boxNormalisation_.nDataPoints() <= 1)
 		{
 			// Only calculate if RDF range is greater than the inscribed sphere radius
 			if (rdfRange_ <= inscribedSphereRadius)

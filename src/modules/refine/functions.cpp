@@ -70,7 +70,7 @@ XYData RefineModule::calculateCR(const XYData& sq, double normFactor, double rMi
 	// Get delta0
 	//const double delta0 = PI / sq.xLast();
 
-	int nQ = sq.nPoints();
+	int nQ = sq.nDataPoints();
 
 	// Perform Fourier sine transform, apply general and omega-dependent broadening, as well as window function
 	double ft, window, broaden;
@@ -360,7 +360,7 @@ double RefineModule::costFunction2Exp(const Array<double>& alpha)
 // Sum fitting equation with the specified parameters into the specified XYData
 void RefineModule::sumFitEquation(XYData& target, double xCentre, double delta, double width, double AL, double AC, double AR)
 {
-	for (int n=0; n<target.nPoints(); ++n) target.y(n) += fitEquation(target.x(n), xCentre, delta, width, AL, AC, AR);
+	for (int n=0; n<target.nDataPoints(); ++n) target.y(n) += fitEquation(target.x(n), xCentre, delta, width, AL, AC, AR);
 }
 
 // Return list of target Modules / data for fitting process

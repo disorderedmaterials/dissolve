@@ -334,7 +334,7 @@ bool BraggModule::calculateUnweightedBraggSQ(ProcessPool& procPool, Configuratio
 				if (inten > 0.01) printf("BRG  %i  %i  %i  %f  %f\n", typeI, typeJ, n, qCentre, inten);
 
 				// Loop over points in braggSQ XYData (which will provide our Q values)
-				for (int m=0; m<braggSQ.nPoints(); ++m)
+				for (int m=0; m<braggSQ.nDataPoints(); ++m)
 				{
 					// Get q value from array
 					//q = braggSQ.x(m);

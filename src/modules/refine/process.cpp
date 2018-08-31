@@ -158,7 +158,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			Messenger::print("Current error for reference data '%s' is %f%%.\n", module->uniqueName(), error);
 
 			// Assess the stability of the current error
-			if (errorStabilityWindow > errors.nPoints()) ++nUnstableData;
+			if (errorStabilityWindow > errors.nDataPoints()) ++nUnstableData;
 			else
 			{
 				double yMean;
@@ -452,8 +452,8 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 					// Find first non-zero (above the threshold value) point in g(r)
 					int n;
-					for (n=0; n<gr.nPoints(); ++n) if (gr.y(n) > thresholdValue) break;
-					if (n < gr.nPoints())
+					for (n=0; n<gr.nDataPoints(); ++n) if (gr.y(n) > thresholdValue) break;
+					if (n < gr.nDataPoints())
 					{
 						double x = gr.x(n) * rFraction;
 						if (x < globalMinimumRadius) minimumRadii.at(i,j) = globalMinimumRadius;
@@ -616,7 +616,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				const double truncationStart = minimumRadius - truncationWidth;
 				double r;
 				Array<double>& y = dPhiR.y();
-				for (int n=0; n<dPhiR.nPoints(); ++n)
+				for (int n=0; n<dPhiR.nDataPoints(); ++n)
 				{
 					r = dPhiR.x(n);
 					if (r < truncationStart) y[n] = 0.0;
@@ -628,7 +628,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				if (smoothPhiR) Filters::kolmogorovZurbenkoFilter(dPhiR, phiRSmoothK, phiRSmoothM);
 
 				// Make sure we go smoothly to zero at the limit of the potential
-				for (int n=0; n<dPhiR.nPoints(); ++n) dPhiR.y(n) *= 1.0 - double(n)/(dPhiR.nPoints()-1);
+				for (int n=0; n<dPhiR.nDataPoints(); ++n) dPhiR.y(n) *= 1.0 - double(n)/(dPhiR.nDataPoints()-1);
 
 				// Apply factor to additional potential
 				dPhiR.y() *= weight;
@@ -670,7 +670,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					if (onlyWhenErrorStable)
 					{
 						const XYData& partialErrors = GenericListHelper<XYData>::value(dissolve.processingModuleData(), CharString("PartialError_%s-%s", at1->name(), at2->name()), uniqueName_);
-						if (partialErrors.nPoints() >= errorStabilityWindow)
+						if (partialErrors.nDataPoints() >= errorStabilityWindow)
 						{
 							double yMean;
 							double grad = Regression::linear(partialErrors, errorStabilityWindow, yMean);

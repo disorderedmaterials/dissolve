@@ -32,17 +32,17 @@ void Filters::medianFilter(XYData& data, int length)
 
 	double window[length], avg, result;
 	int m, i = length/2, n = length/2, miny, maxy;
-	Array<double> newY(data.nPoints());
+	Array<double> newY(data.nDataPoints());
 	
 	// Set boundary values
 	for (m=0; m<n; ++m)
 	{
 		newY[m] = y[m];
-		newY[data.nPoints()-1-m] = y[data.nPoints()-1-m];
+		newY[data.nDataPoints()-1-m] = y[data.nDataPoints()-1-m];
 	}
 
 	// Now loop over remaining points
-	while (n < (data.nPoints()-i))
+	while (n < (data.nDataPoints()-i))
 	{
 		// Grab data values, and determine min/max values
 		miny = 0;
@@ -82,7 +82,7 @@ void Filters::movingAverage(XYData& data, int avgSize)
 	// Make sure avgSize is odd
 	if (avgSize%2 == 0) --avgSize;
 
-	Array<double> newY(data.nPoints());
+	Array<double> newY(data.nDataPoints());
 	newY = 0.0;
 	int n, m, i = avgSize/2;
 
@@ -94,17 +94,17 @@ void Filters::movingAverage(XYData& data, int avgSize)
 	}
 
 	// Central region (full average width available)
-	for (n=i; n < data.nPoints()-i; ++n)
+	for (n=i; n < data.nDataPoints()-i; ++n)
 	{
 		for (m=n-i; m <= n+i; ++m) newY[n] += y[m];
 		newY[n] /= avgSize;
 	}
 
 	// Right-most region of data
-	for (n=data.nPoints()-i; n<data.nPoints(); ++n)
+	for (n=data.nDataPoints()-i; n<data.nDataPoints(); ++n)
 	{
-		for (m=n-i; m<data.nPoints(); ++m) newY[n] += y[m];
-		newY[n] /= (data.nPoints() - n + i + 1);
+		for (m=n-i; m<data.nDataPoints(); ++m) newY[n] += y[m];
+		newY[n] /= (data.nDataPoints() - n + i + 1);
 	}
 
 	y = newY;
@@ -123,7 +123,7 @@ void Filters::convolve(XYData& data, BroadeningFunction function)
 	const Array<double>& x = data.constX();
 	Array<double>& y = data.y();
 
-	Array<double> newY(data.nPoints());
+	Array<double> newY(data.nDataPoints());
 
 	// Outer loop over existing data points
 	double xCentre, xBroad;

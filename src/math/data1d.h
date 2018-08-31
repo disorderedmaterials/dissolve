@@ -54,16 +54,36 @@ class Data1D : public Plottable, public ListItem<Data1D>, public ObjectStore<Dat
 	Array<SampledDouble> y_;
 
 	public:
-	// Initialise to be consistent with supplied Histogram1D object
+	// Initialise arrays to specified size
+	void initialise(int size);
+	// Initialise to be consistent with supplied Data1D object
 	void initialise(const Histogram1D& source);
+	// Initialise to be consistent with supplied Histogram1D object
+	void initialise(const Data1D& source);
+	// Copy arrays from supplied object
+	void copyArrays(const Data1D& source);
 	// Zero values array
 	void zero();
 	// Accumulate specified histogram data
 	void accumulate(const Histogram1D& source);
-	// Return x axis Array
-	const Array<double>& x() const;
-	// Return Array of accumulated values
-	const Array<SampledDouble>& y() const;
+	// Add new data point
+	void addPoint(double x, double y);
+	// Return x value specified
+	double& x(int index);
+	// Return x value specified (const)
+	double constX(int index) const;
+	// Return x Array
+	Array<double>& x();
+	// Return x Array (const)
+	const Array<double>& constX() const;
+	// Return y value specified
+	SampledDouble& y(int index);
+	// Return y value specified (const)
+	SampledDouble constY(int index) const;
+	// Return y Array
+	Array<SampledDouble>& y();
+	// Return y Array (const)
+	const Array<SampledDouble>& constY() const;
 
 
 	/*
@@ -91,6 +111,20 @@ class Data1D : public Plottable, public ListItem<Data1D>, public ObjectStore<Dat
 
 
 	/*
+	 * File I/O
+	 */
+	public:
+	// Load data from specified LineParser, using columns specified
+	bool load(LineParser& parser, int xcol = 0, int ycol = 1);
+	// Load data from specified file, using columns specified
+	bool load(const char* filename, int xcol = 0, int ycol = 1);
+	// Load data from specified file through ProcessPool, using columns specified
+	bool load(ProcessPool& pool, const char* filename, int xcol = 0, int ycol = 1);
+	// Save data to specified file
+	bool save(const char* filename) const;
+
+
+	/*
 	 * Plottable Implementation
 	 */
 	public:
@@ -106,6 +140,8 @@ class Data1D : public Plottable, public ListItem<Data1D>, public ObjectStore<Dat
 	double xAxisMax() const;
 	// Return x axis Array
 	const Array<double>& xAxis() const;
+	// Return number of datapoints present in whole dataset
+	int nDataPoints() const;
 
 
 	/*

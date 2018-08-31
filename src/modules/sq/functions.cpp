@@ -47,16 +47,16 @@ bool SQModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, 
 		for (int m=n; m<nTypes; ++m)
 		{
 			// Total partial
-			unweightedsq.partial(n,m).copyData(unweightedgr.constPartial(n,m));
+			unweightedsq.partial(n,m).copyArrays(unweightedgr.constPartial(n,m));
 			unweightedsq.partial(n,m).y() -= 1.0;
 			if (!Fourier::sineFT(unweightedsq.partial(n,m), 4.0*PI*rho, qMin, qDelta, qMax, windowFunction, broadening)) return false;
 
 			// Bound partial
-			unweightedsq.boundPartial(n,m).copyData(unweightedgr.constBoundPartial(n,m));
+			unweightedsq.boundPartial(n,m).copyArrays(unweightedgr.constBoundPartial(n,m));
 			if (!Fourier::sineFT(unweightedsq.boundPartial(n,m), 4.0*PI*rho, qMin, qDelta, qMax, windowFunction, broadening)) return false;
 
 			// Unbound partial
-			unweightedsq.unboundPartial(n,m).copyData(unweightedgr.constUnboundPartial(n,m));
+			unweightedsq.unboundPartial(n,m).copyArrays(unweightedgr.constUnboundPartial(n,m));
 			unweightedsq.unboundPartial(n,m).y() -= 1.0;
 			if (!Fourier::sineFT(unweightedsq.unboundPartial(n,m), 4.0*PI*rho, qMin, qDelta, qMax, windowFunction, broadening)) return false;
 

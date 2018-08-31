@@ -81,6 +81,8 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
 	void bin(double x);
 	// Return Array of x centre-bin values
 	const Array<double>& binCentres() const;
+	// Return specified bin value
+	int constBin(int index) const;
 	// Return histogram data
 	Array<long int>& bins();
 	// Add source histogram data into local array

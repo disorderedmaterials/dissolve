@@ -253,7 +253,7 @@ void DataWindow::on_ReloadFilesButton_clicked(bool checked)
 			while (dataSet != NULL)
 			{
 				nextDataSet = dataSet->next;
-				if (dataSet->data().nPoints() == 0) currentCollection->removeDataSet(dataSet);
+				if (dataSet->data().nDataPoints() == 0) currentCollection->removeDataSet(dataSet);
 				dataSet = nextDataSet;
 			}
 		}
@@ -321,7 +321,7 @@ void DataWindow::updateControls(bool force)
 		ui.DataSetsTable->setItem(count, 0, item);
 
 		// Create nPoints item
-		item = new QTableWidgetItem(QString::number(dataSet->data().nPoints()));
+		item = new QTableWidgetItem(QString::number(dataSet->data().nDataPoints()));
 		item->setData(Qt::UserRole, VariantPointer<DataSet>(dataSet));
 		item->setFlags(Qt::ItemIsSelectable);
 		ui.DataSetsTable->setItem(count, 1, item);

@@ -146,6 +146,12 @@ const Array<double>& Histogram1D::binCentres() const
 	return binCentres_;
 }
 
+// Return specified bin value
+int Histogram1D::constBin(int index) const
+{
+	return bins_.constAt(index);
+}
+
 // Return histogram data
 Array<long int>& Histogram1D::bins()
 {

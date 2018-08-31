@@ -74,7 +74,7 @@ void XYData::initialise(int size)
 }
 
 // Copy existing X and Y data
-void XYData::copyData(const XYData& source)
+void XYData::copyArrays(const XYData& source)
 {
 	x_ = source.x_;
 	y_ = source.y_;
@@ -89,7 +89,7 @@ void XYData::templateFrom(const XYData& source)
 }
 
 // Return number of defined datapoints
-int XYData::nPoints() const
+int XYData::nDataPoints() const
 {
 	return x_.nItems();
 }
@@ -235,7 +235,7 @@ XYData XYData::operator+(const XYData& source) const
 void XYData::operator+=(const XYData& source)
 {
 	// If source array is empty, nothing to do
-	if (source.nPoints() == 0) return;
+	if (source.nDataPoints() == 0) return;
 
 	// Initialise current arrays?
 	if (x_.nItems() == 0) templateFrom(source);
@@ -402,7 +402,7 @@ bool XYData::load(LineParser& parser, int xcol, int ycol)
 		addPoint(parser.argd(xcol), parser.argd(ycol));
 	}
 
-	Messenger::printVerbose("Read %i points from '%s' (columns %i and %i).\n", nPoints(), parser.inputFilename(), xcol+1, ycol+1);
+	Messenger::printVerbose("Read %i points from '%s' (columns %i and %i).\n", nDataPoints(), parser.inputFilename(), xcol+1, ycol+1);
 
 	return true;
 }
@@ -479,8 +479,8 @@ bool XYData::write(LineParser& parser)
 {
 	if (!parser.writeLineF("'%s'\n", name_.get())) return false;
 	if (!parser.writeLineF("%s\n", objectTag())) return false;
-	if (!parser.writeLineF("%i\n", nPoints())) return false;
-	for (int n=0; n<nPoints(); ++n) if (!parser.writeLineF("%16.9e %16.9e\n", x_.constAt(n), y_.constAt(n))) return false;
+	if (!parser.writeLineF("%i\n", nDataPoints())) return false;
+	for (int n=0; n<nDataPoints(); ++n) if (!parser.writeLineF("%16.9e %16.9e\n", x_.constAt(n), y_.constAt(n))) return false;
 	return true;
 }
 
@@ -528,8 +528,8 @@ bool XYData::equality(ProcessPool& procPool)
 {
 #ifdef PARALLEL
 	// Check number of items in arrays first
-	if (!procPool.equality(nPoints())) return Messenger::error("XYData number of points is not equivalent (process %i has %i).\n", procPool.poolRank(), nPoints());
-	for (int n=0; n<nPoints(); ++n)
+	if (!procPool.equality(nDataPoints())) return Messenger::error("XYData number of points is not equivalent (process %i has %i).\n", procPool.poolRank(), nDataPoints());
+	for (int n=0; n<nDataPoints(); ++n)
 	{
 		if (!procPool.equality(x_[n])) return Messenger::error("XYData x value %i is not equivalent (process %i has %e).\n", n, procPool.poolRank(), x_[n]);
 		if (!procPool.equality(y_[n])) return Messenger::error("XYData y value %i is not equivalent (process %i has %e).\n", n, procPool.poolRank(), y_[n]);

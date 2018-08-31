@@ -181,7 +181,7 @@ void EPSRModule::truncate(XYData& data, double rMin, double rMax)
 	double x;
 	Array<double>& y = data.y();
 	const double decay = rMax - rMin;
-	for (int n=0; n<data.nPoints(); ++n)
+	for (int n=0; n<data.nDataPoints(); ++n)
 	{
 		x = data.x(n);
 

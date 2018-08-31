@@ -75,12 +75,12 @@ bool EditDataSetDialog::call(DataSet* target)
 	
 	// Update table
 	ui.DataTable->clearContents();
-	ui.DataTable->setRowCount(dataSet_.data().nPoints());
+	ui.DataTable->setRowCount(dataSet_.data().nDataPoints());
 
 	const Array<double>& x = dataSet_.x();
 	const Array<double>& y = dataSet_.y();
 	QTableWidgetItem* item;
-	for (int n=0; n<dataSet_.data().nPoints(); ++n)
+	for (int n=0; n<dataSet_.data().nDataPoints(); ++n)
 	{
 		item = new QTableWidgetItem(QString::number(x.constAt(n)));
 		item->setFlags(Qt::ItemIsSelectable);

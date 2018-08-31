@@ -454,7 +454,7 @@ const char* Collection::uniqueDataSetName(const char* baseName)
 int Collection::nEmptyDataSets()
 {
 	int count = 0;
-	for (DataSet* dataSet = dataSets_.first(); dataSet != NULL; dataSet = dataSet->next) if (dataSet->data().nPoints() < 2) ++count;
+	for (DataSet* dataSet = dataSets_.first(); dataSet != NULL; dataSet = dataSet->next) if (dataSet->data().nDataPoints() < 2) ++count;
 	return count;
 }
 
@@ -473,7 +473,7 @@ void Collection::clearDataSets()
 int Collection::nDataPoints()
 {
 	int nPoints = 0;
-	for (DataSet* dataSet = dataSets_.first(); dataSet != NULL; dataSet = dataSet->next) nPoints += dataSet->data().nPoints();
+	for (DataSet* dataSet = dataSets_.first(); dataSet != NULL; dataSet = dataSet->next) nPoints += dataSet->data().nDataPoints();
 	return nPoints;
 }
 
@@ -714,7 +714,7 @@ void Collection::yRangeOverX(double xMin, double xMax, double& yMin, double& yMa
 	for (DataSet* dataSet = dataSets_.first(); dataSet != NULL; dataSet = dataSet->next)
 	{
 		const XYData& data = dataSet->transformedData();
-		for (int n=0; n<data.nPoints(); ++n)
+		for (int n=0; n<data.nDataPoints(); ++n)
 		{
 			if (data.constX(n) < xMin) continue;
 			else if (data.constX(n) > xMax) break;
@@ -1199,7 +1199,7 @@ void Collection::updateLimitsAndTransforms()
 	{
 		// Loop over XY points in data, searching for first positive, non-zero value
 		const XYData& data = dataSet->transformedData();
-		for (int n=0; n<data.nPoints(); ++n)
+		for (int n=0; n<data.nDataPoints(); ++n)
 		{
 			// X
 			if (data.constX(n) > 0.0)
@@ -1290,7 +1290,7 @@ void Collection::updateDisplayData()
 	for (DataSet* dataSet = dataSets_.first(); dataSet != NULL; dataSet = dataSet->next)
 	{
 		// Check for slice with no points...
-		if (dataSet->data().nPoints() == 0) continue;
+		if (dataSet->data().nDataPoints() == 0) continue;
 
 		// Z
 		double z = dataSet->transformedZ();
@@ -1334,7 +1334,7 @@ void Collection::updateDisplayData()
 	Array<int> i(nTransformedDataSets);
 	for (n=0; n<nTransformedDataSets; ++n)
 	{
-		if (data[n]->nPoints() == 0)
+		if (data[n]->nDataPoints() == 0)
 		{
 			i[n] = -1;
 			++nFinished;
@@ -1369,7 +1369,7 @@ void Collection::updateDisplayData()
 			{
 				slices[n]->add(data[n]->y(i[n]), DisplayDataSet::RealPoint);
 				++i[n];
-				if (i[n] == data[n]->nPoints())
+				if (i[n] == data[n]->nDataPoints())
 				{
 					i[n] = -1;
 					++nFinished;
@@ -1503,7 +1503,7 @@ bool Collection::exportData(const char* fileName)
 	for (DataSet* dataSet = dataSets_.first(); dataSet != NULL; dataSet = dataSet->next)
 	{
 		parser.writeLineF("# Z = %e\n", dataSet->z());
-		for (int n=0; n<dataSet->data().nPoints(); ++n)
+		for (int n=0; n<dataSet->data().nDataPoints(); ++n)
 		{
 			const Array<double>& x = dataSet->data().constX();
 			const Array<double>& y = dataSet->data().constY();

@@ -31,6 +31,13 @@ SampledDouble::SampledDouble()
 	m2_ = 0.0;
 }
 
+SampledDouble::SampledDouble(const double x)
+{
+	count_ = 1;
+	mean_ = x;
+	m2_ = 0.0;
+}
+
 /*
  * Data
  */
@@ -109,6 +116,12 @@ void SampledDouble::operator+=(double x)
 
 	// Accumulate m2 using deltas of new value with old and new mean
 	m2_ += delta * (x - mean_);
+}
+
+// Operator +=
+void SampledDouble::operator+=(int i)
+{
+	(*this) += (double) i;
 }
 
 // Operator +=

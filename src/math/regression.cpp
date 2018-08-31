@@ -42,7 +42,7 @@ double Regression::linear(const XYData& data, int nSamples, double& yBar)
 	yBar = 0.0;
 
 	// Calculate mean values of x and y
-	for (int n=data.nPoints()-nSamples; n<data.nPoints(); ++n)
+	for (int n=data.nDataPoints()-nSamples; n<data.nDataPoints(); ++n)
 	{
 		xBar += x.constAt(n);
 		yBar += y.constAt(n);
@@ -52,7 +52,7 @@ double Regression::linear(const XYData& data, int nSamples, double& yBar)
 
 	// Determine Sx, Sy, and Sxy
 	double dx, dy;
-	for (int n=data.nPoints()-nSamples; n<data.nPoints(); ++n)
+	for (int n=data.nDataPoints()-nSamples; n<data.nDataPoints(); ++n)
 	{
 		dx = x.constAt(n) - xBar;
 		dy = y.constAt(n) - yBar;

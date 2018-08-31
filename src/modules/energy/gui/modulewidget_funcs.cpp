@@ -73,7 +73,7 @@ void EnergyModuleWidget::updateControls()
 	if (currentConfiguration_)
 	{
 		const XYData& totalEnergyArray = GenericListHelper<XYData>::value(currentConfiguration_->moduleData(), "Total", module_->uniqueName(), XYData());
-		if (totalEnergyArray.nPoints() < stabilityWindow) ui.GradientValueLabel->setText("N/A");
+		if (totalEnergyArray.nDataPoints() < stabilityWindow) ui.GradientValueLabel->setText("N/A");
 		else
 		{
 			double grad = GenericListHelper<double>::value(currentConfiguration_->moduleData(), "EnergyGradient", "", 0.0);

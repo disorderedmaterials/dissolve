@@ -50,27 +50,6 @@ int Plottable::nYAxisPoints() const
 	return 0;
 }
 
-// Return y axis value specified
-double Plottable::yAxis(int index) const
-{
-	Messenger::error("Tried to retrieve y axis value from a Plottable that doesn't have a y axis.\n");
-	return 0.0;
-}
-
-// Return minimum (first) y axis point
-double Plottable::yAxisMin() const
-{
-	Messenger::error("Tried to retrieve y axis minimum from a Plottable that doesn't have a y axis.\n");
-	return 0.0;
-}
-
-// Return maximum (last) y axis point
-double Plottable::yAxisMax() const
-{
-	Messenger::error("Tried to retrieve y axis maximum from a Plottable that doesn't have a y axis.\n");
-	return 0.0;
-}
-
 // Return y axis Array
 const Array<double>& Plottable::yAxis() const
 {
@@ -84,28 +63,6 @@ int Plottable::nZAxisPoints() const
 {
 	Messenger::error("Tried to retrieve number of z axis points from a Plottable that doesn't have a z axis.\n");
 	return 0;
-}
-
-// Return z axis value specified
-double Plottable::zAxis(int index) const
-{
-	Messenger::error("Tried to retrieve z axis value from a Plottable that doesn't have a z axis.\n");
-	return 0.0;
-}
-
-
-// Return minimum (first) z axis point
-double Plottable::zAxisMin() const
-{
-	Messenger::error("Tried to retrieve z axis minimum from a Plottable that doesn't have a y axis.\n");
-	return 0.0;
-}
-
-// Return maximum (last) z axis point
-double Plottable::zAxisMax() const
-{
-	Messenger::error("Tried to retrieve z axis maximum from a Plottable that doesn't have a y axis.\n");
-	return 0.0;
 }
 
 // Return z axis Array

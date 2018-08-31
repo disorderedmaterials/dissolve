@@ -27,9 +27,9 @@
 bool Fourier::checkBeforeTransform(XYData& data)
 {
 	// Enough data to do transform?
-	if (data.nPoints() < 5)
+	if (data.nDataPoints() < 5)
 	{
-		Messenger::error("Not enough X data points (%i) in XYData. Can't do transform.\n", data.nPoints());
+		Messenger::error("Not enough X data points (%i) in XYData. Can't do transform.\n", data.nDataPoints());
 		return false;
 	}
 
@@ -102,7 +102,7 @@ bool Fourier::sineFT(XYData& data, double normFactor, double wMin, double wStep,
 	}
 
 	// Transfer working arrays to this object
-	data.copyData(sineft);
+	data.copyArrays(sineft);
 
 	// Apply normalisation factor
 	y *= normFactor;
