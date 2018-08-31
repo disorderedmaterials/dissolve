@@ -315,9 +315,9 @@ class ProcessPool
 	bool allSum(int* source, int count, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Reduce (sum) int data to all processes
 	bool allSum(long int* source, int count, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
-	// Reduce (sum) double data over processes relevant to specifeid strategy
+	// Reduce (sum) double data over processes relevant to specified strategy
 	bool allSum(double* source, int count, ProcessPool::DivisionStrategy strategy);
-	// Reduce (sum) int data over processes relevant to specifeid strategy
+	// Reduce (sum) int data over processes relevant to specified strategy
 	bool allSum(int* source, int count, ProcessPool::DivisionStrategy strategy);
 	// Assemble integer array on target rank within the specified communicator
 	bool assemble(int* array, int nData, int* rootDest, int rootMaxData, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
