@@ -57,6 +57,7 @@ void Histogram1D::clear()
 	nMissed_ = 0;
 	bins_.clear();
 	binCentres_.clear();
+	averages_.clear();
 }
 
 /*
@@ -85,14 +86,15 @@ void Histogram1D::initialise(double xMin, double xMax, double binWidth)
 	// Create the arrays
 	binCentres_.initialise(nBins_);
 	bins_.initialise(nBins_);
+	averages_.initialise(nBins_);
 
 	// Create centre-bin array
 	double xCentre = xMin + binWidth_*0.5;
 	for (int n=0; n<nBins_; ++n, xCentre += binWidth_) bins_[n] = xCentre;
 }
 
-// Zero histogram
-void Histogram1D::zero()
+// Zero histogram bins
+void Histogram1D::zeroBins()
 {
 	bins_ = 0;
 	nBinned_ = 0;
@@ -140,6 +142,12 @@ void Histogram1D::bin(double x)
 	++nBinned_;
 }
 
+// Accumulate current histogram bins into averages
+void Histogram1D::accumulate()
+{
+	for (int n=0; n<nBins_; ++n) averages_[n] += double(bins_[n]);
+}
+
 // Return Array of x centre-bin values
 const Array<double>& Histogram1D::binCentres() const
 {
@@ -184,6 +192,7 @@ void Histogram1D::operator=(const Histogram1D& source)
 	nMissed_ = source.nMissed_;
 	bins_ = source.bins_;
 	binCentres_ = source.binCentres_;
+	averages_ = source.averages_;
 }
 
 /*
@@ -246,7 +255,7 @@ bool Histogram1D::allSum(ProcessPool& procPool)
 // Broadcast data
 bool Histogram1D::broadcast(ProcessPool& procPool, int rootRank)
 {
-// #ifdef PARALLEL
+#ifdef PARALLEL
 	// Range data
 	if (!procPool.broadcast(minimum_, rootRank)) return false;
 	if (!procPool.broadcast(maximum_, rootRank)) return false;
@@ -258,7 +267,8 @@ bool Histogram1D::broadcast(ProcessPool& procPool, int rootRank)
 	if (!procPool.broadcast(nMissed_, rootRank)) return false;
 	if (!procPool.broadcast(binCentres_, rootRank)) return false;
 	if (!procPool.broadcast(bins_, rootRank)) return false;
-// #endif
+	for (int n=0; n<averages_.nItems(); ++n) if (!averages_[n].broadcast(procPool, rootRank)) return false;
+#endif
 	return true;
 }
 
@@ -275,6 +285,7 @@ bool Histogram1D::equality(ProcessPool& procPool)
 	if (!procPool.equality(bins_)) return Messenger::error("Histogram1D bin values not equivalent.\n");
 	if (!procPool.equality(nBinned_)) return Messenger::error("Histogram1D nunmber of binned values is not equivalent (process %i has %li).\n", procPool.poolRank(), nBinned_);
 	if (!procPool.equality(nMissed_)) return Messenger::error("Histogram1D nunmber of binned values is not equivalent (process %i has %li).\n", procPool.poolRank(), nBinned_);
+	for (int n=0; n<averages_.nItems(); ++n) if (!averages_[n].equality(procPool)) return Messenger::error("Histogram1D average values not equivalent.\n");
 #endif
 	return true;
 }

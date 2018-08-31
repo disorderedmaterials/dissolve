@@ -22,6 +22,7 @@
 #ifndef DISSOLVE_HISTOGRAM1D_H
 #define DISSOLVE_HISTOGRAM1D_H
 
+#include "math/sampleddouble.h"
 #include "base/genericitembase.h"
 #include "templates/array.h"
 #include "templates/objectstore.h"
@@ -59,6 +60,8 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
 	Array<long int> bins_;
 	// Array of bin centres
 	Array<double> binCentres_;
+	// Accumulated averages
+	Array<SampledDouble> averages_;
 	// Number of values binned over all bins
 	long int nBinned_;
 	// Number of points missed (out of bin range)
@@ -67,8 +70,8 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
 	public:
 	// Initialise with specified bin range
 	void initialise(double minimum, double maximum, double binWidth);
-	// Zero histogram
-	void zero();
+	// Zero histogram bins
+	void zeroBins();
 	// Return minimum value for data (hard left-edge of first bin)
 	double minimum() const;
 	// Return maximum value for data (hard right-edge of last bin, adjusted to match bin width if necessary)
@@ -79,6 +82,8 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
 	int nBins() const;
 	// Bin specified value
 	void bin(double x);
+	// Accumulate current histogram bins into averages
+	void accumulate();
 	// Return Array of x centre-bin values
 	const Array<double>& binCentres() const;
 	// Return specified bin value

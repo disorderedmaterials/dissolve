@@ -64,10 +64,8 @@ class AnalysisCollect1DNode : public AnalysisNode
 	private:
 	// Observable to bin
 	AnalysisCalculateNode* observable_;
-	// Histogram in which to bin data
-	Histogram1D histogram_;
-	// Data into which histograms are accumulated
-	Data1D* data_;
+	// Histogram in which to accumulate data
+	Histogram1D* histogram_;
 	// Axis labels
 	CharString axisLabels_[3];
 	// Range minimum

@@ -76,21 +76,20 @@ const char* AnalysisCollect1DNode::collect1DNodeKeyword(AnalysisCollect1DNode::C
 // Prepare any necessary data, ready for execution
 bool AnalysisCollect1DNode::prepare(Configuration* cfg, const char* dataPrefix, GenericList& targetList)
 {
-	// Make sure that the histogram is initialised
-	histogram_.initialise(minimum_, maximum_, binWidth_);
-	histogram_.zero();
-
 	// Construct our data name, and search for it in the supplied list
 	bool created;
-	Data1D& data = GenericListHelper<Data1D>::realise(targetList, name(), dataPrefix, GenericItem::InRestartFileFlag, &created);
+	Histogram1D& target = GenericListHelper<Histogram1D>::realise(targetList, name(), dataPrefix, GenericItem::InRestartFileFlag, &created);
 	if (created)
 	{
-		Messenger::printVerbose("One-dimensional data for '%s' was not in the target list, so it will now be initialised...\n", name());
-		data.initialise(histogram_);
+		Messenger::printVerbose("One-dimensional histogram data for '%s' was not in the target list, so it will now be initialised...\n", name());
+		target.initialise(minimum_, maximum_, binWidth_);
 	}
 
+	// Zero the current bins, ready for the new pass
+	target.zeroBins();
+
 	// Store a pointer to the data
-	data_ = &data;
+	histogram_ = &target;
 
 	return true;
 }
@@ -106,7 +105,7 @@ AnalysisNode::NodeExecutionResult AnalysisCollect1DNode::execute(ProcessPool& pr
 	}
 #endif
 	// Bin the current value of the observable
-	histogram_.bin(observable_->value());
+	histogram_->bin(observable_->value());
 
 	return AnalysisNode::Success;
 }
@@ -115,14 +114,14 @@ AnalysisNode::NodeExecutionResult AnalysisCollect1DNode::execute(ProcessPool& pr
 bool AnalysisCollect1DNode::finalise(Configuration* cfg, const char* dataPrefix, GenericList& targetList)
 {
 #ifdef CHECKS
-	if (!data_)
+	if (!histogram_)
 	{
 		Messenger::error("No Data1D pointer set in AnalysisCollec1DNode '%s'.\n", name());
 		return AnalysisNode::Failure;
 	}
 #endif
 	// Accumulate the current binned data
-	data_->accumulate(histogram_);
+	histogram_->accumulate();
 
 	return true;
 }
