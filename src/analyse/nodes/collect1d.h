@@ -19,24 +19,20 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ANALYSISCOLLECT_H
-#define DISSOLVE_ANALYSISCOLLECT_H
+#ifndef DISSOLVE_ANALYSISCOLLECT1D_H
+#define DISSOLVE_ANALYSISCOLLECT1D_H
 
 #include "analyse/nodes/node.h"
 #include "base/charstring.h"
 #include "math/histogram1d.h"
-#include "templates/array.h"
-#include "templates/array2d.h"
 #include "templates/reflist.h"
-#include "templates/vector3.h"
 
 // Forward Declarations
 class AnalysisCalculateNode;
-class Data1D;
 class LineParser;
 class NodeContextStack;
 
-// Analysis Node - Collect
+// Analysis Node - Collect1D
 class AnalysisCollect1DNode : public AnalysisNode
 {
 	public:

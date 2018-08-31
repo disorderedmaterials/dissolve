@@ -47,7 +47,7 @@ AnalysisCollect1DNode::~AnalysisCollect1DNode()
  */
 
 // Node Keywords (note ordering for efficiency)
-const char* Collect1DNodeKeywords[] = { "EndCollect", "LabelX", "LabelY", "QuantityX", "RangeX" };
+const char* Collect1DNodeKeywords[] = { "EndCollect1D", "LabelX", "LabelY", "QuantityX", "RangeX" };
 
 // Convert string to node keyword
 AnalysisCollect1DNode::Collect1DNodeKeyword AnalysisCollect1DNode::collect1DNodeKeyword(const char* s)
@@ -100,7 +100,7 @@ AnalysisNode::NodeExecutionResult AnalysisCollect1DNode::execute(ProcessPool& pr
 #ifdef CHECKS
 	if (!observable_)
 	{
-		Messenger::error("No AnalysisCalculateNode pointer set in AnalysisCollec1DNode '%s'.\n", name());
+		Messenger::error("No AnalysisCalculateNode pointer set in AnalysisCollect1DNode '%s'.\n", name());
 		return AnalysisNode::Failure;
 	}
 #endif
@@ -116,7 +116,7 @@ bool AnalysisCollect1DNode::finalise(Configuration* cfg, const char* dataPrefix,
 #ifdef CHECKS
 	if (!histogram_)
 	{
-		Messenger::error("No Data1D pointer set in AnalysisCollec1DNode '%s'.\n", name());
+		Messenger::error("No Data1D pointer set in AnalysisCollect1DNode '%s'.\n", name());
 		return AnalysisNode::Failure;
 	}
 #endif
