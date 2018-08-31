@@ -190,6 +190,39 @@ bool SampledDouble::read(LineParser& parser)
  * Parallel Comms
  */
 
+// Sum data over all processes within the pool
+bool SampledDouble::allSum(ProcessPool& procPool)
+{
+#ifdef PARALLEL
+	// All processes in the pool send their data to the zero rank, which assembles the statistics and then broadcasts the final result
+	for (int n=1; n<procPool.nProcesses(); ++n)
+	{
+		if (procPool.poolRank() == 0)
+		{
+			// Rank zero receives the data and sums it
+			SampledDouble data;
+			if (!procPool.receive(data.count_, 0)) return false;
+			if (!procPool.receive(data.mean_, 0)) return false;
+			if (!procPool.receive(data.m2_, 0)) return false;
+
+			(*this) += data;
+		}
+		else
+		{
+			// Send our data to rank zero
+			if (!procPool.send(count_, 0)) return false;
+			if (!procPool.send(mean_, 0)) return false;
+			if (!procPool.send(m2_, 0)) return false;
+		}
+	}
+
+	if (!procPool.broadcast(count_)) return false;
+	if (!procPool.broadcast(mean_)) return false;
+	if (!procPool.broadcast(m2_)) return false;
+#endif
+	return true;
+}
+
 // Broadcast data
 bool SampledDouble::broadcast(ProcessPool& procPool, int rootRank)
 {

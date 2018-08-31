@@ -99,6 +99,8 @@ class SampledDouble : public GenericItemBase
 	 * Parallel Comms
 	 */
 	public:
+	// Sum data over all processes within the pool
+	bool allSum(ProcessPool& procPool);
 	// Broadcast data
 	bool broadcast(ProcessPool& procPool, int rootRank);
 	// Check equality of all data
