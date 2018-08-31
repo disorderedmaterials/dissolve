@@ -29,6 +29,7 @@
 // Forward Declarations
 class AnalysisSelectNode;
 class AnalysisCalculateNode;
+class AnalysisCollect1DNode;
 
 // Node Context Stack
 class NodeContextStack
@@ -65,19 +66,29 @@ class NodeContextStack
 
 
 	/*
+	 * Reference Stacks
+	 */
+	private:
+	// References for all Collect1DNodes added
+	RefList<AnalysisCollect1DNode,bool> collect1DNodes_;
+
+	public:
+	// Add reference to one-dimensional collect node
+	void add(AnalysisCollect1DNode* collect1DNode);
+
+
+	/*
 	 * Node Search
 	 */
 	public:
 	// Return next available generic name for a SelectNode
 	const char* nextSelectName() const;
-	// Return if named Select node exists somewhere on the stack
-	bool hasSelectNode(const char* name) const;
-	// Return named Select node (if it exists)
-	AnalysisSelectNode* selectNode(const char* name) const;
-	// Return if named Calculate node exists somewhere on the stack
-	bool hasCalculateNode(const char* name) const;
-	// Return named Calculate node (if it exists)
-	AnalysisCalculateNode* calculateNode(const char* name) const;
+	// Return named Select node if it is currently in scope
+	AnalysisSelectNode* selectNodeInScope(const char* name) const;
+	// Return named Calculate node if it is currently in scope
+	AnalysisCalculateNode* calculateNodeInScope(const char* name) const;
+	// Return named Collect1D node (if it exists)
+	AnalysisCollect1DNode* collect1DNode(const char* name) const;
 
 
 	/*

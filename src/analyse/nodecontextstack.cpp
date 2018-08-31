@@ -21,6 +21,7 @@
 
 #include "analyse/nodecontextstack.h"
 #include "analyse/nodes/calculate.h"
+#include "analyse/nodes/collect1d.h"
 #include "analyse/nodes/select.h"
 #include "base/sysfunc.h"
 
@@ -44,6 +45,7 @@ void NodeContextStack::clear()
 {
 	selectStack_.clear();
 	calculateStack_.clear();
+	collect1DNodes_.clear();
 
 	nSelectNodesAdded_ = 0;
 }
@@ -78,9 +80,9 @@ bool NodeContextStack::add(AnalysisSelectNode* selectNode)
 	}
 
 	// Check that the name is valid
-	if (hasSelectNode(selectNode->name()))
+	if (selectNodeInScope(selectNode->name()))
 	{
-		Messenger::error("A Select node with name '%s' already exists.\n", selectNode->name());
+		Messenger::error("A Select node with name '%s' is already in scope.\n", selectNode->name());
 		return false;
 	}
 
@@ -103,7 +105,7 @@ bool NodeContextStack::add(AnalysisCalculateNode* calculateNode)
 	}
 
 	// Check that the name is valid
-	if (hasCalculateNode(calculateNode->name()))
+	if (calculateNodeInScope(calculateNode->name()))
 	{
 		Messenger::error("A Calculate node with name '%s' already exists.\n", calculateNode->name());
 		return false;
@@ -112,6 +114,16 @@ bool NodeContextStack::add(AnalysisCalculateNode* calculateNode)
 	calculateStack_.last().add(calculateNode);
 
 	return true;
+}
+
+/*
+ * Reference Stacks
+ */
+
+// Add reference to one-dimensional collect node
+void NodeContextStack::add(AnalysisCollect1DNode* collect1DNode)
+{
+	collect1DNodes_.addUnique(collect1DNode);
 }
 
 /*
@@ -130,20 +142,8 @@ const char* NodeContextStack::nextSelectName() const
 	return result.get();
 }
 
-// Return if named Select node exists somewhere on the stack
-bool NodeContextStack::hasSelectNode(const char* name) const
-{
-	for (int n=0; n<selectStack_.nItems(); ++n)
-	{
-		RefListIterator<AnalysisSelectNode,bool> contextIterator(selectStack_.constAt(n));
-		while (AnalysisSelectNode* node = contextIterator.iterate()) if (DissolveSys::sameString(node->name(), name)) return true;
-	}
-
-	return false;
-}
-
-// Return named Select node (if it exists)
-AnalysisSelectNode* NodeContextStack::selectNode(const char* name) const
+// Return named Select node if it is currently in scope
+AnalysisSelectNode* NodeContextStack::selectNodeInScope(const char* name) const
 {
 	for (int n=0; n<selectStack_.nItems(); ++n)
 	{
@@ -154,26 +154,23 @@ AnalysisSelectNode* NodeContextStack::selectNode(const char* name) const
 	return NULL;
 }
 
-// Return if named CalculateNode exists somewhere on the stack
-bool NodeContextStack::hasCalculateNode(const char* name) const
-{
-	for (int n=0; n<calculateStack_.nItems(); ++n)
-	{
-		RefListIterator<AnalysisCalculateNode,bool> contextIterator(calculateStack_.constAt(n));
-		while (AnalysisCalculateNode* node = contextIterator.iterate()) if (DissolveSys::sameString(node->name(), name)) return true;
-	}
-
-	return false;
-}
-
-// Return named Calculate node (if it exists)
-AnalysisCalculateNode* NodeContextStack::calculateNode(const char* name) const
+// Return named Calculate node if it is currently in scope
+AnalysisCalculateNode* NodeContextStack::calculateNodeInScope(const char* name) const
 {
 	for (int n=0; n<calculateStack_.nItems(); ++n)
 	{
 		RefListIterator<AnalysisCalculateNode,bool> contextIterator(calculateStack_.constAt(n));
 		while (AnalysisCalculateNode* node = contextIterator.iterate()) if (DissolveSys::sameString(node->name(), name)) return node;
 	}
+
+	return NULL;
+}
+
+// Return named Collect1D node (if it exists)
+AnalysisCollect1DNode* NodeContextStack::collect1DNode(const char* name) const
+{
+	RefListIterator<AnalysisCollect1DNode,bool> nodeIterator(collect1DNodes_);
+	while (AnalysisCollect1DNode* node = nodeIterator.iterate()) if (DissolveSys::sameString(node->name(), name)) return node;
 
 	return NULL;
 }
