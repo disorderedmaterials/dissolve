@@ -48,7 +48,7 @@ class AnalysisNode : public ListItem<AnalysisNode>
 	 */
 	public:
 	// Available Node Types
-	enum NodeType { CalculateNode, Collect1DNode, ExcludeNode, SelectNode, SequenceNode, nNodeTypes };
+	enum NodeType { CalculateNode, Collect1DNode, ExcludeNode, Normalise1DNode, SelectNode, SequenceNode, nNodeTypes };
 	// Convert string to node type
 	static NodeType nodeType(const char* s);
 	// Convert node type to string

@@ -3,6 +3,7 @@ add_library(analysisnodes
   collect1d.cpp
   exclude.cpp
   node.cpp
+  normalise1d.cpp
   select.cpp
   sequence.cpp
 
@@ -11,6 +12,7 @@ add_library(analysisnodes
   exclude.h
   node.h
   nodes.h
+  normalise1d.h
   select.h
   sequence.h
 )
