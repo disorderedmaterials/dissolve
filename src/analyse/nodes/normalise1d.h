@@ -29,6 +29,7 @@
 
 // Forward Declarations
 class AnalysisCollect1DNode;
+class AnalysisSelect1DNode;
 class Data1D;
 class LineParser;
 class NodeContextStack;
@@ -61,8 +62,8 @@ class AnalysisNormalise1DNode : public AnalysisNode
 	private:
 	// Collect1D node which we are normalising
 	AnalysisCollect1DNode* collectNode_;
-	// Normalised data, calculated from accumulated histogram data in associated Collect1D node
-	Data1D normalisedData_;
+	// Reference to sites against which we will normalise by population
+	RefList<AnalysisSelect1DNode,bool> sitePopulationNormalisers_;
 
 
 	/*

@@ -39,7 +39,7 @@ AnalysisNode::~AnalysisNode()
  */
 
 // Control keywords
-const char* NodeTypes[] = { "Calculate", "Collect1D", "Exclude", "Select", "Sequence" };
+const char* NodeTypes[] = { "Calculate", "Collect1D", "Exclude", "Normalise1D", "Select", "Sequence" };
 
 // Convert string to node type
 AnalysisNode::NodeType AnalysisNode::nodeType(const char* s)

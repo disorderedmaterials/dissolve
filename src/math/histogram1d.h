@@ -22,6 +22,7 @@
 #ifndef DISSOLVE_HISTOGRAM1D_H
 #define DISSOLVE_HISTOGRAM1D_H
 
+#include "math/data1d.h"
 #include "math/sampleddouble.h"
 #include "base/genericitembase.h"
 #include "templates/array.h"
@@ -66,6 +67,12 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
 	long int nBinned_;
 	// Number of points missed (out of bin range)
 	long int nMissed_;
+	// Accumulated data
+	Data1D accumulatedData_;
+
+	private:
+	// Update accumulated data
+	void updateAccumulatedData();
 
 	public:
 	// Initialise with specified bin range
@@ -92,6 +99,8 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
 	Array<long int>& bins();
 	// Add source histogram data into local array
 	void add(Histogram1D& other, int factor = 1);
+	// Return accumulated (averaged) data
+	const Data1D& accumulatedData() const;
 
 
 	/*

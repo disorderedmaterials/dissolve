@@ -71,6 +71,10 @@ class AnalysisCollect1DNode : public AnalysisNode
 	// Bin width
 	double binWidth_;
 
+	public:
+	// Return accumulated data
+	const Data1D& accumulatedData() const;
+
 
 	/*
 	 * Execute

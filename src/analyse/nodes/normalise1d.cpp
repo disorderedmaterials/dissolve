@@ -20,6 +20,7 @@
 */
 
 #include "analyse/nodes/normalise1d.h"
+#include "analyse/nodes/collect1d.h"
 #include "analyse/nodecontextstack.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
@@ -29,6 +30,7 @@
 AnalysisNormalise1DNode::AnalysisNormalise1DNode() : AnalysisNode()
 {
 	type_ = AnalysisNode::Normalise1DNode;
+	collectNode_ = NULL;
 }
 
 // Destructor
@@ -41,7 +43,7 @@ AnalysisNormalise1DNode::~AnalysisNormalise1DNode()
  */
 
 // Node Keywords (note ordering for efficiency)
-const char* Normalise1DNodeKeywords[] = { "EndNormalise", "LabelX", "LabelY", "QuantityX", "RangeX" };
+const char* Normalise1DNodeKeywords[] = { "EndNormalise1D", "NSites" };
 
 // Convert string to node keyword
 AnalysisNormalise1DNode::Normalise1DNodeKeyword AnalysisNormalise1DNode::normalise1DNodeKeyword(const char* s)
@@ -61,8 +63,6 @@ const char* AnalysisNormalise1DNode::normalise1DNodeKeyword(AnalysisNormalise1DN
  * Data
  */
 
-
-
 /*
  * Execute
  */
@@ -76,7 +76,13 @@ bool AnalysisNormalise1DNode::prepare(Configuration* cfg, const char* dataPrefix
 // Execute node, targetting the supplied Configuration
 AnalysisNode::NodeExecutionResult AnalysisNormalise1DNode::execute(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList)
 {
+	// Retrieve / realise the normalised data from the supplied list
+	CharString dataName("%s_Normalised", name());
+	Data1D& normalisedData = GenericListHelper<Data1D>::realise(targetList, dataName, dataPrefix, GenericItem::InRestartFileFlag);
 
+	// Copy the averaged data from the associated Collect1D node, and normalise it accordingly
+	normalisedData = collectNode_->accumulatedData();
+	
 	return AnalysisNode::Success;
 }
 
@@ -93,11 +99,12 @@ bool AnalysisNormalise1DNode::finalise(Configuration* cfg, const char* dataPrefi
 // Read structure from specified LineParser
 bool AnalysisNormalise1DNode::read(LineParser& parser, NodeContextStack& contextStack)
 {
-	// The current line in the parser must also contain a node name (which is not necessarily unique...)
-	if (parser.nArgs() != 2) return Messenger::error("A Normalise1D node must be given a suitable name.\n");
-	setName(parser.argc(1));
+	// The current line in the parser must also contain the name of a Collect1D node which we will operate on
+	if (parser.nArgs() != 2) return Messenger::error("A Normalise1D node must be given the name of a Collect1D node.\n");
+	collectNode_ = contextStack.collect1DNode(parser.argc(1));
+	if (!collectNode_) return Messenger::error("A valid Collect1D node name must be given as an argument to Normalise1D.\n");
 
-	// Read until we encounter the EndNormalise keyword, or we fail for some reason
+	// Read until we encounter the EndNormalise1D keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
 	{
 		// Read and parse the next line

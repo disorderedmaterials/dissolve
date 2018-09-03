@@ -67,7 +67,18 @@ const char* AnalysisCollect1DNode::collect1DNodeKeyword(AnalysisCollect1DNode::C
  * Data
  */
 
+// Return accumulated data
+const Data1D& AnalysisCollect1DNode::accumulatedData() const
+{
+	if (!histogram_)
+	{
+		Messenger::error("No histogram pointer set in AnalysisCollect1DNode, so no accumulated data to return.\n");
+		static Data1D dummy;
+		return dummy;
+	}
 
+	return histogram_->accumulatedData();
+}
 
 /*
  * Execute
@@ -136,6 +147,9 @@ bool AnalysisCollect1DNode::read(LineParser& parser, NodeContextStack& contextSt
 	// The current line in the parser must also contain a node name (which is not necessarily unique...)
 	if (parser.nArgs() != 2) return Messenger::error("A Collect1D node must be given a suitable name.\n");
 	setName(parser.argc(1));
+
+	// Add ourselves to the stack
+	contextStack.add(this);
 
 	// Read until we encounter the EndCollect1D keyword, or we fail for some reason
 	while (!parser.eofOrBlank())

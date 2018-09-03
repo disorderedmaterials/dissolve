@@ -29,6 +29,7 @@
 #include "analyse/nodes/calculate.h"
 #include "analyse/nodes/collect1d.h"
 #include "analyse/nodes/exclude.h"
+#include "analyse/nodes/normalise1d.h"
 #include "analyse/nodes/select.h"
 #include "analyse/nodes/sequence.h"
 
