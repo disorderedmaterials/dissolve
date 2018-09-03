@@ -32,6 +32,7 @@
 #include "templates/genericitemcontainer_int.h"
 #include "templates/genericitemcontainer_double.h"
 #include "templates/genericitemcontainer_charstring.h"
+#include "templates/genericitemcontainer_streampos.h"
 
 #include "templates/genericitemcontainer_vec3int.h"
 #include "templates/genericitemcontainer_vec3double.h"

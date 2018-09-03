@@ -98,6 +98,7 @@ void Dissolve::registerGenericItems()
 	GenericItem::addItemClass(new GenericItemContainer<int>("int"));
 	GenericItem::addItemClass(new GenericItemContainer<double>("double"));
 	GenericItem::addItemClass(new GenericItemContainer<CharString>("CharString"));
+	GenericItem::addItemClass(new GenericItemContainer<streampos>("StreamPos"));
 
 	GenericItem::addItemClass(new GenericItemContainer< Vec3<int> >("Vec3<int>"));
 	GenericItem::addItemClass(new GenericItemContainer< Vec3<double> >("Vec3<double>"));
