@@ -28,6 +28,27 @@
 #include "base/lineparser.h"
 #include "templates/genericlisthelper.h"
 
+// Run set-up stage
+bool ForcesModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
+{
+	if (referenceForces_.hasValidFileAndFormat())
+	{
+		Messenger::print("Reading test reference forces.\n");
+
+		// Realise some arrays to store the forces in
+		Array<double>& fx = GenericListHelper< Array<double> >::realise(dissolve.processingModuleData(), "ReferenceFX", uniqueName());
+		Array<double>& fy = GenericListHelper< Array<double> >::realise(dissolve.processingModuleData(), "ReferenceFY", uniqueName());
+		Array<double>& fz = GenericListHelper< Array<double> >::realise(dissolve.processingModuleData(), "ReferenceFZ", uniqueName());
+
+		// Read in the forces
+		LineParser fileParser(&dissolve.worldPool());
+		if (!fileParser.openInput(referenceForces_.filename())) return 0;
+		return ImportModule::readForces(referenceForces_.forceFormat(), fileParser, fx, fy, fz);
+	}
+
+	return true;
+}
+
 // Run main processing
 bool ForcesModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {
@@ -52,9 +73,6 @@ bool ForcesModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Set up process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());
-
-		// Get reference to relevant module data
-		GenericList& moduleData = configurationLocal_ ? cfg->moduleData() : dissolve.processingModuleData();
 
 		// Retrieve control parameters from Configuration
 		const bool saveData = keywords_.asBool("Save");
@@ -439,6 +457,7 @@ bool ForcesModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			int nFailed2 = 0, nFailed3 = 0;
 			Vec3<double> totalRatio;
 			sumError = 0.0;
+			GenericList& moduleData = dissolve.processingModuleData();
 			if (moduleData.contains("ReferenceFX", uniqueName()) && moduleData.contains("ReferenceFY", uniqueName()) && moduleData.contains("ReferenceFZ", uniqueName()))
 			{
 				// Grab reference force arrays and check sizes

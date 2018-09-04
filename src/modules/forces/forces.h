@@ -23,6 +23,7 @@
 #define DISSOLVE_FORCESMODULE_H
 
 #include "module/module.h"
+#include "modules/import/formats.h"
 
 // Forward Declarations
 class PotentialMap;
@@ -84,11 +85,23 @@ class ForcesModule : public Module
 
 
 	/*
+	 * Data
+	 */
+	private:
+	// Reference forces for test
+	ForceImportFileFormat referenceForces_;
+
+
+	/*
 	 * Processing
 	 */
 	private:
 	// Run main processing
 	bool process(Dissolve& dissolve, ProcessPool& procPool);
+
+	public:
+	// Run set-up stage
+	bool setUp(Dissolve& dissolve, ProcessPool& procPool);
 
 
 	/*

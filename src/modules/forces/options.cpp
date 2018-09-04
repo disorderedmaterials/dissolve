@@ -34,34 +34,12 @@ void ForcesModule::setUpKeywords()
 	keywords_.add(new BoolModuleKeyword(false), "TestAnalytic", "Compare parallel force routines against exact (analytic) force rather than tabulated values");
 	keywords_.add(new BoolModuleKeyword(true), "TestInter", "Include interatomic forces in test");
 	keywords_.add(new BoolModuleKeyword(true), "TestIntra", "Include intramolecular forces in test");
-	keywords_.add(new ComplexModuleKeyword(1,2), "TestReference", "Filename containing reference forces for test");
+	keywords_.add(new FileAndFormatModuleKeyword(referenceForces_), "TestReference", "Reference forces for test");
 	keywords_.add(new DoubleModuleKeyword(0.1), "TestThreshold", "Threshold of force (%%) at which test comparison will fail");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 int ForcesModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
-	if (DissolveSys::sameString(parser.argc(0), "TestReference"))
-	{
-		Messenger::print("Reading test reference forces.\n");
-
-		// Realise some arrays to store the forces in
-		Array<double>& fx = GenericListHelper< Array<double> >::realise(targetList, "ReferenceFX", uniqueName());
-		Array<double>& fy = GenericListHelper< Array<double> >::realise(targetList, "ReferenceFY", uniqueName());
-		Array<double>& fz = GenericListHelper< Array<double> >::realise(targetList, "ReferenceFZ", uniqueName());
-
-		// Second argument is the format, third (if present) is the target file
-		ForceImportFileFormat format;
-		if (!format.read(parser, 1)) return false;
-		if (format.hasValidFileAndFormat())
-		{
-			LineParser fileParser(&dissolve->worldPool());
-			if (!fileParser.openInput(parser.argc(2))) return 0;
-
-			return ImportModule::readForces(format.forceFormat(), fileParser, fx, fy, fz);
-		}
-		else return ImportModule::readForces(format.forceFormat(), parser, fx, fy, fz);
-	}
-
 	return -1;
 }
