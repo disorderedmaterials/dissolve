@@ -49,9 +49,9 @@ then
 fi
 if [ "$DUQP" != "NO" ]
 then
-	echo "Parallel version available - checks will be performed over ($PROCS) processes."
 	PARALLEL="TRUE"
 	PROCS="$PROCS 1 2 3 4"
+	echo "Parallel version available - checks will be performed over ($PROCS) processes."
 fi
 
 # Loop over all test directories, or supplied dirs
