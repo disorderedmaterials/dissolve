@@ -34,8 +34,8 @@ bool EPSRModule::addTarget(const char* moduleTarget, const char* group)
 	if (!module) return Messenger::error("Couldn't find Module '%s' to add to EPSRModule's list of targets.\n", moduleTarget);
 
 	// Check on the type of the Module given... if OK, add to the specified group
-	if (DissolveSys::sameString(module->name(), "NeutronSQ")) Messenger::print("Adding NeutronSQ target '%s' to '%s'.\n", moduleTarget, uniqueName());
-	else return Messenger::error("Can't use Module of type '%s' as a fitting target.\n", module->name());
+	if (DissolveSys::sameString(module->type(), "NeutronSQ")) Messenger::print("Adding NeutronSQ target '%s' to '%s'.\n", moduleTarget, uniqueName());
+	else return Messenger::error("Can't use Module of type '%s' as a fitting target.\n", module->type());
 
 	// Does the specified group exist?
 	ModuleGroup* moduleGroup;

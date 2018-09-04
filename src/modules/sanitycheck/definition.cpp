@@ -21,8 +21,8 @@
 
 #include "modules/sanitycheck/sanitycheck.h"
 
-// Return name of module
-const char* SanityCheckModule::name()
+// Return type of module
+const char* SanityCheckModule::type()
 {
 	return "SanityCheck";
 }

@@ -21,8 +21,8 @@
 
 #include "modules/atomshake/atomshake.h"
 
-// Return name of module
-const char* AtomShakeModule::name()
+// Return type of module
+const char* AtomShakeModule::type()
 {
 	return "AtomShake";
 }

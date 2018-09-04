@@ -33,7 +33,7 @@ RefineModule::RefineModule() : Module(), interpolatedFitData_(fitData_)
 {
 	// Add to instances list and set unique name for this instance
 	instances_.own(this);
-	uniqueName_.sprintf("%s%02i", name(), instances_.nItems()-1);
+	uniqueName_.sprintf("%s%02i", type(), instances_.nItems()-1);
 
 	// Set up variables / control parameters
 	setUpKeywords();

@@ -21,8 +21,8 @@
 
 #include "modules/checks/checks.h"
 
-// Return name of module
-const char* ChecksModule::name()
+// Return type of module
+const char* ChecksModule::type()
 {
 	return "Checks";
 }

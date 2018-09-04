@@ -21,8 +21,8 @@
 
 #include "modules/md/md.h"
 
-// Return name of module
-const char* MDModule::name()
+// Return type of module
+const char* MDModule::type()
 {
 	return "MD";
 }

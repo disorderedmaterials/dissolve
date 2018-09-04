@@ -21,8 +21,8 @@
 
 #include "modules/import/import.h"
 
-// Return name of module
-const char* ImportModule::name()
+// Return type of module
+const char* ImportModule::type()
 {
 	return "Import";
 }

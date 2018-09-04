@@ -21,8 +21,8 @@
 
 #include "modules/calibration/calibration.h"
 
-// Return name of module
-const char* CalibrationModule::name()
+// Return type of module
+const char* CalibrationModule::type()
 {
 	return "Calibration";
 }

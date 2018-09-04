@@ -228,7 +228,7 @@ bool Dissolve::setUpSimulation()
 	{
 		Module* module = modRef->module();
 
-		Messenger::print("    %s:\n", module->name());
+		Messenger::print("    %s:\n", module->type());
 		if (module->nConfigurationTargets() == 0) Messenger::print("      No Configuration targets.\n");
 		else
 		{

@@ -125,7 +125,7 @@ bool Dissolve::iterate(int nIterations)
 			{
 				Module* module = modRef->module();
 
-				Messenger::print("      --> %20s  (%s)\n", module->name(), module->enabled() ? module->frequencyDetails(iteration_) : "Disabled");
+				Messenger::print("      --> %20s  (%s)\n", module->type(), module->enabled() ? module->frequencyDetails(iteration_) : "Disabled");
 
 				// TODO This will estimate wrongly for anything other than Sequential Processing
 				thisTime += module->processTimes().value();
@@ -139,7 +139,7 @@ bool Dissolve::iterate(int nIterations)
 		{
 			Module* module = modRef->module();
 			
-			Messenger::print("      --> %20s  (%s)\n", module->name(), module->frequencyDetails(iteration_));
+			Messenger::print("      --> %20s  (%s)\n", module->type(), module->frequencyDetails(iteration_));
 
 			thisTime += module->processTimes().value();
 		}
@@ -192,7 +192,7 @@ bool Dissolve::iterate(int nIterations)
 
 				if (!module->runThisIteration(iteration_)) continue;
 
-				Messenger::heading("%s (%s)", module->name(), module->uniqueName());
+				Messenger::heading("%s (%s)", module->type(), module->uniqueName());
 
 				result = module->executeProcessing(*this, cfg->processPool());
 
@@ -236,13 +236,13 @@ bool Dissolve::iterate(int nIterations)
 
 			if (!module->runThisIteration(iteration_)) continue;
 
-			Messenger::heading("%s (%s)", module->name(), module->uniqueName());
+			Messenger::heading("%s (%s)", module->type(), module->uniqueName());
 
 			result = module->executeProcessing(*this, worldPool());
 
 			if (!result)
 			{
-				Messenger::error("Module '%s' experienced problems. Exiting now.\n", module->name());
+				Messenger::error("Module '%s' experienced problems. Exiting now.\n", module->type());
 				return false;
 			}
 		}
@@ -381,7 +381,7 @@ void Dissolve::printTiming()
 			Module* module = modRef->module();
 
 			SampledDouble timingInfo = module->processTimes();
-			Messenger::print("      --> %30s  %6.1f s/iteration (%i iterations)\n", CharString("%s (%s)", module->name(), module->uniqueName()).get(), timingInfo.value(), timingInfo.count());
+			Messenger::print("      --> %30s  %6.1f s/iteration (%i iterations)\n", CharString("%s (%s)", module->type(), module->uniqueName()).get(), timingInfo.value(), timingInfo.count());
 		}
 	}
 	Messenger::print("\n");
@@ -393,7 +393,7 @@ void Dissolve::printTiming()
 		Module* module = modRef->module();
 
 		SampledDouble timingInfo = module->processTimes();
-		Messenger::print("      --> %30s  %6.1f s/iteration (%i iterations)\n", CharString("%s (%s)", module->name(), module->uniqueName()).get(), timingInfo.value(), timingInfo.count());
+		Messenger::print("      --> %30s  %6.1f s/iteration (%i iterations)\n", CharString("%s (%s)", module->type(), module->uniqueName()).get(), timingInfo.value(), timingInfo.count());
 	}
 	Messenger::print("      --> %30s  %6.1f s/write     (%i writes)\n", "Restart File", saveRestartTimes_.value(), saveRestartTimes_.count());
 	Messenger::print("\n");

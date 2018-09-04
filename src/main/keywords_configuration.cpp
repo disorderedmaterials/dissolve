@@ -164,7 +164,7 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 					// Add our pointer to the Module's list of associated Configurations
 					if (!module->addConfigurationTarget(cfg))
 					{
-						Messenger::error("Failed to add Configuration '%s' to Module '%s' as a target.\n", cfg->name(), module->name());
+						Messenger::error("Failed to add Configuration '%s' to Module '%s' as a target.\n", cfg->name(), module->type());
 						error = true;
 					}
 				}

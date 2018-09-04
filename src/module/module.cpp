@@ -94,7 +94,7 @@ void Module::addDependentModule(Module* module, bool autoAdded)
 Module* Module::dependentModule(const char* name)
 {
 	RefListIterator<Module,bool> iterator(dependentModules_, true);
-	while (Module* module = iterator.iterate()) if (DissolveSys::sameString(name, module->name())) return module;
+	while (Module* module = iterator.iterate()) if (DissolveSys::sameString(name, module->type())) return module;
 
 	return NULL;
 }
@@ -116,25 +116,25 @@ bool Module::updateDependentTargets(ModuleList& currentModuleList, bool autoAddD
 		}
 
 		// Find the named dependentModule in the current list
-		Module* existingModule = currentModuleList.find(dependentModule->name());
+		Module* existingModule = currentModuleList.find(dependentModule->type());
 		if (existingModule)
 		{
 			addDependentModule(existingModule, false);
-			Messenger::print("Added dependent Module '%s' (%s) to Module '%s'.\n", existingModule->uniqueName(), existingModule->name(), uniqueName());
+			Messenger::print("Added dependent Module '%s' (%s) to Module '%s'.\n", existingModule->uniqueName(), existingModule->type(), uniqueName());
 		}
 		else
 		{
 			// No Module exists in the Configuration already - add it automatically?
 			if (autoAddDependents)
 			{
-				Messenger::warn("Auto-adding the Module '%s', since the Module '%s' depends on it.\nDefault parameters will be used.\nFor better control, add the Module by hand to the input file.\n", dependentModule->name(), name());
+				Messenger::warn("Auto-adding the Module '%s', since the Module '%s' depends on it.\nDefault parameters will be used.\nFor better control, add the Module by hand to the input file.\n", dependentModule->type(), type());
 				Module* autoAddedModule = currentModuleList.add(dependentModule, configurationLocal_ ? dependentModule->targetConfigurations().firstItem() : NULL, this);
 				if (!autoAddedModule) return false;
 				addDependentModule(autoAddedModule, true);
 			}
 			else
 			{
-				Messenger::error("The Module '%s' requires the Module '%s' to run prior to it, but the '%s' Module is not present in the current setup.\n", name(), dependentModule->name(), dependentModule->name());
+				Messenger::error("The Module '%s' requires the Module '%s' to run prior to it, but the '%s' Module is not present in the current setup.\n", type(), dependentModule->type(), dependentModule->type());
 				return false;
 			}
 		}
@@ -222,7 +222,7 @@ int Module::parseKeyword(LineParser& parser, Dissolve* dissolve, GenericList& ta
 // Print valid keywords
 void Module::printValidKeywords()
 {
-	Messenger::print("Valid keywords for '%s' Module are:\n", name());
+	Messenger::print("Valid keywords for '%s' Module are:\n", type());
 
 	ListIterator<ModuleKeywordBase> keywordIterator(keywords_.keywords());
 	while (ModuleKeywordBase* keyword = keywordIterator.iterate()) Messenger::print("  %30s  %s\n", keyword->keyword(), keyword->description());
@@ -299,8 +299,8 @@ bool Module::addConfigurationTarget(Configuration* cfg)
 	}
 	else
 	{
-		if (nTargetableConfigurations() == 0) Messenger::error("Can't add Configuration '%s' as a target to Module '%s' since it doesn't accept any such targets.\n", cfg->name(), name());
-		else Messenger::error("Can't add Configuration '%s' as a target to Module '%s' since the maximum number (%i) has already been reached.\n", cfg->name(), name(), nTargetableConfigurations());
+		if (nTargetableConfigurations() == 0) Messenger::error("Can't add Configuration '%s' as a target to Module '%s' since it doesn't accept any such targets.\n", cfg->name(), type());
+		else Messenger::error("Can't add Configuration '%s' as a target to Module '%s' since the maximum number (%i) has already been reached.\n", cfg->name(), type(), nTargetableConfigurations());
 	}
 
 	return false;
@@ -330,7 +330,7 @@ void Module::copyTargetConfigurations(Module* sourceModule)
 	// First, check if this module actually accepts target Configurations
 	if ((nTargetableConfigurations() < sourceModule->nConfigurationTargets()) && (nTargetableConfigurations() != -1))
 	{
-		Messenger::warn("Dependent Module '%s' does not accept Configuration targets, but the source Module '%s' lists %i.\n", name(), sourceModule->name());
+		Messenger::warn("Dependent Module '%s' does not accept Configuration targets, but the source Module '%s' lists %i.\n", type(), sourceModule->type());
 		return;
 	}
 	RefListIterator<Configuration,bool> configIterator(sourceModule->targetConfigurations());

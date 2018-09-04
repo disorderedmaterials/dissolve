@@ -21,8 +21,8 @@
 
 #include "modules/intrashake/intrashake.h"
 
-// Return name of module
-const char* IntraShakeModule::name()
+// Return type of module
+const char* IntraShakeModule::type()
 {
 	return "IntraShake";
 }

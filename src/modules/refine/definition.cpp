@@ -21,8 +21,8 @@
 
 #include "modules/refine/refine.h"
 
-// Return name of module
-const char* RefineModule::name()
+// Return type of module
+const char* RefineModule::type()
 {
 	return "Refine";
 }
@@ -57,7 +57,7 @@ const char* RefineModule::dependentModules()
 // Set up supplied dependent module (only if it has been auto-added)
 bool RefineModule::setUpDependentModule(Module* depMod)
 {
-	if (DissolveSys::sameString(depMod->name(), "Energy"))
+	if (DissolveSys::sameString(depMod->type(), "Energy"))
 	{
 		// Must add all Configuration targets in the associated Partials Module
 		Module* partialsModule = dependentModule("Partials");

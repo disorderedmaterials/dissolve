@@ -32,7 +32,7 @@ List<Module> BraggModule::instances_;
 BraggModule::BraggModule() : Module()
 {
 	// Add to instances list and set unique name for this instance
-	uniqueName_.sprintf("%s%02i", name(), instances_.nItems());
+	uniqueName_.sprintf("%s%02i", type(), instances_.nItems());
 	instances_.own(this);
 
 	// Set up variables / control parameters

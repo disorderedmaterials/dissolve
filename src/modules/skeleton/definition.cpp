@@ -21,8 +21,8 @@
 
 #include "modules/skeleton/skeleton.h"
 
-// Return name of module
-const char* SkeletonModule::name()
+// Return type of module
+const char* SkeletonModule::type()
 {
 	return "Skeleton";
 }

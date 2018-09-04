@@ -21,8 +21,8 @@
 
 #include "modules/forces/forces.h"
 
-// Return name of module
-const char* ForcesModule::name()
+// Return type of module
+const char* ForcesModule::type()
 {
 	return "Forces";
 }

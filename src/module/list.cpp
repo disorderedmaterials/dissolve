@@ -56,7 +56,7 @@ Module* ModuleList::add(Module* module, Configuration* location, Module* addBefo
 	else if (module->instanceType() == Module::SingleInstance)
 	{
 		// Single instance modules are one-per-parent, so must see if it is already in the relevant list...
-		Module* existingModule = find(module->name());
+		Module* existingModule = find(module->type());
 		if (existingModule) moduleToAdd = existingModule;
 		else moduleToAdd = module->createInstance();
 	}
@@ -93,7 +93,7 @@ Module* ModuleList::find(const char* name) const
 	{
 		Module* module = modRef->module();
 
-		if (DissolveSys::sameString(module->name(),name)) return module;
+		if (DissolveSys::sameString(module->type(),name)) return module;
 	}
 
 	return NULL;
@@ -133,9 +133,9 @@ void ModuleList::registerMasterInstance(Module* mainInstance)
 	{
 		Module* module = modRef->module();
 
-		if (DissolveSys::sameString(module->name(), mainInstance->name()))
+		if (DissolveSys::sameString(module->type(), mainInstance->type()))
 		{
-			Messenger::error("Two modules cannot have the same name (%s).\n", module->name());
+			Messenger::error("Two modules cannot have the same name (%s).\n", module->type());
 			ModuleReference* failedRef = failedRegistrations_.add();
 			failedRef->set(module, NULL, NULL);
 			return;
@@ -146,15 +146,15 @@ void ModuleList::registerMasterInstance(Module* mainInstance)
 	masterRef->set(mainInstance, NULL, NULL);
 }
 
-// Find master instance of named Module
-Module* ModuleList::findMasterInstance(const char* name)
+// Find master instance of specified Module type
+Module* ModuleList::findMasterInstance(const char* type)
 {
 	ListIterator<ModuleReference> moduleIterator(masterInstances_);
 	while (ModuleReference* modRef = moduleIterator.iterate())
 	{
 		Module* masterInstance = modRef->module();
 		
-		if (DissolveSys::sameString(masterInstance->name(), name)) return masterInstance;
+		if (DissolveSys::sameString(masterInstance->type(), type)) return masterInstance;
 	}
 
 	return NULL;
@@ -169,7 +169,7 @@ bool ModuleList::printMasterModuleInformation()
 	{
 		Module* masterInstance = modRef->module();
 
-		Messenger::print(" --> %s\n", masterInstance->name());
+		Messenger::print(" --> %s\n", masterInstance->type());
 		Messenger::print("     %s\n", masterInstance->brief());
 	}
 
@@ -182,7 +182,7 @@ bool ModuleList::printMasterModuleInformation()
 		{
 			Module* failedInstance = modRef->module();
 
-			Messenger::print(" --> %s\n", failedInstance->name());
+			Messenger::print(" --> %s\n", failedInstance->type());
 		}
 	}
 

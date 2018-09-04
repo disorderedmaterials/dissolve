@@ -21,8 +21,8 @@
 
 #include "modules/export/export.h"
 
-// Return name of module
-const char* ExportModule::name()
+// Return type of module
+const char* ExportModule::type()
 {
 	return "Export";
 }

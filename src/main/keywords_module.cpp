@@ -57,7 +57,7 @@ int ModuleBlock::nArguments(ModuleBlock::ModuleKeyword id)
 // Parse Module block
 bool ModuleBlock::parse(LineParser& parser, Dissolve* dissolve, Module* module, GenericList& targetList, bool moduleInConfiguration)
 {
-	Messenger::print("\nParsing %s block '%s'...\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::ModuleBlockKeyword), module->name());
+	Messenger::print("\nParsing %s block '%s'...\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::ModuleBlockKeyword), module->type());
 
 	Configuration* targetCfg;
 	CharString varName, dataName;
@@ -81,7 +81,7 @@ bool ModuleBlock::parse(LineParser& parser, Dissolve* dissolve, Module* module, 
 				targetCfg = dissolve->findConfiguration(parser.argc(1));
 				if (!targetCfg)
 				{
-					Messenger::error("Can't associate Configuration '%s' to the Module '%s', since no Configuration by this name exists.\n", parser.argc(1), module->name());
+					Messenger::error("Can't associate Configuration '%s' to the Module '%s', since no Configuration by this name exists.\n", parser.argc(1), module->type());
 					error = true;
 					break;
 				}
@@ -89,7 +89,7 @@ bool ModuleBlock::parse(LineParser& parser, Dissolve* dissolve, Module* module, 
 				// Add it is a target
 				if (!module->addConfigurationTarget(targetCfg))
 				{
-					Messenger::error("Failed to add Configuration target in Module '%s'.\n", module->name());
+					Messenger::error("Failed to add Configuration target in Module '%s'.\n", module->type());
 					error = true;
 					break;
 				}
@@ -119,7 +119,7 @@ bool ModuleBlock::parse(LineParser& parser, Dissolve* dissolve, Module* module, 
 			if (result == 0) error = true;
 			else if (result == -1)
 			{
-				Messenger::error("Unrecognised %s block keyword '%s' found, and the Module '%s' contains no option with this name.\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::ModuleBlockKeyword), parser.argc(0), module->name());
+				Messenger::error("Unrecognised %s block keyword '%s' found, and the Module '%s' contains no option with this name.\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::ModuleBlockKeyword), parser.argc(0), module->type());
 				module->printValidKeywords();
 				error = true;
 			}

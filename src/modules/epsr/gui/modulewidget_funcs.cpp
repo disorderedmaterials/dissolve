@@ -269,7 +269,7 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 		FQGraph_->addCollectionFromBlock(blockData);
 
 		// Calculated data from associated module
-		if (DissolveSys::sameString(targetModule->name(), "NeutronSQ"))
+		if (DissolveSys::sameString(targetModule->type(), "NeutronSQ"))
 		{
 			// F(Q)
 			blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated'; Source Data1D '%s//WeightedSQ//Total'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName());

@@ -21,8 +21,8 @@
 
 #include "modules/bragg/bragg.h"
 
-// Return name of module
-const char* BraggModule::name()
+// Return type of module
+const char* BraggModule::type()
 {
 	return "Bragg";
 }

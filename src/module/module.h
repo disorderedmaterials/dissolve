@@ -76,8 +76,8 @@ class Module : public ListItem<Module>
 	int colour_[3];
 
 	public:
-	// Return name of Module
-	virtual const char* name() = 0;
+	// Return type of Module
+	virtual const char* type() = 0;
 	// Set unique name of Module
 	void setUniqueName(const char* uniqueName);
 	// Return unique name of Module

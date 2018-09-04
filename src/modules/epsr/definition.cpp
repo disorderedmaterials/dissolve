@@ -21,8 +21,8 @@
 
 #include "modules/epsr/epsr.h"
 
-// Return name of module
-const char* EPSRModule::name()
+// Return type of module
+const char* EPSRModule::type()
 {
 	return "EPSR";
 }
@@ -57,7 +57,7 @@ const char* EPSRModule::dependentModules()
 // Set up supplied dependent module (only if it has been auto-added)
 bool EPSRModule::setUpDependentModule(Module* depMod)
 {
-	if (DissolveSys::sameString(depMod->name(), "Energy"))
+	if (DissolveSys::sameString(depMod->type(), "Energy"))
 	{
 		// Must add all Configuration targets in the associated Partials Module
 		Module* partialsModule = dependentModule("Partials");

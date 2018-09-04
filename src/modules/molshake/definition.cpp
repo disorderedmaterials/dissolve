@@ -21,8 +21,8 @@
 
 #include "modules/molshake/molshake.h"
 
-// Return name of module
-const char* MolShakeModule::name()
+// Return type of module
+const char* MolShakeModule::type()
 {
 	return "MolShake";
 }

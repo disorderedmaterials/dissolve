@@ -21,8 +21,8 @@
 
 #include "modules/sq/sq.h"
 
-// Return name of module
-const char* SQModule::name()
+// Return type of module
+const char* SQModule::type()
 {
 	return "SQ";
 }

@@ -60,9 +60,9 @@ int CalibrationModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParse
 			Messenger::error("Error adding NeutronSQ reference target - no Module named '%s' exists.\n", parser.argc(1));
 			return false;
 		}
-		if (!DissolveSys::sameString(module->name(), "NeutronSQ"))
+		if (!DissolveSys::sameString(module->type(), "NeutronSQ"))
 		{
-			Messenger::error("Error adding NeutronSQ reference target - Module '%s' is not a NeutronSQ Module (%s).\n", parser.argc(1), module->name());
+			Messenger::error("Error adding NeutronSQ reference target - Module '%s' is not a NeutronSQ Module (%s).\n", parser.argc(1), module->type());
 			return false;
 		}
 

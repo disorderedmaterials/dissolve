@@ -403,7 +403,7 @@ bool Dissolve::saveInput(const char* filename)
 		{
 			Module* module = modRef->module();
 
-			parser.writeLineF("  %s  %s  '%s'\n", ConfigurationBlock::keyword(ConfigurationBlock::ModuleKeyword), module->name(), module->uniqueName());
+			parser.writeLineF("  %s  %s  '%s'\n", ConfigurationBlock::keyword(ConfigurationBlock::ModuleKeyword), module->type(), module->uniqueName());
 
 			// Write frequency and disabled keywords
 			parser.writeLineF("    Frequency  %i\n", module->frequency());
@@ -433,7 +433,7 @@ bool Dissolve::saveInput(const char* filename)
 	{
 		Module* module = modRef->module();
 
-		parser.writeLineF("\n%s  %s  '%s'\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::ModuleBlockKeyword), module->name(), module->uniqueName());
+		parser.writeLineF("\n%s  %s  '%s'\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::ModuleBlockKeyword), module->type(), module->uniqueName());
 
 		// Write frequency and disabled keywords
 		parser.writeLineF("  Frequency  %i\n", module->frequency());

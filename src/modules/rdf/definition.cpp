@@ -21,8 +21,8 @@
 
 #include "modules/rdf/rdf.h"
 
-// Return name of module
-const char* RDFModule::name()
+// Return type of module
+const char* RDFModule::type()
 {
 	return "RDF";
 }

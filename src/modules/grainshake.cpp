@@ -59,8 +59,8 @@ Module* GrainShakeModule::createInstance()
  * Definition
  */
 
-// Return name of module
-const char* GrainShakeModule::name()
+// Return type of module
+const char* GrainShakeModule::type()
 {
 	return "GrainShake";
 }

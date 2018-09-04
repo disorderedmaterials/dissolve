@@ -21,8 +21,8 @@
 
 #include "modules/test/test.h"
 
-// Return name of module
-const char* TestModule::name()
+// Return type of module
+const char* TestModule::type()
 {
 	return "Test";
 }

@@ -82,7 +82,7 @@ int NeutronSQModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser&
 		// Raise an error if this Configuration is not targetted by the Module
 		if (!isTargetConfiguration(targetCfg)) 
 		{
-			Messenger::error("Configuration '%s' is not targetted by the Module '%s', so setting its weight is irrelevant.\n", targetCfg->name(), name());
+			Messenger::error("Configuration '%s' is not targetted by the Module '%s', so setting its weight is irrelevant.\n", targetCfg->name(), type());
 			return false;
 		}
 

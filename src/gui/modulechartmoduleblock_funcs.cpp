@@ -129,7 +129,7 @@ void ModuleChartModuleBlock::updateControls()
 	if (!module_) return;
 
 	// Set information panel contents
-	CharString topText("%s (%s)", module_->name(), module_->uniqueName());
+	CharString topText("%s (%s)", module_->type(), module_->uniqueName());
 	ui.TopLabel->setText(topText.get());
 	CharString bottomText("Runs @ %s", module_->frequencyDetails(dissolve_.iteration()));
 	ui.BottomLabel->setText(bottomText.get());

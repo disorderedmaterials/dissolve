@@ -71,8 +71,8 @@ class ModuleList
 	public:
 	// Register Module
 	static void registerMasterInstance(Module* mainInstance);
-	// Find master instance of named Module
-	static Module* findMasterInstance(const char* name);
+	// Find master instance of specified Module type
+	static Module* findMasterInstance(const char* type);
 	// Print out registered module information, and return false if any registration errors were encountered
 	static bool printMasterModuleInformation();
 	// Return list of all master instances

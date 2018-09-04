@@ -21,8 +21,8 @@
 
 #include "modules/neutronsq/neutronsq.h"
 
-// Return name of module
-const char* NeutronSQModule::name()
+// Return type of module
+const char* NeutronSQModule::type()
 {
 	return "NeutronSQ";
 }

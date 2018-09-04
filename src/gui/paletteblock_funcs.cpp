@@ -55,7 +55,7 @@ void PaletteBlock::initialiseWindow(Module* module)
 	// Set information panel contents
 	if (module)
 	{
-		CharString topText("%s (%s)", module->name(), module->uniqueName());
+		CharString topText("%s (%s)", module->type(), module->uniqueName());
 		ui.TopLabel->setText(topText.get());
 		CharString bottomText("Runs @ %s", module->frequencyDetails(dissolve_.iteration()));
 		ui.BottomLabel->setText(bottomText.get());

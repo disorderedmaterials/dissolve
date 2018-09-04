@@ -72,9 +72,9 @@ bool ModuleReferenceListModuleKeyword::read(LineParser& parser, int startArg, Pr
 		Messenger::error("No Module named '%s' exists.\n", parser.argc(startArg));
 		return false;
 	}
-	if (!DissolveSys::sameString(module->name(), moduleType_))
+	if (!DissolveSys::sameString(module->type(), moduleType_))
 	{
-		Messenger::error("Module '%s' is not of the correct type (%s).\n", parser.argc(startArg), module->name());
+		Messenger::error("Module '%s' is not of the correct type (%s).\n", parser.argc(startArg), module->type());
 		return false;
 	}
 

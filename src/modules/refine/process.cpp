@@ -124,7 +124,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 			// Calculate our error based on the type of Module
 			double error = 100.0;
-			if (DissolveSys::sameString(module->name(), "NeutronSQ"))
+			if (DissolveSys::sameString(module->type(), "NeutronSQ"))
 			{
 				// Retrieve the ReferenceData from the Module (as Data1D)
 				const Data1D& referenceData = GenericListHelper<Data1D>::value(dissolve.processingModuleData(), "ReferenceData", module->uniqueName(), Data1D(), &found);
@@ -151,7 +151,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				differenceData = referenceData;
 				Interpolator::addInterpolated(differenceData, calcSQTotal, -1.0);
 			}
-			else return Messenger::error("Unrecognised Module type '%s', so can't calculate error.", module->name());
+			else return Messenger::error("Unrecognised Module type '%s', so can't calculate error.", module->type());
 
 			// Store the percentage error
 			errors.addPoint(dissolve.iteration(), error);

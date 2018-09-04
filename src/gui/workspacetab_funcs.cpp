@@ -232,7 +232,7 @@ void WorkspaceTab::createContextMenu(QMenu* parent)
 		{
 			Module* module = modRef->module();
 
-			QAction* moduleItem = cfgMenu->addAction(CharString("%s (%s)", module->name(), module->uniqueName()).get());
+			QAction* moduleItem = cfgMenu->addAction(CharString("%s (%s)", module->type(), module->uniqueName()).get());
 			moduleItem->setData(VariantPointer<Module>(module));
 			connect(moduleItem, SIGNAL(triggered(bool)), this, SLOT(contextMenuModuleSelected(bool)));
 		}
@@ -253,7 +253,7 @@ void WorkspaceTab::createContextMenu(QMenu* parent)
 	{
 		Module* module = modRef->module();
 
-		QAction* moduleItem = parent->addAction(CharString("%s (%s)", module->name(), module->uniqueName()).get());
+		QAction* moduleItem = parent->addAction(CharString("%s (%s)", module->type(), module->uniqueName()).get());
 		moduleItem->setData(VariantPointer<Module>(module));
 		connect(moduleItem, SIGNAL(triggered(bool)), this, SLOT(contextMenuModuleSelected(bool)));
 	}
@@ -298,7 +298,7 @@ void WorkspaceTab::contextMenuWidgetSelected(bool checked)
 SubWindow* WorkspaceTab::addModuleControlWidget(Module* module)
 {
 	// Is the Module already displayed?
-	SubWindow* window = findSubWindow(CharString("%s (%s)", module->name(), module->uniqueName()));
+	SubWindow* window = findSubWindow(CharString("%s (%s)", module->type(), module->uniqueName()));
 	if (!window)
 	{
 		// Create a new ModuleWidget

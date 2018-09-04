@@ -21,8 +21,8 @@
 
 #include "modules/analyse/analyse.h"
 
-// Return name of module
-const char* AnalyseModule::name()
+// Return type of module
+const char* AnalyseModule::type()
 {
 	return "Analyse";
 }

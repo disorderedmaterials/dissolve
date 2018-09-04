@@ -21,8 +21,8 @@
 
 #include "modules/energy/energy.h"
 
-// Return name of module
-const char* EnergyModule::name()
+// Return type of module
+const char* EnergyModule::type()
 {
 	return "Energy";
 }

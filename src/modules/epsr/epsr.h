@@ -64,8 +64,8 @@ class EPSRModule : public Module
 	 * Definition
 	 */
 	public:
-	// Return name of module
-	const char* name();
+	// Return type of module
+	const char* type();
 	// Return brief description of module
 	const char* brief();
 	// Return instance type for module

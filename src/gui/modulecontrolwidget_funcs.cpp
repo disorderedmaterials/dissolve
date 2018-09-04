@@ -67,7 +67,7 @@ void ModuleControlWidget::initialiseWindow(Module* module)
 	// Set information panel contents
 	if (module)
 	{
-		CharString topText("%s (%s) @ %s", module->name(), module->uniqueName(), module->configurationLocal() ? (module->targetConfigurations().first() ? module->targetConfigurations().first()->item->name() : "[NO CONFIG?]") : "Processing");
+		CharString topText("%s (%s) @ %s", module->type(), module->uniqueName(), module->configurationLocal() ? (module->targetConfigurations().first() ? module->targetConfigurations().first()->item->name() : "[NO CONFIG?]") : "Processing");
 		ui.TopLabel->setText(topText.get());
 		CharString bottomText;
 		RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
@@ -183,7 +183,7 @@ void ModuleControlWidget::initialiseControls(Module* module)
 	widgetLayout->setContentsMargins(0,0,0,0);
 	widgetLayout->setSpacing(0);
 	moduleWidget_ = module->createWidget(ui.WidgetWidget, dissolve_);
-	if (moduleWidget_ == NULL) Messenger::printVerbose("Module '%s' did not provide a valid controller widget.\n", module->name());
+	if (moduleWidget_ == NULL) Messenger::printVerbose("Module '%s' did not provide a valid controller widget.\n", module->type());
 	else widgetLayout->addWidget(moduleWidget_);
 
 	// Set and disable the panel toggle button if there is no Module widget
