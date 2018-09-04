@@ -7,6 +7,7 @@ add_library(keywordtypes
   complex.cpp
   datastore.cpp
   double.cpp
+  fileandformat.cpp
   int.cpp
   isotopologuelist.cpp
   modulereferencelist.cpp
@@ -21,6 +22,7 @@ add_library(keywordtypes
   complex.h
   datastore.h
   double.h
+  fileandformat.h
   int.h
   isotopologuelist.h
   modulereferencelist.h
