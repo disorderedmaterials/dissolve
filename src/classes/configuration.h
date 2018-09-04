@@ -79,10 +79,8 @@ class Configuration : public ListItem<Configuration>
 	double density_;
 	// Whether the density is in atomic units (atoms/A3) or chemistry units (g/cm3)
 	bool densityIsAtomic_;
-	// File containing input coordinates
-	CharString inputCoordinatesFile_;
-	// Format of input coordinates file
-	ImportModuleFormats::CoordinateFormat inputCoordinatesFormat_;
+	// File / format of input coordinates file
+	CoordinateImportFileFormat inputCoordinates_;
 	// Temperature of this configuration (K)
 	double temperature_;
 
@@ -117,16 +115,8 @@ class Configuration : public ListItem<Configuration>
 	bool densityIsAtomic() const;
 	// Return the atomic density of the system
 	double atomicDensity() const;
-	// Set file containing input coordinates
-	void setInputCoordinatesFile(const char* filename);
-	// Return file containing input coordinates
-	const char* inputCoordinatesFile() const;
-	// Return whether a file containing input coordinates has been set
-	bool hasInputCoordinatesFile() const;
-	// Set input coordinates file format
-	void setInputCoordinatesFormat(ImportModuleFormats::CoordinateFormat format);
-	// Return input coordinates file format
-	ImportModuleFormats::CoordinateFormat inputCoordinatesFormat();
+	// Return import coordinates file / format
+	CoordinateImportFileFormat& inputCoordinates();
 	// Set configuration temperature
 	void setTemperature(double t);
 	// Return configuration temperature
@@ -232,7 +222,7 @@ class Configuration : public ListItem<Configuration>
 	// Increment current coordinate index
 	void incrementCoordinateIndex();
 	// Load coordinates from specified parser
-	bool loadCoordinates(LineParser& parser, ImportModuleFormats::CoordinateFormat format);
+	bool loadCoordinates(LineParser& parser, CoordinateImportFileFormat::CoordinateFormat format);
 
 
 	/*

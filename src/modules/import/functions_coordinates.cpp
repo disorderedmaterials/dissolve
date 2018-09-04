@@ -23,12 +23,12 @@
 #include "base/lineparser.h"
 
 // Read coordinates in specified format
-bool ImportModule::readCoordinates(ImportModuleFormats::CoordinateFormat format, LineParser& parser, Array< Vec3<double> >& r)
+bool ImportModule::readCoordinates(CoordinateImportFileFormat::CoordinateFormat format, LineParser& parser, Array< Vec3<double> >& r)
 {
 	// Check supplied format string
-	if (format == ImportModuleFormats::XYZCoordinates) return readXYZCoordinates(parser, r);
-	else if (format == ImportModuleFormats::DLPOLYCoordinates) return readDLPOLYCoordinates(parser, r);
-	else if (format == ImportModuleFormats::EPSRCoordinates) return readEPSRCoordinates(parser, r);
+	if (format == CoordinateImportFileFormat::XYZCoordinates) return readXYZCoordinates(parser, r);
+	else if (format == CoordinateImportFileFormat::DLPOLYCoordinates) return readDLPOLYCoordinates(parser, r);
+	else if (format == CoordinateImportFileFormat::EPSRCoordinates) return readEPSRCoordinates(parser, r);
 
 	Messenger::error("Unrecognised coordinate format - '%s'.\nKnown formats are: xyz, dlpoly, epsr.\n", format);
 	return false;

@@ -157,34 +157,10 @@ double Configuration::atomicDensity() const
 	return rho;
 }
 
-// Set file containing input coordinates
-void Configuration::setInputCoordinatesFile(const char* filename)
+// Return import coordinates file / format
+CoordinateImportFileFormat& Configuration::inputCoordinates()
 {
-	inputCoordinatesFile_ = filename;
-}
-
-// Return file containing input coordinates
-const char* Configuration::inputCoordinatesFile() const
-{
-	return inputCoordinatesFile_.get();
-}
-
-// Return whether a file containing input coordinates has been set
-bool Configuration::hasInputCoordinatesFile() const
-{
-	return (!inputCoordinatesFile_.isEmpty());
-}
-
-// Set input coordinates file format
-void Configuration::setInputCoordinatesFormat(ImportModuleFormats::CoordinateFormat format)
-{
-	inputCoordinatesFormat_ = format;
-}
-
-// Return input coordinates file format
-ImportModuleFormats::CoordinateFormat Configuration::inputCoordinatesFormat()
-{
-	return inputCoordinatesFormat_;
+	return inputCoordinates_;
 }
 
 // Set configuration temperature

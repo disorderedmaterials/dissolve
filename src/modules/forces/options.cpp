@@ -51,16 +51,16 @@ int ForcesModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& pa
 		Array<double>& fz = GenericListHelper< Array<double> >::realise(targetList, "ReferenceFZ", uniqueName());
 
 		// Second argument is the format, third (if present) is the target file
-		ImportModuleFormats::ForceFormat ff = ImportModuleFormats::forceFormat(parser.argc(1));
-		if (ff == ImportModuleFormats::nForceFormats) return Messenger::error("Unrecognised force format '%s' found fpr TestReference keyword.\n", parser.argc(1));
-		if (parser.hasArg(2))
+		ForceImportFileFormat format;
+		if (!format.read(parser, 1)) return false;
+		if (format.hasValidFileAndFormat())
 		{
 			LineParser fileParser(&dissolve->worldPool());
 			if (!fileParser.openInput(parser.argc(2))) return 0;
 
-			return ImportModule::readForces(ff, fileParser, fx, fy, fz);
+			return ImportModule::readForces(format.forceFormat(), fileParser, fx, fy, fz);
 		}
-		else return ImportModule::readForces(ff, parser, fx, fy, fz);
+		else return ImportModule::readForces(format.forceFormat(), parser, fx, fy, fz);
 	}
 
 	return -1;

@@ -51,7 +51,7 @@ ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dis
 	ui.SpeciesInfoTable->horizontalHeader()->setFont(font());
 
 	// Populate coordinates file format combo
-	ComboPopulator(ui.CoordinatesFileFormatCombo, ImportModuleFormats::nCoordinateFormats, ImportModuleFormats::niceCoordinateFormats());
+	ComboPopulator(ui.CoordinatesFileFormatCombo, cfg->inputCoordinates().nFormats(), cfg->inputCoordinates().niceFormats());
 
 	refreshing_ = false;
 
@@ -154,9 +154,9 @@ void ConfigurationTab::updateControls()
 	ui.SpeciesInfoTable->resizeColumnsToContents();
 
 	// Input Coordinates
-	ui.CoordinatesFileEdit->setText(configuration_->inputCoordinatesFile());
-	ui.CoordinatesFileFormatCombo->setCurrentIndex(configuration_->inputCoordinatesFormat());
-	ui.CoordinatesFromFileGroup->setChecked(configuration_->hasInputCoordinatesFile());
+	ui.CoordinatesFileEdit->setText(configuration_->inputCoordinates().filename());
+	ui.CoordinatesFileFormatCombo->setCurrentIndex(configuration_->inputCoordinates().format());
+// 	ui.CoordinatesFromFileGroup->setChecked(configuration_->inputCoordinates().is);
 
 	refreshing_ = false;
 }

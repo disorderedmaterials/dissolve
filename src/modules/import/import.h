@@ -93,7 +93,7 @@ class ImportModule : public Module
 	 */
 	public:
 	// Read coordinates in specified format
-	static bool readCoordinates(ImportModuleFormats::CoordinateFormat format, LineParser& parser, Array< Vec3<double> >& r);
+	static bool readCoordinates(CoordinateImportFileFormat::CoordinateFormat format, LineParser& parser, Array< Vec3<double> >& r);
 	// Read xyz coordinates from specified file
 	static bool readXYZCoordinates(LineParser& parser, Array< Vec3<double> >& r);
 	// Read DL_POLY coordinates from specified file
@@ -107,7 +107,7 @@ class ImportModule : public Module
 	 */
 	public:
 	// Read forces in specified format
-	static bool readForces(ImportModuleFormats::ForceFormat format, LineParser& parser, Array<double>& fx, Array<double>& fy, Array<double>& fz);
+	static bool readForces(ForceImportFileFormat::ForceFormat format, LineParser& parser, Array<double>& fx, Array<double>& fy, Array<double>& fz);
 	// Read simple forces from specified file
 	static bool readSimpleForces(LineParser& parser, Array<double>& fx, Array<double>& fy, Array<double>& fz);
 	// Read DL_POLY forces from specified file

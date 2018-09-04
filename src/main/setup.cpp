@@ -52,9 +52,9 @@ bool Dissolve::setUpSimulation()
 		// If the restart file exists, we will take our coordinates from it - no need to set anything up here.
 		// However, if the inputCoordinatesFile_ is set, we create our config from the Species definition and load the coordinates.
 		// Otherwise, if the restart file does not exist, and the inputCoordinatesFile_ is not set, generate a random configuration.
-		if (cfg->hasInputCoordinatesFile())
+		if (cfg->inputCoordinates().hasValidFileAndFormat())
 		{
-			if (DissolveSys::fileExists(cfg->inputCoordinatesFile()))
+			if (DissolveSys::fileExists(cfg->inputCoordinates()))
 			{
 				// Set up the Configuration from the Species populations, unless it has already been set up by reading the restart file
 				if (cfg->nAtoms() == 0)
@@ -63,13 +63,13 @@ bool Dissolve::setUpSimulation()
 					if (!cfg->initialise(worldPool(), false, pairPotentialRange_, nBoxNormalisationPoints_)) return false;
 				}
 
-				Messenger::print("Loading initial coordinates from file '%s'...\n", cfg->inputCoordinatesFile());
+				Messenger::print("Loading initial coordinates from file '%s'...\n", cfg->inputCoordinates().filename());
 				LineParser inputFileParser(&worldPool());
-				if (!inputFileParser.openInput(cfg->inputCoordinatesFile())) return false;
-				if (!cfg->loadCoordinates(inputFileParser, cfg->inputCoordinatesFormat())) return false;
+				if (!inputFileParser.openInput(cfg->inputCoordinates())) return false;
+				if (!cfg->loadCoordinates(inputFileParser, cfg->inputCoordinates().coordinateFormat())) return false;
 				inputFileParser.closeFiles();
 			}
-			else return Messenger::error("Input coordinates file '%s' specified, but it does not exist.\n", cfg->inputCoordinatesFile());
+			else return Messenger::error("Input coordinates file '%s' specified, but it does not exist.\n", cfg->inputCoordinates().filename());
 		}
 		else if (cfg->nAtoms() == 0)
 		{

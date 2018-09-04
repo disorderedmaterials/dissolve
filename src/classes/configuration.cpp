@@ -44,7 +44,6 @@ Configuration::Configuration() : ListItem<Configuration>(), boxNormalisationInte
 	requestedSizeFactor_ = 1.0;
 	appliedSizeFactor_ = 1.0;
 	nonPeriodic_ = false;
-	inputCoordinatesFormat_ = ImportModuleFormats::XYZCoordinates;
 
 	// Box / Cells
 	box_ = NULL;

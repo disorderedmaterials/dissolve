@@ -22,33 +22,57 @@
 #ifndef DISSOLVE_IMPORTMODULEFORMATS_H
 #define DISSOLVE_IMPORTMODULEFORMATS_H
 
+#include "base/fileandformat.h"
+
 // Forward Declarations
 /* none */
 
-namespace ImportModuleFormats
+// Coordinate Import Formats
+class CoordinateImportFileFormat : public FileAndFormat
 {
-	/*
-	 * Coordinate Formats
-	 */
-	enum CoordinateFormat { XYZCoordinates, DLPOLYCoordinates, EPSRCoordinates, nCoordinateFormats};
-	// Convert text string to CoordinateFormat
-	CoordinateFormat coordinateFormat(const char* s);
-	// Convert CoordinateFormat to text string
-	const char* coordinateFormat(CoordinateFormat id);
-	// Return nice CoordinateFormat array
-	const char** niceCoordinateFormats();
+	public:
+	// Available coordinate formats
+ 	enum CoordinateFormat { XYZCoordinates, DLPOLYCoordinates, EPSRCoordinates, nCoordinateFormats };
+	// Return number of available formats
+	int nFormats() const;
+	// Return formats array
+	const char** formats() const;
+	// Return nice formats array
+	const char** niceFormats() const;
+	// Return current format as CoordinateFormat
+	CoordinateFormat coordinateFormat() const;
+};
 
+// Forces Import Formats
+class ForceImportFileFormat : public FileAndFormat
+{
+	public:
+	// Available forces formats
+ 	enum ForceFormat { XYZForces, DLPOLYForces, nForceFormats };
+	// Return number of available formats
+	int nFormats() const;
+	// Return formats array
+	const char** formats() const;
+	// Return nice formats array
+	const char** niceFormats() const;
+	// Return current format as ForceFormat
+	ForceFormat forceFormat() const;
+};
 
-	/*
-	 * Forces Formats
-	 */
-	enum ForceFormat { XYZForces, DLPOLYForces, nForceFormats};
-	// Convert text string to ForceFormat
-	ForceFormat forceFormat(const char* s);
-	// Convert ForceFormat to text string
-	const char* forceFormat(ForceFormat id);
-	// Return nice ForceFormat array
-	const char** niceForceFormats();
+// Trajectory Import Formats
+class TrajectoryImportFileFormat : public FileAndFormat
+{
+	public:
+	// Available forces formats
+ 	enum TrajectoryFormat { XYZTrajectory, nTrajectoryFormats };
+	// Return number of available formats
+	int nFormats() const;
+	// Return formats array
+	const char** formats() const;
+	// Return nice formats array
+	const char** niceFormats() const;
+	// Return current format as TrajectoryFormat
+	TrajectoryFormat trajectoryFormat() const;
 };
 
 #endif

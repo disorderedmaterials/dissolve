@@ -23,11 +23,11 @@
 #include "base/lineparser.h"
 
 // Read forces in specified format
-bool ImportModule::readForces(ImportModuleFormats::ForceFormat format, LineParser& parser, Array<double>& fx, Array<double>& fy, Array<double>& fz)
+bool ImportModule::readForces(ForceImportFileFormat::ForceFormat format, LineParser& parser, Array<double>& fx, Array<double>& fy, Array<double>& fz)
 {
 	// Check supplied format string
-	if (format == ImportModuleFormats::XYZForces) return readSimpleForces(parser, fx, fy, fz);
-	else if (format == ImportModuleFormats::DLPOLYForces) return readDLPOLYForces(parser, fx, fy, fz);
+	if (format == ForceImportFileFormat::XYZForces) return readSimpleForces(parser, fx, fy, fz);
+	else if (format == ForceImportFileFormat::DLPOLYForces) return readDLPOLYForces(parser, fx, fy, fz);
 
 	Messenger::error("Unrecognised force format - '%s'.\nKnown formats are: simple, dlpoly.\n", format);
 	return false;

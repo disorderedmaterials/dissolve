@@ -30,49 +30,90 @@
 const char* CoordinateFormatKeywords[] = { "xyz", "dlpoly", "epsr" };
 const char* NiceCoordinateFormatKeywords[] = { "XYZ", "DL_POLY", "EPSR (ATO)" };
 
-// Convert text string to CoordinateFormat
-ImportModuleFormats::CoordinateFormat ImportModuleFormats::coordinateFormat(const char* s)
+// Return number of available formats
+int CoordinateImportFileFormat::nFormats() const
 {
-	for (int n=0; n<ImportModuleFormats::nCoordinateFormats; ++n) if (DissolveSys::sameString(s,CoordinateFormatKeywords[n])) return (ImportModuleFormats::CoordinateFormat) n;
-	return ImportModuleFormats::nCoordinateFormats;
+	return CoordinateImportFileFormat::nCoordinateFormats;
 }
 
-// Convert CoordinateFormat to text string
-const char* ImportModuleFormats::coordinateFormat(ImportModuleFormats::CoordinateFormat id)
+// Return formats array
+const char** CoordinateImportFileFormat::formats() const
 {
-	return CoordinateFormatKeywords[id];
+	return CoordinateFormatKeywords;
 }
 
-// Return CoordinateFormats array
-const char** ImportModuleFormats::niceCoordinateFormats()
+// Return nice formats array
+const char** CoordinateImportFileFormat::niceFormats() const
 {
 	return NiceCoordinateFormatKeywords;
 }
 
+// Return current format as CoordinateFormat
+CoordinateImportFileFormat::CoordinateFormat CoordinateImportFileFormat::coordinateFormat() const
+{
+	return (CoordinateImportFileFormat::CoordinateFormat) format_;
+}
 
 /*
  * Force Formats
  */
 
 // Force Type Keywords
-const char* ForceFormatKeywords[] = { "xyz", "dlpoly" };
-const char* NiceForceFormatKeywords[] = { "XYZ", "DL_POLY" };
+const char* ForcesFormatKeywords[] = { "xyz", "dlpoly" };
+const char* NiceForcesFormatKeywords[] = { "XYZ", "DL_POLY" };
 
-// Convert text string to ForceFormat
-ImportModuleFormats::ForceFormat ImportModuleFormats::forceFormat(const char* s)
+// Return number of available formats
+int ForceImportFileFormat::nFormats() const
 {
-	for (int n=0; n<ImportModuleFormats::nForceFormats; ++n) if (DissolveSys::sameString(s,ForceFormatKeywords[n])) return (ImportModuleFormats::ForceFormat) n;
-	return ImportModuleFormats::nForceFormats;
+	return ForceImportFileFormat::nForceFormats;
 }
 
-// Convert ForceFormat to text string
-const char* ImportModuleFormats::forceFormat(ImportModuleFormats::ForceFormat id)
+// Return formats array
+const char** ForceImportFileFormat::formats() const
 {
-	return ForceFormatKeywords[id];
+	return ForcesFormatKeywords;
 }
 
-// Return ForceFormats array
-const char** ImportModuleFormats::niceForceFormats()
+// Return nice formats array
+const char** ForceImportFileFormat::niceFormats() const
 {
-	return NiceForceFormatKeywords;
+	return NiceForcesFormatKeywords;
+}
+
+// Return current format as ForceFormat
+ForceImportFileFormat::ForceFormat ForceImportFileFormat::forceFormat() const
+{
+	return (ForceImportFileFormat::ForceFormat) format_;
+}
+
+/*
+ * Trajectory Formats
+ */
+
+// Trajectory Type Keywords
+const char* TrajectoryFormatKeywords[] = { "xyz" };
+const char* NiceTrajectoryFormatKeywords[] = { "XYZ" };
+
+// Return number of available formats
+int TrajectoryImportFileFormat::nFormats() const
+{
+	return TrajectoryImportFileFormat::nTrajectoryFormats;
+}
+
+// Return formats array
+const char** TrajectoryImportFileFormat::formats() const
+{
+	return TrajectoryFormatKeywords;
+}
+
+// Return nice formats array
+const char** TrajectoryImportFileFormat::niceFormats() const
+{
+	return NiceTrajectoryFormatKeywords;
+}
+
+// Return current format as TrajectoryFormat
+TrajectoryImportFileFormat::TrajectoryFormat TrajectoryImportFileFormat::trajectoryFormat() const
+{
+	return (TrajectoryImportFileFormat::TrajectoryFormat) format_;
 }

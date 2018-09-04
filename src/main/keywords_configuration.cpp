@@ -79,7 +79,6 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 	CharString niceName;
 	SpeciesInfo* spInfo;
 	bool blockDone = false, error = false;
-	ImportModuleFormats::CoordinateFormat cf;
 
 	while (!parser.eofOrBlank())
 	{
@@ -136,16 +135,13 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 				cfg->setEnsembleFrequency(parser.argi(1));
 				break;
 			case (ConfigurationBlock::InputCoordinatesKeyword):
-				cf = ImportModuleFormats::coordinateFormat(parser.argc(1));
-				if (cf == ImportModuleFormats::nCoordinateFormats)
+				if (!cfg->inputCoordinates().read(parser, 1))
 				{
-					Messenger::error("Unrecognised coordinate format '%s' given for input coordinates file.\n", parser.argc(1));
+					Messenger::error("Failed to set input coordinates file / format.\n");
 					error = true;
 					break;
 				}
-				cfg->setInputCoordinatesFormat(cf);
-				cfg->setInputCoordinatesFile(parser.argc(2));
-				Messenger::print("Initial coordinates will be loaded from file '%s' (format: %s)\n", cfg->inputCoordinatesFile(), ImportModuleFormats::coordinateFormat(cfg->inputCoordinatesFormat()));
+				Messenger::print("Initial coordinates will be loaded from file '%s' (format: %s)\n", cfg->inputCoordinates().filename(), cfg->inputCoordinates().formatString());
 				break;
 			case (ConfigurationBlock::ModuleKeyword):
 				// The argument following the keyword is the module name
