@@ -42,7 +42,7 @@ Module::InstanceType ImportModule::instanceType()
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
 int ImportModule::nTargetableConfigurations()
 {
-	return -1;
+	return 1;
 }
 
 // Modules upon which this Module depends to have run first

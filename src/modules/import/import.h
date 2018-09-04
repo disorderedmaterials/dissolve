@@ -81,6 +81,14 @@ class ImportModule : public Module
 
 
 	/*
+	 * Data
+	 */
+	private:
+	// Trajectory file source
+	TrajectoryImportFileFormat trajectoryFile_;
+
+
+	/*
 	 * Processing
 	 */
 	private:

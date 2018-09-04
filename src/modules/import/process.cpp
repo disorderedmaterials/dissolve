@@ -21,11 +21,10 @@
 
 #include "modules/import/import.h"
 #include "main/dissolve.h"
-#include "classes/atom.h"
-#include "classes/atomtype.h"
-#include "classes/box.h"
+#include "classes/configuration.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
+#include "templates/genericlisthelper.h"
 
 // Run main processing
 bool ImportModule::process(Dissolve& dissolve, ProcessPool& procPool)
@@ -50,46 +49,45 @@ bool ImportModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Set up process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());
 
-		// Retrieve control parameters from Configuration
-		// bool writeConfig = GenericListHelper<bool>::retrieve(cfg->moduleData(), "WriteConfig", uniqueName(), keywords_.asBool("WriteConfig"));
+		// Retrieve control parameters
+		bool readTrajectory = keywords_.asBool("ReadTrajectory");
 
 		/*
-		 * Import Something
+		 * Import Trajectory Frame?
 		 */
-// 		if (writeConfig)
-// 		{
-// 			Messenger::print("Import: Writing DL_POLY CONFIG file for Configuration '%s'...\n", cfg->name());
-// 
-// 			// Only the pool master saves the data
-// 			if (procPool.isMaster())
-// 			{
-// 				// Construct the filename
-// 				CharString filename("%s.CONFIG", cfg->niceName());
-// 
-// 				// Open the file
-// 				LineParser parser;
-// 				if (!parser.openOutput(filename))
-// 				{
-// 					parser.closeFiles();
-// 					procPool.stop();
-// 					return false;
-// 				}
-// 				else if (!writeConfigurationDLPOLY(parser, cfg, cfg->name()))
-// 				{
-// 					Messenger::print("Import: Failed to export DL_POLY CONFIG file.\n");
-// 					parser.closeFiles();
-// 					procPool.stop();
-// 					return false;
-// 				}
-// 
-// 				procPool.proceed();
-// 			}
-// 			else if (!procPool.decision()) return false;
-// 
-// 			Messenger::print("Import: Finished writing DL_POLY CONFIG file.\n");
-// 		}
+		if (readTrajectory)
+		{
+			Messenger::print("Import: Reading trajectory file frame from '%s' into Configuration '%s'...\n", trajectoryFile_.filename(), cfg->name());
+
+			// Open the file
+			LineParser parser(&procPool);
+			if ((!parser.openInput(trajectoryFile_.filename())) || (!parser.isFileGoodForReading())) return Messenger::error("Couldn't open trajectory file '%s'.\n", trajectoryFile_.filename());
+
+			// Does a seek position exist in the processing module info?
+			CharString streamPosName("TrajectoryPosition_%s", cfg->niceName());
+			if (dissolve.processingModuleData().contains(uniqueName(), streamPosName))
+			{
+				// Retrieve the streampos and go to it in the file
+				streampos trajPos = GenericListHelper<streampos>::retrieve(dissolve.processingModuleData(), streamPosName, uniqueName());
+				parser.seekg(trajPos);
+			}
+
+			// Read the frame
+			switch (trajectoryFile_.trajectoryFormat())
+			{
+				case (TrajectoryImportFileFormat::XYZTrajectory):
+					if (!cfg->loadCoordinates(parser, CoordinateImportFileFormat::XYZCoordinates)) return false;
+					cfg->incrementCoordinateIndex();
+					break;
+				default:
+					return Messenger::error("Bad TGAY - he hasn't implemented reading of trajectory frames of format %i.\n", trajectoryFile_.trajectoryFormat());
+					break;
+			}
+
+			// Set the trajectory file position in the restart file
+			GenericListHelper<streampos>::realise(dissolve.processingModuleData(), streamPosName, uniqueName(), GenericItem::InRestartFileFlag) = parser.tellg();
+		}
 	}
 
 	return true;
 }
-
