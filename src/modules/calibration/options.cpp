@@ -43,7 +43,7 @@ const char* CalibrationModule::intraBroadeningFitTarget(CalibrationModule::Intra
 // Set up keywords for Module
 void CalibrationModule::setUpKeywords()
 {
-	keywords_.add(new ComplexModuleKeyword(1,1), "AdjustIntraBroadening", "Add specified RDF module as a target for IntraBroadening adjustment", "<RDFModule>");
+	keywords_.add(new ModuleReferenceListModuleKeyword(intraBroadeningModules_, "RDF"), "AdjustIntraBroadening", "Add specified RDF module as a target for IntraBroadening adjustment", "<RDFModule>");
 	keywords_.add(new ComplexModuleKeyword(1,2), "IntraBroadeningNeutronReference", "Add specified NeutronSQ module as a reference for IntraBroadening adjustment", "<NeutronSQModule> [target=S(Q)]");
 	keywords_.add(new BoolModuleKeyword(true), "OnlyWhenEnergyStable", "Only perform calibrations when all related Configuration energies are stable");
 }
@@ -51,24 +51,7 @@ void CalibrationModule::setUpKeywords()
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 int CalibrationModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
-	if (DissolveSys::sameString(parser.argc(0), "AdjustIntraBroadening"))
-	{
-		// Find specified RDFModule
-		Module* module = ModuleList::findInstanceByUniqueName(parser.argc(1));
-		if (!module)
-		{
-			Messenger::error("Error adding RDFModule fitting target - no Module named '%s' exists.\n", parser.argc(1));
-			return false;
-		}
-		if (!DissolveSys::sameString(module->name(), "RDF"))
-		{
-			Messenger::error("Error adding RDFModule fitting target - Module '%s' is not an RDF Module (%s).\n", parser.argc(1), module->name());
-			return false;
-		}
-
-		intraBroadeningModules_.add(module);
-	}
-	else 	if (DissolveSys::sameString(parser.argc(0), "IntraBroadeningNeutronReference"))
+	if (DissolveSys::sameString(parser.argc(0), "IntraBroadeningNeutronReference"))
 	{
 		// Find specified RDFModule
 		Module* module = ModuleList::findInstanceByUniqueName(parser.argc(1));
