@@ -5,6 +5,7 @@ libkeywordtypes_la_SOURCES += bool.cpp broadeningfunction.cpp
 libkeywordtypes_la_SOURCES += charstring.cpp complex.cpp
 libkeywordtypes_la_SOURCES += datastore.cpp double.cpp
 libkeywordtypes_la_SOURCES += int.cpp isotopologuelist.cpp
+libkeywordtypes_la_SOURCES += modulereferencelist.cpp
 libkeywordtypes_la_SOURCES += pairbroadeningfunction.cpp
 libkeywordtypes_la_SOURCES += windowfunction.cpp
 
@@ -13,6 +14,7 @@ noinst_HEADERS += bool.h broadeningfunction.h
 noinst_HEADERS += charstring.h complex.h
 noinst_HEADERS += datastore.h double.h
 noinst_HEADERS += int.h isotopologuelist.h
+noinst_HEADERS += modulereferencelist.h
 noinst_HEADERS += pairbroadeningfunction.h
 noinst_HEADERS += windowfunction.h
 

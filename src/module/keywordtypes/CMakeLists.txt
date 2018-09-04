@@ -9,6 +9,7 @@ add_library(keywordtypes
   double.cpp
   int.cpp
   isotopologuelist.cpp
+  modulereferencelist.cpp
   pairbroadeningfunction.cpp
   windowfunction.cpp
 
@@ -22,6 +23,7 @@ add_library(keywordtypes
   double.h
   int.h
   isotopologuelist.h
+  modulereferencelist.h
   pairbroadeningfunction.h
   windowfunction.h
 )

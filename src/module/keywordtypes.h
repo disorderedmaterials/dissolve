@@ -38,6 +38,7 @@
 #include "module/keywordtypes/double.h"
 #include "module/keywordtypes/int.h"
 #include "module/keywordtypes/isotopologuelist.h"
+#include "module/keywordtypes/modulereferencelist.h"
 #include "module/keywordtypes/pairbroadeningfunction.h"
 #include "module/keywordtypes/windowfunction.h"
 
