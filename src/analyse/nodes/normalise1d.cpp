@@ -21,6 +21,7 @@
 
 #include "analyse/nodes/normalise1d.h"
 #include "analyse/nodes/collect1d.h"
+#include "analyse/nodes/select.h"
 #include "analyse/nodecontextstack.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
@@ -82,6 +83,13 @@ AnalysisNode::NodeExecutionResult AnalysisNormalise1DNode::execute(ProcessPool& 
 
 	// Copy the averaged data from the associated Collect1D node, and normalise it accordingly
 	normalisedData = collectNode_->accumulatedData();
+
+	// Normalisation by number of sites
+	RefListIterator<AnalysisSelectNode,double> siteNormaliserIterator(sitePopulationNormalisers_);
+	while (AnalysisSelectNode* selectNode = siteNormaliserIterator.iterate())
+	{
+		normalisedData.y() /= selectNode->nCumulativeSites();
+	}
 	
 	return AnalysisNode::Success;
 }
@@ -104,6 +112,8 @@ bool AnalysisNormalise1DNode::read(LineParser& parser, NodeContextStack& context
 	collectNode_ = contextStack.collect1DNode(parser.argc(1));
 	if (!collectNode_) return Messenger::error("A valid Collect1D node name must be given as an argument to Normalise1D.\n");
 
+	AnalysisSelectNode* selectNode;
+
 	// Read until we encounter the EndNormalise1D keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
 	{
@@ -117,7 +127,9 @@ bool AnalysisNormalise1DNode::read(LineParser& parser, NodeContextStack& context
 			case (Normalise1DNodeKeyword::EndNormalise1DKeyword):
 				return true;
 			case (Normalise1DNodeKeyword::NSitesKeyword):
-				// TODO
+				selectNode = contextStack.selectNode(parser.argc(1));
+				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), normalise1DNodeKeyword(Normalise1DNodeKeyword::NSitesKeyword));
+				sitePopulationNormalisers_.add(selectNode, 1.0);
 				break;
 			case (Normalise1DNodeKeyword::nNormalise1DNodeKeywords):
 				return Messenger::error("Unrecognised Normalise1D node keyword '%s' found.\n", parser.argc(0));

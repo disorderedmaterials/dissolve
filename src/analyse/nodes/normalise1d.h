@@ -29,7 +29,7 @@
 
 // Forward Declarations
 class AnalysisCollect1DNode;
-class AnalysisSelect1DNode;
+class AnalysisSelectNode;
 class Data1D;
 class LineParser;
 class NodeContextStack;
@@ -63,7 +63,7 @@ class AnalysisNormalise1DNode : public AnalysisNode
 	// Collect1D node which we are normalising
 	AnalysisCollect1DNode* collectNode_;
 	// Reference to sites against which we will normalise by population
-	RefList<AnalysisSelect1DNode,bool> sitePopulationNormalisers_;
+	RefList<AnalysisSelectNode,double> sitePopulationNormalisers_;
 
 
 	/*

@@ -90,6 +90,7 @@ bool NodeContextStack::add(AnalysisSelectNode* selectNode)
 	++nSelectNodesAdded_;
 
 	selectStack_.last().add(selectNode);
+	selectNodes_.add(selectNode);
 
 	return true;
 }
@@ -115,10 +116,6 @@ bool NodeContextStack::add(AnalysisCalculateNode* calculateNode)
 
 	return true;
 }
-
-/*
- * Reference Stacks
- */
 
 // Add reference to one-dimensional collect node
 void NodeContextStack::add(AnalysisCollect1DNode* collect1DNode)
@@ -171,6 +168,15 @@ AnalysisCollect1DNode* NodeContextStack::collect1DNode(const char* name) const
 {
 	RefListIterator<AnalysisCollect1DNode,bool> nodeIterator(collect1DNodes_);
 	while (AnalysisCollect1DNode* node = nodeIterator.iterate()) if (DissolveSys::sameString(node->name(), name)) return node;
+
+	return NULL;
+}
+
+// Return named Select node (if it exists)
+AnalysisSelectNode* NodeContextStack::selectNode(const char* name) const
+{
+	RefListIterator<AnalysisSelectNode,bool> nodeIterator(selectNodes_);
+	while (AnalysisSelectNode* node = nodeIterator.iterate()) if (DissolveSys::sameString(node->name(), name)) return node;
 
 	return NULL;
 }

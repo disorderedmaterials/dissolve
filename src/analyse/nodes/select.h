@@ -62,6 +62,8 @@ class AnalysisSelectNode : public AnalysisNode
 	SpeciesSite* speciesSite_;
 	// Stack containing our selected sites
 	const SiteStack* siteStack_;
+	// Cumulative number of sites ever selected
+	int nCumulativeSites_;
 	// Branch for ForEach (if defined)
 	AnalysisSequenceNode* forEachBranch_;
 	// Range of site indices selected
@@ -76,8 +78,10 @@ class AnalysisSelectNode : public AnalysisNode
 	public:
 	// Return whether the node has available site information
 	bool hasSites() const;
-	// Return the number of available sites, if any
-	int nSites() const;
+	// Return the number of available sites in the current stack, if any
+	int nSitesInStack() const;
+	// Return the cumulative number of sites ever selected
+	int nCumulativeSites() const;
 	// Return current site
 	const Site* currentSite() const;
 

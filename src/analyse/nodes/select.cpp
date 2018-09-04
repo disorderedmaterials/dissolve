@@ -37,6 +37,7 @@ AnalysisSelectNode::AnalysisSelectNode() : AnalysisNode()
 	currentSiteIndex_ = -1;
 	firstSiteIndex_ = -1;
 	lastSiteIndex_ = -1;
+	nCumulativeSites_ = 0;
 
 	type_ = AnalysisNode::SelectNode;
 }
@@ -78,10 +79,16 @@ bool AnalysisSelectNode::hasSites() const
 	return true;
 }
 
-// Return the number of available sites, if any
-int AnalysisSelectNode::nSites() const
+// Return the number of available sites in the current stack, if any
+int AnalysisSelectNode::nSitesInStack() const
 {
 	return (siteStack_ ? siteStack_->nSites() : 0);
+}
+
+// Return the cumulative number of sites ever selected
+int AnalysisSelectNode::nCumulativeSites() const
+{
+	return nCumulativeSites_;
 }
 
 // Return current site
@@ -101,6 +108,8 @@ bool AnalysisSelectNode::prepare(Configuration* cfg, const char* dataPrefix, Gen
 {
 	// If one exists, prepare the ForEach branch nodes
 	if (forEachBranch_) return forEachBranch_->prepare(cfg, dataPrefix, targetList);
+
+	nCumulativeSites_ = 0;
 }
 
 // Execute node, targetting the supplied Configuration
@@ -133,7 +142,9 @@ AnalysisNode::NodeExecutionResult AnalysisSelectNode::execute(ProcessPool& procP
 		// TODO Parallelise FIRST select only.
 		for (currentSiteIndex_ = firstSiteIndex_; currentSiteIndex_ <= lastSiteIndex_; ++currentSiteIndex_)
 		{
-			// If the branch fails at any point, return failure here.  Otherwise, continue the loop
+			++nCumulativeSites_;
+
+		// If the branch fails at any point, return failure here.  Otherwise, continue the loop
 			if (forEachBranch_->execute(procPool, cfg, dataPrefix, targetList) == AnalysisNode::Failure) return AnalysisNode::Failure;
 		}
 	}

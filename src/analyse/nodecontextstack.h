@@ -42,7 +42,7 @@ class NodeContextStack
 
 
 	/*
-	 * Context Stacks
+	 * Context / Reference Stacks
 	 */
 	private:
 	// Counter for SelectNode added to the stack at any point
@@ -51,6 +51,10 @@ class NodeContextStack
 	Array< RefList<AnalysisSelectNode,bool> > selectStack_;
 	// CalculateNode context stack
 	Array< RefList<AnalysisCalculateNode,bool> > calculateStack_;
+	// References for all Collect1DNodes added
+	RefList<AnalysisSelectNode,bool> selectNodes_;
+	// References for all Collect1DNodes added
+	RefList<AnalysisCollect1DNode,bool> collect1DNodes_;
 
 	public:
 	// Clear all layers from stack
@@ -63,16 +67,6 @@ class NodeContextStack
 	bool add(AnalysisSelectNode* selectNode);
 	// Add new calculation node the topmost context layer
 	bool add(AnalysisCalculateNode* calculateNode);
-
-
-	/*
-	 * Reference Stacks
-	 */
-	private:
-	// References for all Collect1DNodes added
-	RefList<AnalysisCollect1DNode,bool> collect1DNodes_;
-
-	public:
 	// Add reference to one-dimensional collect node
 	void add(AnalysisCollect1DNode* collect1DNode);
 
@@ -89,6 +83,8 @@ class NodeContextStack
 	AnalysisCalculateNode* calculateNodeInScope(const char* name) const;
 	// Return named Collect1D node (if it exists)
 	AnalysisCollect1DNode* collect1DNode(const char* name) const;
+	// Return named Select node (if it exists)
+	AnalysisSelectNode* selectNode(const char* name) const;
 
 
 	/*
