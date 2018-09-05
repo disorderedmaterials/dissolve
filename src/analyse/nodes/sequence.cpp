@@ -93,11 +93,11 @@ AnalysisNode::NodeExecutionResult AnalysisSequenceNode::execute(ProcessPool& pro
 }
 
 // Finalise any necessary data after execution
-bool AnalysisSequenceNode::finalise(Configuration* cfg, const char* dataPrefix, GenericList& targetList)
+bool AnalysisSequenceNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList)
 {
 	// Loop over nodes in the list, finalising each in turn
 	ListIterator<AnalysisNode> nodeIterator(sequence_);
-	while (AnalysisNode* node = nodeIterator.iterate()) if (!node->finalise(cfg, dataPrefix, targetList)) return false;
+	while (AnalysisNode* node = nodeIterator.iterate()) if (!node->finalise(procPool, cfg, dataPrefix, targetList)) return false;
 
 	return true;
 }

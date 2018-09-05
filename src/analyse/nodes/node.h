@@ -86,7 +86,7 @@ class AnalysisNode : public ListItem<AnalysisNode>
 	// Execute node, targetting the supplied Configuration
 	virtual NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList) = 0;
 	// Finalise any necessary data after execution
-	virtual bool finalise(Configuration* cfg, const char* dataPrefix, GenericList& targetList);
+	virtual bool finalise(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList);
 
 
 	/*

@@ -95,7 +95,7 @@ class AnalysisSelectNode : public AnalysisNode
 	// Execute node, targetting the supplied Configuration
 	AnalysisNode::NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList);
 	// Finalise any necessary data after execution
-	bool finalise(Configuration* cfg, const char* dataPrefix, GenericList& targetList);
+	bool finalise(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList);
 
 
 	/*

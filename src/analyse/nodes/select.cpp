@@ -153,10 +153,10 @@ AnalysisNode::NodeExecutionResult AnalysisSelectNode::execute(ProcessPool& procP
 }
 
 // Finalise any necessary data after execution
-bool AnalysisSelectNode::finalise(Configuration* cfg, const char* dataPrefix, GenericList& targetList)
+bool AnalysisSelectNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList)
 {
 	// If one exists, prepare the ForEach branch nodes
-	if (forEachBranch_) return forEachBranch_->finalise(cfg, dataPrefix, targetList);
+	if (forEachBranch_) return forEachBranch_->finalise(procPool, cfg, dataPrefix, targetList);
 }
 
 /*

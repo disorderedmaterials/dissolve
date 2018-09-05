@@ -93,7 +93,7 @@ bool AnalysisNode::prepare(Configuration* cfg, const char* dataPrefix, GenericLi
 }
 
 // Finalise any necessary data after execution
-bool AnalysisNode::finalise(Configuration* cfg, const char* dataPrefix, GenericList& targetList)
+bool AnalysisNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList)
 {
 	return AnalysisNode::Success;
 }

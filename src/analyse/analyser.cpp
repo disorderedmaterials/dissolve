@@ -62,7 +62,7 @@ bool Analyser::execute(ProcessPool& procPool, Configuration* cfg, const char* da
 	if (!rootSequence_.execute(procPool, cfg, dataPrefix, targetList)) return Messenger::error("Failed to execute analysis sequence.\n");
 
 	// Finalise any nodes that need it
-	if (!rootSequence_.finalise(cfg, dataPrefix, targetList)) return Messenger::error("Failed to finalise analysis sequence after execution.\n");
+	if (!rootSequence_.finalise(procPool, cfg, dataPrefix, targetList)) return Messenger::error("Failed to finalise analysis sequence after execution.\n");
 
 	return true;
 }

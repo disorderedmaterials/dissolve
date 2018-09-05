@@ -122,7 +122,7 @@ AnalysisNode::NodeExecutionResult AnalysisCollect1DNode::execute(ProcessPool& pr
 }
 
 // Finalise any necessary data after execution
-bool AnalysisCollect1DNode::finalise(Configuration* cfg, const char* dataPrefix, GenericList& targetList)
+bool AnalysisCollect1DNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList)
 {
 #ifdef CHECKS
 	if (!histogram_)

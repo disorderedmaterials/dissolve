@@ -78,6 +78,12 @@ bool AnalysisNormalise1DNode::prepare(Configuration* cfg, const char* dataPrefix
 // Execute node, targetting the supplied Configuration
 AnalysisNode::NodeExecutionResult AnalysisNormalise1DNode::execute(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList)
 {
+	return AnalysisNode::Success;
+}
+
+// Finalise any necessary data after execution
+bool AnalysisNormalise1DNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList)
+{
 	// Retrieve / realise the normalised data from the supplied list
 	CharString dataName("%s_Normalised", name());
 	Data1D& normalisedData = GenericListHelper<Data1D>::realise(targetList, dataName, dataPrefix, GenericItem::InRestartFileFlag);
@@ -97,20 +103,10 @@ AnalysisNode::NodeExecutionResult AnalysisNormalise1DNode::execute(ProcessPool& 
 	if (saveNormalisedData_ && procPool.isMaster())
 	{
 		if (normalisedData.save(CharString("%s.txt", dataName.get()))) procPool.decideTrue();
-		else
-		{
-			procPool.decideFalse();
-			return AnalysisNode::Failure;
-		}
+		else return procPool.decideFalse();
 	}
-	else if (!procPool.decision()) return AnalysisNode::Failure;
+	else if (!procPool.decision()) return false;
 
-	return AnalysisNode::Success;
-}
-
-// Finalise any necessary data after execution
-bool AnalysisNormalise1DNode::finalise(Configuration* cfg, const char* dataPrefix, GenericList& targetList)
-{
 	return true;
 }
 
