@@ -67,16 +67,13 @@ void Histogram1D::clear()
 // Update accumulated data
 void Histogram1D::updateAccumulatedData()
 {
-	// Set up arrays in data if necessary
-	if (accumulatedData_.nDataPoints() != bins_.nItems())
-	{
-		accumulatedData_.x() = binCentres_;
-		accumulatedData_.initialise(bins_.nItems());
-	}
+	// Set up arrays
+	accumulatedData_.initialise(bins_.nItems());
 
 	// Store bin centres and accumulated averages in the object
 	for (int n=0; n<bins_.nItems(); ++n)
 	{
+		accumulatedData_.x(n) = binCentres_[n];
 		accumulatedData_.y(n) = averages_.constAt(n);
 	}
 }
@@ -107,7 +104,7 @@ void Histogram1D::initialise(double xMin, double xMax, double binWidth)
 
 	// Create centre-bin array
 	double xCentre = xMin + binWidth_*0.5;
-	for (int n=0; n<nBins_; ++n, xCentre += binWidth_) bins_[n] = xCentre;
+	for (int n=0; n<nBins_; ++n, xCentre += binWidth_) binCentres_[n] = xCentre;
 }
 
 // Zero histogram bins
