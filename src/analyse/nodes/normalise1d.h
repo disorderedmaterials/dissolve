@@ -49,7 +49,7 @@ class AnalysisNormalise1DNode : public AnalysisNode
 	 */
 	public:
 	// Node Keywords
-	enum Normalise1DNodeKeyword { EndNormalise1DKeyword, NSitesKeyword, nNormalise1DNodeKeywords };
+	enum Normalise1DNodeKeyword { EndNormalise1DKeyword, NSitesKeyword, SaveKeyword, nNormalise1DNodeKeywords };
 	// Convert string to control keyword
 	static Normalise1DNodeKeyword normalise1DNodeKeyword(const char* s);
 	// Convert control keyword to string
@@ -64,6 +64,8 @@ class AnalysisNormalise1DNode : public AnalysisNode
 	AnalysisCollect1DNode* collectNode_;
 	// Reference to sites against which we will normalise by population
 	RefList<AnalysisSelectNode,double> sitePopulationNormalisers_;
+	// Whether to save data after normalisation
+	bool saveNormalisedData_;
 
 
 	/*

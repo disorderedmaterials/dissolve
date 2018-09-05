@@ -32,6 +32,7 @@ AnalysisNormalise1DNode::AnalysisNormalise1DNode() : AnalysisNode()
 {
 	type_ = AnalysisNode::Normalise1DNode;
 	collectNode_ = NULL;
+	saveNormalisedData_ = false;
 }
 
 // Destructor
@@ -44,7 +45,7 @@ AnalysisNormalise1DNode::~AnalysisNormalise1DNode()
  */
 
 // Node Keywords (note ordering for efficiency)
-const char* Normalise1DNodeKeywords[] = { "EndNormalise1D", "NSites" };
+const char* Normalise1DNodeKeywords[] = { "EndNormalise1D", "NSites", "Save" };
 
 // Convert string to node keyword
 AnalysisNormalise1DNode::Normalise1DNodeKeyword AnalysisNormalise1DNode::normalise1DNodeKeyword(const char* s)
@@ -80,6 +81,7 @@ AnalysisNode::NodeExecutionResult AnalysisNormalise1DNode::execute(ProcessPool& 
 	// Retrieve / realise the normalised data from the supplied list
 	CharString dataName("%s_Normalised", name());
 	Data1D& normalisedData = GenericListHelper<Data1D>::realise(targetList, dataName, dataPrefix, GenericItem::InRestartFileFlag);
+	normalisedData.setName(dataName);
 
 	// Copy the averaged data from the associated Collect1D node, and normalise it accordingly
 	normalisedData = collectNode_->accumulatedData();
@@ -90,7 +92,19 @@ AnalysisNode::NodeExecutionResult AnalysisNormalise1DNode::execute(ProcessPool& 
 	{
 		normalisedData.y() /= selectNode->nCumulativeSites();
 	}
-	
+
+	// Save data?
+	if (saveNormalisedData_ && procPool.isMaster())
+	{
+		if (normalisedData.save(CharString("%s.txt", dataName.get()))) procPool.decideTrue();
+		else
+		{
+			procPool.decideFalse();
+			return AnalysisNode::Failure;
+		}
+	}
+	else if (!procPool.decision()) return AnalysisNode::Failure;
+
 	return AnalysisNode::Success;
 }
 
@@ -107,10 +121,11 @@ bool AnalysisNormalise1DNode::finalise(Configuration* cfg, const char* dataPrefi
 // Read structure from specified LineParser
 bool AnalysisNormalise1DNode::read(LineParser& parser, NodeContextStack& contextStack)
 {
-	// The current line in the parser must also contain the name of a Collect1D node which we will operate on
+	// The current line in the parser must also contain the name of a Collect1D node which we will operate on (it will also become our node name)
 	if (parser.nArgs() != 2) return Messenger::error("A Normalise1D node must be given the name of a Collect1D node.\n");
 	collectNode_ = contextStack.collect1DNode(parser.argc(1));
 	if (!collectNode_) return Messenger::error("A valid Collect1D node name must be given as an argument to Normalise1D.\n");
+	setName(parser.argc(1));
 
 	AnalysisSelectNode* selectNode;
 
@@ -130,6 +145,9 @@ bool AnalysisNormalise1DNode::read(LineParser& parser, NodeContextStack& context
 				selectNode = contextStack.selectNode(parser.argc(1));
 				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), normalise1DNodeKeyword(Normalise1DNodeKeyword::NSitesKeyword));
 				sitePopulationNormalisers_.add(selectNode, 1.0);
+				break;
+			case (Normalise1DNodeKeyword::SaveKeyword):
+				saveNormalisedData_ = parser.argb(1);
 				break;
 			case (Normalise1DNodeKeyword::nNormalise1DNodeKeywords):
 				return Messenger::error("Unrecognised Normalise1D node keyword '%s' found.\n", parser.argc(0));
