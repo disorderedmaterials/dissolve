@@ -7,7 +7,7 @@ ensemble   nvt hoover   0.1
 # Simulation Time
 timestep		5.0E-4  # ps
 steps			200000
-restart
+# restart
 
 # Interactions
 cut			9.0
