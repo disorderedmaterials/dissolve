@@ -358,7 +358,7 @@ const char* DissolveSys::currentTimeAndDate()
 {
 	static char result[128];
 	time_t currentTime = time(NULL);
-	tm* converted = gmtime(&currentTime);
+	tm* converted = localtime(&currentTime);
 	strftime(result, sizeof(result), "%H:%M:%S on %d-%m-%Y", converted);
 	return result;
 }
