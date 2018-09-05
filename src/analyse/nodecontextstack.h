@@ -85,14 +85,6 @@ class NodeContextStack
 	AnalysisCollect1DNode* collect1DNode(const char* name) const;
 	// Return named Select node (if it exists)
 	AnalysisSelectNode* selectNode(const char* name) const;
-
-
-	/*
-	 * Plottable Data
-	 */
-	private:
-	// Plottables available from the analysis
-// 	RefList<
 };
 
 #endif
