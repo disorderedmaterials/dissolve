@@ -27,6 +27,7 @@
 #include "modules/epsr/epsr.h"
 #include "modules/export/export.h"
 #include "modules/forces/forces.h"
+#include "modules/import/import.h"
 #include "modules/intrashake/intrashake.h"
 #include "modules/md/md.h"
 #include "modules/molshake/molshake.h"
@@ -54,6 +55,7 @@ ModuleRegistry::ModuleRegistry()
 	ModuleRegistrar<EPSRModule> epsrRegistrar;
 	ModuleRegistrar<ExportModule> exportRegistrar;
 	ModuleRegistrar<ForcesModule> forcesRegistrar;
+	ModuleRegistrar<ImportModule> importRegistrar;
 	ModuleRegistrar<IntraShakeModule> intraShakeRegistrar;
 	ModuleRegistrar<MDModule> mdRegistrar;
 	ModuleRegistrar<MolShakeModule> molShakeRegistrar;
