@@ -459,8 +459,8 @@ bool Data1D::read(LineParser& parser)
 
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	int nPoints = parser.argi(0);
-	x_.createEmpty(nPoints);
-	y_.createEmpty(nPoints);
+	x_.initialise(nPoints);
+	y_.initialise(nPoints);
 
 	for (int n=0; n<nPoints; ++n)
 	{
