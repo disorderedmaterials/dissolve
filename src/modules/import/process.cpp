@@ -65,7 +65,7 @@ bool ImportModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 			// Does a seek position exist in the processing module info?
 			CharString streamPosName("TrajectoryPosition_%s", cfg->niceName());
-			if (dissolve.processingModuleData().contains(uniqueName(), streamPosName))
+			if (dissolve.processingModuleData().contains(streamPosName, uniqueName()))
 			{
 				// Retrieve the streampos and go to it in the file
 				streampos trajPos = GenericListHelper<streampos>::retrieve(dissolve.processingModuleData(), streamPosName, uniqueName());
