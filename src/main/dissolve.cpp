@@ -23,6 +23,7 @@
 #include "classes/species.h"
 #include "classes/atomtype.h"
 #include "classes/braggpeak.h"
+#include "math/histogram1d.h"
 #include "classes/kvector.h"
 #include "classes/partialset.h"
 #include "classes/weights.h"
@@ -114,10 +115,11 @@ void Dissolve::registerGenericItems()
 	GenericItem::addItemClass(new GenericItemContainer< Array< Vec3<double> > >("Array<Vec3<double>>"));
 
 	GenericItem::addItemClass(new GenericItemContainer<BraggPeak>(BraggPeak::itemClassName()));
-	GenericItem::addItemClass(new GenericItemContainer<KVector>(KVector::itemClassName()));
-	GenericItem::addItemClass(new GenericItemContainer<IsotopologueMix>(IsotopologueMix::itemClassName()));
-	GenericItem::addItemClass(new GenericItemContainer<PartialSet>(PartialSet::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<Data1D>(Data1D::itemClassName()));
+	GenericItem::addItemClass(new GenericItemContainer<Histogram1D>(Histogram1D::itemClassName()));
+	GenericItem::addItemClass(new GenericItemContainer<IsotopologueMix>(IsotopologueMix::itemClassName()));
+	GenericItem::addItemClass(new GenericItemContainer<KVector>(KVector::itemClassName()));
+	GenericItem::addItemClass(new GenericItemContainer<PartialSet>(PartialSet::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<Weights>(Weights::itemClassName()));
 }
 
