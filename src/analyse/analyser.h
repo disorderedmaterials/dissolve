@@ -44,6 +44,8 @@ class Analyser
 	 * Data
 	 */
 	private:
+	// Context stack
+	NodeContextStack contextStack_;
 	// Sequence node from which the analysis starts
 	AnalysisSequenceNode rootSequence_;
 
