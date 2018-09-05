@@ -38,6 +38,7 @@ AnalysisSelectNode::AnalysisSelectNode() : AnalysisNode()
 	firstSiteIndex_ = -1;
 	lastSiteIndex_ = -1;
 	nCumulativeSites_ = 0;
+	nSelections_ = 0;
 
 	type_ = AnalysisNode::SelectNode;
 }
@@ -109,6 +110,7 @@ bool AnalysisSelectNode::prepare(Configuration* cfg, const char* dataPrefix, Gen
 	// If one exists, prepare the ForEach branch nodes
 	if (forEachBranch_) return forEachBranch_->prepare(cfg, dataPrefix, targetList);
 
+	nSelections_ = 0;
 	nCumulativeSites_ = 0;
 }
 
@@ -118,6 +120,8 @@ AnalysisNode::NodeExecutionResult AnalysisSelectNode::execute(ProcessPool& procP
 	// First, get our SiteStack from the supplied Configuration
 	siteStack_ = cfg->siteStack(speciesSite_);
 	if (siteStack_ == NULL) return AnalysisNode::Failure;
+
+	++nSelections_;
 
 	// Set our site range and the initial site
 	if (siteStack_->nSites() == 0)
@@ -144,7 +148,7 @@ AnalysisNode::NodeExecutionResult AnalysisSelectNode::execute(ProcessPool& procP
 		{
 			++nCumulativeSites_;
 
-		// If the branch fails at any point, return failure here.  Otherwise, continue the loop
+			// If the branch fails at any point, return failure here.  Otherwise, continue the loop
 			if (forEachBranch_->execute(procPool, cfg, dataPrefix, targetList) == AnalysisNode::Failure) return AnalysisNode::Failure;
 		}
 	}
@@ -155,8 +159,15 @@ AnalysisNode::NodeExecutionResult AnalysisSelectNode::execute(ProcessPool& procP
 // Finalise any necessary data after execution
 bool AnalysisSelectNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList)
 {
-	// If one exists, prepare the ForEach branch nodes
-	if (forEachBranch_) return forEachBranch_->finalise(procPool, cfg, dataPrefix, targetList);
+	// If one exists, finalise the ForEach branch nodes
+	if (forEachBranch_ && (!forEachBranch_->finalise(procPool, cfg, dataPrefix, targetList))) return false;
+
+	// Print out summary information
+	Messenger::print("Select - Site '%s': Number of selections made = %i (last contained %i sites).\n", name(), nSelections_ , lastSiteIndex_ - firstSiteIndex_ + 1);
+	Messenger::print("Select - Site '%s': Average number of sites selected per selection = %.2f.\n", name(), double(nCumulativeSites_)/nSelections_);
+	Messenger::print("Select - Site '%s': Cumulative number of sites selected = %i.\n", name(), nCumulativeSites_);
+
+	return true;
 }
 
 /*

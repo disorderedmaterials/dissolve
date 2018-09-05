@@ -62,6 +62,8 @@ class AnalysisSelectNode : public AnalysisNode
 	SpeciesSite* speciesSite_;
 	// Stack containing our selected sites
 	const SiteStack* siteStack_;
+	// Number of selections made by the node
+	int nSelections_;
 	// Cumulative number of sites ever selected
 	int nCumulativeSites_;
 	// Branch for ForEach (if defined)
