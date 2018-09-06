@@ -40,7 +40,7 @@ bool ImportModule::readXYZCoordinates(LineParser& parser, Array< Vec3<double> >&
 	Messenger::print(" --> Reading coordinates in xyz format...\n");
 
 	// Read in natoms
-	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	if (parser.getArgsDelim(LineParser::SkipBlanks) != LineParser::Success) return false;
 	int nAtoms = parser.argi(0);
 
 	// Skip title
