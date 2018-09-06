@@ -67,6 +67,11 @@ SUBDIRS += test
 libmodules_la_LIBADD += test/libtest.la
 libmoduledummywidgets_la_LIBADD += test/libmodulewidget.la
 
+# Include modules in Calculate directory
+SUBDIRS += calculate
+libmodules_la_LIBADD += calculate/libcalculatemodules.la
+libmoduledummywidgets_la_LIBADD += calculate/libcalculatemodulesdummywidgets.la
+
 # GUI targets for modules
 if BUILDGUI
 
@@ -89,6 +94,9 @@ libmodulewidgets_la_LIBADD += refine/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += skeleton/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += sq/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += test/gui/libmodulewidget.la
+
+# Add calculate modules GUI widgets
+libmodulewidgets_la_LIBADD += calculate/libcalculatemoduleswidgets.la
 
 endif
 

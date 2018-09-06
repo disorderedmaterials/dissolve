@@ -181,6 +181,7 @@ set(BASIC_LINK_LIBS
   analysemodule
   atomshakemodule
   braggmodule
+  calculatemodules
   calibrationmodule
   checksmodule
   energymodule
@@ -219,6 +220,7 @@ target_link_libraries( ${target_name}
   analysemodulenogui
   atomshakemodulenogui
   braggmodulenogui
+  calculatemodulesnogui
   calibrationmodulenogui
   energymodulenogui
   epsrmodulenogui
@@ -245,6 +247,7 @@ if(GUI)
     analysemodulegui
     atomshakemodulegui
     braggmodulegui
+    calculatemodulesgui
     calibrationmodulegui
     energymodulegui
     epsrmodulegui

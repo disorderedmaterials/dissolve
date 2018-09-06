@@ -2,6 +2,7 @@
 add_subdirectory(analyse)
 add_subdirectory(atomshake)
 add_subdirectory(bragg)
+add_subdirectory(calculate)
 add_subdirectory(calibration)
 add_subdirectory(checks)
 add_subdirectory(energy)

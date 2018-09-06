@@ -22,6 +22,7 @@
 #include "module/registry.h"
 #include "modules/analyse/analyse.h"
 #include "modules/atomshake/atomshake.h"
+#include "modules/calculate/rdf/calculaterdf.h"
 #include "modules/checks/checks.h"
 #include "modules/energy/energy.h"
 #include "modules/epsr/epsr.h"
@@ -49,6 +50,7 @@ ModuleRegistry::ModuleRegistry()
 {
 	ModuleRegistrar<AnalyseModule> analyseRegistrar;
 	ModuleRegistrar<AtomShakeModule> atomShakeRegistrar;
+	ModuleRegistrar<CalculateRDFModule> calculateRDFRegistrar;
 	ModuleRegistrar<CalibrationModule> calibrationRegistrar;
 	ModuleRegistrar<ChecksModule> checksRegistrar;
 	ModuleRegistrar<EnergyModule> energyRegistrar;
