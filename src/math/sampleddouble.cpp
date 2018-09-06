@@ -152,11 +152,15 @@ void SampledDouble::operator*=(double x)
 {
 	// Apply factor to mean and m2_
 	mean_ *= x;
+	m2_ *= x;
 }
 
 // Operator /=
 void SampledDouble::operator/=(double x)
 {
+	// Apply factor to mean and m2_
+	mean_ /= x;
+	m2_ /= x;
 }
 
 /*
