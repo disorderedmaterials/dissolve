@@ -32,6 +32,8 @@ template<class Histogram1D> const char* ObjectStore<Histogram1D>::objectTypeName
 // Constructor
 Histogram1D::Histogram1D() : ListItem<Histogram1D>(), ObjectStore<Histogram1D>(this) 
 {
+	accumulatedData_.addErrors();
+
 	clear();
 }
 
@@ -68,13 +70,14 @@ void Histogram1D::clear()
 void Histogram1D::updateAccumulatedData()
 {
 	// Set up arrays
-	accumulatedData_.initialise(bins_.nItems());
+	accumulatedData_.initialise(bins_.nItems(), true);
 
 	// Store bin centres and accumulated averages in the object
 	for (int n=0; n<bins_.nItems(); ++n)
 	{
 		accumulatedData_.x(n) = binCentres_[n];
 		accumulatedData_.y(n) = averages_.constAt(n);
+		accumulatedData_.yError(n) = averages_.constAt(n).stDev();
 	}
 }
 
