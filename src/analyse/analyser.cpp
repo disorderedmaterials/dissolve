@@ -35,6 +35,17 @@ Analyser::~Analyser()
 }
 
 /*
+ * Data
+ */
+
+// Clear all data
+void Analyser::clear()
+{
+	contextStack_.clear();
+	rootSequence_.clear();
+}
+
+/*
  * Execute
  */
 

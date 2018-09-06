@@ -37,7 +37,7 @@ class Analyser
 	// Constructor
 	Analyser();
 	// Destructor
-	virtual ~Analyser();
+	~Analyser();
 
 
 	/*
@@ -48,6 +48,10 @@ class Analyser
 	NodeContextStack contextStack_;
 	// Sequence node from which the analysis starts
 	AnalysisSequenceNode rootSequence_;
+
+	public:
+	// Clear all data
+	void clear();
 
 
 	/*

@@ -58,6 +58,10 @@ class AnalysisSequenceNode : public AnalysisNode
 	// Sequential node list
 	List<AnalysisNode> sequence_;
 
+	public:
+	// Clear all data
+	void clear();
+
 
 	/*
 	 * Execute

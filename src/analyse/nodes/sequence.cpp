@@ -36,6 +36,7 @@ AnalysisSequenceNode::AnalysisSequenceNode(const char* blockTerminationKeyword) 
 // Destructor
 AnalysisSequenceNode::~AnalysisSequenceNode()
 {
+	clear();
 }
 
 /*
@@ -57,6 +58,16 @@ AnalysisSequenceNode::SequenceNodeKeyword AnalysisSequenceNode::sequenceNodeKeyw
 const char* AnalysisSequenceNode::sequenceNodeKeyword(AnalysisSequenceNode::SequenceNodeKeyword nk)
 {
 	return SequenceNodeKeywords[nk];
+}
+
+/*
+ * Node Contents
+ */
+
+// Clear all data
+void AnalysisSequenceNode::clear()
+{
+	sequence_.clear();
 }
 
 /*
