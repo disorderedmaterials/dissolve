@@ -12,6 +12,7 @@ add_library(keywordtypes
   isotopologuelist.cpp
   modulereferencelist.cpp
   pairbroadeningfunction.cpp
+  speciessite.cpp
   windowfunction.cpp
 
   analyser.h
@@ -27,6 +28,7 @@ add_library(keywordtypes
   isotopologuelist.h
   modulereferencelist.h
   pairbroadeningfunction.h
+  speciessite.h
   windowfunction.h
 )
 
