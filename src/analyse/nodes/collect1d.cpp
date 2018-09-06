@@ -80,6 +80,24 @@ const Data1D& AnalysisCollect1DNode::accumulatedData() const
 	return histogram_->accumulatedData();
 }
 
+// Return range minimum
+double AnalysisCollect1DNode::minimum() const
+{
+	return minimum_;
+}
+
+// Return range maximum
+double AnalysisCollect1DNode::maximum() const
+{
+	return maximum_;
+}
+
+// Return bin width
+double AnalysisCollect1DNode::binWidth() const
+{
+	return binWidth_;
+}
+
 /*
  * Execute
  */

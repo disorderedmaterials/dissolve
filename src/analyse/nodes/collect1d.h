@@ -74,6 +74,12 @@ class AnalysisCollect1DNode : public AnalysisNode
 	public:
 	// Return accumulated data
 	const Data1D& accumulatedData() const;
+	// Return range minimum
+	double minimum() const;
+	// Return range maximum
+	double maximum() const;
+	// Return bin width
+	double binWidth() const;
 
 
 	/*
