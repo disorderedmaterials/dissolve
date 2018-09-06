@@ -33,6 +33,8 @@ template<class Data1D> const char* ObjectStore<Data1D>::objectTypeName_ = "Data1
 // Constructor
 Data1D::Data1D() : ListItem<Data1D>(), ObjectStore<Data1D>(this) 
 {
+	hasError_ = false;
+
 	clear();
 }
 
@@ -52,6 +54,7 @@ void Data1D::clear()
 {
 	x_.clear();
 	y_.clear();
+	error_.clear();
 }
 
 /*
@@ -59,10 +62,13 @@ void Data1D::clear()
  */
 
 // Initialise arrays to specified size
-void Data1D::initialise(int size)
+void Data1D::initialise(int size, bool withError)
 {
 	x_.initialise(size);
 	y_.initialise(size);
+	hasError_ = withError;
+	if (hasError_) error_.initialise(size);
+	else error_.clear();
 }
 
 // Initialise to be consistent in size and x axis with supplied object
@@ -70,6 +76,9 @@ void Data1D::initialise(const Data1D& source)
 {
 	x_ = source.x_;
 	y_.initialise(x_.nItems());
+	hasError_ = source.hasError_;
+	if (hasError_) error_.initialise(x_.nItems());
+	else error_.clear();
 }
 
 // Copy arrays from supplied object
@@ -77,12 +86,15 @@ void Data1D::copyArrays(const Data1D& source)
 {
 	x_ = source.x_;
 	y_ = source.y_;
+	error_ = source.error_;
+	hasError_ = source.hasError_;
 }
 
 // Zero values array
 void Data1D::zero()
 {
 	y_ = 0.0;
+	if (hasError_) error_ = 0.0;
 }
 
 // Add new data point
@@ -90,6 +102,18 @@ void Data1D::addPoint(double x, double y)
 {
 	x_.add(x);
 	y_.add(y);
+
+	if (hasError_) error_.add(0.0);
+}
+
+// Add new data point with error
+void Data1D::addPoint(double x, double y, double yError)
+{
+	x_.add(x);
+	y_.add(y);
+
+	if (hasError_) error_.add(yError);
+	else Messenger::warn("Tried to addPoint() with an error to Data1D, but this Data1D () has no error information associated with it.\n", name(), objectTag());
 }
 
 // Return x value specified
@@ -170,6 +194,58 @@ const Array<double>& Data1D::constY() const
 	return y_;
 }
 
+// Add / initialise errors array
+void Data1D::addErrors()
+{
+	if (hasError_) Messenger::warn("Adding an error array to a Data1D that already has one...\n");
+
+	error_.initialise(x_.nItems());
+
+	hasError_ = true;
+}
+
+// Return y error value specified
+double& Data1D::yError(int index)
+{
+	if (!hasError_)
+	{
+		static double dummy;
+		Messenger::warn("This Data1D (name='%s', tag='%s') has no errors to return, but yError(int) was requested.\n", name(), objectTag());
+		return dummy;
+	}
+	
+	return error_.at(index);
+}
+
+// Return y error value specified (const)
+double Data1D::constYError(int index) const
+{
+	if (!hasError_)
+	{
+		Messenger::warn("This Data1D (name='%s', tag='%s') has no errors to return, but constYError(int) was requested.\n", name(), objectTag());
+		return 0.0;
+	}
+	
+	return error_.constAt(index);
+}
+
+// Return y error Array
+Array<double>& Data1D::yError()
+{
+	if (!hasError_) Messenger::warn("This Data1D (name='%s', tag='%s') has no errors to return, but yError() was requested.\n", name(), objectTag());
+	
+	return error_;
+}
+
+// Return y error Array (const)
+const Array<double>& Data1D::constYError() const
+{
+	if (!hasError_) Messenger::warn("This Data1D (name='%s', tag='%s') has no errors to return, but constYError() was requested.\n", name(), objectTag());
+	
+	return error_;
+}
+
+
 /*
  * Operators
  */
@@ -180,6 +256,8 @@ void Data1D::operator=(const Data1D& source)
 	name_ = source.name_;
 	x_ = source.x_;
 	y_ = source.y_;
+	hasError_ = source.hasError_;
+	error_ = source.error_;
 }
 
 // Operator +=
@@ -262,13 +340,15 @@ void Data1D::operator-=(const double dy)
 // Operator *=
 void Data1D::operator*=(const double factor)
 {
-	for (int n=0; n<y_.nItems(); ++n) y_[n] *= factor;
+	y_ *= factor;
+	if (hasError_) error_ *= factor;
 }
 
 // Operator /=
 void Data1D::operator/=(const double factor)
 {
-	for (int n=0; n<y_.nItems(); ++n) y_[n] /= factor;
+	y_ /= factor;
+	if (hasError_) error_ /= factor;
 }
 
 /*
@@ -355,7 +435,12 @@ bool Data1D::save(const char* filename) const
 		return false;
 	}
 	
-	for (int n = 0; n<x_.nItems(); ++n) parser.writeLineF("%16.10e  %16.10e\n", x_.constAt(n), y_.constAt(n));
+	if (hasError_)
+	{
+		for (int n = 0; n<x_.nItems(); ++n) parser.writeLineF("%16.10e  %16.10e  %16.10e\n", x_.constAt(n), y_.constAt(n), error_.constAt(n));
+	}
+	else for (int n = 0; n<x_.nItems(); ++n) parser.writeLineF("%16.10e  %16.10e\n", x_.constAt(n), y_.constAt(n));
+
 	parser.closeFiles();
 
 	return true;
@@ -401,6 +486,18 @@ const Array<double>& Data1D::xAxis() const
 	return x_;
 }
 
+// Return single value with index provided
+double Data1D::value(int xIndex) const
+{
+	return y_.constAt(xIndex);
+}
+
+// Return values Array
+const Array<double>& Data1D::values() const
+{
+	return y_;
+}
+
 // Return number of datapoints present in whole dataset
 int Data1D::nDataPoints() const
 {
@@ -429,6 +526,24 @@ double Data1D::maxValue() const
 	return value;
 }
 
+// Return whether the values have associated errors
+bool Data1D::valuesHaveErrors() const
+{
+	return hasError_;
+}
+
+// Return single error with index provided
+double Data1D::error(int xIndex) const
+{
+	return y_.constAt(xIndex);
+}
+
+// Return errors Array
+const Array<double>& Data1D::errors() const
+{
+	return y_;
+}
+
 /*
  * GenericItemBase Implementations
  */
@@ -443,8 +558,12 @@ const char* Data1D::itemClassName()
 bool Data1D::write(LineParser& parser)
 {
 	if (!parser.writeLineF("%s\n", objectTag())) return false;
-	if (!parser.writeLineF("%i\n", x_.nItems())) return false;
-	for (int n=0; n<x_.nItems(); ++n) if (!parser.writeLineF("%f  %f\n", x_[n], y_[n])) return false;
+	if (!parser.writeLineF("%i %i\n", x_.nItems(), hasError_)) return false;
+	if (hasError_)
+	{
+		for (int n=0; n<x_.nItems(); ++n) if (!parser.writeLineF("%f  %f  %f\n", x_[n], y_[n], error_[n])) return false;
+	}
+	else for (int n=0; n<x_.nItems(); ++n) if (!parser.writeLineF("%f  %f\n", x_[n], y_[n])) return false;
 
 	return true;
 }
@@ -459,14 +578,15 @@ bool Data1D::read(LineParser& parser)
 
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	int nPoints = parser.argi(0);
-	x_.initialise(nPoints);
-	y_.initialise(nPoints);
+	bool errors = parser.argb(1);
+	initialise(nPoints, errors);
 
 	for (int n=0; n<nPoints; ++n)
 	{
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 		x_[n] = parser.argd(0);
 		y_[n] = parser.argd(1);
+		if (hasError_) error_[n] = parser.argd(2);
 	}
 
 	return true;
@@ -482,6 +602,8 @@ bool Data1D::broadcast(ProcessPool& procPool, int rootRank)
 #ifdef PARALLEL
 	if (!procPool.broadcast(x_, rootRank)) return false;
 	if (!procPool.broadcast(y_, rootRank)) return false;
+	if (!procPool.broadcast(hasError_, rootRank)) return false;
+	if (!procPool.broadcast(error_, rootRank)) return false;
 #endif
 	return true;
 }
@@ -492,6 +614,8 @@ bool Data1D::equality(ProcessPool& procPool)
 #ifdef PARALLEL
 	if (!procPool.equality(x_)) return Messenger::error("Data1D x axis values not equivalent.\n");
 	if (!procPool.equality(y_)) return Messenger::error("Data1D y axis values not equivalent.\n");
+	if (!procPool.equality(hasError_)) return Messenger::error("Data1D error flag not equivalent.\n");
+	if (!procPool.equality(error_)) return Messenger::error("Data1D error values not equivalent.\n");
 #endif
 	return true;
 }

@@ -74,7 +74,7 @@ const Array<double>& Plottable::zAxis() const
 }
 
 /*
- * Values
+ * Values / Errors
  */
 
 // Return single value with index provided
@@ -118,6 +118,57 @@ double Plottable::value(int xIndex, int yIndex, int zIndex) const
 const Array3D<double>& Plottable::values3D() const
 {
 	Messenger::error("Tried to retrieve a three-dimensional value array from a Plottable that doesn't know how to return one.\n");
+	static Array3D<double> dummy;
+	return dummy;
+}
+
+// Return whether the values have associated errors
+bool Plottable::valuesHaveErrors() const
+{
+	return false;
+}
+
+// Return single error with index provided
+double Plottable::error(int xIndex) const
+{
+	Messenger::error("Tried to retrieve an error from a Plottable that doesn't understand a one-dimensional request.\n");
+	return 0.0;
+}
+
+// Return errors Array
+const Array<double>& Plottable::errors() const
+{
+	Messenger::error("Tried to retrieve a one-dimensional error array from a Plottable that doesn't know how to return one.\n");
+	static Array<double> dummy;
+	return dummy;
+}
+
+// Return single error with pair of indices provided
+double Plottable::error(int xIndex, int yIndex) const
+{
+	Messenger::error("Tried to retrieve an error from a Plottable that doesn't understand a two-dimensional request.\n");
+	return 0.0;
+}
+
+// Return errors Array
+const Array2D<double>& Plottable::errors2D() const
+{
+	Messenger::error("Tried to retrieve a two-dimensional error array from a Plottable that doesn't know how to return one.\n");
+	static Array2D<double> dummy;
+	return dummy;
+}
+
+// Return single error with triplet of indices provided
+double Plottable::error(int xIndex, int yIndex, int zIndex) const
+{
+	Messenger::error("Tried to retrieve an error from a Plottable that doesn't understand a three-dimensional request.\n");
+	return 0.0;
+}
+
+// Return three-dimensional errors Array
+const Array3D<double>& Plottable::errors3D() const
+{
+	Messenger::error("Tried to retrieve a three-dimensional error array from a Plottable that doesn't know how to return one.\n");
 	static Array3D<double> dummy;
 	return dummy;
 }

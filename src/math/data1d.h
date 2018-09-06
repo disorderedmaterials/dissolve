@@ -51,10 +51,14 @@ class Data1D : public Plottable, public ListItem<Data1D>, public ObjectStore<Dat
 	Array<double> x_;
 	// Accumulated values at each x
 	Array<double> y_;
+	// Whether data has associated errors
+	bool hasError_;
+	// Errors of accumulated values, if present
+	Array<double> error_;
 
 	public:
 	// Initialise arrays to specified size
-	void initialise(int size);
+	void initialise(int size, bool withError = false);
 	// Initialise to be consistent in size and x axis with supplied object
 	void initialise(const Data1D& source);
 	// Copy arrays from supplied object
@@ -65,6 +69,8 @@ class Data1D : public Plottable, public ListItem<Data1D>, public ObjectStore<Dat
 	void accumulate(const Histogram1D& source);
 	// Add new data point
 	void addPoint(double x, double y);
+	// Add new data point with error
+	void addPoint(double x, double y, double yError);
 	// Return x value specified
 	double& x(int index);
 	// Return x value specified (const)
@@ -81,6 +87,16 @@ class Data1D : public Plottable, public ListItem<Data1D>, public ObjectStore<Dat
 	Array<double>& y();
 	// Return y Array (const)
 	const Array<double>& constY() const;
+	// Add / initialise errors array
+	void addErrors();
+	// Return y error value specified
+	double& yError(int index);
+	// Return y error value specified (const)
+	double constYError(int index) const;
+	// Return y error Array
+	Array<double>& yError();
+	// Return y error Array (const)
+	const Array<double>& constYError() const;
 
 
 	/*
@@ -133,12 +149,22 @@ class Data1D : public Plottable, public ListItem<Data1D>, public ObjectStore<Dat
 	double xAxisMax() const;
 	// Return x axis Array
 	const Array<double>& xAxis() const;
+	// Return single value with index provided
+	double value(int xIndex) const;
+	// Return values Array
+	const Array<double>& values() const;
 	// Return number of datapoints present in whole dataset
 	int nDataPoints() const;
 	// Return minimum value over all data points
 	double minValue() const;
 	// Return maximum value over all data points
 	double maxValue() const;
+	// Return whether the values have associated errors
+	bool valuesHaveErrors() const;
+	// Return single error with index provided
+	double error(int xIndex) const;
+	// Return errors Array
+	const Array<double>& errors() const;
 
 
 	/*

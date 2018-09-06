@@ -75,7 +75,7 @@ class Plottable
 
 
 	/*
-	 * Values
+	 * Values / Errors
 	 */
 	public:
 	// Return single value with index provided
@@ -96,6 +96,20 @@ class Plottable
 	virtual double minValue() const = 0;
 	// Return maximum value over all data points
 	virtual double maxValue() const = 0;
+	// Return whether the values have associated errors
+	virtual bool valuesHaveErrors() const;
+	// Return single error with index provided
+	virtual double error(int xIndex) const;
+	// Return errors Array
+	virtual const Array<double>& errors() const;
+	// Return single error with pair of indices provided
+	virtual double error(int xIndex, int yIndex) const;
+	// Return errors Array
+	virtual const Array2D<double>& errors2D() const;
+	// Return single error with triplet of indices provided
+	virtual double error(int xIndex, int yIndex, int zIndex) const;
+	// Return three-dimensional errors Array
+	virtual const Array3D<double>& errors3D() const;
 };
 
 #endif
