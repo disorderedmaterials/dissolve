@@ -23,6 +23,8 @@
 #include "analyse/nodes/collect1d.h"
 #include "analyse/nodes/select.h"
 #include "analyse/nodecontextstack.h"
+#include "classes/box.h"
+#include "classes/configuration.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "templates/genericlisthelper.h"
@@ -33,6 +35,9 @@ AnalysisNormalise1DNode::AnalysisNormalise1DNode() : AnalysisNode()
 	type_ = AnalysisNode::Normalise1DNode;
 	collectNode_ = NULL;
 	saveNormalisedData_ = false;
+	normalisationFactor_ = 0.0;
+	normaliseByFactor_ = false;
+	normaliseBySphericalShellVolume_ = false;
 }
 
 // Destructor
@@ -45,7 +50,7 @@ AnalysisNormalise1DNode::~AnalysisNormalise1DNode()
  */
 
 // Node Keywords (note ordering for efficiency)
-const char* Normalise1DNodeKeywords[] = { "EndNormalise1D", "NSites", "Save" };
+const char* Normalise1DNodeKeywords[] = { "EndNormalise1D", "Factor", "NSites", "NumberDensity", "Save", "SphericalShellVolume" };
 
 // Convert string to node keyword
 AnalysisNormalise1DNode::Normalise1DNodeKeyword AnalysisNormalise1DNode::normalise1DNodeKeyword(const char* s)
@@ -92,12 +97,26 @@ bool AnalysisNormalise1DNode::finalise(ProcessPool& procPool, Configuration* cfg
 	// Copy the averaged data from the associated Collect1D node, and normalise it accordingly
 	normalisedData = collectNode_->accumulatedData();
 
-	// Normalisation by number of sites
+	// Normalisation by number of sites?
 	RefListIterator<AnalysisSelectNode,double> siteNormaliserIterator(sitePopulationNormalisers_);
-	while (AnalysisSelectNode* selectNode = siteNormaliserIterator.iterate())
+	while (AnalysisSelectNode* selectNode = siteNormaliserIterator.iterate()) normalisedData.y() /= selectNode->nAverageSites();
+
+	// Normalisation by spherical shell?
+	if (normaliseBySphericalShellVolume_)
 	{
-		normalisedData.y() /= selectNode->nCumulativeSites();
+		double halfBinWidth = collectNode_->binWidth() * 0.5;
+		double r1Cubed = pow(normalisedData.x(0)-halfBinWidth,3), r2Cubed;
+		for (int n = 0; n < normalisedData.nDataPoints(); ++n)
+		{
+			r2Cubed = pow(normalisedData.x(n)+halfBinWidth,3);
+			normalisedData.y(n) /= (4.0/3.0) * PI * (r2Cubed - r1Cubed);
+			r1Cubed = r2Cubed;
+		}
 	}
+
+	// Normalisation by number density of sites
+	RefListIterator<AnalysisSelectNode,double> numberDensityIterator(numberDensityNormalisers_);
+	while (AnalysisSelectNode* selectNode = numberDensityIterator.iterate()) normalisedData.y() /= (selectNode->nAverageSites() / cfg->box()->volume());
 
 	// Save data?
 	if (saveNormalisedData_ && procPool.isMaster())
@@ -137,13 +156,25 @@ bool AnalysisNormalise1DNode::read(LineParser& parser, NodeContextStack& context
 		{
 			case (Normalise1DNodeKeyword::EndNormalise1DKeyword):
 				return true;
+			case (Normalise1DNodeKeyword::FactorKeyword):
+				normalisationFactor_ = parser.argd(1);
+				normaliseByFactor_ = true;
+				break;
 			case (Normalise1DNodeKeyword::NSitesKeyword):
 				selectNode = contextStack.selectNode(parser.argc(1));
 				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), normalise1DNodeKeyword(Normalise1DNodeKeyword::NSitesKeyword));
 				sitePopulationNormalisers_.add(selectNode, 1.0);
 				break;
+			case (Normalise1DNodeKeyword::NumberDensityKeyword):
+				selectNode = contextStack.selectNode(parser.argc(1));
+				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), normalise1DNodeKeyword(Normalise1DNodeKeyword::NumberDensityKeyword));
+				numberDensityNormalisers_.add(selectNode, 1.0);
+				break;
 			case (Normalise1DNodeKeyword::SaveKeyword):
 				saveNormalisedData_ = parser.argb(1);
+				break;
+			case (Normalise1DNodeKeyword::SphericalShellVolumeKeyword):
+				normaliseBySphericalShellVolume_ = parser.argb(1);
 				break;
 			case (Normalise1DNodeKeyword::nNormalise1DNodeKeywords):
 				return Messenger::error("Unrecognised Normalise1D node keyword '%s' found.\n", parser.argc(0));

@@ -82,6 +82,8 @@ class AnalysisSelectNode : public AnalysisNode
 	bool hasSites() const;
 	// Return the number of available sites in the current stack, if any
 	int nSitesInStack() const;
+	// Return the average number of sites selected
+	double nAverageSites() const;
 	// Return the cumulative number of sites ever selected
 	int nCumulativeSites() const;
 	// Return current site

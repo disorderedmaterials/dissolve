@@ -86,6 +86,12 @@ int AnalysisSelectNode::nSitesInStack() const
 	return (siteStack_ ? siteStack_->nSites() : 0);
 }
 
+// Return the average number of sites selected
+double AnalysisSelectNode::nAverageSites() const
+{
+	return double(nCumulativeSites_) / nSelections_;
+}
+
 // Return the cumulative number of sites ever selected
 int AnalysisSelectNode::nCumulativeSites() const
 {
@@ -107,11 +113,13 @@ const Site* AnalysisSelectNode::currentSite() const
 // Prepare any necessary data, ready for execution
 bool AnalysisSelectNode::prepare(Configuration* cfg, const char* dataPrefix, GenericList& targetList)
 {
-	// If one exists, prepare the ForEach branch nodes
-	if (forEachBranch_) return forEachBranch_->prepare(cfg, dataPrefix, targetList);
-
 	nSelections_ = 0;
 	nCumulativeSites_ = 0;
+
+	// If one exists, prepare the ForEach branch nodes
+	if (forEachBranch_ && (!forEachBranch_->prepare(cfg, dataPrefix, targetList))) return false;
+
+	return true;
 }
 
 // Execute node, targetting the supplied Configuration
