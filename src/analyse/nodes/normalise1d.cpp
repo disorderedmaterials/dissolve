@@ -99,7 +99,7 @@ bool AnalysisNormalise1DNode::finalise(ProcessPool& procPool, Configuration* cfg
 
 	// Normalisation by number of sites?
 	RefListIterator<AnalysisSelectNode,double> siteNormaliserIterator(sitePopulationNormalisers_);
-	while (AnalysisSelectNode* selectNode = siteNormaliserIterator.iterate()) normalisedData.y() /= selectNode->nAverageSites();
+	while (AnalysisSelectNode* selectNode = siteNormaliserIterator.iterate()) normalisedData /= selectNode->nAverageSites();
 
 	// Normalisation by spherical shell?
 	if (normaliseBySphericalShellVolume_)
@@ -110,13 +110,17 @@ bool AnalysisNormalise1DNode::finalise(ProcessPool& procPool, Configuration* cfg
 		{
 			r2Cubed = pow(normalisedData.x(n)+halfBinWidth,3);
 			normalisedData.y(n) /= (4.0/3.0) * PI * (r2Cubed - r1Cubed);
+			normalisedData.yError(n) /= (4.0/3.0) * PI * (r2Cubed - r1Cubed);
 			r1Cubed = r2Cubed;
 		}
 	}
 
-	// Normalisation by number density of sites
+	// Normalisation by number density of sites?
 	RefListIterator<AnalysisSelectNode,double> numberDensityIterator(numberDensityNormalisers_);
-	while (AnalysisSelectNode* selectNode = numberDensityIterator.iterate()) normalisedData.y() /= (selectNode->nAverageSites() / cfg->box()->volume());
+	while (AnalysisSelectNode* selectNode = numberDensityIterator.iterate()) normalisedData /= (selectNode->nAverageSites() / cfg->box()->volume());
+
+	// Normalisation by factor?
+	if (normaliseByFactor_) normalisedData /= normalisationFactor_;
 
 	// Save data?
 	if (saveNormalisedData_ && procPool.isMaster())
