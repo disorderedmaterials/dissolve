@@ -136,24 +136,26 @@ const char* AnalysisNormalise1DNode::xAxisLabel() const
  */
 
 // Prepare any necessary data, ready for execution
-bool AnalysisNormalise1DNode::prepare(Configuration* cfg, const char* dataPrefix, GenericList& targetList)
+bool AnalysisNormalise1DNode::prepare(Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 	return true;
 }
 
 // Execute node, targetting the supplied Configuration
-AnalysisNode::NodeExecutionResult AnalysisNormalise1DNode::execute(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList)
+AnalysisNode::NodeExecutionResult AnalysisNormalise1DNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 	return AnalysisNode::Success;
 }
 
 // Finalise any necessary data after execution
-bool AnalysisNormalise1DNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList)
+bool AnalysisNormalise1DNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 	// Retrieve / realise the normalised data from the supplied list
-	CharString dataName("%s_Normalised", name());
-	Data1D& normalisedData = GenericListHelper<Data1D>::realise(targetList, dataName, dataPrefix, GenericItem::InRestartFileFlag);
-	normalisedData.setName(dataName);
+	bool created;
+	Data1D& normalisedData = GenericListHelper<Data1D>::realise(targetList, name(), prefix, GenericItem::InRestartFileFlag, &created);
+
+	normalisedData.setName(name());
+	normalisedData.setObjectTag(CharString("%s//Normalise1D//%s//%s", prefix, cfg->name(), name()));
 
 	// Copy the averaged data from the associated Collect1D node, and normalise it accordingly
 	normalisedData = collectNode_->accumulatedData();

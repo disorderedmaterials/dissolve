@@ -56,7 +56,7 @@ void Analyser::addRootSequenceNode(AnalysisNode* node)
  */
 
 // Run analysis for specified Configuration, storing / retrieving generated data from supplied list
-bool Analyser::execute(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList)
+bool Analyser::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 	// Check that the Configuration has changed before we do any more analysis on it
 	RefListItem<Configuration,int>* ri = configurationPoints_.contains(cfg);
@@ -73,13 +73,13 @@ bool Analyser::execute(ProcessPool& procPool, Configuration* cfg, const char* da
 	else configurationPoints_.add(cfg, cfg->coordinateIndex());
 
 	// Prepare the nodes
-	if (!rootSequence_.prepare(cfg, dataPrefix, targetList)) return Messenger::error("Failed to prepare analysis sequence for execution.\n");
+	if (!rootSequence_.prepare(cfg, prefix, targetList)) return Messenger::error("Failed to prepare analysis sequence for execution.\n");
 
 	// Execute the root sequence
-	if (!rootSequence_.execute(procPool, cfg, dataPrefix, targetList)) return Messenger::error("Failed to execute analysis sequence.\n");
+	if (!rootSequence_.execute(procPool, cfg, prefix, targetList)) return Messenger::error("Failed to execute analysis sequence.\n");
 
 	// Finalise any nodes that need it
-	if (!rootSequence_.finalise(procPool, cfg, dataPrefix, targetList)) return Messenger::error("Failed to finalise analysis sequence after execution.\n");
+	if (!rootSequence_.finalise(procPool, cfg, prefix, targetList)) return Messenger::error("Failed to finalise analysis sequence after execution.\n");
 
 	return true;
 }

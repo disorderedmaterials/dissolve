@@ -104,11 +104,12 @@ double AnalysisCollect1DNode::binWidth() const
  */
 
 // Prepare any necessary data, ready for execution
-bool AnalysisCollect1DNode::prepare(Configuration* cfg, const char* dataPrefix, GenericList& targetList)
+bool AnalysisCollect1DNode::prepare(Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 	// Construct our data name, and search for it in the supplied list
+	CharString dataName("%s_Bins", name());
 	bool created;
-	Histogram1D& target = GenericListHelper<Histogram1D>::realise(targetList, name(), dataPrefix, GenericItem::InRestartFileFlag, &created);
+	Histogram1D& target = GenericListHelper<Histogram1D>::realise(targetList, dataName.get(), prefix, GenericItem::InRestartFileFlag, &created);
 	if (created)
 	{
 		Messenger::printVerbose("One-dimensional histogram data for '%s' was not in the target list, so it will now be initialised...\n", name());
@@ -125,7 +126,7 @@ bool AnalysisCollect1DNode::prepare(Configuration* cfg, const char* dataPrefix, 
 }
 
 // Execute node, targetting the supplied Configuration
-AnalysisNode::NodeExecutionResult AnalysisCollect1DNode::execute(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList)
+AnalysisNode::NodeExecutionResult AnalysisCollect1DNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 #ifdef CHECKS
 	if (!observable_)
@@ -141,7 +142,7 @@ AnalysisNode::NodeExecutionResult AnalysisCollect1DNode::execute(ProcessPool& pr
 }
 
 // Finalise any necessary data after execution
-bool AnalysisCollect1DNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList)
+bool AnalysisCollect1DNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 #ifdef CHECKS
 	if (!histogram_)

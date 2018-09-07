@@ -129,19 +129,19 @@ const Site* AnalysisSelectNode::currentSite() const
  */
 
 // Prepare any necessary data, ready for execution
-bool AnalysisSelectNode::prepare(Configuration* cfg, const char* dataPrefix, GenericList& targetList)
+bool AnalysisSelectNode::prepare(Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 	nSelections_ = 0;
 	nCumulativeSites_ = 0;
 
 	// If one exists, prepare the ForEach branch nodes
-	if (forEachBranch_ && (!forEachBranch_->prepare(cfg, dataPrefix, targetList))) return false;
+	if (forEachBranch_ && (!forEachBranch_->prepare(cfg, prefix, targetList))) return false;
 
 	return true;
 }
 
 // Execute node, targetting the supplied Configuration
-AnalysisNode::NodeExecutionResult AnalysisSelectNode::execute(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList)
+AnalysisNode::NodeExecutionResult AnalysisSelectNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 	// First, get our SiteStack from the supplied Configuration
 	siteStack_ = cfg->siteStack(speciesSite_);
@@ -175,7 +175,7 @@ AnalysisNode::NodeExecutionResult AnalysisSelectNode::execute(ProcessPool& procP
 			++nCumulativeSites_;
 
 			// If the branch fails at any point, return failure here.  Otherwise, continue the loop
-			if (forEachBranch_->execute(procPool, cfg, dataPrefix, targetList) == AnalysisNode::Failure) return AnalysisNode::Failure;
+			if (forEachBranch_->execute(procPool, cfg, prefix, targetList) == AnalysisNode::Failure) return AnalysisNode::Failure;
 		}
 	}
 
@@ -183,10 +183,10 @@ AnalysisNode::NodeExecutionResult AnalysisSelectNode::execute(ProcessPool& procP
 }
 
 // Finalise any necessary data after execution
-bool AnalysisSelectNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList)
+bool AnalysisSelectNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 	// If one exists, finalise the ForEach branch nodes
-	if (forEachBranch_ && (!forEachBranch_->finalise(procPool, cfg, dataPrefix, targetList))) return false;
+	if (forEachBranch_ && (!forEachBranch_->finalise(procPool, cfg, prefix, targetList))) return false;
 
 	// Print out summary information
 	Messenger::print("Select - Site '%s': Number of selections made = %i (last contained %i sites).\n", name(), nSelections_ , lastSiteIndex_ - firstSiteIndex_ + 1);

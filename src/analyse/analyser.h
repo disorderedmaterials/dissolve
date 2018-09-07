@@ -65,7 +65,7 @@ class Analyser
 
 	public:
 	// Run analysis for specified Configuration, storing / retrieving generated data from supplied list 
-	bool execute(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList);
+	bool execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
 
 
 	/*

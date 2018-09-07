@@ -90,13 +90,13 @@ const char* AnalysisNode::niceName() const
  */
 
 // Prepare any necessary data, ready for execution
-bool AnalysisNode::prepare(Configuration* cfg, const char* dataPrefix, GenericList& targetList)
+bool AnalysisNode::prepare(Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 	return AnalysisNode::Success;
 }
 
 // Finalise any necessary data after execution
-bool AnalysisNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList)
+bool AnalysisNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 	return AnalysisNode::Success;
 }

@@ -82,11 +82,11 @@ class AnalysisNode : public ListItem<AnalysisNode>
 	// Node execution result
 	enum NodeExecutionResult { Failure, Success, SomethingElse };
 	// Prepare any necessary data, ready for execution
-	virtual bool prepare(Configuration* cfg, const char* dataPrefix, GenericList& targetList);
+	virtual bool prepare(Configuration* cfg, const char* prefix, GenericList& targetList);
 	// Execute node, targetting the supplied Configuration
-	virtual NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList) = 0;
+	virtual NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList) = 0;
 	// Finalise any necessary data after execution
-	virtual bool finalise(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList);
+	virtual bool finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
 
 
 	/*

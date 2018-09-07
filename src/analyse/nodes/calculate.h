@@ -87,9 +87,9 @@ class AnalysisCalculateNode : public AnalysisNode
 	 */
 	public:
 	// Prepare any necessary data, ready for execution
-	bool prepare(Configuration* cfg, const char* dataPrefix, GenericList& targetList);
+	bool prepare(Configuration* cfg, const char* prefix, GenericList& targetList);
 	// Execute node, targetting the supplied Configuration
-	AnalysisNode::NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList);
+	AnalysisNode::NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
 
 
 	/*

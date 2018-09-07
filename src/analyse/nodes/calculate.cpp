@@ -109,13 +109,13 @@ double AnalysisCalculateNode::value() const
  */
 
 // Prepare any necessary data, ready for execution
-bool AnalysisCalculateNode::prepare(Configuration* cfg, const char* dataPrefix, GenericList& targetList)
+bool AnalysisCalculateNode::prepare(Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 	return true;
 }
 
 // Execute node, targetting the supplied Configuration
-AnalysisNode::NodeExecutionResult AnalysisCalculateNode::execute(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList)
+AnalysisNode::NodeExecutionResult AnalysisCalculateNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 #ifdef CHECKS
 	for (int n=0; n<observableNSites(observable_); ++n)

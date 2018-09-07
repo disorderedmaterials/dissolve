@@ -81,17 +81,17 @@ void AnalysisSequenceNode::addNode(AnalysisNode* node)
  */
 
 // Prepare any necessary data, ready for execution
-bool AnalysisSequenceNode::prepare(Configuration* cfg, const char* dataPrefix, GenericList& targetList)
+bool AnalysisSequenceNode::prepare(Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 	// Loop over nodes in the list, preparing each in turn
 	ListIterator<AnalysisNode> nodeIterator(sequence_);
-	while (AnalysisNode* node = nodeIterator.iterate()) if (!node->prepare(cfg, dataPrefix, targetList)) return false;
+	while (AnalysisNode* node = nodeIterator.iterate()) if (!node->prepare(cfg, prefix, targetList)) return false;
 
 	return true;
 }
 
 // Execute node, targetting the supplied Configuration
-AnalysisNode::NodeExecutionResult AnalysisSequenceNode::execute(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList)
+AnalysisNode::NodeExecutionResult AnalysisSequenceNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 	AnalysisNode::NodeExecutionResult result = AnalysisNode::Success;
 
@@ -100,7 +100,7 @@ AnalysisNode::NodeExecutionResult AnalysisSequenceNode::execute(ProcessPool& pro
 	while (AnalysisNode* node = nodeIterator.iterate())
 	{
 		// Get the result of executing the node
-		result = node->execute(procPool, cfg, dataPrefix, targetList);
+		result = node->execute(procPool, cfg, prefix, targetList);
 
 		// If the result is not Success, don't process any more nodes
 		if (result != AnalysisNode::Success) break;
@@ -110,11 +110,11 @@ AnalysisNode::NodeExecutionResult AnalysisSequenceNode::execute(ProcessPool& pro
 }
 
 // Finalise any necessary data after execution
-bool AnalysisSequenceNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* dataPrefix, GenericList& targetList)
+bool AnalysisSequenceNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 	// Loop over nodes in the list, finalising each in turn
 	ListIterator<AnalysisNode> nodeIterator(sequence_);
-	while (AnalysisNode* node = nodeIterator.iterate()) if (!node->finalise(procPool, cfg, dataPrefix, targetList)) return false;
+	while (AnalysisNode* node = nodeIterator.iterate()) if (!node->finalise(procPool, cfg, prefix, targetList)) return false;
 
 	return true;
 }
