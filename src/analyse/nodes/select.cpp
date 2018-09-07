@@ -35,8 +35,6 @@ AnalysisSelectNode::AnalysisSelectNode(SpeciesSite* site) : AnalysisNode()
 	species_ = (speciesSite_ ? speciesSite_->parent() : NULL);
 	forEachBranch_ = NULL;
 	currentSiteIndex_ = -1;
-	firstSiteIndex_ = -1;
-	lastSiteIndex_ = -1;
 	nCumulativeSites_ = 0;
 	nSelections_ = 0;
 
@@ -54,7 +52,7 @@ AnalysisSelectNode::~AnalysisSelectNode()
  */
 
 // Node Keywords
-const char* SelectNodeKeywords[] = { "EndSelect", "ForEach", "Site" };
+const char* SelectNodeKeywords[] = { "EndSelect", "ExcludeSameMolecule", "ExcludeSameSite", "ForEach", "Site" };
 
 // Convert string to node keyword
 AnalysisSelectNode::SelectNodeKeyword AnalysisSelectNode::selectNodeKeyword(const char* s)
@@ -101,7 +99,7 @@ bool AnalysisSelectNode::hasSites() const
 // Return the number of available sites in the current stack, if any
 int AnalysisSelectNode::nSitesInStack() const
 {
-	return (siteStack_ ? siteStack_->nSites() : 0);
+	return sites_.nItems();
 }
 
 // Return the average number of sites selected
@@ -119,9 +117,7 @@ int AnalysisSelectNode::nCumulativeSites() const
 // Return current site
 const Site* AnalysisSelectNode::currentSite() const
 {
-	if (!siteStack_) return NULL;
-
-	return (currentSiteIndex_ == -1 ? NULL : &siteStack_->site(currentSiteIndex_));
+	return (currentSiteIndex_ == -1 ? NULL : sites_.constAt(currentSiteIndex_));
 }
 
 /*
@@ -143,34 +139,44 @@ bool AnalysisSelectNode::prepare(Configuration* cfg, const char* prefix, Generic
 // Execute node, targetting the supplied Configuration
 AnalysisNode::NodeExecutionResult AnalysisSelectNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
-	// First, get our SiteStack from the supplied Configuration
-	siteStack_ = cfg->siteStack(speciesSite_);
-	if (siteStack_ == NULL) return AnalysisNode::Failure;
+	// Create our array of sites from the source Configuration
+	sites_.clear();
+	
+	const SiteStack* siteStack = cfg->siteStack(speciesSite_);
+	if (siteStack == NULL) return AnalysisNode::Failure;
 
+	// Create our exclusion lists
+	RefList<const Molecule,bool> excludedMolecules;
+	RefListIterator<AnalysisSelectNode,bool> moleculeExclusionIterator(sameMoleculeExclusions_);
+	while (AnalysisSelectNode* node = moleculeExclusionIterator.iterate()) if (node->currentSite()) excludedMolecules.addUnique(node->currentSite()->molecule());
+
+	RefList<const Site,bool> excludedSites;
+	RefListIterator<AnalysisSelectNode,bool> siteExclusionIterator(sameSiteExclusions_);
+	while (AnalysisSelectNode* node = siteExclusionIterator.iterate()) if (node->currentSite()) excludedSites.addUnique(node->currentSite());
+
+	sites_.createEmpty(siteStack->nSites());
+	for (int n=0; n<siteStack->nSites(); ++n)
+	{
+		const Site* site = &siteStack->site(n);
+
+		// Check Molecule exclusions
+		if (excludedMolecules.contains(site->molecule())) continue;
+
+		// Check Site exclusions
+		if (excludedSites.contains(site)) continue;
+
+		// All OK, so add site
+		sites_.add(site);
+	}
+	currentSiteIndex_ = (sites_.nItems() == 0 ? -1 : 0);
+
+	printf("SELECT EXEC nSites = %i\n", sites_.nItems());
 	++nSelections_;
 
-	// Set our site range and the initial site
-	if (siteStack_->nSites() == 0)
-	{
-		firstSiteIndex_ = -1;
-		lastSiteIndex_ = -1;
-		currentSiteIndex_ = -1;
-	}
-// 	else if (sameMolecule_)
-// 	{
-// 	}
-	else
-	{
-		firstSiteIndex_ = 0;
-		lastSiteIndex_ = siteStack_->nSites() - 1;
-		currentSiteIndex_ = 0;
-	}
-
-	// If a ForEach branch has been defined, process it for each of our sites in turn. Otherwise, we're done
+	// If a ForEach branch has been defined, process it for each of our sites in turn. Otherwise, we're done.
 	if (forEachBranch_)
 	{
-		// TODO Parallelise FIRST select only.
-		for (currentSiteIndex_ = firstSiteIndex_; currentSiteIndex_ <= lastSiteIndex_; ++currentSiteIndex_)
+		for (currentSiteIndex_ = 0; currentSiteIndex_ < sites_.nItems(); ++currentSiteIndex_)
 		{
 			++nCumulativeSites_;
 
@@ -189,7 +195,7 @@ bool AnalysisSelectNode::finalise(ProcessPool& procPool, Configuration* cfg, con
 	if (forEachBranch_ && (!forEachBranch_->finalise(procPool, cfg, prefix, targetList))) return false;
 
 	// Print out summary information
-	Messenger::print("Select - Site '%s': Number of selections made = %i (last contained %i sites).\n", name(), nSelections_ , lastSiteIndex_ - firstSiteIndex_ + 1);
+	Messenger::print("Select - Site '%s': Number of selections made = %i (last contained %i sites).\n", name(), nSelections_ , sites_.nItems());
 	Messenger::print("Select - Site '%s': Average number of sites selected per selection = %.2f.\n", name(), double(nCumulativeSites_)/nSelections_);
 	Messenger::print("Select - Site '%s': Cumulative number of sites selected = %i.\n", name(), nCumulativeSites_);
 
@@ -221,6 +227,22 @@ bool AnalysisSelectNode::read(LineParser& parser, NodeContextStack& contextStack
 		{
 			case (SelectNodeKeyword::EndSelectKeyword):
 				return true;
+			case (SelectNodeKeyword::ExcludeSameMoleculeKeyword):
+				for (int n=1; n<parser.nArgs(); ++n)
+				{
+					AnalysisSelectNode* otherNode = contextStack.selectNodeInScope(parser.argc(n));
+					if (!otherNode) return Messenger::error("Unrecognised Select node '%s' given to %s keyword.\n", parser.argc(n), selectNodeKeyword(SelectNodeKeyword::ExcludeSameMoleculeKeyword));
+					sameMoleculeExclusions_.add(otherNode);
+				}
+				break;
+			case (SelectNodeKeyword::ExcludeSameSiteKeyword):
+				for (int n=1; n<parser.nArgs(); ++n)
+				{
+					AnalysisSelectNode* otherNode = contextStack.selectNodeInScope(parser.argc(n));
+					if (!otherNode) return Messenger::error("Unrecognised Select node '%s' given to %s keyword.\n", parser.argc(n), selectNodeKeyword(SelectNodeKeyword::ExcludeSameSiteKeyword));
+					sameSiteExclusions_.add(otherNode);
+				}
+				break;
 			case (SelectNodeKeyword::ForEachKeyword):
 				// Check that a ForEach branch hasn't already been defined
 				if (forEachBranch_) return Messenger::error("Only one ForEach branch may be defined.\n");

@@ -23,6 +23,8 @@
 #define DISSOLVE_ANALYSISSELECT_H
 
 #include "analyse/nodes/node.h"
+#include "templates/array.h"
+#include "templates/reflist.h"
 
 // Forward Declarations
 class AnalysisSequenceNode;
@@ -45,7 +47,7 @@ class AnalysisSelectNode : public AnalysisNode
 	 */
 	public:
 	// Node Keywords
-	enum SelectNodeKeyword { EndSelectKeyword, ForEachKeyword, SiteKeyword, nSelectNodeKeywords };
+	enum SelectNodeKeyword { EndSelectKeyword, ExcludeSameMoleculeKeyword, ExcludeSameSiteKeyword, ForEachKeyword, SiteKeyword, nSelectNodeKeywords };
 	// Convert string to control keyword
 	static SelectNodeKeyword selectNodeKeyword(const char* s);
 	// Convert control keyword to string
@@ -60,16 +62,18 @@ class AnalysisSelectNode : public AnalysisNode
 	Species* species_;
 	// Target site within parent Species
 	SpeciesSite* speciesSite_;
-	// Stack containing our selected sites
-	const SiteStack* siteStack_;
+	// List of other sites (nodes) which will exclude one of our sites if it has the same Molecule parent
+	RefList<AnalysisSelectNode,bool> sameMoleculeExclusions_;
+	// List of other sites (nodes) which will exclude one of our sites if it is the same site
+	RefList<AnalysisSelectNode,bool> sameSiteExclusions_;
+	// Array containing pointers to our selected sites
+	Array<const Site*> sites_;
 	// Number of selections made by the node
 	int nSelections_;
 	// Cumulative number of sites ever selected
 	int nCumulativeSites_;
 	// Branch for ForEach (if defined)
 	AnalysisSequenceNode* forEachBranch_;
-	// Range of site indices selected
-	int firstSiteIndex_, lastSiteIndex_;
 	// Current Site index
 	int currentSiteIndex_;
 
