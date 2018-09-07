@@ -31,25 +31,6 @@ class AnalysisSelectNode;
 // Select Node
 class AnalysisCalculateNode : public AnalysisNode
 {
-	public:
-	// Constructor
-	AnalysisCalculateNode();
-	// Destructor
-	~AnalysisCalculateNode();
-
-
-	/*
-	 * Node Keywords
-	 */
-	public:
-	// Node Keywords
-	enum CalculateNodeKeyword { AngleKeyword, DistanceKeyword, EndCalculateKeyword, nCalculateNodeKeywords };
-	// Convert string to control keyword
-	static CalculateNodeKeyword calculateNodeKeyword(const char* s);
-	// Convert control keyword to string
-	static const char* calculateNodeKeyword(CalculateNodeKeyword nk);
-
-
 	/*
 	 * Observables
 	 */
@@ -67,6 +48,22 @@ class AnalysisCalculateNode : public AnalysisNode
 	static const char* observable(Observable obs);
 	// Number of sites required to calculate Observable
 	static int observableNSites(Observable obs);
+	// Constructor
+	AnalysisCalculateNode(AnalysisCalculateNode::Observable observable = nObservables, AnalysisSelectNode* site0 = NULL, AnalysisSelectNode* site1 = NULL, AnalysisSelectNode* site2 = NULL, AnalysisSelectNode* site3 = NULL);
+	// Destructor
+	~AnalysisCalculateNode();
+
+
+	/*
+	 * Node Keywords
+	 */
+	public:
+	// Node Keywords
+	enum CalculateNodeKeyword { AngleKeyword, DistanceKeyword, EndCalculateKeyword, nCalculateNodeKeywords };
+	// Convert string to control keyword
+	static CalculateNodeKeyword calculateNodeKeyword(const char* s);
+	// Convert control keyword to string
+	static const char* calculateNodeKeyword(CalculateNodeKeyword nk);
 
 
 	/*

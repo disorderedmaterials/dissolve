@@ -29,10 +29,10 @@
 #include "base/sysfunc.h"
 
 // Constructor
-AnalysisSelectNode::AnalysisSelectNode() : AnalysisNode()
+AnalysisSelectNode::AnalysisSelectNode(SpeciesSite* site) : AnalysisNode()
 {
-	species_ = NULL;
-	speciesSite_ = NULL;
+	speciesSite_ = site;
+	species_ = (speciesSite_ ? speciesSite_->parent() : NULL);
 	forEachBranch_ = NULL;
 	currentSiteIndex_ = -1;
 	firstSiteIndex_ = -1;
@@ -68,6 +68,24 @@ AnalysisSelectNode::SelectNodeKeyword AnalysisSelectNode::selectNodeKeyword(cons
 const char* AnalysisSelectNode::selectNodeKeyword(AnalysisSelectNode::SelectNodeKeyword nk)
 {
 	return SelectNodeKeywords[nk];
+}
+
+/*
+ * Data
+ */
+
+// Add and return ForEach sequence
+AnalysisSequenceNode* AnalysisSelectNode::addForEachBranch()
+{
+	if (!forEachBranch_) forEachBranch_ = new AnalysisSequenceNode();
+
+	return forEachBranch_;
+}
+
+// Add specified node to ForEach sequence
+void AnalysisSelectNode::addToForEachBranch(AnalysisNode* node)
+{
+	addForEachBranch()->addNode(node);
 }
 
 /*

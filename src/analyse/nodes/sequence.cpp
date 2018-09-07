@@ -70,6 +70,12 @@ void AnalysisSequenceNode::clear()
 	sequence_.clear();
 }
 
+// Add (own) node into sequence
+void AnalysisSequenceNode::addNode(AnalysisNode* node)
+{
+	sequence_.own(node);
+}
+
 /*
  * Execute
  */

@@ -35,7 +35,7 @@ class AnalysisSelectNode : public AnalysisNode
 {
 	public:
 	// Constructor
-	AnalysisSelectNode();
+	AnalysisSelectNode(SpeciesSite* site = NULL);
 	// Destructor
 	~AnalysisSelectNode();
 
@@ -72,6 +72,12 @@ class AnalysisSelectNode : public AnalysisNode
 	int firstSiteIndex_, lastSiteIndex_;
 	// Current Site index
 	int currentSiteIndex_;
+
+	public:
+	// Add and return ForEach sequence
+	AnalysisSequenceNode* addForEachBranch();
+	// Add specified node to ForEach sequence
+	void addToForEachBranch(AnalysisNode* node);
 
 
 	/*

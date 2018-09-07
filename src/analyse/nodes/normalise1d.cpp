@@ -30,10 +30,11 @@
 #include "templates/genericlisthelper.h"
 
 // Constructor
-AnalysisNormalise1DNode::AnalysisNormalise1DNode() : AnalysisNode()
+AnalysisNormalise1DNode::AnalysisNormalise1DNode(AnalysisCollect1DNode* target) : AnalysisNode()
 {
 	type_ = AnalysisNode::Normalise1DNode;
-	collectNode_ = NULL;
+
+	collectNode_ = target;
 	saveNormalisedData_ = false;
 	normalisationFactor_ = 0.0;
 	normaliseByFactor_ = false;
@@ -50,7 +51,7 @@ AnalysisNormalise1DNode::~AnalysisNormalise1DNode()
  */
 
 // Node Keywords (note ordering for efficiency)
-const char* Normalise1DNodeKeywords[] = { "EndNormalise1D", "Factor", "NSites", "NumberDensity", "Save", "SphericalShellVolume" };
+const char* Normalise1DNodeKeywords[] = { "EndNormalise1D", "Factor", "LabelValue", "LabelX", "NSites", "NumberDensity", "Save", "SphericalShellVolume" };
 
 // Convert string to node keyword
 AnalysisNormalise1DNode::Normalise1DNodeKeyword AnalysisNormalise1DNode::normalise1DNodeKeyword(const char* s)
@@ -69,6 +70,66 @@ const char* AnalysisNormalise1DNode::normalise1DNodeKeyword(AnalysisNormalise1DN
 /*
  * Data
  */
+
+// Add site population normaliser
+void AnalysisNormalise1DNode::addSitePopulationNormaliser(AnalysisSelectNode* selectNode)
+{
+	sitePopulationNormalisers_.add(selectNode, 1.0);
+}
+
+// Add number density normaliser
+void AnalysisNormalise1DNode::addNumberDensityNormaliser(AnalysisSelectNode* selectNode)
+{
+	numberDensityNormalisers_.add(selectNode);
+}
+
+// Set whether to normalise by factor
+void AnalysisNormalise1DNode::setNormaliseByFactor(bool on)
+{
+	normaliseByFactor_ = on;
+}
+
+// Set normalisation factor
+void AnalysisNormalise1DNode::setNormalisationFactor(double factor)
+{
+	normalisationFactor_ = factor;
+}
+
+// Set whether to normalise by spherical shell volume
+void AnalysisNormalise1DNode::setNormaliseBySphericalShellVolume(bool on)
+{
+	normaliseBySphericalShellVolume_ = on;
+}
+
+// Set whether to save normalised data
+void AnalysisNormalise1DNode::setSaveNormalisedData(bool on)
+{
+	saveNormalisedData_ = on;
+}
+
+// Set value label
+void AnalysisNormalise1DNode::setValueLabel(const char* label)
+{
+	valueLabel_ = label;
+}
+
+// Return value label
+const char* AnalysisNormalise1DNode::valueLabel() const
+{
+	return valueLabel_.get();
+}
+
+// Set x axis label
+void AnalysisNormalise1DNode::setXAxisLabel(const char* label)
+{
+	xAxisLabel_ = label;
+}
+
+// Return x axis label
+const char* AnalysisNormalise1DNode::xAxisLabel() const
+{
+	return xAxisLabel_.get();
+}
 
 /*
  * Execute
@@ -163,6 +224,12 @@ bool AnalysisNormalise1DNode::read(LineParser& parser, NodeContextStack& context
 			case (Normalise1DNodeKeyword::FactorKeyword):
 				normalisationFactor_ = parser.argd(1);
 				normaliseByFactor_ = true;
+				break;
+			case (Normalise1DNodeKeyword::LabelValueKeyword):
+				valueLabel_ = parser.argc(1);
+				break;
+			case (Normalise1DNodeKeyword::LabelXKeyword):
+				xAxisLabel_ = parser.argc(1);
 				break;
 			case (Normalise1DNodeKeyword::NSitesKeyword):
 				selectNode = contextStack.selectNode(parser.argc(1));

@@ -45,6 +45,12 @@ void Analyser::clear()
 	rootSequence_.clear();
 }
 
+// Add (own) specified node to root sequence
+void Analyser::addRootSequenceNode(AnalysisNode* node)
+{
+	rootSequence_.addNode(node);
+}
+
 /*
  * Execute
  */

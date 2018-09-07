@@ -39,7 +39,7 @@ class AnalysisNormalise1DNode : public AnalysisNode
 {
 	public:
 	// Constructor
-	AnalysisNormalise1DNode();
+	AnalysisNormalise1DNode(AnalysisCollect1DNode* target = NULL);
 	// Destructor
 	~AnalysisNormalise1DNode();
 
@@ -49,7 +49,7 @@ class AnalysisNormalise1DNode : public AnalysisNode
 	 */
 	public:
 	// Node Keywords
-	enum Normalise1DNodeKeyword { EndNormalise1DKeyword, FactorKeyword, NSitesKeyword, NumberDensityKeyword, SaveKeyword, SphericalShellVolumeKeyword, nNormalise1DNodeKeywords };
+	enum Normalise1DNodeKeyword { EndNormalise1DKeyword, FactorKeyword, LabelValueKeyword, LabelXKeyword, NSitesKeyword, NumberDensityKeyword, SaveKeyword, SphericalShellVolumeKeyword, nNormalise1DNodeKeywords };
 	// Convert string to control keyword
 	static Normalise1DNodeKeyword normalise1DNodeKeyword(const char* s);
 	// Convert control keyword to string
@@ -74,7 +74,32 @@ class AnalysisNormalise1DNode : public AnalysisNode
 	bool normaliseBySphericalShellVolume_;
 	// Whether to save data after normalisation
 	bool saveNormalisedData_;
+	// Value label
+	CharString valueLabel_;
+	// Axis labels
+	CharString xAxisLabel_;
 
+	public:
+	// Add site population normaliser
+	void addSitePopulationNormaliser(AnalysisSelectNode* selectNode);
+	// Add number density normaliser
+	void addNumberDensityNormaliser(AnalysisSelectNode* selectNode);
+	// Set whether to normalise by factor
+	void setNormaliseByFactor(bool on);
+	// Set normalisation factor
+	void setNormalisationFactor(double factor);
+	// Set whether to normalise by spherical shell volume
+	void setNormaliseBySphericalShellVolume(bool on);
+	// Set whether to save normalised data
+	void setSaveNormalisedData(bool on);
+	// Set value label
+	void setValueLabel(const char* label);
+	// Return value label
+	const char* valueLabel() const;
+	// Set x axis label
+	void setXAxisLabel(const char* label);
+	// Return x axis label
+	const char* xAxisLabel() const;
 
 	/*
 	 * Execute

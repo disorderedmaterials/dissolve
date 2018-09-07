@@ -37,7 +37,7 @@ class AnalysisCollect1DNode : public AnalysisNode
 {
 	public:
 	// Constructor
-	AnalysisCollect1DNode();
+	AnalysisCollect1DNode(AnalysisCalculateNode* observable = NULL, double rMin = 0.0, double rMax = 10.0, double binWidth = 0.05);
 	// Destructor
 	~AnalysisCollect1DNode();
 
@@ -47,7 +47,7 @@ class AnalysisCollect1DNode : public AnalysisNode
 	 */
 	public:
 	// Node Keywords
-	enum Collect1DNodeKeyword { EndCollect1DKeyword, LabelXKeyword, LabelYKeyword, QuantityXKeyword, RangeXKeyword, nCollect1DNodeKeywords };
+	enum Collect1DNodeKeyword { EndCollect1DKeyword, QuantityXKeyword, RangeXKeyword, nCollect1DNodeKeywords };
 	// Convert string to control keyword
 	static Collect1DNodeKeyword collect1DNodeKeyword(const char* s);
 	// Convert control keyword to string
@@ -62,8 +62,6 @@ class AnalysisCollect1DNode : public AnalysisNode
 	AnalysisCalculateNode* observable_;
 	// Histogram in which to accumulate data
 	Histogram1D* histogram_;
-	// Axis labels
-	CharString axisLabels_[3];
 	// Range minimum
 	double minimum_;
 	// Range maximum

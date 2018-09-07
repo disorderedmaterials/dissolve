@@ -61,6 +61,8 @@ class AnalysisSequenceNode : public AnalysisNode
 	public:
 	// Clear all data
 	void clear();
+	// Add (own) node into sequence
+	void addNode(AnalysisNode* node);
 
 
 	/*

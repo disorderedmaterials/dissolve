@@ -28,13 +28,14 @@
 #include "templates/genericlisthelper.h"
 
 // Constructor
-AnalysisCollect1DNode::AnalysisCollect1DNode() : AnalysisNode()
+AnalysisCollect1DNode::AnalysisCollect1DNode(AnalysisCalculateNode* observable, double rMin, double rMax, double binWidth) : AnalysisNode()
 {
 	type_ = AnalysisNode::Collect1DNode;
 
-	minimum_ = 0.0;
-	maximum_ = 10.0;
-	binWidth_ = 0.1;
+	observable_ = observable;
+	minimum_ = rMin;
+	maximum_ = rMax;
+	binWidth_ = binWidth;
 }
 
 // Destructor
@@ -46,8 +47,8 @@ AnalysisCollect1DNode::~AnalysisCollect1DNode()
  * Node Keywords
  */
 
-// Node Keywords (note ordering for efficiency)
-const char* Collect1DNodeKeywords[] = { "EndCollect1D", "LabelX", "LabelY", "QuantityX", "RangeX" };
+// Node Keywords
+const char* Collect1DNodeKeywords[] = { "EndCollect1D", "QuantityX", "RangeX" };
 
 // Convert string to node keyword
 AnalysisCollect1DNode::Collect1DNodeKeyword AnalysisCollect1DNode::collect1DNodeKeyword(const char* s)
@@ -181,10 +182,6 @@ bool AnalysisCollect1DNode::read(LineParser& parser, NodeContextStack& contextSt
 		{
 			case (Collect1DNodeKeyword::EndCollect1DKeyword):
 				return true;
-			case (Collect1DNodeKeyword::LabelXKeyword):
-			case (Collect1DNodeKeyword::LabelYKeyword):
-				axisLabels_[nk-Collect1DNodeKeyword::LabelXKeyword] = parser.argc(1);
-				break;
 			case (Collect1DNodeKeyword::QuantityXKeyword):
 				// Determine observable from supplied argument
 				observable_ = contextStack.calculateNodeInScope(parser.argc(1));

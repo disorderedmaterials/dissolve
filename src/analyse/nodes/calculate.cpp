@@ -29,14 +29,15 @@
 #include "base/sysfunc.h"
 
 // Constructor
-AnalysisCalculateNode::AnalysisCalculateNode() : AnalysisNode()
+AnalysisCalculateNode::AnalysisCalculateNode(AnalysisCalculateNode::Observable observable, AnalysisSelectNode* site0, AnalysisSelectNode* site1, AnalysisSelectNode* site2, AnalysisSelectNode* site3) : AnalysisNode()
 {
 	type_ = AnalysisNode::CalculateNode;
 
-	sites_[0] = NULL;
-	sites_[1] = NULL;
-	sites_[2] = NULL;
-	sites_[3] = NULL;
+	observable_ = observable;
+	sites_[0] = site0;
+	sites_[1] = site1;
+	sites_[2] = site2;
+	sites_[3] = site3;
 }
 
 // Destructor

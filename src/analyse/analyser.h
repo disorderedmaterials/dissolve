@@ -52,6 +52,8 @@ class Analyser
 	public:
 	// Clear all data
 	void clear();
+	// Add (own) specified node to root sequence
+	void addRootSequenceNode(AnalysisNode* node);
 
 
 	/*
