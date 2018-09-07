@@ -188,7 +188,7 @@ bool AnalysisNormalise1DNode::finalise(ProcessPool& procPool, Configuration* cfg
 	// Save data?
 	if (saveNormalisedData_ && procPool.isMaster())
 	{
-		if (normalisedData.save(CharString("%s.txt", dataName.get()))) procPool.decideTrue();
+		if (normalisedData.save(CharString("%s_%s.txt", name(), cfg->name()))) procPool.decideTrue();
 		else return procPool.decideFalse();
 	}
 	else if (!procPool.decision()) return false;
