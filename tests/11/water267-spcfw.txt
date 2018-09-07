@@ -31,14 +31,14 @@ EndMaster
 
 Species 'Water'
   # Atoms
-  Atom    1    O     0.015   -0.009   -0.373   'OW'
-  Atom    2    H     0.757    0.013    0.217   'HW'
+  Atom    1    H     0.757    0.013    0.217   'HW'
+  Atom    2    O     0.015   -0.009   -0.373   'OW'
   Atom    3    H    -0.771   -0.003    0.157   'HW'
 
   # Intramolecular Terms
   Bond  1    2  @OH
-  Bond  1    3  @OH
-  Angle 2    1    3  @HOH
+  Bond  3    2  @OH
+  Angle 1    2    3  @HOH
 
   # Isotopologues
   Isotopologue  'Natural'  OW=0  HW=0
@@ -46,15 +46,15 @@ Species 'Water'
 
   # Analysis Sites
   Site  'origin'
-    Origin  1
-    XAxis  2 3
+    Origin  2
+    XAxis  1 3
     YAxis  3
   EndSite
   Site  'O'
-    Origin  1
+    Origin  2
   EndSite
   Site  'H1'
-    Origin  2
+    Origin  1
   EndSite
   Site  'H2'
     Origin  3
@@ -94,6 +94,15 @@ Module  Import
   TrajectoryFile  xyz  'dlpoly/water-267-298K.xyz'
 EndModule
 
+Module CalculateRDF
+  Configuration  'Bulk'
+  OriginSite  Water  'O'
+  OtherSite  Water  'O'
+  RMin  0.0
+  RMax  20.0
+  BinWidth  0.01
+EndModule
+
 Module  Analyse
   Configuration  'Bulk'
   Analyser
@@ -119,7 +128,6 @@ Module  Analyse
             Collect1D  'RDF(OW-OW)'
               QuantityX  'rAB'
               RangeX  0.0  20.0  0.01
-              LabelX  'r, Angstroms'  'Bins'
             EndCollect1D
 
           EndForEach
@@ -133,7 +141,11 @@ Module  Analyse
     # Perform necessary normalisation
     Normalise1D  'RDF(OW-OW)'
       NSites  'A'
+      SphericalShellVolume  On
+      NumberDensity  'B'
       Save  On
+      LabelX  'r, Angstroms'
+      LabelValue  'g(r)'
     EndNormalise1D
 
   EndAnalyser
