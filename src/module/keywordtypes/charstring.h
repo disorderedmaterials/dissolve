@@ -33,7 +33,7 @@ class CharStringModuleKeyword : public ModuleKeywordBase, public ModuleKeywordDa
 {
 	public:
 	// Constructors
-	CharStringModuleKeyword(CharString value);
+	CharStringModuleKeyword(CharString value = CharString());
 	CharStringModuleKeyword(CharString value, int nOptions, const char** options);
 	// Destructor
 	~CharStringModuleKeyword();
