@@ -27,6 +27,9 @@
 // Constructor
 AnalysisNode::AnalysisNode() : ListItem<AnalysisNode>()
 {
+	// Assign default, unique name to the node
+	static int nodeCount = 0;
+	name_ = CharString("Node%04i", ++nodeCount);
 }
 
 // Destructor
