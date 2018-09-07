@@ -72,6 +72,24 @@ const char* AnalysisSelectNode::selectNodeKeyword(AnalysisSelectNode::SelectNode
  * Data
  */
 
+// Add "same molecule" exclusion
+bool AnalysisSelectNode::addSameMoleculeExclusion(AnalysisSelectNode* node)
+{
+	if (sameMoleculeExclusions_.contains(node)) return false;
+	else sameMoleculeExclusions_.add(node);
+
+	return true;
+}
+
+// Add "same site" exclusion
+bool AnalysisSelectNode::addSameSiteExclusion(AnalysisSelectNode* node)
+{
+	if (sameSiteExclusions_.contains(node)) return false;
+	else sameSiteExclusions_.add(node);
+
+	return true;
+}
+
 // Add and return ForEach sequence
 AnalysisSequenceNode* AnalysisSelectNode::addForEachBranch()
 {
@@ -170,7 +188,6 @@ AnalysisNode::NodeExecutionResult AnalysisSelectNode::execute(ProcessPool& procP
 	}
 	currentSiteIndex_ = (sites_.nItems() == 0 ? -1 : 0);
 
-	printf("SELECT EXEC nSites = %i\n", sites_.nItems());
 	++nSelections_;
 
 	// If a ForEach branch has been defined, process it for each of our sites in turn. Otherwise, we're done.
@@ -232,7 +249,7 @@ bool AnalysisSelectNode::read(LineParser& parser, NodeContextStack& contextStack
 				{
 					AnalysisSelectNode* otherNode = contextStack.selectNodeInScope(parser.argc(n));
 					if (!otherNode) return Messenger::error("Unrecognised Select node '%s' given to %s keyword.\n", parser.argc(n), selectNodeKeyword(SelectNodeKeyword::ExcludeSameMoleculeKeyword));
-					sameMoleculeExclusions_.add(otherNode);
+					if (!addSameMoleculeExclusion(otherNode)) return Messenger::error("Duplicate site given to %s keyword.\n", selectNodeKeyword(SelectNodeKeyword::ExcludeSameMoleculeKeyword));
 				}
 				break;
 			case (SelectNodeKeyword::ExcludeSameSiteKeyword):
@@ -240,7 +257,7 @@ bool AnalysisSelectNode::read(LineParser& parser, NodeContextStack& contextStack
 				{
 					AnalysisSelectNode* otherNode = contextStack.selectNodeInScope(parser.argc(n));
 					if (!otherNode) return Messenger::error("Unrecognised Select node '%s' given to %s keyword.\n", parser.argc(n), selectNodeKeyword(SelectNodeKeyword::ExcludeSameSiteKeyword));
-					sameSiteExclusions_.add(otherNode);
+					if (!addSameSiteExclusion(otherNode)) return Messenger::error("Duplicate site given to %s keyword.\n", selectNodeKeyword(SelectNodeKeyword::ExcludeSameSiteKeyword));
 				}
 				break;
 			case (SelectNodeKeyword::ForEachKeyword):

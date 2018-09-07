@@ -34,15 +34,16 @@ bool CalculateRDFModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	analyser_.clear();
 
 	// Get relevant Module options
-	double binWidth = keywords_.asDouble("BinWidth");
+	const double binWidth = keywords_.asDouble("BinWidth");
+	const bool excludeSameMolecule = keywords_.asBool("ExcludeSameMolecule");
 	CharString rdfName = keywords_.asString("Name");
 	if (rdfName.isEmpty()) rdfName = uniqueName();
 	SpeciesSite* originSite = KeywordListHelper<SpeciesSite*>::retrieve(keywords_, "OriginSite", NULL);
 	if (!originSite) return Messenger::error("Origin site is not defined.\n");
 	SpeciesSite* otherSite = KeywordListHelper<SpeciesSite*>::retrieve(keywords_, "OtherSite", NULL);
 	if (!otherSite) return Messenger::error("Other (surrounding) site is not defined.\n");
-	double rMax = keywords_.asDouble("RMax");
-	double rMin = keywords_.asDouble("RMin");
+	const double rMax = keywords_.asDouble("RMax");
+	const double rMin = keywords_.asDouble("RMin");
 
 	/*
 	 * Assemble the code below (@var indicates local variable 'var')
@@ -52,7 +53,8 @@ bool CalculateRDFModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	 *   ForEach
 	 *     Select  'B'
 	 *       Site  @otherSite
-	 *       #ExcludeSameMolecule  'A'
+	 *       ExcludeSameSite  'A'
+	 *       ExcludeSameMolecule  (if @excludeSameMolecule then 'A')
 	 *       ForEach
 	 *         Calculate  'rAB'
 	 *           Distance  'A'  'B'
@@ -82,6 +84,8 @@ bool CalculateRDFModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	// -- Select: Site 'B' (@otherSite)
 	AnalysisSelectNode* otherSelect = new AnalysisSelectNode(otherSite);
 	otherSelect->setName("B");
+	otherSelect->addSameSiteExclusion(originSelect);
+	if (excludeSameMolecule) otherSelect->addSameMoleculeExclusion(originSelect);
 	originSelect->addToForEachBranch(otherSelect);
 
 	// -- -- Calculate: 'rAB'

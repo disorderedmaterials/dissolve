@@ -26,6 +26,7 @@
 void CalculateRDFModule::setUpKeywords()
 {
 	keywords_.add(new DoubleModuleKeyword(0.05, 0.0001), "BinWidth", "Width of bins in histogram (and spacing between points in resulting RDF)", "<r, Angstroms>");
+	keywords_.add(new BoolModuleKeyword(false), "ExcludeSameMolecule", "Whether to exclude correlations between sites on the same molecule", "<True|False>");
 	keywords_.add(new SpeciesSiteModuleKeyword(), "OriginSite", "Set the site which is to represent the origin of the RDF", "<Species> <Site>");
 	keywords_.add(new SpeciesSiteModuleKeyword(), "OtherSite", "Set the site for which the distribution around the origin site is to be calculated", "<Species> <Site>");
 	keywords_.add(new CharStringModuleKeyword(), "Name", "Set the name of the calculated RDF", "<name>");

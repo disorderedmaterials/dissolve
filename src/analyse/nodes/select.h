@@ -78,6 +78,10 @@ class AnalysisSelectNode : public AnalysisNode
 	int currentSiteIndex_;
 
 	public:
+	// Add "same molecule" exclusion
+	bool addSameMoleculeExclusion(AnalysisSelectNode* node);
+	// Add "same site" exclusion
+	bool addSameSiteExclusion(AnalysisSelectNode* node);
 	// Add and return ForEach sequence
 	AnalysisSequenceNode* addForEachBranch();
 	// Add specified node to ForEach sequence
