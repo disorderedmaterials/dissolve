@@ -31,7 +31,7 @@ template<class Data1D> int ObjectStore<Data1D>::objectType_ = ObjectInfo::Data1D
 template<class Data1D> const char* ObjectStore<Data1D>::objectTypeName_ = "Data1D";
 
 // Constructor
-Data1D::Data1D() : ListItem<Data1D>(), ObjectStore<Data1D>(this) 
+Data1D::Data1D() : ListItem<Data1D>(), ObjectStore<Data1D>(this), Plottable()
 {
 	hasError_ = false;
 
