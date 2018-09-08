@@ -67,6 +67,15 @@ bool GenericList::contains(const char* name, const char* prefix)
 	return false;
 }
 
+// Return if named named item, if it exists, is of specified type
+bool GenericList::isItemOfType(const char* type, const char* name, const char* prefix)
+{
+	GenericItem* item = find(name, prefix);
+	if (!item) return false;
+
+	return DissolveSys::sameString(type, item->itemClassName());
+}
+
 // Return head of the list
 GenericItem* GenericList::items()
 {
