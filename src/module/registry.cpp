@@ -24,6 +24,7 @@
 #include "modules/atomshake/atomshake.h"
 #include "modules/calculate/rdf/calculaterdf.h"
 #include "modules/checks/checks.h"
+#include "modules/datatest/datatest.h"
 #include "modules/energy/energy.h"
 #include "modules/epsr/epsr.h"
 #include "modules/export/export.h"
@@ -53,6 +54,7 @@ ModuleRegistry::ModuleRegistry()
 	ModuleRegistrar<CalculateRDFModule> calculateRDFRegistrar;
 	ModuleRegistrar<CalibrationModule> calibrationRegistrar;
 	ModuleRegistrar<ChecksModule> checksRegistrar;
+	ModuleRegistrar<DataTestModule> dataTestRegistrar;
 	ModuleRegistrar<EnergyModule> energyRegistrar;
 	ModuleRegistrar<EPSRModule> epsrRegistrar;
 	ModuleRegistrar<ExportModule> exportRegistrar;

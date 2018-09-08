@@ -184,6 +184,7 @@ set(BASIC_LINK_LIBS
   calculatemodules
   calibrationmodule
   checksmodule
+  datatestmodule
   energymodule
   epsrmodule
   exportmodule
@@ -222,6 +223,7 @@ target_link_libraries( ${target_name}
   braggmodulenogui
   calculatemodulesnogui
   calibrationmodulenogui
+  datatestmodulenogui
   energymodulenogui
   epsrmodulenogui
   neutronsqmodulenogui
@@ -249,6 +251,7 @@ if(GUI)
     braggmodulegui
     calculatemodulesgui
     calibrationmodulegui
+    datatestmodulegui
     energymodulegui
     epsrmodulegui
     neutronsqmodulegui
