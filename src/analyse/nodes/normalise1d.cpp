@@ -152,7 +152,7 @@ bool AnalysisNormalise1DNode::finalise(ProcessPool& procPool, Configuration* cfg
 {
 	// Retrieve / realise the normalised data from the supplied list
 	bool created;
-	Data1D& normalisedData = GenericListHelper<Data1D>::realise(targetList, name(), prefix, GenericItem::InRestartFileFlag, &created);
+	Data1D& normalisedData = GenericListHelper<Data1D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag, &created);
 
 	normalisedData.setName(name());
 	normalisedData.setObjectTag(CharString("%s//Normalise1D//%s//%s", prefix, cfg->name(), name()));

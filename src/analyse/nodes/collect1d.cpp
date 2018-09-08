@@ -23,6 +23,7 @@
 #include "analyse/nodecontextstack.h"
 #include "analyse/nodes/calculate.h"
 #include "math/data1d.h"
+#include "classes/configuration.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "templates/genericlisthelper.h"
@@ -107,7 +108,7 @@ double AnalysisCollect1DNode::binWidth() const
 bool AnalysisCollect1DNode::prepare(Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 	// Construct our data name, and search for it in the supplied list
-	CharString dataName("%s_Bins", name());
+	CharString dataName("%s_%s_Bins", name(), cfg->niceName());
 	bool created;
 	Histogram1D& target = GenericListHelper<Histogram1D>::realise(targetList, dataName.get(), prefix, GenericItem::InRestartFileFlag, &created);
 	if (created)
