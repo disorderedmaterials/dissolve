@@ -26,9 +26,10 @@
 #include "templates/genericlisthelper.h"
 
 // Constructor
-ModuleReferenceListModuleKeyword::ModuleReferenceListModuleKeyword(RefList<Module,bool>& references, const char* moduleType) : ModuleKeywordBase(ModuleKeywordBase::ModuleReferenceListData), ModuleKeywordData< RefList<Module,bool>& >(references)
+ModuleReferenceListModuleKeyword::ModuleReferenceListModuleKeyword(RefList<Module,bool>& references, const char* moduleType, int maxModules) : ModuleKeywordBase(ModuleKeywordBase::ModuleReferenceListData), ModuleKeywordData< RefList<Module,bool>& >(references)
 {
 	moduleType_ = moduleType;
+	maxModules_ = maxModules;
 }
 
 // Destructor
@@ -59,26 +60,32 @@ int ModuleReferenceListModuleKeyword::minArguments()
 // Return maximum number of arguments accepted
 int ModuleReferenceListModuleKeyword::maxArguments()
 {
-	return 1;
+	return (maxModules_ == -1 ? 99 : maxModules_);
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
 bool ModuleReferenceListModuleKeyword::read(LineParser& parser, int startArg, ProcessPool& procPool)
 {
-	// Find specified Module by its unique name
-	Module* module = ModuleList::findInstanceByUniqueName(parser.argc(startArg));
-	if (!module)
+	// Loop over arguments provided to the keyword
+	for (int n = startArg; n<parser.nArgs(); ++n)
 	{
-		Messenger::error("No Module named '%s' exists.\n", parser.argc(startArg));
-		return false;
-	}
-	if (!DissolveSys::sameString(module->type(), moduleType_))
-	{
-		Messenger::error("Module '%s' is not of the correct type (%s).\n", parser.argc(startArg), module->type());
-		return false;
-	}
+		// Find specified Module by its unique name
+		Module* module = ModuleList::findInstanceByUniqueName(parser.argc(n));
+		if (!module)
+		{
+			Messenger::error("No Module named '%s' exists.\n", parser.argc(n));
+			return false;
+		}
 
-	data_.add(module);
+		// Check the module's type
+		if ((!DissolveSys::sameString(moduleType_, "*")) && (!DissolveSys::sameString(module->type(), moduleType_)))
+		{
+			Messenger::error("Module '%s' is not of the correct type (%s).\n", parser.argc(n), module->type());
+			return false;
+		}
+
+		data_.add(module);
+	}
 
 	set_ = true;
 

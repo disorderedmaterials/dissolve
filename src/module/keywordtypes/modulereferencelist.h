@@ -34,7 +34,7 @@ class ModuleReferenceListModuleKeyword : public ModuleKeywordBase, public Module
 {
 	public:
 	// Constructor
-	ModuleReferenceListModuleKeyword(RefList<Module,bool>& references, const char* moduleType);
+	ModuleReferenceListModuleKeyword(RefList<Module,bool>& references, const char* moduleType, int maxModules = -1);
 	// Destructor
 	~ModuleReferenceListModuleKeyword();
 
@@ -45,6 +45,8 @@ class ModuleReferenceListModuleKeyword : public ModuleKeywordBase, public Module
 	private:
 	// Module type to allow
 	CharString moduleType_;
+	// Maximum number of modules to allow in list (-1 for any number)
+	int maxModules_;
 
 	public:
 	// Return whether the current data value has ever been set
@@ -66,4 +68,3 @@ class ModuleReferenceListModuleKeyword : public ModuleKeywordBase, public Module
 };
 
 #endif
-
