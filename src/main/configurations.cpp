@@ -63,6 +63,26 @@ bool Dissolve::writeConfiguration(Configuration* cfg, LineParser& parser)
 	if (!parser.writeLineF("%12e %12e %12e  %f\n", cfg->relativeBoxLengths().x, cfg->relativeBoxLengths().y, cfg->relativeBoxLengths().z, cfg->requestedSizeFactor())) return false;
 	if (!parser.writeLineF("%12e %12e %12e\n", cfg->boxAngles().x, cfg->boxAngles().y, cfg->boxAngles().z)) return false;
 
+	// Write Molecule types - write sequential Molecules with same type as single line
+	int moleculeCount = 1;
+	Species* lastType = cfg->nMolecules() > 0 ? cfg->molecule(0)->species() : NULL;
+	for (int n=1; n<cfg->nMolecules(); ++n)
+	{
+		// If the last Molecule's Species is the same as this one, increment counter and move on
+		if (lastType == cfg->molecule(n)->species())
+		{
+			++moleculeCount;
+			continue;
+		}
+
+		// Species is different between this molecule and the last - write this info, and reset the counter
+		if (!parser.writeLineF("%i  '%s'\n", moleculeCount, lastType->name())) return false;
+		moleculeCount = 1;
+		lastType = cfg->molecule(n)->species();
+	}
+	// Write final 
+	if (!parser.writeLineF("%i  '%s'\n", moleculeCount, lastType->name())) return false;
+
 	// Write all Atoms - for each write type, coordinates, charge, mol ID, and grain ID
 	AtomTypeList usedAtomTypes = cfg->usedAtomTypesList();
 	if (!parser.writeLineF("%i  # nAtoms\n", cfg->nAtoms())) return false;
@@ -79,7 +99,7 @@ bool Dissolve::writeConfiguration(Configuration* cfg, LineParser& parser)
 	{
 		Bond* b = cfg->bond(n);
 		molId = b->molecule() ? b->molecule()->arrayIndex() : -1;
-			spb = b->speciesBond();
+		spb = b->speciesBond();
 		if (!parser.writeLineF("%i %i %i %i %i\n", b->i()->arrayIndex(), b->j()->arrayIndex(), molId, species_.indexOf(spb->parent()), spb->parent()->bondIndex(spb))) return false;
 	}
 
@@ -130,6 +150,20 @@ bool Dissolve::readConfiguration(Configuration* cfg, LineParser& parser)
 	cfg->setRequestedSizeFactor(parser.hasArg(3) ? parser.argd(3) : 1.0);
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	cfg->setBoxAngles(parser.arg3d(0));
+
+	// Read Species types for Molecules
+	int nMolsRead = 0;
+	while (nMolsRead < cfg->nMolecules())
+	{
+		// Read line containing number of molecules and Species name
+		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+		Species* sp = findSpecies(parser.argc(1));
+		if (!sp) return Messenger::error("Unrecognised Species '%s' found in Configuration '%s' in restart file.\n", parser.argc(1), cfg->name());
+
+		// Set Species pointers for this range of Molecules
+		for (int n=0; n<parser.argi(0); ++n) cfg->molecule(nMolsRead+n)->setSpecies(sp);
+		nMolsRead += parser.argi(0);
+	}
 
 	// Read in Atoms
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
