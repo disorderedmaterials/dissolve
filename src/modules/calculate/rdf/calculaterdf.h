@@ -91,15 +91,15 @@ class CalculateRDFModule : public Module
 
 
 	/*
-	 * Analyser Data
+	 * Functions / Data
 	 */
 	private:
 	// Analyser to be run
 	Analyser analyser_;
 
 	public:
-	// Reconstruct Analyser ready for use
-	bool reconstructAnalyser();
+	// Return name of resulting RDF
+	const char* rdfName() const;
 
 
 	/*

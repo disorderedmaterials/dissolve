@@ -26,7 +26,8 @@
 #include "gui/modulewidget.h"
 
 // Forward Declarations
-class Module;
+class CalculateRDFModule;
+class UChromaViewWidget;
 
 // Module Widget
 class CalculateRDFModuleWidget : public ModuleWidget
@@ -36,11 +37,13 @@ class CalculateRDFModuleWidget : public ModuleWidget
 
 	private:
 	// Associated Module
-	Module* module_;
+	CalculateRDFModule* module_;
+	// UChromaViews contained within this widget
+	UChromaViewWidget* rdfGraph_;
 
 	public:
 	// Constructor
-	CalculateRDFModuleWidget(QWidget* parent, Module* module);
+	CalculateRDFModuleWidget(QWidget* parent, CalculateRDFModule* module);
 	// Main form declaration
 	Ui::CalculateRDFModuleWidget ui;
 	// Update controls within widget
@@ -65,6 +68,8 @@ class CalculateRDFModuleWidget : public ModuleWidget
 	 * Widgets / Functions
 	 */
 	private:
+	// Set data targets in graphs
+	void setGraphDataTargets(CalculateRDFModule* module);
 
 	private slots:
 };

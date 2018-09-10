@@ -22,7 +22,7 @@
 #include "modules/calculate/rdf/calculaterdf.h"
 
 // Return type of module
-const char* CalculateRDFModule::type() const
+const char* CalculateRDFModule::type() const	
 {
 	return "CalculateRDF";
 }

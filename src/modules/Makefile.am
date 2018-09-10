@@ -89,6 +89,7 @@ libmodulewidgets_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@ @DISSOLVE_READLINE@
 libmodulewidgets_la_LIBADD += analyse/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += atomshake/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += calibration/gui/libmodulewidget.la
+libmodulewidgets_la_LIBADD += datatest/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += energy/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += epsr/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += neutronsq/gui/libmodulewidget.la

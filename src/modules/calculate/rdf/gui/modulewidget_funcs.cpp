@@ -20,12 +20,28 @@
 */
 
 #include "modules/calculate/rdf/gui/modulewidget.h"
+#include "modules/calculate/rdf/calculaterdf.h"
+#include "classes/configuration.h"
 
 // Constructor
-CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget* parent, Module* module) : ModuleWidget(parent), module_(module)
+CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget* parent, CalculateRDFModule* module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
 	ui.setupUi(this);
+
+	// Set up RDF graph
+	rdfGraph_ = ui.RDFPlotWidget;
+
+	rdfGraph_->startNewSession(true);
+	ViewPane* viewPane = rdfGraph_->currentViewPane();
+	viewPane->setViewType(ViewPane::FlatXYView);
+	viewPane->axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+	viewPane->axes().setMax(0, 10.0);
+	viewPane->axes().setTitle(1, "g(r)");
+	viewPane->axes().setMin(1, -1.0);
+	viewPane->axes().setMax(1, 1.0);
+	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
+	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
 
 	refreshing_ = false;
 }
@@ -33,6 +49,9 @@ CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget* parent, Module* modu
 // Update controls within widget
 void CalculateRDFModuleWidget::updateControls()
 {
+	rdfGraph_->refreshReferencedDataSets();
+
+	rdfGraph_->updateDisplay();
 }
 
 // Disable sensitive controls within widget, ready for main code to run
@@ -52,16 +71,38 @@ void CalculateRDFModuleWidget::enableSensitiveControls()
 // Write widget state through specified LineParser
 bool CalculateRDFModuleWidget::writeState(LineParser& parser)
 {
-	return false;
+	// Write UChromaWidget sessions
+	if (!rdfGraph_->writeSession(parser)) return false;
+
+	return true;
 }
 
 // Read widget state through specified LineParser
 bool CalculateRDFModuleWidget::readState(LineParser& parser)
 {
-	return false;
+	// Read UChromaWidget sessions
+	if (!rdfGraph_->readSession(parser)) return false;
+
+	return true;
 }
 
 /*
  * Widgets / Functions
  */
 
+// Set data targets in graphs
+void CalculateRDFModuleWidget::setGraphDataTargets(CalculateRDFModule* module)
+{
+	// Remove any current collections
+	rdfGraph_->clearCollections();
+
+	// Loop over Configuration targets in Module
+	RefListIterator<Configuration,bool> configIterator(module_->targetConfigurations());
+	while (Configuration* cfg = configIterator.iterate())
+	{
+		// Calculated RDF
+		CharString blockData;
+		blockData.sprintf("Collection '%s'; Group '%s'; DataSet '%s (%s)'; Source Data1D '%s//Normalise1D//%s//%s'; EndDataSet; EndCollection", cfg->name(), cfg->name(), module_->keywords().asString("Name"), cfg->name(), module_->uniqueName(), cfg->niceName(), module_->rdfName());
+		rdfGraph_->addCollectionFromBlock(blockData);
+	}
+}

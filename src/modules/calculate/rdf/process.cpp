@@ -36,8 +36,7 @@ bool CalculateRDFModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	// Get relevant Module options
 	const double binWidth = keywords_.asDouble("BinWidth");
 	const bool excludeSameMolecule = keywords_.asBool("ExcludeSameMolecule");
-	CharString rdfName = keywords_.asString("Name");
-	if (rdfName.isEmpty()) rdfName = uniqueName();
+	CharString dataName = rdfName();
 	SpeciesSite* originSite = KeywordListHelper<SpeciesSite*>::retrieve(keywords_, "OriginSite", NULL);
 	if (!originSite) return Messenger::error("Origin site is not defined.\n");
 	SpeciesSite* otherSite = KeywordListHelper<SpeciesSite*>::retrieve(keywords_, "OtherSite", NULL);
@@ -59,7 +58,7 @@ bool CalculateRDFModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	 *         Calculate  'rAB'
 	 *           Distance  'A'  'B'
 	 *         EndCalculate
-	 *         Collect1D  @rdfName
+	 *         Collect1D  @dataName
 	 *           QuantityX  'rAB'
 	 *           RangeX  @rMin  @rMax  @binWidth
 	 *         EndCollect1D
@@ -67,7 +66,7 @@ bool CalculateRDFModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	 *     EndSelect  'B'
 	 *   EndForEach  'A'
 	 * EndSelect  'A'
-	 * Normalise1D  @rdfName
+	 * Normalise1D  @dataName
 	 *   NSites  'A'
 	 *   SphericalShellVolume  On
 	 *   NumberDensity  'B'
@@ -92,14 +91,14 @@ bool CalculateRDFModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	AnalysisCalculateNode* calcDistance = new AnalysisCalculateNode(AnalysisCalculateNode::DistanceObservable, originSelect, otherSelect);
 	otherSelect->addToForEachBranch(calcDistance);
 
-	// -- -- Collect1D: @rdfName
+	// -- -- Collect1D: @dataName
 	AnalysisCollect1DNode* collect1D = new AnalysisCollect1DNode(calcDistance, rMin, rMax, binWidth);
-	collect1D->setName(rdfName);
+	collect1D->setName(dataName);
 	otherSelect->addToForEachBranch(collect1D);
 
-	// Normalise1D: @rdfName
+	// Normalise1D: @dataName
 	AnalysisNormalise1DNode* normalise1D = new AnalysisNormalise1DNode(collect1D);
-	normalise1D->setName(rdfName);
+	normalise1D->setName(dataName);
 	normalise1D->addSitePopulationNormaliser(originSelect);
 	normalise1D->addNumberDensityNormaliser(otherSelect);
 	normalise1D->setNormaliseBySphericalShellVolume(true);
