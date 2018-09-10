@@ -33,7 +33,7 @@ bool DataTestModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	 */
 
 	// Get options and target Module
-	const double testThreshold = keywords_.asDouble("TestThreshold");
+	const double testThreshold = keywords_.asDouble("Threshold");
 	Module* targetModule = targetModule_.firstItem();
 
 	// Print summary

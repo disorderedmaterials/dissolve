@@ -27,22 +27,32 @@ Configuration  'Bulk'
   RDFRange 15.5
 EndConfiguration
 
-# Samples
+# Calculate and test RDFs
 Module  RDF
   Configuration  'Bulk'
   # Save  On
-  TestThreshold  0.57
   Frequency  1
+EndModule
 
-  Test  on
-  # -- Partial g(r) (unbound terms), unweighted
-  TestReference  'epsr/water.EPSR.g01'  OriginalGR-OW-OW-unbound  1  2
-  TestReference  'epsr/water.EPSR.g01'  OriginalGR-OW-HW-unbound  1  4
-  TestReference  'epsr/water.EPSR.g01'  OriginalGR-HW-HW-unbound  1  6
-  # -- Partial g(r) (intramolecular terms), unweighted
-  TestReference  'epsr/water.EPSR.y01'  OriginalGR-OW-OW-bound  1  2
-  TestReference  'epsr/water.EPSR.y01'  OriginalGR-OW-HW-bound  1  4
-  TestReference  'epsr/water.EPSR.y01'  OriginalGR-HW-HW-bound  1  6
+# -- Partial g(r) (unbound terms)
+Module  DataTest  'Partial g(r) (unbound)'
+  Threshold  3.4
+  Data1D  'epsr/water.EPSR.g01'  'Bulk//OriginalGR//OW-OW//Unbound'  1  2
+  Data1D  'epsr/water.EPSR.g01'  'Bulk//OriginalGR//OW-HW//Unbound'  1  4
+  Data1D  'epsr/water.EPSR.g01'  'Bulk//OriginalGR//HW-HW//Unbound'  1  6
+EndModule
+
+# -- Partial g(r) (intramolecular terms)
+Module  DataTest  'Partial g(r) (bound)'
+  Threshold  4.9
+  Data1D  'epsr/water.EPSR.y01'  'Bulk//OriginalGR//OW-HW//Bound'  1  4
+  Data1D  'epsr/water.EPSR.y01'  'Bulk//OriginalGR//HW-HW//Bound'  1  6
+EndModule
+
+# -- Partial g(r) (intramolecular terms)
+Module  DataTest  'Partial g(r) (zeroed bound)'
+  Threshold  0.001
+  Data1D  'epsr/water.EPSR.y01'  'Bulk//OriginalGR//OW-OW//Bound'  1  2
 EndModule
 
 Module  NeutronSQ  'D2O'
@@ -52,18 +62,34 @@ Module  NeutronSQ  'D2O'
   Configuration  'Bulk'
   Isotopologue  'Bulk'  'Water'  'Deuteriated'  1.0
   # Save  On
-  TestThreshold  0.1
   Frequency  1
-  # -- Partial S(Q) (unbound terms), unweighted
-  TestReference  'epsr/water.EPSR.f01'  UnweightedSQ-OW-OW-unbound  1  2
-  TestReference  'epsr/water.EPSR.f01'  UnweightedSQ-OW-HW-unbound  1  4
-  TestReference  'epsr/water.EPSR.f01'  UnweightedSQ-HW-HW-unbound  1  6
-  # -- Partial S(Q) (bound terms), unweighted
-  TestReference  'epsr/water.EPSR.s01'  UnweightedSQ-OW-OW-bound  1  2
-  TestReference  'epsr/water.EPSR.s01'  UnweightedSQ-OW-HW-bound  1  4
-  TestReference  'epsr/water.EPSR.s01'  UnweightedSQ-HW-HW-bound  1  6
-  # -- Total neutron-weighted S(Q)
-  TestReference  'epsr/water.EPSR.u01'  WeightedSQ-total  1  2
+EndModule
+
+# -- Partial S(Q) (unbound terms)
+Module  DataTest  'Partial S(Q) (unbound)'
+  Threshold  1.3
+  Data1D  'epsr/water.EPSR.f01'  'D2O//UnweightedSQ//OW-OW//Unbound'  1  2
+  Data1D  'epsr/water.EPSR.f01'  'D2O//UnweightedSQ//OW-HW//Unbound'  1  4
+  Data1D  'epsr/water.EPSR.f01'  'D2O//UnweightedSQ//HW-HW//Unbound'  1  6
+EndModule
+
+# -- Partial S(Q) (bound terms)
+Module  DataTest  'Partial S(Q) (bound)'
+  Threshold  0.45
+  Data1D  'epsr/water.EPSR.s01'  'D2O//UnweightedSQ//OW-HW//Bound'  1  4
+  Data1D  'epsr/water.EPSR.s01'  'D2O//UnweightedSQ//HW-HW//Bound'  1  6
+EndModule
+
+# -- Partial S(Q) (bound terms)
+Module  DataTest  'Partial S(Q) (zeroed bound)'
+  Threshold  0.001
+  Data1D  'epsr/water.EPSR.s01'  'D2O//UnweightedSQ//OW-OW//Bound'  1  2
+EndModule
+
+# -- Total neutron-weighted F(Q)
+Module  DataTest  'F(Q) D2O'
+  Threshold  0.9
+  Data1D  'epsr/water.EPSR.u01'  'D2O//WeightedSQ//Total'  1  2
 EndModule
 
 Module  NeutronSQ  'H2O'
@@ -73,11 +99,13 @@ Module  NeutronSQ  'H2O'
   Configuration  'Bulk'
   Isotopologue  'Bulk'  'Water'  'Protiated'  1.0
   # Save  On
-  TestThreshold  0.26
   Frequency  1
-  Test  on
-  # -- Total neutron-weighted S(Q)
-  TestReference  'epsr/water.EPSR.u01'  WeightedSQ-total  1  4
+EndModule
+
+# -- Total neutron-weighted F(Q)
+Module  DataTest  'F(Q) H2O'
+  Threshold  1.1
+  Data1D  'epsr/water.EPSR.u01'  'H2O//WeightedSQ//Total'  1  4
 EndModule
 
 Module  NeutronSQ  'HDO'
@@ -89,12 +117,13 @@ Module  NeutronSQ  'HDO'
   Isotopologue  'Bulk'  'Water'  'Deuteriated'  0.5
   Exchangeable  HW
   # Save  On
-  TestThreshold  0.11
   Frequency  1
+EndModule
 
-  Test  on
-  # -- Total neutron-weighted S(Q)
-  TestReference  'epsr/water.EPSR.u01'  WeightedSQ-total  1  6
+# -- Total neutron-weighted F(Q)
+Module  DataTest  'F(Q) HDO'
+  Threshold  0.75
+  Data1D  'epsr/water.EPSR.u01'  'HDO//WeightedSQ//Total'  1  6
 EndModule
 
 Module SanityCheck

@@ -34,20 +34,20 @@ Configuration  'Box'
     Save  On
 
     Test  On
-    TestThreshold  1.1
+    Threshold  1.1
 
     # Order of data in EPSR partial files is:  Mg-Mg    Mg-OX    OX-OX
     #                                            2        4        6
 
     # Partial g(r)
-    TestReference  'epsr/mgo.EPSR.g01'  OriginalGR-Mg-Mg-unbound  1  2
-    TestReference  'epsr/mgo.EPSR.g01'  OriginalGR-Mg-OX-unbound  1  4
-    TestReference  'epsr/mgo.EPSR.g01'  OriginalGR-OX-OX-unbound  1  6
+    Data1D  'epsr/mgo.EPSR.g01'  OriginalGR-Mg-Mg-unbound  1  2
+    Data1D  'epsr/mgo.EPSR.g01'  OriginalGR-Mg-OX-unbound  1  4
+    Data1D  'epsr/mgo.EPSR.g01'  OriginalGR-OX-OX-unbound  1  6
 
     # Partial S(Q)
-    TestReference  'epsr/mgo.EPSR.f01'  UnweightedSQ-Mg-Mg-unbound  1  2
-    TestReference  'epsr/mgo.EPSR.f01'  UnweightedSQ-Mg-OX-unbound  1  4
-    TestReference  'epsr/mgo.EPSR.f01'  UnweightedSQ-OX-OX-unbound  1  6
+    Data1D  'epsr/mgo.EPSR.f01'  UnweightedSQ-Mg-Mg-unbound  1  2
+    Data1D  'epsr/mgo.EPSR.f01'  UnweightedSQ-Mg-OX-unbound  1  4
+    Data1D  'epsr/mgo.EPSR.f01'  UnweightedSQ-OX-OX-unbound  1  6
   EndModule
 EndConfiguration
 

@@ -28,9 +28,11 @@ Module  NeutronSQ
   QBroadening  Gaussian  0.2
   WindowFunction  None
   Frequency  1
-  Test  On
-  TestThreshold  0.12
-  TestReference  'epsr_qindep0.2/argon.EPSR.u01'  WeightedSQ-total  1  2
+EndModule
+
+Module DataTest
+  Threshold  0.25
+  Data1D  'epsr_qindep0.2/argon.EPSR.u01'  'liquid//NeutronSQ01//WeightedSQ//Total'  1  2
 EndModule
 
 Module SanityCheck

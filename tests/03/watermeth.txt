@@ -59,59 +59,9 @@ Configuration  'Mix'
   RDFRange 38.0
 
   # Calculate and test g(r)
-  Module  RDF
-    # Save  On
+  Module  RDF  RDFs
+    Save  On
     Frequency  1
-  
-    Test  on
-    TestThreshold  0.55
-    #  Order of partials in EPSR files is: 
-    #    2      4      6      8      10     12     14     16     18     20     22     24     26     28     30     32     34     36     38     40     42
-    #  OW-OW  OW-HW  OW-CT  OW-HC  OW-OH  OW-HO  HW-HW  HW-CT  HW-HC  HW-OH  HW-HO  CT-CT  CT-HC  CT-OH  CT-HO  HC-HC  HC-OH  HC-HO  OH-OH  OH-HO  HO-HO  
-    # -- Partial g(r) (unbound terms), unweighted
-    TestReference  'epsr/watermeth.EPSR.g01'  OriginalGR-OW-OW-unbound  1  2
-    TestReference  'epsr/watermeth.EPSR.g01'  OriginalGR-OW-HW-unbound  1  4
-    TestReference  'epsr/watermeth.EPSR.g01'  OriginalGR-OW-CT-unbound  1  6
-    TestReference  'epsr/watermeth.EPSR.g01'  OriginalGR-OW-HC-unbound  1  8
-    TestReference  'epsr/watermeth.EPSR.g01'  OriginalGR-OW-OH-unbound  1  10
-    TestReference  'epsr/watermeth.EPSR.g01'  OriginalGR-OW-HO-unbound  1  12
-    TestReference  'epsr/watermeth.EPSR.g01'  OriginalGR-HW-HW-unbound  1  14
-    TestReference  'epsr/watermeth.EPSR.g01'  OriginalGR-HW-CT-unbound  1  16
-    TestReference  'epsr/watermeth.EPSR.g01'  OriginalGR-HW-HC-unbound  1  18
-    TestReference  'epsr/watermeth.EPSR.g01'  OriginalGR-HW-OH-unbound  1  20
-    TestReference  'epsr/watermeth.EPSR.g01'  OriginalGR-HW-HO-unbound  1  22
-    TestReference  'epsr/watermeth.EPSR.g01'  OriginalGR-CT-CT-unbound  1  24
-    TestReference  'epsr/watermeth.EPSR.g01'  OriginalGR-CT-HC-unbound  1  26
-    TestReference  'epsr/watermeth.EPSR.g01'  OriginalGR-CT-OH-unbound  1  28
-    TestReference  'epsr/watermeth.EPSR.g01'  OriginalGR-CT-HO-unbound  1  30
-    TestReference  'epsr/watermeth.EPSR.g01'  OriginalGR-HC-HC-unbound  1  32
-    TestReference  'epsr/watermeth.EPSR.g01'  OriginalGR-HC-OH-unbound  1  34
-    TestReference  'epsr/watermeth.EPSR.g01'  OriginalGR-HC-HO-unbound  1  36
-    TestReference  'epsr/watermeth.EPSR.g01'  OriginalGR-OH-OH-unbound  1  38
-    TestReference  'epsr/watermeth.EPSR.g01'  OriginalGR-OH-HO-unbound  1  40
-    TestReference  'epsr/watermeth.EPSR.g01'  OriginalGR-HO-HO-unbound  1  42
-    # -- Partial g(r) (intramolecular terms), unweighted
-    TestReference  'epsr/watermeth.EPSR.y01'  OriginalGR-OW-OW-bound  1  2
-    TestReference  'epsr/watermeth.EPSR.y01'  OriginalGR-OW-HW-bound  1  4
-    TestReference  'epsr/watermeth.EPSR.y01'  OriginalGR-OW-CT-bound  1  6
-    TestReference  'epsr/watermeth.EPSR.y01'  OriginalGR-OW-HC-bound  1  8
-    TestReference  'epsr/watermeth.EPSR.y01'  OriginalGR-OW-OH-bound  1  10
-    TestReference  'epsr/watermeth.EPSR.y01'  OriginalGR-OW-HO-bound  1  12
-    TestReference  'epsr/watermeth.EPSR.y01'  OriginalGR-HW-HW-bound  1  14
-    TestReference  'epsr/watermeth.EPSR.y01'  OriginalGR-HW-CT-bound  1  16
-    TestReference  'epsr/watermeth.EPSR.y01'  OriginalGR-HW-HC-bound  1  18
-    TestReference  'epsr/watermeth.EPSR.y01'  OriginalGR-HW-OH-bound  1  20
-    TestReference  'epsr/watermeth.EPSR.y01'  OriginalGR-HW-HO-bound  1  22
-    TestReference  'epsr/watermeth.EPSR.y01'  OriginalGR-CT-CT-bound  1  24
-    TestReference  'epsr/watermeth.EPSR.y01'  OriginalGR-CT-HC-bound  1  26
-    TestReference  'epsr/watermeth.EPSR.y01'  OriginalGR-CT-OH-bound  1  28
-    TestReference  'epsr/watermeth.EPSR.y01'  OriginalGR-CT-HO-bound  1  30
-    TestReference  'epsr/watermeth.EPSR.y01'  OriginalGR-HC-HC-bound  1  32
-    TestReference  'epsr/watermeth.EPSR.y01'  OriginalGR-HC-OH-bound  1  34
-    TestReference  'epsr/watermeth.EPSR.y01'  OriginalGR-HC-HO-bound  1  36
-    TestReference  'epsr/watermeth.EPSR.y01'  OriginalGR-OH-OH-bound  1  38
-    TestReference  'epsr/watermeth.EPSR.y01'  OriginalGR-OH-HO-bound  1  40
-    TestReference  'epsr/watermeth.EPSR.y01'  OriginalGR-HO-HO-bound  1  42
   EndModule
 
   # Sample Structure Factor Calculations
@@ -124,59 +74,6 @@ Configuration  'Mix'
     Exchangeable  HW  HO
     # Save  On
     Frequency  1
-  
-    Test  on
-    TestThreshold  0.28
-    #  Order of partials in EPSR files is: 
-    #    2      4      6      8      10     12     14     16     18     20     22     24     26     28     30     32     34     36     38     40     42
-    #  OW-OW  OW-HW  OW-CT  OW-HC  OW-OH  OW-HO  HW-HW  HW-CT  HW-HC  HW-OH  HW-HO  CT-CT  CT-HC  CT-OH  CT-HO  HC-HC  HC-OH  HC-HO  OH-OH  OH-HO  HO-HO  
-    # -- Partial S(Q) (unbound terms), unweighted
-    TestReference  'epsr/watermeth.EPSR.f01'  UnweightedSQ-OW-OW-unbound  1  2
-    TestReference  'epsr/watermeth.EPSR.f01'  UnweightedSQ-OW-HW-unbound  1  4
-    TestReference  'epsr/watermeth.EPSR.f01'  UnweightedSQ-OW-CT-unbound  1  6
-    TestReference  'epsr/watermeth.EPSR.f01'  UnweightedSQ-OW-HC-unbound  1  8
-    TestReference  'epsr/watermeth.EPSR.f01'  UnweightedSQ-OW-OH-unbound  1  10
-    TestReference  'epsr/watermeth.EPSR.f01'  UnweightedSQ-OW-HO-unbound  1  12
-    TestReference  'epsr/watermeth.EPSR.f01'  UnweightedSQ-HW-HW-unbound  1  14
-    TestReference  'epsr/watermeth.EPSR.f01'  UnweightedSQ-HW-CT-unbound  1  16
-    TestReference  'epsr/watermeth.EPSR.f01'  UnweightedSQ-HW-HC-unbound  1  18
-    TestReference  'epsr/watermeth.EPSR.f01'  UnweightedSQ-HW-OH-unbound  1  20
-    TestReference  'epsr/watermeth.EPSR.f01'  UnweightedSQ-HW-HO-unbound  1  22
-    TestReference  'epsr/watermeth.EPSR.f01'  UnweightedSQ-CT-CT-unbound  1  24
-    TestReference  'epsr/watermeth.EPSR.f01'  UnweightedSQ-CT-HC-unbound  1  26
-    TestReference  'epsr/watermeth.EPSR.f01'  UnweightedSQ-CT-OH-unbound  1  28
-    TestReference  'epsr/watermeth.EPSR.f01'  UnweightedSQ-CT-HO-unbound  1  30
-    TestReference  'epsr/watermeth.EPSR.f01'  UnweightedSQ-HC-HC-unbound  1  32
-    TestReference  'epsr/watermeth.EPSR.f01'  UnweightedSQ-HC-OH-unbound  1  34
-    TestReference  'epsr/watermeth.EPSR.f01'  UnweightedSQ-HC-HO-unbound  1  36
-    TestReference  'epsr/watermeth.EPSR.f01'  UnweightedSQ-OH-OH-unbound  1  38
-    TestReference  'epsr/watermeth.EPSR.f01'  UnweightedSQ-OH-HO-unbound  1  40
-    TestReference  'epsr/watermeth.EPSR.f01'  UnweightedSQ-HO-HO-unbound  1  42
-    # -- Partial S(Q) (bound terms), unweighted
-    TestReference  'epsr/watermeth.EPSR.s01'  UnweightedSQ-OW-OW-bound  1  2
-    TestReference  'epsr/watermeth.EPSR.s01'  UnweightedSQ-OW-HW-bound  1  4
-    TestReference  'epsr/watermeth.EPSR.s01'  UnweightedSQ-OW-CT-bound  1  6
-    TestReference  'epsr/watermeth.EPSR.s01'  UnweightedSQ-OW-HC-bound  1  8
-    TestReference  'epsr/watermeth.EPSR.s01'  UnweightedSQ-OW-OH-bound  1  10
-    TestReference  'epsr/watermeth.EPSR.s01'  UnweightedSQ-OW-HO-bound  1  12
-    TestReference  'epsr/watermeth.EPSR.s01'  UnweightedSQ-HW-HW-bound  1  14
-    TestReference  'epsr/watermeth.EPSR.s01'  UnweightedSQ-HW-CT-bound  1  16
-    TestReference  'epsr/watermeth.EPSR.s01'  UnweightedSQ-HW-HC-bound  1  18
-    TestReference  'epsr/watermeth.EPSR.s01'  UnweightedSQ-HW-OH-bound  1  20
-    TestReference  'epsr/watermeth.EPSR.s01'  UnweightedSQ-HW-HO-bound  1  22
-    TestReference  'epsr/watermeth.EPSR.s01'  UnweightedSQ-CT-CT-bound  1  24
-    TestReference  'epsr/watermeth.EPSR.s01'  UnweightedSQ-CT-HC-bound  1  26
-    TestReference  'epsr/watermeth.EPSR.s01'  UnweightedSQ-CT-OH-bound  1  28
-    TestReference  'epsr/watermeth.EPSR.s01'  UnweightedSQ-CT-HO-bound  1  30
-    TestReference  'epsr/watermeth.EPSR.s01'  UnweightedSQ-HC-HC-bound  1  32
-    TestReference  'epsr/watermeth.EPSR.s01'  UnweightedSQ-HC-OH-bound  1  34
-    TestReference  'epsr/watermeth.EPSR.s01'  UnweightedSQ-HC-HO-bound  1  36
-    TestReference  'epsr/watermeth.EPSR.s01'  UnweightedSQ-OH-OH-bound  1  38
-    TestReference  'epsr/watermeth.EPSR.s01'  UnweightedSQ-OH-HO-bound  1  40
-    TestReference  'epsr/watermeth.EPSR.s01'  UnweightedSQ-HO-HO-bound  1  42
-    # -- Total neutron-weighted S(Q)
-    # u01 file: 1  2   4   6   8   10  12  14  16
-    TestReference  'epsr/watermeth.EPSR.u01'  WeightedSQ-total  1  2
   EndModule
   
   Module  NeutronSQ  'H5H'
@@ -189,13 +86,6 @@ Configuration  'Mix'
     Exchangeable  HW  HO
     #  Save  On
     Frequency  1
-  
-    Test  on
-    TestThreshold  0.08
-    # -- Total neutron-weighted S(Q)
-    # u01 file: 1  2   4   6   8   10  12  14  16
-    #           Q HHH H5H DHH HDH HHD DDH HDD DDD 
-    TestReference  'epsr/watermeth.EPSR.u01'  WeightedSQ-total  1  4
   EndModule
   
   Module  NeutronSQ  'DHH'
@@ -207,13 +97,6 @@ Configuration  'Mix'
     Exchangeable  HW  HO
     #  Save  On
     Frequency  1
-  
-    Test  on
-    TestThreshold  0.08
-    # -- Total neutron-weighted S(Q)
-    # u01 file: 1  2   4   6   8   10  12  14  16
-    #           Q HHH H5H DHH HDH HHD DDH HDD DDD 
-    TestReference  'epsr/watermeth.EPSR.u01'  WeightedSQ-total  1  6
   EndModule
   
   Module  NeutronSQ  'HDH'
@@ -225,13 +108,6 @@ Configuration  'Mix'
     Exchangeable  HW  HO
     #  Save  On
     Frequency  1
-  
-    Test  on
-    TestThreshold  0.08
-    # -- Total neutron-weighted S(Q)
-    # u01 file: 1  2   4   6   8   10  12  14  16
-    #           Q HHH H5H DHH HDH HHD DDH HDD DDD 
-    TestReference  'epsr/watermeth.EPSR.u01'  WeightedSQ-total  1  8
   EndModule
   
   Module  NeutronSQ  'HHD'
@@ -243,13 +119,6 @@ Configuration  'Mix'
     Exchangeable  HW  HO
     #  Save  On
     Frequency  1
-  
-    Test  on
-    TestThreshold  0.11
-    # -- Total neutron-weighted S(Q)
-    # u01 file: 1  2   4   6   8   10  12  14  16
-    #           Q HHH H5H DHH HDH HHD DDH HDD DDD 
-    TestReference  'epsr/watermeth.EPSR.u01'  WeightedSQ-total  1  10
   EndModule
   
   Module  NeutronSQ  'DDH'
@@ -261,13 +130,6 @@ Configuration  'Mix'
     Exchangeable  HW  HO
     #  Save  On
     Frequency  1
-  
-    Test  on
-    TestThreshold  0.07
-    # -- Total neutron-weighted S(Q)
-    # u01 file: 1  2   4   6   8   10  12  14  16
-    #           Q HHH H5H DHH HDH HHD DDH HDD DDD 
-    TestReference  'epsr/watermeth.EPSR.u01'  WeightedSQ-total  1  12
   EndModule
   
   Module  NeutronSQ  'HDD'
@@ -279,13 +141,6 @@ Configuration  'Mix'
     Exchangeable  HW  HO
     #  Save  On
     Frequency  1
-  
-    Test  on
-    TestThreshold  0.08
-    # -- Total neutron-weighted S(Q)
-    # u01 file: 1  2   4   6   8   10  12  14  16
-    #           Q HHH H5H DHH HDH HHD DDH HDD DDD 
-    TestReference  'epsr/watermeth.EPSR.u01'  WeightedSQ-total  1  14
   EndModule
   
   Module  NeutronSQ  'DDD'
@@ -297,15 +152,146 @@ Configuration  'Mix'
     Exchangeable  HW  HO
     #  Save  On
     Frequency  1
-  
-    Test  on
-    TestThreshold  0.07
-    # -- Total neutron-weighted S(Q)
-    # u01 file: 1  2   4   6   8   10  12  14  16
-    #           Q HHH H5H DHH HDH HHD DDH HDD DDD 
-    TestReference  'epsr/watermeth.EPSR.u01'  WeightedSQ-total  1  16
   EndModule
 EndConfiguration
+
+#
+# Perform Tests
+#
+
+# Partial Radial Distribution Functions
+#  Order of partials in EPSR files is: 
+#    2      4      6      8      10     12     14     16     18     20     22     24     26     28     30     32     34     36     38     40     42
+#  OW-OW  OW-HW  OW-CT  OW-HC  OW-OH  OW-HO  HW-HW  HW-CT  HW-HC  HW-OH  HW-HO  CT-CT  CT-HC  CT-OH  CT-HO  HC-HC  HC-OH  HC-HO  OH-OH  OH-HO  HO-HO  
+
+# -- Partial g(r) (unbound terms)
+Module DataTest  'Unbound g(r)'
+  Threshold  2.6
+  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//OW-OW//Unbound'  1  2
+  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//OW-HW//Unbound'  1  4
+  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//OW-CT//Unbound'  1  6
+  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//OW-HC//Unbound'  1  8
+  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//OW-OH//Unbound'  1  10
+  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//OW-HO//Unbound'  1  12
+  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//HW-HW//Unbound'  1  14
+  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//HW-CT//Unbound'  1  16
+  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//HW-HC//Unbound'  1  18
+  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//HW-OH//Unbound'  1  20
+  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//HW-HO//Unbound'  1  22
+  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//CT-CT//Unbound'  1  24
+  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//CT-HC//Unbound'  1  26
+  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//CT-OH//Unbound'  1  28
+  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//CT-HO//Unbound'  1  30
+  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//HC-HC//Unbound'  1  32
+  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//HC-OH//Unbound'  1  34
+  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//HC-HO//Unbound'  1  36
+  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//OH-OH//Unbound'  1  38
+  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//OH-HO//Unbound'  1  40
+  Data1D  'epsr/watermeth.EPSR.g01'  'Mix//OriginalGR//HO-HO//Unbound'  1  42
+EndModule
+
+# -- Partial g(r) (intramolecular terms)
+Module DataTest  'Bound g(r)'
+  Threshold  4.9
+  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//OW-HW//Bound'  1  4
+  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//HW-HW//Bound'  1  14
+  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//CT-HC//Bound'  1  26
+  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//CT-OH//Bound'  1  28
+  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//CT-HO//Bound'  1  30
+  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//HC-HC//Bound'  1  32
+  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//HC-OH//Bound'  1  34
+  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//HC-HO//Bound'  1  36
+  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//OH-HO//Bound'  1  40
+EndModule
+
+# -- Partial g(r) (intramolecular terms, zero)
+Module DataTest  'Zeroed bound g(r)
+  Threshold  0.001
+  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//OW-OW//Bound'  1  2
+  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//OW-CT//Bound'  1  6
+  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//OW-HC//Bound'  1  8
+  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//OW-OH//Bound'  1  10
+  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//OW-HO//Bound'  1  12
+  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//HW-CT//Bound'  1  16
+  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//HW-HC//Bound'  1  18
+  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//HW-OH//Bound'  1  20
+  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//HW-HO//Bound'  1  22
+  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//CT-CT//Bound'  1  24
+  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//OH-OH//Bound'  1  38
+  Data1D  'epsr/watermeth.EPSR.y01'  'Mix//OriginalGR//HO-HO//Bound'  1  42
+EndModule
+
+# -- Partial S(Q) (unbound terms), unweighted
+Module DataTest  'Partial unweighted unbound S(Q)'
+  Threshold  5.0
+  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//OW-OW//Unbound'  1  2
+  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//OW-HW//Unbound'  1  4
+  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//OW-CT//Unbound'  1  6
+  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//OW-HC//Unbound'  1  8
+  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//OW-OH//Unbound'  1  10
+  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//OW-HO//Unbound'  1  12
+  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//HW-HW//Unbound'  1  14
+  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//HW-CT//Unbound'  1  16
+  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//HW-HC//Unbound'  1  18
+  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//HW-OH//Unbound'  1  20
+  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//HW-HO//Unbound'  1  22
+  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//CT-CT//Unbound'  1  24
+  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//CT-HC//Unbound'  1  26
+  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//CT-OH//Unbound'  1  28
+  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//CT-HO//Unbound'  1  30
+  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//HC-HC//Unbound'  1  32
+  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//HC-OH//Unbound'  1  34
+  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//HC-HO//Unbound'  1  36
+  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//OH-OH//Unbound'  1  38
+  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//OH-HO//Unbound'  1  40
+  Data1D  'epsr/watermeth.EPSR.f01'  'HHH//UnweightedSQ//HO-HO//Unbound'  1  42
+EndModule
+
+# -- Partial S(Q) (bound terms)
+Module DataTest  'Partial unweighted bound S(Q)'
+  Threshold  0.29
+  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//OW-HW//Bound'  1  4
+  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//HW-HW//Bound'  1  14
+  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//CT-HC//Bound'  1  26
+  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//CT-OH//Bound'  1  28
+  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//CT-HO//Bound'  1  30
+  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//HC-HC//Bound'  1  32
+  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//HC-OH//Bound'  1  34
+  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//HC-HO//Bound'  1  36
+  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//OH-HO//Bound'  1  40
+EndModule
+
+# -- Partial S(Q) (bound terms, zero)
+Module DataTest  'Partial unweighted zeroed bound S(Q)'
+  Threshold  0.001
+  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//OW-OW//Bound'  1  2
+  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//OW-CT//Bound'  1  6
+  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//OW-HC//Bound'  1  8
+  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//OW-OH//Bound'  1  10
+  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//OW-HO//Bound'  1  12
+  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//HW-CT//Bound'  1  16
+  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//HW-HC//Bound'  1  18
+  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//HW-OH//Bound'  1  20
+  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//HW-HO//Bound'  1  22
+  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//CT-CT//Bound'  1  24
+  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//OH-OH//Bound'  1  38
+  Data1D  'epsr/watermeth.EPSR.s01'  'HHH//UnweightedSQ//HO-HO//Bound'  1  42
+EndModule
+
+# -- Total neutron-weighted S(Q)
+# u01 file: 1  2   4   6   8   10  12  14  16
+#           Q HHH H5H DHH HDH HHD DDH HDD DDD 
+Module DataTest  'Total weighted S(Q)'
+  Threshold  2.1
+  Data1D  'epsr/watermeth.EPSR.u01'  'HHH//WeightedSQ//Total'  1  2
+  Data1D  'epsr/watermeth.EPSR.u01'  'H5H//WeightedSQ//Total'  1  4
+  Data1D  'epsr/watermeth.EPSR.u01'  'DHH//WeightedSQ//Total'  1  6
+  Data1D  'epsr/watermeth.EPSR.u01'  'HDH//WeightedSQ//Total'  1  8
+  Data1D  'epsr/watermeth.EPSR.u01'  'HHD//WeightedSQ//Total'  1  10
+  Data1D  'epsr/watermeth.EPSR.u01'  'DDH//WeightedSQ//Total'  1  12
+  Data1D  'epsr/watermeth.EPSR.u01'  'HDD//WeightedSQ//Total'  1  14
+  Data1D  'epsr/watermeth.EPSR.u01'  'DDD//WeightedSQ//Total'  1  16
+EndModule
 
 Module SanityCheck
 EndModule
