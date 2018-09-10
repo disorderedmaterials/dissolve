@@ -237,7 +237,8 @@ bool Histogram1D::write(LineParser& parser)
 	if (!parser.writeLineF("%s\n", objectTag())) return false;
 	if (!parser.writeLineF("%f %f %f\n", minimum_, maximum_, binWidth_)) return false;
 	if (!parser.writeLineF("%i\n", nBinned_)) return false;
-	for (int n=0; n<nBins_; ++n) if (!parser.writeLineF("%li\n", bins_.at(n))) return false;
+	for (int n=0; n<nBins_; ++n) if (!averages_[n].write(parser)) return false;
+
 	return true;
 }
 
@@ -255,11 +256,7 @@ bool Histogram1D::read(LineParser& parser)
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	nBinned_ = parser.argi(0);
 
-	for (int n=0; n<nBins_; ++n)
-	{
-		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-		bins_[n] = parser.argli(0);
-	}
+	for (int n=0; n<nBins_; ++n) if (!averages_[n].read(parser)) return false;
 
 	return true;
 }
