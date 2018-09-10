@@ -30,6 +30,7 @@
 KeywordData SiteBlockData[] = {
 	{ "EndSite",			0,	"Signals the end of the Site" },
 	{ "Origin",			1,	"Set the atom indices whose average coordinates reflect the site origin" },
+	{ "OriginMassWeighted",		1,	"Control whether the origin should be calculated with mass-weighted coordinates" },
 	{ "XAxis",			1,	"Define one or more atoms whose average coordinates reflect the direction of the x axis" },
 	{ "YAxis",			1,	"Define one or more atoms whose average coordinates reflect the direction of the y axis" },
 	{ "Population",			1,	"Relative population of the Species" }
@@ -88,6 +89,9 @@ bool SiteBlock::parse(LineParser& parser, Dissolve* dissolve, SpeciesSite* site)
 						break;
 					}
 				}
+				break;
+			case (SiteBlock::OriginMassWeightedKeyword):
+				site->setOriginMassWeighted(parser.argb(1));
 				break;
 			case (SiteBlock::nSiteKeywords):
 				Messenger::error("Unrecognised %s block keyword '%s' found.\n", SpeciesBlock::keyword(SpeciesBlock::SiteKeyword), parser.argc(0));

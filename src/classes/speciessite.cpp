@@ -27,6 +27,7 @@
 SpeciesSite::SpeciesSite() : ListItem<SpeciesSite>()
 {
 	parent_ = NULL;
+	originMassWeighted_ = false;
 }
 
 // Destructor
@@ -94,6 +95,18 @@ Array<int> SpeciesSite::originAtomIndices() const
 	while (SpeciesAtom* atom = atomIterator.iterate()) indices.add(atom->index());
 
 	return indices;
+}
+
+// Set whether the origin should be calculated with mass-weighted positions
+void SpeciesSite::setOriginMassWeighted(bool b)
+{
+	originMassWeighted_ = b;
+}
+
+// Return whether the origin should be calculated with mass-weighted positions
+bool SpeciesSite::originMassWeighted() const
+{
+	return originMassWeighted_;
 }
 
 // Add x-axis atom

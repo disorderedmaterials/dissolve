@@ -55,6 +55,8 @@ class SpeciesSite : public ListItem<SpeciesSite>
 	Species* parent_;
 	// List of SpeciesAtoms whose average position is the origin of the site
 	RefList<SpeciesAtom,bool> originAtoms_;
+	// Whether the origin should be calculated with mass-weighted positions
+	bool originMassWeighted_;
 	// SpeciesAtom(s) that indicate the x axis with the origin
 	RefList<SpeciesAtom,bool> xAxisAtoms_;
 	// SpeciesAtom(s) that indicate the y axis with the origin, after orthogonalisation
@@ -77,6 +79,10 @@ class SpeciesSite : public ListItem<SpeciesSite>
 	const RefList<SpeciesAtom,bool>& originAtoms();
 	// Return integer array of indices from which the origin should be formed
 	Array<int> originAtomIndices() const;
+	// Set whether the origin should be calculated with mass-weighted positions
+	void setOriginMassWeighted(bool b);
+	// Return whether the origin should be calculated with mass-weighted positions
+	bool originMassWeighted() const;
 	// Add x-axis atom
 	bool addXAxisAtom(SpeciesAtom* xAxisAtom);
 	// Add x-axis atom from index
