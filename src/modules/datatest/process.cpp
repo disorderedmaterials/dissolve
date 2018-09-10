@@ -32,28 +32,71 @@ bool DataTestModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	 * This is a serial routine.
 	 */
 
-	// Get option values
+	// Get options and target Module
 	const double testThreshold = keywords_.asDouble("TestThreshold");
-
-	// Get target Module
 	Module* targetModule = targetModule_.firstItem();
-	if (!targetModule) return Messenger::error("No target Module specified for data location.\n");
+
+	// Print summary
+	if (!targetModule) Messenger::print("DataTest: No target Module specified for data location - only tags will be searched.\n");
+	else Messenger::print("DataTest: Target Module '%s' will be used as search prefix for data.\n", targetModule->uniqueName());
+	Messenger::print("DataTest: Threshold is %f%%.", testThreshold);
+	Messenger::print("\n");
 
 	// Loop over reference one-dimensional data supplied
 	ListIterator<Data1D> data1DIterator(testData_.data1D());
 	while (Data1D* testData = data1DIterator.iterate())
 	{
-		// Does the named data exist in the processing module data?
-		if (!dissolve.processingModuleData().contains(testData->name(), targetModule->uniqueName())) return Messenger::error("No data named '%s_%s' exists.\n", targetModule->uniqueName(), testData->name());
+		bool found = false;
 
-		// The named data exists - is it of the correct type?
-		if (!dissolve.processingModuleData().isItemOfType(Data1D::itemClassName(), testData->name(), targetModule->uniqueName())) return Messenger::error("Data named '%s_%s' exists, but is not of the correct type (is %s rather than Data1D).\n", targetModule->uniqueName(), testData->name(), dissolve.processingModuleData().find(testData->name(), targetModule->uniqueName())->itemClassName());
+		if (targetModule)
+		{
+			// Get target module data list
+			GenericList& moduleData = targetModule->configurationLocal() ? targetModule->targetConfigurations().firstItem()->moduleData() : dissolve.processingModuleData();
 
-		// All is OK, so get the data and check the error against the test set
-		Data1D& data = GenericListHelper<Data1D>::retrieve(dissolve.processingModuleData(), testData->name(), targetModule->uniqueName());
-		double error = Error::percent(data, *testData);
-		Messenger::print("Reference data '%s_%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", testData->name(), targetModule->uniqueName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-		if (error > testThreshold) return false;
+			// Does the named data (with module prefix) exist in the target list?
+			if (moduleData.contains(testData->name(), targetModule->uniqueName()))
+			{
+				// The named data exists - is it of the correct type?
+				if (!moduleData.isItemOfType(Data1D::itemClassName(), testData->name(), targetModule->uniqueName())) return Messenger::error("Data named '%s_%s' exists, but is not of the correct type (is %s rather than Data1D).\n", targetModule->uniqueName(), testData->name(), moduleData.find(testData->name(), targetModule->uniqueName())->itemClassName());
+
+				// All is OK, so get the data and check the error against the test set
+				Data1D& data = GenericListHelper<Data1D>::retrieve(moduleData, testData->name(), targetModule->uniqueName());
+				double error = Error::percent(data, *testData, true);
+				Messenger::print("Reference data '%s_%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", testData->name(), targetModule->uniqueName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+				if (error > testThreshold) return false;
+				found = true;
+			}
+			else if (moduleData.contains(testData->name()))
+			{
+				// The named data exists without the module name prefix - is it of the correct type?
+				if (!moduleData.isItemOfType(Data1D::itemClassName(), testData->name())) return Messenger::error("Data named '%s' exists, but is not of the correct type (is %s rather than Data1D).\n", testData->name(), moduleData.find(testData->name())->itemClassName());
+
+				// All is OK, so get the data and check the error against the test set
+				Data1D& data = GenericListHelper<Data1D>::retrieve(moduleData, testData->name());
+				double error = Error::percent(data, *testData, true);
+				Messenger::print("Reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", testData->name(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+				if (error > testThreshold) return false;
+				found = true;
+			}
+		}
+
+		// If we haven't found it yet, try a search by object tag
+		if ((!found) && Data1D::findObject(testData->name()))
+		{
+			// The tagged data exists...
+			Data1D* data = Data1D::findObject(testData->name());
+			double error = Error::percent(*data, *testData, true);
+			Messenger::print("Reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", testData->name(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+			if (error > testThreshold) return false;
+			found = true;
+		}
+
+		// Did we succeed?
+		if (!found)
+		{
+			if (targetModule) return Messenger::error("No data named '%s_%s' or '%s', or tagged '%s', exists.\n", targetModule->uniqueName(), testData->name(), testData->name(), testData->name());
+			else return Messenger::error("No data with tag '%s' exists.\n", testData->name());
+		}
 	}
 
 	return true;

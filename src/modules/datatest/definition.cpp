@@ -42,7 +42,7 @@ Module::InstanceType DataTestModule::instanceType()
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
 int DataTestModule::nTargetableConfigurations()
 {
-	return 0;
+	return 1;
 }
 
 // Modules upon which this Module depends to have run first
