@@ -127,8 +127,6 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	double qMax = keywords_.asDouble("QMax");
 	if (qMax < 0.0) qMax = 30.0;
 	const bool saveData = keywords_.asBool("Save");
-	const bool testMode = keywords_.asBool("Test");
-	const double testThreshold = keywords_.asDouble("TestThreshold");
 	const WindowFunction& windowFunction = KeywordListHelper<WindowFunction>::retrieve(keywords_, "WindowFunction", WindowFunction());
 
 	// Print argument/parameter summary
@@ -141,7 +139,6 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	if (qBroadening.function() == BroadeningFunction::NoFunction) Messenger::print("NeutronSQ: No broadening will be applied to calculated S(Q).");
 	else Messenger::print("NeutronSQ: Broadening to be applied in calculated S(Q) is %s (%s).", BroadeningFunction::functionType(qBroadening.function()), qBroadening.parameterSummary().get());
 	Messenger::print("NeutronSQ: Save data is %s.\n", DissolveSys::onOff(saveData));
-	if (testMode) Messenger::print("NeutronSQ: Test mode is enabled (threshold = %f%%).", testThreshold);
 	Messenger::print("\n");
 
 
@@ -271,12 +268,5 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	// Save data if requested
 	if (saveData && (!MPIRunMaster(procPool, summedWeightedSQ.save()))) return false;
 
-	// Test?
-	if (testMode)
-	{
-		Messenger::print("\nTesting calculated weighted and unweighted S(Q) data against supplied datasets (if any)...\n");
-		if (!RDFModule::testReferencePartials(testData_, testThreshold, summedWeightedSQ, "WeightedSQ", summedUnweightedSQ, "UnweightedSQ")) return false;
-	}
-	
 	return true;
 }

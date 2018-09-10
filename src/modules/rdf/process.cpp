@@ -66,8 +66,6 @@ bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	const bool internalTest = keywords_.asBool("InternalTest");
 	const bool saveData = keywords_.asBool("Save");
 	const int smoothing = keywords_.asInt("Smoothing");
-	const bool testMode = keywords_.asBool("Test");
-	const double testThreshold = keywords_.asDouble("TestThreshold");
 
 	// Print argument/parameter summary
 	if (averaging <= 1) Messenger::print("RDF: No averaging of partials will be performed.\n");
@@ -77,7 +75,6 @@ bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	Messenger::print("RDF: Calculation method is '%s'.\n", RDFModule::partialsMethod(method));
 	Messenger::print("RDF: Save data is %s.\n", DissolveSys::onOff(saveData));
 	Messenger::print("RDF: Degree of smoothing to apply to calculated partial g(r) is %i (%s).\n", smoothing, DissolveSys::onOff(smoothing > 0));
-	if (testMode) Messenger::print("RDF: Test mode is enabled (threshold = %f%%).", testThreshold);
 	Messenger::print("\n");
 
 
@@ -109,13 +106,6 @@ bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			PartialSet referencePartials = originalgr;
 			calculateGR(procPool, cfg, RDFModule::TestMethod, allIntra, alreadyUpToDate);
 			if (!testReferencePartials(referencePartials, originalgr, 1.0e-6)) return false;
-		}
-
-		// Test original g(r)?
-		if (testMode)
-		{
-			Messenger::print("\nTesting calculated g(r) without smoothing / broadening against supplied datasets (if any)...\n");
-			if (!testReferencePartials(testData_, testThreshold, originalgr, "OriginalGR")) return false;
 		}
 
 		// Form unweighted g(r) from original g(r), applying any requested smoothing / broadening
