@@ -44,6 +44,7 @@ int main(int argc, char **argv)
 	// Parse CLI options...
 	int n = 1;
 	CharString inputFile;
+	int nIterations = 0;
 	bool ignoreRestart = false, ignoreLayout = false, dontWriteRestart = false;
 	while (n < argc)
 	{
@@ -73,6 +74,17 @@ int main(int argc, char **argv)
 				case ('I'):
 					Messenger::print("GUI layout file (if it exists) will be ignored.\n");
 					ignoreLayout = true;
+					break;
+				case ('n'):
+					++n;
+					if (n == argc)
+					{
+						Messenger::error("Expected number of iterations.\n");
+						Messenger::ceaseRedirect();
+						return 1;
+					}
+					nIterations = atoi(argv[n]);
+					Messenger::print("%i main-loop iterations will be performed, then the GUI will be launched.\n", nIterations);
 					break;
 				case ('q'):
 					Messenger::setQuiet(true);
@@ -122,6 +134,7 @@ int main(int argc, char **argv)
 		ProcessPool::finalise();
 		return 1;
 	}
+
 	// Set restart file frequency to 0 if 'dontWriteRestart' is set
 	if (dontWriteRestart) dissolve.setRestartFileFrequency(0);
 
@@ -157,6 +170,16 @@ int main(int argc, char **argv)
 	{
 		ProcessPool::finalise();
 		return 1;
+	}
+
+	// Iterate before launching the GUI?
+	if (nIterations > 0)
+	{
+		// Prepare for run
+		if (!dissolve.setUp()) return 1;
+
+		// Run main simulation
+		bool result = dissolve.iterate(nIterations);
 	}
 
 	// Update and show the main window
