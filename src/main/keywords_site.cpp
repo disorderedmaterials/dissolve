@@ -91,7 +91,7 @@ bool SiteBlock::parse(LineParser& parser, Dissolve* dissolve, SpeciesSite* site)
 				break;
 			case (SiteBlock::nSiteKeywords):
 				Messenger::error("Unrecognised %s block keyword '%s' found.\n", SpeciesBlock::keyword(SpeciesBlock::SiteKeyword), parser.argc(0));
-				MainInputKeywords::printValidBlockKeywords(MainInputKeywords::SiteBlockKeyword);
+				BlockKeywords::printValidKeywords(BlockKeywords::SiteBlockKeyword);
 				error = true;
 				break;
 			case (SiteBlock::XAxisKeyword):

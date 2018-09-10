@@ -72,7 +72,7 @@ int ConfigurationBlock::nArguments(ConfigurationBlock::ConfigurationKeyword id)
 // Parse Configuration block
 bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configuration* cfg)
 {
-	Messenger::print("\nParsing %s block '%s'...\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::ConfigurationBlockKeyword), cfg->name());
+	Messenger::print("\nParsing %s block '%s'...\n", BlockKeywords::blockKeyword(BlockKeywords::ConfigurationBlockKeyword), cfg->name());
 
 	Species* sp;
 	Module* masterInstance, *module;
@@ -125,7 +125,7 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 				}
 				break;
 			case (ConfigurationBlock::EndConfigurationKeyword):
-				Messenger::print("Found end of %s block.\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::ConfigurationBlockKeyword));
+				Messenger::print("Found end of %s block.\n", BlockKeywords::blockKeyword(BlockKeywords::ConfigurationBlockKeyword));
 				blockDone = true;
 				break;
 			case (ConfigurationBlock::EnsembleKeyword):
@@ -251,12 +251,12 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 				cfg->setTemperature(parser.argd(1));
 				break;
 			case (ConfigurationBlock::nConfigurationKeywords):
-				Messenger::error("Unrecognised %s block keyword '%s' found.\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::ConfigurationBlockKeyword), parser.argc(0));
-				MainInputKeywords::printValidBlockKeywords(MainInputKeywords::ConfigurationBlockKeyword);
+				Messenger::error("Unrecognised %s block keyword '%s' found.\n", BlockKeywords::blockKeyword(BlockKeywords::ConfigurationBlockKeyword), parser.argc(0));
+				BlockKeywords::printValidKeywords(BlockKeywords::ConfigurationBlockKeyword);
 				error = true;
 				break;
 			default:
-				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::ConfigurationBlockKeyword), ConfigurationBlock::keyword(conKeyword));
+				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BlockKeywords::blockKeyword(BlockKeywords::ConfigurationBlockKeyword), ConfigurationBlock::keyword(conKeyword));
 				error = true;
 				break;
 		}

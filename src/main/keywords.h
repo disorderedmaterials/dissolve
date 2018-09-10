@@ -47,15 +47,15 @@ class KeywordData
 };
 
 /*
- * Main Input Keywords
+ * Block Keywords
  */
-namespace MainInputKeywords
+namespace BlockKeywords
 {
 	/*
-	 * Main Input Keywords
+	 * Block Keywords
 	 */
-	// Input File Keyword Enum
-	enum MainInputKeyword
+	// Block Keyword Enum
+	enum BlockKeyword
 	{
 		ConfigurationBlockKeyword,		/* 'Configuration' - Defines a single Configuration for use in the simulation */
 		MasterBlockKeyword,			/* 'Master' - Contains master intramolecular terms for use in Species */
@@ -65,14 +65,14 @@ namespace MainInputKeywords
 		SiteBlockKeyword,			/* 'Site' - Defines an analysis site within a Species */
 		SpeciesBlockKeyword,			/* 'Species' - Begins a definition of a Species */
 		SpeciesInfoBlockKeyword,		/* 'SpeciesInfo' - Defines a Species for inclusion into a Configuration */
-		nMainInputKeywords			/* Number of defined MainInputKeyword keywords */
+		nBlockKeywords				/* Number of defined BlockKeyword keywords */
 	};
-	// Convert text string to MainInputKeyword
-	MainInputKeyword mainInputKeyword(const char* s);
-	// Convert MainInputKeyword to text string
-	const char* mainInputKeyword(MainInputKeyword id);
+	// Convert text string to BlockKeyword
+	BlockKeyword blockKeyword(const char* s);
+	// Convert BlockKeyword to text string
+	const char* blockKeyword(BlockKeyword id);
 	// Print list of valid keywords for the block specified
-	void printValidBlockKeywords(MainInputKeyword block);
+	void printValidKeywords(BlockKeyword block);
 };
 
 

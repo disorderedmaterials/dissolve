@@ -57,7 +57,7 @@ int ModuleBlock::nArguments(ModuleBlock::ModuleKeyword id)
 // Parse Module block
 bool ModuleBlock::parse(LineParser& parser, Dissolve* dissolve, Module* module, GenericList& targetList, bool moduleInConfiguration)
 {
-	Messenger::print("\nParsing %s block '%s'...\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::ModuleBlockKeyword), module->type());
+	Messenger::print("\nParsing %s block '%s'...\n", BlockKeywords::blockKeyword(BlockKeywords::ModuleBlockKeyword), module->type());
 
 	Configuration* targetCfg;
 	CharString varName, dataName;
@@ -98,7 +98,7 @@ bool ModuleBlock::parse(LineParser& parser, Dissolve* dissolve, Module* module, 
 				module->setEnabled(false);
 				break;
 			case (ModuleBlock::EndModuleKeyword):
-				Messenger::print("Found end of %s block.\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::ModuleBlockKeyword));
+				Messenger::print("Found end of %s block.\n", BlockKeywords::blockKeyword(BlockKeywords::ModuleBlockKeyword));
 				blockDone = true;
 				break;
 			case (ModuleBlock::FrequencyKeyword):
@@ -108,7 +108,7 @@ bool ModuleBlock::parse(LineParser& parser, Dissolve* dissolve, Module* module, 
 				// Never used, since it is accounted for in the beginning 'if'
 				break;
 			default:
-				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::ModuleBlockKeyword), ModuleBlock::keyword(modKeyword));
+				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BlockKeywords::blockKeyword(BlockKeywords::ModuleBlockKeyword), ModuleBlock::keyword(modKeyword));
 				error = true;
 				break;
 		}
@@ -119,7 +119,7 @@ bool ModuleBlock::parse(LineParser& parser, Dissolve* dissolve, Module* module, 
 			if (result == 0) error = true;
 			else if (result == -1)
 			{
-				Messenger::error("Unrecognised %s block keyword '%s' found, and the Module '%s' contains no option with this name.\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::ModuleBlockKeyword), parser.argc(0), module->type());
+				Messenger::error("Unrecognised %s block keyword '%s' found, and the Module '%s' contains no option with this name.\n", BlockKeywords::blockKeyword(BlockKeywords::ModuleBlockKeyword), parser.argc(0), module->type());
 				module->printValidKeywords();
 				error = true;
 			}

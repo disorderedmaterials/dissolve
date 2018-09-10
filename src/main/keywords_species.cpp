@@ -63,7 +63,7 @@ int SpeciesBlock::nArguments(SpeciesBlock::SpeciesKeyword id)
 // Parse Species block
 bool SpeciesBlock::parse(LineParser& parser, Dissolve* dissolve, Species* species)
 {
-	Messenger::print("\nParsing %s '%s'\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::SpeciesBlockKeyword), species->name());
+	Messenger::print("\nParsing %s '%s'\n", BlockKeywords::blockKeyword(BlockKeywords::SpeciesBlockKeyword), species->name());
 
 	Element* el;
 	CharString arg1, arg2;
@@ -371,12 +371,12 @@ bool SpeciesBlock::parse(LineParser& parser, Dissolve* dissolve, Species* specie
 				t->setUp();
 				break;
 			case (SpeciesBlock::nSpeciesKeywords):
-				Messenger::error("Unrecognised %s block keyword '%s' found.\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::SpeciesBlockKeyword), parser.argc(0));
-				MainInputKeywords::printValidBlockKeywords(MainInputKeywords::SpeciesBlockKeyword);
+				Messenger::error("Unrecognised %s block keyword '%s' found.\n", BlockKeywords::blockKeyword(BlockKeywords::SpeciesBlockKeyword), parser.argc(0));
+				BlockKeywords::printValidKeywords(BlockKeywords::SpeciesBlockKeyword);
 				error = true;
 				break;
 			default:
-				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::SpeciesBlockKeyword), SpeciesBlock::keyword(spKeyword));
+				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BlockKeywords::blockKeyword(BlockKeywords::SpeciesBlockKeyword), SpeciesBlock::keyword(spKeyword));
 				error = true;
 				break;
 		}

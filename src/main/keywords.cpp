@@ -24,59 +24,59 @@
 #include "base/messenger.h"
 
 // Print list of valid keywords for the block specified
-void MainInputKeywords::printValidBlockKeywords(MainInputKeywords::MainInputKeyword block)
+void BlockKeywords::printValidKeywords(BlockKeywords::BlockKeyword block)
 {
-	Messenger::print("Valid Keywords for '%s' block are:\n", mainInputKeyword(block));
+	Messenger::print("Valid Keywords for '%s' block are:\n", blockKeyword(block));
 	int n;
 	switch (block)
 	{
-		case (MainInputKeywords::ConfigurationBlockKeyword):
+		case (BlockKeywords::ConfigurationBlockKeyword):
 			for (n=0; n<ConfigurationBlock::nConfigurationKeywords; ++n) Messenger::print("  %s", ConfigurationBlock::keyword( (ConfigurationBlock::ConfigurationKeyword) n ));
 			break;
-		case (MainInputKeywords::MasterBlockKeyword):
+		case (BlockKeywords::MasterBlockKeyword):
 			for (n=0; n<MasterBlock::nMasterKeywords; ++n) Messenger::print("  %s", MasterBlock::keyword( (MasterBlock::MasterKeyword) n ));
 			break;
-		case (MainInputKeywords::ModuleBlockKeyword):
+		case (BlockKeywords::ModuleBlockKeyword):
 			for (n=0; n<ModuleBlock::nModuleKeywords; ++n) Messenger::print("  %s", ModuleBlock::keyword( (ModuleBlock::ModuleKeyword) n ));
 			break;
-		case (MainInputKeywords::PairPotentialsBlockKeyword):
+		case (BlockKeywords::PairPotentialsBlockKeyword):
 			for (n=0; n<PairPotentialsBlock::nPairPotentialsKeywords; ++n) Messenger::print("  %s", PairPotentialsBlock::keyword( (PairPotentialsBlock::PairPotentialsKeyword) n ));
 			break;
-		case (MainInputKeywords::SimulationBlockKeyword):
+		case (BlockKeywords::SimulationBlockKeyword):
 			for (n=0; n<SimulationBlock::nSimulationKeywords; ++n) Messenger::print("  %s", SimulationBlock::keyword( (SimulationBlock::SimulationKeyword) n ));
 			break;
-		case (MainInputKeywords::SiteBlockKeyword):
+		case (BlockKeywords::SiteBlockKeyword):
 			for (n=0; n<SiteBlock::nSiteKeywords; ++n) Messenger::print("  %s", SiteBlock::keyword( (SiteBlock::SiteKeyword) n ));
 			break;
-		case (MainInputKeywords::SpeciesBlockKeyword):
+		case (BlockKeywords::SpeciesBlockKeyword):
 			for (n=0; n<SpeciesBlock::nSpeciesKeywords; ++n) Messenger::print("  %s", SpeciesBlock::keyword( (SpeciesBlock::SpeciesKeyword) n ));
 			break;
-		case (MainInputKeywords::SpeciesInfoBlockKeyword):
+		case (BlockKeywords::SpeciesInfoBlockKeyword):
 			for (n=0; n<SpeciesInfoBlock::nSpeciesInfoKeywords; ++n) Messenger::print("  %s", SpeciesInfoBlock::keyword( (SpeciesInfoBlock::SpeciesInfoKeyword) n ));
 			break;
 		default:
-			Messenger::print("Unrecognised block given to MainInputKeywords::printValidBlockKeywords.\n");
+			Messenger::print("Unrecognised block given to BlockKeywords::printValidKeywords.\n");
 			break;
 	}
 	Messenger::print("\n");
 }
 
 /*
- * Main Input Keywords
+ * Block Keywords
  */
 
-// Main Input Keywords
-const char* MainInputKeywordKeywords[] = { "Configuration", "Master", "Module", "PairPotentials", "Simulation", "Site", "Species", "SpeciesInfo" };
+// Block Keywords - Those beginning with an underscore are not meant to be used as a main block
+const char* BlockKeywordKeywords[] = { "Configuration", "Master", "Module", "PairPotentials", "Simulation", "_Site", "Species", "_SpeciesInfo" };
 
 // Convert text string to MainInputKeyword
-MainInputKeywords::MainInputKeyword MainInputKeywords::mainInputKeyword(const char* s)
+BlockKeywords::BlockKeyword BlockKeywords::blockKeyword(const char* s)
 {
-	for (int n=0; n<MainInputKeywords::nMainInputKeywords; ++n) if (DissolveSys::sameString(s,MainInputKeywordKeywords[n])) return (MainInputKeywords::MainInputKeyword) n;
-	return MainInputKeywords::nMainInputKeywords;
+	for (int n=0; n<BlockKeywords::nBlockKeywords; ++n) if (DissolveSys::sameString(s,BlockKeywordKeywords[n])) return (BlockKeywords::BlockKeyword) n;
+	return BlockKeywords::nBlockKeywords;
 }
 
 // Convert MainInputKeyword to text string
-const char* MainInputKeywords::mainInputKeyword(MainInputKeywords::MainInputKeyword id)
+const char* BlockKeywords::blockKeyword(BlockKeywords::BlockKeyword id)
 {
-	return MainInputKeywordKeywords[id];
+	return BlockKeywordKeywords[id];
 }

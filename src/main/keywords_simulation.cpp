@@ -55,7 +55,7 @@ int SimulationBlock::nArguments(SimulationBlock::SimulationKeyword id)
 // Parse Simulation block
 bool SimulationBlock::parse(LineParser& parser, Dissolve* dissolve)
 {
-	Messenger::print("\nParsing %s block...\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::SimulationBlockKeyword));
+	Messenger::print("\nParsing %s block...\n", BlockKeywords::blockKeyword(BlockKeywords::SimulationBlockKeyword));
 
 	bool blockDone = false, error = false;
 
@@ -77,7 +77,7 @@ bool SimulationBlock::parse(LineParser& parser, Dissolve* dissolve)
 				Messenger::print("Number of points to use in Box normalisation calculation = %i\n", dissolve->nBoxNormalisationPoints());
 				break;
 			case (SimulationBlock::EndSimulationKeyword):
-				Messenger::print("Found end of %s block.\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::SimulationBlockKeyword));
+				Messenger::print("Found end of %s block.\n", BlockKeywords::blockKeyword(BlockKeywords::SimulationBlockKeyword));
 				blockDone = true;
 				break;
 			case (SimulationBlock::ParallelStrategyKeyword):
@@ -97,12 +97,12 @@ bool SimulationBlock::parse(LineParser& parser, Dissolve* dissolve)
 				Messenger::print("Random seed set to %i.\n", dissolve->seed());
 				break;
 			case (SimulationBlock::nSimulationKeywords):
-				Messenger::print("Unrecognised %s block keyword '%s' found.\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::SimulationBlockKeyword), parser.argc(0));
-				MainInputKeywords::printValidBlockKeywords(MainInputKeywords::SimulationBlockKeyword);
+				Messenger::print("Unrecognised %s block keyword '%s' found.\n", BlockKeywords::blockKeyword(BlockKeywords::SimulationBlockKeyword), parser.argc(0));
+				BlockKeywords::printValidKeywords(BlockKeywords::SimulationBlockKeyword);
 				error = true;
 				break;
 			default:
-				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", MainInputKeywords::mainInputKeyword(MainInputKeywords::SimulationBlockKeyword), SimulationBlock::keyword(simKeyword));
+				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BlockKeywords::blockKeyword(BlockKeywords::SimulationBlockKeyword), SimulationBlock::keyword(simKeyword));
 				error = true;
 				break;
 		}
