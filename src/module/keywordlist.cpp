@@ -39,7 +39,7 @@ bool ModuleKeywordList::add(ModuleKeywordBase* object, const char* keyword, cons
 }
 
 // Find named keyword
-ModuleKeywordBase* ModuleKeywordList::find(const char* keyword)
+ModuleKeywordBase* ModuleKeywordList::find(const char* keyword) const
 {
 	for (ModuleKeywordBase* kwd = keywords_.first(); kwd != NULL; kwd = kwd->next) if (DissolveSys::sameString(keyword, kwd->keyword())) return kwd;
 
@@ -57,7 +57,7 @@ List<ModuleKeywordBase>& ModuleKeywordList::keywords()
  */
 
 // Return simple keyword value (as bool)
-bool ModuleKeywordList::asBool(const char* keywordName)
+bool ModuleKeywordList::asBool(const char* keywordName) const
 {
 	// Find the named keyword
 	ModuleKeywordBase* keyword = find(keywordName);
@@ -71,7 +71,7 @@ bool ModuleKeywordList::asBool(const char* keywordName)
 }
 
 // Return simple keyword value (as int)
-int ModuleKeywordList::asInt(const char* keywordName)
+int ModuleKeywordList::asInt(const char* keywordName) const
 {
 	// Find the named keyword
 	ModuleKeywordBase* keyword = find(keywordName);
@@ -85,7 +85,7 @@ int ModuleKeywordList::asInt(const char* keywordName)
 }
 
 // Return simple keyword value (as double)
-double ModuleKeywordList::asDouble(const char* keywordName)
+double ModuleKeywordList::asDouble(const char* keywordName) const
 {
 	// Find the named keyword
 	ModuleKeywordBase* keyword = find(keywordName);
@@ -99,7 +99,7 @@ double ModuleKeywordList::asDouble(const char* keywordName)
 }
 
 // Return simple keyword value (as string)
-const char* ModuleKeywordList::asString(const char* keywordName)
+const char* ModuleKeywordList::asString(const char* keywordName) const
 {
 	// Find the named keyword
 	ModuleKeywordBase* keyword = find(keywordName);
@@ -113,7 +113,7 @@ const char* ModuleKeywordList::asString(const char* keywordName)
 }
 
 // Return whether the specified keyword data has ever been set
-bool ModuleKeywordList::isSet(const char* keywordName)
+bool ModuleKeywordList::isSet(const char* keywordName) const
 {
 	// Find the named keyword
 	ModuleKeywordBase* keyword = find(keywordName);

@@ -45,7 +45,7 @@ class ModuleKeywordList
 	// Add keyword
 	bool add(ModuleKeywordBase* object, const char* keyword, const char* description, const char* arguments, int genericItemFlags = 0);
 	// Find named keyword
-	ModuleKeywordBase* find(const char* keyword);
+	ModuleKeywordBase* find(const char* keyword) const;
 	// Return first keyword in list
 	List<ModuleKeywordBase>& keywords();
 
@@ -55,15 +55,15 @@ class ModuleKeywordList
 	 */
 	public:
 	// Return simple keyword value (as bool)
-	bool asBool(const char* keywordName);
+	bool asBool(const char* keywordName) const;
 	// Return simple keyword value (as int)
-	int asInt(const char* keywordName);
+	int asInt(const char* keywordName) const;
 	// Return simple keyword value (as double)
-	double asDouble(const char* keywordName);
+	double asDouble(const char* keywordName) const;
 	// Return simple keyword value (as string)
-	const char* asString(const char* keywordName);
+	const char* asString(const char* keywordName) const;
 	// Return whether the specified keyword data has ever been set
-	bool isSet(const char* keywordName);
+	bool isSet(const char* keywordName) const;
 };
 
 // Keyword List Helper
