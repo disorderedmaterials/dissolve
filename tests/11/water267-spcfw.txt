@@ -59,6 +59,10 @@ Species 'Water'
   Site  'H2'
     Origin  3
   EndSite
+  Site  'COM'
+    Origin  1  2  3
+    OriginMassWeighted  True
+  EndSite
 EndSpecies
 
 #------------------------#
@@ -91,10 +95,12 @@ EndConfiguration
 Module  Import
   Configuration  'Bulk'
   ReadTrajectory  True
+  # Trajectory file contains 95 frames
   TrajectoryFile  xyz  'dlpoly/water-267-298K.xyz'
 EndModule
 
-Module CalculateRDF
+# Oxygen-oxygen radial distribution function
+Module  CalculateRDF  'RDF(OW-OW)'
   Configuration  'Bulk'
   OriginSite  Water  'O'
   OtherSite  Water  'O'
@@ -103,7 +109,51 @@ Module CalculateRDF
   BinWidth  0.01
 EndModule
 
+Module DataTest
+  Frequency  95
+  Target  'RDF(OW-OW)'
+  Data1D  'dlpoly/water-267-298K.aardf1_02_02'  RDF(OW-OW)_Bulk
+  Threshold  1.4
+EndModule
+
+# Hydrogen-hydrogen (H1-H2, 1-3) radial distribution function, excluding intramolecular correlations
+Module  CalculateRDF  'RDF(H1-H2)'
+  Configuration  'Bulk'
+  OriginSite  Water  'H1'
+  OtherSite  Water  'H2'
+  ExcludeSameMolecule  On
+  RMin  0.0
+  RMax  20.0
+  BinWidth  0.01
+EndModule
+
+Module DataTest
+  Frequency  95
+  Target  'RDF(H1-H2)'
+  Data1D  'dlpoly/water-267-298K.aardf1_01_03'  RDF(H1-H2)_Bulk
+  Threshold  1.1
+EndModule
+
+# Center-of-mass radial distribution function
+Module  CalculateRDF  'RDF(COM-COM)'
+  Configuration  'Bulk'
+  OriginSite  Water  'COM'
+  OtherSite  Water  'COM'
+  ExcludeSameMolecule  On
+  RMin  0.0
+  RMax  20.0
+  BinWidth  0.05
+EndModule
+
+Module DataTest
+  Frequency  95
+  Target  'RDF(COM-COM)'
+  Data1D  'dlpoly/water-267-298K.rdf11'  RDF(COM-COM)_Bulk
+  Threshold  0.5
+EndModule
+
 Module  Analyse
+  Disabled
   Configuration  'Bulk'
   Analyser
 
@@ -117,7 +167,7 @@ Module  Analyse
         Select  'B'
 
           Site  Water  'O'
-          #ExcludeSameMolecule  'A'
+          ExcludeSameMolecule  'A'
 
           ForEach
 
@@ -153,6 +203,7 @@ Module  Analyse
 EndModule
 
 Simulation
-  RestartFIleFrequency  1
+  # Prevent writing of restart file
+  RestartFileFrequency  100
 EndSimulation
 
