@@ -68,8 +68,8 @@ double Error::rmse(const Data1D& A, const Data1D& B, bool quiet)
 	return rmse;
 }
 
-// Return percentage error between supplied data
-double Error::percent(const Data1D& A, const Data1D& B, bool quiet)
+// Return MAPE between supplied data
+double Error::mape(const Data1D& A, const Data1D& B, bool quiet)
 {
 	// First, generate interpolation of data B
 	Interpolator interpolatedB(B);
@@ -78,15 +78,7 @@ double Error::percent(const Data1D& A, const Data1D& B, bool quiet)
 	const Array<double>& aX = A.constX();
 	const Array<double>& aY = A.constY();
 
-	/*
-	 * Generate error estimate over actual values of our own data
-	 * We will calculate the mean absolute percentage error (MAPE) as well as the simple sum of errors divided by sum of reference data.
-	 * We do both, and return the higher of the two, since the MAPE is not a good measure when considering very spiky data (since the
-	 * on-step forecast is often worse than the actual error of the predicted value.
-	 */
-	// TODO CHANGE THIS TO BE PURE MAPE?
-	
-	double sume = 0.0, sumf = 0.0, sumy = 0.0;
+	double sum = 0.0;
 	double firstX = 0.0, lastX = 0.0, x, y;
 	int nPointsConsidered = 0;
 	for (int n=0; n<aX.nItems(); ++n)
@@ -103,29 +95,113 @@ double Error::percent(const Data1D& A, const Data1D& B, bool quiet)
 		// Is this the first point considered?
 		if (nPointsConsidered == 0) firstX = x;
 
+		// Get y reference value, and skip if zero
 		y = aY.constAt(n);
+		if (fabs(y) == 0.0) continue;
 
-		// Accumulate numerator - sum of forecast errors
-		sume += fabs(y - interpolatedB.y(x));
-		sumy += fabs(interpolatedB.y(x));
-
-		// Accumulate denominator - one-step naive forecast (backwards forecast for first point)
-		if (nPointsConsidered > 0) sumf += fabs(y - aY.constAt(n-1));
-		else if (n < aX.nItems()-1) sumf += fabs(y - aY.constAt(n+1));
+		// Accumulate sum
+		sum += fabs((y - interpolatedB.y(x)) / y);
 
 		lastX = x;
 		++nPointsConsidered;
 	}
 
-	// Finalise MAPE and summarise result
-	double denominator;
-	// Normalisation to N/(N-1) not performed when using one-step backwards forecast for first point.
-// 	if (sumf > 0.0) denominator = (double(nPointsConsidered) / double(nPointsConsidered-1)) * sumf;
-	if (sumf > 0.0) denominator = sumf;
-	else denominator = 1.0;
-	double mape = sume / denominator;
-	Messenger::printVerbose("MAPE between datasets is %7.3f%% over %15.9e < x < %15.9e (%i points), d(|Y|)/sum(|Y|) = %7.3f%%.\n", mape, firstX, lastX, nPointsConsidered, sume/sumy);
+	double mape = 100.0 * sum / nPointsConsidered;
+	if (!quiet) Messenger::print("MAPE between datasets is %7.3f%% over %15.9e < x < %15.9e (%i points).\n", mape, firstX, lastX, nPointsConsidered);
 
-	return max(mape,sume/sumy);
+	return mape;
 }
 
+// Return MAAPE between supplied data
+double Error::maape(const Data1D& A, const Data1D& B, bool quiet)
+{
+	// First, generate interpolation of data B
+	Interpolator interpolatedB(B);
+
+	// Grab x and y arrays from data A
+	const Array<double>& aX = A.constX();
+	const Array<double>& aY = A.constY();
+
+	double sum = 0.0;
+	double firstX = 0.0, lastX = 0.0, x, y;
+	int nPointsConsidered = 0;
+	for (int n=0; n<1; ++n)
+	{
+		// Grab x value
+		x = aX.constAt(n);
+
+		// Is our x value lower than the lowest x value of the reference data?
+		if (x < B.constX().firstValue()) continue;
+
+		// Is our x value higher than the last x value of the reference data?
+		if (x > B.constX().lastValue()) break;
+
+		// Is this the first point considered?
+		if (nPointsConsidered == 0) firstX = x;
+
+		// Get y reference value
+		y = aY.constAt(n);
+
+		// Accumulate sum
+		sum += atan(fabs((y - interpolatedB.y(x)) / y));
+
+		lastX = x;
+		++nPointsConsidered;
+	}
+	
+	printf("sum = %f, n = %i\n", sum, nPointsConsidered);
+
+	double maape = 100.0 * sum / nPointsConsidered;
+	if (!quiet) Messenger::print("MAAPE between datasets is %7.3f%% over %15.9e < x < %15.9e (%i points).\n", maape, firstX, lastX, nPointsConsidered);
+
+	return maape;
+}
+
+// Return percentage error between supplied data
+double Error::percent(const Data1D& A, const Data1D& B, bool quiet)
+{
+	// First, generate interpolation of data B
+	Interpolator interpolatedB(B);
+
+	// Grab x and y arrays from data A
+	const Array<double>& aX = A.constX();
+	const Array<double>& aY = A.constY();
+
+	// Calculate summed absolute error and absolute y value deviations from average
+	double sume = 0.0, sumy = 0.0;
+	int firstPoint = -1, lastPoint = -1;
+	double x, y;
+	for (int n=0; n<aX.nItems(); ++n)
+	{
+		// Grab x value
+		x = aX.constAt(n);
+
+		// Is our x value lower than the lowest x value of the reference data?
+		if (x < B.constX().firstValue()) continue;
+
+		// Is our x value higher than the last x value of the reference data?
+		if (x > B.constX().lastValue()) break;
+
+		// Is this the first point considered?
+		if (firstPoint == -1) firstPoint = n;
+
+		// Get y reference value
+		y = aY.constAt(n);
+		sume += fabs(y - interpolatedB.y(aX.constAt(n)));
+		sumy += fabs(y);
+
+		// Update last point considered
+		lastPoint = n;
+	}
+
+	// Calculate percentage error, avoiding divide-by-zero if the sum of y values is zero
+	bool zeroSum = sumy == 0;
+	double percentError = (zeroSum ? sume : 100.0 * sume / sumy);
+	if (!quiet)
+	{
+		if (zeroSum) Messenger::print("Absolute squared error between datasets is %7.3f%% over %15.9e < x < %15.9e (%i points).\n", percentError, aX.constAt(firstPoint), aX.constAt(lastPoint), (lastPoint - firstPoint) + 1);
+		else Messenger::print("Percentage error between datasets is %7.3f%% over %15.9e < x < %15.9e (%i points).\n", percentError, aX.constAt(firstPoint), aX.constAt(lastPoint), (lastPoint - firstPoint) + 1);
+	}
+
+	return percentError;
+}

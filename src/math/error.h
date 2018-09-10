@@ -34,6 +34,10 @@ class Error
 	public:
 	// Return RMSE between supplied data
 	static double rmse(const Data1D& A, const Data1D& B, bool quiet = false);
+	// Return MAAPE between supplied data
+	static double maape(const Data1D& A, const Data1D& B, bool quiet = false);
+	// Return MAPE between supplied data
+	static double mape(const Data1D& A, const Data1D& B, bool quiet = false);
 	// Return percentage error between supplied data
 	static double percent(const Data1D& A, const Data1D& B, bool quiet = false);
 };
