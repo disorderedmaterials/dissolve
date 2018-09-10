@@ -22,25 +22,25 @@
 #include "modules/forces/forces.h"
 
 // Return type of module
-const char* ForcesModule::type()
+const char* ForcesModule::type() const
 {
 	return "Forces";
 }
 
 // Return brief description of module
-const char* ForcesModule::brief()
+const char* ForcesModule::brief() const
 {
 	return "Calculate the total atomic forces within a Configuration";
 }
 
 // Return instance type for module
-Module::InstanceType ForcesModule::instanceType()
+Module::InstanceType ForcesModule::instanceType() const
 {
 	return Module::MultipleInstance;
 }
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
-int ForcesModule::nTargetableConfigurations()
+int ForcesModule::nTargetableConfigurations() const
 {
 	return -1;
 }

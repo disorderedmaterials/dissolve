@@ -61,13 +61,13 @@ class ForcesModule : public Module
 	 */
 	public:
 	// Return type of module
-	const char* type();
+	const char* type() const;
 	// Return brief description of module
-	const char* brief();
+	const char* brief() const;
 	// Return instance type for module
-	InstanceType instanceType();
+	InstanceType instanceType() const;
 	// Return the maximum number of Configurations the Module can target (or -1 for any number)
-	int nTargetableConfigurations();
+	int nTargetableConfigurations() const;
 	// Modules upon which this Module depends to have run first
 	const char* dependentModules();
 	// Set up supplied dependent module (only if it has been auto-added)

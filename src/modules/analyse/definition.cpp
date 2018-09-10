@@ -22,25 +22,25 @@
 #include "modules/analyse/analyse.h"
 
 // Return type of module
-const char* AnalyseModule::type()
+const char* AnalyseModule::type() const
 {
 	return "Analyse";
 }
 
 // Return brief description of module
-const char* AnalyseModule::brief()
+const char* AnalyseModule::brief() const
 {
 	return "Perform analysis of one or more Configurations";
 }
 
 // Return instance type for module
-Module::InstanceType AnalyseModule::instanceType()
+Module::InstanceType AnalyseModule::instanceType() const
 {
 	return Module::MultipleInstance;
 }
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
-int AnalyseModule::nTargetableConfigurations()
+int AnalyseModule::nTargetableConfigurations() const
 {
 	return -1;
 }

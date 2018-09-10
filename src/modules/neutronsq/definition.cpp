@@ -22,25 +22,25 @@
 #include "modules/neutronsq/neutronsq.h"
 
 // Return type of module
-const char* NeutronSQModule::type()
+const char* NeutronSQModule::type() const
 {
 	return "NeutronSQ";
 }
 
 // Return brief description of module
-const char* NeutronSQModule::brief()
+const char* NeutronSQModule::brief() const
 {
 	return "Calculate neutron-weighted S(Q)";
 }
 
 // Return instance type for module
-Module::InstanceType NeutronSQModule::instanceType()
+Module::InstanceType NeutronSQModule::instanceType() const
 {
 	return Module::MultipleInstance;
 }
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
-int NeutronSQModule::nTargetableConfigurations()
+int NeutronSQModule::nTargetableConfigurations() const
 {
 	return (configurationLocal_ ? 1 : -1);
 }

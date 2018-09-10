@@ -22,25 +22,25 @@
 #include "modules/import/import.h"
 
 // Return type of module
-const char* ImportModule::type()
+const char* ImportModule::type() const
 {
 	return "Import";
 }
 
 // Return brief description of module
-const char* ImportModule::brief()
+const char* ImportModule::brief() const
 {
 	return "Import data to the target Configuration";
 }
 
 // Return instance type for module
-Module::InstanceType ImportModule::instanceType()
+Module::InstanceType ImportModule::instanceType() const
 {
 	return Module::MultipleInstance;
 }
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
-int ImportModule::nTargetableConfigurations()
+int ImportModule::nTargetableConfigurations() const
 {
 	return 1;
 }

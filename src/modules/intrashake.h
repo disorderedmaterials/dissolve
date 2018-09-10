@@ -55,9 +55,9 @@ class AtomShake : public Module
 	 */
 	public:
 	// Return type of module
-	const char* type();
+	const char* type() const;
 	// Return brief description of module
-	const char* brief();
+	const char* brief() const;
 	// Return type of module
 	ModuleType type();
 

@@ -22,25 +22,25 @@
 #include "modules/atomshake/atomshake.h"
 
 // Return type of module
-const char* AtomShakeModule::type()
+const char* AtomShakeModule::type() const
 {
 	return "AtomShake";
 }
 
 // Return brief description of module
-const char* AtomShakeModule::brief()
+const char* AtomShakeModule::brief() const
 {
 	return "Perform atomic Monte Carlo on all atoms";
 }
 
 // Return instance type for module
-Module::InstanceType AtomShakeModule::instanceType()
+Module::InstanceType AtomShakeModule::instanceType() const
 {
 	return Module::MultipleInstance;
 }
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
-int AtomShakeModule::nTargetableConfigurations()
+int AtomShakeModule::nTargetableConfigurations() const
 {
 	return 1;
 }

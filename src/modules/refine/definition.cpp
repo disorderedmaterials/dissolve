@@ -22,25 +22,25 @@
 #include "modules/refine/refine.h"
 
 // Return type of module
-const char* RefineModule::type()
+const char* RefineModule::type() const
 {
 	return "Refine";
 }
 
 // Return brief description of module
-const char* RefineModule::brief()
+const char* RefineModule::brief() const
 {
 	return "Refine interatomic potentials based on differences between calculated and reference data";
 }
 
 // Return instance type for module
-Module::InstanceType RefineModule::instanceType()
+Module::InstanceType RefineModule::instanceType() const
 {
 	return Module::MultipleInstance;
 }
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
-int RefineModule::nTargetableConfigurations()
+int RefineModule::nTargetableConfigurations() const
 {
 	return 0;
 }

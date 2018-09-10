@@ -22,25 +22,25 @@
 #include "modules/epsr/epsr.h"
 
 // Return type of module
-const char* EPSRModule::type()
+const char* EPSRModule::type() const
 {
 	return "EPSR";
 }
 
 // Return brief description of module
-const char* EPSRModule::brief()
+const char* EPSRModule::brief() const
 {
 	return "Refine interatomic potentials in a manner consistent with EPSR";
 }
 
 // Return instance type for module
-Module::InstanceType EPSRModule::instanceType()
+Module::InstanceType EPSRModule::instanceType() const
 {
 	return Module::MultipleInstance;
 }
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
-int EPSRModule::nTargetableConfigurations()
+int EPSRModule::nTargetableConfigurations() const
 {
 	return 0;
 }

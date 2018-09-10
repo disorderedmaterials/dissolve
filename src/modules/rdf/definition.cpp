@@ -22,25 +22,25 @@
 #include "modules/rdf/rdf.h"
 
 // Return type of module
-const char* RDFModule::type()
+const char* RDFModule::type() const
 {
 	return "RDF";
 }
 
 // Return brief description of module
-const char* RDFModule::brief()
+const char* RDFModule::brief() const
 {
 	return "Calculate partial and total g(r) and S(Q)";
 }
 
 // Return instance type for module
-Module::InstanceType RDFModule::instanceType()
+Module::InstanceType RDFModule::instanceType() const
 {
 	return Module::MultipleInstance;
 }
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
-int RDFModule::nTargetableConfigurations()
+int RDFModule::nTargetableConfigurations() const
 {
 	return (configurationLocal_ ? 1 : -1);
 }

@@ -22,25 +22,25 @@
 #include "modules/bragg/bragg.h"
 
 // Return type of module
-const char* BraggModule::type()
+const char* BraggModule::type() const
 {
 	return "Bragg";
 }
 
 // Return brief description of module
-const char* BraggModule::brief()
+const char* BraggModule::brief() const
 {
 	return "Calculate partial and total g(r) and S(Q)";
 }
 
 // Return instance type for module
-Module::InstanceType BraggModule::instanceType()
+Module::InstanceType BraggModule::instanceType() const
 {
 	return Module::MultipleInstance;
 }
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
-int BraggModule::nTargetableConfigurations()
+int BraggModule::nTargetableConfigurations() const
 {
 	return (configurationLocal_ ? 1 : -1);
 }

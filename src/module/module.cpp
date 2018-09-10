@@ -79,7 +79,7 @@ void Module::setUniqueName(const char* uniqueName)
 }
 
 // Return unique name of Module
-const char* Module::uniqueName()
+const char* Module::uniqueName() const
 {
 	return uniqueName_.get();
 }

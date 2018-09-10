@@ -22,25 +22,25 @@
 #include "modules/datatest/datatest.h"
 
 // Return type of module
-const char* DataTestModule::type()
+const char* DataTestModule::type() const
 {
 	return "DataTest";
 }
 
 // Return brief description of module
-const char* DataTestModule::brief()
+const char* DataTestModule::brief() const
 {
 	return "Test named data in other modules against reference data";
 }
 
 // Return instance type for module
-Module::InstanceType DataTestModule::instanceType()
+Module::InstanceType DataTestModule::instanceType() const
 {
 	return Module::MultipleInstance;
 }
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
-int DataTestModule::nTargetableConfigurations()
+int DataTestModule::nTargetableConfigurations() const
 {
 	return 1;
 }

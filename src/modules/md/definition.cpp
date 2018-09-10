@@ -22,25 +22,25 @@
 #include "modules/md/md.h"
 
 // Return type of module
-const char* MDModule::type()
+const char* MDModule::type() const
 {
 	return "MD";
 }
 
 // Return brief description of module
-const char* MDModule::brief()
+const char* MDModule::brief() const
 {
 	return "Evolve a Configuration using molecular dynamics";
 }
 
 // Return instance type for module
-Module::InstanceType MDModule::instanceType()
+Module::InstanceType MDModule::instanceType() const
 {
 	return Module::MultipleInstance;
 }
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
-int MDModule::nTargetableConfigurations()
+int MDModule::nTargetableConfigurations() const
 {
 	return 1;
 }

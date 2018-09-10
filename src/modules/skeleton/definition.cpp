@@ -22,25 +22,25 @@
 #include "modules/skeleton/skeleton.h"
 
 // Return type of module
-const char* SkeletonModule::type()
+const char* SkeletonModule::type() const
 {
 	return "Skeleton";
 }
 
 // Return brief description of module
-const char* SkeletonModule::brief()
+const char* SkeletonModule::brief() const
 {
 	return "Empty Module providing skeletal structure for new Module development";
 }
 
 // Return instance type for module
-Module::InstanceType SkeletonModule::instanceType()
+Module::InstanceType SkeletonModule::instanceType() const
 {
 	return Module::MultipleInstance;
 }
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
-int SkeletonModule::nTargetableConfigurations()
+int SkeletonModule::nTargetableConfigurations() const
 {
 	return 0;
 }

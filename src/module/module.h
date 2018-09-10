@@ -77,17 +77,17 @@ class Module : public ListItem<Module>
 
 	public:
 	// Return type of Module
-	virtual const char* type() = 0;
+	virtual const char* type() const = 0;
 	// Set unique name of Module
 	void setUniqueName(const char* uniqueName);
 	// Return unique name of Module
-	const char* uniqueName();
+	const char* uniqueName() const;
 	// Return brief description of Module
-	virtual const char* brief() = 0;
+	virtual const char* brief() const = 0;
 	// Return instance type for Module
-	virtual InstanceType instanceType() = 0;
+	virtual InstanceType instanceType() const = 0;
 	// Return the maximum number of Configurations the Module can target (or -1 for any number)
-	virtual int nTargetableConfigurations() = 0;
+	virtual int nTargetableConfigurations() const = 0;
 	// Add dependent Module to this Module
 	void addDependentModule(Module* module, bool autoAdded);
 	// Return pointer for specified dependent Module
