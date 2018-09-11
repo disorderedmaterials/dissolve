@@ -26,11 +26,9 @@
 #include "base/sysfunc.h"
 
 // Constructor
-AnalysisSequenceNode::AnalysisSequenceNode(const char* blockTerminationKeyword) : AnalysisNode()
+AnalysisSequenceNode::AnalysisSequenceNode(const char* blockTerminationKeyword) : AnalysisNode(AnalysisNode::SequenceNode)
 {
 	blockTerminationKeyword_ = blockTerminationKeyword;
-
-	type_ = AnalysisNode::SequenceNode;
 }
 
 // Destructor

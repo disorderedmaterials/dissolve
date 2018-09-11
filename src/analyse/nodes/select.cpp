@@ -29,7 +29,7 @@
 #include "base/sysfunc.h"
 
 // Constructor
-AnalysisSelectNode::AnalysisSelectNode(SpeciesSite* site) : AnalysisNode()
+AnalysisSelectNode::AnalysisSelectNode(SpeciesSite* site) : AnalysisNode(AnalysisNode::SelectNode)
 {
 	speciesSite_ = site;
 	species_ = (speciesSite_ ? speciesSite_->parent() : NULL);
@@ -37,8 +37,6 @@ AnalysisSelectNode::AnalysisSelectNode(SpeciesSite* site) : AnalysisNode()
 	currentSiteIndex_ = -1;
 	nCumulativeSites_ = 0;
 	nSelections_ = 0;
-
-	type_ = AnalysisNode::SelectNode;
 }
 
 // Destructor

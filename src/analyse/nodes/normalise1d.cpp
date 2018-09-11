@@ -30,10 +30,8 @@
 #include "templates/genericlisthelper.h"
 
 // Constructor
-AnalysisNormalise1DNode::AnalysisNormalise1DNode(AnalysisCollect1DNode* target) : AnalysisNode()
+AnalysisNormalise1DNode::AnalysisNormalise1DNode(AnalysisCollect1DNode* target) : AnalysisNode(AnalysisNode::Normalise1DNode)
 {
-	type_ = AnalysisNode::Normalise1DNode;
-
 	collectNode_ = target;
 	saveNormalisedData_ = false;
 	normalisationFactor_ = 0.0;

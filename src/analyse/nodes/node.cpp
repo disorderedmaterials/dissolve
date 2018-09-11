@@ -25,8 +25,10 @@
 #include "base/sysfunc.h"
 
 // Constructor
-AnalysisNode::AnalysisNode() : ListItem<AnalysisNode>()
+AnalysisNode::AnalysisNode(AnalysisNode::NodeType nodeType) : ListItem<AnalysisNode>()
 {
+	type_ = nodeType;
+
 	// Assign default, unique name to the node
 	static int nodeCount = 0;
 	name_ = CharString("Node%04i", ++nodeCount);
@@ -42,7 +44,7 @@ AnalysisNode::~AnalysisNode()
  */
 
 // Control keywords
-const char* NodeTypes[] = { "Calculate", "Collect1D", "Exclude", "Normalise1D", "Select", "Sequence" };
+const char* NodeTypes[] = { "Calculate", "Collect1D", "Collect2D", "Collect3D", "Exclude", "Normalise1D", "Normalise2D", "Normalise3D", "Select", "Sequence" };
 
 // Convert string to node type
 AnalysisNode::NodeType AnalysisNode::nodeType(const char* s)

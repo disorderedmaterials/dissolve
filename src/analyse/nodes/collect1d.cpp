@@ -29,10 +29,8 @@
 #include "templates/genericlisthelper.h"
 
 // Constructor
-AnalysisCollect1DNode::AnalysisCollect1DNode(AnalysisCalculateNode* observable, double rMin, double rMax, double binWidth) : AnalysisNode()
+AnalysisCollect1DNode::AnalysisCollect1DNode(AnalysisCalculateNode* observable, double rMin, double rMax, double binWidth) : AnalysisNode(AnalysisNode::Collect1DNode)
 {
-	type_ = AnalysisNode::Collect1DNode;
-
 	observable_ = observable;
 	minimum_ = rMin;
 	maximum_ = rMax;

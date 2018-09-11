@@ -27,10 +27,8 @@
 #include "base/sysfunc.h"
 
 // Constructor
-AnalysisExcludeNode::AnalysisExcludeNode() : AnalysisNode()
+AnalysisExcludeNode::AnalysisExcludeNode() : AnalysisNode(AnalysisNode::ExcludeNode)
 {
-	type_ = AnalysisNode::ExcludeNode;
-
 	sameSiteA_ = NULL;
 	sameSiteB_ = NULL;
 }

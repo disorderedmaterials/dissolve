@@ -37,32 +37,28 @@ class NodeContextStack;
 class AnalysisNode : public ListItem<AnalysisNode>
 {
 	public:
+	// Available Node Types
+	enum NodeType { CalculateNode, Collect1DNode, Collect2DNode, Collect3DNode, ExcludeNode, Normalise1DNode, Normalise2DNode, Normalise3DNode, SelectNode, SequenceNode, nNodeTypes };
+	// Convert string to node type
+	static NodeType nodeType(const char* s);
+	// Convert node type to string
+	static const char* nodeType(NodeType nt);
 	// Constructor
-	AnalysisNode();
+	AnalysisNode(NodeType nodeType);
 	// Destructor
 	virtual ~AnalysisNode();
 
 
 	/*
-	 * Node Types
+	 * Data
 	 */
-	public:
-	// Available Node Types
-	enum NodeType { CalculateNode, Collect1DNode, ExcludeNode, Normalise1DNode, SelectNode, SequenceNode, nNodeTypes };
-	// Convert string to node type
-	static NodeType nodeType(const char* s);
-	// Convert node type to string
-	static const char* nodeType(NodeType nt);
-
 	private:
+	// Node type
+	NodeType type_;
 	// Node name
 	CharString name_;
 	// Node nice name
 	CharString niceName_;
-
-	protected:
-	// Node type
-	NodeType type_;
 
 	public:
 	// Return node type
