@@ -43,6 +43,8 @@ CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget* parent, CalculateRDF
 	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
 	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
 
+	setGraphDataTargets(module_);
+
 	refreshing_ = false;
 }
 
@@ -96,6 +98,7 @@ void CalculateRDFModuleWidget::setGraphDataTargets(CalculateRDFModule* module)
 	// Remove any current collections
 	rdfGraph_->clearCollections();
 
+	printf("LKjlkjklj\n");
 	// Loop over Configuration targets in Module
 	RefListIterator<Configuration,bool> configIterator(module_->targetConfigurations());
 	while (Configuration* cfg = configIterator.iterate())
@@ -103,6 +106,7 @@ void CalculateRDFModuleWidget::setGraphDataTargets(CalculateRDFModule* module)
 		// Calculated RDF
 		CharString blockData;
 		blockData.sprintf("Collection '%s'; Group '%s'; DataSet '%s (%s)'; Source Data1D '%s//Normalise1D//%s//%s'; EndDataSet; EndCollection", cfg->name(), cfg->name(), module_->keywords().asString("Name"), cfg->name(), module_->uniqueName(), cfg->niceName(), module_->rdfName());
+		printf("BLOCK = [%s]\n", blockData.get());
 		rdfGraph_->addCollectionFromBlock(blockData);
 	}
 }
