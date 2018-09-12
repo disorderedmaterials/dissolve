@@ -145,7 +145,7 @@ bool DataSet::refreshData(QDir sourceDir)
 	else if (dataSource_ == DataSet::FileSource)
 	{
 		// Clear any existing data
-		data_.x().clear();
+		data_.xAxis().clear();
 		data_.values().clear();
 
 		// Check file exists
@@ -166,7 +166,7 @@ bool DataSet::refreshData(QDir sourceDir)
 		else
 		{
 			Messenger::printVerbose("Couldn't locate data '%s' for display.\n", sourceData1D_.get());
-			data_.x().clear();
+			data_.xAxis().clear();
 			data_.values().clear();
 
 			notifyParent();
@@ -205,7 +205,7 @@ const Data1D& DataSet::data() const
 // Return X array from data
 const Array<double>& DataSet::x() const
 {
-	return data_.constX();
+	return data_.constXAxis();
 }
 
 // Return Y array from data
@@ -224,11 +224,11 @@ double& DataSet::z()
 void DataSet::transform(Transformer& xTransformer, Transformer& yTransformer, Transformer& zTransformer)
 {
 	// X
-	if (xTransformer.enabled()) transformedData_.x() = xTransformer.transformArray(data_.x(), data_.values(), z_, 0);
-	else transformedData_.x() = data_.x();
+	if (xTransformer.enabled()) transformedData_.xAxis() = xTransformer.transformArray(data_.xAxis(), data_.values(), z_, 0);
+	else transformedData_.xAxis() = data_.xAxis();
 
 	// Y
-	if (yTransformer.enabled()) transformedData_.values() = yTransformer.transformArray(data_.x(), data_.values(), z_, 1);
+	if (yTransformer.enabled()) transformedData_.values() = yTransformer.transformArray(data_.xAxis(), data_.values(), z_, 1);
 	else transformedData_.values() = data_.values();
 
 	// Z
@@ -255,7 +255,7 @@ double DataSet::transformedZ() const
 // Reset (zero) data
 void DataSet::resetData()
 {
-	data_.x() = 0.0;
+	data_.xAxis() = 0.0;
 
 	notifyParent();
 }
@@ -303,7 +303,7 @@ void DataSet::setZ(double z)
 // Add to specified axis value
 void DataSet::addConstantValue(int axis, double value)
 {
-	if (axis == 0) data_.x() += value;
+	if (axis == 0) data_.xAxis() += value;
 	else if (axis == 1) data_.values() += value;
 	else if (axis == 2) z_ += value;
 
@@ -317,8 +317,8 @@ double DataSet::averageY(double xMin, double xMax) const
 	int nAdded = 0;
 	for (int n=0; n<data_.nDataPoints(); ++n)
 	{
-		if (data_.constX(n) < xMin) continue;
-		else if (data_.constX(n) > xMax) break;
+		if (data_.constXAxis(n) < xMin) continue;
+		else if (data_.constXAxis(n) > xMax) break;
 		++nAdded;
 		result += data_.constValue(n);
 	}

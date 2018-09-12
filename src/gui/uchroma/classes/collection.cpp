@@ -716,8 +716,8 @@ void Collection::yRangeOverX(double xMin, double xMax, double& yMin, double& yMa
 		const Data1D& data = dataSet->transformedData();
 		for (int n=0; n<data.nDataPoints(); ++n)
 		{
-			if (data.constX(n) < xMin) continue;
-			else if (data.constX(n) > xMax) break;
+			if (data.constXAxis(n) < xMin) continue;
+			else if (data.constXAxis(n) > xMax) break;
 
 			if (first)
 			{
@@ -1148,13 +1148,13 @@ void Collection::updateLimitsAndTransforms()
 	{
 		// Grab first dataset and set initial values
 		DataSet* dataSet = dataSets_.first();
-		dataMin_.set(dataSet->data().constX().firstValue(), dataSet->data().minValue(), dataSet->z());
-		dataMax_.set(dataSet->data().constX().lastValue(), dataSet->data().maxValue(), dataSet->z());
+		dataMin_.set(dataSet->data().constXAxis().firstValue(), dataSet->data().minValue(), dataSet->z());
+		dataMax_.set(dataSet->data().constXAxis().lastValue(), dataSet->data().maxValue(), dataSet->z());
 		double mmin, mmax;
 		for (dataSet = dataSet->next; dataSet != NULL; dataSet = dataSet->next)
 		{
-			mmin = dataSet->data().constX().firstValue();
-			mmax = dataSet->data().constX().lastValue();
+			mmin = dataSet->data().constXAxis().firstValue();
+			mmax = dataSet->data().constXAxis().lastValue();
 			if (mmin < dataMin_.x) dataMin_.x = mmin;
 			if (mmax > dataMax_.x) dataMax_.x = mmax;
 			mmin = dataSet->data().minValue();
@@ -1177,13 +1177,13 @@ void Collection::updateLimitsAndTransforms()
 	
 	// Grab first dataset and set initial values
 	DataSet* dataSet = dataSets_.first();
-	transformMin_.set(dataSet->transformedData().constX().firstValue(), dataSet->transformedData().minValue(), dataSet->transformedZ());
-	transformMax_.set(dataSet->transformedData().constX().lastValue(), dataSet->transformedData().maxValue(), dataSet->transformedZ());
+	transformMin_.set(dataSet->transformedData().constXAxis().firstValue(), dataSet->transformedData().minValue(), dataSet->transformedZ());
+	transformMax_.set(dataSet->transformedData().constXAxis().lastValue(), dataSet->transformedData().maxValue(), dataSet->transformedZ());
 	double mmin, mmax;
 	for (dataSet = dataSet->next; dataSet != NULL; dataSet = dataSet->next)
 	{
-		mmin = dataSet->transformedData().constX().firstValue();
-		mmax = dataSet->transformedData().constX().lastValue();
+		mmin = dataSet->transformedData().constXAxis().firstValue();
+		mmax = dataSet->transformedData().constXAxis().lastValue();
 		if (mmin < transformMin_.x) transformMin_.x = mmin;
 		if (mmax > transformMax_.x) transformMax_.x = mmax;
 		mmin = dataSet->transformedData().minValue();
@@ -1202,16 +1202,16 @@ void Collection::updateLimitsAndTransforms()
 		for (int n=0; n<data.nDataPoints(); ++n)
 		{
 			// X
-			if (data.constX(n) > 0.0)
+			if (data.constXAxis(n) > 0.0)
 			{
-				if (data.constX(n) < transformMinPositive_.x) transformMinPositive_.x = data.constX(n);
-				if (data.constX(n) > transformMaxPositive_.x) transformMaxPositive_.x = data.constX(n);
+				if (data.constXAxis(n) < transformMinPositive_.x) transformMinPositive_.x = data.constXAxis(n);
+				if (data.constXAxis(n) > transformMaxPositive_.x) transformMaxPositive_.x = data.constXAxis(n);
 			}
 			// Y
 			if (data.constValue(n) > 0.0)
 			{
-				if (data.constY(n) < transformMinPositive_.y) transformMinPositive_.y = data.constY(n);
-				if (data.constY(n) > transformMaxPositive_.y) transformMaxPositive_.y = data.constY(n);
+				if (data.constValue(n) < transformMinPositive_.y) transformMinPositive_.y = data.constValue(n);
+				if (data.constValue(n) > transformMaxPositive_.y) transformMaxPositive_.y = data.constValue(n);
 			}
 		}
 		
@@ -1306,8 +1306,8 @@ void Collection::updateDisplayData()
 		{
 			Interpolator interpolated(dataSet->transformedData());
 // 			dataSet->transformedData().interpolate(Data1D::SplineInterpolation);
-			double x = dataSet->transformedData().constX().firstValue();
-			while (x <= dataSet->transformedData().constX().lastValue())
+			double x = dataSet->transformedData().constXAxis().firstValue();
+			while (x <= dataSet->transformedData().constXAxis().lastValue())
 			{
 				array[0].add(x);
 				array[1].add(interpolated.y(x));
@@ -1316,7 +1316,7 @@ void Collection::updateDisplayData()
 		}
 		else
 		{
-			array[0] = dataSet->transformedData().constX();
+			array[0] = dataSet->transformedData().constXAxis();
 			array[1] = dataSet->transformedData().constValues();
 		}
 
@@ -1505,7 +1505,7 @@ bool Collection::exportData(const char* fileName)
 		parser.writeLineF("# Z = %e\n", dataSet->z());
 		for (int n=0; n<dataSet->data().nDataPoints(); ++n)
 		{
-			const Array<double>& x = dataSet->data().constX();
+			const Array<double>& x = dataSet->data().constXAxis();
 			const Array<double>& y = dataSet->data().constValues();
 			parser.writeLineF("%e  %e\n", x.constAt(n), y.constAt(n));
 		}

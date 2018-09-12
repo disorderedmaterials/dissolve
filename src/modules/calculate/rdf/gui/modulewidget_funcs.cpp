@@ -38,7 +38,7 @@ CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget* parent, CalculateRDF
 	viewPane->axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	viewPane->axes().setMax(0, 10.0);
 	viewPane->axes().setTitle(1, "g(r)");
-	viewPane->axes().setMin(1, -1.0);
+	viewPane->axes().setMin(1, 0.0);
 	viewPane->axes().setMax(1, 1.0);
 	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
 	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
