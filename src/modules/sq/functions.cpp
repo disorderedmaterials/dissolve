@@ -48,7 +48,7 @@ bool SQModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, 
 		{
 			// Total partial
 			unweightedsq.partial(n,m).copyArrays(unweightedgr.constPartial(n,m));
-			unweightedsq.partial(n,m).y() -= 1.0;
+			unweightedsq.partial(n,m).values() -= 1.0;
 			if (!Fourier::sineFT(unweightedsq.partial(n,m), 4.0*PI*rho, qMin, qDelta, qMax, windowFunction, broadening)) return false;
 
 			// Bound partial
@@ -57,7 +57,7 @@ bool SQModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, 
 
 			// Unbound partial
 			unweightedsq.unboundPartial(n,m).copyArrays(unweightedgr.constUnboundPartial(n,m));
-			unweightedsq.unboundPartial(n,m).y() -= 1.0;
+			unweightedsq.unboundPartial(n,m).values() -= 1.0;
 			if (!Fourier::sineFT(unweightedsq.unboundPartial(n,m), 4.0*PI*rho, qMin, qDelta, qMax, windowFunction, broadening)) return false;
 
 			// Zero Bragg partial, leave x array intact for use if needed

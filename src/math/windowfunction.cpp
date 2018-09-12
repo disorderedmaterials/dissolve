@@ -199,7 +199,7 @@ CharString WindowFunction::parameterSummary() const
 bool WindowFunction::setUp(const Data1D& data)
 {
 	// Store maximum x value of data
-	xMax_ = data.constX().lastValue();
+	xMax_ = data.xAxisMax();
 
 	switch (function_)
 	{

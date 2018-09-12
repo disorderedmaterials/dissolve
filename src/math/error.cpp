@@ -33,8 +33,8 @@ double Error::rmse(const Data1D& A, const Data1D& B, bool quiet)
 	Interpolator interpolatedB(B);
 
 	// Grab x and y arrays from data A
-	const Array<double>& aX = A.constX();
-	const Array<double>& aY = A.constY();
+	const Array<double>& aX = A.constXAxis();
+	const Array<double>& aY = A.constValues();
 
 	// Generate RMSE at x values of A
 	double rmse = 0.0, delta;
@@ -46,10 +46,10 @@ double Error::rmse(const Data1D& A, const Data1D& B, bool quiet)
 		x = aX.constAt(n);
 
 		// Is our x value lower than the lowest x value of the reference data?
-		if (x < B.constX().firstValue()) continue;
+		if (x < B.xAxisMin()) continue;
 
 		// Is our x value higher than the last x value of the reference data?
-		if (x > B.constX().lastValue()) break;
+		if (x > B.xAxisMax()) break;
 
 		// Is this the first point considered?
 		if (nPointsConsidered == 0) firstX = x;
@@ -75,8 +75,8 @@ double Error::mape(const Data1D& A, const Data1D& B, bool quiet)
 	Interpolator interpolatedB(B);
 
 	// Grab x and y arrays from data A
-	const Array<double>& aX = A.constX();
-	const Array<double>& aY = A.constY();
+	const Array<double>& aX = A.constXAxis();
+	const Array<double>& aY = A.constValues();
 
 	double sum = 0.0;
 	double firstX = 0.0, lastX = 0.0, x, y;
@@ -87,10 +87,10 @@ double Error::mape(const Data1D& A, const Data1D& B, bool quiet)
 		x = aX.constAt(n);
 
 		// Is our x value lower than the lowest x value of the reference data?
-		if (x < B.constX().firstValue()) continue;
+		if (x < B.xAxisMin()) continue;
 
 		// Is our x value higher than the last x value of the reference data?
-		if (x > B.constX().lastValue()) break;
+		if (x > B.xAxisMax()) break;
 
 		// Is this the first point considered?
 		if (nPointsConsidered == 0) firstX = x;
@@ -119,8 +119,8 @@ double Error::maape(const Data1D& A, const Data1D& B, bool quiet)
 	Interpolator interpolatedB(B);
 
 	// Grab x and y arrays from data A
-	const Array<double>& aX = A.constX();
-	const Array<double>& aY = A.constY();
+	const Array<double>& aX = A.constXAxis();
+	const Array<double>& aY = A.constValues();
 
 	double sum = 0.0;
 	double firstX = 0.0, lastX = 0.0, x, y;
@@ -131,10 +131,10 @@ double Error::maape(const Data1D& A, const Data1D& B, bool quiet)
 		x = aX.constAt(n);
 
 		// Is our x value lower than the lowest x value of the reference data?
-		if (x < B.constX().firstValue()) continue;
+		if (x < B.xAxisMin()) continue;
 
 		// Is our x value higher than the last x value of the reference data?
-		if (x > B.constX().lastValue()) break;
+		if (x > B.xAxisMax()) break;
 
 		// Is this the first point considered?
 		if (nPointsConsidered == 0) firstX = x;
@@ -164,8 +164,8 @@ double Error::percent(const Data1D& A, const Data1D& B, bool quiet)
 	Interpolator interpolatedB(B);
 
 	// Grab x and y arrays from data A
-	const Array<double>& aX = A.constX();
-	const Array<double>& aY = A.constY();
+	const Array<double>& aX = A.constXAxis();
+	const Array<double>& aY = A.constValues();
 
 	// Calculate summed absolute error and absolute y value deviations from average
 	double sume = 0.0, sumy = 0.0;
@@ -177,10 +177,10 @@ double Error::percent(const Data1D& A, const Data1D& B, bool quiet)
 		x = aX.constAt(n);
 
 		// Is our x value lower than the lowest x value of the reference data?
-		if (x < B.constX().firstValue()) continue;
+		if (x < B.xAxisMin()) continue;
 
 		// Is our x value higher than the last x value of the reference data?
-		if (x > B.constX().lastValue()) break;
+		if (x > B.xAxisMax()) break;
 
 		// Is this the first point considered?
 		if (firstPoint == -1) firstPoint = n;

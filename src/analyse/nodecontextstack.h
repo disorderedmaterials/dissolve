@@ -30,6 +30,8 @@
 class AnalysisSelectNode;
 class AnalysisCalculateNode;
 class AnalysisCollect1DNode;
+class AnalysisCollect2DNode;
+class AnalysisCollect3DNode;
 
 // Node Context Stack
 class NodeContextStack
@@ -55,6 +57,10 @@ class NodeContextStack
 	RefList<AnalysisSelectNode,bool> selectNodes_;
 	// References for all Collect1DNodes added
 	RefList<AnalysisCollect1DNode,bool> collect1DNodes_;
+	// References for all Collect2DNodes added
+	RefList<AnalysisCollect2DNode,bool> collect2DNodes_;
+	// References for all Collect3DNodes added
+	RefList<AnalysisCollect3DNode,bool> collect3DNodes_;
 
 	public:
 	// Clear all layers from stack
@@ -69,6 +75,10 @@ class NodeContextStack
 	bool add(AnalysisCalculateNode* calculateNode);
 	// Add reference to one-dimensional collect node
 	void add(AnalysisCollect1DNode* collect1DNode);
+	// Add reference to two-dimensional collect node
+	void add(AnalysisCollect2DNode* collect2DNode);
+	// Add reference to three-dimensional collect node
+	void add(AnalysisCollect3DNode* collect3DNode);
 
 
 	/*
@@ -83,6 +93,10 @@ class NodeContextStack
 	AnalysisCalculateNode* calculateNodeInScope(const char* name) const;
 	// Return named Collect1D node (if it exists)
 	AnalysisCollect1DNode* collect1DNode(const char* name) const;
+	// Return named Collect2D node (if it exists)
+	AnalysisCollect2DNode* collect2DNode(const char* name) const;
+	// Return named Collect3D node (if it exists)
+	AnalysisCollect3DNode* collect3DNode(const char* name) const;
 	// Return named Select node (if it exists)
 	AnalysisSelectNode* selectNode(const char* name) const;
 };

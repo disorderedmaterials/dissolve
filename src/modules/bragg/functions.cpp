@@ -366,7 +366,7 @@ bool BraggModule::calculateUnweightedBraggSQ(ProcessPool& procPool, Configuratio
 
 			// Normalise to atomic fractions
 			factor = atomTypes[typeI]->fraction() * atomTypes[typeJ]->fraction() * (typeI == typeJ ? 1.0 : 2.0);
-			braggSQ.y() *= factor;
+			braggSQ.values() *= factor;
 		}
 	}
 

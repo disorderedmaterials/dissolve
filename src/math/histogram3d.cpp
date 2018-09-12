@@ -86,15 +86,28 @@ void Histogram1D::initialise(double xMin, double xMax, double binWidth)
 {
 	clear();
 
-	// Store axis limits and binWidth, and then clamp as necessary
+	// Store xMin and binWidth
 	minimum_ = xMin;
-	maximum_ = xMax;
 	binWidth_ = binWidth;
-	setUpAxis(minimum_, maximum_, binWidth_, nBins_, binCentres_);
+
+	// Clamp maximum_ to nearest bin boundary (not less than the supplied xMax)
+	double range = xMax - minimum_;
+	nBins_ = range / binWidth_;
+	if ((minimum_ + nBins_*binWidth_) < xMax)
+	{
+		++nBins_;
+		maximum_ = minimum_ + nBins_*binWidth_;
+	}
+	else maximum_ = xMax;
 
 	// Create the arrays
+	binCentres_.initialise(nBins_);
 	bins_.initialise(nBins_);
 	averages_.initialise(nBins_);
+
+	// Create centre-bin array
+	double xCentre = xMin + binWidth_*0.5;
+	for (int n=0; n<nBins_; ++n, xCentre += binWidth_) binCentres_[n] = xCentre;
 }
 
 // Zero histogram bins
@@ -103,25 +116,6 @@ void Histogram1D::zeroBins()
 	bins_ = 0;
 	nBinned_ = 0;
 	nMissed_ = 0;
-}
-
-// Set up supplied axis
-void Histogram1D::setUpAxis(double axisMin, double& axisMax, double binWidth, int& nBins, Array<double>& binCentres)
-{
-	// Min, max, and bin width should be set to requested values initially
-	// We will clamp the maximum to the nearest bin boundary (not less than the supplied axisMax)
-	double range = axisMax - axisMin;
-	nBins = range / binWidth;
-	if ((axisMin + nBins*binWidth) < axisMax)
-	{
-		++nBins;
-		axisMax = axisMin + nBins*binWidth;
-	}
-
-	// Create centre-bin array
-	binCentres.initialise(nBins);
-	double centre = axisMin + binWidth*0.5;
-	for (int n=0; n<nBins; ++n, centre += binWidth) binCentres[n] = centre;
 }
 
 // Return minimum value for data (hard left-edge of first bin)

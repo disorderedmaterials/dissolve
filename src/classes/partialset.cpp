@@ -140,13 +140,13 @@ void PartialSet::reset()
 			boundHistograms_.at(n,m).zeroBins();
 			unboundHistograms_.at(n,m).zeroBins();
 
-			partials_.at(n,m).y() = 0.0;
-			boundPartials_.at(n,m).y() = 0.0;
-			unboundPartials_.at(n,m).y() = 0.0;
-			braggPartials_.at(n,m).y() = 0.0;
+			partials_.at(n,m).values() = 0.0;
+			boundPartials_.at(n,m).values() = 0.0;
+			unboundPartials_.at(n,m).values() = 0.0;
+			braggPartials_.at(n,m).values() = 0.0;
 		}
 	}
-	total_.y() = 0.0;
+	total_.values() = 0.0;
 
 	fingerprint_.clear();
 }
@@ -253,7 +253,7 @@ void PartialSet::formTotal(bool applyConcentrationWeights)
 
 	// Copy x and y arrays from one of the partials, and zero the latter
 	total_.initialise(partials_.at(0,0));
-	total_.y() = 0.0;
+	total_.values() = 0.0;
 
 	int typeI, typeJ;
 	for (typeI=0; typeI<nTypes; ++typeI)
@@ -270,7 +270,7 @@ void PartialSet::formTotal(bool applyConcentrationWeights)
 			}
 
 			// Add contribution from partial (bound + unbound)
-			total_.y() += partials_.at(typeI,typeJ).y() * factor;
+			total_.values() += partials_.at(typeI,typeJ).values() * factor;
 			// TODO Does not include contributions from Bragg partials
 		}
 	}
@@ -314,7 +314,7 @@ Data1D PartialSet::boundTotal(bool applyConcentrationWeights) const
 			}
 
 			// Add contribution
-			bound.y() += boundPartials_.constAt(typeI,typeJ).y() * factor;
+			bound.values() += boundPartials_.constAt(typeI,typeJ).values() * factor;
 		}
 	}
 
@@ -347,7 +347,7 @@ Data1D PartialSet::unboundTotal(bool applyConcentrationWeights) const
 			}
 
 			// Add contribution
-			unbound.y() += unboundPartials_.constAt(typeI,typeJ).y() * factor;
+			unbound.values() += unboundPartials_.constAt(typeI,typeJ).values() * factor;
 		}
 	}
 
@@ -381,7 +381,7 @@ bool PartialSet::save()
 			Data1D& unbound = unboundPartials_.at(typeI,typeJ);
 			Data1D& bragg = braggPartials_.at(typeI,typeJ);
 			parser.writeLineF("# %-14s  %-16s  %-16s  %-16s  %-16s\n", abscissaUnits_.get(), "Full", "Bound", "Unbound", "Bragg"); 
-			for (n=0; n<full.nDataPoints(); ++n) parser.writeLineF("%16.9e  %16.9e  %16.9e  %16.9e  %16.9e\n", full.constX(n), full.constY(n), bound.constY(n), unbound.constY(n), n < bragg.nDataPoints() ? bragg.constY(n) : 0.0);
+			for (n=0; n<full.nDataPoints(); ++n) parser.writeLineF("%16.9e  %16.9e  %16.9e  %16.9e  %16.9e\n", full.constXAxis(n), full.constValue(n), bound.constValue(n), unbound.constValue(n), n < bragg.nDataPoints() ? bragg.constValue(n) : 0.0);
 			parser.closeFiles();
 		}
 	}
@@ -465,13 +465,13 @@ void PartialSet::adjust(double delta)
 		at2 = at1;
 		for (m=n; m<nTypes; ++m, at2 = at2->next)
 		{
-			partials_.at(n, m).y() += delta;
-			boundPartials_.at(n, m).y() += delta;
-			unboundPartials_.at(n, m).y() += delta;
+			partials_.at(n, m).values() += delta;
+			boundPartials_.at(n, m).values() += delta;
+			unboundPartials_.at(n, m).values() += delta;
 		}
 	}
 
-	total_.y() += delta;
+	total_.values() += delta;
 }
 
 // Form partials from stored Histogram data
@@ -545,13 +545,13 @@ void PartialSet::reweightPartials(double factor)
 		at2 = at1;
 		for (m=n; m<nTypes; ++m, at2 = at2->next)
 		{
-			partials_.at(n, m).y() *= factor;
-			boundPartials_.at(n, m).y() *= factor;
-			unboundPartials_.at(n, m).y() *= factor;
+			partials_.at(n, m).values() *= factor;
+			boundPartials_.at(n, m).values() *= factor;
+			unboundPartials_.at(n, m).values() *= factor;
 		}
 	}
 
-	total_.y() *= factor;
+	total_.values() *= factor;
 }
 
 // Calculate and return RDF from supplied Histogram and normalisation data

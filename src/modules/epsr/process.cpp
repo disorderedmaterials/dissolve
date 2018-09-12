@@ -230,15 +230,15 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Create the difference partial
 		deltaFQ.clear();
-		const Array<double> x1 = referenceData.constX();
-		const Array<double> y1 = referenceData.constY();
+		const Array<double> x1 = referenceData.constXAxis();
+		const Array<double> y1 = referenceData.constValues();
 		Data1D simulatedFQ = weightedSQ.constTotal();
 		Interpolator interpolatedSimFQ(simulatedFQ);
 
 		// Determine allowable range for fit, based on requested values and limits of generated / simulated datasets.
 		double deltaSQMin = qMin, deltaSQMax = (qMax < 0.0 ? x1.lastValue() : qMax);
-		if ((deltaSQMin < x1.firstValue()) || (deltaSQMin < simulatedFQ.constX().firstValue())) deltaSQMin = max(x1.firstValue(), simulatedFQ.constX().firstValue());
-		if ((deltaSQMax > x1.lastValue()) || (deltaSQMax > simulatedFQ.constX().lastValue())) deltaSQMax = min(x1.lastValue(), simulatedFQ.constX().lastValue());
+		if ((deltaSQMin < x1.firstValue()) || (deltaSQMin < simulatedFQ.xAxisMin())) deltaSQMin = max(x1.firstValue(), simulatedFQ.xAxisMin());
+		if ((deltaSQMax > x1.lastValue()) || (deltaSQMax > simulatedFQ.xAxisMax())) deltaSQMax = min(x1.lastValue(), simulatedFQ.xAxisMax());
 
 		double x;
 		for (int n=0; n<x1.nItems(); ++n)
@@ -517,7 +517,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				// Copy experimental S(Q) and FT it
 				expGR = generatedSQ.at(i,j);
 				Fourier::sineFT(expGR, 1.0 / (2 * PI * PI * combinedRho.at(i,j)), 0.0, 0.05, 30.0, WindowFunction(WindowFunction::Lorch0Window));
-				expGR.y() += 1.0;
+				expGR.values() += 1.0;
 			}
 		}
 

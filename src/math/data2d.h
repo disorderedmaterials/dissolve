@@ -1,6 +1,6 @@
 /*
-	*** 1-Dimensional Data
-	*** src/math/data1d.h
+	*** 2-Dimensional Data
+	*** src/math/data2d.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,26 +19,26 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DATA1D_H
-#define DISSOLVE_DATA1D_H
+#ifndef DISSOLVE_DATA2D_H
+#define DISSOLVE_DATA2D_H
 
 #include "math/plottable.h"
-#include "templates/array.h"
+#include "templates/array2d.h"
 #include "templates/objectstore.h"
 
 // Forward Declarations
-class Histogram1D;
+class Histogram2D;
 
 // One-Dimensional Data
-class Data1D : public Plottable, public ListItem<Data1D>, public ObjectStore<Data1D>, public GenericItemBase
+class Data2D : public Plottable, public ListItem<Data2D>, public ObjectStore<Data2D>, public GenericItemBase
 {
 	public:
 	// Constructor
-	Data1D();
+	Data2D();
 	// Destructor
-	~Data1D();
+	~Data2D();
 	// Copy Constructor
-	Data1D(const Data1D& source);
+	Data2D(const Data2D& source);
 	// Clear data
 	void clear();
 	
@@ -47,30 +47,28 @@ class Data1D : public Plottable, public ListItem<Data1D>, public ObjectStore<Dat
 	 * Data
 	 */
 	private:
-	// X array
+	// X axis array
 	Array<double> x_;
-	// Values at each x
-	Array<double> values_;
+	// Y axis array
+	Array<double> y_;
+	// Values at each xy
+	Array2D<double> values_;
 	// Whether data has associated errors
 	bool hasError_;
 	// Errors of values, if present
-	Array<double> errors_;
+	Array2D<double> errors_;
 
 	public:
 	// Initialise arrays to specified size
-	void initialise(int size, bool withError = false);
-	// Initialise to be consistent in size and x axis with supplied object
-	void initialise(const Data1D& source);
+	void initialise(int xSize, int ySize, bool withError = false);
+	// Initialise to be consistent in size and axes with supplied object
+	void initialise(const Data2D& source);
 	// Copy arrays from supplied object
-	void copyArrays(const Data1D& source);
+	void copyArrays(const Data2D& source);
 	// Zero values array
 	void zero();
 	// Accumulate specified histogram data
-	void accumulate(const Histogram1D& source);
-	// Add new data point
-	void addPoint(double x, double value);
-	// Add new data point with error
-	void addPoint(double x, double value, double error);
+	void accumulate(const Histogram2D& source);
 	// Return x axis value specified
 	double& xAxis(int index);
 	// Return x axis value specified (const)
@@ -79,24 +77,32 @@ class Data1D : public Plottable, public ListItem<Data1D>, public ObjectStore<Dat
 	Array<double>& xAxis();
 	// Return x axis Array (const)
 	const Array<double>& constXAxis() const;
+	// Return y axis value specified
+	double& yAxis(int index);
+	// Return y axis value specified (const)
+	double constYAxis(int index) const;
+	// Return y axis Array
+	Array<double>& yAxis();
+	// Return y axis Array (const)
+	const Array<double>& constYAxis() const;
 	// Return value specified
-	double& value(int index);
+	double& value(int xIndex, int yIndex);
 	// Return value value specified (const)
-	double constValue(int index) const;
+	double constValue(int xIndex, int yIndex) const;
 	// Return value Array
-	Array<double>& values();
+	Array2D<double>& values();
 	// Return values Array
-	const Array<double>& constValues() const;
+	const Array2D<double>& constValues2D() const;
 	// Add / initialise errors array
 	void addErrors();
 	// Return error value specified
-	double& error(int index);
+	double& error(int xIndex, int yIndex);
 	// Return error value specified (const)
-	double constError(int index) const;
+	double constError(int xIndex, int yIndex) const;
 	// Return error Array
-	Array<double>& errors();
+	Array2D<double>& errors();
 	// Return errors Array
-	const Array<double>& constErrors() const;
+	const Array2D<double>& constErrors2D() const;
 
 
 	/*
@@ -104,13 +110,13 @@ class Data1D : public Plottable, public ListItem<Data1D>, public ObjectStore<Dat
 	 */
 	public:
 	// Assignment Operator
-	void operator=(const Data1D& source);
+	void operator=(const Data2D& source);
 	// Operator +=
-	void operator+=(const Data1D& source);
+	void operator+=(const Data2D& source);
 	// Operator +=
 	void operator+=(const double delta);
 	// Operator -=
-	void operator-=(const Data1D& source);
+	void operator-=(const Data2D& source);
 	// Operator -=
 	void operator-=(const double delta);
 	// Operator *=
@@ -143,6 +149,12 @@ class Data1D : public Plottable, public ListItem<Data1D>, public ObjectStore<Dat
 	double xAxisMin() const;
 	// Return maximum (last) x axis point
 	double xAxisMax() const;
+	// Return number of points along y axis
+	int nYAxisPoints() const;
+	// Return minimum (first) y axis point
+	double yAxisMin() const;
+	// Return maximum (last) y axis point
+	double yAxisMax() const;
 	// Return number of datapoints present in whole dataset
 	int nDataPoints() const;
 	// Return minimum value over all data points

@@ -166,12 +166,12 @@ bool AnalysisNormalise1DNode::finalise(ProcessPool& procPool, Configuration* cfg
 	if (normaliseBySphericalShellVolume_)
 	{
 		double halfBinWidth = collectNode_->binWidth() * 0.5;
-		double r1Cubed = pow(normalisedData.x(0)-halfBinWidth,3), r2Cubed;
+		double r1Cubed = pow(normalisedData.xAxis(0)-halfBinWidth,3), r2Cubed;
 		for (int n = 0; n < normalisedData.nDataPoints(); ++n)
 		{
-			r2Cubed = pow(normalisedData.x(n)+halfBinWidth,3);
-			normalisedData.y(n) /= (4.0/3.0) * PI * (r2Cubed - r1Cubed);
-			normalisedData.yError(n) /= (4.0/3.0) * PI * (r2Cubed - r1Cubed);
+			r2Cubed = pow(normalisedData.xAxis(n)+halfBinWidth,3);
+			normalisedData.value(n) /= (4.0/3.0) * PI * (r2Cubed - r1Cubed);
+			normalisedData.error(n) /= (4.0/3.0) * PI * (r2Cubed - r1Cubed);
 			r1Cubed = r2Cubed;
 		}
 	}

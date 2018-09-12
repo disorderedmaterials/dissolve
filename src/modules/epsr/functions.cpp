@@ -179,11 +179,11 @@ void EPSRModule::truncate(Data1D& data, double rMin, double rMax)
 {
 	// Replicates the EPSR25 truncate(xx,rminpt,rmaxpt) function applied over a whole dataset.
 	double x;
-	Array<double>& y = data.y();
+	Array<double>& y = data.values();
 	const double decay = rMax - rMin;
 	for (int n=0; n<data.nDataPoints(); ++n)
 	{
-		x = data.x(n);
+		x = data.xAxis(n);
 
 		if (x >= rMax) y[n] = 0.0;
 // 		else if (x <= rMin) y[n] = y[n];

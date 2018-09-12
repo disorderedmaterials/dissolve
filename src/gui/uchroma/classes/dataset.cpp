@@ -146,7 +146,7 @@ bool DataSet::refreshData(QDir sourceDir)
 	{
 		// Clear any existing data
 		data_.x().clear();
-		data_.y().clear();
+		data_.values().clear();
 
 		// Check file exists
 		if (!QFile::exists(sourceDir.absoluteFilePath(sourceFileName_.get())))
@@ -167,7 +167,7 @@ bool DataSet::refreshData(QDir sourceDir)
 		{
 			Messenger::printVerbose("Couldn't locate data '%s' for display.\n", sourceData1D_.get());
 			data_.x().clear();
-			data_.y().clear();
+			data_.values().clear();
 
 			notifyParent();
 
@@ -211,7 +211,7 @@ const Array<double>& DataSet::x() const
 // Return Y array from data
 const Array<double>& DataSet::y() const
 {
-	return data_.constY();
+	return data_.constValues();
 }
 
 // Return z value from data
@@ -224,12 +224,12 @@ double& DataSet::z()
 void DataSet::transform(Transformer& xTransformer, Transformer& yTransformer, Transformer& zTransformer)
 {
 	// X
-	if (xTransformer.enabled()) transformedData_.x() = xTransformer.transformArray(data_.x(), data_.y(), z_, 0);
+	if (xTransformer.enabled()) transformedData_.x() = xTransformer.transformArray(data_.x(), data_.values(), z_, 0);
 	else transformedData_.x() = data_.x();
 
 	// Y
-	if (yTransformer.enabled()) transformedData_.y() = yTransformer.transformArray(data_.x(), data_.y(), z_, 1);
-	else transformedData_.y() = data_.y();
+	if (yTransformer.enabled()) transformedData_.values() = yTransformer.transformArray(data_.x(), data_.values(), z_, 1);
+	else transformedData_.values() = data_.values();
 
 	// Z
 	if (zTransformer.enabled()) transformedZ_ = zTransformer.transform(0.0, 0.0, z_);
@@ -279,7 +279,7 @@ void DataSet::addPoint(double x, double y)
 // Set x value
 void DataSet::setX(int index, double newX)
 {
-	data_.x(index) = newX;
+	data_.xAxis(index) = newX;
 
 	notifyParent();
 }
@@ -287,7 +287,7 @@ void DataSet::setX(int index, double newX)
 // Set y value
 void DataSet::setY(int index, double newY)
 {
-	data_.y(index) = newY;
+	data_.value(index) = newY;
 
 	notifyParent();
 }
@@ -304,7 +304,7 @@ void DataSet::setZ(double z)
 void DataSet::addConstantValue(int axis, double value)
 {
 	if (axis == 0) data_.x() += value;
-	else if (axis == 1) data_.y() += value;
+	else if (axis == 1) data_.values() += value;
 	else if (axis == 2) z_ += value;
 
 	notifyParent();
@@ -320,7 +320,7 @@ double DataSet::averageY(double xMin, double xMax) const
 		if (data_.constX(n) < xMin) continue;
 		else if (data_.constX(n) > xMax) break;
 		++nAdded;
-		result += data_.constY(n);
+		result += data_.constValue(n);
 	}
 	return (nAdded == 0 ? 0.0 : result / nAdded);
 }

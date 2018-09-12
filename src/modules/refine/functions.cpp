@@ -62,7 +62,7 @@ Data1D RefineModule::calculateCR(const Data1D& sq, double normFactor, double rMi
 	Data1D cr;
 
 	// Assume deltQ is the difference between the first two points
-	double deltaQ = sq.constX(1) - sq.constX(0);
+	double deltaQ = sq.constXAxis(1) - sq.constXAxis(0);
 
 	// Set up window function
 	windowFunction.setUp(sq);
@@ -81,12 +81,12 @@ Data1D RefineModule::calculateCR(const Data1D& sq, double normFactor, double rMi
 		for (int m=0; m<nQ; ++m)
 		{
 			// Get window value at this point in the function
-			window = windowFunction.y(sq.constX(m), omega);
+			window = windowFunction.y(sq.constXAxis(m), omega);
 
 			// Calculate broadening
-			broaden = (unbroaden ? 1.0 / broadening.yFT(sq.constX(m), omega) : broadening.yFT(sq.constX(m), omega));
+			broaden = (unbroaden ? 1.0 / broadening.yFT(sq.constXAxis(m), omega) : broadening.yFT(sq.constXAxis(m), omega));
 
-			ft += broaden * window * sq.constY(m) * deltaQ * ((sin(sq.constX(m)*omega) * sq.constX(m)) / (sq.constY(m)+1.0));
+			ft += broaden * window * sq.constValue(m) * deltaQ * ((sin(sq.constXAxis(m)*omega) * sq.constXAxis(m)) / (sq.constValue(m)+1.0));
 		}
 
 		// Normalise
@@ -97,7 +97,7 @@ Data1D RefineModule::calculateCR(const Data1D& sq, double normFactor, double rMi
 	}
 
 	// Apply normalisation factor
-	cr.y() *= normFactor;
+	cr.values() *= normFactor;
 
 	return cr;
 }
@@ -147,7 +147,7 @@ bool RefineModule::modifyBondTerms(Dissolve& dissolve, const Data1D& deltaGR, At
 
 	// Set up the deltaBond data
 	deltaBond = deltaGR;
-	deltaBond.y() = 0.0;
+	deltaBond.values() = 0.0;
 
 	// Loop over reference list of MasterIntra
 	RefListIterator<MasterIntra,double> bondIterator(masterBonds);
@@ -286,12 +286,12 @@ double RefineModule::costFunction3Exp(const Array<double>& alpha)
 	while (x <= xMax)
 	{
 		// Check x against limits of function
-		if (x < fitData_.constX().firstValue())
+		if (x < fitData_.xAxisMin())
 		{
 			x += windowDelta;
 			continue;
 		}
-		else if (x > fitData_.constX().lastValue()) break;
+		else if (x > fitData_.xAxisMax()) break;
 
 		// Evaluate the function
 		func = fitEquation(x, alpha.constAt(0), alpha.constAt(1), alpha.constAt(2), alpha.constAt(3), alpha.constAt(4), alpha.constAt(5));
@@ -334,12 +334,12 @@ double RefineModule::costFunction2Exp(const Array<double>& alpha)
 	while (x <= xMax)
 	{
 		// Check x against limits of function
-		if (x < fitData_.constX().firstValue())
+		if (x < fitData_.xAxisMin())
 		{
 			x += windowDelta;
 			continue;
 		}
-		else if (x > fitData_.constX().lastValue()) break;
+		else if (x > fitData_.xAxisMax()) break;
 
 		// Evaluate the function
 		func = fitEquation(x, alpha.constAt(0), alpha.constAt(1), alpha.constAt(2), alpha.constAt(3), 0.0, alpha.constAt(4));
@@ -360,7 +360,7 @@ double RefineModule::costFunction2Exp(const Array<double>& alpha)
 // Sum fitting equation with the specified parameters into the specified Data1D
 void RefineModule::sumFitEquation(Data1D& target, double xCentre, double delta, double width, double AL, double AC, double AR)
 {
-	for (int n=0; n<target.nDataPoints(); ++n) target.y(n) += fitEquation(target.x(n), xCentre, delta, width, AL, AC, AR);
+	for (int n=0; n<target.nDataPoints(); ++n) target.value(n) += fitEquation(target.xAxis(n), xCentre, delta, width, AL, AC, AR);
 }
 
 // Return list of target Modules / data for fitting process

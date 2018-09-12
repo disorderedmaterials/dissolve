@@ -503,20 +503,20 @@ void PairPotential::calculateDUFull()
 		if ((n == 1) || (n == (nPoints_-2)))
 		{
 			// Three-point 
-			dUFull_.y(n) = -(uFull_.constY(n-1) - uFull_.constY(n+1)) / (2*delta_);
+			dUFull_.value(n) = -(uFull_.constValue(n-1) - uFull_.constValue(n+1)) / (2*delta_);
 		}
 		else
 		{
 			// Five-point stencil
-			fprime = -uFull_.constY(n+2) + 8*uFull_.constY(n+1) - 8*uFull_.constY(n-1) + uFull_.constY(n-2);
+			fprime = -uFull_.constValue(n+2) + 8*uFull_.constValue(n+1) - 8*uFull_.constValue(n-1) + uFull_.constValue(n-2);
 			fprime /= 12*delta_;
-			dUFull_.y(n) = fprime; 
+			dUFull_.value(n) = fprime; 
 		}
 	}
 	
 	// Set first and last points
-	dUFull_.y(0) = 10.0*dUFull_.constY(1);
-	dUFull_.y(nPoints_-1) = dUFull_.constY(nPoints_-2);
+	dUFull_.value(0) = 10.0*dUFull_.constValue(1);
+	dUFull_.value(nPoints_-1) = dUFull_.constValue(nPoints_-2);
 
 	// Update interpolation
 	dUFullInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
@@ -551,7 +551,7 @@ bool PairPotential::setUp(double maxR, double delta, bool includeCoulomb)
 
 	// Set additional potential to zero and update full potential
 	uAdditional_ = uOriginal_;
-	uAdditional_.y() = 0.0;
+	uAdditional_.values() = 0.0;
 	calculateUFull();
 
 	// Generate derivative data
@@ -575,20 +575,20 @@ void PairPotential::calculateUOriginal(bool recalculateUFull)
 	for (int n=1; n<nPoints_; ++n)
 	{
 		r = n*delta_;
-		uOriginal_.x(n) = r;
+		uOriginal_.xAxis(n) = r;
 
 		// Construct potential
-		uOriginal_.y(n) = 0.0;
+		uOriginal_.value(n) = 0.0;
 
 		// Short-range potential contribution
-		uOriginal_.y(n) += analyticShortRangeEnergy(r, shortRangeType_);
+		uOriginal_.value(n) += analyticShortRangeEnergy(r, shortRangeType_);
 		
 		// -- Add Coulomb contribution
-		if (includeCoulomb_) uOriginal_.y(n) += analyticCoulombEnergy(chargeI_*chargeJ_, r);
+		if (includeCoulomb_) uOriginal_.value(n) += analyticCoulombEnergy(chargeI_*chargeJ_, r);
 	}
 
 	// Since the first point (at zero) risks being a nan, set it to ten times the second point instead
-	uOriginal_.y(0) = 10.0*uOriginal_.constY(1);
+	uOriginal_.value(0) = 10.0*uOriginal_.constValue(1);
 
 	// Update full potential (if not the first generation of the potential)
 	if (recalculateUFull) calculateUFull();
@@ -701,7 +701,7 @@ Data1D& PairPotential::uAdditional()
 // Zero additional potential
 void PairPotential::resetUAdditional()
 {
-	uAdditional_.y() = 0.0;
+	uAdditional_.values() = 0.0;
 
 	calculateUFull();
 	calculateDUFull();
@@ -747,7 +747,7 @@ bool PairPotential::save(const char* filename)
 	parser.writeLineF("#%9s  %12s  %12s  %12s  %12s  %12s  %12s\n", "", "Full", "Derivative", "Original", "Additional", "Exact(Orig)", "Exact(Deriv)");
 	parser.writeLineF("#%9s  %12s  %12s  %12s  %12s  %12s  %12s  %12s  %12s\n", "r(Angs)", "U(kJ/mol)", "dU(kJ/mol/Ang)", "U(kJ/mol)", "U(kJ/mol)", "U(kJ/mol)", "dU(kJ/mol/Ang)", "rFine(Angs)", "Derivative");
 	double fineDelta = delta_*0.05;
-	for (int n = 0; n<nPoints_; ++n) parser.writeLineF("%10.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e\n", uOriginal_.constX(n), uFull_.constY(n), dUFull_.constY(n), uOriginal_.constY(n), uAdditional_.constY(n), analyticEnergy(uOriginal_.constX(n)), analyticForce(uOriginal_.constX(n)), fineDelta*n, dUFull_.constX(fineDelta*n));
+	for (int n = 0; n<nPoints_; ++n) parser.writeLineF("%10.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e\n", uOriginal_.constXAxis(n), uFull_.constValue(n), dUFull_.constValue(n), uOriginal_.constValue(n), uAdditional_.constValue(n), analyticEnergy(uOriginal_.constXAxis(n)), analyticForce(uOriginal_.constXAxis(n)), fineDelta*n, dUFull_.constXAxis(fineDelta*n));
 
 	parser.closeFiles();
 

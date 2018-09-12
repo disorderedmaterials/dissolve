@@ -1,6 +1,6 @@
 /*
-	*** 1-Dimensional Histogram
-	*** src/math/histogram1d.h
+	*** 2-Dimensional Histogram
+	*** src/math/histogram2d.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,28 +19,28 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_HISTOGRAM1D_H
-#define DISSOLVE_HISTOGRAM1D_H
+#ifndef DISSOLVE_HISTOGRAM2D_H
+#define DISSOLVE_HISTOGRAM2D_H
 
-#include "math/data1d.h"
+#include "math/data2d.h"
 #include "math/sampleddouble.h"
 #include "base/genericitembase.h"
-#include "templates/array.h"
+#include "templates/array2d.h"
 #include "templates/objectstore.h"
 
 // Forward Declarations
 class ProcessPool;
 
 // One-Dimensional Histogram
-class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D>, public GenericItemBase
+class Histogram2D : public ListItem<Histogram2D>, public ObjectStore<Histogram2D>, public GenericItemBase
 {
 	public:
 	// Constructor
-	Histogram1D();
+	Histogram2D();
 	// Destructor
-	~Histogram1D();
+	~Histogram2D();
 	// Copy Constructor
-	Histogram1D(const Histogram1D& source);
+	Histogram2D(const Histogram2D& source);
 	// Clear data
 	void clear();
 	
@@ -49,26 +49,36 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
 	 * Histogram Data
 	 */
 	private:
-	// Minimum value for data (hard left-edge of first bin)
-	double minimum_;
-	// Maximum value for data (hard right-edge of last bin, adjusted to match bin width if necessary)
-	double maximum_;
-	// Bin width
-	double binWidth_;
-	// Number of bins
-	int nBins_;
+	// Minimum value for x data (hard left-edge of first bin)
+	double xMinimum_;
+	// Maximum value for x data (hard right-edge of last bin, adjusted to match bin width if necessary)
+	double xMaximum_;
+	// Bin width for x axis
+	double xBinWidth_;
+	// Number of bins along x
+	int nXBins_;
+	// Minimum value for y data (hard left-edge of first bin)
+	double yMinimum_;
+	// Maximum value for y data (hard right-edge of last bin, adjusted to match bin width if necessary)
+	double yMaximum_;
+	// Bin width for y axis
+	double yBinWidth_;
+	// Number of bins along y
+	int nYBins_;
 	// Histogram bins
-	Array<long int> bins_;
-	// Array of bin centres
-	Array<double> binCentres_;
+	Array2D<long int> bins_;
+	// Array of x bin centres
+	Array<double> xBinCentres_;
+	// Array of y bin centres
+	Array<double> yBinCentres_;
 	// Accumulated averages
-	Array<SampledDouble> averages_;
+	Array2D<SampledDouble> averages_;
 	// Number of values binned over all bins
 	long int nBinned_;
 	// Number of points missed (out of bin range)
 	long int nMissed_;
 	// Accumulated data
-	Data1D accumulatedData_;
+	Data2D accumulatedData_;
 
 	private:
 	// Update accumulated data
@@ -76,31 +86,39 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
 
 	public:
 	// Initialise with specified bin range
-	void initialise(double minimum, double maximum, double binWidth);
+	void initialise(double xMinimum, double xMaximum, double xBinWidth, double yMinimum, double yMaximum, double yBinWidth);
 	// Zero histogram bins
 	void zeroBins();
-	// Set up supplied axis
-	static void setUpAxis(double axisMin, double& axisMax, double binWidth, int& nBins, Array<double>& binCentres);
-	// Return minimum value for data (hard left-edge of first bin)
-	double minimum() const;
-	// Return maximum value for data (hard right-edge of last bin, adjusted to match bin width if necessary)
-	double maximum() const;
+	// Return minimum value for x data (hard left-edge of first bin)
+	double xMinimum() const;
+	// Return maximum value for x data (hard right-edge of last bin, adjusted to match bin width if necessary)
+	double xMaximum() const;
 	// Return bin width
-	double binWidth() const;
+	double xBinWidth() const;
 	// Return number of bins
-	int nBins() const;
+	int nXBins() const;
+	// Return minimum value for y data (hard left-edge of first bin)
+	double yMinimum() const;
+	// Return maximum value for y data (hard right-edge of last bin, adjusted to match bin width if necessary)
+	double yMaximum() const;
+	// Return bin width
+	double yBinWidth() const;
+	// Return number of bins
+	int nYBins() const;
 	// Bin specified value
-	void bin(double x);
+	void bin(double x, double y);
 	// Accumulate current histogram bins into averages
 	void accumulate();
 	// Return Array of x centre-bin values
-	const Array<double>& binCentres() const;
+	const Array<double>& xBinCentres() const;
+	// Return Array of y centre-bin values
+	const Array<double>& yBinCentres() const;
 	// Return histogram data
-	Array<long int>& bins();
+	Array2D<long int>& bins();
 	// Add source histogram data into local array
-	void add(Histogram1D& other, int factor = 1);
+	void add(Histogram2D& other, int factor = 1);
 	// Return accumulated (averaged) data
-	const Data1D& accumulatedData() const;
+	const Data2D& accumulatedData() const;
 
 
 	/*
@@ -108,7 +126,7 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
 	 */
 	public:
 	// Assignment Operator
-	void operator=(const Histogram1D& source);
+	void operator=(const Histogram2D& source);
 
 
 	/*

@@ -34,8 +34,8 @@ double Integrator::trapezoid(const Data1D& data)
 	if (data.nDataPoints() < 2) return 0.0;
 
 	// Grab data arrays
-	const Array<double>& x = data.constX();
-	const Array<double>& y = data.constY();
+	const Array<double>& x = data.constXAxis();
+	const Array<double>& y = data.constValues();
 
 	double total = 0.0, y0 = y.firstValue(), y1, x0 = x.firstValue(), x1;
 	for (int n=1; n<x.nItems(); ++n)
@@ -56,8 +56,8 @@ double Integrator::absTrapezoid(const Data1D& data)
 	if (data.nDataPoints() < 2) return 0.0;
 
 	// Grab data arrays
-	const Array<double>& x = data.constX();
-	const Array<double>& y = data.constY();
+	const Array<double>& x = data.constXAxis();
+	const Array<double>& y = data.constValues();
 
 	double total = 0.0, y0 = y.firstValue(), y1, x0 = x.firstValue(), x1;
 	for (int n=1; n<x.nItems(); ++n)
@@ -75,7 +75,7 @@ double Integrator::absTrapezoid(const Data1D& data)
 double Integrator::sumOfSquares(const Data1D& data)
 {
 	// Grab data array
-	const Array<double>& y = data.constY();
+	const Array<double>& y = data.constValues();
 
 	double total = 0.0;
 

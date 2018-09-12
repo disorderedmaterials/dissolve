@@ -2,6 +2,8 @@ add_library(math
   broadeningfunction.cpp
   cuboid.cpp
   data1d.cpp
+  data2d.cpp
+  data3d.cpp
   doubleexp.cpp
   error.cpp
   filters.cpp
@@ -9,6 +11,8 @@ add_library(math
   gaussfit.cpp
   gj.cpp
   histogram1d.cpp
+  histogram2d.cpp
+  histogram3d.cpp
   integrator.cpp
   interpolator.cpp
   mathfunc.cpp
@@ -26,6 +30,8 @@ add_library(math
   constants.h
   cuboid.h
   data1d.h
+  data2d.h
+  data3d.h
   doubleexp.h
   error.h
   filters.h
@@ -34,6 +40,8 @@ add_library(math
   gaussfit.h
   gj.h
   histogram1d.h
+  histogram2d.h
+  histogram3d.h
   integrator.h
   interpolator.h
   mathfunc.h

@@ -315,7 +315,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 					// Copy the unweighted data and wight weight it according to the natural isotope / concentration factor calculated above
 					Data1D data = combinedUnweightedSQ.at(i, j);
-					data.y() *= factor;
+					data.values() *= factor;
 					data.setName(CharString("Simulated %s-%s", at1->name(), at2->name()));
 
 					// Add this partial data to the scattering matrix
@@ -361,7 +361,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				// Copy experimental S(Q) and FT it
 				expGR = generatedSQ.at(i,j);
 				Fourier::sineFT(expGR, 1.0 / (2 * PI * PI * combinedRho.at(i,j)), 0.0, 0.05, 30.0, WindowFunction(WindowFunction::Lorch0Window));
-				expGR.y() += 1.0;
+				expGR.values() += 1.0;
 			}
 		}
 
@@ -392,15 +392,15 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				dSQ.clear();
 
 				// Create the difference partial
-				const Array<double> x1 = generatedSQ.at(i, j).constX();
-				const Array<double> y1 = generatedSQ.at(i, j).constY();
+				const Array<double> x1 = generatedSQ.at(i, j).constXAxis();
+				const Array<double> y1 = generatedSQ.at(i, j).constValues();
 				Data1D& simulatedSQ = combinedUnweightedSQ.at(i,j);
 				Interpolator interpolatedSimSQ(simulatedSQ);
 
 				// Determine allowable range for fit, based on requested values and limits of generated / simulated datasets
 				double deltaSQMin = qMin, deltaSQMax = (qMax < 0.0 ? x1.lastValue() : qMax);
-				if ((deltaSQMin < x1.firstValue()) || (deltaSQMin < simulatedSQ.constX().firstValue())) deltaSQMin = max(x1.firstValue(), simulatedSQ.constX().firstValue());
-				if ((deltaSQMax > x1.lastValue()) || (deltaSQMax > simulatedSQ.constX().lastValue())) deltaSQMax = min(x1.lastValue(), simulatedSQ.constX().lastValue());
+				if ((deltaSQMin < x1.firstValue()) || (deltaSQMin < simulatedSQ.xAxisMin())) deltaSQMin = max(x1.firstValue(), simulatedSQ.xAxisMin());
+				if ((deltaSQMax > x1.lastValue()) || (deltaSQMax > simulatedSQ.xAxisMax())) deltaSQMax = min(x1.lastValue(), simulatedSQ.xAxisMax());
 
 				Data1D refSQTrimmed;
 				double x;
@@ -452,10 +452,10 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 					// Find first non-zero (above the threshold value) point in g(r)
 					int n;
-					for (n=0; n<gr.nDataPoints(); ++n) if (gr.y(n) > thresholdValue) break;
+					for (n=0; n<gr.nDataPoints(); ++n) if (gr.value(n) > thresholdValue) break;
 					if (n < gr.nDataPoints())
 					{
-						double x = gr.x(n) * rFraction;
+						double x = gr.xAxis(n) * rFraction;
 						if (x < globalMinimumRadius) minimumRadii.at(i,j) = globalMinimumRadius;
 						else if (x < globalMaximumRadius) minimumRadii.at(i,j) = x;
 						else minimumRadii.at(i,j) = globalMaximumRadius;
@@ -513,7 +513,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					Fourier::sineFT(inversion, 1.0 / (2 * PI * PI * combinedRho.at(i,j)), ppDelta, ppDelta, ppRange, windowFunction);
 
 					dPhiR = inversion;
-					dPhiR.y() *= -1.0;
+					dPhiR.values() *= -1.0;
 				}
 				else if (inversionMethod == RefineModule::DirectGaussianPotentialInversion)
 				{
@@ -540,7 +540,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					// Fourier transform the approximation, and store this as our inversion
 					inversion = gaussFit.approximation(FunctionSpace::RealSpace, 1.0 / (2 * PI * PI * combinedRho.at(i,j)), ppDelta, ppDelta, ppRange);
 					dPhiR = inversion;
-					dPhiR.y() *= -1.0;
+					dPhiR.values() *= -1.0;
 				}
 				else if (inversionMethod == RefineModule::PercusYevickPotentialInversion)
 				{
@@ -615,10 +615,10 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				double minimumRadius = minimumRadii.constAt(i,j);
 				const double truncationStart = minimumRadius - truncationWidth;
 				double r;
-				Array<double>& y = dPhiR.y();
+				Array<double>& y = dPhiR.values();
 				for (int n=0; n<dPhiR.nDataPoints(); ++n)
 				{
-					r = dPhiR.x(n);
+					r = dPhiR.xAxis(n);
 					if (r < truncationStart) y[n] = 0.0;
 					else if (r > minimumRadius) break;
 					else y[n] *= 0.5 - 0.5*cos(PI*0.5*(r-truncationStart)/(truncationWidth*0.5));
@@ -628,10 +628,10 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				if (smoothPhiR) Filters::kolmogorovZurbenkoFilter(dPhiR, phiRSmoothK, phiRSmoothM);
 
 				// Make sure we go smoothly to zero at the limit of the potential
-				for (int n=0; n<dPhiR.nDataPoints(); ++n) dPhiR.y(n) *= 1.0 - double(n)/(dPhiR.nDataPoints()-1);
+				for (int n=0; n<dPhiR.nDataPoints(); ++n) dPhiR.value(n) *= 1.0 - double(n)/(dPhiR.nDataPoints()-1);
 
 				// Apply factor to additional potential
-				dPhiR.y() *= weight;
+				dPhiR.values() *= weight;
 			}
 		}
 	}
@@ -718,7 +718,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			if (modifyPotential && (phiMax > 0.0) && (phiMag > phiMax))
 			{
 				double factor = phiMax / phiMag;
-				pp->uAdditional().y() *= factor;
+				pp->uAdditional().values() *= factor;
 				phiMag = phiMax;
 			}
 

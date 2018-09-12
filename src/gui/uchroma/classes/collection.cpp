@@ -721,14 +721,14 @@ void Collection::yRangeOverX(double xMin, double xMax, double& yMin, double& yMa
 
 			if (first)
 			{
-				yMin = data.constY(n);
+				yMin = data.constValue(n);
 				yMax = yMin;
 				first = false;
 			}
 			else
 			{
-				if (data.constY(n) < yMin) yMin = data.constY(n);
-				else if (data.constY(n) > yMax) yMax = data.constY(n);
+				if (data.constValue(n) < yMin) yMin = data.constValue(n);
+				else if (data.constValue(n) > yMax) yMax = data.constValue(n);
 			}
 		}
 	}
@@ -1208,7 +1208,7 @@ void Collection::updateLimitsAndTransforms()
 				if (data.constX(n) > transformMaxPositive_.x) transformMaxPositive_.x = data.constX(n);
 			}
 			// Y
-			if (data.constY(n) > 0.0)
+			if (data.constValue(n) > 0.0)
 			{
 				if (data.constY(n) < transformMinPositive_.y) transformMinPositive_.y = data.constY(n);
 				if (data.constY(n) > transformMaxPositive_.y) transformMaxPositive_.y = data.constY(n);
@@ -1317,7 +1317,7 @@ void Collection::updateDisplayData()
 		else
 		{
 			array[0] = dataSet->transformedData().constX();
-			array[1] = dataSet->transformedData().constY();
+			array[1] = dataSet->transformedData().constValues();
 		}
 
 		// Now add data to surfaceDataSet
@@ -1353,7 +1353,7 @@ void Collection::updateDisplayData()
 		{
 			// If we have exhausted this slice's data, move on
 			if (i[n] == -1) continue;
-			if (data[n]->x(i[n]) <= lowest) lowest = data[n]->x(i[n]);
+			if (data[n]->xAxis(i[n]) <= lowest) lowest = data[n]->xAxis(i[n]);
 		}
 
 		// Now have lowest x value, so add new x point to abscissa...
@@ -1365,9 +1365,9 @@ void Collection::updateDisplayData()
 			// If we have exhausted this slice's data, add a dummy value.
 			// Otherwise, check how close the X-value is to 'lowest'
 			if (i[n] == -1) slices[n]->addDummy();
-			else if (fabs(data[n]->x(i[n]) - lowest) < 1.0e-5)
+			else if (fabs(data[n]->xAxis(i[n]) - lowest) < 1.0e-5)
 			{
-				slices[n]->add(data[n]->y(i[n]), DisplayDataSet::RealPoint);
+				slices[n]->add(data[n]->value(i[n]), DisplayDataSet::RealPoint);
 				++i[n];
 				if (i[n] == data[n]->nDataPoints())
 				{
@@ -1506,7 +1506,7 @@ bool Collection::exportData(const char* fileName)
 		for (int n=0; n<dataSet->data().nDataPoints(); ++n)
 		{
 			const Array<double>& x = dataSet->data().constX();
-			const Array<double>& y = dataSet->data().constY();
+			const Array<double>& y = dataSet->data().constValues();
 			parser.writeLineF("%e  %e\n", x.constAt(n), y.constAt(n));
 		}
 		parser.writeLineF("\n");

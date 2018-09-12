@@ -239,7 +239,7 @@ bool ScatteringMatrix::addReferenceData(const Data1D& weightedData, Weights& dat
 
 	// Add reference data and its associated factor
 	data_.add(weightedData);
-	data_.last().y() *= factor;
+	data_.last().values() *= factor;
 
 	return true;
 }
@@ -264,7 +264,7 @@ bool ScatteringMatrix::addPartialReferenceData(Data1D& weightedData, AtomType* a
 
 	// Add reference data and its associated factor
 	data_.add(weightedData);
-	data_.last().y() *= factor;
+	data_.last().values() *= factor;
 
 	return true;
 }

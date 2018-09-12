@@ -32,24 +32,29 @@ template <class T> class Array3D;
 // Plottable
 class Plottable
 {
-	/*
-	 * Basic Information
-	 */
 	public:
 	// Plottable Types
 	enum PlottableType {
-		OneAxisPlottable, 		/* Contains series of data points against one axis */
-		TwoDimensionalPlottable,	/* Contains data points plotted against two axes */
-		ThreeDimensionalPlottable	/* Contains data points plotted againas three axes */
+		OneAxisPlottable, 		/* Contains data points plotted against one axis (x) */
+		TwoAxisPlottable,		/* Contains data points plotted against two axes (x and y) */
+		ThreeAxisPlottable		/* Contains data points plotted againas three axes (x, y, and z) */
 	};
+	// Constructor
+	Plottable(PlottableType type);
+
+	
+	/*
+	 * Basic Information
+	 */
+	private:
+	// Type of plottable
+	PlottableType type_;
 
 	protected:
 	// Name of plottable
 	CharString name_;
 
 	public:
-	// Return type of plottable
-	virtual PlottableType plottableType() const = 0;
 	// Set name of plottable
 	void setName(const char* name);
 	// Return name of plottable
@@ -63,33 +68,27 @@ class Plottable
 	// Return number of points along x axis
 	virtual int nXAxisPoints() const = 0;
 	// Return x axis Array
-	virtual const Array<double>& xAxis() const = 0;
+	virtual const Array<double>& constXAxis() const = 0;
 	// Return number of points along y axis
 	virtual int nYAxisPoints() const;
 	// Return y axis Array
-	virtual const Array<double>& yAxis() const;
+	virtual const Array<double>& constYAxis() const;
 	// Return number of points along z axis
 	virtual int nZAxisPoints() const;
 	// Return z axis Array
-	virtual const Array<double>& zAxis() const;
+	virtual const Array<double>& constZAxis() const;
 
 
 	/*
 	 * Values / Errors
 	 */
 	public:
-	// Return single value with index provided
-	virtual double value(int xIndex) const;
 	// Return values Array
-	virtual const Array<double>& values() const;
-	// Return single value with pair of indices provided
-	virtual double value(int xIndex, int yIndex) const;
+	virtual const Array<double>& constValues() const;
 	// Return values Array
-	virtual const Array2D<double>& values2D() const;
-	// Return single value with triplet of indices provided
-	virtual double value(int xIndex, int yIndex, int zIndex) const;
+	virtual const Array2D<double>& constValues2D() const;
 	// Return three-dimensional values Array
-	virtual const Array3D<double>& values3D() const;
+	virtual const Array3D<double>& constValues3D() const;
 	// Return number of data points present in the whole dataset
 	virtual int nDataPoints() const = 0;
 	// Return minimum value over all data points
@@ -98,18 +97,12 @@ class Plottable
 	virtual double maxValue() const = 0;
 	// Return whether the values have associated errors
 	virtual bool valuesHaveErrors() const;
-	// Return single error with index provided
-	virtual double error(int xIndex) const;
 	// Return errors Array
-	virtual const Array<double>& errors() const;
-	// Return single error with pair of indices provided
-	virtual double error(int xIndex, int yIndex) const;
+	virtual const Array<double>& constErrors() const;
 	// Return errors Array
-	virtual const Array2D<double>& errors2D() const;
-	// Return single error with triplet of indices provided
-	virtual double error(int xIndex, int yIndex, int zIndex) const;
+	virtual const Array2D<double>& constErrors2D() const;
 	// Return three-dimensional errors Array
-	virtual const Array3D<double>& errors3D() const;
+	virtual const Array3D<double>& constErrors3D() const;
 };
 
 #endif

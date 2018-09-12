@@ -28,7 +28,7 @@
 void Filters::medianFilter(Data1D& data, int length)
 {
 	// Grab y array
-	Array<double>& y = data.y();
+	Array<double>& y = data.values();
 
 	double window[length], avg, result;
 	int m, i = length/2, n = length/2, miny, maxy;
@@ -77,7 +77,7 @@ void Filters::medianFilter(Data1D& data, int length)
 void Filters::movingAverage(Data1D& data, int avgSize)
 {
 	// Grab y array
-	Array<double>& y = data.y();
+	Array<double>& y = data.values();
 
 	// Make sure avgSize is odd
 	if (avgSize%2 == 0) --avgSize;
@@ -120,8 +120,8 @@ void Filters::kolmogorovZurbenkoFilter(Data1D& data, int k, int m)
 void Filters::convolve(Data1D& data, BroadeningFunction function)
 {
 	// Grab x and y arrays
-	const Array<double>& x = data.constX();
-	Array<double>& y = data.y();
+	const Array<double>& x = data.constXAxis();
+	Array<double>& y = data.values();
 
 	Array<double> newY(data.nDataPoints());
 
@@ -158,15 +158,15 @@ void Filters::convolveNormalised(Data1D& data, BroadeningFunction function)
 	// Calculate the new integral
 	double newIntegral = Integrator::absTrapezoid(data);
 
-	data.y() *= (originalIntegral / newIntegral);
+	data.values() *= (originalIntegral / newIntegral);
 }
 
 // Subtract average level from data, forming average from supplied x value
 double Filters::subtractAverage(Data1D& data, double xStart)
 {
 	// Grab x and y arrays
-	const Array<double>& x = data.constX();
-	Array<double>& y = data.y();
+	const Array<double>& x = data.constXAxis();
+	Array<double>& y = data.values();
 
 	double sum = 0.0;
 	int nPoints = 0;

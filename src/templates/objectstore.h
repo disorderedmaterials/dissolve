@@ -44,7 +44,11 @@ class ObjectInfo
 	{
 		NoObject = 0,
 		Data1DObject,
+		Data2DObject,
+		Data3DObject,
 		Histogram1DObject,
+		Histogram2DObject,
+		Histogram3DObject,
 		UChromaAxesObject,
 		UChromaCollectionObject,
 		UChromaViewPaneObject,

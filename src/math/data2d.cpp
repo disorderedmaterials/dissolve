@@ -98,21 +98,21 @@ void Data1D::zero()
 }
 
 // Add new data point
-void Data1D::addPoint(double x, double value)
+void Data1D::addPoint(double x, double y)
 {
 	x_.add(x);
-	values_.add(value);
+	values_.add(y);
 
 	if (hasError_) errors_.add(0.0);
 }
 
 // Add new data point with error
-void Data1D::addPoint(double x, double value, double error)
+void Data1D::addPoint(double x, double y, double yError)
 {
 	x_.add(x);
-	values_.add(value);
+	values_.add(y);
 
-	if (hasError_) errors_.add(error);
+	if (hasError_) errors_.add(yError);
 	else Messenger::warn("Tried to addPoint() with an error to Data1D, but this Data1D () has no error information associated with it.\n", name(), objectTag());
 }
 

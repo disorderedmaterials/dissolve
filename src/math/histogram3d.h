@@ -1,6 +1,6 @@
 /*
-	*** 1-Dimensional Histogram
-	*** src/math/histogram1d.h
+	*** 3-Dimensional Histogram
+	*** src/math/histogram3d.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,28 +19,28 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_HISTOGRAM1D_H
-#define DISSOLVE_HISTOGRAM1D_H
+#ifndef DISSOLVE_HISTOGRAM3D_H
+#define DISSOLVE_HISTOGRAM3D_H
 
-#include "math/data1d.h"
+#include "math/data3d.h"
 #include "math/sampleddouble.h"
 #include "base/genericitembase.h"
-#include "templates/array.h"
+#include "templates/array3d.h"
 #include "templates/objectstore.h"
 
 // Forward Declarations
 class ProcessPool;
 
 // One-Dimensional Histogram
-class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D>, public GenericItemBase
+class Histogram3D : public ListItem<Histogram3D>, public ObjectStore<Histogram3D>, public GenericItemBase
 {
 	public:
 	// Constructor
-	Histogram1D();
+	Histogram3D();
 	// Destructor
-	~Histogram1D();
+	~Histogram3D();
 	// Copy Constructor
-	Histogram1D(const Histogram1D& source);
+	Histogram3D(const Histogram3D& source);
 	// Clear data
 	void clear();
 	
@@ -49,26 +49,30 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
 	 * Histogram Data
 	 */
 	private:
-	// Minimum value for data (hard left-edge of first bin)
-	double minimum_;
-	// Maximum value for data (hard right-edge of last bin, adjusted to match bin width if necessary)
-	double maximum_;
-	// Bin width
-	double binWidth_;
+	// Minimum x value for data (hard left-edge of first bin along x)
+	Vec3<double> minima_;
+	// Maximum value for data (hard right-edge of last bin along x, adjusted to match bin width if necessary)
+	Vec3<double> maxima_;
+	// Bin widths
+	Vec3<double> binWidths_;
 	// Number of bins
-	int nBins_;
+	Vec3<int> nBins_;
 	// Histogram bins
-	Array<long int> bins_;
-	// Array of bin centres
-	Array<double> binCentres_;
+	Array3D<long int> bins_;
+	// Array of bin centres along x
+	Array<double> xBinCentres_;
+	// Array of bin centres along y
+	Array<double> yBinCentres_;
+	// Array of bin centres along z
+	Array<double> zBinCentres_;
 	// Accumulated averages
-	Array<SampledDouble> averages_;
+	Array3D<SampledDouble> averages_;
 	// Number of values binned over all bins
 	long int nBinned_;
 	// Number of points missed (out of bin range)
 	long int nMissed_;
 	// Accumulated data
-	Data1D accumulatedData_;
+	Data3D accumulatedData_;
 
 	private:
 	// Update accumulated data
@@ -79,8 +83,6 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
 	void initialise(double minimum, double maximum, double binWidth);
 	// Zero histogram bins
 	void zeroBins();
-	// Set up supplied axis
-	static void setUpAxis(double axisMin, double& axisMax, double binWidth, int& nBins, Array<double>& binCentres);
 	// Return minimum value for data (hard left-edge of first bin)
 	double minimum() const;
 	// Return maximum value for data (hard right-edge of last bin, adjusted to match bin width if necessary)
@@ -98,9 +100,9 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
 	// Return histogram data
 	Array<long int>& bins();
 	// Add source histogram data into local array
-	void add(Histogram1D& other, int factor = 1);
+	void add(Histogram3D& other, int factor = 1);
 	// Return accumulated (averaged) data
-	const Data1D& accumulatedData() const;
+	const Data3D& accumulatedData() const;
 
 
 	/*
@@ -108,7 +110,7 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
 	 */
 	public:
 	// Assignment Operator
-	void operator=(const Histogram1D& source);
+	void operator=(const Histogram3D& source);
 
 
 	/*
