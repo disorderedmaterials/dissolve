@@ -93,8 +93,16 @@ class Data2D : public Plottable, public ListItem<Data2D>, public ObjectStore<Dat
 	Array2D<double>& values();
 	// Return values Array
 	const Array2D<double>& constValues2D() const;
+	// Return number of values present in whole dataset
+	int nValues() const;
+	// Return minimum value over all data points
+	double minValue() const;
+	// Return maximum value over all data points
+	double maxValue() const;
 	// Add / initialise errors array
 	void addErrors();
+	// Return whether the values have associated errors
+	bool valuesHaveErrors() const;
 	// Return error value specified
 	double& error(int xIndex, int yIndex);
 	// Return error value specified (const)
@@ -112,57 +120,13 @@ class Data2D : public Plottable, public ListItem<Data2D>, public ObjectStore<Dat
 	// Assignment Operator
 	void operator=(const Data2D& source);
 	// Operator +=
-	void operator+=(const Data2D& source);
-	// Operator +=
 	void operator+=(const double delta);
-	// Operator -=
-	void operator-=(const Data2D& source);
 	// Operator -=
 	void operator-=(const double delta);
 	// Operator *=
 	void operator*=(const double factor);
 	// Operator /=
 	void operator/=(const double factor);
-
-
-	/*
-	 * File I/O
-	 */
-	public:
-	// Load data from specified LineParser, using columns specified
-	bool load(LineParser& parser, int xcol = 0, int ycol = 1);
-	// Load data from specified file, using columns specified
-	bool load(const char* filename, int xcol = 0, int ycol = 1);
-	// Load data from specified file through ProcessPool, using columns specified
-	bool load(ProcessPool& pool, const char* filename, int xcol = 0, int ycol = 1);
-	// Save data to specified filevalues
-	bool save(const char* filename) const;
-
-
-	/*
-	 * Plottable Implementation
-	 */
-	public:
-	// Return number of points along x axis
-	int nXAxisPoints() const;
-	// Return minimum (first) x axis point
-	double xAxisMin() const;
-	// Return maximum (last) x axis point
-	double xAxisMax() const;
-	// Return number of points along y axis
-	int nYAxisPoints() const;
-	// Return minimum (first) y axis point
-	double yAxisMin() const;
-	// Return maximum (last) y axis point
-	double yAxisMax() const;
-	// Return number of datapoints present in whole dataset
-	int nDataPoints() const;
-	// Return minimum value over all data points
-	double minValue() const;
-	// Return maximum value over all data points
-	double maxValue() const;
-	// Return whether the values have associated errors
-	bool valuesHaveErrors() const;
 
 
 	/*

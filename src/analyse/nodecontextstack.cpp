@@ -22,6 +22,8 @@
 #include "analyse/nodecontextstack.h"
 #include "analyse/nodes/calculate.h"
 #include "analyse/nodes/collect1d.h"
+#include "analyse/nodes/collect2d.h"
+#include "analyse/nodes/collect3d.h"
 #include "analyse/nodes/select.h"
 #include "base/sysfunc.h"
 
@@ -121,6 +123,18 @@ bool NodeContextStack::add(AnalysisCalculateNode* calculateNode)
 void NodeContextStack::add(AnalysisCollect1DNode* collect1DNode)
 {
 	collect1DNodes_.addUnique(collect1DNode);
+}
+
+// Add reference to two-dimensional collect node
+void NodeContextStack::add(AnalysisCollect2DNode* collect2DNode)
+{
+	collect2DNodes_.addUnique(collect2DNode);
+}
+
+// Add reference to three-dimensional collect node
+void NodeContextStack::add(AnalysisCollect3DNode* collect3DNode)
+{
+	collect3DNodes_.addUnique(collect3DNode);
 }
 
 /*

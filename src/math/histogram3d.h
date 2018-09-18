@@ -49,14 +49,30 @@ class Histogram3D : public ListItem<Histogram3D>, public ObjectStore<Histogram3D
 	 * Histogram Data
 	 */
 	private:
-	// Minimum x value for data (hard left-edge of first bin along x)
-	Vec3<double> minima_;
-	// Maximum value for data (hard right-edge of last bin along x, adjusted to match bin width if necessary)
-	Vec3<double> maxima_;
-	// Bin widths
-	Vec3<double> binWidths_;
-	// Number of bins
-	Vec3<int> nBins_;
+	// Minimum value for x data (hard left-edge of first bin)
+	double xMinimum_;
+	// Maximum value for x data (hard right-edge of last bin, adjusted to match bin width if necessary)
+	double xMaximum_;
+	// Bin width for x axis
+	double xBinWidth_;
+	// Number of bins along x
+	int nXBins_;
+	// Minimum value for y data (hard left-edge of first bin)
+	double yMinimum_;
+	// Maximum value for y data (hard right-edge of last bin, adjusted to match bin width if necessary)
+	double yMaximum_;
+	// Bin width for y axis
+	double yBinWidth_;
+	// Number of bins along y
+	int nYBins_;
+	// Minimum value for z data (hard left-edge of first bin)
+	double zMinimum_;
+	// Maximum value for z data (hard right-edge of last bin, adjusted to match bin width if necessary)
+	double zMaximum_;
+	// Bin width for z axis
+	double zBinWidth_;
+	// Number of bins along z
+	int nZBins_;
 	// Histogram bins
 	Array3D<long int> bins_;
 	// Array of bin centres along x
@@ -80,25 +96,45 @@ class Histogram3D : public ListItem<Histogram3D>, public ObjectStore<Histogram3D
 
 	public:
 	// Initialise with specified bin range
-	void initialise(double minimum, double maximum, double binWidth);
+	void initialise(double xMinimum, double xMaximum, double xBinWidth, double yMinimum, double yMaximum, double yBinWidth, double zMinimum, double zMaximum, double zBinWidth);
 	// Zero histogram bins
 	void zeroBins();
-	// Return minimum value for data (hard left-edge of first bin)
-	double minimum() const;
-	// Return maximum value for data (hard right-edge of last bin, adjusted to match bin width if necessary)
-	double maximum() const;
-	// Return bin width
-	double binWidth() const;
-	// Return number of bins
-	int nBins() const;
+	// Return minimum value for x data (hard left-edge of first bin)
+	double xMinimum() const;
+	// Return maximum value for x data (hard right-edge of last bin, adjusted to match bin width if necessary)
+	double xMaximum() const;
+	// Return x bin width
+	double xBinWidth() const;
+	// Return number of x bins
+	int nXBins() const;
+	// Return minimum value for y data (hard left-edge of first bin)
+	double yMinimum() const;
+	// Return maximum value for y data (hard right-edge of last bin, adjusted to match bin width if necessary)
+	double yMaximum() const;
+	// Return x bin width
+	double yBinWidth() const;
+	// Return number of y bins
+	int nYBins() const;
+	// Return minimum value for z data (hard left-edge of first bin)
+	double zMinimum() const;
+	// Return maximum value for z data (hard right-edge of last bin, adjusted to match bin width if necessary)
+	double zMaximum() const;
+	// Return z bin width
+	double zBinWidth() const;
+	// Return number of z bins
+	int nZBins() const;
 	// Bin specified value
-	void bin(double x);
+	void bin(double x, double y, double z);
 	// Accumulate current histogram bins into averages
 	void accumulate();
 	// Return Array of x centre-bin values
-	const Array<double>& binCentres() const;
+	const Array<double>& xBinCentres() const;
+	// Return Array of y centre-bin values
+	const Array<double>& yBinCentres() const;
+	// Return Array of z centre-bin values
+	const Array<double>& zBinCentres() const;
 	// Return histogram data
-	Array<long int>& bins();
+	Array3D<long int>& bins();
 	// Add source histogram data into local array
 	void add(Histogram3D& other, int factor = 1);
 	// Return accumulated (averaged) data

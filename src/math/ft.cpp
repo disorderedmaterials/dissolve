@@ -27,9 +27,9 @@
 bool Fourier::checkBeforeTransform(Data1D& data)
 {
 	// Enough data to do transform?
-	if (data.nDataPoints() < 5)
+	if (data.nValues() < 5)
 	{
-		Messenger::error("Not enough X data points (%i) in Data1D. Can't do transform.\n", data.nDataPoints());
+		Messenger::error("Not enough X data points (%i) in Data1D. Can't do transform.\n", data.nValues());
 		return false;
 	}
 

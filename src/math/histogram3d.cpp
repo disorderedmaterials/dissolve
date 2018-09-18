@@ -1,6 +1,6 @@
 /*
-	*** 1-Dimensional Histogram
-	*** src/math/histogram1d.cpp
+	*** 3-Dimensional Histogram
+	*** src/math/histogram3d.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,18 +19,19 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "math/histogram3d.h"
 #include "math/histogram1d.h"
 #include "base/messenger.h"
 #include "base/lineparser.h"
 
 // Static Members (ObjectStore)
-template<class Histogram1D> RefList<Histogram1D,int> ObjectStore<Histogram1D>::objects_;
-template<class Histogram1D> int ObjectStore<Histogram1D>::objectCount_ = 0;
-template<class Histogram1D> int ObjectStore<Histogram1D>::objectType_ = ObjectInfo::Histogram1DObject;
-template<class Histogram1D> const char* ObjectStore<Histogram1D>::objectTypeName_ = "Histogram1D";
+template<class Histogram3D> RefList<Histogram3D,int> ObjectStore<Histogram3D>::objects_;
+template<class Histogram3D> int ObjectStore<Histogram3D>::objectCount_ = 0;
+template<class Histogram3D> int ObjectStore<Histogram3D>::objectType_ = ObjectInfo::Histogram3DObject;
+template<class Histogram3D> const char* ObjectStore<Histogram3D>::objectTypeName_ = "Histogram3D";
 
 // Constructor
-Histogram1D::Histogram1D() : ListItem<Histogram1D>(), ObjectStore<Histogram1D>(this) 
+Histogram3D::Histogram3D() : ListItem<Histogram3D>(), ObjectStore<Histogram3D>(this) 
 {
 	accumulatedData_.addErrors();
 
@@ -38,27 +39,38 @@ Histogram1D::Histogram1D() : ListItem<Histogram1D>(), ObjectStore<Histogram1D>(t
 }
 
 // Destructor
-Histogram1D::~Histogram1D()
+Histogram3D::~Histogram3D()
 {
 }
 
 // Copy Constructor
-Histogram1D::Histogram1D(const Histogram1D& source) : ObjectStore<Histogram1D>(this)
+Histogram3D::Histogram3D(const Histogram3D& source) : ObjectStore<Histogram3D>(this)
 {
 	(*this) = source;
 }
 
 // Clear Data
-void Histogram1D::clear()
+void Histogram3D::clear()
 {
-	minimum_ = 0.0;
-	maximum_ = 0.0;
-	binWidth_ = 0.0;
-	nBins_ = 0;
+	xMinimum_ = 0.0;
+	xMaximum_ = 0.0;
+	xBinWidth_ = 0.0;
+	nXBins_ = 0;
+	yMinimum_ = 0.0;
+	yMaximum_ = 0.0;
+	yBinWidth_ = 0.0;
+	nYBins_ = 0;
+	zMinimum_ = 0.0;
+	zMaximum_ = 0.0;
+	zBinWidth_ = 0.0;
+	nZBins_ = 0;
 	nBinned_ = 0;
 	nMissed_ = 0;
 	bins_.clear();
-	binCentres_.clear();
+	bins_.clear();
+	xBinCentres_.clear();
+	yBinCentres_.clear();
+	zBinCentres_.clear();
 	averages_.clear();
 }
 
@@ -67,132 +79,198 @@ void Histogram1D::clear()
  */
 
 // Update accumulated data
-void Histogram1D::updateAccumulatedData()
+void Histogram3D::updateAccumulatedData()
 {
 	// Set up arrays
-	accumulatedData_.initialise(bins_.nItems(), true);
+	accumulatedData_.initialise(nXBins_, nYBins_, nZBins_);
 
 	// Store bin centres and accumulated averages in the object
-	for (int n=0; n<bins_.nItems(); ++n)
+	for (int x=0; x<nXBins_; ++x)
 	{
-		accumulatedData_.xAxis(n) = binCentres_[n];
-		accumulatedData_.value(n) = averages_.constAt(n);
-		accumulatedData_.error(n) = averages_.constAt(n).stDev();
+		accumulatedData_.xAxis(x) = xBinCentres_[x];
+		for (int y=0; y<nYBins_; ++y)
+		{
+			if (x == 0) accumulatedData_.yAxis(y) = yBinCentres_[y];
+
+			for (int z=0; z<nZBins_; ++z)
+			{
+				if (x == 0) accumulatedData_.zAxis(z) = zBinCentres_[z];
+
+				accumulatedData_.value(x, y, z) = averages_.constAt(x, y, z);
+				accumulatedData_.error(x, y, z) = averages_.constAt(x, y, z).stDev();
+			}
+		}
 	}
 }
 
 // Initialise with specified bin range
-void Histogram1D::initialise(double xMin, double xMax, double binWidth)
+void Histogram3D::initialise(double xMin, double xMax, double xBinWidth, double yMin, double yMax, double yBinWidth, double zMin, double zMax, double zBinWidth)
 {
 	clear();
 
-	// Store xMin and binWidth
-	minimum_ = xMin;
-	binWidth_ = binWidth;
+	// Set up x axis
+	xMinimum_ = xMin;
+	xMaximum_ = xMax;
+	xBinWidth_ = xBinWidth;
+	Histogram1D::setUpAxis(xMinimum_, xMaximum_, xBinWidth_, nXBins_, xBinCentres_);
 
-	// Clamp maximum_ to nearest bin boundary (not less than the supplied xMax)
-	double range = xMax - minimum_;
-	nBins_ = range / binWidth_;
-	if ((minimum_ + nBins_*binWidth_) < xMax)
-	{
-		++nBins_;
-		maximum_ = minimum_ + nBins_*binWidth_;
-	}
-	else maximum_ = xMax;
+	// Set up y axis
+	yMinimum_ = yMin;
+	yMaximum_ = yMax;
+	yBinWidth_ = yBinWidth;
+	Histogram1D::setUpAxis(yMinimum_, yMaximum_, yBinWidth_, nYBins_, yBinCentres_);
 
-	// Create the arrays
-	binCentres_.initialise(nBins_);
-	bins_.initialise(nBins_);
-	averages_.initialise(nBins_);
+	// Set up z axis
+	zMinimum_ = zMin;
+	zMaximum_ = zMax;
+	zBinWidth_ = zBinWidth;
+	Histogram1D::setUpAxis(zMinimum_, zMaximum_, zBinWidth_, nZBins_, zBinCentres_);
 
-	// Create centre-bin array
-	double xCentre = xMin + binWidth_*0.5;
-	for (int n=0; n<nBins_; ++n, xCentre += binWidth_) binCentres_[n] = xCentre;
+	// Create the main bins array
+	bins_.initialise(nXBins_, nYBins_, nZBins_);
+	averages_.initialise(nXBins_, nYBins_, nZBins_);
 }
 
 // Zero histogram bins
-void Histogram1D::zeroBins()
+void Histogram3D::zeroBins()
 {
 	bins_ = 0;
 	nBinned_ = 0;
 	nMissed_ = 0;
 }
 
-// Return minimum value for data (hard left-edge of first bin)
-double Histogram1D::minimum() const
+// Return minimum value for x data (hard left-edge of first bin)
+double Histogram3D::xMinimum() const
 {
-	return minimum_;
+	return xMinimum_;
 }
 
-// Return maximum value for data (hard right-edge of last bin, adjusted to match bin width if necessary)
-double Histogram1D::maximum() const
+// Return maximum value for x data (hard right-edge of last bin, adjusted to match bin width if necessary)
+double Histogram3D::xMaximum() const
 {
-	return maximum_;
+	return xMaximum_;
 }
 
-// Return bin width
-double Histogram1D::binWidth() const
+// Return x bin width
+double Histogram3D::xBinWidth() const
 {
-	return binWidth_;
+	return xBinWidth_;
 }
 
-// Return number of bins
-int Histogram1D::nBins() const
+// Return number of x bins
+int Histogram3D::nXBins() const
 {
-	return nBins_;
+	return nXBins_;
+}
+
+// Return minimum value for y data (hard left-edge of first bin)
+double Histogram3D::yMinimum() const
+{
+	return yMinimum_;
+}
+
+// Return maximum value for y data (hard right-edge of last bin, adjusted to match bin width if necessary)
+double Histogram3D::yMaximum() const
+{
+	return yMaximum_;
+}
+
+// Return y bin width
+double Histogram3D::yBinWidth() const
+{
+	return yBinWidth_;
+}
+
+// Return number of y bins
+int Histogram3D::nYBins() const
+{
+	return nYBins_;
 }
 
 // Bin specified value
-void Histogram1D::bin(double x)
+void Histogram3D::bin(double x, double y, double z)
 {
-	// Calculate target bin
-	int bin = (x - minimum_) / binWidth_;
-
-	// Check bin range
-	if ((bin < 0) || (bin >= nBins_))
+	// Calculate target bin along x
+	int xBin = (x - xMinimum_) / xBinWidth_;
+	if ((xBin < 0) || (xBin >= nXBins_))
 	{
 		++nMissed_;
 		return;
 	}
 
-	++bins_[bin];
+	// Calculate target bin along y
+	int yBin = (y - yMinimum_) / yBinWidth_;
+	if ((yBin < 0) || (yBin >= nYBins_))
+	{
+		++nMissed_;
+		return;
+	}
+
+	// Calculate target bin along z
+	int zBin = (z - zMinimum_) / zBinWidth_;
+	if ((zBin < 0) || (zBin >= nZBins_))
+	{
+		++nMissed_;
+		return;
+	}
+
+	++bins_.at(xBin, yBin, zBin);
 	++nBinned_;
 }
 
 // Accumulate current histogram bins into averages
-void Histogram1D::accumulate()
+void Histogram3D::accumulate()
 {
-	for (int n=0; n<nBins_; ++n) averages_[n] += double(bins_[n]);
+	for (int x=0; x<nXBins_; ++x)
+	{
+		for (int y=0; y<nYBins_; ++y)
+		{
+			for (int z=0; z<nZBins_; ++z) averages_.at(x,y,z) += double(bins_.at(x,y,z));
+		}
+	}
 
 	// Update accumulated data
 	updateAccumulatedData();
 }
 
 // Return Array of x centre-bin values
-const Array<double>& Histogram1D::binCentres() const
+const Array<double>& Histogram3D::xBinCentres() const
 {
-	return binCentres_;
+	return xBinCentres_;
+}
+
+// Return Array of y centre-bin values
+const Array<double>& Histogram3D::yBinCentres() const
+{
+	return yBinCentres_;
 }
 
 // Return histogram data
-Array<long int>& Histogram1D::bins()
+Array3D<long int>& Histogram3D::bins()
 {
 	return bins_;
 }
 
 // Add source histogram data into local array
-void Histogram1D::add(Histogram1D& other, int factor)
+void Histogram3D::add(Histogram3D& other, int factor)
 {
-	if (nBins_ != other.nBins_)
+	if ((nXBins_ != other.nXBins_) || (nYBins_ != other.nYBins_))
 	{
-		Messenger::print("BAD_USAGE - Can't add Histogram1D data since arrays are not the same size (%i vs %i).\n", nBins_, other.nBins_);
+		Messenger::print("BAD_USAGE - Can't add Histogram3D data since arrays are not the same size (%ix%i vs %ix%i).\n", nXBins_, nYBins_, other.nXBins_, other.nYBins_);
 		return;
 	}
-	for (int n=0; n<nBins_; ++n) bins_[n] += other.bins_[n] * factor;
+
+	for (int x=0; x<nXBins_; ++x)
+	{
+		for (int y=0; y<nYBins_; ++y)
+		{
+			for (int z=0; z<nZBins_; ++z) bins_.at(x,y,z) += other.bins_.at(x,y,z) * factor;
+		}
+	}
 }
 
 // Return accumulated (averaged) data
-const Data1D& Histogram1D::accumulatedData() const
+const Data3D& Histogram3D::accumulatedData() const
 {
 	return accumulatedData_;
 }
@@ -202,16 +280,21 @@ const Data1D& Histogram1D::accumulatedData() const
  */
 
 // Operator =
-void Histogram1D::operator=(const Histogram1D& source)
+void Histogram3D::operator=(const Histogram3D& source)
 {
-	minimum_ = source.minimum_;
-	maximum_ = source.maximum_;
-	nBins_ = source.nBins_;
-	binWidth_ = source.binWidth_;
+	xMinimum_ = source.xMinimum_;
+	xMaximum_ = source.xMaximum_;
+	xBinWidth_ = source.xBinWidth_;
+	nXBins_ = source.nXBins_;
+	yMinimum_ = source.yMinimum_;
+	yMaximum_ = source.yMaximum_;
+	yBinWidth_ = source.yBinWidth_;
+	nYBins_ = source.nYBins_;
 	nBinned_ = source.nBinned_;
 	nMissed_ = source.nMissed_;
 	bins_ = source.bins_;
-	binCentres_ = source.binCentres_;
+	xBinCentres_ = source.xBinCentres_;
+	yBinCentres_ = source.yBinCentres_;
 	averages_ = source.averages_;
 }
 
@@ -220,24 +303,30 @@ void Histogram1D::operator=(const Histogram1D& source)
  */
 
 // Return class name
-const char* Histogram1D::itemClassName()
+const char* Histogram3D::itemClassName()
 {
-	return "Histogram1D";
+	return "Histogram3D";
 }
 
 // Write data through specified LineParser
-bool Histogram1D::write(LineParser& parser)
+bool Histogram3D::write(LineParser& parser)
 {
 	if (!parser.writeLineF("%s\n", objectTag())) return false;
-	if (!parser.writeLineF("%f %f %f\n", minimum_, maximum_, binWidth_)) return false;
-	if (!parser.writeLineF("%i\n", nBinned_)) return false;
-	for (int n=0; n<nBins_; ++n) if (!averages_[n].write(parser)) return false;
+	if (!parser.writeLineF("%f %f %f %f %f %f %f %f %f\n", xMinimum_, xMaximum_, xBinWidth_, yMinimum_, yMaximum_, yBinWidth_, zMinimum_, zMaximum_, zBinWidth_)) return false;
+	if (!parser.writeLineF("%li  %li\n", nBinned_, nMissed_)) return false;
+	for (int x=0; x<nXBins_; ++x)
+	{
+		for (int y=0; y<nYBins_; ++y)
+		{
+			for (int z=0; z<nZBins_; ++z) if (!averages_.at(x,y,z).write(parser)) return false;
+		}
+	}
 
 	return true;
 }
 
 // Read data through specified LineParser
-bool Histogram1D::read(LineParser& parser)
+bool Histogram3D::read(LineParser& parser)
 {
 	clear();
 
@@ -245,12 +334,19 @@ bool Histogram1D::read(LineParser& parser)
 	setObjectTag(parser.line());
 
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-	initialise(parser.argd(0), parser.argd(1), parser.argd(2));
+	initialise(parser.argd(0), parser.argd(1), parser.argd(2), parser.argd(3), parser.argd(4), parser.argd(5), parser.argd(6), parser.argd(7), parser.argd(8));
 
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-	nBinned_ = parser.argi(0);
+	nBinned_ = parser.argli(0);
+	nMissed_ = parser.argli(1);
 
-	for (int n=0; n<nBins_; ++n) if (!averages_[n].read(parser)) return false;
+	for (int x=0; x<nXBins_; ++x)
+	{
+		for (int y=0; y<nYBins_; ++y)
+		{
+			for (int z=0; z<nZBins_; ++z) if (!averages_.at(x,y,z).read(parser)) return false;
+		}
+	}
 
 	return true;
 }
@@ -260,7 +356,7 @@ bool Histogram1D::read(LineParser& parser)
  */
 
 // Sum histogram data onto all processes
-bool Histogram1D::allSum(ProcessPool& procPool)
+bool Histogram3D::allSum(ProcessPool& procPool)
 {
 #ifdef PARALLEL
 	if (!procPool.allSum(bins_, nBins_)) return false;
@@ -270,39 +366,55 @@ bool Histogram1D::allSum(ProcessPool& procPool)
 }
 
 // Broadcast data
-bool Histogram1D::broadcast(ProcessPool& procPool, int rootRank)
+bool Histogram3D::broadcast(ProcessPool& procPool, int rootRank)
 {
 #ifdef PARALLEL
 	// Range data
-	if (!procPool.broadcast(minimum_, rootRank)) return false;
-	if (!procPool.broadcast(maximum_, rootRank)) return false;
-	if (!procPool.broadcast(binWidth_, rootRank)) return false;
-	if (!procPool.broadcast(nBins_, rootRank)) return false;
+	if (!procPool.broadcast(xMinimum_, rootRank)) return false;
+	if (!procPool.broadcast(xMaximum_, rootRank)) return false;
+	if (!procPool.broadcast(xBinWidth_, rootRank)) return false;
+	if (!procPool.broadcast(nXBins_, rootRank)) return false;
+	if (!procPool.broadcast(yMinimum_, rootRank)) return false;
+	if (!procPool.broadcast(yMaximum_, rootRank)) return false;
+	if (!procPool.broadcast(yBinWidth_, rootRank)) return false;
+	if (!procPool.broadcast(nYBins_, rootRank)) return false;
 
 	// Data
 	if (!procPool.broadcast(nBinned_, rootRank)) return false;
 	if (!procPool.broadcast(nMissed_, rootRank)) return false;
-	if (!procPool.broadcast(binCentres_, rootRank)) return false;
+	if (!procPool.broadcast(xBinCentres_, rootRank)) return false;
+	if (!procPool.broadcast(yBinCentres_, rootRank)) return false;
 	if (!procPool.broadcast(bins_, rootRank)) return false;
-	for (int n=0; n<averages_.nItems(); ++n) if (!averages_[n].broadcast(procPool, rootRank)) return false;
+	for (int x=0; x<nXBins_; ++x)
+	{
+		for (int y=0; y<nYBins_; ++y) if (!averages_.at(x,y).broadcast(procPool, rootRank)) return false;
+	}
 #endif
 	return true;
 }
 
 // Check item equality
-bool Histogram1D::equality(ProcessPool& procPool)
+bool Histogram3D::equality(ProcessPool& procPool)
 {
 #ifdef PARALLEL
 	// Check number of items in arrays first
-	if (!procPool.equality(minimum_)) return Messenger::error("Histogram1D minimum value is not equivalent (process %i has %e).\n", procPool.poolRank(), minimum_);
-	if (!procPool.equality(maximum_)) return Messenger::error("Histogram1D maximum value is not equivalent (process %i has %e).\n", procPool.poolRank(), maximum_);
-	if (!procPool.equality(binWidth_)) return Messenger::error("Histogram1D bin width is not equivalent (process %i has %e).\n", procPool.poolRank(), binWidth_);
-	if (!procPool.equality(nBins_)) return Messenger::error("Histogram1D number of bins is not equivalent (process %i has %i).\n", procPool.poolRank(), nBins_);
-	if (!procPool.equality(binCentres_)) return Messenger::error("Histogram1D bin centre values not equivalent.\n");
-	if (!procPool.equality(bins_)) return Messenger::error("Histogram1D bin values not equivalent.\n");
-	if (!procPool.equality(nBinned_)) return Messenger::error("Histogram1D nunmber of binned values is not equivalent (process %i has %li).\n", procPool.poolRank(), nBinned_);
-	if (!procPool.equality(nMissed_)) return Messenger::error("Histogram1D nunmber of binned values is not equivalent (process %i has %li).\n", procPool.poolRank(), nBinned_);
-	for (int n=0; n<averages_.nItems(); ++n) if (!averages_[n].equality(procPool)) return Messenger::error("Histogram1D average values not equivalent.\n");
+	if (!procPool.equality(xMinimum_)) return Messenger::error("Histogram3D minimum x value is not equivalent (process %i has %e).\n", procPool.poolRank(), minimum_);
+	if (!procPool.equality(xMaximum_)) return Messenger::error("Histogram3D maximum x value is not equivalent (process %i has %e).\n", procPool.poolRank(), maximum_);
+	if (!procPool.equality(xBinWidth_)) return Messenger::error("Histogram3D bin x width is not equivalent (process %i has %e).\n", procPool.poolRank(), binWidth_);
+	if (!procPool.equality(nXBins_)) return Messenger::error("Histogram3D number of x bins is not equivalent (process %i has %i).\n", procPool.poolRank(), nBins_);
+	if (!procPool.equality(xBinCentres_)) return Messenger::error("Histogram3D x bin centre values not equivalent.\n");
+	if (!procPool.equality(yMinimum_)) return Messenger::error("Histogram3D minimum y value is not equivalent (process %i has %e).\n", procPool.poolRank(), minimum_);
+	if (!procPool.equality(yMaximum_)) return Messenger::error("Histogram3D maximum y value is not equivalent (process %i has %e).\n", procPool.poolRank(), maximum_);
+	if (!procPool.equality(yBinWidth_)) return Messenger::error("Histogram3D bin y width is not equivalent (process %i has %e).\n", procPool.poolRank(), binWidth_);
+	if (!procPool.equality(nYBins_)) return Messenger::error("Histogram3D number of y bins is not equivalent (process %i has %i).\n", procPool.poolRank(), nBins_);
+	if (!procPool.equality(yBinCentres_)) return Messenger::error("Histogram3D y bin centre values not equivalent.\n");
+	if (!procPool.equality(bins_)) return Messenger::error("Histogram3D bin values not equivalent.\n");
+	if (!procPool.equality(nBinned_)) return Messenger::error("Histogram3D nunmber of binned values is not equivalent (process %i has %li).\n", procPool.poolRank(), nBinned_);
+	if (!procPool.equality(nMissed_)) return Messenger::error("Histogram3D nunmber of binned values is not equivalent (process %i has %li).\n", procPool.poolRank(), nBinned_);
+	for (int x=0; x<nXBins_; ++x)
+	{
+		for (int y=0; y<nYBins_; ++y) if (!averages_.at(x,y).equality(procPool)) return Messenger::error("Histogram3D average values not equivalent.\n");
+	}
 #endif
 	return true;
 }

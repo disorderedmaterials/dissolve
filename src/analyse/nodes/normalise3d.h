@@ -29,7 +29,7 @@
 
 // Forward Declarations
 class AnalysisCollect3DNode;
-class AnalysisSelectNode;
+class AnalysisSelectBaseNode;
 class Data3D;
 class LineParser;
 class NodeContextStack;
@@ -63,9 +63,9 @@ class AnalysisNormalise3DNode : public AnalysisNode
 	// Collect3D node which we are normalising
 	AnalysisCollect3DNode* collectNode_;
 	// Reference to sites against which we will normalise by population
-	RefList<AnalysisSelectNode,double> sitePopulationNormalisers_;
+	RefList<AnalysisSelectBaseNode,double> sitePopulationNormalisers_;
 	// Reference to sites against which we will normalise by number density
-	RefList<AnalysisSelectNode,double> numberDensityNormalisers_;
+	RefList<AnalysisSelectBaseNode,double> numberDensityNormalisers_;
 	// Whether to normalise by supplied factor
 	bool normaliseByFactor_;
 	// Normalisation factor to apply (if requested)
@@ -79,9 +79,9 @@ class AnalysisNormalise3DNode : public AnalysisNode
 
 	public:
 	// Add site population normaliser
-	void addSitePopulationNormaliser(AnalysisSelectNode* selectNode);
+	void addSitePopulationNormaliser(AnalysisSelectBaseNode* selectNode);
 	// Add number density normaliser
-	void addNumberDensityNormaliser(AnalysisSelectNode* selectNode);
+	void addNumberDensityNormaliser(AnalysisSelectBaseNode* selectNode);
 	// Set whether to normalise by factor
 	void setNormaliseByFactor(bool on);
 	// Set normalisation factor

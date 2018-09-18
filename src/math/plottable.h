@@ -65,16 +65,10 @@ class Plottable
 	 * Axis Information
 	 */
 	public:
-	// Return number of points along x axis
-	virtual int nXAxisPoints() const = 0;
 	// Return x axis Array
 	virtual const Array<double>& constXAxis() const = 0;
-	// Return number of points along y axis
-	virtual int nYAxisPoints() const;
 	// Return y axis Array
 	virtual const Array<double>& constYAxis() const;
-	// Return number of points along z axis
-	virtual int nZAxisPoints() const;
 	// Return z axis Array
 	virtual const Array<double>& constZAxis() const;
 
@@ -89,8 +83,8 @@ class Plottable
 	virtual const Array2D<double>& constValues2D() const;
 	// Return three-dimensional values Array
 	virtual const Array3D<double>& constValues3D() const;
-	// Return number of data points present in the whole dataset
-	virtual int nDataPoints() const = 0;
+	// Return number of values present in the whole dataset
+	virtual int nValues() const = 0;
 	// Return minimum value over all data points
 	virtual double minValue() const = 0;
 	// Return maximum value over all data points

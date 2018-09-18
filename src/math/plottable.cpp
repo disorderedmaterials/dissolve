@@ -49,26 +49,12 @@ const char* Plottable::name() const
  * Axis Information
  */
 
-// Return number of points along y axis
-int Plottable::nYAxisPoints() const
-{
-	Messenger::error("Tried to retrieve number of y axis points from a Plottable that doesn't have a y axis.\n");
-	return 0;
-}
-
 // Return y axis Array (const)
 const Array<double>& Plottable::constYAxis() const
 {
 	Messenger::error("Tried to retrieve y axis array from a Plottable that doesn't have a y axis.\n");
 	static Array<double> dummy;
 	return dummy;
-}
-
-// Return number of points along z axis
-int Plottable::nZAxisPoints() const
-{
-	Messenger::error("Tried to retrieve number of z axis points from a Plottable that doesn't have a z axis.\n");
-	return 0;
 }
 
 // Return z axis Array (const)

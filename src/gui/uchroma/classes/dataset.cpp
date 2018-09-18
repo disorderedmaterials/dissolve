@@ -315,7 +315,7 @@ double DataSet::averageY(double xMin, double xMax) const
 {
 	double result = 0.0;
 	int nAdded = 0;
-	for (int n=0; n<data_.nDataPoints(); ++n)
+	for (int n=0; n<data_.nValues(); ++n)
 	{
 		if (data_.constXAxis(n) < xMin) continue;
 		else if (data_.constXAxis(n) > xMax) break;

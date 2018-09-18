@@ -75,7 +75,7 @@ template <> class GenericItemContainer< Array2D< Array<double> > > : public Gene
 		parser.writeLineF("%i  %i  %s\n", thisData.nRows(), thisData.nColumns(), DissolveSys::btoa(thisData.halved()));
 		for (int n=0; n<thisData.linearArraySize(); ++n)
 		{
-			const Array<double>& arrayData = thisData.linearValue(n);
+			const Array<double>& arrayData = thisData.constLinearValue(n);
 
 			parser.writeLineF("%i\n", arrayData.nItems());
 			for (int m=0; m<arrayData.nItems(); ++m)

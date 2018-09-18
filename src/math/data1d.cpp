@@ -149,6 +149,12 @@ Array<double>& Data1D::xAxis()
 	return x_;
 }
 
+// Return x axis Array (const)
+const Array<double>& Data1D::constXAxis() const
+{
+	return x_;
+}
+
 // Return y value specified
 double& Data1D::value(int index)
 {
@@ -156,7 +162,7 @@ double& Data1D::value(int index)
 	if ((index < 0) || (index >= values_.nItems()))
 	{
 		static double dummy;
-		Messenger::error("OUT_OF_RANGE - Index %i is out of range for values_ array in Data1D::y().\n", index);
+		Messenger::error("OUT_OF_RANGE - Index %i is out of range for values_ array in Data1D::value().\n", index);
 		return dummy;
 	}
 #endif
@@ -169,7 +175,7 @@ double Data1D::constValue(int index) const
 #ifdef CHECKS
 	if ((index < 0) || (index >= values_.nItems()))
 	{
-		Messenger::error("OUT_OF_RANGE - Index %i is out of range for values_ array in Data1D::constY().\n", index);
+		Messenger::error("OUT_OF_RANGE - Index %i is out of range for values_ array in Data1D::constValue().\n", index);
 		return 0.0;
 	}
 #endif
@@ -188,6 +194,35 @@ const Array<double>& Data1D::constValues() const
 	return values_;
 }
 
+
+// Return number of values present in whole dataset
+int Data1D::nValues() const
+{
+	return x_.nItems();
+}
+
+// Return minimum value over all data points
+double Data1D::minValue() const
+{
+	if (values_.nItems() == 0) return 0.0;
+
+	double value = values_.constAt(0);
+	for (int n=1; n<values_.nItems(); ++n) if (values_.constAt(n) < value) value = values_.constAt(n);
+
+	return value;
+}
+
+// Return maximum value over all data points
+double Data1D::maxValue() const
+{
+	if (values_.nItems() == 0) return 0.0;
+
+	double value = values_.constAt(0);
+	for (int n=1; n<values_.nItems(); ++n) if (values_.constAt(n) > value) value = values_.constAt(n);
+
+	return value;
+}
+
 // Add / initialise errors array
 void Data1D::addErrors()
 {
@@ -196,6 +231,12 @@ void Data1D::addErrors()
 	errors_.initialise(x_.nItems());
 
 	hasError_ = true;
+}
+
+// Return whether the values have associated errors
+bool Data1D::valuesHaveErrors() const
+{
+	return hasError_;
 }
 
 // Return error value specified
@@ -372,7 +413,7 @@ bool Data1D::load(LineParser& parser, int xcol, int ycol)
 		addPoint(parser.argd(xcol), parser.argd(ycol));
 	}
 
-	Messenger::printVerbose("Read %i points from '%s' (columns %i and %i).\n", nDataPoints(), parser.inputFilename(), xcol+1, ycol+1);
+	Messenger::printVerbose("Read %i points from '%s' (columns %i and %i).\n", nValues(), parser.inputFilename(), xcol+1, ycol+1);
 
 	return true;
 }
@@ -437,69 +478,6 @@ bool Data1D::save(const char* filename) const
 	parser.closeFiles();
 
 	return true;
-}
-
-/*
- * Plottable Implementation
- */
-
-// Return number of points along x axis
-int Data1D::nXAxisPoints() const
-{
-	return x_.nItems();
-}
-
-// Return x axis Array (const)
-const Array<double>& Data1D::constXAxis() const
-{
-	return x_;
-}
-
-// Return minimum (first) x axis point
-double Data1D::xAxisMin() const
-{
-	return x_.firstValue();
-}
-
-// Return maximum (last) x axis point
-double Data1D::xAxisMax() const
-{
-	return x_.lastValue();
-}
-
-
-// Return number of datapoints present in whole dataset
-int Data1D::nDataPoints() const
-{
-	return x_.nItems();
-}
-
-// Return minimum value over all data points
-double Data1D::minValue() const
-{
-	if (values_.nItems() == 0) return 0.0;
-
-	double value = values_.constAt(0);
-	for (int n=1; n<values_.nItems(); ++n) if (values_.constAt(n) < value) value = values_.constAt(n);
-
-	return value;
-}
-
-// Return maximum value over all data points
-double Data1D::maxValue() const
-{
-	if (values_.nItems() == 0) return 0.0;
-
-	double value = values_.constAt(0);
-	for (int n=1; n<values_.nItems(); ++n) if (values_.constAt(n) > value) value = values_.constAt(n);
-
-	return value;
-}
-
-// Return whether the values have associated errors
-bool Data1D::valuesHaveErrors() const
-{
-	return hasError_;
 }
 
 /*

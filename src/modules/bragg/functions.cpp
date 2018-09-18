@@ -127,7 +127,7 @@ bool BraggModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cfg,
 						braggIndex = int(mag/braggQResolution);
 
 						// Point this (h,k,l) value to this Bragg peak
-						tempKVectors.ref(h, k, l).initialise(h, k, l, braggIndex, nTypes);
+						tempKVectors.at(h, k, l).initialise(h, k, l, braggIndex, nTypes);
 
 						// Note in the peak that we have found another (h,k,l) that contributes to it
 						tempPeaks[braggIndex].addKVectors(1);
@@ -334,7 +334,7 @@ bool BraggModule::calculateUnweightedBraggSQ(ProcessPool& procPool, Configuratio
 				if (inten > 0.01) printf("BRG  %i  %i  %i  %f  %f\n", typeI, typeJ, n, qCentre, inten);
 
 				// Loop over points in braggSQ Data1D (which will provide our Q values)
-				for (int m=0; m<braggSQ.nDataPoints(); ++m)
+				for (int m=0; m<braggSQ.nValues(); ++m)
 				{
 					// Get q value from array
 					//q = braggSQ.x(m);

@@ -158,7 +158,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			Messenger::print("Current error for reference data '%s' is %f%%.\n", module->uniqueName(), error);
 
 			// Assess the stability of the current error
-			if (errorStabilityWindow > errors.nDataPoints()) ++nUnstableData;
+			if (errorStabilityWindow > errors.nValues()) ++nUnstableData;
 			else
 			{
 				double yMean;
@@ -399,8 +399,8 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 				// Determine allowable range for fit, based on requested values and limits of generated / simulated datasets
 				double deltaSQMin = qMin, deltaSQMax = (qMax < 0.0 ? x1.lastValue() : qMax);
-				if ((deltaSQMin < x1.firstValue()) || (deltaSQMin < simulatedSQ.xAxisMin())) deltaSQMin = max(x1.firstValue(), simulatedSQ.xAxisMin());
-				if ((deltaSQMax > x1.lastValue()) || (deltaSQMax > simulatedSQ.xAxisMax())) deltaSQMax = min(x1.lastValue(), simulatedSQ.xAxisMax());
+				if ((deltaSQMin < x1.firstValue()) || (deltaSQMin < simulatedSQ.xAxis().firstValue())) deltaSQMin = max(x1.firstValue(), simulatedSQ.xAxis().firstValue());
+				if ((deltaSQMax > x1.lastValue()) || (deltaSQMax > simulatedSQ.xAxis().lastValue())) deltaSQMax = min(x1.lastValue(), simulatedSQ.xAxis().lastValue());
 
 				Data1D refSQTrimmed;
 				double x;
@@ -452,8 +452,8 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 					// Find first non-zero (above the threshold value) point in g(r)
 					int n;
-					for (n=0; n<gr.nDataPoints(); ++n) if (gr.value(n) > thresholdValue) break;
-					if (n < gr.nDataPoints())
+					for (n=0; n<gr.nValues(); ++n) if (gr.value(n) > thresholdValue) break;
+					if (n < gr.nValues())
 					{
 						double x = gr.xAxis(n) * rFraction;
 						if (x < globalMinimumRadius) minimumRadii.at(i,j) = globalMinimumRadius;
@@ -616,7 +616,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				const double truncationStart = minimumRadius - truncationWidth;
 				double r;
 				Array<double>& y = dPhiR.values();
-				for (int n=0; n<dPhiR.nDataPoints(); ++n)
+				for (int n=0; n<dPhiR.nValues(); ++n)
 				{
 					r = dPhiR.xAxis(n);
 					if (r < truncationStart) y[n] = 0.0;
@@ -628,7 +628,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				if (smoothPhiR) Filters::kolmogorovZurbenkoFilter(dPhiR, phiRSmoothK, phiRSmoothM);
 
 				// Make sure we go smoothly to zero at the limit of the potential
-				for (int n=0; n<dPhiR.nDataPoints(); ++n) dPhiR.value(n) *= 1.0 - double(n)/(dPhiR.nDataPoints()-1);
+				for (int n=0; n<dPhiR.nValues(); ++n) dPhiR.value(n) *= 1.0 - double(n)/(dPhiR.nValues()-1);
 
 				// Apply factor to additional potential
 				dPhiR.values() *= weight;
@@ -670,7 +670,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					if (onlyWhenErrorStable)
 					{
 						const Data1D& partialErrors = GenericListHelper<Data1D>::value(dissolve.processingModuleData(), CharString("PartialError_%s-%s", at1->name(), at2->name()), uniqueName_);
-						if (partialErrors.nDataPoints() >= errorStabilityWindow)
+						if (partialErrors.nValues() >= errorStabilityWindow)
 						{
 							double yMean;
 							double grad = Regression::linear(partialErrors, errorStabilityWindow, yMean);

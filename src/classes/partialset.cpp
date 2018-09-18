@@ -381,7 +381,7 @@ bool PartialSet::save()
 			Data1D& unbound = unboundPartials_.at(typeI,typeJ);
 			Data1D& bragg = braggPartials_.at(typeI,typeJ);
 			parser.writeLineF("# %-14s  %-16s  %-16s  %-16s  %-16s\n", abscissaUnits_.get(), "Full", "Bound", "Unbound", "Bragg"); 
-			for (n=0; n<full.nDataPoints(); ++n) parser.writeLineF("%16.9e  %16.9e  %16.9e  %16.9e  %16.9e\n", full.constXAxis(n), full.constValue(n), bound.constValue(n), unbound.constValue(n), n < bragg.nDataPoints() ? bragg.constValue(n) : 0.0);
+			for (n=0; n<full.nValues(); ++n) parser.writeLineF("%16.9e  %16.9e  %16.9e  %16.9e  %16.9e\n", full.constXAxis(n), full.constValue(n), bound.constValue(n), unbound.constValue(n), n < bragg.nValues() ? bragg.constValue(n) : 0.0);
 			parser.closeFiles();
 		}
 	}

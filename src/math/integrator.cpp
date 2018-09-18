@@ -31,7 +31,7 @@
 double Integrator::trapezoid(const Data1D& data)
 {
 	// Check for insufficient data
-	if (data.nDataPoints() < 2) return 0.0;
+	if (data.nValues() < 2) return 0.0;
 
 	// Grab data arrays
 	const Array<double>& x = data.constXAxis();
@@ -53,7 +53,7 @@ double Integrator::trapezoid(const Data1D& data)
 double Integrator::absTrapezoid(const Data1D& data)
 {
 	// Check for insufficient data
-	if (data.nDataPoints() < 2) return 0.0;
+	if (data.nValues() < 2) return 0.0;
 
 	// Grab data arrays
 	const Array<double>& x = data.constXAxis();

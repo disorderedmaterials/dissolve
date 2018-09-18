@@ -127,7 +127,7 @@ class Collection : public ListItem<Collection>, public ObjectStore<Collection>
 	// Clear dataset data from collection
 	void clearDataSets();
 	// Return total number of points across all dataset
-	int nDataPoints();
+	int nValues();
 	// Set root directory for datafiles
 	void setDataFileDirectory(QDir directory);
 	// Return root directory for datafiles

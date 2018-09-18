@@ -37,7 +37,7 @@ class AnalysisCollect3DNode : public AnalysisNode
 {
 	public:
 	// Constructor
-	AnalysisCollect3DNode(AnalysisCalculateNode* observable = NULL, double rMin = 0.0, double rMax = 10.0, double binWidth = 0.05);
+	AnalysisCollect3DNode(AnalysisCalculateNode* xObservable = NULL, AnalysisCalculateNode* yObservable = NULL, AnalysisCalculateNode* zObservable = NULL, double xMin = 0.0, double xMax = 10.0, double xBinWidth = 0.05, double yMin = 0.0, double yMax = 10.0, double yBinWidth = 0.05, double zMin = 0.0, double zMax = 10.0, double zBinWidth = 0.05);
 	// Destructor
 	~AnalysisCollect3DNode();
 
@@ -58,26 +58,54 @@ class AnalysisCollect3DNode : public AnalysisNode
 	 * Data
 	 */
 	private:
-	// Observable to bin
-	AnalysisCalculateNode* observable_;
+	// Observable to bin along x
+	AnalysisCalculateNode* xObservable_;
+	// Observable to bin along y
+	AnalysisCalculateNode* yObservable_;
+	// Observable to bin along z
+	AnalysisCalculateNode* zObservable_;
 	// Histogram in which to accumulate data
 	Histogram3D* histogram_;
-	// Range minimum
-	double minimum_;
-	// Range maximum
-	double maximum_;
-	// Bin width
-	double binWidth_;
+	// X range minimum
+	double xMinimum_;
+	// X range maximum
+	double xMaximum_;
+	// X bin width
+	double xBinWidth_;
+	// Y range minimum
+	double yMinimum_;
+	// Y range maximum
+	double yMaximum_;
+	// Y bin width
+	double yBinWidth_;
+	// Z range minimum
+	double zMinimum_;
+	// Z range maximum
+	double zMaximum_;
+	// Z bin width
+	double zBinWidth_;
 
 	public:
 	// Return accumulated data
 	const Data3D& accumulatedData() const;
-	// Return range minimum
-	double minimum() const;
-	// Return range maximum
-	double maximum() const;
-	// Return bin width
-	double binWidth() const;
+	// Return x range minimum
+	double xMinimum() const;
+	// Return x range maximum
+	double xMaximum() const;
+	// Return x bin width
+	double xBinWidth() const;
+	// Return y range minimum
+	double yMinimum() const;
+	// Return y range maximum
+	double yMaximum() const;
+	// Return y bin width
+	double yBinWidth() const;
+	// Return z range minimum
+	double zMinimum() const;
+	// Return z range maximum
+	double zMaximum() const;
+	// Return z bin width
+	double zBinWidth() const;
 
 
 	/*

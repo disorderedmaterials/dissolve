@@ -46,10 +46,10 @@ double Error::rmse(const Data1D& A, const Data1D& B, bool quiet)
 		x = aX.constAt(n);
 
 		// Is our x value lower than the lowest x value of the reference data?
-		if (x < B.xAxisMin()) continue;
+		if (x < B.constXAxis().firstValue()) continue;
 
 		// Is our x value higher than the last x value of the reference data?
-		if (x > B.xAxisMax()) break;
+		if (x > B.constXAxis().lastValue()) break;
 
 		// Is this the first point considered?
 		if (nPointsConsidered == 0) firstX = x;
@@ -87,10 +87,10 @@ double Error::mape(const Data1D& A, const Data1D& B, bool quiet)
 		x = aX.constAt(n);
 
 		// Is our x value lower than the lowest x value of the reference data?
-		if (x < B.xAxisMin()) continue;
+		if (x < B.constXAxis().firstValue()) continue;
 
 		// Is our x value higher than the last x value of the reference data?
-		if (x > B.xAxisMax()) break;
+		if (x > B.constXAxis().lastValue()) break;
 
 		// Is this the first point considered?
 		if (nPointsConsidered == 0) firstX = x;
@@ -131,10 +131,10 @@ double Error::maape(const Data1D& A, const Data1D& B, bool quiet)
 		x = aX.constAt(n);
 
 		// Is our x value lower than the lowest x value of the reference data?
-		if (x < B.xAxisMin()) continue;
+		if (x < B.constXAxis().firstValue()) continue;
 
 		// Is our x value higher than the last x value of the reference data?
-		if (x > B.xAxisMax()) break;
+		if (x > B.constXAxis().lastValue()) break;
 
 		// Is this the first point considered?
 		if (nPointsConsidered == 0) firstX = x;
@@ -177,10 +177,10 @@ double Error::percent(const Data1D& A, const Data1D& B, bool quiet)
 		x = aX.constAt(n);
 
 		// Is our x value lower than the lowest x value of the reference data?
-		if (x < B.xAxisMin()) continue;
+		if (x < B.constXAxis().firstValue()) continue;
 
 		// Is our x value higher than the last x value of the reference data?
-		if (x > B.xAxisMax()) break;
+		if (x > B.constXAxis().lastValue()) break;
 
 		// Is this the first point considered?
 		if (firstPoint == -1) firstPoint = n;

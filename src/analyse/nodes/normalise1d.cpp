@@ -167,7 +167,7 @@ bool AnalysisNormalise1DNode::finalise(ProcessPool& procPool, Configuration* cfg
 	{
 		double halfBinWidth = collectNode_->binWidth() * 0.5;
 		double r1Cubed = pow(normalisedData.xAxis(0)-halfBinWidth,3), r2Cubed;
-		for (int n = 0; n < normalisedData.nDataPoints(); ++n)
+		for (int n = 0; n < normalisedData.nValues(); ++n)
 		{
 			r2Cubed = pow(normalisedData.xAxis(n)+halfBinWidth,3);
 			normalisedData.value(n) /= (4.0/3.0) * PI * (r2Cubed - r1Cubed);

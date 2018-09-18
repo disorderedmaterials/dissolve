@@ -93,17 +93,17 @@ class Histogram2D : public ListItem<Histogram2D>, public ObjectStore<Histogram2D
 	double xMinimum() const;
 	// Return maximum value for x data (hard right-edge of last bin, adjusted to match bin width if necessary)
 	double xMaximum() const;
-	// Return bin width
+	// Return x bin width
 	double xBinWidth() const;
-	// Return number of bins
+	// Return number of x bins
 	int nXBins() const;
 	// Return minimum value for y data (hard left-edge of first bin)
 	double yMinimum() const;
 	// Return maximum value for y data (hard right-edge of last bin, adjusted to match bin width if necessary)
 	double yMaximum() const;
-	// Return bin width
+	// Return y bin width
 	double yBinWidth() const;
-	// Return number of bins
+	// Return number of y bins
 	int nYBins() const;
 	// Bin specified value
 	void bin(double x, double y);

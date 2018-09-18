@@ -29,12 +29,22 @@
 #include "templates/genericlisthelper.h"
 
 // Constructor
-AnalysisCollect3DNode::AnalysisCollect3DNode(AnalysisCalculateNode* observable, double rMin, double rMax, double binWidth) : AnalysisNode(AnalysisNode::Collect3DNode)
+AnalysisCollect3DNode::AnalysisCollect3DNode(AnalysisCalculateNode* xObservable, AnalysisCalculateNode* yObservable, AnalysisCalculateNode* zObservable, double xMin, double xMax, double xBinWidth, double yMin, double yMax, double yBinWidth, double zMin, double zMax, double zBinWidth) : AnalysisNode(AnalysisNode::Collect3DNode)
 {
-	observable_ = observable;
-	minimum_ = rMin;
-	maximum_ = rMax;
-	binWidth_ = binWidth;
+	xObservable_ = xObservable;
+	xMinimum_ = xMin;
+	xMaximum_ = xMax;
+	xBinWidth_ = xBinWidth;
+
+	yObservable_ = yObservable;
+	yMinimum_ = yMin;
+	yMaximum_ = yMax;
+	yBinWidth_ = yBinWidth;
+
+	zObservable_ = zObservable;
+	zMinimum_ = zMin;
+	zMaximum_ = zMax;
+	zBinWidth_ = zBinWidth;
 }
 
 // Destructor
@@ -47,7 +57,7 @@ AnalysisCollect3DNode::~AnalysisCollect3DNode()
  */
 
 // Node Keywords
-const char* Collect3DNodeKeywords[] = { "EndCollect3D", "QuantityX", "RangeX" };
+const char* Collect3DNodeKeywords[] = { "EndCollect3D", "QuantityX", "QuantityY", "QuantityZ", "RangeX", "RangeY", "RangeZ" };
 
 // Convert string to node keyword
 AnalysisCollect3DNode::Collect3DNodeKeyword AnalysisCollect3DNode::collect3DNodeKeyword(const char* s)
@@ -80,22 +90,59 @@ const Data3D& AnalysisCollect3DNode::accumulatedData() const
 	return histogram_->accumulatedData();
 }
 
-// Return range minimum
-double AnalysisCollect3DNode::minimum() const
+
+// Return x range minimum
+double AnalysisCollect3DNode::xMinimum() const
 {
-	return minimum_;
+	return xMinimum_;
 }
 
-// Return range maximum
-double AnalysisCollect3DNode::maximum() const
+// Return x range maximum
+double AnalysisCollect3DNode::xMaximum() const
 {
-	return maximum_;
+	return xMaximum_;
 }
 
-// Return bin width
-double AnalysisCollect3DNode::binWidth() const
+// Return x bin width
+double AnalysisCollect3DNode::xBinWidth() const
 {
-	return binWidth_;
+	return xBinWidth_;
+}
+
+// Return y range minimum
+double AnalysisCollect3DNode::yMinimum() const
+{
+	return yMinimum_;
+}
+
+// Return y range maximum
+double AnalysisCollect3DNode::yMaximum() const
+{
+	return yMaximum_;
+}
+
+// Return y bin width
+double AnalysisCollect3DNode::yBinWidth() const
+{
+	return yBinWidth_;
+}
+
+// Return z range minimum
+double AnalysisCollect3DNode::zMinimum() const
+{
+	return zMinimum_;
+}
+
+// Return z range maximum
+double AnalysisCollect3DNode::zMaximum() const
+{
+	return zMaximum_;
+}
+
+// Return z bin width
+double AnalysisCollect3DNode::zBinWidth() const
+{
+	return zBinWidth_;
 }
 
 /*
@@ -112,7 +159,7 @@ bool AnalysisCollect3DNode::prepare(Configuration* cfg, const char* prefix, Gene
 	if (created)
 	{
 		Messenger::printVerbose("One-dimensional histogram data for '%s' was not in the target list, so it will now be initialised...\n", name());
-		target.initialise(minimum_, maximum_, binWidth_);
+		target.initialise(xMinimum_, xMaximum_, xBinWidth_, yMinimum_, yMaximum_, yBinWidth_, zMinimum_, zMaximum_, zBinWidth_);
 	}
 
 	// Zero the current bins, ready for the new pass
@@ -128,14 +175,24 @@ bool AnalysisCollect3DNode::prepare(Configuration* cfg, const char* prefix, Gene
 AnalysisNode::NodeExecutionResult AnalysisCollect3DNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 #ifdef CHECKS
-	if (!observable_)
+	if (!xObservable_)
 	{
-		Messenger::error("No AnalysisCalculateNode pointer set in AnalysisCollect3DNode '%s'.\n", name());
+		Messenger::error("No AnalysisCalculateNode pointer set for X observable in AnalysisCollect3DNode '%s'.\n", name());
+		return AnalysisNode::Failure;
+	}
+	if (!yObservable_)
+	{
+		Messenger::error("No AnalysisCalculateNode pointer set for Y observable in AnalysisCollect3DNode '%s'.\n", name());
+		return AnalysisNode::Failure;
+	}
+	if (!zObservable_)
+	{
+		Messenger::error("No AnalysisCalculateNode pointer set for Z observable in AnalysisCollect3DNode '%s'.\n", name());
 		return AnalysisNode::Failure;
 	}
 #endif
 	// Bin the current value of the observable
-	histogram_->bin(observable_->value());
+	histogram_->bin(xObservable_->value(), yObservable_->value(), zObservable_->value());
 
 	return AnalysisNode::Success;
 }
@@ -184,15 +241,39 @@ bool AnalysisCollect3DNode::read(LineParser& parser, NodeContextStack& contextSt
 				return true;
 			case (Collect3DNodeKeyword::QuantityXKeyword):
 				// Determine observable from supplied argument
-				observable_ = contextStack.calculateNodeInScope(parser.argc(1));
-				if (!observable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeyword(nk));
+				xObservable_ = contextStack.calculateNodeInScope(parser.argc(1));
+				if (!xObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeyword(nk));
+				break;
+			case (Collect3DNodeKeyword::QuantityYKeyword):
+				// Determine observable from supplied argument
+				yObservable_ = contextStack.calculateNodeInScope(parser.argc(1));
+				if (!yObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeyword(nk));
+				break;
+			case (Collect3DNodeKeyword::QuantityZKeyword):
+				// Determine observable from supplied argument
+				zObservable_ = contextStack.calculateNodeInScope(parser.argc(1));
+				if (!zObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeyword(nk));
 				break;
 			case (Collect3DNodeKeyword::RangeXKeyword):
 				// Check that we have the right number of arguments first...
-				if (parser.nArgs() != 4) return Messenger::error("Collect3D node keyword '%s' expects exactly three arguments (%i given).\n", collect3DNodeKeyword(Collect3DNodeKeyword::RangeXKeyword), parser.nArgs() - 1);
-				minimum_ = parser.argd(1);
-				maximum_ = parser.argd(2);
-				binWidth_ = parser.argd(3);
+				if (parser.nArgs() != 4) return Messenger::error("Collect3D node keyword '%s' expects exactly three arguments (%i given).\n", collect3DNodeKeyword(nk), parser.nArgs() - 1);
+				xMinimum_ = parser.argd(1);
+				xMaximum_ = parser.argd(2);
+				xBinWidth_ = parser.argd(3);
+				break;
+			case (Collect3DNodeKeyword::RangeYKeyword):
+				// Check that we have the right number of arguments first...
+				if (parser.nArgs() != 4) return Messenger::error("Collect3D node keyword '%s' expects exactly three arguments (%i given).\n", collect3DNodeKeyword(nk), parser.nArgs() - 1);
+				yMinimum_ = parser.argd(1);
+				yMaximum_ = parser.argd(2);
+				yBinWidth_ = parser.argd(3);
+				break;
+			case (Collect3DNodeKeyword::RangeZKeyword):
+				// Check that we have the right number of arguments first...
+				if (parser.nArgs() != 4) return Messenger::error("Collect3D node keyword '%s' expects exactly three arguments (%i given).\n", collect3DNodeKeyword(nk), parser.nArgs() - 1);
+				zMinimum_ = parser.argd(1);
+				zMaximum_ = parser.argd(2);
+				zBinWidth_ = parser.argd(3);
 				break;
 			case (Collect3DNodeKeyword::nCollect3DNodeKeywords):
 				return Messenger::error("Unrecognised Collect3D node keyword '%s' found.\n", parser.argc(0));

@@ -28,8 +28,12 @@
 
 #include "analyse/nodes/calculate.h"
 #include "analyse/nodes/collect1d.h"
+#include "analyse/nodes/collect2d.h"
+#include "analyse/nodes/collect3d.h"
 #include "analyse/nodes/exclude.h"
 #include "analyse/nodes/normalise1d.h"
+#include "analyse/nodes/normalise2d.h"
+#include "analyse/nodes/normalise3d.h"
 #include "analyse/nodes/select.h"
 #include "analyse/nodes/sequence.h"
 

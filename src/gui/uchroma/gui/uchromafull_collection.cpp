@@ -264,7 +264,7 @@ void UChromaFullWindow::updateCollectionInfo()
 	if (currentCollection())
 	{
 		ui.CollectionNSlicesLabel->setText(QString::number(currentCollection()->nDataSets()));
-		ui.CollectionNPointsLabel->setText(QString::number(currentCollection()->nDataPoints()));
+		ui.CollectionNPointsLabel->setText(QString::number(currentCollection()->nValues()));
 	}
 	else
 	{

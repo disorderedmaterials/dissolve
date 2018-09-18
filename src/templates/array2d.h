@@ -290,13 +290,26 @@ template <class A> class Array2D
 		return array_;
 	}
 	// Return linear value
-	A& linearValue(int index) const
+	A& linearValue(int index)
 	{
 #ifdef CHECKS
 		static A dummy;
 		if ((index < 0) || (index >= linearSize_))
 		{
 			Messenger::print("OUT_OF_RANGE - Index (%i) is out of range in Array2D::linearValue() (linearSize = %i).\n", index, linearSize_);
+			return dummy;
+		}
+#endif
+		return array_[index];
+	}
+	// Return linear value (const)
+	A& constLinearValue(int index) const
+	{
+#ifdef CHECKS
+		static A dummy;
+		if ((index < 0) || (index >= linearSize_))
+		{
+			Messenger::print("OUT_OF_RANGE - Index (%i) is out of range in Array2D::constLinearValue() (linearSize = %i).\n", index, linearSize_);
 			return dummy;
 		}
 #endif

@@ -1207,7 +1207,7 @@ Vec3<double> ViewPane::transformedDataMinima()
 				if (v.y < minima.y) minima.y = v.y;
 				if (v.z < minima.z) minima.z = v.z;
 			}
-			nCounted += prim->collection()->nDataPoints();
+			nCounted += prim->collection()->nValues();
 		}
 	}
 
@@ -1228,7 +1228,7 @@ Vec3<double> ViewPane::transformedDataMaxima()
 		for (TargetPrimitive* prim = target->displayPrimitives(); prim != NULL; prim = prim->next)
 		{
 			// Check number of datapoints in target
-			if (prim->collection()->nDataPoints() == 0) continue;
+			if (prim->collection()->nValues() == 0) continue;
 
 			// Set limits...
 			if (nCounted == 0) maxima = prim->collection()->transformMax();
@@ -1239,7 +1239,7 @@ Vec3<double> ViewPane::transformedDataMaxima()
 				if (v.y > maxima.y) maxima.y = v.y;
 				if (v.z > maxima.z) maxima.z = v.z;
 			}
-			nCounted += prim->collection()->nDataPoints();
+			nCounted += prim->collection()->nValues();
 		}
 	}
 
@@ -1267,7 +1267,7 @@ Vec3<double> ViewPane::transformedDataPositiveMinima()
 				if (v.y < minima.y) minima.y = v.y;
 				if (v.z < minima.z) minima.z = v.z;
 			}
-			nCounted += prim->collection()->nDataPoints();
+			nCounted += prim->collection()->nValues();
 		}
 	}
 
@@ -1295,7 +1295,7 @@ Vec3<double> ViewPane::transformedDataPositiveMaxima()
 				if (v.y > maxima.y) maxima.y = v.y;
 				if (v.z > maxima.z) maxima.z = v.z;
 			}
-			nCounted += prim->collection()->nDataPoints();
+			nCounted += prim->collection()->nValues();
 		}
 	}
 

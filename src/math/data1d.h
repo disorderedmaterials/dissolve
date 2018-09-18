@@ -87,8 +87,16 @@ class Data1D : public Plottable, public ListItem<Data1D>, public ObjectStore<Dat
 	Array<double>& values();
 	// Return values Array
 	const Array<double>& constValues() const;
+	// Return number of values present in whole dataset
+	int nValues() const;
+	// Return minimum value over all data points
+	double minValue() const;
+	// Return maximum value over all data points
+	double maxValue() const;
 	// Add / initialise errors array
 	void addErrors();
+	// Return whether the values have associated errors
+	bool valuesHaveErrors() const;
 	// Return error value specified
 	double& error(int index);
 	// Return error value specified (const)
@@ -131,26 +139,6 @@ class Data1D : public Plottable, public ListItem<Data1D>, public ObjectStore<Dat
 	bool load(ProcessPool& pool, const char* filename, int xcol = 0, int ycol = 1);
 	// Save data to specified filevalues
 	bool save(const char* filename) const;
-
-
-	/*
-	 * Plottable Implementation
-	 */
-	public:
-	// Return number of points along x axis
-	int nXAxisPoints() const;
-	// Return minimum (first) x axis point
-	double xAxisMin() const;
-	// Return maximum (last) x axis point
-	double xAxisMax() const;
-	// Return number of datapoints present in whole dataset
-	int nDataPoints() const;
-	// Return minimum value over all data points
-	double minValue() const;
-	// Return maximum value over all data points
-	double maxValue() const;
-	// Return whether the values have associated errors
-	bool valuesHaveErrors() const;
 
 
 	/*

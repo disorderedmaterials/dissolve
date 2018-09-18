@@ -69,13 +69,13 @@ const char* AnalysisNormalise2DNode::normalise2DNodeKeyword(AnalysisNormalise2DN
  */
 
 // Add site population normaliser
-void AnalysisNormalise2DNode::addSitePopulationNormaliser(AnalysisSelectNode* selectNode)
+void AnalysisNormalise2DNode::addSitePopulationNormaliser(AnalysisSelectBaseNode* selectNode)
 {
 	sitePopulationNormalisers_.add(selectNode, 1.0);
 }
 
 // Add number density normaliser
-void AnalysisNormalise2DNode::addNumberDensityNormaliser(AnalysisSelectNode* selectNode)
+void AnalysisNormalise2DNode::addNumberDensityNormaliser(AnalysisSelectBaseNode* selectNode)
 {
 	numberDensityNormalisers_.add(selectNode);
 }
@@ -152,12 +152,12 @@ bool AnalysisNormalise2DNode::finalise(ProcessPool& procPool, Configuration* cfg
 	normalisedData = collectNode_->accumulatedData();
 
 	// Normalisation by number of sites?
-	RefListIterator<AnalysisSelectNode,double> siteNormaliserIterator(sitePopulationNormalisers_);
-	while (AnalysisSelectNode* selectNode = siteNormaliserIterator.iterate()) normalisedData /= selectNode->nAverageSites();
+	RefListIterator<AnalysisSelectBaseNode,double> siteNormaliserIterator(sitePopulationNormalisers_);
+	while (AnalysisSelectBaseNode* selectNode = siteNormaliserIterator.iterate()) normalisedData /= selectNode->nAverageSites();
 
 	// Normalisation by number density of sites?
-	RefListIterator<AnalysisSelectNode,double> numberDensityIterator(numberDensityNormalisers_);
-	while (AnalysisSelectNode* selectNode = numberDensityIterator.iterate()) normalisedData /= (selectNode->nAverageSites() / cfg->box()->volume());
+	RefListIterator<AnalysisSelectBaseNode,double> numberDensityIterator(numberDensityNormalisers_);
+	while (AnalysisSelectBaseNode* selectNode = numberDensityIterator.iterate()) normalisedData /= (selectNode->nAverageSites() / cfg->box()->volume());
 
 	// Normalisation by factor?
 	if (normaliseByFactor_) normalisedData /= normalisationFactor_;
@@ -165,8 +165,9 @@ bool AnalysisNormalise2DNode::finalise(ProcessPool& procPool, Configuration* cfg
 	// Save data?
 	if (saveNormalisedData_ && procPool.isMaster())
 	{
-		if (normalisedData.save(CharString("%s_%s.txt", name(), cfg->name()))) procPool.decideTrue();
-		else return procPool.decideFalse();
+		return Messenger::error("Saving of 2D data is not yet implemented.\n");
+// 		if (normalisedData.save(CharString("%s_%s.txt", name(), cfg->name()))) procPool.decideTrue();
+// 		else return procPool.decideFalse();
 	}
 	else if (!procPool.decision()) return false;
 
@@ -186,7 +187,7 @@ bool AnalysisNormalise2DNode::read(LineParser& parser, NodeContextStack& context
 	if (!collectNode_) return Messenger::error("A valid Collect2D node name must be given as an argument to Normalise2D.\n");
 	setName(parser.argc(1));
 
-	AnalysisSelectNode* selectNode;
+	AnalysisSelectBaseNode* selectNode;
 
 	// Read until we encounter the EndNormalise2D keyword, or we fail for some reason
 	while (!parser.eofOrBlank())

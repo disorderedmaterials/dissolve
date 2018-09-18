@@ -182,7 +182,7 @@ void Histogram2D::bin(double x, double y)
 		return;
 	}
 
-	// Calculate target bin along x
+	// Calculate target bin along y
 	int yBin = (y - yMinimum_) / yBinWidth_;
 	if ((yBin < 0) || (yBin >= nYBins_))
 	{
@@ -283,7 +283,7 @@ bool Histogram2D::write(LineParser& parser)
 {
 	if (!parser.writeLineF("%s\n", objectTag())) return false;
 	if (!parser.writeLineF("%f %f %f %f %f %f\n", xMinimum_, xMaximum_, xBinWidth_, yMinimum_, yMaximum_, yBinWidth_)) return false;
-	if (!parser.writeLineF("%i\n", nBinned_)) return false;
+	if (!parser.writeLineF("%li  %li\n", nBinned_, nMissed_)) return false;
 	for (int x=0; x<nXBins_; ++x)
 	{
 		for (int y=0; y<nYBins_; ++y) if (!averages_.at(x,y).write(parser)) return false;
@@ -304,7 +304,8 @@ bool Histogram2D::read(LineParser& parser)
 	initialise(parser.argd(0), parser.argd(1), parser.argd(2), parser.argd(3), parser.argd(4), parser.argd(5));
 
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-	nBinned_ = parser.argi(0);
+	nBinned_ = parser.argli(0);
+	nMissed_ = parser.argli(1);
 
 	for (int x=0; x<nXBins_; ++x)
 	{

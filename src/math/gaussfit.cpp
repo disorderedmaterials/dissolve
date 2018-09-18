@@ -54,11 +54,11 @@ void GaussFit::addFunction(Data1D& data, FunctionSpace::SpaceType space, double 
 	// Functional form of function to add depends on whether we're fitting Gaussians or FTs of Gaussians
 	if (space == FunctionSpace::RealSpace)
 	{
-		for (int m=0; m<data.nDataPoints(); ++m) data.value(m) += gaussian(data.xAxis(m), xCentre, A, fwhm);
+		for (int m=0; m<data.nValues(); ++m) data.value(m) += gaussian(data.xAxis(m), xCentre, A, fwhm);
 	}
 	else
 	{
-		for (int m=0; m<data.nDataPoints(); ++m) data.value(m) += gaussianFT(data.xAxis(m), xCentre, A, fwhm);
+		for (int m=0; m<data.nValues(); ++m) data.value(m) += gaussianFT(data.xAxis(m), xCentre, A, fwhm);
 	}
 }
 
@@ -161,8 +161,8 @@ bool GaussFit::saveFTGaussians(const char* filenamePrefix, double xStep) const
 		double fwhm = fwhm_.constAt(n);
 		if (!parser.writeLineF("#  x=%f  A=%f  fwhm=%f\n", xCentre, A, fwhm)) return false;
 
-		double x = referenceData_.xAxisMin();
-		while (x < referenceData_.xAxisMax())
+		double x = referenceData_.constXAxis().firstValue();
+		while (x < referenceData_.constXAxis().lastValue())
 		{
 			parser.writeLineF("%f  %f\n", x, gaussianFT(x, xCentre, A, fwhm));
 			x += xDelta;
@@ -227,20 +227,20 @@ void GaussFit::set(double rMax, const Array<double>& A, double sigma)
 // Update precalculated function data using specified A
 void GaussFit::updatePrecalculatedFunctions(FunctionSpace::SpaceType space, double A)
 {
-	functions_.initialise(nGaussians_, referenceData_.nDataPoints());
+	functions_.initialise(nGaussians_, referenceData_.nValues());
 	
 	if (space == FunctionSpace::RealSpace)
 	{
 		for (int n=0; n<nGaussians_; ++n)
 		{
-			for (int m=0; m<referenceData_.nDataPoints(); ++m) functions_.at(n, m) = gaussian(referenceData_.xAxis(m), x_[n], A, fwhm_[n]);
+			for (int m=0; m<referenceData_.nValues(); ++m) functions_.at(n, m) = gaussian(referenceData_.xAxis(m), x_[n], A, fwhm_[n]);
 		}
 	}
 	else 
 	{
 		for (int n=0; n<nGaussians_; ++n)
 		{
-			for (int m=0; m<referenceData_.nDataPoints(); ++m) functions_.at(n, m) = gaussianFT(referenceData_.xAxis(m), x_[n], A, fwhm_[n]);
+			for (int m=0; m<referenceData_.nValues(); ++m) functions_.at(n, m) = gaussianFT(referenceData_.xAxis(m), x_[n], A, fwhm_[n]);
 		}
 	}
 }
@@ -331,14 +331,14 @@ double GaussFit::constructReal(double requiredError, int maxGaussians)
 	{
 		// Calculate the delta function between the reference and current approximate data
 		referenceDelta.clear();
-		for (int n=0; n<referenceData_.nDataPoints(); ++n) referenceDelta.addPoint(referenceData_.xAxis(n), referenceData_.value(n) - approximateData_.value(n));
+		for (int n=0; n<referenceData_.nValues(); ++n) referenceDelta.addPoint(referenceData_.xAxis(n), referenceData_.value(n) - approximateData_.value(n));
 
 		// Keep track of the number of Gaussians we add this cycle
 		int nAdded = 0;
 		lastX = -1.0;
 
 		// Go over points in the delta, calculating the gradient as we go, and seeking gradient minima (actually, crossovers between -ve and +ve gradients)
-		for (int n=regionDelta; n<referenceData_.nDataPoints() - regionDelta; ++n)
+		for (int n=regionDelta; n<referenceData_.nValues() - regionDelta; ++n)
 		{
 			// Calculate gradient at this point
 			gradient = 0.0;
@@ -388,7 +388,7 @@ double GaussFit::constructReal(double requiredError, int maxGaussians)
 
 					// Add the accepted Gaussian in to the approximate data, and remove it from the reference delta
 					double x, y;
-					for (int m=0; m<referenceData_.nDataPoints(); ++m)
+					for (int m=0; m<referenceData_.nValues(); ++m)
 					{
 						x = referenceData_.xAxis(m);
 						y = gaussian(x, trialX, trialA, trialFWHM);
@@ -544,7 +544,7 @@ double GaussFit::costAnalyticA(const Array<double>& alpha)
 
 	// Loop over data points, add in our Gaussian contributions, and 
 	double x, y, dy;
-	for (int i=0; i<approximateData_.nDataPoints(); ++i)
+	for (int i=0; i<approximateData_.nValues(); ++i)
 	{
 		// Get approximate data x and y for this point
 		x = approximateData_.xAxis(i);
@@ -578,7 +578,7 @@ double GaussFit::costAnalyticAF(const Array<double>& alpha)
 
 	// Loop over data points, add in our Gaussian contributions, and 
 	double x, y, dy;
-	for (int i=0; i<approximateData_.nDataPoints(); ++i)
+	for (int i=0; i<approximateData_.nValues(); ++i)
 	{
 		// Get approximate data x and y for this point
 		x = approximateData_.xAxis(i);
@@ -616,7 +616,7 @@ double GaussFit::costAnalyticAX(const Array<double>& alpha)
 
 	// Loop over data points, add in our Gaussian contributions, and 
 	double x, y, dy;
-	for (int i=0; i<approximateData_.nDataPoints(); ++i)
+	for (int i=0; i<approximateData_.nValues(); ++i)
 	{
 		// Get approximate data x and y for this point
 		x = approximateData_.xAxis(i);
@@ -654,7 +654,7 @@ double GaussFit::costAnalyticAFX(const Array<double>& alpha)
 
 	// Loop over data points, add in our Gaussian contributions, and 
 	double x, y, dy;
-	for (int i=0; i<approximateData_.nDataPoints(); ++i)
+	for (int i=0; i<approximateData_.nValues(); ++i)
 	{
 		// Get approximate data x and y for this point
 		x = approximateData_.xAxis(i);
@@ -688,7 +688,7 @@ double GaussFit::costTabulatedA(const Array<double>& alpha)
 	// Loop over data points and sum contributions from tabulated functions on to the current approximate data
 	double y, dy;
 	int nAlpha = alpha.nItems();
-	for (int i=0; i<approximateData_.nDataPoints(); ++i)
+	for (int i=0; i<approximateData_.nValues(); ++i)
 	{
 		// Get approximate data x and y for this point
 		y = approximateData_.value(i);

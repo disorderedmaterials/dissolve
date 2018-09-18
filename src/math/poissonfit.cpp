@@ -55,12 +55,12 @@ void PoissonFit::addFunction(Data1D& data, FunctionSpace::SpaceType space, doubl
 {
 	if (space == FunctionSpace::RealSpace)
 	{
-		for (int m=0; m<data.nDataPoints(); ++m) data.value(m) += C * poisson(data.xAxis(m), nIndex);
+		for (int m=0; m<data.nValues(); ++m) data.value(m) += C * poisson(data.xAxis(m), nIndex);
 	}
 	else
 	{
 		// We assume here that the supplied 'data' has abscissa consistent with the precalculated data
-		for (int m=0; m<data.nDataPoints(); ++m) data.value(m) += C * poissonFT(m, nIndex);
+		for (int m=0; m<data.nValues(); ++m) data.value(m) += C * poissonFT(m, nIndex);
 	}
 }
 
@@ -211,10 +211,10 @@ void PoissonFit::preCalculateTerms()
 {
 	// Factors involving Q
 	const Array<double>& Q = referenceData_.constXAxis();
-	sqrtOnePlusQSqSigmaSq_.initialise(referenceData_.nDataPoints());
-	oneMinusQSqSigmaSq_.initialise(referenceData_.nDataPoints());
-	arcTanQSigma_.initialise(referenceData_.nDataPoints());
-	for (int n=0; n<referenceData_.nDataPoints(); ++n)
+	sqrtOnePlusQSqSigmaSq_.initialise(referenceData_.nValues());
+	oneMinusQSqSigmaSq_.initialise(referenceData_.nValues());
+	arcTanQSigma_.initialise(referenceData_.nValues());
+	for (int n=0; n<referenceData_.nValues(); ++n)
 	{
 		sqrtOnePlusQSqSigmaSq_[n] = sqrt(1.0 + Q.constAt(n)*Q.constAt(n) * sigmaQ_*sigmaQ_);
 		oneMinusQSqSigmaSq_[n] = 1.0 - Q.constAt(n)*Q.constAt(n) * sigmaQ_*sigmaQ_;
@@ -252,20 +252,20 @@ void PoissonFit::preCalculateTerms()
 // Update precalculated function data using specified C
 void PoissonFit::updatePrecalculatedFunctions(FunctionSpace::SpaceType space, double C)
 {
-	functions_.initialise(nPoissons_, referenceData_.nDataPoints());
+	functions_.initialise(nPoissons_, referenceData_.nValues());
 	
 	if (space == FunctionSpace::RealSpace)
 	{
 		for (int n=0; n<nPoissons_; ++n)
 		{
-			for (int m=0; m<referenceData_.nDataPoints(); ++m) functions_.at(n, m) = C * poisson(referenceData_.xAxis(m), n);
+			for (int m=0; m<referenceData_.nValues(); ++m) functions_.at(n, m) = C * poisson(referenceData_.xAxis(m), n);
 		}
 	}
 	else 
 	{
 		for (int n=0; n<nPoissons_; ++n)
 		{
-			for (int m=0; m<referenceData_.nDataPoints(); ++m) functions_.at(n, m) = C * poissonFT(m, n);
+			for (int m=0; m<referenceData_.nValues(); ++m) functions_.at(n, m) = C * poissonFT(m, n);
 		}
 	}
 }
@@ -441,7 +441,7 @@ double PoissonFit::costAnalyticC(const Array<double>& alpha)
 
 	// Loop over data points, add in our Gaussian contributions, and 
 	double x, y, dy;
-	for (int i=0; i<approximateData_.nDataPoints(); ++i)
+	for (int i=0; i<approximateData_.nValues(); ++i)
 	{
 		// Get approximate data x and y for this point
 		x = approximateData_.xAxis(i);
@@ -470,7 +470,7 @@ double PoissonFit::costTabulatedC(const Array<double>& alpha)
 
 	double y, dy;
 	int nAlpha = alpha.nItems();
-	for (int i=0; i<approximateData_.nDataPoints(); ++i)
+	for (int i=0; i<approximateData_.nValues(); ++i)
 	{
 		// Get approximate data x and y for this point
 		y = approximateData_.value(i);

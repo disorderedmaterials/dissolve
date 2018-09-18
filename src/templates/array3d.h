@@ -212,7 +212,7 @@ template <class A> class Array3D
 		return nZ_;
 	}
 	// Return linear array size
-	int linearArraySize()
+	int linearArraySize() const
 	{
 		return linearSize_;
 	}
@@ -221,6 +221,46 @@ template <class A> class Array3D
 	{
 		return array_;
 	}
+	// Return linear value
+	A& linearValue(int index)
+	{
+#ifdef CHECKS
+		static A dummy;
+		if ((index < 0) || (index >= linearSize_))
+		{
+			Messenger::print("OUT_OF_RANGE - Index (%i) is out of range in Array3D::linearValue() (linearSize = %i).\n", index, linearSize_);
+			return dummy;
+		}
+#endif
+		return array_[index];
+	}
+	// Return linear value (const)
+	A& constLinearValue(int index) const
+	{
+#ifdef CHECKS
+		static A dummy;
+		if ((index < 0) || (index >= linearSize_))
+		{
+			Messenger::print("OUT_OF_RANGE - Index (%i) is out of range in Array3D::constLinearValue() (linearSize = %i).\n", index, linearSize_);
+			return dummy;
+		}
+#endif
+		return array_[index];
+	}
+
+
+	/*
+	 * Operators
+	 */
+	public:
+	// Operator+= (add to all)
+	void operator+=(const A value) { for (int n=0; n<linearSize_; ++n) array_[n] += value; }
+	// Operator-= (subtract from all)
+	void operator-=(const A value) { for (int n=0; n<linearSize_; ++n) array_[n] -= value; }
+	// Operator*= (multiply all)
+	void operator*=(const A value) { for (int n=0; n<linearSize_; ++n) array_[n] *= value; }
+	// Operator/= (divide all)
+	void operator/=(const A value) { for (int n=0; n<linearSize_; ++n) array_[n] /= value; }
 };
 
 // OffsetArray3D
@@ -336,7 +376,7 @@ template <class A> class OffsetArray3D
 // 		else printf("BAD_USAGE - Zero or negative row/column size(s) given to Array3D::initialise() (r=%i, c=%i)\n", nrows, ncolumns);
 	}
 	// Return specified element as reference
-	A& ref(int x, int y, int z)
+	A& at(int x, int y, int z)
 	{
 #ifdef CHECKS
 		static A dummy;
@@ -358,8 +398,8 @@ template <class A> class OffsetArray3D
 #endif
 		return array_[sliceOffsets_[z-zMin_] + (y-yMin_)*nX_ + (x-xMin_)];
 	}
-	// Return specified element as value
-	A value(int x, int y, int z) const
+	// Return specified element as const reference
+	A& constAt(int x, int y, int z) const
 	{
 #ifdef CHECKS
 		static A dummy;
@@ -382,7 +422,7 @@ template <class A> class OffsetArray3D
 		return array_[sliceOffsets_[z-zMin_] + (y-yMin_)*nX_ + (x-xMin_)];
 	}
 	// Return address of specified element
-	A* ptr(int x, int y, int z)
+	A* pointerAt(int x, int y, int z)
 	{
 #ifdef CHECKS
 		static A dummy;
@@ -420,7 +460,7 @@ template <class A> class OffsetArray3D
 		return nZ_;
 	}
 	// Return linear array size
-	int linearArraySize()
+	int linearArraySize() const
 	{
 		return linearSize_;
 	}
@@ -429,6 +469,46 @@ template <class A> class OffsetArray3D
 	{
 		return array_;
 	}
+	// Return linear value
+	A& linearValue(int index)
+	{
+#ifdef CHECKS
+		static A dummy;
+		if ((index < 0) || (index >= linearSize_))
+		{
+			Messenger::print("OUT_OF_RANGE - Index (%i) is out of range in OffsetArray3D::linearValue() (linearSize = %i).\n", index, linearSize_);
+			return dummy;
+		}
+#endif
+		return array_[index];
+	}
+	// Return linear value (const)
+	A& constLinearValue(int index) const
+	{
+#ifdef CHECKS
+		static A dummy;
+		if ((index < 0) || (index >= linearSize_))
+		{
+			Messenger::print("OUT_OF_RANGE - Index (%i) is out of range in OffsetArray3D::constLinearValue() (linearSize = %i).\n", index, linearSize_);
+			return dummy;
+		}
+#endif
+		return array_[index];
+	}
+
+
+	/*
+	 * Operators
+	 */
+	public:
+	// Operator+= (add to all)
+	void operator+=(const A value) { for (int n=0; n<linearSize_; ++n) array_[n] += value; }
+	// Operator-= (subtract from all)
+	void operator-=(const A value) { for (int n=0; n<linearSize_; ++n) array_[n] -= value; }
+	// Operator*= (multiply all)
+	void operator*=(const A value) { for (int n=0; n<linearSize_; ++n) array_[n] *= value; }
+	// Operator/= (divide all)
+	void operator/=(const A value) { for (int n=0; n<linearSize_; ++n) array_[n] /= value; }
 };
 
 #endif

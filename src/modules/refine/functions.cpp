@@ -70,7 +70,7 @@ Data1D RefineModule::calculateCR(const Data1D& sq, double normFactor, double rMi
 	// Get delta0
 	//const double delta0 = PI / sq.xLast();
 
-	int nQ = sq.nDataPoints();
+	int nQ = sq.nValues();
 
 	// Perform Fourier sine transform, apply general and omega-dependent broadening, as well as window function
 	double ft, window, broaden;
@@ -286,12 +286,12 @@ double RefineModule::costFunction3Exp(const Array<double>& alpha)
 	while (x <= xMax)
 	{
 		// Check x against limits of function
-		if (x < fitData_.xAxisMin())
+		if (x < fitData_.xAxis().firstValue())
 		{
 			x += windowDelta;
 			continue;
 		}
-		else if (x > fitData_.xAxisMax()) break;
+		else if (x > fitData_.xAxis().lastValue()) break;
 
 		// Evaluate the function
 		func = fitEquation(x, alpha.constAt(0), alpha.constAt(1), alpha.constAt(2), alpha.constAt(3), alpha.constAt(4), alpha.constAt(5));
@@ -334,12 +334,12 @@ double RefineModule::costFunction2Exp(const Array<double>& alpha)
 	while (x <= xMax)
 	{
 		// Check x against limits of function
-		if (x < fitData_.xAxisMin())
+		if (x < fitData_.xAxis().firstValue())
 		{
 			x += windowDelta;
 			continue;
 		}
-		else if (x > fitData_.xAxisMax()) break;
+		else if (x > fitData_.xAxis().lastValue()) break;
 
 		// Evaluate the function
 		func = fitEquation(x, alpha.constAt(0), alpha.constAt(1), alpha.constAt(2), alpha.constAt(3), 0.0, alpha.constAt(4));
@@ -360,7 +360,7 @@ double RefineModule::costFunction2Exp(const Array<double>& alpha)
 // Sum fitting equation with the specified parameters into the specified Data1D
 void RefineModule::sumFitEquation(Data1D& target, double xCentre, double delta, double width, double AL, double AC, double AR)
 {
-	for (int n=0; n<target.nDataPoints(); ++n) target.value(n) += fitEquation(target.xAxis(n), xCentre, delta, width, AL, AC, AR);
+	for (int n=0; n<target.nValues(); ++n) target.value(n) += fitEquation(target.xAxis(n), xCentre, delta, width, AL, AC, AR);
 }
 
 // Return list of target Modules / data for fitting process

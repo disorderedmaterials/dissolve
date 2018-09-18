@@ -1,6 +1,6 @@
 /*
-	*** 1-Dimensional Data With Statistics
-	*** src/math/data1d.cpp
+	*** 3-Dimensional Data With Statistics
+	*** src/math/data3d.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,19 +19,19 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "math/data1d.h"
-#include "math/histogram1d.h"
+#include "math/data3d.h"
+#include "math/histogram3d.h"
 #include "base/messenger.h"
 #include "base/lineparser.h"
 
 // Static Members (ObjectStore)
-template<class Data1D> RefList<Data1D,int> ObjectStore<Data1D>::objects_;
-template<class Data1D> int ObjectStore<Data1D>::objectCount_ = 0;
-template<class Data1D> int ObjectStore<Data1D>::objectType_ = ObjectInfo::Data1DObject;
-template<class Data1D> const char* ObjectStore<Data1D>::objectTypeName_ = "Data1D";
+template<class Data3D> RefList<Data3D,int> ObjectStore<Data3D>::objects_;
+template<class Data3D> int ObjectStore<Data3D>::objectCount_ = 0;
+template<class Data3D> int ObjectStore<Data3D>::objectType_ = ObjectInfo::Data3DObject;
+template<class Data3D> const char* ObjectStore<Data3D>::objectTypeName_ = "Data3D";
 
 // Constructor
-Data1D::Data1D() : ListItem<Data1D>(), ObjectStore<Data1D>(this), Plottable(Plottable::OneAxisPlottable)
+Data3D::Data3D() : ListItem<Data3D>(), ObjectStore<Data3D>(this), Plottable(Plottable::TwoAxisPlottable)
 {
 	hasError_ = false;
 
@@ -39,20 +39,22 @@ Data1D::Data1D() : ListItem<Data1D>(), ObjectStore<Data1D>(this), Plottable(Plot
 }
 
 // Destructor
-Data1D::~Data1D()
+Data3D::~Data3D()
 {
 }
 
 // Copy Constructor
-Data1D::Data1D(const Data1D& source) : ObjectStore<Data1D>(this), Plottable(Plottable::OneAxisPlottable)
+Data3D::Data3D(const Data3D& source) : ObjectStore<Data3D>(this), Plottable(Plottable::TwoAxisPlottable)
 {
 	(*this) = source;
 }
 
 // Clear Data
-void Data1D::clear()
+void Data3D::clear()
 {
 	x_.clear();
+	y_.clear();
+	z_.clear();
 	values_.clear();
 	errors_.clear();
 }
@@ -62,68 +64,55 @@ void Data1D::clear()
  */
 
 // Initialise arrays to specified size
-void Data1D::initialise(int size, bool withError)
+void Data3D::initialise(int xSize, int ySize, int zSize, bool withError)
 {
-	x_.initialise(size);
-	values_.initialise(size);
+	x_.initialise(xSize);
+	y_.initialise(ySize);
+	z_.initialise(zSize);
+	values_.initialise(xSize, ySize, zSize);
 	hasError_ = withError;
-	if (hasError_) errors_.initialise(size);
+	if (hasError_) errors_.initialise(xSize, ySize, zSize);
 	else errors_.clear();
 }
 
 // Initialise to be consistent in size and x axis with supplied object
-void Data1D::initialise(const Data1D& source)
+void Data3D::initialise(const Data3D& source)
 {
 	x_ = source.x_;
-	values_.initialise(x_.nItems());
+	y_ = source.y_;
+	z_ = source.z_;
+	values_.initialise(x_.nItems(), y_.nItems(), z_.nItems());
 	hasError_ = source.hasError_;
-	if (hasError_) errors_.initialise(x_.nItems());
+	if (hasError_) errors_.initialise(x_.nItems(), y_.nItems(), z_.nItems());
 	else errors_.clear();
 }
 
 // Copy arrays from supplied object
-void Data1D::copyArrays(const Data1D& source)
+void Data3D::copyArrays(const Data3D& source)
 {
 	x_ = source.x_;
+	y_ = source.y_;
+	z_ = source.z_;
 	values_ = source.values_;
 	errors_ = source.errors_;
 	hasError_ = source.hasError_;
 }
 
 // Zero values array
-void Data1D::zero()
+void Data3D::zero()
 {
 	values_ = 0.0;
 	if (hasError_) errors_ = 0.0;
 }
 
-// Add new data point
-void Data1D::addPoint(double x, double y)
-{
-	x_.add(x);
-	values_.add(y);
-
-	if (hasError_) errors_.add(0.0);
-}
-
-// Add new data point with error
-void Data1D::addPoint(double x, double y, double yError)
-{
-	x_.add(x);
-	values_.add(y);
-
-	if (hasError_) errors_.add(yError);
-	else Messenger::warn("Tried to addPoint() with an error to Data1D, but this Data1D () has no error information associated with it.\n", name(), objectTag());
-}
-
 // Return x value specified
-double& Data1D::xAxis(int index)
+double& Data3D::xAxis(int index)
 {
 #ifdef CHECKS
 	if ((index < 0) || (index >= x_.nItems()))
 	{
 		static double dummy;
-		Messenger::error("OUT_OF_RANGE - Index %i is out of range for x_ array in Data1D::xAxis().\n", index);
+		Messenger::error("OUT_OF_RANGE - Index %i is out of range for x_ array in Data3D::xAxis().\n", index);
 		return dummy;
 	}
 #endif
@@ -131,110 +120,287 @@ double& Data1D::xAxis(int index)
 }
 
 // Return x value specified (const)
-double Data1D::constXAxis(int index) const
+double Data3D::constXAxis(int index) const
 {
 #ifdef CHECKS
 	if ((index < 0) || (index >= x_.nItems()))
 	{
-		Messenger::error("OUT_OF_RANGE - Index %i is out of range for x_ array in Data1D::constXAxis().\n", index);
+		Messenger::error("OUT_OF_RANGE - Index %i is out of range for x_ array in Data3D::constXAxis().\n", index);
 		return 0.0;
 	}
 #endif
 	return x_.constAt(index);
 }
 
-// Return x Array
-Array<double>& Data1D::xAxis()
+// Return x axis Array
+Array<double>& Data3D::xAxis()
+{
+	return x_;
+}
+
+// Return x axis Array (const)
+const Array<double>& Data3D::constXAxis() const
 {
 	return x_;
 }
 
 // Return y value specified
-double& Data1D::value(int index)
+double& Data3D::yAxis(int index)
 {
 #ifdef CHECKS
-	if ((index < 0) || (index >= values_.nItems()))
+	if ((index < 0) || (index >= y_.nItems()))
 	{
 		static double dummy;
-		Messenger::error("OUT_OF_RANGE - Index %i is out of range for values_ array in Data1D::y().\n", index);
+		Messenger::error("OUT_OF_RANGE - Index %i is out of range for x_ array in Data3D::yAxis().\n", index);
 		return dummy;
 	}
 #endif
-	return values_[index];
+	return y_[index];
 }
 
 // Return y value specified (const)
-double Data1D::constValue(int index) const
+double Data3D::constYAxis(int index) const
 {
 #ifdef CHECKS
-	if ((index < 0) || (index >= values_.nItems()))
+	if ((index < 0) || (index >= y_.nItems()))
 	{
-		Messenger::error("OUT_OF_RANGE - Index %i is out of range for values_ array in Data1D::constY().\n", index);
+		Messenger::error("OUT_OF_RANGE - Index %i is out of range for x_ array in Data3D::constYAxis().\n", index);
 		return 0.0;
 	}
 #endif
-	return values_.constAt(index);
+	return y_.constAt(index);
 }
 
 // Return y Array
-Array<double>& Data1D::values()
+Array<double>& Data3D::yAxis()
+{
+	return y_;
+}
+
+// Return y axis Array (const)
+const Array<double>& Data3D::constYAxis() const
+{
+	return y_;
+}
+
+// Return z value specified
+double& Data3D::zAxis(int index)
+{
+#ifdef CHECKS
+	if ((index < 0) || (index >= y_.nItems()))
+	{
+		static double dummy;
+		Messenger::error("OUT_OF_RANGE - Index %i is out of range for z_ array in Data3D::zAxis().\n", index);
+		return dummy;
+	}
+#endif
+	return z_[index];
+}
+
+// Return z value specified (const)
+double Data3D::constZAxis(int index) const
+{
+#ifdef CHECKS
+	if ((index < 0) || (index >= y_.nItems()))
+	{
+		Messenger::error("OUT_OF_RANGE - Index %i is out of range for z_ array in Data3D::constZAxis().\n", index);
+		return 0.0;
+	}
+#endif
+	return z_.constAt(index);
+}
+
+// Return z Array
+Array<double>& Data3D::zAxis()
+{
+	return z_;
+}
+
+// Return z axis Array (const)
+const Array<double>& Data3D::constZAxis() const
+{
+	return z_;
+}
+
+// Return value specified
+double& Data3D::value(int xIndex, int yIndex, int zIndex)
+{
+#ifdef CHECKS
+	if ((xIndex < 0) || (xIndex >= x_.nItems()))
+	{
+		static double dummy;
+		Messenger::error("OUT_OF_RANGE - Index %i is out of range for x axis in Data3D::value().\n", xIndex);
+		return dummy;
+	}
+	if ((yIndex < 0) || (yIndex >= y_.nItems()))
+	{
+		static double dummy;
+		Messenger::error("OUT_OF_RANGE - Index %i is out of range for y axis in Data3D::value().\n", yIndex);
+		return dummy;
+	}
+	if ((zIndex < 0) || (zIndex >= z_.nItems()))
+	{
+		static double dummy;
+		Messenger::error("OUT_OF_RANGE - Index %i is out of range for z axis in Data3D::value().\n", zIndex);
+		return dummy;
+	}
+#endif
+	return values_.at(xIndex, yIndex, zIndex);
+}
+
+// Return value specified (const)
+double Data3D::constValue(int xIndex, int yIndex, int zIndex) const
+{
+#ifdef CHECKS
+	if ((xIndex < 0) || (xIndex >= x_.nItems()))
+	{
+		Messenger::error("OUT_OF_RANGE - Index %i is out of range for x axis in Data3D::constValue().\n", xIndex);
+		return 0.0;
+	}
+	if ((yIndex < 0) || (yIndex >= y_.nItems()))
+	{
+		Messenger::error("OUT_OF_RANGE - Index %i is out of range for y axis in Data3D::constValue().\n", yIndex);
+		return 0.0;
+	}
+	if ((zIndex < 0) || (zIndex >= z_.nItems()))
+	{
+		Messenger::error("OUT_OF_RANGE - Index %i is out of range for z axis in Data3D::constValue().\n", zIndex);
+		return 0.0;
+	}
+#endif
+	return values_.constAt(xIndex, yIndex, zIndex);
+}
+
+// Return values Array
+Array3D<double>& Data3D::values()
 {
 	return values_;
 }
 
-// Return y Array (const)
-const Array<double>& Data1D::constValues() const
+// Return values Array (const)
+const Array3D<double>& Data3D::constValues3D() const
 {
 	return values_;
+}
+
+// Return number of values present in whole dataset
+int Data3D::nValues() const
+{
+	return values_.linearArraySize();
+}
+
+// Return minimum value over all data points
+double Data3D::minValue() const
+{
+	if (values_.linearArraySize() == 0) return 0.0;
+
+	double value = values_.constLinearValue(0);
+	for (int n=1; n<values_.linearArraySize(); ++n) if (values_.constLinearValue(n) < value) value = values_.constLinearValue(n);
+
+	return value;
+}
+
+// Return maximum value over all data points
+double Data3D::maxValue() const
+{
+	if (values_.linearArraySize() == 0) return 0.0;
+
+	double value = values_.constLinearValue(0);
+	for (int n=1; n<values_.linearArraySize(); ++n) if (values_.constLinearValue(n) > value) value = values_.constLinearValue(n);
+
+	return value;
 }
 
 // Add / initialise errors array
-void Data1D::addErrors()
+void Data3D::addErrors()
 {
-	if (hasError_) Messenger::warn("Adding an error array to a Data1D that already has one...\n");
+	if (hasError_) Messenger::warn("Adding an error array to a Data3D that already has one...\n");
 
-	errors_.initialise(x_.nItems());
+	errors_.initialise(x_.nItems(), y_.nItems(), z_.nItems());
 
 	hasError_ = true;
 }
 
+// Return whether the values have associated errors
+bool Data3D::valuesHaveErrors() const
+{
+	return hasError_;
+}
+
 // Return error value specified
-double& Data1D::error(int index)
+double& Data3D::error(int xIndex, int yIndex, int zIndex)
 {
 	if (!hasError_)
 	{
 		static double dummy;
-		Messenger::warn("This Data1D (name='%s', tag='%s') has no errors to return, but error(int) was requested.\n", name(), objectTag());
+		Messenger::warn("This Data3D (name='%s', tag='%s') has no errors to return, but error(int) was requested.\n", name(), objectTag());
 		return dummy;
 	}
-	
-	return errors_.at(index);
+#ifdef CHECKS
+	if ((xIndex < 0) || (xIndex >= x_.nItems()))
+	{
+		static double dummy;
+		Messenger::error("OUT_OF_RANGE - Index %i is out of range for x axis in Data3D::error().\n", xIndex);
+		return dummy;
+	}
+	if ((yIndex < 0) || (yIndex >= y_.nItems()))
+	{
+		static double dummy;
+		Messenger::error("OUT_OF_RANGE - Index %i is out of range for y axis in Data3D::error().\n", yIndex);
+		return dummy;
+	}
+	if ((zIndex < 0) || (zIndex >= z_.nItems()))
+	{
+		static double dummy;
+		Messenger::error("OUT_OF_RANGE - Index %i is out of range for z axis in Data3D::error().\n", zIndex);
+		return dummy;
+	}
+#endif
+
+	return errors_.at(xIndex, yIndex, zIndex);
 }
 
 // Return error value specified (const)
-double Data1D::constError(int index) const
+double Data3D::constError(int xIndex, int yIndex, int zIndex) const
 {
 	if (!hasError_)
 	{
-		Messenger::warn("This Data1D (name='%s', tag='%s') has no errors to return, but constError(int) was requested.\n", name(), objectTag());
+		Messenger::warn("This Data3D (name='%s', tag='%s') has no errors to return, but constError(int,int) was requested.\n", name(), objectTag());
 		return 0.0;
 	}
-	
-	return errors_.constAt(index);
+#ifdef CHECKS
+	if ((xIndex < 0) || (xIndex >= x_.nItems()))
+	{
+		Messenger::error("OUT_OF_RANGE - Index %i is out of range for x axis in Data3D::constError().\n", xIndex);
+		return 0.0;
+	}
+	if ((yIndex < 0) || (yIndex >= y_.nItems()))
+	{
+		Messenger::error("OUT_OF_RANGE - Index %i is out of range for y axis in Data3D::constError().\n", yIndex);
+		return 0.0;
+	}
+	if ((zIndex < 0) || (zIndex >= z_.nItems()))
+	{
+		Messenger::error("OUT_OF_RANGE - Index %i is out of range for z axis in Data3D::constError().\n", zIndex);
+		return 0.0;
+	}
+#endif
+
+	return errors_.constAt(xIndex, yIndex, zIndex);
 }
 
 // Return error Array
-Array<double>& Data1D::errors()
+Array3D<double>& Data3D::errors()
 {
-	if (!hasError_) Messenger::warn("This Data1D (name='%s', tag='%s') has no errors to return, but errors() was requested.\n", name(), objectTag());
+	if (!hasError_) Messenger::warn("This Data3D (name='%s', tag='%s') has no errors to return, but errors() was requested.\n", name(), objectTag());
 	
 	return errors_;
 }
 
 // Return error Array (const)
-const Array<double>& Data1D::constErrors() const
+const Array3D<double>& Data3D::constErrors3D() const
 {
-	if (!hasError_) Messenger::warn("This Data1D (name='%s', tag='%s') has no errors to return, but constErrors() was requested.\n", name(), objectTag());
+	if (!hasError_) Messenger::warn("This Data3D (name='%s', tag='%s') has no errors to return, but constErrors() was requested.\n", name(), objectTag());
 	
 	return errors_;
 }
@@ -244,262 +410,41 @@ const Array<double>& Data1D::constErrors() const
  */
 
 // Operator =
-void Data1D::operator=(const Data1D& source)
+void Data3D::operator=(const Data3D& source)
 {
 	name_ = source.name_;
 	x_ = source.x_;
+	y_ = source.y_;
+	z_ = source.z_;
 	values_ = source.values_;
 	hasError_ = source.hasError_;
 	errors_ = source.errors_;
 }
 
 // Operator +=
-void Data1D::operator+=(const Data1D& source)
+void Data3D::operator+=(const double delta)
 {
-	// If no data is present, simply copy the other arrays
-	if (x_.nItems() == 0)
-	{
-		copyArrays(source);
-		return;
-	}
-
-	// Check array sizes
-	if (x_.nItems() != source.x_.nItems())
-	{
-		Messenger::error("Can't += these Data1D together since they are of differing sizes.\n");
-		return;
-	}
-
-	// Loop over points, summing them into our array
-	for (int n=0; n<x_.nItems(); ++n)
-	{
-#ifdef CHECKS
-		// Check x values for consistency
-		if (fabs(x_[n] - source.constXAxis(n)) > 1.0e-6)
-		{
-			Messenger::error("Failed to += these Data1D together since the x arrays are different (at point %i, x are %e and %e).\n", n, x_[n], source.constXAxis(n));
-			return;
-		}
-#endif
-		values_[n] += source.constValue(n);
-	}
-}
-
-// Operator +=
-void Data1D::operator+=(const double delta)
-{
-	for (int n=0; n<values_.nItems(); ++n) values_[n] += delta;
+	for (int n=0; n<values_.linearArraySize(); ++n) values_.linearValue(n) += delta;
 }
 
 // Operator -=
-void Data1D::operator-=(const Data1D& source)
+void Data3D::operator-=(const double delta)
 {
-	// If no data is present, simply copy the other arrays and negate the y array
-	if (x_.nItems() == 0)
-	{
-		copyArrays(source);
-		for (int n=0; n<values_.nItems(); ++n) values_[n] = -values_[n];
-		return;
-	}
-
-	// Check array sizes
-	if (x_.nItems() != source.x_.nItems())
-	{
-		Messenger::error("Can't -= these Data1D together since they are of differing sizes.\n");
-		return;
-	}
-
-	// Loop over points, summing them into our array
-	for (int n=0; n<x_.nItems(); ++n)
-	{
-#ifdef CHECKS
-		// Check x values for consistency
-		if (fabs(x_[n] - source.constXAxis(n)) > 1.0e-6)
-		{
-			Messenger::error("Failed to -= these Data1D together since the x arrays are different (at point %i, x are %e and %e).\n", n, x_[n], source.constXAxis(n));
-			return;
-		}
-#endif
-		values_[n] -= source.constValue(n);
-	}
-}
-
-// Operator -=
-void Data1D::operator-=(const double delta)
-{
-	for (int n=0; n<values_.nItems(); ++n) values_[n] -= delta;
+	for (int n=0; n<values_.linearArraySize(); ++n) values_.linearValue(n) -= delta;
 }
 
 // Operator *=
-void Data1D::operator*=(const double factor)
+void Data3D::operator*=(const double factor)
 {
 	values_ *= factor;
 	if (hasError_) errors_ *= factor;
 }
 
 // Operator /=
-void Data1D::operator/=(const double factor)
+void Data3D::operator/=(const double factor)
 {
 	values_ /= factor;
 	if (hasError_) errors_ /= factor;
-}
-
-/*
- * File I/O
- */
-
-// Load data from specified LineParser, using columns specified
-bool Data1D::load(LineParser& parser, int xcol, int ycol)
-{
-	int success;
-	clear();
-	while (!parser.eofOrBlank())
-	{
-		success = parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments);
-		if (success != 0)
-		{
-			parser.closeFiles();
-			Messenger::error("Error reading from '%s'.\n", parser.inputFilename());
-			return false;
-		}
-
-		if ((xcol >= parser.nArgs()) || (ycol >= parser.nArgs()))
-		{
-			Messenger::error("Error reading from '%s', as one or both columns specified (%i and %i) are not present.\n", parser.inputFilename(), xcol+1, ycol+1);
-			return false;
-		}
-
-		addPoint(parser.argd(xcol), parser.argd(ycol));
-	}
-
-	Messenger::printVerbose("Read %i points from '%s' (columns %i and %i).\n", nDataPoints(), parser.inputFilename(), xcol+1, ycol+1);
-
-	return true;
-}
-
-// Load data from specified file
-bool Data1D::load(const char* filename, int xcol, int ycol)
-{
-	// Open file and check that we're OK to proceed reading from it
-	LineParser parser;
-
-	if ((!parser.openInput(filename)) || (!parser.isFileGoodForReading()))
-	{
-		Messenger::error("Couldn't open file '%s' for reading.\n", filename);
-		return false;
-	}
-
-	bool result = load(parser, xcol, ycol);
-
-	parser.closeFiles();
-
-	return result;
-}
-
-// Load data from specified file through ProcessPool, using columns specified
-bool Data1D::load(ProcessPool& pool, const char* filename, int xcol, int ycol)
-{
-	// Open file across ProcessPool and check that we're OK to proceed reading from it
-	LineParser parser(&pool);
-
-	if ((!parser.openInput(filename)) || (!parser.isFileGoodForReading()))
-	{
-		Messenger::error("Couldn't open file '%s' for reading.\n", filename);
-		return false;
-	}
-
-	bool result = load(parser, xcol, ycol);
-
-	parser.closeFiles();
-
-	return result;
-}
-
-// Save data to specified file
-bool Data1D::save(const char* filename) const
-{
-	// Open file and check that we're OK to proceed writing to it
-	LineParser parser;
-
-	parser.openOutput(filename, true);
-	if (!parser.isFileGoodForWriting())
-	{
-		Messenger::error("Couldn't open file '%s' for writing.\n", filename);
-		return false;
-	}
-	
-	if (hasError_)
-	{
-		for (int n = 0; n<x_.nItems(); ++n) parser.writeLineF("%16.10e  %16.10e  %16.10e\n", x_.constAt(n), values_.constAt(n), errors_.constAt(n));
-	}
-	else for (int n = 0; n<x_.nItems(); ++n) parser.writeLineF("%16.10e  %16.10e\n", x_.constAt(n), values_.constAt(n));
-
-	parser.closeFiles();
-
-	return true;
-}
-
-/*
- * Plottable Implementation
- */
-
-// Return number of points along x axis
-int Data1D::nXAxisPoints() const
-{
-	return x_.nItems();
-}
-
-// Return x axis Array (const)
-const Array<double>& Data1D::constXAxis() const
-{
-	return x_;
-}
-
-// Return minimum (first) x axis point
-double Data1D::xAxisMin() const
-{
-	return x_.firstValue();
-}
-
-// Return maximum (last) x axis point
-double Data1D::xAxisMax() const
-{
-	return x_.lastValue();
-}
-
-
-// Return number of datapoints present in whole dataset
-int Data1D::nDataPoints() const
-{
-	return x_.nItems();
-}
-
-// Return minimum value over all data points
-double Data1D::minValue() const
-{
-	if (values_.nItems() == 0) return 0.0;
-
-	double value = values_.constAt(0);
-	for (int n=1; n<values_.nItems(); ++n) if (values_.constAt(n) < value) value = values_.constAt(n);
-
-	return value;
-}
-
-// Return maximum value over all data points
-double Data1D::maxValue() const
-{
-	if (values_.nItems() == 0) return 0.0;
-
-	double value = values_.constAt(0);
-	for (int n=1; n<values_.nItems(); ++n) if (values_.constAt(n) > value) value = values_.constAt(n);
-
-	return value;
-}
-
-// Return whether the values have associated errors
-bool Data1D::valuesHaveErrors() const
-{
-	return hasError_;
 }
 
 /*
@@ -507,44 +452,119 @@ bool Data1D::valuesHaveErrors() const
  */
 
 // Return class name
-const char* Data1D::itemClassName()
+const char* Data3D::itemClassName()
 {
-	return "Data1D";
+	return "Data3D";
 }
 
 // Write data through specified LineParser
-bool Data1D::write(LineParser& parser)
+bool Data3D::write(LineParser& parser)
 {
 	if (!parser.writeLineF("%s\n", objectTag())) return false;
-	if (!parser.writeLineF("%i %i\n", x_.nItems(), hasError_)) return false;
+
+	// Write axis sizes and errors flag
+	if (!parser.writeLineF("%i  %i  %i  %s\n", x_.nItems(), y_.nItems(), z_.nItems(), DissolveSys::btoa(hasError_))) return false;
+
+	// Write x axis array
+	for (int x=0; x<x_.nItems(); ++x) if (!parser.writeLineF("%e\n", x_[x])) return false;
+
+	// Write y axis array
+	for (int y=0; y<y_.nItems(); ++y) if (!parser.writeLineF("%e\n", y_[y])) return false;
+
+	// Write z axis array
+	for (int z=0; z<z_.nItems(); ++z) if (!parser.writeLineF("%e\n", z_[z])) return false;
+
+	// Write values / errors
 	if (hasError_)
 	{
-		for (int n=0; n<x_.nItems(); ++n) if (!parser.writeLineF("%f  %f  %f\n", x_[n], values_[n], errors_[n])) return false;
+		for (int x=0; x<x_.nItems(); ++x)
+		{
+			for (int y=0; y<y_.nItems(); ++y)
+			{
+				for (int z=0; z<z_.nItems(); ++z) if (!parser.writeLineF("%e  %e\n", values_.constAt(x,y,z), errors_.constAt(x,y,z))) return false;
+			}
+		}
 	}
-	else for (int n=0; n<x_.nItems(); ++n) if (!parser.writeLineF("%f  %f\n", x_[n], values_[n])) return false;
+	else
+	{
+		for (int x=0; x<x_.nItems(); ++x)
+		{
+			for (int y=0; y<y_.nItems(); ++y)
+			{
+				for (int z=0; z<z_.nItems(); ++z) if (!parser.writeLineF("%e\n", values_.constAt(x,y,z))) return false;
+			}
+		}
+	}
 
 	return true;
 }
 
 // Read data through specified LineParser
-bool Data1D::read(LineParser& parser)
+bool Data3D::read(LineParser& parser)
 {
 	clear();
 
 	if (parser.readNextLine(LineParser::Defaults) != LineParser::Success) return false;
 	setObjectTag(parser.line());
 
+	// Read axis sizes and initialise arrays
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-	int nPoints = parser.argi(0);
-	bool errors = parser.argb(1);
-	initialise(nPoints, errors);
+	int xSize = parser.argi(0);
+	int ySize = parser.argi(1);
+	int zSize = parser.argi(2);
+	bool errors = parser.argb(2);
+	initialise(xSize, ySize, zSize, errors);
 
-	for (int n=0; n<nPoints; ++n)
+	// Read x axis
+	for (int x=0; x<x_.nItems(); ++x)
 	{
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-		x_[n] = parser.argd(0);
-		values_[n] = parser.argd(1);
-		if (hasError_) errors_[n] = parser.argd(2);
+		x_[x] = parser.argd(0);
+	}
+
+	// Read y axis
+	for (int y=0; y<y_.nItems(); ++y)
+	{
+		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+		y_[y] = parser.argd(0);
+	}
+
+	// Read z axis
+	for (int z=0; z<z_.nItems(); ++z)
+	{
+		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+		z_[z] = parser.argd(0);
+	}
+
+	// Read errors / valuse
+	if (hasError_)
+	{
+		for (int x=0; x<x_.nItems(); ++x)
+		{
+			for (int y=0; y<y_.nItems(); ++y)
+			{
+				for (int z=0; z<z_.nItems(); ++z)
+				{
+					if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+					values_.at(x,y,z) = parser.argd(0);
+					errors_.at(x,y,z) = parser.argd(1);
+				}
+			}
+		}
+	}
+	else
+	{
+		for (int x=0; x<x_.nItems(); ++x)
+		{
+			for (int y=0; y<y_.nItems(); ++y)
+			{
+				for (int z=0; z<z_.nItems(); ++z)
+				{
+					if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+					values_.at(x,y,z) = parser.argd(0);
+				}
+			}
+		}
 	}
 
 	return true;
@@ -555,10 +575,12 @@ bool Data1D::read(LineParser& parser)
  */
 
 // Broadcast data
-bool Data1D::broadcast(ProcessPool& procPool, int rootRank)
+bool Data3D::broadcast(ProcessPool& procPool, int rootRank)
 {
 #ifdef PARALLEL
 	if (!procPool.broadcast(x_, rootRank)) return false;
+	if (!procPool.broadcast(y_, rootRank)) return false;
+	if (!procPool.broadcast(z_, rootRank)) return false;
 	if (!procPool.broadcast(values_, rootRank)) return false;
 	if (!procPool.broadcast(hasError_, rootRank)) return false;
 	if (!procPool.broadcast(errors_, rootRank)) return false;
@@ -567,13 +589,15 @@ bool Data1D::broadcast(ProcessPool& procPool, int rootRank)
 }
 
 // Check item equality
-bool Data1D::equality(ProcessPool& procPool)
+bool Data3D::equality(ProcessPool& procPool)
 {
 #ifdef PARALLEL
-	if (!procPool.equality(x_)) return Messenger::error("Data1D x axis values not equivalent.\n");
-	if (!procPool.equality(values_)) return Messenger::error("Data1D y axis values not equivalent.\n");
-	if (!procPool.equality(hasError_)) return Messenger::error("Data1D error flag not equivalent.\n");
-	if (!procPool.equality(errors_)) return Messenger::error("Data1D error values not equivalent.\n");
+	if (!procPool.equality(x_)) return Messenger::error("Data3D x axis values not equivalent.\n");
+	if (!procPool.equality(y_)) return Messenger::error("Data3D y axis values not equivalent.\n");
+	if (!procPool.equality(z_)) return Messenger::error("Data3D z axis values not equivalent.\n");
+	if (!procPool.equality(values_)) return Messenger::error("Data3D values not equivalent.\n");
+	if (!procPool.equality(hasError_)) return Messenger::error("Data3D error flag not equivalent.\n");
+	if (!procPool.equality(errors_)) return Messenger::error("Data3D error values not equivalent.\n");
 #endif
 	return true;
 }
