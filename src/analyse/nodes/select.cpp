@@ -67,74 +67,8 @@ const char* AnalysisSelectNode::selectNodeKeyword(AnalysisSelectNode::SelectNode
 }
 
 /*
- * Data
+ * Selection Target
  */
-
-// Add "same molecule" exclusion
-bool AnalysisSelectNode::addSameMoleculeExclusion(AnalysisSelectNode* node)
-{
-	if (sameMoleculeExclusions_.contains(node)) return false;
-	else sameMoleculeExclusions_.add(node);
-
-	return true;
-}
-
-// Add "same site" exclusion
-bool AnalysisSelectNode::addSameSiteExclusion(AnalysisSelectNode* node)
-{
-	if (sameSiteExclusions_.contains(node)) return false;
-	else sameSiteExclusions_.add(node);
-
-	return true;
-}
-
-// Add and return ForEach sequence
-AnalysisSequenceNode* AnalysisSelectNode::addForEachBranch()
-{
-	if (!forEachBranch_) forEachBranch_ = new AnalysisSequenceNode();
-
-	return forEachBranch_;
-}
-
-// Add specified node to ForEach sequence
-void AnalysisSelectNode::addToForEachBranch(AnalysisNode* node)
-{
-	addForEachBranch()->addNode(node);
-}
-
-/*
- * Site Information
- */
-
-// Return whether the node has available site information
-bool AnalysisSelectNode::hasSites() const
-{
-	return true;
-}
-
-// Return the number of available sites in the current stack, if any
-int AnalysisSelectNode::nSitesInStack() const
-{
-	return sites_.nItems();
-}
-
-// Return the average number of sites selected
-double AnalysisSelectNode::nAverageSites() const
-{
-	return double(nCumulativeSites_) / nSelections_;
-}
-
-// Return the cumulative number of sites ever selected
-int AnalysisSelectNode::nCumulativeSites() const
-{
-	return nCumulativeSites_;
-}
-
-// Return current site
-const Site* AnalysisSelectNode::currentSite() const
-{
-	return (currentSiteIndex_ == -1 ? NULL : sites_.constAt(currentSiteIndex_));
-}
 
 /*
  * Execute
@@ -163,12 +97,12 @@ AnalysisNode::NodeExecutionResult AnalysisSelectNode::execute(ProcessPool& procP
 
 	// Create our exclusion lists
 	RefList<const Molecule,bool> excludedMolecules;
-	RefListIterator<AnalysisSelectNode,bool> moleculeExclusionIterator(sameMoleculeExclusions_);
-	while (AnalysisSelectNode* node = moleculeExclusionIterator.iterate()) if (node->currentSite()) excludedMolecules.addUnique(node->currentSite()->molecule());
+	RefListIterator<AnalysisSelectBaseNode,bool> moleculeExclusionIterator(sameMoleculeExclusions_);
+	while (AnalysisSelectBaseNode* node = moleculeExclusionIterator.iterate()) if (node->currentSite()) excludedMolecules.addUnique(node->currentSite()->molecule());
 
 	RefList<const Site,bool> excludedSites;
-	RefListIterator<AnalysisSelectNode,bool> siteExclusionIterator(sameSiteExclusions_);
-	while (AnalysisSelectNode* node = siteExclusionIterator.iterate()) if (node->currentSite()) excludedSites.addUnique(node->currentSite());
+	RefListIterator<AnalysisSelectBaseNode,bool> siteExclusionIterator(sameSiteExclusions_);
+	while (AnalysisSelectBaseNode* node = siteExclusionIterator.iterate()) if (node->currentSite()) excludedSites.addUnique(node->currentSite());
 
 	sites_.createEmpty(siteStack->nSites());
 	for (int n=0; n<siteStack->nSites(); ++n)
@@ -228,7 +162,7 @@ bool AnalysisSelectNode::read(LineParser& parser, NodeContextStack& contextStack
 	setName(parser.nArgs() == 2 ? parser.argc(1) : contextStack.nextSelectName());
 
 	// Add ourselves to the context stack
-	if (!contextStack.add(this)) return Messenger::error("Error adding Select node '%s' to context stack.\n", name());
+	if (!contextStack.add(this, name())) return Messenger::error("Error adding Select node '%s' to context stack.\n", name());
 
 	// Read until we encounter the EndSelect keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
@@ -245,7 +179,7 @@ bool AnalysisSelectNode::read(LineParser& parser, NodeContextStack& contextStack
 			case (SelectNodeKeyword::ExcludeSameMoleculeKeyword):
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
-					AnalysisSelectNode* otherNode = contextStack.selectNodeInScope(parser.argc(n));
+					AnalysisSelectBaseNode* otherNode = contextStack.selectNodeInScope(parser.argc(n));
 					if (!otherNode) return Messenger::error("Unrecognised Select node '%s' given to %s keyword.\n", parser.argc(n), selectNodeKeyword(SelectNodeKeyword::ExcludeSameMoleculeKeyword));
 					if (!addSameMoleculeExclusion(otherNode)) return Messenger::error("Duplicate site given to %s keyword.\n", selectNodeKeyword(SelectNodeKeyword::ExcludeSameMoleculeKeyword));
 				}
@@ -253,7 +187,7 @@ bool AnalysisSelectNode::read(LineParser& parser, NodeContextStack& contextStack
 			case (SelectNodeKeyword::ExcludeSameSiteKeyword):
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
-					AnalysisSelectNode* otherNode = contextStack.selectNodeInScope(parser.argc(n));
+					AnalysisSelectBaseNode* otherNode = contextStack.selectNodeInScope(parser.argc(n));
 					if (!otherNode) return Messenger::error("Unrecognised Select node '%s' given to %s keyword.\n", parser.argc(n), selectNodeKeyword(SelectNodeKeyword::ExcludeSameSiteKeyword));
 					if (!addSameSiteExclusion(otherNode)) return Messenger::error("Duplicate site given to %s keyword.\n", selectNodeKeyword(SelectNodeKeyword::ExcludeSameSiteKeyword));
 				}

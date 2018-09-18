@@ -9,6 +9,7 @@ add_library(analysisnodes
   normalise2d.cpp
   normalise3d.cpp
   select.cpp
+  selectbase.cpp
   sequence.cpp
 
   calculate.h
@@ -22,6 +23,7 @@ add_library(analysisnodes
   normalise2d.h
   normalise3d.h
   select.h
+  selectbase.h
   sequence.h
 )
 

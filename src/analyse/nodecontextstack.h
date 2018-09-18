@@ -27,7 +27,7 @@
 #include "templates/reflist.h"
 
 // Forward Declarations
-class AnalysisSelectNode;
+class AnalysisSelectBaseNode;
 class AnalysisCalculateNode;
 class AnalysisCollect1DNode;
 class AnalysisCollect2DNode;
@@ -50,11 +50,11 @@ class NodeContextStack
 	// Counter for SelectNode added to the stack at any point
 	int nSelectNodesAdded_;
 	// SelectNode context stack
-	Array< RefList<AnalysisSelectNode,bool> > selectStack_;
+	Array< RefList<AnalysisSelectBaseNode,CharString> > selectStack_;
 	// CalculateNode context stack
 	Array< RefList<AnalysisCalculateNode,bool> > calculateStack_;
 	// References for all Collect1DNodes added
-	RefList<AnalysisSelectNode,bool> selectNodes_;
+	RefList<AnalysisSelectBaseNode,CharString> selectNodes_;
 	// References for all Collect1DNodes added
 	RefList<AnalysisCollect1DNode,bool> collect1DNodes_;
 	// References for all Collect2DNodes added
@@ -70,7 +70,7 @@ class NodeContextStack
 	// Pop topmost context layer from the stack
 	bool pop();
 	// Add new selection node the topmost context layer
-	bool add(AnalysisSelectNode* selectNode);
+	bool add(AnalysisSelectBaseNode* selectBaseNode, const char* name);
 	// Add new calculation node the topmost context layer
 	bool add(AnalysisCalculateNode* calculateNode);
 	// Add reference to one-dimensional collect node
@@ -88,7 +88,7 @@ class NodeContextStack
 	// Return next available generic name for a SelectNode
 	const char* nextSelectName() const;
 	// Return named Select node if it is currently in scope
-	AnalysisSelectNode* selectNodeInScope(const char* name) const;
+	AnalysisSelectBaseNode* selectNodeInScope(const char* name) const;
 	// Return named Calculate node if it is currently in scope
 	AnalysisCalculateNode* calculateNodeInScope(const char* name) const;
 	// Return named Collect1D node (if it exists)
@@ -98,7 +98,7 @@ class NodeContextStack
 	// Return named Collect3D node (if it exists)
 	AnalysisCollect3DNode* collect3DNode(const char* name) const;
 	// Return named Select node (if it exists)
-	AnalysisSelectNode* selectNode(const char* name) const;
+	AnalysisSelectBaseNode* selectNode(const char* name) const;
 };
 
 #endif

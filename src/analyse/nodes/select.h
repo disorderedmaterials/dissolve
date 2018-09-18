@@ -1,5 +1,5 @@
 /*
-	*** Analysis Node - Select
+	*** Analysis Node - Select (Site)
 	*** src/analyse/nodes/select.h
 	Copyright T. Youngs 2012-2018
 
@@ -23,6 +23,7 @@
 #define DISSOLVE_ANALYSISSELECT_H
 
 #include "analyse/nodes/node.h"
+#include "analyse/nodes/selectbase.h"
 #include "templates/array.h"
 #include "templates/reflist.h"
 
@@ -33,7 +34,7 @@ class Species;
 class SpeciesSite;
 
 // Select Node
-class AnalysisSelectNode : public AnalysisNode
+class AnalysisSelectNode : public AnalysisSelectBaseNode, public AnalysisNode
 {
 	public:
 	// Constructor
@@ -62,30 +63,6 @@ class AnalysisSelectNode : public AnalysisNode
 	Species* species_;
 	// Target site within parent Species
 	SpeciesSite* speciesSite_;
-	// List of other sites (nodes) which will exclude one of our sites if it has the same Molecule parent
-	RefList<AnalysisSelectNode,bool> sameMoleculeExclusions_;
-	// List of other sites (nodes) which will exclude one of our sites if it is the same site
-	RefList<AnalysisSelectNode,bool> sameSiteExclusions_;
-	// Array containing pointers to our selected sites
-	Array<const Site*> sites_;
-	// Number of selections made by the node
-	int nSelections_;
-	// Cumulative number of sites ever selected
-	int nCumulativeSites_;
-	// Branch for ForEach (if defined)
-	AnalysisSequenceNode* forEachBranch_;
-	// Current Site index
-	int currentSiteIndex_;
-
-	public:
-	// Add "same molecule" exclusion
-	bool addSameMoleculeExclusion(AnalysisSelectNode* node);
-	// Add "same site" exclusion
-	bool addSameSiteExclusion(AnalysisSelectNode* node);
-	// Add and return ForEach sequence
-	AnalysisSequenceNode* addForEachBranch();
-	// Add specified node to ForEach sequence
-	void addToForEachBranch(AnalysisNode* node);
 
 
 	/*

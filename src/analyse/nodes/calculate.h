@@ -26,7 +26,7 @@
 #include "templates/array.h"
 
 // Forward Declarations
-class AnalysisSelectNode;
+class AnalysisSelectBaseNode;
 
 // Select Node
 class AnalysisCalculateNode : public AnalysisNode
@@ -49,7 +49,7 @@ class AnalysisCalculateNode : public AnalysisNode
 	// Number of sites required to calculate Observable
 	static int observableNSites(Observable obs);
 	// Constructor
-	AnalysisCalculateNode(AnalysisCalculateNode::Observable observable = nObservables, AnalysisSelectNode* site0 = NULL, AnalysisSelectNode* site1 = NULL, AnalysisSelectNode* site2 = NULL, AnalysisSelectNode* site3 = NULL);
+	AnalysisCalculateNode(AnalysisCalculateNode::Observable observable = nObservables, AnalysisSelectBaseNode* site0 = NULL, AnalysisSelectBaseNode* site1 = NULL, AnalysisSelectBaseNode* site2 = NULL, AnalysisSelectBaseNode* site3 = NULL);
 	// Destructor
 	~AnalysisCalculateNode();
 
@@ -73,7 +73,7 @@ class AnalysisCalculateNode : public AnalysisNode
 	// Target observable to calculate
 	Observable observable_;
 	// Nodes (sites) to use for observable calculation
-	AnalysisSelectNode* sites_[4];
+	AnalysisSelectBaseNode* sites_[4];
 	// Last calculate value of observable
 	double value_;
 

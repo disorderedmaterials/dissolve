@@ -29,7 +29,7 @@
 #include "base/sysfunc.h"
 
 // Constructor
-AnalysisCalculateNode::AnalysisCalculateNode(AnalysisCalculateNode::Observable observable, AnalysisSelectNode* site0, AnalysisSelectNode* site1, AnalysisSelectNode* site2, AnalysisSelectNode* site3) : AnalysisNode(AnalysisNode::CalculateNode)
+AnalysisCalculateNode::AnalysisCalculateNode(AnalysisCalculateNode::Observable observable, AnalysisSelectBaseNode* site0, AnalysisSelectBaseNode* site1, AnalysisSelectBaseNode* site2, AnalysisSelectBaseNode* site3) : AnalysisNode(AnalysisNode::CalculateNode)
 {
 	observable_ = observable;
 	sites_[0] = site0;
