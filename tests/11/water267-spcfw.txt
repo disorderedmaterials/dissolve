@@ -157,28 +157,46 @@ Module  Analyse
   Configuration  'Bulk'
   Analyser
 
-    Select
+    # Distance-Angle Map X-H / X-H...O
+    Select  'X'
 
       Site  Water  'O'
 
       ForEach
 
-        # COM RDF
-        Select  'B'
+        DynamicSelect  'H'
 
-          Site  Water  'O'
-          ExcludeSameMolecule  'A'
+          # Targets
+          Atoms  'H'
+          # Types  'HW'
+
+          # Conditions
+	  SameMolecule  'X'
+          # BoundTo  'X'  1
 
           ForEach
 
-            Calculate  'rAB'
-              Distance  'A'  'B'
-            EndCalculate
+            Site  Water  'O'
+            ExcludeSameMolecule  'X'
 
-            Collect1D  'RDF(OW-OW)'
-              QuantityX  'rAB'
-              RangeX  0.0  20.0  0.01
-            EndCollect1D
+            ForEach
+
+              Calculate  'rHO'
+                Distance  'H'  'O'
+              EndCalculate
+
+              Calculate  'aXHO'
+                Angle  'X'  'H'  'O'
+              EndCalculate
+
+              Collect2D  'DistanceAngleMap(H...O/OH...O)'
+                QuantityX  'rHO'
+                QuantityY  'aXHO'
+                RangeX  0.0  5.0  0.01
+                RangeY  0.0  180.0  1.0
+              EndCollect2D
+
+            EndForEach
 
           EndForEach
 
@@ -189,13 +207,12 @@ Module  Analyse
     EndSelect
 
     # Perform necessary normalisation
-    Normalise1D  'RDF(OW-OW)'
-      NSites  'A'
-      SphericalShellVolume  On
-      NumberDensity  'B'
+    Normalise2D  'DistanceAngleMap(H...O/OH...O)'
+      NormaliseToOne  On
       Save  On
-      LabelX  'r, Angstroms'
-      LabelValue  'g(r)'
+      LabelX  '\\it{r}, \\sym{Angstrom}'
+      LabelY  'Angle, \\sym{degree}'
+      LabelValue  'Probability'
     EndNormalise1D
 
   EndAnalyser

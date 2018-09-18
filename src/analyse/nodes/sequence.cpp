@@ -161,6 +161,9 @@ bool AnalysisSequenceNode::read(LineParser& parser, NodeContextStack& contextSta
 			case (AnalysisNode::Collect3DNode):
 				newNode = new AnalysisCollect3DNode;
 				break;
+			case (AnalysisNode::DynamicSelectNode):
+				newNode = new AnalysisDynamicSelectNode;
+				break;
 			case (AnalysisNode::ExcludeNode):
 				newNode = new AnalysisExcludeNode;
 				break;
