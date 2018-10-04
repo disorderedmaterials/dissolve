@@ -1,6 +1,6 @@
 /*
-	*** Analysis Node - Normalise3D
-	*** src/analyse/nodes/normalise3d.h
+	*** Analysis Node - Process1D
+	*** src/analyse/nodes/process1d.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,29 +19,29 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ANALYSISNORMALISE3D_H
-#define DISSOLVE_ANALYSISNORMALISE3D_H
+#ifndef DISSOLVE_ANALYSISPROCESS1D_H
+#define DISSOLVE_ANALYSISPROCESS1D_H
 
 #include "analyse/nodes/node.h"
-#include "math/data3d.h"
+#include "math/data1d.h"
 #include "base/charstring.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
-class AnalysisCollect3DNode;
+class AnalysisCollect1DNode;
 class AnalysisSelectBaseNode;
-class Data3D;
+class Data1D;
 class LineParser;
 class NodeContextStack;
 
-// Analysis Node - Normalise3D
-class AnalysisNormalise3DNode : public AnalysisNode
+// Analysis Node - Process1D
+class AnalysisProcess1DNode : public AnalysisNode
 {
 	public:
 	// Constructor
-	AnalysisNormalise3DNode(AnalysisCollect3DNode* target = NULL);
+	AnalysisProcess1DNode(AnalysisCollect1DNode* target = NULL);
 	// Destructor
-	~AnalysisNormalise3DNode();
+	~AnalysisProcess1DNode();
 
 
 	/*
@@ -49,19 +49,19 @@ class AnalysisNormalise3DNode : public AnalysisNode
 	 */
 	public:
 	// Node Keywords
-	enum Normalise3DNodeKeyword { EndNormalise3DKeyword, FactorKeyword, LabelValueKeyword, LabelXKeyword, LabelYKeyword, LabelZKeyword, NSitesKeyword, NumberDensityKeyword, SaveKeyword, nNormalise3DNodeKeywords };
+	enum Process1DNodeKeyword { EndProcess1DKeyword, FactorKeyword, LabelValueKeyword, LabelXKeyword, NSitesKeyword, NumberDensityKeyword, SaveKeyword, SphericalShellVolumeKeyword, nProcess1DNodeKeywords };
 	// Convert string to control keyword
-	static Normalise3DNodeKeyword normalise3DNodeKeyword(const char* s);
+	static Process1DNodeKeyword normalise1DNodeKeyword(const char* s);
 	// Convert control keyword to string
-	static const char* normalise3DNodeKeyword(Normalise3DNodeKeyword nk);
+	static const char* normalise1DNodeKeyword(Process1DNodeKeyword nk);
 
 
 	/*
 	 * Data
 	 */
 	private:
-	// Collect3D node which we are normalising
-	AnalysisCollect3DNode* collectNode_;
+	// Collect1D node which we are normalising
+	AnalysisCollect1DNode* collectNode_;
 	// Reference to sites against which we will normalise by population
 	RefList<AnalysisSelectBaseNode,double> sitePopulationNormalisers_;
 	// Reference to sites against which we will normalise by number density
@@ -70,12 +70,14 @@ class AnalysisNormalise3DNode : public AnalysisNode
 	bool normaliseByFactor_;
 	// Normalisation factor to apply (if requested)
 	double normalisationFactor_;
+	// Whether to normalise by spherical shell volume
+	bool normaliseBySphericalShellVolume_;
 	// Whether to save data after normalisation
 	bool saveNormalisedData_;
 	// Value label
 	CharString valueLabel_;
 	// Axis labels
-	CharString xAxisLabel_, yAxisLabel_, zAxisLabel_;
+	CharString xAxisLabel_;
 
 	public:
 	// Add site population normaliser
@@ -86,6 +88,8 @@ class AnalysisNormalise3DNode : public AnalysisNode
 	void setNormaliseByFactor(bool on);
 	// Set normalisation factor
 	void setNormalisationFactor(double factor);
+	// Set whether to normalise by spherical shell volume
+	void setNormaliseBySphericalShellVolume(bool on);
 	// Set whether to save normalised data
 	void setSaveNormalisedData(bool on);
 	// Set value label
@@ -96,7 +100,6 @@ class AnalysisNormalise3DNode : public AnalysisNode
 	void setXAxisLabel(const char* label);
 	// Return x axis label
 	const char* xAxisLabel() const;
-
 
 	/*
 	 * Execute

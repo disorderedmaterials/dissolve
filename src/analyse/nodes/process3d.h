@@ -1,6 +1,6 @@
 /*
-	*** Analysis Node - Normalise2D
-	*** src/analyse/nodes/normalise2d.h
+	*** Analysis Node - Process3D
+	*** src/analyse/nodes/process3d.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,29 +19,29 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ANALYSISNORMALISE2D_H
-#define DISSOLVE_ANALYSISNORMALISE2D_H
+#ifndef DISSOLVE_ANALYSISPROCESS3D_H
+#define DISSOLVE_ANALYSISPROCESS3D_H
 
 #include "analyse/nodes/node.h"
-#include "math/data2d.h"
+#include "math/data3d.h"
 #include "base/charstring.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
-class AnalysisCollect2DNode;
+class AnalysisCollect3DNode;
 class AnalysisSelectBaseNode;
-class Data2D;
+class Data3D;
 class LineParser;
 class NodeContextStack;
 
-// Analysis Node - Normalise2D
-class AnalysisNormalise2DNode : public AnalysisNode
+// Analysis Node - Process3D
+class AnalysisProcess3DNode : public AnalysisNode
 {
 	public:
 	// Constructor
-	AnalysisNormalise2DNode(AnalysisCollect2DNode* target = NULL);
+	AnalysisProcess3DNode(AnalysisCollect3DNode* target = NULL);
 	// Destructor
-	~AnalysisNormalise2DNode();
+	~AnalysisProcess3DNode();
 
 
 	/*
@@ -49,19 +49,19 @@ class AnalysisNormalise2DNode : public AnalysisNode
 	 */
 	public:
 	// Node Keywords
-	enum Normalise2DNodeKeyword { EndNormalise2DKeyword, FactorKeyword, LabelValueKeyword, LabelXKeyword, LabelYKeyword, NSitesKeyword, NumberDensityKeyword, SaveKeyword, nNormalise2DNodeKeywords };
+	enum Process3DNodeKeyword { EndProcess3DKeyword, FactorKeyword, LabelValueKeyword, LabelXKeyword, LabelYKeyword, LabelZKeyword, NSitesKeyword, NumberDensityKeyword, SaveKeyword, nProcess3DNodeKeywords };
 	// Convert string to control keyword
-	static Normalise2DNodeKeyword normalise2DNodeKeyword(const char* s);
+	static Process3DNodeKeyword normalise3DNodeKeyword(const char* s);
 	// Convert control keyword to string
-	static const char* normalise2DNodeKeyword(Normalise2DNodeKeyword nk);
+	static const char* normalise3DNodeKeyword(Process3DNodeKeyword nk);
 
 
 	/*
 	 * Data
 	 */
 	private:
-	// Collect2D node which we are normalising
-	AnalysisCollect2DNode* collectNode_;
+	// Collect3D node which we are normalising
+	AnalysisCollect3DNode* collectNode_;
 	// Reference to sites against which we will normalise by population
 	RefList<AnalysisSelectBaseNode,double> sitePopulationNormalisers_;
 	// Reference to sites against which we will normalise by number density
@@ -75,7 +75,7 @@ class AnalysisNormalise2DNode : public AnalysisNode
 	// Value label
 	CharString valueLabel_;
 	// Axis labels
-	CharString xAxisLabel_, yAxisLabel_;
+	CharString xAxisLabel_, yAxisLabel_, zAxisLabel_;
 
 	public:
 	// Add site population normaliser
@@ -96,10 +96,6 @@ class AnalysisNormalise2DNode : public AnalysisNode
 	void setXAxisLabel(const char* label);
 	// Return x axis label
 	const char* xAxisLabel() const;
-	// Set y axis label
-	void setYAxisLabel(const char* label);
-	// Return y axis label
-	const char* yAxisLabel() const;
 
 
 	/*

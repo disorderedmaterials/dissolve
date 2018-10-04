@@ -23,7 +23,7 @@
 #include "main/dissolve.h"
 #include "analyse/nodes/calculate.h"
 #include "analyse/nodes/collect1d.h"
-#include "analyse/nodes/normalise1d.h"
+#include "analyse/nodes/process1d.h"
 #include "analyse/nodes/select.h"
 #include "base/sysfunc.h"
 
@@ -66,13 +66,13 @@ bool CalculateRDFModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	 *     EndSelect  'B'
 	 *   EndForEach  'A'
 	 * EndSelect  'A'
-	 * Normalise1D  @dataName
+	 * Process1D  @dataName
 	 *   NSites  'A'
 	 *   SphericalShellVolume  On
 	 *   NumberDensity  'B'
 	 *   LabelValue  'g(r)'
 	 *   LabelX  'r, Angstroms'
-	 * EndNormalise1D
+	 * EndProcess1D
 	 */
 
 	// Select: Site 'A' (@originSite)
@@ -96,8 +96,8 @@ bool CalculateRDFModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	collect1D->setName(dataName);
 	otherSelect->addToForEachBranch(collect1D);
 
-	// Normalise1D: @dataName
-	AnalysisNormalise1DNode* normalise1D = new AnalysisNormalise1DNode(collect1D);
+	// Process1D: @dataName
+	AnalysisProcess1DNode* normalise1D = new AnalysisProcess1DNode(collect1D);
 	normalise1D->setName(dataName);
 	normalise1D->addSitePopulationNormaliser(originSelect);
 	normalise1D->addNumberDensityNormaliser(otherSelect);

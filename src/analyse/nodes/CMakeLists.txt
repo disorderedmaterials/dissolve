@@ -6,9 +6,9 @@ add_library(analysisnodes
   dynamicselect.cpp
   exclude.cpp
   node.cpp
-  normalise1d.cpp
-  normalise2d.cpp
-  normalise3d.cpp
+  process1d.cpp
+  process2d.cpp
+  process3d.cpp
   select.cpp
   selectbase.cpp
   sequence.cpp
@@ -21,9 +21,9 @@ add_library(analysisnodes
   exclude.h
   node.h
   nodes.h
-  normalise1d.h
-  normalise2d.h
-  normalise3d.h
+  process1d.h
+  process2d.h
+  process3d.h
   select.h
   selectbase.h
   sequence.h

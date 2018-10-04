@@ -167,53 +167,58 @@ Module  Analyse
         DynamicSelect  'H'
 
           # Targets
-          Atoms  'H'
+          Elements  'H'
           # Types  'HW'
 
           # Conditions
 	  SameMolecule  'X'
-          # BoundTo  'X'  1
+	  #ExcludeSameMolecule  'X'
+          # BoundToAtom  1  'X'
 
           ForEach
 
-            Site  Water  'O'
-            ExcludeSameMolecule  'X'
+	    Select  'O'
 
-            ForEach
+              Site  Water  'O'
+              ExcludeSameMolecule  'X'
 
-              Calculate  'rHO'
-                Distance  'H'  'O'
-              EndCalculate
+              ForEach
 
-              Calculate  'aXHO'
-                Angle  'X'  'H'  'O'
-              EndCalculate
+                Calculate  'rHO'
+                  Distance  'H'  'O'
+                EndCalculate
 
-              Collect2D  'DistanceAngleMap(H...O/OH...O)'
-                QuantityX  'rHO'
-                QuantityY  'aXHO'
-                RangeX  0.0  5.0  0.01
-                RangeY  0.0  180.0  1.0
-              EndCollect2D
+                Calculate  'aXHO'
+                  Angle  'X'  'H'  'O'
+                EndCalculate
 
-            EndForEach
+                Collect2D  'DistanceAngleMap(H...O/OH...O)'
+                  QuantityX  'rHO'
+                  QuantityY  'aXHO'
+                  RangeX  0.0  5.0  0.01
+                  RangeY  0.0  180.0  1.0
+                EndCollect2D
+
+              EndForEach
+
+            EndSelect
 
           EndForEach
 
-        EndSelect
+        EndDynamicSelect
 
       EndForEach
 
     EndSelect
 
     # Perform necessary normalisation
-    Normalise2D  'DistanceAngleMap(H...O/OH...O)'
+    Process2D  'DistanceAngleMap(H...O/OH...O)'
       NormaliseToOne  On
       Save  On
       LabelX  '\\it{r}, \\sym{Angstrom}'
       LabelY  'Angle, \\sym{degree}'
       LabelValue  'Probability'
-    EndNormalise1D
+    EndProcess2D
 
   EndAnalyser
 

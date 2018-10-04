@@ -1,6 +1,6 @@
 /*
-	*** Analysis Node - Normalise3D
-	*** src/analyse/nodes/normalise3d.cpp
+	*** Analysis Node - Process3D
+	*** src/analyse/nodes/process3d.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "analyse/nodes/normalise3d.h"
+#include "analyse/nodes/process3d.h"
 #include "analyse/nodes/collect3d.h"
 #include "analyse/nodes/select.h"
 #include "analyse/nodecontextstack.h"
@@ -30,7 +30,7 @@
 #include "templates/genericlisthelper.h"
 
 // Constructor
-AnalysisNormalise3DNode::AnalysisNormalise3DNode(AnalysisCollect3DNode* target) : AnalysisNode(AnalysisNode::Normalise3DNode)
+AnalysisProcess3DNode::AnalysisProcess3DNode(AnalysisCollect3DNode* target) : AnalysisNode(AnalysisNode::Process3DNode)
 {
 	collectNode_ = target;
 	saveNormalisedData_ = false;
@@ -39,7 +39,7 @@ AnalysisNormalise3DNode::AnalysisNormalise3DNode(AnalysisCollect3DNode* target) 
 }
 
 // Destructor
-AnalysisNormalise3DNode::~AnalysisNormalise3DNode()
+AnalysisProcess3DNode::~AnalysisProcess3DNode()
 {
 }
 
@@ -48,20 +48,20 @@ AnalysisNormalise3DNode::~AnalysisNormalise3DNode()
  */
 
 // Node Keywords (note ordering for efficiency)
-const char* Normalise3DNodeKeywords[] = { "EndNormalise3D", "Factor", "LabelValue", "LabelX", "LabelY", "LabelZ", "NSites", "NumberDensity", "Save" };
+const char* Process3DNodeKeywords[] = { "EndProcess3D", "Factor", "LabelValue", "LabelX", "LabelY", "LabelZ", "NSites", "NumberDensity", "Save" };
 
 // Convert string to node keyword
-AnalysisNormalise3DNode::Normalise3DNodeKeyword AnalysisNormalise3DNode::normalise3DNodeKeyword(const char* s)
+AnalysisProcess3DNode::Process3DNodeKeyword AnalysisProcess3DNode::normalise3DNodeKeyword(const char* s)
 {
-	for (int nk=0; nk < AnalysisNormalise3DNode::nNormalise3DNodeKeywords; ++nk) if (DissolveSys::sameString(s, Normalise3DNodeKeywords[nk])) return (AnalysisNormalise3DNode::Normalise3DNodeKeyword) nk;
+	for (int nk=0; nk < AnalysisProcess3DNode::nProcess3DNodeKeywords; ++nk) if (DissolveSys::sameString(s, Process3DNodeKeywords[nk])) return (AnalysisProcess3DNode::Process3DNodeKeyword) nk;
 
-	return AnalysisNormalise3DNode::nNormalise3DNodeKeywords;
+	return AnalysisProcess3DNode::nProcess3DNodeKeywords;
 }
 
 // Convert node keyword to string
-const char* AnalysisNormalise3DNode::normalise3DNodeKeyword(AnalysisNormalise3DNode::Normalise3DNodeKeyword nk)
+const char* AnalysisProcess3DNode::normalise3DNodeKeyword(AnalysisProcess3DNode::Process3DNodeKeyword nk)
 {
-	return Normalise3DNodeKeywords[nk];
+	return Process3DNodeKeywords[nk];
 }
 
 /*
@@ -69,55 +69,55 @@ const char* AnalysisNormalise3DNode::normalise3DNodeKeyword(AnalysisNormalise3DN
  */
 
 // Add site population normaliser
-void AnalysisNormalise3DNode::addSitePopulationNormaliser(AnalysisSelectBaseNode* selectNode)
+void AnalysisProcess3DNode::addSitePopulationNormaliser(AnalysisSelectBaseNode* selectNode)
 {
 	sitePopulationNormalisers_.add(selectNode, 1.0);
 }
 
 // Add number density normaliser
-void AnalysisNormalise3DNode::addNumberDensityNormaliser(AnalysisSelectBaseNode* selectNode)
+void AnalysisProcess3DNode::addNumberDensityNormaliser(AnalysisSelectBaseNode* selectNode)
 {
 	numberDensityNormalisers_.add(selectNode);
 }
 
 // Set whether to normalise by factor
-void AnalysisNormalise3DNode::setNormaliseByFactor(bool on)
+void AnalysisProcess3DNode::setNormaliseByFactor(bool on)
 {
 	normaliseByFactor_ = on;
 }
 
 // Set normalisation factor
-void AnalysisNormalise3DNode::setNormalisationFactor(double factor)
+void AnalysisProcess3DNode::setNormalisationFactor(double factor)
 {
 	normalisationFactor_ = factor;
 }
 
 // Set whether to save normalised data
-void AnalysisNormalise3DNode::setSaveNormalisedData(bool on)
+void AnalysisProcess3DNode::setSaveNormalisedData(bool on)
 {
 	saveNormalisedData_ = on;
 }
 
 // Set value label
-void AnalysisNormalise3DNode::setValueLabel(const char* label)
+void AnalysisProcess3DNode::setValueLabel(const char* label)
 {
 	valueLabel_ = label;
 }
 
 // Return value label
-const char* AnalysisNormalise3DNode::valueLabel() const
+const char* AnalysisProcess3DNode::valueLabel() const
 {
 	return valueLabel_.get();
 }
 
 // Set x axis label
-void AnalysisNormalise3DNode::setXAxisLabel(const char* label)
+void AnalysisProcess3DNode::setXAxisLabel(const char* label)
 {
 	xAxisLabel_ = label;
 }
 
 // Return x axis label
-const char* AnalysisNormalise3DNode::xAxisLabel() const
+const char* AnalysisProcess3DNode::xAxisLabel() const
 {
 	return xAxisLabel_.get();
 }
@@ -127,26 +127,26 @@ const char* AnalysisNormalise3DNode::xAxisLabel() const
  */
 
 // Prepare any necessary data, ready for execution
-bool AnalysisNormalise3DNode::prepare(Configuration* cfg, const char* prefix, GenericList& targetList)
+bool AnalysisProcess3DNode::prepare(Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 	return true;
 }
 
 // Execute node, targetting the supplied Configuration
-AnalysisNode::NodeExecutionResult AnalysisNormalise3DNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
+AnalysisNode::NodeExecutionResult AnalysisProcess3DNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 	return AnalysisNode::Success;
 }
 
 // Finalise any necessary data after execution
-bool AnalysisNormalise3DNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
+bool AnalysisProcess3DNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 	// Retrieve / realise the normalised data from the supplied list
 	bool created;
 	Data3D& normalisedData = GenericListHelper<Data3D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag, &created);
 
 	normalisedData.setName(name());
-	normalisedData.setObjectTag(CharString("%s//Normalise3D//%s//%s", prefix, cfg->name(), name()));
+	normalisedData.setObjectTag(CharString("%s//Process3D//%s//%s", prefix, cfg->name(), name()));
 
 	// Copy the averaged data from the associated Collect3D node, and normalise it accordingly
 	normalisedData = collectNode_->accumulatedData();
@@ -179,62 +179,62 @@ bool AnalysisNormalise3DNode::finalise(ProcessPool& procPool, Configuration* cfg
  */
 
 // Read structure from specified LineParser
-bool AnalysisNormalise3DNode::read(LineParser& parser, NodeContextStack& contextStack)
+bool AnalysisProcess3DNode::read(LineParser& parser, NodeContextStack& contextStack)
 {
 	// The current line in the parser must also contain the name of a Collect3D node which we will operate on (it will also become our node name)
-	if (parser.nArgs() != 2) return Messenger::error("A Normalise3D node must be given the name of a Collect3D node.\n");
+	if (parser.nArgs() != 2) return Messenger::error("A Process3D node must be given the name of a Collect3D node.\n");
 	collectNode_ = contextStack.collect3DNode(parser.argc(1));
-	if (!collectNode_) return Messenger::error("A valid Collect3D node name must be given as an argument to Normalise3D.\n");
+	if (!collectNode_) return Messenger::error("A valid Collect3D node name must be given as an argument to Process3D.\n");
 	setName(parser.argc(1));
 
 	AnalysisSelectBaseNode* selectNode;
 
-	// Read until we encounter the EndNormalise3D keyword, or we fail for some reason
+	// Read until we encounter the EndProcess3D keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
 	{
 		// Read and parse the next line
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
 		// Is the first argument on the current line a valid control keyword?
-		Normalise3DNodeKeyword nk = normalise3DNodeKeyword(parser.argc(0));
+		Process3DNodeKeyword nk = normalise3DNodeKeyword(parser.argc(0));
 		switch (nk)
 		{
-			case (Normalise3DNodeKeyword::EndNormalise3DKeyword):
+			case (Process3DNodeKeyword::EndProcess3DKeyword):
 				return true;
-			case (Normalise3DNodeKeyword::FactorKeyword):
+			case (Process3DNodeKeyword::FactorKeyword):
 				normalisationFactor_ = parser.argd(1);
 				normaliseByFactor_ = true;
 				break;
-			case (Normalise3DNodeKeyword::LabelValueKeyword):
+			case (Process3DNodeKeyword::LabelValueKeyword):
 				valueLabel_ = parser.argc(1);
 				break;
-			case (Normalise3DNodeKeyword::LabelXKeyword):
+			case (Process3DNodeKeyword::LabelXKeyword):
 				xAxisLabel_ = parser.argc(1);
 				break;
-			case (Normalise3DNodeKeyword::LabelYKeyword):
+			case (Process3DNodeKeyword::LabelYKeyword):
 				yAxisLabel_ = parser.argc(1);
 				break;
-			case (Normalise3DNodeKeyword::LabelZKeyword):
+			case (Process3DNodeKeyword::LabelZKeyword):
 				zAxisLabel_ = parser.argc(1);
 				break;
-			case (Normalise3DNodeKeyword::NSitesKeyword):
+			case (Process3DNodeKeyword::NSitesKeyword):
 				selectNode = contextStack.selectNode(parser.argc(1));
-				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), normalise3DNodeKeyword(Normalise3DNodeKeyword::NSitesKeyword));
+				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), normalise3DNodeKeyword(Process3DNodeKeyword::NSitesKeyword));
 				sitePopulationNormalisers_.add(selectNode, 1.0);
 				break;
-			case (Normalise3DNodeKeyword::NumberDensityKeyword):
+			case (Process3DNodeKeyword::NumberDensityKeyword):
 				selectNode = contextStack.selectNode(parser.argc(1));
-				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), normalise3DNodeKeyword(Normalise3DNodeKeyword::NumberDensityKeyword));
+				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), normalise3DNodeKeyword(Process3DNodeKeyword::NumberDensityKeyword));
 				numberDensityNormalisers_.add(selectNode, 1.0);
 				break;
-			case (Normalise3DNodeKeyword::SaveKeyword):
+			case (Process3DNodeKeyword::SaveKeyword):
 				saveNormalisedData_ = parser.argb(1);
 				break;
-			case (Normalise3DNodeKeyword::nNormalise3DNodeKeywords):
-				return Messenger::error("Unrecognised Normalise3D node keyword '%s' found.\n", parser.argc(0));
+			case (Process3DNodeKeyword::nProcess3DNodeKeywords):
+				return Messenger::error("Unrecognised Process3D node keyword '%s' found.\n", parser.argc(0));
 				break;
 			default:
-				return Messenger::error("Epic Developer Fail - Don't know how to deal with the Normalise3D node keyword '%s'.\n", parser.argc(0));
+				return Messenger::error("Epic Developer Fail - Don't know how to deal with the Process3D node keyword '%s'.\n", parser.argc(0));
 		}
 	}
 
@@ -242,7 +242,7 @@ bool AnalysisNormalise3DNode::read(LineParser& parser, NodeContextStack& context
 }
 
 // Write structure to specified LineParser
-bool AnalysisNormalise3DNode::write(LineParser& parser, const char* prefix)
+bool AnalysisProcess3DNode::write(LineParser& parser, const char* prefix)
 {
 	// TODO
 }

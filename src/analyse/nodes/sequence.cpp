@@ -167,14 +167,14 @@ bool AnalysisSequenceNode::read(LineParser& parser, NodeContextStack& contextSta
 			case (AnalysisNode::ExcludeNode):
 				newNode = new AnalysisExcludeNode;
 				break;
-			case (AnalysisNode::Normalise1DNode):
-				newNode = new AnalysisNormalise1DNode;
+			case (AnalysisNode::Process1DNode):
+				newNode = new AnalysisProcess1DNode;
 				break;
-			case (AnalysisNode::Normalise2DNode):
-				newNode = new AnalysisNormalise2DNode;
+			case (AnalysisNode::Process2DNode):
+				newNode = new AnalysisProcess2DNode;
 				break;
-			case (AnalysisNode::Normalise3DNode):
-				newNode = new AnalysisNormalise3DNode;
+			case (AnalysisNode::Process3DNode):
+				newNode = new AnalysisProcess3DNode;
 				break;
 			case (AnalysisNode::SelectNode):
 				newNode = new AnalysisSelectNode;

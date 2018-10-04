@@ -105,7 +105,7 @@ void CalculateRDFModuleWidget::setGraphDataTargets(CalculateRDFModule* module)
 	{
 		// Calculated RDF
 		CharString blockData;
-		blockData.sprintf("Collection '%s'; Group '%s'; DataSet '%s (%s)'; Source Data1D '%s//Normalise1D//%s//%s'; EndDataSet; EndCollection", cfg->name(), cfg->name(), module_->keywords().asString("Name"), cfg->name(), module_->uniqueName(), cfg->niceName(), module_->rdfName());
+		blockData.sprintf("Collection '%s'; Group '%s'; DataSet '%s (%s)'; Source Data1D '%s//Process1D//%s//%s'; EndDataSet; EndCollection", cfg->name(), cfg->name(), module_->keywords().asString("Name"), cfg->name(), module_->uniqueName(), cfg->niceName(), module_->rdfName());
 		printf("BLOCK = [%s]\n", blockData.get());
 		rdfGraph_->addCollectionFromBlock(blockData);
 	}

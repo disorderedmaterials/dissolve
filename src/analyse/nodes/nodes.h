@@ -32,9 +32,9 @@
 #include "analyse/nodes/collect3d.h"
 #include "analyse/nodes/dynamicselect.h"
 #include "analyse/nodes/exclude.h"
-#include "analyse/nodes/normalise1d.h"
-#include "analyse/nodes/normalise2d.h"
-#include "analyse/nodes/normalise3d.h"
+#include "analyse/nodes/process1d.h"
+#include "analyse/nodes/process2d.h"
+#include "analyse/nodes/process3d.h"
 #include "analyse/nodes/select.h"
 #include "analyse/nodes/sequence.h"
 

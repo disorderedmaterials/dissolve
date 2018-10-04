@@ -1,6 +1,6 @@
 /*
-	*** Analysis Node - Normalise1D
-	*** src/analyse/nodes/normalise1d.cpp
+	*** Analysis Node - Process1D
+	*** src/analyse/nodes/process1d.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "analyse/nodes/normalise1d.h"
+#include "analyse/nodes/process1d.h"
 #include "analyse/nodes/collect1d.h"
 #include "analyse/nodes/select.h"
 #include "analyse/nodecontextstack.h"
@@ -30,7 +30,7 @@
 #include "templates/genericlisthelper.h"
 
 // Constructor
-AnalysisNormalise1DNode::AnalysisNormalise1DNode(AnalysisCollect1DNode* target) : AnalysisNode(AnalysisNode::Normalise1DNode)
+AnalysisProcess1DNode::AnalysisProcess1DNode(AnalysisCollect1DNode* target) : AnalysisNode(AnalysisNode::Process1DNode)
 {
 	collectNode_ = target;
 	saveNormalisedData_ = false;
@@ -40,7 +40,7 @@ AnalysisNormalise1DNode::AnalysisNormalise1DNode(AnalysisCollect1DNode* target) 
 }
 
 // Destructor
-AnalysisNormalise1DNode::~AnalysisNormalise1DNode()
+AnalysisProcess1DNode::~AnalysisProcess1DNode()
 {
 }
 
@@ -49,20 +49,20 @@ AnalysisNormalise1DNode::~AnalysisNormalise1DNode()
  */
 
 // Node Keywords (note ordering for efficiency)
-const char* Normalise1DNodeKeywords[] = { "EndNormalise1D", "Factor", "LabelValue", "LabelX", "NSites", "NumberDensity", "Save", "SphericalShellVolume" };
+const char* Process1DNodeKeywords[] = { "EndProcess1D", "Factor", "LabelValue", "LabelX", "NSites", "NumberDensity", "Save", "SphericalShellVolume" };
 
 // Convert string to node keyword
-AnalysisNormalise1DNode::Normalise1DNodeKeyword AnalysisNormalise1DNode::normalise1DNodeKeyword(const char* s)
+AnalysisProcess1DNode::Process1DNodeKeyword AnalysisProcess1DNode::normalise1DNodeKeyword(const char* s)
 {
-	for (int nk=0; nk < AnalysisNormalise1DNode::nNormalise1DNodeKeywords; ++nk) if (DissolveSys::sameString(s, Normalise1DNodeKeywords[nk])) return (AnalysisNormalise1DNode::Normalise1DNodeKeyword) nk;
+	for (int nk=0; nk < AnalysisProcess1DNode::nProcess1DNodeKeywords; ++nk) if (DissolveSys::sameString(s, Process1DNodeKeywords[nk])) return (AnalysisProcess1DNode::Process1DNodeKeyword) nk;
 
-	return AnalysisNormalise1DNode::nNormalise1DNodeKeywords;
+	return AnalysisProcess1DNode::nProcess1DNodeKeywords;
 }
 
 // Convert node keyword to string
-const char* AnalysisNormalise1DNode::normalise1DNodeKeyword(AnalysisNormalise1DNode::Normalise1DNodeKeyword nk)
+const char* AnalysisProcess1DNode::normalise1DNodeKeyword(AnalysisProcess1DNode::Process1DNodeKeyword nk)
 {
-	return Normalise1DNodeKeywords[nk];
+	return Process1DNodeKeywords[nk];
 }
 
 /*
@@ -70,61 +70,61 @@ const char* AnalysisNormalise1DNode::normalise1DNodeKeyword(AnalysisNormalise1DN
  */
 
 // Add site population normaliser
-void AnalysisNormalise1DNode::addSitePopulationNormaliser(AnalysisSelectBaseNode* selectNode)
+void AnalysisProcess1DNode::addSitePopulationNormaliser(AnalysisSelectBaseNode* selectNode)
 {
 	sitePopulationNormalisers_.add(selectNode, 1.0);
 }
 
 // Add number density normaliser
-void AnalysisNormalise1DNode::addNumberDensityNormaliser(AnalysisSelectBaseNode* selectNode)
+void AnalysisProcess1DNode::addNumberDensityNormaliser(AnalysisSelectBaseNode* selectNode)
 {
 	numberDensityNormalisers_.add(selectNode);
 }
 
 // Set whether to normalise by factor
-void AnalysisNormalise1DNode::setNormaliseByFactor(bool on)
+void AnalysisProcess1DNode::setNormaliseByFactor(bool on)
 {
 	normaliseByFactor_ = on;
 }
 
 // Set normalisation factor
-void AnalysisNormalise1DNode::setNormalisationFactor(double factor)
+void AnalysisProcess1DNode::setNormalisationFactor(double factor)
 {
 	normalisationFactor_ = factor;
 }
 
 // Set whether to normalise by spherical shell volume
-void AnalysisNormalise1DNode::setNormaliseBySphericalShellVolume(bool on)
+void AnalysisProcess1DNode::setNormaliseBySphericalShellVolume(bool on)
 {
 	normaliseBySphericalShellVolume_ = on;
 }
 
 // Set whether to save normalised data
-void AnalysisNormalise1DNode::setSaveNormalisedData(bool on)
+void AnalysisProcess1DNode::setSaveNormalisedData(bool on)
 {
 	saveNormalisedData_ = on;
 }
 
 // Set value label
-void AnalysisNormalise1DNode::setValueLabel(const char* label)
+void AnalysisProcess1DNode::setValueLabel(const char* label)
 {
 	valueLabel_ = label;
 }
 
 // Return value label
-const char* AnalysisNormalise1DNode::valueLabel() const
+const char* AnalysisProcess1DNode::valueLabel() const
 {
 	return valueLabel_.get();
 }
 
 // Set x axis label
-void AnalysisNormalise1DNode::setXAxisLabel(const char* label)
+void AnalysisProcess1DNode::setXAxisLabel(const char* label)
 {
 	xAxisLabel_ = label;
 }
 
 // Return x axis label
-const char* AnalysisNormalise1DNode::xAxisLabel() const
+const char* AnalysisProcess1DNode::xAxisLabel() const
 {
 	return xAxisLabel_.get();
 }
@@ -134,26 +134,26 @@ const char* AnalysisNormalise1DNode::xAxisLabel() const
  */
 
 // Prepare any necessary data, ready for execution
-bool AnalysisNormalise1DNode::prepare(Configuration* cfg, const char* prefix, GenericList& targetList)
+bool AnalysisProcess1DNode::prepare(Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 	return true;
 }
 
 // Execute node, targetting the supplied Configuration
-AnalysisNode::NodeExecutionResult AnalysisNormalise1DNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
+AnalysisNode::NodeExecutionResult AnalysisProcess1DNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 	return AnalysisNode::Success;
 }
 
 // Finalise any necessary data after execution
-bool AnalysisNormalise1DNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
+bool AnalysisProcess1DNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 	// Retrieve / realise the normalised data from the supplied list
 	bool created;
 	Data1D& normalisedData = GenericListHelper<Data1D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag, &created);
 
 	normalisedData.setName(name());
-	normalisedData.setObjectTag(CharString("%s//Normalise1D//%s//%s", prefix, cfg->name(), name()));
+	normalisedData.setObjectTag(CharString("%s//Process1D//%s//%s", prefix, cfg->name(), name()));
 
 	// Copy the averaged data from the associated Collect1D node, and normalise it accordingly
 	normalisedData = collectNode_->accumulatedData();
@@ -199,59 +199,59 @@ bool AnalysisNormalise1DNode::finalise(ProcessPool& procPool, Configuration* cfg
  */
 
 // Read structure from specified LineParser
-bool AnalysisNormalise1DNode::read(LineParser& parser, NodeContextStack& contextStack)
+bool AnalysisProcess1DNode::read(LineParser& parser, NodeContextStack& contextStack)
 {
 	// The current line in the parser must also contain the name of a Collect1D node which we will operate on (it will also become our node name)
-	if (parser.nArgs() != 2) return Messenger::error("A Normalise1D node must be given the name of a Collect1D node.\n");
+	if (parser.nArgs() != 2) return Messenger::error("A Process1D node must be given the name of a Collect1D node.\n");
 	collectNode_ = contextStack.collect1DNode(parser.argc(1));
-	if (!collectNode_) return Messenger::error("A valid Collect1D node name must be given as an argument to Normalise1D.\n");
+	if (!collectNode_) return Messenger::error("A valid Collect1D node name must be given as an argument to Process1D.\n");
 	setName(parser.argc(1));
 
 	AnalysisSelectBaseNode* selectNode;
 
-	// Read until we encounter the EndNormalise1D keyword, or we fail for some reason
+	// Read until we encounter the EndProcess1D keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
 	{
 		// Read and parse the next line
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
 		// Is the first argument on the current line a valid control keyword?
-		Normalise1DNodeKeyword nk = normalise1DNodeKeyword(parser.argc(0));
+		Process1DNodeKeyword nk = normalise1DNodeKeyword(parser.argc(0));
 		switch (nk)
 		{
-			case (Normalise1DNodeKeyword::EndNormalise1DKeyword):
+			case (Process1DNodeKeyword::EndProcess1DKeyword):
 				return true;
-			case (Normalise1DNodeKeyword::FactorKeyword):
+			case (Process1DNodeKeyword::FactorKeyword):
 				normalisationFactor_ = parser.argd(1);
 				normaliseByFactor_ = true;
 				break;
-			case (Normalise1DNodeKeyword::LabelValueKeyword):
+			case (Process1DNodeKeyword::LabelValueKeyword):
 				valueLabel_ = parser.argc(1);
 				break;
-			case (Normalise1DNodeKeyword::LabelXKeyword):
+			case (Process1DNodeKeyword::LabelXKeyword):
 				xAxisLabel_ = parser.argc(1);
 				break;
-			case (Normalise1DNodeKeyword::NSitesKeyword):
+			case (Process1DNodeKeyword::NSitesKeyword):
 				selectNode = contextStack.selectNode(parser.argc(1));
-				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), normalise1DNodeKeyword(Normalise1DNodeKeyword::NSitesKeyword));
+				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), normalise1DNodeKeyword(Process1DNodeKeyword::NSitesKeyword));
 				sitePopulationNormalisers_.add(selectNode, 1.0);
 				break;
-			case (Normalise1DNodeKeyword::NumberDensityKeyword):
+			case (Process1DNodeKeyword::NumberDensityKeyword):
 				selectNode = contextStack.selectNode(parser.argc(1));
-				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), normalise1DNodeKeyword(Normalise1DNodeKeyword::NumberDensityKeyword));
+				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), normalise1DNodeKeyword(Process1DNodeKeyword::NumberDensityKeyword));
 				numberDensityNormalisers_.add(selectNode, 1.0);
 				break;
-			case (Normalise1DNodeKeyword::SaveKeyword):
+			case (Process1DNodeKeyword::SaveKeyword):
 				saveNormalisedData_ = parser.argb(1);
 				break;
-			case (Normalise1DNodeKeyword::SphericalShellVolumeKeyword):
+			case (Process1DNodeKeyword::SphericalShellVolumeKeyword):
 				normaliseBySphericalShellVolume_ = parser.argb(1);
 				break;
-			case (Normalise1DNodeKeyword::nNormalise1DNodeKeywords):
-				return Messenger::error("Unrecognised Normalise1D node keyword '%s' found.\n", parser.argc(0));
+			case (Process1DNodeKeyword::nProcess1DNodeKeywords):
+				return Messenger::error("Unrecognised Process1D node keyword '%s' found.\n", parser.argc(0));
 				break;
 			default:
-				return Messenger::error("Epic Developer Fail - Don't know how to deal with the Normalise1D node keyword '%s'.\n", parser.argc(0));
+				return Messenger::error("Epic Developer Fail - Don't know how to deal with the Process1D node keyword '%s'.\n", parser.argc(0));
 		}
 	}
 
@@ -259,7 +259,7 @@ bool AnalysisNormalise1DNode::read(LineParser& parser, NodeContextStack& context
 }
 
 // Write structure to specified LineParser
-bool AnalysisNormalise1DNode::write(LineParser& parser, const char* prefix)
+bool AnalysisProcess1DNode::write(LineParser& parser, const char* prefix)
 {
 	// TODO
 }
