@@ -76,7 +76,7 @@ bool ExportModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					procPool.decideFalse();
 					return false;
 				}
-				else if (!writeConfigurationDLPOLY(parser, cfg, cfg->name()))
+				else if (!writeDLPOLYCoordinates(parser, cfg))
 				{
 					Messenger::print("Export: Failed to export DL_POLY CONFIG file.\n");
 					parser.closeFiles();
@@ -112,7 +112,7 @@ bool ExportModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					procPool.decideFalse();
 					return false;
 				}
-				else if (!writeConfigurationXYZ(parser, cfg, cfg->name()))
+				else if (!writeXYZCoordinates(parser, cfg))
 				{
 					Messenger::print("Export: Failed to export XYZ file.\n");
 					parser.closeFiles();

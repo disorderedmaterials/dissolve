@@ -2,11 +2,14 @@
 add_library(exportmodule
   core.cpp
   definition.cpp
-  functions.cpp
+  formats.cpp
+  functions_coordinates.cpp
+  functions_data2d.cpp
   options.cpp
   process.cpp
 
   export.h
+  formats.h
 )
 
 include_directories(

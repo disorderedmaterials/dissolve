@@ -338,7 +338,7 @@ void ConfigurationTab::on_ExportButton_clicked(bool checked)
 {
 	LineParser parser;
 	parser.openOutput(CharString("%s.xyz", configuration_->niceName()));
-	ExportModule::writeConfigurationXYZ(parser, configuration_, CharString("Configuration '%s'", configuration_->name()));
+	ExportModule::writeXYZCoordinates(parser, configuration_);
 	parser.closeFiles();
 }
 

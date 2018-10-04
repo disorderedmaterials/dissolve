@@ -330,7 +330,7 @@ bool Dissolve::iterate(int nIterations)
 						worldPool().decideFalse();
 						return false;
 					}
-					else if (!ExportModule::writeConfigurationXYZ(ensembleParser, cfg, cfg->name()))
+					else if (!ExportModule::writeXYZCoordinates(ensembleParser, cfg))
 					{
 						Messenger::print("Export: Failed to append Configuration ensemble output file.\n");
 						ensembleParser.closeFiles();

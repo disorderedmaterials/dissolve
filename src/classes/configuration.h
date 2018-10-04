@@ -222,7 +222,7 @@ class Configuration : public ListItem<Configuration>
 	// Increment current coordinate index
 	void incrementCoordinateIndex();
 	// Load coordinates from specified parser
-	bool loadCoordinates(LineParser& parser, CoordinateImportFileFormat::CoordinateFormat format);
+	bool loadCoordinates(LineParser& parser, CoordinateImportFileFormat::CoordinateImportFormat format);
 
 
 	/*

@@ -32,15 +32,15 @@ class CoordinateImportFileFormat : public FileAndFormat
 {
 	public:
 	// Available coordinate formats
- 	enum CoordinateFormat { XYZCoordinates, DLPOLYCoordinates, EPSRCoordinates, nCoordinateFormats };
+ 	enum CoordinateImportFormat { XYZCoordinates, DLPOLYCoordinates, EPSRCoordinates, nCoordinateImportFormats };
 	// Return number of available formats
 	int nFormats() const;
 	// Return formats array
 	const char** formats() const;
 	// Return nice formats array
 	const char** niceFormats() const;
-	// Return current format as CoordinateFormat
-	CoordinateFormat coordinateFormat() const;
+	// Return current format as CoordinateImportFormat
+	CoordinateImportFormat coordinateFormat() const;
 };
 
 // Forces Import Formats
@@ -48,15 +48,15 @@ class ForceImportFileFormat : public FileAndFormat
 {
 	public:
 	// Available forces formats
- 	enum ForceFormat { XYZForces, DLPOLYForces, nForceFormats };
+ 	enum ForceImportFormat { XYZForces, DLPOLYForces, nForceImportFormats };
 	// Return number of available formats
 	int nFormats() const;
 	// Return formats array
 	const char** formats() const;
 	// Return nice formats array
 	const char** niceFormats() const;
-	// Return current format as ForceFormat
-	ForceFormat forceFormat() const;
+	// Return current format as ForceImportFormat
+	ForceImportFormat forceFormat() const;
 };
 
 // Trajectory Import Formats
@@ -64,15 +64,15 @@ class TrajectoryImportFileFormat : public FileAndFormat
 {
 	public:
 	// Available forces formats
- 	enum TrajectoryFormat { XYZTrajectory, nTrajectoryFormats };
+ 	enum TrajectoryImportFormat { XYZTrajectory, nTrajectoryImportFormats };
 	// Return number of available formats
 	int nFormats() const;
 	// Return formats array
 	const char** formats() const;
 	// Return nice formats array
 	const char** niceFormats() const;
-	// Return current format as TrajectoryFormat
-	TrajectoryFormat trajectoryFormat() const;
+	// Return current format as TrajectoryImportFormat
+	TrajectoryImportFormat trajectoryFormat() const;
 };
 
 #endif

@@ -32,7 +32,7 @@ class PotentialMap;
 class ForcesModule : public Module
 {
 	/*
-	 * Calculates the total energy of the system by one of several methods
+	 * Calculates the total forces in a system
 	 */
 
 	public:
