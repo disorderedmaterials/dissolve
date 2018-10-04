@@ -95,6 +95,7 @@ bool AnalysisDynamicSelectNode::addElementTarget(Element* el)
 // Prepare any necessary data, ready for execution
 bool AnalysisDynamicSelectNode::prepare(Configuration* cfg, const char* prefix, GenericList& targetList)
 {
+	nSelections_ = 0;
 	nCumulativeSites_ = 0;
 
 	// If one exists, prepare the ForEach branch nodes
