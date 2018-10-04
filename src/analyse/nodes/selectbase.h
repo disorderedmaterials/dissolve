@@ -27,6 +27,7 @@
 
 // Forward Declarations
 class AnalysisSequenceNode;
+class Molecule;
 class SiteStack;
 class Species;
 class SpeciesSite;
@@ -46,7 +47,7 @@ class AnalysisSelectBaseNode
 	 */
 	public:
 	// Node Keywords
-	enum SelectBaseNodeKeyword { ExcludeSameMoleculeKeyword, ExcludeSameSiteKeyword, ForEachKeyword, SameMoleculeKeyword, nSelectBaseNodeKeywords };
+	enum SelectBaseNodeKeyword { ExcludeSameMoleculeKeyword, ExcludeSameSiteKeyword, ForEachKeyword, SameMoleculeAsSiteKeyword, nSelectBaseNodeKeywords };
 	// Convert string to control keyword
 	static SelectBaseNodeKeyword selectBaseNodeKeyword(const char* s);
 	// Convert control keyword to string
@@ -63,7 +64,7 @@ class AnalysisSelectBaseNode
 	RefList<AnalysisSelectBaseNode,bool> sameMoleculeExclusions_;
 	// List of other sites (nodes) which will exclude one of our sites if it is the same site
 	RefList<AnalysisSelectBaseNode,bool> sameSiteExclusions_;
-	// Molecule in which the site must exist
+	// Molecule (from site) in which the site must exist
 	AnalysisSelectBaseNode* sameMolecule_;
 	// Array containing pointers to our selected sites
 	Array<const Site*> sites_;
@@ -81,6 +82,8 @@ class AnalysisSelectBaseNode
 	bool addSameMoleculeExclusion(AnalysisSelectBaseNode* node);
 	// Add "same site" exclusion
 	bool addSameSiteExclusion(AnalysisSelectBaseNode* node);
+	// Return Molecule (from site) in which the site must exist
+	const Molecule* sameMoleculeMolecule();
 	// Add and return ForEach sequence
 	AnalysisSequenceNode* addForEachBranch();
 	// Add specified node to ForEach sequence

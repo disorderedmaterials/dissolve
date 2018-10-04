@@ -49,7 +49,7 @@ AnalysisSelectBaseNode::~AnalysisSelectBaseNode()
  */
 
 // Node Keywords
-const char* SelectBaseNodeKeywords[] = { "ExcludeSameMolecule", "ExcludeSameSite", "ForEach", "SameMolecule", "Site" };
+const char* SelectBaseNodeKeywords[] = { "ExcludeSameMolecule", "ExcludeSameSite", "ForEach", "SameMoleculeAsSite", "Site" };
 
 // Convert string to node keyword
 AnalysisSelectBaseNode::SelectBaseNodeKeyword AnalysisSelectBaseNode::selectBaseNodeKeyword(const char* s)
@@ -96,7 +96,7 @@ int AnalysisSelectBaseNode::parseBaseKeyword(LineParser& parser, NodeContextStac
 			forEachBranch_ = new AnalysisSequenceNode("EndForEach");
 			if (!forEachBranch_->read(parser, contextStack)) return false;
 			break;
-		case (SelectBaseNodeKeyword::SameMoleculeKeyword):
+		case (SelectBaseNodeKeyword::SameMoleculeAsSiteKeyword):
 			if (sameMolecule_) return Messenger::error("Same molecule restriction has already been set, and cannot be set again.\n");
 			sameMolecule_ = contextStack.selectNodeInScope(parser.argc(1));
 			if (!sameMolecule_) return Messenger::error("Unrecognised selection node '%s' given to %s keyword.\n", parser.argc(1), selectBaseNodeKeyword(nk));
@@ -131,6 +131,25 @@ bool AnalysisSelectBaseNode::addSameSiteExclusion(AnalysisSelectBaseNode* node)
 	else sameSiteExclusions_.add(node);
 
 	return true;
+}
+
+// Return Molecule (from site) in which the site must exist
+const Molecule* AnalysisSelectBaseNode::sameMoleculeMolecule()
+{
+	if (!sameMolecule_)
+	{
+		Messenger::warn("Requested Molecule from AnalysisSelectBaseNode::sameMolecule_, but no selection node is defined for it.\n");
+		return NULL;
+	}
+
+	const Site* site = sameMolecule_->currentSite();
+	if (!site)
+	{
+		Messenger::warn("Requested Molecule from AnalysisSelectBaseNode::sameMolecule_, but there is no current site.\n");
+		return NULL;
+	}
+
+	return site->molecule();
 }
 
 // Add and return ForEach sequence

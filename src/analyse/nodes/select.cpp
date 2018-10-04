@@ -100,13 +100,20 @@ AnalysisNode::NodeExecutionResult AnalysisSelectNode::execute(ProcessPool& procP
 	RefListIterator<AnalysisSelectBaseNode,bool> siteExclusionIterator(sameSiteExclusions_);
 	while (AnalysisSelectBaseNode* node = siteExclusionIterator.iterate()) if (node->currentSite()) excludedSites.addUnique(node->currentSite());
 
+	// Get required Molecule parent, if requested
+	const Molecule* moleculeParent = sameMolecule_ ? sameMoleculeMolecule() : NULL;
+
 	sites_.createEmpty(siteStack->nSites());
 	for (int n=0; n<siteStack->nSites(); ++n)
 	{
 		const Site* site = &siteStack->site(n);
 
-		// Check Molecule exclusions
-		if (excludedMolecules.contains(site->molecule())) continue;
+		// Check Molecule inclusion / exclusions
+		if (moleculeParent)
+		{
+			if (site->molecule() != moleculeParent) continue; 
+		}
+		else if (excludedMolecules.contains(site->molecule())) continue;
 
 		// Check Site exclusions
 		if (excludedSites.contains(site)) continue;
