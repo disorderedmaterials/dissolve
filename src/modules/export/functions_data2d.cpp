@@ -56,8 +56,8 @@ bool ExportModule::writeData2D(Data2DExportFileFormat::Data2DExportFormat format
 bool ExportModule::writeBlockData2D(LineParser& parser, Data2D& data)
 {
 	// Write header comment
-	if (!parser.writeLineF("# %i blocks (nX) of %i points (nY)\n", data.xAxis().nItems(), data.yAxis().nItems())) return false;
-	
+	if (!parser.writeLineF("# %i blocks (nX) of %i points (nY).\n", data.xAxis().nItems(), data.yAxis().nItems())) return false;
+
 	// Write datapoints, separating each block of a specific x value with a single blank line
 	const Array2D<double>& values = data.constValues2D();
 	for (int x=0; x<values.nRows(); ++x)
