@@ -21,6 +21,8 @@
 
 #include "math/integrator.h"
 #include "math/data1d.h"
+#include "math/data2d.h"
+#include "math/data3d.h"
 #include "templates/array.h"
 
 /*
@@ -71,15 +73,93 @@ double Integrator::absTrapezoid(const Data1D& data)
 	return total;
 }
 
-// Return sum of squares of all y values in supplied data
-double Integrator::sumOfSquares(const Data1D& data)
+// Return sum of all values in supplied data
+double Integrator::sum(const Data1D& data)
 {
 	// Grab data array
-	const Array<double>& y = data.constValues();
+	const Array<double>& values = data.constValues();
 
 	double total = 0.0;
 
-	for (int n=0; n<y.nItems(); ++n) total += y.constAt(n)*y.constAt(n);
+	for (int n=0; n<values.nItems(); ++n) total += values.constAt(n);
+
+	return total;
+}
+
+// Return sum of all absolute values in supplied data
+double Integrator::absSum(const Data1D& data)
+{
+	// Grab data array
+	const Array<double>& values = data.constValues();
+
+	double total = 0.0;
+
+	for (int n=0; n<values.nItems(); ++n) total += fabs(values.constAt(n));
+
+	return total;
+}
+
+// Return sum of squares of all values in supplied data
+double Integrator::sumOfSquares(const Data1D& data)
+{
+	// Grab data array
+	const Array<double>& values = data.constValues();
+
+	double total = 0.0;
+
+	for (int n=0; n<values.nItems(); ++n) total += values.constAt(n)*values.constAt(n);
+
+	return total;
+}
+
+// Return sum of all values in supplied data
+double Integrator::sum(const Data2D& data)
+{
+	// Grab data array
+	const Array2D<double>& values = data.constValues2D();
+
+	double total = 0.0;
+
+	for (int n=0; n<values.linearArraySize(); ++n) total += values.constLinearValue(n);
+
+	return total;
+}
+
+// Return sum of all absolute values in supplied data
+double Integrator::absSum(const Data2D& data)
+{
+	// Grab data array
+	const Array2D<double>& values = data.constValues2D();
+
+	double total = 0.0;
+
+	for (int n=0; n<values.linearArraySize(); ++n) total += fabs(values.constLinearValue(n));
+
+	return total;
+}
+
+// Return sum of all values in supplied data
+double Integrator::sum(const Data3D& data)
+{
+	// Grab data array
+	const Array3D<double>& values = data.constValues3D();
+
+	double total = 0.0;
+
+	for (int n=0; n<values.linearArraySize(); ++n) total += values.constLinearValue(n);
+
+	return total;
+}
+
+// Return sum of all absolute values in supplied data
+double Integrator::absSum(const Data3D& data)
+{
+	// Grab data array
+	const Array3D<double>& values = data.constValues3D();
+
+	double total = 0.0;
+
+	for (int n=0; n<values.linearArraySize(); ++n) total += fabs(values.constLinearValue(n));
 
 	return total;
 }

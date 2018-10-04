@@ -24,6 +24,8 @@
 
 // Forward Declarations
 class Data1D;
+class Data2D;
+class Data3D;
 
 // Integrator
 class Integrator
@@ -36,8 +38,20 @@ class Integrator
 	static double trapezoid(const Data1D& data);
 	// Compute absolute integral of supplied data via trapezoid rule
 	static double absTrapezoid(const Data1D& data);
-	// Return sum of squares of all y values in supplied data
+	// Return sum of all values in supplied data
+	static double sum(const Data1D& data);
+	// Return sum of all absolute values in supplied data
+	static double absSum(const Data1D& data);
+	// Return sum of squares of all values in supplied data
 	static double sumOfSquares(const Data1D& data);
+	// Return sum of all values in supplied data
+	static double sum(const Data2D& data);
+	// Return sum of all absolute values in supplied data
+	static double absSum(const Data2D& data);
+	// Return sum of all values in supplied data
+	static double sum(const Data3D& data);
+	// Return sum of all absolute values in supplied data
+	static double absSum(const Data3D& data);
 };
 
 #endif
