@@ -31,6 +31,7 @@
 // Constructor
 AnalysisSelectBaseNode::AnalysisSelectBaseNode()
 {
+	sameMolecule_= NULL;
 	forEachBranch_ = NULL;
 	currentSiteIndex_ = -1;
 	nCumulativeSites_ = 0;
@@ -41,6 +42,73 @@ AnalysisSelectBaseNode::AnalysisSelectBaseNode()
 AnalysisSelectBaseNode::~AnalysisSelectBaseNode()
 {
 	if (forEachBranch_) delete forEachBranch_;
+}
+
+/*
+ * Node Keywords
+ */
+
+// Node Keywords
+const char* SelectBaseNodeKeywords[] = { "ExcludeSameMolecule", "ExcludeSameSite", "ForEach", "SameMolecule", "Site" };
+
+// Convert string to node keyword
+AnalysisSelectBaseNode::SelectBaseNodeKeyword AnalysisSelectBaseNode::selectBaseNodeKeyword(const char* s)
+{
+	for (int nk=0; nk < AnalysisSelectBaseNode::nSelectBaseNodeKeywords; ++nk) if (DissolveSys::sameString(s, SelectBaseNodeKeywords[nk])) return (AnalysisSelectBaseNode::SelectBaseNodeKeyword) nk;
+
+	return AnalysisSelectBaseNode::nSelectBaseNodeKeywords;
+}
+
+// Convert node keyword to string
+const char* AnalysisSelectBaseNode::selectBaseNodeKeyword(AnalysisSelectBaseNode::SelectBaseNodeKeyword nk)
+{
+	return SelectBaseNodeKeywords[nk];
+}
+
+// Parse current keyword (if recognised) returning 1 on success, 0 on recognised but failed, and -1 for not recognised
+int AnalysisSelectBaseNode::parseBaseKeyword(LineParser& parser, NodeContextStack& contextStack)
+{
+	// Is the first argument on the current line a valid control keyword?
+	SelectBaseNodeKeyword nk = selectBaseNodeKeyword(parser.argc(0));
+	switch (nk)
+	{
+		case (SelectBaseNodeKeyword::ExcludeSameMoleculeKeyword):
+			for (int n=1; n<parser.nArgs(); ++n)
+			{
+				AnalysisSelectBaseNode* otherNode = contextStack.selectNodeInScope(parser.argc(n));
+				if (!otherNode) return Messenger::error("Unrecognised selection node '%s' given to %s keyword.\n", parser.argc(n), selectBaseNodeKeyword(nk));
+				if (!addSameMoleculeExclusion(otherNode)) return Messenger::error("Duplicate site given to %s keyword.\n", selectBaseNodeKeyword(nk));
+			}
+			break;
+		case (SelectBaseNodeKeyword::ExcludeSameSiteKeyword):
+			for (int n=1; n<parser.nArgs(); ++n)
+			{
+				AnalysisSelectBaseNode* otherNode = contextStack.selectNodeInScope(parser.argc(n));
+				if (!otherNode) return Messenger::error("Unrecognised selection node '%s' given to %s keyword.\n", parser.argc(n), selectBaseNodeKeyword(nk));
+				if (!addSameSiteExclusion(otherNode)) return Messenger::error("Duplicate site given to %s keyword.\n", selectBaseNodeKeyword(nk));
+			}
+			break;
+		case (SelectBaseNodeKeyword::ForEachKeyword):
+			// Check that a ForEach branch hasn't already been defined
+			if (forEachBranch_) return Messenger::error("Only one ForEach branch may be defined in a selection node.\n");
+
+			// Create and parse a new branch
+			forEachBranch_ = new AnalysisSequenceNode("EndForEach");
+			if (!forEachBranch_->read(parser, contextStack)) return false;
+			break;
+		case (SelectBaseNodeKeyword::SameMoleculeKeyword):
+			if (sameMolecule_) return Messenger::error("Same molecule restriction has already been set, and cannot be set again.\n");
+			sameMolecule_ = contextStack.selectNodeInScope(parser.argc(1));
+			if (!sameMolecule_) return Messenger::error("Unrecognised selection node '%s' given to %s keyword.\n", parser.argc(1), selectBaseNodeKeyword(nk));
+			break;
+		case (SelectBaseNodeKeyword::nSelectBaseNodeKeywords):
+			return -1;
+			break;
+		default:
+			return Messenger::error("Epic Developer Fail - Don't know how to deal with the Select node keyword '%s'.\n", parser.argc(0));
+	}
+
+	return 1;
 }
 
 /*

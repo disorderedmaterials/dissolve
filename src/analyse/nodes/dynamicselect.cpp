@@ -29,7 +29,7 @@
 #include "base/sysfunc.h"
 
 // Constructor
-AnalysisDynamicSelectNode::AnalysisDynamicSelectNode(SpeciesSite* site) : AnalysisSelectBaseNode(), AnalysisNode(AnalysisNode::DynamicSelectNode)
+AnalysisDynamicSelectNode::AnalysisDynamicSelectNode() : AnalysisSelectBaseNode(), AnalysisNode(AnalysisNode::DynamicSelectNode)
 {
 }
 
@@ -44,10 +44,10 @@ AnalysisDynamicSelectNode::~AnalysisDynamicSelectNode()
  */
 
 // Node Keywords
-const char* DynamicSelectNodeKeywords[] = { "EndDynamicSelect", "ExcludeSameMolecule", "ExcludeSameSite", "ForEach", "Site" };
+const char* DynamicSelectNodeKeywords[] = { "Elements", "EndDynamicSelect", "Site" };
 
 // Convert string to node keyword
-AnalysisDynamicSelectNode::DynamicSelectNodeKeyword AnalysisDynamicSelectNode::selectNodeKeyword(const char* s)
+AnalysisDynamicSelectNode::DynamicSelectNodeKeyword AnalysisDynamicSelectNode::dynamicSelectNodeKeyword(const char* s)
 {
 	for (int nk=0; nk < AnalysisDynamicSelectNode::nDynamicSelectNodeKeywords; ++nk) if (DissolveSys::sameString(s, DynamicSelectNodeKeywords[nk])) return (AnalysisDynamicSelectNode::DynamicSelectNodeKeyword) nk;
 
@@ -55,7 +55,7 @@ AnalysisDynamicSelectNode::DynamicSelectNodeKeyword AnalysisDynamicSelectNode::s
 }
 
 // Convert node keyword to string
-const char* AnalysisDynamicSelectNode::selectNodeKeyword(AnalysisDynamicSelectNode::DynamicSelectNodeKeyword nk)
+const char* AnalysisDynamicSelectNode::dynamicSelectNodeKeyword(AnalysisDynamicSelectNode::DynamicSelectNodeKeyword nk)
 {
 	return DynamicSelectNodeKeywords[nk];
 }
@@ -63,6 +63,15 @@ const char* AnalysisDynamicSelectNode::selectNodeKeyword(AnalysisDynamicSelectNo
 /*
  * Selection Target
  */
+
+// Add elemental selection target
+bool AnalysisDynamicSelectNode::addElementTarget(Element* el)
+{
+	if (targetElements_.contains(el)) return false;
+	else targetElements_.add(el);
+
+	return true;
+}
 
 /*
  * Execute
@@ -82,21 +91,20 @@ bool AnalysisDynamicSelectNode::prepare(Configuration* cfg, const char* prefix, 
 // Execute node, targetting the supplied Configuration
 AnalysisNode::NodeExecutionResult AnalysisDynamicSelectNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
-	// Create our array of sites from the source Configuration
+	// Clear our site and reference arrays
+	dynamicSites_.clear();
 	sites_.clear();
-	
-// 	const SiteStack* siteStack = cfg->siteStack(speciesSite_);
-// 	if (siteStack == NULL) return AnalysisNode::Failure;
-// 
-// 	// Create our exclusion lists
-// 	RefList<const Molecule,bool> excludedMolecules;
-// 	RefListIterator<AnalysisSelectBaseNode,bool> moleculeExclusionIterator(sameMoleculeExclusions_);
-// 	while (AnalysisDynamicSelectNode* node = moleculeExclusionIterator.iterate()) if (node->currentSite()) excludedMolecules.addUnique(node->currentSite()->molecule());
-// 
-// 	RefList<const Site,bool> excludedSites;
-// 	RefListIterator<AnalysisSelectBaseNode,bool> siteExclusionIterator(sameSiteExclusions_);
-// 	while (AnalysisDynamicSelectNode* node = siteExclusionIterator.iterate()) if (node->currentSite()) excludedSites.addUnique(node->currentSite());
-// 
+
+	// Create our exclusion lists
+	RefList<const Molecule,bool> excludedMolecules;
+	RefListIterator<AnalysisSelectBaseNode,bool> moleculeExclusionIterator(sameMoleculeExclusions_);
+	while (AnalysisSelectBaseNode* node = moleculeExclusionIterator.iterate()) if (node->currentSite()) excludedMolecules.addUnique(node->currentSite()->molecule());
+
+	RefList<const Site,bool> excludedSites;
+	RefListIterator<AnalysisSelectBaseNode,bool> siteExclusionIterator(sameSiteExclusions_);
+	while (AnalysisSelectBaseNode* node = siteExclusionIterator.iterate()) if (node->currentSite()) excludedSites.addUnique(node->currentSite());
+
+	// Create sites from the specified Configuration
 // 	sites_.createEmpty(siteStack->nSites());
 // 	for (int n=0; n<siteStack->nSites(); ++n)
 // 	{
@@ -163,36 +171,25 @@ bool AnalysisDynamicSelectNode::read(LineParser& parser, NodeContextStack& conte
 		// Read and parse the next line
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
+		// Check if the current line contains a base keyword
+		int baseResult = parseBaseKeyword(parser, contextStack);
+		if (baseResult == 0) return false;
+		else if (baseResult == 1) continue;
+
 		// Is the first argument on the current line a valid control keyword?
-		DynamicSelectNodeKeyword nk = selectNodeKeyword(parser.argc(0));
+		DynamicSelectNodeKeyword nk = dynamicSelectNodeKeyword(parser.argc(0));
 		switch (nk)
 		{
+			case (DynamicSelectNodeKeyword::ElementsKeyword):
+				for (int n=1; n<parser.nArgs(); ++n)
+				{
+					Element* el = Elements::elementPointer(parser.argc(n));
+					if (!el) return Messenger::error("Unrecognised element '%s' given to %s keyword.\n", parser.argc(n), dynamicSelectNodeKeyword(nk));
+					if (!addElementTarget(el)) return Messenger::error("Duplicate site given to %s keyword.\n", dynamicSelectNodeKeyword(nk));
+				}
+				break;
 			case (DynamicSelectNodeKeyword::EndDynamicSelectKeyword):
 				return true;
-			case (DynamicSelectNodeKeyword::ExcludeSameMoleculeKeyword):
-				for (int n=1; n<parser.nArgs(); ++n)
-				{
-					AnalysisSelectBaseNode* otherNode = contextStack.selectNodeInScope(parser.argc(n));
-					if (!otherNode) return Messenger::error("Unrecognised DynamicSelect node '%s' given to %s keyword.\n", parser.argc(n), selectNodeKeyword(DynamicSelectNodeKeyword::ExcludeSameMoleculeKeyword));
-					if (!addSameMoleculeExclusion(otherNode)) return Messenger::error("Duplicate site given to %s keyword.\n", selectNodeKeyword(DynamicSelectNodeKeyword::ExcludeSameMoleculeKeyword));
-				}
-				break;
-			case (DynamicSelectNodeKeyword::ExcludeSameSiteKeyword):
-				for (int n=1; n<parser.nArgs(); ++n)
-				{
-					AnalysisSelectBaseNode* otherNode = contextStack.selectNodeInScope(parser.argc(n));
-					if (!otherNode) return Messenger::error("Unrecognised DynamicSelect node '%s' given to %s keyword.\n", parser.argc(n), selectNodeKeyword(DynamicSelectNodeKeyword::ExcludeSameSiteKeyword));
-					if (!addSameSiteExclusion(otherNode)) return Messenger::error("Duplicate site given to %s keyword.\n", selectNodeKeyword(DynamicSelectNodeKeyword::ExcludeSameSiteKeyword));
-				}
-				break;
-			case (DynamicSelectNodeKeyword::ForEachKeyword):
-				// Check that a ForEach branch hasn't already been defined
-				if (forEachBranch_) return Messenger::error("Only one ForEach branch may be defined.\n");
-
-				// Create and parse a new branch
-				forEachBranch_ = new AnalysisSequenceNode("EndForEach");
-				if (!forEachBranch_->read(parser, contextStack)) return false;
-				break;
 			case (DynamicSelectNodeKeyword::SiteKeyword):
 // 				// If we already have a species/site reference, bail out now
 // 				if (species_) return Messenger::error("The '%s' keyword must appear exactly once in a DynamicSelect node.\n", selectNodeKeyword(DynamicSelectNodeKeyword::SiteKeyword));

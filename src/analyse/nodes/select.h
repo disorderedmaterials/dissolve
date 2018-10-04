@@ -48,7 +48,7 @@ class AnalysisSelectNode : public AnalysisSelectBaseNode, public AnalysisNode
 	 */
 	public:
 	// Node Keywords
-	enum SelectNodeKeyword { EndSelectKeyword, ExcludeSameMoleculeKeyword, ExcludeSameSiteKeyword, ForEachKeyword, SiteKeyword, nSelectNodeKeywords };
+	enum SelectNodeKeyword { EndSelectKeyword, SiteKeyword, nSelectNodeKeywords };
 	// Convert string to control keyword
 	static SelectNodeKeyword selectNodeKeyword(const char* s);
 	// Convert control keyword to string

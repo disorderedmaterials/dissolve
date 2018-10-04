@@ -42,6 +42,20 @@ class AnalysisSelectBaseNode
 
 
 	/*
+	 * Node Keywords
+	 */
+	public:
+	// Node Keywords
+	enum SelectBaseNodeKeyword { ExcludeSameMoleculeKeyword, ExcludeSameSiteKeyword, ForEachKeyword, SameMoleculeKeyword, nSelectBaseNodeKeywords };
+	// Convert string to control keyword
+	static SelectBaseNodeKeyword selectBaseNodeKeyword(const char* s);
+	// Convert control keyword to string
+	static const char* selectBaseNodeKeyword(SelectBaseNodeKeyword nk);
+	// Parse current keyword (if recognised) returning 1 on success, 0 on recognised but failed, and -1 for not recognised
+	int parseBaseKeyword(LineParser& parser, NodeContextStack& contextStack);
+
+
+	/*
 	 * General Data
 	 */
 	protected:
@@ -49,16 +63,18 @@ class AnalysisSelectBaseNode
 	RefList<AnalysisSelectBaseNode,bool> sameMoleculeExclusions_;
 	// List of other sites (nodes) which will exclude one of our sites if it is the same site
 	RefList<AnalysisSelectBaseNode,bool> sameSiteExclusions_;
+	// Molecule in which the site must exist
+	AnalysisSelectBaseNode* sameMolecule_;
 	// Array containing pointers to our selected sites
 	Array<const Site*> sites_;
+	// Current Site index
+	int currentSiteIndex_;
 	// Number of selections made by the node
 	int nSelections_;
 	// Cumulative number of sites ever selected
 	int nCumulativeSites_;
 	// Branch for ForEach (if defined)
 	AnalysisSequenceNode* forEachBranch_;
-	// Current Site index
-	int currentSiteIndex_;
 
 	public:
 	// Add "same molecule" exclusion

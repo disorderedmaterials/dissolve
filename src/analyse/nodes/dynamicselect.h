@@ -29,6 +29,7 @@
 
 // Forward Declarations
 class AnalysisSequenceNode;
+class Element;
 class SiteStack;
 class Species;
 class SpeciesSite;
@@ -38,7 +39,7 @@ class AnalysisDynamicSelectNode : public AnalysisSelectBaseNode, public Analysis
 {
 	public:
 	// Constructor
-	AnalysisDynamicSelectNode(SpeciesSite* site = NULL);
+	AnalysisDynamicSelectNode();
 	// Destructor
 	~AnalysisDynamicSelectNode();
 
@@ -48,18 +49,25 @@ class AnalysisDynamicSelectNode : public AnalysisSelectBaseNode, public Analysis
 	 */
 	public:
 	// Node Keywords
-	enum DynamicSelectNodeKeyword { EndDynamicSelectKeyword, ExcludeSameMoleculeKeyword, ExcludeSameSiteKeyword, ForEachKeyword, SiteKeyword, nDynamicSelectNodeKeywords };
+	enum DynamicSelectNodeKeyword { ElementsKeyword, EndDynamicSelectKeyword, SiteKeyword, nDynamicSelectNodeKeywords };
 	// Convert string to control keyword
-	static DynamicSelectNodeKeyword selectNodeKeyword(const char* s);
+	static DynamicSelectNodeKeyword dynamicSelectNodeKeyword(const char* s);
 	// Convert control keyword to string
-	static const char* selectNodeKeyword(DynamicSelectNodeKeyword nk);
+	static const char* dynamicSelectNodeKeyword(DynamicSelectNodeKeyword nk);
 
 
 	/*
-	 * Data
+	 * Selection Target
 	 */
 	private:
-
+	// Array of dynamically-created sites
+	Array<Site> dynamicSites_;
+	// Target elements for selection
+	RefList<Element,bool> targetElements_;
+	
+	public:
+	// Add elemental selection target
+	bool addElementTarget(Element* el);
 
 
 	/*

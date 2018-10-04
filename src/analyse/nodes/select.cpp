@@ -29,14 +29,10 @@
 #include "base/sysfunc.h"
 
 // Constructor
-AnalysisSelectNode::AnalysisSelectNode(SpeciesSite* site) : AnalysisNode(AnalysisNode::SelectNode)
+AnalysisSelectNode::AnalysisSelectNode(SpeciesSite* site) : AnalysisSelectBaseNode(), AnalysisNode(AnalysisNode::SelectNode)
 {
 	speciesSite_ = site;
 	species_ = (speciesSite_ ? speciesSite_->parent() : NULL);
-	forEachBranch_ = NULL;
-	currentSiteIndex_ = -1;
-	nCumulativeSites_ = 0;
-	nSelections_ = 0;
 }
 
 // Destructor
@@ -50,7 +46,7 @@ AnalysisSelectNode::~AnalysisSelectNode()
  */
 
 // Node Keywords
-const char* SelectNodeKeywords[] = { "EndSelect", "ExcludeSameMolecule", "ExcludeSameSite", "ForEach", "Site" };
+const char* SelectNodeKeywords[] = { "EndSelect", "Site" };
 
 // Convert string to node keyword
 AnalysisSelectNode::SelectNodeKeyword AnalysisSelectNode::selectNodeKeyword(const char* s)
@@ -170,36 +166,17 @@ bool AnalysisSelectNode::read(LineParser& parser, NodeContextStack& contextStack
 		// Read and parse the next line
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
+		// Check if the current line contains a base keyword
+		int baseResult = parseBaseKeyword(parser, contextStack);
+		if (baseResult == 0) return false;
+		else if (baseResult == 1) continue;
+
 		// Is the first argument on the current line a valid control keyword?
 		SelectNodeKeyword nk = selectNodeKeyword(parser.argc(0));
 		switch (nk)
 		{
 			case (SelectNodeKeyword::EndSelectKeyword):
 				return true;
-			case (SelectNodeKeyword::ExcludeSameMoleculeKeyword):
-				for (int n=1; n<parser.nArgs(); ++n)
-				{
-					AnalysisSelectBaseNode* otherNode = contextStack.selectNodeInScope(parser.argc(n));
-					if (!otherNode) return Messenger::error("Unrecognised Select node '%s' given to %s keyword.\n", parser.argc(n), selectNodeKeyword(SelectNodeKeyword::ExcludeSameMoleculeKeyword));
-					if (!addSameMoleculeExclusion(otherNode)) return Messenger::error("Duplicate site given to %s keyword.\n", selectNodeKeyword(SelectNodeKeyword::ExcludeSameMoleculeKeyword));
-				}
-				break;
-			case (SelectNodeKeyword::ExcludeSameSiteKeyword):
-				for (int n=1; n<parser.nArgs(); ++n)
-				{
-					AnalysisSelectBaseNode* otherNode = contextStack.selectNodeInScope(parser.argc(n));
-					if (!otherNode) return Messenger::error("Unrecognised Select node '%s' given to %s keyword.\n", parser.argc(n), selectNodeKeyword(SelectNodeKeyword::ExcludeSameSiteKeyword));
-					if (!addSameSiteExclusion(otherNode)) return Messenger::error("Duplicate site given to %s keyword.\n", selectNodeKeyword(SelectNodeKeyword::ExcludeSameSiteKeyword));
-				}
-				break;
-			case (SelectNodeKeyword::ForEachKeyword):
-				// Check that a ForEach branch hasn't already been defined
-				if (forEachBranch_) return Messenger::error("Only one ForEach branch may be defined.\n");
-
-				// Create and parse a new branch
-				forEachBranch_ = new AnalysisSequenceNode("EndForEach");
-				if (!forEachBranch_->read(parser, contextStack)) return false;
-				break;
 			case (SelectNodeKeyword::SiteKeyword):
 				// If we already have a species/site reference, bail out now
 				if (species_) return Messenger::error("The '%s' keyword must appear exactly once in a Select node.\n", selectNodeKeyword(SelectNodeKeyword::SiteKeyword));
