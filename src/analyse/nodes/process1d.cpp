@@ -70,13 +70,13 @@ const char* AnalysisProcess1DNode::normalise1DNodeKeyword(AnalysisProcess1DNode:
  */
 
 // Add site population normaliser
-void AnalysisProcess1DNode::addSitePopulationNormaliser(AnalysisSelectBaseNode* selectNode)
+void AnalysisProcess1DNode::addSitePopulationNormaliser(AnalysisSelectNode* selectNode)
 {
 	sitePopulationNormalisers_.add(selectNode, 1.0);
 }
 
 // Add number density normaliser
-void AnalysisProcess1DNode::addNumberDensityNormaliser(AnalysisSelectBaseNode* selectNode)
+void AnalysisProcess1DNode::addNumberDensityNormaliser(AnalysisSelectNode* selectNode)
 {
 	numberDensityNormalisers_.add(selectNode);
 }
@@ -159,8 +159,8 @@ bool AnalysisProcess1DNode::finalise(ProcessPool& procPool, Configuration* cfg, 
 	data = collectNode_->accumulatedData();
 
 	// Normalisation by number of sites?
-	RefListIterator<AnalysisSelectBaseNode,double> siteNormaliserIterator(sitePopulationNormalisers_);
-	while (AnalysisSelectBaseNode* selectNode = siteNormaliserIterator.iterate()) data /= selectNode->nAverageSites();
+	RefListIterator<AnalysisSelectNode,double> siteNormaliserIterator(sitePopulationNormalisers_);
+	while (AnalysisSelectNode* selectNode = siteNormaliserIterator.iterate()) data /= selectNode->nAverageSites();
 
 	// Normalisation by spherical shell?
 	if (normaliseBySphericalShellVolume_)
@@ -177,8 +177,8 @@ bool AnalysisProcess1DNode::finalise(ProcessPool& procPool, Configuration* cfg, 
 	}
 
 	// Normalisation by number density of sites?
-	RefListIterator<AnalysisSelectBaseNode,double> numberDensityIterator(numberDensityNormalisers_);
-	while (AnalysisSelectBaseNode* selectNode = numberDensityIterator.iterate()) data /= (selectNode->nAverageSites() / cfg->box()->volume());
+	RefListIterator<AnalysisSelectNode,double> numberDensityIterator(numberDensityNormalisers_);
+	while (AnalysisSelectNode* selectNode = numberDensityIterator.iterate()) data /= (selectNode->nAverageSites() / cfg->box()->volume());
 
 	// Normalisation by factor?
 	if (normaliseByFactor_) data /= normalisationFactor_;
@@ -207,7 +207,7 @@ bool AnalysisProcess1DNode::read(LineParser& parser, NodeContextStack& contextSt
 	if (!collectNode_) return Messenger::error("A valid Collect1D node name must be given as an argument to Process1D.\n");
 	setName(parser.argc(1));
 
-	AnalysisSelectBaseNode* selectNode;
+	AnalysisSelectNode* selectNode;
 
 	// Read until we encounter the EndProcess1D keyword, or we fail for some reason
 	while (!parser.eofOrBlank())

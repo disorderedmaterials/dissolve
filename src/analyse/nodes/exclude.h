@@ -26,7 +26,7 @@
 #include "templates/reflist.h"
 
 // Forward Declarations
-class AnalysisSelectBaseNode;
+class AnalysisSelectNode;
 class LineParser;
 class NodeContextStack;
 
@@ -59,7 +59,7 @@ class AnalysisExcludeNode : public AnalysisNode
 	// Whether to disallow Sites being the same
 	bool disallowSameSite_;
 	// Trio of nodes (sites) to compare when disallowing same Sites
-	AnalysisSelectBaseNode* sameSiteA_, *sameSiteB_, *sameSiteC_;
+	AnalysisSelectNode* sameSiteA_, *sameSiteB_, *sameSiteC_;
 
 
 	/*

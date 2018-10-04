@@ -1,5 +1,5 @@
 /*
-	*** Analysis Node - Select (Site)
+	*** Analysis Node - Select
 	*** src/analyse/nodes/select.h
 	Copyright T. Youngs 2012-2018
 
@@ -23,18 +23,19 @@
 #define DISSOLVE_ANALYSISSELECT_H
 
 #include "analyse/nodes/node.h"
-#include "analyse/nodes/selectbase.h"
 #include "templates/array.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
 class AnalysisSequenceNode;
+class Element;
+class Molecule;
 class SiteStack;
 class Species;
 class SpeciesSite;
 
 // Select Node
-class AnalysisSelectNode : public AnalysisSelectBaseNode, public AnalysisNode
+class AnalysisSelectNode : public AnalysisNode
 {
 	public:
 	// Constructor
@@ -48,7 +49,7 @@ class AnalysisSelectNode : public AnalysisSelectBaseNode, public AnalysisNode
 	 */
 	public:
 	// Node Keywords
-	enum SelectNodeKeyword { EndSelectKeyword, SiteKeyword, nSelectNodeKeywords };
+	enum SelectNodeKeyword { ElementsKeyword, EndSelectKeyword, ExcludeSameMoleculeKeyword, ExcludeSameSiteKeyword, ForEachKeyword, SameMoleculeAsSiteKeyword, SiteKeyword, nSelectNodeKeywords };
 	// Convert string to control keyword
 	static SelectNodeKeyword selectNodeKeyword(const char* s);
 	// Convert control keyword to string
@@ -56,13 +57,83 @@ class AnalysisSelectNode : public AnalysisSelectBaseNode, public AnalysisNode
 
 
 	/*
-	 * Data
+	 * Selection Targets
 	 */
 	private:
-	// Species in which the site is located
+	// Species in which the site is located, if any
 	Species* species_;
-	// Target site within parent Species
+	// Target site within parent Species, if a Species is defined
 	SpeciesSite* speciesSite_;
+	// Target elements for selection
+	RefList<Element,bool> elements_;
+
+	private:
+	// Generate sites from the specified Molecule
+	void generateSites(const Molecule* molecule); 
+
+	public:
+	// Add elemental selection target
+	bool addElementTarget(Element* el);
+
+
+	/*
+	 * Selection Control
+	 */
+	private:
+	// List of other sites (nodes) which will exclude one of our sites if it has the same Molecule parent
+	RefList<AnalysisSelectNode,bool> sameMoleculeExclusions_;
+	// List of other sites (nodes) which will exclude one of our sites if it is the same site
+	RefList<AnalysisSelectNode,bool> sameSiteExclusions_;
+	// Molecule (from site) in which the site must exist
+	AnalysisSelectNode* sameMolecule_;
+
+	public:
+	// Add "same molecule" exclusion
+	bool addSameMoleculeExclusion(AnalysisSelectNode* node);
+	// Add "same site" exclusion
+	bool addSameSiteExclusion(AnalysisSelectNode* node);
+	// Return Molecule (from site) in which the site must exist
+	const Molecule* sameMoleculeMolecule();
+
+
+	/*
+	 * Selected Sites
+	 */
+	private:
+	// Array of any dynamically-created sites
+	Array<Site> dynamicSites_;
+	// Array containing pointers to our selected sites
+	Array<const Site*> sites_;
+	// Current Site index
+	int currentSiteIndex_;
+	// Number of selections made by the node
+	int nSelections_;
+	// Cumulative number of sites ever selected
+	int nCumulativeSites_;
+
+	public:
+	// Return the number of available sites in the current stack, if any
+	int nSitesInStack() const;
+	// Return the average number of sites selected
+	double nAverageSites() const;
+	// Return the cumulative number of sites ever selected
+	int nCumulativeSites() const;
+	// Return current site
+	const Site* currentSite() const;
+
+
+	/*
+	 * Branch
+	 */
+	private:
+	// Branch for ForEach (if defined)
+	AnalysisSequenceNode* forEachBranch_;
+
+	public:
+	// Add and return ForEach sequence
+	AnalysisSequenceNode* addForEachBranch();
+	// Add specified node to ForEach sequence
+	void addToForEachBranch(AnalysisNode* node);
 
 
 	/*

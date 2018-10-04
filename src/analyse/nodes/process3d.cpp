@@ -69,13 +69,13 @@ const char* AnalysisProcess3DNode::normalise3DNodeKeyword(AnalysisProcess3DNode:
  */
 
 // Add site population normaliser
-void AnalysisProcess3DNode::addSitePopulationNormaliser(AnalysisSelectBaseNode* selectNode)
+void AnalysisProcess3DNode::addSitePopulationNormaliser(AnalysisSelectNode* selectNode)
 {
 	sitePopulationNormalisers_.add(selectNode, 1.0);
 }
 
 // Add number density normaliser
-void AnalysisProcess3DNode::addNumberDensityNormaliser(AnalysisSelectBaseNode* selectNode)
+void AnalysisProcess3DNode::addNumberDensityNormaliser(AnalysisSelectNode* selectNode)
 {
 	numberDensityNormalisers_.add(selectNode);
 }
@@ -152,12 +152,12 @@ bool AnalysisProcess3DNode::finalise(ProcessPool& procPool, Configuration* cfg, 
 	data = collectNode_->accumulatedData();
 
 	// Normalisation by number of sites?
-	RefListIterator<AnalysisSelectBaseNode,double> siteNormaliserIterator(sitePopulationNormalisers_);
-	while (AnalysisSelectBaseNode* selectNode = siteNormaliserIterator.iterate()) data /= selectNode->nAverageSites();
+	RefListIterator<AnalysisSelectNode,double> siteNormaliserIterator(sitePopulationNormalisers_);
+	while (AnalysisSelectNode* selectNode = siteNormaliserIterator.iterate()) data /= selectNode->nAverageSites();
 
 	// Normalisation by number density of sites?
-	RefListIterator<AnalysisSelectBaseNode,double> numberDensityIterator(numberDensityNormalisers_);
-	while (AnalysisSelectBaseNode* selectNode = numberDensityIterator.iterate()) data /= (selectNode->nAverageSites() / cfg->box()->volume());
+	RefListIterator<AnalysisSelectNode,double> numberDensityIterator(numberDensityNormalisers_);
+	while (AnalysisSelectNode* selectNode = numberDensityIterator.iterate()) data /= (selectNode->nAverageSites() / cfg->box()->volume());
 
 	// Normalisation by factor?
 	if (normaliseByFactor_) data /= normalisationFactor_;
@@ -187,7 +187,7 @@ bool AnalysisProcess3DNode::read(LineParser& parser, NodeContextStack& contextSt
 	if (!collectNode_) return Messenger::error("A valid Collect3D node name must be given as an argument to Process3D.\n");
 	setName(parser.argc(1));
 
-	AnalysisSelectBaseNode* selectNode;
+	AnalysisSelectNode* selectNode;
 
 	// Read until we encounter the EndProcess3D keyword, or we fail for some reason
 	while (!parser.eofOrBlank())

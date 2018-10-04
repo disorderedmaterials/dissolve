@@ -55,7 +55,7 @@ void NodeContextStack::clear()
 // Push new context layer on to the stack
 void NodeContextStack::push()
 {
-	selectStack_.add(RefList<AnalysisSelectBaseNode,CharString>());
+	selectStack_.add(RefList<AnalysisSelectNode,CharString>());
 	calculateStack_.add(RefList<AnalysisCalculateNode,bool>());
 }
 
@@ -72,7 +72,7 @@ bool NodeContextStack::pop()
 }
 
 // Add new selection node to the topmost context layer
-bool NodeContextStack::add(AnalysisSelectBaseNode* selectNode, const char* name)
+bool NodeContextStack::add(AnalysisSelectNode* selectNode, const char* name)
 {
 	// Check that we have a context to add to
 	if (selectStack_.nItems() == 0)
@@ -154,12 +154,12 @@ const char* NodeContextStack::nextSelectName() const
 }
 
 // Return named Select node if it is currently in scope
-AnalysisSelectBaseNode* NodeContextStack::selectNodeInScope(const char* name) const
+AnalysisSelectNode* NodeContextStack::selectNodeInScope(const char* name) const
 {
 	for (int n=0; n<selectStack_.nItems(); ++n)
 	{
-		RefListIterator<AnalysisSelectBaseNode,CharString> contextIterator(selectStack_.constAt(n));
-		while (AnalysisSelectBaseNode* node = contextIterator.iterate()) if (DissolveSys::sameString(contextIterator.currentData(), name)) return node;
+		RefListIterator<AnalysisSelectNode,CharString> contextIterator(selectStack_.constAt(n));
+		while (AnalysisSelectNode* node = contextIterator.iterate()) if (DissolveSys::sameString(contextIterator.currentData(), name)) return node;
 	}
 
 	return NULL;
@@ -206,10 +206,10 @@ AnalysisCollect3DNode* NodeContextStack::collect3DNode(const char* name) const
 
 
 // Return named Select node (if it exists)
-AnalysisSelectBaseNode* NodeContextStack::selectNode(const char* name) const
+AnalysisSelectNode* NodeContextStack::selectNode(const char* name) const
 {
-	RefListIterator<AnalysisSelectBaseNode,CharString> nodeIterator(selectNodes_);
-	while (AnalysisSelectBaseNode* node = nodeIterator.iterate()) if (DissolveSys::sameString(nodeIterator.currentData(), name)) return node;
+	RefListIterator<AnalysisSelectNode,CharString> nodeIterator(selectNodes_);
+	while (AnalysisSelectNode* node = nodeIterator.iterate()) if (DissolveSys::sameString(nodeIterator.currentData(), name)) return node;
 
 	return NULL;
 }

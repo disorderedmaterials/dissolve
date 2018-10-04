@@ -30,7 +30,6 @@
 #include "analyse/nodes/collect1d.h"
 #include "analyse/nodes/collect2d.h"
 #include "analyse/nodes/collect3d.h"
-#include "analyse/nodes/dynamicselect.h"
 #include "analyse/nodes/exclude.h"
 #include "analyse/nodes/process1d.h"
 #include "analyse/nodes/process2d.h"

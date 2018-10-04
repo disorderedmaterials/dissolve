@@ -29,10 +29,16 @@
 #include "base/sysfunc.h"
 
 // Constructor
-AnalysisSelectNode::AnalysisSelectNode(SpeciesSite* site) : AnalysisSelectBaseNode(), AnalysisNode(AnalysisNode::SelectNode)
+AnalysisSelectNode::AnalysisSelectNode(SpeciesSite* site) : AnalysisNode(AnalysisNode::SelectNode)
 {
 	speciesSite_ = site;
 	species_ = (speciesSite_ ? speciesSite_->parent() : NULL);
+
+	sameMolecule_= NULL;
+	forEachBranch_ = NULL;
+	currentSiteIndex_ = -1;
+	nCumulativeSites_ = 0;
+	nSelections_ = 0;
 }
 
 // Destructor
@@ -46,7 +52,7 @@ AnalysisSelectNode::~AnalysisSelectNode()
  */
 
 // Node Keywords
-const char* SelectNodeKeywords[] = { "EndSelect", "Site" };
+const char* SelectNodeKeywords[] = { "EndSelect", "ExcludeSameMolecule", "ExcludeSameSite", "ForEach", "SameMoleculeAsSite", "Site" };
 
 // Convert string to node keyword
 AnalysisSelectNode::SelectNodeKeyword AnalysisSelectNode::selectNodeKeyword(const char* s)
@@ -63,8 +69,119 @@ const char* AnalysisSelectNode::selectNodeKeyword(AnalysisSelectNode::SelectNode
 }
 
 /*
- * Selection Target
+ * Selection Targets
  */
+
+// Generate sites from the specified Molecule
+void AnalysisSelectNode::generateSites(const Molecule* molecule)
+{
+	// If element targets are defined, 
+	if (elements_.nItems() != 0)
+	{
+		// Loop over Atoms in the Molecule
+		for (int n=0; n<molecule->nAtoms(); ++n)
+		{
+			// If the element is listed in our target elements list, add this atom as a site
+			if (elements_.contains(molecule->atom(n)->element())) dynamicSites_.add(Site(molecule, molecule->atom(n)->r()));
+		}
+	}
+}
+
+// Add elemental selection target
+bool AnalysisSelectNode::addElementTarget(Element* el)
+{
+	if (elements_.contains(el)) return false;
+	else elements_.add(el);
+
+	return true;
+}
+
+/*
+ * Selection Control
+ */
+
+// Add "same molecule" exclusion
+bool AnalysisSelectNode::addSameMoleculeExclusion(AnalysisSelectNode* node)
+{
+	if (sameMoleculeExclusions_.contains(node)) return false;
+	else sameMoleculeExclusions_.add(node);
+
+	return true;
+}
+
+// Add "same site" exclusion
+bool AnalysisSelectNode::addSameSiteExclusion(AnalysisSelectNode* node)
+{
+	if (sameSiteExclusions_.contains(node)) return false;
+	else sameSiteExclusions_.add(node);
+
+	return true;
+}
+
+// Return Molecule (from site) in which the site must exist
+const Molecule* AnalysisSelectNode::sameMoleculeMolecule()
+{
+	if (!sameMolecule_)
+	{
+		Messenger::warn("Requested Molecule from AnalysisSelectNode::sameMolecule_, but no selection node is defined for it.\n");
+		return NULL;
+	}
+
+	const Site* site = sameMolecule_->currentSite();
+	if (!site)
+	{
+		Messenger::warn("Requested Molecule from AnalysisSelectNode::sameMolecule_, but there is no current site.\n");
+		return NULL;
+	}
+
+	return site->molecule();
+}
+
+/*
+ * Selected Sites
+ */
+
+// Return the number of available sites in the current stack, if any
+int AnalysisSelectNode::nSitesInStack() const
+{
+	return sites_.nItems();
+}
+
+// Return the average number of sites selected
+double AnalysisSelectNode::nAverageSites() const
+{
+	return double(nCumulativeSites_) / nSelections_;
+}
+
+// Return the cumulative number of sites ever selected
+int AnalysisSelectNode::nCumulativeSites() const
+{
+	return nCumulativeSites_;
+}
+
+// Return current site
+const Site* AnalysisSelectNode::currentSite() const
+{
+	return (currentSiteIndex_ == -1 ? NULL : sites_.constAt(currentSiteIndex_));
+}
+
+/*
+ * Branch
+ */
+
+// Add and return ForEach sequence
+AnalysisSequenceNode* AnalysisSelectNode::addForEachBranch()
+{
+	if (!forEachBranch_) forEachBranch_ = new AnalysisSequenceNode();
+
+	return forEachBranch_;
+}
+
+// Add specified node to ForEach sequence
+void AnalysisSelectNode::addToForEachBranch(AnalysisNode* node)
+{
+	addForEachBranch()->addNode(node);
+}
 
 /*
  * Execute
@@ -85,44 +202,77 @@ bool AnalysisSelectNode::prepare(Configuration* cfg, const char* prefix, Generic
 // Execute node, targetting the supplied Configuration
 AnalysisNode::NodeExecutionResult AnalysisSelectNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
-	// Create our array of sites from the source Configuration
+	// Create our arrays of sites and dynamically-genreated sites
 	sites_.clear();
-	
-	const SiteStack* siteStack = cfg->siteStack(speciesSite_);
-	if (siteStack == NULL) return AnalysisNode::Failure;
+	dynamicSites_.clear();
 
 	// Create our exclusion lists
 	RefList<const Molecule,bool> excludedMolecules;
-	RefListIterator<AnalysisSelectBaseNode,bool> moleculeExclusionIterator(sameMoleculeExclusions_);
-	while (AnalysisSelectBaseNode* node = moleculeExclusionIterator.iterate()) if (node->currentSite()) excludedMolecules.addUnique(node->currentSite()->molecule());
+	RefListIterator<AnalysisSelectNode,bool> moleculeExclusionIterator(sameMoleculeExclusions_);
+	while (AnalysisSelectNode* node = moleculeExclusionIterator.iterate()) if (node->currentSite()) excludedMolecules.addUnique(node->currentSite()->molecule());
 
 	RefList<const Site,bool> excludedSites;
-	RefListIterator<AnalysisSelectBaseNode,bool> siteExclusionIterator(sameSiteExclusions_);
-	while (AnalysisSelectBaseNode* node = siteExclusionIterator.iterate()) if (node->currentSite()) excludedSites.addUnique(node->currentSite());
+	RefListIterator<AnalysisSelectNode,bool> siteExclusionIterator(sameSiteExclusions_);
+	while (AnalysisSelectNode* node = siteExclusionIterator.iterate()) if (node->currentSite()) excludedSites.addUnique(node->currentSite());
 
 	// Get required Molecule parent, if requested
 	const Molecule* moleculeParent = sameMolecule_ ? sameMoleculeMolecule() : NULL;
 
-	sites_.createEmpty(siteStack->nSites());
-	for (int n=0; n<siteStack->nSites(); ++n)
+	/*
+	 * Add sites from specified Species/Site
+	 */
+	if (speciesSite_)
 	{
-		const Site* site = &siteStack->site(n);
+		const SiteStack* siteStack = cfg->siteStack(speciesSite_);
+		if (siteStack == NULL) return AnalysisNode::Failure;
 
-		// Check Molecule inclusion / exclusions
-		if (moleculeParent)
+		sites_.createEmpty(siteStack->nSites());
+		for (int n=0; n<siteStack->nSites(); ++n)
 		{
-			if (site->molecule() != moleculeParent) continue; 
+			const Site* site = &siteStack->site(n);
+
+			// Check Molecule inclusion / exclusions
+			if (moleculeParent)
+			{
+				if (site->molecule() != moleculeParent) continue; 
+			}
+			else if (excludedMolecules.contains(site->molecule())) continue;
+
+			// Check Site exclusions
+			if (excludedSites.contains(site)) continue;
+
+			// All OK, so add site
+			sites_.add(site);
 		}
-		else if (excludedMolecules.contains(site->molecule())) continue;
-
-		// Check Site exclusions
-		if (excludedSites.contains(site)) continue;
-
-		// All OK, so add site
-		sites_.add(site);
 	}
-	currentSiteIndex_ = (sites_.nItems() == 0 ? -1 : 0);
 
+	/*
+	 * Add dynamically-generated sites.
+	 * We'll loop over all Molecules in the Configuration, rather than all Atoms, since there are useful exclusions we can make based on the parent Molecule.
+	 * If, however, a sameMolecule_ is defined then we can simply grab this Molecule and do the checks within it, rather than looping.
+	 * Both use the local function generateSites(Molecule*) in order to extract site information.
+	 */
+
+	if (moleculeParent) generateSites(moleculeParent);
+	else
+	{
+		// Loop over Molecules in the target Configuration
+		DynamicArray<Molecule>& molecules = cfg->molecules();
+		for (int n=0; n<molecules.nItems(); ++n)
+		{
+			// Check Molecule exclusions
+			if (excludedMolecules.contains(molecules[n])) continue;
+
+			// All OK, so generate sites
+			generateSites(moleculeParent);
+		}
+	}
+
+	// Add any dynamically-generated sites to the reference array
+	for (int n=0; n<dynamicSites_.nItems(); ++n) sites_.add(&dynamicSites_[n]);
+
+	// Set first site index and increase selections counter
+	currentSiteIndex_ = (sites_.nItems() == 0 ? -1 : 0);
 	++nSelections_;
 
 	// If a ForEach branch has been defined, process it for each of our sites in turn. Otherwise, we're done.
@@ -173,17 +323,49 @@ bool AnalysisSelectNode::read(LineParser& parser, NodeContextStack& contextStack
 		// Read and parse the next line
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
-		// Check if the current line contains a base keyword
-		int baseResult = parseBaseKeyword(parser, contextStack);
-		if (baseResult == 0) return false;
-		else if (baseResult == 1) continue;
-
 		// Is the first argument on the current line a valid control keyword?
 		SelectNodeKeyword nk = selectNodeKeyword(parser.argc(0));
 		switch (nk)
 		{
+			case (SelectNodeKeyword::ElementsKeyword):
+				for (int n=1; n<parser.nArgs(); ++n)
+				{
+					Element* el = Elements::elementPointer(parser.argc(n));
+					if (!el) return Messenger::error("Unrecognised element '%s' given to %s keyword.\n", parser.argc(n), selectNodeKeyword(nk));
+					if (!addElementTarget(el)) return Messenger::error("Duplicate site given to %s keyword.\n", selectNodeKeyword(nk));
+				}
+				break;
 			case (SelectNodeKeyword::EndSelectKeyword):
 				return true;
+			case (SelectNodeKeyword::ExcludeSameMoleculeKeyword):
+				for (int n=1; n<parser.nArgs(); ++n)
+				{
+					AnalysisSelectNode* otherNode = contextStack.selectNodeInScope(parser.argc(n));
+					if (!otherNode) return Messenger::error("Unrecognised selection node '%s' given to %s keyword.\n", parser.argc(n), selectNodeKeyword(nk));
+					if (!addSameMoleculeExclusion(otherNode)) return Messenger::error("Duplicate site given to %s keyword.\n", selectNodeKeyword(nk));
+				}
+				break;
+			case (SelectNodeKeyword::ExcludeSameSiteKeyword):
+				for (int n=1; n<parser.nArgs(); ++n)
+				{
+					AnalysisSelectNode* otherNode = contextStack.selectNodeInScope(parser.argc(n));
+					if (!otherNode) return Messenger::error("Unrecognised selection node '%s' given to %s keyword.\n", parser.argc(n), selectNodeKeyword(nk));
+					if (!addSameSiteExclusion(otherNode)) return Messenger::error("Duplicate site given to %s keyword.\n", selectNodeKeyword(nk));
+				}
+				break;
+			case (SelectNodeKeyword::ForEachKeyword):
+				// Check that a ForEach branch hasn't already been defined
+				if (forEachBranch_) return Messenger::error("Only one ForEach branch may be defined in a selection node.\n");
+
+				// Create and parse a new branch
+				forEachBranch_ = new AnalysisSequenceNode("EndForEach");
+				if (!forEachBranch_->read(parser, contextStack)) return false;
+				break;
+			case (SelectNodeKeyword::SameMoleculeAsSiteKeyword):
+				if (sameMolecule_) return Messenger::error("Same molecule restriction has already been set, and cannot be set again.\n");
+				sameMolecule_ = contextStack.selectNodeInScope(parser.argc(1));
+				if (!sameMolecule_) return Messenger::error("Unrecognised selection node '%s' given to %s keyword.\n", parser.argc(1), selectNodeKeyword(nk));
+				break;
 			case (SelectNodeKeyword::SiteKeyword):
 				// If we already have a species/site reference, bail out now
 				if (species_) return Messenger::error("The '%s' keyword must appear exactly once in a Select node.\n", selectNodeKeyword(SelectNodeKeyword::SiteKeyword));
