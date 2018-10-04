@@ -180,13 +180,13 @@ Element* Elements::elements()
 		{ 109,	"Meitnerium",	"Mt" },
 		{ 110,	"Darmstadtium",	"Ds" },
 		{ 111,	"Roentgenium",	"Rg" },
-		{ 112,	"Ununium",	"Uub" },
-		{ 113,	"Ununtrium",	"Uut" },
-		{ 114,	"Ununquadium",	"Uuq" },
-		{ 115,	"Ununpentium",	"Uup" },
-		{ 116,	"Ununhexium",	"Uuh" },
-		{ 117,	"Ununseptium",	"Uus" },
-		{ 118,	"Ununoctium",	"Uuo" }
+		{ 112,	"Copernicium",	"Cn" },
+		{ 113,	"Nihonium",	"Nh" },
+		{ 114,	"Flerovium",	"Fl" },
+		{ 115,	"Moscovium",	"Mc" },
+		{ 116,	"Livermorium",	"Lv" },
+		{ 117,	"Tennessine",	"Ts" },
+		{ 118,	"Oganesson",	"Og" }
 	};
 
 	return elementData;
