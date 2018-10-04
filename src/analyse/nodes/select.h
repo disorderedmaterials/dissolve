@@ -66,22 +66,6 @@ class AnalysisSelectNode : public AnalysisSelectBaseNode, public AnalysisNode
 
 
 	/*
-	 * Site Information
-	 */
-	public:
-	// Return whether the node has available site information
-	bool hasSites() const;
-	// Return the number of available sites in the current stack, if any
-	int nSitesInStack() const;
-	// Return the average number of sites selected
-	double nAverageSites() const;
-	// Return the cumulative number of sites ever selected
-	int nCumulativeSites() const;
-	// Return current site
-	const Site* currentSite() const;
-
-
-	/*
 	 * Execute
 	 */
 	public:
