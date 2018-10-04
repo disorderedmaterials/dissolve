@@ -23,6 +23,7 @@
 #include "analyse/nodes/collect2d.h"
 #include "analyse/nodes/select.h"
 #include "analyse/nodecontextstack.h"
+#include "modules/export/export.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "base/lineparser.h"
@@ -178,9 +179,8 @@ bool AnalysisProcess2DNode::finalise(ProcessPool& procPool, Configuration* cfg, 
 	// Save data?
 	if (saveData_ && procPool.isMaster())
 	{
-		return Messenger::error("Saving of 2D data is not yet implemented.\n");
-// 		if (normalisedData.save(CharString("%s_%s.txt", name(), cfg->name()))) procPool.decideTrue();
-// 		else return procPool.decideFalse();
+		if (ExportModule::writeData2D(Data2DExportFileFormat::BlockData, CharString("%s_%s.txt", name(), cfg->name()), data)) procPool.decideTrue();
+		else return procPool.decideFalse();
 	}
 	else if (!procPool.decision()) return false;
 
