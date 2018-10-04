@@ -133,9 +133,15 @@ AnalysisNode::NodeExecutionResult AnalysisCalculateNode::execute(ProcessPool& pr
 	// Determine the value of the requested observable
 	switch (observable_)
 	{
+		case (Observable::AngleObservable):
+			value_ = cfg->box()->angleInDegrees(sites_[0]->currentSite()->origin(), sites_[1]->currentSite()->origin(), sites_[2]->currentSite()->origin());
+			break;
 		case (Observable::DistanceObservable):
 			value_ = cfg->box()->minimumDistance(sites_[0]->currentSite()->origin(), sites_[1]->currentSite()->origin());
 			break;
+		default:
+			Messenger::error("Mr Developer Man has not implemented calculation of this observable quantity (%i).\n", observable_);
+			return AnalysisNode::Failure;
 	}
 
 	return AnalysisNode::Success;
