@@ -98,8 +98,10 @@ class ExportModule : public Module
 	 * Static Functions - Coordinates
 	 */
 	public:
-	// Write Configuration in specified format
+	// Write Configuration in specified format through parser
 	static bool writeCoordinates(CoordinateExportFileFormat::CoordinateExportFormat format, LineParser& parser, Configuration* cfg);
+	// Write Configuration in specified format to file
+	static bool writeCoordinates(CoordinateExportFileFormat::CoordinateExportFormat format, const char* filename, Configuration* cfg);
 	// Write Configuration as XYZ
 	static bool writeXYZCoordinates(LineParser& parser, Configuration* cfg);
 	// Write Configuration as DL_POLY CONFIG
@@ -110,8 +112,10 @@ class ExportModule : public Module
 	 * Static Functions - Data2D
 	 */
 	public:
-	// Write Data2D in specified format
+	// Write Data2D in specified format through parser
 	static bool writeData2D(Data2DExportFileFormat::Data2DExportFormat format, LineParser& parser, Data2D& data);
+	// Write Data2D in specified format to file
+	static bool writeData2D(Data2DExportFileFormat::Data2DExportFormat format, const char* filename, Data2D& data);
 	// Write Data2D as simple block data
 	static bool writeBlockData2D(LineParser& parser, Data2D& data);
 };

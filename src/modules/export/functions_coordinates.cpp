@@ -38,6 +38,24 @@ bool ExportModule::writeCoordinates(CoordinateExportFileFormat::CoordinateExport
 	return false;
 }
 
+// Write Configuration in specified format
+bool ExportModule::writeCoordinates(CoordinateExportFileFormat::CoordinateExportFormat format, const char* filename, Configuration* cfg)
+{
+	// Open the file
+	LineParser parser;
+	if (!parser.openOutput(filename))
+	{
+		parser.closeFiles();
+		return false;
+	}
+
+	bool result = writeCoordinates(format, parser, cfg);
+
+	parser.closeFiles();
+
+	return result;
+}
+
 // Write coordinates as XYZ
 bool ExportModule::writeXYZCoordinates(LineParser& parser, Configuration* cfg)
 {

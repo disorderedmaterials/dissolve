@@ -54,3 +54,34 @@ CoordinateExportFileFormat::CoordinateExportFormat CoordinateExportFileFormat::c
 	return (CoordinateExportFileFormat::CoordinateExportFormat) format_;
 }
 
+/*
+ * Data2D Formats
+ */
+
+// Data2D Export Keywords
+const char* Data2DExportFormatKeywords[] = { "block" };
+const char* NiceData2DExportFormatKeywords[] = { "Block Data" };
+
+// Return number of available formats
+int Data2DExportFileFormat::nFormats() const
+{
+	return CoordinateExportFileFormat::nCoordinateExportFormats;
+}
+
+// Return formats array
+const char** Data2DExportFileFormat::formats() const
+{
+	return Data2DExportFormatKeywords;
+}
+
+// Return nice formats array
+const char** Data2DExportFileFormat::niceFormats() const
+{
+	return NiceData2DExportFormatKeywords;
+}
+
+// Return current format as CoordinateExportFormat
+Data2DExportFileFormat::Data2DExportFormat Data2DExportFileFormat::data2DFormat() const
+{
+	return (Data2DExportFileFormat::Data2DExportFormat) format_;
+}

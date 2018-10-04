@@ -43,7 +43,6 @@ class CoordinateExportFileFormat : public FileAndFormat
 	CoordinateExportFormat coordinateFormat() const;
 };
 
-
 // Data2D Export Formats
 class Data2DExportFileFormat : public FileAndFormat
 {

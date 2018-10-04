@@ -34,6 +34,24 @@ bool ExportModule::writeData2D(Data2DExportFileFormat::Data2DExportFormat format
 	return false;
 }
 
+// Write Data2D in specified format to file
+bool ExportModule::writeData2D(Data2DExportFileFormat::Data2DExportFormat format, const char* filename, Data2D& data)
+{
+	// Open the file
+	LineParser parser;
+	if (!parser.openOutput(filename))
+	{
+		parser.closeFiles();
+		return false;
+	}
+
+	bool result = writeData2D(format, parser, data);
+
+	parser.closeFiles();
+
+	return result;
+}
+
 // Write Data2D as simple block data
 bool ExportModule::writeBlockData2D(LineParser& parser, Data2D& data)
 {
