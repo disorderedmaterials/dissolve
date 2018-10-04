@@ -91,8 +91,8 @@ bool NodeContextStack::add(AnalysisSelectBaseNode* selectNode, const char* name)
 	// Increase the general counter for new references, and add it
 	++nSelectNodesAdded_;
 
-	selectStack_.last().add(selectNode);
-	selectNodes_.add(selectNode);
+	selectStack_.last().add(selectNode, name);
+	selectNodes_.add(selectNode, name);
 
 	return true;
 }
