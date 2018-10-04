@@ -170,6 +170,12 @@ bool AnalysisSequenceNode::read(LineParser& parser, NodeContextStack& contextSta
 			case (AnalysisNode::Normalise1DNode):
 				newNode = new AnalysisNormalise1DNode;
 				break;
+			case (AnalysisNode::Normalise2DNode):
+				newNode = new AnalysisNormalise2DNode;
+				break;
+			case (AnalysisNode::Normalise3DNode):
+				newNode = new AnalysisNormalise3DNode;
+				break;
 			case (AnalysisNode::SelectNode):
 				newNode = new AnalysisSelectNode;
 				break;
