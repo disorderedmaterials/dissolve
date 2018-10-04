@@ -64,6 +64,21 @@ const char* AnalysisDynamicSelectNode::dynamicSelectNodeKeyword(AnalysisDynamicS
  * Selection Target
  */
 
+// Generate sites from the specified Molecule
+void AnalysisDynamicSelectNode::generateSites(const Molecule* molecule)
+{
+	// If element targets are defined, 
+	if (targetElements_.nItems() != 0)
+	{
+		// Loop over Atoms in the Molecule
+		for (int n=0; n<molecule->nAtoms(); ++n)
+		{
+			// If the element is listed in our target elements list, add this atom as a site
+			if (targetElements_.contains(molecule->atom(n)->element())) dynamicSites_.add(Site(molecule, molecule->atom(n)->r()));
+		}
+	}
+}
+
 // Add elemental selection target
 bool AnalysisDynamicSelectNode::addElementTarget(Element* el)
 {
@@ -91,49 +106,55 @@ bool AnalysisDynamicSelectNode::prepare(Configuration* cfg, const char* prefix, 
 // Execute node, targetting the supplied Configuration
 AnalysisNode::NodeExecutionResult AnalysisDynamicSelectNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
-	// Clear our site and reference arrays
+	// Clear our site array
 	dynamicSites_.clear();
-	sites_.clear();
 
-	// Create our exclusion lists
+	// Create our excluded Molecule lists - excluded site lists are not relevant
 	RefList<const Molecule,bool> excludedMolecules;
 	RefListIterator<AnalysisSelectBaseNode,bool> moleculeExclusionIterator(sameMoleculeExclusions_);
 	while (AnalysisSelectBaseNode* node = moleculeExclusionIterator.iterate()) if (node->currentSite()) excludedMolecules.addUnique(node->currentSite()->molecule());
 
-	RefList<const Site,bool> excludedSites;
-	RefListIterator<AnalysisSelectBaseNode,bool> siteExclusionIterator(sameSiteExclusions_);
-	while (AnalysisSelectBaseNode* node = siteExclusionIterator.iterate()) if (node->currentSite()) excludedSites.addUnique(node->currentSite());
+	/*
+	 * We'll loop over all Molecules in the system, rather than all Atoms, since there are useful exclusions we can make based on the parent Molecule.
+	 * If, however, a sameMolecule_ is defined then we can simply grab this Molecule and do the checks within it, rather than looping.
+	 * Both use the local function generateSites(Molecule*) in order to extract site information.
+	 */
 
-	// Create sites from the specified Configuration
-// 	sites_.createEmpty(siteStack->nSites());
-// 	for (int n=0; n<siteStack->nSites(); ++n)
-// 	{
-// 		const Site* site = &siteStack->site(n);
-// 
-// 		// Check Molecule exclusions
-// 		if (excludedMolecules.contains(site->molecule())) continue;
-// 
-// 		// Check Site exclusions
-// 		if (excludedSites.contains(site)) continue;
-// 
-// 		// All OK, so add site
-// 		sites_.add(site);
-// 	}
-// 	currentSiteIndex_ = (sites_.nItems() == 0 ? -1 : 0);
-// 
-// 	++nSelections_;
-// 
-// 	// If a ForEach branch has been defined, process it for each of our sites in turn. Otherwise, we're done.
-// 	if (forEachBranch_)
-// 	{
-// 		for (currentSiteIndex_ = 0; currentSiteIndex_ < sites_.nItems(); ++currentSiteIndex_)
-// 		{
-// 			++nCumulativeSites_;
-// 
-// 			// If the branch fails at any point, return failure here.  Otherwise, continue the loop
-// 			if (forEachBranch_->execute(procPool, cfg, prefix, targetList) == AnalysisNode::Failure) return AnalysisNode::Failure;
-// 		}
-// 	}
+	// Get required Molecule parent, if requested
+	const Molecule* moleculeParent = sameMolecule_ ? sameMoleculeMolecule() : NULL;
+
+	if (moleculeParent) generateSites(moleculeParent);
+	else
+	{
+		// Loop over Molecules in the target Configuration
+		DynamicArray<Molecule>& molecules = cfg->molecules();
+		for (int n=0; n<molecules.nItems(); ++n)
+		{
+			// Check Molecule exclusions
+			if (excludedMolecules.contains(molecules[n])) continue;
+
+			// All OK, so generate sites
+			generateSites(moleculeParent);
+		}
+	}
+
+	// Construct the Site pointer array
+	sites_.clear();
+	for (int n=0; n<dynamicSites_.nItems(); ++n) sites_.add(&dynamicSites_[n]);
+
+	++nSelections_;
+
+	// If a ForEach branch has been defined, process it for each of our sites in turn. Otherwise, we're done.
+	if (forEachBranch_)
+	{
+		for (currentSiteIndex_ = 0; currentSiteIndex_ < sites_.nItems(); ++currentSiteIndex_)
+		{
+			++nCumulativeSites_;
+
+			// If the branch fails at any point, return failure here.  Otherwise, continue the loop
+			if (forEachBranch_->execute(procPool, cfg, prefix, targetList) == AnalysisNode::Failure) return AnalysisNode::Failure;
+		}
+	}
 
 	return AnalysisNode::Success;
 }
@@ -189,27 +210,9 @@ bool AnalysisDynamicSelectNode::read(LineParser& parser, NodeContextStack& conte
 				}
 				break;
 			case (DynamicSelectNodeKeyword::EndDynamicSelectKeyword):
+				// Check here that no site exclusions have been defined, as they cannot be enforced
+				if (sameSiteExclusions_.nItems() != 0) return Messenger::error("Site exclusions cannot be enforced for DynamicSelect.\n");
 				return true;
-			case (DynamicSelectNodeKeyword::SiteKeyword):
-// 				// If we already have a species/site reference, bail out now
-// 				if (species_) return Messenger::error("The '%s' keyword must appear exactly once in a DynamicSelect node.\n", selectNodeKeyword(DynamicSelectNodeKeyword::SiteKeyword));
-// 
-// 				// First argument is the target Species, second is a site within it
-// 				// Find the named Species
-// 				for (species_ = List<Species>::masterInstance().first(); species_ != NULL; species_ = species_->next)
-// 				{
-// 					if (!DissolveSys::sameString(species_->name(), parser.argc(1))) continue;
-// 
-// 					// Found the Species, so see if it has a site with the correct name
-// 					speciesSite_ = species_->findSite(parser.argc(2));
-// 					if (!speciesSite_) return Messenger::error("Species '%s' contains no site named '%s'.\n", species_->name(), parser.argc(2));
-// 
-// 					Messenger::printVerbose("DynamicSelect node %p uses site label '%s' ('%s' in Species '%s').\n", this, name(), speciesSite_->name(), species_->name());
-// 					break;
-// 				}
-// 				// If we reach here and don't have a valid species_ pointer, we couldn't find the named Species
-// 				if (!species_) return Messenger::error("Couldn't find named Species '%s'.\n", parser.argc(1));
-				break;
 			case (DynamicSelectNodeKeyword::nDynamicSelectNodeKeywords):
 				return Messenger::error("Unrecognised DynamicSelect node keyword '%s' found.\n", parser.argc(0));
 				break;

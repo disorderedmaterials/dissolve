@@ -49,7 +49,7 @@ class AnalysisDynamicSelectNode : public AnalysisSelectBaseNode, public Analysis
 	 */
 	public:
 	// Node Keywords
-	enum DynamicSelectNodeKeyword { ElementsKeyword, EndDynamicSelectKeyword, SiteKeyword, nDynamicSelectNodeKeywords };
+	enum DynamicSelectNodeKeyword { ElementsKeyword, EndDynamicSelectKeyword, nDynamicSelectNodeKeywords };
 	// Convert string to control keyword
 	static DynamicSelectNodeKeyword dynamicSelectNodeKeyword(const char* s);
 	// Convert control keyword to string
@@ -64,6 +64,10 @@ class AnalysisDynamicSelectNode : public AnalysisSelectBaseNode, public Analysis
 	Array<Site> dynamicSites_;
 	// Target elements for selection
 	RefList<Element,bool> targetElements_;
+
+	private:
+	// Generate sites from the specified Molecule
+	void generateSites(const Molecule* molecule); 
 	
 	public:
 	// Add elemental selection target
