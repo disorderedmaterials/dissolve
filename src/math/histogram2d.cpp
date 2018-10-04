@@ -146,7 +146,6 @@ int Histogram2D::nXBins() const
 	return nXBins_;
 }
 
-
 // Return minimum value for y data (hard left-edge of first bin)
 double Histogram2D::yMinimum() const
 {
