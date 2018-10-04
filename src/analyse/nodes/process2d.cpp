@@ -33,7 +33,7 @@
 AnalysisProcess2DNode::AnalysisProcess2DNode(AnalysisCollect2DNode* target) : AnalysisNode(AnalysisNode::Process2DNode)
 {
 	collectNode_ = target;
-	saveNormalisedData_ = false;
+	saveData_ = false;
 	normalisationFactor_ = 0.0;
 	normaliseByFactor_ = false;
 	normaliseToOne_ = false;
@@ -105,10 +105,10 @@ bool AnalysisProcess2DNode::normaliseToOne() const
 	return normaliseToOne_;
 }
 
-// Set whether to save normalised data
-void AnalysisProcess2DNode::setSaveNormalisedData(bool on)
+// Set whether to save processed data
+void AnalysisProcess2DNode::setSaveData(bool on)
 {
-	saveNormalisedData_ = on;
+	saveData_ = on;
 }
 
 // Set value label
@@ -154,29 +154,29 @@ AnalysisNode::NodeExecutionResult AnalysisProcess2DNode::execute(ProcessPool& pr
 // Finalise any necessary data after execution
 bool AnalysisProcess2DNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
-	// Retrieve / realise the normalised data from the supplied listAnalysisProcess2DNod
+	// Retrieve / realise the normalised data from the supplied list
 	bool created;
-	Data2D& normalisedData = GenericListHelper<Data2D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag, &created);
+	Data2D& data = GenericListHelper<Data2D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag, &created);
 
-	normalisedData.setName(name());
-	normalisedData.setObjectTag(CharString("%s//Process2D//%s//%s", prefix, cfg->name(), name()));
+	data.setName(name());
+	data.setObjectTag(CharString("%s//Process2D//%s//%s", prefix, cfg->name(), name()));
 
 	// Copy the averaged data from the associated Collect2D node, and normalise it accordingly
-	normalisedData = collectNode_->accumulatedData();
+	data = collectNode_->accumulatedData();
 
 	// Normalisation by number of sites?
 	RefListIterator<AnalysisSelectBaseNode,double> siteNormaliserIterator(sitePopulationNormalisers_);
-	while (AnalysisSelectBaseNode* selectNode = siteNormaliserIterator.iterate()) normalisedData /= selectNode->nAverageSites();
+	while (AnalysisSelectBaseNode* selectNode = siteNormaliserIterator.iterate()) data /= selectNode->nAverageSites();
 
 	// Normalisation by number density of sites?
 	RefListIterator<AnalysisSelectBaseNode,double> numberDensityIterator(numberDensityNormalisers_);
-	while (AnalysisSelectBaseNode* selectNode = numberDensityIterator.iterate()) normalisedData /= (selectNode->nAverageSites() / cfg->box()->volume());
+	while (AnalysisSelectBaseNode* selectNode = numberDensityIterator.iterate()) data /= (selectNode->nAverageSites() / cfg->box()->volume());
 
 	// Normalisation by factor?
-	if (normaliseByFactor_) normalisedData /= normalisationFactor_;
+	if (normaliseByFactor_) data /= normalisationFactor_;
 
 	// Save data?
-	if (saveNormalisedData_ && procPool.isMaster())
+	if (saveData_ && procPool.isMaster())
 	{
 		return Messenger::error("Saving of 2D data is not yet implemented.\n");
 // 		if (normalisedData.save(CharString("%s_%s.txt", name(), cfg->name()))) procPool.decideTrue();
@@ -241,7 +241,7 @@ bool AnalysisProcess2DNode::read(LineParser& parser, NodeContextStack& contextSt
 				numberDensityNormalisers_.add(selectNode, 1.0);
 				break;
 			case (Process2DNodeKeyword::SaveKeyword):
-				saveNormalisedData_ = parser.argb(1);
+				saveData_ = parser.argb(1);
 				break;
 			case (Process2DNodeKeyword::nProcess2DNodeKeywords):
 				return Messenger::error("Unrecognised Process2D node keyword '%s' found.\n", parser.argc(0));

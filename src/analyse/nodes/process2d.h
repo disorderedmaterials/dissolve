@@ -73,7 +73,7 @@ class AnalysisProcess2DNode : public AnalysisNode
 	// Whether to normalise summed histogram value to 1.0
 	bool normaliseToOne_;
 	// Whether to save data after normalisation
-	bool saveNormalisedData_;
+	bool saveData_;
 	// Value label
 	CharString valueLabel_;
 	// Axis labels
@@ -92,8 +92,8 @@ class AnalysisProcess2DNode : public AnalysisNode
 	void setNormaliseToOne(bool b);
 	// Return whether to normalise summed histogram value to 1.0
 	bool normaliseToOne() const;
-	// Set whether to save normalised data
-	void setSaveNormalisedData(bool on);
+	// Set whether to save processed data
+	void setSaveData(bool on);
 	// Set value label
 	void setValueLabel(const char* label);
 	// Return value label

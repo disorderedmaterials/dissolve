@@ -33,7 +33,7 @@
 AnalysisProcess1DNode::AnalysisProcess1DNode(AnalysisCollect1DNode* target) : AnalysisNode(AnalysisNode::Process1DNode)
 {
 	collectNode_ = target;
-	saveNormalisedData_ = false;
+	saveData_ = false;
 	normalisationFactor_ = 0.0;
 	normaliseByFactor_ = false;
 	normaliseBySphericalShellVolume_ = false;
@@ -99,10 +99,10 @@ void AnalysisProcess1DNode::setNormaliseBySphericalShellVolume(bool on)
 	normaliseBySphericalShellVolume_ = on;
 }
 
-// Set whether to save normalised data
-void AnalysisProcess1DNode::setSaveNormalisedData(bool on)
+// Set whether to save processed data
+void AnalysisProcess1DNode::setSaveData(bool on)
 {
-	saveNormalisedData_ = on;
+	saveData_ = on;
 }
 
 // Set value label
@@ -150,43 +150,43 @@ bool AnalysisProcess1DNode::finalise(ProcessPool& procPool, Configuration* cfg, 
 {
 	// Retrieve / realise the normalised data from the supplied list
 	bool created;
-	Data1D& normalisedData = GenericListHelper<Data1D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag, &created);
+	Data1D& data = GenericListHelper<Data1D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag, &created);
 
-	normalisedData.setName(name());
-	normalisedData.setObjectTag(CharString("%s//Process1D//%s//%s", prefix, cfg->name(), name()));
+	data.setName(name());
+	data.setObjectTag(CharString("%s//Process1D//%s//%s", prefix, cfg->name(), name()));
 
 	// Copy the averaged data from the associated Collect1D node, and normalise it accordingly
-	normalisedData = collectNode_->accumulatedData();
+	data = collectNode_->accumulatedData();
 
 	// Normalisation by number of sites?
 	RefListIterator<AnalysisSelectBaseNode,double> siteNormaliserIterator(sitePopulationNormalisers_);
-	while (AnalysisSelectBaseNode* selectNode = siteNormaliserIterator.iterate()) normalisedData /= selectNode->nAverageSites();
+	while (AnalysisSelectBaseNode* selectNode = siteNormaliserIterator.iterate()) data /= selectNode->nAverageSites();
 
 	// Normalisation by spherical shell?
 	if (normaliseBySphericalShellVolume_)
 	{
 		double halfBinWidth = collectNode_->binWidth() * 0.5;
-		double r1Cubed = pow(normalisedData.xAxis(0)-halfBinWidth,3), r2Cubed;
-		for (int n = 0; n < normalisedData.nValues(); ++n)
+		double r1Cubed = pow(data.xAxis(0)-halfBinWidth,3), r2Cubed;
+		for (int n = 0; n < data.nValues(); ++n)
 		{
-			r2Cubed = pow(normalisedData.xAxis(n)+halfBinWidth,3);
-			normalisedData.value(n) /= (4.0/3.0) * PI * (r2Cubed - r1Cubed);
-			normalisedData.error(n) /= (4.0/3.0) * PI * (r2Cubed - r1Cubed);
+			r2Cubed = pow(data.xAxis(n)+halfBinWidth,3);
+			data.value(n) /= (4.0/3.0) * PI * (r2Cubed - r1Cubed);
+			data.error(n) /= (4.0/3.0) * PI * (r2Cubed - r1Cubed);
 			r1Cubed = r2Cubed;
 		}
 	}
 
 	// Normalisation by number density of sites?
 	RefListIterator<AnalysisSelectBaseNode,double> numberDensityIterator(numberDensityNormalisers_);
-	while (AnalysisSelectBaseNode* selectNode = numberDensityIterator.iterate()) normalisedData /= (selectNode->nAverageSites() / cfg->box()->volume());
+	while (AnalysisSelectBaseNode* selectNode = numberDensityIterator.iterate()) data /= (selectNode->nAverageSites() / cfg->box()->volume());
 
 	// Normalisation by factor?
-	if (normaliseByFactor_) normalisedData /= normalisationFactor_;
+	if (normaliseByFactor_) data /= normalisationFactor_;
 
 	// Save data?
-	if (saveNormalisedData_ && procPool.isMaster())
+	if (saveData_ && procPool.isMaster())
 	{
-		if (normalisedData.save(CharString("%s_%s.txt", name(), cfg->name()))) procPool.decideTrue();
+		if (data.save(CharString("%s_%s.txt", name(), cfg->name()))) procPool.decideTrue();
 		else return procPool.decideFalse();
 	}
 	else if (!procPool.decision()) return false;
@@ -242,7 +242,7 @@ bool AnalysisProcess1DNode::read(LineParser& parser, NodeContextStack& contextSt
 				numberDensityNormalisers_.add(selectNode, 1.0);
 				break;
 			case (Process1DNodeKeyword::SaveKeyword):
-				saveNormalisedData_ = parser.argb(1);
+				saveData_ = parser.argb(1);
 				break;
 			case (Process1DNodeKeyword::SphericalShellVolumeKeyword):
 				normaliseBySphericalShellVolume_ = parser.argb(1);

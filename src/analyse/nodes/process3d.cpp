@@ -33,7 +33,7 @@
 AnalysisProcess3DNode::AnalysisProcess3DNode(AnalysisCollect3DNode* target) : AnalysisNode(AnalysisNode::Process3DNode)
 {
 	collectNode_ = target;
-	saveNormalisedData_ = false;
+	saveData_ = false;
 	normalisationFactor_ = 0.0;
 	normaliseByFactor_ = false;
 }
@@ -92,10 +92,10 @@ void AnalysisProcess3DNode::setNormalisationFactor(double factor)
 	normalisationFactor_ = factor;
 }
 
-// Set whether to save normalised data
-void AnalysisProcess3DNode::setSaveNormalisedData(bool on)
+// Set whether to save processed data
+void AnalysisProcess3DNode::setSaveData(bool on)
 {
-	saveNormalisedData_ = on;
+	saveData_ = on;
 }
 
 // Set value label
@@ -143,30 +143,30 @@ bool AnalysisProcess3DNode::finalise(ProcessPool& procPool, Configuration* cfg, 
 {
 	// Retrieve / realise the normalised data from the supplied list
 	bool created;
-	Data3D& normalisedData = GenericListHelper<Data3D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag, &created);
+	Data3D& data = GenericListHelper<Data3D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag, &created);
 
-	normalisedData.setName(name());
-	normalisedData.setObjectTag(CharString("%s//Process3D//%s//%s", prefix, cfg->name(), name()));
+	data.setName(name());
+	data.setObjectTag(CharString("%s//Process3D//%s//%s", prefix, cfg->name(), name()));
 
 	// Copy the averaged data from the associated Collect3D node, and normalise it accordingly
-	normalisedData = collectNode_->accumulatedData();
+	data = collectNode_->accumulatedData();
 
 	// Normalisation by number of sites?
 	RefListIterator<AnalysisSelectBaseNode,double> siteNormaliserIterator(sitePopulationNormalisers_);
-	while (AnalysisSelectBaseNode* selectNode = siteNormaliserIterator.iterate()) normalisedData /= selectNode->nAverageSites();
+	while (AnalysisSelectBaseNode* selectNode = siteNormaliserIterator.iterate()) data /= selectNode->nAverageSites();
 
 	// Normalisation by number density of sites?
 	RefListIterator<AnalysisSelectBaseNode,double> numberDensityIterator(numberDensityNormalisers_);
-	while (AnalysisSelectBaseNode* selectNode = numberDensityIterator.iterate()) normalisedData /= (selectNode->nAverageSites() / cfg->box()->volume());
+	while (AnalysisSelectBaseNode* selectNode = numberDensityIterator.iterate()) data /= (selectNode->nAverageSites() / cfg->box()->volume());
 
 	// Normalisation by factor?
-	if (normaliseByFactor_) normalisedData /= normalisationFactor_;
+	if (normaliseByFactor_) data /= normalisationFactor_;
 
 	// Save data?
-	if (saveNormalisedData_ && procPool.isMaster())
+	if (saveData_ && procPool.isMaster())
 	{
 		return Messenger::error("Saving of 3D data is not yet implemented.\n");
-// 		if (normalisedData.save(CharString("%s_%s.txt", name(), cfg->name()))) procPool.decideTrue();
+// 		if (data.save(CharString("%s_%s.txt", name(), cfg->name()))) procPool.decideTrue();
 // 		else return procPool.decideFalse();
 	}
 	else if (!procPool.decision()) return false;
@@ -228,7 +228,7 @@ bool AnalysisProcess3DNode::read(LineParser& parser, NodeContextStack& contextSt
 				numberDensityNormalisers_.add(selectNode, 1.0);
 				break;
 			case (Process3DNodeKeyword::SaveKeyword):
-				saveNormalisedData_ = parser.argb(1);
+				saveData_ = parser.argb(1);
 				break;
 			case (Process3DNodeKeyword::nProcess3DNodeKeywords):
 				return Messenger::error("Unrecognised Process3D node keyword '%s' found.\n", parser.argc(0));

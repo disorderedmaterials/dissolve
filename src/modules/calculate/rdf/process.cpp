@@ -102,7 +102,7 @@ bool CalculateRDFModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	normalise1D->addSitePopulationNormaliser(originSelect);
 	normalise1D->addNumberDensityNormaliser(otherSelect);
 	normalise1D->setNormaliseBySphericalShellVolume(true);
-	normalise1D->setSaveNormalisedData(true);
+	normalise1D->setSaveData(true);
 	normalise1D->setValueLabel("g(r)");
 	normalise1D->setXAxisLabel("r, \\symbol{Angstrom}");
 	analyser_.addRootSequenceNode(normalise1D);

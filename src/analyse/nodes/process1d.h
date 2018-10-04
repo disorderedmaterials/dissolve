@@ -73,7 +73,7 @@ class AnalysisProcess1DNode : public AnalysisNode
 	// Whether to normalise by spherical shell volume
 	bool normaliseBySphericalShellVolume_;
 	// Whether to save data after normalisation
-	bool saveNormalisedData_;
+	bool saveData_;
 	// Value label
 	CharString valueLabel_;
 	// Axis labels
@@ -90,8 +90,8 @@ class AnalysisProcess1DNode : public AnalysisNode
 	void setNormalisationFactor(double factor);
 	// Set whether to normalise by spherical shell volume
 	void setNormaliseBySphericalShellVolume(bool on);
-	// Set whether to save normalised data
-	void setSaveNormalisedData(bool on);
+	// Set whether to save processed data
+	void setSaveData(bool on);
 	// Set value label
 	void setValueLabel(const char* label);
 	// Return value label

@@ -71,7 +71,7 @@ class AnalysisProcess3DNode : public AnalysisNode
 	// Normalisation factor to apply (if requested)
 	double normalisationFactor_;
 	// Whether to save data after normalisation
-	bool saveNormalisedData_;
+	bool saveData_;
 	// Value label
 	CharString valueLabel_;
 	// Axis labels
@@ -86,8 +86,8 @@ class AnalysisProcess3DNode : public AnalysisNode
 	void setNormaliseByFactor(bool on);
 	// Set normalisation factor
 	void setNormalisationFactor(double factor);
-	// Set whether to save normalised data
-	void setSaveNormalisedData(bool on);
+	// Set whether to save processed data
+	void setSaveData(bool on);
 	// Set value label
 	void setValueLabel(const char* label);
 	// Return value label
