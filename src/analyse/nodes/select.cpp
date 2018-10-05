@@ -32,8 +32,7 @@
 // Constructor
 AnalysisSelectNode::AnalysisSelectNode(SpeciesSite* site) : AnalysisNode(AnalysisNode::SelectNode)
 {
-	speciesSite_ = site;
-	species_ = (speciesSite_ ? speciesSite_->parent() : NULL);
+	if (site) speciesSites_.add(site);
 
 	sameMolecule_= NULL;
 	forEachBranch_ = NULL;
@@ -212,14 +211,14 @@ AnalysisNode::NodeExecutionResult AnalysisSelectNode::execute(ProcessPool& procP
 	const Molecule* moleculeParent = sameMolecule_ ? sameMoleculeMolecule() : NULL;
 
 	/*
-	 * Add sites from specified Species/Site
+	 * Add sites from specified Species/Sites
 	 */
-	if (speciesSite_)
+	RefListIterator<SpeciesSite, bool> siteIterator(speciesSites_);
+	while (SpeciesSite* site = siteIterator.iterate())
 	{
-		const SiteStack* siteStack = cfg->siteStack(speciesSite_);
+		const SiteStack* siteStack = cfg->siteStack(site);
 		if (siteStack == NULL) return AnalysisNode::Failure;
 
-		sites_.createEmpty(siteStack->nSites());
 		for (int n=0; n<siteStack->nSites(); ++n)
 		{
 			const Site* site = &siteStack->site(n);
@@ -303,6 +302,7 @@ bool AnalysisSelectNode::read(LineParser& parser, NodeContextStack& contextStack
 	if (!contextStack.add(this, name())) return Messenger::error("Error adding Select node '%s' to context stack.\n", name());
 
 	AnalysisDynamicSiteNode* dynamicSiteNode;
+	Species* sp;
 
 	// Read until we encounter the EndSelect keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
@@ -351,24 +351,23 @@ bool AnalysisSelectNode::read(LineParser& parser, NodeContextStack& contextStack
 				if (!sameMolecule_) return Messenger::error("Unrecognised selection node '%s' given to %s keyword.\n", parser.argc(1), selectNodeKeyword(nk));
 				break;
 			case (SelectNodeKeyword::SiteKeyword):
-				// If we already have a species/site reference, bail out now
-				if (species_) return Messenger::error("The '%s' keyword must appear exactly once in a Select node.\n", selectNodeKeyword(SelectNodeKeyword::SiteKeyword));
-
 				// First argument is the target Species, second is a site within it
-				// Find the named Species
-				for (species_ = List<Species>::masterInstance().first(); species_ != NULL; species_ = species_->next)
+				for (sp = List<Species>::masterInstance().first(); sp != NULL; sp = sp->next) if (DissolveSys::sameString(sp->name(), parser.argc(1))) break;
+
+				// Did we find the named Species?
+				if (sp)
 				{
-					if (!DissolveSys::sameString(species_->name(), parser.argc(1))) continue;
-
 					// Found the Species, so see if it has a site with the correct name
-					speciesSite_ = species_->findSite(parser.argc(2));
-					if (!speciesSite_) return Messenger::error("Species '%s' contains no site named '%s'.\n", species_->name(), parser.argc(2));
+					SpeciesSite* site = sp->findSite(parser.argc(2));
+					if (!site) return Messenger::error("Species '%s' contains no site named '%s'.\n", sp->name(), parser.argc(2));
+					if (speciesSites_.contains(site)) return Messenger::error("Site '%s' on Species '%s' specified twice in Select node.\n", site->name(), sp->name());
 
-					Messenger::printVerbose("Select node %p uses site label '%s' ('%s' in Species '%s').\n", this, name(), speciesSite_->name(), species_->name());
+					Messenger::printVerbose("Select node %p uses site label '%s' ('%s' in Species '%s').\n", this, name(), site->name(), sp->name());
+
+					speciesSites_.add(site);
 					break;
 				}
-				// If we reach here and don't have a valid species_ pointer, we couldn't find the named Species
-				if (!species_) return Messenger::error("Couldn't find named Species '%s'.\n", parser.argc(1));
+				else return Messenger::error("Couldn't find named Species '%s'.\n", parser.argc(1));
 				break;
 			case (SelectNodeKeyword::nSelectNodeKeywords):
 				return Messenger::error("Unrecognised Select node keyword '%s' found.\n", parser.argc(0));

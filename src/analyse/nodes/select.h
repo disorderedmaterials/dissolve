@@ -62,10 +62,8 @@ class AnalysisSelectNode : public AnalysisNode
 	 * Selection Targets
 	 */
 	private:
-	// Species in which the site is located, if any
-	Species* species_;
-	// Target site within parent Species, if a Species is defined
-	SpeciesSite* speciesSite_;
+	// List of sites within Species to select
+	RefList<SpeciesSite, bool> speciesSites_;
 	// List of DynamicSites to select, if any
 	RefList<AnalysisDynamicSiteNode, bool> dynamicSites_;
 
