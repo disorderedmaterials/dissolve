@@ -1,5 +1,5 @@
 /*
-	*** CalculateRDF Module - Options
+	*** Calculate RDF Module - Options
 	*** src/modules/calculate/rdf/options.cpp
 	Copyright T. Youngs 2012-2018
 
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calculate/rdf/calculaterdf.h"
+#include "modules/calculate/rdf/rdf.h"
 #include "module/keywordtypes.h"
 
 // Set up keywords for Module

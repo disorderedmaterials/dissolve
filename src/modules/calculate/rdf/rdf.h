@@ -1,6 +1,6 @@
 /*
-	*** CalculateRDF Module
-	*** src/modules/calculate/rdf/calculaterdf.h
+	*** Calculate RDF Module
+	*** src/modules/calculate/rdf/rdf.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -28,7 +28,7 @@
 // Forward Declarations
 /* none */
 
-// CalculateRDF Module
+// Calculate RDF Module
 class CalculateRDFModule : public Module
 {
 	public:

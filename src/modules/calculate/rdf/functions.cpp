@@ -1,5 +1,5 @@
 /*
-	*** CalculateRDF Module - Functions
+	*** Calculate RDF Module - Functions
 	*** src/modules/calculate/rdf/functions.cpp
 	Copyright T. Youngs 2012-2018
 
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calculate/rdf/calculaterdf.h"
+#include "modules/calculate/rdf/rdf.h"
 
 // Return name of resulting RDF
 const char* CalculateRDFModule::rdfName() const

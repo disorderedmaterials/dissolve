@@ -6,7 +6,7 @@ add_library(calculaterdfmodule
   options.cpp
   process.cpp
 
-  calculaterdf.h
+  rdf.h
 )
 
 # 'nogui' library

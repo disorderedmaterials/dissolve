@@ -1,5 +1,5 @@
 /*
-	*** CalculateRDF Module - Core
+	*** Calculate RDF Module - Core
 	*** src/modules/calculate/rdf/core.cpp
 	Copyright T. Youngs 2012-2018
 
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calculate/rdf/calculaterdf.h"
+#include "modules/calculate/rdf/rdf.h"
 
 // Static Members
 List<Module> CalculateRDFModule::instances_;

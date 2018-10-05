@@ -20,7 +20,7 @@
 */
 
 #include "modules/calculate/rdf/gui/modulewidget.h"
-#include "modules/calculate/rdf/calculaterdf.h"
+#include "modules/calculate/rdf/rdf.h"
 #include "classes/configuration.h"
 
 // Constructor

@@ -1,5 +1,5 @@
 /*
-	*** CalculateRDF Module - GUI
+	*** Calculate RDF Module - GUI
 	*** src/modules/calculate/rdf/nogui.cpp
 	Copyright T. Youngs 2012-2018
 
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calculate/rdf/calculaterdf.h"
+#include "modules/calculate/rdf/rdf.h"
 
 // Return a new widget controlling this Module
 ModuleWidget* CalculateRDFModule::createWidget(QWidget* parent, Dissolve& dissolve)

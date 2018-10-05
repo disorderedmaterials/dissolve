@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calculate/rdf/calculaterdf.h"
+#include "modules/calculate/rdf/rdf.h"
 #include "modules/calculate/rdf/gui/modulewidget.h"
 
 // Return a new widget controlling this Module

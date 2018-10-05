@@ -1,5 +1,5 @@
 /*
-	*** CalculateRDF Module - Processing
+	*** Calculate RDF Module - Processing
 	*** src/modules/calculate/rdf/process.cpp
 	Copyright T. Youngs 2012-2018
 
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calculate/rdf/calculaterdf.h"
+#include "modules/calculate/rdf/rdf.h"
 #include "main/dissolve.h"
 #include "analyse/nodes/calculate.h"
 #include "analyse/nodes/collect1d.h"
