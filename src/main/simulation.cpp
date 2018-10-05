@@ -381,7 +381,7 @@ void Dissolve::printTiming()
 			Module* module = modRef->module();
 
 			SampledDouble timingInfo = module->processTimes();
-			Messenger::print("      --> %30s  %6.1f s/iteration (%i iterations)\n", CharString("%s (%s)", module->type(), module->uniqueName()).get(), timingInfo.value(), timingInfo.count());
+			Messenger::print("      --> %30s  %7.2f s/iteration (%i iterations)\n", CharString("%s (%s)", module->type(), module->uniqueName()).get(), timingInfo.value(), timingInfo.count());
 		}
 	}
 	Messenger::print("\n");
@@ -393,9 +393,9 @@ void Dissolve::printTiming()
 		Module* module = modRef->module();
 
 		SampledDouble timingInfo = module->processTimes();
-		Messenger::print("      --> %30s  %6.1f s/iteration (%i iterations)\n", CharString("%s (%s)", module->type(), module->uniqueName()).get(), timingInfo.value(), timingInfo.count());
+		Messenger::print("      --> %30s  %7.2f s/iteration (%i iterations)\n", CharString("%s (%s)", module->type(), module->uniqueName()).get(), timingInfo.value(), timingInfo.count());
 	}
-	Messenger::print("      --> %30s  %6.1f s/write     (%i writes)\n", "Restart File", saveRestartTimes_.value(), saveRestartTimes_.count());
+	Messenger::print("      --> %30s  %7.2f s/write     (%i writes)\n", "Restart File", saveRestartTimes_.value(), saveRestartTimes_.count());
 	Messenger::print("\n");
 
 
