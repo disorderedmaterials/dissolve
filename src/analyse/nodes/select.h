@@ -24,9 +24,11 @@
 
 #include "analyse/nodes/node.h"
 #include "templates/array.h"
+#include "templates/list.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
+class AnalysisDynamicSiteNode;
 class AnalysisSequenceNode;
 class Element;
 class Molecule;
@@ -49,7 +51,7 @@ class AnalysisSelectNode : public AnalysisNode
 	 */
 	public:
 	// Node Keywords
-	enum SelectNodeKeyword { ElementsKeyword, EndSelectKeyword, ExcludeSameMoleculeKeyword, ExcludeSameSiteKeyword, ForEachKeyword, SameMoleculeAsSiteKeyword, SiteKeyword, nSelectNodeKeywords };
+	enum SelectNodeKeyword { DynamicSiteKeyword, EndSelectKeyword, ExcludeSameMoleculeKeyword, ExcludeSameSiteKeyword, ForEachKeyword, SameMoleculeAsSiteKeyword, SiteKeyword, nSelectNodeKeywords };
 	// Convert string to control keyword
 	static SelectNodeKeyword selectNodeKeyword(const char* s);
 	// Convert control keyword to string
@@ -64,16 +66,8 @@ class AnalysisSelectNode : public AnalysisNode
 	Species* species_;
 	// Target site within parent Species, if a Species is defined
 	SpeciesSite* speciesSite_;
-	// Target elements for selection
-	RefList<Element,bool> elements_;
-
-	private:
-	// Generate sites from the specified Molecule
-	void generateSites(const Molecule* molecule); 
-
-	public:
-	// Add elemental selection target
-	bool addElementTarget(Element* el);
+	// List of DynamicSites to select, if any
+	RefList<AnalysisDynamicSiteNode, bool> dynamicSites_;
 
 
 	/*
@@ -82,16 +76,24 @@ class AnalysisSelectNode : public AnalysisNode
 	private:
 	// List of other sites (nodes) which will exclude one of our sites if it has the same Molecule parent
 	RefList<AnalysisSelectNode,bool> sameMoleculeExclusions_;
+	// List of Molecules currently excluded from selection
+	RefList<const Molecule,bool> excludedMolecules_;
 	// List of other sites (nodes) which will exclude one of our sites if it is the same site
 	RefList<AnalysisSelectNode,bool> sameSiteExclusions_;
+	//List of Sites currently excluded from selection
+	RefList<const Site,bool> excludedSites_;
 	// Molecule (from site) in which the site must exist
 	AnalysisSelectNode* sameMolecule_;
 
 	public:
 	// Add "same molecule" exclusion
 	bool addSameMoleculeExclusion(AnalysisSelectNode* node);
+	// Return list of Molecules currently excluded from selection
+	const RefList<const Molecule,bool>& excludedMolecules() const;
 	// Add "same site" exclusion
 	bool addSameSiteExclusion(AnalysisSelectNode* node);
+	// List of Sites currently excluded from selection
+	const RefList<const Site,bool>& excludedSites() const;
 	// Return Molecule (from site) in which the site must exist
 	const Molecule* sameMoleculeMolecule();
 
@@ -100,8 +102,6 @@ class AnalysisSelectNode : public AnalysisNode
 	 * Selected Sites
 	 */
 	private:
-	// Array of any dynamically-created sites
-	Array<Site> dynamicSites_;
 	// Array containing pointers to our selected sites
 	Array<const Site*> sites_;
 	// Current Site index

@@ -153,7 +153,7 @@ Module DataTest
 EndModule
 
 Module  Analyse
-  Disabled
+  #Disabled
   Configuration  'Bulk'
   Analyser
 
@@ -164,16 +164,13 @@ Module  Analyse
 
       ForEach
 
-        DynamicSelect  'H'
+        Select  'H'
 
-          # Targets
-          Elements  'H'
-          # Types  'HW'
+          DynamicSite
+            Element  'H'
+          EndDynamicSite
 
-          # Conditions
-	  SameMolecule  'X'
-	  #ExcludeSameMolecule  'X'
-          # BoundToAtom  1  'X'
+	  SameMoleculeAsSite  'X'
 
           ForEach
 
@@ -192,7 +189,7 @@ Module  Analyse
                   Angle  'X'  'H'  'O'
                 EndCalculate
 
-                Collect2D  'DistanceAngleMap(H...O/OH...O)'
+                Collect2D  'DistanceAngleMap(H_O-OH_O)'
                   QuantityX  'rHO'
                   QuantityY  'aXHO'
                   RangeX  0.0  5.0  0.01
@@ -205,14 +202,14 @@ Module  Analyse
 
           EndForEach
 
-        EndDynamicSelect
+        EndSelect
 
       EndForEach
 
     EndSelect
 
     # Perform necessary normalisation
-    Process2D  'DistanceAngleMap(H...O/OH...O)'
+    Process2D  'DistanceAngleMap(H_O-OH_O)'
       NormaliseToOne  On
       Save  On
       LabelX  '\\it{r}, \\sym{Angstrom}'

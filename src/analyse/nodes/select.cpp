@@ -20,6 +20,7 @@
 */
 
 #include "analyse/nodes/select.h"
+#include "analyse/nodes/dynamicsite.h"
 #include "analyse/nodes/sequence.h"
 #include "analyse/nodecontextstack.h"
 #include "analyse/sitereference.h"
@@ -44,7 +45,12 @@ AnalysisSelectNode::AnalysisSelectNode(SpeciesSite* site) : AnalysisNode(Analysi
 // Destructor
 AnalysisSelectNode::~AnalysisSelectNode()
 {
+	// Remove the forEach branch
 	if (forEachBranch_) delete forEachBranch_;
+
+	// Delete any dynamic site nodes (as we are the owner)
+	RefListIterator<AnalysisDynamicSiteNode,bool> dynamicIterator(dynamicSites_);
+	while (AnalysisDynamicSiteNode* dynamicNode = dynamicIterator.iterate()) delete dynamicNode;
 }
 
 /*
@@ -52,7 +58,7 @@ AnalysisSelectNode::~AnalysisSelectNode()
  */
 
 // Node Keywords
-const char* SelectNodeKeywords[] = { "EndSelect", "ExcludeSameMolecule", "ExcludeSameSite", "ForEach", "SameMoleculeAsSite", "Site" };
+const char* SelectNodeKeywords[] = { "DynamicSite", "EndSelect", "ExcludeSameMolecule", "ExcludeSameSite", "ForEach", "SameMoleculeAsSite", "Site" };
 
 // Convert string to node keyword
 AnalysisSelectNode::SelectNodeKeyword AnalysisSelectNode::selectNodeKeyword(const char* s)
@@ -72,30 +78,6 @@ const char* AnalysisSelectNode::selectNodeKeyword(AnalysisSelectNode::SelectNode
  * Selection Targets
  */
 
-// Generate sites from the specified Molecule
-void AnalysisSelectNode::generateSites(const Molecule* molecule)
-{
-	// If element targets are defined, 
-	if (elements_.nItems() != 0)
-	{
-		// Loop over Atoms in the Molecule
-		for (int n=0; n<molecule->nAtoms(); ++n)
-		{
-			// If the element is listed in our target elements list, add this atom as a site
-			if (elements_.contains(molecule->atom(n)->element())) dynamicSites_.add(Site(molecule, molecule->atom(n)->r()));
-		}
-	}
-}
-
-// Add elemental selection target
-bool AnalysisSelectNode::addElementTarget(Element* el)
-{
-	if (elements_.contains(el)) return false;
-	else elements_.add(el);
-
-	return true;
-}
-
 /*
  * Selection Control
  */
@@ -109,6 +91,12 @@ bool AnalysisSelectNode::addSameMoleculeExclusion(AnalysisSelectNode* node)
 	return true;
 }
 
+// Return list of Molecules currently excluded from selection
+const RefList<const Molecule,bool>& AnalysisSelectNode::excludedMolecules() const
+{
+	return excludedMolecules_;
+}
+
 // Add "same site" exclusion
 bool AnalysisSelectNode::addSameSiteExclusion(AnalysisSelectNode* node)
 {
@@ -118,14 +106,16 @@ bool AnalysisSelectNode::addSameSiteExclusion(AnalysisSelectNode* node)
 	return true;
 }
 
+// List of Sites currently excluded from selection
+const RefList<const Site,bool>& AnalysisSelectNode::excludedSites() const
+{
+	return excludedSites_;
+}
+
 // Return Molecule (from site) in which the site must exist
 const Molecule* AnalysisSelectNode::sameMoleculeMolecule()
 {
-	if (!sameMolecule_)
-	{
-		Messenger::warn("Requested Molecule from AnalysisSelectNode::sameMolecule_, but no selection node is defined for it.\n");
-		return NULL;
-	}
+	if (!sameMolecule_) return NULL;
 
 	const Site* site = sameMolecule_->currentSite();
 	if (!site)
@@ -196,24 +186,27 @@ bool AnalysisSelectNode::prepare(Configuration* cfg, const char* prefix, Generic
 	// If one exists, prepare the ForEach branch nodes
 	if (forEachBranch_ && (!forEachBranch_->prepare(cfg, prefix, targetList))) return false;
 
+	// Prepare any dynamic site nodes
+	RefListIterator<AnalysisDynamicSiteNode,bool> dynamicIterator(dynamicSites_);
+	while (AnalysisDynamicSiteNode* dynamicNode = dynamicIterator.iterate()) if (!dynamicNode->prepare(cfg, prefix, targetList)) return false;
+
 	return true;
 }
 
 // Execute node, targetting the supplied Configuration
 AnalysisNode::NodeExecutionResult AnalysisSelectNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
-	// Create our arrays of sites and dynamically-genreated sites
+	// Create our arrays of sites
 	sites_.clear();
-	dynamicSites_.clear();
 
-	// Create our exclusion lists
-	RefList<const Molecule,bool> excludedMolecules;
+	// Update our exclusion lists
+	excludedMolecules_.clear();
 	RefListIterator<AnalysisSelectNode,bool> moleculeExclusionIterator(sameMoleculeExclusions_);
-	while (AnalysisSelectNode* node = moleculeExclusionIterator.iterate()) if (node->currentSite()) excludedMolecules.addUnique(node->currentSite()->molecule());
+	while (AnalysisSelectNode* node = moleculeExclusionIterator.iterate()) if (node->currentSite()) excludedMolecules_.addUnique(node->currentSite()->molecule());
 
-	RefList<const Site,bool> excludedSites;
+	excludedSites_.clear();
 	RefListIterator<AnalysisSelectNode,bool> siteExclusionIterator(sameSiteExclusions_);
-	while (AnalysisSelectNode* node = siteExclusionIterator.iterate()) if (node->currentSite()) excludedSites.addUnique(node->currentSite());
+	while (AnalysisSelectNode* node = siteExclusionIterator.iterate()) if (node->currentSite()) excludedSites_.addUnique(node->currentSite());
 
 	// Get required Molecule parent, if requested
 	const Molecule* moleculeParent = sameMolecule_ ? sameMoleculeMolecule() : NULL;
@@ -236,10 +229,10 @@ AnalysisNode::NodeExecutionResult AnalysisSelectNode::execute(ProcessPool& procP
 			{
 				if (site->molecule() != moleculeParent) continue; 
 			}
-			else if (excludedMolecules.contains(site->molecule())) continue;
+			else if (excludedMolecules_.contains(site->molecule())) continue;
 
 			// Check Site exclusions
-			if (excludedSites.contains(site)) continue;
+			if (excludedSites_.contains(site)) continue;
 
 			// All OK, so add site
 			sites_.add(site);
@@ -248,28 +241,16 @@ AnalysisNode::NodeExecutionResult AnalysisSelectNode::execute(ProcessPool& procP
 
 	/*
 	 * Add dynamically-generated sites.
-	 * We'll loop over all Molecules in the Configuration, rather than all Atoms, since there are useful exclusions we can make based on the parent Molecule.
-	 * If, however, a sameMolecule_ is defined then we can simply grab this Molecule and do the checks within it, rather than looping.
-	 * Both use the local function generateSites(Molecule*) in order to extract site information.
+	 * Call each AnalysisDynamicSiteNode's execute function in turn, adding any generated sites to our reference array afterwards.
 	 */
-
-	if (moleculeParent) generateSites(moleculeParent);
-	else
+	RefListIterator<AnalysisDynamicSiteNode,bool> dynamicIterator(dynamicSites_);
+	while (AnalysisDynamicSiteNode* dynamicNode = dynamicIterator.iterate())
 	{
-		// Loop over Molecules in the target Configuration
-		DynamicArray<Molecule>& molecules = cfg->molecules();
-		for (int n=0; n<molecules.nItems(); ++n)
-		{
-			// Check Molecule exclusions
-			if (excludedMolecules.contains(molecules[n])) continue;
+		if (dynamicNode->execute(procPool, cfg, prefix, targetList) == AnalysisNode::Failure) return AnalysisNode::Failure;
 
-			// All OK, so generate sites
-			generateSites(moleculeParent);
-		}
+		const Array<Site>& generatedSites = dynamicNode->generatedSites();
+		for (int n=0; n<generatedSites.nItems(); ++n) sites_.add(&generatedSites.constAt(n));
 	}
-
-	// Add any dynamically-generated sites to the reference array
-	for (int n=0; n<dynamicSites_.nItems(); ++n) sites_.add(&dynamicSites_[n]);
 
 	// Set first site index and increase selections counter
 	currentSiteIndex_ = (sites_.nItems() == 0 ? -1 : 0);
@@ -296,6 +277,10 @@ bool AnalysisSelectNode::finalise(ProcessPool& procPool, Configuration* cfg, con
 	// If one exists, finalise the ForEach branch nodes
 	if (forEachBranch_ && (!forEachBranch_->finalise(procPool, cfg, prefix, targetList))) return false;
 
+	// Finalise any dynamic site nodes
+	RefListIterator<AnalysisDynamicSiteNode,bool> dynamicIterator(dynamicSites_);
+	while (AnalysisDynamicSiteNode* dynamicNode = dynamicIterator.iterate()) if (!dynamicNode->finalise(procPool, cfg, prefix, targetList)) return false;
+
 	// Print out summary information
 	Messenger::print("Select - Site '%s': Number of selections made = %i (last contained %i sites).\n", name(), nSelections_ , sites_.nItems());
 	Messenger::print("Select - Site '%s': Average number of sites selected per selection = %.2f.\n", name(), double(nCumulativeSites_)/nSelections_);
@@ -317,6 +302,8 @@ bool AnalysisSelectNode::read(LineParser& parser, NodeContextStack& contextStack
 	// Add ourselves to the context stack
 	if (!contextStack.add(this, name())) return Messenger::error("Error adding Select node '%s' to context stack.\n", name());
 
+	AnalysisDynamicSiteNode* dynamicSiteNode;
+
 	// Read until we encounter the EndSelect keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
 	{
@@ -327,13 +314,10 @@ bool AnalysisSelectNode::read(LineParser& parser, NodeContextStack& contextStack
 		SelectNodeKeyword nk = selectNodeKeyword(parser.argc(0));
 		switch (nk)
 		{
-			case (SelectNodeKeyword::ElementsKeyword):
-				for (int n=1; n<parser.nArgs(); ++n)
-				{
-					Element* el = Elements::elementPointer(parser.argc(n));
-					if (!el) return Messenger::error("Unrecognised element '%s' given to %s keyword.\n", parser.argc(n), selectNodeKeyword(nk));
-					if (!addElementTarget(el)) return Messenger::error("Duplicate site given to %s keyword.\n", selectNodeKeyword(nk));
-				}
+			case (SelectNodeKeyword::DynamicSiteKeyword):
+				dynamicSiteNode = new AnalysisDynamicSiteNode(this);
+				dynamicSites_.add(dynamicSiteNode);
+				if (!dynamicSiteNode->read(parser, contextStack)) return false;
 				break;
 			case (SelectNodeKeyword::EndSelectKeyword):
 				return true;
