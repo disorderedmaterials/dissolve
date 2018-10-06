@@ -28,9 +28,11 @@
 #include "base/sysfunc.h"
 #include "templates/genericlisthelper.h"
 
-// Constructor
+// Constructors
 AnalysisCollect3DNode::AnalysisCollect3DNode(AnalysisCalculateNode* xObservable, AnalysisCalculateNode* yObservable, AnalysisCalculateNode* zObservable, double xMin, double xMax, double xBinWidth, double yMin, double yMax, double yBinWidth, double zMin, double zMax, double zBinWidth) : AnalysisNode(AnalysisNode::Collect3DNode)
 {
+	xyzObservable_ = NULL;
+
 	xObservable_ = xObservable;
 	xMinimum_ = xMin;
 	xMaximum_ = xMax;
@@ -47,6 +49,27 @@ AnalysisCollect3DNode::AnalysisCollect3DNode(AnalysisCalculateNode* xObservable,
 	zBinWidth_ = zBinWidth;
 }
 
+AnalysisCollect3DNode::AnalysisCollect3DNode(AnalysisCalculateNode* xyzObservable, double xMin, double xMax, double xBinWidth, double yMin, double yMax, double yBinWidth, double zMin, double zMax, double zBinWidth) : AnalysisNode(AnalysisNode::Collect3DNode)
+{
+	xObservable_ = NULL;
+	yObservable_ = NULL;
+	zObservable_ = NULL;
+
+	xyzObservable_ = xyzObservable;
+
+	xMinimum_ = xMin;
+	xMaximum_ = xMax;
+	xBinWidth_ = xBinWidth;
+
+	yMinimum_ = yMin;
+	yMaximum_ = yMax;
+	yBinWidth_ = yBinWidth;
+
+	zMinimum_ = zMin;
+	zMaximum_ = zMax;
+	zBinWidth_ = zBinWidth;
+}
+
 // Destructor
 AnalysisCollect3DNode::~AnalysisCollect3DNode()
 {
@@ -57,7 +80,7 @@ AnalysisCollect3DNode::~AnalysisCollect3DNode()
  */
 
 // Node Keywords
-const char* Collect3DNodeKeywords[] = { "EndCollect3D", "QuantityX", "QuantityY", "QuantityZ", "RangeX", "RangeY", "RangeZ" };
+const char* Collect3DNodeKeywords[] = { "EndCollect3D", "QuantityXYZ", "QuantityX", "QuantityY", "QuantityZ", "RangeX", "RangeY", "RangeZ" };
 
 // Convert string to node keyword
 AnalysisCollect3DNode::Collect3DNodeKeyword AnalysisCollect3DNode::collect3DNodeKeyword(const char* s)
@@ -175,24 +198,25 @@ bool AnalysisCollect3DNode::prepare(Configuration* cfg, const char* prefix, Gene
 AnalysisNode::NodeExecutionResult AnalysisCollect3DNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 #ifdef CHECKS
-	if (!xObservable_)
+	if (!xObservable_ && (!xyzObservable_))
 	{
-		Messenger::error("No AnalysisCalculateNode pointer set for X observable in AnalysisCollect3DNode '%s'.\n", name());
+		Messenger::error("No AnalysisCalculateNode pointer set for X observable in AnalysisCollect3DNode '%s', and no XYZ observable set.\n", name());
 		return AnalysisNode::Failure;
 	}
-	if (!yObservable_)
+	if (!yObservable_ && (!xyzObservable_))
 	{
-		Messenger::error("No AnalysisCalculateNode pointer set for Y observable in AnalysisCollect3DNode '%s'.\n", name());
+		Messenger::error("No AnalysisCalculateNode pointer set for Y observable in AnalysisCollect3DNode '%s', and no XYZ observable set.\n", name());
 		return AnalysisNode::Failure;
 	}
-	if (!zObservable_)
+	if (!zObservable_ && (!xyzObservable_))
 	{
-		Messenger::error("No AnalysisCalculateNode pointer set for Z observable in AnalysisCollect3DNode '%s'.\n", name());
+		Messenger::error("No AnalysisCalculateNode pointer set for Z observable in AnalysisCollect3DNode '%s', and no XYZ observable set.\n", name());
 		return AnalysisNode::Failure;
 	}
 #endif
 	// Bin the current value of the observable
-	histogram_->bin(xObservable_->value(), yObservable_->value(), zObservable_->value());
+	if (xyzObservable_) histogram_->bin(xyzObservable_->values());
+	else histogram_->bin(xObservable_->value(0), yObservable_->value(0), zObservable_->value(0));
 
 	return AnalysisNode::Success;
 }
@@ -239,17 +263,30 @@ bool AnalysisCollect3DNode::read(LineParser& parser, NodeContextStack& contextSt
 		{
 			case (Collect3DNodeKeyword::EndCollect3DKeyword):
 				return true;
+			case (Collect3DNodeKeyword::QuantityXYZKeyword):
+				if (xObservable_ || yObservable_ || zObservable_) return Messenger::error("Can't combine QuantityXYZ with one-dimensional Quantity commands.\n");
+
+				// Determine observable from supplied argument
+				xyzObservable_ = contextStack.calculateNodeInScope(parser.argc(1));
+				if (!xyzObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeyword(nk));
+				break;
 			case (Collect3DNodeKeyword::QuantityXKeyword):
+				if (xyzObservable_) return Messenger::error("Can't combine QuantityXYZ with one-dimensional Quantity commands.\n");
+
 				// Determine observable from supplied argument
 				xObservable_ = contextStack.calculateNodeInScope(parser.argc(1));
 				if (!xObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeyword(nk));
 				break;
 			case (Collect3DNodeKeyword::QuantityYKeyword):
+				if (xyzObservable_) return Messenger::error("Can't combine QuantityXYZ with one-dimensional Quantity commands.\n");
+
 				// Determine observable from supplied argument
 				yObservable_ = contextStack.calculateNodeInScope(parser.argc(1));
 				if (!yObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeyword(nk));
 				break;
 			case (Collect3DNodeKeyword::QuantityZKeyword):
+				if (xyzObservable_) return Messenger::error("Can't combine QuantityXYZ with one-dimensional Quantity commands.\n");
+
 				// Determine observable from supplied argument
 				zObservable_ = contextStack.calculateNodeInScope(parser.argc(1));
 				if (!zObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeyword(nk));

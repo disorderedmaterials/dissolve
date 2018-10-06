@@ -135,7 +135,7 @@ AnalysisNode::NodeExecutionResult AnalysisCollect1DNode::execute(ProcessPool& pr
 	}
 #endif
 	// Bin the current value of the observable
-	histogram_->bin(observable_->value());
+	histogram_->bin(observable_->value(0));
 
 	return AnalysisNode::Success;
 }

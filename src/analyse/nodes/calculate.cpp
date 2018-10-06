@@ -36,6 +36,7 @@ AnalysisCalculateNode::AnalysisCalculateNode(AnalysisCalculateNode::Observable o
 	sites_[1] = site1;
 	sites_[2] = site2;
 	sites_[3] = site3;
+	value_ = 0.0;
 }
 
 // Destructor
@@ -48,7 +49,7 @@ AnalysisCalculateNode::~AnalysisCalculateNode()
  */
 
 // Node Keywords
-const char* CalculateNodeKeywords[] = { "Angle", "Distance", "EndCalculate" };
+const char* CalculateNodeKeywords[] = { "Angle", "Distance", "EndCalculate", "Vector" };
 
 // Convert string to node keyword
 AnalysisCalculateNode::CalculateNodeKeyword AnalysisCalculateNode::calculateNodeKeyword(const char* s)
@@ -69,8 +70,9 @@ const char* AnalysisCalculateNode::calculateNodeKeyword(AnalysisCalculateNode::C
  */
 
 // Observable keywords
-const char* ObservableKeywords[] = { "Angle", "Distance" };
-int ObservableNSites[] = { 3, 2 };
+const char* ObservableKeywords[] = { "Angle", "Distance", "Vector" };
+int ObservableNSites[] = { 3, 2 , 2 };
+int ObservableDimensionality[] = { 1, 1, 3 };
 
 // Convert string to Observable
 AnalysisCalculateNode::Observable AnalysisCalculateNode::observable(const char* s)
@@ -92,12 +94,36 @@ int AnalysisCalculateNode::observableNSites(AnalysisCalculateNode::Observable ob
 	return ObservableNSites[obs];
 }
 
+// Dimensionality of data for Observable
+int AnalysisCalculateNode::observableDimensionality(Observable obs)
+{
+	return ObservableDimensionality[obs];
+}
+
 /*
  * Observable Target
  */
 
 // Return last calculated value of observable
-double AnalysisCalculateNode::value() const
+double AnalysisCalculateNode::value(int id) const
+{
+#ifdef CHECKS
+	if ((id < 0) || (id >= 3))
+	{
+		Messenger::error("Observable value index %i is out of range.\n", id);
+		return 0.0;
+	}
+	if (id >= observableDimensionality(observable_))
+	{
+		Messenger::error("Observable value index %i is out of range for an observable of type '%s' which has dimensionality %i.\n", id, observable(observable_), observableDimensionality(observable_));
+		return 0.0;
+	}
+#endif
+	return value_.get(id);
+}
+
+// Return last calculated value of observable
+Vec3<double> AnalysisCalculateNode::values() const
 {
 	return value_;
 }
@@ -134,10 +160,13 @@ AnalysisNode::NodeExecutionResult AnalysisCalculateNode::execute(ProcessPool& pr
 	switch (observable_)
 	{
 		case (Observable::AngleObservable):
-			value_ = cfg->box()->angleInDegrees(sites_[0]->currentSite()->origin(), sites_[1]->currentSite()->origin(), sites_[2]->currentSite()->origin());
+			value_.x = cfg->box()->angleInDegrees(sites_[0]->currentSite()->origin(), sites_[1]->currentSite()->origin(), sites_[2]->currentSite()->origin());
 			break;
 		case (Observable::DistanceObservable):
-			value_ = cfg->box()->minimumDistance(sites_[0]->currentSite()->origin(), sites_[1]->currentSite()->origin());
+			value_.x = cfg->box()->minimumDistance(sites_[0]->currentSite()->origin(), sites_[1]->currentSite()->origin());
+			break;
+		case (Observable::VectorObservable):
+			value_ = cfg->box()->minimumVector(sites_[0]->currentSite()->origin(), sites_[1]->currentSite()->origin());
 			break;
 		default:
 			Messenger::error("Mr Developer Man has not implemented calculation of this observable quantity (%i).\n", observable_);

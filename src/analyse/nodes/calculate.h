@@ -40,6 +40,7 @@ class AnalysisCalculateNode : public AnalysisNode
 	{
 		AngleObservable,		/* 'Angle' - Angle formed between three sites */
 		DistanceObservable,		/* 'Distance' - Distance between two sites */
+		VectorObservable,		/* 'Vector' - Minimum image vector between two sites */
 		nObservables			/* Number of observables in list */
 	};
 	// Convert string to Observable
@@ -48,6 +49,8 @@ class AnalysisCalculateNode : public AnalysisNode
 	static const char* observable(Observable obs);
 	// Number of sites required to calculate Observable
 	static int observableNSites(Observable obs);
+	// Dimensionality of data for Observable
+	static int observableDimensionality(Observable obs);
 	// Constructor
 	AnalysisCalculateNode(AnalysisCalculateNode::Observable observable = nObservables, AnalysisSelectNode* site0 = NULL, AnalysisSelectNode* site1 = NULL, AnalysisSelectNode* site2 = NULL, AnalysisSelectNode* site3 = NULL);
 	// Destructor
@@ -59,7 +62,7 @@ class AnalysisCalculateNode : public AnalysisNode
 	 */
 	public:
 	// Node Keywords
-	enum CalculateNodeKeyword { AngleKeyword, DistanceKeyword, EndCalculateKeyword, nCalculateNodeKeywords };
+	enum CalculateNodeKeyword { AngleKeyword, DistanceKeyword, EndCalculateKeyword, VectorKeyword, nCalculateNodeKeywords };
 	// Convert string to control keyword
 	static CalculateNodeKeyword calculateNodeKeyword(const char* s);
 	// Convert control keyword to string
@@ -74,12 +77,14 @@ class AnalysisCalculateNode : public AnalysisNode
 	Observable observable_;
 	// Nodes (sites) to use for observable calculation
 	AnalysisSelectNode* sites_[4];
-	// Last calculate value of observable
-	double value_;
+	// Last calculate value(s) of observable (as Vec3)
+	Vec3<double> value_;
 
 	public:
 	// Return last calculated value of observable
-	double value() const;
+	double value(int id) const;
+	// Return last calculated value as vector
+	Vec3<double> values() const;
 
 
 	/*

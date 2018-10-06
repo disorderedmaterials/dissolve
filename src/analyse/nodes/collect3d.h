@@ -36,8 +36,9 @@ class NodeContextStack;
 class AnalysisCollect3DNode : public AnalysisNode
 {
 	public:
-	// Constructor
+	// Constructors
 	AnalysisCollect3DNode(AnalysisCalculateNode* xObservable = NULL, AnalysisCalculateNode* yObservable = NULL, AnalysisCalculateNode* zObservable = NULL, double xMin = 0.0, double xMax = 10.0, double xBinWidth = 0.05, double yMin = 0.0, double yMax = 10.0, double yBinWidth = 0.05, double zMin = 0.0, double zMax = 10.0, double zBinWidth = 0.05);
+	AnalysisCollect3DNode(AnalysisCalculateNode* xyzObservable, double xMin = 0.0, double xMax = 10.0, double xBinWidth = 0.05, double yMin = 0.0, double yMax = 10.0, double yBinWidth = 0.05, double zMin = 0.0, double zMax = 10.0, double zBinWidth = 0.05);
 	// Destructor
 	~AnalysisCollect3DNode();
 
@@ -47,7 +48,7 @@ class AnalysisCollect3DNode : public AnalysisNode
 	 */
 	public:
 	// Node Keywords
-	enum Collect3DNodeKeyword { EndCollect3DKeyword, QuantityXKeyword, QuantityYKeyword, QuantityZKeyword, RangeXKeyword, RangeYKeyword, RangeZKeyword, nCollect3DNodeKeywords };
+	enum Collect3DNodeKeyword { EndCollect3DKeyword, QuantityXYZKeyword, QuantityXKeyword, QuantityYKeyword, QuantityZKeyword, RangeXKeyword, RangeYKeyword, RangeZKeyword, nCollect3DNodeKeywords };
 	// Convert string to control keyword
 	static Collect3DNodeKeyword collect3DNodeKeyword(const char* s);
 	// Convert control keyword to string
@@ -64,6 +65,8 @@ class AnalysisCollect3DNode : public AnalysisNode
 	AnalysisCalculateNode* yObservable_;
 	// Observable to bin along z
 	AnalysisCalculateNode* zObservable_;
+	// Observable to use for bins along x, y, and z
+	AnalysisCalculateNode* xyzObservable_;
 	// Histogram in which to accumulate data
 	Histogram3D* histogram_;
 	// X range minimum
