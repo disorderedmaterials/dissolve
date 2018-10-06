@@ -14,7 +14,10 @@ libcalculatemodulesdummywidgets_la_LDFLAGS = -static
 libcalculatemodulesdummywidgets_CPPFLAGS = -I${top_srcdir}/src @DISSOLVE_CFLAGS@ @DISSOLVE_READLINE@
 
 # Module targets
-SUBDIRS = rdf
+SUBDIRS = dangle
+libcalculatemodules_la_LIBADD += dangle/libcalculatedangle.la
+libcalculatemodulesdummywidgets_la_LIBADD += dangle/libmodulewidget.la
+SUBDIRS += rdf
 libcalculatemodules_la_LIBADD += rdf/libcalculaterdf.la
 libcalculatemodulesdummywidgets_la_LIBADD += rdf/libmodulewidget.la
 
@@ -29,6 +32,7 @@ libcalculatemoduleswidgets_la_LDFLAGS = -static
 
 libcalculatemoduleswidgets_CPPFLAGS = -I${top_srcdir}/src @DISSOLVE_CFLAGS@ @DISSOLVE_READLINE@ @GUI_INCLUDES@
 
+libcalculatemoduleswidgets_la_LIBADD += dangle/gui/libmodulewidget.la
 libcalculatemoduleswidgets_la_LIBADD += rdf/gui/libmodulewidget.la
 
 endif
