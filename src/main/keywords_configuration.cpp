@@ -194,9 +194,6 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 				// Parse rest of Module block
 				module->setConfigurationLocal(true);
 				if (!ModuleBlock::parse(parser, dissolve, module, cfg->moduleData(), true)) error = true;
-
-				// Now finished parsing the Module block, so must update targets and auto-add Modules if necessary
-				if (!module->updateDependentTargets(cfg->modules(), dissolve->autoAddDependentModules(), cfg->moduleData())) error = true;
 				break;
 			case (ConfigurationBlock::MultiplierKeyword):
 				cfg->setMultiplier(parser.argd(1));

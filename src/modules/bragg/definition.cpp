@@ -44,16 +44,3 @@ int BraggModule::nTargetableConfigurations() const
 {
 	return (configurationLocal_ ? 1 : -1);
 }
-
-// Modules upon which this Module depends to have run first
-const char* BraggModule::dependentModules()
-{
-	return "";
-}
-
-// Set up supplied dependent module (only if it has been auto-added)
-bool BraggModule::setUpDependentModule(Module* depMod)
-{
-	return true;
-}
-

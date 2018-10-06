@@ -44,15 +44,3 @@ int CalibrationModule::nTargetableConfigurations() const
 {
 	return 0;
 }
-
-// Modules upon which this Module depends to have run first
-const char* CalibrationModule::dependentModules()
-{
-	return "Calibration";
-}
-
-// Set up supplied dependent module (only if it has been auto-added)
-bool CalibrationModule::setUpDependentModule(Module* depMod)
-{
-	return true;
-}

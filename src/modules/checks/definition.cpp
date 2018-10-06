@@ -44,15 +44,3 @@ int ChecksModule::nTargetableConfigurations() const
 {
 	return -1;
 }
-
-// Modules upon which this Module depends to have run first
-const char* ChecksModule::dependentModules()
-{
-	return "";
-}
-
-// Set up supplied dependent module (only if it has been auto-added)
-bool ChecksModule::setUpDependentModule(Module* depMod)
-{
-	return true;
-}

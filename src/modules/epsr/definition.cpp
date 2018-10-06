@@ -44,25 +44,3 @@ int EPSRModule::nTargetableConfigurations() const
 {
 	return 0;
 }
-
-// Modules upon which this Module depends to have run first
-const char* EPSRModule::dependentModules()
-{
-	// If the 'OnlyWhenEnergyStable' keyword is 'true', we require the Energy module
-	// TODO This needs to be updated since Partials module doesn't exist. Just check for presence of EnergyStable while running instead?
-	if (keywords_.asBool("OnlyWhenEnergyStable")) return "Energy";
-	else return "";
-}
-
-// Set up supplied dependent module (only if it has been auto-added)
-bool EPSRModule::setUpDependentModule(Module* depMod)
-{
-	if (DissolveSys::sameString(depMod->type(), "Energy"))
-	{
-		// Must add all Configuration targets in the associated Partials Module
-		Module* partialsModule = dependentModule("Partials");
-		if (!partialsModule) return false;
-		depMod->copyTargetConfigurations(partialsModule);
-	}
-	return true;
-}

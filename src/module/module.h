@@ -70,8 +70,6 @@ class Module : public ListItem<Module>
 	protected:
 	// Unique name of Module
 	CharString uniqueName_;
-	// RefList of dependent Modules
-	RefList<Module,bool> dependentModules_;
 	// Colour used in visual representation of Module
 	int colour_[3];
 
@@ -88,16 +86,6 @@ class Module : public ListItem<Module>
 	virtual InstanceType instanceType() const = 0;
 	// Return the maximum number of Configurations the Module can target (or -1 for any number)
 	virtual int nTargetableConfigurations() const = 0;
-	// Add dependent Module to this Module
-	void addDependentModule(Module* module, bool autoAdded);
-	// Return pointer for specified dependent Module
-	Module* dependentModule(const char* name);
-	// Modules upon which this Module depends to have run first
-	virtual const char* dependentModules() = 0;
-	// Set up supplied dependent module (only if it has been auto-added)
-	virtual bool setUpDependentModule(Module* depMod) = 0;
-	// Update targets for any auto-added dependent Modules with those of this Module
-	bool updateDependentTargets(ModuleList& currentModuleList, bool autoAddDependents, GenericList& currentModuleData);
 	// Return colour used in visual representation of Module
 	const int* colour() const;
 

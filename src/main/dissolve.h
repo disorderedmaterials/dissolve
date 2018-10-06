@@ -305,8 +305,6 @@ class Dissolve
 	CharString filename_;
 	// Filename of current restart file
 	CharString restartFilename_;
-	// Whether to automatically add dependent Modules if they have not been defined
-	bool autoAddDependentModules_;
 	// Accumulated timing information for saving restart file
 	SampledDouble saveRestartTimes_;
 
@@ -333,10 +331,6 @@ class Dissolve
 	bool hasRestartFilename() const;
 	// Return restart filename
 	const char* restartFilename() const;
-	// Set whether to automatically add dependent Modules if they have not been defined
-	void setAutoAddDependentModules(bool b);
-	// Return whether to automatically add dependent Modules if they have not been defined
-	bool autoAddDependentModules();
 
 
 	/*

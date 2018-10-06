@@ -64,10 +64,6 @@ class ImportModule : public Module
 	InstanceType instanceType() const;
 	// Return the maximum number of Configurations the Module can target (or -1 for any number)
 	int nTargetableConfigurations() const;
-	// Modules upon which this Module depends to have run first
-	const char* dependentModules();
-	// Set up supplied dependent module (only if it has been auto-added)
-	bool setUpDependentModule(Module* depMod);
 
 
 	/*

@@ -55,7 +55,6 @@ int main(int argc, char **argv)
 			{
 				case ('h'):
 					printf("Dissolve version %s\n\nAvailable CLI options are:\n\n", DISSOLVEVERSION);
-					printf("\t-a\t\tAuto-add dependent Modules if they are not present already\n");
 					printf("\t-i\t\tIgnore restart file\n");
 					printf("\t-I\t\tIgnore GUI state file\n");
 					printf("\t-q\t\tQuiet mode - print no output\n");
@@ -63,9 +62,6 @@ int main(int argc, char **argv)
 					printf("\t-x\t\tDon't write any restart information (but still read in the restart file if present)\n");
 					ProcessPool::finalise();
 					return 0;
-					break;
-				case ('a'):
-					dissolve.setAutoAddDependentModules(true);
 					break;
 				case ('i'):
 					Messenger::print("Restart file (if it exists) will be ignored.\n");

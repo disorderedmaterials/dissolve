@@ -44,15 +44,3 @@ int AtomShakeModule::nTargetableConfigurations() const
 {
 	return 1;
 }
-
-// Modules upon which this Module depends to have run first
-const char* AtomShakeModule::dependentModules()
-{
-	return "";
-}
-
-// Set up supplied dependent module (only if it has been auto-added)
-bool AtomShakeModule::setUpDependentModule(Module* depMod)
-{
-	return true;
-}

@@ -44,16 +44,3 @@ int SQModule::nTargetableConfigurations() const
 {
 	return (configurationLocal_ ? 1 : -1);
 }
-
-// Modules upon which this Module depends to have run first
-const char* SQModule::dependentModules()
-{
-	return "";
-}
-
-// Set up supplied dependent module (only if it has been auto-added)
-bool SQModule::setUpDependentModule(Module* depMod)
-{
-	return true;
-}
-

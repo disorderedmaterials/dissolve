@@ -139,9 +139,6 @@ bool Dissolve::loadInput(const char* filename)
 				module->setConfigurationLocal(false);
 				if (!ModuleBlock::parse(parser, this, module, processingModuleData_, false)) error = true;
 				if (error) break;
-
-				// Now finished parsing the Module block, so must update targets and auto-add Modules if necessary
-				if (!module->updateDependentTargets(mainProcessingModules_, autoAddDependentModules_, processingModuleData_)) error = true;
 				break;
 			case (BlockKeywords::PairPotentialsBlockKeyword):
 				if (!PairPotentialsBlock::parse(parser, this)) error = true;
@@ -723,16 +720,4 @@ const char* Dissolve::restartFilename() const
 bool Dissolve::hasRestartFilename() const
 {
 	return (!restartFilename_.isEmpty());
-}
-
-// Set whether to automatically add dependent Modules if they have not been defined
-void Dissolve::setAutoAddDependentModules(bool b)
-{
-	autoAddDependentModules_ = b;
-}
-
-// Return whether to automatically add dependent Modules if they have not been defined
-bool Dissolve::autoAddDependentModules()
-{
-	return autoAddDependentModules_;
 }

@@ -57,7 +57,6 @@ int main(int argc, char **argv)
 					printf("Dissolve SERIAL version %s, Copyright (C) 2012-2018 T. Youngs.\n\n", DISSOLVEVERSION);
 #endif
 					printf("Recognised CLI options are:\n\n");
-					printf("\t-a\t\tAuto-add dependent Modules if they are not present already\n");
 					printf("\t-c\t\tCheck input and set-up only - don't perform any main-loop iterations\n");
 					printf("\t-i\t\tIgnore restart file\n");
 					printf("\t-m\t\tRestrict output to be from the master process alone (parallel code only)\n");
@@ -70,9 +69,6 @@ int main(int argc, char **argv)
 					ProcessPool::finalise();
 					Messenger::ceaseRedirect();
 					return 1;
-					break;
-				case ('a'):
-					dissolve.setAutoAddDependentModules(true);
 					break;
 				case ('c'):
 					nIterations = 0;

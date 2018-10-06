@@ -54,9 +54,6 @@ Dissolve::Dissolve() : atomTypes_(List<AtomType>::master()), species_(List<Speci
 	// Parallel Comms
 	parallelStrategy_ = Dissolve::SequentialConfigStrategy;
 
-	// I/O
-	autoAddDependentModules_ = false;
-
 	// Register GenericItems
 	registerGenericItems();
 }
