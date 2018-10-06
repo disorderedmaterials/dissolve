@@ -162,7 +162,7 @@ AnalysisNode::NodeExecutionResult AnalysisCollect2DNode::execute(ProcessPool& pr
 	}
 #endif
 	// Bin the current value of the observable
-	histogram_->bin(xObservable_->value(), yObservable_->value());
+	histogram_->bin(xObservable_->value(0), yObservable_->value(0));
 
 	return AnalysisNode::Success;
 }
