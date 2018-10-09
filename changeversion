@@ -29,12 +29,6 @@ else
   echo "Changing version numbers in files (to ${MAJOR}.${MINOR}.{$PATCH}..."
 fi
 
-# Create git tag
-if [ "$TEST" = "false" ]
-then
-  git tag -a $MAJOR.$MINOR.$PATCH -m "change version to $MAJOR.$MINOR.$PATCH"
-fi
-
 # Program (version.h)
 if [ "$TEST" = "false" ]
 then

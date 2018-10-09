@@ -6,7 +6,6 @@ COMMITFILE="none"
 COMMITMSG="none"
 COMMITTYPE="none"
 BUMP="false"
-PUSH="false"
 ALL="true"
 
 # Parse CLI arguments / options
@@ -24,8 +23,6 @@ while getopts "F:m:bpo" options; do
 	echo "Version (patch) number will be bumped.";;
     o ) ALL="false"
 	echo "Only specific changes will be committed.";;
-    p ) PUSH="true"
-	echo "Files will be committed and local changes pushed to server.";;
     \? ) echo -e $USAGE1
          exit 1;;
     * ) echo -e $USAGE1
@@ -63,12 +60,6 @@ fi
 if [ "$COMMITTYPE" = "msg" ]
 then
   git commit $FLAGS -m "$COMMITMSG"
-fi
-
-# Push changes to server?
-if [ "$PUSH" = "true" ]
-then
-  git push origin master --tags
 fi
 
 exit 0
