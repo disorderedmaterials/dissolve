@@ -1,5 +1,5 @@
 [Desktop Entry]
-Version=0.36.0
+Version=0.4.0
 Encoding=UTF-8
 Comment=Dissolve - Potential-based refinement of neutron scattering data
 Exec=dissolve-gui %f
