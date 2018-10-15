@@ -40,6 +40,8 @@ class Element
 	public:
 	// Return atomic number (Z)
 	int Z() const;
+	// Return whether the element is unknown
+	bool isUnknown() const;
 	// Return name of element
 	const char* name() const;
 	// Return symbol of element
