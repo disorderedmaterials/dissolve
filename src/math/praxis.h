@@ -36,8 +36,9 @@ template <class T> class PrAxis
 
 	public:
 	// Constructor
-	PrAxis<T>(T& object, PrAxisCostFunction func) : object_(object), costFunction_(func)
+	PrAxis<T>(T& object, PrAxisCostFunction func, bool pokeBeforeCost = false) : object_(object), costFunction_(func)
 	{
+		pokeBeforeCost_ = pokeBeforeCost;
 	}
 
 	private:
@@ -45,6 +46,8 @@ template <class T> class PrAxis
 	T& object_;
 	// Pointer to cost function
 	PrAxisCostFunction costFunction_;
+	// Whether to poke values into targets before calling the cost function
+	bool pokeBeforeCost_;
 	// Pointers to double values to be fit
 	Array<double*> targets_;
 	// Local values for fitting
@@ -162,6 +165,7 @@ template <class T> class PrAxis
 	//
 	//  Evaluate the function.
 	//
+		if (pokeBeforeCost_) pokeValues();
 		value = (object_.*f) ( t );
 	
 		return value;
@@ -2143,7 +2147,10 @@ template <class T> class PrAxis
 		kt = 0;
 		nl = 0;
 		nf = 1;
+
+		if (pokeBeforeCost_) pokeValues();
 		fx = (object_.*f) ( x );
+
 		qf1 = fx;
 		t = small + fabs ( t0 );
 		t2 = t;
@@ -2250,6 +2257,7 @@ template <class T> class PrAxis
 							}
 						}
 	
+						if (pokeBeforeCost_) pokeValues();
 						fx = (object_.*f) ( x );
 						nf = nf + 1;
 					}
@@ -2602,11 +2610,30 @@ template <class T> class PrAxis
 	}
 
 	public:
-	// Add pointer to double value to be fit
+	// Add reference to double value to be fit
 	void addTarget(double& var)
 	{
 		targets_.add(&var);
 		values_.add(var);
+	}
+	// Add array of pointers to targets
+	void addTargets(Array<double*> vars)
+	{
+		for (int n=0; n<vars.nItems(); ++n)
+		{
+			targets_.add(vars[n]);
+			values_.add(*vars[n]);
+		}
+	}
+	// Set whether to poke values before assessing cost
+	void setPokeBeforeCost(bool b)
+	{
+		pokeBeforeCost_ = b;
+	}
+	// Poke current test values into their original variables
+	void pokeValues()
+	{
+		for (int n=0; n<targets_.nItems(); ++n) (*targets_[n]) = values_[n];
 	}
 	// Perform minimisation
 	double minimise(double tolerance = 1.0e-5, double maxStep = 0.01, int printLevel = 0)
@@ -2614,7 +2641,7 @@ template <class T> class PrAxis
 		double value = praxis(tolerance, maxStep, values_, printLevel, costFunction_);
 
 		// Set minimised values back into their original variables
-		for (int n=0; n<targets_.nItems(); ++n) (*targets_[n]) = values_[n];
+		pokeValues();
 	
 		return value;
 	}
