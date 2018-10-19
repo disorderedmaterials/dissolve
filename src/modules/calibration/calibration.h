@@ -81,10 +81,6 @@ class CalibrationModule : public Module
 		IntraBroadeningTargetBoth,
 		nIntraBroadeningFitTargets
 	};
-	// Convert string to functional form
-	static IntraBroadeningFitTarget intraBroadeningFitTarget(const char* s);
-	// Return fit target text
-	static const char* intraBroadeningFitTarget(IntraBroadeningFitTarget ft);
 	protected:
 	// Set up options for Module
 	void setUpKeywords();
@@ -106,8 +102,10 @@ class CalibrationModule : public Module
 	private:
 	// RDF Module targets for IntraBroadening calibration
 	RefList<Module,bool> intraBroadeningModules_;
-	// NeutronSQ Module targets for IntraBroadening calibration
-	RefList<Module,IntraBroadeningFitTarget> intraBroadeningReferences_;
+	// NeutronSQ Module targets for IntraBroadening calibration (S(Q) data)
+	RefList<Module,bool> intraBroadeningNeutronSQReferences_;
+	// NeutronSQ Module targets for IntraBroadening calibration (G(r) data)
+	RefList<Module,bool> intraBroadeningNeutronGRReferences_;
 
 
 	/*

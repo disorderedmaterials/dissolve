@@ -56,24 +56,22 @@ int PairBroadeningFunctionModuleKeyword::minArguments()
 // Return maximum number of arguments accepted
 int PairBroadeningFunctionModuleKeyword::maxArguments()
 {
-	return MAXBROADENINGFUNCTIONPARAMS;
+	return 2;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
 bool PairBroadeningFunctionModuleKeyword::read(LineParser& parser, int startArg, ProcessPool& procPool)
 {
-	bool result = data_.set(parser, startArg);
-	if (result) set_ = true;
+	if (data_.readAsKeyword(parser, startArg)) set_ = true;
+	else return false;
 
-	return result;
+	return true;
 }
 
 // Write keyword data to specified LineParser
 bool PairBroadeningFunctionModuleKeyword::write(LineParser& parser, const char* prefix)
 {
-	CharString params;
-	for (int n=0; n<PairBroadeningFunction::nFunctionParameters(data_.function()); ++n) params.strcatf("  %f", data_.parameter(n));
-	return parser.writeLineF("%s%s  '%s'%s\n", prefix, keyword(), PairBroadeningFunction::functionType(data_.function()), params.get());
+	return data_.writeAsKeyword(parser, prefix);
 }
 
 /*
