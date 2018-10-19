@@ -40,7 +40,7 @@ int main(int argc, char **argv)
 
 	// Parse CLI options...
 	int n = 1;
-	CharString inputFile, redirectFileName;
+	CharString inputFile, redirectFileName, restartDataFile;
 	int nIterations = 5;
 	bool ignoreRestart = false, dontWriteRestart = false;
 	while (n < argc)
@@ -64,6 +64,7 @@ int main(int argc, char **argv)
 					printf("\t-q\t\tQuiet mode - print no output\n");
 					printf("\t-r <file>\tRedirect output from all process to 'file.N', where N is the process rank\n");
 					printf("\t-s\t\tPerform single main loop iteration and then quit\n");
+					printf("\t-t <file>\tLoad restart data from specified file, rather than the associated restart file\n");
 					printf("\t-v\t\tVerbose mode - be a little more descriptive throughout\n");
 					printf("\t-x\t\tDon't write any restart information (but still read in the restart file if present)\n");
 					ProcessPool::finalise();
@@ -110,6 +111,18 @@ int main(int argc, char **argv)
 				case ('s'):
 					Messenger::print("Single main-loop iteration will be performed, then Dissolve will exit.\n");
 					nIterations = 1;
+					break;
+				case ('t'):
+					// Next argument is filename
+					++n;
+					if (n == argc)
+					{
+						Messenger::error("Expected restart data filename.\n");
+						Messenger::ceaseRedirect();
+						return 1;
+					}
+					restartDataFile = argv[n];
+					Messenger::print("Restart data will be loaded from '%s'.\n", restartDataFile.get());
 					break;
 				case ('v'):
 					Messenger::setVerbose(true);
@@ -186,7 +199,11 @@ int main(int argc, char **argv)
 	Messenger::banner("Parse Restart File");
 	if (!ignoreRestart)
 	{
-		CharString restartFile("%s.restart", inputFile.get());
+		// We may have been provided the name of a restart file to read in...
+		CharString restartFile;
+		if (restartDataFile.isEmpty()) restartFile.sprintf("%s.restart", inputFile.get());
+		else restartFile = restartDataFile;
+		
 		if (DissolveSys::fileExists(restartFile))
 		{
 			Messenger::print("Restart file '%s' exists and will be loaded.\n", restartFile.get());
