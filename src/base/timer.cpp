@@ -43,9 +43,9 @@ const char* Timer::timeString(clock_t ticks)
 	int minutes = n / 60;
 	n %= 60;
 	double seconds = ticks /  double(CLOCKS_PER_SEC) - hours*3600 - minutes*60;
-	if (hours != 0) timeString_.sprintf("%i hours, %i minutes, and %0.1f seconds", hours, minutes, seconds);
-	else if (minutes != 0) timeString_.sprintf("%i minutes and %0.1f seconds", minutes, seconds);
-	else timeString_.sprintf("%0.1f seconds", seconds);
+	if (hours != 0) timeString_.sprintf("%i hours, %i minutes, and %0.2f seconds", hours, minutes, seconds);
+	else if (minutes != 0) timeString_.sprintf("%i minutes and %0.2f seconds", minutes, seconds);
+	else timeString_.sprintf("%0.2f seconds", seconds);
 	return timeString_.get();
 }
 
