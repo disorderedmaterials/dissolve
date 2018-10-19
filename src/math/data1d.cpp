@@ -494,7 +494,7 @@ const char* Data1D::itemClassName()
 bool Data1D::write(LineParser& parser)
 {
 	if (!parser.writeLineF("%s\n", objectTag())) return false;
-	if (!parser.writeLineF("%i %i\n", x_.nItems(), hasError_)) return false;
+	if (!parser.writeLineF("%i %s\n", x_.nItems(), DissolveSys::btoa(hasError_))) return false;
 	if (hasError_)
 	{
 		for (int n=0; n<x_.nItems(); ++n) if (!parser.writeLineF("%f  %f  %f\n", x_[n], values_[n], errors_[n])) return false;
