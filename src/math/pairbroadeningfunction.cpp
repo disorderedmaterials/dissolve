@@ -36,7 +36,7 @@ PairBroadeningFunction::PairBroadeningFunction(PairBroadeningFunction::FunctionT
 	// Create element broadening array
 	elementPairGaussianFWHM_.initialise(Elements::nElements(), Elements::nElements(), true);
 	elementPairGaussianFlags_.initialise(Elements::nElements(), Elements::nElements(), true);
-	elementPairGaussianFWHM_ = -1.0;
+	elementPairGaussianFWHM_ = 0.13;
 	elementPairGaussianFlags_ = false;
 }
 
@@ -350,6 +350,7 @@ bool PairBroadeningFunction::broadcast(ProcessPool& procPool, int root)
 	if (!procPool.broadcast(EnumCast<PairBroadeningFunction::FunctionType>(function_), root)) return false;
 	if (!procPool.broadcast(gaussianFWHM_, root)) return false;
 	if (!procPool.broadcast(elementPairGaussianFWHM_, root)) return false;
+	if (!procPool.broadcast(elementPairGaussianFlags_, root)) return false;
 #endif
 	return true;
 }
@@ -361,6 +362,7 @@ bool PairBroadeningFunction::equality(ProcessPool& procPool)
 	if (!procPool.equality(EnumCast<PairBroadeningFunction::FunctionType>(function_))) return Messenger::error("PairBroadeningFunction function type is not equivalent (process %i has %i).\n", procPool.poolRank(), function_);
 	if (!procPool.equality(gaussianFWHM_)) return Messenger::error("PairBroadeningFunction Gaussian parameters are not equivalent.\n");
 	if (!procPool.equality(elementPairGaussianFWHM_)) return Messenger::error("PairBroadeningFunction element pair Gaussian parameters are not equivalent.\n");
+	if (!procPool.equality(elementPairGaussianFlags_)) return Messenger::error("PairBroadeningFunction element pair Gaussian parameters are not equivalent.\n");
 #endif
 	return true;
 }
