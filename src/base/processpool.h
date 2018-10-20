@@ -299,6 +299,8 @@ class ProcessPool
 	bool broadcast(Array< Vec3<double> >& array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Broadcast Array2D<double>
 	bool broadcast(Array2D<double>& array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	// Broadcast Array2D<bool>
+	bool broadcast(Array2D<bool>& array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 
 
 	/*
@@ -369,6 +371,8 @@ class ProcessPool
 	bool equality(Array2D<int> array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Check equality of Array2D<double> across involved processes
 	bool equality(Array2D<double> array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	// Check equality of Array2D<bool> across involved processes
+	bool equality(Array2D<bool> array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 
 
 	/*
