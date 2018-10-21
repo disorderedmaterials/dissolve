@@ -55,7 +55,7 @@ bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		Messenger::error("RDF: Invalid averaging scheme '%s' found.\n", keywords_.asString("AveragingScheme"));
 		return false;
 	}
-	const PairBroadeningFunction& intraBroadening = KeywordListHelper<PairBroadeningFunction>::retrieve(keywords_, "IntraBroadening", PairBroadeningFunction());
+	PairBroadeningFunction& intraBroadening = KeywordListHelper<PairBroadeningFunction>::retrieve(keywords_, "IntraBroadening", PairBroadeningFunction());
 	RDFModule::PartialsMethod method = RDFModule::partialsMethod(keywords_.asString("Method"));
 	if (method == RDFModule::nPartialsMethods)
 	{
