@@ -2514,6 +2514,14 @@ template <class T> class PrAxis
 	// Perform minimisation
 	double minimise(double tolerance = 1.0e-5, double maxStep = 0.01, int printLevel = 0)
 	{
+		// Check for zero variable parameters
+		if (values_.nItems() == 0)
+		{
+			Messenger::warn("No variables specified for fitting in PrAxis::minimise(), so nothing to do.\n");
+			return 0.0;
+		}
+
+		// Minimise the function
 		double value = praxis(tolerance, maxStep, values_, printLevel, costFunction_);
 
 		// Set minimised values back into their original variables
