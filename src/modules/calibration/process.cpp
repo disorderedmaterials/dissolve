@@ -133,7 +133,7 @@ bool CalibrationModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Optimise the parameters - the cost function will regenerate the UnweightedGR in the RDF modules, and reassemble the target NeutronSQ data
 		double error = broadeningMinimiser.minimise(0.001);
 
-		Messenger::print("Total error over all specified datasets is %f%%.\n", error);
+		Messenger::print("Total RMSE over all specified datasets is %f.\n", error);
 
 		// Make sure that we re-broaden the RDFs and NeutronSQ data by the correct (optimal) values before we leave
 		// Store alpha parameters in the PairBroadeningFunction in the associated RDF modules
