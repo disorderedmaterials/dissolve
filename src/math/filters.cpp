@@ -25,7 +25,7 @@
 #include "templates/array.h"
 
 // Apply median filter to data
-void Filters::medianFilter(Data1D& data, int length)
+void Filters::median(Data1D& data, int length)
 {
 	// Grab y array
 	Array<double>& y = data.values();
@@ -111,7 +111,7 @@ void Filters::movingAverage(Data1D& data, int avgSize)
 }
 
 // Apply Kolmogorov–Zurbenko filter
-void Filters::kolmogorovZurbenkoFilter(Data1D& data, int k, int m)
+void Filters::kolmogorovZurbenko(Data1D& data, int k, int m)
 {
 	for (int iteration=0; iteration<k; ++iteration) movingAverage(data, m);
 }

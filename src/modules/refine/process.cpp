@@ -625,7 +625,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				}
 
 				// Smooth phi(r)?
-				if (smoothPhiR) Filters::kolmogorovZurbenkoFilter(dPhiR, phiRSmoothK, phiRSmoothM);
+				if (smoothPhiR) Filters::kolmogorovZurbenko(dPhiR, phiRSmoothK, phiRSmoothM);
 
 				// Make sure we go smoothly to zero at the limit of the potential
 				for (int n=0; n<dPhiR.nValues(); ++n) dPhiR.value(n) *= 1.0 - double(n)/(dPhiR.nValues()-1);
