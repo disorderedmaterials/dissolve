@@ -98,7 +98,8 @@ bool CalibrationModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		 */
 		
 		CalibrationModuleCostFunctions costFunctions(dissolve, procPool, intraBroadeningModules_, neutronReferences);
-		PrAxis<CalibrationModuleCostFunctions> broadeningMinimiser(costFunctions, &CalibrationModuleCostFunctions::intraBroadeningCost, true);
+		PrAxis<CalibrationModuleCostFunctions> broadeningMinimiser(costFunctions, &CalibrationModuleCostFunctions::intraBroadeningCost);
+		broadeningMinimiser.setPokeBeforeCost(true);
 		rdfModuleIterator.restart();
 		Array<bool> broadeningAdded(PairBroadeningFunction::nFunctionTypes);
 		broadeningAdded = false;
@@ -124,7 +125,7 @@ bool CalibrationModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					break;
 			}
 
-			broadeningMinimiser.addTargets(broadening.parameters());
+			broadeningMinimiser.addTargets(broadening.parameters(), true, 0.02, true, 0.5);
 
 			// Flag that a broadening of this type has been added
 			broadeningAdded[broadening.function()] = true;

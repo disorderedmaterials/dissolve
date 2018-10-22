@@ -1,68 +1,108 @@
 /*
- * PRAXIS is a C++ library which minimizes a scalar function of a vector argument, without needing derivative information, by Richard Brent.
- * 
- * *** RETRIEVED FROM http://people.sc.fsu.edu/~jburkardt/cpp_src/praxis/praxis.html ON 18/01/2017 ***
- * *** CLASSified BY T.YOUNGS ***
- * 
- * PRAXIS seeks an M-dimensional point X which minimizes a given scalar function F(X).
- * The code is a refinement of Powell's method of conjugate search directions.
- * The user does not need to supply the partial derivatives of the function F(X).
- * In fact, the function F(X) need not be smoothly differentiable.
- * 
- * Changes:
- *   - Removed r8_min, r8_max, and r8_epsilon and replaced with C++ builtins.
- *   - Inner loop now runs from 1 <= k <= nAlpha - the original implementation demanded at least two alpha values in the function.
- * 
- * Licensing:
- * 
- * The computer code and data files described and made available on this web page are distributed under the GNU LGPL license.
- * 
- * Reference:
- *
- *   Richard Brent,
- *   Algorithms for Minimization without Derivatives,
- *   Dover, 2002,
- *   ISBN: 0-486-41998-3,
- *   LC: QA402.5.B74.
- */
+	*** Brent's Principal Axis (PrAxis) Minimiser
+	*** src/math/praxis.h
+	Copyright T. Youngs 2012-2018
+
+	This file is part of Dissolve.
+
+	Dissolve is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	Dissolve is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #ifndef DISSOLVE_PRAXIS_H
 #define DISSOLVE_PRAXIS_H
 
 #include "base/messenger.h"
 #include "templates/array.h"
+#include "math/minimiser.h"
 #include <iomanip>
 #include <limits>
 
-template <class T> class PrAxis
+// Brent's Principal Axis Minimiser
+template <class T> class PrAxis : public MinimiserBase<T>
 {
-	// Command pointer typedef
-	typedef double (T::*PrAxisCostFunction)(const Array<double>& alpha);
-
 	public:
 	// Constructor
-	PrAxis<T>(T& object, PrAxisCostFunction func, bool pokeBeforeCost = false) : object_(object), costFunction_(func)
+	PrAxis<T>(T& object, typename MinimiserBase<T>::MinimiserCostFunction func) : MinimiserBase<T>(object, func)
 	{
-		pokeBeforeCost_ = pokeBeforeCost;
+		maxStep_ = 0.01;
+		printLevel_ = 0;
 	}
 
+
+	/*
+	 * Interface
+	 */
 	private:
-	// Object used to call specified function
-	T& object_;
-	// Pointer to cost function
-	PrAxisCostFunction costFunction_;
-	// Whether to poke values into targets before calling the cost function
-	bool pokeBeforeCost_;
-	// Pointers to double values to be fit
-	Array<double*> targets_;
-	// Local values for fitting
-	Array<double> values_;
+	// Maximum step size
+	double maxStep_;
+	// Print level
+	int printLevel_;
+
+	private:
+	// Perform minimisation
+	double execute(Array<double>& values, double tolerance)
+	{
+		return praxis(tolerance, maxStep_, values, printLevel_);
+	}
+
+	public:
+	// Set maximum step size
+	void setMaxStep(double step)
+	{
+		maxStep_ = step;
+	}
+	// Set print level
+	void setPrintLevel(int level)
+	{
+		printLevel_ = level;
+	}
+
+
+	/*
+	 * Algorithm
+	 *
+	 * *** RETRIEVED FROM http://people.sc.fsu.edu/~jburkardt/cpp_src/praxis/praxis.html ON 18/01/2017 ***
+	 * *** CLASSified BY T.YOUNGS ***
+	 * Changes:
+	 *   - Removed r8_min, r8_max, and r8_epsilon and replaced with C++ builtins.
+	 *   - Inner loop now runs from 1 <= k <= nAlpha - the original implementation demanded at least two alpha values in the function.
+	 *
+	 * PRAXIS is a C++ library which minimizes a scalar function of a vector argument, without needing derivative information, by Richard Brent.
+	 *
+	 * PRAXIS seeks an M-dimensional point X which minimizes a given scalar function F(X).
+	 * The code is a refinement of Powell's method of conjugate search directions.
+	 * The user does not need to supply the partial derivatives of the function F(X).
+	 * In fact, the function F(X) need not be smoothly differentiable.
+	 *
+	 * Licensing:
+	 *
+	 * The computer code and data files described and made available on the above web page are distributed under the GNU LGPL license.
+	 *
+	 * Reference:
+	 *
+	 *   Richard Brent,
+	 *   Algorithms for Minimization without Derivatives,
+	 *   Dover, 2002,
+	 *   ISBN: 0-486-41998-3,
+	 *   LC: QA402.5.B74.
+	 */
 
 	private:
 	//****************************************************************************80
 	
-	double flin ( const Array<double> alpha, int jsearch, double l, PrAxisCostFunction f, 
-		int &nf, double v[], double q0[], double q1[], double &qd0, 
+	double flin ( const Array<double> alpha, int jsearch, double l,
+		int &nf, double v[], double q0[], double q1[], double &qd0,
 		double &qd1, double &qa, double &qb, double &qc )
 	
 	//****************************************************************************80
@@ -106,7 +146,7 @@ template <class T> class PrAxis
 	//    If JSEARCH is -1, then the search is parabolic, based on X, Q0 and Q1.
 	//
 	//    Input, double L, is the parameter determining the particular
-	//    point at which F is to be evaluated.  
+	//    point at which F is to be evaluated.
 	//    For a linear search, L is the step size.
 	//    For a quadratic search, L is a parameter which specifies
 	//    a point in the plane of X, Q0 and Q1.
@@ -117,19 +157,19 @@ template <class T> class PrAxis
 	//
 	//    Input/output, int &NF, the function evaluation counter.
 	//
-	//    Input, double V[N,N], a matrix whose columns constitute 
+	//    Input, double V[N,N], a matrix whose columns constitute
 	//    search directions.
 	//
 	//    Input, double Q0[N], Q1[N], two auxiliary points used to
 	//    determine the plane when a quadratic search is performed.
 	//
-	//    Input, double &QD0, &QD1, values needed to compute the 
+	//    Input, double &QD0, &QD1, values needed to compute the
 	//    coefficients QA, QB, QC.
 	//
 	//    Output, double &QA, &QB, &QC, coefficients used to combine
 	//    Q0, X, and A1 if a quadratic search is used.
 	//
-	//    Output, double FLIN, the value of the function at the 
+	//    Output, double FLIN, the value of the function at the
 	//    minimizing point.
 	//
 	{
@@ -170,8 +210,7 @@ template <class T> class PrAxis
 	//
 	//  Evaluate the function.
 	//
-		if (pokeBeforeCost_) pokeValues(t);
-		value = (object_.*f) ( t );
+		value = MinimiserBase<T>::cost(t);
 	
 		return value;
 	}
@@ -219,7 +258,7 @@ template <class T> class PrAxis
 	//    Volume II, Linear Algebra, Part 2,
 	//    Springer Verlag, 1971.
 	//
-	//    Brian Smith, James Boyle, Jack Dongarra, Burton Garbow, Yasuhiko Ikebe, 
+	//    Brian Smith, James Boyle, Jack Dongarra, Burton Garbow, Yasuhiko Ikebe,
 	//    Virginia Klema, Cleve Moler,
 	//    Matrix Eigensystem Routines, EISPACK Guide,
 	//    Lecture Notes in Computer Science, Volume 6,
@@ -319,7 +358,7 @@ template <class T> class PrAxis
 					{
 						a[ii-1+(j-1)*n] = a[ii-1+(j-1)*n] + f * a[ii-1+(i-1)*n];
 					}
-				} 
+				}
 			}
 	
 			q[i-1] = g;
@@ -602,10 +641,10 @@ template <class T> class PrAxis
 	}
 	//****************************************************************************80
 	
-	void minny ( Array<double>& alpha, int jsearch, int nits, double &d2, double &x1, double &f1, 
-		bool fk, PrAxisCostFunction f, double t, double h, 
-		double v[], double q0[], double q1[], int &nl, int &nf, double dmin, 
-		double ldt, double &fx, double &qa, double &qb, double &qc, double &qd0, 
+	void minny ( Array<double>& alpha, int jsearch, int nits, double &d2, double &x1, double &f1,
+		bool fk, double t, double h,
+		double v[], double q0[], double q1[], int &nl, int &nf, double dmin,
+		double ldt, double &fx, double &qa, double &qb, double &qc, double &qd0,
 		double &qd1 )
 	
 	//****************************************************************************80
@@ -616,7 +655,7 @@ template <class T> class PrAxis
 	//
 	//  Discussion:
 	//
-	//    MINNY minimizes F along the line from X in the direction V(*,JSEARCH) 
+	//    MINNY minimizes F along the line from X in the direction V(*,JSEARCH)
 	//    or else using a quadratic search in the plane defined by Q0, Q1 and X.
 	//
 	//    If FK = true, then F1 is FLIN(X1).  Otherwise X1 and F1 are ignored
@@ -650,22 +689,22 @@ template <class T> class PrAxis
 	//    If J is a legal columnindex, linear search in the direction of V(*,JSEARCH).
 	//    Otherwise, the search is parabolic, based on X, Q0 and Q1.
 	//
-	//    Input, int NITS, the maximum number of times the interval 
+	//    Input, int NITS, the maximum number of times the interval
 	//    may be halved to retry the calculation.
 	//
-	//    Input/output, double &D2, is either zero, or an approximation to 
+	//    Input/output, double &D2, is either zero, or an approximation to
 	//    the value of (1/2) times the second derivative of F.
 	//
-	//    Input/output, double &X1, on entry, an estimate of the 
-	//    distance from X to the minimum along V(*,JSEARCH), or a curve.  
+	//    Input/output, double &X1, on entry, an estimate of the
+	//    distance from X to the minimum along V(*,JSEARCH), or a curve.
 	//    On output, the distance between X and the minimizer that was found.
 	//
 	//    Input/output, double &F1, ?
 	//
-	//    Input, bool FK; if FK is TRUE, then on input F1 contains 
+	//    Input, bool FK; if FK is TRUE, then on input F1 contains
 	//    the value FLIN(X1).
 	//
-	//    Input, double F ( double X[], int N ), is the name of the function to 
+	//    Input, double F ( double X[], int N ), is the name of the function to
 	//    be minimized.
 	//
 	//    Input/output, double X[N], ?
@@ -770,7 +809,7 @@ template <class T> class PrAxis
 			}
 	
 			x1 = temp * t2;
-			f1 = flin ( alpha, jsearch, x1, f, nf, v, q0, q1, qd0, qd1, qa, qb, qc );
+			f1 = flin ( alpha, jsearch, x1, nf, v, q0, q1, qd0, qd1, qa, qb, qc );
 		}
 	
 		if ( f1 <= fm )
@@ -794,7 +833,7 @@ template <class T> class PrAxis
 					x2 = - x1;
 				}
 	
-				f2 = flin ( alpha, jsearch, x2, f, nf, v, q0, q1, qd0, qd1, qa, qb, qc );
+				f2 = flin ( alpha, jsearch, x2, nf, v, q0, q1, qd0, qd1, qa, qb, qc );
 	
 				if ( f2 <= fm )
 				{
@@ -847,7 +886,7 @@ template <class T> class PrAxis
 	
 			for ( ; ; )
 			{
-				f2 = flin ( alpha, jsearch, x2, f, nf, v, q0, q1, qd0, qd1, qa, qb, qc );
+				f2 = flin ( alpha, jsearch, x2, nf, v, q0, q1, qd0, qd1, qa, qb, qc );
 	
 				if ( nits <= k || f2 <= f0 )
 				{
@@ -887,7 +926,7 @@ template <class T> class PrAxis
 	//
 		if ( small < fabs ( x2 * ( x2 - x1 ) ) )
 		{
-			d2 = ( x2 * ( f1 - f0 ) - x1 * ( fm - f0 ) ) 
+			d2 = ( x2 * ( f1 - f0 ) - x1 * ( fm - f0 ) )
 				/ ( ( x1 * x2 ) * ( x1 - x2 ) );
 		}
 		else
@@ -959,13 +998,13 @@ template <class T> class PrAxis
 	//
 	//    Input, int PRIN, the user-specifed print level.
 	//    0, nothing is printed.
-	//    1, F is printed after every n+1 or n+2 linear minimizations.  
-	//       final X is printed, but intermediate X is printed only 
+	//    1, F is printed after every n+1 or n+2 linear minimizations.
+	//       final X is printed, but intermediate X is printed only
 	//       if N is at most 4.
-	//    2, the scale factors and the principal values of the approximating 
+	//    2, the scale factors and the principal values of the approximating
 	//       quadratic form are also printed.
 	//    3, X is also printed after every few linear minimizations.
-	//    4, the principal vectors of the approximating quadratic form are 
+	//    4, the principal vectors of the approximating quadratic form are
 	//       also printed.
 	//
 	//    Input, double FX, the smallest value of F(X) found so far.
@@ -988,9 +1027,9 @@ template <class T> class PrAxis
 	}
 	//****************************************************************************80
 	
-	void quad ( Array<double>& alpha, PrAxisCostFunction f, double t, 
-		double h, double v[], double q0[], double q1[], int &nl, int &nf, double dmin, 
-		double ldt, double &fx, double &qf1, double &qa, double &qb, double &qc, 
+	void quad ( Array<double>& alpha, double t,
+		double h, double v[], double q0[], double q1[], int &nl, int &nf, double dmin,
+		double ldt, double &fx, double &qf1, double &qa, double &qb, double &qc,
 		double &qd0, double &qd1 )
 	
 	//****************************************************************************80
@@ -1028,7 +1067,7 @@ template <class T> class PrAxis
 	//
 	//    Input, int N, the number of variables.
 	//
-	//    Input, double F ( double X[], int N ), the name of the function to 
+	//    Input, double F ( double X[], int N ), the name of the function to
 	//    be minimized.
 	//
 	//    Input/output, double X[N], ?
@@ -1100,7 +1139,7 @@ template <class T> class PrAxis
 			value = qf1;
 			fk = true;
 	
-			minny ( alpha, jsearch, nits, s, l, value, fk, f, t, 
+			minny ( alpha, jsearch, nits, s, l, value, fk, t,
 				h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1 );
 	
 			qa =                 l * ( l - qd1 )       / ( qd0 + qd1 ) / qd0;
@@ -1209,7 +1248,7 @@ template <class T> class PrAxis
 	//
 	//  Licensing:
 	//
-	//    This code is distributed under the GNU LGPL license. 
+	//    This code is distributed under the GNU LGPL license.
 	//
 	//  Modified:
 	//
@@ -1253,7 +1292,7 @@ template <class T> class PrAxis
 	//    Input/output, int &SEED, the "seed" value.  Normally, this
 	//    value should not be 0.  On output, SEED has been updated.
 	//
-	//    Output, double R8_UNIFORM_01, a new pseudorandom variate, 
+	//    Output, double R8_UNIFORM_01, a new pseudorandom variate,
 	//    strictly between 0 and 1.
 	//
 	{
@@ -1736,7 +1775,7 @@ template <class T> class PrAxis
 	}
 	//****************************************************************************80
 	
-	void svsort ( int n, double d[], double v[] ) 
+	void svsort ( int n, double d[], double v[] )
 	
 	//****************************************************************************80
 	//
@@ -1775,10 +1814,10 @@ template <class T> class PrAxis
 	//
 	//    Input, int N, the length of D, and the order of V.
 	//
-	//    Input/output, double D[N], the vector to be sorted.  
+	//    Input/output, double D[N], the vector to be sorted. 
 	//    On output, the entries of D are in descending order.
 	//
-	//    Input/output, double V[N,N], an N by N array to be adjusted 
+	//    Input/output, double V[N,N], an N by N array to be adjusted
 	//    as D is sorted.  In particular, if the value that was in D(I) on input is
 	//    moved to D(J) on output, then the input column V(*,I) is moved to
 	//    the output column V(*,J).
@@ -1826,7 +1865,7 @@ template <class T> class PrAxis
 
 	//****************************************************************************80
 
-	double praxis ( double t0, double h0, Array<double>& x, int prin, PrAxisCostFunction f )
+	double praxis ( double t0, double h0, Array<double>& x, int prin)
 
 	//****************************************************************************80
 	//
@@ -1844,14 +1883,14 @@ template <class T> class PrAxis
 	//
 	//      Q(x") = F(x,n) + (1/2) * (x"-x)" * A * (x"-x)
 	//
-	//    where X is the best estimate of the minimum and 
+	//    where X is the best estimate of the minimum and
 	//
 	//      A = inverse(V") * D * inverse(V)
 	//
-	//    V(*,*) is the matrix of search directions; 
-	//    D(*) is the array of second differences.  
+	//    V(*,*) is the matrix of search directions;
+	//    D(*) is the array of second differences. 
 	//
-	//    If F(X) has continuous second derivatives near X0, then A will tend 
+	//    If F(X) has continuous second derivatives near X0, then A will tend
 	//    to the hessian of F at X0 as X approaches X0.
 	//
 	//  Licensing:
@@ -1876,12 +1915,12 @@ template <class T> class PrAxis
 	//
 	//  Parameters:
 	//
-	//    Input, double T0, is a tolerance.  PRAXIS attempts to return 
+	//    Input, double T0, is a tolerance.  PRAXIS attempts to return
 	//    praxis = f(x) such that if X0 is the true local minimum near X, then
 	//    norm ( x - x0 ) < T0 + sqrt ( EPSILON ( X ) ) * norm ( X ),
 	//    where EPSILON ( X ) is the machine precision for X.
 	//
-	//    Input, double H0, is the maximum step size.  H0 should be 
+	//    Input, double H0, is the maximum step size.  H0 should be
 	//    set to about the maximum distance from the initial guess to the minimum.
 	//    If H0 is set too large or too small, the initial rate of
 	//    convergence may be slow.
@@ -1890,13 +1929,13 @@ template <class T> class PrAxis
 	//
 	//    Input, int PRIN, controls printing intermediate results.
 	//    0, nothing is printed.
-	//    1, F is printed after every n+1 or n+2 linear minimizations.  
-	//       final X is printed, but intermediate X is printed only 
+	//    1, F is printed after every n+1 or n+2 linear minimizations. 
+	//       final X is printed, but intermediate X is printed only
 	//       if N is at most 4.
-	//    2, the scale factors and the principal values of the approximating 
+	//    2, the scale factors and the principal values of the approximating
 	//       quadratic form are also printed.
 	//    3, X is also printed after every few linear minimizations.
-	//    4, the principal vectors of the approximating quadratic form are 
+	//    4, the principal vectors of the approximating quadratic form are
 	//       also printed.
 	//
 	//    Input/output, double X[N], is an array containing on entry a
@@ -2025,8 +2064,7 @@ template <class T> class PrAxis
 		nl = 0;
 		nf = 1;
 
-		if (pokeBeforeCost_) pokeValues(x);
-		fx = (object_.*f) ( x );
+		fx = MinimiserBase<T>::cost(x);
 
 		qf1 = fx;
 		t = small + fabs ( t0 );
@@ -2080,7 +2118,7 @@ template <class T> class PrAxis
 			value = fx;
 			fk = false;
 	
-			minny ( x, jsearch, nits, d2, s, value, fk, f, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1 );
+			minny ( x, jsearch, nits, d2, s, value, fk, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1 );
 	
 			d[0] = d2;
 	
@@ -2133,8 +2171,7 @@ template <class T> class PrAxis
 							}
 						}
 	
-						if (pokeBeforeCost_) pokeValues(x);
-						fx = (object_.*f) ( x );
+						fx = MinimiserBase<T>::cost(x);
 						nf = nf + 1;
 					}
 	//
@@ -2151,7 +2188,7 @@ template <class T> class PrAxis
 						value = fx;
 						fk = false;
 	
-						minny ( x, jsearch, nits, d2, s, value, fk, f, t, 
+						minny ( x, jsearch, nits, d2, s, value, fk, t,
 							h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1 );
 	
 						d[k2-1] = d2;
@@ -2203,12 +2240,12 @@ template <class T> class PrAxis
 					value = fx;
 					fk = false;
 	
-					minny ( x, jsearch, nits, d2, s, value, fk, f, t, 
+					minny ( x, jsearch, nits, d2, s, value, fk, t,
 						h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1 );
 	
 					d[k2-1] = d2;
 				}
-	 
+	
 				f1 = fx;
 				fx = sf;
 	
@@ -2253,7 +2290,7 @@ template <class T> class PrAxis
 					value = f1;
 					fk = true;
 	
-					minny ( x, jsearch, nits, d2, lds, value, fk, f, t, 
+					minny ( x, jsearch, nits, d2, lds, value, fk, t,
 						h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1 );
 	
 					d[k-1] = d2;
@@ -2312,13 +2349,13 @@ template <class T> class PrAxis
 	//
 	//  Try quadratic extrapolation in case we are in a curved valley.
 	//
-			quad ( x, f, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qf1, qa, qb, qc, qd0, qd1 );
+			quad ( x, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qf1, qa, qb, qc, qd0, qd1 );
 	
 			for ( j = 0; j < nAlpha; j++ )
 			{
 				d[j] = 1.0 / sqrt ( d[j] );
 			}
-	 
+	
 			dn = r8vec_max ( nAlpha, d );
 	
 			if ( 3 < prin )
@@ -2454,7 +2491,7 @@ template <class T> class PrAxis
 				if ( 1.0 < scbd )
 				{
 					r8vec_print ( nAlpha, z, "  The scale factors:" );
-				} 
+				}
 				r8vec_print ( nAlpha, d, "  Principal values of the quadratic form:" );
 			}
 	
@@ -2483,51 +2520,6 @@ template <class T> class PrAxis
 		delete [] z;
 	
 		return fx;
-	}
-
-	public:
-	// Add reference to double value to be fit
-	void addTarget(double& var)
-	{
-		targets_.add(&var);
-		values_.add(var);
-	}
-	// Add array of pointers to targets
-	void addTargets(Array<double*> vars)
-	{
-		for (int n=0; n<vars.nItems(); ++n)
-		{
-			targets_.add(vars[n]);
-			values_.add(*vars[n]);
-		}
-	}
-	// Set whether to poke values before assessing cost
-	void setPokeBeforeCost(bool b)
-	{
-		pokeBeforeCost_ = b;
-	}
-	// Poke current test values into their original variables
-	void pokeValues(const Array<double>& values)
-	{
-		for (int n=0; n<targets_.nItems(); ++n) (*targets_[n]) = values.constAt(n);
-	}
-	// Perform minimisation
-	double minimise(double tolerance = 1.0e-5, double maxStep = 0.01, int printLevel = 0)
-	{
-		// Check for zero variable parameters
-		if (values_.nItems() == 0)
-		{
-			Messenger::warn("No variables specified for fitting in PrAxis::minimise(), so nothing to do.\n");
-			return 0.0;
-		}
-
-		// Minimise the function
-		double value = praxis(tolerance, maxStep, values_, printLevel, costFunction_);
-
-		// Set minimised values back into their original variables
-		pokeValues(values_);
-	
-		return value;
 	}
 };
 

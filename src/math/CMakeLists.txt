@@ -48,6 +48,7 @@ add_library(math
   matrix3.h
   matrix4.h
   mc.h
+  minimiser.h
   pairbroadeningfunction.h
   plottable.h
   poissonfit.h

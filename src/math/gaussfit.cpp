@@ -362,7 +362,8 @@ double GaussFit::constructReal(double requiredError, int maxGaussians)
 				gaussMinimiser.addTarget(trialA);
 				gaussMinimiser.addTarget(trialFWHM);
 				gaussMinimiser.addTarget(trialX);
-				double trialError = gaussMinimiser.minimise(0.01, 0.1);
+				gaussMinimiser.setMaxStep(0.1);
+				double trialError = gaussMinimiser.minimise(0.01);
 
 				// Sanity check fitted parameters before we (potentially) accept the new function
 				if (fabs(trialA) < 1.0e-4)
