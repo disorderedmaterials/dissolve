@@ -24,6 +24,7 @@
 #include "classes/atomtype.h"
 #include "classes/braggpeak.h"
 #include "math/histogram1d.h"
+#include "math/pairbroadeningfunction.h"
 #include "classes/kvector.h"
 #include "classes/partialset.h"
 #include "classes/weights.h"
@@ -116,6 +117,7 @@ void Dissolve::registerGenericItems()
 	GenericItem::addItemClass(new GenericItemContainer<Histogram1D>(Histogram1D::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<IsotopologueMix>(IsotopologueMix::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<KVector>(KVector::itemClassName()));
+	GenericItem::addItemClass(new GenericItemContainer<PairBroadeningFunction>(PairBroadeningFunction::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<PartialSet>(PartialSet::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<Weights>(Weights::itemClassName()));
 }
