@@ -47,6 +47,12 @@ int Element::Z() const
 	return Z_;
 }
 
+// Return whether the element is unknown
+bool Element::isUnknown() const
+{
+	return Z_ == 0;
+}
+
 // Return name of element
 const char* Element::name() const
 {

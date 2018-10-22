@@ -55,7 +55,7 @@ bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		Messenger::error("RDF: Invalid averaging scheme '%s' found.\n", keywords_.asString("AveragingScheme"));
 		return false;
 	}
-	const PairBroadeningFunction& intraBroadening = KeywordListHelper<PairBroadeningFunction>::retrieve(keywords_, "IntraBroadening", PairBroadeningFunction());
+	PairBroadeningFunction& intraBroadening = KeywordListHelper<PairBroadeningFunction>::retrieve(keywords_, "IntraBroadening", PairBroadeningFunction());
 	RDFModule::PartialsMethod method = RDFModule::partialsMethod(keywords_.asString("Method"));
 	if (method == RDFModule::nPartialsMethods)
 	{
@@ -71,7 +71,7 @@ bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	if (averaging <= 1) Messenger::print("RDF: No averaging of partials will be performed.\n");
 	else Messenger::print("RDF: Partials will be averaged over %i sets (scheme = %s).\n", averaging, RDFModule::averagingScheme(averagingScheme));
 	if (intraBroadening.function() == PairBroadeningFunction::NoFunction) Messenger::print("RDF: No broadening will be applied to intramolecular g(r).");
-	else Messenger::print("RDF: Broadening to be applied to intramolecular g(r) is %s (%s).", PairBroadeningFunction::functionType(intraBroadening.function()), intraBroadening.parameterSummary().get());
+	else Messenger::print("RDF: Broadening to be applied to intramolecular g(r) is %s.", intraBroadening.summary().get());
 	Messenger::print("RDF: Calculation method is '%s'.\n", RDFModule::partialsMethod(method));
 	Messenger::print("RDF: Save data is %s.\n", DissolveSys::onOff(saveData));
 	Messenger::print("RDF: Degree of smoothing to apply to calculated partial g(r) is %i (%s).\n", smoothing, DissolveSys::onOff(smoothing > 0));

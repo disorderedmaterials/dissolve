@@ -9,6 +9,10 @@
  * The user does not need to supply the partial derivatives of the function F(X).
  * In fact, the function F(X) need not be smoothly differentiable.
  * 
+ * Changes:
+ *   - Removed r8_min, r8_max, and r8_epsilon and replaced with C++ builtins.
+ *   - Inner loop now runs from 1 <= k <= nAlpha - the original implementation demanded at least two alpha values in the function.
+ * 
  * Licensing:
  * 
  * The computer code and data files described and made available on this web page are distributed under the GNU LGPL license.
@@ -28,6 +32,7 @@
 #include "base/messenger.h"
 #include "templates/array.h"
 #include <iomanip>
+#include <limits>
 
 template <class T> class PrAxis
 {
@@ -36,8 +41,9 @@ template <class T> class PrAxis
 
 	public:
 	// Constructor
-	PrAxis<T>(T& object, PrAxisCostFunction func) : object_(object), costFunction_(func)
+	PrAxis<T>(T& object, PrAxisCostFunction func, bool pokeBeforeCost = false) : object_(object), costFunction_(func)
 	{
+		pokeBeforeCost_ = pokeBeforeCost;
 	}
 
 	private:
@@ -45,6 +51,8 @@ template <class T> class PrAxis
 	T& object_;
 	// Pointer to cost function
 	PrAxisCostFunction costFunction_;
+	// Whether to poke values into targets before calling the cost function
+	bool pokeBeforeCost_;
 	// Pointers to double values to be fit
 	Array<double*> targets_;
 	// Local values for fitting
@@ -162,6 +170,7 @@ template <class T> class PrAxis
 	//
 	//  Evaluate the function.
 	//
+		if (pokeBeforeCost_) pokeValues(t);
 		value = (object_.*f) ( t );
 	
 		return value;
@@ -266,7 +275,7 @@ template <class T> class PrAxis
 	
 		e = new double[n];
 	
-		eps = r8_epsilon ( );
+		eps = std::numeric_limits<double>::epsilon();
 		g = 0.0;
 		x = 0.0;
 	
@@ -364,7 +373,7 @@ template <class T> class PrAxis
 	
 			y = fabs ( q[i-1] ) + fabs ( e[i-1] );
 	
-			x = r8_max ( x, y );
+			x = max ( x, y );
 		}
 	//
 	//  Accumulation of right-hand transformations.
@@ -708,7 +717,7 @@ template <class T> class PrAxis
 		double x2;
 		double xm;
 	
-		machep = r8_epsilon ( );
+		machep = std::numeric_limits<double>::epsilon();
 		small = machep * machep;
 		m2 = sqrt ( machep );
 		m4 = sqrt ( m2 );
@@ -740,8 +749,8 @@ template <class T> class PrAxis
 			t2 = s;
 		}
 	
-		t2 = r8_max ( t2, small );
-		t2 = r8_min ( t2, 0.01 * h );
+		t2 = max ( t2, small );
+		t2 = min ( t2, 0.01 * h );
 	
 		if ( fk && f1 <= fm )
 		{
@@ -889,7 +898,7 @@ template <class T> class PrAxis
 			}
 		}
 	
-		d2 = r8_max ( d2, small );
+		d2 = max ( d2, small );
 	
 		x1 = x2;
 		fx = fm;
@@ -1110,45 +1119,7 @@ template <class T> class PrAxis
 	
 		return;
 	}
-	//****************************************************************************80
-	
-	double r8_epsilon ( )
-	
-	//****************************************************************************80
-	//
-	//  Purpose:
-	//
-	//    R8_EPSILON returns the R8 roundoff unit.
-	//
-	//  Discussion:
-	//
-	//    The roundoff unit is a number R which is a power of 2 with the
-	//    property that, to the precision of the computer's arithmetic,
-	//      1 < 1 + R
-	//    but
-	//      1 = ( 1 + R / 2 )
-	//
-	//  Licensing:
-	//
-	//    This code is distributed under the GNU LGPL license.
-	//
-	//  Modified:
-	//
-	//    01 September 2012
-	//
-	//  Author:
-	//
-	//    John Burkardt
-	//
-	//  Parameters:
-	//
-	//    Output, double R8_EPSILON, the R8 round-off unit.
-	//
-	{
-		const double value = 2.220446049250313E-016;
-	
-		return value;
-	}
+
 	//****************************************************************************80
 	
 	double r8_hypot ( double x, double y )
@@ -1206,96 +1177,7 @@ template <class T> class PrAxis
 	
 		return value;
 	}
-	//****************************************************************************80
-	
-	double r8_max ( double x, double y )
-	
-	//****************************************************************************80
-	//
-	//  Purpose:
-	//
-	//    R8_MAX returns the maximum of two R8's.
-	//
-	//  Discussion:
-	//
-	//    The C++ math library provides the function fmax() which is preferred.
-	//
-	//  Licensing:
-	//
-	//    This code is distributed under the GNU LGPL license.
-	//
-	//  Modified:
-	//
-	//    18 August 2004
-	//
-	//  Author:
-	//
-	//    John Burkardt
-	//
-	//  Parameters:
-	//
-	//    Input, double X, Y, the quantities to compare.
-	//
-	//    Output, double R8_MAX, the maximum of X and Y.
-	//
-	{
-		double value;
-	
-		if ( y < x )
-		{
-			value = x;
-		}
-		else
-		{
-			value = y;
-		}
-		return value;
-	}
-	//****************************************************************************80
-	
-	double r8_min ( double x, double y )
-	
-	//****************************************************************************80
-	//
-	//  Purpose:
-	//
-	//    R8_MIN returns the minimum of two R8's.
-	//
-	//  Discussion:
-	//
-	//    The C++ math library provides the function fmin() which is preferred.
-	//
-	//  Licensing:
-	//
-	//    This code is distributed under the GNU LGPL license.
-	//
-	//  Modified:
-	//
-	//    31 August 2004
-	//
-	//  Author:
-	//
-	//    John Burkardt
-	//
-	//  Parameters:
-	//
-	//    Input, double X, Y, the quantities to compare.
-	//
-	//    Output, double R8_MIN, the minimum of X and Y.
-	//
-	{
-		double value;
-	
-		if ( y < x )
-		{
-			value = y;
-		}
-		else
-		{
-			value = x;
-		}
-		return value;
-	}
+
 	//****************************************************************************80
 	
 	double r8_uniform_01 ( int &seed )
@@ -1394,7 +1276,6 @@ template <class T> class PrAxis
 			seed = seed + i4_huge;
 		}
 		r = ( double ) ( seed ) * 4.656612875E-10;
-	
 		return r;
 	}
 	//****************************************************************************80
@@ -2097,17 +1978,17 @@ template <class T> class PrAxis
 	//
 	//  Allocation.
 	//
-		int n = x.nItems();
-		d = new double[n];
-		q0 = new double[n];
-		q1 = new double[n];
-		v = new double[n*n];
-		y = new double[n];
-		z = new double[n];
+		int nAlpha = x.nItems();
+		d = new double[nAlpha];
+		q0 = new double[nAlpha];
+		q1 = new double[nAlpha];
+		v = new double[nAlpha*nAlpha];
+		y = new double[nAlpha];
+		z = new double[nAlpha];
 	//
 	//  Initialization.
 	//
-		machep = r8_epsilon ( );
+		machep = std::numeric_limits<double>::epsilon();
 		small = machep * machep;
 		vsmall = small * small;
 		large = 1.0 / small;
@@ -2143,27 +2024,30 @@ template <class T> class PrAxis
 		kt = 0;
 		nl = 0;
 		nf = 1;
+
+		if (pokeBeforeCost_) pokeValues(x);
 		fx = (object_.*f) ( x );
+
 		qf1 = fx;
 		t = small + fabs ( t0 );
 		t2 = t;
 		dmin = small;
 		h = h0;
-		h = r8_max ( h, 100.0 * t );
+		h = max ( h, 100.0 * t );
 		ldt = h;
 	//
 	//  The initial set of search directions V is the identity matrix.
 	//
-		for ( j = 0; j < n; j++ )
+		for ( j = 0; j < nAlpha; j++ )
 		{
-			for ( i = 0; i < n; i++ )
+			for ( i = 0; i < nAlpha; i++ )
 			{
-				v[i+j*n] = 0.0;
+				v[i+j*nAlpha] = 0.0;
 			}
-			v[j+j*n] = 1.0;
+			v[j+j*nAlpha] = 1.0;
 		}
 	
-		for ( i = 0; i < n; i++ )
+		for ( i = 0; i < nAlpha; i++ )
 		{
 			d[i] = 0.0;
 		}
@@ -2172,12 +2056,12 @@ template <class T> class PrAxis
 		qc = 0.0;
 		qd0 = 0.0;
 		qd1 = 0.0;
-		r8vec_copy ( n, x.array(), q0 );
-		r8vec_copy ( n, x.array(), q1 );
+		r8vec_copy ( nAlpha, x.array(), q0 );
+		r8vec_copy ( nAlpha, x.array(), q1 );
 	
 		if ( 0 < prin )
 		{
-			print2 ( n, x.array(), prin, fx, nf, nl );
+			print2 ( nAlpha, x.array(), prin, fx, nf, nl );
 		}
 	//
 	//  The main loop starts here.
@@ -2196,22 +2080,21 @@ template <class T> class PrAxis
 			value = fx;
 			fk = false;
 	
-			minny ( x, jsearch, nits, d2, s, value, fk, f, t, 
-				h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1 );
+			minny ( x, jsearch, nits, d2, s, value, fk, f, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1 );
 	
 			d[0] = d2;
 	
 			if ( s <= 0.0 )
 			{
-				for ( i = 0; i < n; i++ )
+				for ( i = 0; i < nAlpha; i++ )
 				{
-					v[i+0*n] = - v[i+0*n];
+					v[i+0*nAlpha] = - v[i+0*nAlpha];
 				}
 			}
 	
 			if ( sf <= 0.9 * d[0] || d[0] <= 0.9 * sf )
 			{
-				for ( i = 1; i < n; i++ )
+				for ( i = 1; i < nAlpha; i++ )
 				{
 					d[i] = 0.0;
 				}
@@ -2219,7 +2102,7 @@ template <class T> class PrAxis
 	//
 	//  The inner loop starts here.
 	//
-			for ( k = 2; k <= n; k++ )
+			for ( k = 1; k <= nAlpha; k++ )
 			{
 				r8vec_copy ( x.nItems(), x.array(), y );
 	
@@ -2239,24 +2122,25 @@ template <class T> class PrAxis
 	//
 					if ( illc )
 					{
-						for ( j = 0; j < n; j++ )
+						for ( j = 0; j < nAlpha; j++ )
 						{
 							r = r8_uniform_01 ( seed );
 							s = ( 0.1 * ldt + t2 * pow ( 10.0, kt ) ) * ( r - 0.5 );
 							z[j] = s;
-							for ( i = 0; i < n; i++ )
+							for ( i = 0; i < nAlpha; i++ )
 							{
-								x[i] = x[i] + s * v[i+j*n];
+								x[i] = x[i] + s * v[i+j*nAlpha];
 							}
 						}
 	
+						if (pokeBeforeCost_) pokeValues(x);
 						fx = (object_.*f) ( x );
 						nf = nf + 1;
 					}
 	//
 	//  Minimize along the "non-conjugate" directions V(*,K),...,V(*,N).
 	//
-					for ( k2 = k; k2 <= n; k2++ )
+					for ( k2 = k; k2 <= nAlpha; k2++ )
 					{
 						sl = fx;
 	
@@ -2295,7 +2179,7 @@ template <class T> class PrAxis
 					{
 						break;
 					}
-	
+
 					if ( fabs ( 100.0 * machep * fx ) <= df )
 					{
 						break;
@@ -2305,7 +2189,7 @@ template <class T> class PrAxis
 	
 				if ( k == 2 && 1 < prin )
 				{
-					r8vec_print ( n, d, "  The second difference array:" );
+					r8vec_print ( nAlpha, d, "  The second difference array:" );
 				}
 	//
 	//  Minimize along the "conjugate" directions V(*,1),...,V(*,K-1).
@@ -2328,14 +2212,14 @@ template <class T> class PrAxis
 				f1 = fx;
 				fx = sf;
 	
-				for ( i = 0; i < n; i++ )
+				for ( i = 0; i < nAlpha; i++ )
 				{
 					temp = x[i];
 					x[i] = y[i];
 					y[i] = temp - y[i];
 				}
 				
-				lds = r8vec_norm ( n, y );
+				lds = r8vec_norm ( nAlpha, y );
 	//
 	//  Discard direction V(*,kl).
 	//
@@ -2346,18 +2230,18 @@ template <class T> class PrAxis
 				{
 					for ( j = kl - 1; k <= j; j-- )
 					{
-						for ( i = 1; i <= n; i++ )
+						for ( i = 1; i <= nAlpha; i++ )
 						{
-							v[i-1+j*n] = v[i-1+(j-1)*n];
+							v[i-1+j*nAlpha] = v[i-1+(j-1)*nAlpha];
 						}
 						d[j] = d[j-1];
 					}
 	
 					d[k-1] = 0.0;
 	
-					for ( i = 1; i <= n; i++ )
+					for ( i = 1; i <= nAlpha; i++ )
 					{
-						v[i-1+(k-1)*n] = y[i-1] / lds;
+						v[i-1+(k-1)*nAlpha] = y[i-1] / lds;
 					}
 	//
 	//  Minimize along the new "conjugate" direction V(*,k), which is
@@ -2377,22 +2261,22 @@ template <class T> class PrAxis
 					if ( lds <= 0.0 )
 					{
 						lds = - lds;
-						for ( i = 1; i <= n; i++ )
+						for ( i = 1; i <= nAlpha; i++ )
 						{
-							v[i-1+(k-1)*n] = - v[i-1+(k-1)*n];
+							v[i-1+(k-1)*nAlpha] = - v[i-1+(k-1)*nAlpha];
 						}
 					}
 				}
 	
 				ldt = ldfac * ldt;
-				ldt = r8_max ( ldt, lds );
+				ldt = max ( ldt, lds );
 	
 				if ( 0 < prin )
 				{
-					print2 ( n, x, prin, fx, nf, nl );
+					print2 ( nAlpha, x, prin, fx, nf, nl );
 				}
 	
-				t2 = r8vec_norm ( n, x );
+				t2 = r8vec_norm ( nAlpha, x );
 	
 				t2 = m2 * t2 + t;
 	//
@@ -2410,7 +2294,7 @@ template <class T> class PrAxis
 				{
 					if ( 0 < prin )
 					{
-						r8vec_print ( n, x, "  X:" );
+						r8vec_print ( nAlpha, x, "  X:" );
 					}
 	
 					delete [] d;
@@ -2428,26 +2312,25 @@ template <class T> class PrAxis
 	//
 	//  Try quadratic extrapolation in case we are in a curved valley.
 	//
-			quad ( x, f, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qf1, 
-				qa, qb, qc, qd0, qd1 );
+			quad ( x, f, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qf1, qa, qb, qc, qd0, qd1 );
 	
-			for ( j = 0; j < n; j++ )
+			for ( j = 0; j < nAlpha; j++ )
 			{
 				d[j] = 1.0 / sqrt ( d[j] );
 			}
 	 
-			dn = r8vec_max ( n, d );
+			dn = r8vec_max ( nAlpha, d );
 	
 			if ( 3 < prin )
 			{
-				r8mat_print ( n, n, v, "  The new direction vectors:" );
+				r8mat_print ( nAlpha, nAlpha, v, "  The new direction vectors:" );
 			}
 	
-			for ( j = 0; j < n; j++ )
+			for ( j = 0; j < nAlpha; j++ )
 			{
-				for ( i = 0; i < n; i++ )
+				for ( i = 0; i < nAlpha; i++ )
 				{
-					v[i+j*n] = ( d[j] / dn ) * v[i+j*n];
+					v[i+j*nAlpha] = ( d[j] / dn ) * v[i+j*nAlpha];
 				}
 			}
 	//
@@ -2455,20 +2338,20 @@ template <class T> class PrAxis
 	//
 			if ( 1.0 < scbd )
 			{
-				for ( i = 0; i < n; i++ )
+				for ( i = 0; i < nAlpha; i++ )
 				{
 					s = 0.0;
-					for ( j = 0; j < n; j++ )
+					for ( j = 0; j < nAlpha; j++ )
 					{
-						s = s + v[i+j*n] * v[i+j*n];
+						s = s + v[i+j*nAlpha] * v[i+j*nAlpha];
 					}
 					s = sqrt ( s );
-					z[i] = r8_max ( m4, s );
+					z[i] = max ( m4, s );
 				}
 	
-				s = r8vec_min ( n, z );
+				s = r8vec_min ( nAlpha, z );
 	
-				for ( i = 0; i < n; i++ )
+				for ( i = 0; i < nAlpha; i++ )
 				{
 					sl = s / z[i];
 					z[i] = 1.0 / sl;
@@ -2478,9 +2361,9 @@ template <class T> class PrAxis
 						sl = 1.0 / scbd;
 						z[i] = scbd;
 					}
-					for ( j = 0; j < n; j++ )
+					for ( j = 0; j < nAlpha; j++ )
 					{
-						v[i+j*n] = sl * v[i+j*n];
+						v[i+j*nAlpha] = sl * v[i+j*nAlpha];
 					}
 				}
 			}
@@ -2490,45 +2373,45 @@ template <class T> class PrAxis
 	//
 	//  Transpose V for MINFIT:
 	//
-			r8mat_transpose_in_place ( n, v );
+			r8mat_transpose_in_place ( nAlpha, v );
 	//
 	//  MINFIT finds the singular value decomposition of V.
 	//
 	//  This gives the principal values and principal directions of the
 	//  approximating quadratic form without squaring the condition number.
 	//
-			minfit ( n, vsmall, v, d );
+			minfit ( nAlpha, vsmall, v, d );
 	//
 	//  Unscale the axes.
 	//
 			if ( 1.0 < scbd )
 			{
-				for ( i = 0; i < n; i++ )
+				for ( i = 0; i < nAlpha; i++ )
 				{
-					for ( j = 0; j < n; j++ )
+					for ( j = 0; j < nAlpha; j++ )
 					{
-						v[i+j*n] = z[i] * v[i+j*n];
+						v[i+j*nAlpha] = z[i] * v[i+j*nAlpha];
 					}
 				}
 	
-				for ( j = 0; j < n; j++ )
+				for ( j = 0; j < nAlpha; j++ )
 				{
 					s = 0.0;
-					for ( i = 0; i < n; i++ )
+					for ( i = 0; i < nAlpha; i++ )
 					{
-						s = s + v[i+j*n] * v[i+j*n];
+						s = s + v[i+j*nAlpha] * v[i+j*nAlpha];
 					}
 					s = sqrt ( s );
 	
 					d[j] = s * d[j];
-					for ( i = 0; i < n; i++ )
+					for ( i = 0; i < nAlpha; i++ )
 					{
-						v[i+j*n] = v[i+j*n] / s;
+						v[i+j*nAlpha] = v[i+j*nAlpha] / s;
 					}
 				}
 			}
 	
-			for ( i = 0; i < n; i++ )
+			for ( i = 0; i < nAlpha; i++ )
 			{
 				dni = dn * d[i];
 	
@@ -2548,11 +2431,11 @@ template <class T> class PrAxis
 	//
 	//  Sort the eigenvalues and eigenvectors.
 	//
-			svsort ( n, d, v );
+			svsort ( nAlpha, d, v );
 	//
 	//  Determine the smallest eigenvalue.
 	//
-			dmin = r8_max ( d[n-1], small );
+			dmin = max ( d[nAlpha-1], small );
 	//
 	//  The ratio of the smallest to largest eigenvalue determines whether
 	//  the system is ill conditioned.
@@ -2570,15 +2453,16 @@ template <class T> class PrAxis
 			{
 				if ( 1.0 < scbd )
 				{
-					r8vec_print ( n, z, "  The scale factors:" );
+					r8vec_print ( nAlpha, z, "  The scale factors:" );
 				} 
-				r8vec_print ( n, d, "  Principal values of the quadratic form:" );
+				r8vec_print ( nAlpha, d, "  Principal values of the quadratic form:" );
 			}
 	
 			if ( 3 < prin )
 			{
-				r8mat_print ( n, n, v, "  The principal axes:" );
+				r8mat_print ( nAlpha, nAlpha, v, "  The principal axes:" );
 			}
+
 	//
 	//  The main loop ends here.
 	//
@@ -2586,7 +2470,7 @@ template <class T> class PrAxis
 	
 		if ( 0 < prin )
 		{
-			r8vec_print ( n, x, "  X:" );
+			r8vec_print ( nAlpha, x, "  X:" );
 		}
 	//
 	//  Free memory.
@@ -2602,19 +2486,46 @@ template <class T> class PrAxis
 	}
 
 	public:
-	// Add pointer to double value to be fit
+	// Add reference to double value to be fit
 	void addTarget(double& var)
 	{
 		targets_.add(&var);
 		values_.add(var);
 	}
+	// Add array of pointers to targets
+	void addTargets(Array<double*> vars)
+	{
+		for (int n=0; n<vars.nItems(); ++n)
+		{
+			targets_.add(vars[n]);
+			values_.add(*vars[n]);
+		}
+	}
+	// Set whether to poke values before assessing cost
+	void setPokeBeforeCost(bool b)
+	{
+		pokeBeforeCost_ = b;
+	}
+	// Poke current test values into their original variables
+	void pokeValues(const Array<double>& values)
+	{
+		for (int n=0; n<targets_.nItems(); ++n) (*targets_[n]) = values.constAt(n);
+	}
 	// Perform minimisation
 	double minimise(double tolerance = 1.0e-5, double maxStep = 0.01, int printLevel = 0)
 	{
+		// Check for zero variable parameters
+		if (values_.nItems() == 0)
+		{
+			Messenger::warn("No variables specified for fitting in PrAxis::minimise(), so nothing to do.\n");
+			return 0.0;
+		}
+
+		// Minimise the function
 		double value = praxis(tolerance, maxStep, values_, printLevel, costFunction_);
 
 		// Set minimised values back into their original variables
-		for (int n=0; n<targets_.nItems(); ++n) (*targets_[n]) = values_[n];
+		pokeValues(values_);
 	
 		return value;
 	}

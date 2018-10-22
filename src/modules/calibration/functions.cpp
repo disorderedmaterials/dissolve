@@ -46,20 +46,8 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(const Array<double>& 
 	RefListIterator<Module,bool> rdfModuleIterator(intraBroadeningModules_);
 	while (Module* rdfModule = rdfModuleIterator.iterate())
 	{
-		// Retrieve the PairBroadeningFunction
+		// Retrieve the PairBroadeningFunction - new test values will already have been set (pokeBeforeCost = true)
 		PairBroadeningFunction& broadening = KeywordListHelper<PairBroadeningFunction>::retrieve(rdfModule->keywords(), "IntraBroadening", PairBroadeningFunction());
-
-		// Set its parameters from the alpha array
-		for (int n=0; n<broadening.nParameters(); ++n)
-		{
-			if (alphaIndex >= nAlpha)
-			{
-				Messenger::error("Parameters required by BroadeningFunctions exceeds number available in alpha array.\n");
-				return 100.0;
-			}
-			broadening.parameters()[n] = alpha.constAt(alphaIndex);
-			++alphaIndex;
-		}
 
 		// Recalculate the UnweightedGR for all Configurations targeted by the RDFModule
 		int smoothing = rdfModule->keywords().asInt("Smoothing");
@@ -96,14 +84,14 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(const Array<double>& 
 			// Grab WeightedSQ and ReferenceData and compare
 			const PartialSet& weightedSQ = GenericListHelper<PartialSet>::value(dissolve_.processingModuleData(), "WeightedSQ", module->uniqueName());
 			const Data1D& referenceData = GenericListHelper<Data1D>::value(dissolve_.processingModuleData(), "ReferenceData", module->uniqueName());
-			totalError += Error::percent(weightedSQ.constTotal(), referenceData);
+			totalError += Error::rmse(weightedSQ.constTotal(), referenceData, true);
 		}
 		if ((target == CalibrationModule::IntraBroadeningTargetBoth) || (target == CalibrationModule::IntraBroadeningTargetGR))
 		{
 			// Grab WeightedGR and ReferenceDataFT and compare
 			const PartialSet& weightedGR = GenericListHelper<PartialSet>::value(dissolve_.processingModuleData(), "WeightedGR", module->uniqueName());
 			const Data1D& referenceDataFT = GenericListHelper<Data1D>::value(dissolve_.processingModuleData(), "ReferenceDataFT", module->uniqueName());
-			totalError += Error::percent(weightedGR.constTotal(), referenceDataFT);
+			totalError += Error::rmse(weightedGR.constTotal(), referenceDataFT, true);
 		}
 	}
 

@@ -403,7 +403,7 @@ void ProcessPool::determineMaxProcessGroups(const Vec3<int>& divisions, const Ve
 	// Maximum number of groups possible is the number of processes available, but we want all groups to contain the same number
 	// of processes...
 	while (worldRanks_.nItems()%maxProcessGroups_ != 0) --maxProcessGroups_;
-	
+
 	Messenger::print("Processes will be divided into %i groups.\n", maxProcessGroups_);
 #endif
 }
@@ -470,7 +470,7 @@ bool ProcessPool::assignProcessesToGroups()
 				// Is this us, the master process?
 				if (prank == poolRank_) leader = groupLeader();
 				else if (!receive(leader, prank)) return false;
-				
+
 				// Is this process the leader?
 				if (leader)
 				{
@@ -749,7 +749,7 @@ int ProcessPool::twoBodyLoopStart(int nItems) const
 		// Update startAtom
 		startAtom = finishAtom+1;
 	}
-	
+
 	return -1;
 }
 
@@ -781,7 +781,7 @@ int ProcessPool::twoBodyLoopEnd(int nItems) const
 			return finishAtom;
 		}
 	}
-	
+
 	return -1;
 }
 
@@ -949,13 +949,13 @@ bool ProcessPool::broadcast(CharString& source, int rootRank, ProcessPool::Commu
 #ifdef PARALLEL
 	timer_.start();
 	static char buffer[4096];
-	
+
 	// Get length of string, and make a local copy to avoid the const-ness of CharString.get().
 	if (poolRank_ == rootRank) strcpy(buffer, source.get());
 
 	// Broadcast data
 	if (!broadcast(buffer, rootRank, commType)) return false;
-	
+
 	if (isSlave()) source = buffer;
 	timer_.accumulate();
 #endif
@@ -977,7 +977,7 @@ bool ProcessPool::broadcast(char* source, int rootRank, ProcessPool::Communicato
 			Messenger::print("Failed to broadcast char length data from root rank %i.\n", rootRank);
 			return false;
 		}
-		
+
 		// Now broadcast character data
 		if (MPI_Bcast(source, length, MPI_CHARACTER, rootRank, communicator(commType)) != MPI_SUCCESS)
 		{
@@ -994,7 +994,7 @@ bool ProcessPool::broadcast(char* source, int rootRank, ProcessPool::Communicato
 			Messenger::print("Slave %i (world rank %i) failed to receive char length data from root rank %i.\n", poolRank_, worldRank_, rootRank);
 			return false;
 		}
-		
+
 		if (MPI_Bcast(source, length, MPI_CHARACTER, rootRank, communicator(commType)) != MPI_SUCCESS)
 		{
 			Messenger::print("Slave %i (world rank %i) failed to receive char data from root rank %i.\n", poolRank_, worldRank_, rootRank);
@@ -1566,7 +1566,7 @@ bool ProcessPool::broadcast(Array2D<double>& array, int rootRank, ProcessPool::C
 			Messenger::print("Failed to broadcast Array2D<double> half-diagonal status from root rank %i.\n", rootRank);
 			return false;
 		}
-		
+
 		// Now broadcast Array data
 		if ((nRows*nColumns) > 0)
 		{
@@ -1603,6 +1603,83 @@ bool ProcessPool::broadcast(Array2D<double>& array, int rootRank, ProcessPool::C
 			if (MPI_Bcast(array.linearArray(), array.linearArraySize(), MPI_DOUBLE, rootRank, communicator(commType)) != MPI_SUCCESS)
 			{
 				Messenger::print("Slave %i (world rank %i) failed to receive ArrayD<double> data from root rank %i.\n", poolRank_, worldRank_, rootRank);
+				return false;
+			}
+		}
+		else array.clear();
+	}
+
+	timer_.accumulate();
+#endif
+	return true;
+}
+
+// Broadcast Array2D<bool>
+bool ProcessPool::broadcast(Array2D<bool>& array, int rootRank, ProcessPool::CommunicatorType commType)
+{
+#ifdef PARALLEL
+	timer_.start();
+
+	int nRows, nColumns;
+	bool half;
+	if (poolRank_ == rootRank)
+	{
+		// Broadcast array size first...
+		nRows = array.nRows();
+		if (!broadcast(nRows, rootRank))
+		{
+			Messenger::print("Failed to broadcast Array2D<bool> nRows from root rank %i.\n", rootRank);
+			return false;
+		}
+		nColumns = array.nColumns();
+		if (!broadcast(nColumns, rootRank))
+		{
+			Messenger::print("Failed to broadcast Array2D<bool> nColmnns from root rank %i.\n", rootRank);
+			return false;
+		}
+		half = array.halved();
+		if (!broadcast(half, rootRank))
+		{
+			Messenger::print("Failed to broadcast Array2D<bool> half-diagonal status from root rank %i.\n", rootRank);
+			return false;
+		}
+
+		// Now broadcast Array data
+		if ((nRows*nColumns) > 0)
+		{
+			if (MPI_Bcast(array.linearArray(), array.linearArraySize(), MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
+			{
+				Messenger::print("Failed to broadcast Array2D<bool> data from root rank %i.\n", rootRank);
+				return false;
+			}
+		}
+	}
+	else
+	{
+		// Slaves receive the size, and then create and receive the array
+		if (!broadcast(nRows, rootRank))
+		{
+			Messenger::print("Slave %i (world rank %i) failed to receive Array2D<bool> nRows from root rank %i.\n", poolRank_, worldRank_, rootRank);
+			return false;
+		}
+		if (!broadcast(nColumns, rootRank))
+		{
+			Messenger::print("Slave %i (world rank %i) failed to receive Array2D<bool> nRows from root rank %i.\n", poolRank_, worldRank_, rootRank);
+			return false;
+		}
+		if (!broadcast(half, rootRank))
+		{
+			Messenger::print("Slave %i (world rank %i) failed to receive Array2D<bool> halved status from root rank %i.\n", poolRank_, worldRank_, rootRank);
+			return false;
+		}
+
+		// Resize and receive array
+		array.initialise(nRows, nColumns, half);
+		if ((nRows*nColumns) > 0)
+		{
+			if (MPI_Bcast(array.linearArray(), array.linearArraySize(), MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
+			{
+				Messenger::print("Slave %i (world rank %i) failed to receive ArrayD<bool> data from root rank %i.\n", poolRank_, worldRank_, rootRank);
 				return false;
 			}
 		}
@@ -1838,10 +1915,10 @@ bool ProcessPool::assemble(double* array, int nLocalData, double* rootDest, int 
 		for (int n=0; n<worldRanks_.nItems(); ++n)
 		{
 			if (poolRank_ == n) continue;
-			
+
 			// Get length of data to receive
 			if (!receive(slaveNData, n, commType)) return false;
-			
+
 			// Check buffer length
 			if ((nLocalData + slaveNData) > rootMaxData)
 			{
@@ -1975,7 +2052,7 @@ bool ProcessPool::equality(int i, ProcessPool::CommunicatorType commType)
 		}
 		decideTrue(0, commType);
 	}
-	
+
 #endif
 	return true;
 }
@@ -2004,7 +2081,7 @@ bool ProcessPool::equality(long int i, ProcessPool::CommunicatorType commType)
 		}
 		decideTrue(0, commType);
 	}
-	
+
 #endif
 	return true;
 }
@@ -2034,7 +2111,7 @@ bool ProcessPool::equality(double x, ProcessPool::CommunicatorType commType)
 		}
 		decideTrue(0, commType);
 	}
-	
+
 #endif
 	return true;
 }
@@ -2139,6 +2216,21 @@ bool ProcessPool::equality(Array2D<double> array, ProcessPool::CommunicatorType 
 	return true;
 }
 
+// Check equality of Array2D<bool> across involved processes
+bool ProcessPool::equality(Array2D<bool> array, ProcessPool::CommunicatorType commType)
+{
+#ifdef PARALLEL
+	// Verify array size and state first
+	if (!equality(array.nRows(), commType)) return Messenger::error("Array2D<bool> nRows are not equal (process %i has %i).\n", poolRank_, array.nRows());
+	if (!equality(array.nColumns(), commType)) return Messenger::error("Array2D<bool> nColumns are not equal (process %i has %i).\n", poolRank_, array.nColumns());
+	if (!equality(array.halved(), commType)) return Messenger::error("Array2D<bool> half-status are not equivalent (process %i has %i).\n", poolRank_, array.halved());
+
+	// Keep it simple (and slow) and check/send one value at a time
+	for (int n=0; n<array.linearArraySize(); ++n) if (!equality(array.linearArray()[n], commType)) return Messenger::error("Array2D<bool> value %i is not equivalent (process %i has %i).\n", n, poolRank_, array.linearArray()[n]);
+#endif
+	return true;
+}
+
 /*
  * Buffered Random Numbers
  */
@@ -2149,7 +2241,7 @@ void ProcessPool::refillRandomBuffer()
 #ifdef PARALLEL
 	// Reset index
 	randomBufferIndex_ = 0;
-	
+
 	// Generate new random numbers in array
 	if (randomBufferCommGroup_ == ProcessPool::PoolProcessesCommunicator)
 	{

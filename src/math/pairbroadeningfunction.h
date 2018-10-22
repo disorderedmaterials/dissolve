@@ -25,6 +25,8 @@
 #include "base/charstring.h"
 #include "base/genericitembase.h"
 #include "math/broadeningfunction.h"
+#include "templates/array.h"
+#include "templates/array2d.h"
 
 #define MAXPAIRBROADENINGPARAMS 6
 
@@ -38,19 +40,17 @@ class PairBroadeningFunction : public GenericItemBase
 {
 	public:
 	// Function Types
-	enum FunctionType { NoFunction, GaussianFunction, YoungsA, YoungsB, YoungsC, nFunctionTypes };
+	enum FunctionType { NoFunction, GaussianFunction, GaussianElementPairFunction, nFunctionTypes };
 	// Return FunctionType from supplied string
 	static FunctionType functionType(const char* s);
 	// Return FunctionType name
 	static const char* functionType(FunctionType func);
 	// Return number of parameters needed to define FunctionType
 	static int nFunctionParameters(FunctionType func);
-	// Return description for FunctionType
-	static const char* functionDescription(FunctionType func);
 
 	public:
 	// Constructor
-	PairBroadeningFunction(FunctionType function = NoFunction, double p1 = 0.0, double p2 = 0.0, double p3 = 0.0, double p4 = 0.0, double p5 = 0.0, double p6 = 0.0);
+	PairBroadeningFunction(FunctionType function = NoFunction);
 	// Destructor
 	~PairBroadeningFunction();
 	// Copy Constructor
@@ -65,26 +65,30 @@ class PairBroadeningFunction : public GenericItemBase
 	private:
 	// Function Type
 	FunctionType function_;
-	// Parameters
-	double parameters_[MAXPAIRBROADENINGPARAMS];
+	// Gaussian FWHM parameter
+	double gaussianFWHM_;
+	// Elemental pair Gaussian FWHM parameters
+	Array2D<double> elementPairGaussianFWHM_;
+	// Elemental pair flags (whether a valid value exists)
+	Array2D<bool> elementPairGaussianFlags_;
 
 	public:
+	// Read function data from LineParser source
+	bool readAsKeyword(LineParser& parser, int startArg);
+	// Write function data to LineParser source
+	bool writeAsKeyword(LineParser& parser, const char* prefix);
 	// Set function type
-	void set(FunctionType function, double p1 = 0.0, double p2 = 0.0, double p3 = 0.0, double p4 = 0.0, double p5 = 0.0, double p6 = 0.0);
-	// Set function data from LineParser source
-	bool set(LineParser& parser, int startArg);
+	void setFunction(FunctionType function);
 	// Return function type
 	FunctionType function() const;
-	// Return number of parameters required
-	int nParameters() const;
-	// Return specified parameter
-	double parameter(int index) const;
-	// Return parameters array
-	double* parameters();
-	// Return specified parameter name
-	const char* parameterName(int index) const;
-	// Return short summary of function parameters
-	CharString parameterSummary() const;
+	// Set Gaussian FWHM parameters
+	void setGaussianFWHM(double fwhm);
+	// Return Gaussian FWHM parameter
+	double gaussianFWHM() const;
+	// Return array of pointers to all adjustable parameters
+	Array<double*> parameters();
+	// Return short summary of function and its parameters
+	CharString summary() const;
 	// Return a BroadeningFunction tailored to the specified AtomType pair
 	BroadeningFunction broadeningFunction(AtomType* at1, AtomType* at2);
 
