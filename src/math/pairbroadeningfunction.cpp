@@ -247,10 +247,7 @@ BroadeningFunction PairBroadeningFunction::broadeningFunction(AtomType* at1, Ato
 		case (PairBroadeningFunction::NoFunction):
 			break;
 		case (PairBroadeningFunction::GaussianFunction):
-			/*
-			 * Set up a Gaussian function, using our stored parameter_[0] for the FWHM
-			 * The FWHM is invariant with AtomType.
-			 */
+			// Simple broadening - same FWHM for any AtomType pair
 			result.set(BroadeningFunction::GaussianFunction, gaussianFWHM_);
 			break;
 		case (PairBroadeningFunction::GaussianElementPairFunction):
