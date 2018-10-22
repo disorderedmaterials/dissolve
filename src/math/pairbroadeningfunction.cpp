@@ -151,7 +151,7 @@ bool PairBroadeningFunction::writeAsKeyword(LineParser& parser, const char* pref
 			// Loop again and write the data proper
 			for (int i = 0; i < elementPairGaussianFlags_.nRows(); ++i)
 			{
-				for (int j = 0; j < elementPairGaussianFlags_.nColumns(); ++j)
+				for (int j = i; j < elementPairGaussianFlags_.nColumns(); ++j)
 				{
 					if (elementPairGaussianFlags_.constAt(i, j))
 					{
