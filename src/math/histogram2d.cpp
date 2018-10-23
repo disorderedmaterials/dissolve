@@ -193,6 +193,12 @@ void Histogram2D::bin(double x, double y)
 	++nBinned_;
 }
 
+// Return number of values binned over all bins
+long int Histogram2D::nBinned() const
+{
+	return nBinned_;
+}
+
 // Accumulate current histogram bins into averages
 void Histogram2D::accumulate()
 {

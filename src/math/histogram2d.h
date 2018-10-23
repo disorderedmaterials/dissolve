@@ -107,6 +107,8 @@ class Histogram2D : public ListItem<Histogram2D>, public ObjectStore<Histogram2D
 	int nYBins() const;
 	// Bin specified value
 	void bin(double x, double y);
+	// Return number of values binned over all bins
+	long int nBinned() const;
 	// Accumulate current histogram bins into averages
 	void accumulate();
 	// Return Array of x centre-bin values

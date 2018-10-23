@@ -224,6 +224,12 @@ void Histogram3D::bin(Vec3<double> v)
 	bin(v.x, v.y, v.z);
 }
 
+// Return number of values binned over all bins
+long int Histogram3D::nBinned() const
+{
+	return nBinned_;
+}
+
 // Accumulate current histogram bins into averages
 void Histogram3D::accumulate()
 {

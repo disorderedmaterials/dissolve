@@ -127,6 +127,8 @@ class Histogram3D : public ListItem<Histogram3D>, public ObjectStore<Histogram3D
 	void bin(double x, double y, double z);
 	// Bin specified value (as Vec3)
 	void bin(Vec3<double> v);
+	// Return number of values binned over all bins
+	long int nBinned() const;
 	// Accumulate current histogram bins into averages
 	void accumulate();
 	// Return Array of x centre-bin values

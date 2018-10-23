@@ -165,6 +165,12 @@ void Histogram1D::bin(double x)
 	++nBinned_;
 }
 
+// Return number of values binned over all bins
+long int Histogram1D::nBinned() const
+{
+	return nBinned_;
+}
+
 // Accumulate current histogram bins into averages
 void Histogram1D::accumulate()
 {
