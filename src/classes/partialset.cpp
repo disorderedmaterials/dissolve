@@ -24,6 +24,7 @@
 #include "classes/partialset.h"
 #include "classes/configuration.h"
 #include "classes/box.h"
+#include "genericitems/array2dbool.h"
 
 // Constructor
 PartialSet::PartialSet() : ListItem<PartialSet>()
@@ -40,6 +41,7 @@ PartialSet::~PartialSet()
 
 	partials_.clear();
 	boundPartials_.clear();
+	emptyBoundPartials_.clear();
 	unboundPartials_.clear();
 }
 
@@ -80,6 +82,7 @@ bool PartialSet::setUpPartials(const AtomTypeList& atomTypes, const char* prefix
 	boundPartials_.initialise(nTypes, nTypes, true);
 	unboundPartials_.initialise(nTypes, nTypes, true);
 	braggPartials_.initialise(nTypes, nTypes, true);
+	emptyBoundPartials_.initialise(nTypes, nTypes, true);
 
 	// Set up array matrices for partials
 	CharString title;
@@ -144,6 +147,7 @@ void PartialSet::reset()
 			boundPartials_.at(n,m).values() = 0.0;
 			unboundPartials_.at(n,m).values() = 0.0;
 			braggPartials_.at(n,m).values() = 0.0;
+			emptyBoundPartials_.at(n,m) = true;
 		}
 	}
 	total_.values() = 0.0;
@@ -239,6 +243,12 @@ Data1D& PartialSet::braggPartial(int i, int j)
 Data1D& PartialSet::constBraggPartial(int i, int j) const
 {
 	return braggPartials_.constAt(i, j);
+}
+
+// Return whether specified bound partial is empty
+bool PartialSet::isBoundPartialEmpty(int i, int j) const
+{
+	return emptyBoundPartials_.constAt(i, j);
 }
 
 // Sum partials into total
@@ -486,9 +496,13 @@ void PartialSet::formPartials(double boxVolume, Interpolator& boxNormalisation)
 		at2 = at1;
 		for (m=n; m<nTypes; ++m, at2 = at2->next)
 		{
+			// Calculate RDFs from histogram data
 			calculateRDF(partials_.at(n, m), fullHistograms_.at(n, m), boxVolume, at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0, boxNormalisation);
 			calculateRDF(boundPartials_.at(n, m), boundHistograms_.at(n, m), boxVolume, at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0, boxNormalisation);
 			calculateRDF(unboundPartials_.at(n, m), unboundHistograms_.at(n, m), boxVolume, at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0, boxNormalisation);
+
+			// Set flags for bound partials specifying if they are empty (i.e. there are no contributions of that type)
+			emptyBoundPartials_.at(n, m) = boundHistograms_.at(n, m).nBinned() == 0;
 		}
 	}
 }
@@ -524,6 +538,9 @@ bool PartialSet::addPartials(PartialSet& source, double weighting)
 			Interpolator::addInterpolated(partials_.at(localI, localJ), source.partial(typeI, typeJ), weighting);
 			Interpolator::addInterpolated(boundPartials_.at(localI, localJ), source.boundPartial(typeI, typeJ), weighting);
 			Interpolator::addInterpolated(unboundPartials_.at(localI, localJ), source.unboundPartial(typeI, typeJ), weighting);
+
+			// If the source data bound partial is *not* empty, ensure that our emptyBoundPartials_ flag is set correctly
+			if (!source.isBoundPartialEmpty(typeI, typeJ)) emptyBoundPartials_.at(typeI, typeJ) = false;
 		}
 	}
 
@@ -613,6 +630,7 @@ bool PartialSet::write(LineParser& parser)
 	// Write out AtomTypes first
 	atomTypes_.write(parser);
 	int nTypes = atomTypes_.nItems();
+
 	// Write individual Data1D
 	for (int typeI=0; typeI<nTypes; ++typeI)
 	{
@@ -624,7 +642,13 @@ bool PartialSet::write(LineParser& parser)
 			if (!braggPartials_.at(typeI, typeJ).write(parser)) return false;
 		}
 	}
+
+	// Write total
 	if (!total_.write(parser)) return false;
+
+	// Write empty bound flags
+	if (!GenericItemContainer< Array2D<bool> >::write(emptyBoundPartials_, parser)) return false;
+
 	return true;
 }
 
@@ -635,15 +659,16 @@ bool PartialSet::read(LineParser& parser)
 	if (parser.readNextLine(LineParser::Defaults, abscissaUnits_) != LineParser::Success) return false;
 	if (parser.readNextLine(LineParser::Defaults, fingerprint_) != LineParser::Success) return false;
 
+	// Read atom types
 	atomTypes_.clear();
 	if (!atomTypes_.read(parser)) return false;
 	int nTypes = atomTypes_.nItems();
+
+	// Read partials
 	partials_.initialise(nTypes, nTypes, true);
 	boundPartials_.initialise(nTypes, nTypes, true);
 	unboundPartials_.initialise(nTypes, nTypes, true);
 	braggPartials_.initialise(nTypes, nTypes, true);
-
-	// Read individual Data1D
 	for (int typeI=0; typeI<nTypes; ++typeI)
 	{
 		for (int typeJ=typeI; typeJ<nTypes; ++typeJ)
@@ -654,7 +679,13 @@ bool PartialSet::read(LineParser& parser)
 			if (!braggPartials_.at(typeI, typeJ).read(parser)) return false;
 		}
 	}
+
+	// Read total
 	if (!total_.read(parser)) return false;
+
+	// Read empty bound flags
+	if (!GenericItemContainer< Array2D<bool> >::read(emptyBoundPartials_, parser)) return false;
+
 	return true;
 }
 
@@ -672,13 +703,16 @@ bool PartialSet::broadcast(ProcessPool& procPool, int rootRank)
 	{
 		for (int typeJ=typeI; typeJ<nTypes; ++typeJ)
 		{
-			partials_.at(typeI, typeJ).broadcast(procPool, rootRank);
-			boundPartials_.at(typeI, typeJ).broadcast(procPool, rootRank);
-			unboundPartials_.at(typeI, typeJ).broadcast(procPool, rootRank);
-			braggPartials_.at(typeI, typeJ).broadcast(procPool, rootRank);
+			if (!partials_.at(typeI, typeJ).broadcast(procPool, rootRank)) return Messenger::error("Failed to broadcast partials_ array.\n");
+			if (!boundPartials_.at(typeI, typeJ).broadcast(procPool, rootRank))  return Messenger::error("Failed to broadcast boundPartials_ array.\n");
+			if (!unboundPartials_.at(typeI, typeJ).broadcast(procPool, rootRank))  return Messenger::error("Failed to broadcast unboundPartials_ array.\n");
+			if (!braggPartials_.at(typeI, typeJ).broadcast(procPool, rootRank))  return Messenger::error("Failed to broadcast braggPartials_ array.\n");
 		}
 	}
-	total_.broadcast(procPool, rootRank);
+
+	if (!total_.broadcast(procPool, rootRank)) return Messenger::error("Failed to broadcast total_.\n");
+
+	if (!procPool.broadcast(emptyBoundPartials_)) return Messenger::error("Failed to broadcast emptyBoundPartials_ array.\n");
 	if (!procPool.broadcast(objectNamePrefix_)) return false;
 #endif
 	return true;
@@ -700,6 +734,7 @@ bool PartialSet::equality(ProcessPool& procPool)
 		}
 	}
 	if (!total_.equality(procPool)) return Messenger::error("PartialSet total sum is not equivalent.\n");
+	if (!procPool.equality(emptyBoundPartials_)) return Messenger::error("PartialSet emptyBoundPartials array is not equivalent.\n");
 #endif
 	return true;
 }

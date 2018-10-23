@@ -511,7 +511,7 @@ bool RDFModule::calculateUnweightedGR(const PartialSet& originalgr, PartialSet& 
 		for (int j=i; j<unweightedgr.nAtomTypes(); ++j, typeJ = typeJ->next)
 		{
 			// Broaden bound partials?
-			if (intraBroadening.function() != PairBroadeningFunction::NoFunction)
+			if ((intraBroadening.function() != PairBroadeningFunction::NoFunction) && (!unweightedgr.isBoundPartialEmpty(i, j)))
 			{
 				// Set up the broadening function for these AtomTypes
 				BroadeningFunction function = intraBroadening.broadeningFunction(typeI->atomType(), typeJ->atomType());
