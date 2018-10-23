@@ -205,25 +205,25 @@ Data1D& PartialSet::constPartial(int i, int j) const
 	return partials_.constAt(i, j);
 }
 
-// Return atom-atom partial for pairs not joined by bonds or angles
+// Return atom-atom partial for unbound pairs
 Data1D& PartialSet::unboundPartial(int i, int j)
 {
 	return unboundPartials_.at(i, j);
 }
 
-// Return atom-atom partial for pairs not joined by bonds or angles (const)
+// Return atom-atom partial for unbound pairs (const)
 Data1D& PartialSet::constUnboundPartial(int i, int j) const
 {
 	return unboundPartials_.constAt(i, j);
 }
 
-// Return atom-atom partial for pairs joined by bonds or angles
+// Return atom-atom partial for bound pairs
 Data1D& PartialSet::boundPartial(int i, int j)
 {
 	return boundPartials_.at(i, j);
 }
 
-// Return atom-atom partial for pairs joined by bonds or angles (const)
+// Return atom-atom partial for bound pairs (const)
 Data1D& PartialSet::constBoundPartial(int i, int j) const
 {
 	return boundPartials_.constAt(i, j);

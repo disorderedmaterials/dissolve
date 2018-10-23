@@ -61,9 +61,9 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	Array2D<Histogram1D> unboundHistograms_;
 	// Pair matrix, containing full atom-atom partial
 	Array2D<Data1D> partials_;
-	// Unbound matrix, containing atom-atom partial of pairs not joined by bonds or angles
+	// Unbound matrix, containing atom-atom partial of unbound pairs
 	Array2D<Data1D> unboundPartials_;
-	// Bound matrix, containing atom-atom partial of pairs joined by bonds or angles
+	// Bound matrix, containing atom-atom partial of bound pairs
 	Array2D<Data1D> boundPartials_;
 	// Bragg matrix, derived from summation of HKL terms
 	Array2D<Data1D> braggPartials_;
@@ -101,13 +101,13 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	Data1D& partial(int i, int j);
 	// Return full atom-atom partial specified (const)
 	Data1D& constPartial(int i, int j) const;
-	// Return atom-atom partial for pairs not joined by bonds or angles
+	// Return atom-atom partial for unbound pairs
 	Data1D& unboundPartial(int i, int j);
-	// Return atom-atom partial for pairs not joined by bonds or angles (const)
+	// Return atom-atom partial for unbound pairs (const)
 	Data1D& constUnboundPartial(int i, int j) const;
-	// Return atom-atom partial for pairs joined by bonds or angles
+	// Return atom-atom partial for bound pairs
 	Data1D& boundPartial(int i, int j);
-	// Return atom-atom partial for pairs joined by bonds or angles (const)
+	// Return atom-atom partial for bound pairs (const)
 	Data1D& constBoundPartial(int i, int j) const;
 	// Return atom-atom Bragg partial
 	Data1D& braggPartial(int i, int j);
