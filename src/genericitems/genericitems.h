@@ -39,6 +39,7 @@
 
 #include "genericitems/array2d.h"
 #include "genericitems/array2darraydouble.h"
+#include "genericitems/array2dbool.h"
 #include "genericitems/array2ddouble.h"
 #include "genericitems/array2ddummy.h"
 #include "genericitems/array.h"
