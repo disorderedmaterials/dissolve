@@ -1,6 +1,6 @@
 /*
 	*** Generic Item Container - Array2D< Array<double> >
-	*** src/templates/genericitemcontainer_array2darraydouble.h
+	*** src/genericitems/array2darraydouble.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_GENERICITEMCONTAINER_ARRAY2DARRAYDOUBLE_H
 #define DISSOLVE_GENERICITEMCONTAINER_ARRAY2DARRAYDOUBLE_H
 
-#include "templates/genericitemcontainer.h"
+#include "genericitems/container.h"
 
 // GenericItemContainer< Array2D< Array<double> > >
 template <> class GenericItemContainer< Array2D< Array<double> > > : public GenericItem

@@ -4,7 +4,7 @@
 
 EXTRA_DIST = version.h
 
-SUBDIRS = analyse base classes data main math module templates
+SUBDIRS = analyse base classes data main math module genericitems templates
 
 noinst_LTLIBRARIES = libdissolve.la
 libdissolve_la_SOURCES = 

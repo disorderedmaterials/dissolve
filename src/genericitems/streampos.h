@@ -1,6 +1,6 @@
 /*
-	*** Generic Item Container - Array2D<DummyClass>
-	*** src/templates/genericitemcontainer_array2ddummy.h
+	*** Generic Item Container - StreamPos
+	*** src/genericitems/streampos.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,21 +19,22 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_GENERICITEMCONTAINER_ARRAY2DDUMMY_H
-#define DISSOLVE_GENERICITEMCONTAINER_ARRAY2DDUMMY_H
+#ifndef DISSOLVE_GENERICITEMCONTAINER_STREAMPOS_H
+#define DISSOLVE_GENERICITEMCONTAINER_STREAMPOS_H
 
-#include "templates/genericitemcontainer.h"
-#include "base/dummyclass.h"
-#include "math/data1d.h"
+#include "genericitems/container.h"
+#include <ios>
 
-// GenericItemContainer< Array2D<DummyClass> >
-template <> class GenericItemContainer< Array2D<DummyClass> > : public GenericItem
+// GenericItemContainer<streampos>
+template <> class GenericItemContainer<streampos> : public GenericItem
 {
 	public:
 	// Constructor
-	GenericItemContainer< Array2D<DummyClass> >(const char* name, int flags = 0) : GenericItem(name, flags)
+	GenericItemContainer<streampos>(const char* name, int flags = 0) : GenericItem(name, flags)
 	{
 	}
+	// Data item
+	streampos data;
 
 
 	/*
@@ -43,7 +44,7 @@ template <> class GenericItemContainer< Array2D<DummyClass> > : public GenericIt
 	// Create a new GenericItem containing same class as current type
 	GenericItem* createItem(const char* className, const char* name, int flags = 0)
 	{
-		if (DissolveSys::sameString(className, "Array2D<Data1D>")) return new GenericItemContainer< Array2D<Data1D> >(name, flags);
+		if (DissolveSys::sameString(className, itemClassName())) return new GenericItemContainer<streampos>(name, flags);
 		return NULL;
 	}
 
@@ -51,7 +52,7 @@ template <> class GenericItemContainer< Array2D<DummyClass> > : public GenericIt
 	// Return class name contained in item
 	const char* itemClassName()
 	{
-		return "Array2D<DummyClass>";
+		return "streampos";
 	}
 
 
@@ -62,12 +63,14 @@ template <> class GenericItemContainer< Array2D<DummyClass> > : public GenericIt
 	// Write data through specified parser
 	bool write(LineParser& parser)
 	{
-		return false;
+		return parser.writeLineF("%li\n", data);
 	}
 	// Read data through specified parser
 	bool read(LineParser& parser)
 	{
-		return false;
+		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+		data = parser.argli(0);
+		return true;
 	}
 
 
@@ -78,12 +81,14 @@ template <> class GenericItemContainer< Array2D<DummyClass> > : public GenericIt
 	// Broadcast item contents
 	bool broadcast(ProcessPool& procPool, int root)
 	{
-		return false;
+		long int pos = (long int) data;
+		return procPool.broadcast(pos, root);
+		data = (streampos) pos;
 	}
-	// Return equality between items
+	// Check item equality
 	bool equality(ProcessPool& procPool)
 	{
-		return false;
+		return procPool.equality(data);
 	}
 };
 

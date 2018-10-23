@@ -1,6 +1,6 @@
 /*
 	*** Generic Item Container - Array<int>
-	*** src/templates/genericitemcontainer_arrayint.h
+	*** src/genericitems/arrayint.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_GENERICITEMCONTAINER_ARRAYINT_H
 #define DISSOLVE_GENERICITEMCONTAINER_ARRAYINT_H
 
-#include "templates/genericitemcontainer.h"
+#include "genericitems/container.h"
 
 // GenericItemContainer< Array<int> >
 template <> class GenericItemContainer< Array<int> > : public GenericItem

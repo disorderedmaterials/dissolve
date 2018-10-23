@@ -29,7 +29,7 @@
 #include "classes/partialset.h"
 #include "classes/weights.h"
 #include "base/genericitem.h"
-#include "templates/genericitems.h"
+#include "genericitems/genericitems.h"
 
 // List<T> Master Instances
 template <class T> List<T> List<T>::masterInstance_;

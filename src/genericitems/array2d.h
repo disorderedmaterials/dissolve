@@ -1,6 +1,6 @@
 /*
 	*** Generic Item Container - Array2D<T>
-	*** src/templates/genericitemcontainer_array2d.h
+	*** src/genericitems/array2d.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_GENERICITEMCONTAINER_ARRAY2D_H
 #define DISSOLVE_GENERICITEMCONTAINER_ARRAY2D_H
 
-#include "templates/genericitemcontainer.h"
+#include "genericitems/container.h"
 
 // GenericItemContainer< Array2D<T> >
 template <class T> class GenericItemContainer< Array2D<T> > : public GenericItem

@@ -1,6 +1,6 @@
 /*
-	*** Generic Item Container - Array2D<double>
-	*** src/templates/genericitemcontainer_array2ddouble.h
+	*** Generic Item Container - Array< Vec3<int> >
+	*** src/genericitems/arrayvec3int.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,21 +19,21 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_GENERICITEMCONTAINER_ARRAY2DDOUBLE_H
-#define DISSOLVE_GENERICITEMCONTAINER_ARRAY2DDOUBLE_H
+#ifndef DISSOLVE_GENERICITEMCONTAINER_ARRAYVEC3INT_H
+#define DISSOLVE_GENERICITEMCONTAINER_ARRAYVEC3INT_H
 
-#include "templates/genericitemcontainer.h"
+#include "genericitems/container.h"
 
-// GenericItemContainer< Array2D<double> >
-template <> class GenericItemContainer< Array2D<double> > : public GenericItem
+// GenericItemContainer< Array< Vec3<int> > >
+template <> class GenericItemContainer< Array< Vec3<int> > > : public GenericItem
 {
 	public:
 	// Constructor
-	GenericItemContainer< Array2D<double> >(const char* name, int flags = 0) : GenericItem(name, flags)
+	GenericItemContainer< Array< Vec3<int> > >(const char* name, int flags = 0) : GenericItem(name, flags)
 	{
 	}
 	// Data item
-	Array2D<double> data;
+	Array< Vec3<int> > data;
 
 
 	/*
@@ -43,7 +43,7 @@ template <> class GenericItemContainer< Array2D<double> > : public GenericItem
 	// Create a new GenericItem containing same class as current type
 	GenericItem* createItem(const char* className, const char* name, int flags = 0)
 	{
-		if (DissolveSys::sameString(className, itemClassName())) return new GenericItemContainer< Array2D<double> >(name, flags);
+		if (DissolveSys::sameString(className, itemClassName())) return new GenericItemContainer< Array< Vec3<int> > >(name, flags);
 		return NULL;
 	}
 
@@ -51,7 +51,7 @@ template <> class GenericItemContainer< Array2D<double> > : public GenericItem
 	// Return class name contained in item
 	const char* itemClassName()
 	{
-		return "Array2D<double>";
+		return "Array<Vec3<int>>";
 	}
 
 
@@ -62,31 +62,24 @@ template <> class GenericItemContainer< Array2D<double> > : public GenericItem
 	// Write data through specified parser
 	bool write(LineParser& parser)
 	{
-		return write(data, parser);
+		parser.writeLineF("%i\n", data.nItems());
+		Vec3<int>* array = data.array();
+		for (int n=0; n<data.nItems(); ++n)
+		{
+			if (!parser.writeLineF("%i %i %i\n", array[n].x, array[n].y, array[n].z)) return false;
+		}
+		return true;
 	}
 	// Read data through specified parser
 	bool read(LineParser& parser)
 	{
-		return read(data, parser);
-	}
-	// Write specified data through specified parser
-	static bool write(const Array2D<double>& thisData, LineParser& parser)
-	{
-		parser.writeLineF("%i  %i  %s\n", thisData.nRows(), thisData.nColumns(), DissolveSys::btoa(thisData.halved()));
-		for (int n=0; n<thisData.linearArraySize(); ++n) if (!parser.writeLineF("%16.9e\n", thisData.constLinearValue(n))) return false;
-		return true;
-	}
-	// Read specified data through specified parser
-	static bool read(Array2D<double>& thisData, LineParser& parser)
-	{
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-		int nRows = parser.argi(0), nColumns = parser.argi(1);
-		thisData.initialise(nRows, nColumns, parser.argb(2));
-
-		for (int n=0; n<thisData.linearArraySize(); ++n)
+		int nItems = parser.argi(0);
+		data.createEmpty(nItems);
+		for (int n=0; n<nItems; ++n)
 		{
 			if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-			thisData.linearArray()[n] = parser.argd(0);
+			data.add(parser.arg3i(0));
 		}
 		return true;
 	}
@@ -104,7 +97,11 @@ template <> class GenericItemContainer< Array2D<double> > : public GenericItem
 	// Return equality between items
 	bool equality(ProcessPool& procPool)
 	{
-		return procPool.equality(data);
+		// Verify array size first
+		if (!procPool.equality(data.nItems())) return false;
+		// Keep it simple (and slow) and check/send one value at a time
+		for (int n=0; n<data.nItems(); ++n) if (!procPool.equality(data.constAt(n))) return false;
+		return true;
 	}
 };
 

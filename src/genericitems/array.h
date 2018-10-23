@@ -1,6 +1,6 @@
 /*
-	*** Generic Item Container - CharString
-	*** src/templates/genericitemcontainer_charstring.h
+	*** Generic Item Container - Array<T>
+	*** src/genericitems/array.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,21 +19,22 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_GENERICITEMCONTAINER_CHARSTRING_H
-#define DISSOLVE_GENERICITEMCONTAINER_CHARSTRING_H
+#ifndef DISSOLVE_GENERICITEMCONTAINER_ARRAY_H
+#define DISSOLVE_GENERICITEMCONTAINER_ARRAY_H
 
-#include "templates/genericitemcontainer.h"
+#include "genericitems/container.h"
+#include "templates/broadcastarray.h"
 
-// GenericItemContainer<CharString>
-template <> class GenericItemContainer<CharString> : public GenericItem
+// GenericItemContainer< Array<T> >
+template <class T> class GenericItemContainer< Array<T> > : public GenericItem
 {
 	public:
 	// Constructor
-	GenericItemContainer<CharString>(const char* name, int flags = 0) : GenericItem(name, flags)
+	GenericItemContainer< Array<T> >(const char* name, int flags = 0) : GenericItem(name, flags)
 	{
 	}
 	// Data item
-	CharString data;
+	Array<T> data;
 
 
 	/*
@@ -43,7 +44,7 @@ template <> class GenericItemContainer<CharString> : public GenericItem
 	// Create a new GenericItem containing same class as current type
 	GenericItem* createItem(const char* className, const char* name, int flags = 0)
 	{
-		if (DissolveSys::sameString(className, itemClassName())) return new GenericItemContainer<CharString>(name, flags);
+		if (DissolveSys::sameString(className, itemClassName())) return new GenericItemContainer< Array<T> >(name, flags);
 		return NULL;
 	}
 
@@ -51,7 +52,8 @@ template <> class GenericItemContainer<CharString> : public GenericItem
 	// Return class name contained in item
 	const char* itemClassName()
 	{
-		return "CharString";
+		static CharString className("Array<%s>", T::itemClassName());
+		return className.get();
 	}
 
 
@@ -62,13 +64,22 @@ template <> class GenericItemContainer<CharString> : public GenericItem
 	// Write data through specified parser
 	bool write(LineParser& parser)
 	{
-		return parser.writeLineF("%s\n", data.get());
+		parser.writeLineF("%i\n", data.nItems());
+		T* array = data.array();
+		for (int n=0; n<data.nItems(); ++n)
+		{
+			if (!array[n].write(parser)) return false;
+		}
+		return true;
 	}
 	// Read data through specified parser
 	bool read(LineParser& parser)
 	{
-		if (parser.readNextLine(LineParser::Defaults) == LineParser::Success) return false;
-		data = parser.line();
+		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+		int nItems = parser.argi(0);
+		data.initialise(nItems);
+
+		for (int n=0; n<nItems; ++n) if (!data[n].read(parser)) return false;
 		return true;
 	}
 
@@ -80,12 +91,14 @@ template <> class GenericItemContainer<CharString> : public GenericItem
 	// Broadcast item contents
 	bool broadcast(ProcessPool& procPool, int root)
 	{
-		return procPool.broadcast(data, root);
+		bool success;
+		BroadcastArray<T>(procPool, root, data, success);
+		return success;
 	}
-	// Check item equality
+	// Return equality between items
 	bool equality(ProcessPool& procPool)
 	{
-		return procPool.equality(data);
+		return false;
 	}
 };
 

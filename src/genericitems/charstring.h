@@ -1,6 +1,6 @@
 /*
-	*** Generic Item Container - Int
-	*** src/templates/genericitemcontainer_int.h
+	*** Generic Item Container - CharString
+	*** src/genericitems/charstring.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,21 +19,21 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_GENERICITEMCONTAINER_INT_H
-#define DISSOLVE_GENERICITEMCONTAINER_INT_H
+#ifndef DISSOLVE_GENERICITEMCONTAINER_CHARSTRING_H
+#define DISSOLVE_GENERICITEMCONTAINER_CHARSTRING_H
 
-#include "templates/genericitemcontainer.h"
+#include "genericitems/container.h"
 
-// GenericItemContainer<int>
-template <> class GenericItemContainer<int> : public GenericItem
+// GenericItemContainer<CharString>
+template <> class GenericItemContainer<CharString> : public GenericItem
 {
 	public:
 	// Constructor
-	GenericItemContainer<int>(const char* name, int flags = 0) : GenericItem(name, flags)
+	GenericItemContainer<CharString>(const char* name, int flags = 0) : GenericItem(name, flags)
 	{
 	}
 	// Data item
-	int data;
+	CharString data;
 
 
 	/*
@@ -43,7 +43,7 @@ template <> class GenericItemContainer<int> : public GenericItem
 	// Create a new GenericItem containing same class as current type
 	GenericItem* createItem(const char* className, const char* name, int flags = 0)
 	{
-		if (DissolveSys::sameString(className, itemClassName())) return new GenericItemContainer<int>(name, flags);
+		if (DissolveSys::sameString(className, itemClassName())) return new GenericItemContainer<CharString>(name, flags);
 		return NULL;
 	}
 
@@ -51,7 +51,7 @@ template <> class GenericItemContainer<int> : public GenericItem
 	// Return class name contained in item
 	const char* itemClassName()
 	{
-		return "int";
+		return "CharString";
 	}
 
 
@@ -62,13 +62,13 @@ template <> class GenericItemContainer<int> : public GenericItem
 	// Write data through specified parser
 	bool write(LineParser& parser)
 	{
-		return parser.writeLineF("%i\n", data);
+		return parser.writeLineF("%s\n", data.get());
 	}
 	// Read data through specified parser
 	bool read(LineParser& parser)
 	{
-		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-		data = parser.argi(0);
+		if (parser.readNextLine(LineParser::Defaults) == LineParser::Success) return false;
+		data = parser.line();
 		return true;
 	}
 

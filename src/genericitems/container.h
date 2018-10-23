@@ -1,6 +1,6 @@
 /*
-	*** Generic Item Container - StreamPos
-	*** src/templates/genericitemcontainer_streampos.h
+	*** Generic Item Container
+	*** src/genericitems/container.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,22 +19,22 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_GENERICITEMCONTAINER_STREAMPOS_H
-#define DISSOLVE_GENERICITEMCONTAINER_STREAMPOS_H
+#ifndef DISSOLVE_GENERICITEMCONTAINER_H
+#define DISSOLVE_GENERICITEMCONTAINER_H
 
-#include "templates/genericitemcontainer.h"
-#include <ios>
+#include "base/processpool.h"
+#include "base/genericitem.h"
 
-// GenericItemContainer<streampos>
-template <> class GenericItemContainer<streampos> : public GenericItem
+// GenericItemContainer Template Class
+template <class T> class GenericItemContainer : public GenericItem
 {
 	public:
 	// Constructor
-	GenericItemContainer<streampos>(const char* name, int flags = 0) : GenericItem(name, flags)
+	GenericItemContainer<T>(const char* name, int flags = 0) : GenericItem(name, flags)
 	{
 	}
 	// Data item
-	streampos data;
+	T data;
 
 
 	/*
@@ -44,15 +44,15 @@ template <> class GenericItemContainer<streampos> : public GenericItem
 	// Create a new GenericItem containing same class as current type
 	GenericItem* createItem(const char* className, const char* name, int flags = 0)
 	{
-		if (DissolveSys::sameString(className, itemClassName())) return new GenericItemContainer<streampos>(name, flags);
+		if (DissolveSys::sameString(className, itemClassName())) return new GenericItemContainer<T>(name, flags);
 		return NULL;
 	}
 
 	public:
 	// Return class name contained in item
-	const char* itemClassName()
+	virtual const char* itemClassName()
 	{
-		return "streampos";
+		return T::itemClassName();
 	}
 
 
@@ -63,14 +63,12 @@ template <> class GenericItemContainer<streampos> : public GenericItem
 	// Write data through specified parser
 	bool write(LineParser& parser)
 	{
-		return parser.writeLineF("%li\n", data);
+		return data.write(parser);
 	}
 	// Read data through specified parser
 	bool read(LineParser& parser)
 	{
-		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-		data = parser.argli(0);
-		return true;
+		return data.read(parser);
 	}
 
 
@@ -81,14 +79,12 @@ template <> class GenericItemContainer<streampos> : public GenericItem
 	// Broadcast item contents
 	bool broadcast(ProcessPool& procPool, int root)
 	{
-		long int pos = (long int) data;
-		return procPool.broadcast(pos, root);
-		data = (streampos) pos;
+		return data.broadcast(procPool, root);
 	}
-	// Check item equality
+	// Check for equality
 	bool equality(ProcessPool& procPool)
 	{
-		return procPool.equality(data);
+		return data.equality(procPool);
 	}
 };
 

@@ -24,7 +24,7 @@
 
 #include "base/genericlist.h"
 #include "base/sysfunc.h"
-#include "templates/genericitems.h"
+#include "genericitems/genericitems.h"
 
 // Generic List Helper
 template <class T> class GenericListHelper

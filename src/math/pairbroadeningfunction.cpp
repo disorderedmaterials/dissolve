@@ -26,7 +26,7 @@
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
 #include "templates/enumhelpers.h"
-#include "templates/genericitemcontainer_array2ddouble.h"
+#include "genericitems/array2ddouble.h"
 
 // Constructor
 PairBroadeningFunction::PairBroadeningFunction(PairBroadeningFunction::FunctionType function)

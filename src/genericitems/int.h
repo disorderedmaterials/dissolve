@@ -1,6 +1,6 @@
 /*
-	*** Generic Item Container - Array<DummyClass>
-	*** src/templates/genericitemcontainer_arraydummy.h
+	*** Generic Item Container - Int
+	*** src/genericitems/int.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,20 +19,21 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_GENERICITEMCONTAINER_ARRAYDUMMY_H
-#define DISSOLVE_GENERICITEMCONTAINER_ARRAYDUMMY_H
+#ifndef DISSOLVE_GENERICITEMCONTAINER_INT_H
+#define DISSOLVE_GENERICITEMCONTAINER_INT_H
 
-#include "templates/genericitemcontainer.h"
-#include "base/dummyclass.h"
+#include "genericitems/container.h"
 
-// GenericItemContainer< Array<DummyClass> >
-template <> class GenericItemContainer< Array<DummyClass> > : public GenericItem
+// GenericItemContainer<int>
+template <> class GenericItemContainer<int> : public GenericItem
 {
 	public:
 	// Constructor
-	GenericItemContainer< Array<DummyClass> >(const char* name, int flags = 0) : GenericItem(name, flags)
+	GenericItemContainer<int>(const char* name, int flags = 0) : GenericItem(name, flags)
 	{
 	}
+	// Data item
+	int data;
 
 
 	/*
@@ -42,7 +43,7 @@ template <> class GenericItemContainer< Array<DummyClass> > : public GenericItem
 	// Create a new GenericItem containing same class as current type
 	GenericItem* createItem(const char* className, const char* name, int flags = 0)
 	{
-		if (DissolveSys::sameString(className, "Array<Data1D>")) return new GenericItemContainer< Array<Data1D> >(name, flags);
+		if (DissolveSys::sameString(className, itemClassName())) return new GenericItemContainer<int>(name, flags);
 		return NULL;
 	}
 
@@ -50,7 +51,7 @@ template <> class GenericItemContainer< Array<DummyClass> > : public GenericItem
 	// Return class name contained in item
 	const char* itemClassName()
 	{
-		return "Array<DummyClass>";
+		return "int";
 	}
 
 
@@ -61,12 +62,14 @@ template <> class GenericItemContainer< Array<DummyClass> > : public GenericItem
 	// Write data through specified parser
 	bool write(LineParser& parser)
 	{
-		return false;
+		return parser.writeLineF("%i\n", data);
 	}
 	// Read data through specified parser
 	bool read(LineParser& parser)
 	{
-		return false;
+		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+		data = parser.argi(0);
+		return true;
 	}
 
 
@@ -77,12 +80,12 @@ template <> class GenericItemContainer< Array<DummyClass> > : public GenericItem
 	// Broadcast item contents
 	bool broadcast(ProcessPool& procPool, int root)
 	{
-		return false;
+		return procPool.broadcast(data, root);
 	}
-	// Return equality between items
+	// Check item equality
 	bool equality(ProcessPool& procPool)
 	{
-		return false;
+		return procPool.equality(data);
 	}
 };
 

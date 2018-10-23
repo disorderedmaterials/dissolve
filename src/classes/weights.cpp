@@ -27,7 +27,7 @@
 #include "base/lineparser.h"
 #include "templates/listio.h"
 #include "templates/broadcastlist.h"
-#include "templates/genericitemcontainer_array2ddouble.h"
+#include "genericitems/array2ddouble.h"
 
 // Constructor
 Weights::Weights()

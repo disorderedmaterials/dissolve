@@ -1,6 +1,6 @@
 /*
-	*** Generic Item Container - Vec3<double>
-	*** src/templates/genericitemcontainer_vec3double.h
+	*** Generic Item Container - Array<double>
+	*** src/genericitems/arraydouble.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,21 +19,21 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_GENERICITEMCONTAINER_VEC3DOUBLE_H
-#define DISSOLVE_GENERICITEMCONTAINER_VEC3DOUBLE_H
+#ifndef DISSOLVE_GENERICITEMCONTAINER_ARRAYDOUBLE_H
+#define DISSOLVE_GENERICITEMCONTAINER_ARRAYDOUBLE_H
 
-#include "templates/genericitemcontainer.h"
+#include "genericitems/container.h"
 
-// GenericItemContainer< Vec3<double> >
-template <> class GenericItemContainer< Vec3<double> > : public GenericItem
+// GenericItemContainer< Array<double> >
+template <> class GenericItemContainer< Array<double> > : public GenericItem
 {
 	public:
 	// Constructor
-	GenericItemContainer< Vec3<double> >(const char* name, int flags = 0) : GenericItem(name, flags)
+	GenericItemContainer< Array<double> >(const char* name, int flags = 0) : GenericItem(name, flags)
 	{
 	}
 	// Data item
-	Vec3<double> data;
+	Array<double> data;
 
 
 	/*
@@ -43,7 +43,7 @@ template <> class GenericItemContainer< Vec3<double> > : public GenericItem
 	// Create a new GenericItem containing same class as current type
 	GenericItem* createItem(const char* className, const char* name, int flags = 0)
 	{
-		if (DissolveSys::sameString(className, itemClassName())) return new GenericItemContainer< Vec3<double> >(name, flags);
+		if (DissolveSys::sameString(className, itemClassName())) return new GenericItemContainer< Array<double> >(name, flags);
 		return NULL;
 	}
 
@@ -51,7 +51,7 @@ template <> class GenericItemContainer< Vec3<double> > : public GenericItem
 	// Return class name contained in item
 	const char* itemClassName()
 	{
-		return "Vec3<double>";
+		return "Array<double>";
 	}
 
 
@@ -62,13 +62,34 @@ template <> class GenericItemContainer< Vec3<double> > : public GenericItem
 	// Write data through specified parser
 	bool write(LineParser& parser)
 	{
-		return parser.writeLineF("%16.9e %16.9e %16.9e\n", data.x, data.y, data.z);
+		return write(data, parser);
 	}
 	// Read data through specified parser
 	bool read(LineParser& parser)
 	{
+		return read(data, parser);
+	}
+	// Write specified data through specified parser
+	static bool write(const Array<double>& thisData, LineParser& parser)
+	{
+		parser.writeLineF("%i\n", thisData.nItems());
+		for (int n=0; n<thisData.nItems(); ++n)
+		{
+			if (!parser.writeLineF("%16.9e\n", thisData.constAt(n))) return false;
+		}
+		return true;
+	}
+	// Read specified data through specified parser
+	static bool read(Array<double>& thisData, LineParser& parser)
+	{
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-		data = parser.arg3d(0);
+		int nItems = parser.argi(0);
+		thisData.createEmpty(nItems);
+		for (int n=0; n<nItems; ++n)
+		{
+			if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+			thisData.add(parser.argd(0));
+		}
 		return true;
 	}
 
@@ -82,13 +103,10 @@ template <> class GenericItemContainer< Vec3<double> > : public GenericItem
 	{
 		return procPool.broadcast(data, root);
 	}
-	// Check item equality
+	// Return equality between items
 	bool equality(ProcessPool& procPool)
 	{
-		if (!procPool.equality(data.x)) return false;
-		if (!procPool.equality(data.y)) return false;
-		if (!procPool.equality(data.z)) return false;
-		return true;
+		return procPool.equality(data);
 	}
 };
 

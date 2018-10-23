@@ -1,6 +1,6 @@
 /*
-	*** Generic Item Container - Bool
-	*** src/templates/genericitemcontainer_bool.h
+	*** Generic Item Container - Vec3<Int>
+	*** src/genericitems/vec3int.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,22 +19,21 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_GENERICITEMCONTAINER_BOOL_H
-#define DISSOLVE_GENERICITEMCONTAINER_BOOL_H
+#ifndef DISSOLVE_GENERICITEMCONTAINER_VEC3INT_H
+#define DISSOLVE_GENERICITEMCONTAINER_VEC3INT_H
 
-#include "templates/genericitemcontainer.h"
-#include "base/lineparser.h"
+#include "genericitems/container.h"
 
-// GenericItemContainer<bool>
-template <> class GenericItemContainer<bool> : public GenericItem
+// GenericItemContainer< Vec3<int> >
+template <> class GenericItemContainer< Vec3<int> > : public GenericItem
 {
 	public:
 	// Constructor
-	GenericItemContainer<bool>(const char* name, int flags = 0) : GenericItem(name, flags)
+	GenericItemContainer< Vec3<int> >(const char* name, int flags = 0) : GenericItem(name, flags)
 	{
 	}
 	// Data item
-	bool data;
+	Vec3<int> data;
 
 
 	/*
@@ -44,7 +43,7 @@ template <> class GenericItemContainer<bool> : public GenericItem
 	// Create a new GenericItem containing same class as current type
 	GenericItem* createItem(const char* className, const char* name, int flags = 0)
 	{
-		if (DissolveSys::sameString(className, itemClassName())) return new GenericItemContainer<bool>(name, flags);
+		if (DissolveSys::sameString(className, itemClassName())) return new GenericItemContainer< Vec3<int> >(name, flags);
 		return NULL;
 	}
 
@@ -52,7 +51,7 @@ template <> class GenericItemContainer<bool> : public GenericItem
 	// Return class name contained in item
 	const char* itemClassName()
 	{
-		return "bool";
+		return "Vec3<int>";
 	}
 
 
@@ -63,13 +62,13 @@ template <> class GenericItemContainer<bool> : public GenericItem
 	// Write data through specified parser
 	bool write(LineParser& parser)
 	{
-		return parser.writeLineF("%s\n", DissolveSys::btoa(data));
+		return parser.writeLineF("%i  %i  %i\n", data.x, data.y, data.z);
 	}
 	// Read data through specified parser
 	bool read(LineParser& parser)
 	{
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-		data = parser.argb(0);
+		data = parser.arg3i(0);
 		return true;
 	}
 
@@ -86,7 +85,10 @@ template <> class GenericItemContainer<bool> : public GenericItem
 	// Check item equality
 	bool equality(ProcessPool& procPool)
 	{
-		return procPool.equality(data);
+		if (!procPool.equality(data.x)) return false;
+		if (!procPool.equality(data.y)) return false;
+		if (!procPool.equality(data.z)) return false;
+		return true;
 	}
 };
 
