@@ -149,8 +149,6 @@ double Error::maape(const Data1D& A, const Data1D& B, bool quiet)
 		++nPointsConsidered;
 	}
 	
-	printf("sum = %f, n = %i\n", sum, nPointsConsidered);
-
 	double maape = 100.0 * sum / nPointsConsidered;
 	if (!quiet) Messenger::print("MAAPE between datasets is %7.3f%% over %15.9e < x < %15.9e (%i points).\n", maape, firstX, lastX, nPointsConsidered);
 
@@ -204,4 +202,46 @@ double Error::percent(const Data1D& A, const Data1D& B, bool quiet)
 	}
 
 	return percentError;
+}
+
+// Return R-Factor (average squared error per point) between supplied data
+double Error::rFactor(const Data1D& A, const Data1D& B, bool quiet)
+{
+	// First, generate interpolation of data B
+	Interpolator interpolatedB(B);
+
+	// Grab x and y arrays from data A
+	const Array<double>& aX = A.constXAxis();
+	const Array<double>& aY = A.constValues();
+
+	// Accumulate sum-of-squares error at x values of A
+	double rfac = 0.0, delta;
+	double firstX = 0.0, lastX = 0.0, x;
+	int nPointsConsidered = 0;
+	for (int n=0; n<aX.nItems(); ++n)
+	{
+		// Grab x value
+		x = aX.constAt(n);
+
+		// Is our x value lower than the lowest x value of the reference data?
+		if (x < B.constXAxis().firstValue()) continue;
+
+		// Is our x value higher than the last x value of the reference data?
+		if (x > B.constXAxis().lastValue()) break;
+
+		// Is this the first point considered?
+		if (nPointsConsidered == 0) firstX = x;
+
+		// Sum squared error
+		delta = aY.constAt(n) - interpolatedB.y(x);
+		rfac += delta*delta;
+		lastX = x;
+		++nPointsConsidered;
+	}
+
+	// Calculate squared error per point and summarise result
+	rfac /= nPointsConsidered;
+	if (!quiet) Messenger::print("R-Factor between datasets is %15.9e over %15.9e < x < %15.9e (%i points).\n", rfac, firstX, lastX, nPointsConsidered);
+
+	return rfac;
 }

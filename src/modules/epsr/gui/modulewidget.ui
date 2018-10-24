@@ -416,9 +416,9 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="ErrorsTab">
+     <widget class="QWidget" name="RFactorTab">
       <attribute name="title">
-       <string>Errors</string>
+       <string>R-Factor</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <property name="spacing">
@@ -476,7 +476,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QFrame" name="ErrorsPlotFrame">
+        <widget class="QFrame" name="RFactorPlotFrame">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -509,7 +509,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="UChromaViewWidget" name="ErrorsPlotWidget" native="true"/>
+           <widget class="UChromaViewWidget" name="RFactorPlotWidget" native="true"/>
           </item>
          </layout>
         </widget>

@@ -24,6 +24,7 @@
 #include "modules/energy/energy.h"
 #include "modules/rdf/rdf.h"
 #include "math/error.h"
+#include "math/filters.h"
 #include "math/ft.h"
 #include "math/gaussfit.h"
 #include "math/poissonfit.h"
@@ -142,18 +143,23 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	/*
 	 * Calculate difference functions and current percentage errors in calculated vs reference target data
 	 */
+	double rFacTot = 0.0;
 	allTargetsIterator.restart();
 	while (Module* module = allTargetsIterator.iterate())
 	{
 		// Realise the error array and make sure its object name is set
-		Data1D& errors = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), CharString("Error_%s", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
-		errors.setObjectTag(CharString("%s//Error//%s", uniqueName_.get(), module->uniqueName()));
+		Data1D& errors = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), CharString("RFactor_%s", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
+		errors.setObjectTag(CharString("%s//RFactor//%s", uniqueName_.get(), module->uniqueName()));
 
 		// Calculate our error based on the type of Module
-		double error = 100.0;
+		double rFactor = 100.0;
 		if (DissolveSys::sameString(module->type(), "NeutronSQ"))
 		{
 			bool found;
+
+			// Get difference data container
+			Data1D& differenceData = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), CharString("DifferenceData_%s", module->uniqueName()), uniqueName(), GenericItem::InRestartFileFlag);
+			differenceData.setObjectTag(CharString("%s//Difference//%s", uniqueName_.get(), module->uniqueName()));
 
 			// Retrieve the ReferenceData from the Module (as Data1D)
 			const Data1D& referenceData = GenericListHelper<Data1D>::value(dissolve.processingModuleData(), "ReferenceData", module->uniqueName(), Data1D(), &found);
@@ -162,6 +168,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				Messenger::warn("Could not locate ReferenceData for target '%s'.\n", module->uniqueName());
 				return false;
 			}
+			differenceData = referenceData;
 
 			// Retrieve the PartialSet from the Module
 			const PartialSet& calcSQ = GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "WeightedSQ", module->uniqueName(), PartialSet(), &found);
@@ -172,20 +179,34 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			}
 			Data1D calcSQTotal = calcSQ.constTotal();
 
-			error = Error::percent(referenceData, calcSQTotal);
+			// Determine overlapping Q range between the two datasets
+			double FQMin = qMin, FQMax = qMax;
+			if ((FQMin < differenceData.xAxis().firstValue()) || (FQMin < calcSQTotal.xAxis().firstValue())) FQMin = max(differenceData.xAxis().firstValue(), calcSQTotal.xAxis().firstValue());
+			if ((FQMax > differenceData.xAxis().lastValue()) || (FQMax > calcSQTotal.xAxis().lastValue())) FQMax = min(differenceData.xAxis().lastValue(), calcSQTotal.xAxis().lastValue());
 
-			// Calculate difference
-			Data1D& differenceData = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), CharString("DifferenceData_%s", module->uniqueName()), uniqueName(), GenericItem::InRestartFileFlag);
-			differenceData.setObjectTag(CharString("%s//Difference//%s", uniqueName_.get(), module->uniqueName()));
-			differenceData = referenceData;
+			// Trim both datasets to the common range
+			Filters::trim(calcSQTotal, FQMin, FQMax, true);
+			Filters::trim(differenceData, FQMin, FQMax, true);
+
+			rFactor = Error::rFactor(referenceData, calcSQTotal, true);
+			rFacTot += rFactor;
+
+			// Calculate difference function
 			Interpolator::addInterpolated(differenceData, calcSQTotal, -1.0);
 		}
 		else return Messenger::error("Unrecognised Module type '%s', so can't calculate error.", module->type());
 
-		// Store the percentage error
-		errors.addPoint(dissolve.iteration(), error);
-		Messenger::print("Current error for reference data '%s' is %f%%.\n", module->uniqueName(), error);
+		// Store the rFactor for this reference dataset
+		errors.addPoint(dissolve.iteration(), rFactor);
+		Messenger::print("Current R-Factor for reference data '%s' is %f.\n", module->uniqueName(), rFactor);
 	}
+	rFacTot /= targets_.nItems();
+
+	// Realise the total rFactor array and make sure its object name is set
+	Data1D& totalRFactor = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "RFactor", uniqueName_, GenericItem::InRestartFileFlag);
+	totalRFactor.setObjectTag(CharString("%s//RFactor", uniqueName_.get()));
+	totalRFactor.addPoint(dissolve.iteration(), rFacTot);
+	Messenger::print("Current total R-Factor is %f.\n", rFacTot);
 
 
 	/*
