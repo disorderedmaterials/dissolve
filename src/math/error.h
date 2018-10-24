@@ -40,6 +40,8 @@ class Error
 	static double mape(const Data1D& A, const Data1D& B, bool quiet = false);
 	// Return percentage error between supplied data
 	static double percent(const Data1D& A, const Data1D& B, bool quiet = false);
+	// Return R-Factor (average squared error per point) between supplied data
+	static double rFactor(const Data1D& A, const Data1D& B, bool quiet = false);
 };
 
 #endif
