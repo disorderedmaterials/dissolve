@@ -24,6 +24,58 @@
 #include "math/data1d.h"
 #include "templates/array.h"
 
+
+// Perform point-wise convolution of this data with the supplied BroadeningFunction
+void Filters::convolve(Data1D& data, BroadeningFunction function)
+{
+	// Grab x and y arrays
+	const Array<double>& x = data.constXAxis();
+	Array<double>& y = data.values();
+
+	Array<double> newY(data.nValues());
+
+	// Outer loop over existing data points
+	double xCentre, xBroad;
+	for (int n=0; n<x.nItems(); ++n)
+	{
+		// Grab x value as our current xCentre
+		xCentre = x.constAt(n);
+
+		// Inner loop over whole array
+		for (int m=0; m<x.nItems(); ++m)
+		{
+			xBroad = x.constAt(m) - xCentre;
+			newY[m] += y.constAt(n) * function.y(xBroad, 0.0);
+		}
+	}
+
+	y = newY;
+}
+
+// Perform point-wise convolution of this data with the supplied BroadeningFunction, normalising to the original integral of the function
+void Filters::convolveNormalised(Data1D& data, BroadeningFunction function)
+{
+	// Calculate the original integral
+	double originalIntegral = Integrator::absTrapezoid(data);
+
+	// If the original integral is zero, nothing to do
+	if (originalIntegral == 0.0) return;
+
+	// Convolve the function
+	convolve(data, function);
+
+	// Calculate the new integral
+	double newIntegral = Integrator::absTrapezoid(data);
+
+	data.values() *= (originalIntegral / newIntegral);
+}
+
+// Apply Kolmogorov–Zurbenko filter
+void Filters::kolmogorovZurbenko(Data1D& data, int k, int m)
+{
+	for (int iteration=0; iteration<k; ++iteration) movingAverage(data, m);
+}
+
 // Apply median filter to data
 void Filters::median(Data1D& data, int length)
 {
@@ -110,57 +162,6 @@ void Filters::movingAverage(Data1D& data, int avgSize)
 	y = newY;
 }
 
-// Apply Kolmogorov–Zurbenko filter
-void Filters::kolmogorovZurbenko(Data1D& data, int k, int m)
-{
-	for (int iteration=0; iteration<k; ++iteration) movingAverage(data, m);
-}
-
-// Perform point-wise convolution of this data with the supplied BroadeningFunction
-void Filters::convolve(Data1D& data, BroadeningFunction function)
-{
-	// Grab x and y arrays
-	const Array<double>& x = data.constXAxis();
-	Array<double>& y = data.values();
-
-	Array<double> newY(data.nValues());
-
-	// Outer loop over existing data points
-	double xCentre, xBroad;
-	for (int n=0; n<x.nItems(); ++n)
-	{
-		// Grab x value as our current xCentre
-		xCentre = x.constAt(n);
-
-		// Inner loop over whole array
-		for (int m=0; m<x.nItems(); ++m)
-		{
-			xBroad = x.constAt(m) - xCentre;
-			newY[m] += y.constAt(n) * function.y(xBroad, 0.0);
-		}
-	}
-
-	y = newY;
-}
-
-// Perform point-wise convolution of this data with the supplied BroadeningFunction, normalising to the original integral of the function
-void Filters::convolveNormalised(Data1D& data, BroadeningFunction function)
-{
-	// Calculate the original integral
-	double originalIntegral = Integrator::absTrapezoid(data);
-
-	// If the original integral is zero, nothing to do
-	if (originalIntegral == 0.0) return;
-
-	// Convolve the function
-	convolve(data, function);
-
-	// Calculate the new integral
-	double newIntegral = Integrator::absTrapezoid(data);
-
-	data.values() *= (originalIntegral / newIntegral);
-}
-
 // Subtract average level from data, forming average from supplied x value
 double Filters::subtractAverage(Data1D& data, double xStart)
 {
@@ -182,4 +183,54 @@ double Filters::subtractAverage(Data1D& data, double xStart)
 	y -= sum / nPoints;
 
 	return sum / nPoints;
+}
+
+// Trim supplied data to specified range
+void Filters::trim(Data1D& data, double xMin, double xMax, bool interpolateEnds, double interpolationThreshold)
+{
+	Array<double> newX, newY;
+	const Array<double>& x = data.constXAxis();
+	for (int n=0; n<x.nItems(); ++n)
+	{
+		if (x.constAt(n) < xMin) continue;
+		if (x.constAt(n) > xMax)
+		{
+			// X axis value now exceeds the xMax - interpolate the end?
+			if (interpolateEnds)
+			{
+				// Is there a usable data point with lower x than the present one that we can use for our interpolation?
+				if (n > 0)
+				{
+					double intervalFraction = (xMax - x.constAt(n-1)) / (x.constAt(n) - x.constAt(n-1));
+					if ((1.0 - intervalFraction) > interpolationThreshold)
+					{
+						newX.add(xMax);
+						newY.add(data.value(n-1) + intervalFraction * (data.value(n) - data.value(n-1)));
+					}
+				}
+			}
+			break;
+		}
+
+		// If this is the first point we add, should we interpolate its value?
+		if ((newX.nItems() == 0) && interpolateEnds)
+		{
+			// Is there a usable data point with lower x than the present one that we can use for our interpolation?
+			if (n > 0)
+			{
+				double intervalFraction = (xMin - x.constAt(n-1)) / (x.constAt(n) - x.constAt(n-1));
+				if ((1.0 - intervalFraction) > interpolationThreshold)
+				{
+					newX.add(xMin);
+					newY.add(data.value(n-1) + intervalFraction * (data.value(n) - data.value(n-1)));
+				}
+			}
+		}
+		newX.add(x.constAt(n));
+		newY.add(data.value(n));
+	}
+
+	// Set new arrays
+	data.xAxis() = newX;
+	data.values() = newY;
 }
