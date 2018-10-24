@@ -23,19 +23,6 @@
 #include "math/data1d.h"
 #include "base/sysfunc.h"
 
-// Make some checks before doing transform
-bool Fourier::checkBeforeTransform(Data1D& data)
-{
-	// Enough data to do transform?
-	if (data.nValues() < 5)
-	{
-		Messenger::error("Not enough X data points (%i) in Data1D. Can't do transform.\n", data.nValues());
-		return false;
-	}
-
-	return true;
-}
-
 // Perform Fourier sine transform of current distribution function, over range specified, and with specified broadening function, modification function, and window applied (if requested)
 bool Fourier::sineFT(Data1D& data, double normFactor, double wMin, double wStep, double wMax, WindowFunction windowFunction, BroadeningFunction broadening)
 {
@@ -55,28 +42,23 @@ bool Fourier::sineFT(Data1D& data, double normFactor, double wMin, double wStep,
 	 * the result.
 	 */
 
-	// Okay to continue with transform?
-	if (!checkBeforeTransform(data)) return false;
-
 	// Set up window function for the present data
 	windowFunction.setUp(data);
 
 	// Grab x and y arrays
 	const Array<double>& x = data.constXAxis();
-	Array<double>& y = data.values();
+	const Array<double>& y = data.constValues();
 
 	int m;
 	const int nX = x.nItems();
 	double window, broaden;
 
-	// Create working array
-	Data1D sineft;
-
-	// Assume deltaX is the difference between the first two points
-	double deltaX = x.constAt(1) - x.constAt(0);
+	// Create working arrays
+	Array<double> newX;
+	Array<double> newY;
 
 	// Perform Fourier sine transform, apply general and omega-dependent broadening, as well as window function
-	double ft;
+	double ft, deltaX;
 	double omega = wMin;
 	while (omega <= wMax)
 	{
@@ -91,21 +73,25 @@ bool Fourier::sineFT(Data1D& data, double normFactor, double wMin, double wStep,
 			// Calculate broadening
 			broaden = broadening.yFT(x.constAt(m), omega);
 
-			ft += sin(x.constAt(m)*omega) * x.constAt(m) * broaden * window * y[m] * deltaX;
+			ft += sin(x.constAt(m)*omega) * x.constAt(m) * broaden * window * y.constAt(m) * deltaX;
 		}
 
-		// Normalise
+		// Normalise w.r.t. omega
 		if (omega > 0.0) ft /= omega;
-		sineft.addPoint(omega, ft);
+
+		// Add point
+		newX.add(omega);
+		newY.add(ft);
 		
 		omega += wStep;
 	}
 
-	// Transfer working arrays to this object
-	data.copyArrays(sineft);
-
 	// Apply normalisation factor
-	y *= normFactor;
+	newY *= normFactor;
+
+	// Transfer working arrays to this object
+	data.xAxis() = newX;
+	data.values() = newY;
 
 	return true;
 }

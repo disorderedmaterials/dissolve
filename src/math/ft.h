@@ -31,10 +31,6 @@ class Data1D;
 // Fourier Transforms
 class Fourier
 {
-	private:
-	// Make some checks before doing transform
-	static bool checkBeforeTransform(Data1D& data);
-
 	public:
 	// Perform Fourier sine transform of supplied data, over range specified, and with specified window and broadening functions applied
 	static bool sineFT(Data1D& data, double normFactor, double wMin, double wStep, double wMax, WindowFunction windowFunction = WindowFunction(), BroadeningFunction broadening = BroadeningFunction());
