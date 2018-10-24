@@ -150,21 +150,21 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	viewPane->axes().setMax(1, 1.0);
 	viewPane->setAutoFollowType(ViewPane::XFollow);
 
-	// Errors Graph
+	// R-Factor Graph
 
-	errorsGraph_ = ui.ErrorsPlotWidget;
+	rFactorGraph_ = ui.RFactorPlotWidget;
 
 	// Start a new, empty session
-	errorsGraph_->startNewSession(true);
-	viewPane = errorsGraph_->currentViewPane();
+	rFactorGraph_->startNewSession(true);
+	viewPane = rFactorGraph_->currentViewPane();
 	viewPane->setViewType(ViewPane::FlatXYView);
 	viewPane->axes().setTitle(0, "Iteration");
 	viewPane->axes().numberFormat(0).setNDecimals(0);
 	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "%Error");
+	viewPane->axes().setTitle(1, "R-Factor");
 	viewPane->axes().setMin(1, 0.0);
-	viewPane->axes().setMax(1, 100.0);
-	viewPane->setAutoFollowType(ViewPane::XFollow);
+	viewPane->axes().setMax(1, 0.5);
+	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
 
 	setGraphDataTargets(module_);
 
@@ -188,7 +188,7 @@ void EPSRModuleWidget::updateControls()
 	FRGraph_->refreshReferencedDataSets();
 	phiRGraph_->refreshReferencedDataSets();
 	phiMagGraph_->refreshReferencedDataSets();
-	errorsGraph_->refreshReferencedDataSets();
+	rFactorGraph_->refreshReferencedDataSets();
 
 	FQGraph_->updateDisplay();
 	FQFitGraph_->updateDisplay();
@@ -197,7 +197,7 @@ void EPSRModuleWidget::updateControls()
 	FRGraph_->updateDisplay();
 	phiRGraph_->updateDisplay();
 	phiMagGraph_->updateDisplay();
-	errorsGraph_->updateDisplay();
+	rFactorGraph_->updateDisplay();
 
 	refreshing_ = false;
 }
@@ -227,7 +227,7 @@ bool EPSRModuleWidget::writeState(LineParser& parser)
 	if (!FRGraph_->writeSession(parser)) return false;
 	if (!phiRGraph_->writeSession(parser)) return false;
 	if (!phiMagGraph_->writeSession(parser)) return false;
-	if (!errorsGraph_->writeSession(parser)) return false;
+	if (!rFactorGraph_->writeSession(parser)) return false;
 
 	return true;
 }
@@ -243,7 +243,7 @@ bool EPSRModuleWidget::readState(LineParser& parser)
 	if (!FRGraph_->readSession(parser)) return false;
 	if (!phiRGraph_->readSession(parser)) return false;
 	if (!phiMagGraph_->readSession(parser)) return false;
-	if (!errorsGraph_->readSession(parser)) return false;
+	if (!rFactorGraph_->readSession(parser)) return false;
 
 	return true;
 }
@@ -260,7 +260,11 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 	int n, m;
 	CharString blockData;
 
-	// Add reference data & calculated data to the FQGraph_, and percentage errors to the errorsGraph_
+	// Add total R-Factor before any dataset R-Factors
+	blockData.sprintf("Collection 'Total'; Group 'Total'; DataSet 'Total'; Source Data1D '%s//RFactor'; EndDataSet; EndCollection", module->uniqueName());
+	rFactorGraph_->addCollectionFromBlock(blockData);
+
+	// Add reference data & calculated data to the FQGraph_, and percentage errors to the rFactorGraph_
 	RefListIterator<Module,bool> targetIterator(module->targets());
 	while (Module* targetModule = targetIterator.iterate())
 	{
@@ -279,9 +283,9 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 			blockData.sprintf("Collection '%s Diff'; Group '%s'; LineStyle  1.0 'Dots'; DataSet '%s Error'; Source Data1D '%s//Difference//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
 			FQGraph_->addCollectionFromBlock(blockData);
 
-			// Error of fit between F(Q) and reference
-			blockData.sprintf("Collection '%s Calc'; Group '%s'; DataSet '%s Error'; Source Data1D '%s//Error//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
-			errorsGraph_->addCollectionFromBlock(blockData);
+			// R-Factor between F(Q) and reference
+			blockData.sprintf("Collection '%s'; Group '%s'; DataSet '%s'; Source Data1D '%s//RFactor//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
+			rFactorGraph_->addCollectionFromBlock(blockData);
 
 			// Reference F(r) (from direct FT of input data)
 			blockData.sprintf("Collection '%s Exp'; Group '%s'; LineStyle 1.0 Solid; DataSet 'Reference'; Source Data1D '%s//ReferenceDataFT'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName());
