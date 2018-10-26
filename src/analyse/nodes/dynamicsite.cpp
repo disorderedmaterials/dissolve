@@ -27,6 +27,7 @@
 #include "classes/molecule.h"
 #include "classes/site.h"
 #include "data/elements.h"
+#include "classes/atomtype.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "templates/dynamicarray.h"
@@ -47,7 +48,7 @@ AnalysisDynamicSiteNode::~AnalysisDynamicSiteNode()
  */
 
 // Node Keywords
-const char* DynamicSiteNodeKeywords[] = { "Element", "EndDynamicSite" };
+const char* DynamicSiteNodeKeywords[] = { "AtomType", "Element", "EndDynamicSite" };
 
 // Convert string to node keyword
 AnalysisDynamicSiteNode::DynamicSiteNodeKeyword AnalysisDynamicSiteNode::dynamicSiteNodeKeyword(const char* s)
@@ -74,14 +75,21 @@ const char* AnalysisDynamicSiteNode::dynamicSiteNodeKeyword(AnalysisDynamicSiteN
 // Generate sites from the specified Molecule
 void AnalysisDynamicSiteNode::generateSites(const Molecule* molecule)
 {
-	// Select by element
-	if (elements_.nItems() > 0)
+	// Loop over Atoms in the Molecule
+	for (int n=0; n<molecule->nAtoms(); ++n)
 	{
-		// Loop over Atoms in the Molecule
-		for (int n=0; n<molecule->nAtoms(); ++n)
+		// If the element is listed in our target elements list, add this atom as a site
+		if (elements_.contains(molecule->atom(n)->element()))
 		{
-			// If the element is listed in our target elements list, add this atom as a site
-			if (elements_.contains(molecule->atom(n)->element())) generatedSites_.add(Site(molecule, molecule->atom(n)->r()));
+			generatedSites_.add(Site(molecule, molecule->atom(n)->r()));
+			continue;
+		}
+
+		// If the Atom's AtomType is listed in our target AtomTYpe list, add this atom as a site
+		if (atomTypes_.containsData(molecule->atom(n)->masterTypeIndex()))
+		{
+			generatedSites_.add(Site(molecule, molecule->atom(n)->r()));
+			continue;
 		}
 	}
 }
@@ -148,6 +156,16 @@ bool AnalysisDynamicSiteNode::read(LineParser& parser, NodeContextStack& context
 		DynamicSiteNodeKeyword nk = dynamicSiteNodeKeyword(parser.argc(0));
 		switch (nk)
 		{
+			case (DynamicSiteNodeKeyword::AtomTypeKeyword):
+				for (int n=1; n<parser.nArgs(); ++n)
+				{
+					AtomType* at;
+					for (at = List<AtomType>::masterInstance().first(); at != NULL; at = at->next) if (DissolveSys::sameString(parser.argc(n), at->name())) break;
+					if (!at) return Messenger::error("Unrecognised AtomType '%s' given to %s keyword.\n", parser.argc(n), dynamicSiteNodeKeyword(nk));
+					if (atomTypes_.contains(at)) return Messenger::error("Duplicate AtomType target given to %s keyword.\n", dynamicSiteNodeKeyword(nk));
+					atomTypes_.add(at, List<AtomType>::masterInstance().indexOf(at));
+				}
+				break;
 			case (DynamicSiteNodeKeyword::ElementKeyword):
 				for (int n=1; n<parser.nArgs(); ++n)
 				{

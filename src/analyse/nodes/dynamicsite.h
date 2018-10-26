@@ -28,6 +28,7 @@
 
 // Forward Declarations
 class AnalysisSelectNode;
+class AtomType;
 class Element;
 class LineParser;
 class Molecule;
@@ -48,7 +49,7 @@ class AnalysisDynamicSiteNode : public AnalysisNode
 	 */
 	public:
 	// Node Keywords
-	enum DynamicSiteNodeKeyword { ElementKeyword, EndDynamicSiteKeyword, nDynamicSiteNodeKeywords };
+	enum DynamicSiteNodeKeyword { AtomTypeKeyword, ElementKeyword, EndDynamicSiteKeyword, nDynamicSiteNodeKeywords };
 	// Convert string to control keyword
 	static DynamicSiteNodeKeyword dynamicSiteNodeKeyword(const char* s);
 	// Convert control keyword to string
@@ -63,6 +64,8 @@ class AnalysisDynamicSiteNode : public AnalysisNode
 	AnalysisSelectNode* parent_;
 	// Target Elements for selection as sites
 	RefList<Element,bool> elements_;
+	// Target AtomTypes for selection as sites
+	RefList<AtomType,int> atomTypes_;
 
 
 	/*
