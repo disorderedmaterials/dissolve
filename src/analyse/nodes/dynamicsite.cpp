@@ -170,7 +170,7 @@ bool AnalysisDynamicSiteNode::read(LineParser& parser, NodeContextStack& context
 				{
 					Element* el = Elements::elementPointer(parser.argc(n));
 					if (!el) return Messenger::error("Unrecognised element '%s' given to %s keyword.\n", parser.argc(n), dynamicSiteNodeKeyword(nk));
-					if (elements_.contains(el)) return Messenger::error("Duplicate site given to %s keyword.\n", dynamicSiteNodeKeyword(nk));
+					if (elements_.contains(el)) return Messenger::error("Duplicate Element target given to %s keyword.\n", dynamicSiteNodeKeyword(nk));
 					elements_.add(el);
 				}
 				break;
