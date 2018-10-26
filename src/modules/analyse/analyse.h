@@ -91,6 +91,10 @@ class AnalyseModule : public Module
 	// Analyser to be run
 	Analyser analyser_;
 
+	public:
+	// Return the Analyser's context stack
+	const NodeContextStack& analyserContextStack() const;
+
 
 	/*
 	 * GUI Widget

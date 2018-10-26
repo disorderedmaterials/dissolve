@@ -23,6 +23,7 @@
 #include "analyse/nodes/collect1d.h"
 #include "analyse/nodes/select.h"
 #include "analyse/nodecontextstack.h"
+#include "modules/analyse/analyse.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "base/lineparser.h"
@@ -202,11 +203,26 @@ bool AnalysisProcess1DNode::finalise(ProcessPool& procPool, Configuration* cfg, 
 bool AnalysisProcess1DNode::read(LineParser& parser, NodeContextStack& contextStack)
 {
 	// The current line in the parser must also contain the name of a Collect1D node which we will operate on (it will also become our node name)
-	if (parser.nArgs() != 2) return Messenger::error("A Process1D node must be given the name of a Collect1D node.\n");
-	collectNode_ = contextStack.collect1DNode(parser.argc(1));
+	if (parser.nArgs() < 2) return Messenger::error("A Process1D node must be given the name of a Collect1D node.\n");
+
+	// If a second argument was provided we assume this is the name of an AnalyseModule
+	AnalyseModule* analyseModule = NULL;
+	if (parser.nArgs() == 3)
+	{
+		Module* module = ModuleList::findInstanceByUniqueName(parser.argc(2));
+		if (!module) return Messenger::error("No Analyse module named '%s' exists.\n", parser.argc(2));
+		if (!DissolveSys::sameString("Analyse", module->type())) return Messenger::error("Specified module '%s' must be an Analyse module.\n", parser.argc(2));
+
+		// Found the target AnalyseModule, so cast it up and search for the named Collect1D data in its Analyser
+		analyseModule = (AnalyseModule*) module;
+		collectNode_ = analyseModule->analyserContextStack().collect1DNode(parser.argc(1));
+	}
+	else collectNode_ = contextStack.collect1DNode(parser.argc(1));
 	if (!collectNode_) return Messenger::error("A valid Collect1D node name must be given as an argument to Process1D.\n");
 	setName(parser.argc(1));
 
+	// Set the target context stack to search (it may not be the one passed...)
+	const NodeContextStack& targetStack = analyseModule ? analyseModule->analyserContextStack() : contextStack;
 	AnalysisSelectNode* selectNode;
 
 	// Read until we encounter the EndProcess1D keyword, or we fail for some reason
