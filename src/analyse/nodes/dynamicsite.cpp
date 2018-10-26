@@ -131,10 +131,9 @@ AnalysisNode::NodeExecutionResult AnalysisDynamicSiteNode::execute(ProcessPool& 
 			if (excludedMolecules.contains(molecules[n])) continue;
 
 			// All OK, so generate sites
-			generateSites(moleculeParent);
+			generateSites(molecules[n]);
 		}
 	}
-
 
 	return AnalysisNode::Success;
 }
