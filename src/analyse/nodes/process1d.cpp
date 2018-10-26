@@ -248,13 +248,13 @@ bool AnalysisProcess1DNode::read(LineParser& parser, NodeContextStack& contextSt
 				xAxisLabel_ = parser.argc(1);
 				break;
 			case (Process1DNodeKeyword::NSitesKeyword):
-				selectNode = contextStack.selectNode(parser.argc(1));
-				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), normalise1DNodeKeyword(Process1DNodeKeyword::NSitesKeyword));
+				selectNode = targetStack.selectNode(parser.argc(1));
+				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(1), normalise1DNodeKeyword(Process1DNodeKeyword::NSitesKeyword));
 				sitePopulationNormalisers_.add(selectNode, 1.0);
 				break;
 			case (Process1DNodeKeyword::NumberDensityKeyword):
-				selectNode = contextStack.selectNode(parser.argc(1));
-				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), normalise1DNodeKeyword(Process1DNodeKeyword::NumberDensityKeyword));
+				selectNode = targetStack.selectNode(parser.argc(1));
+				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(1), normalise1DNodeKeyword(Process1DNodeKeyword::NumberDensityKeyword));
 				numberDensityNormalisers_.add(selectNode, 1.0);
 				break;
 			case (Process1DNodeKeyword::SaveKeyword):

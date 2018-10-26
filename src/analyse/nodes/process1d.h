@@ -101,6 +101,7 @@ class AnalysisProcess1DNode : public AnalysisNode
 	// Return x axis label
 	const char* xAxisLabel() const;
 
+
 	/*
 	 * Execute
 	 */
