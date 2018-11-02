@@ -22,7 +22,7 @@
 #include "gui/uchroma/gui/operate_setz.h"
 #include "gui/uchroma/classes/collection.h"
 #include "base/lineparser.h"
-#include "gui/uchroma/expression/variable.h"
+#include "expression/variable.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QDateTime>

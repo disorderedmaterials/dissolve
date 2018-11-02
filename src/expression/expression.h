@@ -1,29 +1,29 @@
 /*
-	*** Expression
-	*** src/gui/uchroma/expression/expression.h
-	Copyright T. Youngs 2015
+	*** Mathematical Expression
+	*** src/expression/expression.h
+	Copyright T. Youngs 2015-2018
 
-	This file is part of uChroma.
+	This file is part of Dissolve.
 
-	uChroma is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	uChroma is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_UCHROMAEXPRESSION_H
-#define DISSOLVE_UCHROMAEXPRESSION_H
+#ifndef DISSOLVE_EXPRESSION_H
+#define DISSOLVE_EXPRESSION_H
 
-#include "gui/uchroma/expression/node.h"
-#include "gui/uchroma/expression/functions.h"
+#include "expression/node.h"
+#include "expression/functions.h"
 #include "base/charstring.h"
 #include "templates/list.h"
 
@@ -34,7 +34,7 @@ extern int ExpressionParser_parse();
 class Node;
 class Variable;
 
-// Expression
+// Mathematical Expression
 class Expression
 {
 	public:
@@ -48,7 +48,7 @@ class Expression
 	 * Creation
 	 */
 	public:
-	// Symbolic tokens - array of corresponding values refers to Bison's tokens
+	// Multi-Character Symbols
 	enum SymbolToken { AssignSymbol, GEQSymbol, LEQSymbol, CNEQSymbol, FNEQSymbol, AndSymbol, OrSymbol, nSymbolTokens };
 
 	private:

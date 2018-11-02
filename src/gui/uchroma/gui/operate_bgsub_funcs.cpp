@@ -22,7 +22,7 @@
 #include "gui/uchroma/gui/operate_bgsub.h"
 #include "gui/uchroma/uchromabase.h"
 #include "gui/uchroma/classes/collection.h"
-#include "gui/uchroma/expression/variable.h"
+#include "expression/variable.h"
 #include <QFileDialog>
 #include <QMessageBox>
 

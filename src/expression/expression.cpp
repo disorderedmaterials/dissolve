@@ -1,29 +1,29 @@
 /*
-	*** Expression
-	*** src/gui/uchroma/expression/expression.cpp
-	Copyright T. Youngs 2015
+	*** Mathematical Expression
+	*** src/expression/expression.cpp
+	Copyright T. Youngs 2015-2018
 
-	This file is part of uChroma.
+	This file is part of Dissolve.
 
-	uChroma is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	uChroma is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/uchroma/expression/expression.h"
-#include "gui/uchroma/expression/variable.h"
-#include "gui/uchroma/expression/functionnode.h"
-#include "gui/uchroma/expression/expression_grammar.hh"
-#include "gui/uchroma/expression/variablenode.h"
+#include "expression/expression.h"
+#include "expression/variable.h"
+#include "expression/functionnode.h"
+#include "expression/expression_grammar.hh"
+#include "expression/variablenode.h"
 #include "base/sysfunc.h"
 #include "base/messenger.h"
 #include <stdarg.h>

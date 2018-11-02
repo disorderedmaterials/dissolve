@@ -21,7 +21,7 @@
 
 #include "gui/uchroma/classes/equationvariable.h"
 #include "base/messenger.h"
-#include "gui/uchroma/expression/variable.h"
+#include "expression/variable.h"
 
 // Constructor
 EquationVariable::EquationVariable() : ListItem<EquationVariable>()

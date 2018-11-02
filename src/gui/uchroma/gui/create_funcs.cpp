@@ -22,7 +22,7 @@
 #include "gui/uchroma/gui/create.h"
 #include "gui/uchroma/uchromabase.h"
 #include "gui/uchroma/gui/selectequation.h"
-#include "gui/uchroma/expression/variable.h"
+#include "expression/variable.h"
 
 // Constructor
 CreateCollectionDialog::CreateCollectionDialog(UChromaBase& uChromaBase, QWidget* parent) : QDialog(parent), uChromaBase_(uChromaBase)

@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_UCHROMATRANSFORMER_H
 #define DISSOLVE_UCHROMATRANSFORMER_H
 
-#include "gui/uchroma/expression/expression.h"
+#include "expression/expression.h"
 #include "base/charstring.h"
 #include "templates/array.h"
 

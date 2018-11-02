@@ -42,6 +42,7 @@ fi
 # Check other basic requirements
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
+AC_PROG_YACC
 
 
 # Configuration options - Qt Tools
@@ -73,9 +74,6 @@ if test "$with_gui" = "yes"; then
   PKG_CHECK_MODULES(QTOPENGL, Qt5OpenGL >= 5.0.0)
   PKG_CHECK_MODULES(QTWIDGETS, Qt5Widgets >= 5.0.0)
   PKG_CHECK_MODULES(QTPRINT, Qt5PrintSupport >= 5.0.0)
-
-  # Make sure Yacc/Bison is available
-  AC_PROG_YACC
 
   # Find Freetype and FTGL (with pkgconfig)
   PKG_CHECK_MODULES(FREETYPE, freetype2 >= 2.0)
@@ -161,6 +159,7 @@ AC_CONFIG_FILES(src/analyse/nodes/Makefile)
 AC_CONFIG_FILES(src/base/Makefile)
 AC_CONFIG_FILES(src/classes/Makefile)
 AC_CONFIG_FILES(src/data/Makefile)
+AC_CONFIG_FILES(src/expression/Makefile)
 AC_CONFIG_FILES(src/main/Makefile)
 AC_CONFIG_FILES(src/math/Makefile)
 AC_CONFIG_FILES(src/module/Makefile)
@@ -199,7 +198,6 @@ if test "$with_gui" = "yes"; then
   AC_CONFIG_FILES(src/gui/uchroma/Makefile)
   AC_CONFIG_FILES(src/gui/widgets/Makefile)
   AC_CONFIG_FILES(src/gui/uchroma/classes/Makefile)
-  AC_CONFIG_FILES(src/gui/uchroma/expression/Makefile)
   AC_CONFIG_FILES(src/gui/uchroma/gui/Makefile)
   AC_CONFIG_FILES(src/gui/uchroma/kernels/Makefile)
   AC_CONFIG_FILES(src/gui/uchroma/render/Makefile)

@@ -23,7 +23,7 @@
 #define DISSOLVE_UCHROMAOPERATE_SETZ_H
 
 #include "gui/uchroma/gui/ui_operate_setz.h"
-#include "gui/uchroma/expression/expression.h"
+#include "expression/expression.h"
 #include <QDialog>
 #include <QObject>
 #include <bitset>
