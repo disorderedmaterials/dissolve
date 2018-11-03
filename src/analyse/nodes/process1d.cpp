@@ -48,7 +48,7 @@ AnalysisProcess1DNode::~AnalysisProcess1DNode()
  * Node Keywords
  */
 
-// Node Keywords (note ordering for efficiency)
+// Node Keywords
 const char* Process1DNodeKeywords[] = { "EndProcess1D", "Factor", "LabelValue", "LabelX", "NSites", "NumberDensity", "Save", "SphericalShellVolume" };
 
 // Convert string to node keyword

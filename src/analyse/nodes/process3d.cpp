@@ -47,7 +47,7 @@ AnalysisProcess3DNode::~AnalysisProcess3DNode()
  * Node Keywords
  */
 
-// Node Keywords (note ordering for efficiency)
+// Node Keywords
 const char* Process3DNodeKeywords[] = { "EndProcess3D", "Factor", "LabelValue", "LabelX", "LabelY", "LabelZ", "NSites", "NumberDensity", "Save" };
 
 // Convert string to node keyword

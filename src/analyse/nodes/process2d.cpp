@@ -50,7 +50,7 @@ AnalysisProcess2DNode::~AnalysisProcess2DNode()
  * Node Keywords
  */
 
-// Node Keywords (note ordering for efficiency)
+// Node Keywords
 const char* Process2DNodeKeywords[] = { "EndProcess2D", "Factor", "LabelValue", "LabelX", "LabelY", "NormaliseToOne", "NSites", "NumberDensity", "Save" };
 
 // Convert string to node keyword
