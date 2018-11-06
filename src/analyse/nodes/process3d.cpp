@@ -52,7 +52,7 @@ AnalysisProcess3DNode::~AnalysisProcess3DNode()
 const char* Process3DNodeKeywords[] = { "EndProcess3D", "Factor", "LabelValue", "LabelX", "LabelY", "LabelZ", "NSites", "NumberDensity", "Save" };
 
 // Convert string to node keyword
-AnalysisProcess3DNode::Process3DNodeKeyword AnalysisProcess3DNode::normalise3DNodeKeyword(const char* s)
+AnalysisProcess3DNode::Process3DNodeKeyword AnalysisProcess3DNode::process3DNodeKeyword(const char* s)
 {
 	for (int nk=0; nk < AnalysisProcess3DNode::nProcess3DNodeKeywords; ++nk) if (DissolveSys::sameString(s, Process3DNodeKeywords[nk])) return (AnalysisProcess3DNode::Process3DNodeKeyword) nk;
 
@@ -60,7 +60,7 @@ AnalysisProcess3DNode::Process3DNodeKeyword AnalysisProcess3DNode::normalise3DNo
 }
 
 // Convert node keyword to string
-const char* AnalysisProcess3DNode::normalise3DNodeKeyword(AnalysisProcess3DNode::Process3DNodeKeyword nk)
+const char* AnalysisProcess3DNode::process3DNodeKeyword(AnalysisProcess3DNode::Process3DNodeKeyword nk)
 {
 	return Process3DNodeKeywords[nk];
 }
@@ -211,7 +211,7 @@ bool AnalysisProcess3DNode::read(LineParser& parser, NodeContextStack& contextSt
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
 		// Is the first argument on the current line a valid control keyword?
-		Process3DNodeKeyword nk = normalise3DNodeKeyword(parser.argc(0));
+		Process3DNodeKeyword nk = process3DNodeKeyword(parser.argc(0));
 		switch (nk)
 		{
 			case (Process3DNodeKeyword::EndProcess3DKeyword):
@@ -234,12 +234,12 @@ bool AnalysisProcess3DNode::read(LineParser& parser, NodeContextStack& contextSt
 				break;
 			case (Process3DNodeKeyword::NSitesKeyword):
 				selectNode = contextStack.selectNode(parser.argc(1));
-				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), normalise3DNodeKeyword(Process3DNodeKeyword::NSitesKeyword));
+				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), process3DNodeKeyword(Process3DNodeKeyword::NSitesKeyword));
 				sitePopulationNormalisers_.add(selectNode, 1.0);
 				break;
 			case (Process3DNodeKeyword::NumberDensityKeyword):
 				selectNode = contextStack.selectNode(parser.argc(1));
-				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), normalise3DNodeKeyword(Process3DNodeKeyword::NumberDensityKeyword));
+				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), process3DNodeKeyword(Process3DNodeKeyword::NumberDensityKeyword));
 				numberDensityNormalisers_.add(selectNode, 1.0);
 				break;
 			case (Process3DNodeKeyword::SaveKeyword):

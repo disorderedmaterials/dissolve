@@ -51,9 +51,9 @@ class AnalysisProcess3DNode : public AnalysisNode
 	// Node Keywords
 	enum Process3DNodeKeyword { EndProcess3DKeyword, FactorKeyword, LabelValueKeyword, LabelXKeyword, LabelYKeyword, LabelZKeyword, NSitesKeyword, NumberDensityKeyword, SaveKeyword, nProcess3DNodeKeywords };
 	// Convert string to control keyword
-	static Process3DNodeKeyword normalise3DNodeKeyword(const char* s);
+	static Process3DNodeKeyword process3DNodeKeyword(const char* s);
 	// Convert control keyword to string
-	static const char* normalise3DNodeKeyword(Process3DNodeKeyword nk);
+	static const char* process3DNodeKeyword(Process3DNodeKeyword nk);
 
 
 	/*

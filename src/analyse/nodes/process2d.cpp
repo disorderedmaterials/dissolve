@@ -55,7 +55,7 @@ AnalysisProcess2DNode::~AnalysisProcess2DNode()
 const char* Process2DNodeKeywords[] = { "EndProcess2D", "Factor", "LabelValue", "LabelX", "LabelY", "NormaliseToOne", "NSites", "NumberDensity", "Save" };
 
 // Convert string to node keyword
-AnalysisProcess2DNode::Process2DNodeKeyword AnalysisProcess2DNode::normalise2DNodeKeyword(const char* s)
+AnalysisProcess2DNode::Process2DNodeKeyword AnalysisProcess2DNode::process2DNodeKeyword(const char* s)
 {
 	for (int nk=0; nk < AnalysisProcess2DNode::nProcess2DNodeKeywords; ++nk) if (DissolveSys::sameString(s, Process2DNodeKeywords[nk])) return (AnalysisProcess2DNode::Process2DNodeKeyword) nk;
 
@@ -63,7 +63,7 @@ AnalysisProcess2DNode::Process2DNodeKeyword AnalysisProcess2DNode::normalise2DNo
 }
 
 // Convert node keyword to string
-const char* AnalysisProcess2DNode::normalise2DNodeKeyword(AnalysisProcess2DNode::Process2DNodeKeyword nk)
+const char* AnalysisProcess2DNode::process2DNodeKeyword(AnalysisProcess2DNode::Process2DNodeKeyword nk)
 {
 	return Process2DNodeKeywords[nk];
 }
@@ -233,7 +233,7 @@ bool AnalysisProcess2DNode::read(LineParser& parser, NodeContextStack& contextSt
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
 		// Is the first argument on the current line a valid control keyword?
-		Process2DNodeKeyword nk = normalise2DNodeKeyword(parser.argc(0));
+		Process2DNodeKeyword nk = process2DNodeKeyword(parser.argc(0));
 		switch (nk)
 		{
 			case (Process2DNodeKeyword::EndProcess2DKeyword):
@@ -256,12 +256,12 @@ bool AnalysisProcess2DNode::read(LineParser& parser, NodeContextStack& contextSt
 				break;
 			case (Process2DNodeKeyword::NSitesKeyword):
 				selectNode = contextStack.selectNode(parser.argc(1));
-				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), normalise2DNodeKeyword(Process2DNodeKeyword::NSitesKeyword));
+				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), process2DNodeKeyword(Process2DNodeKeyword::NSitesKeyword));
 				sitePopulationNormalisers_.add(selectNode, 1.0);
 				break;
 			case (Process2DNodeKeyword::NumberDensityKeyword):
 				selectNode = contextStack.selectNode(parser.argc(1));
-				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), normalise2DNodeKeyword(Process2DNodeKeyword::NumberDensityKeyword));
+				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), process2DNodeKeyword(Process2DNodeKeyword::NumberDensityKeyword));
 				numberDensityNormalisers_.add(selectNode, 1.0);
 				break;
 			case (Process2DNodeKeyword::SaveKeyword):
