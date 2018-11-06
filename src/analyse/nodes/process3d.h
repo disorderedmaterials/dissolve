@@ -62,6 +62,8 @@ class AnalysisProcess3DNode : public AnalysisNode
 	private:
 	// Collect3D node which we are normalising
 	AnalysisCollect3DNode* collectNode_;
+	// Pointer to processed data (stored in processing data list)
+	Data3D* processedData_;
 	// Reference to sites against which we will normalise by population
 	RefList<AnalysisSelectNode,double> sitePopulationNormalisers_;
 	// Reference to sites against which we will normalise by number density
@@ -78,6 +80,8 @@ class AnalysisProcess3DNode : public AnalysisNode
 	CharString xAxisLabel_, yAxisLabel_, zAxisLabel_;
 
 	public:
+	// Return processed data
+	const Data3D& processedData() const;
 	// Add site population normaliser
 	void addSitePopulationNormaliser(AnalysisSelectNode* selectNode);
 	// Add number density normaliser

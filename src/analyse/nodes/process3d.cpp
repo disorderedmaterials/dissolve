@@ -33,6 +33,7 @@
 AnalysisProcess3DNode::AnalysisProcess3DNode(AnalysisCollect3DNode* target) : AnalysisNode(AnalysisNode::Process3DNode)
 {
 	collectNode_ = target;
+	processedData_ = NULL;
 	saveData_ = false;
 	normalisationFactor_ = 0.0;
 	normaliseByFactor_ = false;
@@ -67,6 +68,19 @@ const char* AnalysisProcess3DNode::normalise3DNodeKeyword(AnalysisProcess3DNode:
 /*
  * Data
  */
+
+// Return processed data
+const Data3D& AnalysisProcess3DNode::processedData() const
+{
+	if (!processedData_)
+	{
+		Messenger::error("No processed data pointer set in AnalysisProcess3DNode, so nothing to return.\n");
+		static Data3D dummy;
+		return dummy;
+	}
+
+	return (*processedData_);
+}
 
 // Add site population normaliser
 void AnalysisProcess3DNode::addSitePopulationNormaliser(AnalysisSelectNode* selectNode)
@@ -144,6 +158,7 @@ bool AnalysisProcess3DNode::finalise(ProcessPool& procPool, Configuration* cfg, 
 	// Retrieve / realise the normalised data from the supplied list
 	bool created;
 	Data3D& data = GenericListHelper<Data3D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag, &created);
+	processedData_ = &data;
 
 	data.setName(name());
 	data.setObjectTag(CharString("%s//Process3D//%s//%s", prefix, cfg->name(), name()));

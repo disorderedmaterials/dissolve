@@ -62,6 +62,8 @@ class AnalysisProcess1DNode : public AnalysisNode
 	private:
 	// Collect1D node which we are normalising
 	AnalysisCollect1DNode* collectNode_;
+	// Pointer to processed data (stored in processing data list)
+	Data1D* processedData_;
 	// Reference to sites against which we will normalise by population
 	RefList<AnalysisSelectNode,double> sitePopulationNormalisers_;
 	// Reference to sites against which we will normalise by number density
@@ -80,6 +82,8 @@ class AnalysisProcess1DNode : public AnalysisNode
 	CharString xAxisLabel_;
 
 	public:
+	// Return processed data
+	const Data1D& processedData() const;
 	// Add site population normaliser
 	void addSitePopulationNormaliser(AnalysisSelectNode* selectNode);
 	// Add number density normaliser

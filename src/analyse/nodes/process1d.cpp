@@ -33,6 +33,7 @@
 AnalysisProcess1DNode::AnalysisProcess1DNode(AnalysisCollect1DNode* target) : AnalysisNode(AnalysisNode::Process1DNode)
 {
 	collectNode_ = target;
+	processedData_ = NULL;
 	saveData_ = false;
 	normalisationFactor_ = 0.0;
 	normaliseByFactor_ = false;
@@ -68,6 +69,19 @@ const char* AnalysisProcess1DNode::normalise1DNodeKeyword(AnalysisProcess1DNode:
 /*
  * Data
  */
+
+// Return processed data
+const Data1D& AnalysisProcess1DNode::processedData() const
+{
+	if (!processedData_)
+	{
+		Messenger::error("No processed data pointer set in AnalysisProcess1DNode, so nothing to return.\n");
+		static Data1D dummy;
+		return dummy;
+	}
+
+	return (*processedData_);
+}
 
 // Add site population normaliser
 void AnalysisProcess1DNode::addSitePopulationNormaliser(AnalysisSelectNode* selectNode)
@@ -151,6 +165,7 @@ bool AnalysisProcess1DNode::finalise(ProcessPool& procPool, Configuration* cfg, 
 	// Retrieve / realise the normalised data from the supplied list
 	bool created;
 	Data1D& data = GenericListHelper<Data1D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag, &created);
+	processedData_ = &data;
 
 	data.setName(name());
 	data.setObjectTag(CharString("%s//Process1D//%s//%s", prefix, cfg->name(), name()));
