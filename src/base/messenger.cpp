@@ -186,6 +186,8 @@ void Messenger::printVerbose(const char* fmt, ...)
 // Print error message
 bool Messenger::error(const char* fmt, ...)
 {
+	if (quiet_ || muted_) return false;
+
 	va_list arguments;
 	va_start(arguments,fmt);
 
@@ -203,17 +205,23 @@ bool Messenger::error(const char* fmt, ...)
 // Print warning message
 void Messenger::warn(const char* fmt, ...)
 {
+	if (quiet_ || muted_) return;
+
 	va_list arguments;
 	va_start(arguments, fmt);
+
 	outputText("\n!!! WARNING\n");
 	createAndPrintText("!!! WARNING   ", fmt, arguments);
 	outputText("!!! WARNING\n\n");
+
 	va_end(arguments);
 }
 
 // Print banner message of specified width
 void Messenger::banner(const char* fmt, ...)
 {
+	if (quiet_ || muted_) return;
+
 	static CharString bannerChars;
 	const int width = 80;
 	if (bannerChars.length() < width)
@@ -244,6 +252,8 @@ void Messenger::banner(const char* fmt, ...)
 // Print heading message
 void Messenger::heading(const char* fmt, ...)
 {
+	if (quiet_ || muted_) return;
+
 	static CharString bannerChars;
 	const int width = 80;
 	if (bannerChars.length() < width)

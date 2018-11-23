@@ -54,6 +54,8 @@ class Analyser
 	void clear();
 	// Add (own) specified node to root sequence
 	void addRootSequenceNode(AnalysisNode* node);
+	// Return the context stack
+	const NodeContextStack& contextStack() const;
 
 
 	/*

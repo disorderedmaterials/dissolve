@@ -51,6 +51,12 @@ void Analyser::addRootSequenceNode(AnalysisNode* node)
 	rootSequence_.addNode(node);
 }
 
+// Return the context stack
+const NodeContextStack& Analyser::contextStack() const
+{
+	return contextStack_;
+}
+
 /*
  * Execute
  */
