@@ -23,8 +23,8 @@
 #include "gui/uchroma/classes/collection.h"
 #include "gui/uchroma/classes/referencevariable.h"
 #include "gui/uchroma/classes/viewpane.h"
-#include "gui/uchroma/expression/expression.h"
-#include "gui/uchroma/expression/variable.h"
+#include "expression/expression.h"
+#include "expression/variable.h"
 #include "base/sysfunc.h"
 
 // Constructor

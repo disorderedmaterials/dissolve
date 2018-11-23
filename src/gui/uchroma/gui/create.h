@@ -26,7 +26,7 @@
 #include <QObject>
 #include "gui/uchroma/gui/ui_create.h"
 #include "gui/uchroma/classes/equationvariable.h"
-#include "gui/uchroma/expression/expression.h"
+#include "expression/expression.h"
 #include "templates/array.h"
 #include "templates/list.h"
 

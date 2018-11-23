@@ -20,7 +20,7 @@
 */
 
 #include "gui/uchroma/classes/transformer.h"
-#include "gui/uchroma/expression/variable.h"
+#include "expression/variable.h"
 #include "templates/array.h"
 
 // Constructor

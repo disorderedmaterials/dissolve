@@ -38,19 +38,21 @@ if(CHECKS)
   ADD_DEFINITIONS("-DCHECKS")
 endif(CHECKS)
 
+# Find basic requirements
+include(FindBISON)
+# -- Force first look for Bison to be /usr/local/bin, since version provided by XCode on OSX is too old (v2.3) 
+find_package(BISON PATHS /usr/local/bin NO_DEFAULT_PATH QUIET)
+find_package(BISON REQUIRED)
+
 if(GUI)
   # Add extra functions
   LIST(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
-  include(FindBISON)
   include(FindFTGL)
   include(FindGLEXT)
   find_package(Qt5Widgets REQUIRED)
   find_package(Qt5Core REQUIRED)
   find_package(Qt5Gui REQUIRED)
   find_package(Qt5PrintSupport REQUIRED)
-  # -- Force first look for Bison to be /usr/local/bin, since version provided by XCode on OSX is too old (v2.3) 
-  find_package(BISON PATHS /usr/local/bin NO_DEFAULT_PATH QUIET)
-  find_package(BISON REQUIRED)
   find_package(OpenGL REQUIRED)
   find_package(FTGL REQUIRED)
   find_package(Freetype REQUIRED)
@@ -175,7 +177,7 @@ endif(GUI)
 set(BASIC_LINK_LIBS
 
   # Main libs
-  main classes module analyse analysisnodes keywordtypes base math data
+  main classes module analyse analysisnodes keywordtypes expression base math data
 
   # Modules
   analysemodule

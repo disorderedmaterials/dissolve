@@ -28,7 +28,7 @@
 #include "math/data1d.h"
 #include "gui/uchroma/classes/equationvariable.h"
 #include "gui/uchroma/kernels/fit.h"
-#include "gui/uchroma/expression/expression.h"
+#include "expression/expression.h"
 #include "templates/array.h"
 #include "templates/list.h"
 

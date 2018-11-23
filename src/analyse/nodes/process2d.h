@@ -51,9 +51,9 @@ class AnalysisProcess2DNode : public AnalysisNode
 	// Node Keywords
 	enum Process2DNodeKeyword { EndProcess2DKeyword, FactorKeyword, LabelValueKeyword, LabelXKeyword, LabelYKeyword, NormaliseToOneKeyword, NSitesKeyword, NumberDensityKeyword, SaveKeyword, nProcess2DNodeKeywords };
 	// Convert string to control keyword
-	static Process2DNodeKeyword normalise2DNodeKeyword(const char* s);
+	static Process2DNodeKeyword process2DNodeKeyword(const char* s);
 	// Convert control keyword to string
-	static const char* normalise2DNodeKeyword(Process2DNodeKeyword nk);
+	static const char* process2DNodeKeyword(Process2DNodeKeyword nk);
 
 
 	/*
@@ -62,6 +62,8 @@ class AnalysisProcess2DNode : public AnalysisNode
 	private:
 	// Collect2D node which we are normalising
 	AnalysisCollect2DNode* collectNode_;
+	// Pointer to processed data (stored in processing data list)
+	Data2D* processedData_;
 	// Reference to sites against which we will normalise by population
 	RefList<AnalysisSelectNode,double> sitePopulationNormalisers_;
 	// Reference to sites against which we will normalise by number density
@@ -80,6 +82,8 @@ class AnalysisProcess2DNode : public AnalysisNode
 	CharString xAxisLabel_, yAxisLabel_;
 
 	public:
+	// Return processed data
+	const Data2D& processedData() const;
 	// Add site population normaliser
 	void addSitePopulationNormaliser(AnalysisSelectNode* selectNode);
 	// Add number density normaliser

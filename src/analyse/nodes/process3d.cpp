@@ -33,6 +33,7 @@
 AnalysisProcess3DNode::AnalysisProcess3DNode(AnalysisCollect3DNode* target) : AnalysisNode(AnalysisNode::Process3DNode)
 {
 	collectNode_ = target;
+	processedData_ = NULL;
 	saveData_ = false;
 	normalisationFactor_ = 0.0;
 	normaliseByFactor_ = false;
@@ -47,11 +48,11 @@ AnalysisProcess3DNode::~AnalysisProcess3DNode()
  * Node Keywords
  */
 
-// Node Keywords (note ordering for efficiency)
+// Node Keywords
 const char* Process3DNodeKeywords[] = { "EndProcess3D", "Factor", "LabelValue", "LabelX", "LabelY", "LabelZ", "NSites", "NumberDensity", "Save" };
 
 // Convert string to node keyword
-AnalysisProcess3DNode::Process3DNodeKeyword AnalysisProcess3DNode::normalise3DNodeKeyword(const char* s)
+AnalysisProcess3DNode::Process3DNodeKeyword AnalysisProcess3DNode::process3DNodeKeyword(const char* s)
 {
 	for (int nk=0; nk < AnalysisProcess3DNode::nProcess3DNodeKeywords; ++nk) if (DissolveSys::sameString(s, Process3DNodeKeywords[nk])) return (AnalysisProcess3DNode::Process3DNodeKeyword) nk;
 
@@ -59,7 +60,7 @@ AnalysisProcess3DNode::Process3DNodeKeyword AnalysisProcess3DNode::normalise3DNo
 }
 
 // Convert node keyword to string
-const char* AnalysisProcess3DNode::normalise3DNodeKeyword(AnalysisProcess3DNode::Process3DNodeKeyword nk)
+const char* AnalysisProcess3DNode::process3DNodeKeyword(AnalysisProcess3DNode::Process3DNodeKeyword nk)
 {
 	return Process3DNodeKeywords[nk];
 }
@@ -67,6 +68,19 @@ const char* AnalysisProcess3DNode::normalise3DNodeKeyword(AnalysisProcess3DNode:
 /*
  * Data
  */
+
+// Return processed data
+const Data3D& AnalysisProcess3DNode::processedData() const
+{
+	if (!processedData_)
+	{
+		Messenger::error("No processed data pointer set in AnalysisProcess3DNode, so nothing to return.\n");
+		static Data3D dummy;
+		return dummy;
+	}
+
+	return (*processedData_);
+}
 
 // Add site population normaliser
 void AnalysisProcess3DNode::addSitePopulationNormaliser(AnalysisSelectNode* selectNode)
@@ -144,6 +158,7 @@ bool AnalysisProcess3DNode::finalise(ProcessPool& procPool, Configuration* cfg, 
 	// Retrieve / realise the normalised data from the supplied list
 	bool created;
 	Data3D& data = GenericListHelper<Data3D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag, &created);
+	processedData_ = &data;
 
 	data.setName(name());
 	data.setObjectTag(CharString("%s//Process3D//%s//%s", prefix, cfg->name(), name()));
@@ -196,7 +211,7 @@ bool AnalysisProcess3DNode::read(LineParser& parser, NodeContextStack& contextSt
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
 		// Is the first argument on the current line a valid control keyword?
-		Process3DNodeKeyword nk = normalise3DNodeKeyword(parser.argc(0));
+		Process3DNodeKeyword nk = process3DNodeKeyword(parser.argc(0));
 		switch (nk)
 		{
 			case (Process3DNodeKeyword::EndProcess3DKeyword):
@@ -219,12 +234,12 @@ bool AnalysisProcess3DNode::read(LineParser& parser, NodeContextStack& contextSt
 				break;
 			case (Process3DNodeKeyword::NSitesKeyword):
 				selectNode = contextStack.selectNode(parser.argc(1));
-				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), normalise3DNodeKeyword(Process3DNodeKeyword::NSitesKeyword));
+				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), process3DNodeKeyword(Process3DNodeKeyword::NSitesKeyword));
 				sitePopulationNormalisers_.add(selectNode, 1.0);
 				break;
 			case (Process3DNodeKeyword::NumberDensityKeyword):
 				selectNode = contextStack.selectNode(parser.argc(1));
-				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), normalise3DNodeKeyword(Process3DNodeKeyword::NumberDensityKeyword));
+				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), process3DNodeKeyword(Process3DNodeKeyword::NumberDensityKeyword));
 				numberDensityNormalisers_.add(selectNode, 1.0);
 				break;
 			case (Process3DNodeKeyword::SaveKeyword):

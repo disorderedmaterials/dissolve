@@ -33,6 +33,7 @@
 AnalysisProcess1DNode::AnalysisProcess1DNode(AnalysisCollect1DNode* target) : AnalysisNode(AnalysisNode::Process1DNode)
 {
 	collectNode_ = target;
+	processedData_ = NULL;
 	saveData_ = false;
 	normalisationFactor_ = 0.0;
 	normaliseByFactor_ = false;
@@ -48,11 +49,11 @@ AnalysisProcess1DNode::~AnalysisProcess1DNode()
  * Node Keywords
  */
 
-// Node Keywords (note ordering for efficiency)
+// Node Keywords
 const char* Process1DNodeKeywords[] = { "EndProcess1D", "Factor", "LabelValue", "LabelX", "NSites", "NumberDensity", "Save", "SphericalShellVolume" };
 
 // Convert string to node keyword
-AnalysisProcess1DNode::Process1DNodeKeyword AnalysisProcess1DNode::normalise1DNodeKeyword(const char* s)
+AnalysisProcess1DNode::Process1DNodeKeyword AnalysisProcess1DNode::process1DNodeKeyword(const char* s)
 {
 	for (int nk=0; nk < AnalysisProcess1DNode::nProcess1DNodeKeywords; ++nk) if (DissolveSys::sameString(s, Process1DNodeKeywords[nk])) return (AnalysisProcess1DNode::Process1DNodeKeyword) nk;
 
@@ -60,7 +61,7 @@ AnalysisProcess1DNode::Process1DNodeKeyword AnalysisProcess1DNode::normalise1DNo
 }
 
 // Convert node keyword to string
-const char* AnalysisProcess1DNode::normalise1DNodeKeyword(AnalysisProcess1DNode::Process1DNodeKeyword nk)
+const char* AnalysisProcess1DNode::process1DNodeKeyword(AnalysisProcess1DNode::Process1DNodeKeyword nk)
 {
 	return Process1DNodeKeywords[nk];
 }
@@ -68,6 +69,19 @@ const char* AnalysisProcess1DNode::normalise1DNodeKeyword(AnalysisProcess1DNode:
 /*
  * Data
  */
+
+// Return processed data
+const Data1D& AnalysisProcess1DNode::processedData() const
+{
+	if (!processedData_)
+	{
+		Messenger::error("No processed data pointer set in AnalysisProcess1DNode, so nothing to return.\n");
+		static Data1D dummy;
+		return dummy;
+	}
+
+	return (*processedData_);
+}
 
 // Add site population normaliser
 void AnalysisProcess1DNode::addSitePopulationNormaliser(AnalysisSelectNode* selectNode)
@@ -151,6 +165,7 @@ bool AnalysisProcess1DNode::finalise(ProcessPool& procPool, Configuration* cfg, 
 	// Retrieve / realise the normalised data from the supplied list
 	bool created;
 	Data1D& data = GenericListHelper<Data1D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag, &created);
+	processedData_ = &data;
 
 	data.setName(name());
 	data.setObjectTag(CharString("%s//Process1D//%s//%s", prefix, cfg->name(), name()));
@@ -216,7 +231,7 @@ bool AnalysisProcess1DNode::read(LineParser& parser, NodeContextStack& contextSt
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
 		// Is the first argument on the current line a valid control keyword?
-		Process1DNodeKeyword nk = normalise1DNodeKeyword(parser.argc(0));
+		Process1DNodeKeyword nk = process1DNodeKeyword(parser.argc(0));
 		switch (nk)
 		{
 			case (Process1DNodeKeyword::EndProcess1DKeyword):
@@ -233,12 +248,12 @@ bool AnalysisProcess1DNode::read(LineParser& parser, NodeContextStack& contextSt
 				break;
 			case (Process1DNodeKeyword::NSitesKeyword):
 				selectNode = contextStack.selectNode(parser.argc(1));
-				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), normalise1DNodeKeyword(Process1DNodeKeyword::NSitesKeyword));
+				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), process1DNodeKeyword(Process1DNodeKeyword::NSitesKeyword));
 				sitePopulationNormalisers_.add(selectNode, 1.0);
 				break;
 			case (Process1DNodeKeyword::NumberDensityKeyword):
 				selectNode = contextStack.selectNode(parser.argc(1));
-				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), normalise1DNodeKeyword(Process1DNodeKeyword::NumberDensityKeyword));
+				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), process1DNodeKeyword(Process1DNodeKeyword::NumberDensityKeyword));
 				numberDensityNormalisers_.add(selectNode, 1.0);
 				break;
 			case (Process1DNodeKeyword::SaveKeyword):

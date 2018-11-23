@@ -35,6 +35,7 @@
 AnalysisProcess2DNode::AnalysisProcess2DNode(AnalysisCollect2DNode* target) : AnalysisNode(AnalysisNode::Process2DNode)
 {
 	collectNode_ = target;
+	processedData_ = NULL;
 	saveData_ = false;
 	normalisationFactor_ = 0.0;
 	normaliseByFactor_ = false;
@@ -50,11 +51,11 @@ AnalysisProcess2DNode::~AnalysisProcess2DNode()
  * Node Keywords
  */
 
-// Node Keywords (note ordering for efficiency)
+// Node Keywords
 const char* Process2DNodeKeywords[] = { "EndProcess2D", "Factor", "LabelValue", "LabelX", "LabelY", "NormaliseToOne", "NSites", "NumberDensity", "Save" };
 
 // Convert string to node keyword
-AnalysisProcess2DNode::Process2DNodeKeyword AnalysisProcess2DNode::normalise2DNodeKeyword(const char* s)
+AnalysisProcess2DNode::Process2DNodeKeyword AnalysisProcess2DNode::process2DNodeKeyword(const char* s)
 {
 	for (int nk=0; nk < AnalysisProcess2DNode::nProcess2DNodeKeywords; ++nk) if (DissolveSys::sameString(s, Process2DNodeKeywords[nk])) return (AnalysisProcess2DNode::Process2DNodeKeyword) nk;
 
@@ -62,7 +63,7 @@ AnalysisProcess2DNode::Process2DNodeKeyword AnalysisProcess2DNode::normalise2DNo
 }
 
 // Convert node keyword to string
-const char* AnalysisProcess2DNode::normalise2DNodeKeyword(AnalysisProcess2DNode::Process2DNodeKeyword nk)
+const char* AnalysisProcess2DNode::process2DNodeKeyword(AnalysisProcess2DNode::Process2DNodeKeyword nk)
 {
 	return Process2DNodeKeywords[nk];
 }
@@ -70,6 +71,19 @@ const char* AnalysisProcess2DNode::normalise2DNodeKeyword(AnalysisProcess2DNode:
 /*
  * Data
  */
+
+// Return processed data
+const Data2D& AnalysisProcess2DNode::processedData() const
+{
+	if (!processedData_)
+	{
+		Messenger::error("No processed data pointer set in AnalysisProcess2DNode, so nothing to return.\n");
+		static Data2D dummy;
+		return dummy;
+	}
+
+	return (*processedData_);
+}
 
 // Add site population normaliser
 void AnalysisProcess2DNode::addSitePopulationNormaliser(AnalysisSelectNode* selectNode)
@@ -162,6 +176,7 @@ bool AnalysisProcess2DNode::finalise(ProcessPool& procPool, Configuration* cfg, 
 
 	data.setName(name());
 	data.setObjectTag(CharString("%s//Process2D//%s//%s", prefix, cfg->name(), name()));
+	processedData_ = &data;
 
 	// Copy the averaged data from the associated Collect2D node, and normalise it accordingly
 	data = collectNode_->accumulatedData();
@@ -218,7 +233,7 @@ bool AnalysisProcess2DNode::read(LineParser& parser, NodeContextStack& contextSt
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
 		// Is the first argument on the current line a valid control keyword?
-		Process2DNodeKeyword nk = normalise2DNodeKeyword(parser.argc(0));
+		Process2DNodeKeyword nk = process2DNodeKeyword(parser.argc(0));
 		switch (nk)
 		{
 			case (Process2DNodeKeyword::EndProcess2DKeyword):
@@ -241,12 +256,12 @@ bool AnalysisProcess2DNode::read(LineParser& parser, NodeContextStack& contextSt
 				break;
 			case (Process2DNodeKeyword::NSitesKeyword):
 				selectNode = contextStack.selectNode(parser.argc(1));
-				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), normalise2DNodeKeyword(Process2DNodeKeyword::NSitesKeyword));
+				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), process2DNodeKeyword(Process2DNodeKeyword::NSitesKeyword));
 				sitePopulationNormalisers_.add(selectNode, 1.0);
 				break;
 			case (Process2DNodeKeyword::NumberDensityKeyword):
 				selectNode = contextStack.selectNode(parser.argc(1));
-				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), normalise2DNodeKeyword(Process2DNodeKeyword::NumberDensityKeyword));
+				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), process2DNodeKeyword(Process2DNodeKeyword::NumberDensityKeyword));
 				numberDensityNormalisers_.add(selectNode, 1.0);
 				break;
 			case (Process2DNodeKeyword::SaveKeyword):

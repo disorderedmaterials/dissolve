@@ -20,7 +20,7 @@
 */
 
 #include "gui/uchroma/kernels/fit.h"
-#include "gui/uchroma/expression/variable.h"
+#include "expression/variable.h"
 #include "gui/uchroma/classes/collection.h"
 #include "gui/uchroma/uchromabase.h"
 #include "base/sysfunc.h"
