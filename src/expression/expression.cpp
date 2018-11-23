@@ -346,8 +346,8 @@ Variable* Expression::variable(const char* name)
 		}
 	}
 
-	if (result == NULL) Messenger::printVerbose("...variable '%s' not found.\n", qPrintable(name));
-	else Messenger::printVerbose("...variable '%s' found.\n", qPrintable(name));
+	if (result == NULL) Messenger::printVerbose("...variable '%s' not found.\n", name);
+	else Messenger::printVerbose("...variable '%s' found.\n", name);
 	return result;
 }
 

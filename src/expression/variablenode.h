@@ -23,7 +23,6 @@
 #define DISSOLVE_EXPRESSIONVARIABLENODE_H
 
 #include "expression/node.h"
-#include <QString>
 
 // Forward Declarations
 class Variable;
@@ -50,7 +49,7 @@ class VariableNode : public Node
 	// Get variable target
 	Variable* variable();
 	// Return name of variable target
-	QString name();
+	const char* name() const;
 
 
 	/*
