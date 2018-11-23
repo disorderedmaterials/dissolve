@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_UCHROMAFUNCTIONNODE_H
-#define DISSOLVE_UCHROMAFUNCTIONNODE_H
+#ifndef DISSOLVE_FUNCTIONNODE_H
+#define DISSOLVE_FUNCTIONNODE_H
 
 #include "expression/functions.h"
 #include "expression/node.h"

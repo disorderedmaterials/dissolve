@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_UCHROMANODE_H
-#define DISSOLVE_UCHROMANODE_H
+#ifndef DISSOLVE_EXPRESSIONNODE_H
+#define DISSOLVE_EXPRESSIONNODE_H
 
 #include "templates/listitem.h"
 #include "templates/reflist.h"

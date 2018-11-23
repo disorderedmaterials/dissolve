@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_UCHROMAFUNCTIONS_H
-#define DISSOLVE_UCHROMAFUNCTIONS_H
+#ifndef DISSOLVE_FUNCTIONS_H
+#define DISSOLVE_FUNCTIONS_H
 
 // Forward declarations
 class FunctionNode;

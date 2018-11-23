@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_UCHROMAVARIABLE_H
-#define DISSOLVE_UCHROMAVARIABLE_H
+#ifndef DISSOLVE_EXPRESSIONVARIABLE_H
+#define DISSOLVE_EXPRESSIONVARIABLE_H
 
 #include "expression/node.h"
 #include "base/charstring.h"

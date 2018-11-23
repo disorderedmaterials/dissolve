@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_UCHROMAVARIABLENODE_H
-#define DISSOLVE_UCHROMAVARIABLENODE_H
+#ifndef DISSOLVE_EXPRESSIONVARIABLENODE_H
+#define DISSOLVE_EXPRESSIONVARIABLENODE_H
 
 #include "expression/node.h"
 #include <QString>
