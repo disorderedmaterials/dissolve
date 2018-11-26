@@ -163,6 +163,8 @@ AnalysisSequenceNode* AnalysisSelectNode::addForEachBranch()
 {
 	if (!forEachBranch_) forEachBranch_ = new AnalysisSequenceNode();
 
+	forEachBranch_->setParent(parent());
+
 	return forEachBranch_;
 }
 
@@ -343,6 +345,7 @@ bool AnalysisSelectNode::read(LineParser& parser, NodeContextStack& contextStack
 
 				// Create and parse a new branch
 				forEachBranch_ = new AnalysisSequenceNode("EndForEach");
+				forEachBranch_->setParent(parent());
 				if (!forEachBranch_->read(parser, contextStack)) return false;
 				break;
 			case (SelectNodeKeyword::SameMoleculeAsSiteKeyword):

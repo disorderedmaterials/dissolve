@@ -190,6 +190,9 @@ bool AnalysisSequenceNode::read(LineParser& parser, NodeContextStack& contextSta
 		// Add the new node to our list
 		sequence_.own(newNode);
 
+		// Set the parent of the new node to be the same as ours
+		newNode->setParent(parent());
+
 		// Read the new node
 		if (!newNode->read(parser, contextStack)) return Messenger::error("Failed to read analysis sequence.\n");
 	}

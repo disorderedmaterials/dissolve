@@ -26,6 +26,7 @@
 #include "templates/listitem.h"
 
 // Forward Declarations
+class Analyser;
 class Configuration;
 class GenericList;
 class LineParser;
@@ -59,6 +60,8 @@ class AnalysisNode : public ListItem<AnalysisNode>
 	CharString name_;
 	// Node nice name
 	CharString niceName_;
+	// Analyser parent in which the node exists
+	Analyser* parent_;
 
 	public:
 	// Return node type
@@ -69,6 +72,10 @@ class AnalysisNode : public ListItem<AnalysisNode>
 	const char* name() const;
 	// Return node nice name
 	const char* niceName() const;
+	// Set Analyser parent in which the node exists
+	void setParent(Analyser* parent);
+	// Return Analyser parent in which the node exists
+	Analyser* parent() const;
 
 
 	/*

@@ -27,6 +27,7 @@
 // Constructor
 Analyser::Analyser() : rootSequence_("EndAnalyser")
 {
+	rootSequence_.setParent(this);
 }
 
 // Destructor
@@ -49,6 +50,8 @@ void Analyser::clear()
 void Analyser::addRootSequenceNode(AnalysisNode* node)
 {
 	rootSequence_.addNode(node);
+
+	node->setParent(this);
 }
 
 // Return the context stack
