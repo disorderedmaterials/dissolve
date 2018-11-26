@@ -45,9 +45,8 @@ NodeContextStack::~NodeContextStack()
 // Clear all layers from stack
 void NodeContextStack::clear()
 {
-	selectStack_.clear();
-	calculateStack_.clear();
-	collect1DNodes_.clear();
+	stack_.clear();
+	nodes_.clear();
 
 	nSelectNodesAdded_ = 0;
 }
@@ -55,86 +54,43 @@ void NodeContextStack::clear()
 // Push new context layer on to the stack
 void NodeContextStack::push()
 {
-	selectStack_.add(RefList<AnalysisSelectNode,CharString>());
-	calculateStack_.add(RefList<AnalysisCalculateNode,bool>());
+	stack_.add(RefList<AnalysisNode,bool>());
 }
 
 // Pop topmost context layer from the stack
 bool NodeContextStack::pop()
 {
-	if (selectStack_.nItems() == 0) return Messenger::error("Select context stack is empty, so nothing to pop().\n");
-	if (calculateStack_.nItems() == 0) return Messenger::error("Calculate context stack is empty, so nothing to pop().\n");
+	if (stack_.nItems() == 0) return Messenger::error("Context stack is empty, so nothing to pop().\n");
 
-	selectStack_.removeLast();
-	calculateStack_.removeLast();
+	stack_.removeLast();
 
 	return true;
 }
 
-// Add new selection node to the topmost context layer
-bool NodeContextStack::add(AnalysisSelectNode* selectNode, const char* name)
+// Add new node to the topmost context layer
+bool NodeContextStack::add(AnalysisNode* node)
 {
 	// Check that we have a context to add to
-	if (selectStack_.nItems() == 0)
+	if (stack_.nItems() == 0)
 	{
-		Messenger::error("No current context in which to add Select node '%s'.\n", name);
+		Messenger::error("No current context in which to add node '%s'.\n", node->name());
 		return false;
 	}
 
 	// Check that the name is valid
-	if (selectNodeInScope(name))
+	if (nodeInScope(node->name()))
 	{
-		Messenger::error("A Select node with name '%s' is already in scope.\n", name);
+		Messenger::error("A node with name '%s' is already in scope.\n", node->name());
 		return false;
 	}
 
 	// Increase the general counter for new references, and add it
 	++nSelectNodesAdded_;
 
-	selectStack_.last().add(selectNode, name);
-	selectNodes_.add(selectNode, name);
+	stack_.last().add(node);
+	nodes_.add(node);
 
 	return true;
-}
-
-// Add new calculation node to the topmost context layer
-bool NodeContextStack::add(AnalysisCalculateNode* calculateNode)
-{
-	// Check that we have a context to add to
-	if (calculateStack_.nItems() == 0)
-	{
-		Messenger::error("No current context in which to add Calculate node '%s'.\n", calculateNode->name());
-		return false;
-	}
-
-	// Check that the name is valid
-	if (calculateNodeInScope(calculateNode->name()))
-	{
-		Messenger::error("A Calculate node with name '%s' already exists.\n", calculateNode->name());
-		return false;
-	}
-
-	calculateStack_.last().add(calculateNode);
-
-	return true;
-}
-
-// Add reference to one-dimensional collect node
-void NodeContextStack::add(AnalysisCollect1DNode* collect1DNode)
-{
-	collect1DNodes_.addUnique(collect1DNode);
-}
-
-// Add reference to two-dimensional collect node
-void NodeContextStack::add(AnalysisCollect2DNode* collect2DNode)
-{
-	collect2DNodes_.addUnique(collect2DNode);
-}
-
-// Add reference to three-dimensional collect node
-void NodeContextStack::add(AnalysisCollect3DNode* collect3DNode)
-{
-	collect3DNodes_.addUnique(collect3DNode);
 }
 
 /*
@@ -153,63 +109,39 @@ const char* NodeContextStack::nextSelectName() const
 	return result.get();
 }
 
-// Return named Select node if it is currently in scope
-AnalysisSelectNode* NodeContextStack::selectNodeInScope(const char* name) const
+// Return named node if it is currently in scope, and optionally matches the type given
+AnalysisNode* NodeContextStack::nodeInScope(const char* name, AnalysisNode::NodeType nt) const
 {
-	for (int n=0; n<selectStack_.nItems(); ++n)
+	for (int n=0; n<stack_.nItems(); ++n)
 	{
-		RefListIterator<AnalysisSelectNode,CharString> contextIterator(selectStack_.constAt(n));
-		while (AnalysisSelectNode* node = contextIterator.iterate()) if (DissolveSys::sameString(contextIterator.currentData(), name)) return node;
+		RefListIterator<AnalysisNode,bool> contextIterator(stack_.constAt(n));
+		while (AnalysisNode* node = contextIterator.iterate())
+		{
+			if (DissolveSys::sameString(node->name(), name))
+			{
+				// Check type
+				if (nt == AnalysisNode::nNodeTypes) return node;
+				else if (node->type() == nt) return node;
+			}
+		}
 	}
 
 	return NULL;
 }
 
-// Return named Calculate node if it is currently in scope
-AnalysisCalculateNode* NodeContextStack::calculateNodeInScope(const char* name) const
+// Return named node if known, and which matches the (optional) type given
+AnalysisNode* NodeContextStack::node(const char* name, AnalysisNode::NodeType nt) const
 {
-	for (int n=0; n<calculateStack_.nItems(); ++n)
+	RefListIterator<AnalysisNode,bool> nodeIterator(nodes_);
+	while (AnalysisNode* node = nodeIterator.iterate())
 	{
-		RefListIterator<AnalysisCalculateNode,bool> contextIterator(calculateStack_.constAt(n));
-		while (AnalysisCalculateNode* node = contextIterator.iterate()) if (DissolveSys::sameString(node->name(), name)) return node;
+		if (DissolveSys::sameString(node->name(), name))
+		{
+			// Check type
+			if (nt == AnalysisNode::nNodeTypes) return node;
+			else if (node->type() == nt) return node;
+		}
 	}
-
-	return NULL;
-}
-
-// Return named Collect1D node (if it exists)
-AnalysisCollect1DNode* NodeContextStack::collect1DNode(const char* name) const
-{
-	RefListIterator<AnalysisCollect1DNode,bool> nodeIterator(collect1DNodes_);
-	while (AnalysisCollect1DNode* node = nodeIterator.iterate()) if (DissolveSys::sameString(node->name(), name)) return node;
-
-	return NULL;
-}
-
-// Return named Collect2D node (if it exists)
-AnalysisCollect2DNode* NodeContextStack::collect2DNode(const char* name) const
-{
-	RefListIterator<AnalysisCollect2DNode,bool> nodeIterator(collect2DNodes_);
-	while (AnalysisCollect2DNode* node = nodeIterator.iterate()) if (DissolveSys::sameString(node->name(), name)) return node;
-
-	return NULL;
-}
-
-// Return named Collect1D node (if it exists)
-AnalysisCollect3DNode* NodeContextStack::collect3DNode(const char* name) const
-{
-	RefListIterator<AnalysisCollect3DNode,bool> nodeIterator(collect3DNodes_);
-	while (AnalysisCollect3DNode* node = nodeIterator.iterate()) if (DissolveSys::sameString(node->name(), name)) return node;
-
-	return NULL;
-}
-
-
-// Return named Select node (if it exists)
-AnalysisSelectNode* NodeContextStack::selectNode(const char* name) const
-{
-	RefListIterator<AnalysisSelectNode,CharString> nodeIterator(selectNodes_);
-	while (AnalysisSelectNode* node = nodeIterator.iterate()) if (DissolveSys::sameString(nodeIterator.currentData(), name)) return node;
 
 	return NULL;
 }

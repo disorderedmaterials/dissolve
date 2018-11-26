@@ -33,6 +33,8 @@
 // Constructor
 AnalysisProcess1DNode::AnalysisProcess1DNode(AnalysisCollect1DNode* target) : AnalysisNode(AnalysisNode::Process1DNode)
 {
+	collectNode_.addAllowableNodeType(AnalysisNode::Collect1DNode);
+
 	collectNode_ = target;
 	processedData_ = NULL;
 	saveData_ = false;
@@ -51,7 +53,7 @@ AnalysisProcess1DNode::~AnalysisProcess1DNode()
  */
 
 // Node Keywords
-const char* Process1DNodeKeywords[] = { "EndProcess1D", "Factor", "LabelValue", "LabelX", "NSites", "NumberDensity", "Save", "SphericalShellVolume" };
+const char* Process1DNodeKeywords[] = { "EndProcess1D", "Factor", "LabelValue", "LabelX", "NSites", "NumberDensity", "Save", "SourceData", "SphericalShellVolume" };
 
 // Convert string to node keyword
 AnalysisProcess1DNode::Process1DNodeKeyword AnalysisProcess1DNode::process1DNodeKeyword(const char* s)
@@ -171,8 +173,12 @@ bool AnalysisProcess1DNode::finalise(ProcessPool& procPool, Configuration* cfg, 
 	data.setName(name());
 	data.setObjectTag(CharString("%s//Process1D//%s//%s", prefix, cfg->name(), name()));
 
+	// Get the node pointer
+	AnalysisCollect1DNode* node = (AnalysisCollect1DNode*) collectNode_.node();
+	if (!node) return Messenger::error("No Collect1D node available in AnalysisProcess1DNode::finalise().\n");
+
 	// Copy the averaged data from the associated Collect1D node, and normalise it accordingly
-	data = collectNode_->accumulatedData();
+	data = node->accumulatedData();
 
 	// Normalisation by number of sites?
 	RefListIterator<AnalysisSelectNode,double> siteNormaliserIterator(sitePopulationNormalisers_);
@@ -181,7 +187,7 @@ bool AnalysisProcess1DNode::finalise(ProcessPool& procPool, Configuration* cfg, 
 	// Normalisation by spherical shell?
 	if (normaliseBySphericalShellVolume_)
 	{
-		double halfBinWidth = collectNode_->binWidth() * 0.5;
+		double halfBinWidth = node->binWidth() * 0.5;
 		double r1Cubed = pow(data.xAxis(0)-halfBinWidth,3), r2Cubed;
 		for (int n = 0; n < data.nValues(); ++n)
 		{
@@ -217,27 +223,12 @@ bool AnalysisProcess1DNode::finalise(ProcessPool& procPool, Configuration* cfg, 
 // Read structure from specified LineParser
 bool AnalysisProcess1DNode::read(LineParser& parser, NodeContextStack& contextStack)
 {
-	// The current line in the parser must also contain the name of a Collect1D node which we will operate on (it will also become our node name)
-	if (parser.nArgs() < 2) return Messenger::error("A Process1D node must be given the name of a Collect1D node.\n");
+	// The current line in the parser may contain a node name for us
+	if (parser.nArgs() == 2) setName(parser.argc(1));
 
-	// If a second argument was provided we assume this is the name of an AnalyseModule
-	AnalyseModule* analyseModule = NULL;
-	if (parser.nArgs() == 3)
-	{
-		Module* module = ModuleList::findInstanceByUniqueName(parser.argc(2));
-		if (!module) return Messenger::error("No Analyse module named '%s' exists.\n", parser.argc(2));
-		if (!DissolveSys::sameString("Analyse", module->type())) return Messenger::error("Specified module '%s' must be an Analyse module.\n", parser.argc(2));
+	// Add ourselves to the context stack
+	if (!contextStack.add(this)) return Messenger::error("Error adding Process1D node '%s' to context stack.\n", name());
 
-		// Found the target AnalyseModule, so cast it up and search for the named Collect1D data in its Analyser
-		analyseModule = (AnalyseModule*) module;
-		collectNode_ = analyseModule->analyserContextStack().collect1DNode(parser.argc(1));
-	}
-	else collectNode_ = contextStack.collect1DNode(parser.argc(1));
-	if (!collectNode_) return Messenger::error("A valid Collect1D node name must be given as an argument to Process1D.\n");
-	setName(parser.argc(1));
-
-	// Set the target context stack to search (it may not be the one passed...)
-	const NodeContextStack& targetStack = analyseModule ? analyseModule->analyserContextStack() : contextStack;
 	AnalysisSelectNode* selectNode;
 
 	// Read until we encounter the EndProcess1D keyword, or we fail for some reason
@@ -263,17 +254,28 @@ bool AnalysisProcess1DNode::read(LineParser& parser, NodeContextStack& contextSt
 				xAxisLabel_ = parser.argc(1);
 				break;
 			case (Process1DNodeKeyword::NSitesKeyword):
-				selectNode = targetStack.selectNode(parser.argc(1));
-				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(1), process1DNodeKeyword(Process1DNodeKeyword::NSitesKeyword));
+				// Need a valid collectNode_ so we can retrieve the context stack it's local to
+				if (collectNode_.isNull()) return Messenger::error("Can't set site-dependent normalisers without first setting the collect node target.\n");
+				if (!collectNode_.node()->parent()) return Messenger::error("Can't set site-dependent normalisers since the specified collect node has no analyser parent.\n");
+
+				selectNode = (AnalysisSelectNode*) collectNode_.node()->parent()->contextStack().node(parser.argc(1), AnalysisNode::SelectNode);
+				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), process1DNodeKeyword(Process1DNodeKeyword::NSitesKeyword));
 				sitePopulationNormalisers_.add(selectNode, 1.0);
 				break;
 			case (Process1DNodeKeyword::NumberDensityKeyword):
-				selectNode = targetStack.selectNode(parser.argc(1));
-				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(1), process1DNodeKeyword(Process1DNodeKeyword::NumberDensityKeyword));
+				// Need a valid collectNode_ so we can retrieve the context stack it's local to
+				if (collectNode_.isNull()) return Messenger::error("Can't set site-dependent normalisers without first setting the collect node target.\n");
+				if (!collectNode_.node()->parent()) return Messenger::error("Can't set site-dependent normalisers since the specified collect node has no analyser parent.\n");
+
+				selectNode = (AnalysisSelectNode*) collectNode_.node()->parent()->contextStack().node(parser.argc(1), AnalysisNode::SelectNode);
+				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), process1DNodeKeyword(Process1DNodeKeyword::NumberDensityKeyword));
 				numberDensityNormalisers_.add(selectNode, 1.0);
 				break;
 			case (Process1DNodeKeyword::SaveKeyword):
 				saveData_ = parser.argb(1);
+				break;
+			case (Process1DNodeKeyword::SourceDataKeyword):
+				if (!collectNode_.read(parser, 1, contextStack)) return Messenger::error("Couldn't set source data for node.\n");
 				break;
 			case (Process1DNodeKeyword::SphericalShellVolumeKeyword):
 				normaliseBySphericalShellVolume_ = parser.argb(1);
@@ -285,6 +287,9 @@ bool AnalysisProcess1DNode::read(LineParser& parser, NodeContextStack& contextSt
 				return Messenger::error("Epic Developer Fail - Don't know how to deal with the Process1D node keyword '%s'.\n", parser.argc(0));
 		}
 	}
+
+	// Check that a valid collectNode_ has been set
+	if (collectNode_.isNull()) return Messenger::error("A valid Collect1D node must be set in the Process1D node '%s' using the '%s' keyword.\n", name(), process1DNodeKeyword(Process1DNodeKeyword::SourceDataKeyword));
 
 	return true;
 }

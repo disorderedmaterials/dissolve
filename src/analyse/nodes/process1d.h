@@ -23,6 +23,7 @@
 #define DISSOLVE_ANALYSISPROCESS1D_H
 
 #include "analyse/nodes/node.h"
+#include "analyse/nodes/nodereference.h"
 #include "math/data1d.h"
 #include "base/charstring.h"
 #include "templates/reflist.h"
@@ -49,7 +50,7 @@ class AnalysisProcess1DNode : public AnalysisNode
 	 */
 	public:
 	// Node Keywords
-	enum Process1DNodeKeyword { EndProcess1DKeyword, FactorKeyword, LabelValueKeyword, LabelXKeyword, NSitesKeyword, NumberDensityKeyword, SaveKeyword, SphericalShellVolumeKeyword, nProcess1DNodeKeywords };
+	enum Process1DNodeKeyword { EndProcess1DKeyword, FactorKeyword, LabelValueKeyword, LabelXKeyword, NSitesKeyword, NumberDensityKeyword, SaveKeyword, SourceDataKeyword, SphericalShellVolumeKeyword, nProcess1DNodeKeywords };
 	// Convert string to control keyword
 	static Process1DNodeKeyword process1DNodeKeyword(const char* s);
 	// Convert control keyword to string
@@ -60,8 +61,8 @@ class AnalysisProcess1DNode : public AnalysisNode
 	 * Data
 	 */
 	private:
-	// Collect1D node which we are normalising
-	AnalysisCollect1DNode* collectNode_;
+	// Collect1D node that we are processing
+	AnalysisNodeReference collectNode_;
 	// Pointer to processed data (stored in processing data list)
 	Data1D* processedData_;
 	// Reference to sites against which we will normalise by population

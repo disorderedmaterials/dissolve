@@ -124,7 +124,7 @@ bool AnalysisSequenceNode::finalise(ProcessPool& procPool, Configuration* cfg, c
 // Read structure from specified LineParser
 bool AnalysisSequenceNode::read(LineParser& parser, NodeContextStack& contextStack)
 {
-	// The sequence node constructs a new context...
+	// The sequence node now constructs a new context...
 	contextStack.push();
 
 	// Read until we encounter the block-ending keyword, or we fail for some reason

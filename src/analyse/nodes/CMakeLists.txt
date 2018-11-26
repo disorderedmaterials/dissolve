@@ -6,6 +6,7 @@ add_library(analysisnodes
   dynamicsite.cpp
   exclude.cpp
   node.cpp
+  nodereference.cpp
   process1d.cpp
   process2d.cpp
   process3d.cpp
@@ -19,6 +20,7 @@ add_library(analysisnodes
   dynamicsite.h
   exclude.h
   node.h
+  nodereference.h
   nodes.h
   process1d.h
   process2d.h

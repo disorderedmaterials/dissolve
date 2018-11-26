@@ -98,11 +98,11 @@ bool AnalysisExcludeNode::read(LineParser& parser, NodeContextStack& contextStac
 				if (parser.nArgs() != 3) return Messenger::error("The %s keyword expects exactly two arguments.\n", excludeNodeKeyword(ExcludeNodeKeyword::SameSiteKeyword));
 
 				// First Site argument
-				sameSiteA_ = contextStack.selectNodeInScope(parser.argc(1));
+				sameSiteA_ = (AnalysisSelectNode*) contextStack.nodeInScope(parser.argc(1), AnalysisNode::SelectNode);
 				if (!sameSiteA_) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(1), excludeNodeKeyword(ExcludeNodeKeyword::SameSiteKeyword));
 
 				// Second Site argument
-				sameSiteB_ = contextStack.selectNodeInScope(parser.argc(2));
+				sameSiteB_ = (AnalysisSelectNode*) contextStack.nodeInScope(parser.argc(2), AnalysisNode::SelectNode);
 				if (!sameSiteB_) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(2), excludeNodeKeyword(ExcludeNodeKeyword::SameSiteKeyword));
 				else 
 				break;

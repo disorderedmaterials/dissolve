@@ -167,8 +167,8 @@ bool AnalysisCollect1DNode::read(LineParser& parser, NodeContextStack& contextSt
 	if (parser.nArgs() != 2) return Messenger::error("A Collect1D node must be given a suitable name.\n");
 	setName(parser.argc(1));
 
-	// Add ourselves to the stack
-	contextStack.add(this);
+	// Add ourselves to the context stack
+	if (!contextStack.add(this)) return Messenger::error("Error adding Collect1D node '%s' to context stack.\n", name());
 
 	// Read until we encounter the EndCollect1D keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
@@ -184,7 +184,7 @@ bool AnalysisCollect1DNode::read(LineParser& parser, NodeContextStack& contextSt
 				return true;
 			case (Collect1DNodeKeyword::QuantityXKeyword):
 				// Determine observable from supplied argument
-				observable_ = contextStack.calculateNodeInScope(parser.argc(1));
+				observable_ = (AnalysisCalculateNode*) contextStack.nodeInScope(parser.argc(1), AnalysisNode::CalculateNode);
 				if (!observable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect1DNodeKeyword(nk));
 				break;
 			case (Collect1DNodeKeyword::RangeXKeyword):

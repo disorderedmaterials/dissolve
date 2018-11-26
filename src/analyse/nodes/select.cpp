@@ -301,7 +301,7 @@ bool AnalysisSelectNode::read(LineParser& parser, NodeContextStack& contextStack
 	setName(parser.nArgs() == 2 ? parser.argc(1) : contextStack.nextSelectName());
 
 	// Add ourselves to the context stack
-	if (!contextStack.add(this, name())) return Messenger::error("Error adding Select node '%s' to context stack.\n", name());
+	if (!contextStack.add(this)) return Messenger::error("Error adding Select node '%s' to context stack.\n", name());
 
 	AnalysisDynamicSiteNode* dynamicSiteNode;
 	Species* sp;
@@ -326,7 +326,7 @@ bool AnalysisSelectNode::read(LineParser& parser, NodeContextStack& contextStack
 			case (SelectNodeKeyword::ExcludeSameMoleculeKeyword):
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
-					AnalysisSelectNode* otherNode = contextStack.selectNodeInScope(parser.argc(n));
+					AnalysisSelectNode* otherNode = (AnalysisSelectNode*) contextStack.nodeInScope(parser.argc(n), AnalysisNode::SelectNode);
 					if (!otherNode) return Messenger::error("Unrecognised selection node '%s' given to %s keyword.\n", parser.argc(n), selectNodeKeyword(nk));
 					if (!addSameMoleculeExclusion(otherNode)) return Messenger::error("Duplicate site given to %s keyword.\n", selectNodeKeyword(nk));
 				}
@@ -334,7 +334,7 @@ bool AnalysisSelectNode::read(LineParser& parser, NodeContextStack& contextStack
 			case (SelectNodeKeyword::ExcludeSameSiteKeyword):
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
-					AnalysisSelectNode* otherNode = contextStack.selectNodeInScope(parser.argc(n));
+					AnalysisSelectNode* otherNode = (AnalysisSelectNode*) contextStack.nodeInScope(parser.argc(n), AnalysisNode::SelectNode);
 					if (!otherNode) return Messenger::error("Unrecognised selection node '%s' given to %s keyword.\n", parser.argc(n), selectNodeKeyword(nk));
 					if (!addSameSiteExclusion(otherNode)) return Messenger::error("Duplicate site given to %s keyword.\n", selectNodeKeyword(nk));
 				}
@@ -350,7 +350,7 @@ bool AnalysisSelectNode::read(LineParser& parser, NodeContextStack& contextStack
 				break;
 			case (SelectNodeKeyword::SameMoleculeAsSiteKeyword):
 				if (sameMolecule_) return Messenger::error("Same molecule restriction has already been set, and cannot be set again.\n");
-				sameMolecule_ = contextStack.selectNodeInScope(parser.argc(1));
+				sameMolecule_ = (AnalysisSelectNode*) contextStack.nodeInScope(parser.argc(1), AnalysisNode::SelectNode);
 				if (!sameMolecule_) return Messenger::error("Unrecognised selection node '%s' given to %s keyword.\n", parser.argc(1), selectNodeKeyword(nk));
 				break;
 			case (SelectNodeKeyword::SiteKeyword):

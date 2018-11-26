@@ -23,6 +23,7 @@
 #define DISSOLVE_ANALYSISPROCESS3D_H
 
 #include "analyse/nodes/node.h"
+#include "analyse/nodes/nodereference.h"
 #include "math/data3d.h"
 #include "base/charstring.h"
 #include "templates/reflist.h"
@@ -49,7 +50,7 @@ class AnalysisProcess3DNode : public AnalysisNode
 	 */
 	public:
 	// Node Keywords
-	enum Process3DNodeKeyword { EndProcess3DKeyword, FactorKeyword, LabelValueKeyword, LabelXKeyword, LabelYKeyword, LabelZKeyword, NSitesKeyword, NumberDensityKeyword, SaveKeyword, nProcess3DNodeKeywords };
+	enum Process3DNodeKeyword { EndProcess3DKeyword, FactorKeyword, LabelValueKeyword, LabelXKeyword, LabelYKeyword, LabelZKeyword, NSitesKeyword, NumberDensityKeyword, SaveKeyword, SourceDataKeyword, nProcess3DNodeKeywords };
 	// Convert string to control keyword
 	static Process3DNodeKeyword process3DNodeKeyword(const char* s);
 	// Convert control keyword to string
@@ -60,8 +61,8 @@ class AnalysisProcess3DNode : public AnalysisNode
 	 * Data
 	 */
 	private:
-	// Collect3D node which we are normalising
-	AnalysisCollect3DNode* collectNode_;
+	// Collect3D node that we are processing
+	AnalysisNodeReference collectNode_;
 	// Pointer to processed data (stored in processing data list)
 	Data3D* processedData_;
 	// Reference to sites against which we will normalise by population

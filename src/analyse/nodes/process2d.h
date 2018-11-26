@@ -23,6 +23,7 @@
 #define DISSOLVE_ANALYSISPROCESS2D_H
 
 #include "analyse/nodes/node.h"
+#include "analyse/nodes/nodereference.h"
 #include "math/data2d.h"
 #include "base/charstring.h"
 #include "templates/reflist.h"
@@ -49,7 +50,7 @@ class AnalysisProcess2DNode : public AnalysisNode
 	 */
 	public:
 	// Node Keywords
-	enum Process2DNodeKeyword { EndProcess2DKeyword, FactorKeyword, LabelValueKeyword, LabelXKeyword, LabelYKeyword, NormaliseToOneKeyword, NSitesKeyword, NumberDensityKeyword, SaveKeyword, nProcess2DNodeKeywords };
+	enum Process2DNodeKeyword { EndProcess2DKeyword, FactorKeyword, LabelValueKeyword, LabelXKeyword, LabelYKeyword, NormaliseToOneKeyword, NSitesKeyword, NumberDensityKeyword, SaveKeyword, SourceDataKeyword, nProcess2DNodeKeywords };
 	// Convert string to control keyword
 	static Process2DNodeKeyword process2DNodeKeyword(const char* s);
 	// Convert control keyword to string
@@ -60,8 +61,8 @@ class AnalysisProcess2DNode : public AnalysisNode
 	 * Data
 	 */
 	private:
-	// Collect2D node which we are normalising
-	AnalysisCollect2DNode* collectNode_;
+	// Collect2D node that we are processing
+	AnalysisNodeReference collectNode_;
 	// Pointer to processed data (stored in processing data list)
 	Data2D* processedData_;
 	// Reference to sites against which we will normalise by population

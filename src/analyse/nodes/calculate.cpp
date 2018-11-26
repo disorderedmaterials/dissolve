@@ -185,11 +185,10 @@ bool AnalysisCalculateNode::read(LineParser& parser, NodeContextStack& contextSt
 {
 	// The current line in the parser must contain a label (name) for the node, and which must not currently exist on the context stack
 	if (parser.nArgs() != 2) return Messenger::error("A Calculate node must be given a suitable name.\n");
-	if (contextStack.calculateNodeInScope(parser.argc(1))) return Messenger::error("A Calculate node named '%s' is already in scope, and cannot be redefined.\n", parser.argc(1));
 	setName(parser.argc(1));
 
 	// Add ourselves to the context stack
-	if (!contextStack.add(this)) return Messenger::error("Error adding Select node '%s' to context stack.\n", name());
+	if (!contextStack.add(this)) return Messenger::error("Error adding Calculate node '%s' to context stack.\n", name());
 
 	// Read until we encounter the EndCalculate keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
@@ -207,15 +206,15 @@ bool AnalysisCalculateNode::read(LineParser& parser, NodeContextStack& contextSt
 				observable_ = Observable::AngleObservable;
 
 				// First Site argument (point 'i' in angle i-j-k)
-				sites_[0] = contextStack.selectNodeInScope(parser.argc(1));
+				sites_[0] = (AnalysisSelectNode*) contextStack.nodeInScope(parser.argc(1), AnalysisNode::SelectNode);
 				if (!sites_[0]) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(1), calculateNodeKeyword(CalculateNodeKeyword::AngleKeyword));
 
 				// Second Site argument (point 'j' in angle i-j-k)
-				sites_[1] = contextStack.selectNodeInScope(parser.argc(2));
+				sites_[1] = (AnalysisSelectNode*) contextStack.nodeInScope(parser.argc(2), AnalysisNode::SelectNode);
 				if (!sites_[1]) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(2), calculateNodeKeyword(CalculateNodeKeyword::AngleKeyword));
 
 				// Third Site argument (point 'k' in angle i-j-k)
-				sites_[2] = contextStack.selectNodeInScope(parser.argc(3));
+				sites_[2] = (AnalysisSelectNode*) contextStack.nodeInScope(parser.argc(3), AnalysisNode::SelectNode);
 				if (!sites_[2]) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(3), calculateNodeKeyword(CalculateNodeKeyword::AngleKeyword));
 				break;
 			case (CalculateNodeKeyword::DistanceKeyword):
@@ -224,11 +223,11 @@ bool AnalysisCalculateNode::read(LineParser& parser, NodeContextStack& contextSt
 				observable_ = Observable::DistanceObservable;
 
 				// First Site argument (point 'i' in distance i-j)
-				sites_[0] = contextStack.selectNodeInScope(parser.argc(1));
+				sites_[0] = (AnalysisSelectNode*) contextStack.nodeInScope(parser.argc(1), AnalysisNode::SelectNode);
 				if (!sites_[0]) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(1), calculateNodeKeyword(CalculateNodeKeyword::DistanceKeyword));
 
 				// Second Site argument (point 'j' in distance i-j)
-				sites_[1] = contextStack.selectNodeInScope(parser.argc(2));
+				sites_[1] = (AnalysisSelectNode*) contextStack.nodeInScope(parser.argc(2), AnalysisNode::SelectNode);
 				if (!sites_[1]) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(2), calculateNodeKeyword(CalculateNodeKeyword::DistanceKeyword));
 				else 
 				break;
