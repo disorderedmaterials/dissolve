@@ -99,6 +99,7 @@ bool CalibrationModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		
 		CalibrationModuleCostFunctions costFunctions(dissolve, procPool, intraBroadeningModules_, neutronReferences);
 		PrAxis<CalibrationModuleCostFunctions> broadeningMinimiser(costFunctions, &CalibrationModuleCostFunctions::intraBroadeningCost);
+		broadeningMinimiser.setTolerance(0.001);
 		broadeningMinimiser.setPokeBeforeCost(true);
 		rdfModuleIterator.restart();
 		Array<bool> broadeningAdded(PairBroadeningFunction::nFunctionTypes);
@@ -132,7 +133,7 @@ bool CalibrationModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		}
 
 		// Optimise the parameters - the cost function will regenerate the UnweightedGR in the RDF modules, and reassemble the target NeutronSQ data
-		double error = broadeningMinimiser.minimise(0.001);
+		double error = broadeningMinimiser.minimise();
 
 		Messenger::print("Total RMSE over all specified datasets is %f.\n", error);
 

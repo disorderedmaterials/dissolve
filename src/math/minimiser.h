@@ -96,8 +96,6 @@ template <class T> class MinimiserBase
 	protected:
 	// Pointers to double values to be fit
 	Array<double*> targets_;
-	// Local values that are the subject of fitting
-	Array<double> values_;
 	// Whether maximum limits have been set for targets
 	Array<bool> maximumLimit_;
 	// Whether minimum limits have been set for targets
@@ -123,7 +121,6 @@ template <class T> class MinimiserBase
 	{
 		// Add pointer and current value
 		targets_.add(var);
-		values_.add(*var);
 
 		// Add/set limits
 		minimumLimit_.add(minLimit);
@@ -158,26 +155,30 @@ template <class T> class MinimiserBase
 	 */
 	protected:
 	// Minimiser function to be called in derived class
-	virtual double execute(Array<double>& values, double tolerance) = 0;
+	virtual double execute(Array<double>& values) = 0;
 
 	public:
 	// Minimise target parameters
-	double minimise(double tolerance = 1.0e-3)
+	double minimise()
 	{
 		// Check for zero variable parameters
-		if (values_.nItems() == 0)
+		if (targets_.nItems() == 0)
 		{
 			Messenger::warn("No variables specified for fitting, so nothing to do.\n");
 			return 0.0;
 		}
 
+		// Create a local array of values to pass to the fitting routine
+		Array<double> values;
+		for (int n=0; n<targets_.nItems(); ++n) values.add(*targets_[n]);
+
 		// Minimise the function
-		double value = execute(values_, tolerance);
+		double finalCost = execute(values);
 
-		// Set minimised values back into their original variables
-		pokeValues(values_);
+		// Set optimised values back into their original variables
+		pokeValues(values);
 
-		return value;
+		return finalCost;
 	}
 };
 
