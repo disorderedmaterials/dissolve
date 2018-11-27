@@ -28,24 +28,24 @@
 // Forward declarations
 class Expression;
 
-// Tree Node
-class Node : public ListItem<Node>
+// Expresison Node
+class ExpressionNode : public ListItem<ExpressionNode>
 {
 	public:
 	// Constructor / Destructor
-	Node();
-	virtual ~Node();
+	ExpressionNode();
+	virtual ~ExpressionNode();
 	// List pointers (for argument list)
-	Node* nextArgument, *prevArgument;
+	ExpressionNode* nextArgument, *prevArgument;
 	// Node Types
-	enum NodeType { BasicNode, FuncNode, VarNode, VarWrapperNode, nNodeTypes };
+	enum NodeType { BasicNode, FunctionNode, ValueNode, VariableNode, nNodeTypes };
 	// Copy data
-	void copy(Node* source);
+	void copy(ExpressionNode* source);
 
 
 	/*
-	// Node Type
-	*/
+	 * Node Type
+	 */
 	protected:
 	// Type of node
 	NodeType nodeType_;
@@ -66,7 +66,7 @@ class Node : public ListItem<Node>
 	 */
 	protected:
 	// Arguments (if any) to leaf node operation
-	RefList<Node,int> args_;
+	RefList<ExpressionNode,int> args_;
 
 	public:
 	// Return number of arguments currently assigned to node
@@ -74,13 +74,13 @@ class Node : public ListItem<Node>
 	// Return if nth argument is numeric
 	bool isArgNumeric(int i);
 	// Add list of arguments formas as a plain List<Node>, beginning from supplied list head
-	void addListArguments(Node* leaf);
+	void addListArguments(ExpressionNode* leaf);
 	// Add list of arguments joined by parser, probably with list tail supplied
-	void addJoinedArguments(Node* args);
+	void addJoinedArguments(ExpressionNode* args);
 	// Add multiple arguments to node
 	void addArguments(int nargs, ...);
 	// Add multiple arguments to node
-	void addArgument(Node* arg);
+	void addArgument(ExpressionNode* arg);
 	// Check arguments stored in argument list
 	bool checkArguments(const char* arglist, const char* funcname);
 	// Return (execute) argument specified
@@ -92,7 +92,7 @@ class Node : public ListItem<Node>
 	// Return (execute) argument specified as a double
 	double argd(int i);
 	// Return the Node corresponding to the argument, rather than executing it
-	Node* argNode(int i);
+	ExpressionNode* argNode(int i);
 	// Set argument specified
 	bool setArg(int i, double& rv);
 	// Return whether argument i was given

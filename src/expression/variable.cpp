@@ -23,36 +23,36 @@
 #include <string.h>
 
 // Constructor
-Variable::Variable(double value, bool readOnly) : Node()
+ExpressionVariable::ExpressionVariable(double value, bool readOnly) : ExpressionNode()
 {
 	// Private variables
 	name_ = "unnamedvariable";
 	initialValue_ = NULL;
-	nodeType_ = Node::VarNode;
+	nodeType_ = ExpressionNode::VariableNode;
 	value_ = value;
 	returnsNumber_ = true;
 	readOnly_ = readOnly;
 }
 
 // Destructor (virtual)
-Variable::~Variable()
+ExpressionVariable::~ExpressionVariable()
 {
 }
 
 // Set name of variable
-void Variable::setName(const char* s)
+void ExpressionVariable::setName(const char* s)
 {
 	name_ = s;
 }
 
 // Get name of variable
-const char* Variable::name() const
+const char* ExpressionVariable::name() const
 {
 	return name_.get();
 }
 
 // Initialise variable
-bool Variable::initialise()
+bool ExpressionVariable::initialise()
 {
 	if (initialValue_ == NULL) value_ = 0.0;
 	else
@@ -73,7 +73,7 @@ bool Variable::initialise()
 }
 
 // Set initial value expression
-bool Variable::setInitialValue(Node* node)
+bool ExpressionVariable::setInitialValue(ExpressionNode* node)
 {
 	initialValue_ = node;
 	if (initialValue_ == NULL) return true;
@@ -89,7 +89,7 @@ bool Variable::setInitialValue(Node* node)
 }
 
 // Return Node corresponding to initial value
-Node* Variable::initialValue() const
+ExpressionNode* ExpressionVariable::initialValue() const
 {
 	return initialValue_;
 }
@@ -99,26 +99,29 @@ Node* Variable::initialValue() const
  */
 
 // Set value of variable (real)
-bool Variable::set(double rv)
+bool ExpressionVariable::set(double value)
 {
 	if (readOnly_)
 	{
 		printf("A constant value (in this case a double) cannot be assigned to.\n");
 		return false;
 	}
-	value_ = rv;
+
+	value_ = value;
+
 	return true;
 }
 
 // Return value of node
-bool Variable::execute(double& rv)
+bool ExpressionVariable::execute(double& value)
 {
-	rv = value_;
+	value = value_;
+
 	return true;
 }
 
 // Print node contents
-void Variable::nodePrint(int offset, const char* prefix)
+void ExpressionVariable::nodePrint(int offset, const char* prefix)
 {
 	// Construct tabbed offset
 	CharString tab;

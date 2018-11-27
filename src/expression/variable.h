@@ -26,12 +26,12 @@
 #include "base/charstring.h"
 
 // Variable
-class Variable : public Node
+class ExpressionVariable : public ExpressionNode
 {
 	public:
 	// Constructor / Destructor
-	Variable(double value = 0.0, bool readOnly = false);
-	~Variable();
+	ExpressionVariable(double value = 0.0, bool readOnly = false);
+	~ExpressionVariable();
 
 
 	/*
@@ -43,7 +43,7 @@ class Variable : public Node
 	// Value of variable
 	double value_;
 	// Initial value of new variable
-	Node* initialValue_;
+	ExpressionNode* initialValue_;
 
 	public:
 	// Set name of variable
@@ -51,9 +51,9 @@ class Variable : public Node
 	// Get name of variable
 	const char* name() const;
 	// Set initial value expression
-	bool setInitialValue(Node* node);
+	bool setInitialValue(ExpressionNode* node);
 	// Return Node corresponding to initial value
-	Node* initialValue() const;
+	ExpressionNode* initialValue() const;
 
 
 	/*
@@ -61,9 +61,9 @@ class Variable : public Node
 	 */
 	public:
 	// Return value of node
-	bool execute(double& rv);
+	bool execute(double& value);
 	// Set value of node
-	bool set(double rv);
+	bool set(double value);
 
 
 	/*

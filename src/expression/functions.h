@@ -19,18 +19,18 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FUNCTIONS_H
-#define DISSOLVE_FUNCTIONS_H
+#ifndef DISSOLVE_EXPRESSIONFUNCTIONS_H
+#define DISSOLVE_EXPRESSIONFUNCTIONS_H
 
 // Forward declarations
-class FunctionNode;
+class ExpressionFunction;
 
 // Function pointer typedef and call #define
-typedef bool (*FunctionFunction)(FunctionNode* c, double& rv);
+typedef bool (*FunctionFunction)(ExpressionFunction* c, double& result);
 #define CALL_COMMAND(object,ptrToMember) ((object).*(ptrToMember)) 
 
 // Function data 
-class FunctionData
+class ExpressionFunctionData
 {
 	public:
 	// Function keyword
@@ -45,13 +45,13 @@ class FunctionData
 	const char* syntax;
 };
 
-// Function actions
-class Functions
+// Expression Functions
+class ExpressionFunctions
 {
 	public:
 	// Constructor / Destructor
-	Functions();
-	~Functions();
+	ExpressionFunctions();
+	~ExpressionFunctions();
 
 
 	/*
@@ -113,7 +113,7 @@ class Functions
 		nFunctions
 	};
 	// Return enumerated function id from string
-	static Functions::Function function(const char* s);
+	static Function function(const char* s);
 
 
 	/*
@@ -121,71 +121,72 @@ class Functions
 	 */
 	private:
 	// AST-specific functions
-	static bool function_NoFunction(FunctionNode* c, double& rv);
-	static bool function_Joiner(FunctionNode* c, double& rv);
+	static bool function_NoFunction(ExpressionFunction* c, double& result);
+	static bool function_Joiner(ExpressionFunction* c, double& result);
 	// Flow control
-	static bool function_If(FunctionNode* c, double& rv);
+	static bool function_If(ExpressionFunction* c, double& result);
 	// Math Functions
-	static bool function_Abs(FunctionNode* c, double& rv);
-	static bool function_ACos(FunctionNode* c, double& rv);
-	static bool function_ASin(FunctionNode* c, double& rv);
-	static bool function_ATan(FunctionNode* c, double& rv);
-	static bool function_Cos(FunctionNode* c, double& rv);
-	static bool function_Exp(FunctionNode* c, double& rv);
-	static bool function_Ln(FunctionNode* c, double& rv);
-	static bool function_Log(FunctionNode* c, double& rv);
-	static bool function_Nint(FunctionNode* c, double& rv);
-	static bool function_Sin(FunctionNode* c, double& rv);
-	static bool function_Sqrt(FunctionNode* c, double& rv);
-	static bool function_Tan(FunctionNode* c, double& rv);
+	static bool function_Abs(ExpressionFunction* c, double& result);
+	static bool function_ACos(ExpressionFunction* c, double& result);
+	static bool function_ASin(ExpressionFunction* c, double& result);
+	static bool function_ATan(ExpressionFunction* c, double& result);
+	static bool function_Cos(ExpressionFunction* c, double& result);
+	static bool function_Exp(ExpressionFunction* c, double& result);
+	static bool function_Ln(ExpressionFunction* c, double& result);
+	static bool function_Log(ExpressionFunction* c, double& result);
+	static bool function_Nint(ExpressionFunction* c, double& result);
+	static bool function_Sin(ExpressionFunction* c, double& result);
+	static bool function_Sqrt(ExpressionFunction* c, double& result);
+	static bool function_Tan(ExpressionFunction* c, double& result);
 	// Variable Operators
-	static bool function_OperatorAdd(FunctionNode* c, double& rv);
-	static bool function_OperatorAnd(FunctionNode* c, double& rv);
-	static bool function_OperatorDivide(FunctionNode* c, double& rv);
-	static bool function_OperatorEqualTo(FunctionNode* c, double& rv);
-	static bool function_OperatorGreaterThan(FunctionNode* c, double& rv);
-	static bool function_OperatorGreaterThanEqualTo(FunctionNode* c, double& rv);
-	static bool function_OperatorLessThan(FunctionNode* c, double& rv);
-	static bool function_OperatorLessThanEqualTo(FunctionNode* c, double& rv);
-	static bool function_OperatorModulus(FunctionNode* c, double& rv);
-	static bool function_OperatorMultiply(FunctionNode* c, double& rv);
-	static bool function_OperatorNegate(FunctionNode* c, double& rv);
-	static bool function_OperatorNot(FunctionNode* c, double& rv);
-	static bool function_OperatorNotEqualTo(FunctionNode* c, double& rv);
-	static bool function_OperatorOr(FunctionNode* c, double& rv);
-	static bool function_OperatorPower(FunctionNode* c, double& rv);
-	static bool function_OperatorSubtract(FunctionNode* c, double& rv);
+	static bool function_OperatorAdd(ExpressionFunction* c, double& result);
+	static bool function_OperatorAnd(ExpressionFunction* c, double& result);
+	static bool function_OperatorDivide(ExpressionFunction* c, double& result);
+	static bool function_OperatorEqualTo(ExpressionFunction* c, double& result);
+	static bool function_OperatorGreaterThan(ExpressionFunction* c, double& result);
+	static bool function_OperatorGreaterThanEqualTo(ExpressionFunction* c, double& result);
+	static bool function_OperatorLessThan(ExpressionFunction* c, double& result);
+	static bool function_OperatorLessThanEqualTo(ExpressionFunction* c, double& result);
+	static bool function_OperatorModulus(ExpressionFunction* c, double& result);
+	static bool function_OperatorMultiply(ExpressionFunction* c, double& result);
+	static bool function_OperatorNegate(ExpressionFunction* c, double& result);
+	static bool function_OperatorNot(ExpressionFunction* c, double& result);
+	static bool function_OperatorNotEqualTo(ExpressionFunction* c, double& result);
+	static bool function_OperatorOr(ExpressionFunction* c, double& result);
+	static bool function_OperatorPower(ExpressionFunction* c, double& result);
+	static bool function_OperatorSubtract(ExpressionFunction* c, double& result);
 	// Other Functions
-	static bool function_PrintF(FunctionNode* c, double& rv);
-	
+	static bool function_PrintF(ExpressionFunction* c, double& result);
+
+
 	/*
 	 * Function descriptions / syntax etc.
 	 */
 	private:
 	// Function pointers
-	FunctionFunction pointers_[Functions::nFunctions];
+	FunctionFunction pointers_[ExpressionFunctions::nFunctions];
 
 	public:
 	// Function data
-	static FunctionData data[Functions::nFunctions];
+	static ExpressionFunctionData data[ExpressionFunctions::nFunctions];
 	// Return specified function keyword
-	static const char* keyword(Functions::Function func);
+	static const char* keyword(ExpressionFunctions::Function func);
 	// Return specified function arguments
-	static const char* arguments(Functions::Function func);
+	static const char* arguments(ExpressionFunctions::Function func);
 	// Return whether specified function returns a number
-	static bool returnsNumber(Functions::Function func);
+	static bool returnsNumber(ExpressionFunctions::Function func);
 	// Return specified function argument names
-	static const char* argText(Functions::Function func);
+	static const char* argText(ExpressionFunctions::Function func);
 	// Return specified function syntax
-	static const char* syntax(Functions::Function func);
+	static const char* syntax(ExpressionFunctions::Function func);
 	// Initialise function pointers
 	void initPointers();
 	// Execute specified function
-	bool call(Functions::Function cf, FunctionNode* node, double& rv);
+	bool call(ExpressionFunctions::Function cf, ExpressionFunction* node, double& result);
 };
 
 // External Singleton
-extern Functions functions;
+extern ExpressionFunctions expressionFunctions;
 
 #endif
 

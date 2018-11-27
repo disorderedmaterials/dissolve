@@ -1,6 +1,6 @@
 /*
-	*** Expression Function Node
-	*** src/expression/functionnode.h
+	*** Expression Value Node
+	*** src/expression/value.h
 	Copyright T. Youngs 2015-2018
 
 	This file is part of Dissolve.
@@ -19,41 +19,49 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FUNCTIONNODE_H
-#define DISSOLVE_FUNCTIONNODE_H
+#ifndef DISSOLVE_EXPRESSIONVALUE_H
+#define DISSOLVE_EXPRESSIONVALUE_H
 
-#include "expression/functions.h"
 #include "expression/node.h"
 
 // Forward Declarations
-/* none */
+class ExpressionVariable;
 
-// Function Node
-class FunctionNode : public Node
+// Value Node (retrieves value of an ExpressionVariable)
+class ExpressionValue : public ExpressionNode
 {
 	public:
-	// Constructors / Destructor
-	FunctionNode(Functions::Function func = Functions::NoFunction);
-	FunctionNode(Node* source);
-	~FunctionNode();
+	// Constructor / Destructor
+	ExpressionValue(ExpressionVariable* var = 0);
+	~ExpressionValue();
 
 
 	/*
-	 * Function Data
+	 * Variable Data
 	 */
-	protected:
-	// Function that this node performs
-	Functions::Function function_;
+	private:
+	// Variable that this node links to
+	ExpressionVariable* variable_;
 	
 	public:
-	// Get command function
-	Functions::Function function();
-	// Execute command
+	// Set variable target
+	void setVariable(ExpressionVariable* v);
+	// Get variable target
+	ExpressionVariable* variable() const;
+	// Return name of variable target
+	const char* name() const;
+
+
+	/*
+	 * Inherited Virtuals
+	 */
+	public:
+	// Execute node
 	bool execute(double& rv);
 	// Print node contents
 	void nodePrint(int offset, const char* prefix = "");
-	// Set from returnvalue node
-	bool set(double rv);
+	// Set from double value
+	bool set(double value);
 	// Initialise node
 	bool initialise();
 };

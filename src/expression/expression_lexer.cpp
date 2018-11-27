@@ -186,7 +186,7 @@ int Expression::lex()
 		}
 
 		// Is it an existing variable?
-		Variable* v = variable(token);
+		ExpressionVariable* v = variable(token);
 		if (v != NULL)
 		{
 			Messenger::printVerbose("LEXER (%p): ...which is an existing variable (->VAR)\n", this);
@@ -194,9 +194,9 @@ int Expression::lex()
 			return UCR_EP_VAR;
 		}
 
-		// Is it one of Dissolve's function keywords?
-		n = Functions::function(token.get());
-		if (n != Functions::nFunctions)
+		// Is it a known function keyword?
+		n = ExpressionFunctions::function(token.get());
+		if (n != ExpressionFunctions::nFunctions)
 		{
 			Messenger::printVerbose("LEXER (%p): ... which is a function (->FUNCCALL).\n", this);
 			ExpressionParser_lval.functionId = n;
@@ -221,7 +221,7 @@ int Expression::lex()
 		}
 	}
 
-	/* We have found a symbolic character (or a pair) that corresponds to an operator */
+	// We have found a symbolic character (or a pair) that corresponds to an operator
 	// Return immediately in the case of brackets, comma, and semicolon
 	if ((c == '(') || (c == ')') || (c == ';') || (c == ',') || (c == '{') || (c == '}') || (c == '[') || (c == ']') || (c == '%') || (c == ':'))
 	{
@@ -229,11 +229,14 @@ int Expression::lex()
 		return c;
 	}
 	token += c;
+
 	// Similarly, if the next character is a period, bracket or double quotes, return immediately
 	char c2 = peekChar();
 	if ((c2 == '.') || (c2 == '(') || (c2 == ')') || (c2 == ';') || (c2 == '{') || (c2 == '}') || (c2 == '"')) return c;
+
 	// If next character is '-', return now if previous char was *not* another '-'
 	if ((c2 == '-') && (c != '-')) return c;
+
 	// If it is 'punctuation', add this second character to our operator and search for it
 	if (ispunct(c2))
 	{
@@ -253,5 +256,6 @@ int Expression::lex()
 		}
 		else return c;
 	}
+
 	return 0;
 }

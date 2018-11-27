@@ -31,7 +31,7 @@
 const int MAXNODEARGS = 10;
 
 // Constructors
-Node::Node() : ListItem<Node>()
+ExpressionNode::ExpressionNode() : ListItem<ExpressionNode>()
 {
 	// Private variables
 	returnsNumber_ = false;
@@ -39,16 +39,16 @@ Node::Node() : ListItem<Node>()
 	parent_ = NULL;
 	nextArgument = NULL;
 	prevArgument = NULL;
-	nodeType_ = Node::BasicNode;
+	nodeType_ = ExpressionNode::BasicNode;
 }
 
 // Destructor
-Node::~Node()
+ExpressionNode::~ExpressionNode()
 {
 }
 
 // Copy data
-void Node::copy(Node* source)
+void ExpressionNode::copy(ExpressionNode* source)
 {
 	nodeType_ = source->nodeType_;
 	parent_ = source->parent_;
@@ -58,70 +58,70 @@ void Node::copy(Node* source)
 }
 
 // Retrieve node type
-Node::NodeType Node::nodeType() const
+ExpressionNode::NodeType ExpressionNode::nodeType() const
 {
 	return nodeType_;
 }
 
 // Set parent 
-void Node::setParent(Expression* parent)
+void ExpressionNode::setParent(Expression* parent)
 {
 	parent_ = parent;
 }
 
 // Retrieve parent
-Expression* Node::parent() const
+Expression* ExpressionNode::parent() const
 {
 	return parent_;
 }
 
 // Set whether node returns a number
-void Node::setReturnsNumber(bool b)
+void ExpressionNode::setReturnsNumber(bool b)
 {
 	returnsNumber_ = b;
 }
 
 // Return whether node returns a number
-bool Node::returnsNumber()
+bool ExpressionNode::returnsNumber()
 {
 	return returnsNumber_;
 }
 
 // Set the readonly status of the variable to true
-void Node::setReadOnly()
+void ExpressionNode::setReadOnly()
 {
 	readOnly_ = true;
 }
 
 // Return readonly status
-bool Node::readOnly() const
+bool ExpressionNode::readOnly() const
 {
 	return readOnly_;
 }
 
 // Return number of arguments currently assigned to node
-int Node::nArgs() const
+int ExpressionNode::nArgs() const
 {
 	return args_.nItems();
 }
 
 // Return whether nth argument returns a number
-bool Node::isArgNumeric(int i)
+bool ExpressionNode::isArgNumeric(int i)
 {
 	if ((i < 0) || (i >= args_.nItems()))
 	{
-		Messenger::printVerbose("Node::argType : Argument index %i is out of range (node = %p).\n", i, this);
+		Messenger::printVerbose("ExpressionNode::argType : Argument index %i is out of range (node = %p).\n", i, this);
 		return false;
 	}
 	return args_[i]->item->returnsNumber();
 }
 
 // Set argument specified
-bool Node::setArg(int i, double& rv)
+bool ExpressionNode::setArg(int i, double& rv)
 {
 	if ((i < 0) || (i >= args_.nItems()))
 	{
-		Messenger::printVerbose("Node::setArg : Argument index %i is out of range (node = %p).\n", i, this);
+		Messenger::printVerbose("ExpressionNode::setArg : Argument index %i is out of range (node = %p).\n", i, this);
 		return false;
 	}
 	// Check readonly attribute of argument
@@ -135,51 +135,51 @@ bool Node::setArg(int i, double& rv)
 }
 
 // Return whether argument i was given
-bool Node::hasArg(int i)
+bool ExpressionNode::hasArg(int i)
 {
 	return (i < args_.nItems());
 }
 
 // Add list of arguments formas as a plain List<Node>, beginning from supplied list head
-void Node::addListArguments(Node* leaf)
+void ExpressionNode::addListArguments(ExpressionNode* leaf)
 {
-	for (Node* node = leaf; node != NULL; node = node->next) args_.add(node);
+	for (ExpressionNode* node = leaf; node != NULL; node = node->next) args_.add(node);
 }
 
 // Add list of arguments formed as a linked Node list
-void Node::addJoinedArguments(Node* lastleaf)
+void ExpressionNode::addJoinedArguments(ExpressionNode* lastleaf)
 {
 	/*
-	The supplied leaf may be a single node, or it may be a list of nodes beginning at the *last* node (this is the case if Joined by the parser)
-	Therefore, must walk backwards through the list first to get to the head...
-	*/
-	Node* first;
+	 * The supplied leaf may be a single node, or it may be a list of nodes beginning at the *last* node (this is the case if Joined by the parser)
+	 * Therefore, must walk backwards through the list first to get to the head...
+	 */
+	ExpressionNode* first;
 	for (first = lastleaf; first != NULL; first = first->prevArgument) if (first->prevArgument == NULL) break;
-	for (Node* node = first; node != NULL; node = node->nextArgument) args_.add(node);
+	for (ExpressionNode* node = first; node != NULL; node = node->nextArgument) args_.add(node);
 }
 
 // Add multiple arguments to node
-void Node::addArguments(int nargs, ...)
+void ExpressionNode::addArguments(int nargs, ...)
 {
 	// Create variable argument parser
 	va_list vars;
 	va_start(vars,nargs);
 	// Add arguments in the order they were provided
-	for (int n=0; n<nargs; n++) addArgument(va_arg(vars, Node*));
+	for (int n=0; n<nargs; n++) addArgument(va_arg(vars, ExpressionNode*));
 	va_end(vars);
 	//Messenger::print(Messenger::Parse,"Node %p now has %i arguments.\n", this, args_.nItems());
 }
 
 // Add multiple arguments to node
-void Node::addArgument(Node* arg)
+void ExpressionNode::addArgument(ExpressionNode* arg)
 {
 	args_.add(arg);
 }
 
 // Check validity of supplied arguments
-bool Node::checkArguments(const char* arglist, const char* funcname)
+bool ExpressionNode::checkArguments(const char* arglist, const char* funcname)
 {
-	//msg.enter("Node::checkArguments");
+	//msg.enter("ExpressionNode::checkArguments");
 	//Messenger::print(Messenger::Parse, "Checking the %i argument(s) given to function '%s'...\n", args_.nItems(), funcname);
 	const char* c = NULL, *altargs = arglist;
 // 	Messenger::print(Messenger::Parse, "...argument list is [%s]\n", altargs);
@@ -189,7 +189,7 @@ bool Node::checkArguments(const char* arglist, const char* funcname)
 	// If the argument list begins with '_', arguments will have already been checked and added elsewhere...
 	if (*altargs == '_')
 	{
-// 		msg.exit("Node::checkArguments");
+// 		msg.exit("ExpressionNode::checkArguments");
 		return true;
 	}
 	// Search for an alternative set of arguments
@@ -217,7 +217,7 @@ bool Node::checkArguments(const char* arglist, const char* funcname)
 					reset = true;
 					continue;
 				}
-// 				msg.exit("Node::checkArguments");
+// 				msg.exit("ExpressionNode::checkArguments");
 				return true;
 			}
 		// Retain previous information if this is a repeat, but make it an optional argument
@@ -262,7 +262,7 @@ bool Node::checkArguments(const char* arglist, const char* funcname)
 					reset = true;
 					continue;
 				}
-// 				msg.exit("Node::checkArguments");
+// 				msg.exit("ExpressionNode::checkArguments");
 				return true;
 			}
 			// Convert character to upper case if necessary
@@ -288,19 +288,19 @@ bool Node::checkArguments(const char* arglist, const char* funcname)
 				if (altargs != NULL) { reset = true; continue; }
 				Messenger::printVerbose("Error: The function '%s' requires argument %i.\n", funcname, count+1);
 // 				printf("       Command syntax is '%s(%s)'.\n", funcname, Command::data[function_].argText);
-// 				msg.exit("Node::checkArguments");
+// 				msg.exit("ExpressionNode::checkArguments");
 				return false;
 			}
 			else if (cluster && (ngroup != 0))
 			{
 				Messenger::printVerbose("Error: The optional argument %i to function '%s' is part of a group and must be specified.\n", count+1, funcname);
 // 				printf("       Command syntax is '%s(%s)'.\n", funcname, arglist);
-// 				msg.exit("Node::checkArguments");
+// 				msg.exit("ExpressionNode::checkArguments");
 				return false;
 			}
 			else
 			{
-// 				msg.exit("Node::checkArguments");
+// 				msg.exit("ExpressionNode::checkArguments");
 				return true;
 			}
 		}
@@ -338,30 +338,30 @@ bool Node::checkArguments(const char* arglist, const char* funcname)
 	if (result && (args_.nItems() > count))
 	{
 		Messenger::printVerbose("Error: %i extra arguments given to function '%s'.\n", args_.nItems()-count, funcname);
-// 		msg.exit("Node::checkArguments");
+// 		msg.exit("ExpressionNode::checkArguments");
 		return false;
 	}
-// 	msg.exit("Node::checkArguments");
+// 	msg.exit("ExpressionNode::checkArguments");
 	return result;
 }
 
 // Return (execute) argument specified
-bool Node::arg(int i, double& rv)
+bool ExpressionNode::arg(int i, double& rv)
 {
 	if ((i < 0) || (i >= args_.nItems()))
 	{
-		Messenger::printVerbose("Node::arg : Argument index %i is out of range (node = %p).\n", i, this);
+		Messenger::printVerbose("ExpressionNode::arg : Argument index %i is out of range (node = %p).\n", i, this);
 		return false;
 	}
 	return args_[i]->item->execute(rv);
 }
 
 // Return (execute) argument specified as a bool
-bool Node::argb(int i)
+bool ExpressionNode::argb(int i)
 {
 	if ((i < 0) || (i >= args_.nItems()))
 	{
-		Messenger::printVerbose("Node::argb : Argument index %i is out of range (node = %p).\n", i, this);
+		Messenger::printVerbose("ExpressionNode::argb : Argument index %i is out of range (node = %p).\n", i, this);
 		return false;
 	}
 	double rv;
@@ -372,11 +372,11 @@ bool Node::argb(int i)
 }
 
 // Return (execute) argument specified as an integer
-int Node::argi(int i)
+int ExpressionNode::argi(int i)
 {
 	if ((i < 0) || (i >= args_.nItems()))
 	{
-		Messenger::printVerbose("Node::argi : Argument index %i is out of range (node = %p).\n", i, this);
+		Messenger::printVerbose("ExpressionNode::argi : Argument index %i is out of range (node = %p).\n", i, this);
 		return false;
 	}
 	double rv;
@@ -387,11 +387,11 @@ int Node::argi(int i)
 }
 
 // Return (execute) argument specified as a double
-double Node::argd(int i)
+double ExpressionNode::argd(int i)
 {
 	if ((i < 0) || (i >= args_.nItems()))
 	{
-		Messenger::printVerbose("Node::argd : Argument index %i is out of range (node = %p).\n", i, this);
+		Messenger::printVerbose("ExpressionNode::argd : Argument index %i is out of range (node = %p).\n", i, this);
 		return false;
 	}
 	double result = 0.0;
@@ -400,11 +400,11 @@ double Node::argd(int i)
 }
 
 // Return the Node corresponding to the argument, rather than executing it
-Node* Node::argNode(int i)
+ExpressionNode* ExpressionNode::argNode(int i)
 {
 	if ((i < 0) || (i > args_.nItems()))
 	{
-		Messenger::printVerbose("Node::argNode : Argument index %i is out of range for returning the argument node (node = %p).\n", i, this);
+		Messenger::printVerbose("ExpressionNode::argNode : Argument index %i is out of range for returning the argument node (node = %p).\n", i, this);
 		return NULL;
 	}
 	return args_[i]->item;

@@ -32,7 +32,7 @@ extern int ExpressionParser_parse();
 
 // Forward declarations
 class Node;
-class Variable;
+class ExpressionVariable;
 
 // Mathematical Expression
 class Expression
@@ -94,30 +94,30 @@ class Expression
 	 * Node Control
 	 */
 	private:
-	// Node list - a disordered list of all nodes owned by the Expression
-	List<Node> nodes_;
-	// Permanent node list, not removed by normal clear() function
-	List<Node> permanentNodes_;
+	// Node list - a disordered list of all nodes (except persistent ones) owned by the Expression
+	List<ExpressionNode> nodes_;
+	// Persistent node list, not removed by normal clear() function
+	List<ExpressionNode> persistentNodes_;
 	// Reflist of all statements in the Expression, to be executed sequentially
-	RefList<Node,int> statements_;
+	RefList<ExpressionNode,int> statements_;
 	// Number of syntactic errors encountered
 	int nErrors_;
 
 	public:
 	// Add a node representing a whole statement to the execution list
-	bool addStatement(Node* leaf);
+	bool addStatement(ExpressionNode* leaf);
 	// Add an operator to the Expression
-	Node* addOperator(Functions::Function func, Node* arg1, Node* arg2 = NULL);
+	ExpressionNode* addOperator(ExpressionFunctions::Function func, ExpressionNode* arg1, ExpressionNode* arg2 = NULL);
 	// Associate a command-based leaf node to the Expression
-	Node* addFunctionNodeWithArglist(Functions::Function func, Node* arglist);
+	ExpressionNode* addFunctionNodeWithArglist(ExpressionFunctions::Function func, ExpressionNode* arglist);
 	// Add a function node to the list (overloaded to accept simple arguments instead of a list)
-	Node* addFunctionNode(Functions::Function func, Node* a1 = NULL, Node* a2 = NULL, Node* a3 = NULL, Node* a4 = NULL);
-	// Add a variable node, targetting the supplied variable
-	Node* addVariableNode(Variable* var);
+	ExpressionNode* addFunctionNode(ExpressionFunctions::Function func, ExpressionNode* a1 = NULL, ExpressionNode* a2 = NULL, ExpressionNode* a3 = NULL, ExpressionNode* a4 = NULL);
+	// Add a value node, targetting the supplied variable
+	ExpressionNode* addValueNode(ExpressionVariable* var);
 	// Join two nodes together
-	static Node* joinArguments(Node* arg1, Node* arg2);
+	static ExpressionNode* joinArguments(ExpressionNode* arg1, ExpressionNode* arg2);
 	// Join two commands together
-	Node* joinCommands(Node* node1, Node* node2);
+	ExpressionNode* joinCommands(ExpressionNode* node1, ExpressionNode* node2);
 	// Print statement info
 	void print();
 
@@ -127,21 +127,23 @@ class Expression
 	 */
 	private:
 	// List of variables
-	RefList<Variable,bool> variables_;
+	RefList<ExpressionVariable,bool> variables_;
 	// List of constants
-	RefList<Variable,bool> constants_;
+	RefList<ExpressionVariable,bool> constants_;
 
 	public:
 	// Add double constant
-	Variable* createConstant(double d, bool permanent = false);
-	// Add variable
-	Variable* createVariable(const char* name, Node* initialValue = 0, bool permanent = false);
+	ExpressionVariable* createConstant(double d, bool persistent = false);
+	// Add variable, with ExpressionNode as initial value source
+	ExpressionVariable* createVariable(const char* name, bool persistent = false, ExpressionNode* initialValue = NULL);
+	// Add variable, with double as initial value source
+	ExpressionVariable* createVariableWithValue(const char* name, double initialValue, bool persistent = false);
 	// Search for variable
-	Variable* variable(const char* name);
+	ExpressionVariable* variable(const char* name);
 	// Return variables
-	RefListItem<Variable,bool>* variables();
+	RefListItem<ExpressionVariable,bool>* variables();
 	// Return constants
-	RefListItem<Variable,bool>* constants();
+	RefListItem<ExpressionVariable,bool>* constants();
 
 
 	/*

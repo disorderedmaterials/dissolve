@@ -21,26 +21,27 @@
 
 #include "expression/expression.h"
 #include "expression/functions.h"
-#include "expression/functionnode.h"
+#include "expression/function.h"
 #include "math/constants.h"
+#include "base/sysfunc.h"
 #include <cmath>
 #include <cstring>
 
 // Static singleton
-Functions functions;
+ExpressionFunctions expressionFunctions;
 
 // Default settings
-bool Functions::assumeDegrees_ = false;
+bool ExpressionFunctions::assumeDegrees_ = false;
 
 // Constructor
-Functions::Functions()
+ExpressionFunctions::ExpressionFunctions()
 {
 	// Create pointer list
 	initPointers();
 }
 
 // Constructor
-Functions::~Functions()
+ExpressionFunctions::~ExpressionFunctions()
 {
 }
 
@@ -49,13 +50,13 @@ Functions::~Functions()
  */
 
 // Set whether to assume values used in trig functions are degrees
-void Functions::setAssumeDegrees(bool b)
+void ExpressionFunctions::setAssumeDegrees(bool b)
 {
 	assumeDegrees_ = b;
 }
 
 // Return whether to assume values used in trig functions are degrees
-bool Functions::assumeDegrees()
+bool ExpressionFunctions::assumeDegrees()
 {
 	return assumeDegrees_;
 }
@@ -77,7 +78,7 @@ bool Functions::assumeDegrees()
 */
 
 // Command action
-FunctionData Functions::data[Functions::nFunctions] = {
+ExpressionFunctionData ExpressionFunctions::data[ExpressionFunctions::nFunctions] = {
 
 	// Operators
 	{ "+",			"..",		true, "",
@@ -162,11 +163,11 @@ FunctionData Functions::data[Functions::nFunctions] = {
 };
 
 // Return enumerated command from string
-Functions::Function Functions::function(const char* s)
+ExpressionFunctions::Function ExpressionFunctions::function(const char* s)
 {
-	int result;
-	for (result = Functions::NoFunction; result < Functions::nFunctions; result++) if (strcmp(data[result].keyword,s) == 0) break;
-	return (Functions::Function) result;
+	for (int result = ExpressionFunctions::NoFunction; result < ExpressionFunctions::nFunctions; result++) if (DissolveSys::sameString(data[result].keyword,s)) return (ExpressionFunctions::Function) result;
+
+	return (ExpressionFunctions::Function) ExpressionFunctions::nFunctions;
 }
 
 /*
@@ -174,7 +175,7 @@ Functions::Function Functions::function(const char* s)
  */
 
 // Add two quantities together
-bool Functions::function_OperatorAdd(FunctionNode* c, double& rv)
+bool ExpressionFunctions::function_OperatorAdd(ExpressionFunction* c, double& rv)
 {
 	double lhs, rhs;
 	if (!c->arg(0,lhs)) return false;
@@ -186,7 +187,7 @@ bool Functions::function_OperatorAdd(FunctionNode* c, double& rv)
 }
 
 // Logical AND check on two operators
-bool Functions::function_OperatorAnd(FunctionNode* c, double& rv)
+bool ExpressionFunctions::function_OperatorAnd(ExpressionFunction* c, double& rv)
 {
 	double v1, v2;
 	if (!c->arg(0,v1)) return false;
@@ -198,7 +199,7 @@ bool Functions::function_OperatorAnd(FunctionNode* c, double& rv)
 }
 
 // Divide one quantity by another
-bool Functions::function_OperatorDivide(FunctionNode* c, double& rv)
+bool ExpressionFunctions::function_OperatorDivide(ExpressionFunction* c, double& rv)
 {
 	// Grab both argument (return) values and send them to be operated on
 	double lhs, rhs;
@@ -211,7 +212,7 @@ bool Functions::function_OperatorDivide(FunctionNode* c, double& rv)
 }
 
 // Equal To
-bool Functions::function_OperatorEqualTo(FunctionNode* c, double& rv)
+bool ExpressionFunctions::function_OperatorEqualTo(ExpressionFunction* c, double& rv)
 {
 	// Grab both argument (return) values and send them to be operated on
 	double lhs, rhs;
@@ -224,7 +225,7 @@ bool Functions::function_OperatorEqualTo(FunctionNode* c, double& rv)
 }
 
 // Greater Than
-bool Functions::function_OperatorGreaterThan(FunctionNode* c, double& rv)
+bool ExpressionFunctions::function_OperatorGreaterThan(ExpressionFunction* c, double& rv)
 {
 	// Grab both argument (return) values and send them to be operated on
 	double lhs, rhs;
@@ -237,7 +238,7 @@ bool Functions::function_OperatorGreaterThan(FunctionNode* c, double& rv)
 }
 
 // Greater Than Equal To
-bool Functions::function_OperatorGreaterThanEqualTo(FunctionNode* c, double& rv)
+bool ExpressionFunctions::function_OperatorGreaterThanEqualTo(ExpressionFunction* c, double& rv)
 {
 	// Grab both argument (return) values and send them to be operated on
 	double lhs, rhs;
@@ -250,7 +251,7 @@ bool Functions::function_OperatorGreaterThanEqualTo(FunctionNode* c, double& rv)
 }
 
 // Less Than
-bool Functions::function_OperatorLessThan(FunctionNode* c, double& rv)
+bool ExpressionFunctions::function_OperatorLessThan(ExpressionFunction* c, double& rv)
 {
 	// Grab both argument (return) values and send them to be operated on
 	double lhs, rhs;
@@ -263,7 +264,7 @@ bool Functions::function_OperatorLessThan(FunctionNode* c, double& rv)
 }
 
 // Less Than Equal To
-bool Functions::function_OperatorLessThanEqualTo(FunctionNode* c, double& rv)
+bool ExpressionFunctions::function_OperatorLessThanEqualTo(ExpressionFunction* c, double& rv)
 {
 	// Grab both argument (return) values and send them to be operated on
 	double lhs, rhs;
@@ -276,7 +277,7 @@ bool Functions::function_OperatorLessThanEqualTo(FunctionNode* c, double& rv)
 }
 
 // Integer remainder of A/B
-bool Functions::function_OperatorModulus(FunctionNode* c, double& rv)
+bool ExpressionFunctions::function_OperatorModulus(ExpressionFunction* c, double& rv)
 {
 	// Grab both argument (return) values and send them to be operated on
 	double lhs, rhs;
@@ -289,7 +290,7 @@ bool Functions::function_OperatorModulus(FunctionNode* c, double& rv)
 }
 
 // Multiply one quantity by another
-bool Functions::function_OperatorMultiply(FunctionNode* c, double& rv)
+bool ExpressionFunctions::function_OperatorMultiply(ExpressionFunction* c, double& rv)
 {
 	// Grab both argument (return) values and send them to be operated on
 	double lhs, rhs;
@@ -302,7 +303,7 @@ bool Functions::function_OperatorMultiply(FunctionNode* c, double& rv)
 }
 
 // Negate value
-bool Functions::function_OperatorNegate(FunctionNode* c, double& rv)
+bool ExpressionFunctions::function_OperatorNegate(ExpressionFunction* c, double& rv)
 {
 	if (!c->arg(0, rv)) return false;
 
@@ -312,7 +313,7 @@ bool Functions::function_OperatorNegate(FunctionNode* c, double& rv)
 }
 
 // Not (Reverse Logic)
-bool Functions::function_OperatorNot(FunctionNode* c, double& rv)
+bool ExpressionFunctions::function_OperatorNot(ExpressionFunction* c, double& rv)
 {
 	if (!c->arg(0, rv)) return false;
 
@@ -322,7 +323,7 @@ bool Functions::function_OperatorNot(FunctionNode* c, double& rv)
 }
 
 // Not Equal To
-bool Functions::function_OperatorNotEqualTo(FunctionNode* c, double& rv)
+bool ExpressionFunctions::function_OperatorNotEqualTo(ExpressionFunction* c, double& rv)
 {
 	// Grab both argument (return) values and send them to be operated on
 	double lhs, rhs;
@@ -335,7 +336,7 @@ bool Functions::function_OperatorNotEqualTo(FunctionNode* c, double& rv)
 }
 
 // Logical OR check on two operators
-bool Functions::function_OperatorOr(FunctionNode* c, double& rv)
+bool ExpressionFunctions::function_OperatorOr(ExpressionFunction* c, double& rv)
 {
 	// Grab both argument (return) values and send them to be operated on
 	double lhs, rhs;
@@ -348,7 +349,7 @@ bool Functions::function_OperatorOr(FunctionNode* c, double& rv)
 }
 
 // Raise one quantity to the power of another
-bool Functions::function_OperatorPower(FunctionNode* c, double& rv)
+bool ExpressionFunctions::function_OperatorPower(ExpressionFunction* c, double& rv)
 {
 	// Grab both argument (return) values and send them to be operated on
 	double lhs, rhs;
@@ -361,7 +362,7 @@ bool Functions::function_OperatorPower(FunctionNode* c, double& rv)
 }
 
 // Subtract one quantity from another
-bool Functions::function_OperatorSubtract(FunctionNode* c, double& rv)
+bool ExpressionFunctions::function_OperatorSubtract(ExpressionFunction* c, double& rv)
 {
 	// Grab both argument (return) values and send them to be operated on
 	double lhs, rhs;
@@ -378,13 +379,13 @@ bool Functions::function_OperatorSubtract(FunctionNode* c, double& rv)
  */
 
 // Dummy Node
-bool Functions::function_NoFunction(FunctionNode* c, double& rv)
+bool ExpressionFunctions::function_NoFunction(ExpressionFunction* c, double& rv)
 {
 	return true;
 }
 
 // Joiner
-bool Functions::function_Joiner(FunctionNode* c, double& rv)
+bool ExpressionFunctions::function_Joiner(ExpressionFunction* c, double& rv)
 {
 	// Execute both commands
 	bool result = true;
@@ -394,7 +395,7 @@ bool Functions::function_Joiner(FunctionNode* c, double& rv)
 }
 
 // If test
-bool Functions::function_If(FunctionNode* c, double& rv)
+bool ExpressionFunctions::function_If(ExpressionFunction* c, double& rv)
 {
 	double ifval;
 	if (!c->arg(0, ifval)) return false;
@@ -408,84 +409,84 @@ bool Functions::function_If(FunctionNode* c, double& rv)
  */
 
 // Return absolute of argument
-bool Functions::function_Abs(FunctionNode* c, double& rv)
+bool ExpressionFunctions::function_Abs(ExpressionFunction* c, double& rv)
 {
 	rv = fabs(c->argd(0));
 	return true;
 }
 
 // Return invserse cosine of argument
-bool Functions::function_ACos(FunctionNode* c, double& rv)
+bool ExpressionFunctions::function_ACos(ExpressionFunction* c, double& rv)
 {
 	rv = (assumeDegrees_ ? acos(c->argd(0)) * DEGRAD : acos(c->argd(0)) );
 	return true;
 }
 
 // Return invserse sine of argument
-bool Functions::function_ASin(FunctionNode* c, double& rv)
+bool ExpressionFunctions::function_ASin(ExpressionFunction* c, double& rv)
 {
 	rv = (assumeDegrees_ ? asin(c->argd(0)) * DEGRAD : asin(c->argd(0)) );
 	return true;
 }
 
 // Return invserse tangent of argument
-bool Functions::function_ATan(FunctionNode* c, double& rv)
+bool ExpressionFunctions::function_ATan(ExpressionFunction* c, double& rv)
 {
 	rv = (assumeDegrees_ ? atan(c->argd(0)) * DEGRAD : atan(c->argd(0)) );
 	return true;
 }
 
 // Return cosine of argument (supplied in degrees)
-bool Functions::function_Cos(FunctionNode* c, double& rv)
+bool ExpressionFunctions::function_Cos(ExpressionFunction* c, double& rv)
 {
 	rv = (assumeDegrees_ ? cos(c->argd(0) / DEGRAD) : cos(c->argd(0)) );
 	return true;
 }
 
 // Return exponential of of argument
-bool Functions::function_Exp(FunctionNode* c, double& rv)
+bool ExpressionFunctions::function_Exp(ExpressionFunction* c, double& rv)
 {
 	rv = exp(c->argd(0));
 	return true;
 }
 
 // Return natural logarithm of argument
-bool Functions::function_Ln(FunctionNode* c, double& rv)
+bool ExpressionFunctions::function_Ln(ExpressionFunction* c, double& rv)
 {
 	rv = log(c->argd(0));
 	return true;
 }
 
 // Return base-10 logarithm of argument
-bool Functions::function_Log(FunctionNode* c, double& rv)
+bool ExpressionFunctions::function_Log(ExpressionFunction* c, double& rv)
 {
 	rv = log10(c->argd(0));
 	return true;
 }
 
 // Round real value to nearest integer
-bool Functions::function_Nint(FunctionNode* c, double& rv)
+bool ExpressionFunctions::function_Nint(ExpressionFunction* c, double& rv)
 {
 	rv = floor(c->argd(0) + 0.5);
 	return true;
 }
 
 // Return sine of argument (supplied in degrees)
-bool Functions::function_Sin(FunctionNode* c, double& rv)
+bool ExpressionFunctions::function_Sin(ExpressionFunction* c, double& rv)
 {
 	rv = (assumeDegrees_ ? sin(c->argd(0) / DEGRAD) : sin(c->argd(0)) );
 	return true;
 }
 
 // Return square root of argument
-bool Functions::function_Sqrt(FunctionNode* c, double& rv)
+bool ExpressionFunctions::function_Sqrt(ExpressionFunction* c, double& rv)
 {
 	rv = sqrt(c->argd(0));
 	return true;
 }
 
 // Return tangent of argument (supplied in degrees)
-bool Functions::function_Tan(FunctionNode* c, double& rv)
+bool ExpressionFunctions::function_Tan(ExpressionFunction* c, double& rv)
 {
 	rv = (assumeDegrees_ ? tan(c->argd(0) / DEGRAD) : tan(c->argd(0)) );
 	return true;
@@ -496,41 +497,42 @@ bool Functions::function_Tan(FunctionNode* c, double& rv)
  */
 
 // Return specified command keyword
-const char* Functions::keyword(Functions::Function func)
+const char* ExpressionFunctions::keyword(ExpressionFunctions::Function func)
 {
-	return Functions::data[func].keyword;
+	return ExpressionFunctions::data[func].keyword;
 }
 
 // Return specified command arguments
-const char* Functions::arguments(Functions::Function func)
+const char* ExpressionFunctions::arguments(ExpressionFunctions::Function func)
 {
-	return Functions::data[func].arguments;
+	return ExpressionFunctions::data[func].arguments;
 }
 
 // Return whether specified function returns a number
-bool Functions::returnsNumber(Functions::Function func)
+bool ExpressionFunctions::returnsNumber(ExpressionFunctions::Function func)
 {
-	return Functions::data[func].returnsNumber;
+	return ExpressionFunctions::data[func].returnsNumber;
 }
 
 // Return specified command argument names
-const char* Functions::argText(Functions::Function func)
+const char* ExpressionFunctions::argText(ExpressionFunctions::Function func)
 {
-	return Functions::data[func].argText;
+	return ExpressionFunctions::data[func].argText;
 }
 
 // Return specified command syntax
-const char* Functions::syntax(Functions::Function func)
+const char* ExpressionFunctions::syntax(ExpressionFunctions::Function func)
 {
-	return Functions::data[func].syntax;
+	return ExpressionFunctions::data[func].syntax;
 }
 
 // Initialise Command Pointers
-void Functions::initPointers()
+void ExpressionFunctions::initPointers()
 {
 	/*
-	// Store pointers to all command functions
-	*/
+	 * Store pointers to all command functions
+	 */
+
 	// Operators
 	pointers_[OperatorAdd] = &function_OperatorAdd;
 	pointers_[OperatorAnd] = &function_OperatorAnd;
@@ -556,22 +558,22 @@ void Functions::initPointers()
 	pointers_[If] = &function_If;
 
 	// Math Commands
-	pointers_[Abs] = &Functions::function_Abs;
-	pointers_[ACos] = &Functions::function_ACos;
-	pointers_[ASin] = &Functions::function_ASin;
-	pointers_[ATan] = &Functions::function_ATan;
-	pointers_[Cos] = &Functions::function_Cos;
-	pointers_[Exp] = &Functions::function_Exp;
-	pointers_[Ln] = &Functions::function_Ln;
-	pointers_[Log] = &Functions::function_Log;
-	pointers_[Nint] = &Functions::function_Nint;
-	pointers_[Sin] = &Functions::function_Sin;
-	pointers_[Sqrt] = &Functions::function_Sqrt;
-	pointers_[Tan] = &Functions::function_Tan;
+	pointers_[Abs] = &function_Abs;
+	pointers_[ACos] = &function_ACos;
+	pointers_[ASin] = &function_ASin;
+	pointers_[ATan] = &function_ATan;
+	pointers_[Cos] = &function_Cos;
+	pointers_[Exp] = &function_Exp;
+	pointers_[Ln] = &function_Ln;
+	pointers_[Log] = &function_Log;
+	pointers_[Nint] = &function_Nint;
+	pointers_[Sin] = &function_Sin;
+	pointers_[Sqrt] = &function_Sqrt;
+	pointers_[Tan] = &function_Tan;
 }
 
 // Execute command
-bool Functions::call(Functions::Function cf, FunctionNode* node, double& rv)
+bool ExpressionFunctions::call(ExpressionFunctions::Function cf, ExpressionFunction* node, double& rv)
 {
 // 	printf("Calling command '%s' (node is %p)...\n", data[cf].keyword, node);
 	return (this->pointers_[cf])(node, rv);

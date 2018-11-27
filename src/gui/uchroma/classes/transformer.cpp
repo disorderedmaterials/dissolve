@@ -26,7 +26,7 @@
 // Constructor
 Transformer::Transformer()
 {
-	// Add permanent variable trio to equation
+	// Add persistent variable trio to equation
 	x_ = equation_.createVariable("x", NULL, true);
 	y_ = equation_.createVariable("y", NULL, true);
 	z_ = equation_.createVariable("z", NULL, true);

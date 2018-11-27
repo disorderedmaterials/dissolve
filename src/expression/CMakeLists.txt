@@ -4,18 +4,18 @@ add_library(uchromaexpression
   ${BISON_ExpressionParser_OUTPUTS}
   expression.cpp
   expression_lexer.cpp
-  functionnode.cpp
+  function.cpp
   functions.cpp
   node.cpp
+  value.cpp
   variable.cpp
-  variablenode.cpp
 
   expression.h
-  functionnode.h
+  function.h
   functions.h
   node.h
+  value.h
   variable.h
-  variablenode.h
 )
 
 target_include_directories(uchromaexpression PRIVATE

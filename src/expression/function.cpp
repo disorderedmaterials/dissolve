@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "expression/functionnode.h"
+#include "expression/function.h"
 #include "base/sysfunc.h"
 #include "base/messenger.h"
 #include "base/charstring.h"
@@ -27,38 +27,38 @@
 #include <stdarg.h>
 
 // Constructor
-FunctionNode::FunctionNode(Functions::Function func) : Node(), function_(func)
+ExpressionFunction::ExpressionFunction(ExpressionFunctions::Function func) : ExpressionNode(), function_(func)
 {
 	// Private variables
-	nodeType_ = Node::FuncNode;
+	nodeType_ = ExpressionNode::FunctionNode;
 }
 
-FunctionNode::FunctionNode(Node* source)
+ExpressionFunction::ExpressionFunction(ExpressionNode* source)
 {
 	copy(source);	
 }
 
 // Destructor
-FunctionNode::~FunctionNode()
+ExpressionFunction::~ExpressionFunction()
 {
 }
 
 // Get function
-Functions::Function FunctionNode::function()
+ExpressionFunctions::Function ExpressionFunction::function() const
 {
 	return function_;
 }
 
 // Execute command
-bool FunctionNode::execute(double& rv)
+bool ExpressionFunction::execute(double& rv)
 {
 	// Execute the command
 	//printf("Node function is %i (%s)\n", function_, commands.data[function_].keyword);
-	return functions.call(function_, this, rv);
+	return expressionFunctions.call(function_, this, rv);
 }
 
 // Print node contents
-void FunctionNode::nodePrint(int offset, const char* prefix)
+void ExpressionFunction::nodePrint(int offset, const char* prefix)
 {
 	// Construct tabbed offset
 	CharString tab;
@@ -68,20 +68,20 @@ void FunctionNode::nodePrint(int offset, const char* prefix)
 
 	// Output node data
 // 	printf("Function id = %p\n", function_);
-	printf("[CN]%s%s (Function) (%i arguments)\n", tab.get(), Functions::data[function_].keyword, args_.nItems());
+	printf("[CN]%s%s (Function) (%i arguments)\n", tab.get(), ExpressionFunctions::data[function_].keyword, args_.nItems());
 	// Output Argument data
-	for (RefListItem<Node,int> *ri = args_.first(); ri != NULL; ri = ri->next) ri->item->nodePrint(offset+1);
+	for (RefListItem<ExpressionNode,int>* ri = args_.first(); ri != NULL; ri = ri->next) ri->item->nodePrint(offset+1);
 }
 
-// Set from returnvalue node
-bool FunctionNode::set(double rv)
+// Set from double value
+bool ExpressionFunction::set(double value)
 {
 	printf("Internal Error: Trying to 'set' a FunctionNode.\n");
 	return false;
 }
 
 // Initialise node
-bool FunctionNode::initialise()
+bool ExpressionFunction::initialise()
 {
 	printf("Internal Error: A FunctionNode cannot be initialised.\n");
 	return false;

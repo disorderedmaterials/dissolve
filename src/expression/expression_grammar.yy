@@ -23,11 +23,11 @@ void ExpressionParser_error(char *s);
 
 /* Type Definition */
 %union {
-	int functionId;			/* Function enum id */
-	CharString* name;		/* Character pointer for names */
-	Node* node;			/* node pointer */
-	Variable* variable;		/* variable pointer */
-	double doubleConst;		/* double constant value */
+	int functionId;				/* Function enum id */
+	CharString* name;			/* Character pointer for names */
+	ExpressionNode* node;			/* Expression node pointer */
+	ExpressionVariable* variable;		/* Expression variable pointer */
+	double doubleConst;			/* Constant double value */
 };
 
 %token <doubleConst> UCR_EP_CONSTANT
@@ -88,7 +88,7 @@ constant:
 /* Pre-Existing Variable */
 variable:
 	UCR_EP_VAR					{
-		$$ = Expression::target()->addVariableNode($1);
+		$$ = Expression::target()->addValueNode($1);
 		if ($$ == NULL) YYABORT;
 		}
 	| variable '('					{
@@ -104,14 +104,14 @@ variable:
 /* Built-In Functions */
 function:
 	UCR_EP_FUNCCALL '(' ')'				{
-		$$ = Expression::target()->addFunctionNode( (Functions::Function) $1);
+		$$ = Expression::target()->addFunctionNode( (ExpressionFunctions::Function) $1);
 		if ($$ == NULL) YYABORT;
-		Messenger::printVerbose("PARSER: function : function '%s'\n", functions.data[(Functions::Function) $1].keyword);
+		Messenger::printVerbose("PARSER: function : function '%s'\n", expressionFunctions.data[(ExpressionFunctions::Function) $1].keyword);
 		}
 	| UCR_EP_FUNCCALL '(' expressionlist ')'	{
-		$$ = Expression::target()->addFunctionNodeWithArglist( (Functions::Function) $1, $3);
+		$$ = Expression::target()->addFunctionNodeWithArglist( (ExpressionFunctions::Function) $1, $3);
 		if ($$ == NULL) YYABORT;
-		Messenger::printVerbose("PARSER: function : function '%s' with exprlist\n", functions.data[(Functions::Function) $1].keyword);
+		Messenger::printVerbose("PARSER: function : function '%s' with exprlist\n", expressionFunctions.data[(ExpressionFunctions::Function) $1].keyword);
 		}
 	| UCR_EP_FUNCCALL error				{
 		Messenger::printVerbose("Error: Missing brackets after function call?\n");
@@ -127,24 +127,24 @@ function:
 expression:
 	constant					{ $$ = $1; }
 	| function					{ $$ = $1; }
-	| '-' expression %prec UCR_EP_UMINUS		{ $$ = Expression::target()->addOperator(Functions::OperatorNegate, $2); }
+	| '-' expression %prec UCR_EP_UMINUS		{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorNegate, $2); }
 	| variable					{ $$ = $1; }
-	| expression '+' expression			{ $$ = Expression::target()->addOperator(Functions::OperatorAdd, $1, $3); }
-	| expression '-' expression			{ $$ = Expression::target()->addOperator(Functions::OperatorSubtract, $1, $3); }
-	| expression '*' expression			{ $$ = Expression::target()->addOperator(Functions::OperatorMultiply, $1, $3); }
-	| expression '/' expression			{ $$ = Expression::target()->addOperator(Functions::OperatorDivide, $1, $3); }
-	| expression '^' expression			{ $$ = Expression::target()->addOperator(Functions::OperatorPower, $1, $3); }
-	| expression '%' expression			{ $$ = Expression::target()->addOperator(Functions::OperatorModulus, $1, $3); }
-	| expression UCR_EP_EQ expression		{ $$ = Expression::target()->addOperator(Functions::OperatorEqualTo, $1, $3); }
-	| expression UCR_EP_NEQ expression		{ $$ = Expression::target()->addOperator(Functions::OperatorNotEqualTo, $1, $3); }
-	| expression '>' expression			{ $$ = Expression::target()->addOperator(Functions::OperatorGreaterThan, $1, $3); }
-	| expression UCR_EP_GEQ expression		{ $$ = Expression::target()->addOperator(Functions::OperatorGreaterThanEqualTo, $1, $3); }
-	| expression '<' expression			{ $$ = Expression::target()->addOperator(Functions::OperatorLessThan, $1, $3); }
-	| expression UCR_EP_LEQ expression		{ $$ = Expression::target()->addOperator(Functions::OperatorLessThanEqualTo, $1, $3); }
-	| expression UCR_EP_AND expression		{ $$ = Expression::target()->addOperator(Functions::OperatorAnd, $1, $3); }
-	| expression UCR_EP_OR expression		{ $$ = Expression::target()->addOperator(Functions::OperatorOr, $1, $3); }
+	| expression '+' expression			{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorAdd, $1, $3); }
+	| expression '-' expression			{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorSubtract, $1, $3); }
+	| expression '*' expression			{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorMultiply, $1, $3); }
+	| expression '/' expression			{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorDivide, $1, $3); }
+	| expression '^' expression			{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorPower, $1, $3); }
+	| expression '%' expression			{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorModulus, $1, $3); }
+	| expression UCR_EP_EQ expression		{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorEqualTo, $1, $3); }
+	| expression UCR_EP_NEQ expression		{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorNotEqualTo, $1, $3); }
+	| expression '>' expression			{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorGreaterThan, $1, $3); }
+	| expression UCR_EP_GEQ expression		{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorGreaterThanEqualTo, $1, $3); }
+	| expression '<' expression			{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorLessThan, $1, $3); }
+	| expression UCR_EP_LEQ expression		{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorLessThanEqualTo, $1, $3); }
+	| expression UCR_EP_AND expression		{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorAnd, $1, $3); }
+	| expression UCR_EP_OR expression		{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorOr, $1, $3); }
 	| '(' expression ')'				{ $$ = $2; }
-	| '!' expression				{ $$ = Expression::target()->addOperator(Functions::OperatorNot, $2); }
+	| '!' expression				{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorNot, $2); }
 	| UCR_EP_NEWTOKEN				{ Messenger::printVerbose("Error: '%s' has not been declared as a function or a variable.\n", (*yylval.name).get()); YYABORT; }
 	;
 
@@ -203,7 +203,7 @@ block:
 		$$ = $2;
 		}
 	| '{' '}'					{
-		$$ = Expression::target()->addFunctionNode(Functions::NoFunction);
+		$$ = Expression::target()->addFunctionNode(ExpressionFunctions::NoFunction);
 		}
 	;
 
@@ -220,10 +220,10 @@ blockment:
 /* Flow-Control Statement */
 flowstatement:
 	UCR_EP_IF '(' expression ')' blockment UCR_EP_ELSE blockment 	{
-		$$ = Expression::target()->addFunctionNode(Functions::If,$3,$5,$7);
+		$$ = Expression::target()->addFunctionNode(ExpressionFunctions::If,$3,$5,$7);
 		}
 	| UCR_EP_IF '(' expression ')' blockment 			{
-		$$ = Expression::target()->addFunctionNode(Functions::If,$3,$5);
+		$$ = Expression::target()->addFunctionNode(ExpressionFunctions::If,$3,$5);
 		}
 	;
 
