@@ -12,7 +12,7 @@ template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
 {
 	public:
 	// Constructor
-	MonteCarloMinimiser<T>(T& object, typename MinimiserBase<T>::MinimiserCostFunction costFunction) : MinimiserBase<T>(object, costFunction)
+	MonteCarloMinimiser<T>(T& object, typename MinimiserBase<T>::MinimiserCostFunction costFunction, bool pokeBeforeCost = false) : MinimiserBase<T>(object, costFunction, pokeBeforeCost)
 	{
 		parameterSmoothingFrequency_ = 0;
 		acceptanceMemoryLength_ = 25;
