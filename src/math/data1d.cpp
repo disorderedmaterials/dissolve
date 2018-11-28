@@ -468,14 +468,23 @@ bool Data1D::save(const char* filename) const
 		Messenger::error("Couldn't open file '%s' for writing.\n", filename);
 		return false;
 	}
-	
-	if (hasError_)
-	{
-		for (int n = 0; n<x_.nItems(); ++n) parser.writeLineF("%16.10e  %16.10e  %16.10e\n", x_.constAt(n), values_.constAt(n), errors_.constAt(n));
-	}
-	else for (int n = 0; n<x_.nItems(); ++n) parser.writeLineF("%16.10e  %16.10e\n", x_.constAt(n), values_.constAt(n));
+
+	// Write the data
+	bool result = save(parser);
 
 	parser.closeFiles();
+
+	return result;
+}
+
+// Save data to specified file
+bool Data1D::save(LineParser& parser) const
+{
+	if (hasError_)
+	{
+		for (int n = 0; n<x_.nItems(); ++n) if (!parser.writeLineF("%16.10e  %16.10e  %16.10e\n", x_.constAt(n), values_.constAt(n), errors_.constAt(n))) return false;
+	}
+	else for (int n = 0; n<x_.nItems(); ++n) if (!parser.writeLineF("%16.10e  %16.10e\n", x_.constAt(n), values_.constAt(n))) return false;
 
 	return true;
 }
