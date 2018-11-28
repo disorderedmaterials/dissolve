@@ -29,11 +29,11 @@
 #include <limits>
 
 // Brent's Principal Axis Minimiser
-template <class T> class PrAxis : public MinimiserBase<T>
+template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 {
 	public:
 	// Constructor
-	PrAxis<T>(T& object, typename MinimiserBase<T>::MinimiserCostFunction costFunction, bool pokeBeforeCost = false) : MinimiserBase<T>(object, costFunction, pokeBeforeCost)
+	PrAxisMinimiser<T>(T& object, typename MinimiserBase<T>::MinimiserCostFunction costFunction, bool pokeBeforeCost = false) : MinimiserBase<T>(object, costFunction, pokeBeforeCost)
 	{
 		maxStep_ = 0.01;
 		tolerance_ = 1.0e-3;

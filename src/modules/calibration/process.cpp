@@ -98,7 +98,7 @@ bool CalibrationModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		 */
 		
 		CalibrationModuleCostFunctions costFunctions(dissolve, procPool, intraBroadeningModules_, neutronReferences);
-		PrAxis<CalibrationModuleCostFunctions> broadeningMinimiser(costFunctions, &CalibrationModuleCostFunctions::intraBroadeningCost);
+		PrAxisMinimiser<CalibrationModuleCostFunctions> broadeningMinimiser(costFunctions, &CalibrationModuleCostFunctions::intraBroadeningCost);
 		broadeningMinimiser.setTolerance(0.001);
 		broadeningMinimiser.setPokeBeforeCost(true);
 		rdfModuleIterator.restart();

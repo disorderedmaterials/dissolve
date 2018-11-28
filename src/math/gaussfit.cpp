@@ -359,7 +359,7 @@ double GaussFit::constructReal(double requiredError, int maxGaussians)
 				Messenger::printVerbose("Attempting Gaussian addition for peak/trough located at x = %f\n", trialX);
 
 				// Set up minimiser, minimising test Gaussian only
-				PrAxis<GaussFit> gaussMinimiser(*this, &GaussFit::costAnalyticAFX);
+				PrAxisMinimiser<GaussFit> gaussMinimiser(*this, &GaussFit::costAnalyticAFX);
 				gaussMinimiser.setMaxStep(0.1);
 				gaussMinimiser.setTolerance(0.01);
 				gaussMinimiser.addTarget(trialA);
