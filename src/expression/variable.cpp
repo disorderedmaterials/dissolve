@@ -112,6 +112,18 @@ bool ExpressionVariable::set(double value)
 	return true;
 }
 
+// Return value
+double ExpressionVariable::value() const
+{
+	return value_;
+}
+
+// Return pointer to value
+double* ExpressionVariable::valuePointer()
+{
+	return &value_;
+}
+
 // Return value of node
 bool ExpressionVariable::execute(double& value)
 {

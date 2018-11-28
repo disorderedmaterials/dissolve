@@ -378,15 +378,15 @@ ExpressionVariable* Expression::variable(const char* name)
 }
 
 // Return variables
-RefListItem<ExpressionVariable,bool>* Expression::variables()
+RefList<ExpressionVariable,bool>& Expression::variables()
 {
-	return variables_.first();
+	return variables_;
 }
 
 // Return constants
-RefListItem<ExpressionVariable,bool>* Expression::constants()
+RefList<ExpressionVariable,bool>& Expression::constants()
 {
-	return constants_.first();
+	return constants_;
 }
 
 /*

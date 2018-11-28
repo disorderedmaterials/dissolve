@@ -140,10 +140,10 @@ class Expression
 	ExpressionVariable* createVariableWithValue(const char* name, double initialValue, bool persistent = false);
 	// Search for variable
 	ExpressionVariable* variable(const char* name);
-	// Return variables
-	RefListItem<ExpressionVariable,bool>* variables();
-	// Return constants
-	RefListItem<ExpressionVariable,bool>* constants();
+	// Return list of variables
+	RefList<ExpressionVariable,bool>& variables();
+	// Return list of constants
+	RefList<ExpressionVariable,bool>& constants();
 
 
 	/*

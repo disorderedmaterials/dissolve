@@ -29,13 +29,14 @@
 #include <limits>
 
 // Brent's Principal Axis Minimiser
-template <class T> class PrAxis : public MinimiserBase<T>
+template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 {
 	public:
 	// Constructor
-	PrAxis<T>(T& object, typename MinimiserBase<T>::MinimiserCostFunction func) : MinimiserBase<T>(object, func)
+	PrAxisMinimiser<T>(T& object, typename MinimiserBase<T>::MinimiserCostFunction costFunction, bool pokeBeforeCost = false) : MinimiserBase<T>(object, costFunction, pokeBeforeCost)
 	{
 		maxStep_ = 0.01;
+		tolerance_ = 1.0e-3;
 		printLevel_ = 0;
 	}
 
@@ -46,14 +47,16 @@ template <class T> class PrAxis : public MinimiserBase<T>
 	private:
 	// Maximum step size
 	double maxStep_;
+	// Convergence tolerance
+	double tolerance_;
 	// Print level
 	int printLevel_;
 
 	private:
 	// Perform minimisation
-	double execute(Array<double>& values, double tolerance)
+	double execute(Array<double>& values)
 	{
-		return praxis(tolerance, maxStep_, values, printLevel_);
+		return praxis(tolerance_, maxStep_, values, printLevel_);
 	}
 
 	public:
@@ -61,6 +64,11 @@ template <class T> class PrAxis : public MinimiserBase<T>
 	void setMaxStep(double step)
 	{
 		maxStep_ = step;
+	}
+	// Set convergence tolerance
+	void setTolerance(double tol)
+	{
+		tolerance_ = tol;
 	}
 	// Set print level
 	void setPrintLevel(int level)

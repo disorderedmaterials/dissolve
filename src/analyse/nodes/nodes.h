@@ -32,6 +32,7 @@
 #include "analyse/nodes/collect3d.h"
 #include "analyse/nodes/dynamicsite.h"
 #include "analyse/nodes/exclude.h"
+#include "analyse/nodes/fit1d.h"
 #include "analyse/nodes/process1d.h"
 #include "analyse/nodes/process2d.h"
 #include "analyse/nodes/process3d.h"

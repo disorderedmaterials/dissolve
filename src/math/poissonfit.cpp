@@ -321,7 +321,9 @@ double PoissonFit::sweepFitC(FunctionSpace::SpaceType space, double xMin, int sa
 			}
 
 			// Optimise this set of Gaussians
-			currentError_ = poissonMinimiser.minimise(100, 0.01);
+			poissonMinimiser.setMaxIterations(100);
+			poissonMinimiser.setStepSize(0.01);
+			currentError_ = poissonMinimiser.minimise();
 			Messenger::printVerbose("PoissonFit::reFitC() - P = %i, error = %f\n", p, currentError_);
 
 			// If we are not at the end of the Gaussian array, move the index backwards so the next set overlaps a little with this one
@@ -357,6 +359,8 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, int nPoissons, 
 
 	// Perform Monte Carlo minimisation on the amplitudes
 	MonteCarloMinimiser<PoissonFit> poissonMinimiser(*this, &PoissonFit::costTabulatedC);
+	poissonMinimiser.setMaxIterations(nIterations);
+	poissonMinimiser.setStepSize(initialStepSize);
 	poissonMinimiser.enableParameterSmoothing(smoothingThreshold, smoothingK, smoothingM);
 	alphaSpace_ = FunctionSpace::ReciprocalSpace;
 
@@ -369,7 +373,7 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, int nPoissons, 
 		poissonMinimiser.addTarget(C_[n]);
 	}
 
-	currentError_ = poissonMinimiser.minimise(nIterations, initialStepSize);
+	currentError_ = poissonMinimiser.minimise();
 
 	// Perform a final grouped refit of the amplitudes
 	if (reFitAtEnd) sweepFitC(FunctionSpace::ReciprocalSpace, rMin);
@@ -402,6 +406,8 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, Array<double> c
 
 	// Perform Monte Carlo minimisation on the amplitudes
 	MonteCarloMinimiser<PoissonFit> poissonMinimiser(*this, &PoissonFit::costTabulatedC);
+	poissonMinimiser.setMaxIterations(nIterations);
+	poissonMinimiser.setStepSize(initialStepSize);
 	poissonMinimiser.enableParameterSmoothing(smoothingThreshold, smoothingK, smoothingM);
 	alphaSpace_ = FunctionSpace::ReciprocalSpace;
 
@@ -414,7 +420,7 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, Array<double> c
 		poissonMinimiser.addTarget(C_[n]);
 	}
 
-	currentError_ = poissonMinimiser.minimise(nIterations, initialStepSize);
+	currentError_ = poissonMinimiser.minimise();
 
 	// Perform a final grouped refit of the amplitudes
 	if (reFitAtEnd) sweepFitC(FunctionSpace::ReciprocalSpace, rMin);

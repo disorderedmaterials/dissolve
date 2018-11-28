@@ -92,7 +92,7 @@ variable:
 		if ($$ == NULL) YYABORT;
 		}
 	| variable '('					{
-		Messenger::printVerbose("Tried to use a variable as a function.\n");
+		Messenger::error("Tried to use a variable as a function.\n");
 		YYABORT;
 		}
 	;
@@ -114,7 +114,7 @@ function:
 		Messenger::printVerbose("PARSER: function : function '%s' with exprlist\n", expressionFunctions.data[(ExpressionFunctions::Function) $1].keyword);
 		}
 	| UCR_EP_FUNCCALL error				{
-		Messenger::printVerbose("Error: Missing brackets after function call?\n");
+		Messenger::error("Missing brackets after function call?\n");
 		YYABORT;
 		}
 	;
@@ -145,7 +145,7 @@ expression:
 	| expression UCR_EP_OR expression		{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorOr, $1, $3); }
 	| '(' expression ')'				{ $$ = $2; }
 	| '!' expression				{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorNot, $2); }
-	| UCR_EP_NEWTOKEN				{ Messenger::printVerbose("Error: '%s' has not been declared as a function or a variable.\n", (*yylval.name).get()); YYABORT; }
+	| UCR_EP_NEWTOKEN				{ Messenger::error("'%s' has not been declared as a function or a variable.\n", (*yylval.name).get()); YYABORT; }
 	;
 
 /* Expression List */
@@ -158,7 +158,7 @@ expressionlist:
 		$$ = Expression::joinArguments($3,$1);
 		}
 	| expressionlist expression			{
-		Messenger::printVerbose("Error: Missing comma between items.\n");
+		Messenger::error("Missing comma between items.\n");
 		YYABORT;
 		}
 	;
