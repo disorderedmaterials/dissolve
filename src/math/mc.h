@@ -115,7 +115,6 @@ template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
 	{
 		targetAcceptanceRatio_ = ratio;
 	}
-
 	// Perform minimisation
 	double execute(Array<double>& values)
 	{
@@ -136,7 +135,11 @@ template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
 			trialValues = values;
 
 			// Perform a Monte Carlo move on the parameters
-			for (int i=0; i<trialValues.nItems(); ++i) trialValues[i] += DissolveMath::randomPlusMinusOne()*stepSize_;
+			for (int i=0; i<trialValues.nItems(); ++i)
+			{
+				if (trialValues[i] < 1.0e-8) trialValues[i] += DissolveMath::randomPlusMinusOne()*0.01*stepSize_;
+				else trialValues[i] += DissolveMath::randomPlusMinusOne()*trialValues[i]*stepSize_;
+			}
 
 			// Get error for the new parameters, and store if improved
 			trialError = MinimiserBase<T>::cost(trialValues);
@@ -145,6 +148,7 @@ template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
 			{
 				values = trialValues;
 				currentError = trialError;
+
 				++smoothingNAccepted;
 			}
 
