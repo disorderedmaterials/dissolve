@@ -23,6 +23,7 @@
 #define DISSOLVE_MINIMISER_H
 
 #include "base/messenger.h"
+#include "expression/variable.h"
 #include "templates/array.h"
 
 // Minimiser Base Class
@@ -132,6 +133,11 @@ template <class T> class MinimiserBase
 	void addTarget(double& var, bool minLimit = false, double minValue = 0.0, bool maxLimit = false, double maxValue = 0.0)
 	{
 		addTarget(&var, minLimit, minValue, maxLimit, maxValue);
+	}
+	// Add ExpressionVariable as target, with limits specified
+	void addTarget(ExpressionVariable* var, bool minLimit = false, double minValue = 0.0, bool maxLimit = false, double maxValue = 0.0)
+	{
+		addTarget(var->valuePointer(), minLimit, minValue, maxLimit, maxValue);
 	}
 	// Add array of pointers to targets
 	void addTargets(Array<double*> vars, bool minLimit = false, double minValue = 0.0, bool maxLimit = false, double maxValue = 0.0)

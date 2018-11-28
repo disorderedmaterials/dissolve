@@ -64,6 +64,10 @@ class ExpressionVariable : public ExpressionNode
 	bool execute(double& value);
 	// Set value of node
 	bool set(double value);
+	// Return value
+	double value() const;
+	// Return pointer to value
+	double* valuePointer();
 
 
 	/*
