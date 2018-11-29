@@ -55,11 +55,11 @@ class Transformer
 	// Whether current equation is valid
 	bool valid_;
 	// X variable in equation
-	Variable* x_;
+	ExpressionVariable* x_;
 	// Y variable in equation
-	Variable* y_;
+	ExpressionVariable* y_;
 	// Z variable in equation
-	Variable* z_;
+	ExpressionVariable* z_;
 
 	public:
 	// Set whether transform is enabled
@@ -75,7 +75,7 @@ class Transformer
 	// Transform single value
 	double transform(double x, double y, double z);
 	// Transform whole array, including application of pre/post transform shift
-	Array<double> transformArray(Array< double > sourceX, Array< double > sourceY, double z, int target);
+	Array<double> transformArray(Array<double> sourceX, Array<double> sourceY, double z, int target);
 };
 
 #endif

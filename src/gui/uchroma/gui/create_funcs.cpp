@@ -30,8 +30,8 @@ CreateCollectionDialog::CreateCollectionDialog(UChromaBase& uChromaBase, QWidget
 	ui.setupUi(this);
 
 	// Create static x and z variables
-	xVariable_ = equation_.createVariable("x", NULL, true);
-	zVariable_ = equation_.createVariable("z", NULL, true);
+	xVariable_ = equation_.createVariable("x", true);
+	zVariable_ = equation_.createVariable("z", true);
 	equation_.setGenerateMissingVariables(true);
 
 	refreshing_ = true;
@@ -100,9 +100,9 @@ void CreateCollectionDialog::updateVariables()
 	// Ignore 'x' and 'z' if they exist
 	// If a variable already exists in equationVariables_, set it's 'used' status to true.
 	// If it doesn't, create it and set it's 'used' status to true
-	for (RefListItem<Variable,bool>* ri = equation_.variables(); ri != NULL; ri = ri->next)
+	for (RefListItem<ExpressionVariable,bool>* ri = equation_.variables().first(); ri != NULL; ri = ri->next)
 	{
-		Variable* var = ri->item;
+		ExpressionVariable* var = ri->item;
 
 		// Is this variable one of 'x' or 'z'?
 		if (DissolveSys::sameString(var->name(), "x") || DissolveSys::sameString(var->name(), "z")) continue;
@@ -338,7 +338,7 @@ void CreateCollectionDialog::updateVariableTable()
 		if (!eqVar->used()) continue;
 
 		// Grab variable pointer from FitVariable
-		Variable* var = eqVar->variable();
+		ExpressionVariable* var = eqVar->variable();
 
 		// -- Variable Name / Fit flag
 		item = new QTableWidgetItem();

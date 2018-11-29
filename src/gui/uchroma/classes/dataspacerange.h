@@ -34,7 +34,7 @@
 class Collection;
 class DataSpace;
 class Expression;
-class Variable;
+class ExpressionVariable;
 class ReferenceVariable;
 
 /*
@@ -121,7 +121,7 @@ class DataSpaceRange : public ListItem<DataSpaceRange>
 	// Copy values from stored source collection, using index data provided
 	bool copyValues(IndexData xIndex, IndexData zIndex);
 	// Calculate values from specified equation
-	bool calculateValues(Expression& equation, Variable* xVariable, Variable* zVariable, const RefList<ReferenceVariable,bool>& usedReferences);
+	bool calculateValues(Expression& equation, ExpressionVariable* xVariable, ExpressionVariable* zVariable, const RefList<ReferenceVariable,bool>& usedReferences);
 	// Return sos error between stored and referenced values
 	double sosError();
 	// Add values to datasets in specified Collection

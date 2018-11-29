@@ -288,7 +288,7 @@ bool DataSpaceRange::copyValues(IndexData xIndex, IndexData zIndex)
 }
 
 // Calculate values from specified equation
-bool DataSpaceRange::calculateValues(Expression& equation, Variable* xVariable, Variable* zVariable, const RefList<ReferenceVariable,bool>& usedReferences)
+bool DataSpaceRange::calculateValues(Expression& equation, ExpressionVariable* xVariable, ExpressionVariable* zVariable, const RefList<ReferenceVariable,bool>& usedReferences)
 {
 	bool success;
 

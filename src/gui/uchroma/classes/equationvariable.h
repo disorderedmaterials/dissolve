@@ -26,7 +26,7 @@
 #include "templates/listitem.h"
 
 // Forward Declarations
-class Variable;
+class ExpressionVariable;
 
 // Equation Variable
 class EquationVariable : public ListItem<EquationVariable>
@@ -43,8 +43,8 @@ class EquationVariable : public ListItem<EquationVariable>
 	private:
 	// Name of target variable
 	CharString name_;
-	// Target Variable pointer
-	Variable* variable_;
+	// Target ExpressionVariable pointer
+	ExpressionVariable* variable_;
 	// Value
 	double value_;
 	// Whether minimum maximum limits are enabled
@@ -62,11 +62,11 @@ class EquationVariable : public ListItem<EquationVariable>
 	// Return name
 	const char* name();
 	// Set variable target
-	void setVariable(Variable* variable);
+	void setVariable(ExpressionVariable* variable);
 	// Reset variable target (to NULL) and usage status
 	void resetVariable();
 	// Return variable target
-	Variable* variable();
+	ExpressionVariable* variable();
 	// Set value
 	void setValue(double value);
 	// Return value

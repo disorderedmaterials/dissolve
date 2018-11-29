@@ -55,7 +55,7 @@ class OperateSetZDialog : public QDialog
 	// Collection whose data should be modified
 	Collection* targetCollection_;
 	// Index and current z variables for equation
-	Variable* indexVariable_, *zVariable_;
+	ExpressionVariable* indexVariable_, *zVariable_;
 	// Equation for transform
 	Expression equation_;
 	// Whether source files are available

@@ -27,7 +27,7 @@
 #include "base/charstring.h"
 
 // Forward Declarations
-class Variable;
+class ExpressionVariable;
 
 // Reference Variable
 class ReferenceVariable : public ListItem<ReferenceVariable>
@@ -48,8 +48,8 @@ class ReferenceVariable : public ListItem<ReferenceVariable>
 	private:
 	// Name of target variable
 	CharString name_;
-	// Target Variable pointer
-	Variable* variable_;
+	// Target ExpressionVariable pointer
+	ExpressionVariable* variable_;
 	// Whether the variable is used in the current equation
 	bool used_;
 
@@ -59,11 +59,11 @@ class ReferenceVariable : public ListItem<ReferenceVariable>
 	// Return name
 	const char* name();
 	// Set variable target
-	void setVariable(Variable* variable);
+	void setVariable(ExpressionVariable* variable);
 	// Reset variable target (to NULL) and usage status
 	void resetVariable();
 	// Return variable target
-	Variable* variable();
+	ExpressionVariable* variable();
 	// Update associated variable to reflect name of ReferenceVariable
 	bool updateVariable();
 	// Set whether this variable is used in the current equation

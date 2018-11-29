@@ -35,8 +35,8 @@ OperateSetZDialog::OperateSetZDialog(QWidget* parent, Collection* targetCollecti
 	targetCollection_ = targetCollection;
 
 	// Setup initial equation
-	indexVariable_ = equation_.createVariable("index", NULL, true);
-	zVariable_ = equation_.createVariable("z", NULL, true);
+	indexVariable_ = equation_.createVariable("index", true);
+	zVariable_ = equation_.createVariable("z", true);
 	equation_.setGenerateMissingVariables(false);
 	ui.FromEquationEdit->setText("index");
 

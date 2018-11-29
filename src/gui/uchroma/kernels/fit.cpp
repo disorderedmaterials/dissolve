@@ -32,8 +32,8 @@ FitKernel::FitKernel(UChromaBase& uChromaBase) : uChromaBase_(uChromaBase)
 	// Equation and Variable Data
 	nVariablesUsed_ = 0;
 	equationValid_ = false;
-	xVariable_ = equation_.createVariable("x", NULL, true);
-	zVariable_ = equation_.createVariable("z", NULL, true);
+	xVariable_ = equation_.createVariable("x", true);
+	zVariable_ = equation_.createVariable("z", true);
 	equation_.setGenerateMissingVariables(true);
 
 	// Fit Range
@@ -135,9 +135,9 @@ void FitKernel::updateVariables()
 	// Ignore 'x' and 'z' if they exist
 	// If a variable already exists in equationVariables_, set it's 'used' status to true.
 	// If it doesn't, create it and set it's 'used' status to true
-	for (RefListItem<Variable,bool>* ri = equation_.variables(); ri != NULL; ri = ri->next)
+	for (RefListItem<ExpressionVariable,bool>* ri = equation_.variables().first(); ri != NULL; ri = ri->next)
 	{
-		Variable* var = ri->item;
+		ExpressionVariable* var = ri->item;
 
 		// Is this variable one of 'x' or 'z'? Must compare by name since the pointers are not permanent...
 		if (DissolveSys::sameString(var->name(), "x") || DissolveSys::sameString(var->name(), "z")) continue;

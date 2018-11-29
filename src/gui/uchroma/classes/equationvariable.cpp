@@ -54,7 +54,7 @@ const char* EquationVariable::name()
 }
 
 // Set variable target
-void EquationVariable::setVariable(Variable* variable)
+void EquationVariable::setVariable(ExpressionVariable* variable)
 {
 	variable_ = variable;
 }
@@ -67,7 +67,7 @@ void EquationVariable::resetVariable()
 }
 
 // Return variable target
-Variable* EquationVariable::variable()
+ExpressionVariable* EquationVariable::variable()
 {
 	return variable_;
 }

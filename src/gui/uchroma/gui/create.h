@@ -79,7 +79,7 @@ class CreateCollectionDialog : public QDialog
 	// Whether current equation is valid
 	bool equationValid_;
 	// Standard x and z variables
-	Variable* xVariable_, *zVariable_;
+	ExpressionVariable* xVariable_, *zVariable_;
 	// List of variables targetted in create process
 	RefList<EquationVariable,bool> usedVariables_;
 

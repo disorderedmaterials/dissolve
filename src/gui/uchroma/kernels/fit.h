@@ -33,7 +33,7 @@
 class UChromaBase;
 class Collection;
 class DataSet;
-class Variable;
+class ExpressionVariable;
 
 /*
  * Fit Kernel
@@ -74,7 +74,7 @@ class FitKernel
 	// Whether current equation is valid
 	bool equationValid_;
 	// Standard x and z variables
-	Variable* xVariable_, *zVariable_;
+	ExpressionVariable* xVariable_, *zVariable_;
 	// List of variables used in equation
 	RefList<EquationVariable,bool> usedVariables_;
 	// List of variables targetted in fit process

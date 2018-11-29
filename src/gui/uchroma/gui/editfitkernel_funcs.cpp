@@ -179,7 +179,7 @@ void EditFitKernelDialog::updateVariableTable()
 		if (!eqVar->used()) continue;
 
 		// Grab variable pointer from FitVariable
-		Variable* var = eqVar->variable();
+		ExpressionVariable* var = eqVar->variable();
 
 		// -- Variable Name / Fit flag
 		item = new QTableWidgetItem();

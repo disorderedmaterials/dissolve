@@ -75,7 +75,7 @@ const char* ReferenceVariable::name()
 }
 
 // Set variable target
-void ReferenceVariable::setVariable(Variable* variable)
+void ReferenceVariable::setVariable(ExpressionVariable* variable)
 {
 	variable_ = variable;
 }
@@ -88,7 +88,7 @@ void ReferenceVariable::resetVariable()
 }
 
 // Return variable target
-Variable* ReferenceVariable::variable()
+ExpressionVariable* ReferenceVariable::variable()
 {
 	return variable_;
 }
