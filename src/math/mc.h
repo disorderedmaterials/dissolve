@@ -137,7 +137,7 @@ template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
 			// Perform a Monte Carlo move on the parameters
 			for (int i=0; i<trialValues.nItems(); ++i)
 			{
-				if (trialValues[i] < 1.0e-8) trialValues[i] += DissolveMath::randomPlusMinusOne()*0.01*stepSize_;
+				if (fabs(trialValues[i]) < 1.0e-8) trialValues[i] += DissolveMath::randomPlusMinusOne()*0.01*stepSize_;
 				else trialValues[i] += DissolveMath::randomPlusMinusOne()*trialValues[i]*stepSize_;
 			}
 
