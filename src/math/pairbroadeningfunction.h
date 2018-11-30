@@ -28,8 +28,6 @@
 #include "templates/array.h"
 #include "templates/array2d.h"
 
-#define MAXPAIRBROADENINGPARAMS 6
-
 // Forward Declarations
 class AtomType;
 class LineParser;
