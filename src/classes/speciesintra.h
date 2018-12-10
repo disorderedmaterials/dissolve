@@ -73,6 +73,8 @@ class SpeciesIntra
 	void setMasterParameters(MasterIntra* master);
 	// Return linked master from which parameters should be taken
 	MasterIntra* masterParameters();
+	// Return parameter source
+	SpeciesIntra* parameterSource();
 	// Set functional form index of interaction
 	void setForm(int form);
 	// Return functional form index of interaction

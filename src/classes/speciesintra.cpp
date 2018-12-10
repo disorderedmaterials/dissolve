@@ -68,6 +68,12 @@ MasterIntra* SpeciesIntra::masterParameters()
 	return masterParameters_;
 }
 
+// Return parameter source
+SpeciesIntra* SpeciesIntra::parameterSource()
+{
+	return (masterParameters_ ? masterParameters_ : this);
+}
+
 // Set functional form index of interaction
 void SpeciesIntra::setForm(int form)
 {
