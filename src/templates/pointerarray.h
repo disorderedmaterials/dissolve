@@ -188,6 +188,25 @@ template <class T> class PointerArray
 		}
 		Messenger::print("PointerArray<T>::remove(%p) - Couldn't find pointer in array.\n", ptr);
 	}
+	// Remove indexed item from the array, leaving the remaining items contiguous in memory
+	void remove(int index)
+	{
+#ifdef CHECKS
+		if ((index < 0) || (index >= nItems_))
+		{
+			Messenger::error("Can't remove index '%i' from PointerArray<T>, since it is out of range (nItems = %i).\n", index, nItems_);
+			return;
+		}
+#endif
+		// If it is at the end of the list, just decrease nItems_.
+		// If not, switch the current last item into this slot, and then decrease nItems_.
+		if (index < (nItems_-1))
+		{
+			items_[index] = items_[nItems_-1];
+			items_[nItems_-1] = NULL;
+		}
+		--nItems_;
+	}
 	// Return array index of pointer within the list
 	int indexOf(const T* ptr) const
 	{
