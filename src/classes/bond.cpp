@@ -84,7 +84,7 @@ Atom* Bond::partner(Atom* i) const
 	return (i == i_ ? j_ : i_);
 }
 
-// Return whether Atoms in Angle match those specified
+// Return whether Atoms in Bond match those specified
 bool Bond::matches(Atom* i, Atom* j) const
 {
 	if ((i_ == i) && (j_ == j)) return true;
