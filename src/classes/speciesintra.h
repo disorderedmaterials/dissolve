@@ -88,7 +88,9 @@ class SpeciesIntra
 	// Set parameters from Array<double>
 	void setParametersFromArray(Array<double> params);
 	// Set up any necessary parameters
-	virtual void setUp();
+	virtual void setUp() = 0;
+	// Calculate and return fundamental frequency for the interaction
+	virtual double fundamentalFrequency(double reducedMass) const = 0;
 };
 
 #endif

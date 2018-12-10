@@ -94,6 +94,10 @@ class SpeciesAngle : public SpeciesIntra, public ListItem<SpeciesAngle>
 	static int nFunctionParameters(AngleFunction func);
 
 	public:
+	// Set up any necessary parameters
+	void setUp();
+	// Return fundamental frequency for the interaction
+	double fundamentalFrequency(double reducedMass) const;
 	// Return energy for specified angle
 	double energy(double angleInDegrees) const;
 	// Return force multiplier for specified angle

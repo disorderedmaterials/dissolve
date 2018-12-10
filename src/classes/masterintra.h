@@ -72,6 +72,16 @@ class MasterIntra : public SpeciesIntra, public ListItem<MasterIntra>
 	void registerUsage(int idI, int idJ);
 	// Unregister single usage of this term by the specified pair of AtomType indices
 	void unregisterUsage(int idI, int idJ);
+
+
+	/*
+	 * Interaction Parameters
+	 */
+	public:
+	// Set up any necessary parameters
+	void setUp();
+	// Calculate and return fundamental frequency for the interaction
+	double fundamentalFrequency(double reducedMass) const;
 };
 
 #endif

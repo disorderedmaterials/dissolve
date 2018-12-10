@@ -139,8 +139,3 @@ void SpeciesIntra::setParametersFromArray(Array<double> params)
 		parameters_[n] = params[n];
 	}
 }
-
-// Set up any necessary parameters
-void SpeciesIntra::setUp()
-{
-}

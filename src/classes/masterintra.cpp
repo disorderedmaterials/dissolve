@@ -80,3 +80,19 @@ void MasterIntra::unregisterUsage(int idI, int idJ)
 {
 	--usageCounts_.at(idI, idJ);
 }
+
+/*
+ * Interaction Parameters
+ */
+
+// Set up any necessary parameters
+void MasterIntra::setUp()
+{
+}
+
+// Calculate and return fundamental frequency for the interaction
+double MasterIntra::fundamentalFrequency(double reducedMass) const
+{
+	Messenger::warn("A MasterIntra can't return a fundamental frequency, so don't ask for one!\n");
+	return 0.0;
+}
