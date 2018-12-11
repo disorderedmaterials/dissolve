@@ -56,7 +56,7 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(const Array<double>& 
 		{
 			const PartialSet& originalGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "OriginalGR");
 			PartialSet& unweightedGR = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR");
-			RDFModule::calculateUnweightedGR(originalGR, unweightedGR, broadening, smoothing);
+			RDFModule::calculateUnweightedGR(processPool_, cfg, originalGR, unweightedGR, broadening, smoothing);
 		}
 	}
 
