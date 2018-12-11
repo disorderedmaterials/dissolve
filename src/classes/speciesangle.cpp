@@ -201,6 +201,12 @@ double SpeciesAngle::fundamentalFrequency(double reducedMass) const
 	return v;
 }
 
+// Return type of this interaction
+SpeciesIntra::IntramolecularType SpeciesAngle::type() const
+{
+	return SpeciesIntra::IntramolecularAngle;
+}
+
 // Return energy for specified angle
 double SpeciesAngle::energy(double angleInDegrees) const
 {

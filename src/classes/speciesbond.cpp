@@ -208,6 +208,12 @@ double SpeciesBond::fundamentalFrequency(double reducedMass) const
 	return v;
 }
 
+// Return type of this interaction
+SpeciesIntra::IntramolecularType SpeciesBond::type() const
+{
+	return SpeciesIntra::IntramolecularBond;
+}
+
 // Return energy for specified distance
 double SpeciesBond::energy(double distance) const
 {

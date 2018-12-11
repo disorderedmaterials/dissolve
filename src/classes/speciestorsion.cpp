@@ -212,6 +212,12 @@ double SpeciesTorsion::fundamentalFrequency(double reducedMass) const
 	return 0.0;
 }
 
+// Return type of this interaction
+SpeciesIntra::IntramolecularType SpeciesTorsion::type() const
+{
+	return SpeciesIntra::IntramolecularTorsion;
+}
+
 // Return energy for specified angle
 double SpeciesTorsion::energy(double angleInDegrees) const
 {

@@ -37,6 +37,7 @@ MasterIntra* Dissolve::addMasterBond(const char* name)
 	// OK to add new master Bond
 	MasterIntra* b = masterBonds_.add();
 	b->setName(name);
+	b->setType(SpeciesIntra::IntramolecularBond);
 
 	return b;
 }
@@ -82,6 +83,7 @@ MasterIntra* Dissolve::addMasterAngle(const char* name)
 	// OK to add new master Angle
 	MasterIntra* a = masterAngles_.add();
 	a->setName(name);
+	a->setType(SpeciesIntra::IntramolecularAngle);
 
 	return a;
 }
@@ -127,6 +129,7 @@ MasterIntra* Dissolve::addMasterTorsion(const char* name)
 	// OK to add new master Torsion
 	MasterIntra* t = masterTorsions_.add();
 	t->setName(name);
+	t->setType(SpeciesIntra::IntramolecularTorsion);
 
 	return t;
 }
