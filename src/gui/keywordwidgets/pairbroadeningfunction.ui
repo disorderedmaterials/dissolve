@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>161</width>
-    <height>97</height>
+    <width>153</width>
+    <height>179</height>
    </rect>
   </property>
   <property name="font">
@@ -117,8 +117,104 @@
    <item>
     <widget class="QRadioButton" name="GaussianElementsRadio">
      <property name="text">
-      <string>Gaussian, By Element Pair</string>
+      <string>Gaussian, by element pair</string>
      </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QRadioButton" name="FrequencyRadio">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>Gaussian, by frequency</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="FrequencyParametersWidget" native="true">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <property name="spacing">
+       <number>4</number>
+      </property>
+      <item row="0" column="2">
+       <widget class="TExponentialSpin" name="FrequencyBondConstantSpin">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>32</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="label_2">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>C(bond)</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="label_3">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>C(angle)</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="TExponentialSpin" name="FrequencyAngleConstantSpin">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>
@@ -140,11 +236,27 @@
    <hints>
     <hint type="sourcelabel">
      <x>63</x>
-     <y>66</y>
+     <y>43</y>
     </hint>
     <hint type="destinationlabel">
      <x>86</x>
-     <y>103</y>
+     <y>72</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>FrequencyRadio</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>FrequencyParametersWidget</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>3</x>
+     <y>116</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>9</x>
+     <y>138</y>
     </hint>
    </hints>
   </connection>

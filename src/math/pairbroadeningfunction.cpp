@@ -25,6 +25,7 @@
 #include "base/processpool.h"
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
+#include "classes/speciesintra.h"
 #include "templates/enumhelpers.h"
 #include "genericitems/array2ddouble.h"
 
@@ -33,11 +34,16 @@ PairBroadeningFunction::PairBroadeningFunction(PairBroadeningFunction::FunctionT
 {
 	function_ = function;
 
+	gaussianFWHM_ = 0.12;
+
 	// Create element broadening array
 	elementPairGaussianFWHM_.initialise(Elements::nElements(), Elements::nElements(), true);
 	elementPairGaussianFlags_.initialise(Elements::nElements(), Elements::nElements(), true);
 	elementPairGaussianFWHM_ = 0.13;
 	elementPairGaussianFlags_ = false;
+
+	frequencyBondConstant_ = 1.0e-3;
+	frequencyAngleConstant_ = 1.0e-3;
 }
 
 // Destructor
@@ -60,10 +66,13 @@ void PairBroadeningFunction::operator=(const PairBroadeningFunction& source)
 	
 	elementPairGaussianFWHM_ = source.elementPairGaussianFWHM_;
 	elementPairGaussianFlags_ = source.elementPairGaussianFlags_;
+
+	frequencyBondConstant_ = source.frequencyBondConstant_;
+	frequencyAngleConstant_ = source.frequencyAngleConstant_;
 }
 
-const char* PairBroadeningFunctionKeywords[] = { "None", "Gaussian", "GaussianElements" };
-int PairBroadeningFunctionNParameters[] = { 0, 1, 0 };
+const char* PairBroadeningFunctionKeywords[] = { "None", "Gaussian", "GaussianElements", "BROKEN_Frequency" };
+int PairBroadeningFunctionNParameters[] = { 0, 1, 0, 2 };
 
 // Return FunctionType from supplied string
 PairBroadeningFunction::FunctionType PairBroadeningFunction::functionType(const char* s)
@@ -120,6 +129,10 @@ bool PairBroadeningFunction::readAsKeyword(LineParser& parser, int startArg)
 		case (PairBroadeningFunction::GaussianElementPairFunction):
 			Messenger::print("Gaussian element-pair broadening requested - default starting values will be used.\n");
 			break;
+		case (PairBroadeningFunction::FrequencyFunction):
+			frequencyBondConstant_ = parser.argd(startArg+1);
+			frequencyAngleConstant_ = parser.argd(startArg+2);
+			break;
 		default:
 			Messenger::error("Function form '%s' not accounted for in PairBroadeningFunction::set(LineParser&,int).\n", PairBroadeningFunction::functionType(funcType));
 			return false;
@@ -159,6 +172,9 @@ bool PairBroadeningFunction::writeAsKeyword(LineParser& parser, const char* pref
 					}
 				}
 			}
+		case (PairBroadeningFunction::FrequencyFunction):
+			if (!parser.writeLineF("%s%e  %e\n", prefix, frequencyBondConstant_, frequencyAngleConstant_)) return false;
+			break;
 		default:
 			break;
 	}
@@ -189,6 +205,30 @@ double PairBroadeningFunction::gaussianFWHM() const
 	return gaussianFWHM_;
 }
 
+// Set frequency bond constant
+void PairBroadeningFunction::setFrequencyBondConstant(double k)
+{
+	frequencyBondConstant_ = k;
+}
+
+// Return frequency bond constant
+double PairBroadeningFunction::frequencyBondConstant() const
+{
+	return frequencyBondConstant_;
+}
+
+// Set frequency angle constant
+void PairBroadeningFunction::setFrequencyAngleConstant(double k)
+{
+	frequencyAngleConstant_ = k;
+}
+
+// Return frequency angle constant
+double PairBroadeningFunction::frequencyAngleConstant() const
+{
+	return frequencyAngleConstant_;
+}
+
 // Return array of pointers to all adjustable parameters
 Array<double*> PairBroadeningFunction::parameters()
 {
@@ -206,6 +246,10 @@ Array<double*> PairBroadeningFunction::parameters()
 			{
 				if (elementPairGaussianFlags_.constLinearValue(n)) params.add(&elementPairGaussianFWHM_.linearValue(n));
 			}
+			break;
+		case (PairBroadeningFunction::FrequencyFunction):
+			params.add(&frequencyBondConstant_);
+			params.add(&frequencyAngleConstant_);
 			break;
 		default:
 			break;
@@ -225,10 +269,13 @@ CharString PairBroadeningFunction::summary() const
 			result = "None";
 			break;
 		case (PairBroadeningFunction::GaussianFunction):
-			result.sprintf("Gaussian, FWHM=%f", gaussianFWHM_);
+			result.sprintf("Gaussian");
 			break;
 		case (PairBroadeningFunction::GaussianElementPairFunction):
 			result = "Gaussian [Z1-Z2]";
+			break;
+		case (PairBroadeningFunction::FrequencyFunction):
+			result.sprintf("Frequency");
 			break;
 		default:
 			break;
@@ -237,8 +284,8 @@ CharString PairBroadeningFunction::summary() const
 	return result;
 }
 
-// Return a BroadeningFunction tailored to the specified AtomType pair
-BroadeningFunction PairBroadeningFunction::broadeningFunction(AtomType* at1, AtomType* at2)
+// Return a BroadeningFunction tailored to the specified AtomType pair, using intramolecular data if required
+BroadeningFunction PairBroadeningFunction::broadeningFunction(AtomType* at1, AtomType* at2, SpeciesIntra* intra)
 {
 	BroadeningFunction result;
 
@@ -255,6 +302,32 @@ BroadeningFunction PairBroadeningFunction::broadeningFunction(AtomType* at1, Ato
 			if (!elementPairGaussianFlags_.at(at1->element()->Z(), at2->element()->Z())) elementPairGaussianFlags_.at(at1->element()->Z(), at2->element()->Z()) = true;
 			result.set(BroadeningFunction::GaussianFunction, elementPairGaussianFWHM_.at(at1->element()->Z(), at2->element()->Z()));
 			break;
+		case (PairBroadeningFunction::FrequencyFunction):
+			// Broadening based on fundamental frequency of interaction - requires SpeciesIntra
+			if (!intra) Messenger::error("Broadening type is '%s', but a valid SpeciesIntra reference has not been provided.\n", PairBroadeningFunction::functionType(function_));
+			else
+			{
+				// If this interaction is a torsion, treat it as a special case
+				if (intra->type() == SpeciesIntra::IntramolecularTorsion)
+				{
+					// TODO This will kill all torsions interactions!
+					result.set(BroadeningFunction::NoFunction);
+				}
+				else
+				{
+					// Bond or an angle, so calculate the fundamental frequency
+					printf("NEWBROAD : %s %s\n", at1->name(), at2->name());
+					double v = intra->fundamentalFrequency(AtomicMass::reducedMass(at1->element(), at2->element()));
+
+					// Convert to cm-1?
+					double wno = v / (SPEEDOFLIGHT * 100.0);
+					printf("Wavenumbers = %f\n", wno);
+
+					if (intra->type() == SpeciesIntra::IntramolecularBond) result.set(BroadeningFunction::GaussianFunction, frequencyBondConstant_*wno);
+					else if (intra->type() == SpeciesIntra::IntramolecularAngle) result.set(BroadeningFunction::GaussianFunction, frequencyAngleConstant_*wno);
+				}
+			}
+			break;
 			// POSSIBLE USE AS FUNCTION FOR ELEMENT/ATOMTYPE-DEPENDENT BROADENING?
 // 		case (PairBroadeningFunction::GaussianElementFunction):
 // 			// Calculate reduced mass (store in parameters_[1])
@@ -264,7 +337,7 @@ BroadeningFunction PairBroadeningFunction::broadeningFunction(AtomType* at1, Ato
 // 			parameters_[0] = 1.0 / (2.0 * sqrt(2.0) * parameters_[1]);
 // 
 // 			result.set(BroadeningFunction::GaussianFunction, parameters_[0]);
-			break;
+// 			break;
 		default:
 			Messenger::error("Function form '%s' not accounted for in setUpDependentParameters().\n", PairBroadeningFunction::functionType(function_));
 	}

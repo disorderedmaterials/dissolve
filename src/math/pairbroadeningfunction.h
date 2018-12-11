@@ -32,13 +32,14 @@
 class AtomType;
 class LineParser;
 class ProcessPool;
+class SpeciesIntra;
 
 // Pair Broadening Function
 class PairBroadeningFunction : public GenericItemBase
 {
 	public:
 	// Function Types
-	enum FunctionType { NoFunction, GaussianFunction, GaussianElementPairFunction, nFunctionTypes };
+	enum FunctionType { NoFunction, GaussianFunction, GaussianElementPairFunction, FrequencyFunction, nFunctionTypes };
 	// Return FunctionType from supplied string
 	static FunctionType functionType(const char* s);
 	// Return FunctionType name
@@ -69,6 +70,10 @@ class PairBroadeningFunction : public GenericItemBase
 	Array2D<double> elementPairGaussianFWHM_;
 	// Elemental pair flags (whether a valid value exists)
 	Array2D<bool> elementPairGaussianFlags_;
+	// Frequency-based bond broadening constant
+	double frequencyBondConstant_;
+	// Frequency-based angle broadening constant
+	double frequencyAngleConstant_;
 
 	public:
 	// Read function data from LineParser source
@@ -83,12 +88,20 @@ class PairBroadeningFunction : public GenericItemBase
 	void setGaussianFWHM(double fwhm);
 	// Return Gaussian FWHM parameter
 	double gaussianFWHM() const;
+	// Set frequency bond constant
+	void setFrequencyBondConstant(double k);
+	// Return frequency bond constant
+	double frequencyBondConstant() const;
+	// Set frequency angle constant
+	void setFrequencyAngleConstant(double k);
+	// Return frequency angle constant
+	double frequencyAngleConstant() const;
 	// Return array of pointers to all adjustable parameters
 	Array<double*> parameters();
 	// Return short summary of function and its parameters
 	CharString summary() const;
 	// Return a BroadeningFunction tailored to the specified AtomType pair
-	BroadeningFunction broadeningFunction(AtomType* at1, AtomType* at2);
+	BroadeningFunction broadeningFunction(AtomType* at1, AtomType* at2, SpeciesIntra* intra = NULL);
 
 
 	/*

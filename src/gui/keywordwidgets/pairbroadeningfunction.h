@@ -55,10 +55,10 @@ class PairBroadeningFunctionKeywordWidget : public KeywordDropDown, public Keywo
 	 * Signals / Slots
 	 */
 	private slots:
-	// Function type combo changed
-	void functionCombo_currentIndexChanged(int index);
-	// Parameter value changed
-	void parameterSpin_valueChanged(double value);
+	// Function type radio changed
+	void functionRadioChanged(bool checked);
+	// Function parameter value changed
+	void functionParameterChanged(double value);
 
 	signals:
 	// Keyword value changed
