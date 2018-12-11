@@ -167,6 +167,46 @@ int SpeciesAngle::nFunctionParameters(AngleFunction func)
 	return AngleFunctionNParameters[func];
 }
 
+// Set up any necessary parameters
+void SpeciesAngle::setUp()
+{
+}
+
+// Calculate and return fundamental frequency for the interaction
+double SpeciesAngle::fundamentalFrequency(double reducedMass) const
+{
+	// Get pointer to relevant parameters array
+	const double* params = parameters();
+
+	double k = 0.0;
+	if (form() == SpeciesAngle::HarmonicForm) k = params[0];
+	else
+	{
+		Messenger::error("Functional form of SpeciesAngle term not set, or no force constant available, so can't determine fundamental frequency.\n");
+		return 0.0;
+	}
+
+	// Convert force constant from (assumed) kJ mol-1 A-2 into J m-2 (kg s-2)
+	k *= 1000.0 * 1.0e20 / AVOGADRO;
+// 	printf("K = %f\n", k);
+
+	// Convert reduced mass from amu to kg
+	double mu = reducedMass / (AVOGADRO * 1000.0);
+// 	printf("mu = %e\n", mu);
+
+	// Calculate fundamental frequency
+	double v = (1.0 / TWOPI) * sqrt(k / mu);
+// 	printf("v = %e\n", v);
+
+	return v;
+}
+
+// Return type of this interaction
+SpeciesIntra::IntramolecularType SpeciesAngle::type() const
+{
+	return SpeciesIntra::IntramolecularAngle;
+}
+
 // Return energy for specified angle
 double SpeciesAngle::energy(double angleInDegrees) const
 {

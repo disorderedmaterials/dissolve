@@ -94,6 +94,10 @@ class SpeciesBond : public SpeciesIntra, public ListItem<SpeciesBond>
 	public:
 	// Set up any necessary parameters
 	void setUp();
+	// Return fundamental frequency for the interaction
+	double fundamentalFrequency(double reducedMass) const;
+	// Return type of this interaction
+	SpeciesIntra::IntramolecularType type() const;
 	// Return energy for specified distance
 	double energy(double distance) const;
 	// Return force multiplier for specified distance

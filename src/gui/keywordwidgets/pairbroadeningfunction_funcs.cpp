@@ -35,7 +35,13 @@ PairBroadeningFunctionKeywordWidget::PairBroadeningFunctionKeywordWidget(QWidget
 	ui.GaussianFWHMSpin->setSingleStep(0.01);
 
 	// Connect signals / slots
-	connect(ui.GaussianFWHMSpin, SIGNAL(valueChanged(double)), this, SLOT(parameterSpin_valueChanged(double)));
+	connect(ui.NoneRadio, SIGNAL(toggled(bool)), this, SLOT(functionRadioChanged(bool)));
+	connect(ui.GaussianRadio, SIGNAL(toggled(bool)), this, SLOT(functionRadioChanged(bool)));
+	connect(ui.GaussianElementsRadio, SIGNAL(toggled(bool)), this, SLOT(functionRadioChanged(bool)));
+	connect(ui.FrequencyRadio, SIGNAL(toggled(bool)), this, SLOT(functionRadioChanged(bool)));
+	connect(ui.GaussianFWHMSpin, SIGNAL(valueChanged(double)), this, SLOT(functionParameterChanged(double)));
+	connect(ui.FrequencyBondConstantSpin, SIGNAL(valueChanged(double)), this, SLOT(functionParameterChanged(double)));
+	connect(ui.FrequencyAngleConstantSpin, SIGNAL(valueChanged(double)), this, SLOT(functionParameterChanged(double)));
 
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<PairBroadeningFunctionModuleKeyword*>(keyword);
@@ -51,8 +57,8 @@ PairBroadeningFunctionKeywordWidget::PairBroadeningFunctionKeywordWidget(QWidget
  * Signals / Slots
  */
 
-// Function type combo changed
-void PairBroadeningFunctionKeywordWidget::functionCombo_currentIndexChanged(int index)
+// Function type radio changed
+void PairBroadeningFunctionKeywordWidget::functionRadioChanged(bool checked)
 {
 	if (refreshing_) return;
 
@@ -64,7 +70,7 @@ void PairBroadeningFunctionKeywordWidget::functionCombo_currentIndexChanged(int 
 }
 
 // Parameter value changed
-void PairBroadeningFunctionKeywordWidget::parameterSpin_valueChanged(double value)
+void PairBroadeningFunctionKeywordWidget::functionParameterChanged(double value)
 {
 	if (refreshing_) return;
 
@@ -114,12 +120,17 @@ void PairBroadeningFunctionKeywordWidget::updateWidgetValues()
 		case (PairBroadeningFunction::GaussianElementPairFunction):
 			ui.GaussianElementsRadio->setChecked(true);
 			break;
+		case (PairBroadeningFunction::FrequencyFunction):
+			ui.FrequencyRadio->setChecked(true);
+			break;
 		default:
 			break;
 	}
 
 	// Parameters
 	ui.GaussianFWHMSpin->setValue(pairBroadeningFunction.gaussianFWHM());
+	ui.FrequencyBondConstantSpin->setValue(pairBroadeningFunction.frequencyBondConstant());
+	ui.FrequencyAngleConstantSpin->setValue(pairBroadeningFunction.frequencyAngleConstant());
 
 	refreshing_ = false;
 }
@@ -134,9 +145,12 @@ void PairBroadeningFunctionKeywordWidget::updateKeywordData()
 	if (ui.NoneRadio->isChecked()) pairBroadeningFunction.setFunction(PairBroadeningFunction::NoFunction);
 	else if (ui.GaussianRadio->isChecked()) pairBroadeningFunction.setFunction(PairBroadeningFunction::GaussianFunction);
 	else if (ui.GaussianElementsRadio->isChecked()) pairBroadeningFunction.setFunction(PairBroadeningFunction::GaussianElementPairFunction);
+	else if (ui.FrequencyRadio->isChecked()) pairBroadeningFunction.setFunction(PairBroadeningFunction::FrequencyFunction);
 
 	// Parameters
 	pairBroadeningFunction.setGaussianFWHM(ui.GaussianFWHMSpin->value());
+	pairBroadeningFunction.setFrequencyBondConstant(ui.FrequencyBondConstantSpin->value());
+	pairBroadeningFunction.setFrequencyAngleConstant(ui.FrequencyAngleConstantSpin->value());
 
 	keyword_->setData(pairBroadeningFunction);
 }

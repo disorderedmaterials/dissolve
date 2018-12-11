@@ -154,7 +154,7 @@ bool CalibrationModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			{
 				const PartialSet& originalGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "OriginalGR");
 				PartialSet& unweightedGR = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR");
-				RDFModule::calculateUnweightedGR(originalGR, unweightedGR, broadening, smoothing);
+				RDFModule::calculateUnweightedGR(procPool, cfg, originalGR, unweightedGR, broadening, smoothing);
 			}
 
 			// Store the new broadening parameters in the restart file for info only (they won't be read in and used)

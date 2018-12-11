@@ -200,6 +200,24 @@ int SpeciesTorsion::nFunctionParameters(SpeciesTorsion::TorsionFunction func)
 	return TorsionFunctionNParameters[func];
 }
 
+// Set up any necessary parameters
+void SpeciesTorsion::setUp()
+{
+}
+
+// Calculate and return fundamental frequency for the interaction
+double SpeciesTorsion::fundamentalFrequency(double reducedMass) const
+{
+	Messenger::warn("No fundamental frequency can be calculated for this torsion interaction.\n");
+	return 0.0;
+}
+
+// Return type of this interaction
+SpeciesIntra::IntramolecularType SpeciesTorsion::type() const
+{
+	return SpeciesIntra::IntramolecularTorsion;
+}
+
 // Return energy for specified angle
 double SpeciesTorsion::energy(double angleInDegrees) const
 {

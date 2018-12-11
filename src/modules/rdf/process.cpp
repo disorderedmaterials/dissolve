@@ -108,9 +108,9 @@ bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			if (!testReferencePartials(referencePartials, originalgr, 1.0e-6)) return false;
 		}
 
-		// Form unweighted g(r) from original g(r), applying any requested smoothing / broadening
+		// Form unweighted g(r) from original g(r), applying any requested smoothing / intramolecular broadening
 		PartialSet& unweightedgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR", NULL, GenericItem::InRestartFileFlag);
-		calculateUnweightedGR(originalgr, unweightedgr, intraBroadening, smoothing);
+		calculateUnweightedGR(procPool, cfg, originalgr, unweightedgr, intraBroadening, smoothing);
 
 		// Set names of resources and filename in Data1D within the PartialSet
 		unweightedgr.setObjectTags(CharString("%s//UnweightedGR", cfg->niceName()));

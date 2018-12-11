@@ -52,6 +52,12 @@ const char* MasterIntra::name()
 	return name_.get();
 }
 
+// Set type of interaction
+void MasterIntra::setType(SpeciesIntra::IntramolecularType type)
+{
+	type_ = type;
+}
+
 /*
  * Usage Counting
  */
@@ -79,4 +85,26 @@ void MasterIntra::registerUsage(int idI, int idJ)
 void MasterIntra::unregisterUsage(int idI, int idJ)
 {
 	--usageCounts_.at(idI, idJ);
+}
+
+/*
+ * Interaction Parameters
+ */
+
+// Set up any necessary parameters
+void MasterIntra::setUp()
+{
+}
+
+// Calculate and return fundamental frequency for the interaction
+double MasterIntra::fundamentalFrequency(double reducedMass) const
+{
+	Messenger::warn("A MasterIntra can't return a fundamental frequency, so don't ask for one!\n");
+	return 0.0;
+}
+
+// Return type of this interaction
+SpeciesIntra::IntramolecularType MasterIntra::type() const
+{
+	return type_;
 }

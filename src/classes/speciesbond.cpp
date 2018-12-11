@@ -177,6 +177,43 @@ void SpeciesBond::setUp()
 	}
 }
 
+// Return fundamental frequency for the interaction
+double SpeciesBond::fundamentalFrequency(double reducedMass) const
+{
+	// Get pointer to relevant parameters array
+	const double* params = parameters();
+
+	double k = 0.0;
+	if (form() == SpeciesBond::HarmonicForm) k = params[0];
+	else if (form() == SpeciesBond::EPSRForm) k = params[0];
+	else if (form() == SpeciesBond::SoftHarmonicForm) k = params[0];
+	else
+	{
+		Messenger::error("Functional form of SpeciesBond term not set, or no force constant available, so can't determine fundamental frequency.\n");
+		return 0.0;
+	}
+
+	// Convert force constant from (assumed) kJ mol-1 A-2 into J m-2 (kg s-2)
+	k *= 1000.0 * 1.0e20 / AVOGADRO;
+// 	printf("K = %f\n", k);
+
+	// Convert reduced mass from amu to kg
+	double mu = reducedMass / (AVOGADRO * 1000.0);
+// 	printf("mu = %e\n", mu);
+
+	// Calculate fundamental frequency
+	double v = (1.0 / TWOPI) * sqrt(k / mu);
+// 	printf("v = %e\n", v);
+
+	return v;
+}
+
+// Return type of this interaction
+SpeciesIntra::IntramolecularType SpeciesBond::type() const
+{
+	return SpeciesIntra::IntramolecularBond;
+}
+
 // Return energy for specified distance
 double SpeciesBond::energy(double distance) const
 {
