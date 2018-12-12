@@ -109,6 +109,38 @@ Module  CalculateRDF  'RDF(OW-OW)'
   BinWidth  0.01
 EndModule
 
+# Oxygen-oxygen radial distribution function (using Analysis module)
+Module  Analyse  'RDF(OW-OW)-Analyser'
+  Configuration  'Bulk'
+  Analyser
+    Select  'O1'
+      Site  Water  'O'
+      ForEach
+        Select  'O2'
+          Site  Water  'O'
+          ExcludeSameMolecule  'A'
+          ForEach
+            Calculate  'rOO'
+              Distance  'O1'  'O2'
+            EndCalculate
+            Collect1D  'HistoOO'
+              QuantityX  'rOO'
+              RangeX  0.0  20.0  0.01
+            EndCollect1D
+          EndForEach
+        EndSelect
+      EndForEach
+    EndSelect
+    Process1D  'RDF'
+      SourceData  'HistoOO'
+      NSites  'O1'
+      SphericalShellVolume  On
+      LabelValue  'gOO(r)'
+      LabelX  'r, Angstroms'
+    EndProcess1D
+  EndAnalyser
+EndModule
+
 Module DataTest
   Frequency  95
   Target  'RDF(OW-OW)'
