@@ -352,6 +352,16 @@ template <class T> class List
 		--nItems_;
 		regenerate_ = true;
 	}
+	// Remove the item at the specified position
+	void remove(int pos)
+	{
+		if ((pos < 0) || (pos >= nItems_))
+		{
+			Messenger::error("Internal Error: Invalid position %i passed to List<T>::remove(int pos) (nItems_ = %i)\n", pos, nItems_);
+			return;
+		}
+		remove(array()[pos]);
+	}
 	// Remove first item from the list
 	void removeFirst()
 	{
