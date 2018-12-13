@@ -37,20 +37,7 @@ template <class T> List<T> List<T>::masterInstance_;
 // Constructor
 Dissolve::Dissolve() : atomTypes_(List<AtomType>::master()), species_(List<Species>::master()), configurations_(List<Configuration>::master())
 {
-	// PairPotentials
-	pairPotentialDelta_ = 0.005;
-	pairPotentialRange_ = 15.0;
-	pairPotentialsIncludeCoulomb_ = true;
-
-	// Simulation
-	iteration_ = 0;
-	nIterationsPerformed_ = 0;
-	setUp_ = false;
-
-	// Simulation Setup
-	nBoxNormalisationPoints_ = 500000000;
-	seed_ = -1;
-	restartFileFrequency_ = 10;
+	clear();
 
 	// Parallel Comms
 	parallelStrategy_ = Dissolve::SequentialConfigStrategy;
@@ -72,6 +59,21 @@ Dissolve::~Dissolve()
 // Clear all data
 void Dissolve::clear()
 {
+	// PairPotentials
+	pairPotentialDelta_ = 0.005;
+	pairPotentialRange_ = 15.0;
+	pairPotentialsIncludeCoulomb_ = true;
+
+	// Simulation
+	iteration_ = 0;
+	nIterationsPerformed_ = 0;
+	setUp_ = false;
+
+	// Simulation Setup
+	nBoxNormalisationPoints_ = 500000000;
+	seed_ = -1;
+	restartFileFrequency_ = 10;
+
 	Messenger::printVerbose("Clearing Configurations...\n");
 	configurations_.clear();
 
@@ -86,8 +88,6 @@ void Dissolve::clear()
 
 	Messenger::printVerbose("Clearing misc...\n");
 	filename_.clear();
-
-	setUp_ = false;
 }
 
 // Register GenericItems
