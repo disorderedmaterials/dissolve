@@ -30,7 +30,7 @@
 class Module;
 
 // Module Tab
-class ModuleTab : public QWidget, public MainTab
+class ModuleTab : public QWidget, public ListItem<ModuleTab>, public MainTab
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
@@ -60,6 +60,10 @@ class ModuleTab : public QWidget, public MainTab
 	// ModuleWidget displayed in this control widget (if any)
 	ModuleWidget* moduleWidget_;
 
+	public:
+	// Return displayed Module
+	const Module* module() const;
+
 
 	/*
 	 * Update
@@ -70,7 +74,7 @@ class ModuleTab : public QWidget, public MainTab
 	// Update header texts
 	void updateHeaderTexts();
 
-	protected:
+	public:
 	// Update controls in tab
 	void updateControls();
 	// Disable sensitive controls within tab, ready for main code to run

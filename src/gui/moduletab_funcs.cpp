@@ -27,7 +27,7 @@
 #include "base/lineparser.h"
 
 // Constructor / Destructor
-ModuleTab::ModuleTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, Module* module) : MainTab(dissolveWindow, dissolve, parent, module->uniqueName(), this), module_(module)
+ModuleTab::ModuleTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, Module* module) : ListItem<ModuleTab>(), MainTab(dissolveWindow, dissolve, parent, module->uniqueName(), this), module_(module)
 {
 	ui.setupUi(this);
 
@@ -50,6 +50,16 @@ ModuleTab::~ModuleTab()
 const char* ModuleTab::tabType() const
 {
 	return "ModuleTab";
+}
+
+/*
+ * Module Target
+ */
+
+// Return displayed Module
+const Module* ModuleTab::module() const
+{
+	return module_;
 }
 
 /*

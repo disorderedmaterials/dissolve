@@ -35,7 +35,7 @@
 #include <QListWidgetItem>
 
 // Constructor / Destructor
-SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, Species* species) : MainTab(dissolveWindow, dissolve, parent, CharString("Species: %s", title), this)
+SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, Species* species) : ListItem<SpeciesTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Species: %s", title), this)
 {
 	ui.setupUi(this);
 
@@ -73,6 +73,16 @@ SpeciesTab::~SpeciesTab()
 const char* SpeciesTab::tabType() const
 {
 	return "SpeciesTab";
+}
+
+/*
+ * Species Target
+ */
+
+// Return displayed Species
+const Species* SpeciesTab::species() const
+{
+	return species_;
 }
 
 /*

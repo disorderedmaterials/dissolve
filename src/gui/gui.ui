@@ -1092,6 +1092,8 @@
     <property name="title">
      <string>&amp;Session</string>
     </property>
+    <addaction name="SessionNewAction"/>
+    <addaction name="separator"/>
     <addaction name="SessionOpenAction"/>
     <addaction name="SessionOpenRemoteAction"/>
     <addaction name="SessionOpenRecentAction"/>
@@ -1100,6 +1102,7 @@
     <addaction name="SessionSaveAsAction"/>
     <addaction name="separator"/>
     <addaction name="SessionQuitAction"/>
+    <addaction name="SessionRunWizardAction"/>
    </widget>
    <widget class="QMenu" name="WorkspaceMenu">
     <property name="font">
@@ -1112,6 +1115,22 @@
     </property>
     <addaction name="WorkspaceAddNewAction"/>
    </widget>
+   <widget class="QMenu" name="ControlMenu">
+    <property name="font">
+     <font>
+      <pointsize>8</pointsize>
+     </font>
+    </property>
+    <property name="title">
+     <string>&amp;Control</string>
+    </property>
+    <addaction name="SimulationRunAction"/>
+    <addaction name="separator"/>
+    <addaction name="SimulationPauseAction"/>
+    <addaction name="SimulationStepFiveAction"/>
+    <addaction name="SimulationStepAction"/>
+    <addaction name="separator"/>
+   </widget>
    <widget class="QMenu" name="SimulationMenu">
     <property name="font">
      <font>
@@ -1121,26 +1140,13 @@
     <property name="title">
      <string>S&amp;imulation</string>
     </property>
-    <widget class="QMenu" name="SimulationAddAction">
-     <property name="font">
-      <font>
-       <pointsize>8</pointsize>
-      </font>
-     </property>
-     <property name="title">
-      <string>Add...</string>
-     </property>
-     <addaction name="SimulationAddConfigurationAction"/>
-    </widget>
-    <addaction name="SimulationAddAction"/>
+    <addaction name="SimulationAddSpeciesAction"/>
     <addaction name="separator"/>
-    <addaction name="SimulationRunAction"/>
-    <addaction name="SimulationStepAction"/>
-    <addaction name="SimulationFiveStepsAction"/>
-    <addaction name="SimulationPauseAction"/>
+    <addaction name="SimulationAddConfigurationAction"/>
    </widget>
    <addaction name="SessionMenu"/>
    <addaction name="SimulationMenu"/>
+   <addaction name="ControlMenu"/>
    <addaction name="WorkspaceMenu"/>
   </widget>
   <action name="SessionOpenAction">
@@ -1187,7 +1193,7 @@
   </action>
   <action name="SimulationAddConfigurationAction">
    <property name="text">
-    <string>Configuration</string>
+    <string>Add &amp;Configuration</string>
    </property>
   </action>
   <action name="WorkspaceAddWidgetGeneralAction">
@@ -1245,9 +1251,9 @@
     <string>Ctrl+1</string>
    </property>
   </action>
-  <action name="SimulationFiveStepsAction">
+  <action name="SimulationStepFiveAction">
    <property name="text">
-    <string>&amp;Five Steps</string>
+    <string>Step &amp;Five</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+5</string>
@@ -1259,6 +1265,21 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+P</string>
+   </property>
+  </action>
+  <action name="SessionNewAction">
+   <property name="text">
+    <string>&amp;New...</string>
+   </property>
+  </action>
+  <action name="SessionRunWizardAction">
+   <property name="text">
+    <string>Run Wizard...</string>
+   </property>
+  </action>
+  <action name="SimulationAddSpeciesAction">
+   <property name="text">
+    <string>Add &amp;Species</string>
    </property>
   </action>
  </widget>

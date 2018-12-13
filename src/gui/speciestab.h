@@ -36,7 +36,7 @@ class SpeciesAngle;
 class SpeciesTorsion;
 
 // Species Tab
-class SpeciesTab : public QWidget, public MainTab
+class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
@@ -58,11 +58,15 @@ class SpeciesTab : public QWidget, public MainTab
 
 
 	/*
-	 * Target
+	 * Species Target
 	 */
 	private:
 	// Species data to display
 	Species* species_;
+
+	public:
+	// Return displayed Species
+	const Species* species() const;
 
 
 	/*
@@ -80,7 +84,7 @@ class SpeciesTab : public QWidget, public MainTab
 	// SpeciesTorsionTable row update function
 	void updateTorsionTableRow(int row, SpeciesTorsion* speciesTorsion, bool createItems);
 
-	protected:
+	public:
 	// Update controls in tab
 	void updateControls();
 	// Disable sensitive controls within tab, ready for main code to run

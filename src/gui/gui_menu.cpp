@@ -31,7 +31,8 @@
  * Main Menu
  */
 
-void DissolveWindow::on_SessionOpenAction_triggered(bool checked)
+// Check whether current input needs to be saved and, if so, if it saved successfully
+bool DissolveWindow::checkSaveCurrentInput()
 {
 	// First, check the modification status of the current session
 	if (modified_)
@@ -43,31 +44,60 @@ void DissolveWindow::on_SessionOpenAction_triggered(bool checked)
 		queryBox.setDefaultButton(QMessageBox::Cancel);
 		int ret = queryBox.exec();
 
-		if (ret == QMessageBox::Cancel) return;
+		if (ret == QMessageBox::Cancel) return false;
 		else if (ret == QMessageBox::Yes)
 		{
 			// If an input filename has been set, just overwrite it. If not, request a name first
 			if (!dissolve_.hasInputFilename())
 			{
 				QString newFile = QFileDialog::getSaveFileName(this, "Choose input file name to save", QDir().absolutePath(), "Dissolve input files (*.txt)");
-				if (newFile.isEmpty()) return;
+				if (newFile.isEmpty()) return false;
 
 				dissolve_.setInputFilename(qPrintable(newFile));
 			}
 
 			// Save the file
-			if (!dissolve_.saveInput(dissolve_.inputFilename())) return;
+			if (!dissolve_.saveInput(dissolve_.inputFilename())) return false;
 		}
 	}
+
+	// All OK
+	return true;
+}
+
+void DissolveWindow::on_SessionNewAction_triggered(bool checked)
+{
+	if (!checkSaveCurrentInput()) return;
+
+	// Clear any data-related tabs from the UI
+	clearTabs();
+
+	// Clear Dissolve itself
+	dissolve_.clear();
+
+	updateStatus();
+
+	updateControls();
+
+	updateFileLabels();
+}
+
+void DissolveWindow::on_SessionRunWizardAction_triggered(bool checked)
+{
+}
+
+void DissolveWindow::on_SessionOpenAction_triggered(bool checked)
+{
+	if (!checkSaveCurrentInput()) return;
 
 	// Request a new file to open
 	QString inputFile = QFileDialog::getOpenFileName(this, "Choose input file to open", QDir().absolutePath(), "Dissolve input files (*.txt)");
 	if (inputFile.isEmpty()) return;
 
-	// Clear any tabs from the UI
-	clearAllTabs();
+	// Clear any data-related tabs from the UI
+	clearTabs();
 
-	// Clear the main object
+	// Clear Dissolve itself
 	dissolve_.clear();
 
 	// Load the new file
@@ -112,38 +142,35 @@ void DissolveWindow::on_SessionSaveAction_triggered(bool checked)
 
 void DissolveWindow::on_SessionQuitAction_triggered(bool checked)
 {
-	// First, check the modification status of the current session
-	if (modified_)
-	{
-		QMessageBox queryBox;
-		queryBox.setText("The current input file is unsaved.");
-		queryBox.setInformativeText("Would you like to save it before quitting?");
-		queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
-		queryBox.setDefaultButton(QMessageBox::Cancel);
-		int ret = queryBox.exec();
-
-		if (ret == QMessageBox::Cancel) return;
-		else if (ret == QMessageBox::Yes)
-		{
-			// If an input filename has been set, just overwrite it. If not, request a name first
-			if (!dissolve_.hasInputFilename())
-			{
-				QString newFile = QFileDialog::getSaveFileName(this, "Choose input file name to save", QDir().absolutePath(), "Dissolve input files (*.txt)");
-				if (newFile.isEmpty()) return;
-
-				dissolve_.setInputFilename(qPrintable(newFile));
-			}
-
-			// Save the file
-			if (!dissolve_.saveInput(dissolve_.inputFilename())) return;
-		}
-	}
+	if (!checkSaveCurrentInput()) return;
 
 	QCoreApplication::quit();
 }
 
 /*
  * Simulation
+ */
+
+void DissolveWindow::on_SimulationAddSpeciesAction_triggered(bool checked)
+{
+	Species* sp = dissolve_.addSpecies();
+
+	reconcileTabs();
+
+	updateStatus();
+}
+
+void DissolveWindow::on_SimulationAddConfigurationAction_triggered(bool checked)
+{
+	Configuration* cfg = dissolve_.addConfiguration();
+
+	reconcileTabs();
+
+	updateStatus();
+}
+
+/*
+ * Control
  */
 
 void DissolveWindow::on_SimulationRunAction_triggered(bool checked)

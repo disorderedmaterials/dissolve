@@ -30,7 +30,7 @@ class TMdiArea;
 class QMenu;
 
 // Workspace Tab
-class WorkspaceTab : public QWidget, public MainTab
+class WorkspaceTab : public QWidget, public ListItem<WorkspaceTab>, public MainTab
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
@@ -50,13 +50,13 @@ class WorkspaceTab : public QWidget, public MainTab
 	// Return tab type
 	const char* tabType() const;
 	// Return whether the title of the tab can be changed
-	bool canChangeTitle();
+	bool canChangeTitle() const;
 
 
 	/*
 	 * Update
 	 */
-	protected:
+	public:
 	// Update controls in tab
 	void updateControls();
 	// Disable sensitive controls within tab, ready for main code to run

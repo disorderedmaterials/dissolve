@@ -22,6 +22,11 @@
 #include "main/dissolve.h"
 #include "version.h"
 #include "gui/gui.h"
+#include "gui/configurationtab.h"
+#include "gui/forcefieldtab.h"
+#include "gui/moduletab.h"
+#include "gui/speciestab.h"
+#include "gui/workspacetab.h"
 #include "base/lineparser.h"
 #include <QCloseEvent>
 #include <QMdiSubWindow>
@@ -51,6 +56,8 @@ DissolveWindow::DissolveWindow(Dissolve& dissolve) : QMainWindow(NULL), dissolve
 
 	refreshing_ = false;
 	modified_ = false;
+
+	addCoreTabs();
 
 	updateStatus();
 }
@@ -97,9 +104,9 @@ void DissolveWindow::resizeEvent(QResizeEvent* event)
 bool DissolveWindow::openFile(const char* inputFile, bool ignoreRestartFile, bool ignoreLayoutFile)
 {
 	// Clear any existing tabs etc.
-	clearAllTabs();
+	clearTabs();
 
-	// Clear dissolve itself
+	// Clear Dissolve itself
 	dissolve_.clear();
 
 	// Load the input file
@@ -134,8 +141,7 @@ bool DissolveWindow::openFile(const char* inputFile, bool ignoreRestartFile, boo
 
 	refreshing_ = true;
 
-	// Add on necessary tabs
-	addAllTabs();
+	reconcileTabs();
 
 	refreshing_ = false;
 
@@ -162,8 +168,13 @@ void DissolveWindow::updateControls()
 	// Iteration Panel
 	ui.IterationNumberLabel->setText(DissolveSys::itoa(dissolve_.iteration()));
 
-	// Loop over tabs
-	for (MainTab* tab = tabs_.first(); tab != NULL; tab = tab->next) tab->updateControls();
+	// Update all tabs
+	forcefieldTab_->updateControls();
+	mainProcessingTab_->updateControls();
+	for (SpeciesTab* tab = speciesTabs_.first(); tab != NULL; tab = tab->next) tab->updateControls();
+	for (ConfigurationTab* tab = configurationTabs_.first(); tab != NULL; tab = tab->next) tab->updateControls();
+	for (ModuleTab* tab = moduleTabs_.first(); tab != NULL; tab = tab->next) tab->updateControls();
+	for (WorkspaceTab* tab = workspaceTabs_.first(); tab != NULL; tab = tab->next) tab->updateControls();
 }
 
 // Update status
@@ -220,11 +231,15 @@ bool DissolveWindow::saveWindowLayout()
 	// Write current tab index
 	if (!stateParser.writeLineF("%i\n", ui.MainTabs->currentIndex())) return false;
 
-	// Loop over tabs
-	for (MainTab* tab = tabs_.first(); tab != NULL; tab = tab->next)
+	// Write tab state
+	RefList<MainTab,bool> tabs = allTabs();
+	RefListIterator<MainTab,bool> tabIterator(tabs);
+	while (MainTab* tab = tabIterator.iterate())
 	{
 		// Write tab type and title
 		if (!stateParser.writeLineF("'%s'  %s\n", tab->title(), tab->tabType())) return false;
+
+		// Write tab state
 		if (!tab->writeState(stateParser)) return false;
 	}
 

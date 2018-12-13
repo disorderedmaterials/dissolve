@@ -34,7 +34,7 @@
 #include <QMenu>
 
 // Constructor / Destructor
-WorkspaceTab::WorkspaceTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title) : MainTab(dissolveWindow, dissolve, parent, title, this)
+WorkspaceTab::WorkspaceTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title) : ListItem<WorkspaceTab>(), MainTab(dissolveWindow, dissolve, parent, title, this)
 {
 	ui.setupUi(this);
 
@@ -59,7 +59,7 @@ const char* WorkspaceTab::tabType() const
 }
 
 // Return whether the title of the tab can be changed
-bool WorkspaceTab::canChangeTitle()
+bool WorkspaceTab::canChangeTitle() const
 {
 	return true;
 }

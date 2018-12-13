@@ -31,7 +31,7 @@ class Configuration;
 class SpeciesInfo;
 
 // Configuration Tab
-class ConfigurationTab : public QWidget, public MainTab
+class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, public MainTab
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
@@ -53,11 +53,15 @@ class ConfigurationTab : public QWidget, public MainTab
 
 
 	/*
-	 * Target
+	 * Configuration Target
 	 */
 	private:
 	// Configuration data to display
 	Configuration* configuration_;
+
+	public:
+	// Return displayed Configuration
+	const Configuration* configuration() const;
 
 
 	/*
@@ -77,7 +81,7 @@ class ConfigurationTab : public QWidget, public MainTab
 	// Row update function for BondsTable
 	void updateSpeciesInfoTableRow(int row, SpeciesInfo* speciesInfo, bool createItems);
 
-	protected:
+	public:
 	// Update controls in tab
 	void updateControls();
 	// Disable sensitive controls within tab, ready for main code to run

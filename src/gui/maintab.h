@@ -39,7 +39,7 @@ class QTabWidget;
 class QWidget;
 
 // Base 
-class MainTab : public ListItem<MainTab>
+class MainTab
 {
 	public:
 	// Constructor / Destructor

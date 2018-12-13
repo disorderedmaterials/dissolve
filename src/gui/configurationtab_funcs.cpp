@@ -34,7 +34,7 @@
 #include <QMessageBox>
 
 // Constructor / Destructor
-ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, Configuration* cfg) : MainTab(dissolveWindow, dissolve, parent, CharString("Configuration: %s", title), this)
+ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, Configuration* cfg) : ListItem<ConfigurationTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Configuration: %s", title), this)
 {
 	ui.setupUi(this);
 
@@ -71,6 +71,16 @@ ConfigurationTab::~ConfigurationTab()
 const char* ConfigurationTab::tabType() const
 {
 	return "ConfigurationTab";
+}
+
+/*
+ * Configuration Target
+ */
+
+// Return displayed Configuration
+const Configuration* ConfigurationTab::configuration() const
+{
+	return configuration_;
 }
 
 /*

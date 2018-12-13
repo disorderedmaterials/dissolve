@@ -21,6 +21,11 @@
 
 #include "main/dissolve.h"
 #include "gui/gui.h"
+#include "gui/configurationtab.h"
+#include "gui/forcefieldtab.h"
+#include "gui/moduletab.h"
+#include "gui/speciestab.h"
+#include "gui/workspacetab.h"
 
 // Return current state of Dissolve
 DissolveWindow::DissolveState DissolveWindow::dissolveState() const
@@ -111,8 +116,13 @@ void DissolveWindow::setWidgetsForRun()
 	ui.ControlStepFiveButton->setEnabled(false);
 	ui.ControlPauseButton->setEnabled(true);
 
-	// Disable sensitive controls in tabs
-	for (MainTab* tab = tabs_.first(); tab != NULL; tab = tab->next) tab->disableSensitiveControls();
+	// Disable sensitive controls in all tabs
+	forcefieldTab_->disableSensitiveControls();
+	mainProcessingTab_->disableSensitiveControls();
+	for (SpeciesTab* tab = speciesTabs_.first(); tab != NULL; tab = tab->next) tab->disableSensitiveControls();
+	for (ConfigurationTab* tab = configurationTabs_.first(); tab != NULL; tab = tab->next) tab->disableSensitiveControls();
+	for (ModuleTab* tab = moduleTabs_.first(); tab != NULL; tab = tab->next) tab->disableSensitiveControls();
+	for (WorkspaceTab* tab = workspaceTabs_.first(); tab != NULL; tab = tab->next) tab->disableSensitiveControls();
 }
 
 // Set widgets after the main code has been run
@@ -125,7 +135,12 @@ void DissolveWindow::setWidgetsAfterRun()
 	ui.ControlPauseButton->setEnabled(false);
 
 	// Enable necessary controls in tabs
-	for (MainTab* tab = tabs_.first(); tab != NULL; tab = tab->next) tab->enableSensitiveControls();
+	forcefieldTab_->enableSensitiveControls();
+	mainProcessingTab_->enableSensitiveControls();
+	for (SpeciesTab* tab = speciesTabs_.first(); tab != NULL; tab = tab->next) tab->enableSensitiveControls();
+	for (ConfigurationTab* tab = configurationTabs_.first(); tab != NULL; tab = tab->next) tab->enableSensitiveControls();
+	for (ModuleTab* tab = moduleTabs_.first(); tab != NULL; tab = tab->next) tab->enableSensitiveControls();
+	for (WorkspaceTab* tab = workspaceTabs_.first(); tab != NULL; tab = tab->next) tab->enableSensitiveControls();
 }
 
 // All iterations requested are complete

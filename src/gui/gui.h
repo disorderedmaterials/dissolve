@@ -33,9 +33,14 @@
 // Forward Declarations
 class BrowserWidget;
 class Configuration;
+class ConfigurationTab;
 class Dissolve;
+class ForcefieldTab;
 class QMdiSubWindow;
 class Species;
+class SpeciesTab;
+class ModuleTab;
+class WorkspaceTab;
 
 class DissolveWindow : public QMainWindow
 {
@@ -105,14 +110,23 @@ class DissolveWindow : public QMainWindow
 	/*
 	 * Main Menu
 	 */
+	private:
+	// Check whether current input needs to be saved and, if so, if it saved successfully
+	bool checkSaveCurrentInput();
+
 	private slots:
 	// Session
+	void on_SessionNewAction_triggered(bool checked);
+	void on_SessionRunWizardAction_triggered(bool checked);
 	void on_SessionOpenAction_triggered(bool checked);
 	void on_SessionOpenRemoteAction_triggered(bool checked);
 	void on_SessionOpenRecentAction_triggered(bool checked);
 	void on_SessionSaveAction_triggered(bool checked);
 	void on_SessionQuitAction_triggered(bool checked);
 	// Simulation
+	void on_SimulationAddSpeciesAction_triggered(bool checked);
+	void on_SimulationAddConfigurationAction_triggered(bool checked);
+	// Control
 	void on_SimulationRunAction_triggered(bool checked);
 	void on_SimulationStepAction_triggered(bool checked);
 	void on_SimulationFiveStepsAction_triggered(bool checked);
@@ -168,12 +182,16 @@ class DissolveWindow : public QMainWindow
 	 * Tab Management
 	 */
 	private:
-	// List of all displayed tabs
-	List<MainTab> tabs_;
 	// Pointer to Forcefield tab
-	MainTab* forcefieldTab_;
-	// Pointer to Species tab
-	MainTab* speciesTab_;
+	ForcefieldTab* forcefieldTab_;
+	// List of Species tabs
+	List<SpeciesTab> speciesTabs_;
+	// List of Configuration tabs
+	List<ConfigurationTab> configurationTabs_;
+	// List of Module tabs
+	List<ModuleTab> moduleTabs_;
+	// List of Workspace tabs
+	List<WorkspaceTab> workspaceTabs_;
 	// Pointer to Main Processing tab
 	MainTab* mainProcessingTab_;
 	// Pointer to Analysis Processing tab
@@ -184,26 +202,36 @@ class DissolveWindow : public QMainWindow
 	void mainTabsDoubleClicked(int index);
 
 	private:
-	// Clear all tabs
-	void clearAllTabs();
-	// Add all tabs necessary to represent the current setup
-	void addAllTabs();
-	// Add new tab for specified Species target
-	MainTab* addSpeciesTab(Species* sp);
-	// Add new tab for specified Configuration target
-	MainTab* addConfigurationTab(Configuration* cfg);
+	// Remove tabs related to the current data
+	void clearTabs();
+	// Reconcile tabs, making them consistent with the current data
+	void reconcileTabs();
+	// Add core (permanent) tabs
+	void addCoreTabs();
 	// Add on an empty workspace tab
 	MainTab* addWorkspaceTab(const char* title);
 	// Find tab with title specified
 	MainTab* findTab(const char* title);
 	// Find tab with specified page widget
 	MainTab* findTab(QWidget* page);
+	// Find SpeciesTab containing specified page widget
+	SpeciesTab* speciesTab(QWidget* page);
+	// Find ConfigurationTab containing specified page widget
+	ConfigurationTab* configurationTab(QWidget* page);
+	// Find ModuleTab containing specified page widget
+	ModuleTab* moduleTab(QWidget* page);
+	// Find ModuleTab containing specified Module
+	ModuleTab* moduleTab(Module* module);
+	// Find WorkspaceTab containing specified page widget
+	WorkspaceTab* workspaceTab(QWidget* page);
 	// Return current tab
 	MainTab* currentTab();
 	// Make specified tab the current one
 	void setCurrentTab(MainTab* tab);
 	// Make specified tab the current one (by index)
 	void setCurrentTab(int tabIndex);
+	// Return reference list of all current tabs
+	RefList<MainTab,bool> allTabs() const;
 
 	public:
 	// Add tab for specified Module target
