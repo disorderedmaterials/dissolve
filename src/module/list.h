@@ -47,6 +47,8 @@ class ModuleList
 	List<ModuleReference> modules_;
 
 	public:
+	// Clear list
+	void clear();
 	// Associate Module to list
 	Module* add(Module* module, Configuration* location = NULL, Module* addBeforeThis = NULL);
 	// Find associated Module by name
@@ -69,6 +71,8 @@ class ModuleList
 	static List<ModuleReference> failedRegistrations_;
 
 	public:
+	// Clear master Module instances
+	static void clearMasterInstances();
 	// Register Module
 	static void registerMasterInstance(Module* mainInstance);
 	// Find master instance of specified Module type

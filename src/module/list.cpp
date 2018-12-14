@@ -42,6 +42,12 @@ ModuleList::~ModuleList()
  * Module List
  */
 
+// Clear list
+void ModuleList::clear()
+{
+	modules_.clear();
+}
+
 // Add module to list
 Module* ModuleList::add(Module* module, Configuration* location, Module* addBeforeThis)
 {
@@ -123,6 +129,13 @@ List<ModuleReference>& ModuleList::modules()
 /*
  * Master Module List
  */
+
+// Clear master Module instances
+void ModuleList::clearMasterInstances()
+{
+	masterInstances_.clear();
+	failedRegistrations_.clear();
+}
 
 // Register master Module isntance
 void ModuleList::registerMasterInstance(Module* mainInstance)
