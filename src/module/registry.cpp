@@ -46,8 +46,8 @@
  * All modules to be registered for use in the code must be placed here.
  */
 
-// Constructor
-ModuleRegistry::ModuleRegistry()
+// Register master instances for all Modules
+void ModuleRegistry::registerModules()
 {
 	ModuleRegistrar<AnalyseModule> analyseRegistrar;
 	ModuleRegistrar<AtomShakeModule> atomShakeRegistrar;

@@ -170,7 +170,7 @@ int main(int argc, char **argv)
 
 	// Register modules and print info
 	Messenger::banner("Register Modules");
-	ModuleRegistry moduleRegistry;
+	ModuleRegistry::registerModules();
 	if (!ModuleList::printMasterModuleInformation())
 	{
 		ProcessPool::finalise();

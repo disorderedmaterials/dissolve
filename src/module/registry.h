@@ -31,8 +31,8 @@ class Module;
 class ModuleRegistry
 {
 	public:
-	// Constructor
-	ModuleRegistry();
+	// Register master instances for all Modules
+	static void registerModules();
 };
 
 // Module Registrar

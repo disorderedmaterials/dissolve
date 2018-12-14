@@ -20,14 +20,15 @@
 */
 
 #include "main/dissolve.h"
+#include "module/registry.h"
 #include "classes/species.h"
 #include "classes/atomtype.h"
 #include "classes/braggpeak.h"
-#include "math/histogram1d.h"
-#include "math/pairbroadeningfunction.h"
 #include "classes/kvector.h"
 #include "classes/partialset.h"
 #include "classes/weights.h"
+#include "math/histogram1d.h"
+#include "math/pairbroadeningfunction.h"
 #include "base/genericitem.h"
 #include "genericitems/genericitems.h"
 
