@@ -118,12 +118,9 @@ void DissolveWindow::setWidgetsForRun()
 	ui.ControlPauseButton->setEnabled(true);
 
 	// Disable sensitive controls in all tabs
-	forcefieldTab_->disableSensitiveControls();
-	mainProcessingTab_->disableSensitiveControls();
-	for (SpeciesTab* tab = speciesTabs_.first(); tab != NULL; tab = tab->next) tab->disableSensitiveControls();
-	for (ConfigurationTab* tab = configurationTabs_.first(); tab != NULL; tab = tab->next) tab->disableSensitiveControls();
-	for (ModuleTab* tab = moduleTabs_.first(); tab != NULL; tab = tab->next) tab->disableSensitiveControls();
-	for (WorkspaceTab* tab = workspaceTabs_.first(); tab != NULL; tab = tab->next) tab->disableSensitiveControls();
+	RefList<MainTab,bool> tabs = allTabs();
+	RefListIterator<MainTab,bool> tabIterator(tabs);
+	while (MainTab* tab = tabIterator.iterate()) tab->disableSensitiveControls();
 }
 
 // Set widgets after the main code has been run
@@ -135,13 +132,10 @@ void DissolveWindow::setWidgetsAfterRun()
 	ui.ControlStepFiveButton->setEnabled(true);
 	ui.ControlPauseButton->setEnabled(false);
 
-	// Enable necessary controls in tabs
-	forcefieldTab_->enableSensitiveControls();
-	mainProcessingTab_->enableSensitiveControls();
-	for (SpeciesTab* tab = speciesTabs_.first(); tab != NULL; tab = tab->next) tab->enableSensitiveControls();
-	for (ConfigurationTab* tab = configurationTabs_.first(); tab != NULL; tab = tab->next) tab->enableSensitiveControls();
-	for (ModuleTab* tab = moduleTabs_.first(); tab != NULL; tab = tab->next) tab->enableSensitiveControls();
-	for (WorkspaceTab* tab = workspaceTabs_.first(); tab != NULL; tab = tab->next) tab->enableSensitiveControls();
+	// Enable necessary controls in all tabs
+	RefList<MainTab,bool> tabs = allTabs();
+	RefListIterator<MainTab,bool> tabIterator(tabs);
+	while (MainTab* tab = tabIterator.iterate()) tab->enableSensitiveControls();
 }
 
 // All iterations requested are complete

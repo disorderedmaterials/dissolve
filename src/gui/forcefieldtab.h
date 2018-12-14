@@ -67,7 +67,7 @@ class ForcefieldTab : public QWidget, public MainTab
 	// Row update function for PairPotentialsTable
 	void updatePairPotentialsTableRow(int row, PairPotential* pairPotential, bool createItems);
 
-	public:
+	protected:
 	// Update controls in tab
 	void updateControls();
 	// Disable sensitive controls within tab, ready for main code to run

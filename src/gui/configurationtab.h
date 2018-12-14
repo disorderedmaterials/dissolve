@@ -81,7 +81,7 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
 	// Row update function for BondsTable
 	void updateSpeciesInfoTableRow(int row, SpeciesInfo* speciesInfo, bool createItems);
 
-	public:
+	protected:
 	// Update controls in tab
 	void updateControls();
 	// Disable sensitive controls within tab, ready for main code to run

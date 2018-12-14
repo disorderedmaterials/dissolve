@@ -84,7 +84,7 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	// SpeciesTorsionTable row update function
 	void updateTorsionTableRow(int row, SpeciesTorsion* speciesTorsion, bool createItems);
 
-	public:
+	protected:
 	// Update controls in tab
 	void updateControls();
 	// Disable sensitive controls within tab, ready for main code to run

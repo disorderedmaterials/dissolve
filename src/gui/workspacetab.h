@@ -56,7 +56,7 @@ class WorkspaceTab : public QWidget, public ListItem<WorkspaceTab>, public MainT
 	/*
 	 * Update
 	 */
-	public:
+	protected:
 	// Update controls in tab
 	void updateControls();
 	// Disable sensitive controls within tab, ready for main code to run

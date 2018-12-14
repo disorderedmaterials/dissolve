@@ -64,7 +64,7 @@ class ProcessingTab : public QWidget, public ListItem<ProcessingTab>, public Mai
 	/*
 	 * Update
 	 */
-	public:
+	protected:
 	// Update controls in tab
 	void updateControls();
 	// Disable sensitive controls within tab, ready for main code to run

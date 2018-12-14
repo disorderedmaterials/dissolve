@@ -170,12 +170,9 @@ void DissolveWindow::updateControls()
 	ui.IterationNumberLabel->setText(DissolveSys::itoa(dissolve_.iteration()));
 
 	// Update all tabs
-	forcefieldTab_->updateControls();
-	mainProcessingTab_->updateControls();
-	for (SpeciesTab* tab = speciesTabs_.first(); tab != NULL; tab = tab->next) tab->updateControls();
-	for (ConfigurationTab* tab = configurationTabs_.first(); tab != NULL; tab = tab->next) tab->updateControls();
-	for (ModuleTab* tab = moduleTabs_.first(); tab != NULL; tab = tab->next) tab->updateControls();
-	for (WorkspaceTab* tab = workspaceTabs_.first(); tab != NULL; tab = tab->next) tab->updateControls();
+	RefList<MainTab,bool> tabs = allTabs();
+	RefListIterator<MainTab,bool> tabIterator(tabs);
+	while (MainTab* tab = tabIterator.iterate()) tab->updateControls();
 }
 
 // Update status
