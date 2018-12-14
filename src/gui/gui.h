@@ -36,6 +36,7 @@ class Configuration;
 class ConfigurationTab;
 class Dissolve;
 class ForcefieldTab;
+class ProcessingTab;
 class QMdiSubWindow;
 class Species;
 class SpeciesTab;
@@ -193,9 +194,9 @@ class DissolveWindow : public QMainWindow
 	// List of Workspace tabs
 	List<WorkspaceTab> workspaceTabs_;
 	// Pointer to Main Processing tab
-	MainTab* mainProcessingTab_;
+	ProcessingTab* mainProcessingTab_;
 	// Pointer to Analysis Processing tab
-	MainTab* analysisProcessingTab_;
+	ProcessingTab* analysisProcessingTab_;
 
 	private slots:
 	void on_MainTabs_currentChanged(int index);

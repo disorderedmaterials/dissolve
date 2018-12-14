@@ -31,7 +31,7 @@ class ModuleChart;
 class ModulePalette;
 
 // Processing Tab
-class ProcessingTab : public QWidget, public MainTab
+class ProcessingTab : public QWidget, public ListItem<ProcessingTab>, public MainTab
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
@@ -64,7 +64,7 @@ class ProcessingTab : public QWidget, public MainTab
 	/*
 	 * Update
 	 */
-	protected:
+	public:
 	// Update controls in tab
 	void updateControls();
 	// Disable sensitive controls within tab, ready for main code to run

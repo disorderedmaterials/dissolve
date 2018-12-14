@@ -26,7 +26,7 @@
 #include "base/lineparser.h"
 
 // Constructor / Destructor
-ProcessingTab::ProcessingTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title) : MainTab(dissolveWindow, dissolve, parent, title, this)
+ProcessingTab::ProcessingTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title) : ListItem<ProcessingTab>(), MainTab(dissolveWindow, dissolve, parent, title, this)
 {
 	ui.setupUi(this);
 
