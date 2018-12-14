@@ -183,7 +183,7 @@ void DissolveWindow::on_SimulationStepAction_triggered(bool checked)
 	ui.ControlStepButton->click();
 }
 
-void DissolveWindow::on_SimulationFiveStepsAction_triggered(bool checked)
+void DissolveWindow::on_SimulationStepFiveAction_triggered(bool checked)
 {
 	ui.ControlStepFiveButton->click();
 }
