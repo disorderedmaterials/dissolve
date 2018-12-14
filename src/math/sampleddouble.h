@@ -49,6 +49,8 @@ class SampledDouble : public GenericItemBase
 	double m2_;
 
 	public:
+	// Clear data
+	void clear();
 	// Return current (mean) value
 	double value() const;
 	// Return number of samples contributing to averages etc.

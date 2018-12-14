@@ -26,9 +26,7 @@
 // Constructor
 SampledDouble::SampledDouble()
 {
-	count_ = 0;
-	mean_ = 0.0;
-	m2_ = 0.0;
+	clear();
 }
 
 SampledDouble::SampledDouble(const double x)
@@ -41,6 +39,14 @@ SampledDouble::SampledDouble(const double x)
 /*
  * Data
  */
+
+// Clear data
+void SampledDouble::clear()
+{
+	count_ = 0;
+	mean_ = 0.0;
+	m2_ = 0.0;
+}
 
 // Return current (mean) value
 double SampledDouble::value() const
