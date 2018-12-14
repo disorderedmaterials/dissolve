@@ -476,6 +476,10 @@ void ModuleChart::updateControls()
 		}
 	}
 
+	// For any items that remain in moduleWidgets_ we must now delete the widgets, as they are no longer used
+	RefListIterator<ModuleChartModuleBlock,bool> widgetRemover(moduleWidgets_);
+	while (ModuleChartModuleBlock* block = widgetRemover.iterate()) delete block;
+
 	// Copy the new RefList
 	moduleWidgets_ = newModuleWidgets;
 
