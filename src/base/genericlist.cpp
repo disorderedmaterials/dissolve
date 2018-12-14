@@ -21,6 +21,12 @@
 
 #include "base/genericlist.h"
 
+// Clear all items
+void GenericList::clear()
+{
+	items_.clear();
+}
+
 // Add specified item to list (from base class pointer)
 void GenericList::add(GenericItem* item)
 {

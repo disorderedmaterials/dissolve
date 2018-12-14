@@ -35,6 +35,8 @@ class GenericList
 	List<GenericItem> items_;
 
 	public:
+	// Clear all items
+	void clear();
 	// Add specified item to list (from base class pointer)
 	void add(GenericItem* item);
 	// Create an item of the specified type
