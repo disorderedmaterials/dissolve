@@ -42,7 +42,7 @@ class ModuleChartBlock : public ListItem<ModuleChartBlock>
 	public:
 	// Constructor / Destructor
 	ModuleChartBlock(DissolveWindow* dissolveWindow, Dissolve& dissolve);
-	~ModuleChartBlock();
+	virtual ~ModuleChartBlock();
 
 
 	/*
