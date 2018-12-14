@@ -263,7 +263,8 @@ void DissolveWindow::setCurrentTab(int tabIndex)
 // Return reference list of all current tabs
 RefList<MainTab,bool> DissolveWindow::allTabs() const
 {
-	RefList<MainTab,bool> tabs = allTabs();
+	RefList<MainTab,bool> tabs;
+
 	tabs.add(forcefieldTab_);
 	tabs.add(mainProcessingTab_);
 	for (SpeciesTab* tab = speciesTabs_.first(); tab != NULL; tab = tab->next) tabs.add(tab);
