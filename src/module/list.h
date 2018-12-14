@@ -75,10 +75,12 @@ class ModuleList
 	static void clearMasterInstances();
 	// Register Module
 	static void registerMasterInstance(Module* mainInstance);
+	// Return number of failed Module registrations
+	static int nFailedRegistrations();
 	// Find master instance of specified Module type
 	static Module* findMasterInstance(const char* type);
 	// Print out registered module information, and return false if any registration errors were encountered
-	static bool printMasterModuleInformation();
+	static void printMasterModuleInformation();
 	// Return list of all master instances
 	static List<ModuleReference>& masterInstances();
 	// Search for any instance of any module with the specified unique name

@@ -60,35 +60,53 @@ Dissolve::~Dissolve()
 // Clear all data
 void Dissolve::clear()
 {
-	// PairPotentials
-	pairPotentialDelta_ = 0.005;
-	pairPotentialRange_ = 15.0;
-	pairPotentialsIncludeCoulomb_ = true;
-
-	// Simulation
-	iteration_ = 0;
-	nIterationsPerformed_ = 0;
+	// Core
 	setUp_ = false;
 
-	// Simulation Setup
-	nBoxNormalisationPoints_ = 500000000;
-	seed_ = -1;
-	restartFileFrequency_ = 10;
+	// Atom Types
+	Messenger::printVerbose("Clearing Atom Types...\n");
+	atomTypes_.clear();
 
-	Messenger::printVerbose("Clearing Configurations...\n");
-	configurations_.clear();
+	// Master Terms
+	Messenger::printVerbose("Clearing Master Terms...\n");
+	masterBonds_.clear();
+	masterAngles_.clear();
+	masterTorsions_.clear();
 
+	// Species
 	Messenger::printVerbose("Clearing Species...\n");
 	species_.clear();
 
-	Messenger::printVerbose("Clearing PotentialMap...\n");
+	// PairPotentials
+	Messenger::printVerbose("Clearing Pair Potentials...\n");
+	pairPotentialDelta_ = 0.005;
+	pairPotentialRange_ = 15.0;
+	pairPotentialRangeSquared_ = pairPotentialRange_*pairPotentialRange_;
+	pairPotentialsIncludeCoulomb_ = true;
+	pairPotentials_.clear();
 	potentialMap_.clear();
 
-	Messenger::printVerbose("Clearing AtomTypes...\n");
-	atomTypes_.clear();
+	// Configurations
+	Messenger::printVerbose("Clearing Configurations...\n");
+	configurations_.clear();
 
-	Messenger::printVerbose("Clearing misc...\n");
+	// Simulation
+	Messenger::printVerbose("Clearing Simulation...\n");
+	nBoxNormalisationPoints_ = 500000000;
+	seed_ = -1;
+	restartFileFrequency_ = 10;
+	mainProcessingModules_.clear();
+	analysisProcessingModules_.clear();
+	processingModuleData_.clear();
+	iteration_ = 0;
+	nIterationsPerformed_ = 0;
+	ModuleList::clearMasterInstances();
+	ModuleRegistry::registerModules();
+
+	// I/O
 	filename_.clear();
+	restartFilename_.clear();
+	saveRestartTimes_ = 0.0;
 }
 
 // Register GenericItems

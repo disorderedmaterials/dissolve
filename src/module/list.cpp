@@ -159,6 +159,12 @@ void ModuleList::registerMasterInstance(Module* mainInstance)
 	masterRef->set(mainInstance, NULL, NULL);
 }
 
+// Return number of failed Module registrations
+int ModuleList::nFailedRegistrations()
+{
+	return failedRegistrations_.nItems();
+}
+
 // Find master instance of specified Module type
 Module* ModuleList::findMasterInstance(const char* type)
 {
@@ -174,7 +180,7 @@ Module* ModuleList::findMasterInstance(const char* type)
 }
 
 // Print out registered module information
-bool ModuleList::printMasterModuleInformation()
+void ModuleList::printMasterModuleInformation()
 {
 	Messenger::print("Module Information (%i available):\n", masterInstances_.nItems());
 	ListIterator<ModuleReference> moduleIterator(masterInstances_);
@@ -198,8 +204,6 @@ bool ModuleList::printMasterModuleInformation()
 			Messenger::print(" --> %s\n", failedInstance->type());
 		}
 	}
-
-	return (failedRegistrations_.nItems() == 0);
 }
 
 // Return list of all master instances
