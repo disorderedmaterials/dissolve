@@ -1,5 +1,5 @@
 /*
-	*** Dissolve Main Window - Menu Functions
+	*** Dissolve GUI - Menu Functions
 	*** src/gui/gui_menu.cpp
 	Copyright T. Youngs 2012-2018
 

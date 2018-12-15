@@ -137,7 +137,7 @@ class DissolveWindow : public QMainWindow
 
 
 	/*
-	 * Run Control
+	 * Simulation Page - Run Control
 	 */
 	public:
 	// Dissolve State Enum
@@ -180,7 +180,7 @@ class DissolveWindow : public QMainWindow
 
 
 	/*
-	 * Tab Management
+	 * Simulation Page - Tab Management
 	 */
 	private:
 	// Pointer to Forcefield tab
@@ -244,7 +244,7 @@ class DissolveWindow : public QMainWindow
 
 
 	/*
-	 * Window State
+	 * Simulation Page - Window State
 	 */
 	private:
 	// Filename containing current window layout

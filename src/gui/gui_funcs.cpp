@@ -1,5 +1,5 @@
 /*
-	*** Dissolve Main Window - Functions
+	*** Dissolve GUI - Core Functions
 	*** src/gui/gui_funcs.cpp
 	Copyright T. Youngs 2012-2018
 
@@ -215,87 +215,11 @@ void DissolveWindow::addOutputHandler()
 }
 
 /*
- * Window State
+ * Main Stack
  */
 
-// Save current window layout
-bool DissolveWindow::saveWindowLayout()
+// Set currently-visible main stack page
+void DissolveWindow::showMainStackPage(DissolveWindow::MainStackPage page)
 {
-	// Open file for writing
-	LineParser stateParser;
-	stateParser.openOutput(windowLayoutFilename_);
-	if (!stateParser.isFileGoodForWriting()) return false;
-
-	// Write current tab index
-	if (!stateParser.writeLineF("%i\n", ui.MainTabs->currentIndex())) return false;
-
-	// Write tab state
-	RefList<MainTab,bool> tabs = allTabs();
-	RefListIterator<MainTab,bool> tabIterator(tabs);
-	while (MainTab* tab = tabIterator.iterate())
-	{
-		// Write tab type and title
-		if (!stateParser.writeLineF("'%s'  %s\n", tab->title(), tab->tabType())) return false;
-
-		// Write tab state
-		if (!tab->writeState(stateParser)) return false;
-	}
-
-	stateParser.closeFiles();
-
-	return true;
-}
-
-// Load window layout
-bool DissolveWindow::loadWindowLayout()
-{
-	// Open file for reading
-	LineParser stateParser;
-	stateParser.openInput(windowLayoutFilename_);
-	if (!stateParser.isFileGoodForReading()) return false;
-
-	// Read current tab index - it may not yet exist, so store it now and set it later
-	if (stateParser.getArgsDelim(LineParser::UseQuotes) != LineParser::Success) return false;
-	int currentTab = stateParser.argi(0);
-
-	// Remainder of file references tab types. Core tabs and those for Configurations will exist already. Others must be created.
-	while (!stateParser.eofOrBlank())
-	{
-		// Parse the line, which contains the title and type of the tab
-		if (stateParser.getArgsDelim(LineParser::UseQuotes) != LineParser::Success) return false;
-
-		// If any of our current tabs match the title, call it's readState() function
-		MainTab* tab = findTab(stateParser.argc(0));
-		if (tab)
-		{
-			if (!tab->readState(stateParser)) return false;
-		}
-		else
-		{
-			// Must first create the tab first.
-			if (DissolveSys::sameString(stateParser.argc(1), "ModuleTab"))
-			{
-				// The title represents the unique name of the Module, so find it now
-				Module* module = ModuleList::findInstanceByUniqueName(stateParser.argc(0));
-				if (!module) return Messenger::error("Failed to find Module '%s' for display in a ModuleTab.\n", stateParser.argc(0)); 
-
-				tab = addModuleTab(module);
-				
-			}
-			else if (DissolveSys::sameString(stateParser.argc(1), "WorkspaceTab"))
-			{
-				// Create a new workspace with the desired name
-				tab = addWorkspaceTab(stateParser.argc(0));
-			}
-			else return Messenger::error("Unrecognised tab type '%s' in state file.\n", stateParser.argc(1));
-
-			// Now read state information
-			if (!tab->readState(stateParser)) return false;
-		}
-	}
-
-	// Set current tab (we stored the index earlier)
-	ui.MainTabs->setCurrentIndex(currentTab);
-
-	return true;
+	ui.MainStack->setCurrentIndex(page);
 }

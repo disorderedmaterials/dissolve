@@ -1,6 +1,6 @@
 /*
-	*** Dissolve Main Window - Control
-	*** src/gui/gui_control.cpp
+	*** Dissolve GUI - Simulation Page - Control
+	*** src/gui/gui_simulation_control.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.

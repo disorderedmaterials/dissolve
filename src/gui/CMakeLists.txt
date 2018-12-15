@@ -56,10 +56,11 @@ SET(gui_SRCS
   analysistab_funcs.cpp
   configurationtab_funcs.cpp
   forcefieldtab_funcs.cpp
-  gui_control.cpp
   gui_funcs.cpp
   gui_menu.cpp
-  gui_tabs.cpp
+  gui_simulation_control.cpp
+  gui_simulation_state.cpp
+  gui_simulation_tabs.cpp
   maintab.cpp
   modulechart_funcs.cpp
   modulechartblock.cpp

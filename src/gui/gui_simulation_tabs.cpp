@@ -1,6 +1,6 @@
 /*
-	*** Dissolve Main Window - Tab Management
-	*** src/gui/gui_tabs.cpp
+	*** Dissolve GUI - Simulation Page - Tabs
+	*** src/gui/gui_simulation_tabs.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
