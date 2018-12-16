@@ -377,11 +377,13 @@ void ForcefieldTab::updateControls()
 // Disable sensitive controls within tab, ready for main code to run
 void ForcefieldTab::disableSensitiveControls()
 {
+	setEnabled(false);
 }
 
 // Enable sensitive controls within tab, ready for main code to run
 void ForcefieldTab::enableSensitiveControls()
 {
+	setEnabled(false);
 }
 
 /*
@@ -390,14 +392,152 @@ void ForcefieldTab::enableSensitiveControls()
 
 void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
 {
+	printf("NOT IMPLEMENTED YET.\n");
 }
 
 void ForcefieldTab::on_AtomTypeRemoveButton_clicked(bool checked)
 {
+	printf("NOT IMPLEMENTED YET.\n");
 }
 
 void ForcefieldTab::on_AtomTypeLibraryButton_clicked(bool checked)
 {
+	printf("NOT IMPLEMENTED YET.\n");
+}
+
+void ForcefieldTab::on_MasterTermAddBondButton_clicked(bool checked)
+{
+	printf("NOT IMPLEMENTED YET.\n");
+}
+
+void ForcefieldTab::on_MasterTermRemoveBondButton_clicked(bool checked)
+{
+	printf("NOT IMPLEMENTED YET.\n");
+}
+
+void ForcefieldTab::on_MasterBondsTable_itemChanged(QTableWidgetItem* w)
+{
+	if (refreshing_) return;
+
+	// Get target MasterIntra from the passed widget
+	MasterIntra* masterIntra = w ? VariantPointer<MasterIntra>(w->data(Qt::UserRole)) : NULL;
+	if (!masterIntra) return;
+
+	// Column of passed item tells us the type of data we need to change
+	switch (w->column())
+	{
+		// Name
+		case (0):
+			masterIntra->setName(qPrintable(w->text()));
+			dissolveWindow_->setModified();
+			break;
+		// Functional Form
+		case (1):
+			masterIntra->setForm(SpeciesBond::bondFunction(qPrintable(w->text())));
+			dissolveWindow_->setModified();
+			break;
+		// Parameters
+		case (2):
+		case (3):
+		case (4):
+		case (5):
+			masterIntra->setParameter(w->column()-2, w->text().toDouble());
+			dissolveWindow_->setModified();
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of MasterIntra table.\n", w->column());
+			break;
+	}
+}
+
+void ForcefieldTab::on_MasterTermAddAngleButton_clicked(bool checked)
+{
+	printf("NOT IMPLEMENTED YET.\n");
+}
+
+void ForcefieldTab::on_MasterTermRemoveAngleButton_clicked(bool checked)
+{
+	printf("NOT IMPLEMENTED YET.\n");
+}
+
+void ForcefieldTab::on_MasterAnglesTable_itemChanged(QTableWidgetItem* w)
+{
+	if (refreshing_) return;
+
+	// Get target MasterIntra from the passed widget
+	MasterIntra* masterIntra = w ? VariantPointer<MasterIntra>(w->data(Qt::UserRole)) : NULL;
+	if (!masterIntra) return;
+
+	// Column of passed item tells us the type of data we need to change
+	switch (w->column())
+	{
+		// Name
+		case (0):
+			masterIntra->setName(qPrintable(w->text()));
+			dissolveWindow_->setModified();
+			break;
+		// Functional Form
+		case (1):
+			masterIntra->setForm(SpeciesAngle::angleFunction(qPrintable(w->text())));
+			dissolveWindow_->setModified();
+			break;
+		// Parameters
+		case (2):
+		case (3):
+		case (4):
+		case (5):
+			masterIntra->setParameter(w->column()-2, w->text().toDouble());
+			dissolveWindow_->setModified();
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of MasterIntra table.\n", w->column());
+			break;
+	}
+}
+
+void ForcefieldTab::on_MasterTermAddTorsionButton_clicked(bool checked)
+{
+	printf("NOT IMPLEMENTED YET.\n");
+}
+
+void ForcefieldTab::on_MasterTermRemoveTorsionButton_clicked(bool checked)
+{
+	printf("NOT IMPLEMENTED YET.\n");
+}
+
+void ForcefieldTab::on_MasterTorsionsTable_itemChanged(QTableWidgetItem* w)
+{
+	if (refreshing_) return;
+
+	// Get target MasterIntra from the passed widget
+	MasterIntra* masterIntra = w ? VariantPointer<MasterIntra>(w->data(Qt::UserRole)) : NULL;
+	if (!masterIntra) return;
+
+	// Column of passed item tells us the type of data we need to change
+	switch (w->column())
+	{
+		// Name
+		case (0):
+			masterIntra->setName(qPrintable(w->text()));
+			dissolveWindow_->setModified();
+			break;
+		// Functional Form
+		case (1):
+			masterIntra->setForm(SpeciesTorsion::torsionFunction(qPrintable(w->text())));
+			dissolveWindow_->setModified();
+			break;
+		// Parameters
+		case (2):
+		case (3):
+		case (4):
+		case (5):
+			masterIntra->setParameter(w->column()-2, w->text().toDouble());
+			dissolveWindow_->setModified();
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of MasterIntra table.\n", w->column());
+			break;
+	}
 }
 
 void ForcefieldTab::on_AtomTypesTable_itemChanged(QTableWidgetItem* w)

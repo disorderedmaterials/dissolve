@@ -82,6 +82,16 @@ class ForcefieldTab : public QWidget, public MainTab
 	private:
 
 	private slots:
+	// Master Terms
+	void on_MasterTermAddBondButton_clicked(bool checked);
+	void on_MasterTermRemoveBondButton_clicked(bool checked);
+	void on_MasterBondsTable_itemChanged(QTableWidgetItem* w);
+	void on_MasterTermAddAngleButton_clicked(bool checked);
+	void on_MasterTermRemoveAngleButton_clicked(bool checked);
+	void on_MasterAnglesTable_itemChanged(QTableWidgetItem* w);
+	void on_MasterTermAddTorsionButton_clicked(bool checked);
+	void on_MasterTermRemoveTorsionButton_clicked(bool checked);
+	void on_MasterTorsionsTable_itemChanged(QTableWidgetItem* w);
 	// Atom Types
 	void on_AtomTypeAddButton_clicked(bool checked);
 	void on_AtomTypeRemoveButton_clicked(bool checked);
