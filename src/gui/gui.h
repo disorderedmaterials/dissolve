@@ -122,7 +122,9 @@ class DissolveWindow : public QMainWindow
 	void on_SessionOpenAction_triggered(bool checked);
 	void on_SessionOpenRemoteAction_triggered(bool checked);
 	void on_SessionOpenRecentAction_triggered(bool checked);
+	void on_SessionCloseAction_triggered(bool checked);
 	void on_SessionSaveAction_triggered(bool checked);
+	void on_SessionSaveAsAction_triggered(bool checked);
 	void on_SessionQuitAction_triggered(bool checked);
 	// Simulation
 	void on_SimulationAddSpeciesAction_triggered(bool checked);
@@ -137,7 +139,36 @@ class DissolveWindow : public QMainWindow
 
 
 	/*
-	 * Simulation Page - Run Control
+	 * Main Stack
+	 */
+	private:
+	// Stack Pages Enum
+	enum MainStackPage
+	{
+		StartStackPage,		/* Start Page - Routes to load, create, and monitor simulations */
+		WizardStackPage,	/* Wizard Page - Simulation creation wizard */
+		SimulationStackPage,	/* Simulation Page - Controls for current simulation */
+		nStackPages
+	};
+
+	private:
+	// Set currently-visible main stack page
+	void showMainStackPage(MainStackPage page);
+
+
+	/*
+	 * 'Start' Stack Page
+	 */
+	private slots:
+	void on_StartOpenExistingButton_clicked(bool checked);
+	void on_StartOpenRemoteButton_clicked(bool checked);
+	void on_StartOpenRecentButton_clicked(bool checked);
+	void on_StartCreateNewButton_clicked(bool checked);
+	void on_StartRunWizardButton_clicked(bool checked);
+
+
+	/*
+	 * 'Simulation' Stack Page - Run Control
 	 */
 	public:
 	// Dissolve State Enum
@@ -180,7 +211,7 @@ class DissolveWindow : public QMainWindow
 
 
 	/*
-	 * Simulation Page - Tab Management
+	 *  'Simulation' Stack Page - Run Control
 	 */
 	private:
 	// Pointer to Forcefield tab
@@ -244,7 +275,7 @@ class DissolveWindow : public QMainWindow
 
 
 	/*
-	 * Simulation Page - Window State
+	 *  'Simulation' Stack Page - Run Control
 	 */
 	private:
 	// Filename containing current window layout

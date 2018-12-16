@@ -118,6 +118,26 @@ void DissolveWindow::on_SessionOpenRecentAction_triggered(bool checked)
 	// TODO
 }
 
+void DissolveWindow::on_SessionCloseAction_triggered(bool checked)
+{
+	if (!checkSaveCurrentInput()) return;
+
+	// Clear any data-related tabs from the UI
+	clearTabs();
+
+	// Clear Dissolve itself
+	dissolve_.clear();
+
+	updateControls();
+
+	updateStatus();
+
+	updateFileLabels();
+
+	// Go back to the 'Start' page
+	showMainStackPage(DissolveWindow::StartStackPage);
+}
+
 void DissolveWindow::on_SessionSaveAction_triggered(bool checked)
 {
 	// If the file is not modified, nothing to do.
@@ -138,6 +158,10 @@ void DissolveWindow::on_SessionSaveAction_triggered(bool checked)
 	modified_ = false;
 
 	updateStatus();
+}
+
+void DissolveWindow::on_SessionSaveAsAction_triggered(bool checked)
+{
 }
 
 void DissolveWindow::on_SessionQuitAction_triggered(bool checked)

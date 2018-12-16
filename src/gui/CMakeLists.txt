@@ -61,6 +61,8 @@ SET(gui_SRCS
   gui_simulation_control.cpp
   gui_simulation_state.cpp
   gui_simulation_tabs.cpp
+  gui_stack.cpp
+  gui_start.cpp
   maintab.cpp
   modulechart_funcs.cpp
   modulechartblock.cpp

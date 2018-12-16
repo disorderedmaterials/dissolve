@@ -52,15 +52,15 @@ DissolveWindow::DissolveWindow(Dissolve& dissolve) : QMainWindow(NULL), dissolve
 	connect(ui.MainTabs, SIGNAL(tabBarDoubleClicked(int)), this, SLOT(mainTabsDoubleClicked(int)));
 	dissolveState_ = StoppedState;
 
-	// Hide the Wizard by default
-	ui.WizardStack->setVisible(false);
-
 	refreshing_ = false;
 	modified_ = false;
 
 	addCoreTabs();
 
 	updateStatus();
+
+	// Show the Start stack page (we call this mostly to ensure correct availability of other controls)
+	showMainStackPage(DissolveWindow::StartStackPage);
 }
 
 // Destructor
@@ -152,6 +152,9 @@ bool DissolveWindow::openFile(const char* inputFile, bool ignoreRestartFile, boo
 	// Try to load in the window state file
 	if (DissolveSys::fileExists(windowLayoutFilename_) && (!ignoreLayoutFile)) loadWindowLayout();
 
+	// Switch to the Simulation stack page
+	showMainStackPage(DissolveWindow::SimulationStackPage);
+
 	updateControls();
 
 	updateStatus();
@@ -212,14 +215,4 @@ void DissolveWindow::addOutputHandler()
 {
 	Messenger::setOutputHandler(&outputHandler_);
 	connect(&outputHandler_, SIGNAL(printText(const QString&)), ui.MessagesBrowser, SLOT(append(const QString&)));
-}
-
-/*
- * Main Stack
- */
-
-// Set currently-visible main stack page
-void DissolveWindow::showMainStackPage(DissolveWindow::MainStackPage page)
-{
-	ui.MainStack->setCurrentIndex(page);
 }
