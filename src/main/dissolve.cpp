@@ -100,6 +100,7 @@ void Dissolve::clear()
 	processingModuleData_.clear();
 	iteration_ = 0;
 	nIterationsPerformed_ = 0;
+	ModuleRegistry::deRegisterModules();
 	ModuleList::clearMasterInstances();
 	ModuleRegistry::registerModules();
 

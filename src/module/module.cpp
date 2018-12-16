@@ -62,12 +62,6 @@ Module* Module::findInstance(const char* uniqueName)
 	return NULL;
 }
 
-// Delete all instances of this Module
-void Module::deleteInstances()
-{
-	while (instances().first()) instances().removeFirst();
-}
-
 /*
  * Definition
  */

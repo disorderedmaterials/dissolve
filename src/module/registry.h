@@ -23,6 +23,7 @@
 #define DISSOLVE_MODULEREGISTRY_H
 
 #include "module/list.h"
+#include "templates/reflist.h"
 
 // Forward Declarations
 class Module;
@@ -30,9 +31,17 @@ class Module;
 // Module Registry
 class ModuleRegistry
 {
+	private:
+	// Reference list of lists of registered Module instances
+	static RefList< List<Module>, bool> instanceLists_;
+
 	public:
 	// Register master instances for all Modules
 	static void registerModules();
+	// De-register master (and other) instances for all Modules
+	static void deRegisterModules();
+	// Register instance list for Module
+	static void registerInstanceList(List<Module>& instanceList);
 };
 
 // Module Registrar
@@ -42,8 +51,13 @@ template <class M> class ModuleRegistrar
 	// Constructor
 	ModuleRegistrar()
 	{
-		ModuleList::registerMasterInstance(new M);
+		M* mainInstance = new M;
+		ModuleList::registerMasterInstance(mainInstance);
+		ModuleRegistry::registerInstanceList(mainInstance->instances());
 	};
+
+	private:
+
 };
 
 #endif

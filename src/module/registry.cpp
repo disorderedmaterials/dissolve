@@ -40,6 +40,9 @@
 #include "modules/neutronsq/neutronsq.h"
 #include "modules/test/test.h"
 
+// Static Members
+RefList< List<Module>, bool> ModuleRegistry::instanceLists_;
+
 /*
  * Module Registration
  * ===================
@@ -68,4 +71,18 @@ void ModuleRegistry::registerModules()
 	ModuleRegistrar<SanityCheckModule> sanityCheckRegistrar;
 	ModuleRegistrar<NeutronSQModule> neutronSQRegistrar;
 	ModuleRegistrar<TestModule> testRegistrar;
+}
+
+// De-register master (and other) instances for all Modules
+void ModuleRegistry::deRegisterModules()
+{
+	RefListIterator< List<Module>, bool> listIterator(instanceLists_);
+	while (List<Module>* list = listIterator.iterate()) list->clear();
+	instanceLists_.clear();
+}
+
+// Register instance list for Module
+void ModuleRegistry::registerInstanceList(List<Module>& instanceList)
+{
+	instanceLists_.add(&instanceList);
 }

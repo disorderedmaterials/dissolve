@@ -51,17 +51,13 @@ class Module : public ListItem<Module>
 	/*
 	 * Instances
 	 */
-	private:
-	// Return list of all created instances of this Module
-	virtual List<Module>& instances() = 0;
-
 	public:
 	// Create instance of this module
 	virtual Module* createInstance() = 0;
+	// Return list of all created instances of this Module
+	virtual List<Module>& instances() = 0;
 	// Find instance with unique name specified
 	Module* findInstance(const char* uniqueName);
-	// Delete all instances of this Module
-	void deleteInstances();
 
 
 	/*
