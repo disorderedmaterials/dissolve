@@ -184,6 +184,22 @@ void DissolveWindow::on_SimulationAddSpeciesAction_triggered(bool checked)
 	updateStatus();
 }
 
+void DissolveWindow::on_SimulationImportSpeciesAction_triggered(bool checked)
+{
+	// Request a new file to open
+	QString inputFile = QFileDialog::getOpenFileName(this, "Choose species / input file to open", QDir().absolutePath(), "Dissolve species files (*.dsp)");
+	if (inputFile.isEmpty()) return;
+
+	// Create a new, temporary Dissolve object, and attempt to load the file
+	Dissolve tempDissolve;
+	if (!tempDissolve.loadInput(qPrintable(inputFile)))
+	{
+		// TODO Message box
+		return;
+	}
+
+}
+
 void DissolveWindow::on_SimulationAddConfigurationAction_triggered(bool checked)
 {
 	Configuration* cfg = dissolve_.addConfiguration();
