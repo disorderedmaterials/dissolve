@@ -21,6 +21,7 @@
 
 #include "classes/isotopologuereference.h"
 #include "classes/configuration.h"
+#include "classes/coredata.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
 #include "base/processpool.h"
@@ -109,18 +110,11 @@ const char* IsotopologueReference::itemClassName()
 	return "IsotopologueReference";
 }
 
-// Write data through specified LineParser
-bool IsotopologueReference::write(LineParser& parser)
-{
-	return parser.writeLineF("'%s'  '%s'  '%s'  %f", configuration_->name(), species_->name(), isotopologue_->name(), weight_);
-}
-
 // Read data through specified LineParser
-bool IsotopologueReference::read(LineParser& parser)
+bool IsotopologueReference::read(LineParser& parser, const CoreData& coreData)
 {
 	// Find target Configuration (first argument)
-	configuration_ = NULL;
-	for (configuration_ = List<Configuration>::masterInstance().first(); configuration_ != NULL; configuration_ = configuration_->next) if (DissolveSys::sameString(parser.argc(0), configuration_->name())) break;
+	configuration_ = coreData.findConfiguration(parser.argc(0));
 	if (!configuration_)
 	{
 		Messenger::error("Error defining Isotopologue reference - no Configuration named '%s' exists.\n", parser.argc(0));
@@ -128,8 +122,7 @@ bool IsotopologueReference::read(LineParser& parser)
 	}
 
 	// Find specified Species (second argument) - must be present in the target Configuration
-	species_ = NULL;
-	for (species_ = List<Species>::masterInstance().first(); species_ != NULL; species_ = species_->next) if (DissolveSys::sameString(parser.argc(1), species_->name())) break;
+	species_ = coreData.findSpecies(parser.argc(1));
 	if (!species_) return Messenger::error("Error defining Isotopologue reference - no Species named '%s' exists.\n", parser.argc(1));
 	if (!configuration_->hasUsedSpecies(species_))return Messenger::error("Error defining Isotopologue reference - Species '%s' is not present in Configuration '%s'.\n", species_->name(), configuration_->name());
 
@@ -141,6 +134,12 @@ bool IsotopologueReference::read(LineParser& parser)
 	weight_ = parser.argd(3);
 
 	return true;
+}
+
+// Write data through specified LineParser
+bool IsotopologueReference::write(LineParser& parser)
+{
+	return parser.writeLineF("'%s'  '%s'  '%s'  %f", configuration_->name(), species_->name(), isotopologue_->name(), weight_);
 }
 
 /*

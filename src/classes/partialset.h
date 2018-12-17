@@ -169,10 +169,10 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	public:
 	// Return class name
 	static const char* itemClassName();
+	// Read data through specified LineParser
+	bool read(LineParser& parser, const CoreData& coreData);
 	// Write data through specified LineParser
 	bool write(LineParser& parser);
-	// Read data through specified LineParser
-	bool read(LineParser& parser);
 
 
 	/*

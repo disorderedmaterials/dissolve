@@ -124,7 +124,7 @@ class AnalysisProcess1DNode : public AnalysisNode
 	 */
 	public:
 	// Read structure from specified LineParser
-	bool read(LineParser& parser, NodeContextStack& contextStack);
+	bool read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack);
 	// Write structure to specified LineParser
 	bool write(LineParser& parser, const char* prefix);
 };

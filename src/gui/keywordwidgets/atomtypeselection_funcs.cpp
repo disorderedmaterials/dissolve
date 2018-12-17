@@ -24,12 +24,13 @@
 #include "gui/helpers/listwidgetupdater.h"
 #include "classes/atomtype.h"
 #include "classes/atomtypelist.h"
+#include "classes/coredata.h"
 #include "templates/genericlisthelper.h"
 #include <QHBoxLayout>
 #include <QComboBox>
 
 // Constructor
-AtomTypeSelectionKeywordWidget::AtomTypeSelectionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, GenericList& moduleData, const char* prefix) : KeywordDropDown(this), KeywordWidgetBase(moduleData, prefix)
+AtomTypeSelectionKeywordWidget::AtomTypeSelectionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : KeywordDropDown(this), KeywordWidgetBase(coreData, moduleData, prefix)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container
 	ui.setupUi(dropWidget());
@@ -43,7 +44,7 @@ AtomTypeSelectionKeywordWidget::AtomTypeSelectionKeywordWidget(QWidget* parent, 
 	else
 	{
 		// Set current information
-		updateWidgetValues();
+		updateWidgetValues(coreData_);
 	}
 }
 
@@ -95,16 +96,16 @@ void AtomTypeSelectionKeywordWidget::updateValue()
 
 	refreshing_ = false;
 
-	updateWidgetValues();
+	updateWidgetValues(coreData_);
 }
 
 // Update widget values data based on keyword data
-void AtomTypeSelectionKeywordWidget::updateWidgetValues()
+void AtomTypeSelectionKeywordWidget::updateWidgetValues(const CoreData& coreData)
 {
 	refreshing_ = true;
 	
 	// Update the list against the global AtomType list
-	ListWidgetUpdater<AtomTypeSelectionKeywordWidget,AtomType> listUpdater(ui.SelectionList, List<AtomType>::masterInstance(), this, &AtomTypeSelectionKeywordWidget::updateSelectionRow);
+	ListWidgetUpdater<AtomTypeSelectionKeywordWidget,AtomType> listUpdater(ui.SelectionList, coreData_.constAtomTypes(), this, &AtomTypeSelectionKeywordWidget::updateSelectionRow);
 
 	refreshing_ = false;
 }
@@ -120,5 +121,4 @@ void AtomTypeSelectionKeywordWidget::updateKeywordData()
 		if (item->checkState() == Qt::Checked) newSelection.add( (AtomType*) VariantPointer<AtomType>(item->data(Qt::UserRole)));
 	}
 	keyword_->setData(newSelection);
-
 }

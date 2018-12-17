@@ -36,7 +36,7 @@ class WindowFunctionKeywordWidget : public QWidget, public KeywordWidgetBase
 
 	public:
 	// Constructor
-	WindowFunctionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, GenericList& moduleData, const char* prefix);
+	WindowFunctionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
 
 
 	/*

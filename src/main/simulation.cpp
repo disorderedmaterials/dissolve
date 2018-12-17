@@ -116,7 +116,7 @@ bool Dissolve::iterate(int nIterations)
 		double thisTime = 0.0;
 
 		Messenger::print("Configuration Processing\n");
-		for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
+		for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next)
 		{
 			Messenger::print("   * '%s'\n", cfg->name());
 			if (cfg->nModules() == 0) Messenger::print("  (( No Tasks ))\n");
@@ -163,7 +163,7 @@ bool Dissolve::iterate(int nIterations)
 		Messenger::banner("Configuration Processing");
 
 		bool result = true;
-		for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
+		for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next)
 		{
 			// Check for failure of one or more processes / processing tasks
 			if (!worldPool().allTrue(result))
@@ -211,7 +211,7 @@ bool Dissolve::iterate(int nIterations)
 		 */
 		Messenger::banner("Reassemble Data");
 		// Loop over Configurations
-		for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
+		for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next)
 		{
 			Messenger::printVerbose("Broadcasting data for Configuration '%s'...\n", cfg->name());
 			if (!cfg->broadcastCoordinates(worldPool(), cfg->processPool().rootWorldRank())) return false;
@@ -315,7 +315,7 @@ bool Dissolve::iterate(int nIterations)
 			 */
 
 			// Keep track of number of Configurations saved / to save
-			for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
+			for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next)
 			{
 				// Append ensemble file
 				if (cfg->appendEnsemble() && (iteration_%cfg->ensembleFrequency() != 0))
@@ -370,7 +370,7 @@ void Dissolve::printTiming()
 	Messenger::banner("Timing Information");
 
 	Messenger::print("Configuration Processing:\n");
-	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
+	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next)
 	{
 		if (cfg->nModules() == 0) continue;
 

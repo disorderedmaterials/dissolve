@@ -27,6 +27,7 @@
 
 // Forward Declarations
 class AtomType;
+class CoreData;
 class IsotopeData;
 class Isotope;
 
@@ -106,10 +107,10 @@ class AtomTypeData : public MPIListItem<AtomTypeData>
 	 * I/O
 	 */
 	public:
+	// Read data through specified LineParser
+	bool read(LineParser& parser, const CoreData& coreData);
 	// Write data through specified LineParser
 	bool write(LineParser& parser);
-	// Read data through specified LineParser
-	bool read(LineParser& parser);
 
 
 	/*

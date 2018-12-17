@@ -222,9 +222,9 @@ class Species : public ListItem<Species>
 	// Update current Isotopologues
 	void updateIsotopologues(const List<AtomType>& atomTypes);
 	// Add a new Isotopologue to this Species
-	Isotopologue* addIsotopologue(const char* baseName = "UnnamedIsotopologue");
+	Isotopologue* addIsotopologue(const char* baseName, const List<AtomType>& masterAtomTypes);
 	// Add natural isotopologue to this species, if it hasn't already been defined
-	Isotopologue* addNaturalIsotopologue();
+	Isotopologue* addNaturalIsotopologue(const List<AtomType>& masterAtomTypes);
 	// Remove specified Isotopologue from this Species
 	void removeIsotopologue(Isotopologue* iso);
 	// Return number of defined Isotopologues

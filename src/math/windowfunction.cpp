@@ -282,21 +282,21 @@ const char* WindowFunction::itemClassName()
 	return "WindowFunction";
 }
 
+// Read data through specified LineParser
+bool WindowFunction::read(LineParser& parser, const CoreData& coreData)
+{
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	function_ = functionType(parser.argc(0));
+	for (int n=0; n<nFunctionParameters(function_); ++n) parameters_[n] = parser.argd(n+1);
+	return true;
+}
+
 // Write data through specified LineParser
 bool WindowFunction::write(LineParser& parser)
 {
 	CharString line("%s", functionType(function_));
 	for (int n=0; n<nFunctionParameters(function_); ++n) line.strcatf(" %16.9e", parameters_[n]);
 	return parser.writeLine(line.get());
-}
-
-// Read data through specified LineParser
-bool WindowFunction::read(LineParser& parser)
-{
-	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-	function_ = functionType(parser.argc(0));
-	for (int n=0; n<nFunctionParameters(function_); ++n) parameters_[n] = parser.argd(n+1);
-	return true;
 }
 
 /*

@@ -25,6 +25,9 @@
 #include "base/processpool.h"
 #include "base/sysfunc.h"
 
+// Forward Declarations
+class CoreData;
+
 /*
  * GenericItem - Base class for all GenericItemContainers
  */
@@ -105,7 +108,7 @@ class GenericItem
 	// Write data through specified parser
 	virtual bool write(LineParser& parser) = 0;
 	// Read data through specified parser
-	virtual bool read(LineParser& parser) = 0;
+	virtual bool read(LineParser& parser, const CoreData& coreData) = 0;
 
 
 	/*

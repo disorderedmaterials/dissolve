@@ -229,7 +229,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Set object names in combinedUnweightedSQ
 		i = 0;
-		for (AtomType* at1 = dissolve.atomTypes(); at1 != NULL; at1 = at1->next, ++i)
+		for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
 		{
 			j = i;
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j) combinedUnweightedSQ.at(i,j).setObjectTag(CharString("%s//UnweightedSQ//%s//%s-%s", uniqueName(), group->name(), at1->name(), at2->name()));
@@ -237,7 +237,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Realise storage for generated S(Q), and reinitialise the scattering matrix
 		Array2D<Data1D>&  generatedSQ = GenericListHelper< Array2D<Data1D> >::realise(dissolve.processingModuleData(), "GeneratedSQ", uniqueName_, GenericItem::InRestartFileFlag);
-		scatteringMatrix_.initialise(dissolve.atomTypeList(), generatedSQ, uniqueName_, group->name());
+		scatteringMatrix_.initialise(dissolve.atomTypes(), generatedSQ, uniqueName_, group->name());
 
 		// Get factor with which to add data, based on the requested AugmentationStyle
 		double dataFactor = 1.0;
@@ -304,7 +304,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			// Create the array
 			simulatedReferenceData_.createEmpty(combinedUnweightedSQ.linearArraySize());
 			i = 0;
-			for (AtomType* at1 = dissolve.atomTypes(); at1 != NULL; at1 = at1->next, ++i)
+			for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
 			{
 				j = i;
 				for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
@@ -347,9 +347,9 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		 */
 
 		Array2D<Data1D>& generatedGR = GenericListHelper< Array2D<Data1D> >::realise(dissolve.processingModuleData(), "GeneratedGR", uniqueName_, GenericItem::InRestartFileFlag);
-		generatedGR.initialise(dissolve.atomTypeList().nItems(), dissolve.atomTypeList().nItems(), true);
+		generatedGR.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
 		i = 0;
-		for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+		for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
 		{
 			j = i;
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
@@ -379,7 +379,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		if (created) deltaSQ.initialise(nTypes, nTypes, true);
 
 		i = 0;
-		for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+		for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
 		{
 			j = i;
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
@@ -442,7 +442,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			const double rFraction = 0.95;
 			const double thresholdValue = 0.1;
 			i = 0;
-			for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+			for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
 			{
 				j = i;
 				for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
@@ -475,7 +475,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		Data1D cr;
 		Array<double> crgr;
 		i = 0;
-		for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+		for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
 		{
 			j = i;
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
@@ -640,7 +640,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	 * Normalise and store our combined partial errors
 	 */
 	i = 0;
-	for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+	for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
 	{
 		j = i;
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
@@ -661,7 +661,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			const Array2D<Data1D>& groupDeltaPhiR = GenericListHelper< Array2D<Data1D> >::value(dissolve.processingModuleData(), CharString("DeltaPhiR_%s", group->name()), uniqueName_, Array2D<Data1D>());
 
 			i = 0;
-			for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+			for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
 			{
 				j = i;
 				for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
@@ -702,7 +702,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	 */
 	double phiMagTot = 0.0;
 	i = 0;
-	for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+	for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
 	{
 		j = i;
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)

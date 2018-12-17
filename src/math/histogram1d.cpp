@@ -237,19 +237,8 @@ const char* Histogram1D::itemClassName()
 	return "Histogram1D";
 }
 
-// Write data through specified LineParser
-bool Histogram1D::write(LineParser& parser)
-{
-	if (!parser.writeLineF("%s\n", objectTag())) return false;
-	if (!parser.writeLineF("%f %f %f\n", minimum_, maximum_, binWidth_)) return false;
-	if (!parser.writeLineF("%li  %li\n", nBinned_, nMissed_)) return false;
-	for (int n=0; n<nBins_; ++n) if (!averages_[n].write(parser)) return false;
-
-	return true;
-}
-
 // Read data through specified LineParser
-bool Histogram1D::read(LineParser& parser)
+bool Histogram1D::read(LineParser& parser, const CoreData& coreData)
 {
 	clear();
 
@@ -263,7 +252,18 @@ bool Histogram1D::read(LineParser& parser)
 	nBinned_ = parser.argli(0);
 	nMissed_ = parser.argli(1);
 
-	for (int n=0; n<nBins_; ++n) if (!averages_[n].read(parser)) return false;
+	for (int n=0; n<nBins_; ++n) if (!averages_[n].read(parser, coreData)) return false;
+
+	return true;
+}
+
+// Write data through specified LineParser
+bool Histogram1D::write(LineParser& parser)
+{
+	if (!parser.writeLineF("%s\n", objectTag())) return false;
+	if (!parser.writeLineF("%f %f %f\n", minimum_, maximum_, binWidth_)) return false;
+	if (!parser.writeLineF("%li  %li\n", nBinned_, nMissed_)) return false;
+	for (int n=0; n<nBins_; ++n) if (!averages_[n].write(parser)) return false;
 
 	return true;
 }

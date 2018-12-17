@@ -28,23 +28,41 @@
 // Add new Configuration
 Configuration* Dissolve::addConfiguration()
 {
-	Configuration* cfg = configurations_.add();
+	Configuration* cfg = coreData_.addConfiguration();
 
 	setUp_ = false;
 
 	return cfg;
 }
 
-// Return first Configuration in list
-const List<Configuration>& Dissolve::configurations() const
+// Return number of defined Configurations
+int Dissolve::nConfigurations() const
 {
-	return configurations_;
+	return coreData_.nConfigurations();
+}
+
+// Return Configuration list
+List<Configuration>& Dissolve::configurations()
+{
+	return coreData_.configurations();
+}
+
+// Return Configuration list (const)
+const List<Configuration>& Dissolve::constConfigurations() const
+{
+	return coreData_.configurations();
 }
 
 // Find configuration by name
-Configuration* Dissolve::findConfiguration(const char* name, bool useNiceName) const
+Configuration* Dissolve::findConfiguration(const char* name) const
 {
-	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next) if (DissolveSys::sameString(name, useNiceName ? cfg->niceName() : cfg->name())) return cfg;
+	return coreData_.findConfiguration(name);
+}
+
+// Find configuration by 'nice' name
+Configuration* Dissolve::findConfigurationByNiceName(const char* name) const
+{
+	for (Configuration* cfg = constConfigurations().first(); cfg != NULL; cfg = cfg->next) if (DissolveSys::sameString(name, cfg->niceName())) return cfg;
 
 	return NULL;
 }
@@ -100,7 +118,7 @@ bool Dissolve::writeConfiguration(Configuration* cfg, LineParser& parser)
 		Bond* b = cfg->bond(n);
 		molId = b->molecule() ? b->molecule()->arrayIndex() : -1;
 		spb = b->speciesBond();
-		if (!parser.writeLineF("%i %i %i %i %i\n", b->i()->arrayIndex(), b->j()->arrayIndex(), molId, species_.indexOf(spb->parent()), spb->parent()->bondIndex(spb))) return false;
+		if (!parser.writeLineF("%i %i %i %i %i\n", b->i()->arrayIndex(), b->j()->arrayIndex(), molId, species().indexOf(spb->parent()), spb->parent()->bondIndex(spb))) return false;
 	}
 
 	// Write all Angles - for each write Atom IDs (in global array), molecule ID, and parameter source
@@ -110,7 +128,7 @@ bool Dissolve::writeConfiguration(Configuration* cfg, LineParser& parser)
 		Angle* a = cfg->angle(n);
 		molId = a->molecule() ? a->molecule()->arrayIndex() : -1;
 		spa = a->speciesAngle();
-		if (!parser.writeLineF("%i %i %i %i %i %i\n", a->i()->arrayIndex(), a->j()->arrayIndex(), a->k()->arrayIndex(), molId, species_.indexOf(spa->parent()), spa->parent()->angleIndex(spa))) return false;
+		if (!parser.writeLineF("%i %i %i %i %i %i\n", a->i()->arrayIndex(), a->j()->arrayIndex(), a->k()->arrayIndex(), molId, species().indexOf(spa->parent()), spa->parent()->angleIndex(spa))) return false;
 	}
 
 	// Write all Torsions - for each write Atom IDs (in global array), molecule ID, and parameter source
@@ -120,7 +138,7 @@ bool Dissolve::writeConfiguration(Configuration* cfg, LineParser& parser)
 		Torsion* t = cfg->torsion(n);
 		molId = t->molecule() ? t->molecule()->arrayIndex() : -1;
 		spt = t->speciesTorsion();
-		if (!parser.writeLineF("%i %i %i %i %i %i %i\n", t->i()->arrayIndex(), t->j()->arrayIndex(), t->k()->arrayIndex(), t->l()->arrayIndex(), molId, species_.indexOf(spt->parent()), spt->parent()->torsionIndex(spt))) return false;
+		if (!parser.writeLineF("%i %i %i %i %i %i %i\n", t->i()->arrayIndex(), t->j()->arrayIndex(), t->k()->arrayIndex(), t->l()->arrayIndex(), molId, species().indexOf(spt->parent()), spt->parent()->torsionIndex(spt))) return false;
 	}
 
 	return true;
@@ -196,7 +214,7 @@ bool Dissolve::readConfiguration(Configuration* cfg, LineParser& parser)
 		bond = cfg->addBond(mol, parser.argi(0), parser.argi(1));
 
 		// Set parameters
-		bond->setSpeciesBond(species_[parser.argi(3)]->bond(parser.argi(4)));
+		bond->setSpeciesBond(species(parser.argi(3))->bond(parser.argi(4)));
 	}
 
 	// Read Angles
@@ -211,7 +229,7 @@ bool Dissolve::readConfiguration(Configuration* cfg, LineParser& parser)
 		angle = cfg->addAngle(mol, parser.argi(0), parser.argi(1), parser.argi(2));
 
 		// Set parameters
-		angle->setSpeciesAngle(species_[parser.argi(4)]->angle(parser.argi(5)));
+		angle->setSpeciesAngle(species(parser.argi(4))->angle(parser.argi(5)));
 	}
 
 	// Read Torsions
@@ -226,7 +244,7 @@ bool Dissolve::readConfiguration(Configuration* cfg, LineParser& parser)
 		torsion = cfg->addTorsion(mol, parser.argi(0), parser.argi(1), parser.argi(2), parser.argi(3));
 
 		// Set parameters
-		torsion->setSpeciesTorsion(species_[parser.argi(5)]->torsion(parser.argi(6)));
+		torsion->setSpeciesTorsion(species(parser.argi(5))->torsion(parser.argi(6)));
 	}
 
 	cfg->finaliseAfterLoad(worldPool(), pairPotentialRange_, nBoxNormalisationPoints_);

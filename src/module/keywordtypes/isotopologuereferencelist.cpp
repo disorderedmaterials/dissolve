@@ -62,7 +62,7 @@ int IsotopologueReferenceListModuleKeyword::maxArguments()
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool IsotopologueReferenceListModuleKeyword::read(LineParser& parser, int startArg, ProcessPool& procPool)
+bool IsotopologueReferenceListModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	// Find target Configuration (first argument)
 	Configuration* cfg = NULL;

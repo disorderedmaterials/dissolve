@@ -27,18 +27,19 @@
 #include "gui/delegates/usedspeciescombo.hui"
 #include "gui/helpers/tablewidgetupdater.h"
 #include "classes/configuration.h"
+#include "classes/coredata.h"
 #include "classes/species.h"
 #include "templates/genericlisthelper.h"
 #include "templates/variantpointer.h"
 
 // Constructor
-IsotopologueListKeywordWidget::IsotopologueListKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, GenericList& moduleData, const char* prefix) : KeywordDropDown(this), KeywordWidgetBase(moduleData, prefix)
+IsotopologueListKeywordWidget::IsotopologueListKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : KeywordDropDown(this), KeywordWidgetBase(coreData, moduleData, prefix)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container
 	ui.setupUi(dropWidget());
 
 	// Set delegates for table
-	ui.IsotopologueTable->setItemDelegateForColumn(0, new ComboListDelegate(this, new ComboNameListItems<Configuration>(List<Configuration>::masterInstance())));
+	ui.IsotopologueTable->setItemDelegateForColumn(0, new ComboListDelegate(this, new ComboNameListItems<Configuration>(coreData.constConfigurations())));
 	ui.IsotopologueTable->setItemDelegateForColumn(1, new UsedSpeciesComboDelegate(this));
 	ui.IsotopologueTable->setItemDelegateForColumn(2, new IsotopologueComboDelegate(this));
 	ui.IsotopologueTable->setItemDelegateForColumn(3, new TExponentialSpinDelegate(this));
@@ -54,7 +55,7 @@ IsotopologueListKeywordWidget::IsotopologueListKeywordWidget(QWidget* parent, Mo
 	else
 	{
 		// Set current information
-		updateWidgetValues();
+		updateWidgetValues(coreData_);
 	}
 
 	// Summary text on KeywordDropDown button
@@ -67,10 +68,12 @@ IsotopologueListKeywordWidget::IsotopologueListKeywordWidget(QWidget* parent, Mo
 
 void IsotopologueListKeywordWidget::addButton_clicked(bool checked)
 {
+	printf("NOT IMPLEMENTED YET\n");
 }
 
 void IsotopologueListKeywordWidget::removeButton_clicked(bool checked)
 {
+	printf("NOT IMPLEMENTED YET\n");
 }
 
 void IsotopologueListKeywordWidget::isotopologueTable_itemChanged(QTableWidgetItem* w)
@@ -89,7 +92,7 @@ void IsotopologueListKeywordWidget::isotopologueTable_itemChanged(QTableWidgetIt
 	{
 		// Configuration
 		case (0):
-			for (cfg = List<Configuration>::masterInstance().first(); cfg != NULL; cfg = cfg->next) if (DissolveSys::sameString(qPrintable(w->text()), cfg->name())) break;
+			cfg = coreData_.findConfiguration(qPrintable(w->text()));
 			if (cfg)
 			{
 				// Set new Configuration, and update Species and Isotopologue
@@ -114,7 +117,7 @@ void IsotopologueListKeywordWidget::isotopologueTable_itemChanged(QTableWidgetIt
 				Messenger::error("No valid Configuration, so can't set Species.\n");
 				break;
 			}
-			for (sp = List<Species>::masterInstance().first(); sp != NULL; sp = sp->next) if (DissolveSys::sameString(qPrintable(w->text()), sp->name())) break;
+			sp = coreData_.findSpecies(qPrintable(w->text()));
 			if (sp)
 			{
 				// Make sure this Species is referenced in the Configuration
@@ -206,11 +209,11 @@ void IsotopologueListKeywordWidget::updateTableRow(int row, IsotopologueReferenc
 // Update value displayed in widget, using specified source if necessary
 void IsotopologueListKeywordWidget::updateValue()
 {
-	updateWidgetValues();
+	updateWidgetValues(coreData_);
 }
 
 // Update widget values data based on keyword data
-void IsotopologueListKeywordWidget::updateWidgetValues()
+void IsotopologueListKeywordWidget::updateWidgetValues(const CoreData& coreData)
 {
 	refreshing_ = true;
 

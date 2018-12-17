@@ -30,31 +30,6 @@
 #include "version.h"
 #include <string.h>
 
-// Load Species from specified file
-bool Dissolve::loadSpecies(const char* filename)
-{
-	Species* newSpecies = addSpecies();
-	if (!newSpecies->loadFromXYZ(filename))
-	{
-		Messenger::print("Error loading from XYZ file.\n");
-		removeSpecies(newSpecies);
-		return false;
-	}
-	
-	// Centre coordinates at the origin
-	newSpecies->centreAtOrigin();
-
-	// Add an automatic GrainDefinition
-	Messenger::print("Adding automatic GrainDefinitions for '%s'...\n", newSpecies->name());
-	newSpecies->autoAddGrains();
-	
-	// Add the default (natural) Isotopologue
-	Messenger::print("Adding natural isotopologue...\n");
-	newSpecies->addIsotopologue("Natural");
-
-	return true;
-}
-
 // Load input file
 bool Dissolve::loadInput(const char* filename)
 {
@@ -88,7 +63,7 @@ bool Dissolve::loadInput(const char* filename)
 					error = true;
 					break;
 				}
-				cfg = configurations_.add();
+				cfg = addConfiguration();
 				cfg->setName(parser.argc(1));
 				Messenger::print("Created Configuration '%s'...\n", cfg->name());
 				if (!ConfigurationBlock::parse(parser, this, cfg)) error = true;
@@ -126,7 +101,7 @@ bool Dissolve::loadInput(const char* filename)
 						error = true;
 						break;
 					}
-					else if (findConfiguration(niceName, true))
+					else if (findConfigurationByNiceName(niceName))
 					{
 						Messenger::error("A Configuration with the unique name '%s' already exist, and so cannot be used as a Module name.\n", niceName.get());
 						error = true;
@@ -236,7 +211,7 @@ bool Dissolve::saveInput(const char* filename)
 
 	// Write Species data
 	parser.writeBannerComment("Define Species");
-	for (Species* sp = species_.first(); sp != NULL; sp = sp->next)
+	for (Species* sp = species().first(); sp != NULL; sp = sp->next)
 	{
 		parser.writeLineF("\n%s '%s'\n", BlockKeywords::blockKeyword(BlockKeywords::SpeciesBlockKeyword), sp->name());
 		
@@ -337,7 +312,7 @@ bool Dissolve::saveInput(const char* filename)
 	parser.writeLineF("  # Atom Type Parameters\n");
 	parser.writeLineF("  # Note: These are for reference only (unless GenerateAll is used).\n");
 	parser.writeLineF("  # If you wish to modify the potential, change the relevant Generate lines below.\n");
-	for (AtomType* atomType = atomTypes_.first(); atomType != NULL; atomType = atomType->next)
+	for (AtomType* atomType = atomTypes().first(); atomType != NULL; atomType = atomType->next)
 	{
 		CharString s("  %s  %s  %12.6e", PairPotentialsBlock::keyword(PairPotentialsBlock::ParametersKeyword), atomType->name(), atomType->parameters().charge());
 		for (int n=0; n<MAXSRPARAMETERS; ++n) s.strcatf("  %12.6e", atomType->parameters().parameter(n));
@@ -358,7 +333,7 @@ bool Dissolve::saveInput(const char* filename)
 
 	// Write Configurations
 	parser.writeBannerComment("Define Configurations");
-	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
+	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next)
 	{
 		parser.writeLineF("\n%s  '%s'\n", BlockKeywords::blockKeyword(BlockKeywords::ConfigurationBlockKeyword), cfg->name());
 		parser.writeLineF("  %s  %i\n", ConfigurationBlock::keyword(ConfigurationBlock::MultiplierKeyword), cfg->multiplier());
@@ -503,7 +478,7 @@ bool Dissolve::loadRestart(const char* filename)
 			GenericItem* item = cfg->moduleData().create(parser.argc(2), parser.argc(3));
 
 			// Read in the data
-			if ((!item) || (!item->read(parser)))
+			if ((!item) || (!item->read(parser, coreData_)))
 			{
 				Messenger::error("Failed to read item data '%s' from restart file.\n", item->name());
 				error = true;
@@ -518,7 +493,7 @@ bool Dissolve::loadRestart(const char* filename)
 			GenericItem* item = processingModuleData_.create(parser.argc(1), parser.argc(2));
 
 			// Read in the data
-			if ((!item) || (!item->read(parser)))
+			if ((!item) || (!item->read(parser, coreData_)))
 			{
 				Messenger::error("Failed to read item data '%s' from restart file.\n", item->name());
 				error = true;
@@ -595,7 +570,7 @@ bool Dissolve::saveRestart(const char* filename)
 	if (!parser.writeLineF("# Restart file written by Dissolve v%s at %s.\n", DISSOLVEVERSION, DissolveSys::currentTimeAndDate())) return false;
 
 	// Configuration Module Data
-	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
+	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next)
 	{
 		// Cycle over data store in the Configuration
 		for (GenericItem* item = cfg->moduleData().items(); item != NULL; item = item->next)
@@ -619,7 +594,7 @@ bool Dissolve::saveRestart(const char* filename)
 	}
 
 	// Configurations
-	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
+	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next)
 	{
 		if (!parser.writeLineF("Configuration  '%s'\n", cfg->name())) return false;
 		if (!writeConfiguration(cfg, parser)) return false;
@@ -628,7 +603,7 @@ bool Dissolve::saveRestart(const char* filename)
 	// Module timing information
 	RefList<Module,bool> writtenModules;
 	// -- Configuration Modules
-	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
+	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next)
 	{
 		ListIterator<ModuleReference> moduleIterator(cfg->modules().modules());
 		while (ModuleReference* modRef = moduleIterator.iterate())

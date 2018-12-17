@@ -28,7 +28,6 @@
 #include "base/processpool.h"
 #include "base/sysfunc.h"
 #include "templates/broadcastlist.h"
-#include "templates/listio.h"
 #include <string.h>
 
 // Constructor
@@ -300,16 +299,30 @@ const char* AtomTypeList::itemClassName()
 	return "AtomTypeList";
 }
 
+// Read data through specified LineParser
+bool AtomTypeList::read(LineParser& parser, const CoreData& coreData)
+{
+	types_.clear();
+
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	int nItems = parser.argi(0);
+	for (int n=0; n<nItems; ++n)
+	{
+		AtomTypeData* atd = types_.add();
+		if (!atd->read(parser, coreData)) return false;
+	}
+
+	return true;
+}
+
 // Write data through specified LineParser
 bool AtomTypeList::write(LineParser& parser)
 {
-	return ListIO<AtomTypeData>::write(types_, parser);
-}
+	if (!parser.writeLineF("%i  # nItems\n", types_.nItems())) return false;
+	ListIterator<AtomTypeData> atdIterator(types_);
+	while (AtomTypeData* atd = atdIterator.iterate()) if (!atd->write(parser)) return false;
 
-// Read data through specified LineParser
-bool AtomTypeList::read(LineParser& parser)
-{
-	return ListIO<AtomTypeData>::read(types_, parser);
+	return true;
 }
 
 /*

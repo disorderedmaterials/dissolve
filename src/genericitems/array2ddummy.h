@@ -65,7 +65,7 @@ template <> class GenericItemContainer< Array2D<DummyClass> > : public GenericIt
 		return false;
 	}
 	// Read data through specified parser
-	bool read(LineParser& parser)
+	bool read(LineParser& parser, const CoreData& coreData)
 	{
 		return false;
 	}

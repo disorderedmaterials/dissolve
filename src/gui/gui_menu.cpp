@@ -191,7 +191,8 @@ void DissolveWindow::on_SimulationImportSpeciesAction_triggered(bool checked)
 	if (inputFile.isEmpty()) return;
 
 	// Create a new, temporary Dissolve object, and attempt to load the file
-	Dissolve tempDissolve;
+	CoreData tempData;
+	Dissolve tempDissolve(tempData);
 	if (!tempDissolve.loadInput(qPrintable(inputFile)))
 	{
 		// TODO Message box

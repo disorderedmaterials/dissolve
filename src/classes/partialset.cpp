@@ -618,6 +618,43 @@ const char* PartialSet::itemClassName()
 	return "PartialSet";
 }
 
+// Read data through specified LineParser
+bool PartialSet::read(LineParser& parser, const CoreData& coreData)
+{
+	if (parser.readNextLine(LineParser::Defaults, objectNamePrefix_) != LineParser::Success) return false;
+	if (parser.readNextLine(LineParser::Defaults, abscissaUnits_) != LineParser::Success) return false;
+	if (parser.readNextLine(LineParser::Defaults, fingerprint_) != LineParser::Success) return false;
+
+	// Read atom types
+	atomTypes_.clear();
+	if (!atomTypes_.read(parser, coreData)) return false;
+	int nTypes = atomTypes_.nItems();
+
+	// Read partials
+	partials_.initialise(nTypes, nTypes, true);
+	boundPartials_.initialise(nTypes, nTypes, true);
+	unboundPartials_.initialise(nTypes, nTypes, true);
+	braggPartials_.initialise(nTypes, nTypes, true);
+	for (int typeI=0; typeI<nTypes; ++typeI)
+	{
+		for (int typeJ=typeI; typeJ<nTypes; ++typeJ)
+		{
+			if (!partials_.at(typeI, typeJ).read(parser, coreData)) return false;
+			if (!boundPartials_.at(typeI, typeJ).read(parser, coreData)) return false;
+			if (!unboundPartials_.at(typeI, typeJ).read(parser, coreData)) return false;
+			if (!braggPartials_.at(typeI, typeJ).read(parser, coreData)) return false;
+		}
+	}
+
+	// Read total
+	if (!total_.read(parser, coreData)) return false;
+
+	// Read empty bound flags
+	if (!GenericItemContainer< Array2D<bool> >::read(emptyBoundPartials_, parser)) return false;
+
+	return true;
+}
+
 // Write data through specified LineParser
 bool PartialSet::write(LineParser& parser)
 {
@@ -648,43 +685,6 @@ bool PartialSet::write(LineParser& parser)
 
 	// Write empty bound flags
 	if (!GenericItemContainer< Array2D<bool> >::write(emptyBoundPartials_, parser)) return false;
-
-	return true;
-}
-
-// Read data through specified LineParser
-bool PartialSet::read(LineParser& parser)
-{
-	if (parser.readNextLine(LineParser::Defaults, objectNamePrefix_) != LineParser::Success) return false;
-	if (parser.readNextLine(LineParser::Defaults, abscissaUnits_) != LineParser::Success) return false;
-	if (parser.readNextLine(LineParser::Defaults, fingerprint_) != LineParser::Success) return false;
-
-	// Read atom types
-	atomTypes_.clear();
-	if (!atomTypes_.read(parser)) return false;
-	int nTypes = atomTypes_.nItems();
-
-	// Read partials
-	partials_.initialise(nTypes, nTypes, true);
-	boundPartials_.initialise(nTypes, nTypes, true);
-	unboundPartials_.initialise(nTypes, nTypes, true);
-	braggPartials_.initialise(nTypes, nTypes, true);
-	for (int typeI=0; typeI<nTypes; ++typeI)
-	{
-		for (int typeJ=typeI; typeJ<nTypes; ++typeJ)
-		{
-			if (!partials_.at(typeI, typeJ).read(parser)) return false;
-			if (!boundPartials_.at(typeI, typeJ).read(parser)) return false;
-			if (!unboundPartials_.at(typeI, typeJ).read(parser)) return false;
-			if (!braggPartials_.at(typeI, typeJ).read(parser)) return false;
-		}
-	}
-
-	// Read total
-	if (!total_.read(parser)) return false;
-
-	// Read empty bound flags
-	if (!GenericItemContainer< Array2D<bool> >::read(emptyBoundPartials_, parser)) return false;
 
 	return true;
 }

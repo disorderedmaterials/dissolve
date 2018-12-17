@@ -61,7 +61,7 @@ int DataStoreModuleKeyword::maxArguments()
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool DataStoreModuleKeyword::read(LineParser& parser, int startArg, ProcessPool& procPool)
+bool DataStoreModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	Messenger::print("Reading test data '%s' from file '%s'...\n", parser.argc(startArg), parser.argc(startArg+1));
 

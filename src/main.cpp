@@ -35,8 +35,9 @@ int main(int argc, char **argv)
 	ProcessPool::initialiseMPI(&argc, &argv);
 #endif
 
-	// Instantiate main class
-	Dissolve dissolve;
+	// Instantiate main classes
+	CoreData coreData;
+	Dissolve dissolve(coreData);
 
 	// Parse CLI options...
 	int n = 1;

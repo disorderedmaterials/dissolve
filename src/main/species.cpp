@@ -27,19 +27,18 @@
 // Add a new Species to the list
 Species* Dissolve::addSpecies()
 {
-	// Create a new Species
-	Species* sp = species_.add();
+	Species* newSpecies = coreData_.addSpecies();
 
 	setUp_ = false;
 
-	return sp;
+	return newSpecies;
 }
 
 // Remove the specified Species from the list
 void Dissolve::removeSpecies(Species* sp)
 {
 	// Remove Species
-	species_.remove(sp);
+	coreData_.species().remove(sp);
 
 	setUp_ = false;
 }
@@ -47,34 +46,33 @@ void Dissolve::removeSpecies(Species* sp)
 // Return number of defined Species
 int Dissolve::nSpecies() const
 {
-	return species_.nItems();
+	return coreData_.nSpecies();
 }
 
 // Return Species list
 List<Species>& Dissolve::species()
 {
-	return species_;
+	return coreData_.species();
 }
 
 // Return nth Species in the list
 Species* Dissolve::species(int n)
 {
-	return species_[n];
+	return coreData_.species(n);
 }
 
 // Search for Species by name
 Species* Dissolve::findSpecies(const char* name) const
 {
-	for (Species* sp = species_.first(); sp != NULL; sp = sp->next) if (strcmp(name,sp->name()) == 0) return sp;
-	return NULL;
+	return coreData_.findSpecies(name);
 }
 
 // Update Species (or all) Isotopologues (or specified)
 void Dissolve::updateIsotopologues(Species* species, Isotopologue* iso)
 {
-	if (iso) iso->update(atomTypes_);
-	else if (species) species->updateIsotopologues(atomTypes_);
-	else for (species = species_.first(); species != NULL; species = species->next) species->updateIsotopologues(atomTypes_);
+	if (iso) iso->update(coreData_.atomTypes());
+	else if (species) species->updateIsotopologues(coreData_.atomTypes());
+	else for (species = coreData_.species().first(); species != NULL; species = species->next) species->updateIsotopologues(coreData_.atomTypes());
 }
 
 // Remove Isotopologue from Species

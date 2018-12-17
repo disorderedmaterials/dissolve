@@ -21,6 +21,7 @@
 
 #include "classes/atomtypelist.h"
 #include "classes/atomtype.h"
+#include "classes/coredata.h"
 #include "classes/isotopedata.h"
 #include "data/isotopes.h"
 #include "base/constants.h"
@@ -222,21 +223,11 @@ const char* AtomTypeData::atomTypeName() const
  * I/O
  */
 
-// Write data through specified LineParser
-bool AtomTypeData::write(LineParser& parser)
-{
-	// Line Contains: AtomType name, exchangeable flag, population, fraction, boundCoherent, and nIsotopes
-	if (!parser.writeLineF("%s %i %f %f %i\n", atomType_->name(), population_, fraction_, boundCoherent_, isotopes_.nItems())) return false;
-	ListIterator<IsotopeData> isotopeIterator(isotopes_);
-	while (IsotopeData* topeData = isotopeIterator.iterate()) if (!topeData->write(parser)) return false;
-	return true;
-}
-
 // Read data through specified LineParser
-bool AtomTypeData::read(LineParser& parser)
+bool AtomTypeData::read(LineParser& parser, const CoreData& coreData)
 {
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-	for (atomType_ = List<AtomType>::masterInstance().first(); atomType_ != NULL; atomType_ = atomType_->next) if (DissolveSys::sameString(atomType_->name(), parser.argc(0))) break;
+	atomType_ = coreData.findAtomType(parser.argc(0));
 	if (!atomType_) return false;
 	population_ = parser.argi(1);
 	fraction_ = parser.argd(2);
@@ -246,8 +237,18 @@ bool AtomTypeData::read(LineParser& parser)
 	for (int n = 0; n<nIso; ++n)
 	{
 		IsotopeData* tope = isotopes_.add();
-		if (!tope->read(parser)) return false;
+		if (!tope->read(parser, coreData)) return false;
 	}
+	return true;
+}
+
+// Write data through specified LineParser
+bool AtomTypeData::write(LineParser& parser)
+{
+	// Line Contains: AtomType name, exchangeable flag, population, fraction, boundCoherent, and nIsotopes
+	if (!parser.writeLineF("%s %i %f %f %i\n", atomType_->name(), population_, fraction_, boundCoherent_, isotopes_.nItems())) return false;
+	ListIterator<IsotopeData> isotopeIterator(isotopes_);
+	while (IsotopeData* topeData = isotopeIterator.iterate()) if (!topeData->write(parser)) return false;
 	return true;
 }
 

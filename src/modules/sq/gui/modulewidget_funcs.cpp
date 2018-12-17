@@ -169,7 +169,7 @@ void SQModuleWidget::setGraphDataTargets(SQModule* module)
 
 	// Add partials
 	int n = 0;
-	for (AtomType* at1 = dissolve_.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
+	for (AtomType* at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next, ++n)
 	{
 		int m = n;
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)

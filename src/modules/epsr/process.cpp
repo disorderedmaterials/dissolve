@@ -378,7 +378,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Set object names in combinedUnweightedSQ
 		i = 0;
-		for (AtomType* at1 = dissolve.atomTypes(); at1 != NULL; at1 = at1->next, ++i)
+		for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
 		{
 			j = i;
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j) combinedUnweightedSQ.at(i,j).setObjectTag(CharString("%s//UnweightedSQ//%s//%s-%s", uniqueName(), group->name(), at1->name(), at2->name()));
@@ -387,7 +387,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Realise storage for generated S(Q), and initialise a scattering matrix
 		Array2D<Data1D>& generatedSQ = GenericListHelper< Array2D<Data1D> >::realise(dissolve.processingModuleData(), "GeneratedSQ", uniqueName_, GenericItem::InRestartFileFlag);
 		ScatteringMatrix scatteringMatrix;
-		scatteringMatrix.initialise(dissolve.atomTypeList(), generatedSQ, uniqueName_, group->name());
+		scatteringMatrix.initialise(dissolve.atomTypes(), generatedSQ, uniqueName_, group->name());
 
 		// Add a row in the scattering matrix for each target in the group
 		targetIterator.restart();
@@ -460,7 +460,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Create the array
 		simulatedReferenceData_.createEmpty(combinedUnweightedSQ.linearArraySize());
 		i = 0;
-		for (AtomType* at1 = dissolve.atomTypes(); at1 != NULL; at1 = at1->next, ++i)
+		for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
 		{
 			j = i;
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
@@ -503,7 +503,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		if (testMode)
 		{
 			i = 0;
-			for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+			for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
 			{
 				j = i;
 				for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
@@ -524,9 +524,9 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		 */
 
 		Array2D<Data1D>& generatedGR = GenericListHelper< Array2D<Data1D> >::realise(dissolve.processingModuleData(), "GeneratedGR", uniqueName_, GenericItem::InRestartFileFlag);
-		generatedGR.initialise(dissolve.atomTypeList().nItems(), dissolve.atomTypeList().nItems(), true);
+		generatedGR.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
 		i = 0;
-		for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+		for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
 		{
 			j = i;
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
@@ -563,7 +563,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			
 			// Loop over pair potentials and retrieve the inverse weight from the scattering matrix
 			i = 0;
-			for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+			for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
 			{
 				j = i;
 				for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
@@ -594,7 +594,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		Array2D< Array<double> >& coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
 
 		i = 0;
-		for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+		for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
 		{
 			j = i;
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)

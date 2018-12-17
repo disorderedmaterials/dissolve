@@ -181,7 +181,7 @@ AnalysisNode::NodeExecutionResult AnalysisCalculateNode::execute(ProcessPool& pr
  */
 
 // Read structure from specified LineParser
-bool AnalysisCalculateNode::read(LineParser& parser, NodeContextStack& contextStack)
+bool AnalysisCalculateNode::read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack)
 {
 	// The current line in the parser must contain a label (name) for the node, and which must not currently exist on the context stack
 	if (parser.nArgs() != 2) return Messenger::error("A Calculate node must be given a suitable name.\n");

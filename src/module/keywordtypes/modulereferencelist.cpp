@@ -64,7 +64,7 @@ int ModuleReferenceListModuleKeyword::maxArguments()
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool ModuleReferenceListModuleKeyword::read(LineParser& parser, int startArg, ProcessPool& procPool)
+bool ModuleReferenceListModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	// Loop over arguments provided to the keyword
 	for (int n = startArg; n<parser.nArgs(); ++n)

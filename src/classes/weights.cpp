@@ -25,7 +25,6 @@
 #include "data/isotopes.h"
 #include "base/processpool.h"
 #include "base/lineparser.h"
-#include "templates/listio.h"
 #include "templates/broadcastlist.h"
 #include "genericitems/array2ddouble.h"
 
@@ -391,37 +390,23 @@ const char* Weights::itemClassName()
 	return "Weights";
 }
 
-// Write data through specified LineParser
-bool Weights::write(LineParser& parser)
-{
-	// Write AtomTypeList
-	if (!atomTypes_.write(parser)) return false;
-
-	// Write IsotopologueMix-tures
-	if (!ListIO<IsotopologueMix>::write(isotopologueMixtures_, parser)) return false;
-
-	// Write arrays using static methods in the relevant GenericItemContainer
-	if (!GenericItemContainer< Array2D<double> >::write(concentrationProducts_, parser)) return false;
-	if (!GenericItemContainer< Array2D<double> >::write(boundCoherentProducts_, parser)) return false;
-	if (!GenericItemContainer< Array2D<double> >::write(weights_, parser)) return false;
-	if (!GenericItemContainer< Array2D<double> >::write(boundWeights_, parser)) return false;
-
-	// Write averages
-	if (!parser.writeLineF("%f %f\n", boundCoherentAverageOfSquares_, boundCoherentSquareOfAverage_)) return false;
-
-	return true;
-}
-
 // Read data through specified LineParser
-bool Weights::read(LineParser& parser)
+bool Weights::read(LineParser& parser, const CoreData& coreData)
 {
 	clear();
 
 	// Read AtomTypeList
-	if (!atomTypes_.read(parser)) return false;
+	if (!atomTypes_.read(parser, coreData)) return false;
 
 	// Read IsotopologueMix-tures
-	if (!ListIO<IsotopologueMix>::read(isotopologueMixtures_, parser)) return false;
+	isotopologueMixtures_.clear();
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	int nItems = parser.argi(0);
+	for (int n=0; n<nItems; ++n)
+	{
+		IsotopologueMix* mix = isotopologueMixtures_.add();
+		if (!mix->read(parser, coreData)) return false;
+	}
 
 	// Read arrays using static methods in the relevant GenericItemContainer
 	if (!GenericItemContainer< Array2D<double> >::read(concentrationProducts_, parser)) return false;
@@ -433,6 +418,29 @@ bool Weights::read(LineParser& parser)
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	boundCoherentAverageOfSquares_ = parser.argd(0);
 	boundCoherentSquareOfAverage_ = parser.argd(1);
+
+	return true;
+}
+
+// Write data through specified LineParser
+bool Weights::write(LineParser& parser)
+{
+	// Write AtomTypeList
+	if (!atomTypes_.write(parser)) return false;
+
+	// Write IsotopologueMix-tures
+	if (!parser.writeLineF("%i  # nItems\n", isotopologueMixtures_.nItems())) return false;
+	ListIterator<IsotopologueMix> mixIterator(isotopologueMixtures_);
+	while (IsotopologueMix* mix = mixIterator.iterate()) if (!mix->write(parser)) return false;
+
+	// Write arrays using static methods in the relevant GenericItemContainer
+	if (!GenericItemContainer< Array2D<double> >::write(concentrationProducts_, parser)) return false;
+	if (!GenericItemContainer< Array2D<double> >::write(boundCoherentProducts_, parser)) return false;
+	if (!GenericItemContainer< Array2D<double> >::write(weights_, parser)) return false;
+	if (!GenericItemContainer< Array2D<double> >::write(boundWeights_, parser)) return false;
+
+	// Write averages
+	if (!parser.writeLineF("%f %f\n", boundCoherentAverageOfSquares_, boundCoherentSquareOfAverage_)) return false;
 
 	return true;
 }

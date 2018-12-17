@@ -182,7 +182,7 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 						error = true;
 						break;
 					}
-					else if (dissolve->findConfiguration(niceName, true))
+					else if (dissolve->findConfigurationByNiceName(niceName))
 					{
 						Messenger::error("A Configuration with the unique name '%s' already exist, and so cannot be used as a Module name.\n", niceName.get());
 						error = true;

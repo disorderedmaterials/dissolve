@@ -179,14 +179,8 @@ const char* SampledDouble::itemClassName()
 	return "SampledDouble";
 }
 
-// Write data through specified LineParser
-bool SampledDouble::write(LineParser& parser)
-{
-	return parser.writeLineF("%f  %i  %f\n", mean_, count_, m2_);
-}
-
 // Read data through specified LineParser
-bool SampledDouble::read(LineParser& parser)
+bool SampledDouble::read(LineParser& parser, const CoreData& coreData)
 {
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	mean_ = parser.argd(0);
@@ -194,6 +188,12 @@ bool SampledDouble::read(LineParser& parser)
 	m2_ = parser.argd(2);
 
 	return true;
+}
+
+// Write data through specified LineParser
+bool SampledDouble::write(LineParser& parser)
+{
+	return parser.writeLineF("%f  %i  %f\n", mean_, count_, m2_);
 }
 
 /*

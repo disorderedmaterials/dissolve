@@ -390,41 +390,8 @@ const char* Data2D::itemClassName()
 	return "Data2D";
 }
 
-// Write data through specified LineParser
-bool Data2D::write(LineParser& parser)
-{
-	if (!parser.writeLineF("%s\n", objectTag())) return false;
-
-	// Write axis sizes and errors flag
-	if (!parser.writeLineF("%i  %i  %s\n", x_.nItems(), y_.nItems(), DissolveSys::btoa(hasError_))) return false;
-
-	// Write x axis array
-	for (int x=0; x<x_.nItems(); ++x) if (!parser.writeLineF("%e\n", x_[x])) return false;
-
-	// Write y axis array
-	for (int y=0; y<y_.nItems(); ++y) if (!parser.writeLineF("%e\n", y_[y])) return false;
-
-	// Write values / errors
-	if (hasError_)
-	{
-		for (int x=0; x<x_.nItems(); ++x)
-		{
-			for (int y=0; y<y_.nItems(); ++y) if (!parser.writeLineF("%e  %e\n", values_.constAt(x,y), errors_.constAt(x,y))) return false;
-		}
-	}
-	else
-	{
-		for (int x=0; x<x_.nItems(); ++x)
-		{
-			for (int y=0; y<y_.nItems(); ++y) if (!parser.writeLineF("%e\n", values_.constAt(x,y))) return false;
-		}
-	}
-
-	return true;
-}
-
 // Read data through specified LineParser
-bool Data2D::read(LineParser& parser)
+bool Data2D::read(LineParser& parser, const CoreData& coreData)
 {
 	clear();
 
@@ -474,6 +441,39 @@ bool Data2D::read(LineParser& parser)
 				if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 				values_.at(x,y) = parser.argd(0);
 			}
+		}
+	}
+
+	return true;
+}
+
+// Write data through specified LineParser
+bool Data2D::write(LineParser& parser)
+{
+	if (!parser.writeLineF("%s\n", objectTag())) return false;
+
+	// Write axis sizes and errors flag
+	if (!parser.writeLineF("%i  %i  %s\n", x_.nItems(), y_.nItems(), DissolveSys::btoa(hasError_))) return false;
+
+	// Write x axis array
+	for (int x=0; x<x_.nItems(); ++x) if (!parser.writeLineF("%e\n", x_[x])) return false;
+
+	// Write y axis array
+	for (int y=0; y<y_.nItems(); ++y) if (!parser.writeLineF("%e\n", y_[y])) return false;
+
+	// Write values / errors
+	if (hasError_)
+	{
+		for (int x=0; x<x_.nItems(); ++x)
+		{
+			for (int y=0; y<y_.nItems(); ++y) if (!parser.writeLineF("%e  %e\n", values_.constAt(x,y), errors_.constAt(x,y))) return false;
+		}
+	}
+	else
+	{
+		for (int x=0; x<x_.nItems(); ++x)
+		{
+			for (int y=0; y<y_.nItems(); ++y) if (!parser.writeLineF("%e\n", values_.constAt(x,y))) return false;
 		}
 	}
 

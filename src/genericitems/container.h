@@ -66,9 +66,9 @@ template <class T> class GenericItemContainer : public GenericItem
 		return data.write(parser);
 	}
 	// Read data through specified parser
-	bool read(LineParser& parser)
+	bool read(LineParser& parser, const CoreData& coreData)
 	{
-		return data.read(parser);
+		return data.read(parser, coreData);
 	}
 
 

@@ -62,7 +62,7 @@ class ModuleReferenceListModuleKeyword : public ModuleKeywordBase, public Module
 	// Return maximum number of arguments accepted
 	int maxArguments();
 	// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-	bool read(LineParser& parser, int startArg, ProcessPool& procPool);
+	bool read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool);
 	// Write keyword data to specified LineParser
 	bool write(LineParser& parser, const char* prefix);
 };

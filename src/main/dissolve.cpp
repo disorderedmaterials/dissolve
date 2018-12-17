@@ -32,11 +32,8 @@
 #include "base/genericitem.h"
 #include "genericitems/genericitems.h"
 
-// List<T> Master Instances
-template <class T> List<T> List<T>::masterInstance_;
-
 // Constructor
-Dissolve::Dissolve() : atomTypes_(List<AtomType>::master()), species_(List<Species>::master()), configurations_(List<Configuration>::master())
+Dissolve::Dissolve(CoreData& coreData) : coreData_(coreData)
 {
 	clear();
 
@@ -57,6 +54,12 @@ Dissolve::~Dissolve()
  * Core
  */
 
+// Return reference to CoreData
+const CoreData& Dissolve::coreData() const
+{
+	return coreData_;
+}
+
 // Clear all data
 void Dissolve::clear()
 {
@@ -65,7 +68,7 @@ void Dissolve::clear()
 
 	// Atom Types
 	Messenger::printVerbose("Clearing Atom Types...\n");
-	atomTypes_.clear();
+	atomTypes().clear();
 
 	// Master Terms
 	Messenger::printVerbose("Clearing Master Terms...\n");
@@ -75,7 +78,7 @@ void Dissolve::clear()
 
 	// Species
 	Messenger::printVerbose("Clearing Species...\n");
-	species_.clear();
+	species().clear();
 
 	// PairPotentials
 	Messenger::printVerbose("Clearing Pair Potentials...\n");
@@ -88,7 +91,7 @@ void Dissolve::clear()
 
 	// Configurations
 	Messenger::printVerbose("Clearing Configurations...\n");
-	configurations_.clear();
+	configurations().clear();
 
 	// Simulation
 	Messenger::printVerbose("Clearing Simulation...\n");

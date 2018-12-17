@@ -23,7 +23,7 @@
 #include "templates/genericlisthelper.h"
 
 // Constructor
-BoolKeywordWidget::BoolKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, GenericList& moduleData, const char* prefix) : QCheckBox(parent), KeywordWidgetBase(moduleData, prefix)
+BoolKeywordWidget::BoolKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QCheckBox(parent), KeywordWidgetBase(coreData, moduleData, prefix)
 {
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<BoolModuleKeyword*>(keyword);

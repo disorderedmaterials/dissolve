@@ -23,7 +23,7 @@
 #include "templates/genericlisthelper.h"
 
 // Constructor
-IntegerKeywordWidget::IntegerKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, GenericList& moduleData, const char* prefix) : QSpinBox(parent), KeywordWidgetBase(moduleData, prefix)
+IntegerKeywordWidget::IntegerKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QSpinBox(parent), KeywordWidgetBase(coreData, moduleData, prefix)
 {
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<IntegerModuleKeyword*>(keyword);

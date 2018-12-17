@@ -355,7 +355,7 @@ void ForcefieldTab::updateControls()
 	ui.MasterTorsionsTable->resizeColumnsToContents();
 
 	// AtomTypes Table
-	TableWidgetUpdater<ForcefieldTab,AtomType> atomTypesUpdater(ui.AtomTypesTable, dissolve_.atomTypeList(), this, &ForcefieldTab::updateAtomTypesTableRow);
+	TableWidgetUpdater<ForcefieldTab,AtomType> atomTypesUpdater(ui.AtomTypesTable, dissolve_.atomTypes(), this, &ForcefieldTab::updateAtomTypesTableRow);
 	ui.AtomTypesTable->resizeColumnsToContents();
 
 	// PairPotentials

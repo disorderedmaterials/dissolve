@@ -66,7 +66,7 @@ template <> class GenericItemContainer<bool> : public GenericItem
 		return parser.writeLineF("%s\n", DissolveSys::btoa(data));
 	}
 	// Read data through specified parser
-	bool read(LineParser& parser)
+	bool read(LineParser& parser, const CoreData& coreData)
 	{
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 		data = parser.argb(0);

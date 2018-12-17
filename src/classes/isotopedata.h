@@ -25,6 +25,7 @@
 #include "templates/mpilistitem.h"
 
 // Forward Declarations
+class CoreData;
 class Isotope;
 class LineParser;
 
@@ -77,7 +78,7 @@ class IsotopeData : public MPIListItem<IsotopeData>
 	// Write data through specified LineParser
 	bool write(LineParser& parser);
 	// Read data through specified LineParser
-	bool read(LineParser& parser);
+	bool read(LineParser& parser, const CoreData& coreData);
 
 
 	/*

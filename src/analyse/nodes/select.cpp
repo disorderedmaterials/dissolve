@@ -25,6 +25,7 @@
 #include "analyse/nodecontextstack.h"
 #include "analyse/sitereference.h"
 #include "classes/configuration.h"
+#include "classes/coredata.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
@@ -295,7 +296,7 @@ bool AnalysisSelectNode::finalise(ProcessPool& procPool, Configuration* cfg, con
  */
 
 // Read structure from specified LineParser
-bool AnalysisSelectNode::read(LineParser& parser, NodeContextStack& contextStack)
+bool AnalysisSelectNode::read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack)
 {
 	// The current line in the parser may contain a specific label for the sites we are to select, which we set as our node name
 	setName(parser.nArgs() == 2 ? parser.argc(1) : contextStack.nextSelectName());
@@ -319,7 +320,7 @@ bool AnalysisSelectNode::read(LineParser& parser, NodeContextStack& contextStack
 			case (SelectNodeKeyword::DynamicSiteKeyword):
 				dynamicSiteNode = new AnalysisDynamicSiteNode(this);
 				dynamicSites_.add(dynamicSiteNode);
-				if (!dynamicSiteNode->read(parser, contextStack)) return false;
+				if (!dynamicSiteNode->read(parser, coreData, contextStack)) return false;
 				break;
 			case (SelectNodeKeyword::EndSelectKeyword):
 				return true;
@@ -346,7 +347,7 @@ bool AnalysisSelectNode::read(LineParser& parser, NodeContextStack& contextStack
 				// Create and parse a new branch
 				forEachBranch_ = new AnalysisSequenceNode("EndForEach");
 				forEachBranch_->setParent(parent());
-				if (!forEachBranch_->read(parser, contextStack)) return false;
+				if (!forEachBranch_->read(parser, coreData, contextStack)) return false;
 				break;
 			case (SelectNodeKeyword::SameMoleculeAsSiteKeyword):
 				if (sameMolecule_) return Messenger::error("Same molecule restriction has already been set, and cannot be set again.\n");
@@ -355,7 +356,7 @@ bool AnalysisSelectNode::read(LineParser& parser, NodeContextStack& contextStack
 				break;
 			case (SelectNodeKeyword::SiteKeyword):
 				// First argument is the target Species, second is a site within it
-				for (sp = List<Species>::masterInstance().first(); sp != NULL; sp = sp->next) if (DissolveSys::sameString(sp->name(), parser.argc(1))) break;
+				sp = coreData.findSpecies(parser.argc(1));
 
 				// Did we find the named Species?
 				if (sp)

@@ -320,25 +320,8 @@ const char* Histogram3D::itemClassName()
 	return "Histogram3D";
 }
 
-// Write data through specified LineParser
-bool Histogram3D::write(LineParser& parser)
-{
-	if (!parser.writeLineF("%s\n", objectTag())) return false;
-	if (!parser.writeLineF("%f %f %f %f %f %f %f %f %f\n", xMinimum_, xMaximum_, xBinWidth_, yMinimum_, yMaximum_, yBinWidth_, zMinimum_, zMaximum_, zBinWidth_)) return false;
-	if (!parser.writeLineF("%li  %li\n", nBinned_, nMissed_)) return false;
-	for (int x=0; x<nXBins_; ++x)
-	{
-		for (int y=0; y<nYBins_; ++y)
-		{
-			for (int z=0; z<nZBins_; ++z) if (!averages_.at(x,y,z).write(parser)) return false;
-		}
-	}
-
-	return true;
-}
-
 // Read data through specified LineParser
-bool Histogram3D::read(LineParser& parser)
+bool Histogram3D::read(LineParser& parser, const CoreData& coreData)
 {
 	clear();
 
@@ -356,7 +339,24 @@ bool Histogram3D::read(LineParser& parser)
 	{
 		for (int y=0; y<nYBins_; ++y)
 		{
-			for (int z=0; z<nZBins_; ++z) if (!averages_.at(x,y,z).read(parser)) return false;
+			for (int z=0; z<nZBins_; ++z) if (!averages_.at(x,y,z).read(parser, coreData)) return false;
+		}
+	}
+
+	return true;
+}
+
+// Write data through specified LineParser
+bool Histogram3D::write(LineParser& parser)
+{
+	if (!parser.writeLineF("%s\n", objectTag())) return false;
+	if (!parser.writeLineF("%f %f %f %f %f %f %f %f %f\n", xMinimum_, xMaximum_, xBinWidth_, yMinimum_, yMaximum_, yBinWidth_, zMinimum_, zMaximum_, zBinWidth_)) return false;
+	if (!parser.writeLineF("%li  %li\n", nBinned_, nMissed_)) return false;
+	for (int x=0; x<nXBins_; ++x)
+	{
+		for (int y=0; y<nYBins_; ++y)
+		{
+			for (int z=0; z<nZBins_; ++z) if (!averages_.at(x,y,z).write(parser)) return false;
 		}
 	}
 

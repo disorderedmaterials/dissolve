@@ -23,7 +23,7 @@
 #include "templates/genericlisthelper.h"
 
 // Constructor
-CharStringKeywordWidget::CharStringKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, GenericList& moduleData, const char* prefix) : QComboBox(parent), KeywordWidgetBase(moduleData, prefix)
+CharStringKeywordWidget::CharStringKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QComboBox(parent), KeywordWidgetBase(coreData, moduleData, prefix)
 {
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<CharStringModuleKeyword*>(keyword);

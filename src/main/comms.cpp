@@ -80,7 +80,7 @@ bool Dissolve::setUpMPIPools()
 
 	// Get relative atom counts between each configuration
 	Array<int> configSizes;
-	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next) configSizes.add(cfg->nAtoms());
+	for (Configuration* cfg = coreData_.configurations().first(); cfg != NULL; cfg = cfg->next) configSizes.add(cfg->nAtoms());
 // 	configSizes /= configSizes.min();
 
 	// Default pool - all world ranks
@@ -89,7 +89,7 @@ bool Dissolve::setUpMPIPools()
 
 	// Set up pool based on selected strategy
 	int cfgIndex = 0;
-	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
+	for (Configuration* cfg = coreData_.configurations().first(); cfg != NULL; cfg = cfg->next)
 	{
 		Messenger::print("Configuration '%s':\n", cfg->name());
 
@@ -101,19 +101,19 @@ bool Dissolve::setUpMPIPools()
 		else if (parallelStrategy_ == Dissolve::EvenStrategy)
 		{
 			// All processes divided equally amongst Configurations - do we have enough?
-			if (ProcessPool::nWorldProcesses() < configurations_.nItems())
+			if (ProcessPool::nWorldProcesses() < nConfigurations())
 			{
-				Messenger::error("Number of processes (%i) is less than the number of Configurations (%i) so Even strategy can't be employed.\n", ProcessPool::nWorldProcesses(), configurations_.nItems());
+				Messenger::error("Number of processes (%i) is less than the number of Configurations (%i) so Even strategy can't be employed.\n", ProcessPool::nWorldProcesses(), nConfigurations());
 				return false;
 			}
-			else if (ProcessPool::nWorldProcesses()%configurations_.nItems() != 0)
+			else if (ProcessPool::nWorldProcesses()%nConfigurations() != 0)
 			{
-				Messenger::error("Number of processes (%i) does not divide equally amongst the number of Configurations (%i) so Even strategy can't be employed.\n", ProcessPool::nWorldProcesses(), configurations_.nItems());
+				Messenger::error("Number of processes (%i) does not divide equally amongst the number of Configurations (%i) so Even strategy can't be employed.\n", ProcessPool::nWorldProcesses(), coreData_.nConfigurations());
 				return false;
 			}
 
 			// Create new pool
-			int procsPerConfig = ProcessPool::nWorldProcesses() / configurations_.nItems();
+			int procsPerConfig = ProcessPool::nWorldProcesses() / nConfigurations();
 			Array<int> poolProcesses;
 			for (int n=0; n<procsPerConfig; ++n) poolProcesses.add(procsPerConfig*cfgIndex + n);
 			if (!cfg->setUpProcessPool(poolProcesses)) return false;

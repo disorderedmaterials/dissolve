@@ -98,11 +98,11 @@ bool Analyser::execute(ProcessPool& procPool, Configuration* cfg, const char* pr
  */
 
 // Read structure from specified LineParser
-bool Analyser::read(LineParser& parser)
+bool Analyser::read(LineParser& parser, const CoreData& coreData)
 {
 	contextStack_.clear();
 
-	return rootSequence_.read(parser, contextStack_);
+	return rootSequence_.read(parser, coreData, contextStack_);
 }
 
 // Write structure to specified LineParser

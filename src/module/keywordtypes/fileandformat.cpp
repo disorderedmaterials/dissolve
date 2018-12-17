@@ -62,7 +62,7 @@ int FileAndFormatModuleKeyword::maxArguments()
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool FileAndFormatModuleKeyword::read(LineParser& parser, int startArg, ProcessPool& procPool)
+bool FileAndFormatModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	if (!data_.read(parser, startArg)) return Messenger::error("Failed to read file/format.\n");
 

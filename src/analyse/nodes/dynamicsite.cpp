@@ -24,6 +24,7 @@
 #include "analyse/nodecontextstack.h"
 #include "classes/atom.h"
 #include "classes/configuration.h"
+#include "classes/coredata.h"
 #include "classes/molecule.h"
 #include "classes/site.h"
 #include "data/elements.h"
@@ -143,7 +144,7 @@ AnalysisNode::NodeExecutionResult AnalysisDynamicSiteNode::execute(ProcessPool& 
  */
 
 // Read structure from specified LineParser
-bool AnalysisDynamicSiteNode::read(LineParser& parser, NodeContextStack& contextStack)
+bool AnalysisDynamicSiteNode::read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack)
 {
 	// Read until we encounter the EndExclude keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
@@ -158,11 +159,10 @@ bool AnalysisDynamicSiteNode::read(LineParser& parser, NodeContextStack& context
 			case (DynamicSiteNodeKeyword::AtomTypeKeyword):
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
-					AtomType* at;
-					for (at = List<AtomType>::masterInstance().first(); at != NULL; at = at->next) if (DissolveSys::sameString(parser.argc(n), at->name())) break;
+					AtomType* at = coreData.findAtomType(parser.argc(n));
 					if (!at) return Messenger::error("Unrecognised AtomType '%s' given to %s keyword.\n", parser.argc(n), dynamicSiteNodeKeyword(nk));
 					if (atomTypes_.contains(at)) return Messenger::error("Duplicate AtomType target given to %s keyword.\n", dynamicSiteNodeKeyword(nk));
-					atomTypes_.add(at, List<AtomType>::masterInstance().indexOf(at));
+					atomTypes_.add(at, coreData.constAtomTypes().indexOf(at));
 				}
 				break;
 			case (DynamicSiteNodeKeyword::ElementKeyword):

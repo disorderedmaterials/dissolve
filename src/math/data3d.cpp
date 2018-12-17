@@ -457,50 +457,8 @@ const char* Data3D::itemClassName()
 	return "Data3D";
 }
 
-// Write data through specified LineParser
-bool Data3D::write(LineParser& parser)
-{
-	if (!parser.writeLineF("%s\n", objectTag())) return false;
-
-	// Write axis sizes and errors flag
-	if (!parser.writeLineF("%i  %i  %i  %s\n", x_.nItems(), y_.nItems(), z_.nItems(), DissolveSys::btoa(hasError_))) return false;
-
-	// Write x axis array
-	for (int x=0; x<x_.nItems(); ++x) if (!parser.writeLineF("%e\n", x_[x])) return false;
-
-	// Write y axis array
-	for (int y=0; y<y_.nItems(); ++y) if (!parser.writeLineF("%e\n", y_[y])) return false;
-
-	// Write z axis array
-	for (int z=0; z<z_.nItems(); ++z) if (!parser.writeLineF("%e\n", z_[z])) return false;
-
-	// Write values / errors
-	if (hasError_)
-	{
-		for (int x=0; x<x_.nItems(); ++x)
-		{
-			for (int y=0; y<y_.nItems(); ++y)
-			{
-				for (int z=0; z<z_.nItems(); ++z) if (!parser.writeLineF("%e  %e\n", values_.constAt(x,y,z), errors_.constAt(x,y,z))) return false;
-			}
-		}
-	}
-	else
-	{
-		for (int x=0; x<x_.nItems(); ++x)
-		{
-			for (int y=0; y<y_.nItems(); ++y)
-			{
-				for (int z=0; z<z_.nItems(); ++z) if (!parser.writeLineF("%e\n", values_.constAt(x,y,z))) return false;
-			}
-		}
-	}
-
-	return true;
-}
-
 // Read data through specified LineParser
-bool Data3D::read(LineParser& parser)
+bool Data3D::read(LineParser& parser, const CoreData& coreData)
 {
 	clear();
 
@@ -563,6 +521,48 @@ bool Data3D::read(LineParser& parser)
 					if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 					values_.at(x,y,z) = parser.argd(0);
 				}
+			}
+		}
+	}
+
+	return true;
+}
+
+// Write data through specified LineParser
+bool Data3D::write(LineParser& parser)
+{
+	if (!parser.writeLineF("%s\n", objectTag())) return false;
+
+	// Write axis sizes and errors flag
+	if (!parser.writeLineF("%i  %i  %i  %s\n", x_.nItems(), y_.nItems(), z_.nItems(), DissolveSys::btoa(hasError_))) return false;
+
+	// Write x axis array
+	for (int x=0; x<x_.nItems(); ++x) if (!parser.writeLineF("%e\n", x_[x])) return false;
+
+	// Write y axis array
+	for (int y=0; y<y_.nItems(); ++y) if (!parser.writeLineF("%e\n", y_[y])) return false;
+
+	// Write z axis array
+	for (int z=0; z<z_.nItems(); ++z) if (!parser.writeLineF("%e\n", z_[z])) return false;
+
+	// Write values / errors
+	if (hasError_)
+	{
+		for (int x=0; x<x_.nItems(); ++x)
+		{
+			for (int y=0; y<y_.nItems(); ++y)
+			{
+				for (int z=0; z<z_.nItems(); ++z) if (!parser.writeLineF("%e  %e\n", values_.constAt(x,y,z), errors_.constAt(x,y,z))) return false;
+			}
+		}
+	}
+	else
+	{
+		for (int x=0; x<x_.nItems(); ++x)
+		{
+			for (int y=0; y<y_.nItems(); ++y)
+			{
+				for (int z=0; z<z_.nItems(); ++z) if (!parser.writeLineF("%e\n", values_.constAt(x,y,z))) return false;
 			}
 		}
 	}

@@ -499,22 +499,8 @@ const char* Data1D::itemClassName()
 	return "Data1D";
 }
 
-// Write data through specified LineParser
-bool Data1D::write(LineParser& parser)
-{
-	if (!parser.writeLineF("%s\n", objectTag())) return false;
-	if (!parser.writeLineF("%i %s\n", x_.nItems(), DissolveSys::btoa(hasError_))) return false;
-	if (hasError_)
-	{
-		for (int n=0; n<x_.nItems(); ++n) if (!parser.writeLineF("%f  %f  %f\n", x_[n], values_[n], errors_[n])) return false;
-	}
-	else for (int n=0; n<x_.nItems(); ++n) if (!parser.writeLineF("%f  %f\n", x_[n], values_[n])) return false;
-
-	return true;
-}
-
 // Read data through specified LineParser
-bool Data1D::read(LineParser& parser)
+bool Data1D::read(LineParser& parser, const CoreData& coreData)
 {
 	clear();
 
@@ -533,6 +519,20 @@ bool Data1D::read(LineParser& parser)
 		values_[n] = parser.argd(1);
 		if (hasError_) errors_[n] = parser.argd(2);
 	}
+
+	return true;
+}
+
+// Write data through specified LineParser
+bool Data1D::write(LineParser& parser)
+{
+	if (!parser.writeLineF("%s\n", objectTag())) return false;
+	if (!parser.writeLineF("%i %s\n", x_.nItems(), DissolveSys::btoa(hasError_))) return false;
+	if (hasError_)
+	{
+		for (int n=0; n<x_.nItems(); ++n) if (!parser.writeLineF("%f  %f  %f\n", x_[n], values_[n], errors_[n])) return false;
+	}
+	else for (int n=0; n<x_.nItems(); ++n) if (!parser.writeLineF("%f  %f\n", x_[n], values_[n])) return false;
 
 	return true;
 }

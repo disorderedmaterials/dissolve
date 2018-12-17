@@ -168,7 +168,7 @@ void Dissolve::updateCurrentPairPotentials()
 bool Dissolve::generateMissingPairPotentials(PairPotential::ShortRangeType srType)
 {
 	// Loop over all atomtype pairs and generate any missing potentials
-	for (AtomType* at1 = atomTypes_.first(); at1 != NULL; at1 = at1->next)
+	for (AtomType* at1 = coreData_.atomTypes().first(); at1 != NULL; at1 = at1->next)
 	{
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next)
 		{

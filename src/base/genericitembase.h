@@ -25,7 +25,7 @@
 #include "base/messenger.h"
 
 // Forward Declarations
-/* none */
+class CoreData;
 
 // Base function templates for a Class that is to be used as a GenericItem
 class GenericItemBase
@@ -49,10 +49,10 @@ class GenericItemBase
 	 * I/O
 	 */
 	public:
+	// Read data through specified parser
+	virtual bool read(LineParser& parser, const CoreData& coreData);
 	// Write data through specified parser
 	virtual bool write(LineParser& parser);
-	// Read data through specified parser
-	virtual bool read(LineParser& parser);
 };
 
 #endif

@@ -99,36 +99,6 @@ template <class T> class List
 
 
 	/*
-	 * Master Instance
-	 */
-	private:
-	// Static master instance for this List<T>
-	static List<T> masterInstance_;
-
-	public:
-	// Return reference to master instance for this List<T> (non-const)
-	static List<T>& master()
-	{
-		static bool retrieved = false;
-		if (retrieved)
-		{
-			Messenger::error("Master list for this type has already been retrieved, so refusing to give it out again.\n");
-			static List<T> dummy;
-			return dummy;
-		}
-
-		retrieved = true;
-
-		return masterInstance_;
-	}
-	// Return reference to master instance for this List<T>
-	static const List<T>& masterInstance()
-	{
-		return masterInstance_;
-	}
-
-
-	/*
 	 * Basic Data
 	 */
 	protected:

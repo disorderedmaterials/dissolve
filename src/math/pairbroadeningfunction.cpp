@@ -98,10 +98,10 @@ int PairBroadeningFunction::nFunctionParameters(FunctionType func)
  */
 
 // Read function data from LineParser source
-bool PairBroadeningFunction::readAsKeyword(LineParser& parser, int startArg)
+bool PairBroadeningFunction::readAsKeyword(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	// First argument is the form of the function, or a '&' to indicate that a full block-style definition of the data
-	if (DissolveSys::sameString("&", parser.argc(startArg))) return read(parser);
+	if (DissolveSys::sameString("&", parser.argc(startArg))) return read(parser, coreData);
 
 	PairBroadeningFunction::FunctionType funcType = PairBroadeningFunction::functionType(parser.argc(startArg));
 	if (funcType == PairBroadeningFunction::nFunctionTypes)
@@ -355,14 +355,8 @@ const char* PairBroadeningFunction::itemClassName()
 	return "PairBroadeningFunction";
 }
 
-// Write data through specified LineParser
-bool PairBroadeningFunction::write(LineParser& parser)
-{
-	return writeAsKeyword(parser, "");
-}
-
 // Read data through specified LineParser
-bool PairBroadeningFunction::read(LineParser& parser)
+bool PairBroadeningFunction::read(LineParser& parser, const CoreData& coreData)
 {
 	// First line is function name
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
@@ -407,6 +401,12 @@ bool PairBroadeningFunction::read(LineParser& parser)
 	}
 
 	return true;
+}
+
+// Write data through specified LineParser
+bool PairBroadeningFunction::write(LineParser& parser)
+{
+	return writeAsKeyword(parser, "");
 }
 
 /*

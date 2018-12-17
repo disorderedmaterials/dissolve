@@ -22,7 +22,7 @@
 #include "gui/keywordwidgets/base.h"
 
 // Constructor
-KeywordWidgetBase::KeywordWidgetBase(GenericList& moduleData, const char* prefix) : moduleData_(moduleData)
+KeywordWidgetBase::KeywordWidgetBase(const CoreData& coreData, GenericList& moduleData, const char* prefix) : coreData_(coreData), moduleData_(moduleData)
 {
 	modulePrefix_ = prefix;
 	refreshing_ = false;

@@ -20,6 +20,7 @@
 */
 
 #include "classes/isotopologuemix.h"
+#include "classes/coredata.h"
 #include "classes/species.h"
 #include "base/processpool.h"
 #include "base/lineparser.h"
@@ -195,25 +196,12 @@ const char* IsotopologueMix::itemClassName()
 	return "IsotopologueMix";
 }
 
-// Write data through specified LineParser
-bool IsotopologueMix::write(LineParser& parser)
-{
-	// Write Species name, integer population, and number of isotopologues in the mix
-	if (!parser.writeLineF("'%s'  %i  %i\n", species_->name(), speciesPopulation_, mix_.nItems())) return false;
-
-	// Write Isotopologues
-	RefListIterator<Isotopologue,double> mixIterator(mix_);
-	while (Isotopologue* top = mixIterator.iterate()) if (!parser.writeLineF("%s  %f\n", top->name(), mixIterator.currentData())) return false;
-
-	return true;
-}
-
 // Read data through specified LineParser
-bool IsotopologueMix::read(LineParser& parser)
+bool IsotopologueMix::read(LineParser& parser, const CoreData& coreData)
 {
 	// Read Species name
 	if (parser.getArgsDelim(LineParser::UseQuotes) != LineParser::Success) return false;
-	for (species_ = List<Species>::masterInstance().first(); species_ != NULL; species_ = species_->next) if (DissolveSys::sameString(species_->name(), parser.argc(0))) break;
+	species_ = coreData.findSpecies(parser.argc(0));
 	if (species_ == NULL)
 	{
 		Messenger::error("Failed to find Species '%s' while reading IsotopologueMix.\n", parser.argc(0));
@@ -234,6 +222,19 @@ bool IsotopologueMix::read(LineParser& parser)
 		}
 		mix_.add(top, parser.argd(1));
 	}
+
+	return true;
+}
+
+// Write data through specified LineParser
+bool IsotopologueMix::write(LineParser& parser)
+{
+	// Write Species name, integer population, and number of isotopologues in the mix
+	if (!parser.writeLineF("'%s'  %i  %i\n", species_->name(), speciesPopulation_, mix_.nItems())) return false;
+
+	// Write Isotopologues
+	RefListIterator<Isotopologue,double> mixIterator(mix_);
+	while (Isotopologue* top = mixIterator.iterate()) if (!parser.writeLineF("%s  %f\n", top->name(), mixIterator.currentData())) return false;
 
 	return true;
 }

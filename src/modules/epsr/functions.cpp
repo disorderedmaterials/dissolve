@@ -91,7 +91,7 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve& dissolve, EPSRModule::Exp
 	Array2D< Array<double> >& coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
 
 	i = 0;
-	for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+	for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
 	{
 		j = i;
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
@@ -148,7 +148,7 @@ double EPSRModule::absEnergyEP(Dissolve& dissolve)
 	double absEnergyEP = 0.0;
 
 	int i = 0;
-	for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+	for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
 	{
 		int j = i;
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)

@@ -188,7 +188,7 @@ bool AnalysisCollect2DNode::finalise(ProcessPool& procPool, Configuration* cfg, 
  */
 
 // Read structure from specified LineParser
-bool AnalysisCollect2DNode::read(LineParser& parser, NodeContextStack& contextStack)
+bool AnalysisCollect2DNode::read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack)
 {
 	// The current line in the parser must also contain a node name (which is not necessarily unique...)
 	if (parser.nArgs() != 2) return Messenger::error("A Collect2D node must be given a suitable name.\n");

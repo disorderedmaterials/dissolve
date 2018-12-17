@@ -65,7 +65,7 @@ template <> class GenericItemContainer< Vec3<double> > : public GenericItem
 		return parser.writeLineF("%16.9e %16.9e %16.9e\n", data.x, data.y, data.z);
 	}
 	// Read data through specified parser
-	bool read(LineParser& parser)
+	bool read(LineParser& parser, const CoreData& coreData)
 	{
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 		data = parser.arg3d(0);

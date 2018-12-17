@@ -44,7 +44,7 @@ ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dis
 
 	// Set item delegates for tables
 	// -- SpeciesInfo
-	ui.SpeciesInfoTable->setItemDelegateForColumn(0, new ComboListDelegate(this, new ComboNameListItems<Species>(List<Species>::masterInstance())));
+	ui.SpeciesInfoTable->setItemDelegateForColumn(0, new ComboListDelegate(this, new ComboNameListItems<Species>(dissolve.species())));
 	ui.SpeciesInfoTable->setItemDelegateForColumn(1, new TExponentialSpinDelegate(this));
 
 	// Ensure fonts for table headers are set correctly

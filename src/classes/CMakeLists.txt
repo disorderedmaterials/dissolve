@@ -24,6 +24,7 @@ add_library(classes
   configuration_contents.cpp
   configuration_sites.cpp
   configuration_upkeep.cpp
+  coredata.cpp
   datastore.cpp
   distributor.cpp
   empiricalformula.cpp
@@ -81,6 +82,7 @@ add_library(classes
   changedata.h
   changestore.h
   configuration.h
+  coredata.h
   datastore.h
   distributor.h
   empiricalformula.h

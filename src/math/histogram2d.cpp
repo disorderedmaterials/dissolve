@@ -283,22 +283,8 @@ const char* Histogram2D::itemClassName()
 	return "Histogram2D";
 }
 
-// Write data through specified LineParser
-bool Histogram2D::write(LineParser& parser)
-{
-	if (!parser.writeLineF("%s\n", objectTag())) return false;
-	if (!parser.writeLineF("%f %f %f %f %f %f\n", xMinimum_, xMaximum_, xBinWidth_, yMinimum_, yMaximum_, yBinWidth_)) return false;
-	if (!parser.writeLineF("%li  %li\n", nBinned_, nMissed_)) return false;
-	for (int x=0; x<nXBins_; ++x)
-	{
-		for (int y=0; y<nYBins_; ++y) if (!averages_.at(x,y).write(parser)) return false;
-	}
-
-	return true;
-}
-
 // Read data through specified LineParser
-bool Histogram2D::read(LineParser& parser)
+bool Histogram2D::read(LineParser& parser, const CoreData& coreData)
 {
 	clear();
 
@@ -314,7 +300,21 @@ bool Histogram2D::read(LineParser& parser)
 
 	for (int x=0; x<nXBins_; ++x)
 	{
-		for (int y=0; y<nYBins_; ++y) if (!averages_.at(x,y).read(parser)) return false;
+		for (int y=0; y<nYBins_; ++y) if (!averages_.at(x,y).read(parser, coreData)) return false;
+	}
+
+	return true;
+}
+
+// Write data through specified LineParser
+bool Histogram2D::write(LineParser& parser)
+{
+	if (!parser.writeLineF("%s\n", objectTag())) return false;
+	if (!parser.writeLineF("%f %f %f %f %f %f\n", xMinimum_, xMaximum_, xBinWidth_, yMinimum_, yMaximum_, yBinWidth_)) return false;
+	if (!parser.writeLineF("%li  %li\n", nBinned_, nMissed_)) return false;
+	for (int x=0; x<nXBins_; ++x)
+	{
+		for (int y=0; y<nYBins_; ++y) if (!averages_.at(x,y).write(parser)) return false;
 	}
 
 	return true;

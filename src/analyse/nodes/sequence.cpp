@@ -122,7 +122,7 @@ bool AnalysisSequenceNode::finalise(ProcessPool& procPool, Configuration* cfg, c
  */
 
 // Read structure from specified LineParser
-bool AnalysisSequenceNode::read(LineParser& parser, NodeContextStack& contextStack)
+bool AnalysisSequenceNode::read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack)
 {
 	// The sequence node now constructs a new context...
 	contextStack.push();
@@ -197,7 +197,7 @@ bool AnalysisSequenceNode::read(LineParser& parser, NodeContextStack& contextSta
 		newNode->setParent(parent());
 
 		// Read the new node
-		if (!newNode->read(parser, contextStack)) return Messenger::error("Failed to read analysis sequence.\n");
+		if (!newNode->read(parser, coreData, contextStack)) return Messenger::error("Failed to read analysis sequence.\n");
 	}
 
 	// Remove our context, since it is now 'out-of-scope'

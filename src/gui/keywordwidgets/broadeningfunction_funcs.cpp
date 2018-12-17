@@ -26,7 +26,7 @@
 #include <QComboBox>
 
 // Constructor
-BroadeningFunctionKeywordWidget::BroadeningFunctionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, GenericList& moduleData, const char* prefix) : KeywordDropDown(this), KeywordWidgetBase(moduleData, prefix)
+BroadeningFunctionKeywordWidget::BroadeningFunctionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : KeywordDropDown(this), KeywordWidgetBase(coreData, moduleData, prefix)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container
 	ui.setupUi(dropWidget());
@@ -57,7 +57,7 @@ BroadeningFunctionKeywordWidget::BroadeningFunctionKeywordWidget(QWidget* parent
 	else
 	{
 		// Set current information
-		updateWidgetValues();
+		updateWidgetValues(coreData_);
 	}
 }
 
@@ -72,7 +72,7 @@ void BroadeningFunctionKeywordWidget::functionCombo_currentIndexChanged(int inde
 
 	updateKeywordData();
 
-	updateWidgetValues();
+	updateWidgetValues(coreData_);
 
 	emit(keywordValueChanged());
 }
@@ -105,11 +105,11 @@ void BroadeningFunctionKeywordWidget::updateValue()
 
 	refreshing_ = false;
 
-	updateWidgetValues();
+	updateWidgetValues(coreData_);
 }
 
 // Update widget values data based on keyword data
-void BroadeningFunctionKeywordWidget::updateWidgetValues()
+void BroadeningFunctionKeywordWidget::updateWidgetValues(const CoreData& coreData)
 {
 	refreshing_ = true;
 

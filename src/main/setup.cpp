@@ -32,10 +32,10 @@ bool Dissolve::setUpSimulation()
 	 */
 
 	Messenger::print("*** Checking Species definitions...\n");
-	for (Species* sp = species_.first(); sp != NULL; sp = sp->next)
+	for (Species* sp = species().first(); sp != NULL; sp = sp->next)
 	{
 		Messenger::print("--- Species '%s'...\n", sp->name());
-		if (!sp->checkSetup(atomTypes_)) return false;
+		if (!sp->checkSetup(coreData_.atomTypes())) return false;
 	}
 
 	/*
@@ -45,7 +45,7 @@ bool Dissolve::setUpSimulation()
 	Messenger::print("\n");
 	Messenger::print("*** Setting up Configurations...\n");
 	int index = 0;
-	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next, ++index)
+	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next, ++index)
 	{
 		Messenger::print("*** Configuration %2i: '%s'\n", index, cfg->name());
 
@@ -90,7 +90,7 @@ bool Dissolve::setUpSimulation()
 	Messenger::print("\n");
 	Messenger::print("*** Setting up PairPotentials...\n");
 	int nMissingPots = 0;
-	for (AtomType* at1 = atomTypes_.first(); at1 != NULL; at1 = at1->next)
+	for (AtomType* at1 = coreData_.atomTypes().first(); at1 != NULL; at1 = at1->next)
 	{
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next)
 		{
@@ -119,8 +119,8 @@ bool Dissolve::setUpSimulation()
 	if (nMissingPots > 0) return false;
 
 	// Create PairPotential matrix
-	Messenger::print("Creating PairPotential matrix (%ix%i)...\n", atomTypes_.nItems(), atomTypes_.nItems());
-	if (!potentialMap_.initialise(atomTypes_, pairPotentials_, pairPotentialRange_)) return false;
+	Messenger::print("Creating PairPotential matrix (%ix%i)...\n", coreData_.nAtomTypes(), coreData_.nAtomTypes());
+	if (!potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_, pairPotentialRange_)) return false;
 
 	/*
 	 * Master Intramolecular Terms
@@ -130,12 +130,12 @@ bool Dissolve::setUpSimulation()
 	Messenger::print("*** Setting up Master Intramolecular Terms...\n");
 
 	// All master intramolecular terms must first be initialised with the number of AtomTypes present in the system
-	for (MasterIntra* b = masterBonds_.first(); b != NULL; b = b->next) b->initialiseUsageArray(atomTypes_.nItems());
-	for (MasterIntra* a = masterAngles_.first(); a != NULL; a = a->next) a->initialiseUsageArray(atomTypes_.nItems());
-	for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next) t->initialiseUsageArray(atomTypes_.nItems());
+	for (MasterIntra* b = masterBonds_.first(); b != NULL; b = b->next) b->initialiseUsageArray(coreData_.nAtomTypes());
+	for (MasterIntra* a = masterAngles_.first(); a != NULL; a = a->next) a->initialiseUsageArray(coreData_.nAtomTypes());
+	for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next) t->initialiseUsageArray(coreData_.nAtomTypes());
 
 	// Loop over Configurations, flagging any initial usage of master terms in the relevant MasterIntra usage array
-	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next, ++index)
+	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next, ++index)
 	{
 		// Bonds
 		DynamicArrayIterator<Bond> bondIterator(cfg->bonds());
@@ -163,13 +163,13 @@ bool Dissolve::setUpSimulation()
 		for (MasterIntra* b = masterBonds_.first(); b != NULL; b = b->next)
 		{
 			bool first = true;
-			for (int n=0; n<atomTypes_.nItems(); ++n)
+			for (int n=0; n<nAtomTypes(); ++n)
 			{
-				for (int m=n; m<atomTypes_.nItems(); ++m)
+				for (int m=n; m<nAtomTypes(); ++m)
 				{
 					if (b->usageCount(n, m) == 0) continue;
-					if (first) Messenger::print("     %-10s   %5s-%-5s   %i", b->name(), atomTypes_[n]->name(), atomTypes_[m]->name(), b->usageCount(n, m));
-					else Messenger::print("                  %5s-%-5s   %i", atomTypes_[n]->name(), atomTypes_[m]->name(), b->usageCount(n, m));
+					if (first) Messenger::print("     %-10s   %5s-%-5s   %i", b->name(), atomType(n)->name(), atomType(m)->name(), b->usageCount(n, m));
+					else Messenger::print("                  %5s-%-5s   %i", atomType(n)->name(), atomType(m)->name(), b->usageCount(n, m));
 					first = false;
 				}
 			}
@@ -194,13 +194,13 @@ bool Dissolve::setUpSimulation()
 		for (MasterIntra* a = masterAngles_.first(); a != NULL; a = a->next)
 		{
 			bool first = true;
-			for (int n=0; n<atomTypes_.nItems(); ++n)
+			for (int n=0; n<nAtomTypes(); ++n)
 			{
-				for (int m=n; m<atomTypes_.nItems(); ++m)
+				for (int m=n; m<nAtomTypes(); ++m)
 				{
 					if (a->usageCount(n, m) == 0) continue;
-					if (first) Messenger::print("     %-10s   %5s-?-%-5s   %i", a->name(), atomTypes_[n]->name(), atomTypes_[m]->name(), a->usageCount(n, m));
-					else Messenger::print("                  %5s-?-%-5s   %i", atomTypes_[n]->name(), atomTypes_[m]->name(), a->usageCount(n, m));
+					if (first) Messenger::print("     %-10s   %5s-?-%-5s   %i", a->name(), atomType(n)->name(), atomType(m)->name(), a->usageCount(n, m));
+					else Messenger::print("                  %5s-?-%-5s   %i", atomType(n)->name(), atomType(m)->name(), a->usageCount(n, m));
 					first = false;
 				}
 			}
@@ -245,7 +245,7 @@ bool Dissolve::setUpSimulation()
 	Messenger::print("*** Performing Module set-up...\n");
 
 	// Loop over configurations
-	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
+	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next)
 	{
 		// Loop over Modules
 		ListIterator<ModuleReference> moduleIterator(cfg->modules().modules());
@@ -271,7 +271,7 @@ bool Dissolve::setUpSimulation()
 	 */
 
 	Messenger::print("*** Defined Species\n");
-	for (Species* sp = species_.first(); sp != NULL; sp = sp->next)
+	for (Species* sp = species().first(); sp != NULL; sp = sp->next)
 	{
 		Messenger::print("--- Species '%s'...\n", sp->name());
 		sp->print();

@@ -27,6 +27,7 @@
 #include "templates/listitem.h"
 
 // Forward Declarations
+class CoreData;
 class ProcessPool;
 
 // Module Keyword Base Class
@@ -84,7 +85,7 @@ class ModuleKeywordBase : public ListItem<ModuleKeywordBase>
 	// Return maxnimum number of arguments accepted
 	virtual int maxArguments() = 0;
 	// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-	virtual bool read(LineParser& parser, int startArg, ProcessPool& procPool) = 0;
+	virtual bool read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool) = 0;
 	// Write keyword data to specified LineParser
 	virtual bool write(LineParser& parser, const char* prefix) = 0;
 

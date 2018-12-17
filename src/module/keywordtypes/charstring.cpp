@@ -66,7 +66,7 @@ int CharStringModuleKeyword::maxArguments()
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool CharStringModuleKeyword::read(LineParser& parser, int startArg, ProcessPool& procPool)
+bool CharStringModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	if (parser.hasArg(startArg))
 	{

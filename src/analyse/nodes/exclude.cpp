@@ -80,7 +80,7 @@ AnalysisNode::NodeExecutionResult AnalysisExcludeNode::execute(ProcessPool& proc
  */
 
 // Read structure from specified LineParser
-bool AnalysisExcludeNode::read(LineParser& parser, NodeContextStack& contextStack)
+bool AnalysisExcludeNode::read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack)
 {
 	// Read until we encounter the EndExclude keyword, or we fail for some reason
 	while (!parser.eofOrBlank())

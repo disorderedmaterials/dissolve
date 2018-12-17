@@ -27,7 +27,7 @@
 #include <QWidget>
 
 // Forward Declarations
-/* none */
+class CoreData;
 
 class KeywordDropDown : public QWidget
 {
@@ -68,7 +68,7 @@ class KeywordDropDown : public QWidget
 	// Set summary text on call button
 	void setSummaryText(const char* text);
 	// Update widget values data based on keyword data
-	virtual void updateWidgetValues() = 0;
+	virtual void updateWidgetValues(const CoreData& coreData) = 0;
 	// Update keyword data based on widget values
 	virtual void updateKeywordData() = 0;
 };

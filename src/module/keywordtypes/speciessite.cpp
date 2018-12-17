@@ -20,6 +20,7 @@
 */
 
 #include "module/keywordtypes/speciessite.h"
+#include "classes/coredata.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
 #include "templates/genericlisthelper.h"
@@ -61,11 +62,10 @@ int SpeciesSiteModuleKeyword::maxArguments()
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool SpeciesSiteModuleKeyword::read(LineParser& parser, int startArg, ProcessPool& procPool)
+bool SpeciesSiteModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	// Find target Species (first argument)
-	Species* sp = NULL;
-	for (sp = List<Species>::masterInstance().first(); sp != NULL; sp = sp->next) if (DissolveSys::sameString(parser.argc(startArg), sp->name())) break;
+	Species* sp = coreData.findSpecies(parser.argc(startArg));
 	if (!sp)
 	{
 		Messenger::error("Error setting SpeciesSite - no Species named '%s' exists.\n", parser.argc(startArg));

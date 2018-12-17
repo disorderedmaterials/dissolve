@@ -65,7 +65,7 @@ template <> class GenericItemContainer< Vec3<int> > : public GenericItem
 		return parser.writeLineF("%i  %i  %i\n", data.x, data.y, data.z);
 	}
 	// Read data through specified parser
-	bool read(LineParser& parser)
+	bool read(LineParser& parser, const CoreData& coreData)
 	{
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 		data = parser.arg3i(0);

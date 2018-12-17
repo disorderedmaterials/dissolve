@@ -68,13 +68,13 @@ template <class T> class GenericItemContainer< Array2D<T> > : public GenericItem
 		return true;
 	}
 	// Read data through specified parser
-	bool read(LineParser& parser)
+	bool read(LineParser& parser, const CoreData& coreData)
 	{
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 		int nRows = parser.argi(0), nColumns = parser.argi(1);
 		data.initialise(nRows, nColumns, parser.argb(2));
 
-		for (int n=0; n<data.linearArraySize(); ++n) if (!data.linearArray()[n].read(parser)) return false;
+		for (int n=0; n<data.linearArraySize(); ++n) if (!data.linearArray()[n].read(parser, coreData)) return false;
 		return true;
 	}
 

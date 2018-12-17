@@ -28,6 +28,7 @@
 // Forward Declarations
 class Analyser;
 class Configuration;
+class CoreData;
 class GenericList;
 class LineParser;
 class ProcessPool;
@@ -97,7 +98,7 @@ class AnalysisNode : public ListItem<AnalysisNode>
 	 */
 	public:
 	// Read structure from specified LineParser
-	virtual bool read(LineParser& parser, NodeContextStack& contextStack) = 0;
+	virtual bool read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack) = 0;
 	// Write structure to specified LineParser
 	virtual bool write(LineParser& parser, const char* prefix) = 0;
 };

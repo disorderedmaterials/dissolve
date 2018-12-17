@@ -310,7 +310,7 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 	{
 		// Add experimentally-determined partial S(Q), calculated partial S(Q), and delta S(Q) to the SQGraph_
 		n = 0;
-		for (AtomType* at1 = dissolve_.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
+		for (AtomType* at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next, ++n)
 		{
 			m = n;
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
@@ -349,7 +349,7 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 	}
 
 	n = 0;
-	for (AtomType* at1 = dissolve_.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
+	for (AtomType* at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next, ++n)
 	{
 		m = n;
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)

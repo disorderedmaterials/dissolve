@@ -25,6 +25,7 @@
 #include "data/elements.h"
 #include "module/module.h"
 #include "classes/configuration.h"
+#include "classes/coredata.h"
 #include "classes/pairpotential.h"
 #include "classes/potentialmap.h"
 #include "classes/masterintra.h"
@@ -44,7 +45,7 @@ class Dissolve
 {
 	public:
 	// Constructor
-	Dissolve();
+	Dissolve(CoreData& coreData);
 	// Destructor
 	~Dissolve();
 
@@ -53,10 +54,14 @@ class Dissolve
 	 * Core
 	 */
 	private:
+	// Reference to CoreData 
+	CoreData& coreData_;
 	// Whether we are set up, ready for simulation
 	bool setUp_;
 
 	public:
+	// Return reference to CoreData
+	const CoreData& coreData() const;
 	// Clear all data
 	void clear();
 	// Register GenericItems
@@ -69,20 +74,15 @@ class Dissolve
 
 	/*
 	 * Atom Types
+	 * (Exposes List<AtomType> in coreData_)
 	 */
-	private:
-	// Master list of allowed AtomTypes for all Species (referenced from List<T>::masterInstance_)
-	List<AtomType>& atomTypes_;
-	
 	public:
 	// Add AtomType with specified Element
 	AtomType* addAtomType(Element* el);
 	// Return number of AtomTypes in list
 	int nAtomTypes() const;
-	// Return first AtomType in list
-	AtomType* atomTypes() const;
 	// Return AtomTypes list
-	const List<AtomType>& atomTypeList() const;
+	List<AtomType>& atomTypes();
 	// Return nth AtomType in list
 	AtomType* atomType(int n);
 	// Generate unique AtomType name with base name provided
@@ -137,11 +137,8 @@ class Dissolve
 
 	/*
 	 * Species Definitions
+	 * (Exposes List<Species> in coreData_)
 	 */
-	private:
-	// Master List of defined Species (referenced from List<T>::masterInstance_)
-	List<Species>& species_;
-	
 	public:
 	// Add a new Species to the list
 	Species* addSpecies();
@@ -221,18 +218,21 @@ class Dissolve
 
 	/*
 	 * Configurations
+	 * (Exposes List<Configuration> in coreData_)
 	 */
-	private:
-	// Master lst of all atomic configurations (referenced from List<T>::masterInstance_)
-	List<Configuration>& configurations_;
-
 	public:
 	// Add new Configuration
 	Configuration* addConfiguration();
-	// Return first Configuration in list
-	const List<Configuration>& configurations() const;
+	// Return number of defined Configurations
+	int nConfigurations() const;
+	// Return Configuration list
+	List<Configuration>& configurations();
+	// Return Configuration list (const)
+	const List<Configuration>& constConfigurations() const;
 	// Find configuration by name
-	Configuration* findConfiguration(const char* name, bool useNiceName = false) const;
+	Configuration* findConfiguration(const char* name) const;
+	// Find configuration by 'nice' name
+	Configuration* findConfigurationByNiceName(const char* name) const;
 	// Write Configuration through specified LineParser
 	bool writeConfiguration(Configuration* cfg, LineParser& parser);
 	// Read Configuration through specified LineParser
@@ -309,8 +309,6 @@ class Dissolve
 	SampledDouble saveRestartTimes_;
 
 	public:
-	// Load Species from specified file
-	bool loadSpecies(const char* filename);
 	// Load input file
 	bool loadInput(const char* filename);
 	// Save input file

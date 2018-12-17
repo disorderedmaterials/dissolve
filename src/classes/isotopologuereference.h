@@ -22,6 +22,7 @@
 #ifndef DISSOLVE_ISOTOPOLOGUEREFERENCE_H
 #define DISSOLVE_ISOTOPOLOGUEREFERENCE_H
 
+#include "base/genericitembase.h"
 #include "templates/listitem.h"
 
 // Forward Declarations
@@ -32,7 +33,7 @@ class LineParser;
 class ProcessPool;
 
 // Isotopologue Reference
-class IsotopologueReference : public ListItem<IsotopologueReference>
+class IsotopologueReference : public ListItem<IsotopologueReference>, public GenericItemBase
 {
 	public:
 	// Constructor
@@ -81,10 +82,10 @@ class IsotopologueReference : public ListItem<IsotopologueReference>
 	public:
 	// Return class name
 	static const char* itemClassName();
+	// Read data through specified LineParser
+	bool read(LineParser& parser, const CoreData& coreData);
 	// Write data through specified LineParser
 	bool write(LineParser& parser);
-	// Read data through specified LineParser
-	bool read(LineParser& parser);
 
 
 	/*

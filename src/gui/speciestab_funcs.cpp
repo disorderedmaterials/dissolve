@@ -46,7 +46,7 @@ SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabW
 	// Set item delegates in tables
 	// -- SpeciesAtomTable
 	for (int n=1; n<5; ++n) ui.AtomTable->setItemDelegateForColumn(n, new TExponentialSpinDelegate(this));
-	ui.AtomTable->setItemDelegateForColumn(5, new ComboListDelegate(this, new ComboNameListItems<AtomType>(dissolve_.atomTypeList())));
+	ui.AtomTable->setItemDelegateForColumn(5, new ComboListDelegate(this, new ComboNameListItems<AtomType>(dissolve_.atomTypes())));
 	ui.AtomTable->horizontalHeader()->setFont(font());
 	// -- Isotope Table
 	ui.IsotopeTable->setItemDelegateForColumn(1, new IsotopeComboDelegate(this));

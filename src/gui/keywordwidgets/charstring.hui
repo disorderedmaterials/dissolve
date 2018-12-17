@@ -36,7 +36,7 @@ class CharStringKeywordWidget : public QComboBox, public KeywordWidgetBase
 
 	public:
 	// Constructor
-	CharStringKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, GenericList& moduleData, const char* prefix);
+	CharStringKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
 
 
 	/*

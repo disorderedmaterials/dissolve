@@ -26,7 +26,7 @@
 #include <QComboBox>
 
 // Constructor
-PairBroadeningFunctionKeywordWidget::PairBroadeningFunctionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, GenericList& moduleData, const char* prefix) : KeywordDropDown(this), KeywordWidgetBase(moduleData, prefix)
+PairBroadeningFunctionKeywordWidget::PairBroadeningFunctionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : KeywordDropDown(this), KeywordWidgetBase(coreData, moduleData, prefix)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container
 	ui.setupUi(dropWidget());
@@ -49,7 +49,7 @@ PairBroadeningFunctionKeywordWidget::PairBroadeningFunctionKeywordWidget(QWidget
 	else
 	{
 		// Set current information
-		updateWidgetValues();
+		updateWidgetValues(coreData_);
 	}
 }
 
@@ -64,7 +64,7 @@ void PairBroadeningFunctionKeywordWidget::functionRadioChanged(bool checked)
 
 	updateKeywordData();
 
-	updateWidgetValues();
+	updateWidgetValues(coreData_);
 
 	emit(keywordValueChanged());
 }
@@ -97,11 +97,11 @@ void PairBroadeningFunctionKeywordWidget::updateValue()
 
 	refreshing_ = false;
 
-	updateWidgetValues();
+	updateWidgetValues(coreData_);
 }
 
 // Update widget values data based on keyword data
-void PairBroadeningFunctionKeywordWidget::updateWidgetValues()
+void PairBroadeningFunctionKeywordWidget::updateWidgetValues(const CoreData& coreData)
 {
 	refreshing_ = true;
 

@@ -224,7 +224,7 @@ bool AnalysisFit1DNode::finalise(ProcessPool& procPool, Configuration* cfg, cons
  */
 
 // Read structure from specified LineParser
-bool AnalysisFit1DNode::read(LineParser& parser, NodeContextStack& contextStack)
+bool AnalysisFit1DNode::read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack)
 {
 	// The current line in the parser may contain a node name for us
 	if (parser.nArgs() == 2) setName(parser.argc(1));

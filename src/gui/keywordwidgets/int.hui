@@ -36,7 +36,7 @@ class IntegerKeywordWidget : public QSpinBox, public KeywordWidgetBase
 
 	public:
 	// Constructor
-	IntegerKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, GenericList& moduleData, const char* prefix);
+	IntegerKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
 
 
 	/*

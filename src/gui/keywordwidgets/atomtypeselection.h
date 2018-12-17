@@ -38,7 +38,7 @@ class AtomTypeSelectionKeywordWidget : public KeywordDropDown, public KeywordWid
 
 	public:
 	// Constructor
-	AtomTypeSelectionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, GenericList& moduleData, const char* prefix);
+	AtomTypeSelectionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
         // Main form declaration
         Ui::AtomTypeSelectionWidget ui;
 
@@ -74,7 +74,7 @@ class AtomTypeSelectionKeywordWidget : public KeywordDropDown, public KeywordWid
 	// Update value displayed in widget, using specified source if necessary
 	void updateValue();
 	// Update widget values data based on keyword data
-	void updateWidgetValues();
+	void updateWidgetValues(const CoreData& coreData);
 	// Update keyword data based on widget values
 	void updateKeywordData();
 };

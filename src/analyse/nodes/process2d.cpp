@@ -222,7 +222,7 @@ bool AnalysisProcess2DNode::finalise(ProcessPool& procPool, Configuration* cfg, 
  */
 
 // Read structure from specified LineParser
-bool AnalysisProcess2DNode::read(LineParser& parser, NodeContextStack& contextStack)
+bool AnalysisProcess2DNode::read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack)
 {
 	// The current line in the parser may contain a node name for us
 	if (parser.nArgs() == 2) setName(parser.argc(1));
