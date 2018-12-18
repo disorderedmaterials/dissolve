@@ -25,10 +25,6 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Static Members
-int Module::staticLogPoint_ = 0;
-int Module::staticBroadcastPoint_ = 0;
-
 // Constructor
 Module::Module()
 {

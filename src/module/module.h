@@ -178,12 +178,8 @@ class Module : public ListItem<Module>
 	protected:
 	// Logpoint for instance-local data
 	int logPoint_;
-	// Logpoint for static data, shared across all instances
-	static int staticLogPoint_;
 	// Logpoint reflecting time of last broadcast of instance-local data
 	int broadcastPoint_;
-	// Logpoint reflecting time of last broadcast of static data (shared across all instances)
-	static int staticBroadcastPoint_;
 
 
 	/*

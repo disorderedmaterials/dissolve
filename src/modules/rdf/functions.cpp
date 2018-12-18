@@ -495,7 +495,6 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 	 */
 	
 	originalgr.setFingerprint(CharString("%i", cfg->coordinateIndex()));
-	++staticLogPoint_;
 
 	return true;
 }
