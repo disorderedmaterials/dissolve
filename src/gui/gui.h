@@ -212,7 +212,7 @@ class DissolveWindow : public QMainWindow
 
 
 	/*
-	 *  'Simulation' Stack Page - Run Control
+	 * 'Simulation' Stack Page - Run Control
 	 */
 	private:
 	// Pointer to Forcefield tab
@@ -276,7 +276,7 @@ class DissolveWindow : public QMainWindow
 
 
 	/*
-	 *  'Simulation' Stack Page - Run Control
+	 * 'Simulation' Stack Page - Run Control
 	 */
 	private:
 	// Filename containing current window layout
