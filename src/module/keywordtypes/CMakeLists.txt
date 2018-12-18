@@ -10,6 +10,7 @@ add_library(keywordtypes
   fileandformat.cpp
   int.cpp
   isotopologuelist.cpp
+  modulegroups.cpp
   modulereferencelist.cpp
   pairbroadeningfunction.cpp
   speciessite.cpp
@@ -26,6 +27,7 @@ add_library(keywordtypes
   fileandformat.h
   int.h
   isotopologuelist.h
+  modulegroups.h
   modulereferencelist.h
   pairbroadeningfunction.h
   speciessite.h
