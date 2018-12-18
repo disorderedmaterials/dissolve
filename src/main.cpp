@@ -22,7 +22,6 @@
 #include "version.h"
 #include "base/messenger.h"
 #include "main/dissolve.h"
-#include "module/registry.h"
 #include "base/processpool.h"
 #include <time.h>
 #include <ctime>
@@ -171,8 +170,8 @@ int main(int argc, char **argv)
 
 	// Check module registration 
 	Messenger::banner("Available Modules");
-	ModuleList::printMasterModuleInformation();
-	if (ModuleList::nFailedRegistrations() > 0)
+	dissolve.printMasterModuleInformation();
+	if (dissolve.nFailedModuleRegistrations() > 0)
 	{
 		ProcessPool::finalise();
 		Messenger::ceaseRedirect();

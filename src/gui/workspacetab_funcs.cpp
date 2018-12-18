@@ -342,6 +342,45 @@ SubWindow* WorkspaceTab::addNamedWidget(const char* widgetName, const char* titl
  * State
  */
 
+// Read widget state through specified LineParser
+bool WorkspaceTab::readState(LineParser& parser, const CoreData& coreData)
+{
+	// Read tab state information:   nSubWindows
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	const int nWidgets = parser.argi(0);
+
+	// Read in widgets
+	for (int n=0; n<nWidgets; ++n)
+	{
+		// Read line from the file, which should contain the window type, title, and any identifying info
+		if (parser.getArgsDelim(LineParser::UseQuotes) != LineParser::Success) return false;
+		SubWindow* subWindow = NULL;
+		if (DissolveSys::sameString(parser.argc(1), "ModuleControl"))
+		{
+			// Create a new ModuleControl widget - the target module's unique name is the title of the window
+			Module* module = coreData.findModule(parser.argc(0));
+			if (!module) return Messenger::error("Module '%s' could not be located and added to workspace '%s'.\n", parser.argc(0), title());
+			subWindow = addModuleControlWidget(module);
+		}
+		else subWindow = addNamedWidget(parser.argc(1), parser.argc(0));
+		
+		if (subWindow == NULL) return Messenger::error("Unrecognised widget type '%s' in workspace '%s'.\n", parser.argc(1), title());
+
+		// Read in the widget's geometry / state / flags
+		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+		QMdiSubWindow* window = subWindow->window();
+		window->setGeometry(parser.argi(0), parser.argi(1), parser.argi(2), parser.argi(3));
+		// -- Is the window maximised, or shaded?
+		if (parser.argb(4)) window->showMaximized();
+		else if (parser.argb(5)) window->showShaded();
+
+		// Now call the widget's local readState()
+		if (!subWindow->subWidget()->readState(parser)) return false;
+	}
+
+	return true;
+}
+
 // Write widget state through specified LineParser
 bool WorkspaceTab::writeState(LineParser& parser)
 {
@@ -361,45 +400,6 @@ bool WorkspaceTab::writeState(LineParser& parser)
 
 		// Write widget-specific state information
 		if (!subWindow->subWidget()->writeState(parser)) return false;
-	}
-
-	return true;
-}
-
-// Read widget state through specified LineParser
-bool WorkspaceTab::readState(LineParser& parser)
-{
-	// Read tab state information:   nSubWindows
-	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-	const int nWidgets = parser.argi(0);
-
-	// Read in widgets
-	for (int n=0; n<nWidgets; ++n)
-	{
-		// Read line from the file, which should contain the window type, title, and any identifying info
-		if (parser.getArgsDelim(LineParser::UseQuotes) != LineParser::Success) return false;
-		SubWindow* subWindow = NULL;
-		if (DissolveSys::sameString(parser.argc(1), "ModuleControl"))
-		{
-			// Create a new ModuleControl widget - the target module's unique name is the title of the window
-			Module* module = ModuleList::findInstanceByUniqueName(parser.argc(0));
-			if (!module) return Messenger::error("Module '%s' could not be located and added to workspace '%s'.\n", parser.argc(0), title());
-			subWindow = addModuleControlWidget(module);
-		}
-		else subWindow = addNamedWidget(parser.argc(1), parser.argc(0));
-		
-		if (subWindow == NULL) return Messenger::error("Unrecognised widget type '%s' in workspace '%s'.\n", parser.argc(1), title());
-
-		// Read in the widget's geometry / state / flags
-		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-		QMdiSubWindow* window = subWindow->window();
-		window->setGeometry(parser.argi(0), parser.argi(1), parser.argi(2), parser.argi(3));
-		// -- Is the window maximised, or shaded?
-		if (parser.argb(4)) window->showMaximized();
-		else if (parser.argb(5)) window->showShaded();
-
-		// Now call the widget's local readState()
-		if (!subWindow->subWidget()->readState(parser)) return false;
 	}
 
 	return true;

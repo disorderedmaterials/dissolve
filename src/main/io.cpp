@@ -73,7 +73,7 @@ bool Dissolve::loadInput(const char* filename)
 				break;
 			case (BlockKeywords::ModuleBlockKeyword):
 				// The argument following the keyword is the module name
-				masterInstance = ModuleList::findMasterInstance(parser.argc(1));
+				masterInstance = moduleList_.findMasterInstance(parser.argc(1));
 				if (!masterInstance)
 				{
 					Messenger::error("No Module named '%s' exists.\n", parser.argc(1));
@@ -94,7 +94,7 @@ bool Dissolve::loadInput(const char* filename)
 				if (parser.hasArg(2))
 				{
 					niceName = DissolveSys::niceName(parser.argc(2));
-					Module* existingModule = ModuleList::findInstanceByUniqueName(niceName);
+					Module* existingModule = moduleList_.findInstanceByUniqueName(niceName);
 					if (existingModule && (existingModule != module))
 					{
 						Messenger::error("A Module with the unique name '%s' already exist.\n", niceName.get());
@@ -518,7 +518,7 @@ bool Dissolve::loadRestart(const char* filename)
 			// Let the user know what we are doing
 			Messenger::print("Reading timing information for Module '%s'...\n", parser.argc(1));
 
-			module = ModuleList::findInstanceByUniqueName(parser.argc(1));
+			module = moduleList_.findInstanceByUniqueName(parser.argc(1));
 			if (!module)
 			{
 				Messenger::error("No Module with unique name '%s' exists.\n", parser.argc(1));

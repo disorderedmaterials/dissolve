@@ -275,7 +275,7 @@ bool AnalysisProcess1DNode::read(LineParser& parser, const CoreData& coreData, N
 				saveData_ = parser.argb(1);
 				break;
 			case (Process1DNodeKeyword::SourceDataKeyword):
-				if (!collectNode_.read(parser, 1, contextStack)) return Messenger::error("Couldn't set source data for node.\n");
+				if (!collectNode_.read(parser, 1, coreData, contextStack)) return Messenger::error("Couldn't set source data for node.\n");
 				break;
 			case (Process1DNodeKeyword::SphericalShellVolumeKeyword):
 				normaliseBySphericalShellVolume_ = parser.argb(1);

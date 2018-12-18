@@ -54,7 +54,7 @@ bool ModuleEditor::setUp(DissolveWindow* dissolveWindow, ModuleList& moduleList)
 	ui.ModuleScrollArea->setWidget(chartWidget_);
 
 	// Create a ModulePalette widget
-	paletteWidget_ = new ModulePalette(dissolveWindow);
+	paletteWidget_ = new ModulePalette(dissolveWindow, dissolveWindow->dissolve().masterModules());
 	ui.PaletteScrollArea->setWidget(paletteWidget_);
 
 	// Hide palette group initially

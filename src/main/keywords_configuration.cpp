@@ -145,7 +145,7 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 				break;
 			case (ConfigurationBlock::ModuleKeyword):
 				// The argument following the keyword is the module name
-				masterInstance = ModuleList::findMasterInstance(parser.argc(1));
+				masterInstance = dissolve->findMasterModule(parser.argc(1));
 				if (!masterInstance)
 				{
 					Messenger::error("No Module named '%s' exists.\n", parser.argc(1));
@@ -175,7 +175,7 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 				if (parser.hasArg(2))
 				{
 					niceName = DissolveSys::niceName(parser.argc(2));
-					Module* existingModule = ModuleList::findInstanceByUniqueName(niceName);
+					Module* existingModule = dissolve->findModule(niceName);
 					if (existingModule && (existingModule != module))
 					{
 						Messenger::error("A Module with the unique name '%s' already exist.\n", niceName.get());

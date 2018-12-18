@@ -73,7 +73,7 @@ bool DissolveWindow::loadWindowLayout()
 		MainTab* tab = findTab(stateParser.argc(0));
 		if (tab)
 		{
-			if (!tab->readState(stateParser)) return false;
+			if (!tab->readState(stateParser, dissolve_.coreData())) return false;
 		}
 		else
 		{
@@ -81,7 +81,7 @@ bool DissolveWindow::loadWindowLayout()
 			if (DissolveSys::sameString(stateParser.argc(1), "ModuleTab"))
 			{
 				// The title represents the unique name of the Module, so find it now
-				Module* module = ModuleList::findInstanceByUniqueName(stateParser.argc(0));
+				Module* module = dissolve_.findModule(stateParser.argc(0));
 				if (!module) return Messenger::error("Failed to find Module '%s' for display in a ModuleTab.\n", stateParser.argc(0)); 
 
 				tab = addModuleTab(module);
@@ -95,7 +95,7 @@ bool DissolveWindow::loadWindowLayout()
 			else return Messenger::error("Unrecognised tab type '%s' in state file.\n", stateParser.argc(1));
 
 			// Now read state information
-			if (!tab->readState(stateParser)) return false;
+			if (!tab->readState(stateParser, dissolve_.coreData())) return false;
 		}
 	}
 

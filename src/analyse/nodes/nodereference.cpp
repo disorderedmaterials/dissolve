@@ -22,6 +22,7 @@
 #include "analyse/nodes/nodereference.h"
 #include "modules/analyse/analyse.h"
 #include "module/list.h"
+#include "classes/coredata.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
@@ -93,14 +94,14 @@ void AnalysisNodeReference::operator=(const AnalysisNodeReference& nodeRef)
  */
 
 // Read structure from specified LineParser
-bool AnalysisNodeReference::read(LineParser& parser, int startArg, NodeContextStack& localStack)
+bool AnalysisNodeReference::read(LineParser& parser, int startArg, const CoreData& coreData, NodeContextStack& localStack)
 {
 	node_ = NULL;
 
 	// If two arguments are provided, the second is the identifying name of an AnalyseModule
 	if (parser.nArgs() == (startArg+2))
 	{
-		Module* module = ModuleList::findInstanceByUniqueName(parser.argc(startArg+1));
+		Module* module = coreData.findModule(parser.argc(startArg+1));
 		if (!module) return Messenger::error("No Analyse module named '%s' exists.\n", parser.argc(startArg+1));
 		if (!DissolveSys::sameString("Analyse", module->type())) return Messenger::error("Specified module '%s' must be an Analyse module.\n", parser.argc(startArg+1));
 

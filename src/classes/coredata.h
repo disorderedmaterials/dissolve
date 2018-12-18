@@ -29,6 +29,8 @@ class AtomType;
 class Configuration;
 class Element;
 class Species;
+class Module;
+class ModuleList;
 
 // Core Data Container
 class CoreData
@@ -109,6 +111,20 @@ class CoreData
 	const char* uniqueConfigurationName(const char* base, Configuration* exclude = 0) const;
 	// Search for Configuration by name
 	Configuration* findConfiguration(const char* name) const;
+
+
+	/*
+	 * Module List
+	 */
+	private:
+	// Pointer to ModuleList
+	ModuleList* moduleList_;
+
+	public:
+	// Set target ModuleList
+	void setModuleList(ModuleList* moduleList);
+	// Search for any instance of any module with the specified unique name
+	Module* findModule(const char* uniqueName) const;
 };
 
 #endif

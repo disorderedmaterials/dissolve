@@ -23,6 +23,7 @@
 #define DISSOLVE_MODULEPALETTE_H
 
 #include "templates/array.h"
+#include "templates/list.h"
 #include "templates/reflist.h"
 #include <QWidget>
 
@@ -48,12 +49,14 @@ class ModulePalette : public QWidget
 
 	public:
 	// Constructor / Destructor
-	ModulePalette(DissolveWindow* dissolveWindow, QWidget* parent = NULL);
+	ModulePalette(DissolveWindow* dissolveWindow, const List<ModuleReference>& moduleMasterInstances, QWidget* parent = NULL);
 	virtual ~ModulePalette();
 
 	private:
 	// Pointer to DissolveWindow
 	DissolveWindow* dissolveWindow_;
+	// Module master list to display
+	const List<ModuleReference>& moduleMasterInstances_;
 
 
 	/*

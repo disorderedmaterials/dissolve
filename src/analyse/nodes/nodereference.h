@@ -27,7 +27,7 @@
 #include "templates/listitem.h"
 
 // Forward Declarations
-/* none */
+class CoreData;
 
 // Analysis Node Reference
 class AnalysisNodeReference : public ListItem<AnalysisNodeReference>
@@ -76,7 +76,7 @@ class AnalysisNodeReference : public ListItem<AnalysisNodeReference>
 	 */
 	public:
 	// Read structure from specified LineParser
-	bool read(LineParser& parser, int startArg, NodeContextStack& localStack);
+	bool read(LineParser& parser, int startArg, const CoreData& coreData, NodeContextStack& localStack);
 	// Write structure to specified LineParser
 	bool write(LineParser& parser, const char* prefix);
 };

@@ -265,7 +265,7 @@ bool AnalysisFit1DNode::read(LineParser& parser, const CoreData& coreData, NodeC
 				saveData_ = parser.argb(1);
 				break;
 			case (Fit1DNodeKeyword::SourceData):
-				if (!dataNode_.read(parser, 1, contextStack)) return Messenger::error("Couldn't set source data for node.\n");
+				if (!dataNode_.read(parser, 1, coreData, contextStack)) return Messenger::error("Couldn't set source data for node.\n");
 				break;
 			case (Fit1DNodeKeyword::nFit1DNodeKeywords):
 				return Messenger::error("Unrecognised Fit1D node keyword '%s' found.\n", parser.argc(0));

@@ -33,7 +33,7 @@
 bool RefineModule::addTarget(const char* moduleTarget, const char* group)
 {
 	// First, find the named Module
-	Module* module = ModuleList::findInstanceByUniqueName(moduleTarget);
+	Module* module = NULL; // ModuleList::findInstanceByUniqueName(moduleTarget);
 	if (!module) return Messenger::error("Couldn't find Module '%s' to add to RefineModule's list of targets.\n", moduleTarget);
 
 	// Check on the type of the Module given... if OK, add to the specified group

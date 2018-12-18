@@ -66,25 +66,25 @@ class ModuleList
 	 */
 	private:
 	// List of master Module instances
-	static List<ModuleReference> masterInstances_;
+	List<ModuleReference> masterInstances_;
 	// List of Modules that failed to register
-	static List<ModuleReference> failedRegistrations_;
+	List<ModuleReference> failedRegistrations_;
 
 	public:
 	// Clear master Module instances
-	static void clearMasterInstances();
+	void clearMasterInstances();
 	// Register Module
-	static void registerMasterInstance(Module* mainInstance);
+	void registerMasterInstance(Module* mainInstance);
 	// Return number of failed Module registrations
-	static int nFailedRegistrations();
+	int nFailedRegistrations() const;
 	// Find master instance of specified Module type
-	static Module* findMasterInstance(const char* type);
+	Module* findMasterInstance(const char* type) const;
 	// Print out registered module information, and return false if any registration errors were encountered
-	static void printMasterModuleInformation();
+	void printMasterModuleInformation() const;
 	// Return list of all master instances
-	static List<ModuleReference>& masterInstances();
+	const List<ModuleReference>& masterInstances() const;
 	// Search for any instance of any module with the specified unique name
-	static Module* findInstanceByUniqueName(const char* uniqueName);
+	Module* findInstanceByUniqueName(const char* uniqueName) const;
 };
 
 #endif

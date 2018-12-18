@@ -113,10 +113,10 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	 * State
 	 */
 	public:
+	// Read widget state through specified LineParser
+	bool readState(LineParser& parser, const CoreData& coreData);
 	// Write widget state through specified LineParser
 	bool writeState(LineParser& parser);
-	// Read widget state through specified LineParser
-	bool readState(LineParser& parser);
 };
 
 #endif

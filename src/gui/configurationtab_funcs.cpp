@@ -356,14 +356,14 @@ void ConfigurationTab::on_ExportButton_clicked(bool checked)
  * State
  */
 
-// Write widget state through specified LineParser
-bool ConfigurationTab::writeState(LineParser& parser)
+// Read widget state through specified LineParser
+bool ConfigurationTab::readState(LineParser& parser, const CoreData& coreData)
 {
 	return true;
 }
 
-// Read widget state through specified LineParser
-bool ConfigurationTab::readState(LineParser& parser)
+// Write widget state through specified LineParser
+bool ConfigurationTab::writeState(LineParser& parser)
 {
 	return true;
 }

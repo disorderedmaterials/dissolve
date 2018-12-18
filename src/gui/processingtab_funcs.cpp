@@ -124,18 +124,18 @@ void ProcessingTab::enableSensitiveControls()
  * State
  */
 
-// Write widget state through specified LineParser
-bool ProcessingTab::writeState(LineParser& parser)
+// Read widget state through specified LineParser
+bool ProcessingTab::readState(LineParser& parser, const CoreData& coreData)
 {
-	if (!ui.ModulePanel->writeState(parser)) return false;
+	if (!ui.ModulePanel->readState(parser)) return false;
 
 	return true;
 }
 
-// Read widget state through specified LineParser
-bool ProcessingTab::readState(LineParser& parser)
+// Write widget state through specified LineParser
+bool ProcessingTab::writeState(LineParser& parser)
 {
-	if (!ui.ModulePanel->readState(parser)) return false;
+	if (!ui.ModulePanel->writeState(parser)) return false;
 
 	return true;
 }

@@ -208,23 +208,8 @@ void ModuleTab::on_FrequencySpin_valueChanged(int value)
  * State
  */
 
-// Write widget state through specified LineParser
-bool ModuleTab::writeState(LineParser& parser)
-{
-	// Write state information for the tab : KeywordsShown(bool)
-	if (!parser.writeLineF("%s\n", DissolveSys::btoa(ui.ToggleKeywordsButton->isChecked()))) return false;
-
-	// Write any state information associated with the displayed ModuleWidget
-	if (module_ && moduleWidget_)
-	{
-		if (!moduleWidget_->writeState(parser)) return false;
-	}
-
-	return true;
-}
-
 // Read widget state through specified LineParser
-bool ModuleTab::readState(LineParser& parser)
+bool ModuleTab::readState(LineParser& parser, const CoreData& coreData)
 {
 	// Read state information for the tab : KeywordsShown(bool)
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
@@ -236,6 +221,21 @@ bool ModuleTab::readState(LineParser& parser)
 	if (module_ && moduleWidget_)
 	{
 		if (!moduleWidget_->readState(parser)) return false;
+	}
+
+	return true;
+}
+
+// Write widget state through specified LineParser
+bool ModuleTab::writeState(LineParser& parser)
+{
+	// Write state information for the tab : KeywordsShown(bool)
+	if (!parser.writeLineF("%s\n", DissolveSys::btoa(ui.ToggleKeywordsButton->isChecked()))) return false;
+
+	// Write any state information associated with the displayed ModuleWidget
+	if (module_ && moduleWidget_)
+	{
+		if (!moduleWidget_->writeState(parser)) return false;
 	}
 
 	return true;

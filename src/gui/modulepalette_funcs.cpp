@@ -30,7 +30,7 @@
 #include <QPainter>
 
 // Constructor
-ModulePalette::ModulePalette(DissolveWindow* dissolveWindow, QWidget* parent) : QWidget(parent)
+ModulePalette::ModulePalette(DissolveWindow* dissolveWindow, const List<ModuleReference>& moduleMasterInstances, QWidget* parent) : moduleMasterInstances_(moduleMasterInstances), QWidget(parent)
 {
 	dissolveWindow_ = dissolveWindow;
 
@@ -43,7 +43,7 @@ ModulePalette::ModulePalette(DissolveWindow* dissolveWindow, QWidget* parent) : 
 	layout->setSpacing(4);
 
 	// Add available Modules to our widget
-	for (ModuleReference* modRef = ModuleList::masterInstances().first(); modRef != NULL; modRef = modRef->next)
+	for (ModuleReference* modRef = moduleMasterInstances.first(); modRef != NULL; modRef = modRef->next)
 	{
 		PaletteBlock* widget = new PaletteBlock(this, dissolveWindow_, modRef);
 		displayedWidgets_.add(widget);

@@ -24,10 +24,6 @@
 #include "base/sysfunc.h"
 #include "base/lineparser.h"
 
-// Static Members
-List<ModuleReference> ModuleList::masterInstances_;
-List<ModuleReference> ModuleList::failedRegistrations_;
-
 // Constructor
 ModuleList::ModuleList()
 {
@@ -160,13 +156,13 @@ void ModuleList::registerMasterInstance(Module* mainInstance)
 }
 
 // Return number of failed Module registrations
-int ModuleList::nFailedRegistrations()
+int ModuleList::nFailedRegistrations() const
 {
 	return failedRegistrations_.nItems();
 }
 
 // Find master instance of specified Module type
-Module* ModuleList::findMasterInstance(const char* type)
+Module* ModuleList::findMasterInstance(const char* type) const
 {
 	ListIterator<ModuleReference> moduleIterator(masterInstances_);
 	while (ModuleReference* modRef = moduleIterator.iterate())
@@ -180,7 +176,7 @@ Module* ModuleList::findMasterInstance(const char* type)
 }
 
 // Print out registered module information
-void ModuleList::printMasterModuleInformation()
+void ModuleList::printMasterModuleInformation() const
 {
 	Messenger::print("Module Information (%i available):\n", masterInstances_.nItems());
 	ListIterator<ModuleReference> moduleIterator(masterInstances_);
@@ -207,13 +203,13 @@ void ModuleList::printMasterModuleInformation()
 }
 
 // Return list of all master instances
-List<ModuleReference>& ModuleList::masterInstances()
+const List<ModuleReference>& ModuleList::masterInstances() const
 {
 	return masterInstances_;
 }
 
 // Search for any instance of any module with the specified unique name
-Module* ModuleList::findInstanceByUniqueName(const char* uniqueName)
+Module* ModuleList::findInstanceByUniqueName(const char* uniqueName) const
 {
 	ListIterator<ModuleReference> moduleIterator(masterInstances_);
 	while (ModuleReference* modRef = moduleIterator.iterate())

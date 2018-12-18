@@ -239,6 +239,34 @@ class Dissolve
 
 
 	/*
+	 * Modules
+	 */
+	private:
+	// Repository for instances of all used Modules, including master instances for each Module
+	ModuleList moduleList_;
+	// Reference list of lists of registered Module instances
+	RefList< List<Module>, bool> moduleInstances_;
+
+	private:
+	// Register master instances for all Modules
+	void registerModules();
+	// De-register master (and other) instances for all Modules
+	void clearModules();
+
+	public:
+	// Return master Module instances
+	const List<ModuleReference>& masterModules() const;
+	// Return number of failed Module registrations
+	int nFailedModuleRegistrations() const;
+	// Print out registered module information, and return false if any registration errors were encountered
+	void printMasterModuleInformation() const;
+	// Search for and return the master reference for the named Module
+	Module* findMasterModule(const char* moduleName);
+	// Search for any instance of any module with the specified unique name
+	Module* findModule(const char* uniqueName);
+
+
+	/*
 	 * Simulation
 	 */
 	private:

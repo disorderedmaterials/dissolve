@@ -1,6 +1,6 @@
 /*
-	*** Dissolve Module Registry
-	*** src/module/registry.h
+	*** Module Registrar
+	*** src/module/registrar.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEREGISTRY_H
-#define DISSOLVE_MODULEREGISTRY_H
+#ifndef DISSOLVE_MODULEREGISTRAR_H
+#define DISSOLVE_MODULEREGISTRAR_H
 
 #include "module/list.h"
 #include "templates/reflist.h"
@@ -28,36 +28,17 @@
 // Forward Declarations
 class Module;
 
-// Module Registry
-class ModuleRegistry
-{
-	private:
-	// Reference list of lists of registered Module instances
-	static RefList< List<Module>, bool> instanceLists_;
-
-	public:
-	// Register master instances for all Modules
-	static void registerModules();
-	// De-register master (and other) instances for all Modules
-	static void deRegisterModules();
-	// Register instance list for Module
-	static void registerInstanceList(List<Module>& instanceList);
-};
-
 // Module Registrar
 template <class M> class ModuleRegistrar
 {
 	public:
 	// Constructor
-	ModuleRegistrar()
+	ModuleRegistrar(ModuleList& moduleList, RefList< List<Module>, bool>& instancesList_)
 	{
 		M* mainInstance = new M;
-		ModuleList::registerMasterInstance(mainInstance);
-		ModuleRegistry::registerInstanceList(mainInstance->instances());
+		moduleList.registerMasterInstance(mainInstance);
+		instancesList_.add(&mainInstance->instances());
 	};
-
-	private:
-
 };
 
 #endif

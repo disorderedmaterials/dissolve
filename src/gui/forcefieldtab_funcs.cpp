@@ -709,14 +709,14 @@ void ForcefieldTab::on_PairPotentialsTable_itemChanged(QTableWidgetItem* w)
  * State
  */
 
-// Write widget state through specified LineParser
-bool ForcefieldTab::writeState(LineParser& parser)
+// Read widget state through specified LineParser
+bool ForcefieldTab::readState(LineParser& parser, const CoreData& coreData)
 {
 	return true;
 }
 
-// Read widget state through specified LineParser
-bool ForcefieldTab::readState(LineParser& parser)
+// Write widget state through specified LineParser
+bool ForcefieldTab::writeState(LineParser& parser)
 {
 	return true;
 }

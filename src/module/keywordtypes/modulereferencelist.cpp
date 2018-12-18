@@ -22,6 +22,7 @@
 #include "module/keywordtypes/modulereferencelist.h"
 #include "module/list.h"
 #include "module/module.h"
+#include "classes/coredata.h"
 #include "base/lineparser.h"
 #include "templates/genericlisthelper.h"
 
@@ -70,7 +71,7 @@ bool ModuleReferenceListModuleKeyword::read(LineParser& parser, int startArg, co
 	for (int n = startArg; n<parser.nArgs(); ++n)
 	{
 		// Find specified Module by its unique name
-		Module* module = ModuleList::findInstanceByUniqueName(parser.argc(n));
+		Module* module = coreData.findModule(parser.argc(n));
 		if (!module)
 		{
 			Messenger::error("No Module named '%s' exists.\n", parser.argc(n));

@@ -20,7 +20,6 @@
 */
 
 #include "main/dissolve.h"
-#include "module/registry.h"
 #include "classes/species.h"
 #include "classes/atomtype.h"
 #include "classes/braggpeak.h"
@@ -35,6 +34,10 @@
 // Constructor
 Dissolve::Dissolve(CoreData& coreData) : coreData_(coreData)
 {
+	// Set ModuleList target in our core data
+	coreData_.setModuleList(&moduleList_);
+
+	// Clear everything
 	clear();
 
 	// Parallel Comms
@@ -93,6 +96,11 @@ void Dissolve::clear()
 	Messenger::printVerbose("Clearing Configurations...\n");
 	configurations().clear();
 
+	// Modules
+	Messenger::printVerbose("Clearing Modules...\n");
+	clearModules();
+	registerModules();
+
 	// Simulation
 	Messenger::printVerbose("Clearing Simulation...\n");
 	nBoxNormalisationPoints_ = 500000000;
@@ -103,9 +111,6 @@ void Dissolve::clear()
 	processingModuleData_.clear();
 	iteration_ = 0;
 	nIterationsPerformed_ = 0;
-	ModuleRegistry::deRegisterModules();
-	ModuleList::clearMasterInstances();
-	ModuleRegistry::registerModules();
 
 	// I/O
 	filename_.clear();

@@ -95,10 +95,10 @@ class MainTab
 	 * State
 	 */
 	public:
+	// Read widget state through specified LineParser
+	virtual bool readState(LineParser& parser, const CoreData& coreData) = 0;
 	// Write widget state through specified LineParser
 	virtual bool writeState(LineParser& parser) = 0;
-	// Read widget state through specified LineParser
-	virtual bool readState(LineParser& parser) = 0;
 };
 
 #endif
