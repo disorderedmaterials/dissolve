@@ -96,7 +96,7 @@ bool ModuleReferenceListModuleKeyword::read(LineParser& parser, int startArg, co
 // Write keyword data to specified LineParser
 bool ModuleReferenceListModuleKeyword::write(LineParser& parser, const char* prefix)
 {
-	// Loop over list of IsotopologueReferences
+	// Loop over list of referenced Modules
 	RefListIterator<Module,bool> refIterator(data_);
 	while (Module* module = refIterator.iterate())
 	{
