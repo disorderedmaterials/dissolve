@@ -23,7 +23,7 @@
 #define DISSOLVE_EPSRMODULE_H
 
 #include "module/module.h"
-#include "module/group.h"
+#include "module/groups.h"
 #include "classes/datastore.h"
 #include "math/data1d.h"
 #include "templates/array3d.h"
@@ -115,22 +115,16 @@ class EPSRModule : public Module
 	private:
 	// Test datasets (if any)
 	DataStore testData_;
-	// List of target Modules to be targetted in refinement process
-	RefList<Module,bool> targets_;
-	// Target groups
-	List<ModuleGroup> targetGroups_;
+	// Target Modules, divided into groups
+	ModuleGroups groupedTargets_;
 	// Simulated data added as reference data
 	Array<Data1D> simulatedReferenceData_;
 
-	private:
-	// Add Module target to specified group
-	bool addTarget(const char* moduleTarget, const char* group);
-
 	public:
-	// Return list of target Modules / data for fitting process
-	const RefList<Module,bool>& targets() const;
-	// Return list of target groups defined
-	const List<ModuleGroup>& targetGroups() const;
+	// Return list of target Modules / data for refeinement
+	const RefList<Module,bool>& allTargets() const;
+	// Return grouped target Modules
+	const ModuleGroups& groupedTargets() const;
 	// Create / retrieve arrays for storage of empirical potential coefficients
 	Array2D< Array<double> >& potentialCoefficients(Dissolve& dissolve, const int nAtomTypes, const int ncoeffp = -1);
 	// Generate empirical potentials from current coefficients

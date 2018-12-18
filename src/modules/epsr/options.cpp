@@ -61,7 +61,7 @@ void EPSRModule::setUpKeywords()
 	keywords_.add(new DoubleModuleKeyword(30.0, -1.0), "QMax", "Maximum Q value over which to generate potentials from total scattering data");
 	keywords_.add(new DoubleModuleKeyword(0.5, -1.0), "QMin", "Minimum Q value over which to generate potentials from total scattering data");
 	keywords_.add(new BoolModuleKeyword(false), "Save", "Whether to save data to disk after calculation", "<True|False>");
-	keywords_.add(new ComplexModuleKeyword(1,2), "Target", "Add specified Module (and it's Reference data) as a fitting target", "<ModuleName> [GroupName]");
+	keywords_.add(new ModuleGroupsModuleKeyword(groupedTargets_, "NeutronSQ"), "Target", "Add specified Module (and it's Reference data) as a refinement target", "<ModuleName> [GroupName]");
 	keywords_.add(new BoolModuleKeyword(false), "Test", "Test against supplied reference data", "<True|False>");
 	keywords_.add(new DataStoreModuleKeyword(testData_), "TestReference", "Specify test reference data", "<filename> <target> [xcol] [ycol]");
 	keywords_.add(new DoubleModuleKeyword(0.1, 1.0e-5), "TestThreshold", "Test threshold (%%error) above which test fails", "<threshold[0.1]>");
@@ -71,8 +71,5 @@ void EPSRModule::setUpKeywords()
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 int EPSRModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
-	if (DissolveSys::sameString(parser.argc(0), "Target")) return addTarget(parser.argc(1), parser.hasArg(2) ? parser.argc(2) : "Default");
-	else return -1;
-
-	return true;
+	return -1;
 }

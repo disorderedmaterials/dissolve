@@ -23,7 +23,7 @@
 #define DISSOLVE_REFINEMODULE_H
 
 #include "module/module.h"
-#include "module/group.h"
+#include "module/groups.h"
 #include "math/broadeningfunction.h"
 #include "math/windowfunction.h"
 #include "classes/scatteringmatrix.h"
@@ -123,10 +123,8 @@ class RefineModule : public Module
 	 * Functions
 	 */
 	private:
-	// List of target Modules to be targetted in refinement process
-	RefList<Module,bool> targets_;
-	// Target groups
-	List<ModuleGroup> targetGroups_;
+	// Target Modules, divided into groups
+	ModuleGroups groupedTargets_;
 	// Full scattering matrix containing reference dat
 	ScatteringMatrix scatteringMatrix_;
 	// Simulated data added as reference data
@@ -139,8 +137,6 @@ class RefineModule : public Module
 	double xCentreStart_, xCentreDeltaLimit_;
 
 	private:
-	// Add Module target to specified group
-	bool addTarget(const char* moduleTarget, const char* group);
 	// Calculate c(r) from supplied S(Q)
 	Data1D calculateCR(const Data1D& sq, double normFactor, double rMin, double rStep, double rMax, WindowFunction windowFunction = WindowFunction(), BroadeningFunction broadening = BroadeningFunction(), bool unbroaden = false);
 	// Determine modification to bonds based on supplied delta g(r)
@@ -156,9 +152,9 @@ class RefineModule : public Module
 
 	public:
 	// Return list of target Modules / data for fitting process
-	const RefList<Module,bool>& targets() const;
-	// Return list of target groups defined
-	const List<ModuleGroup>& targetGroups() const;
+	const RefList<Module,bool>& allTargets() const;
+	// Return grouped target Modules
+	const ModuleGroups& groupedTargets() const;
 
 
 	/*

@@ -78,7 +78,7 @@ void RefineModule::setUpKeywords()
 	keywords_.add(new DoubleModuleKeyword(3.0, -1.0), "PhiMax", "Limit of magnitude of additional potential for any one pair potential");
 	keywords_.add(new DoubleModuleKeyword(30.0, -1.0), "QMax", "Maximum Q value over which to generate potentials from total scattering data");
 	keywords_.add(new DoubleModuleKeyword(0.1, -1.0), "QMin", "Minimum Q value over which to generate potentials from total scattering data");
-	keywords_.add(new ComplexModuleKeyword(1,2), "Target", "Add specified Module (and it's Reference data) as a fitting target", "<ModuleName> [GroupName]");
+	keywords_.add(new ModuleGroupsModuleKeyword(groupedTargets_, "NeutronSQ"), "Target", "Add specified Module (and it's Reference data) as a refinement target", "<ModuleName> [GroupName]");
 	keywords_.add(new DoubleModuleKeyword(0.2, 0.01, 1.0), "TruncationWidth", "Width of truncation zone, below the minimum radius, over which additional potential smoothly decreases to zero");
 	keywords_.add(new DoubleModuleKeyword(1.0, 0.0, 10.0), "Weighting", "Fractional (maximal) amounts of generated perturbations to apply to pair potentials");
 	keywords_.add(new WindowFunctionModuleKeyword(WindowFunction(WindowFunction::SineWindow)), "WindowFunction", "Window function to apply when back-transforming delta S(Q) to g(r)");
@@ -87,8 +87,5 @@ void RefineModule::setUpKeywords()
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 int RefineModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
-	if (DissolveSys::sameString(parser.argc(0), "Target")) return addTarget(parser.argc(1), parser.hasArg(2) ? parser.argc(2) : "Default");
-	else return -1;
-
-	return true;
+	return -1;
 }

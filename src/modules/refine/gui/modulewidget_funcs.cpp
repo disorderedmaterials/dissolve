@@ -24,6 +24,7 @@
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "math/integrator.h"
+#include "module/group.h"
 #include "modules/refine/refine.h"
 #include "classes/atomtype.h"
 #include "templates/variantpointer.h"
@@ -228,10 +229,11 @@ void RefineModuleWidget::setGraphDataTargets(RefineModule* module)
 	CharString blockData;
 
 	// Loop over groups
-	for (ModuleGroup* group = module_->targetGroups().first(); group != NULL; group = group->next)
+	ListIterator<ModuleGroup> groupIterator(module_->groupedTargets().groups());
+	while (ModuleGroup* group = groupIterator.iterate())
 	{
 		// Add reference data & calculated data to the dataGraph_, and percentage errors to the errorsGraph_
-		RefListIterator<Module,bool> targetIterator(module->targets());
+		RefListIterator<Module,bool> targetIterator(group->modules());
 		while (Module* targetModule = targetIterator.iterate())
 		{
 			// Reference data

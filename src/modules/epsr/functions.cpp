@@ -26,42 +26,16 @@
 #include "math/poissonfit.h"
 #include "templates/genericlisthelper.h"
 
-// Add Module target to specified group
-bool EPSRModule::addTarget(const char* moduleTarget, const char* group)
+// Return list of target Modules / data for refeinement
+const RefList<Module,bool>& EPSRModule::allTargets() const
 {
-	// First, find the named Module
-	Module* module = NULL; // ModuleList::findInstanceByUniqueName(moduleTarget);
-	if (!module) return Messenger::error("Couldn't find Module '%s' to add to EPSRModule's list of targets.\n", moduleTarget);
-
-	// Check on the type of the Module given... if OK, add to the specified group
-	if (DissolveSys::sameString(module->type(), "NeutronSQ")) Messenger::print("Adding NeutronSQ target '%s' to '%s'.\n", moduleTarget, uniqueName());
-	else return Messenger::error("Can't use Module of type '%s' as a reference target.\n", module->type());
-
-	// Does the specified group exist?
-	ModuleGroup* moduleGroup;
-	for (moduleGroup = targetGroups_.first(); moduleGroup != NULL; moduleGroup = moduleGroup->next) if (DissolveSys::sameString(moduleGroup->name(), group)) break;
-	if (moduleGroup == NULL)
-	{
-		moduleGroup = new ModuleGroup(group);
-		targetGroups_.own(moduleGroup);
-	}
-
-	targets_.add(module);
-	moduleGroup->add(module);
-
-	return true;
+	return groupedTargets_.modules();
 }
 
-// Return list of target Modules / data for fitting process
-const RefList<Module,bool>& EPSRModule::targets() const
+// Return grouped target Modules
+const ModuleGroups& EPSRModule::groupedTargets() const
 {
-	return targets_;
-}
-
-// Return list of target groups defined
-const List<ModuleGroup>& EPSRModule::targetGroups() const
-{
-	return targetGroups_;
+	return groupedTargets_;
 }
 
 // Create / retrieve arrays for storage of empirical potential coefficients

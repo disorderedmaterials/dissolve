@@ -24,6 +24,7 @@
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "modules/epsr/epsr.h"
+#include "module/group.h"
 #include "classes/atomtype.h"
 #include "templates/variantpointer.h"
 #include "templates/genericlisthelper.h"
@@ -265,7 +266,7 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 	rFactorGraph_->addCollectionFromBlock(blockData);
 
 	// Add reference data & calculated data to the FQGraph_, and percentage errors to the rFactorGraph_
-	RefListIterator<Module,bool> targetIterator(module->targets());
+	RefListIterator<Module,bool> targetIterator(module->allTargets());
 	while (Module* targetModule = targetIterator.iterate())
 	{
 		// Reference data
@@ -306,7 +307,8 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 	}
 
 	// Loop over groups
-	for (ModuleGroup* group = module_->targetGroups().first(); group != NULL; group = group->next)
+	ListIterator<ModuleGroup> groupIterator(module_->groupedTargets().groups());
+	while (ModuleGroup* group = groupIterator.iterate())
 	{
 		// Add experimentally-determined partial S(Q), calculated partial S(Q), and delta S(Q) to the SQGraph_
 		n = 0;

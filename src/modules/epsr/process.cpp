@@ -23,6 +23,7 @@
 #include "main/dissolve.h"
 #include "modules/energy/energy.h"
 #include "modules/rdf/rdf.h"
+#include "module/group.h"
 #include "math/error.h"
 #include "math/filters.h"
 #include "math/ft.h"
@@ -124,14 +125,14 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	/*
 	 * Do we have targets to refine against?
 	 */
-	if (targets_.nItems() == 0) return Messenger::error("At least one Module target containing suitable data must be provided.\n");
+	if (groupedTargets_.nModules() == 0) return Messenger::error("At least one Module target containing suitable data must be provided.\n");
 
 
 	/*
 	 * Make a list of all Configurations related to all targets
 	 */
 	RefList<Configuration,bool> configs;
-	RefListIterator<Module,bool> allTargetsIterator(targets_);
+	RefListIterator<Module,bool> allTargetsIterator(groupedTargets_.modules());
 	while (Module* module = allTargetsIterator.iterate())
 	{
 		RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
@@ -200,7 +201,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		errors.addPoint(dissolve.iteration(), rFactor);
 		Messenger::print("Current R-Factor for reference data '%s' is %f.\n", module->uniqueName(), rFactor);
 	}
-	rFacTot /= targets_.nItems();
+	rFacTot /= groupedTargets_.nModules();
 
 	// Realise the total rFactor array and make sure its object name is set
 	Data1D& totalRFactor = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "RFactor", uniqueName_, GenericItem::InRestartFileFlag);
@@ -353,7 +354,8 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	Array3D<double> fluctuationCoefficients(nAtomTypes, nAtomTypes, ncoeffp);
 	fluctuationCoefficients = 0.0;
 
-	for (ModuleGroup* group = targetGroups_.first(); group != NULL; group = group->next)
+	ListIterator<ModuleGroup> groupIterator(groupedTargets_.groups());
+	while (ModuleGroup* group = groupIterator.iterate())
 	{
 		Messenger::print("Generating dPhiR from target group '%s'...\n", group->name());
 

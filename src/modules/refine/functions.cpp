@@ -29,32 +29,6 @@
 #include "math/praxis.h"
 #include "templates/genericlisthelper.h"
 
-// Add Module target to specified group
-bool RefineModule::addTarget(const char* moduleTarget, const char* group)
-{
-	// First, find the named Module
-	Module* module = NULL; // ModuleList::findInstanceByUniqueName(moduleTarget);
-	if (!module) return Messenger::error("Couldn't find Module '%s' to add to RefineModule's list of targets.\n", moduleTarget);
-
-	// Check on the type of the Module given... if OK, add to the specified group
-	if (DissolveSys::sameString(module->type(), "NeutronSQ")) Messenger::print("Adding NeutronSQ target '%s' to '%s'.\n", moduleTarget, uniqueName());
-	else return Messenger::error("Can't use Module of type '%s' as a fitting target.\n", module->type());
-
-	// Does the specified group exist?
-	ModuleGroup* moduleGroup;
-	for (moduleGroup = targetGroups_.first(); moduleGroup != NULL; moduleGroup = moduleGroup->next) if (DissolveSys::sameString(moduleGroup->name(), group)) break;
-	if (moduleGroup == NULL)
-	{
-		moduleGroup = new ModuleGroup(group);
-		targetGroups_.own(moduleGroup);
-	}
-
-	targets_.add(module);
-	moduleGroup->add(module);
-
-	return true;
-}
-
 // Calculate c(r) from supplied S(Q)
 Data1D RefineModule::calculateCR(const Data1D& sq, double normFactor, double rMin, double rStep, double rMax, WindowFunction windowFunction, BroadeningFunction broadening, bool unbroaden)
 {
@@ -364,13 +338,13 @@ void RefineModule::sumFitEquation(Data1D& target, double xCentre, double delta, 
 }
 
 // Return list of target Modules / data for fitting process
-const RefList<Module,bool>& RefineModule::targets() const
+const RefList<Module,bool>& RefineModule::allTargets() const
 {
-	return targets_;
+	return groupedTargets_.modules();
 }
 
 // Return list of target groups defined
-const List<ModuleGroup>& RefineModule::targetGroups() const
+const ModuleGroups& RefineModule::groupedTargets() const
 {
-	return targetGroups_;
+	return groupedTargets_;
 }

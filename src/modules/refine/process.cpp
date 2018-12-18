@@ -29,6 +29,7 @@
 #include "math/gaussfit.h"
 #include "math/integrator.h"
 #include "math/regression.h"
+#include "module/group.h"
 #include "classes/scatteringmatrix.h"
 #include "classes/weights.h"
 #include "classes/atomtype.h"
@@ -91,14 +92,14 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	/*
 	 * Do we have targets to refine against?
 	 */
-	if (targets_.nItems() == 0) return Messenger::error("At least one Module target containing suitable data must be provided.\n");
+	if (groupedTargets_.nModules() == 0) return Messenger::error("At least one Module target containing suitable data must be provided.\n");
 
 
 	/*
 	 * Make a list of all Configurations related to all targets
 	 */
 	RefList<Configuration,bool> configs;
-	RefListIterator<Module,bool> allTargetsIterator(targets_);
+	RefListIterator<Module,bool> allTargetsIterator(groupedTargets_.modules());
 	while (Module* module = allTargetsIterator.iterate())
 	{
 		RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
@@ -111,11 +112,11 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	 * Calculate current percentage errors in calculated vs reference target data
 	 */
 	int nUnstableData = 0;
-	for (ModuleGroup* group = targetGroups_.first(); group != NULL; group = group->next)
+	ListIterator<ModuleGroup> groupIterator(groupedTargets_.groups());
+	while (ModuleGroup* group = groupIterator.iterate())
 	{
 		// Grab Module list for this group and set up an iterator
-		const RefList<Module,bool>& targetModules = group->modules();
-		RefListIterator<Module,bool> targetIterator(targetModules);
+		RefListIterator<Module,bool> targetIterator(group->modules());
 		while (Module* module = targetIterator.iterate())
 		{
 			// Realise the error array and make sure its object name is set
@@ -204,7 +205,8 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	globalCombinedErrors.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
 	globalCombinedErrors = 0.0;
 	bool created;
-	for (ModuleGroup* group = targetGroups_.first(); group != NULL; group = group->next)
+	groupIterator.restart();
+	while (ModuleGroup* group = groupIterator.iterate())
 	{
 		Messenger::print("Generating dPhiR from target group '%s'...\n", group->name());
 
@@ -654,7 +656,8 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	// Perform actual modification to potential, adding in deltaPhiR calculated over all groups
 	if (modifyPotential)
 	{
-		for (ModuleGroup* group = targetGroups_.first(); group != NULL; group = group->next)
+		groupIterator.restart();
+		while (ModuleGroup* group = groupIterator.iterate())
 		{
 			// Get the delta phi(r) data for this group
 			if (!dissolve.processingModuleData().contains(CharString("DeltaPhiR_%s", group->name()), uniqueName())) return Messenger::error("Could not locate delta phi(r) data for group '%s'.\n", group->name());
