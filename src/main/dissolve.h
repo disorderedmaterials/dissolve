@@ -38,7 +38,6 @@ class Grain;
 class Isotopologue;
 class Molecule;
 class ChangeStore;
-class ModuleProxyBase;
 
 // Dissolve Main Class
 class Dissolve
