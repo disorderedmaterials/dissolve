@@ -80,6 +80,9 @@ void DissolveWindow::on_SessionNewAction_triggered(bool checked)
 	updateControls();
 
 	updateFileLabels();
+
+	// Make sure we are now on the Simulation stack page
+	showMainStackPage(DissolveWindow::SimulationStackPage);
 }
 
 void DissolveWindow::on_SessionRunWizardAction_triggered(bool checked)
@@ -106,6 +109,9 @@ void DissolveWindow::on_SessionOpenAction_triggered(bool checked)
 	updateStatus();
 
 	updateFileLabels();
+
+	// Make sure we are now on the Simulation stack page
+	showMainStackPage(DissolveWindow::SimulationStackPage);
 }
 
 void DissolveWindow::on_SessionOpenRemoteAction_triggered(bool checked)
