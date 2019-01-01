@@ -10,6 +10,7 @@ SET(widgets_MOC_HDRS
   subwindow.h
   tmenubuttongroup.h
 
+  checkindicator.hui
   colourbutton.hui
   gradientbar.hui
   mimetreewidget.hui
@@ -29,6 +30,7 @@ QT5_WRAP_UI(widgets_UIS_H ${widgets_UIS})
 
 # Source files (not Qt UI files or custom .h [uih])
 SET(widgets_SRCS
+  checkindicator_funcs.cpp
   colourbutton_funcs.cpp
   gradientbar_funcs.cpp
   mimestrings.cpp
