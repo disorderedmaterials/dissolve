@@ -71,7 +71,7 @@ bool Species::loadFromXYZ(const char* filename)
 			return false;
 		}
 		el = Elements::elementPointer(parser.argc(0));
-		SpeciesAtom* i = addAtom(el, parser.argd(1), parser.argd(2),parser.argd(3));
+		SpeciesAtom* i = addAtom(el, parser.arg3d(1));
 		if (parser.hasArg(4)) i->setCharge(parser.argd(4));
 	}
 

@@ -80,7 +80,7 @@ class Species : public ListItem<Species>
 	
 	public:
 	// Add a new Atom to the Species
-	SpeciesAtom* addAtom(Element* element = NULL, double rx = 0.0, double ry = 0.0, double rz = 0.0);
+	SpeciesAtom* addAtom(Element* element, Vec3<double> r);
 	// Return the number of atoms in the species
 	int nAtoms() const;
 	// Return the first atom in the Species

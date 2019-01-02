@@ -158,7 +158,7 @@ bool SpeciesBlock::parse(LineParser& parser, Dissolve* dissolve, Species* specie
 					error = true;
 					break;
 				}
-				i = species->addAtom(el, parser.argd(3), parser.argd(4), parser.argd(5));
+				i = species->addAtom(el, parser.arg3d(3));
 				if (parser.hasArg(7)) i->setCharge(parser.argd(7));
 
 				// Locate the AtomType assigned to the Atom
