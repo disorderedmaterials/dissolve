@@ -40,6 +40,10 @@ class CheckIndicator : public QLabel
 	// State of indicator
 	bool state_;
 
+	public:
+	// Return state of indicator
+	bool state() const;
+
 
 	/*
 	 * State Update

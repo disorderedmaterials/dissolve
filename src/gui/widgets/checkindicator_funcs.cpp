@@ -37,6 +37,12 @@ CheckIndicator::CheckIndicator(QWidget* parent) : QLabel(parent)
 	setNotOK();
 }
 
+// Return state of indicator
+bool CheckIndicator::state() const
+{
+	return state_;
+}
+
 /*
  * State Update
  */
