@@ -25,12 +25,20 @@ clean-local:
 
 libgui_la_SOURCES = icons.qrc
 
+# UI - Module Chart
 libgui_la_SOURCES += modulechartinsertionblock.ui modulechartmoduleblock.ui modulecontrolwidget.ui moduleeditor.ui paletteblock.ui
+libgui_la_SOURCES += modulechart.hui modulepalette.hui
+# UI - Widgets
+libgui_la_SOURCES += addspecieswizard.ui wizardwidget.hui wizardwidgetfooter.ui wizardwidgetheader.ui
+# UI - Dialogs
+libgui_la_SOURCES += addspeciesdialog.ui
+# UI - Main Tabs
 libgui_la_SOURCES += gui.ui analysistab.ui configurationtab.ui forcefieldtab.ui moduletab.ui pairpotentialwidget.ui processingtab.ui speciestab.ui workspacetab.ui
+# UI - Utility Classes
+libgui_la_SOURCES += outputhandler.hui thread.hui
 
-libgui_la_SOURCES += modulechart.hui modulepalette.hui outputhandler.hui thread.hui
-
-libgui_la_SOURCES += analysistab_funcs.cpp
+# Implementations
+libgui_la_SOURCES += addspeciesdialog_funcs.cpp addspecieswizard_funcs.cpp analysistab_funcs.cpp
 libgui_la_SOURCES += configurationtab_funcs.cpp
 libgui_la_SOURCES += forcefieldtab_funcs.cpp
 libgui_la_SOURCES += gui_funcs.cpp gui_menu.cpp gui_simulation_control.cpp gui_simulation_state.cpp gui_simulation_tabs.cpp gui_stack.cpp gui_start.cpp
@@ -42,15 +50,15 @@ libgui_la_SOURCES += pairpotentialwidget_funcs.cpp paletteblock_funcs.cpp proces
 libgui_la_SOURCES += speciestab_funcs.cpp
 libgui_la_SOURCES += thread_funcs.cpp
 libgui_la_SOURCES += tmdiarea.hui tmdiarea_funcs.cpp
-libgui_la_SOURCES += workspacetab_funcs.cpp
+libgui_la_SOURCES += wizardwidget_funcs.cpp wizardwidgetpageinfo.cpp workspacetab_funcs.cpp
 
-noinst_HEADERS = analysistab.h
+noinst_HEADERS = addspeciesdialog.h addspecieswizard.h analysistab.h
 noinst_HEADERS += configurationtab.h
 noinst_HEADERS += forcefieldtab.h
 noinst_HEADERS += gui.h
 noinst_HEADERS += maintab.h modulechartblock.h modulecharthotspot.h modulechartinsertionblock.h modulechartmetrics.h modulechartmoduleblock.h modulecontrolwidget.h moduleeditor.h modulekeywordswidget.h moduletab.h modulewidget.h
 noinst_HEADERS += pairpotentialwidget.h paletteblock.h processingtab.h
 noinst_HEADERS += speciestab.h
-noinst_HEADERS += workspacetab.h
+noinst_HEADERS += wizardwidgetfooter.h wizardwidgetheader.h wizardwidgetpageinfo.h workspacetab.h
 
 AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@

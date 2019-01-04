@@ -83,7 +83,7 @@ const char* CoreData::uniqueAtomTypeName(const char* base, AtomType* exclude) co
 	// Find all existing names which are the same as 'baseName' up to the first '_', and get the highest appended number
 	for (at = atomTypes_.first(); at != NULL; at = at->next)
 	{
-		if ( at == exclude) continue;
+		if (at == exclude) continue;
 		if (DissolveSys::sameString(baseName, at->name())) highest = 0;
 		else if (DissolveSys::sameString(baseName,DissolveSys::beforeLastChar(at->name(),'_')) == 0) highest = atoi(DissolveSys::afterLastChar(at->name(), '_'));
 	}

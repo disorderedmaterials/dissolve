@@ -3,11 +3,7 @@
 
 # Meta-Objects
 SET(gui_MOC_HDRS
-  analysistab.h
-  configurationtab.h
-  forcefieldtab.h
-  gui.h
-  maintab.h
+  # Module Chart
   modulechartblock.h
   modulecharthotspot.h
   modulechartinsertionblock.h
@@ -18,14 +14,30 @@ SET(gui_MOC_HDRS
   moduleeditor.h
   moduletab.h
   modulewidget.h
-  pairpotentialwidget.h
   paletteblock.h
-  processingtab.h
-  speciestab.h
-  workspacetab.h
 
   modulechart.hui
   modulepalette.hui
+  # Widgets
+  addspecieswizard.h
+  pairpotentialwidget.h
+  wizardwidget.hui
+  wizardwidgetfooter.h
+  wizardwidgetheader.h
+  wizardwidgetpageinfo.h
+  # Dialogs
+  addspeciesdialog.h
+  # Main Tabs
+  analysistab.h
+  configurationtab.h
+  forcefieldtab.h
+  maintab.h
+  processingtab.h
+  speciestab.h
+  workspacetab.h
+  # Main UI
+  gui.h
+
   outputhandler.hui
   tmdiarea.hui
   thread.hui
@@ -34,36 +46,35 @@ QT5_WRAP_CPP(gui_MOC_SRCS ${gui_MOC_HDRS})
 
 # User Interface Files
 SET(gui_UIS
-  analysistab.ui
-  configurationtab.ui
-  forcefieldtab.ui
-  gui.ui
+  # Module Chart
   modulechartinsertionblock.ui
   modulechartmoduleblock.ui
   modulecontrolwidget.ui
   moduleeditor.ui
   moduletab.ui
-  pairpotentialwidget.ui
   paletteblock.ui
+  # Widgets
+  addspecieswizard.ui
+  pairpotentialwidget.ui
+  wizardwidgetfooter.ui
+  wizardwidgetheader.ui
+  # Dialogs
+  addspeciesdialog.ui
+  # Main Tabs
+  analysistab.ui
+  configurationtab.ui
+  forcefieldtab.ui
   processingtab.ui
   speciestab.ui
   workspacetab.ui
+  # Main UI
+  gui.ui
 )
 QT5_WRAP_UI(gui_UIS_H ${gui_UIS})
 
 # Source files (not Qt UI files or custom .h [uih])
 SET(gui_SRCS
-  analysistab_funcs.cpp
-  configurationtab_funcs.cpp
-  forcefieldtab_funcs.cpp
-  gui_funcs.cpp
-  gui_menu.cpp
-  gui_simulation_control.cpp
-  gui_simulation_state.cpp
-  gui_simulation_tabs.cpp
-  gui_stack.cpp
-  gui_start.cpp
-  maintab.cpp
+  # Module Chart
   modulechart_funcs.cpp
   modulechartblock.cpp
   modulecharthotspot.cpp
@@ -75,14 +86,33 @@ SET(gui_SRCS
   modulepalette_funcs.cpp
   moduletab_funcs.cpp
   modulewidget.cpp
-  outputhandler_funcs.cpp
-  pairpotentialwidget_funcs.cpp
   paletteblock_funcs.cpp
+  # Widgets
+  addspecieswizard_funcs.cpp
+  pairpotentialwidget_funcs.cpp
+  wizardwidget_funcs.cpp
+  wizardwidgetpageinfo.cpp
+  # Dialogs
+  addspeciesdialog_funcs.cpp
+  # Main Tabs
+  analysistab_funcs.cpp
+  configurationtab_funcs.cpp
+  forcefieldtab_funcs.cpp
+  maintab.cpp
   processingtab_funcs.cpp
   speciestab_funcs.cpp
+  workspacetab_funcs.cpp
+  # Main UI
+  gui_funcs.cpp
+  gui_menu.cpp
+  gui_simulation_control.cpp
+  gui_simulation_state.cpp
+  gui_simulation_tabs.cpp
+  gui_stack.cpp
+  gui_start.cpp
+  outputhandler_funcs.cpp
   thread_funcs.cpp
   tmdiarea_funcs.cpp
-  workspacetab_funcs.cpp
 )
 
 # Resources

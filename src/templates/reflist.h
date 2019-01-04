@@ -87,6 +87,8 @@ template <class T, class D> class RefList
 	RefListItem<T,D>* last() const;
 	// Returns the T referenced by the head of the item list
 	T* firstItem() const;
+	// Returns the T referenced by the tail of the item list
+	T* lastItem() const;
 	// Returns the number of atoms in the list
 	int nItems() const;
 	// Add reference to the list
@@ -204,6 +206,13 @@ template <class T, class D> RefListItem<T,D>* RefList<T,D>::last() const
 template <class T, class D> T* RefList<T,D>::firstItem() const
 {
 	if (listHead_) return listHead_->item;
+	else return NULL;
+}
+
+// Returns the T associated to the tail of the item list
+template <class T, class D> T* RefList<T,D>::lastItem() const
+{
+	if (listTail_) return listTail_->item;
 	else return NULL;
 }
 

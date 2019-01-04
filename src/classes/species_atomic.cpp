@@ -23,12 +23,13 @@
 #include "data/atomicmass.h"
 
 // Add a new atom to the Species
-SpeciesAtom* Species::addAtom(Element* element, double rx, double ry, double rz)
+SpeciesAtom* Species::addAtom(Element* element, Vec3<double> r)
 {
 	SpeciesAtom* i = atoms_.add();
 	i->setParent(this);
-	i->set(element, rx, ry, rz);
+	i->set(element, r.x, r.y, r.z);
 	i->setIndex(atoms_.nItems()-1);
+
 	return i;
 }
 
