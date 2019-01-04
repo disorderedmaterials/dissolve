@@ -33,12 +33,6 @@ const char* RefineModule::brief() const
 	return "Refine interatomic potentials based on differences between calculated and reference data";
 }
 
-// Return instance type for module
-Module::InstanceType RefineModule::instanceType() const
-{
-	return Module::MultipleInstance;
-}
-
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
 int RefineModule::nTargetableConfigurations() const
 {

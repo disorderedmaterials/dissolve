@@ -33,12 +33,6 @@ const char* MolShakeModule::brief() const
 	return "Perform molecular Monte Carlo moves";
 }
 
-// Return instance type for module
-Module::InstanceType MolShakeModule::instanceType() const
-{
-	return Module::MultipleInstance;
-}
-
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
 int MolShakeModule::nTargetableConfigurations() const
 {

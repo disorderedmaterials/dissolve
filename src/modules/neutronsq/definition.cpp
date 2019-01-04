@@ -33,12 +33,6 @@ const char* NeutronSQModule::brief() const
 	return "Calculate neutron-weighted S(Q)";
 }
 
-// Return instance type for module
-Module::InstanceType NeutronSQModule::instanceType() const
-{
-	return Module::MultipleInstance;
-}
-
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
 int NeutronSQModule::nTargetableConfigurations() const
 {

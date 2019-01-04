@@ -33,12 +33,6 @@ const char* EnergyModule::brief() const
 	return "Calculate the total energy of a Configuration";
 }
 
-// Return instance type for module
-Module::InstanceType EnergyModule::instanceType() const
-{
-	return Module::MultipleInstance;
-}
-
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
 int EnergyModule::nTargetableConfigurations() const
 {

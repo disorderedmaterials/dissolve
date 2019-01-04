@@ -33,12 +33,6 @@ const char* MDModule::brief() const
 	return "Evolve a Configuration using molecular dynamics";
 }
 
-// Return instance type for module
-Module::InstanceType MDModule::instanceType() const
-{
-	return Module::MultipleInstance;
-}
-
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
 int MDModule::nTargetableConfigurations() const
 {

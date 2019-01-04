@@ -33,12 +33,6 @@ const char* CalibrationModule::brief() const
 	return "Calibrate various parameters";
 }
 
-// Return instance type for module
-Module::InstanceType CalibrationModule::instanceType() const
-{
-	return Module::MultipleInstance;
-}
-
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
 int CalibrationModule::nTargetableConfigurations() const
 {

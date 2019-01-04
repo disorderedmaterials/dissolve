@@ -33,12 +33,6 @@ const char* ExportModule::brief() const
 	return "Export data from one or more Configurations";
 }
 
-// Return instance type for module
-Module::InstanceType ExportModule::instanceType() const
-{
-	return Module::MultipleInstance;
-}
-
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
 int ExportModule::nTargetableConfigurations() const
 {

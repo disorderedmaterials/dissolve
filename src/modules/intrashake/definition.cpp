@@ -33,12 +33,6 @@ const char* IntraShakeModule::brief() const
 	return "Perform Monte Carlo shakes on intramolecular terms within Molecules";
 }
 
-// Return instance type for module
-Module::InstanceType IntraShakeModule::instanceType() const
-{
-	return Module::MultipleInstance;
-}
-
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
 int IntraShakeModule::nTargetableConfigurations() const
 {

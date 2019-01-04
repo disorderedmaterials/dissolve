@@ -47,26 +47,8 @@ void ModuleList::clear()
 // Add module to list
 Module* ModuleList::add(Module* module, Configuration* location, Module* addBeforeThis)
 {
-	Module* moduleToAdd = NULL;
-
-	// Check the module instance type before adding it to the relevant list
-	if (module->instanceType() == Module::UniqueInstance)
-	{
-		// Unique modules always re-use the master instance (provided as the argument)
-		moduleToAdd = module;
-	}
-	else if (module->instanceType() == Module::SingleInstance)
-	{
-		// Single instance modules are one-per-parent, so must see if it is already in the relevant list...
-		Module* existingModule = find(module->type());
-		if (existingModule) moduleToAdd = existingModule;
-		else moduleToAdd = module->createInstance();
-	}
-	else
-	{
-		// Multiple instance modules are many-per-parent, so always create a new instance
-		moduleToAdd = module->createInstance();
-	}
+	// All modules are multiple-instance
+	Module* moduleToAdd = module->createInstance();
 
 	// Add the module pointer to the list
 	ModuleReference* newModuleItem;

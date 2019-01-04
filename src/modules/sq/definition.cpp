@@ -33,12 +33,6 @@ const char* SQModule::brief() const
 	return "Transform g(r) into unweighted S(Q)";
 }
 
-// Return instance type for module
-Module::InstanceType SQModule::instanceType() const
-{
-	return Module::MultipleInstance;
-}
-
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
 int SQModule::nTargetableConfigurations() const
 {

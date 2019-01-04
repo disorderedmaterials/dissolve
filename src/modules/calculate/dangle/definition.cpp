@@ -33,12 +33,6 @@ const char* CalculateDAngleModule::brief() const
 	return "Calculate distance/angle maps";
 }
 
-// Return instance type for module
-Module::InstanceType CalculateDAngleModule::instanceType() const
-{
-	return Module::MultipleInstance;
-}
-
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
 int CalculateDAngleModule::nTargetableConfigurations() const
 {

@@ -33,12 +33,6 @@ const char* BraggModule::brief() const
 	return "Calculate partial and total g(r) and S(Q)";
 }
 
-// Return instance type for module
-Module::InstanceType BraggModule::instanceType() const
-{
-	return Module::MultipleInstance;
-}
-
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
 int BraggModule::nTargetableConfigurations() const
 {

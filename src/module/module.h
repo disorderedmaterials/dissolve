@@ -44,8 +44,6 @@ class Module : public ListItem<Module>
 	Module();
 	// Destructor
 	virtual ~Module();
-	// Module Instance Styles
-	enum InstanceType { UniqueInstance, SingleInstance, MultipleInstance };
 
 
 	/*
@@ -78,8 +76,6 @@ class Module : public ListItem<Module>
 	const char* uniqueName() const;
 	// Return brief description of Module
 	virtual const char* brief() const = 0;
-	// Return instance type for Module
-	virtual InstanceType instanceType() const = 0;
 	// Return the maximum number of Configurations the Module can target (or -1 for any number)
 	virtual int nTargetableConfigurations() const = 0;
 	// Return colour used in visual representation of Module
