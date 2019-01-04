@@ -1381,7 +1381,6 @@
      <string>S&amp;imulation</string>
     </property>
     <addaction name="SimulationAddSpeciesAction"/>
-    <addaction name="SimulationImportSpeciesAction"/>
     <addaction name="separator"/>
     <addaction name="SimulationAddConfigurationAction"/>
    </widget>
@@ -1521,11 +1520,6 @@
   <action name="SimulationAddSpeciesAction">
    <property name="text">
     <string>Add &amp;Species</string>
-   </property>
-  </action>
-  <action name="SimulationImportSpeciesAction">
-   <property name="text">
-    <string>&amp;Import Species</string>
    </property>
   </action>
   <action name="SessionCloseAction">

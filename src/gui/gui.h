@@ -128,7 +128,6 @@ class DissolveWindow : public QMainWindow
 	void on_SessionQuitAction_triggered(bool checked);
 	// Simulation
 	void on_SimulationAddSpeciesAction_triggered(bool checked);
-	void on_SimulationImportSpeciesAction_triggered(bool checked);
 	void on_SimulationAddConfigurationAction_triggered(bool checked);
 	// Control
 	void on_SimulationRunAction_triggered(bool checked);
