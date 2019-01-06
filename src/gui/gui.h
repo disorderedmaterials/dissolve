@@ -136,6 +136,9 @@ class DissolveWindow : public QMainWindow
 	void on_SimulationPauseAction_triggered(bool checked);
 	// Workspace
 	void on_WorkspaceAddNewAction_triggered(bool checked);
+	// Help
+	void on_HelpViewQuickStartGuideAction_triggered(bool checked);
+	void on_HelpRunATutorialAction_triggered(bool checked);
 
 
 	/*
@@ -160,11 +163,16 @@ class DissolveWindow : public QMainWindow
 	 * 'Start' Stack Page
 	 */
 	private slots:
+	// 'Create' Group
+	void on_StartCreateNewButton_clicked(bool checked);
+	void on_StartRunWizardButton_clicked(bool checked);
+	// 'Open / Connect' Group
 	void on_StartOpenExistingButton_clicked(bool checked);
 	void on_StartOpenRemoteButton_clicked(bool checked);
 	void on_StartOpenRecentButton_clicked(bool checked);
-	void on_StartCreateNewButton_clicked(bool checked);
-	void on_StartRunWizardButton_clicked(bool checked);
+	// 'Learn' Group
+	void on_StartQuickStartButton_clicked(bool checked);
+	void on_StartRunTutorialButton_clicked(bool checked);
 
 
 	/*

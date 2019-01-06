@@ -125,6 +125,9 @@ void DissolveWindow::on_SessionOpenRecentAction_triggered(bool checked)
 	// TODO
 }
 
+	void on_StartQuickStartButton_clicked(bool checked);
+	void on_StartRunTutorialButton_clicked(bool checked);
+	
 void DissolveWindow::on_SessionCloseAction_triggered(bool checked)
 {
 	if (!checkSaveCurrentInput()) return;
@@ -246,4 +249,16 @@ void DissolveWindow::on_WorkspaceAddNewAction_triggered(bool checked)
 	MainTab* workspaceTab = addWorkspaceTab(qPrintable(text));
 
 	setCurrentTab(workspaceTab);
+}
+
+/*
+ * Help
+ */
+
+void DissolveWindow::on_HelpViewQuickStartGuideAction_triggered(bool checked)
+{
+}
+
+void DissolveWindow::on_HelpRunATutorialAction_triggered(bool checked)
+{
 }

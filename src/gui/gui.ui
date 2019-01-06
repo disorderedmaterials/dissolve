@@ -95,151 +95,293 @@
               <widget class="QWidget" name="StartPageWidget" native="true">
                <layout class="QVBoxLayout" name="verticalLayout_10">
                 <item>
-                 <widget class="QPushButton" name="StartCreateNewButton">
-                  <property name="font">
-                   <font>
-                    <pointsize>12</pointsize>
-                    <weight>75</weight>
-                    <bold>true</bold>
-                   </font>
+                 <widget class="QGroupBox" name="StartCreateGroup">
+                  <property name="title">
+                   <string>Create</string>
                   </property>
-                  <property name="text">
-                   <string>Create a Simulation from Scratch</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="icons.qrc">
-                    <normaloff>:/file/icons/file_new.svg</normaloff>:/file/icons/file_new.svg</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>32</width>
-                    <height>32</height>
-                   </size>
-                  </property>
-                  <property name="flat">
-                   <bool>false</bool>
-                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_12">
+                   <property name="spacing">
+                    <number>4</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>4</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>4</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>4</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>4</number>
+                   </property>
+                   <item>
+                    <widget class="QPushButton" name="StartCreateNewButton">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                       <weight>75</weight>
+                       <bold>true</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Create a Simulation from Scratch</string>
+                     </property>
+                     <property name="icon">
+                      <iconset resource="icons.qrc">
+                       <normaloff>:/file/icons/file_new.svg</normaloff>:/file/icons/file_new.svg</iconset>
+                     </property>
+                     <property name="iconSize">
+                      <size>
+                       <width>32</width>
+                       <height>32</height>
+                      </size>
+                     </property>
+                     <property name="flat">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="StartRunWizardButton">
+                     <property name="enabled">
+                      <bool>false</bool>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                       <weight>75</weight>
+                       <bold>true</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Set Up a Simulation With the Wizard...</string>
+                     </property>
+                     <property name="icon">
+                      <iconset resource="icons.qrc">
+                       <normaloff>:/special/icons/special_wizard.svg</normaloff>:/special/icons/special_wizard.svg</iconset>
+                     </property>
+                     <property name="iconSize">
+                      <size>
+                       <width>32</width>
+                       <height>32</height>
+                      </size>
+                     </property>
+                     <property name="flat">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="StartRunWizardButton">
-                  <property name="enabled">
-                   <bool>false</bool>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <pointsize>12</pointsize>
-                    <weight>75</weight>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>Set Up a Simulation With the Wizard...</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="icons.qrc">
-                    <normaloff>:/wizard/icons/wizard.svg</normaloff>:/wizard/icons/wizard.svg</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>32</width>
-                    <height>32</height>
-                   </size>
-                  </property>
-                  <property name="flat">
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="Line" name="line_3">
+                 <widget class="Line" name="StartLine1">
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="StartOpenExistingButton">
-                  <property name="font">
-                   <font>
-                    <pointsize>12</pointsize>
-                    <weight>75</weight>
-                    <bold>true</bold>
-                   </font>
+                 <widget class="QGroupBox" name="StartOpenConnectGroup">
+                  <property name="title">
+                   <string>Open / Connect</string>
                   </property>
-                  <property name="text">
-                   <string>Open an Existing Simulation...</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="icons.qrc">
-                    <normaloff>:/file/icons/file_open.svg</normaloff>:/file/icons/file_open.svg</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>32</width>
-                    <height>32</height>
-                   </size>
-                  </property>
-                  <property name="flat">
-                   <bool>false</bool>
+                  <layout class="QVBoxLayout" name="verticalLayout_13">
+                   <property name="spacing">
+                    <number>4</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>4</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>4</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>4</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>4</number>
+                   </property>
+                   <item>
+                    <widget class="QPushButton" name="StartOpenExistingButton">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                       <weight>75</weight>
+                       <bold>true</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Open an Existing Simulation...</string>
+                     </property>
+                     <property name="icon">
+                      <iconset resource="icons.qrc">
+                       <normaloff>:/file/icons/file_open.svg</normaloff>:/file/icons/file_open.svg</iconset>
+                     </property>
+                     <property name="iconSize">
+                      <size>
+                       <width>32</width>
+                       <height>32</height>
+                      </size>
+                     </property>
+                     <property name="flat">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="StartOpenRemoteButton">
+                     <property name="enabled">
+                      <bool>false</bool>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                       <weight>75</weight>
+                       <bold>true</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Connect to an Existing Remote Simulation</string>
+                     </property>
+                     <property name="icon">
+                      <iconset resource="icons.qrc">
+                       <normaloff>:/special/icons/special_connect.svg</normaloff>:/special/icons/special_connect.svg</iconset>
+                     </property>
+                     <property name="iconSize">
+                      <size>
+                       <width>32</width>
+                       <height>32</height>
+                      </size>
+                     </property>
+                     <property name="flat">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="StartOpenRecentButton">
+                     <property name="enabled">
+                      <bool>false</bool>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                       <weight>75</weight>
+                       <bold>true</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Open a Recent Simulation</string>
+                     </property>
+                     <property name="icon">
+                      <iconset resource="icons.qrc">
+                       <normaloff>:/file/icons/file_recent.svg</normaloff>:/file/icons/file_recent.svg</iconset>
+                     </property>
+                     <property name="iconSize">
+                      <size>
+                       <width>32</width>
+                       <height>32</height>
+                      </size>
+                     </property>
+                     <property name="flat">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="Line" name="StartLine2">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="StartOpenRemoteButton">
-                  <property name="enabled">
-                   <bool>false</bool>
+                 <widget class="QGroupBox" name="StartLearnGroup">
+                  <property name="title">
+                   <string>Learn</string>
                   </property>
-                  <property name="font">
-                   <font>
-                    <pointsize>12</pointsize>
-                    <weight>75</weight>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>Connect to an Existing Remote Simulation</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="icons.qrc">
-                    <normaloff>:/file/icons/file_open.svg</normaloff>:/file/icons/file_open.svg</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>32</width>
-                    <height>32</height>
-                   </size>
-                  </property>
-                  <property name="flat">
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="StartOpenRecentButton">
-                  <property name="font">
-                   <font>
-                    <pointsize>12</pointsize>
-                    <weight>75</weight>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>Open a Recent Simulation</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="icons.qrc">
-                    <normaloff>:/file/icons/file_open.svg</normaloff>:/file/icons/file_open.svg</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>32</width>
-                    <height>32</height>
-                   </size>
-                  </property>
-                  <property name="flat">
-                   <bool>false</bool>
-                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_14">
+                   <property name="spacing">
+                    <number>4</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>4</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>4</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>4</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>4</number>
+                   </property>
+                   <item>
+                    <widget class="QPushButton" name="StartQuickStartButton">
+                     <property name="enabled">
+                      <bool>false</bool>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                       <weight>75</weight>
+                       <bold>true</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>View the QuickStart Guide</string>
+                     </property>
+                     <property name="icon">
+                      <iconset resource="icons.qrc">
+                       <normaloff>:/special/icons/special_guide.svg</normaloff>:/special/icons/special_guide.svg</iconset>
+                     </property>
+                     <property name="iconSize">
+                      <size>
+                       <width>32</width>
+                       <height>32</height>
+                      </size>
+                     </property>
+                     <property name="flat">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="StartRunTutorialButton">
+                     <property name="enabled">
+                      <bool>false</bool>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                       <weight>75</weight>
+                       <bold>true</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Run a Tutorial</string>
+                     </property>
+                     <property name="icon">
+                      <iconset resource="icons.qrc">
+                       <normaloff>:/special/icons/special_learn.svg</normaloff>:/special/icons/special_learn.svg</iconset>
+                     </property>
+                     <property name="iconSize">
+                      <size>
+                       <width>32</width>
+                       <height>32</height>
+                      </size>
+                     </property>
+                     <property name="flat">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </widget>
                 </item>
                </layout>
@@ -335,7 +477,7 @@
                      <string/>
                     </property>
                     <property name="pixmap">
-                     <pixmap resource="icons.qrc">:/wizard/icons/wizard.svg</pixmap>
+                     <pixmap>:/wizard/icons/wizard.svg</pixmap>
                     </property>
                     <property name="scaledContents">
                      <bool>true</bool>
@@ -646,7 +788,7 @@
                      <string/>
                     </property>
                     <property name="pixmap">
-                     <pixmap resource="icons.qrc">:/wizard/icons/wizard.svg</pixmap>
+                     <pixmap>:/wizard/icons/wizard.svg</pixmap>
                     </property>
                     <property name="scaledContents">
                      <bool>true</bool>
@@ -1331,6 +1473,7 @@
      <string>&amp;Session</string>
     </property>
     <addaction name="SessionNewAction"/>
+    <addaction name="SessionRunWizardAction"/>
     <addaction name="separator"/>
     <addaction name="SessionOpenAction"/>
     <addaction name="SessionOpenRemoteAction"/>
@@ -1342,7 +1485,6 @@
     <addaction name="SessionSaveAsAction"/>
     <addaction name="separator"/>
     <addaction name="SessionQuitAction"/>
-    <addaction name="SessionRunWizardAction"/>
    </widget>
    <widget class="QMenu" name="WorkspaceMenu">
     <property name="font">
@@ -1384,10 +1526,23 @@
     <addaction name="separator"/>
     <addaction name="SimulationAddConfigurationAction"/>
    </widget>
+   <widget class="QMenu" name="HelpMenu">
+    <property name="font">
+     <font>
+      <pointsize>8</pointsize>
+     </font>
+    </property>
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="HelpViewQuickStartGuideAction"/>
+    <addaction name="HelpRunATutorialAction"/>
+   </widget>
    <addaction name="SessionMenu"/>
    <addaction name="SimulationMenu"/>
    <addaction name="ControlMenu"/>
    <addaction name="WorkspaceMenu"/>
+   <addaction name="HelpMenu"/>
   </widget>
   <action name="SessionOpenAction">
    <property name="text">
@@ -1525,6 +1680,16 @@
   <action name="SessionCloseAction">
    <property name="text">
     <string>&amp;Close</string>
+   </property>
+  </action>
+  <action name="HelpViewQuickStartGuideAction">
+   <property name="text">
+    <string>View QuickStart Guide</string>
+   </property>
+  </action>
+  <action name="HelpRunATutorialAction">
+   <property name="text">
+    <string>Run a Tutorial...</string>
    </property>
   </action>
  </widget>
