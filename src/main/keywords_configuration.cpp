@@ -75,7 +75,7 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 	Messenger::print("\nParsing %s block '%s'...\n", BlockKeywords::blockKeyword(BlockKeywords::ConfigurationBlockKeyword), cfg->name());
 
 	Species* sp;
-	Module* masterInstance, *module;
+	Module* module;
 	CharString niceName;
 	SpeciesInfo* spInfo;
 	bool blockDone = false, error = false;
@@ -144,18 +144,16 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 				Messenger::print("Initial coordinates will be loaded from file '%s' (format: %s)\n", cfg->inputCoordinates().filename(), cfg->inputCoordinates().formatString());
 				break;
 			case (ConfigurationBlock::ModuleKeyword):
-				// The argument following the keyword is the module name
-				masterInstance = dissolve->findMasterModule(parser.argc(1));
-				if (!masterInstance)
+				// The argument following the keyword is the module name, so try to create an instance of that Module
+				module = dissolve->createModuleInstance(parser.argc(1));
+				if (!module)
 				{
-					Messenger::error("No Module named '%s' exists.\n", parser.argc(1));
 					error = true;
 					break;
 				}
 
-				// Try to add this module (or an instance of it) to the current Configuration
-				module = cfg->addModule(masterInstance);
-				if (module)
+				// Add the new instance to the current Configuration
+				if (cfg->addModule(module))
 				{
 					// Add our pointer to the Module's list of associated Configurations
 					if (!module->addConfigurationTarget(cfg))
@@ -175,7 +173,7 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 				if (parser.hasArg(2))
 				{
 					niceName = DissolveSys::niceName(parser.argc(2));
-					Module* existingModule = dissolve->findModule(niceName);
+					Module* existingModule = dissolve->findModuleInstance(niceName);
 					if (existingModule && (existingModule != module))
 					{
 						Messenger::error("A Module with the unique name '%s' already exist.\n", niceName.get());

@@ -48,17 +48,6 @@ Module::~Module()
 }
 
 /*
- * Instances
- */
-
-// Find instance with unique name specified
-Module* Module::findInstance(const char* uniqueName)
-{
-	for (Module* instance = instances().first(); instance != NULL; instance = instance->next) if (DissolveSys::sameString(instance->uniqueName(), uniqueName)) return instance;
-	return NULL;
-}
-
-/*
  * Definition
  */
 

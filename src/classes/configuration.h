@@ -365,8 +365,8 @@ class Configuration : public ListItem<Configuration>
 	GenericList moduleData_;
 
 	public:
-	// Add Module (or an instance of it) to the Configuration
-	Module* addModule(Module* masterInstance);
+	// Add Module to the Configuration
+	bool addModule(Module* module);
 	// Return number of Modules associated to this Configuration
 	int nModules() const;
 	// Return list of Modules associated to this Configuration

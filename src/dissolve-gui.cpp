@@ -122,10 +122,9 @@ int main(int argc, char **argv)
 	Messenger::print("This is free software, and you are welcome to redistribute it under certain conditions.\n");
 	Messenger::print("For more details read the GPL at <http://www.gnu.org/copyleft/gpl.html>.\n");
 
-	// Check module registration 
+	// Register master Modules
 	Messenger::banner("Available Modules");
-	dissolve.printMasterModuleInformation();
-	if (dissolve.nFailedModuleRegistrations() > 0)
+	if (!dissolve.registerMasterModules())
 	{
 		ProcessPool::finalise();
 		return 1;

@@ -21,9 +21,6 @@
 
 #include "modules/atomshake/atomshake.h"
 
-// Static Members
-List<Module> AtomShakeModule::instances_;
-
 /*
  * Constructor / Destructor
  */
@@ -31,9 +28,9 @@ List<Module> AtomShakeModule::instances_;
 // Constructor
 AtomShakeModule::AtomShakeModule() : Module()
 {
-	// Add to instances list and set unique name for this instance
-	uniqueName_.sprintf("%s%02i", type(), instances_.nItems());
-	instances_.own(this);
+	// Set unique name for this instance of the Module
+	static int instanceId = 0;
+	uniqueName_.sprintf("%s%02i", type(), instanceId++);
 
 	// Set up variables / control parameters
 	setUpKeywords();
@@ -53,14 +50,9 @@ AtomShakeModule::~AtomShakeModule()
  * Instances
  */
 
-// Create instance of this module
-List<Module>& AtomShakeModule::instances()
-{
-	return instances_;
-}
 
 // Create instance of this module
-Module* AtomShakeModule::createInstance()
+Module* AtomShakeModule::createInstance() const
 {
 	return new AtomShakeModule;
 }

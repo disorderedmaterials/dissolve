@@ -16,7 +16,6 @@ add_library(module
   keywordlist.h
   list.h
   reference.h
-  registrar.h
   keywordtypes.h
 )
 

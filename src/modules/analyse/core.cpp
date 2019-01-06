@@ -21,9 +21,6 @@
 
 #include "modules/analyse/analyse.h"
 
-// Static Members
-List<Module> AnalyseModule::instances_;
-
 /*
  * Constructor / Destructor
  */
@@ -31,9 +28,9 @@ List<Module> AnalyseModule::instances_;
 // Constructor
 AnalyseModule::AnalyseModule() : Module()
 {
-	// Add to instances list and set unique name for this instance
-	instances_.own(this);
-	uniqueName_.sprintf("%s%02i", type(), instances_.nItems()-1);
+	// Set unique name for this instance of the Module
+	static int instanceId = 0;
+	uniqueName_.sprintf("%s%02i", type(), instanceId++);
 
 	// Set up variables / control parameters
 	setUpKeywords();
@@ -49,13 +46,7 @@ AnalyseModule::~AnalyseModule()
  */
 
 // Create instance of this module
-List<Module>& AnalyseModule::instances()
-{
-	return instances_;
-}
-
-// Create instance of this module
-Module* AnalyseModule::createInstance()
+Module* AnalyseModule::createInstance() const
 {
 	return new AnalyseModule;
 }

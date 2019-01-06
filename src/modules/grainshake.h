@@ -47,7 +47,7 @@ class GrainShakeModule : public Module
 	 */
 	public:
 	// Create instance of this module
-	Module* createInstance();
+	Module* createInstance() const;
 
 
 	/*

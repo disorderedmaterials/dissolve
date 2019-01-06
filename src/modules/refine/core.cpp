@@ -21,9 +21,6 @@
 
 #include "modules/refine/refine.h"
 
-// Static Members
-List<Module> RefineModule::instances_;
-
 /*
  * Constructor / Destructor
  */
@@ -31,9 +28,9 @@ List<Module> RefineModule::instances_;
 // Constructor
 RefineModule::RefineModule() : Module(), interpolatedFitData_(fitData_)
 {
-	// Add to instances list and set unique name for this instance
-	instances_.own(this);
-	uniqueName_.sprintf("%s%02i", type(), instances_.nItems()-1);
+	// Set unique name for this instance of the Module
+	static int instanceId = 0;
+	uniqueName_.sprintf("%s%02i", type(), instanceId++);
 
 	// Set up variables / control parameters
 	setUpKeywords();
@@ -49,13 +46,7 @@ RefineModule::~RefineModule()
  */
 
 // Create instance of this module
-List<Module>& RefineModule::instances()
-{
-	return instances_;
-}
-
-// Create instance of this module
-Module* RefineModule::createInstance()
+Module* RefineModule::createInstance() const
 {
 	return new RefineModule;
 }

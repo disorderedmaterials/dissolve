@@ -81,11 +81,10 @@ bool DissolveWindow::loadWindowLayout()
 			if (DissolveSys::sameString(stateParser.argc(1), "ModuleTab"))
 			{
 				// The title represents the unique name of the Module, so find it now
-				Module* module = dissolve_.findModule(stateParser.argc(0));
-				if (!module) return Messenger::error("Failed to find Module '%s' for display in a ModuleTab.\n", stateParser.argc(0)); 
+				Module* module = dissolve_.findModuleInstance(stateParser.argc(0));
+				if (!module) return Messenger::error("Failed to find Module instance '%s' for display in a ModuleTab.\n", stateParser.argc(0)); 
 
 				tab = addModuleTab(module);
-				
 			}
 			else if (DissolveSys::sameString(stateParser.argc(1), "WorkspaceTab"))
 			{

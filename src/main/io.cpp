@@ -42,7 +42,7 @@ bool Dissolve::loadInput(const char* filename)
 
 	// Variables
 	Configuration* cfg;
-	Module* module, *masterInstance;
+	Module* module;
 	CharString niceName;
 	Species* sp;
 	BlockKeywords::BlockKeyword kwd;
@@ -72,18 +72,16 @@ bool Dissolve::loadInput(const char* filename)
 				if (!MasterBlock::parse(parser, this)) error = true;
 				break;
 			case (BlockKeywords::ModuleBlockKeyword):
-				// The argument following the keyword is the module name
-				masterInstance = moduleList_.findMasterInstance(parser.argc(1));
-				if (!masterInstance)
+				// The argument following the keyword is the module name, so try to create an instance of that Module
+				module = createModuleInstance(parser.argc(1));
+				if (!module)
 				{
-					Messenger::error("No Module named '%s' exists.\n", parser.argc(1));
 					error = true;
 					break;
 				}
 
-				// Try to add this module (or an instance of it) to the main processing Module list
-				module = mainProcessingModules_.add(masterInstance);
-				if (!module)
+				// Add the new instance to the processing list
+				if (!mainProcessingModules_.add(module))
 				{
 					Messenger::error("Failed to add Module '%s' as main processing task.\n", parser.argc(1));
 					error = true;
@@ -94,7 +92,7 @@ bool Dissolve::loadInput(const char* filename)
 				if (parser.hasArg(2))
 				{
 					niceName = DissolveSys::niceName(parser.argc(2));
-					Module* existingModule = moduleList_.findInstanceByUniqueName(niceName);
+					Module* existingModule = findModuleInstance(niceName);
 					if (existingModule && (existingModule != module))
 					{
 						Messenger::error("A Module with the unique name '%s' already exist.\n", niceName.get());
@@ -518,7 +516,7 @@ bool Dissolve::loadRestart(const char* filename)
 			// Let the user know what we are doing
 			Messenger::print("Reading timing information for Module '%s'...\n", parser.argc(1));
 
-			module = moduleList_.findInstanceByUniqueName(parser.argc(1));
+			module = findModuleInstance(parser.argc(1));
 			if (!module)
 			{
 				Messenger::error("No Module with unique name '%s' exists.\n", parser.argc(1));

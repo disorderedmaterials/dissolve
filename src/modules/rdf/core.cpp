@@ -21,9 +21,6 @@
 
 #include "modules/rdf/rdf.h"
 
-// Static Members
-List<Module> RDFModule::instances_;
-
 /*
  * Constructor / Destructor
  */
@@ -31,9 +28,9 @@ List<Module> RDFModule::instances_;
 // Constructor
 RDFModule::RDFModule() : Module()
 {
-	// Add to instances list and set unique name for this instance
-	uniqueName_.sprintf("%s%02i", type(), instances_.nItems());
-	instances_.own(this);
+	// Set unique name for this instance of the Module
+	static int instanceId = 0;
+	uniqueName_.sprintf("%s%02i", type(), instanceId++);
 
 	// Set up variables / control parameters
 	setUpKeywords();
@@ -54,13 +51,7 @@ RDFModule::~RDFModule()
  */
 
 // Create instance of this module
-List<Module>& RDFModule::instances()
-{
-	return instances_;
-}
-
-// Create instance of this module
-Module* RDFModule::createInstance()
+Module* RDFModule::createInstance() const
 {
 	return new RDFModule;
 }

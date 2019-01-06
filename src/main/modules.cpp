@@ -20,7 +20,6 @@
 */
 
 #include "main/dissolve.h"
-#include "module/registrar.h"
 #include "modules/analyse/analyse.h"
 #include "modules/atomshake/atomshake.h"
 #include "modules/calculate/rdf/rdf.h"
@@ -47,67 +46,103 @@
  * All modules to be registered for use in the code must be placed here.
  */
 
+// Register master Module
+bool Dissolve::registerMasterModule(Module* mainInstance)
+{
+	// Do sanity check on name
+	ListIterator<ModuleReference> moduleIterator(masterModules_);
+	while (ModuleReference* modRef = moduleIterator.iterate())
+	{
+		Module* module = modRef->module();
+
+		if (DissolveSys::sameString(module->type(), mainInstance->type()))
+		{
+			Messenger::error("Two modules cannot have the same name (%s).\n", module->type());
+			return false;
+		}
+	}
+
+	ModuleReference* masterRef = masterModules_.add();
+	masterRef->set(mainInstance, NULL, NULL);
+
+	return true;
+}
+
 // Register master instances for all Modules
-void Dissolve::registerModules()
+bool Dissolve::registerMasterModules()
 {
-	ModuleRegistrar<AnalyseModule> analyseRegistrar(moduleList_, moduleInstances_);
-	ModuleRegistrar<AtomShakeModule> atomShakeRegistrar(moduleList_, moduleInstances_);
-	ModuleRegistrar<CalculateRDFModule> calculateRDFRegistrar(moduleList_, moduleInstances_);
-	ModuleRegistrar<CalibrationModule> calibrationRegistrar(moduleList_, moduleInstances_);
-	ModuleRegistrar<ChecksModule> checksRegistrar(moduleList_, moduleInstances_);
-	ModuleRegistrar<DataTestModule> dataTestRegistrar(moduleList_, moduleInstances_);
-	ModuleRegistrar<EnergyModule> energyRegistrar(moduleList_, moduleInstances_);
-	ModuleRegistrar<EPSRModule> epsrRegistrar(moduleList_, moduleInstances_);
-	ModuleRegistrar<ExportModule> exportRegistrar(moduleList_, moduleInstances_);
-	ModuleRegistrar<ForcesModule> forcesRegistrar(moduleList_, moduleInstances_);
-	ModuleRegistrar<ImportModule> importRegistrar(moduleList_, moduleInstances_);
-	ModuleRegistrar<IntraShakeModule> intraShakeRegistrar(moduleList_, moduleInstances_);
-	ModuleRegistrar<MDModule> mdRegistrar(moduleList_, moduleInstances_);
-	ModuleRegistrar<MolShakeModule> molShakeRegistrar(moduleList_, moduleInstances_);
-	ModuleRegistrar<RDFModule> rdfRegistrar(moduleList_, moduleInstances_);
-	ModuleRegistrar<RefineModule> refineRegistrar(moduleList_, moduleInstances_);
-	ModuleRegistrar<SanityCheckModule> sanityCheckRegistrar(moduleList_, moduleInstances_);
-	ModuleRegistrar<NeutronSQModule> neutronSQRegistrar(moduleList_, moduleInstances_);
-	ModuleRegistrar<TestModule> testRegistrar(moduleList_, moduleInstances_);
+	if (!registerMasterModule(new AnalyseModule)) return false;
+	if (!registerMasterModule(new AtomShakeModule)) return false;
+	if (!registerMasterModule(new CalculateRDFModule)) return false;
+	if (!registerMasterModule(new CalibrationModule)) return false;
+	if (!registerMasterModule(new ChecksModule)) return false;
+	if (!registerMasterModule(new DataTestModule)) return false;
+	if (!registerMasterModule(new EnergyModule)) return false;
+	if (!registerMasterModule(new EPSRModule)) return false;
+	if (!registerMasterModule(new ExportModule)) return false;
+	if (!registerMasterModule(new ForcesModule)) return false;
+	if (!registerMasterModule(new ImportModule)) return false;
+	if (!registerMasterModule(new IntraShakeModule)) return false;
+	if (!registerMasterModule(new MDModule)) return false;
+	if (!registerMasterModule(new MolShakeModule)) return false;
+	if (!registerMasterModule(new RDFModule)) return false;
+	if (!registerMasterModule(new RefineModule)) return false;
+	if (!registerMasterModule(new SanityCheckModule)) return false;
+	if (!registerMasterModule(new NeutronSQModule)) return false;
+	if (!registerMasterModule(new TestModule)) return false;
+
+	Messenger::print("Module Information (%i available):\n", masterModules_.nItems());
+	ListIterator<ModuleReference> moduleIterator(masterModules_);
+	while (ModuleReference* modRef = moduleIterator.iterate())
+	{
+		Module* masterInstance = modRef->module();
+
+		Messenger::print(" --> %s\n", masterInstance->type());
+		Messenger::print("     %s\n", masterInstance->brief());
+	}
 }
 
-// Clear master (and all other) instances for all Modules
-void Dissolve::clearModules()
+// Search for named master Module
+Module* Dissolve::findMasterModule(const char* moduleName) const
 {
-	RefListIterator< List<Module>, bool> listIterator(moduleInstances_);
-	while (List<Module>* list = listIterator.iterate()) list->clear();
-	moduleInstances_.clear();
+	ListIterator<ModuleReference> moduleIterator(masterModules_);
+	while (ModuleReference* modRef = moduleIterator.iterate())
+	{
+		Module* masterInstance = modRef->module();
+		
+		if (DissolveSys::sameString(masterInstance->type(), moduleName)) return masterInstance;
+	}
 
-	// Need to clear the accompanying reference lists in our ModuleList
-	moduleList_.clearMasterInstances();
-}
-
-// Search for and return the master reference for the named Module
-Module* Dissolve::findMasterModule(const char* moduleName)
-{
-	return moduleList_.findMasterInstance(moduleName);
+	return NULL;
 }
 
 // Return master Module instances
 const List<ModuleReference>& Dissolve::masterModules() const
 {
-	return moduleList_.masterInstances();
+	return masterModules_;
 }
 
-// Return number of failed Module registrations
-int Dissolve::nFailedModuleRegistrations() const
+// Create a Module instance for the named Module
+Module* Dissolve::createModuleInstance(const char* moduleName)
 {
-	return moduleList_.nFailedRegistrations();
-}
+	Module* masterModule = findMasterModule(moduleName);
+	if (!masterModule)
+	{
+		Messenger::error("No Module named '%s' exists.\n", moduleName);
+		return NULL;
+	}
 
-// Print out registered module information, and return false if any registration errors were encountered
-void Dissolve::printMasterModuleInformation() const
-{
-	moduleList_.printMasterModuleInformation();
+	// Creat a new instance of the specified Module and add it to our list
+	Module* instance = masterModule->createInstance();
+	moduleInstances_.own(instance);
+
+	return instance;
 }
 
 // Search for any instance of any module with the specified unique name
-Module* Dissolve::findModule(const char* uniqueName)
+Module* Dissolve::findModuleInstance(const char* uniqueName)
 {
-	moduleList_.findInstanceByUniqueName(uniqueName);
+	for (Module* module = moduleInstances_.first(); module != NULL; module = module->next) if (DissolveSys::sameString(module->uniqueName(), uniqueName)) return module;
+
+	return NULL;
 }

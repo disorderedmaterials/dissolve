@@ -170,8 +170,7 @@ int main(int argc, char **argv)
 
 	// Check module registration 
 	Messenger::banner("Available Modules");
-	dissolve.printMasterModuleInformation();
-	if (dissolve.nFailedModuleRegistrations() > 0)
+	if (!dissolve.registerMasterModules())
 	{
 		ProcessPool::finalise();
 		Messenger::ceaseRedirect();

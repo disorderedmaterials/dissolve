@@ -51,11 +51,7 @@ class Module : public ListItem<Module>
 	 */
 	public:
 	// Create instance of this module
-	virtual Module* createInstance() = 0;
-	// Return list of all created instances of this Module
-	virtual List<Module>& instances() = 0;
-	// Find instance with unique name specified
-	Module* findInstance(const char* uniqueName);
+	virtual Module* createInstance() const = 0;
 
 
 	/*

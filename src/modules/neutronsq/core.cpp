@@ -21,9 +21,6 @@
 
 #include "modules/neutronsq/neutronsq.h"
 
-// Static Members
-List<Module> NeutronSQModule::instances_;
-
 /*
  * Constructor / Destructor
  */
@@ -31,9 +28,9 @@ List<Module> NeutronSQModule::instances_;
 // Constructor
 NeutronSQModule::NeutronSQModule() : Module()
 {
-	// Add to instances list and set unique name for this instance
-	uniqueName_.sprintf("%s%02i", type(), instances_.nItems());
-	instances_.own(this);
+	// Set unique name for this instance of the Module
+	static int instanceId = 0;
+	uniqueName_.sprintf("%s%02i", type(), instanceId++);
 
 	// Set up variables / control parameters
 	setUpKeywords();
@@ -54,13 +51,7 @@ NeutronSQModule::~NeutronSQModule()
  */
 
 // Create instance of this module
-List<Module>& NeutronSQModule::instances()
-{
-	return instances_;
-}
-
-// Create instance of this module
-Module* NeutronSQModule::createInstance()
+Module* NeutronSQModule::createInstance() const
 {
 	return new NeutronSQModule;
 }

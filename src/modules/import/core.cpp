@@ -21,10 +21,6 @@
 
 #include "modules/import/import.h"
 
-
-// Static Members
-List<Module> ImportModule::instances_;
-
 /*
  * Constructor / Destructor
  */
@@ -32,9 +28,9 @@ List<Module> ImportModule::instances_;
 // Constructor
 ImportModule::ImportModule() : Module()
 {
-	// Add to instances list and set unique name for this instance
-	instances_.own(this);
-	uniqueName_.sprintf("%s%02i", type(), instances_.nItems()-1);
+	// Set unique name for this instance of the Module
+	static int instanceId = 0;
+	uniqueName_.sprintf("%s%02i", type(), instanceId++);
 
 	// Set up variables / control parameters
 	setUpKeywords();
@@ -50,13 +46,7 @@ ImportModule::~ImportModule()
  */
 
 // Create instance of this module
-List<Module>& ImportModule::instances()
-{
-	return instances_;
-}
-
-// Create instance of this module
-Module* ImportModule::createInstance()
+Module* ImportModule::createInstance() const
 {
 	return new ImportModule;
 }

@@ -114,15 +114,15 @@ class CoreData
 
 
 	/*
-	 * Module List
+	 * Module Instances
 	 */
 	private:
-	// Pointer to ModuleList
-	ModuleList* moduleList_;
+	// Pointer to Module instances list
+	List<Module>* moduleInstances_;
 
 	public:
-	// Set target ModuleList
-	void setModuleList(ModuleList* moduleList);
+	// Set target Module instances list
+	void setModuleInstances(List<Module>* moduleInstances);
 	// Search for any instance of any module with the specified unique name
 	Module* findModule(const char* uniqueName) const;
 };

@@ -34,8 +34,8 @@
 // Constructor
 Dissolve::Dissolve(CoreData& coreData) : coreData_(coreData)
 {
-	// Set ModuleList target in our core data
-	coreData_.setModuleList(&moduleList_);
+	// Set Module instances list in our core data
+	coreData_.setModuleInstances(&moduleInstances_);
 
 	// Clear everything
 	clear();
@@ -50,7 +50,11 @@ Dissolve::Dissolve(CoreData& coreData) : coreData_(coreData)
 // Destructor
 Dissolve::~Dissolve()
 {
+	// Clear main data
 	clear();
+
+	// Delete all master Modules
+	masterModules_.clear();
 }
 
 /*
@@ -98,8 +102,7 @@ void Dissolve::clear()
 
 	// Modules
 	Messenger::printVerbose("Clearing Modules...\n");
-	clearModules();
-	registerModules();
+	moduleInstances_.clear();
 
 	// Simulation
 	Messenger::printVerbose("Clearing Simulation...\n");

@@ -21,9 +21,6 @@
 
 #include "modules/md/md.h"
 
-// Static Members
-List<Module> MDModule::instances_;
-
 /*
  * Constructor / Destructor
  */
@@ -31,9 +28,9 @@ List<Module> MDModule::instances_;
 // Constructor
 MDModule::MDModule() : Module()
 {
-	// Add to instances list and set unique name for this instance
-	instances_.own(this);
-	uniqueName_.sprintf("%s%02i", type(), instances_.nItems()-1);
+	// Set unique name for this instance of the Module
+	static int instanceId = 0;
+	uniqueName_.sprintf("%s%02i", type(), instanceId++);
 
 	// Set up variables / control parameters
 	setUpKeywords();
@@ -54,13 +51,7 @@ MDModule::~MDModule()
  */
 
 // Create instance of this module
-List<Module>& MDModule::instances()
-{
-	return instances_;
-}
-
-// Create instance of this module
-Module* MDModule::createInstance()
+Module* MDModule::createInstance() const
 {
 	return new MDModule;
 }

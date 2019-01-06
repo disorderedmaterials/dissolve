@@ -21,9 +21,6 @@
 
 #include "modules/skeleton/skeleton.h"
 
-// Static Members
-List<Module> SkeletonModule::instances_;
-
 /*
  * Constructor / Destructor
  */
@@ -31,9 +28,9 @@ List<Module> SkeletonModule::instances_;
 // Constructor
 SkeletonModule::SkeletonModule() : Module()
 {
-	// Add to instances list and set unique name for this instance
-	instances_.own(this);
-	uniqueName_.sprintf("%s%02i", type(), instances_.nItems()-1);
+	// Set unique name for this instance of the Module
+	static int instanceId = 0;
+	uniqueName_.sprintf("%s%02i", type(), instanceId++);
 
 	// Set up variables / control parameters
 	setUpKeywords();
@@ -49,13 +46,7 @@ SkeletonModule::~SkeletonModule()
  */
 
 // Create instance of this module
-List<Module>& SkeletonModule::instances()
-{
-	return instances_;
-}
-
-// Create instance of this module
-Module* SkeletonModule::createInstance()
+Module* SkeletonModule::createInstance() const
 {
 	return new SkeletonModule;
 }

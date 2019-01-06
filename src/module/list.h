@@ -50,7 +50,7 @@ class ModuleList
 	// Clear list
 	void clear();
 	// Associate Module to list
-	Module* add(Module* module, Configuration* location = NULL, Module* addBeforeThis = NULL);
+	bool add(Module* module, Configuration* location = NULL, Module* addBeforeThis = NULL);
 	// Find associated Module by name
 	Module* find(const char* name) const;
 	// Find ModuleReference for specified Module
@@ -59,32 +59,6 @@ class ModuleList
 	int nModules() const;
 	// Return list of ModuleReferences
 	List<ModuleReference>& modules();
-
-
-	/*
-	 * Master Module Instances
-	 */
-	private:
-	// List of master Module instances
-	List<ModuleReference> masterInstances_;
-	// List of Modules that failed to register
-	List<ModuleReference> failedRegistrations_;
-
-	public:
-	// Clear master Module instances
-	void clearMasterInstances();
-	// Register Module
-	void registerMasterInstance(Module* mainInstance);
-	// Return number of failed Module registrations
-	int nFailedRegistrations() const;
-	// Find master instance of specified Module type
-	Module* findMasterInstance(const char* type) const;
-	// Print out registered module information, and return false if any registration errors were encountered
-	void printMasterModuleInformation() const;
-	// Return list of all master instances
-	const List<ModuleReference>& masterInstances() const;
-	// Search for any instance of any module with the specified unique name
-	Module* findInstanceByUniqueName(const char* uniqueName) const;
 };
 
 #endif

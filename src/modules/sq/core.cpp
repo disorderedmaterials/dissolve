@@ -21,9 +21,6 @@
 
 #include "modules/sq/sq.h"
 
-// Static Members
-List<Module> SQModule::instances_;
-
 /*
  * Constructor / Destructor
  */
@@ -31,9 +28,9 @@ List<Module> SQModule::instances_;
 // Constructor
 SQModule::SQModule() : Module()
 {
-	// Add to instances list and set unique name for this instance
-	uniqueName_.sprintf("%s%02i", type(), instances_.nItems());
-	instances_.own(this);
+	// Set unique name for this instance of the Module
+	static int instanceId = 0;
+	uniqueName_.sprintf("%s%02i", type(), instanceId++);
 
 	// Set up variables / control parameters
 	setUpKeywords();
@@ -54,13 +51,7 @@ SQModule::~SQModule()
  */
 
 // Create instance of this module
-List<Module>& SQModule::instances()
-{
-	return instances_;
-}
-
-// Create instance of this module
-Module* SQModule::createInstance()
+Module* SQModule::createInstance() const
 {
 	return new SQModule;
 }

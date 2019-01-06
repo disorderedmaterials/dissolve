@@ -24,12 +24,13 @@
 #include "classes/species.h"
 #include "classes/atomtype.h"
 #include "module/list.h"
+#include "module/module.h"
 #include "base/sysfunc.h"
 
 // Constructor
 CoreData::CoreData()
 {
-	moduleList_ = NULL;
+	moduleInstances_ = NULL;
 }
 
 // Destructor
@@ -236,20 +237,22 @@ Configuration* CoreData::findConfiguration(const char* name) const
  * Module List
  */
 
-// Set target ModuleList
-void CoreData::setModuleList(ModuleList* moduleList)
+// Set target Module instances list
+void CoreData::setModuleInstances(List<Module>* moduleInstances)
 {
-	moduleList_ = moduleList;
+	moduleInstances_ = moduleInstances;
 }
 
 // Search for any instance of any module with the specified unique name
 Module* CoreData::findModule(const char* uniqueName) const
 {
-	if (!moduleList_)
+	if (!moduleInstances_)
 	{
-		printf("Error - ModuleList pointer not set in CoreData.\n");
+		printf("Error - List<Module> pointer not set in CoreData.\n");
 		return NULL;
 	}
 
-	return moduleList_->findInstanceByUniqueName(uniqueName);
+	for (Module* module = moduleInstances_->first(); module != NULL; module = module->next) if (DissolveSys::sameString(module->uniqueName(), uniqueName)) return module;
+
+	return NULL;
 }
