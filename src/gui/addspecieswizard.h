@@ -71,8 +71,8 @@ class AddSpeciesWizard : public WizardWidget
 	private:
 	// Main form declaration
 	Ui::AddSpeciesWizard ui_;
-	// Whether the widget is currently refreshing
-	bool refreshing_;
+	// Lock counter for the widget refreshing
+	int lockedForRefresh_;
 	// Pages Enum
 	enum WidgetPage
 	{
@@ -134,7 +134,10 @@ class AddSpeciesWizard : public WizardWidget
 	void updateAtomTypesPage();
 
 	private slots:
+	void on_AtomTypesList_itemSelectionChanged();
 	void atomTypesListEdited(QWidget* lineEdit);
+	void on_AtomTypesPrefixButton_clicked(bool checked);
+	void on_AtomTypesSuffixButton_clicked(bool checked);
 
 
 	/*

@@ -26,6 +26,7 @@
 #include "classes/species.h"
 #include "templates/variantpointer.h"
 #include <QFileDialog>
+#include <QInputDialog>
 
 // Constructor / Destructor
 AddSpeciesWizard::AddSpeciesWizard(QWidget* parent) : temporaryDissolve_(temporaryCoreData_)
@@ -47,7 +48,7 @@ AddSpeciesWizard::AddSpeciesWizard(QWidget* parent) : temporaryDissolve_(tempora
 	// Connect signals / slots
 	connect(ui_.AtomTypesList->itemDelegate(), SIGNAL(commitData(QWidget*)), this, SLOT(atomTypesListEdited(QWidget*)));
 
-	refreshing_ = false;
+	lockedForRefresh_ = 0;
 }
 
 AddSpeciesWizard::~AddSpeciesWizard()
@@ -392,6 +393,14 @@ void AddSpeciesWizard::updateAtomTypesPage()
 	ListWidgetUpdater<AddSpeciesWizard,AtomType> listUpdater(ui_.AtomTypesList, temporaryCoreData_.constAtomTypes(), this, &AddSpeciesWizard::updateAtomTypesListRow);
 }
 
+void AddSpeciesWizard::on_AtomTypesList_itemSelectionChanged()
+{
+	// Enable / disable prefix and suffix buttons as appropriate
+	bool isSelection = ui_.AtomTypesList->selectedItems().count() > 0;
+	ui_.AtomTypesPrefixButton->setEnabled(isSelection);
+	ui_.AtomTypesSuffixButton->setEnabled(isSelection);
+}
+
 void AddSpeciesWizard::atomTypesListEdited(QWidget* lineEdit)
 {
 	// Since the signal that leads us here does not tell us the item that was edited, update all AtomType names here before updating the page
@@ -406,7 +415,41 @@ void AddSpeciesWizard::atomTypesListEdited(QWidget* lineEdit)
 
 	updateAtomTypesPage();
 }
-	
+
+void AddSpeciesWizard::on_AtomTypesPrefixButton_clicked(bool checked)
+{
+	bool ok;
+	QString prefix = QInputDialog::getText(this, "Prefix AtomTypes", "Enter prefix to apply to all selected AtomTypes", QLineEdit::Normal, "", &ok);
+	if (!ok) return;
+
+	QList<QListWidgetItem*> selectedItems = ui_.AtomTypesList->selectedItems();
+	QList<QListWidgetItem*>::iterator i;
+	for (i = selectedItems.begin(); i != selectedItems.end(); ++i)
+	{
+		AtomType* at = (AtomType*) VariantPointer<AtomType>((*i)->data(Qt::UserRole));
+		at->setName(CharString("%s%s", qPrintable(prefix), at->name()));
+	}
+
+	updateAtomTypesPage();
+}
+
+void AddSpeciesWizard::on_AtomTypesSuffixButton_clicked(bool checked)
+{
+	bool ok;
+	QString suffix = QInputDialog::getText(this, "Suffix AtomTypes", "Enter suffix to apply to all selected AtomTypes", QLineEdit::Normal, "", &ok);
+	if (!ok) return;
+
+	QList<QListWidgetItem*> selectedItems = ui_.AtomTypesList->selectedItems();
+	QList<QListWidgetItem*>::iterator i;
+	for (i = selectedItems.begin(); i != selectedItems.end(); ++i)
+	{
+		AtomType* at = (AtomType*) VariantPointer<AtomType>((*i)->data(Qt::UserRole));
+		at->setName(CharString("%s%s", at->name(), qPrintable(suffix)));
+	}
+
+	updateAtomTypesPage();
+}
+
 /*
  * Species Name Page
  */
