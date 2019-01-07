@@ -29,11 +29,11 @@ libgui_la_SOURCES = icons.qrc
 libgui_la_SOURCES += modulechartinsertionblock.ui modulechartmoduleblock.ui modulecontrolwidget.ui moduleeditor.ui paletteblock.ui
 libgui_la_SOURCES += modulechart.hui modulepalette.hui
 # UI - Widgets
-libgui_la_SOURCES += addspecieswizard.ui wizardwidget.hui wizardwidgetfooter.ui wizardwidgetheader.ui
+libgui_la_SOURCES += addspecieswizard.ui pairpotentialwidget.ui wizardwidget.hui wizardwidgetfooter.ui wizardwidgetheader.ui
 # UI - Dialogs
 libgui_la_SOURCES += addspeciesdialog.ui
 # UI - Main Tabs
-libgui_la_SOURCES += gui.ui analysistab.ui configurationtab.ui forcefieldtab.ui moduletab.ui pairpotentialwidget.ui processingtab.ui speciestab.ui workspacetab.ui
+libgui_la_SOURCES += gui.ui analysistab.ui configurationtab.ui forcefieldtab.ui moduletab.ui processingtab.ui speciestab.ui workspacetab.ui
 # UI - Utility Classes
 libgui_la_SOURCES += outputhandler.hui thread.hui
 
