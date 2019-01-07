@@ -61,6 +61,12 @@ void WizardWidget::setUpHeaderAndFooter(QWidget* widget)
 	else printf("Footer widget not found.\n");
 }
 
+// Set icon in header
+void WizardWidget::setWizardHeaderIcon(QString iconResource)
+{
+	if (headerAvailable_) headerUi_.IconLabel->setPixmap(QPixmap(iconResource));
+}
+
 // Update controls in header and footer widgets to reflect the specified page
 void WizardWidget::updateHeaderAndFooter(WizardWidgetPageInfo* page)
 {

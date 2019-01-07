@@ -59,6 +59,8 @@ class WizardWidget : public QWidget
 	protected:
 	// Attach header and footer to existing named widgets in specified widget
 	void setUpHeaderAndFooter(QWidget* widget);
+	// Set icon in header
+	void setWizardHeaderIcon(QString iconResource);
 	// Update controls in header and footer widgets to reflect the specified page
 	void updateHeaderAndFooter(WizardWidgetPageInfo* page);
 
