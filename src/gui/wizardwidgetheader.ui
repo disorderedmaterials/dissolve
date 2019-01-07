@@ -82,7 +82,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="icons.qrc">:/wizard/icons/wizard.svg</pixmap>
+         <pixmap resource="icons.qrc">:/special/icons/special_wizard.svg</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
