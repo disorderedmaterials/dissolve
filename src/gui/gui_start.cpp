@@ -39,7 +39,7 @@ void DissolveWindow::on_StartCreateNewButton_clicked(bool checked)
 	ui.SessionNewAction->trigger();
 }
 
-void DissolveWindow::on_StartRunWizardButton_clicked(bool checked)
+void DissolveWindow::on_StartSetupWizardButton_clicked(bool checked)
 {
 }
 

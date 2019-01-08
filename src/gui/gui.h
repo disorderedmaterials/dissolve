@@ -118,7 +118,7 @@ class DissolveWindow : public QMainWindow
 	private slots:
 	// Session
 	void on_SessionNewAction_triggered(bool checked);
-	void on_SessionRunWizardAction_triggered(bool checked);
+	void on_SessionSetupWizardAction_triggered(bool checked);
 	void on_SessionOpenAction_triggered(bool checked);
 	void on_SessionOpenRemoteAction_triggered(bool checked);
 	void on_SessionOpenRecentAction_triggered(bool checked);
@@ -165,7 +165,7 @@ class DissolveWindow : public QMainWindow
 	private slots:
 	// 'Create' Group
 	void on_StartCreateNewButton_clicked(bool checked);
-	void on_StartRunWizardButton_clicked(bool checked);
+	void on_StartSetupWizardButton_clicked(bool checked);
 	// 'Open / Connect' Group
 	void on_StartOpenExistingButton_clicked(bool checked);
 	void on_StartOpenRemoteButton_clicked(bool checked);

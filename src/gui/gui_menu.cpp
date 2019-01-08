@@ -86,7 +86,7 @@ void DissolveWindow::on_SessionNewAction_triggered(bool checked)
 	showMainStackPage(DissolveWindow::SimulationStackPage);
 }
 
-void DissolveWindow::on_SessionRunWizardAction_triggered(bool checked)
+void DissolveWindow::on_SessionSetupWizardAction_triggered(bool checked)
 {
 }
 
