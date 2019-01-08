@@ -68,7 +68,7 @@ ForcefieldTab::ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve,
 
 	// Set item delegates for tables
 	// -- Charge / Parameters
-	for (int n=2; n<7; ++n) ui.AtomTypesTable->setItemDelegateForColumn(n, new TExponentialSpinDelegate(this));
+	for (int n=3; n<8; ++n) ui.AtomTypesTable->setItemDelegateForColumn(n, new TExponentialSpinDelegate(this));
 
 	// Ensure fonts for table headers are set correctly
 	ui.AtomTypesTable->horizontalHeader()->setFont(font());
@@ -242,14 +242,25 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, AtomType* atomType, bool cr
 	else item = ui.AtomTypesTable->item(row, 0);
 	item->setText(atomType->name());
 
+	// Target element
+	if (createItems)
+	{
+		item = new QTableWidgetItem;
+		item->setData(Qt::UserRole, VariantPointer<AtomType>(atomType));
+		item->setFlags(Qt::NoItemFlags);
+		ui.AtomTypesTable->setItem(row, 1, item);
+	}
+	else item = ui.AtomTypesTable->item(row, 1);
+	item->setText(atomType->element()->symbol());
+
 	// Charge
 	if (createItems)
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<AtomType>(atomType));
-		ui.AtomTypesTable->setItem(row, 1, item);
+		ui.AtomTypesTable->setItem(row, 2, item);
 	}
-	else item = ui.AtomTypesTable->item(row, 1);
+	else item = ui.AtomTypesTable->item(row, 2);
 	item->setText(QString::number(atomType->parameters().charge()));
 
 	// Parameters
@@ -259,9 +270,9 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, AtomType* atomType, bool cr
 		{
 			item = new QTableWidgetItem;
 			item->setData(Qt::UserRole, VariantPointer<AtomType>(atomType));
-			ui.AtomTypesTable->setItem(row, n+2, item);
+			ui.AtomTypesTable->setItem(row, n+3, item);
 		}
-		else item = ui.AtomTypesTable->item(row, n+2);
+		else item = ui.AtomTypesTable->item(row, n+3);
 		item->setText(QString::number(atomType->parameters().parameter(n)));
 	}
 }
@@ -383,7 +394,7 @@ void ForcefieldTab::disableSensitiveControls()
 // Enable sensitive controls within tab, ready for main code to run
 void ForcefieldTab::enableSensitiveControls()
 {
-	setEnabled(false);
+	setEnabled(true);
 }
 
 /*
@@ -557,16 +568,16 @@ void ForcefieldTab::on_AtomTypesTable_itemChanged(QTableWidgetItem* w)
 			dissolveWindow_->setModified();
 			break;
 		// Charge
-		case (1):
+		case (2):
 			atomType->parameters().setCharge(w->text().toDouble());
 			dissolveWindow_->setModified();
 			break;
 		// Parameters
-		case (2):
 		case (3):
 		case (4):
 		case (5):
-			atomType->parameters().setParameter(w->column()-2, w->text().toDouble());
+		case (6):
+			atomType->parameters().setParameter(w->column()-3, w->text().toDouble());
 			dissolveWindow_->setModified();
 			break;
 		default:
