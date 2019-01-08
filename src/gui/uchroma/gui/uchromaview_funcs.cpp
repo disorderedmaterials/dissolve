@@ -32,7 +32,7 @@
 UChromaViewWidget::UChromaViewWidget(QWidget* parent) : QWidget(parent), UChromaBase(this), viewTypeActionGroup_(this)
 {
 	// Initialise the icon resource
-	Q_INIT_RESOURCE(icons);
+	Q_INIT_RESOURCE(main);
 
 	// Call the main creation function
 	ui.setupUi(this);

@@ -63,7 +63,7 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset resource="icons.qrc">
+        <iconset resource="main.qrc">
          <normaloff>:/general/icons/general_cross.svg</normaloff>:/general/icons/general_cross.svg</iconset>
        </property>
        <property name="iconSize">
@@ -188,7 +188,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="main.qrc">
               <normaloff>:/control/icons/control_play.svg</normaloff>:/control/icons/control_play.svg</iconset>
             </property>
             <property name="iconSize">
@@ -236,7 +236,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="main.qrc">
               <normaloff>:/general/icons/slider-off.svg</normaloff>
               <normalon>:/general/icons/slider-on.svg</normalon>:/general/icons/slider-off.svg</iconset>
             </property>
@@ -282,7 +282,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="main.qrc">
               <normaloff>:/general/icons/general_options.svg</normaloff>:/general/icons/general_options.svg</iconset>
             </property>
             <property name="iconSize">
@@ -421,7 +421,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="main.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -429,7 +429,7 @@
              <string>Remove</string>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="main.qrc">
               <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
             </property>
             <property name="iconSize">
@@ -458,7 +458,7 @@
              <string>Add</string>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="main.qrc">
               <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
             </property>
             <property name="iconSize">
@@ -540,7 +540,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="icons.qrc">
+              <iconset resource="main.qrc">
                <normaloff>:/file/icons/file_open.svg</normaloff>:/file/icons/file_open.svg</iconset>
              </property>
              <property name="iconSize">
@@ -681,7 +681,7 @@
            <string>Regenerate Now</string>
           </property>
           <property name="icon">
-           <iconset resource="icons.qrc">
+           <iconset resource="main.qrc">
             <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
           </property>
           <property name="iconSize">
@@ -710,7 +710,7 @@
            <string>Export XYZ</string>
           </property>
           <property name="icon">
-           <iconset resource="icons.qrc">
+           <iconset resource="main.qrc">
             <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
           </property>
           <property name="iconSize">
@@ -793,7 +793,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="main.qrc"/>
  </resources>
  <connections/>
 </ui>

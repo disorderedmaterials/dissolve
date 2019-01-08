@@ -106,7 +106,7 @@
               <string>Remove</string>
              </property>
              <property name="icon">
-              <iconset resource="icons.qrc">
+              <iconset resource="main.qrc">
                <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
              </property>
              <property name="iconSize">
@@ -135,7 +135,7 @@
               <string>Add</string>
              </property>
              <property name="icon">
-              <iconset resource="icons.qrc">
+              <iconset resource="main.qrc">
                <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
              </property>
              <property name="iconSize">
@@ -253,7 +253,7 @@
               <string>Remove</string>
              </property>
              <property name="icon">
-              <iconset resource="icons.qrc">
+              <iconset resource="main.qrc">
                <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
              </property>
              <property name="iconSize">
@@ -282,7 +282,7 @@
               <string>Add</string>
              </property>
              <property name="icon">
-              <iconset resource="icons.qrc">
+              <iconset resource="main.qrc">
                <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
              </property>
              <property name="iconSize">
@@ -400,7 +400,7 @@
               <string>Remove</string>
              </property>
              <property name="icon">
-              <iconset resource="icons.qrc">
+              <iconset resource="main.qrc">
                <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
              </property>
              <property name="iconSize">
@@ -429,7 +429,7 @@
               <string>Add</string>
              </property>
              <property name="icon">
-              <iconset resource="icons.qrc">
+              <iconset resource="main.qrc">
                <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
              </property>
              <property name="iconSize">
@@ -540,7 +540,7 @@
            <string>Library</string>
           </property>
           <property name="icon">
-           <iconset resource="icons.qrc">
+           <iconset resource="main.qrc">
             <normaloff>:/general/icons/general_library.svg</normaloff>:/general/icons/general_library.svg</iconset>
           </property>
           <property name="iconSize">
@@ -582,7 +582,7 @@
            <string>Remove</string>
           </property>
           <property name="icon">
-           <iconset resource="icons.qrc">
+           <iconset resource="main.qrc">
             <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
           </property>
           <property name="iconSize">
@@ -611,7 +611,7 @@
            <string>Add</string>
           </property>
           <property name="icon">
-           <iconset resource="icons.qrc">
+           <iconset resource="main.qrc">
             <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
           </property>
           <property name="iconSize">
@@ -967,7 +967,7 @@
               <string>Update All</string>
              </property>
              <property name="icon">
-              <iconset resource="icons.qrc">
+              <iconset resource="main.qrc">
                <normaloff>:/general/icons/general_repeat.svg</normaloff>:/general/icons/general_repeat.svg</iconset>
              </property>
              <property name="iconSize">
@@ -1084,7 +1084,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="main.qrc"/>
  </resources>
  <connections/>
 </ui>

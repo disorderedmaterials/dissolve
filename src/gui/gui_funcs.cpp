@@ -37,7 +37,7 @@
 DissolveWindow::DissolveWindow(Dissolve& dissolve) : QMainWindow(NULL), dissolve_(dissolve), threadController_(this, dissolve)
 {
 	// Initialise resources
-	Q_INIT_RESOURCE(icons);
+	Q_INIT_RESOURCE(main);
 	Q_INIT_RESOURCE(uchroma);
 
 	// Set up user interface

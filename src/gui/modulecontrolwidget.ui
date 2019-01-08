@@ -94,7 +94,7 @@
          <string>...</string>
         </property>
         <property name="icon">
-         <iconset resource="icons.qrc">
+         <iconset resource="main.qrc">
           <normaloff>:/general/icons/general_arrowleft.svg</normaloff>:/general/icons/general_arrowleft.svg</iconset>
         </property>
         <property name="iconSize">
@@ -114,7 +114,7 @@
          <string>...</string>
         </property>
         <property name="icon">
-         <iconset resource="icons.qrc">
+         <iconset resource="main.qrc">
           <normaloff>:/general/icons/general_arrowright.svg</normaloff>:/general/icons/general_arrowright.svg</iconset>
         </property>
         <property name="iconSize">
@@ -137,7 +137,7 @@
          <string>...</string>
         </property>
         <property name="icon">
-         <iconset resource="icons.qrc">
+         <iconset resource="main.qrc">
           <normaloff>:/general/icons/general_cross.svg</normaloff>:/general/icons/general_cross.svg</iconset>
         </property>
         <property name="iconSize">
@@ -261,7 +261,7 @@
          <string>...</string>
         </property>
         <property name="icon">
-         <iconset resource="icons.qrc">
+         <iconset resource="main.qrc">
           <normaloff>:/control/icons/control_play.svg</normaloff>:/control/icons/control_play.svg</iconset>
         </property>
         <property name="iconSize">
@@ -281,7 +281,7 @@
          <string>...</string>
         </property>
         <property name="icon">
-         <iconset resource="icons.qrc">
+         <iconset resource="main.qrc">
           <normaloff>:/general/icons/general_bothon.svg</normaloff>:/general/icons/general_bothon.svg</iconset>
         </property>
         <property name="iconSize">
@@ -484,7 +484,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="main.qrc"/>
  </resources>
  <connections/>
 </ui>

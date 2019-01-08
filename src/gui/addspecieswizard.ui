@@ -112,7 +112,7 @@
               <string>Create an empty Species</string>
              </property>
              <property name="icon">
-              <iconset resource="icons.qrc">
+              <iconset resource="main.qrc">
                <normaloff>:/file/icons/file_new.svg</normaloff>:/file/icons/file_new.svg</iconset>
              </property>
              <property name="iconSize">
@@ -139,7 +139,7 @@
               <string>Create a Species with a single atom</string>
              </property>
              <property name="icon">
-              <iconset resource="icons.qrc">
+              <iconset resource="main.qrc">
                <normaloff>:/file/icons/file_new.svg</normaloff>:/file/icons/file_new.svg</iconset>
              </property>
              <property name="iconSize">
@@ -169,7 +169,7 @@
               <string>Add a predefined Species</string>
              </property>
              <property name="icon">
-              <iconset resource="icons.qrc">
+              <iconset resource="main.qrc">
                <normaloff>:/tabs/icons/tabs_species.svg</normaloff>:/tabs/icons/tabs_species.svg</iconset>
              </property>
              <property name="iconSize">
@@ -199,7 +199,7 @@
               <string>Import coordinates and assign a forcefield</string>
              </property>
              <property name="icon">
-              <iconset resource="icons.qrc">
+              <iconset resource="main.qrc">
                <normaloff>:/file/icons/file_open.svg</normaloff>:/file/icons/file_open.svg</iconset>
              </property>
              <property name="iconSize">
@@ -226,7 +226,7 @@
               <string>Import a Species from an existing simulation</string>
              </property>
              <property name="icon">
-              <iconset resource="icons.qrc">
+              <iconset resource="main.qrc">
                <normaloff>:/file/icons/file_open.svg</normaloff>:/file/icons/file_open.svg</iconset>
              </property>
              <property name="iconSize">
@@ -324,7 +324,7 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset resource="icons.qrc">
+               <iconset resource="main.qrc">
                 <normaloff>:/file/icons/file_open.svg</normaloff>:/file/icons/file_open.svg</iconset>
               </property>
              </widget>
@@ -514,7 +514,7 @@
                <string/>
               </property>
               <property name="pixmap">
-               <pixmap resource="icons.qrc">:/general/icons/general_true.svg</pixmap>
+               <pixmap resource="main.qrc">:/general/icons/general_true.svg</pixmap>
               </property>
               <property name="scaledContents">
                <bool>true</bool>
@@ -546,7 +546,7 @@
                <string/>
               </property>
               <property name="pixmap">
-               <pixmap resource="icons.qrc">:/general/icons/general_warn.svg</pixmap>
+               <pixmap resource="main.qrc">:/general/icons/general_warn.svg</pixmap>
               </property>
               <property name="scaledContents">
                <bool>true</bool>
@@ -658,7 +658,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="main.qrc"/>
  </resources>
  <connections/>
 </ui>

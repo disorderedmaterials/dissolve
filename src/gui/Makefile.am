@@ -21,9 +21,9 @@ SUFFIXES: .ui .hui .qrc
 	rm $*.cpp
 
 clean-local:
-	-rm -f ui_* *.o moc_*.cpp icons.cpp tmdiarea.cpp
+	-rm -f ui_* *.o moc_*.cpp main.cpp tmdiarea.cpp
 
-libgui_la_SOURCES = icons.qrc
+libgui_la_SOURCES = main.qrc
 
 # UI - Module Chart
 libgui_la_SOURCES += modulechartinsertionblock.ui modulechartmoduleblock.ui modulecontrolwidget.ui moduleeditor.ui paletteblock.ui
