@@ -21,7 +21,7 @@ SUFFIXES: .ui .hui .qrc
 	rm $*.cpp
 
 clean-local:
-	-rm -f ui_* *.o moc_*.cpp main.cpp tmdiarea.cpp
+	-rm -f ui_* *.o moc_*.cpp main.cpp tmdiarea.cpp wizardwidget.cpp
 
 libgui_la_SOURCES = main.qrc
 
@@ -50,7 +50,7 @@ libgui_la_SOURCES += pairpotentialwidget_funcs.cpp paletteblock_funcs.cpp proces
 libgui_la_SOURCES += speciestab_funcs.cpp
 libgui_la_SOURCES += thread_funcs.cpp
 libgui_la_SOURCES += tmdiarea.hui tmdiarea_funcs.cpp
-libgui_la_SOURCES += wizardwidget_funcs.cpp wizardwidgetpageinfo.cpp workspacetab_funcs.cpp
+libgui_la_SOURCES += wizardwidget_funcs.cpp wizardwidgethighlight.cpp wizardwidgetpageinfo.cpp workspacetab_funcs.cpp
 
 noinst_HEADERS = addspeciesdialog.h addspecieswizard.h analysistab.h
 noinst_HEADERS += configurationtab.h
@@ -59,6 +59,6 @@ noinst_HEADERS += gui.h
 noinst_HEADERS += maintab.h modulechartblock.h modulecharthotspot.h modulechartinsertionblock.h modulechartmetrics.h modulechartmoduleblock.h modulecontrolwidget.h moduleeditor.h modulekeywordswidget.h moduletab.h modulewidget.h
 noinst_HEADERS += pairpotentialwidget.h paletteblock.h processingtab.h
 noinst_HEADERS += speciestab.h
-noinst_HEADERS += wizardwidgetfooter.h wizardwidgetheader.h wizardwidgetpageinfo.h workspacetab.h
+noinst_HEADERS += wizardwidgetfooter.h wizardwidgetheader.h wizardwidgethighlight.h wizardwidgetpageinfo.h workspacetab.h
 
 AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@

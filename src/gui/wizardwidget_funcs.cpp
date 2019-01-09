@@ -20,6 +20,7 @@
 */
 
 #include "gui/wizardwidget.hui"
+#include "base/sysfunc.h"
 
 // Constructor / Destructor
 WizardWidget::WizardWidget()
@@ -102,13 +103,23 @@ void WizardWidget::updateHeaderAndFooter(WizardWidgetPageInfo* page)
  * Page Management
  */
 
-// Find page with specified index
-WizardWidgetPageInfo* WizardWidget::findPage(int index)
+// Clear all registered pages
+void WizardWidget::clearPages()
 {
-	ListIterator<WizardWidgetPageInfo> pageIterator(pages_);
-	while (WizardWidgetPageInfo* page = pageIterator.iterate()) if (page->index() == index) return page;
+	pages_.clear();
+	history_.clear();
+	currentPage_ = NULL;
 
-	return NULL;
+	updateHeaderAndFooter(NULL);
+}
+
+// Add empty page
+WizardWidgetPageInfo* WizardWidget::addPage()
+{
+	WizardWidgetPageInfo* page = pages_.add();
+	page->setIndex(pages_.nItems());
+
+	return page;
 }
 
 // Register page
@@ -139,6 +150,37 @@ void WizardWidget::registerFinishPage(int index, const char* title)
 	WizardWidgetPageInfo* page = registerPage(index, title);
 
 	page->setPageType(WizardWidgetPageInfo::FinishPage);
+}
+
+// Find page with specified index
+WizardWidgetPageInfo* WizardWidget::findPage(int index)
+{
+	ListIterator<WizardWidgetPageInfo> pageIterator(pages_);
+	while (WizardWidgetPageInfo* page = pageIterator.iterate()) if (page->index() == index) return page;
+
+	return NULL;
+}
+
+// Return page index with supplied tag
+int WizardWidget::indexOfTag(const char* tag)
+{
+	ListIterator<WizardWidgetPageInfo> pageIterator(pages_);
+	while (WizardWidgetPageInfo* page = pageIterator.iterate()) if (DissolveSys::sameString(tag, page->pageTag())) return page->index();
+
+	return -1;
+}
+
+// Resolve page links for tagged pages
+void WizardWidget::resolveTaggedPageLinks()
+{
+	ListIterator<WizardWidgetPageInfo> pageIterator(pages_);
+	while (WizardWidgetPageInfo* page = pageIterator.iterate())
+	{
+		// If a next page tag is not set for this page, move on
+		if (!page->hasNextPageTag()) continue;
+
+		page->setNextPageIndex(indexOfTag(page->nextPageTag()));
+	}
 }
 
 /*

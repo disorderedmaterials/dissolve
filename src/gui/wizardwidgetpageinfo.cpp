@@ -25,6 +25,7 @@
 WizardWidgetPageInfo::WizardWidgetPageInfo() : ListItem<WizardWidgetPageInfo>()
 {
 	pageType_ = WizardWidgetPageInfo::NormalPage;
+	stackedWidgetPage_ = NULL;
 }
 
 WizardWidgetPageInfo::~WizardWidgetPageInfo()
@@ -40,6 +41,24 @@ void WizardWidgetPageInfo::set(int index, const char* title, int nextIndex)
 {
 	index_ = index;
 	title_ = title;
+	nextIndex_ = nextIndex;
+}
+
+// Set page index
+void WizardWidgetPageInfo::setIndex(int index)
+{
+	index_ = index;
+}
+
+// Set page title
+void WizardWidgetPageInfo::setTitle(const char* title)
+{
+	title_ = title;
+}
+
+// Set next page index
+void WizardWidgetPageInfo::setNextPageIndex(int nextIndex)
+{
 	nextIndex_ = nextIndex;
 }
 
@@ -77,4 +96,70 @@ int WizardWidgetPageInfo::nextIndex() const
 bool WizardWidgetPageInfo::isFinishPoint() const
 {
 	return nextIndex_ == -1;
+}
+
+/*
+ * Widget Interaction
+ */
+
+// Set Associated widget in QStackedWidget
+void WizardWidgetPageInfo::setStackedWidgetPage(QWidget* widget)
+{
+	stackedWidgetPage_ = widget;
+}
+
+// Return associated widget in QStackedWidget
+QWidget* WizardWidgetPageInfo::stackedWidgetPage() const
+{
+	return stackedWidgetPage_;
+}
+
+// Set tag for this page
+void WizardWidgetPageInfo::setPageTag(const char* tag)
+{
+	pageTag_ = tag;
+}
+
+// Return tag for this page
+const char* WizardWidgetPageInfo::pageTag() const
+{
+	return pageTag_.get();
+}
+
+// Set tag for the page following this one
+void WizardWidgetPageInfo::setNextPageTag(const char* nextTag)
+{
+	nextPageTag_ = nextTag;
+}
+
+// Return tag for the page following this one
+const char* WizardWidgetPageInfo::nextPageTag() const
+{
+	return nextPageTag_.get();
+}
+
+// Return whether a next page tag has been set
+bool WizardWidgetPageInfo::hasNextPageTag() const
+{
+	return (!nextPageTag_.isEmpty());
+}
+
+// Add new widget highlight
+WizardWidgetHighlight* WizardWidgetPageInfo::addWidgetHighlight()
+{
+	return widgetHighlights_.add();
+}
+
+// Highlight all defined widgets
+void WizardWidgetPageInfo::highlightWidgets()
+{
+	ListIterator<WizardWidgetHighlight> highlightIterator(widgetHighlights_);
+	while (WizardWidgetHighlight* wh =highlightIterator.iterate()) wh->highlight();
+}
+
+// Un-highlight all defined widgets
+void WizardWidgetPageInfo::unHighlightWidgets()
+{
+	ListIterator<WizardWidgetHighlight> highlightIterator(widgetHighlights_);
+	while (WizardWidgetHighlight* wh =highlightIterator.iterate()) wh->unHighlight();
 }

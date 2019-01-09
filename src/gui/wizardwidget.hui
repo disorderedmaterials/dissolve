@@ -74,17 +74,23 @@ class WizardWidget : public QWidget
 	// History of traversed pages
 	RefList<WizardWidgetPageInfo,bool> history_;
 
-	private:
-	// Find page with specified index
-	WizardWidgetPageInfo* findPage(int index);
-
 	public:
+	// Clear all registered pages
+	void clearPages();
+	// Add empty page
+	WizardWidgetPageInfo* addPage();
 	// Register normal page
 	WizardWidgetPageInfo* registerPage(int index, const char* title, int nextIndex = -1);
 	// Register choice page (no Finish / Next buttons)
 	void registerChoicePage(int index, const char* title);
 	// Register exit (finish) page
 	void registerFinishPage(int index, const char* title);
+	// Find page with specified index
+	WizardWidgetPageInfo* findPage(int index);
+	// Return page index with supplied tag
+	int indexOfTag(const char* tag);
+	// Resolve page links for tagged pages
+	void resolveTaggedPageLinks();
 
 
 	/*

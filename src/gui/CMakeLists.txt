@@ -24,6 +24,7 @@ SET(gui_MOC_HDRS
   wizardwidget.hui
   wizardwidgetfooter.h
   wizardwidgetheader.h
+  wizardwidgethighlight.h
   wizardwidgetpageinfo.h
   # Dialogs
   addspeciesdialog.h
@@ -91,6 +92,7 @@ SET(gui_SRCS
   addspecieswizard_funcs.cpp
   pairpotentialwidget_funcs.cpp
   wizardwidget_funcs.cpp
+  wizardwidgethighlight.cpp
   wizardwidgetpageinfo.cpp
   # Dialogs
   addspeciesdialog_funcs.cpp
