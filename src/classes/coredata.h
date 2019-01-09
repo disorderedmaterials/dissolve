@@ -60,7 +60,7 @@ class CoreData
 	// Return nth AtomType in list
 	AtomType* atomType(int n);
 	// Generate unique AtomType name with base name provided
-	const char* uniqueAtomTypeName(const char* base, AtomType* exclude = 0) const;
+	const char* uniqueAtomTypeName(const char* baseName) const;
 	// Search for AtomType by name
 	AtomType* findAtomType(const char* name) const;
 
@@ -84,7 +84,7 @@ class CoreData
 	// Return nth Species in list
 	Species* species(int n);
 	// Generate unique Species name with base name provided
-	const char* uniqueSpeciesName(const char* base, Species* exclude = 0) const;
+	const char* uniqueSpeciesName(const char* baseName) const;
 	// Search for Species by name
 	Species* findSpecies(const char* name) const;
 
@@ -108,7 +108,7 @@ class CoreData
 	// Return nth Configuration in list
 	Configuration* configuration(int n);
 	// Generate unique Configuration name with base name provided
-	const char* uniqueConfigurationName(const char* base, Configuration* exclude = 0) const;
+	const char* uniqueConfigurationName(const char* baseName) const;
 	// Search for Configuration by name
 	Configuration* findConfiguration(const char* name) const;
 

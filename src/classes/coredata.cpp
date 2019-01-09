@@ -73,26 +73,24 @@ AtomType* CoreData::atomType(int n)
 }
 
 // Generate unique AtomType name with base name provided
-const char* CoreData::uniqueAtomTypeName(const char* base, AtomType* exclude) const
+const char* CoreData::uniqueAtomTypeName(const char* base) const
 {
+	static CharString uniqueName;
 	CharString baseName = base;
-	AtomType* at;
-	int highest = -1;
-	
+	uniqueName = baseName;
+	int suffix = 0;
+
+	// Must always have a baseName
 	if (baseName.isEmpty()) baseName = "Unnamed";
 
-	// Find all existing names which are the same as 'baseName' up to the first '_', and get the highest appended number
-	for (at = atomTypes_.first(); at != NULL; at = at->next)
+	// Find an unused name starting with the baseName provided
+	while (findAtomType(uniqueName))
 	{
-		if (at == exclude) continue;
-		if (DissolveSys::sameString(baseName, at->name())) highest = 0;
-		else if (DissolveSys::sameString(baseName,DissolveSys::beforeLastChar(at->name(),'_')) == 0) highest = atoi(DissolveSys::afterLastChar(at->name(), '_'));
+		// Increase suffix value and regenerate uniqueName from baseName
+		++suffix;
+		uniqueName.sprintf("%s%i", baseName.get(), suffix);
 	}
 
-	static CharString uniqueName;
-	if (highest > -1) uniqueName.sprintf("%s_%i", baseName.get(), ++highest);
-	else uniqueName = baseName;
-	
 	return uniqueName;
 }
 
@@ -100,6 +98,7 @@ const char* CoreData::uniqueAtomTypeName(const char* base, AtomType* exclude) co
 AtomType* CoreData::findAtomType(const char* name) const
 {
 	for (AtomType* at = atomTypes_.first(); at != NULL; at = at->next) if (DissolveSys::sameString(at->name(),name)) return at;
+
 	return NULL;
 }
 
@@ -138,26 +137,24 @@ Species* CoreData::species(int n)
 }
 
 // Generate unique Species name with base name provided
-const char* CoreData::uniqueSpeciesName(const char* base, Species* exclude) const
+const char* CoreData::uniqueSpeciesName(const char* base) const
 {
+	static CharString uniqueName;
 	CharString baseName = base;
-	Species* sp;
-	int highest = -1;
-	
+	uniqueName = baseName;
+	int suffix = 0;
+
+	// Must always have a baseName
 	if (baseName.isEmpty()) baseName = "Unnamed";
 
-	// Find all existing names which are the same as 'baseName' up to the first '_', and get the highest appended number
-	for (sp = species_.first(); sp != NULL; sp = sp->next)
+	// Find an unused name starting with the baseName provided
+	while (findSpecies(uniqueName))
 	{
-		if ( sp == exclude) continue;
-		if (DissolveSys::sameString(baseName, sp->name())) highest = 0;
-		else if (DissolveSys::sameString(baseName,DissolveSys::beforeLastChar(sp->name(),'_')) == 0) highest = atoi(DissolveSys::afterLastChar(sp->name(), '_'));
+		// Increase suffix value and regenerate uniqueName from baseName
+		++suffix;
+		uniqueName.sprintf("%s%i", baseName.get(), suffix);
 	}
 
-	static CharString uniqueName;
-	if (highest > -1) uniqueName.sprintf("%s_%i", baseName.get(), ++highest);
-	else uniqueName = baseName;
-	
 	return uniqueName;
 }
 
@@ -165,6 +162,7 @@ const char* CoreData::uniqueSpeciesName(const char* base, Species* exclude) cons
 Species* CoreData::findSpecies(const char* name) const
 {
 	for (Species* sp = species_.first(); sp != NULL; sp = sp->next) if (DissolveSys::sameString(sp->name(),name)) return sp;
+
 	return NULL;
 }
 
@@ -203,26 +201,24 @@ Configuration* CoreData::configuration(int n)
 }
 
 // Generate unique Configuration name with base name provided
-const char* CoreData::uniqueConfigurationName(const char* base, Configuration* exclude) const
+const char* CoreData::uniqueConfigurationName(const char* base) const
 {
+	static CharString uniqueName;
 	CharString baseName = base;
-	Configuration* cfg;
-	int highest = -1;
-	
+	uniqueName = baseName;
+	int suffix = 0;
+
+	// Must always have a baseName
 	if (baseName.isEmpty()) baseName = "Unnamed";
 
-	// Find all existing names which are the same as 'baseName' up to the first '_', and get the highest appended number
-	for (cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
+	// Find an unused name starting with the baseName provided
+	while (findConfiguration(uniqueName))
 	{
-		if ( cfg == exclude) continue;
-		if (DissolveSys::sameString(baseName, cfg->name())) highest = 0;
-		else if (DissolveSys::sameString(baseName,DissolveSys::beforeLastChar(cfg->name(),'_')) == 0) highest = atoi(DissolveSys::afterLastChar(cfg->name(), '_'));
+		// Increase suffix value and regenerate uniqueName from baseName
+		++suffix;
+		uniqueName.sprintf("%s%i", baseName.get(), suffix);
 	}
 
-	static CharString uniqueName;
-	if (highest > -1) uniqueName.sprintf("%s_%i", baseName.get(), ++highest);
-	else uniqueName = baseName;
-	
 	return uniqueName;
 }
 
@@ -230,6 +226,7 @@ const char* CoreData::uniqueConfigurationName(const char* base, Configuration* e
 Configuration* CoreData::findConfiguration(const char* name) const
 {
 	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next) if (DissolveSys::sameString(cfg->name(),name)) return cfg;
+
 	return NULL;
 }
 

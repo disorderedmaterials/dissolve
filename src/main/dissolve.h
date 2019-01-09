@@ -84,8 +84,6 @@ class Dissolve
 	List<AtomType>& atomTypes();
 	// Return nth AtomType in list
 	AtomType* atomType(int n);
-	// Generate unique AtomType name with base name provided
-	const char* uniqueAtomTypeName(const char* base, AtomType* exclude = 0) const;
 	// Search for AtomType by name
 	AtomType* findAtomType(const char* name) const;
 

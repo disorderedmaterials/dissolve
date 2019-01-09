@@ -56,12 +56,6 @@ AtomType* Dissolve::atomType(int n)
 	return coreData_.atomType(n);
 }
 
-// Generate unique AtomType name with base name provided
-const char* Dissolve::uniqueAtomTypeName(const char* base, AtomType* exclude) const
-{
-	return coreData_.uniqueAtomTypeName(base, exclude);
-}
-
 // Search for AtomType by name
 AtomType* Dissolve::findAtomType(const char* name) const
 {
