@@ -22,6 +22,7 @@
 #include "classes/speciesatom.h"
 #include "classes/atomtype.h"
 #include "classes/speciesbond.h"
+#include "data/elements.h"
 #include "base/processpool.h"
 
 // Constructor
@@ -102,7 +103,7 @@ void SpeciesAtom::setAtomType(AtomType* at)
 	// Check elements
 	if (at && (at->element() != element_))
 	{
-		Messenger::warn("Refused to assign AtomType '%s' to SpeciesAtom, since their elements differ.\n", at->name());
+		Messenger::warn("Refused to assign AtomType '%s' to an atom of element %s, since the element of the AtomType is %s.\n", at->name(), element_->symbol(), at->element()->symbol());
 	}
 	else atomType_ = at;
 }
