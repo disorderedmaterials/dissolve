@@ -12,6 +12,7 @@ SET(widgets_MOC_HDRS
 
   checkindicator.hui
   colourbutton.hui
+  elementselector.hui
   gradientbar.hui
   mimetreewidget.hui
   supertabbar.hui
@@ -32,6 +33,7 @@ QT5_WRAP_UI(widgets_UIS_H ${widgets_UIS})
 SET(widgets_SRCS
   checkindicator_funcs.cpp
   colourbutton_funcs.cpp
+  elementselector_funcs.cpp
   gradientbar_funcs.cpp
   mimestrings.cpp
   mimetreewidget_funcs.cpp

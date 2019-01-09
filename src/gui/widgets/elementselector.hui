@@ -1,0 +1,84 @@
+/*
+	*** Element Selector Widget
+	*** src/gui/widgets/elementselector.hui
+	Copyright T. Youngs 2019
+
+	This file is part of Dissolve.
+
+	Dissolve is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	Dissolve is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef DISSOLVE_ELEMENTSELECTOR_H
+#define DISSOLVE_ELEMENTSELECTOR_H
+
+#include "templates/reflist.h"
+#include <QTimer>
+#include <QWidget>
+
+// Forward Declarations
+class Element;
+class QToolButton;
+
+// Element Selector Widget
+class ElementSelector : public QWidget
+{
+	// All Qt declarations derived from QObject must include this macro
+	Q_OBJECT
+
+	public:
+	// Constructor / Destructor
+	ElementSelector(QWidget* parent);
+	~ElementSelector();
+
+
+	/*
+	 * Widget Functions
+	 */
+	private:
+	// Timer to enable detection of double-click events on buttons
+	QTimer doubleClickTimer_;
+
+	private slots:
+	void elementButtonClicked(bool checked);
+
+	signals:
+	void elementClicked();
+	void elementDoubleClicked();
+
+
+	/*
+	 * Data
+	 */
+	private:
+	// Current element
+	Element* currentElement_;
+	// Reference list of buttons and their associated Elements
+	RefList<QToolButton,Element*> elementButtons_;
+
+	public:
+	// Set current element
+	void setCurrentElement(Element* element);
+	// Return current element
+	Element* currentElement() const;
+
+
+	/*
+	 * Static Functions
+	 */
+	public:
+	// Get Element from user via input dialog
+	static Element* getElement(QWidget* parent, const char* title, const char* labelText, Element* element, bool* ok = NULL, Qt::WindowFlags flags = Qt::Dialog);
+};
+
+#endif
