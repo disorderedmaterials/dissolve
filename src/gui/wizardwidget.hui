@@ -53,6 +53,8 @@ class WizardWidget : public QWidget
 	Ui::WizardWidgetFooter footerUi_;
 	// Whether header controls are available
 	bool headerAvailable_;
+	// Whether the close button is available
+	bool closeButtonAvailable_;
 	// Whether footer controls are available
 	bool footerAvailable_;
 
@@ -63,6 +65,10 @@ class WizardWidget : public QWidget
 	void setWizardHeaderIcon(QString iconResource);
 	// Update controls in header and footer widgets to reflect the specified page
 	void updateHeaderAndFooter(WizardWidgetPageInfo* page);
+
+	public:
+	// Set whether the close button is available
+	void setCloseButtonAvailable(bool b);
 
 
 	/*
@@ -118,7 +124,9 @@ class WizardWidget : public QWidget
 	// Next button clicked
 	void nextButtonClicked(bool checked);
 	// Finish button clicked
-	virtual void finishButtonClicked(bool checked);
+	void finishButtonClicked(bool checked);
+	// Close button clicked
+	void closeButtonClicked(bool checked);
 
 	public:
 	// Reset wizard and begin again from specified page

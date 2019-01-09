@@ -281,12 +281,6 @@ bool AddSpeciesWizard::prepareForPreviousPage(int currentIndex)
 	return true;
 }
 
-// Finish button clicked
-void AddSpeciesWizard::finishButtonClicked(bool checked)
-{
-	emit(finished());
-}
-
 /*
  * Controls
  */

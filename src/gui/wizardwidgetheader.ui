@@ -12,7 +12,7 @@
   </property>
   <property name="font">
    <font>
-    <pointsize>10</pointsize>
+    <pointsize>8</pointsize>
    </font>
   </property>
   <property name="windowTitle">
@@ -106,6 +106,26 @@
         </property>
         <property name="text">
          <string>Page Title</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="CloseButton">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="main.qrc">
+          <normaloff>:/general/icons/general_false.svg</normaloff>:/general/icons/general_false.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
         </property>
        </widget>
       </item>

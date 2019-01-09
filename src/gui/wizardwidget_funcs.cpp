@@ -27,12 +27,18 @@ WizardWidget::WizardWidget()
 {
 	headerAvailable_ = false;
 	footerAvailable_ = false;
+	closeButtonAvailable_ = true;
+
 	currentPage_ = NULL;
 }
 
 WizardWidget::~WizardWidget()
 {
 }
+
+/*
+ * Widgets
+ */
 
 // Attach header and footer to existing named widgets in specified widget
 void WizardWidget::setUpHeaderAndFooter(QWidget* widget)
@@ -44,6 +50,8 @@ void WizardWidget::setUpHeaderAndFooter(QWidget* widget)
 		headerAvailable_ = true;
 
 		headerUi_.setupUi(headerWidget);
+
+		connect(headerUi_.CloseButton, SIGNAL(clicked(bool)), this, SLOT(closeButtonClicked(bool)));
 	}
 	else printf("Header widget not found.\n");
 
@@ -97,6 +105,14 @@ void WizardWidget::updateHeaderAndFooter(WizardWidgetPageInfo* page)
 			footerUi_.FinishButton->setEnabled(false);
 		}
 	}
+}
+
+ // Set whether the close button is available
+void WizardWidget::setCloseButtonAvailable(bool b)
+{
+	closeButtonAvailable_ = b;
+
+	if (headerAvailable_) headerUi_.CloseButton->setVisible(closeButtonAvailable_);
 }
 
 /*
@@ -220,7 +236,15 @@ void WizardWidget::nextButtonClicked(bool checked)
 // Finish button clicked
 void WizardWidget::finishButtonClicked(bool checked)
 {
+	emit(finished());
 }
+
+// Close button clicked
+void WizardWidget::closeButtonClicked(bool checked)
+{
+	emit(canceled());
+}
+
 
 // Reset wizard and begin again from specified page
 void WizardWidget::resetToPage(int index)

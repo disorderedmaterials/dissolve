@@ -114,12 +114,6 @@ bool GeneralWizard::prepareForPreviousPage(int currentIndex)
 	return true;
 }
 
-// Finish button clicked
-void GeneralWizard::finishButtonClicked(bool checked)
-{
-	emit(finished());
-}
-
 /*
  * Controls
  */

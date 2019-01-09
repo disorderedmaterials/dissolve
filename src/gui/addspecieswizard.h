@@ -94,10 +94,6 @@ class AddSpeciesWizard : public WizardWidget
 	// Perform any necssary actions before moving to the previous page
 	bool prepareForPreviousPage(int currentIndex);
 
-	protected slots:
-	// Finish button clicked
-	void finishButtonClicked(bool checked);
-
 	public:
 	// Reset, ready for adding a new Species
 	void reset();

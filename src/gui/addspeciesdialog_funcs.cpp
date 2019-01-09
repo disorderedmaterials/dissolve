@@ -28,6 +28,7 @@ AddSpeciesDialog::AddSpeciesDialog(QWidget* parent, const Dissolve& mainDissolve
 
 	// Set up and connect the AddSpeciesWidget
 	ui_.AddSpeciesWidget->setMainDissolveReference(&mainDissolveInstance);
+	ui_.AddSpeciesWidget->setCloseButtonAvailable(false);
 	connect(ui_.AddSpeciesWidget, SIGNAL(finished()), this, SLOT(accept()));
 }
 
