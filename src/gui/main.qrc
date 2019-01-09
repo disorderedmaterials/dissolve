@@ -19,7 +19,7 @@
     <file>icons/tabs_ff.svg</file>
     <file>icons/tabs_configuration.svg</file>
     <file>icons/tabs_species.svg</file>
-    <file>icons/tabs_flow.svg</file>
+    <file>icons/tabs_modules.svg</file>
   </qresource>
   <qresource prefix="general">
     <file>icons/general_false.svg</file>

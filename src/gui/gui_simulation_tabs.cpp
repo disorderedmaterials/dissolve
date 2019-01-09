@@ -147,7 +147,7 @@ void DissolveWindow::addCoreTabs()
 	mainProcessingTab_ = new ProcessingTab(this, dissolve_, ui.MainTabs, "Main Processing");
 	ui.MainTabs->addTab(mainProcessingTab_->page(), "Main Processing");
 	ui.MainTabs->setTabTextColour(mainProcessingTab_->page(), QColor(11, 36, 118));
-	ui.MainTabs->setTabIcon(mainProcessingTab_->page(), QIcon(":/tabs/icons/tabs_flow.svg"));
+	ui.MainTabs->setTabIcon(mainProcessingTab_->page(), QIcon(":/tabs/icons/tabs_modules.svg"));
 }
 
 // Add on an empty workspace tab
