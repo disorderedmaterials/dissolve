@@ -21,6 +21,7 @@
 
 #include "gui/forcefieldtab.h"
 #include "gui/gui.h"
+#include "gui/widgets/elementselector.hui"
 #include "gui/delegates/combolist.hui"
 #include "gui/delegates/texponentialspin.hui"
 #include "gui/helpers/listwidgetupdater.h"
@@ -403,7 +404,19 @@ void ForcefieldTab::enableSensitiveControls()
 
 void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
 {
-	printf("NOT IMPLEMENTED YET.\n");
+	// First, need to get target element for the new AtomType
+	bool ok;
+	Element* element = ElementSelector::getElement(this, "Element Selection", "Choose the Element for the AtomType", NULL, &ok);
+	if (!ok) return;
+
+	AtomType* at = dissolve_.addAtomType(element);
+
+	refreshing_ = true;
+
+	TableWidgetUpdater<ForcefieldTab,AtomType> atomTypesUpdater(ui.AtomTypesTable, dissolve_.atomTypes(), this, &ForcefieldTab::updateAtomTypesTableRow);
+	ui.AtomTypesTable->resizeColumnsToContents();
+
+	refreshing_ = false;
 }
 
 void ForcefieldTab::on_AtomTypeRemoveButton_clicked(bool checked)
