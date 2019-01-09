@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<guide>
+	<title>QuickStart Guide</title>
+	<icon>:/special/icons/special_guide.svg</icon>
+	<start>welcome</start>
+	<pages>
+		<page>
+			<title>Welcome</title>
+			<tag>welcome</tag>
+			<next>overview</next>
+			<content>
+				<![CDATA[
+				<html><head/><body><p><span style=" font-weight:600;">Welcome to the QuickStart guide!</span></p><p>This guide will introduce the core aspects of the Dissolve GUI, and cover the steps required to set up and run a simple simulation.</p><p>To quit this guide at any point use the red close button at the top right (this will leave the simulation available for examination) or use <span style=" font-weight:600; color:#bb0000;">File&rarr;Close</span> (in which case everything will be closed, and you will return to Dissolve's start page).</p></body></html>
+				]]>
+			</content>
+		</page>
+		<page>
+			<title>Overview</title>
+			<tag>overview</tag>
+			<next>gui1</next>
+			<content>
+				<![CDATA[
+				<html><head/><body><p>The Dissolve GUI can be used to set up, monitor, and run simulations...</p><p><span style=" font-style:italic;">Creating a simulation </span>can be done from scratch, adding the necessary components of the simulation individually, or by using the <span style=" font-weight:600;">Setup Wizard</span> (<span style=" font-weight:600; color:#bb0000;">File&rarr;Setup Wizard</span>) which can help to construct common types of simulation (which can then be further modified as necessary).</p><p><span style=" font-style:italic;">Monitoring a simulation</span> involves plotting data of interest, checking on the progression of the simulation etc., and can be done for both locally- and remotely-running simulations (e.g. those on an HPC machine).</p><p><span style=" font-style:italic;">Running simulations</span> from within the GUI is also possible, but Dissolve cannot run in parallel in such cases as the GUI is strictly a serial code.</p></body></html>
+				]]>
+			</content>
+		</page>
+		<page>
+			<title>The GUi</title>
+			<tag>gui1</tag>
+			<next>gui2</next>
+			<content>
+				<![CDATA[
+				<html><head/><body><p align="center"><img src=":/quickstart/guides/quickstart/quickstart_tour.png"/></p><p>The standard view in the Dissolve GUI is composed of three main parts...</p></body></html>
+				]]>
+			</content>
+		</page>
+		<page>
+			<title>The GUI - Control</title>
+			<tag>gui2</tag>
+			<next>gui3</next>
+			<content>
+				<![CDATA[
+				<html><head/><body><p align="center"><img src=":/quickstart/guides/quickstart/quickstart_tour_controls.png"/></p><p>XXX More to do here!!! Monitoring vs Controlling</p><p>The controls header allow the current simulation to be run or stepped (provided it is not running elsewhere) or the state of the current simulation reloaded (if data already exists for it, or it is running elsewhere).</p></body></html>
+				]]>
+			</content>
+			<highlight>
+				<widget>ControlGroup</widget>
+				<r>0</r>
+				<g>224</g>
+				<b>52</b>
+				<a>128</a>
+			</highlight>
+		</page>
+		<page>
+			<title>The GUI - Tabs</title>
+			<tag>gui3</tag>
+			<next>gui4</next>
+			<content>
+				<![CDATA[
+				<html><head/><body><p align="center"><img src=":/quickstart/guides/quickstart/quickstart_tour_tabs.png"/></p><p>Tabs display all of the available <span style=" font-weight:600;">Species</span> and <span style=" font-weight:600;">Configurations</span> in the simulation, as well as lists of processing <span style=" font-weight:600;">Modules</span> and the underlying <span style=" font-weight:600;">Forcefield</span>. The only tab which is always present is the <span style=" font-weight:600;">Forcefield</span> tab - all others depend on the content of the simulation.</p></body></html>
+				]]>
+			</content>
+			<highlight>
+				<widget>MainTabs</widget>
+				<r>255</r>
+				<g>56</g>
+				<b>255</b>
+				<a>128</a>
+			</highlight>
+		</page>
+		<page>
+			<title>The GUI - Messages</title>
+			<tag>gui4</tag>
+			<next>basics1</next>
+			<content>
+				<![CDATA[
+				<html><head/><body><p align="center"><img src=":/quickstart/guides/quickstart/quickstart_tour_messages.png"/></p><p>The messages view displays any output from Dissolve or the GUI when creating or running a simulation. It is the first place to look for errors (when something doesn't do as you expect it to).</p></body></html>
+				]]>
+			</content>
+			<highlight>
+				<widget>MessagesBrowser</widget>
+				<r>255</r>
+				<g>80</g>
+				<b>44</b>
+				<a>128</a>
+			</highlight>
+		</page>
+		<page>
+			<title>Basics - AtomTypes</title>
+			<tag>basics1</tag>
+			<next>basics2</next>
+			<content>
+				<![CDATA[
+				<html><head/><body><p>We'll now cover the basic components of a simulation within Dissolve, and on which tabs they are located.</p><p><span style=" font-weight:600;">AtomTypes</span> define interatomic interaction parameters between atoms - e.g. Lennard-Jones terms and, optionally, charges - and are used to generate the complete set of pair potentials used to describe interatomic interactions between <span style=" font-weight:600;">Species</span>.</p><p align="center"><img src=":/quickstart/guides/quickstart/quickstart_tabs_forcefield.png"/></p><p>All defined <span style=" font-weight:600;">AtomTypes</span> for the current simulation can be found on the <span style=" font-weight:600;">Forcefield</span> tab.</p></body></html>
+				]]>
+			</content>
+		</page>
+		<page>
+			<title>Basics - Species</title>
+			<tag>basics2</tag>
+			<next>basics3</next>
+			<content>
+				<![CDATA[
+				<html><head/><body><p><span style=" font-weight:600;">Species</span> represent molecules, single atoms, or other useful assemblies of atoms. They define the starting coordinates and any necessary intramolecular terms between the atoms (e.g. chemical bonds or angles), as well as assign <span style=" font-weight:600;">AtomTypes</span> to each individual atom. <span style=" font-weight:600;">Species</span> also contain isotopologue definitions which describe any required isotopic variants.</p><p align="center"><img src=":/quickstart/guides/quickstart/quickstart_tabs_species.png"/></p><p>Each <span style=" font-weight:600;">Species</span> in the simulaton has its own tab which containis all of its relevant definitions. When more than one <span style=" font-weight:600;">Species</span> is present, their order is not important.</p></body></html>
+				]]>
+			</content>
+		</page>
+		<page>
+			<title>Basics - Configurations</title>
+			<tag>basics3</tag>
+			<next>basics4</next>
+			<content>
+				<![CDATA[
+				<html><head/><body><p><span style=" font-weight:600;">Configurations</span> are collections of atoms that represent a target system to be studied, be it a bulk liquid, a crystal, or something else. They are constructed from (copies of) one or more <span style=" font-weight:600;">Species</span> definitions, in some number and relative proportion, and are typically contained within a box employng period boundary conditions. <span style=" font-weight:600;">Configurations</span> are the principal targets of <span style=" font-weight:600;">Modules</span>.</p><p align="center"><img src=":/quickstart/guides/quickstart/quickstart_tabs_configurations.png"/></p><p>Each <span style=" font-weight:600;">Configuration</span> has its own tab which, aside from containing a blueprint for its inital construction, also allows quick visualisation of the current coordinates, and (optionally) editing of local processing <span style=" font-weight:600;">Modules</span>.<br/></p></body></html>
+				]]>
+			</content>
+		</page>
+		<page>
+			<title>Basics - Modules</title>
+			<tag>basics4</tag>
+			<next>argon1</next>
+			<content>
+				<![CDATA[
+				<html><head/><body><p><span style=" font-weight:600;">Modules</span> perform all of Dissolve's 'interesting' functionality, and usually target one or more <span style=" font-weight:600;">Configurations</span>. For instance, there are <span style=" font-weight:600;">Modules</span> to evolve the atomic coordinates within <span style=" font-weight:600;">Configurations</span> (e.g. <span style=" font-weight:600; color:#0000bb;">AtomShake</span>, <span style=" font-weight:600; color:#0000bb;">MolShake</span>, and <span style=" font-weight:600; color:#0000bb;">MD</span>) and calculate basic correlation functions (e.g. <span style=" font-weight:600; color:#0000bb;">RDF</span> and <span style=" font-weight:600; color:#0000bb;">NeutronSQ</span>). A sequence of <span style=" font-weight:600;">Modules</span> makes up the core simulation that Dissolve is to perform, with the exact <span style=" font-weight:600;">Modules</span> employed depending on the nature of the system and the purpose of the simulation.</p><p align="center"><img src=":/quickstart/guides/quickstart/quickstart_tabs_modules.png"/></p><p><span style=" font-weight:600;">Modules</span> exist in sequence in a processing list, and there can be more than one processing list in a simulation, with each having its own tab. So, for example, a sequence of <span style=" font-weight:600;">Modules</span> that evolve the <span style=" font-weight:600;">Configurations</span> in a simulation can be kept separate from a sequence of <span style=" font-weight:600;">Modules</span> that calculate properties of interest.</p></body></html>
+				]]>
+			</content>
+		</page>
+		<page>
+			<title>Example - Liquid Argon</title>
+			<tag>argon1</tag>
+			<next>argon2</next>
+			<content>
+				<![CDATA[
+				<html><head/><body><p>We'll now set up a simple simulation completely by hand to illustrate the basic usage of the GUI, and discuss a few topics in a bit more detail.</p><p>Our target will be to describe liquid argon at 85 K, beginning from a set of reference Lennard-Jones parameters, and then to refine this potential against some experimentally-measured data. Our steps will be:</p><p>1) Add suitable <span style=" font-weight:600;">AtomType</span> parameters for interactions between argon atoms</p><p>2) Create a <span style=" font-weight:600;">Species</span> to represent an argon atom</p><p>3) Define a <span style=" font-weight:600;">Configuration</span> consistent with the (experimentally-measured) data</p><p>4) Create a sequence of processing <span style=" font-weight:600;">Modules</span> to evolve the Configuration and refine the interatomic potential</p><p>Let's begin!</p></body></html>
+				]]>
+			</content>
+		</page>
+		<page>
+			<title>Create an AtomType</title>
+			<tag>argon2</tag>
+			<next>argon3</next>
+			<content>
+				<![CDATA[
+				<html><head/><body><p>The first step is to create an <span style=" font-weight:600;">AtomType</span> to describe the interaction between argon atoms. This is the sole component of the forcefield in this simulation.</p><p>On the <span style=" font-weight:600;">Forcefield</span> tab create a new <span style=" font-weight:600;">AtomType</span> by clicking the <span style=" font-weight:600; color:#bb0000;">Add</span> button (highlighted in red) in the relevant section.</p></body></html>
+				]]>
+			</content>
+		</page>
+		<page>
+			<title></title>
+			<tag>argon3</tag>
+			<next>argon4</next>
+			<content>
+				<![CDATA[
+				]]>
+			</content>
+		</page>
+		<page>
+			<title></title>
+			<tag>argon4</tag>
+			<next>argon5</next>
+			<content>
+				<![CDATA[
+				]]>
+			</content>
+		</page>
+	</pages>
+</guide>
+
+quickstart/guides/quickstart/quickstart_tour.png

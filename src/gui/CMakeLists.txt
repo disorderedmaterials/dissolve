@@ -20,6 +20,7 @@ SET(gui_MOC_HDRS
   modulepalette.hui
   # Widgets
   addspecieswizard.h
+  generalwizard.h
   pairpotentialwidget.h
   wizardwidget.hui
   wizardwidgetfooter.h
@@ -56,6 +57,7 @@ SET(gui_UIS
   paletteblock.ui
   # Widgets
   addspecieswizard.ui
+  generalwizard.ui
   pairpotentialwidget.ui
   wizardwidgetfooter.ui
   wizardwidgetheader.ui
@@ -90,6 +92,7 @@ SET(gui_SRCS
   paletteblock_funcs.cpp
   # Widgets
   addspecieswizard_funcs.cpp
+  generalwizard_funcs.cpp
   pairpotentialwidget_funcs.cpp
   wizardwidget_funcs.cpp
   wizardwidgethighlight.cpp
@@ -108,6 +111,7 @@ SET(gui_SRCS
   gui_funcs.cpp
   gui_menu.cpp
   gui_simulation_control.cpp
+  gui_simulation_guide.cpp
   gui_simulation_state.cpp
   gui_simulation_tabs.cpp
   gui_stack.cpp

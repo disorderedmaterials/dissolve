@@ -63,8 +63,6 @@ class GeneralWizard : public WizardWidget
 	private:
 	// Main form declaration
 	Ui::GeneralWizard ui_;
-	// Lock counter for the widget refreshing
-	int lockedForRefresh_;
 
 	private:
 	// Highlight specified widget

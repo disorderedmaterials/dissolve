@@ -257,6 +257,27 @@ void DissolveWindow::on_WorkspaceAddNewAction_triggered(bool checked)
 
 void DissolveWindow::on_HelpViewQuickStartGuideAction_triggered(bool checked)
 {
+	if (!checkSaveCurrentInput()) return;
+
+	// Clear any data-related tabs from the UI
+	clearTabs();
+
+	// Clear Dissolve itself
+	dissolve_.clear();
+
+	updateControls();
+
+	updateStatus();
+
+	updateFileLabels();
+
+	// Make sure we are now on the Simulation stack page
+	showMainStackPage(DissolveWindow::SimulationStackPage);
+
+	// Reset the guide wizard widget and set up the QuickStart guide in it
+	ui.GuideWidget->clear();
+	ui.GuideWidget->setContent(":/quickstart/guides/quickstart/quickstart.xml");
+	ui.GuideWidget->setVisible(true);
 }
 
 void DissolveWindow::on_HelpRunATutorialAction_triggered(bool checked)

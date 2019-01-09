@@ -52,6 +52,12 @@ DissolveWindow::DissolveWindow(Dissolve& dissolve) : QMainWindow(NULL), dissolve
 	connect(ui.MainTabs, SIGNAL(tabBarDoubleClicked(int)), this, SLOT(mainTabsDoubleClicked(int)));
 	dissolveState_ = StoppedState;
 
+	// Set up GuideWidget
+	ui.GuideWidget->setMainDissolveReference(&dissolve);
+	ui.GuideWidget->setDissolveWindow(this);
+	connect(ui.GuideWidget, SIGNAL(canceled()), this, SLOT(guideWidgetCanceled()));
+	connect(ui.GuideWidget, SIGNAL(finished()), this, SLOT(guideWidgetFinished()));
+
 	refreshing_ = false;
 	modified_ = false;
 

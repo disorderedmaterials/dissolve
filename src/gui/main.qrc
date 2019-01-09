@@ -6,6 +6,17 @@
     <file>icons/file_open.svg</file>
     <file>icons/file_save.svg</file>
   </qresource>
+  <qresource prefix="quickstart">
+    <file>guides/quickstart/quickstart_tabs_configurations.png</file>
+    <file>guides/quickstart/quickstart.xml</file>
+    <file>guides/quickstart/quickstart_tabs_forcefield.png</file>
+    <file>guides/quickstart/quickstart_tabs_modules.png</file>
+    <file>guides/quickstart/quickstart_tabs_species.png</file>
+    <file>guides/quickstart/quickstart_tour.png</file>
+    <file>guides/quickstart/quickstart_tour_controls.png</file>
+    <file>guides/quickstart/quickstart_tour_messages.png</file>
+    <file>guides/quickstart/quickstart_tour_tabs.png</file>
+  </qresource>
   <qresource prefix="images">
     <file>images/squares.jpg</file>
   </qresource>

@@ -35,9 +35,6 @@ GeneralWizard::GeneralWizard(QWidget* parent)
 	ui_.setupUi(this);
 	setUpHeaderAndFooter(this);
 
-	// Connect signals / slots
-
-	lockedForRefresh_ = 0;
 	startPageIndex_ = -1;
 }
 

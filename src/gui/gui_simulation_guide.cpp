@@ -1,6 +1,6 @@
 /*
-	*** Dissolve GUI - Stack Functions
-	*** src/gui/gui_stack.cpp
+	*** Dissolve GUI - Simulation Page - Guide
+	*** src/gui/gui_simulation_guide.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,19 +19,15 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "main/dissolve.h"
 #include "gui/gui.h"
+#include "main/dissolve.h"
 
-// Set currently-visible main stack page
-void DissolveWindow::showMainStackPage(DissolveWindow::MainStackPage page)
+void DissolveWindow::guideWidgetCanceled()
 {
-	ui.MainStack->setCurrentIndex(page);
+	ui.GuideWidget->hide();
+}
 
-	// Enable / disable main menu items as appropriate
-	ui.SimulationMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
-	ui.ControlMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
-	ui.WorkspaceMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
-
-	// Make sure the guide widget is hidden
-	ui.GuideWidget->setVisible(false);
+void DissolveWindow::guideWidgetFinished()
+{
+	ui.GuideWidget->hide();
 }

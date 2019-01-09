@@ -29,7 +29,8 @@ libgui_la_SOURCES = main.qrc
 libgui_la_SOURCES += modulechartinsertionblock.ui modulechartmoduleblock.ui modulecontrolwidget.ui moduleeditor.ui paletteblock.ui
 libgui_la_SOURCES += modulechart.hui modulepalette.hui
 # UI - Widgets
-libgui_la_SOURCES += addspecieswizard.ui pairpotentialwidget.ui wizardwidget.hui wizardwidgetfooter.ui wizardwidgetheader.ui
+libgui_la_SOURCES += wizardwidgetfooter.ui wizardwidgetheader.ui wizardwidget.hui
+libgui_la_SOURCES += addspecieswizard.ui generalwizard.ui pairpotentialwidget.ui
 # UI - Dialogs
 libgui_la_SOURCES += addspeciesdialog.ui
 # UI - Main Tabs
@@ -41,7 +42,7 @@ libgui_la_SOURCES += outputhandler.hui thread.hui
 libgui_la_SOURCES += addspeciesdialog_funcs.cpp addspecieswizard_funcs.cpp analysistab_funcs.cpp
 libgui_la_SOURCES += configurationtab_funcs.cpp
 libgui_la_SOURCES += forcefieldtab_funcs.cpp
-libgui_la_SOURCES += gui_funcs.cpp gui_menu.cpp gui_simulation_control.cpp gui_simulation_state.cpp gui_simulation_tabs.cpp gui_stack.cpp gui_start.cpp
+libgui_la_SOURCES += generalwizard_funcs.cpp gui_funcs.cpp gui_menu.cpp gui_simulation_control.cpp gui_simulation_guide.cpp gui_simulation_state.cpp gui_simulation_tabs.cpp gui_stack.cpp gui_start.cpp
 libgui_la_SOURCES += maintab.cpp
 libgui_la_SOURCES += modulechart_funcs.cpp modulechartblock.cpp modulecharthotspot.cpp modulechartinsertionblock_funcs.cpp modulechartmoduleblock_funcs.cpp
 libgui_la_SOURCES += modulecontrolwidget_funcs.cpp moduleeditor_funcs.cpp modulekeywordswidget_funcs.cpp modulepalette_funcs.cpp moduletab_funcs.cpp modulewidget.cpp
@@ -55,7 +56,7 @@ libgui_la_SOURCES += wizardwidget_funcs.cpp wizardwidgethighlight.cpp wizardwidg
 noinst_HEADERS = addspeciesdialog.h addspecieswizard.h analysistab.h
 noinst_HEADERS += configurationtab.h
 noinst_HEADERS += forcefieldtab.h
-noinst_HEADERS += gui.h
+noinst_HEADERS += generalwizard.h gui.h
 noinst_HEADERS += maintab.h modulechartblock.h modulecharthotspot.h modulechartinsertionblock.h modulechartmetrics.h modulechartmoduleblock.h modulecontrolwidget.h moduleeditor.h modulekeywordswidget.h moduletab.h modulewidget.h
 noinst_HEADERS += pairpotentialwidget.h paletteblock.h processingtab.h
 noinst_HEADERS += speciestab.h
