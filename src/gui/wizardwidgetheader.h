@@ -1,6 +1,6 @@
 /*
 	*** Wizard Widget Header
-	*** src/gui/wizardwidgetheader.h`
+	*** src/gui/wizardwidgetheader.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.

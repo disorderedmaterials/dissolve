@@ -1,6 +1,6 @@
 /*
 	*** Wizard Widget Footer
-	*** src/gui/wizardwidgetfooter.h`
+	*** src/gui/wizardwidgetfooter.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
