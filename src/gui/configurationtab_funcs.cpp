@@ -22,7 +22,7 @@
 #include "gui/configurationtab.h"
 #include "gui/gui.h"
 #include "gui/delegates/combolist.hui"
-#include "gui/delegates/texponentialspin.hui"
+#include "gui/delegates/exponentialspin.hui"
 #include "gui/helpers/combopopulator.h"
 #include "gui/helpers/tablewidgetupdater.h"
 #include "main/dissolve.h"
@@ -45,7 +45,7 @@ ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dis
 	// Set item delegates for tables
 	// -- SpeciesInfo
 	ui.SpeciesInfoTable->setItemDelegateForColumn(0, new ComboListDelegate(this, new ComboNameListItems<Species>(dissolve.species())));
-	ui.SpeciesInfoTable->setItemDelegateForColumn(1, new TExponentialSpinDelegate(this));
+	ui.SpeciesInfoTable->setItemDelegateForColumn(1, new ExponentialSpinDelegate(this));
 
 	// Ensure fonts for table headers are set correctly
 	ui.SpeciesInfoTable->horizontalHeader()->setFont(font());

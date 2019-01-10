@@ -90,7 +90,7 @@
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="TExponentialSpin" name="TemperatureSpin">
+         <widget class="ExponentialSpin" name="TemperatureSpin">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -127,7 +127,7 @@
          <number>4</number>
         </property>
         <item row="1" column="1">
-         <widget class="TExponentialSpin" name="BoxBSpin">
+         <widget class="ExponentialSpin" name="BoxBSpin">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -195,7 +195,7 @@
          </widget>
         </item>
         <item row="2" column="1">
-         <widget class="TExponentialSpin" name="BoxCSpin">
+         <widget class="ExponentialSpin" name="BoxCSpin">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -221,7 +221,7 @@
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="TExponentialSpin" name="BoxASpin">
+         <widget class="ExponentialSpin" name="BoxASpin">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -244,7 +244,7 @@
          </widget>
         </item>
         <item row="0" column="3">
-         <widget class="TExponentialSpin" name="BoxAlphaSpin">
+         <widget class="ExponentialSpin" name="BoxAlphaSpin">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -254,7 +254,7 @@
          </widget>
         </item>
         <item row="1" column="3">
-         <widget class="TExponentialSpin" name="BoxBetaSpin">
+         <widget class="ExponentialSpin" name="BoxBetaSpin">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -264,7 +264,7 @@
          </widget>
         </item>
         <item row="2" column="3">
-         <widget class="TExponentialSpin" name="BoxGammaSpin">
+         <widget class="ExponentialSpin" name="BoxGammaSpin">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -361,7 +361,7 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="TExponentialSpin" name="DensitySpin">
+           <widget class="ExponentialSpin" name="DensitySpin">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -605,7 +605,7 @@
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="TExponentialSpin" name="RequestedSizeFactorSpin">
+         <widget class="ExponentialSpin" name="RequestedSizeFactorSpin">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -621,7 +621,7 @@
          </widget>
         </item>
         <item row="0" column="3">
-         <widget class="TExponentialSpin" name="AppliedSizeFactorSpin">
+         <widget class="ExponentialSpin" name="AppliedSizeFactorSpin">
           <property name="enabled">
            <bool>false</bool>
           </property>
@@ -781,9 +781,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>TExponentialSpin</class>
+   <class>ExponentialSpin</class>
    <extends>QDoubleSpinBox</extends>
-   <header>gui/widgets/texponentialspin.hui</header>
+   <header>gui/widgets/exponentialspin.hui</header>
   </customwidget>
   <customwidget>
    <class>ModuleEditor</class>

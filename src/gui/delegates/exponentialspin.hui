@@ -1,6 +1,6 @@
 /*
-	*** TExponentialSpinDelegate
-	*** src/gui/delegates/texponentialspin.h
+	*** ExponentialSpinDelegate
+	*** src/gui/delegates/exponentialspin.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -25,19 +25,19 @@
 #include <QtWidgets/QItemDelegate>
 #include <QModelIndex>
 #include <QObject>
-#include "gui/widgets/texponentialspin.hui"
+#include "gui/widgets/exponentialspin.hui"
 
-class TExponentialSpinDelegate : public QItemDelegate
+class ExponentialSpinDelegate : public QItemDelegate
 {
 	Q_OBJECT
 
 	private:
-	// Parameters for TExponentialSpin
+	// Parameters for ExponentialSpin
 	double min_, max_, step_, nDecimals_;
 
 	public:
 	// Constructor
-	TExponentialSpinDelegate(QObject* parent = 0, double vmin = -1e6, double vmax = 1e6, double vstep = 1.0, double nDecimals = 5);
+	ExponentialSpinDelegate(QObject* parent = 0, double vmin = -1e6, double vmax = 1e6, double vstep = 1.0, double nDecimals = 5);
 	// Reimplemented virtual function to create editing widget
 	QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const;
 	// Set the data to appear when the editor is called

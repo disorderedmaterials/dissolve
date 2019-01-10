@@ -95,7 +95,7 @@
           </widget>
          </item>
          <item>
-          <widget class="TExponentialSpin" name="PhiLevelSpin">
+          <widget class="ExponentialSpin" name="PhiLevelSpin">
            <property name="enabled">
             <bool>false</bool>
            </property>
@@ -497,9 +497,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>TExponentialSpin</class>
+   <class>ExponentialSpin</class>
    <extends>QDoubleSpinBox</extends>
-   <header>gui/widgets/texponentialspin.hui</header>
+   <header>gui/widgets/exponentialspin.hui</header>
   </customwidget>
  </customwidgets>
  <resources>

@@ -102,7 +102,7 @@
        </widget>
       </item>
       <item>
-       <widget class="TExponentialSpin" name="GaussianFWHMSpin">
+       <widget class="ExponentialSpin" name="GaussianFWHMSpin">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -153,7 +153,7 @@
        <number>4</number>
       </property>
       <item row="0" column="2">
-       <widget class="TExponentialSpin" name="FrequencyBondConstantSpin">
+       <widget class="ExponentialSpin" name="FrequencyBondConstantSpin">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -205,7 +205,7 @@
        </widget>
       </item>
       <item row="1" column="2">
-       <widget class="TExponentialSpin" name="FrequencyAngleConstantSpin">
+       <widget class="ExponentialSpin" name="FrequencyAngleConstantSpin">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -221,9 +221,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>TExponentialSpin</class>
+   <class>ExponentialSpin</class>
    <extends>QDoubleSpinBox</extends>
-   <header>gui/widgets/texponentialspin.hui</header>
+   <header>gui/widgets/exponentialspin.hui</header>
   </customwidget>
  </customwidgets>
  <resources/>

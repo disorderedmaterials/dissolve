@@ -1,6 +1,6 @@
 /*
-	*** TExponentialSpinDelegate Functions
-	*** src/gui/delegates/texponentialspin_funcs.cpp
+	*** ExponentialSpinDelegate Functions
+	*** src/gui/delegates/exponentialspin_funcs.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,10 +19,10 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/delegates/texponentialspin.hui"
+#include "gui/delegates/exponentialspin.hui"
 #include <stdio.h>
 
-TExponentialSpinDelegate::TExponentialSpinDelegate(QObject *parent, double vmin, double vmax, double vstep, double nDecimals) : QItemDelegate(parent)
+ExponentialSpinDelegate::ExponentialSpinDelegate(QObject *parent, double vmin, double vmax, double vstep, double nDecimals) : QItemDelegate(parent)
 {
 	// Private variables
 	min_ = vmin;
@@ -32,10 +32,10 @@ TExponentialSpinDelegate::TExponentialSpinDelegate(QObject *parent, double vmin,
 }
 
 // Create editor
-QWidget* TExponentialSpinDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const
+QWidget* ExponentialSpinDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
 	// Create editor widget (in this case a double spin box) and set some properties
-	TExponentialSpin* editor = new TExponentialSpin(parent);
+	ExponentialSpin* editor = new ExponentialSpin(parent);
 	editor->setMinimum(min_);
 	editor->setMaximum(max_);
 	editor->setSingleStep(step_);
@@ -45,18 +45,18 @@ QWidget* TExponentialSpinDelegate::createEditor(QWidget* parent, const QStyleOpt
 }
 
 // Set initial value in editor
-void TExponentialSpinDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
+void ExponentialSpinDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
 {
 	double value = index.model()->data(index, Qt::EditRole).toDouble();
 
-	TExponentialSpin* spinBox = static_cast<TExponentialSpin*>(editor);
+	ExponentialSpin* spinBox = static_cast<ExponentialSpin*>(editor);
 	spinBox->setValue(value);
 }
 
 // Get value from editing widget, and set back in model
-void TExponentialSpinDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const
+void ExponentialSpinDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const
 {
-	TExponentialSpin* spinBox = static_cast<TExponentialSpin*>(editor);
+	ExponentialSpin* spinBox = static_cast<ExponentialSpin*>(editor);
 
 	// Make sure the value in the spinBox has been updated from the current text
 	spinBox->updateValueFromText();
@@ -66,7 +66,7 @@ void TExponentialSpinDelegate::setModelData(QWidget* editor, QAbstractItemModel*
 }
 
 // Update widget geometry
-void TExponentialSpinDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const
+void ExponentialSpinDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
 	editor->setGeometry(option.rect);
 }

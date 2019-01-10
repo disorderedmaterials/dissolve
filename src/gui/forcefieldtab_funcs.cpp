@@ -23,7 +23,7 @@
 #include "gui/gui.h"
 #include "gui/widgets/elementselector.hui"
 #include "gui/delegates/combolist.hui"
-#include "gui/delegates/texponentialspin.hui"
+#include "gui/delegates/exponentialspin.hui"
 #include "gui/helpers/listwidgetupdater.h"
 #include "gui/helpers/tablewidgetupdater.h"
 #include "main/dissolve.h"
@@ -53,9 +53,9 @@ ForcefieldTab::ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve,
 	// -- Parameters
 	for (int n=2; n<6; ++n)
 	{
-		ui.MasterBondsTable->setItemDelegateForColumn(n, new TExponentialSpinDelegate(this));
-		ui.MasterAnglesTable->setItemDelegateForColumn(n, new TExponentialSpinDelegate(this));
-		ui.MasterTorsionsTable->setItemDelegateForColumn(n, new TExponentialSpinDelegate(this));
+		ui.MasterBondsTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
+		ui.MasterAnglesTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
+		ui.MasterTorsionsTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
 	}
 
 	// Ensure fonts for table headers are set correctly
@@ -69,7 +69,7 @@ ForcefieldTab::ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve,
 
 	// Set item delegates for tables
 	// -- Charge / Parameters
-	for (int n=3; n<8; ++n) ui.AtomTypesTable->setItemDelegateForColumn(n, new TExponentialSpinDelegate(this));
+	for (int n=3; n<8; ++n) ui.AtomTypesTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
 
 	// Ensure fonts for table headers are set correctly
 	ui.AtomTypesTable->horizontalHeader()->setFont(font());
@@ -88,7 +88,7 @@ ForcefieldTab::ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve,
 	ui.PairPotentialsTable->setItemDelegateForColumn(2, new ComboListDelegate(this, new ComboListEnumItems(PairPotential::nShortRangeTypes, PairPotential::shortRangeTypes())));
 
 	// -- Charges / Parameters
-	for (int n=3; n<9; ++n) ui.PairPotentialsTable->setItemDelegateForColumn(n, new TExponentialSpinDelegate(this));
+	for (int n=3; n<9; ++n) ui.PairPotentialsTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
 
 	refreshing_ = false;
 }

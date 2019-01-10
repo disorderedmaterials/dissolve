@@ -748,7 +748,7 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="TExponentialSpin" name="ShortRangeTruncationWidthSpin">
+          <widget class="ExponentialSpin" name="ShortRangeTruncationWidthSpin">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -828,7 +828,7 @@
           <number>4</number>
          </property>
          <item row="0" column="1">
-          <widget class="TExponentialSpin" name="PairPotentialRangeSpin">
+          <widget class="ExponentialSpin" name="PairPotentialRangeSpin">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -871,7 +871,7 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="TExponentialSpin" name="PairPotentialDeltaSpin">
+          <widget class="ExponentialSpin" name="PairPotentialDeltaSpin">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -1090,9 +1090,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>TExponentialSpin</class>
+   <class>ExponentialSpin</class>
    <extends>QDoubleSpinBox</extends>
-   <header>gui/widgets/texponentialspin.hui</header>
+   <header>gui/widgets/exponentialspin.hui</header>
   </customwidget>
  </customwidgets>
  <resources>

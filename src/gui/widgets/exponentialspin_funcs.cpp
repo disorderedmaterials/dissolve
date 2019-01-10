@@ -1,6 +1,6 @@
 /*
-	*** TExponentialSpin Functions
-	*** src/gui/widgets/texponentialspin_funcs.cpp
+	*** ExponentialSpin Functions
+	*** src/gui/widgets/exponentialspin_funcs.cpp
 	Copyright T. Youngs 2016-2018
 
 	This file is part of Dissolve.
@@ -19,12 +19,12 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/widgets/texponentialspin.hui"
+#include "gui/widgets/exponentialspin.hui"
 #include <QLineEdit>
 #include <stdio.h>
 
 // Constructor
-TExponentialSpin::TExponentialSpin(QWidget* parent) : QAbstractSpinBox(parent)
+ExponentialSpin::ExponentialSpin(QWidget* parent) : QAbstractSpinBox(parent)
 {
 	// Set default values
 	value_ = 0.0;
@@ -54,7 +54,7 @@ TExponentialSpin::TExponentialSpin(QWidget* parent) : QAbstractSpinBox(parent)
  */
 
 // Clamp current value to allowable range
-bool TExponentialSpin::clamp()
+bool ExponentialSpin::clamp()
 {
 	if (limitMinValue_ && (value_.value() < valueMin_))
 	{
@@ -70,7 +70,7 @@ bool TExponentialSpin::clamp()
 }
 
 // Create text from current value, and display in lineEdit
-void TExponentialSpin::updateTextFromValue()
+void ExponentialSpin::updateTextFromValue()
 {
 	const double formatThreshold = 1.0e3;
 // 	printf("Here we are in updateText, setting [%s].\n", qPrintable(value_.text(precision)));
@@ -79,13 +79,13 @@ void TExponentialSpin::updateTextFromValue()
 }
 
 // Return double value
-double TExponentialSpin::value()
+double ExponentialSpin::value()
 {
 	return value_.value();
 }
 
 // Set value
-void TExponentialSpin::setValue(double value)
+void ExponentialSpin::setValue(double value)
 {
 	// Is the new value different from the old one?
 	bool different = (value_ != value);
@@ -102,7 +102,7 @@ void TExponentialSpin::setValue(double value)
 }
 
 // Set minimum limit
-void TExponentialSpin::setMinimum(double value)
+void ExponentialSpin::setMinimum(double value)
 {
 	valueMin_ = value;
 	limitMinValue_ = true;
@@ -111,7 +111,7 @@ void TExponentialSpin::setMinimum(double value)
 }
 
 // Set minimum limit
-void TExponentialSpin::setMaximum(double value)
+void ExponentialSpin::setMaximum(double value)
 {
 	valueMax_ = value;
 	limitMaxValue_ = true;
@@ -121,7 +121,7 @@ void TExponentialSpin::setMaximum(double value)
 }
 
 // Set allowable range of value
-void TExponentialSpin::setRange(bool limitMin, double minValue, bool limitMax, double maxValue, int nSteps)
+void ExponentialSpin::setRange(bool limitMin, double minValue, bool limitMax, double maxValue, int nSteps)
 {
 	valueMin_ = minValue;
 	limitMinValue_ = limitMin;
@@ -141,38 +141,38 @@ void TExponentialSpin::setRange(bool limitMin, double minValue, bool limitMax, d
 }
 
 // Remove range limits
-void TExponentialSpin::setUnlimitedRange()
+void ExponentialSpin::setUnlimitedRange()
 {
 	limitMinValue_ = false;
 	limitMaxValue_ = false;
 }
 
 // Set single step value
-void TExponentialSpin::setSingleStep(double step)
+void ExponentialSpin::setSingleStep(double step)
 {
 	valueStep_ = step;
 }
 
 // Return number of decimals to use when converting to text
-int TExponentialSpin::decimals()
+int ExponentialSpin::decimals()
 {
 	return decimals_;
 }
 
 // Set number of decimals to use when converting to text
-void TExponentialSpin::setDecimals(int nDecimals)
+void ExponentialSpin::setDecimals(int nDecimals)
 {
 	decimals_ = nDecimals;
 }
 
 // Return suffix for value
-QString TExponentialSpin::suffix()
+QString ExponentialSpin::suffix()
 {
 	return suffix_;
 }
 
 // Set suffix for value
-void TExponentialSpin::setSuffix(QString suffix)
+void ExponentialSpin::setSuffix(QString suffix)
 {
 	suffix_ = suffix;
 }
@@ -182,7 +182,7 @@ void TExponentialSpin::setSuffix(QString suffix)
  */
 
 // Update value from current text
-void TExponentialSpin::updateValueFromText()
+void ExponentialSpin::updateValueFromText()
 {
 	if (!textChanged_) return;
 
@@ -201,7 +201,7 @@ void TExponentialSpin::updateValueFromText()
 }
 
 // Flag that the text has been modified since the last emit of valueChanged()
-void TExponentialSpin::textChanged(QString text)
+void ExponentialSpin::textChanged(QString text)
 {
 	textChanged_ = true;
 }
@@ -211,7 +211,7 @@ void TExponentialSpin::textChanged(QString text)
  */
 
 // Step value by specified amount
-void TExponentialSpin::stepBy(int nSteps)
+void ExponentialSpin::stepBy(int nSteps)
 {
 	value_ = value_.value() + valueStep_*nSteps;
 
@@ -223,7 +223,7 @@ void TExponentialSpin::stepBy(int nSteps)
 }
 
 // Return which steps should be enabled
-QAbstractSpinBox::StepEnabled TExponentialSpin::stepEnabled() const
+QAbstractSpinBox::StepEnabled ExponentialSpin::stepEnabled() const
 {
 	bool up = (value_.value() < valueMax_) || (!limitMaxValue_);
 	bool down = (value_.value() > valueMin_) || (!limitMinValue_);

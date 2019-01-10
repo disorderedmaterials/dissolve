@@ -25,7 +25,7 @@
 #include "gui/delegates/combolist.hui"
 #include "gui/delegates/integerspin.hui"
 #include "gui/delegates/isotopecombo.hui"
-#include "gui/delegates/texponentialspin.hui"
+#include "gui/delegates/exponentialspin.hui"
 #include "gui/helpers/listwidgetupdater.h"
 #include "gui/helpers/tablewidgetupdater.h"
 #include "main/dissolve.h"
@@ -46,7 +46,7 @@ SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabW
 	// Set item delegates in tables
 	// -- SpeciesAtomTable
 	ui.AtomTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboNameListItems<AtomType>(dissolve_.atomTypes())));
-	for (int n=2; n<6; ++n) ui.AtomTable->setItemDelegateForColumn(n, new TExponentialSpinDelegate(this));
+	for (int n=2; n<6; ++n) ui.AtomTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
 	ui.AtomTable->horizontalHeader()->setFont(font());
 	// -- Bond Table
 	for (int n=0; n<2; ++n) ui.BondTable->setItemDelegateForColumn(n, new IntegerSpinDelegate(this, 1, 1e9));

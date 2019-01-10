@@ -4,11 +4,11 @@
 # Meta-Objects
 SET(delegates_MOC_HDRS
   combolist.hui
+  exponentialspin.hui
   integerspin.hui
   intraformcombo.hui
   isotopecombo.hui
   isotopologuecombo.hui
-  texponentialspin.hui
   usedspeciescombo.hui
 )
 QT5_WRAP_CPP(delegates_MOC_SRCS ${delegates_MOC_HDRS})
@@ -21,11 +21,11 @@ QT5_WRAP_CPP(delegates_MOC_SRCS ${delegates_MOC_HDRS})
 # Source files (not Qt UI files or custom .h [uih])
 SET(delegates_SRCS
   combolist_funcs.cpp
+  exponentialspin_funcs.cpp
   integerspin_funcs.cpp
   intraformcombo_funcs.cpp
   isotopecombo_funcs.cpp
   isotopologuecombo_funcs.cpp
-  texponentialspin_funcs.cpp
   usedspeciescombo_funcs.cpp
 )
 
