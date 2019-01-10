@@ -19,6 +19,7 @@ SET(gui_MOC_HDRS
   modulechart.hui
   modulepalette.hui
   # Widgets
+  addconfigurationwizard.h
   addspecieswizard.h
   generalwizard.h
   pairpotentialwidget.h
@@ -28,6 +29,7 @@ SET(gui_MOC_HDRS
   wizardwidgethighlight.h
   wizardwidgetpageinfo.h
   # Dialogs
+  addconfigurationdialog.h
   addspeciesdialog.h
   # Main Tabs
   analysistab.h
@@ -56,12 +58,14 @@ SET(gui_UIS
   moduletab.ui
   paletteblock.ui
   # Widgets
+  addconfigurationwizard.ui
   addspecieswizard.ui
   generalwizard.ui
   pairpotentialwidget.ui
   wizardwidgetfooter.ui
   wizardwidgetheader.ui
   # Dialogs
+  addconfigurationdialog.ui
   addspeciesdialog.ui
   # Main Tabs
   analysistab.ui
@@ -91,6 +95,7 @@ SET(gui_SRCS
   modulewidget.cpp
   paletteblock_funcs.cpp
   # Widgets
+  addconfigurationwizard_funcs.cpp
   addspecieswizard_funcs.cpp
   generalwizard_funcs.cpp
   pairpotentialwidget_funcs.cpp
@@ -98,6 +103,7 @@ SET(gui_SRCS
   wizardwidgethighlight.cpp
   wizardwidgetpageinfo.cpp
   # Dialogs
+  addconfigurationdialog_funcs.cpp
   addspeciesdialog_funcs.cpp
   # Main Tabs
   analysistab_funcs.cpp

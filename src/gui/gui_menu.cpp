@@ -20,6 +20,7 @@
 */
 
 #include "gui/gui.h"
+#include "gui/addconfigurationdialog.h"
 #include "gui/addspeciesdialog.h"
 #include "gui/modulecontrolwidget.h"
 #include "main/dissolve.h"
@@ -207,13 +208,22 @@ void DissolveWindow::on_SimulationAddSpeciesAction_triggered(bool checked)
 
 void DissolveWindow::on_SimulationAddConfigurationAction_triggered(bool checked)
 {
-	Configuration* cfg = dissolve_.addConfiguration();
+	static AddConfigurationDialog addConfigurationDialog(this, dissolve_);
 
-	reconcileTabs();
+	addConfigurationDialog.reset();
 
-	updateControls();
+	if (addConfigurationDialog.exec() == QDialog::Accepted)
+	{
+		Configuration* sp = addConfigurationDialog.importConfiguration(dissolve_);
 
-	updateStatus();
+		reconcileTabs();
+
+		updateControls();
+
+		updateStatus();
+
+		setCurrentTab(sp);
+	}
 }
 
 /*
