@@ -77,6 +77,7 @@ class AddSpeciesWizard : public WizardWidget
 	enum WidgetPage
 	{
 		StartPage,			/* Starting page, offering choices of how to proceed */
+		CreateAtomicPage,		/* Create atomic Species, optionally with new AtomType */
 		ImportSpeciesSelectFilePage,	/* Import Species - select file */
 		ImportSpeciesSelectSpeciesPage,	/* Import Species - choose species */
 		AtomTypesPage,			/* AtomTypes page - check / re-map AtomTypes*/
@@ -108,6 +109,13 @@ class AddSpeciesWizard : public WizardWidget
 	void on_StartAddPredefinedButton_clicked(bool checked);
 	void on_StartImportCoordinatesButton_clicked(bool checked);
 	void on_StartImportSpeciesButton_clicked(bool checked);
+
+
+	/*
+	 * Create Atomic Page
+	 */
+	private slots:
+	void createAtomicElementChanged();
 
 
 	/*
