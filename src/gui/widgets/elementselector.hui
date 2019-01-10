@@ -54,6 +54,7 @@ class ElementSelector : public QWidget
 
 	signals:
 	void elementSelectionChanged();
+	void elementSelected(bool);
 	void elementDoubleClicked();
 
 

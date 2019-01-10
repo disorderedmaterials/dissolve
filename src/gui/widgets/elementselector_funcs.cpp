@@ -26,6 +26,7 @@
 #include <QDialogButtonBox>
 #include <QGridLayout>
 #include <QLabel>
+#include <QPushButton>
 #include <QToolButton>
 
 // Constructor
@@ -169,6 +170,7 @@ void ElementSelector::elementButtonClicked(bool checked)
 	{
 		doubleClickTimer_.start();
 		emit(elementSelectionChanged());
+		emit(elementSelected(true));
 	}
 }
 
@@ -182,7 +184,8 @@ void ElementSelector::setCurrentElement(Element* element)
 	// Uncheck any current element button before we change
 	if (currentElement_)
 	{
-		RefListItem<QToolButton,Element*>* buttonItem = elementButtons_.containsData(currentElement_);
+		QToolButton* button = elementButtons_.itemWithData(currentElement_);
+		if (button) button->setChecked(false);
 	}
 
 	currentElement_ = element;
@@ -190,7 +193,8 @@ void ElementSelector::setCurrentElement(Element* element)
 	// Find and check the related button
 	if (currentElement_ == NULL)
 	{
-		// Uncheck
+		QToolButton* button = elementButtons_.itemWithData(currentElement_);
+		if (button) button->setChecked(true);
 	}
 }
 
@@ -224,6 +228,8 @@ Element* ElementSelector::getElement(QWidget* parent, const char* title, const c
 	QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &inputDialog);
 	QObject::connect(buttonBox, SIGNAL(accepted()), &inputDialog, SLOT(accept()));
 	QObject::connect(buttonBox, SIGNAL(rejected()), &inputDialog, SLOT(reject()));
+	buttonBox->button(QDialogButtonBox::Ok)->setEnabled(element != NULL);
+	QObject::connect(elementSelector, SIGNAL(elementSelected(bool)), buttonBox->button(QDialogButtonBox::Ok), SLOT(setEnabled(bool)));
 
 	QVBoxLayout* mainLayout = new QVBoxLayout(&inputDialog);
 	mainLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
