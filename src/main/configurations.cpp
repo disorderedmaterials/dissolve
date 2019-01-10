@@ -35,6 +35,17 @@ Configuration* Dissolve::addConfiguration()
 	return cfg;
 }
 
+// Own specified Configuration
+bool Dissolve::ownConfiguration(Configuration* cfg)
+{
+	// Sanity check - do we already own this Configuration?
+	if (coreData_.configurations().contains(cfg)) return Messenger::error("Already own Configuration '%s', so nothing to do.\n", cfg->name());
+
+	coreData_.configurations().own(cfg);
+
+	return true;
+}
+
 // Return number of defined Configurations
 int Dissolve::nConfigurations() const
 {

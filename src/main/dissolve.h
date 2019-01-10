@@ -220,6 +220,8 @@ class Dissolve
 	public:
 	// Add new Configuration
 	Configuration* addConfiguration();
+	// Own the specified Configuration
+	bool ownConfiguration(Configuration* cfg);
 	// Return number of defined Configurations
 	int nConfigurations() const;
 	// Return Configuration list
