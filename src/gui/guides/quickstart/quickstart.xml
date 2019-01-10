@@ -57,7 +57,7 @@
 			<next>gui4</next>
 			<content>
 				<![CDATA[
-				<html><head/><body><p align="center"><img src=":/quickstart/guides/quickstart/quickstart_tour_tabs.png"/></p><p>Tabs display all of the available <span style=" font-weight:600;">Species</span> and <span style=" font-weight:600;">Configurations</span> in the simulation, as well as lists of processing <span style=" font-weight:600;">Modules</span> and the underlying <span style=" font-weight:600;">Forcefield</span>. The only tab which is always present is the <span style=" font-weight:600;">Forcefield</span> tab - all others depend on the content of the simulation.</p></body></html>
+				<html><head/><body><p align="center"><img src=":/quickstart/guides/quickstart/quickstart_tour_tabs.png"/></p><p>Tabs display all of the available <span style=" font-weight:600;">Species</span> and <span style=" font-weight:600;">Configurations</span> in the simulation, as well as lists of processing <span style=" font-weight:600;">Modules</span> and the underlying <span style=" font-weight:600;">Forcefield</span>. The only tab which is always present (and which is the only one visible right now) is the <span style=" font-weight:600;">Forcefield</span> tab - all others depend on the content of the simulation.</p></body></html>
 				]]>
 			</content>
 			<highlight>
@@ -131,26 +131,27 @@
 			<next>argon2</next>
 			<content>
 				<![CDATA[
-				<html><head/><body><p>We'll now set up a simple simulation completely by hand to illustrate the basic usage of the GUI, and discuss a few topics in a bit more detail.</p><p>Our target will be to describe liquid argon at 85 K, beginning from a set of reference Lennard-Jones parameters, and then to refine this potential against some experimentally-measured data. Our steps will be:</p><p>1) Add suitable <span style=" font-weight:600;">AtomType</span> parameters for interactions between argon atoms</p><p>2) Create a <span style=" font-weight:600;">Species</span> to represent an argon atom</p><p>3) Define a <span style=" font-weight:600;">Configuration</span> consistent with the (experimentally-measured) data</p><p>4) Create a sequence of processing <span style=" font-weight:600;">Modules</span> to evolve the Configuration and refine the interatomic potential</p><p>Let's begin!</p></body></html>
+				<html><head/><body><p>We'll now set up a simple simulation completely by hand to illustrate the basic usage of the GUI, and discuss a few topics in a bit more detail.</p><p>Our target will be to describe liquid argon at 85 K, beginning from a set of reference Lennard-Jones parameters, and then to refine this potential against some experimentally-measured data. Our steps will be:</p><p>1) Add suitable <span style=" font-weight:600;">AtomType</span> parameters for interactions between argon atoms</p><p>2) Create a <span style=" font-weight:600;">Species</span> to represent an argon atom</p><p>3) Define a <span style=" font-weight:600;">Configuration</span> consistent with the experimentally-measured data</p><p>4) Create a sequence of processing <span style=" font-weight:600;">Modules</span> to evolve the Configuration and refine the interatomic potential</p><p>Let's begin!</p></body></html>
 				]]>
 			</content>
 		</page>
 		<page>
-			<title>Create an AtomType</title>
+			<title>Create a Species</title>
 			<tag>argon2</tag>
 			<next>argon3</next>
 			<content>
 				<![CDATA[
-				<html><head/><body><p>The first step is to create an <span style=" font-weight:600;">AtomType</span> to describe the interaction between argon atoms. This is the sole component of the forcefield in this simulation.</p><p>On the <span style=" font-weight:600;">Forcefield</span> tab create a new <span style=" font-weight:600;">AtomType</span> by clicking the <span style=" font-weight:600; color:#bb0000;">Add</span> button (highlighted in red) in the relevant section.</p></body></html>
+				<html><head/><body><p>We need a suitable atomic <span style=" font-weight:600;">Species</span> to represent the argon atom in our simulation. You can set one up quickly, including an associated <span style=" font-weight:600;">AtomType</span>, by using the <span style=" font-style:italic;">Add Species</span> wizard on the <span style=" font-style:italic;">Simulation</span> menu (<span style=" font-weight:600; color:#bb0000;">Simulation→Add Species</span>) and following the steps below.</p><p>1) In the <span style=" font-style:italic;">Add Species</span> wizard, choose <span style=" font-style:italic;">Create a Species with a single atom</span>.</p><p>2) Choose <span style=" font-style:italic;">Ar</span> from the periodic table. The <span style=" font-style:italic;">Create associated AtomType</span> is already ticked, and will add a new <span style=" font-weight:600;">AtomType</span> for us, so press <span style=" font-style:italic;">Next</span> to continue.</p><p>3) The name of the new <span style=" font-weight:600;">Species</span> can be left as 'Ar'. Choose <span style=" font-style:italic;">Finish</span> to complete the wizard.</p><p>As you will see, we now have a new tab containing our atomic argon Species, with a single atom located at (0,0,0), and assigned to the <span style=" font-weight:600;">AtomType</span> 'Ar', which we will adjust in the next step.</p></body></html>
 				]]>
 			</content>
 		</page>
 		<page>
-			<title></title>
+			<title>Set Up the AtomType</title>
 			<tag>argon3</tag>
 			<next>argon4</next>
 			<content>
 				<![CDATA[
+				<html><head/><body><p>Go back to the forcefield tab and you will see the new <span style=" font-weight:600;">AtomType</span> - this is the sole component of the forcefield in this simulation. Note that all <span style=" font-weight:600;">AtomTypes</span> are strictly associated with with one chemical element, and can only be applied to that element.</p><p>Our new AtomType exists, but has no useful parameters associated to it (they are all zero) so we must add these in now. For a Lennard-Jones interaction <span style=" font-style:italic;">Parameter1</span> is epsilon (the well depth) in kj/mol while <span style=" font-style:italic;">Parameter2</span> is sigma (which helps define the extent of the repulsive core of the atom) in Angstroms. Enter the following values:</p><p><span style=" font-style:italic;">Parameter1</span> (epsilon) = 0.979</p><p><span style=" font-style:italic;">Parameter2</span> (sigma) = 3.401</p><p>These values are taken from Jorgensen's OPLS-AA forcefield. </p></body></html>
 				]]>
 			</content>
 		</page>
@@ -165,5 +166,3 @@
 		</page>
 	</pages>
 </guide>
-
-quickstart/guides/quickstart/quickstart_tour.png
