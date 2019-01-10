@@ -276,7 +276,7 @@
            </spacer>
           </item>
           <item>
-           <widget class="QToolButton" name="BondRemoveButtom">
+           <widget class="QToolButton" name="BondRemoveButton">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -446,7 +446,7 @@
            </spacer>
           </item>
           <item>
-           <widget class="QToolButton" name="AngleRemoveButtom">
+           <widget class="QToolButton" name="AngleRemoveButton">
             <property name="enabled">
              <bool>false</bool>
             </property>
