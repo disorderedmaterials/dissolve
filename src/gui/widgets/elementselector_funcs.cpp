@@ -168,7 +168,7 @@ void ElementSelector::elementButtonClicked(bool checked)
 	else
 	{
 		doubleClickTimer_.start();
-		emit(elementClicked());
+		emit(elementSelectionChanged());
 	}
 }
 
