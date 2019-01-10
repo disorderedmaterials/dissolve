@@ -24,6 +24,7 @@
 
 #include <QComboBox>
 #include "templates/list.h"
+#include "templates/variantpointer.h"
 
 // ComboBox Populator
 class ComboPopulator
@@ -51,7 +52,7 @@ template <class T> class ComboNameListPopulator
 		if (!append) combo->clear();
 
 		// Add our text items to the list
-		for (T* item = items.first(); item != NULL; item = item->next) combo->addItem(item->name());
+		for (T* item = items.first(); item != NULL; item = item->next) combo->addItem(item->name(), VariantPointer<T>(item));
 	}
 	// Constructor
 	ComboNameListPopulator<T>(QComboBox* combo, const List<T>& items, const char* prefix, bool append = false)
@@ -60,7 +61,7 @@ template <class T> class ComboNameListPopulator
 		if (!append) combo->clear();
 
 		// Add our text items to the list
-		for (T* item = items.first(); item != NULL; item = item->next) combo->addItem(QString("%1%2").arg(prefix, item->name()));
+		for (T* item = items.first(); item != NULL; item = item->next) combo->addItem(QString("%1%2").arg(prefix, item->name()), VariantPointer<T>(item));
 	}
 };
 
