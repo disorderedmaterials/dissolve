@@ -31,6 +31,10 @@
 #include "classes/species.h"
 #include <QInputDialog>
 
+/*
+ * Private Slots
+ */
+
 void DissolveWindow::on_MainTabs_currentChanged(int index)
 {
 	if (refreshing_) return;
@@ -68,6 +72,10 @@ void DissolveWindow::mainTabsDoubleClicked(int index)
 // 
 // 	tab->setTitle(newName);
 }
+
+/*
+ * Private
+ */
 
 // Remove tabs related to the current data
 void DissolveWindow::clearTabs()
@@ -260,6 +268,41 @@ void DissolveWindow::setCurrentTab(int tabIndex)
 	ui.MainTabs->setCurrentIndex(tabIndex);
 }
 
+// Show forcefield tab
+void DissolveWindow::showForcefieldTab()
+{
+	if (forcefieldTab_) ui.MainTabs->setCurrentWidget(forcefieldTab_->page());
+	else Messenger::error("Can't show ForcefieldTab, since it doesn't exist!\n");
+}
+
+// Make specified Species tab the current one
+void DissolveWindow::setCurrentTab(Species* species)
+{
+	if (!species) return;
+
+	for (SpeciesTab* tab = speciesTabs_.first(); tab != NULL; tab = tab->next) if (tab->species() == species)
+	{
+		ui.MainTabs->setCurrentWidget(tab->page());
+		return;
+	}
+
+	Messenger::error("Can't display SpeciesTab for Species '%s' as it doesn't exist.\n", species->name());
+}
+
+// Make specified Configuration tab the current one
+void DissolveWindow::setCurrentTab(Configuration* cfg)
+{
+	if (!cfg) return;
+
+	for (ConfigurationTab* tab = configurationTabs_.first(); tab != NULL; tab = tab->next) if (tab->configuration() == cfg)
+	{
+		ui.MainTabs->setCurrentWidget(tab->page());
+		return;
+	}
+
+	Messenger::error("Can't display ConfigurationTab for Configuration '%s' as it doesn't exist.\n", cfg->name());
+}
+
 // Return reference list of all current tabs
 RefList<MainTab,bool> DissolveWindow::allTabs() const
 {
@@ -274,6 +317,10 @@ RefList<MainTab,bool> DissolveWindow::allTabs() const
 
 	return tabs;
 }
+
+/*
+ * Public
+ */
 
 // Create / go to Module tab for specified Module, provided it has a Module control widget
 MainTab* DissolveWindow::addModuleTab(Module* module)
@@ -295,6 +342,10 @@ MainTab* DissolveWindow::addModuleTab(Module* module)
 
 	return tab;
 }
+
+/*
+ * Public Slots
+ */
 
 // Remove tab containing the specified page widget
 void DissolveWindow::removeTab(QWidget* page)

@@ -120,10 +120,14 @@ void AddSpeciesWizard::setMainDissolveReference(const Dissolve* dissolveReferenc
 }
 
 // Copy imported Species over to the specified Dissolve object
-bool AddSpeciesWizard::importSpecies(Dissolve& dissolve)
+Species* AddSpeciesWizard::importSpecies(Dissolve& dissolve)
 {
 	// Check that we have a target Species (in temporaryDissolve_) to import
-	if (!importTarget_) return Messenger::error("No target Species to import!\n");
+	if (!importTarget_)
+	{
+		Messenger::error("No target Species to import!\n");
+		return NULL;
+	}
 
 	// Create our new Species
 	Species* newSpecies = dissolve.addSpecies();
@@ -190,6 +194,8 @@ bool AddSpeciesWizard::importSpecies(Dissolve& dissolve)
 	newSpecies->updateGrains();
 	newSpecies->centreAtOrigin();
 	newSpecies->orderAtomsWithinGrains();
+
+	return newSpecies;
 }
 
 /*

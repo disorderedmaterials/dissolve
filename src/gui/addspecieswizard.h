@@ -61,8 +61,8 @@ class AddSpeciesWizard : public WizardWidget
 	public:
 	// Set Dissolve reference
 	void setMainDissolveReference(const Dissolve* dissolveReference);
-	// Copy imported Species over to the specified Dissolve object
-	bool importSpecies(Dissolve& dissolve);
+	// Copy imported Species over to the specified Dissolve object, returning the new pointer to it
+	Species* importSpecies(Dissolve& dissolve);
 
 
 	/*

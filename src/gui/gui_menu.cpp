@@ -191,13 +191,18 @@ void DissolveWindow::on_SimulationAddSpeciesAction_triggered(bool checked)
 
 	addSpeciesDialog.reset();
 
-	if (addSpeciesDialog.exec() == QDialog::Accepted) addSpeciesDialog.importSpecies(dissolve_);
+	if (addSpeciesDialog.exec() == QDialog::Accepted)
+	{
+		Species* sp = addSpeciesDialog.importSpecies(dissolve_);
 
-	reconcileTabs();
+		reconcileTabs();
 
-	updateControls();
+		updateControls();
 
-	updateStatus();
+		updateStatus();
+
+		setCurrentTab(sp);
+	}
 }
 
 void DissolveWindow::on_SimulationAddConfigurationAction_triggered(bool checked)

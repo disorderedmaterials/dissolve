@@ -270,6 +270,12 @@ class DissolveWindow : public QMainWindow
 	void setCurrentTab(MainTab* tab);
 	// Make specified tab the current one (by index)
 	void setCurrentTab(int tabIndex);
+	// Show forcefield tab
+	void showForcefieldTab();
+	// Make specified Species tab the current one
+	void setCurrentTab(Species* species);
+	// Make specified Configuration tab the current one
+	void setCurrentTab(Configuration* cfg);
 	// Return reference list of all current tabs
 	RefList<MainTab,bool> allTabs() const;
 

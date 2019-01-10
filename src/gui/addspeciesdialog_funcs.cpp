@@ -44,7 +44,7 @@ void AddSpeciesDialog::reset()
 }
 
 // Copy imported Species over to the specified Dissolve object
-bool AddSpeciesDialog::importSpecies(Dissolve& dissolve)
+Species* AddSpeciesDialog::importSpecies(Dissolve& dissolve)
 {
-	ui_.AddSpeciesWidget->importSpecies(dissolve);
+	return ui_.AddSpeciesWidget->importSpecies(dissolve);
 }
