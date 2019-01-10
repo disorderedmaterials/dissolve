@@ -337,11 +337,13 @@ void SpeciesTab::updateControls()
 // Disable sensitive controls within tab, ready for main code to run
 void SpeciesTab::disableSensitiveControls()
 {
+	setEnabled(false);
 }
 
 // Enable sensitive controls within tab, ready for main code to run
 void SpeciesTab::enableSensitiveControls()
 {
+	setEnabled(true);
 }
 
 /*
