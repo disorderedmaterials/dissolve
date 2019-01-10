@@ -383,20 +383,8 @@ void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem* w)
 		// Element
 		case (0):
 			break;
-		// Coordinates
-		case (1):
-		case (2):
-		case (3):
-			speciesAtom->setCoordinate(w->column()-1, w->text().toDouble());
-			dissolveWindow_->setModified();
-			break;
-		// Charge
-		case (4):
-			speciesAtom->setCharge(w->text().toDouble());
-			dissolveWindow_->setModified();
-			break;
 		// AtomType
-		case (5):
+		case (1):
 			// Check the text to see if it is an existing AtomType - if not, we should create it
 			atomType = dissolve_.findAtomType(qPrintable(w->text()));
 			if (!atomType)
@@ -405,6 +393,18 @@ void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem* w)
 				atomType->setName(qPrintable(w->text()));
 			}
 			speciesAtom->setAtomType(atomType);
+			dissolveWindow_->setModified();
+			break;
+		// Coordinates
+		case (2):
+		case (3):
+		case (4):
+			speciesAtom->setCoordinate(w->column()-1, w->text().toDouble());
+			dissolveWindow_->setModified();
+			break;
+		// Charge
+		case (5):
+			speciesAtom->setCharge(w->text().toDouble());
 			dissolveWindow_->setModified();
 			break;
 		default:
