@@ -360,7 +360,15 @@ Isotopologue* SpeciesTab::currentIsotopologue()
 
 void SpeciesTab::on_AtomAddButton_clicked(bool checked)
 {
-	printf("NOT IMPLEMENTED YET!\n");
+	SpeciesAtom* atom = species_->addAtom(&Elements::element(1), Vec3<double>());
+
+	refreshing_ = true;
+
+	TableWidgetUpdater<SpeciesTab,SpeciesAtom> speciesAtomUpdater(ui.AtomTable, species_->atoms(), this, &SpeciesTab::updateAtomTableRow);
+
+	refreshing_ = false;
+
+	dissolveWindow_->setModified();
 }
 
 void SpeciesTab::on_AtomRemoveButton_clicked(bool checked)
