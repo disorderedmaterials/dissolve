@@ -103,9 +103,10 @@ void Box::setUp(double volume)
 	inverseAxes_ = axes_;
 	inverseAxes_.invert();
 
-	// Calculate reciprocal axes and volume
-	// Reciprocal cell vectors are perpendicular to normal cell axes.
-	// Calculate from cross products of normal cell vectors
+	/*
+	 * Calculate reciprocal axes and volume.
+	 * Reciprocal cell vectors are perpendicular to normal cell axes - calculate from cross products of normal cell vectors.
+	 */
 	reciprocalAxes_.setColumn(0, axes_.columnAsVec3(1) * axes_.columnAsVec3(2));
 	reciprocalAxes_.setColumn(1, axes_.columnAsVec3(2) * axes_.columnAsVec3(0));
 	reciprocalAxes_.setColumn(2, axes_.columnAsVec3(0) * axes_.columnAsVec3(1));
