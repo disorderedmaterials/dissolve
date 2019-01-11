@@ -13,6 +13,11 @@
     <height>205</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <pointsize>10</pointsize>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>Create Configuration</string>
   </property>

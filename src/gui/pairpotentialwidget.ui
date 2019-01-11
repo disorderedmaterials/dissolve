@@ -12,7 +12,7 @@
   </property>
   <property name="font">
    <font>
-    <pointsize>8</pointsize>
+    <pointsize>10</pointsize>
    </font>
   </property>
   <property name="windowTitle">
@@ -80,7 +80,6 @@
         </property>
         <property name="font">
          <font>
-          <pointsize>8</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -97,7 +96,6 @@
        <widget class="QLabel" name="BottomLabel">
         <property name="font">
          <font>
-          <pointsize>8</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>

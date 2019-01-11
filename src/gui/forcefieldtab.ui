@@ -12,7 +12,7 @@
   </property>
   <property name="font">
    <font>
-    <pointsize>8</pointsize>
+    <pointsize>10</pointsize>
    </font>
   </property>
   <property name="windowTitle">
@@ -161,7 +161,7 @@
          <widget class="QTableWidget" name="MasterBondsTable">
           <property name="font">
            <font>
-            <pointsize>8</pointsize>
+            <pointsize>10</pointsize>
            </font>
           </property>
           <property name="columnCount">
@@ -310,7 +310,7 @@
          <widget class="QTableWidget" name="MasterAnglesTable">
           <property name="font">
            <font>
-            <pointsize>8</pointsize>
+            <pointsize>10</pointsize>
            </font>
           </property>
           <property name="columnCount">
@@ -459,7 +459,7 @@
          <widget class="QTableWidget" name="MasterTorsionsTable">
           <property name="font">
            <font>
-            <pointsize>8</pointsize>
+            <pointsize>10</pointsize>
            </font>
           </property>
           <property name="columnCount">
@@ -643,7 +643,7 @@
        <widget class="QTableWidget" name="AtomTypesTable">
         <property name="font">
          <font>
-          <pointsize>8</pointsize>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="columnCount">
@@ -1021,7 +1021,7 @@
           <widget class="QTableWidget" name="PairPotentialsTable">
            <property name="font">
             <font>
-             <pointsize>8</pointsize>
+             <pointsize>10</pointsize>
             </font>
            </property>
            <property name="columnCount">

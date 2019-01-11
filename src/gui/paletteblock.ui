@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>200</width>
-    <height>59</height>
+    <height>46</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -24,7 +24,7 @@
   </property>
   <property name="font">
    <font>
-    <pointsize>8</pointsize>
+    <pointsize>10</pointsize>
    </font>
   </property>
   <property name="windowTitle">
@@ -53,6 +53,11 @@
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
      </property>
      <property name="toolTip">
       <string/>
@@ -98,7 +103,6 @@
         </property>
         <property name="font">
          <font>
-          <pointsize>8</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -121,7 +125,6 @@
         </property>
         <property name="font">
          <font>
-          <pointsize>8</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>

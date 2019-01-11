@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1206</width>
+    <width>921</width>
     <height>863</height>
    </rect>
   </property>
   <property name="font">
    <font>
-    <pointsize>8</pointsize>
+    <pointsize>10</pointsize>
    </font>
   </property>
   <property name="windowTitle">
@@ -1468,8 +1468,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1206</width>
-     <height>23</height>
+     <width>921</width>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="SessionMenu">
