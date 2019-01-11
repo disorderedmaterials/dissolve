@@ -61,6 +61,8 @@ class Configuration : public ListItem<Configuration>
 	~Configuration();
 	// Assignment operator
 	void operator=(Configuration& source);
+	// Clear all data
+	void clear();
 
 
 	/*
@@ -121,8 +123,6 @@ class Configuration : public ListItem<Configuration>
 	void setTemperature(double t);
 	// Return configuration temperature
 	double temperature();
-	// Clear all data
-	void clear();
 
 
 	/*
@@ -147,6 +147,8 @@ class Configuration : public ListItem<Configuration>
 	int coordinateIndex_;
 
 	public:
+	// Empty contents of Configuration, leaving core definitions intact
+	void empty();
 	// Initialise empty Molecule and Grain arrays
 	void initialise(int nMolecules, int nGrains);
 	// Initialise from assigned Species populations

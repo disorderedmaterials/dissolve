@@ -166,7 +166,7 @@ bool Dissolve::readConfiguration(Configuration* cfg, LineParser& parser)
 	Torsion* torsion;
 
 	// Clear current contents of Configuration
-	cfg->clear();
+	cfg->empty();
 
 	// Read configuration name, nMolecules, and nGrains, and initialise those arrays
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
