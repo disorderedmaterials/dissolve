@@ -26,7 +26,7 @@
 // Constructor
 MonoclinicBox::MonoclinicBox(double volume, const Vec3<double> relativeLengths, double beta) : Box()
 {
-	type_ = Box::MonoclinicBox;
+	type_ = Box::MonoclinicBoxType;
 	
 	// Construct axes
 	alpha_ = 90.0;

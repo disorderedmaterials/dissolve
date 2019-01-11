@@ -26,7 +26,7 @@
 // Constructor
 OrthorhombicBox::OrthorhombicBox(double volume, const Vec3<double> relativeLengths) : Box()
 {
-	type_ = Box::OrthorhombicBox;
+	type_ = Box::OrthorhombicBoxType;
 	
 	// Construct axes_
 	axes_.setColumn(0, relativeLengths.x, 0.0, 0.0);

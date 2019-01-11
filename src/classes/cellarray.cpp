@@ -264,7 +264,7 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 		{
 			// Retrieve Cell pointers
 			nbr = cell(gridRef.x+item->x, gridRef.y+item->y, gridRef.z+item->z);
-			mimRequired = box_->type() == Box::NonPeriodicBox ? false : useMim(&cells_[n], nbr);
+			mimRequired = box_->type() == Box::NonPeriodicBoxType ? false : useMim(&cells_[n], nbr);
 			if (mimRequired) mimNeighbours.add(nbr);
 			else nearNeighbours.add(nbr);
 

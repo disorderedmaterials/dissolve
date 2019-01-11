@@ -26,7 +26,7 @@
 // Constructor
 CubicBox::CubicBox(double volume, double boxLength) : Box()
 {
-	type_ = Box::CubicBox;
+	type_ = Box::CubicBoxType;
 	
 	// Construct axes_
 	axes_.setColumn(0, boxLength, 0.0, 0.0);

@@ -41,12 +41,12 @@ class Box
 	virtual ~Box();
 	// Box Type Enum
 	enum BoxType {
-		NonPeriodicBox,		/* Non-periodic system - cubic box, but no minimum image calculation */
-		CubicBox,		/* Cubic box with equivalent cell lengths, and right-angles */
-		OrthorhombicBox,	/* Orthorhombic box with inequivalent cell lengths, and right-angles */
-		MonoclinicBox,		/* Monoclinic box with cell angles a != 90, and b == c == 90 */
-		TriclinicBox,		/* Triclinic box with cell angles a != b != c != 90 */
-		nBoxTypes		/* Number of Box types */
+		NonPeriodicBoxType,		/* Non-periodic system - cubic box, but no minimum image calculation */
+		CubicBoxType,			/* Cubic box with equivalent cell lengths, and right-angles */
+		OrthorhombicBoxType,		/* Orthorhombic box with inequivalent cell lengths, and right-angles */
+		MonoclinicBoxType,		/* Monoclinic box with cell angles a != 90, and b == c == 90 */
+		TriclinicBoxType,		/* Triclinic box with cell angles a != b != c != 90 */
+		nBoxTypes			/* Number of Box types */
 	};
 	// Convert text string to BoxType
 	static BoxType boxType(const char* s);

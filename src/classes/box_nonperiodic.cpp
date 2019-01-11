@@ -27,7 +27,7 @@
 // Constructor
 NonPeriodicBox::NonPeriodicBox(double volume) : Box()
 {
-	type_ = Box::NonPeriodicBox;
+	type_ = Box::NonPeriodicBoxType;
 	periodic_.set(false, false, false);
 
 	// Construct axes_
