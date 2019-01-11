@@ -192,9 +192,7 @@ class Box
 	static double torsionInRadians(const Vec3<double>& vecji, const Vec3<double>& vecjk, const Vec3<double>& veckl, Vec3<double>& xpj, double& magxpj, Vec3<double>& xpk, double& magxpk);
 };
 
-/*
- * Non-Periodic Box Definition
- */
+// Non-Periodic Box Definition
 class NonPeriodicBox : public Box
 {
 	public:
