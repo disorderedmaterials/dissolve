@@ -130,6 +130,7 @@ bool Configuration::setUpBox(ProcessPool& procPool, double ppRange, int nExpecte
 		box_ = new NonPeriodicBox(volume);
 	}
 	else box_ = Box::generate(relativeBoxLengths_, boxAngles_, volume);
+	Messenger::print("Configuration box volume is %f cubic Angstroms (reciprocal volume = %e)\n", box_->volume(), box_->reciprocalVolume());
 
 	// Need to calculate atomic density if it wasn't provided
 	if (density_ < 0.0) density_ = nExpectedAtoms / box_->volume();
