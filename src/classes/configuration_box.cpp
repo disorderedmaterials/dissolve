@@ -115,7 +115,7 @@ bool Configuration::setUpBox(ProcessPool& procPool, double ppRange, int nExpecte
 	// Remove old box if present
 	if (box_ != NULL)
 	{
-		Messenger::print("Removing existing box definition...\n");
+		Messenger::printVerbose("Removing existing box definition...\n");
 		delete box_;
 	}
 
