@@ -73,6 +73,7 @@ class AddConfigurationWizard : public WizardWidget
 		MultiSpeciesPage,		/* Create from multiple Species */
 		BoxTypePage,			/* Choose Box type */
 		BoxGeometryPage,		/* Set relative box lengths and absolute angles */
+		MultiplierPage,			/* Multiplier page, with calculation of final nAtoms etc. */
 		FinishPage,			/* Final page, setting name and temperature for Configuration */
 		nPages
 	};
@@ -99,6 +100,17 @@ class AddConfigurationWizard : public WizardWidget
 	void on_StartCreateEmptyButton_clicked(bool checked);
 	void on_StartMonoSpeciesButton_clicked(bool checked);
 	void on_StartMultiSpeciesButton_clicked(bool checked);
+
+
+	/*
+	 * Multiplier Page
+	 */
+	private:
+	// Species population row update function
+	void updatePopulationTableRow(int row, Species* sp, int population, bool createItems);
+
+	private slots:
+	void on_MultiplierSpin_valueChanged(int value);
 
 
 	/*

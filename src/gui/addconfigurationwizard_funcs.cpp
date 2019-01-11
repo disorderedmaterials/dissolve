@@ -21,7 +21,9 @@
 
 #include "gui/addconfigurationwizard.h"
 #include "gui/helpers/combopopulator.h"
+#include "gui/helpers/tablewidgetupdater.h"
 #include "main/dissolve.h"
+#include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "templates/variantpointer.h"
@@ -43,7 +45,8 @@ AddConfigurationWizard::AddConfigurationWizard(QWidget* parent)
 	registerPage(AddConfigurationWizard::MonoSpeciesPage, "Single-Species Configuration", AddConfigurationWizard::BoxTypePage);
 	registerPage(AddConfigurationWizard::MultiSpeciesPage, "Mixture of Species", AddConfigurationWizard::BoxTypePage);
 	registerPage(AddConfigurationWizard::BoxTypePage, "Basic Box Type", AddConfigurationWizard::BoxGeometryPage);
-	registerPage(AddConfigurationWizard::BoxGeometryPage, "Box Geometry", AddConfigurationWizard::FinishPage);
+	registerPage(AddConfigurationWizard::BoxGeometryPage, "Box Geometry", AddConfigurationWizard::MultiplierPage);
+	registerPage(AddConfigurationWizard::MultiplierPage, "Box Multiplier", AddConfigurationWizard::FinishPage);
 	registerFinishPage(AddConfigurationWizard::FinishPage, "Name and Temperature");
 
 	// Connect signals / slots
@@ -125,8 +128,18 @@ bool AddConfigurationWizard::progressionAllowed(int index) const
 // Perform any necssary actions before moving to the next page
 bool AddConfigurationWizard::prepareForNextPage(int currentIndex)
 {
+	Species* sp;
+
 	switch (currentIndex)
 	{
+		case (AddConfigurationWizard::MonoSpeciesPage):
+			// Clear Configuration, and add used Species
+			importTarget_->clear();
+			sp = (Species*) VariantPointer<Species>(ui_.MonoSpeciesSpeciesCombo->currentData());
+			importTarget_->addUsedSpecies(sp, 1.0);
+			if (ui_.MonoSpeciesDensityUnitsCombo->currentIndex() == 0) importTarget_->setAtomicDensity(ui_.MonoSpeciesDensitySpin->value());
+			else importTarget_->setChemicalDensity(ui_.MonoSpeciesDensitySpin->value());
+			break;
 		case (AddConfigurationWizard::BoxTypePage):
 			// Set relevant controls on the Box geometry page
 			ui_.BoxRelativeLengthASpin->setVisible(true);
@@ -180,6 +193,22 @@ bool AddConfigurationWizard::prepareForNextPage(int currentIndex)
 				ui_.BoxAbsoluteAngleBetaSpin->setEnabled(true);
 				ui_.BoxAbsoluteAngleGammaSpin->setEnabled(true);
 			}
+			break;
+		case (AddConfigurationWizard::BoxGeometryPage):
+			// Set the Box angles and relative lengths in the Configuration
+			importTarget_->setBoxAngles(Vec3<double>(ui_.BoxAbsoluteAngleAlphaSpin->value(), ui_.BoxAbsoluteAngleBetaSpin->value(), ui_.BoxAbsoluteAngleGammaSpin->value()));
+			if (ui_.BoxNonPeriodicRadio->isChecked())
+			{
+				importTarget_->setRelativeBoxLengths(Vec3<double>(1.0,1.0,1.0));
+				importTarget_->setNonPeriodic(true);
+			}
+			else if (ui_.BoxCubicRadio->isChecked()) importTarget_->setRelativeBoxLengths(Vec3<double>(1.0,1.0,1.0));
+			else if (ui_.BoxOrthorhombicRadio->isChecked()) importTarget_->setRelativeBoxLengths(Vec3<double>(ui_.BoxRelativeLengthASpin->value(), ui_.BoxRelativeLengthBSpin->value(), ui_.BoxRelativeLengthCSpin->value()));
+			else importTarget_->setRelativeBoxLengths(Vec3<double>(ui_.BoxRelativeLengthASpin->value(), ui_.BoxRelativeLengthBSpin->value(), ui_.BoxRelativeLengthCSpin->value()));
+
+			// Set the current multiplier, and generate the Box
+			on_MultiplierSpin_valueChanged(ui_.MultiplierSpin->value());
+			break;
 		default:
 			break;
 	}
@@ -241,6 +270,76 @@ void AddConfigurationWizard::on_StartMonoSpeciesButton_clicked(bool checked)
 void AddConfigurationWizard::on_StartMultiSpeciesButton_clicked(bool checked)
 {
 	goToPage(AddConfigurationWizard::MultiSpeciesPage);
+}
+
+/*
+ * Multiplier Page
+ */
+
+// Species population row update function
+void AddConfigurationWizard::updatePopulationTableRow(int row, Species* sp, int population, bool createItems)
+{
+	QTableWidgetItem* item;
+
+	// Species Name
+	if (createItems)
+	{
+		item = new QTableWidgetItem;
+		item->setFlags(Qt::NoItemFlags);
+		ui_.MultiplierPopulationsTable->setItem(row, 0, item);
+	}
+	else item = ui_.MultiplierPopulationsTable->item(row, 0);
+	item->setText(sp->name());
+
+	// Population
+	if (createItems)
+	{
+		item = new QTableWidgetItem;
+		item->setFlags(Qt::NoItemFlags);
+		ui_.MultiplierPopulationsTable->setItem(row, 1, item);
+	}
+	else item = ui_.MultiplierPopulationsTable->item(row, 1);
+	if (population == 0)
+	{
+		item->setIcon(QIcon(":/general/icons/general_warn.svg"));
+		item->setText("Zero");
+	}
+	else item->setText(QString::number(population));
+}
+
+void AddConfigurationWizard::on_MultiplierSpin_valueChanged(int value)
+{
+	// Set the multiplier in the Configuration
+	importTarget_->setMultiplier(value);
+
+	// Calculate expected number of atoms, and individual species populations
+	RefList<Species,int> populations;
+	int nExpectedAtoms = 0;
+	ListIterator<SpeciesInfo> usedSpeciesIterator(importTarget_->usedSpecies());
+	while (SpeciesInfo* spInfo = usedSpeciesIterator.iterate())
+	{
+		// Get Species pointer
+		Species* sp = spInfo->species();
+
+		// Determine the number of molecules of this component
+		int count =  spInfo->population() * value;
+
+		populations.add(sp, count);
+
+		nExpectedAtoms += count * sp->nAtoms();
+	}
+
+	// Determine required volume, and generate a suitable Box
+	double volume = nExpectedAtoms / importTarget_->atomicDensity();
+	Box* temporaryBox = Box::generate(importTarget_->relativeBoxLengths(), importTarget_->boxAngles(), volume);
+
+	// Update controls on MultiplierPage
+	TableWidgetRefListUpdater<AddConfigurationWizard,Species,int> populationsUpdater(ui_.MultiplierPopulationsTable, populations, this, &AddConfigurationWizard::updatePopulationTableRow);
+	ui_.MultiplierNAtomsLabel->setText(QString::number(nExpectedAtoms));
+	ui_.MultiplierBoxALabel->setText(QString::number(temporaryBox->axisLength(0)));
+	ui_.MultiplierBoxBLabel->setText(QString::number(temporaryBox->axisLength(1)));
+	ui_.MultiplierBoxCLabel->setText(QString::number(temporaryBox->axisLength(2)));
+	ui_.MultiplierPPRangeLabel->setText(QString::number(temporaryBox->inscribedSphereRadius()));
 }
 
 /*
