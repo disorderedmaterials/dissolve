@@ -368,7 +368,7 @@ void SpeciesTab::on_AtomAddButton_clicked(bool checked)
 
 	refreshing_ = false;
 
-	dissolveWindow_->setModified();
+	dissolveWindow_->setModifiedAndInvalidated();
 }
 
 void SpeciesTab::on_AtomRemoveButton_clicked(bool checked)
@@ -401,18 +401,19 @@ void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem* w)
 				atomType->setName(qPrintable(w->text()));
 			}
 			speciesAtom->setAtomType(atomType);
-			dissolveWindow_->setModified();
+			dissolveWindow_->setModifiedAndInvalidated();
 			break;
 		// Coordinates
 		case (2):
 		case (3):
 		case (4):
 			speciesAtom->setCoordinate(w->column()-1, w->text().toDouble());
-			dissolveWindow_->setModified();
+			dissolveWindow_->setModifiedAndInvalidated();
 			break;
 		// Charge
 		case (5):
 			speciesAtom->setCharge(w->text().toDouble());
+			// TODO This change needs to be propagated to all Configurations->Molecules based on this Species
 			dissolveWindow_->setModified();
 			break;
 		default:

@@ -67,6 +67,8 @@ class Dissolve
 	void registerGenericItems();
 	// Set up everything needed to run the simulation
 	bool setUp();
+	// Flag that the set up is no longer valid and should be done again
+	void invalidateSetUp();
 	// Return whether the simulation has been set up
 	bool isSetUp() const;
 

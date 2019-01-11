@@ -43,6 +43,8 @@ bool Dissolve::ownConfiguration(Configuration* cfg)
 
 	coreData_.configurations().own(cfg);
 
+	setUp_ = false;
+
 	return true;
 }
 

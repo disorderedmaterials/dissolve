@@ -82,6 +82,16 @@ void DissolveWindow::setModified()
 	updateStatus();
 }
 
+// Flag that data has been modified via the GUI, and that the set up is now invalid
+void DissolveWindow::setModifiedAndInvalidated()
+{
+	modified_ = true;
+
+	dissolve_.invalidateSetUp();
+
+	updateStatus();
+}
+
 // Return reference to Dissolve
 Dissolve& DissolveWindow::dissolve()
 {

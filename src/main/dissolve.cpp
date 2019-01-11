@@ -183,6 +183,12 @@ bool Dissolve::setUp()
 	return true;
 }
 
+// Flag that the set up is no longer valid and should be done again
+void Dissolve::invalidateSetUp()
+{
+	setUp_ = false;
+}
+
 // Return whether the simulation has been set up
 bool Dissolve::isSetUp() const
 {
