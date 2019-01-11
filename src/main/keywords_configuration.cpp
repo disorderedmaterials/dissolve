@@ -106,13 +106,13 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 				cfg->setBraggMultiplicity(parser.arg3i(1));
 				break;
 			case (ConfigurationBlock::CellAnglesKeyword):
-				cfg->setBoxAngles(Vec3<double>(parser.argd(1),  parser.argd(2), parser.argd(3)));
+				cfg->setBoxAngles(parser.arg3d(1));
 				break;
 			case (ConfigurationBlock::CellDivisionLengthKeyword):
 				cfg->setRequestedCellDivisionLength(parser.argd(1));
 				break;
 			case (ConfigurationBlock::CellLengthsKeyword):
-				cfg->setRelativeBoxLengths(Vec3<double>(parser.argd(1), parser.argd(2), parser.argd(3)));
+				cfg->setRelativeBoxLengths(parser.arg3d(1));
 				break;
 			case (ConfigurationBlock::DensityKeyword):
 				// Determine units given
