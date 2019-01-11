@@ -236,6 +236,34 @@ void Box::scale(double factor)
  * Utility Routines
  */
 
+// Generate a suitable Box given the supplied relative lengths, angles, and volume
+Box* Box::generate(Vec3<double> relativeLengths, Vec3<double> angles, double volume)
+{
+	// Determine box type from supplied lengths / angles
+	bool rightAlpha = (fabs(angles.x-90.0) < 0.001);
+	bool rightBeta = (fabs(angles.y-90.0) < 0.001);
+	bool rightGamma = (fabs(angles.z-90.0) < 0.001);
+
+	if (rightAlpha && rightBeta && rightGamma)
+	{
+		// Cubic or orthorhombic
+		bool abSame = (fabs(relativeLengths.x-relativeLengths.y) < 0.0001);
+		bool acSame = (fabs(relativeLengths.x-relativeLengths.z) < 0.0001);
+		if (abSame && acSame) return new CubicBox(volume, relativeLengths.x);
+		else return new OrthorhombicBox(volume, relativeLengths);
+	}
+	else if (rightAlpha && (!rightBeta) && rightGamma)
+	{
+		// Monoclinic
+		return new MonoclinicBox(volume, relativeLengths, angles.y);
+	}
+	else
+	{
+		// Triclinic
+		return new TriclinicBox(volume, relativeLengths, angles);
+	}
+}
+
 // Return radius of largest possible inscribed sphere for box
 double Box::inscribedSphereRadius() const
 {

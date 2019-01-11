@@ -150,6 +150,8 @@ class Box
 	 * Utility Routines
 	 */
 	public:
+	// Generate a suitable Box given the supplied relative lengths, angles, and volume
+	static Box* generate(Vec3<double> relativeLengths, Vec3<double> angles, double volume);
 	// Return radius of largest possible inscribed sphere for box
 	double inscribedSphereRadius() const;
 	// Calculate the RDF normalisation for the Box

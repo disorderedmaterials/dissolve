@@ -123,30 +123,13 @@ bool Configuration::setUpBox(ProcessPool& procPool, double ppRange, int nExpecte
 	double volume = -1.0;
 	if (density_ > 0.0) volume = nExpectedAtoms / atomicDensity();
 
-	// Determine box type from supplied lengths / angles
-	bool rightAlpha = (fabs(boxAngles_.x-90.0) < 0.001);
-	bool rightBeta = (fabs(boxAngles_.y-90.0) < 0.001);
-	bool rightGamma = (fabs(boxAngles_.z-90.0) < 0.001);
 	if (nonPeriodic_)
 	{
 		// Might need to increase pseudo-box volume to accommodate three times the ppRange
 		if (volume < pow(ppRange*3.0, 3.0)) volume = pow(ppRange*3.0, 3.0);
 		box_ = new NonPeriodicBox(volume);
 	}
-	else if (rightAlpha && rightBeta && rightGamma)
-	{
-		// Cubic or orthorhombic
-		bool abSame = (fabs(relativeBoxLengths_.x-relativeBoxLengths_.y) < 0.0001);
-		bool acSame = (fabs(relativeBoxLengths_.x-relativeBoxLengths_.z) < 0.0001);
-		if (abSame && acSame) box_ = new CubicBox(volume, relativeBoxLengths_.x);
-		else box_ = new OrthorhombicBox(volume, relativeBoxLengths_);
-	}
-	else if (rightAlpha && (!rightBeta) && rightGamma) box_ = new MonoclinicBox(volume, relativeBoxLengths_, boxAngles_.y);	// Monoclinic
-	else
-	{
-		// Triclinic
-		box_ = new TriclinicBox(volume, relativeBoxLengths_, boxAngles_);
-	}
+	else box_ = Box::generate(relativeBoxLengths_, boxAngles_, volume);
 
 	// Need to calculate atomic density if it wasn't provided
 	if (density_ < 0.0) density_ = nExpectedAtoms / box_->volume();
