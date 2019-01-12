@@ -25,14 +25,14 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:window-width="1920"
-     inkscape:window-height="1163"
+     inkscape:window-height="983"
      id="namedview3048"
      showgrid="false"
-     inkscape:zoom="1.4142136"
-     inkscape:cx="-107.11253"
-     inkscape:cy="-67.645198"
-     inkscape:window-x="1920"
-     inkscape:window-y="0"
+     inkscape:zoom="11.313709"
+     inkscape:cx="53.396344"
+     inkscape:cy="65.109721"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
      inkscape:window-maximized="1"
      inkscape:current-layer="g829" />
   <metadata
@@ -53,7 +53,7 @@
      transform="translate(5,-5)">
     <path
        sodipodi:nodetypes="cccccccccc"
-       style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.8888889;stroke-opacity:1"
+       style="fill:#ffffeb;fill-opacity:1;stroke:#ffffff;stroke-width:0.8888889;stroke-opacity:1"
        id="path4170-3"
        d="M 48.076924,87.163458 78.846151,70.384613 V 39.807689 L 48.076924,51.009618 Z M 45,45.576924 78.557689,33.365387 45,21.153849 11.442311,33.365387 Z"
        inkscape:connector-curvature="0" />

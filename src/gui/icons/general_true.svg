@@ -37,18 +37,24 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:window-width="1920"
-     inkscape:window-height="1163"
+     inkscape:window-height="983"
      id="namedview3048"
      showgrid="false"
      inkscape:zoom="4.0000001"
-     inkscape:cx="-16.124994"
-     inkscape:cy="44.191178"
-     inkscape:window-x="1920"
-     inkscape:window-y="0"
+     inkscape:cx="-52.749994"
+     inkscape:cy="43.191178"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg2" />
   <defs
      id="defs4" />
+  <circle
+     style="opacity:1;fill:#ffffeb;fill-opacity:1;fill-rule:nonzero;stroke:#ffffeb;stroke-width:3.77952766;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="path815"
+     cx="50.375"
+     cy="50.375"
+     r="29.125" />
   <g
      id="g4286"
      transform="matrix(1.1101625,0,0,1.1101625,132.17737,-27.28944)"
@@ -57,12 +63,6 @@
      id="g817"
      transform="matrix(1.2499991,0,0,1.249999,-56.656207,-31.249935)"
      style="stroke-width:1.25">
-    <circle
-       r="30"
-       cy="65"
-       cx="85.325027"
-       id="path4146"
-       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:3.75;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <path
        style="fill:#316549;fill-opacity:1;stroke-width:1.25"
        id="path4"

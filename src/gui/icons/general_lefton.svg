@@ -36,18 +36,27 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:window-width="1920"
-     inkscape:window-height="1163"
+     inkscape:window-height="983"
      id="namedview3048"
      showgrid="false"
      inkscape:zoom="5.6568544"
-     inkscape:cx="-6.6175693"
-     inkscape:cy="38.925163"
-     inkscape:window-x="1920"
-     inkscape:window-y="0"
+     inkscape:cx="12.163896"
+     inkscape:cy="38.218056"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg2" />
   <defs
      id="defs4" />
+  <rect
+     style="opacity:1;fill:#ffffeb;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:3.77952766;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="rect814"
+     width="28.8146"
+     height="76.013977"
+     x="55.154327"
+     y="11.788431"
+     rx="4"
+     ry="4" />
   <g
      id="g10"
      transform="matrix(0.88888889,0,0,0.88888889,5.5553711,5.5555555)"

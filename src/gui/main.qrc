@@ -38,6 +38,11 @@
     <file>icons/general_true.svg</file>
     <file>icons/general_warn.svg</file>
     <file>icons/general_options.svg</file>
+    <file>icons/general_edit.svg</file>
+    <file>icons/general_monitor.svg</file>
+    <file>icons/general_heartbeat.svg</file>
+    <file>icons/general_local.svg</file>
+    <file>icons/general_restartfile.svg</file>
     <file>icons/slider-off.svg</file>
     <file>icons/general_trash.svg</file>
     <file>icons/slider-on.svg</file>
