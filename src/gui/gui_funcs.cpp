@@ -30,6 +30,7 @@
 #include "gui/workspacetab.h"
 #include "base/lineparser.h"
 #include <QCloseEvent>
+#include <QDir>
 #include <QMdiSubWindow>
 #include <QFileInfo>
 
@@ -221,8 +222,16 @@ void DissolveWindow::updateStatus()
 // Update file labels
 void DissolveWindow::updateFileLabels()
 {
-	ui.LocationLabel->setText(QFileInfo(dissolve_.inputFilename()).absolutePath() + "  (Local)");
-	ui.InputFileLabel->setText(dissolve_.inputFilename());
+	if (dissolve_.hasInputFilename())
+	{
+		ui.LocationLabel->setText(QFileInfo(dissolve_.inputFilename()).absolutePath() + "  (Local)");
+		ui.InputFileLabel->setText(dissolve_.inputFilename());
+	}
+	else
+	{
+		ui.LocationLabel->setText(QDir::current().absolutePath() + " (Local)");
+		ui.InputFileLabel->setText("<untitled>");
+	}
 	ui.RestartFileLabel->setText(dissolve_.hasRestartFilename() ? dissolve_.restartFilename() : "<none>");
 }
 
