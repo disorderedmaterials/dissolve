@@ -1,6 +1,5 @@
 <RCC>
   <qresource prefix="file">
-    <file>icons/file_close.svg</file>
     <file>icons/file_new.svg</file>
     <file>icons/file_recent.svg</file>
     <file>icons/file_open.svg</file>
