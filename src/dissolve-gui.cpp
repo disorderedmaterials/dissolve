@@ -161,7 +161,7 @@ int main(int argc, char **argv)
 	DissolveWindow dissolveWindow(dissolve);
 
 	// If an input file was specified, load it here
-	if ((!inputFile.isEmpty()) && (!dissolveWindow.openFile(inputFile, ignoreRestart, ignoreLayout)))
+	if ((!inputFile.isEmpty()) && (!dissolveWindow.openFileFromCLI(inputFile, ignoreRestart, ignoreLayout)))
 	{
 		ProcessPool::finalise();
 		return 1;

@@ -84,8 +84,8 @@ class DissolveWindow : public QMainWindow
 	 * File
 	 */
 	public:
-	// Open specified input file
-	bool openFile(const char* inputFile, bool ignoreRestartFile, bool ignoreLayoutFile);
+	// Open specified input file from the CLI
+	bool openFileFromCLI(const char* inputFile, bool ignoreRestartFile, bool ignoreLayoutFile);
 
 
 	/*

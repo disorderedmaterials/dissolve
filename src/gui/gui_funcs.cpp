@@ -119,7 +119,8 @@ void DissolveWindow::resizeEvent(QResizeEvent* event)
  * File
  */
 
-bool DissolveWindow::openFile(const char* inputFile, bool ignoreRestartFile, bool ignoreLayoutFile)
+// Open specified input file from the CLI
+bool DissolveWindow::openFileFromCLI(const char* inputFile, bool ignoreRestartFile, bool ignoreLayoutFile)
 {
 	// Clear any existing tabs etc.
 	clearTabs();
