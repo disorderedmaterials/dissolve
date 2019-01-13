@@ -21,9 +21,9 @@
 
 #include "gui/gui.h"
 
-void DissolveWindow::on_StartOpenExistingButton_clicked(bool checked)
+void DissolveWindow::on_StartOpenLocalButton_clicked(bool checked)
 {
-	ui.SessionOpenAction->trigger();
+	ui.SessionOpenLocalAction->trigger();
 }
 
 void DissolveWindow::on_StartOpenRemoteButton_clicked(bool checked)

@@ -98,6 +98,8 @@ class DissolveWindow : public QMainWindow
 	bool shown_;
 	// Output handler for messaging in GUI
 	GUIOutputHandler outputHandler_;
+	// Whether the current simulation is on the local machine
+	bool localSimulation_;
 
 	public slots:
 	// Refresh all controls
@@ -121,7 +123,7 @@ class DissolveWindow : public QMainWindow
 	// Session
 	void on_SessionNewAction_triggered(bool checked);
 	void on_SessionSetupWizardAction_triggered(bool checked);
-	void on_SessionOpenAction_triggered(bool checked);
+	void on_SessionOpenLocalAction_triggered(bool checked);
 	void on_SessionOpenRemoteAction_triggered(bool checked);
 	void on_SessionOpenRecentAction_triggered(bool checked);
 	void on_SessionCloseAction_triggered(bool checked);
@@ -131,6 +133,7 @@ class DissolveWindow : public QMainWindow
 	// Simulation
 	void on_SimulationAddSpeciesAction_triggered(bool checked);
 	void on_SimulationAddConfigurationAction_triggered(bool checked);
+	void on_SimulationSetRandomSeedAction_triggered(bool checked);
 	// Control
 	void on_SimulationRunAction_triggered(bool checked);
 	void on_SimulationStepAction_triggered(bool checked);
@@ -169,7 +172,7 @@ class DissolveWindow : public QMainWindow
 	void on_StartCreateNewButton_clicked(bool checked);
 	void on_StartSetupWizardButton_clicked(bool checked);
 	// 'Open / Connect' Group
-	void on_StartOpenExistingButton_clicked(bool checked);
+	void on_StartOpenLocalButton_clicked(bool checked);
 	void on_StartOpenRemoteButton_clicked(bool checked);
 	void on_StartOpenRecentButton_clicked(bool checked);
 	// 'Learn' Group
@@ -202,8 +205,6 @@ class DissolveWindow : public QMainWindow
 	private slots: 
 	void on_ControlSetUpButton_clicked(bool checked);
 	void on_ControlRunButton_clicked(bool checked);
-	void on_ControlStepButton_clicked(bool checked);
-	void on_ControlStepFiveButton_clicked(bool checked);
 	void on_ControlPauseButton_clicked(bool checked);
 	void on_ControlReloadButton_clicked(bool checked);
 

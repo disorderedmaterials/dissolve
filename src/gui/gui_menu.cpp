@@ -91,7 +91,7 @@ void DissolveWindow::on_SessionSetupWizardAction_triggered(bool checked)
 {
 }
 
-void DissolveWindow::on_SessionOpenAction_triggered(bool checked)
+void DissolveWindow::on_SessionOpenLocalAction_triggered(bool checked)
 {
 	if (!checkSaveCurrentInput()) return;
 
@@ -105,11 +105,56 @@ void DissolveWindow::on_SessionOpenAction_triggered(bool checked)
 	// Clear Dissolve itself
 	dissolve_.clear();
 
-	// Load the new file
-	openFile(qPrintable(inputFile), false, false);
+	// Load the input file
+	if (!dissolve_.loadInput(qPrintable(inputFile)))
+	{
+		dissolve_.clear();
 
+		updateStatus();
+		updateFileLabels();	dissolveState_ = StoppedState;
+
+
+		// Make sure we are now on the Simulation stack page
+		showMainStackPage(DissolveWindow::StartStackPage);
+
+		return;
+	}
+
+	localSimulation_ = true;
+
+	// Load restart file if it exists
+	CharString restartFile("%s.restart", qPrintable(inputFile));
+	if (DissolveSys::fileExists(restartFile))
+	{
+		Messenger::print("\nRestart file '%s' exists and will be loaded.\n", restartFile.get());
+		if (!dissolve_.loadRestart(restartFile.get()))
+		{
+			Messenger::error("Restart file contained errors.\n");
+
+			dissolve_.clear();
+
+			updateStatus();
+			updateFileLabels();
+
+			// Make sure we are now on the Simulation stack page
+			showMainStackPage(DissolveWindow::StartStackPage);
+
+			return;
+		}
+	}
+	else Messenger::print("\nRestart file '%s' does not exist.\n", restartFile.get());
+
+	dissolveState_ = StoppedState;
+
+	// Check the beat file
+	CharString beatFile("%s.bet", qPrintable(inputFile));
+	if (DissolveSys::fileExists(beatFile))
+	{
+// 		if (
+	}
+
+	// Update GUI
 	updateStatus();
-
 	updateFileLabels();
 
 	// Make sure we are now on the Simulation stack page
@@ -226,28 +271,80 @@ void DissolveWindow::on_SimulationAddConfigurationAction_triggered(bool checked)
 	}
 }
 
+void DissolveWindow::on_SimulationSetRandomSeedAction_triggered(bool checked)
+{
+	// Create an input dialog to get the new seed
+	bool ok;
+	dissolve_.seed();
+	int newSeed = QInputDialog::getInt(this, "Set random seed", "Enter the new value of the random seed, or -1 to remove set value", dissolve_.seed(), -1, 2147483647, 1, &ok);
+
+	if (!ok) return;
+
+	// Set and initialise random seed
+	dissolve_.setSeed(newSeed);
+
+	if (dissolve_.seed() == -1) srand( (unsigned)time( NULL ) );
+	else srand(dissolve_.seed());
+}
+
 /*
  * Control
  */
 
 void DissolveWindow::on_SimulationRunAction_triggered(bool checked)
 {
-	ui.ControlRunButton->click();
+	// Make sure everything is set-up
+	if ((!dissolve_.isSetUp()) && (!dissolve_.setUp())) return;
+
+	updateStatus();
+
+	// Prepare the GUI
+	setWidgetsForRun();
+
+	dissolveState_ = DissolveWindow::RunningState;
+
+	emit iterate(-1);
 }
 
 void DissolveWindow::on_SimulationStepAction_triggered(bool checked)
 {
-	ui.ControlStepButton->click();
+	// Make sure everything is set-up
+	if ((!dissolve_.isSetUp()) && (!dissolve_.setUp())) return;
+
+	updateStatus();
+
+	// Prepare the GUI
+	setWidgetsForRun();
+
+	dissolveState_ = DissolveWindow::RunningState;
+
+	emit iterate(1);
 }
 
 void DissolveWindow::on_SimulationStepFiveAction_triggered(bool checked)
 {
-	ui.ControlStepFiveButton->click();
+	// Make sure everything is set-up
+	if ((!dissolve_.isSetUp()) && (!dissolve_.setUp())) return;
+
+	updateStatus();
+
+	// Prepare the GUI
+	setWidgetsForRun();
+
+	dissolveState_ = DissolveWindow::RunningState;
+
+	emit iterate(5);
 }
 
 void DissolveWindow::on_SimulationPauseAction_triggered(bool checked)
 {
-	ui.ControlPauseButton->click();
+	dissolveState_ = DissolveWindow::StoppedState;
+
+	updateStatus();
+
+	emit stopIterating();
+
+	ui.ControlPauseButton->setEnabled(false);
 }
 
 /*

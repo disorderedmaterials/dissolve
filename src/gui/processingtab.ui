@@ -98,20 +98,6 @@
        </layout>
       </widget>
      </item>
-     <item>
-      <widget class="QCheckBox" name="SetRandomSeedCheck">
-       <property name="text">
-        <string>Set Random Seed</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="RandomSeedSpin">
-       <property name="maximum">
-        <number>999999999</number>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
    <item>

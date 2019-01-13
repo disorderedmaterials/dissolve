@@ -67,28 +67,6 @@ void ProcessingTab::on_RestartFrequencySpin_valueChanged(int value)
 	dissolve_.setRestartFileFrequency(value);
 }
 
-void ProcessingTab::on_SetRandomSeedCheck_clicked(bool checked)
-{
-	if (refreshing_) return;
-
-	dissolve_.setSeed(checked ? ui.RandomSeedSpin->value() : -1);
-
-	// Initialise random seed
-	if (dissolve_.seed() == -1) srand( (unsigned)time( NULL ) );
-	else srand(dissolve_.seed());
-}
-
-void ProcessingTab::on_RandomSeedSpin_valueChanged(int value)
-{
-	if (refreshing_) return;
-
-	dissolve_.setSeed(value);
-
-	// Initialise random seed
-	if (dissolve_.seed() == -1) srand( (unsigned)time( NULL ) );
-	else srand(dissolve_.seed());
-}
-
 /*
  * Update
  */
@@ -100,8 +78,6 @@ void ProcessingTab::updateControls()
 
 	ui.WriteRestartFileCheck->setChecked(dissolve_.restartFileFrequency() > 0);
 	ui.RestartFrequencySpin->setValue(dissolve_.restartFileFrequency() > 0 ? dissolve_.restartFileFrequency() : 10);
-	ui.SetRandomSeedCheck->setChecked(dissolve_.seed() != -1);
-	ui.RandomSeedSpin->setValue(dissolve_.seed() == -1 ? 0 : dissolve_.seed());
 
 	ui.ModulePanel->updateControls();
 

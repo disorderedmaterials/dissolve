@@ -50,58 +50,12 @@ void DissolveWindow::on_ControlSetUpButton_clicked(bool checked)
 
 void DissolveWindow::on_ControlRunButton_clicked(bool checked)
 {
-	// Make sure everything is set-up
-	if ((!dissolve_.isSetUp()) && (!dissolve_.setUp())) return;
-
-	updateStatus();
-
-	// Prepare the GUI
-	setWidgetsForRun();
-
-	dissolveState_ = DissolveWindow::RunningState;
-
-	emit iterate(-1);
-}
-
-void DissolveWindow::on_ControlStepButton_clicked(bool checked)
-{
-	// Make sure everything is set-up
-	if ((!dissolve_.isSetUp()) && (!dissolve_.setUp())) return;
-
-	updateStatus();
-
-	// Prepare the GUI
-	setWidgetsForRun();
-
-	dissolveState_ = DissolveWindow::RunningState;
-
-	emit iterate(1);
-}
-
-void DissolveWindow::on_ControlStepFiveButton_clicked(bool checked)
-{
-	// Make sure everything is set-up
-	if ((!dissolve_.isSetUp()) && (!dissolve_.setUp())) return;
-
-	updateStatus();
-
-	// Prepare the GUI
-	setWidgetsForRun();
-
-	dissolveState_ = DissolveWindow::RunningState;
-
-	emit iterate(5);
+	ui.SimulationRunAction->trigger();
 }
 
 void DissolveWindow::on_ControlPauseButton_clicked(bool checked)
 {
-	dissolveState_ = DissolveWindow::StoppedState;
-
-	updateStatus();
-
-	emit stopIterating();
-
-	ui.ControlPauseButton->setEnabled(false);
+	ui.SimulationPauseAction->trigger();
 }
 
 void DissolveWindow::on_ControlReloadButton_clicked(bool checked)
@@ -113,8 +67,6 @@ void DissolveWindow::setWidgetsForRun()
 {
 	// Disable / enable controls
 	ui.ControlRunButton->setEnabled(false);
-	ui.ControlStepButton->setEnabled(false);
-	ui.ControlStepFiveButton->setEnabled(false);
 	ui.ControlPauseButton->setEnabled(true);
 
 	// Disable sensitive controls in all tabs
@@ -128,8 +80,6 @@ void DissolveWindow::setWidgetsAfterRun()
 {
 	// Disable / enable controls
 	ui.ControlRunButton->setEnabled(true);
-	ui.ControlStepButton->setEnabled(true);
-	ui.ControlStepFiveButton->setEnabled(true);
 	ui.ControlPauseButton->setEnabled(false);
 
 	// Enable necessary controls in all tabs

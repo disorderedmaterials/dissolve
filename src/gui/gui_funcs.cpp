@@ -61,6 +61,7 @@ DissolveWindow::DissolveWindow(Dissolve& dissolve) : QMainWindow(NULL), dissolve
 
 	refreshing_ = false;
 	modified_ = false;
+	localSimulation_ = true;
 
 	addCoreTabs();
 
