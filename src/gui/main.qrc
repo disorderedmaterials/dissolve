@@ -5,6 +5,7 @@
     <file>icons/file_recent.svg</file>
     <file>icons/file_open.svg</file>
     <file>icons/file_save.svg</file>
+    <file>icons/file_connect.svg</file>
   </qresource>
   <qresource prefix="quickstart">
     <file>guides/quickstart/quickstart_tabs_configurations.png</file>
@@ -25,7 +26,6 @@
     <file>icons/special_wizard.svg</file>
     <file>icons/special_guide.svg</file>
     <file>icons/special_multiplespecies.svg</file>
-    <file>icons/special_connect.svg</file>
   </qresource>
   <qresource prefix="tabs">
     <file>icons/tabs_ff.svg</file>
