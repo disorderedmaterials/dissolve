@@ -40,11 +40,11 @@
 			<next>gui3</next>
 			<content>
 				<![CDATA[
-				<html><head/><body><p align="center"><img src=":/quickstart/guides/quickstart/quickstart_tour_controls.png"/></p><p>XXX More to do here!!! Monitoring vs Controlling</p><p>The controls header allow the current simulation to be run or stepped (provided it is not running elsewhere) or the state of the current simulation reloaded (if data already exists for it, or it is running elsewhere).</p></body></html>
+				<html><head/><body><p align="center"><img src=":/quickstart/guides/quickstart/quickstart_tour_controls.png"/></p><p>XXX More to do here!!! Monitoring vs Controlling</p><p>The controls header provides information and on what Dissolve is currently doing (its 'state') - i.e. editing a simulation vs. running a simulation vs. monitoring a simulation - while giving access to the relevant controls. The exact controls available will depend on the current state - monitoring a simulation running elsewhere means the Run control will be disabled, for instance.</p></body></html>
 				]]>
 			</content>
 			<highlight>
-				<widget>ControlGroup</widget>
+				<widget>ControlFrame</widget>
 				<r>0</r>
 				<g>224</g>
 				<b>52</b>
