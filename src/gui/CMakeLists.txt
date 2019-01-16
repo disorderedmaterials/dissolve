@@ -32,7 +32,6 @@ SET(gui_MOC_HDRS
   addconfigurationdialog.h
   addspeciesdialog.h
   # Main Tabs
-  analysistab.h
   configurationtab.h
   forcefieldtab.h
   maintab.h
@@ -68,7 +67,6 @@ SET(gui_UIS
   addconfigurationdialog.ui
   addspeciesdialog.ui
   # Main Tabs
-  analysistab.ui
   configurationtab.ui
   forcefieldtab.ui
   processingtab.ui
@@ -106,7 +104,6 @@ SET(gui_SRCS
   addconfigurationdialog_funcs.cpp
   addspeciesdialog_funcs.cpp
   # Main Tabs
-  analysistab_funcs.cpp
   configurationtab_funcs.cpp
   forcefieldtab_funcs.cpp
   maintab.cpp

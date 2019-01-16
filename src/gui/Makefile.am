@@ -34,12 +34,12 @@ libgui_la_SOURCES += addconfigurationwizard.ui addspecieswizard.ui generalwizard
 # UI - Dialogs
 libgui_la_SOURCES += addconfigurationdialog.ui addspeciesdialog.ui
 # UI - Main Tabs
-libgui_la_SOURCES += gui.ui analysistab.ui configurationtab.ui forcefieldtab.ui moduletab.ui processingtab.ui speciestab.ui workspacetab.ui
+libgui_la_SOURCES += gui.ui configurationtab.ui forcefieldtab.ui moduletab.ui processingtab.ui speciestab.ui workspacetab.ui
 # UI - Utility Classes
 libgui_la_SOURCES += outputhandler.hui thread.hui
 
 # Implementations
-libgui_la_SOURCES += addconfigurationdialog_funcs.cpp addconfigurationwizard_funcs.cpp addspeciesdialog_funcs.cpp addspecieswizard_funcs.cpp analysistab_funcs.cpp
+libgui_la_SOURCES += addconfigurationdialog_funcs.cpp addconfigurationwizard_funcs.cpp addspeciesdialog_funcs.cpp addspecieswizard_funcs.cpp
 libgui_la_SOURCES += configurationtab_funcs.cpp
 libgui_la_SOURCES += forcefieldtab_funcs.cpp
 libgui_la_SOURCES += generalwizard_funcs.cpp gui_funcs.cpp gui_menu.cpp gui_simulation_control.cpp gui_simulation_guide.cpp gui_simulation_state.cpp gui_simulation_tabs.cpp gui_stack.cpp gui_start.cpp
@@ -53,7 +53,7 @@ libgui_la_SOURCES += thread_funcs.cpp
 libgui_la_SOURCES += tmdiarea.hui tmdiarea_funcs.cpp
 libgui_la_SOURCES += wizardwidget_funcs.cpp wizardwidgethighlight.cpp wizardwidgetpageinfo.cpp workspacetab_funcs.cpp
 
-noinst_HEADERS = addconfigurationdialog.h addconfigurationwizard.h addspeciesdialog.h addspecieswizard.h analysistab.h
+noinst_HEADERS = addconfigurationdialog.h addconfigurationwizard.h addspeciesdialog.h addspecieswizard.h
 noinst_HEADERS += configurationtab.h
 noinst_HEADERS += forcefieldtab.h
 noinst_HEADERS += generalwizard.h gui.h
