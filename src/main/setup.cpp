@@ -244,27 +244,13 @@ bool Dissolve::setUpSimulation()
 
 	Messenger::print("*** Performing Module set-up...\n");
 
-	// Loop over configurations
-	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next)
+	// Loop over all used modules (in Configurations and ModuleLayers)
+	ListIterator<Module> moduleIterator(moduleInstances_);
+	while (Module* module = moduleIterator.iterate())
 	{
-		// Loop over Modules
-		ListIterator<ModuleReference> moduleIterator(cfg->modules().modules());
-		while (ModuleReference* modRef = moduleIterator.iterate())
-		{
-			Module* module = modRef->module();
-
-			if (!module->setUp(*this, worldPool())) return false;
-		}
-	}
-
-	// Loop over processing modules 
-	ListIterator<ModuleReference> processingIterator(mainProcessingModules_.modules());
-	while (ModuleReference* modRef = processingIterator.iterate())
-	{
-		Module* module = modRef->module();
-
 		if (!module->setUp(*this, worldPool())) return false;
 	}
+
 
 	/*
 	 * Print Defined Species
