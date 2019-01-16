@@ -30,7 +30,6 @@ class Configuration;
 class Element;
 class Species;
 class Module;
-class ModuleList;
 
 // Core Data Container
 class CoreData
