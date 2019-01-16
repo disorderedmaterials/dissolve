@@ -118,32 +118,6 @@ namespace ConfigurationBlock
 
 
 /*
- * Data Block Keywords
- */
-namespace DataBlock
-{
-	// Data Block Keyword Enum
-	enum DataKeyword
-	{
-		AssociatedToKeyword,		/* 'AssociatedTo' - Name of Module to which this data is associated, if any */
-		EndDataKeyword,			/* 'EndData' - Signals the end of the Data block */
-		FileKeyword,			/* 'File' - Datafile containing reference data */
-		SubtractAverageLevelKeyword,	/* 'SubtractAverageLevel' - Minimum x value from which to calculate and subtract mean value from y data */
-		TypeKeyword,			/* 'Type' - Type of the supplied reference data */
-		nDataKeywords			/* Number of keywords defined for this block */
-	};
-	// Convert text string to DataKeyword
-	DataKeyword keyword(const char* s);
-	// Convert DataKeyword to text string
-	const char* keyword(DataKeyword id);
-	// Return expected number of expected arguments
-	int nArguments(DataKeyword id);
-	// Parse Data block
-	bool parse(LineParser& parser, Dissolve* dissolve, Data* data);
-};
-
-
-/*
  * Master Block Keywords
  */
 namespace MasterBlock
