@@ -60,6 +60,8 @@ bool DissolveWindow::checkSaveCurrentInput()
 
 			// Save the file
 			if (!dissolve_.saveInput(dissolve_.inputFilename())) return false;
+
+			modified_ = false;
 		}
 	}
 
@@ -67,24 +69,30 @@ bool DissolveWindow::checkSaveCurrentInput()
 	return true;
 }
 
-void DissolveWindow::on_SessionNewAction_triggered(bool checked)
+// Clear all data and start new simulation afresh
+void DissolveWindow::startNew()
 {
-	if (!checkSaveCurrentInput()) return;
-
 	// Clear any data-related tabs from the UI
 	clearTabs();
 
 	// Clear Dissolve itself
 	dissolve_.clear();
 
-	updateStatus();
+	dissolveState_ = DissolveWindow::EditingState;
+	localSimulation_ = true;
 
-	updateControls();
-
-	updateFileLabels();
+	// Fully update GUI
+	fullUpdate();
 
 	// Make sure we are now on the Simulation stack page
 	showMainStackPage(DissolveWindow::SimulationStackPage);
+}
+
+void DissolveWindow::on_SessionNewAction_triggered(bool checked)
+{
+	if (!checkSaveCurrentInput()) return;
+
+	startNew();
 }
 
 void DissolveWindow::on_SessionSetupWizardAction_triggered(bool checked)
@@ -108,15 +116,7 @@ void DissolveWindow::on_SessionOpenLocalAction_triggered(bool checked)
 	// Load the input file
 	if (!dissolve_.loadInput(qPrintable(inputFile)))
 	{
-		dissolve_.clear();
-
-		updateStatus();
-		updateFileLabels();	dissolveState_ = StoppedState;
-
-
-		// Make sure we are now on the Simulation stack page
-		showMainStackPage(DissolveWindow::StartStackPage);
-
+		startNew();
 		return;
 	}
 
@@ -130,21 +130,13 @@ void DissolveWindow::on_SessionOpenLocalAction_triggered(bool checked)
 		if (!dissolve_.loadRestart(restartFile.get()))
 		{
 			Messenger::error("Restart file contained errors.\n");
-
-			dissolve_.clear();
-
-			updateStatus();
-			updateFileLabels();
-
-			// Make sure we are now on the Simulation stack page
-			showMainStackPage(DissolveWindow::StartStackPage);
-
+			startNew();
 			return;
 		}
 	}
 	else Messenger::print("\nRestart file '%s' does not exist.\n", restartFile.get());
 
-	dissolveState_ = StoppedState;
+	dissolveState_ = EditingState;
 
 	// Check the beat file
 	CharString beatFile("%s.bet", qPrintable(inputFile));
@@ -153,9 +145,8 @@ void DissolveWindow::on_SessionOpenLocalAction_triggered(bool checked)
 // 		if (
 	}
 
-	// Update GUI
-	updateStatus();
-	updateFileLabels();
+	// Fully update GUI
+	fullUpdate();
 
 	// Make sure we are now on the Simulation stack page
 	showMainStackPage(DissolveWindow::SimulationStackPage);
@@ -171,27 +162,11 @@ void DissolveWindow::on_SessionOpenRecentAction_triggered(bool checked)
 	// TODO
 }
 
-	void on_StartQuickStartButton_clicked(bool checked);
-	void on_StartRunTutorialButton_clicked(bool checked);
-	
 void DissolveWindow::on_SessionCloseAction_triggered(bool checked)
 {
 	if (!checkSaveCurrentInput()) return;
 
-	// Clear any data-related tabs from the UI
-	clearTabs();
-
-	// Clear Dissolve itself
-	dissolve_.clear();
-
-	updateControls();
-
-	updateStatus();
-
-	updateFileLabels();
-
-	// Go back to the 'Start' page
-	showMainStackPage(DissolveWindow::StartStackPage);
+	startNew();
 }
 
 void DissolveWindow::on_SessionSaveAction_triggered(bool checked)
@@ -213,7 +188,7 @@ void DissolveWindow::on_SessionSaveAction_triggered(bool checked)
 
 	modified_ = false;
 
-	updateStatus();
+	updateWindowTitle();
 }
 
 void DissolveWindow::on_SessionSaveAsAction_triggered(bool checked)
@@ -240,14 +215,10 @@ void DissolveWindow::on_SimulationAddSpeciesAction_triggered(bool checked)
 	if (addSpeciesDialog.exec() == QDialog::Accepted)
 	{
 		Species* sp = addSpeciesDialog.importSpecies(dissolve_);
-
-		reconcileTabs();
-
-		updateControls();
-
-		updateStatus();
-
 		setCurrentTab(sp);
+
+		// Fully update GUI
+		fullUpdate();
 	}
 }
 
@@ -259,15 +230,11 @@ void DissolveWindow::on_SimulationAddConfigurationAction_triggered(bool checked)
 
 	if (addConfigurationDialog.exec() == QDialog::Accepted)
 	{
-		Configuration* sp = addConfigurationDialog.importConfiguration(dissolve_);
+		Configuration* cfg = addConfigurationDialog.importConfiguration(dissolve_);
+		setCurrentTab(cfg);
 
-		reconcileTabs();
-
-		updateControls();
-
-		updateStatus();
-
-		setCurrentTab(sp);
+		// Fully update GUI
+		fullUpdate();
 	}
 }
 
@@ -296,12 +263,13 @@ void DissolveWindow::on_SimulationRunAction_triggered(bool checked)
 	// Make sure everything is set-up
 	if ((!dissolve_.isSetUp()) && (!dissolve_.setUp())) return;
 
-	updateStatus();
-
 	// Prepare the GUI
 	setWidgetsForRun();
 
 	dissolveState_ = DissolveWindow::RunningState;
+
+	// Update the controls
+	updateControlsFrame();
 
 	emit iterate(-1);
 }
@@ -311,12 +279,13 @@ void DissolveWindow::on_SimulationStepAction_triggered(bool checked)
 	// Make sure everything is set-up
 	if ((!dissolve_.isSetUp()) && (!dissolve_.setUp())) return;
 
-	updateStatus();
-
 	// Prepare the GUI
 	setWidgetsForRun();
 
 	dissolveState_ = DissolveWindow::RunningState;
+
+	// Update the controls
+	updateControlsFrame();
 
 	emit iterate(1);
 }
@@ -326,23 +295,25 @@ void DissolveWindow::on_SimulationStepFiveAction_triggered(bool checked)
 	// Make sure everything is set-up
 	if ((!dissolve_.isSetUp()) && (!dissolve_.setUp())) return;
 
-	updateStatus();
-
 	// Prepare the GUI
 	setWidgetsForRun();
 
 	dissolveState_ = DissolveWindow::RunningState;
+
+	// Update the controls
+	updateControlsFrame();
 
 	emit iterate(5);
 }
 
 void DissolveWindow::on_SimulationPauseAction_triggered(bool checked)
 {
-	dissolveState_ = DissolveWindow::StoppedState;
-
-	updateStatus();
+	dissolveState_ = DissolveWindow::EditingState;
 
 	emit stopIterating();
+
+	// Update the controls
+	updateControlsFrame();
 
 	ui.ControlPauseButton->setEnabled(false);
 }
@@ -371,20 +342,7 @@ void DissolveWindow::on_HelpViewQuickStartGuideAction_triggered(bool checked)
 {
 	if (!checkSaveCurrentInput()) return;
 
-	// Clear any data-related tabs from the UI
-	clearTabs();
-
-	// Clear Dissolve itself
-	dissolve_.clear();
-
-	updateControls();
-
-	updateStatus();
-
-	updateFileLabels();
-
-	// Make sure we are now on the Simulation stack page
-	showMainStackPage(DissolveWindow::SimulationStackPage);
+	startNew();
 
 	// Reset the guide wizard widget and set up the QuickStart guide in it
 	ui.GuideWidget->clear();

@@ -307,7 +307,7 @@ SubWindow* WorkspaceTab::addModuleControlWidget(Module* module)
 		window = addSubWindow(moduleControlWidget, module);
 
 		// If we are currently running, we need to disable sensitive controls in the newly-created widget
-		if ((dissolveWindow_->dissolveState() != DissolveWindow::StoppedState) && window && window->subWidget()) window->subWidget()->disableSensitiveControls();
+		if ((dissolveWindow_->dissolveState() != DissolveWindow::EditingState) && window && window->subWidget()) window->subWidget()->disableSensitiveControls();
 	}
 	else window->raise();
 

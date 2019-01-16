@@ -61,13 +61,21 @@ class DissolveWindow : public QMainWindow
 
 
 	/*
-	 * Dissolve Reference
+	 * Dissolve Integration
 	 */
 	private:
 	// Dissolve reference
 	Dissolve& dissolve_;
-	// Whether any data has been modified in the GUI
+	// Whether any data has been modified
 	bool modified_;
+	// Whether window is currently refreshing
+	bool refreshing_;
+	// Whether window has been shown
+	bool shown_;
+	// Output handler for messaging in GUI
+	GUIOutputHandler outputHandler_;
+	// Whether the current simulation is on the local machine
+	bool localSimulation_;
 
 	public slots:
 	// Flag that data has been modified via the GUI
@@ -78,6 +86,8 @@ class DissolveWindow : public QMainWindow
 	public:
 	// Return reference to Dissolve
 	Dissolve& dissolve();
+	// Link the Messenger in to the GUI output device
+	void addOutputHandler();
 
 
 	/*
@@ -91,25 +101,15 @@ class DissolveWindow : public QMainWindow
 	/*
 	 * Update Functions
 	 */
-	private:
-	// Whether window is currently refreshing
-	bool refreshing_;
-	// Whether window has been shown
-	bool shown_;
-	// Output handler for messaging in GUI
-	GUIOutputHandler outputHandler_;
-	// Whether the current simulation is on the local machine
-	bool localSimulation_;
-
 	public slots:
-	// Refresh all controls
-	void updateControls();
-	// Update status
-	void updateStatus();
-	// Update file labels
-	void updateFileLabels();
-	// Link output handler in to the Messenger
-	void addOutputHandler();
+	// Update all tabs
+	void updateTabs();
+	// Update window title
+	void updateWindowTitle();
+	// Update controls frame
+	void updateControlsFrame();
+	// Perform full update of the GUI, including tab reconciliation
+	void fullUpdate();
 
 
 	/*
@@ -118,6 +118,8 @@ class DissolveWindow : public QMainWindow
 	private:
 	// Check whether current input needs to be saved and, if so, if it saved successfully
 	bool checkSaveCurrentInput();
+	// Clear all data and start new simulation afresh
+	void startNew();
 
 	private slots:
 	// Session
@@ -186,8 +188,8 @@ class DissolveWindow : public QMainWindow
 	public:
 	// Dissolve State Enum
 	enum DissolveState {
+		EditingState,		/* Dissolve is currently editing a file in the GUI */
 		RunningState,		/* Dissolve is currently running in the GUI */
-		StoppedState,		/* Dissolve is currently stopped in the GUI */
 		MonitoringState,	/* Dissolve is running in the background, and we are monitoring it via the restart file */
 		nDissolveStates
 	};

@@ -51,7 +51,7 @@ DissolveWindow::DissolveWindow(Dissolve& dissolve) : QMainWindow(NULL), dissolve
 	// Connect signals from our main tab widget / bar
 	connect(ui.MainTabs, SIGNAL(tabClosed(QWidget*)), this, SLOT(removeTab(QWidget*)));
 	connect(ui.MainTabs, SIGNAL(tabBarDoubleClicked(int)), this, SLOT(mainTabsDoubleClicked(int)));
-	dissolveState_ = StoppedState;
+	dissolveState_ = EditingState;
 
 	// Set up GuideWidget
 	ui.GuideWidget->setMainDissolveReference(&dissolve);
@@ -65,7 +65,9 @@ DissolveWindow::DissolveWindow(Dissolve& dissolve) : QMainWindow(NULL), dissolve
 
 	addCoreTabs();
 
-	updateStatus();
+	updateTabs();
+	updateWindowTitle();
+	updateControlsFrame();
 
 	// Show the Start stack page (we call this mostly to ensure correct availability of other controls)
 	showMainStackPage(DissolveWindow::StartStackPage);
@@ -74,30 +76,6 @@ DissolveWindow::DissolveWindow(Dissolve& dissolve) : QMainWindow(NULL), dissolve
 // Destructor
 DissolveWindow::~DissolveWindow()
 {
-}
-
-// Flag that data has been modified via the GUI
-void DissolveWindow::setModified()
-{
-	modified_ = true;
-
-	updateStatus();
-}
-
-// Flag that data has been modified via the GUI, and that the set up is now invalid
-void DissolveWindow::setModifiedAndInvalidated()
-{
-	modified_ = true;
-
-	dissolve_.invalidateSetUp();
-
-	updateStatus();
-}
-
-// Return reference to Dissolve
-Dissolve& DissolveWindow::dissolve()
-{
-	return dissolve_;
 }
 
 // Catch window close event
@@ -114,6 +92,41 @@ void DissolveWindow::closeEvent(QCloseEvent* event)
 
 void DissolveWindow::resizeEvent(QResizeEvent* event)
 {
+}
+
+/*
+ * Dissolve Integration
+ */
+
+// Flag that data has been modified via the GUI
+void DissolveWindow::setModified()
+{
+	modified_ = true;
+
+	updateWindowTitle();
+}
+
+// Flag that data has been modified via the GUI, and that the set up is now invalid
+void DissolveWindow::setModifiedAndInvalidated()
+{
+	modified_ = true;
+
+	dissolve_.invalidateSetUp();
+
+	updateWindowTitle();
+}
+
+// Return reference to Dissolve
+Dissolve& DissolveWindow::dissolve()
+{
+	return dissolve_;
+}
+
+// Link output handler in to the Messenger
+void DissolveWindow::addOutputHandler()
+{
+	Messenger::setOutputHandler(&outputHandler_);
+	connect(&outputHandler_, SIGNAL(printText(const QString&)), ui.MessagesBrowser, SLOT(append(const QString&)));
 }
 
 /*
@@ -174,9 +187,8 @@ bool DissolveWindow::openFileFromCLI(const char* inputFile, bool ignoreRestartFi
 	// Switch to the Simulation stack page
 	showMainStackPage(DissolveWindow::SimulationStackPage);
 
-	updateControls();
-
-	updateStatus();
+	// Fully update GUI
+	fullUpdate();
 
 	return true;
 }
@@ -185,61 +197,89 @@ bool DissolveWindow::openFileFromCLI(const char* inputFile, bool ignoreRestartFi
  * Update Functions
  */
 
-// Refresh all displayed widgets
-void DissolveWindow::updateControls()
+// Update all tabs
+void DissolveWindow::updateTabs()
 {
-	// Iteration Panel
-	ui.IterationNumberLabel->setText(DissolveSys::itoa(dissolve_.iteration()));
-
-	// Update all tabs
 	RefList<MainTab,bool> tabs = allTabs();
 	RefListIterator<MainTab,bool> tabIterator(tabs);
 	while (MainTab* tab = tabIterator.iterate()) tab->updateControls();
 }
 
-// Update status
-void DissolveWindow::updateStatus()
+// Update window title
+void DissolveWindow::updateWindowTitle()
 {
 	// Window Title
 	QString title = QString("Dissolve v%1 - %2%3").arg(DISSOLVEVERSION, dissolve_.hasInputFilename() ? dissolve_.inputFilename() : "<untitled>", modified_ ? "(*)" : "");
 	setWindowTitle(title);
+}
 
-	// Dissolve Status
-	QPalette labelPalette = ui.SetUpLabel->palette();
-	if (dissolve_.isSetUp())
+// Update controls frame
+void DissolveWindow::updateControlsFrame()
+{
+	// Update ControlFrame to reflect Dissolve's current state
+	if (dissolveState_ == DissolveWindow::EditingState)
 	{
-		labelPalette.setColor(QPalette::WindowText, Qt::darkGreen);
-		ui.SetUpLabel->setText("Set Up & Ready");
+		ui.ControlStateIcon->setPixmap(QPixmap(":/general/icons/general_edit.svg"));
+		ui.ControlStateLabel->setText("EDITING");
+		ui.ControlSetUpButton->setEnabled(!dissolve_.isSetUp());
+		ui.ControlSetUpButton->setIcon(dissolve_.isSetUp() ? QIcon(":/general/icons/general_true.svg") : QIcon(":/general/icons/general_false.svg"));
+		ui.ControlRunButton->setEnabled(dissolve_.isSetUp());
+		ui.ControlPauseButton->setEnabled(false);
+		ui.ControlReloadButton->setEnabled(false);
+	}
+	else if (dissolveState_ == DissolveWindow::RunningState)
+	{
+		ui.ControlStateIcon->setPixmap(QPixmap(":/general/icons/general_edit.svg"));
+		ui.ControlStateLabel->setText("RUNNING");
 		ui.ControlSetUpButton->setEnabled(false);
+		ui.ControlSetUpButton->setIcon(QIcon(":/general/icons/general_true.svg"));
+		ui.ControlRunButton->setEnabled(false);
+		ui.ControlPauseButton->setEnabled(true);
+		ui.ControlReloadButton->setEnabled(false);
+	}
+	else if (dissolveState_ == DissolveWindow::MonitoringState)
+	{
+		ui.ControlStateIcon->setPixmap(QPixmap(":/general/icons/general_monitor.svg"));
+		ui.ControlStateLabel->setText("MONITOR");
+		ui.ControlSetUpButton->setEnabled(false);
+		ui.ControlSetUpButton->setIcon(QIcon(":/general/icons/general_true.svg"));
+		ui.ControlRunButton->setEnabled(false);
+		ui.ControlPauseButton->setEnabled(false);
+		ui.ControlReloadButton->setEnabled(true);
+	}
+
+	// Set current iteration number
+	ui.ControlIterationNumberLCD->display(DissolveSys::itoa(dissolve_.iteration()));
+
+	// Set relevant file locations
+	if (localSimulation_)
+	{
+		if (dissolve_.hasInputFilename())
+		{
+			ui.ControlLocationLabel->setText(QFileInfo(dissolve_.inputFilename()).absolutePath() + "  (Local)");
+			ui.ControlInputFileLabel->setText(dissolve_.inputFilename());
+		}
+		else
+		{
+			ui.ControlLocationLabel->setText(QDir::current().absolutePath() + " (Local)");
+			ui.ControlInputFileLabel->setText("<untitled>");
+		}
+		ui.ControlRestartFileLabel->setText(dissolve_.hasRestartFilename() ? dissolve_.restartFilename() : "<none>");
 	}
 	else
 	{
-		labelPalette.setColor(QPalette::WindowText, Qt::darkRed);
-		ui.SetUpLabel->setText("Not Set Up");
-		ui.ControlSetUpButton->setEnabled(true);
+		ui.ControlLocationLabel->setText("UNKNOWN NETWORK LOCATION");
+		ui.ControlInputFileLabel->setText(dissolve_.inputFilename());
+		ui.ControlRestartFileLabel->setText(dissolve_.hasRestartFilename() ? dissolve_.restartFilename() : "<none>");
 	}
-	ui.SetUpLabel->setPalette(labelPalette);
 }
 
-// Update file labels
-void DissolveWindow::updateFileLabels()
+// Perform full update of the GUI, including tab reconciliation
+void DissolveWindow::fullUpdate()
 {
-	if (dissolve_.hasInputFilename())
-	{
-		ui.LocationLabel->setText(QFileInfo(dissolve_.inputFilename()).absolutePath() + "  (Local)");
-		ui.InputFileLabel->setText(dissolve_.inputFilename());
-	}
-	else
-	{
-		ui.LocationLabel->setText(QDir::current().absolutePath() + " (Local)");
-		ui.InputFileLabel->setText("<untitled>");
-	}
-	ui.RestartFileLabel->setText(dissolve_.hasRestartFilename() ? dissolve_.restartFilename() : "<none>");
-}
+	reconcileTabs();
 
-// Link output handler in to the Messenger
-void DissolveWindow::addOutputHandler()
-{
-	Messenger::setOutputHandler(&outputHandler_);
-	connect(&outputHandler_, SIGNAL(printText(const QString&)), ui.MessagesBrowser, SLOT(append(const QString&)));
+	updateTabs();
+	updateWindowTitle();
+	updateControlsFrame();
 }

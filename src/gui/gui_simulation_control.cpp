@@ -45,7 +45,7 @@ void DissolveWindow::on_ControlSetUpButton_clicked(bool checked)
 
 	dissolve_.setUp();
 
-	updateStatus();
+	updateControlsFrame();
 }
 
 void DissolveWindow::on_ControlRunButton_clicked(bool checked)

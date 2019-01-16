@@ -655,8 +655,6 @@ void ForcefieldTab::on_RegenerateAllPairPotentialsButton_clicked(bool checked)
 	ui.PairPotentialsTable->resizeColumnsToContents();
 
 	refreshing_ = false;
-
-	dissolveWindow_->updateStatus();
 }
 
 void ForcefieldTab::on_UpdatePairPotentialsButton_clicked(bool checked)
@@ -671,8 +669,6 @@ void ForcefieldTab::on_UpdatePairPotentialsButton_clicked(bool checked)
 	ui.PairPotentialsTable->resizeColumnsToContents();
 
 	refreshing_ = false;
-
-	dissolveWindow_->updateStatus();
 }
 
 void ForcefieldTab::on_GenerateMissingPairPotentialsButton_clicked(bool checked)
@@ -685,8 +681,6 @@ void ForcefieldTab::on_GenerateMissingPairPotentialsButton_clicked(bool checked)
 	ui.PairPotentialsTable->resizeColumnsToContents();
 
 	refreshing_ = false;
-
-	dissolveWindow_->updateStatus();
 }
 
 void ForcefieldTab::on_PairPotentialsTable_itemChanged(QTableWidgetItem* w)

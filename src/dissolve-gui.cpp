@@ -178,9 +178,7 @@ int main(int argc, char **argv)
 	}
 
 	// Update and show the main window
-	dissolveWindow.updateControls();
-	dissolveWindow.updateStatus();
-	dissolveWindow.updateFileLabels();
+	dissolveWindow.fullUpdate();
 	dissolveWindow.addOutputHandler();
 	dissolveWindow.show();
 
