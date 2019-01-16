@@ -280,7 +280,7 @@ class Dissolve
 	ModuleList mainProcessingModules_;
 	// List of analysis processing Modules to run
 	ModuleList analysisProcessingModules_;
-	// Data associated with main processing Modules
+	// Data associated with processing Modules
 	GenericList processingModuleData_;
 	// Current simulation step
 	int iteration_;

@@ -78,7 +78,7 @@ ModuleList& Dissolve::analysisProcessingModules()
 	return analysisProcessingModules_;
 }
 
-// Return data associated with main processing Modules
+// Return data associated with processing Modules
 GenericList& Dissolve::processingModuleData()
 {
 	return processingModuleData_;
