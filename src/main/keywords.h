@@ -127,7 +127,7 @@ namespace MasterBlock
 	{
 		AngleKeyword,			/* 'Angle' - Define master Angle parameters that can be referred to */
 		BondKeyword,			/* 'Bond' - Define master Bond parameters that can be referred to */
-		EndMasterKeyword,		/* 'EndModule' - Signals the end of the Module block */
+		EndMasterKeyword,		/* 'EndMaster' - Signals the end of the Master block */
 		TorsionKeyword,			/* 'Torsion' - Define master Torsion parameters that can be referred to */
 		nMasterKeywords			/* Number of keywords defined for this block */
 	};
@@ -137,7 +137,7 @@ namespace MasterBlock
 	const char* keyword(MasterKeyword id);
 	// Return expected number of expected arguments
 	int nArguments(MasterKeyword id);
-	// Parse Module block
+	// Parse Master block
 	bool parse(LineParser& parser, Dissolve* dissolve);
 };
 
