@@ -113,15 +113,15 @@ class Module : public ListItem<Module>
 	// Frequency with which to run Module (relative to master simulation loop counter)
 	void setFrequency(int freq);
 	// Frequency with which to run Module (relative to master simulation loop counter)
-	int frequency();
+	int frequency() const;
 	// Return whether the Module should run this iteration
-	bool runThisIteration(int iteration);
+	bool runThisIteration(int iteration) const;
 	// Return short descriptive text relating frequency to supplied iteration number
-	const char* frequencyDetails(int iteration);
+	const char* frequencyDetails(int iteration) const;
 	// Set whether the Module is enabled
 	void setEnabled(bool b);
 	// Return whether the Module is enabled
-	bool enabled();
+	bool enabled() const;
 
 
 	/*
@@ -137,7 +137,7 @@ class Module : public ListItem<Module>
 	// Add Configuration target
 	bool addConfigurationTarget(Configuration* cfg);
 	// Return number of targeted Configurations
-	int nConfigurationTargets();
+	int nConfigurationTargets() const;
 	// Return first targeted Configuration
 	RefList<Configuration,bool>& targetConfigurations();
 	// Return if the specified Configuration is in the targets list
@@ -147,7 +147,7 @@ class Module : public ListItem<Module>
 	// Set whether this module is a local Module in a Configuration
 	void setConfigurationLocal(bool b);
 	// Return whether this module is a local Module in a Configuration
-	bool configurationLocal();
+	bool configurationLocal() const;
 
 
 	/*

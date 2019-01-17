@@ -140,13 +140,13 @@ void Module::setFrequency(int freq)
 }
 
 // Frequency with which to run Module (relative to master simulation loop counter)
-int Module::frequency()
+int Module::frequency() const
 {
 	return frequency_;
 }
 
 // Return whether the Module should run this iteration
-bool Module::runThisIteration(int iteration)
+bool Module::runThisIteration(int iteration) const
 {
 	if ((frequency_ < 1) || (!enabled_)) return false;
 	else if ((iteration%frequency_) == 0) return true;
@@ -154,7 +154,7 @@ bool Module::runThisIteration(int iteration)
 }
 
 // Return short descriptive text relating frequency to supplied iteration number
-const char* Module::frequencyDetails(int iteration)
+const char* Module::frequencyDetails(int iteration) const
 {
 	static CharString result;
 
@@ -180,7 +180,7 @@ void Module::setEnabled(bool b)
 }
 
 // Return whether the Module is enabled
-bool Module::enabled()
+bool Module::enabled() const
 {
 	return enabled_;
 }
@@ -208,7 +208,7 @@ bool Module::addConfigurationTarget(Configuration* cfg)
 }
 
 // Return number of targeted Configurations
-int Module::nConfigurationTargets()
+int Module::nConfigurationTargets() const
 {
 	return targetConfigurations_.nItems();
 }
@@ -245,7 +245,7 @@ void Module::setConfigurationLocal(bool b)
 }
 
 // Return whether this module is a local Module in a Configuration
-bool Module::configurationLocal()
+bool Module::configurationLocal() const
 {
 	return configurationLocal_;
 }
