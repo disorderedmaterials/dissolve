@@ -1496,6 +1496,7 @@
     </property>
     <addaction name="SimulationAddSpeciesAction"/>
     <addaction name="SimulationAddConfigurationAction"/>
+    <addaction name="SimulationAddProcessingLayerAction"/>
     <addaction name="separator"/>
     <addaction name="SimulationSetRandomSeedAction"/>
    </widget>
@@ -1668,6 +1669,11 @@
   <action name="SimulationSetRandomSeedAction">
    <property name="text">
     <string>Set &amp;Random Seed</string>
+   </property>
+  </action>
+  <action name="SimulationAddProcessingLayerAction">
+   <property name="text">
+    <string>Add &amp;Processing Layer</string>
    </property>
   </action>
  </widget>

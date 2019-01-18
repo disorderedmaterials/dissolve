@@ -104,15 +104,15 @@ class Module : public ListItem<Module>
 	 * Control
 	 */
 	protected:
-	// Frequency with which to run Module (relative to master simulation loop counter)
+	// Frequency with which to run Module (relative to layer execution count)
 	int frequency_;
 	// Whether the Module is enabled
 	bool enabled_;
 
 	public:
-	// Frequency with which to run Module (relative to master simulation loop counter)
+	// Set frequency with which to run Module (relative to layer execution count)
 	void setFrequency(int freq);
-	// Frequency with which to run Module (relative to master simulation loop counter)
+	// Return frequency with which to run Module (relative to layer execution count)
 	int frequency() const;
 	// Return whether the Module should run this iteration
 	bool runThisIteration(int iteration) const;

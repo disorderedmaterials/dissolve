@@ -238,24 +238,28 @@ void WorkspaceTab::createContextMenu(QMenu* parent)
 		}
 	}
 
-	// Processing Modules
-	menuItem = parent->addAction("Processing");
-	menuItem->setFont(italicFont);
-	menuItem->setEnabled(false);
-	if (dissolve_.mainProcessingModules().nModules() == 0)
+	// Processing Layer Modules
+	ListIterator<ModuleLayer> layerIterator(dissolve_.processingLayers());
+	while (ModuleLayer* layer = layerIterator.iterate())
 	{
-		QAction* moduleItem = parent->addAction("None");
-		moduleItem->setFont(italicFont);
-		moduleItem->setEnabled(false);
-	}
-	ListIterator<ModuleReference> moduleIterator(dissolve_.mainProcessingModules().modules());
-	while (ModuleReference* modRef = moduleIterator.iterate())
-	{
-		Module* module = modRef->module();
+		menuItem = parent->addAction(layer->name());
+		menuItem->setFont(italicFont);
+		menuItem->setEnabled(false);
+		if (layer->nModules() == 0)
+		{
+			QAction* moduleItem = parent->addAction("None");
+			moduleItem->setFont(italicFont);
+			moduleItem->setEnabled(false);
+		}
+		ListIterator<ModuleReference> moduleIterator(layer->modules());
+		while (ModuleReference* modRef = moduleIterator.iterate())
+		{
+			Module* module = modRef->module();
 
-		QAction* moduleItem = parent->addAction(CharString("%s (%s)", module->type(), module->uniqueName()).get());
-		moduleItem->setData(VariantPointer<Module>(module));
-		connect(moduleItem, SIGNAL(triggered(bool)), this, SLOT(contextMenuModuleSelected(bool)));
+			QAction* moduleItem = parent->addAction(CharString("%s (%s)", module->type(), module->uniqueName()).get());
+			moduleItem->setData(VariantPointer<Module>(module));
+			connect(moduleItem, SIGNAL(triggered(bool)), this, SLOT(contextMenuModuleSelected(bool)));
+		}
 	}
 }
 

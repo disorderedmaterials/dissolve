@@ -31,7 +31,7 @@
 #include "classes/molecule.h"
 #include "classes/speciesinfo.h"
 #include "classes/sitestack.h"
-#include "module/list.h"
+#include "module/layer.h"
 #include "modules/import/formats.h"
 #include "math/histogram1d.h"
 #include "math/interpolator.h"
@@ -361,8 +361,8 @@ class Configuration : public ListItem<Configuration>
 	 * Modules
 	 */
 	private:
-	// List of Modules associated to this Configuration
-	ModuleList modules_;
+	// Module layer associated to this Configuration
+	ModuleLayer moduleLayer_;
 	// Variables set by Modules
 	GenericList moduleData_;
 
@@ -371,6 +371,8 @@ class Configuration : public ListItem<Configuration>
 	bool addModule(Module* module);
 	// Return number of Modules associated to this Configuration
 	int nModules() const;
+	// Return Module layer for this Configuration
+	ModuleLayer& moduleLayer();
 	// Return list of Modules associated to this Configuration
 	ModuleList& modules();
 	// Return list of variables set by Modules

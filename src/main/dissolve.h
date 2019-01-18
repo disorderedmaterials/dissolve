@@ -24,6 +24,7 @@
 
 #include "data/elements.h"
 #include "module/module.h"
+#include "module/layer.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 #include "classes/pairpotential.h"
@@ -276,10 +277,8 @@ class Dissolve
 	int seed_;
 	// Frequency at which to write restart file
 	int restartFileFrequency_;
-	// List of main processing Modules to run
-	ModuleList mainProcessingModules_;
-	// List of analysis processing Modules to run
-	ModuleList analysisProcessingModules_;
+	// List of defined processing layers
+	List<ModuleLayer> processingLayers_;
 	// Data associated with processing Modules
 	GenericList processingModuleData_;
 	// Current simulation step
@@ -302,10 +301,16 @@ class Dissolve
 	void setRestartFileFrequency(int n);
 	// Return frequency with which to write restart file
 	int restartFileFrequency() const;
-	// Return list of main processing Modules to run
-	ModuleList& mainProcessingModules();
-	// Return list of analysis processing Modules to run
-	ModuleList& analysisProcessingModules();
+	// Add new processing layer
+	ModuleLayer* addProcessingLayer();
+	// Find named processing layer
+	ModuleLayer* findProcessingLayer(const char* name) const;
+	// Own the specified ModuleLayer from the target object
+	bool ownProcessingLayer(ModuleLayer* layer);
+	// Generate unique processing layer name, with base name provided
+	const char* uniqueProcessingLayerName(const char* baseName) const;
+	// Return list of processing layers
+	List<ModuleLayer>& processingLayers();
 	// Return data associated with main processing Modules
 	GenericList& processingModuleData();
 	// Iterate main simulation

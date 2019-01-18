@@ -25,7 +25,7 @@
 #include "gui/configurationtab.h"
 #include "gui/forcefieldtab.h"
 #include "gui/moduletab.h"
-#include "gui/processingtab.h"
+#include "gui/modulelayertab.h"
 #include "gui/speciestab.h"
 #include "gui/workspacetab.h"
 #include "base/lineparser.h"

@@ -66,16 +66,60 @@ int Dissolve::restartFileFrequency() const
 	return restartFileFrequency_;
 }
 
-// Return list of main processing Modules to run
-ModuleList& Dissolve::mainProcessingModules()
+// Add new processing layer
+ModuleLayer* Dissolve::addProcessingLayer()
 {
-	return mainProcessingModules_;
+	return processingLayers_.add();
 }
 
-// Return list of analysis processing Modules to run
-ModuleList& Dissolve::analysisProcessingModules()
+// Find named processing layer
+ModuleLayer* Dissolve::findProcessingLayer(const char* name) const
 {
-	return analysisProcessingModules_;
+	ListIterator<ModuleLayer> layerIterator(processingLayers_);
+	while (ModuleLayer* layer = layerIterator.iterate()) if (DissolveSys::sameString(layer->name(), name)) return layer;
+
+	return NULL;
+}
+
+// Own / extract the specified ModuleLayer from the target object
+bool Dissolve::ownProcessingLayer(ModuleLayer* layer)
+{
+	// Sanity check - do we already own this Configuration?
+	if (processingLayers_.contains(layer)) return Messenger::error("Already own ModuleLayer '%s', so nothing to do.\n", layer->name());
+
+	processingLayers_.own(layer);
+
+	setUp_ = false;
+
+	return true;
+}
+
+// Generate unique processing layer name with base name provided
+const char* Dissolve::uniqueProcessingLayerName(const char* base) const
+{
+	static CharString uniqueName;
+	CharString baseName = base;
+	uniqueName = baseName;
+	int suffix = 0;
+
+	// Must always have a baseName
+	if (baseName.isEmpty()) baseName = "Unnamed";
+
+	// Find an unused name starting with the baseName provided
+	while (findProcessingLayer(uniqueName))
+	{
+		// Increase suffix value and regenerate uniqueName from baseName
+		++suffix;
+		uniqueName.sprintf("%s%i", baseName.get(), suffix);
+	}
+
+	return uniqueName;
+}
+
+// Return list of processing layers
+List<ModuleLayer>& Dissolve::processingLayers()
+{
+	return processingLayers_;
 }
 
 // Return data associated with processing Modules
@@ -133,17 +177,23 @@ bool Dissolve::iterate(int nIterations)
 		}
 		Messenger::print("\n");
 
-		Messenger::print("Main Processing\n");
-		ListIterator<ModuleReference> processingIterator(mainProcessingModules_.modules());
-		while (ModuleReference* modRef = processingIterator.iterate())
+		ListIterator<ModuleLayer> processingLayerIterator(processingLayers_);
+		while (ModuleLayer* layer = processingLayerIterator.iterate())
 		{
-			Module* module = modRef->module();
-			
-			Messenger::print("      --> %20s  (%s)\n", module->type(), module->frequencyDetails(iteration_));
+			Messenger::print("Processing layer '%s'  (%s):\n\n", layer->name(), layer->frequencyDetails(iteration_));
+			int layerExecutionCount = iteration_ / layer->frequency();
 
-			thisTime += module->processTimes().value();
+			ListIterator<ModuleReference> processingIterator(layer->modules());
+			while (ModuleReference* modRef = processingIterator.iterate())
+			{
+				Module* module = modRef->module();
+				
+				Messenger::print("      --> %20s  (%s)\n", module->type(), module->frequencyDetails(layerExecutionCount));
+
+				thisTime += module->processTimes().value();
+			}
+			Messenger::print("\n");
 		}
-		Messenger::print("\n");
 
 		// Write heartbeat file
 		if (worldPool().isMaster())
@@ -228,22 +278,31 @@ bool Dissolve::iterate(int nIterations)
 		/*
 		 *  3)	Run processing Modules (using the world pool).
 		 */
-		if (mainProcessingModules_.nModules() > 0) Messenger::banner("Main Processing");
-		processingIterator.restart();
-		while (ModuleReference* modRef = processingIterator.iterate())
+		processingLayerIterator.restart();
+		while (ModuleLayer* layer = processingLayerIterator.iterate())
 		{
-			Module* module = modRef->module();
+			// Check if this layer is due to run
+			if (!layer->runThisIteration(iteration_)) continue;
 
-			if (!module->runThisIteration(iteration_)) continue;
+			Messenger::banner("Layer '%s'", layer->name());
+			int layerExecutionCount = iteration_ / layer->frequency();
 
-			Messenger::heading("%s (%s)", module->type(), module->uniqueName());
-
-			result = module->executeProcessing(*this, worldPool());
-
-			if (!result)
+			ListIterator<ModuleReference> processingIterator(layer->modules());
+			while (ModuleReference* modRef = processingIterator.iterate())
 			{
-				Messenger::error("Module '%s' experienced problems. Exiting now.\n", module->type());
-				return false;
+				Module* module = modRef->module();
+
+				if (!module->runThisIteration(layerExecutionCount)) continue;
+
+				Messenger::heading("%s (%s)", module->type(), module->uniqueName());
+
+				result = module->executeProcessing(*this, worldPool());
+
+				if (!result)
+				{
+					Messenger::error("Module '%s' experienced problems. Exiting now.\n", module->type());
+					return false;
+				}
 			}
 		}
 
@@ -386,15 +445,20 @@ void Dissolve::printTiming()
 	}
 	Messenger::print("\n");
 
-	Messenger::print("Main Processing:\n");
-	ListIterator<ModuleReference> processingIterator(mainProcessingModules_.modules());
-	while (ModuleReference* modRef = processingIterator.iterate())
+	ListIterator<ModuleLayer> processingLayerIterator(processingLayers_);
+	while (ModuleLayer* layer = processingLayerIterator.iterate())
 	{
-		Module* module = modRef->module();
+		Messenger::print("Processing Layer '%s':\n", layer->name());
+		ListIterator<ModuleReference> processingIterator(layer->modules());
+		while (ModuleReference* modRef = processingIterator.iterate())
+		{
+			Module* module = modRef->module();
 
-		SampledDouble timingInfo = module->processTimes();
-		Messenger::print("      --> %30s  %7.2f s/iteration (%i iterations)\n", CharString("%s (%s)", module->type(), module->uniqueName()).get(), timingInfo.value(), timingInfo.count());
+			SampledDouble timingInfo = module->processTimes();
+			Messenger::print("      --> %30s  %7.2f s/iteration (%i iterations)\n", CharString("%s (%s)", module->type(), module->uniqueName()).get(), timingInfo.value(), timingInfo.count());
+		}
 	}
+
 	Messenger::print("      --> %30s  %7.2f s/write     (%i writes)\n", "Restart File", saveRestartTimes_.value(), saveRestartTimes_.count());
 	Messenger::print("\n");
 

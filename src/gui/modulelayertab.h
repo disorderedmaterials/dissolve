@@ -1,6 +1,6 @@
 /*
-	*** Processing Tab
-	*** src/gui/processingtab.h
+	*** Module Layer Tab
+	*** src/gui/moduleayertab.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,10 +19,10 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PROCESSINGTAB_H
-#define DISSOLVE_PROCESSINGTAB_H
+#ifndef DISSOLVE_MODULELAYERTAB_H
+#define DISSOLVE_MODULELAYERTAB_H
 
-#include "gui/ui_processingtab.h"
+#include "gui/ui_modulelayertab.h"
 #include "gui/maintab.h"
 #include "gui/widgets/subwidget.h"
 
@@ -31,17 +31,17 @@ class ModuleChart;
 class ModulePalette;
 
 // Processing Tab
-class ProcessingTab : public QWidget, public ListItem<ProcessingTab>, public MainTab
+class ModuleLayerTab : public QWidget, public ListItem<ModuleLayerTab>, public MainTab
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
 	public:
 	// Constructor / Destructor
-	ProcessingTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title);
-	~ProcessingTab();
+	ModuleLayerTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, ModuleLayer* layer);
+	~ModuleLayerTab();
 	// Main form declaration
-	Ui::ProcessingTab ui;
+	Ui::ModuleLayerTab ui;
 
 
 	/*
@@ -53,11 +53,24 @@ class ProcessingTab : public QWidget, public ListItem<ProcessingTab>, public Mai
 
 
 	/*
+	 * ModuleLayer Target
+	 */
+	private:
+	// ModuleLayer data to display
+	ModuleLayer* moduleLayer_;
+
+	public:
+	// Return displayed ModuleLayer
+	const ModuleLayer* moduleLayer() const;
+
+
+	/*
 	 * Widgets
 	 */
 	public slots:
-	void on_WriteRestartFileCheck_clicked(bool checked);
-	void on_RestartFrequencySpin_valueChanged(int value);
+	void on_EnabledButton_clicked(bool checked);
+	void on_FrequencySpin_valueChanged(int value);
+
 
 	/*
 	 * Update

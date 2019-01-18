@@ -221,22 +221,29 @@ bool Dissolve::setUpSimulation()
 		}
 	}
 
-	if (mainProcessingModules_.nModules() == 0) Messenger::print("No main processing Modules found.\n");
-	else Messenger::print("%i main processing %s found.\n", mainProcessingModules_.nModules(), mainProcessingModules_.nModules() == 1 ? "Module" : "Modules");
-	ListIterator<ModuleReference> mainProcessingIterator(mainProcessingModules_.modules());
-	while (ModuleReference* modRef = mainProcessingIterator.iterate())
+	ListIterator<ModuleLayer> processingLayerIterator(processingLayers_);
+	while (ModuleLayer* layer = processingLayerIterator.iterate())
 	{
-		Module* module = modRef->module();
-
-		Messenger::print("    %s:\n", module->type());
-		if (module->nConfigurationTargets() == 0) Messenger::print("      No Configuration targets.\n");
-		else
+		Messenger::print("Processing layer '%s':\n\n", layer->name());
+	
+		if (layer->nModules() == 0) Messenger::print("No Modules found.\n");
+		else Messenger::print("%i main processing %s found.\n", layer->nModules(), layer->nModules() == 1 ? "Module" : "Modules");
+		ListIterator<ModuleReference> processingIterator(layer->modules());
+		while (ModuleReference* modRef = processingIterator.iterate())
 		{
-			Messenger::print("      %i Configuration %s:\n", module->nConfigurationTargets(), module->nConfigurationTargets() == 1 ? "target" : "targets");
-			RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
-			while (Configuration* cfg = configIterator.iterate()) Messenger::print("      --> %s\n", cfg->name());
+			Module* module = modRef->module();
+
+			Messenger::print("    %s:\n", module->type());
+			if (module->nConfigurationTargets() == 0) Messenger::print("      No Configuration targets.\n");
+			else
+			{
+				Messenger::print("      %i Configuration %s:\n", module->nConfigurationTargets(), module->nConfigurationTargets() == 1 ? "target" : "targets");
+				RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
+				while (Configuration* cfg = configIterator.iterate()) Messenger::print("      --> %s\n", cfg->name());
+			}
 		}
 	}
+
 
 	/*
 	 * Perform Set-Up Steps in Modules

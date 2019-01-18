@@ -29,6 +29,7 @@ class Sample;
 class Configuration;
 class Species;
 class Module;
+class ModuleLayer;
 class GenericList;
 class Data;
 class SpeciesInfo;
@@ -58,6 +59,7 @@ namespace BlockKeywords
 	enum BlockKeyword
 	{
 		ConfigurationBlockKeyword,		/* 'Configuration' - Defines a single Configuration for use in the simulation */
+		LayerBlockKeyword,			/* 'Layer' - Defines a sequence of Modules in a processing layer */
 		MasterBlockKeyword,			/* 'Master' - Contains master intramolecular terms for use in Species */
 		ModuleBlockKeyword,			/* 'Module' - Sets up a Module to run after Configuration processing */
 		PairPotentialsBlockKeyword,		/* 'PairPotentials' - Contains definitions of the PairPotentials for the simulation */
@@ -114,6 +116,31 @@ namespace ConfigurationBlock
 	int nArguments(ConfigurationKeyword id);
 	// Parse Configuration block
 	bool parse(LineParser& parser, Dissolve* dissolve, Configuration* cfg);
+};
+
+
+/*
+ * Layer Block Keywords
+ */
+namespace LayerBlock
+{
+	// Layer Block Keyword Enum
+	enum LayerKeyword
+	{
+		EnabledKeyword,			/* 'Enabled' - Specify whether the layer is enabled or not */
+		EndLayerKeyword,		/* 'EndLayer' - Signals the end of the Layer block */
+		FrequencyKeyword,		/* 'Frequency' - Frequency at which the layer is executed, relative to the main iteration counter */
+		ModuleKeyword,			/* 'Module' - Begin a Module definition within this layer */
+		nLayerKeywords			/* Number of keywords defined for this block */
+	};
+	// Convert text string to LayerKeyword
+	LayerKeyword keyword(const char* s);
+	// Convert LayerKeyword to text string
+	const char* keyword(LayerKeyword id);
+	// Return expected number of expected arguments
+	int nArguments(LayerKeyword id);
+	// Parse Layer block
+	bool parse(LineParser& parser, Dissolve* dissolve, ModuleLayer* layer);
 };
 
 

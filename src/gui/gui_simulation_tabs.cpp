@@ -23,7 +23,7 @@
 #include "gui/configurationtab.h"
 #include "gui/forcefieldtab.h"
 #include "gui/moduletab.h"
-#include "gui/processingtab.h"
+#include "gui/modulelayertab.h"
 #include "gui/speciestab.h"
 #include "gui/workspacetab.h"
 #include "main/dissolve.h"
@@ -92,6 +92,7 @@ void DissolveWindow::reconcileTabs()
 	// Species - Global tab indices run from 1 (first tab after ForcefieldTab) to 1+nSpecies
 	ListIterator<Species> speciesIterator(dissolve_.species());
 	int currentTabIndex = 0;
+	int baseIndex = 1;
 	while (Species* sp = speciesIterator.iterate())
 	{
 		// Loop over existing tabs
@@ -107,7 +108,7 @@ void DissolveWindow::reconcileTabs()
 		{
 			SpeciesTab* newTab = new SpeciesTab(this, dissolve_, ui.MainTabs, sp->name(), sp);
 			speciesTabs_.own(newTab);
-			ui.MainTabs->insertTab(1 + currentTabIndex, newTab, sp->name());
+			ui.MainTabs->insertTab(baseIndex + currentTabIndex, newTab, sp->name());
 			ui.MainTabs->setTabTextColour(newTab->page(), QColor(0, 81, 0));
 			ui.MainTabs->setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_species.svg"));
 		}
@@ -118,6 +119,7 @@ void DissolveWindow::reconcileTabs()
 	// Configurations - Global tab indices run from 1+nSpecies (first tab after last Species) to 1+nSpecies+nConfigurations
 	ListIterator<Configuration> configurationIterator(dissolve_.configurations());
 	currentTabIndex = 0;
+	baseIndex = 1 + dissolve_.nSpecies();
 	while (Configuration* cfg = configurationIterator.iterate())
 	{
 		// Loop over existing tabs
@@ -133,9 +135,36 @@ void DissolveWindow::reconcileTabs()
 		{
 			ConfigurationTab* newTab = new ConfigurationTab(this, dissolve_, ui.MainTabs, cfg->name(), cfg);
 			configurationTabs_.own(newTab);
-			ui.MainTabs->insertTab(1 + dissolve_.nSpecies() + currentTabIndex, newTab, cfg->name());
+			ui.MainTabs->insertTab(baseIndex + currentTabIndex, newTab, cfg->name());
 			ui.MainTabs->setTabTextColour(newTab->page(), QColor(0, 81, 0));
 			ui.MainTabs->setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_configuration.svg"));
+		}
+
+		++currentTabIndex;
+	}
+
+	// Processing Layers - Global tab indices run from 1+nSpecies+nConfigurations (first tab after last Configuration) to 1+nSpecies+nConfigurations+nProcessingLayers
+	ListIterator<ModuleLayer> processingLayerIterator(dissolve_.processingLayers());
+	currentTabIndex = 0;
+	baseIndex = 1 + dissolve_.nSpecies() + dissolve_.nConfigurations();
+	while (ModuleLayer* layer = processingLayerIterator.iterate())
+	{
+		// Loop over existing tabs
+		while (currentTabIndex < processingLayerTabs_.nItems())
+		{
+			// If the existing tab is displaying the current Configuration already, then we can move on. Otherwise, delete it
+			if (processingLayerTabs_[currentTabIndex]->moduleLayer() == layer) break;
+			else processingLayerTabs_.remove(currentTabIndex);
+		}
+
+		// If the current tab index is (now) out of range, add a new one
+		if (currentTabIndex == processingLayerTabs_.nItems())
+		{
+			ModuleLayerTab* newTab = new ModuleLayerTab(this, dissolve_, ui.MainTabs, layer->name(), layer);
+			processingLayerTabs_.own(newTab);
+			ui.MainTabs->insertTab(baseIndex + currentTabIndex, newTab, layer->name());
+			ui.MainTabs->setTabTextColour(newTab->page(), QColor(0, 81, 0));
+			ui.MainTabs->setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_modulelayer.svg"));
 		}
 
 		++currentTabIndex;
@@ -150,12 +179,6 @@ void DissolveWindow::addCoreTabs()
 	ui.MainTabs->addTab(forcefieldTab_->page(), "Forcefield");
 	ui.MainTabs->setTabTextColour(forcefieldTab_->page(), QColor(189, 68, 0));
 	ui.MainTabs->setTabIcon(forcefieldTab_->page(), QIcon(":/tabs/icons/tabs_ff.svg"));
-	
-	// Main Processing
-	mainProcessingTab_ = new ProcessingTab(this, dissolve_, ui.MainTabs, "Main Processing");
-	ui.MainTabs->addTab(mainProcessingTab_->page(), "Main Processing");
-	ui.MainTabs->setTabTextColour(mainProcessingTab_->page(), QColor(11, 36, 118));
-	ui.MainTabs->setTabIcon(mainProcessingTab_->page(), QIcon(":/tabs/icons/tabs_modules.svg"));
 }
 
 // Add on an empty workspace tab
@@ -181,6 +204,7 @@ MainTab* DissolveWindow::findTab(const char* title)
 
 	for (SpeciesTab* tab = speciesTabs_.first(); tab != NULL; tab = tab->next) if (DissolveSys::sameString(title, tab->title())) return tab;
 	for (ConfigurationTab* tab = configurationTabs_.first(); tab != NULL; tab = tab->next) if (DissolveSys::sameString(title, tab->title())) return tab;
+	for (ModuleLayerTab* tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next) if (DissolveSys::sameString(title, tab->title())) return tab;
 	for (ModuleTab* tab = moduleTabs_.first(); tab != NULL; tab = tab->next) if (DissolveSys::sameString(title, tab->title())) return tab;
 	for (WorkspaceTab* tab = workspaceTabs_.first(); tab != NULL; tab = tab->next) if (DissolveSys::sameString(title, tab->title())) return tab;
 
@@ -303,15 +327,29 @@ void DissolveWindow::setCurrentTab(Configuration* cfg)
 	Messenger::error("Can't display ConfigurationTab for Configuration '%s' as it doesn't exist.\n", cfg->name());
 }
 
+// Make specified processing layer tab the current one
+void DissolveWindow::setCurrentTab(ModuleLayer* layer)
+{
+	if (!layer) return;
+
+	for (ModuleLayerTab* tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next) if (tab->moduleLayer() == layer)
+	{
+		ui.MainTabs->setCurrentWidget(tab->page());
+		return;
+	}
+
+	Messenger::error("Can't display ModuleLayerTab for processing layer '%s' as it doesn't exist.\n", layer->name());
+}
+
 // Return reference list of all current tabs
 RefList<MainTab,bool> DissolveWindow::allTabs() const
 {
 	RefList<MainTab,bool> tabs;
 
 	tabs.add(forcefieldTab_);
-	tabs.add(mainProcessingTab_);
 	for (SpeciesTab* tab = speciesTabs_.first(); tab != NULL; tab = tab->next) tabs.add(tab);
 	for (ConfigurationTab* tab = configurationTabs_.first(); tab != NULL; tab = tab->next) tabs.add(tab);
+	for (ModuleLayerTab* tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next) tabs.add(tab);
 	for (ModuleTab* tab = moduleTabs_.first(); tab != NULL; tab = tab->next) tabs.add(tab);
 	for (WorkspaceTab* tab = workspaceTabs_.first(); tab != NULL; tab = tab->next) tabs.add(tab);
 

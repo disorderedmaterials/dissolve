@@ -46,10 +46,10 @@ ModuleEditor::~ModuleEditor()
  */
 
 // Setup up the ModuleEditor for the specified Module list
-bool ModuleEditor::setUp(DissolveWindow* dissolveWindow, ModuleList& moduleList)
+bool ModuleEditor::setUp(DissolveWindow* dissolveWindow, ModuleLayer* moduleLayer)
 {
 	// Create a ModuleChart widget and set its source list
-	chartWidget_ = new ModuleChart(dissolveWindow, moduleList);
+	chartWidget_ = new ModuleChart(dissolveWindow, *moduleLayer);
 	chartWidget_->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
 	ui.ModuleScrollArea->setWidget(chartWidget_);
 

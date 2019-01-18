@@ -36,7 +36,7 @@ class Configuration;
 class ConfigurationTab;
 class Dissolve;
 class ForcefieldTab;
-class ProcessingTab;
+class ModuleLayerTab;
 class QMdiSubWindow;
 class Species;
 class SpeciesTab;
@@ -135,6 +135,7 @@ class DissolveWindow : public QMainWindow
 	// Simulation
 	void on_SimulationAddSpeciesAction_triggered(bool checked);
 	void on_SimulationAddConfigurationAction_triggered(bool checked);
+	void on_SimulationAddProcessingLayerAction_triggered(bool checked);
 	void on_SimulationSetRandomSeedAction_triggered(bool checked);
 	// Control
 	void on_SimulationRunAction_triggered(bool checked);
@@ -233,14 +234,12 @@ class DissolveWindow : public QMainWindow
 	List<SpeciesTab> speciesTabs_;
 	// List of Configuration tabs
 	List<ConfigurationTab> configurationTabs_;
+	// List of processing layer tabs
+	List<ModuleLayerTab> processingLayerTabs_;
 	// List of Module tabs
 	List<ModuleTab> moduleTabs_;
 	// List of Workspace tabs
 	List<WorkspaceTab> workspaceTabs_;
-	// Pointer to Main Processing tab
-	ProcessingTab* mainProcessingTab_;
-	// Pointer to Analysis Processing tab
-	ProcessingTab* analysisProcessingTab_;
 
 	private slots:
 	void on_MainTabs_currentChanged(int index);
@@ -281,6 +280,8 @@ class DissolveWindow : public QMainWindow
 	void setCurrentTab(Species* species);
 	// Make specified Configuration tab the current one
 	void setCurrentTab(Configuration* cfg);
+	// Make specified processing layer tab the current one
+	void setCurrentTab(ModuleLayer* layer);
 	// Return reference list of all current tabs
 	RefList<MainTab,bool> allTabs() const;
 

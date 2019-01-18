@@ -21,6 +21,7 @@
 
 #include "gui/gui.h"
 #include "gui/addconfigurationdialog.h"
+#include "gui/addprocessinglayerdialog.h"
 #include "gui/addspeciesdialog.h"
 #include "gui/modulecontrolwidget.h"
 #include "main/dissolve.h"
@@ -215,10 +216,12 @@ void DissolveWindow::on_SimulationAddSpeciesAction_triggered(bool checked)
 	if (addSpeciesDialog.exec() == QDialog::Accepted)
 	{
 		Species* sp = addSpeciesDialog.importSpecies(dissolve_);
-		setCurrentTab(sp);
 
 		// Fully update GUI
+		setModified();
 		fullUpdate();
+
+		setCurrentTab(sp);
 	}
 }
 
@@ -231,10 +234,30 @@ void DissolveWindow::on_SimulationAddConfigurationAction_triggered(bool checked)
 	if (addConfigurationDialog.exec() == QDialog::Accepted)
 	{
 		Configuration* cfg = addConfigurationDialog.importConfiguration(dissolve_);
-		setCurrentTab(cfg);
 
 		// Fully update GUI
+		setModified();
 		fullUpdate();
+
+		setCurrentTab(cfg);
+	}
+}
+
+void DissolveWindow::on_SimulationAddProcessingLayerAction_triggered(bool checked)
+{
+	static AddProcessingLayerDialog addProcessingLayerDialog(this, dissolve_);
+
+	addProcessingLayerDialog.reset();
+
+	if (addProcessingLayerDialog.exec() == QDialog::Accepted)
+	{
+		ModuleLayer* layer = addProcessingLayerDialog.importModuleLayer(dissolve_);
+
+		// Fully update GUI
+		setModified();
+		fullUpdate();
+
+		setCurrentTab(layer);
 	}
 }
 

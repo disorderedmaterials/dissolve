@@ -91,6 +91,7 @@ bool DissolveWindow::loadWindowLayout()
 				// Create a new workspace with the desired name
 				tab = addWorkspaceTab(stateParser.argc(0));
 			}
+		
 			else return Messenger::error("Unrecognised tab type '%s' in state file.\n", stateParser.argc(1));
 
 			// Now read state information

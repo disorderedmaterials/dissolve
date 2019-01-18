@@ -28,7 +28,7 @@
 class DissolveWindow;
 class LineParser;
 class ModuleChart;
-class ModuleList;
+class ModuleLayer;
 class ModulePalette;
 
 // ModuleEditor
@@ -49,8 +49,8 @@ class ModuleEditor : public QWidget
 	 * Setup
 	 */
 	public:
-	// Setup up the ModuleEditor for the specified Module list
-	bool setUp(DissolveWindow* dissolveWindow, ModuleList& moduleList);
+	// Set up the ModuleEditor for the specified ModuleLayer
+	bool setUp(DissolveWindow* dissolveWindow, ModuleLayer* moduleLayer);
 
 
 	/*

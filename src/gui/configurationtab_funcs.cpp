@@ -56,7 +56,7 @@ ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dis
 	refreshing_ = false;
 
 	// Set up the ModuleEditor
-	ui.ModulePanel->setUp(dissolveWindow, cfg->modules());
+	ui.ModulePanel->setUp(dissolveWindow, &cfg->moduleLayer());
 }
 
 ConfigurationTab::~ConfigurationTab()

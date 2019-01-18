@@ -12,6 +12,7 @@ SET(gui_MOC_HDRS
   modulekeywordswidget.h
   modulecontrolwidget.h
   moduleeditor.h
+  modulelayertab.h
   moduletab.h
   modulewidget.h
   paletteblock.h
@@ -20,6 +21,7 @@ SET(gui_MOC_HDRS
   modulepalette.hui
   # Widgets
   addconfigurationwizard.h
+  addprocessinglayerwizard.h
   addspecieswizard.h
   generalwizard.h
   pairpotentialwidget.h
@@ -30,12 +32,12 @@ SET(gui_MOC_HDRS
   wizardwidgetpageinfo.h
   # Dialogs
   addconfigurationdialog.h
+  addprocessinglayerdialog.h
   addspeciesdialog.h
   # Main Tabs
   configurationtab.h
   forcefieldtab.h
   maintab.h
-  processingtab.h
   speciestab.h
   workspacetab.h
   # Main UI
@@ -54,10 +56,12 @@ SET(gui_UIS
   modulechartmoduleblock.ui
   modulecontrolwidget.ui
   moduleeditor.ui
+  modulelayertab.ui
   moduletab.ui
   paletteblock.ui
   # Widgets
   addconfigurationwizard.ui
+  addprocessinglayerwizard.ui
   addspecieswizard.ui
   generalwizard.ui
   pairpotentialwidget.ui
@@ -65,11 +69,11 @@ SET(gui_UIS
   wizardwidgetheader.ui
   # Dialogs
   addconfigurationdialog.ui
+  addprocessinglayerdialog.ui
   addspeciesdialog.ui
   # Main Tabs
   configurationtab.ui
   forcefieldtab.ui
-  processingtab.ui
   speciestab.ui
   workspacetab.ui
   # Main UI
@@ -88,12 +92,14 @@ SET(gui_SRCS
   modulecontrolwidget_funcs.cpp
   moduleeditor_funcs.cpp
   modulekeywordswidget_funcs.cpp
+  modulelayertab_funcs.cpp
   modulepalette_funcs.cpp
   moduletab_funcs.cpp
   modulewidget.cpp
   paletteblock_funcs.cpp
   # Widgets
   addconfigurationwizard_funcs.cpp
+  addprocessinglayerwizard_funcs.cpp
   addspecieswizard_funcs.cpp
   generalwizard_funcs.cpp
   pairpotentialwidget_funcs.cpp
@@ -102,12 +108,12 @@ SET(gui_SRCS
   wizardwidgetpageinfo.cpp
   # Dialogs
   addconfigurationdialog_funcs.cpp
+  addprocessinglayerdialog_funcs.cpp
   addspeciesdialog_funcs.cpp
   # Main Tabs
   configurationtab_funcs.cpp
   forcefieldtab_funcs.cpp
   maintab.cpp
-  processingtab_funcs.cpp
   speciestab_funcs.cpp
   workspacetab_funcs.cpp
   # Main UI

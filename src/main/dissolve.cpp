@@ -109,8 +109,7 @@ void Dissolve::clear()
 	nBoxNormalisationPoints_ = 500000000;
 	seed_ = -1;
 	restartFileFrequency_ = 10;
-	mainProcessingModules_.clear();
-	analysisProcessingModules_.clear();
+	processingLayers_.clear();
 	processingModuleData_.clear();
 	iteration_ = 0;
 	nIterationsPerformed_ = 0;
