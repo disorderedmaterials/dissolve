@@ -9,7 +9,10 @@
   <qresource prefix="modules">
     <file>icons/modules_export.svg</file>
     <file>icons/modules_molshake.svg</file>
+    <file>icons/modules_checks.svg</file>
+    <file>icons/modules_energy.svg</file>
     <file>icons/modules_neutronsq.svg</file>
+    <file>icons/modules_calculaterdf.svg</file>
     <file>icons/modules_generic.svg</file>
     <file>icons/modules_import.svg</file>
   </qresource>
@@ -66,7 +69,6 @@
     <file>icons/general_arrowright.svg</file>
     <file>icons/general_arrowup.svg</file>
   </qresource>
-  <qresource prefix="module"/>
   <qresource prefix="control">
     <file>icons/control_pause.svg</file>
     <file>icons/control_locked.svg</file>
