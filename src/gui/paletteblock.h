@@ -68,14 +68,6 @@ class PaletteBlock : public QWidget
 
 
 	/*
-	 * QWidget Reimplementations
-	 */
-	protected:
-	// Paint event
-	void paintEvent(QPaintEvent* event);
-
-
-	/*
 	 * Widget Functions
 	 */
 	private:

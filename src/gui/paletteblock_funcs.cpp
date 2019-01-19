@@ -78,26 +78,6 @@ ModuleReference* PaletteBlock::moduleReference()
 }
 
 /*
- * QWidget Reimplementations
- */
-
-// Paint event
-void PaletteBlock::paintEvent(QPaintEvent* event)
-{
-	if (!module_) return;
-
-	QPainter painter(this);
-
-	const int* colour = module_->colour();
-	QColor blockColour(colour[0], colour[1], colour[2], 50);
-
-	QLinearGradient linearGrad(QPointF(0, 0), QPointF(100, 50));
-	linearGrad.setColorAt(0, blockColour);
-	linearGrad.setColorAt(1, QColor(0,0,0,0));
-	painter.fillRect(QRect(0, 0, width(), height()), linearGrad);
-}
-
-/*
  * Widget Functions
  */
 

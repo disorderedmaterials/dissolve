@@ -34,11 +34,6 @@ MDModule::MDModule() : Module()
 
 	// Set up variables / control parameters
 	setUpKeywords();
-
-	// Set representative colour
-	colour_[0] = 200;
-	colour_[1] = 0;
-	colour_[2] = 0;
 }
 
 // Destructor

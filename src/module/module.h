@@ -60,8 +60,6 @@ class Module : public ListItem<Module>
 	protected:
 	// Unique name of Module
 	CharString uniqueName_;
-	// Colour used in visual representation of Module
-	int colour_[3];
 
 	public:
 	// Return type of Module
@@ -74,8 +72,6 @@ class Module : public ListItem<Module>
 	virtual const char* brief() const = 0;
 	// Return the maximum number of Configurations the Module can target (or -1 for any number)
 	virtual int nTargetableConfigurations() const = 0;
-	// Return colour used in visual representation of Module
-	const int* colour() const;
 
 
 	/*

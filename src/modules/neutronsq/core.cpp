@@ -34,11 +34,6 @@ NeutronSQModule::NeutronSQModule() : Module()
 
 	// Set up variables / control parameters
 	setUpKeywords();
-
-	// Set representative colour
-	colour_[0] = 0;
-	colour_[1] = 0;
-	colour_[2] = 200;
 }
 
 // Destructor

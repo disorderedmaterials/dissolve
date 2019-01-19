@@ -25,6 +25,7 @@
 #include "gui/keywordwidgets.h"
 #include "main/dissolve.h"
 #include "classes/configuration.h"
+#include <QFile>
 #include <QPainter>
 
 // Constructor
@@ -48,6 +49,7 @@ ModuleChartModuleBlock::ModuleChartModuleBlock(QWidget* parent, DissolveWindow* 
 	// Set up our keywords widget
 	ui.KeywordsWidget->setUp(dissolveWindow_, module_);
 
+	updateIcon();
 	updateControls();
 }
 
@@ -91,13 +93,7 @@ void ModuleChartModuleBlock::paintEvent(QPaintEvent* event)
 	borderPath.lineTo(width()-metrics.blockBorderWidth(), metrics.blockBorderMidPoint());
 	borderPath.closeSubpath();
 
-	const int* colour = module_->colour();
-	QColor blockColour = QColor(colour[0], colour[1], colour[2]).lighter(200);
-	QLinearGradient linearGrad(QPointF(0, 0), QPointF(100, 50));
-	linearGrad.setColorAt(0, blockColour);
-	linearGrad.setColorAt(1, Qt::white);
-	painter.setBrush(linearGrad);
-// 	painter.setBrush(Qt::white);
+	painter.setBrush(Qt::white);
 
 	// Ready - draw the border + fill!
 	painter.drawPath(borderPath);
@@ -149,6 +145,21 @@ void ModuleChartModuleBlock::updateControls()
 
 	// Update keywords
 	ui.KeywordsWidget->updateControls();
+}
+
+// Update icon
+void ModuleChartModuleBlock::updateIcon()
+{
+	if (!module_)
+	{
+		ui.IconLabel->setPixmap(QPixmap(":/modules/icons/modules_generic.svg"));
+		return;
+	}
+
+	// Construct the name of the icon for this module in our resource file
+	CharString iconName(":/modules/icons/modules_%s.svg", DissolveSys::lowerCase(module_->type()));
+	if (QFile::exists(iconName.get())) ui.IconLabel->setPixmap(QPixmap(iconName.get()));
+	else ui.IconLabel->setPixmap(QPixmap(":/modules/icons/modules_generic.svg"));
 }
 
 // Disable sensitive controls, ready for main code to run

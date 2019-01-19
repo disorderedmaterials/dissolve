@@ -6,6 +6,13 @@
     <file>icons/file_save.svg</file>
     <file>icons/file_connect.svg</file>
   </qresource>
+  <qresource prefix="modules">
+    <file>icons/modules_export.svg</file>
+    <file>icons/modules_molshake.svg</file>
+    <file>icons/modules_neutronsq.svg</file>
+    <file>icons/modules_generic.svg</file>
+    <file>icons/modules_import.svg</file>
+  </qresource>
   <qresource prefix="quickstart">
     <file>guides/quickstart/quickstart_tabs_configurations.png</file>
     <file>guides/quickstart/quickstart.xml</file>
@@ -63,7 +70,6 @@
   <qresource prefix="control">
     <file>icons/control_pause.svg</file>
     <file>icons/control_locked.svg</file>
-    <file>icons/control_setup.svg</file>
     <file>icons/control_unlocked.svg</file>
     <file>icons/control_play.svg</file>
   </qresource>

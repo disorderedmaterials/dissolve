@@ -35,11 +35,6 @@ Module::Module()
 	// LogPoints
 	logPoint_ = 0;
 	broadcastPoint_ = 0;
-
-	// Colour (used in GUI)
-	colour_[0] = 255;
-	colour_[1] = 255;
-	colour_[2] = 255;
 }
 
 // Destructor
@@ -61,12 +56,6 @@ void Module::setUniqueName(const char* uniqueName)
 const char* Module::uniqueName() const
 {
 	return uniqueName_.get();
-}
-
-// Return colour used in visual representation of Module
-const int* Module::colour() const
-{
-	return colour_;
 }
 
 /*
