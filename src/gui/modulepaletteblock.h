@@ -1,6 +1,6 @@
 /*
-	*** Palette Block Widget
-	*** src/gui/paletteblock.h
+	*** module Palette Block Widget
+	*** src/gui/modulepaletteblock.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,10 +19,10 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PALETTEBLOCKWIDGET_H
-#define DISSOLVE_PALETTEBLOCKWIDGET_H
+#ifndef DISSOLVE_MODULEPALETTEBLOCKWIDGET_H
+#define DISSOLVE_MODULEPALETTEBLOCKWIDGET_H
 
-#include "gui/ui_paletteblock.h"
+#include "gui/ui_modulepaletteblock.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
@@ -31,8 +31,8 @@ class DissolveWindow;
 class Module;
 class ModuleReference;
 
-// Palette Block Widget
-class PaletteBlock : public QWidget
+// Module Palette Block Widget
+class ModulePaletteBlock : public QWidget
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
@@ -45,8 +45,8 @@ class PaletteBlock : public QWidget
 
 	public:
 	// Constructor / Destructor
-	PaletteBlock(QWidget* parent, DissolveWindow* dissolveWindow, ModuleReference* moduleReference);
-	~PaletteBlock();
+	ModulePaletteBlock(QWidget* parent, DissolveWindow* dissolveWindow, ModuleReference* moduleReference);
+	~ModulePaletteBlock();
 	// Main form declaration
 	Ui::PaletteBlockWidget ui;
 	// Initialise window

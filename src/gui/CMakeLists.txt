@@ -13,9 +13,9 @@ SET(gui_MOC_HDRS
   modulecontrolwidget.h
   moduleeditor.h
   modulelayertab.h
+  modulepaletteblock.h
   moduletab.h
   modulewidget.h
-  paletteblock.h
 
   modulechart.hui
   modulepalette.hui
@@ -57,8 +57,8 @@ SET(gui_UIS
   modulecontrolwidget.ui
   moduleeditor.ui
   modulelayertab.ui
+  modulepaletteblock.ui
   moduletab.ui
-  paletteblock.ui
   # Widgets
   addconfigurationwizard.ui
   addprocessinglayerwizard.ui
@@ -94,9 +94,9 @@ SET(gui_SRCS
   modulekeywordswidget_funcs.cpp
   modulelayertab_funcs.cpp
   modulepalette_funcs.cpp
+  modulepaletteblock_funcs.cpp
   moduletab_funcs.cpp
   modulewidget.cpp
-  paletteblock_funcs.cpp
   # Widgets
   addconfigurationwizard_funcs.cpp
   addprocessinglayerwizard_funcs.cpp

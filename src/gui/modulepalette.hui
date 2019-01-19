@@ -29,9 +29,9 @@
 
 // Forward Declarations
 class DissolveWindow;
-class PaletteBlock;
 class LineParser;
 class Module;
+class ModulePaletteBlock;
 class ModuleReference;
 class QDragEnterEvent;
 class QDragLeaveEvent;
@@ -88,7 +88,7 @@ class ModulePalette : public QWidget
 	// Position of mouse click
 	QPoint dragStartPosition_;
 	// PaletteBlock we are dragging
-	PaletteBlock* draggedModule_;
+	ModulePaletteBlock* draggedModule_;
 
 
 	/*
@@ -96,13 +96,13 @@ class ModulePalette : public QWidget
 	 */
 	private:
 	// Displayed Widgets
-	RefList<PaletteBlock,bool> displayedWidgets_;
+	RefList<ModulePaletteBlock,bool> displayedWidgets_;
 
 	private:
-	// Find PaletteBlock displaying specified ModuleReference
-	RefListItem<PaletteBlock,bool>* paletteBlockReference(ModuleReference* modRef);
-	// Return the PaletteBlock clicked on its header at the specified position (if any)
-	PaletteBlock* paletteBlockHeaderAt(QPoint pos);
+	// Find ModulePaletteBlock displaying specified ModuleReference
+	RefListItem<ModulePaletteBlock,bool>* paletteBlockReference(ModuleReference* modRef);
+	// Return the ModulePaletteBlock clicked on its header at the specified position (if any)
+	ModulePaletteBlock* paletteBlockHeaderAt(QPoint pos);
 
 	public:
 	// Update controls within widget
@@ -111,16 +111,6 @@ class ModulePalette : public QWidget
 	void disableSensitiveControls();
 	// Enable sensitive controls within widget, ready for main code to run
 	void enableSensitiveControls();
-
-
-	/*
-	 * State I/O
-	 */
-	public:
-	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser);
-	// Read widget state through specified LineParser
-	bool readState(LineParser& parser);
 };
 
 #endif

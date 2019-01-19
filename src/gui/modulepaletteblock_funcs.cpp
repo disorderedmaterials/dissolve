@@ -1,6 +1,6 @@
 /*
-	*** Palette Block Widget - Functions
-	*** src/gui/paletteblock_funcs.cpp
+	*** Module Palette Block Widget - Functions
+	*** src/gui/modulepaletteblock_funcs.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/paletteblock.h"
+#include "gui/modulepaletteblock.h"
 #include "gui/gui.h"
 #include "gui/keywordwidgets.h"
 #include "main/dissolve.h"
@@ -27,7 +27,7 @@
 #include <QPainter>
 
 // Constructor
-PaletteBlock::PaletteBlock(QWidget* parent, DissolveWindow* dissolveWindow, ModuleReference* modRef) : QWidget(parent), dissolveWindow_(dissolveWindow), dissolve_(dissolveWindow->dissolve())
+ModulePaletteBlock::ModulePaletteBlock(QWidget* parent, DissolveWindow* dissolveWindow, ModuleReference* modRef) : QWidget(parent), dissolveWindow_(dissolveWindow), dissolve_(dissolveWindow->dissolve())
 {
 	// Set up user interface
 	ui.setupUi(this);
@@ -45,12 +45,12 @@ PaletteBlock::PaletteBlock(QWidget* parent, DissolveWindow* dissolveWindow, Modu
 	updateControls();
 }
 
-PaletteBlock::~PaletteBlock()
+ModulePaletteBlock::~ModulePaletteBlock()
 {
 }
 
 // Initialise window
-void PaletteBlock::initialiseWindow(Module* module)
+void ModulePaletteBlock::initialiseWindow(Module* module)
 {
 	// Set information panel contents
 	if (module)
@@ -72,7 +72,7 @@ void PaletteBlock::initialiseWindow(Module* module)
  */
 
 // Return reference for associated Module
-ModuleReference* PaletteBlock::moduleReference()
+ModuleReference* ModulePaletteBlock::moduleReference()
 {
 	return moduleReference_;
 }
@@ -82,7 +82,7 @@ ModuleReference* PaletteBlock::moduleReference()
  */
 
 // Update controls within widget
-void PaletteBlock::updateControls()
+void ModulePaletteBlock::updateControls()
 {
 	if (!module_) return;
 
@@ -98,11 +98,11 @@ void PaletteBlock::updateControls()
 }
 
 // Disable sensitive controls, ready for main code to run
-void PaletteBlock::disableSensitiveControls()
+void ModulePaletteBlock::disableSensitiveControls()
 {
 }
 
 // Enable sensitive controls, ready for main code to run
-void PaletteBlock::enableSensitiveControls()
+void ModulePaletteBlock::enableSensitiveControls()
 {
 }

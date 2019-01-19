@@ -20,7 +20,7 @@
 */
 
 #include "gui/modulepalette.hui"
-#include "gui/paletteblock.h"
+#include "gui/modulepaletteblock.h"
 #include "gui/gui.h"
 #include "module/list.h"
 #include "module/module.h"
@@ -45,7 +45,7 @@ ModulePalette::ModulePalette(DissolveWindow* dissolveWindow, const List<ModuleRe
 	// Add available Modules to our widget
 	for (ModuleReference* modRef = moduleMasterInstances.first(); modRef != NULL; modRef = modRef->next)
 	{
-		PaletteBlock* widget = new PaletteBlock(this, dissolveWindow_, modRef);
+		ModulePaletteBlock* widget = new ModulePaletteBlock(this, dissolveWindow_, modRef);
 		displayedWidgets_.add(widget);
 
 		layout->addWidget(widget);
@@ -63,7 +63,7 @@ ModulePalette::~ModulePalette()
 // Mouse press event
 void ModulePalette::mousePressEvent(QMouseEvent* event)
 {
-	// If the left-button was pressed *on a PaletteBlock HeaderFrame*, store the current click position. Otherwise do nothing
+	// If the left-button was pressed *on a ModulePaletteBlock HeaderFrame*, store the current click position. Otherwise do nothing
 	if (event->button() == Qt::LeftButton)
 	{
 		// Check object under mouse
@@ -116,8 +116,8 @@ void ModulePalette::mouseDoubleClickEvent(QMouseEvent* event)
 	// If the left button is not down, nothing to do here
 	if (!(event->buttons() & Qt::LeftButton)) return;
 
-	// Was a PaletteBlock's header was under the mouse?
-	PaletteBlock* block = paletteBlockHeaderAt(mapToGlobal(event->pos()));
+	// Was a ModulePaletteBlock's header was under the mouse?
+	ModulePaletteBlock* block = paletteBlockHeaderAt(mapToGlobal(event->pos()));
 	if (!block) return;
 
 	// Attempt to open the Module in a ModuleTab
@@ -156,20 +156,20 @@ void ModulePalette::dropEvent(QDropEvent* event)
  * Display Widgets
  */
 
-// Find PaletteBlock displaying specified ModuleReference
-RefListItem<PaletteBlock,bool>* ModulePalette::paletteBlockReference(ModuleReference* modRef)
+// Find ModulePaletteBlock displaying specified ModuleReference
+RefListItem<ModulePaletteBlock,bool>* ModulePalette::paletteBlockReference(ModuleReference* modRef)
 {
-	RefListIterator<PaletteBlock,bool> flowBlockIterator(displayedWidgets_);
-	while (PaletteBlock* block = flowBlockIterator.iterate()) if (block->moduleReference() == modRef) return flowBlockIterator.currentItem();
+	RefListIterator<ModulePaletteBlock,bool> flowBlockIterator(displayedWidgets_);
+	while (ModulePaletteBlock* block = flowBlockIterator.iterate()) if (block->moduleReference() == modRef) return flowBlockIterator.currentItem();
 
 	return NULL;
 }
 
-// Return the PaletteBlock clicked on its header at the specified position (if any)
-PaletteBlock* ModulePalette::paletteBlockHeaderAt(QPoint globalPos)
+// Return the ModulePaletteBlock clicked on its header at the specified position (if any)
+ModulePaletteBlock* ModulePalette::paletteBlockHeaderAt(QPoint globalPos)
 {
-	RefListIterator<PaletteBlock,bool> flowBlockIterator(displayedWidgets_);
-	while (PaletteBlock* block = flowBlockIterator.iterate()) if (block->ui.HeaderFrame->geometry().contains(block->mapFromGlobal(globalPos))) return block;
+	RefListIterator<ModulePaletteBlock,bool> flowBlockIterator(displayedWidgets_);
+	while (ModulePaletteBlock* block = flowBlockIterator.iterate()) if (block->ui.HeaderFrame->geometry().contains(block->mapFromGlobal(globalPos))) return block;
 
 	return NULL;
 }
