@@ -65,22 +65,6 @@ class ModulePaletteBlock : public QWidget
 	public:
 	// Return reference for associated Module
 	ModuleReference* moduleReference();
-
-
-	/*
-	 * Widget Functions
-	 */
-	private:
-	// Whether the widget is currently refreshing
-	bool refreshing_;
-
-	public:
-	// Update controls within widget
-	void updateControls();
-	// Disable sensitive controls, ready for main code to run
-	void disableSensitiveControls();
-	// Enable sensitive controls, ready for main code to run
-	void enableSensitiveControls();
 };
 
 #endif

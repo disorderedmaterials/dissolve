@@ -21,9 +21,7 @@
 
 #include "gui/modulepaletteblock.h"
 #include "gui/gui.h"
-#include "gui/keywordwidgets.h"
-#include "main/dissolve.h"
-#include "classes/configuration.h"
+#include <QFile>
 #include <QPainter>
 
 // Constructor
@@ -38,11 +36,7 @@ ModulePaletteBlock::ModulePaletteBlock(QWidget* parent, DissolveWindow* dissolve
 
 	module_ = moduleReference_ ? moduleReference_->module() : NULL;
 
-	refreshing_ = false;
-
 	initialiseWindow(module_);
-
-	updateControls();
 }
 
 ModulePaletteBlock::~ModulePaletteBlock()
@@ -55,15 +49,17 @@ void ModulePaletteBlock::initialiseWindow(Module* module)
 	// Set information panel contents
 	if (module)
 	{
-		CharString topText("%s (%s)", module->type(), module->uniqueName());
-		ui.TopLabel->setText(topText.get());
-		CharString bottomText("Runs @ %s", module->frequencyDetails(dissolve_.iteration()));
-		ui.BottomLabel->setText(bottomText.get());
+		ui.TextLabel->setText(module->type());
+
+		// Construct the name of the icon for this module in our resource file
+		CharString iconName(":/modules/icons/modules_%s.svg", DissolveSys::lowerCase(module->type()));
+		if (QFile::exists(iconName.get())) ui.IconLabel->setPixmap(QPixmap(iconName.get()));
+		else ui.IconLabel->setPixmap(QPixmap(":/modules/icons/modules_generic.svg"));
 	}
 	else
 	{
-		ui.TopLabel->setText("? (?) @ ?");
-		ui.BottomLabel->setText("Runs @ ");
+		ui.TextLabel->setText("???");
+		ui.IconLabel->setPixmap(QPixmap(":/modules/icons/modules_generic.svg"));
 	}
 }
 
@@ -75,34 +71,4 @@ void ModulePaletteBlock::initialiseWindow(Module* module)
 ModuleReference* ModulePaletteBlock::moduleReference()
 {
 	return moduleReference_;
-}
-
-/*
- * Widget Functions
- */
-
-// Update controls within widget
-void ModulePaletteBlock::updateControls()
-{
-	if (!module_) return;
-
-	// Make sure tooltip on HeaderFrame is up-to-date
-	CharString toolTip("Targets: ");
-	RefListIterator<Configuration,bool> configIterator(module_->targetConfigurations());
-	while (Configuration* cfg = configIterator.iterate())
-	{
-		if (configIterator.isFirst()) toolTip.strcatf("%s", cfg->name());
-		else toolTip.strcatf(", %s", cfg->name());
-	}
-	ui.HeaderFrame->setToolTip(toolTip.get());
-}
-
-// Disable sensitive controls, ready for main code to run
-void ModulePaletteBlock::disableSensitiveControls()
-{
-}
-
-// Enable sensitive controls, ready for main code to run
-void ModulePaletteBlock::enableSensitiveControls()
-{
 }
