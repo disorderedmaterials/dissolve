@@ -1,7 +1,7 @@
 /*
 	*** Poisson Function Approximation
 	*** src/math/poissonfit.h
-	Copyright T. Youngs 2018
+	Copyright T. Youngs 2019
 
 	This file is part of Dissolve.
 

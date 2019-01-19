@@ -1,7 +1,7 @@
 /*
 	*** Edit Fit Results Dialog
 	*** src/gui/uchroma/gui/editfitresults_funcs.cpp
-	Copyright T. Youngs 2013-2018
+	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
 

@@ -1,7 +1,7 @@
 /*
 	*** Text Primitive List
 	*** src/gui/uchroma/render/textprimitivelist.cpp
-	Copyright T. Youngs 2013-2018
+	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
 

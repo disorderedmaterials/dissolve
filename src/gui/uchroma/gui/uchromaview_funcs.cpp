@@ -1,7 +1,7 @@
 /*
 	*** View Widget - Functions 
 	*** src/gui/uchroma/gui/uchromaview_funcs.cpp
-	Copyright T. Youngs 2013-2018
+	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
 

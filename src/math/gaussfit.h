@@ -1,7 +1,7 @@
 /*
 	*** Gaussian Function Approximation
 	*** src/math/gaussfit.h
-	Copyright T. Youngs 2018
+	Copyright T. Youngs 2019
 
 	This file is part of Dissolve.
 

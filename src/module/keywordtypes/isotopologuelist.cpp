@@ -1,7 +1,7 @@
 /*
 	*** Module Keyword - Isotopologue Reference List
 	*** src/modules/keywordtypes/isotopologuelist.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 

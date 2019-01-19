@@ -1,7 +1,7 @@
 /*
 	*** Dissolve Main
 	*** src/main.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -52,9 +52,9 @@ int main(int argc, char **argv)
 			{
 				case ('h'):
 #ifdef PARALLEL
-					printf("Dissolve PARALLEL version %s, Copyright (C) 2012-2018 T. Youngs.\n\n", DISSOLVEVERSION);
+					printf("Dissolve PARALLEL version %s, Copyright (C) 2012-2019 T. Youngs.\n\n", DISSOLVEVERSION);
 #else
-					printf("Dissolve SERIAL version %s, Copyright (C) 2012-2018 T. Youngs.\n\n", DISSOLVEVERSION);
+					printf("Dissolve SERIAL version %s, Copyright (C) 2012-2019 T. Youngs.\n\n", DISSOLVEVERSION);
 #endif
 					printf("Recognised CLI options are:\n\n");
 					printf("\t-c\t\tCheck input and set-up only - don't perform any main-loop iterations\n");
@@ -159,9 +159,9 @@ int main(int argc, char **argv)
 
 	// Print GPL license information
 #ifdef PARALLEL
-	Messenger::print("Dissolve PARALLEL version %s, Copyright (C) 2012-2018 T. Youngs.\n", DISSOLVEVERSION);
+	Messenger::print("Dissolve PARALLEL version %s, Copyright (C) 2012-2019 T. Youngs.\n", DISSOLVEVERSION);
 #else
-	Messenger::print("Dissolve SERIAL version %s, Copyright (C) 2012-2018 T. Youngs.\n", DISSOLVEVERSION);
+	Messenger::print("Dissolve SERIAL version %s, Copyright (C) 2012-2019 T. Youngs.\n", DISSOLVEVERSION);
 #endif
 	Messenger::print("Source repository: %s.\n", DISSOLVEREPO);
 	Messenger::print("Dissolve comes with ABSOLUTELY NO WARRANTY.\n");

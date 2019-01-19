@@ -1,7 +1,7 @@
 /*
 	*** Keyword Parsing - Master Block
 	*** src/main/keywords_master.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 

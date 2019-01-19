@@ -1,7 +1,7 @@
 /*
 	*** ExponentialSpinDelegate Functions
 	*** src/gui/delegates/exponentialspin_funcs.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 

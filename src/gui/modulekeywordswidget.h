@@ -1,7 +1,7 @@
 /*
 	*** Module Keywords Widget
 	*** src/gui/modulekeywordswidget.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 

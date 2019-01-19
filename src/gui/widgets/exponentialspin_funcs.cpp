@@ -1,7 +1,7 @@
 /*
 	*** ExponentialSpin Functions
 	*** src/gui/widgets/exponentialspin_funcs.cpp
-	Copyright T. Youngs 2016-2018
+	Copyright T. Youngs 2016-2019
 
 	This file is part of Dissolve.
 

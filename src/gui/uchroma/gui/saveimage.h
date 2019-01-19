@@ -1,7 +1,7 @@
 /*
 	*** Save Image Dialog
 	*** src/gui/uchroma/gui/saveimage.h
-	Copyright T. Youngs 2013-2018
+	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
 

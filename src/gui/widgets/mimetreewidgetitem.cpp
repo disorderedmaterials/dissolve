@@ -1,7 +1,7 @@
 /*
 	*** Mime Tree Widget Item
 	*** src/gui/widgets/mimetreewidgetitem.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 

@@ -1,7 +1,7 @@
 /*
 	*** Axes Definitions 
 	*** src/gui/uchroma/classes/axes.cpp
-	Copyright T. Youngs 2013-2018
+	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
 

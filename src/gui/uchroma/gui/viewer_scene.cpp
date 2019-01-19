@@ -1,7 +1,7 @@
 /*
 	*** Viewer - Main scene rendering
 	*** src/gui/uchroma/gui/viewer_scene.cpp
-	Copyright T. Youngs 2013-2018
+	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
 

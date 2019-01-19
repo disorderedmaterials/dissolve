@@ -1,7 +1,7 @@
 /*
 	*** RDF Module - Definition
 	*** src/modules/rdf/definition.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 

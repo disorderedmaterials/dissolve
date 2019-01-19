@@ -1,7 +1,7 @@
 /*
 	*** View Widget - Slots
 	*** src/gui/uchroma/gui/uchromaview_slots.cpp
-	Copyright T. Youngs 2013-2018
+	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
 
