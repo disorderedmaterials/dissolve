@@ -173,19 +173,3 @@ ModulePaletteBlock* ModulePalette::paletteBlockHeaderAt(QPoint globalPos)
 
 	return NULL;
 }
-
-// Update controls within widget
-void ModulePalette::updateControls()
-{
-}
-
-// Disable sensitive controls within widget, ready for main code to run
-void ModulePalette::disableSensitiveControls()
-{
-}
-
-// Enable sensitive controls within widget, ready for main code to run
-void ModulePalette::enableSensitiveControls()
-{
-}
-

@@ -103,14 +103,6 @@ class ModulePalette : public QWidget
 	RefListItem<ModulePaletteBlock,bool>* paletteBlockReference(ModuleReference* modRef);
 	// Return the ModulePaletteBlock clicked on its header at the specified position (if any)
 	ModulePaletteBlock* paletteBlockHeaderAt(QPoint pos);
-
-	public:
-	// Update controls within widget
-	void updateControls();
-	// Disable sensitive controls within widget, ready for main code to run
-	void disableSensitiveControls();
-	// Enable sensitive controls within widget, ready for main code to run
-	void enableSensitiveControls();
 };
 
 #endif
