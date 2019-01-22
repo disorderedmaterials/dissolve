@@ -11,6 +11,7 @@
     <file>icons/modules_molshake.svg</file>
     <file>icons/modules_checks.svg</file>
     <file>icons/modules_energy.svg</file>
+    <file>icons/modules_md.svg</file>
     <file>icons/modules_neutronsq.svg</file>
     <file>icons/modules_calculaterdf.svg</file>
     <file>icons/modules_generic.svg</file>
@@ -51,6 +52,7 @@
     <file>icons/general_monitor.svg</file>
     <file>icons/general_heartbeat.svg</file>
     <file>icons/general_local.svg</file>
+    <file>icons/general_movemodule.svg</file>
     <file>icons/general_restartfile.svg</file>
     <file>icons/slider-off.svg</file>
     <file>icons/general_trash.svg</file>
