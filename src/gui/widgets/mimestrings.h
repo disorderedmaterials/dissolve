@@ -84,6 +84,10 @@ class MimeStrings : public QMimeData
 	void add(MimeString::MimeStringType type, QString data);
 	// Add mime strings from source MimeStrings
 	void add(MimeStrings& sourceStrings);
+	// Return whether the specified MimeString data is present
+	bool hasData(MimeString::MimeStringType type) const;
+	// Return the data for the specified type
+	QString data(MimeString::MimeStringType type) const;
 	// Return mime strings
 	List<MimeString>& mimeStrings();
 };
