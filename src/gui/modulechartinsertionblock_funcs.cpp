@@ -20,6 +20,7 @@
 */
 
 #include "gui/modulechartinsertionblock.h"
+#include "gui/modulechartmoduleblock.h"
 #include "gui/modulechartmetrics.h"
 #include "gui/gui.h"
 #include "gui/keywordwidgets.h"
@@ -125,4 +126,23 @@ int ModuleChartInsertionBlock::widgetHeight() const
 void ModuleChartInsertionBlock::setWidgetGeometry(int left, int top, int width, int height)
 {
 	setGeometry(left, top, width, height);
+}
+
+/*
+ * Icons
+ */
+
+// Set icons to reflect insertion of specified Module
+void ModuleChartInsertionBlock::setDisplayModuleInsertion(QString moduleType)
+{
+	ui.ActionLabel->setPixmap(QPixmap(":/general/icons/general_add.svg"));
+	ui.ModuleIconLabel->setPixmap(ModuleChartModuleBlock::modulePixmap(qPrintable(moduleType)));
+	ui.ModuleIconLabel->setVisible(true);
+}
+
+// Set icons to reflect moving existing Module to new position
+void ModuleChartInsertionBlock::setDisplayModuleMove()
+{
+	ui.ActionLabel->setPixmap(QPixmap(":/general/icons/general_movemodule.svg"));
+	ui.ModuleIconLabel->setVisible(true);
 }

@@ -23,6 +23,7 @@
 #include "gui/gui.h"
 #include "gui/modulechart.hui"
 #include "gui/modulepalette.hui"
+#include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "base/lineparser.h"
 
@@ -53,9 +54,42 @@ bool ModuleEditor::setUp(DissolveWindow* dissolveWindow, ModuleLayer* moduleLaye
 	chartWidget_->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
 	ui.ModuleScrollArea->setWidget(chartWidget_);
 
-	// Create a ModulePalette widget
-	paletteWidget_ = new ModulePalette(dissolveWindow, dissolveWindow->dissolve().masterModules());
-	ui.PaletteScrollArea->setWidget(paletteWidget_);
+	// Add MimeTreeWidgetItems for each Module, adding them to a parent category item
+	moduleCategories_.clear();
+	ListIterator<Module> moduleIterator(dissolveWindow->dissolve().masterModules());
+	while (const Module* module = moduleIterator.iterate())
+	{
+		// Check that the category is not 'HIDDEN' (in which case we don't show it)
+		if (DissolveSys::sameString("HIDDEN", module->category())) continue;
+
+		// Find category for this Module (if it exists) or create a new one
+		MimeTreeWidgetItem* categoryItem = NULL;
+		RefListIterator<MimeTreeWidgetItem,CharString> categoryIterator(moduleCategories_);
+		while (categoryItem = categoryIterator.iterate()) if (DissolveSys::sameString(module->category(), categoryIterator.currentData())) break;
+		if (categoryItem == NULL)
+		{
+			categoryItem = new MimeTreeWidgetItem((QTreeWidget*)NULL, 1000);
+			categoryItem->setText(0, module->category());
+			categoryItem->setFlags(Qt::ItemIsEnabled);
+			moduleCategories_.add(categoryItem, module->category());
+		}
+
+		// Create item for the Module
+		MimeTreeWidgetItem* item = new MimeTreeWidgetItem(categoryItem, 1000);
+		item->setIcon(0, ModuleChartModuleBlock::modulePixmap(module));
+		item->setText(0, module->type());
+		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsDragEnabled);
+		item->addMimeString(MimeString::ModuleType, module->type());
+	}
+
+	// Populate the available Modules tree with the categories we now have
+	ui.AvailableModulesTree->clear();
+	RefListIterator<MimeTreeWidgetItem,CharString> categoryIterator(moduleCategories_);
+	while (MimeTreeWidgetItem* categoryItem = categoryIterator.iterate()) ui.AvailableModulesTree->addTopLevelItem(categoryItem);
+	ui.AvailableModulesTree->resizeColumnToContents(0);
+	ui.AvailableModulesTree->sortByColumn(0, Qt::AscendingOrder);
+	ui.AvailableModulesTree->setSortingEnabled(true);
+	ui.AvailableModulesTree->expandAll();
 
 	// Hide palette group initially
 // 	ui.PaletteGroup->setVisible(false);

@@ -87,8 +87,10 @@ class ModuleChartModuleBlock : public QWidget, public ModuleChartBlock
 	QWidget* widget();
 	// Update controls within widget
 	void updateControls();
-	// Update icon
-	void updateIcon();
+	// Return suitable QPixmap for supplied Module
+	static QPixmap modulePixmap(const Module* module);
+	// Return suitable QPixmap for supplied Module type
+	static QPixmap modulePixmap(QString moduleType);
 	// Disable sensitive controls, ready for main code to run
 	void disableSensitiveControls();
 	// Enable sensitive controls, ready for main code to run

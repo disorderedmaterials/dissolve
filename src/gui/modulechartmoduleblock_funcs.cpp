@@ -49,7 +49,7 @@ ModuleChartModuleBlock::ModuleChartModuleBlock(QWidget* parent, DissolveWindow* 
 	// Set up our keywords widget
 	ui.KeywordsWidget->setUp(dissolveWindow_, module_);
 
-	updateIcon();
+	ui.IconLabel->setPixmap(modulePixmap(module_));
 	updateControls();
 }
 
@@ -147,19 +147,22 @@ void ModuleChartModuleBlock::updateControls()
 	ui.KeywordsWidget->updateControls();
 }
 
-// Update icon
-void ModuleChartModuleBlock::updateIcon()
+// Return suitable QPixmap for supplied Module
+QPixmap ModuleChartModuleBlock::modulePixmap(const Module* module)
 {
-	if (!module_)
-	{
-		ui.IconLabel->setPixmap(QPixmap(":/modules/icons/modules_generic.svg"));
-		return;
-	}
+	if (module) return modulePixmap(module->type());
 
+	return QPixmap(":/modules/icons/modules_generic.svg");
+}
+
+// Return suitable QPixmap for supplied Module type
+QPixmap ModuleChartModuleBlock::modulePixmap(QString moduleType)
+{
 	// Construct the name of the icon for this module in our resource file
-	CharString iconName(":/modules/icons/modules_%s.svg", DissolveSys::lowerCase(module_->type()));
-	if (QFile::exists(iconName.get())) ui.IconLabel->setPixmap(QPixmap(iconName.get()));
-	else ui.IconLabel->setPixmap(QPixmap(":/modules/icons/modules_generic.svg"));
+	QString iconName = QString(":/modules/icons/modules_%1.svg").arg(moduleType.toLower());
+	if (QFile::exists(iconName)) return QPixmap(iconName);
+
+	return QPixmap(":/modules/icons/modules_generic.svg");
 }
 
 // Disable sensitive controls, ready for main code to run

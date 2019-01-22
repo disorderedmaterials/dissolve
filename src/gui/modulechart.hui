@@ -97,6 +97,10 @@ class ModuleChart : public QWidget
 	private:
 	// Position of last mouse click
 	QPoint mouseDownPosition_;
+	// Name of new Module to add (dragged from palette) if any
+	QString paletteModuleToAdd_;
+	// Whether a Module is currently being dragged from the palette
+	bool paletteModuleDragged_;
 	// ModuleChartModuleBlock being dragged (if a local drag)
 	ModuleChartModuleBlock* draggedBlock_;
 	// Drop hotspots avialable on the chart

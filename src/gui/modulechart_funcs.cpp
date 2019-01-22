@@ -22,6 +22,7 @@
 #include "gui/modulechart.hui"
 #include "gui/modulechartmetrics.h"
 #include "gui/modulechartinsertionblock.h"
+#include "gui/widgets/mimestrings.h"
 #include "gui/gui.h"
 #include "module/list.h"
 #include "module/module.h"
@@ -48,6 +49,7 @@ ModuleChart::ModuleChart(DissolveWindow* dissolveWindow, ModuleList& modules, QW
 	// Drag / Drop
 	setAcceptDrops(true);
 	draggedBlock_ = NULL;
+	paletteModuleDragged_ = false;
 	insertionWidget_ = NULL;
 	currentHotSpotIndex_ = -1;
 
@@ -269,13 +271,30 @@ void ModuleChart::dragEnterEvent(QDragEnterEvent* event)
 	// Is the correct data type being dragged over us?
 	if (event->mimeData()->hasFormat("image/x-dissolve-moduleblock")) event->accept();
 	else if (event->mimeData()->hasFormat("image/x-dissolve-paletteblock")) event->accept();
-	else event->ignore();
+	else if (event->mimeData()->hasFormat("dissolve/mimestrings"))
+	{
+		// Cast into a MimeStrings object
+		MimeStrings* mimeStrings = (MimeStrings*) event->mimeData();
+		if (!mimeStrings) return;
+
+		// Check if the relevant datum is present
+		if (mimeStrings->hasData(MimeString::ModuleType))
+		{
+			paletteModuleDragged_ = true;
+			paletteModuleToAdd_ = mimeStrings->data(MimeString::ModuleType);
+			recreateDisplayWidgets();
+			event->accept();
+		}
+		else event->ignore();
+	}
 }
 
 // Drag leave event
 void ModuleChart::dragLeaveEvent(QDragLeaveEvent* event)
 {
 	// Object has been dragged outside the widget
+	resetAfterDrop();
+
 	update();
 	event->accept();
 }
@@ -358,6 +377,47 @@ void ModuleChart::dropEvent(QDropEvent* event)
 		}
 		else printf("ModuleReference from dragged block has no parent list, so can't move it.\n");
 	}
+	else if (event->mimeData()->hasFormat("dissolve/mimestrings"))
+	{
+		// Cast into a MimeStrings object
+		MimeStrings* mimeStrings = (MimeStrings*) event->mimeData();
+		if (!mimeStrings) return;
+		if (!mimeStrings->hasData(MimeString::ModuleType))
+		{
+			event->ignore();
+			resetAfterDrop();
+			return;
+		}
+
+		// Check for a current hot spot and ensure we have a current palette Module
+		ModuleChartHotSpot* hotSpot = (currentHotSpotIndex_ == -1 ? NULL : hotSpots_[currentHotSpotIndex_]);
+		if ((!hotSpot) || (!paletteModuleDragged_))
+		{
+			event->ignore();
+			resetAfterDrop();
+			return;
+		}
+
+		// Create the new module
+		Module* newModule = dissolveWindow_->dissolve().createModuleInstance(qPrintable(paletteModuleToAdd_));
+
+		// Get the ModuleReference before which we are going to move the targetReference
+		if (hotSpot->moduleBlockAfter() == NULL)
+		{
+			// No next block, so add the new Module to the end of the current list
+			modules_.add(newModule);
+		}
+		else
+		{
+			// Insert the new Module before the next block
+			modules_.add(newModule, NULL, hotSpot->moduleBlockAfter()->moduleReference()->module());
+		}
+
+		updateControls();
+
+		// Widgets are almost in the right place, so don't animate anything
+		resetAfterDrop(false);
+	}
 	else
 	{
 		event->ignore();
@@ -383,6 +443,8 @@ void ModuleChart::resetAfterDrop(bool animateWidgets)
 {
 	currentHotSpotIndex_ = -1;
 	draggedBlock_ = NULL;
+	paletteModuleDragged_ = false;
+	paletteModuleToAdd_.clear();
 
 	recreateDisplayWidgets();
 
@@ -431,6 +493,13 @@ void ModuleChart::recreateDisplayWidgets()
 
 	// Hotspot might be after the last displayed widget, so check here...
 	if (hotSpot && (hotSpot->moduleBlockAfter() == NULL)) displayBlocks_.add(insertionWidget_, NULL);
+
+	// Set the icons in the insertionWidget_ to reflect the drop action
+	if (hotSpot)
+	{
+		if (paletteModuleDragged_) insertionWidget_->setDisplayModuleInsertion(paletteModuleToAdd_);
+		else insertionWidget_->setDisplayModuleMove();
+	}
 }
 
 // Find ModuleChartModuleBlock displaying specified ModuleReference

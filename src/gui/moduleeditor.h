@@ -23,10 +23,13 @@
 #define DISSOLVE_MODULEEDITOR_H
 
 #include "gui/ui_moduleeditor.h"
+#include "base/charstring.h"
+#include "templates/reflist.h"
 
 // Forward Declarations
 class DissolveWindow;
 class LineParser;
+class MimeTreeWidgetItem;
 class ModuleChart;
 class ModuleLayer;
 class ModulePalette;
@@ -48,6 +51,10 @@ class ModuleEditor : public QWidget
 	/*
 	 * Setup
 	 */
+	private:
+	// Module categories and their associated MimeTreeWidgetItems
+	RefList<MimeTreeWidgetItem,CharString> moduleCategories_;
+
 	public:
 	// Set up the ModuleEditor for the specified ModuleLayer
 	bool setUp(DissolveWindow* dissolveWindow, ModuleLayer* moduleLayer);

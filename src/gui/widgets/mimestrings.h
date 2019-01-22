@@ -37,6 +37,7 @@ class MimeString : public ListItem<MimeString>
 	enum MimeStringType
 	{
 		UChromaCollectionBlockType,		/* UChroma-format 'Collection' block */
+		ModuleType,				/* Module type */
 		nMimeStringTypes
 	};
 	// Constructor

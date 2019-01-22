@@ -26,8 +26,8 @@ clean-local:
 libgui_la_SOURCES = main.qrc
 
 # UI - Module Chart
-libgui_la_SOURCES += modulechartinsertionblock.ui modulechartmoduleblock.ui modulecontrolwidget.ui moduleeditor.ui modulepaletteblock.ui
-libgui_la_SOURCES += modulechart.hui modulepalette.hui
+libgui_la_SOURCES += modulechartinsertionblock.ui modulechartmoduleblock.ui modulecontrolwidget.ui moduleeditor.ui
+libgui_la_SOURCES += modulechart.hui
 # UI - Widgets
 libgui_la_SOURCES += wizardwidgetfooter.ui wizardwidgetheader.ui wizardwidget.hui
 libgui_la_SOURCES += addconfigurationwizard.ui addprocessinglayerwizard.ui addspecieswizard.ui generalwizard.ui pairpotentialwidget.ui
@@ -45,7 +45,7 @@ libgui_la_SOURCES += forcefieldtab_funcs.cpp
 libgui_la_SOURCES += generalwizard_funcs.cpp gui_funcs.cpp gui_menu.cpp gui_simulation_control.cpp gui_simulation_guide.cpp gui_simulation_state.cpp gui_simulation_tabs.cpp gui_stack.cpp gui_start.cpp
 libgui_la_SOURCES += maintab.cpp
 libgui_la_SOURCES += modulechart_funcs.cpp modulechartblock.cpp modulecharthotspot.cpp modulechartinsertionblock_funcs.cpp modulechartmoduleblock_funcs.cpp
-libgui_la_SOURCES += modulecontrolwidget_funcs.cpp moduleeditor_funcs.cpp modulekeywordswidget_funcs.cpp modulelayertab_funcs.cpp modulepalette_funcs.cpp modulepaletteblock_funcs.cpp moduletab_funcs.cpp modulewidget.cpp
+libgui_la_SOURCES += modulecontrolwidget_funcs.cpp moduleeditor_funcs.cpp modulekeywordswidget_funcs.cpp modulelayertab_funcs.cpp moduletab_funcs.cpp modulewidget.cpp
 libgui_la_SOURCES += outputhandler_funcs.cpp
 libgui_la_SOURCES += pairpotentialwidget_funcs.cpp
 libgui_la_SOURCES += speciestab_funcs.cpp
@@ -57,7 +57,7 @@ noinst_HEADERS = addconfigurationdialog.h addconfigurationwizard.h addprocessing
 noinst_HEADERS += configurationtab.h
 noinst_HEADERS += forcefieldtab.h
 noinst_HEADERS += generalwizard.h gui.h
-noinst_HEADERS += maintab.h modulechartblock.h modulecharthotspot.h modulechartinsertionblock.h modulechartmetrics.h modulechartmoduleblock.h modulecontrolwidget.h moduleeditor.h modulekeywordswidget.h modulelayertab.h modulepaletteblock.h moduletab.h modulewidget.h
+noinst_HEADERS += maintab.h modulechartblock.h modulecharthotspot.h modulechartinsertionblock.h modulechartmetrics.h modulechartmoduleblock.h modulecontrolwidget.h moduleeditor.h modulekeywordswidget.h modulelayertab.h moduletab.h modulewidget.h
 noinst_HEADERS += pairpotentialwidget.h
 noinst_HEADERS += speciestab.h
 noinst_HEADERS += wizardwidgetfooter.h wizardwidgetheader.h wizardwidgethighlight.h wizardwidgetpageinfo.h workspacetab.h
