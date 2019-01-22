@@ -248,21 +248,21 @@ class Dissolve
 	// List of all instances of all used Modules
 	List<Module> moduleInstances_;
 	// List of master Module instances
-	List<ModuleReference> masterModules_;
+	List<Module> masterModules_;
 
 	private:
 	// Register master Module
-	bool registerMasterModule(Module* mainInstance);
+	bool registerMasterModule(Module* masterInstance);
 
 	public:
 	// Register master instances for all Modules
 	bool registerMasterModules();
 	// Return master Module instances
-	const List<ModuleReference>& masterModules() const;
-	// Search for named master Module
-	Module* findMasterModule(const char* moduleName) const;
-	// Create a Module instance for the named Module
-	Module* createModuleInstance(const char* moduleName);
+	const List<Module>& masterModules() const;
+	// Search for master Module of the named type
+	Module* findMasterModule(const char* moduleType) const;
+	// Create a Module instance for the named Module type
+	Module* createModuleInstance(const char* moduleType);
 	// Search for any instance of any module with the specified unique name
 	Module* findModuleInstance(const char* uniqueName);
 

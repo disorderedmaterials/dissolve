@@ -47,23 +47,20 @@
  */
 
 // Register master Module
-bool Dissolve::registerMasterModule(Module* mainInstance)
+bool Dissolve::registerMasterModule(Module* masterInstance)
 {
 	// Do sanity check on name
-	ListIterator<ModuleReference> moduleIterator(masterModules_);
-	while (ModuleReference* modRef = moduleIterator.iterate())
+	ListIterator<Module> moduleIterator(masterModules_);
+	while (Module* module = moduleIterator.iterate())
 	{
-		Module* module = modRef->module();
-
-		if (DissolveSys::sameString(module->type(), mainInstance->type()))
+		if (DissolveSys::sameString(module->type(), masterInstance->type()))
 		{
 			Messenger::error("Two modules cannot have the same name (%s).\n", module->type());
 			return false;
 		}
 	}
 
-	ModuleReference* masterRef = masterModules_.add();
-	masterRef->set(mainInstance, NULL, NULL);
+	masterModules_.own(masterInstance);
 
 	return true;
 }
@@ -92,43 +89,39 @@ bool Dissolve::registerMasterModules()
 	if (!registerMasterModule(new TestModule)) return false;
 
 	Messenger::print("Module Information (%i available):\n", masterModules_.nItems());
-	ListIterator<ModuleReference> moduleIterator(masterModules_);
-	while (ModuleReference* modRef = moduleIterator.iterate())
+	ListIterator<Module> moduleIterator(masterModules_);
+	while (Module* module = moduleIterator.iterate())
 	{
-		Module* masterInstance = modRef->module();
-
-		Messenger::print(" --> %s\n", masterInstance->type());
-		Messenger::print("     %s\n", masterInstance->brief());
+		Messenger::print(" --> %s\n", module->type());
+		Messenger::print("     %s\n", module->brief());
 	}
 }
 
-// Search for named master Module
-Module* Dissolve::findMasterModule(const char* moduleName) const
+// Search for master Module of the named type
+Module* Dissolve::findMasterModule(const char* moduleType) const
 {
-	ListIterator<ModuleReference> moduleIterator(masterModules_);
-	while (ModuleReference* modRef = moduleIterator.iterate())
+	ListIterator<Module> moduleIterator(masterModules_);
+	while (Module* module = moduleIterator.iterate())
 	{
-		Module* masterInstance = modRef->module();
-		
-		if (DissolveSys::sameString(masterInstance->type(), moduleName)) return masterInstance;
+		if (DissolveSys::sameString(module->type(), moduleType)) return module;
 	}
 
 	return NULL;
 }
 
 // Return master Module instances
-const List<ModuleReference>& Dissolve::masterModules() const
+const List<Module>& Dissolve::masterModules() const
 {
 	return masterModules_;
 }
 
-// Create a Module instance for the named Module
-Module* Dissolve::createModuleInstance(const char* moduleName)
+// Create a Module instance for the named Module type
+Module* Dissolve::createModuleInstance(const char* moduleType)
 {
-	Module* masterModule = findMasterModule(moduleName);
+	Module* masterModule = findMasterModule(moduleType);
 	if (!masterModule)
 	{
-		Messenger::error("No Module named '%s' exists.\n", moduleName);
+		Messenger::error("No Module type '%s' exists.\n", moduleType);
 		return NULL;
 	}
 
