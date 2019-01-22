@@ -27,6 +27,12 @@ const char* MDModule::type() const
 	return "MD";
 }
 
+// Return category for module
+const char* MDModule::category() const
+{
+	return "Evolution";
+}
+
 // Return brief description of module
 const char* MDModule::brief() const
 {

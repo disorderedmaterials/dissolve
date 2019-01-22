@@ -27,6 +27,12 @@ const char* CalculateDAngleModule::type() const
 	return "CalculateDAngle";
 }
 
+// Return category for module
+const char* CalculateDAngleModule::category() const
+{
+	return "Property Calculation";
+}
+
 // Return brief description of module
 const char* CalculateDAngleModule::brief() const
 {

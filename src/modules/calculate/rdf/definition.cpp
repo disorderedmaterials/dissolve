@@ -27,6 +27,12 @@ const char* CalculateRDFModule::type() const
 	return "CalculateRDF";
 }
 
+// Return category for module
+const char* CalculateRDFModule::category() const
+{
+	return "Property Calculation";
+}
+
 // Return brief description of module
 const char* CalculateRDFModule::brief() const
 {

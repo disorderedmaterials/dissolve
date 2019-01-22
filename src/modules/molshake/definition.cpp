@@ -27,6 +27,12 @@ const char* MolShakeModule::type() const
 	return "MolShake";
 }
 
+// Return category for module
+const char* MolShakeModule::category() const
+{
+	return "Evolution";
+}
+
 // Return brief description of module
 const char* MolShakeModule::brief() const
 {

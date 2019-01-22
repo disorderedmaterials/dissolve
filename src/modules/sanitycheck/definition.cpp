@@ -27,6 +27,12 @@ const char* SanityCheckModule::type() const
 	return "SanityCheck";
 }
 
+// Return category for module
+const char* SanityCheckModule::category() const
+{
+	return "Checks & Tests";
+}
+
 // Return brief description of module
 const char* SanityCheckModule::brief() const
 {

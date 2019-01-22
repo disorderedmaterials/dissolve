@@ -27,6 +27,12 @@ const char* IntraShakeModule::type() const
 	return "IntraShake";
 }
 
+// Return category for module
+const char* IntraShakeModule::category() const
+{
+	return "Evolution";
+}
+
 // Return brief description of module
 const char* IntraShakeModule::brief() const
 {

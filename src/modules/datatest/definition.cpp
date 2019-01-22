@@ -27,6 +27,12 @@ const char* DataTestModule::type() const
 	return "DataTest";
 }
 
+// Return category for module
+const char* DataTestModule::category() const
+{
+	return "Checks & Tests";
+}
+
 // Return brief description of module
 const char* DataTestModule::brief() const
 {

@@ -27,6 +27,12 @@ const char* ForcesModule::type() const
 	return "Forces";
 }
 
+// Return category for module
+const char* ForcesModule::category() const
+{
+	return "Forcefield";
+}
+
 // Return brief description of module
 const char* ForcesModule::brief() const
 {

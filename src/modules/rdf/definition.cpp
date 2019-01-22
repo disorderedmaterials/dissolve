@@ -27,6 +27,13 @@ const char* RDFModule::type() const
 	return "RDF";
 }
 
+// Return category for module
+const char* RDFModule::category() const
+{
+	return "Correlation Functions";
+}
+
+
 // Return brief description of module
 const char* RDFModule::brief() const
 {

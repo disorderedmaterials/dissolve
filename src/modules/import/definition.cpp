@@ -27,6 +27,12 @@ const char* ImportModule::type() const
 	return "Import";
 }
 
+// Return category for module
+const char* ImportModule::category() const
+{
+	return "Input / Output";
+}
+
 // Return brief description of module
 const char* ImportModule::brief() const
 {

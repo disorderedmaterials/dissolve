@@ -27,6 +27,12 @@ const char* TestModule::type() const
 	return "Test";
 }
 
+// Return category for module
+const char* TestModule::category() const
+{
+	return "HIDDEN";
+}
+
 // Return brief description of module
 const char* TestModule::brief() const
 {

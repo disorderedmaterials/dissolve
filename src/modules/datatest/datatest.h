@@ -52,6 +52,8 @@ class DataTestModule : public Module
 	public:
 	// Return type of module
 	const char* type() const;
+	// Return category for module
+	const char* category() const;
 	// Return brief description of module
 	const char* brief() const;
 	// Return the maximum number of Configurations the Module can target (or -1 for any number)

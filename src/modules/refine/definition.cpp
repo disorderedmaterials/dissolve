@@ -27,6 +27,12 @@ const char* RefineModule::type() const
 	return "Refine";
 }
 
+// Return category for module
+const char* RefineModule::category() const
+{
+	return "Forcefield";
+}
+
 // Return brief description of module
 const char* RefineModule::brief() const
 {

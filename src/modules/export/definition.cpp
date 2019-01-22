@@ -27,6 +27,12 @@ const char* ExportModule::type() const
 	return "Export";
 }
 
+// Return category for module
+const char* ExportModule::category() const
+{
+	return "Input / Output";
+}
+
 // Return brief description of module
 const char* ExportModule::brief() const
 {

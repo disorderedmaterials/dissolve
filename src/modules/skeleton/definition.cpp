@@ -27,6 +27,12 @@ const char* SkeletonModule::type() const
 	return "Skeleton";
 }
 
+// Return category for module
+const char* SkeletonModule::category() const
+{
+	return "NO CATEGORY ASSIGNED";
+}
+
 // Return brief description of module
 const char* SkeletonModule::brief() const
 {

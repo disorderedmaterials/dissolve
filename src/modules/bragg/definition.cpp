@@ -27,6 +27,12 @@ const char* BraggModule::type() const
 	return "Bragg";
 }
 
+// Return category for module
+const char* BraggModule::category() const
+{
+	return "Correlation Functions";
+}
+
 // Return brief description of module
 const char* BraggModule::brief() const
 {

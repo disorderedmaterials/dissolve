@@ -27,6 +27,12 @@ const char* EPSRModule::type() const
 	return "EPSR";
 }
 
+// Return category for module
+const char* EPSRModule::category() const
+{
+	return "Forcefield";
+}
+
 // Return brief description of module
 const char* EPSRModule::brief() const
 {

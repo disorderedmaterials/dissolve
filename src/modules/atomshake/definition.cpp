@@ -27,6 +27,12 @@ const char* AtomShakeModule::type() const
 	return "AtomShake";
 }
 
+// Return category for module
+const char* AtomShakeModule::category() const
+{
+	return "Evolution";
+}
+
 // Return brief description of module
 const char* AtomShakeModule::brief() const
 {

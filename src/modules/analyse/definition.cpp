@@ -27,6 +27,12 @@ const char* AnalyseModule::type() const
 	return "Analyse";
 }
 
+// Return category for module
+const char* AnalyseModule::category() const
+{
+	return "Property Calculation";
+}
+
 // Return brief description of module
 const char* AnalyseModule::brief() const
 {

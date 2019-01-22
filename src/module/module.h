@@ -64,6 +64,8 @@ class Module : public ListItem<Module>
 	public:
 	// Return type of Module
 	virtual const char* type() const = 0;
+	// Return category for Module
+	virtual const char* category() const = 0;
 	// Set unique name of Module
 	void setUniqueName(const char* uniqueName);
 	// Return unique name of Module

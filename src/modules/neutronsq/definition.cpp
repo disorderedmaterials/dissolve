@@ -27,6 +27,12 @@ const char* NeutronSQModule::type() const
 	return "NeutronSQ";
 }
 
+// Return category for module
+const char* NeutronSQModule::category() const
+{
+	return "Correlation Functions";
+}
+
 // Return brief description of module
 const char* NeutronSQModule::brief() const
 {

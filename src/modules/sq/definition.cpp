@@ -27,6 +27,12 @@ const char* SQModule::type() const
 	return "SQ";
 }
 
+// Return category for module
+const char* SQModule::category() const
+{
+	return "Correlation Functions";
+}
+
 // Return brief description of module
 const char* SQModule::brief() const
 {

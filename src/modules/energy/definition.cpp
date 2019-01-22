@@ -27,6 +27,12 @@ const char* EnergyModule::type() const
 	return "Energy";
 }
 
+// Return category for module
+const char* EnergyModule::category() const
+{
+	return "Forcefield";
+}
+
 // Return brief description of module
 const char* EnergyModule::brief() const
 {

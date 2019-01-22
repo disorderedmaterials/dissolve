@@ -27,6 +27,12 @@ const char* ChecksModule::type() const
 	return "Checks";
 }
 
+// Return category for module
+const char* ChecksModule::category() const
+{
+	return "Checks & Tests";
+}
+
 // Return brief description of module
 const char* ChecksModule::brief() const
 {

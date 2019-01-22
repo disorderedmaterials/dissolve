@@ -27,6 +27,12 @@ const char* CalibrationModule::type() const
 	return "Calibration";
 }
 
+// Return category for module
+const char* CalibrationModule::category() const
+{
+	return "Optimisation";
+}
+
 // Return brief description of module
 const char* CalibrationModule::brief() const
 {
