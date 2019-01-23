@@ -98,6 +98,8 @@ class ModuleChartModuleBlock : public QWidget, public ModuleChartBlock
 	void on_RemoveButton_clicked(bool checked);
 	void on_RunButton_clicked(bool checked);
 	void on_EnabledButton_clicked(bool checked);
+	void on_FrequencySpin_valueChanged(int value);
+	void on_ConfigurationTargetList_itemChanged(QListWidgetItem* item);
 
 	signals:
 	void settingsToggled();
