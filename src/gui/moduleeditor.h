@@ -52,6 +52,10 @@ class ModuleEditor : public QWidget
 	 * Setup
 	 */
 	private:
+	// Pointer to main window
+	DissolveWindow* dissolveWindow_;
+	// Target ModuleLayer
+	ModuleLayer* moduleLayer_;
 	// Module categories and their associated MimeTreeWidgetItems
 	RefList<MimeTreeWidgetItem,CharString> moduleCategories_;
 
@@ -82,6 +86,9 @@ class ModuleEditor : public QWidget
 	private:
 	// Chart widget being displayed
 	ModuleChart* chartWidget_;
+
+	private slots:
+	void on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* item);
 
 
 	/*

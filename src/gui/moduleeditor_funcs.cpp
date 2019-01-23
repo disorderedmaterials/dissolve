@@ -25,6 +25,7 @@
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "base/lineparser.h"
+#include "templates/variantpointer.h"
 
 // Constructor / Destructor
 ModuleEditor::ModuleEditor(QWidget* parent) : QWidget(parent)
@@ -47,8 +48,11 @@ ModuleEditor::~ModuleEditor()
 // Setup up the ModuleEditor for the specified Module list
 bool ModuleEditor::setUp(DissolveWindow* dissolveWindow, ModuleLayer* moduleLayer)
 {
+	dissolveWindow_ = dissolveWindow;
+	moduleLayer_ = moduleLayer;
+
 	// Create a ModuleChart widget and set its source list
-	chartWidget_ = new ModuleChart(dissolveWindow, *moduleLayer);
+	chartWidget_ = new ModuleChart(dissolveWindow, *moduleLayer_);
 	chartWidget_->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
 	ui.ModuleScrollArea->setWidget(chartWidget_);
 
@@ -77,6 +81,7 @@ bool ModuleEditor::setUp(DissolveWindow* dissolveWindow, ModuleLayer* moduleLaye
 		item->setIcon(0, ModuleChartModuleBlock::modulePixmap(module));
 		item->setText(0, module->type());
 		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsDragEnabled);
+		item->setData(0, Qt::UserRole, VariantPointer<const Module>(module));
 		item->addMimeString(MimeString::ModuleType, module->type());
 	}
 
@@ -126,6 +131,22 @@ void ModuleEditor::enableSensitiveControls()
 /*
  * Widget Functions
  */
+
+void ModuleEditor::on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* item)
+{
+	if (!moduleLayer_) return;
+
+	// Get the Module associated to the double-clicked item
+	const Module* module = (const Module*) VariantPointer<const Module>(item->data(0, Qt::UserRole));
+	if (!module) return;
+
+	// Create a new instance of the Module
+	Module* instance = dissolveWindow_->dissolve().createModuleInstance(module->type());
+
+	moduleLayer_->add(instance);
+
+	updateControls();
+}
 
 /*
  * State
