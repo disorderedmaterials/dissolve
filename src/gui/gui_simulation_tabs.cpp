@@ -240,6 +240,14 @@ ConfigurationTab* DissolveWindow::configurationTab(QWidget* page)
 	return NULL;
 }
 
+// Find ModuleLayerTab containing specified page widget
+ModuleLayerTab* DissolveWindow::processingLayerTab(QWidget* page)
+{
+	for (ModuleLayerTab* tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next) if (tab->page() == page) return tab;
+
+	return NULL;
+}
+
 // Find ModuleTab containing specified page widget
 ModuleTab* DissolveWindow::moduleTab(QWidget* page)
 {
@@ -396,8 +404,8 @@ void DissolveWindow::removeTab(QWidget* page)
 	// Now delete the tab from its list - this will delete the actual page widget
 	if (speciesTab(page)) speciesTabs_.remove(speciesTab(page));
 	else if (configurationTab(page)) configurationTabs_.remove(configurationTab(page));
+	else if (processingLayerTab(page)) processingLayerTabs_.remove(processingLayerTab(page));
 	else if (moduleTab(page)) moduleTabs_.remove(moduleTab(page));
 	else if (workspaceTab(page)) workspaceTabs_.remove(workspaceTab(page));
-	
-	printf("Couldn't remove tab %p as it could not be found in any list.\n", page);
+	else printf("Couldn't remove tab %p as it could not be found in any list.\n", page);
 }

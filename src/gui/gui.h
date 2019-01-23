@@ -262,6 +262,8 @@ class DissolveWindow : public QMainWindow
 	SpeciesTab* speciesTab(QWidget* page);
 	// Find ConfigurationTab containing specified page widget
 	ConfigurationTab* configurationTab(QWidget* page);
+	// Find ModuleLayerTab containing specified page widget
+	ModuleLayerTab* processingLayerTab(QWidget* page);
 	// Find ModuleTab containing specified page widget
 	ModuleTab* moduleTab(QWidget* page);
 	// Find ModuleTab containing specified Module
