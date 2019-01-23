@@ -31,7 +31,6 @@ class Dissolve;
 class DissolveWindow;
 class KeywordWidgetBase;
 class Module;
-class ModuleReference;
 
 // ModuleChart Module Block Widget
 class ModuleChartModuleBlock : public QWidget, public ModuleChartBlock
@@ -41,7 +40,7 @@ class ModuleChartModuleBlock : public QWidget, public ModuleChartBlock
 
 	public:
 	// Constructor / Destructor
-	ModuleChartModuleBlock(QWidget* parent, DissolveWindow* dissolveWindow, ModuleReference* moduleReference);
+	ModuleChartModuleBlock(QWidget* parent, DissolveWindow* dissolveWindow, Module* module);
 	~ModuleChartModuleBlock();
 	// Main form declaration
 	Ui::ModuleChartModuleWidget ui;
@@ -53,14 +52,12 @@ class ModuleChartModuleBlock : public QWidget, public ModuleChartBlock
 	private:
 	// Associated Module
 	Module* module_;
-	// Reference for associated Module
-	ModuleReference* moduleReference_;
 	// List of keyword widgets displayed
 	RefList<KeywordWidgetBase,bool> keywordWidgets_;
 
 	public:
-	// Return reference for associated Module
-	ModuleReference* moduleReference();
+	// Return associated Module
+	Module* module();
 
 
 	/*

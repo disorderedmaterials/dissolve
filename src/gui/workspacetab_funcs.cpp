@@ -227,11 +227,9 @@ void WorkspaceTab::createContextMenu(QMenu* parent)
 			moduleItem->setFont(italicFont);
 			moduleItem->setEnabled(false);
 		}
-		ListIterator<ModuleReference> moduleIterator(cfg->modules().modules());
-		while (ModuleReference* modRef = moduleIterator.iterate())
+		ListIterator<Module> moduleIterator(cfg->modules());
+		while (Module* module= moduleIterator.iterate())
 		{
-			Module* module = modRef->module();
-
 			QAction* moduleItem = cfgMenu->addAction(CharString("%s (%s)", module->type(), module->uniqueName()).get());
 			moduleItem->setData(VariantPointer<Module>(module));
 			connect(moduleItem, SIGNAL(triggered(bool)), this, SLOT(contextMenuModuleSelected(bool)));
@@ -251,11 +249,9 @@ void WorkspaceTab::createContextMenu(QMenu* parent)
 			moduleItem->setFont(italicFont);
 			moduleItem->setEnabled(false);
 		}
-		ListIterator<ModuleReference> moduleIterator(layer->modules());
-		while (ModuleReference* modRef = moduleIterator.iterate())
+		ListIterator<Module> moduleIterator(layer->modules());
+		while (Module* module = moduleIterator.iterate())
 		{
-			Module* module = modRef->module();
-
 			QAction* moduleItem = parent->addAction(CharString("%s (%s)", module->type(), module->uniqueName()).get());
 			moduleItem->setData(VariantPointer<Module>(module));
 			connect(moduleItem, SIGNAL(triggered(bool)), this, SLOT(contextMenuModuleSelected(bool)));

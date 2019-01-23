@@ -340,11 +340,9 @@ bool Dissolve::saveInput(const char* filename)
 		// Modules
 		parser.writeLineF("\n  # Modules\n");
 		if (cfg->nModules() == 0) parser.writeLineF("  # -- None\n");
-		ListIterator<ModuleReference> moduleIterator(cfg->modules().modules());
-		while (ModuleReference* modRef = moduleIterator.iterate())
+		ListIterator<Module> moduleIterator(cfg->modules().modules());
+		while (Module* module = moduleIterator.iterate())
 		{
-			Module* module = modRef->module();
-
 			parser.writeLineF("  %s  %s  '%s'\n", ConfigurationBlock::keyword(ConfigurationBlock::ModuleKeyword), module->type(), module->uniqueName());
 
 			// Write frequency and disabled keywords
@@ -373,11 +371,9 @@ bool Dissolve::saveInput(const char* filename)
 	ListIterator<ModuleLayer> processingLayerIterator(processingLayers_);
 	while (ModuleLayer* layer = processingLayerIterator.iterate())
 	{
-		ListIterator<ModuleReference> processingIterator(layer->modules());
-		while (ModuleReference* modRef = processingIterator.iterate())
+		ListIterator<Module> processingIterator(layer->modules());
+		while (Module* module= processingIterator.iterate())
 		{
-			Module* module = modRef->module();
-
 			parser.writeLineF("\n%s  %s  '%s'\n", BlockKeywords::blockKeyword(BlockKeywords::ModuleBlockKeyword), module->type(), module->uniqueName());
 
 			// Write frequency and disabled keywords
@@ -575,7 +571,7 @@ bool Dissolve::saveRestart(const char* filename)
 	}
 
 	// Module timing information
-	ListIterator<Module> moduleIterator(moduleInstances_);
+	RefListIterator<Module,bool> moduleIterator(moduleInstances_);
 	while (Module* module = moduleIterator.iterate())
 	{
 		if (!parser.writeLineF("Timing  %s\n", module->uniqueName())) return false;

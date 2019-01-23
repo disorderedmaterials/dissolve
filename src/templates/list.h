@@ -265,6 +265,37 @@ template <class T> class List
 		++nItems_;
 		regenerate_ = true;
 	}
+	// Own an item into the list (before supplied item)
+	void ownBefore(T* oldItem, T* beforeItem)
+	{
+		if (beforeItem == NULL)
+		{
+			Messenger::error("No item supplied to List<T>::ownBefore().\n");
+			return;
+		}
+		if (oldItem == NULL)
+		{
+			Messenger::error("Internal Error: NULL pointer passed to List<T>::own().\n");
+			return;
+		}
+		// In the interests of 'pointer etiquette', refuse to own the item if its pointers are not NULL
+		if ((oldItem->next != NULL) || (oldItem->prev != NULL))
+		{
+			Messenger::error("List::own() <<<< Refused to own an item that still had links to other items >>>>\n");
+			return;
+		}
+		// Get pointer to next item after the supplied item (our newprev)
+		T* newPrev = beforeItem->prev;
+		// Re-point newnext and the new item
+		beforeItem->prev = oldItem;
+		oldItem->next = beforeItem;
+		// Re-point newprev and the new item
+		if (newPrev != NULL) newPrev->next = oldItem;
+		else listHead_ = oldItem;
+		oldItem->prev = newPrev;
+		++nItems_;
+		regenerate_ = true;
+	}
 
 
 	/*

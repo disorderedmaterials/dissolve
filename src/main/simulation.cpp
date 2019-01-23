@@ -164,11 +164,9 @@ bool Dissolve::iterate(int nIterations)
 		{
 			Messenger::print("   * '%s'\n", cfg->name());
 			if (cfg->nModules() == 0) Messenger::print("  (( No Tasks ))\n");
-			ListIterator<ModuleReference> modIterator(cfg->modules().modules());
-			while (ModuleReference* modRef = modIterator.iterate())
+			ListIterator<Module> modIterator(cfg->modules());
+			while (Module* module = modIterator.iterate())
 			{
-				Module* module = modRef->module();
-
 				Messenger::print("      --> %20s  (%s)\n", module->type(), module->enabled() ? module->frequencyDetails(iteration_) : "Disabled");
 
 				// TODO This will estimate wrongly for anything other than Sequential Processing
@@ -183,11 +181,9 @@ bool Dissolve::iterate(int nIterations)
 			Messenger::print("Processing layer '%s'  (%s):\n\n", layer->name(), layer->frequencyDetails(iteration_));
 			int layerExecutionCount = iteration_ / layer->frequency();
 
-			ListIterator<ModuleReference> processingIterator(layer->modules());
-			while (ModuleReference* modRef = processingIterator.iterate())
+			ListIterator<Module> processingIterator(layer->modules());
+			while (Module* module= processingIterator.iterate())
 			{
-				Module* module = modRef->module();
-				
 				Messenger::print("      --> %20s  (%s)\n", module->type(), module->frequencyDetails(layerExecutionCount));
 
 				thisTime += module->processTimes().value();
@@ -235,11 +231,9 @@ bool Dissolve::iterate(int nIterations)
 			if (!cfg->prepare(potentialMap_)) return false;
 
 			// Loop over Modules defined in the Configuration
-			ListIterator<ModuleReference> moduleIterator(cfg->modules().modules());
-			while (ModuleReference* modRef = moduleIterator.iterate())
+			ListIterator<Module> moduleIterator(cfg->modules());
+			while (Module* module = moduleIterator.iterate())
 			{
-				Module* module = modRef->module();
-
 				if (!module->runThisIteration(iteration_)) continue;
 
 				Messenger::heading("%s (%s)", module->type(), module->uniqueName());
@@ -287,11 +281,9 @@ bool Dissolve::iterate(int nIterations)
 			Messenger::banner("Layer '%s'", layer->name());
 			int layerExecutionCount = iteration_ / layer->frequency();
 
-			ListIterator<ModuleReference> processingIterator(layer->modules());
-			while (ModuleReference* modRef = processingIterator.iterate())
+			ListIterator<Module> processingIterator(layer->modules());
+			while (Module* module = processingIterator.iterate())
 			{
-				Module* module = modRef->module();
-
 				if (!module->runThisIteration(layerExecutionCount)) continue;
 
 				Messenger::heading("%s (%s)", module->type(), module->uniqueName());
@@ -434,11 +426,9 @@ void Dissolve::printTiming()
 		if (cfg->nModules() == 0) continue;
 
 		Messenger::print("   * '%s'\n", cfg->name());
-		ListIterator<ModuleReference> modIterator(cfg->modules().modules());
-		while (ModuleReference* modRef = modIterator.iterate())
+		ListIterator<Module> modIterator(cfg->modules().modules());
+		while (Module* module = modIterator.iterate())
 		{
-			Module* module = modRef->module();
-
 			SampledDouble timingInfo = module->processTimes();
 			Messenger::print("      --> %30s  %7.2f s/iteration (%i iterations)\n", CharString("%s (%s)", module->type(), module->uniqueName()).get(), timingInfo.value(), timingInfo.count());
 		}
@@ -449,11 +439,9 @@ void Dissolve::printTiming()
 	while (ModuleLayer* layer = processingLayerIterator.iterate())
 	{
 		Messenger::print("Processing Layer '%s':\n", layer->name());
-		ListIterator<ModuleReference> processingIterator(layer->modules());
-		while (ModuleReference* modRef = processingIterator.iterate())
+		ListIterator<Module> processingIterator(layer->modules());
+		while (Module* module = processingIterator.iterate())
 		{
-			Module* module = modRef->module();
-
 			SampledDouble timingInfo = module->processTimes();
 			Messenger::print("      --> %30s  %7.2f s/iteration (%i iterations)\n", CharString("%s (%s)", module->type(), module->uniqueName()).get(), timingInfo.value(), timingInfo.count());
 		}

@@ -1,3 +1,4 @@
+
 /*
 	*** Dynamic character string
 	*** src/base/charstring.cpp

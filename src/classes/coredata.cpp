@@ -235,7 +235,7 @@ Configuration* CoreData::findConfiguration(const char* name) const
  */
 
 // Set target Module instances list
-void CoreData::setModuleInstances(List<Module>* moduleInstances)
+void CoreData::setModuleInstances(RefList<Module,bool>* moduleInstances)
 {
 	moduleInstances_ = moduleInstances;
 }
@@ -245,11 +245,12 @@ Module* CoreData::findModule(const char* uniqueName) const
 {
 	if (!moduleInstances_)
 	{
-		printf("Error - List<Module> pointer not set in CoreData.\n");
+		printf("Error - RefList<Module,bool> pointer not set in CoreData.\n");
 		return NULL;
 	}
 
-	for (Module* module = moduleInstances_->first(); module != NULL; module = module->next) if (DissolveSys::sameString(module->uniqueName(), uniqueName)) return module;
+	RefListIterator<Module,bool> moduleIterator(*moduleInstances_);
+	while (Module* module = moduleIterator.iterate()) if (DissolveSys::sameString(module->uniqueName(), uniqueName)) return module;
 
 	return NULL;
 }

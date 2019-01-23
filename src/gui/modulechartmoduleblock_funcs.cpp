@@ -29,7 +29,7 @@
 #include <QPainter>
 
 // Constructor
-ModuleChartModuleBlock::ModuleChartModuleBlock(QWidget* parent, DissolveWindow* dissolveWindow, ModuleReference* modRef) : QWidget(parent), ModuleChartBlock(dissolveWindow, dissolveWindow->dissolve())
+ModuleChartModuleBlock::ModuleChartModuleBlock(QWidget* parent, DissolveWindow* dissolveWindow, Module* module) : QWidget(parent), ModuleChartBlock(dissolveWindow, dissolveWindow->dissolve())
 {
 	// Set up user interface
 	ui.setupUi(this);
@@ -42,9 +42,8 @@ ModuleChartModuleBlock::ModuleChartModuleBlock(QWidget* parent, DissolveWindow* 
 	// Hide the keywords control frame to start with
 	ui.KeywordsControlFrame->setVisible(false);
 
-	// Set ModuleReference and Module pointers
-	moduleReference_ = modRef;
-	module_ = moduleReference_ ? moduleReference_->module() : NULL;
+	// Set Module pointers
+	module_ = module;
 
 	// Set up our keywords widget
 	ui.KeywordsWidget->setUp(dissolveWindow_, module_);
@@ -58,13 +57,13 @@ ModuleChartModuleBlock::~ModuleChartModuleBlock()
 }
 
 /*
- * Module / Reference Data
+ * Module
  */
 
-// Return reference for associated Module
-ModuleReference* ModuleChartModuleBlock::moduleReference()
+// Return associated Module
+Module* ModuleChartModuleBlock::module()
 {
-	return moduleReference_;
+	return module_;
 }
 
 /*
@@ -195,7 +194,7 @@ void ModuleChartModuleBlock::on_ToggleKeywordsButton_clicked(bool checked)
 
 void ModuleChartModuleBlock::on_RemoveButton_clicked(bool checked)
 {
-	emit (removeModule(moduleReference_));
+	emit (removeModule(module_));
 }
 
 void ModuleChartModuleBlock::on_RunButton_clicked(bool checked)

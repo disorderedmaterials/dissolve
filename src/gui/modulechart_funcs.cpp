@@ -260,9 +260,7 @@ void ModuleChart::mouseDoubleClickEvent(QMouseEvent* event)
 	if (!moduleBlock) return;
 
 	// Attempt to open the Module in a ModuleTab
-	Module* module = moduleBlock->moduleReference()->module();
-	if (!module) return;
-	dissolveWindow_->addModuleTab(module);
+	dissolveWindow_->addModuleTab(moduleBlock->module());
 }
 
 // Drag enter event
@@ -354,28 +352,25 @@ void ModuleChart::dropEvent(QDropEvent* event)
 			return;
 		}
 
-		// Get the ModuleReference of the dragged block, and check it has a parent list
-		ModuleReference* targetReference = draggedBlock_->moduleReference();
-		if (targetReference->parentList())
+		// Assume that we are operating on Modules belonging to the same list
+		Module* targetModule = draggedBlock_->module();
+
+		// Get the ModuleReference before which we are going to move the targetReference
+		if (hotSpot->moduleBlockAfter() == NULL)
 		{
-			// Get the ModuleReference before which we are going to move the targetReference
-			if (hotSpot->moduleBlockAfter() == NULL)
-			{
-				// No next block, so move widget to the end of the list
-				targetReference->parentList()->modules().moveBefore(targetReference, NULL);
-			}
-			else
-			{
-				ModuleReference* beforeReference = hotSpot->moduleBlockAfter()->moduleReference();
-				targetReference->parentList()->modules().moveBefore(targetReference, beforeReference);
-			}
-
-			updateControls();
-
-			// Widgets are almost in the right place, so don't animate anything
-			resetAfterDrop(false);
+			// No next block, so move widget to the end of the list
+			modules_.modules().moveBefore(targetModule, NULL);
 		}
-		else printf("ModuleReference from dragged block has no parent list, so can't move it.\n");
+		else
+		{
+			Module* beforeModule = hotSpot->moduleBlockAfter()->module();
+			modules_.modules().moveBefore(targetModule, beforeModule);
+		}
+
+		updateControls();
+
+		// Widgets are almost in the right place, so don't animate anything
+		resetAfterDrop(false);
 	}
 	else if (event->mimeData()->hasFormat("dissolve/mimestrings"))
 	{
@@ -410,7 +405,7 @@ void ModuleChart::dropEvent(QDropEvent* event)
 		else
 		{
 			// Insert the new Module before the next block
-			modules_.add(newModule, NULL, hotSpot->moduleBlockAfter()->moduleReference()->module());
+			modules_.add(newModule, hotSpot->moduleBlockAfter()->module());
 		}
 
 		updateControls();
@@ -502,11 +497,11 @@ void ModuleChart::recreateDisplayWidgets()
 	}
 }
 
-// Find ModuleChartModuleBlock displaying specified ModuleReference
-RefListItem<ModuleChartModuleBlock,bool>* ModuleChart::moduleChartModuleBlockReference(ModuleReference* modRef)
+//  Find ModuleChartModuleBlock displaying specified Module
+RefListItem<ModuleChartModuleBlock,bool>* ModuleChart::moduleChartModuleBlockReference(Module* module)
 {
 	RefListIterator<ModuleChartModuleBlock,bool> moduleChartModuleBlockIterator(moduleWidgets_);
-	while (ModuleChartModuleBlock* block = moduleChartModuleBlockIterator.iterate()) if (block->moduleReference() == modRef) return moduleChartModuleBlockIterator.currentItem();
+	while (ModuleChartModuleBlock* block = moduleChartModuleBlockIterator.iterate()) if (block->module() == module) return moduleChartModuleBlockIterator.currentItem();
 
 	return NULL;
 }
@@ -525,10 +520,11 @@ void ModuleChart::updateControls()
 {
 	// Step through the Modules in the list, we'll construct a new RefList of current widgets in the process.
 	RefList<ModuleChartModuleBlock,bool> newModuleWidgets;
-	for (ModuleReference* modRef = modules_.modules().first(); modRef != NULL; modRef = modRef->next)
+	ListIterator<Module> moduleIterator(modules_);
+	while (Module* module = moduleIterator.iterate())
 	{
 		// For this ModuleReference, does a current ModuleChartModuleBlock match?
-		RefListItem<ModuleChartModuleBlock,bool>* blockRef = moduleChartModuleBlockReference(modRef);
+		RefListItem<ModuleChartModuleBlock,bool>* blockRef = moduleChartModuleBlockReference(module);
 		if (blockRef)
 		{
 			// Widget already exists, so remove the reference from the old list and add it to our new one
@@ -539,7 +535,7 @@ void ModuleChart::updateControls()
 		else
 		{
 			// No current ModuleChartModuleBlock reference, so must create suitable widget
-			ModuleChartModuleBlock* mcmBlock = new ModuleChartModuleBlock(this, dissolveWindow_, modRef);
+			ModuleChartModuleBlock* mcmBlock = new ModuleChartModuleBlock(this, dissolveWindow_, module);
 			connect(mcmBlock, SIGNAL(settingsToggled()), this, SLOT(recalculateLayout()));
 			newModuleWidgets.add(mcmBlock);
 		}

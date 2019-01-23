@@ -24,7 +24,6 @@
 
 #include "gui/widgets/subwindow.h"
 #include "module/module.h"
-#include "module/reference.h"
 #include "base/charstring.h"
 #include "templates/list.h"
 #include "templates/reflist.h"

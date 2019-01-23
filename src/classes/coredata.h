@@ -23,6 +23,7 @@
 #define DISSOLVE_COREDATA_H
 
 #include "templates/list.h"
+#include "templates/reflist.h"
 
 // Forward Declarations
 class AtomType;
@@ -117,11 +118,11 @@ class CoreData
 	 */
 	private:
 	// Pointer to Module instances list
-	List<Module>* moduleInstances_;
+	RefList<Module,bool>* moduleInstances_;
 
 	public:
 	// Set target Module instances list
-	void setModuleInstances(List<Module>* moduleInstances);
+	void setModuleInstances(RefList<Module,bool>* moduleInstances);
 	// Search for any instance of any module with the specified unique name
 	Module* findModule(const char* uniqueName) const;
 };

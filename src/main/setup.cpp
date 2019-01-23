@@ -228,11 +228,9 @@ bool Dissolve::setUpSimulation()
 	
 		if (layer->nModules() == 0) Messenger::print("No Modules found.\n");
 		else Messenger::print("%i main processing %s found.\n", layer->nModules(), layer->nModules() == 1 ? "Module" : "Modules");
-		ListIterator<ModuleReference> processingIterator(layer->modules());
-		while (ModuleReference* modRef = processingIterator.iterate())
+		ListIterator<Module> processingIterator(layer->modules());
+		while (Module* module = processingIterator.iterate())
 		{
-			Module* module = modRef->module();
-
 			Messenger::print("    %s:\n", module->type());
 			if (module->nConfigurationTargets() == 0) Messenger::print("      No Configuration targets.\n");
 			else
@@ -252,7 +250,7 @@ bool Dissolve::setUpSimulation()
 	Messenger::print("*** Performing Module set-up...\n");
 
 	// Loop over all used modules (in Configurations and ModuleLayers)
-	ListIterator<Module> moduleIterator(moduleInstances_);
+	RefListIterator<Module,bool> moduleIterator(moduleInstances_);
 	while (Module* module = moduleIterator.iterate())
 	{
 		if (!module->setUp(*this, worldPool())) return false;

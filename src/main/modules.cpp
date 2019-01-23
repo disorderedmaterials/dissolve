@@ -127,7 +127,7 @@ Module* Dissolve::createModuleInstance(const char* moduleType)
 
 	// Creat a new instance of the specified Module and add it to our list
 	Module* instance = masterModule->createInstance();
-	moduleInstances_.own(instance);
+	moduleInstances_.add(instance);
 
 	return instance;
 }
@@ -135,7 +135,8 @@ Module* Dissolve::createModuleInstance(const char* moduleType)
 // Search for any instance of any module with the specified unique name
 Module* Dissolve::findModuleInstance(const char* uniqueName)
 {
-	for (Module* module = moduleInstances_.first(); module != NULL; module = module->next) if (DissolveSys::sameString(module->uniqueName(), uniqueName)) return module;
+	RefListIterator<Module,bool> moduleIterator(moduleInstances_);
+	while (Module* module = moduleIterator.iterate()) if (DissolveSys::sameString(module->uniqueName(), uniqueName)) return module;
 
 	return NULL;
 }

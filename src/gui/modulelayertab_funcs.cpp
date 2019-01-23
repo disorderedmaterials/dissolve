@@ -21,7 +21,6 @@
 
 #include "gui/modulelayertab.h"
 #include "gui/modulechart.hui"
-#include "gui/modulepalette.hui"
 #include "gui/gui.h"
 #include "main/dissolve.h"
 #include "base/lineparser.h"

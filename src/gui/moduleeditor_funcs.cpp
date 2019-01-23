@@ -22,7 +22,6 @@
 #include "gui/moduleeditor.h"
 #include "gui/gui.h"
 #include "gui/modulechart.hui"
-#include "gui/modulepalette.hui"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "base/lineparser.h"
