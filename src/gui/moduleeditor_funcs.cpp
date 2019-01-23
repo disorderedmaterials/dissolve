@@ -32,7 +32,6 @@ ModuleEditor::ModuleEditor(QWidget* parent) : QWidget(parent)
 	ui.setupUi(this);
 
 	chartWidget_ = NULL;
-	paletteWidget_ = NULL;
 
 	refreshing_ = false;
 }

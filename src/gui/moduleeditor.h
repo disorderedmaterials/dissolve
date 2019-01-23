@@ -82,8 +82,6 @@ class ModuleEditor : public QWidget
 	private:
 	// Chart widget being displayed
 	ModuleChart* chartWidget_;
-	// Palette widget
-	ModulePalette* paletteWidget_;
 
 
 	/*
