@@ -61,6 +61,10 @@ bool Dissolve::registerMasterModule(Module* masterInstance)
 		}
 	}
 
+	// Set the unique name of the Module
+	masterInstance->setUniqueName(CharString("%s_MASTER", masterInstance->type()));
+
+	// Own the module into our master instances list
 	masterModules_.own(masterInstance);
 
 	return true;
@@ -127,9 +131,18 @@ Module* Dissolve::createModuleInstance(const char* moduleType)
 		return NULL;
 	}
 
+	// Find a suitable unique name for the Module
+	int instanceId = 1;
+	CharString uniqueName;
+	do
+	{
+		uniqueName.sprintf("%s%02i", moduleType, instanceId++);
+	} while (findModuleInstance(uniqueName));
+
 	// Create a new instance of the specified Module and add it to our list
 	Module* instance = masterModule->createInstance();
 	moduleInstances_.add(instance);
+	instance->setUniqueName(uniqueName);
 
 	return instance;
 }

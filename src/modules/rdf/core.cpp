@@ -28,10 +28,6 @@
 // Constructor
 RDFModule::RDFModule() : Module()
 {
-	// Set unique name for this instance of the Module
-	static int instanceId = 0;
-	uniqueName_.sprintf("%s%02i", type(), instanceId++);
-
 	// Set up variables / control parameters
 	setUpKeywords();
 }
