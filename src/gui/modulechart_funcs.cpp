@@ -752,6 +752,10 @@ void ModuleChart::layOutWidgets(bool animateWidgets)
 	// Loop over defined hotspots and set the correct heights based on their row indices
 	for (ModuleChartHotSpot* hotSpot = hotSpots_.first(); hotSpot != NULL; hotSpot = hotSpot->next) hotSpot->setAreaHeight(heights_[hotSpot->row()]);
 
+	// Add on a default hotspot covering the whole widget
+	ModuleChartHotSpot* hotSpot = hotSpots_.add();
+	hotSpot->set(0, ModuleChartHotSpot::ModuleInsertionHotSpot, QRect(metrics.chartMargin(), metrics.chartMargin(), width() - metrics.chartMargin(), height() - metrics.chartMargin()), blockIterator.currentData());
+
 	// Calculate size hint
 	// Our requested width is the left-most edge of the left-most column, plus the width of the column, plus the spacing.
 	// Our requested height is the top-most edge of the last row, plus the height of the row, plus the spacing.
