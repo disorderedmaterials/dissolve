@@ -81,6 +81,7 @@ void DissolveWindow::startNew()
 
 	dissolveState_ = DissolveWindow::EditingState;
 	localSimulation_ = true;
+	modified_ = false;
 
 	// Fully update GUI
 	fullUpdate();

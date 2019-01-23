@@ -83,6 +83,7 @@ void DissolveWindow::clearTabs()
 	// Removal of the tab and widget will be handled by the destructors
 	speciesTabs_.clear();
 	configurationTabs_.clear();
+	processingLayerTabs_.clear();
 	moduleTabs_.clear();
 }
 
