@@ -38,7 +38,7 @@ AddProcessingLayerWizard::AddProcessingLayerWizard(QWidget* parent) : temporaryD
 	setUpHeaderAndFooter(this);
 
 	// Register pages with the wizard
-	registerChoicePage(AddProcessingLayerWizard::StartPage, "Create Configuration");
+	registerChoicePage(AddProcessingLayerWizard::StartPage, "Create Processing Layer");
 	registerFinishPage(AddProcessingLayerWizard::FinishPage, "Layer Name");
 
 	// Connect signals / slots
