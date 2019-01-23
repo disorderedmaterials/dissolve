@@ -127,7 +127,7 @@ Module* Dissolve::createModuleInstance(const char* moduleType)
 		return NULL;
 	}
 
-	// Creat a new instance of the specified Module and add it to our list
+	// Create a new instance of the specified Module and add it to our list
 	Module* instance = masterModule->createInstance();
 	moduleInstances_.add(instance);
 
