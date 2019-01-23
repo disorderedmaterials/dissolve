@@ -37,6 +37,7 @@
 #include "modules/rdf/rdf.h"
 #include "modules/refine/refine.h"
 #include "modules/sanitycheck/sanitycheck.h"
+#include "modules/sq/sq.h"
 #include "modules/neutronsq/neutronsq.h"
 #include "modules/test/test.h"
 
@@ -85,6 +86,7 @@ bool Dissolve::registerMasterModules()
 	if (!registerMasterModule(new RDFModule)) return false;
 	if (!registerMasterModule(new RefineModule)) return false;
 	if (!registerMasterModule(new SanityCheckModule)) return false;
+	if (!registerMasterModule(new SQModule)) return false;
 	if (!registerMasterModule(new NeutronSQModule)) return false;
 	if (!registerMasterModule(new TestModule)) return false;
 
