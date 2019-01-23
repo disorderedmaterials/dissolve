@@ -133,9 +133,11 @@ class Module : public ListItem<Module>
 
 	public:
 	// Add Configuration target
-	bool addConfigurationTarget(Configuration* cfg);
+	bool addTargetConfiguration(Configuration* cfg);
+	// Remove Configuration target
+	bool removeTargetConfiguration(Configuration* cfg);
 	// Return number of targeted Configurations
-	int nConfigurationTargets() const;
+	int nTargetConfigurations() const;
 	// Return first targeted Configuration
 	RefList<Configuration,bool>& targetConfigurations();
 	// Return if the specified Configuration is in the targets list

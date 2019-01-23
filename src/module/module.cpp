@@ -179,7 +179,7 @@ bool Module::enabled() const
  */
 
 // Add Configuration target
-bool Module::addConfigurationTarget(Configuration* cfg)
+bool Module::addTargetConfiguration(Configuration* cfg)
 {
 	// Check how many Configurations we accept before we do anything else
 	if ((nTargetableConfigurations() == -1) || (targetConfigurations_.nItems() < nTargetableConfigurations()))
@@ -196,8 +196,18 @@ bool Module::addConfigurationTarget(Configuration* cfg)
 	return false;
 }
 
+// Remove Configuration target
+bool Module::removeTargetConfiguration(Configuration* cfg)
+{
+	if (!targetConfigurations_.contains(cfg)) return Messenger::error("Can't remove Configuration '%s' from Module '%s' as it isn't currently a target.\n", cfg->name(), uniqueName());
+
+	targetConfigurations_.remove(cfg);
+
+	return true;
+}
+
 // Return number of targeted Configurations
-int Module::nConfigurationTargets() const
+int Module::nTargetConfigurations() const
 {
 	return targetConfigurations_.nItems();
 }
@@ -218,13 +228,13 @@ bool Module::isTargetConfiguration(Configuration* cfg) const
 void Module::copyTargetConfigurations(Module* sourceModule)
 {
 	// First, check if this module actually accepts target Configurations
-	if ((nTargetableConfigurations() < sourceModule->nConfigurationTargets()) && (nTargetableConfigurations() != -1))
+	if ((nTargetableConfigurations() < sourceModule->nTargetConfigurations()) && (nTargetableConfigurations() != -1))
 	{
 		Messenger::warn("Dependent Module '%s' does not accept Configuration targets, but the source Module '%s' lists %i.\n", type(), sourceModule->type());
 		return;
 	}
 	RefListIterator<Configuration,bool> configIterator(sourceModule->targetConfigurations());
-	while (Configuration* cfg = configIterator.iterate()) addConfigurationTarget(cfg);
+	while (Configuration* cfg = configIterator.iterate()) addTargetConfiguration(cfg);
 }
 
 // Set whether this module is a local Module in a Configuration

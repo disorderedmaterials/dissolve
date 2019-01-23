@@ -232,10 +232,10 @@ bool Dissolve::setUpSimulation()
 		while (Module* module = processingIterator.iterate())
 		{
 			Messenger::print("    %s:\n", module->type());
-			if (module->nConfigurationTargets() == 0) Messenger::print("      No Configuration targets.\n");
+			if (module->nTargetConfigurations() == 0) Messenger::print("      No Configuration targets.\n");
 			else
 			{
-				Messenger::print("      %i Configuration %s:\n", module->nConfigurationTargets(), module->nConfigurationTargets() == 1 ? "target" : "targets");
+				Messenger::print("      %i Configuration %s:\n", module->nTargetConfigurations(), module->nTargetConfigurations() == 1 ? "target" : "targets");
 				RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
 				while (Configuration* cfg = configIterator.iterate()) Messenger::print("      --> %s\n", cfg->name());
 			}
