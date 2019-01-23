@@ -209,7 +209,7 @@ RefList<Configuration,bool>& Module::targetConfigurations()
 }
 
 // Return if the specified Configuration is in the targets list
-bool Module::isTargetConfiguration(Configuration* cfg)
+bool Module::isTargetConfiguration(Configuration* cfg) const
 {
 	return targetConfigurations_.contains(cfg);
 }
