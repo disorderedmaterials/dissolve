@@ -829,9 +829,14 @@ template <class T> class ListIterator
 		currentItem_ = NULL;
 	}
 	// Return whether we are on the first item in the list
-	bool first()
+	bool isFirst() const
 	{
 		return (currentItem_ == targetList_.first());
+	}
+	// Return whether we are on the last item in the list
+	bool isLast() const
+	{
+		return (currentItem_ == targetList_.last());
 	}
 };
 
