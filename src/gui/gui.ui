@@ -1438,7 +1438,7 @@
    <widget class="QMenu" name="SessionMenu">
     <property name="font">
      <font>
-      <pointsize>8</pointsize>
+      <pointsize>10</pointsize>
      </font>
     </property>
     <property name="title">
@@ -1461,7 +1461,7 @@
    <widget class="QMenu" name="WorkspaceMenu">
     <property name="font">
      <font>
-      <pointsize>8</pointsize>
+      <pointsize>10</pointsize>
      </font>
     </property>
     <property name="title">
@@ -1472,7 +1472,7 @@
    <widget class="QMenu" name="ControlMenu">
     <property name="font">
      <font>
-      <pointsize>8</pointsize>
+      <pointsize>10</pointsize>
      </font>
     </property>
     <property name="title">
@@ -1488,7 +1488,7 @@
    <widget class="QMenu" name="SimulationMenu">
     <property name="font">
      <font>
-      <pointsize>8</pointsize>
+      <pointsize>10</pointsize>
      </font>
     </property>
     <property name="title">
@@ -1503,7 +1503,7 @@
    <widget class="QMenu" name="HelpMenu">
     <property name="font">
      <font>
-      <pointsize>8</pointsize>
+      <pointsize>10</pointsize>
      </font>
     </property>
     <property name="title">
@@ -1592,6 +1592,9 @@
    </property>
   </action>
   <action name="SessionOpenRemoteAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Open &amp;Remote...</string>
    </property>
@@ -1600,6 +1603,9 @@
    </property>
   </action>
   <action name="SessionOpenRecentAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Open R&amp;ecent...</string>
    </property>
@@ -1642,6 +1648,9 @@
    </property>
   </action>
   <action name="SessionSetupWizardAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Setup &amp;Wizard...</string>
    </property>
