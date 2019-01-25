@@ -85,3 +85,35 @@ Data2DExportFileFormat::Data2DExportFormat Data2DExportFileFormat::data2DFormat(
 {
 	return (Data2DExportFileFormat::Data2DExportFormat) format_;
 }
+
+/*
+ * PairPotential Formats
+ */
+
+// PairPotential Export Keywords
+const char* PairPotentialExportFormatKeywords[] = { "block", "TABLE" };
+const char* NicePairPotentialExportFormatKeywords[] = { "Block Data", "DL_POLY TABLE file" };
+
+// Return number of available formats
+int PairPotentialExportFileFormat::nFormats() const
+{
+	return PairPotentialExportFileFormat::nPairPotentialExportFormats;
+}
+
+// Return formats array
+const char** PairPotentialExportFileFormat::formats() const
+{
+	return PairPotentialExportFormatKeywords;
+}
+
+// Return nice formats array
+const char** PairPotentialExportFileFormat::niceFormats() const
+{
+	return NicePairPotentialExportFormatKeywords;
+}
+
+// Return current format as CoordinateExportFormat
+PairPotentialExportFileFormat::PairPotentialExportFormat PairPotentialExportFileFormat::pairPotentialFormat() const
+{
+	return (PairPotentialExportFileFormat::PairPotentialExportFormat) format_;
+}

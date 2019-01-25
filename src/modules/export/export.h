@@ -29,6 +29,7 @@
 class Data1D;
 class Data2D;
 class Data3D;
+class PairPotential;
 
 // Export Module
 class ExportModule : public Module
@@ -77,6 +78,16 @@ class ExportModule : public Module
 
 
 	/*
+	 * Data
+	 */
+	private:
+	// Filename and format for coordinate export
+	CoordinateExportFileFormat coordinatesFormat_;
+	// Basename and format for PairPotential export
+	PairPotentialExportFileFormat pairPotentialFormat_;
+
+
+	/*
 	 * Processing
 	 */
 	private:
@@ -108,6 +119,20 @@ class ExportModule : public Module
 	static bool writeData2D(Data2DExportFileFormat::Data2DExportFormat format, const char* filename, Data2D& data);
 	// Write Data2D as simple block data
 	static bool writeBlockData2D(LineParser& parser, Data2D& data);
+
+
+	/*
+	 * Static Functions - PairPotentials
+	 */
+	public:
+	// Write PairPotential in specified format through parser
+	static bool writePairPotential(PairPotentialExportFileFormat::PairPotentialExportFormat format, LineParser& parser, PairPotential* pp);
+	// Write PairPotential in specified format to file
+	static bool writePairPotential(PairPotentialExportFileFormat::PairPotentialExportFormat format, const char* filename, PairPotential* pp);
+	// Write PairPotential as simple block data
+	static bool writeBlockPairPotential(LineParser& parser, PairPotential* pp);
+	// Write PairPotential as a DL_POLY TABLE file
+	static bool writeDLPOLYTABLEPairPotential(LineParser& parser, PairPotential* pp);
 };
 
 #endif

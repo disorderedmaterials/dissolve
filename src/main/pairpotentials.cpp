@@ -128,21 +128,6 @@ PairPotential* Dissolve::pairPotential(const char* at1, const char* at2) const
 	return NULL;
 }
 
-// Save all PairPotentials
-bool Dissolve::savePairPotentials(const char* baseName) const
-{
-	bool result = true;
-
-	for (PairPotential* pp = pairPotentials_.first(); pp != NULL; pp = pp->next)
-	{
-		// Generate filename
-		result = pp->save(CharString("%s-%s-%s.pp", baseName, pp->atomTypeNameI(), pp->atomTypeNameJ()));
-		if (!result) break;
-	}
-	
-	return result;
-}
-
 // Return map for PairPotentials
 const PotentialMap& Dissolve::potentialMap()
 {

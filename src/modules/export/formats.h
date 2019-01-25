@@ -59,5 +59,22 @@ class Data2DExportFileFormat : public FileAndFormat
 	Data2DExportFormat data2DFormat() const;
 };
 
+
+// PairPotential Export Formats
+class PairPotentialExportFileFormat : public FileAndFormat
+{
+	public:
+	// Available data formats
+	enum PairPotentialExportFormat { BlockPairPotential, DLPOLYTABLEPairPotential, nPairPotentialExportFormats };
+	// Return number of available formats
+	int nFormats() const;
+	// Return formats array
+	const char** formats() const;
+	// Return nice formats array
+	const char** niceFormats() const;
+	// Return current format as PairPotentialExportFormat
+	PairPotentialExportFormat pairPotentialFormat() const;
+};
+
 #endif
 
