@@ -250,7 +250,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		deltaFQ.setObjectTag(CharString("%s//DeltaFQ//%s", uniqueName_.get(), module->uniqueName()));
 		deltaFQFit.setObjectTag(CharString("%s//DeltaFQFit//%s", uniqueName_.get(), module->uniqueName()));
 
-		// Create the difference partial
+		// Set up data for construction of the deltaFQ
 		deltaFQ.clear();
 		const Array<double> x1 = referenceData.constXAxis();
 		const Array<double> y1 = referenceData.constValues();
