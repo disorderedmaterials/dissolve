@@ -65,7 +65,7 @@ const char* NiceData2DExportFormatKeywords[] = { "Block Data" };
 // Return number of available formats
 int Data2DExportFileFormat::nFormats() const
 {
-	return CoordinateExportFileFormat::nCoordinateExportFormats;
+	return Data2DExportFileFormat::nData2DExportFormats;
 }
 
 // Return formats array

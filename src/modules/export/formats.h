@@ -32,7 +32,7 @@ class CoordinateExportFileFormat : public FileAndFormat
 {
 	public:
 	// Available coordinate formats
- 	enum CoordinateExportFormat { XYZCoordinates, DLPOLYCoordinates, nCoordinateExportFormats };
+	enum CoordinateExportFormat { XYZCoordinates, DLPOLYCoordinates, nCoordinateExportFormats };
 	// Return number of available formats
 	int nFormats() const;
 	// Return formats array
@@ -48,7 +48,7 @@ class Data2DExportFileFormat : public FileAndFormat
 {
 	public:
 	// Available data formats
- 	enum Data2DExportFormat { BlockData, nCoordinateExportFormats };
+	enum Data2DExportFormat { BlockData, nData2DExportFormats };
 	// Return number of available formats
 	int nFormats() const;
 	// Return formats array
