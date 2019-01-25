@@ -55,17 +55,24 @@ const char* FileAndFormat::format(int id) const
 	return formats()[id];
 }
 
-// Return format
-int FileAndFormat::format() const
+// Return format index
+int FileAndFormat::formatIndex() const
 {
 	return format_;
 }
 
 // Return format string
-const char* FileAndFormat::formatString() const
+const char* FileAndFormat::format() const
 {
 	if ((format_ < 0) || (format_ >= nFormats())) return "???";
 	else return format(format_);
+}
+
+// Return nice format string
+const char* FileAndFormat::niceFormat() const
+{
+	if ((format_ < 0) || (format_ >= nFormats())) return "???";
+	else return niceFormats()[format_];
 }
 
 /*

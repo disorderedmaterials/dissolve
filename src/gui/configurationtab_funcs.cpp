@@ -165,7 +165,7 @@ void ConfigurationTab::updateControls()
 
 	// Input Coordinates
 	ui.CoordinatesFileEdit->setText(configuration_->inputCoordinates().filename());
-	ui.CoordinatesFileFormatCombo->setCurrentIndex(configuration_->inputCoordinates().format());
+	ui.CoordinatesFileFormatCombo->setCurrentIndex(configuration_->inputCoordinates().formatIndex());
 // 	ui.CoordinatesFromFileGroup->setChecked(configuration_->inputCoordinates().is);
 
 	refreshing_ = false;

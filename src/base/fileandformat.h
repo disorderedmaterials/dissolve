@@ -56,9 +56,11 @@ class FileAndFormat
 	// Convert format index to text string
 	const char* format(int id) const;
 	// Return format index
-	int format() const;
+	int formatIndex() const;
 	// Return format string
-	const char* formatString() const;
+	const char* format() const;
+	// Return nice format string
+	const char* niceFormat() const;
 
 
 	/*

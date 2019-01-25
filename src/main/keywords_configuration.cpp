@@ -141,7 +141,7 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 					error = true;
 					break;
 				}
-				Messenger::print("Initial coordinates will be loaded from file '%s' (format: %s)\n", cfg->inputCoordinates().filename(), cfg->inputCoordinates().formatString());
+				Messenger::print("Initial coordinates will be loaded from file '%s' (%s)\n", cfg->inputCoordinates().filename(), cfg->inputCoordinates().format());
 				break;
 			case (ConfigurationBlock::ModuleKeyword):
 				// The argument following the keyword is the module name, so try to create an instance of that Module
