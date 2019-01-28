@@ -331,6 +331,14 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		simulatedFR = simulatedFQ;
 		Fourier::sineFT(simulatedFR, 1.0 / (2*PI*PI*GenericListHelper<double>::value(dissolve.processingModuleData(), "EffectiveRho", module->uniqueName(), 0.0)), 0.0, 0.03, 30.0, WindowFunction(WindowFunction::Lorch0Window));
 
+		// Save data?
+		if (saveData)
+		{
+			if (!simulatedFR.save(CharString("SimulatedFR-%s.gr", module->uniqueName()))) return false;
+			const Data1D& referenceDataFR = GenericListHelper<Data1D>::value(dissolve.processingModuleData(), "ReferenceDataFT", module->uniqueName(), Data1D(), &found);
+			if (found) referenceDataFR.save(CharString("ExperimentalFR-%s.gr", module->uniqueName()));
+		}
+
 		// Test Mode
 		if (testMode)
 		{
