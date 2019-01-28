@@ -45,7 +45,7 @@ class FileAndFormat
 	int format_;
 
 	public:
-	// Return umber of available formats
+	// Return number of available formats
 	virtual int nFormats() const = 0;
 	// Return formats array
 	virtual const char** formats() const = 0;
