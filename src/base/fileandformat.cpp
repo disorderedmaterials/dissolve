@@ -124,4 +124,9 @@ bool FileAndFormat::read(LineParser& parser, int startArg)
 // Return formatted string for writing
 const char* FileAndFormat::asString() const
 {
+	static CharString result;
+
+	result.sprintf("%s  '%s'", format(format_), filename_.get());
+
+	return result.get();
 }
