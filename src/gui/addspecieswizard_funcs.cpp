@@ -242,7 +242,7 @@ bool AddSpeciesWizard::progressionAllowed(int index) const
 	return true;
 }
 
-// Perform any necssary actions before moving to the next page
+// Perform any necessary actions before moving to the next page
 bool AddSpeciesWizard::prepareForNextPage(int currentIndex)
 {
 	SpeciesAtom* atomicAtom;
@@ -294,7 +294,7 @@ bool AddSpeciesWizard::prepareForNextPage(int currentIndex)
 	return true;
 }
 
-// Perform any necssary actions before moving to the previous page
+// Perform any necessary actions before moving to the previous page
 bool AddSpeciesWizard::prepareForPreviousPage(int currentIndex)
 {
 	switch (currentIndex)

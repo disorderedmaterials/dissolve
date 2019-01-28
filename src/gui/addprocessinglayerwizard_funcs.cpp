@@ -132,7 +132,7 @@ bool AddProcessingLayerWizard::progressionAllowed(int index) const
 	return true;
 }
 
-// Perform any necssary actions before moving to the next page
+// Perform any necessary actions before moving to the next page
 bool AddProcessingLayerWizard::prepareForNextPage(int currentIndex)
 {
 	switch (currentIndex)
@@ -144,7 +144,7 @@ bool AddProcessingLayerWizard::prepareForNextPage(int currentIndex)
 	return true;
 }
 
-// Perform any necssary actions before moving to the previous page
+// Perform any necessary actions before moving to the previous page
 bool AddProcessingLayerWizard::prepareForPreviousPage(int currentIndex)
 {
 	switch (currentIndex)

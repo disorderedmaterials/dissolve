@@ -85,7 +85,7 @@ bool GeneralWizard::progressionAllowed(int index) const
 	return true;
 }
 
-// Perform any necssary actions before moving to the next page
+// Perform any necessary actions before moving to the next page
 bool GeneralWizard::prepareForNextPage(int currentIndex)
 {
 	// Find page with given index
@@ -98,7 +98,7 @@ bool GeneralWizard::prepareForNextPage(int currentIndex)
 	return true;
 }
 
-// Perform any necssary actions before moving to the previous page
+// Perform any necessary actions before moving to the previous page
 bool GeneralWizard::prepareForPreviousPage(int currentIndex)
 {
 	// Find page with given index

@@ -125,7 +125,7 @@ bool AddConfigurationWizard::progressionAllowed(int index) const
 	return true;
 }
 
-// Perform any necssary actions before moving to the next page
+// Perform any necessary actions before moving to the next page
 bool AddConfigurationWizard::prepareForNextPage(int currentIndex)
 {
 	Species* sp;
@@ -216,7 +216,7 @@ bool AddConfigurationWizard::prepareForNextPage(int currentIndex)
 	return true;
 }
 
-// Perform any necssary actions before moving to the previous page
+// Perform any necessary actions before moving to the previous page
 bool AddConfigurationWizard::prepareForPreviousPage(int currentIndex)
 {
 	switch (currentIndex)

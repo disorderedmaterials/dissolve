@@ -111,9 +111,9 @@ class WizardWidget : public QWidget
 	virtual bool displayControlPage(int index) = 0;
 	// Return whether progression to the next page from the current page is allowed
 	virtual bool progressionAllowed(int index) const = 0;
-	// Perform any necssary actions before moving to the next page
+	// Perform any necessary actions before moving to the next page
 	virtual bool prepareForNextPage(int currentIndex) = 0;
-	// Perform any necssary actions before moving to the previous page
+	// Perform any necessary actions before moving to the previous page
 	virtual bool prepareForPreviousPage(int currentIndex) = 0;
 
 	protected slots:

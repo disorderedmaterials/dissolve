@@ -82,9 +82,9 @@ class AddProcessingLayerWizard : public WizardWidget
 	bool displayControlPage(int index);
 	// Return whether progression to the next page from the current page is allowed
 	bool progressionAllowed(int index) const;
-	// Perform any necssary actions before moving to the next page
+	// Perform any necessary actions before moving to the next page
 	bool prepareForNextPage(int currentIndex);
-	// Perform any necssary actions before moving to the previous page
+	// Perform any necessary actions before moving to the previous page
 	bool prepareForPreviousPage(int currentIndex);
 
 	public:
