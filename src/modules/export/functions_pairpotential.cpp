@@ -83,7 +83,7 @@ bool ExportModule::writeDLPOLYTABLEPairPotential(LineParser& parser, PairPotenti
 	if (!parser.writeLineF("%-80s\n", "TABLE file written by Dissolve")) return false;
 
 	// Write mesh information (record 2)
-	if (!parser.writeLineF("%15.8e%15.8e%10i\n", pp->delta(), pp->range(), nPoints)) return false;
+	if (!parser.writeLineF("%15.8e %15.8e %10i\n", pp->delta(), pp->range(), nPoints)) return false;
 
 	// Write pair potential header record
 	if (!parser.writeLineF("%-8s%-8s\n", pp->atomTypeNameI(), pp->atomTypeNameJ())) return false;
@@ -91,7 +91,7 @@ bool ExportModule::writeDLPOLYTABLEPairPotential(LineParser& parser, PairPotenti
 	// Write energy data
 	for (int n=0; n<nPoints; ++n)
 	{
-		if (!parser.writeLineF("%15.8e", uFull.constValue(n))) return false;
+		if (!parser.writeLineF("%15.8e ", uFull.constValue(n))) return false;
 		if ( ((n+1)%4 == 0) || (n == (nPoints-1)) )
 		{
 			if (!parser.writeLineF("\n")) return false;
