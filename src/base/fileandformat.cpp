@@ -79,7 +79,7 @@ const char* FileAndFormat::niceFormat() const
  * Filename
  */
 
-// Return filename
+// Return filename / basename
 const char* FileAndFormat::filename() const
 {
 	return filename_.get();
@@ -103,7 +103,7 @@ bool FileAndFormat::hasValidFileAndFormat() const
  */
 
 // Read format / filename from specified parser
-bool FileAndFormat::read(LineParser& parser, int startArg, bool checkFileExists)
+bool FileAndFormat::read(LineParser& parser, int startArg)
 {
 	// Convert first argument to format type
 	format_ = format(parser.argc(startArg));
@@ -115,7 +115,7 @@ bool FileAndFormat::read(LineParser& parser, int startArg, bool checkFileExists)
 		filename_ = parser.argc(startArg+1);
 
 		// Check that the file exists?
-		if (checkFileExists && (!DissolveSys::fileExists(filename_))) return Messenger::error("Specified file '%s' does not exist.\n", filename_.get());
+		if (fileMustExist() && (!DissolveSys::fileExists(filename_))) return Messenger::error("Specified file '%s' does not exist.\n", filename_.get());
 	}
 
 	return true;

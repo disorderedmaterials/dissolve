@@ -64,14 +64,16 @@ class FileAndFormat
 
 
 	/*
-	 * Filename
+	 * Filename / Basename
 	 */
 	protected:
-	// Name of associated file
+	// Associated filename / basename
 	CharString filename_;
 
 	public:
-	// Return filename
+	// Return whether the file must exist
+	virtual bool fileMustExist() const = 0;
+	// Return filename / basename
 	const char* filename() const;
 
 
@@ -88,7 +90,7 @@ class FileAndFormat
 	 */
 	public:
 	// Read format / filename from specified parser
-	bool read(LineParser& parser, int startArg, bool checkFileExists = true);
+	bool read(LineParser& parser, int startArg);
 	// Return formatted string for writing
 	const char* asString() const;
 };

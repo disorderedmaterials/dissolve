@@ -30,6 +30,9 @@
 // Coordinate Import Formats
 class CoordinateImportFileFormat : public FileAndFormat
 {
+	/*
+	 * Available Formats
+	 */
 	public:
 	// Available coordinate formats
  	enum CoordinateImportFormat { XYZCoordinates, DLPOLYCoordinates, EPSRCoordinates, nCoordinateImportFormats };
@@ -41,11 +44,25 @@ class CoordinateImportFileFormat : public FileAndFormat
 	const char** niceFormats() const;
 	// Return current format as CoordinateImportFormat
 	CoordinateImportFormat coordinateFormat() const;
+
+
+	/*
+	 * Filename / Basename
+	 */
+	public:
+	// Return whether the file must exist
+	bool fileMustExist() const
+	{
+		return true;
+	}
 };
 
 // Forces Import Formats
 class ForceImportFileFormat : public FileAndFormat
 {
+	/*
+	 * Available Formats
+	 */
 	public:
 	// Available forces formats
  	enum ForceImportFormat { XYZForces, DLPOLYForces, nForceImportFormats };
@@ -57,11 +74,25 @@ class ForceImportFileFormat : public FileAndFormat
 	const char** niceFormats() const;
 	// Return current format as ForceImportFormat
 	ForceImportFormat forceFormat() const;
+
+
+	/*
+	 * Filename / Basename
+	 */
+	public:
+	// Return whether the file must exist
+	bool fileMustExist() const
+	{
+		return true;
+	}
 };
 
 // Trajectory Import Formats
 class TrajectoryImportFileFormat : public FileAndFormat
 {
+	/*
+	 * Available Formats
+	 */
 	public:
 	// Available forces formats
  	enum TrajectoryImportFormat { XYZTrajectory, nTrajectoryImportFormats };
@@ -73,6 +104,17 @@ class TrajectoryImportFileFormat : public FileAndFormat
 	const char** niceFormats() const;
 	// Return current format as TrajectoryImportFormat
 	TrajectoryImportFormat trajectoryFormat() const;
+
+
+	/*
+	 * Filename / Basename
+	 */
+	public:
+	// Return whether the file must exist
+	bool fileMustExist() const
+	{
+		return true;
+	}
 };
 
 #endif

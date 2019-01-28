@@ -30,6 +30,9 @@
 // Coordinate Export Formats
 class CoordinateExportFileFormat : public FileAndFormat
 {
+	/*
+	 * Available Formats
+	 */
 	public:
 	// Available coordinate formats
 	enum CoordinateExportFormat { XYZCoordinates, DLPOLYCoordinates, nCoordinateExportFormats };
@@ -41,11 +44,25 @@ class CoordinateExportFileFormat : public FileAndFormat
 	const char** niceFormats() const;
 	// Return current format as CoordinateExportFormat
 	CoordinateExportFormat coordinateFormat() const;
+
+
+	/*
+	 * Filename / Basename
+	 */
+	public:
+	// Return whether the file must exist
+	bool fileMustExist() const
+	{
+		return false;
+	}
 };
 
 // Data2D Export Formats
 class Data2DExportFileFormat : public FileAndFormat
 {
+	/*
+	 * Available Formats
+	 */
 	public:
 	// Available data formats
 	enum Data2DExportFormat { BlockData, nData2DExportFormats };
@@ -57,12 +74,25 @@ class Data2DExportFileFormat : public FileAndFormat
 	const char** niceFormats() const;
 	// Return current format as Data2DExportFormat
 	Data2DExportFormat data2DFormat() const;
-};
 
+
+	/*
+	 * Filename / Basename
+	 */
+	public:
+	// Return whether the file must exist
+	bool fileMustExist() const
+	{
+		return false;
+	}
+};
 
 // PairPotential Export Formats
 class PairPotentialExportFileFormat : public FileAndFormat
 {
+	/*
+	 * Available Formats
+	 */
 	public:
 	// Available data formats
 	enum PairPotentialExportFormat { BlockPairPotential, DLPOLYTABLEPairPotential, nPairPotentialExportFormats };
@@ -74,6 +104,17 @@ class PairPotentialExportFileFormat : public FileAndFormat
 	const char** niceFormats() const;
 	// Return current format as PairPotentialExportFormat
 	PairPotentialExportFormat pairPotentialFormat() const;
+
+
+	/*
+	 * Filename / Basename
+	 */
+	public:
+	// Return whether the file must exist
+	bool fileMustExist() const
+	{
+		return false;
+	}
 };
 
 #endif
