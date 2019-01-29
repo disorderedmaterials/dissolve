@@ -728,9 +728,8 @@ void ModuleChart::layOutWidgets(bool animateWidgets)
 					 * Otherwise, set to its minimum height.
 					 */
 					if (col > 0) block->setWidgetGeometry(left, top, widths_[col], blockIterator.peekPrevious()->widgetHeight());
-					else if (col < (nColumns_-1)) block->setWidgetGeometry(left, top, widths_[col], blockIterator.peek()->widgetHeight());
-					block->setWidgetGeometry(left, top, widths_[col], 64);
-					
+					else if ((col < (nColumns_-1)) && blockIterator.peek()) block->setWidgetGeometry(left, top, widths_[col], blockIterator.peek()->widgetHeight());
+					else block->setWidgetGeometry(left, top, widths_[col], 64);
 				}
 				else block->setWidgetGeometry(left, top, blockWidth, blockHeight);
 
