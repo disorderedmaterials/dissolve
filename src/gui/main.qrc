@@ -12,6 +12,8 @@
     <file>icons/modules_checks.svg</file>
     <file>icons/modules_energy.svg</file>
     <file>icons/modules_md.svg</file>
+    <file>icons/modules_atomshake.svg</file>
+    <file>icons/modules_intrashake.svg</file>
     <file>icons/modules_neutronsq.svg</file>
     <file>icons/modules_calculaterdf.svg</file>
     <file>icons/modules_generic.svg</file>
