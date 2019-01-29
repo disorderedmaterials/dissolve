@@ -119,12 +119,14 @@ void ModuleEditor::updateControls()
 // Disable sensitive controls within tab, ready for main code to run
 void ModuleEditor::disableSensitiveControls()
 {
+	ui.AvailableModulesTree->setEnabled(false);
 	chartWidget_->disableSensitiveControls();
 }
 
 // Enable sensitive controls within tab, ready for main code to run
 void ModuleEditor::enableSensitiveControls()
 {
+	ui.AvailableModulesTree->setEnabled(true);
 	chartWidget_->enableSensitiveControls();
 }
 
