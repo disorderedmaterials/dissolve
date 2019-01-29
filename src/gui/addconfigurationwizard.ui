@@ -40,7 +40,7 @@
    <item>
     <widget class="QStackedWidget" name="MainStack">
      <property name="currentIndex">
-      <number>5</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="StartPage">
       <layout class="QVBoxLayout" name="verticalLayout_2">
