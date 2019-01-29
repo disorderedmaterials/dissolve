@@ -119,6 +119,7 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	void on_IsotopologueAddButton_clicked(bool checked);
 	void on_IsotopologueRemoveButton_clicked(bool checked);
 	void on_IsotopologueList_currentRowChanged(int row);
+	void on_IsotopologueList_itemChanged(QListWidgetItem* item);
 	void on_IsotopeTable_itemChanged(QTableWidgetItem* w);
 
 

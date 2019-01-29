@@ -305,7 +305,13 @@ void SpeciesTab::updateControls()
 
 	// Isotopologues List
 	if (!species_) ui.IsotopologueList->clear();
-	else ListWidgetUpdater<SpeciesTab,Isotopologue> isotopologueUpdater(ui.IsotopologueList, species_->isotopologues());
+	else
+	{
+		ListWidgetUpdater<SpeciesTab,Isotopologue> isotopologueUpdater(ui.IsotopologueList, species_->isotopologues(), Qt::ItemIsEditable);
+
+		// If there is no current isotopologue selected, try to select the first
+		if (!currentIsotopologue()) ui.IsotopologueList->setCurrentRow(0);
+	}
 
 	Isotopologue* isotopologue = currentIsotopologue();
 
@@ -673,6 +679,23 @@ void SpeciesTab::on_IsotopologueList_currentRowChanged(int row)
 	else TableWidgetRefListUpdater<SpeciesTab,AtomType,Isotope*> isotopeUpdater(ui.IsotopeTable, isotopologue->isotopes(), this, &SpeciesTab::updateIsotopeTableRow);
 
 	refreshing_ = false;
+}
+
+void SpeciesTab::on_IsotopologueList_itemChanged(QListWidgetItem* item)
+{
+	if (refreshing_) return;
+
+	// Get Isotopologue pointer
+	Isotopologue* isotopologue = (Isotopologue*) VariantPointer<Isotopologue>(item->data(Qt::UserRole));
+	if (!isotopologue) return;
+
+	// Need to ensure new name is unique within the Species
+	isotopologue->setName(species_->uniqueIsotopologueName(qPrintable(item->text()), isotopologue));
+
+	// Make sure the item text is consistent with the Isotopologue name
+	item->setText(isotopologue->name());
+
+	dissolveWindow_->setModified();
 }
 
 void SpeciesTab::on_IsotopeTable_itemChanged(QTableWidgetItem* w)
