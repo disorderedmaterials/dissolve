@@ -69,7 +69,7 @@ void BlockKeywords::printValidKeywords(BlockKeywords::BlockKeyword block)
  */
 
 // Block Keywords - Those beginning with an underscore are not meant to be used as a main block
-const char* BlockKeywordKeywords[] = { "Configuration", "Layer", "Master", "_Module", "PairPotentials", "Simulation", "_Site", "Species", "_SpeciesInfo" };
+const char* BlockKeywordKeywords[] = { "Configuration", "Layer", "Master", "Module", "PairPotentials", "Simulation", "Site", "Species", "SpeciesInfo" };
 
 // Convert text string to MainInputKeyword
 BlockKeywords::BlockKeyword BlockKeywords::blockKeyword(const char* s)

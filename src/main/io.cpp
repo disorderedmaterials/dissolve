@@ -108,7 +108,7 @@ bool Dissolve::loadInput(const char* filename)
 				error = true;
 				break;
 			default:
-				printf("DEV_OOPS - Input block keyword '%s' not accounted for.\n", BlockKeywords::blockKeyword(kwd));
+				Messenger::error("Block keyword '%s' is not relevant in this context.\n", BlockKeywords::blockKeyword(kwd));
 				error = true;
 				break;
 		}
