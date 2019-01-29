@@ -165,6 +165,9 @@ void ModuleEditor::on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* it
 	moduleLayer_->add(newInstance);
 
 	updateControls();
+
+	// Flag that the current data has changed
+	dissolveWindow_->setModified();
 }
 
 /*

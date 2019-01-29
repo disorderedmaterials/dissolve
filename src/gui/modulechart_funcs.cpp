@@ -356,16 +356,16 @@ void ModuleChart::dropEvent(QDropEvent* event)
 		// Assume that we are operating on Modules belonging to the same list
 		Module* targetModule = draggedBlock_->module();
 
-		// Get the ModuleReference before which we are going to move the targetReference
-		if (hotSpot->moduleBlockAfter() == NULL)
+		// Get the Module before which we are going to move the targetModule
+		Module* beforeModule = hotSpot->moduleBlockAfter() ? hotSpot->moduleBlockAfter()->module() : NULL;
+
+		// Check if the dragged Module is back in its original position (in which case we don't flag a change)
+		if (targetModule->next != beforeModule)
 		{
-			// No next block, so move widget to the end of the list
-			modules_.modules().moveBefore(targetModule, NULL);
-		}
-		else
-		{
-			Module* beforeModule = hotSpot->moduleBlockAfter()->module();
 			modules_.modules().moveBefore(targetModule, beforeModule);
+
+			// Flag that the current data has changed
+			dissolveWindow_->setModified();
 		}
 
 		updateControls();
@@ -429,6 +429,9 @@ void ModuleChart::dropEvent(QDropEvent* event)
 
 		// Widgets are almost in the right place, so don't animate anything
 		resetAfterDrop(false);
+
+		// Flag that the current data has changed
+		dissolveWindow_->setModified();
 	}
 	else
 	{
