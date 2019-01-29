@@ -70,6 +70,24 @@ void AddConfigurationWizard::setMainDissolveReference(const Dissolve* dissolveRe
 	dissolveReference_ = dissolveReference;
 }
 
+// Get Box details from controls and put into target Configuration
+void AddConfigurationWizard::getBoxDetails()
+{
+	// Set Configuration multiplier
+	importTarget_->setMultiplier(ui_.MultiplierSpin->value());
+
+	// Set the Box angles and relative lengths in the Configuration
+	importTarget_->setBoxAngles(Vec3<double>(ui_.BoxAbsoluteAngleAlphaSpin->value(), ui_.BoxAbsoluteAngleBetaSpin->value(), ui_.BoxAbsoluteAngleGammaSpin->value()));
+	if (ui_.BoxNonPeriodicRadio->isChecked())
+	{
+		importTarget_->setRelativeBoxLengths(Vec3<double>(1.0,1.0,1.0));
+		importTarget_->setNonPeriodic(true);
+	}
+	else if (ui_.BoxCubicRadio->isChecked()) importTarget_->setRelativeBoxLengths(Vec3<double>(1.0,1.0,1.0));
+	else if (ui_.BoxOrthorhombicRadio->isChecked()) importTarget_->setRelativeBoxLengths(Vec3<double>(ui_.BoxRelativeLengthASpin->value(), ui_.BoxRelativeLengthBSpin->value(), ui_.BoxRelativeLengthCSpin->value()));
+	else importTarget_->setRelativeBoxLengths(Vec3<double>(ui_.BoxRelativeLengthASpin->value(), ui_.BoxRelativeLengthBSpin->value(), ui_.BoxRelativeLengthCSpin->value()));
+}
+
 // Move constructed Configuration over to the specified Dissolve object, returning the new pointer to it
 Configuration* AddConfigurationWizard::importConfiguration(Dissolve& dissolve)
 {
@@ -77,6 +95,10 @@ Configuration* AddConfigurationWizard::importConfiguration(Dissolve& dissolve)
 
 	// Set the name of the Configuration from the name edit
 	importTarget_->setName(qPrintable(ui_.FinishNameEdit->text()));
+
+	getBoxDetails();
+
+	importTarget_->initialise(dissolve.worldPool(), true, dissolve.pairPotentialRange(), dissolve.nBoxNormalisationPoints());
 
 	dissolve.ownConfiguration(importTarget_);
 
@@ -193,21 +215,17 @@ bool AddConfigurationWizard::prepareForNextPage(int currentIndex)
 				ui_.BoxAbsoluteAngleBetaSpin->setEnabled(true);
 				ui_.BoxAbsoluteAngleGammaSpin->setEnabled(true);
 			}
+
+			// Set box angles and lengths
+			getBoxDetails();
+
+			updateMultiplierPage();
 			break;
 		case (AddConfigurationWizard::BoxGeometryPage):
-			// Set the Box angles and relative lengths in the Configuration
-			importTarget_->setBoxAngles(Vec3<double>(ui_.BoxAbsoluteAngleAlphaSpin->value(), ui_.BoxAbsoluteAngleBetaSpin->value(), ui_.BoxAbsoluteAngleGammaSpin->value()));
-			if (ui_.BoxNonPeriodicRadio->isChecked())
-			{
-				importTarget_->setRelativeBoxLengths(Vec3<double>(1.0,1.0,1.0));
-				importTarget_->setNonPeriodic(true);
-			}
-			else if (ui_.BoxCubicRadio->isChecked()) importTarget_->setRelativeBoxLengths(Vec3<double>(1.0,1.0,1.0));
-			else if (ui_.BoxOrthorhombicRadio->isChecked()) importTarget_->setRelativeBoxLengths(Vec3<double>(ui_.BoxRelativeLengthASpin->value(), ui_.BoxRelativeLengthBSpin->value(), ui_.BoxRelativeLengthCSpin->value()));
-			else importTarget_->setRelativeBoxLengths(Vec3<double>(ui_.BoxRelativeLengthASpin->value(), ui_.BoxRelativeLengthBSpin->value(), ui_.BoxRelativeLengthCSpin->value()));
+			// Set box angles and lengths
+			getBoxDetails();
 
-			// Set the current multiplier, and generate the Box
-			on_MultiplierSpin_valueChanged(ui_.MultiplierSpin->value());
+			updateMultiplierPage();
 			break;
 		default:
 			break;
@@ -219,13 +237,19 @@ bool AddConfigurationWizard::prepareForNextPage(int currentIndex)
 // Determine next page for the current page, based on current data
 int AddConfigurationWizard::determineNextPage(int currentIndex)
 {
+	int result = -1;
+
 	switch (currentIndex)
 	{
+		case (AddConfigurationWizard::BoxTypePage):
+			if (ui_.BoxCubicRadio->isChecked() || ui_.BoxNonPeriodicRadio->isChecked()) result = AddConfigurationWizard::MultiplierPage;
+			else result = AddConfigurationWizard::BoxGeometryPage;
+			break;
 		default:
 			break;
 	}
 
-	return -1;
+	return result;
 }
 
 // Perform any necessary actions before moving to the previous page
@@ -319,11 +343,9 @@ void AddConfigurationWizard::updatePopulationTableRow(int row, Species* sp, int 
 	else item->setText(QString::number(population));
 }
 
-void AddConfigurationWizard::on_MultiplierSpin_valueChanged(int value)
+// Update controls on MultiplierPage
+void AddConfigurationWizard::updateMultiplierPage()
 {
-	// Set the multiplier in the Configuration
-	importTarget_->setMultiplier(value);
-
 	// Calculate expected number of atoms, and individual species populations
 	RefList<Species,int> populations;
 	int nExpectedAtoms = 0;
@@ -334,24 +356,33 @@ void AddConfigurationWizard::on_MultiplierSpin_valueChanged(int value)
 		Species* sp = spInfo->species();
 
 		// Determine the number of molecules of this component
-		int count =  spInfo->population() * value;
+		int count =  spInfo->population() * importTarget_->multiplier();
 
 		populations.add(sp, count);
 
 		nExpectedAtoms += count * sp->nAtoms();
 	}
 
-	// Determine required volume, and generate a suitable Box
+	// Determine required volume, and generate a temporary Box to get hte relevant info
 	double volume = nExpectedAtoms / importTarget_->atomicDensity();
 	Box* temporaryBox = Box::generate(importTarget_->relativeBoxLengths(), importTarget_->boxAngles(), volume);
 
-	// Update controls on MultiplierPage
 	TableWidgetRefListUpdater<AddConfigurationWizard,Species,int> populationsUpdater(ui_.MultiplierPopulationsTable, populations, this, &AddConfigurationWizard::updatePopulationTableRow);
 	ui_.MultiplierNAtomsLabel->setText(QString::number(nExpectedAtoms));
 	ui_.MultiplierBoxALabel->setText(QString::number(temporaryBox->axisLength(0)));
 	ui_.MultiplierBoxBLabel->setText(QString::number(temporaryBox->axisLength(1)));
 	ui_.MultiplierBoxCLabel->setText(QString::number(temporaryBox->axisLength(2)));
 	ui_.MultiplierPPRangeLabel->setText(QString::number(temporaryBox->inscribedSphereRadius()));
+	QPalette palette = ui_.MultiplierBoxCLabel->palette();
+	if (temporaryBox->inscribedSphereRadius() < dissolveReference_->pairPotentialRange()) palette.setColor(QPalette::WindowText, Qt::red);
+	ui_.MultiplierPPRangeLabel->setPalette(palette);
+}
+
+void AddConfigurationWizard::on_MultiplierSpin_valueChanged(int value)
+{
+	getBoxDetails();
+
+	updateMultiplierPage();
 }
 
 /*

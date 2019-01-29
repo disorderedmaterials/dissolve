@@ -53,6 +53,8 @@ class AddConfigurationWizard : public WizardWidget
 	public:
 	// Set Dissolve reference
 	void setMainDissolveReference(const Dissolve* dissolveReference);
+	// Get Box details from controls and put into target Configuration
+	void getBoxDetails();
 	// Move constructed Configuration over to the specified Dissolve object, returning the new pointer to it
 	Configuration* importConfiguration(Dissolve& dissolve);
 
@@ -110,6 +112,8 @@ class AddConfigurationWizard : public WizardWidget
 	private:
 	// Species population row update function
 	void updatePopulationTableRow(int row, Species* sp, int population, bool createItems);
+	// Update controls on MultiplierPage
+	void updateMultiplierPage();
 
 	private slots:
 	void on_MultiplierSpin_valueChanged(int value);
