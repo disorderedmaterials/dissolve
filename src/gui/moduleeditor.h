@@ -27,6 +27,7 @@
 #include "templates/reflist.h"
 
 // Forward Declarations
+class Configuration;
 class DissolveWindow;
 class LineParser;
 class MimeTreeWidgetItem;
@@ -56,12 +57,14 @@ class ModuleEditor : public QWidget
 	DissolveWindow* dissolveWindow_;
 	// Target ModuleLayer
 	ModuleLayer* moduleLayer_;
+	// Parent Configuration (if we are local to one)
+	Configuration* localConfiguration_;
 	// Module categories and their associated MimeTreeWidgetItems
 	RefList<MimeTreeWidgetItem,CharString> moduleCategories_;
 
 	public:
 	// Set up the ModuleEditor for the specified ModuleLayer
-	bool setUp(DissolveWindow* dissolveWindow, ModuleLayer* moduleLayer);
+	bool setUp(DissolveWindow* dissolveWindow, ModuleLayer* moduleLayer, Configuration* localConfiguration = NULL);
 
 
 	/*

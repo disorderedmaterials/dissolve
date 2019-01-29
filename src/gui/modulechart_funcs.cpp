@@ -33,9 +33,10 @@
 #include <QPropertyAnimation>
 
 // Constructor
-ModuleChart::ModuleChart(DissolveWindow* dissolveWindow, ModuleList& modules, QWidget* parent) : QWidget(parent), modules_(modules)
+ModuleChart::ModuleChart(DissolveWindow* dissolveWindow, ModuleList& modules, Configuration* localConfiguration) : QWidget(NULL), modules_(modules)
 {
 	dissolveWindow_ = dissolveWindow;
+	localConfiguration_ = localConfiguration;
 
 	// Layout
 	columnSpacing_ = 32;
@@ -395,6 +396,22 @@ void ModuleChart::dropEvent(QDropEvent* event)
 
 		// Create the new module
 		Module* newModule = dissolveWindow_->dissolve().createModuleInstance(qPrintable(paletteModuleToAdd_));
+		newModule->setConfigurationLocal(localConfiguration_);
+
+		// Set Configuration targets as appropriate
+		if (newModule->nTargetableConfigurations() != 0)
+		{
+			if (localConfiguration_) newModule->addTargetConfiguration(localConfiguration_);
+			else
+			{
+				ListIterator<Configuration> configIterator(dissolveWindow_->dissolve().configurations());
+				while (Configuration* cfg = configIterator.iterate())
+				{
+					newModule->addTargetConfiguration(cfg);
+					if ((newModule->nTargetableConfigurations() != -1) && (newModule->nTargetableConfigurations() == newModule->nTargetConfigurations())) break;
+				}
+			}
+		}
 
 		// Get the ModuleReference before which we are going to move the targetReference
 		if (hotSpot->moduleBlockAfter() == NULL)

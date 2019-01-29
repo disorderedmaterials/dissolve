@@ -46,13 +46,14 @@ ModuleEditor::~ModuleEditor()
  */
 
 // Setup up the ModuleEditor for the specified Module list
-bool ModuleEditor::setUp(DissolveWindow* dissolveWindow, ModuleLayer* moduleLayer)
+bool ModuleEditor::setUp(DissolveWindow* dissolveWindow, ModuleLayer* moduleLayer, Configuration* localConfiguration)
 {
 	dissolveWindow_ = dissolveWindow;
 	moduleLayer_ = moduleLayer;
+	localConfiguration_ = localConfiguration;
 
 	// Create a ModuleChart widget and set its source list
-	chartWidget_ = new ModuleChart(dissolveWindow, *moduleLayer_);
+	chartWidget_ = new ModuleChart(dissolveWindow, *moduleLayer_, localConfiguration_);
 	chartWidget_->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
 	ui.ModuleScrollArea->setWidget(chartWidget_);
 
@@ -143,9 +144,25 @@ void ModuleEditor::on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* it
 	if (!module) return;
 
 	// Create a new instance of the Module
-	Module* instance = dissolveWindow_->dissolve().createModuleInstance(module->type());
+	Module* newInstance = dissolveWindow_->dissolve().createModuleInstance(module->type());
+	newInstance->setConfigurationLocal(localConfiguration_);
 
-	moduleLayer_->add(instance);
+	// Set Configuration targets as appropriate
+	if (newInstance->nTargetableConfigurations() != 0)
+	{
+		if (localConfiguration_) newInstance->addTargetConfiguration(localConfiguration_);
+		else
+		{
+			ListIterator<Configuration> configIterator(dissolveWindow_->dissolve().configurations());
+			while (Configuration* cfg = configIterator.iterate())
+			{
+				newInstance->addTargetConfiguration(cfg);
+				if ((newInstance->nTargetableConfigurations() != -1) && (newInstance->nTargetableConfigurations() == newInstance->nTargetConfigurations())) break;
+			}
+		}
+	}
+
+	moduleLayer_->add(newInstance);
 
 	updateControls();
 }

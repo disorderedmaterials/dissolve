@@ -30,6 +30,7 @@
 #include <QWidget>
 
 // Forward Declarations
+class Configuration;
 class DissolveWindow;
 class FlowLayout;
 class LineParser;
@@ -52,7 +53,7 @@ class ModuleChart : public QWidget
 
 	public:
 	// Constructor / Destructor
-	ModuleChart(DissolveWindow* dissolveWindow, ModuleList& moduleList, QWidget* parent = NULL);
+	ModuleChart(DissolveWindow* dissolveWindow, ModuleList& moduleList, Configuration* localConfiguration = NULL);
 	virtual ~ModuleChart();
 
 	private:
@@ -120,6 +121,8 @@ class ModuleChart : public QWidget
 	private:
 	// Target ModuleList
 	ModuleList& modules_;
+	// Parent Configuration (if we are local to one)
+	Configuration* localConfiguration_;
 	// Module widgets for Modules in target ModuleList
 	RefList<ModuleChartModuleBlock,bool> moduleWidgets_;
 	// Insertion point widget
