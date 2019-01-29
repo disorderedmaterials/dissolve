@@ -77,6 +77,8 @@ class GeneralWizard : public WizardWidget
 	bool progressionAllowed(int index) const;
 	// Perform any necessary actions before moving to the next page
 	bool prepareForNextPage(int currentIndex);
+	// Determine next page for the current page, based on current data
+	int determineNextPage(int currentIndex);
 	// Perform any necessary actions before moving to the previous page
 	bool prepareForPreviousPage(int currentIndex);
 

@@ -113,6 +113,8 @@ class WizardWidget : public QWidget
 	virtual bool progressionAllowed(int index) const = 0;
 	// Perform any necessary actions before moving to the next page
 	virtual bool prepareForNextPage(int currentIndex) = 0;
+	// Determine next page for the current page, based on current data
+	virtual int determineNextPage(int currentIndex) = 0;
 	// Perform any necessary actions before moving to the previous page
 	virtual bool prepareForPreviousPage(int currentIndex) = 0;
 

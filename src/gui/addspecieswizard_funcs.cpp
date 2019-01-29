@@ -294,6 +294,18 @@ bool AddSpeciesWizard::prepareForNextPage(int currentIndex)
 	return true;
 }
 
+// Determine next page for the current page, based on current data
+int AddSpeciesWizard::determineNextPage(int currentIndex)
+{
+	switch (currentIndex)
+	{
+		default:
+			break;
+	}
+
+	return -1;
+}
+
 // Perform any necessary actions before moving to the previous page
 bool AddSpeciesWizard::prepareForPreviousPage(int currentIndex)
 {

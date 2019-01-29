@@ -44,7 +44,7 @@ AddConfigurationWizard::AddConfigurationWizard(QWidget* parent)
 	registerChoicePage(AddConfigurationWizard::StartPage, "Create Configuration");
 	registerPage(AddConfigurationWizard::MonoSpeciesPage, "Single-Species Configuration", AddConfigurationWizard::BoxTypePage);
 	registerPage(AddConfigurationWizard::MultiSpeciesPage, "Mixture of Species", AddConfigurationWizard::BoxTypePage);
-	registerPage(AddConfigurationWizard::BoxTypePage, "Basic Box Type", AddConfigurationWizard::BoxGeometryPage);
+	registerPage(AddConfigurationWizard::BoxTypePage, "Basic Box Type");
 	registerPage(AddConfigurationWizard::BoxGeometryPage, "Box Geometry", AddConfigurationWizard::MultiplierPage);
 	registerPage(AddConfigurationWizard::MultiplierPage, "Box Multiplier", AddConfigurationWizard::FinishPage);
 	registerFinishPage(AddConfigurationWizard::FinishPage, "Name and Temperature");
@@ -97,15 +97,15 @@ bool AddConfigurationWizard::displayControlPage(int index)
 	// Check page index given
 	if ((index < 0) || (index >= AddConfigurationWizard::nPages)) return Messenger::error("Page index %i not recognised.\n", index);
 
-	// Page index is valid, so show it - no need to switch/case
-	ui_.MainStack->setCurrentIndex(index);
-
-	// Update controls in the target page if necessary
+	// Update controls / check flow
 	switch (index)
 	{
 		default:
 			break;
 	}
+
+	// Page index is valid, so show it - no need to switch/case
+	ui_.MainStack->setCurrentIndex(index);
 
 	return true;
 }
@@ -214,6 +214,18 @@ bool AddConfigurationWizard::prepareForNextPage(int currentIndex)
 	}
 
 	return true;
+}
+
+// Determine next page for the current page, based on current data
+int AddConfigurationWizard::determineNextPage(int currentIndex)
+{
+	switch (currentIndex)
+	{
+		default:
+			break;
+	}
+
+	return -1;
 }
 
 // Perform any necessary actions before moving to the previous page

@@ -93,8 +93,10 @@ void WizardWidget::updateHeaderAndFooter(WizardWidgetPageInfo* page)
 		if (page)
 		{
 			bool allowNextOrFinish = progressionAllowed(page->index());
+			int nextIndex = page->nextIndex();
+			if (nextIndex == -1) nextIndex = determineNextPage(page->index());
 			footerUi_.NextButton->setVisible(page->pageType() != WizardWidgetPageInfo::FinishPage);
-			footerUi_.NextButton->setEnabled((page->pageType() == WizardWidgetPageInfo::NormalPage) && (page->nextIndex() != -1) && allowNextOrFinish);
+			footerUi_.NextButton->setEnabled((page->pageType() == WizardWidgetPageInfo::NormalPage) && (nextIndex != -1) && allowNextOrFinish);
 			footerUi_.FinishButton->setVisible(page->pageType() == WizardWidgetPageInfo::FinishPage);
 			footerUi_.FinishButton->setEnabled(allowNextOrFinish);
 		}
@@ -230,7 +232,12 @@ void WizardWidget::nextButtonClicked(bool checked)
 	if (!prepareForNextPage(currentPage_->index())) return;
 
 	// Move to the next page defined for the current page
-	if (currentPage_) goToPage(currentPage_->nextIndex());
+	int nextIndex = currentPage_->nextIndex();
+	if (nextIndex == -1) nextIndex = determineNextPage(currentPage_->index());
+
+	// If we still have no valid index, complain!
+	if (nextIndex == -1) Messenger::error("No valid Next page could be determined.\n");
+	else goToPage(nextIndex);
 }
 
 // Finish button clicked

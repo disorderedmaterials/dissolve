@@ -98,6 +98,19 @@ bool GeneralWizard::prepareForNextPage(int currentIndex)
 	return true;
 }
 
+
+// Determine next page for the current page, based on current data
+int GeneralWizard::determineNextPage(int currentIndex)
+{
+	// Find page with given index
+	WizardWidgetPageInfo* page = findPage(currentIndex);
+	if (!page) return Messenger::error("Page index %i not recognised.\n", currentIndex);
+
+	// TODO
+
+	return -1;
+}
+
 // Perform any necessary actions before moving to the previous page
 bool GeneralWizard::prepareForPreviousPage(int currentIndex)
 {
