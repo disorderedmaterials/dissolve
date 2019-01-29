@@ -13,6 +13,9 @@
     <file>icons/modules_energy.svg</file>
     <file>icons/modules_md.svg</file>
     <file>icons/modules_atomshake.svg</file>
+    <file>icons/modules_calibrate.svg</file>
+    <file>icons/modules_datatest.svg</file>
+    <file>icons/modules_rdf.svg</file>
     <file>icons/modules_intrashake.svg</file>
     <file>icons/modules_neutronsq.svg</file>
     <file>icons/modules_calculaterdf.svg</file>
