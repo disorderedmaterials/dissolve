@@ -117,3 +117,35 @@ TrajectoryImportFileFormat::TrajectoryImportFormat TrajectoryImportFileFormat::t
 {
 	return (TrajectoryImportFileFormat::TrajectoryImportFormat) format_;
 }
+
+/*
+ * Data1D Formats
+ */
+
+// Data1D Type Keywords
+const char* Data1DImportFormatKeywords[] = { "xy" };
+const char* NiceData1DImportFormatKeywords[] = { "XY Data" };
+
+// Return number of available formats
+int Data1DImportFileFormat::nFormats() const
+{
+	return Data1DImportFileFormat::nData1DImportFormats;
+}
+
+// Return formats array
+const char** Data1DImportFileFormat::formats() const
+{
+	return Data1DImportFormatKeywords;
+}
+
+// Return nice formats array
+const char** Data1DImportFileFormat::niceFormats() const
+{
+	return NiceData1DImportFormatKeywords;
+}
+
+// Return current format as Data1DImportFormat
+Data1DImportFileFormat::Data1DImportFormat Data1DImportFileFormat::data1DFormat() const
+{
+	return (Data1DImportFileFormat::Data1DImportFormat) format_;
+}

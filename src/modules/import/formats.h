@@ -117,5 +117,35 @@ class TrajectoryImportFileFormat : public FileAndFormat
 	}
 };
 
+// Data1D Import Formats
+class Data1DImportFileFormat : public FileAndFormat
+{
+	/*
+	 * Available Formats
+	 */
+	public:
+	// Available Data1D formats
+ 	enum Data1DImportFormat { XYData1D, nData1DImportFormats };
+	// Return number of available formats
+	int nFormats() const;
+	// Return formats array
+	const char** formats() const;
+	// Return nice formats array
+	const char** niceFormats() const;
+	// Return current format as Data1DImportFormat
+	Data1DImportFormat data1DFormat() const;
+
+
+	/*
+	 * Filename / Basename
+	 */
+	public:
+	// Return whether the file must exist
+	bool fileMustExist() const
+	{
+		return true;
+	}
+};
+
 #endif
 
