@@ -30,7 +30,7 @@
 UChromaFullWindow::UChromaFullWindow(QMainWindow *parent) : QMainWindow(parent), UChromaBase(this), viewTypeActionGroup_(this)
 {
 	// Initialise the icon resource
-	Q_INIT_RESOURCE(icons);
+	Q_INIT_RESOURCE(uchroma);
 
 	// Call the main creation function
 	ui.setupUi(this);
