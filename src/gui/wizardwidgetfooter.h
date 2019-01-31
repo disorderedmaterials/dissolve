@@ -32,11 +32,6 @@ class WizardWidgetFooter : public QWidget
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
-
-	public:
-	// Constructor / Destructor
-	WizardWidgetFooter();
-	~WizardWidgetFooter();
 };
 
 #endif
