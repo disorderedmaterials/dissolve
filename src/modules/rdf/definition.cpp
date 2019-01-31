@@ -37,7 +37,7 @@ const char* RDFModule::category() const
 // Return brief description of module
 const char* RDFModule::brief() const
 {
-	return "Calculate partial and total g(r) and S(Q)";
+	return "Calculate partial and total g(r)";
 }
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
