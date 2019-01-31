@@ -34,6 +34,15 @@ Guide::~Guide()
 {
 }
 
+// Clear all data
+void Guide::clear()
+{
+	valid_ = false;
+	name_.clear();
+	iconUrl_.clear();
+	pages_.clear();
+}
+
 /*
  * Description
  */

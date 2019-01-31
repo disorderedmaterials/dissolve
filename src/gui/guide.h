@@ -38,6 +38,8 @@ class Guide : public ListItem<Guide>
 	// Constructor / Destructor
 	Guide();
 	~Guide();
+	// Clear all data
+	void clear();
 
 
 	/*
