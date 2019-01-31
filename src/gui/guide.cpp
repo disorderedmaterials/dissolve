@@ -75,6 +75,15 @@ bool Guide::isValid() const
  * Page Data
  */
 
+// Add empty page
+GuidePage* Guide::addEmptyPage(const char* name)
+{
+	GuidePage* page = pages_.add();
+	page->setName(name);
+
+	return page;
+}
+
 // Return index of page with supplied name
 int Guide::indexOfPage(const char* name) const
 {

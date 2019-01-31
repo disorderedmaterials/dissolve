@@ -76,6 +76,8 @@ class Guide : public ListItem<Guide>
 	GuidePage* startPage_;
 
 	public:
+	// Add empty page
+	GuidePage* addEmptyPage(const char* name = "Empty Page");
 	// Return index of page with supplied name
 	int indexOfPage(const char* name) const;
 	// Return GuidePage with name specified
