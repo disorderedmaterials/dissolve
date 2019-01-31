@@ -24,6 +24,7 @@
 
 #include "gui/ui_gui.h"
 #include "gui/widgets/subwindow.h"
+#include "gui/guide.h"
 #include "gui/outputhandler.hui"
 #include "gui/thread.hui"
 #include "gui/maintab.h"
@@ -170,6 +171,10 @@ class DissolveWindow : public QMainWindow
 	/*
 	 * 'Start' Stack Page
 	 */
+	private:
+	// Guide object for QuickStart
+	Guide quickStartGuide_;
+
 	private slots:
 	// 'Create' Group
 	void on_StartCreateNewButton_clicked(bool checked);

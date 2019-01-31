@@ -21,7 +21,7 @@ SET(gui_MOC_HDRS
   addconfigurationwizard.h
   addprocessinglayerwizard.h
   addspecieswizard.h
-  generalwizard.h
+  guidewizard.h
   pairpotentialwidget.h
   wizardwidget.hui
   wizardwidgetfooter.h
@@ -40,6 +40,9 @@ SET(gui_MOC_HDRS
   workspacetab.h
   # Main UI
   gui.h
+  guide.h
+  guidepage.h
+  guidepagehighlight.h
 
   outputhandler.hui
   tmdiarea.hui
@@ -60,7 +63,7 @@ SET(gui_UIS
   addconfigurationwizard.ui
   addprocessinglayerwizard.ui
   addspecieswizard.ui
-  generalwizard.ui
+  guidewizard.ui
   pairpotentialwidget.ui
   wizardwidgetfooter.ui
   wizardwidgetheader.ui
@@ -96,7 +99,7 @@ SET(gui_SRCS
   addconfigurationwizard_funcs.cpp
   addprocessinglayerwizard_funcs.cpp
   addspecieswizard_funcs.cpp
-  generalwizard_funcs.cpp
+  guidewizard_funcs.cpp
   pairpotentialwidget_funcs.cpp
   wizardwidget_funcs.cpp
   wizardwidgethighlight.cpp
@@ -120,6 +123,9 @@ SET(gui_SRCS
   gui_simulation_tabs.cpp
   gui_stack.cpp
   gui_start.cpp
+  guide.cpp
+  guidepage.cpp
+  guidepagehighlight.cpp
   outputhandler_funcs.cpp
   thread_funcs.cpp
   tmdiarea_funcs.cpp

@@ -46,9 +46,9 @@ void WizardWidgetHighlight::setWidget(QWidget* widget)
 }
 
 // Set highlight colour
-void WizardWidgetHighlight::setColour(int r, int g, int b, int a)
+void WizardWidgetHighlight::setColour(QColor colour)
 {
-	colour_.setRgb(r, g, b, a);
+	colour_ = colour;
 }
 
 /*

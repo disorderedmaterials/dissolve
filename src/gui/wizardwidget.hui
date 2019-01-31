@@ -93,10 +93,6 @@ class WizardWidget : public QWidget
 	void registerFinishPage(int index, const char* title);
 	// Find page with specified index
 	WizardWidgetPageInfo* findPage(int index);
-	// Return page index with supplied tag
-	int indexOfTag(const char* tag);
-	// Resolve page links for tagged pages
-	void resolveTaggedPageLinks();
 
 
 	/*

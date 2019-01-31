@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>GeneralWizard</class>
- <widget class="QWidget" name="GeneralWizard">
+ <class>GuideWizard</class>
+ <widget class="QWidget" name="GuideWizard">
   <property name="geometry">
    <rect>
     <x>0</x>

@@ -1,6 +1,6 @@
 /*
-	*** General Wizard
-	*** src/gui/generalwizard.h
+	*** Guide Wizard
+	*** src/gui/guidewizard.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,26 +19,27 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_GENERALWIZARD_H
-#define DISSOLVE_GENERALWIZARD_H
+#ifndef DISSOLVE_GUIDEWIZARD_H
+#define DISSOLVE_GUIDEWIZARD_H
 
-#include "gui/ui_generalwizard.h"
+#include "gui/ui_guidewizard.h"
 #include "gui/wizardwidget.hui"
 #include "main/dissolve.h"
 
 // Forward Declarations
 class DissolveWindow;
+class Guide;
 
 // General Wizard
-class GeneralWizard : public WizardWidget
+class GuideWizard : public WizardWidget
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
 	public:
 	// Constructor / Destructor
-	GeneralWizard(QWidget* parent);
-	~GeneralWizard();
+	GuideWizard(QWidget* parent);
+	~GuideWizard();
 
 
 	/*
@@ -62,7 +63,7 @@ class GeneralWizard : public WizardWidget
 	 */
 	private:
 	// Main form declaration
-	Ui::GeneralWizard ui_;
+	Ui::GuideWizard ui_;
 
 	private:
 	// Highlight specified widget
@@ -91,16 +92,14 @@ class GeneralWizard : public WizardWidget
 	 * Content Management
 	 */
 	private:
-	// Tag for start page
-	CharString startPageTag_;
 	// Index for start page
 	int startPageIndex_;
 
 	public:
 	// Clear current content
 	void clear();
-	// Set up specified content (from resource)
-	bool setContent(QString resourceName);
+	// Set up specified guide content
+	bool setContent(const Guide& guide);
 };
 
 #endif

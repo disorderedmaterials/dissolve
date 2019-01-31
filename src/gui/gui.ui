@@ -1417,7 +1417,7 @@
             </item>
            </layout>
           </widget>
-          <widget class="GeneralWizard" name="GuideWidget" native="true"/>
+          <widget class="GuideWizard" name="GuideWidget" native="true"/>
          </widget>
         </item>
        </layout>
@@ -1694,9 +1694,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>GeneralWizard</class>
+   <class>GuideWizard</class>
    <extends>QWidget</extends>
-   <header>gui/generalwizard.h</header>
+   <header>gui/guidewizard.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

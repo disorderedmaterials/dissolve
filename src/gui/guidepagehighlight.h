@@ -1,6 +1,6 @@
 /*
-	*** Wizard Widget Highlight
-	*** src/gui/wizardwidgethighlight.h
+	*** Guide Page Highlight
+	*** src/gui/guidepagehighlight.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,50 +19,43 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_WIZARDWIDGETHIGHLIGHT_H
-#define DISSOLVE_WIZARDWIDGETHIGHLIGHT_H
+#ifndef DISSOLVE_GUIDEPAGEHIGHLIGHT_H
+#define DISSOLVE_GUIDEPAGEHIGHLIGHT_H
 
+#include "base/charstring.h"
 #include "templates/listitem.h"
 #include <QPalette>
 
 // Forward Declarations
-class QWidget;
+/* none */
 
-// Wizard Widget Highlight Definition
-class WizardWidgetHighlight : public ListItem<WizardWidgetHighlight>
+// Guide Page Highlight Definition
+class GuidePageHighlight : public ListItem<GuidePageHighlight>
 {
 	public:
 	// Constructor / Destructor
-	WizardWidgetHighlight();
-	~WizardWidgetHighlight();
+	GuidePageHighlight();
+	~GuidePageHighlight();
 
 
 	/*
 	 * Data
 	 */
 	private:
-	// Target widget
-	QWidget* widget_;
-	// Original palette
-	QPalette originalPalette_;
+	// Target widget name
+	CharString widgetName_;
 	// Highlight colour
 	QColor colour_;
 
 	public:
-	// Set target widget
-	void setWidget(QWidget* widget);
+	// Set target widget name
+	void setWidgetName(const char* name);
+	// Return target widget name
+	const char* widgetName() const;
 	// Set highlight colour
-	void setColour(QColor colour);
-
-
-	/*
-	 * Highlighting
-	 */
-	public:
-	// Highlight the target widget
-	void highlight();
-	// Remove highlight from the target widget
-	void unHighlight();
+	void setColour(int r, int g, int b, int a = 255);
+	// Return highlight colour
+	QColor colour() const;
 };
 
 #endif

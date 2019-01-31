@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <guide>
-	<title>QuickStart Guide</title>
+	<name>QuickStart Guide</name>
 	<icon>:/special/icons/special_guide.svg</icon>
 	<start>welcome</start>
 	<pages>

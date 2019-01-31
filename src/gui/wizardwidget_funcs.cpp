@@ -179,28 +179,6 @@ WizardWidgetPageInfo* WizardWidget::findPage(int index)
 	return NULL;
 }
 
-// Return page index with supplied tag
-int WizardWidget::indexOfTag(const char* tag)
-{
-	ListIterator<WizardWidgetPageInfo> pageIterator(pages_);
-	while (WizardWidgetPageInfo* page = pageIterator.iterate()) if (DissolveSys::sameString(tag, page->pageTag())) return page->index();
-
-	return -1;
-}
-
-// Resolve page links for tagged pages
-void WizardWidget::resolveTaggedPageLinks()
-{
-	ListIterator<WizardWidgetPageInfo> pageIterator(pages_);
-	while (WizardWidgetPageInfo* page = pageIterator.iterate())
-	{
-		// If a next page tag is not set for this page, move on
-		if (!page->hasNextPageTag()) continue;
-
-		page->setNextPageIndex(indexOfTag(page->nextPageTag()));
-	}
-}
-
 /*
  * Control
  */
