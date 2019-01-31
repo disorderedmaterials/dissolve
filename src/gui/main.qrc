@@ -23,8 +23,8 @@
     <file>icons/modules_import.svg</file>
   </qresource>
   <qresource prefix="quickstart">
+    <file>guides/quickstart/quickstart.guide</file>
     <file>guides/quickstart/quickstart_tabs_configurations.png</file>
-    <file>guides/quickstart/quickstart.xml</file>
     <file>guides/quickstart/quickstart_tabs_forcefield.png</file>
     <file>guides/quickstart/quickstart_tabs_modules.png</file>
     <file>guides/quickstart/quickstart_tabs_species.png</file>

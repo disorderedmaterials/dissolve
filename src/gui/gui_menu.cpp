@@ -373,7 +373,7 @@ void DissolveWindow::on_HelpViewQuickStartGuideAction_triggered(bool checked)
 	// If the quickstart guide hasn't been set up yet, set it up now...
 	if (!quickStartGuide_.isValid())
 	{
-		if (!quickStartGuide_.load(":/quickstart/guides/quickstart/quickstart.xml"))
+		if (!quickStartGuide_.load(":/quickstart/guides/quickstart/quickstart.guide"))
 		{
 			Messenger::error("Failed to load QuickStart guide.\n");
 			return;
