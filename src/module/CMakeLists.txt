@@ -1,20 +1,21 @@
 add_library(module
-  module.cpp
   group.cpp
   groups.cpp
   keywordbase.cpp
   keywordlist.cpp
+  layer.cpp
   list.cpp
+  module.cpp
 
-  module.h
   group.h
   groups.h
-  list.h
   keywordbase.h
   keyworddata.h
   keywordlist.h
-  list.h
   keywordtypes.h
+  layer.h
+  list.h
+  module.h
 )
 
 include_directories(
