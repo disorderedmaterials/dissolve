@@ -1,6 +1,6 @@
 /*
-	*** Module Keyword - CharString
-	*** src/module/keywordtypes/charstring.h
+	*** Module Keyword - Enum String
+	*** src/module/keywordtypes/enumstring.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEKEYWORDCHARSTRING_H
-#define DISSOLVE_MODULEKEYWORDCHARSTRING_H
+#ifndef DISSOLVE_MODULEKEYWORDENUMSTRING_H
+#define DISSOLVE_MODULEKEYWORDENUMSTRING_H
 
 #include "module/keyworddata.h"
 #include "module/keywordbase.h"
@@ -28,14 +28,14 @@
 // Forward Declarations
 /* none */
 
-// Keyword with CharString Data
-class CharStringModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<CharString>
+// Keyword with Enum Value
+class EnumStringModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<CharString>
 {
 	public:
 	// Constructor
-	CharStringModuleKeyword(CharString value = CharString());
+	EnumStringModuleKeyword(int value, int nOptions, const char** options);
 	// Destructor
-	~CharStringModuleKeyword();
+	~EnumStringModuleKeyword();
 
 
 	/*
@@ -49,7 +49,15 @@ class CharStringModuleKeyword : public ModuleKeywordBase, public ModuleKeywordDa
 	/*
 	 * Data Validation
 	 */
+	private:
+	// List of valid values (if appropriate)
+	Array<CharString> validValues_;
+
 	public:
+	// Return whether a validation list has been set
+	bool hasValidationList();
+	// Return validation list
+	const Array<CharString>& validationList();
 	// Validate supplied value
 	bool isValid(CharString value);
 

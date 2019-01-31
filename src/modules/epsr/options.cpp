@@ -44,7 +44,7 @@ const char* EPSRModule::expansionFunctionType(EPSRModule::ExpansionFunctionType 
 void EPSRModule::setUpKeywords()
 {
 	keywords_.add(new DoubleModuleKeyword(3.0, -1.0), "EReq", "Limit of magnitude of additional potential for any one pair potential");
-	keywords_.add(new CharStringModuleKeyword("Poisson", EPSRModule::nExpansionFunctionTypes, ExpansionFunctionTypeKeywords), "ExpansionFunction", "Form of expansion function to use when fitting difference data");
+	keywords_.add(new EnumStringModuleKeyword(EPSRModule::PoissonExpansionFunction, EPSRModule::nExpansionFunctionTypes, ExpansionFunctionTypeKeywords), "ExpansionFunction", "Form of expansion function to use when fitting difference data");
 	keywords_.add(new DoubleModuleKeyword(0.9), "Feedback", "Confidence factor");
 	keywords_.add(new DoubleModuleKeyword(0.1, 0.001, 1.0), "GSigma1", "Width for Gaussian function in reciprocal space");
 	keywords_.add(new DoubleModuleKeyword(0.2, 0.001, 1.0), "GSigma2", "Width for Gaussian function in real space");

@@ -72,26 +72,12 @@ void ModuleKeywordsWidget::setUp(DissolveWindow* dissolveWindow, Module* module)
 		keywordsLayout->addWidget(nameLabel, row, 0);
 
 		// The widget to create here depends on the data type of the keyword
-		if (keyword->type() == ModuleKeywordBase::IntegerData)
+		if (keyword->type() == ModuleKeywordBase::AtomTypeSelectionData)
 		{
-			IntegerKeywordWidget* intWidget = new IntegerKeywordWidget(NULL, keyword, coreData, moduleData, module->uniqueName());
-			connect(intWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
-			widget = intWidget;
-			base = intWidget;
-		}
-		else if (keyword->type() == ModuleKeywordBase::DoubleData)
-		{
-			DoubleKeywordWidget* doubleWidget = new DoubleKeywordWidget(NULL, keyword, coreData, moduleData, module->uniqueName());
-			connect(doubleWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
-			widget = doubleWidget;
-			base = doubleWidget;
-		}
-		else if (keyword->type() == ModuleKeywordBase::CharStringData)
-		{
-			CharStringKeywordWidget* charWidget = new CharStringKeywordWidget(NULL, keyword, coreData, moduleData, module->uniqueName());
-			connect(charWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
-			widget = charWidget;
-			base = charWidget;
+			AtomTypeSelectionKeywordWidget* atomTypeSelectionWidget = new AtomTypeSelectionKeywordWidget(NULL, keyword, coreData, moduleData, module->uniqueName());
+			connect(atomTypeSelectionWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
+			widget = atomTypeSelectionWidget;
+			base = atomTypeSelectionWidget;
 		}
 		else if (keyword->type() == ModuleKeywordBase::BoolData)
 		{
@@ -100,19 +86,40 @@ void ModuleKeywordsWidget::setUp(DissolveWindow* dissolveWindow, Module* module)
 			widget = boolWidget;
 			base = boolWidget;
 		}
-		else if (keyword->type() == ModuleKeywordBase::AtomTypeSelectionData)
-		{
-			AtomTypeSelectionKeywordWidget* atomTypeSelectionWidget = new AtomTypeSelectionKeywordWidget(NULL, keyword, coreData, moduleData, module->uniqueName());
-			connect(atomTypeSelectionWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
-			widget = atomTypeSelectionWidget;
-			base = atomTypeSelectionWidget;
-		}
 		else if (keyword->type() == ModuleKeywordBase::BroadeningFunctionData)
 		{
 			BroadeningFunctionKeywordWidget* broadeningFunctionWidget = new BroadeningFunctionKeywordWidget(NULL, keyword, coreData, moduleData, module->uniqueName());
 			connect(broadeningFunctionWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
 			widget = broadeningFunctionWidget;
 			base = broadeningFunctionWidget;
+		}
+		else if (keyword->type() == ModuleKeywordBase::CharStringData)
+		{
+			CharStringKeywordWidget* charWidget = new CharStringKeywordWidget(NULL, keyword, coreData, moduleData, module->uniqueName());
+			connect(charWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
+			widget = charWidget;
+			base = charWidget;
+		}
+		else if (keyword->type() == ModuleKeywordBase::DoubleData)
+		{
+			DoubleKeywordWidget* doubleWidget = new DoubleKeywordWidget(NULL, keyword, coreData, moduleData, module->uniqueName());
+			connect(doubleWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
+			widget = doubleWidget;
+			base = doubleWidget;
+		}
+		else if (keyword->type() == ModuleKeywordBase::EnumStringData)
+		{
+			EnumStringKeywordWidget* charWidget = new EnumStringKeywordWidget(NULL, keyword, coreData, moduleData, module->uniqueName());
+			connect(charWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
+			widget = charWidget;
+			base = charWidget;
+		}
+		else if (keyword->type() == ModuleKeywordBase::IntegerData)
+		{
+			IntegerKeywordWidget* intWidget = new IntegerKeywordWidget(NULL, keyword, coreData, moduleData, module->uniqueName());
+			connect(intWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
+			widget = intWidget;
+			base = intWidget;
 		}
 		else if (keyword->type() == ModuleKeywordBase::IsotopologueListData)
 		{

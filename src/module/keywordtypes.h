@@ -36,6 +36,7 @@
 #include "module/keywordtypes/complex.h"
 #include "module/keywordtypes/datastore.h"
 #include "module/keywordtypes/double.h"
+#include "module/keywordtypes/enumstring.h"
 #include "module/keywordtypes/fileandformat.h"
 #include "module/keywordtypes/int.h"
 #include "module/keywordtypes/isotopologuelist.h"

@@ -1,6 +1,6 @@
 /*
-	*** Keyword Widget - CharString
-	*** src/gui/keywordwidgets/charstring_funcs.cpp
+	*** Keyword Widget - Enum String
+	*** src/gui/keywordwidgets/enumstring_funcs.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,30 +19,39 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/keywordwidgets/charstring.hui"
+#include "gui/keywordwidgets/enumstring.hui"
 #include "templates/genericlisthelper.h"
 
 // Constructor
-CharStringKeywordWidget::CharStringKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QLineEdit(parent), KeywordWidgetBase(coreData, moduleData, prefix)
+EnumStringKeywordWidget::EnumStringKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QComboBox(parent), KeywordWidgetBase(coreData, moduleData, prefix)
 {
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<CharStringModuleKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base module keyword into CharStringModuleKeyword.\n");
+	keyword_ = dynamic_cast<EnumStringModuleKeyword*>(keyword);
+	if (!keyword_) Messenger::error("Couldn't cast base module keyword into EnumStringModuleKeyword.\n");
 	else
 	{
-		setText(keyword_->asString());
+		// Populate the combo with the allowed values
+		const Array<CharString>& items = keyword_->validationList();
+		for (int n=0; n<items.nItems(); ++n)
+		{
+			addItem(items.constAt(n).get());
+			if (DissolveSys::sameString(keyword_->asString(), items.constAt(n))) setCurrentIndex(n);
+		}
+
+		// Turn off editability
+		setEditable(false);
 	}
 
 	// Connect the currentTextChanged signal to our own slot
-	connect(this, SIGNAL(textChanged(QString)), this, SLOT(myTextChanged(QString)));
+	connect(this, SIGNAL(currentTextChanged(QString)), this, SLOT(myCurrentTextChanged(QString)));
 }
 
 /*
  * Signals / Slots
  */
 
-// Line edit text changed
-void CharStringKeywordWidget::myTextChanged(const QString& text)
+// Combo box text changed
+void EnumStringKeywordWidget::myCurrentTextChanged(const QString& text)
 {
 	if (refreshing_) return;
 
@@ -56,7 +65,7 @@ void CharStringKeywordWidget::myTextChanged(const QString& text)
  */
 
 // Update value displayed in widget, using specified source if necessary
-void CharStringKeywordWidget::updateValue()
+void EnumStringKeywordWidget::updateValue()
 {
 	refreshing_ = true;
 
@@ -69,6 +78,16 @@ void CharStringKeywordWidget::updateValue()
 	}
 	else newValue = keyword_->asString();
 
+	// If we have a validation list, set the new index
+	if (keyword_->hasValidationList())
+	{
+		const Array<CharString>& items = keyword_->validationList();
+		for (int n=0; n<items.nItems(); ++n) if (DissolveSys::sameString(keyword_->asString(), items.constAt(n)))
+		{
+			setCurrentIndex(n);
+			break;
+		}
+	}
+
 	refreshing_ = false;
 }
-
