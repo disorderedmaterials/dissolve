@@ -150,7 +150,7 @@ Layer  "Main Processing"
     Configuration  'Liquid'
     QBroadening  OmegaDependentGaussian  0.02
     Isotopologue  'Liquid'  'Benzene'  'Natural'  1.0
-    Reference  'data/C6H6.mint01'
+    Reference  xy  'data/C6H6.mint01'
   EndModule
   
   # 5) Calculate S(Q) for the C6D6 sample
@@ -158,7 +158,7 @@ Layer  "Main Processing"
     Configuration  'Liquid'
     QBroadening  OmegaDependentGaussian  0.02
     Isotopologue  'Liquid'  'Benzene'  'Deuteriated'  1.0
-    Reference  'data/C6D6.mint01'
+    Reference  xy  'data/C6D6.mint01'
   EndModule
   
   # 6) Calculate S(Q) for the 5050 sample
@@ -167,7 +167,7 @@ Layer  "Main Processing"
     QBroadening  OmegaDependentGaussian  0.02
     Isotopologue  'Liquid'  'Benzene'  'Deuteriated'  0.5
     Isotopologue  'Liquid'  'Benzene'  'Natural'  0.5
-    Reference  'data/5050.mint01'
+    Reference  xy  'data/5050.mint01'
   EndModule
   
 EndLayer

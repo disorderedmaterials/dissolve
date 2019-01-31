@@ -123,61 +123,64 @@ EndConfiguration
 #   Define Processing    #
 #------------------------#
 
-# 1) Perform whole-molecule MC
-Module MolShake
-  Configuration  'Liquid'
-EndModule
+Layer  Processing
 
-# 2) Perform molecular dynamics
-Module MD
-  Configuration  'Liquid'
-  Frequency  10
-  NSteps  50
-EndModule
+  # 1) Perform whole-molecule MC
+  Module MolShake
+    Configuration  'Liquid'
+  EndModule
+  
+  # 2) Perform molecular dynamics
+  Module MD
+    Configuration  'Liquid'
+    Frequency  10
+    NSteps  50
+  EndModule
+  
+  # 3) Calculate RDFs
+  Module  RDF  'RDFs'
+    Configuration  'Liquid'
+    IntraBroadening  Gaussian  0.13
+  EndModule
+  
+  # 4) Calculate S(Q) for the C6H6 sample
+  Module  NeutronSQ  'C6H6'
+    Configuration  'Liquid'
+    QBroadening  OmegaDependentGaussian  0.02
+    Isotopologue  'Liquid'  'Benzene'  'Natural'  1.0
+    Reference  xy  'data/C6H6.mint01'
+  EndModule
+  
+  # 5) Calculate S(Q) for the C6D6 sample
+  Module  NeutronSQ  'C6D6'
+    Configuration  'Liquid'
+    QBroadening  OmegaDependentGaussian  0.02
+    Isotopologue  'Liquid'  'Benzene'  'Deuteriated'  1.0
+    Reference  xy  'data/C6D6.mint01'
+  EndModule
+  
+  # 6) Calculate S(Q) for the 5050 sample
+  Module  NeutronSQ  '5050'
+    Configuration  'Liquid'
+    QBroadening  OmegaDependentGaussian  0.02
+    Isotopologue  'Liquid'  'Benzene'  'Deuteriated'  0.5
+    Isotopologue  'Liquid'  'Benzene'  'Natural'  0.5
+    Reference  xy  'data/5050.mint01'
+  EndModule
+  
+  # 7) Calculate energy of the Configuration
+  Module Energy
+    Configuration  'Liquid'
+  EndModule
+  
+  # 8) Refine potentials
+  Module  EPSR
+    Target  'C6H6'
+    Target  'C6D6'
+    Target  '5050'
+    OnlyWhenEnergyStable  True
+    Frequency  5
+    EReq  30.0
+  EndModule
 
-# 3) Calculate RDFs
-Module  RDF  'RDFs'
-  Configuration  'Liquid'
-  IntraBroadening  Gaussian  0.13
-EndModule
-
-# 4) Calculate S(Q) for the C6H6 sample
-Module  NeutronSQ  'C6H6'
-  Configuration  'Liquid'
-  QBroadening  OmegaDependentGaussian  0.02
-  Isotopologue  'Liquid'  'Benzene'  'Natural'  1.0
-  Reference  'data/C6H6.mint01'
-EndModule
-
-# 5) Calculate S(Q) for the C6D6 sample
-Module  NeutronSQ  'C6D6'
-  Configuration  'Liquid'
-  QBroadening  OmegaDependentGaussian  0.02
-  Isotopologue  'Liquid'  'Benzene'  'Deuteriated'  1.0
-  Reference  'data/C6D6.mint01'
-EndModule
-
-# 6) Calculate S(Q) for the 5050 sample
-Module  NeutronSQ  '5050'
-  Configuration  'Liquid'
-  QBroadening  OmegaDependentGaussian  0.02
-  Isotopologue  'Liquid'  'Benzene'  'Deuteriated'  0.5
-  Isotopologue  'Liquid'  'Benzene'  'Natural'  0.5
-  Reference  'data/5050.mint01'
-EndModule
-
-# 7) Calculate energy of the Configuration
-Module Energy
-  Configuration  'Liquid'
-EndModule
-
-# 8) Refine potentials
-Module  EPSR
-  Target  'C6H6'
-  Target  'C6D6'
-  Target  '5050'
-  OnlyWhenEnergyStable  True
-  Frequency  5
-  EReq  30.0
-EndModule
-
+EndLayer
