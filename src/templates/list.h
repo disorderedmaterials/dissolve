@@ -838,6 +838,25 @@ template <class T> class ListIterator
 	{
 		return (currentItem_ == targetList_.last());
 	}
+        // Peek the next item (if any)
+        T* peek()
+        {
+                if (reverse_)
+                {
+                        return (currentItem_ ? currentItem_->prev : NULL);
+                }
+                else return (currentItem_ ? currentItem_->next : NULL);
+        }
+        // Peek the previous item (if any)
+        T* peekPrevious()
+        {
+                if (reverse_)
+                {
+                        return (currentItem_ ? currentItem_->next : NULL);
+                }
+                else return (currentItem_ ? currentItem_->prev : NULL);
+        }
+
 };
 
 #endif
