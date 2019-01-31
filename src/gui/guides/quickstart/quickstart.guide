@@ -182,26 +182,16 @@
         <page>
             <name>Add Modules (3/5)</name>
             <next>Add Modules (4/5)</next>
-            <content><![CDATA[
-				
-				
-			]]></content>
+            <content><![CDATA[<html><head/><body><p>OK, to business! We ultimately want to calculate the total neutron-weighted structure factor for the system, but to do that we first need the total radial distribution function from the <span style=" font-weight:600; color:#0000bb;">RDF </span><span style=" font-weight:600;">Module:</span></p><p align="center"><img src=":/modules/icons/modules_rdf.svg" width="32" height="32"/><span style=" font-weight:600; color:#0000bb;">RDF</span></p><p>Add one after the <span style=" font-weight:600; color:#0000bb;">Energy</span><span style=" color:#000000;"> - note that </span><span style=" font-weight:600; color:#0000bb;">RDF</span> has a default frequency of 5, so this means we will calculate the g(r) only after the <span style=" font-weight:600; color:#0000bb;">AtomShake</span> and <span style=" font-weight:600; color:#0000bb;">Energy</span> have run five times each (as their frequencies are both 1). This prevents recalculating the g(r) too often, and slowing down the evolution of the system.</p></body></html>]]></content>
         </page>
         <page>
             <name>Add Modules (4/5)</name>
             <next>Add Modules (5/5)</next>
-            <content><![CDATA[
-				
-				
-			]]></content>
+            <content><![CDATA[<html><head/><body><p>From the data calculated by RDF we can calculate the structure factors by Fourier transform. Since we have neutron scattering data we will use the <span style=" font-weight:600; color:#0000bb;">NeutronSQ</span><span style=" font-weight:600;">Module:</span></p><p align="center"><img src=":/modules/icons/modules_neutronsq.svg" width="32" height="32"/><span style=" font-weight:600; color:#0000bb;">NeutronSQ</span></p><p>Add one after the RDF</p></body></html>]]></content>
         </page>
         <page>
             <name>Add Modules (5/5)</name>
-            <next>Empty Page</next>
-            <content><![CDATA[
-				
-				
-			]]></content>
+            <content><![CDATA[<html><head/><body><p><br/></p></body></html>]]></content>
         </page>
     </pages>
 </guide>
