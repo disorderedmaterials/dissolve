@@ -94,7 +94,7 @@ class TrajectoryImportFileFormat : public FileAndFormat
 	 * Available Formats
 	 */
 	public:
-	// Available forces formats
+	// Available trajectory formats
  	enum TrajectoryImportFormat { XYZTrajectory, nTrajectoryImportFormats };
 	// Return number of available formats
 	int nFormats() const;
