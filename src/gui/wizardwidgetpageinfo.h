@@ -85,10 +85,6 @@ class WizardWidgetPageInfo : public ListItem<WizardWidgetPageInfo>
 	private:
 	// Associated widget in QStackedWidget
 	QWidget* stackedWidgetPage_;
-	// Tag for this page
-	CharString pageTag_;
-	// Tag for the page following this one
-	CharString nextPageTag_;
 	// Highlighted widgets
 	List<WizardWidgetHighlight> widgetHighlights_;
 
@@ -97,16 +93,6 @@ class WizardWidgetPageInfo : public ListItem<WizardWidgetPageInfo>
 	void setStackedWidgetPage(QWidget* widget);
 	// Return associated widget in QStackedWidget
 	QWidget* stackedWidgetPage() const;
-	// Set tag for this page
-	void setPageTag(const char* tag);
-	// Return tag for this page
-	const char* pageTag() const;
-	// Set tag for the page following this one
-	void setNextPageTag(const char* nextTag);
-	// Return tag for the page following this one
-	const char* nextPageTag() const;
-	// Return whether a next page tag has been set
-	bool hasNextPageTag() const;
 	// Add new widget highlight
 	WizardWidgetHighlight* addWidgetHighlight();
 	// Highlight all defined widgets

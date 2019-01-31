@@ -113,37 +113,6 @@ QWidget* WizardWidgetPageInfo::stackedWidgetPage() const
 {
 	return stackedWidgetPage_;
 }
-
-// Set tag for this page
-void WizardWidgetPageInfo::setPageTag(const char* tag)
-{
-	pageTag_ = tag;
-}
-
-// Return tag for this page
-const char* WizardWidgetPageInfo::pageTag() const
-{
-	return pageTag_.get();
-}
-
-// Set tag for the page following this one
-void WizardWidgetPageInfo::setNextPageTag(const char* nextTag)
-{
-	nextPageTag_ = nextTag;
-}
-
-// Return tag for the page following this one
-const char* WizardWidgetPageInfo::nextPageTag() const
-{
-	return nextPageTag_.get();
-}
-
-// Return whether a next page tag has been set
-bool WizardWidgetPageInfo::hasNextPageTag() const
-{
-	return (!nextPageTag_.isEmpty());
-}
-
 // Add new widget highlight
 WizardWidgetHighlight* WizardWidgetPageInfo::addWidgetHighlight()
 {
