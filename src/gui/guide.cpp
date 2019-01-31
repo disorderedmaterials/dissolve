@@ -75,54 +75,6 @@ bool Guide::isValid() const
  * Page Data
  */
 
-// Add empty page
-GuidePage* Guide::addEmptyPage(const char* name)
-{
-	GuidePage* page = pages_.add();
-	page->setName(name);
-
-	return page;
-}
-
-// Return index of page with supplied name
-int Guide::indexOfPage(const char* name) const
-{
-	ListIterator<GuidePage> pageIterator(pages_);
-	int count = 0;
-	while (GuidePage* page = pageIterator.iterate())
-	{
-		if (DissolveSys::sameString(name, page->name())) return count;
-		++count;
-	}
-
-	return -1;
-}
-
-// Return GuidePage with name specified
-GuidePage* Guide::page(const char* name)
-{
-	ListIterator<GuidePage> pageIterator(pages_);
-	while (GuidePage* page = pageIterator.iterate()) if (DissolveSys::sameString(name, page->name())) return page;
-
-	return NULL;
-}
-
-// Return name of intended start page
-const char* Guide::startPageName() const
-{
-	return startPageName_.get();
-}
-
-// Return list of defined pages
-const List<GuidePage>& Guide::pages() const
-{
-	return pages_;
-}
-
-/*
- * I/O
- */
-
 // Resolve internal links between pages, converting tags to pointers
 void Guide::resolveInternalLinks()
 {
@@ -152,6 +104,75 @@ void Guide::resolveInternalLinks()
 		}
 	}
 }
+
+// Add empty page
+GuidePage* Guide::addEmptyPage(const char* name)
+{
+	GuidePage* page = pages_.add();
+	page->setName(name);
+
+	return page;
+}
+
+// Remove specified page, updating internal links
+void Guide::removePage(GuidePage* page)
+{
+	pages_.remove(page);
+
+	// Need to update internal links
+	resolveInternalLinks();
+}
+
+// Shift specified page up in the list (towards the start)
+void Guide::shiftPageUp(GuidePage* page)
+{
+	pages_.shiftUp(page);
+}
+
+// Shift specified page down in the list (towards the end)
+void Guide::shiftPageDown(GuidePage* page)
+{
+	pages_.shiftDown(page);
+}
+
+// Return index of page with supplied name
+int Guide::indexOfPage(const char* name) const
+{
+	ListIterator<GuidePage> pageIterator(pages_);
+	int count = 0;
+	while (GuidePage* page = pageIterator.iterate())
+	{
+		if (DissolveSys::sameString(name, page->name())) return count;
+		++count;
+	}
+
+	return -1;
+}
+
+// Return GuidePage with name specified
+GuidePage* Guide::page(const char* name)
+{
+	ListIterator<GuidePage> pageIterator(pages_);
+	while (GuidePage* page = pageIterator.iterate()) if (DissolveSys::sameString(name, page->name())) return page;
+
+	return NULL;
+}
+
+// Return list of defined pages
+const List<GuidePage>& Guide::pages() const
+{
+	return pages_;
+}
+
+// Return name of intended start page
+const char* Guide::startPageName() const
+{
+	return startPageName_.get();
+}
+
+/*
+ * I/O
+ */
 
 // Load page data from specified resource
 bool Guide::load(const char* resourceName)

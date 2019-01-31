@@ -75,26 +75,32 @@ class Guide : public ListItem<Guide>
 	// Pointer to start page
 	GuidePage* startPage_;
 
+	private:
+	// Resolve internal links between pages, converting tags to pointers
+	void resolveInternalLinks();
+
 	public:
 	// Add empty page
 	GuidePage* addEmptyPage(const char* name = "Empty Page");
+	// Remove specified page, updating internal links
+	void removePage(GuidePage* page);
+	// Shift specified page up in the list (towards the start)
+	void shiftPageUp(GuidePage* page);
+	// Shift specified page down in the list (towards the end)
+	void shiftPageDown(GuidePage* page);
 	// Return index of page with supplied name
 	int indexOfPage(const char* name) const;
 	// Return GuidePage with name specified
 	GuidePage* page(const char* name);
-	// Return name of intended start page
-	const char* startPageName() const;
 	// Return list of defined pages
 	const List<GuidePage>& pages() const;
+	// Return name of intended start page
+	const char* startPageName() const;
 
 
 	/*
 	 * I/O
 	 */
-	private:
-	// Resolve internal links between pages, converting tags to pointers
-	void resolveInternalLinks();
-
 	public:
 	// Load guide data from specified resource
 	bool load(const char* resourceName);
