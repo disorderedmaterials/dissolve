@@ -169,7 +169,8 @@ void DissolveWindow::on_SessionCloseAction_triggered(bool checked)
 {
 	if (!checkSaveCurrentInput()) return;
 
-	startNew();
+	// Make sure we are now on the Start stack page
+	showMainStackPage(DissolveWindow::StartStackPage);
 }
 
 void DissolveWindow::on_SessionSaveAction_triggered(bool checked)
