@@ -23,6 +23,7 @@
 #define DISSOLVE_NEUTRONSQMODULE_H
 
 #include "module/module.h"
+#include "modules/import/formats.h"
 #include "classes/partialset.h"
 #include "classes/isotopologuereference.h"
 #include "classes/datastore.h"
@@ -71,6 +72,8 @@ class NeutronSQModule : public Module
 	List<IsotopologueReference> isotopologues_;
 	// Exchangeable AtomTypes
 	AtomTypeList exchangeableTypes_;
+	// Reference F(Q) file and format
+	Data1DImportFileFormat referenceFQ_;
 
 	protected:
 	// Set up keywords for Module

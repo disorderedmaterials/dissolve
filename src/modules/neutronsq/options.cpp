@@ -55,7 +55,7 @@ void NeutronSQModule::setUpKeywords()
 	keywords_.add(new BroadeningFunctionModuleKeyword(BroadeningFunction()), "QBroadening", "Instrument broadening function to apply when calculating S(Q)");
 	keywords_.add(new DoubleModuleKeyword(-1.0, -1.0), "QMax", "Maximum Q for calculated S(Q)");
 	keywords_.add(new DoubleModuleKeyword(0.01, 0.0), "QMin", "Minimum Q for calculated S(Q)");
-	keywords_.add(new CharStringModuleKeyword(""), "Reference", "F(Q) reference data", "<filename>");
+	keywords_.add(new FileAndFormatModuleKeyword(referenceFQ_), "Reference", "F(Q) reference data", "<format> <filename>");
 	keywords_.add(new EnumStringModuleKeyword(NeutronSQModule::NoNormalisation, NeutronSQModule::nNormalisationTypes, NormalisationTypeKeywords), "ReferenceNormalisation", "Normalisation to remove from reference data before use");
 	keywords_.add(new DoubleModuleKeyword(-1.0, -1.0), "ReferenceRemoveAverage", "Q value at which to form average level to be subtracted from reference data before use (-1 for no subtraction)");
 	keywords_.add(new BoolModuleKeyword(false), "Save", "Whether to save partials to disk after calculation", "<True|False>");
