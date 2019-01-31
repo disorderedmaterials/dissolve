@@ -24,6 +24,7 @@
 // Constructor / Destructor
 GuidePage::GuidePage() : ListItem<GuidePage>()
 {
+	nextPage_ = NULL;
 }
 
 GuidePage::~GuidePage()
@@ -35,15 +36,16 @@ GuidePage::~GuidePage()
  */
 
 
-// Set page title
-void GuidePage::setTitle(const char* title)
+// Set page name
+void GuidePage::setName(const char* name)
 {
-	title_ = title;
+	name_ = name;
 }
-// Return title text for page
-const char* GuidePage::title() const
+
+// Return name of page
+const char* GuidePage::name() const
 {
-	return title_.get();
+	return name_.get();
 }
 
 // Set resource location for icon
@@ -76,34 +78,34 @@ bool GuidePage::finishPoint() const
 	return finishPoint_;
 }
 
-// Set tag for this page
-void GuidePage::setTag(const char* tag)
+// Set name of the page following this one
+void GuidePage::setNextPageName(const char* name)
 {
-	tag_ = tag;
+	nextPageName_ = name;
 }
 
-// Return tag for this page
-const char* GuidePage::tag() const
+// Return name for the page following this one
+const char* GuidePage::nextPageName() const
 {
-	return tag_.get();
+	return nextPageName_.get();
 }
 
-// Set tag for the page following this one
-void GuidePage::setNextPageTag(const char* nextTag)
+// Return whether a next page name has been set
+bool GuidePage::hasNextPageName() const
 {
-	nextPageTag_ = nextTag;
+	return (!nextPageName_.isEmpty());
 }
 
-// Return tag for the page following this one
-const char* GuidePage::nextPageTag() const
+// Set pointer to the page to move to once 'Next' is clicked
+void GuidePage::setNextPage(GuidePage* page)
 {
-	return nextPageTag_.get();
+	nextPage_ = page;
 }
 
-// Return whether a next page tag has been set
-bool GuidePage::hasNextPageTag() const
+// Pointer to the page to move to once 'Next' is clicked
+GuidePage* GuidePage::nextPage() const
 {
-	return (!nextPageTag_.isEmpty());
+	return nextPage_;
 }
 
 /*

@@ -75,24 +75,33 @@ bool Guide::isValid() const
  * Page Data
  */
 
-// Return page index with supplied tag
-int Guide::indexOfTag(const char* tag) const
+// Return index of page with supplied name
+int Guide::indexOfPage(const char* name) const
 {
 	ListIterator<GuidePage> pageIterator(pages_);
 	int count = 0;
 	while (GuidePage* page = pageIterator.iterate())
 	{
-		if (DissolveSys::sameString(tag, page->tag())) return count;
+		if (DissolveSys::sameString(name, page->name())) return count;
 		++count;
 	}
 
 	return -1;
 }
 
-// Return tag for start page
-const char* Guide::startPageTag() const
+// Return GuidePage with name specified
+GuidePage* Guide::page(const char* name)
 {
-	return startPageTag_.get();
+	ListIterator<GuidePage> pageIterator(pages_);
+	while (GuidePage* page = pageIterator.iterate()) if (DissolveSys::sameString(name, page->name())) return page;
+
+	return NULL;
+}
+
+// Return name of intended start page
+const char* Guide::startPageName() const
+{
+	return startPageName_.get();
 }
 
 // Return list of defined pages
@@ -105,6 +114,35 @@ const List<GuidePage>& Guide::pages() const
  * I/O
  */
 
+// Resolve internal links between pages, converting tags to pointers
+void Guide::resolveInternalLinks()
+{
+	// Set starting page
+	if (!startPageName_.isEmpty())
+	{
+		startPage_ = page(startPageName_);
+		if (!startPage_) Messenger::warn("No page named '%s' exists, so the starting page pointer cannot be set.\n", startPageName_.get());
+	}
+	else
+	{
+		startPage_ = NULL;
+		Messenger::warn("No starting page has been set for this guide.\n");
+	}
+
+	// Loop over pages, setting pointers to linked pages based on the stored tags
+	ListIterator<GuidePage> pageIterator(pages_);
+	while (GuidePage* guidePage = pageIterator.iterate())
+	{
+		// Next page pointer
+		if (guidePage->hasNextPageName())
+		{
+			// Locate the next page in our list
+			GuidePage* nextPage = page(guidePage->nextPageName());
+			if (!nextPage) Messenger::warn("No page named '%s' exists, so the next page pointer for page '%s' cannot be set.\n", guidePage->nextPageName(), guidePage->name());
+			guidePage->setNextPage(nextPage);
+		}
+	}
+}
 
 // Load page data from specified resource
 bool Guide::load(const char* resourceName)
@@ -126,7 +164,7 @@ bool Guide::load(const char* resourceName)
 
 		if (token == "name") name_ = qPrintable(guideReader.readElementText());
 		else if (token == "icon") iconUrl_= qPrintable(guideReader.readElementText());
-		else if (token == "start") startPageTag_ = qPrintable(guideReader.readElementText());
+		else if (token == "start") startPageName_ = qPrintable(guideReader.readElementText());
 		else if (token == "pages")
 		{
 			// Start of the pages set
@@ -148,9 +186,8 @@ bool Guide::load(const char* resourceName)
 				{
 					QString pageToken = guideReader.name().toString();
 
-					if (pageToken == "title") page->setTitle(qPrintable(guideReader.readElementText()));
-					else if (pageToken == "tag") page->setTag(qPrintable(guideReader.readElementText()));
-					else if (pageToken == "next") page->setNextPageTag(qPrintable(guideReader.readElementText()));
+					if (pageToken == "name") page->setName(qPrintable(guideReader.readElementText()));
+					else if (pageToken == "next") page->setNextPageName(qPrintable(guideReader.readElementText()));
 					else if (pageToken == "content") page->setRichTextContent(qPrintable(guideReader.readElementText()));
 					else if (pageToken == "highlight")
 					{
@@ -175,7 +212,7 @@ bool Guide::load(const char* resourceName)
 					}
 				}
 
-				Messenger::printVerbose("Found page '%s'\n", page->tag());
+				Messenger::printVerbose("Found page '%s'\n", page->name());
 			}
 		}
 		else
@@ -184,6 +221,72 @@ bool Guide::load(const char* resourceName)
 			return false;
 		}
 	}
+
+	// Now we have all the pages loaded, we can resolve internal links between them
+	resolveInternalLinks();
+
+	return true;
+}
+
+// Save guide data to specified resource
+bool Guide::save(const char* resourceName)
+{
+	// Set up an XML stream writer on the supplied filename
+	QFile guideFile(resourceName);
+	if (!guideFile.open(QIODevice::WriteOnly | QIODevice::Text)) return Messenger::error("Couldn't open guide '%s' for writing.\n", resourceName);
+	QXmlStreamWriter guideWriter(&guideFile);
+
+	// Set up the writer
+	guideWriter.setAutoFormatting(true);
+	guideWriter.writeStartDocument();
+
+	// Write opening element
+	guideWriter.writeStartElement("guide");
+
+	// Write guide information
+	guideWriter.writeTextElement("name", name_.get());
+	if (!iconUrl_.isEmpty()) guideWriter.writeTextElement("icon", iconUrl_.get());
+	if (startPage_) guideWriter.writeTextElement("start", startPage_->name());
+
+	// Write pages
+	guideWriter.writeStartElement("pages");
+	ListIterator<GuidePage> pageIterator(pages_);
+	while (GuidePage* page = pageIterator.iterate())
+	{
+		// Open the page element
+		guideWriter.writeStartElement("page");
+
+		guideWriter.writeTextElement("name", page->name());
+		if (page->nextPage()) guideWriter.writeTextElement("next", page->nextPage()->name());
+
+		// Write rich text content
+		guideWriter.writeStartElement("content");
+		guideWriter.writeCDATA(page->richTextContent());
+		guideWriter.writeEndElement();
+
+		// Write widget higlights
+		ListIterator<GuidePageHighlight> highlightIterator(page->highlights());
+		while (GuidePageHighlight* highlight = highlightIterator.iterate())
+		{
+			guideWriter.writeStartElement("highlight");
+			guideWriter.writeTextElement("widget", highlight->widgetName());
+			QColor colour = highlight->colour();
+			guideWriter.writeTextElement("r", QString::number(colour.red()));
+			guideWriter.writeTextElement("g", QString::number(colour.green()));
+			guideWriter.writeTextElement("b", QString::number(colour.blue()));
+			guideWriter.writeTextElement("a", QString::number(colour.alpha()));
+			guideWriter.writeEndElement();
+		}
+
+		// Close the page element
+		guideWriter.writeEndElement();
+	}
+	guideWriter.writeEndElement();
+
+	// Write ending element for the entire guide
+	guideWriter.writeEndElement();
+
+	guideWriter.writeEndDocument();
 
 	return true;
 }

@@ -71,13 +71,17 @@ class Guide : public ListItem<Guide>
 	// List of defined pages
 	List<GuidePage> pages_;
 	// Tag for start page
-	CharString startPageTag_;
+	CharString startPageName_;
+	// Pointer to start page
+	GuidePage* startPage_;
 
 	public:
-	// Return index of page with supplied tag
-	int indexOfTag(const char* tag) const;
-	// Return tag for start page
-	const char* startPageTag() const;
+	// Return index of page with supplied name
+	int indexOfPage(const char* name) const;
+	// Return GuidePage with name specified
+	GuidePage* page(const char* name);
+	// Return name of intended start page
+	const char* startPageName() const;
 	// Return list of defined pages
 	const List<GuidePage>& pages() const;
 
@@ -85,9 +89,15 @@ class Guide : public ListItem<Guide>
 	/*
 	 * I/O
 	 */
+	private:
+	// Resolve internal links between pages, converting tags to pointers
+	void resolveInternalLinks();
+
 	public:
 	// Load guide data from specified resource
 	bool load(const char* resourceName);
+	// Save guide data to specified resource
+	bool save(const char* resourceName);
 };
 
 #endif

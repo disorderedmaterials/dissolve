@@ -180,9 +180,9 @@ bool GuideWizard::setContent(const Guide& guide)
 		WizardWidgetPageInfo* pageInfo = addPage();
 		pageInfo->setStackedWidgetPage(widget);
 
-		pageInfo->setTitle(page->title());
-		pageInfo->setIndex(guide.indexOfTag(page->tag()));
-		if (page->hasNextPageTag()) pageInfo->setNextPageIndex(guide.indexOfTag(page->nextPageTag()));
+		pageInfo->setTitle(page->name());
+		pageInfo->setIndex(guide.indexOfPage(page->name()));
+		if (page->hasNextPageName()) pageInfo->setNextPageIndex(guide.indexOfPage(page->nextPageName()));
 
 		// Add any page highlights
 		ListIterator<GuidePageHighlight> highlightIterator(page->highlights());
@@ -205,7 +205,7 @@ bool GuideWizard::setContent(const Guide& guide)
 	};
 
 	// Set start page index
-	startPageIndex_ = guide.indexOfTag(guide.startPageTag());
+	startPageIndex_ = guide.indexOfPage(guide.startPageName());
 
 	// Set wizard header icon (if set)
 	if (guide.hasIconUrl()) setWizardHeaderIcon(guide.iconUrl());

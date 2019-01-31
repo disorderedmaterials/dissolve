@@ -44,22 +44,22 @@ class GuidePage : public ListItem<GuidePage>
 	 * Basic Definition
 	 */
 	private:
-	// Title text for page
-	CharString title_;
+	// Name / title text for page
+	CharString name_;
 	// Resource location for icon
 	CharString iconUrl_;
 	// Whether this page is a Finish point
 	bool finishPoint_;
-	// Tag for this page
-	CharString tag_;
-	// Tag for the page to move to once 'Next' is clicked
-	CharString nextPageTag_;
+	// Name of the page to move to once 'Next' is clicked
+	CharString nextPageName_;
+	// Pointer to the page to move to once 'Next' is clicked
+	GuidePage* nextPage_;
 
 	public:
-	// Set page title
-	void setTitle(const char* title);
-	// Return title text for page
-	const char* title() const;
+	// Set page name
+	void setName(const char* name);
+	// Return name of page
+	const char* name() const;
 	// Set resource location for icon
 	void setIconUrl(const char* resourceUrl);
 	// Return resource location for icon
@@ -70,16 +70,16 @@ class GuidePage : public ListItem<GuidePage>
 	void setFinishPoint(bool b);
 	// Whether this page is a Finish point
 	bool finishPoint() const;
-	// Set tag for this page
-	void setTag(const char* tag);
-	// Return tag for this page
-	const char* tag() const;
-	// Set tag for the page following this one
-	void setNextPageTag(const char* nextTag);
-	// Return tag for the page following this one
-	const char* nextPageTag() const;
-	// Return whether a next page tag has been set
-	bool hasNextPageTag() const;
+	// Set name for the page following this one
+	void setNextPageName(const char* name);
+	// Return name for the page following this one
+	const char* nextPageName() const;
+	// Return whether a next page name has been set
+	bool hasNextPageName() const;
+	// Set pointer to the page to move to once 'Next' is clicked
+	void setNextPage(GuidePage* page);
+	// Pointer to the page to move to once 'Next' is clicked
+	GuidePage* nextPage() const;
 
 
 	/*
