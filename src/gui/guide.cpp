@@ -96,32 +96,38 @@ const List<GuidePage>& Guide::pages() const
  * I/O
  */
 
-// Parse guide from specified QXmlStreamReader
-bool Guide::parse(QXmlStreamReader& xmlStreamReader)
+
+// Load page data from specified resource
+bool Guide::load(const char* resourceName)
 {
+	// Set up an XML stream reader on the supplied resource
+	QFile guideFile(resourceName);
+	if (!guideFile.open(QIODevice::ReadOnly | QIODevice::Text)) return Messenger::error("Couldn't open guide '%s'.\n", resourceName);
+	QXmlStreamReader guideReader(&guideFile);
+
 	// Check that we have a file with the correct root node
-	if (!xmlStreamReader.readNextStartElement()) return Messenger::error("Failed to do initial read from guide xml.\n");
-	if (xmlStreamReader.name() != "guide") return Messenger::error("Guide file has wrong root node type.\n");
+	if (!guideReader.readNextStartElement()) return Messenger::error("Failed to do initial read from guide xml.\n");
+	if (guideReader.name() != "guide") return Messenger::error("Guide file has wrong root node type.\n");
 
 	// Now loop over root node elements
-	while (xmlStreamReader.readNextStartElement())
+	while (guideReader.readNextStartElement())
 	{
 		// Check the name of the root element
-		QString token = xmlStreamReader.name().toString();
+		QString token = guideReader.name().toString();
 
-		if (token == "name") name_ = qPrintable(xmlStreamReader.readElementText());
-		else if (token == "icon") iconUrl_= qPrintable(xmlStreamReader.readElementText());
-		else if (token == "start") startPageTag_ = qPrintable(xmlStreamReader.readElementText());
+		if (token == "name") name_ = qPrintable(guideReader.readElementText());
+		else if (token == "icon") iconUrl_= qPrintable(guideReader.readElementText());
+		else if (token == "start") startPageTag_ = qPrintable(guideReader.readElementText());
 		else if (token == "pages")
 		{
 			// Start of the pages set
-			while (xmlStreamReader.readNextStartElement())
+			while (guideReader.readNextStartElement())
 			{
 				// Check that this is a <page>...
-				if (xmlStreamReader.name() != "page")
+				if (guideReader.name() != "page")
 				{
-					Messenger::error("Encountered unrecognised token '%s' when we expected a <page>.\n", qPrintable(xmlStreamReader.name().toString()));
-					xmlStreamReader.skipCurrentElement();
+					Messenger::error("Encountered unrecognised token '%s' when we expected a <page>.\n", qPrintable(guideReader.name().toString()));
+					guideReader.skipCurrentElement();
 					continue;
 				}
 
@@ -129,27 +135,27 @@ bool Guide::parse(QXmlStreamReader& xmlStreamReader)
 				GuidePage* page = pages_.add();
 
 				// Process the page's content
-				while (xmlStreamReader.readNextStartElement())
+				while (guideReader.readNextStartElement())
 				{
-					QString pageToken = xmlStreamReader.name().toString();
+					QString pageToken = guideReader.name().toString();
 
-					if (pageToken == "title") page->setTitle(qPrintable(xmlStreamReader.readElementText()));
-					else if (pageToken == "tag") page->setTag(qPrintable(xmlStreamReader.readElementText()));
-					else if (pageToken == "next") page->setNextPageTag(qPrintable(xmlStreamReader.readElementText()));
-					else if (pageToken == "content") page->setRichTextContent(qPrintable(xmlStreamReader.readElementText()));
+					if (pageToken == "title") page->setTitle(qPrintable(guideReader.readElementText()));
+					else if (pageToken == "tag") page->setTag(qPrintable(guideReader.readElementText()));
+					else if (pageToken == "next") page->setNextPageTag(qPrintable(guideReader.readElementText()));
+					else if (pageToken == "content") page->setRichTextContent(qPrintable(guideReader.readElementText()));
 					else if (pageToken == "highlight")
 					{
 						GuidePageHighlight* highlight = page->addHighlight();
 						int r = 0, g = 0, b = 0, a = 255;
-						while (xmlStreamReader.readNextStartElement())
+						while (guideReader.readNextStartElement())
 						{
-							QString name = xmlStreamReader.name().toString();
+							QString name = guideReader.name().toString();
 
-							if (name == "widget") highlight->setWidgetName(qPrintable(xmlStreamReader.readElementText()));
-							else if (name == "r") r = xmlStreamReader.readElementText().toInt();
-							else if (name == "g") g = xmlStreamReader.readElementText().toInt();
-							else if (name == "b") b = xmlStreamReader.readElementText().toInt();
-							else if (name == "a") a = xmlStreamReader.readElementText().toInt();
+							if (name == "widget") highlight->setWidgetName(qPrintable(guideReader.readElementText()));
+							else if (name == "r") r = guideReader.readElementText().toInt();
+							else if (name == "g") g = guideReader.readElementText().toInt();
+							else if (name == "b") b = guideReader.readElementText().toInt();
+							else if (name == "a") a = guideReader.readElementText().toInt();
 						}
 						highlight->setColour(r, g, b, a);
 					}
@@ -171,17 +177,4 @@ bool Guide::parse(QXmlStreamReader& xmlStreamReader)
 	}
 
 	return true;
-}
-
-// Load page data from specified resource
-bool Guide::loadFromResource(const char* resourceName)
-{
-	// Set up an XML stream reader on the supplied resource
-	QFile guideFile(resourceName);
-	if (!guideFile.open(QIODevice::ReadOnly | QIODevice::Text)) return Messenger::error("Couldn't open guide '%s'.\n", resourceName);
-	QXmlStreamReader guideReader(&guideFile);
-
-	valid_ = parse(guideReader);
-
-	return valid_;
 }

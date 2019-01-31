@@ -83,13 +83,9 @@ class Guide : public ListItem<Guide>
 	/*
 	 * I/O
 	 */
-	private:
-	// Parse guide from specified QXmlStreamReader
-	bool parse(QXmlStreamReader& xmlStreamReader);
-
 	public:
 	// Load guide data from specified resource
-	bool loadFromResource(const char* resourceName);
+	bool load(const char* resourceName);
 };
 
 #endif
