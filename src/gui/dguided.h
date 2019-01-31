@@ -114,6 +114,8 @@ class DGuidEdWindow : public QMainWindow
 	void on_NextPageCombo_currentIndexChanged(int index);
 
 	public:
+	// Set the current page
+	void setCurrentPage(GuidePage* page);
 	// Stash current page content
 	void stashPageContent(GuidePage* page);
 	// Update page lists
@@ -144,6 +146,8 @@ class DGuidEdWindow : public QMainWindow
 	void on_FormatItalicAction_triggered(bool checked);
 	void on_FormatUnderlineAction_triggered(bool checked);
 	void on_FormatColourAction_triggered(bool checked);
+	void on_FormatModuleNameAction_triggered(bool checked);
+	void on_FormatClearAction_triggered(bool checked);
 	void textAlign(QAction *a);
 
 
@@ -152,6 +156,7 @@ class DGuidEdWindow : public QMainWindow
 	 */
 	private:
 	void mergeFormatOnWordOrSelection(const QTextCharFormat &format);
+	void clearFormatOnWordOrSelection();
 	void fontChanged(const QFont &f);
 	void colorChanged(const QColor &c);
 	void alignmentChanged(Qt::Alignment a);

@@ -294,6 +294,8 @@
    <addaction name="FormatAlignJustifyAction"/>
    <addaction name="separator"/>
    <addaction name="FormatColourAction"/>
+   <addaction name="FormatModuleNameAction"/>
+   <addaction name="FormatClearAction"/>
   </widget>
   <widget class="QToolBar" name="ModuleIconToolBar">
    <property name="windowTitle">
@@ -504,6 +506,36 @@
   <action name="ToolsInsertPictureAction">
    <property name="text">
     <string>Insert &amp;Picture</string>
+   </property>
+  </action>
+  <action name="FormatModuleNameAction">
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/modules/icons/modules_generic.svg</normaloff>:/modules/icons/modules_generic.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Module Format</string>
+   </property>
+   <property name="toolTip">
+    <string>Format the current selection as a Module name (bold, blue)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+M</string>
+   </property>
+  </action>
+  <action name="FormatClearAction">
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/dguided/icons/dguided_clearformat.svg</normaloff>:/dguided/icons/dguided_clearformat.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Clear Formatting</string>
+   </property>
+   <property name="toolTip">
+    <string>Reset font and colour formatting</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
    </property>
   </action>
  </widget>

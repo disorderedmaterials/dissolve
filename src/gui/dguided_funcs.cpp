@@ -44,7 +44,6 @@ DGuidEdWindow::DGuidEdWindow(QMainWindow* parent) : QMainWindow(parent)
 
 	fontChanged(ui_.TextEdit->font());
 	ui_.TextEdit->setFocus();
-	ui_.TextEdit->document()->setDefaultStyleSheet("");
 	setCurrentFilename(QString());
 
 	QActionGroup *grp = new QActionGroup(this);
@@ -93,6 +92,8 @@ DGuidEdWindow::DGuidEdWindow(QMainWindow* parent) : QMainWindow(parent)
 	setModified(false);
 
 	refreshing_ = false;
+
+	updatePages();
 }
 
 // Destructor
@@ -121,7 +122,7 @@ void DGuidEdWindow::setCurrentFilename(const QString& filename)
 	if (filename_.isEmpty()) shownName = "untitled.txt";
 	else shownName = QFileInfo(filename_).fileName();
 
-	setWindowTitle(tr("%1[*] - %2").arg(shownName).arg(tr("Rich Text")));
+	setWindowTitle(tr("%1[*] - Dissolve Guide Editor").arg(shownName));
 }
 
 // Window close event
@@ -313,14 +314,27 @@ void DGuidEdWindow::on_PageAddButton_clicked(bool checked)
 
 	// Update the pages controls, and set our new page as the current one
 	updatePages();
-
-	ui_.PageList->setCurrentRow(guide_.pages().nItems() - 1);
+	setCurrentPage(page);
 
 	setModified();
 }
 
 void DGuidEdWindow::on_PageRemoveButton_clicked(bool checked)
 {
+	GuidePage* page = currentPage();
+	if (!page) return;
+
+	// Determine the new current page before we delete this one
+	GuidePage* newCurrentPage = page->next ? page->next : page->prev;
+
+	// Remove the page
+	guide_.removePage(page);
+
+	// Update the list and set the new current page
+	updatePages();
+	setCurrentPage(newCurrentPage);
+
+	setModified();
 }
 
 void DGuidEdWindow::on_PageCloneButton_clicked(bool checked)
@@ -329,10 +343,42 @@ void DGuidEdWindow::on_PageCloneButton_clicked(bool checked)
 
 void DGuidEdWindow::on_PageMoveDownButton_clicked(bool checked)
 {
+	GuidePage* page = currentPage();
+	if (!page) return;
+
+	// Stash any changes in the current page
+	stashPageContent(page);
+
+	// Move it down in the pages list
+	guide_.shiftPageDown(page);
+
+	// Update the pages list
+	updatePages();
+
+	// Retain this page as the currently-selected one
+	setCurrentPage(page);
+
+	setModified();
 }
 
 void DGuidEdWindow::on_PageMoveUpButton_clicked(bool checked)
 {
+	GuidePage* page = currentPage();
+	if (!page) return;
+
+	// Stash any changes in the current page
+	stashPageContent(page);
+
+	// Move it up in the pages list
+	guide_.shiftPageUp(page);
+
+	// Update the pages list
+	updatePages();
+
+	// Retain this page as the currently-selected one
+	setCurrentPage(page);
+
+	setModified();
 }
 
 void DGuidEdWindow::on_PageList_currentItemChanged(QListWidgetItem* current, QListWidgetItem* previous)
@@ -368,9 +414,20 @@ void DGuidEdWindow::on_NextPageCombo_currentIndexChanged(int index)
 	GuidePage* page = currentPage();
 	if (!page) return;
 
-	page->setNextPage((GuidePage*) VariantPointer<GuidePage>(ui_.NextPageCombo->itemData(Qt::UserRole)));
+	page->setNextPage((GuidePage*) VariantPointer<GuidePage>(ui_.NextPageCombo->currentData()));
 
 	setModified();
+}
+
+// Set the current page
+void DGuidEdWindow::setCurrentPage(GuidePage* page)
+{
+	if (!page) return;
+
+	int index = guide_.pages().indexOf(page);
+	if (index == -1) return;
+
+	ui_.PageList->setCurrentRow(index);
 }
 
 // Stash current content to specified page
@@ -556,6 +613,22 @@ void DGuidEdWindow::on_FormatColourAction_triggered(bool checked)
 	colorChanged(col);
 }
 
+void DGuidEdWindow::on_FormatModuleNameAction_triggered(bool checked)
+{
+	QColor col = QColor(0,0,187);
+	
+	QTextCharFormat fmt;
+	fmt.setForeground(col);
+	fmt.setFontWeight(QFont::Bold);
+	mergeFormatOnWordOrSelection(fmt);
+	colorChanged(col);
+}
+
+void DGuidEdWindow::on_FormatClearAction_triggered(bool checked)
+{
+	clearFormatOnWordOrSelection();
+}
+
 void DGuidEdWindow::textAlign(QAction *a)
 {
 	if (a == ui_.FormatAlignLeftAction) ui_.TextEdit->setAlignment(Qt::AlignLeft | Qt::AlignAbsolute);
@@ -574,6 +647,14 @@ void DGuidEdWindow::mergeFormatOnWordOrSelection(const QTextCharFormat &format)
 	if (!cursor.hasSelection()) cursor.select(QTextCursor::WordUnderCursor);
 	cursor.mergeCharFormat(format);
 	ui_.TextEdit->mergeCurrentCharFormat(format);
+}
+
+void DGuidEdWindow::clearFormatOnWordOrSelection()
+{
+	QTextCursor cursor = ui_.TextEdit->textCursor();
+	if (!cursor.hasSelection()) cursor.select(QTextCursor::WordUnderCursor);
+	cursor.setCharFormat(QTextCharFormat());
+	ui_.TextEdit->mergeCurrentCharFormat(QTextCharFormat());
 }
 
 void DGuidEdWindow::fontChanged(const QFont &f)
@@ -636,6 +717,9 @@ void DGuidEdWindow::on_ToolsSetLinearAction_triggered(bool checked)
 			page->setFinishPoint(false);
 		}
 	}
+
+	// Update the current page data, in case its links have changed
+	updatePageData();
 
 	setModified(true);
 }
