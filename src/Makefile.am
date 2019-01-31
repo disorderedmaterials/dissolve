@@ -40,6 +40,7 @@ endif
 # Target 'dissolve-gui'
 if BUILDGUI
 
+# Main GUI
 bin_PROGRAMS += dissolve-gui
 
 dissolve_gui_SOURCES = dissolve-gui.cpp
@@ -55,6 +56,15 @@ libdissolvegui_la_CPPFLAGS = @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
 dissolve_gui_LDADD = libdissolvegui.la @GUI_LDLIBS@ @MPI_LDLIBS@
 
 dissolve_gui_CPPFLAGS = @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
+
+# Guide Editor
+bin_PROGRAMS += dguided
+
+dguided_SOURCES = dguided.cpp
+
+dguided_LDADD = gui/libdguided.la libdissolvegui.la @GUI_LDLIBS@ @MPI_LDLIBS@
+
+dguided_CPPFLAGS = @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
 
 endif
 

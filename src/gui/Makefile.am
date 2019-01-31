@@ -1,4 +1,4 @@
-noinst_LTLIBRARIES = libgui.la
+noinst_LTLIBRARIES = libgui.la libdguided.la
 
 SUBDIRS = delegates keywordwidgets uchroma widgets
 
@@ -53,8 +53,12 @@ libgui_la_SOURCES += thread_funcs.cpp
 libgui_la_SOURCES += tmdiarea.hui tmdiarea_funcs.cpp
 libgui_la_SOURCES += wizardwidget_funcs.cpp wizardwidgethighlight.cpp wizardwidgetpageinfo.cpp workspacetab_funcs.cpp
 
+# DGuidEd
+libdguided_la_SOURCES = dguided.ui dguided_funcs.cpp
+
 noinst_HEADERS = addconfigurationdialog.h addconfigurationwizard.h addprocessinglayerdialog.h addprocessinglayerwizard.h addspeciesdialog.h addspecieswizard.h
 noinst_HEADERS += configurationtab.h
+noinst_HEADERS += dguided.h
 noinst_HEADERS += forcefieldtab.h
 noinst_HEADERS += guidewizard.h gui.h guide.h guidepage.h guidepagehighlight.h
 noinst_HEADERS += maintab.h modulechartblock.h modulecharthotspot.h modulechartinsertionblock.h modulechartmetrics.h modulechartmoduleblock.h modulecontrolwidget.h moduleeditor.h modulekeywordswidget.h modulelayertab.h moduletab.h modulewidget.h

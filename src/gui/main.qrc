@@ -6,6 +6,20 @@
     <file>icons/file_save.svg</file>
     <file>icons/file_connect.svg</file>
   </qresource>
+  <qresource prefix="dguided">
+    <file>icons/dguided_redo.svg</file>
+    <file>icons/dguided_undo.svg</file>
+    <file>icons/dguided_copy.svg</file>
+    <file>icons/dguided_cut.svg</file>
+    <file>icons/dguided_paste.svg</file>
+    <file>icons/dguided_aligncentre.svg</file>
+    <file>icons/dguided_alignjustify.svg</file>
+    <file>icons/dguided_alignleft.svg</file>
+    <file>icons/dguided_alignright.svg</file>
+    <file>icons/dguided_bold.svg</file>
+    <file>icons/dguided_italic.svg</file>
+    <file>icons/dguided_underline.svg</file>
+  </qresource>
   <qresource prefix="modules">
     <file>icons/modules_export.svg</file>
     <file>icons/modules_molshake.svg</file>
