@@ -1,5 +1,5 @@
 /*
-	*** Guide for GeneralWizard
+	*** Guide for GuideWizard
 	*** src/gui/guide.h
 	Copyright T. Youngs 2012-2019
 
@@ -31,7 +31,7 @@
 class QWidget;
 class QXmlStreamReader;
 
-// Guide for display in a GeneralWizard
+// Guide for display in a GuideWizard
 class Guide : public ListItem<Guide>
 {
 	public:

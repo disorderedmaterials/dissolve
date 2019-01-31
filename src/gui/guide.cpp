@@ -1,5 +1,5 @@
 /*
-	*** Guide for GeneralWizard
+	*** Guide for GuideWizard
 	*** src/gui/guide.cpp
 	Copyright T. Youngs 2012-2019
 

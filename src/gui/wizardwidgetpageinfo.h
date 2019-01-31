@@ -80,7 +80,7 @@ class WizardWidgetPageInfo : public ListItem<WizardWidgetPageInfo>
 
 
 	/*
-	 * GeneralWizard Data
+	 * Widget Interaction
 	 */
 	private:
 	// Associated widget in QStackedWidget
