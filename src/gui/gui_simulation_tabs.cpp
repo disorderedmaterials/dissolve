@@ -191,6 +191,11 @@ MainTab* DissolveWindow::addWorkspaceTab(const char* title)
 	{
 		WorkspaceTab* newWorkspace = new WorkspaceTab(this, dissolve_, ui.MainTabs, title);
 		workspaceTabs_.own(newWorkspace);
+
+		// Add the new tab directly in to our tabs - it will not be managed in reconcileTabs().
+		ui.MainTabs->addTab(newWorkspace, title);
+		ui.MainTabs->addTabCloseButton(newWorkspace);
+		ui.MainTabs->setTabIcon(newWorkspace->page(), QIcon(":/tabs/icons/tabs_workspace.svg"));
 		return newWorkspace;
 	}
 	else Messenger::printVerbose("Tab '%s' already exists, so returning that instead...\n", title);

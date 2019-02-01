@@ -60,6 +60,7 @@
   <qresource prefix="tabs">
     <file>icons/tabs_ff.svg</file>
     <file>icons/tabs_configuration.svg</file>
+    <file>icons/tabs_workspace.svg</file>
     <file>icons/tabs_species.svg</file>
     <file>icons/tabs_modulelayer.svg</file>
   </qresource>
