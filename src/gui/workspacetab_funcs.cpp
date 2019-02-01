@@ -302,7 +302,7 @@ SubWindow* WorkspaceTab::addModuleControlWidget(Module* module)
 	if (!window)
 	{
 		// Create a new ModuleWidget
-		ModuleControlWidget* moduleControlWidget = new ModuleControlWidget(dissolveWindow_, module, module->uniqueName(), false);
+		ModuleControlWidget* moduleControlWidget = new ModuleControlWidget(dissolveWindow_, module, module->uniqueName());
 		connect(moduleControlWidget, SIGNAL(windowClosed(QString)), this, SLOT(removeSubWindow(QString)));
 		window = addSubWindow(moduleControlWidget, module);
 

@@ -28,6 +28,7 @@
 
 // Forward Declarations
 class Module;
+class ModuleChartModuleBlock;
 
 // Module Tab
 class ModuleTab : public QWidget, public ListItem<ModuleTab>, public MainTab
@@ -57,10 +58,14 @@ class ModuleTab : public QWidget, public ListItem<ModuleTab>, public MainTab
 	public:
 	// Module displayed in this tab
 	Module* module_;
+	// Module control widget displayed
+	ModuleChartModuleBlock* controlsWidget_;
 	// ModuleWidget displayed in this control widget (if any)
 	ModuleWidget* moduleWidget_;
 
 	public:
+	// Initialise controls for the specified Module
+	void initialiseControls(Module* module);
 	// Return displayed Module
 	const Module* module() const;
 
@@ -68,12 +73,6 @@ class ModuleTab : public QWidget, public ListItem<ModuleTab>, public MainTab
 	/*
 	 * Update
 	 */
-	private:
-	// Initialise controls for the specified Module
-	void initialiseControls(Module* module);
-	// Update header texts
-	void updateHeaderTexts();
-
 	public:
 	// Update controls in tab
 	void updateControls();
@@ -81,19 +80,6 @@ class ModuleTab : public QWidget, public ListItem<ModuleTab>, public MainTab
 	void disableSensitiveControls();
 	// Enable sensitive controls within tab, ready for main code to run
 	void enableSensitiveControls();
-
-
-	/*
-	 * Widget Functions
-	 */
-	public slots:
-	void on_ToggleKeywordsButton_clicked(bool checked);
-	void on_RunButton_clicked(bool checked);
-	void on_EnabledButton_clicked(bool checked);
-	void on_FrequencySpin_valueChanged(int value);
-
-	signals:
-	void moduleRun();
 
 
 	/*

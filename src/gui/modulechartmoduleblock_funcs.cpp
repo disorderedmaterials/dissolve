@@ -123,6 +123,14 @@ QWidget* ModuleChartModuleBlock::widget()
 	return this;
 }
 
+// Set whether the settings are expanded or not, and whether this is permanent
+void ModuleChartModuleBlock::setSettingsExpanded(bool expanded, bool permanent)
+{
+	on_ToggleSettingsButton_clicked(expanded);
+
+	ui.ToggleSettingsButton->setDisabled(permanent);
+}
+
 // Update controls within widget
 void ModuleChartModuleBlock::updateControls()
 {
@@ -207,7 +215,7 @@ void ModuleChartModuleBlock::enableSensitiveControls()
 	ui.RemoveButton->setEnabled(true);
 }
 
-void ModuleChartModuleBlock::on_ToggleKeywordsButton_clicked(bool checked)
+void ModuleChartModuleBlock::on_ToggleSettingsButton_clicked(bool checked)
 {
 	ui.KeywordsControlFrame->setVisible(checked);
 

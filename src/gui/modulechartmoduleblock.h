@@ -82,6 +82,8 @@ class ModuleChartModuleBlock : public QWidget, public ModuleChartBlock
 	public:
 	// Return underlying widget
 	QWidget* widget();
+	// Set whether the settings are expanded or not, and whether this is permanent
+	void setSettingsExpanded(bool expanded, bool permanent = false);
 	// Update controls within widget
 	void updateControls();
 	// Return suitable QPixmap for supplied Module
@@ -94,7 +96,7 @@ class ModuleChartModuleBlock : public QWidget, public ModuleChartBlock
 	void enableSensitiveControls();
 
 	public slots:
-	void on_ToggleKeywordsButton_clicked(bool checked);
+	void on_ToggleSettingsButton_clicked(bool checked);
 	void on_RemoveButton_clicked(bool checked);
 	void on_RunButton_clicked(bool checked);
 	void on_EnabledButton_clicked(bool checked);
