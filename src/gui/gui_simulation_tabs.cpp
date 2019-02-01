@@ -179,7 +179,6 @@ void DissolveWindow::addCoreTabs()
 	// Forcefield
 	forcefieldTab_ = new ForcefieldTab(this, dissolve_, ui.MainTabs, "Forcefield");
 	ui.MainTabs->addTab(forcefieldTab_->page(), "Forcefield");
-	ui.MainTabs->setTabTextColour(forcefieldTab_->page(), QColor(189, 68, 0));
 	ui.MainTabs->setTabIcon(forcefieldTab_->page(), QIcon(":/tabs/icons/tabs_ff.svg"));
 }
 
