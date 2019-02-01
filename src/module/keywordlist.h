@@ -46,7 +46,7 @@ class ModuleKeywordList
 	bool add(ModuleKeywordBase* object, const char* keyword, const char* description, const char* arguments, int genericItemFlags = 0);
 	// Find named keyword
 	ModuleKeywordBase* find(const char* keyword) const;
-	// Return first keyword in list
+	// Return keywords list
 	List<ModuleKeywordBase>& keywords();
 
 
