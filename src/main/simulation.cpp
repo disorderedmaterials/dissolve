@@ -81,7 +81,7 @@ ModuleLayer* Dissolve::findProcessingLayer(const char* name) const
 	return NULL;
 }
 
-// Own / extract the specified ModuleLayer from the target object
+// Own the specified processing layer
 bool Dissolve::ownProcessingLayer(ModuleLayer* layer)
 {
 	// Sanity check - do we already own this Configuration?
@@ -92,6 +92,12 @@ bool Dissolve::ownProcessingLayer(ModuleLayer* layer)
 	setUp_ = false;
 
 	return true;
+}
+
+// Return number of defined processing layers
+int Dissolve::nProcessingLayers() const
+{
+	return processingLayers_.nItems();
 }
 
 // Generate unique processing layer name with base name provided

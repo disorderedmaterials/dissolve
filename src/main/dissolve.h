@@ -303,8 +303,10 @@ class Dissolve
 	ModuleLayer* addProcessingLayer();
 	// Find named processing layer
 	ModuleLayer* findProcessingLayer(const char* name) const;
-	// Own the specified ModuleLayer from the target object
+	// Own the specified processing layer
 	bool ownProcessingLayer(ModuleLayer* layer);
+	// Return number of defined processing layers
+	int nProcessingLayers() const;
 	// Generate unique processing layer name, with base name provided
 	const char* uniqueProcessingLayerName(const char* baseName) const;
 	// Return list of processing layers
