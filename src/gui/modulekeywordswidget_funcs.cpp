@@ -114,6 +114,13 @@ void ModuleKeywordsWidget::setUp(DissolveWindow* dissolveWindow, Module* module)
 			widget = charWidget;
 			base = charWidget;
 		}
+		else if (keyword->type() == ModuleKeywordBase::FileAndFormatData)
+		{
+			FileAndFormatKeywordWidget* fileAndFormatWidget = new FileAndFormatKeywordWidget(NULL, keyword, coreData, moduleData, module->uniqueName());
+			connect(fileAndFormatWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
+			widget = fileAndFormatWidget;
+			base = fileAndFormatWidget;
+		}
 		else if (keyword->type() == ModuleKeywordBase::IntegerData)
 		{
 			IntegerKeywordWidget* intWidget = new IntegerKeywordWidget(NULL, keyword, coreData, moduleData, module->uniqueName());

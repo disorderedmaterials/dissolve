@@ -55,6 +55,12 @@ const char* FileAndFormat::format(int id) const
 	return formats()[id];
 }
 
+// Set format index
+void FileAndFormat::setFormatIndex(int id)
+{
+	format_ = id;
+}
+
 // Return format index
 int FileAndFormat::formatIndex() const
 {
@@ -78,6 +84,12 @@ const char* FileAndFormat::niceFormat() const
 /*
  * Filename
  */
+
+// Set filename / basename
+void FileAndFormat::setFilename(const char* filename)
+{
+	filename_ = filename;
+}
 
 // Return filename / basename
 const char* FileAndFormat::filename() const

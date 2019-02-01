@@ -55,6 +55,8 @@ class FileAndFormat
 	int format(const char* s) const;
 	// Convert format index to text string
 	const char* format(int id) const;
+	// Set format index
+	void setFormatIndex(int id);
 	// Return format index
 	int formatIndex() const;
 	// Return format string
@@ -73,6 +75,8 @@ class FileAndFormat
 	public:
 	// Return whether the file must exist
 	virtual bool fileMustExist() const = 0;
+	// Set filename / basename
+	void setFilename(const char* filename);
 	// Return filename / basename
 	const char* filename() const;
 

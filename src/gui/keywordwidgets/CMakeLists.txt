@@ -5,6 +5,7 @@
 SET(keywordwidgets_MOC_HDRS
   atomtypeselection.h
   broadeningfunction.h
+  fileandformat.h
   isotopologuelist.h
   pairbroadeningfunction.h
   dropdown.h
@@ -24,6 +25,7 @@ SET(keywordwidgets_UIS
   atomtypeselection.ui
   broadeningfunction.ui
   dropdown.ui
+  fileandformat.ui
   isotopologuelist.ui
   pairbroadeningfunction.ui
 )
@@ -41,6 +43,7 @@ SET(keywordwidgets_SRCS
   dropdown_funcs.cpp
   dropwidget_funcs.cpp
   enumstring_funcs.cpp
+  fileandformat_funcs.cpp
   int_funcs.cpp
   isotopologuelist_funcs.cpp
   pairbroadeningfunction_funcs.cpp
