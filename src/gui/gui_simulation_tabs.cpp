@@ -116,11 +116,11 @@ void DissolveWindow::reconcileTabs()
 
 		++currentTabIndex;
 	}
+	baseIndex += dissolve_.nSpecies();
 
 	// Configurations - Global tab indices run from 1+nSpecies (first tab after last Species) to 1+nSpecies+nConfigurations
 	ListIterator<Configuration> configurationIterator(dissolve_.configurations());
 	currentTabIndex = 0;
-	baseIndex = 1 + dissolve_.nSpecies();
 	while (Configuration* cfg = configurationIterator.iterate())
 	{
 		// Loop over existing tabs
@@ -143,17 +143,17 @@ void DissolveWindow::reconcileTabs()
 
 		++currentTabIndex;
 	}
+	baseIndex += dissolve_.nConfigurations();
 
 	// Processing Layers - Global tab indices run from 1+nSpecies+nConfigurations (first tab after last Configuration) to 1+nSpecies+nConfigurations+nProcessingLayers
 	ListIterator<ModuleLayer> processingLayerIterator(dissolve_.processingLayers());
 	currentTabIndex = 0;
-	baseIndex = 1 + dissolve_.nSpecies() + dissolve_.nConfigurations();
 	while (ModuleLayer* layer = processingLayerIterator.iterate())
 	{
 		// Loop over existing tabs
 		while (currentTabIndex < processingLayerTabs_.nItems())
 		{
-			// If the existing tab is displaying the current Configuration already, then we can move on. Otherwise, delete it
+			// If the existing tab is displaying the current ModuleLayer already, then we can move on. Otherwise, delete it
 			if (processingLayerTabs_[currentTabIndex]->moduleLayer() == layer) break;
 			else processingLayerTabs_.remove(currentTabIndex);
 		}
@@ -170,6 +170,7 @@ void DissolveWindow::reconcileTabs()
 
 		++currentTabIndex;
 	}
+	baseIndex += dissolve_.nProcessingLayers();
 }
 
 // Add core (permanent) tabs
