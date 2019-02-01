@@ -219,6 +219,7 @@ MainTab* DissolveWindow::findTab(QWidget* page)
 
 	MainTab* result = speciesTab(page);
 	if (!result) result = configurationTab(page);
+	if (!result) result = processingLayerTab(page);
 	if (!result) result = moduleTab(page);
 	if (!result) result = workspaceTab(page);
 
