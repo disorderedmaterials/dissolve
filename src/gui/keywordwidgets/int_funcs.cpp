@@ -20,6 +20,7 @@
 */
 
 #include "gui/keywordwidgets/int.hui"
+#include "gui/helpers/mousewheeladjustmentguard.h"
 #include "templates/genericlisthelper.h"
 
 // Constructor
@@ -39,8 +40,10 @@ IntegerKeywordWidget::IntegerKeywordWidget(QWidget* parent, ModuleKeywordBase* k
 
 	// Connect the
 	connect(this, SIGNAL(valueChanged(int)), this, SLOT(myValueChanged(int)));
-}
 
+	// Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a QScrollArea)
+	installEventFilter(new MouseWheelWidgetAdjustmentGuard(this));
+}
 
 /*
  * Signals / Slots

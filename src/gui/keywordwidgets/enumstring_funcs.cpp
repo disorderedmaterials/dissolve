@@ -20,6 +20,7 @@
 */
 
 #include "gui/keywordwidgets/enumstring.hui"
+#include "gui/helpers/mousewheeladjustmentguard.h"
 #include "templates/genericlisthelper.h"
 
 // Constructor
@@ -44,6 +45,9 @@ EnumStringKeywordWidget::EnumStringKeywordWidget(QWidget* parent, ModuleKeywordB
 
 	// Connect the currentTextChanged signal to our own slot
 	connect(this, SIGNAL(currentTextChanged(QString)), this, SLOT(myCurrentTextChanged(QString)));
+
+	// Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a QScrollArea)
+	installEventFilter(new MouseWheelWidgetAdjustmentGuard(this));
 }
 
 /*

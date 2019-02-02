@@ -20,6 +20,7 @@
 */
 
 #include "gui/keywordwidgets/double.hui"
+#include "gui/helpers/mousewheeladjustmentguard.h"
 #include "templates/genericlisthelper.h"
 
 // Constructor
@@ -39,8 +40,10 @@ DoubleKeywordWidget::DoubleKeywordWidget(QWidget* parent, ModuleKeywordBase* key
 
 	// Connect the valueChanged signal to our own slot
 	connect(this, SIGNAL(valueChanged(double)), this, SLOT(myValueChanged(double)));
-}
 
+	// Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a QScrollArea)
+	installEventFilter(new MouseWheelWidgetAdjustmentGuard(this));
+}
 
 /*
  * Slots
