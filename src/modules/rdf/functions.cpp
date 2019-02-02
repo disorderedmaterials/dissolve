@@ -755,7 +755,7 @@ double RDFModule::summedRho(Module* module, GenericList& processingModuleData)
 	RefListIterator<Configuration,bool> targetIterator(module->targetConfigurations());
 	while (Configuration* cfg = targetIterator.iterate())
 	{
-		double weight = GenericListHelper<double>::value(processingModuleData, CharString("Weight_%s", cfg->niceName()), module->uniqueName(), 1.0);
+		double weight = GenericListHelper<double>::value(processingModuleData, CharString("ConfigurationWeight_%s", cfg->niceName()), module->uniqueName(), 1.0);
 		totalWeight += weight;
 
 		rho0 += weight / cfg->atomicDensity();
@@ -788,7 +788,7 @@ bool RDFModule::sumUnweightedGR(ProcessPool& procPool, Module* module, GenericLi
 	while (Configuration* cfg = targetIterator.iterate())
 	{
 		// Get weighting factor for this Configuration to contribute to the summed partials
-		double weight = GenericListHelper<double>::value(processingModuleData, CharString("Weight_%s", cfg->niceName()), module->uniqueName(), 1.0);
+		double weight = GenericListHelper<double>::value(processingModuleData, CharString("ConfigurationWeight_%s", cfg->niceName()), module->uniqueName(), 1.0);
 		Messenger::print("Weight for Configuration '%s' is %f.\n", cfg->name(), weight);
 	
 		// Add our Configuration target
@@ -840,7 +840,7 @@ bool RDFModule::sumUnweightedGR(ProcessPool& procPool, Module* parentModule, Mod
 		while (Configuration* cfg = targetIterator.iterate())
 		{
 			// Get weighting factor for this Configuration to contribute to the summed partials
-			double weight = GenericListHelper<double>::value(processingModuleData, CharString("Weight_%s", cfg->niceName()), module->uniqueName(), 1.0);
+			double weight = GenericListHelper<double>::value(processingModuleData, CharString("ConfigurationWeight_%s", cfg->niceName()), module->uniqueName(), 1.0);
 			Messenger::print("Weight for Configuration '%s' is %f.\n", cfg->name(), weight);
 		
 			// Add our Configuration target
