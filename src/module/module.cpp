@@ -62,10 +62,33 @@ const char* Module::uniqueName() const
  * Keywords
  */
 
+// Create and return named keyword group
+ModuleKeywordGroup* Module::addKeywordGroup(const char* name)
+{
+	// Check that a group with the specified name doesn't already exist
+	ModuleKeywordGroup* group = NULL;
+	for (group = keywordGroups_.first(); group != NULL; group = group->next) if (DissolveSys::sameString(name, group->name())) break;
+
+	if (!group)
+	{
+		group = new ModuleKeywordGroup(keywords_);
+		group->setName(name);
+		keywordGroups_.own(group);
+	}
+
+	return group;
+}
+
 // Return list of recognised keywords
 ModuleKeywordList& Module::keywords()
 {
 	return keywords_;
+}
+
+// Return list of defined keyword groups
+const List<ModuleKeywordGroup>& Module::keywordGroups() const
+{
+	return keywordGroups_;
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised

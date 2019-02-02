@@ -27,10 +27,18 @@
 // Set up keywords for Module
 void CalibrationModule::setUpKeywords()
 {
-	keywords_.add(new ModuleReferenceListModuleKeyword(intraBroadeningModules_, "RDF"), "AdjustIntraBroadening", "Add specified RDF module as a target for IntraBroadening adjustment", "<RDFModule>");
-	keywords_.add(new ModuleReferenceListModuleKeyword(intraBroadeningNeutronGRReferences_, "NeutronSQ"), "IntraBroadeningNeutronGRReference", "Add G(r) data in the specified NeutronSQ module as a reference for IntraBroadening adjustment", "<NeutronSQModule>");
-	keywords_.add(new ModuleReferenceListModuleKeyword(intraBroadeningNeutronSQReferences_, "NeutronSQ"), "IntraBroadeningNeutronSQReference", "Add S(Q) data in the specified NeutronSQ module as a reference for IntraBroadening adjustment", "<NeutronSQModule>");
-	keywords_.add(new BoolModuleKeyword(true), "OnlyWhenEnergyStable", "Only perform calibrations when all related Configuration energies are stable");
+	// Calculation
+	ModuleKeywordGroup* group = addKeywordGroup("Calculation");
+	group->add(new BoolModuleKeyword(true), "OnlyWhenEnergyStable", "Only perform calibrations when all related Configuration energies are stable");
+
+	// RDF Calibration
+	group = addKeywordGroup("RDF Calibration");
+	group->add(new ModuleReferenceListModuleKeyword(intraBroadeningModules_, "RDF"), "AdjustIntraBroadening", "Add specified RDF module as a target for IntraBroadening adjustment", "<RDFModule>");
+
+	// NeutronSQ Calibration
+	group = addKeywordGroup("NeutronSQ Calibration");
+	group->add(new ModuleReferenceListModuleKeyword(intraBroadeningNeutronGRReferences_, "NeutronSQ"), "IntraBroadeningNeutronGRReference", "Add G(r) data in the specified NeutronSQ module as a reference for IntraBroadening adjustment", "<NeutronSQModule>");
+	group->add(new ModuleReferenceListModuleKeyword(intraBroadeningNeutronSQReferences_, "NeutronSQ"), "IntraBroadeningNeutronSQReference", "Add S(Q) data in the specified NeutronSQ module as a reference for IntraBroadening adjustment", "<NeutronSQModule>");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised

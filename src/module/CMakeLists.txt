@@ -2,6 +2,7 @@ add_library(module
   group.cpp
   groups.cpp
   keywordbase.cpp
+  keywordgroup.cpp
   keywordlist.cpp
   layer.cpp
   list.cpp
@@ -11,6 +12,7 @@ add_library(module
   groups.h
   keywordbase.h
   keyworddata.h
+  keywordgroup.h
   keywordlist.h
   keywordtypes.h
   layer.h

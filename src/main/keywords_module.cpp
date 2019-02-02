@@ -28,10 +28,10 @@
 
 // Module Block Keywords
 KeywordData ModuleBlockData[] = {
-	{ "Configuration",		1,	"Associates the named Configuration to this Module" },
+	{ "Configuration",		1,	"Associates the named Configuration to this Module, with optional weight" },
 	{ "Disabled",			0,	"Specifies that the Module should never be run" },
 	{ "EndModule",			0,	"Marks the end of a Module block" },
-	{ "Frequency",			1,	"Frequency, relative to the main loop, at which this Module is run" },
+	{ "Frequency",			1,	"Frequency, relative to the processing layer in which it exists, at which this Module is run" },
 	{ "Isotopologue",		3,	"Sets the relative population of a Species Isotopologue for a specific Configuration" }
 };
 
@@ -86,13 +86,16 @@ bool ModuleBlock::parse(LineParser& parser, Dissolve* dissolve, Module* module, 
 					break;
 				}
 
-				// Add it is a target
+				// Add it as a target
 				if (!module->addTargetConfiguration(targetCfg))
 				{
 					Messenger::error("Failed to add Configuration target in Module '%s'.\n", module->type());
 					error = true;
 					break;
 				}
+
+				// Create weight data if a second argument was provided
+				if (parser.hasArg(2)) GenericListHelper<double>::add(targetList, CharString("ConfigurationWeight_%s", targetCfg->niceName()), module->uniqueName()) = parser.argd(2);
 				break;
 			case (ModuleBlock::DisableKeyword):
 				module->setEnabled(false);
