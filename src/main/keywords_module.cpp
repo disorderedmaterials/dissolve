@@ -31,7 +31,7 @@ KeywordData ModuleBlockData[] = {
 	{ "Configuration",		1,	"Associates the named Configuration to this Module" },
 	{ "Disabled",			0,	"Specifies that the Module should never be run" },
 	{ "EndModule",			0,	"Marks the end of a Module block" },
-	{ "Frequency",			1,	"Frequency, relative to the main loop, at which this Module is run" },
+	{ "Frequency",			1,	"Frequency, relative to the processing layer in which it exists, at which this Module is run" },
 	{ "Isotopologue",		3,	"Sets the relative population of a Species Isotopologue for a specific Configuration" }
 };
 
