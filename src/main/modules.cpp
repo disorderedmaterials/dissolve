@@ -1,7 +1,7 @@
 /*
 	*** Dissolve - Modules
 	*** src/main/modules.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -37,6 +37,7 @@
 #include "modules/rdf/rdf.h"
 #include "modules/refine/refine.h"
 #include "modules/sanitycheck/sanitycheck.h"
+#include "modules/sq/sq.h"
 #include "modules/neutronsq/neutronsq.h"
 #include "modules/test/test.h"
 
@@ -47,23 +48,24 @@
  */
 
 // Register master Module
-bool Dissolve::registerMasterModule(Module* mainInstance)
+bool Dissolve::registerMasterModule(Module* masterInstance)
 {
 	// Do sanity check on name
-	ListIterator<ModuleReference> moduleIterator(masterModules_);
-	while (ModuleReference* modRef = moduleIterator.iterate())
+	ListIterator<Module> moduleIterator(masterModules_);
+	while (Module* module = moduleIterator.iterate())
 	{
-		Module* module = modRef->module();
-
-		if (DissolveSys::sameString(module->type(), mainInstance->type()))
+		if (DissolveSys::sameString(module->type(), masterInstance->type()))
 		{
 			Messenger::error("Two modules cannot have the same name (%s).\n", module->type());
 			return false;
 		}
 	}
 
-	ModuleReference* masterRef = masterModules_.add();
-	masterRef->set(mainInstance, NULL, NULL);
+	// Set the unique name of the Module
+	masterInstance->setUniqueName(CharString("%s_MASTER", masterInstance->type()));
+
+	// Own the module into our master instances list
+	masterModules_.own(masterInstance);
 
 	return true;
 }
@@ -88,53 +90,59 @@ bool Dissolve::registerMasterModules()
 	if (!registerMasterModule(new RDFModule)) return false;
 	if (!registerMasterModule(new RefineModule)) return false;
 	if (!registerMasterModule(new SanityCheckModule)) return false;
+	if (!registerMasterModule(new SQModule)) return false;
 	if (!registerMasterModule(new NeutronSQModule)) return false;
 	if (!registerMasterModule(new TestModule)) return false;
 
 	Messenger::print("Module Information (%i available):\n", masterModules_.nItems());
-	ListIterator<ModuleReference> moduleIterator(masterModules_);
-	while (ModuleReference* modRef = moduleIterator.iterate())
+	ListIterator<Module> moduleIterator(masterModules_);
+	while (Module* module = moduleIterator.iterate())
 	{
-		Module* masterInstance = modRef->module();
-
-		Messenger::print(" --> %s\n", masterInstance->type());
-		Messenger::print("     %s\n", masterInstance->brief());
+		Messenger::print(" --> %s\n", module->type());
+		Messenger::print("     %s\n", module->brief());
 	}
 }
 
-// Search for named master Module
-Module* Dissolve::findMasterModule(const char* moduleName) const
+// Search for master Module of the named type
+Module* Dissolve::findMasterModule(const char* moduleType) const
 {
-	ListIterator<ModuleReference> moduleIterator(masterModules_);
-	while (ModuleReference* modRef = moduleIterator.iterate())
+	ListIterator<Module> moduleIterator(masterModules_);
+	while (Module* module = moduleIterator.iterate())
 	{
-		Module* masterInstance = modRef->module();
-		
-		if (DissolveSys::sameString(masterInstance->type(), moduleName)) return masterInstance;
+		if (DissolveSys::sameString(module->type(), moduleType)) return module;
 	}
 
 	return NULL;
 }
 
 // Return master Module instances
-const List<ModuleReference>& Dissolve::masterModules() const
+const List<Module>& Dissolve::masterModules() const
 {
 	return masterModules_;
 }
 
-// Create a Module instance for the named Module
-Module* Dissolve::createModuleInstance(const char* moduleName)
+// Create a Module instance for the named Module type
+Module* Dissolve::createModuleInstance(const char* moduleType)
 {
-	Module* masterModule = findMasterModule(moduleName);
+	Module* masterModule = findMasterModule(moduleType);
 	if (!masterModule)
 	{
-		Messenger::error("No Module named '%s' exists.\n", moduleName);
+		Messenger::error("No Module type '%s' exists.\n", moduleType);
 		return NULL;
 	}
 
-	// Creat a new instance of the specified Module and add it to our list
+	// Find a suitable unique name for the Module
+	int instanceId = 1;
+	CharString uniqueName;
+	do
+	{
+		uniqueName.sprintf("%s%02i", moduleType, instanceId++);
+	} while (findModuleInstance(uniqueName));
+
+	// Create a new instance of the specified Module and add it to our list
 	Module* instance = masterModule->createInstance();
-	moduleInstances_.own(instance);
+	moduleInstances_.add(instance);
+	instance->setUniqueName(uniqueName);
 
 	return instance;
 }
@@ -142,7 +150,8 @@ Module* Dissolve::createModuleInstance(const char* moduleName)
 // Search for any instance of any module with the specified unique name
 Module* Dissolve::findModuleInstance(const char* uniqueName)
 {
-	for (Module* module = moduleInstances_.first(); module != NULL; module = module->next) if (DissolveSys::sameString(module->uniqueName(), uniqueName)) return module;
+	RefListIterator<Module,bool> moduleIterator(moduleInstances_);
+	while (Module* module = moduleIterator.iterate()) if (DissolveSys::sameString(module->uniqueName(), uniqueName)) return module;
 
 	return NULL;
 }

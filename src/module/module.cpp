@@ -1,7 +1,7 @@
 /*
 	*** Dissolve Module Interface
 	*** src/module/module.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -35,11 +35,6 @@ Module::Module()
 	// LogPoints
 	logPoint_ = 0;
 	broadcastPoint_ = 0;
-
-	// Colour (used in GUI)
-	colour_[0] = 255;
-	colour_[1] = 255;
-	colour_[2] = 255;
 }
 
 // Destructor
@@ -61,12 +56,6 @@ void Module::setUniqueName(const char* uniqueName)
 const char* Module::uniqueName() const
 {
 	return uniqueName_.get();
-}
-
-// Return colour used in visual representation of Module
-const int* Module::colour() const
-{
-	return colour_;
 }
 
 /*
@@ -140,13 +129,13 @@ void Module::setFrequency(int freq)
 }
 
 // Frequency with which to run Module (relative to master simulation loop counter)
-int Module::frequency()
+int Module::frequency() const
 {
 	return frequency_;
 }
 
 // Return whether the Module should run this iteration
-bool Module::runThisIteration(int iteration)
+bool Module::runThisIteration(int iteration) const
 {
 	if ((frequency_ < 1) || (!enabled_)) return false;
 	else if ((iteration%frequency_) == 0) return true;
@@ -154,7 +143,7 @@ bool Module::runThisIteration(int iteration)
 }
 
 // Return short descriptive text relating frequency to supplied iteration number
-const char* Module::frequencyDetails(int iteration)
+const char* Module::frequencyDetails(int iteration) const
 {
 	static CharString result;
 
@@ -180,7 +169,7 @@ void Module::setEnabled(bool b)
 }
 
 // Return whether the Module is enabled
-bool Module::enabled()
+bool Module::enabled() const
 {
 	return enabled_;
 }
@@ -190,7 +179,7 @@ bool Module::enabled()
  */
 
 // Add Configuration target
-bool Module::addConfigurationTarget(Configuration* cfg)
+bool Module::addTargetConfiguration(Configuration* cfg)
 {
 	// Check how many Configurations we accept before we do anything else
 	if ((nTargetableConfigurations() == -1) || (targetConfigurations_.nItems() < nTargetableConfigurations()))
@@ -207,8 +196,18 @@ bool Module::addConfigurationTarget(Configuration* cfg)
 	return false;
 }
 
+// Remove Configuration target
+bool Module::removeTargetConfiguration(Configuration* cfg)
+{
+	if (!targetConfigurations_.contains(cfg)) return Messenger::error("Can't remove Configuration '%s' from Module '%s' as it isn't currently a target.\n", cfg->name(), uniqueName());
+
+	targetConfigurations_.remove(cfg);
+
+	return true;
+}
+
 // Return number of targeted Configurations
-int Module::nConfigurationTargets()
+int Module::nTargetConfigurations() const
 {
 	return targetConfigurations_.nItems();
 }
@@ -220,7 +219,7 @@ RefList<Configuration,bool>& Module::targetConfigurations()
 }
 
 // Return if the specified Configuration is in the targets list
-bool Module::isTargetConfiguration(Configuration* cfg)
+bool Module::isTargetConfiguration(Configuration* cfg) const
 {
 	return targetConfigurations_.contains(cfg);
 }
@@ -229,13 +228,13 @@ bool Module::isTargetConfiguration(Configuration* cfg)
 void Module::copyTargetConfigurations(Module* sourceModule)
 {
 	// First, check if this module actually accepts target Configurations
-	if ((nTargetableConfigurations() < sourceModule->nConfigurationTargets()) && (nTargetableConfigurations() != -1))
+	if ((nTargetableConfigurations() < sourceModule->nTargetConfigurations()) && (nTargetableConfigurations() != -1))
 	{
 		Messenger::warn("Dependent Module '%s' does not accept Configuration targets, but the source Module '%s' lists %i.\n", type(), sourceModule->type());
 		return;
 	}
 	RefListIterator<Configuration,bool> configIterator(sourceModule->targetConfigurations());
-	while (Configuration* cfg = configIterator.iterate()) addConfigurationTarget(cfg);
+	while (Configuration* cfg = configIterator.iterate()) addTargetConfiguration(cfg);
 }
 
 // Set whether this module is a local Module in a Configuration
@@ -245,7 +244,7 @@ void Module::setConfigurationLocal(bool b)
 }
 
 // Return whether this module is a local Module in a Configuration
-bool Module::configurationLocal()
+bool Module::configurationLocal() const
 {
 	return configurationLocal_;
 }

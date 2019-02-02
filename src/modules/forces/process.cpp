@@ -1,7 +1,7 @@
 /*
 	*** Forces Module - Processing
 	*** src/modules/forces/process.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -42,7 +42,7 @@ bool ForcesModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Read in the forces
 		LineParser fileParser(&dissolve.worldPool());
-		if (!fileParser.openInput(referenceForces_.filename())) return 0;
+		if (!fileParser.openInput(referenceForces_.filename())) return false;
 		return ImportModule::readForces(referenceForces_.forceFormat(), fileParser, fx, fy, fz);
 	}
 

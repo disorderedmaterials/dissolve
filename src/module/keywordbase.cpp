@@ -1,7 +1,7 @@
 /*
 	*** Module Keyword Base Class
 	*** src/module/keywordbase.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -32,7 +32,7 @@ ModuleKeywordBase::~ModuleKeywordBase()
 }
 
 // Value Keyword Data Type Keywords
-const char* KeywordDataTypeKeywords[] = { "Analyser", "AtomTypeSelection", "Bool", "BroadeningFunction", "CharString", "Complex", "DataStore", "Double", "Integer", "IsotopologueList", "PairBroadeningFunction", "SpeciesSite", "WindowFunction" };
+const char* KeywordDataTypeKeywords[] = { "Analyser", "AtomTypeSelection", "Bool", "BroadeningFunction", "CharString", "Complex", "DataStore", "Double", "EnumString", "Integer", "IsotopologueList", "PairBroadeningFunction", "SpeciesSite", "WindowFunction" };
 
 // Return ValueType name
 const char* ModuleKeywordBase::keywordDataType(KeywordDataType kdt)

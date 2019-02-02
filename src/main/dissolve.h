@@ -1,7 +1,7 @@
 /*
 	*** Dissolve Main Structure
 	*** src/main/dissolve.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -24,6 +24,7 @@
 
 #include "data/elements.h"
 #include "module/module.h"
+#include "module/layer.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 #include "classes/pairpotential.h"
@@ -67,6 +68,8 @@ class Dissolve
 	void registerGenericItems();
 	// Set up everything needed to run the simulation
 	bool setUp();
+	// Flag that the set up is no longer valid and should be done again
+	void invalidateSetUp();
 	// Return whether the simulation has been set up
 	bool isSetUp() const;
 
@@ -84,8 +87,6 @@ class Dissolve
 	List<AtomType>& atomTypes();
 	// Return nth AtomType in list
 	AtomType* atomType(int n);
-	// Generate unique AtomType name with base name provided
-	const char* uniqueAtomTypeName(const char* base, AtomType* exclude = 0) const;
 	// Search for AtomType by name
 	AtomType* findAtomType(const char* name) const;
 
@@ -203,8 +204,6 @@ class Dissolve
 	PairPotential* pairPotential(AtomType* at1, AtomType* at2) const;
 	// Return whether specified PairPotential is defined
 	PairPotential* pairPotential(const char* at1, const char* at2) const;
-	// Save all PairPotentials
-	bool savePairPotentials(const char* baseName) const;
 	// Return map for PairPotentials
 	const PotentialMap& potentialMap();
 	// Regenerate all PairPotentials, replacing those currently defined
@@ -222,6 +221,8 @@ class Dissolve
 	public:
 	// Add new Configuration
 	Configuration* addConfiguration();
+	// Own the specified Configuration
+	bool ownConfiguration(Configuration* cfg);
 	// Return number of defined Configurations
 	int nConfigurations() const;
 	// Return Configuration list
@@ -243,23 +244,23 @@ class Dissolve
 	 */
 	private:
 	// List of all instances of all used Modules
-	List<Module> moduleInstances_;
+	RefList<Module,bool> moduleInstances_;
 	// List of master Module instances
-	List<ModuleReference> masterModules_;
+	List<Module> masterModules_;
 
 	private:
 	// Register master Module
-	bool registerMasterModule(Module* mainInstance);
+	bool registerMasterModule(Module* masterInstance);
 
 	public:
 	// Register master instances for all Modules
 	bool registerMasterModules();
 	// Return master Module instances
-	const List<ModuleReference>& masterModules() const;
-	// Search for named master Module
-	Module* findMasterModule(const char* moduleName) const;
-	// Create a Module instance for the named Module
-	Module* createModuleInstance(const char* moduleName);
+	const List<Module>& masterModules() const;
+	// Search for master Module of the named type
+	Module* findMasterModule(const char* moduleType) const;
+	// Create a Module instance for the named Module type
+	Module* createModuleInstance(const char* moduleType);
 	// Search for any instance of any module with the specified unique name
 	Module* findModuleInstance(const char* uniqueName);
 
@@ -274,11 +275,9 @@ class Dissolve
 	int seed_;
 	// Frequency at which to write restart file
 	int restartFileFrequency_;
-	// List of main processing Modules to run
-	ModuleList mainProcessingModules_;
-	// List of analysis processing Modules to run
-	ModuleList analysisProcessingModules_;
-	// Data associated with main processing Modules
+	// List of defined processing layers
+	List<ModuleLayer> processingLayers_;
+	// Data associated with processing Modules
 	GenericList processingModuleData_;
 	// Current simulation step
 	int iteration_;
@@ -300,10 +299,18 @@ class Dissolve
 	void setRestartFileFrequency(int n);
 	// Return frequency with which to write restart file
 	int restartFileFrequency() const;
-	// Return list of main processing Modules to run
-	ModuleList& mainProcessingModules();
-	// Return list of analysis processing Modules to run
-	ModuleList& analysisProcessingModules();
+	// Add new processing layer
+	ModuleLayer* addProcessingLayer();
+	// Find named processing layer
+	ModuleLayer* findProcessingLayer(const char* name) const;
+	// Own the specified processing layer
+	bool ownProcessingLayer(ModuleLayer* layer);
+	// Return number of defined processing layers
+	int nProcessingLayers() const;
+	// Generate unique processing layer name, with base name provided
+	const char* uniqueProcessingLayerName(const char* baseName) const;
+	// Return list of processing layers
+	List<ModuleLayer>& processingLayers();
 	// Return data associated with main processing Modules
 	GenericList& processingModuleData();
 	// Iterate main simulation

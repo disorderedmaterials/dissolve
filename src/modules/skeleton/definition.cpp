@@ -1,7 +1,7 @@
 /*
 	*** Skeleton Module - Definition
 	*** src/modules/skeleton/definition.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -25,6 +25,12 @@
 const char* SkeletonModule::type() const
 {
 	return "Skeleton";
+}
+
+// Return category for module
+const char* SkeletonModule::category() const
+{
+	return "NO CATEGORY ASSIGNED";
 }
 
 // Return brief description of module

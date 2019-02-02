@@ -1,7 +1,7 @@
 /*
 	*** Module Keyword - CharString
 	*** src/module/keywordtypes/charstring.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -32,9 +32,8 @@
 class CharStringModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<CharString>
 {
 	public:
-	// Constructors
+	// Constructor
 	CharStringModuleKeyword(CharString value = CharString());
-	CharStringModuleKeyword(CharString value, int nOptions, const char** options);
 	// Destructor
 	~CharStringModuleKeyword();
 
@@ -50,15 +49,7 @@ class CharStringModuleKeyword : public ModuleKeywordBase, public ModuleKeywordDa
 	/*
 	 * Data Validation
 	 */
-	private:
-	// List of valid values (if appropriate)
-	Array<CharString> validValues_;
-
 	public:
-	// Return whether a validation list has been set
-	bool hasValidationList();
-	// Return validation list
-	const Array<CharString>& validationList();
 	// Validate supplied value
 	bool isValid(CharString value);
 

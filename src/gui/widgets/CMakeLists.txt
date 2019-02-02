@@ -12,11 +12,12 @@ SET(widgets_MOC_HDRS
 
   checkindicator.hui
   colourbutton.hui
+  elementselector.hui
+  exponentialspin.hui
   gradientbar.hui
   mimetreewidget.hui
   supertabbar.hui
   supertabwidget.hui
-  texponentialspin.hui
   tmenubutton.hui
   tpopupwidget.hui
 )
@@ -32,6 +33,8 @@ QT5_WRAP_UI(widgets_UIS_H ${widgets_UIS})
 SET(widgets_SRCS
   checkindicator_funcs.cpp
   colourbutton_funcs.cpp
+  elementselector_funcs.cpp
+  exponentialspin_funcs.cpp
   gradientbar_funcs.cpp
   mimestrings.cpp
   mimetreewidget_funcs.cpp
@@ -41,7 +44,6 @@ SET(widgets_SRCS
   subwindow.cpp
   supertabbar_funcs.cpp
   supertabwidget_funcs.cpp
-  texponentialspin_funcs.cpp
   tmenubutton_funcs.cpp
   tmenubuttongroup.cpp
   tpopupwidget_funcs.cpp

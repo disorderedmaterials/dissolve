@@ -1,7 +1,7 @@
 /*
 	*** Analyse Module - Definition
 	*** src/modules/analyse/definition.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -25,6 +25,12 @@
 const char* AnalyseModule::type() const
 {
 	return "Analyse";
+}
+
+// Return category for module
+const char* AnalyseModule::category() const
+{
+	return "Property Calculation";
 }
 
 // Return brief description of module

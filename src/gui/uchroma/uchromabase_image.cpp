@@ -1,7 +1,7 @@
 /*
 	*** UChroma Base - Image
 	*** src/gui/uchroma/uchromabase_image.cpp
-	Copyright T. Youngs 2013-2018
+	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
 

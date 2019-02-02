@@ -1,7 +1,7 @@
 /*
 	*** Wizard Widget Page Info
 	*** src/gui/wizardwidgetpageinfo.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -22,11 +22,13 @@
 #ifndef DISSOLVE_WIZARDWIDGETPAGEINFO_H
 #define DISSOLVE_WIZARDWIDGETPAGEINFO_H
 
+#include "gui/wizardwidgethighlight.h"
 #include "base/charstring.h"
+#include "templates/list.h"
 #include "templates/listitem.h"
 
 // Forward Declarations
-/* none */
+class QWidget;
 
 // Wizard Page Info
 class WizardWidgetPageInfo : public ListItem<WizardWidgetPageInfo>
@@ -37,6 +39,7 @@ class WizardWidgetPageInfo : public ListItem<WizardWidgetPageInfo>
 	~WizardWidgetPageInfo();
 	// Page Types
 	enum PageType { NormalPage, ChoicePage, FinishPage };
+
 
 	/*
 	 * Data
@@ -56,6 +59,12 @@ class WizardWidgetPageInfo : public ListItem<WizardWidgetPageInfo>
 	public:
 	// Set page information
 	void set(int index, const char* title, int nextIndex = -1);
+	// Set page index
+	void setIndex(int index);
+	// Set page title
+	void setTitle(const char* title);
+	// Set next page index
+	void setNextPageIndex(int nextIndex);
 	// Set page type
 	void setPageType(WizardWidgetPageInfo::PageType type);
 	// Return page type
@@ -68,6 +77,28 @@ class WizardWidgetPageInfo : public ListItem<WizardWidgetPageInfo>
 	int nextIndex() const;
 	// Return whether this is an exit (finish) point
 	bool isFinishPoint() const;
+
+
+	/*
+	 * Widget Interaction
+	 */
+	private:
+	// Associated widget in QStackedWidget
+	QWidget* stackedWidgetPage_;
+	// Highlighted widgets
+	List<WizardWidgetHighlight> widgetHighlights_;
+
+	public:
+	// Set Associated widget in QStackedWidget
+	void setStackedWidgetPage(QWidget* widget);
+	// Return associated widget in QStackedWidget
+	QWidget* stackedWidgetPage() const;
+	// Add new widget highlight
+	WizardWidgetHighlight* addWidgetHighlight();
+	// Highlight all defined widgets
+	void highlightWidgets();
+	// Un-highlight all defined widgets
+	void unHighlightWidgets();
 };
 
 #endif

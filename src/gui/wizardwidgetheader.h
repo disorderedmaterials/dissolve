@@ -1,7 +1,7 @@
 /*
 	*** Wizard Widget Header
-	*** src/gui/wizardwidgetheader.h`
-	Copyright T. Youngs 2012-2018
+	*** src/gui/wizardwidgetheader.h
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -32,11 +32,6 @@ class WizardWidgetHeader : public QWidget
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
-
-	public:
-	// Constructor / Destructor
-	WizardWidgetHeader();
-	~WizardWidgetHeader();
 };
 
 #endif

@@ -1,7 +1,7 @@
 /*
 	*** Wizard Widget
 	*** src/gui/wizardwidget.hui
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -53,14 +53,22 @@ class WizardWidget : public QWidget
 	Ui::WizardWidgetFooter footerUi_;
 	// Whether header controls are available
 	bool headerAvailable_;
+	// Whether the close button is available
+	bool closeButtonAvailable_;
 	// Whether footer controls are available
 	bool footerAvailable_;
 
 	protected:
 	// Attach header and footer to existing named widgets in specified widget
 	void setUpHeaderAndFooter(QWidget* widget);
+	// Set icon in header
+	void setWizardHeaderIcon(QString iconResource);
 	// Update controls in header and footer widgets to reflect the specified page
 	void updateHeaderAndFooter(WizardWidgetPageInfo* page);
+
+	public:
+	// Set whether the close button is available
+	void setCloseButtonAvailable(bool b);
 
 
 	/*
@@ -72,17 +80,19 @@ class WizardWidget : public QWidget
 	// History of traversed pages
 	RefList<WizardWidgetPageInfo,bool> history_;
 
-	private:
-	// Find page with specified index
-	WizardWidgetPageInfo* findPage(int index);
-
 	public:
+	// Clear all registered pages
+	void clearPages();
+	// Add empty page
+	WizardWidgetPageInfo* addPage();
 	// Register normal page
 	WizardWidgetPageInfo* registerPage(int index, const char* title, int nextIndex = -1);
 	// Register choice page (no Finish / Next buttons)
 	void registerChoicePage(int index, const char* title);
 	// Register exit (finish) page
 	void registerFinishPage(int index, const char* title);
+	// Find page with specified index
+	WizardWidgetPageInfo* findPage(int index);
 
 
 	/*
@@ -97,9 +107,11 @@ class WizardWidget : public QWidget
 	virtual bool displayControlPage(int index) = 0;
 	// Return whether progression to the next page from the current page is allowed
 	virtual bool progressionAllowed(int index) const = 0;
-	// Perform any necssary actions before moving to the next page
+	// Perform any necessary actions before moving to the next page
 	virtual bool prepareForNextPage(int currentIndex) = 0;
-	// Perform any necssary actions before moving to the previous page
+	// Determine next page for the current page, based on current data
+	virtual int determineNextPage(int currentIndex) = 0;
+	// Perform any necessary actions before moving to the previous page
 	virtual bool prepareForPreviousPage(int currentIndex) = 0;
 
 	protected slots:
@@ -110,7 +122,9 @@ class WizardWidget : public QWidget
 	// Next button clicked
 	void nextButtonClicked(bool checked);
 	// Finish button clicked
-	virtual void finishButtonClicked(bool checked);
+	void finishButtonClicked(bool checked);
+	// Close button clicked
+	void closeButtonClicked(bool checked);
 
 	public:
 	// Reset wizard and begin again from specified page

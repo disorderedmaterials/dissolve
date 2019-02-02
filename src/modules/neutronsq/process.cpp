@@ -1,7 +1,7 @@
 /*
 	*** Neutron SQ Module - Processing
 	*** src/modules/neutronsq/process.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -28,6 +28,7 @@
 #include "classes/weights.h"
 #include "math/filters.h"
 #include "math/ft.h"
+#include "modules/import/import.h"
 #include "modules/rdf/rdf.h"
 #include "modules/sq/sq.h"
 #include "templates/genericlisthelper.h"
@@ -36,17 +37,17 @@
 bool NeutronSQModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 {
 	/*
-	 * Load and set up reference data (if a filename was given)
+	 * Load and set up reference data (if a file/format was given)
 	 */
-	CharString referenceFile = keywords_.asString("Reference");
-	if (!referenceFile.isEmpty())
+	if (referenceFQ_.hasValidFileAndFormat())
 	{
 		// Load the data
 		Data1D referenceData;
 		LineParser parser(&procPool);
-		if ((!parser.openInput(referenceFile)) || (!referenceData.load(parser, 0, 1)))
+		if (!parser.openInput(referenceFQ_.filename())) return 0;
+		if (!ImportModule::readData1D(referenceFQ_.data1DFormat(), parser, referenceData))
 		{
-			Messenger::error("Failed to load reference data '%s'.\n", referenceFile.get());
+			Messenger::error("Failed to load reference data '%s'.\n", referenceFQ_.filename());
 			return false;
 		}
 

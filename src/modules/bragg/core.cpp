@@ -1,7 +1,7 @@
 /*
 	*** Bragg Module - Core Functions
 	*** src/modules/bragg/core.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -28,17 +28,8 @@
 // Constructor
 BraggModule::BraggModule() : Module()
 {
-	// Set unique name for this instance of the Module
-	static int instanceId = 0;
-	uniqueName_.sprintf("%s%02i", type(), instanceId++);
-
 	// Set up variables / control parameters
 	setUpKeywords();
-
-	// Set representative colour
-	colour_[0] = 0;
-	colour_[1] = 200;
-	colour_[2] = 0;
 }
 
 // Destructor

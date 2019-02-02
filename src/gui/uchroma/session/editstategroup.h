@@ -1,7 +1,7 @@
 /*
 	*** Edit State Group
 	*** src/gui/uchroma/session/editstategroup.h
-	Copyright T. Youngs 2013-2018
+	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
 

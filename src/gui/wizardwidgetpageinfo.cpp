@@ -1,7 +1,7 @@
 /*
 	*** Wizard Widget Page Info Functions
 	*** src/gui/wizardwidgetpageinfo.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -25,6 +25,7 @@
 WizardWidgetPageInfo::WizardWidgetPageInfo() : ListItem<WizardWidgetPageInfo>()
 {
 	pageType_ = WizardWidgetPageInfo::NormalPage;
+	stackedWidgetPage_ = NULL;
 }
 
 WizardWidgetPageInfo::~WizardWidgetPageInfo()
@@ -40,6 +41,24 @@ void WizardWidgetPageInfo::set(int index, const char* title, int nextIndex)
 {
 	index_ = index;
 	title_ = title;
+	nextIndex_ = nextIndex;
+}
+
+// Set page index
+void WizardWidgetPageInfo::setIndex(int index)
+{
+	index_ = index;
+}
+
+// Set page title
+void WizardWidgetPageInfo::setTitle(const char* title)
+{
+	title_ = title;
+}
+
+// Set next page index
+void WizardWidgetPageInfo::setNextPageIndex(int nextIndex)
+{
 	nextIndex_ = nextIndex;
 }
 
@@ -77,4 +96,39 @@ int WizardWidgetPageInfo::nextIndex() const
 bool WizardWidgetPageInfo::isFinishPoint() const
 {
 	return nextIndex_ == -1;
+}
+
+/*
+ * Widget Interaction
+ */
+
+// Set Associated widget in QStackedWidget
+void WizardWidgetPageInfo::setStackedWidgetPage(QWidget* widget)
+{
+	stackedWidgetPage_ = widget;
+}
+
+// Return associated widget in QStackedWidget
+QWidget* WizardWidgetPageInfo::stackedWidgetPage() const
+{
+	return stackedWidgetPage_;
+}
+// Add new widget highlight
+WizardWidgetHighlight* WizardWidgetPageInfo::addWidgetHighlight()
+{
+	return widgetHighlights_.add();
+}
+
+// Highlight all defined widgets
+void WizardWidgetPageInfo::highlightWidgets()
+{
+	ListIterator<WizardWidgetHighlight> highlightIterator(widgetHighlights_);
+	while (WizardWidgetHighlight* wh =highlightIterator.iterate()) wh->highlight();
+}
+
+// Un-highlight all defined widgets
+void WizardWidgetPageInfo::unHighlightWidgets()
+{
+	ListIterator<WizardWidgetHighlight> highlightIterator(widgetHighlights_);
+	while (WizardWidgetHighlight* wh =highlightIterator.iterate()) wh->unHighlight();
 }

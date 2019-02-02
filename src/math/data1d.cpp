@@ -1,7 +1,7 @@
 /*
 	*** 1-Dimensional Data With Statistics
 	*** src/math/data1d.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -504,14 +504,21 @@ bool Data1D::read(LineParser& parser, const CoreData& coreData)
 {
 	clear();
 
+	// Read object tag
 	if (parser.readNextLine(LineParser::Defaults) != LineParser::Success) return false;
 	setObjectTag(parser.line());
 
+	// Read object name
+	if (parser.readNextLine(LineParser::Defaults) != LineParser::Success) return false;
+	name_ = parser.line();
+
+	// Read number of points and whether errors are present
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	int nPoints = parser.argi(0);
 	bool errors = parser.argb(1);
 	initialise(nPoints, errors);
 
+	// Read data points
 	for (int n=0; n<nPoints; ++n)
 	{
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
@@ -526,8 +533,14 @@ bool Data1D::read(LineParser& parser, const CoreData& coreData)
 // Write data through specified LineParser
 bool Data1D::write(LineParser& parser)
 {
+	// Write object tag and name
 	if (!parser.writeLineF("%s\n", objectTag())) return false;
+	if (!parser.writeLineF("%s\n", name())) return false;
+
+	// Write axis size and errors flag
 	if (!parser.writeLineF("%i %s\n", x_.nItems(), DissolveSys::btoa(hasError_))) return false;
+
+	// Write values / errors
 	if (hasError_)
 	{
 		for (int n=0; n<x_.nItems(); ++n) if (!parser.writeLineF("%f  %f  %f\n", x_[n], values_[n], errors_[n])) return false;

@@ -1,7 +1,7 @@
 /*
 	*** Add Species Dialog
 	*** src/gui/addspeciesdialog_funcs.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -28,6 +28,7 @@ AddSpeciesDialog::AddSpeciesDialog(QWidget* parent, const Dissolve& mainDissolve
 
 	// Set up and connect the AddSpeciesWidget
 	ui_.AddSpeciesWidget->setMainDissolveReference(&mainDissolveInstance);
+	ui_.AddSpeciesWidget->setCloseButtonAvailable(false);
 	connect(ui_.AddSpeciesWidget, SIGNAL(finished()), this, SLOT(accept()));
 }
 
@@ -43,7 +44,7 @@ void AddSpeciesDialog::reset()
 }
 
 // Copy imported Species over to the specified Dissolve object
-bool AddSpeciesDialog::importSpecies(Dissolve& dissolve)
+Species* AddSpeciesDialog::importSpecies(Dissolve& dissolve)
 {
-	ui_.AddSpeciesWidget->importSpecies(dissolve);
+	return ui_.AddSpeciesWidget->importSpecies(dissolve);
 }

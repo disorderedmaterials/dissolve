@@ -1,7 +1,7 @@
 /*
 	*** Display DataSet
 	*** src/gui/uchroma/classes/displaydataset.h
-	Copyright T. Youngs 2013-2018
+	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
 

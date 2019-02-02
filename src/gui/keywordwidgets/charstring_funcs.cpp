@@ -1,7 +1,7 @@
 /*
 	*** Keyword Widget - CharString
 	*** src/gui/keywordwidgets/charstring_funcs.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -23,43 +23,26 @@
 #include "templates/genericlisthelper.h"
 
 // Constructor
-CharStringKeywordWidget::CharStringKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QComboBox(parent), KeywordWidgetBase(coreData, moduleData, prefix)
+CharStringKeywordWidget::CharStringKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QLineEdit(parent), KeywordWidgetBase(coreData, moduleData, prefix)
 {
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<CharStringModuleKeyword*>(keyword);
 	if (!keyword_) Messenger::error("Couldn't cast base module keyword into CharStringModuleKeyword.\n");
 	else
 	{
-		// Set allowed values
-		if (keyword_->hasValidationList())
-		{
-			// Populate the combo with the allowed values
-			const Array<CharString>& items = keyword_->validationList();
-			for (int n=0; n<items.nItems(); ++n)
-			{
-				addItem(items.constAt(n).get());
-				if (DissolveSys::sameString(keyword_->asString(), items.constAt(n))) setCurrentIndex(n);
-			}
-
-			// Turn off editability
-			setEditable(false);
-		}
-		else
-		{
-			setCurrentText(keyword_->asString());
-		}
+		setText(keyword_->asString());
 	}
 
-	// Connect the 
-	connect(this, SIGNAL(currentTextChanged(QString)), this, SLOT(myCurrentTextChanged(QString)));
+	// Connect the currentTextChanged signal to our own slot
+	connect(this, SIGNAL(textChanged(QString)), this, SLOT(myTextChanged(QString)));
 }
 
 /*
  * Signals / Slots
  */
 
-// Combo box text changed
-void CharStringKeywordWidget::myCurrentTextChanged(const QString& text)
+// Line edit text changed
+void CharStringKeywordWidget::myTextChanged(const QString& text)
 {
 	if (refreshing_) return;
 
@@ -85,17 +68,6 @@ void CharStringKeywordWidget::updateValue()
 		newValue = GenericListHelper<double>::value(moduleData_, keyword_->keyword(), modulePrefix_);
 	}
 	else newValue = keyword_->asString();
-
-	// If we have a validation list, set the new index
-	if (keyword_->hasValidationList())
-	{
-		const Array<CharString>& items = keyword_->validationList();
-		for (int n=0; n<items.nItems(); ++n) if (DissolveSys::sameString(keyword_->asString(), items.constAt(n)))
-		{
-			setCurrentIndex(n);
-			break;
-		}
-	}
 
 	refreshing_ = false;
 }

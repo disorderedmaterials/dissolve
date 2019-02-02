@@ -1,7 +1,7 @@
 /*
 	*** RDF Module - Options
 	*** src/modules/rdf/options.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -64,10 +64,10 @@ void RDFModule::setUpKeywords()
 {
 	frequency_ = 5;
 	keywords_.add(new IntegerModuleKeyword(5, 0), "Averaging", "Number of historical partial sets to combine into final partials", "<N[5]>");
-	keywords_.add(new CharStringModuleKeyword("Simple", RDFModule::nAveragingSchemes, AveragingSchemeKeywords), "AveragingScheme", "Weighting scheme to use when averaging partials", "<scheme[Exponential]>");
+	keywords_.add(new EnumStringModuleKeyword(RDFModule::SimpleAveraging, RDFModule::nAveragingSchemes, AveragingSchemeKeywords), "AveragingScheme", "Weighting scheme to use when averaging partials", "<scheme[Exponential]>");
 	keywords_.add(new BoolModuleKeyword(false), "InternalTest", "Perform internal check of calculated partials (relative to Test method)");
 	keywords_.add(new PairBroadeningFunctionModuleKeyword(PairBroadeningFunction()), "IntraBroadening", "Type of broadening to apply to intramolecular g(r)");
-	keywords_.add(new CharStringModuleKeyword("Auto", RDFModule::nPartialsMethods, PartialsMethodKeywords), "Method", "Calculation method for partial radial distribution functions");
+	keywords_.add(new EnumStringModuleKeyword(RDFModule::AutoMethod, RDFModule::nPartialsMethods, PartialsMethodKeywords), "Method", "Calculation method for partial radial distribution functions");
 	keywords_.add(new BoolModuleKeyword(false), "Save", "Whether to save partials to disk after calculation", "<True|False>");
 	keywords_.add(new IntegerModuleKeyword(0, 0, 100), "Smoothing", "Specifies the degree of smoothing 'n' to apply to calculated g(r), where 2n+1 controls the length in the applied Spline smooth");
 	keywords_.add(new BoolModuleKeyword(false), "Test", "Test calculated total and partials against supplied reference data", "<True|False>");

@@ -1,7 +1,7 @@
 /*
 	*** Module List
 	*** src/module/list.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -22,7 +22,6 @@
 #ifndef DISSOLVE_MODULELIST_H
 #define DISSOLVE_MODULELIST_H
 
-#include "module/reference.h"
 #include "templates/list.h"
 
 // Forward Declarations
@@ -37,28 +36,30 @@ class ModuleList
 	ModuleList();
 	// Destructor
 	~ModuleList();
+	// Conversion operator (List<Module>&)
+	operator List<Module>&();
 
 
 	/*
 	 * Module List
 	 */
 	private:
-	// List of Module References
-	List<ModuleReference> modules_;
+	// List of Modules
+	List<Module> modules_;
 
 	public:
 	// Clear list
 	void clear();
 	// Associate Module to list
-	bool add(Module* module, Configuration* location = NULL, Module* addBeforeThis = NULL);
-	// Find associated Module by name
-	Module* find(const char* name) const;
-	// Find ModuleReference for specified Module
-	ModuleReference* contains(Module* module);
+	bool add(Module* module, Module* addBeforeThis = NULL);
+	// Find associated Module by unique name
+	Module* find(const char* uniqueName) const;
+	// Return whether specified Module is present in the list
+	bool contains(Module* searchModule) const;
 	// Return number of Modules in the list
 	int nModules() const;
-	// Return list of ModuleReferences
-	List<ModuleReference>& modules();
+	// Return list of Modules
+	List<Module>& modules();
 };
 
 #endif

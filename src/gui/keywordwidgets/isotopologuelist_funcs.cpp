@@ -1,7 +1,7 @@
 /*
 	*** Keyword Widget - IsotopologueList
 	*** src/gui/keywordwidgets/isotopologuelist_funcs.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -22,7 +22,7 @@
 #include "gui/keywordwidgets/isotopologuelist.h"
 #include "gui/keywordwidgets/dropdown.h"
 #include "gui/delegates/combolist.hui"
-#include "gui/delegates/texponentialspin.hui"
+#include "gui/delegates/exponentialspin.hui"
 #include "gui/delegates/isotopologuecombo.hui"
 #include "gui/delegates/usedspeciescombo.hui"
 #include "gui/helpers/tablewidgetupdater.h"
@@ -42,7 +42,7 @@ IsotopologueListKeywordWidget::IsotopologueListKeywordWidget(QWidget* parent, Mo
 	ui.IsotopologueTable->setItemDelegateForColumn(0, new ComboListDelegate(this, new ComboNameListItems<Configuration>(coreData.constConfigurations())));
 	ui.IsotopologueTable->setItemDelegateForColumn(1, new UsedSpeciesComboDelegate(this));
 	ui.IsotopologueTable->setItemDelegateForColumn(2, new IsotopologueComboDelegate(this));
-	ui.IsotopologueTable->setItemDelegateForColumn(3, new TExponentialSpinDelegate(this));
+	ui.IsotopologueTable->setItemDelegateForColumn(3, new ExponentialSpinDelegate(this));
 
 	// Connect signals / slots
 	connect(ui.AddButton, SIGNAL(clicked(bool)), this, SLOT(addButton_clicked(bool)));

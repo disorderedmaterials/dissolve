@@ -1,7 +1,7 @@
 /*
 	*** DataTest Module - Definition
 	*** src/modules/datatest/definition.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -25,6 +25,12 @@
 const char* DataTestModule::type() const
 {
 	return "DataTest";
+}
+
+// Return category for module
+const char* DataTestModule::category() const
+{
+	return "Checks & Tests";
 }
 
 // Return brief description of module

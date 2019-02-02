@@ -1,7 +1,7 @@
 /*
 	*** ListWidgetUpdater
 	*** src/gui/helpers/listwidgetupdater.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -73,12 +73,11 @@ template <class T, class I> class ListWidgetUpdater
 			}
 
 			++currentRow;
-
 		}
 	}
 
 	// Update widget from supplied List, assuming that the name() function in class I is the desired text to show in the list
-	ListWidgetUpdater(QListWidget* listWidget, const List<I>& data)
+	ListWidgetUpdater(QListWidget* listWidget, const List<I>& data, Qt::ItemFlags flags = Qt::NoItemFlags)
 	{
 		QListWidgetItem* listWidgetItem;
 
@@ -117,10 +116,10 @@ template <class T, class I> class ListWidgetUpdater
 				listWidget->addItem(listWidgetItem);
 				listWidgetItem->setData(Qt::UserRole, VariantPointer<I>(dataItem));
 				listWidgetItem->setText(dataItem->name());
+				if (flags != Qt::NoItemFlags) listWidgetItem->setFlags(listWidgetItem->flags() | flags);
 			}
 
 			++currentRow;
-
 		}
 	}
 };

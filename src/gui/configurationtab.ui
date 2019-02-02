@@ -12,7 +12,7 @@
   </property>
   <property name="font">
    <font>
-    <pointsize>8</pointsize>
+    <pointsize>10</pointsize>
    </font>
   </property>
   <property name="windowTitle">
@@ -90,7 +90,7 @@
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="TExponentialSpin" name="TemperatureSpin">
+         <widget class="ExponentialSpin" name="TemperatureSpin">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -127,7 +127,7 @@
          <number>4</number>
         </property>
         <item row="1" column="1">
-         <widget class="TExponentialSpin" name="BoxBSpin">
+         <widget class="ExponentialSpin" name="BoxBSpin">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -195,7 +195,7 @@
          </widget>
         </item>
         <item row="2" column="1">
-         <widget class="TExponentialSpin" name="BoxCSpin">
+         <widget class="ExponentialSpin" name="BoxCSpin">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -221,7 +221,7 @@
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="TExponentialSpin" name="BoxASpin">
+         <widget class="ExponentialSpin" name="BoxASpin">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -244,7 +244,7 @@
          </widget>
         </item>
         <item row="0" column="3">
-         <widget class="TExponentialSpin" name="BoxAlphaSpin">
+         <widget class="ExponentialSpin" name="BoxAlphaSpin">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -254,7 +254,7 @@
          </widget>
         </item>
         <item row="1" column="3">
-         <widget class="TExponentialSpin" name="BoxBetaSpin">
+         <widget class="ExponentialSpin" name="BoxBetaSpin">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -264,7 +264,7 @@
          </widget>
         </item>
         <item row="2" column="3">
-         <widget class="TExponentialSpin" name="BoxGammaSpin">
+         <widget class="ExponentialSpin" name="BoxGammaSpin">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -361,7 +361,7 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="TExponentialSpin" name="DensitySpin">
+           <widget class="ExponentialSpin" name="DensitySpin">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -429,7 +429,7 @@
              <string>Remove</string>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="main.qrc">
               <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
             </property>
             <property name="iconSize">
@@ -458,7 +458,7 @@
              <string>Add</string>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="main.qrc">
               <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
             </property>
             <property name="iconSize">
@@ -540,7 +540,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="icons.qrc">
+              <iconset resource="main.qrc">
                <normaloff>:/file/icons/file_open.svg</normaloff>:/file/icons/file_open.svg</iconset>
              </property>
              <property name="iconSize">
@@ -605,7 +605,7 @@
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="TExponentialSpin" name="RequestedSizeFactorSpin">
+         <widget class="ExponentialSpin" name="RequestedSizeFactorSpin">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -621,7 +621,7 @@
          </widget>
         </item>
         <item row="0" column="3">
-         <widget class="TExponentialSpin" name="AppliedSizeFactorSpin">
+         <widget class="ExponentialSpin" name="AppliedSizeFactorSpin">
           <property name="enabled">
            <bool>false</bool>
           </property>
@@ -681,7 +681,7 @@
            <string>Regenerate Now</string>
           </property>
           <property name="icon">
-           <iconset resource="icons.qrc">
+           <iconset resource="main.qrc">
             <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
           </property>
           <property name="iconSize">
@@ -710,7 +710,7 @@
            <string>Export XYZ</string>
           </property>
           <property name="icon">
-           <iconset resource="icons.qrc">
+           <iconset resource="main.qrc">
             <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
           </property>
           <property name="iconSize">
@@ -781,9 +781,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>TExponentialSpin</class>
+   <class>ExponentialSpin</class>
    <extends>QDoubleSpinBox</extends>
-   <header>gui/widgets/texponentialspin.hui</header>
+   <header>gui/widgets/exponentialspin.hui</header>
   </customwidget>
   <customwidget>
    <class>ModuleEditor</class>
@@ -793,7 +793,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="main.qrc"/>
  </resources>
  <connections/>
 </ui>

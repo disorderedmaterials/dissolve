@@ -1,7 +1,7 @@
 /*
 	*** Keyword Parsing - Configuration Block
 	*** src/main/keywords_configuration.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -106,13 +106,13 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 				cfg->setBraggMultiplicity(parser.arg3i(1));
 				break;
 			case (ConfigurationBlock::CellAnglesKeyword):
-				cfg->setBoxAngles(Vec3<double>(parser.argd(1),  parser.argd(2), parser.argd(3)));
+				cfg->setBoxAngles(parser.arg3d(1));
 				break;
 			case (ConfigurationBlock::CellDivisionLengthKeyword):
 				cfg->setRequestedCellDivisionLength(parser.argd(1));
 				break;
 			case (ConfigurationBlock::CellLengthsKeyword):
-				cfg->setRelativeBoxLengths(Vec3<double>(parser.argd(1), parser.argd(2), parser.argd(3)));
+				cfg->setRelativeBoxLengths(parser.arg3d(1));
 				break;
 			case (ConfigurationBlock::DensityKeyword):
 				// Determine units given
@@ -141,7 +141,7 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 					error = true;
 					break;
 				}
-				Messenger::print("Initial coordinates will be loaded from file '%s' (format: %s)\n", cfg->inputCoordinates().filename(), cfg->inputCoordinates().formatString());
+				Messenger::print("Initial coordinates will be loaded from file '%s' (%s)\n", cfg->inputCoordinates().filename(), cfg->inputCoordinates().format());
 				break;
 			case (ConfigurationBlock::ModuleKeyword):
 				// The argument following the keyword is the module name, so try to create an instance of that Module
@@ -156,7 +156,7 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 				if (cfg->addModule(module))
 				{
 					// Add our pointer to the Module's list of associated Configurations
-					if (!module->addConfigurationTarget(cfg))
+					if (!module->addTargetConfiguration(cfg))
 					{
 						Messenger::error("Failed to add Configuration '%s' to Module '%s' as a target.\n", cfg->name(), module->type());
 						error = true;

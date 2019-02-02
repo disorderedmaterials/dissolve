@@ -1,7 +1,7 @@
 /*
 	*** Module Editor
 	*** src/gui/moduleeditor.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -23,12 +23,16 @@
 #define DISSOLVE_MODULEEDITOR_H
 
 #include "gui/ui_moduleeditor.h"
+#include "base/charstring.h"
+#include "templates/reflist.h"
 
 // Forward Declarations
+class Configuration;
 class DissolveWindow;
 class LineParser;
+class MimeTreeWidgetItem;
 class ModuleChart;
-class ModuleList;
+class ModuleLayer;
 class ModulePalette;
 
 // ModuleEditor
@@ -48,9 +52,19 @@ class ModuleEditor : public QWidget
 	/*
 	 * Setup
 	 */
+	private:
+	// Pointer to main window
+	DissolveWindow* dissolveWindow_;
+	// Target ModuleLayer
+	ModuleLayer* moduleLayer_;
+	// Parent Configuration (if we are local to one)
+	Configuration* localConfiguration_;
+	// Module categories and their associated MimeTreeWidgetItems
+	RefList<MimeTreeWidgetItem,CharString> moduleCategories_;
+
 	public:
-	// Setup up the ModuleEditor for the specified Module list
-	bool setUp(DissolveWindow* dissolveWindow, ModuleList& moduleList);
+	// Set up the ModuleEditor for the specified ModuleLayer
+	bool setUp(DissolveWindow* dissolveWindow, ModuleLayer* moduleLayer, Configuration* localConfiguration = NULL);
 
 
 	/*
@@ -75,8 +89,9 @@ class ModuleEditor : public QWidget
 	private:
 	// Chart widget being displayed
 	ModuleChart* chartWidget_;
-	// Palette widget
-	ModulePalette* paletteWidget_;
+
+	private slots:
+	void on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* item);
 
 
 	/*

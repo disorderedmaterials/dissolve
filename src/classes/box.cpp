@@ -1,7 +1,7 @@
 /*
 	*** Box Definition
 	*** src/classes/box.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -89,12 +89,12 @@ void Box::setUp(double volume)
 {
 	if (volume > 0.0)
 	{
-		Messenger::print("Current box volume is %f cubic Angstroms, requested = %f\n", axes_.determinant(), volume);
+		Messenger::printVerbose("Current box volume is %f cubic Angstroms, requested = %f\n", axes_.determinant(), volume);
 		double factor = pow(volume,1.0/3.0) / pow(axes_.determinant(),1.0/3.0);
-		Messenger::print("Scaling factor = %f\n", factor);
+		Messenger::printVerbose("...scaling factor = %f\n", factor);
 		axes_.applyScaling(factor, factor, factor);
 	}
-	else Messenger::print("Current box volume is %f cubic Angstroms and will not be altered.\n", axes_.determinant());
+	else Messenger::printVerbose("Current box volume is %f cubic Angstroms and will not be altered.\n", axes_.determinant());
 
 	// Calculate box volume
 	volume_ = axes_.determinant();
@@ -103,9 +103,10 @@ void Box::setUp(double volume)
 	inverseAxes_ = axes_;
 	inverseAxes_.invert();
 
-	// Calculate reciprocal axes and volume
-	// Reciprocal cell vectors are perpendicular to normal cell axes.
-	// Calculate from cross products of normal cell vectors
+	/*
+	 * Calculate reciprocal axes and volume.
+	 * Reciprocal cell vectors are perpendicular to normal cell axes - calculate from cross products of normal cell vectors.
+	 */
 	reciprocalAxes_.setColumn(0, axes_.columnAsVec3(1) * axes_.columnAsVec3(2));
 	reciprocalAxes_.setColumn(1, axes_.columnAsVec3(2) * axes_.columnAsVec3(0));
 	reciprocalAxes_.setColumn(2, axes_.columnAsVec3(0) * axes_.columnAsVec3(1));
@@ -113,8 +114,6 @@ void Box::setUp(double volume)
 	reciprocalAxes_.columnMultiply(1, TWOPI / volume_);
 	reciprocalAxes_.columnMultiply(2, TWOPI / volume_);
 	reciprocalVolume_ = (reciprocalAxes_.columnAsVec3(1) * reciprocalAxes_.columnAsVec3(2)).dp(reciprocalAxes_.columnAsVec3(0));
-
-	Messenger::print("Final box volume is %f cubic Angstroms (reciprocal volume = %e)\n", volume_, reciprocalVolume_);
 }
 
 // Return volume
@@ -235,6 +234,34 @@ void Box::scale(double factor)
 /*
  * Utility Routines
  */
+
+// Generate a suitable Box given the supplied relative lengths, angles, and volume
+Box* Box::generate(Vec3<double> relativeLengths, Vec3<double> angles, double volume)
+{
+	// Determine box type from supplied lengths / angles
+	bool rightAlpha = (fabs(angles.x-90.0) < 0.001);
+	bool rightBeta = (fabs(angles.y-90.0) < 0.001);
+	bool rightGamma = (fabs(angles.z-90.0) < 0.001);
+
+	if (rightAlpha && rightBeta && rightGamma)
+	{
+		// Cubic or orthorhombic
+		bool abSame = (fabs(relativeLengths.x-relativeLengths.y) < 0.0001);
+		bool acSame = (fabs(relativeLengths.x-relativeLengths.z) < 0.0001);
+		if (abSame && acSame) return new CubicBox(volume, relativeLengths.x);
+		else return new OrthorhombicBox(volume, relativeLengths);
+	}
+	else if (rightAlpha && (!rightBeta) && rightGamma)
+	{
+		// Monoclinic
+		return new MonoclinicBox(volume, relativeLengths, angles.y);
+	}
+	else
+	{
+		// Triclinic
+		return new TriclinicBox(volume, relativeLengths, angles);
+	}
+}
 
 // Return radius of largest possible inscribed sphere for box
 double Box::inscribedSphereRadius() const

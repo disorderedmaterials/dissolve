@@ -87,7 +87,7 @@
       </widget>
      </item>
      <item row="1" column="3" colspan="3">
-      <widget class="TExponentialSpin" name="ConstantValueSpin" native="true">
+      <widget class="ExponentialSpin" name="ConstantValueSpin" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -123,7 +123,7 @@
       </widget>
      </item>
      <item row="3" column="3">
-      <widget class="TExponentialSpin" name="XRangeMinSpin" native="true">
+      <widget class="ExponentialSpin" name="XRangeMinSpin" native="true">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -165,7 +165,7 @@
       </widget>
      </item>
      <item row="5" column="3">
-      <widget class="TExponentialSpin" name="ZRangeMinSpin" native="true">
+      <widget class="ExponentialSpin" name="ZRangeMinSpin" native="true">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -266,7 +266,7 @@
       </widget>
      </item>
      <item row="5" column="5">
-      <widget class="TExponentialSpin" name="ZRangeMaxSpin" native="true">
+      <widget class="ExponentialSpin" name="ZRangeMaxSpin" native="true">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -282,7 +282,7 @@
       </widget>
      </item>
      <item row="3" column="5">
-      <widget class="TExponentialSpin" name="XRangeMaxSpin" native="true">
+      <widget class="ExponentialSpin" name="XRangeMaxSpin" native="true">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -418,9 +418,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>TExponentialSpin</class>
+   <class>ExponentialSpin</class>
    <extends>QWidget</extends>
-   <header>gui/widgets/texponentialspin.hui</header>
+   <header>gui/widgets/exponentialspin.hui</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

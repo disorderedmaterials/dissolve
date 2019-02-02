@@ -1,7 +1,7 @@
 /*
 	*** Module Keyword Base Class
 	*** src/module/keywordbase.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -35,7 +35,7 @@ class ModuleKeywordBase : public ListItem<ModuleKeywordBase>
 {
 	public:
 	// Keyword Data Type
-	enum KeywordDataType { AnalyserData, AtomTypeSelectionData, BoolData, BroadeningFunctionData, CharStringData, ComplexData, DataStoreData, DoubleData, FileAndFormatData, IntegerData, IsotopologueListData, ModuleReferenceListData, PairBroadeningFunctionData, SpeciesSiteData, WindowFunctionData };
+	enum KeywordDataType { AnalyserData, AtomTypeSelectionData, BoolData, BroadeningFunctionData, CharStringData, ComplexData, DataStoreData, DoubleData, EnumStringData, FileAndFormatData, IntegerData, IsotopologueListData, ModuleReferenceListData, PairBroadeningFunctionData, SpeciesSiteData, WindowFunctionData };
 	// Constructor
 	ModuleKeywordBase(KeywordDataType type);
 	// Destructor

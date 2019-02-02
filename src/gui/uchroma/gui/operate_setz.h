@@ -1,7 +1,7 @@
 /*
 	*** Opertate - Set Z Dialog
 	*** src/gui/uchroma/gui/operate_setz.h
-	Copyright T. Youngs 2012-2018.
+	Copyright T. Youngs 2012-2019
 
 	This file is part of uChroma.
 

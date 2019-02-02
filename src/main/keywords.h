@@ -1,7 +1,7 @@
 /*
 	*** Keyword Definitions
 	*** src/main/keywords.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -29,6 +29,7 @@ class Sample;
 class Configuration;
 class Species;
 class Module;
+class ModuleLayer;
 class GenericList;
 class Data;
 class SpeciesInfo;
@@ -58,6 +59,7 @@ namespace BlockKeywords
 	enum BlockKeyword
 	{
 		ConfigurationBlockKeyword,		/* 'Configuration' - Defines a single Configuration for use in the simulation */
+		LayerBlockKeyword,			/* 'Layer' - Defines a sequence of Modules in a processing layer */
 		MasterBlockKeyword,			/* 'Master' - Contains master intramolecular terms for use in Species */
 		ModuleBlockKeyword,			/* 'Module' - Sets up a Module to run after Configuration processing */
 		PairPotentialsBlockKeyword,		/* 'PairPotentials' - Contains definitions of the PairPotentials for the simulation */
@@ -118,28 +120,27 @@ namespace ConfigurationBlock
 
 
 /*
- * Data Block Keywords
+ * Layer Block Keywords
  */
-namespace DataBlock
+namespace LayerBlock
 {
-	// Data Block Keyword Enum
-	enum DataKeyword
+	// Layer Block Keyword Enum
+	enum LayerKeyword
 	{
-		AssociatedToKeyword,		/* 'AssociatedTo' - Name of Module to which this data is associated, if any */
-		EndDataKeyword,			/* 'EndData' - Signals the end of the Data block */
-		FileKeyword,			/* 'File' - Datafile containing reference data */
-		SubtractAverageLevelKeyword,	/* 'SubtractAverageLevel' - Minimum x value from which to calculate and subtract mean value from y data */
-		TypeKeyword,			/* 'Type' - Type of the supplied reference data */
-		nDataKeywords			/* Number of keywords defined for this block */
+		EnabledKeyword,			/* 'Enabled' - Specify whether the layer is enabled or not */
+		EndLayerKeyword,		/* 'EndLayer' - Signals the end of the Layer block */
+		FrequencyKeyword,		/* 'Frequency' - Frequency at which the layer is executed, relative to the main iteration counter */
+		ModuleKeyword,			/* 'Module' - Begin a Module definition within this layer */
+		nLayerKeywords			/* Number of keywords defined for this block */
 	};
-	// Convert text string to DataKeyword
-	DataKeyword keyword(const char* s);
-	// Convert DataKeyword to text string
-	const char* keyword(DataKeyword id);
+	// Convert text string to LayerKeyword
+	LayerKeyword keyword(const char* s);
+	// Convert LayerKeyword to text string
+	const char* keyword(LayerKeyword id);
 	// Return expected number of expected arguments
-	int nArguments(DataKeyword id);
-	// Parse Data block
-	bool parse(LineParser& parser, Dissolve* dissolve, Data* data);
+	int nArguments(LayerKeyword id);
+	// Parse Layer block
+	bool parse(LineParser& parser, Dissolve* dissolve, ModuleLayer* layer);
 };
 
 
@@ -153,7 +154,7 @@ namespace MasterBlock
 	{
 		AngleKeyword,			/* 'Angle' - Define master Angle parameters that can be referred to */
 		BondKeyword,			/* 'Bond' - Define master Bond parameters that can be referred to */
-		EndMasterKeyword,		/* 'EndModule' - Signals the end of the Module block */
+		EndMasterKeyword,		/* 'EndMaster' - Signals the end of the Master block */
 		TorsionKeyword,			/* 'Torsion' - Define master Torsion parameters that can be referred to */
 		nMasterKeywords			/* Number of keywords defined for this block */
 	};
@@ -163,7 +164,7 @@ namespace MasterBlock
 	const char* keyword(MasterKeyword id);
 	// Return expected number of expected arguments
 	int nArguments(MasterKeyword id);
-	// Parse Module block
+	// Parse Master block
 	bool parse(LineParser& parser, Dissolve* dissolve);
 };
 

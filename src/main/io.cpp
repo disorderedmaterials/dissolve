@@ -1,7 +1,7 @@
 /*
 	*** Dissolve I/O
 	*** src/main/io.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -43,6 +43,7 @@ bool Dissolve::loadInput(const char* filename)
 	// Variables
 	Configuration* cfg;
 	Module* module;
+	ModuleLayer* layer = NULL;
 	CharString niceName;
 	Species* sp;
 	BlockKeywords::BlockKeyword kwd;
@@ -68,50 +69,21 @@ bool Dissolve::loadInput(const char* filename)
 				Messenger::print("Created Configuration '%s'...\n", cfg->name());
 				if (!ConfigurationBlock::parse(parser, this, cfg)) error = true;
 				break;
-			case (BlockKeywords::MasterBlockKeyword):
-				if (!MasterBlock::parse(parser, this)) error = true;
-				break;
-			case (BlockKeywords::ModuleBlockKeyword):
-				// The argument following the keyword is the module name, so try to create an instance of that Module
-				module = createModuleInstance(parser.argc(1));
-				if (!module)
+			case (BlockKeywords::LayerBlockKeyword):
+				// Check to see if a processing layer with this name already exists...
+				if (findProcessingLayer(parser.argc(1)))
 				{
+					Messenger::error("Redefinition of processing layer '%s'.\n", parser.argc(1));
 					error = true;
 					break;
 				}
-
-				// Add the new instance to the processing list
-				if (!mainProcessingModules_.add(module))
-				{
-					Messenger::error("Failed to add Module '%s' as main processing task.\n", parser.argc(1));
-					error = true;
-				}
-				if (error) break;
-
-				// Set unique name, if it was provided - need to check if it has been used elsewhere (in any Module or instance of it)
-				if (parser.hasArg(2))
-				{
-					niceName = DissolveSys::niceName(parser.argc(2));
-					Module* existingModule = findModuleInstance(niceName);
-					if (existingModule && (existingModule != module))
-					{
-						Messenger::error("A Module with the unique name '%s' already exist.\n", niceName.get());
-						error = true;
-						break;
-					}
-					else if (findConfigurationByNiceName(niceName))
-					{
-						Messenger::error("A Configuration with the unique name '%s' already exist, and so cannot be used as a Module name.\n", niceName.get());
-						error = true;
-						break;
-					}
-					else module->setUniqueName(niceName);
-				}
-
-				// Parse rest of Module block
-				module->setConfigurationLocal(false);
-				if (!ModuleBlock::parse(parser, this, module, processingModuleData_, false)) error = true;
-				if (error) break;
+				layer = addProcessingLayer();
+				layer->setName(parser.argc(1));
+				Messenger::print("Created processing layer '%s'...\n", layer->name());
+				if (!LayerBlock::parse(parser, this, layer)) error = true;
+				break;
+			case (BlockKeywords::MasterBlockKeyword):
+				if (!MasterBlock::parse(parser, this)) error = true;
 				break;
 			case (BlockKeywords::PairPotentialsBlockKeyword):
 				if (!PairPotentialsBlock::parse(parser, this)) error = true;
@@ -136,7 +108,7 @@ bool Dissolve::loadInput(const char* filename)
 				error = true;
 				break;
 			default:
-				printf("DEV_OOPS - Input block keyword '%s' not accounted for.\n", BlockKeywords::blockKeyword(kwd));
+				Messenger::error("Block keyword '%s' is not relevant in this context.\n", BlockKeywords::blockKeyword(kwd));
 				error = true;
 				break;
 		}
@@ -368,11 +340,9 @@ bool Dissolve::saveInput(const char* filename)
 		// Modules
 		parser.writeLineF("\n  # Modules\n");
 		if (cfg->nModules() == 0) parser.writeLineF("  # -- None\n");
-		ListIterator<ModuleReference> moduleIterator(cfg->modules().modules());
-		while (ModuleReference* modRef = moduleIterator.iterate())
+		ListIterator<Module> moduleIterator(cfg->modules().modules());
+		while (Module* module = moduleIterator.iterate())
 		{
-			Module* module = modRef->module();
-
 			parser.writeLineF("  %s  %s  '%s'\n", ConfigurationBlock::keyword(ConfigurationBlock::ModuleKeyword), module->type(), module->uniqueName());
 
 			// Write frequency and disabled keywords
@@ -396,36 +366,38 @@ bool Dissolve::saveInput(const char* filename)
 		parser.writeLineF("%s\n", ConfigurationBlock::keyword(ConfigurationBlock::EndConfigurationKeyword));
 	}
 
-	// Write processing Module blocks
-	parser.writeBannerComment("Processing Modules");
-	ListIterator<ModuleReference> processingIterator(mainProcessingModules_.modules());
-	while (ModuleReference* modRef = processingIterator.iterate())
+	// Write processing layers
+	parser.writeBannerComment("Processing Layers");
+	ListIterator<ModuleLayer> processingLayerIterator(processingLayers_);
+	while (ModuleLayer* layer = processingLayerIterator.iterate())
 	{
-		Module* module = modRef->module();
-
-		parser.writeLineF("\n%s  %s  '%s'\n", BlockKeywords::blockKeyword(BlockKeywords::ModuleBlockKeyword), module->type(), module->uniqueName());
-
-		// Write frequency and disabled keywords
-		parser.writeLineF("  Frequency  %i\n", module->frequency());
-		if (!module->enabled()) parser.writeLineF("  Disabled\n");
-		parser.writeLineF("\n");
-
-		// Write Configuration target(s)
-		RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
-		while (Configuration* cfg = configIterator.iterate()) parser.writeLineF("  %s  '%s'\n", ModuleBlock::keyword(ModuleBlock::ConfigurationKeyword), cfg->name());
-		parser.writeLineF("\n");
-
-		// Print keyword options
-		ListIterator<ModuleKeywordBase> keywordIterator(module->keywords().keywords());
-		while (ModuleKeywordBase* keyword = keywordIterator.iterate())
+		ListIterator<Module> processingIterator(layer->modules());
+		while (Module* module= processingIterator.iterate())
 		{
-			// If the keyword has never been set (i.e. it still has its default value) don't bother to write it
-			if (!keyword->isSet()) continue;
+			parser.writeLineF("\n%s  %s  '%s'\n", BlockKeywords::blockKeyword(BlockKeywords::ModuleBlockKeyword), module->type(), module->uniqueName());
 
-			if (!keyword->write(parser, "  ")) return false;
+			// Write frequency and disabled keywords
+			parser.writeLineF("  Frequency  %i\n", module->frequency());
+			if (!module->enabled()) parser.writeLineF("  Disabled\n");
+			parser.writeLineF("\n");
+
+			// Write Configuration target(s)
+			RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
+			while (Configuration* cfg = configIterator.iterate()) parser.writeLineF("  %s  '%s'\n", ModuleBlock::keyword(ModuleBlock::ConfigurationKeyword), cfg->name());
+			parser.writeLineF("\n");
+
+			// Print keyword options
+			ListIterator<ModuleKeywordBase> keywordIterator(module->keywords().keywords());
+			while (ModuleKeywordBase* keyword = keywordIterator.iterate())
+			{
+				// If the keyword has never been set (i.e. it still has its default value) don't bother to write it
+				if (!keyword->isSet()) continue;
+
+				if (!keyword->write(parser, "  ")) return false;
+			}
+
+			parser.writeLineF("%s\n", ModuleBlock::keyword(ModuleBlock::EndModuleKeyword));
 		}
-
-		parser.writeLineF("%s\n", ModuleBlock::keyword(ModuleBlock::EndModuleKeyword));
 	}
 
 	// Write Simulation block
@@ -599,37 +571,11 @@ bool Dissolve::saveRestart(const char* filename)
 	}
 
 	// Module timing information
-	RefList<Module,bool> writtenModules;
-	// -- Configuration Modules
-	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next)
+	RefListIterator<Module,bool> moduleIterator(moduleInstances_);
+	while (Module* module = moduleIterator.iterate())
 	{
-		ListIterator<ModuleReference> moduleIterator(cfg->modules().modules());
-		while (ModuleReference* modRef = moduleIterator.iterate())
-		{
-			Module* module = modRef->module();
-
-			// In the case of unique-instance modules, don't write timing information more than once...
-			if (writtenModules.contains(module)) continue;
-
-			if (!parser.writeLineF("Timing  %s\n", module->uniqueName())) return false;
-			if (!module->processTimes().write(parser)) return false;
-
-			writtenModules.add(module);
-		}
-	}
-	// -- Processing
-	ListIterator<ModuleReference> procModIterator(mainProcessingModules_.modules());
-	while (ModuleReference* modRef = procModIterator.iterate())
-	{
-		Module* module = modRef->module();
-
-		// In the case of unique-instance modules, don't write timing information more than once...
-		if (writtenModules.contains(module)) continue;
-
 		if (!parser.writeLineF("Timing  %s\n", module->uniqueName())) return false;
 		if (!module->processTimes().write(parser)) return false;
-
-		writtenModules.add(module);
 	}
 
 	parser.closeFiles();

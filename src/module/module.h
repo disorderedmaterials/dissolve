@@ -1,7 +1,7 @@
 /*
 	*** Dissolve Module Interface
 	*** src/module/module.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -60,12 +60,12 @@ class Module : public ListItem<Module>
 	protected:
 	// Unique name of Module
 	CharString uniqueName_;
-	// Colour used in visual representation of Module
-	int colour_[3];
 
 	public:
 	// Return type of Module
 	virtual const char* type() const = 0;
+	// Return category for Module
+	virtual const char* category() const = 0;
 	// Set unique name of Module
 	void setUniqueName(const char* uniqueName);
 	// Return unique name of Module
@@ -74,8 +74,6 @@ class Module : public ListItem<Module>
 	virtual const char* brief() const = 0;
 	// Return the maximum number of Configurations the Module can target (or -1 for any number)
 	virtual int nTargetableConfigurations() const = 0;
-	// Return colour used in visual representation of Module
-	const int* colour() const;
 
 
 	/*
@@ -104,24 +102,24 @@ class Module : public ListItem<Module>
 	 * Control
 	 */
 	protected:
-	// Frequency with which to run Module (relative to master simulation loop counter)
+	// Frequency with which to run Module (relative to layer execution count)
 	int frequency_;
 	// Whether the Module is enabled
 	bool enabled_;
 
 	public:
-	// Frequency with which to run Module (relative to master simulation loop counter)
+	// Set frequency with which to run Module (relative to layer execution count)
 	void setFrequency(int freq);
-	// Frequency with which to run Module (relative to master simulation loop counter)
-	int frequency();
+	// Return frequency with which to run Module (relative to layer execution count)
+	int frequency() const;
 	// Return whether the Module should run this iteration
-	bool runThisIteration(int iteration);
+	bool runThisIteration(int iteration) const;
 	// Return short descriptive text relating frequency to supplied iteration number
-	const char* frequencyDetails(int iteration);
+	const char* frequencyDetails(int iteration) const;
 	// Set whether the Module is enabled
 	void setEnabled(bool b);
 	// Return whether the Module is enabled
-	bool enabled();
+	bool enabled() const;
 
 
 	/*
@@ -135,19 +133,21 @@ class Module : public ListItem<Module>
 
 	public:
 	// Add Configuration target
-	bool addConfigurationTarget(Configuration* cfg);
+	bool addTargetConfiguration(Configuration* cfg);
+	// Remove Configuration target
+	bool removeTargetConfiguration(Configuration* cfg);
 	// Return number of targeted Configurations
-	int nConfigurationTargets();
+	int nTargetConfigurations() const;
 	// Return first targeted Configuration
 	RefList<Configuration,bool>& targetConfigurations();
 	// Return if the specified Configuration is in the targets list
-	bool isTargetConfiguration(Configuration* cfg);
+	bool isTargetConfiguration(Configuration* cfg) const;
 	// Copy Configuration targets from specified Module
 	void copyTargetConfigurations(Module* sourceModule);
 	// Set whether this module is a local Module in a Configuration
 	void setConfigurationLocal(bool b);
 	// Return whether this module is a local Module in a Configuration
-	bool configurationLocal();
+	bool configurationLocal() const;
 
 
 	/*

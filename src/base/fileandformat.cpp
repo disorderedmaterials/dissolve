@@ -1,7 +1,7 @@
 /*
 	*** File And Format
 	*** src/base/fileandformat.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -55,24 +55,43 @@ const char* FileAndFormat::format(int id) const
 	return formats()[id];
 }
 
-// Return format
-int FileAndFormat::format() const
+// Set format index
+void FileAndFormat::setFormatIndex(int id)
+{
+	format_ = id;
+}
+
+// Return format index
+int FileAndFormat::formatIndex() const
 {
 	return format_;
 }
 
 // Return format string
-const char* FileAndFormat::formatString() const
+const char* FileAndFormat::format() const
 {
 	if ((format_ < 0) || (format_ >= nFormats())) return "???";
 	else return format(format_);
+}
+
+// Return nice format string
+const char* FileAndFormat::niceFormat() const
+{
+	if ((format_ < 0) || (format_ >= nFormats())) return "???";
+	else return niceFormats()[format_];
 }
 
 /*
  * Filename
  */
 
-// Return filename
+// Set filename / basename
+void FileAndFormat::setFilename(const char* filename)
+{
+	filename_ = filename;
+}
+
+// Return filename / basename
 const char* FileAndFormat::filename() const
 {
 	return filename_.get();
@@ -96,7 +115,7 @@ bool FileAndFormat::hasValidFileAndFormat() const
  */
 
 // Read format / filename from specified parser
-bool FileAndFormat::read(LineParser& parser, int startArg, bool checkFileExists)
+bool FileAndFormat::read(LineParser& parser, int startArg)
 {
 	// Convert first argument to format type
 	format_ = format(parser.argc(startArg));
@@ -108,7 +127,7 @@ bool FileAndFormat::read(LineParser& parser, int startArg, bool checkFileExists)
 		filename_ = parser.argc(startArg+1);
 
 		// Check that the file exists?
-		if (checkFileExists && (!DissolveSys::fileExists(filename_))) return Messenger::error("Specified file '%s' does not exist.\n", filename_.get());
+		if (fileMustExist() && (!DissolveSys::fileExists(filename_))) return Messenger::error("Specified file '%s' does not exist.\n", filename_.get());
 	}
 
 	return true;
@@ -117,4 +136,9 @@ bool FileAndFormat::read(LineParser& parser, int startArg, bool checkFileExists)
 // Return formatted string for writing
 const char* FileAndFormat::asString() const
 {
+	static CharString result;
+
+	result.sprintf("%s  '%s'", format(format_), filename_.get());
+
+	return result.get();
 }

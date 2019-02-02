@@ -1,7 +1,7 @@
 /*
 	*** Neutron SQ Module - Options
 	*** src/modules/neutronsq/options.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -50,13 +50,13 @@ void NeutronSQModule::setUpKeywords()
 	keywords_.add(new ComplexModuleKeyword(2,2), "ConfigurationWeight", "Sets the relative weight of the specified Configuration in construction of the structure factors", "<Configuration Name> <weight>");
 	keywords_.add(new AtomTypeSelectionModuleKeyword(exchangeableTypes_, targetConfigurations_), "Exchangeable", "Specify AtomTypes that are exchangeable", "<AtomType> [AtomType...]");
 	keywords_.add(new IsotopologueListModuleKeyword(isotopologues_), "Isotopologue", "Set Isotopologue (and its population) to use for a particular Species in a given Configuration");
-	keywords_.add(new CharStringModuleKeyword("None", NeutronSQModule::nNormalisationTypes, NormalisationTypeKeywords), "Normalisation", "Normalisation to apply to total weighted F(Q)");
+	keywords_.add(new EnumStringModuleKeyword(NeutronSQModule::NoNormalisation, NeutronSQModule::nNormalisationTypes, NormalisationTypeKeywords), "Normalisation", "Normalisation to apply to total weighted F(Q)");
 	keywords_.add(new DoubleModuleKeyword(0.05, 1.0e-5), "QDelta", "Step size in Q for S(Q) calculation");
 	keywords_.add(new BroadeningFunctionModuleKeyword(BroadeningFunction()), "QBroadening", "Instrument broadening function to apply when calculating S(Q)");
 	keywords_.add(new DoubleModuleKeyword(-1.0, -1.0), "QMax", "Maximum Q for calculated S(Q)");
 	keywords_.add(new DoubleModuleKeyword(0.01, 0.0), "QMin", "Minimum Q for calculated S(Q)");
-	keywords_.add(new CharStringModuleKeyword(""), "Reference", "F(Q) reference data", "<filename>");
-	keywords_.add(new CharStringModuleKeyword("None", NeutronSQModule::nNormalisationTypes, NormalisationTypeKeywords), "ReferenceNormalisation", "Normalisation to remove from reference data before use");
+	keywords_.add(new FileAndFormatModuleKeyword(referenceFQ_), "Reference", "F(Q) reference data", "<format> <filename>");
+	keywords_.add(new EnumStringModuleKeyword(NeutronSQModule::NoNormalisation, NeutronSQModule::nNormalisationTypes, NormalisationTypeKeywords), "ReferenceNormalisation", "Normalisation to remove from reference data before use");
 	keywords_.add(new DoubleModuleKeyword(-1.0, -1.0), "ReferenceRemoveAverage", "Q value at which to form average level to be subtracted from reference data before use (-1 for no subtraction)");
 	keywords_.add(new BoolModuleKeyword(false), "Save", "Whether to save partials to disk after calculation", "<True|False>");
 	keywords_.add(new WindowFunctionModuleKeyword(WindowFunction(WindowFunction::Lorch0Window)), "WindowFunction", "Window function to apply when Fourier-transforming g(r) to S(Q)");

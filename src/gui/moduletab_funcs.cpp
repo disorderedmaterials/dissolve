@@ -1,7 +1,7 @@
 /*
 	*** ModuleTab Functions
 	*** src/gui/moduletab_funcs.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -21,6 +21,7 @@
 
 #include "gui/moduletab.h"
 #include "gui/gui.h"
+#include "gui/modulechartmoduleblock.h"
 #include "gui/modulewidget.h"
 #include "gui/widgets/nocontrols.h"
 #include "main/dissolve.h"
@@ -30,6 +31,9 @@
 ModuleTab::ModuleTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, Module* module) : ListItem<ModuleTab>(), MainTab(dissolveWindow, dissolve, parent, module->uniqueName(), this), module_(module)
 {
 	ui.setupUi(this);
+
+	controlsWidget_ = NULL;
+	moduleWidget_ = NULL;
 
 	refreshing_ = false;
 
@@ -62,39 +66,50 @@ const Module* ModuleTab::module() const
 	return module_;
 }
 
-/*
- * Update
- */
-
 // Initialise controls for the specified Module
 void ModuleTab::initialiseControls(Module* module)
 {
 	if (!module) return;
 
-	// Set up our keywords widget
-	ui.KeywordsWidget->setUp(dissolveWindow_, module);
-
-	// Create the module widget (if this Module has one)
-	QVBoxLayout* widgetLayout = new QVBoxLayout(ui.WidgetWidget);
-	widgetLayout->setContentsMargins(0,0,0,0);
-	widgetLayout->setSpacing(0);
-	moduleWidget_ = module->createWidget(ui.WidgetWidget, dissolve_);
-	if (moduleWidget_ == NULL)
+	// Check if we have already created a widget...
+	if (controlsWidget_)
 	{
-		NoControlsWidget* ncw = new NoControlsWidget(ui.WidgetWidget);
-		widgetLayout->addWidget(ncw);
+		Messenger::error("Already have a controls widget for this ModuleControlWidget (%s), so will not create another one.\n", title());
+		return;
 	}
-	else widgetLayout->addWidget(moduleWidget_);
+
+	// Set a nice icon for the window
+	setWindowIcon(ModuleChartModuleBlock::modulePixmap(module));
+
+	// Create a splitter into which we'll add our widgets
+	QSplitter* splitter = new QSplitter(Qt::Horizontal, this);
+
+	// Create the controls widget (a ModuleChartModuleBlock)
+	controlsWidget_ = new ModuleChartModuleBlock(NULL, dissolveWindow_, module);
+	controlsWidget_->setSettingsExpanded(true, true);
+	controlsWidget_->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+	splitter->addWidget(controlsWidget_);
+
+	// Create a module widget if there are additional GUI elements available for the Module
+	moduleWidget_ = module->createWidget(NULL, dissolve_);
+	if (moduleWidget_ == NULL) Messenger::printVerbose("Module '%s' did not provide a valid controller widget.\n", module->type());
+	else
+	{
+		moduleWidget_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+		splitter->addWidget(moduleWidget_);
+		splitter->setStretchFactor(1, 5);
+	}
+
+	// Create a layout, add the splitter, and add it to the window
+	QVBoxLayout* layout = new QVBoxLayout;
+	layout->setMargin(4);
+	layout->addWidget(splitter);
+	setLayout(layout);
 }
 
-// Update header texts
-void ModuleTab::updateHeaderTexts()
-{
-	CharString topText("%s (%s)", module_->type(), module_->uniqueName());
-	ui.TopLabel->setText(topText.get());
-	CharString bottomText("Runs @ %s", module_->frequencyDetails(dissolve_.iteration()));
-	ui.BottomLabel->setText(bottomText.get());
-}
+/*
+ * Update
+ */
 
 // Update controls in tab
 void ModuleTab::updateControls()
@@ -103,30 +118,7 @@ void ModuleTab::updateControls()
 
 	refreshing_ = true;
 
-	// Update header labels
-	updateHeaderTexts();
-
-	// Make sure tooltip on HeaderFrame is up-to-date
-	CharString toolTip("Targets: ");
-	RefListIterator<Configuration,bool> configIterator(module_->targetConfigurations());
-	while (Configuration* cfg = configIterator.iterate())
-	{
-		if (configIterator.isFirst()) toolTip.strcatf("%s", cfg->name());
-		else toolTip.strcatf(", %s", cfg->name());
-	}
-	ui.HeaderFrame->setToolTip(toolTip.get());
-
-	// Set button status
-	ui.ToggleKeywordsButton->setChecked(ui.KeywordsGroup->isVisible());
-	ui.EnabledButton->setChecked(module_->enabled());
-
-	// Update frequency spin
-	ui.FrequencySpin->setValue(module_->frequency());
-
-	// Update keyword widget
-	ui.KeywordsWidget->updateControls();
-
-	// Update module control widget (if there is one)
+	if (controlsWidget_) controlsWidget_->updateControls();
 	if (moduleWidget_) moduleWidget_->updateControls();
 
 	refreshing_ = false;
@@ -135,73 +127,17 @@ void ModuleTab::updateControls()
 // Disable sensitive controls within tab, ready for main code to run
 void ModuleTab::disableSensitiveControls()
 {
-	// Disable control widgets
-	ui.RunButton->setEnabled(false);
-	ui.EnabledButton->setEnabled(false);
-	ui.FrequencySpin->setEnabled(false);
+	if (controlsWidget_) controlsWidget_->disableSensitiveControls();
 
-	// Disable keywords widget
-	ui.KeywordsGroup->setEnabled(false);
-
-	// Disable module control widget (if there is one)
 	if (moduleWidget_) moduleWidget_->disableSensitiveControls();
 }
 
 // Enable sensitive controls within tab, ready for main code to run
 void ModuleTab::enableSensitiveControls()
 {
-	// Enable control widgets
-	ui.RunButton->setEnabled(true);
-	ui.EnabledButton->setEnabled(true);
-	ui.FrequencySpin->setEnabled(true);
+	if (controlsWidget_) controlsWidget_->enableSensitiveControls();
 
-	// Enable keywords widget
-	ui.KeywordsGroup->setEnabled(true);
-
-	// Enable module control widget (if there is one)
 	if (moduleWidget_) moduleWidget_->enableSensitiveControls();
-}
-
-/*
- * Widget Functions
- */
-
-void ModuleTab::on_ToggleKeywordsButton_clicked(bool checked)
-{
-	if (refreshing_) return;
-
-	ui.KeywordsGroup->setVisible(checked);
-}
-
-void ModuleTab::on_RunButton_clicked(bool checked)
-{
-	if (!module_) return;
-
-	module_->executeProcessing(dissolve_, dissolve_.worldPool());
-
-	updateControls();
-
-	emit(moduleRun());
-}
-
-void ModuleTab::on_EnabledButton_clicked(bool checked)
-{
-	if (refreshing_) return;
-
-	module_->setEnabled(checked);
-
-	dissolveWindow_->setModified();
-}
-
-void ModuleTab::on_FrequencySpin_valueChanged(int value)
-{
-	if (refreshing_) return;
-
-	module_->setFrequency(value);
-
-	dissolveWindow_->setModified();
-
-	updateHeaderTexts();
 }
 
 /*
@@ -211,11 +147,11 @@ void ModuleTab::on_FrequencySpin_valueChanged(int value)
 // Read widget state through specified LineParser
 bool ModuleTab::readState(LineParser& parser, const CoreData& coreData)
 {
-	// Read state information for the tab : KeywordsShown(bool)
+	// Read state information for the tab : CollapsedIndex(int)
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-	bool keywordsVisible = parser.argb(0);
-	ui.ToggleKeywordsButton->setChecked(keywordsVisible);
-	ui.KeywordsGroup->setVisible(keywordsVisible);
+	int collapsedIndex = parser.argi(0);
+	if ((collapsedIndex == 0) && controlsWidget_) controlsWidget_->setHidden(true);
+	else if ((collapsedIndex == 1) && moduleWidget_) moduleWidget_->setHidden(true);
 
 	// Read any state information associated with the displayed ModuleWidget
 	if (module_ && moduleWidget_)
@@ -229,8 +165,11 @@ bool ModuleTab::readState(LineParser& parser, const CoreData& coreData)
 // Write widget state through specified LineParser
 bool ModuleTab::writeState(LineParser& parser)
 {
-	// Write state information for the tab : KeywordsShown(bool)
-	if (!parser.writeLineF("%s\n", DissolveSys::btoa(ui.ToggleKeywordsButton->isChecked()))) return false;
+	// Write state information for the tab : CollapsedIndex(int)
+	int collapsedIndex = -1;
+	if (controlsWidget_->visibleRegion().isEmpty()) collapsedIndex = 0;
+	else if (moduleWidget_ && moduleWidget_->visibleRegion().isEmpty()) collapsedIndex = 1;
+	if (!parser.writeLineF("%i\n", collapsedIndex)) return false;
 
 	// Write any state information associated with the displayed ModuleWidget
 	if (module_ && moduleWidget_)

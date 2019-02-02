@@ -1,7 +1,7 @@
 /*
 	*** ConfigurationTab Functions
 	*** src/gui/configurationtab_funcs.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -22,7 +22,7 @@
 #include "gui/configurationtab.h"
 #include "gui/gui.h"
 #include "gui/delegates/combolist.hui"
-#include "gui/delegates/texponentialspin.hui"
+#include "gui/delegates/exponentialspin.hui"
 #include "gui/helpers/combopopulator.h"
 #include "gui/helpers/tablewidgetupdater.h"
 #include "main/dissolve.h"
@@ -45,7 +45,7 @@ ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dis
 	// Set item delegates for tables
 	// -- SpeciesInfo
 	ui.SpeciesInfoTable->setItemDelegateForColumn(0, new ComboListDelegate(this, new ComboNameListItems<Species>(dissolve.species())));
-	ui.SpeciesInfoTable->setItemDelegateForColumn(1, new TExponentialSpinDelegate(this));
+	ui.SpeciesInfoTable->setItemDelegateForColumn(1, new ExponentialSpinDelegate(this));
 
 	// Ensure fonts for table headers are set correctly
 	ui.SpeciesInfoTable->horizontalHeader()->setFont(font());
@@ -56,7 +56,7 @@ ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dis
 	refreshing_ = false;
 
 	// Set up the ModuleEditor
-	ui.ModulePanel->setUp(dissolveWindow, cfg->modules());
+	ui.ModulePanel->setUp(dissolveWindow, &cfg->moduleLayer(), configuration_);
 }
 
 ConfigurationTab::~ConfigurationTab()
@@ -165,7 +165,7 @@ void ConfigurationTab::updateControls()
 
 	// Input Coordinates
 	ui.CoordinatesFileEdit->setText(configuration_->inputCoordinates().filename());
-	ui.CoordinatesFileFormatCombo->setCurrentIndex(configuration_->inputCoordinates().format());
+	ui.CoordinatesFileFormatCombo->setCurrentIndex(configuration_->inputCoordinates().formatIndex());
 // 	ui.CoordinatesFromFileGroup->setChecked(configuration_->inputCoordinates().is);
 
 	refreshing_ = false;

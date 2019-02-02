@@ -1,7 +1,7 @@
 /*
 	*** Import Module - Definition
 	*** src/modules/import/definition.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -25,6 +25,12 @@
 const char* ImportModule::type() const
 {
 	return "Import";
+}
+
+// Return category for module
+const char* ImportModule::category() const
+{
+	return "Input / Output";
 }
 
 // Return brief description of module

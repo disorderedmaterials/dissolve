@@ -1,7 +1,7 @@
 /*
 	*** Add Species Dialog
 	*** src/gui/addspeciesdialog.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -27,6 +27,7 @@
 
 // Forward Declarations
 class Dissolve;
+class Species;
 
 // Add Species Dialog
 class AddSpeciesDialog : public QDialog
@@ -47,7 +48,7 @@ class AddSpeciesDialog : public QDialog
 	// Reset, ready for adding a new Species
 	void reset();
 	// Copy imported Species over to the specified Dissolve object
-	bool importSpecies(Dissolve& dissolve);
+	Species* importSpecies(Dissolve& dissolve);
 };
 
 #endif

@@ -1,7 +1,7 @@
 /*
 	*** Bragg Module - Definition
 	*** src/modules/bragg/definition.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -25,6 +25,12 @@
 const char* BraggModule::type() const
 {
 	return "Bragg";
+}
+
+// Return category for module
+const char* BraggModule::category() const
+{
+	return "Correlation Functions";
 }
 
 // Return brief description of module

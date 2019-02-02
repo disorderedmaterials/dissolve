@@ -1,7 +1,7 @@
 /*
 	*** Analysis Node - Node Sequence
 	*** src/analyse/nodes/sequence.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 

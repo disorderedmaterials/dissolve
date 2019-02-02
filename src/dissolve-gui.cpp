@@ -1,7 +1,7 @@
 /*
 	*** Dissolve GUI Main
 	*** src/dissolve-gui.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of dissolve.
 
@@ -116,7 +116,7 @@ int main(int argc, char **argv)
 	}
 
 	// Print GPL license information
-	Messenger::print("Dissolve-GUI version %s, Copyright (C) 2012-2018 T. Youngs.\n", DISSOLVEVERSION);
+	Messenger::print("Dissolve-GUI version %s, Copyright (C) 2012-2019 T. Youngs.\n", DISSOLVEVERSION);
 	Messenger::print("Source repository: %s.\n", DISSOLVEREPO);
 	Messenger::print("Dissolve comes with ABSOLUTELY NO WARRANTY.\n");
 	Messenger::print("This is free software, and you are welcome to redistribute it under certain conditions.\n");
@@ -161,7 +161,7 @@ int main(int argc, char **argv)
 	DissolveWindow dissolveWindow(dissolve);
 
 	// If an input file was specified, load it here
-	if ((!inputFile.isEmpty()) && (!dissolveWindow.openFile(inputFile, ignoreRestart, ignoreLayout)))
+	if ((!inputFile.isEmpty()) && (!dissolveWindow.openFileFromCLI(inputFile, ignoreRestart, ignoreLayout)))
 	{
 		ProcessPool::finalise();
 		return 1;
@@ -178,9 +178,7 @@ int main(int argc, char **argv)
 	}
 
 	// Update and show the main window
-	dissolveWindow.updateControls();
-	dissolveWindow.updateStatus();
-	dissolveWindow.updateFileLabels();
+	dissolveWindow.fullUpdate();
 	dissolveWindow.addOutputHandler();
 	dissolveWindow.show();
 

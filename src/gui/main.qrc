@@ -1,0 +1,102 @@
+<RCC>
+  <qresource prefix="file">
+    <file>icons/file_new.svg</file>
+    <file>icons/file_recent.svg</file>
+    <file>icons/file_open.svg</file>
+    <file>icons/file_save.svg</file>
+    <file>icons/file_connect.svg</file>
+  </qresource>
+  <qresource prefix="dguided">
+    <file>icons/dguided_redo.svg</file>
+    <file>icons/dguided_clearformat.svg</file>
+    <file>icons/dguided_undo.svg</file>
+    <file>icons/dguided_copy.svg</file>
+    <file>icons/dguided_cut.svg</file>
+    <file>icons/dguided_paste.svg</file>
+    <file>icons/dguided_aligncentre.svg</file>
+    <file>icons/dguided_alignjustify.svg</file>
+    <file>icons/dguided_alignleft.svg</file>
+    <file>icons/dguided_alignright.svg</file>
+    <file>icons/dguided_bold.svg</file>
+    <file>icons/dguided_italic.svg</file>
+    <file>icons/dguided_underline.svg</file>
+  </qresource>
+  <qresource prefix="modules">
+    <file>icons/modules_export.svg</file>
+    <file>icons/modules_molshake.svg</file>
+    <file>icons/modules_checks.svg</file>
+    <file>icons/modules_energy.svg</file>
+    <file>icons/modules_md.svg</file>
+    <file>icons/modules_atomshake.svg</file>
+    <file>icons/modules_calibrate.svg</file>
+    <file>icons/modules_datatest.svg</file>
+    <file>icons/modules_rdf.svg</file>
+    <file>icons/modules_intrashake.svg</file>
+    <file>icons/modules_neutronsq.svg</file>
+    <file>icons/modules_calculaterdf.svg</file>
+    <file>icons/modules_generic.svg</file>
+    <file>icons/modules_import.svg</file>
+  </qresource>
+  <qresource prefix="quickstart">
+    <file>guides/quickstart/quickstart.guide</file>
+    <file>guides/quickstart/quickstart_tabs_configurations.png</file>
+    <file>guides/quickstart/quickstart_tabs_forcefield.png</file>
+    <file>guides/quickstart/quickstart_tabs_modules.png</file>
+    <file>guides/quickstart/quickstart_tabs_species.png</file>
+    <file>guides/quickstart/quickstart_tour.png</file>
+    <file>guides/quickstart/quickstart_tour_controls.png</file>
+    <file>guides/quickstart/quickstart_tour_messages.png</file>
+    <file>guides/quickstart/quickstart_tour_tabs.png</file>
+  </qresource>
+  <qresource prefix="images">
+    <file>images/squares.jpg</file>
+  </qresource>
+  <qresource prefix="special">
+    <file>icons/special_learn.svg</file>
+    <file>icons/special_wizard.svg</file>
+    <file>icons/special_guide.svg</file>
+    <file>icons/special_multiplespecies.svg</file>
+  </qresource>
+  <qresource prefix="tabs">
+    <file>icons/tabs_ff.svg</file>
+    <file>icons/tabs_configuration.svg</file>
+    <file>icons/tabs_workspace.svg</file>
+    <file>icons/tabs_species.svg</file>
+    <file>icons/tabs_modulelayer.svg</file>
+  </qresource>
+  <qresource prefix="general">
+    <file>icons/general_false.svg</file>
+    <file>icons/general_true.svg</file>
+    <file>icons/general_warn.svg</file>
+    <file>icons/general_options.svg</file>
+    <file>icons/general_edit.svg</file>
+    <file>icons/general_monitor.svg</file>
+    <file>icons/general_heartbeat.svg</file>
+    <file>icons/general_local.svg</file>
+    <file>icons/general_movemodule.svg</file>
+    <file>icons/general_restartfile.svg</file>
+    <file>icons/slider-off.svg</file>
+    <file>icons/general_trash.svg</file>
+    <file>icons/general_frequency.svg</file>
+    <file>icons/slider-on.svg</file>
+    <file>icons/general_bothon.svg</file>
+    <file>icons/general_cross.svg</file>
+    <file>icons/general_lefton.svg</file>
+    <file>icons/general_module.svg</file>
+    <file>icons/general_righton.svg</file>
+    <file>icons/general_arrowdown.svg</file>
+    <file>icons/general_arrowleft.svg</file>
+    <file>icons/general_library.svg</file>
+    <file>icons/general_repeat.svg</file>
+    <file>icons/general_add.svg</file>
+    <file>icons/general_remove.svg</file>
+    <file>icons/general_arrowright.svg</file>
+    <file>icons/general_arrowup.svg</file>
+  </qresource>
+  <qresource prefix="control">
+    <file>icons/control_pause.svg</file>
+    <file>icons/control_locked.svg</file>
+    <file>icons/control_unlocked.svg</file>
+    <file>icons/control_play.svg</file>
+  </qresource>
+</RCC>

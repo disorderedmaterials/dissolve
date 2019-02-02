@@ -1,7 +1,7 @@
 /*
 	*** Species Tab
 	*** src/gui/speciestab.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -75,14 +75,14 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	private:
 	// SpeciesAtomTable row update function
 	void updateAtomTableRow(int row, SpeciesAtom* speciesAtom, bool createItems);
-	// IsotopologuesIsotopesTable row update function
-	void updateIsotopeTableRow(int row, AtomType* atomType, Isotope* isotope, bool createItems);
 	// SpeciesBondTable row update function
 	void updateBondTableRow(int row, SpeciesBond* speciesBond, bool createItems);
 	// SpeciesAngleTable row update function
 	void updateAngleTableRow(int row, SpeciesAngle* speciesAngle, bool createItems);
 	// SpeciesTorsionTable row update function
 	void updateTorsionTableRow(int row, SpeciesTorsion* speciesTorsion, bool createItems);
+	// IsotopologuesIsotopesTable row update function
+	void updateIsotopeTableRow(int row, AtomType* atomType, Isotope* isotope, bool createItems);
 
 	protected:
 	// Update controls in tab
@@ -101,12 +101,26 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	Isotopologue* currentIsotopologue();
 
 	private slots:
+	// Contents
+	void on_AtomAddButton_clicked(bool checked);
+	void on_AtomRemoveButton_clicked(bool checked);
 	void on_AtomTable_itemChanged(QTableWidgetItem* w);
-	void on_IsotopologueList_currentRowChanged(int row);
-	void on_IsotopeTable_itemChanged(QTableWidgetItem* w);
+	// Intramolecular Terms
+	void on_BondAddButton_clicked(bool checked);
+	void on_BondRemoveButton_clicked(bool checked);
 	void on_BondTable_itemChanged(QTableWidgetItem* w);
+	void on_AngleAddButton_clicked(bool checked);
+	void on_AngleRemoveButton_clicked(bool checked);
 	void on_AngleTable_itemChanged(QTableWidgetItem* w);
+	void on_TorsionAddButton_clicked(bool checked);
+	void on_TorsionRemoveButton_clicked(bool checked);
 	void on_TorsionTable_itemChanged(QTableWidgetItem* w);
+	// Isotopologues
+	void on_IsotopologueAddButton_clicked(bool checked);
+	void on_IsotopologueRemoveButton_clicked(bool checked);
+	void on_IsotopologueList_currentRowChanged(int row);
+	void on_IsotopologueList_itemChanged(QListWidgetItem* item);
+	void on_IsotopeTable_itemChanged(QTableWidgetItem* w);
 
 
 	/*

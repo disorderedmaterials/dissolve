@@ -1,7 +1,7 @@
 /*
 	*** Module List
 	*** src/module/list.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -34,6 +34,12 @@ ModuleList::~ModuleList()
 {
 }
 
+// Conversion operator (List<Module>&)
+ModuleList::operator List<Module>&()
+{
+	return modules_;
+}
+
 /*
  * Module List
  */
@@ -45,23 +51,20 @@ void ModuleList::clear()
 }
 
 // Add module to list
-bool ModuleList::add(Module* module, Configuration* location, Module* addBeforeThis)
+bool ModuleList::add(Module* module, Module* addBeforeThis)
 {
 	// Add the module pointer to the list
-	ModuleReference* newModuleItem;
 	if (addBeforeThis)
 	{
 		// Find the specified Module in the list
-		ModuleReference* modRef = contains(addBeforeThis);
-		if (!modRef)
+		if (!contains(addBeforeThis))
 		{
 			Messenger::error("ModuleList doesn't contain the Module pointer given as 'addBeforeThis'.\n");
 			return false;
 		}
-		else newModuleItem = modules_.insertBefore(modRef);
+		else modules_.ownBefore(module, addBeforeThis);
 	}
-	else newModuleItem = modules_.add();
-	newModuleItem->set(module, this, location);
+	else modules_.own(module);
 
 	return true;
 }
@@ -69,24 +72,19 @@ bool ModuleList::add(Module* module, Configuration* location, Module* addBeforeT
 // Find associated module by name
 Module* ModuleList::find(const char* name) const
 {
-	ListIterator<ModuleReference> moduleIterator(modules_);
-	while (ModuleReference* modRef = moduleIterator.iterate())
-	{
-		Module* module = modRef->module();
-
-		if (DissolveSys::sameString(module->type(),name)) return module;
-	}
+	ListIterator<Module> moduleIterator(modules_);
+	while (Module* module = moduleIterator.iterate()) if (DissolveSys::sameString(module->type(), name)) return module;
 
 	return NULL;
 }
 
-// Find ModuleReference for specified Module
-ModuleReference* ModuleList::contains(Module* module)
+// Return whether specified Module is present in the list
+bool ModuleList::contains(Module* searchModule) const
 {
-	ListIterator<ModuleReference> moduleIterator(modules_);
-	while (ModuleReference* modRef = moduleIterator.iterate()) if (modRef->module() == module) return modRef;
+	ListIterator<Module> moduleIterator(modules_);
+	while (Module* module = moduleIterator.iterate()) if (module == searchModule) return true;
 
-	return NULL;
+	return false;
 }
 
 // Return total number of Modules in the list
@@ -95,8 +93,8 @@ int ModuleList::nModules() const
 	return modules_.nItems();
 }
 
-// Return Modules associated to Configuration
-List<ModuleReference>& ModuleList::modules()
+// Return list of Modules
+List<Module>& ModuleList::modules()
 {
 	return modules_;
 }

@@ -1,7 +1,7 @@
 /*
 	*** Neutron SQ Module
 	*** src/modules/neutronsq/neutronsq.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -23,6 +23,7 @@
 #define DISSOLVE_NEUTRONSQMODULE_H
 
 #include "module/module.h"
+#include "modules/import/formats.h"
 #include "classes/partialset.h"
 #include "classes/isotopologuereference.h"
 #include "classes/datastore.h"
@@ -55,6 +56,8 @@ class NeutronSQModule : public Module
 	public:
 	// Return type of module
 	const char* type() const;
+	// Return category for module
+	const char* category() const;
 	// Return brief description of module
 	const char* brief() const;
 	// Return the maximum number of Configurations the Module can target (or -1 for any number)
@@ -69,6 +72,8 @@ class NeutronSQModule : public Module
 	List<IsotopologueReference> isotopologues_;
 	// Exchangeable AtomTypes
 	AtomTypeList exchangeableTypes_;
+	// Reference F(Q) file and format
+	Data1DImportFileFormat referenceFQ_;
 
 	protected:
 	// Set up keywords for Module

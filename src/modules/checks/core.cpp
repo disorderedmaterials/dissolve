@@ -1,7 +1,7 @@
 /*
 	*** Checks Module - Core
 	*** src/modules/checks/core.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -28,10 +28,6 @@
 // Constructor
 ChecksModule::ChecksModule() : Module()
 {
-	// Set unique name for this instance of the Module
-	static int instanceId = 0;
-	uniqueName_.sprintf("%s%02i", type(), instanceId++);
-
 	// Set up variables / control parameters
 	setUpKeywords();
 }

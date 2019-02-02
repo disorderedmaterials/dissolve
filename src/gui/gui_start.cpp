@@ -1,7 +1,7 @@
 /*
 	*** Dissolve GUI - Main Stack Functions
 	*** src/gui/gui_stack.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -21,9 +21,9 @@
 
 #include "gui/gui.h"
 
-void DissolveWindow::on_StartOpenExistingButton_clicked(bool checked)
+void DissolveWindow::on_StartOpenLocalButton_clicked(bool checked)
 {
-	ui.SessionOpenAction->trigger();
+	ui.SessionOpenLocalAction->trigger();
 }
 
 void DissolveWindow::on_StartOpenRemoteButton_clicked(bool checked)
@@ -39,6 +39,16 @@ void DissolveWindow::on_StartCreateNewButton_clicked(bool checked)
 	ui.SessionNewAction->trigger();
 }
 
-void DissolveWindow::on_StartRunWizardButton_clicked(bool checked)
+void DissolveWindow::on_StartSetupWizardButton_clicked(bool checked)
 {
+}
+
+void DissolveWindow::on_StartQuickStartButton_clicked(bool checked)
+{
+	ui.HelpViewQuickStartGuideAction->trigger();
+}
+
+void DissolveWindow::on_StartRunTutorialButton_clicked(bool checked)
+{
+	ui.HelpRunATutorialAction->trigger();
 }

@@ -1,7 +1,7 @@
 /*
 	*** Cubic Box
 	*** src/classes/box_cubic.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -26,7 +26,7 @@
 // Constructor
 CubicBox::CubicBox(double volume, double boxLength) : Box()
 {
-	type_ = Box::CubicBox;
+	type_ = Box::CubicBoxType;
 	
 	// Construct axes_
 	axes_.setColumn(0, boxLength, 0.0, 0.0);

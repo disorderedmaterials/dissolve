@@ -1,7 +1,7 @@
 /*
 	*** MolShake Module - Definition
 	*** src/modules/molshake/definition.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -25,6 +25,12 @@
 const char* MolShakeModule::type() const
 {
 	return "MolShake";
+}
+
+// Return category for module
+const char* MolShakeModule::category() const
+{
+	return "Evolution";
 }
 
 // Return brief description of module

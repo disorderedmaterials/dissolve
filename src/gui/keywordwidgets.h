@@ -1,7 +1,7 @@
 /*
 	*** Keyword Widgets
 	*** src/gui/keywordwidgets.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -27,6 +27,8 @@
 #include "gui/keywordwidgets/charstring.hui"
 #include "gui/keywordwidgets/double.hui"
 #include "gui/keywordwidgets/dropwidget.hui"
+#include "gui/keywordwidgets/enumstring.hui"
+#include "gui/keywordwidgets/fileandformat.h"
 #include "gui/keywordwidgets/int.hui"
 #include "gui/keywordwidgets/isotopologuelist.h"
 #include "gui/keywordwidgets/pairbroadeningfunction.h"

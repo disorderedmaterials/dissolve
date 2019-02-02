@@ -1,7 +1,7 @@
 /*
 	*** Dissolve GUI - Stack Functions
 	*** src/gui/gui_stack.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -31,4 +31,7 @@ void DissolveWindow::showMainStackPage(DissolveWindow::MainStackPage page)
 	ui.SimulationMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
 	ui.ControlMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
 	ui.WorkspaceMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
+
+	// Make sure the guide widget is hidden
+	ui.GuideWidget->setVisible(false);
 }

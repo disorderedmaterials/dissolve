@@ -1,7 +1,7 @@
 /*
 	*** 3-Dimensional Data With Statistics
 	*** src/math/data3d.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -462,9 +462,14 @@ bool Data3D::read(LineParser& parser, const CoreData& coreData)
 {
 	clear();
 
+	// Read object tag
 	if (parser.readNextLine(LineParser::Defaults) != LineParser::Success) return false;
 	setObjectTag(parser.line());
 
+	// Read object name
+	if (parser.readNextLine(LineParser::Defaults) != LineParser::Success) return false;
+	name_ = parser.line();
+	
 	// Read axis sizes and initialise arrays
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	int xSize = parser.argi(0);
@@ -531,7 +536,9 @@ bool Data3D::read(LineParser& parser, const CoreData& coreData)
 // Write data through specified LineParser
 bool Data3D::write(LineParser& parser)
 {
+	// Write object tag and name
 	if (!parser.writeLineF("%s\n", objectTag())) return false;
+	if (!parser.writeLineF("%s\n", name())) return false;
 
 	// Write axis sizes and errors flag
 	if (!parser.writeLineF("%i  %i  %i  %s\n", x_.nItems(), y_.nItems(), z_.nItems(), DissolveSys::btoa(hasError_))) return false;

@@ -1,7 +1,7 @@
 /*
 	*** Dissolve GUI - Menu Functions
 	*** src/gui/gui_menu.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -20,6 +20,8 @@
 */
 
 #include "gui/gui.h"
+#include "gui/addconfigurationdialog.h"
+#include "gui/addprocessinglayerdialog.h"
 #include "gui/addspeciesdialog.h"
 #include "gui/modulecontrolwidget.h"
 #include "main/dissolve.h"
@@ -59,6 +61,8 @@ bool DissolveWindow::checkSaveCurrentInput()
 
 			// Save the file
 			if (!dissolve_.saveInput(dissolve_.inputFilename())) return false;
+
+			modified_ = false;
 		}
 	}
 
@@ -66,31 +70,38 @@ bool DissolveWindow::checkSaveCurrentInput()
 	return true;
 }
 
-void DissolveWindow::on_SessionNewAction_triggered(bool checked)
+// Clear all data and start new simulation afresh
+void DissolveWindow::startNew()
 {
-	if (!checkSaveCurrentInput()) return;
-
 	// Clear any data-related tabs from the UI
 	clearTabs();
 
 	// Clear Dissolve itself
 	dissolve_.clear();
 
-	updateStatus();
+	dissolveState_ = DissolveWindow::EditingState;
+	localSimulation_ = true;
+	modified_ = false;
 
-	updateControls();
-
-	updateFileLabels();
+	// Fully update GUI
+	fullUpdate();
 
 	// Make sure we are now on the Simulation stack page
 	showMainStackPage(DissolveWindow::SimulationStackPage);
 }
 
-void DissolveWindow::on_SessionRunWizardAction_triggered(bool checked)
+void DissolveWindow::on_SessionNewAction_triggered(bool checked)
+{
+	if (!checkSaveCurrentInput()) return;
+
+	startNew();
+}
+
+void DissolveWindow::on_SessionSetupWizardAction_triggered(bool checked)
 {
 }
 
-void DissolveWindow::on_SessionOpenAction_triggered(bool checked)
+void DissolveWindow::on_SessionOpenLocalAction_triggered(bool checked)
 {
 	if (!checkSaveCurrentInput()) return;
 
@@ -104,12 +115,41 @@ void DissolveWindow::on_SessionOpenAction_triggered(bool checked)
 	// Clear Dissolve itself
 	dissolve_.clear();
 
-	// Load the new file
-	openFile(qPrintable(inputFile), false, false);
+	// Load the input file
+	if (!dissolve_.loadInput(qPrintable(inputFile)))
+	{
+		startNew();
+		return;
+	}
 
-	updateStatus();
+	localSimulation_ = true;
 
-	updateFileLabels();
+	// Load restart file if it exists
+	CharString restartFile("%s.restart", qPrintable(inputFile));
+	if (DissolveSys::fileExists(restartFile))
+	{
+		Messenger::print("\nRestart file '%s' exists and will be loaded.\n", restartFile.get());
+		if (!dissolve_.loadRestart(restartFile.get()))
+		{
+			Messenger::error("Restart file contained errors.\n");
+			startNew();
+			return;
+		}
+	}
+	else Messenger::print("\nRestart file '%s' does not exist.\n", restartFile.get());
+
+	dissolveState_ = EditingState;
+
+	// Check the beat file
+	CharString beatFile("%s.bet", qPrintable(inputFile));
+	if (DissolveSys::fileExists(beatFile))
+	{
+		// TODO
+// 		if (
+	}
+
+	// Fully update GUI
+	fullUpdate();
 
 	// Make sure we are now on the Simulation stack page
 	showMainStackPage(DissolveWindow::SimulationStackPage);
@@ -129,19 +169,7 @@ void DissolveWindow::on_SessionCloseAction_triggered(bool checked)
 {
 	if (!checkSaveCurrentInput()) return;
 
-	// Clear any data-related tabs from the UI
-	clearTabs();
-
-	// Clear Dissolve itself
-	dissolve_.clear();
-
-	updateControls();
-
-	updateStatus();
-
-	updateFileLabels();
-
-	// Go back to the 'Start' page
+	// Make sure we are now on the Start stack page
 	showMainStackPage(DissolveWindow::StartStackPage);
 }
 
@@ -164,7 +192,7 @@ void DissolveWindow::on_SessionSaveAction_triggered(bool checked)
 
 	modified_ = false;
 
-	updateStatus();
+	updateWindowTitle();
 }
 
 void DissolveWindow::on_SessionSaveAsAction_triggered(bool checked)
@@ -188,24 +216,68 @@ void DissolveWindow::on_SimulationAddSpeciesAction_triggered(bool checked)
 
 	addSpeciesDialog.reset();
 
-	if (addSpeciesDialog.exec() == QDialog::Accepted) addSpeciesDialog.importSpecies(dissolve_);
+	if (addSpeciesDialog.exec() == QDialog::Accepted)
+	{
+		Species* sp = addSpeciesDialog.importSpecies(dissolve_);
 
-	reconcileTabs();
+		// Fully update GUI
+		setModified();
+		fullUpdate();
 
-	updateControls();
-
-	updateStatus();
+		setCurrentTab(sp);
+	}
 }
 
 void DissolveWindow::on_SimulationAddConfigurationAction_triggered(bool checked)
 {
-	Configuration* cfg = dissolve_.addConfiguration();
+	static AddConfigurationDialog addConfigurationDialog(this, dissolve_);
 
-	reconcileTabs();
+	addConfigurationDialog.reset();
 
-	updateControls();
+	if (addConfigurationDialog.exec() == QDialog::Accepted)
+	{
+		Configuration* cfg = addConfigurationDialog.importConfiguration(dissolve_);
 
-	updateStatus();
+		// Fully update GUI
+		setModified();
+		fullUpdate();
+
+		setCurrentTab(cfg);
+	}
+}
+
+void DissolveWindow::on_SimulationAddProcessingLayerAction_triggered(bool checked)
+{
+	static AddProcessingLayerDialog addProcessingLayerDialog(this, dissolve_);
+
+	addProcessingLayerDialog.reset();
+
+	if (addProcessingLayerDialog.exec() == QDialog::Accepted)
+	{
+		ModuleLayer* layer = addProcessingLayerDialog.importModuleLayer(dissolve_);
+
+		// Fully update GUI
+		setModified();
+		fullUpdate();
+
+		setCurrentTab(layer);
+	}
+}
+
+void DissolveWindow::on_SimulationSetRandomSeedAction_triggered(bool checked)
+{
+	// Create an input dialog to get the new seed
+	bool ok;
+	dissolve_.seed();
+	int newSeed = QInputDialog::getInt(this, "Set random seed", "Enter the new value of the random seed, or -1 to remove set value", dissolve_.seed(), -1, 2147483647, 1, &ok);
+
+	if (!ok) return;
+
+	// Set and initialise random seed
+	dissolve_.setSeed(newSeed);
+
+	if (dissolve_.seed() == -1) srand( (unsigned)time( NULL ) );
+	else srand(dissolve_.seed());
 }
 
 /*
@@ -214,22 +286,62 @@ void DissolveWindow::on_SimulationAddConfigurationAction_triggered(bool checked)
 
 void DissolveWindow::on_SimulationRunAction_triggered(bool checked)
 {
-	ui.ControlRunButton->click();
+	// Make sure everything is set-up
+	if ((!dissolve_.isSetUp()) && (!dissolve_.setUp())) return;
+
+	// Prepare the GUI
+	setWidgetsForRun();
+
+	dissolveState_ = DissolveWindow::RunningState;
+
+	// Update the controls
+	updateControlsFrame();
+
+	emit iterate(-1);
 }
 
 void DissolveWindow::on_SimulationStepAction_triggered(bool checked)
 {
-	ui.ControlStepButton->click();
+	// Make sure everything is set-up
+	if ((!dissolve_.isSetUp()) && (!dissolve_.setUp())) return;
+
+	// Prepare the GUI
+	setWidgetsForRun();
+
+	dissolveState_ = DissolveWindow::RunningState;
+
+	// Update the controls
+	updateControlsFrame();
+
+	emit iterate(1);
 }
 
 void DissolveWindow::on_SimulationStepFiveAction_triggered(bool checked)
 {
-	ui.ControlStepFiveButton->click();
+	// Make sure everything is set-up
+	if ((!dissolve_.isSetUp()) && (!dissolve_.setUp())) return;
+
+	// Prepare the GUI
+	setWidgetsForRun();
+
+	dissolveState_ = DissolveWindow::RunningState;
+
+	// Update the controls
+	updateControlsFrame();
+
+	emit iterate(5);
 }
 
 void DissolveWindow::on_SimulationPauseAction_triggered(bool checked)
 {
-	ui.ControlPauseButton->click();
+	dissolveState_ = DissolveWindow::EditingState;
+
+	emit stopIterating();
+
+	// Update the controls
+	updateControlsFrame();
+
+	ui.ControlPauseButton->setEnabled(false);
 }
 
 /*
@@ -246,4 +358,34 @@ void DissolveWindow::on_WorkspaceAddNewAction_triggered(bool checked)
 	MainTab* workspaceTab = addWorkspaceTab(qPrintable(text));
 
 	setCurrentTab(workspaceTab);
+}
+
+/*
+ * Help
+ */
+
+void DissolveWindow::on_HelpViewQuickStartGuideAction_triggered(bool checked)
+{
+	if (!checkSaveCurrentInput()) return;
+
+	startNew();
+
+	// If the quickstart guide hasn't been set up yet, set it up now...
+	if (!quickStartGuide_.isValid())
+	{
+		if (!quickStartGuide_.load(":/quickstart/guides/quickstart/quickstart.guide"))
+		{
+			Messenger::error("Failed to load QuickStart guide.\n");
+			return;
+		}
+		ui.GuideWidget->setContent(quickStartGuide_);
+	}
+
+	// Reset the guide wizard widget and set up the QuickStart guide in it
+	ui.GuideWidget->reset();
+	ui.GuideWidget->setVisible(true);
+}
+
+void DissolveWindow::on_HelpRunATutorialAction_triggered(bool checked)
+{
 }

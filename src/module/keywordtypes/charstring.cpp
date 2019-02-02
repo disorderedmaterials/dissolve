@@ -1,7 +1,7 @@
 /*
 	*** Module Keyword - CharString
 	*** src/module/keywordtypes/charstring.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -26,12 +26,6 @@
 // Constructor
 CharStringModuleKeyword::CharStringModuleKeyword(CharString value) : ModuleKeywordBase(ModuleKeywordBase::CharStringData), ModuleKeywordData<CharString>(value)
 {
-}
-
-CharStringModuleKeyword::CharStringModuleKeyword(CharString value, int nOptions, const char** options) : ModuleKeywordBase(ModuleKeywordBase::CharStringData), ModuleKeywordData<CharString>(value)
-{
-	// Set our array of valid values
-	for (int n=0; n<nOptions; ++n) validValues_.add(options[n]);
 }
 
 // Destructor
@@ -70,17 +64,11 @@ bool CharStringModuleKeyword::read(LineParser& parser, int startArg, const CoreD
 {
 	if (parser.hasArg(startArg))
 	{
-		if (!setData(parser.argc(startArg)))
-		{
-			CharString validValueString;
-			for (int n=0; n<validValues_.nItems(); ++n) validValueString += CharString(n == 0 ? "%s" : ", %s", validValues_[n].get());
-			Messenger::error("Value '%s' is not valid for this keyword.\nValid values are:  %s", data_.get(), validValueString.get());
-
-			return false;
-		}
+		if (!setData(parser.argc(startArg))) return false;
 
 		return true;
 	}
+
 	return false;
 }
 
@@ -94,27 +82,11 @@ bool CharStringModuleKeyword::write(LineParser& parser, const char* prefix)
  * Validation
  */
 
-// Return whether a validation list has been set
-bool CharStringModuleKeyword::hasValidationList()
-{
-	return (validValues_.nItems() > 0);
-}
-
-// Return validation list
-const Array<CharString>& CharStringModuleKeyword::validationList()
-{
-	return validValues_;
-}
-
 // Validate supplied value
 bool CharStringModuleKeyword::isValid(CharString value)
 {
-	// If there is no validation list, we always accept the value
-	if (validValues_.nItems() == 0) return true;
-
-	for (int n=0; n<validValues_.nItems(); ++n) if (DissolveSys::sameString(value, validValues_[n])) return true;
-
-	return false;
+	// Any string value is allowed
+	return true;
 }
 
 /*

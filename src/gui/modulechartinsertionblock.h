@@ -1,7 +1,7 @@
 /*
 	*** ModuleChart Insertion Block Widget
 	*** src/gui/modulechartinsertionblock.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -84,6 +84,16 @@ class ModuleChartInsertionBlock : public QWidget, public ModuleChartBlock
 	int widgetHeight() const;
 	// Set underlying widget geometry
 	void setWidgetGeometry(int left, int top, int width, int height);
+
+
+	/*
+	 * Icons
+	 */
+	public:
+	// Set icons to reflect insertion of specified Module
+	void setDisplayModuleInsertion(QString moduleType);
+	// Set icons to reflect moving existing Module to new position
+	void setDisplayModuleMove();
 };
 
 #endif

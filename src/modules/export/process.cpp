@@ -1,7 +1,7 @@
 /*
 	*** Export Module - Processing
 	*** src/modules/export/process.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -31,102 +31,75 @@
 bool ExportModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {
 	/*
-	 * Export data from the target Configuration(s)
+	 * Export data
 	 */
 
-	// Check for zero Configuration targets
-	if (targetConfigurations_.nItems() == 0)
+	/*
+	 * Write coordinates
+	 */
+
+	if (coordinatesFormat_.hasValidFileAndFormat())
 	{
-		Messenger::warn("No Configuration targets for Module.\n");
-		return true;
+		// Check for zero Configuration targets
+		if (targetConfigurations_.nItems() == 0) Messenger::warn("No Configuration targets for Module.\n");
+		else
+		{
+			// Loop over target Configurations
+			for (RefListItem<Configuration,bool>* ri = targetConfigurations_.first(); ri != NULL; ri = ri->next)
+			{
+				// Grab Configuration pointer
+				Configuration* cfg = ri->item;
+
+				// Set up process pool - must do this to ensure we are using all available processes
+				procPool.assignProcessesToGroups(cfg->processPool());
+
+				// Only the pool master saves the data
+				if (procPool.isMaster())
+				{
+					Messenger::print("Export: Writing coordinates file (%s) for Configuration '%s'...\n", coordinatesFormat_.niceFormat(), cfg->name());
+
+					if (!ExportModule::writeCoordinates(coordinatesFormat_.coordinateFormat(), coordinatesFormat_.filename(), cfg))
+					{
+						Messenger::print("Export: Failed to export coordinates file '%s'.\n", coordinatesFormat_.filename());
+						procPool.decideFalse();
+						return false;
+					}
+
+					procPool.decideTrue();
+				}
+				else if (!procPool.decision()) return false;
+			}
+		}
 	}
 
+	/*
+	 * Write PairPotentials
+	 */
 
-	// Loop over target Configurations
-	for (RefListItem<Configuration,bool>* ri = targetConfigurations_.first(); ri != NULL; ri = ri->next)
+	if (pairPotentialFormat_.hasValidFileAndFormat())
 	{
-		// Grab Configuration pointer
-		Configuration* cfg = ri->item;
-
-		// Set up process pool - must do this to ensure we are using all available processes
-		procPool.assignProcessesToGroups(cfg->processPool());
-
-		// Retrieve control parameters from Configuration
-		bool writeDLPOLY = keywords_.asBool("WriteDLPOLY");
-		bool writeXYZ = keywords_.asBool("WriteXYZ");
-
-		/*
-		 * Write DL_POLY CONFIG
-		 */
-		if (writeDLPOLY)
+		// Only the pool master saves the data
+		if (procPool.isMaster())
 		{
-			Messenger::print("Export: Writing DL_POLY CONFIG file for Configuration '%s'...\n", cfg->name());
-
-			// Only the pool master saves the data
-			if (procPool.isMaster())
+			for (PairPotential* pp = dissolve.pairPotentials().first(); pp != NULL; pp = pp->next)
 			{
-				// Construct the filename
-				CharString filename("%s.CONFIG", cfg->niceName());
+				Messenger::print("Export: Writing pair potential file (%s) for %s-%s...\n", pairPotentialFormat_.niceFormat(), pp->atomTypeNameI(), pp->atomTypeNameJ());
 
-				// Open the file
-				LineParser parser;
-				if (!parser.openOutput(filename))
+				// Generate filename
+				CharString ppName("%s-%s-%s.pp", pairPotentialFormat_.filename(), pp->atomTypeNameI(), pp->atomTypeNameJ());
+
+				// Append pair potential
+				if (!ExportModule::writePairPotential(pairPotentialFormat_.pairPotentialFormat(), ppName, pp))
 				{
-					parser.closeFiles();
-					procPool.decideFalse();
-					return false;
-				}
-				else if (!writeDLPOLYCoordinates(parser, cfg))
-				{
-					Messenger::print("Export: Failed to export DL_POLY CONFIG file.\n");
-					parser.closeFiles();
+					Messenger::print("Export: Failed to export pair potential file '%s'.\n", ppName.get());
 					procPool.decideFalse();
 					return false;
 				}
 
 				procPool.decideTrue();
 			}
-			else if (!procPool.decision()) return false;
-
-			Messenger::print("Export: Finished writing DL_POLY CONFIG file.\n");
 		}
-
-		/*
-		 * Write XYZ
-		 */
-		if (writeXYZ)
-		{
-			Messenger::print("Export: Writing XYZ file for Configuration '%s'...\n", cfg->name());
-
-			// Only the pool master saves the data
-			if (procPool.isMaster())
-			{
-				// Construct the filename
-				CharString filename("%s.xyz", cfg->niceName());
-
-				// Open the file
-				LineParser parser;
-				if (!parser.openOutput(filename))
-				{
-					parser.closeFiles();
-					procPool.decideFalse();
-					return false;
-				}
-				else if (!writeXYZCoordinates(parser, cfg))
-				{
-					Messenger::print("Export: Failed to export XYZ file.\n");
-					parser.closeFiles();
-					procPool.decideFalse();
-					return false;
-				}
-
-				procPool.decideTrue();
-			}
-			else if (!procPool.decision()) return false;
-
-			Messenger::print("Export: Finished writing XYZ file.\n");
-		}
-
+		else if (!procPool.decision()) return false; 
 	}
 
 	return true;

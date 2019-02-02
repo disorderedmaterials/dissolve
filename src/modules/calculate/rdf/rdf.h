@@ -1,7 +1,7 @@
 /*
 	*** Calculate RDF Module
 	*** src/modules/calculate/rdf/rdf.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -52,6 +52,8 @@ class CalculateRDFModule : public Module
 	public:
 	// Return type of module
 	const char* type() const;
+	// Return category for module
+	const char* category() const;
 	// Return brief description of module
 	const char* brief() const;
 	// Return the maximum number of Configurations the Module can target (or -1 for any number)

@@ -1,7 +1,7 @@
 /*
 	*** EPSR Module - Processing
 	*** src/modules/epsr/process.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -250,7 +250,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		deltaFQ.setObjectTag(CharString("%s//DeltaFQ//%s", uniqueName_.get(), module->uniqueName()));
 		deltaFQFit.setObjectTag(CharString("%s//DeltaFQFit//%s", uniqueName_.get(), module->uniqueName()));
 
-		// Create the difference partial
+		// Set up data for construction of the deltaFQ
 		deltaFQ.clear();
 		const Array<double> x1 = referenceData.constXAxis();
 		const Array<double> y1 = referenceData.constValues();
@@ -330,6 +330,14 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		simulatedFR.setObjectTag(CharString("%s//SimulatedFR//%s", uniqueName_.get(), module->uniqueName()));
 		simulatedFR = simulatedFQ;
 		Fourier::sineFT(simulatedFR, 1.0 / (2*PI*PI*GenericListHelper<double>::value(dissolve.processingModuleData(), "EffectiveRho", module->uniqueName(), 0.0)), 0.0, 0.03, 30.0, WindowFunction(WindowFunction::Lorch0Window));
+
+		// Save data?
+		if (saveData)
+		{
+			if (!simulatedFR.save(CharString("SimulatedFR-%s.gr", module->uniqueName()))) return false;
+			const Data1D& referenceDataFR = GenericListHelper<Data1D>::value(dissolve.processingModuleData(), "ReferenceDataFT", module->uniqueName(), Data1D(), &found);
+			if (found) referenceDataFR.save(CharString("ExperimentalFR-%s.gr", module->uniqueName()));
+		}
 
 		// Test Mode
 		if (testMode)

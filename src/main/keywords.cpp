@@ -1,7 +1,7 @@
 /*
 	*** Keyword Definitions
 	*** src/main/keywords.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -42,6 +42,9 @@ void BlockKeywords::printValidKeywords(BlockKeywords::BlockKeyword block)
 		case (BlockKeywords::PairPotentialsBlockKeyword):
 			for (n=0; n<PairPotentialsBlock::nPairPotentialsKeywords; ++n) Messenger::print("  %s", PairPotentialsBlock::keyword( (PairPotentialsBlock::PairPotentialsKeyword) n ));
 			break;
+		case (BlockKeywords::LayerBlockKeyword):
+			for (n=0; n<LayerBlock::nLayerKeywords; ++n) Messenger::print("  %s", LayerBlock::keyword( (LayerBlock::LayerKeyword) n ));
+			break;
 		case (BlockKeywords::SimulationBlockKeyword):
 			for (n=0; n<SimulationBlock::nSimulationKeywords; ++n) Messenger::print("  %s", SimulationBlock::keyword( (SimulationBlock::SimulationKeyword) n ));
 			break;
@@ -66,7 +69,7 @@ void BlockKeywords::printValidKeywords(BlockKeywords::BlockKeyword block)
  */
 
 // Block Keywords - Those beginning with an underscore are not meant to be used as a main block
-const char* BlockKeywordKeywords[] = { "Configuration", "Master", "Module", "PairPotentials", "Simulation", "_Site", "Species", "_SpeciesInfo" };
+const char* BlockKeywordKeywords[] = { "Configuration", "Layer", "Master", "Module", "PairPotentials", "Simulation", "Site", "Species", "SpeciesInfo" };
 
 // Convert text string to MainInputKeyword
 BlockKeywords::BlockKeyword BlockKeywords::blockKeyword(const char* s)

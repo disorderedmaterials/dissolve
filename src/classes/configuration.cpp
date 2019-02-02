@@ -1,7 +1,7 @@
 /*
 	*** Configuration
 	*** src/classes/configuration.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Configuration.
 
@@ -35,33 +35,8 @@
 // Constructor
 Configuration::Configuration() : ListItem<Configuration>(), boxNormalisationInterpolation_(boxNormalisation_)
 {
-	// Composition
-	multiplier_ = 1;
-	density_ = -1.0;
-	densityIsAtomic_ = true;
-	boxAngles_.set(90.0, 90.0, 90.0);
-	relativeBoxLengths_.set(1.0, 1.0, 1.0);
-	requestedSizeFactor_ = 1.0;
-	appliedSizeFactor_ = 1.0;
-	nonPeriodic_ = false;
-
-	// Box / Cells
 	box_ = NULL;
-	requestedCellDivisionLength_ = 10.0;
-	coordinateIndex_ = 0;
-
-	// Set up
-	rdfBinWidth_ = 0.025;
-	rdfRange_ = -1.0;
-	requestedRDFRange_ = -2.0;
-	temperature_ = 300.0;
-	braggQMax_ = 0.01;
-	braggQMax_ = 2.0;
-	braggMultiplicity_.set(1,1,1);
-
-	// Ensemble
-	appendEnsemble_ = false;
-	ensembleFrequency_ = 10;
+	clear();
 }
 
 // Destructor
@@ -76,21 +51,41 @@ void Configuration::operator=(Configuration& source)
 	Messenger::error("XXX CONFIGURATION COPY (via ASSIGNMENT OPERATOR) IS NOT YET IMPLEMENTED.\n");
 }
 
-// Clear data
+// Clear all data
 void Configuration::clear()
 {
-	bonds_.clear();
-	angles_.clear();
-	torsions_.clear();
-	molecules_.clear();
-	grains_.clear();
-	atoms_.clear();
-	usedAtomTypes_.clear();
-	if (box_ != NULL) delete box_;
-	box_ = NULL;
-	cells_.clear();
+	// Clear generated content
+	empty();
 
+	// Clear used species
+	usedSpecies_.clear();
+
+	// Reset composition
+	multiplier_ = 1;
+	density_ = -1.0;
+	densityIsAtomic_ = true;
+	boxAngles_.set(90.0, 90.0, 90.0);
+	relativeBoxLengths_.set(1.0, 1.0, 1.0);
+	requestedSizeFactor_ = 1.0;
+	appliedSizeFactor_ = 1.0;
+	nonPeriodic_ = false;
+
+	// Reset box / Cells
+	requestedCellDivisionLength_ = 10.0;
 	coordinateIndex_ = 0;
+
+	// Reset set-up
+	rdfBinWidth_ = 0.025;
+	rdfRange_ = -1.0;
+	requestedRDFRange_ = -2.0;
+	temperature_ = 300.0;
+	braggQMax_ = 0.01;
+	braggQMax_ = 2.0;
+	braggMultiplicity_.set(1,1,1);
+
+	// Reset ensemble data
+	appendEnsemble_ = false;
+	ensembleFrequency_ = 10;
 }
 
 /*
@@ -170,19 +165,25 @@ Vec3<int> Configuration::braggMultiplicity()
 // Add Module to the Configuration
 bool Configuration::addModule(Module* module)
 {
-	return modules_.add(module, this);
+	return moduleLayer_.add(module);
 }
 
 // Return number of Modules associated to this Configuration
 int Configuration::nModules() const
 {
-	return modules_.nModules();
+	return moduleLayer_.nModules();
+}
+
+// Return Module layer for this Configuration
+ModuleLayer& Configuration::moduleLayer()
+{
+	return moduleLayer_;
 }
 
 // Return list of Modules associated to this Configuration
 ModuleList& Configuration::modules()
 {
-	return modules_;
+	return moduleLayer_;
 }
 
 // Return list of data variables set by Modules

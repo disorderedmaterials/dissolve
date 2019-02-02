@@ -1,7 +1,7 @@
 /*
 	*** Module Control Widget
 	*** src/gui/modulecontrolwidget.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -32,6 +32,7 @@ class Dissolve;
 class DissolveWindow;
 class Module;
 class ModuleWidget;
+class ModuleChartModuleBlock;
 
 // Module Control Widget
 class ModuleControlWidget : public SubWidget
@@ -49,13 +50,23 @@ class ModuleControlWidget : public SubWidget
 
 	public:
 	// Constructor / Destructor
-	ModuleControlWidget(DissolveWindow* dissolveWindow, Module* module, const char* title, bool showTopControls);
+	ModuleControlWidget(DissolveWindow* dissolveWindow, Module* module, const char* title);
 	~ModuleControlWidget();
 	// Main form declaration
 	Ui::ModuleControlWidget ui;
-	// Initialise window
-	void initialiseWindow(Module* module);
-	// Initialise controls
+
+
+	/*
+	 * Widgets
+	 */
+	private:
+	// Module control widget displayed
+	ModuleChartModuleBlock* controlsWidget_;
+	// ModuleWidget displayed in this control widget
+	ModuleWidget* moduleWidget_;
+
+	public:
+	// Initialise controls for the specified Module
 	void initialiseControls(Module* module);
 
 
@@ -81,37 +92,10 @@ class ModuleControlWidget : public SubWidget
 
 
 	/*
-	 * Functions
-	 */
-	public:
-	// Panel visibility states
-	enum PanelState { OnlyControlsVisible, OnlyWidgetVisible, ControlsAndWidgetVisible, nPanelStates };
-
-	private:
-	// Current panel visibility
-	PanelState panelState_;
-	// ModuleWidget displayed in this control widget
-	ModuleWidget* moduleWidget_;
-	// List of keyword widgets displayed
-	RefList<KeywordWidgetBase,bool> keywordWidgets_;
-
-	public:
-	// Set panel visibility state
-	void setPanelState(PanelState state);
-
-
-	/*
 	 * Widget Signals / Slots
 	 */
 	signals:
 	void windowClosed(QString windowTitle);
-	void moduleRun();
-
-	public slots:
-	void on_RunButton_clicked(bool checked);
-	void on_TogglePanelsButton_clicked(bool checked);
-	void on_EnabledCheck_clicked(bool checked);
-	void on_FrequencySpin_valueChanged(int value);
 };
 
 #endif

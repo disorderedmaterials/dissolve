@@ -1,7 +1,7 @@
 /*
 	*** Keywords
 	*** src/module/keywords.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -36,6 +36,7 @@
 #include "module/keywordtypes/complex.h"
 #include "module/keywordtypes/datastore.h"
 #include "module/keywordtypes/double.h"
+#include "module/keywordtypes/enumstring.h"
 #include "module/keywordtypes/fileandformat.h"
 #include "module/keywordtypes/int.h"
 #include "module/keywordtypes/isotopologuelist.h"

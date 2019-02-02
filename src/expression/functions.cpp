@@ -1,7 +1,7 @@
 /*
 	*** Expression Functions
 	*** src/expression/functions.cpp
-	Copyright T. Youngs 2010-2018
+	Copyright T. Youngs 2010-2019
 
 	This file is part of Dissolve.
 

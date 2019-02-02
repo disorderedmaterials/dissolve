@@ -1,7 +1,7 @@
 /*
 	*** Module Chart Metrics
 	*** src/gui/modulechartmetrics.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -37,7 +37,7 @@ class ModuleChartMetrics
 	{
 		return 2;
 	}
-	// Border roudner radius
+	// Border external radius
 	static int blockBorderRadius()
 	{
 		return 6;
@@ -61,7 +61,7 @@ class ModuleChartMetrics
 	// Radius of the dent
 	static int blockDentRadius()
 	{
-		return 7;
+		return 9;
 	}
 
 

@@ -314,7 +314,7 @@
                  </widget>
                 </item>
                 <item row="0" column="1">
-                 <widget class="TExponentialSpin" name="XMinSpin">
+                 <widget class="ExponentialSpin" name="XMinSpin">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -336,7 +336,7 @@
                  </widget>
                 </item>
                 <item row="0" column="4">
-                 <widget class="TExponentialSpin" name="XMaxSpin">
+                 <widget class="ExponentialSpin" name="XMaxSpin">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -441,7 +441,7 @@
                  </widget>
                 </item>
                 <item row="1" column="1">
-                 <widget class="TExponentialSpin" name="XPositionYRealSpin">
+                 <widget class="ExponentialSpin" name="XPositionYRealSpin">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -463,7 +463,7 @@
                  </widget>
                 </item>
                 <item row="2" column="1">
-                 <widget class="TExponentialSpin" name="XPositionZRealSpin">
+                 <widget class="ExponentialSpin" name="XPositionZRealSpin">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -625,7 +625,7 @@
                  </widget>
                 </item>
                 <item row="1" column="2">
-                 <widget class="TExponentialSpin" name="XPositionYFractionalSpin">
+                 <widget class="ExponentialSpin" name="XPositionYFractionalSpin">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -647,7 +647,7 @@
                  </widget>
                 </item>
                 <item row="2" column="2">
-                 <widget class="TExponentialSpin" name="XPositionZFractionalSpin">
+                 <widget class="ExponentialSpin" name="XPositionZFractionalSpin">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -1613,7 +1613,7 @@
                  </widget>
                 </item>
                 <item row="0" column="4">
-                 <widget class="TExponentialSpin" name="YMaxSpin">
+                 <widget class="ExponentialSpin" name="YMaxSpin">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -1674,7 +1674,7 @@
                  </widget>
                 </item>
                 <item row="0" column="1">
-                 <widget class="TExponentialSpin" name="YMinSpin">
+                 <widget class="ExponentialSpin" name="YMinSpin">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -1805,7 +1805,7 @@
                  </widget>
                 </item>
                 <item row="1" column="1">
-                 <widget class="TExponentialSpin" name="YPositionXRealSpin">
+                 <widget class="ExponentialSpin" name="YPositionXRealSpin">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -1827,7 +1827,7 @@
                  </widget>
                 </item>
                 <item row="2" column="1">
-                 <widget class="TExponentialSpin" name="YPositionZRealSpin">
+                 <widget class="ExponentialSpin" name="YPositionZRealSpin">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -1989,7 +1989,7 @@
                  </widget>
                 </item>
                 <item row="1" column="2">
-                 <widget class="TExponentialSpin" name="YPositionXFractionalSpin">
+                 <widget class="ExponentialSpin" name="YPositionXFractionalSpin">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -2011,7 +2011,7 @@
                  </widget>
                 </item>
                 <item row="2" column="2">
-                 <widget class="TExponentialSpin" name="YPositionZFractionalSpin">
+                 <widget class="ExponentialSpin" name="YPositionZFractionalSpin">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -2983,7 +2983,7 @@
                  </widget>
                 </item>
                 <item row="0" column="1">
-                 <widget class="TExponentialSpin" name="ZMinSpin">
+                 <widget class="ExponentialSpin" name="ZMinSpin">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -3056,7 +3056,7 @@
                  </widget>
                 </item>
                 <item row="0" column="4">
-                 <widget class="TExponentialSpin" name="ZMaxSpin">
+                 <widget class="ExponentialSpin" name="ZMaxSpin">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -3187,7 +3187,7 @@
                  </widget>
                 </item>
                 <item row="1" column="1">
-                 <widget class="TExponentialSpin" name="ZPositionXRealSpin">
+                 <widget class="ExponentialSpin" name="ZPositionXRealSpin">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -3209,7 +3209,7 @@
                  </widget>
                 </item>
                 <item row="2" column="1">
-                 <widget class="TExponentialSpin" name="ZPositionYRealSpin">
+                 <widget class="ExponentialSpin" name="ZPositionYRealSpin">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -3371,7 +3371,7 @@
                  </widget>
                 </item>
                 <item row="1" column="2">
-                 <widget class="TExponentialSpin" name="ZPositionXFractionalSpin">
+                 <widget class="ExponentialSpin" name="ZPositionXFractionalSpin">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -3393,7 +3393,7 @@
                  </widget>
                 </item>
                 <item row="2" column="2">
-                 <widget class="TExponentialSpin" name="ZPositionYFractionalSpin">
+                 <widget class="ExponentialSpin" name="ZPositionYFractionalSpin">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -4566,9 +4566,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>TExponentialSpin</class>
+   <class>ExponentialSpin</class>
    <extends>QDoubleSpinBox</extends>
-   <header>gui/widgets/texponentialspin.hui</header>
+   <header>gui/widgets/exponentialspin.hui</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

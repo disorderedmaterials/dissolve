@@ -1,7 +1,7 @@
 /*
 	*** Dissolve - PairPotentials
 	*** src/main/pairpotentials.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -126,21 +126,6 @@ PairPotential* Dissolve::pairPotential(const char* at1, const char* at2) const
 		if (DissolveSys::sameString(pot->atomTypeNameI(), at2) && DissolveSys::sameString(pot->atomTypeNameJ(), at1)) return pot;
 	}
 	return NULL;
-}
-
-// Save all PairPotentials
-bool Dissolve::savePairPotentials(const char* baseName) const
-{
-	bool result = true;
-
-	for (PairPotential* pp = pairPotentials_.first(); pp != NULL; pp = pp->next)
-	{
-		// Generate filename
-		result = pp->save(CharString("%s-%s-%s.pp", baseName, pp->atomTypeNameI(), pp->atomTypeNameJ()));
-		if (!result) break;
-	}
-	
-	return result;
 }
 
 // Return map for PairPotentials

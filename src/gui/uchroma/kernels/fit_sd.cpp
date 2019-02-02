@@ -1,7 +1,7 @@
 /*
 	*** FitKernel - Steepest Descent Minimiser
 	*** src/gui/uchroma/kernels/fit_sd.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of uChroma.
 

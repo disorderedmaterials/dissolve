@@ -12,7 +12,7 @@
   </property>
   <property name="font">
    <font>
-    <pointsize>8</pointsize>
+    <pointsize>10</pointsize>
    </font>
   </property>
   <property name="windowTitle">
@@ -80,7 +80,6 @@
         </property>
         <property name="font">
          <font>
-          <pointsize>8</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -97,7 +96,6 @@
        <widget class="QLabel" name="BottomLabel">
         <property name="font">
          <font>
-          <pointsize>8</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -130,7 +128,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="icons.qrc">
+        <iconset resource="main.qrc">
          <normaloff>:/general/icons/general_arrowleft.svg</normaloff>:/general/icons/general_arrowleft.svg</iconset>
        </property>
        <property name="iconSize">
@@ -153,7 +151,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="icons.qrc">
+        <iconset resource="main.qrc">
          <normaloff>:/general/icons/general_arrowright.svg</normaloff>:/general/icons/general_arrowright.svg</iconset>
        </property>
        <property name="iconSize">
@@ -420,7 +418,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="main.qrc"/>
  </resources>
  <connections/>
 </ui>

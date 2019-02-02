@@ -1,7 +1,7 @@
 /*
 	*** Interatomic Pair Potential
 	*** src/classes/pairpotential.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -561,10 +561,22 @@ bool PairPotential::setUp(double maxR, double delta, bool includeCoulomb)
 	return true;
 }
 
+// Return number of tabulated points in potential
+int PairPotential::nPoints() const
+{
+	return nPoints_;
+}
+
 // Return range of potential
 double PairPotential::range() const
 {
 	return range_;
+}
+
+// Return spacing between points
+double PairPotential::delta() const
+{
+	return delta_;
 }
 
 // (Re)generate potential from current parameters
@@ -724,34 +736,6 @@ void PairPotential::adjustUAdditional(Data1D u, double factor)
 
 	calculateUFull();
 	calculateDUFull();
-}
-
-/*
- * File I/O
- */
-
-// Save PairPotential data to specified file
-bool PairPotential::save(const char* filename)
-{
-	// Open file and check that we're OK to proceed writing to it
-	LineParser parser;
-	Messenger::print("Writing PairPotential file '%s'...\n", filename);
-
-	parser.openOutput(filename, true);
-	if (!parser.isFileGoodForWriting())
-	{
-		Messenger::error("Couldn't open file '%s' for writing.\n", filename);
-		return false;
-	}
-	
-	parser.writeLineF("#%9s  %12s  %12s  %12s  %12s  %12s  %12s\n", "", "Full", "Derivative", "Original", "Additional", "Exact(Orig)", "Exact(Deriv)");
-	parser.writeLineF("#%9s  %12s  %12s  %12s  %12s  %12s  %12s  %12s  %12s\n", "r(Angs)", "U(kJ/mol)", "dU(kJ/mol/Ang)", "U(kJ/mol)", "U(kJ/mol)", "U(kJ/mol)", "dU(kJ/mol/Ang)", "rFine(Angs)", "Derivative");
-	double fineDelta = delta_*0.05;
-	for (int n = 0; n<nPoints_; ++n) parser.writeLineF("%10.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e\n", uOriginal_.constXAxis(n), uFull_.constValue(n), dUFull_.constValue(n), uOriginal_.constValue(n), uAdditional_.constValue(n), analyticEnergy(uOriginal_.constXAxis(n)), analyticForce(uOriginal_.constXAxis(n)), fineDelta*n, dUFull_.constXAxis(fineDelta*n));
-
-	parser.closeFiles();
-
-	return true;
 }
 
 /*

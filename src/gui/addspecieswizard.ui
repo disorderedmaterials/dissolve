@@ -112,7 +112,7 @@
               <string>Create an empty Species</string>
              </property>
              <property name="icon">
-              <iconset resource="icons.qrc">
+              <iconset resource="main.qrc">
                <normaloff>:/file/icons/file_new.svg</normaloff>:/file/icons/file_new.svg</iconset>
              </property>
              <property name="iconSize">
@@ -139,7 +139,7 @@
               <string>Create a Species with a single atom</string>
              </property>
              <property name="icon">
-              <iconset resource="icons.qrc">
+              <iconset resource="main.qrc">
                <normaloff>:/file/icons/file_new.svg</normaloff>:/file/icons/file_new.svg</iconset>
              </property>
              <property name="iconSize">
@@ -169,7 +169,7 @@
               <string>Add a predefined Species</string>
              </property>
              <property name="icon">
-              <iconset resource="icons.qrc">
+              <iconset resource="main.qrc">
                <normaloff>:/tabs/icons/tabs_species.svg</normaloff>:/tabs/icons/tabs_species.svg</iconset>
              </property>
              <property name="iconSize">
@@ -199,7 +199,7 @@
               <string>Import coordinates and assign a forcefield</string>
              </property>
              <property name="icon">
-              <iconset resource="icons.qrc">
+              <iconset resource="main.qrc">
                <normaloff>:/file/icons/file_open.svg</normaloff>:/file/icons/file_open.svg</iconset>
              </property>
              <property name="iconSize">
@@ -226,7 +226,7 @@
               <string>Import a Species from an existing simulation</string>
              </property>
              <property name="icon">
-              <iconset resource="icons.qrc">
+              <iconset resource="main.qrc">
                <normaloff>:/file/icons/file_open.svg</normaloff>:/file/icons/file_open.svg</iconset>
              </property>
              <property name="iconSize">
@@ -269,6 +269,38 @@
           </size>
          </property>
         </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="CreateAtomicPage">
+      <layout class="QVBoxLayout" name="verticalLayout_12">
+       <property name="spacing">
+        <number>4</number>
+       </property>
+       <property name="leftMargin">
+        <number>4</number>
+       </property>
+       <property name="topMargin">
+        <number>4</number>
+       </property>
+       <property name="rightMargin">
+        <number>4</number>
+       </property>
+       <property name="bottomMargin">
+        <number>4</number>
+       </property>
+       <item>
+        <widget class="ElementSelector" name="CreateAtomicElementSelector" native="true"/>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="CreateAtomicAddAtomTypeCheck">
+         <property name="text">
+          <string>Create associated AtomType</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -324,7 +356,7 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset resource="icons.qrc">
+               <iconset resource="main.qrc">
                 <normaloff>:/file/icons/file_open.svg</normaloff>:/file/icons/file_open.svg</iconset>
               </property>
              </widget>
@@ -514,7 +546,7 @@
                <string/>
               </property>
               <property name="pixmap">
-               <pixmap resource="icons.qrc">:/general/icons/general_true.svg</pixmap>
+               <pixmap resource="main.qrc">:/general/icons/general_true.svg</pixmap>
               </property>
               <property name="scaledContents">
                <bool>true</bool>
@@ -546,7 +578,7 @@
                <string/>
               </property>
               <property name="pixmap">
-               <pixmap resource="icons.qrc">:/general/icons/general_warn.svg</pixmap>
+               <pixmap resource="main.qrc">:/general/icons/general_warn.svg</pixmap>
               </property>
               <property name="scaledContents">
                <bool>true</bool>
@@ -656,9 +688,15 @@
    <extends>QLabel</extends>
    <header>gui/widgets/checkindicator.hui</header>
   </customwidget>
+  <customwidget>
+   <class>ElementSelector</class>
+   <extends>QWidget</extends>
+   <header>gui/widgets/elementselector.hui</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="main.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -1,7 +1,7 @@
 /*
 	*** Export Module - Coordinate Functions
 	*** src/modules/export/functions_coordinates.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -80,13 +80,13 @@ bool ExportModule::writeDLPOLYCoordinates(LineParser& parser, Configuration* cfg
 	if (!parser.writeLineF("%s @ %i\n", cfg->name(), cfg->coordinateIndex())) return false;
 
 	// Write keytrj and imcon
-	if (cfg->box()->type() == Box::NonPeriodicBox) if (!parser.writeLineF("%10i%10i\n", 0, 0)) return false;
-	else if (cfg->box()->type() == Box::CubicBox) if (!parser.writeLineF("%10i%10i\n", 0, 1)) return false;
-	else if (cfg->box()->type() == Box::OrthorhombicBox) if (!parser.writeLineF("%10i%10i\n", 0, 2)) return false;
+	if (cfg->box()->type() == Box::NonPeriodicBoxType) if (!parser.writeLineF("%10i%10i\n", 0, 0)) return false;
+	else if (cfg->box()->type() == Box::CubicBoxType) if (!parser.writeLineF("%10i%10i\n", 0, 1)) return false;
+	else if (cfg->box()->type() == Box::OrthorhombicBoxType) if (!parser.writeLineF("%10i%10i\n", 0, 2)) return false;
 	else parser.writeLineF("%10i%10i\n", 0, 3);
 	
 	// Write Cell
-	if (cfg->box()->type() != Box::NonPeriodicBox)
+	if (cfg->box()->type() != Box::NonPeriodicBoxType)
 	{
 		Matrix3 axes = cfg->box()->axes();
 		if (!parser.writeLineF("%20.12f%20.12f%20.12f\n", axes[0], axes[1], axes[2])) return false;

@@ -6,6 +6,7 @@ add_library(main
   io.cpp
   keywords.cpp
   keywords_configuration.cpp
+  keywords_layer.cpp
   keywords_master.cpp
   keywords_module.cpp
   keywords_pairpotentials.cpp

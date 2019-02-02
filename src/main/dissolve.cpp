@@ -1,7 +1,7 @@
 /*
 	*** Dissolve Main Structure
 	*** src/main/dissolve.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -109,8 +109,7 @@ void Dissolve::clear()
 	nBoxNormalisationPoints_ = 500000000;
 	seed_ = -1;
 	restartFileFrequency_ = 10;
-	mainProcessingModules_.clear();
-	analysisProcessingModules_.clear();
+	processingLayers_.clear();
 	processingModuleData_.clear();
 	iteration_ = 0;
 	nIterationsPerformed_ = 0;
@@ -181,6 +180,12 @@ bool Dissolve::setUp()
 	setUp_ = true;
 
 	return true;
+}
+
+// Flag that the set up is no longer valid and should be done again
+void Dissolve::invalidateSetUp()
+{
+	setUp_ = false;
 }
 
 // Return whether the simulation has been set up

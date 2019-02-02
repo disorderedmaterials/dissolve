@@ -5,6 +5,7 @@ add_library(exportmodule
   formats.cpp
   functions_coordinates.cpp
   functions_data2d.cpp
+  functions_pairpotential.cpp
   options.cpp
   process.cpp
 

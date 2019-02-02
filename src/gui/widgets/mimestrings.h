@@ -1,7 +1,7 @@
 /*
 	*** Mime Data
 	*** src/gui/widgets/mimedata.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -37,6 +37,7 @@ class MimeString : public ListItem<MimeString>
 	enum MimeStringType
 	{
 		UChromaCollectionBlockType,		/* UChroma-format 'Collection' block */
+		ModuleType,				/* Module type */
 		nMimeStringTypes
 	};
 	// Constructor
@@ -84,6 +85,10 @@ class MimeStrings : public QMimeData
 	void add(MimeString::MimeStringType type, QString data);
 	// Add mime strings from source MimeStrings
 	void add(MimeStrings& sourceStrings);
+	// Return whether the specified MimeString data is present
+	bool hasData(MimeString::MimeStringType type) const;
+	// Return the data for the specified type
+	QString data(MimeString::MimeStringType type) const;
 	// Return mime strings
 	List<MimeString>& mimeStrings();
 };

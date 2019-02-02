@@ -1,7 +1,7 @@
 /*
 	*** Keyword Parsing - Species Block
 	*** src/main/keywords_species.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -172,6 +172,13 @@ bool SpeciesBlock::parse(LineParser& parser, Dissolve* dissolve, Species* specie
 
 				// Finally, set AtomType for the Atom
 				i->setAtomType(at);
+
+				// Check that the AtomType was successfully assigned, and raise an error if not
+				if (!i->atomType())
+				{
+					error = true;
+					break;
+				}
 				break;
 			case (SpeciesBlock::AutoAddGrainsKeyword):
 				species->autoAddGrains();

@@ -1,7 +1,7 @@
 /*
 	*** Expression Functions
 	*** src/expression/functions.h
-	Copyright T. Youngs 2015-2018
+	Copyright T. Youngs 2015-2019
 
 	This file is part of Dissolve.
 

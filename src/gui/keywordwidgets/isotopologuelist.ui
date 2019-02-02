@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>313</width>
-    <height>195</height>
+    <width>303</width>
+    <height>182</height>
    </rect>
   </property>
   <property name="font">
    <font>
-    <pointsize>8</pointsize>
+    <pointsize>10</pointsize>
    </font>
   </property>
   <property name="windowTitle">
@@ -64,7 +64,7 @@
         <string>Remove</string>
        </property>
        <property name="icon">
-        <iconset resource="../icons.qrc">
+        <iconset resource="../main.qrc">
          <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
        </property>
        <property name="iconSize">
@@ -93,7 +93,7 @@
         <string>Add</string>
        </property>
        <property name="icon">
-        <iconset resource="../icons.qrc">
+        <iconset resource="../main.qrc">
          <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
        </property>
        <property name="iconSize">
@@ -142,7 +142,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../icons.qrc"/>
+  <include location="../main.qrc"/>
  </resources>
  <connections/>
 </ui>

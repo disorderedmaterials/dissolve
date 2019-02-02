@@ -1,7 +1,7 @@
 /*
 	*** Dissolve - Setup
 	*** src/main/setup.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -221,22 +221,27 @@ bool Dissolve::setUpSimulation()
 		}
 	}
 
-	if (mainProcessingModules_.nModules() == 0) Messenger::print("No main processing Modules found.\n");
-	else Messenger::print("%i main processing %s found.\n", mainProcessingModules_.nModules(), mainProcessingModules_.nModules() == 1 ? "Module" : "Modules");
-	ListIterator<ModuleReference> mainProcessingIterator(mainProcessingModules_.modules());
-	while (ModuleReference* modRef = mainProcessingIterator.iterate())
+	ListIterator<ModuleLayer> processingLayerIterator(processingLayers_);
+	while (ModuleLayer* layer = processingLayerIterator.iterate())
 	{
-		Module* module = modRef->module();
-
-		Messenger::print("    %s:\n", module->type());
-		if (module->nConfigurationTargets() == 0) Messenger::print("      No Configuration targets.\n");
-		else
+		Messenger::print("Processing layer '%s':\n\n", layer->name());
+	
+		if (layer->nModules() == 0) Messenger::print("No Modules found.\n");
+		else Messenger::print("%i main processing %s found.\n", layer->nModules(), layer->nModules() == 1 ? "Module" : "Modules");
+		ListIterator<Module> processingIterator(layer->modules());
+		while (Module* module = processingIterator.iterate())
 		{
-			Messenger::print("      %i Configuration %s:\n", module->nConfigurationTargets(), module->nConfigurationTargets() == 1 ? "target" : "targets");
-			RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
-			while (Configuration* cfg = configIterator.iterate()) Messenger::print("      --> %s\n", cfg->name());
+			Messenger::print("    %s:\n", module->type());
+			if (module->nTargetConfigurations() == 0) Messenger::print("      No Configuration targets.\n");
+			else
+			{
+				Messenger::print("      %i Configuration %s:\n", module->nTargetConfigurations(), module->nTargetConfigurations() == 1 ? "target" : "targets");
+				RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
+				while (Configuration* cfg = configIterator.iterate()) Messenger::print("      --> %s\n", cfg->name());
+			}
 		}
 	}
+
 
 	/*
 	 * Perform Set-Up Steps in Modules
@@ -244,27 +249,13 @@ bool Dissolve::setUpSimulation()
 
 	Messenger::print("*** Performing Module set-up...\n");
 
-	// Loop over configurations
-	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next)
+	// Loop over all used modules (in Configurations and ModuleLayers)
+	RefListIterator<Module,bool> moduleIterator(moduleInstances_);
+	while (Module* module = moduleIterator.iterate())
 	{
-		// Loop over Modules
-		ListIterator<ModuleReference> moduleIterator(cfg->modules().modules());
-		while (ModuleReference* modRef = moduleIterator.iterate())
-		{
-			Module* module = modRef->module();
-
-			if (!module->setUp(*this, worldPool())) return false;
-		}
-	}
-
-	// Loop over processing modules 
-	ListIterator<ModuleReference> processingIterator(mainProcessingModules_.modules());
-	while (ModuleReference* modRef = processingIterator.iterate())
-	{
-		Module* module = modRef->module();
-
 		if (!module->setUp(*this, worldPool())) return false;
 	}
+
 
 	/*
 	 * Print Defined Species

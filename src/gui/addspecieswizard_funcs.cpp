@@ -1,7 +1,7 @@
 /*
 	*** Add Species Wizard Functions
 	*** src/gui/addspecieswizard_funcs.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -40,6 +40,7 @@ AddSpeciesWizard::AddSpeciesWizard(QWidget* parent) : temporaryDissolve_(tempora
 
 	// Register pages with the wizard
 	registerChoicePage(AddSpeciesWizard::StartPage, "Create Species");
+	registerPage(AddSpeciesWizard::CreateAtomicPage, "Create Atomic Species", AddSpeciesWizard::SpeciesNamePage);
 	registerPage(AddSpeciesWizard::ImportSpeciesSelectFilePage, "Choose Input File", AddSpeciesWizard::ImportSpeciesSelectSpeciesPage);
 	registerPage(AddSpeciesWizard::ImportSpeciesSelectSpeciesPage, "Select Species", AddSpeciesWizard::AtomTypesPage);
 	registerPage(AddSpeciesWizard::AtomTypesPage, "Atom Types", AddSpeciesWizard::SpeciesNamePage);
@@ -47,6 +48,7 @@ AddSpeciesWizard::AddSpeciesWizard(QWidget* parent) : temporaryDissolve_(tempora
 
 	// Connect signals / slots
 	connect(ui_.AtomTypesList->itemDelegate(), SIGNAL(commitData(QWidget*)), this, SLOT(atomTypesListEdited(QWidget*)));
+	connect(ui_.CreateAtomicElementSelector, SIGNAL(elementSelectionChanged()), this, SLOT(createAtomicElementChanged()));
 
 	lockedForRefresh_ = 0;
 }
@@ -118,10 +120,14 @@ void AddSpeciesWizard::setMainDissolveReference(const Dissolve* dissolveReferenc
 }
 
 // Copy imported Species over to the specified Dissolve object
-bool AddSpeciesWizard::importSpecies(Dissolve& dissolve)
+Species* AddSpeciesWizard::importSpecies(Dissolve& dissolve)
 {
 	// Check that we have a target Species (in temporaryDissolve_) to import
-	if (!importTarget_) return Messenger::error("No target Species to import!\n");
+	if (!importTarget_)
+	{
+		Messenger::error("No target Species to import!\n");
+		return NULL;
+	}
 
 	// Create our new Species
 	Species* newSpecies = dissolve.addSpecies();
@@ -188,6 +194,8 @@ bool AddSpeciesWizard::importSpecies(Dissolve& dissolve)
 	newSpecies->updateGrains();
 	newSpecies->centreAtOrigin();
 	newSpecies->orderAtomsWithinGrains();
+
+	return newSpecies;
 }
 
 /*
@@ -219,6 +227,8 @@ bool AddSpeciesWizard::progressionAllowed(int index) const
 	// Check widget validity in the specified page, returning if progression (i.e. pushing 'Next' or 'Finish') is allowed
 	switch (index)
 	{
+		case (AddSpeciesWizard::CreateAtomicPage):
+			return (ui_.CreateAtomicElementSelector->currentElement());
 		case (AddSpeciesWizard::ImportSpeciesSelectFilePage):
 			return ((!ui_.InputFileEdit->text().isEmpty()) && (QFile::exists(ui_.InputFileEdit->text())));
 		case (AddSpeciesWizard::ImportSpeciesSelectSpeciesPage):
@@ -232,11 +242,29 @@ bool AddSpeciesWizard::progressionAllowed(int index) const
 	return true;
 }
 
-// Perform any necssary actions before moving to the next page
+// Perform any necessary actions before moving to the next page
 bool AddSpeciesWizard::prepareForNextPage(int currentIndex)
 {
+	SpeciesAtom* atomicAtom;
+
 	switch (currentIndex)
 	{
+		case (AddSpeciesWizard::CreateAtomicPage):
+			// Create our atomic species here
+			importTarget_ = temporaryDissolve_.addSpecies();
+			atomicAtom = importTarget_->addAtom(ui_.CreateAtomicElementSelector->currentElement(), Vec3<double>());
+
+			// Add associated AtomType?
+			if (ui_.CreateAtomicAddAtomTypeCheck->isChecked())
+			{
+				AtomType* at = temporaryDissolve_.addAtomType(ui_.CreateAtomicElementSelector->currentElement());
+				at->setName(dissolveReference_->coreData().uniqueAtomTypeName(ui_.CreateAtomicElementSelector->currentElement()->symbol()));
+				atomicAtom->setAtomType(at);
+			}
+
+			// Set a suitable name
+			ui_.SpeciesNameEdit->setText(dissolveReference_->coreData().uniqueSpeciesName(ui_.CreateAtomicElementSelector->currentElement()->symbol()));
+			break;
 		case (AddSpeciesWizard::ImportSpeciesSelectFilePage):
 			// Check that the input/species file exists, and can be read in successfully
 			if (!temporaryDissolve_.loadInput(qPrintable(ui_.InputFileEdit->text())))
@@ -266,7 +294,19 @@ bool AddSpeciesWizard::prepareForNextPage(int currentIndex)
 	return true;
 }
 
-// Perform any necssary actions before moving to the previous page
+// Determine next page for the current page, based on current data
+int AddSpeciesWizard::determineNextPage(int currentIndex)
+{
+	switch (currentIndex)
+	{
+		default:
+			break;
+	}
+
+	return -1;
+}
+
+// Perform any necessary actions before moving to the previous page
 bool AddSpeciesWizard::prepareForPreviousPage(int currentIndex)
 {
 	switch (currentIndex)
@@ -279,12 +319,6 @@ bool AddSpeciesWizard::prepareForPreviousPage(int currentIndex)
 	}
 
 	return true;
-}
-
-// Finish button clicked
-void AddSpeciesWizard::finishButtonClicked(bool checked)
-{
-	emit(finished());
 }
 
 /*
@@ -319,6 +353,7 @@ void AddSpeciesWizard::on_StartCreateEmptyButton_clicked(bool checked)
 
 void AddSpeciesWizard::on_StartCreateAtomicButton_clicked(bool checked)
 {
+	goToPage(AddSpeciesWizard::CreateAtomicPage);
 }
 
 void AddSpeciesWizard::on_StartAddPredefinedButton_clicked(bool checked)
@@ -333,6 +368,15 @@ void AddSpeciesWizard::on_StartImportSpeciesButton_clicked(bool checked)
 {
 	// Go to the input file selector
 	goToPage(AddSpeciesWizard::ImportSpeciesSelectFilePage);
+}
+
+/*
+ * Create Atomic Page
+ */
+
+void AddSpeciesWizard::createAtomicElementChanged()
+{
+	updateProgressionControls();
 }
 
 /*

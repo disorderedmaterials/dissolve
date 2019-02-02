@@ -1,7 +1,7 @@
 /*
 	*** Configuration
 	*** src/classes/configuration.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -31,7 +31,7 @@
 #include "classes/molecule.h"
 #include "classes/speciesinfo.h"
 #include "classes/sitestack.h"
-#include "module/list.h"
+#include "module/layer.h"
 #include "modules/import/formats.h"
 #include "math/histogram1d.h"
 #include "math/interpolator.h"
@@ -61,6 +61,8 @@ class Configuration : public ListItem<Configuration>
 	~Configuration();
 	// Assignment operator
 	void operator=(Configuration& source);
+	// Clear all data
+	void clear();
 
 
 	/*
@@ -121,8 +123,6 @@ class Configuration : public ListItem<Configuration>
 	void setTemperature(double t);
 	// Return configuration temperature
 	double temperature();
-	// Clear all data
-	void clear();
 
 
 	/*
@@ -147,6 +147,8 @@ class Configuration : public ListItem<Configuration>
 	int coordinateIndex_;
 
 	public:
+	// Empty contents of Configuration, leaving core definitions intact
+	void empty();
 	// Initialise empty Molecule and Grain arrays
 	void initialise(int nMolecules, int nGrains);
 	// Initialise from assigned Species populations
@@ -359,8 +361,8 @@ class Configuration : public ListItem<Configuration>
 	 * Modules
 	 */
 	private:
-	// List of Modules associated to this Configuration
-	ModuleList modules_;
+	// Module layer associated to this Configuration
+	ModuleLayer moduleLayer_;
 	// Variables set by Modules
 	GenericList moduleData_;
 
@@ -369,6 +371,8 @@ class Configuration : public ListItem<Configuration>
 	bool addModule(Module* module);
 	// Return number of Modules associated to this Configuration
 	int nModules() const;
+	// Return Module layer for this Configuration
+	ModuleLayer& moduleLayer();
 	// Return list of Modules associated to this Configuration
 	ModuleList& modules();
 	// Return list of variables set by Modules

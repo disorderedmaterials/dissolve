@@ -1,7 +1,7 @@
 /*
 	*** Export Module - Formats
 	*** src/modules/export/formats.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -65,7 +65,7 @@ const char* NiceData2DExportFormatKeywords[] = { "Block Data" };
 // Return number of available formats
 int Data2DExportFileFormat::nFormats() const
 {
-	return CoordinateExportFileFormat::nCoordinateExportFormats;
+	return Data2DExportFileFormat::nData2DExportFormats;
 }
 
 // Return formats array
@@ -84,4 +84,36 @@ const char** Data2DExportFileFormat::niceFormats() const
 Data2DExportFileFormat::Data2DExportFormat Data2DExportFileFormat::data2DFormat() const
 {
 	return (Data2DExportFileFormat::Data2DExportFormat) format_;
+}
+
+/*
+ * PairPotential Formats
+ */
+
+// PairPotential Export Keywords
+const char* PairPotentialExportFormatKeywords[] = { "block", "TABLE" };
+const char* NicePairPotentialExportFormatKeywords[] = { "Block Data", "DL_POLY TABLE file" };
+
+// Return number of available formats
+int PairPotentialExportFileFormat::nFormats() const
+{
+	return PairPotentialExportFileFormat::nPairPotentialExportFormats;
+}
+
+// Return formats array
+const char** PairPotentialExportFileFormat::formats() const
+{
+	return PairPotentialExportFormatKeywords;
+}
+
+// Return nice formats array
+const char** PairPotentialExportFileFormat::niceFormats() const
+{
+	return NicePairPotentialExportFormatKeywords;
+}
+
+// Return current format as CoordinateExportFormat
+PairPotentialExportFileFormat::PairPotentialExportFormat PairPotentialExportFileFormat::pairPotentialFormat() const
+{
+	return (PairPotentialExportFileFormat::PairPotentialExportFormat) format_;
 }

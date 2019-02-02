@@ -1,7 +1,7 @@
 /*
 	*** Dissolve Main Window
 	*** src/gui/gui.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -24,6 +24,7 @@
 
 #include "gui/ui_gui.h"
 #include "gui/widgets/subwindow.h"
+#include "gui/guide.h"
 #include "gui/outputhandler.hui"
 #include "gui/thread.hui"
 #include "gui/maintab.h"
@@ -36,7 +37,7 @@ class Configuration;
 class ConfigurationTab;
 class Dissolve;
 class ForcefieldTab;
-class ProcessingTab;
+class ModuleLayerTab;
 class QMdiSubWindow;
 class Species;
 class SpeciesTab;
@@ -61,51 +62,55 @@ class DissolveWindow : public QMainWindow
 
 
 	/*
-	 * Dissolve Reference
+	 * Dissolve Integration
 	 */
 	private:
 	// Dissolve reference
 	Dissolve& dissolve_;
-	// Whether any data has been modified in the GUI
+	// Whether any data has been modified
 	bool modified_;
-
-	public slots:
-	// Flag that data has been modified via the GUI
-	void setModified();
-
-	public:
-	// Return reference to Dissolve
-	Dissolve& dissolve();
-
-
-	/*
-	 * File
-	 */
-	public:
-	// Open specified input file
-	bool openFile(const char* inputFile, bool ignoreRestartFile, bool ignoreLayoutFile);
-
-
-	/*
-	 * Update Functions
-	 */
-	private:
 	// Whether window is currently refreshing
 	bool refreshing_;
 	// Whether window has been shown
 	bool shown_;
 	// Output handler for messaging in GUI
 	GUIOutputHandler outputHandler_;
+	// Whether the current simulation is on the local machine
+	bool localSimulation_;
 
 	public slots:
-	// Refresh all controls
-	void updateControls();
-	// Update status
-	void updateStatus();
-	// Update file labels
-	void updateFileLabels();
-	// Link output handler in to the Messenger
+	// Flag that data has been modified via the GUI
+	void setModified();
+	// Flag that data has been modified via the GUI, and that the set up is now invalid
+	void setModifiedAndInvalidated();
+
+	public:
+	// Return reference to Dissolve
+	Dissolve& dissolve();
+	// Link the Messenger in to the GUI output device
 	void addOutputHandler();
+
+
+	/*
+	 * File
+	 */
+	public:
+	// Open specified input file from the CLI
+	bool openFileFromCLI(const char* inputFile, bool ignoreRestartFile, bool ignoreLayoutFile);
+
+
+	/*
+	 * Update Functions
+	 */
+	public slots:
+	// Update all tabs
+	void updateTabs();
+	// Update window title
+	void updateWindowTitle();
+	// Update controls frame
+	void updateControlsFrame();
+	// Perform full update of the GUI, including tab reconciliation
+	void fullUpdate();
 
 
 	/*
@@ -114,12 +119,14 @@ class DissolveWindow : public QMainWindow
 	private:
 	// Check whether current input needs to be saved and, if so, if it saved successfully
 	bool checkSaveCurrentInput();
+	// Clear all data and start new simulation afresh
+	void startNew();
 
 	private slots:
 	// Session
 	void on_SessionNewAction_triggered(bool checked);
-	void on_SessionRunWizardAction_triggered(bool checked);
-	void on_SessionOpenAction_triggered(bool checked);
+	void on_SessionSetupWizardAction_triggered(bool checked);
+	void on_SessionOpenLocalAction_triggered(bool checked);
 	void on_SessionOpenRemoteAction_triggered(bool checked);
 	void on_SessionOpenRecentAction_triggered(bool checked);
 	void on_SessionCloseAction_triggered(bool checked);
@@ -129,6 +136,8 @@ class DissolveWindow : public QMainWindow
 	// Simulation
 	void on_SimulationAddSpeciesAction_triggered(bool checked);
 	void on_SimulationAddConfigurationAction_triggered(bool checked);
+	void on_SimulationAddProcessingLayerAction_triggered(bool checked);
+	void on_SimulationSetRandomSeedAction_triggered(bool checked);
 	// Control
 	void on_SimulationRunAction_triggered(bool checked);
 	void on_SimulationStepAction_triggered(bool checked);
@@ -136,6 +145,9 @@ class DissolveWindow : public QMainWindow
 	void on_SimulationPauseAction_triggered(bool checked);
 	// Workspace
 	void on_WorkspaceAddNewAction_triggered(bool checked);
+	// Help
+	void on_HelpViewQuickStartGuideAction_triggered(bool checked);
+	void on_HelpRunATutorialAction_triggered(bool checked);
 
 
 	/*
@@ -159,12 +171,21 @@ class DissolveWindow : public QMainWindow
 	/*
 	 * 'Start' Stack Page
 	 */
+	private:
+	// Guide object for QuickStart
+	Guide quickStartGuide_;
+
 	private slots:
-	void on_StartOpenExistingButton_clicked(bool checked);
+	// 'Create' Group
+	void on_StartCreateNewButton_clicked(bool checked);
+	void on_StartSetupWizardButton_clicked(bool checked);
+	// 'Open / Connect' Group
+	void on_StartOpenLocalButton_clicked(bool checked);
 	void on_StartOpenRemoteButton_clicked(bool checked);
 	void on_StartOpenRecentButton_clicked(bool checked);
-	void on_StartCreateNewButton_clicked(bool checked);
-	void on_StartRunWizardButton_clicked(bool checked);
+	// 'Learn' Group
+	void on_StartQuickStartButton_clicked(bool checked);
+	void on_StartRunTutorialButton_clicked(bool checked);
 
 
 	/*
@@ -173,8 +194,8 @@ class DissolveWindow : public QMainWindow
 	public:
 	// Dissolve State Enum
 	enum DissolveState {
+		EditingState,		/* Dissolve is currently editing a file in the GUI */
 		RunningState,		/* Dissolve is currently running in the GUI */
-		StoppedState,		/* Dissolve is currently stopped in the GUI */
 		MonitoringState,	/* Dissolve is running in the background, and we are monitoring it via the restart file */
 		nDissolveStates
 	};
@@ -192,8 +213,6 @@ class DissolveWindow : public QMainWindow
 	private slots: 
 	void on_ControlSetUpButton_clicked(bool checked);
 	void on_ControlRunButton_clicked(bool checked);
-	void on_ControlStepButton_clicked(bool checked);
-	void on_ControlStepFiveButton_clicked(bool checked);
 	void on_ControlPauseButton_clicked(bool checked);
 	void on_ControlReloadButton_clicked(bool checked);
 
@@ -211,7 +230,7 @@ class DissolveWindow : public QMainWindow
 
 
 	/*
-	 * 'Simulation' Stack Page - Run Control
+	 * 'Simulation' Stack Page - Tabs
 	 */
 	private:
 	// Pointer to Forcefield tab
@@ -220,14 +239,12 @@ class DissolveWindow : public QMainWindow
 	List<SpeciesTab> speciesTabs_;
 	// List of Configuration tabs
 	List<ConfigurationTab> configurationTabs_;
+	// List of processing layer tabs
+	List<ModuleLayerTab> processingLayerTabs_;
 	// List of Module tabs
 	List<ModuleTab> moduleTabs_;
 	// List of Workspace tabs
 	List<WorkspaceTab> workspaceTabs_;
-	// Pointer to Main Processing tab
-	ProcessingTab* mainProcessingTab_;
-	// Pointer to Analysis Processing tab
-	ProcessingTab* analysisProcessingTab_;
 
 	private slots:
 	void on_MainTabs_currentChanged(int index);
@@ -250,6 +267,8 @@ class DissolveWindow : public QMainWindow
 	SpeciesTab* speciesTab(QWidget* page);
 	// Find ConfigurationTab containing specified page widget
 	ConfigurationTab* configurationTab(QWidget* page);
+	// Find ModuleLayerTab containing specified page widget
+	ModuleLayerTab* processingLayerTab(QWidget* page);
 	// Find ModuleTab containing specified page widget
 	ModuleTab* moduleTab(QWidget* page);
 	// Find ModuleTab containing specified Module
@@ -262,6 +281,14 @@ class DissolveWindow : public QMainWindow
 	void setCurrentTab(MainTab* tab);
 	// Make specified tab the current one (by index)
 	void setCurrentTab(int tabIndex);
+	// Show forcefield tab
+	void showForcefieldTab();
+	// Make specified Species tab the current one
+	void setCurrentTab(Species* species);
+	// Make specified Configuration tab the current one
+	void setCurrentTab(Configuration* cfg);
+	// Make specified processing layer tab the current one
+	void setCurrentTab(ModuleLayer* layer);
 	// Return reference list of all current tabs
 	RefList<MainTab,bool> allTabs() const;
 
@@ -275,7 +302,15 @@ class DissolveWindow : public QMainWindow
 
 
 	/*
-	 * 'Simulation' Stack Page - Run Control
+	 * 'Simulation' Stack Page - Guide
+	 */
+	private slots:
+	void guideWidgetCanceled();
+	void guideWidgetFinished();
+
+
+	/*
+	 * 'Simulation' Stack Page - State I/O
 	 */
 	private:
 	// Filename containing current window layout

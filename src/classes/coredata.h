@@ -1,7 +1,7 @@
 /*
 	*** Core Data
 	*** src/classes/coredata.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -23,6 +23,7 @@
 #define DISSOLVE_COREDATA_H
 
 #include "templates/list.h"
+#include "templates/reflist.h"
 
 // Forward Declarations
 class AtomType;
@@ -30,7 +31,6 @@ class Configuration;
 class Element;
 class Species;
 class Module;
-class ModuleList;
 
 // Core Data Container
 class CoreData
@@ -60,7 +60,7 @@ class CoreData
 	// Return nth AtomType in list
 	AtomType* atomType(int n);
 	// Generate unique AtomType name with base name provided
-	const char* uniqueAtomTypeName(const char* base, AtomType* exclude = 0) const;
+	const char* uniqueAtomTypeName(const char* baseName) const;
 	// Search for AtomType by name
 	AtomType* findAtomType(const char* name) const;
 
@@ -84,7 +84,7 @@ class CoreData
 	// Return nth Species in list
 	Species* species(int n);
 	// Generate unique Species name with base name provided
-	const char* uniqueSpeciesName(const char* base, Species* exclude = 0) const;
+	const char* uniqueSpeciesName(const char* baseName) const;
 	// Search for Species by name
 	Species* findSpecies(const char* name) const;
 
@@ -108,7 +108,7 @@ class CoreData
 	// Return nth Configuration in list
 	Configuration* configuration(int n);
 	// Generate unique Configuration name with base name provided
-	const char* uniqueConfigurationName(const char* base, Configuration* exclude = 0) const;
+	const char* uniqueConfigurationName(const char* baseName) const;
 	// Search for Configuration by name
 	Configuration* findConfiguration(const char* name) const;
 
@@ -118,11 +118,11 @@ class CoreData
 	 */
 	private:
 	// Pointer to Module instances list
-	List<Module>* moduleInstances_;
+	RefList<Module,bool>* moduleInstances_;
 
 	public:
 	// Set target Module instances list
-	void setModuleInstances(List<Module>* moduleInstances);
+	void setModuleInstances(RefList<Module,bool>* moduleInstances);
 	// Search for any instance of any module with the specified unique name
 	Module* findModule(const char* uniqueName) const;
 };

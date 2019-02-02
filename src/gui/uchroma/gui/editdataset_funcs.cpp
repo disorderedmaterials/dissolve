@@ -1,7 +1,7 @@
 /*
 	*** Edit DataSet Dialog
 	*** src/gui/uchroma/gui/editdataset_funcs.cpp
-	Copyright T. Youngs 2013-2018
+	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
 

@@ -1,7 +1,7 @@
 /*
 	*** Keyword Parsing - Site Block
-	*** src/main/keywords_speciesinfo.cpp
-	Copyright T. Youngs 2012-2018
+	*** src/main/keywords_site.cpp
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -32,8 +32,7 @@ KeywordData SiteBlockData[] = {
 	{ "Origin",			1,	"Set the atom indices whose average coordinates reflect the site origin" },
 	{ "OriginMassWeighted",		1,	"Control whether the origin should be calculated with mass-weighted coordinates" },
 	{ "XAxis",			1,	"Define one or more atoms whose average coordinates reflect the direction of the x axis" },
-	{ "YAxis",			1,	"Define one or more atoms whose average coordinates reflect the direction of the y axis" },
-	{ "Population",			1,	"Relative population of the Species" }
+	{ "YAxis",			1,	"Define one or more atoms whose average coordinates reflect the direction of the y axis" }
 };
 
 // Convert text string to SiteKeyword
@@ -58,7 +57,7 @@ int SiteBlock::nArguments(SiteBlock::SiteKeyword id)
 // Parse Site block
 bool SiteBlock::parse(LineParser& parser, Dissolve* dissolve, SpeciesSite* site)
 {
-	Messenger::print("\nParsing %s block '%s'...\n", SpeciesBlock::keyword(SpeciesBlock::SiteKeyword), site->parent()->name());
+	Messenger::print("\nParsing %s block '%s'...\n", BlockKeywords::blockKeyword(BlockKeywords::SiteBlockKeyword), site->parent()->name());
 
 	bool blockDone = false, error = false;
 
@@ -66,17 +65,17 @@ bool SiteBlock::parse(LineParser& parser, Dissolve* dissolve, SpeciesSite* site)
 	{
 		// Read in a line, which should contain a keyword and a minimum number of arguments
 		parser.getArgsDelim(LineParser::SkipBlanks+LineParser::StripComments+LineParser::UseQuotes);
-		SiteBlock::SiteKeyword spInfoKeyword = SiteBlock::keyword(parser.argc(0));
-		if ((spInfoKeyword != SiteBlock::nSiteKeywords) && ((parser.nArgs()-1) < SiteBlock::nArguments(spInfoKeyword)))
+		SiteBlock::SiteKeyword siteKeyword = SiteBlock::keyword(parser.argc(0));
+		if ((siteKeyword != SiteBlock::nSiteKeywords) && ((parser.nArgs()-1) < SiteBlock::nArguments(siteKeyword)))
 		{
-			Messenger::error("Not enough arguments given to '%s' keyword.\n", SiteBlock::keyword(spInfoKeyword));
+			Messenger::error("Not enough arguments given to '%s' keyword.\n", SiteBlock::keyword(siteKeyword));
 			error = true;
 			break;
 		}
-		switch (spInfoKeyword)
+		switch (siteKeyword)
 		{
 			case (SiteBlock::EndSiteKeyword):
-				Messenger::print("Found end of %s block.\n", SpeciesBlock::keyword(SpeciesBlock::SiteKeyword));
+				Messenger::print("Found end of %s block.\n", BlockKeywords::blockKeyword(BlockKeywords::SiteBlockKeyword));
 				blockDone = true;
 				break;
 			case (SiteBlock::OriginKeyword):
@@ -94,7 +93,7 @@ bool SiteBlock::parse(LineParser& parser, Dissolve* dissolve, SpeciesSite* site)
 				site->setOriginMassWeighted(parser.argb(1));
 				break;
 			case (SiteBlock::nSiteKeywords):
-				Messenger::error("Unrecognised %s block keyword '%s' found.\n", SpeciesBlock::keyword(SpeciesBlock::SiteKeyword), parser.argc(0));
+				Messenger::error("Unrecognised %s block keyword '%s' found.\n", BlockKeywords::blockKeyword(BlockKeywords::SiteBlockKeyword), parser.argc(0));
 				BlockKeywords::printValidKeywords(BlockKeywords::SiteBlockKeyword);
 				error = true;
 				break;
@@ -121,7 +120,7 @@ bool SiteBlock::parse(LineParser& parser, Dissolve* dissolve, SpeciesSite* site)
 				}
 				break;
 			default:
-				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", SpeciesBlock::keyword(SpeciesBlock::SiteKeyword), SiteBlock::keyword(spInfoKeyword));
+				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BlockKeywords::blockKeyword(BlockKeywords::SiteBlockKeyword), SiteBlock::keyword(siteKeyword));
 				error = true;
 				break;
 		}

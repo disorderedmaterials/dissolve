@@ -1,7 +1,7 @@
 /*
 	*** Session Save
 	*** src/gui/uchroma/session/save.cpp
-	Copyright T. Youngs 2013-2018
+	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
 

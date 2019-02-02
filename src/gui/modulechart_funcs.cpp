@@ -1,7 +1,7 @@
 /*
 	*** Module Chart
 	*** src/gui/modulechart_funcs.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -22,6 +22,7 @@
 #include "gui/modulechart.hui"
 #include "gui/modulechartmetrics.h"
 #include "gui/modulechartinsertionblock.h"
+#include "gui/widgets/mimestrings.h"
 #include "gui/gui.h"
 #include "module/list.h"
 #include "module/module.h"
@@ -32,9 +33,10 @@
 #include <QPropertyAnimation>
 
 // Constructor
-ModuleChart::ModuleChart(DissolveWindow* dissolveWindow, ModuleList& modules, QWidget* parent) : QWidget(parent), modules_(modules)
+ModuleChart::ModuleChart(DissolveWindow* dissolveWindow, ModuleList& modules, Configuration* localConfiguration) : QWidget(NULL), modules_(modules)
 {
 	dissolveWindow_ = dissolveWindow;
+	localConfiguration_ = localConfiguration;
 
 	// Layout
 	columnSpacing_ = 32;
@@ -48,6 +50,7 @@ ModuleChart::ModuleChart(DissolveWindow* dissolveWindow, ModuleList& modules, QW
 	// Drag / Drop
 	setAcceptDrops(true);
 	draggedBlock_ = NULL;
+	paletteModuleDragged_ = false;
 	insertionWidget_ = NULL;
 	currentHotSpotIndex_ = -1;
 
@@ -258,9 +261,7 @@ void ModuleChart::mouseDoubleClickEvent(QMouseEvent* event)
 	if (!moduleBlock) return;
 
 	// Attempt to open the Module in a ModuleTab
-	Module* module = moduleBlock->moduleReference()->module();
-	if (!module) return;
-	dissolveWindow_->addModuleTab(module);
+	dissolveWindow_->addModuleTab(moduleBlock->module());
 }
 
 // Drag enter event
@@ -269,13 +270,30 @@ void ModuleChart::dragEnterEvent(QDragEnterEvent* event)
 	// Is the correct data type being dragged over us?
 	if (event->mimeData()->hasFormat("image/x-dissolve-moduleblock")) event->accept();
 	else if (event->mimeData()->hasFormat("image/x-dissolve-paletteblock")) event->accept();
-	else event->ignore();
+	else if (event->mimeData()->hasFormat("dissolve/mimestrings"))
+	{
+		// Cast into a MimeStrings object
+		MimeStrings* mimeStrings = (MimeStrings*) event->mimeData();
+		if (!mimeStrings) return;
+
+		// Check if the relevant datum is present
+		if (mimeStrings->hasData(MimeString::ModuleType))
+		{
+			paletteModuleDragged_ = true;
+			paletteModuleToAdd_ = mimeStrings->data(MimeString::ModuleType);
+			recreateDisplayWidgets();
+			event->accept();
+		}
+		else event->ignore();
+	}
 }
 
 // Drag leave event
 void ModuleChart::dragLeaveEvent(QDragLeaveEvent* event)
 {
 	// Object has been dragged outside the widget
+	resetAfterDrop();
+
 	update();
 	event->accept();
 }
@@ -335,28 +353,85 @@ void ModuleChart::dropEvent(QDropEvent* event)
 			return;
 		}
 
-		// Get the ModuleReference of the dragged block, and check it has a parent list
-		ModuleReference* targetReference = draggedBlock_->moduleReference();
-		if (targetReference->parentList())
+		// Assume that we are operating on Modules belonging to the same list
+		Module* targetModule = draggedBlock_->module();
+
+		// Get the Module before which we are going to move the targetModule
+		Module* beforeModule = hotSpot->moduleBlockAfter() ? hotSpot->moduleBlockAfter()->module() : NULL;
+
+		// Check if the dragged Module is back in its original position (in which case we don't flag a change)
+		if (targetModule->next != beforeModule)
 		{
-			// Get the ModuleReference before which we are going to move the targetReference
-			if (hotSpot->moduleBlockAfter() == NULL)
-			{
-				// No next block, so move widget to the end of the list
-				targetReference->parentList()->modules().moveBefore(targetReference, NULL);
-			}
+			modules_.modules().moveBefore(targetModule, beforeModule);
+
+			// Flag that the current data has changed
+			dissolveWindow_->setModified();
+		}
+
+		updateControls();
+
+		// Widgets are almost in the right place, so don't animate anything
+		resetAfterDrop(false);
+	}
+	else if (event->mimeData()->hasFormat("dissolve/mimestrings"))
+	{
+		// Cast into a MimeStrings object
+		MimeStrings* mimeStrings = (MimeStrings*) event->mimeData();
+		if (!mimeStrings) return;
+		if (!mimeStrings->hasData(MimeString::ModuleType))
+		{
+			event->ignore();
+			resetAfterDrop();
+			return;
+		}
+
+		// Check for a current hot spot and ensure we have a current palette Module
+		ModuleChartHotSpot* hotSpot = (currentHotSpotIndex_ == -1 ? NULL : hotSpots_[currentHotSpotIndex_]);
+		if ((!hotSpot) || (!paletteModuleDragged_))
+		{
+			event->ignore();
+			resetAfterDrop();
+			return;
+		}
+
+		// Create the new module
+		Module* newModule = dissolveWindow_->dissolve().createModuleInstance(qPrintable(paletteModuleToAdd_));
+		newModule->setConfigurationLocal(localConfiguration_);
+
+		// Set Configuration targets as appropriate
+		if (newModule->nTargetableConfigurations() != 0)
+		{
+			if (localConfiguration_) newModule->addTargetConfiguration(localConfiguration_);
 			else
 			{
-				ModuleReference* beforeReference = hotSpot->moduleBlockAfter()->moduleReference();
-				targetReference->parentList()->modules().moveBefore(targetReference, beforeReference);
+				ListIterator<Configuration> configIterator(dissolveWindow_->dissolve().configurations());
+				while (Configuration* cfg = configIterator.iterate())
+				{
+					newModule->addTargetConfiguration(cfg);
+					if ((newModule->nTargetableConfigurations() != -1) && (newModule->nTargetableConfigurations() == newModule->nTargetConfigurations())) break;
+				}
 			}
-
-			updateControls();
-
-			// Widgets are almost in the right place, so don't animate anything
-			resetAfterDrop(false);
 		}
-		else printf("ModuleReference from dragged block has no parent list, so can't move it.\n");
+
+		// Get the ModuleReference before which we are going to move the targetReference
+		if (hotSpot->moduleBlockAfter() == NULL)
+		{
+			// No next block, so add the new Module to the end of the current list
+			modules_.add(newModule);
+		}
+		else
+		{
+			// Insert the new Module before the next block
+			modules_.add(newModule, hotSpot->moduleBlockAfter()->module());
+		}
+
+		updateControls();
+
+		// Widgets are almost in the right place, so don't animate anything
+		resetAfterDrop(false);
+
+		// Flag that the current data has changed
+		dissolveWindow_->setModified();
 	}
 	else
 	{
@@ -383,6 +458,8 @@ void ModuleChart::resetAfterDrop(bool animateWidgets)
 {
 	currentHotSpotIndex_ = -1;
 	draggedBlock_ = NULL;
+	paletteModuleDragged_ = false;
+	paletteModuleToAdd_.clear();
 
 	recreateDisplayWidgets();
 
@@ -431,13 +508,20 @@ void ModuleChart::recreateDisplayWidgets()
 
 	// Hotspot might be after the last displayed widget, so check here...
 	if (hotSpot && (hotSpot->moduleBlockAfter() == NULL)) displayBlocks_.add(insertionWidget_, NULL);
+
+	// Set the icons in the insertionWidget_ to reflect the drop action
+	if (hotSpot)
+	{
+		if (paletteModuleDragged_) insertionWidget_->setDisplayModuleInsertion(paletteModuleToAdd_);
+		else insertionWidget_->setDisplayModuleMove();
+	}
 }
 
-// Find ModuleChartModuleBlock displaying specified ModuleReference
-RefListItem<ModuleChartModuleBlock,bool>* ModuleChart::moduleChartModuleBlockReference(ModuleReference* modRef)
+//  Find ModuleChartModuleBlock displaying specified Module
+RefListItem<ModuleChartModuleBlock,bool>* ModuleChart::moduleChartModuleBlockReference(Module* module)
 {
 	RefListIterator<ModuleChartModuleBlock,bool> moduleChartModuleBlockIterator(moduleWidgets_);
-	while (ModuleChartModuleBlock* block = moduleChartModuleBlockIterator.iterate()) if (block->moduleReference() == modRef) return moduleChartModuleBlockIterator.currentItem();
+	while (ModuleChartModuleBlock* block = moduleChartModuleBlockIterator.iterate()) if (block->module() == module) return moduleChartModuleBlockIterator.currentItem();
 
 	return NULL;
 }
@@ -456,10 +540,11 @@ void ModuleChart::updateControls()
 {
 	// Step through the Modules in the list, we'll construct a new RefList of current widgets in the process.
 	RefList<ModuleChartModuleBlock,bool> newModuleWidgets;
-	for (ModuleReference* modRef = modules_.modules().first(); modRef != NULL; modRef = modRef->next)
+	ListIterator<Module> moduleIterator(modules_);
+	while (Module* module = moduleIterator.iterate())
 	{
 		// For this ModuleReference, does a current ModuleChartModuleBlock match?
-		RefListItem<ModuleChartModuleBlock,bool>* blockRef = moduleChartModuleBlockReference(modRef);
+		RefListItem<ModuleChartModuleBlock,bool>* blockRef = moduleChartModuleBlockReference(module);
 		if (blockRef)
 		{
 			// Widget already exists, so remove the reference from the old list and add it to our new one
@@ -470,7 +555,7 @@ void ModuleChart::updateControls()
 		else
 		{
 			// No current ModuleChartModuleBlock reference, so must create suitable widget
-			ModuleChartModuleBlock* mcmBlock = new ModuleChartModuleBlock(this, dissolveWindow_, modRef);
+			ModuleChartModuleBlock* mcmBlock = new ModuleChartModuleBlock(this, dissolveWindow_, module);
 			connect(mcmBlock, SIGNAL(settingsToggled()), this, SLOT(recalculateLayout()));
 			newModuleWidgets.add(mcmBlock);
 		}
@@ -493,7 +578,6 @@ void ModuleChart::updateControls()
 // Disable sensitive controls within widget, ready for main code to run
 void ModuleChart::disableSensitiveControls()
 {
-	// TODO Need to disable drag/drop here too
 	RefListIterator<ModuleChartModuleBlock,bool> moduleBlockIterator(moduleWidgets_);
 	while (ModuleChartModuleBlock* block = moduleBlockIterator.iterate()) block->disableSensitiveControls();
 }
@@ -647,9 +731,8 @@ void ModuleChart::layOutWidgets(bool animateWidgets)
 					 * Otherwise, set to its minimum height.
 					 */
 					if (col > 0) block->setWidgetGeometry(left, top, widths_[col], blockIterator.peekPrevious()->widgetHeight());
-					else if (col < (nColumns_-1)) block->setWidgetGeometry(left, top, widths_[col], blockIterator.peek()->widgetHeight());
-					block->setWidgetGeometry(left, top, widths_[col], 64);
-					
+					else if ((col < (nColumns_-1)) && blockIterator.peek()) block->setWidgetGeometry(left, top, widths_[col], blockIterator.peek()->widgetHeight());
+					else block->setWidgetGeometry(left, top, widths_[col], 64);
 				}
 				else block->setWidgetGeometry(left, top, blockWidth, blockHeight);
 
@@ -686,6 +769,10 @@ void ModuleChart::layOutWidgets(bool animateWidgets)
 
 	// Loop over defined hotspots and set the correct heights based on their row indices
 	for (ModuleChartHotSpot* hotSpot = hotSpots_.first(); hotSpot != NULL; hotSpot = hotSpot->next) hotSpot->setAreaHeight(heights_[hotSpot->row()]);
+
+	// Add on a default hotspot covering the whole widget
+	ModuleChartHotSpot* hotSpot = hotSpots_.add();
+	hotSpot->set(0, ModuleChartHotSpot::ModuleInsertionHotSpot, QRect(metrics.chartMargin(), metrics.chartMargin(), width() - metrics.chartMargin(), height() - metrics.chartMargin()), blockIterator.currentData());
 
 	// Calculate size hint
 	// Our requested width is the left-most edge of the left-most column, plus the width of the column, plus the spacing.

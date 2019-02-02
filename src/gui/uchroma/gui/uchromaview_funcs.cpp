@@ -1,7 +1,7 @@
 /*
 	*** View Widget - Functions 
 	*** src/gui/uchroma/gui/uchromaview_funcs.cpp
-	Copyright T. Youngs 2013-2018
+	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
 
@@ -32,7 +32,7 @@
 UChromaViewWidget::UChromaViewWidget(QWidget* parent) : QWidget(parent), UChromaBase(this), viewTypeActionGroup_(this)
 {
 	// Initialise the icon resource
-	Q_INIT_RESOURCE(icons);
+	Q_INIT_RESOURCE(main);
 
 	// Call the main creation function
 	ui.setupUi(this);

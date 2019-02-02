@@ -1,7 +1,7 @@
 /*
 	*** Import Module - Formats
 	*** src/modules/import/formats.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -45,7 +45,7 @@ class FileAndFormat
 	int format_;
 
 	public:
-	// Return umber of available formats
+	// Return number of available formats
 	virtual int nFormats() const = 0;
 	// Return formats array
 	virtual const char** formats() const = 0;
@@ -55,21 +55,29 @@ class FileAndFormat
 	int format(const char* s) const;
 	// Convert format index to text string
 	const char* format(int id) const;
+	// Set format index
+	void setFormatIndex(int id);
 	// Return format index
-	int format() const;
+	int formatIndex() const;
 	// Return format string
-	const char* formatString() const;
+	const char* format() const;
+	// Return nice format string
+	const char* niceFormat() const;
 
 
 	/*
-	 * Filename
+	 * Filename / Basename
 	 */
 	protected:
-	// Name of associated file
+	// Associated filename / basename
 	CharString filename_;
 
 	public:
-	// Return filename
+	// Return whether the file must exist
+	virtual bool fileMustExist() const = 0;
+	// Set filename / basename
+	void setFilename(const char* filename);
+	// Return filename / basename
 	const char* filename() const;
 
 
@@ -86,7 +94,7 @@ class FileAndFormat
 	 */
 	public:
 	// Read format / filename from specified parser
-	bool read(LineParser& parser, int startArg, bool checkFileExists = true);
+	bool read(LineParser& parser, int startArg);
 	// Return formatted string for writing
 	const char* asString() const;
 };

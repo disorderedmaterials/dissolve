@@ -1,7 +1,7 @@
 /*
 	*** TMenuButtonGroup - Group of TMenuButton with custom handling of exclusivity
 	*** src/gui/widgets/tmenubuttongroup.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 

@@ -1,7 +1,7 @@
 /*
 	*** Add Species Wizard
-	*** src/gui/addspecieswizard.h`
-	Copyright T. Youngs 2012-2018
+	*** src/gui/addspecieswizard.h
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -61,8 +61,8 @@ class AddSpeciesWizard : public WizardWidget
 	public:
 	// Set Dissolve reference
 	void setMainDissolveReference(const Dissolve* dissolveReference);
-	// Copy imported Species over to the specified Dissolve object
-	bool importSpecies(Dissolve& dissolve);
+	// Copy imported Species over to the specified Dissolve object, returning the new pointer to it
+	Species* importSpecies(Dissolve& dissolve);
 
 
 	/*
@@ -77,6 +77,7 @@ class AddSpeciesWizard : public WizardWidget
 	enum WidgetPage
 	{
 		StartPage,			/* Starting page, offering choices of how to proceed */
+		CreateAtomicPage,		/* Create atomic Species, optionally with new AtomType */
 		ImportSpeciesSelectFilePage,	/* Import Species - select file */
 		ImportSpeciesSelectSpeciesPage,	/* Import Species - choose species */
 		AtomTypesPage,			/* AtomTypes page - check / re-map AtomTypes*/
@@ -89,14 +90,12 @@ class AddSpeciesWizard : public WizardWidget
 	bool displayControlPage(int index);
 	// Return whether progression to the next page from the current page is allowed
 	bool progressionAllowed(int index) const;
-	// Perform any necssary actions before moving to the next page
+	// Perform any necessary actions before moving to the next page
 	bool prepareForNextPage(int currentIndex);
-	// Perform any necssary actions before moving to the previous page
+	// Determine next page for the current page, based on current data
+	int determineNextPage(int currentIndex);
+	// Perform any necessary actions before moving to the previous page
 	bool prepareForPreviousPage(int currentIndex);
-
-	protected slots:
-	// Finish button clicked
-	void finishButtonClicked(bool checked);
 
 	public:
 	// Reset, ready for adding a new Species
@@ -112,6 +111,13 @@ class AddSpeciesWizard : public WizardWidget
 	void on_StartAddPredefinedButton_clicked(bool checked);
 	void on_StartImportCoordinatesButton_clicked(bool checked);
 	void on_StartImportSpeciesButton_clicked(bool checked);
+
+
+	/*
+	 * Create Atomic Page
+	 */
+	private slots:
+	void createAtomicElementChanged();
 
 
 	/*

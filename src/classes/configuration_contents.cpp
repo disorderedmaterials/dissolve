@@ -1,7 +1,7 @@
 /*
 	*** Configuration - Contents
 	*** src/classes/configuration_contents.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -28,11 +28,28 @@
 #include "base/processpool.h"
 #include "modules/import/import.h"
 
+// Clear contents of Configuration, leaving core definitions intact
+void Configuration::empty()
+{
+	bonds_.clear();
+	angles_.clear();
+	torsions_.clear();
+	molecules_.clear();
+	grains_.clear();
+	atoms_.clear();
+	usedAtomTypes_.clear();
+	if (box_ != NULL) delete box_;
+	box_ = NULL;
+	cells_.clear();
+
+	coordinateIndex_ = 0;
+}
+
 // Initialise all content arrays
 void Configuration::initialise(int nMolecules, int nGrains)
 {
 	// Clear current contents
-	clear();
+	empty();
 
 	molecules_.initialise(nMolecules);
 	grains_.initialise(nGrains);
@@ -44,7 +61,7 @@ bool Configuration::initialise(ProcessPool& procPool, bool randomise, double pai
 	Messenger::print("Setting up Configuration from Species / multiplier definition...\n");
 
 	// Clear current contents
-	clear();
+	empty();
 
 	/*
 	 * Check Species populations, and calculate total number of expected Atoms

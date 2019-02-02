@@ -1,7 +1,7 @@
 /*
 	*** ForcefieldTab Functions
 	*** src/gui/forcefieldtab_funcs.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -21,8 +21,9 @@
 
 #include "gui/forcefieldtab.h"
 #include "gui/gui.h"
+#include "gui/widgets/elementselector.hui"
 #include "gui/delegates/combolist.hui"
-#include "gui/delegates/texponentialspin.hui"
+#include "gui/delegates/exponentialspin.hui"
 #include "gui/helpers/listwidgetupdater.h"
 #include "gui/helpers/tablewidgetupdater.h"
 #include "main/dissolve.h"
@@ -52,9 +53,9 @@ ForcefieldTab::ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve,
 	// -- Parameters
 	for (int n=2; n<6; ++n)
 	{
-		ui.MasterBondsTable->setItemDelegateForColumn(n, new TExponentialSpinDelegate(this));
-		ui.MasterAnglesTable->setItemDelegateForColumn(n, new TExponentialSpinDelegate(this));
-		ui.MasterTorsionsTable->setItemDelegateForColumn(n, new TExponentialSpinDelegate(this));
+		ui.MasterBondsTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
+		ui.MasterAnglesTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
+		ui.MasterTorsionsTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
 	}
 
 	// Ensure fonts for table headers are set correctly
@@ -68,7 +69,7 @@ ForcefieldTab::ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve,
 
 	// Set item delegates for tables
 	// -- Charge / Parameters
-	for (int n=2; n<7; ++n) ui.AtomTypesTable->setItemDelegateForColumn(n, new TExponentialSpinDelegate(this));
+	for (int n=3; n<8; ++n) ui.AtomTypesTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
 
 	// Ensure fonts for table headers are set correctly
 	ui.AtomTypesTable->horizontalHeader()->setFont(font());
@@ -87,7 +88,7 @@ ForcefieldTab::ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve,
 	ui.PairPotentialsTable->setItemDelegateForColumn(2, new ComboListDelegate(this, new ComboListEnumItems(PairPotential::nShortRangeTypes, PairPotential::shortRangeTypes())));
 
 	// -- Charges / Parameters
-	for (int n=3; n<9; ++n) ui.PairPotentialsTable->setItemDelegateForColumn(n, new TExponentialSpinDelegate(this));
+	for (int n=3; n<9; ++n) ui.PairPotentialsTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
 
 	refreshing_ = false;
 }
@@ -242,14 +243,25 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, AtomType* atomType, bool cr
 	else item = ui.AtomTypesTable->item(row, 0);
 	item->setText(atomType->name());
 
+	// Target element
+	if (createItems)
+	{
+		item = new QTableWidgetItem;
+		item->setData(Qt::UserRole, VariantPointer<AtomType>(atomType));
+		item->setFlags(Qt::NoItemFlags);
+		ui.AtomTypesTable->setItem(row, 1, item);
+	}
+	else item = ui.AtomTypesTable->item(row, 1);
+	item->setText(atomType->element()->symbol());
+
 	// Charge
 	if (createItems)
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<AtomType>(atomType));
-		ui.AtomTypesTable->setItem(row, 1, item);
+		ui.AtomTypesTable->setItem(row, 2, item);
 	}
-	else item = ui.AtomTypesTable->item(row, 1);
+	else item = ui.AtomTypesTable->item(row, 2);
 	item->setText(QString::number(atomType->parameters().charge()));
 
 	// Parameters
@@ -259,9 +271,9 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, AtomType* atomType, bool cr
 		{
 			item = new QTableWidgetItem;
 			item->setData(Qt::UserRole, VariantPointer<AtomType>(atomType));
-			ui.AtomTypesTable->setItem(row, n+2, item);
+			ui.AtomTypesTable->setItem(row, n+3, item);
 		}
-		else item = ui.AtomTypesTable->item(row, n+2);
+		else item = ui.AtomTypesTable->item(row, n+3);
 		item->setText(QString::number(atomType->parameters().parameter(n)));
 	}
 }
@@ -383,7 +395,7 @@ void ForcefieldTab::disableSensitiveControls()
 // Enable sensitive controls within tab, ready for main code to run
 void ForcefieldTab::enableSensitiveControls()
 {
-	setEnabled(false);
+	setEnabled(true);
 }
 
 /*
@@ -392,7 +404,19 @@ void ForcefieldTab::enableSensitiveControls()
 
 void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
 {
-	printf("NOT IMPLEMENTED YET.\n");
+	// First, need to get target element for the new AtomType
+	bool ok;
+	Element* element = ElementSelector::getElement(this, "Element Selection", "Choose the Element for the AtomType", NULL, &ok);
+	if (!ok) return;
+
+	AtomType* at = dissolve_.addAtomType(element);
+
+	refreshing_ = true;
+
+	TableWidgetUpdater<ForcefieldTab,AtomType> atomTypesUpdater(ui.AtomTypesTable, dissolve_.atomTypes(), this, &ForcefieldTab::updateAtomTypesTableRow);
+	ui.AtomTypesTable->resizeColumnsToContents();
+
+	refreshing_ = false;
 }
 
 void ForcefieldTab::on_AtomTypeRemoveButton_clicked(bool checked)
@@ -557,16 +581,16 @@ void ForcefieldTab::on_AtomTypesTable_itemChanged(QTableWidgetItem* w)
 			dissolveWindow_->setModified();
 			break;
 		// Charge
-		case (1):
+		case (2):
 			atomType->parameters().setCharge(w->text().toDouble());
 			dissolveWindow_->setModified();
 			break;
 		// Parameters
-		case (2):
 		case (3):
 		case (4):
 		case (5):
-			atomType->parameters().setParameter(w->column()-2, w->text().toDouble());
+		case (6):
+			atomType->parameters().setParameter(w->column()-3, w->text().toDouble());
 			dissolveWindow_->setModified();
 			break;
 		default:
@@ -631,8 +655,6 @@ void ForcefieldTab::on_RegenerateAllPairPotentialsButton_clicked(bool checked)
 	ui.PairPotentialsTable->resizeColumnsToContents();
 
 	refreshing_ = false;
-
-	dissolveWindow_->updateStatus();
 }
 
 void ForcefieldTab::on_UpdatePairPotentialsButton_clicked(bool checked)
@@ -647,8 +669,6 @@ void ForcefieldTab::on_UpdatePairPotentialsButton_clicked(bool checked)
 	ui.PairPotentialsTable->resizeColumnsToContents();
 
 	refreshing_ = false;
-
-	dissolveWindow_->updateStatus();
 }
 
 void ForcefieldTab::on_GenerateMissingPairPotentialsButton_clicked(bool checked)
@@ -661,8 +681,6 @@ void ForcefieldTab::on_GenerateMissingPairPotentialsButton_clicked(bool checked)
 	ui.PairPotentialsTable->resizeColumnsToContents();
 
 	refreshing_ = false;
-
-	dissolveWindow_->updateStatus();
 }
 
 void ForcefieldTab::on_PairPotentialsTable_itemChanged(QTableWidgetItem* w)

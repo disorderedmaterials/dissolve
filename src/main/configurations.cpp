@@ -1,7 +1,7 @@
 /*
 	*** Dissolve - Configurations
 	*** src/main/configurations.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -33,6 +33,19 @@ Configuration* Dissolve::addConfiguration()
 	setUp_ = false;
 
 	return cfg;
+}
+
+// Own specified Configuration
+bool Dissolve::ownConfiguration(Configuration* cfg)
+{
+	// Sanity check - do we already own this Configuration?
+	if (coreData_.configurations().contains(cfg)) return Messenger::error("Already own Configuration '%s', so nothing to do.\n", cfg->name());
+
+	coreData_.configurations().own(cfg);
+
+	setUp_ = false;
+
+	return true;
 }
 
 // Return number of defined Configurations
@@ -155,7 +168,7 @@ bool Dissolve::readConfiguration(Configuration* cfg, LineParser& parser)
 	Torsion* torsion;
 
 	// Clear current contents of Configuration
-	cfg->clear();
+	cfg->empty();
 
 	// Read configuration name, nMolecules, and nGrains, and initialise those arrays
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;

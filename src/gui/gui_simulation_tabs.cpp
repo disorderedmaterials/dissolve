@@ -1,7 +1,7 @@
 /*
 	*** Dissolve GUI - Simulation Page - Tabs
 	*** src/gui/gui_simulation_tabs.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -23,13 +23,17 @@
 #include "gui/configurationtab.h"
 #include "gui/forcefieldtab.h"
 #include "gui/moduletab.h"
-#include "gui/processingtab.h"
+#include "gui/modulelayertab.h"
 #include "gui/speciestab.h"
 #include "gui/workspacetab.h"
 #include "main/dissolve.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include <QInputDialog>
+
+/*
+ * Private Slots
+ */
 
 void DissolveWindow::on_MainTabs_currentChanged(int index)
 {
@@ -69,12 +73,17 @@ void DissolveWindow::mainTabsDoubleClicked(int index)
 // 	tab->setTitle(newName);
 }
 
+/*
+ * Private
+ */
+
 // Remove tabs related to the current data
 void DissolveWindow::clearTabs()
 {
 	// Removal of the tab and widget will be handled by the destructors
 	speciesTabs_.clear();
 	configurationTabs_.clear();
+	processingLayerTabs_.clear();
 	moduleTabs_.clear();
 }
 
@@ -84,6 +93,7 @@ void DissolveWindow::reconcileTabs()
 	// Species - Global tab indices run from 1 (first tab after ForcefieldTab) to 1+nSpecies
 	ListIterator<Species> speciesIterator(dissolve_.species());
 	int currentTabIndex = 0;
+	int baseIndex = 1;
 	while (Species* sp = speciesIterator.iterate())
 	{
 		// Loop over existing tabs
@@ -99,13 +109,14 @@ void DissolveWindow::reconcileTabs()
 		{
 			SpeciesTab* newTab = new SpeciesTab(this, dissolve_, ui.MainTabs, sp->name(), sp);
 			speciesTabs_.own(newTab);
-			ui.MainTabs->insertTab(1 + currentTabIndex, newTab, sp->name());
+			ui.MainTabs->insertTab(baseIndex + currentTabIndex, newTab, sp->name());
 			ui.MainTabs->setTabTextColour(newTab->page(), QColor(0, 81, 0));
 			ui.MainTabs->setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_species.svg"));
 		}
 
 		++currentTabIndex;
 	}
+	baseIndex += dissolve_.nSpecies();
 
 	// Configurations - Global tab indices run from 1+nSpecies (first tab after last Species) to 1+nSpecies+nConfigurations
 	ListIterator<Configuration> configurationIterator(dissolve_.configurations());
@@ -125,13 +136,41 @@ void DissolveWindow::reconcileTabs()
 		{
 			ConfigurationTab* newTab = new ConfigurationTab(this, dissolve_, ui.MainTabs, cfg->name(), cfg);
 			configurationTabs_.own(newTab);
-			ui.MainTabs->insertTab(1 + dissolve_.nSpecies() + currentTabIndex, newTab, cfg->name());
+			ui.MainTabs->insertTab(baseIndex + currentTabIndex, newTab, cfg->name());
 			ui.MainTabs->setTabTextColour(newTab->page(), QColor(0, 81, 0));
 			ui.MainTabs->setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_configuration.svg"));
 		}
 
 		++currentTabIndex;
 	}
+	baseIndex += dissolve_.nConfigurations();
+
+	// Processing Layers - Global tab indices run from 1+nSpecies+nConfigurations (first tab after last Configuration) to 1+nSpecies+nConfigurations+nProcessingLayers
+	ListIterator<ModuleLayer> processingLayerIterator(dissolve_.processingLayers());
+	currentTabIndex = 0;
+	while (ModuleLayer* layer = processingLayerIterator.iterate())
+	{
+		// Loop over existing tabs
+		while (currentTabIndex < processingLayerTabs_.nItems())
+		{
+			// If the existing tab is displaying the current ModuleLayer already, then we can move on. Otherwise, delete it
+			if (processingLayerTabs_[currentTabIndex]->moduleLayer() == layer) break;
+			else processingLayerTabs_.remove(currentTabIndex);
+		}
+
+		// If the current tab index is (now) out of range, add a new one
+		if (currentTabIndex == processingLayerTabs_.nItems())
+		{
+			ModuleLayerTab* newTab = new ModuleLayerTab(this, dissolve_, ui.MainTabs, layer->name(), layer);
+			processingLayerTabs_.own(newTab);
+			ui.MainTabs->insertTab(baseIndex + currentTabIndex, newTab, layer->name());
+			ui.MainTabs->setTabTextColour(newTab->page(), QColor(0, 81, 0));
+			ui.MainTabs->setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_modulelayer.svg"));
+		}
+
+		++currentTabIndex;
+	}
+	baseIndex += dissolve_.nProcessingLayers();
 }
 
 // Add core (permanent) tabs
@@ -140,14 +179,7 @@ void DissolveWindow::addCoreTabs()
 	// Forcefield
 	forcefieldTab_ = new ForcefieldTab(this, dissolve_, ui.MainTabs, "Forcefield");
 	ui.MainTabs->addTab(forcefieldTab_->page(), "Forcefield");
-	ui.MainTabs->setTabTextColour(forcefieldTab_->page(), QColor(189, 68, 0));
 	ui.MainTabs->setTabIcon(forcefieldTab_->page(), QIcon(":/tabs/icons/tabs_ff.svg"));
-	
-	// Main Processing
-	mainProcessingTab_ = new ProcessingTab(this, dissolve_, ui.MainTabs, "Main Processing");
-	ui.MainTabs->addTab(mainProcessingTab_->page(), "Main Processing");
-	ui.MainTabs->setTabTextColour(mainProcessingTab_->page(), QColor(11, 36, 118));
-	ui.MainTabs->setTabIcon(mainProcessingTab_->page(), QIcon(":/tabs/icons/tabs_flow.svg"));
 }
 
 // Add on an empty workspace tab
@@ -159,6 +191,11 @@ MainTab* DissolveWindow::addWorkspaceTab(const char* title)
 	{
 		WorkspaceTab* newWorkspace = new WorkspaceTab(this, dissolve_, ui.MainTabs, title);
 		workspaceTabs_.own(newWorkspace);
+
+		// Add the new tab directly in to our tabs - it will not be managed in reconcileTabs().
+		ui.MainTabs->addTab(newWorkspace, title);
+		ui.MainTabs->addTabCloseButton(newWorkspace);
+		ui.MainTabs->setTabIcon(newWorkspace->page(), QIcon(":/tabs/icons/tabs_workspace.svg"));
 		return newWorkspace;
 	}
 	else Messenger::printVerbose("Tab '%s' already exists, so returning that instead...\n", title);
@@ -173,6 +210,7 @@ MainTab* DissolveWindow::findTab(const char* title)
 
 	for (SpeciesTab* tab = speciesTabs_.first(); tab != NULL; tab = tab->next) if (DissolveSys::sameString(title, tab->title())) return tab;
 	for (ConfigurationTab* tab = configurationTabs_.first(); tab != NULL; tab = tab->next) if (DissolveSys::sameString(title, tab->title())) return tab;
+	for (ModuleLayerTab* tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next) if (DissolveSys::sameString(title, tab->title())) return tab;
 	for (ModuleTab* tab = moduleTabs_.first(); tab != NULL; tab = tab->next) if (DissolveSys::sameString(title, tab->title())) return tab;
 	for (WorkspaceTab* tab = workspaceTabs_.first(); tab != NULL; tab = tab->next) if (DissolveSys::sameString(title, tab->title())) return tab;
 
@@ -186,6 +224,7 @@ MainTab* DissolveWindow::findTab(QWidget* page)
 
 	MainTab* result = speciesTab(page);
 	if (!result) result = configurationTab(page);
+	if (!result) result = processingLayerTab(page);
 	if (!result) result = moduleTab(page);
 	if (!result) result = workspaceTab(page);
 
@@ -204,6 +243,14 @@ SpeciesTab* DissolveWindow::speciesTab(QWidget* page)
 ConfigurationTab* DissolveWindow::configurationTab(QWidget* page)
 {
 	for (ConfigurationTab* tab = configurationTabs_.first(); tab != NULL; tab = tab->next) if (tab->page() == page) return tab;
+
+	return NULL;
+}
+
+// Find ModuleLayerTab containing specified page widget
+ModuleLayerTab* DissolveWindow::processingLayerTab(QWidget* page)
+{
+	for (ModuleLayerTab* tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next) if (tab->page() == page) return tab;
 
 	return NULL;
 }
@@ -260,20 +307,73 @@ void DissolveWindow::setCurrentTab(int tabIndex)
 	ui.MainTabs->setCurrentIndex(tabIndex);
 }
 
+// Show forcefield tab
+void DissolveWindow::showForcefieldTab()
+{
+	if (forcefieldTab_) ui.MainTabs->setCurrentWidget(forcefieldTab_->page());
+	else Messenger::error("Can't show ForcefieldTab, since it doesn't exist!\n");
+}
+
+// Make specified Species tab the current one
+void DissolveWindow::setCurrentTab(Species* species)
+{
+	if (!species) return;
+
+	for (SpeciesTab* tab = speciesTabs_.first(); tab != NULL; tab = tab->next) if (tab->species() == species)
+	{
+		ui.MainTabs->setCurrentWidget(tab->page());
+		return;
+	}
+
+	Messenger::error("Can't display SpeciesTab for Species '%s' as it doesn't exist.\n", species->name());
+}
+
+// Make specified Configuration tab the current one
+void DissolveWindow::setCurrentTab(Configuration* cfg)
+{
+	if (!cfg) return;
+
+	for (ConfigurationTab* tab = configurationTabs_.first(); tab != NULL; tab = tab->next) if (tab->configuration() == cfg)
+	{
+		ui.MainTabs->setCurrentWidget(tab->page());
+		return;
+	}
+
+	Messenger::error("Can't display ConfigurationTab for Configuration '%s' as it doesn't exist.\n", cfg->name());
+}
+
+// Make specified processing layer tab the current one
+void DissolveWindow::setCurrentTab(ModuleLayer* layer)
+{
+	if (!layer) return;
+
+	for (ModuleLayerTab* tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next) if (tab->moduleLayer() == layer)
+	{
+		ui.MainTabs->setCurrentWidget(tab->page());
+		return;
+	}
+
+	Messenger::error("Can't display ModuleLayerTab for processing layer '%s' as it doesn't exist.\n", layer->name());
+}
+
 // Return reference list of all current tabs
 RefList<MainTab,bool> DissolveWindow::allTabs() const
 {
 	RefList<MainTab,bool> tabs;
 
 	tabs.add(forcefieldTab_);
-	tabs.add(mainProcessingTab_);
 	for (SpeciesTab* tab = speciesTabs_.first(); tab != NULL; tab = tab->next) tabs.add(tab);
 	for (ConfigurationTab* tab = configurationTabs_.first(); tab != NULL; tab = tab->next) tabs.add(tab);
+	for (ModuleLayerTab* tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next) tabs.add(tab);
 	for (ModuleTab* tab = moduleTabs_.first(); tab != NULL; tab = tab->next) tabs.add(tab);
 	for (WorkspaceTab* tab = workspaceTabs_.first(); tab != NULL; tab = tab->next) tabs.add(tab);
 
 	return tabs;
 }
+
+/*
+ * Public
+ */
 
 // Create / go to Module tab for specified Module, provided it has a Module control widget
 MainTab* DissolveWindow::addModuleTab(Module* module)
@@ -296,6 +396,10 @@ MainTab* DissolveWindow::addModuleTab(Module* module)
 	return tab;
 }
 
+/*
+ * Public Slots
+ */
+
 // Remove tab containing the specified page widget
 void DissolveWindow::removeTab(QWidget* page)
 {
@@ -307,8 +411,8 @@ void DissolveWindow::removeTab(QWidget* page)
 	// Now delete the tab from its list - this will delete the actual page widget
 	if (speciesTab(page)) speciesTabs_.remove(speciesTab(page));
 	else if (configurationTab(page)) configurationTabs_.remove(configurationTab(page));
+	else if (processingLayerTab(page)) processingLayerTabs_.remove(processingLayerTab(page));
 	else if (moduleTab(page)) moduleTabs_.remove(moduleTab(page));
 	else if (workspaceTab(page)) workspaceTabs_.remove(workspaceTab(page));
-	
-	printf("Couldn't remove tab %p as it could not be found in any list.\n", page);
+	else printf("Couldn't remove tab %p as it could not be found in any list.\n", page);
 }

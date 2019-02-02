@@ -1,7 +1,7 @@
 /*
 	*** Dissolve - AtomTypes
 	*** src/main/atomtypes.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -54,12 +54,6 @@ List<AtomType>& Dissolve::atomTypes()
 AtomType* Dissolve::atomType(int n)
 {
 	return coreData_.atomType(n);
-}
-
-// Generate unique AtomType name with base name provided
-const char* Dissolve::uniqueAtomTypeName(const char* base, AtomType* exclude) const
-{
-	return coreData_.uniqueAtomTypeName(base, exclude);
 }
 
 // Search for AtomType by name

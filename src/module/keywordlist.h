@@ -1,7 +1,7 @@
 /*
 	*** Module Keyword List
 	*** src/module/keywordlist.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -46,7 +46,7 @@ class ModuleKeywordList
 	bool add(ModuleKeywordBase* object, const char* keyword, const char* description, const char* arguments, int genericItemFlags = 0);
 	// Find named keyword
 	ModuleKeywordBase* find(const char* keyword) const;
-	// Return first keyword in list
+	// Return keywords list
 	List<ModuleKeywordBase>& keywords();
 
 

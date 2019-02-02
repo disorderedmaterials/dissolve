@@ -1,7 +1,7 @@
 /*
 	*** Import Module - Formats
 	*** src/modules/import/formats.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -30,6 +30,9 @@
 // Coordinate Import Formats
 class CoordinateImportFileFormat : public FileAndFormat
 {
+	/*
+	 * Available Formats
+	 */
 	public:
 	// Available coordinate formats
  	enum CoordinateImportFormat { XYZCoordinates, DLPOLYCoordinates, EPSRCoordinates, nCoordinateImportFormats };
@@ -41,11 +44,25 @@ class CoordinateImportFileFormat : public FileAndFormat
 	const char** niceFormats() const;
 	// Return current format as CoordinateImportFormat
 	CoordinateImportFormat coordinateFormat() const;
+
+
+	/*
+	 * Filename / Basename
+	 */
+	public:
+	// Return whether the file must exist
+	bool fileMustExist() const
+	{
+		return true;
+	}
 };
 
 // Forces Import Formats
 class ForceImportFileFormat : public FileAndFormat
 {
+	/*
+	 * Available Formats
+	 */
 	public:
 	// Available forces formats
  	enum ForceImportFormat { XYZForces, DLPOLYForces, nForceImportFormats };
@@ -57,13 +74,27 @@ class ForceImportFileFormat : public FileAndFormat
 	const char** niceFormats() const;
 	// Return current format as ForceImportFormat
 	ForceImportFormat forceFormat() const;
+
+
+	/*
+	 * Filename / Basename
+	 */
+	public:
+	// Return whether the file must exist
+	bool fileMustExist() const
+	{
+		return true;
+	}
 };
 
 // Trajectory Import Formats
 class TrajectoryImportFileFormat : public FileAndFormat
 {
+	/*
+	 * Available Formats
+	 */
 	public:
-	// Available forces formats
+	// Available trajectory formats
  	enum TrajectoryImportFormat { XYZTrajectory, nTrajectoryImportFormats };
 	// Return number of available formats
 	int nFormats() const;
@@ -73,6 +104,47 @@ class TrajectoryImportFileFormat : public FileAndFormat
 	const char** niceFormats() const;
 	// Return current format as TrajectoryImportFormat
 	TrajectoryImportFormat trajectoryFormat() const;
+
+
+	/*
+	 * Filename / Basename
+	 */
+	public:
+	// Return whether the file must exist
+	bool fileMustExist() const
+	{
+		return true;
+	}
+};
+
+// Data1D Import Formats
+class Data1DImportFileFormat : public FileAndFormat
+{
+	/*
+	 * Available Formats
+	 */
+	public:
+	// Available Data1D formats
+ 	enum Data1DImportFormat { XYData1D, nData1DImportFormats };
+	// Return number of available formats
+	int nFormats() const;
+	// Return formats array
+	const char** formats() const;
+	// Return nice formats array
+	const char** niceFormats() const;
+	// Return current format as Data1DImportFormat
+	Data1DImportFormat data1DFormat() const;
+
+
+	/*
+	 * Filename / Basename
+	 */
+	public:
+	// Return whether the file must exist
+	bool fileMustExist() const
+	{
+		return true;
+	}
 };
 
 #endif

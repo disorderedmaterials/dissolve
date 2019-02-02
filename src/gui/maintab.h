@@ -1,7 +1,7 @@
 /*
 	*** Main Tab
 	*** src/gui/maintab.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -24,7 +24,6 @@
 
 #include "gui/widgets/subwindow.h"
 #include "module/module.h"
-#include "module/reference.h"
 #include "base/charstring.h"
 #include "templates/list.h"
 #include "templates/reflist.h"

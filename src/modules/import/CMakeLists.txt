@@ -4,6 +4,7 @@ add_library(importmodule
   definition.cpp
   formats.cpp
   functions_coordinates.cpp
+  functions_data1d.cpp
   functions_forces.cpp
   options.cpp
   process.cpp

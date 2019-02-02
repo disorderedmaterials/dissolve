@@ -338,7 +338,7 @@
           </widget>
          </item>
          <item row="1" column="6">
-          <widget class="TExponentialSpin" name="XAbsoluteMaxSpin" native="true">
+          <widget class="ExponentialSpin" name="XAbsoluteMaxSpin" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -394,7 +394,7 @@
           </widget>
          </item>
          <item row="1" column="4">
-          <widget class="TExponentialSpin" name="XAbsoluteMinSpin" native="true">
+          <widget class="ExponentialSpin" name="XAbsoluteMinSpin" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -613,7 +613,7 @@
           </widget>
          </item>
          <item row="1" column="4">
-          <widget class="TExponentialSpin" name="ZAbsoluteMaxSpin" native="true">
+          <widget class="ExponentialSpin" name="ZAbsoluteMaxSpin" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -636,7 +636,7 @@
           </widget>
          </item>
          <item row="1" column="2">
-          <widget class="TExponentialSpin" name="ZAbsoluteMinSpin" native="true">
+          <widget class="ExponentialSpin" name="ZAbsoluteMinSpin" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -956,7 +956,7 @@
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="TExponentialSpin" name="MinimisationToleranceSpin" native="true">
+             <widget class="ExponentialSpin" name="MinimisationToleranceSpin" native="true">
               <property name="minimumSize">
                <size>
                 <width>90</width>
@@ -999,7 +999,7 @@
              </widget>
             </item>
             <item row="3" column="1">
-             <widget class="TExponentialSpin" name="MinimisationLimitStrengthSpin" native="true">
+             <widget class="ExponentialSpin" name="MinimisationLimitStrengthSpin" native="true">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                 <horstretch>0</horstretch>
@@ -1144,9 +1144,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>TExponentialSpin</class>
+   <class>ExponentialSpin</class>
    <extends>QWidget</extends>
-   <header>gui/widgets/texponentialspin.hui</header>
+   <header>gui/widgets/exponentialspin.hui</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

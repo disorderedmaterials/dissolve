@@ -1,7 +1,7 @@
 /*
 	*** Energy Module - Definition
 	*** src/modules/energy/definition.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -25,6 +25,12 @@
 const char* EnergyModule::type() const
 {
 	return "Energy";
+}
+
+// Return category for module
+const char* EnergyModule::category() const
+{
+	return "Forcefield";
 }
 
 // Return brief description of module

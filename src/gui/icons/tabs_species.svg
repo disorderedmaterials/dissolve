@@ -13,7 +13,7 @@
    width="100"
    height="100"
    id="svg2"
-   inkscape:version="0.91 r13725"
+   inkscape:version="0.92.2 5c3e80d, 2017-08-06"
    sodipodi:docname="tabs_species.svg">
   <metadata
      id="metadata3050">
@@ -36,45 +36,45 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:window-width="1920"
-     inkscape:window-height="1136"
+     inkscape:window-height="1163"
      id="namedview3048"
      showgrid="false"
-     inkscape:zoom="1"
-     inkscape:cx="-430.47778"
-     inkscape:cy="21.310946"
-     inkscape:window-x="0"
-     inkscape:window-y="27"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="-103.00605"
+     inkscape:cy="-159.93474"
+     inkscape:window-x="1920"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg2" />
+     inkscape:current-layer="g851" />
   <defs
      id="defs4" />
   <g
-     id="g4277"
-     transform="translate(5.5,-0.125)"
-     style="fill:#005100;fill-opacity:1">
+     id="g851"
+     transform="matrix(0.84848485,0,0,0.8483475,7.3636363,14.581492)"
+     style="stroke-width:1.17866683">
     <circle
        r="16.625"
-       cy="17.875"
-       cx="56.375"
-       id="path4256"
-       style="opacity:1;fill:#005100;fill-opacity:1;stroke:none;stroke-width:3.4000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:3.4, 13.59999999999999964;stroke-dashoffset:0;stroke-opacity:1" />
-    <circle
-       r="6"
-       cy="42.75"
-       cx="76.25"
-       id="path4258"
-       style="opacity:1;fill:#005100;fill-opacity:1;stroke:none;stroke-width:3.4000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:3.4, 13.59999999999999964;stroke-dashoffset:0;stroke-opacity:1" />
+       cy="67.25"
+       cx="21.5"
+       id="path4256-6"
+       style="opacity:1;fill:#005100;fill-opacity:1;stroke:#ffffff;stroke-width:3.53600049;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
     <circle
        r="31.625"
-       cy="67.375"
-       cx="32.375"
+       cy="49.75"
+       cx="46.875"
        id="path4260"
-       style="opacity:1;fill:#005100;fill-opacity:1;stroke:none;stroke-width:3.4000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:3.4, 13.59999999999999964;stroke-dashoffset:0;stroke-opacity:1" />
+       style="opacity:1;fill:#005100;fill-opacity:1;stroke:#ffffff;stroke-width:3.53600049;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
     <circle
-       r="6"
-       cy="60.5"
-       cx="82.25"
-       id="path4258-3"
-       style="opacity:1;fill:#005100;fill-opacity:1;stroke:none;stroke-width:3.4000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:3.4, 13.59999999999999964;stroke-dashoffset:0;stroke-opacity:1" />
+       r="16.625"
+       cy="14.25"
+       cx="45.125"
+       id="path4256"
+       style="opacity:1;fill:#005100;fill-opacity:1;stroke:#ffffff;stroke-width:3.53600049;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <circle
+       r="16.625"
+       cy="69.25"
+       cx="79"
+       id="path4256-3"
+       style="opacity:1;fill:#005100;fill-opacity:1;stroke:#ffffff;stroke-width:3.53600049;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
   </g>
 </svg>

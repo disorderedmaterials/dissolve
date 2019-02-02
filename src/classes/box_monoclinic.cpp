@@ -1,7 +1,7 @@
 /*
 	*** Monoclinic Box
 	*** src/classes/box_monoclinic.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -26,7 +26,7 @@
 // Constructor
 MonoclinicBox::MonoclinicBox(double volume, const Vec3<double> relativeLengths, double beta) : Box()
 {
-	type_ = Box::MonoclinicBox;
+	type_ = Box::MonoclinicBoxType;
 	
 	// Construct axes
 	alpha_ = 90.0;

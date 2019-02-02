@@ -1,7 +1,7 @@
 /*
 	*** Keyword Parsing - Module Block
 	*** src/main/keywords_module.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -87,7 +87,7 @@ bool ModuleBlock::parse(LineParser& parser, Dissolve* dissolve, Module* module, 
 				}
 
 				// Add it is a target
-				if (!module->addConfigurationTarget(targetCfg))
+				if (!module->addTargetConfiguration(targetCfg))
 				{
 					Messenger::error("Failed to add Configuration target in Module '%s'.\n", module->type());
 					error = true;

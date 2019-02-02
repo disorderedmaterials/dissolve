@@ -241,7 +241,7 @@
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="TExponentialSpin" name="GridSpecifyXMinSpin" native="true">
+              <widget class="ExponentialSpin" name="GridSpecifyXMinSpin" native="true">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                  <horstretch>0</horstretch>
@@ -273,7 +273,7 @@
               </widget>
              </item>
              <item row="0" column="3">
-              <widget class="TExponentialSpin" name="GridSpecifyXMaxSpin" native="true">
+              <widget class="ExponentialSpin" name="GridSpecifyXMaxSpin" native="true">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                  <horstretch>0</horstretch>
@@ -299,7 +299,7 @@
               </widget>
              </item>
              <item row="0" column="5">
-              <widget class="TExponentialSpin" name="GridSpecifyXDeltaSpin" native="true">
+              <widget class="ExponentialSpin" name="GridSpecifyXDeltaSpin" native="true">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                  <horstretch>0</horstretch>
@@ -331,7 +331,7 @@
               </widget>
              </item>
              <item row="1" column="1">
-              <widget class="TExponentialSpin" name="GridSpecifyZMinSpin" native="true">
+              <widget class="ExponentialSpin" name="GridSpecifyZMinSpin" native="true">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                  <horstretch>0</horstretch>
@@ -363,7 +363,7 @@
               </widget>
              </item>
              <item row="1" column="3">
-              <widget class="TExponentialSpin" name="GridSpecifyZMaxSpin" native="true">
+              <widget class="ExponentialSpin" name="GridSpecifyZMaxSpin" native="true">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                  <horstretch>0</horstretch>
@@ -389,7 +389,7 @@
               </widget>
              </item>
              <item row="1" column="5">
-              <widget class="TExponentialSpin" name="GridSpecifyZDeltaSpin" native="true">
+              <widget class="ExponentialSpin" name="GridSpecifyZDeltaSpin" native="true">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                  <horstretch>0</horstretch>
@@ -500,9 +500,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>TExponentialSpin</class>
+   <class>ExponentialSpin</class>
    <extends>QWidget</extends>
-   <header>gui/widgets/texponentialspin.hui</header>
+   <header>gui/widgets/exponentialspin.hui</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
