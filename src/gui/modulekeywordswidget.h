@@ -30,6 +30,7 @@
 class Dissolve;
 class DissolveWindow;
 class Module;
+class ModuleKeywordBase;
 class ModuleReference;
 
 // Module Keywords Widget
@@ -55,6 +56,10 @@ class ModuleKeywordsWidget : public QWidget
 	private:
 	// List of keyword widgets displayed
 	RefList<KeywordWidgetBase,bool> keywordWidgets_;
+
+	private:
+	// Create widget for specified keyword
+	QWidget* createKeywordWidget(DissolveWindow* dissolveWindow, RefList<KeywordWidgetBase,bool>& keywordWidgets, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* uniqueName);
 
 	public:
 	// Set up keyword controls for specified Module
