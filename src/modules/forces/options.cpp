@@ -29,13 +29,18 @@
 // Set up keywords for Module
 void ForcesModule::setUpKeywords()
 {
-	keywords_.add(new BoolModuleKeyword(false), "Save", "Save forces for the Configuration to the file '<name>.forces.txt'");
-	keywords_.add(new BoolModuleKeyword(false), "Test", "Test parallel force routines against simplified, serial ones");
-	keywords_.add(new BoolModuleKeyword(false), "TestAnalytic", "Compare parallel force routines against exact (analytic) force rather than tabulated values");
-	keywords_.add(new BoolModuleKeyword(true), "TestInter", "Include interatomic forces in test");
-	keywords_.add(new BoolModuleKeyword(true), "TestIntra", "Include intramolecular forces in test");
-	keywords_.add(new FileAndFormatModuleKeyword(referenceForces_), "TestReference", "Reference forces for test");
-	keywords_.add(new DoubleModuleKeyword(0.1), "TestThreshold", "Threshold of force (%%) at which test comparison will fail");
+	// Test
+	ModuleKeywordGroup* group = addKeywordGroup("Test");
+	group->add(new BoolModuleKeyword(false), "Test", "Test parallel force routines against simplified, serial ones");
+	group->add(new BoolModuleKeyword(false), "TestAnalytic", "Compare parallel force routines against exact (analytic) force rather than tabulated values");
+	group->add(new BoolModuleKeyword(true), "TestInter", "Include interatomic forces in test");
+	group->add(new BoolModuleKeyword(true), "TestIntra", "Include intramolecular forces in test");
+	group->add(new FileAndFormatModuleKeyword(referenceForces_), "TestReference", "Reference forces for test");
+	group->add(new DoubleModuleKeyword(0.1), "TestThreshold", "Threshold of force (%%) at which test comparison will fail");
+
+	// Export
+	group = addKeywordGroup("Export");
+	group->add(new BoolModuleKeyword(false), "Save", "Save forces for the Configuration to the file '<name>.forces.txt'");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised

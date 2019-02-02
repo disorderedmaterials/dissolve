@@ -43,29 +43,42 @@ const char* EPSRModule::expansionFunctionType(EPSRModule::ExpansionFunctionType 
 // Set up keywords for Module
 void EPSRModule::setUpKeywords()
 {
-	keywords_.add(new DoubleModuleKeyword(3.0, -1.0), "EReq", "Limit of magnitude of additional potential for any one pair potential");
-	keywords_.add(new EnumStringModuleKeyword(EPSRModule::PoissonExpansionFunction, EPSRModule::nExpansionFunctionTypes, ExpansionFunctionTypeKeywords), "ExpansionFunction", "Form of expansion function to use when fitting difference data");
-	keywords_.add(new DoubleModuleKeyword(0.9), "Feedback", "Confidence factor");
-	keywords_.add(new DoubleModuleKeyword(0.1, 0.001, 1.0), "GSigma1", "Width for Gaussian function in reciprocal space");
-	keywords_.add(new DoubleModuleKeyword(0.2, 0.001, 1.0), "GSigma2", "Width for Gaussian function in real space");
-	keywords_.add(new BoolModuleKeyword(true), "ModifyPotential", "Whether to apply generated perturbations to interatomic potentials");
-	keywords_.add(new IntegerModuleKeyword(-1, -1), "NCoeffP", "Number of coefficients user to define the empirical potential (-1 for automatic)");
-	keywords_.add(new IntegerModuleKeyword(1000, 10), "NPItSs", "Number of steps for refining the potential");
-	keywords_.add(new BoolModuleKeyword(true), "OnlyWhenEnergyStable", "Assesses the energy of all involved Configurations, refining the potential only when all their total energies are stable");
-	keywords_.add(new CharStringModuleKeyword(""), "PCofFile", "EPSR pcof file from which to read starting coefficients from");
-	keywords_.add(new DoubleModuleKeyword(0.1, 0.001, 10.0), "PCofRho", "Atomic number density with which to weight coefficients from pcof file");
-	keywords_.add(new DoubleModuleKeyword(0.01, 0.001, 1.0), "PSigma1", "Width for Poisson functions in reciprocal space (N.B. this is psigma2 in EPSR)");
-	keywords_.add(new DoubleModuleKeyword(0.01, 0.001, 1.0), "PSigma2", "Width for Poisson functions in real space");
-	keywords_.add(new DoubleModuleKeyword(-1.0), "RMaxPT", "Radius at which potential truncation goes to zero (-1.0 to use pair potential maximum range)");
-	keywords_.add(new DoubleModuleKeyword(-1.0), "RMinPT", "Radius at which potential truncation begins (-1.0 to set to 2.0 Angstroms under rmaxpt)");
-	keywords_.add(new DoubleModuleKeyword(30.0, -1.0), "QMax", "Maximum Q value over which to generate potentials from total scattering data");
-	keywords_.add(new DoubleModuleKeyword(0.5, -1.0), "QMin", "Minimum Q value over which to generate potentials from total scattering data");
-	keywords_.add(new BoolModuleKeyword(false), "Save", "Whether to save data to disk after calculation", "<True|False>");
-	keywords_.add(new ModuleGroupsModuleKeyword(groupedTargets_, "NeutronSQ"), "Target", "Add specified Module (and it's Reference data) as a refinement target", "<ModuleName> [GroupName]");
-	keywords_.add(new BoolModuleKeyword(false), "Test", "Test against supplied reference data", "<True|False>");
-	keywords_.add(new DataStoreModuleKeyword(testData_), "TestReference", "Specify test reference data", "<filename> <target> [xcol] [ycol]");
-	keywords_.add(new DoubleModuleKeyword(0.1, 1.0e-5), "TestThreshold", "Test threshold (%%error) above which test fails", "<threshold[0.1]>");
-	keywords_.add(new DoubleModuleKeyword(1.0, 0.0, 10.0), "Weighting", "Fractional (maximal) amounts of generated perturbations to apply to pair potentials");
+	frequency_ = 5;
+
+	// Calculation
+	ModuleKeywordGroup* group = addKeywordGroup("Calculation");
+	group->add(new BoolModuleKeyword(true), "OnlyWhenEnergyStable", "Assesses the energy of all involved Configurations, refining the potential only when all their total energies are stable");
+	group->add(new DoubleModuleKeyword(3.0, -1.0), "EReq", "Limit of magnitude of additional potential for any one pair potential");
+	group->add(new DoubleModuleKeyword(0.9), "Feedback", "Confidence factor");
+	group->add(new BoolModuleKeyword(true), "ModifyPotential", "Whether to apply generated perturbations to interatomic potentials");
+	group->add(new ModuleGroupsModuleKeyword(groupedTargets_, "NeutronSQ"), "Target", "Add specified Module (and it's Reference data) as a refinement target", "<ModuleName> [GroupName]");
+	group->add(new DoubleModuleKeyword(30.0, -1.0), "QMax", "Maximum Q value over which to generate potentials from total scattering data");
+	group->add(new DoubleModuleKeyword(0.5, -1.0), "QMin", "Minimum Q value over which to generate potentials from total scattering data");
+
+	// Expansion Function
+	group = addKeywordGroup("Expansion Function");
+	group->add(new EnumStringModuleKeyword(EPSRModule::PoissonExpansionFunction, EPSRModule::nExpansionFunctionTypes, ExpansionFunctionTypeKeywords), "ExpansionFunction", "Form of expansion function to use when fitting difference data");
+	group->add(new DoubleModuleKeyword(0.1, 0.001, 1.0), "GSigma1", "Width for Gaussian function in reciprocal space");
+	group->add(new DoubleModuleKeyword(0.2, 0.001, 1.0), "GSigma2", "Width for Gaussian function in real space");
+	group->add(new IntegerModuleKeyword(-1, -1), "NCoeffP", "Number of coefficients user to define the empirical potential (-1 for automatic)");
+	group->add(new IntegerModuleKeyword(1000, 10), "NPItSs", "Number of steps for refining the potential");
+	group->add(new CharStringModuleKeyword(""), "PCofFile", "EPSR pcof file from which to read starting coefficients from");
+	group->add(new DoubleModuleKeyword(0.1, 0.001, 10.0), "PCofRho", "Atomic number density with which to weight coefficients from pcof file");
+	group->add(new DoubleModuleKeyword(0.01, 0.001, 1.0), "PSigma1", "Width for Poisson functions in reciprocal space (N.B. this is psigma2 in EPSR)");
+	group->add(new DoubleModuleKeyword(0.01, 0.001, 1.0), "PSigma2", "Width for Poisson functions in real space");
+	group->add(new DoubleModuleKeyword(-1.0), "RMaxPT", "Radius at which potential truncation goes to zero (-1.0 to use pair potential maximum range)");
+	group->add(new DoubleModuleKeyword(-1.0), "RMinPT", "Radius at which potential truncation begins (-1.0 to set to 2.0 Angstroms under rmaxpt)");
+	group->add(new DoubleModuleKeyword(1.0, 0.0, 10.0), "Weighting", "Fractional (maximal) amounts of generated perturbations to apply to pair potentials");
+
+	// Test
+	group = addKeywordGroup("Test");
+	group->add(new BoolModuleKeyword(false), "Test", "Test against supplied reference data", "<True|False>");
+	group->add(new DataStoreModuleKeyword(testData_), "TestReference", "Specify test reference data", "<filename> <target> [xcol] [ycol]");
+	group->add(new DoubleModuleKeyword(0.1, 1.0e-5), "TestThreshold", "Test threshold (%%error) above which test fails", "<threshold[0.1]>");
+
+	// Save
+	group = addKeywordGroup("Save");
+	group->add(new BoolModuleKeyword(false), "Save", "Whether to save data to disk after calculation", "<True|False>");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
