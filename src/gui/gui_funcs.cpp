@@ -84,6 +84,12 @@ void DissolveWindow::closeEvent(QCloseEvent* event)
 	// Mark the window as refreshing, so we don't try to update any more widgets
 	refreshing_ = true;
 
+	if (!checkSaveCurrentInput())
+	{
+		event->ignore();
+		return;
+	}
+
 	// Save the state before we go...
 	saveWindowLayout();
 
