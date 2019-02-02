@@ -42,7 +42,7 @@ ModuleChartModuleBlock::ModuleChartModuleBlock(QWidget* parent, DissolveWindow* 
 	setContentsMargins(metrics.blockMargins());
 
 	// Hide the keywords control frame to start with
-	ui.KeywordsControlFrame->setVisible(false);
+	ui.KeywordsControlWidget->setVisible(false);
 
 	// Set Module pointers
 	module_ = module;
@@ -198,7 +198,7 @@ QPixmap ModuleChartModuleBlock::modulePixmap(QString moduleType)
 // Disable sensitive controls, ready for main code to run
 void ModuleChartModuleBlock::disableSensitiveControls()
 {
-	ui.KeywordsControlFrame->setEnabled(false);
+	ui.KeywordsControlWidget->setEnabled(false);
 	ui.RunButton->setEnabled(false);
 	ui.EnabledButton->setEnabled(false);
 	ui.FrequencySpin->setEnabled(false);
@@ -208,7 +208,7 @@ void ModuleChartModuleBlock::disableSensitiveControls()
 // Enable sensitive controls, ready for main code to run
 void ModuleChartModuleBlock::enableSensitiveControls()
 {
-	ui.KeywordsControlFrame->setEnabled(true);
+	ui.KeywordsControlWidget->setEnabled(true);
 	ui.RunButton->setEnabled(true);
 	ui.EnabledButton->setEnabled(true);
 	ui.FrequencySpin->setEnabled(true);
@@ -217,7 +217,7 @@ void ModuleChartModuleBlock::enableSensitiveControls()
 
 void ModuleChartModuleBlock::on_ToggleSettingsButton_clicked(bool checked)
 {
-	ui.KeywordsControlFrame->setVisible(checked);
+	ui.KeywordsControlWidget->setVisible(checked);
 
 	adjustSize();
 	updateGeometry();
