@@ -25,7 +25,7 @@
 #include "module/module.h"
 #include "main/dissolve.h"
 #include "base/lineparser.h"
-#include <QGridLayout>
+#include <QFormLayout>
 #include <QLabel>
 
 // Constructor
@@ -146,11 +146,9 @@ void ModuleKeywordsWidget::setUp(DissolveWindow* dissolveWindow, Module* module)
 	dissolveWindow_ = dissolveWindow;
 
 	// Create keyword widgets in a new grid layout
-	QGridLayout* keywordsLayout = new QGridLayout(this);
+	QVBoxLayout* keywordsLayout = new QVBoxLayout(this);
 	keywordsLayout->setContentsMargins(4,4,4,4);
 	keywordsLayout->setSpacing(4);
-	int row = 0;
-	QWidget* widget;
 
 	// Select source list for keywords that have potentially been replicated / updated there
 	GenericList& moduleData = module->configurationLocal() ? module->targetConfigurations().firstItem()->moduleData() : dissolveWindow_->dissolve().processingModuleData();
@@ -158,33 +156,74 @@ void ModuleKeywordsWidget::setUp(DissolveWindow* dissolveWindow, Module* module)
 	// Get reference to Dissolve's core data for convenience
 	const CoreData& coreData = dissolveWindow_->dissolve().coreData();
 
-	// Loop over keyword groups first - we'll keep track of which keywords we add, and append any that aren't in a group at the end
-	RefList<ModuleKeywordBase,bool> addedKeywords;
-	// -- NOTE Keeps original action in this commit
-
+	// Loop over keyword groups first - we'll keep track of which keywords are not part of a group, and these at the end
+	RefList<ModuleKeywordBase,bool> remainingKeywords;
 	ListIterator<ModuleKeywordBase> keywordIterator(module->keywords().keywords());
-	while (ModuleKeywordBase* keyword = keywordIterator.iterate())
-	{
-		// Create / setup the keyword widget
-		widget = createKeywordWidget(dissolveWindow_, keywordWidgets_, keyword, coreData, moduleData, module->uniqueName());
+	while (ModuleKeywordBase* keyword = keywordIterator.iterate()) remainingKeywords.add(keyword);
 
-		if (!widget)
+	ListIterator<ModuleKeywordGroup> groupIterator(module->keywordGroups());
+	while (ModuleKeywordGroup* group = groupIterator.iterate())
+	{
+		// Create a QGroupBox and layout for our widgets
+		QGroupBox* groupBox = new QGroupBox(group->name());
+		QFormLayout* groupLayout = new QFormLayout(groupBox);
+
+		// Loop over keywords in the group and add them to our groupbox
+		RefListIterator<ModuleKeywordBase,bool> groupKeywordIterator(group->keywords());
+		while (ModuleKeywordBase* keyword = groupKeywordIterator.iterate())
 		{
-			Messenger::error("Can't create widget for keyword '%s'.\n", keyword->keyword());
-			continue;
+			// Create / setup the keyword widget
+			QWidget* widget = createKeywordWidget(dissolveWindow_, keywordWidgets_, keyword, coreData, moduleData, module->uniqueName());
+
+			if (!widget)
+			{
+				Messenger::error("Can't create widget for keyword '%s'.\n", keyword->keyword());
+				continue;
+			}
+
+			// Create a label and add it and the widget to our layout
+			QLabel* nameLabel = new QLabel(keyword->keyword());
+			nameLabel->setToolTip(keyword->description());
+			groupLayout->addRow(nameLabel, widget);
+
+			// Can now remove this keyword from our reference list
+			remainingKeywords.remove(keyword);
 		}
 
-		// Create a label and add it and the widget to our layout
-		QLabel* nameLabel = new QLabel(keyword->keyword());
-		nameLabel->setToolTip(keyword->description());
-		keywordsLayout->addWidget(nameLabel, row, 0);
-		keywordsLayout->addWidget(widget, row, 1);
-
-		++row;
+		// Group is finished - add it to the layout
+		keywordsLayout->addWidget(groupBox);
 	}
 
-	// Add a vertical spacer to the end to take up any extra space
-	keywordsLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding), row, 0);
+	// If there are any 'group-orphaned' keywords, add these at the bottom
+	if (remainingKeywords.nItems() > 0)
+	{
+		// Need a widget with a QFormLayout...
+		QWidget* otherKeywordsWidget = new QWidget;
+		QFormLayout* layout = new QFormLayout(otherKeywordsWidget);
+
+		RefListIterator<ModuleKeywordBase,bool> remainingKeywordsIterator(remainingKeywords);
+		while (ModuleKeywordBase* keyword = remainingKeywordsIterator.iterate())
+		{
+			// Create / setup the keyword widget
+			QWidget* widget = createKeywordWidget(dissolveWindow_, keywordWidgets_, keyword, coreData, moduleData, module->uniqueName());
+
+			if (!widget)
+			{
+				Messenger::error("Can't create widget for keyword '%s'.\n", keyword->keyword());
+				continue;
+			}
+
+			// Create a label and add it and the widget to our layout
+			QLabel* nameLabel = new QLabel(keyword->keyword());
+			nameLabel->setToolTip(keyword->description());
+			layout->addRow(nameLabel, widget);
+		}
+
+		keywordsLayout->addWidget(otherKeywordsWidget);
+	}
+
+	// Add a vertical spacer at the end to take up any extra space
+	keywordsLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
 }
 
 // Update controls within widget
