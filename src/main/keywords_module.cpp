@@ -86,7 +86,7 @@ bool ModuleBlock::parse(LineParser& parser, Dissolve* dissolve, Module* module, 
 					break;
 				}
 
-				// Add it is a target
+				// Add it as a target
 				if (!module->addTargetConfiguration(targetCfg))
 				{
 					Messenger::error("Failed to add Configuration target in Module '%s'.\n", module->type());
