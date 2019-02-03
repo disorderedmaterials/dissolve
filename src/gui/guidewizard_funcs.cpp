@@ -170,6 +170,7 @@ bool GuideWizard::setContent(const Guide& guide)
 		layout->setSpacing(4);
 		QLabel* label = new QLabel;
 		label->setWordWrap(true);
+		label->setFont(QFont("SourceSansPro-Regular", 12));
 		label->setText(page->richTextContent());
 		label->setAlignment(Qt::AlignTop);
 		layout->addWidget(label);

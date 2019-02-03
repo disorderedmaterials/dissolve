@@ -27,6 +27,7 @@
 #include <QColorDialog>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QFontDatabase>
 #include <QMessageBox>
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
@@ -37,12 +38,16 @@ DGuidEdWindow::DGuidEdWindow(QMainWindow* parent) : QMainWindow(parent)
 	// Initialise resources
 	Q_INIT_RESOURCE(main);
 
+	// Add our custom font
+	QFontDatabase::addApplicationFont(":/dguided/fonts/SourceSansPro-Regular.ttf");
+
 	// Call the main creation function
 	ui_.setupUi(this);
 
 	refreshing_ = true;
 
 	ui_.TextEdit->setFocus();
+	ui_.TextEdit->setFont(QFont("SourceSansPro-Regular", 12));
 	setCurrentFilename(QString());
 
 	QActionGroup *grp = new QActionGroup(this);
