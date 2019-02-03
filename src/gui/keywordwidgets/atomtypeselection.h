@@ -77,6 +77,8 @@ class AtomTypeSelectionKeywordWidget : public KeywordDropDown, public KeywordWid
 	void updateWidgetValues(const CoreData& coreData);
 	// Update keyword data based on widget values
 	void updateKeywordData();
+	// Update summary text
+	void updateSummaryText();
 };
 
 #endif

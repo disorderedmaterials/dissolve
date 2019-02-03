@@ -28,6 +28,7 @@
 #include "templates/genericlisthelper.h"
 #include <QHBoxLayout>
 #include <QComboBox>
+#include <QString>
 
 // Constructor
 AtomTypeSelectionKeywordWidget::AtomTypeSelectionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : KeywordDropDown(this), KeywordWidgetBase(coreData, moduleData, prefix)
@@ -75,6 +76,10 @@ void AtomTypeSelectionKeywordWidget::itemChanged(QListWidgetItem* item)
 {
 	if (refreshing_) return;
 
+	updateKeywordData();
+
+	updateSummaryText();
+
 	emit(keywordValueChanged());
 }
 
@@ -107,6 +112,8 @@ void AtomTypeSelectionKeywordWidget::updateWidgetValues(const CoreData& coreData
 	// Update the list against the global AtomType list
 	ListWidgetUpdater<AtomTypeSelectionKeywordWidget,AtomType> listUpdater(ui.SelectionList, coreData_.constAtomTypes(), this, &AtomTypeSelectionKeywordWidget::updateSelectionRow);
 
+	updateSummaryText();
+
 	refreshing_ = false;
 }
 
@@ -121,4 +128,23 @@ void AtomTypeSelectionKeywordWidget::updateKeywordData()
 		if (item->checkState() == Qt::Checked) newSelection.add( (AtomType*) VariantPointer<AtomType>(item->data(Qt::UserRole)));
 	}
 	keyword_->setData(newSelection);
+}
+
+// Update summary text
+void AtomTypeSelectionKeywordWidget::updateSummaryText()
+{
+	// Create summary text for the KeywordDropDown button
+	AtomTypeList& selection = keyword_->data();
+	if (selection.nItems() == 0) setSummaryText("<None>");
+	else
+	{
+		CharString summaryText;
+		ListIterator<AtomTypeData> atomTypeIterator(selection.types());
+		while (AtomTypeData* atd = atomTypeIterator.iterate())
+		{
+			if (atomTypeIterator.isFirst()) summaryText = atd->atomTypeName();
+			else summaryText.strcatf(", %s", atd->atomTypeName());
+		}
+		setSummaryText(summaryText);
+	}
 }
