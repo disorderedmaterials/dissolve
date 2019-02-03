@@ -427,6 +427,8 @@ bool Dissolve::saveInput(const char* filename)
 
 			if (!parser.writeLineF("  %s\n", ModuleBlock::keyword(ModuleBlock::EndModuleKeyword))) return false;
 		}
+
+		if (!parser.writeLineF("%s\n", LayerBlock::keyword(LayerBlock::EndLayerKeyword))) return false;
 	}
 
 	// Write Simulation block
