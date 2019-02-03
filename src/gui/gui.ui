@@ -1544,7 +1544,7 @@
   </action>
   <action name="WorkspaceAddNewAction">
    <property name="text">
-    <string>Add &amp;New</string>
+    <string>Add &amp;New...</string>
    </property>
   </action>
   <action name="WorkspaceCurrentAction">
@@ -1562,7 +1562,7 @@
   </action>
   <action name="SimulationAddConfigurationAction">
    <property name="text">
-    <string>Add &amp;Configuration</string>
+    <string>Add &amp;Configuration...</string>
    </property>
   </action>
   <action name="WorkspaceAddWidgetGeneralAction">
@@ -1657,7 +1657,7 @@
   </action>
   <action name="SimulationAddSpeciesAction">
    <property name="text">
-    <string>Add &amp;Species</string>
+    <string>Add &amp;Species...</string>
    </property>
   </action>
   <action name="SessionCloseAction">
@@ -1682,7 +1682,7 @@
   </action>
   <action name="SimulationAddProcessingLayerAction">
    <property name="text">
-    <string>Add &amp;Processing Layer</string>
+    <string>Add &amp;Processing Layer...</string>
    </property>
   </action>
  </widget>
