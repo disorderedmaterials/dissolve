@@ -250,7 +250,6 @@ bool SpeciesBlock::parse(LineParser& parser, Dissolve* dissolve, Species* specie
 				break;
 			case (SpeciesBlock::EndSpeciesKeyword):
 				species->updateUsedAtomTypes();
-				species->addNaturalIsotopologue(dissolve->atomTypes());
 				species->updateGrains();
 				species->centreAtOrigin();
 				species->orderAtomsWithinGrains();
