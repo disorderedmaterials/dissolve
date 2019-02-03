@@ -192,11 +192,27 @@ void DissolveWindow::on_SessionSaveAction_triggered(bool checked)
 
 	modified_ = false;
 
+	updateControlsFrame();
+
 	updateWindowTitle();
 }
 
 void DissolveWindow::on_SessionSaveAsAction_triggered(bool checked)
 {
+	// Get a suitable input file name
+	QString newFile = QFileDialog::getSaveFileName(this, "Choose input file name to save", QDir().absolutePath(), "Dissolve input files (*.txt)");
+	if (newFile.isEmpty()) return;
+
+	dissolve_.setInputFilename(qPrintable(newFile));
+
+	// Attempt to save the file
+	if (!dissolve_.saveInput(dissolve_.inputFilename())) return;
+
+	modified_ = false;
+
+	updateControlsFrame();
+
+	updateWindowTitle();
 }
 
 void DissolveWindow::on_SessionQuitAction_triggered(bool checked)
