@@ -96,6 +96,9 @@ Configuration* AddConfigurationWizard::importConfiguration(Dissolve& dissolve)
 	// Set the name of the Configuration from the name edit
 	importTarget_->setName(qPrintable(ui_.FinishNameEdit->text()));
 
+	// Set the Configuration's temperature
+	importTarget_->setTemperature(ui_.FinishTemperatureSpin->value());
+
 	getBoxDetails();
 
 	importTarget_->initialise(dissolve.worldPool(), true, dissolve.pairPotentialRange(), dissolve.nBoxNormalisationPoints());
