@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>771</width>
-    <height>526</height>
+    <width>996</width>
+    <height>697</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -222,7 +222,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>771</width>
+     <width>996</width>
      <height>28</height>
     </rect>
    </property>
@@ -298,6 +298,8 @@
    <addaction name="FormatColourAction"/>
    <addaction name="FormatModuleNameAction"/>
    <addaction name="FormatClearAction"/>
+   <addaction name="separator"/>
+   <addaction name="InsertAngstromAction"/>
   </widget>
   <widget class="QToolBar" name="ModuleIconToolBar">
    <property name="windowTitle">
@@ -574,6 +576,21 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+-</string>
+   </property>
+  </action>
+  <action name="InsertAngstromAction">
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/dguided/icons/dguided_angstrom.svg</normaloff>:/dguided/icons/dguided_angstrom.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Angstrom</string>
+   </property>
+   <property name="toolTip">
+    <string>Insert an Angstrom symbol at the current location</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+', Shift+A</string>
    </property>
   </action>
  </widget>

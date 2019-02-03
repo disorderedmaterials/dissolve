@@ -577,6 +577,11 @@ void DGuidEdWindow::on_TextEdit_cursorPositionChanged()
 	alignmentChanged(ui_.TextEdit->alignment());
 }
 
+void DGuidEdWindow::on_InsertAngstromAction_triggered()
+{
+	ui_.TextEdit->textCursor().insertHtml("&#8491;");
+}
+
 /*
  * Text Formatting
  */

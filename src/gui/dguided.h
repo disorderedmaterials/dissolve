@@ -136,6 +136,7 @@ class DGuidEdWindow : public QMainWindow
 	void textEditContentChanged();
 	void on_TextEdit_currentCharFormatChanged(const QTextCharFormat &format);
 	void on_TextEdit_cursorPositionChanged();
+	void on_InsertAngstromAction_triggered();
 
 
 	/*
