@@ -179,7 +179,7 @@ void AddProcessingLayerWizard::reset()
 	resetToPage(AddProcessingLayerWizard::StartPage);
 
 	// Set a new, unique name ready on the final page
-	ui_.FinishNameEdit->setText(dissolveReference_->uniqueProcessingLayerName("Processing"));
+	ui_.FinishNameEdit->setText(dissolveReference_->uniqueProcessingLayerName("Main Processing"));
 }
 
 /*
