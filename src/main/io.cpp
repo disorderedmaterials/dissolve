@@ -422,7 +422,7 @@ bool Dissolve::saveInput(const char* filename)
 				// If the keyword has never been set (i.e. it still has its default value) don't bother to write it
 				if (!keyword->isSet()) continue;
 
-				if (!keyword->write(parser, "  ")) return false;
+				if (!keyword->write(parser, "    ")) return false;
 			}
 
 			if (!parser.writeLineF("  %s\n", ModuleBlock::keyword(ModuleBlock::EndModuleKeyword))) return false;
