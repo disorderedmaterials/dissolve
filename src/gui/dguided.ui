@@ -223,7 +223,7 @@
      <x>0</x>
      <y>0</y>
      <width>771</width>
-     <height>25</height>
+     <height>28</height>
     </rect>
    </property>
    <widget class="QMenu" name="FileMenu">
@@ -287,6 +287,8 @@
    <addaction name="FormatBoldAction"/>
    <addaction name="FormatItalicAction"/>
    <addaction name="FormatUnderlineAction"/>
+   <addaction name="FormatSuperscriptAction"/>
+   <addaction name="FormatSubscriptAction"/>
    <addaction name="separator"/>
    <addaction name="FormatAlignLeftAction"/>
    <addaction name="FormatAlignCentreAction"/>
@@ -536,6 +538,42 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="FormatSuperscriptAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/dguided/icons/dguided_superscript.svg</normaloff>:/dguided/icons/dguided_superscript.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Superscript</string>
+   </property>
+   <property name="toolTip">
+    <string>Superscript</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+=</string>
+   </property>
+  </action>
+  <action name="FormatSubscriptAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/dguided/icons/dguided_subscript.svg</normaloff>:/dguided/icons/dguided_subscript.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Subscript</string>
+   </property>
+   <property name="toolTip">
+    <string>Subscript</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+-</string>
    </property>
   </action>
  </widget>

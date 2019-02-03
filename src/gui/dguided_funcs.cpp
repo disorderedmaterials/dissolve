@@ -42,7 +42,6 @@ DGuidEdWindow::DGuidEdWindow(QMainWindow* parent) : QMainWindow(parent)
 
 	refreshing_ = true;
 
-	fontChanged(ui_.TextEdit->font());
 	ui_.TextEdit->setFocus();
 	setCurrentFilename(QString());
 
@@ -569,6 +568,7 @@ void DGuidEdWindow::textEditContentChanged()
 void DGuidEdWindow::on_TextEdit_currentCharFormatChanged(const QTextCharFormat &format)
 {
 	fontChanged(format.font());
+	verticalAlignmentChanged(format.verticalAlignment());
 	colorChanged(format.foreground().color());
 }
 
@@ -584,21 +584,35 @@ void DGuidEdWindow::on_TextEdit_cursorPositionChanged()
 void DGuidEdWindow::on_FormatBoldAction_triggered(bool checked)
 {
 	QTextCharFormat fmt;
-	fmt.setFontWeight(ui_.FormatBoldAction->isChecked() ? QFont::Bold : QFont::Normal);
+	fmt.setFontWeight(checked ? QFont::Bold : QFont::Normal);
 	mergeFormatOnWordOrSelection(fmt);
 }
 
 void DGuidEdWindow::on_FormatItalicAction_triggered(bool checked)
 {
 	QTextCharFormat fmt;
-	fmt.setFontItalic(ui_.FormatItalicAction->isChecked());
+	fmt.setFontItalic(checked);
 	mergeFormatOnWordOrSelection(fmt);
 }
 
 void DGuidEdWindow::on_FormatUnderlineAction_triggered(bool checked)
 {
 	QTextCharFormat fmt;
-	fmt.setFontUnderline(ui_.FormatUnderlineAction->isChecked());
+	fmt.setFontUnderline(checked);
+	mergeFormatOnWordOrSelection(fmt);
+}
+
+void DGuidEdWindow::on_FormatSuperscriptAction_triggered(bool checked)
+{
+	QTextCharFormat fmt;
+	fmt.setVerticalAlignment(checked ? QTextCharFormat::AlignSuperScript : QTextCharFormat::AlignNormal);
+	mergeFormatOnWordOrSelection(fmt);
+}
+
+void DGuidEdWindow::on_FormatSubscriptAction_triggered(bool checked)
+{
+	QTextCharFormat fmt;
+	fmt.setVerticalAlignment(checked ? QTextCharFormat::AlignSubScript : QTextCharFormat::AlignNormal);
 	mergeFormatOnWordOrSelection(fmt);
 }
 
@@ -691,6 +705,12 @@ void DGuidEdWindow::alignmentChanged(Qt::Alignment a)
 	{
 		ui_.FormatAlignJustifyAction->setChecked(true);
 	}
+}
+
+void DGuidEdWindow::verticalAlignmentChanged(QTextCharFormat::VerticalAlignment alignment)
+{
+	ui_.FormatSuperscriptAction->setChecked(alignment == QTextCharFormat::AlignSuperScript);
+	ui_.FormatSubscriptAction->setChecked(alignment == QTextCharFormat::AlignSubScript);
 }
 
 /*

@@ -145,6 +145,8 @@ class DGuidEdWindow : public QMainWindow
 	void on_FormatBoldAction_triggered(bool checked);
 	void on_FormatItalicAction_triggered(bool checked);
 	void on_FormatUnderlineAction_triggered(bool checked);
+	void on_FormatSuperscriptAction_triggered(bool checked);
+	void on_FormatSubscriptAction_triggered(bool checked);
 	void on_FormatColourAction_triggered(bool checked);
 	void on_FormatModuleNameAction_triggered(bool checked);
 	void on_FormatClearAction_triggered(bool checked);
@@ -160,6 +162,7 @@ class DGuidEdWindow : public QMainWindow
 	void fontChanged(const QFont &f);
 	void colorChanged(const QColor &c);
 	void alignmentChanged(Qt::Alignment a);
+	void verticalAlignmentChanged(QTextCharFormat::VerticalAlignment alignment);
 
 
 	/*
