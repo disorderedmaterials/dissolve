@@ -26,7 +26,7 @@
 // Constructor
 FileAndFormat::FileAndFormat()
 {
-	format_ = -1;
+	format_ = 0;
 }
 
 // Conversion operators
