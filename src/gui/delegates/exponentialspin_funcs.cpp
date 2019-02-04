@@ -51,6 +51,7 @@ void ExponentialSpinDelegate::setEditorData(QWidget* editor, const QModelIndex& 
 
 	ExponentialSpin* spinBox = static_cast<ExponentialSpin*>(editor);
 	spinBox->setValue(value);
+	spinBox->selectAll();
 }
 
 // Get value from editing widget, and set back in model
