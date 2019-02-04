@@ -51,7 +51,7 @@ void WizardWidget::setUpHeaderAndFooter(QWidget* widget)
 
 		headerUi_.setupUi(headerWidget);
 
-		connect(headerUi_.CloseButton, SIGNAL(clicked(bool)), this, SLOT(closeButtonClicked(bool)));
+		connect(headerUi_.CloseButton, SIGNAL(clicked(bool)), this, SLOT(closeWizard(bool)));
 	}
 	else printf("Header widget not found.\n");
 
@@ -63,9 +63,9 @@ void WizardWidget::setUpHeaderAndFooter(QWidget* widget)
 		footerUi_.setupUi(footerWidget);
 
 		// Connect signals / slots
-		connect(footerUi_.BackButton, SIGNAL(clicked(bool)), this, SLOT(backButtonClicked(bool)));
-		connect(footerUi_.NextButton, SIGNAL(clicked(bool)), this, SLOT(nextButtonClicked(bool)));
-		connect(footerUi_.FinishButton, SIGNAL(clicked(bool)), this, SLOT(finishButtonClicked(bool)));
+		connect(footerUi_.BackButton, SIGNAL(clicked(bool)), this, SLOT(goToPreviousPage(bool)));
+		connect(footerUi_.NextButton, SIGNAL(clicked(bool)), this, SLOT(goToNextPage(bool)));
+		connect(footerUi_.FinishButton, SIGNAL(clicked(bool)), this, SLOT(finishWizard(bool)));
 	}
 	else printf("Footer widget not found.\n");
 }
@@ -115,6 +115,18 @@ void WizardWidget::setCloseButtonAvailable(bool b)
 	closeButtonAvailable_ = b;
 
 	if (headerAvailable_) headerUi_.CloseButton->setVisible(closeButtonAvailable_);
+}
+
+// Return whether header controls are available
+bool WizardWidget::headerAvailable() const
+{
+	return headerAvailable_;
+}
+ 
+// Return whether footer controls are available
+bool WizardWidget::footerAvailable() const
+{
+	return footerAvailable_;
 }
 
 /*
@@ -189,8 +201,14 @@ bool WizardWidget::updateProgressionControls()
 	updateHeaderAndFooter(currentPage_);
 }
 
-// Back button clicked
-void WizardWidget::backButtonClicked(bool checked)
+// Go to previous page
+void WizardWidget::goToPreviousPage(bool checked)
+{
+	goToPreviousPage();
+}
+
+// Go to previous page
+void WizardWidget::goToPreviousPage()
 {
 	if (!currentPage_) return;
 
@@ -201,8 +219,14 @@ void WizardWidget::backButtonClicked(bool checked)
 	goBack();
 }
 
-// Next button clicked
-void WizardWidget::nextButtonClicked(bool checked)
+// Go to next page
+void WizardWidget::goToNextPage(bool checked)
+{
+	goToNextPage();
+}
+
+// Go to next page
+void WizardWidget::goToNextPage()
 {
 	if (!currentPage_) return;
 
@@ -218,14 +242,14 @@ void WizardWidget::nextButtonClicked(bool checked)
 	else goToPage(nextIndex);
 }
 
-// Finish button clicked
-void WizardWidget::finishButtonClicked(bool checked)
+// End the wizard
+void WizardWidget::finishWizard(bool checked)
 {
 	emit(finished());
 }
 
-// Close button clicked
-void WizardWidget::closeButtonClicked(bool checked)
+// Close the wizard
+void WizardWidget::closeWizard(bool checked)
 {
 	emit(canceled());
 }

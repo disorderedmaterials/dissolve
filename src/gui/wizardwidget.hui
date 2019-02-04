@@ -69,6 +69,10 @@ class WizardWidget : public QWidget
 	public:
 	// Set whether the close button is available
 	void setCloseButtonAvailable(bool b);
+	// Return whether header controls are available
+	bool headerAvailable() const;
+	// Return whether footer controls are available
+	bool footerAvailable() const;
 
 
 	/*
@@ -117,14 +121,18 @@ class WizardWidget : public QWidget
 	protected slots:
 	// Update state of progression ('Next' / 'Finish') controls
 	bool updateProgressionControls();
-	// Back button clicked
-	void backButtonClicked(bool checked);
-	// Next button clicked
-	void nextButtonClicked(bool checked);
-	// Finish button clicked
-	void finishButtonClicked(bool checked);
-	// Close button clicked
-	void closeButtonClicked(bool checked);
+	// Go to previous page
+	void goToPreviousPage(bool checked);
+	// Go to previous page
+	void goToPreviousPage();
+	// Go to next page
+	void goToNextPage(bool checked);
+	// Go to next page
+	void goToNextPage();
+	// End the wizard
+	void finishWizard(bool checked);
+	// Close the wizard
+	void closeWizard(bool checked);
 
 	public:
 	// Reset wizard and begin again from specified page
