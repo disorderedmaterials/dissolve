@@ -236,7 +236,7 @@ int Module::nTargetConfigurations() const
 }
 
 // Return first targeted Configuration
-RefList<Configuration,bool>& Module::targetConfigurations()
+const RefList<Configuration,bool>& Module::targetConfigurations() const
 {
 	return targetConfigurations_;
 }

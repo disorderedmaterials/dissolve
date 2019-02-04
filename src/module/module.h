@@ -145,8 +145,8 @@ class Module : public ListItem<Module>
 	bool removeTargetConfiguration(Configuration* cfg);
 	// Return number of targeted Configurations
 	int nTargetConfigurations() const;
-	// Return first targeted Configuration
-	RefList<Configuration,bool>& targetConfigurations();
+	// Return targeted Configurations
+	const RefList<Configuration,bool>& targetConfigurations() const;
 	// Return if the specified Configuration is in the targets list
 	bool isTargetConfiguration(Configuration* cfg) const;
 	// Copy Configuration targets from specified Module
