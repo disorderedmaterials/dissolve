@@ -39,8 +39,6 @@ class IsotopologueListKeywordWidget : public KeywordDropDown, public KeywordWidg
 	public:
 	// Constructor
 	IsotopologueListKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
-        // Main form declaration
-        Ui::IsotopologueListWidget ui;
 
 
 	/*
@@ -52,9 +50,14 @@ class IsotopologueListKeywordWidget : public KeywordDropDown, public KeywordWidg
 
 
 	/*
-	 * Signals / Slots
+	 * Widgets
 	 */
+	private:
+        // Main form declaration
+        Ui::IsotopologueListWidget ui_;
+
 	private slots:
+	void autoButton_clicked(bool checked);
 	void addButton_clicked(bool checked);
 	void removeButton_clicked(bool checked);
 	void isotopologueTable_itemChanged(QTableWidgetItem* w);

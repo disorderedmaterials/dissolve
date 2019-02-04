@@ -40,6 +40,32 @@
       <number>4</number>
      </property>
      <item>
+      <widget class="QToolButton" name="AutoButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Auto</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../main.qrc">
+         <normaloff>:/special/icons/special_wizard.svg</normaloff>:/special/icons/special_wizard.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>16</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextBesideIcon</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer_2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
