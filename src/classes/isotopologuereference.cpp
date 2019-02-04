@@ -100,6 +100,12 @@ double IsotopologueReference::weight()
 	return weight_;
 }
 
+// Return whether the supplied Configuration and Species match
+bool IsotopologueReference::matches(Configuration* cfg, Species* sp) const
+{
+	return ((configuration_ == cfg) && (species_ == sp));
+}
+
 /*
  * GenericItemBase Implementations
  */

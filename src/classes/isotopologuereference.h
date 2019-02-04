@@ -74,6 +74,8 @@ class IsotopologueReference : public ListItem<IsotopologueReference>, public Gen
 	void setWeight(double weight);
 	// Return weight
 	double weight();
+	// Return whether the supplied Configuration and Species match
+	bool matches(Configuration* cfg, Species* sp) const;
 
 
 	/*
