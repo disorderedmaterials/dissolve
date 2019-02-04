@@ -101,7 +101,13 @@ const char* FileAndFormat::filename() const
  * Check
  */
 
-// Return whether a valid filename and format have been set
+// Return whether a filename has been set
+bool FileAndFormat::hasFilename() const
+{
+	return (!filename_.isEmpty());
+}
+
+// Return whether a filename and format have been set
 bool FileAndFormat::hasValidFileAndFormat() const
 {
 	if (filename_.isEmpty()) return false;

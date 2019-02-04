@@ -85,7 +85,9 @@ class FileAndFormat
 	 * Check
 	 */
 	public:
-	// Return whether a valid filename and format have been set
+	// Return whether a filename has been set
+	bool hasFilename() const;
+	// Return whether a filename and format have been set
 	bool hasValidFileAndFormat() const;
 
 
