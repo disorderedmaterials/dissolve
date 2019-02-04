@@ -63,13 +63,16 @@ bool AtomShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		const int nShakesPerAtom = keywords_.asInt("ShakesPerAtom");
 		const double targetAcceptanceRate = keywords_.asDouble("TargetAcceptanceRate");
 		double stepSize = GenericListHelper<double>::value(moduleData, "StepSize", uniqueName(), keywords_.asDouble("StepSize"));
+		const double stepSizeMax = keywords_.asDouble("StepSizeMax");
+		const double stepSizeMin = keywords_.asDouble("StepSizeMin");
 		const double termScale = 1.0;
 		const double rRT = 1.0/(.008314472*cfg->temperature());
 
 		// Print argument/parameter summary
 		Messenger::print("AtomShake: Cutoff distance is %f\n", cutoffDistance);
 		Messenger::print("AtomShake: Performing %i shake(s) per Atom\n", nShakesPerAtom);
-		Messenger::print("AtomShake: Translation step is %f Angstroms, target acceptance rate is %f.\n", stepSize, targetAcceptanceRate);
+		Messenger::print("AtomShake: Step size for adjustments is %f Angstroms (allowed range is %f <= delta <= %f).\n", stepSize, stepSizeMin, stepSizeMax);
+		Messenger::print("AtomShake: Target acceptance rate is %f.\n", targetAcceptanceRate);
 		Messenger::print("\n");
 
 		ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
@@ -191,18 +194,14 @@ bool AtomShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		Messenger::print("Overall acceptance rate was %4.2f% (%i of %i attempted moves) (%s work, %s comms, %i nodists, %i broadcasts)\n", 100.0*rate, nAccepted, nTries, timer.totalTimeString(), procPool.accumulatedTimeString(), distributor.nUnavailableInstances(), distributor.nChangeBroadcastsRequired());
 		Messenger::print("Total energy delta was %10.4e kJ/mol.\n", totalDelta);
 
-		// Adjust step size - if nAccepted was zero, just decrease the current stepSize by a constant factor
+		// Update and set translation step size
 		stepSize *= (nAccepted == 0) ? 0.8 : rate/targetAcceptanceRate;
+		if (stepSize < stepSizeMin) stepSize = stepSizeMin;
+		else if (stepSize > stepSizeMax) stepSize = stepSizeMax;
 
-		// Clamp step size
-// 		if (stepSize > 0.5) stepSize = 0.5;
-// 		else if (stepSize_ > maxTranslationStep_) stepSize_ = maxTranslationStep_;
-// 		if (rotationStep_ < 3.0) rotationStep_ = 3.0;
-
-		// Store updated parameter values
+		Messenger::print("Updated step size is %f Angstroms.\n", stepSize); 
 		GenericListHelper<double>::realise(moduleData, "StepSize", uniqueName(), GenericItem::InRestartFileFlag) = stepSize;
-		Messenger::print("Updated translation step is %f Angstroms.\n", stepSize);
-		
+
 		// Increase coordinate index in Configuration
 		if (nAccepted > 0) cfg->incrementCoordinateIndex();
 	}

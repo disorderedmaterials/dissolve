@@ -32,8 +32,10 @@ void AtomShakeModule::setUpKeywords()
 	group->add(new DoubleModuleKeyword(0.33, 0.01, 1.0), "TargetAcceptanceRate", "Target acceptance rate for Monte Carlo moves");
 
 	// Translations
-	group = addKeywordGroup("Translation");
-	group->add(new DoubleModuleKeyword(0.05), "StepSize", "Maximal step size for single Monte Carlo move", GenericItem::InRestartFileFlag);
+	group = addKeywordGroup("Translations");
+	group->add(new DoubleModuleKeyword(0.05), "StepSize", "Step size for translational component of Monte Carlo move (Angstroms)", "<stepsize>", GenericItem::InRestartFileFlag);
+	group->add(new DoubleModuleKeyword(1.0), "StepSizeMax", "Maximum step size for translations (Angstroms)", "<stepsize>");
+	group->add(new DoubleModuleKeyword(0.001), "StepSizeMin", "Minimum step size for translations (Angstroms)", "<stepsize>");
 }
 
 // Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
