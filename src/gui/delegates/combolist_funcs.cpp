@@ -53,6 +53,10 @@ ComboListDelegate::~ComboListDelegate()
 	if (items_) delete items_;
 }
 
+/*
+ * QItemDelegate Virtuals
+ */
+
 // Create editor
 QWidget* ComboListDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
@@ -62,6 +66,8 @@ QWidget* ComboListDelegate::createEditor(QWidget* parent, const QStyleOptionView
 	while (items_->nextItem()) editor->addItem(items_->currentItemText());
 	editor->setEditable(allowNewItems_);
 
+	// Connect index changed signal of combobox to a local slot, so we can signal to close the editor immediately
+	connect(editor, SIGNAL(currentIndexChanged(int)), this, SLOT(comboIndexChanged(int)));
 	return editor;
 }
 
@@ -96,4 +102,17 @@ void ComboListDelegate::setModelData(QWidget* editor, QAbstractItemModel* model,
 void ComboListDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
 	editor->setGeometry(option.rect);
+}
+
+/*
+ * Signals / Slots
+ */
+
+// Index changed in combo box
+void ComboListDelegate::comboIndexChanged(int index)
+{
+	QComboBox* editor = qobject_cast<QComboBox*>(sender());
+
+	emit commitData(editor);
+	emit closeEditor(editor);
 }

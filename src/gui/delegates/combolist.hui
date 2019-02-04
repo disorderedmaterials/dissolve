@@ -158,18 +158,28 @@ class ComboListDelegate : public QItemDelegate
 {
 	Q_OBJECT
 
+	public:
+	// Constructor
+	ComboListDelegate(QObject* parent, ComboListItems* items, bool allowNewItems = false);
+	// Destructor
+	virtual ~ComboListDelegate();
+
+
+	/*
+	 * Data
+	 */
 	private:
 	// Associated item list
 	ComboListItems* items_;
 	// Parameters for editor
 	bool allowNewItems_;
 
-	public:
-	// Constructor
-	ComboListDelegate(QObject* parent, ComboListItems* items, bool allowNewItems = false);
-	// Destructor
-	virtual ~ComboListDelegate();
-	// Reimplemented virtual function to create editing widget
+
+	/*
+	 * QItemDelegate Virtuals
+	 */
+	private:
+	// Create editing widget
 	QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const;
 	// Set the data to appear when the editor is called
 	void setEditorData(QWidget* editor, const QModelIndex& index) const;
@@ -177,6 +187,14 @@ class ComboListDelegate : public QItemDelegate
 	void setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const;
 	// Resize editor
 	void updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+
+
+	/*
+	 * Signals / Slots
+	 */
+	private slots:
+	// Index changed in combo box
+	void comboIndexChanged(int index);
 };
 
 #endif
