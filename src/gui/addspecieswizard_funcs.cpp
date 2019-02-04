@@ -49,6 +49,7 @@ AddSpeciesWizard::AddSpeciesWizard(QWidget* parent) : temporaryDissolve_(tempora
 	// Connect signals / slots
 	connect(ui_.AtomTypesList->itemDelegate(), SIGNAL(commitData(QWidget*)), this, SLOT(atomTypesListEdited(QWidget*)));
 	connect(ui_.CreateAtomicElementSelector, SIGNAL(elementSelectionChanged()), this, SLOT(createAtomicElementChanged()));
+	if (footerAvailable()) connect(ui_.CreateAtomicElementSelector, SIGNAL(elementDoubleClicked()), this, SLOT(goToNextPage()));
 
 	lockedForRefresh_ = 0;
 }
