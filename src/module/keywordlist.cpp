@@ -22,6 +22,21 @@
 #include "module/keywordlist.h"
 #include "base/sysfunc.h"
 
+// Constructor
+ModuleKeywordList::ModuleKeywordList(const Module* moduleParent)
+{
+	moduleParent_ = moduleParent;
+}
+
+// Destructor
+ModuleKeywordList::~ModuleKeywordList()
+{
+}
+
+/*
+ * Keyword List
+ */
+
 // Add keyword
 bool ModuleKeywordList::add(ModuleKeywordBase* object, const char* keyword, const char* description, int genericItemFlags)
 {
@@ -34,6 +49,9 @@ bool ModuleKeywordList::add(ModuleKeywordBase* object, const char* keyword, cons
 	// Take ownership of the passed object, and set its basic information
 	keywords_.own(object);
 	object->set(keyword, description, arguments, genericItemFlags);
+
+	// Set the parent of the keyword
+	object->setModuleParent(moduleParent_);
 
 	return true;
 }

@@ -41,6 +41,22 @@ const char* ModuleKeywordBase::keywordDataType(KeywordDataType kdt)
 }
 
 /*
+ * Module Parent
+ */
+
+// Set Module parent to which this keyword belongs
+void ModuleKeywordBase::setModuleParent(const Module* parent)
+{
+	moduleParent_ = parent;
+}
+
+// Return Module to which this keyword belongs
+const Module* ModuleKeywordBase::moduleParent() const
+{
+	return moduleParent_;
+}
+
+/*
  * Keyword Description
  */
 

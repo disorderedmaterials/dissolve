@@ -27,11 +27,21 @@
 #include "templates/list.h"
 
 // Forward Declarations
-/* none */
+class Module;
 
 // Module Keyword List
 class ModuleKeywordList
 {
+	public:
+	// Constructor / Destructor
+	ModuleKeywordList(const Module* moduleParent);
+	~ModuleKeywordList();
+
+	private:
+	// Module parent
+	const Module* moduleParent_;
+
+
 	/*
 	 * Keyword List
 	 */

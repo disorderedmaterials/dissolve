@@ -28,6 +28,7 @@
 
 // Forward Declarations
 class CoreData;
+class Module;
 class ProcessPool;
 
 // Module Keyword Base Class
@@ -42,6 +43,20 @@ class ModuleKeywordBase : public ListItem<ModuleKeywordBase>
 	virtual ~ModuleKeywordBase();
 	// Return DataType name
 	static const char* keywordDataType(KeywordDataType kdt);
+
+
+	/*
+	 * Module Parent
+	 */
+	private:
+	// Module to which this keyword belongs
+	const Module* moduleParent_;
+
+	public:
+	// Set Module to which this keyword belongs
+	void setModuleParent(const Module* parent);
+	// Return Module to which this keyword belongs
+	const Module* moduleParent() const;
 
 
 	/*
