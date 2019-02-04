@@ -150,8 +150,11 @@ class DGuidEdWindow : public QMainWindow
 	void on_FormatSubscriptAction_triggered(bool checked);
 	void on_FormatColourAction_triggered(bool checked);
 	void on_FormatModuleNameAction_triggered(bool checked);
+	void on_FormatWidgetNameAction_triggered(bool checked);
+	void on_FormatStepsAction_triggered(bool checked);
 	void on_FormatClearAction_triggered(bool checked);
 	void textAlign(QAction *a);
+	void listFormat(QAction *a);
 
 
 	/*
@@ -164,6 +167,7 @@ class DGuidEdWindow : public QMainWindow
 	void colorChanged(const QColor &c);
 	void alignmentChanged(Qt::Alignment a);
 	void verticalAlignmentChanged(QTextCharFormat::VerticalAlignment alignment);
+	void listFormatChanged(QTextListFormat::Style style);
 
 
 	/*

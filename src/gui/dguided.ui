@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>996</width>
-    <height>697</height>
+    <width>1112</width>
+    <height>760</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -222,8 +222,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>996</width>
-     <height>28</height>
+     <width>1112</width>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="FileMenu">
@@ -295,11 +295,19 @@
    <addaction name="FormatAlignRightAction"/>
    <addaction name="FormatAlignJustifyAction"/>
    <addaction name="separator"/>
+   <addaction name="FormatListNoneAction"/>
+   <addaction name="FormatListCircleAction"/>
+   <addaction name="FormatListSquareAction"/>
+   <addaction name="FormatListNumberAction"/>
+   <addaction name="separator"/>
    <addaction name="FormatColourAction"/>
    <addaction name="FormatModuleNameAction"/>
+   <addaction name="FormatWidgetNameAction"/>
+   <addaction name="FormatStepsAction"/>
    <addaction name="FormatClearAction"/>
    <addaction name="separator"/>
    <addaction name="InsertAngstromAction"/>
+   <addaction name="separator"/>
   </widget>
   <widget class="QToolBar" name="ModuleIconToolBar">
    <property name="windowTitle">
@@ -515,7 +523,7 @@
   <action name="FormatModuleNameAction">
    <property name="icon">
     <iconset resource="main.qrc">
-     <normaloff>:/modules/icons/modules_generic.svg</normaloff>:/modules/icons/modules_generic.svg</iconset>
+     <normaloff>:/dguided/icons/dguided_formatmodule.svg</normaloff>:/dguided/icons/dguided_formatmodule.svg</iconset>
    </property>
    <property name="text">
     <string>Module Format</string>
@@ -591,6 +599,90 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+', Shift+A</string>
+   </property>
+  </action>
+  <action name="FormatWidgetNameAction">
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/dguided/icons/dguided_formatwidget.svg</normaloff>:/dguided/icons/dguided_formatwidget.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Widget Format</string>
+   </property>
+   <property name="toolTip">
+    <string>Format the current selection as a Widget name (italic, green)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+W</string>
+   </property>
+  </action>
+  <action name="FormatStepsAction">
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/dguided/icons/dguided_formatsteps.svg</normaloff>:/dguided/icons/dguided_formatsteps.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Steps Format</string>
+   </property>
+   <property name="toolTip">
+    <string>Format the current selection as a steps header (bold, grey)</string>
+   </property>
+  </action>
+  <action name="FormatListCircleAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/dguided/icons/dguided_listcircle.svg</normaloff>:/dguided/icons/dguided_listcircle.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Format list (circle)</string>
+   </property>
+  </action>
+  <action name="FormatListSquareAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/dguided/icons/dguided_listsquare.svg</normaloff>:/dguided/icons/dguided_listsquare.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Format list (square)</string>
+   </property>
+   <property name="toolTip">
+    <string>Format list (square)</string>
+   </property>
+  </action>
+  <action name="FormatListNumberAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/dguided/icons/dguided_listnumber.svg</normaloff>:/dguided/icons/dguided_listnumber.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Format list (number)</string>
+   </property>
+   <property name="toolTip">
+    <string>Format list (number)</string>
+   </property>
+  </action>
+  <action name="FormatListNoneAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/dguided/icons/dguided_listnone.svg</normaloff>:/dguided/icons/dguided_listnone.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Format list (none)</string>
+   </property>
+   <property name="toolTip">
+    <string>Format list (none)</string>
    </property>
   </action>
  </widget>

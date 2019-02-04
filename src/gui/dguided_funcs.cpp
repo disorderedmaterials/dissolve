@@ -27,6 +27,7 @@
 #include <QColorDialog>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QTextList>
 #include <QFontDatabase>
 #include <QMessageBox>
 #include <QXmlStreamReader>
@@ -50,12 +51,21 @@ DGuidEdWindow::DGuidEdWindow(QMainWindow* parent) : QMainWindow(parent)
 	ui_.TextEdit->setFont(QFont("SourceSansPro-Regular", 12));
 	setCurrentFilename(QString());
 
+	// Create action group for text alignment options
 	QActionGroup *grp = new QActionGroup(this);
 	connect(grp, SIGNAL(triggered(QAction*)), this, SLOT(textAlign(QAction*)));
 	grp->addAction(ui_.FormatAlignLeftAction);
 	grp->addAction(ui_.FormatAlignRightAction);
 	grp->addAction(ui_.FormatAlignCentreAction);
 	grp->addAction(ui_.FormatAlignJustifyAction);
+
+	// Create action group for list formatting
+	grp = new QActionGroup(this);
+	connect(grp, SIGNAL(triggered(QAction*)), this, SLOT(listFormat(QAction*)));
+	grp->addAction(ui_.FormatListNoneAction);
+	grp->addAction(ui_.FormatListCircleAction);
+	grp->addAction(ui_.FormatListSquareAction);
+	grp->addAction(ui_.FormatListNumberAction);
 
 	fontChanged(ui_.TextEdit->font());
 	colorChanged(ui_.TextEdit->textColor());
@@ -580,6 +590,10 @@ void DGuidEdWindow::on_TextEdit_currentCharFormatChanged(const QTextCharFormat &
 void DGuidEdWindow::on_TextEdit_cursorPositionChanged()
 {
 	alignmentChanged(ui_.TextEdit->alignment());
+
+	QTextList *list = ui_.TextEdit->textCursor().currentList();
+	if (list) listFormatChanged(list->format().style());
+	else listFormatChanged(QTextListFormat::ListStyleUndefined);
 }
 
 void DGuidEdWindow::on_InsertAngstromAction_triggered()
@@ -644,6 +658,34 @@ void DGuidEdWindow::on_FormatModuleNameAction_triggered(bool checked)
 	QTextCharFormat fmt;
 	fmt.setForeground(col);
 	fmt.setFontWeight(QFont::Bold);
+	fmt.setFontItalic(false);
+
+	mergeFormatOnWordOrSelection(fmt);
+	colorChanged(col);
+}
+
+void DGuidEdWindow::on_FormatWidgetNameAction_triggered(bool checked)
+{
+	QColor col = QColor(0,187,0);
+	
+	QTextCharFormat fmt;
+	fmt.setForeground(col);
+	fmt.setFontWeight(QFont::Normal);
+	fmt.setFontItalic(true);
+
+	mergeFormatOnWordOrSelection(fmt);
+	colorChanged(col);
+}
+
+void DGuidEdWindow::on_FormatStepsAction_triggered(bool checked)
+{
+	QColor col = QColor(187,187,187);
+	
+	QTextCharFormat fmt;
+	fmt.setForeground(col);
+	fmt.setFontWeight(QFont::Bold);
+	fmt.setFontItalic(false);
+
 	mergeFormatOnWordOrSelection(fmt);
 	colorChanged(col);
 }
@@ -659,6 +701,45 @@ void DGuidEdWindow::textAlign(QAction *a)
 	else if (a == ui_.FormatAlignCentreAction) ui_.TextEdit->setAlignment(Qt::AlignHCenter);
 	else if (a == ui_.FormatAlignRightAction) ui_.TextEdit->setAlignment(Qt::AlignRight | Qt::AlignAbsolute);
 	else if (a == ui_.FormatAlignJustifyAction) ui_.TextEdit->setAlignment(Qt::AlignJustify);
+}
+
+void DGuidEdWindow::listFormat(QAction *a)
+{
+	QTextCursor cursor = ui_.TextEdit->textCursor();
+	QTextListFormat::Style style = QTextListFormat::ListStyleUndefined;
+
+	if (a == ui_.FormatListNoneAction) style = QTextListFormat::ListStyleUndefined;
+	else if (a == ui_.FormatListCircleAction) style = QTextListFormat::ListCircle;
+	else if (a == ui_.FormatListSquareAction) style = QTextListFormat::ListSquare;
+	else if (a == ui_.FormatListNumberAction) style = QTextListFormat::ListDecimal;
+
+	cursor.beginEditBlock();
+
+	QTextBlockFormat blockFmt = cursor.blockFormat();
+
+	if (style == QTextListFormat::ListStyleUndefined) {
+		blockFmt.setObjectIndex(-1);
+		cursor.setBlockFormat(blockFmt);
+		QTextCharFormat fmt;
+		cursor.select(QTextCursor::LineUnderCursor);
+		cursor.mergeCharFormat(fmt);
+		ui_.TextEdit->mergeCurrentCharFormat(fmt);
+	}
+	else
+	{
+		QTextListFormat listFmt;
+		if (cursor.currentList()) listFmt = cursor.currentList()->format();
+		else
+		{
+			listFmt.setIndent(blockFmt.indent() + 1);
+			blockFmt.setIndent(0);
+			cursor.setBlockFormat(blockFmt);
+		}
+		listFmt.setStyle(style);
+		cursor.createList(listFmt);
+	}
+
+	cursor.endEditBlock();
 }
 
 /*
@@ -721,6 +802,25 @@ void DGuidEdWindow::verticalAlignmentChanged(QTextCharFormat::VerticalAlignment 
 {
 	ui_.FormatSuperscriptAction->setChecked(alignment == QTextCharFormat::AlignSuperScript);
 	ui_.FormatSubscriptAction->setChecked(alignment == QTextCharFormat::AlignSubScript);
+}
+
+void DGuidEdWindow::listFormatChanged(QTextListFormat::Style style)
+{
+	switch (style)
+	{
+		case (QTextListFormat::ListCircle):
+			ui_.FormatListCircleAction->setChecked(true);
+			break;
+		case (QTextListFormat::ListSquare):
+			ui_.FormatListSquareAction->setChecked(true);
+			break;
+		case (QTextListFormat::ListDecimal):
+			ui_.FormatListNumberAction->setChecked(true);
+			break;
+		default:
+			ui_.FormatListNoneAction->setChecked(true);
+			break;
+	}
 }
 
 /*

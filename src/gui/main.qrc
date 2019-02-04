@@ -9,7 +9,14 @@
   <qresource prefix="dguided">
     <file>icons/dguided_redo.svg</file>
     <file>icons/dguided_clearformat.svg</file>
+    <file>icons/dguided_listcircle.svg</file>
+    <file>icons/dguided_listnone.svg</file>
+    <file>icons/dguided_listnumber.svg</file>
+    <file>icons/dguided_listsquare.svg</file>
     <file>icons/dguided_undo.svg</file>
+    <file>icons/dguided_formatsteps.svg</file>
+    <file>icons/dguided_formatmodule.svg</file>
+    <file>icons/dguided_formatwidget.svg</file>
     <file>fonts/SourceSansPro-Regular.ttf</file>
     <file>icons/dguided_copy.svg</file>
     <file>icons/dguided_angstrom.svg</file>
