@@ -22,6 +22,9 @@
 #ifndef DISSOLVE_ELEMENTS_H
 #define DISSOLVE_ELEMENTS_H
 
+#include "templates/array.h"
+#include "templates/list.h"
+
 // Basic Element Definition (Z, name, symbol)
 class Element
 {
@@ -73,6 +76,22 @@ class Elements
 	static const char* name(int Z);
 	// Return symbol of element with specified Z
 	static const char* symbol(int Z);
+
+
+	/*
+	 * Helper Functions
+	 */
+	public:
+	template <class T> static void createElementListArray(Array< List<T> >& listArray)
+	{
+		/*
+		 * Create the array, and set all Lists to only disown their items on destruction, rather than deleting them.
+		 * Need to do this otherwise each datum will be destructed twice - once from the List<T> destructor, and once
+		 * again from the destruction of the static array.
+		 */
+		listArray.initialise(Elements::nElements());
+		for (int n=0; n<nElements(); ++n) listArray[n].setDisownOnDestruction(true);
+	}
 };
 
 // Reference to Element, for use in constructing derived/associated data classes
