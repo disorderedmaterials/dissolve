@@ -35,6 +35,7 @@ class Isotope : public ElementReference, public ListItem<Isotope>
 	// Assignment Operator
 	Isotope& operator=(const Isotope& source);
 
+
 	/*
 	 * Isotope Data
 	 */
