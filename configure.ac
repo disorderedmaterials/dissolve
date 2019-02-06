@@ -196,6 +196,7 @@ if test "$with_gui" = "yes"; then
   AC_CONFIG_FILES(src/gui/delegates/Makefile)
   AC_CONFIG_FILES(src/gui/keywordwidgets/Makefile)
   AC_CONFIG_FILES(src/gui/uchroma/Makefile)
+  AC_CONFIG_FILES(src/gui/viewer/Makefile)
   AC_CONFIG_FILES(src/gui/widgets/Makefile)
   AC_CONFIG_FILES(src/gui/uchroma/classes/Makefile)
   AC_CONFIG_FILES(src/gui/uchroma/gui/Makefile)

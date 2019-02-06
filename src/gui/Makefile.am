@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = libgui.la libdguided.la
 
-SUBDIRS = delegates keywordwidgets uchroma widgets
+SUBDIRS = delegates keywordwidgets uchroma viewer widgets
 
 SUFFIXES: .ui .hui .qrc
 
