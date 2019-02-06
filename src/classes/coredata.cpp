@@ -43,9 +43,18 @@ CoreData::~CoreData()
  */
 
 // Add new AtomType
-AtomType* CoreData::addAtomType()
+AtomType* CoreData::addAtomType(Element* el)
 {
-	return atomTypes_.add();
+	AtomType* newAtomType = atomTypes_.add();
+
+	// Create a suitable unique name
+	newAtomType->setName(uniqueAtomTypeName(el->name()));
+
+	// Set data
+	newAtomType->setElement(el);
+	newAtomType->setIndex(nAtomTypes() - 1);
+
+	return newAtomType;
 }
 
 // Return number of AtomTypes in list
@@ -109,7 +118,12 @@ AtomType* CoreData::findAtomType(const char* name) const
 // Add new Species
 Species* CoreData::addSpecies()
 {
-	return species_.add();
+	Species* newSpecies = species_.add();
+
+	// Create a suitable unique name
+	newSpecies->setName(uniqueSpeciesName("NewSpecies"));
+
+	return newSpecies;
 }
 
 // Return number of Species in list
@@ -173,7 +187,12 @@ Species* CoreData::findSpecies(const char* name) const
 // Add new Configuration
 Configuration* CoreData::addConfiguration()
 {
-	return configurations_.add();
+	Configuration* newConfiguration = configurations_.add();
+
+	// Create a suitable unique name
+	newConfiguration->setName(uniqueConfigurationName("NewConfiguration"));
+
+	return newConfiguration;
 }
 
 // Return number of Configurations in list

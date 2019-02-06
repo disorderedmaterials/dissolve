@@ -26,12 +26,7 @@
 // Add AtomType with specified Element
 AtomType* Dissolve::addAtomType(Element* el)
 {
-	AtomType* newAtomType = coreData_.addAtomType();
-
-	// Create a suitable name...
-	newAtomType->setName(coreData_.uniqueAtomTypeName(el->symbol()));
-	newAtomType->setElement(el);
-	newAtomType->setIndex(coreData_.nAtomTypes() - 1);
+	AtomType* newAtomType = coreData_.addAtomType(el);
 
 	setUp_ = false;
 
