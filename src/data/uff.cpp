@@ -1,0 +1,597 @@
+/*
+	*** Universal Forcefield
+	*** src/data/uff.cpp
+	Copyright T. Youngs 2019
+
+	This file is part of Dissolve.
+
+	Dissolve is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	Dissolve is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#include "data/uff.h"
+#include "classes/atomtype.h"
+#include "classes/coredata.h"
+#include "classes/species.h"
+
+/*
+ * Implements "UFF, a Full Periodic Table Force Field for Molecular Mechanics and Molecular Dynamics Simulations"
+ * A. K. Rappe, C. J. Casewit, K. S. Colwell, W. A. Goddard III, and W. M. Skiff
+ * J. Am. Chem. Soc. 114, 10024-10039 (1992)
+ * 
+ * Notes:
+ * Generator data 8 (THyb) are used to quickly determine the method of torsional parameter generation.
+ * Torsional parameters U(i) are assigned to the second through sixth periods, following M. G. Martin's
+ * implementation in MCCCS Towhee.
+ * All energy values are in kcal.
+ */
+
+// Static Singletons
+Array< List<UFFAtomType> > UFF::atomTypesByElementPrivate_;
+
+/*
+ * Universal Forcefield AtomType Data
+ */
+
+// Constructor
+UFFAtomType::UFFAtomType(int z, const char* symbol, int index, const char* name, double r, double theta, double x, double D, double zeta, double Z, double chi, int geom, double V, double U) : ElementReference(z, symbol), ListItem<UFFAtomType>()
+{
+	// Set the atomtype's data
+	index_ = index;
+	name_ = name;
+	r_ = r;
+	theta_ = theta;
+	x_ = x;
+	D_ = D;
+	zeta_ = zeta;
+	Z_ = Z;
+	chi_ = chi;
+	geom_ = geom;
+	V_ = V;
+	U_ = U;
+
+	// Add this atomtype to its parent element's list
+	UFF::registerAtomType(this, z);
+}
+
+// Assignment Operator
+UFFAtomType& UFFAtomType::operator=(const UFFAtomType& source)
+{
+	index_ = source.index_;
+	name_ = source.name_;
+	r_ = source.r_;
+	theta_ = source.theta_;
+	x_ = source.x_;
+	D_ = source.D_;
+	zeta_ = source.zeta_;
+	Z_ = source.Z_;
+	chi_ = source.chi_;
+	geom_ = source.geom_;
+	V_ = source.V_;
+	U_ = source.U_;
+}
+
+/*
+ * Definition
+ */
+
+// Return name of Forcefield
+const char* UFF::name()
+{
+	return "UFF";
+}
+
+/*
+ * Atom Type Data
+ */
+
+// Return atom type data for specified Element
+List<UFFAtomType>& UFF::atomTypesByElement(int Z)
+{
+	// Has the master array been initialised yet? If not, do it now, before the data is constructed
+	if (atomTypesByElementPrivate_.nItems() == 0) Elements::createElementListArray<UFFAtomType>(atomTypesByElementPrivate_);
+
+	static UFFAtomType uffData[] = {
+		// Z	El	FFID	Name		  r	theta     x       D     zeta      Z      chi	geom	V	U
+		{ 1,	"H",	1,	"H_",		0.3540,	180.00,	2.8860,	0.0440,	12.000,	0.7120,	4.528,	0,	0.0,	0.0 },
+		{ 1,	"H",	2,	"H_b",		0.4600,	83.50,	2.8860,	0.0440,	12.000,	0.7125,	4.528,	8,	0.0,	0.0 },
+		{ 2,	"He",	3,	"He4+4",	0.8490,	90.00,	2.3620,	0.0560,	15.240,	0.0972,	9.66,	4,	0.0,	0.0 },
+		{ 3,	"Li",	4,	"Li",		1.3360,	180.00,	2.4510,	0.0250,	12.000,	1.0255,	3.006,	0,	0.0,	2.0 },
+		{ 4,	"Be",	5,	"Be3+2",	1.0740,	109.47,	2.7450,	0.0850,	12.000,	1.5650,	4.877,	3,	0.0,	2.0 },
+		{ 5,	"B",	6,	"B_3",		0.8380,	109.47,	4.0830,	0.1800,	12.052,	1.7550,	5.11,	3,	0.0,	2.0 },
+		{ 5,	"B",	7,	"B_2",		0.8280,	120.00,	4.0830,	0.1800,	12.052,	1.7550,	5.11,	2,	0.0,	2.0 },
+		{ 6,	"C",	8,	"C_3",		0.7570,	109.47,	3.8510,	0.1050,	12.730,	1.9120,	5.343,	3,	2.119,	2.0 },
+		{ 6,	"C",	9,	"C_R",		0.7290,	120.00,	3.8510,	0.1050,	12.730,	1.9120,	5.343,	9,	0.0,	2.0 },
+		{ 6,	"C",	10,	"C_2",		0.7320,	120.00,	3.8510,	0.1050,	12.730,	1.9120,	5.343,	2,	0.0,	2.0 },
+		{ 6,	"C",	11,	"C_1",		0.7060,	180.00,	3.8510,	0.1050,	12.730,	1.9120,	5.343,	1,	0.0,	2.0 },
+		{ 7,	"N",	12,	"N_3",		0.7000,	106.70,	3.6600,	0.0690,	13.407,	2.5438,	6.899,	3,	0.450,	0.0 },
+		{ 7,	"N",	13,	"N_R",		0.6990,	120.00,	3.6600,	0.0690,	13.407,	2.5438,	6.899,	9,	0.0,	2.0 },
+		{ 7,	"N",	14,	"N_2",		0.6850,	111.30,	3.6600,	0.0690,	13.407,	2.5438,	6.899,	2,	0.0,	2.0 },
+		{ 7,	"N",	15,	"N_1",		0.6560,	180.00,	3.6600,	0.0690,	13.407,	2.5438,	6.899,	1,	0.0,	2.0 },
+		{ 8,	"O",	16,	"O_3",		0.6580,	104.51,	3.5000,	0.0600,	14.085,	2.2998,	8.741,	3,	0.018,	2.0 },
+		{ 8,	"O",	17,	"O_3_z",	0.5280,	145.50,	3.5000,	0.0600,	14.085,	2.2998,	8.741,	3,	0.018,	2.0 },
+		{ 8,	"O",	18,	"O_R",		0.6800,	110.30,	3.5000,	0.0600,	14.085,	2.2998,	8.741,	9,	0.0,	2.0 },
+		{ 8,	"O",	19,	"O_2",		0.6340,	120.00,	3.5000,	0.0600,	14.085,	2.2998,	8.741,	2,	0.0,	2.0 },
+		{ 8,	"O",	20,	"O_1",		0.6390,	180.00,	3.5000,	0.0600,	14.085,	2.2998,	8.741,	1,	0.0,	2.0 },
+		{ 9,	"F",	21,	"F_",		0.6680,	180.00,	3.3640,	0.0500,	14.762,	1.7350,	10.874,	0,	0.0,	2.0 },
+		{ 10,	"Ne",	22,	"Ne4+4",	0.9200,	90.00,	3.2430,	0.0420,	15.440,	0.1944,	11.04,	4,	0.0,	2.0 },
+		{ 11,	"Na",	23,	"Na",		1.5390,	180.00,	2.9830,	0.0300,	12.000,	1.0809,	2.843,	0,	0.0,	1.25 },
+		{ 12,	"Mg",	24,	"Mg3+2",	1.4210,	109.47,	3.0210,	0.1110,	12.000,	1.7866,	3.951,	3,	0.0,	1.25 },
+		{ 13,	"Al",	25,	"Al3",		1.2440,	109.47,	4.4990,	0.5050,	11.278,	1.7924,	4.06,	3,	0,	1.25 },
+		{ 14,	"Si",	26,	"Si3",		1.1170,	109.47,	4.2950,	0.4020,	12.175,	2.3232,	4.168,	3,	1.225,	1.25 },
+		{ 15,	"P",	27,	"P_3+3",	1.1010,	93.80,	4.1470,	0.3050,	13.072,	2.8627,	5.463,	3,	2.4,	1.25 },
+		{ 15,	"P",	28,	"P_3+5",	1.0560,	109.47,	4.1470,	0.3050,	13.072,	2.8627,	5.463,	3,	2.4,	1.25 },
+		{ 15,	"P",	29,	"P_3+q",	1.0560,	109.47,	4.1470,	0.3050,	13.072,	2.8627,	5.463,	3,	2.4,	1.25 },
+		{ 16,	"S",	30,	"S_3+2",	1.0640,	92.10,	4.0350,	0.2740,	13.969,	2.7032,	6.928,	3,	0.484,	1.25 },
+		{ 16,	"S",	31,	"S_3+4",	1.0490,	103.20,	4.0350,	0.2740,	13.969,	2.7032,	6.928,	3,	0.484,	1.25 },
+		{ 16,	"S",	32,	"S_3+6",	1.0270,	109.47,	4.0350,	0.2740,	13.969,	2.7032,	6.928,	3,	0.484,	1.25 },
+		{ 16,	"S",	33,	"S_R",		1.0770,	92.20,	4.0350,	0.2740,	13.969,	2.7032,	6.928,	9,	0.0,	1.25 },
+		{ 16,	"S",	34,	"S_2",		0.8540,	120.00,	4.0350,	0.2740,	13.969,	2.7032,	6.928,	2,	0.0,	1.25 },
+		{ 17,	"Cl",	35,	"Cl",		1.0440,	180.00,	3.9470,	0.2270,	14.886,	2.3484,	8.564,	0,	0.0,	1.25 },
+		{ 18,	"Ar",	36,	"Ar4+4",	1.0320,	90.00,	3.8680,	0.1850,	15.763,	0.2994,	9.465,	4,	0.0,	1.25 },
+		{ 19,	"K",	37,	"K_",		1.9530,	180.00,	3.8120,	0.0350,	12.000,	1.1645,	2.421,	0,	0.0,	0.7 },
+		{ 20,	"Ca",	38,	"Ca6+2",	1.7610,	90.00,	3.3990,	0.2380,	12.000,	2.1414,	3.231,	6,	0.0,	0.7 },
+		{ 21,	"Sc",	39,	"Sc3+3",	1.5130,	109.47,	3.2950,	0.0190,	12.000,	2.5924,	3.395,	3,	0.0,	0.7 },
+		{ 22,	"Ti",	40,	"Ti3+4",	1.4120,	109.47,	3.1750,	0.0170,	12.000,	2.6595,	3.47,	3,	0.0,	0.7 },
+		{ 22,	"Ti",	41,	"Ti6+4",	1.4120,	90.00,	3.1750,	0.0170,	12.000,	2.6595,	3.47,	6,	0.0,	0.7 },
+		{ 23,	"V",	42,	"V_3+5",	1.4020,	109.47,	3.1440,	0.0160,	12.000,	2.6789,	3.65,	3,	0.0,	0.7 },
+		{ 24,	"Cr",	43,	"Cr6+3",	1.3450,	90.00,	3.0230,	0.0150,	12.000,	2.4631,	3.415,	6,	0.0,	0.7 },
+		{ 25,	"Mn",	44,	"Mn6+2",	1.3820,	90.00,	2.9610,	0.0130,	12.000,	2.4301,	3.325,	6,	0.0,	0.7 },
+		{ 26,	"Fe",	45,	"Fe3+2",	1.4120,	109.47,	2.9120,	0.0130,	12.000,	2.4301,	3.76,	3,	0.0,	0.7 },
+		{ 26,	"Fe",	46,	"Fe6+2",	1.3350,	90.00,	2.9120,	0.0130,	12.000,	2.4301,	3.76,	6,	0.0,	0.7 },
+		{ 27,	"Co",	47,	"Co6+3",	1.2410,	90.00,	2.8720,	0.0140,	12.000,	2.4301,	4.105,	6,	0.0,	0.7 },
+		{ 28,	"Ni",	48,	"Ni4+2",	1.1640,	90.00,	2.8340,	0.0150,	12.000,	2.4301,	4.465,	4,	0.0,	0.7 },
+		{ 29,	"Cu",	49,	"Cu3+1",	1.3020,	109.47,	3.4950,	0.0050,	12.000,	1.7565,	4.2,	3,	0.0,	0.7 },
+		{ 30,	"Zn",	50,	"Zn3+2",	1.1930,	109.47,	2.7630,	0.1240,	12.000,	1.3084,	5.106,	3,	0.0,	0.7 },
+		{ 31,	"Ga",	51,	"Ga3+3",	1.2600,	109.47,	4.3830,	0.4150,	11.000,	1.8206,	3.641,	3,	0.0,	0.7 },
+		{ 32,	"Ge",	52,	"Ge3",		1.1970,	109.47,	4.2800,	0.3790,	12.000,	2.7888,	4.051,	3,	0.701,	0.0 },
+		{ 33,	"As",	53,	"As3+3",	1.2110,	92.10,	4.2300,	0.3090,	13.000,	2.8640,	5.188,	3,	1.5,	0.0 },
+		{ 34,	"Se",	54,	"Se3+2",	1.1900,	90.60,	4.2050,	0.2910,	14.000,	2.7645,	6.428,	3,	0.335,	0.0 },
+		{ 35,	"Br",	55,	"Br",		1.1920,	180.00,	4.1890,	0.2510,	15.000,	2.5186,	7.79,	0,	0.0,	0.7 },
+		{ 36,	"Kr",	56,	"Kr4+4",	1.1470,	90.00,	4.1410,	0.2200,	16.000,	0.4520,	8.505,	4,	0.0,	0.7 },
+		{ 37,	"Rb",	57,	"Rb",		2.2600,	180.00,	4.1140,	0.0400,	12.000,	1.5922,	2.331,	0,	0.0,	0.2 },
+		{ 38,	"Sr",	58,	"Sr6+2",	2.0520,	90.00,	3.6410,	0.2350,	12.000,	2.4486,	3.024,	6,	0.0,	0.2 },
+		{ 39,	"Y",	59,	"Y_3+3",	1.6980,	109.47,	3.3450,	0.0720,	12.000,	3.2573,	3.83,	3,	0.0,	0.2 },
+		{ 40,	"Zr",	60,	"Zr3+4",	1.5640,	109.47,	3.1240,	0.0690,	12.000,	3.6675,	3.4,	3,	0.0,	0.2 },
+		{ 41,	"Nb",	61,	"Nb3+5",	1.4730,	109.47,	3.1650,	0.0590,	12.000,	3.6179,	3.55,	3,	0.0,	0.2 },
+		{ 42,	"Mo",	62,	"Mo6+6",	1.4670,	90.00,	3.0520,	0.0560,	12.000,	3.4021,	3.465,	6,	0.0,	0.2 },
+		{ 42,	"Mo",	63,	"Mo3+6",	1.4840,	109.47,	3.0520,	0.0560,	12.000,	3.4021,	3.465,	3,	0.0,	0.2 },
+		{ 43,	"Tc",	64,	"Tc6+5",	1.3220,	90.00,	2.9980,	0.0480,	12.000,	3.4021,	3.29,	6,	0.0,	0.2 },
+		{ 44,	"Ru",	65,	"Ru6+2",	1.4780,	90.00,	2.9630,	0.0560,	12.000,	3.4021,	3.575,	6,	0.0,	0.2 },
+		{ 45,	"Rh",	66,	"Rh6+3",	1.3320,	90.00,	2.9290,	0.0530,	12.000,	3.5081,	3.975,	6,	0.0,	0.2 },
+		{ 46,	"Pd",	67,	"Pd4+2",	1.3380,	90.00,	2.8990,	0.0480,	12.000,	3.2077,	4.32,	4,	0.0,	0.2 },
+		{ 47,	"Ag",	68,	"Ag1+1",	1.3860,	180.00,	3.1480,	0.0360,	12.000,	1.9557,	4.436,	1,	0.0,	0.2 },
+		{ 48,	"Cd",	69,	"Cd3+2",	1.4030,	109.47,	2.8480,	0.2280,	12.000,	1.6525,	5.034,	3,	0.0,	0.2 },
+		{ 49,	"In",	70,	"In3+3",	1.4590,	109.47,	4.4630,	0.5990,	11.000,	2.0704,	3.506,	3,	0.0,	0.2 },
+		{ 50,	"Sn",	71,	"Sn3",		1.3980,	109.47,	4.3920,	0.5670,	12.000,	2.9608,	3.987,	3,	0.199,	0.2 },
+		{ 51,	"Sb",	72,	"Sb3+3",	1.4070,	91.60,	4.4200,	0.4490,	13.000,	2.7042,	4.899,	3,	1.1,	0.2 },
+		{ 52,	"Te",	73,	"Te3+2",	1.3860,	90.25,	4.4700,	0.3980,	14.000,	2.8821,	5.816,	3,	0.3,	0.2 },
+		{ 53,	"I",	74,	"I_",		1.3820,	180.00,	4.5000,	0.3390,	15.000,	2.6537,	6.822,	0,	0,	0.2 },
+		{ 54,	"Xe",	75,	"Xe4+4",	1.2670,	90.00,	4.4040,	0.3320,	12.000,	0.5560,	7.595,	4,	0,	0.2 },
+		{ 55,	"Cs",	76,	"Cs",		2.5700,	180.00,	4.5170,	0.0450,	12.000,	1.5728,	2.183,	0,	0.0,	0.1 },
+		{ 56,	"Ba",	77,	"Ba6+2",	2.2770,	90.00,	3.7030,	0.3640,	12.000,	2.7266,	2.814,	6,	0.0,	0.1 },
+		{ 57,	"La",	78,	"La3+3",	1.9430,	109.47,	3.5220,	0.0170,	12.000,	3.3049,	2.8355,	3,	0.0,	0.1 },
+		{ 58,	"Ce",	79,	"Ce6+3",	1.8410,	90.00,	3.5560,	0.0130,	12.000,	3.3049,	2.774,	6,	0.0,	0.1 },
+		{ 59,	"Pr",	80,	"Pr6+3",	1.8230,	90.00,	3.6060,	0.0100,	12.000,	3.3049,	2.858,	6,	0.0,	0.1 },
+		{ 60,	"Nd",	81,	"Nd6+3",	1.8160,	90.00,	3.5750,	0.0100,	12.000,	3.3049,	2.8685,	6,	0.0,	0.1 },
+		{ 61,	"Pm",	82,	"Pm6+3",	1.8010,	90.00,	3.5470,	0.0090,	12.000,	3.3049,	2.881,	6,	0.0,	0.1 },
+		{ 62,	"Sm",	83,	"Sm6+3",	1.7800,	90.00,	3.5200,	0.0080,	12.000,	3.3049,	2.9115,	6,	0.0,	0.1 },
+		{ 63,	"Eu",	84,	"Eu6+3",	1.7710,	90.00,	3.4930,	0.0080,	12.000,	3.3049,	2.8785,	6,	0.0,	0.1 },
+		{ 64,	"Gd",	85,	"Gd6+3",	1.7350,	90.00,	3.3680,	0.0090,	12.000,	3.3049,	3.1665,	6,	0.0,	0.1 },
+		{ 65,	"Tb",	86,	"Tb6+3",	1.7320,	90.00,	3.4510,	0.0070,	12.000,	3.3049,	3.018,	6,	0.0,	0.1 },
+		{ 66,	"Dy",	87,	"Dy6+3",	1.7100,	90.00,	3.4280,	0.0070,	12.000,	3.3049,	3.0555,	6,	0.0,	0.1 },
+		{ 67,	"Ho",	88,	"Ho6+3",	1.6960,	90.00,	3.4090,	0.0070,	12.000,	3.4157,	3.127,	6,	0.0,	0.1 },
+		{ 68,	"Er",	89,	"Er6+3",	1.6730,	90.00,	3.3910,	0.0070,	12.000,	3.3049,	3.1865,	6,	0.0,	0.1 },
+		{ 69,	"Tm",	90,	"Tm6+3",	1.6600,	90.00,	3.3740,	0.0060,	12.000,	3.3049,	3.2514,	6,	0.0,	0.1 },
+		{ 70,	"Yb",	91,	"Yb6+3",	1.6370,	90.00,	3.3550,	0.2280,	12.000,	2.6177,	3.2889,	6,	0.0,	0.1 },
+		{ 71,	"Lu",	92,	"Lu6+3",	1.6710,	90.00,	3.6400,	0.0410,	12.000,	3.2709,	2.9629,	6,	0.0,	0.1 },
+		{ 72,	"Hf",	93,	"Hf3+4",	1.6110,	109.47,	3.1410,	0.0720,	12.000,	3.9212,	3.7,	3,	0.0,	0.1 },
+		{ 73,	"Ta",	94,	"Ta3+5",	1.5110,	109.47,	3.1700,	0.0810,	12.000,	4.0748,	5.1,	3,	0.0,	0.1 },
+		{ 74,	"W",	95,	"W_6+6",	1.3920,	90.00,	3.0690,	0.0670,	12.000,	3.6937,	4.63,	6,	0.0,	0.1 },
+		{ 74,	"W",	96,	"W_3+4",	1.5260,	109.47,	3.0690,	0.0670,	12.000,	3.6937,	4.63,	3,	0.0,	0.1 },
+		{ 74,	"W",	97,	"W_3+6",	1.3800,	109.47,	3.0690,	0.0670,	12.000,	3.6937,	4.63,	3,	0.0,	0.1 },
+		{ 75,	"Re",	98,	"Re6+5",	1.3720,	90.00,	2.9540,	0.0660,	12.000,	3.6937,	3.96,	6,	0.0,	0.1 },
+		{ 75,	"Re",	99,	"Re3+7",	1.3140,	109.47,	2.9540,	0.0660,	12.000,	3.6937,	3.96,	3,	0.0,	0.1 },
+		{ 76,	"Os",	100,	"Os6+6",	1.3720,	90.00,	3.1200,	0.0370,	12.000,	3.6937,	5.14,	6,	0.0,	0.1 },
+		{ 77,	"Ir",	101,	"Ir6+3",	1.3710,	90.00,	2.8400,	0.0730,	12.000,	3.7307,	5.0,	6,	0.0,	0.1 },
+		{ 78,	"Pt",	102,	"Pt4+2",	1.3640,	90.00,	2.7540,	0.0800,	12.000,	3.3817,	4.79,	4,	0.0,	0.1 },
+		{ 79,	"Au",	103,	"Au4+3",	1.2620,	90.00,	3.2930,	0.0390,	12.000,	2.6255,	4.894,	4,	0.0,	0.1 },
+		{ 80,	"Hg",	104,	"Hg1+2",	1.3400,	180.00,	2.7050,	0.3850,	12.000,	1.7497,	6.27,	1,	0.0,	0.1 },
+		{ 81,	"Tl",	105,	"Tl3+3",	1.5180,	120.00,	4.3470,	0.6800,	11.000,	2.0685,	3.2,	3,	0.0,	0.1 },
+		{ 82,	"Pb",	106,	"Pb3",		1.4590,	109.47,	4.2970,	0.6630,	12.000,	2.8461,	3.9,	3,	0.1,	0.1 },
+		{ 83,	"Bi",	107,	"Bi3+3",	1.5120,	90.00,	4.3700,	0.5180,	13.000,	2.4700,	4.69,	3,	1.0,	0.1 },
+		{ 84,	"Po",	108,	"Po3+2",	1.5000,	90.00,	4.7090,	0.3250,	14.000,	2.3329,	4.21,	3,	0.3,	0.1 },
+		{ 85,	"At",	109,	"At",		1.5450,	180.00,	4.7500,	0.2840,	15.000,	2.2357,	4.75,	0,	0.0,	0.1 },
+		{ 86,	"Rn",	110,	"Rn4+4",	1.4200,	90.00,	4.7650,	0.2480,	16.000,	0.5832,	5.37,	4,	0.0,	0.1 },
+		{ 87,	"Fr",	111,	"Fr",		2.8800,	180.00,	4.9000,	0.0500,	12.000,	1.8469,	2.0,	0,	0.0,	0.0 },
+		{ 88,	"Ra",	112,	"Ra6+2",	2.5120,	90.00,	3.6770,	0.4040,	12.000,	2.9161,	2.843,	6,	0.0,	0.0 },
+		{ 89,	"Ac",	113,	"Ac6+3",	1.9830,	90.00,	3.4780,	0.0330,	12.000,	3.8882,	2.835,	6,	0.0,	0.0 },
+		{ 90,	"Th",	114,	"Th6+4",	1.7210,	90.00,	3.3960,	0.0260,	12.000,	4.2021,	3.175,	6,	0.0,	0.0 },
+		{ 91,	"Pa",	115,	"Pa6+4",	1.7110,	90.00,	3.4240,	0.0220,	12.000,	3.8882,	2.985,	6,	0.0,	0.0 },
+		{ 92,	"U",	116,	"U_6+4",	1.6840,	90.00,	3.3950,	0.0220,	12.000,	3.8882,	3.341,	6,	0.0,	0.0 },
+		{ 93,	"Np",	117,	"Np6+4",	1.6660,	90.00,	3.4240,	0.0190,	12.000,	3.8882,	3.549,	6,	0.0,	0.0 },
+		{ 94,	"Pu",	118,	"Pu6+4",	1.6570,	90.00,	3.4240,	0.0160,	12.000,	3.8882,	3.243,	6,	0.0,	0.0 },
+		{ 95,	"Am",	119,	"Am6+4",	1.6600,	90.00,	3.3810,	0.0140,	12.000,	3.8882,	2.9895,	6,	0.0,	0.0 },
+		{ 96,	"Cm",	120,	"Cm6+3",	1.8010,	90.00,	3.3260,	0.0130,	12.000,	3.8882,	2.8315,	6,	0.0,	0.0 },
+		{ 97,	"Bk",	121,	"Bk6+3",	1.7610,	90.00,	3.3390,	0.0130,	12.000,	3.8882,	3.1935,	6,	0.0,	0.0 },
+		{ 98,	"Cf",	122,	"Cf6+3",	1.7500,	90.00,	3.3130,	0.0130,	12.000,	3.8882,	3.197,	6,	0.0,	0.0 },
+		{ 99,	"Es",	123,	"Es6+3",	1.7240,	90.00,	3.2990,	0.0120,	12.000,	3.8882,	3.333,	6,	0.0,	0.0 },
+		{ 100,	"Fm",	124,	"Fm6+3",	1.7120,	90.00,	3.2860,	0.0120,	12.000,	3.8882,	3.4,	6,	0.0,	0.0 },
+		{ 101,	"Md",	125,	"Md6+3",	1.6890,	90.00,	3.2740,	0.0110,	12.000,	3.8882,	3.47,	6,	0.0,	0.0 },
+		{ 102,	"No",	126,	"No6+3",	1.6790,	90.00,	3.2480,	0.0110,	12.000,	3.8882,	3.475,	6,	0.0,	0.0 },
+		{ 103,	"Lr",	127,	"Lr6+3",	1.6980,	90.00,	3.2360,	0.0110,	12.000,	3.8882,	3.5,	6,	1.0,	1.0 }
+	};
+
+	if ((Z < 0) || (Z > nElements()))
+	{
+		Messenger::error("UFF::atomTypesByElement() - Element with Z=%i is out of range!\n", Z);
+		return atomTypesByElementPrivate_[0];
+	}
+
+	return atomTypesByElementPrivate_[Z];
+}
+
+// Register specified atom type to given Element
+void UFF::registerAtomType(UFFAtomType* atomType, int Z)
+{
+	atomTypesByElementPrivate_[Z].own(atomType);
+}
+
+/*
+ * Term Generation
+ */
+
+// Determine and return AtomType for specified SpeciesAtom
+UFFAtomType* UFF::determineAtomType(SpeciesAtom* sp)
+{
+	switch (sp->element()->Z())
+	{
+		// H
+		case (1): 
+// 				H_	""
+// 				H_b	"-B,-B"
+			break;
+		// Boron
+		case (5):
+// 				B_3	"tetrahedral"
+// 				B_2	"trigonal
+			break;
+		// Carbon
+		case (6):
+// 				C_3	""
+// 				C_R	"aromatic,nbonds=3"
+// 				C_2	"nonaromatic,nbonds=3"
+// 				C_1	"linear"
+			break;
+		// Nitrogen
+		case (7):
+// 				N_3	""
+// 				N_R	"aromatic"
+// 				N_2	"trigonal
+// 				N_1	"linear"
+			break;
+		// Oxygen
+		case (8):
+// 				O_3	"tetrahedral"
+// 				O_3_z	""
+// 				O_R	"aromatic"
+// 				O_2	"=Any"
+// 				O_1	""
+			break;
+		// Phosphorus
+		case (15):
+// 				P_3+3	""
+// 				P_3+5	"os=5"
+// 				P_3+q	"nbonds=4,tetrahedral"
+			break;
+		// Sulphur
+		case (16):
+// 				S_3+2	""
+// 				S_3+4	"os=4"
+// 				S_3+6	"os=6"
+// 				S_R	"aromatic"
+// 				S_2	"trigonal"
+			break;
+		// Titanium
+		case (22):
+// 				Ti3+4	"nbonds=3"
+// 				Ti6+4	"nbonds=6"
+			break;
+		// Iron
+		case (26):
+// 				Fe3+2	"nbonds=3"
+// 				Fe6+2	"nbonds=6"
+			break;
+		// Molybdenum
+		case (42):
+// 				Mo6+6	"nbonds=6"
+// 				Mo3+6	"nbonds=3"
+			break;
+		// Tungsten
+		case (74):
+// 				W_6+6	"nbonds=6,os=6"
+// 				W_3+4	"tetrahedral,os=4"
+// 				W_3+6	"tetrahedral,os=6"
+			break;
+		// Rhenium
+		case (75):
+// 				Re6+5	"os=5"
+// // 				Re3+7	"os=7"
+			break;
+		// Default - all elements with only one type
+		default:
+			return atomTypesByElementPrivate_[sp->element()->Z()].first();
+			break;
+	}
+
+	return NULL;
+}
+
+// Create and assign suitable AtomTypes for the supplied Species
+bool UFF::createAtomTypes(Species* sp, CoreData& coreData)
+{
+	// Loop over Species atoms
+	for (SpeciesAtom* i = sp->atoms().first(); i != NULL; i = i->next)
+	{
+		UFFAtomType* uffType = determineAtomType(i);
+		if (!uffType) Messenger::print("No UFF type available for Atom %i of Species (%s).\n", i->index()+1, i->element()->symbol());
+		else
+		{
+			// Check if an AtomType of the same name already exists - if it does, just use that one
+			AtomType* at = coreData.findAtomType(uffType->name());
+			if (!at)
+			{
+				at = coreData.addAtomType(i->element());
+
+				/*
+				 * Determine suitable LJ parameters.
+				 *     UFF functional form  : U = Dij * ( (r/rij)**12 - 2(r/rij)**6 )
+				 * Our functional form (LJ) : U = 4 * epsilon * [ (s/rij)**12 - (s/rij)**6 ]
+				 * 
+				 * So:    sigma(LJ) = sigma(UFF) / 2.0^(1.0/6.0)
+				 *      epsilon(LJ) = (epsilon / 4.0) * 4.184       (UFF energy parameters in kcal)
+				 */
+				at->parameters();
+			}
+		}
+	}
+
+	return true;
+}
+
+// int vdwgenerator(ffatom term)
+// {
+// 	double D, sigma;
+// 	D = term.dataD("D");
+// 	sigma = term.dataD("x");
+
+// 	# To convert from UFF -> Lj divide sigma by 2**(1/6)
+// 	# Parameter order: D, sigma
+// 	term.form = "lj";
+// 	term.data = { D, sigma/2.0^(1.0/6.0) };
+// 	verbose("Generated lj VDW information for type %s : epsilon=%f, sigma=%f\n", term.name, D, sigma);
+// 	return 1;
+// }
+// 
+// int bondgenerator(ffbound newterm, atom i, atom j)
+// {
+// 	double k, rij, ri, rj, sumr, chii, chij, rBO, chi, rEN, Zi, Zj;
+// 	# Grab some oft-used data
+// 	ffatom fi = i.type;
+// 	ffatom fj = j.type;
+// 	ri = fi.dataD("r");
+// 	rj = fj.dataD("r");
+// 	chii = fi.dataD("chi");
+// 	chij = fj.dataD("chi");
+// 	# rBO : Bond-order correction = -0.1332 * (ri + rj) * ln(n)  (eq 3)
+// 	sumr = ri + rj;
+// 	rBO = -0.1332 * sumr * ln(i.findBond(j).order());
+// 	# rEN : Electronegativity correction : ri*rj * (sqrt(Xi)-sqrt(Xj))**2 / (Xi*ri + Xj*rj)    (eq 4)
+// 	chi = sqrt(chii) - sqrt(chij);
+// 	rEN = ri * rj * chi * chi / (chii*ri + chij*rj);
+// 	# rij : Equilibrium distance : = ri + rj + rBO - rEN  (eq 2)
+// 	# Note: In the original paper  rij = ri + rj + rBO + rEN, but Marcus Martin (MCCCS Towhee) notes that the last term should be subtracted
+// 	rij = sumr + rBO - rEN;
+// 	Zi = fi.dataD("Z");
+// 	Zj = fj.dataD("Z");
+// 	k = aten.convertEnergy(664.12, "kcal") * (Zi * Zj) / (rij * rij * rij);
+// 	# Set the parameters of the new bond term
+// 	# In Aten, parameter order is { force constant, eq distance }, and the functional form is : U = 0.5 * k * (r - eq)**2   (same as UFF)
+// 	newterm.form = "harmonic";
+// 	newterm.data = { k, rij };
+// 	verbose("Generated harmonic bond information for %s-%s : k=%f, eq=%f\n", fi.equivalent,fj.equivalent, k, rij);
+// 	return 1;
+// }
+// 
+// int anglegenerator(ffbound newterm, atom i, atom j, atom k)
+// {
+// 	double rij, rjk, ri, rj, rk, sumrij, sumrjk, chii, chij, chik, rBOij, rBOjk, chiij, chijk, rENij, rENjk, Zi, Zk;
+// 	double theta, rik2, rik5, forcek, c0, c1, c2;
+// 	int n, geom;
+// 	# Grab some oft-used data
+// 	ffatom fi = i.type;
+// 	ffatom fj = j.type;
+// 	ffatom fk = k.type;
+// 	#verbose("The atoms passed are have assigned equivalent types of '%s' and '%s'.\n", i.type.equivalent,j.type.equivalent);
+// 	ri = fi.dataD("r");
+// 	rj = fj.dataD("r");
+// 	rk = fk.dataD("r");
+// 	chii = fi.dataD("chi");
+// 	chij = fj.dataD("chi");
+// 	chik = fk.dataD("chi");
+// 	Zi = fi.dataD("Z");
+// 	Zk = fk.dataD("Z");
+// 	# rBO : Bond-order correction = -0.1332 * (ri + rj) * ln(n)  (eq 3)
+// 	sumrij = ri + rj;
+// 	sumrjk = rj + rk;
+// 	rBOij = -0.1332 * sumrij * ln(i.findBond(j).order());
+// 	rBOjk = -0.1332 * sumrjk * ln(j.findBond(k).order());
+// 	# rEN : Electronegativity correction : ri*rj * (sqrt(Xi)-sqrt(Xj))**2 / (Xi*ri + Xj*rj)    (eq 4)
+// 	chiij = sqrt(chii) - sqrt(chij);
+// 	chijk = sqrt(chij) - sqrt(chik);
+// 	rENij = ri * rj * chiij * chiij / (chii*ri + chij*rj);
+// 	rENjk = rj * rk * chijk * chijk / (chij*rj + chik*rk);
+// 	# rij : Equilibrium distance : = ri + rj + rBO - rEN  (eq 2)
+// 	# Note: In the original paper  rij = ri + rj + rBO + rEN, but Marcus Martin (MCCCS Towhee) notes that the last term should be subtracted
+// 	rij = sumrij + rBOij - rENij;
+// 	rjk = sumrjk + rBOjk - rENjk;
+// 	theta = fj.dataD("theta");
+// 	# Determine rik2 and rik5 values
+// 	# rik2 = rij**2 + rjk**2 - 2 * rij * rjk * cos(theta)
+// 	rik2 = rij * rij + rjk * rjk - 2.0 * rij * rjk * cos(theta);
+// 	rik5 = rik2 * rik2 * sqrt(rik2);
+// 	forcek = aten.convertEnergy(664.12, "kcal") * (Zi * Zk / rik5);
+// 	forcek = forcek * ( 3.0 * rij * rjk * (1.0 - cos(theta)*cos(theta)) - rik2*cos(theta));
+// 
+// 	# To determine angle form and necessary coefficients, use 'geom' integer data (which represents the third letter of the atom name.
+// 	# This idea is shamelessly stolen from MCCCS Towhee.
+// 	n = 0;
+// 	geom = fj.dataI("geom");
+// 	if (geom == 0)
+// 	{
+// 		# No possible angle definitions
+// 		printf("Unable to generate angle function for central atom '%s'.\n", fk.name);
+// 		return 0;
+// 	}
+// 	# Specific cases for linear, trigonal planar, square-planar and octahedral environments
+// 	else if (geom == 1) n = 1;
+// 	else if (geom == 2) n = 3;
+// 	else if ((geom == 3) && (fj.dataD("theta") < 90.1)) n = 2;
+// 	else if ((geom == 4) || (geom == 6)) n = 4;
+// 	else
+// 	{
+// 		# General nonlinear case:  U(theta) = forcek * (C0 + C1 * cos(theta) + C2 * cos(2*theta))
+// 		c2 = 1.0 / (4.0 * sin(theta)*sin(theta));
+// 		c1 = -4.0 * c2 * cos(theta);
+// 		c0 = c2 * (2.0 * cos(theta) * cos(theta) + 1.0);
+// 		newterm.form = "cos2";
+// 		newterm.data = { forcek, c0, c1, c2 };
+// 		verbose("Generated cos2 angle information for %s-%s-%s : k=%f, c0=%f, c1=%f, c2=%f\n", fi.equivalent,fj.equivalent,fk.equivalent,forcek,c0,c1,c2);
+// 	}
+// 
+// 	# Setup terms for the specific case
+// 	if (n != 0)
+// 	{
+// 		newterm.form = "cos";
+// 		newterm.data = { forcek/(n*n), n, 0.0, -1.0 };
+// 		verbose("Generated cos angle information for %s-%s-%s : k=%f (n=%i), eq=0.0\n", fi.equivalent,fj.equivalent,fk.equivalent,forcek/(n*n),n);
+// 	}
+// 	return 1;
+// }
+// 
+// int torsiongenerator(ffbound newterm, atom i, atom j, atom k, atom l)
+// {
+// 	# There are seven cases to consider, listed in decreasing complexity:
+// 	#   a) j and k are both group 16 (old group 6) atoms, and both are sp3 centres
+// 	#   b) j or k is a group 16 atom, while the other is an sp2 or resonant centre
+// 	#   c) j or k is an sp3 atom, while the other is an sp2/resonant centre bound to another sp2/resonant centre
+// 	#   d) j and k are both sp3 centres
+// 	#   e) j and k are both sp2 centres
+// 	#   f) j is sp2 and k is sp3 (or vice versa)
+// 	#   g) everything else (no torsional barrier)
+// 
+// 	# The original formula in the paper is given as a sum over cosine terms, but this reduces to: 0.5 * V * (1 - cos(n*eq) * cos(n*phi))
+// 	# Aten's single cosine potential has the form: forcek * (1 + s*cos(period*phi - eq))
+// 	# Therefore: forcek = 0.5 * V
+// 	#		  s = -cos(n*eq)
+// 	#	     period = n
+// 	#		 eq = 0.0
+// 
+// 	ffatom fi = i.type;
+// 	ffatom fj = j.type;
+// 	ffatom fk = k.type;
+// 	ffatom fl = l.type;
+// 	int groupj = aten.elements[j.z].group;
+// 	int groupk = aten.elements[k.z].group;
+// 	int geomi = fi.dataI("geom");
+// 	if (geomi == 9) geomi = 2;
+// 	int geomj = fj.dataI("geom");
+// 	if (geomj == 9) geomj = 2;
+// 	int geomk = fk.dataI("geom");
+// 	if (geomk == 9) geomk = 2;
+// 	int geoml = fl.dataI("geom");
+// 	if (geoml == 9) geoml = 2;
+// 	double n, forcek, s;
+// 
+// 	# Here we go...
+// 	if ((groupj == 16) && (groupk == 16) && (geomj == 3) && (geomk == 3))
+// 	{
+// 		# Case a) j and k are both group 16 (old group 6) atoms, and both are sp3 centres
+// 		double vj = 6.8, vk = 6.8;
+// 		# V value is 2.0 for oxygen, 6.8 otherwise
+// 		if (j.z == 8) vj = 2.0;
+// 		if (k.z == 8) vk = 2.0;
+// 		vj = aten.convertEnergy(vj, "kcal");
+// 		vk = aten.convertEnergy(vk, "kcal");
+// 		forcek = sqrt(vj*vk);
+// 		n = 2.0;
+// 		s = -cos(n*180.0);
+// 	}
+// 	else if ( ((groupj == 16) && (geomj == 3) && (geomk == 2)) || ((groupk == 16) && (geomk == 3) && (geomj == 2)) )
+// 	{
+// 		# Case b) j or k is a group 16 atom, while the other is an sp2 or resonant centre
+// 		# Since bond order is 1.0, ln term in eq 17 is zero...
+// 		forcek = 5.0 * sqrt(fj.dataD("U")*fk.dataD("U"));
+// 		n = 2.0;
+// 		s = -cos(n*90.0);
+// 	}
+// 	else if ((geomj == 3) && (geomk == 3))
+// 	{
+// 		# Case d) j and k are both sp3 centres
+// 		forcek = sqrt(fj.dataD("V")*fk.dataD("V"));
+// 		n = 3.0;
+// 		s = -cos(n*180.0);
+// 	}
+// 	else if ((geomj == 2) && (geomk == 2))
+// 	{
+// 		# Case e) j and k are both sp2 centres
+// 		# Force constant is adjusted based on current bond order
+// 		forcek = 5.0 * sqrt(fj.dataD("U")*fk.dataD("U")) * (1.0 + 4.18*ln( j.findBond(k).order() ));
+// 		#printf("sp2-sp2  Vi=%f Vj=%f lnbond=%f\n", fj.dataD("U"),fk.dataD("U"),ln( j.findBond(k).order() ));
+// 		n = 2.0;
+// 		s = -cos(n*180.0);
+// 	}
+// 	else if ( ((geomj == 3) && (geomk == 2)) || ((geomk == 3) && (geomj == 2)) )
+// 	{
+// 		# Case f) j is sp2 and k is sp3 (or vice versa)
+// 		n = 6.0;
+// 		s = -cos(n*0.0);
+// 		forcek = aten.convertEnergy(1.0, "kcal");
+// 	}
+// 	else
+// 	{
+// 		# Case c) j or k is an sp3 atom, while the other is an sp2/resonant centre bound to another sp2/resonant centre
+// 		# Case g) everything else
+// 		if ( ((geomj == 3) && (geomk == 2) && (geoml == 2)) || ((geomk == 3) && (geomj == 2) && (geomi == 2)) )
+// 		{
+// 			forcek = aten.convertEnergy(2.0, "kcal");
+// 			n = 3.0;
+// 			s = -cos(n*180.0);
+// 		}
+// 		else
+// 		{
+// 			# Everything else....
+// 			forcek = 0.0;
+// 			n = 1.0;
+// 			s = 1.0;
+// 		}
+// 	}
+// 
+// 	# Store the generated parameters
+// 	# Parameter order is: forcek, n, eq, s
+// 	newterm.form = "cos";
+// 	newterm.data = { 0.5*forcek, n, 0.0, s };
+// 	verbose("Generated cos torsion information for %s-%s-%s-%s : k=%f, n=%f, eq=0.0, s=%f\n", fi.equivalent,fj.equivalent,fk.equivalent,fj.equivalent,forcek,n,s);
+// 	return 0;
+// }
+

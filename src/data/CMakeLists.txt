@@ -2,10 +2,13 @@ add_library(data
   atomicmass.cpp
   elements.cpp
   isotopes.cpp
-  
+  uff.cpp
+
   atomicmass.h
   elements.h
+  ff.h
   isotopes.h
+  uff.h
 )
 
 include_directories(
