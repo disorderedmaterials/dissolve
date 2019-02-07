@@ -32,6 +32,7 @@ SpeciesBond::SpeciesBond() : SpeciesIntra(), ListItem<SpeciesBond>()
 	parent_ = NULL;
 	i_ = NULL;
 	j_ = NULL;
+	bondType_ = SpeciesBond::SingleBond;
 	form_ = SpeciesBond::nBondFunctions;
 }
 
@@ -115,6 +116,38 @@ bool SpeciesBond::matches(SpeciesAtom* i, SpeciesAtom* j) const
 	if ((i_ == i) && (j_ == j)) return true;
 	if ((i_ == j) && (j_ == i)) return true;
 	return false;
+}
+
+/*
+ * Bond Type
+ */
+
+// Bond type keywords
+const char* BondTypeKeywords[] = { "Single", "Double", "Triple", "Quadruple", "Aromatic" };
+
+// Convert bond type string to functional form
+SpeciesBond::BondType SpeciesBond::bondType(const char* s)
+{
+	for (int n=0; n<SpeciesBond::nBondTypes; ++n) if (DissolveSys::sameString(s, BondTypeKeywords[n])) return (SpeciesBond::BondType) n;
+	return SpeciesBond::nBondTypes;
+}
+
+// Return bond type functional form text
+const char* SpeciesBond::bondType(SpeciesBond::BondType bt)
+{
+	return BondTypeKeywords[bt];
+}
+
+// Set bond type
+void SpeciesBond::setBondType(BondType type)
+{
+	bondType_ = type;
+}
+
+// Return bond type
+SpeciesBond::BondType SpeciesBond::bondType() const
+{
+	return bondType_;
 }
 
 /*

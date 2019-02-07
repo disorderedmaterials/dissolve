@@ -71,6 +71,28 @@ class SpeciesBond : public SpeciesIntra, public ListItem<SpeciesBond>
 
 
 	/*
+	 * Bond Type
+	 */
+	public:
+	// Bond Type enum
+	enum BondType { SingleBond, DoubleBond, TripleBond, QuadrupleBond, AromaticBond, nBondTypes };
+	// Convert bond type string to functional form
+	static BondType bondType(const char* s);
+	// Return bond type functional form text
+	static const char* bondType(BondType bt);
+
+	private:
+	// Bond type
+	BondType bondType_;
+
+	public:
+	// Set bond type
+	void setBondType(BondType type);
+	// Return bond type
+	BondType bondType() const;
+
+
+	/*
 	 * Interaction Parameters
 	 */
 	public:
