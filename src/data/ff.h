@@ -25,7 +25,9 @@
 #include "data/elements.h"
 
 // Forward Declarations
+class CoreData;
 class Species;
+class SpeciesAtom;
 
 // Forcefield Base Class
 class Forcefield : public Elements
@@ -55,8 +57,16 @@ class Forcefield : public Elements
 	/*
 	 * Atom Environment Helpers
 	 */
+	public:
+	// Atom Geometry enum
+	enum AtomGeometry { UnboundGeometry, TerminalGeometry, LinearGeometry, TShapeGeometry, TrigonalPlanarGeometry, TetrahedralGeometry, SquarePlanarGeometry, TrigonalBipyramidalGeometry, OctahedralGeometry, nAtomGeometries };
+
 	protected:
-	// 
+	AtomGeometry geometryOfAtom(SpeciesAtom* i);
+	// Return whether the specified SpeciesAtom exists in the specified geometry
+	bool isAtomGeometry(AtomGeometry geom) const;
+	// Return whether supplied bonding pattern around the SpeciesAtom matches *exactly*
+	bool isBondPattern(const SpeciesAtom* i, const int nSingle, const int nDouble = 0, const int nTriple = 0, const int nQuadruple = 0, const int nAromatic = 0) const;
 };
 
 #endif

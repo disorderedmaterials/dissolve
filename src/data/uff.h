@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_UFF_H
 #define DISSOLVE_UFF_H
 
-#include "data/elements.h"
+#include "data/ff.h"
 #include "templates/array.h"
 #include "templates/list.h"
 
@@ -63,7 +63,7 @@ class UFFAtomType : public ElementReference, public ListItem<UFFAtomType>
 };
 
 // Universal Forcefield
-class UFF : public Elements
+class UFF : public Forcefield
 {
 	/*
 	 * Definition
@@ -87,6 +87,8 @@ class UFF : public Elements
 	public:
 	// Register specified atom type to given Element
 	static void registerAtomType(UFFAtomType* atomType, int Z);
+	// Return the named UFFAtomType (if it exists)
+	UFFAtomType* atomTypeByName(const char* name, Element* element = NULL);
 
 
 	/*

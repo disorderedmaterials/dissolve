@@ -1,6 +1,7 @@
 add_library(data
   atomicmass.cpp
   elements.cpp
+  ff.cpp
   isotopes.cpp
   uff.cpp
 

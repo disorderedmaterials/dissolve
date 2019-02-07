@@ -23,6 +23,7 @@
 #include "classes/atomtype.h"
 #include "classes/coredata.h"
 #include "classes/species.h"
+#include "base/sysfunc.h"
 
 /*
  * Implements "UFF, a Full Periodic Table Force Field for Molecular Mechanics and Molecular Dynamics Simulations"
@@ -101,7 +102,8 @@ List<UFFAtomType>& UFF::atomTypesByElement(int Z)
 	// Has the master array been initialised yet? If not, do it now, before the data is constructed
 	if (atomTypesByElementPrivate_.nItems() == 0) Elements::createElementListArray<UFFAtomType>(atomTypesByElementPrivate_);
 
-	static UFFAtomType uffData[] = {
+	static UFFAtomType uffData[] =
+	{
 		// Z	El	FFID	Name		  r	theta     x       D     zeta      Z      chi	geom	V	U
 		{ 1,	"H",	1,	"H_",		0.3540,	180.00,	2.8860,	0.0440,	12.000,	0.7120,	4.528,	0,	0.0,	0.0 },
 		{ 1,	"H",	2,	"H_b",		0.4600,	83.50,	2.8860,	0.0440,	12.000,	0.7125,	4.528,	8,	0.0,	0.0 },
@@ -247,6 +249,21 @@ void UFF::registerAtomType(UFFAtomType* atomType, int Z)
 	atomTypesByElementPrivate_[Z].own(atomType);
 }
 
+// Return the named UFFAtomType (if it exists)
+UFFAtomType* UFF::atomTypeByName(const char* name, Element* element)
+{
+	int startZ = (element ? element->Z() : 0);
+	int endZ = (element ? element->Z() : nElements()-1);
+	for (int Z=startZ; Z<=endZ; ++Z)
+	{
+		// Go through types associated to the Element
+		ListIterator<UFFAtomType> typeIterator(atomTypesByElementPrivate_[Z]);
+		while (UFFAtomType* type = typeIterator.iterate()) if (DissolveSys::sameString(type->name(), name)) return type;
+	}
+
+	return NULL;
+}
+
 /*
  * Term Generation
  */
@@ -277,8 +294,8 @@ UFFAtomType* UFF::determineAtomType(SpeciesAtom* sp)
 		case (7):
 // 				N_3	""
 // 				N_R	"aromatic"
-// 				N_2	"trigonal
-// 				N_1	"linear"
+// 				if (isBondPattern(N_2	"trigonal
+//				if (isBondPattern(sp, 0, 0, 1) || isAtomGeometry(SpeciesAtom::LinearGeometry)) return atomTypeByName("N_1", sp->element());
 			break;
 		// Oxygen
 		case (8):
