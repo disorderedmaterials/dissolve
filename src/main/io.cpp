@@ -180,7 +180,7 @@ bool Dissolve::saveInput(const char* filename)
 	}
 
 	// Write Species data
-	parser.writeBannerComment("Define Species");
+	parser.writeBannerComment("Species");
 	for (Species* sp = species().first(); sp != NULL; sp = sp->next)
 	{
 		if (!parser.writeLineF("\n%s '%s'\n", BlockKeywords::blockKeyword(BlockKeywords::SpeciesBlockKeyword), sp->name())) return false;
@@ -327,7 +327,7 @@ bool Dissolve::saveInput(const char* filename)
 	if (!parser.writeLineF("%s\n", PairPotentialsBlock::keyword(PairPotentialsBlock::EndPairPotentialsKeyword))) return false;
 
 	// Write Configurations
-	if (!parser.writeBannerComment("Define Configurations")) return false;
+	if (!parser.writeBannerComment("Configurations")) return false;
 	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next)
 	{
 		if (!parser.writeLineF("\n%s  '%s'\n", BlockKeywords::blockKeyword(BlockKeywords::ConfigurationBlockKeyword), cfg->name())) return false;
