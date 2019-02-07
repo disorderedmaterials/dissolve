@@ -1,6 +1,6 @@
 /*
-	*** Config Viewer Rendering
-	*** src/gui/viewer/configviewer_scene.cpp
+	*** Configuration Viewer Rendering
+	*** src/gui/viewer/configurationviewer_scene.cpp
 	Copyright T. Youngs 2012-2013
 
 	This file is part of Dissolve.
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/viewer/configviewer.hui"
+#include "gui/viewer/configurationviewer.hui"
 #include "classes/configuration.h"
 #include "classes/atom.h"
 #include "classes/isotopologue.h"

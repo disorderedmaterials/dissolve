@@ -1,6 +1,6 @@
 /*
-	*** Config Viewer Input Functions
-	*** src/gui/viewer/configviewer_input.cpp
+	*** Configuration Viewer Input Functions
+	*** src/gui/viewer/configurationviewer_input.cpp
 	Copyright T. Youngs 2012-2013
 
 	This file is part of Dissolve.
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/viewer/configviewer.hui"
+#include "gui/viewer/configurationviewer.hui"
 #include "classes/species.h"
 #include <QtGui/QMouseEvent>
 
