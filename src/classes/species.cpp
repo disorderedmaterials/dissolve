@@ -141,9 +141,10 @@ bool Species::checkSetUp(const List<AtomType>& atomTypes)
 		}
 		
 		/* Check each Bond for two-way consistency */
-		for (RefListItem<SpeciesBond,int>* ri = i->bonds(); ri != NULL; ri = ri->next)
+		RefListIterator<SpeciesBond,int> bondIterator(i->bonds());
+		while (SpeciesBond* bond = bondIterator.iterate())
 		{
-			SpeciesAtom* j = ri->item->partner(i);
+			SpeciesAtom* j = bond->partner(i);
 			if (!j->hasBond(i))
 			{
 				Messenger::error("SpeciesAtom %i references a Bond to SpeciesAtom %i, but SpeciesAtom %i does not.\n", i->userIndex(), j->userIndex(), j->userIndex());

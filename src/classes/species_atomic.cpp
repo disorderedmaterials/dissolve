@@ -75,11 +75,14 @@ void Species::selectFromAtom(SpeciesAtom* i, SpeciesBond* exclude)
 	// Loop over Bonds on specified Atom
 	selectAtom(i);
 	SpeciesAtom* j;
-	for (RefListItem<SpeciesBond,int>* refBond = i->bonds(); refBond != NULL; refBond = refBond->next)
+	RefListIterator<SpeciesBond,int> bondIterator(i->bonds());
+	while (SpeciesBond* bond = bondIterator.iterate())
 	{
 		// Is this the excluded Bond?
-		if (exclude == refBond->item) continue;
-		j = refBond->item->partner(i);
+		if (exclude == bond) continue;
+
+		// Get the partner atom in the bond and select it (if it is not selected already)
+		j = bond->partner(i);
 		if (selectedAtoms_.contains(j)) continue;
 		selectFromAtom(j, exclude);
 	}
