@@ -137,7 +137,7 @@ class Species : public ListItem<Species>
 	const List<SpeciesBond>& bonds() const;
 	// Return nth SpeciesBond
 	SpeciesBond* bond(int n);
-	// Return whether SpeciesBond between SpeciesAtomss exists
+	// Return whether SpeciesBond between SpeciesAtoms exists
 	SpeciesBond* hasBond(SpeciesAtom* i, SpeciesAtom* j) const;
 	// Return index of specified SpeciesBond
 	int bondIndex(SpeciesBond* spb);
