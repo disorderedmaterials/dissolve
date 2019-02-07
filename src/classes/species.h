@@ -139,6 +139,8 @@ class Species : public ListItem<Species>
 	SpeciesBond* bond(int n);
 	// Return whether SpeciesBond between SpeciesAtoms exists
 	SpeciesBond* hasBond(SpeciesAtom* i, SpeciesAtom* j) const;
+	// Return whether SpeciesBond between specified atom indices exists
+	SpeciesBond* hasBond(int i, int j);
 	// Return index of specified SpeciesBond
 	int bondIndex(SpeciesBond* spb);
 	// Add new SpeciesAngle definition

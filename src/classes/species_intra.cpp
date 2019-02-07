@@ -139,6 +139,23 @@ SpeciesBond* Species::hasBond(SpeciesAtom* i, SpeciesAtom* j) const
 	return NULL;
 }
 
+// Return whether SpeciesBond between specified atom indices exists
+SpeciesBond* Species::hasBond(int i, int j)
+{
+	if ((i < 0) || (i >= nAtoms()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'i' supplied to Species::hasBond() is out of range (%i) for Species '%s'\n", i, name_.get());
+		return NULL;
+	}
+	if ((j < 0) || (j >= nAtoms()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'j' supplied to Species::hasBond() is out of range (%i) for Species '%s'\n", j, name_.get());
+		return NULL;
+	}
+
+	return hasBond(atoms_[i], atoms_[j]);
+}
+
 // Return index of specified SpeciesBond
 int Species::bondIndex(SpeciesBond* spb)
 {
