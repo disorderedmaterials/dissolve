@@ -61,8 +61,8 @@ class Species : public ListItem<Species>
 	void setName(const char* name);
 	// Return the name of the Species
 	const char* name() const;
-	// Check setup
-	bool checkSetup(const List<AtomType>& atomTypes);
+	// Check set-up of Species
+	bool checkSetUp(const List<AtomType>& atomTypes);
 	// Print Species information
 	void print();
 

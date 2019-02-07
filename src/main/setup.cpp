@@ -35,7 +35,7 @@ bool Dissolve::setUpSimulation()
 	for (Species* sp = species().first(); sp != NULL; sp = sp->next)
 	{
 		Messenger::print("--- Species '%s'...\n", sp->name());
-		if (!sp->checkSetup(coreData_.atomTypes())) return false;
+		if (!sp->checkSetUp(coreData_.atomTypes())) return false;
 	}
 
 	/*
