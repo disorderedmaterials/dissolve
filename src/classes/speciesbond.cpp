@@ -69,7 +69,7 @@ SpeciesAtom* SpeciesBond::j() const
 }
 
 // Return the 'other' SpeciesAtom in the SpeciesBond
-SpeciesAtom* SpeciesBond::partner(SpeciesAtom* i) const
+SpeciesAtom* SpeciesBond::partner(const SpeciesAtom* i) const
 {
 	return (i == i_ ? j_ : i_);
 }

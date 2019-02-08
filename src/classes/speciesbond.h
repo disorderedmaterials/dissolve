@@ -59,7 +59,7 @@ class SpeciesBond : public SpeciesIntra, public ListItem<SpeciesBond>
 	// Return second SpeciesAtom
 	SpeciesAtom* j() const;
 	// Return the 'other' SpeciesAtom
-	SpeciesAtom* partner(SpeciesAtom* i) const;
+	SpeciesAtom* partner(const SpeciesAtom* i) const;
 	// Return index (in parent Species) of first SpeciesAtom
 	int indexI() const;
 	// Return index (in parent Species) of second SpeciesAtom
