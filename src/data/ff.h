@@ -62,11 +62,16 @@ class Forcefield : public Elements
 	enum AtomGeometry { UnboundGeometry, TerminalGeometry, LinearGeometry, TShapeGeometry, TrigonalPlanarGeometry, TetrahedralGeometry, SquarePlanarGeometry, TrigonalBipyramidalGeometry, OctahedralGeometry, nAtomGeometries };
 
 	protected:
-	AtomGeometry geometryOfAtom(SpeciesAtom* i);
+	// Calculate and return the geometry of the specified SpeciesAtom
+	AtomGeometry geometryOfAtom(SpeciesAtom* i) const;
 	// Return whether the specified SpeciesAtom exists in the specified geometry
-	bool isAtomGeometry(AtomGeometry geom) const;
+	bool isAtomGeometry(SpeciesAtom* i, AtomGeometry geom) const;
 	// Return whether supplied bonding pattern around the SpeciesAtom matches *exactly*
 	bool isBondPattern(const SpeciesAtom* i, const int nSingle, const int nDouble = 0, const int nTriple = 0, const int nQuadruple = 0, const int nAromatic = 0) const;
+	// Return whether the specified atom is bound to a specific element (and count thereof)
+	bool isBoundTo(const SpeciesAtom* i, Element* element, const int count = 1, bool allowMoreThanCount = true) const;
+	// Guess and return oxidation state for the specified SpeciesAtom
+	int guessOxidationState(const SpeciesAtom* i) const;
 };
 
 #endif
