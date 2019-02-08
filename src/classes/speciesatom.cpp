@@ -176,6 +176,12 @@ int SpeciesAtom::nBonds() const
 	return bonds_.nItems();
 }
 
+// Return specified bond
+SpeciesBond* SpeciesAtom::bond(int index)
+{
+	return bonds_.item(index);
+}
+
 // Return bonds list
 const RefList<SpeciesBond,int>& SpeciesAtom::bonds() const
 {

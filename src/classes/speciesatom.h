@@ -127,6 +127,8 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	void clearBonds();
 	// Return number of bonds
 	int nBonds() const;
+	// Return specified bond
+	SpeciesBond* bond(int index);
 	// Return bonds list
 	const RefList<SpeciesBond,int>& bonds() const;
 	// Return whether bond to specified atom exists
