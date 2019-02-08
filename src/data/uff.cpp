@@ -80,6 +80,44 @@ UFFAtomType& UFFAtomType::operator=(const UFFAtomType& source)
 	geom_ = source.geom_;
 	V_ = source.V_;
 	U_ = source.U_;
+
+	return *this;
+}
+
+// Return single bond radius (r, Angstroms)
+double UFFAtomType::r() const
+{
+	return r_;
+}
+
+// Return descriptive angle (theta, degrees)
+double UFFAtomType::theta() const
+{
+	return theta_;
+}
+
+// Return nonbond distance (x, Angstroms)
+double UFFAtomType::x() const
+{
+	return x_;
+}
+
+// Return nonbond energy (D, kcal)
+double UFFAtomType::D() const
+{
+	return D_;
+}
+
+// Return nonbond scale (zeta)
+double UFFAtomType::zeta() const
+{
+	return zeta_;
+}
+
+// Return effective charge (Z)
+double UFFAtomType::Z() const
+{
+	return Z_;
 }
 
 /*
@@ -269,85 +307,88 @@ UFFAtomType* UFF::atomTypeByName(const char* name, Element* element)
  */
 
 // Determine and return AtomType for specified SpeciesAtom
-UFFAtomType* UFF::determineAtomType(SpeciesAtom* sp)
+UFFAtomType* UFF::determineAtomType(SpeciesAtom* i)
 {
-	switch (sp->element()->Z())
+	switch (i->element()->Z())
 	{
 		// H
-		case (1): 
-// 				H_	""
-// 				H_b	"-B,-B"
+		case (ELEMENT_H): 
+				if (isBoundTo(i, &Elements::element(5), 2)) return atomTypeByName("H_b", i->element());
+				else return atomTypeByName("H_", i->element());
 			break;
 		// Boron
-		case (5):
-// 				B_3	"tetrahedral"
-// 				B_2	"trigonal
+		case (ELEMENT_B):
+				if (isAtomGeometry(i, Forcefield::TetrahedralGeometry)) return atomTypeByName("B_3", i->element());
+				else return atomTypeByName("B_2", i->element());
 			break;
 		// Carbon
-		case (6):
-// 				C_3	""
-// 				C_R	"aromatic,nbonds=3"
-// 				C_2	"nonaromatic,nbonds=3"
-// 				C_1	"linear"
+		case (ELEMENT_C):
+				if (isBondPattern(i, 1, 0, 0, 0, -1)) return atomTypeByName("C_R", i->element());
+				else if (isBondPattern(i, 2, 1)) return atomTypeByName("C_2", i->element());
+				else if (isBondPattern(i, 1, 0, 1) || isAtomGeometry(i, Forcefield::LinearGeometry)) return atomTypeByName("C_1", i->element());
+				else return atomTypeByName("C_3", i->element());
 			break;
 		// Nitrogen
-		case (7):
-// 				N_3	""
-// 				N_R	"aromatic"
-// 				if (isBondPattern(N_2	"trigonal
-//				if (isBondPattern(sp, 0, 0, 1) || isAtomGeometry(SpeciesAtom::LinearGeometry)) return atomTypeByName("N_1", sp->element());
+		case (ELEMENT_N):
+				if (isBondPattern(i, 0, 0, 0, 0, -1)) return atomTypeByName("N_R", i->element());
+				else if (isBondPattern(i, 1, 1)) return atomTypeByName("N_2", i->element());
+				else if (isBondPattern(i, 0, 0, 1) || isAtomGeometry(i, Forcefield::LinearGeometry)) return atomTypeByName("N_1", i->element());
+				else return atomTypeByName("N_3", i->element());
 			break;
 		// Oxygen
-		case (8):
-// 				O_3	"tetrahedral"
-// 				O_3_z	""
-// 				O_R	"aromatic"
-// 				O_2	"=Any"
-// 				O_1	""
+		case (ELEMENT_O):
+				if (isBondPattern(i, 0, 0, 0, 0, -1)) return atomTypeByName("O_R", i->element());
+				else if (isBondPattern(i, 0, 1)) return atomTypeByName("O_2", i->element());
+				else if (isBondPattern(i, 0, 0, 1) || isAtomGeometry(i, Forcefield::LinearGeometry)) return atomTypeByName("O_1", i->element());
+				else if (isBoundTo(i, &Elements::element(14), 2)) return atomTypeByName("O_3_z", i->element());
+				else return atomTypeByName("O_3", i->element());
 			break;
 		// Phosphorus
-		case (15):
-// 				P_3+3	""
-// 				P_3+5	"os=5"
-// 				P_3+q	"nbonds=4,tetrahedral"
+		case (ELEMENT_P):
+				if (guessOxidationState(i) == 5) return atomTypeByName("P_3+5", i->element());
+				else if (guessOxidationState(i) == 3) return atomTypeByName("P_3+3", i->element());
+				else if ((i->nBonds() == 4) && (isAtomGeometry(i, Forcefield::TetrahedralGeometry))) return atomTypeByName("P_3+q", i->element());
 			break;
 		// Sulphur
-		case (16):
-// 				S_3+2	""
-// 				S_3+4	"os=4"
-// 				S_3+6	"os=6"
-// 				S_R	"aromatic"
-// 				S_2	"trigonal"
+		case (ELEMENT_S):
+				if (guessOxidationState(i) == 2) return atomTypeByName("S_3+2", i->element());
+				else if (guessOxidationState(i) == 4) return atomTypeByName("S_3+4", i->element());
+				else if (guessOxidationState(i) == 6) return atomTypeByName("S_3+6", i->element());
+				else if (isBondPattern(i, 0, 0, 0, 0, -1)) return atomTypeByName("S_R", i->element());
+				else if (isAtomGeometry(i, Forcefield::TrigonalPlanarGeometry)) return atomTypeByName("S_2", i->element());
 			break;
 		// Titanium
-		case (22):
-// 				Ti3+4	"nbonds=3"
-// 				Ti6+4	"nbonds=6"
+		case (ELEMENT_TI):
+				if (isAtomGeometry(i, Forcefield::OctahedralGeometry)) return atomTypeByName("Ti6+4", i->element());
+				else return atomTypeByName("Ti3+4", i->element());
 			break;
 		// Iron
-		case (26):
-// 				Fe3+2	"nbonds=3"
-// 				Fe6+2	"nbonds=6"
+		case (ELEMENT_FE):
+				if (isAtomGeometry(i, Forcefield::OctahedralGeometry)) return atomTypeByName("Fe6+2", i->element());
+				else return atomTypeByName("Fe3+2", i->element());
+				
 			break;
 		// Molybdenum
-		case (42):
-// 				Mo6+6	"nbonds=6"
-// 				Mo3+6	"nbonds=3"
+		case (ELEMENT_MO):
+				if (isAtomGeometry(i, Forcefield::OctahedralGeometry)) return atomTypeByName("Mo6+6", i->element());
+				else return atomTypeByName("Mo3+6", i->element());
 			break;
 		// Tungsten
-		case (74):
-// 				W_6+6	"nbonds=6,os=6"
-// 				W_3+4	"tetrahedral,os=4"
-// 				W_3+6	"tetrahedral,os=6"
+		case (ELEMENT_W):
+				if (isAtomGeometry(i, Forcefield::OctahedralGeometry)) return atomTypeByName("W_6+6", i->element());
+				else if (guessOxidationState(i) == 4) return atomTypeByName("W_3+4", i->element());
+				else return atomTypeByName("W_3+6", i->element());
 			break;
 		// Rhenium
-		case (75):
+		case (ELEMENT_RE):
 // 				Re6+5	"os=5"
 // // 				Re3+7	"os=7"
+				if (isAtomGeometry(i, Forcefield::OctahedralGeometry)) return atomTypeByName("Re6+5", i->element());
+				else return atomTypeByName("Re3+7", i->element());
 			break;
 		// Default - all elements with only one type
 		default:
-			return atomTypesByElementPrivate_[sp->element()->Z()].first();
+			return atomTypesByElementPrivate_[i->element()->Z()].first();
 			break;
 	}
 
@@ -372,34 +413,24 @@ bool UFF::createAtomTypes(Species* sp, CoreData& coreData)
 
 				/*
 				 * Determine suitable LJ parameters.
-				 *     UFF functional form  : U = Dij * ( (r/rij)**12 - 2(r/rij)**6 )
+				 *     UFF functional form  : U = Dij * ( (x/rij)**12 - 2(x/rij)**6 )
 				 * Our functional form (LJ) : U = 4 * epsilon * [ (s/rij)**12 - (s/rij)**6 ]
 				 * 
-				 * So:    sigma(LJ) = sigma(UFF) / 2.0^(1.0/6.0)
-				 *      epsilon(LJ) = (epsilon / 4.0) * 4.184       (UFF energy parameters in kcal)
+				 * So:    sigma = x / (2.0^(1/6))
+				 * 	epsilon = Dij * 4.184       (UFF energy parameters in kcal)
 				 */
-				at->parameters();
+				at->parameters().setParameter(0, uffType->D() * 4.184);
+				at->parameters().setParameter(1, uffType->x() / (pow(2.0, 1.0/6.0)));
 			}
+
+			i->setAtomType(at);
 		}
 	}
 
 	return true;
 }
 
-// int vdwgenerator(ffatom term)
-// {
-// 	double D, sigma;
-// 	D = term.dataD("D");
-// 	sigma = term.dataD("x");
 
-// 	# To convert from UFF -> Lj divide sigma by 2**(1/6)
-// 	# Parameter order: D, sigma
-// 	term.form = "lj";
-// 	term.data = { D, sigma/2.0^(1.0/6.0) };
-// 	verbose("Generated lj VDW information for type %s : epsilon=%f, sigma=%f\n", term.name, D, sigma);
-// 	return 1;
-// }
-// 
 // int bondgenerator(ffbound newterm, atom i, atom j)
 // {
 // 	double k, rij, ri, rj, sumr, chii, chij, rBO, chi, rEN, Zi, Zj;

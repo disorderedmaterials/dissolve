@@ -58,8 +58,20 @@ class UFFAtomType : public ElementReference, public ListItem<UFFAtomType>
 	int index() const;
 	// Return name of atom type
 	const char* name() const;
-	// Return number of bonds that the atom type should have
-	int nBonds() const;
+	// Return single bond radius (r, Angstroms)
+	double r() const;
+	// Return descriptive angle (theta, degrees)
+	double theta() const;
+	// Return nonbond distance (x, Angstroms)
+	double x() const;
+	// Return nonbond energy (D, kcal)
+	double D() const;
+	// Return nonbond scale (zeta)
+	double zeta() const;
+	// Return effective charge (Z)
+	double Z() const;
+// 	chi_, V_, U_;	int geom_;
+
 };
 
 // Universal Forcefield
@@ -96,7 +108,7 @@ class UFF : public Forcefield
 	 */
 	public:
 	// Determine and return AtomType for specified SpeciesAtom
-	UFFAtomType* determineAtomType(SpeciesAtom* sp);
+	UFFAtomType* determineAtomType(SpeciesAtom* i);
 	// Create and assign suitable AtomTypes for the supplied Species
 	bool createAtomTypes(Species* sp, CoreData& coreData);
 	// Generate missing bond terms for the supplied Species
