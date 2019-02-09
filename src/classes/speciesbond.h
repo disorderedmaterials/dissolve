@@ -80,6 +80,8 @@ class SpeciesBond : public SpeciesIntra, public ListItem<SpeciesBond>
 	static BondType bondType(const char* s);
 	// Return bond type functional form text
 	static const char* bondType(BondType bt);
+	// Return bond order for specified bond type
+	static double bondOrder(BondType bt);
 
 	private:
 	// Bond type
@@ -90,6 +92,8 @@ class SpeciesBond : public SpeciesIntra, public ListItem<SpeciesBond>
 	void setBondType(BondType type);
 	// Return bond type
 	BondType bondType() const;
+	// Return bond order for current bond type
+	double bondOrder() const;
 
 
 	/*

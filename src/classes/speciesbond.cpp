@@ -124,6 +124,7 @@ bool SpeciesBond::matches(SpeciesAtom* i, SpeciesAtom* j) const
 
 // Bond type keywords
 const char* BondTypeKeywords[] = { "Single", "Double", "Triple", "Quadruple", "Aromatic" };
+double BondTypeOrders[] = { 1.0, 2.0, 3.0, 4.0, 1.5 };
 
 // Convert bond type string to functional form
 SpeciesBond::BondType SpeciesBond::bondType(const char* s)
@@ -138,6 +139,12 @@ const char* SpeciesBond::bondType(SpeciesBond::BondType bt)
 	return BondTypeKeywords[bt];
 }
 
+// Return bond order for specified bond type
+double SpeciesBond::bondOrder(SpeciesBond::BondType bt)
+{
+	return BondTypeOrders[bt];
+}
+
 // Set bond type
 void SpeciesBond::setBondType(BondType type)
 {
@@ -148,6 +155,12 @@ void SpeciesBond::setBondType(BondType type)
 SpeciesBond::BondType SpeciesBond::bondType() const
 {
 	return bondType_;
+}
+
+// Return bond order for current bond type
+double SpeciesBond::bondOrder() const
+{
+	return SpeciesBond::bondOrder(bondType_);
 }
 
 /*
