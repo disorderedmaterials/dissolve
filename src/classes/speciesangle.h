@@ -82,6 +82,8 @@ class SpeciesAngle : public SpeciesIntra, public ListItem<SpeciesAngle>
 	enum AngleFunction
 	{
 		HarmonicForm,
+		CosineForm,
+		Cos2Form,
 		nAngleFunctions
 	};
 	// Convert string to functional form

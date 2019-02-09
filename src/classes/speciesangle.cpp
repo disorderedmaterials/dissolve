@@ -139,8 +139,8 @@ bool SpeciesAngle::matches(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const
  */
 
 // Angle function keywords
-const char* AngleFunctionKeywords[] = { "Harmonic" };
-int AngleFunctionNParameters[] = { 2 };
+const char* AngleFunctionKeywords[] = { "Harmonic", "Cosine", "Cos2" };
+int AngleFunctionNParameters[] = { 2, 4, 4 };
 
 // Convert string to functional form
 SpeciesAngle::AngleFunction SpeciesAngle::angleFunction(const char* s)
@@ -216,14 +216,42 @@ double SpeciesAngle::energy(double angleInDegrees) const
 	if (form() == SpeciesAngle::HarmonicForm)
 	{
 		/*
+		 * U(theta) = 0.5 * forcek * (theta - eq)**2
+		 *
 		 * Parameters:
-		 * 0 : force constant
-		 * 1 : equilibrium angle (degrees)
+		 * 0 : Force constant, k
+		 * 1 : Equilibrium angle, eq (degrees)
 		 */
 		double delta = (angleInDegrees - params[1]) / DEGRAD;
 		return 0.5*params[0]*delta*delta;
 	}
-
+	else if (form() == SpeciesAngle::CosineForm)
+	{
+		/*
+		 * U(theta) = forcek * (1 + s * cos(n*theta - eq))
+		 *
+		 * Parameters:
+		 * 0 : Force constant, k
+		 * 1 : Periodicity, N
+		 * 2 : Equilibrium angle, eq (degrees)
+		 * 3 : Sign, s
+		 */
+		return params[0] * (1.0 + params[3] * cos(params[1] * angleInDegrees/DEGRAD - params[2]));
+	}
+	else if (form() == SpeciesAngle::Cos2Form)
+	{
+		/*
+		 * U(theta) = forcek * (C0 + C1 * cos(theta) + C2 * cos(2*theta))
+		 *
+		 * Parameters:
+		 * 0 : Force constant, k
+		 * 1 : Constant C0
+		 * 2 : Constant C1
+		 * 3 : Constant C2
+		 */
+		const double angleInRadians = angleInDegrees /DEGRAD;
+		return params[0] * (params[1] + params[2] * cos(angleInRadians) + params[3] * cos(2.0 * angleInRadians));
+	}
 	Messenger::error("Functional form of SpeciesAngle term not set, so can't calculate energy.\n");
 	return 0.0;
 }
@@ -234,20 +262,50 @@ double SpeciesAngle::force(double angleInDegrees) const
 	// Get pointer to relevant parameters array
 	const double* params = parameters();
 
+	// Convert angle to radians
+	const double angleInRadians = angleInDegrees /DEGRAD;
+
+	// Set initial derivative of angle w.r.t. cos(angle) for chain rule
+	const double dTheta_dCosTheta = -1.0 / sin(angleInDegrees/DEGRAD);
+
 	if (form() == SpeciesAngle::HarmonicForm)
 	{
 		/*
+		 * dU/d(theta) = k * (theta - eq)
+		 *
 		 * Parameters:
-		 * 0 : force constant
-		 * 1 : equilibrium angle (degrees)
+		 * 0 : Force constant, k
+		 * 1 : Equilibrium angle, eq (degrees)
 		 */
-		// Set initial derivative of angle w.r.t. cos(angle)
-		double dU_dtheta = -1.0 / sin(angleInDegrees/DEGRAD);
 
 		// Chain rule - multiply by derivative of energy w.r.t. angle (harmonic form)
-		dU_dtheta *= -params[0]*((angleInDegrees-params[1])/DEGRAD);
-
-		return dU_dtheta;
+		return dTheta_dCosTheta * -params[0]*((angleInDegrees-params[1])/DEGRAD);
+	}
+	else if (form() == SpeciesAngle::CosineForm)
+	{
+		/*
+		 * dU/d(theta) = -forcek * n * s * sin(n*theta - eq)
+		 *
+		 * Parameters:
+		 * 0 : Force constant, k
+		 * 1 : Periodicity, N
+		 * 2 : Equilibrium angle, eq (degrees)
+		 * 3 : Sign, s
+		 */
+		return dTheta_dCosTheta * -params[0] * params[1] * params[3] * sin(params[1] * angleInRadians - params[2]/DEGRAD);
+	}
+	else if (form() == SpeciesAngle::Cos2Form)
+	{
+		/*
+		 * dU/d(theta) = -forcek * (c1 * sin(theta) + 2 * c2 * sin(2*theta))
+		 *
+		 * Parameters:
+		 * 0 : Force constant, k
+		 * 1 : Constant C0 (unused)
+		 * 2 : Constant C1
+		 * 3 : Constant C2
+		 */
+		return dTheta_dCosTheta * -params[0] * (params[2] * sin(angleInRadians) + 2.0 * params[3] * sin(2.0 * angleInRadians));
 	}
 
 	Messenger::error("Functional form of SpeciesAngle term not set, so can't calculate force.\n");
