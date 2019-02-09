@@ -34,6 +34,7 @@
  * Generator data 8 (THyb) are used to quickly determine the method of torsional parameter generation.
  * Torsional parameters U(i) are assigned to the second through sixth periods, following M. G. Martin's
  * implementation in MCCCS Towhee.
+ * Other modifications from the original paper are made following the MCCCS Towhee implementation.
  * All energy values are in kcal.
  */
 
@@ -118,6 +119,12 @@ double UFFAtomType::zeta() const
 double UFFAtomType::Z() const
 {
 	return Z_;
+}
+
+// Return integer representing geometry about the type (geom)
+int UFFAtomType::geom() const
+{
+	return geom_;
 }
 
 /*
@@ -288,7 +295,7 @@ void UFF::registerAtomType(UFFAtomType* atomType, int Z)
 }
 
 // Return the named UFFAtomType (if it exists)
-UFFAtomType* UFF::atomTypeByName(const char* name, Element* element)
+UFFAtomType* UFF::atomTypeByName(const char* name, Element* element) const
 {
 	int startZ = (element ? element->Z() : 0);
 	int endZ = (element ? element->Z() : nElements()-1);
@@ -302,12 +309,8 @@ UFFAtomType* UFF::atomTypeByName(const char* name, Element* element)
 	return NULL;
 }
 
-/*
- * Term Generation
- */
-
 // Determine and return AtomType for specified SpeciesAtom
-UFFAtomType* UFF::determineAtomType(SpeciesAtom* i)
+UFFAtomType* UFF::determineAtomType(SpeciesAtom* i) const
 {
 	switch (i->element()->Z())
 	{
@@ -381,8 +384,6 @@ UFFAtomType* UFF::determineAtomType(SpeciesAtom* i)
 			break;
 		// Rhenium
 		case (ELEMENT_RE):
-// 				Re6+5	"os=5"
-// // 				Re3+7	"os=7"
 				if (isAtomGeometry(i, Forcefield::OctahedralGeometry)) return atomTypeByName("Re6+5", i->element());
 				else return atomTypeByName("Re3+7", i->element());
 			break;
@@ -395,8 +396,121 @@ UFFAtomType* UFF::determineAtomType(SpeciesAtom* i)
 	return NULL;
 }
 
+/*
+ * Term Generation
+ */
+
+// Generate bond parameters for the supplied UFF atom types
+bool UFF::generateBondTerm(const Species* sp, SpeciesBond* bondTerm, UFFAtomType* i, UFFAtomType* j) const
+{
+	// Check type pointers
+	if ((!i) || (!j)) return Messenger::error("One or more NULL type pointers passed (%p-%p).\n", i, j);
+
+	// Calculate rBO : Bond-order correction = -0.1332 * (ri + rj) * ln(n)  (eq 3)
+	const double sumr = i->r() + j->r();
+	const double rBO = -0.1332 * sumr * log(bondTerm->bondOrder());
+
+	// Calculate rEN : Electronegativity correction : ri*rj * (sqrt(Xi)-sqrt(Xj))**2 / (Xi*ri + Xj*rj)    (eq 4)
+	const double chi = sqrt(i->chi()) - sqrt(j->chi());
+	const double rEN = i->r() * j->r() * chi * chi / (i->chi()*i->r() + j->chi()*j->r());
+
+	// rij : Equilibrium distance : = ri + rj + rBO - rEN  (eq 2)
+	// Note: In the original paper  rij = ri + rj + rBO + rEN, but Marcus Martin (MCCCS Towhee) notes that the last term should be subtracted
+	const double rij = sumr + rBO - rEN;
+
+	// k : Force constant : = 664.12 * (Zi * Zj) / rij**3     (note 664.12 in kcal)
+	const double k = 664.12 * 4.184 * (i->Z() * j->Z()) / (rij * rij * rij);
+
+	// Set the parameters and form of the new bond term
+	// Functional form is Harmonic : U = 0.5 * k * (r - eq)**2
+	bondTerm->setForm(SpeciesBond::HarmonicForm);
+	bondTerm->setParameter(0, k);
+	bondTerm->setParameter(1, rij);
+
+	return true;
+}
+
+// Generate angle parameters for the supplied UFF atom types
+bool UFF::generateAngleTerm(const Species* sp, SpeciesAngle* angleTerm, UFFAtomType* i, UFFAtomType* j, UFFAtomType* k) const
+{
+	// Check type pointers
+	if ((!i) || (!j) || (!k)) return Messenger::error("One or more NULL type pointers passed (%p-%p-%p).\n", i, j, k);
+
+	// rBO : Bond-order correction = -0.1332 * (ri + rj) * ln(n)  (eq 3)
+	// We need the bond orders of the involved bonds...
+	SpeciesBond* ij = sp->hasBond(angleTerm->i(), angleTerm->j());
+	if (!ij) return Messenger::error("Can't locate bond i-j for bond order retrieval.\n");
+	SpeciesBond* jk = sp->hasBond(angleTerm->j(), angleTerm->k());
+	if (!jk) return Messenger::error("Can't locate bond j-k for bond order retrieval.\n");
+
+	const double sumrij = i->r() + j->r();
+	const double sumrjk = j->r() + k->r();
+	const double rBOij = -0.1332 * sumrij * log(ij->bondOrder());
+	const double rBOjk = -0.1332 * sumrjk * log(jk->bondOrder());
+
+	// rEN : Electronegativity correction : ri*rj * (sqrt(Xi)-sqrt(Xj))**2 / (Xi*ri + Xj*rj)    (eq 4)
+	const double chiij = sqrt(i->chi()) - sqrt(j->chi());
+	const double rENij = i->r() * j->r() * chiij * chiij / (i->chi()*i->r() + j->chi()*j->r());
+	const double chijk = sqrt(j->chi()) - sqrt(k->chi());
+	const double rENjk = j->r() * k->r() * chijk * chijk / (j->chi()*j->r() + k->chi()*k->r());
+
+	// rij : Equilibrium distance : = ri + rj + rBO - rEN  (eq 2)
+	// Note: In the original paper  rij = ri + rj + rBO + rEN, but Marcus Martin (MCCCS Towhee) notes that the last term should be subtracted
+	double rij = sumrij + rBOij - rENij;
+	double rjk = sumrjk + rBOjk - rENjk;
+
+	// Get theta for the central atom
+	const double theta = j->theta();
+	const double cosTheta = cos(theta);
+
+	// Determine rik2 and rik5 values
+	// rik2 = rij**2 + rjk**2 - 2 * rij * rjk * cos(theta)
+	const double rik2 = rij * rij + rjk * rjk - 2.0 * rij * rjk * cosTheta;
+	const double rik5 = rik2 * rik2 * sqrt(rik2);
+	const double forcek = 664.12 * 4.184 * (i->Z() * k->Z() / rik5) * ( 3.0 * rij * rjk * (1.0 - cosTheta*cosTheta) - rik2*cosTheta);
+
+	// To determine angle form and necessary coefficients, use 'geom' integer data (which represents the third letter of the atom name.
+	// This idea is shamelessly stolen from MCCCS Towhee!
+	int n = 0;
+	const int geom = j->geom();
+	// TODO CHECK THIS SECTION
+	if (geom == 0) Messenger::error("Unable to generate angle function around central atom '%s'.\n", j->name());
+	else if (geom == 1) n = 1;
+	else if (geom == 2) n = 3;
+	else if ((geom == 3) && (j->theta() < 90.1)) n = 2;
+	else if ((geom == 4) || (geom == 6)) n = 4;
+	else
+	{
+		// General nonlinear case:  U(theta) = forcek * (C0 + C1 * cos(theta) + C2 * cos(2*theta))
+		const double c2 = 1.0 / (4.0 * sin(theta)*sin(theta));
+		const double c1 = -4.0 * c2 * cosTheta;
+		const double c0 = c2 * (2.0 * cosTheta * cosTheta + 1.0);
+
+		angleTerm->setForm(SpeciesAngle::Cos2Form);
+		angleTerm->setParameter(0, forcek);
+		angleTerm->setParameter(1, c0);
+		angleTerm->setParameter(2, c1);
+		angleTerm->setParameter(3, c2);
+		return true;
+	}
+
+	// Setup terms for the specific case (n != 0)
+	angleTerm->setForm(SpeciesAngle::Cos2Form);
+	angleTerm->setParameter(0, forcek/(n*n));
+	angleTerm->setParameter(1, n);
+	angleTerm->setParameter(2, 0.0);
+	angleTerm->setParameter(3, -1.0);
+
+	return true;
+}
+
+// Generate torsion parameters for the supplied UFF atom types
+bool UFF::generateTorsionTerm(const Species* sp, SpeciesTorsion* torsionTerm, UFFAtomType* i, UFFAtomType* j, UFFAtomType* k, UFFAtomType* l) const
+{
+}
+
 // Create and assign suitable AtomTypes for the supplied Species
-bool UFF::createAtomTypes(Species* sp, CoreData& coreData)
+bool UFF::createAtomTypes(Species* sp, CoreData& coreData) const
 {
 	// Loop over Species atoms
 	for (SpeciesAtom* i = sp->atoms().first(); i != NULL; i = i->next)
@@ -430,112 +544,44 @@ bool UFF::createAtomTypes(Species* sp, CoreData& coreData)
 	return true;
 }
 
+// Create a full forcefield description for the supplied Species
+bool UFF::describe(Species* sp, CoreData& coreData) const
+{
+	// Set the atom types to our elements
+	if (!createAtomTypes(sp, coreData)) return Messenger::error("Failed to create/assign atom types.\n");
 
-// int bondgenerator(ffbound newterm, atom i, atom j)
-// {
-// 	double k, rij, ri, rj, sumr, chii, chij, rBO, chi, rEN, Zi, Zj;
-// 	# Grab some oft-used data
-// 	ffatom fi = i.type;
-// 	ffatom fj = j.type;
-// 	ri = fi.dataD("r");
-// 	rj = fj.dataD("r");
-// 	chii = fi.dataD("chi");
-// 	chij = fj.dataD("chi");
-// 	# rBO : Bond-order correction = -0.1332 * (ri + rj) * ln(n)  (eq 3)
-// 	sumr = ri + rj;
-// 	rBO = -0.1332 * sumr * ln(i.findBond(j).order());
-// 	# rEN : Electronegativity correction : ri*rj * (sqrt(Xi)-sqrt(Xj))**2 / (Xi*ri + Xj*rj)    (eq 4)
-// 	chi = sqrt(chii) - sqrt(chij);
-// 	rEN = ri * rj * chi * chi / (chii*ri + chij*rj);
-// 	# rij : Equilibrium distance : = ri + rj + rBO - rEN  (eq 2)
-// 	# Note: In the original paper  rij = ri + rj + rBO + rEN, but Marcus Martin (MCCCS Towhee) notes that the last term should be subtracted
-// 	rij = sumr + rBO - rEN;
-// 	Zi = fi.dataD("Z");
-// 	Zj = fj.dataD("Z");
-// 	k = aten.convertEnergy(664.12, "kcal") * (Zi * Zj) / (rij * rij * rij);
-// 	# Set the parameters of the new bond term
-// 	# In Aten, parameter order is { force constant, eq distance }, and the functional form is : U = 0.5 * k * (r - eq)**2   (same as UFF)
-// 	newterm.form = "harmonic";
-// 	newterm.data = { k, rij };
-// 	verbose("Generated harmonic bond information for %s-%s : k=%f, eq=%f\n", fi.equivalent,fj.equivalent, k, rij);
-// 	return 1;
-// }
-// 
-// int anglegenerator(ffbound newterm, atom i, atom j, atom k)
-// {
-// 	double rij, rjk, ri, rj, rk, sumrij, sumrjk, chii, chij, chik, rBOij, rBOjk, chiij, chijk, rENij, rENjk, Zi, Zk;
-// 	double theta, rik2, rik5, forcek, c0, c1, c2;
-// 	int n, geom;
-// 	# Grab some oft-used data
-// 	ffatom fi = i.type;
-// 	ffatom fj = j.type;
-// 	ffatom fk = k.type;
-// 	#verbose("The atoms passed are have assigned equivalent types of '%s' and '%s'.\n", i.type.equivalent,j.type.equivalent);
-// 	ri = fi.dataD("r");
-// 	rj = fj.dataD("r");
-// 	rk = fk.dataD("r");
-// 	chii = fi.dataD("chi");
-// 	chij = fj.dataD("chi");
-// 	chik = fk.dataD("chi");
-// 	Zi = fi.dataD("Z");
-// 	Zk = fk.dataD("Z");
-// 	# rBO : Bond-order correction = -0.1332 * (ri + rj) * ln(n)  (eq 3)
-// 	sumrij = ri + rj;
-// 	sumrjk = rj + rk;
-// 	rBOij = -0.1332 * sumrij * ln(i.findBond(j).order());
-// 	rBOjk = -0.1332 * sumrjk * ln(j.findBond(k).order());
-// 	# rEN : Electronegativity correction : ri*rj * (sqrt(Xi)-sqrt(Xj))**2 / (Xi*ri + Xj*rj)    (eq 4)
-// 	chiij = sqrt(chii) - sqrt(chij);
-// 	chijk = sqrt(chij) - sqrt(chik);
-// 	rENij = ri * rj * chiij * chiij / (chii*ri + chij*rj);
-// 	rENjk = rj * rk * chijk * chijk / (chij*rj + chik*rk);
-// 	# rij : Equilibrium distance : = ri + rj + rBO - rEN  (eq 2)
-// 	# Note: In the original paper  rij = ri + rj + rBO + rEN, but Marcus Martin (MCCCS Towhee) notes that the last term should be subtracted
-// 	rij = sumrij + rBOij - rENij;
-// 	rjk = sumrjk + rBOjk - rENjk;
-// 	theta = fj.dataD("theta");
-// 	# Determine rik2 and rik5 values
-// 	# rik2 = rij**2 + rjk**2 - 2 * rij * rjk * cos(theta)
-// 	rik2 = rij * rij + rjk * rjk - 2.0 * rij * rjk * cos(theta);
-// 	rik5 = rik2 * rik2 * sqrt(rik2);
-// 	forcek = aten.convertEnergy(664.12, "kcal") * (Zi * Zk / rik5);
-// 	forcek = forcek * ( 3.0 * rij * rjk * (1.0 - cos(theta)*cos(theta)) - rik2*cos(theta));
-// 
-// 	# To determine angle form and necessary coefficients, use 'geom' integer data (which represents the third letter of the atom name.
-// 	# This idea is shamelessly stolen from MCCCS Towhee.
-// 	n = 0;
-// 	geom = fj.dataI("geom");
-// 	if (geom == 0)
-// 	{
-// 		# No possible angle definitions
-// 		printf("Unable to generate angle function for central atom '%s'.\n", fk.name);
-// 		return 0;
-// 	}
-// 	# Specific cases for linear, trigonal planar, square-planar and octahedral environments
-// 	else if (geom == 1) n = 1;
-// 	else if (geom == 2) n = 3;
-// 	else if ((geom == 3) && (fj.dataD("theta") < 90.1)) n = 2;
-// 	else if ((geom == 4) || (geom == 6)) n = 4;
-// 	else
-// 	{
-// 		# General nonlinear case:  U(theta) = forcek * (C0 + C1 * cos(theta) + C2 * cos(2*theta))
-// 		c2 = 1.0 / (4.0 * sin(theta)*sin(theta));
-// 		c1 = -4.0 * c2 * cos(theta);
-// 		c0 = c2 * (2.0 * cos(theta) * cos(theta) + 1.0);
-// 		newterm.form = "cos2";
-// 		newterm.data = { forcek, c0, c1, c2 };
-// 		verbose("Generated cos2 angle information for %s-%s-%s : k=%f, c0=%f, c1=%f, c2=%f\n", fi.equivalent,fj.equivalent,fk.equivalent,forcek,c0,c1,c2);
-// 	}
-// 
-// 	# Setup terms for the specific case
-// 	if (n != 0)
-// 	{
-// 		newterm.form = "cos";
-// 		newterm.data = { forcek/(n*n), n, 0.0, -1.0 };
-// 		verbose("Generated cos angle information for %s-%s-%s : k=%f (n=%i), eq=0.0\n", fi.equivalent,fj.equivalent,fk.equivalent,forcek/(n*n),n);
-// 	}
-// 	return 1;
-// }
+	// Create an array of the UFFAtomTypes for the atoms in the Species for speed
+	Array<UFFAtomType*> atomTypes;
+	ListIterator<SpeciesAtom> atomIterator(sp->atoms());
+	while (SpeciesAtom* i = atomIterator.iterate()) atomTypes.add(atomTypeByName(i->atomType()->name(), i->element()));
+
+	// Generate bond parameters
+	ListIterator<SpeciesBond> bondIterator(sp->bonds());
+	while (SpeciesBond* bond = bondIterator.iterate())
+	{
+		UFFAtomType* i = atomTypes[bond->indexI()];
+		UFFAtomType* j = atomTypes[bond->indexJ()];
+		if (!generateBondTerm(sp, bond, i, j)) return Messenger::error("Failed to create parameters for bond %i-%i.\n", bond->indexI()+1, bond->indexJ()+1);
+	}
+
+	// Generate angle parameters
+	ListIterator<SpeciesAngle> angleIterator(sp->angles());
+	while (SpeciesAngle* angle = angleIterator.iterate())
+	{
+		UFFAtomType* i = atomTypes[angle->indexI()];
+		UFFAtomType* j = atomTypes[angle->indexJ()];
+		UFFAtomType* k = atomTypes[angle->indexK()];
+		if (!generateAngleTerm(sp, angle, i, j, k)) return Messenger::error("Failed to create parameters for angle %i-%i-%i.\n", angle->indexI()+1, angle->indexJ()+1, angle->indexK()+1);
+	}
+
+	return true;
+}
+
+// Generate intramolecular parameters description for the supplied Species, using on-the-fly typing
+bool UFF::describeIntramolecular(Species* sp) const
+{
+}
+
 // 
 // int torsiongenerator(ffbound newterm, atom i, atom j, atom k, atom l)
 // {
@@ -643,3 +689,8 @@ bool UFF::createAtomTypes(Species* sp, CoreData& coreData)
 // 	return 0;
 // }
 
+// Perform some test calculations
+void UFF::test() const
+{
+	
+}

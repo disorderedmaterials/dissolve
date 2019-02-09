@@ -29,7 +29,11 @@
 // Forward Declarations
 class CoreData;
 class Species;
+class SpeciesAngle;
 class SpeciesAtom;
+class SpeciesBond;
+class SpeciesIntra;
+class SpeciesTorsion;
 
 // Universal Forcefield AtomType Data
 class UFFAtomType : public ElementReference, public ListItem<UFFAtomType>
@@ -70,8 +74,12 @@ class UFFAtomType : public ElementReference, public ListItem<UFFAtomType>
 	double zeta() const;
 	// Return effective charge (Z)
 	double Z() const;
-// 	chi_, V_, U_;	int geom_;
+	// Return GMP electronegativity (chi)
+	double chi() const;
+// 	V_, U_;
 
+	// Return integer representing geometry about the type (geom)
+	int geom() const;
 };
 
 // Universal Forcefield
@@ -100,23 +108,31 @@ class UFF : public Forcefield
 	// Register specified atom type to given Element
 	static void registerAtomType(UFFAtomType* atomType, int Z);
 	// Return the named UFFAtomType (if it exists)
-	UFFAtomType* atomTypeByName(const char* name, Element* element = NULL);
+	UFFAtomType* atomTypeByName(const char* name, Element* element = NULL) const;
+	// Determine and return AtomType for specified SpeciesAtom
+	UFFAtomType* determineAtomType(SpeciesAtom* i) const;
 
 
 	/*
 	 * Term Generation
 	 */
+	private:
+	// Generate bond parameters for the supplied UFF atom types
+	bool generateBondTerm(const Species* sp, SpeciesBond* bondTerm, UFFAtomType* i, UFFAtomType* j) const;
+	// Generate angle parameters for the supplied UFF atom types
+	bool generateAngleTerm(const Species* sp, SpeciesAngle* angleTerm, UFFAtomType* i, UFFAtomType* j, UFFAtomType* k) const;
+	// Generate torsion parameters for the supplied UFF atom types
+	bool generateTorsionTerm(const Species* sp, SpeciesTorsion* torsionTerm, UFFAtomType* i, UFFAtomType* j, UFFAtomType* k, UFFAtomType* l) const;
+
 	public:
-	// Determine and return AtomType for specified SpeciesAtom
-	UFFAtomType* determineAtomType(SpeciesAtom* i);
 	// Create and assign suitable AtomTypes for the supplied Species
-	bool createAtomTypes(Species* sp, CoreData& coreData);
-	// Generate missing bond terms for the supplied Species
-	bool generateBondTerms(Species* sp);
-	// Generate missing angle terms for the supplied Species
-	bool generateAngleTerms(Species* sp);
-	// Generate missing torsion terms for the supplied Species
-	bool generateTorsionTerms(Species* sp);
+	bool createAtomTypes(Species* sp, CoreData& coreData) const;
+	// Create a full forcefield description for the supplied Species
+	bool describe(Species* sp, CoreData& coreData) const;
+	// Generate intramolecular parameters description for the supplied Species, using on-the-fly typing
+	bool describeIntramolecular(Species* sp) const;
+	// Perform some test calculations
+	void test() const;
 };
 
 #endif
