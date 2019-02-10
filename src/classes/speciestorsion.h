@@ -93,6 +93,7 @@ class SpeciesTorsion : public SpeciesIntra, public ListItem<SpeciesTorsion>
 		Cos3Form,
 		Cos4Form,
 		Cos3CForm,
+		UFFCosineForm,
 		nTorsionFunctions
 	};
 	// Convert string to functional form
