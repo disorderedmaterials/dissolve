@@ -1,6 +1,6 @@
 /*
 	*** Select Symbol Functions
-	*** src/gui/uchroma/gui/selectsymbol_funcs.cpp
+	*** src/gui/viewer/selectsymbol_funcs.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of uChroma.
@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/uchroma/gui/selectsymbol.h"
-#include "gui/uchroma/classes/symbol.h"
+#include "gui/viewer/selectsymbol.h"
+#include "gui/viewer/symbol.h"
 #include "templates/variantpointer.h"
 #include <QScrollBar>
 

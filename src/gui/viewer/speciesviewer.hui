@@ -28,7 +28,7 @@
 class Species;
 
 // Species Rendering Widget
-class SpeciesViewer : public Viewer
+class SpeciesViewer : public BaseViewer
 {
 	Q_OBJECT
 

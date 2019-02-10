@@ -1,6 +1,6 @@
 /*
 	*** Font Instance
-	*** src/gui/uchroma/render/fontinstance.cpp
+	*** src/gui/viewer/render/fontinstance.cpp
 	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
@@ -19,7 +19,7 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/uchroma/render/fontinstance.h"
+#include "gui/viewer/render/fontinstance.h"
 #include "base/messenger.h"
 
 // Constructor

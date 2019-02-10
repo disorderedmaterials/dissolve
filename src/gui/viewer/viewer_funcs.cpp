@@ -1,61 +1,69 @@
 /*
 	*** Viewer Functions
-	*** src/gui/viewer/viewer_funcs.cpp
-	Copyright T. Youngs 2012-2013
+	*** src/gui/uchroma/gui/viewer_funcs.cpp
+	Copyright T. Youngs 2013-2019
 
-	This file is part of Dissolve.
+	This file is part of uChroma.
 
-	Dissolve is free software: you can redistribute it and/or modify
+	uChroma is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
+	uChroma is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/viewer/viewer.hui"
+#include "gui/uchroma/gui/viewer.hui"
+#include "gui/uchroma/uchromabase.h"
 #include "base/messenger.h"
-
-// Static instance counter
-int nViewerInstances = 0;
+#include "gui/uchroma/render/fontinstance.h"
 
 // Constructor
-Viewer::Viewer(QWidget* parent) : QGLWidget(parent)
+UChromaViewer::UChromaViewer(QWidget* parent) : QOpenGLWidget(parent)
 {
+	uChromaBase_ = NULL;
+
 	// Character / Setup
 	contextWidth_ = 0;
 	contextHeight_ = 0;
 	valid_ = false;
 	drawing_ = false;
-	renderingOffscreen_ = false;
+	renderingOffScreen_ = false;
+	highlightCollection_ = NULL;
 
-	// Preferences (set static members only on first instance creation)
-	setDefaultPreferences(nViewerInstances == 0);
-	
-	// Engine Setup
-	linePrimitives_.setColourData(true);
-	linePrimitives_.setType(GL_LINES);
-	linePrimitives_.setNoInstances();
-	pointPrimitives_.setColourData(true);
-	pointPrimitives_.setType(GL_POINTS);
-	pointPrimitives_.setNoInstances();
-	resetView();
+	// Query
+	objectQueryX_ = -1;
+	objectQueryY_ = -1;
+	depthAtQueryCoordinates_ = 1.0;
+	objectAtQueryCoordinates_ = UChromaViewer::NoObject;
 
 	// Prevent QPainter from autofilling widget background
 	setAutoFillBackground(false);
 
-	++nViewerInstances;
+        // Create our FTGL font instance
+	fontInstance_.setup();
+
+	// Set up context menu
+	setContextMenuPolicy(Qt::CustomContextMenu);
+	initialiseContextMenu();
+	connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
 }
 
 // Destructor
-Viewer::~Viewer()
+UChromaViewer::~UChromaViewer()
 {
+}
+
+// Set UChromaBase pointer
+void UChromaViewer::setUChromaBase(UChromaBase* uChromaBase)
+{
+	uChromaBase_ = uChromaBase;
 }
 
 /*
@@ -63,37 +71,37 @@ Viewer::~Viewer()
  */
 
 // Initialise context widget (when created by Qt)
-void Viewer::initializeGL()
+void UChromaViewer::initializeGL()
 {
-	// Initialize GL
-	valid_ = true;
-	
-	// Create an instance for each defined user primitive - we do this in every call to initialiseGL so
-	// that, when saving a bitmap using QGLWidget::renderPixmap(), we automatically create new display list
-	// objects, rather than having to worry about context sharing etc. Slow, but safer and more compatible.
-	Messenger::print("In Viewer::initializeGL, pushing instances for %i primitives...\n", primitiveList_.nItems());
-	for (RefListItem<Primitive,int>* ri = primitiveList_.first(); ri != NULL; ri = ri->next) ri->item->pushInstance(context()); 
-}
+	// Setup function pointers to OpenGL extension functions
+	initializeOpenGLFunctions();
 
-void Viewer::paintGL()
-{
-	if (renderingOffscreen_) paintEvent(NULL);
-}
+	// Setup offscreen context
+	Messenger::printVerbose("Setting up offscreen context and surface...");
+        offscreenContext_.setShareContext(context());
+        offscreenContext_.setFormat(context()->format());
+        offscreenContext_.create();
+        offscreenSurface_.setFormat(context()->format());
+	offscreenSurface_.create();
+	Messenger::printVerbose("Done.");
 
-// General repaint callback
-void Viewer::paintEvent(QPaintEvent* event)
-{
-	makeCurrent();
-	
-	QColor color;
-	QRect currentBox;
-
-	// Do nothing if the canvas is not valid, or we are still drawing from last time.
-	if ((!valid_) || drawing_)
+	// Check for vertex buffer extensions
+        if ((!hasOpenGLFeature(QOpenGLFunctions::Buffers)) && (PrimitiveInstance::globalInstanceType() == PrimitiveInstance::VBOInstance))
 	{
-		doneCurrent();
-		return;
+		printf("VBO extension is requested but not available, so reverting to display lists instead.\n");
+		PrimitiveInstance::setGlobalInstanceType(PrimitiveInstance::ListInstance);
 	}
+
+	valid_ = true;
+
+	// Recalculate view layouts
+	uChromaBase_->recalculateViewLayout(contextWidth_, contextHeight_);
+}
+
+void UChromaViewer::paintGL()
+{
+	// Do nothing if the canvas is not valid, or we are still drawing from last time, or the uChroma pointer has not been set
+	if ((!valid_) || drawing_ || (!uChromaBase_)) return;
 
 	// Set the drawing flag so we don't have any rendering clashes
 	drawing_ = true;
@@ -101,137 +109,66 @@ void Viewer::paintEvent(QPaintEvent* event)
 	// Setup basic GL stuff
 	setupGL();
 
-	// Note: An internet source suggests that the QPainter documentation is incomplete, and that
-	// all OpenGL calls should be made after the QPainter is constructed, and before the QPainter
-	// is destroyed. However, this results in mangled graphics on the Linux (and other?) versions,
-	// so here it is done in the 'wrong' order.
-	
-	// Clear view
-	Messenger::printVerbose(" --> Clearing context, background, and setting pen colour\n");
-	glViewport(0,0,contextWidth_,contextHeight_);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	// Render full scene
+	renderFullScene();
 
-	// Check to see if data has changed since the last time drawScene() was called
-	// TODO
-	if (1)
-	{
-		solidPrimitives_.clear();
-		transparentPrimitives_.clear();
-		linePrimitives_.clear();
-		pointPrimitives_.clear();
-		textPrimitives_.forgetAll();
-		isotopeTextPrimitives_.forgetAll();
-
-		// Set colour mode
-		glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-		glEnable(GL_COLOR_MATERIAL);
-
-		// Prepare matrices
-	// 	glViewport(vp[0], vp[1], vp[2], vp[3]);
-		glMatrixMode(GL_PROJECTION);
-		setProjectionMatrix();
-		glLoadMatrixd(projectionMatrix_.matrix());
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-	
-		// What to draw depends on the target* pointers...
-		drawScene();
-	}
-
-	// Send primitives to the display
-	sortAndSendGL();
-	
-	// Start of QPainter code
-	static QFont font;
-	font.setPointSize(Viewer::fontSize());
-	QBrush nobrush(Qt::NoBrush);
-	QPen pen;
-	QPainter painter(this);
-	
-	// Render text elements for all models (with QPainter)
-	painter.setFont(font);
-	painter.setRenderHint(QPainter::Antialiasing);
-	textPrimitives_.renderAll(painter, this);
-	isotopeTextPrimitives_.renderAll(painter, this, true, false);
-	font.setPointSize(Viewer::fontSize()*Viewer::superScriptFraction());
-	painter.setFont(font);
-	isotopeTextPrimitives_.renderAll(painter, this, true, true);
-
-	// Render selection box (if any)
-// 	if (selectionBox_.width() != 0) painter.drawRect(selectionBox_);
-
-	// Done.
-	painter.end();
+	// Reset query coordinate
+	objectQueryX_ = -1;
+	objectQueryY_ = -1;
 
 	// Set the rendering flag to false
 	drawing_ = false;
-
-	// If we were rendering offscreen, we may delete the topmost primitive instance here
-	if (renderingOffscreen_)
-	{
-		Messenger::print("In Viewer::PaintGL, popping instances for %i primitives...\n", primitiveList_.nItems());
-		for (RefListItem<Primitive,int>* ri = primitiveList_.first(); ri != NULL; ri = ri->next) ri->item->popInstance(context());
-	}
-
-	doneCurrent();
 }
 
 // Resize function
-void Viewer::resizeGL(int newwidth, int newheight)
+void UChromaViewer::resizeGL(int newwidth, int newheight)
 {
 	// Store the new width and height of the widget
 	contextWidth_ = (GLsizei) newwidth;
 	contextHeight_ = (GLsizei) newheight;
-	viewportMatrix_[0] = 0;
-	viewportMatrix_[1] = 0;
-	viewportMatrix_[2] = newwidth;
-	viewportMatrix_[3] = newheight;
-	setProjectionMatrix();
+
+	// Recalculate view layout
+	uChromaBase_->recalculateViewLayout(contextWidth_, contextHeight_);
 }
 
 /*
- * Character / Setup
- */
+// Character / Setup
+*/
 
 // Return the current height of the drawing area
-GLsizei Viewer::contextHeight() const
+GLsizei UChromaViewer::contextHeight() const
 {
 	return contextHeight_;
 }
 
 // Return the current width of the drawing area
-GLsizei Viewer::contextWidth() const
+GLsizei UChromaViewer::contextWidth() const
 {
 	return contextWidth_;
 }
 
-// Probe features
-void Viewer::probeFeatures()
+// Setup font instance with supplied font
+bool UChromaViewer::setupFont(const char* fontFileName)
 {
-	QGLFormat fmt = context()->format();
-	// Probe this format!
-	printf(" QGLFormat: Alpha buffer is %s.\n", fmt.alpha() ? "enabled" : "disabled");
-	printf(" QGLFormat: Accumulation buffer is %s.\n", fmt.accum() ? "enabled" : "disabled");
-	printf(" QGLFormat: Depth buffer is %s.\n", fmt.depth() ? "enabled" : "disabled");
-	printf(" QGLFormat: Double-buffering is %s.\n", fmt.doubleBuffer() ? "enabled" : "disabled");
-	printf(" QGLFormat: Direct rendering is %s.\n", fmt.directRendering() ? "enabled" : "disabled");
-	printf(" QGLFormat: RGBA colour mode is %s.\n", fmt.rgba() ? "enabled" : "disabled");
-	printf(" QGLFormat: Multisample buffer is %s.\n", fmt.sampleBuffers() ? "enabled" : "disabled");
-	printf(" QGLFormat: Stencil buffer is %s.\n", fmt.stencil() ? "enabled" : "disabled");
-	printf(" QGLWidget: Autoswap buffers is %s.\n", autoBufferSwap() ? "enabled" : "disabled");
+	return fontInstance_.setup(fontFileName);
+}
+
+// Return font instance
+FontInstance& UChromaViewer::fontInstance()
+{
+	return fontInstance_;
 }
 
 // Check for GL error
-void Viewer::checkGlError()
+void UChromaViewer::checkGlError()
 {
-	// Do GL error check
 	GLenum glerr = GL_NO_ERROR;
 	do
 	{
 		switch (glGetError())
 		{
 			case (GL_INVALID_ENUM): Messenger::printVerbose("GLenum argument out of range\n"); break;
-			case (GL_INVALID_VALUE): Messenger::printVerbose("N(umeric argument out of range\n"); break;
+			case (GL_INVALID_VALUE): Messenger::printVerbose("Numeric argument out of range\n"); break;
 			case (GL_INVALID_OPERATION): Messenger::printVerbose("Operation illegal in current state\n"); break;
 			case (GL_STACK_OVERFLOW): Messenger::printVerbose("Command would cause a stack overflow\n"); break;
 			case (GL_STACK_UNDERFLOW): Messenger::printVerbose("Command would cause a stack underflow\n"); break;
@@ -245,189 +182,91 @@ void Viewer::checkGlError()
 }
 
 // Refresh widget / scene
-void Viewer::postRedisplay()
+void UChromaViewer::postRedisplay()
 {
 	if ((!valid_) || drawing_) return;
 	update();
 }
 
-// Setup projection matrix
-void Viewer::setProjectionMatrix(double perspectiveFov)
-{
-	// Create projection matrix for model
-	GLdouble top, bottom, right, left, aspect = (GLdouble) contextWidth_ / (GLdouble) contextHeight_;
-	GLdouble nearClip = 0.5, farClip = 2000.0;
-	if (hasPerspective_)
-	{
-		// Use reversed top and bottom values so we get y-axis (0,1,0) pointing up
-		top = tan(perspectiveFov / DEGRAD) * 0.5;
-		bottom = -top;
-		left = -aspect*top;
-		right = aspect*top;
+/*
+ * Object Querying
+ */
 
-		projectionMatrix_.setColumn(0, (nearClip*2.0) / (right-left), 0.0, 0.0, 0.0);
-		projectionMatrix_.setColumn(1, 0.0, (nearClip*2.0) / (top-bottom), 0.0, 0.0);
-		projectionMatrix_.setColumn(2, (right+left)/(right-left), (top+bottom)/(top-bottom), -(farClip+nearClip)/(farClip-nearClip), -1.0);
-		projectionMatrix_.setColumn(3, 0.0, 0.0, -(2.0*nearClip*farClip) / (farClip-nearClip), 0.0);
-		// Equivalent to the following code:
-		// glMatrixMode(GL_PROJECTION);
-		// glLoadIdentity();
-		// top = tan(prefs.perspectiveFov() / DEGRAD) * prefs.clipNear();
-		// bottom = -top;
-		// glFrustum(aspect*bottom, aspect*top, bottom, top, prefs.clipNear(), prefs.clipFar());
-		// glGetDoublev(GL_PROJECTION_MATRIX, modelProjectionMatrix_.matrix());
-	}
-	else
-	{
-		top = -tan(perspectiveFov / DEGRAD) * viewMatrix_[14];
-		bottom = -top;
-		left = -aspect*top;
-		right = aspect*top;
-
-		projectionMatrix_.setColumn(0, 2.0 / (right-left), 0.0, 0.0, (right+left)/(right-left));
-		projectionMatrix_.setColumn(1, 0.0, 2.0 / (top-bottom), 0.0, (top+bottom)/(top-bottom));
-		projectionMatrix_.setColumn(2, 0.0, 0.0, -1.0/farClip, 0.0);
-		projectionMatrix_.setColumn(3, 0.0, 0.0, 0.0, 1.0);
-		// Equivalent to the following code:
-		// glMatrixMode(GL_PROJECTION);
-		// glLoadIdentity();
-		// top = tan(prefs.perspectiveFov() / DEGRAD) * prefs.clipNear();
-		// bottom = -top;
-		// glOrtho(aspect*top, aspect*bottom, top, bottom, -prefs.clipFar(), prefs.clipFar());
-		// glGetDoublev(GL_PROJECTION_MATRIX, modelProjectionMatrix_.matrix());
-	}
-}
-                
-// Update transformation (view) matrix
-void Viewer::setViewMatrix(Matrix4& mat)
+// Update depth at query coordinates, returning whether it is closer
+bool UChromaViewer::updateQueryDepth()
 {
-	viewMatrix_ = mat;
+	// Return immediately if we are not querying
+	if (objectQueryX_ == -1) return false;
+
+	// Sample a small area centred at the supplied position
+	GLfloat depth[9];
+	
+	glReadPixels(objectQueryX_, objectQueryY_, objectQueryWidth_, objectQueryHeight_, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+
+	bool result = false;
+	for (int i=0; i<objectQueryWidth_*objectQueryHeight_; ++i)
+	{
+		if (depth[i] < depthAtQueryCoordinates_)
+		{
+			depthAtQueryCoordinates_ = depth[i];
+			result = true;
+		}
+	}
+	// 	printf("Current averageDepth at %i,%i is now %f\n", objectQueryX_, objectQueryY_, averageDepth);
+
+	return result;
 }
 
-// Render or grab image
-QPixmap Viewer::generateImage(int w, int h)
+// Set information of query object
+void UChromaViewer::setQueryObject(UChromaViewer::ViewObject objectType, const char* info)
 {
-	renderingOffscreen_ = true;
-	if (useFrameBuffer_ == false)
-	{
-
-		// Generate offscreen bitmap (a temporary context will be created)
-		QPixmap pixmap = renderPixmap(w, h, false);
-		
-		// Ensure correct widget context size is stored
-		contextWidth_ = (GLsizei) width();
-		contextHeight_ = (GLsizei) height();
-
-		renderingOffscreen_ = false;
-		return pixmap;
-	}
-	else
-	{
-		postRedisplay();
-		QImage image = grabFrameBuffer();
-
-		renderingOffscreen_ = false;
-		return QPixmap::fromImage(image);
-	}
+	objectAtQueryCoordinates_ = objectType;
+	infoAtQueryCoordinates_ = info;
 }
 
-// Reset current view
-void Viewer::resetView()
+// Set coordinates to query at next redraw
+void UChromaViewer::setQueryCoordinates(int mouseX, int mouseY)
 {
-	// Setup right-handed transformation matrix
-	viewMatrix_.setColumn(0, 1.0, 0.0, 0.0, 0.0);
-	viewMatrix_.setColumn(1, 0.0, 1.0, 0.0, 0.0);
-	viewMatrix_.setColumn(2, 0.0, 0.0, -1.0, 0.0);
-	viewMatrix_[14] = -5.0;
-}
+	depthAtQueryCoordinates_ = 1.0;
+	objectAtQueryCoordinates_ = UChromaViewer::NoObject;
+	infoAtQueryCoordinates_.clear();
 
-// Project given model coordinates into world coordinates
-Vec3<double> Viewer::modelToWorld(const Vec3<double>& modelr)
-{
-	Vec3<double> worldr;
-	Matrix4 vmat;
-	Vec4<double> pos, temp;
-	// Projection formula is : worldr = P x M x modelr
-	pos.set(modelr, 1.0);
-	// Get the world coordinates of the atom - Multiply by modelview matrix 'view'
-	vmat = viewMatrix_;
-//	vmat.applyTranslation(-cell_.centre().x, -cell_.centre().y, -cell_.centre().z);
-	temp = vmat * pos;
-	worldr.set(temp.x, temp.y, temp.z);
-	return worldr;
-}
-
-// Project given model coordinates into screen coordinates
-Vec4<double> Viewer::modelToScreen(const Vec3<double>& modelr, double screenradius)
-{
-	Vec4<double> screenr, tempscreen;
-	Vec4<double> worldr;
-	Matrix4 vmat;
-	Vec4<double> pos;
-	// Projection formula is : worldr = P x M x modelr
-	pos.set(modelr, 1.0);
-	// Get the world coordinates of the atom - Multiply by modelview matrix 'view'
-	vmat = viewMatrix_;
-//	vmat.applyTranslation(-cell_.centre().x, -cell_.centre().y, -cell_.centre().z);
-	worldr = vmat * pos;
-
-	screenr = projectionMatrix_ * worldr;
-	screenr.x /= screenr.w;
-	screenr.y /= screenr.w;
-	screenr.x = viewportMatrix_[0] + viewportMatrix_[2]*(screenr.x+1)*0.5;
-	screenr.y = viewportMatrix_[1] + viewportMatrix_[3]*(screenr.y+1)*0.5;
-	screenr.z = screenr.z / screenr.w;
-	// Calculate 2D 'radius' around the point - Multiply world[x+delta] coordinates by P
-	if (screenradius > 0.0)
+	// Check for invalid coordinates
+	if ((mouseX < 0) || (mouseX >= width()) || (mouseY < 0) || (mouseY >= height()))
 	{
-		worldr.x += screenradius;
-		tempscreen = projectionMatrix_ * worldr;
-		tempscreen.x /= tempscreen.w;
-		screenr.w = fabs( (viewportMatrix_[0] + viewportMatrix_[2]*(tempscreen.x+1)*0.5) - screenr.x);
-	}
-	return screenr;
-}
-
-// Convert screen coordinates into model space coordinates
-Vec3<double> Viewer::screenToModel(int x, int y, double z)
-{
-	static Vec3<double> modelr;
-	Vec4<double> temp, worldr;
-	int newx, newy;
-	double dx, dy;
-
-	// Grab transformation matrix, apply translation correction, and invert
-	Matrix4 itransform = viewMatrix_;
-//	itransform.applyTranslation(-cell_.centre().x, -cell_.centre().y, -cell_.centre().z);
-	itransform.invert();
-
-	// Mirror y-coordinate
-	y = viewportMatrix_[3] - y;
-
-	// Project points at guide z-position and two other points along literal x and y to get scaling factors for screen coordinates
-	worldr.set(0.0,0.0,z, 1.0);
-	temp = projectionMatrix_ * worldr;
-	newx = viewportMatrix_[0] + viewportMatrix_[2]*(temp.x / temp.w + 1.0)*0.5;
-	newy = viewportMatrix_[1] + viewportMatrix_[3]*(temp.y / temp.w + 1.0)*0.5;
-
-	for (int n=0; n<10; ++n)
-	{
-		// Determine new (better) coordinate from a yardstick centred at current world coordinates
-		temp = projectionMatrix_ * Vec4<double>(worldr.x+1.0, worldr.y+1.0, worldr.z, worldr.w);
-		dx = viewportMatrix_[0] + viewportMatrix_[2]*(temp.x / temp.w + 1.0)*0.5 - newx;
-		dy = viewportMatrix_[1] + viewportMatrix_[3]*(temp.y / temp.w + 1.0)*0.5 - newy;
-
-		worldr.add((x-newx)/dx, (y-newy)/dy, 0.0, 0.0);
-// 		printf ("N=%i", n); worldr.print();
-		temp = projectionMatrix_ * worldr;
-		newx = viewportMatrix_[0] + viewportMatrix_[2]*(temp.x / temp.w + 1.0)*0.5;
-		newy = viewportMatrix_[1] + viewportMatrix_[3]*(temp.y / temp.w + 1.0)*0.5;
-// 		printf("NEW dx = %f, dy = %f, wantedxy = %f, %f\n", newx, newy, x, y);
-		if ((x == newx) && (y == newy)) break;
+		objectQueryX_ = -1;
+		objectQueryY_ = -1;
+		return;
 	}
 
-	// Finally, invert to model coordinates
-	modelr = itransform * Vec3<double>(worldr.x, worldr.y, worldr.z);
+	// Setup area to sample around central pixel
+	objectQueryWidth_ = 3;
+	objectQueryX_ = mouseX-1;
+	if (mouseX == 0)
+	{
+		--objectQueryWidth_;
+		++mouseX;
+	}
+	else if (mouseX == (width()-1)) --objectQueryWidth_;
 
-	return modelr;
+	objectQueryHeight_ = 3;
+	objectQueryY_ = mouseY-1;
+	if (mouseY == 0)
+	{
+		--objectQueryHeight_;
+		++mouseY;
+	}
+	else if (mouseY == (height()-1)) --objectQueryHeight_;
+}
+
+// Return object type at query coordinates
+UChromaViewer::ViewObject UChromaViewer::objectAtQueryCoordinates() const
+{
+	return objectAtQueryCoordinates_;
+}
+
+// Info for object at query coordinates
+const char* UChromaViewer::infoAtQueryCoordinates() const
+{
+	return infoAtQueryCoordinates_.get();
 }

@@ -1,6 +1,6 @@
 /*
 	*** Rendering Primitive
-	*** src/gui/viewer/primitive.h
+	*** src/gui/viewer/render/primitive.h
 	Copyright T. Youngs 2012-2013
 
 	This file is part of Dissolve.
@@ -27,7 +27,7 @@
 #include <GL/gl.h>
 #include "glext.h"
 #endif
-#include "gui/viewer/vertexchunk.h"
+#include "gui/viewer/render/vertexchunk.h"
 #include "math/matrix4.h"
 #include "base/charstring.h"
 #include "templates/list.h"

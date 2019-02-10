@@ -1,5 +1,7 @@
 noinst_LTLIBRARIES = libviewer.la
 
+SUBDIRS = render
+
 SUFFIXES: .ui .hui .qrc
 
 .ui.lo:
@@ -25,11 +27,9 @@ libviewer_la_SOURCES = configurationviewer.hui speciesviewer.hui viewer.hui
 
 libviewer_la_SOURCES += configurationviewer_input.cpp configurationviewer_scene.cpp
 libviewer_la_SOURCES += speciesviewer_funcs.cpp speciesviewer_input.cpp speciesviewer_scene.cpp
-libviewer_la_SOURCES += primitive.cpp primitiveinfo.cpp primitivevertex.cpp
-libviewer_la_SOURCES += textprimitive.cpp
-libviewer_la_SOURCES += vertexchunk.cpp viewer_engine.cpp viewer_funcs.cpp viewer_input.cpp viewer_prefs.cpp
+libviewer_la_SOURCES += viewer_context.cpp viewer_funcs.cpp viewer_input.cpp viewer_scene.cpp
 
-noinst_HEADERS = primitive.h primitiveinfo.h textprimitive.h vertexchunk.h
+#noinst_HEADERS = 
 
 AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
 

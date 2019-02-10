@@ -23,7 +23,7 @@
 #include "base/messenger.h"
 
 // Constructor
-SpeciesViewer::SpeciesViewer(QWidget* parent) : Viewer(parent)
+SpeciesViewer::SpeciesViewer(QWidget* parent) : BaseViewer(parent)
 {
 	// Source data
 	sourceSpecies_ = NULL;

@@ -1,6 +1,6 @@
 /*
 	*** Primitive Info
-	*** src/gui/viewer/primitiveinfo.cpp
+	*** src/gui/viewer/render/primitiveinfo.cpp
 	Copyright T. Youngs 2012-2013
 
 	This file is part of Dissolve.
@@ -23,7 +23,7 @@
 #include <windows.h>
 #include <GL/gl.h>
 #endif
-#include "gui/viewer/primitiveinfo.h"
+#include "gui/viewer/render/primitiveinfo.h"
 
 // Constructor
 PrimitiveInfo::PrimitiveInfo()

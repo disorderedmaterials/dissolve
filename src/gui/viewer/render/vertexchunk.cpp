@@ -1,6 +1,6 @@
 /*
 	*** Vertex Chunk
-	*** src/gui/viewer/vertexchunk.cpp
+	*** src/gui/viewer/render/vertexchunk.cpp
 	Copyright T. Youngs 2012-2013
 
 	This file is part of Dissolve.
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/viewer/vertexchunk.h"
+#include "gui/viewer/render/vertexchunk.h"
 #include <stdio.h>
 #include <math.h>
 

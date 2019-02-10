@@ -1,6 +1,6 @@
 /*
 	*** Rendering Primitive
-	*** src/gui/viewer/primitive.cpp
+	*** src/gui/viewer/render/primitive.cpp
 	Copyright T. Youngs 2012-2013
 
 	This file is part of Dissolve.
@@ -25,7 +25,7 @@
 #include <GL/gl.h>
 #include "glext.h"
 #endif
-#include "gui/viewer/primitive.h"
+#include "gui/viewer/render/primitive.h"
 
 // Declare static VBO functions (Windows only)
 #ifdef _WIN32

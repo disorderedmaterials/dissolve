@@ -28,7 +28,7 @@
 class Configuration;
 
 // Configuration Rendering Widget
-class ConfigurationViewer : public Viewer
+class ConfigurationViewer : public BaseViewer
 {
 	Q_OBJECT
 

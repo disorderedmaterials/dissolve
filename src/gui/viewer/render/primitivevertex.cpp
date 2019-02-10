@@ -1,6 +1,6 @@
 /*
 	*** Primitive Vertex Generation Functions
-	*** src/render/viewer_primitivevertex.cpp
+	*** src/viewer/render/primitivevertex.cpp
 	Copyright T. Youngs 2012-2013
 
 	This file is part of Dissolve.
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/viewer/primitive.h"
+#include "gui/viewer/render/primitive.h"
 #include "math/constants.h"
 #include "templates/vector3.h"
 #include <math.h>
