@@ -30,7 +30,7 @@ class Element
 {
 	public:
 	// Constructor
-	Element(int Z, const char* name, const char* symbol);
+	Element(int Z, const char* name, const char* symbol, int group);
 
 	private:
 	// Atomic number (Z)
@@ -39,6 +39,8 @@ class Element
 	const char* name_;
 	// Element symbol
 	const char* symbol_;
+	// Group in periodic table
+	int group_;
 
 	public:
 	// Return atomic number (Z)
@@ -49,6 +51,8 @@ class Element
 	const char* name() const;
 	// Return symbol of element
 	const char* symbol() const;
+	// Return group for element
+	int group() const;
 };
 
 // Basic Elements Base Class
