@@ -21,6 +21,7 @@
 
 #include "gui/addspecieswizard.h"
 #include "gui/helpers/listwidgetupdater.h"
+#include "gui/helpers/treewidgetupdater.h"
 #include "main/dissolve.h"
 #include "classes/atomtype.h"
 #include "classes/species.h"
@@ -38,16 +39,32 @@ AddSpeciesWizard::AddSpeciesWizard(QWidget* parent) : temporaryDissolve_(tempora
 	ui_.setupUi(this);
 	setUpHeaderAndFooter(this);
 
+	// Create parent items for MasterTerms tree
+	masterBondItemParent_ = new QTreeWidgetItem(ui_.MasterTermsTree);
+	masterBondItemParent_->setFlags(Qt::ItemIsEnabled);
+	masterBondItemParent_->setExpanded(true);
+	masterBondItemParent_->setText(0, "Bonds");
+	masterAngleItemParent_ = new QTreeWidgetItem(ui_.MasterTermsTree);
+	masterAngleItemParent_->setFlags(Qt::ItemIsEnabled);
+	masterAngleItemParent_->setText(0, "Angles");
+	masterAngleItemParent_->setExpanded(true);
+	masterTorsionItemParent_ = new QTreeWidgetItem(ui_.MasterTermsTree);
+	masterTorsionItemParent_->setFlags(Qt::ItemIsEnabled);
+	masterTorsionItemParent_->setText(0, "Torsions");
+	masterTorsionItemParent_->setExpanded(true);
+
 	// Register pages with the wizard
 	registerChoicePage(AddSpeciesWizard::StartPage, "Create Species");
 	registerPage(AddSpeciesWizard::CreateAtomicPage, "Create Atomic Species", AddSpeciesWizard::SpeciesNamePage);
 	registerPage(AddSpeciesWizard::ImportSpeciesSelectFilePage, "Choose Input File", AddSpeciesWizard::ImportSpeciesSelectSpeciesPage);
 	registerPage(AddSpeciesWizard::ImportSpeciesSelectSpeciesPage, "Select Species", AddSpeciesWizard::AtomTypesPage);
-	registerPage(AddSpeciesWizard::AtomTypesPage, "Atom Types", AddSpeciesWizard::SpeciesNamePage);
+	registerPage(AddSpeciesWizard::AtomTypesPage, "Atom Types");
+	registerPage(AddSpeciesWizard::MasterTermsPage, "Master Terms", AddSpeciesWizard::SpeciesNamePage);
 	registerFinishPage(AddSpeciesWizard::SpeciesNamePage, "Species Name");
 
 	// Connect signals / slots
 	connect(ui_.AtomTypesList->itemDelegate(), SIGNAL(commitData(QWidget*)), this, SLOT(atomTypesListEdited(QWidget*)));
+	connect(ui_.MasterTermsTree->itemDelegate(), SIGNAL(commitData(QWidget*)), this, SLOT(masterTermsTreeEdited(QWidget*)));
 	connect(ui_.CreateAtomicElementSelector, SIGNAL(elementSelectionChanged()), this, SLOT(createAtomicElementChanged()));
 	if (footerAvailable()) connect(ui_.CreateAtomicElementSelector, SIGNAL(elementDoubleClicked()), this, SLOT(goToNextPage()));
 
@@ -65,8 +82,6 @@ AddSpeciesWizard::~AddSpeciesWizard()
 // Copy interaction parameters, adding MasterIntra if necessary
 void AddSpeciesWizard::copyIntra(SpeciesIntra* sourceIntra, SpeciesIntra* destIntra, Dissolve& mainDissolve)
 {
-	// We can always copy the form of the interaction, regardless of whether it is a MasterIntra or not
-
 	// If sourceIntra referneces a MasterIntra, check for its presence in the supplied Dissolve reference, and create it if necessary
 	if (sourceIntra->masterParameters())
 	{
@@ -287,6 +302,7 @@ bool AddSpeciesWizard::prepareForNextPage(int currentIndex)
 			}
 
 			updateAtomTypesPage();
+			updateMasterTermsPage();
 			break;
 		default:
 			break;
@@ -300,6 +316,10 @@ int AddSpeciesWizard::determineNextPage(int currentIndex)
 {
 	switch (currentIndex)
 	{
+		case (AddSpeciesWizard::AtomTypesPage):
+			// If there are master terms present, go to that page first. Otherwise, skip straight to naming
+			if (temporaryDissolve_.nMasterBonds() || temporaryDissolve_.nMasterAngles() || temporaryDissolve_.nMasterTorsions()) return AddSpeciesWizard::MasterTermsPage;
+			else return AddSpeciesWizard::SpeciesNamePage;
 		default:
 			break;
 	}
@@ -404,7 +424,11 @@ void AddSpeciesWizard::on_SpeciesList_currentRowChanged(int currentRow)
 {
 	// Set import target from current row
 	if (currentRow == -1) importTarget_ = NULL;
-	else importTarget_ = VariantPointer<Species>(ui_.SpeciesList->currentItem()->data(Qt::UserRole));
+	else
+	{
+		importTarget_ = VariantPointer<Species>(ui_.SpeciesList->currentItem()->data(Qt::UserRole));
+		ui_.SpeciesNameEdit->setText(importTarget_->name());
+	}
 
 	updateProgressionControls();
 }
@@ -436,6 +460,18 @@ void AddSpeciesWizard::updateAtomTypesPage()
 {
 	// Update the list against the global AtomType list
 	ListWidgetUpdater<AddSpeciesWizard,AtomType> listUpdater(ui_.AtomTypesList, temporaryCoreData_.constAtomTypes(), this, &AddSpeciesWizard::updateAtomTypesListRow);
+
+	// Determine whether we have any naming conflicts
+	bool conflicts = false;
+	ListIterator<AtomType> typeIterator(temporaryCoreData_.constAtomTypes());
+	while (AtomType* at = typeIterator.iterate()) if (dissolveReference_->findAtomType(at->name()))
+	{
+		conflicts = true;
+		break;
+	}
+	ui_.AtomTypesIndicator->setNotOK(conflicts);
+	if (conflicts) ui_.AtomTypesIndicatorLabel->setText("One or more AtomTypes in the imported Species conflict with existing types");
+	else ui_.AtomTypesIndicatorLabel->setText("There are no naming conflicts with the imported AtomTypes");
 }
 
 void AddSpeciesWizard::on_AtomTypesList_itemSelectionChanged()
@@ -493,6 +529,134 @@ void AddSpeciesWizard::on_AtomTypesSuffixButton_clicked(bool checked)
 	}
 
 	updateAtomTypesPage();
+}
+
+/*
+ * MasterTerms Page
+ */
+
+// Row update function for MasterTermsList
+void AddSpeciesWizard::updateMasterTermsTreeChild(QTreeWidgetItem* parent, int childIndex, MasterIntra* masterIntra, bool createItem)
+{
+	QTreeWidgetItem* item;
+	if (createItem)
+	{
+		item = new QTreeWidgetItem;
+		item->setData(0, Qt::UserRole, VariantPointer<MasterIntra>(masterIntra));
+		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
+		parent->insertChild(childIndex, item);
+	}
+	else item = parent->child(childIndex);
+
+	// Set item data
+	item->setText(0, masterIntra->name());
+	item->setIcon(0, QIcon(dissolveReference_->findMasterTerm(masterIntra->name()) ?  ":/general/icons/general_warn.svg" : ":/general/icons/general_true.svg"));
+}
+
+// Update page with MasterTerms in our temporary Dissolve reference
+void AddSpeciesWizard::updateMasterTermsPage()
+{
+	// Update the list against the global MasterTerm tree
+	TreeWidgetUpdater<AddSpeciesWizard,MasterIntra> bondUpdater(masterBondItemParent_, temporaryDissolve_.masterBonds(), this, &AddSpeciesWizard::updateMasterTermsTreeChild);
+	TreeWidgetUpdater<AddSpeciesWizard,MasterIntra> angleUpdater(masterAngleItemParent_, temporaryDissolve_.masterAngles(), this, &AddSpeciesWizard::updateMasterTermsTreeChild);
+	TreeWidgetUpdater<AddSpeciesWizard,MasterIntra> torsionUpdater(masterTorsionItemParent_, temporaryDissolve_.masterTorsions(), this, &AddSpeciesWizard::updateMasterTermsTreeChild);
+
+	// Determine whether we have any naming conflicts
+	bool conflicts = false;
+	ListIterator<MasterIntra> bondIterator(temporaryDissolve_.masterBonds());
+	while (MasterIntra* intra = bondIterator.iterate()) if (dissolveReference_->findMasterTerm(intra->name()))
+	{
+		conflicts = true;
+		break;
+	}
+	ListIterator<MasterIntra> angleIterator(temporaryDissolve_.masterAngles());
+	while (MasterIntra* intra = angleIterator.iterate()) if (dissolveReference_->findMasterTerm(intra->name()))
+	{
+		conflicts = true;
+		break;
+	}
+	ListIterator<MasterIntra> torsionIterator(temporaryDissolve_.masterTorsions());
+	while (MasterIntra* intra = torsionIterator.iterate()) if (dissolveReference_->findMasterTerm(intra->name()))
+	{
+		conflicts = true;
+		break;
+	}
+	ui_.MasterTermsIndicator->setNotOK(conflicts);
+	if (conflicts) ui_.MasterTermsIndicatorLabel->setText("One or more MasterTerms in the imported Species conflict with existing ones");
+	else ui_.MasterTermsIndicatorLabel->setText("There are no naming conflicts with the imported MasterTerms");
+}
+
+void AddSpeciesWizard::on_MasterTermsTree_itemSelectionChanged()
+{
+	// Enable / disable prefix and suffix buttons as appropriate
+	bool isSelection = ui_.MasterTermsTree->selectedItems().count() > 0;
+	ui_.MasterTermsPrefixButton->setEnabled(isSelection);
+	ui_.MasterTermsSuffixButton->setEnabled(isSelection);
+}
+
+void AddSpeciesWizard::masterTermsTreeEdited(QWidget* lineEdit)
+{
+	// Since the signal that leads us here does not tell us the item that was edited, update all MasterTerm names here before updating the page
+	for (int n=0; n<masterBondItemParent_->childCount(); ++n)
+	{
+		QTreeWidgetItem* item = masterBondItemParent_->child(n);
+		MasterIntra* intra = (MasterIntra*) VariantPointer<MasterIntra>(item->data(0, Qt::UserRole));
+		if (!intra) continue;
+
+		intra->setName(qPrintable(item->text(0)));
+	}
+	for (int n=0; n<masterAngleItemParent_->childCount(); ++n)
+	{
+		QTreeWidgetItem* item = masterAngleItemParent_->child(n);
+		MasterIntra* intra = (MasterIntra*) VariantPointer<MasterIntra>(item->data(0, Qt::UserRole));
+		if (!intra) continue;
+
+		intra->setName(qPrintable(item->text(0)));
+	}
+	for (int n=0; n<masterTorsionItemParent_->childCount(); ++n)
+	{
+		QTreeWidgetItem* item = masterTorsionItemParent_->child(n);
+		MasterIntra* intra = (MasterIntra*) VariantPointer<MasterIntra>(item->data(0, Qt::UserRole));
+		if (!intra) continue;
+
+		intra->setName(qPrintable(item->text(0)));
+	}
+
+	updateMasterTermsPage();
+}
+
+void AddSpeciesWizard::on_MasterTermsPrefixButton_clicked(bool checked)
+{
+	bool ok;
+	QString prefix = QInputDialog::getText(this, "Prefix MasterTerms", "Enter prefix to apply to all selected MasterTerms", QLineEdit::Normal, "", &ok);
+	if (!ok) return;
+
+	QList<QTreeWidgetItem*> selectedItems = ui_.MasterTermsTree->selectedItems();
+	QList<QTreeWidgetItem*>::iterator i;
+	for (i = selectedItems.begin(); i != selectedItems.end(); ++i)
+	{
+		MasterIntra* intra = (MasterIntra*) VariantPointer<MasterIntra>((*i)->data(0, Qt::UserRole));
+		intra->setName(CharString("%s%s", qPrintable(prefix), intra->name()));
+	}
+
+	updateMasterTermsPage();
+}
+
+void AddSpeciesWizard::on_MasterTermsSuffixButton_clicked(bool checked)
+{
+	bool ok;
+	QString suffix = QInputDialog::getText(this, "Suffix MasterTerms", "Enter suffix to apply to all selected MasterTerms", QLineEdit::Normal, "", &ok);
+	if (!ok) return;
+
+	QList<QTreeWidgetItem*> selectedItems = ui_.MasterTermsTree->selectedItems();
+	QList<QTreeWidgetItem*>::iterator i;
+	for (i = selectedItems.begin(); i != selectedItems.end(); ++i)
+	{
+		MasterIntra* intra = (MasterIntra*) VariantPointer<MasterIntra>((*i)->data(0, Qt::UserRole));
+		intra->setName(CharString("%s%s", intra->name(), qPrintable(suffix)));
+	}
+
+	updateMasterTermsPage();
 }
 
 /*

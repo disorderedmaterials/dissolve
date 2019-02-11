@@ -27,7 +27,7 @@
 #include "main/dissolve.h"
 
 // Forward Declarations
-/* none */
+class MasterIntra;
 
 // Add Species Wizard
 class AddSpeciesWizard : public WizardWidget
@@ -80,7 +80,8 @@ class AddSpeciesWizard : public WizardWidget
 		CreateAtomicPage,		/* Create atomic Species, optionally with new AtomType */
 		ImportSpeciesSelectFilePage,	/* Import Species - select file */
 		ImportSpeciesSelectSpeciesPage,	/* Import Species - choose species */
-		AtomTypesPage,			/* AtomTypes page - check / re-map AtomTypes*/
+		AtomTypesPage,			/* AtomTypes page - check / re-map AtomTypes */
+		MasterTermsPage,		/* MasterTerms page - check / re-map MasterTerms */
 		SpeciesNamePage,		/* Final page, setting name for Species */
 		nPages
 	};
@@ -144,6 +145,25 @@ class AddSpeciesWizard : public WizardWidget
 	void atomTypesListEdited(QWidget* lineEdit);
 	void on_AtomTypesPrefixButton_clicked(bool checked);
 	void on_AtomTypesSuffixButton_clicked(bool checked);
+
+
+	/*
+	 * MasterTerms Page
+	 */
+	private:
+	// Parental tree widgets for master terms
+	QTreeWidgetItem* masterBondItemParent_, *masterAngleItemParent_, *masterTorsionItemParent_;
+	
+	private:
+	// Row update function for MasterTermsTree
+	void updateMasterTermsTreeChild(QTreeWidgetItem* parent, int childIndex, MasterIntra* masterIntra, bool createItem);
+	void updateMasterTermsPage();
+
+	private slots:
+	void on_MasterTermsTree_itemSelectionChanged();
+	void masterTermsTreeEdited(QWidget* lineEdit);
+	void on_MasterTermsPrefixButton_clicked(bool checked);
+	void on_MasterTermsSuffixButton_clicked(bool checked);
 
 
 	/*
