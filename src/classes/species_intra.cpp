@@ -420,3 +420,119 @@ int Species::torsionIndex(SpeciesTorsion* spt)
 {
 	return torsions_.indexOf(spt);
 }
+
+// Return whether the attached atoms lists have been created
+bool Species::attachedAtomListsGenerated() const
+{
+	return attachedAtomListsGenerated_;
+}
+
+// Generate attached SpeciesAtom lists for all intramolecular terms
+void Species::generateAttachedAtomLists()
+{
+	// Bonds
+	for (int n=0; n<bonds_.nItems(); ++n)
+	{
+		// Grab Bond pointer
+		SpeciesBond* b = bonds_[n];
+
+		// Select all Atoms attached to Atom 'i', excluding the Bond as a path
+		clearAtomSelection();
+		selectFromAtom(b->i(), b);
+
+		// If the list now contains Atom j, the two atoms are present in a cycle of some sort, and we can only add the Atom 'i' itself
+		// In that case we can also finish the list for Atom 'j', and continue the loop.
+		if (selectedAtoms_.contains(b->j()))
+		{
+			Messenger::printVerbose("Bond between Atoms %i-%i is present in a cycle, so a minimal set of attached atoms will be used.\n", b->i()->userIndex(), b->j()->userIndex());
+			b->setAttachedAtoms(0, b->i());
+			b->setAttachedAtoms(1, b->j());
+			b->setInCycle(true);
+			continue;
+		}
+		else b->setAttachedAtoms(0, selectedAtoms_);
+
+		// Select all Atoms attached to Atom 'i', excluding the Bond as a path
+		clearAtomSelection();
+		selectFromAtom(b->j(), b);
+		b->setAttachedAtoms(1, selectedAtoms_);
+	}
+
+	// Angles - termini are 'i' and 'k'
+	for (int n=0; n<angles_.nItems(); ++n)
+	{
+		// Grab Angle pointer
+		SpeciesAngle* a = angles_[n];
+
+		// Grab relevant Bonds (if they exist)
+		SpeciesBond* ji = a->j()->hasBond(a->i());
+		SpeciesBond* jk = a->j()->hasBond(a->k());
+
+		// Select all Atoms attached to Atom 'i', excluding the Bond ji as a path
+		clearAtomSelection();
+		selectFromAtom(a->i(), ji, jk);
+
+		// Remove Atom 'j' from the list if it's there
+		selectedAtoms_.remove(a->j());
+
+		// If the list now contains Atom k, the two atoms are present in a cycle of some sort, and we can only add the Atom 'i' itself
+		// In that case we can also finish the list for Atom 'k', and continue the loop.
+		if (selectedAtoms_.contains(a->k()))
+		{
+			Messenger::printVerbose("Angle between Atoms %i-%i-%i is present in a cycle, so a minimal set of attached atoms will be used.\n", a->i()->userIndex(), a->j()->userIndex(), a->k()->userIndex());
+			a->setAttachedAtoms(0, a->i());
+			a->setAttachedAtoms(1, a->k());
+			a->setInCycle(true);
+			continue;
+		}
+		else a->setAttachedAtoms(0, selectedAtoms_);
+
+		// Select all Atoms attached to Atom 'k', excluding the Bond jk as a path
+		clearAtomSelection();
+		selectFromAtom(a->k(), ji, jk);
+
+		// Remove Atom 'j' from the list if it's there
+		selectedAtoms_.remove(a->j());
+
+		a->setAttachedAtoms(1, selectedAtoms_);
+	}
+
+	// Torsions - termini are 'j' and 'k'
+	for (int n=0; n<torsions_.nItems(); ++n)
+	{
+		// Grab Torsion pointer
+		SpeciesTorsion* t = torsions_[n];
+
+		// Grab relevant Bond (if it exists)
+		SpeciesBond* jk = t->j()->hasBond(t->k());
+
+		// Select all Atoms attached to Atom 'j', excluding the Bond ji as a path
+		clearAtomSelection();
+		selectFromAtom(t->j(), jk);
+
+		// Remove Atom 'j' from the list
+		selectedAtoms_.remove(t->j());
+
+		// If the list now contains Atom k, the two atoms are present in a cycle of some sort, and we can only add the Atom 'i'
+		if (selectedAtoms_.contains(t->k()))
+		{
+			Messenger::printVerbose("Torsion between Atoms %i-%i-%i-%i is present in a cycle, so a minimal set of attached atoms will be used.\n", t->i()->userIndex(), t->j()->userIndex(), t->k()->userIndex(), t->l()->userIndex());
+			t->setAttachedAtoms(0, t->i());
+			t->setAttachedAtoms(1, t->l());
+			t->setInCycle(true);
+			continue;
+		}
+		else t->setAttachedAtoms(0, selectedAtoms_);
+
+		// Select all Atoms attached to Atom 'k', excluding the Bond jk as a path
+		clearAtomSelection();
+		selectFromAtom(t->k(), jk);
+
+		// Remove Atom 'k' from the list
+		selectedAtoms_.remove(t->k());
+
+		t->setAttachedAtoms(1, selectedAtoms_);
+	}
+
+	attachedAtomListsGenerated_ = true;
+}

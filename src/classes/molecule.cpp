@@ -252,116 +252,6 @@ void Molecule::selectFromAtom(Atom* i, RefList<Atom,bool>& selectedAtoms, Bond* 
 	}
 }
 
-// Recalculate attached Atom lists for all intramolecular terms involved in the Molecule
-void Molecule::updateAttachedAtomLists()
-{
-	RefList<Atom,bool> selectedAtoms;
-
-	// Bonds
-	for (int n=0; n<bonds_.nItems(); ++n)
-	{
-		// Grab Bond pointer
-		Bond* b = bonds_[n];
-
-		// Select all Atoms attached to Atom 'i', excluding the Bond as a path
-		selectedAtoms.clear();
-		selectFromAtom(b->i(), selectedAtoms, b);
-
-		// If the list now contains Atom j, the two atoms are present in a cycle of some sort, and we can only add the Atom 'i' itself
-		// In that case we can also finish the list for Atom 'j', and continue the loop.
-		if (selectedAtoms.contains(b->j()))
-		{
-			Messenger::printVerbose("Bond between Atoms %i-%i is present in a cycle, so a minimal set of attached atoms will be used.\n", b->i()->arrayIndex(), b->j()->arrayIndex());
-			b->setAttachedAtoms(0, b->i());
-			b->setAttachedAtoms(1, b->j());
-			b->setInCycle(true);
-			continue;
-		}
-		else b->setAttachedAtoms(0, selectedAtoms);
-
-		// Select all Atoms attached to Atom 'i', excluding the Bond as a path
-		selectedAtoms.clear();
-		selectFromAtom(b->j(), selectedAtoms, b);
-		b->setAttachedAtoms(1, selectedAtoms);
-	}
-
-	// Angles - termini are 'i' and 'k'
-	for (int n=0; n<angles_.nItems(); ++n)
-	{
-		// Grab Angle pointer
-		Angle* a = angles_[n];
-
-		// Grab relevant Bonds (if they exist)
-		Bond* ji = a->j()->findBond(a->i());
-		Bond* jk = a->j()->findBond(a->k());
-
-		// Select all Atoms attached to Atom 'i', excluding the Bond ji as a path
-		selectedAtoms.clear();
-		selectFromAtom(a->i(), selectedAtoms, ji, jk);
-
-		// Remove Atom 'j' from the list if it's there
-		selectedAtoms.remove(a->j());
-
-		// If the list now contains Atom k, the two atoms are present in a cycle of some sort, and we can only add the Atom 'i' itself
-		// In that case we can also finish the list for Atom 'k', and continue the loop.
-		if (selectedAtoms.contains(a->k()))
-		{
-			Messenger::printVerbose("Angle between Atoms %i-%i-%i is present in a cycle, so a minimal set of attached atoms will be used.\n", a->i()->arrayIndex(), a->j()->arrayIndex(), a->k()->arrayIndex());
-			a->setAttachedAtoms(0, a->i());
-			a->setAttachedAtoms(1, a->k());
-			a->setInCycle(true);
-			continue;
-		}
-		else a->setAttachedAtoms(0, selectedAtoms);
-
-		// Select all Atoms attached to Atom 'k', excluding the Bond jk as a path
-		selectedAtoms.clear();
-		selectFromAtom(a->k(), selectedAtoms, ji, jk);
-
-		// Remove Atom 'j' from the list if it's there
-		selectedAtoms.remove(a->j());
-
-		a->setAttachedAtoms(1, selectedAtoms);
-	}
-
-	// Torsions - termini are 'j' and 'k'
-	for (int n=0; n<torsions_.nItems(); ++n)
-	{
-		// Grab Torsion pointer
-		Torsion* t = torsions_[n];
-
-		// Grab relevant Bond (if it exists)
-		Bond* jk = t->j()->findBond(t->k());
-
-		// Select all Atoms attached to Atom 'j', excluding the Bond ji as a path
-		selectedAtoms.clear();
-		selectFromAtom(t->j(), selectedAtoms, jk);
-
-		// Remove Atom 'j' from the list
-		selectedAtoms.remove(t->j());
-
-		// If the list now contains Atom k, the two atoms are present in a cycle of some sort, and we can only add the Atom 'i'
-		if (selectedAtoms.contains(t->k()))
-		{
-			Messenger::printVerbose("Torsion between Atoms %i-%i-%i-%i is present in a cycle, so a minimal set of attached atoms will be used.\n", t->i()->arrayIndex(), t->j()->arrayIndex(), t->k()->arrayIndex(), t->l()->arrayIndex());
-			t->setAttachedAtoms(0, t->i());
-			t->setAttachedAtoms(1, t->l());
-			t->setInCycle(true);
-			continue;
-		}
-		else t->setAttachedAtoms(0, selectedAtoms);
-
-		// Select all Atoms attached to Atom 'k', excluding the Bond jk as a path
-		selectedAtoms.clear();
-		selectFromAtom(t->k(), selectedAtoms, jk);
-
-		// Remove Atom 'k' from the list
-		selectedAtoms.remove(t->k());
-
-		t->setAttachedAtoms(1, selectedAtoms);
-	}
-}
-
 /*
  * Manipulations
  */
@@ -407,14 +297,14 @@ void Molecule::transform(const Box* box, const Matrix3& transformationMatrix)
 }
 
 // Transform selected atoms with supplied matrix, around specified origin
-void Molecule::transform(const Box* box, const Matrix3& transformationMatrix, const Vec3<double>& origin, int nTargetAtoms, Atom** targetAtoms)
+void Molecule::transform(const Box* box, const Matrix3& transformationMatrix, const Vec3<double>& origin, int nTargetAtoms, int* targetAtoms)
 {
 	// Loop over supplied Atoms
 	Vec3<double> newR;
 	Atom* i;
 	for (int n=0; n<nTargetAtoms; ++n)
 	{
-		i = targetAtoms[n];
+		i = atom(targetAtoms[n]);
 		newR = transformationMatrix * box->minimumVector(origin, i->r()) + origin;
 		i->setCoordinates(newR);
 	}
@@ -427,7 +317,7 @@ void Molecule::translate(const Vec3<double> delta)
 }
 
 // Translate specified atoms by the delta specified
-void Molecule::translate(const Vec3<double>& delta, int nTargetAtoms, Atom** targetAtoms)
+void Molecule::translate(const Vec3<double>& delta, int nTargetAtoms, int* targetAtoms)
 {
-	for (int n=0; n<nTargetAtoms; ++n) targetAtoms[n]->translateCoordinates(delta);
+	for (int n=0; n<nTargetAtoms; ++n) atom(targetAtoms[n])->translateCoordinates(delta);
 }
