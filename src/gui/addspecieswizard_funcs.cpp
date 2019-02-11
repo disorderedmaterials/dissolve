@@ -235,7 +235,7 @@ bool AddSpeciesWizard::progressionAllowed(int index) const
 		case (AddSpeciesWizard::ImportSpeciesSelectSpeciesPage):
 			return (ui_.SpeciesList->currentRow() != -1);
 		case (AddSpeciesWizard::SpeciesNamePage):
-			return (ui_.SpeciesNameIndicator->state());
+			return (ui_.SpeciesNameIndicator->state() == CheckIndicator::OKState);
 		default:
 			break;
 	}
@@ -513,7 +513,7 @@ void AddSpeciesWizard::on_SpeciesNameEdit_textChanged(const QString text)
 	if (text.isEmpty()) readyForImport = false;
 	else readyForImport = dissolveReference_->findSpecies(qPrintable(text)) == NULL;
 
-	ui_.SpeciesNameIndicator->setState(readyForImport);
+	ui_.SpeciesNameIndicator->setOK(readyForImport);
 
 	// Update state of progression controls
 	updateProgressionControls();

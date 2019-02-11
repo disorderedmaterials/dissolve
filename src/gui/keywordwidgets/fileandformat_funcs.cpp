@@ -131,7 +131,7 @@ void FileAndFormatKeywordWidget::checkFileValidity()
 	if (fileAndFormat.fileMustExist())
 	{
 		ui.FileExistsIndicator->setVisible(true);
-		ui.FileExistsIndicator->setState(fileAndFormat.hasFilename() ? QFile::exists(fileAndFormat.filename()) : false);
+		ui.FileExistsIndicator->setOK(fileAndFormat.hasFilename() ? QFile::exists(fileAndFormat.filename()) : false);
 	}
 	else
 	{

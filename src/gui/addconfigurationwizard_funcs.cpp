@@ -142,7 +142,7 @@ bool AddConfigurationWizard::progressionAllowed(int index) const
 	switch (index)
 	{
 		case (AddConfigurationWizard::FinishPage):
-			return (ui_.FinishNameIndicator->state());
+			return (ui_.FinishNameIndicator->state() == CheckIndicator::OKState);
 		default:
 			break;
 	}
@@ -406,7 +406,7 @@ void AddConfigurationWizard::on_FinishNameEdit_textChanged(const QString text)
 	if (text.isEmpty()) nameIsValid = false;
 	else nameIsValid = dissolveReference_->findConfiguration(qPrintable(text)) == NULL;
 
-	ui_.FinishNameIndicator->setState(nameIsValid);
+	ui_.FinishNameIndicator->setOK(nameIsValid);
 
 	// Update state of progression controls
 	updateProgressionControls();

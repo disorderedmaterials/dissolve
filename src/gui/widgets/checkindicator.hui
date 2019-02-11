@@ -35,26 +35,32 @@ class CheckIndicator : public QLabel
 	public:
 	// Constructor / Destructor
 	CheckIndicator(QWidget* parent = NULL);
+	// Indicator State enum
+	enum IndicatorState { OKState, NotOKState, WarningState };
 
 	private:
 	// State of indicator
-	bool state_;
+	IndicatorState state_;
 
 	public:
 	// Return state of indicator
-	bool state() const;
+	IndicatorState state() const;
 
 
 	/*
 	 * State Update
 	 */
+	private:
+	// Update state icon
+	void updateStateIcon();
+
 	public slots:
-	// Set indicator state
-	void setState(bool state);
-	// Set indicator to OK / true / green tick
-	void setOK();
-	// Set indicator to Not OK / false / red cross
-	void setNotOK();
+	// Set indicator to OK (green tick)
+	void setOK(bool isOK = true);
+	// Set indicator to Not OK (red cross)
+	void setNotOK(bool isNotOK = true);
+	// Set indicator to Warning (orange bang)
+	void setWarning();
 };
 
 #endif

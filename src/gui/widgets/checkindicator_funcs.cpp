@@ -38,7 +38,7 @@ CheckIndicator::CheckIndicator(QWidget* parent) : QLabel(parent)
 }
 
 // Return state of indicator
-bool CheckIndicator::state() const
+CheckIndicator::IndicatorState CheckIndicator::state() const
 {
 	return state_;
 }
@@ -47,25 +47,35 @@ bool CheckIndicator::state() const
  * State Update
  */
 
-// Set indicator state
-void CheckIndicator::setState(bool state)
+// Update state icon
+void CheckIndicator::updateStateIcon()
 {
-	state_ = state; 
-	if (state) setOK();
-	else setNotOK();
+	if (state_ == CheckIndicator::OKState) setPixmap(QPixmap(":/general/icons/general_true.svg"));
+	else if (state_ == CheckIndicator::NotOKState) setPixmap(QPixmap(":/general/icons/general_false.svg"));
+	else if (state_ == CheckIndicator::WarningState) setPixmap(QPixmap(":/general/icons/general_warn.svg"));
+	else setPixmap(QPixmap(":/general/icons/general_unknown.svg"));
 }
 
-// Set indicator to OK / true / green tick
-void CheckIndicator::setOK()
+// Set indicator to OK (green tick)
+void CheckIndicator::setOK(bool isOK)
 {
-	state_ = true;
-	setPixmap(QPixmap(":/general/icons/general_true.svg"));
+	state_ = isOK ? CheckIndicator::OKState : CheckIndicator::NotOKState;
+
+	updateStateIcon();
 }
 
-// Set indicator to Not OK / false / red cross
-void CheckIndicator::setNotOK()
+// Set indicator to Not OK (red cross)
+void CheckIndicator::setNotOK(bool isNotOK)
 {
-	state_ = false;
-	setPixmap(QPixmap(":/general/icons/general_false.svg"));
+	state_ = isNotOK ? CheckIndicator::NotOKState : CheckIndicator::OKState;
+
+	updateStateIcon();
 }
 
+// Set indicator to Warning (orange bang)
+void CheckIndicator::setWarning()
+{
+	state_ = CheckIndicator::WarningState;
+
+	updateStateIcon();
+}
