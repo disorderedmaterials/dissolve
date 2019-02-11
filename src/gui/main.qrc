@@ -79,6 +79,7 @@
     <file>icons/general_false.svg</file>
     <file>icons/general_true.svg</file>
     <file>icons/general_warn.svg</file>
+    <file>icons/general_unknown.svg</file>
     <file>icons/general_options.svg</file>
     <file>icons/general_edit.svg</file>
     <file>icons/general_monitor.svg</file>
