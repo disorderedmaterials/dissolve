@@ -160,7 +160,7 @@ void ConfigurationTab::updateControls()
 	ui.MultiplierSpin->setValue(configuration_->multiplier());
 	ui.DensitySpin->setValue(configuration_->density());
 	ui.DensityUnitsCombo->setCurrentIndex(configuration_->densityIsAtomic() ? 0 : 1);
-	TableWidgetUpdater<ConfigurationTab,SpeciesInfo> bondsUpdater(ui.SpeciesInfoTable, configuration_->usedSpecies(), this, &ConfigurationTab::updateSpeciesInfoTableRow);
+	TableWidgetUpdater<ConfigurationTab,SpeciesInfo> speciesInfoUpdater(ui.SpeciesInfoTable, configuration_->usedSpecies(), this, &ConfigurationTab::updateSpeciesInfoTableRow);
 	ui.SpeciesInfoTable->resizeColumnsToContents();
 
 	// Input Coordinates
@@ -194,6 +194,16 @@ void ConfigurationTab::enableSensitiveControls()
 /*
  * Signals / Slots
  */
+
+// Return current SpeciesInfo
+SpeciesInfo* ConfigurationTab::currentSpeciesInfo() const
+{
+	if (!ui.SpeciesInfoTable->currentItem()) return NULL;
+
+	SpeciesInfo* spInfo = (SpeciesInfo*) VariantPointer<SpeciesInfo>(ui.SpeciesInfoTable->currentItem()->data(Qt::UserRole));
+
+	return spInfo;
+}
 
 void ConfigurationTab::on_NameEdit_textChanged(QString text)
 {
@@ -273,9 +283,9 @@ void ConfigurationTab::on_MultiplierSpin_valueChanged(int value)
 {
 	if (refreshing_) return;
 
-	configuration_->setBoxAngle(2, value);
+	configuration_->setMultiplier(value);
 
-	dissolveWindow_->setModified();
+	dissolveWindow_->setModifiedAndInvalidated();
 }
 
 void ConfigurationTab::on_DensitySpin_valueChanged(double value)
@@ -285,14 +295,18 @@ void ConfigurationTab::on_DensitySpin_valueChanged(double value)
 	if (ui.DensityUnitsCombo->currentIndex() == 0) configuration_->setAtomicDensity(value);
 	else configuration_->setChemicalDensity(value);
 
-	dissolveWindow_->setModified();
+	dissolveWindow_->setModifiedAndInvalidated();
 }
 
 void ConfigurationTab::on_SpeciesInfoAddButton_clicked(bool checked)
 {
 	if (refreshing_) return;
 
-// 	dissolveWindow_->setModified();
+	configuration_->addUsedSpecies(dissolve_.species().first(), 1.0);
+
+	updateControls();
+
+	dissolveWindow_->setModifiedAndInvalidated();
 }
 
 void ConfigurationTab::on_SpeciesInfoRemoveButton_clicked(bool checked)
@@ -315,6 +329,46 @@ void ConfigurationTab::on_DensityUnitsCombo_currentIndexChanged(int index)
 void ConfigurationTab::on_SpeciesInfoTable_itemChanged(QTableWidgetItem* w)
 {
 	if (refreshing_) return;
+
+	// Get the currently-selected SpeciesInfo
+	SpeciesInfo* spInfo = currentSpeciesInfo();
+	if (!spInfo) return;
+
+	// Column of passed item tells us the type of data we need to change
+	Species* sp;
+	switch (w->column())
+	{
+		// Species
+		case (0):
+			// Find the named Species
+			sp = dissolve_.findSpecies(qPrintable(w->text()));
+			if (!sp)
+			{
+				Messenger::error("Unrecognised Species '%s' found in SpeciesInfo table for Configuration '%s'.\n", qPrintable(w->text()), configuration_->name());
+				return;
+			}
+			spInfo->setSpecies(sp);
+			dissolveWindow_->setModifiedAndInvalidated();
+			break;
+		// Relative Population
+		case (1):
+			spInfo->setPopulation(w->text().toDouble());
+			dissolveWindow_->setModifiedAndInvalidated();
+			break;
+		// Rotation on insertion
+		case (2):
+			spInfo->setRotateOnInsertion(w->checkState() == Qt::Checked);
+			dissolveWindow_->setModified();
+			break;
+		// Translate on insertion
+		case (3):
+			spInfo->setTranslateOnInsertion(w->checkState() == Qt::Checked);
+			dissolveWindow_->setModified();
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of SpeciesInfo table.\n", w->column());
+			break;
+	}
 }
 
 // Initial Coordinates

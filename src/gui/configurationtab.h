@@ -94,6 +94,8 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
 	 * Signals / Slots
 	 */
 	private:
+	// Return current SpeciesInfo
+	SpeciesInfo* currentSpeciesInfo() const;
 
 	private slots:
 	// Definition
