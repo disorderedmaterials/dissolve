@@ -150,8 +150,6 @@ class Molecule : public DynamicArrayObject<Molecule>
 	void translate(const Vec3<double> delta);
 	// Translate specified atoms by the delta specified
 	void translate(const Vec3<double>& delta, int nTargetAtoms, Atom** targetAtoms);
-	// Randomise conformation by rotating around bond terms
-	void randomiseConformation(const Box* box);
 };
 
 #endif
