@@ -1,6 +1,6 @@
 /*
 	*** Viewer Context Menu Functions
-	*** src/gui/uchroma/gui/viewer_context.cpp
+	*** src/gui/viewer/context.cpp
 	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
@@ -19,8 +19,7 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/uchroma/gui/viewer.hui"
-#include "gui/uchroma/uchromabase.h"
+#include "gui/viewer/viewer.hui"
 #include "templates/variantpointer.h"
 #include <QClipboard>
 
@@ -29,7 +28,7 @@
  */
 
 // Initialise context menu
-void UChromaViewer::initialiseContextMenu()
+void BaseViewer::initialiseContextMenu()
 {
 	// Set font for menu, and create italic version
 	QFont menuFont = font();
@@ -55,7 +54,7 @@ void UChromaViewer::initialiseContextMenu()
 }
 
 // Update dynamic aspects of context menu before display
-void UChromaViewer::updateContextMenu()
+void BaseViewer::updateContextMenu()
 {
 	ViewPane* viewPane = uChromaBase_->currentViewPane();
 
@@ -80,7 +79,7 @@ void UChromaViewer::updateContextMenu()
  */
 
 // Show dialog
-void UChromaViewer::showDialog(bool checked)
+void BaseViewer::showDialog(bool checked)
 {
 	// Get sender
 	QAction* action = (QAction*) sender();
@@ -90,7 +89,7 @@ void UChromaViewer::showDialog(bool checked)
 }
 
 // Set display status of Collection target
-void UChromaViewer::setCollectionDisplayed(bool checked)
+void BaseViewer::setCollectionDisplayed(bool checked)
 {
 	// Get collection from data attached to sender
 	QAction* action = (QAction*) sender();
@@ -106,7 +105,7 @@ void UChromaViewer::setCollectionDisplayed(bool checked)
 }
 
 // Copy current view image to clipboard
-void UChromaViewer::copyViewToClipboard(bool checked)
+void BaseViewer::copyViewToClipboard(bool checked)
 {
 	// Generate image of current view
 	QPixmap pixmap = frameBuffer();
@@ -121,7 +120,7 @@ void UChromaViewer::copyViewToClipboard(bool checked)
  */
 
 // Show context menu
-void UChromaViewer::showContextMenu(const QPoint& pos)
+void BaseViewer::showContextMenu(const QPoint& pos)
 {
 	// The clicked pane will become the current pane
 	if (uChromaBase_->setCurrentViewPane(pos.x(), height()-pos.y())) postRedisplay();
