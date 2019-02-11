@@ -71,7 +71,9 @@ bool PairBroadeningFunctionModuleKeyword::read(LineParser& parser, int startArg,
 // Write keyword data to specified LineParser
 bool PairBroadeningFunctionModuleKeyword::write(LineParser& parser, const char* prefix)
 {
-	return data_.writeAsKeyword(parser, prefix);
+	if (!parser.writeLineF("%s%s", prefix, keyword())) return false;
+
+	return data_.writeAsKeyword(parser, prefix, true);
 }
 
 /*

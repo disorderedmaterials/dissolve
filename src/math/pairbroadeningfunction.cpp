@@ -144,19 +144,24 @@ bool PairBroadeningFunction::readAsKeyword(LineParser& parser, int startArg, con
 }
 
 // Write function data to LineParser source
-bool PairBroadeningFunction::writeAsKeyword(LineParser& parser, const char* prefix)
+bool PairBroadeningFunction::writeAsKeyword(LineParser& parser, const char* prefix, bool writeBlockMarker)
 {
-	// Write function name as first line
-	if (!parser.writeLineF("%s%s\n", prefix, functionType(function_))) return false;
+	// If the functional form requires a block rather than a single line, write an '&' and start a new line
+	if (writeBlockMarker && (function_ == PairBroadeningFunction::GaussianElementPairFunction))
+	{
+		if (!parser.writeLineF(" &\n")) return false;
+	}
 
-	// Write any additional info here
 	int count = 0;
 	switch (function_)
 	{
 		case (PairBroadeningFunction::GaussianFunction):
-			if (!parser.writeLineF("%s%e\n", prefix, gaussianFWHM_)) return false;
+			if (!parser.writeLineF("%s%s  %e\n", prefix, functionType(function_), gaussianFWHM_)) return false;
 			break;
 		case (PairBroadeningFunction::GaussianElementPairFunction):
+			// Must be written as a block
+			if (!parser.writeLineF("%s%s", prefix, functionType(function_))) return false;
+
 			// Count number of pairs/values to expect and write to file
 			for (int n = 0; n<elementPairGaussianFlags_.linearArraySize(); ++n) if (elementPairGaussianFlags_.constLinearValue(n)) ++count;
 			if (!parser.writeLineF("%s%i\n", prefix, count)) return false;
@@ -172,8 +177,9 @@ bool PairBroadeningFunction::writeAsKeyword(LineParser& parser, const char* pref
 					}
 				}
 			}
+			break;
 		case (PairBroadeningFunction::FrequencyFunction):
-			if (!parser.writeLineF("%s%e  %e\n", prefix, frequencyBondConstant_, frequencyAngleConstant_)) return false;
+			if (!parser.writeLineF("%s%s  %e  %e\n", prefix, functionType(function_), frequencyBondConstant_, frequencyAngleConstant_)) return false;
 			break;
 		default:
 			break;
@@ -406,7 +412,7 @@ bool PairBroadeningFunction::read(LineParser& parser, const CoreData& coreData)
 // Write data through specified LineParser
 bool PairBroadeningFunction::write(LineParser& parser)
 {
-	return writeAsKeyword(parser, "");
+	return writeAsKeyword(parser, "", false);
 }
 
 /*

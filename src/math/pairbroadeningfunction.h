@@ -79,7 +79,7 @@ class PairBroadeningFunction : public GenericItemBase
 	// Read function data from LineParser source
 	bool readAsKeyword(LineParser& parser, int startArg, const CoreData& coreData);
 	// Write function data to LineParser source
-	bool writeAsKeyword(LineParser& parser, const char* prefix);
+	bool writeAsKeyword(LineParser& parser, const char* prefix, bool writeBlockMarker = true);
 	// Set function type
 	void setFunction(FunctionType function);
 	// Return function type
