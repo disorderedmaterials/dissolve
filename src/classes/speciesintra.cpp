@@ -132,13 +132,20 @@ const double* SpeciesIntra::parameters() const
 Array<double> SpeciesIntra::parametersAsArray() const
 {
 	Array<double> params;
-	for (int n=0; n<MAXINTRAPARAMS; ++n) params.add(parameters_[n]);
+	for (int n=0; n<MAXINTRAPARAMS; ++n) params.add(parameters()[n]);
 	return params;
 }
 
 // Set parameters from Array<double>
 void SpeciesIntra::setParametersFromArray(Array<double> params)
 {
+	// Does this intramolecular interaction reference a set of master parameters?
+	if (masterParameters_)
+	{
+		Messenger::error("Refused to set intramolecular parameters array since master parameters are referenced.\n");
+		return;
+	}
+
 	for (int n=0; n<MAXINTRAPARAMS; ++n)
 	{
 		if (params.nItems() <= n) break;
