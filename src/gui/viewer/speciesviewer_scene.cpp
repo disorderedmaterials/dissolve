@@ -37,11 +37,11 @@ void SpeciesViewer::createPrimitives()
 	wireCubePrimitive_.createWireCube(1.0);
 
 	// Every created primitive must be added to the primitiveList_
-	primitiveList_.add(&spherePrimitive03_);
-	primitiveList_.add(&spherePrimitive04_);
-	primitiveList_.add(&cubePrimitive_);
-	primitiveList_.add(&cylinderPrimitive_);
-	primitiveList_.add(&wireCubePrimitive_);
+// 	primitiveList_.add(&spherePrimitive03_);
+// 	primitiveList_.add(&spherePrimitive04_);
+// 	primitiveList_.add(&cubePrimitive_);
+// 	primitiveList_.add(&cylinderPrimitive_);
+// 	primitiveList_.add(&wireCubePrimitive_);
 }
 
 // Setup basic GL properties (called each time before renderScene())

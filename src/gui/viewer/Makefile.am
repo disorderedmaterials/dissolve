@@ -23,11 +23,14 @@ SUFFIXES: .ui .hui .qrc
 clean-local:
 	-rm -f ui_* *.o moc_*.cpp configurationviewer.cpp speciesviewer.cpp viewer.cpp
 
-libviewer_la_SOURCES = configurationviewer.hui speciesviewer.hui viewer.hui
+#libviewer_la_SOURCES = configurationviewer.hui speciesviewer.hui viewer.hui
+libviewer_la_SOURCES = dataviewer.hui viewer.hui
 
-libviewer_la_SOURCES += configurationviewer_input.cpp configurationviewer_scene.cpp
-libviewer_la_SOURCES += speciesviewer_funcs.cpp speciesviewer_input.cpp speciesviewer_scene.cpp
-libviewer_la_SOURCES += viewer_context.cpp viewer_funcs.cpp viewer_input.cpp viewer_scene.cpp
+#libviewer_la_SOURCES += configurationviewer_input.cpp configurationviewer_scene.cpp
+#libviewer_la_SOURCES += speciesviewer_funcs.cpp speciesviewer_input.cpp speciesviewer_scene.cpp
+
+libviewer_la_SOURCES += dataviewer_contextmenu.cpp dataviewer_funcs.cpp dataviewer_input.cpp dataviewer_render.cpp
+libviewer_la_SOURCES += viewer_funcs.cpp viewer_input.cpp viewer_render.cpp
 
 #noinst_HEADERS = 
 

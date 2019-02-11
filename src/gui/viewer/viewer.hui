@@ -1,5 +1,5 @@
 /*
-	*** OpenGL Viewer Widget (subclassing QOpenGLWidget)
+	*** Base Viewer Widget (subclassing QOpenGLWidget)
 	*** src/gui/viewer/viewer.hui
 	Copyright T. Youngs 2013-2019
 
@@ -27,8 +27,7 @@
 #include <QOffscreenSurface>
 #include <QObject>
 #include <QMenu>
-#include "gui/uchroma/render/primitive.h"
-#include "gui/uchroma/classes/colourscale.h"
+#include "gui/viewer/render/primitive.h"
 #include "gui/viewer/render/fontinstance.h"
 #include "math/data1d.h"
 #include "templates/list.h"
@@ -52,6 +51,18 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	 * Context / Character
 	 */
 	private:
+
+
+
+
+	public:
+
+
+
+	/*
+	 * Rendering
+	 */
+	private:
 	// Width, height, and aspect ratio of the context
 	GLsizei contextWidth_, contextHeight_;
 	// Flag to indicate whether we may draw to the context
@@ -60,14 +71,30 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	bool drawing_;
 	// Font instance for this viewer
 	FontInstance fontInstance_;
+	// Flag specifying whether we are currently rendering offscreen
+	bool renderingOffScreen_;
+	// Line width scaling factor to use (to adjust line width when saving images)
+	double lineWidthScaling_;
+	// Offscreen context
+        QOpenGLContext offscreenContext_;
+	// Offscreen surface
+	QOffscreenSurface offscreenSurface_;
 
-	protected:
+	private:
 	// Initialise context widget (when created by Qt)
 	void initializeGL();
 	// General repaint callback
 	void paintGL();
 	// Resize function
-	void resizeGL(int, int);
+	void resizeGL(int width, int height);
+	// Perform post-initialisation operations
+	virtual void postInitialiseGL();
+	// Perform post-resize operations
+	virtual void postResizeGL();
+	// Setup basic GL properties
+	virtual void setupGL();
+	// Draw full scene
+	virtual void render(int xOffset = 0, int yOffset = 0) = 0;
 
 	public:
 	// Return the current height of the drawing area
@@ -82,28 +109,6 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	void checkGlError();
 	// Refresh widget / scene
 	void postRedisplay();
-
-
-	/*
-	 * Scene Rendering
-	 */
-	private:
-	// Flag specifying whether we are currently rendering offscreen
-	bool renderingOffScreen_;
-	// Line width scaling factor to use (to adjust line width when saving images)
-	double lineWidthScaling_;
-	// Offscreen context
-        QOpenGLContext offscreenContext_;
-	// Offscreen surface
-	QOffscreenSurface offscreenSurface_;
-
-	private:
-	// Setup basic GL properties
-	void setupGL();
-	// Draw full scene
-	void renderFullScene(int xOffset = 0, int yOffset = 0);
-
-	public:
 	// Set whether we are currently rendering offscreen
 	void setRenderingOffScreen(bool b);
 	// Set line width and text scaling to use
@@ -112,70 +117,73 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	QPixmap frameBuffer();
 	// Render current scene at supplied size
 	QPixmap generateImage(int imageWidth, int imageHeight);
+	// Copy current view to clipboard as an image
+	void copyViewToClipboard(bool checked);
 
 
 	/*
 	 * Mouse / Keyboard Input
 	 * (in viewer_input.cpp)
 	 */
-	private:
+	protected:
 	// Canvas coordinates of mouse down
-	Vec3<double> rMouseDown_;
+	Vec3<int> rMouseDown_;
 	// Canvas coordinates of mouse cursor
-	Vec3<double> rMouseLast_;
+	Vec3<int> rMouseLast_;
 	// Current state of mouse buttons
 	Qt::MouseButtons buttonState_;
 
-	protected:
-	// Qt Virtual (mouse press event)
+	private:
+	// Mouse press event
 	void mousePressEvent(QMouseEvent* event);
-	// Qt Virtual (mouse release event)
+	// Mouse release event
 	void mouseReleaseEvent(QMouseEvent* event);
-	// Qt Virtual (mouse move event)
+	// Mouse move event
 	void mouseMoveEvent(QMouseEvent* event);
-	// Qt Virtual (mouse wheel event)
+	// Mouse wheel event
 	void wheelEvent(QWheelEvent* event);
-	// Qt Virtual (mouse double click event)
+	// Mouse double click event
 	void mouseDoubleClickEvent(QMouseEvent* event);
+	// Mouse pressed
+	virtual void mousePressed() = 0;
+	// Mouse released
+	virtual void mouseReleased() = 0;
+	// Mouse moved
+	virtual void mouseMoved(int dx, int dy, Qt::KeyboardModifiers km) = 0;
+	// Mouse 'wheeled'
+	virtual void mouseWheeled(int delta) = 0;
+	// Mouse double clicked
+	virtual void mouseDoubleClicked() = 0;
 
 	public:
 	// Return mouse coordinates at last mousedown event
-	Vec3<double> rMouseDown() const;
+	Vec3<int> rMouseDown() const;
 	// Return mouse coordinates at last mousemove event
-	Vec3<double> rMouseLast() const;
+	Vec3<int> rMouseLast() const;
 
 	public slots:
-	// Qt Slot (key press event)
-	void keyPressEvent(QKeyEvent*);
-	// Qt Slot (key release event)
-	void keyReleaseEvent(QKeyEvent*);
+	// Key press event
+	virtual void keyPressEvent(QKeyEvent*);
+	// Key release event
+	virtual void keyReleaseEvent(QKeyEvent*);
+	// Key pressed
+	virtual bool keyPressed(int key, Qt::KeyboardModifiers modifiers) = 0;
+	// Key released
+	virtual bool keyReleased(int key, Qt::KeyboardModifiers modifiers) = 0;
 
 
 	/*
 	 * Context Menu
-	 * (in viewer_context.cpp)
 	 */
 	private:
 	// Context menu for display
 	QMenu contextMenu_;
-	// Special QActions
-	QAction* currentPaneAction_;
-	// Special QMenu items
-	QMenu* currentCollectionsMenu_;
 
 	private:
 	// Initialise context menu
-	void initialiseContextMenu();
+	virtual void initialiseContextMenu() = 0;
 	// Update dynamic aspects of context menu before display
-	void updateContextMenu();
-
-	private slots:
-	// Show dialog
-	void showDialog(bool checked);
-	// Set display status of Collection target
-	void setCollectionDisplayed(bool checked);
-	// Copy current view image to clipboard
-	void copyViewToClipboard(bool checked);
+	virtual void updateContextMenu() = 0;
 
 	public slots:
 	// Show context menu

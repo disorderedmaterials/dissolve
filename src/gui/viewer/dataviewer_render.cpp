@@ -1,6 +1,6 @@
 /*
-	*** Viewer - Main scene rendering
-	*** src/gui/uchroma/gui/viewer_scene.cpp
+	*** Base Viewer - Scene Rendering
+	*** src/gui/viewer/viewer_scene.cpp
 	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.

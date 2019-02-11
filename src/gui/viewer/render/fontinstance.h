@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_UCHROMAFONTINSTANCE_H
-#define DISSOLVE_UCHROMAFONTINSTANCE_H
+#ifndef DISSOLVE_FONTINSTANCE_H
+#define DISSOLVE_FONTINSTANCE_H
 
 #include "templates/vector3.h"
 #include <FTGL/ftgl.h>

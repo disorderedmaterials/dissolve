@@ -1,6 +1,6 @@
 /*
-	*** Viewer Context Menu Functions
-	*** src/gui/viewer/context.cpp
+	*** Base Viewer Context Menu Functions
+	*** src/gui/viewer/viewer_context.cpp
 	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
