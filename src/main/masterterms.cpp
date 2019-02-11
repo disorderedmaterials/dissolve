@@ -161,3 +161,16 @@ MasterIntra* Dissolve::hasMasterTorsion(const char* name) const
 	for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next) if (DissolveSys::sameString(trimmedName, t->name())) return t;
 	return NULL;
 }
+
+// Return the named master term (of any form) if it exists
+MasterIntra* Dissolve::findMasterTerm(const char* name) const
+{
+	// Remove leading '@' if necessary
+	const char* trimmedName = name[0] == '@' ? &name[1] : name;
+
+	for (MasterIntra* b = masterBonds_.first(); b != NULL; b = b->next) if (DissolveSys::sameString(trimmedName, b->name())) return b;
+	for (MasterIntra* a = masterAngles_.first(); a != NULL; a = a->next) if (DissolveSys::sameString(trimmedName, a->name())) return a;
+	for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next) if (DissolveSys::sameString(trimmedName, t->name())) return t;
+
+	return NULL;
+}
