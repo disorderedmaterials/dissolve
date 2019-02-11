@@ -163,9 +163,6 @@ bool Configuration::finaliseAfterLoad(ProcessPool& procPool, double pairPotentia
 
 	// Finalise used AtomType list
 	usedAtomTypes_.finalise();
-	
-	// Assemble attached Atom lists for all Molecules
-	for (int n=0; n<nMolecules(); ++n) molecules_[n]->updateAttachedAtomLists();
 
 	return true;
 }
@@ -250,9 +247,6 @@ Molecule* Configuration::addMolecule(Species* sp)
 		Torsion* t = addTorsion(newMolecule, i, j, k, l);
 		t->setSpeciesTorsion(spt);
 	}
-
-	// Now that all intramolecular terms have been added, we can assemble the attached lists for each
-	newMolecule->updateAttachedAtomLists();
 
 	return newMolecule;
 }

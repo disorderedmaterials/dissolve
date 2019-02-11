@@ -47,7 +47,6 @@ void Bond::clear()
 	j_ = NULL;
 
 	// Intra
-	deleteAttachedAtomArrays();
 	molecule_ = NULL;
 }
 

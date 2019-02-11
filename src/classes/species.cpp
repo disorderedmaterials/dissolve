@@ -32,6 +32,7 @@
 // Constructor
 Species::Species() : ListItem<Species>()
 {
+	attachedAtomListsGenerated_ = false;
 }
 
 // Destructor

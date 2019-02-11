@@ -48,7 +48,6 @@ void Angle::clear()
 	k_ = NULL;
 
 	// Intra
-	deleteAttachedAtomArrays();
 	molecule_ = NULL;
 }
 

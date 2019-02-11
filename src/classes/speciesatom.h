@@ -63,6 +63,8 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	AtomType* atomType_;
 	// Index in Species
 	int index_;
+	// Whether the atom is currently selected
+	bool selected_;
 
 	public:
 	// Set Species parent
@@ -93,6 +95,10 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	int index() const;
 	// Return 'user' index (1->N)
 	int userIndex() const;
+	// Set whether the atom is currently selected
+	void setSelected(bool selected);
+	// Return whether the atom is currently selected
+	bool isSelected() const;
 	// Copy properties from supplied Atom
 	void copyProperties(const SpeciesAtom* source);
 

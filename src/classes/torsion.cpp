@@ -49,7 +49,6 @@ void Torsion::clear()
 	l_ = NULL;
 
 	// Intra
-	deleteAttachedAtomArrays();
 	molecule_ = NULL;
 }
 

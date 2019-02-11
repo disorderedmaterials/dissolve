@@ -74,7 +74,7 @@ class Species : public ListItem<Species>
 	// List of Atoms in the Species
 	List<SpeciesAtom> atoms_;
 	// List of selected Atoms
-	RefList<SpeciesAtom,int> selectedAtoms_;
+	RefList<SpeciesAtom,bool> selectedAtoms_;
 	// List of AtomTypes, and their populations, used in the Species
 	AtomTypeList usedAtomTypes_;
 	
@@ -93,10 +93,10 @@ class Species : public ListItem<Species>
 	void clearAtomSelection();
 	// Add Atom to selection
 	void selectAtom(SpeciesAtom* i);
-	// Select Atoms along any path from the specified one
-	void selectFromAtom(SpeciesAtom* i, SpeciesBond* exclude);
-	// Return first selected Atom reference
-	RefListItem<SpeciesAtom,int>* selectedAtoms() const;
+	// Select Atoms along any path from the specified one, ignoring the bond(s) provided
+	void selectFromAtom(SpeciesAtom* i, SpeciesBond* exclude, SpeciesBond* excludeToo = NULL);
+	// Return current atom selection
+	const RefList<SpeciesAtom,bool>& selectedAtoms() const;
 	// Return nth selected Atom
 	SpeciesAtom* selectedAtom(int n);
 	// Return number of selected Atoms
@@ -121,6 +121,8 @@ class Species : public ListItem<Species>
 	List<SpeciesAngle> angles_;
 	// List of Torsions between Atoms in the Species
 	List<SpeciesTorsion> torsions_;
+	// Whether the attached atoms lists have been created
+	bool attachedAtomListsGenerated_;
 
 	public:
 	// Add new SpeciesBond definition (from SpeciesAtom*)
@@ -177,6 +179,10 @@ class Species : public ListItem<Species>
 	bool hasTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const;
 	// Return index of specified SpeciesTorsion
 	int torsionIndex(SpeciesTorsion* spt);
+	// Return whether the attached atoms lists have been created
+	bool attachedAtomListsGenerated() const;
+	// Generate attached Atom lists for all intramolecular terms
+	void generateAttachedAtomLists();
 
 
 	/*

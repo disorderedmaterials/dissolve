@@ -60,41 +60,49 @@ List<SpeciesAtom>& Species::atoms()
 // Clear current Atom selection
 void Species::clearAtomSelection()
 {
+	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next) i->setSelected(false);
 	selectedAtoms_.clear();
 }
 
 // Add Atom to selection
 void Species::selectAtom(SpeciesAtom* i)
 {
-	selectedAtoms_.addUnique(i);
+	if (!i->isSelected())
+	{
+		i->setSelected(true);
+		selectedAtoms_.add(i);
+	}
 }
 
-// Select Atoms along any path from the specified one
-void Species::selectFromAtom(SpeciesAtom* i, SpeciesBond* exclude)
+// Select Atoms along any path from the specified one, ignoring the bond(s) provided
+void Species::selectFromAtom(SpeciesAtom* i, SpeciesBond* exclude, SpeciesBond* excludeToo)
 {
 	// Loop over Bonds on specified Atom
 	selectAtom(i);
 	SpeciesAtom* j;
 	for (RefListItem<SpeciesBond,int>* refBond = i->bonds(); refBond != NULL; refBond = refBond->next)
 	{
-		// Is this the excluded Bond?
+		// Is this either of the excluded bonds?
 		if (exclude == refBond->item) continue;
+		if (excludeToo == refBond->item) continue;
+
+		// Get partner atom and continue selection
 		j = refBond->item->partner(i);
 		if (selectedAtoms_.contains(j)) continue;
 		selectFromAtom(j, exclude);
 	}
 }
 
-// Return first selected Atom reference
-RefListItem<SpeciesAtom,int>* Species::selectedAtoms() const
+// Return current atom selection
+const RefList<SpeciesAtom,bool>& Species::selectedAtoms() const
 {
-	return selectedAtoms_.first();
+	return selectedAtoms_;
 }
 
 // Return nth selected Atom
 SpeciesAtom* Species::selectedAtom(int n)
 {
-	RefListItem<SpeciesAtom,int>* ri = selectedAtoms_[n];
+	RefListItem<SpeciesAtom,bool>* ri = selectedAtoms_[n];
 	if (ri == NULL) return NULL;
 	else return ri->item;
 }
