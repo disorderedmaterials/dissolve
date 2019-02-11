@@ -34,6 +34,7 @@ SpeciesAtom::SpeciesAtom() : ListItem<SpeciesAtom>()
 	grain_ = NULL;
 	r_.zero();
 	index_= -1;
+	selected_ = false;
 }
 
 // Destructor
@@ -130,6 +131,18 @@ int SpeciesAtom::index() const
 int SpeciesAtom::userIndex() const
 {
 	return index_+1;
+}
+
+// Set whether the atom is currently selected
+void SpeciesAtom::setSelected(bool selected)
+{
+	selected_ = selected;
+}
+
+// Return whether the atom is currently selected
+bool SpeciesAtom::isSelected() const
+{
+	return selected_;
 }
 
 /*
