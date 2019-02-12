@@ -64,7 +64,7 @@ void AtomTypeData::operator=(const AtomTypeData& source)
  */
 
 // Initialise
-bool AtomTypeData::initialise(int listIndex, AtomType* atomType, int population)
+bool AtomTypeData::initialise(int listIndex, AtomType* atomType, double population)
 {
 	listIndex_ = listIndex;
 	atomType_ = atomType;
@@ -79,13 +79,13 @@ bool AtomTypeData::initialise(int listIndex, AtomType* atomType, int population)
 }
 
 // Add to population
-void AtomTypeData::add(int nAdd)
+void AtomTypeData::add(double nAdd)
 {
 	population_ += nAdd;
 }
 
 // Add to population of Isotope
-void AtomTypeData::add(Isotope* tope, int nAdd)
+void AtomTypeData::add(Isotope* tope, double nAdd)
 {
 	// Has this isotope already been added to the list?
 	IsotopeData* topeData = NULL;
@@ -110,7 +110,7 @@ void AtomTypeData::zeroPopulations()
 	for (IsotopeData* topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next) topeData->zeroPopulation();
 
 	// Zero totals
-	population_ = 0;
+	population_ = 0.0;
 	fraction_ = 0.0;
 }
 
@@ -139,10 +139,10 @@ bool AtomTypeData::exchangeable() const
 }
 
 // Finalise, calculating fractional populations etc.
-void AtomTypeData::finalise(int totalAtoms)
+void AtomTypeData::finalise(double totalAtoms)
 {
 	// Calculate fractional world population
-	fraction_ = double(population_) / totalAtoms;
+	fraction_ = population_ / totalAtoms;
 
 	// Calculate isotope fractional populations (of AtomType)
 	for (IsotopeData* topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next) topeData->finalise(population_);
@@ -229,7 +229,7 @@ bool AtomTypeData::read(LineParser& parser, const CoreData& coreData)
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	atomType_ = coreData.findAtomType(parser.argc(0));
 	if (!atomType_) return false;
-	population_ = parser.argi(1);
+	population_ = parser.argd(1);
 	fraction_ = parser.argd(2);
 	boundCoherent_ = parser.argd(3);
 	isotopes_.clear();
@@ -246,7 +246,7 @@ bool AtomTypeData::read(LineParser& parser, const CoreData& coreData)
 bool AtomTypeData::write(LineParser& parser)
 {
 	// Line Contains: AtomType name, exchangeable flag, population, fraction, boundCoherent, and nIsotopes
-	if (!parser.writeLineF("%s %i %f %f %i\n", atomType_->name(), population_, fraction_, boundCoherent_, isotopes_.nItems())) return false;
+	if (!parser.writeLineF("%s %f %f %f %i\n", atomType_->name(), population_, fraction_, boundCoherent_, isotopes_.nItems())) return false;
 	ListIterator<IsotopeData> isotopeIterator(isotopes_);
 	while (IsotopeData* topeData = isotopeIterator.iterate()) if (!topeData->write(parser)) return false;
 	return true;

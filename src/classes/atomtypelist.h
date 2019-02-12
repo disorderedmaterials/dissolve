@@ -60,11 +60,11 @@ class AtomTypeList : public GenericItemBase
 	// Zero populations of all types in the list
 	void zero();
 	// Add the specified AtomType to the list, returning the AtomTypeData
-	AtomTypeData* add(AtomType* atomType, int popAdd = 0);
+	AtomTypeData* add(AtomType* atomType, double popAdd = 0);
 	// Add the AtomTypes in the supplied list into this one, increasing populations etc.
 	void add(const AtomTypeList& source);
 	// Add/increase this AtomType/Isotope pair, returning the index of the AtomType in the list
-	void addIsotope(AtomType* atomType, Isotope* tope = NULL, int popAdd = 0);
+	void addIsotope(AtomType* atomType, Isotope* tope = NULL, double popAdd = 0);
 	// Finalise list, calculating fractional populations etc.
 	void finalise();
 	// Finalise list, calculating fractional populations etc., and accounting for exchangeable sites in boundCoherent values
@@ -86,7 +86,7 @@ class AtomTypeList : public GenericItemBase
 	// Return index of names AtomType in list
 	int indexOf(const char* name) const;
 	// Return total population of all types in list
-	int totalPopulation() const;
+	double totalPopulation() const;
 	// Return nth referenced AtomType
 	AtomType* atomType(int n);
 	// Return AtomTypeData for specified AtomType

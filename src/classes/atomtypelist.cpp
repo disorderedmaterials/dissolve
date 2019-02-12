@@ -82,7 +82,7 @@ void AtomTypeList::zero()
 }
 
 // Add the specified AtomType to the list, returning the index of the AtomType in the list
-AtomTypeData* AtomTypeList::add(AtomType* atomType, int population)
+AtomTypeData* AtomTypeList::add(AtomType* atomType, double population)
 {
 	// Search the list for the AtomType provided.
 	AtomTypeData* atd = NULL;
@@ -115,7 +115,7 @@ void AtomTypeList::add(const AtomTypeList& source)
 }
 
 // Add/increase this AtomType/Isotope pair
-void AtomTypeList::addIsotope(AtomType* atomType, Isotope* tope, int popAdd)
+void AtomTypeList::addIsotope(AtomType* atomType, Isotope* tope, double popAdd)
 {
 	AtomTypeData* atd = add(atomType, 0);
 	
@@ -127,7 +127,7 @@ void AtomTypeList::addIsotope(AtomType* atomType, Isotope* tope, int popAdd)
 void AtomTypeList::finalise()
 {
 	// Finalise AtomTypeData
-	int total = totalPopulation();
+	double total = totalPopulation();
 	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next) atd->finalise(total);
 }
 
@@ -235,9 +235,9 @@ int AtomTypeList::indexOf(const char* name) const
 }
 
 // Return total population of all types in list
-int AtomTypeList::totalPopulation() const
+double AtomTypeList::totalPopulation() const
 {
-	int total = 0;
+	double total = 0;
 	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next) total += atd->population();
 	return total;
 }

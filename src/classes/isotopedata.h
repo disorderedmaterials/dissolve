@@ -49,8 +49,8 @@ class IsotopeData : public MPIListItem<IsotopeData>
 	private:
 	// Reference Isotope
 	Isotope* isotope_;
-	// Integer population of Isotope
-	int population_;
+	// Population of Isotope
+	double population_;
 	// Local fractional population (e.g. within an AtomTypeData)
 	double fraction_;
 
@@ -58,15 +58,15 @@ class IsotopeData : public MPIListItem<IsotopeData>
 	// Initialise
 	bool initialise(Isotope* isotope);
 	// Add to population of Isotope
-	void add(int nAdd);
+	void add(double nAdd);
 	// Finalise, calculating local fractional population (e.g. within an AtomTypeData)
-	void finalise(int totalAtoms);
+	void finalise(double totalAtoms);
 	// Zero population and fraction
 	void zeroPopulation();
 	// Return reference Isotope
 	Isotope* isotope() const;
-	// Return population
-	int population() const;
+	// Return total population
+	double population() const;
 	// Return local fractional population (e.g. within an AtomTypeData)
 	double fraction() const;
 

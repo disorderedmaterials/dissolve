@@ -62,28 +62,28 @@ bool IsotopeData::initialise(Isotope* isotope)
 		return false;
 	}
 
-	population_ = 0;
+	population_ = 0.0;
 	fraction_ = 0.0;
 
 	return true;
 }
 
 // Add to population of Isotope
-void IsotopeData::add(int nAdd)
+void IsotopeData::add(double nAdd)
 {
 	population_ += nAdd;
 }
 
 // Finalise, calculating local fractional population (e.g. within an IsotopeData)
-void IsotopeData::finalise(int totalAtoms)
+void IsotopeData::finalise(double totalAtoms)
 {
-	fraction_ = double(population_) / double(totalAtoms);
+	fraction_ = population_ / totalAtoms;
 }
 
 // Zero populations
 void IsotopeData::zeroPopulation()
 {
-	population_ = 0;
+	population_ = 0.0;
 	fraction_ = 0.0;
 }
 
@@ -94,7 +94,7 @@ Isotope* IsotopeData::isotope() const
 }
 
 // Return total population over all isotopes
-int IsotopeData::population() const
+double IsotopeData::population() const
 {
 	return population_;
 }
