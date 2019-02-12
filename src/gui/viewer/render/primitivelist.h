@@ -1,6 +1,6 @@
 /*
 	*** Rendering Primitive List
-	*** src/gui/uchroma/render/primitivelist.h
+	*** src/gui/viewer/render/primitivelist.h
 	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
@@ -19,12 +19,12 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_UCHROMAPRIMITIVELIST_H
-#define DISSOLVE_UCHROMAPRIMITIVELIST_H
+#ifndef DISSOLVE_PRIMITIVELIST_H
+#define DISSOLVE_PRIMITIVELIST_H
 
-#include "gui/uchroma/render/primitive.h"
+#include "gui/viewer/render/primitive.h"
 #include "templates/list.h"
-
+sdf
 // Forward Declarations
 class QOpenGLContext;
 class Viewer;

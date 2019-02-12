@@ -1,6 +1,6 @@
 /*
 	*** Collection
-	*** src/gui/uchroma/classes/collection.h
+	*** src/gui/viewer/render/collection.h
 	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
@@ -19,21 +19,18 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_UCHROMACOLLECTION_H
-#define DISSOLVE_UCHROMACOLLECTION_H
+#ifndef DISSOLVE_COLLECTION_H
+#define DISSOLVE_COLLECTION_H
 
-#include "gui/uchroma/classes/dataset.h"
-#include "gui/uchroma/classes/displaydataset.h"
-#include "gui/uchroma/classes/transformer.h"
-#include "gui/uchroma/classes/colourdef.h"
-#include "gui/uchroma/render/linestyle.h"
-#include "gui/uchroma/render/primitivelist.h"
+#include "gui/viewer/render/dataset.h"
+#include "gui/viewer/render/displaydataset.h"
+#include "gui/viewer/render/transformer.h"
+#include "gui/viewer/render/colourdef.h"
+#include "gui/viewer/render/linestyle.h"
 #include "templates/objectstore.h"
 
 // Forward Declarations
 class CollectionGroupManager;
-class FitKernel;
-class UChromaBase;
 
 class Collection : public ListItem<Collection>, public ObjectStore<Collection>
 {

@@ -21,7 +21,6 @@
 
 #include "gui/viewer/graphwidget.h"
 #include "gui/viewer/render/fontinstance.h"
-#include "gui/widgets/mimestrings.h"
 #include "templates/reflist.h"
 #include "templates/variantpointer.h"
 #include <QMessageBox>
@@ -31,54 +30,8 @@
 // Constructor
 GraphWidget::GraphWidget(QWidget* parent) : QWidget(parent)
 {
-	// Initialise the icon resource
-	Q_INIT_RESOURCE(main);
-
 	// Call the main creation function
-	ui.setupUi(this);
-
-	// Set Viewer pointer
-	viewer_ = ui.MainView;
-
-	// Set variable defaults
-	interactionMode_ = UChromaBase::ViewInteraction;
-	interactionAxis_ = -1;
-	interactionStarted_ = false;
-	clickedInteractionValue_ = 0.0;
-	clickedObject_ = UChromaViewer::NoObject;
-	currentInteractionValue_ = 0.0;
-	refreshing_ = false;
-
-	// Load settings...
-	loadSettings();
-
-	// Set UChroma pointers in widgets/dialogs where necessary
-	ui.MainView->setUChromaBase(this);
-
-	// Connect sub-window closed signal to toggle buttons / menu items in uChroma's main window
-	connect(&axesWindow_, SIGNAL(windowClosed(bool)), ui.actionWindowAxes, SLOT(setChecked(bool)));
-	connect(&dataWindow_, SIGNAL(windowClosed(bool)), ui.actionWindowData, SLOT(setChecked(bool)));
-	connect(&styleWindow_, SIGNAL(windowClosed(bool)), ui.actionWindowStyle, SLOT(setChecked(bool)));
-	connect(&transformWindow_, SIGNAL(windowClosed(bool)), ui.actionWindowTransform, SLOT(setChecked(bool)));
-	connect(&viewWindow_, SIGNAL(windowClosed(bool)), ui.actionWindowView, SLOT(setChecked(bool)));
-
-	// Create necessary action groups
-	// -- ViewType actions
-	viewTypeActionGroup_.addAction(ui.actionViewNormal);
-	viewTypeActionGroup_.addAction(ui.actionViewAutoStretched3D);
-	viewTypeActionGroup_.addAction(ui.actionViewFlatXY);
-	viewTypeActionGroup_.addAction(ui.actionViewFlatXZ);
-	viewTypeActionGroup_.addAction(ui.actionViewFlatZY);
-	viewTypeActionGroup_.addAction(ui.actionViewLinked);
-	// -- Interaction mode actions
-	QActionGroup* actionGroup = new QActionGroup(this);
-	actionGroup->addAction(ui.actionInteractNone);
-	actionGroup->addAction(ui.actionInteractX);
-	actionGroup->addAction(ui.actionInteractY);
-	actionGroup->addAction(ui.actionInteractZ);
-
-	// Set initial interaction mode
-	setInteractionMode(UChromaBase::ViewInteraction, -1);
+	ui_.setupUi(this);
 }
 
 // Destructor
@@ -86,80 +39,8 @@ GraphWidget::~GraphWidget()
 {
 }
 
-/*
- * Window Functions
- */
-
-// Return centre coordinate of main window
-QPoint GraphWidget::centrePos()
+// Return contained DataViewWidget
+DataViewer* GraphWidget::dataViewer()
 {
-	QPoint centre = pos();
-	centre += QPoint(width()/2, height()/2);
-	return centre;
+	return ui_.DataView;
 }
-
-// Load settings
-void GraphWidget::loadSettings()
-{
-	QSettings settings;
-
-	// Viewer font
-	if (settings.contains("ViewerFont")) setViewerFontFileName(qPrintable(settings.value("ViewerFont").toString()));
-}
-
-// Save settings
-void GraphWidget::saveSettings()
-{
-	QSettings settings;
-
-	// Viewer font
-	settings.setValue("ViewerFont", viewerFontFileName());
-}
-
-/*
- * Mouse Reimplementations
- */
-
-void GraphWidget::dragEnterEvent(QDragEnterEvent* event)
-{
-	// Check that the event contains suitable data
-	if (event->mimeData()->hasFormat("dissolve/mimestrings")) event->acceptProposedAction();
-}
-
-void GraphWidget::dropEvent(QDropEvent* event)
-{
-	if (!event->mimeData()->hasFormat("dissolve/mimestrings")) return;
-
-	// Cast into a MimeStrings object
-	MimeStrings* mimeStrings = (MimeStrings*) event->mimeData();
-	if (!mimeStrings) return;
-
-	// Set ViewPane under drop point as current
-	ViewPane* viewPane = viewLayout_.paneAt(event->pos().x(), height() - event->pos().y());
-	if (!viewPane) return;
-	setCurrentViewPane(viewPane);
-
-	// Loop over mime strings data
-	ListIterator<MimeString> mimeIterator(mimeStrings->mimeStrings());
-	while (MimeString* mimeString = mimeIterator.iterate())
-	{
-		switch (mimeString->type())
-		{
-			case (MimeString::UChromaCollectionBlockType):
-				addCollectionFromBlock(qPrintable(mimeString->data()));
-				updateDisplay();
-				break;
-			default:
-				Messenger::warn("Ignoring mime string data type %i, since we don't understand how to deal with it.\n", mimeString->type());
-				break;
-		}
-	}
-
-	event->acceptProposedAction();
-}
-
-void GraphWidget::mouseMoveEvent(QMouseEvent* event)
-{
-	
-}
-

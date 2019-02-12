@@ -40,7 +40,6 @@ DissolveWindow::DissolveWindow(Dissolve& dissolve) : QMainWindow(NULL), dissolve
 {
 	// Initialise resources
 	Q_INIT_RESOURCE(main);
-	Q_INIT_RESOURCE(uchroma);
 
 	// Register our custom font (for the GuideWizard)
 	QFontDatabase::addApplicationFont(":/dguided/fonts/SourceSansPro-Regular.ttf");

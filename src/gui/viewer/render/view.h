@@ -151,9 +151,9 @@ class View
 	bool isFlatView() const;
 	// Return projection matrix
 	Matrix4 projectionMatrix() const;
-	// Set whether this pane uses perspective
+	// Set whether the view uses perspective
 	void setHasPerspective(bool perspective);
-	// Return whether this pane uses perspective
+	// Return whether the view uses perspective
 	bool hasPerspective() const;
 	// Update view matrix
 	void setViewRotation(Matrix4& mat);
@@ -207,7 +207,7 @@ class View
 	 * Axes
 	 */
 	private:
-	// Axes for this pane
+	// Axes for the view
 	Axes axes_;
 	// Pixel 'lengths' of axes in flat views
 	Vec3<double> axisPixelLength_;
@@ -221,14 +221,14 @@ class View
 	Vec3<double> transformedDataPositiveMinima();
 	// Return absolute maximum positive transformed values over all associated collections
 	Vec3<double> transformedDataPositiveMaxima();
-	// Return axes for this pane
-	Axes& axes();
 	// Update axis limits to represent data extent of associated collections
 	void updateAxisLimits(double xFrac =1.0, double yFrac = 1.0, double zFrac = 1.0);
 	// Shift flat view axis limits by specified amounts
 	void shiftFlatAxisLimits(double deltaH, double deltaV);
 	// Shift flat view axis limits by specified fractional amounts
 	void shiftFlatAxisLimitsFractional(double fracH, double fracV);
+	// Return axes for the view
+	Axes& axes();
 
 
 	/*

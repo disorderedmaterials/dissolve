@@ -41,8 +41,6 @@ class GraphWidget : public QWidget
 	private:
 	// Main form declaration
 	Ui::GraphWidget ui_;
-	// Return centre coordinate of main window
-	QPoint centrePos();
 
 	public:
 	// Return contained DataViewWidget

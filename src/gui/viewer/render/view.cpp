@@ -141,7 +141,7 @@ void View::removeCollectionTarget(Collection* collection)
 	TargetData* target = collectionIsTarget(collection);
 	if (!target)
 	{
-		Messenger::printVerbose("Internal Error: Tried to remove collection '%s' from pane,  but it is not a target there.\n", collection->name());
+		Messenger::printVerbose("Internal Error: Tried to remove collection '%s' from view,  but it is not a target there.\n", collection->name());
 		return;
 	}
 
@@ -278,7 +278,7 @@ Matrix4 View::projectionMatrix() const
 	return projectionMatrix_;
 }
 
-// Set whether this pane uses perspective
+// Set whether the view uses perspective
 void View::setHasPerspective(bool perspective)
 {
 	hasPerspective_ = perspective;
@@ -288,7 +288,7 @@ void View::setHasPerspective(bool perspective)
 	calculateFontScaling();
 }
 
-// Return whether this pane uses perspective
+// Return whether the view uses perspective
 bool View::hasPerspective() const
 {
 	return hasPerspective_;
@@ -613,9 +613,12 @@ void View::recalculateView(bool force)
 	// Create a temporary, orthographic projection matrix
 	Matrix4 tempProjection = calculateProjectionMatrix(false, zOffset_);
 
-	// To begin, set the stretch factors to our best first estimate, dividing the pane width by the range of the axes
-	// Doing this first will allow us to get much better values for the pixel overlaps we need later on
-	// -- Project a point one unit each along X and Y and subtract off the viewport centre coordinate in order to get literal 'pixels per unit' for (screen) X and Y 
+	/*
+	 * To begin, set the stretch factors to our best first estimate, dividing our width by the range of the axes
+	 * Doing this first will allow us to get much better values for the pixel overlaps we need later on
+	 */
+
+	 // -- Project a point one unit each along X and Y and subtract off the viewport centre coordinate in order to get literal 'pixels per unit' for (screen) X and Y
 	Vec3<double> unit = modelToScreen(Vec3<double>(1.0, 1.0, 0.0), tempProjection, Matrix4());
 	unit.x -= viewportMatrix_[0] + viewportMatrix_[2]/2.0;
 	unit.y -= viewportMatrix_[1] + viewportMatrix_[3]/2.0;
@@ -1030,12 +1033,6 @@ Vec3<double> View::transformedDataPositiveMaxima()
 	else return maxima;
 }
 
-// Return axes for this pane
-Axes& View::axes()
-{
-	return axes_;
-}
-
 // Update axis limits to represent data extent of associated collections
 void View::updateAxisLimits(double xFrac, double yFrac, double zFrac)
 {
@@ -1150,6 +1147,12 @@ void View::shiftFlatAxisLimitsFractional(double fracH, double fracV)
 	double deltaV = (axes_.max(axes[1]) - axes_.min(axes[1])) * fracV;
 
 	shiftFlatAxisLimits(deltaH, deltaV);
+}
+
+// Return axes for the view
+Axes& View::axes()
+{
+	return axes_;
 }
 
 /*

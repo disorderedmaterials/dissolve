@@ -12,7 +12,7 @@ librender_la_SOURCES += collection.cpp collectiongroup.cpp
 librender_la_SOURCES += displaydataset.cpp
 librender_la_SOURCES += fontinstance.cpp
 librender_la_SOURCES += numberformat.cpp
-librender_la_SOURCES += primitive.cpp primitiveinfo.cpp primitiveinstance.cpp #primitivevertex.cpp
+librender_la_SOURCES += primitive.cpp primitiveinfo.cpp primitiveinstance.cpp primitivelist.cpp #primitivevertex.cpp
 librender_la_SOURCES += targetdata.cpp targetprimitive.cpp textprimitive.cpp
 librender_la_SOURCES += vertexchunk.cpp view.cpp
 
@@ -21,7 +21,7 @@ noinst_HEADERS += collection.h collectiongroup.h
 noinst_HEADERS += displaydataset.h
 noinst_HEADERS += fontinstance.h
 noinst_HEADERS += numberformat.h
-noinst_HEADERS += primitive.h primitiveinfo.h primitiveinstance.h
+noinst_HEADERS += primitive.h primitiveinfo.h primitiveinstance.h primitivelist.h
 noinst_HEADERS += targetdata.h targetprimitive.h textprimitive.h
 noinst_HEADERS += vertexchunk.h view.h
 
