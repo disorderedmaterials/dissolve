@@ -20,7 +20,7 @@
 */
 
 #include "modules/refine/gui/modulewidget.h"
-#include "gui/uchroma/gui/uchromaview.h"
+#include "gui/viewer/dataviewer.hui"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "math/integrator.h"
@@ -42,99 +42,93 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, Dissolve
 
 	// Data Graph
 
-	dataGraph_ = ui.DataPlotWidget;
+	dataGraph_ = ui.DataPlotWidget->dataViewer();
 
 	// Start a new, empty session
 	dataGraph_->startNewSession(true);
-	viewPane = dataGraph_->currentViewPane();
-	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
-	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "S(Q)");
-	viewPane->axes().setMin(1, -1.0);
-	viewPane->axes().setMax(1, 1.0);
-	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::HalfVerticalShift);
-	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
+	dataGraph_->view().setViewType(View::FlatXYView);
+	dataGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
+	dataGraph_->view().axes().setMax(0, 10.0);
+	dataGraph_->view().axes().setTitle(1, "S(Q)");
+	dataGraph_->view().axes().setMin(1, -1.0);
+	dataGraph_->view().axes().setMax(1, 1.0);
+	dataGraph_->view().collectionGroupManager().setVerticalShift(CollectionGroupManager::HalfVerticalShift);
+	dataGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Partial S(Q) Graph
 	
-	partialSQGraph_ = ui.PartialSQPlotWidget;
+	partialSQGraph_ = ui.PartialSQPlotWidget->dataViewer();
 
 	// Start a new, empty session
 	partialSQGraph_->startNewSession(true);
-	viewPane = partialSQGraph_->currentViewPane();
-	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
-	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "S(Q)");
-	viewPane->axes().setMin(1, -1.0);
-	viewPane->axes().setMax(1, 1.0);
-	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
-	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
+	partialSQGraph_->view().setViewType(View::FlatXYView);
+	partialSQGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
+	partialSQGraph_->view().axes().setMax(0, 10.0);
+	partialSQGraph_->view().axes().setTitle(1, "S(Q)");
+	partialSQGraph_->view().axes().setMin(1, -1.0);
+	partialSQGraph_->view().axes().setMax(1, 1.0);
+	partialSQGraph_->view().collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
+	partialSQGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Partial g(r) Graph
 	
-	partialGRGraph_ = ui.PartialGRPlotWidget;
+	partialGRGraph_ = ui.PartialGRPlotWidget->dataViewer();
 
 	// Start a new, empty session
 	partialGRGraph_->startNewSession(true);
-	viewPane = partialGRGraph_->currentViewPane();
-	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
-	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "g(r)");
-	viewPane->axes().setMin(1, -1.0);
-	viewPane->axes().setMax(1, 1.0);
-	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
-	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
+	partialGRGraph_->view().setViewType(View::FlatXYView);
+	partialGRGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+	partialGRGraph_->view().axes().setMax(0, 10.0);
+	partialGRGraph_->view().axes().setTitle(1, "g(r)");
+	partialGRGraph_->view().axes().setMin(1, -1.0);
+	partialGRGraph_->view().axes().setMax(1, 1.0);
+	partialGRGraph_->view().collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
+	partialGRGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Delta phi(r) Graph
 
-	deltaPhiRGraph_ = ui.DeltaPhiRPlotWidget;
+	deltaPhiRGraph_ = ui.DeltaPhiRPlotWidget->dataViewer();
 
 	// Start a new, empty session
 	deltaPhiRGraph_->startNewSession(true);
-	viewPane = deltaPhiRGraph_->currentViewPane();
-	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
-	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "\\sym{Delta}g(r), \\sym{Delta}\\sym{phi}(\\it{r})");
-	viewPane->axes().setMin(1, -1.0);
-	viewPane->axes().setMax(1, 1.0);
-	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
-	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
+	deltaPhiRGraph_->view().setViewType(View::FlatXYView);
+	deltaPhiRGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+	deltaPhiRGraph_->view().axes().setMax(0, 10.0);
+	deltaPhiRGraph_->view().axes().setTitle(1, "\\sym{Delta}g(r), \\sym{Delta}\\sym{phi}(\\it{r})");
+	deltaPhiRGraph_->view().axes().setMin(1, -1.0);
+	deltaPhiRGraph_->view().axes().setMax(1, 1.0);
+	deltaPhiRGraph_->view().collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
+	deltaPhiRGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Delta phi(r) Graph
 
-	phiMagGraph_ = ui.PhiMagPlotWidget;
+	phiMagGraph_ = ui.PhiMagPlotWidget->dataViewer();
 
 	// Start a new, empty session
 	phiMagGraph_->startNewSession(true);
-	viewPane = phiMagGraph_->currentViewPane();
-	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "Iteration");
-	viewPane->axes().numberFormat(0).setNDecimals(0);
-	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "\\sym{Delta}\\sym{phi}(\\it{r}), kJ mol\\sup{-1} \\sum{angstrom}\\sup{-1}");
-	viewPane->axes().setMin(1, 0.0);
-	viewPane->axes().setMax(1, 1.0);
-	viewPane->setAutoFollowType(ViewPane::XFollow);
+	phiMagGraph_->view().setViewType(View::FlatXYView);
+	phiMagGraph_->view().axes().setTitle(0, "Iteration");
+	phiMagGraph_->view().axes().numberFormat(0).setNDecimals(0);
+	phiMagGraph_->view().axes().setMax(0, 10.0);
+	phiMagGraph_->view().axes().setTitle(1, "\\sym{Delta}\\sym{phi}(\\it{r}), kJ mol\\sup{-1} \\sum{angstrom}\\sup{-1}");
+	phiMagGraph_->view().axes().setMin(1, 0.0);
+	phiMagGraph_->view().axes().setMax(1, 1.0);
+	phiMagGraph_->view().setAutoFollowType(View::XFollow);
 
 	// Errors Graph
 
-	errorsGraph_ = ui.ErrorsPlotWidget;
+	errorsGraph_ = ui.ErrorsPlotWidget->dataViewer();
 
 	// Start a new, empty session
 	errorsGraph_->startNewSession(true);
-	viewPane = errorsGraph_->currentViewPane();
-	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "Iteration");
-	viewPane->axes().numberFormat(0).setNDecimals(0);
-	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "%Error");
-	viewPane->axes().setMin(1, 0.0);
-	viewPane->axes().setMax(1, 100.0);
-	viewPane->setAutoFollowType(ViewPane::XFollow);
+	errorsGraph_->view().setViewType(View::FlatXYView);
+	errorsGraph_->view().axes().setTitle(0, "Iteration");
+	errorsGraph_->view().axes().numberFormat(0).setNDecimals(0);
+	errorsGraph_->view().axes().setMax(0, 10.0);
+	errorsGraph_->view().axes().setTitle(1, "%Error");
+	errorsGraph_->view().axes().setMin(1, 0.0);
+	errorsGraph_->view().axes().setMax(1, 100.0);
+	errorsGraph_->view().setAutoFollowType(View::XFollow);
 
 	setGraphDataTargets(module_);
 
@@ -164,12 +158,12 @@ void RefineModuleWidget::updateControls()
 	phiMagGraph_->refreshReferencedDataSets();
 	errorsGraph_->refreshReferencedDataSets();
 
-	dataGraph_->updateDisplay();
-	partialSQGraph_->updateDisplay();
-	partialGRGraph_->updateDisplay();
-	deltaPhiRGraph_->updateDisplay();
-	phiMagGraph_->updateDisplay();
-	errorsGraph_->updateDisplay();
+	dataGraph_->postRedisplay();
+	partialSQGraph_->postRedisplay();
+	partialGRGraph_->postRedisplay();
+	deltaPhiRGraph_->postRedisplay();
+	phiMagGraph_->postRedisplay();
+	errorsGraph_->postRedisplay();
 
 	refreshing_ = false;
 }
@@ -191,7 +185,7 @@ void RefineModuleWidget::enableSensitiveControls()
 // Write widget state through specified LineParser
 bool RefineModuleWidget::writeState(LineParser& parser)
 {
-	// Write UChromaWidget sessions
+	// Write DataViewer sessions
 	if (!dataGraph_->writeSession(parser)) return false;
 	if (!partialSQGraph_->writeSession(parser)) return false;
 	if (!partialGRGraph_->writeSession(parser)) return false;
@@ -205,7 +199,7 @@ bool RefineModuleWidget::writeState(LineParser& parser)
 // Read widget state through specified LineParser
 bool RefineModuleWidget::readState(LineParser& parser)
 {
-	// Read UChromaWidget sessions
+	// Read DataViewer sessions
 	if (!dataGraph_->readSession(parser)) return false;
 	if (!partialSQGraph_->readSession(parser)) return false;
 	if (!partialGRGraph_->readSession(parser)) return false;

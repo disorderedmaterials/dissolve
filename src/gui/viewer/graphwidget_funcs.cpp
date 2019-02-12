@@ -1,6 +1,6 @@
 /*
-	*** View Widget - Functions 
-	*** src/gui/uchroma/gui/uchromaview_funcs.cpp
+	*** Graph Widget - Functions 
+	*** src/gui/viewer/graphwidget_funcs.cpp
 	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/viewer/dataviewer.hui"
-#include "gui/uchroma/render/fontinstance.h"
+#include "gui/viewer/graphwidget.h"
+#include "gui/viewer/render/fontinstance.h"
 #include "gui/widgets/mimestrings.h"
 #include "templates/reflist.h"
 #include "templates/variantpointer.h"
@@ -29,14 +29,13 @@
 #include <QSettings>
 
 // Constructor
-UChromaViewWidget::UChromaViewWidget(QWidget* parent) : QWidget(parent), UChromaBase(this), viewTypeActionGroup_(this)
+GraphWidget::GraphWidget(QWidget* parent) : QWidget(parent)
 {
 	// Initialise the icon resource
 	Q_INIT_RESOURCE(main);
 
 	// Call the main creation function
 	ui.setupUi(this);
-	setAcceptDrops(true);
 
 	// Set Viewer pointer
 	viewer_ = ui.MainView;
@@ -83,7 +82,7 @@ UChromaViewWidget::UChromaViewWidget(QWidget* parent) : QWidget(parent), UChroma
 }
 
 // Destructor
-UChromaViewWidget::~UChromaViewWidget()
+GraphWidget::~GraphWidget()
 {
 }
 
@@ -92,7 +91,7 @@ UChromaViewWidget::~UChromaViewWidget()
  */
 
 // Return centre coordinate of main window
-QPoint UChromaViewWidget::centrePos()
+QPoint GraphWidget::centrePos()
 {
 	QPoint centre = pos();
 	centre += QPoint(width()/2, height()/2);
@@ -100,7 +99,7 @@ QPoint UChromaViewWidget::centrePos()
 }
 
 // Load settings
-void UChromaViewWidget::loadSettings()
+void GraphWidget::loadSettings()
 {
 	QSettings settings;
 
@@ -109,7 +108,7 @@ void UChromaViewWidget::loadSettings()
 }
 
 // Save settings
-void UChromaViewWidget::saveSettings()
+void GraphWidget::saveSettings()
 {
 	QSettings settings;
 
@@ -121,13 +120,13 @@ void UChromaViewWidget::saveSettings()
  * Mouse Reimplementations
  */
 
-void UChromaViewWidget::dragEnterEvent(QDragEnterEvent* event)
+void GraphWidget::dragEnterEvent(QDragEnterEvent* event)
 {
 	// Check that the event contains suitable data
 	if (event->mimeData()->hasFormat("dissolve/mimestrings")) event->acceptProposedAction();
 }
 
-void UChromaViewWidget::dropEvent(QDropEvent* event)
+void GraphWidget::dropEvent(QDropEvent* event)
 {
 	if (!event->mimeData()->hasFormat("dissolve/mimestrings")) return;
 
@@ -159,7 +158,7 @@ void UChromaViewWidget::dropEvent(QDropEvent* event)
 	event->acceptProposedAction();
 }
 
-void UChromaViewWidget::mouseMoveEvent(QMouseEvent* event)
+void GraphWidget::mouseMoveEvent(QMouseEvent* event)
 {
 	
 }

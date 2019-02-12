@@ -20,7 +20,7 @@
 */
 
 #include "modules/energy/gui/modulewidget.h"
-#include "gui/uchroma/gui/uchromaview.h"
+#include "gui/viewer/dataviewer.hui"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "modules/energy/energy.h"
@@ -34,22 +34,22 @@ EnergyModuleWidget::EnergyModuleWidget(QWidget* parent, Module* module, Dissolve
 	// Set up user interface
 	ui.setupUi(this);
 
-	// Grab our UChroma widget
-	energyGraph_ = ui.PlotWidget;
+	// Grab our DataViewer widget
+	energyGraph_ = ui.PlotWidget->dataViewer();
 
 	// Start a new, empty session
 	energyGraph_->startNewSession(true);
-	ViewPane* viewPane = energyGraph_->currentViewPane();
-	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "Iteration");
-	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().numberFormat(0).setNDecimals(0);
-	viewPane->axes().setTitle(1, "Energy, kJ mol\\sup{-1}");
-	viewPane->axes().setMin(1, -1.0);
-	viewPane->axes().setMax(1, 1.0);
-	viewPane->axes().numberFormat(1).setType(NumberFormat::ScientificFormat);
-	viewPane->axes().numberFormat(1).setUseENotation(true);
-	viewPane->setAutoFollowType(ViewPane::XFollow);
+	View& view = energyGraph_->view();
+	view.setViewType(View::FlatXYView);
+	view.axes().setTitle(0, "Iteration");
+	view.axes().setMax(0, 10.0);
+	view.axes().numberFormat(0).setNDecimals(0);
+	view.axes().setTitle(1, "Energy, kJ mol\\sup{-1}");
+	view.axes().setMin(1, -1.0);
+	view.axes().setMax(1, 1.0);
+	view.axes().numberFormat(1).setType(NumberFormat::ScientificFormat);
+	view.axes().numberFormat(1).setUseENotation(true);
+	view.setAutoFollowType(View::XFollow);
 
 	currentConfiguration_ = NULL;
 
@@ -103,7 +103,7 @@ void EnergyModuleWidget::updateControls()
 
 	// Ensure that any displayed data are up-to-date
 	energyGraph_->refreshReferencedDataSets();
-	energyGraph_->updateDisplay();
+	energyGraph_->postRedisplay();
 }
 
 // Disable sensitive controls within widget, ready for main code to run
@@ -123,7 +123,7 @@ void EnergyModuleWidget::enableSensitiveControls()
 // Write widget state through specified LineParser
 bool EnergyModuleWidget::writeState(LineParser& parser)
 {
-	// Write UChromaWidget sessions
+	// Write DataViewer sessions
 	if (!energyGraph_->writeSession(parser)) return false;
 
 	return true;
@@ -132,7 +132,7 @@ bool EnergyModuleWidget::writeState(LineParser& parser)
 // Read widget state through specified LineParser
 bool EnergyModuleWidget::readState(LineParser& parser)
 {
-	// Read UChromaWidget sessions
+	// Read DataViewer sessions
 	if (!energyGraph_->readSession(parser)) return false;
 
 	return true;

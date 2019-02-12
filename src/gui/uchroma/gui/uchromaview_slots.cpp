@@ -19,7 +19,7 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/uchroma/gui/uchromaview.h"
+#include "gui/viewer/dataviewer.hui"
 #include "gui/uchroma/gui/editviewlayout.h"
 #include "gui/uchroma/gui/editfitresults.h"
 #include "gui/uchroma/gui/operate_bgsub.h"

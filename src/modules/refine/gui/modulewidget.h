@@ -30,7 +30,7 @@ class Dissolve;
 class Module;
 class PartialSet;
 class RefineModule;
-class UChromaViewWidget;
+class DataViewer;
 
 // Module Widget
 class RefineModuleWidget : public ModuleWidget
@@ -42,7 +42,7 @@ class RefineModuleWidget : public ModuleWidget
 	// Associated Module
 	RefineModule* module_;
 	// UChromaViews contained within this widget
-	UChromaViewWidget* dataGraph_, *partialSQGraph_, *partialGRGraph_, *deltaPhiRGraph_, *phiMagGraph_, *errorsGraph_;
+	DataViewer* dataGraph_, *partialSQGraph_, *partialGRGraph_, *deltaPhiRGraph_, *phiMagGraph_, *errorsGraph_;
 	// Reference to Dissolve
 	Dissolve& dissolve_;
 

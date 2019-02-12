@@ -20,7 +20,7 @@
 */
 
 #include "modules/rdf/gui/modulewidget.h"
-#include "gui/uchroma/gui/uchromaview.h"
+#include "gui/viewer/dataviewer.hui"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "modules/rdf/rdf.h"
@@ -38,33 +38,31 @@ RDFModuleWidget::RDFModuleWidget(QWidget* parent, Module* module, Dissolve& diss
 
 	// Set up partial g(r) graph
 
-	partialsGraph_ = ui.PartialsPlotWidget;
+	partialsGraph_ = ui.PartialsPlotWidget->dataViewer();
 
 	partialsGraph_->startNewSession(true);
-	viewPane = partialsGraph_->currentViewPane();
-	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
-	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "g(r)");
-	viewPane->axes().setMin(1, -1.0);
-	viewPane->axes().setMax(1, 1.0);
-	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
-	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
+	partialsGraph_->view().setViewType(View::FlatXYView);
+	partialsGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+	partialsGraph_->view().axes().setMax(0, 10.0);
+	partialsGraph_->view().axes().setTitle(1, "g(r)");
+	partialsGraph_->view().axes().setMin(1, -1.0);
+	partialsGraph_->view().axes().setMax(1, 1.0);
+	partialsGraph_->view().collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
+	partialsGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Set up total G(r) graph
 
-	totalsGraph_ = ui.TotalsPlotWidget;
+	totalsGraph_ = ui.TotalsPlotWidget->dataViewer();
 
 	totalsGraph_->startNewSession(true);
-	viewPane = totalsGraph_->currentViewPane();
-	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
-	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "g(r)");
-	viewPane->axes().setMin(1, -1.0);
-	viewPane->axes().setMax(1, 1.0);
-	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::OneVerticalShift);
-	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
+	totalsGraph_->view().setViewType(View::FlatXYView);
+	totalsGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+	totalsGraph_->view().axes().setMax(0, 10.0);
+	totalsGraph_->view().axes().setTitle(1, "g(r)");
+	totalsGraph_->view().axes().setMin(1, -1.0);
+	totalsGraph_->view().axes().setMax(1, 1.0);
+	totalsGraph_->view().collectionGroupManager().setVerticalShift(CollectionGroupManager::OneVerticalShift);
+	totalsGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	refreshing_ = false;
 
@@ -84,8 +82,8 @@ void RDFModuleWidget::updateControls()
 	partialsGraph_->refreshReferencedDataSets();
 	totalsGraph_->refreshReferencedDataSets();
 
-	partialsGraph_->updateDisplay();
-	totalsGraph_->updateDisplay();
+	partialsGraph_->postRedisplay();
+	totalsGraph_->postRedisplay();
 }
 
 // Disable sensitive controls within widget, ready for main code to run
@@ -105,7 +103,7 @@ void RDFModuleWidget::enableSensitiveControls()
 // Write widget state through specified LineParser
 bool RDFModuleWidget::writeState(LineParser& parser)
 {
-	// Write UChromaWidget sessions
+	// Write DataViewer sessions
 	if (!partialsGraph_->writeSession(parser)) return false;
 	if (!totalsGraph_->writeSession(parser)) return false;
 
@@ -115,7 +113,7 @@ bool RDFModuleWidget::writeState(LineParser& parser)
 // Read widget state through specified LineParser
 bool RDFModuleWidget::readState(LineParser& parser)
 {
-	// Read UChromaWidget sessions
+	// Read DataViewer sessions
 	if (!partialsGraph_->readSession(parser)) return false;
 	if (!totalsGraph_->readSession(parser)) return false;
 

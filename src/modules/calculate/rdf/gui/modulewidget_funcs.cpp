@@ -30,18 +30,18 @@ CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget* parent, CalculateRDF
 	ui.setupUi(this);
 
 	// Set up RDF graph
-	rdfGraph_ = ui.RDFPlotWidget;
+	rdfGraph_ = ui.RDFPlotWidget->dataViewer();
 
 	rdfGraph_->startNewSession(true);
-	ViewPane* viewPane = rdfGraph_->currentViewPane();
-	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
-	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "g(r)");
-	viewPane->axes().setMin(1, 0.0);
-	viewPane->axes().setMax(1, 1.0);
-	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
-	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
+	View& view = rdfGraph_->view();
+	view.setViewType(View::FlatXYView);
+	view.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+	view.axes().setMax(0, 10.0);
+	view.axes().setTitle(1, "g(r)");
+	view.axes().setMin(1, 0.0);
+	view.axes().setMax(1, 1.0);
+	view.collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
+	view.setAutoFollowType(View::AllAutoFollow);
 
 	setGraphDataTargets(module_);
 
@@ -53,7 +53,7 @@ void CalculateRDFModuleWidget::updateControls()
 {
 	rdfGraph_->refreshReferencedDataSets();
 
-	rdfGraph_->updateDisplay();
+	rdfGraph_->postRedisplay();
 }
 
 // Disable sensitive controls within widget, ready for main code to run
@@ -73,7 +73,7 @@ void CalculateRDFModuleWidget::enableSensitiveControls()
 // Write widget state through specified LineParser
 bool CalculateRDFModuleWidget::writeState(LineParser& parser)
 {
-	// Write UChromaWidget sessions
+	// Write DataViewer sessions
 	if (!rdfGraph_->writeSession(parser)) return false;
 
 	return true;
@@ -82,7 +82,7 @@ bool CalculateRDFModuleWidget::writeState(LineParser& parser)
 // Read widget state through specified LineParser
 bool CalculateRDFModuleWidget::readState(LineParser& parser)
 {
-	// Read UChromaWidget sessions
+	// Read DataViewer sessions
 	if (!rdfGraph_->readSession(parser)) return false;
 
 	return true;

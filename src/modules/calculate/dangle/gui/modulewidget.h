@@ -27,7 +27,7 @@
 
 // Forward Declarations
 class CalculateDAngleModule;
-class UChromaViewWidget;
+class DataViewer;
 
 // Module Widget
 class CalculateDAngleModuleWidget : public ModuleWidget
@@ -39,7 +39,7 @@ class CalculateDAngleModuleWidget : public ModuleWidget
 	// Associated Module
 	CalculateDAngleModule* module_;
 	// UChromaViews contained within this widget
-	UChromaViewWidget* rdfGraph_;
+	DataViewer* rdfGraph_;
 
 	public:
 	// Constructor

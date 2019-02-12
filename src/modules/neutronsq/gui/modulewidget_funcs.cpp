@@ -20,7 +20,7 @@
 */
 
 #include "modules/neutronsq/gui/modulewidget.h"
-#include "gui/uchroma/gui/uchromaview.h"
+#include "gui/viewer/dataviewer.hui"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "modules/neutronsq/neutronsq.h"
@@ -38,63 +38,59 @@ NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget* parent, Module* module, Di
 
 	// Set up partial g(r) graph
 
-	partialGRGraph_ = ui.PartialGRPlotWidget;
+	partialGRGraph_ = ui.PartialGRPlotWidget->dataViewer();
 
 	partialGRGraph_->startNewSession(true);
-	viewPane = partialGRGraph_->currentViewPane();
-	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
-	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "g(r)");
-	viewPane->axes().setMin(1, -1.0);
-	viewPane->axes().setMax(1, 1.0);
-	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
-	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
+	partialGRGraph_->view().setViewType(View::FlatXYView);
+	partialGRGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+	partialGRGraph_->view().axes().setMax(0, 10.0);
+	partialGRGraph_->view().axes().setTitle(1, "g(r)");
+	partialGRGraph_->view().axes().setMin(1, -1.0);
+	partialGRGraph_->view().axes().setMax(1, 1.0);
+	partialGRGraph_->view().collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
+	partialGRGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Set up partial S(Q) graph
 
-	partialSQGraph_ = ui.PartialSQPlotWidget;
+	partialSQGraph_ = ui.PartialSQPlotWidget->dataViewer();
 
 	partialSQGraph_->startNewSession(true);
-	viewPane = partialSQGraph_->currentViewPane();
-	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
-	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "S(Q)");
-	viewPane->axes().setMin(1, -1.0);
-	viewPane->axes().setMax(1, 1.0);
-	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
-	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
+	partialSQGraph_->view().setViewType(View::FlatXYView);
+	partialSQGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
+	partialSQGraph_->view().axes().setMax(0, 10.0);
+	partialSQGraph_->view().axes().setTitle(1, "S(Q)");
+	partialSQGraph_->view().axes().setMin(1, -1.0);
+	partialSQGraph_->view().axes().setMax(1, 1.0);
+	partialSQGraph_->view().collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
+	partialSQGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Set up total G(r) graph
 
-	totalGRGraph_ = ui.TotalGRPlotWidget;
+	totalGRGraph_ = ui.TotalGRPlotWidget->dataViewer();
 
 	totalGRGraph_->startNewSession(true);
-	viewPane = totalGRGraph_->currentViewPane();
-	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
-	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "g(r)");
-	viewPane->axes().setMin(1, -1.0);
-	viewPane->axes().setMax(1, 1.0);
-	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::NoVerticalShift);
-	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
+	totalGRGraph_->view().setViewType(View::FlatXYView);
+	totalGRGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+	totalGRGraph_->view().axes().setMax(0, 10.0);
+	totalGRGraph_->view().axes().setTitle(1, "g(r)");
+	totalGRGraph_->view().axes().setMin(1, -1.0);
+	totalGRGraph_->view().axes().setMax(1, 1.0);
+	totalGRGraph_->view().collectionGroupManager().setVerticalShift(CollectionGroupManager::NoVerticalShift);
+	totalGRGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Set up total S(Q) graph
 
-	totalSQGraph_ = ui.TotalSQPlotWidget;
+	totalSQGraph_ = ui.TotalSQPlotWidget->dataViewer();
 
 	totalSQGraph_->startNewSession(true);
-	viewPane = totalSQGraph_->currentViewPane();
-	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
-	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "S(Q)");
-	viewPane->axes().setMin(1, -1.0);
-	viewPane->axes().setMax(1, 1.0);
-	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::NoVerticalShift);
-	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
+	totalSQGraph_->view().setViewType(View::FlatXYView);
+	totalSQGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
+	totalSQGraph_->view().axes().setMax(0, 10.0);
+	totalSQGraph_->view().axes().setTitle(1, "S(Q)");
+	totalSQGraph_->view().axes().setMin(1, -1.0);
+	totalSQGraph_->view().axes().setMax(1, 1.0);
+	totalSQGraph_->view().collectionGroupManager().setVerticalShift(CollectionGroupManager::NoVerticalShift);
+	totalSQGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	setGraphDataTargets(module_);
 
@@ -114,10 +110,10 @@ void NeutronSQModuleWidget::updateControls()
 	totalGRGraph_->refreshReferencedDataSets();
 	totalSQGraph_->refreshReferencedDataSets();
 
-	partialGRGraph_->updateDisplay();
-	partialSQGraph_->updateDisplay();
-	totalGRGraph_->updateDisplay();
-	totalSQGraph_->updateDisplay();
+	partialGRGraph_->postRedisplay();
+	partialSQGraph_->postRedisplay();
+	totalGRGraph_->postRedisplay();
+	totalSQGraph_->postRedisplay();
 }
 
 // Disable sensitive controls within widget, ready for main code to run
@@ -137,7 +133,7 @@ void NeutronSQModuleWidget::enableSensitiveControls()
 // Write widget state through specified LineParser
 bool NeutronSQModuleWidget::writeState(LineParser& parser)
 {
-	// Write UChromaWidget sessions
+	// Write DataViewer sessions
 	if (!partialGRGraph_->writeSession(parser)) return false;
 	if (!partialSQGraph_->writeSession(parser)) return false;
 	if (!totalGRGraph_->writeSession(parser)) return false;
@@ -149,7 +145,7 @@ bool NeutronSQModuleWidget::writeState(LineParser& parser)
 // Read widget state through specified LineParser
 bool NeutronSQModuleWidget::readState(LineParser& parser)
 {
-	// Read UChromaWidget sessions
+	// Read DataViewer sessions
 	if (!partialGRGraph_->readSession(parser)) return false;
 	if (!partialSQGraph_->readSession(parser)) return false;
 	if (!totalGRGraph_->readSession(parser)) return false;

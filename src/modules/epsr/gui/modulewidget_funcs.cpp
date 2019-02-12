@@ -20,7 +20,7 @@
 */
 
 #include "modules/epsr/gui/modulewidget.h"
-#include "gui/uchroma/gui/uchromaview.h"
+#include "gui/viewer/dataviewer.hui"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "modules/epsr/epsr.h"
@@ -37,135 +37,125 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 
 	refreshing_ = true;
 
-	ViewPane* viewPane;
-
 	// F(Q) Graph
 
-	FQGraph_ = ui.FQPlotWidget;
+	FQGraph_ = ui.FQPlotWidget->dataViewer();
 
 	// Start a new, empty session
 	FQGraph_->startNewSession(true);
-	viewPane = FQGraph_->currentViewPane();
-	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
-	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "F(\\it{Q})");
-	viewPane->axes().setMin(1, -1.0);
-	viewPane->axes().setMax(1, 1.0);
-	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::HalfVerticalShift);
-	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
+	FQGraph_->view().setViewType(View::FlatXYView);
+	FQGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
+	FQGraph_->view().axes().setMax(0, 10.0);
+	FQGraph_->view().axes().setTitle(1, "F(\\it{Q})");
+	FQGraph_->view().axes().setMin(1, -1.0);
+	FQGraph_->view().axes().setMax(1, 1.0);
+	FQGraph_->view().collectionGroupManager().setVerticalShift(CollectionGroupManager::HalfVerticalShift);
+	FQGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// F(Q) Fitting Graph
 
-	FQFitGraph_ = ui.FQFitPlotWidget;
+	FQFitGraph_ = ui.FQFitPlotWidget->dataViewer();
 
 	// Start a new, empty session
 	FQFitGraph_->startNewSession(true);
-	viewPane = FQFitGraph_->currentViewPane();
-	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
-	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "\\sym{Delta}F(\\it{Q})");
-	viewPane->axes().setMin(1, -1.0);
-	viewPane->axes().setMax(1, 1.0);
-	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::HalfVerticalShift);
-	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
+	FQFitGraph_->view().setViewType(View::FlatXYView);
+	FQFitGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
+	FQFitGraph_->view().axes().setMax(0, 10.0);
+	FQFitGraph_->view().axes().setTitle(1, "\\sym{Delta}F(\\it{Q})");
+	FQFitGraph_->view().axes().setMin(1, -1.0);
+	FQFitGraph_->view().axes().setMax(1, 1.0);
+	FQFitGraph_->view().collectionGroupManager().setVerticalShift(CollectionGroupManager::HalfVerticalShift);
+	FQFitGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Partial S(Q) Graph
 	
-	SQGraph_ = ui.SQPlotWidget;
+	SQGraph_ = ui.SQPlotWidget->dataViewer();
 
 	// Start a new, empty session
 	SQGraph_->startNewSession(true);
-	viewPane = SQGraph_->currentViewPane();
-	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
-	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "S(\\it{Q})");
-	viewPane->axes().setMin(1, -1.0);
-	viewPane->axes().setMax(1, 1.0);
-	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
-	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
+	SQGraph_->view().setViewType(View::FlatXYView);
+	SQGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
+	SQGraph_->view().axes().setMax(0, 10.0);
+	SQGraph_->view().axes().setTitle(1, "S(\\it{Q})");
+	SQGraph_->view().axes().setMin(1, -1.0);
+	SQGraph_->view().axes().setMax(1, 1.0);
+	SQGraph_->view().collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
+	SQGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// g(r) Graph
 	
-	GRGraph_ = ui.GRPlotWidget;
+	GRGraph_ = ui.GRPlotWidget->dataViewer();
 
 	// Start a new, empty session
 	GRGraph_->startNewSession(true);
-	viewPane = GRGraph_->currentViewPane();
-	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
-	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "g(r)");
-	viewPane->axes().setMin(1, -1.0);
-	viewPane->axes().setMax(1, 1.0);
-	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
-	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
+	GRGraph_->view().setViewType(View::FlatXYView);
+	GRGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+	GRGraph_->view().axes().setMax(0, 10.0);
+	GRGraph_->view().axes().setTitle(1, "g(r)");
+	GRGraph_->view().axes().setMin(1, -1.0);
+	GRGraph_->view().axes().setMax(1, 1.0);
+	GRGraph_->view().collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
+	GRGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// F(r) Graph
 	
-	FRGraph_ = ui.FRPlotWidget;
+	FRGraph_ = ui.FRPlotWidget->dataViewer();
 
 	// Start a new, empty session
 	FRGraph_->startNewSession(true);
-	viewPane = FRGraph_->currentViewPane();
-	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
-	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "F(r)");
-	viewPane->axes().setMin(1, -1.0);
-	viewPane->axes().setMax(1, 1.0);
-	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
-	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
+	FRGraph_->view().setViewType(View::FlatXYView);
+	FRGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+	FRGraph_->view().axes().setMax(0, 10.0);
+	FRGraph_->view().axes().setTitle(1, "F(r)");
+	FRGraph_->view().axes().setMin(1, -1.0);
+	FRGraph_->view().axes().setMax(1, 1.0);
+	FRGraph_->view().collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
+	FRGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Phi(r) (Empirical Potentials) Graph
 
-	phiRGraph_ = ui.PhiRPlotWidget;
+	phiRGraph_ = ui.PhiRPlotWidget->dataViewer();
 
 	// Start a new, empty session
 	phiRGraph_->startNewSession(true);
-	viewPane = phiRGraph_->currentViewPane();
-	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
-	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "\\sym{phi}(\\it{r})");
-	viewPane->axes().setMin(1, -1.0);
-	viewPane->axes().setMax(1, 1.0);
-	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
-	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
+	phiRGraph_->view().setViewType(View::FlatXYView);
+	phiRGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+	phiRGraph_->view().axes().setMax(0, 10.0);
+	phiRGraph_->view().axes().setTitle(1, "\\sym{phi}(\\it{r})");
+	phiRGraph_->view().axes().setMin(1, -1.0);
+	phiRGraph_->view().axes().setMax(1, 1.0);
+	phiRGraph_->view().collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
+	phiRGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// phi(r) Magnitude Graph
 
-	phiMagGraph_ = ui.PhiMagPlotWidget;
+	phiMagGraph_ = ui.PhiMagPlotWidget->dataViewer();
 
 	// Start a new, empty session
 	phiMagGraph_->startNewSession(true);
-	viewPane = phiMagGraph_->currentViewPane();
-	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "Iteration");
-	viewPane->axes().numberFormat(0).setNDecimals(0);
-	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "\\sym{Delta}\\sym{phi}(\\it{r}), kJ mol\\sup{-1} \\sum{angstrom}\\sup{-1}");
-	viewPane->axes().setMin(1, 0.0);
-	viewPane->axes().setMax(1, 1.0);
-	viewPane->setAutoFollowType(ViewPane::XFollow);
+	phiMagGraph_->view().setViewType(View::FlatXYView);
+	phiMagGraph_->view().axes().setTitle(0, "Iteration");
+	phiMagGraph_->view().axes().numberFormat(0).setNDecimals(0);
+	phiMagGraph_->view().axes().setMax(0, 10.0);
+	phiMagGraph_->view().axes().setTitle(1, "\\sym{Delta}\\sym{phi}(\\it{r}), kJ mol\\sup{-1} \\sum{angstrom}\\sup{-1}");
+	phiMagGraph_->view().axes().setMin(1, 0.0);
+	phiMagGraph_->view().axes().setMax(1, 1.0);
+	phiMagGraph_->view().setAutoFollowType(View::XFollow);
 
 	// R-Factor Graph
 
-	rFactorGraph_ = ui.RFactorPlotWidget;
+	rFactorGraph_ = ui.RFactorPlotWidget->dataViewer();
 
 	// Start a new, empty session
 	rFactorGraph_->startNewSession(true);
-	viewPane = rFactorGraph_->currentViewPane();
-	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "Iteration");
-	viewPane->axes().numberFormat(0).setNDecimals(0);
-	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "R-Factor");
-	viewPane->axes().setMin(1, 0.0);
-	viewPane->axes().setMax(1, 0.5);
-	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
+	rFactorGraph_->view().setViewType(View::FlatXYView);
+	rFactorGraph_->view().axes().setTitle(0, "Iteration");
+	rFactorGraph_->view().axes().numberFormat(0).setNDecimals(0);
+	rFactorGraph_->view().axes().setMax(0, 10.0);
+	rFactorGraph_->view().axes().setTitle(1, "R-Factor");
+	rFactorGraph_->view().axes().setMin(1, 0.0);
+	rFactorGraph_->view().axes().setMax(1, 0.5);
+	rFactorGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	setGraphDataTargets(module_);
 
@@ -191,14 +181,14 @@ void EPSRModuleWidget::updateControls()
 	phiMagGraph_->refreshReferencedDataSets();
 	rFactorGraph_->refreshReferencedDataSets();
 
-	FQGraph_->updateDisplay();
-	FQFitGraph_->updateDisplay();
-	SQGraph_->updateDisplay();
-	GRGraph_->updateDisplay();
-	FRGraph_->updateDisplay();
-	phiRGraph_->updateDisplay();
-	phiMagGraph_->updateDisplay();
-	rFactorGraph_->updateDisplay();
+	FQGraph_->postRedisplay();
+	FQFitGraph_->postRedisplay();
+	SQGraph_->postRedisplay();
+	GRGraph_->postRedisplay();
+	FRGraph_->postRedisplay();
+	phiRGraph_->postRedisplay();
+	phiMagGraph_->postRedisplay();
+	rFactorGraph_->postRedisplay();
 
 	refreshing_ = false;
 }
@@ -220,7 +210,7 @@ void EPSRModuleWidget::enableSensitiveControls()
 // Write widget state through specified LineParser
 bool EPSRModuleWidget::writeState(LineParser& parser)
 {
-	// Write UChromaWidget sessions
+	// Write DataViewer sessions
 	if (!FQGraph_->writeSession(parser)) return false;
 	if (!FQFitGraph_->writeSession(parser)) return false;
 	if (!SQGraph_->writeSession(parser)) return false;
@@ -236,7 +226,7 @@ bool EPSRModuleWidget::writeState(LineParser& parser)
 // Read widget state through specified LineParser
 bool EPSRModuleWidget::readState(LineParser& parser)
 {
-	// Read UChromaWidget sessions
+	// Read DataViewer sessions
 	if (!FQGraph_->readSession(parser)) return false;
 	if (!FQFitGraph_->readSession(parser)) return false;
 	if (!SQGraph_->readSession(parser)) return false;

@@ -27,7 +27,7 @@
 
 // Forward Declarations
 class CalculateRDFModule;
-class UChromaViewWidget;
+class DataViewer;
 
 // Module Widget
 class CalculateRDFModuleWidget : public ModuleWidget
@@ -39,7 +39,7 @@ class CalculateRDFModuleWidget : public ModuleWidget
 	// Associated Module
 	CalculateRDFModule* module_;
 	// UChromaViews contained within this widget
-	UChromaViewWidget* rdfGraph_;
+	DataViewer* rdfGraph_;
 
 	public:
 	// Constructor

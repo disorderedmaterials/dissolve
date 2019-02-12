@@ -26,15 +26,12 @@
 // Mouse press event
 void BaseViewer::mousePressEvent(QMouseEvent* event)
 {
-	// Handle button presses (button down) from the mouse
+	// Store the current button state and mouse position
 	buttonState_ = event->buttons();
-	Qt::KeyboardModifiers km = event->modifiers();
-
-	// Store event information
 	rMouseDown_.set(event->x(), event->y(), 0.0);
 
 	// Handle the event
-	mousePressed();
+	mousePressed(event->modifiers());
 }
 
 // Mouse release event

@@ -23,9 +23,11 @@
 #define DISSOLVE_DATAVIEWER_H
 
 #include "gui/viewer/viewer.hui"
+#include "gui/viewer/render/collection.h"
+#include "gui/viewer/render/view.h"
 
 // Forward Declarations
-/* none */
+class DataSet;
 
 // Data Viewer
 class DataViewer : public BaseViewer
@@ -39,47 +41,41 @@ class DataViewer : public BaseViewer
 
 
 	/*
-	 * Scene Rendering
+	 * Rendering (BaseViewer virtuals)
 	 */
 	private:
-	// Setup basic GL properties
-	void setupGL();
-	// Draw full scene
-	void renderFullScene(int xOffset = 0, int yOffset = 0);
+	// Perform post-initialisation operations
+	void postInitialiseGL();
+	// Perform post-resize operations
+	void postResizeGL();
+	// Render content
+	void render(int xOffset = 0, int yOffset = 0);
 
 
 	/*
-	 * Mouse / Keyboard Input
-	 * (in viewer_input.cpp)
+	 * Mouse / Keyboard Input (BaseViewer virtuals)
 	 */
 	protected:
-	// Mouse press event
-	void mousePressEvent(QMouseEvent* event);
-	// Mouse release event
-	void mouseReleaseEvent(QMouseEvent* event);
-	// Mouse move event
-	void mouseMoveEvent(QMouseEvent* event);
-	// Mouse wheel event
-	void wheelEvent(QWheelEvent* event);
-	// Mouse double click event
-	void mouseDoubleClickEvent(QMouseEvent* event);
-
-	public slots:
-	// Key press event
-	void keyPressEvent(QKeyEvent*);
-	// Key release event
-	void keyReleaseEvent(QKeyEvent*);
+	// Mouse pressed
+	void mousePressed(Qt::KeyboardModifiers modifiers);
+	// Mouse released
+	void mouseReleased();
+	// Mouse moved
+	void mouseMoved(int dx, int dy, Qt::KeyboardModifiers modifiers);
+	// Mouse 'wheeled'
+	void mouseWheeled(int delta);
+	// Mouse double clicked
+	void mouseDoubleClicked();
+	// Key pressed
+	bool keyPressed(int key, Qt::KeyboardModifiers modifiers);
+	// Key released
+	bool keyReleased(int key, Qt::KeyboardModifiers modifiers);
 
 
 	/*
-	 * Context Menu
-	 * (in viewer_context.cpp)
+	 * Context Menu (BaseViewer virtuals)
 	 */
 	private:
-	// Context menu for display
-	QMenu contextMenu_;
-	// Special QActions
-	QAction* currentPaneAction_;
 	// Special QMenu items
 	QMenu* currentCollectionsMenu_;
 
@@ -94,12 +90,373 @@ class DataViewer : public BaseViewer
 	void showDialog(bool checked);
 	// Set display status of Collection target
 	void setCollectionDisplayed(bool checked);
-	// Copy current view image to clipboard
-	void copyViewToClipboard(bool checked);
 
-	public slots:
-	// Show context menu
-	void showContextMenu(const QPoint& pos);
+
+	/*
+	 * View
+	 */
+	private:
+	// Current view
+	View view_;
+
+	public:
+	// Return the view for viewer
+	View& view();
+
+
+	/*
+	 * Interaction
+	 */
+	public:
+	// Interaction Mode enum
+	enum InteractionMode
+	{
+		FitSetupSelectXInteraction,
+		FitSetupSelectZInteraction,
+		OperateBGSubSelectYValueInteraction,
+		OperateBGSubSelectXRangeInteraction,
+		OperateBGSubSelectZRangeInteraction,
+		ViewInteraction,
+		ZoomInteraction,
+		nInteractionModes
+	};
+	// Return InteractionMode name
+	static const char* interactionModeName(InteractionMode mode);
+	// Return InteractionMode help text
+	static const char* interactionModeHelp(InteractionMode mode);
+
+	protected:
+	// Current interaction mode
+	InteractionMode interactionMode_;
+	// Current axis target for interaction
+	int interactionAxis_;
+	// Whether interaction has started (i.e. mouse is down)
+	bool interactionStarted_;
+	// Collection to highlight in this pass
+	Collection* highlightCollection_;
+	// Starting (clicked) value when interacting
+	double clickedInteractionValue_;
+	// Starting (clicked) keyboard modifiers when interacting
+	Qt::KeyboardModifiers clickedInteractionModifiers_;
+	// Current interaction position on axis
+	double currentInteractionValue_;
+	// Clicked local coordinate under mouse in 2D view
+	Vec3<double> rClickedLocal_;
+	// Current local coordinate under mouse in 2D view
+	Vec3<double> rCurrentLocal_;
+
+	public:
+	// Set interaction mode and target axis
+	void setInteractionMode(InteractionMode mode, int axis);
+	// Return interaction mode
+	InteractionMode interactionMode() const;
+	// Return current axis target for interaction
+	int interactionAxis() const;
+	// Return whether interaction has started (i.e. mouse is down)
+	bool interactionStarted() const;
+	// Cancel current interaction
+	void cancelInteraction();
+	// Start interaction at the specified screen coordinates
+	void startInteraction(int mouseX, int mouseY, Qt::KeyboardModifiers modifiers);
+	// Update current interaction value
+	bool updateInteractionPosition(int mouseX, int mouseY);
+	// End interaction at the specified screen coordinates
+	void endInteraction(int mouseX, int mouseY);
+	// Return clicked interaction value on axis
+	double clickedInteractionValue();
+	// Return current interaction value on axis
+	double currentInteractionValue();
+	// Return clicked interaction coordinate on axis
+	double clickedInteractionCoordinate();
+	// Return current interaction coordinate on axis
+	double currentInteractionCoordinate();
+	// Return current slice data
+	DataSet* currentSlice();
+	// Perform relevant double-click action, occurring at specified coordinate
+	void doubleClickInteraction(int mouseX, int mouseY);
+	// Calculate local coordinate from supplied screen coordinates
+	Vec3<double> screenToLocal(int mouseX, int mouseY);
+
+
+	/*
+	 * Object Querying
+	 */
+	public:
+	// Drawing object type
+	enum ViewObject { AxisTickLabelObject, AxisLineObject, AxisTitleLabelObject, CollectionObject, GridLineMinorObject, GridLineMajorObject, NoObject };
+
+	private:
+	// View coordinates to probe for objects at next redraw
+	int objectQueryX_, objectQueryY_;
+	// Width and height of area about clicked position
+	int objectQueryWidth_, objectQueryHeight_;
+	// Maximum depth value found at query pixel
+	GLfloat depthAtQueryCoordinates_;
+	// Type of object found at query coordinates
+	ViewObject objectAtQueryCoordinates_;
+	// Information describing object at query coordinates
+	CharString infoAtQueryCoordinates_;
+
+	private:
+	// Update depth at query coordinates, returning whether it is closer
+	bool updateQueryDepth();
+	// Set information of query object
+	void setQueryObject(ViewObject objectType, const char* info);
+
+	public:
+	// Set coordinates to query at next redraw
+	void setQueryCoordinates(int mouseX, int mouseY);
+	// Return object type at query coordinates
+	ViewObject objectAtQueryCoordinates() const;
+	// Info for object at query coordinates
+	const char* infoAtQueryCoordinates() const;
+
+
+	/*
+	 * Tool Windows
+	 */
+// 	protected:
+// 	// Axes Window
+// 	AxesWindow axesWindow_;
+// 	// Data Window
+// 	DataWindow dataWindow_;
+// 	// Style Window
+// 	StyleWindow styleWindow_;
+// 	// Transform Window
+// 	TransformWindow transformWindow_;
+// 	// View Window
+// 	ViewWindow viewWindow_;
+// 	// Create Collection Dialog
+// 	CreateCollectionDialog createCollectionDialog_;
+// 	// Import Dialog
+// 	ImportDialog importDialog_;
+// 	// Fit Window
+// 	EditFitKernelDialog editFitKernelDialog_;
+// 	// Save Image Dialog
+// 	SaveImageDialog saveImageDialog_;
+
+	public:
+	// Dialog enum
+	enum DialogWindow { UChromaAxesWindow, UChromaDataWindow, UChromaStyleWindow, UChromaTransformWindow, UChromaViewWindow, UChromaCreateCollectionDialog, UChromaImportDialog, UChromaEditFitKernelDialog, UChromaSaveImageDialog };
+	// Show specified window / dialog
+	void showDialog(int window);
+
+
+	/*
+	 * Collections
+	 */
+	protected:
+	// List of Collections
+	List<Collection> collections_;
+	// Currently-selected Collection
+	Collection* currentCollection_;
+
+	protected:
+	// Return unique name based on supplied baseName
+	const char* uniqueCollectionName(const char* baseName);
+
+	public:
+	// Setup new, empty session
+	void startNewSession(bool createDefaults);
+	// Add new collection
+	Collection* addCollection(const char* name = NULL, int index = -1);
+	// Add new collection to the current view pane
+	Collection* addCollectionToCurrentViewPane(const char* name = NULL, int identifier = -1);
+	// Add new Collection from Collection block data
+	Collection* addCollectionFromBlock(const char* blockData);
+	// Remove existing collection
+	void removeCollection(Collection* collection);
+	// Clear all collections
+	void clearCollections();
+	// Remove current collection
+	void removeCurrentCollection();
+	// Return number of collections
+	int nCollections();
+	// Return first collection in list
+	Collection* collections();
+	// Return named collection
+	Collection* collection(const char* name);
+	// Return nth collection in list
+	Collection* collection(int index);
+	// Return index of specified collection
+	int collectionIndex(Collection* collection);
+	// Move collection focus to next in list
+	void focusNextCollection();
+	// Move collection focus to previous in list
+	void focusPreviousCollection();
+	// Set current Collection
+	void setCurrentCollection(Collection* collection);
+	// Return current Collection
+	Collection* currentCollection();
+	// Return whether specified collection is the current collection
+	bool isCurrentCollection(Collection* collection);
+	// Identify collection
+	Collection* identifyCollection(int id);
+	// Set collection visibility
+	bool setCollectionVisible(const char* name, bool visible);
+	// Return collection visibility
+	bool collectionVisible(const char* name);
+	// Refresh referenced DataSets in all Collections
+	void refreshReferencedDataSets();
+
+
+	/*
+	 * I/O
+	 */
+	public:
+	// Input File Block Keyword Enum
+	enum InputBlock
+	{
+		CollectionBlock,
+		EndDataViewerBlock,
+		ViewBlock,
+		nInputBlocks
+	};
+	// Convert text string to InputBlock
+	InputBlock inputBlock(const char* s);
+	// Convert InputBlock to text string
+	const char* inputBlock(InputBlock id);
+	// Print list of valid keywords for InputBlock specified
+	void printValidKeywords(InputBlock block);
+
+	// Axis Block Keyword Enum
+	enum AxisKeyword
+	{
+		AutoScaleKeyword,
+		AutoTicksKeyword,
+		EndAxisKeyword,
+		FirstTickKeyword,
+		FractionalPositioningKeyword,
+		GridLinesKeyword,
+		GridLineMajorStyleKeyword,
+		GridLineMinorStyleKeyword,
+		InvertKeyword,
+		LabelAnchorKeyword,
+		LabelOrientationKeyword,
+		LimitsKeyword,
+		LogarithmicKeyword,
+		MinorTicksKeyword,
+		NumberFormatKeyword,
+		PositionFractionalKeyword,
+		PositionRealKeyword,
+		StretchKeyword,
+		TickDeltaKeyword,
+		TickDirectionKeyword,
+		TitleKeyword,
+		TitleAnchorKeyword,
+		TitleOrientationKeyword,
+		VisibleAxisKeyword,
+		nAxisKeywords
+	};
+	// Convert text string to AxisKeyword
+	AxisKeyword axisKeyword(const char* s);
+	// Convert AxisKeyword to text string
+	const char* axisKeyword(AxisKeyword kwd);
+	// Return minimum number of expected arguments
+	int axisKeywordNArguments(AxisKeyword kwd);
+
+	// Collection Block Keyword Enum
+	enum CollectionKeyword
+	{
+		ColourAlphaControlKeyword,
+		ColourAlphaFixedKeyword,
+		ColourCustomGradientKeyword,
+		ColourRGBGradientAKeyword,
+		ColourRGBGradientBKeyword,
+		ColourHSVGradientAKeyword,
+		ColourHSVGradientBKeyword,
+		ColourSingleKeyword,
+		ColourSourceKeyword,
+		DataSetDefinitionKeyword,
+		EndCollectionKeyword,
+		GroupKeyword,
+		LineStyleKeyword,
+		ShininessKeyword,
+		StyleKeyword,
+		TransformXKeyword,
+		TransformYKeyword,
+		TransformZKeyword,
+		VisibleCollectionKeyword,
+		nCollectionKeywords
+	};
+	// Convert text string to CollectionKeyword
+	CollectionKeyword collectionKeyword(const char* s);
+	// Convert CollectionKeyword to text string
+	const char* collectionKeyword(CollectionKeyword kwd);
+	// Return minimum number of expected arguments
+	int collectionKeywordNArguments(CollectionKeyword kwd);
+
+	// DataSet Block Keyword Enum
+	enum DataSetKeyword
+	{
+		DataKeyword,
+		EndDataSetKeyword,
+		SourceKeyword,
+		ZKeyword,
+		nDataSetKeywords
+	};
+	// Convert text string to DataSetKeyword
+	DataSetKeyword dataSetKeyword(const char* s);
+	// Convert DataSetKeyword to text string
+	const char* dataSetKeyword(DataSetKeyword kwd);
+	// Return minimum number of expected arguments
+	int dataSetKeywordNArguments(DataSetKeyword kwd);
+
+	// View Block Keyword Enum
+	enum ViewKeyword
+	{
+		AutoFollowTypeKeyword,
+		AutoPositionTitlesKeyword,
+		AxisBlockKeyword,
+		BoundingBoxKeyword,
+		BoundingBoxPlaneYKeyword,
+		EndViewKeyword,
+		FlatLabelsKeyword,
+		LabelPointSizeKeyword,
+		PerspectiveKeyword,
+		RoleTargetCollectionKeyword,
+		RotationXKeyword,
+		RotationYKeyword,
+		RotationZKeyword,
+		TitlePointSizeKeyword,
+		TranslationKeyword,
+		UseBestFlatViewKeyword,
+		VerticalShiftKeyword,
+		ViewTypeKeyword,
+		nViewKeywords
+	};
+	// Convert text string to ViewKeyword
+	ViewKeyword viewKeyword(const char* s);
+	// Convert ViewKeyword to text string
+	const char* viewKeyword(ViewKeyword kwd);
+	// Return minimum number of expected arguments
+	int viewKeywordNArguments(ViewKeyword kwd);
+
+	public:
+	// Read AxisBlock keywords
+	bool readAxisBlock(LineParser& parser, Axes& axes, int axis, bool strictBlockEnd = true);
+	// Read CollectionBlock keywords
+	bool readCollectionBlock(LineParser& parser, Collection* collection, bool strictBlockEnd = true);
+	// Read DataSetBlock keywords
+	bool readDataSetBlock(LineParser& parser, DataSet* dataSet, Collection* collection, bool strictBlockEnd = true);
+	// Read ViewBlock keywords
+	bool readViewBlock(LineParser& parser, bool strictBlockEnd = true);
+	// Write AxisBlock keywords
+	bool writeAxisBlock(LineParser& parser, Axes& axes, int axis);
+	// Write CollectionBlock keywords
+	bool writeCollectionBlock(LineParser& parser, Collection* collection, int indentLevel = 0);
+	// Write DataSetBlock keywords
+	bool writeDataSetBlock(LineParser& parser, DataSet* dataSet, int indentLevel = 0);
+	// Write ViewBlock keywords
+	bool writeViewBlock(LineParser& parser);
+	
+	public:
+	// Parse main input blocks through specified parser
+	bool parseInputBlocks(LineParser& parser);
+	// Read session through parser specified
+	bool readSession(LineParser& parser);
+	// Write session through parser specified
+	bool writeSession(LineParser& parser);
 };
 
 #endif

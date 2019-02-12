@@ -21,7 +21,7 @@
 
 #include "gui/pairpotentialwidget.h"
 #include "gui/gui.h"
-#include "gui/uchroma/gui/uchromaview.h"
+#include "gui/viewer/graphwidget.h"
 #include "gui/widgets/subwindow.h"
 #include "main/dissolve.h"
 #include "math/integrator.h"
@@ -38,8 +38,8 @@ PairPotentialWidget::PairPotentialWidget(DissolveWindow* dissolveWindow, const c
 	// Set up user interface
 	ui.setupUi(this);
 
-	// Grab our UChromaWidget pointer
-	uChromaView_ = ui.PlotWidget;
+	// Grab the DataViewer pointer from the 
+	dataView_ = ui.PlotWidget->dataViewer();
 
 	// Initialise window contents
 	lastPairPotential_ = dissolve_.pairPotentials().first();
@@ -83,26 +83,26 @@ void PairPotentialWidget::initialiseControls(PairPotential* pp, bool addDefaults
 	if (pp && addDefaults)
 	{
 		// Start a new, empty session
-		uChromaView_->startNewSession(true);
+		dataView_->startNewSession(true);
 
 		// Set up the view pane
-		ViewPane* viewPane = uChromaView_->currentViewPane();
-		viewPane->setViewType(ViewPane::FlatXYView);
-		viewPane->axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
-		viewPane->axes().setMax(0, pp ? pp->range() : 15.0);
-		viewPane->axes().setTitle(1, "U(r), kJ mol\\sup{-1}");
-		viewPane->axes().setMin(1, -5.0);
-		viewPane->axes().setMax(1, 10.0);
+		View& view = dataView_->view();
+		view.setViewType(View::FlatXYView);
+		view.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+		view.axes().setMax(0, pp ? pp->range() : 15.0);
+		view.axes().setTitle(1, "U(r), kJ mol\\sup{-1}");
+		view.axes().setMin(1, -5.0);
+		view.axes().setMax(1, 10.0);
 
 		setDataTargets(pp);
 	}
 
 	refreshing_ = true;
 
-	ui.FullEnergyCheck->setChecked(uChromaView_->collectionVisible("Full"));
-	ui.OriginalEnergyCheck->setChecked(uChromaView_->collectionVisible("Original"));
-	ui.AdditionalEnergyCheck->setChecked(uChromaView_->collectionVisible("Additional"));
-	ui.FullForceCheck->setChecked(uChromaView_->collectionVisible("Force"));
+	ui.FullEnergyCheck->setChecked(dataView_->collectionVisible("Full"));
+	ui.OriginalEnergyCheck->setChecked(dataView_->collectionVisible("Original"));
+	ui.AdditionalEnergyCheck->setChecked(dataView_->collectionVisible("Additional"));
+	ui.FullForceCheck->setChecked(dataView_->collectionVisible("Force"));
 
 	refreshing_ = false;
 }
@@ -111,7 +111,7 @@ void PairPotentialWidget::initialiseControls(PairPotential* pp, bool addDefaults
 void PairPotentialWidget::setDataTargets(PairPotential* pp)
 {
 	// Clear any old collections
-	uChromaView_->clearCollections();
+	dataView_->clearCollections();
 
 	if (pp)
 	{
@@ -119,19 +119,19 @@ void PairPotentialWidget::setDataTargets(PairPotential* pp)
 
 		// Full potential
 		blockData.sprintf("Collection 'Full'; ColourSingle 0 0 0 255; LineStyle 1.0 Solid; DataSet 'Full'; Source Data1D %s; EndDataSet; EndCollection", pp->uFull().objectTag());
-		uChromaView_->addCollectionFromBlock(blockData);
+		dataView_->addCollectionFromBlock(blockData);
 
 		// Original potential
 		blockData.sprintf("Collection 'Original'; ColourSingle 200 0 0 255; LineStyle 1.0 'Half Dash'; DataSet 'Full'; Source Data1D %s; EndDataSet; EndCollection", pp->uOriginal().objectTag());
-		uChromaView_->addCollectionFromBlock(blockData);
+		dataView_->addCollectionFromBlock(blockData);
 
 		// Additional potential
 		blockData.sprintf("Collection 'Additional'; ColourSingle 0 0 200 255; LineStyle 1.0 'Dots'; DataSet 'Full'; Source Data1D %s; EndDataSet; EndCollection", pp->uAdditional().objectTag());
-		uChromaView_->addCollectionFromBlock(blockData);
+		dataView_->addCollectionFromBlock(blockData);
 
 		// Full potential
 		blockData.sprintf("Collection 'Force'; Visible False; ColourSingle 0 200 0 255; LineStyle 1.0 Solid; DataSet 'Full'; Source Data1D %s; EndDataSet; EndCollection", pp->dUFull().objectTag());
-		uChromaView_->addCollectionFromBlock(blockData);
+		dataView_->addCollectionFromBlock(blockData);
 	}
 }
 
@@ -150,8 +150,8 @@ void PairPotentialWidget::updateControls()
 	refreshing_ = true;
 
 	// Ensure that any displayed data are up-to-date
-	uChromaView_->refreshReferencedDataSets();
-	uChromaView_->updateDisplay();
+	dataView_->refreshReferencedDataSets();
+	dataView_->postRedisplay();
 
 	// Compare current pair potential being displayed with that retrieved from the main list
 	if (lastPairPotential_ != dissolve_.pairPotential(pairPotentialIndex_))
@@ -201,7 +201,7 @@ bool PairPotentialWidget::writeState(LineParser& parser)
 	else if (!parser.writeLineF("None\n")) return false;
 
 	// Write uChromaView state
-	if (!uChromaView_->writeSession(parser)) return false;
+	if (!dataView_->writeSession(parser)) return false;
 
 	return true;
 }
@@ -224,7 +224,7 @@ bool PairPotentialWidget::readState(LineParser& parser)
 	initialiseWindow(lastPairPotential_);
 
 	// Reset UChromaView
-	uChromaView_->startNewSession(false);
+	dataView_->startNewSession(false);
 
 	// We will read the UChroma data from the file, unless the PairPotential could not be found
 	if (!lastPairPotential_)
@@ -232,7 +232,7 @@ bool PairPotentialWidget::readState(LineParser& parser)
 		initialiseControls(NULL, false);
 		return false;
 	}
-	if (!uChromaView_->readSession(parser)) return false;
+	if (!dataView_->readSession(parser)) return false;
 
 	initialiseControls(lastPairPotential_, false);
 
@@ -283,31 +283,31 @@ void PairPotentialWidget::on_NextPotentialButton_clicked(bool checked)
 
 void PairPotentialWidget::on_FullEnergyCheck_clicked(bool checked)
 {
-	uChromaView_->setCollectionVisible("Full", checked);
+	dataView_->setCollectionVisible("Full", checked);
 }
 
 void PairPotentialWidget::on_OriginalEnergyCheck_clicked(bool checked)
 {
-	uChromaView_->setCollectionVisible("Original", checked);
+	dataView_->setCollectionVisible("Original", checked);
 }
 
 void PairPotentialWidget::on_AdditionalEnergyCheck_clicked(bool checked)
 {
-	uChromaView_->setCollectionVisible("Additional", checked);
+	dataView_->setCollectionVisible("Additional", checked);
 }
 
 void PairPotentialWidget::on_FullForceCheck_clicked(bool checked)
 {
-	uChromaView_->setCollectionVisible("Force", checked);
+	dataView_->setCollectionVisible("Force", checked);
 }
 
 void PairPotentialWidget::on_ResetGraphButton_clicked(bool checked)
 {
-	ViewPane* viewPane = uChromaView_->currentViewPane();
-	viewPane->axes().setRange(0, 0.0, dissolveWindow_->dissolve().pairPotentialRange());
-	viewPane->axes().setRange(1, -10.0, 10.0);
+	View& view = dataView_->view();
+	view.axes().setRange(0, 0.0, dissolveWindow_->dissolve().pairPotentialRange());
+	view.axes().setRange(1, -10.0, 10.0);
 
-	uChromaView_->updateDisplay();
+	dataView_->postRedisplay();
 }
 
 void PairPotentialWidget::on_ZeroUAdditionalButton_clicked(bool checked)
@@ -330,7 +330,7 @@ void PairPotentialWidget::on_ZeroUAdditionalButton_clicked(bool checked)
 	{
 		lastPairPotential_->resetUAdditional();
 
-		uChromaView_->refreshReferencedDataSets();
-		uChromaView_->updateDisplay();
+		dataView_->refreshReferencedDataSets();
+		dataView_->postRedisplay();
 	}
 }

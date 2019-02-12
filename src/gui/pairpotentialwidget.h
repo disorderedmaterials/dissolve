@@ -29,7 +29,7 @@
 class Collection;
 class Dissolve;
 class PairPotential;
-class UChromaViewWidget;
+class GraphWidget;
 
 // PairPotential Widget
 class PairPotentialWidget : public SubWidget
@@ -44,8 +44,8 @@ class PairPotentialWidget : public SubWidget
 	int pairPotentialIndex_;
 	// Last displayed pair potential
 	PairPotential* lastPairPotential_;
-	// UChromaView contained within this widget
-	UChromaViewWidget* uChromaView_;
+	// DataViewer contained within this widget
+	DataViewer* dataView_;
 
 	private:
 	// Set data targets for specified PairPotential in UChromaView

@@ -31,7 +31,7 @@ class Dissolve;
 class Module;
 class RDFModule;
 class PartialSet;
-class UChromaViewWidget;
+class DataViewer;
 
 // Module Widget
 class RDFModuleWidget : public ModuleWidget
@@ -43,7 +43,7 @@ class RDFModuleWidget : public ModuleWidget
 	// Associated Module
 	RDFModule* module_;
 	// UChromaViews contained within this widget
-	UChromaViewWidget* partialsGraph_, *totalsGraph_;
+	DataViewer* partialsGraph_, *totalsGraph_;
 	// Reference to Dissolve
 	Dissolve& dissolve_;
 

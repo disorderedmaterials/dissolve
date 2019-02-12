@@ -30,7 +30,7 @@ class BraggModule;
 class Dissolve;
 class Module;
 class PartialSet;
-class UChromaViewWidget;
+class DataViewer;
 
 // Module Widget
 class BraggModuleWidget : public ModuleWidget
@@ -41,8 +41,8 @@ class BraggModuleWidget : public ModuleWidget
 	private:
 	// Associated Module
 	BraggModule* module_;
-	// UChromaView contained within this widget
-	UChromaViewWidget* uChromaView_;
+	// DataViewer contained within this widget
+	DataViewer* dataView_;
 	// Reference to Dissolve
 	Dissolve& dissolve_;
 
