@@ -1,6 +1,6 @@
 /*
 	*** Generic Item Base
-	*** src/templates/genericitembase.h
+	*** src/base/genericitembase.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
