@@ -31,7 +31,7 @@ template<class Data3D> int ObjectStore<Data3D>::objectType_ = ObjectInfo::Data3D
 template<class Data3D> const char* ObjectStore<Data3D>::objectTypeName_ = "Data3D";
 
 // Constructor
-Data3D::Data3D() : ListItem<Data3D>(), ObjectStore<Data3D>(this), Plottable(Plottable::TwoAxisPlottable)
+Data3D::Data3D() : ListItem<Data3D>(), ObjectStore<Data3D>(this), PlottableData(PlottableData::TwoAxisPlottable)
 {
 	hasError_ = false;
 
@@ -44,7 +44,7 @@ Data3D::~Data3D()
 }
 
 // Copy Constructor
-Data3D::Data3D(const Data3D& source) : ObjectStore<Data3D>(this), Plottable(Plottable::TwoAxisPlottable)
+Data3D::Data3D(const Data3D& source) : ObjectStore<Data3D>(this), PlottableData(PlottableData::TwoAxisPlottable)
 {
 	(*this) = source;
 }

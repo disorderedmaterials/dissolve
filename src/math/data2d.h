@@ -30,7 +30,7 @@
 class Histogram2D;
 
 // One-Dimensional Data
-class Data2D : public Plottable, public ListItem<Data2D>, public ObjectStore<Data2D>, public GenericItemBase
+class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore<Data2D>, public GenericItemBase
 {
 	public:
 	// Constructor
