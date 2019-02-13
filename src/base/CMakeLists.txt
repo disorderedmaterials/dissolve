@@ -15,6 +15,7 @@ add_library(base
   processpool.cpp
   sysfunc.cpp
   timer.cpp
+  version.cpp
   
   charstring.h
   constants.h
@@ -33,6 +34,7 @@ add_library(base
   processpool.h
   sysfunc.h
   timer.h
+  version.h
 )
 
 include_directories(
