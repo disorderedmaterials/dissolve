@@ -1,6 +1,6 @@
 /*
-	*** Collection
-	*** src/gui/viewer/render/collection.h
+	*** Renderable
+	*** src/gui/viewer/render/renderable.h
 	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
@@ -19,116 +19,81 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_COLLECTION_H
-#define DISSOLVE_COLLECTION_H
+#ifndef DISSOLVE_RENDERABLE_H
+#define DISSOLVE_RENDERABLE_H
 
-#include "gui/viewer/render/dataset.h"
-#include "gui/viewer/render/displaydataset.h"
-#include "gui/viewer/render/transformer.h"
-#include "gui/viewer/render/colourdef.h"
+#include "gui/viewer/render/primitivelist.h"
+#include "gui/viewer/render/colourdefinition.h"
 #include "gui/viewer/render/linestyle.h"
-#include "templates/objectstore.h"
+#include "math/transformer.h"
+#include "base/charstring.h"
 
 // Forward Declarations
-class CollectionGroupManager;
+class PlottableData;
+class RenderableGroupManager;
+class View;
 
-class Collection : public ListItem<Collection>, public ObjectStore<Collection>
+class Renderable : public ListItem<Renderable>
 {
 	public:
-	// Constructor
-	Collection();
-	// Destructor
-	~Collection();
-	// Copy constructor
-	Collection(const Collection& source);
-	// Assignment operator
-	void operator=(const Collection& source);
-	
+	// Renderable type
+	enum RenderableType { Data1DRenderable, nRenderableTypes };
+	// Convert text string to RenderableType
+	static RenderableType renderableType(const char* s);
+	// Convert RenderableType to text string
+	static const char* renderableType(RenderableType rt);
+
+	// Constructor / Destructor
+	Renderable(RenderableType type);
+	~Renderable();
+
+
+	/*
+	 * Identity
+	 */
+	private:
+	// Name of Renderable
+	CharString name_;
+	// Type of Renderable
+	RenderableType type_;
+
+	public:
+	// Set name of Renderable
+	void setName(const char* name);
+	// Return name of Renderable
+	const char* name();
+	// Return type of Renderable
+	RenderableType type() const;
+
 
 	/*
 	 * Data
 	 */
 	private:
-	// Name of collection
-	CharString name_;
-	// List of datasets
-	List<DataSet> dataSets_;
-	// Extreme values of raw data
-	Vec3<double> dataMin_, dataMax_;
-	// Identifier
-	int identifier_;
-	// Version counter for changes to data
-	int dataVersion_;
+	// Return version of data
+	virtual const int version() const = 0;
 
 	public:
-	// Set name of collection
-	void setName(const char* title);
-	// Return name
-	const char* name();
-	// Set identifier QUERY Is this used?
-	void setIdentifier(int identifier);
-	// Return identifier
-	int identifier();
-	// Add dataset
-	DataSet* addDataSet();
-	// Add dataset at specified z
-	DataSet* addDataSet(double z);
-	// Add dataset from supplied Data1D
-	DataSet* addDataSet(Data1D& data, double z = 0.0);
-	// Add dataset from supplied Data1D
-	DataSet* addDataSetWithReference(Data1D* data, double z = 0.0);
-	// Add dataset, copying from supplied DataSet
-	void addDataSet(DataSet* source);
-	// Add dataset, copying from supplied DisplayDataSet
-	void addDataSet(const Array<double>& abscissa, DisplayDataSet* source, bool pruneEmpty = true);
-	// Copy datasets from specified source collection
-	void copyDataSets(Collection* source);
-	// Return number of datasets
-	int nDataSets();
-	// Remove dataset
-	void removeDataSet(DataSet* dataSet);
-	// Set z value of specified dataset
-	void setDataSetZ(DataSet* target, double z);
-	// Set data for specified dataset (from source DataSet)
-	void setDataSetData(DataSet* target, DataSet& source);
-	// Return first dataset in list
-	DataSet* dataSets() const;
-	// Return named dataset
-	DataSet* dataSet(const char* name);
-	// Return last dataset in list
-	DataSet* lastDataSet();
-	// Return nth dataset in list
-	DataSet* dataSet(int index);
-	// Return index of specified dataset
-	int dataSetIndex(const char* name);
-	// Return unique name based on supplied basename
-	const char* uniqueDataSetName(const char* baseName);
-	// Return number of dataset with no data present
-	int nEmptyDataSets();
-	// Clear dataset data from collection
-	void clearDataSets();
-	// Return total number of points across all dataset
-	int nValues();
-	// Return data minima, calculating if necessary
-	Vec3<double> dataMin();
-	// Return data maxima, calculating if necessary
-	Vec3<double> dataMax();
-	// Increase data version (i.e. notify that data has been changed)
-	void notifyDataChanged();
-	// Return version counter for changes to data
-	int dataVersion();
+	// Return identifying tag/name for contained data
+	virtual const char* objectIdentifier() const = 0;
 
 
 	/*
-	 * Transform
+	 * Transform / Limits
 	 */
-	private:
+	protected:
+	// Equation transformers for each axis
+	Transformer transforms_[3];
 	// Extreme values of transformed data 
 	Vec3<double> transformMin_, transformMax_;
 	// Extreme positive values of transformed data
 	Vec3<double> transformMinPositive_, transformMaxPositive_;
-	// Transform for data
-	Transformer transforms_[3];
+	// Data version at which transformed data was last calculated
+	int transformDataVersion_;
+
+	protected:
+	// Transform data according to current settings
+	virtual void transformData() = 0;
 
 	public:
 	// Return transformed data minima, calculating if necessary
@@ -142,50 +107,30 @@ class Collection : public ListItem<Collection>, public ObjectStore<Collection>
 	// Set transform equation for data
 	void setTransformEquation(int axis, const char* transformEquation);
 	// Return transform equation for data
-	const char* transformEquation(int axis);
+	const char* transformEquation(int axis) const;
 	// Return whether specified transform equation is valid
-	bool transformEquationValid(int axis);
+	bool transformEquationValid(int axis) const;
 	// Set whether specified transform is enabled
 	void setTransformEnabled(int axis, bool enabled);
 	// Return whether specified transform is enabled
-	bool transformEnabled(int axis);
-
-
-	/*
-	 * Data Operations
-	 */
-	public:
-	// Add to specified axis value`
-	void addConstantValue(int axis, double value);
-	// Calculate min/max y value over specified x range
-	void yRangeOverX(double xMin, double xMax, double& yMin, double& yMax);
-
-
-	/*
-	 * Update
-	 */
-	private:
-	// Data version at which limits and transforms were last updated
-	int limitsAndTransformsVersion_;
-
-	private:
-	// Update data limits and transform data
-	void updateLimitsAndTransforms();
+	bool transformEnabled(int axis) const;
+	// Calculate min/max y value over specified x range (if possible in the underlying data)
+	virtual bool yRangeOverX(double xMin, double xMax, double& yMin, double& yMax) = 0;
 
 
 	/*
 	 * Group
 	 */
 	private:
-	// Name of group that this Collection is associated to (if any)
+	// Name of group that this Renderable is associated to (if any)
 	CharString groupName_;
 
 	public:
-	// Set group that this Collection is associated to
+	// Set group that this Renderable is associated to
 	void setGroupName(const char* groupName);
-	// Return whether this Collection is associated to a group
+	// Return whether this Renderable is associated to a group
 	bool hasGroupName() const;
-	// Return group name that this Collection is associated to
+	// Return group name that this Renderable is associated to
 	const char* groupName() const;
 
 
@@ -200,15 +145,11 @@ class Collection : public ListItem<Collection>, public ObjectStore<Collection>
 	// Convert DisplayStyle to text string
 	static const char* displayStyle(DisplayStyle kwd);
 
-	private:
+	protected:
 	// Colour definition for display
 	ColourDefinition colour_;
 	// Whether data is visible
 	bool visible_;
-	// Transformed data to display
-	List<DisplayDataSet> displayData_;
-	// Data version at which displayData_ was last generated
-	int displayDataGeneratedAt_;
 	// Abscissa values for display data
 	Array<double> displayAbscissa_;
 	// Display style of data
@@ -217,44 +158,52 @@ class Collection : public ListItem<Collection>, public ObjectStore<Collection>
 	LineStyle displayLineStyle_;
 	// Surface shininess
 	double displaySurfaceShininess_;
-	// Style version
+	// Style version (relative to data version)
 	int displayStyleVersion_;
-
-	private:
-	// Generate display data
-	void updateDisplayData();
 
 	public:
 	// Return local colour definition for display
 	ColourDefinition& colour();
 	// Set whether data is visible
 	void setVisible(bool visible);
-	// Return hether data is visible
-	bool visible();
+	// Return whether data is visible
+	bool isVisible() const;
 	// Return transformed display abscissa for data
 	const Array<double>& displayAbscissa();
-	// Return transformed data to display
-	List<DisplayDataSet>& displayData();
 	// Set display style of data
 	void setDisplayStyle(DisplayStyle style);
 	// Return display style of data
-	DisplayStyle displayStyle();
+	DisplayStyle displayStyle() const;
 	// Return line style
 	LineStyle& displayLineStyle();
 	// Set surface shininess
 	void setDisplaySurfaceShininess(double shininess);
 	// Return surface shininess
-	double displaySurfaceShininess();
+	double displaySurfaceShininess() const;
 	// Return style version
-	int displayStyleVersion();
+	int displayStyleVersion() const;
 
 
 	/*
-	 * File
+	 * Rendering Primitives
 	 */
+	protected:
+	// Primitives representing the data
+	PrimitiveList primitives_;
+	// Data version at which primitives were last created
+	int primitivesDataVersion_;
+	// ColourDefinition fingerprint at which primitives were last created
+	CharString primitivesColourDefinitionFingerprint_;
+	// Axes version at which primitives were last created
+	int primitivesAxesVersion_;
+	// Style version at which primitives were last created
+	int primitivesStyleVersion_;
+
 	public:
-	// Export data to plain text file
-	bool exportData(const char* fileName);
+	// Update primitives and send for display
+	virtual void updateAndSendPrimitives(View& view, RenderableGroupManager& groupManager, bool forceUpdate, bool pushAndPop, const QOpenGLContext* context) = 0;
+	// Send primitives to GL
+	void sendToGL();
 };
 
 #endif

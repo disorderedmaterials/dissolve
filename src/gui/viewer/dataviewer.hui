@@ -23,7 +23,7 @@
 #define DISSOLVE_DATAVIEWER_H
 
 #include "gui/viewer/viewer.hui"
-#include "gui/viewer/render/collection.h"
+#include "gui/viewer/render/renderable.h"
 #include "gui/viewer/render/view.h"
 
 // Forward Declarations
@@ -77,7 +77,7 @@ class DataViewer : public BaseViewer
 	 */
 	private:
 	// Special QMenu items
-	QMenu* currentCollectionsMenu_;
+	QMenu* currentDataMenu_;
 
 	private:
 	// Initialise context menu
@@ -88,8 +88,8 @@ class DataViewer : public BaseViewer
 	private slots:
 	// Show dialog
 	void showDialog(bool checked);
-	// Set display status of Collection target
-	void setCollectionDisplayed(bool checked);
+	// Set data visibility
+	void contextMenuSetDataVisible(bool checked);
 
 
 	/*
@@ -111,11 +111,6 @@ class DataViewer : public BaseViewer
 	// Interaction Mode enum
 	enum InteractionMode
 	{
-		FitSetupSelectXInteraction,
-		FitSetupSelectZInteraction,
-		OperateBGSubSelectYValueInteraction,
-		OperateBGSubSelectXRangeInteraction,
-		OperateBGSubSelectZRangeInteraction,
 		ViewInteraction,
 		ZoomInteraction,
 		nInteractionModes
@@ -132,14 +127,14 @@ class DataViewer : public BaseViewer
 	int interactionAxis_;
 	// Whether interaction has started (i.e. mouse is down)
 	bool interactionStarted_;
-	// Collection to highlight in this pass
-	Collection* highlightCollection_;
 	// Starting (clicked) value when interacting
 	double clickedInteractionValue_;
 	// Starting (clicked) keyboard modifiers when interacting
 	Qt::KeyboardModifiers clickedInteractionModifiers_;
 	// Current interaction position on axis
 	double currentInteractionValue_;
+	// Data to highlight in this pass
+	Renderable* highlightedRenderable_;
 	// Clicked local coordinate under mouse in 2D view
 	Vec3<double> rClickedLocal_;
 	// Current local coordinate under mouse in 2D view
@@ -243,60 +238,44 @@ class DataViewer : public BaseViewer
 
 
 	/*
-	 * Collections
+	 * Renderable Data
 	 */
 	protected:
-	// List of Collections
-	List<Collection> collections_;
-	// Currently-selected Collection
-	Collection* currentCollection_;
+	// List of renderables to display
+	List<Renderable> renderables_;
+	// Group manager for the data
+	RenderableGroupManager groupManager_;
+	// Currently-selected renderable (if any)
+	Renderable* currentRenderable_;
 
 	protected:
 	// Return unique name based on supplied baseName
-	const char* uniqueCollectionName(const char* baseName);
+	const char* uniqueDataName(const char* baseName);
 
 	public:
 	// Setup new, empty session
 	void startNewSession(bool createDefaults);
-	// Add new collection
-	Collection* addCollection(const char* name = NULL, int index = -1);
-	// Add new collection to the current view pane
-	Collection* addCollectionToCurrentViewPane(const char* name = NULL, int identifier = -1);
-	// Add new Collection from Collection block data
-	Collection* addCollectionFromBlock(const char* blockData);
-	// Remove existing collection
-	void removeCollection(Collection* collection);
-	// Clear all collections
-	void clearCollections();
-	// Remove current collection
-	void removeCurrentCollection();
-	// Return number of collections
-	int nCollections();
-	// Return first collection in list
-	Collection* collections();
-	// Return named collection
-	Collection* collection(const char* name);
-	// Return nth collection in list
-	Collection* collection(int index);
-	// Return index of specified collection
-	int collectionIndex(Collection* collection);
-	// Move collection focus to next in list
-	void focusNextCollection();
-	// Move collection focus to previous in list
-	void focusPreviousCollection();
-	// Set current Collection
-	void setCurrentCollection(Collection* collection);
-	// Return current Collection
-	Collection* currentCollection();
-	// Return whether specified collection is the current collection
-	bool isCurrentCollection(Collection* collection);
-	// Identify collection
-	Collection* identifyCollection(int id);
-	// Set collection visibility
-	bool setCollectionVisible(const char* name, bool visible);
-	// Return collection visibility
-	bool collectionVisible(const char* name);
-	// Refresh referenced DataSets in all Collections
+	// Add new data from block data
+	Renderable* addDataFromBlock(const char* blockData);
+	// Remove existing renderable
+	void removeData(Renderable* data);
+	// Clear all renderables
+	void clearRenderables();
+	// Return number of Renderables
+	int nRenderables() const;
+	// Return list of Renderables
+	const List<Renderable>& renderables() const;
+	// Return named renderable
+	Renderable* renderable(const char* name);
+	// Return nth Renderable in list
+	Renderable* renderable(int index);
+	// Set current Renderable
+	void setCurrentRenderable(Renderable* rend);
+	// Return current Renderable
+	Renderable* currentRenderable() const;
+	// Return whether specified Renderable is the current Renderable
+	bool isCurrentRenderable(Renderable* rend);
+	// Refresh referenced DataSets in all Renderables
 	void refreshReferencedDataSets();
 
 
@@ -307,8 +286,8 @@ class DataViewer : public BaseViewer
 	// Input File Block Keyword Enum
 	enum InputBlock
 	{
-		CollectionBlock,
 		EndDataViewerBlock,
+		RenderableBlock,
 		ViewBlock,
 		nInputBlocks
 	};
@@ -355,8 +334,8 @@ class DataViewer : public BaseViewer
 	// Return minimum number of expected arguments
 	int axisKeywordNArguments(AxisKeyword kwd);
 
-	// Collection Block Keyword Enum
-	enum CollectionKeyword
+	// Renderable Block Keyword Enum
+	enum RenderableKeyword
 	{
 		ColourAlphaControlKeyword,
 		ColourAlphaFixedKeyword,
@@ -367,8 +346,7 @@ class DataViewer : public BaseViewer
 		ColourHSVGradientBKeyword,
 		ColourSingleKeyword,
 		ColourSourceKeyword,
-		DataSetDefinitionKeyword,
-		EndCollectionKeyword,
+		EndRenderableKeyword,
 		GroupKeyword,
 		LineStyleKeyword,
 		ShininessKeyword,
@@ -376,31 +354,15 @@ class DataViewer : public BaseViewer
 		TransformXKeyword,
 		TransformYKeyword,
 		TransformZKeyword,
-		VisibleCollectionKeyword,
-		nCollectionKeywords
+		VisibleKeyword,
+		nRenderableKeywords
 	};
-	// Convert text string to CollectionKeyword
-	CollectionKeyword collectionKeyword(const char* s);
-	// Convert CollectionKeyword to text string
-	const char* collectionKeyword(CollectionKeyword kwd);
+	// Convert text string to RenderableKeyword
+	RenderableKeyword renderableKeyword(const char* s);
+	// Convert RenderableKeyword to text string
+	const char* renderableKeyword(RenderableKeyword kwd);
 	// Return minimum number of expected arguments
-	int collectionKeywordNArguments(CollectionKeyword kwd);
-
-	// DataSet Block Keyword Enum
-	enum DataSetKeyword
-	{
-		DataKeyword,
-		EndDataSetKeyword,
-		SourceKeyword,
-		ZKeyword,
-		nDataSetKeywords
-	};
-	// Convert text string to DataSetKeyword
-	DataSetKeyword dataSetKeyword(const char* s);
-	// Convert DataSetKeyword to text string
-	const char* dataSetKeyword(DataSetKeyword kwd);
-	// Return minimum number of expected arguments
-	int dataSetKeywordNArguments(DataSetKeyword kwd);
+	int renderableKeywordNArguments(RenderableKeyword kwd);
 
 	// View Block Keyword Enum
 	enum ViewKeyword
@@ -414,7 +376,6 @@ class DataViewer : public BaseViewer
 		FlatLabelsKeyword,
 		LabelPointSizeKeyword,
 		PerspectiveKeyword,
-		RoleTargetCollectionKeyword,
 		RotationXKeyword,
 		RotationYKeyword,
 		RotationZKeyword,
@@ -435,18 +396,14 @@ class DataViewer : public BaseViewer
 	public:
 	// Read AxisBlock keywords
 	bool readAxisBlock(LineParser& parser, Axes& axes, int axis, bool strictBlockEnd = true);
-	// Read CollectionBlock keywords
-	bool readCollectionBlock(LineParser& parser, Collection* collection, bool strictBlockEnd = true);
-	// Read DataSetBlock keywords
-	bool readDataSetBlock(LineParser& parser, DataSet* dataSet, Collection* collection, bool strictBlockEnd = true);
+	// Read RenderableBlock keywords
+	bool readRenderableBlock(LineParser& parser, Renderable* renderable, bool strictBlockEnd = true);
 	// Read ViewBlock keywords
 	bool readViewBlock(LineParser& parser, bool strictBlockEnd = true);
 	// Write AxisBlock keywords
 	bool writeAxisBlock(LineParser& parser, Axes& axes, int axis);
-	// Write CollectionBlock keywords
-	bool writeCollectionBlock(LineParser& parser, Collection* collection, int indentLevel = 0);
-	// Write DataSetBlock keywords
-	bool writeDataSetBlock(LineParser& parser, DataSet* dataSet, int indentLevel = 0);
+	// Write RenderableBlock keywords
+	bool writeRenderableBlock(LineParser& parser, Renderable* renderable, int indentLevel = 0);
 	// Write ViewBlock keywords
 	bool writeViewBlock(LineParser& parser);
 	

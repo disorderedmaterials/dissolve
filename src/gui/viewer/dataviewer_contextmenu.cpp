@@ -34,7 +34,7 @@ void DataViewer::initialiseContextMenu()
 	italicFont.setItalic(true);
 
 	// Create special menu items
-	currentCollectionsMenu_ = contextMenu_.addMenu("Collections");
+	currentDataMenu_ = contextMenu_.addMenu("Data");
 
 // 	QAction* action = contextMenu_.addAction("Import...");
 // 	action->setData(UChromaBase::UChromaImportDialog);
@@ -49,16 +49,16 @@ void DataViewer::initialiseContextMenu()
 // Update dynamic aspects of context menu before display
 void DataViewer::updateContextMenu()
 {
-	// Update current Collections
-	currentCollectionsMenu_->clear();
-	for (Collection* collection = collections(); collection != NULL; collection = collection->next)
+	// Update current data
+	currentDataMenu_->clear();
+	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next)
 	{
-		// Add an action for the Collection
-		QAction* action = currentCollectionsMenu_->addAction(collection->name());
-		action->setData(VariantPointer<Collection>(collection));
+		// Add an action containing the Renderable data
+		QAction* action = currentDataMenu_->addAction(rend->name());
+		action->setData(VariantPointer<Renderable>(rend));
 		action->setCheckable(true);
-		action->setChecked(view_.collectionIsTarget(collection));
-		connect(action, SIGNAL(triggered(bool)), this, SLOT(setCollectionDisplayed(bool)));
+		action->setChecked(rend->isVisible());
+		connect(action, SIGNAL(triggered(bool)), this, SLOT(contextMenuSetDataVisible(bool)));
 	}
 }
 
@@ -76,17 +76,14 @@ void DataViewer::showDialog(bool checked)
 	showDialog(action->data().toInt());
 }
 
-// Set display status of Collection target
-void DataViewer::setCollectionDisplayed(bool checked)
+// Set visibility of Renderable target
+void DataViewer::contextMenuSetDataVisible(bool checked)
 {
 	// Get collection from data attached to sender
 	QAction* action = (QAction*) sender();
 	if (!action) return;
-	Collection* collection = VariantPointer<Collection>(action->data());
-
-	// Add / remove the specified Collection as a target for the current view pane
-	if (checked) view_.addCollectionTarget(collection);
-	else view_.removeCollectionTarget(collection);
+	Renderable* rend = VariantPointer<Renderable>(action->data());
+	if (rend) rend->setVisible(checked);
 
 	postRedisplay();
 }

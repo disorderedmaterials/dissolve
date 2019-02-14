@@ -20,6 +20,7 @@
 */
 
 #include "gui/viewer/dataviewer.hui"
+#include "gui/viewer/render/renderabledata1d.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "base/messenger.h"
@@ -31,7 +32,7 @@
  */
 
 // Input File Block Keywords
-const char* DataViewerInputBlockKeywords[] = { "Collection", "EndDataViewer", "View" };
+const char* DataViewerInputBlockKeywords[] = { "EndDataViewer", "Renderable", "View" };
 
 // Convert text string to InputBlock
 DataViewer::InputBlock DataViewer::inputBlock(const char* s)
@@ -80,10 +81,9 @@ int DataViewer::axisKeywordNArguments(DataViewer::AxisKeyword kwd)
  */
 
 // Collection Block Keywords
-const char* DataViewerCollectionBlockKeywords[] = {
+const char* DataViewerRenderableBlockKeywords[] = {
 	"ColourAlphaControl", "ColourAlphaFixed", "ColourCustomGradient", "ColourLinearRGBA", "ColourLinearRGBB", "ColourLinearHSVA", "ColourLinearHSVB", "ColourSingle", "ColourSource",
-	"DataSet",
-	"EndCollection",
+	"EndRenderable",
 	"Group",
 	"LineStyle",
 	"Shininess", "Style",
@@ -91,9 +91,8 @@ const char* DataViewerCollectionBlockKeywords[] = {
 	"Visible" };
 
 // Collection Block NArguments
-int DataViewerCollectionKeywordNArguments[] = {
+int DataViewerRenderableKeywordNArguments[] = {
 	1, 1, 5, 5, 5, 5, 5, 4, 1,
-	1,
 	0,	
 	1,
 	2,
@@ -101,52 +100,23 @@ int DataViewerCollectionKeywordNArguments[] = {
 	2, 2, 2,
 	1 };
 
-// Convert text string to CollectionKeyword
-DataViewer::CollectionKeyword DataViewer::collectionKeyword(const char* s)
+// Convert text string to RenderableKeyword
+DataViewer::RenderableKeyword DataViewer::renderableKeyword(const char* s)
 {
-	for (int n=0; n<nCollectionKeywords; ++n) if (DissolveSys::sameString(s, DataViewerCollectionBlockKeywords[n])) return (DataViewer::CollectionKeyword) n;
-	return nCollectionKeywords;
+	for (int n=0; n<nRenderableKeywords; ++n) if (DissolveSys::sameString(s, DataViewerRenderableBlockKeywords[n])) return (DataViewer::RenderableKeyword) n;
+	return nRenderableKeywords;
 }
 
-// Convert CollectionKeyword to text string
-const char* DataViewer::collectionKeyword(DataViewer::CollectionKeyword kwd)
+// Convert RenderableKeyword to text string
+const char* DataViewer::renderableKeyword(DataViewer::RenderableKeyword kwd)
 {
-	return DataViewerCollectionBlockKeywords[kwd];
-}
-
-// Return minimum number of expected arguments
-int DataViewer::collectionKeywordNArguments(DataViewer::CollectionKeyword kwd)
-{
-	return DataViewerCollectionKeywordNArguments[kwd];
-}
-
-/*
- * DataSet Keywords
- */
-
-// DataSet Block Keywords
-const char* DataViewerDataSetBlockKeywords[] = { "Data", "EndDataSet", "Source", "Z" };
-
-// DataSet Block NArguments
-int DataViewerDataSetKeywordNArguments[] = { 0, 0, 1, 1 };
-
-// Convert text string to DataSetKeyword
-DataViewer::DataSetKeyword DataViewer::dataSetKeyword(const char* s)
-{
-	for (int n=0; n<nDataSetKeywords; ++n) if (DissolveSys::sameString(s, DataViewerDataSetBlockKeywords[n])) return (DataViewer::DataSetKeyword) n;
-	return nDataSetKeywords;
-}
-
-// Convert DataSetKeyword to text string
-const char* DataViewer::dataSetKeyword(DataViewer::DataSetKeyword kwd)
-{
-	return DataViewerDataSetBlockKeywords[kwd];
+	return DataViewerRenderableBlockKeywords[kwd];
 }
 
 // Return minimum number of expected arguments
-int DataViewer::dataSetKeywordNArguments(DataViewer::DataSetKeyword kwd)
+int DataViewer::renderableKeywordNArguments(DataViewer::RenderableKeyword kwd)
 {
-	return DataViewerDataSetKeywordNArguments[kwd];
+	return DataViewerRenderableKeywordNArguments[kwd];
 }
 
 /*
@@ -161,11 +131,10 @@ const char* DataViewerViewBlockKeywords[] = {
 	"FlatLabels",
 	"LabelPointSize",
 	"Perspective",
-	"RoleTargetCollection", "RotationX", "RotationY", "RotationZ",
+	"RotationX", "RotationY", "RotationZ",
 	"TitlePointSize", "Translation",
 	"UseBestFlatView",
-	"VerticalShift",
-	"ViewType"
+	"VerticalShift", "ViewType"
 };
 
 // View Block NArguments
@@ -176,11 +145,10 @@ int DataViewerViewKeywordNArguments[] = {
 	1,
 	1,
 	1,
-	1, 3, 3, 3,
+	3, 3, 3,
 	1, 3,
 	1,
-	1,
-	1
+	1, 1
 };
 
 // Convert text string to ViewKeyword
@@ -404,16 +372,16 @@ bool DataViewer::readAxisBlock(LineParser& parser, Axes& axes, int axis, bool st
 	return true;
 }
 
-// Read CollectionBlock keywords
-bool DataViewer::readCollectionBlock(LineParser& parser, Collection* collection, bool strictBlockEnd)
+// Read RenderableBlock keywords
+bool DataViewer::readRenderableBlock(LineParser& parser, Renderable* renderable, bool strictBlockEnd)
 {
 	DataSet* dataSet;
 	int xyz;
 	double alpha;
 	ColourDefinition::AlphaControl ac;
 	ColourDefinition::ColourSource cs;
-	ColourDefinition& colourDefinition = collection->colour();
-	Collection::DisplayStyle ds;
+	ColourDefinition& colourDefinition = renderable->colour();
+	Renderable::DisplayStyle ds;
 	LineStipple::StippleType stipple;
 
 	while (!parser.eofOrBlank())
@@ -422,13 +390,13 @@ bool DataViewer::readCollectionBlock(LineParser& parser, Collection* collection,
 		parser.getArgsDelim(LineParser::UseQuotes + LineParser::SkipBlanks + LineParser::SemiColonLineBreaks);
 
 		// Get keyword and check number of arguments provided
-		DataViewer::CollectionKeyword collectionKwd = collectionKeyword(parser.argc(0));
-		if ((collectionKwd != DataViewer::nCollectionKeywords) && (collectionKeywordNArguments(collectionKwd) > (parser.nArgs()-1)))
+		DataViewer::RenderableKeyword renderableKwd = renderableKeyword(parser.argc(0));
+		if ((renderableKwd != DataViewer::nRenderableKeywords) && (renderableKeywordNArguments(renderableKwd) > (parser.nArgs()-1)))
 		{
-			Messenger::error("Collection keyword '%s' requires %i arguments, but only %i have been provided.\n", collectionKeyword(collectionKwd), collectionKeywordNArguments(collectionKwd), parser.nArgs()-1);
+			Messenger::error("Renderable keyword '%s' requires %i arguments, but only %i have been provided.\n", renderableKeyword(renderableKwd), renderableKeywordNArguments(renderableKwd), parser.nArgs()-1);
 			return false;
 		}
-		switch (collectionKwd)
+		switch (renderableKwd)
 		{
 			// Colour alpha control
 			case (DataViewer::ColourAlphaControlKeyword):
@@ -437,7 +405,6 @@ bool DataViewer::readCollectionBlock(LineParser& parser, Collection* collection,
 				{
 					Messenger::warn("Unrecognised alpha control type '%s'. Defaulting to '%s'.\n", parser.argc(1), ColourDefinition::alphaControl(ColourDefinition::OwnAlpha));
 					ac = ColourDefinition::OwnAlpha;
-					return false;
 				}
 				colourDefinition.setAlphaControl(ac);
 				break;
@@ -446,9 +413,8 @@ bool DataViewer::readCollectionBlock(LineParser& parser, Collection* collection,
 				alpha = parser.argd(1);
 				if ((alpha < 0.0) || (alpha > 1.0))
 				{
-					Messenger::warn("Alpha value (%f) is out of range for %s keyword - it will be reset to 1.0.\n", alpha, collectionKeyword(collectionKwd));
+					Messenger::warn("Alpha value (%f) is out of range for %s keyword - it will be reset to 1.0.\n", alpha, renderableKeyword(renderableKwd));
 					alpha = 1.0;
-					return false;
 				}
 				colourDefinition.setFixedAlpha(alpha);
 				break;
@@ -459,12 +425,12 @@ bool DataViewer::readCollectionBlock(LineParser& parser, Collection* collection,
 			// Colour Linear Gradient point definition
 			case (DataViewer::ColourRGBGradientAKeyword):
 			case (DataViewer::ColourRGBGradientBKeyword):
-				colourDefinition.setColourScalePoint(ColourDefinition::RGBGradientSource, QColor(parser.argi(2), parser.argi(3), parser.argi(4), parser.argi(5)), parser.argd(1), collectionKwd == DataViewer::ColourRGBGradientAKeyword ? 0 : 1);
+				colourDefinition.setColourScalePoint(ColourDefinition::RGBGradientSource, QColor(parser.argi(2), parser.argi(3), parser.argi(4), parser.argi(5)), parser.argd(1), renderableKwd == DataViewer::ColourRGBGradientAKeyword ? 0 : 1);
 				break;
 			// Colour Linear HSV Gradient point definition
 			case (DataViewer::ColourHSVGradientAKeyword):
 			case (DataViewer::ColourHSVGradientBKeyword):
-				colourDefinition.setColourScalePoint(ColourDefinition::HSVGradientSource, QColor::fromHsv(parser.argi(2), parser.argi(3), parser.argi(4), parser.argi(5)), parser.argd(1), collectionKwd == DataViewer::ColourHSVGradientAKeyword ? 0 : 1);
+				colourDefinition.setColourScalePoint(ColourDefinition::HSVGradientSource, QColor::fromHsv(parser.argi(2), parser.argi(3), parser.argi(4), parser.argi(5)), parser.argd(1), renderableKwd == DataViewer::ColourHSVGradientAKeyword ? 0 : 1);
 				break;
 			// Colour single colour definition
 			case (DataViewer::ColourSingleKeyword):
@@ -477,66 +443,53 @@ bool DataViewer::readCollectionBlock(LineParser& parser, Collection* collection,
 				{
 					Messenger::warn("Unrecognised colour source '%s'. Defaulting to '%s'.\n", parser.argc(1), ColourDefinition::colourSource(ColourDefinition::SingleColourSource));
 					cs = ColourDefinition::SingleColourSource;
-					return false;
 				}
 				colourDefinition.setColourSource(cs);
 				break;
-			// DataSet
-			case (DataViewer::DataSetDefinitionKeyword):
-				// Create new dataset
-				dataSet = collection->addDataSet();
-				dataSet->setName(parser.argc(1));
-				if (!readDataSetBlock(parser, dataSet, collection)) return false;
-				break;
 			// End input block
-			case (DataViewer::EndCollectionKeyword):
+			case (DataViewer::EndRenderableKeyword):
 				return true;
 				break;
 			// Group
 			case (DataViewer::GroupKeyword):
-				collection->setGroupName(parser.argc(1));
+				renderable->setGroupName(parser.argc(1));
 				break;
 			// Line style
 			case (DataViewer::LineStyleKeyword):
-				collection->displayLineStyle().setWidth(parser.argd(1));
+				renderable->displayLineStyle().setWidth(parser.argd(1));
 				stipple = LineStipple::stippleType(parser.argc(2));
 				if (stipple == LineStipple::nStippleTypes)
 				{
 					Messenger::warn("Unrecognised line stipple type '%s'. Defaulting to 'NoStipple'.\n", parser.argc(2));
 					stipple = LineStipple::NoStipple;
-					return false;
 				}
-				collection->displayLineStyle().setStipple(stipple);
+				renderable->displayLineStyle().setStipple(stipple);
 				break;
 			// Surface shininess
 			case (DataViewer::ShininessKeyword):
-				collection->setDisplaySurfaceShininess(parser.argd(1));
+				renderable->setDisplaySurfaceShininess(parser.argd(1));
 				break;
 			// Display style
 			case (DataViewer::StyleKeyword):
-				ds = Collection::displayStyle(parser.argc(1));
-				if (ds == Collection::nDisplayStyles)
-				{
-					Messenger::warn("Unrecognised display style '%s'.\n", parser.argc(1));
-					return false;
-				}
-				collection->setDisplayStyle(ds);
+				ds = Renderable::displayStyle(parser.argc(1));
+				if (ds == Renderable::nDisplayStyles) Messenger::warn("Unrecognised display style '%s'.\n", parser.argc(1));
+				else renderable->setDisplayStyle(ds);
 				break;
-			// Data Transform
+			// Transforms
 			case (DataViewer::TransformXKeyword):
 			case (DataViewer::TransformYKeyword):
 			case (DataViewer::TransformZKeyword):
-				xyz = collectionKwd - DataViewer::TransformXKeyword;
-				collection->setTransformEnabled(xyz, parser.argb(1));
-				collection->setTransformEquation(xyz,  parser.argc(2));
+				xyz = renderableKwd - DataViewer::TransformXKeyword;
+				renderable->setTransformEnabled(xyz, parser.argb(1));
+				renderable->setTransformEquation(xyz,  parser.argc(2));
 				break;
 			// Visible flag
-			case (DataViewer::VisibleCollectionKeyword):
-				collection->setVisible(parser.argb(1));
+			case (DataViewer::VisibleKeyword):
+				renderable->setVisible(parser.argb(1));
 				break;
 			// Unrecognised Keyword
 			default:
-				Messenger::warn("Unrecognised collection keyword: %s\n", parser.argc(0));
+				Messenger::warn("Unrecognised renderable keyword: %s\n", parser.argc(0));
 				return false;
 				break;
 		}
@@ -544,100 +497,7 @@ bool DataViewer::readCollectionBlock(LineParser& parser, Collection* collection,
 
 	if (strictBlockEnd)
 	{
-		Messenger::print("Error : Unterminated 'Collection' block.\n");
-		return false;
-	}
-
-	return true;
-}
-
-// Read DataSetBlock keywords
-bool DataViewer::readDataSetBlock(LineParser& parser, DataSet* dataSet, Collection* collection, bool strictBlockEnd)
-{
-	bool foundEnd;
-	DataSet::DataSource source;
-	Data1D data;
-	while (!parser.eofOrBlank())
-	{
-		// Get line from file
-		parser.getArgsDelim(LineParser::UseQuotes + LineParser::SkipBlanks + LineParser::SemiColonLineBreaks);
-
-		// Get keyword and check number of arguments provided
-		DataViewer::DataSetKeyword dataSetKwd = dataSetKeyword(parser.argc(0));
-		if ((dataSetKwd != DataViewer::nDataSetKeywords) && (dataSetKeywordNArguments(dataSetKwd) > (parser.nArgs()-1)))
-		{
-			Messenger::print("Error : DataSet keyword '%s' requires %i arguments, but only %i have been provided.\n", dataSetKeyword(dataSetKwd), dataSetKeywordNArguments(dataSetKwd), parser.nArgs()-1);
-			return false;
-		}
-		switch (dataSetKwd)
-		{
-			case (DataViewer::DataKeyword):
-				data.clear();
-				foundEnd = false;
-				do
-				{
-					parser.getArgsDelim(LineParser::Defaults);
-					// Check for 'EndData'
-					if (DissolveSys::sameString(parser.argc(0), "EndData")) foundEnd = true;
-					else data.addPoint(parser.argd(0), parser.argd(1));
-				} while ((!foundEnd) && (!parser.eofOrBlank()));
-				if (!foundEnd)
-				{
-					Messenger::print("Error : Unterminated 'Data' block in dataSet '%s'.\n", qPrintable(dataSet->name()));
-					return false;
-				}
-
-				dataSet->setData(data);
-				break;
-			case (DataViewer::EndDataSetKeyword):
-				return true;
-				break;
-			case (DataViewer::SourceKeyword):
-				source = DataSet::dataSource(parser.argc(1));
-				if (source == DataSet::nDataSources)
-				{
-					Messenger::warn("Datasource for dataSet not recognised (%s)\n", parser.argc(1));
-					return false;
-					break;
-				}
-				dataSet->setDataSource(source);
-				// Depending on the source, we might expect other data here...
-				if (source == DataSet::FileSource)
-				{
-					if (parser.hasArg(2)) dataSet->setSourceFileName(parser.argc(2));
-					else
-					{
-						Messenger::error("Expected data file name after 'Source File' declaration in dataSet '%s'.\n", qPrintable(dataSet->name()));
-						return false;
-					}
-				}
-				else if (source == DataSet::Data1DSource)
-				{
-					if (!parser.hasArg(2))
-					{
-						Messenger::error("Object name for Data1D expected, but none found.\n");
-						return false;
-					}
-					// Locate Data1D
-					Data1D* sourceData1D = Data1D::findObject(parser.argc(2));
-					if (!sourceData1D) Messenger::printVerbose("Couldn't locate specified Data1D object (%s).\n", parser.argc(2));
-					dataSet->setSourceData(parser.argc(2));
-				}
-				break;
-			case (DataViewer::ZKeyword):
-				collection->setDataSetZ(dataSet, parser.argd(1));
-				break;
-			// Unrecognised Keyword
-			default:
-				Messenger::warn("Unrecognised DataSet keyword: %s\n", parser.argc(0));
-				return false;
-				break;
-		}
-	}
-
-	if (strictBlockEnd)
-	{
-		Messenger::print("Error : Unterminated 'DataSet' block.\n");
+		Messenger::print("Error : Unterminated 'Renderable' block.\n");
 		return false;
 	}
 
@@ -648,7 +508,6 @@ bool DataViewer::readDataSetBlock(LineParser& parser, DataSet* dataSet, Collecti
 bool DataViewer::readViewBlock(LineParser& parser, bool strictBlockEnd)
 {
 	int xyz, axis;
-	Collection* c;
 	Matrix4 mat;
 	View::ViewType vt;
 	View::AutoFollowType aft;
@@ -720,13 +579,6 @@ bool DataViewer::readViewBlock(LineParser& parser, bool strictBlockEnd)
 			case (DataViewer::PerspectiveKeyword):
 				view_.setHasPerspective(parser.argb(1));
 				break;
-			// Role associated collection
-			case (DataViewer::RoleTargetCollectionKeyword):
-				// Locate named collection
-				c = collection(parser.argc(1));
-				if (!c) Messenger::warn("Collection '%s' not found, and can't be associated to view.\n", parser.argc(1));
-				else view_.addCollectionTarget(c);
-				break;
 			// Title scale
 			case (DataViewer::TitlePointSizeKeyword):
 				view_.setTitlePointSize(parser.argd(1));
@@ -739,9 +591,9 @@ bool DataViewer::readViewBlock(LineParser& parser, bool strictBlockEnd)
 			case (DataViewer::UseBestFlatViewKeyword):
 				view_.axes().setUseBestFlatView(parser.argb(1));
 				break;
-			// Vertical shift (collection group manager)
+			// Vertical shift (renderable group manager)
 			case (DataViewer::VerticalShiftKeyword):
-				view_.collectionGroupManager().setVerticalShift((CollectionGroupManager::VerticalShift) parser.argi(1));
+				groupManager_.setVerticalShift((RenderableGroupManager::VerticalShift) parser.argi(1));
 				break;
 			// View Type
 			case (DataViewer::ViewTypeKeyword):
@@ -776,6 +628,8 @@ bool DataViewer::parseInputBlocks(LineParser& parser)
 {
 	// Read line from file and decide what to do with it
 	DataViewer::InputBlock block;
+	Renderable* renderable;
+	Renderable::RenderableType rt;
 	bool success = true;
 	while (!parser.eofOrBlank())
 	{
@@ -785,20 +639,30 @@ bool DataViewer::parseInputBlocks(LineParser& parser)
 		block = DataViewer::inputBlock(parser.argc(0));
 		switch (block)
 		{
-			// Collection Block
-			case (DataViewer::CollectionBlock):
-				// Create new master Collection and set its title
-				currentCollection_ = addCollection(parser.argc(1));
-
-				// Load the collection data
-				success = readCollectionBlock(parser, currentCollection_);
-
-				// Set it for display in the current ViewPane
-				view_.addCollectionTarget(currentCollection_);
-				break;
 			// End of DataViewer Input
 			case (DataViewer::EndDataViewerBlock):
 				return true;
+				break;
+			// Renderable Block
+			case (DataViewer::RenderableBlock):
+				// Check that two arguments have been given (type and object tag)
+				if (!parser.hasArg(2)) return Messenger::error("Type and object tag for Renderable expected, but none found.\n");
+
+				// Determine Renderable type
+				rt = Renderable::renderableType(parser.argc(1));
+				if (rt == Renderable::nRenderableTypes) return Messenger::error("Unknown Renderable type '%s' found.\n", parser.argc(1));
+
+				switch (rt)
+				{
+					case (Renderable::Data1DRenderable):
+						if (!Data1D::findObject(parser.argc(2))) return Messenger::error("Renderable Data1D '%s' not found.\n", parser.argc(2));
+						renderable = new RenderableData1D(*Data1D::findObject(parser.argc(2)));
+						break;
+					default:
+						return Messenger::error("Don't know how to create a Renderable of type '%s.\n", parser.argc(1));
+				}
+
+				success = readRenderableBlock(parser, renderable);
 				break;
 			// View
 			case (DataViewer::ViewBlock):
@@ -883,91 +747,64 @@ bool DataViewer::writeAxisBlock(LineParser& parser, Axes& axes, int axis)
 	return true;
 }
 
-// Write CollectionBlock keywords
-bool DataViewer::writeCollectionBlock(LineParser& parser, Collection* collection, int indentLevel)
+// Write RenderableBlock keywords
+bool DataViewer::writeRenderableBlock(LineParser& parser, Renderable* renderable, int indentLevel)
 {
 	// Construct indent string
 	char* indent = new char[indentLevel*2+1];
 	for (int n=0; n<indentLevel*2; ++n) indent[n] = ' ';
 	indent[indentLevel*2] = '\0';
 
-	parser.writeLineF("%s%s '%s'\n", indent, DataViewer::inputBlock(DataViewer::CollectionBlock), collection->name());
+	parser.writeLineF("%s%s  %s  '%s'\n", indent, DataViewer::inputBlock(DataViewer::RenderableBlock), Renderable::renderableType(renderable->type()), renderable->objectIdentifier());
 
 	// -- Transforms
-	parser.writeLineF("%s  %s %s %s\n", indent, DataViewer::collectionKeyword(DataViewer::TransformXKeyword), stringBool(collection->transformEnabled(0)), collection->transformEquation(0));
-	parser.writeLineF("%s  %s %s %s\n", indent, DataViewer::collectionKeyword(DataViewer::TransformYKeyword), stringBool(collection->transformEnabled(1)), collection->transformEquation(1));
-	parser.writeLineF("%s  %s %s %s\n", indent, DataViewer::collectionKeyword(DataViewer::TransformZKeyword), stringBool(collection->transformEnabled(2)), collection->transformEquation(2));
+	parser.writeLineF("%s  %s %s %s\n", indent, DataViewer::renderableKeyword(DataViewer::TransformXKeyword), stringBool(renderable->transformEnabled(0)), renderable->transformEquation(0));
+	parser.writeLineF("%s  %s %s %s\n", indent, DataViewer::renderableKeyword(DataViewer::TransformYKeyword), stringBool(renderable->transformEnabled(1)), renderable->transformEquation(1));
+	parser.writeLineF("%s  %s %s %s\n", indent, DataViewer::renderableKeyword(DataViewer::TransformZKeyword), stringBool(renderable->transformEnabled(2)), renderable->transformEquation(2));
 
 
 	// Colour Setup
-	ColourDefinition& colourDef = collection->colour();
-	parser.writeLineF("%s  %s '%s'\n", indent, DataViewer::collectionKeyword(DataViewer::ColourSourceKeyword), ColourDefinition::colourSource(colourDef.colourSource()));
+	ColourDefinition& colourDef = renderable->colour();
+	parser.writeLineF("%s  %s '%s'\n", indent, DataViewer::renderableKeyword(DataViewer::ColourSourceKeyword), ColourDefinition::colourSource(colourDef.colourSource()));
 	ColourScalePoint* csp;
 	QColor colour;
 	double value;
 	// -- Single Colour
 	colour = colourDef.colourScalePointColour(ColourDefinition::SingleColourSource);
-	parser.writeLineF("%s  %s %i %i %i %i\n", indent, DataViewer::collectionKeyword(DataViewer::ColourSingleKeyword), colour.red(), colour.green(), colour.blue(), colour.alpha());
+	parser.writeLineF("%s  %s %i %i %i %i\n", indent, DataViewer::renderableKeyword(DataViewer::ColourSingleKeyword), colour.red(), colour.green(), colour.blue(), colour.alpha());
 	// -- RGB Gradient
 	colour = colourDef.colourScalePointColour(ColourDefinition::RGBGradientSource, 0);
 	value = colourDef.colourScalePointValue(ColourDefinition::RGBGradientSource, 0);
-	parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, DataViewer::collectionKeyword(DataViewer::ColourRGBGradientAKeyword), value, colour.red(), colour.green(), colour.blue(), colour.alpha());
+	parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, DataViewer::renderableKeyword(DataViewer::ColourRGBGradientAKeyword), value, colour.red(), colour.green(), colour.blue(), colour.alpha());
 	colour = colourDef.colourScalePointColour(ColourDefinition::RGBGradientSource, 1);
 	value = colourDef.colourScalePointValue(ColourDefinition::RGBGradientSource, 1);
-	parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, DataViewer::collectionKeyword(DataViewer::ColourRGBGradientBKeyword), value, colour.red(), colour.green(), colour.blue(), colour.alpha());
+	parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, DataViewer::renderableKeyword(DataViewer::ColourRGBGradientBKeyword), value, colour.red(), colour.green(), colour.blue(), colour.alpha());
 	// -- HSV Gradient
 	colour = colourDef.colourScalePointColour(ColourDefinition::HSVGradientSource, 0);
 	value = colourDef.colourScalePointValue(ColourDefinition::HSVGradientSource, 0);
-	parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, DataViewer::collectionKeyword(DataViewer::ColourHSVGradientAKeyword), value, colour.hue(), colour.saturation(), colour.value(), colour.alpha());
+	parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, DataViewer::renderableKeyword(DataViewer::ColourHSVGradientAKeyword), value, colour.hue(), colour.saturation(), colour.value(), colour.alpha());
 	colour = colourDef.colourScalePointColour(ColourDefinition::HSVGradientSource, 1);
 	value = colourDef.colourScalePointValue(ColourDefinition::HSVGradientSource, 1);
-	parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, DataViewer::collectionKeyword(DataViewer::ColourHSVGradientBKeyword), value, colour.hue(), colour.saturation(), colour.value(), colour.alpha());
+	parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, DataViewer::renderableKeyword(DataViewer::ColourHSVGradientBKeyword), value, colour.hue(), colour.saturation(), colour.value(), colour.alpha());
 	// -- Custom Gradient
 	for (csp = colourDef.customColourScalePoints(); csp != NULL; csp = csp->next)
 	{
-		parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, DataViewer::collectionKeyword(DataViewer::ColourCustomGradientKeyword), csp->value(), csp->colour().red(), csp->colour().green(), csp->colour().blue(), csp->colour().alpha());
+		parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, DataViewer::renderableKeyword(DataViewer::ColourCustomGradientKeyword), csp->value(), csp->colour().red(), csp->colour().green(), csp->colour().blue(), csp->colour().alpha());
 	}
 	// -- Alpha control
-	parser.writeLineF("%s  %s '%s'\n", indent, DataViewer::collectionKeyword(DataViewer::ColourAlphaControlKeyword), ColourDefinition::alphaControl(colourDef.alphaControl()));
-	parser.writeLineF("%s  %s %f\n", indent, DataViewer::collectionKeyword(DataViewer::ColourAlphaFixedKeyword), colourDef.fixedAlpha());
+	parser.writeLineF("%s  %s '%s'\n", indent, DataViewer::renderableKeyword(DataViewer::ColourAlphaControlKeyword), ColourDefinition::alphaControl(colourDef.alphaControl()));
+	parser.writeLineF("%s  %s %f\n", indent, DataViewer::renderableKeyword(DataViewer::ColourAlphaFixedKeyword), colourDef.fixedAlpha());
 
 	// Display
-	parser.writeLineF("%s  %s %f '%s'\n", indent, DataViewer::collectionKeyword(DataViewer::LineStyleKeyword), collection->displayLineStyle().width(), LineStipple::stipple[collection->displayLineStyle().stipple()].name);
-	parser.writeLineF("%s  %s %f\n", indent, DataViewer::collectionKeyword(DataViewer::ShininessKeyword), collection->displaySurfaceShininess());
-	parser.writeLineF("%s  %s %s\n", indent, DataViewer::collectionKeyword(DataViewer::StyleKeyword), Collection::displayStyle(collection->displayStyle()));
-	parser.writeLineF("%s  %s %s\n", indent, DataViewer::collectionKeyword(DataViewer::VisibleCollectionKeyword), stringBool(collection->visible()));
-
-	// Loop over datasets
-	for (DataSet* dataSet = collection->dataSets(); dataSet != NULL; dataSet = dataSet->next) writeDataSetBlock(parser, dataSet, indentLevel);
+	parser.writeLineF("%s  %s %f '%s'\n", indent, DataViewer::renderableKeyword(DataViewer::LineStyleKeyword), renderable->displayLineStyle().width(), LineStipple::stipple[renderable->displayLineStyle().stipple()].name);
+	parser.writeLineF("%s  %s %f\n", indent, DataViewer::renderableKeyword(DataViewer::ShininessKeyword), renderable->displaySurfaceShininess());
+	parser.writeLineF("%s  %s %s\n", indent, DataViewer::renderableKeyword(DataViewer::StyleKeyword), Renderable::displayStyle(renderable->displayStyle()));
+	parser.writeLineF("%s  %s %s\n", indent, DataViewer::renderableKeyword(DataViewer::VisibleKeyword), stringBool(renderable->isVisible()));
 
 	// Write Group if set
-	if (collection->hasGroupName()) parser.writeLineF("%s  %s '%s'\n", indent, DataViewer::collectionKeyword(DataViewer::GroupKeyword), collection->groupName());
+	if (renderable->hasGroupName()) parser.writeLineF("%s  %s '%s'\n", indent, DataViewer::renderableKeyword(DataViewer::GroupKeyword), renderable->groupName());
 
-	parser.writeLineF("%s%s\n", indent, DataViewer::collectionKeyword(DataViewer::EndCollectionKeyword));
-
-	return true;
-}
-
-// Write DataSetBlock keywords
-bool DataViewer::writeDataSetBlock(LineParser& parser, DataSet* dataSet, int indentLevel)
-{
-	// Construct indent string
-	char* indent = new char[indentLevel*2+1];
-	for (int n=0; n<indentLevel*2; ++n) indent[n] = ' ';
-	indent[indentLevel*2] = '\0';
-
-	parser.writeLineF("%s  %s '%s'\n", indent, DataViewer::collectionKeyword(DataViewer::DataSetDefinitionKeyword), dataSet->name());
-	if (dataSet->dataSource() == DataSet::FileSource) parser.writeLineF("%s    %s %s '%s'\n", indent, DataViewer::dataSetKeyword(DataViewer::SourceKeyword), DataSet::dataSource(dataSet->dataSource()), dataSet->sourceFileName());
-	else if (dataSet->dataSource() == DataSet::Data1DSource)  parser.writeLineF("%s    %s %s '%s'\n", indent, DataViewer::dataSetKeyword(DataViewer::SourceKeyword), DataSet::dataSource(dataSet->dataSource()), dataSet->sourceData1D());
-	else parser.writeLineF("%s    %s %s\n", indent, DataViewer::dataSetKeyword(DataViewer::SourceKeyword), DataSet::dataSource(dataSet->dataSource()));
-	parser.writeLineF("%s    %s %f\n", indent, DataViewer::dataSetKeyword(DataViewer::ZKeyword), dataSet->z());
-	if (dataSet->dataSource() == DataSet::InternalSource)
-	{
-		parser.writeLineF("%s    %s\n", indent, DataViewer::dataSetKeyword(DataViewer::DataKeyword));
-		for (int n=0; n< dataSet->data().nValues(); ++n) parser.writeLineF("%s      %f  %f\n", indent, dataSet->data().constXAxis(n), dataSet->data().constValue(n));
-		parser.writeLineF("%s    End%s\n", indent, DataViewer::dataSetKeyword(DataViewer::DataKeyword));
-	}
-	parser.writeLineF("%s  %s\n", indent, DataViewer::dataSetKeyword(DataViewer::EndDataSetKeyword));
+	parser.writeLineF("%s%s\n", indent, DataViewer::renderableKeyword(DataViewer::EndRenderableKeyword));
 
 	return true;
 }
@@ -991,13 +828,8 @@ bool DataViewer::writeViewBlock(LineParser& parser)
 	parser.writeLineF("    %s %f %f %f\n", DataViewer::viewKeyword(DataViewer::RotationZKeyword), mat[8], mat[9], mat[10]);
 	parser.writeLineF("    %s %f %f %f\n", DataViewer::viewKeyword(DataViewer::TranslationKeyword), trans.x, trans.y, trans.z);
 	parser.writeLineF("    %s %s\n", DataViewer::viewKeyword(DataViewer::PerspectiveKeyword), stringBool(view_.hasPerspective()));
-	for (TargetData* target = view_.collectionTargets(); target != NULL; target = target->next)
-	{
-		if (!Collection::objectValid(target->collection(), "collection in DataViewer::writeViewBlock")) continue;
-		parser.writeLineF("    %s '%s'\n", DataViewer::viewKeyword(DataViewer::RoleTargetCollectionKeyword), target->collection()->name());
-	}
 	parser.writeLineF("    %s %s\n", DataViewer::viewKeyword(DataViewer::UseBestFlatViewKeyword), stringBool(view_.axes().useBestFlatView()));
-	parser.writeLineF("    %s %i\n", DataViewer::viewKeyword(DataViewer::VerticalShiftKeyword), view_.collectionGroupManager().verticalShift());
+	parser.writeLineF("    %s %i\n", DataViewer::viewKeyword(DataViewer::VerticalShiftKeyword), groupManager_.verticalShift());
 	parser.writeLineF("    %s '%s'\n", DataViewer::viewKeyword(DataViewer::ViewTypeKeyword), View::viewType(view_.viewType()));
 	parser.writeLineF("  %s\n", DataViewer::viewKeyword(DataViewer::EndViewKeyword));
 
@@ -1007,8 +839,8 @@ bool DataViewer::writeViewBlock(LineParser& parser)
 // Write session through parser specified
 bool DataViewer::writeSession(LineParser& parser)
 {
-	// Write Collection Data
-	for (Collection* collection = collections_.first(); collection != NULL; collection = collection->next) if (!writeCollectionBlock(parser, collection)) return false;
+	// Write Renderable data
+	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next) if (!writeRenderableBlock(parser, rend)) return false;
 
 	// Write View Data
 	if (!writeViewBlock(parser)) return false;

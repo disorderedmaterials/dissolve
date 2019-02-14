@@ -24,7 +24,7 @@
 
 #include "gui/viewer/render/primitive.h"
 #include "templates/list.h"
-sdf
+
 // Forward Declarations
 class QOpenGLContext;
 class Viewer;

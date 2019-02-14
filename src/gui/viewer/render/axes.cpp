@@ -562,18 +562,20 @@ double Axes::transformY(double y) const
 }
 
 // Transform entire array of values into local axes coordinates
-void Axes::transformY(Array<double>& yArray, Array<DisplayDataSet::DataPointType>& typeArray) const
+void Axes::transformY(Array<double>& yArray) const
 {
 	if (inverted_.y && logarithmic_.y) for (int n=0; n< yArray.nItems(); ++n)
 	{
-		if (max_.y / yArray[n] <= 0.0) typeArray[n] = DisplayDataSet::NoPoint;
-		else yArray[n] = log10(max_.y/ yArray[n]) * stretch_.y;
+// 		if (max_.y / yArray[n] <= 0.0) typeArray[n] = DisplayDataSet::NoPoint;
+// 		else
+		yArray[n] = log10(max_.y/ yArray[n]) * stretch_.y;
 	}
 	else if (inverted_.y) for (int n=0; n< yArray.nItems(); ++n) yArray[n] = ((max_.y - yArray[n]) + min_.y) * stretch_.y;
 	else if (logarithmic_.y) for (int n=0; n<yArray.nItems(); ++n)
 	{
-		if (yArray[n] <= 0.0) typeArray[n] = DisplayDataSet::NoPoint;
-		else yArray[n] = log10(yArray[n]) * stretch_.y;
+// 		if (yArray[n] <= 0.0) typeArray[n] = DisplayDataSet::NoPoint;
+// 		else
+		yArray[n] = log10(yArray[n]) * stretch_.y;
 	}
 	else yArray *= stretch_.y;
 }

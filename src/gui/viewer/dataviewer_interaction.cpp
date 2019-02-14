@@ -20,25 +20,14 @@
 */
 
 #include "gui/viewer/dataviewer.hui"
-// #include "gui/uchroma/gui/operate_bgsub.h"
 
 // Static list of interaction modes
 const char* InteractionModeName[] = { 
-	"Fit (select X)",
-	"Fit (select Z)",
-	"BG Subtraction (select Y)",	 
-	"BG Subtraction (select X range)", 
-	"BG Subtraction (select Z range)", 
 	"View",
 	"Zoom"
 };
 
 const char* InteractionModeHelp[] = {
-	"<b>Left-click-drag</b> Select X region for fitting",
-	"<b>Left-click-drag</b> Select Z region for fitting",
-	"<b>Left-click</b> select Y value for subtraction",
-	"<b>Left-click-drag</b> select X range for determination of average value",
-	"<b>Left-click-drag</b> select Z range for determination of average value",
 	"<b>Right</b> Rotate view, <b>Middle</b> Translate view (3D) or shift axis limits (2D), <b>Wheel</b> Zoom view",
 	"<b>Left-click-drag</b> Zoom to selected region, <b>Ctrl+Left</b> Extract slice"
 };
@@ -99,15 +88,6 @@ void DataViewer::cancelInteraction()
 	// Cancel interaction type
 	switch (interactionMode_)
 	{
-		case (DataViewer::FitSetupSelectXInteraction):
-		case (DataViewer::FitSetupSelectZInteraction):
-// 			editFitKernelDialog_.updateAndExec();
-			break;
-		case (DataViewer::OperateBGSubSelectYValueInteraction):
-		case (DataViewer::OperateBGSubSelectXRangeInteraction):
-		case (DataViewer::OperateBGSubSelectZRangeInteraction):
-// 			OperateBGSubDialog(*this, parent_).updateAndExec();
-			break;
 		case (DataViewer::ViewInteraction):
 		case (DataViewer::ZoomInteraction):
 			break;
@@ -170,28 +150,6 @@ void DataViewer::endInteraction(int mouseX, int mouseY)
 	// Finalise interaction type
 	switch (interactionMode_)
 	{
-		case (DataViewer::FitSetupSelectXInteraction):
-// 			editFitKernelDialog_.ui.XAbsoluteMinSpin->setValue(std::min(clickedInteractionValue_, currentInteractionValue_));
-// 			editFitKernelDialog_.ui.XAbsoluteMaxSpin->setValue(std::max(clickedInteractionValue_, currentInteractionValue_));
-// 			editFitKernelDialog_.updateAndExec();
-			break;
-		case (DataViewer::FitSetupSelectZInteraction):
-// 			editFitKernelDialog_.ui.ZAbsoluteMinSpin->setValue(std::min(clickedInteractionValue_, currentInteractionValue_));
-// 			editFitKernelDialog_.ui.ZAbsoluteMaxSpin->setValue(std::max(clickedInteractionValue_, currentInteractionValue_));
-// 			editFitKernelDialog_.updateAndExec();
-			break;
-		case (DataViewer::OperateBGSubSelectYValueInteraction):
-// 			OperateBGSubDialog::setConstantValue(currentInteractionValue_);
-// 			OperateBGSubDialog(*this, parent_).updateAndExec();
-// 			break;
-		case (DataViewer::OperateBGSubSelectXRangeInteraction):
-// 			OperateBGSubDialog::setXRange(std::min(clickedInteractionValue_, currentInteractionValue_), std::max(clickedInteractionValue_, currentInteractionValue_));
-// 			OperateBGSubDialog(*this, parent_).updateAndExec();
-			break;
-		case (DataViewer::OperateBGSubSelectZRangeInteraction):
-// 			OperateBGSubDialog::setZRange(std::min(clickedInteractionValue_, currentInteractionValue_), std::max(clickedInteractionValue_, currentInteractionValue_));
-// 			OperateBGSubDialog(*this, parent_).updateAndExec();
-			break;
 		case (DataViewer::ViewInteraction):
 			// Check the pixel area of the clicked region and determine whether this was a targeted click or a click-drag
 			if ((rMouseDown_ - rMouseLast_).magnitude() < 9.0)
@@ -201,10 +159,7 @@ void DataViewer::endInteraction(int mouseX, int mouseY)
 				repaint();
 				clickedObject = objectAtQueryCoordinates();
 				clickedObjectInfo = infoAtQueryCoordinates();
-				if (clickedObject == CollectionObject)
-				{
-					highlightCollection_ = collection(clickedObjectInfo);
-				}
+				if (clickedObject == CollectionObject) highlightedRenderable_ = renderable(clickedObjectInfo);
 			}
 			else
 			{
@@ -225,9 +180,9 @@ void DataViewer::endInteraction(int mouseX, int mouseY)
 
 			if (clickedObject == CollectionObject)
 			{
-				highlightCollection_ = NULL;
-				Collection* c = collection(clickedObjectInfo);
-				if (c) setCurrentCollection(c);
+				highlightedRenderable_ = NULL;
+				Renderable* rend = renderable(clickedObjectInfo);
+				if (rend) setCurrentRenderable(rend);
 			}
 			break;
 		case (DataViewer::ZoomInteraction):

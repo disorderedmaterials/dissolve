@@ -1,6 +1,6 @@
 /*
-	*** Collection Group
-	*** src/gui/uchroma/classes/collectiongroup.h
+	*** Renderable Group
+	*** src/gui/viewer/renderablegroup.h
 	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
@@ -19,10 +19,10 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_UCHROMACOLLECTIONGROUP_H
-#define DISSOLVE_UCHROMACOLLECTIONGROUP_H
+#ifndef DISSOLVE_RENDERABLEGROUP_H
+#define DISSOLVE_RENDERABLEGROUP_H
 
-#include "gui/uchroma/classes/colourdef.h"
+#include "gui/viewer/render/colourdefinition.h"
 #include "base/charstring.h"
 #include "base/sysfunc.h"
 #include "templates/array.h"
@@ -31,32 +31,32 @@
 #include "templates/reflist.h"
 
 // Forward declarations
-class Collection;
+class Renderable;
 
-// Collection Group
-class CollectionGroup : public ListItem<CollectionGroup>
+// Renderable Group
+class RenderableGroup : public ListItem<RenderableGroup>
 {
 	public:
 	// Constructor
-	CollectionGroup(const char* name, ColourDefinition::StockColour colour);
+	RenderableGroup(const char* name, ColourDefinition::StockColour colour);
 
 	private:
 	// Name of the group
 	CharString name_;
-	// Collections using this group
-	RefList<Collection,int> collections_;
+	// Renderables using this group
+	RefList<Renderable,int> collections_;
 	// Colour associated to this group
 	ColourDefinition::StockColour stockColour_;
 	// Colour definition for this group
 	ColourDefinition colour_;
 	// Whether vertical shifting is enabled in this group
 	bool hasVerticalShift_;
-	// Shift (in vertical axis) to apply to Collections
+	// Shift (in vertical axis) to apply to Renderables
 	double verticalShift_;
 
 	private:
-	// Set vertical shift in all Collections in the group via their transform equations
-	void setVerticalShiftInCollections();
+	// Set vertical shift in all Renderables in the group via their transform equations
+	void setVerticalShiftInRenderables();
 
 	public:
 	// Return name of group
@@ -65,47 +65,47 @@ class CollectionGroup : public ListItem<CollectionGroup>
 	ColourDefinition::StockColour stockColour() const;
 	// Return colour definition for the group
 	const ColourDefinition& colour() const;
-	// Associate Collection to group (if it isn't already)
-	void associateCollection(Collection* collection);
-	// Remove Collection from group (if it exists)
-	void removeCollection(Collection* collection);
+	// Associate Renderable to group (if it isn't already)
+	void associateRenderable(Renderable* collection);
+	// Remove Renderable from group (if it exists)
+	void removeRenderable(Renderable* collection);
 	// Return whether the group is used by the specified collection
-	bool usedByCollection(Collection* collection);
+	bool usedByRenderable(Renderable* collection);
 	// Return whether the group is empty
 	bool isEmpty();
 	// Set whether vertical shifting is enabled in this group
 	void setVerticalShift(bool enabled, double verticalShift);
 	// Whether vertical shifting is enabled in this group
 	bool hasVerticalShift();
-	// Return shift (in vertical axis) to apply to Collections
+	// Return shift (in vertical axis) to apply to Renderables
 	double verticalShift();
 };
 
-// Collection Group Manager
-class CollectionGroupManager
+// Renderable Group Manager
+class RenderableGroupManager
 {
 	public:
 	// Constructor
-	CollectionGroupManager();
+	RenderableGroupManager();
 
 	/*
 	 * Group Management
 	 */
 	private:
-	// List of current CollectionGroups in use
-	List<CollectionGroup> collectionGroups_;
+	// List of current RenderableGroups in use
+	List<RenderableGroup> collectionGroups_;
 	// Usage counters for stock colours
 	Array<int> stockColourUsageCount_;
 
 	public:
-	// Add Collection to its specified group, creating / associating if necessary
-	CollectionGroup* addToGroup(Collection* collection);
+	// Add Renderable to its specified group, creating / associating if necessary
+	RenderableGroup* addToGroup(Renderable* collection);
 	// Return named group, if it exists
-	CollectionGroup* group(const char* name);
-	// Return group for specified Collection, if one has been assigned
-	CollectionGroup* group(Collection* collection);
-	// Remove Collection from its specified group
-	void removeFromGroup(Collection* collection);
+	RenderableGroup* group(const char* name);
+	// Return group for specified Renderable, if one has been assigned
+	RenderableGroup* group(Renderable* collection);
+	// Remove Renderable from its specified group
+	void removeFromGroup(Renderable* collection);
 
 
 	/*
@@ -127,19 +127,19 @@ class CollectionGroupManager
 	VerticalShift verticalShift_;
 
 	private:
-	// Set vertical shifts for current CollectionGroups
-	void setCollectionGroupShifts();
+	// Set vertical shifts for current RenderableGroups
+	void setRenderableGroupShifts();
 
 	public:
-	// Return colour definition for specified Collection
-	const ColourDefinition& colourDefinition(Collection* collection);
-	// Cycle vertical shift applied to CollectionGroups
+	// Return colour definition for specified Renderable
+	const ColourDefinition& colourDefinition(Renderable* collection);
+	// Cycle vertical shift applied to RenderableGroups
 	void cycleVerticalShifts();
-	// Set vertical shift applied to CollectionGroups
+	// Set vertical shift applied to RenderableGroups
 	void setVerticalShift(VerticalShift shiftType);
 	// Return current vertical shift type
 	VerticalShift verticalShift() const;
-	// Remove all vertical shifts from CollectionGroups
+	// Remove all vertical shifts from RenderableGroups
 	void removeVerticalShifts();
 };
 

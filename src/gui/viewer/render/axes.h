@@ -23,7 +23,6 @@
 #define DISSOLVE_AXES_H
 
 #include "gui/viewer/render/numberformat.h"
-#include "gui/viewer/render/displaydataset.h"
 #include "gui/viewer/render/primitive.h"
 #include "gui/viewer/render/textprimitivelist.h"
 #include "gui/viewer/render/linestyle.h"
@@ -35,7 +34,6 @@
 
 // Forward Declarations
 class View;
-class UChromaBase;
 
 // Axes
 class Axes
@@ -183,7 +181,7 @@ class Axes
 	// Return supplied data y value in local axes coordinates
 	double transformY(double y) const;
 	// Transform entire array of values into local axes coordinates
-	void transformY(Array< double >& yArray, Array<DisplayDataSet::DataPointType>& typeArray) const;
+	void transformY(Array<double>& yArray) const;
 	// Return supplied data z value in local axes coordinates
 	double transformZ(double z) const;
 

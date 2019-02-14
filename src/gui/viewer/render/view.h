@@ -23,9 +23,8 @@
 #define DISSOLVE_VIEW_H
 
 #include "gui/viewer/render/axes.h"
-#include "gui/viewer/render/collection.h"
-#include "gui/viewer/render/collectiongroup.h"
-#include "gui/viewer/render/targetdata.h"
+#include "gui/viewer/render/renderable.h"
+#include "gui/viewer/render/renderablegroup.h"
 #include "math/matrix4.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
@@ -39,10 +38,12 @@ class View
 	private:
 	// Associated FontInstance from parent viewer
 	FontInstance& fontInstance_;
+	// List of Renderables that we are to display
+	const List<Renderable>& renderables_;
 
 	public:
 	// Constructor / Destructor
-	View(FontInstance& fontInstance);
+	View(const List<Renderable>& renderables, FontInstance& fontInstance);
 	~View();
 
 
@@ -71,24 +72,6 @@ class View
 	void translateViewport(int deltaX, int deltaY);
 	// Return viewport matrix
 	const GLuint* viewportMatrix() const;
-
-
-	/*
-	 * Targets
-	 */
-	private:
-	// Target collection(s) for role
-	ParentList<TargetData,View> collectionTargets_;
-
-	public:
-	// Add target collection for role
-	void addCollectionTarget(Collection* collection);
-	// Remove target collection for role
-	void removeCollectionTarget(Collection* collection);
-	// Return whether specified collection is a target
-	TargetData* collectionIsTarget(Collection* collection);
-	// Return first target collection for role
-	TargetData* collectionTargets();
 
 
 	/*
@@ -139,8 +122,6 @@ class View
 	private:
 	// Return calculated projection matrix
 	Matrix4 calculateProjectionMatrix(bool hasPerspective, double orthoZoom = 0.0) const;
-	// Update primitive
-	void updatePrimitive(Collection* collection, PrimitiveList& primitive, bool forcePrimitiveUpdate = false, bool dontPopInstance = false);
 
 	public:
 	// Set view type
@@ -251,8 +232,6 @@ class View
 	double textZScale_;
 	// Whether axis text labels are drawn flat in 3D views
 	bool flatLabelsIn3D_;
-	// Collection group manager for this View
-	CollectionGroupManager collectionGroupManager_;
 
 	private:
 	// Calculate font scaling factor
@@ -281,8 +260,6 @@ class View
 	void setFlatLabelsIn3D(bool flat);
 	// Whether axis text labels are drawn flat in 3D views
 	bool flatLabelsIn3D();
-	// Return collection group manager for this View
-	CollectionGroupManager& collectionGroupManager();
 
 
 	/*

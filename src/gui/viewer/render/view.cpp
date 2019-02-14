@@ -20,7 +20,7 @@
 */
 
 #include "gui/viewer/render/view.h"
-#include "gui/viewer/render/collection.h"
+#include "gui/viewer/render/renderable.h"
 #include "math/cuboid.h"
 #include <algorithm>
 #include <cmath>
@@ -29,7 +29,7 @@
 const double View::zOffset_ = -10.0;
 
 // Constructor
-View::View(FontInstance& fontInstance) : fontInstance_(fontInstance), axes_(*this, fontInstance)
+View::View(const List<Renderable>& renderables, FontInstance& fontInstance) : fontInstance_(fontInstance), renderables_(renderables), axes_(*this, fontInstance)
 {
 	// Geometry / position
 	xOffset_ = 0;
@@ -119,50 +119,6 @@ void View::translateViewport(int deltaX, int deltaY)
 const GLuint* View::viewportMatrix() const
 {
 	return viewportMatrix_;
-}
-
-/*
- * Targets
- */
-
-// Add target collection for role
-void View::addCollectionTarget(Collection* collection)
-{
-	TargetData* target = collectionTargets_.add(*this);
-	target->initialise(collection);
-
-	// Add collection to a group, if it has a group name
-	if (collection->hasGroupName()) collectionGroupManager_.addToGroup(collection);
-}
-
-// Remove target collection for role
-void View::removeCollectionTarget(Collection* collection)
-{
-	TargetData* target = collectionIsTarget(collection);
-	if (!target)
-	{
-		Messenger::printVerbose("Internal Error: Tried to remove collection '%s' from view,  but it is not a target there.\n", collection->name());
-		return;
-	}
-
-	// Remove the target from our list
-	collectionTargets_.remove(target);
-
-	// Remove the Collection from its group
-	collectionGroupManager_.removeFromGroup(collection);
-}
-
-// Return whether specified collection is a target
-TargetData* View::collectionIsTarget(Collection* collection)
-{
-	for (TargetData* target = collectionTargets_.first(); target != NULL; target = target->next) if (target->collection() == collection) return target;
-	return NULL;
-}
-
-// Return target collections for role
-TargetData* View::collectionTargets()
-{
-	return collectionTargets_.first();
 }
 
 /*
@@ -868,24 +824,20 @@ void View::autoFollowData()
 		// Get y range over the horizontal range we've established
 		bool first = true;
 		double yMin, yMax, yMinTest, yMaxTest;
-		for (TargetData* target = collectionTargets_.first(); target != NULL; target = target->next)
+		for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next)
 		{
-			// Loop over display targets
-			for (TargetPrimitive* prim = target->displayPrimitives(); prim != NULL; prim = prim->next)
+			// Get y limits for the this data
+			rend->yRangeOverX(xMin, xMax, yMinTest, yMaxTest);
+			if (first)
 			{
-				// Get limits for the associated collection
-				prim->collection()->yRangeOverX(xMin, xMax, yMinTest, yMaxTest);
-				if (first)
-				{
-					yMin = yMinTest;
-					yMax = yMaxTest;
-					first = false;
-				}
-				else
-				{
-					if (yMinTest < yMin) yMin = yMinTest;
-					if (yMaxTest > yMax) yMax = yMaxTest;
-				}
+				yMin = yMinTest;
+				yMax = yMaxTest;
+				first = false;
+			}
+			else
+			{
+				if (yMinTest < yMin) yMin = yMinTest;
+				if (yMaxTest > yMax) yMax = yMaxTest;
 			}
 		}
 
@@ -917,27 +869,22 @@ void View::autoFollowData()
  * Axes
  */
 
-// Return absolute minimum transformed values over all displayed collections
+// Return absolute minimum transformed values over all displayed data
 Vec3<double> View::transformedDataMinima()
 {
-	// Set starting values from first display collection we find
 	int nCounted = 0;
 	Vec3<double> v, minima;
-	for (TargetData* target = collectionTargets_.first(); target != NULL; target = target->next)
+	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next)
 	{
-		// Loop over display targets
-		for (TargetPrimitive* prim = target->displayPrimitives(); prim != NULL; prim = prim->next)
+		if (nCounted == 0) minima = rend->transformMin();
+		else
 		{
-			if (nCounted == 0) minima = prim->collection()->transformMin();
-			else
-			{
-				v = target->collection()->transformMin();
-				if (v.x < minima.x) minima.x = v.x;
-				if (v.y < minima.y) minima.y = v.y;
-				if (v.z < minima.z) minima.z = v.z;
-			}
-			nCounted += prim->collection()->nValues();
+			v = rend->transformMin();
+			if (v.x < minima.x) minima.x = v.x;
+			if (v.y < minima.y) minima.y = v.y;
+			if (v.z < minima.z) minima.z = v.z;
 		}
+		++nCounted;
 	}
 
 	// If we didn't have any data to work with, return the current axis limits
@@ -948,28 +895,19 @@ Vec3<double> View::transformedDataMinima()
 // Return absolute maximum transformed values over all associated collections
 Vec3<double> View::transformedDataMaxima()
 {
-	// Set starting values from first display collection we find
 	int nCounted = 0;
 	Vec3<double> v, maxima;
-	for (TargetData* target = collectionTargets_.first(); target != NULL; target = target->next)
+	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next)
 	{
-		// Loop over display targets
-		for (TargetPrimitive* prim = target->displayPrimitives(); prim != NULL; prim = prim->next)
+		if (nCounted == 0) maxima = rend->transformMax();
+		else
 		{
-			// Check number of datapoints in target
-			if (prim->collection()->nValues() == 0) continue;
-
-			// Set limits...
-			if (nCounted == 0) maxima = prim->collection()->transformMax();
-			else
-			{
-				v = target->collection()->transformMax();
-				if (v.x > maxima.x) maxima.x = v.x;
-				if (v.y > maxima.y) maxima.y = v.y;
-				if (v.z > maxima.z) maxima.z = v.z;
-			}
-			nCounted += prim->collection()->nValues();
+			v = rend->transformMax();
+			if (v.x < maxima.x) maxima.x = v.x;
+			if (v.y < maxima.y) maxima.y = v.y;
+			if (v.z < maxima.z) maxima.z = v.z;
 		}
+		++nCounted;
 	}
 
 	// If we didn't have any data to work with, return the current axis limits
@@ -980,24 +918,19 @@ Vec3<double> View::transformedDataMaxima()
 // Return absolute minimum positive transformed values over all associated collections
 Vec3<double> View::transformedDataPositiveMinima()
 {
-	// Set starting values from first display collection we find
 	int nCounted = 0;
 	Vec3<double> v, minima;
-	for (TargetData* target = collectionTargets_.first(); target != NULL; target = target->next)
+	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next)
 	{
-		// Loop over display targets
-		for (TargetPrimitive* prim = target->displayPrimitives(); prim != NULL; prim = prim->next)
+		if (nCounted == 0) minima = rend->transformMinPositive();
+		else
 		{
-			if (nCounted == 0) minima = prim->collection()->transformMinPositive();
-			else
-			{
-				v = target->collection()->transformMinPositive();
-				if (v.x < minima.x) minima.x = v.x;
-				if (v.y < minima.y) minima.y = v.y;
-				if (v.z < minima.z) minima.z = v.z;
-			}
-			nCounted += prim->collection()->nValues();
+			v = rend->transformMinPositive();
+			if (v.x < minima.x) minima.x = v.x;
+			if (v.y < minima.y) minima.y = v.y;
+			if (v.z < minima.z) minima.z = v.z;
 		}
+		++nCounted;
 	}
 
 	// If we didn't have any data to work with, return the current axis limits
@@ -1008,24 +941,19 @@ Vec3<double> View::transformedDataPositiveMinima()
 // Return absolute maximum positive transformed values over all associated collections
 Vec3<double> View::transformedDataPositiveMaxima()
 {
-	// Set starting values from first display collection we find
 	int nCounted = 0;
 	Vec3<double> v, maxima;
-	for (TargetData* target = collectionTargets_.first(); target != NULL; target = target->next)
+	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next)
 	{
-		// Loop over display targets
-		for (TargetPrimitive* prim = target->displayPrimitives(); prim != NULL; prim = prim->next)
+		if (nCounted == 0) maxima = rend->transformMaxPositive();
+		else
 		{
-			if (nCounted == 0) maxima = prim->collection()->transformMaxPositive();
-			else
-			{
-				v = target->collection()->transformMaxPositive();
-				if (v.x > maxima.x) maxima.x = v.x;
-				if (v.y > maxima.y) maxima.y = v.y;
-				if (v.z > maxima.z) maxima.z = v.z;
-			}
-			nCounted += prim->collection()->nValues();
+			v = rend->transformMaxPositive();
+			if (v.x < maxima.x) maxima.x = v.x;
+			if (v.y < maxima.y) maxima.y = v.y;
+			if (v.z < maxima.z) maxima.z = v.z;
 		}
+		++nCounted;
 	}
 
 	// If we didn't have any data to work with, return the current axis limits
@@ -1246,12 +1174,6 @@ void View::setFlatLabelsIn3D(bool flat)
 bool View::flatLabelsIn3D()
 {
 	return flatLabelsIn3D_;
-}
-
-// Return collection group manager for this ViewPane
-CollectionGroupManager& View::collectionGroupManager()
-{
-	return collectionGroupManager_;
 }
 
 /*

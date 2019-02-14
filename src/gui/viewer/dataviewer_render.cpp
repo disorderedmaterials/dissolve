@@ -226,7 +226,7 @@ void DataViewer::render(int xOffset, int yOffset)
 		for (TargetPrimitive* primitive = target->displayPrimitives(); primitive != NULL; primitive = primitive->next)
 		{
 			// Make sure the primitive is up to date and send it to GL
-			primitive->updateAndSendPrimitive(&view_, renderingOffScreen_, renderingOffScreen_, context());
+			primitive->updateAndSendPrimitives(view_, groupManager_, renderingOffScreen_, renderingOffScreen_, context());
 		}
 
 		// Update query

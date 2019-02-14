@@ -146,7 +146,7 @@ bool DataViewer::keyPressed(int key, Qt::KeyboardModifiers modifiers)
 			else view_.axes().toggleLogarithmic(view_.viewType() == View::FlatZYView ? 2 : 0);
 			break;
 		case (Qt::Key_S):
-			view_.collectionGroupManager().cycleVerticalShifts();
+			groupManager_.cycleVerticalShifts();
 			break;
 		default:
 			refresh = false;
