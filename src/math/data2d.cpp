@@ -56,6 +56,8 @@ void Data2D::clear()
 	y_.clear();
 	values_.clear();
 	errors_.clear();
+
+	++version_;
 }
 
 /*
@@ -71,6 +73,8 @@ void Data2D::initialise(int xSize, int ySize, bool withError)
 	hasError_ = withError;
 	if (hasError_) errors_.initialise(xSize, ySize);
 	else errors_.clear();
+
+	++version_;
 }
 
 // Initialise to be consistent in size and x axis with supplied object
@@ -82,6 +86,8 @@ void Data2D::initialise(const Data2D& source)
 	hasError_ = source.hasError_;
 	if (hasError_) errors_.initialise(x_.nItems(), y_.nItems());
 	else errors_.clear();
+
+	++version_;
 }
 
 // Copy arrays from supplied object
@@ -92,6 +98,8 @@ void Data2D::copyArrays(const Data2D& source)
 	values_ = source.values_;
 	errors_ = source.errors_;
 	hasError_ = source.hasError_;
+
+	++version_;
 }
 
 // Zero values array
@@ -99,6 +107,14 @@ void Data2D::zero()
 {
 	values_ = 0.0;
 	if (hasError_) errors_ = 0.0;
+
+	++version_;
+}
+
+// Return data version
+const int Data2D::version() const
+{
+	return version_;
 }
 
 // Return x value specified
@@ -112,6 +128,9 @@ double& Data2D::xAxis(int index)
 		return dummy;
 	}
 #endif
+
+	++version_;
+
 	return x_[index];
 }
 
@@ -131,6 +150,8 @@ double Data2D::constXAxis(int index) const
 // Return x axis Array
 Array<double>& Data2D::xAxis()
 {
+	++version_;
+
 	return x_;
 }
 
@@ -151,6 +172,8 @@ double& Data2D::yAxis(int index)
 		return dummy;
 	}
 #endif
+	++version_;
+
 	return y_[index];
 }
 
@@ -170,6 +193,8 @@ double Data2D::constYAxis(int index) const
 // Return y Array
 Array<double>& Data2D::yAxis()
 {
+	++version_;
+
 	return y_;
 }
 
@@ -196,6 +221,8 @@ double& Data2D::value(int xIndex, int yIndex)
 		return dummy;
 	}
 #endif
+	++version_;
+
 	return values_.at(xIndex, yIndex);
 }
 
@@ -220,6 +247,8 @@ double Data2D::constValue(int xIndex, int yIndex) const
 // Return values Array
 Array2D<double>& Data2D::values()
 {
+	++version_;
+
 	return values_;
 }
 
@@ -265,6 +294,8 @@ void Data2D::addErrors()
 	errors_.initialise(x_.nItems(), y_.nItems());
 
 	hasError_ = true;
+
+	++version_;
 }
 
 // Return whether the values have associated errors
@@ -297,6 +328,8 @@ double& Data2D::error(int xIndex, int yIndex)
 	}
 #endif
 
+	++version_;
+
 	return errors_.at(xIndex, yIndex);
 }
 
@@ -328,7 +361,9 @@ double Data2D::constError(int xIndex, int yIndex) const
 Array2D<double>& Data2D::errors()
 {
 	if (!hasError_) Messenger::warn("This Data2D (name='%s', tag='%s') has no errors to return, but errors() was requested.\n", name(), objectTag());
-	
+
+	++version_;
+
 	return errors_;
 }
 
@@ -352,18 +387,24 @@ void Data2D::operator=(const Data2D& source)
 	values_ = source.values_;
 	hasError_ = source.hasError_;
 	errors_ = source.errors_;
+
+	++version_;
 }
 
 // Operator +=
 void Data2D::operator+=(const double delta)
 {
 	for (int n=0; n<values_.linearArraySize(); ++n) values_.linearValue(n) += delta;
+
+	++version_;
 }
 
 // Operator -=
 void Data2D::operator-=(const double delta)
 {
 	for (int n=0; n<values_.linearArraySize(); ++n) values_.linearValue(n) -= delta;
+
+	++version_;
 }
 
 // Operator *=
@@ -371,6 +412,8 @@ void Data2D::operator*=(const double factor)
 {
 	values_ *= factor;
 	if (hasError_) errors_ *= factor;
+
+	++version_;
 }
 
 // Operator /=
@@ -378,6 +421,8 @@ void Data2D::operator/=(const double factor)
 {
 	values_ /= factor;
 	if (hasError_) errors_ /= factor;
+
+	++version_;
 }
 
 /*

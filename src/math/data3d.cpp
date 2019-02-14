@@ -57,6 +57,8 @@ void Data3D::clear()
 	z_.clear();
 	values_.clear();
 	errors_.clear();
+
+	++version_;
 }
 
 /*
@@ -73,6 +75,8 @@ void Data3D::initialise(int xSize, int ySize, int zSize, bool withError)
 	hasError_ = withError;
 	if (hasError_) errors_.initialise(xSize, ySize, zSize);
 	else errors_.clear();
+
+	++version_;
 }
 
 // Initialise to be consistent in size and x axis with supplied object
@@ -85,6 +89,8 @@ void Data3D::initialise(const Data3D& source)
 	hasError_ = source.hasError_;
 	if (hasError_) errors_.initialise(x_.nItems(), y_.nItems(), z_.nItems());
 	else errors_.clear();
+
+	++version_;
 }
 
 // Copy arrays from supplied object
@@ -96,6 +102,8 @@ void Data3D::copyArrays(const Data3D& source)
 	values_ = source.values_;
 	errors_ = source.errors_;
 	hasError_ = source.hasError_;
+
+	++version_;
 }
 
 // Zero values array
@@ -103,6 +111,14 @@ void Data3D::zero()
 {
 	values_ = 0.0;
 	if (hasError_) errors_ = 0.0;
+
+	++version_;
+}
+
+// Return data version
+const int Data3D::version() const
+{
+	return version_;
 }
 
 // Return x value specified
@@ -116,6 +132,9 @@ double& Data3D::xAxis(int index)
 		return dummy;
 	}
 #endif
+
+	++version_;
+
 	return x_[index];
 }
 
@@ -136,6 +155,8 @@ double Data3D::constXAxis(int index) const
 Array<double>& Data3D::xAxis()
 {
 	return x_;
+
+	++version_;
 }
 
 // Return x axis Array (const)
@@ -155,6 +176,8 @@ double& Data3D::yAxis(int index)
 		return dummy;
 	}
 #endif
+	++version_;
+
 	return y_[index];
 }
 
@@ -174,6 +197,8 @@ double Data3D::constYAxis(int index) const
 // Return y Array
 Array<double>& Data3D::yAxis()
 {
+	++version_;
+
 	return y_;
 }
 
@@ -194,6 +219,8 @@ double& Data3D::zAxis(int index)
 		return dummy;
 	}
 #endif
+	++version_;
+
 	return z_[index];
 }
 
@@ -213,6 +240,8 @@ double Data3D::constZAxis(int index) const
 // Return z Array
 Array<double>& Data3D::zAxis()
 {
+	++version_;
+
 	return z_;
 }
 
@@ -245,6 +274,8 @@ double& Data3D::value(int xIndex, int yIndex, int zIndex)
 		return dummy;
 	}
 #endif
+	++version_;
+
 	return values_.at(xIndex, yIndex, zIndex);
 }
 
@@ -274,6 +305,8 @@ double Data3D::constValue(int xIndex, int yIndex, int zIndex) const
 // Return values Array
 Array3D<double>& Data3D::values()
 {
+	++version_;
+
 	return values_;
 }
 
@@ -319,6 +352,8 @@ void Data3D::addErrors()
 	errors_.initialise(x_.nItems(), y_.nItems(), z_.nItems());
 
 	hasError_ = true;
+
+	++version_;
 }
 
 // Return whether the values have associated errors
@@ -356,6 +391,7 @@ double& Data3D::error(int xIndex, int yIndex, int zIndex)
 		return dummy;
 	}
 #endif
+	++version_;
 
 	return errors_.at(xIndex, yIndex, zIndex);
 }
@@ -393,7 +429,9 @@ double Data3D::constError(int xIndex, int yIndex, int zIndex) const
 Array3D<double>& Data3D::errors()
 {
 	if (!hasError_) Messenger::warn("This Data3D (name='%s', tag='%s') has no errors to return, but errors() was requested.\n", name(), objectTag());
-	
+
+	++version_;
+
 	return errors_;
 }
 
@@ -401,7 +439,7 @@ Array3D<double>& Data3D::errors()
 const Array3D<double>& Data3D::constErrors3D() const
 {
 	if (!hasError_) Messenger::warn("This Data3D (name='%s', tag='%s') has no errors to return, but constErrors() was requested.\n", name(), objectTag());
-	
+
 	return errors_;
 }
 
@@ -419,18 +457,24 @@ void Data3D::operator=(const Data3D& source)
 	values_ = source.values_;
 	hasError_ = source.hasError_;
 	errors_ = source.errors_;
+
+	++version_;
 }
 
 // Operator +=
 void Data3D::operator+=(const double delta)
 {
 	for (int n=0; n<values_.linearArraySize(); ++n) values_.linearValue(n) += delta;
+
+	++version_;
 }
 
 // Operator -=
 void Data3D::operator-=(const double delta)
 {
 	for (int n=0; n<values_.linearArraySize(); ++n) values_.linearValue(n) -= delta;
+
+	++version_;
 }
 
 // Operator *=
@@ -438,6 +482,8 @@ void Data3D::operator*=(const double factor)
 {
 	values_ *= factor;
 	if (hasError_) errors_ *= factor;
+
+	++version_;
 }
 
 // Operator /=
@@ -445,6 +491,8 @@ void Data3D::operator/=(const double factor)
 {
 	values_ /= factor;
 	if (hasError_) errors_ /= factor;
+
+	++version_;
 }
 
 /*

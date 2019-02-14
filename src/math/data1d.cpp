@@ -69,6 +69,8 @@ void Data1D::initialise(int size, bool withError)
 	hasError_ = withError;
 	if (hasError_) errors_.initialise(size);
 	else errors_.clear();
+
+	++version_;
 }
 
 // Initialise to be consistent in size and x axis with supplied object
@@ -79,6 +81,8 @@ void Data1D::initialise(const Data1D& source)
 	hasError_ = source.hasError_;
 	if (hasError_) errors_.initialise(x_.nItems());
 	else errors_.clear();
+
+	++version_;
 }
 
 // Copy arrays from supplied object
@@ -88,6 +92,8 @@ void Data1D::copyArrays(const Data1D& source)
 	values_ = source.values_;
 	errors_ = source.errors_;
 	hasError_ = source.hasError_;
+
+	++version_;
 }
 
 // Zero values array
@@ -95,6 +101,14 @@ void Data1D::zero()
 {
 	values_ = 0.0;
 	if (hasError_) errors_ = 0.0;
+
+	++version_;
+}
+
+// Return data version
+const int Data1D::version() const
+{
+	return version_;
 }
 
 // Add new data point
@@ -104,6 +118,8 @@ void Data1D::addPoint(double x, double value)
 	values_.add(value);
 
 	if (hasError_) errors_.add(0.0);
+
+	++version_;
 }
 
 // Add new data point with error
@@ -114,6 +130,8 @@ void Data1D::addPoint(double x, double value, double error)
 
 	if (hasError_) errors_.add(error);
 	else Messenger::warn("Tried to addPoint() with an error to Data1D, but this Data1D () has no error information associated with it.\n", name(), objectTag());
+
+	++version_;
 }
 
 // Return x value specified
@@ -127,6 +145,8 @@ double& Data1D::xAxis(int index)
 		return dummy;
 	}
 #endif
+	++version_;
+
 	return x_[index];
 }
 
@@ -146,6 +166,8 @@ double Data1D::constXAxis(int index) const
 // Return x Array
 Array<double>& Data1D::xAxis()
 {
+	++version_;
+
 	return x_;
 }
 
@@ -166,6 +188,8 @@ double& Data1D::value(int index)
 		return dummy;
 	}
 #endif
+	++version_;
+
 	return values_[index];
 }
 
@@ -185,6 +209,8 @@ double Data1D::constValue(int index) const
 // Return y Array
 Array<double>& Data1D::values()
 {
+	++version_;
+
 	return values_;
 }
 
@@ -231,6 +257,8 @@ void Data1D::addErrors()
 	errors_.initialise(x_.nItems());
 
 	hasError_ = true;
+
+	++version_;
 }
 
 // Return whether the values have associated errors
@@ -248,7 +276,9 @@ double& Data1D::error(int index)
 		Messenger::warn("This Data1D (name='%s', tag='%s') has no errors to return, but error(int) was requested.\n", name(), objectTag());
 		return dummy;
 	}
-	
+
+	++version_;
+
 	return errors_.at(index);
 }
 
@@ -260,7 +290,7 @@ double Data1D::constError(int index) const
 		Messenger::warn("This Data1D (name='%s', tag='%s') has no errors to return, but constError(int) was requested.\n", name(), objectTag());
 		return 0.0;
 	}
-	
+
 	return errors_.constAt(index);
 }
 
@@ -268,7 +298,9 @@ double Data1D::constError(int index) const
 Array<double>& Data1D::errors()
 {
 	if (!hasError_) Messenger::warn("This Data1D (name='%s', tag='%s') has no errors to return, but errors() was requested.\n", name(), objectTag());
-	
+
+	++version_;
+
 	return errors_;
 }
 
@@ -276,7 +308,7 @@ Array<double>& Data1D::errors()
 const Array<double>& Data1D::constErrors() const
 {
 	if (!hasError_) Messenger::warn("This Data1D (name='%s', tag='%s') has no errors to return, but constErrors() was requested.\n", name(), objectTag());
-	
+
 	return errors_;
 }
 
@@ -292,6 +324,8 @@ void Data1D::operator=(const Data1D& source)
 	values_ = source.values_;
 	hasError_ = source.hasError_;
 	errors_ = source.errors_;
+
+	++version_;
 }
 
 // Operator +=
@@ -310,6 +344,8 @@ void Data1D::operator+=(const Data1D& source)
 		Messenger::error("Can't += these Data1D together since they are of differing sizes.\n");
 		return;
 	}
+
+	++version_;
 
 	// Loop over points, summing them into our array
 	for (int n=0; n<x_.nItems(); ++n)
@@ -330,6 +366,8 @@ void Data1D::operator+=(const Data1D& source)
 void Data1D::operator+=(const double delta)
 {
 	for (int n=0; n<values_.nItems(); ++n) values_[n] += delta;
+
+	++version_;
 }
 
 // Operator -=
@@ -350,6 +388,8 @@ void Data1D::operator-=(const Data1D& source)
 		return;
 	}
 
+	++version_;
+
 	// Loop over points, summing them into our array
 	for (int n=0; n<x_.nItems(); ++n)
 	{
@@ -369,6 +409,8 @@ void Data1D::operator-=(const Data1D& source)
 void Data1D::operator-=(const double delta)
 {
 	for (int n=0; n<values_.nItems(); ++n) values_[n] -= delta;
+
+	++version_;
 }
 
 // Operator *=
@@ -376,11 +418,15 @@ void Data1D::operator*=(const double factor)
 {
 	values_ *= factor;
 	if (hasError_) errors_ *= factor;
+
+	++version_;
 }
 
 // Operator /=
 void Data1D::operator/=(const double factor)
 {
+	++version_;
+
 	values_ /= factor;
 	if (hasError_) errors_ /= factor;
 }

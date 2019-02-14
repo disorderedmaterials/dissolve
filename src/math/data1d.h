@@ -23,6 +23,7 @@
 #define DISSOLVE_DATA1D_H
 
 #include "math/plottable.h"
+#include "base/version.h"
 #include "templates/array.h"
 #include "templates/objectstore.h"
 
@@ -55,6 +56,8 @@ class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore
 	bool hasError_;
 	// Errors of values, if present
 	Array<double> errors_;
+	// Data version
+	VersionCounter version_;
 
 	public:
 	// Initialise arrays to specified size
@@ -65,6 +68,8 @@ class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore
 	void copyArrays(const Data1D& source);
 	// Zero values array
 	void zero();
+	// Return data version
+	const int version() const;
 	// Accumulate specified histogram data
 	void accumulate(const Histogram1D& source);
 	// Add new data point

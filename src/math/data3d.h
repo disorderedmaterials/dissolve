@@ -23,6 +23,7 @@
 #define DISSOLVE_DATA3D_H
 
 #include "math/plottable.h"
+#include "base/version.h"
 #include "templates/array3d.h"
 #include "templates/objectstore.h"
 
@@ -59,6 +60,8 @@ class Data3D : public PlottableData, public ListItem<Data3D>, public ObjectStore
 	bool hasError_;
 	// Errors of values, if present
 	Array3D<double> errors_;
+	// Data version
+	VersionCounter version_;
 
 	public:
 	// Initialise arrays to specified size
@@ -71,6 +74,8 @@ class Data3D : public PlottableData, public ListItem<Data3D>, public ObjectStore
 	void zero();
 	// Accumulate specified histogram data
 	void accumulate(const Histogram3D& source);
+	// Return data version
+	const int version() const;
 	// Return x axis value specified
 	double& xAxis(int index);
 	// Return x axis value specified (const)
