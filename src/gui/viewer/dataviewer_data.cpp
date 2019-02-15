@@ -44,10 +44,14 @@ void DataViewer::ownRenderable(Renderable* newRenderable)
 }
 
 // Create Renderable by type and object identifier
-Renderable* DataViewer::createRenderable(Renderable::RenderableType type, const char* objectTag, const char* name)
+Renderable* DataViewer::createRenderable(Renderable::RenderableType type, const char* objectTag, const char* name, const char* title)
 {
 	Renderable* renderable = RenderableFactory::create(type, objectTag);
-	if (renderable) renderable->setName(name);
+	if (renderable)
+	{
+		renderable->setName(name);
+		renderable->setTitle(title ? title : name);
+	}
 
 	return renderable;
 }

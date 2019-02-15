@@ -111,7 +111,7 @@ class DataViewer : public BaseViewer
 	// Own supplied renderable and display it
 	void ownRenderable(Renderable* newRenderable);
 	// Create Renderable by type and object identifier
-	Renderable* createRenderable(Renderable::RenderableType type, const char* objectTag, const char* name);
+	Renderable* createRenderable(Renderable::RenderableType type, const char* objectTag, const char* name, const char* title = NULL);
 	// Remove existing Renderable
 	void removeRenderable(Renderable* data);
 	// Clear all Renderables
