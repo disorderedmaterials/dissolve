@@ -54,23 +54,25 @@ class LineStyle
 
 	public:
 	// Set line style
+	void set(double width, LineStipple::StippleType stipple);
+	// Set line style and colour
 	void set(double width, LineStipple::StippleType stipple, QColor colour);
-	// Set line style
+	// Set line style and colour
 	void set(double width, LineStipple::StippleType stipple, double r, double g, double b, double a = 1.0);
 	// Set line width
 	void setWidth(double width);
 	// Return line width
-	double width();
+	double width() const;
 	// Set line stipple
 	void setStipple(LineStipple::StippleType stipple);
 	// Return line stipple
-	LineStipple::StippleType stipple();
+	LineStipple::StippleType stipple() const;
 	// Set line colour
 	void setColour(QColor colour);
 	// Set line colour
 	void setColour(double r, double g, double b, double a = 1.0);
 	// Return line colour
-	QColor colour();
+	QColor colour() const;
 
 
 	/*

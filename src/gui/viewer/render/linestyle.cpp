@@ -1,6 +1,6 @@
 /*
 	*** Line Style
-	*** src/gui/uchroma/render/linestyle.cpp
+	*** src/gui/viewer/render/linestyle.cpp
 	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
@@ -19,7 +19,7 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/uchroma/render/linestyle.h"
+#include "gui/viewer/render/linestyle.h"
 #include <stdio.h>
 
 // Static members
@@ -57,6 +57,13 @@ void LineStyle::operator=(const LineStyle& source)
  */
 
 // Set line style
+void LineStyle::set(double width, LineStipple::StippleType stipple)
+{
+	width_ = width;
+	stipple_ = stipple;
+}
+
+// Set line style
 void LineStyle::set(double width, LineStipple::StippleType stipple, QColor colour)
 {
 	width_ = width;
@@ -79,7 +86,7 @@ void LineStyle::setWidth(double width)
 }
 
 // Return line width
-double LineStyle::width()
+double LineStyle::width() const
 {
 	return width_;
 }
@@ -91,7 +98,7 @@ void LineStyle::setStipple(LineStipple::StippleType stipple)
 }
 
 // Return line stipple
-LineStipple::StippleType LineStyle::stipple()
+LineStipple::StippleType LineStyle::stipple() const
 {
 	return stipple_;
 }
@@ -109,7 +116,7 @@ void LineStyle::setColour(double r, double g, double b, double a)
 }
 
 // Return line colour
-QColor LineStyle::colour()
+QColor LineStyle::colour() const
 {
 	return colour_;
 }
