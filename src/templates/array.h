@@ -96,7 +96,7 @@ template <class A> class Array : public ListItem< Array<A> >
 
 	private:
 	// Resize array 
-	void resize(int newSize)
+	void resize(int newSize, A* dataToInsert = NULL, int insertionPosition = -1)
 	{
 		// Array large enough already?
 		if ((newSize-size_) <= 0) return;
@@ -123,8 +123,26 @@ template <class A> class Array : public ListItem< Array<A> >
 		}
 
 		// Copy old data into new array
-		if (nItems_ > 0)
+		if (dataToInsert)
 		{
+			if (nItems_ == 0) array_[0] = *dataToInsert;
+			else
+			{
+				int index = 0;
+				// Put existing items back in to the list, inserting our new item along the way
+				for (int n=0; n<nItems_; ++n)
+				{
+					if (n == insertionPosition) array_[index++] = *dataToInsert;
+					array_[index++] = oldItems[n];
+				}
+				if (insertionPosition >= nItems_) array_[nItems_] = *dataToInsert;
+			}
+
+			++nItems_;
+		}
+		else if (nItems_ > 0)
+		{
+			// Copy old items back in to new array
 			for (int n=0; n<nItems_; ++n) array_[n] = oldItems[n];
 			delete[] oldItems;
 		}
@@ -192,13 +210,38 @@ template <class A> class Array : public ListItem< Array<A> >
 	 */
 	public:
 	// Add new element to array
-	void add(A data)
+	A& add(A data)
 	{
 		// Is current array large enough?
 		if (nItems_ == size_) resize(size_+chunkSize_);
 
 		// Store new value
 		array_[nItems_++] = data;
+
+		return array_[nItems_++];
+	}
+	// Insert new element in array
+	A& insert(A data, const int position)
+	{
+#ifdef CHECKS
+		if ((position < 0) || (position >= nItems_))
+		{
+			Messenger::print("OUT_OF_RANGE - Position index %i is out of range in Array::insert() (nItems = %i).\n", position, nItems_);
+			static A dummy;
+			return dummy;
+		}
+#endif
+
+		// Is current array large enough?
+		if (nItems_ == size_) resize(size_+chunkSize_);
+
+		// Working from the top of the array, shift all items after or at 'position' up one place
+		for (int n=nItems_; n>position; --n) array_[n] = array_[n-1];
+
+		array_[position] = data;
+		++nItems_;
+
+		return array_[position];
 	}
 	// Forget data (set nItems to zero) leaving array intact
 	void forgetData()
@@ -223,7 +266,20 @@ template <class A> class Array : public ListItem< Array<A> >
 		}
 		--nItems_;
 	}
+	// Remove the specified index
+	void remove(const int position)
+	{
+#ifdef CHECKS
+		if ((position < 0) || (position >= nItems_))
+		{
+			Messenger::print("OUT_OF_RANGE - Array index %i is out of range in Array::remove() (nItems = %i).\n", position, nItems_);
+			return;
+		}
+#endif
+		for (int n=position; n<nItems_-1; ++n) array_[n] = array_[n+1];
 
+		--nItems_;
+	}
 
 	/*
 	 * Set / Get
@@ -309,6 +365,46 @@ template <class A> class Array : public ListItem< Array<A> >
 			return dummy;
 		}
 		return array_[nItems_-1];
+	}
+
+
+	/*
+	 * Move
+	 */
+	public:
+	// Shift item up in the array (towards higher indices)
+	void shiftUp(int position)
+	{
+#ifdef CHECKS
+		if ((position < 0) || (position >= nItems_))
+		{
+			Messenger::print("OUT_OF_RANGE - Array index %i is out of range in Array::shiftUp() (nItems = %i).\n", position, nItems_);
+			return;
+		}
+#endif
+		// If this item is already last in the list, return now
+		if (position == (nItems_-1)) return;
+
+		A temporary(array_[position+1]);
+		array_[position+1] = array_[position];
+		array_[position] = temporary;
+	}
+	// Shift item down in the array (towards lower indices)
+	void shiftDown(int position)
+	{
+#ifdef CHECKS
+		if ((position < 0) || (position >= nItems_))
+		{
+			Messenger::print("OUT_OF_RANGE - Array index %i is out of range in Array::shiftDown() (nItems = %i).\n", position, nItems_);
+			return;
+		}
+#endif
+		// If this item is already first in the list, return now
+		if (position == 0) return;
+
+		A temporary(array_[position-1]);
+		array_[position-1] = array_[position];
+		array_[position] = temporary;
 	}
 
 
