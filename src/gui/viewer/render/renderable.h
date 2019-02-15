@@ -138,7 +138,7 @@ class Renderable : public ListItem<Renderable>
 	 * Display
 	 */
 	public:
-	// Display types enum
+	// Display Styles enum
 	enum DisplayStyle { LineXYStyle, LineZYStyle, GridStyle, SurfaceStyle, UnlitSurfaceStyle, nDisplayStyles };
 	// Convert text string to DisplayStyle
 	static DisplayStyle displayStyle(const char* s);
@@ -146,42 +146,52 @@ class Renderable : public ListItem<Renderable>
 	static const char* displayStyle(DisplayStyle kwd);
 
 	protected:
-	// Colour definition for display
+	// Colour definition for data
 	ColourDefinition colour_;
 	// Whether data is visible
 	bool visible_;
-	// Abscissa values for display data
-	Array<double> displayAbscissa_;
 	// Display style of data
 	DisplayStyle displayStyle_;
 	// Line style
-	LineStyle displayLineStyle_;
+	LineStyle lineStyle_;
 	// Surface shininess
 	double displaySurfaceShininess_;
 	// Style version (relative to data version)
 	int displayStyleVersion_;
+	// Title to display in legend, if any
+	CharString title_;
 
 	public:
-	// Return local colour definition for display
-	ColourDefinition& colour();
-	// Set whether data is visible
-	void setVisible(bool visible);
-	// Return whether data is visible
-	bool isVisible() const;
-	// Return transformed display abscissa for data
-	const Array<double>& displayAbscissa();
 	// Set display style of data
 	void setDisplayStyle(DisplayStyle style);
 	// Return display style of data
 	DisplayStyle displayStyle() const;
+	// Set basic colour
+	void setColour(int r, int g, int b, int a = 255);
+	// Set basic colour
+	void setColour(ColourDefinition::StockColour stockColour);
+	// Return local colour definition for display
+	ColourDefinition& colour();
+	// Return local colour definition for display (const)
+	const ColourDefinition& constColour() const;
+	// Set whether data is visible
+	void setVisible(bool visible);
+	// Return whether data is visible
+	bool isVisible() const;
 	// Return line style
-	LineStyle& displayLineStyle();
+	LineStyle& lineStyle();
 	// Set surface shininess
 	void setDisplaySurfaceShininess(double shininess);
 	// Return surface shininess
 	double displaySurfaceShininess() const;
 	// Return style version
 	int displayStyleVersion() const;
+	// Set title to display in legend
+	void setTitle(const char* title);
+	// Return title to display in legend, if any
+	const char* title() const;
+	// Return whether a title to display in legend has been set
+	bool hasTitle() const;
 
 
 	/*

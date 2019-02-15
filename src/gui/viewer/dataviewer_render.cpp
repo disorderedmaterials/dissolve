@@ -209,28 +209,23 @@ void DataViewer::render(int xOffset, int yOffset)
 	glEnable(GL_CLIP_PLANE1);
 	glPopMatrix();
 
-	// Render pane data - loop over collection targets
-	for (TargetData* target = view_.collectionTargets(); target != NULL; target = target->next)
+	// Render pane data - loop over renderables
+	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next)
 	{
 		// If this is the collection to highlight, set color to transparent grey and disable material colouring....
-		if (target->collection() == highlightCollection_)
+		if (rend == highlightedRenderable_)
 		{
 			glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
 			glDisable(GL_COLOR_MATERIAL);
 		}
 
 		// Set shininess for collection
-		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, target->collection()->displaySurfaceShininess());
+		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, rend->displaySurfaceShininess());
 
-		// Loop over display primitives in this target...
-		for (TargetPrimitive* primitive = target->displayPrimitives(); primitive != NULL; primitive = primitive->next)
-		{
-			// Make sure the primitive is up to date and send it to GL
-			primitive->updateAndSendPrimitives(view_, groupManager_, renderingOffScreen_, renderingOffScreen_, context());
-		}
+		rend->updateAndSendPrimitives(view_, groupManager_, renderingOffScreen_, renderingOffScreen_, context());
 
 		// Update query
-		if (updateQueryDepth()) setQueryObject(DataViewer::CollectionObject, target->collection()->objectTag());
+		if (updateQueryDepth()) setQueryObject(DataViewer::CollectionObject, rend->objectIdentifier());
 
 		glEnable(GL_COLOR_MATERIAL);
 	}
@@ -263,7 +258,7 @@ void DataViewer::render(int xOffset, int yOffset)
 	CharString indicatorText;
 	if (view_.autoFollowType() == View::AllAutoFollow) indicatorText += "|A| ";
 	else if (view_.autoFollowType() == View::XFollow) indicatorText += "A\\sub{X} ";
-	if (view_.collectionGroupManager().verticalShift() > 0) indicatorText.strcatf("S\\sub{%i}", view_.collectionGroupManager().verticalShift());
+	if (groupManager_.verticalShift() > 0) indicatorText.strcatf("S\\sub{%i}", groupManager_.verticalShift());
 	TextPrimitive indicatorPrimitive;
 	indicatorPrimitive.set(fontInstance_, indicatorText.get(), Vec3<double>(overlaySpacing, view_.viewportMatrix()[3] - overlaySpacing,0.0), TextPrimitive::TopLeftAnchor, Vec3<double>(), Matrix4(), overlayTextSize, false);
 	glColor3d(0.0, 0.0, 0.0);
@@ -275,15 +270,16 @@ void DataViewer::render(int xOffset, int yOffset)
 	 */
 
 	// Create RefList of legend entries
-	RefList<Collection,double> legendEntries;
+	RefList<Renderable,double> legendEntries;
 
 	double maxTextWidth = -1.0;
 	// Render pane data - loop over collection targets
-	for (TargetData* target = view_.collectionTargets(); target != NULL; target = target->next)
+	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next)
 	{
-		if (!target->collection()->visible()) continue;
-		double textWidth = fontInstance_.boundingBoxWidth(target->collection()->name()) * overlayTextSize;
-		legendEntries.add(target->collection(), textWidth);
+		if (!rend->isVisible()) continue;
+
+		double textWidth = fontInstance_.boundingBoxWidth(rend->name()) * overlayTextSize;
+		legendEntries.add(rend, textWidth);
 		if (textWidth > maxTextWidth) maxTextWidth = textWidth;
 	}
 
@@ -294,28 +290,29 @@ void DataViewer::render(int xOffset, int yOffset)
 
 	// Loop over legend entries
 	Vec4<float> colour;
-	RefListIterator<Collection,double> legendEntryIterator(legendEntries);
-	while (Collection* collection = legendEntryIterator.iterate())
+	RefListIterator<Renderable,double> legendEntryIterator(legendEntries);
+	while (Renderable* rend = legendEntryIterator.iterate())
 	{
 		// Grab copy of the relevant colour definition for this Collection
-		ColourDefinition colourDefinition = view_.collectionGroupManager().colourDefinition(collection);
+		ColourDefinition colourDefinition = groupManager_.colourDefinition(rend);
 
 		// Draw line indicator
 		glPushMatrix();
-		glTranslated(-overlaySpacing, (overlayTextSize/2.0) - (collection->displayLineStyle().width()/2.0), 0.0);
+		glTranslated(-overlaySpacing, (overlayTextSize/2.0) - (rend->lineStyle().width()/2.0), 0.0);
 		// -- What are we drawing for the line indicator?
 		if (colourDefinition.colourSource() == ColourDefinition::SingleColourSource)
 		{
-			collection->displayLineStyle().apply();
+			rend->lineStyle().apply();
 			GLfloat lineWidth;
 			glGetFloatv(GL_LINE_WIDTH, &lineWidth);
 			glLineWidth(lineWidth*2.0);
-			colourDefinition.colourScale().applyColour(0.0);
+			colourDefinition.colourScale().colour(0.0, colour);
+			glColor4f(colour.x, colour.y, colour.z, colour.w);
 			glBegin(GL_LINES);
 			glVertex2i(0.0, 0.0);
 			glVertex2i(-legendLineLength, 0.0);
 			glEnd();
-			collection->displayLineStyle().revert();
+			rend->lineStyle().revert();
 		}
 		glPopMatrix();
 
@@ -323,7 +320,7 @@ void DataViewer::render(int xOffset, int yOffset)
 		glPushMatrix();
 		glColor3d(0.0, 0.0, 0.0);
 		glScaled(overlayTextSize, overlayTextSize, overlayTextSize);
-		fontInstance_.font()->Render(collection->name());
+		fontInstance_.font()->Render(rend->name());
 		glPopMatrix();
 
 		// Shift to next position

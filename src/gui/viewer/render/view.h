@@ -45,6 +45,8 @@ class View
 	// Constructor / Destructor
 	View(const List<Renderable>& renderables, FontInstance& fontInstance);
 	~View();
+	// Clear view, resetting to defaults
+	void clear();
 
 
 	/*

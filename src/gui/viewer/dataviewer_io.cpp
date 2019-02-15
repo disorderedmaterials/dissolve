@@ -20,7 +20,7 @@
 */
 
 #include "gui/viewer/dataviewer.hui"
-#include "gui/viewer/render/renderabledata1d.h"
+#include "gui/viewer/render/renderablefactory.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "base/messenger.h"
@@ -456,14 +456,14 @@ bool DataViewer::readRenderableBlock(LineParser& parser, Renderable* renderable,
 				break;
 			// Line style
 			case (DataViewer::LineStyleKeyword):
-				renderable->displayLineStyle().setWidth(parser.argd(1));
+				renderable->lineStyle().setWidth(parser.argd(1));
 				stipple = LineStipple::stippleType(parser.argc(2));
 				if (stipple == LineStipple::nStippleTypes)
 				{
 					Messenger::warn("Unrecognised line stipple type '%s'. Defaulting to 'NoStipple'.\n", parser.argc(2));
 					stipple = LineStipple::NoStipple;
 				}
-				renderable->displayLineStyle().setStipple(stipple);
+				renderable->lineStyle().setStipple(stipple);
 				break;
 			// Surface shininess
 			case (DataViewer::ShininessKeyword):
@@ -652,15 +652,8 @@ bool DataViewer::parseInputBlocks(LineParser& parser)
 				rt = Renderable::renderableType(parser.argc(1));
 				if (rt == Renderable::nRenderableTypes) return Messenger::error("Unknown Renderable type '%s' found.\n", parser.argc(1));
 
-				switch (rt)
-				{
-					case (Renderable::Data1DRenderable):
-						if (!Data1D::findObject(parser.argc(2))) return Messenger::error("Renderable Data1D '%s' not found.\n", parser.argc(2));
-						renderable = new RenderableData1D(*Data1D::findObject(parser.argc(2)));
-						break;
-					default:
-						return Messenger::error("Don't know how to create a Renderable of type '%s.\n", parser.argc(1));
-				}
+				renderable = RenderableFactory::create(rt, parser.argc(2));
+				if (!renderable) return false;
 
 				success = readRenderableBlock(parser, renderable);
 				break;
@@ -685,7 +678,7 @@ bool DataViewer::parseInputBlocks(LineParser& parser)
 bool DataViewer::readSession(LineParser& parser)
 {
 	// Clear existing data
-	startNewSession(false);
+	clear();
 
 	// Parse input blocks
 	bool success = parseInputBlocks(parser);
@@ -764,7 +757,7 @@ bool DataViewer::writeRenderableBlock(LineParser& parser, Renderable* renderable
 
 
 	// Colour Setup
-	ColourDefinition& colourDef = renderable->colour();
+	const ColourDefinition& colourDef = renderable->colour();
 	parser.writeLineF("%s  %s '%s'\n", indent, DataViewer::renderableKeyword(DataViewer::ColourSourceKeyword), ColourDefinition::colourSource(colourDef.colourSource()));
 	ColourScalePoint* csp;
 	QColor colour;
@@ -787,16 +780,18 @@ bool DataViewer::writeRenderableBlock(LineParser& parser, Renderable* renderable
 	value = colourDef.colourScalePointValue(ColourDefinition::HSVGradientSource, 1);
 	parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, DataViewer::renderableKeyword(DataViewer::ColourHSVGradientBKeyword), value, colour.hue(), colour.saturation(), colour.value(), colour.alpha());
 	// -- Custom Gradient
-	for (csp = colourDef.customColourScalePoints(); csp != NULL; csp = csp->next)
+	const Array<ColourScalePoint> customColourScale = colourDef.customColourScalePoints();
+	for (int n=0; n<customColourScale.nItems(); ++n)
 	{
-		parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, DataViewer::renderableKeyword(DataViewer::ColourCustomGradientKeyword), csp->value(), csp->colour().red(), csp->colour().green(), csp->colour().blue(), csp->colour().alpha());
+		const ColourScalePoint& point = customColourScale.at(n);
+		parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, DataViewer::renderableKeyword(DataViewer::ColourCustomGradientKeyword), point.value(), point.colour().red(), point.colour().green(), point.colour().blue(), point.colour().alpha());
 	}
 	// -- Alpha control
 	parser.writeLineF("%s  %s '%s'\n", indent, DataViewer::renderableKeyword(DataViewer::ColourAlphaControlKeyword), ColourDefinition::alphaControl(colourDef.alphaControl()));
 	parser.writeLineF("%s  %s %f\n", indent, DataViewer::renderableKeyword(DataViewer::ColourAlphaFixedKeyword), colourDef.fixedAlpha());
 
 	// Display
-	parser.writeLineF("%s  %s %f '%s'\n", indent, DataViewer::renderableKeyword(DataViewer::LineStyleKeyword), renderable->displayLineStyle().width(), LineStipple::stipple[renderable->displayLineStyle().stipple()].name);
+	parser.writeLineF("%s  %s %f '%s'\n", indent, DataViewer::renderableKeyword(DataViewer::LineStyleKeyword), renderable->lineStyle().width(), LineStipple::stipple[renderable->lineStyle().stipple()].name);
 	parser.writeLineF("%s  %s %f\n", indent, DataViewer::renderableKeyword(DataViewer::ShininessKeyword), renderable->displaySurfaceShininess());
 	parser.writeLineF("%s  %s %s\n", indent, DataViewer::renderableKeyword(DataViewer::StyleKeyword), Renderable::displayStyle(renderable->displayStyle()));
 	parser.writeLineF("%s  %s %s\n", indent, DataViewer::renderableKeyword(DataViewer::VisibleKeyword), stringBool(renderable->isVisible()));

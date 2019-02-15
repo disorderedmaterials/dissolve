@@ -207,38 +207,20 @@ const char* Renderable::groupName() const
  * Display
  */
 
-// Suface Style Keywords
-const char* SurfaceStyleKeywords[] = { "LineXY", "LineZY", "Grid", "Surface", "UnlitSurface" };
+// Display Style Keywords
+const char* DisplayStyleKeywords[] = { "LineXY", "LineZY", "Grid", "Surface", "UnlitSurface" };
 
 // Convert text string to DisplayStyle
 Renderable::DisplayStyle Renderable::displayStyle(const char* s)
 {
-	for (int n=0; n<nDisplayStyles; ++n) if (DissolveSys::sameString(s, SurfaceStyleKeywords[n])) return (Renderable::DisplayStyle) n;
+	for (int n=0; n<nDisplayStyles; ++n) if (DissolveSys::sameString(s, DisplayStyleKeywords[n])) return (Renderable::DisplayStyle) n;
 	return nDisplayStyles;
 }
 
 // Convert DisplayStyle to text string
 const char* Renderable::displayStyle(Renderable::DisplayStyle kwd)
 {
-	return SurfaceStyleKeywords[kwd];
-}
-
-// Return local colour definition for display
-ColourDefinition& Renderable::colour()
-{
-	return colour_;
-}
-
-// Set whether data is visible
-void Renderable::setVisible(bool visible)
-{
-	visible_ = visible;
-}
-
-// Return whether data is visible
-bool Renderable::isVisible() const
-{
-	return visible_;
+	return DisplayStyleKeywords[kwd];
 }
 
 // Set display style of data
@@ -255,10 +237,46 @@ Renderable::DisplayStyle Renderable::displayStyle() const
 	return displayStyle_;
 }
 
-// Return line style
-LineStyle& Renderable::displayLineStyle()
+// Set basic colour
+void Renderable::setColour(int r, int g, int b, int a)
 {
-	return displayLineStyle_;
+	colour_.setColourScalePoint(ColourDefinition::SingleColourSource, QColor(r, g, b, a));
+}
+
+// Set basic colour
+void Renderable::setColour(ColourDefinition::StockColour stockColour)
+{
+	colour_.setColourScalePoint(ColourDefinition::SingleColourSource, ColourDefinition::stockColour(stockColour));
+}
+
+// Return local colour definition for display
+ColourDefinition& Renderable::colour()
+{
+	return colour_;
+}
+
+// Return local colour definition for display (const)
+const ColourDefinition& Renderable::constColour() const
+{
+	return colour_;
+}
+
+// Set whether data is visible
+void Renderable::setVisible(bool visible)
+{
+	visible_ = visible;
+}
+
+// Return whether data is visible
+bool Renderable::isVisible() const
+{
+	return visible_;
+}
+
+// Return line style
+LineStyle& Renderable::lineStyle()
+{
+	return lineStyle_;
 }
 
 // Set surface shininess
@@ -279,6 +297,24 @@ int Renderable::displayStyleVersion() const
 	return displayStyleVersion_;
 }
 
+// Set title to display in legend
+void Renderable::setTitle(const char* title)
+{
+	title_ = title;
+}
+
+// Return title to display in legend, if any
+const char* Renderable::title() const
+{
+	return title_.get();
+}
+
+// Return whether a title to display in legend has been set
+bool Renderable::hasTitle() const
+{
+	return (!title_.isEmpty());
+}
+
 /*
  * Rendering Primitives
  */
@@ -297,7 +333,7 @@ void Renderable::sendToGL()
         else
         {
                 glEnable(GL_LINE_SMOOTH);
-                displayLineStyle().apply();
+                lineStyle().apply();
                 glDisable(GL_LIGHTING);
         }
 

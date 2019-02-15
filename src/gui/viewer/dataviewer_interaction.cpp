@@ -182,7 +182,7 @@ void DataViewer::endInteraction(int mouseX, int mouseY)
 			{
 				highlightedRenderable_ = NULL;
 				Renderable* rend = renderable(clickedObjectInfo);
-				if (rend) setCurrentRenderable(rend);
+				if (rend) currentRenderable_ = rend;
 			}
 			break;
 		case (DataViewer::ZoomInteraction):

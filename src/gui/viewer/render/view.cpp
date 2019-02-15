@@ -31,6 +31,22 @@ const double View::zOffset_ = -10.0;
 // Constructor
 View::View(const List<Renderable>& renderables, FontInstance& fontInstance) : fontInstance_(fontInstance), renderables_(renderables), axes_(*this, fontInstance)
 {
+	clear();
+
+	// Set GL primitive styles
+	interactionPrimitive_.setNoInstances();
+	interactionBoxPrimitive_.setNoInstances();
+	boundingBoxPrimitive_.setNoInstances();
+}
+
+// Destructor
+View::~View()
+{
+}
+
+// Clear view, resetting to defaults
+void View::clear()
+{
 	// Geometry / position
 	xOffset_ = 0;
 	yOffset_ = 0;
@@ -63,16 +79,6 @@ View::View(const List<Renderable>& renderables, FontInstance& fontInstance) : fo
 	titlePointSize_ = 18.0;
 	textZScale_ = -1.0;
 	flatLabelsIn3D_ = false;
-
-	// GL
-	interactionPrimitive_.setNoInstances();
-	interactionBoxPrimitive_.setNoInstances();
-	boundingBoxPrimitive_.setNoInstances();
-}
-
-// Destructor
-View::~View()
-{
 }
 
 /*

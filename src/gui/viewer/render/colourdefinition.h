@@ -73,7 +73,7 @@ class ColourDefinition
 	ColourScalePoint colourSinglePoint_;
 	ColourScalePoint colourRGBGradientAPoint_, colourRGBGradientBPoint_;
 	ColourScalePoint colourHSVGradientAPoint_, colourHSVGradientBPoint_;
-	// Actual ColourScale used by surface
+	// Actual ColourScale used by Renderables
 	ColourScale colourScale_;
 	// Custom ColourScale source
 	ColourScale customColourScale_;

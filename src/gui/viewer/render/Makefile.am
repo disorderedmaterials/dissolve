@@ -12,7 +12,7 @@ librender_la_SOURCES += colourdefinition.cpp colourscale.cpp colourscaledelta.cp
 librender_la_SOURCES += fontinstance.cpp
 librender_la_SOURCES += numberformat.cpp
 librender_la_SOURCES += primitive.cpp primitiveinfo.cpp primitiveinstance.cpp primitivelist.cpp #primitivevertex.cpp
-librender_la_SOURCES += renderable.cpp renderabledata1d.cpp renderablegroup.cpp
+librender_la_SOURCES += renderable.cpp renderabledata1d.cpp renderablefactory.cpp renderablegroup.cpp
 librender_la_SOURCES += textprimitive.cpp
 librender_la_SOURCES += vertexchunk.cpp view.cpp
 
@@ -21,7 +21,7 @@ noinst_HEADERS += colourdefinition.h colourscale.h colourscaledelta.h colourscal
 noinst_HEADERS += fontinstance.h
 noinst_HEADERS += numberformat.h
 noinst_HEADERS += primitive.h primitiveinfo.h primitiveinstance.h primitivelist.h
-noinst_HEADERS += renderable.h renderabledata1d.h renderablegroup.h
+noinst_HEADERS += renderable.h renderabledata1d.h renderablefactory.h renderablegroup.h
 noinst_HEADERS += textprimitive.h
 noinst_HEADERS += vertexchunk.h view.h
 
