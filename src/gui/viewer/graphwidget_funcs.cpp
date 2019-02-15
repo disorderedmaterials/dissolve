@@ -20,12 +20,7 @@
 */
 
 #include "gui/viewer/graphwidget.h"
-#include "gui/viewer/render/fontinstance.h"
-#include "templates/reflist.h"
-#include "templates/variantpointer.h"
-#include <QMessageBox>
-#include <QDragEnterEvent>
-#include <QSettings>
+#include "gui/viewer/render/view.h"
 
 // Constructor
 GraphWidget::GraphWidget(QWidget* parent) : QWidget(parent)
@@ -44,3 +39,33 @@ DataViewer* GraphWidget::dataViewer()
 {
 	return ui_.DataView;
 }
+
+/*
+ * Signals / Slots
+ */
+
+// Update coordinate info
+void GraphWidget::updateCoordinateInfo()
+{
+	View& view = ui_.DataView->view();
+	Vec3<double> rLocal = ui_.DataView->rCurrentLocal();
+	QString text;
+	switch (view.viewType())
+	{
+		case (View::FlatXYView):
+			text.sprintf("x = %e, y = %e", rLocal.x, rLocal.y);
+			break;
+		case (View::FlatXZView):
+			text.sprintf("x = %e, z = %e", rLocal.x, rLocal.z);
+			break;
+		case (View::FlatZYView):
+			text.sprintf("z = %e, y = %e", rLocal.z, rLocal.y);
+			break;
+		default:
+			text.sprintf("x = %e, y = %e, z = %e", rLocal.x, rLocal.y, rLocal.z);
+			break;
+	}
+
+	ui_.CoordinateLabel->setText(text);
+}
+

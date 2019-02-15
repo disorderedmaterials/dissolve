@@ -87,58 +87,14 @@ void BaseViewer::resizeGL(int newwidth, int newheight)
 	postResizeGL();
 }
 
-
-// Return the current height of the drawing area
-GLsizei BaseViewer::contextHeight() const
+// Perform post-initialisation operations
+void BaseViewer::postInitialiseGL()
 {
-	return contextHeight_;
 }
 
-// Return the current width of the drawing area
-GLsizei BaseViewer::contextWidth() const
+// Perform post-resize operations
+void BaseViewer::postResizeGL()
 {
-	return contextWidth_;
-}
-
-// Setup font instance with supplied font
-bool BaseViewer::setupFont(const char* fontFileName)
-{
-	return fontInstance_.setup(fontFileName);
-}
-
-// Return font instance
-FontInstance& BaseViewer::fontInstance()
-{
-	return fontInstance_;
-}
-
-// Check for GL error
-void BaseViewer::checkGlError()
-{
-	GLenum glerr = GL_NO_ERROR;
-	do
-	{
-		switch (glGetError())
-		{
-			case (GL_INVALID_ENUM): Messenger::printVerbose("GLenum argument out of range\n"); break;
-			case (GL_INVALID_VALUE): Messenger::printVerbose("Numeric argument out of range\n"); break;
-			case (GL_INVALID_OPERATION): Messenger::printVerbose("Operation illegal in current state\n"); break;
-			case (GL_STACK_OVERFLOW): Messenger::printVerbose("Command would cause a stack overflow\n"); break;
-			case (GL_STACK_UNDERFLOW): Messenger::printVerbose("Command would cause a stack underflow\n"); break;
-			case (GL_OUT_OF_MEMORY): Messenger::printVerbose("Not enough memory left to execute command\n"); break;
-			case (GL_NO_ERROR): Messenger::printVerbose("No GL error\n"); break;
-			default:
-				Messenger::printVerbose("Unknown GL error?\n");
-				break;
-		}
-	} while (glerr != GL_NO_ERROR);
-}
-
-// Refresh widget / scene
-void BaseViewer::postRedisplay()
-{
-	if ((!valid_) || drawing_) return;
-	update();
 }
 
 // Setup basic GL properties (called each time before renderScene())
@@ -201,10 +157,61 @@ void BaseViewer::setupGL()
 // 	glEnable(GL_CULL_FACE);
 }
 
-// Set whether we are currently rendering offscreen
-void BaseViewer::setRenderingOffScreen(bool b)
+/*
+ * Public Functions
+ */
+
+// Return the current height of the drawing area
+GLsizei BaseViewer::contextHeight() const
 {
-	renderingOffScreen_ = b;
+	return contextHeight_;
+}
+
+// Return the current width of the drawing area
+GLsizei BaseViewer::contextWidth() const
+{
+	return contextWidth_;
+}
+
+// Setup font instance with supplied font
+bool BaseViewer::setupFont(const char* fontFileName)
+{
+	return fontInstance_.setup(fontFileName);
+}
+
+// Return font instance
+FontInstance& BaseViewer::fontInstance()
+{
+	return fontInstance_;
+}
+
+// Check for GL error
+void BaseViewer::checkGlError()
+{
+	GLenum glerr = GL_NO_ERROR;
+	do
+	{
+		switch (glGetError())
+		{
+			case (GL_INVALID_ENUM): Messenger::printVerbose("GLenum argument out of range\n"); break;
+			case (GL_INVALID_VALUE): Messenger::printVerbose("Numeric argument out of range\n"); break;
+			case (GL_INVALID_OPERATION): Messenger::printVerbose("Operation illegal in current state\n"); break;
+			case (GL_STACK_OVERFLOW): Messenger::printVerbose("Command would cause a stack overflow\n"); break;
+			case (GL_STACK_UNDERFLOW): Messenger::printVerbose("Command would cause a stack underflow\n"); break;
+			case (GL_OUT_OF_MEMORY): Messenger::printVerbose("Not enough memory left to execute command\n"); break;
+			case (GL_NO_ERROR): Messenger::printVerbose("No GL error\n"); break;
+			default:
+				Messenger::printVerbose("Unknown GL error?\n");
+				break;
+		}
+	} while (glerr != GL_NO_ERROR);
+}
+
+// Refresh widget / scene
+void BaseViewer::postRedisplay()
+{
+	if ((!valid_) || drawing_) return;
+	update();
 }
 
 // Set line width and text scaling to use

@@ -20,6 +20,7 @@
 */
 
 #include "gui/viewer/render/renderabledata1d.h"
+#include "gui/viewer/render/renderablegroupmanager.h"
 #include "gui/viewer/render/view.h"
 
 // Constructor

@@ -73,7 +73,7 @@ void DataViewer::showDialog(bool checked)
 	QAction* action = (QAction*) sender();
 	if (!action) return;
 
-	showDialog(action->data().toInt());
+// 	showDialog(action->data().toInt());
 }
 
 // Set visibility of Renderable target

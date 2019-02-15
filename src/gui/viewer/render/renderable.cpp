@@ -95,10 +95,11 @@ const char* Renderable::name()
 	return name_.get();
 }
 
-/*
- * Transform / Limits
- */
-
+// Return type of Renderable
+Renderable::RenderableType Renderable::type() const
+{
+	return type_;
+}
 
 /*
  * Transforms

@@ -83,6 +83,8 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	virtual void setupGL();
 	// Render content
 	virtual void render(int xOffset = 0, int yOffset = 0) = 0;
+	// Set line width and text scaling to use
+	void setObjectScaling(double scaling);
 
 	public:
 	// Return the current height of the drawing area
@@ -97,10 +99,6 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	void checkGlError();
 	// Refresh widget / scene
 	void postRedisplay();
-	// Set whether we are currently rendering offscreen
-	void setRenderingOffScreen(bool b);
-	// Set line width and text scaling to use
-	void setObjectScaling(double scaling);
 	// Grab current contents of framebuffer
 	QPixmap frameBuffer();
 	// Render current scene at supplied size
@@ -111,7 +109,6 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 
 	/*
 	 * Mouse / Keyboard Input
-	 * (in viewer_input.cpp)
 	 */
 	protected:
 	// Canvas coordinates of mouse down

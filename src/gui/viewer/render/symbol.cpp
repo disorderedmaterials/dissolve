@@ -1,6 +1,6 @@
 /*
 	*** Symbol Definitions
-	*** src/gui/uchroma/classes/symbol.cpp
+	*** src/gui/viewer/render/symbol.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of uChroma.
@@ -19,7 +19,7 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/uchroma/classes/symbol.h"
+#include "gui/viewer/render/symbol.h"
 
 // Static list of symbols
 SymbolData SymbolData::symbols[] = {

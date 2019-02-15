@@ -24,6 +24,7 @@
 
 #include "gui/viewer/viewer.hui"
 #include "gui/viewer/render/renderable.h"
+#include "gui/viewer/render/renderablegroupmanager.h"
 #include "gui/viewer/render/view.h"
 
 // Forward Declarations
@@ -199,6 +200,8 @@ class DataViewer : public BaseViewer
 	void doubleClickInteraction(int mouseX, int mouseY);
 	// Calculate local coordinate from supplied screen coordinates
 	Vec3<double> screenToLocal(int mouseX, int mouseY);
+	// Return current local coordinate under mouse in 2D view
+	Vec3<double> rCurrentLocal() const;
 
 
 	/*

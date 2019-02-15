@@ -38,7 +38,6 @@ EnergyModuleWidget::EnergyModuleWidget(QWidget* parent, Module* module, Dissolve
 	energyGraph_ = ui.PlotWidget->dataViewer();
 
 	// Start a new, empty session
-	energyGraph_->startNewSession(true);
 	View& view = energyGraph_->view();
 	view.setViewType(View::FlatXYView);
 	view.axes().setTitle(0, "Iteration");
@@ -101,8 +100,6 @@ void EnergyModuleWidget::updateControls()
 	}
 	ui.StableLabel->setPalette(labelPalette);
 
-	// Ensure that any displayed data are up-to-date
-	energyGraph_->refreshReferencedDataSets();
 	energyGraph_->postRedisplay();
 }
 
@@ -155,27 +152,20 @@ void EnergyModuleWidget::setGraphDataTargets(EnergyModule* module)
 
 void EnergyModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 {
-	// Remove any current collections
-	energyGraph_->clearCollections();
+	// Remove any current data
+	energyGraph_->clearRenderables();
 
 	// Get target Configuration
 	currentConfiguration_ = (Configuration*) VariantPointer<Configuration>(ui.TargetCombo->itemData(index));
 	if (!currentConfiguration_) return;
 
-	// Set data targets
-	CharString blockData;
-	blockData.sprintf("Collection 'Total'; Group 'Total'; LineStyle 1.0 Solid; DataSet 'Total'; Source Data1D 'Data1D@%s//%s//Total'; EndDataSet; EndCollection", currentConfiguration_->niceName(), module_->uniqueName());
-	energyGraph_->addCollectionFromBlock(blockData);
-	blockData.sprintf("Collection 'Inter'; Group 'Inter'; LineStyle 1.0 Solid; DataSet 'Inter'; Source Data1D 'Data1D@%s//%s//Inter'; EndDataSet; EndCollection", currentConfiguration_->niceName(), module_->uniqueName());
-	energyGraph_->addCollectionFromBlock(blockData);
-	blockData.sprintf("Collection 'Intra'; Group 'Intra'; LineStyle 1.0 Solid; DataSet 'Intra'; Source Data1D 'Data1D@%s//%s//Intra'; EndDataSet; EndCollection", currentConfiguration_->niceName(), module_->uniqueName());
-	energyGraph_->addCollectionFromBlock(blockData);
-	blockData.sprintf("Collection 'Bond'; Group 'Bond'; LineStyle 1.0 Solid; DataSet 'Bond'; Source Data1D 'Data1D@%s//%s//Bond'; EndDataSet; EndCollection", currentConfiguration_->niceName(), module_->uniqueName());
-	energyGraph_->addCollectionFromBlock(blockData);
-	blockData.sprintf("Collection 'Angle'; Group 'Angle'; LineStyle 1.0 Solid; DataSet 'Angle'; Source Data1D 'Data1D@%s//%s//Angle'; EndDataSet; EndCollection", currentConfiguration_->niceName(), module_->uniqueName());
-	energyGraph_->addCollectionFromBlock(blockData);
-	blockData.sprintf("Collection 'Torsion'; Group 'Torsion'; LineStyle 1.0 Solid; DataSet 'Torsion'; Source Data1D 'Data1D@%s//%s//Torsion'; EndDataSet; EndCollection", currentConfiguration_->niceName(), module_->uniqueName());
-	energyGraph_->addCollectionFromBlock(blockData);
+	// Add data targets
+	energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Total", currentConfiguration_->niceName(), module_->uniqueName()), "Total");
+	energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Inter", currentConfiguration_->niceName(), module_->uniqueName()), "Inter");
+	energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Intra", currentConfiguration_->niceName(), module_->uniqueName()), "Intra");
+	energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Bond", currentConfiguration_->niceName(), module_->uniqueName()), "Bond");
+	energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Angle", currentConfiguration_->niceName(), module_->uniqueName()), "Angle");
+	energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Torsion", currentConfiguration_->niceName(), module_->uniqueName()), "Torsion");
 
 	updateControls();
 }

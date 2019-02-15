@@ -42,14 +42,13 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	FQGraph_ = ui.FQPlotWidget->dataViewer();
 
 	// Start a new, empty session
-	FQGraph_->startNewSession(true);
 	FQGraph_->view().setViewType(View::FlatXYView);
 	FQGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
 	FQGraph_->view().axes().setMax(0, 10.0);
 	FQGraph_->view().axes().setTitle(1, "F(\\it{Q})");
 	FQGraph_->view().axes().setMin(1, -1.0);
 	FQGraph_->view().axes().setMax(1, 1.0);
-	FQGraph_->view().collectionGroupManager().setVerticalShift(CollectionGroupManager::HalfVerticalShift);
+	FQGraph_->groupManager().setVerticalShift(RenderableGroupManager::HalfVerticalShift);
 	FQGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// F(Q) Fitting Graph
@@ -57,14 +56,13 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	FQFitGraph_ = ui.FQFitPlotWidget->dataViewer();
 
 	// Start a new, empty session
-	FQFitGraph_->startNewSession(true);
 	FQFitGraph_->view().setViewType(View::FlatXYView);
 	FQFitGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
 	FQFitGraph_->view().axes().setMax(0, 10.0);
 	FQFitGraph_->view().axes().setTitle(1, "\\sym{Delta}F(\\it{Q})");
 	FQFitGraph_->view().axes().setMin(1, -1.0);
 	FQFitGraph_->view().axes().setMax(1, 1.0);
-	FQFitGraph_->view().collectionGroupManager().setVerticalShift(CollectionGroupManager::HalfVerticalShift);
+	FQFitGraph_->groupManager().setVerticalShift(RenderableGroupManager::HalfVerticalShift);
 	FQFitGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Partial S(Q) Graph
@@ -72,14 +70,13 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	SQGraph_ = ui.SQPlotWidget->dataViewer();
 
 	// Start a new, empty session
-	SQGraph_->startNewSession(true);
 	SQGraph_->view().setViewType(View::FlatXYView);
 	SQGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
 	SQGraph_->view().axes().setMax(0, 10.0);
 	SQGraph_->view().axes().setTitle(1, "S(\\it{Q})");
 	SQGraph_->view().axes().setMin(1, -1.0);
 	SQGraph_->view().axes().setMax(1, 1.0);
-	SQGraph_->view().collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
+	SQGraph_->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
 	SQGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// g(r) Graph
@@ -87,14 +84,13 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	GRGraph_ = ui.GRPlotWidget->dataViewer();
 
 	// Start a new, empty session
-	GRGraph_->startNewSession(true);
 	GRGraph_->view().setViewType(View::FlatXYView);
 	GRGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	GRGraph_->view().axes().setMax(0, 10.0);
 	GRGraph_->view().axes().setTitle(1, "g(r)");
 	GRGraph_->view().axes().setMin(1, -1.0);
 	GRGraph_->view().axes().setMax(1, 1.0);
-	GRGraph_->view().collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
+	GRGraph_->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
 	GRGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// F(r) Graph
@@ -102,14 +98,13 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	FRGraph_ = ui.FRPlotWidget->dataViewer();
 
 	// Start a new, empty session
-	FRGraph_->startNewSession(true);
 	FRGraph_->view().setViewType(View::FlatXYView);
 	FRGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	FRGraph_->view().axes().setMax(0, 10.0);
 	FRGraph_->view().axes().setTitle(1, "F(r)");
 	FRGraph_->view().axes().setMin(1, -1.0);
 	FRGraph_->view().axes().setMax(1, 1.0);
-	FRGraph_->view().collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
+	FRGraph_->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
 	FRGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Phi(r) (Empirical Potentials) Graph
@@ -117,14 +112,13 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	phiRGraph_ = ui.PhiRPlotWidget->dataViewer();
 
 	// Start a new, empty session
-	phiRGraph_->startNewSession(true);
 	phiRGraph_->view().setViewType(View::FlatXYView);
 	phiRGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	phiRGraph_->view().axes().setMax(0, 10.0);
 	phiRGraph_->view().axes().setTitle(1, "\\sym{phi}(\\it{r})");
 	phiRGraph_->view().axes().setMin(1, -1.0);
 	phiRGraph_->view().axes().setMax(1, 1.0);
-	phiRGraph_->view().collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
+	phiRGraph_->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
 	phiRGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// phi(r) Magnitude Graph
@@ -132,7 +126,6 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	phiMagGraph_ = ui.PhiMagPlotWidget->dataViewer();
 
 	// Start a new, empty session
-	phiMagGraph_->startNewSession(true);
 	phiMagGraph_->view().setViewType(View::FlatXYView);
 	phiMagGraph_->view().axes().setTitle(0, "Iteration");
 	phiMagGraph_->view().axes().numberFormat(0).setNDecimals(0);
@@ -147,7 +140,6 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	rFactorGraph_ = ui.RFactorPlotWidget->dataViewer();
 
 	// Start a new, empty session
-	rFactorGraph_->startNewSession(true);
 	rFactorGraph_->view().setViewType(View::FlatXYView);
 	rFactorGraph_->view().axes().setTitle(0, "Iteration");
 	rFactorGraph_->view().axes().numberFormat(0).setNDecimals(0);
@@ -170,16 +162,6 @@ EPSRModuleWidget::~EPSRModuleWidget()
 void EPSRModuleWidget::updateControls()
 {
 	refreshing_ = true;
-
-	// Ensure that any displayed data are up-to-date
-	FQGraph_->refreshReferencedDataSets();
-	FQFitGraph_->refreshReferencedDataSets();
-	SQGraph_->refreshReferencedDataSets();
-	GRGraph_->refreshReferencedDataSets();
-	FRGraph_->refreshReferencedDataSets();
-	phiRGraph_->refreshReferencedDataSets();
-	phiMagGraph_->refreshReferencedDataSets();
-	rFactorGraph_->refreshReferencedDataSets();
 
 	FQGraph_->postRedisplay();
 	FQFitGraph_->postRedisplay();
@@ -252,48 +234,48 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 	CharString blockData;
 
 	// Add total R-Factor before any dataset R-Factors
-	blockData.sprintf("Collection 'Total'; Group 'Total'; DataSet 'Total'; Source Data1D '%s//RFactor'; EndDataSet; EndCollection", module->uniqueName());
-	rFactorGraph_->addCollectionFromBlock(blockData);
+	rFactorGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//RFactor", module->uniqueName()), "TotalRFactor", "Total");
 
 	// Add reference data & calculated data to the FQGraph_, and percentage errors to the rFactorGraph_
 	RefListIterator<Module,bool> targetIterator(module->allTargets());
 	while (Module* targetModule = targetIterator.iterate())
 	{
 		// Reference data
-		blockData.sprintf("Collection '%s Exp'; Group '%s'; LineStyle 1.0 Solid; DataSet 'Reference'; Source Data1D '%s//ReferenceData'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName());
-		FQGraph_->addCollectionFromBlock(blockData);
-
+		Renderable* refData = FQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//ReferenceData", targetModule->uniqueName()), CharString("ExpFQ//%s", targetModule->uniqueName()), CharString("%s Exp", targetModule->uniqueName()));
+		refData->setGroupName(targetModule->uniqueName());
+	
 		// Calculated data from associated module
 		if (DissolveSys::sameString(targetModule->type(), "NeutronSQ"))
 		{
 			// F(Q)
-			blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated'; Source Data1D '%s//WeightedSQ//Total'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName());
-			FQGraph_->addCollectionFromBlock(blockData);
+			Renderable* calcFQ = FQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedSQ//Total", targetModule->uniqueName()), CharString("CalcFQ//%s", targetModule->uniqueName()), CharString("%s Calc", targetModule->uniqueName()));
+			calcFQ->setGroupName(targetModule->uniqueName());
 
 			// F(Q) diff w.r.t. reference
-			blockData.sprintf("Collection '%s Diff'; Group '%s'; LineStyle  1.0 'Dots'; DataSet '%s Error'; Source Data1D '%s//Difference//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
-			FQGraph_->addCollectionFromBlock(blockData);
+			Renderable* diffFQ = FQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Difference//%s", module->uniqueName(), targetModule->uniqueName()), CharString("DiffFQ//%s//%s", module->uniqueName(), targetModule->uniqueName()), CharString("%s Diff", targetModule->uniqueName()));
+			diffFQ->lineStyle().setStipple(LineStipple::DotStipple);
+			diffFQ->setGroupName(targetModule->uniqueName());
 
 			// R-Factor between F(Q) and reference
-			blockData.sprintf("Collection '%s'; Group '%s'; DataSet '%s'; Source Data1D '%s//RFactor//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
-			rFactorGraph_->addCollectionFromBlock(blockData);
+			Renderable* rFactor = rFactorGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//RFactor//%s", module->uniqueName(), targetModule->uniqueName()), CharString("RFactor//%s//%s", module->uniqueName(), targetModule->uniqueName()), targetModule->uniqueName());
+			rFactor->setGroupName(targetModule->uniqueName());
 
 			// Reference F(r) (from direct FT of input data)
-			blockData.sprintf("Collection '%s Exp'; Group '%s'; LineStyle 1.0 Solid; DataSet 'Reference'; Source Data1D '%s//ReferenceDataFT'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName());
-			FRGraph_->addCollectionFromBlock(blockData);
+			Renderable* expFR = FRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//ReferenceDataFT", targetModule->uniqueName()), CharString("ExpFR//%s", targetModule->uniqueName()), CharString("%s Exp", targetModule->uniqueName()));
+			expFR->setGroupName(targetModule->uniqueName());
 
 			// Simulated F(r) (from FT of the calculated F(Q))
-			blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated'; Source Data1D '%s//SimulatedFR//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
-			FRGraph_->addCollectionFromBlock(blockData);
+			Renderable* calcFR = FRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//SimulatedFR//%s", module->uniqueName(), targetModule->uniqueName()), CharString("CalcFR//%s//%s", module->uniqueName(), targetModule->uniqueName()), CharString("%s Calc", targetModule->uniqueName()));
+			calcFR->setGroupName(targetModule->uniqueName());
 		}
 
 		// Delta F(Q) and fit
-		blockData.sprintf("Collection '%s Delta'; Group '%s'; DataSet '%s Delta'; Source Data1D '%s//DeltaFQ//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
-		FQFitGraph_->addCollectionFromBlock(blockData);
+		Renderable* deltaFQ = FQFitGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//DeltaFQ//%s", module->uniqueName(), targetModule->uniqueName()), CharString("DeltaFQ//%s//%s", module->uniqueName(), targetModule->uniqueName()), CharString("%s Delta", targetModule->uniqueName()));
+		deltaFQ->setGroupName(targetModule->uniqueName());
 
-		blockData.sprintf("Collection '%s Fit'; Group '%s'; LineStyle  1.0 'Quarter Dash'; DataSet '%s Fit'; Source Data1D '%s//DeltaFQFit//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
-		FQFitGraph_->addCollectionFromBlock(blockData);
-
+		Renderable* deltaFQFit = FQFitGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//DeltaFQFit//%s", module->uniqueName(), targetModule->uniqueName()), CharString("FitFQ//%s//%s", module->uniqueName(), targetModule->uniqueName()), CharString("%s Fit", targetModule->uniqueName()));
+		deltaFQFit->lineStyle().setStipple(LineStipple::QuarterDashStipple);
+		deltaFQFit->setGroupName(targetModule->uniqueName());
 	}
 
 	// Loop over groups
@@ -314,28 +296,31 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 				 */
 
 				// Experimentally-determined unweighted partial
-				blockData.sprintf("Collection '%s Exp'; Group '%s'; DataSet 'Experimental %s'; Source Data1D '%s//GeneratedSQ//%s//%s-%s'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
-				SQGraph_->addCollectionFromBlock(blockData);
+				Renderable* expSQ = SQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//GeneratedSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("ExpSQ//%s", id.get()), CharString("%s Exp", id.get()));
+				expSQ->setGroupName(id.get());
 
 				// Calculated / summed partial
-				blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated %s'; Source Data1D '%s//UnweightedSQ//%s//%s-%s'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
-				SQGraph_->addCollectionFromBlock(blockData);
+				Renderable* calcSQ = SQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("CalcSQ//%s", id.get()), CharString("%s Calc", id.get()));
+				calcSQ->lineStyle().setStipple(LineStipple::QuarterDashStipple);
+				calcSQ->setGroupName(id.get());
 
 				// Deltas
-				blockData.sprintf("Collection '%s Diff'; Group '%s'; LineStyle 1.0 'Dots'; DataSet 'Delta %s'; Source Data1D '%s//DeltaSQ//%s//%s-%s'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
-				SQGraph_->addCollectionFromBlock(blockData);
+				Renderable* deltaSQ = SQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//DeltaSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("DeltaSQ//%s", id.get()), CharString("%s Delta", id.get()));
+				deltaSQ->lineStyle().setStipple(LineStipple::DotStipple);
+				deltaSQ->setGroupName(id.get());
 
 				/*
 				 * Partial RDFs
 				 */
 
 				// Experimentally-determined unweighted partial
-				blockData.sprintf("Collection '%s Exp'; Group '%s'; DataSet 'Experimental %s'; Source Data1D '%s//GeneratedGR//%s//%s-%s'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
-				GRGraph_->addCollectionFromBlock(blockData);
+				Renderable* expGR = GRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//GeneratedGR//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("ExpGR//%s", id.get()), CharString("%s Exp", id.get()));
+				expGR->setGroupName(id.get());
 
-				// Calculated partial
-				blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated %s'; Source Data1D '%s//UnweightedGR//%s//%s-%s//Full'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
-				GRGraph_->addCollectionFromBlock(blockData);
+				// Calculated / summed partial
+				Renderable* calcGR = GRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s//%s-%s//Full", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("CalcGR//%s", id.get()), CharString("%s Calc", id.get()));
+				calcGR->lineStyle().setStipple(LineStipple::QuarterDashStipple);
+				calcGR->setGroupName(id.get());
 			}
 		}
 	}
@@ -349,13 +334,12 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 			CharString id("%s-%s", at1->name(), at2->name());
 
 			// Generated potential
-			blockData.sprintf("Collection '%s phi(r)'; Group '%s'; DataSet '%s phi(r)'; Source Data1D 'PairPotential//%s-%s//Additional'; EndDataSet; EndCollection", id.get(), id.get(), id.get(),  at1->name(), at2->name());
-			phiRGraph_->addCollectionFromBlock(blockData);
+			Renderable* phi = phiRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("PairPotential//%s-%s//Additional", id.get()), CharString("PhiR//%s", id.get()), CharString("%s", id.get()));
+			phi->setGroupName(id.get());
 		}
 	}
 
 	// Add phi magnitude data
-	blockData.sprintf("Collection 'EPMag'; Group 'EPMag'; DataSet 'EPMag'; Source Data1D '%s//EPMag'; EndDataSet; EndCollection", module_->uniqueName());
-	phiMagGraph_->addCollectionFromBlock(blockData);
+	phiMagGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//EPMag", module_->uniqueName()), "EReq", "EReq");
 }
 

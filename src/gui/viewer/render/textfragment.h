@@ -1,6 +1,6 @@
 /*
 	*** Text Fragment
-	*** src/gui/uchroma/render/textfragment.h
+	*** src/gui/viewer/render/textfragment.h
 	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_UCHROMATEXTFRAGMENT_H
-#define DISSOLVE_UCHROMATEXTFRAGMENT_H
+#ifndef DISSOLVE_TEXTFRAGMENT_H
+#define DISSOLVE_TEXTFRAGMENT_H
 
 #include "templates/vector3.h"
 #include "templates/list.h"

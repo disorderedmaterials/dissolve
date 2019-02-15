@@ -36,9 +36,6 @@ CalibrationModuleWidget::CalibrationModuleWidget(QWidget* parent, Module* module
 	// Grab our DataViewer widget
 	dataView_ = ui.PlotWidget->dataViewer();
 
-	// Start a new, empty session
-	dataView_->startNewSession(true);
-
 	// Set up the view pane
 	View& view = dataView_->view();
 	view.setViewType(View::FlatXYView);
@@ -58,9 +55,6 @@ CalibrationModuleWidget::~CalibrationModuleWidget()
 // Update controls within widget
 void CalibrationModuleWidget::updateControls()
 {
-	// Ensure that any displayed data are up-to-date
-	dataView_->refreshReferencedDataSets();
-
 	dataView_->postRedisplay();
 }
 

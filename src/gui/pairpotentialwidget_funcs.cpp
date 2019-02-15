@@ -82,27 +82,23 @@ void PairPotentialWidget::initialiseControls(PairPotential* pp, bool addDefaults
 	// Add data targets
 	if (pp && addDefaults)
 	{
-		// Start a new, empty session
-		dataView_->startNewSession(true);
-
 		// Set up the view pane
 		View& view = dataView_->view();
 		view.setViewType(View::FlatXYView);
 		view.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 		view.axes().setMax(0, pp ? pp->range() : 15.0);
 		view.axes().setTitle(1, "U(r), kJ mol\\sup{-1}");
-		view.axes().setMin(1, -5.0);
-		view.axes().setMax(1, 10.0);
+		view.axes().setRange(1, -5.0, 10.0);
 
 		setDataTargets(pp);
 	}
 
 	refreshing_ = true;
 
-	ui.FullEnergyCheck->setChecked(dataView_->collectionVisible("Full"));
-	ui.OriginalEnergyCheck->setChecked(dataView_->collectionVisible("Original"));
-	ui.AdditionalEnergyCheck->setChecked(dataView_->collectionVisible("Additional"));
-	ui.FullForceCheck->setChecked(dataView_->collectionVisible("Force"));
+	ui.FullEnergyCheck->setChecked(dataView_->isRenderableVisible("Full"));
+	ui.OriginalEnergyCheck->setChecked(dataView_->isRenderableVisible("Original"));
+	ui.AdditionalEnergyCheck->setChecked(dataView_->isRenderableVisible("Additional"));
+	ui.FullForceCheck->setChecked(dataView_->isRenderableVisible("Force"));
 
 	refreshing_ = false;
 }
@@ -110,28 +106,24 @@ void PairPotentialWidget::initialiseControls(PairPotential* pp, bool addDefaults
 // Set data targets for specified PairPotential in UChromaView
 void PairPotentialWidget::setDataTargets(PairPotential* pp)
 {
-	// Clear any old collections
-	dataView_->clearCollections();
+	// Clear any old renderables
+	dataView_->clearRenderables();
 
 	if (pp)
 	{
-		CharString blockData;
+		Renderable* fullPotential = dataView_->createRenderable(Renderable::Data1DRenderable, pp->uFull().objectTag(), "Full");
+		fullPotential->setColour(ColourDefinition::BlackStockColour);
 
-		// Full potential
-		blockData.sprintf("Collection 'Full'; ColourSingle 0 0 0 255; LineStyle 1.0 Solid; DataSet 'Full'; Source Data1D %s; EndDataSet; EndCollection", pp->uFull().objectTag());
-		dataView_->addCollectionFromBlock(blockData);
+		Renderable* originalPotential = dataView_->createRenderable(Renderable::Data1DRenderable, pp->uOriginal().objectTag(), "Original");
+		originalPotential->setColour(ColourDefinition::RedStockColour);
+		originalPotential->lineStyle().set(1.0, LineStipple::HalfDashStipple);
 
-		// Original potential
-		blockData.sprintf("Collection 'Original'; ColourSingle 200 0 0 255; LineStyle 1.0 'Half Dash'; DataSet 'Full'; Source Data1D %s; EndDataSet; EndCollection", pp->uOriginal().objectTag());
-		dataView_->addCollectionFromBlock(blockData);
+		Renderable* additionalPotential = dataView_->createRenderable(Renderable::Data1DRenderable, pp->uAdditional().objectTag(), "Additional");
+		additionalPotential->setColour(ColourDefinition::BlueStockColour);
+		additionalPotential->lineStyle().set(1.0, LineStipple::DotStipple);
 
-		// Additional potential
-		blockData.sprintf("Collection 'Additional'; ColourSingle 0 0 200 255; LineStyle 1.0 'Dots'; DataSet 'Full'; Source Data1D %s; EndDataSet; EndCollection", pp->uAdditional().objectTag());
-		dataView_->addCollectionFromBlock(blockData);
-
-		// Full potential
-		blockData.sprintf("Collection 'Force'; Visible False; ColourSingle 0 200 0 255; LineStyle 1.0 Solid; DataSet 'Full'; Source Data1D %s; EndDataSet; EndCollection", pp->dUFull().objectTag());
-		dataView_->addCollectionFromBlock(blockData);
+		Renderable* dUFull = dataView_->createRenderable(Renderable::Data1DRenderable, pp->dUFull().objectTag(), "Force");
+		dUFull->setColour(ColourDefinition::GreenStockColour);
 	}
 }
 
@@ -149,8 +141,7 @@ void PairPotentialWidget::updateControls()
 {
 	refreshing_ = true;
 
-	// Ensure that any displayed data are up-to-date
-	dataView_->refreshReferencedDataSets();
+	// Refresh the graph
 	dataView_->postRedisplay();
 
 	// Compare current pair potential being displayed with that retrieved from the main list
@@ -167,7 +158,6 @@ void PairPotentialWidget::updateControls()
 
 	refreshing_ = false;
 }
-
 
 // Disable sensitive controls within widget, ready for main code to run
 void PairPotentialWidget::disableSensitiveControls()
@@ -223,10 +213,7 @@ bool PairPotentialWidget::readState(LineParser& parser)
 	// Initialise window
 	initialiseWindow(lastPairPotential_);
 
-	// Reset UChromaView
-	dataView_->startNewSession(false);
-
-	// We will read the UChroma data from the file, unless the PairPotential could not be found
+	// We will read the DataViewer data from the file, unless the PairPotential could not be found
 	if (!lastPairPotential_)
 	{
 		initialiseControls(NULL, false);
@@ -283,22 +270,22 @@ void PairPotentialWidget::on_NextPotentialButton_clicked(bool checked)
 
 void PairPotentialWidget::on_FullEnergyCheck_clicked(bool checked)
 {
-	dataView_->setCollectionVisible("Full", checked);
+	dataView_->setRenderableVisible("Full", checked);
 }
 
 void PairPotentialWidget::on_OriginalEnergyCheck_clicked(bool checked)
 {
-	dataView_->setCollectionVisible("Original", checked);
+	dataView_->setRenderableVisible("Original", checked);
 }
 
 void PairPotentialWidget::on_AdditionalEnergyCheck_clicked(bool checked)
 {
-	dataView_->setCollectionVisible("Additional", checked);
+	dataView_->setRenderableVisible("Additional", checked);
 }
 
 void PairPotentialWidget::on_FullForceCheck_clicked(bool checked)
 {
-	dataView_->setCollectionVisible("Force", checked);
+	dataView_->setRenderableVisible("Force", checked);
 }
 
 void PairPotentialWidget::on_ResetGraphButton_clicked(bool checked)
@@ -330,7 +317,6 @@ void PairPotentialWidget::on_ZeroUAdditionalButton_clicked(bool checked)
 	{
 		lastPairPotential_->resetUAdditional();
 
-		dataView_->refreshReferencedDataSets();
 		dataView_->postRedisplay();
 	}
 }

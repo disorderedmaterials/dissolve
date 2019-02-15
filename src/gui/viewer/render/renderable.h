@@ -79,7 +79,7 @@ class Renderable : public ListItem<Renderable>
 
 
 	/*
-	 * Transform / Limits
+	 * Transform
 	 */
 	protected:
 	// Equation transformers for each axis

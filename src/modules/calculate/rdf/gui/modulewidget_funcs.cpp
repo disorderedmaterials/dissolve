@@ -32,7 +32,6 @@ CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget* parent, CalculateRDF
 	// Set up RDF graph
 	rdfGraph_ = ui.RDFPlotWidget->dataViewer();
 
-	rdfGraph_->startNewSession(true);
 	View& view = rdfGraph_->view();
 	view.setViewType(View::FlatXYView);
 	view.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
@@ -40,7 +39,7 @@ CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget* parent, CalculateRDF
 	view.axes().setTitle(1, "g(r)");
 	view.axes().setMin(1, 0.0);
 	view.axes().setMax(1, 1.0);
-	view.collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
+	rdfGraph_->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
 	view.setAutoFollowType(View::AllAutoFollow);
 
 	setGraphDataTargets(module_);
@@ -51,8 +50,6 @@ CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget* parent, CalculateRDF
 // Update controls within widget
 void CalculateRDFModuleWidget::updateControls()
 {
-	rdfGraph_->refreshReferencedDataSets();
-
 	rdfGraph_->postRedisplay();
 }
 
@@ -95,18 +92,15 @@ bool CalculateRDFModuleWidget::readState(LineParser& parser)
 // Set data targets in graphs
 void CalculateRDFModuleWidget::setGraphDataTargets(CalculateRDFModule* module)
 {
-	// Remove any current collections
-	rdfGraph_->clearCollections();
+	// Remove any current data
+	rdfGraph_->clearRenderables();
 
-	printf("LKjlkjklj\n");
 	// Loop over Configuration targets in Module
 	RefListIterator<Configuration,bool> configIterator(module_->targetConfigurations());
 	while (Configuration* cfg = configIterator.iterate())
 	{
 		// Calculated RDF
-		CharString blockData;
-		blockData.sprintf("Collection '%s'; Group '%s'; DataSet '%s (%s)'; Source Data1D '%s//Process1D//%s//%s'; EndDataSet; EndCollection", cfg->name(), cfg->name(), module_->keywords().asString("Name"), cfg->name(), module_->uniqueName(), cfg->niceName(), module_->rdfName());
-		printf("BLOCK = [%s]\n", blockData.get());
-		rdfGraph_->addCollectionFromBlock(blockData);
+		Renderable* rdf = rdfGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//%s", module_->uniqueName(), cfg->niceName(), module_->rdfName()), CharString("RDF//%s", cfg->niceName()), cfg->niceName());
+		rdf->setColour(ColourDefinition::BlackStockColour);
 	}
 }

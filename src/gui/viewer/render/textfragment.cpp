@@ -1,6 +1,6 @@
 /*
 	*** Text Fragment
-	*** src/gui/uchroma/render/textfragment.cpp
+	*** src/gui/viewer/render/textfragment.cpp
 	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
@@ -19,7 +19,7 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/uchroma/render/textfragment.h"
+#include "gui/viewer/render/textfragment.h"
 
 // Constructor
 TextFragment::TextFragment() : ListItem<TextFragment>()

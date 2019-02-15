@@ -38,21 +38,18 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, Dissolve
 
 	refreshing_ = true;
 
-	ViewPane* viewPane;
-
 	// Data Graph
 
 	dataGraph_ = ui.DataPlotWidget->dataViewer();
 
 	// Start a new, empty session
-	dataGraph_->startNewSession(true);
 	dataGraph_->view().setViewType(View::FlatXYView);
 	dataGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
 	dataGraph_->view().axes().setMax(0, 10.0);
 	dataGraph_->view().axes().setTitle(1, "S(Q)");
 	dataGraph_->view().axes().setMin(1, -1.0);
 	dataGraph_->view().axes().setMax(1, 1.0);
-	dataGraph_->view().collectionGroupManager().setVerticalShift(CollectionGroupManager::HalfVerticalShift);
+	dataGraph_->groupManager().setVerticalShift(RenderableGroupManager::HalfVerticalShift);
 	dataGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Partial S(Q) Graph
@@ -60,14 +57,13 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, Dissolve
 	partialSQGraph_ = ui.PartialSQPlotWidget->dataViewer();
 
 	// Start a new, empty session
-	partialSQGraph_->startNewSession(true);
 	partialSQGraph_->view().setViewType(View::FlatXYView);
 	partialSQGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
 	partialSQGraph_->view().axes().setMax(0, 10.0);
 	partialSQGraph_->view().axes().setTitle(1, "S(Q)");
 	partialSQGraph_->view().axes().setMin(1, -1.0);
 	partialSQGraph_->view().axes().setMax(1, 1.0);
-	partialSQGraph_->view().collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
+	partialSQGraph_->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
 	partialSQGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Partial g(r) Graph
@@ -75,14 +71,13 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, Dissolve
 	partialGRGraph_ = ui.PartialGRPlotWidget->dataViewer();
 
 	// Start a new, empty session
-	partialGRGraph_->startNewSession(true);
 	partialGRGraph_->view().setViewType(View::FlatXYView);
 	partialGRGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	partialGRGraph_->view().axes().setMax(0, 10.0);
 	partialGRGraph_->view().axes().setTitle(1, "g(r)");
 	partialGRGraph_->view().axes().setMin(1, -1.0);
 	partialGRGraph_->view().axes().setMax(1, 1.0);
-	partialGRGraph_->view().collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
+	partialGRGraph_->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
 	partialGRGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Delta phi(r) Graph
@@ -90,22 +85,20 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, Dissolve
 	deltaPhiRGraph_ = ui.DeltaPhiRPlotWidget->dataViewer();
 
 	// Start a new, empty session
-	deltaPhiRGraph_->startNewSession(true);
 	deltaPhiRGraph_->view().setViewType(View::FlatXYView);
 	deltaPhiRGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	deltaPhiRGraph_->view().axes().setMax(0, 10.0);
 	deltaPhiRGraph_->view().axes().setTitle(1, "\\sym{Delta}g(r), \\sym{Delta}\\sym{phi}(\\it{r})");
 	deltaPhiRGraph_->view().axes().setMin(1, -1.0);
 	deltaPhiRGraph_->view().axes().setMax(1, 1.0);
-	deltaPhiRGraph_->view().collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
+	deltaPhiRGraph_->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
 	deltaPhiRGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
-	// Delta phi(r) Graph
+	// Phi(r) Magnitude Graph
 
 	phiMagGraph_ = ui.PhiMagPlotWidget->dataViewer();
 
 	// Start a new, empty session
-	phiMagGraph_->startNewSession(true);
 	phiMagGraph_->view().setViewType(View::FlatXYView);
 	phiMagGraph_->view().axes().setTitle(0, "Iteration");
 	phiMagGraph_->view().axes().numberFormat(0).setNDecimals(0);
@@ -120,7 +113,6 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, Dissolve
 	errorsGraph_ = ui.ErrorsPlotWidget->dataViewer();
 
 	// Start a new, empty session
-	errorsGraph_->startNewSession(true);
 	errorsGraph_->view().setViewType(View::FlatXYView);
 	errorsGraph_->view().axes().setTitle(0, "Iteration");
 	errorsGraph_->view().axes().numberFormat(0).setNDecimals(0);
@@ -149,14 +141,6 @@ void RefineModuleWidget::updateControls()
 	ListIterator<PairPotential> ppIterator(dissolve_.pairPotentials());
 	while (PairPotential* pp = ppIterator.iterate()) phiLevel += Integrator::absTrapezoid(pp->uAdditional());
 	ui.PhiLevelSpin->setValue(phiLevel);
-
-	// Ensure that any displayed data are up-to-date
-	dataGraph_->refreshReferencedDataSets();
-	partialSQGraph_->refreshReferencedDataSets();
-	partialGRGraph_->refreshReferencedDataSets();
-	deltaPhiRGraph_->refreshReferencedDataSets();
-	phiMagGraph_->refreshReferencedDataSets();
-	errorsGraph_->refreshReferencedDataSets();
 
 	dataGraph_->postRedisplay();
 	partialSQGraph_->postRedisplay();
@@ -231,20 +215,23 @@ void RefineModuleWidget::setGraphDataTargets(RefineModule* module)
 		while (Module* targetModule = targetIterator.iterate())
 		{
 			// Reference data
-			blockData.sprintf("Collection '%s Exp'; Group '%s'; LineStyle 1.0 Solid; DataSet 'Reference'; Source Data1D '%s//ReferenceData'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName());
-			dataGraph_->addCollectionFromBlock(blockData);
+			Renderable* refData = dataGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//ReferenceData", targetModule->uniqueName()), CharString("ExpFQ//%s", targetModule->uniqueName()), CharString("%s Exp", targetModule->uniqueName()));
+			refData->setGroupName(targetModule->uniqueName());
 
 			// Calculated data from associated module
 			if (DissolveSys::sameString(targetModule->type(), "NeutronSQ"))
 			{
-				blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated'; Source Data1D '%s//WeightedSQ//Total'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName());
-				dataGraph_->addCollectionFromBlock(blockData);
+				// Calculated F(Q)
+				Renderable* calcFQ = dataGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedSQ//Total", targetModule->uniqueName()), CharString("CalcFQ//%s", targetModule->uniqueName()), CharString("%s Calc", targetModule->uniqueName()));
+				calcFQ->setGroupName(targetModule->uniqueName());
 
-				blockData.sprintf("Collection '%s Diff'; Group '%s'; LineStyle  1.0 'Dots'; DataSet '%s Error'; Source Data1D '%s//Difference//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
-				dataGraph_->addCollectionFromBlock(blockData);
+				// F(Q) diff w.r.t. reference
+				Renderable* diffFQ = dataGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Difference//%s", module->uniqueName(), targetModule->uniqueName()), CharString("DiffFQ//%s//%s", module->uniqueName(), targetModule->uniqueName()), CharString("%s Diff", targetModule->uniqueName()));
+				diffFQ->lineStyle().setStipple(LineStipple::DotStipple);
+				diffFQ->setGroupName(targetModule->uniqueName());
 
-				blockData.sprintf("Collection '%s Calc'; Group '%s'; DataSet '%s Error'; Source Data1D '%s//Error//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
-				errorsGraph_->addCollectionFromBlock(blockData);
+				Renderable* error = errorsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Error//%s", module->uniqueName(), targetModule->uniqueName()), CharString("Error//%s//%s", module->uniqueName(), targetModule->uniqueName()), targetModule->uniqueName());
+				error->setGroupName(targetModule->uniqueName());
 			}
 		}
 
@@ -262,50 +249,51 @@ void RefineModuleWidget::setGraphDataTargets(RefineModule* module)
 				 */
 
 				// Experimentally-determined unweighted partial
-				blockData.sprintf("Collection '%s Exp'; Group '%s'; DataSet 'Experimental %s'; Source Data1D '%s//GeneratedSQ//%s//%s-%s'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
-				partialSQGraph_->addCollectionFromBlock(blockData);
+				Renderable* expSQ = partialSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//GeneratedSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("ExpSQ//%s", id.get()), CharString("%s Exp", id.get()));
+				expSQ->setGroupName(id.get());
 
 				// Calculated / summed partial
-				blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated %s'; Source Data1D '%s//UnweightedSQ//%s//%s-%s'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
-				partialSQGraph_->addCollectionFromBlock(blockData);
+				Renderable* calcSQ = partialSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("CalcSQ//%s", id.get()), CharString("%s Calc", id.get()));
+				calcSQ->lineStyle().setStipple(LineStipple::QuarterDashStipple);
+				calcSQ->setGroupName(id.get());
 
 				// Deltas
-				blockData.sprintf("Collection '%s Diff'; Group '%s'; LineStyle 1.0 'Dots'; DataSet 'Delta %s'; Source Data1D '%s//DeltaSQ//%s//%s-%s'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
-				partialSQGraph_->addCollectionFromBlock(blockData);
+				Renderable* deltaSQ = partialSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//DeltaSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("DeltaSQ//%s", id.get()), CharString("%s Delta", id.get()));
+				deltaSQ->lineStyle().setStipple(LineStipple::DotStipple);
+				deltaSQ->setGroupName(id.get());
 
 				/*
 				 * Partial RDFs
 				 */
 
 				// Experimentally-determined unweighted partial
-				blockData.sprintf("Collection '%s Exp'; Group '%s'; DataSet 'Experimental %s'; Source Data1D '%s//GeneratedGR//%s//%s-%s'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
-				partialGRGraph_->addCollectionFromBlock(blockData);
+				Renderable* expGR = partialGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//GeneratedGR//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("ExpGR//%s", id.get()), CharString("%s Exp", id.get()));
+				expGR->setGroupName(id.get());
 
-				// Calculated partial
-				blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated %s'; Source Data1D '%s//UnweightedGR//%s//%s-%s//Full'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
-				partialGRGraph_->addCollectionFromBlock(blockData);
+				// Calculated / summed partial
+				Renderable* calcGR = partialGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s//%s-%s//Full", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("CalcGR//%s", id.get()), CharString("%s Calc", id.get()));
+				calcGR->lineStyle().setStipple(LineStipple::QuarterDashStipple);
+				calcGR->setGroupName(id.get());
 
 				/*
 				 * Phi(r)
 				 */
 
 				// Generated potential
-				blockData.sprintf("Collection '%s dphi(r)'; Group '%s'; DataSet '%s dphi(r)'; Source Data1D '%s//DeltaPhiR//%s//%s-%s'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
-				deltaPhiRGraph_->addCollectionFromBlock(blockData);
+				Renderable* deltaPhiR = deltaPhiRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//DeltaPhiR//%s//%s-%s//Full", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("DeltaPhiR//%s//%s-%s", group->name(), at1->name(), at2->name()), CharString("%s dphi(r)", id.get()));
 
 				// Inversion (delta g(r), FT etc.)
-				blockData.sprintf("Collection '%s dg(r)'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet '%s Delta g(r)'; Source Data1D '%s//Inversion//%s//%s-%s'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
-				deltaPhiRGraph_->addCollectionFromBlock(blockData);
+				Renderable* inversion = deltaPhiRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Inversion//%s//%s-%s//Full", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("Inversion//%s//%s-%s", group->name(), at1->name(), at2->name()), CharString("%s dFull(r)", id.get()));
+				inversion->lineStyle().setStipple(LineStipple::QuarterDashStipple);
 
 				// Delta g(r)
-				blockData.sprintf("Collection '%s dBound(r)'; Group '%s'; LineStyle 1.0 'Dots'; DataSet '%s Delta Bound g(r)'; Source Data1D '%s//DeltaGRBond//%s//%s-%s'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
-				deltaPhiRGraph_->addCollectionFromBlock(blockData);
+				Renderable* deltaBond = deltaPhiRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//DeltaGRBond//%s//%s-%s//Full", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("DeltaGR//%s//%s-%s", group->name(), at1->name(), at2->name()), CharString("%s dBound(r)", id.get()));
+				deltaBond->lineStyle().setStipple(LineStipple::DotStipple);
 			}
 		}
 	}
 
 	// Add phi magnitude data
-	blockData.sprintf("Collection 'PhiMag'; Group 'PhiMag; DataSet 'PhiMag'; Source Data1D '%s//PhiMag'; EndDataSet; EndCollection", module_->uniqueName());
-	phiMagGraph_->addCollectionFromBlock(blockData);
+	phiMagGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//PhiMag", module_->uniqueName()), "PhiMag", "PhiMag");
 }
 

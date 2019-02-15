@@ -387,7 +387,7 @@ bool TextPrimitive::addFragment(QString text)
 	if (!format->symbol()) textToAdd = text;
 	else
 	{
-		// Must convert the supplied text into a symbol - use '??' if we don't recognise it
+		// Must convert the supplied text into a symbol - use '<?>' if we don't recognise it
 		SymbolData* symbol = SymbolData::symbol(text);
 		if (symbol) textToAdd = symbol->character;
 		else textToAdd = "<?>";

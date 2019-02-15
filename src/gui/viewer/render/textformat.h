@@ -1,6 +1,6 @@
 /*
 	*** Text Format
-	*** src/gui/uchroma/render/textformat.h
+	*** src/gui/viewer/render/textformat.h
 	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_UCHROMATEXTFORMAT_H
-#define DISSOLVE_UCHROMATEXTFORMAT_H
+#ifndef DISSOLVE_TEXTFORMAT_H
+#define DISSOLVE_TEXTFORMAT_H
 
 #include "templates/listitem.h"
 

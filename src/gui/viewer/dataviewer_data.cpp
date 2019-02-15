@@ -121,6 +121,12 @@ bool DataViewer::isRenderableVisible(const char* name) const
 	return rend->isVisible();
 }
 
+// Return the group manager for the data
+RenderableGroupManager& DataViewer::groupManager()
+{
+	return groupManager_;
+}
+
 // Return the view
 View& DataViewer::view()
 {

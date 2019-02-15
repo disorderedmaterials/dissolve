@@ -285,3 +285,9 @@ Vec3<double> DataViewer::screenToLocal(int mouseX, int mouseY)
 
 	return result;
 }
+
+// Return current local coordinate under mouse in 2D view
+Vec3<double> DataViewer::rCurrentLocal() const
+{
+	return rCurrentLocal_;
+}

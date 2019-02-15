@@ -1,6 +1,6 @@
 /*
 	*** Text Format
-	*** src/gui/uchroma/render/textformat.cpp
+	*** src/gui/viewer/render/textformat.cpp
 	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
@@ -19,7 +19,7 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/uchroma/render/textformat.h"
+#include "gui/viewer/render/textformat.h"
 
 // Constructor
 TextFormat::TextFormat() :  ListItem<TextFormat>()
