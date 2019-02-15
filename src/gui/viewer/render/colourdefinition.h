@@ -96,23 +96,23 @@ class ColourDefinition
 	// Set colourscale point colour
 	void setColourScalePoint(ColourSource source, QColor colour, double value = 0.0, int index = -1);
 	// Return colourscale point specified
-	const ColourScalePoint* colourScalePoint(ColourSource source, int index = -1);
+	const ColourScalePoint& colourScalePoint(ColourSource source, int index = -1) const;
 	// Return colour of point specified
-	QColor colourScalePointColour(ColourSource source, int index = -1);
-	// Retu5rn value of point specified
-	double colourScalePointValue(ColourSource source, int index = -1);
+	QColor colourScalePointColour(ColourSource source, int index = -1) const;
+	// Return value of point specified
+	double colourScalePointValue(ColourSource source, int index = -1) const;
 	// Add empty point to end of custom colourscale
 	void addCustomColourScalePoint();
 	// Add point to custom colourscale
 	void addCustomColourScalePoint(double value, QColor colour);
 	// Return number of custom colourscale points
 	int nCustomColourScalePoints();
-	// Return first custom colourscale point in list
-	ColourScalePoint* customColourScalePoints();
+	// Return custom colourscale points
+	const Array<ColourScalePoint>& customColourScalePoints() const;
 	// Return custom colourscale point with index specified
-	ColourScalePoint* customColourScalePoint(int id);
+	const ColourScalePoint& customColourScalePoint(int id) const;
 	// Remove specified colourscale point
-	void removeCustomColourScalePoint(ColourScalePoint* point);
+	void removeCustomColourScalePoint(int id);
 	// Set alpha control
 	void setAlphaControl(AlphaControl alpha);
 	// Return current alpha control

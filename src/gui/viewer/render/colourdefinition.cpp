@@ -198,19 +198,19 @@ void ColourDefinition::setColourScalePoint(ColourSource source, QColor colour, d
 	if (source == colourSource_) ++colourVersion_;
 }
 
-// Return colourscale point specified
-const ColourScalePoint* ColourDefinition::colourScalePoint(ColourSource source, int index)
+// specific point in ColourScale
+const ColourScalePoint& ColourDefinition::colourScalePoint(ColourSource source, int index) const
 {
 	switch (source)
 	{
 		case (ColourDefinition::SingleColourSource):
-			return &colourSinglePoint_;
+			return colourSinglePoint_;
 			break;
 		case (ColourDefinition::RGBGradientSource):
-			return (index == 0 ? &colourRGBGradientAPoint_ : &colourRGBGradientBPoint_);
+			return (index == 0 ? colourRGBGradientAPoint_ : colourRGBGradientBPoint_);
 			break;
 		case (ColourDefinition::HSVGradientSource):
-			return (index == 0 ? &colourHSVGradientAPoint_ : &colourHSVGradientBPoint_);
+			return (index == 0 ? colourHSVGradientAPoint_ : colourHSVGradientBPoint_);
 			break;
 		case (ColourDefinition::CustomGradientSource):
 			return customColourScale_.point(index);
@@ -219,29 +219,30 @@ const ColourScalePoint* ColourDefinition::colourScalePoint(ColourSource source, 
 			Messenger::print("Unhandled ColourSource in ColourDefinition::colourScalePoint().\n");
 	}
 
-	return NULL;
+	static ColourScalePoint dummy;
+	return dummy;
 }
 
 // Return colour of point specified
-QColor ColourDefinition::colourScalePointColour(ColourSource source, int index)
+QColor ColourDefinition::colourScalePointColour(ColourSource source, int index) const
 {
-	const ColourScalePoint* point = colourScalePoint(source, index);
-	if (point) return point->colour();
-	else return Qt::black;
+	const ColourScalePoint& point = colourScalePoint(source, index);
+
+	return point.colour();
 }
 
 // Return value of point specified
-double ColourDefinition::colourScalePointValue(ColourSource source, int index)
+double ColourDefinition::colourScalePointValue(ColourSource source, int index) const
 {
-	const ColourScalePoint* point = colourScalePoint(source, index);
-	if (point) return point->value();
-	else return 0.0;
+	const ColourScalePoint& point = colourScalePoint(source, index);
+
+	return point.value();
 }
 
 // Add point to custom colour scale
 void ColourDefinition::addCustomColourScalePoint()
 {
-	customColourScale_.addPoint(customColourScale_.lastPoint() ? customColourScale_.lastPoint()->value() + 1.0 : 0.0, Qt::white);
+	customColourScale_.addPoint(customColourScale_.nPoints() > 0 ? customColourScale_.lastPoint().value() + 1.0 : 0.0, Qt::white);
 
 	// Update colourscale?
 	if (colourSource_ == ColourDefinition::CustomGradientSource) ++colourVersion_;
@@ -259,22 +260,22 @@ int ColourDefinition::nCustomColourScalePoints()
 	return customColourScale_.nPoints();
 }
 
-// Return first custom colourscale point in list
-ColourScalePoint* ColourDefinition::customColourScalePoints()
+// Return custom colourscale points
+const Array<ColourScalePoint>& ColourDefinition::customColourScalePoints() const
 {
-	return customColourScale_.firstPoint();
+	return customColourScale_.points();
 }
 
 // Return custom colourscale point with index specified
-ColourScalePoint* ColourDefinition::customColourScalePoint(int id)
+const ColourScalePoint& ColourDefinition::customColourScalePoint(int id) const
 {
 	return customColourScale_.point(id);
 }
 
 // Remove specified colourscale point
-void ColourDefinition::removeCustomColourScalePoint(ColourScalePoint* point)
+void ColourDefinition::removeCustomColourScalePoint(int id)
 {
-	customColourScale_.removePoint(point);
+	customColourScale_.removePoint(id);
 
 	// Update colourscale?
 	if (colourSource_ == ColourDefinition::CustomGradientSource) ++colourVersion_;
@@ -322,4 +323,3 @@ int ColourDefinition::colourVersion() const
 {
 	return colourVersion_;
 }
-
