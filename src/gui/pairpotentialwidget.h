@@ -48,7 +48,7 @@ class PairPotentialWidget : public SubWidget
 	DataViewer* dataView_;
 
 	private:
-	// Set data targets for specified PairPotential in UChromaView
+	// Set data targets for specified PairPotential
 	void setDataTargets(PairPotential* pp);
 
 	public:

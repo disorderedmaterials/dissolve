@@ -103,7 +103,7 @@ void PairPotentialWidget::initialiseControls(PairPotential* pp, bool addDefaults
 	refreshing_ = false;
 }
 
-// Set data targets for specified PairPotential in UChromaView
+// Set data targets for specified PairPotential
 void PairPotentialWidget::setDataTargets(PairPotential* pp)
 {
 	// Clear any old renderables
