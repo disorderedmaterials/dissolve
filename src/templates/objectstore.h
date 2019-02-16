@@ -49,9 +49,6 @@ class ObjectInfo
 		Histogram1DObject,
 		Histogram2DObject,
 		Histogram3DObject,
-		UChromaAxesObject,
-		UChromaCollectionObject,
-		UChromaViewPaneObject,
 		nObjectTypes
 	};
 

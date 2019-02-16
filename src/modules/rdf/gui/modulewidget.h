@@ -42,7 +42,7 @@ class RDFModuleWidget : public ModuleWidget
 	private:
 	// Associated Module
 	RDFModule* module_;
-	// UChromaViews contained within this widget
+	// DataViewers contained within this widget
 	DataViewer* partialsGraph_, *totalsGraph_;
 	// Reference to Dissolve
 	Dissolve& dissolve_;

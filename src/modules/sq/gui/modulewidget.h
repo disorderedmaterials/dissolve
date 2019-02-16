@@ -41,7 +41,7 @@ class SQModuleWidget : public ModuleWidget
 	private:
 	// Associated Module
 	SQModule* module_;
-	// UChromaViews contained within this widget
+	// DataViewers contained within this widget
 	DataViewer* partialGRGraph_, *partialSQGraph_, *totalGRGraph_, *totalSQGraph_;
 	// Reference to Dissolve
 	Dissolve& dissolve_;

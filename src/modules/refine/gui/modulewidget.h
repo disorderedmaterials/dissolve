@@ -41,7 +41,7 @@ class RefineModuleWidget : public ModuleWidget
 	private:
 	// Associated Module
 	RefineModule* module_;
-	// UChromaViews contained within this widget
+	// DataViewers contained within this widget
 	DataViewer* dataGraph_, *partialSQGraph_, *partialGRGraph_, *deltaPhiRGraph_, *phiMagGraph_, *errorsGraph_;
 	// Reference to Dissolve
 	Dissolve& dissolve_;

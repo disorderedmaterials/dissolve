@@ -38,7 +38,7 @@ class CalculateDAngleModuleWidget : public ModuleWidget
 	private:
 	// Associated Module
 	CalculateDAngleModule* module_;
-	// UChromaViews contained within this widget
+	// DataViewer contained within this widget
 	DataViewer* rdfGraph_;
 
 	public:
