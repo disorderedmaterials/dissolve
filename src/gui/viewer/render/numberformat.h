@@ -1,6 +1,6 @@
 /*
 	*** Number Format
-	*** src/gui/uchroma/classes/numberformat.h
+	*** src/gui/viewer/render/numberformat.h
 	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_UCHROMANUMBERFORMAT_H
-#define DISSOLVE_UCHROMANUMBERFORMAT_H
+#ifndef DISSOLVE_NUMBERFORMAT_H
+#define DISSOLVE_NUMBERFORMAT_H
 
 #include <QString>
 

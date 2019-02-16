@@ -1,6 +1,6 @@
 /*
 	*** Rendering Primitive Instance
-	*** src/gui/uchroma/render/primitiveinstance.cpp
+	*** src/gui/viewer/render/primitiveinstance.cpp
 	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
@@ -19,7 +19,7 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/uchroma/render/primitiveinstance.h"
+#include "gui/viewer/render/primitiveinstance.h"
 #include <string.h>
 
 // Static members

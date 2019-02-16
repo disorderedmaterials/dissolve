@@ -1,6 +1,6 @@
 /*
 	*** Number Format
-	*** src/gui/uchroma/classes/numberformat.cpp
+	*** src/gui/viewer/render/numberformat.cpp
 	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
@@ -19,7 +19,7 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/uchroma/classes/numberformat.h"
+#include "gui/viewer/render/numberformat.h"
 #include <math/doubleexp.h>
 #include <stdio.h>
 #include <QString>

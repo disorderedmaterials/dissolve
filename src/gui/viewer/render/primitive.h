@@ -1,6 +1,6 @@
 /*
 	*** Rendering Primitive
-	*** src/gui/uchroma/render/primitive.h
+	*** src/gui/viewer/render/primitive.h
 	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
@@ -19,15 +19,15 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_UCHROMAPRIMITIVE_H
-#define DISSOLVE_UCHROMAPRIMITIVE_H
+#ifndef DISSOLVE_PRIMITIVE_H
+#define DISSOLVE_PRIMITIVE_H
 
-#ifdef _WIN32
-#include <windows.h>
-#include <GL/gl.h>
-#include "glext.h"
-#endif
-#include "gui/uchroma/render/primitiveinstance.h"
+// #ifdef _WIN32
+// #include <windows.h>
+// #include <GL/gl.h>
+// #include "glext.h"
+// #endif
+#include "gui/viewer/render/primitiveinstance.h"
 #include "math/matrix4.h"
 #include "templates/list.h"
 #include "templates/array.h"

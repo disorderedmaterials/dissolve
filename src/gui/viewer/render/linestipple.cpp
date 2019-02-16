@@ -1,6 +1,6 @@
 /*
 	*** Line Stipple
-	*** src/gui/uchroma/render/linestipple.cpp
+	*** src/gui/viewer/render/linestipple.cpp
 	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
@@ -19,7 +19,7 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/uchroma/render/linestipple.h"
+#include "gui/viewer/render/linestipple.h"
 #include <QVector>
 #include <QComboBox>
 #include <QPainter>

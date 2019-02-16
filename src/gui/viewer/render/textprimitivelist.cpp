@@ -20,7 +20,7 @@
 */
 
 #include "gui/viewer/render/textprimitivelist.h"
-#include "gui/uchroma/classes/viewpane.h"
+#include "gui/viewer/render/view.h"
 
 // Constructor
 TextPrimitiveList::TextPrimitiveList()

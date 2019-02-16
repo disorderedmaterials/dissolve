@@ -1,6 +1,6 @@
 /*
 	*** Line Style
-	*** src/gui/uchroma/render/linestyle.h
+	*** src/gui/viewer/render/linestyle.h
 	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
@@ -19,10 +19,10 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_UCHROMALINESTYLE_H
-#define DISSOLVE_UCHROMALINESTYLE_H
+#ifndef DISSOLVE_LINESTYLE_H
+#define DISSOLVE_LINESTYLE_H
 
-#include "gui/uchroma/render/linestipple.h"
+#include "gui/viewer/render/linestipple.h"
 #include <QColor>
 
 // Forward Declarations

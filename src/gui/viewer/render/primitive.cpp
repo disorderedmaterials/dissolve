@@ -1,6 +1,6 @@
 /*
 	*** Rendering Primitive
-	*** src/gui/uchroma/render/primitive.cpp
+	*** src/gui/viewer/render/primitive.cpp
 	Copyright T. Youngs 2013-2019
 
 	This file is part of uChroma.
@@ -19,13 +19,9 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "gui/viewer/render/primitive.h"
 #include "base/messenger.h"
-#include "gui/uchroma/render/primitive.h"
 #include <string.h>
-#include <QOpenGLContext>
-#ifdef __APPLE__
-#include <OpenGL/gl.h>
-#endif
 
 // Constructor
 Primitive::Primitive() : ListItem<Primitive>()
