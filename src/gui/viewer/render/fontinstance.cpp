@@ -43,11 +43,11 @@ bool FontInstance::setUp(QString fontFileName)
 
 	// Check the fontFileName - if it's empty then we try to load the default font from our resource
 	fontFile_ = fontFileName;
-	if (fontFile_.isEmpty()) fontData_ = new QResource(":/freefont/freefont/FreeSans.ttf");
+	if (fontFile_.isEmpty()) fontData_ = new QResource(":/fonts/fonts/FreeSans.ttf");
 	else fontData_ = new QResource(fontFileName);
 	if (fontData_->size() <= 0)
 	{
-		Messenger::print("Font data is empty - correct resource path specified?\n");
+		printf("Font data is empty - correct resource path specified?\n");
 		return false;
 	}
 

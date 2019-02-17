@@ -40,7 +40,7 @@ DGuidEdWindow::DGuidEdWindow(QMainWindow* parent) : QMainWindow(parent)
 	Q_INIT_RESOURCE(main);
 
 	// Add our custom font
-	QFontDatabase::addApplicationFont(":/fonts/SourceSansPro-Regular.ttf");
+	QFontDatabase::addApplicationFont(":/fonts/fonts/SourceSansPro-Regular.ttf");
 
 	// Call the main creation function
 	ui_.setupUi(this);
