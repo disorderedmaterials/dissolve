@@ -580,7 +580,7 @@ void View::recalculateView(bool force)
 	 * Doing this first will allow us to get much better values for the pixel overlaps we need later on
 	 */
 
-	 // -- Project a point one unit each along X and Y and subtract off the viewport centre coordinate in order to get literal 'pixels per unit' for (screen) X and Y
+	// -- Project a point one unit each along X and Y and subtract off the viewport centre coordinate in order to get literal 'pixels per unit' for (screen) X and Y
 	Vec3<double> unit = modelToScreen(Vec3<double>(1.0, 1.0, 0.0), tempProjection, Matrix4());
 	unit.x -= viewportMatrix_[0] + viewportMatrix_[2]/2.0;
 	unit.y -= viewportMatrix_[1] + viewportMatrix_[3]/2.0;
@@ -610,7 +610,7 @@ void View::recalculateView(bool force)
 		axes_.setStretch(axis, viewportMatrix_[axisDir[axis]+2] / (unit[axisDir[axis]] * (axes_.realRange(axis))));
 		if (!std::isnormal(axes_.stretch(axis))) axes_.setStretch(axis, 1.0);
 	}
-	
+
 	const double margin = 10.0;
 	Matrix4 viewMat, B, viewMatrixInverse;
 	double tempMin, tempMax;

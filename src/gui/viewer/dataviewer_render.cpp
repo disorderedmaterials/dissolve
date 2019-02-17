@@ -64,6 +64,7 @@ void DataViewer::render(int xOffset, int yOffset)
 
 	// Loop over defined viewpanes
 	GLdouble clipPlaneBottom[4] = { 0.0, 1.0, 0.0, 0.0 }, clipPlaneTop[4] = { 0.0, -1.0, 0.0, 0.0 };
+
 	// If we are auto-following, set the axis limits here
 	if (view_.autoFollowType() != View::NoAutoFollow) view_.autoFollowData();
 	
@@ -233,7 +234,6 @@ void DataViewer::render(int xOffset, int yOffset)
 	// Disable current clip planes
 	glDisable(GL_CLIP_PLANE0);
 	glDisable(GL_CLIP_PLANE1);
-
 
 	/*
 	 * Set orthographic, one-to-one pixel view
