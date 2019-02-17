@@ -84,19 +84,6 @@ void DataViewer::render(int xOffset, int yOffset)
 	glLoadIdentity();
 	glDisable(GL_LIGHTING);
 
-	// Draw graduated background for current pane (only if rendering on-screen)
-// 		if ((pane == uChromaBase_->currentViewPane()) && (!renderingOffScreen_))
-// 		{
-// 			glBegin(GL_QUADS);
-// 			glColor4fv(colourBlue);
-// 			glVertex3i(0, 0, 0);
-// 			glVertex3i(view_.viewportMatrix()[2]-1, 0, 0);
-// 			glColor4fv(colourWhite);
-// 			glVertex3i(view_.viewportMatrix()[2]-1, view_.viewportMatrix()[3]*0.5, 0);
-// 			glVertex3i(0, view_.viewportMatrix()[3]*0.5, 0);
-// 			glEnd();
-// 		}
-
 	// Draw a box around the pane
 	if (!renderingOffScreen_)
 	{
