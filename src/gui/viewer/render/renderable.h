@@ -44,14 +44,14 @@ class Renderable : public ListItem<Renderable>
 	static const char* renderableType(RenderableType rt);
 
 	// Constructor / Destructor
-	Renderable(RenderableType type);
+	Renderable(RenderableType type, const char* objectTag);
 	~Renderable();
 
 
 	/*
 	 * Identity
 	 */
-	private:
+	protected:
 	// Name of Renderable
 	CharString name_;
 	// Type of Renderable
@@ -69,13 +69,19 @@ class Renderable : public ListItem<Renderable>
 	/*
 	 * Data
 	 */
+	protected:
+	// Identifying tag for source data object
+	const char* objectTag_;
+
 	private:
+	// Return whether a valid data source is available (attempting to set it if not)
+	virtual bool validateDataSource() = 0;
 	// Return version of data
 	virtual const int version() const = 0;
 
 	public:
-	// Return identifying tag/name for contained data
-	virtual const char* objectIdentifier() const = 0;
+	// Return identifying tag for source data object
+	const char* objectTag() const;
 
 
 	/*

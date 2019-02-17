@@ -28,14 +28,8 @@ Renderable* RenderableFactory::create(Renderable::RenderableType renderableType,
 	Renderable* renderable = NULL;
 	Data1D* data1d;
 
-	if (renderableType == Renderable::Data1DRenderable)
-	{
-		Data1D* data = Data1D::findObject(objectTag);
-		if (!data) Messenger::error("Target Data1D '%s' for Renderable not found.\n", objectTag);
-		else renderable = new RenderableData1D(*Data1D::findObject(objectTag));
-	}
+	if (renderableType == Renderable::Data1DRenderable) renderable = new RenderableData1D(Data1D::findObject(objectTag), objectTag);
 	else Messenger::error("Don't know how to create a Renderable of type '%s' (object tag = '%s'.\n", Renderable::renderableType(renderableType), objectTag);
 
 	return renderable;
 }
-

@@ -24,7 +24,7 @@
 #include "gui/viewer/render/view.h"
 
 // Constructor
-RenderableData1D::RenderableData1D(const Data1D& source) : Renderable(Renderable::Data1DRenderable), source_(source)
+RenderableData1D::RenderableData1D(const Data1D* source, const char* objectTag) : Renderable(Renderable::Data1DRenderable, objectTag), source_(source)
 {
 }
 
@@ -37,16 +37,25 @@ RenderableData1D::~RenderableData1D()
  * Data
  */
 
+// Return whether a valid data source is available (attempting to set it if not)
+bool RenderableData1D::validateDataSource()
+{
+	// If there is no valid source set, attempt to set it now...
+	if (!source_) source_ = Data1D::findObject(objectTag_);
+
+	return source_;
+}
+
 // Return version of data
 const int RenderableData1D::version() const
 {
-	return source_.version();
+	return (source_ ? source_->version() : -99);
 }
 
-// Return identifying tag/name for contained data
-const char* RenderableData1D::objectIdentifier() const
+// Return identifying tag for source data object
+const char* RenderableData1D::objectTag() const
 {
-	return source_.objectTag();
+	return objectTag_;
 }
 
 /*
@@ -60,7 +69,8 @@ void RenderableData1D::transformData()
 	if (transformDataVersion_ == version()) return;
 
 	// Copy original data and transform it now. We do this even if the transformers are disabled, since they may have previously been active
-	transformedData_ = source_;
+	if (!validateDataSource()) transformedData_.clear();
+	else transformedData_ = *source_;
 	Transformer::transform(transformedData_, transforms_[0], transforms_[1]);
 
 	transformMin_ = 0.0;
@@ -103,8 +113,11 @@ void RenderableData1D::transformData()
 // Return reference to transformed data
 const Data1D& RenderableData1D::transformedData()
 {
+	// Check that we have a valid source
+	if (!validateDataSource()) return transformedData_;
+
 	// If no transforms are enabled, just return the original data
-	if ((!transforms_[0].enabled()) && (!transforms_[1].enabled())) return source_;
+	if ((!transforms_[0].enabled()) && (!transforms_[1].enabled())) return *source_;
 
 	// Make sure the transformed data is up-to-date
 	transformData();

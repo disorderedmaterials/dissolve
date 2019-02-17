@@ -33,7 +33,7 @@ class RenderableData1D : public Renderable
 {
 	public:
 	// Constructor / Destructor
-	RenderableData1D(const Data1D& source);
+	RenderableData1D(const Data1D* source, const char* objectTag);
 	~RenderableData1D();
 
 
@@ -42,15 +42,17 @@ class RenderableData1D : public Renderable
 	 */
 	private:
 	// Source data
-	const Data1D& source_;
+	const Data1D* source_;
 
 	private:
+	// Return whether a valid data source is available (attempting to set it if not)
+	bool validateDataSource();
 	// Return version of data
 	const int version() const;
 
 	public:
-	// Return identifying tag/name for contained data
-	const char* objectIdentifier() const;
+	// Return identifying tag for source data object
+	const char* objectTag() const;
 
 
 	/*

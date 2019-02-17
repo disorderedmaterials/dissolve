@@ -225,7 +225,7 @@ void DataViewer::render(int xOffset, int yOffset)
 		rend->updateAndSendPrimitives(view_, groupManager_, renderingOffScreen_, renderingOffScreen_, context());
 
 		// Update query
-		if (updateQueryDepth()) setQueryObject(DataViewer::CollectionObject, rend->objectIdentifier());
+		if (updateQueryDepth()) setQueryObject(DataViewer::CollectionObject, rend->objectTag());
 
 		glEnable(GL_COLOR_MATERIAL);
 	}

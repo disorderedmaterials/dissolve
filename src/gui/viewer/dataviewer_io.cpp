@@ -748,13 +748,12 @@ bool DataViewer::writeRenderableBlock(LineParser& parser, Renderable* renderable
 	for (int n=0; n<indentLevel*2; ++n) indent[n] = ' ';
 	indent[indentLevel*2] = '\0';
 
-	parser.writeLineF("%s%s  %s  '%s'\n", indent, DataViewer::inputBlock(DataViewer::RenderableBlock), Renderable::renderableType(renderable->type()), renderable->objectIdentifier());
+	parser.writeLineF("%s%s  %s  '%s'\n", indent, DataViewer::inputBlock(DataViewer::RenderableBlock), Renderable::renderableType(renderable->type()), renderable->objectTag());
 
 	// -- Transforms
 	parser.writeLineF("%s  %s %s %s\n", indent, DataViewer::renderableKeyword(DataViewer::TransformXKeyword), stringBool(renderable->transformEnabled(0)), renderable->transformEquation(0));
 	parser.writeLineF("%s  %s %s %s\n", indent, DataViewer::renderableKeyword(DataViewer::TransformYKeyword), stringBool(renderable->transformEnabled(1)), renderable->transformEquation(1));
 	parser.writeLineF("%s  %s %s %s\n", indent, DataViewer::renderableKeyword(DataViewer::TransformZKeyword), stringBool(renderable->transformEnabled(2)), renderable->transformEquation(2));
-
 
 	// Colour Setup
 	const ColourDefinition& colourDef = renderable->colour();

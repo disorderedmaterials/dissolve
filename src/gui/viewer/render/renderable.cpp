@@ -43,11 +43,14 @@ const char* Renderable::renderableType(RenderableType rt)
 }
 
 // Constructor
-Renderable::Renderable(Renderable::RenderableType type)
+Renderable::Renderable(Renderable::RenderableType type, const char* objectTag)
 {
 	// Identity
 	type_ = type;
 	name_ = "New Renderable";
+
+	// Data tag
+	objectTag_ = objectTag;
 
 	// Transform
 	transformDataVersion_ = -1;
@@ -99,6 +102,16 @@ const char* Renderable::name()
 Renderable::RenderableType Renderable::type() const
 {
 	return type_;
+}
+
+/*
+ * Data
+ */
+
+// Return identifying tag for source data object
+const char* Renderable::objectTag() const
+{
+	return objectTag_;
 }
 
 /*
