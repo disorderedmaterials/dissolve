@@ -250,7 +250,7 @@ void DataViewer::render(int xOffset, int yOffset)
 	indicatorPrimitive.set(fontInstance_, indicatorText.get(), Vec3<double>(overlaySpacing, view_.viewportMatrix()[3] - overlaySpacing,0.0), TextPrimitive::TopLeftAnchor, Vec3<double>(), Matrix4(), overlayTextSize, false);
 	glColor3d(0.0, 0.0, 0.0);
 	Matrix4 identity;
-	indicatorPrimitive.render(fontInstance_, identity, identity, 1.0);
+	if (fontInstance_.fontOK()) indicatorPrimitive.render(fontInstance_, identity, identity, 1.0);
 
 	/*
 	 * Draw legend in top-right corner

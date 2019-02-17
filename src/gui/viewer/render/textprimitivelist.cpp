@@ -20,6 +20,7 @@
 */
 
 #include "gui/viewer/render/textprimitivelist.h"
+#include "gui/viewer/render/fontinstance.h"
 #include "gui/viewer/render/view.h"
 
 // Constructor
@@ -69,6 +70,11 @@ Cuboid TextPrimitiveList::boundingCuboid(FontInstance& fontInstance, const Matri
 // Render all primitives in list
 void TextPrimitiveList::renderAll(FontInstance& fontInstance, const Matrix4& viewMatrix, const Matrix4& viewMatrixInverse, double baseFontSize)
 {
+	if (!fontInstance.fontOK())
+	{
+		printf("Can't send TextPrimtiveList for rendering - FontInstance is not valid.\n");
+		return;
+	}
 	for (TextPrimitive* primitive = textPrimitives_.first(); primitive != NULL; primitive = primitive->next) primitive->render(fontInstance, viewMatrix, viewMatrixInverse, baseFontSize);
 }
 
