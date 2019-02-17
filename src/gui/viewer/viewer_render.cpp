@@ -173,10 +173,10 @@ GLsizei BaseViewer::contextWidth() const
 	return contextWidth_;
 }
 
-// Setup font instance with supplied font
-bool BaseViewer::setupFont(const char* fontFileName)
+// Set up font instance with supplied font
+bool BaseViewer::setUpFont(const char* fontFileName)
 {
-	return fontInstance_.setup(fontFileName);
+	return fontInstance_.setUp(fontFileName);
 }
 
 // Return font instance

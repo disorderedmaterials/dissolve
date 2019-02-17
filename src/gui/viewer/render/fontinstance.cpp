@@ -32,8 +32,8 @@ FontInstance::FontInstance()
 	dotWidth_ = 0.0;
 }
 
-// Setup font specified
-bool FontInstance::setup(QString fontFileName)
+// Set up font with font filename specified
+bool FontInstance::setUp(QString fontFileName)
 {
 	// Delete any previous font
 	if (font_) delete font_;
@@ -82,31 +82,31 @@ bool FontInstance::setup(QString fontFileName)
 }
 
 // Return whether font exists and is ready for use
-bool FontInstance::fontOK()
+bool FontInstance::fontOK() const
 {
 	return (font_ != NULL);
 }
 
 // Return current font
-FTFont* FontInstance::font()
+FTFont* FontInstance::font() const
 {
 	return font_;
 }
 
 // Return base height of font
-double FontInstance::fontBaseHeight()
+double FontInstance::fontBaseHeight() const
 {
 	return fontBaseHeight_;
 }
 
 // Return full height of font
-double FontInstance::fontFullHeight()
+double FontInstance::fontFullHeight() const
 {
 	return fontFullHeight_;
 }
 
 // Return bounding box for specified string
-FTBBox FontInstance::boundingBox(QString text)
+FTBBox FontInstance::boundingBox(QString text) const
 {
 	if (!font_) return FTBBox();
 
@@ -118,7 +118,7 @@ FTBBox FontInstance::boundingBox(QString text)
 }
 
 // Calculate bounding box for specified string
-void FontInstance::boundingBox(QString text, Vec3<double>& lowerLeft, Vec3<double>& upperRight)
+void FontInstance::boundingBox(QString text, Vec3<double>& lowerLeft, Vec3<double>& upperRight) const
 {
 	FTBBox box = boundingBox(text);
 	lowerLeft.set(box.Lower().X(), box.Lower().Y(), box.Lower().Z());
@@ -126,14 +126,14 @@ void FontInstance::boundingBox(QString text, Vec3<double>& lowerLeft, Vec3<doubl
 }
 
 // Calculate bounding box width for specified string
-double FontInstance::boundingBoxWidth(QString text)
+double FontInstance::boundingBoxWidth(QString text) const
 {
 	FTBBox box = boundingBox(text);
 	return (box.Upper().X() - box.Lower().X());
 }
 
 // Calculate bounding box height for specified string
-double FontInstance::boundingBoxHeight(QString text)
+double FontInstance::boundingBoxHeight(QString text) const
 {
 	FTBBox box = boundingBox(text);
 	return (box.Upper().Y() - box.Lower().Y());

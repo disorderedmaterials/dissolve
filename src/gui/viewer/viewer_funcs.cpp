@@ -36,8 +36,8 @@ BaseViewer::BaseViewer(QWidget* parent) : QOpenGLWidget(parent)
 	// Prevent QPainter from autofilling widget background
 	setAutoFillBackground(false);
 
-        // Create our FTGL font instance
-	fontInstance_.setup();
+        // Set up the font instance
+	fontInstance_.setUp();
 
 	// Set up context menu
 	setContextMenuPolicy(Qt::CustomContextMenu);

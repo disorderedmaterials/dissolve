@@ -91,8 +91,8 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	GLsizei contextHeight() const;
 	// Return the current width of the drawing area
 	GLsizei contextWidth() const;
-	// Setup font instance with supplied font
-	bool setupFont(const char* fontFileName = NULL);
+	// Set up font instance with supplied font
+	bool setUpFont(const char* fontFileName = NULL);
 	// Return font instance
 	FontInstance& fontInstance();
 	// Check for GL error

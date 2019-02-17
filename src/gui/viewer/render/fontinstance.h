@@ -1,5 +1,5 @@
 /*
-	*** Font (from FTGL)
+	*** Font Instance
 	*** src/gui/viewer/render/fontinstance.h
 	Copyright T. Youngs 2013-2019
 
@@ -30,7 +30,7 @@
 // Forward Declarations
 /* none */
 
-// Static Font Instance
+// Font Instance
 class FontInstance
 {
 	public:
@@ -52,24 +52,24 @@ class FontInstance
 	double dotWidth_;
 
 	public:
-	// Setup font specified
-	bool setup(QString fontFileName = QString());
+	// Set up font with font filename specified
+	bool setUp(QString fontFileName = QString());
 	// Return whether font exists and is ready for use
-	bool fontOK();
+	bool fontOK() const;
 	// Return current font
-	FTFont* font();
+	FTFont* font() const;
 	// Return full height of font
-	double fontFullHeight();
+	double fontFullHeight() const;
 	// Return base height of font
-	double fontBaseHeight();
+	double fontBaseHeight() const;
 	// Return bounding box for specified string
-	FTBBox boundingBox(QString text);
+	FTBBox boundingBox(QString text) const;
 	// Calculate bounding box for specified string
-	void boundingBox(QString text, Vec3<double>& lowerLeft, Vec3<double>& upperRight);
+	void boundingBox(QString text, Vec3<double>& lowerLeft, Vec3<double>& upperRight) const;
 	// Calculate bounding box width for specified string
-	double boundingBoxWidth(QString text);
+	double boundingBoxWidth(QString text) const;
 	// Calculate bounding box height for specified string
-	double boundingBoxHeight(QString text);
+	double boundingBoxHeight(QString text) const;
 };
 
 #endif
