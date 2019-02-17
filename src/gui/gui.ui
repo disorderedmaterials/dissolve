@@ -1702,7 +1702,6 @@
  </customwidgets>
  <resources>
   <include location="main.qrc"/>
-  <include location="uchroma/gui/uchroma.qrc"/>
  </resources>
  <connections/>
 </ui>
