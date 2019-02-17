@@ -40,6 +40,7 @@ void DataViewer::ownRenderable(Renderable* newRenderable)
 	// Warn if an existing Renderable has the same name as this one
 	if (renderable(newRenderable->name())) Messenger::warn("A Renderable named '%s' already exists, and another with the same name is being added...\n", newRenderable->name());
 
+	// Own the new Renderable
 	renderables_.own(newRenderable);
 }
 
@@ -49,8 +50,12 @@ Renderable* DataViewer::createRenderable(Renderable::RenderableType type, const 
 	Renderable* renderable = RenderableFactory::create(type, objectTag);
 	if (renderable)
 	{
+		// Set name and title
 		renderable->setName(name);
 		renderable->setTitle(title ? title : name);
+
+		// Own the new Renderable
+		renderables_.own(renderable);
 	}
 
 	return renderable;

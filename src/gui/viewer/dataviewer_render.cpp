@@ -197,9 +197,11 @@ void DataViewer::render(int xOffset, int yOffset)
 	glEnable(GL_CLIP_PLANE1);
 	glPopMatrix();
 
-	// Render pane data - loop over renderables
+	// Draw all renderables
 	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next)
 	{
+		if (!rend->isVisible()) continue;
+
 		// If this is the collection to highlight, set color to transparent grey and disable material colouring....
 		if (rend == highlightedRenderable_)
 		{
