@@ -6,6 +6,11 @@
     <file>icons/file_save.svg</file>
     <file>icons/file_connect.svg</file>
   </qresource>
+  <qresource prefix="fonts">
+    <file>fonts/FreeSans.ttf</file>
+    <file>fonts/FreeSerif.ttf</file>
+    <file>fonts/SourceSansPro-Regular.ttf</file>
+  </qresource>
   <qresource prefix="dguided">
     <file>icons/dguided_redo.svg</file>
     <file>icons/dguided_clearformat.svg</file>
@@ -17,7 +22,6 @@
     <file>icons/dguided_formatsteps.svg</file>
     <file>icons/dguided_formatmodule.svg</file>
     <file>icons/dguided_formatwidget.svg</file>
-    <file>fonts/SourceSansPro-Regular.ttf</file>
     <file>icons/dguided_copy.svg</file>
     <file>icons/dguided_angstrom.svg</file>
     <file>icons/dguided_subscript.svg</file>
