@@ -155,7 +155,7 @@ int DataViewer::renderableKeywordNArguments(DataViewer::RenderableKeyword kwd)
 const char* DataViewerViewBlockKeywords[] = {
 	"AutoFollowType", "AutoPositionTitles", "Axis",
 	"BoundingBox", "BoundingBoxPlaneY",
-	"EndViewPane",
+	"EndView",
 	"FlatLabels",
 	"LabelPointSize",
 	"Perspective",
