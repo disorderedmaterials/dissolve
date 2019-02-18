@@ -1,5 +1,5 @@
 /*
-	*** Data Viewer Input Functions
+	*** Data Viewer - Input
 	*** src/gui/viewer/dataviewer_input.cpp
 	Copyright T. Youngs 2013-2019
 
