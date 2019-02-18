@@ -719,39 +719,27 @@ bool DataViewer::readSession(LineParser& parser)
  * Write Routines
  */
 
-// Return boolean string based on integer value
-const char* stringBool(int i)
-{
-	return (i > 0 ? "true" : "false");
-}
-
-// Return boolean string based on boolean value
-const char* stringBool(bool b)
-{
-	return (b ? "true" : "false");
-}
-
 // Write AxisBlock keywords
 bool DataViewer::writeAxisBlock(LineParser& parser, Axes& axes, int axis)
 {
 	parser.writeLineF("    %s %i\n", DataViewer::viewKeyword(DataViewer::AxisBlockKeyword), axis);
 	parser.writeLineF("      %s %s\n", DataViewer::axisKeyword(DataViewer::AutoScaleKeyword), Axes::autoScaleMethod(axes.autoScale(axis)));
-	parser.writeLineF("      %s %s\n", DataViewer::axisKeyword(DataViewer::AutoTicksKeyword), stringBool(axes.autoTicks(axis)));
+	parser.writeLineF("      %s %s\n", DataViewer::axisKeyword(DataViewer::AutoTicksKeyword), DissolveSys::btoa(axes.autoTicks(axis)));
 	parser.writeLineF("      %s %f\n", DataViewer::axisKeyword(DataViewer::FirstTickKeyword), axes.tickFirst(axis));
-	parser.writeLineF("      %s %s\n", DataViewer::axisKeyword(DataViewer::FractionalPositioningKeyword), stringBool(axes.positionIsFractional(axis)));
-	parser.writeLineF("      %s %s %s %s\n", DataViewer::axisKeyword(DataViewer::GridLinesKeyword), stringBool(axes.gridLinesMajor(axis)), stringBool(axes.gridLinesMinor(axis)), stringBool(axes.gridLinesFull(axis)));
+	parser.writeLineF("      %s %s\n", DataViewer::axisKeyword(DataViewer::FractionalPositioningKeyword), DissolveSys::btoa(axes.positionIsFractional(axis)));
+	parser.writeLineF("      %s %s %s %s\n", DataViewer::axisKeyword(DataViewer::GridLinesKeyword), DissolveSys::btoa(axes.gridLinesMajor(axis)), DissolveSys::btoa(axes.gridLinesMinor(axis)), DissolveSys::btoa(axes.gridLinesFull(axis)));
 	LineStyle style = axes.gridLineMajorStyle(axis);
 	parser.writeLineF("      %s %f '%s' %f %f %f %f\n", DataViewer::axisKeyword(DataViewer::GridLineMajorStyleKeyword), style.width(), LineStipple::stipple[style.stipple()].name, style.colour().redF(), style.colour().greenF(), style.colour().blueF(), style.colour().alphaF());
 	style = axes.gridLineMinorStyle(axis);
 	parser.writeLineF("      %s %f '%s' %f %f %f %f\n", DataViewer::axisKeyword(DataViewer::GridLineMinorStyleKeyword), style.width(), LineStipple::stipple[style.stipple()].name, style.colour().redF(), style.colour().greenF(), style.colour().blueF(), style.colour().alphaF());
-	parser.writeLineF("      %s %s\n", DataViewer::axisKeyword(DataViewer::InvertKeyword), stringBool(axes.inverted(axis)));
+	parser.writeLineF("      %s %s\n", DataViewer::axisKeyword(DataViewer::InvertKeyword), DissolveSys::btoa(axes.inverted(axis)));
 	parser.writeLineF("      %s %s\n", DataViewer::axisKeyword(DataViewer::LabelAnchorKeyword), TextPrimitive::textAnchor(axes.labelAnchor(axis)));
 	parser.writeLineF("      %s %f %f %f\n", DataViewer::axisKeyword(DataViewer::LabelOrientationKeyword), axes.labelOrientation(axis).x, axes.labelOrientation(axis).y, axes.labelOrientation(axis).z);
 	parser.writeLineF("      %s %f %f\n", DataViewer::axisKeyword(DataViewer::LimitsKeyword), axes.min(axis), axes.max(axis));
-	parser.writeLineF("      %s %s\n", DataViewer::axisKeyword(DataViewer::LogarithmicKeyword), stringBool(axes.logarithmic(axis)));
+	parser.writeLineF("      %s %s\n", DataViewer::axisKeyword(DataViewer::LogarithmicKeyword), DissolveSys::btoa(axes.logarithmic(axis)));
 	parser.writeLineF("      %s %i\n", DataViewer::axisKeyword(DataViewer::MinorTicksKeyword), axes.minorTicks(axis));
 	NumberFormat fmt = axes.numberFormat(axis);
-	parser.writeLineF("      %s '%s' %i %s %s\n", DataViewer::axisKeyword(DataViewer::NumberFormatKeyword), NumberFormat::formatType(fmt.type()), fmt.nDecimals(), stringBool(fmt.useUpperCaseExponent()), stringBool(fmt.forcePrecedingPlus()));
+	parser.writeLineF("      %s '%s' %i %s %s\n", DataViewer::axisKeyword(DataViewer::NumberFormatKeyword), NumberFormat::formatType(fmt.type()), fmt.nDecimals(), DissolveSys::btoa(fmt.useUpperCaseExponent()), DissolveSys::btoa(fmt.forcePrecedingPlus()));
 	parser.writeLineF("      %s %f %f %f\n", DataViewer::axisKeyword(DataViewer::PositionFractionalKeyword), axes.positionFractional(axis).x, axes.positionFractional(axis).y, axes.positionFractional(axis).z);
 	parser.writeLineF("      %s %f %f %f\n", DataViewer::axisKeyword(DataViewer::PositionRealKeyword), axes.positionReal(axis).x, axes.positionReal(axis).y, axes.positionReal(axis).z);
 	parser.writeLineF("      %s %f\n", DataViewer::axisKeyword(DataViewer::StretchKeyword), axes.stretch(axis));
@@ -760,7 +748,7 @@ bool DataViewer::writeAxisBlock(LineParser& parser, Axes& axes, int axis)
 	parser.writeLineF("      %s %s\n", DataViewer::axisKeyword(DataViewer::TitleAnchorKeyword), TextPrimitive::textAnchor(axes.titleAnchor(axis)));
 	parser.writeLineF("      %s '%s'\n", DataViewer::axisKeyword(DataViewer::TitleKeyword), axes.title(axis));
 	parser.writeLineF("      %s %f %f %f %f\n", DataViewer::axisKeyword(DataViewer::TitleOrientationKeyword), axes.titleOrientation(axis).x, axes.titleOrientation(axis).y, axes.titleOrientation(axis).z, axes.titleOrientation(axis).w);
-	parser.writeLineF("      %s %s\n", DataViewer::axisKeyword(DataViewer::VisibleAxisKeyword), stringBool(axes.visible(axis)));
+	parser.writeLineF("      %s %s\n", DataViewer::axisKeyword(DataViewer::VisibleAxisKeyword), DissolveSys::btoa(axes.visible(axis)));
 	parser.writeLineF("    %s\n", DataViewer::axisKeyword(DataViewer::EndAxisKeyword));
 
 	return true;
@@ -777,9 +765,9 @@ bool DataViewer::writeRenderableBlock(LineParser& parser, Renderable* renderable
 	parser.writeLineF("%s%s  %s  '%s'\n", indent, DataViewer::inputBlock(DataViewer::RenderableBlock), Renderable::renderableType(renderable->type()), renderable->objectTag());
 
 	// -- Transforms
-	parser.writeLineF("%s  %s %s %s\n", indent, DataViewer::renderableKeyword(DataViewer::TransformXKeyword), stringBool(renderable->transformEnabled(0)), renderable->transformEquation(0));
-	parser.writeLineF("%s  %s %s %s\n", indent, DataViewer::renderableKeyword(DataViewer::TransformYKeyword), stringBool(renderable->transformEnabled(1)), renderable->transformEquation(1));
-	parser.writeLineF("%s  %s %s %s\n", indent, DataViewer::renderableKeyword(DataViewer::TransformZKeyword), stringBool(renderable->transformEnabled(2)), renderable->transformEquation(2));
+	parser.writeLineF("%s  %s %s %s\n", indent, DataViewer::renderableKeyword(DataViewer::TransformXKeyword), DissolveSys::btoa(renderable->transformEnabled(0)), renderable->transformEquation(0));
+	parser.writeLineF("%s  %s %s %s\n", indent, DataViewer::renderableKeyword(DataViewer::TransformYKeyword), DissolveSys::btoa(renderable->transformEnabled(1)), renderable->transformEquation(1));
+	parser.writeLineF("%s  %s %s %s\n", indent, DataViewer::renderableKeyword(DataViewer::TransformZKeyword), DissolveSys::btoa(renderable->transformEnabled(2)), renderable->transformEquation(2));
 
 	// Colour Setup
 	const ColourDefinition& colourDef = renderable->colour();
@@ -818,7 +806,7 @@ bool DataViewer::writeRenderableBlock(LineParser& parser, Renderable* renderable
 	parser.writeLineF("%s  %s %f '%s'\n", indent, DataViewer::renderableKeyword(DataViewer::LineStyleKeyword), renderable->lineStyle().width(), LineStipple::stipple[renderable->lineStyle().stipple()].name);
 	parser.writeLineF("%s  %s %f\n", indent, DataViewer::renderableKeyword(DataViewer::ShininessKeyword), renderable->displaySurfaceShininess());
 	parser.writeLineF("%s  %s %s\n", indent, DataViewer::renderableKeyword(DataViewer::StyleKeyword), Renderable::displayStyle(renderable->displayStyle()));
-	parser.writeLineF("%s  %s %s\n", indent, DataViewer::renderableKeyword(DataViewer::VisibleKeyword), stringBool(renderable->isVisible()));
+	parser.writeLineF("%s  %s %s\n", indent, DataViewer::renderableKeyword(DataViewer::VisibleKeyword), DissolveSys::btoa(renderable->isVisible()));
 
 	// Write Group if set
 	if (renderable->group()) parser.writeLineF("%s  %s '%s'\n", indent, DataViewer::renderableKeyword(DataViewer::GroupKeyword), renderable->group()->name());
@@ -833,11 +821,11 @@ bool DataViewer::writeViewBlock(LineParser& parser)
 {
 	parser.writeLineF("  %s\n", DataViewer::inputBlock(DataViewer::ViewBlock));
 	parser.writeLineF("    %s %s\n", DataViewer::viewKeyword(DataViewer::AutoFollowTypeKeyword), View::autoFollowType(view_.autoFollowType()));
-	parser.writeLineF("    %s %s\n", DataViewer::viewKeyword(DataViewer::AutoPositionTitlesKeyword), stringBool(view_.axes().autoPositionTitles()));
+	parser.writeLineF("    %s %s\n", DataViewer::viewKeyword(DataViewer::AutoPositionTitlesKeyword), DissolveSys::btoa(view_.axes().autoPositionTitles()));
 	for (int axis=0; axis < 3; ++axis) writeAxisBlock(parser, view_.axes(), axis);
 	parser.writeLineF("    %s %i\n", DataViewer::viewKeyword(DataViewer::BoundingBoxKeyword), view_.boundingBox());
 	parser.writeLineF("    %s %f\n", DataViewer::viewKeyword(DataViewer::BoundingBoxPlaneYKeyword), view_.boundingBoxPlaneY());
-	parser.writeLineF("    %s %s\n", DataViewer::viewKeyword(DataViewer::FlatLabelsKeyword), stringBool(view_.flatLabelsIn3D()));
+	parser.writeLineF("    %s %s\n", DataViewer::viewKeyword(DataViewer::FlatLabelsKeyword), DissolveSys::btoa(view_.flatLabelsIn3D()));
 	parser.writeLineF("    %s %f\n", DataViewer::viewKeyword(DataViewer::LabelPointSizeKeyword), view_.labelPointSize());
 	parser.writeLineF("    %s %f\n", DataViewer::viewKeyword(DataViewer::TitlePointSizeKeyword), view_.titlePointSize());
 	Matrix4 mat = view_.viewRotation();
@@ -846,8 +834,8 @@ bool DataViewer::writeViewBlock(LineParser& parser)
 	parser.writeLineF("    %s %f %f %f\n", DataViewer::viewKeyword(DataViewer::RotationYKeyword), mat[4], mat[5], mat[6]);
 	parser.writeLineF("    %s %f %f %f\n", DataViewer::viewKeyword(DataViewer::RotationZKeyword), mat[8], mat[9], mat[10]);
 	parser.writeLineF("    %s %f %f %f\n", DataViewer::viewKeyword(DataViewer::TranslationKeyword), trans.x, trans.y, trans.z);
-	parser.writeLineF("    %s %s\n", DataViewer::viewKeyword(DataViewer::PerspectiveKeyword), stringBool(view_.hasPerspective()));
-	parser.writeLineF("    %s %s\n", DataViewer::viewKeyword(DataViewer::UseBestFlatViewKeyword), stringBool(view_.axes().useBestFlatView()));
+	parser.writeLineF("    %s %s\n", DataViewer::viewKeyword(DataViewer::PerspectiveKeyword), DissolveSys::btoa(view_.hasPerspective()));
+	parser.writeLineF("    %s %s\n", DataViewer::viewKeyword(DataViewer::UseBestFlatViewKeyword), DissolveSys::btoa(view_.axes().useBestFlatView()));
 	parser.writeLineF("    %s %i\n", DataViewer::viewKeyword(DataViewer::VerticalShiftKeyword), groupManager_.verticalShift());
 	parser.writeLineF("    %s '%s'\n", DataViewer::viewKeyword(DataViewer::ViewTypeKeyword), View::viewType(view_.viewType()));
 	parser.writeLineF("  %s\n", DataViewer::viewKeyword(DataViewer::EndViewKeyword));
