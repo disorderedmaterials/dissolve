@@ -25,8 +25,11 @@
 // Constructor
 GraphWidget::GraphWidget(QWidget* parent) : QWidget(parent)
 {
-	// Call the main creation function
+	// Set up our UI
 	ui_.setupUi(this);
+
+	// Connect signals / slots
+	connect(ui_.DataView, SIGNAL(currentCoordinateChanged()), this, SLOT(updateCoordinateInfo()));
 }
 
 // Destructor

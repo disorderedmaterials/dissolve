@@ -86,6 +86,9 @@ void DataViewer::mouseMoved(int dx, int dy, Qt::KeyboardModifiers modifiers)
 	// Update interaction position
 	if (updateInteractionPosition(rMouseLast_.x, contextHeight_-rMouseLast_.y)) refresh = true;
 
+	// Notify any interested widgets that our current coordinate has changed
+	emit(currentCoordinateChanged());
+
 	if (refresh) postRedisplay();
 }
 

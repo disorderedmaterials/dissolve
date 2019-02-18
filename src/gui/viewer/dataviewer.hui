@@ -69,6 +69,9 @@ class DataViewer : public BaseViewer
 	// Key released
 	bool keyReleased(int key, Qt::KeyboardModifiers modifiers);
 
+	signals:
+	void currentCoordinateChanged();
+
 
 	/*
 	 * Context Menu (BaseViewer virtuals)
