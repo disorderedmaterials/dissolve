@@ -281,15 +281,15 @@ class DataViewer : public BaseViewer
 	// Renderable Block Keyword Enum
 	enum RenderableKeyword
 	{
-		ColourAlphaControlKeyword,
-		ColourAlphaFixedKeyword,
+		ColourAlphaIsGlobalKeyword,
 		ColourCustomGradientKeyword,
-		ColourRGBGradientAKeyword,
-		ColourRGBGradientBKeyword,
-		ColourHSVGradientAKeyword,
-		ColourHSVGradientBKeyword,
+		ColourGlobalAlphaKeyword,
+		ColourHSVGradientEndKeyword,
+		ColourHSVGradientStartKeyword,
+		ColourRGBGradientEndKeyword,
+		ColourRGBGradientStartKeyword,
 		ColourSingleKeyword,
-		ColourSourceKeyword,
+		ColourStyleKeyword,
 		EndRenderableKeyword,
 		GroupKeyword,
 		LineStyleKeyword,

@@ -251,13 +251,13 @@ Renderable::DisplayStyle Renderable::displayStyle() const
 // Set basic colour
 void Renderable::setColour(int r, int g, int b, int a)
 {
-	colour_.setColourScalePoint(ColourDefinition::SingleColourSource, QColor(r, g, b, a));
+	colour_.setSingleColour(QColor(r, g, b, a));
 }
 
 // Set basic colour
 void Renderable::setColour(ColourDefinition::StockColour stockColour)
 {
-	colour_.setColourScalePoint(ColourDefinition::SingleColourSource, ColourDefinition::stockColour(stockColour));
+	colour_.setSingleColour(ColourDefinition::stockColour(stockColour));
 }
 
 // Return local colour definition for display

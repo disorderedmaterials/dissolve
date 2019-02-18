@@ -31,8 +31,8 @@ RenderableGroup::RenderableGroup(const char* name, ColourDefinition::StockColour
 	verticalShift_ = 0.0;
 
 	// Set up the ColourDefinition to be single (stock) colour
-	colour_.setColourSource(ColourDefinition::SingleColourSource);
-	colour_.setColourScalePoint(ColourDefinition::SingleColourSource, ColourDefinition::stockColour(stockColour_));
+	colour_.setStyle(ColourDefinition::SingleColourStyle);
+	colour_.setSingleColour(ColourDefinition::stockColour(stockColour_));
 }
 
 // Set vertical shift in all Renderables in the group via their transform equations

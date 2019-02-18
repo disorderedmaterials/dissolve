@@ -53,7 +53,6 @@ class ColourScale
 	Array<ColourScalePoint> points_;
 
 	public:
-
 	// Add new point to ColourScale
 	void addPoint(double value, QColor colour);
 	// Return number of points in ColourScale
@@ -66,9 +65,6 @@ class ColourScale
 	const ColourScalePoint& lastPoint() const;
 	// Return specific point in ColourScale
 	const ColourScalePoint& point(int id) const;
-// 	// Return first delta in ColourScale
-// 	ColourScaleDelta* firstDelta() const;
-
 	// Set colour and value data for point
 	void setPoint(int position, double value, QColor colour);
 	// Set value for specified point

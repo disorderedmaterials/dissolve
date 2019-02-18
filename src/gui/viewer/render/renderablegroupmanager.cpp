@@ -59,7 +59,6 @@ RenderableGroup* RenderableGroupManager::createGroup(const char* name)
 // Add Renderable to its specified group, creating / associating as necessary
 RenderableGroup* RenderableGroupManager::addToGroup(Renderable* renderable, const char* groupName)
 {
-	printf("ADDING TO GROUP '%s'\n", groupName);
 	// Check to see if the Renderable is already associated to a group...
 	if (renderable->group())
 	{

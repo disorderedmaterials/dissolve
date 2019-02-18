@@ -78,7 +78,7 @@ class RenderableData1D : public Renderable
 	 */
 	private:
 	// Create line strip primitive
-	void constructLineXY(const Array<double>& displayAbscissa, const Array<double>& displayValues, Primitive* primitive, const Axes& axes, ColourScale colourScale, double zCoordinate = 0.0);
+	void constructLineXY(const Array<double>& displayAbscissa, const Array<double>& displayValues, Primitive* primitive, const Axes& axes, const ColourDefinition& colourDefinition, double zCoordinate = 0.0);
 
 	public:
 	// Update primitives and send for display

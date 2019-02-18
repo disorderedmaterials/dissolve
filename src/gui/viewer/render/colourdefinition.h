@@ -23,6 +23,7 @@
 #define DISSOLVE_COLOURDEFINITION_H
 
 #include "gui/viewer/render/colourscale.h"
+#include "base/version.h"
 
 // Forward Declarations
 /* none */
@@ -45,86 +46,156 @@ class ColourDefinition
 	 * Enumerations
 	 */
 	public:
-	// Available colourscale sources
-	enum ColourSource { SingleColourSource, RGBGradientSource, HSVGradientSource, CustomGradientSource, nColourSources };
-	// Convert text string to ColourSource
-	static ColourSource colourSource(const char* s);
-	// Convert ColourSource to text string
-	static const char* colourSource(ColourDefinition::ColourSource cs);
-	// Alpha control options
-	enum AlphaControl { OwnAlpha, FixedAlpha, nAlphaControls };
-	// Convert text string to AlphaControl
-	static AlphaControl alphaControl(const char* s);
-	// Convert AlphaControl to text string
-	static const char* alphaControl(ColourDefinition::AlphaControl as);
-	// Stock colours enum
+	// Colour Styles
+	enum ColourStyle { SingleColourStyle, RGBGradientStyle, HSVGradientStyle, CustomGradientStyle, nColourStyles };
+	// Convert text string to ColourStyle
+	static ColourStyle colourStyle(const char* s);
+	// Convert ColourStyle to text string
+	static const char* colourStyle(ColourDefinition::ColourStyle cs);
+	// Stock Colours
 	enum StockColour { BlackStockColour, RedStockColour, GreenStockColour, BlueStockColour, PurpleStockColour, CyanStockColour, OrangeStockColour, PinkStockColour, LightRedStockColour, LightGreenStockColour, LightBlueStockColour, SilverStockColour, GoldStockColour, nStockColours };
 	// Return stock colour (as QColor)
 	static QColor stockColour(StockColour colour);
 
 
 	/*
-	 * Colour Definiton
+	 * Style
 	 */
 	private:
-	// Current colourscale source to use
-	ColourSource colourSource_;
-	// Points for SingleColour, RGBGradient and HSVGradient sources
-	ColourScalePoint colourSinglePoint_;
-	ColourScalePoint colourRGBGradientAPoint_, colourRGBGradientBPoint_;
-	ColourScalePoint colourHSVGradientAPoint_, colourHSVGradientBPoint_;
-	// Actual ColourScale used by Renderables
-	ColourScale colourScale_;
-	// Custom ColourScale source
-	ColourScale customColourScale_;
-	// Current alpha control
-	AlphaControl alphaControl_;
-	// Fixed alpha value (for FixedAlpha option)
-	double fixedAlpha_;
-	// Version for colourscale
-	int colourVersion_;
-	// Version at which the colourscale was last generated at
-	int colourScaleGeneratedAt_;
+	// Current colour style in use
+	ColourStyle style_;
+	// Whether to use global alpha value
+	bool useGlobalAlpha_;
+	// Global alpha value
+	double globalAlpha_;
+	// Version
+	VersionCounter version_;
 
 	public:
-	// Update colour scale
-	void updateColourScale();
-	// Set colourscale source to use
-	void setColourSource(ColourSource source);
-	// Return colourscale source to use
-	ColourSource colourSource() const;
-	// Set colourscale point colour
-	void setColourScalePoint(ColourSource source, QColor colour, double value = 0.0, int index = -1);
-	// Return colourscale point specified
-	const ColourScalePoint& colourScalePoint(ColourSource source, int index = -1) const;
-	// Return colour of point specified
-	QColor colourScalePointColour(ColourSource source, int index = -1) const;
-	// Return value of point specified
-	double colourScalePointValue(ColourSource source, int index = -1) const;
-	// Add empty point to end of custom colourscale
-	void addCustomColourScalePoint();
-	// Add point to custom colourscale
-	void addCustomColourScalePoint(double value, QColor colour);
-	// Return number of custom colourscale points
-	int nCustomColourScalePoints();
-	// Return custom colourscale points
-	const Array<ColourScalePoint>& customColourScalePoints() const;
-	// Return custom colourscale point with index specified
-	const ColourScalePoint& customColourScalePoint(int id) const;
-	// Remove specified colourscale point
-	void removeCustomColourScalePoint(int id);
-	// Set alpha control
-	void setAlphaControl(AlphaControl alpha);
-	// Return current alpha control
-	AlphaControl alphaControl() const;
-	// Set fixed alpha value
-	void setFixedAlpha(double alpha);
-	// Return fixed alpha value
-	double fixedAlpha() const;
-	// Return current colourscale
-	const ColourScale& colourScale();
-	// Return colour version
-	int colourVersion() const;
+	// Set colour style to use
+	void setStyle(ColourStyle source);
+	// Return colour style in use
+	ColourStyle style() const;
+	// Set whether to use global alpha value
+	void setUseGlobalAlpha(bool useGlobalAlpha);
+	// Return whether to use global alpha value
+	bool useGlobalAlpha() const;
+	// Set global alpha value
+	void setGlobalAlpha(double alpha);
+	// Return global alpha value
+	double globalAlpha() const;
+	// Return version
+	const int version() const;
+
+
+	/*
+	 * Single Colour Definition
+	 */
+	private:
+	// Single colour
+	QColor singleColour_;
+
+	public:
+	// Set single colour
+	void setSingleColour(QColor colour);
+	// Return single colour
+	QColor singleColour() const;
+
+
+	/*
+	 * RGB Gradient Definition
+	 */
+	private:
+	// RGB Gradient
+	ColourScale rgbGradient_;
+
+	public:
+	// Set RGB gradient start value
+	void setRGBGradientStartValue(double value);
+	// Return RGB gradient start value
+	double rgbGradientStartValue() const;
+	// Set RGB gradient start colour
+	void setRGBGradientStartColour(QColor colour);
+	// Return RGB gradient start colour
+	QColor rgbGradientStartColour() const;
+	// Set RGB gradient start
+	void setRGBGradientStart(double value, QColor colour);
+	// Set RGB gradient end value
+	void setRGBGradientEndValue(double value);
+	// Return RGB gradient end value
+	double rgbGradientEndValue() const;
+	// Set RGB gradient end colour
+	void setRGBGradientEndColour(QColor colour);
+	// Return RGB gradient end colour
+	QColor rgbGradientEndColour() const;
+	// Set RGB gradient end
+	void setRGBGradientEnd(double value, QColor colour);
+
+
+	/*
+	 * HSV Gradient Definition
+	 */
+	private:
+	// HSV gradient
+	ColourScale hsvGradient_;
+
+	public:
+	// Set HSV gradient start value
+	void setHSVGradientStartValue(double value);
+	// Return HSV gradient start value
+	double hsvGradientStartValue() const;
+	// Set HSV gradient start colour
+	void setHSVGradientStartColour(QColor colour);
+	// Return HSV gradient start colour
+	QColor hsvGradientStartColour() const;
+	// Set HSV gradient start
+	void setHSVGradientStart(double value, QColor colour);
+	// Set HSV gradient end value
+	void setHSVGradientEndValue(double value);
+	// Return HSV gradient end value
+	double hsvGradientEndValue() const;
+	// Set HSV gradient end colour
+	void setHSVGradientEndColour(QColor colour);
+	// Return HSV gradient end colour
+	QColor hsvGradientEndColour() const;
+	// Set HSV gradient end
+	void setHSVGradientEnd(double value, QColor colour);
+
+
+	/*
+	 * Custom Gradient Definition
+	 */
+	private:
+	// Custom gradient
+	ColourScale customGradient_;
+
+	public:
+	// Set custom gradient point value and colour
+	void setCustomGradientPoint(int index, double value, QColor colour);
+	// Return custom gradient point specified
+	const ColourScalePoint& customGradientPoint(int index) const;
+	// Return colour of custom gradient point specified
+	QColor customGradientColour(int index) const;
+	// Return value of custom gradient point specified
+	double customGradientValue(ColourStyle source, int index) const;
+	// Append point to custom gradient
+	void appendCustomGradientPoint();
+	// Add point to custom gradient
+	void addCustomGradientPoint(double value, QColor colour);
+	// Return number of points in custom gradient
+	int nCustomGradientPoints() const;
+	// Return custom gradient points
+	const Array<ColourScalePoint>& customGradientPoints() const;
+	// Remove specified colourscale point with index specified
+	void removeCustomGradientPoint(int id);
+
+
+	/*
+	 * Colour Access
+	 */
+	public:
+	// Return (set) colour for specified value
+	void colour(double value, Vec4<GLfloat>& target) const;
 };
 
 #endif

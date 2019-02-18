@@ -289,13 +289,13 @@ void DataViewer::render(int xOffset, int yOffset)
 		glPushMatrix();
 		glTranslated(-overlaySpacing, (overlayTextSize/2.0) - (rend->lineStyle().width()/2.0), 0.0);
 		// -- What are we drawing for the line indicator?
-		if (colourDefinition.colourSource() == ColourDefinition::SingleColourSource)
+		if (colourDefinition.style() == ColourDefinition::SingleColourStyle)
 		{
 			rend->lineStyle().apply();
 			GLfloat lineWidth;
 			glGetFloatv(GL_LINE_WIDTH, &lineWidth);
 			glLineWidth(lineWidth*2.0);
-			colourDefinition.colourScale().colour(0.0, colour);
+			colourDefinition.colour(0.0, colour);
 			glColor4f(colour.x, colour.y, colour.z, colour.w);
 			glBegin(GL_LINES);
 			glVertex2i(0.0, 0.0);

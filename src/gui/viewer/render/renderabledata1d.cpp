@@ -171,7 +171,7 @@ void RenderableData1D::updateAndSendPrimitives(View& view, RenderableGroupManage
 	bool upToDate = true;
 	if (forceUpdate) upToDate = false;
 	else if (primitivesAxesVersion_!= axes.displayVersion()) upToDate = false;
-	else if (!DissolveSys::sameString(primitivesColourDefinitionFingerprint_, CharString("%p@%i", group_, colourDefinition.colourVersion()), true)) upToDate = false;
+	else if (!DissolveSys::sameString(primitivesColourDefinitionFingerprint_, CharString("%p@%i", group_, colourDefinition.version()), true)) upToDate = false;
 	else if (primitivesDataVersion_ != version()) upToDate = false;
 	else if (primitivesStyleVersion_ != displayStyleVersion()) upToDate = false;
 
@@ -186,7 +186,7 @@ void RenderableData1D::updateAndSendPrimitives(View& view, RenderableGroupManage
 		{
 			case (RenderableData1D::LineXYStyle):
 				primitives_.reinitialise(1, true, GL_LINE_STRIP, true);
-				constructLineXY(transformedData().constXAxis(), transformedData().constValues(), primitives_[0], axes, colourDefinition.colourScale());
+				constructLineXY(transformedData().constXAxis(), transformedData().constValues(), primitives_[0], axes, colourDefinition);
 				break;
 // 			case (RenderableData1D::LineZYStyle):
 // 				Surface::constructLineZY(primitive_, axes, collection_->displayAbscissa(), collection_->displayData(), colourDefinition.colourScale());
@@ -218,7 +218,7 @@ void RenderableData1D::updateAndSendPrimitives(View& view, RenderableGroupManage
 
 	// Store version points for the up-to-date primitive
 	primitivesAxesVersion_ = axes.displayVersion();
-	primitivesColourDefinitionFingerprint_.sprintf("%p@%i", group_, colourDefinition.colourVersion());
+	primitivesColourDefinitionFingerprint_.sprintf("%p@%i", group_, colourDefinition.version());
 	primitivesDataVersion_ = version();
 	primitivesStyleVersion_ = displayStyleVersion();
 
@@ -226,7 +226,7 @@ void RenderableData1D::updateAndSendPrimitives(View& view, RenderableGroupManage
 }
 
 // Create line strip primitive
-void RenderableData1D::constructLineXY(const Array<double>& displayAbscissa, const Array<double>& displayValues, Primitive* primitive, const Axes& axes, ColourScale colourScale, double zCoordinate)
+void RenderableData1D::constructLineXY(const Array<double>& displayAbscissa, const Array<double>& displayValues, Primitive* primitive, const Axes& axes, const ColourDefinition& colourDefinition, double zCoordinate)
 {
 // 	// Get extents of displayData to use based on current axes limits
 // 	Vec3<int> minIndex, maxIndex;
@@ -258,17 +258,36 @@ void RenderableData1D::constructLineXY(const Array<double>& displayAbscissa, con
 	// Set vertexA to -1 so we don't draw a line at n=0
 	vertexA = -1;
 
-	// Loop over x values
-	for (int n=0; n<nX; ++n)
+	// Check for a single colour style in the colourDefinition - use optimised case in that eventuality
+	if (colourDefinition.style() == ColourDefinition::SingleColourStyle)
 	{
-		colourScale.colour(yLogarithmic ? pow(10.0, y.constAt(n) / yStretch) : y.constAt(n) / yStretch, colour);
-		//printf("LINEXY Colour %i %i = %f %f %f %f\n", slice, n, colour[0], colour[1], colour[2], colour[3]);
-		vertexB = primitive->defineVertex(x.constAt(n), y.constAt(n), z, nrm, colour);
+		// Get the single colour
+		colourDefinition.colour(0.0, colour);
 
-		// If both vertices are valid, plot a line
-		if (vertexA != -1) primitive->defineIndices(vertexA, vertexB);
+		// Loop over x values
+		for (int n=0; n<nX; ++n)
+		{
+			vertexB = primitive->defineVertex(x.constAt(n), y.constAt(n), z, nrm, colour);
 
-		vertexA = vertexB;
+			// If both vertices are valid, plot a line
+			if (vertexA != -1) primitive->defineIndices(vertexA, vertexB);
+
+			vertexA = vertexB;
+		}
+	}
+	else
+	{
+		// Loop over x values
+		for (int n=0; n<nX; ++n)
+		{
+			colourDefinition.colour(yLogarithmic ? pow(10.0, y.constAt(n) / yStretch) : y.constAt(n) / yStretch, colour);
+			vertexB = primitive->defineVertex(x.constAt(n), y.constAt(n), z, nrm, colour);
+
+			// If both vertices are valid, plot a line
+			if (vertexA != -1) primitive->defineIndices(vertexA, vertexB);
+
+			vertexA = vertexB;
+		}
 	}
 }
 

@@ -25,18 +25,19 @@
 // Constructor
 ColourDefinition::ColourDefinition()
 {
-	colourScale_.clear();
-	colourSinglePoint_.set(0.0, QColor(0,0,0));
-	colourRGBGradientAPoint_.set(0.0, QColor(255,255,255));
-	colourRGBGradientBPoint_.set(1.0, QColor(0,0,255));
-	colourHSVGradientAPoint_.set(0.0, QColor(255,0,0));
-	colourHSVGradientBPoint_.set(1.0, QColor(100,40,255));
-	customColourScale_.clear();
-	colourSource_ = SingleColourSource;
-	alphaControl_ = ColourDefinition::OwnAlpha;
-	fixedAlpha_ = 0.5;
-	colourVersion_ = 0;
-	colourScaleGeneratedAt_ = -1;
+	// Colour Definitions
+	singleColour_.setRgb(0, 0, 0, 255);
+	rgbGradient_.addPoint(0.0, QColor(255,255,255));
+	rgbGradient_.addPoint(1.0, QColor(0,0,255));
+	hsvGradient_.setUseHSV(true);
+	hsvGradient_.addPoint(0.0, QColor(255,0,0));
+	hsvGradient_.addPoint(1.0, QColor(100,40,255));
+	customGradient_.clear();
+
+	// Style
+	style_ = ColourDefinition::SingleColourStyle;
+	useGlobalAlpha_ = false;
+	globalAlpha_ = 0.5;
 }
 
 // Destructor
@@ -53,54 +54,35 @@ ColourDefinition::ColourDefinition(const ColourDefinition& source)
 // Assignment operator
 void ColourDefinition::operator=(const ColourDefinition& source)
 {
-	colourSource_ = source.colourSource_;
-	colourSinglePoint_ = source.colourSinglePoint_;
-	colourRGBGradientAPoint_ = source.colourRGBGradientAPoint_;
-	colourRGBGradientBPoint_ = source.colourRGBGradientBPoint_;
-	colourHSVGradientAPoint_ = source.colourHSVGradientAPoint_;
-	colourHSVGradientBPoint_ = source.colourHSVGradientBPoint_;
-	colourScale_ = source.colourScale_;
-	customColourScale_ = source.customColourScale_;
-	alphaControl_ = source.alphaControl_;
-	fixedAlpha_ = source.fixedAlpha_;
-	colourVersion_ = source.colourVersion_;
-	colourScaleGeneratedAt_ = source.colourScaleGeneratedAt_;
+	// Colour Definitions
+	style_ = source.style_;
+	singleColour_ = source.singleColour_;
+	rgbGradient_ = source.rgbGradient_;
+	hsvGradient_ = source.hsvGradient_;
+	customGradient_ = source.customGradient_;
+	useGlobalAlpha_ = source.useGlobalAlpha_;
+	globalAlpha_ = source.globalAlpha_;
+	version_ = source.version_;
 }
 
 /*
  * Enumerations
  */
 
-// ColourSource Keywords
-const char* ColourSourceKeywords[] = { "SingleColour", "RGBGradient", "HSVGradient", "CustomGradient" };
+// ColourStyle Keywords
+const char* ColourStyleKeywords[] = { "SingleColour", "RGBGradient", "HSVGradient", "CustomGradient" };
 
-// Convert text string to ColourSource
-ColourDefinition::ColourSource ColourDefinition::colourSource(const char* s)
+// Convert text string to ColourStyle
+ColourDefinition::ColourStyle ColourDefinition::colourStyle(const char* s)
 {
-	for (int n=0; n<ColourDefinition::nColourSources; ++n) if (DissolveSys::sameString(s, ColourSourceKeywords[n])) return (ColourDefinition::ColourSource) n;
-	return ColourDefinition::nColourSources;
+	for (int n=0; n<ColourDefinition::nColourStyles; ++n) if (DissolveSys::sameString(s, ColourStyleKeywords[n])) return (ColourDefinition::ColourStyle) n;
+	return ColourDefinition::nColourStyles;
 }
 
-// Convert ColourSource to text string
-const char* ColourDefinition::colourSource(ColourSource cs)
+// Convert ColourStyle to text string
+const char* ColourDefinition::colourStyle(ColourStyle cs)
 {
-	return ColourSourceKeywords[cs];
-}
-
-// AlphaControl keywords
-const char* AlphaControlKeywords[] = { "OwnAlpha", "FixedAlpha" };
-
-// Convert text string to AlphaControl
-ColourDefinition::AlphaControl ColourDefinition::alphaControl(const char* s)
-{
-	for (int n=0; n<ColourDefinition::nAlphaControls; ++n) if (DissolveSys::sameString(s, AlphaControlKeywords[n])) return (ColourDefinition::AlphaControl) n;
-	return ColourDefinition::nAlphaControls;
-}
-
-// Convert AlphaControl to text string
-const char* ColourDefinition::alphaControl(ColourDefinition::AlphaControl as)
-{
-	return AlphaControlKeywords[as];
+	return ColourStyleKeywords[cs];
 }
 
 // Stock Colours
@@ -127,199 +109,320 @@ QColor ColourDefinition::stockColour(ColourDefinition::StockColour colour)
 }
 
 /*
- * Colour Definition
+ * Style
  */
 
-// Update colour scale
-void ColourDefinition::updateColourScale()
+// Set colour style to use
+void ColourDefinition::setStyle(ColourStyle style)
 {
-	if (colourVersion_ == colourScaleGeneratedAt_) return;
+	style_ = style;
 
-	colourScale_.clear();
-	if (colourSource_ == ColourDefinition::SingleColourSource) colourScale_.addPoint(0.0, colourSinglePoint_.colour());
-	else if (colourSource_ == ColourDefinition::RGBGradientSource)
+	++version_;
+}
+
+// Return colour style in use
+ColourDefinition::ColourStyle ColourDefinition::style() const
+{
+	return style_;
+}
+
+// Set whether to use global alpha value
+void ColourDefinition::setUseGlobalAlpha(bool useGlobalAlpha)
+{
+	useGlobalAlpha_ = useGlobalAlpha;
+
+	++version_;
+}
+
+// Return whether to use global alpha value
+bool ColourDefinition::useGlobalAlpha() const
+{
+	return useGlobalAlpha_;
+}
+
+// Set global alpha value
+void ColourDefinition::setGlobalAlpha(double alpha)
+{
+	globalAlpha_ = alpha;
+
+	++version_;
+}
+
+// Return global alpha value
+double ColourDefinition::globalAlpha() const
+{
+	return globalAlpha_;
+}
+
+// Return version
+const int ColourDefinition::version() const
+{
+	return version_;
+}
+
+/*
+ * Colour Definitions
+ */
+
+// Set single colour
+void ColourDefinition::setSingleColour(QColor colour)
+{
+	singleColour_ = colour;
+
+	++version_;
+}
+
+// Return single colour
+QColor ColourDefinition::singleColour() const
+{
+	return singleColour_;
+}
+
+/*
+ * RGB Gradient Definition
+ */
+
+// Set RGB gradient start value
+void ColourDefinition::setRGBGradientStartValue(double value)
+{
+	rgbGradient_.setValue(0, value);
+
+	++version_;
+}
+
+// Return RGB gradient start value
+double ColourDefinition::rgbGradientStartValue() const
+{
+	return rgbGradient_.point(0).value();
+}
+
+// Set RGB gradient start colour
+void ColourDefinition::setRGBGradientStartColour(QColor colour)
+{
+	rgbGradient_.setColour(0, colour);
+
+	++version_;
+}
+
+// Return RGB gradient start colour
+QColor ColourDefinition::rgbGradientStartColour() const
+{
+	return rgbGradient_.point(0).colour();
+}
+
+// Set RGB gradient start
+void ColourDefinition::setRGBGradientStart(double value, QColor colour)
+{
+	rgbGradient_.setPoint(0, value, colour);
+
+	++version_;
+}
+
+// Set RGB gradient end value
+void ColourDefinition::setRGBGradientEndValue(double value)
+{
+	rgbGradient_.setValue(1, value);
+
+	++version_;
+}
+
+// Return RGB gradient end value
+double ColourDefinition::rgbGradientEndValue() const
+{
+	return rgbGradient_.point(1).value();
+}
+
+// Set RGB gradient end colour
+void ColourDefinition::setRGBGradientEndColour(QColor colour)
+{
+	rgbGradient_.setColour(1, colour);
+
+	++version_;
+}
+
+// Return RGB gradient end colour
+QColor ColourDefinition::rgbGradientEndColour() const
+{
+	return rgbGradient_.point(1).colour();
+}
+
+// Set RGB gradient end
+void ColourDefinition::setRGBGradientEnd(double value, QColor colour)
+{
+	rgbGradient_.setPoint(1, value, colour);
+
+	++version_;
+}
+
+/*
+ * HSV Gradient Definition
+ */
+
+// Set HSV gradient start value
+void ColourDefinition::setHSVGradientStartValue(double value)
+{
+	hsvGradient_.setValue(0, value);
+
+	++version_;
+}
+
+// Return HSV gradient start value
+double ColourDefinition::hsvGradientStartValue() const
+{
+	return hsvGradient_.point(0).value();
+}
+
+// Set HSV gradient start colour
+void ColourDefinition::setHSVGradientStartColour(QColor colour)
+{
+	hsvGradient_.setColour(0, colour);
+
+	++version_;
+}
+
+// Return HSV gradient start colour
+QColor ColourDefinition::hsvGradientStartColour() const
+{
+	return hsvGradient_.point(0).colour();
+}
+
+// Set HSV gradient start
+void ColourDefinition::setHSVGradientStart(double value, QColor colour)
+{
+	hsvGradient_.setPoint(0, value, colour);
+
+	++version_;
+}
+
+// Set HSV gradient end value
+void ColourDefinition::setHSVGradientEndValue(double value)
+{
+	hsvGradient_.setValue(1, value);
+
+	++version_;
+}
+
+// Return HSV gradient end value
+double ColourDefinition::hsvGradientEndValue() const
+{
+	return hsvGradient_.point(1).value();
+}
+
+// Set HSV gradient end colour
+void ColourDefinition::setHSVGradientEndColour(QColor colour)
+{
+	hsvGradient_.setColour(1, colour);
+
+	++version_;
+}
+
+// Return HSV gradient end colour
+QColor ColourDefinition::hsvGradientEndColour() const
+{
+	return hsvGradient_.point(1).colour();
+}
+
+// Set HSV gradient end
+void ColourDefinition::setHSVGradientEnd(double value, QColor colour)
+{
+	hsvGradient_.setPoint(1, value, colour);
+
+	++version_;
+}
+
+/*
+ * Custom Gradient Definition
+ */
+
+// Set custom gradient point value and colour
+void ColourDefinition::setCustomGradientPoint(int index, double value, QColor colour)
+{
+	customGradient_.setPoint(index, value, colour);
+
+	++version_;
+}
+
+// Return custom gradient point specified
+const ColourScalePoint& ColourDefinition::customGradientPoint(int index) const
+{
+	return customGradient_.point(index);
+}
+
+// Return colour of custom gradient point specified
+QColor ColourDefinition::customGradientColour(int index) const
+{
+	return customGradient_.point(index).colour();
+}
+
+// Return value of custom gradient point specified
+double ColourDefinition::customGradientValue(ColourStyle source, int index) const
+{
+	return customGradient_.point(index).value();
+}
+
+// Append point to custom gradient
+void ColourDefinition::appendCustomGradientPoint()
+{
+	customGradient_.addPoint(customGradient_.nPoints() > 0 ? customGradient_.lastPoint().value() + 1.0 : 0.0, Qt::white);
+
+	++version_;
+}
+
+// Add point to custom gradient
+void ColourDefinition::addCustomGradientPoint(double value, QColor colour)
+{
+	customGradient_.addPoint(value, colour);
+
+	++version_;
+}
+
+// Return number of points in custom gradient
+int ColourDefinition::nCustomGradientPoints() const
+{
+	return customGradient_.nPoints();
+}
+
+// Return custom gradient points
+const Array<ColourScalePoint>& ColourDefinition::customGradientPoints() const
+{
+	return customGradient_.points();
+}
+
+// Remove specified colourscale point with index specified
+void ColourDefinition::removeCustomGradientPoint(int id)
+{
+	customGradient_.removePoint(id);
+
+	++version_;
+}
+
+/*
+ * Colour Access
+ */
+
+// Return (set) colour for specified value
+void ColourDefinition::colour(double value, Vec4<GLfloat>& target) const
+{
+	if (style_ == ColourStyle::SingleColourStyle)
 	{
-		colourScale_.setUseHSV(false);
-		colourScale_.addPoint(colourRGBGradientAPoint_.value(), colourRGBGradientAPoint_.colour());
-		colourScale_.addPoint(colourRGBGradientBPoint_.value(), colourRGBGradientBPoint_.colour());
+		target.x = singleColour_.redF();
+		target.y = singleColour_.greenF();
+		target.z = singleColour_.blueF();
+		target.w = useGlobalAlpha_ ? globalAlpha_ : singleColour_.alphaF();
 	}
-	else if (colourSource_ == ColourDefinition::HSVGradientSource)
+	else if (style_ == ColourStyle::RGBGradientStyle)
 	{
-		colourScale_.setUseHSV(true);
-		colourScale_.addPoint(colourHSVGradientAPoint_.value(), colourHSVGradientAPoint_.colour());
-		colourScale_.addPoint(colourHSVGradientBPoint_.value(), colourHSVGradientBPoint_.colour());
+		rgbGradient_.colour(value, target);
+		if (useGlobalAlpha_) target.w = globalAlpha_;
 	}
-	else if (colourSource_ == ColourDefinition::CustomGradientSource) colourScale_ = customColourScale_;
-
-	// Set alpha value for all points if alphaControl_ == FixedAlpha
-	if (alphaControl_ == ColourDefinition::FixedAlpha) colourScale_.setAllAlpha(fixedAlpha_);
-
-	colourScaleGeneratedAt_ = colourVersion_;
-}
-
-// Set colourscale source to use
-void ColourDefinition::setColourSource(ColourSource source)
-{
-	colourSource_ = source;
-
-	++colourVersion_;
-}
-
-// Return colourscale source to use
-ColourDefinition::ColourSource ColourDefinition::colourSource() const
-{
-	return colourSource_;
-}
-
-// Set colourscale point colour
-void ColourDefinition::setColourScalePoint(ColourSource source, QColor colour, double value, int index)
-{
-	switch (source)
+	else if (style_ == ColourStyle::HSVGradientStyle)
 	{
-		case (ColourDefinition::SingleColourSource):
-			colourSinglePoint_.setColour(colour);
-			break;
-		case (ColourDefinition::RGBGradientSource):
-			if (index == 0) colourRGBGradientAPoint_.set(value, colour);
-			else colourRGBGradientBPoint_.set(value, colour);
-			break;
-		case (ColourDefinition::HSVGradientSource):
-			if (index == 0) colourHSVGradientAPoint_.set(value, colour);
-			else colourHSVGradientBPoint_.set(value, colour);
-			break;
-		case (ColourDefinition::CustomGradientSource):
-			customColourScale_.setPoint(index, value, colour);
-			break;
-		default:
-			Messenger::print("Unhandled ColourSource in ColourDefinition::setColourScalePoint().\n");
+		hsvGradient_.colour(value, target);
+		if (useGlobalAlpha_) target.w = globalAlpha_;
 	}
-
-	// Update colourscale?
-	if (source == colourSource_) ++colourVersion_;
-}
-
-// specific point in ColourScale
-const ColourScalePoint& ColourDefinition::colourScalePoint(ColourSource source, int index) const
-{
-	switch (source)
+	else
 	{
-		case (ColourDefinition::SingleColourSource):
-			return colourSinglePoint_;
-			break;
-		case (ColourDefinition::RGBGradientSource):
-			return (index == 0 ? colourRGBGradientAPoint_ : colourRGBGradientBPoint_);
-			break;
-		case (ColourDefinition::HSVGradientSource):
-			return (index == 0 ? colourHSVGradientAPoint_ : colourHSVGradientBPoint_);
-			break;
-		case (ColourDefinition::CustomGradientSource):
-			return customColourScale_.point(index);
-			break;
-		default:
-			Messenger::print("Unhandled ColourSource in ColourDefinition::colourScalePoint().\n");
+		customGradient_.colour(value, target);
+		if (useGlobalAlpha_) target.w = globalAlpha_;
 	}
-
-	static ColourScalePoint dummy;
-	return dummy;
-}
-
-// Return colour of point specified
-QColor ColourDefinition::colourScalePointColour(ColourSource source, int index) const
-{
-	const ColourScalePoint& point = colourScalePoint(source, index);
-
-	return point.colour();
-}
-
-// Return value of point specified
-double ColourDefinition::colourScalePointValue(ColourSource source, int index) const
-{
-	const ColourScalePoint& point = colourScalePoint(source, index);
-
-	return point.value();
-}
-
-// Add point to custom colour scale
-void ColourDefinition::addCustomColourScalePoint()
-{
-	customColourScale_.addPoint(customColourScale_.nPoints() > 0 ? customColourScale_.lastPoint().value() + 1.0 : 0.0, Qt::white);
-
-	// Update colourscale?
-	if (colourSource_ == ColourDefinition::CustomGradientSource) ++colourVersion_;
-}
-
-// Add point to custom colourscale
-void ColourDefinition::addCustomColourScalePoint(double value, QColor colour)
-{
-	customColourScale_.addPoint(value, colour);
-}
-
-// Return number of custom colourscale points
-int ColourDefinition::nCustomColourScalePoints()
-{
-	return customColourScale_.nPoints();
-}
-
-// Return custom colourscale points
-const Array<ColourScalePoint>& ColourDefinition::customColourScalePoints() const
-{
-	return customColourScale_.points();
-}
-
-// Return custom colourscale point with index specified
-const ColourScalePoint& ColourDefinition::customColourScalePoint(int id) const
-{
-	return customColourScale_.point(id);
-}
-
-// Remove specified colourscale point
-void ColourDefinition::removeCustomColourScalePoint(int id)
-{
-	customColourScale_.removePoint(id);
-
-	// Update colourscale?
-	if (colourSource_ == ColourDefinition::CustomGradientSource) ++colourVersion_;
-}
-
-// Set alpha control
-void ColourDefinition::setAlphaControl(ColourDefinition::AlphaControl alpha)
-{
-	alphaControl_ = alpha;
-
-	++colourVersion_;
-}
-
-// Return current alpha control
-ColourDefinition::AlphaControl ColourDefinition::alphaControl() const
-{
-	return alphaControl_;
-}
-
-// Set fixed alpha value
-void ColourDefinition::setFixedAlpha(double alpha)
-{
-	fixedAlpha_ = alpha;
-
-	++colourVersion_;
-}
-
-// Return fixed alpha value
-double ColourDefinition::fixedAlpha() const
-{
-	return fixedAlpha_;
-}
-
-// Return current colourscale
-const ColourScale& ColourDefinition::colourScale()
-{
-	// Does the colourscale need updating first?
-	updateColourScale();
-	
-	return colourScale_;
-}
-
-// Return colour version
-int ColourDefinition::colourVersion() const
-{
-	return colourVersion_;
 }

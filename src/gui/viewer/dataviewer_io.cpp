@@ -52,10 +52,36 @@ const char* DataViewer::inputBlock(DataViewer::InputBlock id)
  */
 
 // Axis Block Keywords
-const char* DataViewerAxisBlockKeywords[] = { "AutoScale", "AutoTicks", "EndAxis", "FirstTick", "FractionalPositioning", "GridLines", "GridLineMajorStyle", "GridLineMinorStyle", "Invert", "LabelAnchor", "LabelOrientation", "Limits", "Logarithmic", "MinorTicks", "NumberFormat", "PositionFractional", "PositionReal", "Stretch", "TickDelta", "TickDirection", "Title", "TitleAnchor", "TitleOrientation", "Visible" };
+const char* DataViewerAxisBlockKeywords[] = {
+	"AutoScale", "AutoTicks",
+	"EndAxis",
+	"FirstTick", "FractionalPositioning",
+	"GridLines", "GridLineMajorStyle", "GridLineMinorStyle",
+	"Invert",
+	"LabelAnchor", "LabelOrientation", "Limits", "Logarithmic",
+	"MinorTicks",
+	"NumberFormat",
+	"PositionFractional", "PositionReal",
+	"Stretch",
+	"TickDelta", "TickDirection", "Title", "TitleAnchor", "TitleOrientation",
+	"Visible"
+};
 
 // Axis Block NArguments
-int DataViewerAxisKeywordNArguments[] = { 1, 1, 0, 1, 1, 3, 6, 6, 1, 1, 3, 2, 1, 1, 4, 3, 3, 1, 1, 3, 1, 1, 4, 1 };
+int DataViewerAxisKeywordNArguments[] = {
+	1, 1,
+	0,
+	1, 1,
+	3, 6, 6,
+	1,
+	1, 3, 2, 1,
+	1,
+	4,
+	3, 3,
+	1,
+	1, 3, 1, 1, 4,
+	1
+};
 
 // Convert text string to AxisKeyword
 DataViewer::AxisKeyword DataViewer::axisKeyword(const char* s)
@@ -82,23 +108,25 @@ int DataViewer::axisKeywordNArguments(DataViewer::AxisKeyword kwd)
 
 // Collection Block Keywords
 const char* DataViewerRenderableBlockKeywords[] = {
-	"ColourAlphaControl", "ColourAlphaFixed", "ColourCustomGradient", "ColourLinearRGBA", "ColourLinearRGBB", "ColourLinearHSVA", "ColourLinearHSVB", "ColourSingle", "ColourSource",
+	"ColourAlphaIsGlobal", "ColourCustom", "ColourGlobalAlpha", "ColourHSVEnd", "ColourHSVStart", "ColourRGBEnd", "ColourRGBStart", "ColourSingle", "ColourStyle",
 	"EndRenderable",
 	"Group",
 	"LineStyle",
 	"Shininess", "Style",
 	"TransformX", "TransformY", "TransformZ",
-	"Visible" };
+	"Visible"
+};
 
 // Collection Block NArguments
 int DataViewerRenderableKeywordNArguments[] = {
-	1, 1, 5, 5, 5, 5, 5, 4, 1,
+	1, 5, 1, 5, 5, 5, 5, 4, 1,
 	0,	
 	1,
 	2,
 	1, 1,
 	2, 2, 2,
-	1 };
+	1
+};
 
 // Convert text string to RenderableKeyword
 DataViewer::RenderableKeyword DataViewer::renderableKeyword(const char* s)
@@ -377,8 +405,7 @@ bool DataViewer::readRenderableBlock(LineParser& parser, Renderable* renderable,
 {
 	int xyz;
 	double alpha;
-	ColourDefinition::AlphaControl ac;
-	ColourDefinition::ColourSource cs;
+	ColourDefinition::ColourStyle cs;
 	ColourDefinition& colourDefinition = renderable->colour();
 	Renderable::DisplayStyle ds;
 	LineStipple::StippleType stipple;
@@ -398,52 +425,52 @@ bool DataViewer::readRenderableBlock(LineParser& parser, Renderable* renderable,
 		switch (renderableKwd)
 		{
 			// Colour alpha control
-			case (DataViewer::ColourAlphaControlKeyword):
-				ac = ColourDefinition::alphaControl(parser.argc(1));
-				if (ac == ColourDefinition::nAlphaControls)
-				{
-					Messenger::warn("Unrecognised alpha control type '%s'. Defaulting to '%s'.\n", parser.argc(1), ColourDefinition::alphaControl(ColourDefinition::OwnAlpha));
-					ac = ColourDefinition::OwnAlpha;
-				}
-				colourDefinition.setAlphaControl(ac);
+			case (DataViewer::ColourAlphaIsGlobalKeyword):
+				colourDefinition.setUseGlobalAlpha(parser.argb(1));
+				break;
+			// Colour Custom Gradient point definition
+			case (DataViewer::ColourCustomGradientKeyword):
+				colourDefinition.addCustomGradientPoint(parser.argd(1), QColor(parser.argi(2), parser.argi(3), parser.argi(4), parser.argi(5)));
 				break;
 			// Colour alpha fixed value
-			case (DataViewer::ColourAlphaFixedKeyword):
+			case (DataViewer::ColourGlobalAlphaKeyword):
 				alpha = parser.argd(1);
 				if ((alpha < 0.0) || (alpha > 1.0))
 				{
 					Messenger::warn("Alpha value (%f) is out of range for %s keyword - it will be reset to 1.0.\n", alpha, renderableKeyword(renderableKwd));
 					alpha = 1.0;
 				}
-				colourDefinition.setFixedAlpha(alpha);
+				colourDefinition.setGlobalAlpha(alpha);
 				break;
-			// Colour Custom Gradient point definition
-			case (DataViewer::ColourCustomGradientKeyword):
-				colourDefinition.addCustomColourScalePoint(parser.argd(1), QColor(parser.argi(2), parser.argi(3), parser.argi(4), parser.argi(5)));
+			// Colour HSV Gradient end point definition
+			case (DataViewer::ColourHSVGradientEndKeyword):
+				colourDefinition.setHSVGradientEnd(parser.argd(1), QColor(parser.argi(2), parser.argi(3), parser.argi(4), parser.argi(5)));
 				break;
-			// Colour Linear Gradient point definition
-			case (DataViewer::ColourRGBGradientAKeyword):
-			case (DataViewer::ColourRGBGradientBKeyword):
-				colourDefinition.setColourScalePoint(ColourDefinition::RGBGradientSource, QColor(parser.argi(2), parser.argi(3), parser.argi(4), parser.argi(5)), parser.argd(1), renderableKwd == DataViewer::ColourRGBGradientAKeyword ? 0 : 1);
+			// Colour HSV Gradient start point definition
+			case (DataViewer::ColourHSVGradientStartKeyword):
+				colourDefinition.setHSVGradientStart(parser.argd(1), QColor(parser.argi(2), parser.argi(3), parser.argi(4), parser.argi(5)));
 				break;
-			// Colour Linear HSV Gradient point definition
-			case (DataViewer::ColourHSVGradientAKeyword):
-			case (DataViewer::ColourHSVGradientBKeyword):
-				colourDefinition.setColourScalePoint(ColourDefinition::HSVGradientSource, QColor::fromHsv(parser.argi(2), parser.argi(3), parser.argi(4), parser.argi(5)), parser.argd(1), renderableKwd == DataViewer::ColourHSVGradientAKeyword ? 0 : 1);
+			// Colour RGB Gradient end point definition
+			case (DataViewer::ColourRGBGradientEndKeyword):
+				colourDefinition.setRGBGradientEnd(parser.argd(1), QColor(parser.argi(2), parser.argi(3), parser.argi(4), parser.argi(5)));
+				break;
+			// Colour RGB Gradient start point definition
+			case (DataViewer::ColourRGBGradientStartKeyword):
+				colourDefinition.setRGBGradientStart(parser.argd(1), QColor(parser.argi(2), parser.argi(3), parser.argi(4), parser.argi(5)));
 				break;
 			// Colour single colour definition
 			case (DataViewer::ColourSingleKeyword):
-				colourDefinition.setColourScalePoint(ColourDefinition::SingleColourSource, QColor(parser.argi(1), parser.argi(2), parser.argi(3), parser.argi(4)));
+				colourDefinition.setSingleColour(QColor(parser.argi(1), parser.argi(2), parser.argi(3), parser.argi(4)));
 				break;
-			// Colour source
-			case (DataViewer::ColourSourceKeyword):
-				cs = ColourDefinition::colourSource(parser.argc(1));
-				if (cs == ColourDefinition::nColourSources)
+			// Colour style
+			case (DataViewer::ColourStyleKeyword):
+				cs = ColourDefinition::colourStyle(parser.argc(1));
+				if (cs == ColourDefinition::nColourStyles)
 				{
-					Messenger::warn("Unrecognised colour source '%s'. Defaulting to '%s'.\n", parser.argc(1), ColourDefinition::colourSource(ColourDefinition::SingleColourSource));
-					cs = ColourDefinition::SingleColourSource;
+					Messenger::warn("Unrecognised colour style '%s'. Defaulting to '%s'.\n", parser.argc(1), ColourDefinition::colourStyle(ColourDefinition::SingleColourStyle));
+					cs = ColourDefinition::SingleColourStyle;
 				}
-				colourDefinition.setColourSource(cs);
+				colourDefinition.setStyle(cs);
 				break;
 			// End input block
 			case (DataViewer::EndRenderableKeyword):
@@ -756,37 +783,36 @@ bool DataViewer::writeRenderableBlock(LineParser& parser, Renderable* renderable
 
 	// Colour Setup
 	const ColourDefinition& colourDef = renderable->colour();
-	parser.writeLineF("%s  %s '%s'\n", indent, DataViewer::renderableKeyword(DataViewer::ColourSourceKeyword), ColourDefinition::colourSource(colourDef.colourSource()));
-	ColourScalePoint* csp;
+	parser.writeLineF("%s  %s '%s'\n", indent, DataViewer::renderableKeyword(DataViewer::ColourStyleKeyword), ColourDefinition::colourStyle(colourDef.style()));
 	QColor colour;
 	double value;
 	// -- Single Colour
-	colour = colourDef.colourScalePointColour(ColourDefinition::SingleColourSource);
+	colour = colourDef.singleColour();
 	parser.writeLineF("%s  %s %i %i %i %i\n", indent, DataViewer::renderableKeyword(DataViewer::ColourSingleKeyword), colour.red(), colour.green(), colour.blue(), colour.alpha());
 	// -- RGB Gradient
-	colour = colourDef.colourScalePointColour(ColourDefinition::RGBGradientSource, 0);
-	value = colourDef.colourScalePointValue(ColourDefinition::RGBGradientSource, 0);
-	parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, DataViewer::renderableKeyword(DataViewer::ColourRGBGradientAKeyword), value, colour.red(), colour.green(), colour.blue(), colour.alpha());
-	colour = colourDef.colourScalePointColour(ColourDefinition::RGBGradientSource, 1);
-	value = colourDef.colourScalePointValue(ColourDefinition::RGBGradientSource, 1);
-	parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, DataViewer::renderableKeyword(DataViewer::ColourRGBGradientBKeyword), value, colour.red(), colour.green(), colour.blue(), colour.alpha());
+	colour = colourDef.rgbGradientStartColour();
+	value = colourDef.rgbGradientStartValue();
+	parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, DataViewer::renderableKeyword(DataViewer::ColourRGBGradientStartKeyword), value, colour.red(), colour.green(), colour.blue(), colour.alpha());
+	colour = colourDef.rgbGradientEndColour();
+	value = colourDef.rgbGradientEndValue();
+	parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, DataViewer::renderableKeyword(DataViewer::ColourRGBGradientEndKeyword), value, colour.red(), colour.green(), colour.blue(), colour.alpha());
 	// -- HSV Gradient
-	colour = colourDef.colourScalePointColour(ColourDefinition::HSVGradientSource, 0);
-	value = colourDef.colourScalePointValue(ColourDefinition::HSVGradientSource, 0);
-	parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, DataViewer::renderableKeyword(DataViewer::ColourHSVGradientAKeyword), value, colour.hue(), colour.saturation(), colour.value(), colour.alpha());
-	colour = colourDef.colourScalePointColour(ColourDefinition::HSVGradientSource, 1);
-	value = colourDef.colourScalePointValue(ColourDefinition::HSVGradientSource, 1);
-	parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, DataViewer::renderableKeyword(DataViewer::ColourHSVGradientBKeyword), value, colour.hue(), colour.saturation(), colour.value(), colour.alpha());
+	colour = colourDef.hsvGradientStartColour();
+	value = colourDef.hsvGradientStartValue();
+	parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, DataViewer::renderableKeyword(DataViewer::ColourHSVGradientStartKeyword), value, colour.hue(), colour.saturation(), colour.value(), colour.alpha());
+	colour = colourDef.hsvGradientEndColour();
+	value = colourDef.hsvGradientEndValue();
+	parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, DataViewer::renderableKeyword(DataViewer::ColourHSVGradientEndKeyword), value, colour.hue(), colour.saturation(), colour.value(), colour.alpha());
 	// -- Custom Gradient
-	const Array<ColourScalePoint> customColourScale = colourDef.customColourScalePoints();
-	for (int n=0; n<customColourScale.nItems(); ++n)
+	const Array<ColourScalePoint> customGradient = colourDef.customGradientPoints();
+	for (int n=0; n<customGradient.nItems(); ++n)
 	{
-		const ColourScalePoint& point = customColourScale.at(n);
+		const ColourScalePoint& point = customGradient.at(n);
 		parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, DataViewer::renderableKeyword(DataViewer::ColourCustomGradientKeyword), point.value(), point.colour().red(), point.colour().green(), point.colour().blue(), point.colour().alpha());
 	}
 	// -- Alpha control
-	parser.writeLineF("%s  %s '%s'\n", indent, DataViewer::renderableKeyword(DataViewer::ColourAlphaControlKeyword), ColourDefinition::alphaControl(colourDef.alphaControl()));
-	parser.writeLineF("%s  %s %f\n", indent, DataViewer::renderableKeyword(DataViewer::ColourAlphaFixedKeyword), colourDef.fixedAlpha());
+	parser.writeLineF("%s  %s %s\n", indent, DataViewer::renderableKeyword(DataViewer::ColourAlphaIsGlobalKeyword), DissolveSys::btoa(colourDef.useGlobalAlpha()));
+	parser.writeLineF("%s  %s %f\n", indent, DataViewer::renderableKeyword(DataViewer::ColourGlobalAlphaKeyword), colourDef.globalAlpha());
 
 	// Display
 	parser.writeLineF("%s  %s %f '%s'\n", indent, DataViewer::renderableKeyword(DataViewer::LineStyleKeyword), renderable->lineStyle().width(), LineStipple::stipple[renderable->lineStyle().stipple()].name);

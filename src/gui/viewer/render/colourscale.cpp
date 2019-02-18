@@ -240,6 +240,7 @@ void ColourScale::colour(double value, Vec4<GLfloat>& target) const
 	}
 
 	// Shouldn't ever get here
+	printf("Oh dear - fell through to the bottom of ColourScale::colour().\n");
 	target.x = 0.0;
 	target.y = 0.0;
 	target.z = 0.0;
