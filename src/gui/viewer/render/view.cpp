@@ -878,6 +878,9 @@ void View::autoFollowData()
 // Return absolute minimum transformed values over all displayed data
 Vec3<double> View::transformedDataMinima()
 {
+	// If there are no Renderables, just return the current limits
+	if (renderables_.nItems() == 0) return Vec3<double>(axes_.limitMin(0), axes_.limitMin(1), axes_.limitMin(2));
+
 	int nCounted = 0;
 	Vec3<double> v, minima;
 	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next)
@@ -893,14 +896,15 @@ Vec3<double> View::transformedDataMinima()
 		++nCounted;
 	}
 
-	// If we didn't have any data to work with, return the current axis limits
-	if (nCounted == 0) return Vec3<double>(axes_.limitMin(0), axes_.limitMin(1), axes_.limitMin(2));
-	else return minima;
+	return minima;
 }
 
 // Return absolute maximum transformed values over all associated collections
 Vec3<double> View::transformedDataMaxima()
 {
+	// If there are no Renderables, just return the current limits
+	if (renderables_.nItems() == 0) return Vec3<double>(axes_.limitMax(0), axes_.limitMax(1), axes_.limitMax(2));
+
 	int nCounted = 0;
 	Vec3<double> v, maxima;
 	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next)
@@ -909,16 +913,14 @@ Vec3<double> View::transformedDataMaxima()
 		else
 		{
 			v = rend->transformMax();
-			if (v.x < maxima.x) maxima.x = v.x;
-			if (v.y < maxima.y) maxima.y = v.y;
-			if (v.z < maxima.z) maxima.z = v.z;
+			if (v.x > maxima.x) maxima.x = v.x;
+			if (v.y > maxima.y) maxima.y = v.y;
+			if (v.z > maxima.z) maxima.z = v.z;
 		}
 		++nCounted;
 	}
 
-	// If we didn't have any data to work with, return the current axis limits
-	if (nCounted == 0) return Vec3<double>(axes_.limitMax(0), axes_.limitMax(1), axes_.limitMax(2));
-	else return maxima;
+	return maxima;
 }
 
 // Return absolute minimum positive transformed values over all associated collections
