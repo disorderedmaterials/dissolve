@@ -160,6 +160,8 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	QPixmap frameBuffer();
 	// Render current scene at supplied size
 	QPixmap generateImage(int imageWidth, int imageHeight);
+
+	protected slots:
 	// Copy current view to clipboard as an image
 	void copyViewToClipboard(bool checked);
 
