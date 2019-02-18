@@ -50,10 +50,6 @@ class RenderableData1D : public Renderable
 	// Return version of data
 	const int version() const;
 
-	public:
-	// Return identifying tag for source data object
-	const char* objectTag() const;
-
 
 	/*
 	 * Transform / Limits

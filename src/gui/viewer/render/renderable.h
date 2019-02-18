@@ -72,7 +72,7 @@ class Renderable : public ListItem<Renderable>
 	 */
 	protected:
 	// Identifying tag for source data object
-	const char* objectTag_;
+	CharString objectTag_;
 
 	private:
 	// Return whether a valid data source is available (attempting to set it if not)

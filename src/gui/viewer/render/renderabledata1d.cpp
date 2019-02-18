@@ -52,12 +52,6 @@ const int RenderableData1D::version() const
 	return (source_ ? source_->version() : -99);
 }
 
-// Return identifying tag for source data object
-const char* RenderableData1D::objectTag() const
-{
-	return objectTag_;
-}
-
 /*
  * Transform / Limits
  */

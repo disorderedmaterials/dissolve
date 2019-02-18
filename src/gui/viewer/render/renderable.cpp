@@ -114,7 +114,7 @@ Renderable::RenderableType Renderable::type() const
 // Return identifying tag for source data object
 const char* Renderable::objectTag() const
 {
-	return objectTag_;
+	return objectTag_.get();
 }
 
 /*
