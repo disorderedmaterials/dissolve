@@ -23,9 +23,6 @@
 #define DISSOLVE_DATAVIEWER_H
 
 #include "gui/viewer/viewer.hui"
-#include "gui/viewer/render/renderable.h"
-#include "gui/viewer/render/renderablegroupmanager.h"
-#include "gui/viewer/render/view.h"
 
 // Forward Declarations
 class DataSet;
@@ -91,46 +88,6 @@ class DataViewer : public BaseViewer
 	void showDialog(bool checked);
 	// Set data visibility
 	void contextMenuSetDataVisible(bool checked);
-
-
-	/*
-	 * Renderable Data
-	 */
-	protected:
-	// List of renderables to display
-	List<Renderable> renderables_;
-	// Group manager for the data
-	RenderableGroupManager groupManager_;
-	// Currently-selected renderable (if any)
-	Renderable* currentRenderable_;
-	// View for renderable data
-	View view_;
-
-	public:
-	// Clear existing data
-	void clear();
-	// Own supplied renderable and display it
-	void ownRenderable(Renderable* newRenderable);
-	// Create Renderable by type and object identifier
-	Renderable* createRenderable(Renderable::RenderableType type, const char* objectTag, const char* name, const char* title = NULL);
-	// Remove existing Renderable
-	void removeRenderable(Renderable* data);
-	// Clear all Renderables
-	void clearRenderables();
-	// Return number of Renderables
-	int nRenderables() const;
-	// Return list of Renderables
-	const List<Renderable>& renderables() const;
-	// Return named Renderable
-	Renderable* renderable(const char* name) const;
-	// Set visibility of named Renderable
-	void setRenderableVisible(const char* name, bool visible);
-	// Return visibility of named Renderable
-	bool isRenderableVisible(const char* name) const;
-	// Return the group manager for the data
-	RenderableGroupManager& groupManager();
-	// Return the view
-	View& view();
 
 
 	/*

@@ -22,16 +22,19 @@
 #ifndef DISSOLVE_BASEVIEWER_H
 #define DISSOLVE_BASEVIEWER_H
 
-#include <QOpenGLWidget>
-#include <QOpenGLFunctions>
-#include <QOffscreenSurface>
-#include <QObject>
-#include <QMenu>
+#include "gui/viewer/render/renderable.h"
+#include "gui/viewer/render/renderablegroupmanager.h"
+#include "gui/viewer/render/view.h"
 #include "gui/viewer/render/primitive.h"
 #include "gui/viewer/render/fontinstance.h"
 #include "math/data1d.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
+#include <QOpenGLWidget>
+#include <QOpenGLFunctions>
+#include <QOffscreenSurface>
+#include <QObject>
+#include <QMenu>
 
 // Forward Declarations
 /* none */
@@ -45,6 +48,46 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	// Constructor / Destructor
 	BaseViewer(QWidget *parent);
 	~BaseViewer();
+
+
+	/*
+	 * Renderable Data
+	 */
+	protected:
+	// List of renderables to display
+	List<Renderable> renderables_;
+	// Group manager for the data
+	RenderableGroupManager groupManager_;
+	// Currently-selected renderable (if any)
+	Renderable* currentRenderable_;
+	// View for renderable data
+	View view_;
+
+	public:
+	// Clear existing data
+	void clear();
+	// Own supplied renderable and display it
+	void ownRenderable(Renderable* newRenderable);
+	// Create Renderable by type and object identifier
+	Renderable* createRenderable(Renderable::RenderableType type, const char* objectTag, const char* name, const char* title = NULL);
+	// Remove existing Renderable
+	void removeRenderable(Renderable* data);
+	// Clear all Renderables
+	void clearRenderables();
+	// Return number of Renderables
+	int nRenderables() const;
+	// Return list of Renderables
+	const List<Renderable>& renderables() const;
+	// Return named Renderable
+	Renderable* renderable(const char* name) const;
+	// Set visibility of named Renderable
+	void setRenderableVisible(const char* name, bool visible);
+	// Return visibility of named Renderable
+	bool isRenderableVisible(const char* name) const;
+	// Return the group manager for the data
+	RenderableGroupManager& groupManager();
+	// Return the view
+	View& view();
 
 
 	/*

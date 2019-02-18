@@ -20,11 +20,10 @@
 */
 
 #include "gui/viewer/viewer.hui"
-#include "gui/viewer/render/fontinstance.h"
 #include "base/messenger.h"
 
 // Constructor
-BaseViewer::BaseViewer(QWidget* parent) : QOpenGLWidget(parent)
+BaseViewer::BaseViewer(QWidget* parent) : QOpenGLWidget(parent), view_(renderables_, fontInstance_)
 {
 	// Character / Setup
 	contextWidth_ = 0;

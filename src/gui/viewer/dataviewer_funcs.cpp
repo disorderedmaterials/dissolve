@@ -23,7 +23,7 @@
 #include "base/messenger.h"
 
 // Constructor
-DataViewer::DataViewer(QWidget* parent) : BaseViewer(parent), view_(renderables_, fontInstance())
+DataViewer::DataViewer(QWidget* parent) : BaseViewer(parent)
 {
 	// Interaction
 	interactionMode_ = DataViewer::ViewInteraction;
