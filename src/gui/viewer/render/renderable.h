@@ -46,7 +46,7 @@ class Renderable : public ListItem<Renderable>
 
 	// Constructor / Destructor
 	Renderable(RenderableType type, const char* objectTag);
-	~Renderable();
+	virtual ~Renderable();
 
 
 	/*
