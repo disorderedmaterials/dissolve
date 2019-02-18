@@ -678,7 +678,7 @@ bool DataViewer::parseInputBlocks(LineParser& parser)
 				rt = Renderable::renderableType(parser.argc(1));
 				if (rt == Renderable::nRenderableTypes) return Messenger::error("Unknown Renderable type '%s' found.\n", parser.argc(1));
 
-				renderable = RenderableFactory::create(rt, parser.argc(2));
+				renderable = createRenderable(rt, parser.argc(2), parser.argc(3), parser.argc(4));
 				if (!renderable) return false;
 
 				success = readRenderableBlock(parser, renderable);
@@ -762,7 +762,7 @@ bool DataViewer::writeRenderableBlock(LineParser& parser, Renderable* renderable
 	for (int n=0; n<indentLevel*2; ++n) indent[n] = ' ';
 	indent[indentLevel*2] = '\0';
 
-	parser.writeLineF("%s%s  %s  '%s'\n", indent, DataViewer::inputBlock(DataViewer::RenderableBlock), Renderable::renderableType(renderable->type()), renderable->objectTag());
+	parser.writeLineF("%s%s  %s  '%s'  '%s'  '%s'\n", indent, DataViewer::inputBlock(DataViewer::RenderableBlock), Renderable::renderableType(renderable->type()), renderable->objectTag(), renderable->name(), renderable->title());
 
 	// -- Transforms
 	parser.writeLineF("%s  %s %s %s\n", indent, DataViewer::renderableKeyword(DataViewer::TransformXKeyword), DissolveSys::btoa(renderable->transformEnabled(0)), renderable->transformEquation(0));
