@@ -34,6 +34,13 @@ ModuleTab::ModuleTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWid
 
 	controlsWidget_ = NULL;
 	moduleWidget_ = NULL;
+	splitter_ = new QSplitter(Qt::Horizontal, this);
+
+	// Create a layout, add the splitter, and add it to the window
+	QVBoxLayout* layout = new QVBoxLayout;
+	layout->setMargin(4);
+	layout->addWidget(splitter_);
+	setLayout(layout);
 
 	refreshing_ = false;
 
@@ -81,14 +88,11 @@ void ModuleTab::initialiseControls(Module* module)
 	// Set a nice icon for the window
 	setWindowIcon(ModuleChartModuleBlock::modulePixmap(module));
 
-	// Create a splitter into which we'll add our widgets
-	QSplitter* splitter = new QSplitter(Qt::Horizontal, this);
-
 	// Create the controls widget (a ModuleChartModuleBlock)
 	controlsWidget_ = new ModuleChartModuleBlock(NULL, dissolveWindow_, module);
 	controlsWidget_->setSettingsExpanded(true, true);
 	controlsWidget_->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-	splitter->addWidget(controlsWidget_);
+	splitter_->addWidget(controlsWidget_);
 
 	// Create a module widget if there are additional GUI elements available for the Module
 	moduleWidget_ = module->createWidget(NULL, dissolve_);
@@ -96,15 +100,9 @@ void ModuleTab::initialiseControls(Module* module)
 	else
 	{
 		moduleWidget_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-		splitter->addWidget(moduleWidget_);
-		splitter->setStretchFactor(1, 5);
+		splitter_->addWidget(moduleWidget_);
+		splitter_->setStretchFactor(1, 5);
 	}
-
-	// Create a layout, add the splitter, and add it to the window
-	QVBoxLayout* layout = new QVBoxLayout;
-	layout->setMargin(4);
-	layout->addWidget(splitter);
-	setLayout(layout);
 }
 
 /*
@@ -150,8 +148,11 @@ bool ModuleTab::readState(LineParser& parser, const CoreData& coreData)
 	// Read state information for the tab : CollapsedIndex(int)
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	int collapsedIndex = parser.argi(0);
-	if ((collapsedIndex == 0) && controlsWidget_) controlsWidget_->setHidden(true);
-	else if ((collapsedIndex == 1) && moduleWidget_) moduleWidget_->setHidden(true);
+	QList<int> widgetSizes;
+	if ((collapsedIndex == 0) && controlsWidget_) widgetSizes << 0 << 1;
+	else if ((collapsedIndex == 1) && moduleWidget_) widgetSizes << 1 << 0;
+	else if (collapsedIndex == -1) widgetSizes << 1 << 1;
+	splitter_->setSizes(widgetSizes);
 
 	// Read any state information associated with the displayed ModuleWidget
 	if (module_ && moduleWidget_)
@@ -167,8 +168,9 @@ bool ModuleTab::writeState(LineParser& parser)
 {
 	// Write state information for the tab : CollapsedIndex(int)
 	int collapsedIndex = -1;
-	if (controlsWidget_->visibleRegion().isEmpty()) collapsedIndex = 0;
-	else if (moduleWidget_ && moduleWidget_->visibleRegion().isEmpty()) collapsedIndex = 1;
+	QList<int> sizes = splitter_->sizes();
+	if (sizes.at(0) == 0) collapsedIndex = 0;
+	else if (moduleWidget_ && (sizes.at(1) == 0)) collapsedIndex = 1;
 	if (!parser.writeLineF("%i\n", collapsedIndex)) return false;
 
 	// Write any state information associated with the displayed ModuleWidget

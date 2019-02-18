@@ -29,6 +29,7 @@
 // Forward Declarations
 class Module;
 class ModuleChartModuleBlock;
+class QSplitter;
 
 // Module Tab
 class ModuleTab : public QWidget, public ListItem<ModuleTab>, public MainTab
@@ -68,6 +69,14 @@ class ModuleTab : public QWidget, public ListItem<ModuleTab>, public MainTab
 	void initialiseControls(Module* module);
 	// Return displayed Module
 	const Module* module() const;
+
+
+	/*
+	 * Widgets
+	 */
+	private:
+	// Splitter which contains the controls and module widgets
+	QSplitter* splitter_;
 
 
 	/*
