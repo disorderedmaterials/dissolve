@@ -407,6 +407,7 @@ bool DataViewer::readRenderableBlock(LineParser& parser, Renderable* renderable,
 	double alpha;
 	ColourDefinition::ColourStyle cs;
 	ColourDefinition& colourDefinition = renderable->colour();
+	QColor hsvColour;
 	Renderable::DisplayStyle ds;
 	LineStipple::StippleType stipple;
 
@@ -444,11 +445,13 @@ bool DataViewer::readRenderableBlock(LineParser& parser, Renderable* renderable,
 				break;
 			// Colour HSV Gradient end point definition
 			case (DataViewer::ColourHSVGradientEndKeyword):
-				colourDefinition.setHSVGradientEnd(parser.argd(1), QColor(parser.argi(2), parser.argi(3), parser.argi(4), parser.argi(5)));
+				hsvColour.setHsv(parser.argi(2), parser.argi(3), parser.argi(4), parser.argi(5));
+				colourDefinition.setHSVGradientEnd(parser.argd(1), hsvColour);
 				break;
 			// Colour HSV Gradient start point definition
 			case (DataViewer::ColourHSVGradientStartKeyword):
-				colourDefinition.setHSVGradientStart(parser.argd(1), QColor(parser.argi(2), parser.argi(3), parser.argi(4), parser.argi(5)));
+				hsvColour.setHsv(parser.argi(2), parser.argi(3), parser.argi(4), parser.argi(5));
+				colourDefinition.setHSVGradientStart(parser.argd(1), hsvColour);
 				break;
 			// Colour RGB Gradient end point definition
 			case (DataViewer::ColourRGBGradientEndKeyword):
