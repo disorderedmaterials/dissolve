@@ -33,6 +33,8 @@ class RenderableGroupManager
 	public:
 	// Constructor
 	RenderableGroupManager();
+	// Clear all groups
+	void clear();
 
 
 	/*
@@ -55,6 +57,8 @@ class RenderableGroupManager
 	RenderableGroup* group(Renderable* renderable);
 	// Remove Renderable from its specified group
 	void removeFromGroup(Renderable* renderable);
+	// Empty all groups of Renderables
+	void emptyGroups();
 
 
 	/*

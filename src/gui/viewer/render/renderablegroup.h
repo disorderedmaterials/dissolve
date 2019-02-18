@@ -64,6 +64,8 @@ class RenderableGroup : public ListItem<RenderableGroup>
 	bool usedByRenderable(Renderable* renderable) const;
 	// Return whether the group is empty
 	bool isEmpty() const;
+	// Empty the group, removing all Renderable targets
+	void empty();
 
 
 	/*

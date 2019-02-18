@@ -88,6 +88,16 @@ bool RenderableGroup::isEmpty() const
 	return renderables_.nItems() == 0;
 }
 
+// Empty the group, removing all Renderable targets
+void RenderableGroup::empty()
+{
+	while (Renderable* renderable = renderables_.firstItem())
+	{
+		renderables_.remove(renderable);
+		renderable->setGroup(NULL);
+	}
+}
+
 /*
  * Style
  */

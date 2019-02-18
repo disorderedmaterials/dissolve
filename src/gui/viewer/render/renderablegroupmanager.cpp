@@ -27,8 +27,24 @@
 RenderableGroupManager::RenderableGroupManager()
 {
 	stockColourUsageCount_.initialise(ColourDefinition::nStockColours);
-	verticalShift_ = NoVerticalShift;
+
+	clear();
 }
+
+// Clear all groups
+void RenderableGroupManager::clear()
+{
+	stockColourUsageCount_ = 0;
+	verticalShift_ = NoVerticalShift;
+
+	emptyGroups();
+
+	groups_.clear();
+}
+
+/*
+ * Group Management
+ */
 
 // Create named group, or return existing group by the same name
 RenderableGroup* RenderableGroupManager::createGroup(const char* name)
@@ -112,6 +128,12 @@ void RenderableGroupManager::removeFromGroup(Renderable* renderable)
 		--stockColourUsageCount_[renderableGroup->stockColour()];
 		groups_.remove(renderableGroup);
 	}
+}
+
+// Empty all groups of Renderables
+void RenderableGroupManager::emptyGroups()
+{
+	for (RenderableGroup* group = groups_.first(); group != NULL; group = group->next) group->empty();
 }
 
 // Vertical shifts

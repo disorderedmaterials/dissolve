@@ -27,6 +27,9 @@
 // Clear existing data
 void BaseViewer::clear()
 {
+	// Reset the group manager
+	groupManager_.clear();
+
 	// Clear all current data
 	renderables_.clear();
 
