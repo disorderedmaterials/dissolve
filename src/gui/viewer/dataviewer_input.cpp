@@ -37,7 +37,7 @@ void DataViewer::mousePressed(Qt::KeyboardModifiers modifiers)
 // Mouse released
 void DataViewer::mouseReleased()
 {
-	// Notify uChroma that the mouse button has been released (if relevant)
+	// Notify that the mouse button has been released (if relevant)
 	if (buttonState_&Qt::LeftButton) endInteraction(rMouseLast_.x, contextHeight_-rMouseLast_.y);
 }
 

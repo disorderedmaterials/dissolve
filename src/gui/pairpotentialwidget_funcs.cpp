@@ -190,7 +190,7 @@ bool PairPotentialWidget::writeState(LineParser& parser)
 	}
 	else if (!parser.writeLineF("None\n")) return false;
 
-	// Write uChromaView state
+	// Write DataViewer state
 	if (!dataView_->writeSession(parser)) return false;
 
 	return true;
