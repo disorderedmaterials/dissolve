@@ -24,11 +24,6 @@
 
 #include "gui/viewer/render/colourdefinition.h"
 #include "base/charstring.h"
-// #include "base/sysfunc.h"
-// #include "templates/array.h"
-// #include "templates/list.h"
-// #include "templates/listitem.h"
-// #include "templates/reflist.h"
 
 // Forward declarations
 class Renderable;
@@ -40,11 +35,41 @@ class RenderableGroup : public ListItem<RenderableGroup>
 	// Constructor
 	RenderableGroup(const char* name, ColourDefinition::StockColour colour);
 
+
+	/*
+	 * Name
+	 */
 	private:
 	// Name of the group
 	CharString name_;
+
+	public:
+	// Return name of group
+	const char* name() const;
+
+
+	/*
+	 * Renderable Targets
+	 */
+	private:
 	// Renderables using this group
 	RefList<Renderable,int> renderables_;
+
+	public:
+	// Associate Renderable to group (if it isn't already)
+	void associateRenderable(Renderable* renderable);
+	// Remove Renderable from group (if it exists)
+	void removeRenderable(Renderable* renderable);
+	// Return whether the group is used by the specified renderable
+	bool usedByRenderable(Renderable* renderable) const;
+	// Return whether the group is empty
+	bool isEmpty() const;
+
+
+	/*
+	 * Style
+	 */
+	private:
 	// Colour associated to this group
 	ColourDefinition::StockColour stockColour_;
 	// Colour definition for this group
@@ -59,20 +84,10 @@ class RenderableGroup : public ListItem<RenderableGroup>
 	void setVerticalShiftInRenderables();
 
 	public:
-	// Return name of group
-	const char* name() const;
 	// Return colour associated to the group
 	ColourDefinition::StockColour stockColour() const;
 	// Return colour definition for the group
 	const ColourDefinition& colour() const;
-	// Associate Renderable to group (if it isn't already)
-	void associateRenderable(Renderable* renderable);
-	// Remove Renderable from group (if it exists)
-	void removeRenderable(Renderable* renderable);
-	// Return whether the group is used by the specified renderable
-	bool usedByRenderable(Renderable* renderable) const;
-	// Return whether the group is empty
-	bool isEmpty() const;
 	// Set whether vertical shifting is enabled in this group
 	void setVerticalShift(bool enabled, double verticalShift);
 	// Whether vertical shifting is enabled in this group

@@ -35,16 +35,9 @@ RenderableGroup::RenderableGroup(const char* name, ColourDefinition::StockColour
 	colour_.setSingleColour(ColourDefinition::stockColour(stockColour_));
 }
 
-// Set vertical shift in all Renderables in the group via their transform equations
-void RenderableGroup::setVerticalShiftInRenderables()
-{
-	RefListIterator<Renderable,int> renderableIterator(renderables_);
-	while (Renderable* renderable = renderableIterator.iterate())
-	{
-		renderable->setTransformEnabled(1, hasVerticalShift_);
-		renderable->setTransformEquation(1, CharString("y+%f", verticalShift_));
-	}
-}
+/*
+ * Name
+ */
 
 // Return name of group
 const char* RenderableGroup::name() const
@@ -52,17 +45,9 @@ const char* RenderableGroup::name() const
 	return name_.get();
 }
 
-// Return colour associated to the group
-ColourDefinition::StockColour RenderableGroup::stockColour() const
-{
-	return stockColour_;
-}
-
-// Return colour definition for the group
-const ColourDefinition& RenderableGroup::colour() const
-{
-	return colour_;
-}
+/*
+ * Renderable Targets
+ */
 
 // Associate Renderable to group (if it isn't already)
 void RenderableGroup::associateRenderable(Renderable* renderable)
@@ -101,6 +86,33 @@ bool RenderableGroup::usedByRenderable(Renderable* renderable) const
 bool RenderableGroup::isEmpty() const
 {
 	return renderables_.nItems() == 0;
+}
+
+/*
+ * Style
+ */
+
+// Set vertical shift in all Renderables in the group via their transform equations
+void RenderableGroup::setVerticalShiftInRenderables()
+{
+	RefListIterator<Renderable,int> renderableIterator(renderables_);
+	while (Renderable* renderable = renderableIterator.iterate())
+	{
+		renderable->setTransformEnabled(1, hasVerticalShift_);
+		renderable->setTransformEquation(1, CharString("y+%f", verticalShift_));
+	}
+}
+
+// Return colour associated to the group
+ColourDefinition::StockColour RenderableGroup::stockColour() const
+{
+	return stockColour_;
+}
+
+// Return colour definition for the group
+const ColourDefinition& RenderableGroup::colour() const
+{
+	return colour_;
 }
 
 // Set whether vertical shifting is enabled in this group
