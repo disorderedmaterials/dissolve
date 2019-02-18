@@ -39,6 +39,8 @@ void DataViewer::mouseReleased()
 {
 	// Notify that the mouse button has been released (if relevant)
 	if (buttonState_&Qt::LeftButton) endInteraction(rMouseLast_.x, contextHeight_-rMouseLast_.y);
+
+	postRedisplay();
 }
 
 // Mouse Moved
@@ -83,6 +85,8 @@ void DataViewer::mouseMoved(int dx, int dy, Qt::KeyboardModifiers modifiers)
 	
 	// Update interaction position
 	if (updateInteractionPosition(rMouseLast_.x, contextHeight_-rMouseLast_.y)) refresh = true;
+
+	if (refresh) postRedisplay();
 }
 
 // Mouse 'wheeled'
