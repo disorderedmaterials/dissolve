@@ -45,7 +45,7 @@ void BaseViewer::ownRenderable(Renderable* newRenderable)
 }
 
 // Create Renderable by type and object identifier
-Renderable* BaseViewer::createRenderable(Renderable::RenderableType type, const char* objectTag, const char* name, const char* title)
+Renderable* BaseViewer::createRenderable(Renderable::RenderableType type, const char* objectTag, const char* name, const char* title, const char* groupName)
 {
 	Renderable* renderable = RenderableFactory::create(type, objectTag);
 	if (renderable)
@@ -56,6 +56,9 @@ Renderable* BaseViewer::createRenderable(Renderable::RenderableType type, const 
 
 		// Own the new Renderable
 		renderables_.own(renderable);
+
+		// Set the group, if one was provided
+		if (groupName) groupManager_.addToGroup(renderable, groupName);
 	}
 
 	return renderable;

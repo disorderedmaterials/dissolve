@@ -451,7 +451,7 @@ bool DataViewer::readRenderableBlock(LineParser& parser, Renderable* renderable,
 				break;
 			// Group
 			case (DataViewer::GroupKeyword):
-				renderable->setGroupName(parser.argc(1));
+				groupManager_.addToGroup(renderable, parser.argc(1));
 				break;
 			// Line style
 			case (DataViewer::LineStyleKeyword):
@@ -795,7 +795,7 @@ bool DataViewer::writeRenderableBlock(LineParser& parser, Renderable* renderable
 	parser.writeLineF("%s  %s %s\n", indent, DataViewer::renderableKeyword(DataViewer::VisibleKeyword), stringBool(renderable->isVisible()));
 
 	// Write Group if set
-	if (renderable->hasGroupName()) parser.writeLineF("%s  %s '%s'\n", indent, DataViewer::renderableKeyword(DataViewer::GroupKeyword), renderable->groupName());
+	if (renderable->group()) parser.writeLineF("%s  %s '%s'\n", indent, DataViewer::renderableKeyword(DataViewer::GroupKeyword), renderable->group()->name());
 
 	parser.writeLineF("%s%s\n", indent, DataViewer::renderableKeyword(DataViewer::EndRenderableKeyword));
 

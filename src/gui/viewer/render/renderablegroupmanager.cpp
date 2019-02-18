@@ -30,14 +30,11 @@ RenderableGroupManager::RenderableGroupManager()
 	verticalShift_ = NoVerticalShift;
 }
 
-// Add Renderable to its specified group, creating / associating if necessary
-RenderableGroup* RenderableGroupManager::addToGroup(Renderable* renderable)
+// Create named group, or return existing group by the same name
+RenderableGroup* RenderableGroupManager::createGroup(const char* name)
 {
-	// If group name specified in Renderable is empty, nothing more to do here
-	if (!renderable->hasGroupName()) return NULL;
-
 	// Does a group with this name already exist?
-	RenderableGroup* renderableGroup = group(renderable->groupName());
+	RenderableGroup* renderableGroup = group(name);
 	if (!renderableGroup)
 	{
 		// No existing group, so must add a new one
@@ -48,7 +45,7 @@ RenderableGroup* RenderableGroupManager::addToGroup(Renderable* renderable)
 			if (stockColourUsageCount_[colourId] < stockColourUsageCount_[lowestId]) lowestId = colourId;
 		}
 
-		renderableGroup = new RenderableGroup(renderable->groupName(), (ColourDefinition::StockColour) lowestId);
+		renderableGroup = new RenderableGroup(name, (ColourDefinition::StockColour) lowestId);
 		groups_.own(renderableGroup);
 		++stockColourUsageCount_[lowestId];
 
@@ -56,8 +53,33 @@ RenderableGroup* RenderableGroupManager::addToGroup(Renderable* renderable)
 		setRenderableGroupShifts();
 	}
 
+	return renderableGroup;
+}
+
+// Add Renderable to its specified group, creating / associating as necessary
+RenderableGroup* RenderableGroupManager::addToGroup(Renderable* renderable, const char* groupName)
+{
+	printf("ADDING TO GROUP '%s'\n", groupName);
+	// Check to see if the Renderable is already associated to a group...
+	if (renderable->group())
+	{
+		if (DissolveSys::sameString(renderable->group()->name(), groupName))
+		{
+			Messenger::print("Renderable '%s' already associated to group '%s'...\n", renderable->name(), renderable->group()->name());
+			return renderable->group();
+		}
+
+		// Remove it from the current group
+		renderable->group()->removeRenderable(renderable);
+	}
+
+	// Create / retrieve the group
+	RenderableGroup* renderableGroup = createGroup(groupName);
+
 	// Add unique Renderable reference to the group
 	renderableGroup->associateRenderable(renderable);
+	renderable->setGroup(renderableGroup);
+
 	return renderableGroup;
 }
 
@@ -78,13 +100,11 @@ RenderableGroup* RenderableGroupManager::group(Renderable* renderable)
 // Remove Renderable from its specified group
 void RenderableGroupManager::removeFromGroup(Renderable* renderable)
 {
-	// If group name specified in Renderable is empty, nothing more to do here
-	if (!renderable->hasGroupName()) return;
-
-	// Does a group with this name already exist?
-	RenderableGroup* renderableGroup = group(renderable->groupName());
+	// If no group is currently set in the Renderable, nothing more to do here
+	RenderableGroup* renderableGroup = renderable->group();
 	if (!renderableGroup) return;
 
+	// Remove the Renderable from the group and nullify its pointer
 	renderableGroup->removeRenderable(renderable);
 
 	// If the group is now empty, we can delete it

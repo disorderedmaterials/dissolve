@@ -165,32 +165,32 @@ void SQModuleWidget::setGraphDataTargets(SQModule* module)
 			// Partial g(r)
 
 			Renderable* fullGR = partialGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s-%s//Full", module_->uniqueName(), at1->name(), at2->name()), CharString("GR//%s", id.get()), id.get());
-			fullGR->setGroupName(id.get());
+			partialGRGraph_->groupManager().addToGroup(fullGR, id.get());
 
 			// Partial S(Q)
 
 			Renderable* fullSQ = partialSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedSQ//%s-%s//Full", module_->uniqueName(), at1->name(), at2->name()), CharString("SQ//%s", id.get()), id.get());
-			fullGR->setGroupName(id.get());
+			partialSQGraph_->groupManager().addToGroup(fullSQ, id.get());
 		}
 	}
 
 	// Add calculated total G(r)
 	Renderable* totalGR = totalGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedGR//Total", module_->uniqueName()), "G(r) Calc");
-	totalGR->setGroupName("Calc");
+	totalGRGraph_->groupManager().addToGroup(totalGR, "Calc");
 
 	// Add calculate total F(Q)
 	Renderable* totalFQ = totalSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedSQ//Total", module_->uniqueName()), "F(Q) Calc");
-	totalFQ->setGroupName("Calc");
+	totalSQGraph_->groupManager().addToGroup(totalFQ, "Calc");
 
 	// Add on reference data if present
 	if (module->keywords().find("Reference"))
 	{
 		// Add FT of reference data total G(r)
 		Renderable* refGR = totalGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//ReferenceDataFT", module_->uniqueName()), "G(r) Exp");
-		refGR->setGroupName("Exp");
+		totalGRGraph_->groupManager().addToGroup(refGR, "Exp");
 
 		// Add calculate total F(Q)
 		Renderable* refFQ = totalSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//ReferenceData", module_->uniqueName()), "F(Q) Exp");
-		refFQ->setGroupName("Exp");
+		totalSQGraph_->groupManager().addToGroup(refFQ, "Exp");
 	}
 }

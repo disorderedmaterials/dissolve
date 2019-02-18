@@ -52,6 +52,9 @@ Renderable::Renderable(Renderable::RenderableType type, const char* objectTag)
 	// Data tag
 	objectTag_ = objectTag;
 
+	// Group
+	group_ = NULL;
+
 	// Transform
 	transformDataVersion_ = -1;
 	transformMin_.zero();
@@ -199,22 +202,16 @@ bool Renderable::transformEnabled(int axis) const
  * Group
  */
 
-// Set group that this Collection is associated to
-void Renderable::setGroupName(const char* groupName)
+// Set group that this Renderable is associated to
+void Renderable::setGroup(RenderableGroup* group)
 {
-	groupName_ = groupName;
+	group_ = group;
 }
 
-// Return whether this Collection is associated to a group
-bool Renderable::hasGroupName() const
+// Return group that this Renderable is associated to
+RenderableGroup* Renderable::group() const
 {
-	return (!groupName_.isEmpty());
-}
-
-// Return group name that this Collection is associated to
-const char* Renderable::groupName() const
-{
-	return groupName_.get();
+	return group_;
 }
 
 /*

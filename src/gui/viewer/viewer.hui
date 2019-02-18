@@ -56,8 +56,6 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	protected:
 	// List of renderables to display
 	List<Renderable> renderables_;
-	// Group manager for the data
-	RenderableGroupManager groupManager_;
 	// Currently-selected renderable (if any)
 	Renderable* currentRenderable_;
 	// View for renderable data
@@ -69,7 +67,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	// Own supplied renderable and display it
 	void ownRenderable(Renderable* newRenderable);
 	// Create Renderable by type and object identifier
-	Renderable* createRenderable(Renderable::RenderableType type, const char* objectTag, const char* name, const char* title = NULL);
+	Renderable* createRenderable(Renderable::RenderableType type, const char* objectTag, const char* name, const char* title = NULL, const char* groupName = NULL);
 	// Remove existing Renderable
 	void removeRenderable(Renderable* data);
 	// Clear all Renderables
@@ -84,10 +82,20 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	void setRenderableVisible(const char* name, bool visible);
 	// Return visibility of named Renderable
 	bool isRenderableVisible(const char* name) const;
-	// Return the group manager for the data
-	RenderableGroupManager& groupManager();
 	// Return the view
 	View& view();
+
+
+	/*
+	 * Renderable Groups
+	 */
+	protected:
+	// Group manager for the data
+	RenderableGroupManager groupManager_;
+
+	public:
+	// Return the group manager for the data
+	RenderableGroupManager& groupManager();
 
 
 	/*

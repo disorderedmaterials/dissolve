@@ -23,12 +23,6 @@
 #define DISSOLVE_RENDERABLEGROUPMANAGER_H
 
 #include "gui/viewer/render/renderablegroup.h"
-// #include "base/charstring.h"
-// #include "base/sysfunc.h"
-// #include "templates/array.h"
-// #include "templates/list.h"
-// #include "templates/listitem.h"
-// #include "templates/reflist.h"
 
 // Forward declarations
 /* none */
@@ -51,8 +45,10 @@ class RenderableGroupManager
 	Array<int> stockColourUsageCount_;
 
 	public:
-	// Add Renderable to its specified group, creating / associating if necessary
-	RenderableGroup* addToGroup(Renderable* renderable);
+	// Create named group, or return existing group by the same name
+	RenderableGroup* createGroup(const char* name);
+	// Add Renderable to its specified group, creating / associating as necessary
+	RenderableGroup* addToGroup(Renderable* renderable, const char* groupName);
 	// Return named group, if it exists
 	RenderableGroup* group(const char* name);
 	// Return group for specified Renderable, if one has been assigned

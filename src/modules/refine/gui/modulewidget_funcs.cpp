@@ -216,22 +216,23 @@ void RefineModuleWidget::setGraphDataTargets(RefineModule* module)
 		{
 			// Reference data
 			Renderable* refData = dataGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//ReferenceData", targetModule->uniqueName()), CharString("ExpFQ//%s", targetModule->uniqueName()), CharString("%s Exp", targetModule->uniqueName()));
-			refData->setGroupName(targetModule->uniqueName());
+			dataGraph_->groupManager().addToGroup(refData, targetModule->uniqueName());
 
 			// Calculated data from associated module
 			if (DissolveSys::sameString(targetModule->type(), "NeutronSQ"))
 			{
 				// Calculated F(Q)
 				Renderable* calcFQ = dataGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedSQ//Total", targetModule->uniqueName()), CharString("CalcFQ//%s", targetModule->uniqueName()), CharString("%s Calc", targetModule->uniqueName()));
-				calcFQ->setGroupName(targetModule->uniqueName());
+				dataGraph_->groupManager().addToGroup(calcFQ, targetModule->uniqueName());
 
 				// F(Q) diff w.r.t. reference
 				Renderable* diffFQ = dataGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Difference//%s", module->uniqueName(), targetModule->uniqueName()), CharString("DiffFQ//%s//%s", module->uniqueName(), targetModule->uniqueName()), CharString("%s Diff", targetModule->uniqueName()));
 				diffFQ->lineStyle().setStipple(LineStipple::DotStipple);
-				diffFQ->setGroupName(targetModule->uniqueName());
+				dataGraph_->groupManager().addToGroup(diffFQ, targetModule->uniqueName());
 
+				// Error
 				Renderable* error = errorsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Error//%s", module->uniqueName(), targetModule->uniqueName()), CharString("Error//%s//%s", module->uniqueName(), targetModule->uniqueName()), targetModule->uniqueName());
-				error->setGroupName(targetModule->uniqueName());
+				dataGraph_->groupManager().addToGroup(error, targetModule->uniqueName());
 			}
 		}
 
@@ -250,17 +251,17 @@ void RefineModuleWidget::setGraphDataTargets(RefineModule* module)
 
 				// Experimentally-determined unweighted partial
 				Renderable* expSQ = partialSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//GeneratedSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("ExpSQ//%s", id.get()), CharString("%s Exp", id.get()));
-				expSQ->setGroupName(id.get());
+				partialSQGraph_->groupManager().addToGroup(expSQ, id.get());
 
 				// Calculated / summed partial
 				Renderable* calcSQ = partialSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("CalcSQ//%s", id.get()), CharString("%s Calc", id.get()));
 				calcSQ->lineStyle().setStipple(LineStipple::QuarterDashStipple);
-				calcSQ->setGroupName(id.get());
+				partialSQGraph_->groupManager().addToGroup(calcSQ, id.get());
 
 				// Deltas
 				Renderable* deltaSQ = partialSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//DeltaSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("DeltaSQ//%s", id.get()), CharString("%s Delta", id.get()));
 				deltaSQ->lineStyle().setStipple(LineStipple::DotStipple);
-				deltaSQ->setGroupName(id.get());
+				partialSQGraph_->groupManager().addToGroup(deltaSQ, id.get());
 
 				/*
 				 * Partial RDFs
@@ -268,12 +269,12 @@ void RefineModuleWidget::setGraphDataTargets(RefineModule* module)
 
 				// Experimentally-determined unweighted partial
 				Renderable* expGR = partialGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//GeneratedGR//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("ExpGR//%s", id.get()), CharString("%s Exp", id.get()));
-				expGR->setGroupName(id.get());
+				partialGRGraph_->groupManager().addToGroup(expGR, id.get());
 
 				// Calculated / summed partial
 				Renderable* calcGR = partialGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s//%s-%s//Full", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("CalcGR//%s", id.get()), CharString("%s Calc", id.get()));
 				calcGR->lineStyle().setStipple(LineStipple::QuarterDashStipple);
-				calcGR->setGroupName(id.get());
+				partialGRGraph_->groupManager().addToGroup(calcGR, id.get());
 
 				/*
 				 * Phi(r)

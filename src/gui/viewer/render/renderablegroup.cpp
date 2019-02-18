@@ -88,6 +88,7 @@ void RenderableGroup::removeRenderable(Renderable* renderable)
 	}
 
 	renderables_.remove(renderable);
+	renderable->setGroup(NULL);
 }
 
 // Return whether the group is used by the specified renderable

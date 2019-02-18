@@ -165,13 +165,13 @@ void RenderableData1D::updateAndSendPrimitives(View& view, RenderableGroupManage
 	const Axes& axes = view.axes();
 
 	// Grab copy of the relevant colour definition for this Collection
-	ColourDefinition colour = groupManager.colourDefinition(this);
+	ColourDefinition colourDefinition = groupManager.colourDefinition(this);
 
 	// Check whether the primitive for this collection needs updating
 	bool upToDate = true;
 	if (forceUpdate) upToDate = false;
 	else if (primitivesAxesVersion_!= axes.displayVersion()) upToDate = false;
-	else if (!DissolveSys::sameString(primitivesColourDefinitionFingerprint_, CharString("%s%i", groupName(), colour.colourVersion()), true)) upToDate = false;
+	else if (!DissolveSys::sameString(primitivesColourDefinitionFingerprint_, CharString("%p@%i", group_, colourDefinition.colourVersion()), true)) upToDate = false;
 	else if (primitivesDataVersion_ != version()) upToDate = false;
 	else if (primitivesStyleVersion_ != displayStyleVersion()) upToDate = false;
 
@@ -181,23 +181,22 @@ void RenderableData1D::updateAndSendPrimitives(View& view, RenderableGroupManage
 		// Forget all current data
 		primitives_.forgetAll();
 
-
 		// Recreate primitive depending on current style
 		switch (displayStyle())
 		{
 			case (RenderableData1D::LineXYStyle):
 				primitives_.reinitialise(1, true, GL_LINE_STRIP, true);
-				constructLineXY(transformedData().constXAxis(), transformedData().constValues(), primitives_[0], axes, colour.colourScale());
+				constructLineXY(transformedData().constXAxis(), transformedData().constValues(), primitives_[0], axes, colourDefinition.colourScale());
 				break;
 // 			case (RenderableData1D::LineZYStyle):
-// 				Surface::constructLineZY(primitive_, axes, collection_->displayAbscissa(), collection_->displayData(), colour.colourScale());
+// 				Surface::constructLineZY(primitive_, axes, collection_->displayAbscissa(), collection_->displayData(), colourDefinition.colourScale());
 // 				break;
 // 			case (RenderableData1D::GridStyle):
-// 				Surface::constructGrid(primitive_, axes, collection_->displayAbscissa(), collection_->displayData(), colour.colourScale());
+// 				Surface::constructGrid(primitive_, axes, collection_->displayAbscissa(), collection_->displayData(), colourDefinition.colourScale());
 // 				break;
 // 			case (RenderableData1D::SurfaceStyle):
 // 			case (RenderableData1D::UnlitSurfaceStyle):
-// 				Surface::constructFull(primitive_, axes, collection_->displayAbscissa(), collection_->displayData(), colour.colourScale());
+// 				Surface::constructFull(primitive_, axes, collection_->displayAbscissa(), collection_->displayData(), colourDefinition.colourScale());
 // 				break;
 			default:
 				printf("Internal Error: Display style %i not accounted for in RenderableData1D::updateAndSendPrimitive().\n", displayStyle());
@@ -219,7 +218,7 @@ void RenderableData1D::updateAndSendPrimitives(View& view, RenderableGroupManage
 
 	// Store version points for the up-to-date primitive
 	primitivesAxesVersion_ = axes.displayVersion();
-	primitivesColourDefinitionFingerprint_.sprintf("%s%i", groupName(), colour.colourVersion());
+	primitivesColourDefinitionFingerprint_.sprintf("%p@%i", group_, colourDefinition.colourVersion());
 	primitivesDataVersion_ = version();
 	primitivesStyleVersion_ = displayStyleVersion();
 

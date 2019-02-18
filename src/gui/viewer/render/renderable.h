@@ -30,6 +30,7 @@
 
 // Forward Declarations
 class PlottableData;
+class RenderableGroup;
 class RenderableGroupManager;
 class View;
 
@@ -127,17 +128,15 @@ class Renderable : public ListItem<Renderable>
 	/*
 	 * Group
 	 */
-	private:
-	// Name of group that this Renderable is associated to (if any)
-	CharString groupName_;
+	protected:
+	// Group that this Renderable is associated to (if any)
+	RenderableGroup* group_;
 
 	public:
 	// Set group that this Renderable is associated to
-	void setGroupName(const char* groupName);
-	// Return whether this Renderable is associated to a group
-	bool hasGroupName() const;
-	// Return group name that this Renderable is associated to
-	const char* groupName() const;
+	void setGroup(RenderableGroup* group);
+	// Return group that this Renderable is associated to
+	RenderableGroup* group() const;
 
 
 	/*

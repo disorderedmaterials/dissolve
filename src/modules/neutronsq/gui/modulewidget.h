@@ -42,7 +42,7 @@ class NeutronSQModuleWidget : public ModuleWidget
 	// Associated Module
 	NeutronSQModule* module_;
 	// DataViewers contained within this widget
-	DataViewer* partialGRGraph_, *partialSQGraph_, *totalGRGraph_, *totalSQGraph_;
+	DataViewer* partialGRGraph_, *partialSQGraph_, *totalGRGraph_, *totalFQGraph_;
 	// Reference to Dissolve
 	Dissolve& dissolve_;
 
