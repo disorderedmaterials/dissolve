@@ -25,7 +25,7 @@
 #include "gui/viewer/viewer.hui"
 
 // Forward Declarations
-class DataSet;
+/* none */
 
 // Data Viewer
 class DataViewer : public BaseViewer
@@ -151,8 +151,6 @@ class DataViewer : public BaseViewer
 	double clickedInteractionCoordinate();
 	// Return current interaction coordinate on axis
 	double currentInteractionCoordinate();
-	// Return current slice data
-	DataSet* currentSlice();
 	// Perform relevant double-click action, occurring at specified coordinate
 	void doubleClickInteraction(int mouseX, int mouseY);
 	// Calculate local coordinate from supplied screen coordinates

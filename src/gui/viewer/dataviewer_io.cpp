@@ -375,7 +375,6 @@ bool DataViewer::readAxisBlock(LineParser& parser, Axes& axes, int axis, bool st
 // Read RenderableBlock keywords
 bool DataViewer::readRenderableBlock(LineParser& parser, Renderable* renderable, bool strictBlockEnd)
 {
-	DataSet* dataSet;
 	int xyz;
 	double alpha;
 	ColourDefinition::AlphaControl ac;
