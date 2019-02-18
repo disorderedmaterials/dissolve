@@ -34,8 +34,6 @@ RDFModuleWidget::RDFModuleWidget(QWidget* parent, Module* module, Dissolve& diss
 	// Set up user interface
 	ui.setupUi(this);
 
-	ViewPane* viewPane;
-
 	// Set up partial g(r) graph
 
 	partialsGraph_ = ui.PartialsPlotWidget->dataViewer();

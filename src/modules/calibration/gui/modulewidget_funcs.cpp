@@ -36,7 +36,7 @@ CalibrationModuleWidget::CalibrationModuleWidget(QWidget* parent, Module* module
 	// Grab our DataViewer widget
 	dataView_ = ui.PlotWidget->dataViewer();
 
-	// Set up the view pane
+	// Set up the view
 	View& view = dataView_->view();
 	view.setViewType(View::FlatXYView);
 	view.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");

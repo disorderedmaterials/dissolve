@@ -57,7 +57,7 @@ void DataViewer::setInteractionMode(DataViewer::InteractionMode mode, int axis)
 	interactionMode_ = mode;
 	interactionAxis_ = axis;
 
-	// Generate interaction primitives for all panes
+	// Generate interaction primitives
 	view_.updateInteractionPrimitive(axis);
 
 	// Update GUI

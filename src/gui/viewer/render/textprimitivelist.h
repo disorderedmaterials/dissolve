@@ -31,7 +31,6 @@
 
 // Forward Declarations
 class FontInstance;
-class ViewPane;
 
 // Text Primitive List
 class TextPrimitiveList

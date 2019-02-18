@@ -34,8 +34,6 @@ SQModuleWidget::SQModuleWidget(QWidget* parent, Module* module, Dissolve& dissol
 	// Set up user interface
 	ui.setupUi(this);
 
-	ViewPane* viewPane;
-
 	// Set up partial g(r) graph
 
 	partialGRGraph_ = ui.PartialGRPlotWidget->dataViewer();

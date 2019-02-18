@@ -161,7 +161,7 @@ bool RenderableData1D::yRangeOverX(double xMin, double xMax, double& yMin, doubl
 // Update primitives and send for display
 void RenderableData1D::updateAndSendPrimitives(View& view, RenderableGroupManager& groupManager, bool forceUpdate, bool pushAndPop, const QOpenGLContext* context)
 {
-	// Grab axes for the target ViewPane
+	// Grab axes for the View
 	const Axes& axes = view.axes();
 
 	// Grab copy of the relevant colour definition for this Collection

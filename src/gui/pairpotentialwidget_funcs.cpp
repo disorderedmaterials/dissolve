@@ -82,7 +82,7 @@ void PairPotentialWidget::initialiseControls(PairPotential* pp, bool addDefaults
 	// Add data targets
 	if (pp && addDefaults)
 	{
-		// Set up the view pane
+		// Set up the view
 		View& view = dataView_->view();
 		view.setViewType(View::FlatXYView);
 		view.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
