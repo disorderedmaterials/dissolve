@@ -342,8 +342,8 @@ class Axes
 	 * GL
 	 */
 	private:
-	// Y axis clip plane position
-	GLdouble clipPlaneYMin_, clipPlaneYMax_;
+	// Clip plane coordinates
+	Vec3<double> clipMin_, clipMax_;
 	// Display primitives
 	Primitive axisPrimitives_[3];
 	// Axis text primitives
@@ -363,9 +363,9 @@ class Axes
 
 	public:
 	// Return clip plane lower Y value
-	GLdouble clipPlaneYMin();
+	Vec3<double> clipMin() const;
 	// Return clip plane upper Y value
-	GLdouble clipPlaneYMax();
+	Vec3<double> clipMax() const;
 	// Flag primitives as invalid
 	void setPrimitivesInvalid();
 	// Return axis primitive for axis specified

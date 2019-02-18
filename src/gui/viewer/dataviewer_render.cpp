@@ -62,9 +62,6 @@ void DataViewer::render(int xOffset, int yOffset)
 // 	GLfloat colourBlue[4] = { 0.88, 0.95, 1.0, 1.0 };
 // 	GLfloat colourWhite[4] = { 1.0, 1.0, 1.0, 1.0 };
 
-	// Loop over defined viewpanes
-	GLdouble clipPlaneBottom[4] = { 0.0, 1.0, 0.0, 0.0 }, clipPlaneTop[4] = { 0.0, -1.0, 0.0, 0.0 };
-
 	// If we are auto-following, set the axis limits here
 	if (view_.autoFollowType() != View::NoAutoFollow) view_.autoFollowData();
 	
@@ -104,7 +101,7 @@ void DataViewer::render(int xOffset, int yOffset)
 	glMatrixMode(GL_MODELVIEW);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
-	// Get the pane's view matrix and rotation matrix inverse
+	// Get the view matrix and rotation matrix inverse
 	Matrix4 viewMatrix = view_.viewMatrix();
 	Matrix4 viewRotationInverse = view_.viewRotationInverse();
 
@@ -185,17 +182,7 @@ void DataViewer::render(int xOffset, int yOffset)
 	}
 
 	// Setup clip planes to enforce Y-axis limits
-	glLoadMatrixd(viewMatrix.matrix());
-	glPushMatrix();
-	glTranslated(0.0, view_.axes().clipPlaneYMin(), 0.0);
-	glClipPlane(GL_CLIP_PLANE0, clipPlaneBottom);
-	glEnable(GL_CLIP_PLANE0);
-	glPopMatrix();
-	glPushMatrix();
-	glTranslated(0.0, view_.axes().clipPlaneYMax(), 0.0);
-	glClipPlane (GL_CLIP_PLANE1, clipPlaneTop);
-	glEnable(GL_CLIP_PLANE1);
-	glPopMatrix();
+	enableClipping();
 
 	// Draw all renderables
 	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next)
@@ -221,8 +208,7 @@ void DataViewer::render(int xOffset, int yOffset)
 	}
 
 	// Disable current clip planes
-	glDisable(GL_CLIP_PLANE0);
-	glDisable(GL_CLIP_PLANE1);
+	disableClipping();
 
 	/*
 	 * Set orthographic, one-to-one pixel view

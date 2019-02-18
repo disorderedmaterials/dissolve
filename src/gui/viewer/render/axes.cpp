@@ -104,8 +104,8 @@ Axes::Axes(View& parent, FontInstance& fontInstance) : parentView_(parent), font
 		gridLineMinorPrimitives_[n].initialise(GL_LINES, false);
 		gridLineMinorPrimitives_[n].setNoInstances();
 	}
-	clipPlaneYMin_ = 0.0;
-	clipPlaneYMax_ = 0.0;
+	clipMin_.set(0.0, 0.0, 0.0);
+	clipMax_.set(0.0, 0.0, 0.0);
 	gridLineMajorStyle_[0].set(1.0, LineStipple::NoStipple, 0.5, 0.5, 0.5, 1.0);
 	gridLineMinorStyle_[0].set(1.0, LineStipple::QuarterDashStipple, 0.75, 0.75, 0.75, 1.0);
 	gridLineMajorStyle_[1] = gridLineMajorStyle_[0];
@@ -1001,16 +1001,19 @@ void Axes::updateAxisPrimitives()
 	if (parentView_.viewType() == View::FlatXZView) inPlaneAxis = 1;
 	else if (parentView_.viewType() == View::FlatZYView) inPlaneAxis = 0;
 
-	// Set Y clip
-	if (logarithmic_.y)
+	// Set clip coordinates
+	for (int axis = 0; axis < 3; ++axis)
 	{
-		clipPlaneYMin_ = (inverted_.y ? 0.0 : log10(min_.y)) * stretch_.y - clipPlaneDelta;
-		clipPlaneYMax_ = (inverted_.y ? log10(max_.y/min_.y) : log10(max_.y)) * stretch_.y + clipPlaneDelta;
-	}
-	else
-	{
-		clipPlaneYMin_ = (min_.y * stretch_.y) - clipPlaneDelta;
-		clipPlaneYMax_ = (max_.y * stretch_.y) + clipPlaneDelta;
+		if (logarithmic_[axis])
+		{
+			clipMin_[axis] = (inverted_[axis] ? 0.0 : log10(min_[axis])) * stretch_[axis] - clipPlaneDelta;
+			clipMax_[axis] = (inverted_[axis] ? log10(max_[axis]/min_[axis]) : log10(max_[axis])) * stretch_[axis] + clipPlaneDelta;
+		}
+		else
+		{
+			clipMin_[axis] = (min_[axis] * stretch_[axis]) - clipPlaneDelta;
+			clipMax_[axis] = (max_[axis] * stretch_[axis]) + clipPlaneDelta;
+		}
 	}
 
 	// Construct axes
@@ -1255,15 +1258,15 @@ void Axes::updateAxisPrimitives()
 }
 
 // Return clip plane lower Y value
-GLdouble Axes::clipPlaneYMin()
+Vec3<double> Axes::clipMin() const
 {
-	return clipPlaneYMin_;
+	return clipMin_;
 }
 
 // Return clip plane upper Y value
-GLdouble Axes::clipPlaneYMax()
+Vec3<double> Axes::clipMax() const
 {
-	return clipPlaneYMax_;
+	return clipMax_;
 }
 
 // Flag primitives as invalid

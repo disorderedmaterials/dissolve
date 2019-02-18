@@ -137,6 +137,12 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	// Set line width and text scaling to use
 	void setObjectScaling(double scaling);
 
+	protected:
+	// Set and enable clip planes suitable for current axis limits and view
+	void enableClipping();
+	// Disable clip planes
+	void disableClipping();
+
 	public:
 	// Return the current height of the drawing area
 	GLsizei contextHeight() const;

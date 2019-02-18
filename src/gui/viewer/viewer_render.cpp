@@ -225,6 +225,57 @@ void BaseViewer::setObjectScaling(double scaling)
 // 	TextPrimitive::setTextSizeScale(scaling);
 }
 
+// Set and enable clip planes suitable for current axis limits and view
+void BaseViewer::enableClipping()
+{
+	// Load identity matrix
+	glLoadMatrixd(view_.viewMatrix().matrix());
+
+	// Get clip plane coordinates and indices
+	Vec3<double> clipMin = view_.axes().clipMin();
+	Vec3<double> clipMax = view_.axes().clipMax();
+	static GLenum planes[6] = { GL_CLIP_PLANE0, GL_CLIP_PLANE1, GL_CLIP_PLANE2, GL_CLIP_PLANE3, GL_CLIP_PLANE4, GL_CLIP_PLANE5 };
+
+	// Loop over axes
+	Vec3<double> translation;
+	for (int axis=0; axis<3; ++axis)
+	{
+		translation.zero();
+
+		// Positive
+		translation[axis] = clipMin[axis];
+		GLdouble plane[4] = { 0.0, 0.0, 0.0, 0.0 };
+		plane[axis] = 1.0;
+
+		glPushMatrix();
+		glTranslated(translation.x, translation.y, translation.z);
+		glClipPlane(planes[axis], plane);
+		glEnable(planes[axis]);
+		glPopMatrix();
+
+		// Negative
+		translation[axis] = clipMax[axis];
+		plane[axis] = -1.0;
+
+		glPushMatrix();
+		glTranslated(translation.x, translation.y, translation.z);
+		glClipPlane(planes[axis+3], plane);
+		glEnable(planes[axis+3]);
+		glPopMatrix();
+	}
+}
+
+// Disable clip planes
+void BaseViewer::disableClipping()
+{
+	glDisable(GL_CLIP_PLANE0);
+	glDisable(GL_CLIP_PLANE1);
+	glDisable(GL_CLIP_PLANE2);
+	glDisable(GL_CLIP_PLANE3);
+	glDisable(GL_CLIP_PLANE4);
+	glDisable(GL_CLIP_PLANE5);
+}
+
 // Grab current contents of framebuffer
 QPixmap BaseViewer::frameBuffer()
 {
