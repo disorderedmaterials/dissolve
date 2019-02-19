@@ -23,6 +23,7 @@
 #define DISSOLVE_FORCEFIELD_UFF_H
 
 #include "data/ff.h"
+#include "data/ff/uffatomtype.h"
 #include "templates/array.h"
 #include "templates/list.h"
 
@@ -34,53 +35,6 @@ class SpeciesAtom;
 class SpeciesBond;
 class SpeciesIntra;
 class SpeciesTorsion;
-
-// Universal Forcefield AtomType Data
-class UFFAtomType : public ElementReference, public ListItem<UFFAtomType>
-{
-	public:
-	// Constructor
-	UFFAtomType(int z = 0, const char* symbol = NULL, int index = -1, const char* name = NULL, double r = 0.0, double theta = 0.0, double x = 0.0, double D = 0.0, double zeta = 0.0, double Z = 0.0, double chi = 0.0, int geom = 0, double V = 0.0, double U = 0.0);
-	// Assignment Operator
-	UFFAtomType& operator=(const UFFAtomType& source);
-
-
-	/*
-	 * Data
-	 */
-	private:
-	// Index of atom type
-	int index_;
-	// Name of atom type
-	const char* name_;
-	// Generator parameters
-	double r_, theta_, x_, D_, zeta_, Z_, chi_, V_, U_;
-	int geom_;
-
-	public:
-	// Return index of atom type
-	int index() const;
-	// Return name of atom type
-	const char* name() const;
-	// Return single bond radius (r, Angstroms)
-	double r() const;
-	// Return descriptive angle (theta, degrees)
-	double theta() const;
-	// Return nonbond distance (x, Angstroms)
-	double x() const;
-	// Return nonbond energy (D, kcal)
-	double D() const;
-	// Return nonbond scale (zeta)
-	double zeta() const;
-	// Return effective charge (Z)
-	double Z() const;
-	// Return GMP electronegativity (chi)
-	double chi() const;
-// 	V_, U_;
-
-	// Return integer representing geometry about the type (geom)
-	int geom() const;
-};
 
 // Universal Forcefield
 class Forcefield_UFF : public Forcefield

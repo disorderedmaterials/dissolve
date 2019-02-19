@@ -1,6 +1,8 @@
 add_library(ff
   uff.cpp
+  uffatomtype.cpp
   uff.h
+  uffatomtype.h
 )
 
 include_directories(
