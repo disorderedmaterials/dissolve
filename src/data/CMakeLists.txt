@@ -3,13 +3,11 @@ add_library(data
   elements.cpp
   ff.cpp
   isotopes.cpp
-  uff.cpp
 
   atomicmass.h
   elements.h
   ff.h
   isotopes.h
-  uff.h
 )
 
 include_directories(

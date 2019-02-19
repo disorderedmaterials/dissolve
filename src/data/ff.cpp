@@ -24,6 +24,15 @@
 #include "classes/speciesatom.h"
 #include "classes/speciesbond.h"
 
+// Constructor / Destructor
+Forcefield::Forcefield() : ListItem<Forcefield>()
+{
+}
+
+Forcefield::~Forcefield()
+{
+}
+
 /*
  * Atom Environment Helpers
  */

@@ -1,6 +1,6 @@
 /*
 	*** Universal Forcefield
-	*** src/data/uff.h
+	*** src/data/ff/uff.h
 	Copyright T. Youngs 2019
 
 	This file is part of Dissolve.
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_UFF_H
-#define DISSOLVE_UFF_H
+#ifndef DISSOLVE_FORCEFIELD_UFF_H
+#define DISSOLVE_FORCEFIELD_UFF_H
 
 #include "data/ff.h"
 #include "templates/array.h"
@@ -83,8 +83,14 @@ class UFFAtomType : public ElementReference, public ListItem<UFFAtomType>
 };
 
 // Universal Forcefield
-class UFF : public Forcefield
+class Forcefield_UFF : public Forcefield
 {
+	public:
+	// Constructor / Destructor
+	Forcefield_UFF();
+	~Forcefield_UFF();
+
+
 	/*
 	 * Definition
 	 */

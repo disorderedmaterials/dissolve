@@ -30,8 +30,14 @@ class Species;
 class SpeciesAtom;
 
 // Forcefield Base Class
-class Forcefield : public Elements
+class Forcefield : public Elements, public ListItem<Forcefield>
 {
+	public:
+	// Constructor / Destructor
+	Forcefield();
+	virtual ~Forcefield();
+
+
 	/*
 	 * Definition
 	 */

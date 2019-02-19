@@ -1,6 +1,6 @@
 /*
 	*** Universal Forcefield
-	*** src/data/uff.cpp
+	*** src/data/ff/uff.cpp
 	Copyright T. Youngs 2019
 
 	This file is part of Dissolve.
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "data/uff.h"
+#include "data/ff/uff.h"
 #include "classes/atomtype.h"
 #include "classes/coredata.h"
 #include "classes/species.h"
@@ -39,7 +39,7 @@
  */
 
 // Static Singletons
-Array< List<UFFAtomType> > UFF::atomTypesByElementPrivate_;
+Array< List<UFFAtomType> > Forcefield_UFF::atomTypesByElementPrivate_;
 
 /*
  * Universal Forcefield AtomType Data
@@ -63,7 +63,7 @@ UFFAtomType::UFFAtomType(int z, const char* symbol, int index, const char* name,
 	U_ = U;
 
 	// Add this atomtype to its parent element's list
-	UFF::registerAtomType(this, z);
+	Forcefield_UFF::registerAtomType(this, z);
 }
 
 // Assignment Operator
@@ -127,12 +127,21 @@ int UFFAtomType::geom() const
 	return geom_;
 }
 
+// Constructor / Destructor
+Forcefield_UFF::Forcefield_UFF()
+{
+}
+
+Forcefield_UFF::~Forcefield_UFF()
+{
+}
+
 /*
  * Definition
  */
 
 // Return name of Forcefield
-const char* UFF::name()
+const char* Forcefield_UFF::name()
 {
 	return "UFF";
 }
@@ -142,7 +151,7 @@ const char* UFF::name()
  */
 
 // Return atom type data for specified Element
-List<UFFAtomType>& UFF::atomTypesByElement(int Z)
+List<UFFAtomType>& Forcefield_UFF::atomTypesByElement(int Z)
 {
 	// Has the master array been initialised yet? If not, do it now, before the data is constructed
 	if (atomTypesByElementPrivate_.nItems() == 0) Elements::createElementListArray<UFFAtomType>(atomTypesByElementPrivate_);
@@ -281,7 +290,7 @@ List<UFFAtomType>& UFF::atomTypesByElement(int Z)
 
 	if ((Z < 0) || (Z > nElements()))
 	{
-		Messenger::error("UFF::atomTypesByElement() - Element with Z=%i is out of range!\n", Z);
+		Messenger::error("Forcefield_UFF::atomTypesByElement() - Element with Z=%i is out of range!\n", Z);
 		return atomTypesByElementPrivate_[0];
 	}
 
@@ -289,13 +298,13 @@ List<UFFAtomType>& UFF::atomTypesByElement(int Z)
 }
 
 // Register specified atom type to given Element
-void UFF::registerAtomType(UFFAtomType* atomType, int Z)
+void Forcefield_UFF::registerAtomType(UFFAtomType* atomType, int Z)
 {
 	atomTypesByElementPrivate_[Z].own(atomType);
 }
 
 // Return the named UFFAtomType (if it exists)
-UFFAtomType* UFF::atomTypeByName(const char* name, Element* element) const
+UFFAtomType* Forcefield_UFF::atomTypeByName(const char* name, Element* element) const
 {
 	int startZ = (element ? element->Z() : 0);
 	int endZ = (element ? element->Z() : nElements()-1);
@@ -310,7 +319,7 @@ UFFAtomType* UFF::atomTypeByName(const char* name, Element* element) const
 }
 
 // Determine and return AtomType for specified SpeciesAtom
-UFFAtomType* UFF::determineAtomType(SpeciesAtom* i) const
+UFFAtomType* Forcefield_UFF::determineAtomType(SpeciesAtom* i) const
 {
 	switch (i->element()->Z())
 	{
@@ -401,7 +410,7 @@ UFFAtomType* UFF::determineAtomType(SpeciesAtom* i) const
  */
 
 // Generate bond parameters for the supplied UFF atom types
-bool UFF::generateBondTerm(const Species* sp, SpeciesBond* bondTerm, UFFAtomType* i, UFFAtomType* j) const
+bool Forcefield_UFF::generateBondTerm(const Species* sp, SpeciesBond* bondTerm, UFFAtomType* i, UFFAtomType* j) const
 {
 	// Check type pointers
 	if ((!i) || (!j)) return Messenger::error("One or more NULL type pointers passed (%p-%p).\n", i, j);
@@ -431,7 +440,7 @@ bool UFF::generateBondTerm(const Species* sp, SpeciesBond* bondTerm, UFFAtomType
 }
 
 // Generate angle parameters for the supplied UFF atom types
-bool UFF::generateAngleTerm(const Species* sp, SpeciesAngle* angleTerm, UFFAtomType* i, UFFAtomType* j, UFFAtomType* k) const
+bool Forcefield_UFF::generateAngleTerm(const Species* sp, SpeciesAngle* angleTerm, UFFAtomType* i, UFFAtomType* j, UFFAtomType* k) const
 {
 	// Check type pointers
 	if ((!i) || (!j) || (!k)) return Messenger::error("One or more NULL type pointers passed (%p-%p-%p).\n", i, j, k);
@@ -505,12 +514,12 @@ bool UFF::generateAngleTerm(const Species* sp, SpeciesAngle* angleTerm, UFFAtomT
 }
 
 // Generate torsion parameters for the supplied UFF atom types
-bool UFF::generateTorsionTerm(const Species* sp, SpeciesTorsion* torsionTerm, UFFAtomType* i, UFFAtomType* j, UFFAtomType* k, UFFAtomType* l) const
+bool Forcefield_UFF::generateTorsionTerm(const Species* sp, SpeciesTorsion* torsionTerm, UFFAtomType* i, UFFAtomType* j, UFFAtomType* k, UFFAtomType* l) const
 {
 }
 
 // Create and assign suitable AtomTypes for the supplied Species
-bool UFF::createAtomTypes(Species* sp, CoreData& coreData) const
+bool Forcefield_UFF::createAtomTypes(Species* sp, CoreData& coreData) const
 {
 	// Loop over Species atoms
 	for (SpeciesAtom* i = sp->atoms().first(); i != NULL; i = i->next)
@@ -545,7 +554,7 @@ bool UFF::createAtomTypes(Species* sp, CoreData& coreData) const
 }
 
 // Create a full forcefield description for the supplied Species
-bool UFF::describe(Species* sp, CoreData& coreData) const
+bool Forcefield_UFF::describe(Species* sp, CoreData& coreData) const
 {
 	// Set the atom types to our elements
 	if (!createAtomTypes(sp, coreData)) return Messenger::error("Failed to create/assign atom types.\n");
@@ -578,7 +587,7 @@ bool UFF::describe(Species* sp, CoreData& coreData) const
 }
 
 // Generate intramolecular parameters description for the supplied Species, using on-the-fly typing
-bool UFF::describeIntramolecular(Species* sp) const
+bool Forcefield_UFF::describeIntramolecular(Species* sp) const
 {
 }
 
@@ -690,7 +699,7 @@ bool UFF::describeIntramolecular(Species* sp) const
 // }
 
 // Perform some test calculations
-void UFF::test() const
+void Forcefield_UFF::test() const
 {
 	
 }
