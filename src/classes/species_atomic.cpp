@@ -52,7 +52,7 @@ SpeciesAtom* Species::atom(int n)
 }
 
 // Return the list of SpeciesAtoms
-List<SpeciesAtom>& Species::atoms()
+const List<SpeciesAtom>& Species::atoms() const
 {
 	return atoms_;
 }
