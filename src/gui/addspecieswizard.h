@@ -54,10 +54,6 @@ class AddSpeciesWizard : public WizardWidget
 	// Target Species (in temporaryCoreData_) for import
 	Species* importTarget_;
 
-	private:
-	// Copy interaction parameters, adding MasterIntra if necessary
-	void copyIntra(SpeciesIntra* sourceIntra, SpeciesIntra* destIntra, Dissolve& mainDissolve);
-
 	public:
 	// Set Dissolve reference
 	void setMainDissolveReference(const Dissolve* dissolveReference);

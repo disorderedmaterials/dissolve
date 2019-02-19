@@ -20,6 +20,7 @@
 */
 
 #include "main/dissolve.h"
+#include "classes/atomtype.h"
 #include "classes/species.h"
 #include "base/sysfunc.h"
 #include <string.h>
@@ -93,4 +94,120 @@ void Dissolve::removeSpeciesIsotopologue(Species* species, Isotopologue* iso)
 	species->removeIsotopologue(iso);
 
 	setUp_ = false;
+}
+
+// Copy intramolecular interaction parameters, adding MasterIntra if necessary
+void Dissolve::copySpeciesIntra(SpeciesIntra* sourceIntra, SpeciesIntra* destIntra)
+{
+	// We can always copy the form of the interaction, regardless of whether it is a MasterIntra or not
+
+	// If sourceIntra referneces a MasterIntra, check for its presence in the supplied Dissolve reference, and create it if necessary
+	if (sourceIntra->masterParameters())
+	{
+		// Search for MasterIntra by the same name in our main Dissolve instance
+		MasterIntra* master = NULL;
+		if (sourceIntra->type() == SpeciesIntra::IntramolecularBond)
+		{
+			master = hasMasterBond(sourceIntra->masterParameters()->name());
+			if (!master)
+			{
+				master = addMasterBond(sourceIntra->masterParameters()->name());
+				master->setParametersFromArray(sourceIntra->parametersAsArray());
+			}
+		}
+		else if (sourceIntra->type() == SpeciesIntra::IntramolecularAngle)
+		{
+			master = hasMasterAngle(sourceIntra->masterParameters()->name());
+			if (!master)
+			{
+				master = addMasterAngle(sourceIntra->masterParameters()->name());
+				master->setParametersFromArray(sourceIntra->parametersAsArray());
+			}
+		}
+		else if (sourceIntra->type() == SpeciesIntra::IntramolecularTorsion)
+		{
+			master = hasMasterTorsion(sourceIntra->masterParameters()->name());
+			if (!master)
+			{
+				master = addMasterTorsion(sourceIntra->masterParameters()->name());
+				master->setParametersFromArray(sourceIntra->parametersAsArray());
+			}
+		}
+
+		master->setForm(sourceIntra->masterParameters()->form());
+
+		// Set the master pointer in the interaction
+		destIntra->setMasterParameters(master);
+	}
+	else
+	{
+		// Just copy over form / parameters
+		destIntra->setForm(sourceIntra->form());
+		destIntra->setParametersFromArray(sourceIntra->parametersAsArray());
+	}
+}
+
+// Copy Species from supplied instance
+Species* Dissolve::copySpecies(const Species* species)
+{
+	// Create our new Species
+	Species* newSpecies = addSpecies();
+	newSpecies->setName(coreData_.uniqueSpeciesName(species->name()));
+
+	// Duplicate atoms
+	ListIterator<SpeciesAtom> atomIterator(species->atoms());
+	while (SpeciesAtom* i = atomIterator.iterate())
+	{
+		// Create the Atom in our new Species
+		SpeciesAtom* newAtom = newSpecies->addAtom(i->element(), i->r());
+
+		// Search for the existing atom's AtomType by name, and create it if it doesn't exist
+		if (i->atomType())
+		{
+			AtomType* at = findAtomType(i->atomType()->name());
+			if (!at)
+			{
+				at = addAtomType(i->element());
+				at->setName(i->atomType()->name());
+				at->parameters() = i->atomType()->parameters();
+			}
+
+			newAtom->setAtomType(at);
+		}
+	}
+
+	// Duplicate bonds
+	ListIterator<SpeciesBond> bondIterator(species->bonds());
+	while (SpeciesBond* b = bondIterator.iterate())
+	{
+		// Create the bond in the new Species
+		SpeciesBond* newBond = newSpecies->addBond(b->indexI(), b->indexJ());
+
+		// Copy interaction parameters, including MasterIntra if necessary
+		copySpeciesIntra(b, newBond);
+	}
+
+	// Duplicate angles
+	ListIterator<SpeciesAngle> angleIterator(species->angles());
+	while (SpeciesAngle* a = angleIterator.iterate())
+	{
+		// Create the angle in the new Species
+		SpeciesAngle* newAngle = newSpecies->addAngle(a->indexI(), a->indexJ(), a->indexK());
+
+		// Copy interaction parameters, including MasterIntra if necessary
+		copySpeciesIntra(a, newAngle);
+	}
+
+	// Duplicate torsions
+	ListIterator<SpeciesTorsion> torsionIterator(species->torsions());
+	while (SpeciesTorsion* t = torsionIterator.iterate())
+	{
+		// Create the torsion in the new Species
+		SpeciesTorsion* newTorsion = newSpecies->addTorsion(t->indexI(), t->indexJ(), t->indexK(), t->indexL());
+
+		// Copy interaction parameters, including MasterIntra if necessary
+		copySpeciesIntra(t, newTorsion);
+	}
+
+	return newSpecies;
 }

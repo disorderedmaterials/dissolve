@@ -156,6 +156,10 @@ class Dissolve
 	void updateIsotopologues(Species* species = NULL, Isotopologue* iso = NULL);
 	// Remove Isotopologue from Species
 	void removeSpeciesIsotopologue(Species* species, Isotopologue* iso);
+	// Copy intramolecular interaction parameters, adding MasterIntra if necessary
+	void copySpeciesIntra(SpeciesIntra* sourceIntra, SpeciesIntra* destIntra);
+	// Copy Species
+	Species* copySpecies(const Species* species);
 
 
 	/*
