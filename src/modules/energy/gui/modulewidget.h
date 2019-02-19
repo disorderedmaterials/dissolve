@@ -31,7 +31,7 @@ class Dissolve;
 class Module;
 class PartialSet;
 class EnergyModule;
-class UChromaViewWidget;
+class DataViewer;
 
 // Module Widget
 class EnergyModuleWidget : public ModuleWidget
@@ -42,8 +42,8 @@ class EnergyModuleWidget : public ModuleWidget
 	private:
 	// Associated Module
 	EnergyModule* module_;
-	// UChromaViews contained within this widget
-	UChromaViewWidget* energyGraph_;
+	// DataViewer contained within this widget
+	DataViewer* energyGraph_;
 	// Reference to Dissolve
 	Dissolve& dissolve_;
 

@@ -1,0 +1,241 @@
+/*
+	*** Base Viewer Widget (subclassing QOpenGLWidget)
+	*** src/gui/viewer/viewer.hui
+	Copyright T. Youngs 2013-2019
+
+	This file is part of Dissolve.
+
+	Dissolve is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	Dissolve is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef DISSOLVE_BASEVIEWER_H
+#define DISSOLVE_BASEVIEWER_H
+
+#include "gui/viewer/render/renderable.h"
+#include "gui/viewer/render/renderablegroupmanager.h"
+#include "gui/viewer/render/view.h"
+#include "gui/viewer/render/primitive.h"
+#include "gui/viewer/render/fontinstance.h"
+#include "math/data1d.h"
+#include "templates/list.h"
+#include "templates/reflist.h"
+#include <QOpenGLWidget>
+#include <QOpenGLFunctions>
+#include <QOffscreenSurface>
+#include <QObject>
+#include <QMenu>
+
+// Forward Declarations
+/* none */
+
+// Base rendering widget
+class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
+{
+	Q_OBJECT
+
+	public:
+	// Constructor / Destructor
+	BaseViewer(QWidget *parent);
+	~BaseViewer();
+
+
+	/*
+	 * Renderable Data
+	 */
+	protected:
+	// List of renderables to display
+	List<Renderable> renderables_;
+	// Currently-selected renderable (if any)
+	Renderable* currentRenderable_;
+	// View for renderable data
+	View view_;
+
+	public:
+	// Clear existing data
+	void clear();
+	// Own supplied renderable and display it
+	void ownRenderable(Renderable* newRenderable);
+	// Create Renderable by type and object identifier
+	Renderable* createRenderable(Renderable::RenderableType type, const char* objectTag, const char* name, const char* title = NULL, const char* groupName = NULL);
+	// Remove existing Renderable
+	void removeRenderable(Renderable* data);
+	// Clear all Renderables
+	void clearRenderables();
+	// Return number of Renderables
+	int nRenderables() const;
+	// Return list of Renderables
+	const List<Renderable>& renderables() const;
+	// Return named Renderable
+	Renderable* renderable(const char* name) const;
+	// Set visibility of named Renderable
+	void setRenderableVisible(const char* name, bool visible);
+	// Return visibility of named Renderable
+	bool isRenderableVisible(const char* name) const;
+	// Return the view
+	View& view();
+
+
+	/*
+	 * Renderable Groups
+	 */
+	protected:
+	// Group manager for the data
+	RenderableGroupManager groupManager_;
+
+	public:
+	// Return the group manager for the data
+	RenderableGroupManager& groupManager();
+
+
+	/*
+	 * Rendering
+	 */
+	protected:
+	// Width, height, and aspect ratio of the context
+	GLsizei contextWidth_, contextHeight_;
+	// Flag to indicate whether we may draw to the context
+	bool valid_;
+	// Flag indicating if we are currently drawing to this context
+	bool drawing_;
+	// Font instance for this viewer
+	FontInstance fontInstance_;
+	// Flag specifying whether we are currently rendering offscreen
+	bool renderingOffScreen_;
+	// Line width scaling factor to use (to adjust line width when saving images)
+	double lineWidthScaling_;
+	// Offscreen context
+        QOpenGLContext offscreenContext_;
+	// Offscreen surface
+	QOffscreenSurface offscreenSurface_;
+
+	private:
+	// Initialise context widget (when created by Qt)
+	void initializeGL();
+	// General repaint callback
+	void paintGL();
+	// Resize function
+	void resizeGL(int width, int height);
+	// Perform post-initialisation operations
+	virtual void postInitialiseGL();
+	// Perform post-resize operations
+	virtual void postResizeGL();
+	// Setup basic GL properties
+	virtual void setupGL();
+	// Render content
+	virtual void render(int xOffset = 0, int yOffset = 0) = 0;
+	// Set line width and text scaling to use
+	void setObjectScaling(double scaling);
+
+	protected:
+	// Set and enable clip planes suitable for current axis limits and view
+	void enableClipping();
+	// Disable clip planes
+	void disableClipping();
+
+	public:
+	// Return the current height of the drawing area
+	GLsizei contextHeight() const;
+	// Return the current width of the drawing area
+	GLsizei contextWidth() const;
+	// Set up font instance with supplied font
+	bool setUpFont(const char* fontFileName = NULL);
+	// Return font instance
+	FontInstance& fontInstance();
+	// Check for GL error
+	void checkGlError();
+	// Refresh widget / scene
+	void postRedisplay();
+	// Grab current contents of framebuffer
+	QPixmap frameBuffer();
+	// Render current scene at supplied size
+	QPixmap generateImage(int imageWidth, int imageHeight);
+
+	protected slots:
+	// Copy current view to clipboard as an image
+	void copyViewToClipboard(bool checked);
+
+
+	/*
+	 * Mouse / Keyboard Input
+	 */
+	protected:
+	// Canvas coordinates of mouse down
+	Vec3<int> rMouseDown_;
+	// Canvas coordinates of mouse cursor
+	Vec3<int> rMouseLast_;
+	// Current state of mouse buttons
+	Qt::MouseButtons buttonState_;
+
+	private:
+	// Mouse press event
+	void mousePressEvent(QMouseEvent* event);
+	// Mouse release event
+	void mouseReleaseEvent(QMouseEvent* event);
+	// Mouse move event
+	void mouseMoveEvent(QMouseEvent* event);
+	// Mouse wheel event
+	void wheelEvent(QWheelEvent* event);
+	// Mouse double click event
+	void mouseDoubleClickEvent(QMouseEvent* event);
+
+	protected:
+	// Mouse pressed
+	virtual void mousePressed(Qt::KeyboardModifiers modifiers) = 0;
+	// Mouse released
+	virtual void mouseReleased() = 0;
+	// Mouse moved
+	virtual void mouseMoved(int dx, int dy, Qt::KeyboardModifiers modifiers) = 0;
+	// Mouse 'wheeled'
+	virtual void mouseWheeled(int delta) = 0;
+	// Mouse double clicked
+	virtual void mouseDoubleClicked() = 0;
+
+	private slots:
+	// Key press event
+	void keyPressEvent(QKeyEvent*);
+	// Key release event
+	void keyReleaseEvent(QKeyEvent*);
+
+	protected:
+	// Key pressed
+	virtual bool keyPressed(int key, Qt::KeyboardModifiers modifiers) = 0;
+	// Key released
+	virtual bool keyReleased(int key, Qt::KeyboardModifiers modifiers) = 0;
+
+	public:
+	// Return mouse coordinates at last mousedown event
+	Vec3<int> rMouseDown() const;
+	// Return mouse coordinates at last mousemove event
+	Vec3<int> rMouseLast() const;
+
+
+	/*
+	 * Context Menu
+	 */
+	protected:
+	// Context menu for display
+	QMenu contextMenu_;
+
+	protected:
+	// Initialise context menu
+	virtual void initialiseContextMenu() = 0;
+	// Update dynamic aspects of context menu before display
+	virtual void updateContextMenu() = 0;
+
+	public slots:
+	// Show context menu
+	void showContextMenu(const QPoint& pos);
+};
+
+#endif

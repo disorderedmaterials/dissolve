@@ -36,7 +36,6 @@ class MimeString : public ListItem<MimeString>
 	// Mime Strings Data Type
 	enum MimeStringType
 	{
-		UChromaCollectionBlockType,		/* UChroma-format 'Collection' block */
 		ModuleType,				/* Module type */
 		nMimeStringTypes
 	};

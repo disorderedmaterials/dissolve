@@ -20,7 +20,7 @@
 */
 
 #include "modules/calibration/gui/modulewidget.h"
-#include "gui/uchroma/gui/uchromaview.h"
+#include "gui/viewer/dataviewer.hui"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "classes/atomtype.h"
@@ -33,20 +33,17 @@ CalibrationModuleWidget::CalibrationModuleWidget(QWidget* parent, Module* module
 	// Set up user interface
 	ui.setupUi(this);
 
-	// Grab our UChroma widget
-	uChromaView_ = ui.PlotWidget;
+	// Grab our DataViewer widget
+	dataView_ = ui.PlotWidget->dataViewer();
 
-	// Start a new, empty session
-	uChromaView_->startNewSession(true);
-
-	// Set up the view pane
-	ViewPane* viewPane = uChromaView_->currentViewPane();
-	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
-	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "g(r) / S(Q)");
-	viewPane->axes().setMin(1, -1.0);
-	viewPane->axes().setMax(1, 1.0);
+	// Set up the view
+	View& view = dataView_->view();
+	view.setViewType(View::FlatXYView);
+	view.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+	view.axes().setMax(0, 10.0);
+	view.axes().setTitle(1, "g(r) / S(Q)");
+	view.axes().setMin(1, -1.0);
+	view.axes().setMax(1, 1.0);
 
 	refreshing_ = false;
 }
@@ -58,10 +55,7 @@ CalibrationModuleWidget::~CalibrationModuleWidget()
 // Update controls within widget
 void CalibrationModuleWidget::updateControls()
 {
-	// Ensure that any displayed data are up-to-date
-	uChromaView_->refreshReferencedDataSets();
-
-	uChromaView_->updateDisplay();
+	dataView_->postRedisplay();
 }
 
 // Disable sensitive controls within widget, ready for main code to run
@@ -81,8 +75,8 @@ void CalibrationModuleWidget::enableSensitiveControls()
 // Write widget state through specified LineParser
 bool CalibrationModuleWidget::writeState(LineParser& parser)
 {
-	// Write UChromaWidget session
-	if (!uChromaView_->writeSession(parser)) return false;
+	// Write DataViewer session
+	if (!dataView_->writeSession(parser)) return false;
 
 	return true;
 }
@@ -90,8 +84,8 @@ bool CalibrationModuleWidget::writeState(LineParser& parser)
 // Read widget state through specified LineParser
 bool CalibrationModuleWidget::readState(LineParser& parser)
 {
-	// Read UChromaWidget session
-	if (!uChromaView_->readSession(parser)) return false;
+	// Read DataViewer session
+	if (!dataView_->readSession(parser)) return false;
 	
 	return true;
 }

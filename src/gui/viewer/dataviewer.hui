@@ -1,0 +1,366 @@
+/*
+	*** Data Viewer Widget
+	*** src/gui/viewer/dataviewer.hui
+	Copyright T. Youngs 2013-2019
+
+	This file is part of Dissolve.
+
+	Dissolve is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	Dissolve is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef DISSOLVE_DATAVIEWER_H
+#define DISSOLVE_DATAVIEWER_H
+
+#include "gui/viewer/viewer.hui"
+
+// Forward Declarations
+/* none */
+
+// Data Viewer
+class DataViewer : public BaseViewer
+{
+	Q_OBJECT
+
+	public:
+	// Constructor / Destructor
+	DataViewer(QWidget *parent);
+	~DataViewer();
+
+
+	/*
+	 * Rendering (BaseViewer virtuals)
+	 */
+	private:
+	// Perform post-initialisation operations
+	void postInitialiseGL();
+	// Perform post-resize operations
+	void postResizeGL();
+	// Render content
+	void render(int xOffset = 0, int yOffset = 0);
+
+
+	/*
+	 * Mouse / Keyboard Input (BaseViewer virtuals)
+	 */
+	protected:
+	// Mouse pressed
+	void mousePressed(Qt::KeyboardModifiers modifiers);
+	// Mouse released
+	void mouseReleased();
+	// Mouse moved
+	void mouseMoved(int dx, int dy, Qt::KeyboardModifiers modifiers);
+	// Mouse 'wheeled'
+	void mouseWheeled(int delta);
+	// Mouse double clicked
+	void mouseDoubleClicked();
+	// Key pressed
+	bool keyPressed(int key, Qt::KeyboardModifiers modifiers);
+	// Key released
+	bool keyReleased(int key, Qt::KeyboardModifiers modifiers);
+
+	signals:
+	void currentCoordinateChanged();
+
+
+	/*
+	 * Context Menu (BaseViewer virtuals)
+	 */
+	private:
+	// Special QMenu items
+	QMenu* currentDataMenu_;
+
+	private:
+	// Initialise context menu
+	void initialiseContextMenu();
+	// Update dynamic aspects of context menu before display
+	void updateContextMenu();
+
+	private slots:
+	// Show dialog
+	void showDialog(bool checked);
+	// Set data visibility
+	void contextMenuSetDataVisible(bool checked);
+
+
+	/*
+	 * Interaction
+	 */
+	public:
+	// Interaction Mode enum
+	enum InteractionMode
+	{
+		ViewInteraction,
+		ZoomInteraction,
+		nInteractionModes
+	};
+	// Return InteractionMode name
+	static const char* interactionModeName(InteractionMode mode);
+	// Return InteractionMode help text
+	static const char* interactionModeHelp(InteractionMode mode);
+
+	protected:
+	// Current interaction mode
+	InteractionMode interactionMode_;
+	// Current axis target for interaction
+	int interactionAxis_;
+	// Whether interaction has started (i.e. mouse is down)
+	bool interactionStarted_;
+	// Starting (clicked) value when interacting
+	double clickedInteractionValue_;
+	// Starting (clicked) keyboard modifiers when interacting
+	Qt::KeyboardModifiers clickedInteractionModifiers_;
+	// Current interaction position on axis
+	double currentInteractionValue_;
+	// Data to highlight in this pass
+	Renderable* highlightedRenderable_;
+	// Clicked local coordinate under mouse in 2D view
+	Vec3<double> rClickedLocal_;
+	// Current local coordinate under mouse in 2D view
+	Vec3<double> rCurrentLocal_;
+
+	public:
+	// Set interaction mode and target axis
+	void setInteractionMode(InteractionMode mode, int axis);
+	// Return interaction mode
+	InteractionMode interactionMode() const;
+	// Return current axis target for interaction
+	int interactionAxis() const;
+	// Return whether interaction has started (i.e. mouse is down)
+	bool interactionStarted() const;
+	// Cancel current interaction
+	void cancelInteraction();
+	// Start interaction at the specified screen coordinates
+	void startInteraction(int mouseX, int mouseY, Qt::KeyboardModifiers modifiers);
+	// Update current interaction value
+	bool updateInteractionPosition(int mouseX, int mouseY);
+	// End interaction at the specified screen coordinates
+	void endInteraction(int mouseX, int mouseY);
+	// Return clicked interaction value on axis
+	double clickedInteractionValue();
+	// Return current interaction value on axis
+	double currentInteractionValue();
+	// Return clicked interaction coordinate on axis
+	double clickedInteractionCoordinate();
+	// Return current interaction coordinate on axis
+	double currentInteractionCoordinate();
+	// Perform relevant double-click action, occurring at specified coordinate
+	void doubleClickInteraction(int mouseX, int mouseY);
+	// Calculate local coordinate from supplied screen coordinates
+	Vec3<double> screenToLocal(int mouseX, int mouseY);
+	// Return current local coordinate under mouse in 2D view
+	Vec3<double> rCurrentLocal() const;
+
+
+	/*
+	 * Object Querying
+	 */
+	public:
+	// Drawing object type
+	enum ViewObject { AxisTickLabelObject, AxisLineObject, AxisTitleLabelObject, CollectionObject, GridLineMinorObject, GridLineMajorObject, NoObject };
+
+	private:
+	// View coordinates to probe for objects at next redraw
+	int objectQueryX_, objectQueryY_;
+	// Width and height of area about clicked position
+	int objectQueryWidth_, objectQueryHeight_;
+	// Maximum depth value found at query pixel
+	GLfloat depthAtQueryCoordinates_;
+	// Type of object found at query coordinates
+	ViewObject objectAtQueryCoordinates_;
+	// Information describing object at query coordinates
+	CharString infoAtQueryCoordinates_;
+
+	private:
+	// Update depth at query coordinates, returning whether it is closer
+	bool updateQueryDepth();
+	// Set information of query object
+	void setQueryObject(ViewObject objectType, const char* info);
+
+	public:
+	// Set coordinates to query at next redraw
+	void setQueryCoordinates(int mouseX, int mouseY);
+	// Return object type at query coordinates
+	ViewObject objectAtQueryCoordinates() const;
+	// Info for object at query coordinates
+	const char* infoAtQueryCoordinates() const;
+
+
+	/*
+	 * Tool Windows
+	 */
+// 	protected:
+// 	// Axes Window
+// 	AxesWindow axesWindow_;
+// 	// Data Window
+// 	DataWindow dataWindow_;
+// 	// Style Window
+// 	StyleWindow styleWindow_;
+// 	// Transform Window
+// 	TransformWindow transformWindow_;
+// 	// View Window
+// 	ViewWindow viewWindow_;
+// 	// Create Collection Dialog
+// 	CreateCollectionDialog createCollectionDialog_;
+// 	// Import Dialog
+// 	ImportDialog importDialog_;
+// 	// Fit Window
+// 	EditFitKernelDialog editFitKernelDialog_;
+// 	// Save Image Dialog
+// 	SaveImageDialog saveImageDialog_;
+
+	public:
+// 	// Dialog enum
+// 	enum DialogWindow { AxesWindow, DataWindow, StyleWindow, TransformWindow, ViewWindow, CreateCollectionDialog, ImportDialog, EditFitKernelDialog, SaveImageDialog };
+// 	// Show specified window / dialog
+// 	void showDialog(int window);
+
+
+	/*
+	 * I/O
+	 */
+	public:
+	// Input File Block Keyword Enum
+	enum InputBlock
+	{
+		EndDataViewerBlock,
+		RenderableBlock,
+		ViewBlock,
+		nInputBlocks
+	};
+	// Convert text string to InputBlock
+	InputBlock inputBlock(const char* s);
+	// Convert InputBlock to text string
+	const char* inputBlock(InputBlock id);
+	// Print list of valid keywords for InputBlock specified
+	void printValidKeywords(InputBlock block);
+
+	// Axis Block Keyword Enum
+	enum AxisKeyword
+	{
+		AutoScaleKeyword,
+		AutoTicksKeyword,
+		EndAxisKeyword,
+		FirstTickKeyword,
+		FractionalPositioningKeyword,
+		GridLinesKeyword,
+		GridLineMajorStyleKeyword,
+		GridLineMinorStyleKeyword,
+		InvertKeyword,
+		LabelAnchorKeyword,
+		LabelOrientationKeyword,
+		LimitsKeyword,
+		LogarithmicKeyword,
+		MinorTicksKeyword,
+		NumberFormatKeyword,
+		PositionFractionalKeyword,
+		PositionRealKeyword,
+		StretchKeyword,
+		TickDeltaKeyword,
+		TickDirectionKeyword,
+		TitleKeyword,
+		TitleAnchorKeyword,
+		TitleOrientationKeyword,
+		VisibleAxisKeyword,
+		nAxisKeywords
+	};
+	// Convert text string to AxisKeyword
+	AxisKeyword axisKeyword(const char* s);
+	// Convert AxisKeyword to text string
+	const char* axisKeyword(AxisKeyword kwd);
+	// Return minimum number of expected arguments
+	int axisKeywordNArguments(AxisKeyword kwd);
+
+	// Renderable Block Keyword Enum
+	enum RenderableKeyword
+	{
+		ColourAlphaIsGlobalKeyword,
+		ColourCustomGradientKeyword,
+		ColourGlobalAlphaKeyword,
+		ColourHSVGradientEndKeyword,
+		ColourHSVGradientStartKeyword,
+		ColourRGBGradientEndKeyword,
+		ColourRGBGradientStartKeyword,
+		ColourSingleKeyword,
+		ColourStyleKeyword,
+		EndRenderableKeyword,
+		GroupKeyword,
+		LineStyleKeyword,
+		ShininessKeyword,
+		StyleKeyword,
+		TransformXKeyword,
+		TransformYKeyword,
+		TransformZKeyword,
+		VisibleKeyword,
+		nRenderableKeywords
+	};
+	// Convert text string to RenderableKeyword
+	RenderableKeyword renderableKeyword(const char* s);
+	// Convert RenderableKeyword to text string
+	const char* renderableKeyword(RenderableKeyword kwd);
+	// Return minimum number of expected arguments
+	int renderableKeywordNArguments(RenderableKeyword kwd);
+
+	// View Block Keyword Enum
+	enum ViewKeyword
+	{
+		AutoFollowTypeKeyword,
+		AutoPositionTitlesKeyword,
+		AxisBlockKeyword,
+		BoundingBoxKeyword,
+		BoundingBoxPlaneYKeyword,
+		EndViewKeyword,
+		FlatLabelsKeyword,
+		LabelPointSizeKeyword,
+		PerspectiveKeyword,
+		RotationXKeyword,
+		RotationYKeyword,
+		RotationZKeyword,
+		TitlePointSizeKeyword,
+		TranslationKeyword,
+		UseBestFlatViewKeyword,
+		VerticalShiftKeyword,
+		ViewTypeKeyword,
+		nViewKeywords
+	};
+	// Convert text string to ViewKeyword
+	ViewKeyword viewKeyword(const char* s);
+	// Convert ViewKeyword to text string
+	const char* viewKeyword(ViewKeyword kwd);
+	// Return minimum number of expected arguments
+	int viewKeywordNArguments(ViewKeyword kwd);
+
+	public:
+	// Read AxisBlock keywords
+	bool readAxisBlock(LineParser& parser, Axes& axes, int axis, bool strictBlockEnd = true);
+	// Read RenderableBlock keywords
+	bool readRenderableBlock(LineParser& parser, Renderable* renderable, bool strictBlockEnd = true);
+	// Read ViewBlock keywords
+	bool readViewBlock(LineParser& parser, bool strictBlockEnd = true);
+	// Write AxisBlock keywords
+	bool writeAxisBlock(LineParser& parser, Axes& axes, int axis);
+	// Write RenderableBlock keywords
+	bool writeRenderableBlock(LineParser& parser, Renderable* renderable, int indentLevel = 0);
+	// Write ViewBlock keywords
+	bool writeViewBlock(LineParser& parser);
+	
+	public:
+	// Parse main input blocks through specified parser
+	bool parseInputBlocks(LineParser& parser);
+	// Read session through parser specified
+	bool readSession(LineParser& parser);
+	// Write session through parser specified
+	bool writeSession(LineParser& parser);
+};
+
+#endif

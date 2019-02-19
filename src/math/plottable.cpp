@@ -24,7 +24,7 @@
 #include "templates/array3d.h"
 
 // Constructor
-Plottable::Plottable::Plottable(Plottable::PlottableType type)
+PlottableData::PlottableData(PlottableData::PlottableDataType type)
 {
 	type_ = type;
 }
@@ -34,13 +34,13 @@ Plottable::Plottable::Plottable(Plottable::PlottableType type)
  */
 
 // Set name of plottable
-void Plottable::setName(const char* name)
+void PlottableData::setName(const char* name)
 {
 	name_ = name;
 }
 
 // Return name of plottable
-const char* Plottable::name() const
+const char* PlottableData::name() const
 {
 	return name_.get();
 }
@@ -50,17 +50,17 @@ const char* Plottable::name() const
  */
 
 // Return y axis Array (const)
-const Array<double>& Plottable::constYAxis() const
+const Array<double>& PlottableData::constYAxis() const
 {
-	Messenger::error("Tried to retrieve y axis array from a Plottable that doesn't have a y axis.\n");
+	Messenger::error("Tried to retrieve y axis array from a PlottableData that doesn't have a y axis.\n");
 	static Array<double> dummy;
 	return dummy;
 }
 
 // Return z axis Array (const)
-const Array<double>& Plottable::constZAxis() const
+const Array<double>& PlottableData::constZAxis() const
 {
-	Messenger::error("Tried to retrieve z axis array from a Plottable that doesn't have a z axis.\n");
+	Messenger::error("Tried to retrieve z axis array from a PlottableData that doesn't have a z axis.\n");
 	static Array<double> dummy;
 	return dummy;
 }
@@ -70,55 +70,55 @@ const Array<double>& Plottable::constZAxis() const
  */
 
 // Return values Array
-const Array<double>& Plottable::constValues() const
+const Array<double>& PlottableData::constValues() const
 {
-	Messenger::error("Tried to retrieve a one-dimensional value array from a Plottable that doesn't know how to return one.\n");
+	Messenger::error("Tried to retrieve a one-dimensional value array from a PlottableData that doesn't know how to return one.\n");
 	static Array<double> dummy;
 	return dummy;
 }
 
 // Return values Array
-const Array2D<double>& Plottable::constValues2D() const
+const Array2D<double>& PlottableData::constValues2D() const
 {
-	Messenger::error("Tried to retrieve a two-dimensional value array from a Plottable that doesn't know how to return one.\n");
+	Messenger::error("Tried to retrieve a two-dimensional value array from a PlottableData that doesn't know how to return one.\n");
 	static Array2D<double> dummy;
 	return dummy;
 }
 
 // Return three-dimensional values Array
-const Array3D<double>& Plottable::constValues3D() const
+const Array3D<double>& PlottableData::constValues3D() const
 {
-	Messenger::error("Tried to retrieve a three-dimensional value array from a Plottable that doesn't know how to return one.\n");
+	Messenger::error("Tried to retrieve a three-dimensional value array from a PlottableData that doesn't know how to return one.\n");
 	static Array3D<double> dummy;
 	return dummy;
 }
 
 // Return whether the values have associated errors
-bool Plottable::valuesHaveErrors() const
+bool PlottableData::valuesHaveErrors() const
 {
 	return false;
 }
 
 // Return errors Array
-const Array<double>& Plottable::constErrors() const
+const Array<double>& PlottableData::constErrors() const
 {
-	Messenger::error("Tried to retrieve a one-dimensional error array from a Plottable that doesn't know how to return one.\n");
+	Messenger::error("Tried to retrieve a one-dimensional error array from a PlottableData that doesn't know how to return one.\n");
 	static Array<double> dummy;
 	return dummy;
 }
 
 // Return errors Array
-const Array2D<double>& Plottable::constErrors2D() const
+const Array2D<double>& PlottableData::constErrors2D() const
 {
-	Messenger::error("Tried to retrieve a two-dimensional error array from a Plottable that doesn't know how to return one.\n");
+	Messenger::error("Tried to retrieve a two-dimensional error array from a PlottableData that doesn't know how to return one.\n");
 	static Array2D<double> dummy;
 	return dummy;
 }
 
 // Return three-dimensional errors Array
-const Array3D<double>& Plottable::constErrors3D() const
+const Array3D<double>& PlottableData::constErrors3D() const
 {
-	Messenger::error("Tried to retrieve a three-dimensional error array from a Plottable that doesn't know how to return one.\n");
+	Messenger::error("Tried to retrieve a three-dimensional error array from a PlottableData that doesn't know how to return one.\n");
 	static Array3D<double> dummy;
 	return dummy;
 }

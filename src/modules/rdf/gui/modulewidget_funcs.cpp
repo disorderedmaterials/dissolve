@@ -20,7 +20,7 @@
 */
 
 #include "modules/rdf/gui/modulewidget.h"
-#include "gui/uchroma/gui/uchromaview.h"
+#include "gui/viewer/dataviewer.hui"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "modules/rdf/rdf.h"
@@ -34,37 +34,31 @@ RDFModuleWidget::RDFModuleWidget(QWidget* parent, Module* module, Dissolve& diss
 	// Set up user interface
 	ui.setupUi(this);
 
-	ViewPane* viewPane;
-
 	// Set up partial g(r) graph
 
-	partialsGraph_ = ui.PartialsPlotWidget;
+	partialsGraph_ = ui.PartialsPlotWidget->dataViewer();
 
-	partialsGraph_->startNewSession(true);
-	viewPane = partialsGraph_->currentViewPane();
-	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
-	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "g(r)");
-	viewPane->axes().setMin(1, -1.0);
-	viewPane->axes().setMax(1, 1.0);
-	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
-	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
+	partialsGraph_->view().setViewType(View::FlatXYView);
+	partialsGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+	partialsGraph_->view().axes().setMax(0, 10.0);
+	partialsGraph_->view().axes().setTitle(1, "g(r)");
+	partialsGraph_->view().axes().setMin(1, -1.0);
+	partialsGraph_->view().axes().setMax(1, 1.0);
+	partialsGraph_->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
+	partialsGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Set up total G(r) graph
 
-	totalsGraph_ = ui.TotalsPlotWidget;
+	totalsGraph_ = ui.TotalsPlotWidget->dataViewer();
 
-	totalsGraph_->startNewSession(true);
-	viewPane = totalsGraph_->currentViewPane();
-	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
-	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "g(r)");
-	viewPane->axes().setMin(1, -1.0);
-	viewPane->axes().setMax(1, 1.0);
-	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::OneVerticalShift);
-	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
+	totalsGraph_->view().setViewType(View::FlatXYView);
+	totalsGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+	totalsGraph_->view().axes().setMax(0, 10.0);
+	totalsGraph_->view().axes().setTitle(1, "g(r)");
+	totalsGraph_->view().axes().setMin(1, -1.0);
+	totalsGraph_->view().axes().setMax(1, 1.0);
+	totalsGraph_->groupManager().setVerticalShift(RenderableGroupManager::OneVerticalShift);
+	totalsGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	refreshing_ = false;
 
@@ -80,12 +74,8 @@ RDFModuleWidget::~RDFModuleWidget()
 // Update controls within widget
 void RDFModuleWidget::updateControls()
 {
-	// Ensure that any displayed data are up-to-date
-	partialsGraph_->refreshReferencedDataSets();
-	totalsGraph_->refreshReferencedDataSets();
-
-	partialsGraph_->updateDisplay();
-	totalsGraph_->updateDisplay();
+	partialsGraph_->postRedisplay();
+	totalsGraph_->postRedisplay();
 }
 
 // Disable sensitive controls within widget, ready for main code to run
@@ -105,7 +95,7 @@ void RDFModuleWidget::enableSensitiveControls()
 // Write widget state through specified LineParser
 bool RDFModuleWidget::writeState(LineParser& parser)
 {
-	// Write UChromaWidget sessions
+	// Write DataViewer sessions
 	if (!partialsGraph_->writeSession(parser)) return false;
 	if (!totalsGraph_->writeSession(parser)) return false;
 
@@ -115,7 +105,7 @@ bool RDFModuleWidget::writeState(LineParser& parser)
 // Read widget state through specified LineParser
 bool RDFModuleWidget::readState(LineParser& parser)
 {
-	// Read UChromaWidget sessions
+	// Read DataViewer sessions
 	if (!partialsGraph_->readSession(parser)) return false;
 	if (!totalsGraph_->readSession(parser)) return false;
 
@@ -142,15 +132,15 @@ void RDFModuleWidget::setGraphDataTargets(RDFModule* module)
 	while (Configuration* cfg = configIterator.iterate())
 	{
 		// Add calculated total G(r)
-		blockData.sprintf("Collection '%s'; Group 'Calc'; DataSet 'Calculated'; Source Data1D '%s//UnweightedGR//Total'; EndDataSet; EndCollection", cfg->niceName(), cfg->niceName());
-		totalsGraph_->addCollectionFromBlock(blockData);
+		Renderable* refData = totalsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//Total", cfg->niceName()), CharString("Calculated//%s", cfg->niceName()), cfg->niceName());
+		totalsGraph_->groupManager().addToGroup(refData, "Calc");
 	}
 }
 
 void RDFModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 {
-	// Remove any current collections
-	partialsGraph_->clearCollections();
+	// Remove any current data
+	partialsGraph_->clearRenderables();
 
 	// Get target Configuration
 	currentConfiguration_ = (Configuration*) VariantPointer<Configuration>(ui.TargetCombo->itemData(index));
@@ -167,16 +157,18 @@ void RDFModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 			CharString id("%s-%s", at1->name(), at2->name());
 
 			// Full partial
-			blockData.sprintf("Collection '%s'; Group '%s'; DataSet 'Calculated %s'; Source Data1D '%s//UnweightedGR//%s-%s//Full'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), currentConfiguration_->niceName(), at1->name(), at2->name());
-			partialsGraph_->addCollectionFromBlock(blockData);
+			Renderable* fullGR = partialsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s-%s//Full", currentConfiguration_->niceName(), at1->name(), at2->name()), CharString("Full//%s", id.get()), id.get());
+			partialsGraph_->groupManager().addToGroup(fullGR, id.get());
 
 			// Bound partial
-			blockData.sprintf("Collection '%s Bound'; Group '%s'; LineStyle 1.0 'Half Dash'; DataSet 'Calculated %s'; Source Data1D '%s//UnweightedGR//%s-%s//Bound'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), currentConfiguration_->niceName(), at1->name(), at2->name());
-			partialsGraph_->addCollectionFromBlock(blockData);
+			Renderable* boundGR = partialsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s-%s//Bound", currentConfiguration_->niceName(), at1->name(), at2->name()), CharString("Bound//%s", id.get()), id.get());
+			boundGR->lineStyle().setStipple(LineStipple::HalfDashStipple);
+			partialsGraph_->groupManager().addToGroup(boundGR, id.get());
 
 			// Unbound partial
-			blockData.sprintf("Collection '%s Unbound'; Group '%s'; LineStyle 1.0 Dots; DataSet 'Calculated %s'; Source Data1D '%s//UnweightedGR//%s-%s//Unbound'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), currentConfiguration_->niceName(), at1->name(), at2->name());
-			partialsGraph_->addCollectionFromBlock(blockData);
+			Renderable* unboundGR = partialsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s-%s//Unbound", currentConfiguration_->niceName(), at1->name(), at2->name()), CharString("Unbound//%s", id.get()), id.get());
+			unboundGR->lineStyle().setStipple(LineStipple::DotStipple);
+			partialsGraph_->groupManager().addToGroup(unboundGR, id.get());
 		}
 	}
 }

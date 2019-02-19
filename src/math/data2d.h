@@ -23,6 +23,7 @@
 #define DISSOLVE_DATA2D_H
 
 #include "math/plottable.h"
+#include "base/version.h"
 #include "templates/array2d.h"
 #include "templates/objectstore.h"
 
@@ -30,7 +31,7 @@
 class Histogram2D;
 
 // One-Dimensional Data
-class Data2D : public Plottable, public ListItem<Data2D>, public ObjectStore<Data2D>, public GenericItemBase
+class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore<Data2D>, public GenericItemBase
 {
 	public:
 	// Constructor
@@ -57,6 +58,8 @@ class Data2D : public Plottable, public ListItem<Data2D>, public ObjectStore<Dat
 	bool hasError_;
 	// Errors of values, if present
 	Array2D<double> errors_;
+	// Data version
+	VersionCounter version_;
 
 	public:
 	// Initialise arrays to specified size
@@ -69,6 +72,8 @@ class Data2D : public Plottable, public ListItem<Data2D>, public ObjectStore<Dat
 	void zero();
 	// Accumulate specified histogram data
 	void accumulate(const Histogram2D& source);
+	// Return data version
+	const int version() const;
 	// Return x axis value specified
 	double& xAxis(int index);
 	// Return x axis value specified (const)

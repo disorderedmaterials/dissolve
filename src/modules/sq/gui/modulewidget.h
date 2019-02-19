@@ -30,7 +30,7 @@ class Dissolve;
 class Module;
 class PartialSet;
 class SQModule;
-class UChromaViewWidget;
+class DataViewer;
 
 // Module Widget
 class SQModuleWidget : public ModuleWidget
@@ -41,8 +41,8 @@ class SQModuleWidget : public ModuleWidget
 	private:
 	// Associated Module
 	SQModule* module_;
-	// UChromaViews contained within this widget
-	UChromaViewWidget* partialGRGraph_, *partialSQGraph_, *totalGRGraph_, *totalSQGraph_;
+	// DataViewers contained within this widget
+	DataViewer* partialGRGraph_, *partialSQGraph_, *totalGRGraph_, *totalSQGraph_;
 	// Reference to Dissolve
 	Dissolve& dissolve_;
 

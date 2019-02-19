@@ -30,7 +30,7 @@ class Dissolve;
 class Module;
 class PartialSet;
 class EPSRModule;
-class UChromaViewWidget;
+class DataViewer;
 
 // Module Widget
 class EPSRModuleWidget : public ModuleWidget
@@ -41,8 +41,8 @@ class EPSRModuleWidget : public ModuleWidget
 	private:
 	// Associated Module
 	EPSRModule* module_;
-	// UChromaViews contained within this widget
-	UChromaViewWidget* FQGraph_, *FQFitGraph_, *SQGraph_, *GRGraph_, *FRGraph_, *phiRGraph_, *phiMagGraph_, *rFactorGraph_;
+	// DataViewers contained within this widget
+	DataViewer* FQGraph_, *FQFitGraph_, *SQGraph_, *GRGraph_, *FRGraph_, *phiRGraph_, *phiMagGraph_, *rFactorGraph_;
 	// Reference to Dissolve
 	Dissolve& dissolve_;
 

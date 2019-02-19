@@ -49,9 +49,6 @@ class ObjectInfo
 		Histogram1DObject,
 		Histogram2DObject,
 		Histogram3DObject,
-		UChromaAxesObject,
-		UChromaCollectionObject,
-		UChromaViewPaneObject,
 		nObjectTypes
 	};
 
@@ -110,7 +107,7 @@ template <class T> class ObjectStore
 		// Store the parent object pointer, and add it to the master list
 		object_ = object;
 		objectInfo_.set(objectType_, objectCount_++);
-		setObjectTag("");
+		setObjectTag(CharString("%p", object_));
 		objects_.add(object_, objectInfo_.id());
 	}
 	// Destructor

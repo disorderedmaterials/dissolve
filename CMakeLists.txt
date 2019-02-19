@@ -296,6 +296,7 @@ if(GUI)
     uchromarender
     uchromakernels
     uchromasession
+    viewer
     widgets
     keywordwidgets
     delegates
@@ -342,6 +343,7 @@ if(GUI)
     uchromarender
     uchromakernels
     uchromasession
+    viewer
     widgets
     keywordwidgets
     delegates
