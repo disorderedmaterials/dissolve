@@ -225,7 +225,7 @@ UFFAtomType* Forcefield_UFF::atomTypeByName(const char* name, Element* element) 
 	for (int Z=startZ; Z<=endZ; ++Z)
 	{
 		// Go through types associated to the Element
-		ListIterator<UFFAtomType> typeIterator(atomTypesByElementPrivate_[Z]);
+		ListIterator<UFFAtomType> typeIterator(atomTypesByElement(Z));
 		while (UFFAtomType* type = typeIterator.iterate()) if (DissolveSys::sameString(type->name(), name)) return type;
 	}
 
@@ -451,6 +451,7 @@ bool Forcefield_UFF::createAtomTypes(Species* sp, CoreData& coreData, bool keepE
 			if (!at)
 			{
 				at = coreData.addAtomType(i->element());
+				at->setName(uffType->name());
 
 				/*
 				 * Determine suitable LJ parameters.
