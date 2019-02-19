@@ -86,11 +86,9 @@ class Forcefield_UFF : public Forcefield
 
 	public:
 	// Create and assign suitable AtomTypes for the supplied Species
-	bool createAtomTypes(Species* sp, CoreData& coreData) const;
-	// Create a full forcefield description for the supplied Species
-	bool describe(Species* sp, CoreData& coreData) const;
-	// Generate intramolecular parameters description for the supplied Species, using on-the-fly typing
-	bool describeIntramolecular(Species* sp) const;
+	bool createAtomTypes(Species* sp, CoreData& coreData, bool keepExisting = false) const;
+	// Generate intramolecular parameters description for the supplied Species
+	bool createIntramolecular(Species* sp, bool useExistingTypes, bool createBonds, bool createAngles, bool createTorsions) const;
 	// Perform some test calculations
 	void test() const;
 };

@@ -51,11 +51,9 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 	 */
 	public:
 	// Create and assign suitable AtomTypes for the supplied Species
-	virtual bool createAtomTypes(Species* sp, CoreData& coreData) const = 0;
-	// Create a full forcefield description for the supplied Species
-	virtual bool describe(Species* sp, CoreData& coreData) const = 0;
-	// Generate intramolecular parameters description for the supplied Species, using on-the-fly typing
-	virtual bool describeIntramolecular(Species* sp) const = 0;
+	virtual bool createAtomTypes(Species* sp, CoreData& coreData, bool keepExisting = false) const = 0;
+	// Generate intramolecular parameters description for the supplied Species
+	virtual bool createIntramolecular(Species* sp, bool useExistingTypes, bool createBonds, bool createAngles, bool createTorsions) const = 0;
 
 
 	/*
