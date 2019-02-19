@@ -23,6 +23,7 @@ SET(gui_MOC_HDRS
   modulechart.hui
   # Widgets
   addconfigurationwizard.h
+  addforcefieldtermswizard.h
   addprocessinglayerwizard.h
   addspecieswizard.h
   guidewizard.h
@@ -34,6 +35,7 @@ SET(gui_MOC_HDRS
   wizardwidgetpageinfo.h
   # Dialogs
   addconfigurationdialog.h
+  addforcefieldtermsdialog.h
   addprocessinglayerdialog.h
   addspeciesdialog.h
   # Main Tabs
@@ -65,6 +67,7 @@ SET(gui_UIS
   moduletab.ui
   # Widgets
   addconfigurationwizard.ui
+  addforcefieldtermswizard.ui
   addprocessinglayerwizard.ui
   addspecieswizard.ui
   guidewizard.ui
@@ -73,6 +76,7 @@ SET(gui_UIS
   wizardwidgetheader.ui
   # Dialogs
   addconfigurationdialog.ui
+  addforcefieldtermsdialog.ui
   addprocessinglayerdialog.ui
   addspeciesdialog.ui
   # Main Tabs
@@ -101,6 +105,7 @@ SET(gui_SRCS
   modulewidget.cpp
   # Widgets
   addconfigurationwizard_funcs.cpp
+  addforcefieldtermswizard_funcs.cpp
   addprocessinglayerwizard_funcs.cpp
   addspecieswizard_funcs.cpp
   guidewizard_funcs.cpp
@@ -110,6 +115,7 @@ SET(gui_SRCS
   wizardwidgetpageinfo.cpp
   # Dialogs
   addconfigurationdialog_funcs.cpp
+  addforcefieldtermsdialog_funcs.cpp
   addprocessinglayerdialog_funcs.cpp
   addspeciesdialog_funcs.cpp
   # Main Tabs

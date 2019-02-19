@@ -1497,6 +1497,7 @@
     <addaction name="SimulationAddSpeciesAction"/>
     <addaction name="SimulationAddConfigurationAction"/>
     <addaction name="SimulationAddProcessingLayerAction"/>
+    <addaction name="SimulationAddForcefieldTermsAction"/>
     <addaction name="separator"/>
     <addaction name="SimulationSetRandomSeedAction"/>
    </widget>
@@ -1683,6 +1684,11 @@
   <action name="SimulationAddProcessingLayerAction">
    <property name="text">
     <string>Add &amp;Processing Layer...</string>
+   </property>
+  </action>
+  <action name="SimulationAddForcefieldTermsAction">
+   <property name="text">
+    <string>Add &amp;Forcefield Terms...</string>
    </property>
   </action>
  </widget>

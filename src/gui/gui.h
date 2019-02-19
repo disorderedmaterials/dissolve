@@ -137,6 +137,7 @@ class DissolveWindow : public QMainWindow
 	void on_SimulationAddSpeciesAction_triggered(bool checked);
 	void on_SimulationAddConfigurationAction_triggered(bool checked);
 	void on_SimulationAddProcessingLayerAction_triggered(bool checked);
+	void on_SimulationAddForcefieldTermsAction_triggered(bool checked);
 	void on_SimulationSetRandomSeedAction_triggered(bool checked);
 	// Control
 	void on_SimulationRunAction_triggered(bool checked);
