@@ -266,7 +266,7 @@ UFFAtomType* Forcefield_UFF::determineAtomType(SpeciesAtom* i) const
 				if (isBondPattern(i, 0, 0, 0, 0, -1)) return atomTypeByName("O_R", i->element());
 				else if (isBondPattern(i, 0, 1)) return atomTypeByName("O_2", i->element());
 				else if (isBondPattern(i, 0, 0, 1) || isAtomGeometry(i, Forcefield::LinearGeometry)) return atomTypeByName("O_1", i->element());
-				else if (isBoundTo(i, &Elements::element(14), 2)) return atomTypeByName("O_3_z", i->element());
+				else if (isBoundTo(i, &Elements::element(ELEMENT_SI), 2)) return atomTypeByName("O_3_z", i->element());
 				else return atomTypeByName("O_3", i->element());
 			break;
 		// Phosphorus
