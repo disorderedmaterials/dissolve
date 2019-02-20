@@ -56,3 +56,9 @@ AtomType* Dissolve::findAtomType(const char* name) const
 {
 	return coreData_.findAtomType(name);
 }
+
+// Clear all AtomTypes
+void Dissolve::clearAtomTypes()
+{
+	coreData_.atomTypes().clear();
+}

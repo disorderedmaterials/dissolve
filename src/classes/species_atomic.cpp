@@ -134,3 +134,10 @@ const AtomTypeList& Species::usedAtomTypes()
 {
 	return usedAtomTypes_;
 }
+
+// Clear AtomType assignments for all atoms
+void Species::clearAtomTypes()
+{
+	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next) i->setAtomType(NULL);
+	usedAtomTypes_.clear();
+}

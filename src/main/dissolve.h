@@ -89,6 +89,8 @@ class Dissolve
 	AtomType* atomType(int n);
 	// Search for AtomType by name
 	AtomType* findAtomType(const char* name) const;
+	// Clear all AtomTypes
+	void clearAtomTypes();
 
 
 	/*

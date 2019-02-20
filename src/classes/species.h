@@ -109,6 +109,8 @@ class Species : public ListItem<Species>
 	void updateUsedAtomTypes();
 	// Return used AtomTypesList
 	const AtomTypeList& usedAtomTypes();
+	// Clear AtomType assignments for all atoms
+	void clearAtomTypes();
 
 
 	/*
