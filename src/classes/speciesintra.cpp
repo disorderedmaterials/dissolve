@@ -68,6 +68,18 @@ MasterIntra* SpeciesIntra::masterParameters()
 	return masterParameters_;
 }
 
+// Detach from MasterIntra, if we are currently referencing one
+void SpeciesIntra::detachFromMasterIntra()
+{
+	if (!masterParameters_) return;
+
+	// Copy master term parameters over our own
+	form_ = masterParameters_->form();
+	for (int n=0; n<MAXINTRAPARAMS; ++n) parameters_[n] = masterParameters_->parameter(n);
+
+	masterParameters_ = NULL;
+}
+
 // Return parameter source
 SpeciesIntra* SpeciesIntra::parameterSource()
 {

@@ -80,6 +80,8 @@ class SpeciesIntra
 	void setMasterParameters(MasterIntra* master);
 	// Return linked master from which parameters should be taken
 	MasterIntra* masterParameters();
+	// Detach from MasterIntra, if we are currently referencing one
+	void detachFromMasterIntra();
 	// Return parameter source
 	SpeciesIntra* parameterSource();
 	// Set functional form index of interaction

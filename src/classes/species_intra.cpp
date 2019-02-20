@@ -437,3 +437,11 @@ int Species::torsionIndex(SpeciesTorsion* spt)
 {
 	return torsions_.indexOf(spt);
 }
+
+// Detach master term links for all interaction types, copying parameters to local SpeciesIntra
+void Species::detachFromMasterTerms()
+{
+	for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next) b->detachFromMasterIntra(); 
+	for (SpeciesAngle* a = angles_.first(); a != NULL; a = a->next) a->detachFromMasterIntra();
+	for (SpeciesTorsion* t = torsions_.first(); t != NULL; t = t->next) t->detachFromMasterIntra();
+}

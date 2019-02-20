@@ -179,6 +179,8 @@ class Species : public ListItem<Species>
 	bool hasTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const;
 	// Return index of specified SpeciesTorsion
 	int torsionIndex(SpeciesTorsion* spt);
+	// Detach master term links for all interaction types, copying parameters to local SpeciesIntra
+	void detachFromMasterTerms();
 
 
 	/*

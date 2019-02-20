@@ -133,6 +133,8 @@ class Dissolve
 	MasterIntra* masterTorsion(int n);
 	// Return whether named master Torsion parameters exist
 	MasterIntra* hasMasterTorsion(const char* name) const;
+	// Clear all MasterTerms
+	void clearMasterTerms();
 
 
 	/*

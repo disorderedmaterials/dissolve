@@ -161,3 +161,11 @@ MasterIntra* Dissolve::hasMasterTorsion(const char* name) const
 	for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next) if (DissolveSys::sameString(trimmedName, t->name())) return t;
 	return NULL;
 }
+
+// Clear all MasterTerms
+void Dissolve::clearMasterTerms()
+{
+	masterBonds_.clear();
+	masterAngles_.clear();
+	masterTorsions_.clear();
+}
