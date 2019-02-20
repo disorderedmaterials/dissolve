@@ -354,7 +354,7 @@ UFFAtomType* Forcefield_UFF::atomTypeByName(const char* name, Element* element) 
 	{
 		// Go through types associated to the Element
 		ListIterator<UFFAtomType> typeIterator(atomTypesByElement(Z));
-		while (UFFAtomType* type = typeIterator.iterate()) if (DissolveSys::sameString(type->name(), name)) return type;
+		while (UFFAtomType* type = typeIterator.iterate()) if (DissolveSys::sameString(type->typeName(), name)) return type;
 	}
 
 	return NULL;
@@ -525,7 +525,7 @@ bool Forcefield_UFF::generateAngleTerm(const Species* sp, SpeciesAngle* angleTer
 	int n = 0;
 	const int geom = j->geom();
 	// TODO CHECK THIS SECTION
-	if (geom == 0) Messenger::error("Unable to generate angle function around central atom '%s'.\n", j->name());
+	if (geom == 0) Messenger::error("Unable to generate angle function around central atom '%s'.\n", j->typeName());
 	else if (geom == 1) n = 1;
 	else if (geom == 2) n = 3;
 	else if ((geom == 3) && (j->theta() < 90.1)) n = 2;
@@ -575,11 +575,11 @@ bool Forcefield_UFF::createAtomTypes(Species* sp, CoreData& coreData, bool keepE
 		else
 		{
 			// Check if an AtomType of the same name already exists - if it does, just use that one
-			AtomType* at = coreData.findAtomType(uffType->name());
+			AtomType* at = coreData.findAtomType(uffType->typeName());
 			if (!at)
 			{
 				at = coreData.addAtomType(i->element());
-				at->setName(uffType->name());
+				at->setName(uffType->typeName());
 
 				/*
 				 * Determine suitable LJ parameters.

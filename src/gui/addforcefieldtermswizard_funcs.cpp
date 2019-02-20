@@ -146,8 +146,10 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 			ff = currentForcefield();
 			if (!ff) return false;
 
-			// Copy selected Species to our temporary instance
+			// Copy selected Species to our temporary instance, detach any MasterTerm references, and delete the MasterTerms
 			sp = temporaryDissolve_.copySpecies(currentSpecies());
+			sp->detachFromMasterTerms();
+			temporaryDissolve_.clearMasterTerms();
 
 			// Assign AtomTypes
 			if (ui_.AtomTypesAssignAllRadio->isChecked()) if (!ff->createAtomTypes(sp, temporaryCoreData_)) return false;
