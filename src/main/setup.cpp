@@ -144,6 +144,10 @@ bool Dissolve::setUpSimulation()
 		// Angles
 		DynamicArrayIterator<Angle> angleIterator(cfg->angles());
 		while (Angle* a = angleIterator.iterate()) if (a->speciesAngle()->masterParameters()) a->speciesAngle()->masterParameters()->registerUsage(a->i()->masterTypeIndex(), a->k()->masterTypeIndex());
+
+		// Torsions
+		DynamicArrayIterator<Torsion> torsionIterator(cfg->torsions());
+		while (Torsion* t = torsionIterator.iterate()) if (t->speciesTorsion()->masterParameters()) t->speciesTorsion()->masterParameters()->registerUsage(t->i()->masterTypeIndex(), t->l()->masterTypeIndex());
 	}
 
 	if (nMasterBonds() > 0)
@@ -218,6 +222,24 @@ bool Dissolve::setUpSimulation()
 			CharString s("     %-10s  %-12s", t->name(), SpeciesTorsion::torsionFunction( (SpeciesTorsion::TorsionFunction) t->form()));
 			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", t->parameter(n));
 			Messenger::print("%s\n", s.get());
+		}
+
+		Messenger::print("\n     Name        Usage Count\n");
+		Messenger::print("    --------------------------------------------------------------------------\n");
+		for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next)
+		{
+			bool first = true;
+			for (int n=0; n<nAtomTypes(); ++n)
+			{
+				for (int m=n; m<nAtomTypes(); ++m)
+				{
+					if (t->usageCount(n, m) == 0) continue;
+					if (first) Messenger::print("     %-10s   %5s-?-?-%-5s   %i", t->name(), atomType(n)->name(), atomType(m)->name(), t->usageCount(n, m));
+					else Messenger::print("                  %5s-?-?-%-5s   %i", atomType(n)->name(), atomType(m)->name(), t->usageCount(n, m));
+					first = false;
+				}
+			}
+			if (first) Messenger::print("      [[ No Uses ]]\n");
 		}
 	}
 
