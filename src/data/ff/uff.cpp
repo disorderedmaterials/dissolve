@@ -377,7 +377,7 @@ UFFAtomType* Forcefield_UFF::determineAtomType(SpeciesAtom* i) const
 			break;
 		// Carbon
 		case (ELEMENT_C):
-				if (isBondPattern(i, 1, 0, 0, 0, -1)) return atomTypeByName("C_R", i->element());
+				if (isBondPattern(i, 0, 0, 0, 0, -1)) return atomTypeByName("C_R", i->element());
 				else if (isBondPattern(i, 2, 1)) return atomTypeByName("C_2", i->element());
 				else if (isBondPattern(i, 1, 0, 1) || isAtomGeometry(i, Forcefield::LinearGeometry)) return atomTypeByName("C_1", i->element());
 				else return atomTypeByName("C_3", i->element());
