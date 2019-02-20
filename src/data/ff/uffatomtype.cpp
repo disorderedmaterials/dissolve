@@ -23,11 +23,9 @@
 #include "data/ff/uff.h"
 
 // Constructor
-UFFAtomType::UFFAtomType(int z, const char* symbol, int index, const char* name, double r, double theta, double x, double D, double zeta, double Z, double chi, int geom, double V, double U) : ElementReference(z, symbol), ListItem<UFFAtomType>()
+UFFAtomType::UFFAtomType(int z, const char* symbol, int index, const char* name, const char* description, double r, double theta, double x, double D, double zeta, double Z, double chi, int geom, double V, double U) : ElementReference(z, symbol), ForcefieldAtomType(index, name, description), ListItem<UFFAtomType>()
 {
 	// Set the atomtype's data
-	index_ = index;
-	name_ = name;
 	r_ = r;
 	theta_ = theta;
 	x_ = x;
@@ -46,8 +44,6 @@ UFFAtomType::UFFAtomType(int z, const char* symbol, int index, const char* name,
 // Assignment Operator
 UFFAtomType& UFFAtomType::operator=(const UFFAtomType& source)
 {
-	index_ = source.index_;
-	name_ = source.name_;
 	r_ = source.r_;
 	theta_ = source.theta_;
 	x_ = source.x_;
@@ -65,18 +61,6 @@ UFFAtomType& UFFAtomType::operator=(const UFFAtomType& source)
 /*
  * Data
  */
-
-// Return index of atom type
-int UFFAtomType::index() const
-{
-	return index_;
-}
-
-// Return name of atom type
-const char* UFFAtomType::name() const
-{
-	return name_;
-}
 
 // Return single bond radius (r, Angstroms)
 double UFFAtomType::r() const
