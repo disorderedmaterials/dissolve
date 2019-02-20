@@ -152,7 +152,14 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 			temporaryDissolve_.clearMasterTerms();
 
 			// Assign AtomTypes
-			if (ui_.AtomTypesAssignAllRadio->isChecked()) if (!ff->createAtomTypes(sp, temporaryCoreData_)) return false;
+			if (ui_.AtomTypesAssignAllRadio->isChecked())
+			{
+				// Remove all previous AtomType association from the Species, and subsequently from the main object
+				sp->clearAtomTypes();
+				temporaryDissolve_.clearAtomTypes();
+
+				if (!ff->createAtomTypes(sp, temporaryCoreData_)) return false;
+			}
 			else if (ui_.AtomTypesAssignMissingRadio->isChecked()) if (!ff->createAtomTypes(sp, temporaryCoreData_, true)) return false;
 
 			// Create intramolecular terms
