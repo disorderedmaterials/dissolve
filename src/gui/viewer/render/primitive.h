@@ -22,11 +22,6 @@
 #ifndef DISSOLVE_PRIMITIVE_H
 #define DISSOLVE_PRIMITIVE_H
 
-// #ifdef _WIN32
-// #include <windows.h>
-// #include <GL/gl.h>
-// #include "glext.h"
-// #endif
 #include "gui/viewer/render/primitiveinstance.h"
 #include "math/matrix4.h"
 #include "templates/list.h"
@@ -129,6 +124,20 @@ class Primitive : public ListItem<Primitive>
 	void line(double x1, double y1, double z1, double x2, double y2, double z2);
 	// Draw line
 	void line(Vec3<double> v1, Vec3<double> v2);
+	// Create vertices of sphere with specified radius and quality
+	void sphere(double radius, int nstacks, int nslices);
+	// Plot cylinder vertices from origin {ox,oy,oz}, following vector {vx,vy,vz}, with radii and quality specified
+	void cylinder(GLfloat ox, GLfloat oy, GLfloat oz, GLfloat vx, GLfloat vy, GLfloat vz, double startRadius, double endRadius, int nStacks, int nSlices, bool capStart, bool capEnd);
+	// Plot tube ring of specified radius and tube width
+	void ring(double radius, double width, int nStacks, int nSlices, int nSegments, bool segmented);
+	// Plot circle of specified radius
+	void circle(double radius, int nStacks, int nSegments, bool segmented);
+	// Create vertices of cross with specified width
+	void cross(double halfWidth, Matrix4& transform, GLfloat colour[4]);
+	// Plot solid cube of specified size at specified origin, and with sides subdivided into triangles ( ntriangles = 2*nSubs )
+	void cube(double size, int nSubs, double ox, double oy, double oz);
+	// Plot solid orthorhomboid of specified size at specified origin, and with sides subdivided into triangles ( ntriangles = 2*nSubs )
+	void orthorhomboid(double sizex, double sizey, double sizez, int nSubs, double ox, double oy, double oz);
 };
 
 #endif

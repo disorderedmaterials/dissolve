@@ -401,3 +401,286 @@ void Primitive::line(Vec3<double> v1, Vec3<double> v2)
 	defineVertex(v1.x, v1.y, v1.z, 1.0, 0.0, 0.0);
 	defineVertex(v2.x, v2.y, v2.z, 1.0, 0.0, 0.0);
 }
+
+// Create vertices of sphere with specified radius and quality
+void Primitive::sphere(double radius, int nStacks, int nSlices)
+{
+	int i, j;
+	double stack0, stack1, z0, zr0, z1, zr1, slice0, slice1, x0, y0, x1, y1;
+	
+	for (i = 1; i <= nStacks; ++i)
+	{
+		stack0 = PI * (-0.5 + (double) (i-1) / nStacks);
+		z0  = sin(stack0);
+		zr0 = cos(stack0);
+		
+		stack1 = PI * (-0.5 + (double) i / nStacks);
+		z1 = sin(stack1);
+		zr1 = cos(stack1);
+		
+		for (j = 1; j <= nSlices; ++j)
+		{
+			slice0 = 2 * PI * (double) (j-1) / nSlices;
+			x0 = cos(slice0);
+			y0 = sin(slice0);
+			
+			slice1 = 2 * PI * (double) j / nSlices;
+			x1 = cos(slice1);
+			y1 = sin(slice1);
+			
+			// First triangle - {x0,y0,z0},{x0,y0,z1},{x1,y1,z0}
+			// N.B Don't plot if i == 1, to avoid overlapping with subsequent vertices in this pass
+			if (i > 1)
+			{
+				defineVertex(x0 * zr0 * radius, y0 * zr0 * radius, z0 * radius, x0 * zr0, y0 * zr0, z0);
+				defineVertex(x0 * zr1 * radius, y0 * zr1 * radius, z1 * radius, x0 * zr1, y0 * zr1, z1);
+				defineVertex(x1 * zr0 * radius, y1 * zr0 * radius, z0 * radius, x1 * zr0, y1 * zr0, z0);
+			}
+			
+			// Second triangle - {x0,y0,z0},{x0,y0,z1},{x1,y1,z0}
+			// N.B. Don't plot if i == nStacks, to avoid overlapping with previous vertices in this pass
+			if (i < nStacks)
+			{
+				defineVertex(x0 * zr1 * radius, y0 * zr1 * radius, z1 * radius, x0 * zr1, y0 * zr1, z1);
+				defineVertex(x1 * zr0 * radius, y1 * zr0 * radius, z0 * radius, x1 * zr0, y1 * zr0, z0);
+				defineVertex(x1 * zr1 * radius, y1 * zr1 * radius, z1 * radius, x1 * zr1, y1 * zr1, z1);
+			}
+		}
+	}
+}
+
+// Plot cylinder vertices from origin {ox,oy,oz}, following vector {vx,vy,vz}, with radii and quality specified
+void Primitive::cylinder(GLfloat ox, GLfloat oy, GLfloat oz, GLfloat vx, GLfloat vy, GLfloat vz, double startRadius, double endRadius, int nStacks, int nSlices, bool capStart, bool capEnd)
+{
+	int i, j;
+	Vec3<GLfloat> u, v, w, vert[4], normal[2], deltarj, rj;
+	double d, dtheta, dradius;
+	
+	// Setup some variables
+	rj.set(vx,vy,vz);
+	dtheta = TWOPI / nSlices;
+	dradius = (startRadius-endRadius)/nStacks;
+	deltarj = rj / nStacks;
+
+	// Calculate orthogonal vectors
+	u = rj.orthogonal();
+// 	u.normalise();
+	v = rj * u;
+	v.normalise();
+	w = rj;
+	w.normalise();
+
+	// TODO Normal calculation for cones will be incorrect
+	for (i=1; i <= nStacks; ++i)
+	{
+		for (j = 1; j <= nSlices; ++j)
+		{
+			d = (j-1) * dtheta;
+			normal[0] = u*cos(d) + v*sin(d);
+			vert[0] = normal[0]*(startRadius-(i-1)*dradius) + deltarj*(i-1);
+			vert[1] = normal[0]*(startRadius-i*dradius) + deltarj*i;
+			d = j * dtheta;
+			normal[1] = u*cos(d) + v*sin(d);
+			vert[2] = normal[1]*(startRadius-(i-1)*dradius) + deltarj*(i-1);
+			vert[3] = normal[1]*(startRadius-i*dradius) + deltarj*i;
+			
+			// Triangle 1
+			if ((i > 1) || (startRadius > 1.0e-5))
+			{
+				defineVertex(ox+vert[0].x, oy+vert[0].y, oz+vert[0].z, normal[0].x, normal[0].y, normal[0].z);
+				defineVertex(ox+vert[1].x, oy+vert[1].y, oz+vert[1].z, normal[0].x, normal[0].y, normal[0].z);
+				defineVertex(ox+vert[2].x, oy+vert[2].y, oz+vert[2].z, normal[1].x, normal[1].y, normal[1].z);
+			}
+ 
+			// Triangle 2
+			if ((i < nStacks) || (endRadius > 1.0e-5))
+			{
+				defineVertex(ox+vert[1].x, oy+vert[1].y, oz+vert[1].z, normal[0].x, normal[0].y, normal[0].z);
+				defineVertex(ox+vert[2].x, oy+vert[2].y, oz+vert[2].z, normal[1].x, normal[1].y, normal[1].z);
+				defineVertex(ox+vert[3].x, oy+vert[3].y, oz+vert[3].z, normal[1].x, normal[1].y, normal[1].z);
+			}
+			
+			// Start cap
+			if ((i == 1) && (startRadius > 1.0e-5) && capStart)
+			{
+				defineVertex(ox, oy, oz, -w.x, -w.y, -w.z);
+				defineVertex(ox+vert[0].x, oy+vert[0].y, oz+vert[0].z, -w.x, -w.y, -w.z);
+				defineVertex(ox+vert[2].x, oy+vert[2].y, oz+vert[2].z, -w.x, -w.y, -w.z);
+			}
+
+			// End cap
+			if ((i == nStacks) && (endRadius > 1.0e-5) && capEnd)
+			{
+				defineVertex(ox+rj.x, oy+rj.y, oz+rj.z, w.x, w.y, w.z);
+				defineVertex(ox+vert[1].x, oy+vert[1].y, oz+vert[1].z, w.x, w.y, w.z);
+				defineVertex(ox+vert[3].x, oy+vert[3].y, oz+vert[3].z, w.x, w.y, w.z);
+			}
+		}
+	}
+}
+
+// Plot tube ring of specified radius and tube width
+void Primitive::ring(double radius, double width, int nStacks, int nSlices, int nSegments, bool segmented)
+{
+	int n, m, o;
+	Vec3<GLfloat> x1, x2, y(0.0,0.0,1.0), normal[4], vert[4], r1, r2;
+	double d1, d2, dtheta, dphi, dpsi, cosphi1, sinphi1, cosphi2, sinphi2;
+
+	// Setup some variables
+	dphi = TWOPI / nStacks;
+	dpsi = dphi / nSegments;
+	dtheta = TWOPI / nSlices;
+	
+	for (n=0; n<nStacks; ++n)
+	{
+		// Calculate position around circle and orthogonal vectors (for cylinder plotting)
+		if (segmented && (n+1)%2) continue;
+
+		for (o=0; o<nSegments; ++o)
+		{
+			cosphi1 = cos(n*dphi+o*dpsi);
+			sinphi1 = sin(n*dphi+o*dpsi);
+			cosphi2 = cos(n*dphi+(o+1)*dpsi);
+			sinphi2 = sin(n*dphi+(o+1)*dpsi);
+			r1.set(cosphi1*radius, sinphi1*radius, 0.0);
+			r2.set(cosphi2*radius, sinphi2*radius, 0.0);
+			x1.set(cosphi1, sinphi1, 0.0);
+			x2.set(cosphi2, sinphi2, 0.0);
+			
+			for (m=0; m<nSlices; ++m)
+			{
+				// Plot along specified direction, and then map vertices from straight cylinder onto circle in XY plane
+				d1 = m * dtheta;
+				d2 = d1 + dtheta;
+	
+				normal[0] = x1*cos(d1) + y*sin(d1);
+				normal[1] = x1*cos(d2) + y*sin(d2);
+				normal[2] = x2*cos(d1) + y*sin(d1);
+				normal[3] = x2*cos(d2) + y*sin(d2);
+	
+				vert[0] = normal[0]*width + r1;
+				vert[1] = normal[1]*width + r1;
+				vert[2] = normal[2]*width + r2;
+				vert[3] = normal[3]*width + r2;
+	
+				// Triangle 1
+				defineVertex(vert[0].x, vert[0].y, vert[0].z, normal[0].x, normal[0].y, normal[0].z);
+				defineVertex(vert[1].x, vert[1].y, vert[1].z, normal[1].x, normal[1].y, normal[1].z);
+				defineVertex(vert[2].x, vert[2].y, vert[2].z, normal[2].x, normal[2].y, normal[2].z);
+				
+				// Triangle 2
+				defineVertex(vert[1].x, vert[1].y, vert[1].z, normal[1].x, normal[1].y, normal[1].z);
+				defineVertex(vert[2].x, vert[2].y, vert[2].z, normal[2].x, normal[2].y, normal[2].z);
+				defineVertex(vert[3].x, vert[3].y, vert[3].z, normal[3].x, normal[3].y, normal[3].z);
+			}
+		}
+	}
+}
+
+// Plot circle of specified radius
+void Primitive::circle(double radius, int nStacks, int nSegments, bool segmented)
+{
+	int n, o;
+	Vec3<GLfloat> r1, r2;
+	double dphi, dpsi, cosphi1, sinphi1, cosphi2, sinphi2;
+
+	type_ = GL_LINES;
+
+	// Setup some variables
+	dphi = TWOPI / nStacks;
+	dpsi = dphi / nSegments;
+	
+	for (n=0; n<nStacks; ++n)
+	{
+		// Calculate position around circle
+		if (segmented && (n+1)%2) continue;
+
+		for (o=0; o<nSegments; ++o)
+		{
+			cosphi1 = cos(n*dphi+o*dpsi);
+			sinphi1 = sin(n*dphi+o*dpsi);
+			cosphi2 = cos(n*dphi+(o+1)*dpsi);
+			sinphi2 = sin(n*dphi+(o+1)*dpsi);
+			r1.set(cosphi1*radius, sinphi1*radius, 0.0);
+			r2.set(cosphi2*radius, sinphi2*radius, 0.0);
+	
+			defineVertex(r1.x, r1.y, r1.z, 0.0, 0.0, 1.0);
+			defineVertex(r2.x, r2.y, r2.z, 0.0, 0.0, 1.0);
+		}
+	}
+}
+
+// Create vertices of cross with specified width
+void Primitive::cross(double halfWidth, Matrix4& transform, GLfloat colour[4])
+{
+	Vec3<double> v, centre(transform[12], transform[13], transform[14]);
+	for (int i=0; i<3; ++i)
+	{
+		v = transform.columnAsVec3(i) * halfWidth;
+		defineVertex(centre.x+v.x, centre.y+v.y, centre.z+v.z, 1.0, 1.0, 1.0, colour[0], colour[1], colour[2], colour[3]);
+		defineVertex(centre.x-v.x, centre.y-v.y, centre.z-v.z, 1.0, 1.0, 1.0, colour[0], colour[1], colour[2], colour[3]);
+	}
+}
+
+// Plot solid cube of specified size at specified origin, and with sides subdivided into triangles ( ntriangles = 2*nSubs )
+void Primitive::cube(double size, int nSubs, double ox, double oy, double oz)
+{
+	orthorhomboid(size, size, size, nSubs, ox, oy, oz);
+}
+
+// Plot solid orthorhomboid of specified size at specified origin, and with sides subdivided into triangles ( ntriangles = 2*nSubs )
+void Primitive::orthorhomboid(double sizex, double sizey, double sizez, int nSubs, double ox, double oy, double oz)
+{
+	// Create each face individually - 'offset' calculated so centre of orthorhombus is at <ox,oy,oz>
+	GLfloat delta[3], veca[3], vecb[3], vertex[3], sizes[3], offset[3];
+	int i, j, plane;
+	sizes[0] = (GLfloat) sizex;
+	sizes[1] = (GLfloat) sizey;
+	sizes[2] = (GLfloat) sizez;
+	delta[0] = (GLfloat) sizex/nSubs;
+	delta[1] = (GLfloat) sizey/nSubs;
+	delta[2] = (GLfloat) sizez/nSubs;
+	offset[0] = (-sizex/2.0f) + ox;
+	offset[1] = (-sizey/2.0f) + oy;
+	offset[2] = (-sizez/2.0f) + oz;
+
+	// Set general origin coordinate
+	// Loop over planes
+	for (plane=0; plane<3; ++plane)
+	{
+		// Define deltas for this plane
+		for (j=0; j<3; ++j)
+		{
+			veca[j] = 0.0;
+			vecb[j] = 0.0;
+		}
+		veca[(plane+1)%3] = delta[(plane+1)%3];
+		vecb[(plane+2)%3] = delta[(plane+2)%3];
+		// Loop over subdivisions in plane
+		for (i=0; i<nSubs; ++i)
+		{
+			for (j=0; j<nSubs; ++j)
+			{
+				vertex[0] = offset[0] + i*veca[0] + j*vecb[0];
+				vertex[1] = offset[1] + i*veca[1] + j*vecb[1];
+				vertex[2] = offset[2] + i*veca[2] + j*vecb[2];
+				// Define triangle vertices for 'lower' plane
+				defineVertex(vertex[0], vertex[1], vertex[2], plane == 0, -1*(plane == 1), -1*(plane == 2));
+				defineVertex(vertex[0]+veca[0], vertex[1]+veca[1], vertex[2]+veca[2], plane == 0, -1*(plane == 1), -1*(plane == 2));
+				defineVertex(vertex[0]+veca[0]+vecb[0], vertex[1]+veca[1]+vecb[1], vertex[2]+veca[2]+vecb[2], plane == 0, -1*(plane == 1), -1*(plane == 2));
+				defineVertex(vertex[0], vertex[1], vertex[2], plane == 0, -1*(plane == 1), -1*(plane == 2));
+				defineVertex(vertex[0]+vecb[0], vertex[1]+vecb[1], vertex[2]+vecb[2], plane == 0, -1*(plane == 1), -1*(plane == 2));
+				defineVertex(vertex[0]+veca[0]+vecb[0], vertex[1]+veca[1]+vecb[1], vertex[2]+veca[2]+vecb[2], plane == 0, -1*(plane == 1), -1*(plane == 2));
+
+				// Define trangle vertices for 'upper' plane
+				vertex[plane] += sizes[plane];
+				defineVertex(vertex[0], vertex[1], vertex[2], plane == 0, plane == 1, plane == 2);
+				defineVertex(vertex[0]+veca[0], vertex[1]+veca[1], vertex[2]+veca[2], plane == 0, plane == 1, plane == 2);
+				defineVertex(vertex[0]+veca[0]+vecb[0], vertex[1]+veca[1]+vecb[1], vertex[2]+veca[2]+vecb[2], plane == 0, plane == 1, plane == 2);
+				defineVertex(vertex[0], vertex[1], vertex[2], plane == 0, plane == 1, plane == 2);
+				defineVertex(vertex[0]+vecb[0], vertex[1]+vecb[1], vertex[2]+vecb[2], plane == 0, plane == 1, plane == 2);
+				defineVertex(vertex[0]+veca[0]+vecb[0], vertex[1]+veca[1]+vecb[1], vertex[2]+veca[2]+vecb[2], plane == 0, plane == 1, plane == 2);
+			}
+		}
+	}
+}
