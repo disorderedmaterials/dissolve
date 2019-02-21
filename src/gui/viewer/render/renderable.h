@@ -38,7 +38,7 @@ class Renderable : public ListItem<Renderable>
 {
 	public:
 	// Renderable type
-	enum RenderableType { Data1DRenderable, nRenderableTypes };
+	enum RenderableType { Data1DRenderable, SpeciesRenderable, nRenderableTypes };
 	// Convert text string to RenderableType
 	static RenderableType renderableType(const char* s);
 	// Convert RenderableType to text string

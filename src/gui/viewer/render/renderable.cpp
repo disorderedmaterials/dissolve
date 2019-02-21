@@ -27,7 +27,7 @@
 #include <limits>
 
 // Renderable Type
-const char* RenderableTypeKeywords[] = { "Data1D" };
+const char* RenderableTypeKeywords[] = { "Data1D", "Species" };
 
 // Convert text string to RenderableType
 Renderable::RenderableType Renderable::renderableType(const char* s)
