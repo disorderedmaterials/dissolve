@@ -1,35 +1,64 @@
-# Don't forget to include output directory, otherwise
-# the UI file won't be wrapped!
-
-# Meta-Objects
-SET(viewer_MOC_HDRS
-  configurationviewer.hui
-  speciesviewer.hui
-  viewer.hui
-)
-QT5_WRAP_CPP(viewer_MOC_SRCS ${viewer_MOC_HDRS})
-
 # Source files (not Qt UI files or custom .h [uih])
-SET(viewer_SRCS
-  configurationviewer_input.cpp
-  configurationviewer_scene.cpp
-  speciesviewer_funcs.cpp
-  speciesviewer_input.cpp
-  speciesviewer_scene.cpp
-  primitive.cpprprimitiveinfo.cpp
+SET(render_SRCS
+  axes.h
+  colourdefinition.h
+  colourscaledelta.h
+  colourscale.h
+  colourscalepoint.h
+  fontinstance.h
+  linestipple.h
+  linestyle.h
+  numberformat.h
+  primitive.h
+  primitiveinfo.h
+  primitiveinstance.h
+  primitivelist.h
+  renderabledata1d.h
+  renderablefactory.h
+  renderablegroup.h
+  renderablegroupmanager.h
+  renderable.h
+  renderablespecies.h
+  symbol.h
+  textformat.h
+  textfragment.h
+  textprimitive.h
+  textprimitivelist.h
+  vertexchunk.h
+  view.h
+
+  axes.cpp
+  colourdefinition.cpp
+  colourscale.cpp
+  colourscaledelta.cpp
+  colourscalepoint.cpp
+  fontinstance.cpp
+  linestipple.cpp
+  linestyle.cpp
+  numberformat.cpp
+  primitive.cpp
+  primitiveinfo.cpp
+  primitiveinstance.cpp
+  primitivelist.cpp
   primitivevertex.cpp
+  renderable.cpp
+  renderabledata1d.cpp
+  renderablefactory.cpp
+  renderablegroup.cpp
+  renderablegroupmanager.cpp
+  renderablespecies.cpp
+  symbol.cpp
+  textformat.cpp
+  textfragment.cpp
   textprimitive.cpp
+  textprimitivelist.cpp
   vertexchunk.cpp
-  viewer_engine.cpp
-  viewer_funcs.cpp
-  viewer_input.cpp
-  viewer_prefs.cpp
+  view.cpp
 )
 
-# Target 'viewer'
-add_library(viewer
-  ${viewer_SRCS}
-  ${viewer_MOC_SRCS}
+# Target 'render'
+add_library(render
+  ${render_SRCS}
 )
 target_include_directories(viewer PRIVATE
   ${PROJECT_SOURCE_DIR}/src
