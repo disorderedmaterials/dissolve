@@ -3,7 +3,7 @@
 
 # Meta-Objects
 SET(viewer_MOC_HDRS
-  configurationviewer.hui
+  # configurationviewer.hui
   speciesviewer.hui
   viewer.hui
 )
@@ -11,11 +11,11 @@ QT5_WRAP_CPP(viewer_MOC_SRCS ${viewer_MOC_HDRS})
 
 # Source files (not Qt UI files or custom .h [uih])
 SET(viewer_SRCS
-  configurationviewer_input.cpp
-  configurationviewer_scene.cpp
+#configurationviewer_input.cpp
+#configurationviewer_scene.cpp
   speciesviewer_funcs.cpp
   speciesviewer_input.cpp
-  speciesviewer_scene.cpp
+  speciesviewer_render.cpp
   primitive.cpprprimitiveinfo.cpp
   primitivevertex.cpp
   textprimitive.cpp
