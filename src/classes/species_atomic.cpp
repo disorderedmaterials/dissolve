@@ -30,6 +30,8 @@ SpeciesAtom* Species::addAtom(Element* element, Vec3<double> r)
 	i->set(element, r.x, r.y, r.z);
 	i->setIndex(atoms_.nItems()-1);
 
+	++version_;
+
 	return i;
 }
 

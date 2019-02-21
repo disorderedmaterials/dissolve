@@ -66,9 +66,7 @@ const char* Species::name() const
 	return name_.get();
 }
 
-/*
- * Check setup
- */
+// Check Setup
 bool Species::checkSetup(const List<AtomType>& atomTypes)
 {
 	int nErrors = 0;
@@ -256,4 +254,10 @@ void Species::print()
 			Messenger::print("       %2i atoms: %s\n", grain->nAtoms(), grainAtoms.get());
 		}
 	}
+}
+
+// Return version
+const int Species::version() const
+{
+	return version_;
 }

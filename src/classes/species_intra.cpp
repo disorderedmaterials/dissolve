@@ -52,6 +52,8 @@ SpeciesBond* Species::addBond(SpeciesAtom* i, SpeciesAtom* j)
 	i->addBond(b);
 	j->addBond(b);
 
+	++version_;
+
 	return b;
 }
 
@@ -86,6 +88,7 @@ bool Species::reconnectBond(SpeciesBond* bond, SpeciesAtom* i, SpeciesAtom* j)
 	if (hasBond(i, j)) return Messenger::error("A bond between atoms %i and %i already exists in Species '%s', so refusing to reconnect a duplicate.\n", i->userIndex(), j->userIndex(), name_.get());
 
 	// Disconnect the existing Bond
+	// TODO Shouldn't this be the SpeciesAtoms specified in the bond, rather than the "new" i and j?
 	i->removeBond(bond);
 	j->removeBond(bond);
 
@@ -93,6 +96,8 @@ bool Species::reconnectBond(SpeciesBond* bond, SpeciesAtom* i, SpeciesAtom* j)
 	bond->setAtoms(i, j);
 	i->addBond(bond);
 	j->addBond(bond);
+
+	++version_;
 
 	return true;
 }
@@ -177,6 +182,8 @@ SpeciesAngle* Species::addAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k)
 	a->setParent(this);
 	a->setAtoms(i, j, k);
 
+	++version_;
+
 	return a;
 }
 
@@ -218,6 +225,8 @@ bool Species::reconnectAngle(SpeciesAngle* angle, SpeciesAtom* i, SpeciesAtom* j
 
 	// Set the new angle atoms
 	angle->setAtoms(i, j, k);
+
+	++version_;
 
 	return true;
 }
@@ -312,6 +321,8 @@ SpeciesTorsion* Species::addTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom*
 	t->setParent(this);
 	t->setAtoms(i, j, k, l);
 
+	++version_;
+
 	return t;
 }
 
@@ -359,6 +370,8 @@ bool Species::reconnectTorsion(SpeciesTorsion* torsion, SpeciesAtom* i, SpeciesA
 
 	// Set the new angle atoms
 	torsion->setAtoms(i, j, k, l);
+
+	++version_;
 
 	return true;
 }

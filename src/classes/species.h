@@ -31,19 +31,17 @@
 #include "classes/speciessite.h"
 #include "classes/isotopologue.h"
 #include "base/charstring.h"
+#include "base/version.h"
 
 // Forward Declarations
 class Box;
 
-/*
- * Species Definition
- */
+//Species Definition
 class Species : public ListItem<Species>
 {
 	public:
-	// Constructor
+	// Constructor / Destructor
 	Species();
-	// Destructor
 	~Species();
 	// Clear Data
 	void clear();
@@ -55,6 +53,8 @@ class Species : public ListItem<Species>
 	private:
 	// Name of the Species
 	CharString name_;
+	// Version of the Species
+	VersionCounter version_;
 
 	public:
 	// Set name of the Species
@@ -65,6 +65,8 @@ class Species : public ListItem<Species>
 	bool checkSetup(const List<AtomType>& atomTypes);
 	// Print Species information
 	void print();
+	// Return version
+	const int version() const;
 
 
 	/*
