@@ -90,10 +90,6 @@ Axes::Axes(View& parent, FontInstance& fontInstance) : parentView_(parent), font
 	useBestFlatView_ = false;
 	autoPositionTitles_ = true;
 
-	// Versions
-	axesVersion_ = 0;
-	displayVersion_ = 0;
-
 	// GL
 	for (int n=0; n<3; ++n)
 	{
@@ -144,7 +140,7 @@ const char* Axes::autoScaleMethod(Axes::AutoScaleMethod scale)
 void Axes::updateCoordinates()
 {
 	// Check coordinate version
-	if (coordinateVersion_ == axesVersion_) return;
+	if (coordinateVersion_ == version_) return;
 
 	double position;
 	
@@ -179,7 +175,7 @@ void Axes::updateCoordinates()
 	}
 
 	// Set new version
-	coordinateVersion_ = axesVersion_;
+	coordinateVersion_ = version_;
 }
 
 // Clamp axis position and min/max to current limits if necessary
@@ -215,8 +211,7 @@ void Axes::setMin(int axis, double value)
 {
 	min_[axis] = value;
 
-	++axesVersion_;
-	++displayVersion_;
+	++version_;
 }
 
 // Return minimum value for specified axis
@@ -230,8 +225,7 @@ void Axes::setMax(int axis, double value)
 {
 	max_[axis] = value;
 
-	++axesVersion_;
-	++displayVersion_;
+	++version_;
 }
 
 // Return maximum value for specified axis
@@ -246,8 +240,7 @@ void Axes::setRange(int axis, double minValue, double maxValue)
 	min_[axis] = minValue;
 	max_[axis] = maxValue;
 
-	++axesVersion_;
-	++displayVersion_;
+	++version_;
 }
 
 // Return real axis range (accounting for log axes)
@@ -322,8 +315,7 @@ void Axes::setToLimit(int axis, bool minLim)
 	if (minLim) min_[axis] = limitMin_[axis];
 	else max_[axis] = limitMax_[axis];
 
-	++axesVersion_;
-	++displayVersion_;
+	++version_;
 }
 
 // Set axis minimum limit for specified axis
@@ -399,8 +391,7 @@ void Axes::setInverted(int axis, bool b)
 {
 	inverted_[axis] = b;
 
-	++axesVersion_;
-	++displayVersion_;
+	++version_;
 }
 
 // Return whether axis is inverted
@@ -420,8 +411,7 @@ void Axes::setLogarithmic(int axis, bool b)
 	// Update and clamp axis values according to data
 	clamp(axis);
 
-	++axesVersion_;
-	++displayVersion_;
+	++version_;
 
 	parentView_.recalculateView();
 }
@@ -455,8 +445,7 @@ void Axes::setStretch(int axis, double value)
 {
 	stretch_[axis] = value;
 
-	++axesVersion_;
-	++displayVersion_;
+	++version_;
 }
 
 // Return stretch factor for axis
@@ -470,7 +459,7 @@ void Axes::setPositionIsFractional(int axis, bool b)
 {
 	positionIsFractional_[axis] = b;
 
-	++axesVersion_;
+	++version_;
 }
 
 // Return fractional position flag for axis
@@ -484,7 +473,7 @@ void Axes::setPositionReal(int axis, int dir, double value)
 {
 	positionReal_[axis].set(dir, value);
 
-	++axesVersion_;
+	++version_;
 }
 
 // Set axis position to axis limit (in real surface-space coordinates)
@@ -509,7 +498,7 @@ void Axes::setPositionFractional(int axis, int dir, double value)
 
 	positionFractional_[axis].set(dir, value);
 
-	++axesVersion_;
+	++version_;
 }
 
 // Return axis position (in fractional axis coordinates)
@@ -525,7 +514,7 @@ void Axes::setAutoScale(int axis, Axes::AutoScaleMethod method)
 }
 
 // Return autoscaling method employed
-Axes::AutoScaleMethod Axes::autoScale(int axis)
+Axes::AutoScaleMethod Axes::autoScale(int axis) const
 {
 	return autoScale_[axis];
 }
@@ -652,7 +641,7 @@ void Axes::setTickDirection(int axis, int dir, double value)
 {
 	tickDirection_[axis].set(dir, value);
 
-	++axesVersion_;
+	++version_;
 }
 
 // Return axis tick direction
@@ -679,13 +668,13 @@ void Axes::setTickSize(int axis, double size)
 {
 	tickSize_[axis] = size;
 
-	++axesVersion_;
+	++version_;
 }
 
 // Return axis tick size (relative to font size)
-double Axes::tickSize(int axis)
+double Axes::tickSize(int axis) const
 {
-	return tickSize_[axis];
+	return tickSize_.get(axis);
 }
 
 // Set position of first tick delta on axes
@@ -693,13 +682,13 @@ void Axes::setFirstTick(int axis, double value)
 {
 	tickFirst_[axis] = value;
 
-	++axesVersion_;
+	++version_;
 }
 
 // Return position of first tick delta on axes
-double Axes::tickFirst(int axis)
+double Axes::tickFirst(int axis) const
 {
-	return tickFirst_[axis];
+	return tickFirst_.get(axis);
 }
 
 // Set tick delta for axes
@@ -707,13 +696,13 @@ void Axes::setTickDelta(int axis, double value)
 {
 	tickDelta_[axis] = value;
 
-	++axesVersion_;
+	++version_;
 }
 
 // Return tick delta for axes
-double Axes::tickDelta(int axis)
+double Axes::tickDelta(int axis) const
 {
-	return tickDelta_[axis];
+	return tickDelta_.get(axis);
 }
 
 // Set whether to calculate ticks automatically
@@ -721,13 +710,13 @@ void Axes::setAutoTicks(int axis, bool b)
 {
 	autoTicks_[axis] = b;
 
-	++axesVersion_;
+	++version_;
 }
 
 // Return whether to calculate ticks automatically
-bool Axes::autoTicks(int axis)
+bool Axes::autoTicks(int axis) const
 {
-	return autoTicks_[axis];
+	return autoTicks_.get(axis);
 }
 
 // Set number of minor ticks in major tick intervals
@@ -735,13 +724,13 @@ void Axes::setMinorTicks(int axis, int value)
 {
 	minorTicks_[axis] = value;
 
-	++axesVersion_;
+	++version_;
 }
 
 // Return number of minor ticks in major tick intervals
-int Axes::minorTicks(int axis)
+int Axes::minorTicks(int axis) const
 {
-	return minorTicks_[axis];
+	return minorTicks_.get(axis);
 }
 
 /*
@@ -759,7 +748,7 @@ void Axes::setLabelOrientation(int axis, int component, double value)
 {
 	labelOrientation_[axis].set(component, value);
 
-	++axesVersion_;
+	++version_;
 }
 
 // Return orientation of labels for specified axis
@@ -786,7 +775,7 @@ void Axes::setLabelAnchor(int axis, TextPrimitive::TextAnchor anchor)
 {
 	labelAnchor_[axis] = anchor;
 
-	++axesVersion_;
+	++version_;
 }
 
 // Return axis label text anchor position for specified axis
@@ -813,7 +802,7 @@ void Axes::setTitle(int axis, const char* title)
 {
 	title_[axis] = title;
 
-	++axesVersion_;
+	++version_;
 }
 
 // Return title for specified axis
@@ -827,7 +816,7 @@ void Axes::setTitleOrientation(int axis, int component, double value)
 {
 	titleOrientation_[axis].set(component, value);
 
-	++axesVersion_;
+	++version_;
 }
 
 // Return orientation of titles for specified axis
@@ -854,7 +843,7 @@ void Axes::setTitleAnchor(int axis, TextPrimitive::TextAnchor anchor)
 {
 	titleAnchor_[axis] = anchor;
 
-	++axesVersion_;
+	++version_;
 }
 
 // Return axis title text anchor position for specified axis
@@ -885,11 +874,11 @@ void Axes::setUseBestFlatView(bool b)
 {
 	useBestFlatView_ = b;
 
-	++axesVersion_;
+	++version_;
 }
 
 // Return whether to use best tick/label orientation for flat views
-bool Axes::useBestFlatView()
+bool Axes::useBestFlatView() const
 {
 	return useBestFlatView_;
 }
@@ -899,11 +888,11 @@ void Axes::setAutoPositionTitles(bool b)
 {
 	autoPositionTitles_ = b;
 
-	++axesVersion_;
+	++version_;
 }
 
 // Return whether to automatically place titles at a sensible position after label text
-bool Axes::autoPositionTitles()
+bool Axes::autoPositionTitles() const
 {
 	return autoPositionTitles_;
 }
@@ -917,7 +906,7 @@ void Axes::setGridLinesFull(int axis, bool b)
 {
 	gridLinesFull_[axis] = b;
 
-	++axesVersion_;
+	++version_;
 }
 
 // Return whether gridlines cover entire volume or just at axis lines
@@ -931,7 +920,7 @@ void Axes::setGridLinesMajor(int axis, bool on)
 {
 	gridLinesMajor_[axis] = on;
 
-	++axesVersion_;
+	++version_;
 }
 
 // Return whether gridLines at major tick intervals are active for specified axis
@@ -945,7 +934,7 @@ void Axes::setGridLinesMinor(int axis, bool on)
 {
 	gridLinesMinor_[axis] = on;
 
-	++axesVersion_;
+	++version_;
 }
 
 // Return whether gridLines at minor tick intervals are active for specified axis
@@ -955,20 +944,13 @@ bool Axes::gridLinesMinor(int axis) const
 }
 
 /*
- * Versions
+ * Version
  */
 
-
-// Return version of axis definition
-int Axes::axesVersion()
+// Return version of axws definitions
+const int Axes::version() const
 {
-	return axesVersion_;
-}
-
-// Return version of axis properties affecting data display
-int Axes::displayVersion() const
-{
-	return displayVersion_;
+	return version_;
 }
 
 /*
@@ -979,7 +961,7 @@ int Axes::displayVersion() const
 void Axes::updateAxisPrimitives()
 {
 	// Check whether we need to regenerate the axes primitives / data
-	if (axesVersion_ == primitiveVersion_) return;
+	if (version_ == primitiveVersion_) return;
 
 	QString s;
 	FTBBox boundingBox;
@@ -1254,7 +1236,7 @@ void Axes::updateAxisPrimitives()
 		}
 	}
 
-	primitiveVersion_ = axesVersion_;
+	primitiveVersion_ = version_;
 }
 
 // Return clip plane lower Y value

@@ -164,7 +164,7 @@ void RenderableData1D::updateAndSendPrimitives(View& view, RenderableGroupManage
 	// Check whether the primitive for this collection needs updating
 	bool upToDate = true;
 	if (forceUpdate) upToDate = false;
-	else if (primitivesAxesVersion_!= axes.displayVersion()) upToDate = false;
+	else if (primitivesAxesVersion_!= axes.version()) upToDate = false;
 	else if (!DissolveSys::sameString(primitivesColourDefinitionFingerprint_, CharString("%p@%i", group_, colourDefinition.version()), true)) upToDate = false;
 	else if (primitivesDataVersion_ != version()) upToDate = false;
 	else if (primitivesStyleVersion_ != displayStyleVersion()) upToDate = false;
@@ -211,7 +211,7 @@ void RenderableData1D::updateAndSendPrimitives(View& view, RenderableGroupManage
 	if (pushAndPop) primitives_.popInstance(context);
 
 	// Store version points for the up-to-date primitive
-	primitivesAxesVersion_ = axes.displayVersion();
+	primitivesAxesVersion_ = axes.version();
 	primitivesColourDefinitionFingerprint_.sprintf("%p@%i", group_, colourDefinition.version());
 	primitivesDataVersion_ = version();
 	primitivesStyleVersion_ = displayStyleVersion();

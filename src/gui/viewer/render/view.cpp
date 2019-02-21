@@ -561,7 +561,7 @@ void View::recalculateView(bool force)
 	// If we are already up-to-date (w.r.t. the associated axes) then we can also return now
 	bool upToDate = true;
 	if (force) upToDate = false;
-	else if (viewAxesUsedAt_ != axes().axesVersion()) upToDate = false;
+	else if (viewAxesUsedAt_ != axes().version()) upToDate = false;
 	else if (viewViewportUsedAt_ != viewportVersion_) upToDate = false;
 
 	if (upToDate) return;
@@ -712,7 +712,7 @@ void View::recalculateView(bool force)
 	calculateFontScaling();
 
 	// Store new versions of view
-	viewAxesUsedAt_ = axes().axesVersion();
+	viewAxesUsedAt_ = axes().version();
 	viewViewportUsedAt_ = viewportVersion_;
 }
 
