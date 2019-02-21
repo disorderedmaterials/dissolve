@@ -1,6 +1,6 @@
 /*
-	*** Species Viewer - Functions
-	*** src/gui/viewer/speciesviewer_funcs.cpp
+	*** Species Viewer - Context Menu
+	*** src/gui/viewer/speciesviewer_context.cpp
 	Copyright T. Youngs 2019
 
 	This file is part of Dissolve.
@@ -20,24 +20,27 @@
 */
 
 #include "gui/viewer/speciesviewer.hui"
-#include "base/messenger.h"
+#include "templates/variantpointer.h"
+#include <QClipboard>
 
-// Constructor
-SpeciesViewer::SpeciesViewer(QWidget* parent) : BaseViewer(parent)
+/// Initialise context menu
+void SpeciesViewer::initialiseContextMenu()
 {
-	// Source data
-	species_ = NULL;
-	drawStyle_ = SpeciesViewer::LineStyle;
+	// Set font for menu, and create italic version
+	QFont menuFont = font();
+	menuFont.setPointSize(8);
+	contextMenu_.setFont(menuFont);
+	QFont italicFont = font();
+	italicFont.setItalic(true);
 
-	// Input
-// 	atomContextMenu_ = NULL;
-// 	speciesUpdateTargets_ = 0;
-
-	createPrimitives();
+	// View-wide functions
+	contextMenu_.addSeparator();
+	QAction* action = contextMenu_.addAction("Copy image");
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(copyViewToClipboard(bool)));
 }
 
-// Destructor
-SpeciesViewer::~SpeciesViewer()
+// Update dynamic aspects of context menu before display
+void SpeciesViewer::updateContextMenu()
 {
 }
 

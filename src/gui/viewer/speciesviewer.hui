@@ -1,7 +1,7 @@
 /*
 	*** Species Viewer
 	*** src/gui/viewer/speciesviewer.uih
-	Copyright T. Youngs 2012-2013
+	Copyright T. Youngs 2019
 
 	This file is part of Dissolve.
 
@@ -39,46 +39,79 @@ class SpeciesViewer : public BaseViewer
 
 
 	/*
-	// Mouse / Keyboard Input
-	*/
-	protected:
-	// Qt Virtual (mouse press event)
-	void mousePressEvent(QMouseEvent*);
-	// Qt Virtual (mouse release event)
-	void mouseReleaseEvent(QMouseEvent*);
-	// Qt Virtual (mouse move event)
-	void mouseMoveEvent(QMouseEvent*);
-	// Qt Virtual (mouse wheel event)
-	void wheelEvent(QWheelEvent*);
+	 * Rendering (BaseViewer virtuals)
+	 */
+	private:
+	// Create necessary primitives for rendering
+	void createPrimitives();
+	// Perform post-initialisation operations
+	void postInitialiseGL();
+	// Perform post-resize operations
+	void postResizeGL();
+	// Render content
+	void render(int xOffset = 0, int yOffset = 0);
 
 
 	/*
-	 * Rendering Callbacks / Data
+	 * Mouse / Keyboard Input (BaseViewer virtuals)
 	 */
 	protected:
-	// Create necessary primitives (called once when Viewer is constructed)
-	void createPrimitives();
-	// Setup basic GL properties
-	void setupGL();
-	// Draw source Species
-	void drawScene();
-	
+	// Mouse pressed
+	void mousePressed(Qt::KeyboardModifiers modifiers);
+	// Mouse released
+	void mouseReleased();
+	// Mouse moved
+	void mouseMoved(int dx, int dy, Qt::KeyboardModifiers modifiers);
+	// Mouse 'wheeled'
+	void mouseWheeled(int delta);
+	// Mouse double clicked
+	void mouseDoubleClicked();
+	// Key pressed
+	bool keyPressed(int key, Qt::KeyboardModifiers modifiers);
+	// Key released
+	bool keyReleased(int key, Qt::KeyboardModifiers modifiers);
+
+
 	/*
-	// Custom Data
-	*/
+	 * Context Menu (BaseViewer virtuals)
+	 */
+	private:
+	// Special QMenu items
+	QMenu* currentDataMenu_;
+
+	private:
+	// Initialise context menu
+	void initialiseContextMenu();
+	// Update dynamic aspects of context menu before display
+	void updateContextMenu();
+
+
+	/*
+	 * Source Species
+	 */
+	private:
+	// Source Species to display
+	Species* species_;
+
 	public:
-	/// Draw Style enum
+	// Set source Species
+	void setSource(Species* sp);
+
+
+	/*
+	 * Custom Data
+	 */
+	public:
+	// Draw Style
 	enum DrawStyle
 	{
-		PointStyle,		/**> Draw source Species/Configuration with points (atoms only) */
-		LineStyle,		/**> Draw source Species/Configuration with lines */
-		BallAndStickStyle,	/**> Draw source Species/Configuration with balls and sticks */
-		nDrawStyles		/**> Number of drawing styles */
+		PointStyle,		/* Draw source Species/Configuration with points (atoms only) */
+		LineStyle,		/* Draw source Species/Configuration with lines */
+		BallAndStickStyle,	/* Draw source Species/Configuration with balls and sticks */
+		nDrawStyles		/* Number of drawing styles */
 	};
 	
 	private:
-	// Source Species to display
-	Species *sourceSpecies_;
 	// Selection box (if any)
 	QRect selectionBox_;
 	// Basic primtives
@@ -87,8 +120,6 @@ class SpeciesViewer : public BaseViewer
 	SpeciesViewer::DrawStyle drawStyle_;
 
 	public:
-	// Set source (Species)
-	void setSource(Species *sp);
 	// Set draw style
 	void setDrawStyle(SpeciesViewer::DrawStyle style);
 	

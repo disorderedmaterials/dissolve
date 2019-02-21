@@ -1,7 +1,7 @@
 /*
-	*** Viewer Input Functions
+	*** Species Viewer - Input
 	*** src/gui/viewer/speciesviewer_input.cpp
-	Copyright T. Youngs 2012-2013
+	Copyright T. Youngs 2019
 
 	This file is part of Dissolve.
 
@@ -20,55 +20,44 @@
 */
 
 #include "gui/viewer/speciesviewer.hui"
-// #include "gui/mainwindow.h"
-// #include "classes/atomtype.h"
 #include "classes/species.h"
 #include <QtGui/QMouseEvent>
 
-/*
- * Mouse Input
- */
-
-// Qt Signal (mouse press event)
-void SpeciesViewer::mousePressEvent(QMouseEvent* event)
+// Mouse pressed
+void SpeciesViewer::mousePressed(Qt::KeyboardModifiers modifiers)
 {
-	// Handle button presses (button down) from the mouse
-	buttonStateOnPress_ = event->buttons();
-// 	Qt::KeyboardModifiers km = event->modifiers();
+	if (!species_) return;
 
-	// Store event information
-	rMouseDown_.set(event->x(), event->y(), 0.0);
-	
 	// Do something with the button press event (e.g. context menu function)?
-	if ((buttonStateOnPress_.testFlag(Qt::RightButton)) && sourceSpecies_)
+	if (buttonState_.testFlag(Qt::RightButton))
 	{
 		// Firstly, determine whether we are on top of an Atom...
 		Vec4<double> v;
 		SpeciesAtom* i;
-		for (i = sourceSpecies_->atoms().first(); i != NULL; i = i->next)
+		for (i = species_->atoms().first(); i != NULL; i = i->next)
 		{
-			v = modelToScreen(i->r(), 0.3);
-			v.x -= event->x();
-			v.y -= (height()-event->y());
-			if (sqrt(v.x*v.x + v.y*v.y) < v.w) break;
+// 			v = view_.modelToScreen(i->r(), 0.3);   TGAY YOU GOT TO HERE
+// 			v.x -= event->x();
+// 			v.y -= (height()-event->y());
+// 			if (sqrt(v.x*v.x + v.y*v.y) < v.w) break;
 		}
 
 		// If we *are* over an Atom, then there is more to do...
 		if (i != NULL)
 		{
 			// If this Atom is *not* currently selected, select it after deselecting all others
-			if (!sourceSpecies_->isAtomSelected(i))
+			if (!species_->isAtomSelected(i))
 			{
-				sourceSpecies_->clearAtomSelection();
-				sourceSpecies_->selectAtom(i);
+				species_->clearAtomSelection();
+				species_->selectAtom(i);
 			}
 			
 			// Now we have update the Atom selection (if it was necessary) we must update the
 			// available isotope options in the context menu. This depends on all Atoms in the
 			// current selection being of the same element.
-// 			int el = sourceSpecies_->selectedAtoms()->item->element();
+// 			int el = species_->selectedAtoms()->item->element();
 // 			bool same = true;
-// 			for (RefListItem<SpeciesAtom,int>* ri = sourceSpecies_->selectedAtoms(); ri != NULL; ri = ri->next)
+// 			for (RefListItem<SpeciesAtom,int>* ri = species_->selectedAtoms(); ri != NULL; ri = ri->next)
 // 			{
 // 				if (ri->item->element() != el)
 // 				{
@@ -108,13 +97,40 @@ void SpeciesViewer::mousePressEvent(QMouseEvent* event)
 // 			
 			// Ready - execute the popup menu
 // 			if (atomContextMenu_) atomContextMenu_->exec(event->globalPos());
-			
-			// Clear buttonstate
-			buttonStateOnPress_ = 0;
 		}
 	}
 }
 
+// Mouse released
+void SpeciesViewer::mouseReleased()
+{
+}
+
+// Mouse moved
+void SpeciesViewer::mouseMoved(int dx, int dy, Qt::KeyboardModifiers modifiers)
+{
+}
+
+// Mouse 'wheeled'
+void SpeciesViewer::mouseWheeled(int delta)
+{
+}
+
+// Mouse double clicked
+void SpeciesViewer::mouseDoubleClicked()
+{
+}
+
+// Key pressed
+bool SpeciesViewer::keyPressed(int key, Qt::KeyboardModifiers modifiers)
+{
+}
+
+// Key released
+bool SpeciesViewer::keyReleased(int key, Qt::KeyboardModifiers modifiers)
+{
+}
+/*
 // Qt Signal (mouse release event)
 void SpeciesViewer::mouseReleaseEvent(QMouseEvent* event)
 {
@@ -122,22 +138,22 @@ void SpeciesViewer::mouseReleaseEvent(QMouseEvent* event)
 	Qt::KeyboardModifiers km = event->modifiers();
 	
 	// Check mouse button state when the mousePressEvent occurred
-	if ((buttonStateOnPress_&Qt::LeftButton) && sourceSpecies_)
+	if ((buttonStateOnPress_&Qt::LeftButton) && species_)
 	{
 		Vec4<double> v;
 		// If the selectionBox_ is smaller than some critical size, assume it was an attempt to click an Atom
 		if (abs(selectionBox_.width()*selectionBox_.height()) <= 9)
 		{
 			// Clear current selection (unless Ctrl is pressed)
-			if (!km.testFlag(Qt::ShiftModifier)) sourceSpecies_->clearAtomSelection();
-			for (SpeciesAtom* i = sourceSpecies_->atoms().first(); i != NULL; i = i->next)
+			if (!km.testFlag(Qt::ShiftModifier)) species_->clearAtomSelection();
+			for (SpeciesAtom* i = species_->atoms().first(); i != NULL; i = i->next)
 			{
 				v = modelToScreen(i->r(), 0.3);
 				v.x -= event->x();
 				v.y -= (height()-event->y());
 				if (sqrt(v.x*v.x + v.y*v.y) < v.w)
 				{
-					sourceSpecies_->selectAtom(i);
+					species_->selectAtom(i);
 					break;
 				}
 			}
@@ -147,11 +163,11 @@ void SpeciesViewer::mouseReleaseEvent(QMouseEvent* event)
 			// Perform Box Select
 
 			// Clear current selection (unless Shift is pressed)
-			if (!km.testFlag(Qt::ShiftModifier)) sourceSpecies_->clearAtomSelection();
-			for (SpeciesAtom* i = sourceSpecies_->atoms().first(); i != NULL; i = i->next)
+			if (!km.testFlag(Qt::ShiftModifier)) species_->clearAtomSelection();
+			for (SpeciesAtom* i = species_->atoms().first(); i != NULL; i = i->next)
 			{
 				v = modelToScreen(i->r());
-				if (selectionBox_.contains(v.x, height()-v.y)) sourceSpecies_->selectAtom(i); 
+				if (selectionBox_.contains(v.x, height()-v.y)) species_->selectAtom(i); 
 			}
 		}
 		
@@ -163,7 +179,7 @@ void SpeciesViewer::mouseReleaseEvent(QMouseEvent* event)
 	
 	update();
 	
-// 	if (sourceSpecies_) mainWindow_->refresh(speciesUpdateTargets_);
+// 	if (species_) mainWindow_->refresh(speciesUpdateTargets_);
 }
 
 // Qt Signal (mouse move event)
@@ -222,4 +238,4 @@ void SpeciesViewer::wheelEvent(QWheelEvent* event)
 	// Never let camera z go below -1.0...
 	if (viewMatrix_[14] > -0.1) viewMatrix_[14] = -0.1;
 	postRedisplay();
-}
+}*/
