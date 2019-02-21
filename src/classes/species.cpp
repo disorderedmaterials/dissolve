@@ -29,8 +29,14 @@
 #include <string.h>
 #include <base/sysfunc.h>
 
+// Static Members (ObjectStore)
+template<class Species> RefList<Species,int> ObjectStore<Species>::objects_;
+template<class Species> int ObjectStore<Species>::objectCount_ = 0;
+template<class Species> int ObjectStore<Species>::objectType_ = ObjectInfo::SpeciesObject;
+template<class Species> const char* ObjectStore<Species>::objectTypeName_ = "Species";
+
 // Constructor
-Species::Species() : ListItem<Species>()
+Species::Species() : ListItem<Species>(), ObjectStore<Species>(this)
 {
 	attachedAtomListsGenerated_ = false;
 }

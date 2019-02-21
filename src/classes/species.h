@@ -32,12 +32,13 @@
 #include "classes/isotopologue.h"
 #include "base/charstring.h"
 #include "base/version.h"
+#include "templates/objectstore.h"
 
 // Forward Declarations
 class Box;
 
 //Species Definition
-class Species : public ListItem<Species>
+class Species : public ListItem<Species>, public ObjectStore<Species>
 {
 	public:
 	// Constructor / Destructor

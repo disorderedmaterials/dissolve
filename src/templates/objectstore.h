@@ -49,6 +49,7 @@ class ObjectInfo
 		Histogram1DObject,
 		Histogram2DObject,
 		Histogram3DObject,
+		SpeciesObject,
 		nObjectTypes
 	};
 
