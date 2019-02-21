@@ -127,7 +127,7 @@ class Primitive : public ListItem<Primitive>
 	// Create vertices of sphere with specified radius and quality
 	void sphere(double radius, int nstacks, int nslices);
 	// Plot cylinder vertices from origin {ox,oy,oz}, following vector {vx,vy,vz}, with radii and quality specified
-	void cylinder(GLfloat ox, GLfloat oy, GLfloat oz, GLfloat vx, GLfloat vy, GLfloat vz, double startRadius, double endRadius, int nStacks, int nSlices, bool capStart, bool capEnd);
+	void cylinder(GLfloat ox, GLfloat oy, GLfloat oz, GLfloat vx, GLfloat vy, GLfloat vz, double startRadius, double endRadius, int nStacks, int nSlices, bool capStart = false, bool capEnd = false);
 	// Plot tube ring of specified radius and tube width
 	void ring(double radius, double width, int nStacks, int nSlices, int nSegments, bool segmented);
 	// Plot circle of specified radius
