@@ -189,20 +189,20 @@ void DataViewer::render(int xOffset, int yOffset)
 	{
 		if (!rend->isVisible()) continue;
 
-		// If this is the collection to highlight, set color to transparent grey and disable material colouring....
+		// If this is the Renderable to highlight, set color to transparent grey and disable material colouring....
 		if (rend == highlightedRenderable_)
 		{
 			glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
 			glDisable(GL_COLOR_MATERIAL);
 		}
 
-		// Set shininess for collection
+		// Set shininess for Renderable
 		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, rend->displaySurfaceShininess());
 
 		rend->updateAndSendPrimitives(view_, groupManager_, renderingOffScreen_, renderingOffScreen_, context());
 
 		// Update query
-		if (updateQueryDepth()) setQueryObject(DataViewer::CollectionObject, rend->objectTag());
+		if (updateQueryDepth()) setQueryObject(DataViewer::RenderableObject, rend->objectTag());
 
 		glEnable(GL_COLOR_MATERIAL);
 	}
@@ -248,7 +248,7 @@ void DataViewer::render(int xOffset, int yOffset)
 	RefList<Renderable,double> legendEntries;
 
 	double maxTextWidth = -1.0;
-	// Render pane data - loop over collection targets
+	// Render pane data - loop over Renderable targets
 	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next)
 	{
 		if (!rend->isVisible()) continue;
@@ -268,7 +268,7 @@ void DataViewer::render(int xOffset, int yOffset)
 	RefListIterator<Renderable,double> legendEntryIterator(legendEntries);
 	while (Renderable* rend = legendEntryIterator.iterate())
 	{
-		// Grab copy of the relevant colour definition for this Collection
+		// Grab copy of the relevant colour definition for this Renderable
 		ColourDefinition colourDefinition = groupManager_.colourDefinition(rend);
 
 		// Draw line indicator

@@ -79,7 +79,7 @@ void DataViewer::showDialog(bool checked)
 // Set visibility of Renderable target
 void DataViewer::contextMenuSetDataVisible(bool checked)
 {
-	// Get collection from data attached to sender
+	// Get Renderable from data attached to sender
 	QAction* action = (QAction*) sender();
 	if (!action) return;
 	Renderable* rend = VariantPointer<Renderable>(action->data());

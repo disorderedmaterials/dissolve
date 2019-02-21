@@ -167,7 +167,7 @@ class DataViewer : public BaseViewer
 	 */
 	public:
 	// Drawing object type
-	enum ViewObject { AxisTickLabelObject, AxisLineObject, AxisTitleLabelObject, CollectionObject, GridLineMinorObject, GridLineMajorObject, NoObject };
+	enum ViewObject { AxisLineObject, AxisTickLabelObject, AxisTitleLabelObject, GridLineMajorObject, GridLineMinorObject, NoObject, RenderableObject };
 
 	private:
 	// View coordinates to probe for objects at next redraw
@@ -210,8 +210,8 @@ class DataViewer : public BaseViewer
 // 	TransformWindow transformWindow_;
 // 	// View Window
 // 	ViewWindow viewWindow_;
-// 	// Create Collection Dialog
-// 	CreateCollectionDialog createCollectionDialog_;
+// 	// Create Renderable Dialog
+// 	CreateRenderableDialog createRenderableDialog_;
 // 	// Import Dialog
 // 	ImportDialog importDialog_;
 // 	// Fit Window
@@ -221,7 +221,7 @@ class DataViewer : public BaseViewer
 
 	public:
 // 	// Dialog enum
-// 	enum DialogWindow { AxesWindow, DataWindow, StyleWindow, TransformWindow, ViewWindow, CreateCollectionDialog, ImportDialog, EditFitKernelDialog, SaveImageDialog };
+// 	enum DialogWindow { AxesWindow, DataWindow, StyleWindow, TransformWindow, ViewWindow, CreateRenderableDialog, ImportDialog, EditFitKernelDialog, SaveImageDialog };
 // 	// Show specified window / dialog
 // 	void showDialog(int window);
 

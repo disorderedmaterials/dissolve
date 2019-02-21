@@ -333,7 +333,7 @@ bool Renderable::hasTitle() const
 // Send primitives to GL
 void Renderable::sendToGL()
 {
-        // If this collection is not visible return now
+        // If this Renderable is not visible return now
         if (!visible_) return;
 
         if (displayStyle() == Renderable::SurfaceStyle)

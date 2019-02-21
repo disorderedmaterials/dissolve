@@ -159,7 +159,7 @@ void DataViewer::endInteraction(int mouseX, int mouseY)
 				repaint();
 				clickedObject = objectAtQueryCoordinates();
 				clickedObjectInfo = infoAtQueryCoordinates();
-				if (clickedObject == CollectionObject) highlightedRenderable_ = renderable(clickedObjectInfo);
+				if (clickedObject == RenderableObject) highlightedRenderable_ = renderable(clickedObjectInfo);
 			}
 			else
 			{
@@ -178,7 +178,7 @@ void DataViewer::endInteraction(int mouseX, int mouseY)
 				}
 			}
 
-			if (clickedObject == CollectionObject)
+			if (clickedObject == RenderableObject)
 			{
 				highlightedRenderable_ = NULL;
 				Renderable* rend = renderable(clickedObjectInfo);
@@ -259,7 +259,7 @@ void DataViewer::doubleClickInteraction(int mouseX, int mouseY)
 			break;
 		case (AxisTitleLabelObject):
 			break;
-		case (CollectionObject):
+		case (RenderableObject):
 			break;
 		case (GridLineMajorObject):
 			break;

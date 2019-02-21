@@ -158,10 +158,10 @@ void RenderableData1D::updateAndSendPrimitives(View& view, RenderableGroupManage
 	// Grab axes for the View
 	const Axes& axes = view.axes();
 
-	// Grab copy of the relevant colour definition for this Collection
+	// Grab copy of the relevant colour definition for this Renderable
 	ColourDefinition colourDefinition = groupManager.colourDefinition(this);
 
-	// Check whether the primitive for this collection needs updating
+	// Check whether the primitive for this Renderable needs updating
 	bool upToDate = true;
 	if (forceUpdate) upToDate = false;
 	else if (primitivesAxesVersion_!= axes.version()) upToDate = false;

@@ -103,10 +103,10 @@ int DataViewer::axisKeywordNArguments(DataViewer::AxisKeyword kwd)
 }
 
 /*
- * Collection Keywords
+ * Renderable Keywords
  */
 
-// Collection Block Keywords
+// Renderable Block Keywords
 const char* DataViewerRenderableBlockKeywords[] = {
 	"ColourAlphaIsGlobal", "ColourCustom", "ColourGlobalAlpha", "ColourHSVEnd", "ColourHSVStart", "ColourRGBEnd", "ColourRGBStart", "ColourSingle", "ColourStyle",
 	"EndRenderable",
@@ -117,7 +117,7 @@ const char* DataViewerRenderableBlockKeywords[] = {
 	"Visible"
 };
 
-// Collection Block NArguments
+// Renderable Block NArguments
 int DataViewerRenderableKeywordNArguments[] = {
 	1, 5, 1, 5, 5, 5, 5, 4, 1,
 	0,	
