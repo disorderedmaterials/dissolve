@@ -94,7 +94,6 @@ void Primitive::setNoInstances()
 	useInstances_ = false;
 }
 
-
 // Push instance of primitive
 void Primitive::pushInstance(const QOpenGLContext* context)
 {
