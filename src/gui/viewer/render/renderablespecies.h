@@ -63,6 +63,10 @@ class RenderableSpecies : public Renderable
 	 * Rendering Primitives
 	 */
 	private:
+	// Basic primitives
+	Primitive* atomPrimitive_, *unitCellPrimitive_, *bondPrimitive_;
+
+	private:
 	// Recreate necessary primitives / primitive assemblies for the data
 	void recreatePrimitives(const View& view, const ColourDefinition& colourDefinition);
 };

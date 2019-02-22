@@ -26,6 +26,18 @@
 // Constructor
 RenderableSpecies::RenderableSpecies(const Species* source, const char* objectTag) : Renderable(Renderable::SpeciesRenderable, objectTag), source_(source)
 {
+	// Create basic primitives
+	atomPrimitive_ = new Primitive;
+	atomPrimitive_->sphere(1.0, 8, 10);
+	bondPrimitive_ = new Primitive;
+	bondPrimitive_->cylinder(0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.15, 0.15, 8, 8);
+	unitCellPrimitive_ = new Primitive;
+// 	unitCellPrimitive_->wireCube(1.0, 4, 0, 0, 0);	
+
+	// Add our Primitives to the PrimitiveList in the underlying Renderable so that their management will be automated
+	basicPrimitives_.add(atomPrimitive_);
+	basicPrimitives_.add(bondPrimitive_);
+// 	basicPrimitives_.add(&unitCellPrimitive_);
 }
 
 // Destructor
@@ -72,32 +84,36 @@ bool RenderableSpecies::yRangeOverX(double xMin, double xMax, double& yMin, doub
 // Recreate necessary primitives / primitive assemblies for the data
 void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinition& colourDefinition)
 {
-// 	// Draw Atoms
-// 	CharString text(128);
-// 	Isotope* iso;
-// 	GLfloat TEMPORARYCOLOUR[4] = { 0.0, 0.0, 0.0, 1.0 };
-// 	bool atomTypeLabel = false; //mainWindow_->ui.ViewAtomTypeCheck->isChecked();
-// 	bool indexLabel = false; //mainWindow_->ui.ViewIndexCheck->isChecked();
-// 	for (SpeciesAtom* i = source_->atoms().first(); i != NULL; i = i->next)
-// 	{
-// 		A.setTranslation(i->r());
-// 
-// 		// The Atom itself
-// 		// TODO Implement ElemnetColour class, based on Elements.
-// // 		renderPrimitive(&spherePrimitive03_, TEMPORARYCOLOUR, A);
-// 
-// 		// Label
+	printf("RECREATE SPECIES PRIMITVIE.\n");
+	// Draw Atoms
+	CharString text(128);
+	Isotope* iso;
+// 	PrimitiveInfo primitiveInfo;
+	Matrix4 A;
+	GLfloat TEMPORARYCOLOUR[4] = { 0.0, 0.0, 0.0, 1.0 };
+	bool atomTypeLabel = false; //mainWindow_->ui.ViewAtomTypeCheck->isChecked();
+	bool indexLabel = false; //mainWindow_->ui.ViewIndexCheck->isChecked();
+	ListIterator<SpeciesAtom> atomIterator(source_->atoms());
+	while (SpeciesAtom* i = atomIterator.iterate())
+	{
+		A.setTranslation(i->r());
+
+		// The Atom itself
+		// TODO Implement ElemnetColour class, based on Elements.
+		primitiveAssembly_.add(PrimitiveInfo(atomPrimitive_, A, TEMPORARYCOLOUR));
+
+		// Label
 // 		text.clear();
 // 		if (atomTypeLabel) text.strcatf("%s ", i->atomType()->name());
 // 		if (indexLabel) text.strcatf("%i ", i->userIndex());
-// // 		if (species_->highlightedIsotopologue())
-// // 		{
-// // 			iso = species_->highlightedIsotopologue()->atomTypeIsotope(i->atomType());
-// // 			if (iso == NULL) text.sprintf("%s [???]", i->atomType()->name());
-// // 			else text.strcatf("[%i-%s]", iso->A(), PeriodicTable::element(i->element()).symbol());
-// // 		}
-// // 		renderTextPrimitive(i->r(), text.get(), false, false);
-// 	}
+// 		if (species_->highlightedIsotopologue())
+// 		{
+// 			iso = species_->highlightedIsotopologue()->atomTypeIsotope(i->atomType());
+// 			if (iso == NULL) text.sprintf("%s [???]", i->atomType()->name());
+// 			else text.strcatf("[%i-%s]", iso->A(), PeriodicTable::element(i->element()).symbol());
+// 		}
+// 		renderTextPrimitive(i->r(), text.get(), false, false);
+	}
 // 
 // 	// Draw Atom Selection
 // 	for (RefListItem<SpeciesAtom,bool>* ri = source_->selectedAtoms().first(); ri != NULL; ri = ri->next)

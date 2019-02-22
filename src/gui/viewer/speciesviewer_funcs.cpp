@@ -32,8 +32,6 @@ SpeciesViewer::SpeciesViewer(QWidget* parent) : BaseViewer(parent)
 	// Input
 // 	atomContextMenu_ = NULL;
 // 	speciesUpdateTargets_ = 0;
-
-	createPrimitives();
 }
 
 // Destructor

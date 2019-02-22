@@ -20,27 +20,6 @@
 */
 
 #include "gui/viewer/speciesviewer.hui"
-#include "classes/atomtype.h"
-#include "classes/species.h"
-#include "classes/isotopologue.h"
-
-// Create necessary primitives for rendering
-void SpeciesViewer::createPrimitives()
-{
-	// Create basic primitives
-	spherePrimitive03_.sphere(0.3, 8, 10);
-	spherePrimitive04_.sphere(0.4, 8, 10);
-	cubePrimitive_.cube(1.0, 4, 0, 0, 0);	
-	cylinderPrimitive_.cylinder(0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.15, 0.15, 8, 8);
-// 	wireCubePrimitive_.createWireCube(1.0);
-
-	// Every created primitive must be added to the primitiveList_
-// 	primitiveList_.add(&spherePrimitive03_);
-// 	primitiveList_.add(&spherePrimitive04_);
-// 	primitiveList_.add(&cubePrimitive_);
-// 	primitiveList_.add(&cylinderPrimitive_);
-// 	primitiveList_.add(&wireCubePrimitive_);
-}
 
 // Perform post-initialisation operations
 void SpeciesViewer::postInitialiseGL()
