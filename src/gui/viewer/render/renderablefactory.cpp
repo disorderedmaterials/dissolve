@@ -21,6 +21,7 @@
 
 #include "gui/viewer/render/renderablefactory.h"
 #include "gui/viewer/render/renderabledata1d.h"
+#include "gui/viewer/render/renderablespecies.h"
 
 // Create Renderable of specified type
 Renderable* RenderableFactory::create(Renderable::RenderableType renderableType, const char* objectTag)
@@ -28,6 +29,7 @@ Renderable* RenderableFactory::create(Renderable::RenderableType renderableType,
 	Renderable* renderable = NULL;
 
 	if (renderableType == Renderable::Data1DRenderable) renderable = new RenderableData1D(Data1D::findObject(objectTag), objectTag);
+	else if (renderableType == Renderable::SpeciesRenderable) renderable = new RenderableSpecies(Species::findObject(objectTag), objectTag);
 	else Messenger::error("Don't know how to create a Renderable of type '%s' (object tag = '%s'.\n", Renderable::renderableType(renderableType), objectTag);
 
 	return renderable;
