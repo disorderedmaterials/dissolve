@@ -20,7 +20,7 @@
 */
 
 #include "gui/viewer/speciesviewer.hui"
-#include "base/messenger.h"
+#include "classes/species.h"
 
 // Constructor
 SpeciesViewer::SpeciesViewer(QWidget* parent) : BaseViewer(parent)
@@ -28,6 +28,8 @@ SpeciesViewer::SpeciesViewer(QWidget* parent) : BaseViewer(parent)
 	// Source data
 	species_ = NULL;
 	drawStyle_ = SpeciesViewer::LineStyle;
+
+	view().setViewType(View::NormalView);
 
 	// Input
 // 	atomContextMenu_ = NULL;
@@ -39,3 +41,32 @@ SpeciesViewer::~SpeciesViewer()
 {
 }
 
+/*
+ * Target Species
+ */
+
+// Set target Species
+void SpeciesViewer::setSpecies(Species *sp)
+{
+	species_ = sp;
+
+	// Clear Renderables
+	clearRenderables();
+
+	// Create a new Renderable for the supplied Species
+	if (species_)
+	{
+		createRenderable(Renderable::SpeciesRenderable, species_->objectTag(), species_->name());
+	}
+}
+
+/*
+ * Style
+ */
+
+// Set draw style
+void SpeciesViewer::setDrawStyle(SpeciesViewer::DrawStyle style)
+{
+	drawStyle_ = style;
+	update();
+}

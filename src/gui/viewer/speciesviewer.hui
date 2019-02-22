@@ -92,8 +92,8 @@ class SpeciesViewer : public BaseViewer
 	Species* species_;
 
 	public:
-	// Set source Species
-	void setSource(Species* sp);
+	// Set target Species
+	void setSpecies(Species* sp);
 
 
 	/*
@@ -118,10 +118,6 @@ class SpeciesViewer : public BaseViewer
 	public:
 	// Set draw style
 	void setDrawStyle(SpeciesViewer::DrawStyle style);
-	
-	public slots:
-	// Change draw style
-	void changeDrawStyle(int style);
 };
 
 #endif
