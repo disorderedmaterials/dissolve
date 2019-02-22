@@ -54,6 +54,10 @@ class RenderableSpecies : public Renderable
 	/*
 	 * Transform / Limits
 	 */
+	protected:
+	// Transform data according to current settings
+	void transformData();
+
 	public:
 	// Calculate min/max y value over specified x range (if possible in the underlying data)
 	bool yRangeOverX(double xMin, double xMax, double& yMin, double& yMax);

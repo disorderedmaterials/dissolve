@@ -68,6 +68,11 @@ const int RenderableSpecies::version() const
  * Transform / Limits
  */
 
+// Transform data according to current settings
+void RenderableSpecies::transformData()
+{
+}
+
 // Calculate min/max y value over specified x range (if possible in the underlying data)
 bool RenderableSpecies::yRangeOverX(double xMin, double xMax, double& yMin, double& yMax)
 {
