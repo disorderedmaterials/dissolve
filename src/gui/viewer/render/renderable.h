@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_RENDERABLE_H
 #define DISSOLVE_RENDERABLE_H
 
-#include "gui/viewer/render/primitiveinfo.h"
+#include "gui/viewer/render/primitiveassembly.h"
 #include "gui/viewer/render/primitivelist.h"
 #include "gui/viewer/render/colourdefinition.h"
 #include "gui/viewer/render/linestyle.h"
@@ -207,7 +207,7 @@ class Renderable : public ListItem<Renderable>
 	// Basic Primitives managed by the Renderable, used to assemble representations of data
 	PrimitiveList basicPrimitives_;
 	// Representation of data using local Primitives
-	Array<PrimitiveInfo> primitiveAssembly_;
+	PrimitiveAssembly primitiveAssembly_;
 	// Bespoke primitives create to represent the data
 	PrimitiveList bespokePrimitives_;
 	// Data version at which bespoke primitives / assembled list were last created

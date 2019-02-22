@@ -409,6 +409,8 @@ void Renderable::sendToGL()
         }
 
         // Send Primitive assembly to display
-//         for (int n=0; n<primitiveAssembly_.nItems(); ++n) primitiveAssembly_[n].
+	primitiveAssembly_.sendToGL();
+
+	// Send bespoke Primities to display
 	bespokePrimitives_.sendToGL();
 }
