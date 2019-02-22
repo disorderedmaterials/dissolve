@@ -26,17 +26,17 @@
 /// Initialise context menu
 void SpeciesViewer::initialiseContextMenu()
 {
-	// Set font for menu, and create italic version
-	QFont menuFont = font();
-	menuFont.setPointSize(8);
-	contextMenu_.setFont(menuFont);
-	QFont italicFont = font();
-	italicFont.setItalic(true);
-
-	// View-wide functions
-	contextMenu_.addSeparator();
-	QAction* action = contextMenu_.addAction("Copy image");
-	connect(action, SIGNAL(triggered(bool)), this, SLOT(copyViewToClipboard(bool)));
+// 	// Set font for menu, and create italic version
+// 	QFont menuFont = font();
+// 	menuFont.setPointSize(8);
+// 	contextMenu_.setFont(menuFont);
+// 	QFont italicFont = font();
+// 	italicFont.setItalic(true);
+// 
+// 	// View-wide functions
+// 	contextMenu_.addSeparator();
+// 	QAction* action = contextMenu_.addAction("Copy image");
+// 	connect(action, SIGNAL(triggered(bool)), this, SLOT(copyViewToClipboard(bool)));
 }
 
 // Update dynamic aspects of context menu before display

@@ -37,25 +37,9 @@ BaseViewer::BaseViewer(QWidget* parent) : QOpenGLWidget(parent), view_(renderabl
 
         // Set up the font instance
 	fontInstance_.setUp();
-
-	// Set up context menu
-	setContextMenuPolicy(Qt::CustomContextMenu);
-	connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
 }
 
 // Destructor
 BaseViewer::~BaseViewer()
 {
-}
-
-/*
- * Context Menu
- */
-
-// Show context menu
-void BaseViewer::showContextMenu(const QPoint& pos)
-{
-	updateContextMenu();
-
-	contextMenu_.exec(mapToGlobal(pos));
 }

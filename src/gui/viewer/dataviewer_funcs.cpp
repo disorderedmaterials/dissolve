@@ -38,9 +38,6 @@ DataViewer::DataViewer(QWidget* parent) : BaseViewer(parent)
 	objectQueryY_ = -1;
 	depthAtQueryCoordinates_ = 1.0;
 	objectAtQueryCoordinates_ = DataViewer::NoObject;
-
-	// Set up context menu
-	initialiseContextMenu();
 }
 
 // Destructor

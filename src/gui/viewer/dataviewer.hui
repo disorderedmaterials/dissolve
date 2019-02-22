@@ -70,26 +70,6 @@ class DataViewer : public BaseViewer
 
 
 	/*
-	 * Context Menu (BaseViewer virtuals)
-	 */
-	private:
-	// Special QMenu items
-	QMenu* currentDataMenu_;
-
-	private:
-	// Initialise context menu
-	void initialiseContextMenu();
-	// Update dynamic aspects of context menu before display
-	void updateContextMenu();
-
-	private slots:
-	// Show dialog
-	void showDialog(bool checked);
-	// Set data visibility
-	void contextMenuSetDataVisible(bool checked);
-
-
-	/*
 	 * Interaction
 	 */
 	public:

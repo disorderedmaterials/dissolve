@@ -258,24 +258,6 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	ViewerObject objectAtQueryCoordinates() const;
 	// Info for object at query coordinates
 	const char* infoAtQueryCoordinates() const;
-
-
-	/*
-	 * Context Menu
-	 */
-	protected:
-	// Context menu for display
-	QMenu contextMenu_;
-
-	protected:
-	// Initialise context menu
-	virtual void initialiseContextMenu() = 0;
-	// Update dynamic aspects of context menu before display
-	virtual void updateContextMenu() = 0;
-
-	public slots:
-	// Show context menu
-	void showContextMenu(const QPoint& pos);
 };
 
 #endif

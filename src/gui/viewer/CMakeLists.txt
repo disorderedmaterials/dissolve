@@ -17,7 +17,6 @@ SET(viewer_SRCS
 
   configurationviewer_input.cpp
   configurationviewer_scene.cpp
-  dataviewer_contextmenu.cpp
   dataviewer_funcs.cpp
   dataviewer_input.cpp
   dataviewer_interaction.cpp
