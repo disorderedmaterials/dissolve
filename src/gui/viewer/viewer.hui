@@ -64,7 +64,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	public:
 	// Clear existing data
 	void clear();
-	// Own supplied renderable and display it
+	// Own supplied Renderable and display it
 	void ownRenderable(Renderable* newRenderable);
 	// Create Renderable by type and object identifier
 	Renderable* createRenderable(Renderable::RenderableType type, const char* objectTag, const char* name, const char* title = NULL, const char* groupName = NULL);
@@ -82,7 +82,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	void setRenderableVisible(const char* name, bool visible);
 	// Return visibility of named Renderable
 	bool isRenderableVisible(const char* name) const;
-	// Return the view
+	// Return the View definition
 	View& view();
 
 
@@ -90,11 +90,11 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	 * Renderable Groups
 	 */
 	protected:
-	// Group manager for the data
+	// Group manager for Renderables
 	RenderableGroupManager groupManager_;
 
 	public:
-	// Return the group manager for the data
+	// Return the group manager for Renderables
 	RenderableGroupManager& groupManager();
 
 
@@ -122,7 +122,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	private:
 	// Initialise context widget (when created by Qt)
 	void initializeGL();
-	// General repaint callback
+	// Widget repaint
 	void paintGL();
 	// Resize function
 	void resizeGL(int width, int height);

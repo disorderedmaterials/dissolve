@@ -58,6 +58,7 @@ void BaseViewer::initializeGL()
 	postResizeGL();
 }
 
+// Widget repaint
 void BaseViewer::paintGL()
 {
 	// Do nothing if the canvas is not valid, or we are still drawing from last time
