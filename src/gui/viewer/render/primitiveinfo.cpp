@@ -1,7 +1,7 @@
 /*
 	*** Primitive Info
 	*** src/gui/viewer/render/primitiveinfo.cpp
-	Copyright T. Youngs 2012-2013
+	Copyright T. Youngs 2019
 
 	This file is part of Dissolve.
 
@@ -19,10 +19,6 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifdef _WIN32
-#include <windows.h>
-#include <GL/gl.h>
-#endif
 #include "gui/viewer/render/primitiveinfo.h"
 
 // Constructor
@@ -43,7 +39,7 @@ PrimitiveInfo::PrimitiveInfo()
 }
 
 // Set primitive info data
-void PrimitiveInfo::set(Primitive* prim, const GLfloat* colour, Matrix4& transform, GLenum fillMode, GLfloat lineWidth)
+void PrimitiveInfo::set(Primitive* prim, GLfloat *colour, Matrix4& transform, GLenum fillMode, GLfloat lineWidth)
 {
 	primitive_ = prim;
 	localTransform_ = transform;
@@ -53,7 +49,7 @@ void PrimitiveInfo::set(Primitive* prim, const GLfloat* colour, Matrix4& transfo
 }
 
 // Return pointer to primitive
-Primitive *PrimitiveInfo::primitive()
+Primitive* PrimitiveInfo::primitive()
 {
 	return primitive_;
 }

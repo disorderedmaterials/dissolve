@@ -1,7 +1,7 @@
 /*
 	*** Primitive Info
-	*** src/gui/viewer/primitiveinfo.h
-	Copyright T. Youngs 2012-2013
+	*** src/gui/viewer/render/primitiveinfo.h
+	Copyright T. Youngs 2019
 
 	This file is part of Dissolve.
 
@@ -33,8 +33,6 @@ class PrimitiveInfo
 	public:
 	// Constructor
 	PrimitiveInfo();
-	// List pointer
-	PrimitiveInfo* prev, *next;
 
 	private:
 	// Target primitive
@@ -50,13 +48,13 @@ class PrimitiveInfo
 	
 	public:
 	// Set primitive info data
-	void set(Primitive* prim, const GLfloat* colour, Matrix4& transform, GLenum fillMode = GL_FILL, GLfloat lineWidth = 1.0f);
+	void set(Primitive* prim, GLfloat *colour, Matrix4& transform, GLenum fillMode = GL_FILL, GLfloat lineWidth = 1.0f);
 	// Return pointer to stored primitive
 	Primitive* primitive();
 	// Return local transformation of primitive
 	Matrix4& localTransform();
 	// Return colour array
-	GLfloat* colour();
+	GLfloat *colour();
 	// Return polygon fill mode
 	GLenum fillMode();
 	// Return line width
