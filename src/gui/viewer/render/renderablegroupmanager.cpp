@@ -154,10 +154,11 @@ void RenderableGroupManager::setRenderableGroupShifts()
 }
 
 // Return colour definition for specified Renderable
-const ColourDefinition& RenderableGroupManager::colourDefinition(Renderable* renderable)
+const ColourDefinition& RenderableGroupManager::colourDefinition(Renderable* renderable) const
 {
-	RenderableGroup* renderableGroup = group(renderable);
-	return (renderableGroup ? renderableGroup->colour() : renderable->colour());
+	for (RenderableGroup* group = groups_.first(); group != NULL; group = group->next) if (group->usedByRenderable(renderable)) return group->colour();
+
+	return renderable->colour();
 }
 
 // Cycle vertical shift applied to RenderableGroups

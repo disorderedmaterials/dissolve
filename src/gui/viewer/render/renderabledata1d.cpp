@@ -152,71 +152,11 @@ bool RenderableData1D::yRangeOverX(double xMin, double xMax, double& yMin, doubl
  * Rendering Primitives
  */
 
-// Update primitives and send for display
-void RenderableData1D::updateAndSendPrimitives(View& view, RenderableGroupManager& groupManager, bool forceUpdate, bool pushAndPop, const QOpenGLContext* context)
+// Recreate necessary primitives / primitive assemblies for the data
+void RenderableData1D::recreatePrimitives(const View& view, const ColourDefinition& colourDefinition)
 {
-	// Grab axes for the View
-	const Axes& axes = view.axes();
-
-	// Grab copy of the relevant colour definition for this Renderable
-	ColourDefinition colourDefinition = groupManager.colourDefinition(this);
-
-	// Check whether the primitive for this Renderable needs updating
-	bool upToDate = true;
-	if (forceUpdate) upToDate = false;
-	else if (primitivesAxesVersion_!= axes.version()) upToDate = false;
-	else if (!DissolveSys::sameString(primitivesColourDefinitionFingerprint_, CharString("%p@%i", group_, colourDefinition.version()), true)) upToDate = false;
-	else if (primitivesDataVersion_ != version()) upToDate = false;
-	else if (primitivesStyleVersion_ != displayStyleVersion()) upToDate = false;
-
-	// If the primitive is out of date, recreate it's data.
-	if (!upToDate)
-	{
-		// Forget all current data
-		primitives_.forgetAll();
-
-		// Recreate primitive depending on current style
-		switch (displayStyle())
-		{
-			case (RenderableData1D::LineXYStyle):
-				primitives_.reinitialise(1, true, GL_LINE_STRIP, true);
-				constructLineXY(transformedData().constXAxis(), transformedData().constValues(), primitives_[0], axes, colourDefinition);
-				break;
-// 			case (RenderableData1D::LineZYStyle):
-// 				Surface::constructLineZY(primitive_, axes, collection_->displayAbscissa(), collection_->displayData(), colourDefinition.colourScale());
-// 				break;
-// 			case (RenderableData1D::GridStyle):
-// 				Surface::constructGrid(primitive_, axes, collection_->displayAbscissa(), collection_->displayData(), colourDefinition.colourScale());
-// 				break;
-// 			case (RenderableData1D::SurfaceStyle):
-// 			case (RenderableData1D::UnlitSurfaceStyle):
-// 				Surface::constructFull(primitive_, axes, collection_->displayAbscissa(), collection_->displayData(), colourDefinition.colourScale());
-// 				break;
-			default:
-				printf("Internal Error: Display style %i not accounted for in RenderableData1D::updateAndSendPrimitive().\n", displayStyle());
-				break;
-		}
-
-		// Pop old primitive instance (unless flagged not to)
-		if ((!pushAndPop) && (primitives_.nInstances() != 0)) primitives_.popInstance(context);
-	
-		// Push a new instance to create the new display list / vertex array
-		primitives_.pushInstance(context);
-	}
-
-	// Send primitive
-	sendToGL();
-
-	// Pop current instance (if flagged)
-	if (pushAndPop) primitives_.popInstance(context);
-
-	// Store version points for the up-to-date primitive
-	primitivesAxesVersion_ = axes.version();
-	primitivesColourDefinitionFingerprint_.sprintf("%p@%i", group_, colourDefinition.version());
-	primitivesDataVersion_ = version();
-	primitivesStyleVersion_ = displayStyleVersion();
-
-	return;
+	bespokePrimitives_.reinitialise(1, true, GL_LINE_STRIP, true);
+	constructLineXY(transformedData().constXAxis(), transformedData().constValues(), bespokePrimitives_[0], view.constAxes(), colourDefinition);
 }
 
 // Create line strip primitive

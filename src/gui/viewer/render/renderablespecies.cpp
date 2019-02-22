@@ -69,137 +69,96 @@ bool RenderableSpecies::yRangeOverX(double xMin, double xMax, double& yMin, doub
  * Rendering Primitives
  */
 
-// Update primitives and send for display
-void RenderableSpecies::updateAndSendPrimitives(View& view, RenderableGroupManager& groupManager, bool forceUpdate, bool pushAndPop, const QOpenGLContext* context)
+// Recreate necessary primitives / primitive assemblies for the data
+void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinition& colourDefinition)
 {
-	// Grab axes for the View
-	const Axes& axes = view.axes();
-
-	// Grab copy of the relevant colour definition for this Collection
-	ColourDefinition colourDefinition = groupManager.colourDefinition(this);
-
-	// Check whether the primitive for this collection needs updating
-	bool upToDate = true;
-	if (forceUpdate) upToDate = false;
-	else if (primitivesAxesVersion_!= axes.version()) upToDate = false;
-	else if (!DissolveSys::sameString(primitivesColourDefinitionFingerprint_, CharString("%p@%i", group_, colourDefinition.version()), true)) upToDate = false;
-	else if (primitivesDataVersion_ != version()) upToDate = false;
-	else if (primitivesStyleVersion_ != displayStyleVersion()) upToDate = false;
-
-	// TODO Need to push/pop base primitives here, and create a PrimtiveInfo list?
-	// TODO Lock Axes to 3D (relative) view, rather than scaled / autostreched?
-
-	// If the primitive is out of date, recreate it's data.
-	if (!upToDate)
-	{
-
-
-		// Pop old primitive instance (unless flagged not to)
-		if ((!pushAndPop) && (primitives_.nInstances() != 0)) primitives_.popInstance(context);
-	
-		// Push a new instance to create the new display list / vertex array
-		primitives_.pushInstance(context);
-	}
-
-	// Send primitive
-	sendToGL();
-
-	// Pop current instance (if flagged)
-	if (pushAndPop) primitives_.popInstance(context);
-
-	// Store version points for the up-to-date primitive
-	primitivesAxesVersion_ = axes.version();
-	primitivesColourDefinitionFingerprint_.sprintf("%p@%i", group_, colourDefinition.version());
-	primitivesDataVersion_ = version();
-	primitivesStyleVersion_ = displayStyleVersion();
-
-	return;
+// 	// Draw Atoms
+// 	CharString text(128);
+// 	Isotope* iso;
+// 	GLfloat TEMPORARYCOLOUR[4] = { 0.0, 0.0, 0.0, 1.0 };
+// 	bool atomTypeLabel = false; //mainWindow_->ui.ViewAtomTypeCheck->isChecked();
+// 	bool indexLabel = false; //mainWindow_->ui.ViewIndexCheck->isChecked();
+// 	for (SpeciesAtom* i = source_->atoms().first(); i != NULL; i = i->next)
+// 	{
+// 		A.setTranslation(i->r());
+// 
+// 		// The Atom itself
+// 		// TODO Implement ElemnetColour class, based on Elements.
+// // 		renderPrimitive(&spherePrimitive03_, TEMPORARYCOLOUR, A);
+// 
+// 		// Label
+// 		text.clear();
+// 		if (atomTypeLabel) text.strcatf("%s ", i->atomType()->name());
+// 		if (indexLabel) text.strcatf("%i ", i->userIndex());
+// // 		if (species_->highlightedIsotopologue())
+// // 		{
+// // 			iso = species_->highlightedIsotopologue()->atomTypeIsotope(i->atomType());
+// // 			if (iso == NULL) text.sprintf("%s [???]", i->atomType()->name());
+// // 			else text.strcatf("[%i-%s]", iso->A(), PeriodicTable::element(i->element()).symbol());
+// // 		}
+// // 		renderTextPrimitive(i->r(), text.get(), false, false);
+// 	}
+// 
+// 	// Draw Atom Selection
+// 	for (RefListItem<SpeciesAtom,bool>* ri = source_->selectedAtoms().first(); ri != NULL; ri = ri->next)
+// 	{
+// 		A.setTranslation(ri->item->r());
+// 		// TODO - Use proper element colour
+// // 		col = PeriodicTable::element(ri->item->element()).colour();
+// // 		colour[0] = col[0];
+// // 		colour[1] = col[1];
+// // 		colour[2] = col[2];
+// // 		colour[3] = 0.5;
+// 		colour[0] = 0.0;
+// 		colour[1] = 0.0;
+// 		colour[2] = 0.0;
+// 		colour[3] = 0.5;
+// // 		renderPrimitive(&spherePrimitive04_, colour, A);
+// 	}
+// 
+// 	// Draw Bonds
+// 	Vec3<double> vij;
+// 	double mag;
+// 	for (SpeciesBond* b = source_->bonds().first(); b != NULL; b = b->next)
+// 	{
+// 		// Get vector between Atoms i->j and move to Bond centre
+// 		vij = b->j()->r() - b->i()->r();
+// 		A.setTranslation(b->i()->r()+vij*0.5);
+// 		mag = vij.magAndNormalise();
+// 		
+// 		// Create rotation matrix for Bond
+// 		A.setColumn(2, vij.x, vij.y, vij.z, 0.0);
+// 		A.setColumn(0, vij.orthogonal(), 0.0);
+// 		A.setColumn(1, vij * A.columnAsVec3(0), 0.0);
+// 		A.columnMultiply(2, 0.5*mag);
+// 
+// 		// Render half of Bond in colour of Atom j
+// 		// TODO Use proper element colour
+// //  		renderPrimitive(&cylinderPrimitive_, PeriodicTable::element(b->j()->element()).colour(), A);
+// // 		renderPrimitive(&cylinderPrimitive_, colour, A);
+// 		
+// 		// Render half of Bond in colour of Atom i
+// 		A.columnMultiply(2,-1.0);
+// 		// TODO Use proper element colour
+// // 		renderPrimitive(&cylinderPrimitive_, PeriodicTable::element(b->i()->element()).colour(), A);
+// // 		renderPrimitive(&cylinderPrimitive_, colour, A);
+// 	}
+// 	
+// 	// If a GrainDefinition is selected, add on highlight to involved atoms
+// // 	if (species_->highlightedGrain())
+// // 	{
+// // 		A.setIdentity();
+// // 		A.applyScaling(1.1,1.1,1.1);
+// // 		GLfloat colour[4] = {0.0, 0.0, 0.0, 0.6};
+// // 		SpeciesAtom* i;
+// // 		for (RefListItem<SpeciesAtom,int>* ri = species_->highlightedGrain()->atoms(); ri != NULL; ri = ri->next)
+// // 		{
+// // 			i = ri->item;
+// // 			A.setTranslation(i->r());
+// // // 			colour[0] = PeriodicTable::element(i->element()).colour()[0];
+// // // 			colour[1] = PeriodicTable::element(i->element()).colour()[1];
+// // // 			colour[2] = PeriodicTable::element(i->element()).colour()[2];
+// // 			renderPrimitive(&spherePrimitive03_, colour, A, GL_LINE);
+// // 		}
+// // 	}
 }
-
-// Create line strip primitive
-void RenderableSpecies::constructLineXY(const Array<double>& displayAbscissa, const Array<double>& displayValues, Primitive* primitive, const Axes& axes, const ColourDefinition& colourDefinition, double zCoordinate)
-{
-// 	// Get extents of displayData to use based on current axes limits
-// 	Vec3<int> minIndex, maxIndex;
-// 	if (!calculateExtents(axes, displayAbscissa, displayData, minIndex, maxIndex)) return;
-// 	int nZ = (maxIndex.z - minIndex.z) + 1;
-
-	// Copy and transform abscissa values (still in data space) into axes coordinates
-// 	Array<double> x(displayAbscissa, minIndex.x, maxIndex.x);
-	Array<double> x = displayAbscissa;
-	axes.transformX(x);
-	int nX = x.nItems();
-	if (nX < 2) return;
-
-	// Get some values from axes so we can calculate colours properly
-	bool yLogarithmic = axes.logarithmic(1);
-	double yStretch = axes.stretch(1);
-
-	// Temporary variables
-	Vec4<GLfloat> colour(0,0,0,1);
-	Vec3<double> nrm(0.0, 1.0, 0.0);
-
-	// Create lines for slices
-	int vertexA, vertexB;
-	// Grab y and z values
-	Array<double> y = displayValues;
-	axes.transformY(y);
-	double z = axes.transformZ(zCoordinate);
-
-	// Set vertexA to -1 so we don't draw a line at n=0
-	vertexA = -1;
-
-	// Check for a single colour style in the colourDefinition - use optimised case in that eventuality
-	if (colourDefinition.style() == ColourDefinition::SingleColourStyle)
-	{
-		// Get the single colour
-		colourDefinition.colour(0.0, colour);
-
-		// Loop over x values
-		for (int n=0; n<nX; ++n)
-		{
-			vertexB = primitive->defineVertex(x.constAt(n), y.constAt(n), z, nrm, colour);
-
-			// If both vertices are valid, plot a line
-			if (vertexA != -1) primitive->defineIndices(vertexA, vertexB);
-
-			vertexA = vertexB;
-		}
-	}
-	else
-	{
-		// Loop over x values
-		for (int n=0; n<nX; ++n)
-		{
-			colourDefinition.colour(yLogarithmic ? pow(10.0, y.constAt(n) / yStretch) : y.constAt(n) / yStretch, colour);
-			vertexB = primitive->defineVertex(x.constAt(n), y.constAt(n), z, nrm, colour);
-
-			// If both vertices are valid, plot a line
-			if (vertexA != -1) primitive->defineIndices(vertexA, vertexB);
-
-			vertexA = vertexB;
-		}
-	}
-}
-
-// Calculate integer index extents for display data given supplied axes
-// bool Surface::calculateExtents(const Axes& axes, const Array<double>& abscissa, List<DisplayDataSet>& displayData, Vec3<int>& minIndex, Vec3<int>& maxIndex)
-// {
-// 	// Grab some stuff from the pane's axes
-// 	Vec3<double> axisMin(axes.min(0), axes.min(1), axes.min(2));
-// 	Vec3<double> axisMax(axes.max(0), axes.max(1), axes.max(2));
-// 
-// 	// Get x index limits
-// 	for (minIndex.x = 0; minIndex.x < abscissa.nItems(); ++minIndex.x) if (abscissa.constAt(minIndex.x) >= axisMin.x) break;
-// 	if (minIndex.x == abscissa.nItems()) return false;
-// 	for (maxIndex.x = abscissa.nItems()-1; maxIndex.x >= 0; --maxIndex.x) if (abscissa.constAt(maxIndex.x) <= axisMax.x) break;
-// 	if (maxIndex.x < 0) return false;
-// 
-// 	// Get z index limits
-// 	for (minIndex.z = 0; minIndex.z < displayData.nItems(); ++minIndex.z) if (displayData[minIndex.z]->z() >= axisMin.z) break;
-// 	if (minIndex.z == displayData.nItems()) return false;
-// 	for (maxIndex.z = displayData.nItems()-1; maxIndex.z >= 0; --maxIndex.z)  if (displayData[maxIndex.z]->z() <= axisMax.z) break;
-// 	if (maxIndex.z < 0) return false;
-// 
-// 	return true;
-// }

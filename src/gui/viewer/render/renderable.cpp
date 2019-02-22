@@ -20,6 +20,7 @@
 */
 
 #include "gui/viewer/render/renderable.h"
+#include "gui/viewer/render/renderablegroupmanager.h"
 #include "gui/viewer/render/view.h"
 #include "math/interpolator.h"
 #include "base/lineparser.h"
@@ -68,10 +69,10 @@ Renderable::Renderable(Renderable::RenderableType type, const char* objectTag)
 	transforms_[1].setEquation("y");
 	transforms_[2].setEquation("z");
 
-	// GL
-	primitivesDataVersion_ = -1;
-	primitivesAxesVersion_ = -1;
-	primitivesStyleVersion_ = -1;
+	// Rendering Versions
+	lastDataVersion_ = -1;
+	lastAxesVersion_ = -1;
+	lastStyleVersion_ = -1;
 
 	// Display
 	visible_ = true;
@@ -330,6 +331,65 @@ bool Renderable::hasTitle() const
  * Rendering Primitives
  */
 
+
+// Update primitives and send for display
+void Renderable::updateAndSendPrimitives(const View& view, const RenderableGroupManager& groupManager, bool forceUpdate, bool pushAndPop, const QOpenGLContext* context)
+{
+	// Grab axes for the View
+	const Axes& axes = view.constAxes();
+
+	// Grab copy of the relevant colour definition for this Renderable
+	const ColourDefinition& colourDefinition = groupManager.colourDefinition(this);
+
+	// Check whether the primitive for this Renderable needs updating
+	bool upToDate = true;
+	if (forceUpdate) upToDate = false;
+	else if (lastAxesVersion_!= axes.version()) upToDate = false;
+	else if (!DissolveSys::sameString(lastColourDefinitionFingerprint_, CharString("%p@%i", group_, colourDefinition.version()), true)) upToDate = false;
+	else if (lastDataVersion_ != version()) upToDate = false;
+	else if (lastStyleVersion_ != displayStyleVersion()) upToDate = false;
+
+	// If the primitive is out of date, recreate it's data.
+	if (!upToDate)
+	{
+		// Forget all current data
+		bespokePrimitives_.forgetAll();
+		primitiveAssembly_.clear();
+
+		// Recreate Primitives for the underlying data
+		recreatePrimitives(view, colourDefinition);
+
+		// Pop old Primitive instances (unless flagged not to)
+		if (!pushAndPop)
+		{
+			if (basicPrimitives_.nInstances() != 0) basicPrimitives_.popInstance(context);
+			if (bespokePrimitives_.nInstances() != 0) bespokePrimitives_.popInstance(context);
+		}
+	
+		// Push new instances to create the new display list / vertex arrays
+		basicPrimitives_.pushInstance(context);
+		bespokePrimitives_.pushInstance(context);
+	}
+
+	// Send primitive
+	sendToGL();
+
+	// Pop current instances (if flagged)
+	if (pushAndPop)
+	{
+		basicPrimitives_.popInstance(context);
+		bespokePrimitives_.popInstance(context);
+	}
+
+	// Store version points for the up-to-date primitive
+	lastAxesVersion_ = axes.version();
+	lastColourDefinitionFingerprint_.sprintf("%p@%i", group_, colourDefinition.version());
+	lastDataVersion_ = version();
+	lastStyleVersion_ = displayStyleVersion();
+
+	return;
+}
+
 // Send primitives to GL
 void Renderable::sendToGL()
 {
@@ -348,6 +408,7 @@ void Renderable::sendToGL()
                 glDisable(GL_LIGHTING);
         }
 
-        // Send Primitives to display
-        primitives_.sendToGL();
+        // Send Primitive assembly to display
+//         for (int n=0; n<primitiveAssembly_.nItems(); ++n) primitiveAssembly_[n].
+	bespokePrimitives_.sendToGL();
 }

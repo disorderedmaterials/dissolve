@@ -22,6 +22,7 @@
 #ifndef DISSOLVE_RENDERABLE_H
 #define DISSOLVE_RENDERABLE_H
 
+#include "gui/viewer/render/primitiveinfo.h"
 #include "gui/viewer/render/primitivelist.h"
 #include "gui/viewer/render/colourdefinition.h"
 #include "gui/viewer/render/linestyle.h"
@@ -203,20 +204,28 @@ class Renderable : public ListItem<Renderable>
 	 * Rendering Primitives
 	 */
 	protected:
-	// Primitives representing the data
-	PrimitiveList primitives_;
-	// Data version at which primitives were last created
-	int primitivesDataVersion_;
+	// Basic Primitives managed by the Renderable, used to assemble representations of data
+	PrimitiveList basicPrimitives_;
+	// Representation of data using local Primitives
+	Array<PrimitiveInfo> primitiveAssembly_;
+	// Bespoke primitives create to represent the data
+	PrimitiveList bespokePrimitives_;
+	// Data version at which bespoke primitives / assembled list were last created
+	int lastDataVersion_;
 	// ColourDefinition fingerprint at which primitives were last created
-	CharString primitivesColourDefinitionFingerprint_;
+	CharString lastColourDefinitionFingerprint_;
 	// Axes version at which primitives were last created
-	int primitivesAxesVersion_;
+	int lastAxesVersion_;
 	// Style version at which primitives were last created
-	int primitivesStyleVersion_;
+	int lastStyleVersion_;
+
+	private:
+	// Recreate necessary primitives / primitive assemblies for the data
+	virtual void recreatePrimitives(const View& view, const ColourDefinition& colourDefinition) = 0;
 
 	public:
 	// Update primitives and send for display
-	virtual void updateAndSendPrimitives(View& view, RenderableGroupManager& groupManager, bool forceUpdate, bool pushAndPop, const QOpenGLContext* context) = 0;
+	void updateAndSendPrimitives(const View& view, const RenderableGroupManager& groupManager, bool forceUpdate, bool pushAndPop, const QOpenGLContext* context);
 	// Send primitives to GL
 	void sendToGL();
 };

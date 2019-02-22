@@ -75,10 +75,8 @@ class RenderableData1D : public Renderable
 	private:
 	// Create line strip primitive
 	void constructLineXY(const Array<double>& displayAbscissa, const Array<double>& displayValues, Primitive* primitive, const Axes& axes, const ColourDefinition& colourDefinition, double zCoordinate = 0.0);
-
-	public:
-	// Update primitives and send for display
-	void updateAndSendPrimitives(View& view, RenderableGroupManager& groupManager, bool forceUpdate, bool pushAndPop, const QOpenGLContext* context);
+	// Recreate necessary primitives / primitive assemblies for the data
+	void recreatePrimitives(const View& view, const ColourDefinition& colourDefinition);
 };
 
 #endif
