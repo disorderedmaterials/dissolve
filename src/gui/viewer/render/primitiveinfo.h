@@ -31,34 +31,58 @@ class Primitive;
 class PrimitiveInfo
 {
 	public:
-	// Constructor
+	// Constructors
 	PrimitiveInfo();
+	PrimitiveInfo(GLfloat lineWidth);
+	PrimitiveInfo(GLenum fillMode);
+	PrimitiveInfo(Primitive* prim, Matrix4& transform, GLfloat* colour, GLenum fillMode = GL_FILL, GLfloat lineWidth = 1.0f);
+	// Clear
+	void clear();
 
+	/*
+	 * Info Type
+	 */
+	public:
+	// PrimitiveInfo Type
+	enum PrimitiveInfoType { ObjectInfoType, ColourInfoType, FillModeInfoType, LineWidthInfoType, nPrimitiveInfoTypes };
+
+	private:
+	// Flags indicating which types of info are contained
+	bool infoType_[nPrimitiveInfoTypes];
+
+
+	/*
+	 * Object Information
+	 */
 	private:
 	// Target primitive
 	Primitive* primitive_;
-	// Local transformation of primitive
-	Matrix4 localTransform_;
-	// Colour of primitive (if vertexData_ doesn't contain colour information)
-	GLfloat colour_[4];
-	// Whether to draw the primitive as filled or wireframe polygons
+	// Transformation to apply before rendering Primitive
+	Matrix4 transform_;
+	// Whether to draw the Primitive as filled or wireframe polygons
 	GLenum fillMode_;
+	// Colour of Primitive (if relevant)
+	GLfloat colour_[4];
 	// GL object line width (if type_ == GL_LINE or chunk primitive type == GL_LINES)
 	GLfloat lineWidth_;
 	
 	public:
-	// Set primitive info data
-	void set(Primitive* prim, GLfloat *colour, Matrix4& transform, GLenum fillMode = GL_FILL, GLfloat lineWidth = 1.0f);
-	// Return pointer to stored primitive
-	Primitive* primitive();
-	// Return local transformation of primitive
-	Matrix4& localTransform();
-	// Return colour array
-	GLfloat *colour();
-	// Return polygon fill mode
-	GLenum fillMode();
-	// Return line width
-	GLfloat lineWidth();
+	// Set Primitive, transform, and colour
+	void setPrimitive(Primitive* prim, Matrix4& transform, GLfloat* colour);
+	// Set Primitive and transform
+	void setPrimitive(Primitive* prim, Matrix4& transform);
+	// Set polygon fill mode
+	void setFillMode(GLenum fillMode);
+	// Set line width
+	void setLineWidth(GLfloat lineWidth);
+
+
+	/*
+	 * GL
+	 */
+	public:
+	// Expose contained info to GL
+	void sendToGL();
 };
 
 #endif

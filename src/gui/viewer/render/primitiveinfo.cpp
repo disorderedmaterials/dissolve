@@ -20,9 +20,16 @@
 */
 
 #include "gui/viewer/render/primitiveinfo.h"
+#include "gui/viewer/render/primitive.h"
 
 // Constructor
 PrimitiveInfo::PrimitiveInfo()
+{
+	clear();
+}
+
+// Clear
+void PrimitiveInfo::clear()
 {
 	// Private variables
 	primitive_ = NULL;
@@ -33,48 +40,68 @@ PrimitiveInfo::PrimitiveInfo()
 	colour_[2] = 0.0;
 	colour_[3] = 1.0;
 
-	// Public variables
-	prev = NULL;
-	next = NULL;
+	// Content flags
+	for (int n=0; n<nPrimitiveInfoTypes; ++n) infoType_[n] = false;
 }
 
-// Set primitive info data
-void PrimitiveInfo::set(Primitive* prim, GLfloat *colour, Matrix4& transform, GLenum fillMode, GLfloat lineWidth)
+/*
+ * Object Information
+ */
+
+// Set Primitive, transform, and colour
+void PrimitiveInfo::setPrimitive(Primitive* prim, Matrix4& transform, GLfloat* colour)
 {
 	primitive_ = prim;
-	localTransform_ = transform;
+	transform_ = transform;
+	for (int n=0; n<4; ++n) colour_[n] = colour[n];
+
+	infoType_[PrimitiveInfo::ObjectInfoType] = true;
+	infoType_[PrimitiveInfo::ColourInfoType] = true;
+}
+
+// Set Primitive and transform
+void PrimitiveInfo::setPrimitive(Primitive* prim, Matrix4& transform)
+{
+	primitive_ = prim;
+	transform_ = transform;
+
+	infoType_[PrimitiveInfo::ObjectInfoType] = true;
+}
+
+// Set polygon fill mode
+void PrimitiveInfo::setFillMode(GLenum fillMode)
+{
 	fillMode_ = fillMode;
+
+	infoType_[PrimitiveInfo::FillModeInfoType] = true;
+}
+
+// Set line width
+void PrimitiveInfo::setLineWidth(GLfloat lineWidth)
+{
 	lineWidth_ = lineWidth;
-	if (colour != NULL) for (int n=0; n<4; ++n) colour_[n] = colour[n];
+
+	infoType_[PrimitiveInfo::LineWidthInfoType] = true;
 }
 
-// Return pointer to primitive
-Primitive* PrimitiveInfo::primitive()
+/*
+ * GL
+ */
+
+// Expose contained info to GL
+void PrimitiveInfo::sendToGL()
 {
-	return primitive_;
-}
+	// Apply styles first
+	if (infoType_[PrimitiveInfo::ColourInfoType]) glColor4fv(colour_);
+	if (infoType_[PrimitiveInfo::FillModeInfoType]) glPolygonMode(GL_FRONT_AND_BACK, fillMode_);
+	if (infoType_[PrimitiveInfo::LineWidthInfoType]) glLineWidth(lineWidth_);
 
-// Return local transformation of primitive
-Matrix4& PrimitiveInfo::localTransform()
-{
-	return localTransform_;
+	// Render Primitive if one is present
+	if (primitive_)
+	{
+		glPushMatrix();
+		glLoadMatrixd(transform_.matrix());
+		primitive_->sendToGL();
+		glPopMatrix();
+	}
 }
-
-// Return colour array
-GLfloat *PrimitiveInfo::colour()
-{
-	return colour_;
-}
-
-// Return polygon fill mode
-GLenum PrimitiveInfo::fillMode()
-{
-	return fillMode_;
-}
-
-// Return line width
-GLfloat PrimitiveInfo::lineWidth()
-{
-	return lineWidth_;
-}
-
