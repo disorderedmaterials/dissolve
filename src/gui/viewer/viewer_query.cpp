@@ -1,6 +1,6 @@
 /*
-	*** Data Viewer - Object Querying
-	*** src/gui/viewer/dataviewer_query.cpp
+	*** Base Viewer - Object Querying
+	*** src/gui/viewer/viewer_query.cpp
 	Copyright T. Youngs 2013-2019
 
 	This file is part of Dissolve.
@@ -23,7 +23,7 @@
 #include "base/messenger.h"
 
 // Update depth at query coordinates, returning whether it is closer
-bool DataViewer::updateQueryDepth()
+bool BaseViewer::updateQueryDepth()
 {
 	// Return immediately if we are not querying
 	if (objectQueryX_ == -1) return false;
@@ -48,17 +48,17 @@ bool DataViewer::updateQueryDepth()
 }
 
 // Set information of query object
-void DataViewer::setQueryObject(DataViewer::ViewObject objectType, const char* info)
+void BaseViewer::setQueryObject(BaseViewer::ViewerObject objectType, const char* info)
 {
 	objectAtQueryCoordinates_ = objectType;
 	infoAtQueryCoordinates_ = info;
 }
 
 // Set coordinates to query at next redraw
-void DataViewer::setQueryCoordinates(int mouseX, int mouseY)
+void BaseViewer::setQueryCoordinates(int mouseX, int mouseY)
 {
 	depthAtQueryCoordinates_ = 1.0;
-	objectAtQueryCoordinates_ = DataViewer::NoObject;
+	objectAtQueryCoordinates_ = BaseViewer::NoObject;
 	infoAtQueryCoordinates_.clear();
 
 	// Check for invalid coordinates
@@ -90,13 +90,13 @@ void DataViewer::setQueryCoordinates(int mouseX, int mouseY)
 }
 
 // Return object type at query coordinates
-DataViewer::ViewObject DataViewer::objectAtQueryCoordinates() const
+BaseViewer::ViewerObject BaseViewer::objectAtQueryCoordinates() const
 {
 	return objectAtQueryCoordinates_;
 }
 
 // Info for object at query coordinates
-const char* DataViewer::infoAtQueryCoordinates() const
+const char* BaseViewer::infoAtQueryCoordinates() const
 {
 	return infoAtQueryCoordinates_.get();
 }

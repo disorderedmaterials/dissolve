@@ -163,40 +163,6 @@ class DataViewer : public BaseViewer
 
 
 	/*
-	 * Object Querying
-	 */
-	public:
-	// Drawing object type
-	enum ViewObject { AxisLineObject, AxisTickLabelObject, AxisTitleLabelObject, GridLineMajorObject, GridLineMinorObject, NoObject, RenderableObject };
-
-	private:
-	// View coordinates to probe for objects at next redraw
-	int objectQueryX_, objectQueryY_;
-	// Width and height of area about clicked position
-	int objectQueryWidth_, objectQueryHeight_;
-	// Maximum depth value found at query pixel
-	GLfloat depthAtQueryCoordinates_;
-	// Type of object found at query coordinates
-	ViewObject objectAtQueryCoordinates_;
-	// Information describing object at query coordinates
-	CharString infoAtQueryCoordinates_;
-
-	private:
-	// Update depth at query coordinates, returning whether it is closer
-	bool updateQueryDepth();
-	// Set information of query object
-	void setQueryObject(ViewObject objectType, const char* info);
-
-	public:
-	// Set coordinates to query at next redraw
-	void setQueryCoordinates(int mouseX, int mouseY);
-	// Return object type at query coordinates
-	ViewObject objectAtQueryCoordinates() const;
-	// Info for object at query coordinates
-	const char* infoAtQueryCoordinates() const;
-
-
-	/*
 	 * Tool Windows
 	 */
 // 	protected:

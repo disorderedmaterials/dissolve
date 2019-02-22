@@ -223,6 +223,40 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 
 
 	/*
+	 * Object Querying
+	 */
+	public:
+	// Drawing object type
+	enum ViewerObject { AxisLineObject, AxisTickLabelObject, AxisTitleLabelObject, GridLineMajorObject, GridLineMinorObject, NoObject, RenderableObject };
+
+	protected:
+	// View coordinates to probe for objects at next redraw
+	int objectQueryX_, objectQueryY_;
+	// Width and height of area about clicked position
+	int objectQueryWidth_, objectQueryHeight_;
+	// Maximum depth value found at query pixel
+	GLfloat depthAtQueryCoordinates_;
+	// Type of object found at query coordinates
+	ViewerObject objectAtQueryCoordinates_;
+	// Information describing object at query coordinates
+	CharString infoAtQueryCoordinates_;
+
+	protected:
+	// Update depth at query coordinates, returning whether it is closer
+	bool updateQueryDepth();
+	// Set information of query object
+	void setQueryObject(ViewerObject objectType, const char* info);
+
+	public:
+	// Set coordinates to query at next redraw
+	void setQueryCoordinates(int mouseX, int mouseY);
+	// Return object type at query coordinates
+	ViewerObject objectAtQueryCoordinates() const;
+	// Info for object at query coordinates
+	const char* infoAtQueryCoordinates() const;
+
+
+	/*
 	 * Context Menu
 	 */
 	protected:

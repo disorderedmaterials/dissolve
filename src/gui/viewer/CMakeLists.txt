@@ -22,7 +22,6 @@ SET(viewer_SRCS
   dataviewer_input.cpp
   dataviewer_interaction.cpp
   dataviewer_io.cpp
-  dataviewer_query.cpp
   dataviewer_render.cpp
   graphwidget_funcs.cpp
   selectsymbol_funcs.cpp
@@ -33,6 +32,7 @@ SET(viewer_SRCS
   viewer_data.cpp
   viewer_funcs.cpp
   viewer_input.cpp
+  viewer_query.cpp
   viewer_render.cpp
 )
 

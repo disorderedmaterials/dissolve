@@ -143,7 +143,7 @@ bool DataViewer::updateInteractionPosition(int mouseX, int mouseY)
 // End interaction at the specified screen coordinates
 void DataViewer::endInteraction(int mouseX, int mouseY)
 {
-	ViewObject clickedObject = NoObject;
+	ViewerObject clickedObject = NoObject;
 	CharString clickedObjectInfo;
 	double newMin, newMax;
 
