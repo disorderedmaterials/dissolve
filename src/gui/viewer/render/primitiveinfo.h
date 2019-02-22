@@ -35,7 +35,8 @@ class PrimitiveInfo
 	PrimitiveInfo();
 	PrimitiveInfo(GLfloat lineWidth);
 	PrimitiveInfo(GLenum fillMode);
-	PrimitiveInfo(Primitive* prim, Matrix4& transform, GLfloat* colour, GLenum fillMode = GL_FILL, GLfloat lineWidth = 1.0f);
+	PrimitiveInfo(Primitive* prim, Matrix4& transform);
+	PrimitiveInfo(Primitive* prim, Matrix4& transform, GLfloat* colour);
 	// Clear
 	void clear();
 

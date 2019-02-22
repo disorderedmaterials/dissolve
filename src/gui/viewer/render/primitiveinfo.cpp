@@ -22,10 +22,38 @@
 #include "gui/viewer/render/primitiveinfo.h"
 #include "gui/viewer/render/primitive.h"
 
-// Constructor
+// Constructors
 PrimitiveInfo::PrimitiveInfo()
 {
 	clear();
+}
+
+PrimitiveInfo::PrimitiveInfo(GLfloat lineWidth)
+{
+	clear();
+
+	setLineWidth(lineWidth);
+}
+
+PrimitiveInfo::PrimitiveInfo(GLenum fillMode)
+{
+	clear();
+
+	setFillMode(fillMode);
+}
+
+PrimitiveInfo::PrimitiveInfo(Primitive* prim, Matrix4& transform)
+{
+	clear();
+
+	setPrimitive(prim, transform);
+}
+
+PrimitiveInfo::PrimitiveInfo(Primitive* prim, Matrix4& transform, GLfloat* colour)
+{
+	clear();
+
+	setPrimitive(prim, transform, colour);
 }
 
 // Clear
