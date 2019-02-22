@@ -27,7 +27,6 @@
 
 // Forward Declarations
 class QOpenGLContext;
-class Viewer;
 
 // Rendering Primitive List
 class PrimitiveList
