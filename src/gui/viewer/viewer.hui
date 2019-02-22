@@ -126,14 +126,16 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	void paintGL();
 	// Resize function
 	void resizeGL(int width, int height);
+	// Main rendering function
+	void renderGL(int xOffset = 0, int yOffset = 0);
 	// Perform post-initialisation operations
 	virtual void postInitialiseGL();
 	// Perform post-resize operations
 	virtual void postResizeGL();
 	// Setup basic GL properties
 	virtual void setupGL();
-	// Render content
-	virtual void render(int xOffset = 0, int yOffset = 0) = 0;
+	// Render 2D overlay content
+	virtual void render2DOverlay() = 0;
 	// Set line width and text scaling to use
 	void setObjectScaling(double scaling);
 

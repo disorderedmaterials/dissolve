@@ -48,8 +48,8 @@ class SpeciesViewer : public BaseViewer
 	void postInitialiseGL();
 	// Perform post-resize operations
 	void postResizeGL();
-	// Render content
-	void render(int xOffset = 0, int yOffset = 0);
+	// Render 2D overlay content
+	void render2DOverlay();
 
 
 	/*
