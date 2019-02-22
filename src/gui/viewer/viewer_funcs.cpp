@@ -32,6 +32,12 @@ BaseViewer::BaseViewer(QWidget* parent) : QOpenGLWidget(parent), view_(renderabl
 	drawing_ = false;
 	renderingOffScreen_ = false;
 
+	// Query
+	objectQueryX_ = -1;
+	objectQueryY_ = -1;
+	depthAtQueryCoordinates_ = 1.0;
+	objectAtQueryCoordinates_ = BaseViewer::NoObject;
+
 	// Prevent QPainter from autofilling widget background
 	setAutoFillBackground(false);
 

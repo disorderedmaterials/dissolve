@@ -32,12 +32,6 @@ DataViewer::DataViewer(QWidget* parent) : BaseViewer(parent)
 	clickedInteractionValue_ = 0.0;
 	currentInteractionValue_ = 0.0;
 	highlightedRenderable_ = NULL;
-
-	// Query
-	objectQueryX_ = -1;
-	objectQueryY_ = -1;
-	depthAtQueryCoordinates_ = 1.0;
-	objectAtQueryCoordinates_ = DataViewer::NoObject;
 }
 
 // Destructor
