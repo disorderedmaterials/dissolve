@@ -10,6 +10,7 @@ SET(render_SRCS
   linestyle.h
   numberformat.h
   primitive.h
+  primitiveassembly.h
   primitiveinfo.h
   primitiveinstance.h
   primitivelist.h
@@ -37,6 +38,7 @@ SET(render_SRCS
   linestyle.cpp
   numberformat.cpp
   primitive.cpp
+  primitiveassembly.cpp
   primitiveinfo.cpp
   primitiveinstance.cpp
   primitivelist.cpp
