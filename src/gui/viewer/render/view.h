@@ -212,6 +212,8 @@ class View
 	void shiftFlatAxisLimitsFractional(double fracH, double fracV);
 	// Return axes for the view
 	Axes& axes();
+	// Return axes for the view (const)
+	const Axes& constAxes() const;
 
 
 	/*

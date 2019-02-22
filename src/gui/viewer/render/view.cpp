@@ -1091,6 +1091,12 @@ Axes& View::axes()
 	return axes_;
 }
 
+// Return axes for the view (const)
+const Axes& View::constAxes() const
+{
+	return axes_;
+}
+
 /*
  * Style
  */
