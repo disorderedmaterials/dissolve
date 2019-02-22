@@ -28,10 +28,12 @@ SET(viewer_SRCS
   speciesviewer_contextmenu.cpp
   speciesviewer_funcs.cpp
   speciesviewer_input.cpp
+  speciesviewer_interaction.cpp
   speciesviewer_render.cpp
   viewer_data.cpp
   viewer_funcs.cpp
   viewer_input.cpp
+  viewer_interaction.cpp
   viewer_query.cpp
   viewer_render.cpp
 )

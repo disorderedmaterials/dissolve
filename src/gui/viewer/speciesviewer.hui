@@ -71,6 +71,16 @@ class SpeciesViewer : public BaseViewer
 
 
 	/*
+	 * Interaction (BaseViewer virtuals)
+	 */
+	protected:
+	// Start interaction at the specified screen coordinates
+	void startInteraction(int mouseX, int mouseY, Qt::KeyboardModifiers modifiers);
+	// End interaction at the specified screen coordinates
+	void endInteraction(int mouseX, int mouseY);
+
+
+	/*
 	 * Context Menu (BaseViewer virtuals)
 	 */
 	private:

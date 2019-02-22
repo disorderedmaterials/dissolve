@@ -191,18 +191,6 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	// Mouse double click event
 	void mouseDoubleClickEvent(QMouseEvent* event);
 
-	protected:
-	// Mouse pressed
-	virtual void mousePressed(Qt::KeyboardModifiers modifiers) = 0;
-	// Mouse released
-	virtual void mouseReleased() = 0;
-	// Mouse moved
-	virtual void mouseMoved(int dx, int dy, Qt::KeyboardModifiers modifiers) = 0;
-	// Mouse 'wheeled'
-	virtual void mouseWheeled(int delta) = 0;
-	// Mouse double clicked
-	virtual void mouseDoubleClicked() = 0;
-
 	private slots:
 	// Key press event
 	void keyPressEvent(QKeyEvent*);
@@ -210,16 +198,32 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	void keyReleaseEvent(QKeyEvent*);
 
 	protected:
+	// Mouse moved
+	virtual void mouseMoved(int dx, int dy, Qt::KeyboardModifiers modifiers);
+	// Mouse 'wheeled'
+	virtual void mouseWheeled(int delta);
+	// Mouse double clicked
+	virtual void mouseDoubleClicked();
 	// Key pressed
-	virtual bool keyPressed(int key, Qt::KeyboardModifiers modifiers) = 0;
+	virtual bool keyPressed(int key, Qt::KeyboardModifiers modifiers);
 	// Key released
-	virtual bool keyReleased(int key, Qt::KeyboardModifiers modifiers) = 0;
+	virtual bool keyReleased(int key, Qt::KeyboardModifiers modifiers);
 
 	public:
 	// Return mouse coordinates at last mousedown event
 	Vec3<int> rMouseDown() const;
 	// Return mouse coordinates at last mousemove event
 	Vec3<int> rMouseLast() const;
+
+
+	/*
+	 * Interaction
+	 */
+	protected:
+	// Start interaction at the specified screen coordinates
+	virtual void startInteraction(int mouseX, int mouseY, Qt::KeyboardModifiers modifiers);
+	// End interaction at the specified screen coordinates
+	virtual void endInteraction(int mouseX, int mouseY);
 
 
 	/*

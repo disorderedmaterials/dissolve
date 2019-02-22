@@ -23,6 +23,10 @@
 #include <QMouseEvent>
 #include <QMenu>
 
+/*
+ * Private Functions
+ */
+
 // Mouse press event
 void BaseViewer::mousePressEvent(QMouseEvent* event)
 {
@@ -31,14 +35,16 @@ void BaseViewer::mousePressEvent(QMouseEvent* event)
 	rMouseDown_.set(event->x(), event->y(), 0.0);
 
 	// Handle the event
-	mousePressed(event->modifiers());
+	startInteraction(rMouseDown_.x, contextHeight_-rMouseDown_.y, event->modifiers());
 }
 
 // Mouse release event
 void BaseViewer::mouseReleaseEvent(QMouseEvent* event)
 {
 	// Handle the event
-	mouseReleased();
+	endInteraction(rMouseLast_.x, contextHeight_-rMouseLast_.y);
+
+	postRedisplay();
 
 	// Clear button state
 	buttonState_ = 0;
@@ -71,17 +77,9 @@ void BaseViewer::mouseDoubleClickEvent(QMouseEvent* event)
 	mouseDoubleClicked();
 }
 
-// Return mouse coordinates at last mousedown event
-Vec3<int> BaseViewer::rMouseDown() const
-{
-	return rMouseDown_;
-}
-
-// Return mouse coordinates at last mousemove event
-Vec3<int> BaseViewer::rMouseLast() const
-{
-	return rMouseLast_;
-}
+/*
+ * Private Slots
+ */
 
 // Key press event
 void BaseViewer::keyPressEvent(QKeyEvent *event)
@@ -97,4 +95,51 @@ void BaseViewer::keyReleaseEvent(QKeyEvent *event)
 	// Handle the event
 	if (keyReleased(event->key(), event->modifiers())) event->accept();
 	else event->ignore();
+}
+
+/*
+ * Protected Virtuals
+ */
+
+// Mouse moved
+void BaseViewer::mouseMoved(int dx, int dy, Qt::KeyboardModifiers modifiers)
+{
+}
+
+// Mouse 'wheeled'
+void BaseViewer::mouseWheeled(int delta)
+{
+}
+
+// Mouse double clicked
+void BaseViewer::mouseDoubleClicked()
+{
+}
+
+// Key pressed
+bool BaseViewer::keyPressed(int key, Qt::KeyboardModifiers modifiers)
+{
+	return false;
+}
+
+// Key released
+bool BaseViewer::keyReleased(int key, Qt::KeyboardModifiers modifiers)
+{
+	return false;
+}
+
+/*
+ * Public Functions
+ */
+
+// Return mouse coordinates at last mousedown event
+Vec3<int> BaseViewer::rMouseDown() const
+{
+	return rMouseDown_;
+}
+
+// Return mouse coordinates at last mousemove event
+Vec3<int> BaseViewer::rMouseLast() const
+{
+	return rMouseLast_;
 }

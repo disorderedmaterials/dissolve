@@ -54,10 +54,6 @@ class DataViewer : public BaseViewer
 	 * Mouse / Keyboard Input (BaseViewer virtuals)
 	 */
 	protected:
-	// Mouse pressed
-	void mousePressed(Qt::KeyboardModifiers modifiers);
-	// Mouse released
-	void mouseReleased();
 	// Mouse moved
 	void mouseMoved(int dx, int dy, Qt::KeyboardModifiers modifiers);
 	// Mouse 'wheeled'

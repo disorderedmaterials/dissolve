@@ -23,26 +23,6 @@
 #include <QMouseEvent>
 #include <QMenu>
 
-// Mouse pressed
-void DataViewer::mousePressed(Qt::KeyboardModifiers modifiers)
-{
-	// Do something with the button press event (e.g. context menu function, or interaction start)
-	if (buttonState_&Qt::LeftButton) startInteraction(rMouseDown_.x, contextHeight_-rMouseDown_.y, modifiers);
-	else if (buttonState_&Qt::RightButton)
-	{
-
-	}
-}
-
-// Mouse released
-void DataViewer::mouseReleased()
-{
-	// Notify that the mouse button has been released (if relevant)
-	if (buttonState_&Qt::LeftButton) endInteraction(rMouseLast_.x, contextHeight_-rMouseLast_.y);
-
-	postRedisplay();
-}
-
 // Mouse Moved
 void DataViewer::mouseMoved(int dx, int dy, Qt::KeyboardModifiers modifiers)
 {
