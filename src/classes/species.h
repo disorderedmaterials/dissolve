@@ -91,7 +91,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	// Return the nth atom in the Species
 	SpeciesAtom* atom(int n);
 	// Return the list of SpeciesAtoms
-	List<SpeciesAtom>& atoms();
+	const List<SpeciesAtom>& atoms() const;
 	// Clear current Atom selection
 	void clearAtomSelection();
 	// Add Atom to selection
