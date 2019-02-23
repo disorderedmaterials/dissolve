@@ -25,6 +25,12 @@
  * Protected Virtuals
  */
 
+// Return current interaction mode
+int BaseViewer::interactionMode() const
+{
+	return -1;
+}
+
 // Start interaction
 void BaseViewer::startInteraction(Qt::KeyboardModifiers modifiers)
 {

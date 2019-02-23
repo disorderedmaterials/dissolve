@@ -220,6 +220,8 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	Vec3<double> current2DAxesCoordinates_;
 
 	protected:
+	// Return current interaction mode
+	virtual int interactionMode() const;
 	// Start interaction 
 	virtual void startInteraction(Qt::KeyboardModifiers modifiers);
 	// End interaction

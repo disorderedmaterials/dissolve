@@ -74,10 +74,12 @@ class SpeciesViewer : public BaseViewer
 	 * Interaction (BaseViewer virtuals)
 	 */
 	protected:
+	// Return current interaction mode
+	int interactionMode() const;
 	// Start interaction at the specified screen coordinates
-	void startInteraction(int mouseX, int mouseY, Qt::KeyboardModifiers modifiers);
+	void startInteraction(Qt::KeyboardModifiers modifiers);
 	// End interaction at the specified screen coordinates
-	void endInteraction(int mouseX, int mouseY);
+	void endInteraction();
 
 
 	/*

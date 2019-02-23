@@ -70,7 +70,7 @@ class DataViewer : public BaseViewer
 
 
 	/*
-	 * Interaction
+	 * Interaction (BaseViewer Virtuals)
 	 */
 	public:
 	// Interaction Mode enum
@@ -89,8 +89,8 @@ class DataViewer : public BaseViewer
 	InteractionMode interactionMode_;
 
 	public:
-	// Return interaction mode
-	InteractionMode interactionMode() const;
+	// Return current interaction mode
+	int interactionMode() const;
 	// Cancel current interaction
 	void cancelInteraction();
 	// Start interaction

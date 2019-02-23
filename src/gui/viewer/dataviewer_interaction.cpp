@@ -25,8 +25,8 @@
  * Public Functions
  */
 
-// Return interaction mode
-DataViewer::InteractionMode DataViewer::interactionMode() const
+// Return current interaction mode
+int DataViewer::interactionMode() const
 {
 	return interactionMode_;
 }
