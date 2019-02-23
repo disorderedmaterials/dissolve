@@ -53,7 +53,7 @@ void DataViewer::mouseMoved(int dx, int dy, Qt::KeyboardModifiers modifiers)
 			}
 			else 
 			{
-				view_.rotateView(dy/2.0, dx/2.0);
+				view_.rotateView(-dy/2.0, dx/2.0);
 				refresh = true;
 			}
 			break;
