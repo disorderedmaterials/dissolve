@@ -23,92 +23,46 @@
 #include "classes/species.h"
 #include <QtGui/QMouseEvent>
 
-// Mouse pressed
-void SpeciesViewer::mousePressed(Qt::KeyboardModifiers modifiers)
-{
-	if (!species_) return;
-
-	// Do something with the button press event (e.g. context menu function)?
-	if (buttonState_.testFlag(Qt::RightButton))
-	{
-		// Firstly, determine whether we are on top of an Atom...
-		Vec4<double> v;
-		SpeciesAtom* i;
-		for (i = species_->atoms().first(); i != NULL; i = i->next)
-		{
-// 			v = view_.modelToScreen(i->r(), 0.3);   TGAY YOU GOT TO HERE
-// 			v.x -= event->x();
-// 			v.y -= (height()-event->y());
-// 			if (sqrt(v.x*v.x + v.y*v.y) < v.w) break;
-		}
-
-		// If we *are* over an Atom, then there is more to do...
-		if (i != NULL)
-		{
-			// If this Atom is *not* currently selected, select it after deselecting all others
-			if (!species_->isAtomSelected(i))
-			{
-				species_->clearAtomSelection();
-				species_->selectAtom(i);
-			}
-			
-			// Now we have update the Atom selection (if it was necessary) we must update the
-			// available isotope options in the context menu. This depends on all Atoms in the
-			// current selection being of the same element.
-// 			int el = species_->selectedAtoms()->item->element();
-// 			bool same = true;
-// 			for (RefListItem<SpeciesAtom,int>* ri = species_->selectedAtoms(); ri != NULL; ri = ri->next)
-// 			{
-// 				if (ri->item->element() != el)
-// 				{
-// 					same = false;
-// 					break;
-// 				}
-// 			}
-
-			// If all Atoms in the selection are *not* the same element, then disable the SetIsotope menu and the SelectSame action
-// 			QMenu* typeMenu = mainWindow_->ui.menuSelectionSetAtomType;
-// 			typeMenu->setEnabled(same);
-// 			mainWindow_->ui.actionSelectionSelectSame->setEnabled(same);
-			// TODO TODO TODO
-// 			if (same)
-// 			{
-// 				Dnchar text;
-// 				QAction* action;
-// 				// Elements are all the same, so present list of available AtomTypes in menu
-// 				typeMenu->setEnabled(true);
-// 				typeMenu->clear();
-// 				int count = 0;
-// 				for (AtomType* at = mainWindow_->Dissolve().atomTypes(); at != NULL; at = at->next)
-// 				{
-// 					if (at->element() != el) continue;
-// 					action = typeMenu->addAction(at->name());
-// 					QObject::connect(action, SIGNAL(triggered(bool)), mainWindow_, SLOT(selectionAtomTypeChanged(bool)));
-// 					++count;
-// 				}
-// 				
-// 				// Add dummy entry if there were no available AtomTypes
-// 				if (count == 0)
-// 				{
-// 					action = typeMenu->addAction("No AtomTypes Available");
-// 					action->setEnabled(false);
-// 				}
-// 			}
-// 			
-			// Ready - execute the popup menu
-// 			if (atomContextMenu_) atomContextMenu_->exec(event->globalPos());
-		}
-	}
-}
-
-// Mouse released
-void SpeciesViewer::mouseReleased()
-{
-}
-
 // Mouse moved
 void SpeciesViewer::mouseMoved(int dx, int dy, Qt::KeyboardModifiers modifiers)
 {
+	// If we are not actually interacting with the view, return now
+	if (!interacting()) return;
+
+	bool refresh = false;
+
+	// What we do here depends on the current mode
+	switch (interactionMode_)
+	{
+		case (SpeciesViewer::SelectAreaInteraction):
+			// No action to take - the selection box will be drawn from the clicked and current positions (already stored)
+			refresh = true;
+			break;
+		case (SpeciesViewer::RotateViewInteraction):
+			// Rotate view
+			if (modifiers.testFlag(Qt::ShiftModifier))
+			{
+			}
+			else if (modifiers.testFlag(Qt::ControlModifier))
+			{
+			}
+			else 
+			{
+				view_.rotateView(-dy/2.0, dx/2.0);
+				refresh = true;
+			}
+			break;
+		case (SpeciesViewer::TranslateViewInteraction):
+			// If this is a flat view, shift the axis limits rather than translating the view
+			if (view_.isFlatView()) view_.shiftFlatAxisLimits(dx, dy);
+			else view_.translateView(dx/15.0, dy/15.0, 0.0);
+			refresh = true;
+			break;
+		default:
+			break;
+	}
+
+	if (refresh) postRedisplay();
 }
 
 // Mouse 'wheeled'

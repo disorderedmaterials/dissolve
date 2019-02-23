@@ -44,3 +44,70 @@ void SpeciesViewer::updateContextMenu()
 {
 }
 
+// 		// Firstly, determine whether we are on top of an Atom...
+// 		Vec4<double> v;
+// 		SpeciesAtom* i;
+// 		for (i = species_->atoms().first(); i != NULL; i = i->next)
+// 		{
+// // 			v = view_.modelToScreen(i->r(), 0.3);
+// // 			v.x -= event->x();
+// // 			v.y -= (height()-event->y());
+// // 			if (sqrt(v.x*v.x + v.y*v.y) < v.w) break;
+// 		}
+// 
+// 		// If we *are* over an Atom, then there is more to do...
+// 		if (i != NULL)
+// 		{
+// 			// If this Atom is *not* currently selected, select it after deselecting all others
+// 			if (!species_->isAtomSelected(i))
+// 			{
+// 				species_->clearAtomSelection();
+// 				species_->selectAtom(i);
+// 			}
+// 			
+// 			// Now we have update the Atom selection (if it was necessary) we must update the
+// 			// available isotope options in the context menu. This depends on all Atoms in the
+// 			// current selection being of the same element.
+// // 			int el = species_->selectedAtoms()->item->element();
+// // 			bool same = true;
+// // 			for (RefListItem<SpeciesAtom,int>* ri = species_->selectedAtoms(); ri != NULL; ri = ri->next)
+// // 			{
+// // 				if (ri->item->element() != el)
+// // 				{
+// // 					same = false;
+// // 					break;
+// // 				}
+// // 			}
+// 
+// 			// If all Atoms in the selection are *not* the same element, then disable the SetIsotope menu and the SelectSame action
+// // 			QMenu* typeMenu = mainWindow_->ui.menuSelectionSetAtomType;
+// // 			typeMenu->setEnabled(same);
+// // 			mainWindow_->ui.actionSelectionSelectSame->setEnabled(same);
+// 			// TODO TODO TODO
+// // 			if (same)
+// // 			{
+// // 				Dnchar text;
+// // 				QAction* action;
+// // 				// Elements are all the same, so present list of available AtomTypes in menu
+// // 				typeMenu->setEnabled(true);
+// // 				typeMenu->clear();
+// // 				int count = 0;
+// // 				for (AtomType* at = mainWindow_->Dissolve().atomTypes(); at != NULL; at = at->next)
+// // 				{
+// // 					if (at->element() != el) continue;
+// // 					action = typeMenu->addAction(at->name());
+// // 					QObject::connect(action, SIGNAL(triggered(bool)), mainWindow_, SLOT(selectionAtomTypeChanged(bool)));
+// // 					++count;
+// // 				}
+// // 				
+// // 				// Add dummy entry if there were no available AtomTypes
+// // 				if (count == 0)
+// // 				{
+// // 					action = typeMenu->addAction("No AtomTypes Available");
+// // 					action->setEnabled(false);
+// // 				}
+// // 			}
+// // 			
+// 			// Ready - execute the popup menu
+// // 			if (atomContextMenu_) atomContextMenu_->exec(event->globalPos());
+// 		}

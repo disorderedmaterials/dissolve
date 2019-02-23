@@ -24,16 +24,57 @@
 // Return current interaction mode
 int SpeciesViewer::interactionMode() const
 {
+	return interactionMode_;
 }
 
 // Start interaction at the specified screen coordinates
 void SpeciesViewer::startInteraction(Qt::KeyboardModifiers modifiers)
 {
+	switch (interactionMode_)
+	{
+		// Default Interaction Mode
+		case (SpeciesViewer::DefaultInteraction):
+			// This is the standard mode, giving access to view manipulation
+			if (buttonState_.testFlag(Qt::LeftButton)) interactionMode_ = SpeciesViewer::SelectAreaInteraction;
+			else if (buttonState_.testFlag(Qt::RightButton)) interactionMode_ = SpeciesViewer::RotateViewInteraction;
+			else if (buttonState_.testFlag(Qt::MiddleButton)) interactionMode_ = SpeciesViewer::TranslateViewInteraction;
+			break;
+		default:
+			break;
+	}
 }
 
 // End interaction at the specified screen coordinates
 void SpeciesViewer::endInteraction()
 {
+	// Finalise interaction type
+	switch (interactionMode_)
+	{
+		case (SpeciesViewer::SelectAreaInteraction):
+			// Check the pixel area of the clicked region and determine whether this was actually a targeted click rather than an area select
+			if ((rMouseDown_ - rMouseLast_).magnitude() < 9.0)
+			{
+				// Single, targetted click - atom under mouse?
+				// TODO
+			}
+			else
+			{
+				// Click-drag - area select
+			}
+			break;
+		case (SpeciesViewer::RotateViewInteraction):
+			// Nothing more to do - rotation matrix has already been modified
+			break;
+		case (SpeciesViewer::TranslateViewInteraction):
+			// Nothing more to do - translation has already been applied
+			break;
+		default:
+			printf("Internal Error: Don't know how to complete interaction mode %i\n", interactionMode_);
+			break;
+	}
+
+	// Reset (cancel) the interaction mode
+	cancelInteraction(); 
 }
 
 // Cancel current interaction

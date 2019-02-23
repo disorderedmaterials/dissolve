@@ -29,7 +29,11 @@ SpeciesViewer::SpeciesViewer(QWidget* parent) : BaseViewer(parent)
 	species_ = NULL;
 	drawStyle_ = SpeciesViewer::LineStyle;
 
-	view().setViewType(View::NormalView);
+	// Interaction
+	interactionMode_ = SpeciesViewer::DefaultInteraction;
+
+	// Set up the view
+	view_.setViewType(View::NormalView);
 }
 
 // Destructor
