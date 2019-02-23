@@ -84,7 +84,7 @@ class DataViewer : public BaseViewer
 		nInteractionModes
 	};
 
-	protected:
+	private:
 	// Current interaction mode
 	InteractionMode interactionMode_;
 
