@@ -33,6 +33,7 @@ void BaseViewer::mousePressEvent(QMouseEvent* event)
 	// Store the current button state and mouse position (with inverted y coordinate)
 	buttonState_ = event->buttons();
 	rMouseDown_.set(event->x(), contextHeight_ - event->y(), 0.0);
+	rMouseLast_ = rMouseDown_;
 
 	// If a 2D view, store the clicked local coordinate
 	if (view_.isFlatView()) clicked2DAxesCoordinates_ = screenTo2DAxes(event->x(), contextHeight_ - event->y());
