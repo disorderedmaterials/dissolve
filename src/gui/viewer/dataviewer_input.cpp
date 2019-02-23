@@ -26,45 +26,49 @@
 // Mouse Moved
 void DataViewer::mouseMoved(int dx, int dy, Qt::KeyboardModifiers modifiers)
 {
+	// If we are not actually interacting with the view, return now
+	if (!interacting())
+	{
+		emit(currentCoordinateChanged());
+
+		return;
+	}
+
 	bool refresh = false;
 
-	if (buttonState_&Qt::LeftButton)
+	// What we do here depends on the current mode
+	switch (interactionMode())
 	{
-		// What we do here depends on the current mode, and whether interaction has started
-		switch (interactionMode())
-		{
-			case (DataViewer::ViewInteraction):
-				if (interacting()) refresh = true;
-				break;
-			default:
-				break;
-		}
-	}
-	else if (buttonState_&Qt::RightButton)
-	{
-		// View manipulation
-		if (modifiers&Qt::ShiftModifier)
-		{
-		}
-		else if (modifiers&Qt::ControlModifier)
-		{
-		}
-		else 
-		{
-			view_.rotateView(dy/2.0, dx/2.0);
+		case (DataViewer::ZoomToAreaInteraction):
+			// No action to take - the selection box will be drawn from the clicked and current positions (already stored)
 			refresh = true;
-		}
+			break;
+		case (DataViewer::RotateViewInteraction):
+			// Rotate view
+			if (modifiers.testFlag(Qt::ShiftModifier))
+			{
+			}
+			else if (modifiers.testFlag(Qt::ControlModifier))
+			{
+			}
+			else 
+			{
+				view_.rotateView(dy/2.0, dx/2.0);
+				refresh = true;
+			}
+			break;
+		case (DataViewer::TranslateViewInteraction):
+			// If this is a flat view, shift the axis limits rather than translating the view
+			if (view_.isFlatView()) view_.shiftFlatAxisLimits(dx, dy);
+			else view_.translateView(dx/15.0, dy/15.0, 0.0);
+			refresh = true;
+			break;
+		default:
+			break;
 	}
-	else if (buttonState_&Qt::MidButton)
-	{
-		// If this is a flat view, shift the axis limits rather than the view
-		if (view_.isFlatView()) view_.shiftFlatAxisLimits(dx, -dy);
-		else view_.translateView(dx/15.0, -dy/15.0, 0.0);
-		refresh = true;
-	}
-	
-	// Update interaction position
-	if (updateInteractionPosition(rMouseLast_.x, contextHeight_-rMouseLast_.y)) refresh = true;
+
+	// Update interaction position REMOVE
+// 	if (updateInteractionPosition(rMouseLast_.x, contextHeight_-rMouseLast_.y)) refresh = true;
 
 	// Notify any interested widgets that our current coordinate has changed
 	emit(currentCoordinateChanged());

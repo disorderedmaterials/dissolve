@@ -25,22 +25,6 @@
  * Public Functions
  */
 
-// Set interaction mode and axis
-void DataViewer::setInteractionMode(DataViewer::InteractionMode mode, int axis)
-{
-	// Cancel any previous interaction mode...
-	cancelInteraction();
-
-	interactionMode_ = mode;
-	interactionAxis_ = axis;
-
-	// Generate interaction primitives
-	view_.updateInteractionPrimitive(axis);
-
-	// Update GUI
-	postRedisplay();
-}
-
 // Return interaction mode
 DataViewer::InteractionMode DataViewer::interactionMode() const
 {
@@ -56,23 +40,35 @@ int DataViewer::interactionAxis() const
 // Cancel current interaction
 void DataViewer::cancelInteraction()
 {
-	// Cancel interaction type
+	// Perform any actions necessary to properly cancel the interaction
 	switch (interactionMode_)
 	{
-		case (DataViewer::ViewInteraction):
-		case (DataViewer::ZoomInteraction):
-			break;
 		default:
-			printf("Internal Error: Don't know how to cancel interaction mode %i\n", interactionMode_);
 			break;
 	}
+
+	// Reset back to DefaultInteraction
+	interactionMode_ = DataViewer::DefaultInteraction;
 }
 
 // Start interaction at the specified screen coordinates
 void DataViewer::startInteraction(Qt::KeyboardModifiers modifiers)
 {
-	// Calculate axis value at start of interaction
-	if (interactionAxis_ != -1) clickedInteractionValue_ = view_.screenToAxis(interactionAxis_, rMouseDown_.x, rMouseDown_.y, true);
+	switch (interactionMode_)
+	{
+		// Default Interaction Mode
+		case (DataViewer::DefaultInteraction):
+			// This is the standard mode, giving access to view manipulation
+			if (buttonState_.testFlag(Qt::LeftButton)) interactionMode_ = DataViewer::ZoomToAreaInteraction;
+			else if (buttonState_.testFlag(Qt::RightButton)) interactionMode_ = DataViewer::RotateViewInteraction;
+			else if (buttonState_.testFlag(Qt::MiddleButton)) interactionMode_ = DataViewer::TranslateViewInteraction;
+			break;
+		default:
+			break;
+	}
+
+	// Calculate axis value at start of interaction REMOVE
+// 	if (interactionAxis_ != -1) clickedInteractionValue_ = view_.screenToAxis(interactionAxis_, rMouseDown_.x, rMouseDown_.y, true);
 }
 
 // Update current interaction position / coordinate, returning if a refresh of the display is necessary
@@ -107,11 +103,11 @@ void DataViewer::endInteraction()
 	// Finalise interaction type
 	switch (interactionMode_)
 	{
-		case (DataViewer::ViewInteraction):
-			// Check the pixel area of the clicked region and determine whether this was a targeted click or a click-drag
+		case (DataViewer::ZoomToAreaInteraction):
+			// Check the pixel area of the clicked region and determine whether this was actually a targeted click rather than an area select
 			if ((rMouseDown_ - rMouseLast_).magnitude() < 9.0)
 			{
-				// Get the clicked object (if interaction mode is ViewInteraction)
+				// Single, targetted click - get the clicked object
 				setQueryCoordinates(rMouseLast_.x, rMouseLast_.y);
 				// TODO Offscreen paint instead of repaint
 				repaint();
@@ -121,7 +117,6 @@ void DataViewer::endInteraction()
 			else
 			{
 				// Click-drag
-				// Single, targetted click
 				if (view_.isFlatView())
 				{
 					// Make sure any autofollowing is turned off...
@@ -135,22 +130,31 @@ void DataViewer::endInteraction()
 				}
 			}
 			break;
-		case (DataViewer::ZoomInteraction):
-			// None : Zoom to defined region
-			newMin = std::min(clickedInteractionValue_, currentInteractionValue_);
-			newMax = std::max(clickedInteractionValue_, currentInteractionValue_);
-			if ((newMax-newMin) > 1.0e-10)
-			{
-				view_.axes().setMin(interactionAxis_, newMin);
-				view_.axes().setMax(interactionAxis_, newMax);
-// 				axesWindow_.updateControls();
-			}
-			postRedisplay();
+		case (DataViewer::RotateViewInteraction):
+			// Nothing more to do - rotation matrix has already been modified
 			break;
+		case (DataViewer::TranslateViewInteraction):
+			// Nothing more to do - translation has already been applied
+			break;
+// 		case (DataViewer::ZoomInteraction):
+// 			// None : Zoom to defined region
+// 			newMin = std::min(clickedInteractionValue_, currentInteractionValue_);
+// 			newMax = std::max(clickedInteractionValue_, currentInteractionValue_);
+// 			if ((newMax-newMin) > 1.0e-10)
+// 			{
+// 				view_.axes().setMin(interactionAxis_, newMin);
+// 				view_.axes().setMax(interactionAxis_, newMax);
+// // 				axesWindow_.updateControls();
+// 			}
+// 			postRedisplay();
+// 			break;
 		default:
 			printf("Internal Error: Don't know how to complete interaction mode %i\n", interactionMode_);
 			break;
 	}
+
+	// Reset (cancel) the interaction mode
+	cancelInteraction(); 
 }
 
 // Return clicked interaction value on axis

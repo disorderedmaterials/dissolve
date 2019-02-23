@@ -76,8 +76,10 @@ class DataViewer : public BaseViewer
 	// Interaction Mode enum
 	enum InteractionMode
 	{
-		ViewInteraction,
-		ZoomInteraction,
+		DefaultInteraction,
+		ZoomToAreaInteraction,
+		TranslateViewInteraction,
+		RotateViewInteraction,
 		nInteractionModes
 	};
 
@@ -92,8 +94,6 @@ class DataViewer : public BaseViewer
 	double currentInteractionValue_;
 
 	public:
-	// Set interaction mode and target axis
-	void setInteractionMode(InteractionMode mode, int axis);
 	// Return interaction mode
 	InteractionMode interactionMode() const;
 	// Return current axis target for interaction
