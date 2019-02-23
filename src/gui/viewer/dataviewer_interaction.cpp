@@ -106,9 +106,6 @@ void DataViewer::startInteraction(int mouseX, int mouseY, Qt::KeyboardModifiers 
 	// Calculate axis value at start of interaction
 	if (interactionAxis_ != -1) clickedInteractionValue_ = view_.screenToAxis(interactionAxis_, mouseX, mouseY, true);
 
-	// Store keyboard modifiers
-	clickedInteractionModifiers_ = modifiers;
-
 	interactionStarted_ = true;
 }
 
@@ -159,7 +156,6 @@ void DataViewer::endInteraction(int mouseX, int mouseY)
 				repaint();
 				clickedObject = objectAtQueryCoordinates();
 				clickedObjectInfo = infoAtQueryCoordinates();
-				if (clickedObject == RenderableObject) highlightedRenderable_ = renderable(clickedObjectInfo);
 			}
 			else
 			{
@@ -176,13 +172,6 @@ void DataViewer::endInteraction(int mouseX, int mouseY)
 				else
 				{
 				}
-			}
-
-			if (clickedObject == RenderableObject)
-			{
-				highlightedRenderable_ = NULL;
-				Renderable* rend = renderable(clickedObjectInfo);
-				if (rend) currentRenderable_ = rend;
 			}
 			break;
 		case (DataViewer::ZoomInteraction):

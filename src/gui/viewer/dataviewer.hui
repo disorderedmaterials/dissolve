@@ -94,12 +94,8 @@ class DataViewer : public BaseViewer
 	bool interactionStarted_;
 	// Starting (clicked) value when interacting
 	double clickedInteractionValue_;
-	// Starting (clicked) keyboard modifiers when interacting
-	Qt::KeyboardModifiers clickedInteractionModifiers_;
 	// Current interaction position on axis
 	double currentInteractionValue_;
-	// Data to highlight in this pass
-	Renderable* highlightedRenderable_;
 	// Clicked local coordinate under mouse in 2D view
 	Vec3<double> rClickedLocal_;
 	// Current local coordinate under mouse in 2D view

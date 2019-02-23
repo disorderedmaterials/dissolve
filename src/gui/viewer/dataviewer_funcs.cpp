@@ -31,7 +31,6 @@ DataViewer::DataViewer(QWidget* parent) : BaseViewer(parent)
 	interactionStarted_ = false;
 	clickedInteractionValue_ = 0.0;
 	currentInteractionValue_ = 0.0;
-	highlightedRenderable_ = NULL;
 }
 
 // Destructor

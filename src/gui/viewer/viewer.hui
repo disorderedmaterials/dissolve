@@ -56,8 +56,6 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	protected:
 	// List of renderables to display
 	List<Renderable> renderables_;
-	// Currently-selected renderable (if any)
-	Renderable* currentRenderable_;
 	// View for renderable data
 	View view_;
 
