@@ -87,11 +87,9 @@ class Axes
 	Vec3<double> positionFractional_[3];
 	// Autoscaling method employed for each axis
 	Axes::AutoScaleMethod autoScale_[3];
-	// Version at which coordinate extremes/centre were last generated
-	int coordinateVersion_;
 
 	private:
-	// Recalculate centre coordinate of axes
+	// Recalculate minimum, maximum, and centre coordinates of axes
 	void updateCoordinates();
 	// Clamp axis position and min/max to current limits
 	void clamp(int axis);
@@ -128,11 +126,11 @@ class Axes
 	// Set all axis limits at once
 	void expandLimits(bool noShrink);
 	// Return coordinate at centre of axes
-	Vec3<double> coordCentre();
+	Vec3<double> coordCentre() const;
 	// Return coordinate at minimum of specified axis
-	Vec3<double> coordMin(int axis);
+	Vec3<double> coordMin(int axis) const;
 	// Return coordinate at maximum of specified axis
-	Vec3<double> coordMax(int axis);
+	Vec3<double> coordMax(int axis) const;
 	// Set whether axis is inverted
 	void setInverted(int axis, bool b);
 	// Return whether axis is inverted

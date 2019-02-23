@@ -53,7 +53,6 @@ Axes::Axes(View& parent, FontInstance& fontInstance) : parentView_(parent), font
 	autoScale_[0] = Axes::NoAutoScale;
 	autoScale_[1] = Axes::NoAutoScale;
 	autoScale_[2] = Axes::NoAutoScale;
-	coordinateVersion_ = -1;
 
 	// Ticks
 	tickDirection_[0].set(0.0, -1.0, 0.0);
@@ -136,14 +135,9 @@ const char* Axes::autoScaleMethod(Axes::AutoScaleMethod scale)
 	return AutoScaleKeywords[scale];
 }
 
-// Recalculate centre coordinate of axes
+// Recalculate minimum, maximum, and centre coordinates of axes
 void Axes::updateCoordinates()
 {
-	// Check coordinate version
-	if (coordinateVersion_ == version_) return;
-
-	double position;
-	
 	// Loop over axes
 	for (int axis=0; axis < 3; ++axis)
 	{
@@ -155,7 +149,7 @@ void Axes::updateCoordinates()
 		for (int n=0; n<3; ++n)
 		{
 			// Get axis position
-			position = (positionIsFractional_[axis] ? positionFractional_[axis][n]*(max_[n]-min_[n])+min_[n] : positionReal_[axis][n]);
+			double position = (positionIsFractional_[axis] ? positionFractional_[axis][n]*(max_[n]-min_[n])+min_[n] : positionReal_[axis][n]);
 			if (logarithmic_[n]) coordMin_[axis].set(n, (inverted_[n] ? log10(max_[n]/position) : log10(position)) * stretch_[n]);
 			else coordMin_[axis].set(n, (inverted_[n] ? max_[n] - position +min_[n] : position) * stretch_[n]);
 		}
@@ -173,9 +167,6 @@ void Axes::updateCoordinates()
 			coordMax_[axis].set(axis, (inverted_[axis] ? min_[axis] : max_[axis]) * stretch_[axis]);
 		}
 	}
-
-	// Set new version
-	coordinateVersion_ = version_;
 }
 
 // Clamp axis position and min/max to current limits if necessary
@@ -211,6 +202,8 @@ void Axes::setMin(int axis, double value)
 {
 	min_[axis] = value;
 
+	updateCoordinates();
+
 	++version_;
 }
 
@@ -224,6 +217,8 @@ double Axes::min(int axis) const
 void Axes::setMax(int axis, double value)
 {
 	max_[axis] = value;
+
+	updateCoordinates();
 
 	++version_;
 }
@@ -239,6 +234,8 @@ void Axes::setRange(int axis, double minValue, double maxValue)
 {
 	min_[axis] = minValue;
 	max_[axis] = maxValue;
+
+	updateCoordinates();
 
 	++version_;
 }
@@ -315,6 +312,8 @@ void Axes::setToLimit(int axis, bool minLim)
 	if (minLim) min_[axis] = limitMin_[axis];
 	else max_[axis] = limitMax_[axis];
 
+	updateCoordinates();
+
 	++version_;
 }
 
@@ -327,6 +326,10 @@ void Axes::setLimitMin(int axis, double limit)
 	else if (autoScale_[axis] == Axes::FullAutoScale) setToLimit(axis, true);
 
 	clamp(axis);
+
+	updateCoordinates();
+
+	++version_;
 }
 
 // Return axis minimum limit for specified axis
@@ -344,6 +347,10 @@ void Axes::setLimitMax(int axis, double limit)
 	else if (autoScale_[axis] == Axes::FullAutoScale) setToLimit(axis, false);
 
 	clamp(axis);
+
+	updateCoordinates();
+
+	++version_;
 }
 
 // Return axis maximum limit for specified axis
@@ -363,26 +370,20 @@ void Axes::expandLimits(bool noShrink)
 }
 
 // Return coordinate at centre of current axes
-Vec3<double> Axes::coordCentre()
+Vec3<double> Axes::coordCentre() const
 {
-	updateCoordinates();
-
 	return coordCentre_;
 }
 
 // Return coordinate at minimum of specified axis
-Vec3<double> Axes::coordMin(int axis)
+Vec3<double> Axes::coordMin(int axis) const
 {
-	updateCoordinates();
-
 	return coordMin_[axis];
 }
 
 // Return coordinate at maximum of specified axis
-Vec3<double> Axes::coordMax(int axis)
+Vec3<double> Axes::coordMax(int axis) const
 {
-	updateCoordinates();
-
 	return coordMax_[axis];
 }
 
@@ -390,6 +391,8 @@ Vec3<double> Axes::coordMax(int axis)
 void Axes::setInverted(int axis, bool b)
 {
 	inverted_[axis] = b;
+
+	updateCoordinates();
 
 	++version_;
 }
@@ -410,6 +413,8 @@ void Axes::setLogarithmic(int axis, bool b)
 	
 	// Update and clamp axis values according to data
 	clamp(axis);
+
+	updateCoordinates();
 
 	++version_;
 
@@ -445,6 +450,8 @@ void Axes::setStretch(int axis, double value)
 {
 	stretch_[axis] = value;
 
+	updateCoordinates();
+
 	++version_;
 }
 
@@ -473,6 +480,8 @@ void Axes::setPositionReal(int axis, int dir, double value)
 {
 	positionReal_[axis].set(dir, value);
 
+	updateCoordinates();
+
 	++version_;
 }
 
@@ -497,6 +506,8 @@ void Axes::setPositionFractional(int axis, int dir, double value)
 	else if (value < 0.0) value = 0.0;
 
 	positionFractional_[axis].set(dir, value);
+
+	updateCoordinates();
 
 	++version_;
 }
