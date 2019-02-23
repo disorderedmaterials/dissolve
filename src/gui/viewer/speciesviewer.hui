@@ -122,8 +122,6 @@ class SpeciesViewer : public BaseViewer
 	};
 	
 	private:
-	// Selection box (if any)
-	QRect selectionBox_;
 	// Style in which to draw source
 	SpeciesViewer::DrawStyle drawStyle_;
 
