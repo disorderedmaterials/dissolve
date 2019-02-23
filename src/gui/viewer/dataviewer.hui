@@ -80,36 +80,23 @@ class DataViewer : public BaseViewer
 		ZoomToAreaInteraction,
 		TranslateViewInteraction,
 		RotateViewInteraction,
+		ZoomXRangeInteraction,
 		nInteractionModes
 	};
 
 	protected:
 	// Current interaction mode
 	InteractionMode interactionMode_;
-	// Current axis target for interaction
-	int interactionAxis_;
-	// Starting (clicked) value when interacting
-	double clickedInteractionValue_;
-	// Current interaction position on axis
-	double currentInteractionValue_;
 
 	public:
 	// Return interaction mode
 	InteractionMode interactionMode() const;
-	// Return current axis target for interaction
-	int interactionAxis() const;
 	// Cancel current interaction
 	void cancelInteraction();
 	// Start interaction
 	void startInteraction(Qt::KeyboardModifiers modifiers);
-	// Update current interaction value
-	bool updateInteractionPosition(int mouseX, int mouseY);
 	// End interaction
 	void endInteraction();
-	// Return clicked interaction value on axis
-	double clickedInteractionValue();
-	// Return current interaction value on axis
-	double currentInteractionValue();
 	// Return clicked interaction coordinate on axis
 	double clickedInteractionCoordinate();
 	// Return current interaction coordinate on axis

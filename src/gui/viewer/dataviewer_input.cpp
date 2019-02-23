@@ -63,12 +63,13 @@ void DataViewer::mouseMoved(int dx, int dy, Qt::KeyboardModifiers modifiers)
 			else view_.translateView(dx/15.0, dy/15.0, 0.0);
 			refresh = true;
 			break;
+		case (DataViewer::ZoomXRangeInteraction):
+			// No action to take - the range will be drawn from the clicked and current positionss (already stored)
+			refresh = true;
+			break;
 		default:
 			break;
 	}
-
-	// Update interaction position REMOVE
-// 	if (updateInteractionPosition(rMouseLast_.x, contextHeight_-rMouseLast_.y)) refresh = true;
 
 	// Notify any interested widgets that our current coordinate has changed
 	emit(currentCoordinateChanged());

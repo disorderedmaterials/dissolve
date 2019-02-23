@@ -136,3 +136,27 @@ void DataViewer::render2DOverlay()
 			break;
 	}
 }
+
+// // Grab axes, and knock out values in the supplied vectors which correspond to the activated axis
+// Vec3<double> axisMinA, axisMinB, axisMaxA, axisMaxB;
+// int axis = interactionMode_ - DataViewer::ZoomXRangeInteraction;
+// axisMinA[(axis+1)%3] = view_.axes().coordMin((axis+1)%3)[(axis+1)%3];
+// axisMaxA[(axis+1)%3] = view_.axes().coordMax((axis+1)%3)[(axis+1)%3];
+// axisMinB[(axis+2)%3] = view_.axes().coordMin((axis+2)%3)[(axis+2)%3];
+// axisMaxB[(axis+2)%3] = view_.axes().coordMax((axis+2)%3)[(axis+2)%3];
+// axisMinA[axis] = 0.0;
+// axisMaxA[axis] = 0.0;
+// axisMinB[axis] = 0.0;
+// axisMaxB[axis] = 0.0;
+//
+// // Create 'bounding box' for slice primitive
+// Vec3<double> normal(0.0, 0.0, 1.0);
+//
+// interactionBoxPrimitive_.defineVertex(axisMinA + axisMinB, normal);
+// interactionBoxPrimitive_.defineVertex(axisMinA + axisMaxB, normal);
+// interactionBoxPrimitive_.defineVertex(axisMaxA + axisMaxB, normal);
+// interactionBoxPrimitive_.defineVertex(axisMaxA + axisMinB, normal);
+// interactionBoxPrimitive_.defineIndices(0,1);
+// interactionBoxPrimitive_.defineIndices(1,2);
+// interactionBoxPrimitive_.defineIndices(2,3);
+// interactionBoxPrimitive_.defineIndices(3,0);

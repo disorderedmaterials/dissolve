@@ -31,12 +31,6 @@ DataViewer::InteractionMode DataViewer::interactionMode() const
 	return interactionMode_;
 }
 
-// Return current axis target for interaction
-int DataViewer::interactionAxis() const
-{
-	return interactionAxis_;
-}
-
 // Cancel current interaction
 void DataViewer::cancelInteraction()
 {
@@ -66,31 +60,6 @@ void DataViewer::startInteraction(Qt::KeyboardModifiers modifiers)
 		default:
 			break;
 	}
-
-	// Calculate axis value at start of interaction REMOVE
-// 	if (interactionAxis_ != -1) clickedInteractionValue_ = view_.screenToAxis(interactionAxis_, rMouseDown_.x, rMouseDown_.y, true);
-}
-
-// Update current interaction position / coordinate, returning if a refresh of the display is necessary
-bool DataViewer::updateInteractionPosition(int mouseX, int mouseY)
-{
-	bool refresh = false;
-
-	// Are we interacting with an axis?
-	if (interactionAxis_ != -1)
-	{
-		// Calculate axis value
-		currentInteractionValue_ = view_.screenToAxis(interactionAxis_, mouseX, mouseY, true);
-
-		refresh = true;
-	}
-	else
-	{
-		clickedInteractionValue_ = 0.0;
-		currentInteractionValue_ = 0.0;
-	}
-
-	return refresh;
 }
 
 // End interaction at the specified screen coordinates
@@ -98,7 +67,7 @@ void DataViewer::endInteraction()
 {
 	ViewerObject clickedObject = NoObject;
 	CharString clickedObjectInfo;
-	double newMin, newMax;
+	double rangeStart, rangeEnd;
 
 	// Finalise interaction type
 	switch (interactionMode_)
@@ -136,18 +105,16 @@ void DataViewer::endInteraction()
 		case (DataViewer::TranslateViewInteraction):
 			// Nothing more to do - translation has already been applied
 			break;
-// 		case (DataViewer::ZoomInteraction):
-// 			// None : Zoom to defined region
-// 			newMin = std::min(clickedInteractionValue_, currentInteractionValue_);
-// 			newMax = std::max(clickedInteractionValue_, currentInteractionValue_);
-// 			if ((newMax-newMin) > 1.0e-10)
-// 			{
-// 				view_.axes().setMin(interactionAxis_, newMin);
-// 				view_.axes().setMax(interactionAxis_, newMax);
-// // 				axesWindow_.updateControls();
-// 			}
-// 			postRedisplay();
-// 			break;
+		case (DataViewer::ZoomXRangeInteraction):
+			// Zoom to defined X range
+			rangeStart = view_.screenToAxis(0, rMouseDown_.x, rMouseDown_.y, true);
+			rangeEnd = view_.screenToAxis(0, rMouseLast_.x, rMouseLast_.y, true);
+			if (fabs(rangeStart-rangeEnd) > 1.0e-10)
+			{
+				view_.axes().setMin(0, std::min(rangeStart, rangeEnd));
+				view_.axes().setMax(0, std::max(rangeStart, rangeEnd));
+			}
+			break;
 		default:
 			printf("Internal Error: Don't know how to complete interaction mode %i\n", interactionMode_);
 			break;
@@ -156,37 +123,24 @@ void DataViewer::endInteraction()
 	// Reset (cancel) the interaction mode
 	cancelInteraction(); 
 }
-
-// Return clicked interaction value on axis
-double DataViewer::clickedInteractionValue()
-{
-	return clickedInteractionValue_;
-}
-
-// Return current interaction value on axis
-double DataViewer::currentInteractionValue()
-{
-	return currentInteractionValue_;
-}
-
-// Return clicked interaction coordinate on axis
-double DataViewer::clickedInteractionCoordinate()
-{
-	// Check for valid interaction axis
-	if (interactionAxis_ == -1) return 0.0;
-
-	Axes& axes = view_.axes();
-	if (axes.logarithmic(interactionAxis_)) return (axes.inverted(interactionAxis_) ? log10(axes.max(interactionAxis_)/clickedInteractionValue_) : log10(clickedInteractionValue_));
-	else return (axes.inverted(interactionAxis_) ? axes.max(interactionAxis_) - clickedInteractionValue_ : clickedInteractionValue_);
-}
-
-// Return current interaction coordinate on axis
-double DataViewer::currentInteractionCoordinate()
-{
-	// Check for valid interaction axis
-	if (interactionAxis_ == -1) return 0.0;
-
-	Axes& axes = view_.axes();
-	if (axes.logarithmic(interactionAxis_)) return (axes.inverted(interactionAxis_) ? log10(axes.max(interactionAxis_)/currentInteractionValue_) : log10(currentInteractionValue_));
-	else return (axes.inverted(interactionAxis_) ? axes.max(interactionAxis_) - currentInteractionValue_ : currentInteractionValue_);
-}
+// // Return clicked interaction coordinate on axis
+// double DataViewer::clickedInteractionCoordinate()
+// {
+// 	// Check for valid interaction axis
+// 	if (interactionAxis_ == -1) return 0.0;
+// 
+// 	Axes& axes = view_.axes();
+// 	if (axes.logarithmic(interactionAxis_)) return (axes.inverted(interactionAxis_) ? log10(axes.max(interactionAxis_)/clickedInteractionValue_) : log10(clickedInteractionValue_));
+// 	else return (axes.inverted(interactionAxis_) ? axes.max(interactionAxis_) - clickedInteractionValue_ : clickedInteractionValue_);
+// }
+// 
+// // Return current interaction coordinate on axis
+// double DataViewer::currentInteractionCoordinate()
+// {
+// 	// Check for valid interaction axis
+// 	if (interactionAxis_ == -1) return 0.0;
+// 
+// 	Axes& axes = view_.axes();
+// 	if (axes.logarithmic(interactionAxis_)) return (axes.inverted(interactionAxis_) ? log10(axes.max(interactionAxis_)/currentInteractionValue_) : log10(currentInteractionValue_));
+// 	else return (axes.inverted(interactionAxis_) ? axes.max(interactionAxis_) - currentInteractionValue_ : currentInteractionValue_);
+// }
