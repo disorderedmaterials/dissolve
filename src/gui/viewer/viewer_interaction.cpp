@@ -21,12 +21,52 @@
 
 #include "gui/viewer/viewer.hui"
 
-// Start interaction at the specified screen coordinates
-void BaseViewer::startInteraction(int mouseX, int mouseY, Qt::KeyboardModifiers modifiers)
+/*
+ * Protected Virtuals
+ */
+
+// Start interaction
+void BaseViewer::startInteraction(Qt::KeyboardModifiers modifiers)
 {
 }
 
-// End interaction at the specified screen coordinates
-void BaseViewer::endInteraction(int mouseX, int mouseY)
+// End interaction
+void BaseViewer::endInteraction()
 {
+}
+
+/*
+ * Public Functions
+ */
+
+// Return whether the viewer is currently being interacted with
+bool BaseViewer::interacting() const
+{
+	return interacting_;
+}
+
+// Return clicked coordinate (in Axes frame) in 2D view
+Vec3<double> BaseViewer::clicked2DAxesCoordinates() const
+{
+	return clicked2DAxesCoordinates_;
+}
+
+// Return current coordinate (in Axes frame) under mouse in 2D view
+Vec3<double> BaseViewer::current2DAxesCoordinates() const
+{
+	return current2DAxesCoordinates_;
+}
+
+// Calculate 2D Axes coordinate from screen coordinates
+Vec3<double> BaseViewer::screenTo2DAxes(int mouseX, int mouseY)
+{
+	// Must be a flat view in order to return 2D local coordinates
+	if (!view_.isFlatView()) return Vec3<double>();
+
+	Vec3<double> result;
+	if (view_.viewType() == View::FlatXYView) result.set(view_.screenToAxis(0, mouseX, mouseY, false), view_.screenToAxis(1, mouseX, mouseY, false), 0.0);
+	else if (view_.viewType() == View::FlatXZView) result.set(view_.screenToAxis(0, mouseX, mouseY, false), 0.0, view_.screenToAxis(2, mouseX, mouseY, false));
+	else if (view_.viewType() == View::FlatZYView) result.set(0.0, view_.screenToAxis(1, mouseX, mouseY, false), view_.screenToAxis(2, mouseX, mouseY, false));
+
+	return result;
 }

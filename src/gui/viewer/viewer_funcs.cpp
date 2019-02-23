@@ -32,6 +32,9 @@ BaseViewer::BaseViewer(QWidget* parent) : QOpenGLWidget(parent), view_(renderabl
 	drawing_ = false;
 	renderingOffScreen_ = false;
 
+	// Interaction
+	interacting_ = false;
+
 	// Query
 	objectQueryX_ = -1;
 	objectQueryY_ = -1;

@@ -119,17 +119,17 @@ void DataViewer::render2DOverlay()
 	if (interactionMode() == ViewInteraction)
 	{
 		// Draw selection box, if the interaction has started
-		if (interactionStarted())
+		if (interacting())
 		{
 			glColor3d(0.0, 0.0, 0.0);
 			glLineWidth(1.0);
 			glEnable(GL_LINE_STIPPLE);
 			glLineStipple(1, 0xf0f0);
 			glBegin(GL_LINE_LOOP);
-			glVertex2d(rMouseDown_.x, contextHeight_-rMouseDown_.y);
-			glVertex2d(rMouseLast_.x, contextHeight_-rMouseDown_.y);
-			glVertex2d(rMouseLast_.x, contextHeight_-rMouseLast_.y);
-			glVertex2d(rMouseDown_.x, contextHeight_-rMouseLast_.y);
+			glVertex2d(rMouseDown_.x, rMouseDown_.y);
+			glVertex2d(rMouseLast_.x, rMouseDown_.y);
+			glVertex2d(rMouseLast_.x, rMouseLast_.y);
+			glVertex2d(rMouseDown_.x, rMouseLast_.y);
 			glEnd();
 			glDisable(GL_LINE_STIPPLE);
 		}

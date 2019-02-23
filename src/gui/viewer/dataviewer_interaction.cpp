@@ -76,12 +76,6 @@ int DataViewer::interactionAxis() const
 	return interactionAxis_;
 }
 
-// Return whether interaction has started (i.e. mouse is down)
-bool DataViewer::interactionStarted() const
-{
-	return interactionStarted_;
-}
-
 // Cancel current interaction
 void DataViewer::cancelInteraction()
 {
@@ -98,24 +92,16 @@ void DataViewer::cancelInteraction()
 }
 
 // Start interaction at the specified screen coordinates
-void DataViewer::startInteraction(int mouseX, int mouseY, Qt::KeyboardModifiers modifiers)
+void DataViewer::startInteraction(Qt::KeyboardModifiers modifiers)
 {
-	// If a 2D view, store the clicked local coordinate
-	if (view_.isFlatView()) rClickedLocal_ = screenToLocal(mouseX, mouseY);
-
 	// Calculate axis value at start of interaction
-	if (interactionAxis_ != -1) clickedInteractionValue_ = view_.screenToAxis(interactionAxis_, mouseX, mouseY, true);
-
-	interactionStarted_ = true;
+	if (interactionAxis_ != -1) clickedInteractionValue_ = view_.screenToAxis(interactionAxis_, rMouseDown_.x, rMouseDown_.y, true);
 }
 
 // Update current interaction position / coordinate, returning if a refresh of the display is necessary
 bool DataViewer::updateInteractionPosition(int mouseX, int mouseY)
 {
 	bool refresh = false;
-
-	// If a 2D view, store the current local coordinate
-	if (view_.isFlatView()) rCurrentLocal_ = screenToLocal(mouseX, mouseY);
 
 	// Are we interacting with an axis?
 	if (interactionAxis_ != -1)
@@ -131,14 +117,11 @@ bool DataViewer::updateInteractionPosition(int mouseX, int mouseY)
 		currentInteractionValue_ = 0.0;
 	}
 
-	// Update the displayed coordinate box informstion
-// 	updateCoordinateInfo();
-
 	return refresh;
 }
 
 // End interaction at the specified screen coordinates
-void DataViewer::endInteraction(int mouseX, int mouseY)
+void DataViewer::endInteraction()
 {
 	ViewerObject clickedObject = NoObject;
 	CharString clickedObjectInfo;
@@ -152,7 +135,8 @@ void DataViewer::endInteraction(int mouseX, int mouseY)
 			if ((rMouseDown_ - rMouseLast_).magnitude() < 9.0)
 			{
 				// Get the clicked object (if interaction mode is ViewInteraction)
-				setQueryCoordinates(mouseX, mouseY);
+				setQueryCoordinates(rMouseLast_.x, rMouseLast_.y);
+				// TODO Offscreen paint instead of repaint
 				repaint();
 				clickedObject = objectAtQueryCoordinates();
 				clickedObjectInfo = infoAtQueryCoordinates();
@@ -167,7 +151,7 @@ void DataViewer::endInteraction(int mouseX, int mouseY)
 					view_.setAutoFollowType(View::NoAutoFollow);
 
 					// Zoom to the specified coordinate range
-					view_.zoomTo(rClickedLocal_, rCurrentLocal_);
+					view_.zoomTo(clicked2DAxesCoordinates(), current2DAxesCoordinates());
 				}
 				else
 				{
@@ -190,8 +174,6 @@ void DataViewer::endInteraction(int mouseX, int mouseY)
 			printf("Internal Error: Don't know how to complete interaction mode %i\n", interactionMode_);
 			break;
 	}
-
-	interactionStarted_ = false;
 }
 
 // Return clicked interaction value on axis
@@ -226,57 +208,4 @@ double DataViewer::currentInteractionCoordinate()
 	Axes& axes = view_.axes();
 	if (axes.logarithmic(interactionAxis_)) return (axes.inverted(interactionAxis_) ? log10(axes.max(interactionAxis_)/currentInteractionValue_) : log10(currentInteractionValue_));
 	else return (axes.inverted(interactionAxis_) ? axes.max(interactionAxis_) - currentInteractionValue_ : currentInteractionValue_);
-}
-
-// Perform relevant double-click action, occurring at specified coordinate
-void DataViewer::doubleClickInteraction(int mouseX, int mouseY)
-{
-	setQueryCoordinates(mouseX, mouseY);
-	repaint();
-
-	switch (objectAtQueryCoordinates())
-	{
-		case (NoObject):
-			break;
-		case (AxisLineObject):
-//			i = clickedObjectInfo_.asInteger();
-// 			axesWindow_.updateAndShow();
-// 			axesWindow_.ui.AxesTabs->setCurrentIndex(i);
-// 			axesWindow_.ui.
-			break;
-		case (AxisTickLabelObject):
-			break;
-		case (AxisTitleLabelObject):
-			break;
-		case (RenderableObject):
-			break;
-		case (GridLineMajorObject):
-			break;
-		case (GridLineMinorObject):
-			break;
-	}
-
-	// Reset clicked object info
-// 	clickedObject_ = NoObject;
-// 	clickedObjectInfo_.clear();
-}
-
-// Calculate local coordinate from supplied screen coordinates
-Vec3<double> DataViewer::screenToLocal(int mouseX, int mouseY)
-{
-	// Must be a flat view in order to return 2D local coordinates
-	if (!view_.isFlatView()) return Vec3<double>();
-
-	Vec3<double> result;
-	if (view_.viewType() == View::FlatXYView) result.set(view_.screenToAxis(0, mouseX, mouseY, false), view_.screenToAxis(1, mouseX, mouseY, false), 0.0);
-	else if (view_.viewType() == View::FlatXZView) result.set(view_.screenToAxis(0, mouseX, mouseY, false), 0.0, view_.screenToAxis(2, mouseX, mouseY, false));
-	else if (view_.viewType() == View::FlatZYView) result.set(0.0, view_.screenToAxis(1, mouseX, mouseY, false), view_.screenToAxis(2, mouseX, mouseY, false));
-
-	return result;
-}
-
-// Return current local coordinate under mouse in 2D view
-Vec3<double> DataViewer::rCurrentLocal() const
-{
-	return rCurrentLocal_;
 }

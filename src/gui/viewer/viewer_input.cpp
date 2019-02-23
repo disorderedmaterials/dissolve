@@ -30,33 +30,46 @@
 // Mouse press event
 void BaseViewer::mousePressEvent(QMouseEvent* event)
 {
-	// Store the current button state and mouse position
+	// Store the current button state and mouse position (with inverted y coordinate)
 	buttonState_ = event->buttons();
-	rMouseDown_.set(event->x(), event->y(), 0.0);
+	rMouseDown_.set(event->x(), contextHeight_ - event->y(), 0.0);
+
+	// If a 2D view, store the clicked local coordinate
+	if (view_.isFlatView()) clicked2DAxesCoordinates_ = screenTo2DAxes(event->x(), contextHeight_ - event->y());
+
+	interacting_ = true;
 
 	// Handle the event
-	startInteraction(rMouseDown_.x, contextHeight_-rMouseDown_.y, event->modifiers());
+	startInteraction(event->modifiers());
 }
 
 // Mouse release event
 void BaseViewer::mouseReleaseEvent(QMouseEvent* event)
 {
 	// Handle the event
-	endInteraction(rMouseLast_.x, contextHeight_-rMouseLast_.y);
+	endInteraction();
 
 	postRedisplay();
 
-	// Clear button state
+	// Clear button state and interaction flag
 	buttonState_ = 0;
+	interacting_ = false;
 }
 
 // Mouse move event
 void BaseViewer::mouseMoveEvent(QMouseEvent* event)
 {
-	// Handle the event
-	mouseMoved(event->x() - rMouseLast_.x, event->y() - rMouseLast_.y, event->modifiers());
+	const int dx = event->x() - rMouseLast_.x;
+	const int dy = (contextHeight_ - event->y()) - rMouseLast_.y;
 
-	rMouseLast_.set(event->x(), event->y(), 0.0);
+	// Store the new mouse coordinate with inverted y coordinate
+	rMouseLast_.set(event->x(), contextHeight_ - event->y(), 0.0);
+
+	// If a 2D view, store the current local Axes coordinate
+	if (view_.isFlatView()) current2DAxesCoordinates_ = screenTo2DAxes(rMouseLast_.x, rMouseLast_.y);
+
+	// Handle the event, passing the delta position
+	mouseMoved(dx, dy, event->modifiers());
 
 	setFocus();
 }
@@ -126,20 +139,4 @@ bool BaseViewer::keyPressed(int key, Qt::KeyboardModifiers modifiers)
 bool BaseViewer::keyReleased(int key, Qt::KeyboardModifiers modifiers)
 {
 	return false;
-}
-
-/*
- * Public Functions
- */
-
-// Return mouse coordinates at last mousedown event
-Vec3<int> BaseViewer::rMouseDown() const
-{
-	return rMouseDown_;
-}
-
-// Return mouse coordinates at last mousemove event
-Vec3<int> BaseViewer::rMouseLast() const
-{
-	return rMouseLast_;
 }

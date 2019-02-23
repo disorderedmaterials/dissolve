@@ -207,21 +207,33 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	// Key released
 	virtual bool keyReleased(int key, Qt::KeyboardModifiers modifiers);
 
-	public:
-	// Return mouse coordinates at last mousedown event
-	Vec3<int> rMouseDown() const;
-	// Return mouse coordinates at last mousemove event
-	Vec3<int> rMouseLast() const;
-
 
 	/*
 	 * Interaction
 	 */
+	private:
+	// Whether the viewer is currently being interacted with
+	bool interacting_;
+	// Clicked coordinates (in Axes frame) in 2D view
+	Vec3<double> clicked2DAxesCoordinates_;
+	// Current coordinates (in Axes frame) under mouse in 2D view
+	Vec3<double> current2DAxesCoordinates_;
+
 	protected:
-	// Start interaction at the specified screen coordinates
-	virtual void startInteraction(int mouseX, int mouseY, Qt::KeyboardModifiers modifiers);
-	// End interaction at the specified screen coordinates
-	virtual void endInteraction(int mouseX, int mouseY);
+	// Start interaction 
+	virtual void startInteraction(Qt::KeyboardModifiers modifiers);
+	// End interaction
+	virtual void endInteraction();
+
+	public:
+	// Return whether the viewer is currently being interacted with
+	bool interacting() const;
+	// Return clicked coordinates (in Axes frame) in 2D view
+	Vec3<double> clicked2DAxesCoordinates() const;
+	// Return current coordinates (in Axes frame) under mouse in 2D view
+	Vec3<double> current2DAxesCoordinates() const;
+	// Calculate 2D Axes coordinate from screen coordinates
+	Vec3<double> screenTo2DAxes(int mouseX, int mouseY);
 
 
 	/*

@@ -28,7 +28,6 @@ DataViewer::DataViewer(QWidget* parent) : BaseViewer(parent)
 	// Interaction
 	interactionMode_ = DataViewer::ViewInteraction;
 	interactionAxis_ = -1;
-	interactionStarted_ = false;
 	clickedInteractionValue_ = 0.0;
 	currentInteractionValue_ = 0.0;
 }

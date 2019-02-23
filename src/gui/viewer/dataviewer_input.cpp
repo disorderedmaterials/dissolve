@@ -34,7 +34,7 @@ void DataViewer::mouseMoved(int dx, int dy, Qt::KeyboardModifiers modifiers)
 		switch (interactionMode())
 		{
 			case (DataViewer::ViewInteraction):
-				if (interactionStarted()) refresh = true;
+				if (interacting()) refresh = true;
 				break;
 			default:
 				break;
@@ -88,8 +88,34 @@ void DataViewer::mouseWheeled(int delta)
 // Mouse double clicked
 void DataViewer::mouseDoubleClicked()
 {
-	printf("Mouse double-click event has occurred!\n");
-	doubleClickInteraction(rMouseLast_.x, height()-rMouseLast_.y);
+	setQueryCoordinates(rMouseLast_.x, contextHeight() - rMouseLast_.y);
+	repaint();
+
+	switch (objectAtQueryCoordinates())
+	{
+		case (NoObject):
+			break;
+		case (AxisLineObject):
+//			i = clickedObjectInfo_.asInteger();
+// 			axesWindow_.updateAndShow();
+// 			axesWindow_.ui.AxesTabs->setCurrentIndex(i);
+// 			axesWindow_.ui.
+			break;
+		case (AxisTickLabelObject):
+			break;
+		case (AxisTitleLabelObject):
+			break;
+		case (RenderableObject):
+			break;
+		case (GridLineMajorObject):
+			break;
+		case (GridLineMinorObject):
+			break;
+	}
+
+	// Reset clicked object info
+// 	clickedObject_ = NoObject;
+// 	clickedObjectInfo_.clear();
 }
 
 // Key pressed

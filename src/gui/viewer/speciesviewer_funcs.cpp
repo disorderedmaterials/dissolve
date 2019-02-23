@@ -30,10 +30,6 @@ SpeciesViewer::SpeciesViewer(QWidget* parent) : BaseViewer(parent)
 	drawStyle_ = SpeciesViewer::LineStyle;
 
 	view().setViewType(View::NormalView);
-
-	// Input
-// 	atomContextMenu_ = NULL;
-// 	speciesUpdateTargets_ = 0;
 }
 
 // Destructor

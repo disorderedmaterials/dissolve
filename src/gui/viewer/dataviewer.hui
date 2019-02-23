@@ -90,16 +90,10 @@ class DataViewer : public BaseViewer
 	InteractionMode interactionMode_;
 	// Current axis target for interaction
 	int interactionAxis_;
-	// Whether interaction has started (i.e. mouse is down)
-	bool interactionStarted_;
 	// Starting (clicked) value when interacting
 	double clickedInteractionValue_;
 	// Current interaction position on axis
 	double currentInteractionValue_;
-	// Clicked local coordinate under mouse in 2D view
-	Vec3<double> rClickedLocal_;
-	// Current local coordinate under mouse in 2D view
-	Vec3<double> rCurrentLocal_;
 
 	public:
 	// Set interaction mode and target axis
@@ -108,16 +102,14 @@ class DataViewer : public BaseViewer
 	InteractionMode interactionMode() const;
 	// Return current axis target for interaction
 	int interactionAxis() const;
-	// Return whether interaction has started (i.e. mouse is down)
-	bool interactionStarted() const;
 	// Cancel current interaction
 	void cancelInteraction();
-	// Start interaction at the specified screen coordinates
-	void startInteraction(int mouseX, int mouseY, Qt::KeyboardModifiers modifiers);
+	// Start interaction
+	void startInteraction(Qt::KeyboardModifiers modifiers);
 	// Update current interaction value
 	bool updateInteractionPosition(int mouseX, int mouseY);
-	// End interaction at the specified screen coordinates
-	void endInteraction(int mouseX, int mouseY);
+	// End interaction
+	void endInteraction();
 	// Return clicked interaction value on axis
 	double clickedInteractionValue();
 	// Return current interaction value on axis
@@ -126,12 +118,6 @@ class DataViewer : public BaseViewer
 	double clickedInteractionCoordinate();
 	// Return current interaction coordinate on axis
 	double currentInteractionCoordinate();
-	// Perform relevant double-click action, occurring at specified coordinate
-	void doubleClickInteraction(int mouseX, int mouseY);
-	// Calculate local coordinate from supplied screen coordinates
-	Vec3<double> screenToLocal(int mouseX, int mouseY);
-	// Return current local coordinate under mouse in 2D view
-	Vec3<double> rCurrentLocal() const;
 
 
 	/*
