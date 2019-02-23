@@ -21,29 +21,6 @@
 
 #include "gui/viewer/dataviewer.hui"
 
-// Static list of interaction modes
-const char* InteractionModeName[] = { 
-	"View",
-	"Zoom"
-};
-
-const char* InteractionModeHelp[] = {
-	"<b>Right</b> Rotate view, <b>Middle</b> Translate view (3D) or shift axis limits (2D), <b>Wheel</b> Zoom view",
-	"<b>Left-click-drag</b> Zoom to selected region, <b>Ctrl+Left</b> Extract slice"
-};
-
-// Return InteractionMode name
-const char* DataViewer::interactionModeName(DataViewer::InteractionMode mode)
-{
-	return InteractionModeName[mode];
-}
-
-// Return InteractionMode help text
-const char* DataViewer::interactionModeHelp(DataViewer::InteractionMode mode)
-{
-	return InteractionModeHelp[mode];
-}
-
 /*
  * Public Functions
  */

@@ -80,10 +80,6 @@ class DataViewer : public BaseViewer
 		ZoomInteraction,
 		nInteractionModes
 	};
-	// Return InteractionMode name
-	static const char* interactionModeName(InteractionMode mode);
-	// Return InteractionMode help text
-	static const char* interactionModeHelp(InteractionMode mode);
 
 	protected:
 	// Current interaction mode
