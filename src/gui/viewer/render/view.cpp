@@ -61,7 +61,9 @@ void View::clear()
 	viewViewportUsedAt_ = -1;
 	viewAxesUsedAt_ = -1;
 	viewRotationPoint_ = 0;
+	viewRotation_.setIdentity();
 	viewRotationInversePoint_ = -1;
+	updateViewMatrix();
 
 	// Role
 	viewType_ = View::AutoStretchedView;
@@ -274,6 +276,8 @@ void View::setViewRotation(Matrix4& mat)
 
 	viewRotation_ = mat;
 
+	updateViewMatrix();
+
 	++viewRotationPoint_;
 }
 
@@ -284,6 +288,8 @@ void View::setViewRotationColumn(int column, double x, double y, double z)
 	if ((viewType_ != View::NormalView) && (viewType_ != View::AutoStretchedView)) return;
 	
 	viewRotation_.setColumn(column, x, y, z, 0.0);
+
+	updateViewMatrix();
 
 	++viewRotationPoint_;
 }
@@ -297,6 +303,8 @@ void View::rotateView(double dx, double dy)
 	Matrix4 A;
 	A.createRotationXY(dx, dy);	// TODO Create Matrix4::applyPreRotationXY() function.
 	viewRotation_.preMultiply(A);
+
+	updateViewMatrix();
 
 	++viewRotationPoint_;
 }
@@ -326,17 +334,23 @@ void View::setViewTranslation(double x, double y, double z)
 {
 	viewTranslation_.set(x, y, z);
 	if (!hasPerspective_) projectionMatrix_ = calculateProjectionMatrix(false, viewTranslation_.z);
+
+	updateViewMatrix();
+
 	calculateFontScaling();
 }
 
 // Translate view matrix by amounts specified
 void View::translateView(double dx, double dy, double dz)
 {
-	// If this is a two-dimensional or linked view, ignore the request
+	// If this is a two-dimensional view, ignore the request
 	if ((viewType_ != View::NormalView) && (viewType_ != View::AutoStretchedView)) return;
 
 	viewTranslation_.add(dx, dy, dz);
 	if ((!hasPerspective_) && (fabs(dz) > 1.0e-4)) projectionMatrix_ = calculateProjectionMatrix(false, viewTranslation_.z);
+
+	updateViewMatrix();
+
 	calculateFontScaling();
 }
 
