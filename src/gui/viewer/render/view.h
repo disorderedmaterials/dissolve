@@ -225,15 +225,7 @@ class View
 	/*
 	 * Style
 	 */
-	public:
-	// Available Bounding Boxes
-	enum BoundingBox { NoBox, PlaneBox, CubeBox, nBoundingBoxes };
-
 	private:
-	// Current bounding box type
-	BoundingBox boundingBox_;
-	// Y-intercept of bounding XZ plane
-	double boundingBoxPlaneY_;
 	// Font scaling for axis value labels
 	double labelPointSize_;
 	// Font scaling for titles
@@ -248,14 +240,6 @@ class View
 	void calculateFontScaling();
 
 	public:
-	// Set current bounding box type
-	void setBoundingBox(View::BoundingBox type);
-	// Return current bounding box type
-	View::BoundingBox boundingBox();
-	// Set y intercept for plane bounding box
-	void setBoundingBoxPlaneY(double value);
-	// Return y intercept for plane bounding box
-	double boundingBoxPlaneY();
 	// Set font point size for axis value labels
 	void setLabelPointSize(double value);
 	// Return font point size for axis value labels
@@ -278,26 +262,6 @@ class View
 	public:
 	// Return axis title at specified coordinates (if any)
 	int axisTitleAt(int screenX, int screenY);
-
-
-	/*
-	 * GL
-	 */
-	private:
-	// Display primitives
-	Primitive interactionPrimitive_, interactionBoxPrimitive_, boundingBoxPrimitive_;
-
-	public:
-	// Create bounding box
-	void createBoundingBox(int type, double planeY);
-	// Update interaction primitive
-	void updateInteractionPrimitive(int axis);
-	// Return interaction primitive
-	Primitive& interactionPrimitive();
-	// Return interaction box primitive
-	Primitive& interactionBoxPrimitive();
-	// Return bounding box primitive
-	Primitive& boundingBoxPrimitive();
 };
 
 #endif

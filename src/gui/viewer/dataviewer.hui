@@ -237,8 +237,6 @@ class DataViewer : public BaseViewer
 		AutoFollowTypeKeyword,
 		AutoPositionTitlesKeyword,
 		AxisBlockKeyword,
-		BoundingBoxKeyword,
-		BoundingBoxPlaneYKeyword,
 		EndViewKeyword,
 		FlatLabelsKeyword,
 		LabelPointSizeKeyword,

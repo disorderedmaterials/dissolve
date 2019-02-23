@@ -32,11 +32,6 @@ const double View::zOffset_ = -10.0;
 View::View(const List<Renderable>& renderables, FontInstance& fontInstance) : fontInstance_(fontInstance), renderables_(renderables), axes_(*this, fontInstance)
 {
 	clear();
-
-	// Set GL primitive styles
-	interactionPrimitive_.setNoInstances();
-	interactionBoxPrimitive_.setNoInstances();
-	boundingBoxPrimitive_.setNoInstances();
 }
 
 // Destructor
@@ -73,8 +68,6 @@ void View::clear()
 	autoFollowType_ = View::NoAutoFollow;
 
 	// Style
-	boundingBox_ = View::NoBox;
-	boundingBoxPlaneY_ = 0.0;
 	labelPointSize_ = 16.0;
 	titlePointSize_ = 18.0;
 	textZScale_ = -1.0;
@@ -1113,36 +1106,6 @@ void View::calculateFontScaling()
 	textZScale_ = unit.y;
 }
 
-// Set current bounding box type
-void View::setBoundingBox(View::BoundingBox type)
-{
-	boundingBox_ = type;
-
-	// Bounding boxes are generated as part of the axes primitives, so need to regenerate them
-	// TODO regenerateAxes_ = true;
-}
-
-// Return current bounding box type
-View::BoundingBox View::boundingBox()
-{
-	return boundingBox_;
-}
-
-// Set y intercept for plane bounding box
-void View::setBoundingBoxPlaneY(double value)
-{
-	boundingBoxPlaneY_ = value;
-
-	// Bounding boxes are generated as part of the axes primitives, so need to regenerate them
-	// TODO 0regenerateAxes_ = true;
-}
-
-// Return y intercept for plane bounding box
-double View::boundingBoxPlaneY()
-{
-	return boundingBoxPlaneY_;
-}
-
 // Set font point size for axis value labels
 void View::setLabelPointSize(double value)
 {
@@ -1216,105 +1179,4 @@ int View::axisTitleAt(int screenX, int screenY)
 		if (cuboid.isPointWithinProjection(screenX, screenY, viewMatrix_, projectionMatrix_, viewportMatrix_)) return axis;
 	}
 	return -1;
-}
-
-/*
- * GL
- */
-
-// Create bounding box
-void View::createBoundingBox(int type, double planeY)
-{
-	boundingBoxPrimitive_.forgetAll();
-	
-	if (type == 0) return;
-	else if (type == 1)
-	{
-		// Plane in XZ, spanning data range   // TODO
-// 		boundingBoxPrimitive_.plotLine(Vec3<double>(axisCoordMin_[0].x, planeY, axisCoordMin_[2].z), Vec3<double>(axisCoordMin_[0].x, planeY, axisCoordMax_[2].z));
-// 		boundingBoxPrimitive_.plotLine(Vec3<double>(axisCoordMin_[0].x, planeY, axisCoordMax_[2].z), Vec3<double>(axisCoordMax_[0].x, planeY, axisCoordMax_[2].z));
-// 		boundingBoxPrimitive_.plotLine(Vec3<double>(axisCoordMax_[0].x, planeY, axisCoordMax_[2].z), Vec3<double>(axisCoordMax_[0].x, planeY, axisCoordMin_[2].z));
-// 		boundingBoxPrimitive_.plotLine(Vec3<double>(axisCoordMax_[0].x, planeY, axisCoordMin_[2].z), Vec3<double>(axisCoordMin_[0].x, planeY, axisCoordMin_[2].z));
-	}
-}
-
-
-// Update interaction primitive
-void View::updateInteractionPrimitive(int axis)
-{
-	const int nPoints = 16;
-	
-	interactionPrimitive_.initialise(GL_TRIANGLES, false);
-	interactionPrimitive_.forgetAll();
-	interactionBoxPrimitive_.initialise(GL_LINES, false);
-	interactionBoxPrimitive_.forgetAll();
-
-	if (axis == -1) return;
-
-	// Grab axes, and knock out values in the supplied vectors which correspond to the activated axis
-	Vec3<double> axisMinA, axisMinB, axisMaxA, axisMaxB;
-	axisMinA[(axis+1)%3] = axes_.coordMin((axis+1)%3)[(axis+1)%3];
-	axisMaxA[(axis+1)%3] = axes_.coordMax((axis+1)%3)[(axis+1)%3];
-	axisMinB[(axis+2)%3] = axes_.coordMin((axis+2)%3)[(axis+2)%3];
-	axisMaxB[(axis+2)%3] = axes_.coordMax((axis+2)%3)[(axis+2)%3];
-	axisMinA[axis] = 0.0;
-	axisMaxA[axis] = 0.0;
-	axisMinB[axis] = 0.0;
-	axisMaxB[axis] = 0.0;
-
-	// Create 'bounding box' for slice primitive
-	Vec3<double> normal(0.0, 0.0, 1.0);
-	
-	interactionBoxPrimitive_.defineVertex(axisMinA + axisMinB, normal);
-	interactionBoxPrimitive_.defineVertex(axisMinA + axisMaxB, normal);
-	interactionBoxPrimitive_.defineVertex(axisMaxA + axisMaxB, normal);
-	interactionBoxPrimitive_.defineVertex(axisMaxA + axisMinB, normal);
-	interactionBoxPrimitive_.defineIndices(0,1);
-	interactionBoxPrimitive_.defineIndices(1,2);
-	interactionBoxPrimitive_.defineIndices(2,3);
-	interactionBoxPrimitive_.defineIndices(3,0);
-
-	// Work out deltas for each direction
-	Vec3<double> deltaA, deltaB, pos;
-	deltaA = (axisMaxA - axisMinA) / nPoints;
-	deltaB = (axisMaxB - axisMinB) / nPoints;
-
-	// Set normal
-	normal.zero();
-	normal[axis] = 1.0;
-
-	// Construct plane
-	GLuint a, b, c, d;
-	for (int n=0; n<nPoints; ++n)
-	{
-		pos = axisMinA + axisMinB + deltaA*n;
-		for (int m=0; m<nPoints; ++m)
-		{
-			a = interactionPrimitive_.defineVertex(pos, normal);
-			b = interactionPrimitive_.defineVertex(pos + deltaA, normal);
-			c = interactionPrimitive_.defineVertex(pos + deltaA + deltaB, normal);
-			d = interactionPrimitive_.defineVertex(pos + deltaB, normal);
-			interactionPrimitive_.defineIndices(a, b, c);
-			interactionPrimitive_.defineIndices(c, d, a);
-			pos += deltaB;
-		}
-	}
-}
-
-// Return interaction primitive
-Primitive& View::interactionPrimitive()
-{
-	return interactionPrimitive_;
-}
-
-// Return interaction box primitive
-Primitive& View::interactionBoxPrimitive()
-{
-	return interactionBoxPrimitive_;
-}
-
-// Return bounding box primitive
-Primitive& View::boundingBoxPrimitive()
-{
-	return boundingBoxPrimitive_;
 }
