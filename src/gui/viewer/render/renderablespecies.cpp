@@ -89,7 +89,6 @@ bool RenderableSpecies::yRangeOverX(double xMin, double xMax, double& yMin, doub
 // Recreate necessary primitives / primitive assemblies for the data
 void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinition& colourDefinition)
 {
-	printf("RECREATE SPECIES PRIMITVIE.\n");
 	// Draw Atoms
 	CharString text(128);
 	Isotope* iso;
