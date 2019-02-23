@@ -213,6 +213,23 @@ Matrix4 View::calculateProjectionMatrix(bool hasPerspective, double orthoZoom) c
 	return result;
 }
 
+// Update view matrix
+void View::updateViewMatrix()
+{
+	// Create translation to centre of Axes coordinates
+	viewMatrix_.createTranslation(-axes_.coordCentre());
+
+	// Apply rotation matrix about this local centre
+	viewMatrix_.preMultiply(viewRotation_);
+
+	// Apply translation to apply view shift and zoom (the latter only if using perspective)
+	viewMatrix_.applyPreTranslation(viewTranslation_.x, viewTranslation_.y, hasPerspective_ ? viewTranslation_.z : 0.0);
+
+	// Calculate inverse
+	viewMatrixInverse_ = viewMatrix_;
+	viewMatrixInverse_.invert();
+}
+
 // Set view type
 void View::setViewType(View::ViewType vt)
 {
@@ -337,24 +354,13 @@ Vec3<double> View::viewTranslation() const
 }
 
 // Return full view matrix (rotation + translation)
-Matrix4 View::viewMatrix()
+const Matrix4& View::viewMatrix() const
 {
-	Matrix4 viewMatrix;
-
-	// Apply translation to centre of axes coordinates
-	viewMatrix.createTranslation(-axes_.coordCentre());
-
-	// Apply rotation matrix about this local centre
-	viewMatrix.preMultiply(viewRotation_);
-
-	// Apply translation to apply view shift and zoom (the latter only if using perspective)
-	viewMatrix.applyPreTranslation(viewTranslation_.x, viewTranslation_.y, hasPerspective_ ? viewTranslation_.z : 0.0 );
-
-	return viewMatrix;
+	return viewMatrix_;
 }
 
 // Project given model coordinates into world coordinates
-Vec3<double> View::modelToWorld(Vec3<double> modelr)
+Vec3<double> View::modelToWorld(Vec3<double> modelr) const
 {
 	Vec3<double> worldr;
 	Matrix4 vmat;
@@ -362,16 +368,16 @@ Vec3<double> View::modelToWorld(Vec3<double> modelr)
 
 	// Projection formula is : worldr = P x M x modelr
 	pos.set(modelr, 1.0);
-	// Get the world coordinates of the atom - Multiply by modelview matrix 'view'
-	vmat = viewMatrix();
-	temp = vmat * pos;
+
+	// Get the world coordinates of the atom - Multiply by view matrix
+	temp = viewMatrix_ * pos;
 	worldr.set(temp.x, temp.y, temp.z);
 
 	return worldr;
 }
 
 // Project given model coordinates into screen coordinates
-Vec3<double> View::modelToScreen(Vec3<double> modelr)
+Vec3<double> View::modelToScreen(Vec3<double> modelr) const
 {
 	Vec4<double> screenr, tempscreen;
 	Vec4<double> worldr;
@@ -381,9 +387,8 @@ Vec3<double> View::modelToScreen(Vec3<double> modelr)
 	// Projection formula is : worldr = P x M x modelr
 	pos.set(modelr, 1.0);
 
-	// Get the world coordinates of the point - Multiply by modelview matrix 'view'
-	vmat = viewMatrix();
-	worldr = vmat * pos;
+	// Get the world coordinates of the point - Multiply by view matrix
+	worldr = viewMatrix_ * pos;
 	screenr = projectionMatrix_ * worldr;
 	screenr.x /= screenr.w;
 	screenr.y /= screenr.w;
@@ -395,7 +400,7 @@ Vec3<double> View::modelToScreen(Vec3<double> modelr)
 }
 
 // Project given model coordinates into screen coordinates using supplied projection matrix, rotation matrix and translation vector
-Vec3<double> View::modelToScreen(Vec3<double> modelr, Matrix4 projectionMatrix, Matrix4 rotationMatrix, Vec3<double> translation)
+Vec3<double> View::modelToScreen(Vec3<double> modelr, Matrix4 projectionMatrix, Matrix4 rotationMatrix, Vec3<double> translation) const
 {
 	Vec4<double> screenr, tempscreen;
 	Vec4<double> worldr;
@@ -420,7 +425,7 @@ Vec3<double> View::modelToScreen(Vec3<double> modelr, Matrix4 projectionMatrix, 
 }
 
 // Return z translation necessary to display coordinates supplied, assuming the identity view matrix
-double View::calculateRequiredZoom(double xMax, double yMax, double fraction)
+double View::calculateRequiredZoom(double xMax, double yMax, double fraction) const
 {
 	// The supplied x and y extents should indicate the number of units in those directions
 	// from the origin that are to be displaye on-screen. The 'fraction' indicates how much of the
@@ -468,16 +473,12 @@ double View::calculateRequiredZoom(double xMax, double yMax, double fraction)
 }
 
 // Convert screen coordinates into model space coordinates
-Vec3<double> View::screenToModel(int x, int y, double z)
+Vec3<double> View::screenToModel(int x, int y, double z) const
 {
 	static Vec3<double> modelr;
 	Vec4<double> temp, worldr;
 	int newx, newy;
 	double dx, dy;
-
-	// Grab full transformation matrix (not just rotation matrix) and invert
-	Matrix4 itransform = viewMatrix();
-	itransform.invert();
 
 	// Project points at guide z-position and two other points along literal x and y to get scaling factors for screen coordinates
 	worldr.set(0.0,0.0,z, 1.0);
@@ -502,13 +503,13 @@ Vec3<double> View::screenToModel(int x, int y, double z)
 	}
 
 	// Finally, invert to model coordinates
-	modelr = itransform * Vec3<double>(worldr.x, worldr.y, worldr.z);
+	modelr = viewMatrixInverse_ * Vec3<double>(worldr.x, worldr.y, worldr.z);
 
 	return modelr;
 }
 
 // Calculate selection axis coordinate from supplied screen coordinates
-double View::screenToAxis(int axis, int x, int y, bool clamp)
+double View::screenToAxis(int axis, int x, int y, bool clamp) const
 {
 	// Check for a valid axis
 	if (axis == -1) return 0.0;
@@ -1194,6 +1195,7 @@ bool View::flatLabelsIn3D()
  * Interaction
  */
 
+// TODO Old code, unused. Useful?
 // Return axis title at specified coordinates (if any)
 int View::axisTitleAt(int screenX, int screenY)
 {
@@ -1211,7 +1213,7 @@ int View::axisTitleAt(int screenX, int screenY)
 		Cuboid cuboid = axes_.titlePrimitive(axis).boundingCuboid(fontInstance_, viewRotInverse, textZScale_);
 
 		// Determine whether the screen point specified is within the projected cuboid
-		if (cuboid.isPointWithinProjection(screenX, screenY, viewMatrix(), projectionMatrix_, viewportMatrix_)) return axis;
+		if (cuboid.isPointWithinProjection(screenX, screenY, viewMatrix_, projectionMatrix_, viewportMatrix_)) return axis;
 	}
 	return -1;
 }

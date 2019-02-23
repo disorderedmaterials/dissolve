@@ -112,6 +112,10 @@ class View
 	int viewRotationInversePoint_;
 	// Current translation of view
 	Vec3<double> viewTranslation_;
+	// Full view matrix (rotation + translation)
+	Matrix4 viewMatrix_;
+	// Inverse of view matrix
+	Matrix4 viewMatrixInverse_;
 	// Standard zOffset for translation matrix
 	static const double zOffset_;
 	// Axes version at which view matrix was last calculated (mostly for keeping 2D view correct)
@@ -154,20 +158,22 @@ class View
 	void translateView(double dx, double dy, double dz);
 	// Return current view translation
 	Vec3<double> viewTranslation() const;
+	// Update view matrix
+	void updateViewMatrix();
 	// Return full view matrix (rotation + translation)
-	Matrix4 viewMatrix();
+	const Matrix4& viewMatrix() const;
 	// Project given model coordinates into world coordinates
-	Vec3<double> modelToWorld(Vec3<double> modelr);
+	Vec3<double> modelToWorld(Vec3<double> modelr) const;
 	// Project given model coordinates into screen coordinates
-	Vec3<double> modelToScreen(Vec3<double> modelr);
+	Vec3<double> modelToScreen(Vec3<double> modelr) const;
 	// Project given model coordinates into screen coordinates using supplied rotation matrix and translation vector
-	Vec3<double> modelToScreen(Vec3<double> modelr, Matrix4 projectionMatrix, Matrix4 rotationMatrix, Vec3<double> translation = Vec3<double>());
+	Vec3<double> modelToScreen(Vec3<double> modelr, Matrix4 projectionMatrix, Matrix4 rotationMatrix, Vec3<double> translation = Vec3<double>()) const;
 	// Return z translation necessary to display coordinates supplied, assuming the identity view matrix
-	double calculateRequiredZoom(double xMax, double yMax, double fraction);
+	double calculateRequiredZoom(double xMax, double yMax, double fraction) const;
 	// Convert screen coordinates into model space coordinates
-	Vec3<double> screenToModel(int x, int y, double z);
+	Vec3<double> screenToModel(int x, int y, double z) const;
 	// Calculate selection axis coordinate from supplied screen coordinates
-	double screenToAxis(int axis, int x, int y, bool clamp);
+	double screenToAxis(int axis, int x, int y, bool clamp) const;
 	// Recalculate current view parameters (e.g. for 2D, autostretched 3D etc.)
 	void recalculateView(bool force = false);
 	// Reset view matrix to face XY plane

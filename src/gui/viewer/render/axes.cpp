@@ -167,6 +167,8 @@ void Axes::updateCoordinates()
 			coordMax_[axis].set(axis, (inverted_[axis] ? min_[axis] : max_[axis]) * stretch_[axis]);
 		}
 	}
+
+	parentView_.updateViewMatrix();
 }
 
 // Clamp axis position and min/max to current limits if necessary
