@@ -35,3 +35,17 @@ void SpeciesViewer::startInteraction(Qt::KeyboardModifiers modifiers)
 void SpeciesViewer::endInteraction()
 {
 }
+
+// Cancel current interaction
+void SpeciesViewer::cancelInteraction()
+{
+	// Perform any actions necessary to properly cancel the interaction
+	switch (interactionMode_)
+	{
+		default:
+			break;
+	}
+
+	// Reset back to DefaultInteraction
+	interactionMode_ = SpeciesViewer::DefaultInteraction;
+}

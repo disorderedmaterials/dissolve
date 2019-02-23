@@ -226,6 +226,8 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	virtual void startInteraction(Qt::KeyboardModifiers modifiers);
 	// End interaction
 	virtual void endInteraction();
+	// Cancel current interaction
+	virtual void cancelInteraction();
 
 	public:
 	// Return whether the viewer is currently being interacted with

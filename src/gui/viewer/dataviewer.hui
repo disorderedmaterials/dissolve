@@ -91,12 +91,12 @@ class DataViewer : public BaseViewer
 	public:
 	// Return current interaction mode
 	int interactionMode() const;
-	// Cancel current interaction
-	void cancelInteraction();
 	// Start interaction
 	void startInteraction(Qt::KeyboardModifiers modifiers);
 	// End interaction
 	void endInteraction();
+	// Cancel current interaction
+	void cancelInteraction();
 	// Return clicked interaction coordinate on axis
 	double clickedInteractionCoordinate();
 	// Return current interaction coordinate on axis

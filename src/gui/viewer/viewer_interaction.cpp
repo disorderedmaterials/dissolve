@@ -41,6 +41,11 @@ void BaseViewer::endInteraction()
 {
 }
 
+// Cancel current interaction
+void BaseViewer::cancelInteraction()
+{
+}
+
 /*
  * Public Functions
  */

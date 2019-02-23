@@ -31,20 +31,6 @@ int DataViewer::interactionMode() const
 	return interactionMode_;
 }
 
-// Cancel current interaction
-void DataViewer::cancelInteraction()
-{
-	// Perform any actions necessary to properly cancel the interaction
-	switch (interactionMode_)
-	{
-		default:
-			break;
-	}
-
-	// Reset back to DefaultInteraction
-	interactionMode_ = DataViewer::DefaultInteraction;
-}
-
 // Start interaction at the specified screen coordinates
 void DataViewer::startInteraction(Qt::KeyboardModifiers modifiers)
 {
@@ -123,6 +109,21 @@ void DataViewer::endInteraction()
 	// Reset (cancel) the interaction mode
 	cancelInteraction(); 
 }
+
+// Cancel current interaction
+void DataViewer::cancelInteraction()
+{
+	// Perform any actions necessary to properly cancel the interaction
+	switch (interactionMode_)
+	{
+		default:
+			break;
+	}
+
+	// Reset back to DefaultInteraction
+	interactionMode_ = DataViewer::DefaultInteraction;
+}
+
 // // Return clicked interaction coordinate on axis
 // double DataViewer::clickedInteractionCoordinate()
 // {

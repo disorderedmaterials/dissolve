@@ -80,6 +80,8 @@ class SpeciesViewer : public BaseViewer
 	void startInteraction(Qt::KeyboardModifiers modifiers);
 	// End interaction at the specified screen coordinates
 	void endInteraction();
+	// Cancel current interaction
+	void cancelInteraction();
 
 
 	/*
