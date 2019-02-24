@@ -719,6 +719,9 @@ void View::recalculateView(bool force)
 	// Recalculate font scaling
 	calculateFontScaling();
 
+	// Recalculate view matrix (translation may have changed)
+	updateViewMatrix();
+
 	// Store new versions of view
 	viewAxesUsedAt_ = axes().version();
 	viewViewportUsedAt_ = viewportVersion_;
