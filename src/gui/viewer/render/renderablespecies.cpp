@@ -71,6 +71,38 @@ const int RenderableSpecies::version() const
 // Transform data according to current settings
 void RenderableSpecies::transformData()
 {
+	if (!source_) return;
+
+	// Loop over Atoms, seeking extreme x, y, and z values
+	ListIterator<SpeciesAtom> atomIterator(source_->atoms());
+	while (SpeciesAtom* i = atomIterator.iterate())
+	{
+		if (atomIterator.isFirst())
+		{
+			transformMin_ = i->r();
+			transformMax_ = i->r();
+		}
+		else
+		{
+			if (i->r().x < transformMin_.x) transformMin_.x = i->r().x;
+			else if (i->r().x > transformMax_.x) transformMax_.x = i->r().x;
+			if (i->r().y < transformMin_.y) transformMin_.y = i->r().y;
+			else if (i->r().y > transformMax_.y) transformMax_.y = i->r().y;
+			if (i->r().z < transformMin_.z) transformMin_.z = i->r().z;
+			else if (i->r().z > transformMax_.z) transformMax_.z = i->r().z;
+		}
+	}
+
+	// Need to add on a little extra to the limits since the atoms have a radius
+	transformMin_ -= 1.0;
+	transformMax_ += 1.0;
+
+	transformMinPositive_.x = transformMin_.x < 0.0 ? 0.01 : transformMin_.x;
+	transformMinPositive_.y = transformMin_.y < 0.0 ? 0.01 : transformMin_.y;
+	transformMinPositive_.z = transformMin_.z < 0.0 ? 0.01 : transformMin_.z;
+	transformMaxPositive_.x = transformMax_.x < 0.0 ? 1.0 : transformMax_.x;
+	transformMaxPositive_.y = transformMax_.y < 0.0 ? 1.0 : transformMax_.y;
+	transformMaxPositive_.z = transformMax_.z < 0.0 ? 1.0 : transformMax_.z;
 }
 
 // Calculate min/max y value over specified x range (if possible in the underlying data)
