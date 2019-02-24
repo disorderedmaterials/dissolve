@@ -128,7 +128,7 @@ void PrimitiveInfo::sendToGL()
 	if (primitive_)
 	{
 		glPushMatrix();
-		glLoadMatrixd(transform_.matrix());
+		glMultMatrixd(transform_.matrix());
 		primitive_->sendToGL();
 		glPopMatrix();
 	}
