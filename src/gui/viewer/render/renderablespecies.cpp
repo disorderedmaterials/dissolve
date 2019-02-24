@@ -22,6 +22,7 @@
 #include "gui/viewer/render/renderablespecies.h"
 #include "gui/viewer/render/renderablegroupmanager.h"
 #include "gui/viewer/render/view.h"
+#include "data/elementcolours.h"
 
 // Constructor
 RenderableSpecies::RenderableSpecies(const Species* source, const char* objectTag) : Renderable(Renderable::SpeciesRenderable, objectTag), source_(source)
@@ -126,7 +127,7 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 	Isotope* iso;
 // 	PrimitiveInfo primitiveInfo;
 	Matrix4 A;
-	GLfloat TEMPORARYCOLOUR[4] = { 0.0, 0.0, 0.0, 1.0 };
+	const float* colour;
 	bool atomTypeLabel = false; //mainWindow_->ui.ViewAtomTypeCheck->isChecked();
 	bool indexLabel = false; //mainWindow_->ui.ViewIndexCheck->isChecked();
 	ListIterator<SpeciesAtom> atomIterator(source_->atoms());
@@ -135,8 +136,8 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 		A.setTranslation(i->r());
 
 		// The Atom itself
-		// TODO Implement ElemnetColour class, based on Elements.
-		primitiveAssembly_.add(PrimitiveInfo(atomPrimitive_, A, TEMPORARYCOLOUR));
+		colour = ElementColours::colour(i->element());
+		primitiveAssembly_.add(PrimitiveInfo(atomPrimitive_, A, (GLfloat*) colour));
 
 		// Label
 // 		text.clear();
