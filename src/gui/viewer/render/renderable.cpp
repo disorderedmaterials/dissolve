@@ -359,22 +359,19 @@ void Renderable::updateAndSendPrimitives(const View& view, const RenderableGroup
 		// Recreate Primitives for the underlying data
 		recreatePrimitives(view, colourDefinition);
 
-		// Pop old Primitive instances (unless flagged not to)
-		if (!pushAndPop)
-		{
-			if (basicPrimitives_.nInstances() != 0) basicPrimitives_.popInstance(context);
-			if (bespokePrimitives_.nInstances() != 0) bespokePrimitives_.popInstance(context);
-		}
-	
-		// Push new instances to create the new display list / vertex arrays
-		basicPrimitives_.pushInstance(context);
-		bespokePrimitives_.pushInstance(context);
+		// Pop old Primitive instance (if one exists)
+		if (basicPrimitives_.nInstances() != 0) basicPrimitives_.popInstance(context);
+		if (bespokePrimitives_.nInstances() != 0) bespokePrimitives_.popInstance(context);
 	}
+
+	// If there are no current instances, or we are forcing a push/pop of an instance, push an instance here
+	if ((basicPrimitives_.nInstances() == 0) || pushAndPop) basicPrimitives_.pushInstance(context);
+	if ((bespokePrimitives_.nInstances() == 0) || pushAndPop) bespokePrimitives_.pushInstance(context);
 
 	// Send primitive
 	sendToGL();
 
-	// Pop current instances (if flagged)
+	// Pop current instances if required
 	if (pushAndPop)
 	{
 		basicPrimitives_.popInstance(context);
