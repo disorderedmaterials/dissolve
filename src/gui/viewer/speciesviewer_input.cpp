@@ -68,6 +68,14 @@ void SpeciesViewer::mouseMoved(int dx, int dy, Qt::KeyboardModifiers modifiers)
 // Mouse 'wheeled'
 void SpeciesViewer::mouseWheeled(int delta)
 {
+	bool scrollup = delta > 0;
+
+	// Perform camera zoom
+	double zrange = view_.axes().stretch(2) * view_.axes().realRange(2);
+	if (zrange < 1.0) zrange = 1.0;
+	view_.translateView(0.0, 0.0, 0.5*zrange*(scrollup ? -1.0 : 1.0));
+
+	postRedisplay();
 }
 
 // Mouse double clicked
@@ -84,6 +92,7 @@ bool SpeciesViewer::keyPressed(int key, Qt::KeyboardModifiers modifiers)
 bool SpeciesViewer::keyReleased(int key, Qt::KeyboardModifiers modifiers)
 {
 }
+
 /*
 // Qt Signal (mouse release event)
 void SpeciesViewer::mouseReleaseEvent(QMouseEvent* event)
