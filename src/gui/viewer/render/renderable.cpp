@@ -393,6 +393,7 @@ void Renderable::sendToGL()
         // If this Renderable is not visible return now
         if (!visible_) return;
 
+	// TODO This needs to be more general
         if (displayStyle() == Renderable::SurfaceStyle)
         {
                 glEnable(GL_LIGHTING);
