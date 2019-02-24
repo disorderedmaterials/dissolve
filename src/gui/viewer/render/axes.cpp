@@ -988,7 +988,7 @@ void Axes::updateAxisPrimitives()
 	// Make sure coordinates are up-to-date
 	updateCoordinates();
 
-	// Get view matrix inverse
+	// Get view rotation inverse
 	Matrix4 viewRotationInverse = parentView_.viewRotationInverse();
 
 	// Set axis for in-plane (in-screen) rotation
