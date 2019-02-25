@@ -59,10 +59,10 @@ const int RenderableData1D::version() const
 // Transform data according to current settings
 void RenderableData1D::transformData()
 {
-	// If the transformed data is already up-to-date, no need to do anything
+	// If the transformed data are already up-to-date, no need to do anything
 	if (transformDataVersion_ == version()) return;
 
-	// Copy original data and transform it now. We do this even if the transformers are disabled, since they may have previously been active
+	// Copy original data and transform now. We do this even if the transformers are disabled, since they may have previously been active
 	if (!validateDataSource()) transformedData_.clear();
 	else transformedData_ = *source_;
 	Transformer::transform(transformedData_, transforms_[0], transforms_[1]);
