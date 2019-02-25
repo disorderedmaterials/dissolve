@@ -74,6 +74,9 @@ void RenderableSpecies::transformData()
 {
 	if (!source_) return;
 
+	// If the transformed data are already up-to-date, no need to do anything
+	if (transformDataVersion_ == version()) return;
+
 	// Loop over Atoms, seeking extreme x, y, and z values
 	ListIterator<SpeciesAtom> atomIterator(source_->atoms());
 	while (SpeciesAtom* i = atomIterator.iterate())
@@ -104,6 +107,9 @@ void RenderableSpecies::transformData()
 	transformMaxPositive_.x = transformMax_.x < 0.0 ? 1.0 : transformMax_.x;
 	transformMaxPositive_.y = transformMax_.y < 0.0 ? 1.0 : transformMax_.y;
 	transformMaxPositive_.z = transformMax_.z < 0.0 ? 1.0 : transformMax_.z;
+
+	// Update the transformed data 'version'
+	transformDataVersion_ = version();
 }
 
 // Calculate min/max y value over specified x range (if possible in the underlying data)
