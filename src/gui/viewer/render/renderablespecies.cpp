@@ -31,7 +31,7 @@ RenderableSpecies::RenderableSpecies(const Species* source, const char* objectTa
 	atomPrimitive_ = new Primitive;
 	atomPrimitive_->sphere(1.0, 8, 10);
 	bondPrimitive_ = new Primitive;
-	bondPrimitive_->cylinder(0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.15, 0.15, 8, 8);
+	bondPrimitive_->cylinder(0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1, 8);
 	unitCellPrimitive_ = new Primitive;
 // 	unitCellPrimitive_->wireCube(1.0, 4, 0, 0, 0);	
 
@@ -175,12 +175,14 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 // 		colour[3] = 0.5;
 // // 		renderPrimitive(&spherePrimitive04_, colour, A);
 // 	}
-// 
+
 	// Draw Bonds
 	Vec3<double> vij;
 	double mag;
 	for (SpeciesBond* b = source_->bonds().first(); b != NULL; b = b->next)
 	{
+		A.setIdentity();
+
 		// Get vector between Atoms i->j and move to Bond centre
 		vij = b->j()->r() - b->i()->r();
 		A.setTranslation(b->i()->r()+vij*0.5);
@@ -191,34 +193,15 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 		A.setColumn(0, vij.orthogonal(), 0.0);
 		A.setColumn(1, vij * A.columnAsVec3(0), 0.0);
 		A.columnMultiply(2, 0.5*mag);
+		A.applyScaling(0.1, 0.1, 1.0);
 
 		// Render half of Bond in colour of Atom j
-		// TODO Use proper element colour
-//  		renderPrimitive(&cylinderPrimitive_, PeriodicTable::element(b->j()->element()).colour(), A);
-// 		renderPrimitive(&cylinderPrimitive_, colour, A);
+		colour = ElementColours::colour(b->j()->element());
+		primitiveAssembly_.add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 		
 		// Render half of Bond in colour of Atom i
 		A.columnMultiply(2,-1.0);
-		// TODO Use proper element colour
-// 		renderPrimitive(&cylinderPrimitive_, PeriodicTable::element(b->i()->element()).colour(), A);
-// 		renderPrimitive(&cylinderPrimitive_, colour, A);
+		colour = ElementColours::colour(b->i()->element());
+		primitiveAssembly_.add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 	}
-	
-// 	// If a GrainDefinition is selected, add on highlight to involved atoms
-// // 	if (species_->highlightedGrain())
-// // 	{
-// // 		A.setIdentity();
-// // 		A.applyScaling(1.1,1.1,1.1);
-// // 		GLfloat colour[4] = {0.0, 0.0, 0.0, 0.6};
-// // 		SpeciesAtom* i;
-// // 		for (RefListItem<SpeciesAtom,int>* ri = species_->highlightedGrain()->atoms(); ri != NULL; ri = ri->next)
-// // 		{
-// // 			i = ri->item;
-// // 			A.setTranslation(i->r());
-// // // 			colour[0] = PeriodicTable::element(i->element()).colour()[0];
-// // // 			colour[1] = PeriodicTable::element(i->element()).colour()[1];
-// // // 			colour[2] = PeriodicTable::element(i->element()).colour()[2];
-// // 			renderPrimitive(&spherePrimitive03_, colour, A, GL_LINE);
-// // 		}
-// // 	}
 }
