@@ -162,13 +162,7 @@ void RenderableData1D::recreatePrimitives(const View& view, const ColourDefiniti
 // Create line strip primitive
 void RenderableData1D::constructLineXY(const Array<double>& displayAbscissa, const Array<double>& displayValues, Primitive* primitive, const Axes& axes, const ColourDefinition& colourDefinition, double zCoordinate)
 {
-// 	// Get extents of displayData to use based on current axes limits
-// 	Vec3<int> minIndex, maxIndex;
-// 	if (!calculateExtents(axes, displayAbscissa, displayData, minIndex, maxIndex)) return;
-// 	int nZ = (maxIndex.z - minIndex.z) + 1;
-
 	// Copy and transform abscissa values (still in data space) into axes coordinates
-// 	Array<double> x(displayAbscissa, minIndex.x, maxIndex.x);
 	Array<double> x = displayAbscissa;
 	axes.transformX(x);
 	int nX = x.nItems();
@@ -224,25 +218,3 @@ void RenderableData1D::constructLineXY(const Array<double>& displayAbscissa, con
 		}
 	}
 }
-
-// Calculate integer index extents for display data given supplied axes
-// bool Surface::calculateExtents(const Axes& axes, const Array<double>& abscissa, List<DisplayDataSet>& displayData, Vec3<int>& minIndex, Vec3<int>& maxIndex)
-// {
-// 	// Grab some stuff from the pane's axes
-// 	Vec3<double> axisMin(axes.min(0), axes.min(1), axes.min(2));
-// 	Vec3<double> axisMax(axes.max(0), axes.max(1), axes.max(2));
-// 
-// 	// Get x index limits
-// 	for (minIndex.x = 0; minIndex.x < abscissa.nItems(); ++minIndex.x) if (abscissa.constAt(minIndex.x) >= axisMin.x) break;
-// 	if (minIndex.x == abscissa.nItems()) return false;
-// 	for (maxIndex.x = abscissa.nItems()-1; maxIndex.x >= 0; --maxIndex.x) if (abscissa.constAt(maxIndex.x) <= axisMax.x) break;
-// 	if (maxIndex.x < 0) return false;
-// 
-// 	// Get z index limits
-// 	for (minIndex.z = 0; minIndex.z < displayData.nItems(); ++minIndex.z) if (displayData[minIndex.z]->z() >= axisMin.z) break;
-// 	if (minIndex.z == displayData.nItems()) return false;
-// 	for (maxIndex.z = displayData.nItems()-1; maxIndex.z >= 0; --maxIndex.z)  if (displayData[maxIndex.z]->z() <= axisMax.z) break;
-// 	if (maxIndex.z < 0) return false;
-// 
-// 	return true;
-// }
