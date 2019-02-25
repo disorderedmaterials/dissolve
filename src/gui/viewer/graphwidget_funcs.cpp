@@ -37,7 +37,7 @@ GraphWidget::~GraphWidget()
 {
 }
 
-// Return contained DataViewWidget
+// Return contained DataViewer
 DataViewer* GraphWidget::dataViewer()
 {
 	return ui_.DataView;

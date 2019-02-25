@@ -43,7 +43,7 @@ class GraphWidget : public QWidget
 	Ui::GraphWidget ui_;
 
 	public:
-	// Return contained DataViewWidget
+	// Return contained DataViewer
 	DataViewer* dataViewer();
 
 
