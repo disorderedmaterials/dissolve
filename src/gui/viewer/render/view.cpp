@@ -366,33 +366,29 @@ const Matrix4& View::viewMatrix() const
 	return viewMatrix_;
 }
 
-// Project given model coordinates into world coordinates
-Vec3<double> View::modelToWorld(Vec3<double> modelr) const
+// Project given data coordinates into world coordinates
+Vec3<double> View::dataToWorld(Vec3<double> r) const
 {
-	Vec3<double> worldr;
 	Matrix4 vmat;
 	Vec4<double> pos, temp;
 
-	// Projection formula is : worldr = P x M x modelr
-	pos.set(modelr, 1.0);
-
-	// Get the world coordinates of the atom - Multiply by view matrix
+	// Get the world coordinates of r - multiply by view matrix
+	pos.set(r, 1.0);
 	temp = viewMatrix_ * pos;
-	worldr.set(temp.x, temp.y, temp.z);
 
-	return worldr;
+	return Vec3<double>(temp.x, temp.y, temp.z);
 }
 
-// Project given model coordinates into screen coordinates
-Vec3<double> View::modelToScreen(Vec3<double> modelr) const
+// Project given data coordinates into screen coordinates
+Vec3<double> View::dataToScreen(Vec3<double> r) const
 {
 	Vec4<double> screenr, tempscreen;
 	Vec4<double> worldr;
 	Matrix4 vmat;
 	Vec4<double> pos;
 
-	// Projection formula is : worldr = P x M x modelr
-	pos.set(modelr, 1.0);
+	// Projection formula is : worldr = P x M x r
+	pos.set(r, 1.0);
 
 	// Get the world coordinates of the point - Multiply by view matrix
 	worldr = viewMatrix_ * pos;
@@ -406,18 +402,18 @@ Vec3<double> View::modelToScreen(Vec3<double> modelr) const
 	return Vec3<double>(screenr.x, screenr.y, screenr.z);
 }
 
-// Project given model coordinates into screen coordinates using supplied projection matrix, rotation matrix and translation vector
-Vec3<double> View::modelToScreen(Vec3<double> modelr, Matrix4 projectionMatrix, Matrix4 rotationMatrix, Vec3<double> translation) const
+// Project given data coordinates into screen coordinates using supplied projection matrix, rotation matrix and translation vector
+Vec3<double> View::dataToScreen(Vec3<double> r, Matrix4 projectionMatrix, Matrix4 rotationMatrix, Vec3<double> translation) const
 {
 	Vec4<double> screenr, tempscreen;
 	Vec4<double> worldr;
 	Matrix4 vmat;
 	Vec4<double> pos;
 
-	// Projection formula is : worldr = P x M x modelr
-	pos.set(modelr, 1.0);
+	// Projection formula is : worldr = P x M x r
+	pos.set(r, 1.0);
 
-	// Get the world coordinates of the point - Multiply by modelview matrix 'view'
+	// Get the screen coordinates of the point
 	vmat = rotationMatrix;
 	vmat.applyPreTranslation(translation);
 	worldr = vmat * pos;
@@ -479,10 +475,9 @@ double View::calculateRequiredZoom(double xMax, double yMax, double fraction) co
 	return translation.z;
 }
 
-// Convert screen coordinates into model space coordinates
-Vec3<double> View::screenToModel(int x, int y, double z) const
+// Convert screen coordinates into data space coordinates
+Vec3<double> View::screenToData(int x, int y, double z) const
 {
-	static Vec3<double> modelr;
 	Vec4<double> temp, worldr;
 	int newx, newy;
 	double dx, dy;
@@ -510,9 +505,7 @@ Vec3<double> View::screenToModel(int x, int y, double z) const
 	}
 
 	// Finally, invert to model coordinates
-	modelr = viewMatrixInverse_ * Vec3<double>(worldr.x, worldr.y, worldr.z);
-
-	return modelr;
+	return viewMatrixInverse_ * Vec3<double>(worldr.x, worldr.y, worldr.z);
 }
 
 // Calculate selection axis coordinate from supplied screen coordinates
@@ -525,8 +518,8 @@ double View::screenToAxis(int axis, int x, int y, bool clamp) const
 // 	rMouseLast_.print();
 // 	axisCoordMin_[0].print();
 	// Project axis coordinates to get a screen-based yardstick
-	Vec3<double> axmin = modelToScreen(axes_.coordMin(axis));
-	Vec3<double> axmax = modelToScreen(axes_.coordMax(axis));
+	Vec3<double> axmin = dataToScreen(axes_.coordMin(axis));
+	Vec3<double> axmax = dataToScreen(axes_.coordMax(axis));
 // 	axmin.print();
 // 	axmax.print();
 
@@ -589,7 +582,7 @@ void View::recalculateView(bool force)
 	 */
 
 	// -- Project a point one unit each along X and Y and subtract off the viewport centre coordinate in order to get literal 'pixels per unit' for (screen) X and Y
-	Vec3<double> unit = modelToScreen(Vec3<double>(1.0, 1.0, 0.0), tempProjection, Matrix4());
+	Vec3<double> unit = dataToScreen(Vec3<double>(1.0, 1.0, 0.0), tempProjection, Matrix4());
 	unit.x -= viewportMatrix_[0] + viewportMatrix_[2]/2.0;
 	unit.y -= viewportMatrix_[1] + viewportMatrix_[3]/2.0;
 	unit.z = unit.y;
@@ -649,8 +642,8 @@ void View::recalculateView(bool force)
 			if ((axis != axisX) && (axis != axisY)) continue;
 
 			// Project axis min/max coordinates onto screen
-			a = modelToScreen(axes_.coordMin(axis), tempProjection, viewMat);
-			b = modelToScreen(axes_.coordMax(axis), tempProjection, viewMat);
+			a = dataToScreen(axes_.coordMin(axis), tempProjection, viewMat);
+			b = dataToScreen(axes_.coordMax(axis), tempProjection, viewMat);
 			coordMin[axis].set(std::min(a.x,b.x), std::min(a.y,b.y),  std::min(a.z,b.z)); 
 			coordMax[axis].set(std::max(a.x,b.x), std::max(a.y,b.y),  std::max(a.z,b.z)); 
 
@@ -667,8 +660,8 @@ void View::recalculateView(bool force)
 			cuboid = axes_.titlePrimitive(axis).boundingCuboid(fontInstance_, viewMatrixInverse, textZScale_, cuboid);
 
 			// Project cuboid extremes and store projected coordinates
-			a = modelToScreen(cuboid.minima(), tempProjection, viewMat);
-			b = modelToScreen(cuboid.maxima(), tempProjection, viewMat);
+			a = dataToScreen(cuboid.minima(), tempProjection, viewMat);
+			b = dataToScreen(cuboid.maxima(), tempProjection, viewMat);
 
 			// Update global and label min/max
 			for (int n=0; n<3; ++n)
@@ -1118,7 +1111,7 @@ void View::calculateFontScaling()
 	// Calculate text scaling factor
 	Vec3<double> translate(0.0, 0.0, zOffset_);
 	if (hasPerspective_) translate.z = 0.5;
-	Vec3<double> unit = modelToScreen(Vec3<double>(0.0, 1.0, viewTranslation_.z), projectionMatrix_, Matrix4(), translate);
+	Vec3<double> unit = dataToScreen(Vec3<double>(0.0, 1.0, viewTranslation_.z), projectionMatrix_, Matrix4(), translate);
 	unit.y -= viewportMatrix_[1] + viewportMatrix_[3]*0.5;
 	textZScale_ = unit.y;
 }

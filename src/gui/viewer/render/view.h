@@ -162,16 +162,16 @@ class View
 	void updateViewMatrix();
 	// Return full view matrix (rotation + translation)
 	const Matrix4& viewMatrix() const;
-	// Project given model coordinates into world coordinates
-	Vec3<double> modelToWorld(Vec3<double> modelr) const;
-	// Project given model coordinates into screen coordinates
-	Vec3<double> modelToScreen(Vec3<double> modelr) const;
-	// Project given model coordinates into screen coordinates using supplied rotation matrix and translation vector
-	Vec3<double> modelToScreen(Vec3<double> modelr, Matrix4 projectionMatrix, Matrix4 rotationMatrix, Vec3<double> translation = Vec3<double>()) const;
+	// Project given data coordinates into world coordinates
+	Vec3<double> dataToWorld(Vec3<double> r) const;
+	// Project given data coordinates into screen coordinates
+	Vec3<double> dataToScreen(Vec3<double> r) const;
+	// Project given data coordinates into screen coordinates using supplied rotation matrix and translation vector
+	Vec3<double> dataToScreen(Vec3<double> r, Matrix4 projectionMatrix, Matrix4 rotationMatrix, Vec3<double> translation = Vec3<double>()) const;
 	// Return z translation necessary to display coordinates supplied, assuming the identity view matrix
 	double calculateRequiredZoom(double xMax, double yMax, double fraction) const;
-	// Convert screen coordinates into model space coordinates
-	Vec3<double> screenToModel(int x, int y, double z) const;
+	// Convert screen coordinates into data space coordinates
+	Vec3<double> screenToData(int x, int y, double z) const;
 	// Calculate selection axis coordinate from supplied screen coordinates
 	double screenToAxis(int axis, int x, int y, bool clamp) const;
 	// Recalculate current view parameters (e.g. for 2D, autostretched 3D etc.)
