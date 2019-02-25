@@ -26,6 +26,7 @@
 
 // Forward Declarations
 class Species;
+class SpeciesAtom;
 
 // Species Rendering Widget
 class SpeciesViewer : public BaseViewer
@@ -77,8 +78,13 @@ class SpeciesViewer : public BaseViewer
 		SelectAreaInteraction,
 		TranslateViewInteraction,
 		RotateViewInteraction,
+		DrawInteraction,
 		nInteractionModes
 	};
+
+	private:
+	// Clicked atom at the start of the interaction (if any)
+	SpeciesAtom* clickedAtom_;
 
 	protected:
 	// Start interaction at the specified screen coordinates

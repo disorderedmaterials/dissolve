@@ -53,6 +53,7 @@ void SpeciesWidget::on_ViewToolButton_clicked(bool checked)
 
 void SpeciesWidget::on_DrawToolButton_clicked(bool checked)
 {
+	if (checked) speciesViewer()->setInteractionMode(SpeciesViewer::DrawInteraction);
 }
 
 // Update info label

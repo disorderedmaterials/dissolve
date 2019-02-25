@@ -31,6 +31,7 @@ SpeciesViewer::SpeciesViewer(QWidget* parent) : BaseViewer(parent)
 
 	// Interaction
 	setInteractionMode(SpeciesViewer::DefaultInteraction);
+	clickedAtom_ = NULL;
 
 	// Set up the view
 	view_.setViewType(View::NormalView);

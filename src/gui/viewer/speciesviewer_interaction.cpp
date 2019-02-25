@@ -33,6 +33,10 @@ void SpeciesViewer::startInteraction(Qt::KeyboardModifiers modifiers)
 			else if (buttonState_.testFlag(Qt::RightButton)) interactionMode_ = SpeciesViewer::RotateViewInteraction;
 			else if (buttonState_.testFlag(Qt::MiddleButton)) interactionMode_ = SpeciesViewer::TranslateViewInteraction;
 			break;
+		// Draw
+		case (SpeciesViewer::DrawInteraction):
+			
+			break;
 		default:
 			break;
 	}
