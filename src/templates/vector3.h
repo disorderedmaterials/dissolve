@@ -330,19 +330,27 @@ template <class T> class Vec3
 			z /= mag;
 		}
 	}
-	// Returns an orthogonal unit vector
-	Vec3<T> orthogonal(bool isNormalised = false) const
+	// Returns an orthogonal, normalised unit vector
+	Vec3<T> orthogonal() const
 	{
-		// Static test vectors
-		static Vec3<T> unitX(1.0,0.0,0.0), unitY(0.0,1.0,0.0);
-		
-		// Normalise current vector unless told not to
-		Vec3<T> currentVec(x,y,z);
-		if (!isNormalised) currentVec.normalise();
-		
-		// Check dot product of unitX with the current vector - if greater than 0.5, use unitY instead
-		if (unitX.dp(currentVec) > 0.5) return currentVec * unitY;
-		else return currentVec * unitX;
+		// Check dot product of (1,0,0) with the current vector - if greater than 0.5, use (0,1,0) instead
+		Vec3<T> result;
+		if (x > y)
+		{
+			// XP with (0,1,0)
+			result.x = -z;
+			result.y = 0.0;
+			result.z = x;
+		}
+		else
+		{
+			// XP with (1,0,0)
+			result.x = 0.0;
+			result.y = z;
+			result.z = -y;
+		}
+		result.normalise();
+		return result;
 	}
 	// Orthogonalise (Gram-Schmidt) w.r.t. supplied vector
 	void orthogonalise(const Vec3<T>& reference)
