@@ -334,7 +334,7 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 			CharString id("%s-%s", at1->name(), at2->name());
 
 			// Generated potential
-			Renderable* phi = phiRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("PairPotential//%s-%s//Additional", id.get()), CharString("PhiR//%s", id.get()), CharString("%s", id.get()));
+			Renderable* phi = phiRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("PairPotential//%s//Additional", id.get()), CharString("PhiR//%s", id.get()), CharString("%s", id.get()));
 			phiRGraph_->groupManager().addToGroup(phi, id.get());
 		}
 	}
