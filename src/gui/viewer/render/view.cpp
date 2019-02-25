@@ -402,6 +402,35 @@ Vec3<double> View::dataToScreen(Vec3<double> r) const
 	return Vec3<double>(screenr.x, screenr.y, screenr.z);
 }
 
+// Project given data coordinates into screen coordinates, with corresponding distance 'delta' in data
+Vec3<double> View::dataToScreen(Vec3<double> r, double& lengthScale) const
+{
+	Vec4<double> screenr;
+	Vec4<double> worldr;
+	Matrix4 vmat;
+	Vec4<double> pos;
+
+	// Projection formula is : worldr = P x M x r
+	pos.set(r, 1.0);
+
+	// Get the world coordinates of the point - Multiply by view matrix
+	worldr = viewMatrix_ * pos;
+	screenr = projectionMatrix_ * worldr;
+	screenr.x /= screenr.w;
+	screenr.y /= screenr.w;
+	screenr.x = viewportMatrix_[0] + viewportMatrix_[2]*(screenr.x+1)*0.5;
+	screenr.y = viewportMatrix_[1] + viewportMatrix_[3]*(screenr.y+1)*0.5;
+	screenr.z = screenr.z / screenr.w;
+
+	// Calculate 2D lengthscale around the point - multiply world[x+lengthScale] coordinates by P
+	worldr.x += lengthScale;
+	Vec4<double> tempScreen = projectionMatrix_ * worldr;
+	tempScreen.x /= tempScreen.w;
+	lengthScale = fabs( (viewportMatrix_[0] + viewportMatrix_[2]*(tempScreen.x+1)*0.5) - screenr.x);
+
+	return Vec3<double>(screenr.x, screenr.y, screenr.z);
+}
+
 // Project given data coordinates into screen coordinates using supplied projection matrix, rotation matrix and translation vector
 Vec3<double> View::dataToScreen(Vec3<double> r, Matrix4 projectionMatrix, Matrix4 rotationMatrix, Vec3<double> translation) const
 {

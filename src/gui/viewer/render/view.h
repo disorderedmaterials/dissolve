@@ -166,6 +166,8 @@ class View
 	Vec3<double> dataToWorld(Vec3<double> r) const;
 	// Project given data coordinates into screen coordinates
 	Vec3<double> dataToScreen(Vec3<double> r) const;
+	// Project given data coordinates into screen coordinates, with corresponding distance 'delta' in data
+	Vec3<double> dataToScreen(Vec3<double> r, double& delta) const;
 	// Project given data coordinates into screen coordinates using supplied rotation matrix and translation vector
 	Vec3<double> dataToScreen(Vec3<double> r, Matrix4 projectionMatrix, Matrix4 rotationMatrix, Vec3<double> translation = Vec3<double>()) const;
 	// Return z translation necessary to display coordinates supplied, assuming the identity view matrix
