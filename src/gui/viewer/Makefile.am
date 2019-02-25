@@ -25,13 +25,13 @@ clean-local:
 
 #libviewer_la_SOURCES = configurationviewer.hui
 libviewer_la_SOURCES = dataviewer.hui speciesviewer.hui viewer.hui
-libviewer_la_SOURCES += graphwidget.ui
+libviewer_la_SOURCES += graphwidget.ui specieswidget.ui
 
 #libviewer_la_SOURCES += configurationviewer_input.cpp configurationviewer_scene.cpp
 
 libviewer_la_SOURCES += dataviewer_funcs.cpp dataviewer_input.cpp dataviewer_interaction.cpp dataviewer_io.cpp dataviewer_render.cpp
 libviewer_la_SOURCES += graphwidget_funcs.cpp
-libviewer_la_SOURCES += speciesviewer_contextmenu.cpp speciesviewer_funcs.cpp speciesviewer_input.cpp speciesviewer_interaction.cpp speciesviewer_render.cpp
+libviewer_la_SOURCES += speciesviewer_contextmenu.cpp speciesviewer_funcs.cpp speciesviewer_input.cpp speciesviewer_interaction.cpp speciesviewer_render.cpp specieswidget_funcs.cpp
 libviewer_la_SOURCES += viewer_data.cpp viewer_funcs.cpp viewer_input.cpp viewer_interaction.cpp viewer_query.cpp viewer_render.cpp
 
 #noinst_HEADERS = 

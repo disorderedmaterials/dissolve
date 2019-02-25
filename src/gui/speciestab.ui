@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1028</width>
-    <height>819</height>
+    <width>955</width>
+    <height>810</height>
    </rect>
   </property>
   <property name="font">
@@ -229,9 +229,9 @@
          </layout>
         </item>
         <item>
-         <widget class="SpeciesViewer" name="ViewerWidget" native="true">
+         <widget class="SpeciesWidget" name="ViewerWidget" native="true">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
             <horstretch>0</horstretch>
             <verstretch>2</verstretch>
            </sizepolicy>
@@ -968,9 +968,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>SpeciesViewer</class>
+   <class>SpeciesWidget</class>
    <extends>QWidget</extends>
-   <header>gui/viewer/speciesviewer.hui</header>
+   <header>gui/viewer/specieswidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

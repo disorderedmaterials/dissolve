@@ -10,10 +10,18 @@ SET(viewer_MOC_HDRS
 )
 QT5_WRAP_CPP(viewer_MOC_SRCS ${viewer_MOC_HDRS})
 
+# User Interface Files
+SET(viewer_UIS
+  graphwidget.ui
+  specieswidget.ui
+}
+QT5_WRAP_UI(viewer_UIS_H ${viewer_UIS})
+
 # Source files (not Qt UI files or custom .h [uih])
 SET(viewer_SRCS
   graphwidget.h
   selectsymbol.h
+  specieswidget.h
 
   configurationviewer_input.cpp
   configurationviewer_scene.cpp
@@ -29,6 +37,7 @@ SET(viewer_SRCS
   speciesviewer_input.cpp
   speciesviewer_interaction.cpp
   speciesviewer_render.cpp
+  specieswidget_funcs.cpp
   viewer_data.cpp
   viewer_funcs.cpp
   viewer_input.cpp
@@ -39,6 +48,7 @@ SET(viewer_SRCS
 
 # Target 'viewer'
 add_library(viewer
+  ${viewer_UIS_H}
   ${viewer_SRCS}
   ${viewer_MOC_SRCS}
 )

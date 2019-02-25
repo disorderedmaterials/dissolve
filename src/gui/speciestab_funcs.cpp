@@ -59,7 +59,7 @@ SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabW
 	ui.IsotopeTable->setItemDelegateForColumn(1, new IsotopeComboDelegate(this));
 
 	// Set target for SpeciesViewer
-	ui.ViewerWidget->setSpecies(species_);
+	ui.ViewerWidget->speciesViewer()->setSpecies(species_);
 
 	refreshing_ = false;
 }
