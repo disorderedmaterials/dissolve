@@ -25,12 +25,13 @@
 #include "gui/viewer/render/primitiveinfo.h"
 #include "templates/array.h"
 #include "templates/factory.h"
+#include "templates/listitem.h"
 
 // Forward Declarations
 /* none */
 
 // Rendering Primitive List
-class PrimitiveAssembly
+class PrimitiveAssembly : public ListItem<PrimitiveAssembly>
 {
 	public:
 	// Constructor / Destructor

@@ -28,17 +28,15 @@
 RenderableSpecies::RenderableSpecies(const Species* source, const char* objectTag) : Renderable(Renderable::SpeciesRenderable, objectTag), source_(source)
 {
 	// Create basic primitives
-	atomPrimitive_ = new Primitive;
+	atomPrimitive_ = createBasicPrimitive(GL_TRIANGLES, false);
 	atomPrimitive_->sphere(1.0, 8, 10);
-	bondPrimitive_ = new Primitive;
+	bondPrimitive_ = createBasicPrimitive(GL_TRIANGLES, false);
 	bondPrimitive_->cylinder(0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1, 8);
-	unitCellPrimitive_ = new Primitive;
-// 	unitCellPrimitive_->wireCube(1.0, 4, 0, 0, 0);	
+	unitCellPrimitive_ = createBasicPrimitive(GL_LINES, false);
+// 	unitCellPrimitive_->wireCube(1.0, 4, 0, 0, 0);
 
-	// Add our Primitives to the PrimitiveList in the underlying Renderable so that their management will be automated
-	basicPrimitives_.add(atomPrimitive_);
-	basicPrimitives_.add(bondPrimitive_);
-// 	basicPrimitives_.add(&unitCellPrimitive_);
+	// Create main primitive assembly
+	speciesPrimitive_ = createPrimitiveAssembly();
 }
 
 // Destructor
@@ -131,10 +129,13 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 	Matrix4 A;
 	const float* colour;
 
+	// Clear existing data
+	speciesPrimitive_->clear();
+
 	/*
 	 * Draw Atoms
 	 */
-	primitiveAssembly_.add(true, GL_FILL);
+	speciesPrimitive_->add(true, GL_FILL);
 	ListIterator<SpeciesAtom> atomIterator(source_->atoms());
 	while (SpeciesAtom* i = atomIterator.iterate())
 	{
@@ -144,7 +145,7 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 
 		// The Atom itself
 		colour = ElementColours::colour(i->element());
-		primitiveAssembly_.add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+		speciesPrimitive_->add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 
 		// Label
 // 		text.clear();
@@ -197,11 +198,11 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 
 		// Render half of Bond in colour of Atom j
 		colour = ElementColours::colour(b->j()->element());
-		primitiveAssembly_.add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+		speciesPrimitive_->add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 		
 		// Render half of Bond in colour of Atom i
 		A.columnMultiply(2,-1.0);
 		colour = ElementColours::colour(b->i()->element());
-		primitiveAssembly_.add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+		speciesPrimitive_->add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 	}
 }

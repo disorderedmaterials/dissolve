@@ -203,13 +203,13 @@ class Renderable : public ListItem<Renderable>
 	/*
 	 * Rendering Primitives
 	 */
-	protected:
-	// Basic Primitives managed by the Renderable, used to assemble representations of data
+	private:
+	// Basic Primitives managed by the Renderable, and used in the creation of assemblies
 	PrimitiveList basicPrimitives_;
-	// Representation of data using local Primitives
-	PrimitiveAssembly primitiveAssembly_;
-	// Bespoke primitives create to represent the data
-	PrimitiveList bespokePrimitives_;
+	// Standard Primitives managed by the Renderable, and drawn automatically
+	PrimitiveList primitives_;
+	// Primitive assemblies managed by the Renderable, and drawn automatically
+	List<PrimitiveAssembly> assemblies_;
 	// Data version at which bespoke primitives / assembled list were last created
 	int lastDataVersion_;
 	// ColourDefinition fingerprint at which primitives were last created
@@ -219,6 +219,20 @@ class Renderable : public ListItem<Renderable>
 	// Style version at which primitives were last created
 	int lastStyleVersion_;
 
+	protected:
+	// Create new basic Primitive
+	Primitive* createBasicPrimitive(GLenum type = GL_LINES, bool colourData = false);
+	// Remove specified basic Primitive
+	void removeBasicPrimitive(Primitive* primitive);
+	// Create new Primitive
+	Primitive* createPrimitive();
+	// Remove specified Primitive
+	void removePrimitive(Primitive* primitive);
+	// Create new PrimitiveAssembly
+	PrimitiveAssembly* createPrimitiveAssembly();
+	// Remove specified PrimitiveAssembly
+	void removePrimitiveAssembly(PrimitiveAssembly* assembly);
+	
 	private:
 	// Recreate necessary primitives / primitive assemblies for the data
 	virtual void recreatePrimitives(const View& view, const ColourDefinition& colourDefinition) = 0;

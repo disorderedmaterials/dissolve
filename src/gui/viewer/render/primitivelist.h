@@ -52,9 +52,11 @@ class PrimitiveList
 	// Reinitialise list so it is large enough to accomodate specified number of Primitives
 	void reinitialise(int newSize, bool allowShrink, GLenum type, bool colourData);
 	// Add a new Primitive to the end of the list
-	Primitive* add(GLenum type, bool colourData);
+	Primitive* add(GLenum type = GL_LINES, bool colourData = false);
 	// Register an existing Primitive with the list
 	void add(Primitive* primitive);
+	// Remove specified Primitive
+	void remove(Primitive* primitive);
 	// Return total number of defined vertices
 	int nDefinedVertices();
 	// Return total number of defined indices

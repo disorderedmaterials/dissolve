@@ -26,6 +26,7 @@
 // Constructor
 RenderableData1D::RenderableData1D(const Data1D* source, const char* objectTag) : Renderable(Renderable::Data1DRenderable, objectTag), source_(source)
 {
+	dataPrimitive_ = createPrimitive();
 }
 
 // Destructor
@@ -155,8 +156,8 @@ bool RenderableData1D::yRangeOverX(double xMin, double xMax, double& yMin, doubl
 // Recreate necessary primitives / primitive assemblies for the data
 void RenderableData1D::recreatePrimitives(const View& view, const ColourDefinition& colourDefinition)
 {
-	bespokePrimitives_.reinitialise(1, true, GL_LINE_STRIP, true);
-	constructLineXY(transformedData().constXAxis(), transformedData().constValues(), bespokePrimitives_[0], view.constAxes(), colourDefinition);
+	dataPrimitive_->initialise(GL_LINE_STRIP, true);
+	constructLineXY(transformedData().constXAxis(), transformedData().constValues(), dataPrimitive_, view.constAxes(), colourDefinition);
 }
 
 // Create line strip primitive

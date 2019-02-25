@@ -78,6 +78,12 @@ void PrimitiveList::add(Primitive* primitive)
 	primitives_.own(primitive);
 }
 
+// Remove specified Primitive
+void PrimitiveList::remove(Primitive* primitive)
+{
+	primitives_.remove(primitive);
+}
+
 // Return total number of defined vertices
 int PrimitiveList::nDefinedVertices()
 {

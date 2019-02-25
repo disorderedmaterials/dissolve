@@ -69,6 +69,8 @@ class RenderableSpecies : public Renderable
 	private:
 	// Basic primitives
 	Primitive* atomPrimitive_, *unitCellPrimitive_, *bondPrimitive_;
+	// Main primitive
+	PrimitiveAssembly* speciesPrimitive_;
 
 	private:
 	// Recreate necessary primitives / primitive assemblies for the data

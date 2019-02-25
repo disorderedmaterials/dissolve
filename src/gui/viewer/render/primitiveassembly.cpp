@@ -22,7 +22,7 @@
 #include "gui/viewer/render/primitiveassembly.h"
 
 // Constructor
-PrimitiveAssembly::PrimitiveAssembly()
+PrimitiveAssembly::PrimitiveAssembly() : ListItem<PrimitiveAssembly>()
 {
 }
 
