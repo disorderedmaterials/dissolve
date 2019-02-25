@@ -24,6 +24,7 @@
 
 #include "gui/viewer/render/primitiveinfo.h"
 #include "templates/array.h"
+#include "templates/factory.h"
 
 // Forward Declarations
 /* none */
@@ -38,19 +39,31 @@ class PrimitiveAssembly
 
 
 	/*
-	 * Data
+	 * Object Factories
 	 */
 	private:
-	// Array of PrimitiveInfo that constitute our assembly
-	Array<PrimitiveInfo> assembly_;
+	// Factories for all PrimitiveInfo-derived classes
+	ObjectFactory<UncolouredPrimitiveInfo> uncolouredPrimitiveFactory_;
+	ObjectFactory<ColouredPrimitiveInfo> colouredPrimitiveFactory_;
+	ObjectFactory<StylePrimitiveInfo> stylePrimitiveFactory_;
+
+
+	/*
+	 * Assembly
+	 */
+	private:
+	// Array of PrimitiveInfo pointers that constitute our assembly
+	Array<PrimitiveInfo*> assembly_;
 
 	public:
 	// Clear existing data
 	void clear();
-	// Forget all data, leaving array intact
-	void forgetAll();
-	// Add PrimitiveInfo to the assembly
-	void add(PrimitiveInfo info);
+	// Add Primitive to the assembly
+	void add(Primitive* primitive, const Matrix4& matrix);
+	// Add Primitive with colour to the assembly
+	void add(Primitive* primitive, const Matrix4& matrix, GLfloat r, GLfloat g, GLfloat b, GLfloat a);
+	// Add styling information
+	void add(bool lighting, GLenum polygonFillMode, GLfloat lineWidth = 1.0);
 
 
 	/*

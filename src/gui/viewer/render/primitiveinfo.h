@@ -31,56 +31,79 @@ class Primitive;
 class PrimitiveInfo
 {
 	public:
-	// Constructors
+	// Constructor / Desctructor
 	PrimitiveInfo();
-	PrimitiveInfo(GLfloat lineWidth);
-	PrimitiveInfo(GLenum fillMode);
-	PrimitiveInfo(Primitive* prim, Matrix4& transform);
-	PrimitiveInfo(Primitive* prim, Matrix4& transform, GLfloat* colour);
-	// Clear
-	void clear();
+	virtual ~PrimitiveInfo();
 
+	
 	/*
-	 * Info Type
+	 * GL
 	 */
 	public:
-	// PrimitiveInfo Type
-	enum PrimitiveInfoType { ObjectInfoType, ColourInfoType, FillModeInfoType, LineWidthInfoType, nPrimitiveInfoTypes };
+	// Expose contained info to GL
+	virtual void sendToGL() = 0;
+};
 
-	private:
-	// Flags indicating which types of info are contained
-	bool infoType_[nPrimitiveInfoTypes];
+/*
+ * Derived Classes
+ */
 
+// Primitive Only
+class UncolouredPrimitiveInfo : public PrimitiveInfo
+{
+	public:
+	// Constructor / Destructor
+	UncolouredPrimitiveInfo(Primitive* prim = NULL, Matrix4 transform = Matrix4());
+	~UncolouredPrimitiveInfo();
 
-	/*
-	 * Object Information
-	 */
 	private:
 	// Target primitive
 	Primitive* primitive_;
 	// Transformation to apply before rendering Primitive
 	Matrix4 transform_;
-	// Whether to draw the Primitive as filled or wireframe polygons
-	GLenum fillMode_;
-	// Colour of Primitive (if relevant)
-	GLfloat colour_[4];
-	// GL object line width (if type_ == GL_LINE or chunk primitive type == GL_LINES)
-	GLfloat lineWidth_;
-	
+
 	public:
-	// Set Primitive, transform, and colour
-	void setPrimitive(Primitive* prim, Matrix4& transform, GLfloat* colour);
-	// Set Primitive and transform
-	void setPrimitive(Primitive* prim, Matrix4& transform);
-	// Set polygon fill mode
-	void setFillMode(GLenum fillMode);
-	// Set line width
-	void setLineWidth(GLfloat lineWidth);
+	// Expose contained info to GL
+	void sendToGL();
+};
 
+// Primitive and Colour
+class ColouredPrimitiveInfo : public PrimitiveInfo
+{
+	public:
+	// Constructor / Destructor
+	ColouredPrimitiveInfo(Primitive* prim = NULL, Matrix4 transform = Matrix4(), GLfloat r = 0.0, GLfloat g = 0.0, GLfloat b = 0.0, GLfloat a = 0.0);
+	~ColouredPrimitiveInfo();
 
-	/*
-	 * GL
-	 */
+	private:
+	// Target primitive
+	Primitive* primitive_;
+	// Transformation to apply before rendering Primitive
+	Matrix4 transform_;
+	// Colour of Primitive
+	GLfloat colour_[4];
+
+	public:
+	// Expose contained info to GL
+	void sendToGL();
+};
+
+// Style Information
+class StylePrimitiveInfo : public PrimitiveInfo
+{
+	public:
+	// Constructor / Destructor
+	StylePrimitiveInfo(bool lighting = true, GLenum polygonFillMode = GL_FILL, GLfloat lineWidth = 1.0);
+	~StylePrimitiveInfo();
+
+	private:
+	// Whether lighting is enabled
+	bool lighting_;
+	// Polygon fill mode
+	GLenum fillMode_;
+	// GL object line width (for GL_LINE etc.)
+	GLfloat lineWidth_;
+
 	public:
 	// Expose contained info to GL
 	void sendToGL();

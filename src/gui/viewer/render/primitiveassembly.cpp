@@ -34,19 +34,32 @@ PrimitiveAssembly::~PrimitiveAssembly()
 // Clear all existing primitives
 void PrimitiveAssembly::clear()
 {
+	// Return all objects to their 
 	assembly_.clear();
 }
 
-// Forget all data, leaving arrays intact
-void PrimitiveAssembly::forgetAll()
+// Add Primitive to the assembly
+void PrimitiveAssembly::add(Primitive* primitive, const Matrix4& matrix)
 {
-	assembly_.forgetData();
+	UncolouredPrimitiveInfo* pi = uncolouredPrimitiveFactory_.produce();
+	(*pi) = UncolouredPrimitiveInfo(primitive, matrix);
+	assembly_.add(pi);
 }
 
-// Add PrimitiveInfo to the assembly
-void PrimitiveAssembly::add(PrimitiveInfo info)
+// Add Primitive with colour to the assembly
+void PrimitiveAssembly::add(Primitive* primitive, const Matrix4& matrix, GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
-	assembly_.add(info);
+	ColouredPrimitiveInfo* pi = colouredPrimitiveFactory_.produce();
+	(*pi) = ColouredPrimitiveInfo(primitive, matrix, r, g, b, a);
+	assembly_.add(pi);
+}
+
+// Add styling information
+void PrimitiveAssembly::add(bool lighting, GLenum polygonFillMode, GLfloat lineWidth)
+{
+	StylePrimitiveInfo* pi = stylePrimitiveFactory_.produce();
+	(*pi) = StylePrimitiveInfo(lighting, polygonFillMode, lineWidth);
+	assembly_.add(pi);
 }
 
 /*
@@ -56,5 +69,5 @@ void PrimitiveAssembly::add(PrimitiveInfo info)
 // Send to OpenGL (i.e. render)
 void PrimitiveAssembly::sendToGL()
 {
-	for (int n=0; n<assembly_.nItems(); ++n) assembly_[n].sendToGL();
+	for (int n=0; n<assembly_.nItems(); ++n) assembly_[n]->sendToGL();
 }

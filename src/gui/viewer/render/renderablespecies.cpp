@@ -122,22 +122,23 @@ bool RenderableSpecies::yRangeOverX(double xMin, double xMax, double& yMin, doub
 // Recreate necessary primitives / primitive assemblies for the data
 void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinition& colourDefinition)
 {
-	// Draw Atoms
-	CharString text(128);
-	Isotope* iso;
-// 	PrimitiveInfo primitiveInfo;
 	Matrix4 A;
 	const float* colour;
-	bool atomTypeLabel = false; //mainWindow_->ui.ViewAtomTypeCheck->isChecked();
-	bool indexLabel = false; //mainWindow_->ui.ViewIndexCheck->isChecked();
+
+	/*
+	 * Draw Atoms
+	 */
+	primitiveAssembly_.add(true, GL_FILL);
 	ListIterator<SpeciesAtom> atomIterator(source_->atoms());
 	while (SpeciesAtom* i = atomIterator.iterate())
 	{
+		A.setIdentity();
 		A.setTranslation(i->r());
+		A.applyScaling(0.3);
 
 		// The Atom itself
 		colour = ElementColours::colour(i->element());
-		primitiveAssembly_.add(PrimitiveInfo(atomPrimitive_, A, (GLfloat*) colour));
+		primitiveAssembly_.add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 
 		// Label
 // 		text.clear();
@@ -169,34 +170,34 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 // // 		renderPrimitive(&spherePrimitive04_, colour, A);
 // 	}
 // 
-// 	// Draw Bonds
-// 	Vec3<double> vij;
-// 	double mag;
-// 	for (SpeciesBond* b = source_->bonds().first(); b != NULL; b = b->next)
-// 	{
-// 		// Get vector between Atoms i->j and move to Bond centre
-// 		vij = b->j()->r() - b->i()->r();
-// 		A.setTranslation(b->i()->r()+vij*0.5);
-// 		mag = vij.magAndNormalise();
-// 		
-// 		// Create rotation matrix for Bond
-// 		A.setColumn(2, vij.x, vij.y, vij.z, 0.0);
-// 		A.setColumn(0, vij.orthogonal(), 0.0);
-// 		A.setColumn(1, vij * A.columnAsVec3(0), 0.0);
-// 		A.columnMultiply(2, 0.5*mag);
-// 
-// 		// Render half of Bond in colour of Atom j
-// 		// TODO Use proper element colour
-// //  		renderPrimitive(&cylinderPrimitive_, PeriodicTable::element(b->j()->element()).colour(), A);
-// // 		renderPrimitive(&cylinderPrimitive_, colour, A);
-// 		
-// 		// Render half of Bond in colour of Atom i
-// 		A.columnMultiply(2,-1.0);
-// 		// TODO Use proper element colour
-// // 		renderPrimitive(&cylinderPrimitive_, PeriodicTable::element(b->i()->element()).colour(), A);
-// // 		renderPrimitive(&cylinderPrimitive_, colour, A);
-// 	}
-// 	
+	// Draw Bonds
+	Vec3<double> vij;
+	double mag;
+	for (SpeciesBond* b = source_->bonds().first(); b != NULL; b = b->next)
+	{
+		// Get vector between Atoms i->j and move to Bond centre
+		vij = b->j()->r() - b->i()->r();
+		A.setTranslation(b->i()->r()+vij*0.5);
+		mag = vij.magAndNormalise();
+		
+		// Create rotation matrix for Bond
+		A.setColumn(2, vij.x, vij.y, vij.z, 0.0);
+		A.setColumn(0, vij.orthogonal(), 0.0);
+		A.setColumn(1, vij * A.columnAsVec3(0), 0.0);
+		A.columnMultiply(2, 0.5*mag);
+
+		// Render half of Bond in colour of Atom j
+		// TODO Use proper element colour
+//  		renderPrimitive(&cylinderPrimitive_, PeriodicTable::element(b->j()->element()).colour(), A);
+// 		renderPrimitive(&cylinderPrimitive_, colour, A);
+		
+		// Render half of Bond in colour of Atom i
+		A.columnMultiply(2,-1.0);
+		// TODO Use proper element colour
+// 		renderPrimitive(&cylinderPrimitive_, PeriodicTable::element(b->i()->element()).colour(), A);
+// 		renderPrimitive(&cylinderPrimitive_, colour, A);
+	}
+	
 // 	// If a GrainDefinition is selected, add on highlight to involved atoms
 // // 	if (species_->highlightedGrain())
 // // 	{

@@ -22,107 +22,70 @@
 #include "gui/viewer/render/primitiveinfo.h"
 #include "gui/viewer/render/primitive.h"
 
-// Constructors
+/*
+ * PrimitiveInfo
+ */
+
+// Constructor
 PrimitiveInfo::PrimitiveInfo()
 {
-	clear();
 }
 
-PrimitiveInfo::PrimitiveInfo(GLfloat lineWidth)
+// Destructor
+PrimitiveInfo::~PrimitiveInfo()
 {
-	clear();
-
-	setLineWidth(lineWidth);
-}
-
-PrimitiveInfo::PrimitiveInfo(GLenum fillMode)
-{
-	clear();
-
-	setFillMode(fillMode);
-}
-
-PrimitiveInfo::PrimitiveInfo(Primitive* prim, Matrix4& transform)
-{
-	clear();
-
-	setPrimitive(prim, transform);
-}
-
-PrimitiveInfo::PrimitiveInfo(Primitive* prim, Matrix4& transform, GLfloat* colour)
-{
-	clear();
-
-	setPrimitive(prim, transform, colour);
-}
-
-// Clear
-void PrimitiveInfo::clear()
-{
-	// Private variables
-	primitive_ = NULL;
-	fillMode_ = GL_FILL;
-	lineWidth_ = 1.0f;
-	colour_[0] = 0.0;
-	colour_[1] = 0.0;
-	colour_[2] = 0.0;
-	colour_[3] = 1.0;
-
-	// Content flags
-	for (int n=0; n<nPrimitiveInfoTypes; ++n) infoType_[n] = false;
 }
 
 /*
- * Object Information
+ * UncolouredPrimitiveInfo
  */
 
-// Set Primitive, transform, and colour
-void PrimitiveInfo::setPrimitive(Primitive* prim, Matrix4& transform, GLfloat* colour)
+// Constructor
+UncolouredPrimitiveInfo::UncolouredPrimitiveInfo(Primitive* prim, Matrix4 transform) : primitive_(prim), transform_(transform)
 {
-	primitive_ = prim;
-	transform_ = transform;
-	for (int n=0; n<4; ++n) colour_[n] = colour[n];
-
-	infoType_[PrimitiveInfo::ObjectInfoType] = true;
-	infoType_[PrimitiveInfo::ColourInfoType] = true;
 }
 
-// Set Primitive and transform
-void PrimitiveInfo::setPrimitive(Primitive* prim, Matrix4& transform)
+// Destructor
+UncolouredPrimitiveInfo::~UncolouredPrimitiveInfo()
 {
-	primitive_ = prim;
-	transform_ = transform;
-
-	infoType_[PrimitiveInfo::ObjectInfoType] = true;
 }
-
-// Set polygon fill mode
-void PrimitiveInfo::setFillMode(GLenum fillMode)
-{
-	fillMode_ = fillMode;
-
-	infoType_[PrimitiveInfo::FillModeInfoType] = true;
-}
-
-// Set line width
-void PrimitiveInfo::setLineWidth(GLfloat lineWidth)
-{
-	lineWidth_ = lineWidth;
-
-	infoType_[PrimitiveInfo::LineWidthInfoType] = true;
-}
-
-/*
- * GL
- */
 
 // Expose contained info to GL
-void PrimitiveInfo::sendToGL()
+void UncolouredPrimitiveInfo::sendToGL()
 {
-	// Apply styles first
-	if (infoType_[PrimitiveInfo::ColourInfoType]) glColor4fv(colour_);
-	if (infoType_[PrimitiveInfo::FillModeInfoType]) glPolygonMode(GL_FRONT_AND_BACK, fillMode_);
-	if (infoType_[PrimitiveInfo::LineWidthInfoType]) glLineWidth(lineWidth_);
+	// Render Primitive if one is present
+	if (primitive_)
+	{
+		glPushMatrix();
+		glMultMatrixd(transform_.matrix());
+		primitive_->sendToGL();
+		glPopMatrix();
+	}
+}
+
+/*
+ * ColouredPrimitiveInfo
+ */
+
+// Constructor
+ColouredPrimitiveInfo::ColouredPrimitiveInfo(Primitive* prim, Matrix4 transform, GLfloat r, GLfloat g, GLfloat b, GLfloat a) : primitive_(prim), transform_(transform)
+{
+	colour_[0] = r;
+	colour_[1] = g;
+	colour_[2] = b;
+	colour_[3] = a;
+}
+
+// Destructor
+ColouredPrimitiveInfo::~ColouredPrimitiveInfo()
+{
+}
+
+// Expose contained info to GL
+void ColouredPrimitiveInfo::sendToGL()
+{
+	// Apply colour
+	glColor4fv(colour_);
 
 	// Render Primitive if one is present
 	if (primitive_)
@@ -132,4 +95,28 @@ void PrimitiveInfo::sendToGL()
 		primitive_->sendToGL();
 		glPopMatrix();
 	}
+}
+
+/*
+ * StylePrimitiveInfo
+ */
+
+// Constructor
+StylePrimitiveInfo::StylePrimitiveInfo(bool lighting, GLenum polygonFillMode, GLfloat lineWidth) : lighting_(lighting), fillMode_(polygonFillMode), lineWidth_(lineWidth)
+{
+}
+
+// Destructor
+StylePrimitiveInfo::~StylePrimitiveInfo()
+{
+}
+
+// Expose contained info to GL
+void StylePrimitiveInfo::sendToGL()
+{
+	// Apply style
+	if (lighting_) glEnable(GL_LIGHTING);
+	else glDisable(GL_LIGHTING);
+	glPolygonMode(GL_FRONT_AND_BACK, fillMode_);
+	glLineWidth(lineWidth_);
 }
