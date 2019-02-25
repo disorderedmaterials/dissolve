@@ -21,12 +21,6 @@
 
 #include "gui/viewer/speciesviewer.hui"
 
-// Return current interaction mode
-int SpeciesViewer::interactionMode() const
-{
-	return interactionMode_;
-}
-
 // Start interaction at the specified screen coordinates
 void SpeciesViewer::startInteraction(Qt::KeyboardModifiers modifiers)
 {

@@ -30,7 +30,7 @@ SpeciesViewer::SpeciesViewer(QWidget* parent) : BaseViewer(parent)
 	drawStyle_ = SpeciesViewer::LineStyle;
 
 	// Interaction
-	interactionMode_ = SpeciesViewer::DefaultInteraction;
+	setInteractionMode(SpeciesViewer::DefaultInteraction);
 
 	// Set up the view
 	view_.setViewType(View::NormalView);

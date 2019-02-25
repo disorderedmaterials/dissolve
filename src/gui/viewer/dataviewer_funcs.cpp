@@ -26,7 +26,7 @@
 DataViewer::DataViewer(QWidget* parent) : BaseViewer(parent)
 {
 	// Interaction
-	interactionMode_ = DataViewer::DefaultInteraction;
+	setInteractionMode(DataViewer::DefaultInteraction);
 
 	// Set up the view
 	view_.setViewType(View::FlatXYView);

@@ -80,13 +80,7 @@ class SpeciesViewer : public BaseViewer
 		nInteractionModes
 	};
 
-	private:
-	// Current interaction mode
-	InteractionMode interactionMode_;
-
 	protected:
-	// Return current interaction mode
-	int interactionMode() const;
 	// Start interaction at the specified screen coordinates
 	void startInteraction(Qt::KeyboardModifiers modifiers);
 	// End interaction at the specified screen coordinates

@@ -84,13 +84,7 @@ class DataViewer : public BaseViewer
 		nInteractionModes
 	};
 
-	private:
-	// Current interaction mode
-	InteractionMode interactionMode_;
-
 	public:
-	// Return current interaction mode
-	int interactionMode() const;
 	// Start interaction
 	void startInteraction(Qt::KeyboardModifiers modifiers);
 	// End interaction

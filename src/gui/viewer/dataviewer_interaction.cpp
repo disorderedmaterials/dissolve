@@ -25,12 +25,6 @@
  * Public Functions
  */
 
-// Return current interaction mode
-int DataViewer::interactionMode() const
-{
-	return interactionMode_;
-}
-
 // Start interaction at the specified screen coordinates
 void DataViewer::startInteraction(Qt::KeyboardModifiers modifiers)
 {

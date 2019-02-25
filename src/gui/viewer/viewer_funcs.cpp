@@ -34,6 +34,7 @@ BaseViewer::BaseViewer(QWidget* parent) : QOpenGLWidget(parent), view_(renderabl
 
 	// Interaction
 	interacting_ = false;
+	interactionMode_ = -1;
 
 	// Query
 	objectQueryX_ = -1;

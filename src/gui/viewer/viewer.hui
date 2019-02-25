@@ -212,16 +212,18 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	 * Interaction
 	 */
 	private:
-	// Whether the viewer is currently being interacted with
-	bool interacting_;
 	// Clicked coordinates (in Axes frame) in 2D view
 	Vec3<double> clicked2DAxesCoordinates_;
 	// Current coordinates (in Axes frame) under mouse in 2D view
 	Vec3<double> current2DAxesCoordinates_;
 
 	protected:
-	// Return current interaction mode
-	virtual int interactionMode() const;
+	// Whether the viewer is currently being interacted with
+	bool interacting_;
+	// Current interaction mode
+	int interactionMode_;
+
+	protected:
 	// Start interaction 
 	virtual void startInteraction(Qt::KeyboardModifiers modifiers);
 	// End interaction
@@ -230,6 +232,10 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	virtual void cancelInteraction();
 
 	public:
+	// Set current interaction mode
+	void setInteractionMode(int mode);
+	// Return current interaction mode
+	int interactionMode() const;
 	// Return whether the viewer is currently being interacted with
 	bool interacting() const;
 	// Return clicked coordinates (in Axes frame) in 2D view
