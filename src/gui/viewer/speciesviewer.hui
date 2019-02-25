@@ -86,6 +86,10 @@ class SpeciesViewer : public BaseViewer
 	// Clicked atom at the start of the interaction (if any)
 	SpeciesAtom* clickedAtom_;
 
+	private:
+	// Return atom at specified coordinates
+	SpeciesAtom* atomAt(int x, int y);
+
 	protected:
 	// Start interaction at the specified screen coordinates
 	void startInteraction(Qt::KeyboardModifiers modifiers);

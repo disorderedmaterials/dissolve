@@ -20,6 +20,37 @@
 */
 
 #include "gui/viewer/speciesviewer.hui"
+#include "classes/species.h"
+#include "classes/speciesatom.h"
+
+/*
+ * Private Functions
+ */
+
+// Return atom at specified coordinates
+SpeciesAtom* SpeciesViewer::atomAt(int x, int y)
+{
+	if (!species_) return NULL;
+
+	double lengthScale = 0.3;
+	Vec3<double> rScreen;
+
+	ListIterator<SpeciesAtom> atomIterator(species_->atoms());
+	while (SpeciesAtom* i = atomIterator.iterate())
+	{
+		lengthScale = 0.3;
+		rScreen = view_.dataToScreen(i->r(), lengthScale);
+		rScreen.x -= x;
+		rScreen.y -= y;
+		if (sqrt(rScreen.x*rScreen.x + rScreen.y*rScreen.y) < lengthScale) return i;
+	}
+
+	return NULL;
+}
+
+/*
+ * Protected Virtuals
+ */
 
 // Start interaction at the specified screen coordinates
 void SpeciesViewer::startInteraction(Qt::KeyboardModifiers modifiers)
@@ -35,7 +66,7 @@ void SpeciesViewer::startInteraction(Qt::KeyboardModifiers modifiers)
 			break;
 		// Draw
 		case (SpeciesViewer::DrawInteraction):
-			
+			clickedAtom_ = atomAt(rMouseDown_.x, rMouseDown_.y);
 			break;
 		default:
 			break;
@@ -53,26 +84,29 @@ void SpeciesViewer::endInteraction()
 			if ((rMouseDown_ - rMouseLast_).magnitude() < 9.0)
 			{
 				// Single, targetted click - atom under mouse?
-				// TODO
+				SpeciesAtom* i = atomAt(rMouseLast_.x, rMouseLast_.y);
 			}
 			else
 			{
 				// Click-drag - area select
 			}
+			// Revert to default interaction mode
+			interactionMode_ = SpeciesViewer::DefaultInteraction;
 			break;
 		case (SpeciesViewer::RotateViewInteraction):
-			// Nothing more to do - rotation matrix has already been modified
+			// Rotation matrix has already been modified. Revert to default interaction mode
+			interactionMode_ = SpeciesViewer::DefaultInteraction;
 			break;
 		case (SpeciesViewer::TranslateViewInteraction):
-			// Nothing more to do - translation has already been applied
+			// Translation has already been applied. Revert to default interaction mode
+			interactionMode_ = SpeciesViewer::DefaultInteraction;
+			break;
+		case (SpeciesViewer::DrawInteraction):
 			break;
 		default:
 			printf("Internal Error: Don't know how to complete interaction mode %i\n", interactionMode_);
 			break;
 	}
-
-	// Reset (cancel) the interaction mode
-	cancelInteraction(); 
 }
 
 // Cancel current interaction
@@ -84,6 +118,9 @@ void SpeciesViewer::cancelInteraction()
 		default:
 			break;
 	}
+
+	// Reset other data
+	clickedAtom_ = NULL;
 
 	// Reset back to DefaultInteraction
 	interactionMode_ = SpeciesViewer::DefaultInteraction;

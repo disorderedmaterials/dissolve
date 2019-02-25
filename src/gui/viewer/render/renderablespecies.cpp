@@ -30,6 +30,8 @@ RenderableSpecies::RenderableSpecies(const Species* source, const char* objectTa
 	// Create basic primitives
 	atomPrimitive_ = createBasicPrimitive(GL_TRIANGLES, false);
 	atomPrimitive_->sphere(1.0, 8, 10);
+	selectedAtomPrimitive_ = createBasicPrimitive(GL_LINES, false);
+	selectedAtomPrimitive_->sphere(1.1, 8, 10);
 	bondPrimitive_ = createBasicPrimitive(GL_TRIANGLES, false);
 	bondPrimitive_->cylinder(0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1, 8);
 	unitCellPrimitive_ = createBasicPrimitive(GL_LINES, false);
@@ -128,6 +130,7 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 {
 	Matrix4 A;
 	const float* colour;
+	const float colourBlack[4] = { 0.0, 0.0, 0.0, 1.0 };
 
 	// Clear existing data
 	speciesPrimitive_->clear();
@@ -143,7 +146,7 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 		A.setTranslation(i->r());
 		A.applyScaling(0.3);
 
-		// The Atom itself
+		// The atom itself
 		colour = ElementColours::colour(i->element());
 		speciesPrimitive_->add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 
@@ -158,6 +161,12 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 // 			else text.strcatf("[%i-%s]", iso->A(), PeriodicTable::element(i->element()).symbol());
 // 		}
 // 		renderTextPrimitive(i->r(), text.get(), false, false);
+
+		// Is the atom selected?
+		if (i->isSelected())
+		{
+			speciesPrimitive_->add(selectedAtomPrimitive_, A, colourBlack[0], colourBlack[1], colourBlack[2], colourBlack[3]);
+		}
 	}
 // 
 // 	// Draw Atom Selection
