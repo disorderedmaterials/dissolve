@@ -34,7 +34,6 @@ SpeciesViewer::SpeciesViewer(QWidget* parent) : BaseViewer(parent)
 
 	// Set up the view
 	view_.setViewType(View::NormalView);
-	view_.setAutoFollowType(View::AllAutoFollow);
 }
 
 // Destructor
@@ -58,6 +57,7 @@ void SpeciesViewer::setSpecies(Species *sp)
 	if (species_)
 	{
 		createRenderable(Renderable::SpeciesRenderable, species_->objectTag(), species_->name());
+		view_.showAllData();
 	}
 }
 
