@@ -20,6 +20,7 @@
 */
 
 #include "gui/viewer/speciesviewer.hui"
+#include "gui/viewer/render/renderablespecies.h"
 #include "classes/species.h"
 #include "classes/speciesatom.h"
 
@@ -69,6 +70,7 @@ void SpeciesViewer::startInteraction()
 			clickedAtom_ = atomAt(rMouseDown_.x, rMouseDown_.y);
 			break;
 		default:
+
 			break;
 	}
 }
@@ -85,10 +87,39 @@ void SpeciesViewer::endInteraction()
 			{
 				// Single, targetted click - atom under mouse?
 				SpeciesAtom* i = atomAt(rMouseLast_.x, rMouseLast_.y);
+
+				// If there is an atom at the current position, (de)select it, maintaining the current selection if Shift was pressed
+				if (i)
+				{
+					if (mouseDownModifiers_.testFlag(Qt::ShiftModifier)) species_->toggleAtomSelection(i);
+					else
+					{
+						species_->clearAtomSelection();
+						species_->selectAtom(i);
+					}
+				}
+				else
+				{
+					// No atom at the current position - if Shift was not pressed, deselect everything
+					if (!mouseDownModifiers_.testFlag(Qt::ShiftModifier)) species_->clearAtomSelection();
+				}
 			}
 			else
 			{
 				// Click-drag - area select
+				// If Shift was not pressed, clear the current selection first
+				if (!mouseDownModifiers_.testFlag(Qt::ShiftModifier)) species_->clearAtomSelection();
+				Vec3<double> rScreen;
+				QRect selectionRect(QPoint(rMouseDown_.x, rMouseDown_.y), QPoint(rMouseLast_.x, rMouseLast_.y));
+				ListIterator<SpeciesAtom> atomIterator(species_->atoms());
+				while (SpeciesAtom* i = atomIterator.iterate())
+				{
+					rScreen = view_.dataToScreen(i->r());
+					if (selectionRect.contains(rScreen.x, rScreen.y)) species_->selectAtom(i);
+				}
+
+				// Update the selection
+				speciesRenderable_->recreateSelectionPrimitive();
 			}
 			// Revert to default interaction mode
 			interactionMode_ = SpeciesViewer::DefaultInteraction;

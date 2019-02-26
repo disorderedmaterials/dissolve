@@ -69,12 +69,18 @@ class RenderableSpecies : public Renderable
 	private:
 	// Basic primitives
 	Primitive* atomPrimitive_, *selectedAtomPrimitive_, *unitCellPrimitive_, *bondPrimitive_;
-	// Main primitive
-	PrimitiveAssembly* speciesPrimitive_;
+	// Main primitives
+	PrimitiveAssembly* speciesPrimitive_, *selectionPrimitive_;
+	// Version at which selection primitive was created, relative to selection version
+	int selectionPrimitiveVersion_;
 
 	private:
 	// Recreate necessary primitives / primitive assemblies for the data
 	void recreatePrimitives(const View& view, const ColourDefinition& colourDefinition);
+
+	public:
+	// Recreate selection Primitive
+	void recreateSelectionPrimitive();
 };
 
 #endif

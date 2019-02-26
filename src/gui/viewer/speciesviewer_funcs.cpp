@@ -20,6 +20,7 @@
 */
 
 #include "gui/viewer/speciesviewer.hui"
+#include "gui/viewer/render/renderablespecies.h"
 #include "classes/species.h"
 
 // Constructor
@@ -27,7 +28,7 @@ SpeciesViewer::SpeciesViewer(QWidget* parent) : BaseViewer(parent)
 {
 	// Source data
 	species_ = NULL;
-	drawStyle_ = SpeciesViewer::LineStyle;
+	drawStyle_ = SpeciesViewer::LinesDrawStyle;
 
 	// Interaction
 	setInteractionMode(SpeciesViewer::DefaultInteraction);
@@ -50,6 +51,7 @@ SpeciesViewer::~SpeciesViewer()
 void SpeciesViewer::setSpecies(Species *sp)
 {
 	species_ = sp;
+	speciesRenderable_ = NULL;
 
 	// Clear Renderables
 	clearRenderables();
@@ -57,7 +59,8 @@ void SpeciesViewer::setSpecies(Species *sp)
 	// Create a new Renderable for the supplied Species
 	if (species_)
 	{
-		createRenderable(Renderable::SpeciesRenderable, species_->objectTag(), species_->name());
+		speciesRenderable_ = new RenderableSpecies(species_, species_->objectTag());
+		ownRenderable(speciesRenderable_);
 		view_.showAllData();
 	}
 }

@@ -37,8 +37,12 @@ RenderableSpecies::RenderableSpecies(const Species* source, const char* objectTa
 	unitCellPrimitive_ = createBasicPrimitive(GL_LINES, false);
 // 	unitCellPrimitive_->wireCube(1.0, 4, 0, 0, 0);
 
-	// Create main primitive assembly
+	// Create main primitive assemblies
 	speciesPrimitive_ = createPrimitiveAssembly();
+	selectionPrimitive_ = createPrimitiveAssembly();
+
+	// Set versions
+	selectionPrimitiveVersion_ = -1;
 }
 
 // Destructor
@@ -134,11 +138,15 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 
 	// Clear existing data
 	speciesPrimitive_->clear();
+	selectionPrimitive_->clear();
+
+	// Set basic styling for assemblies
+	speciesPrimitive_->add(true, GL_FILL);
+	selectionPrimitive_->add(true, GL_LINE);
 
 	/*
 	 * Draw Atoms
 	 */
-	speciesPrimitive_->add(true, GL_FILL);
 	ListIterator<SpeciesAtom> atomIterator(source_->atoms());
 	while (SpeciesAtom* i = atomIterator.iterate())
 	{
@@ -165,26 +173,9 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 		// Is the atom selected?
 		if (i->isSelected())
 		{
-			speciesPrimitive_->add(selectedAtomPrimitive_, A, colourBlack[0], colourBlack[1], colourBlack[2], colourBlack[3]);
+			selectionPrimitive_->add(selectedAtomPrimitive_, A, colourBlack[0], colourBlack[1], colourBlack[2], colourBlack[3]);
 		}
 	}
-// 
-// 	// Draw Atom Selection
-// 	for (RefListItem<SpeciesAtom,bool>* ri = source_->selectedAtoms().first(); ri != NULL; ri = ri->next)
-// 	{
-// 		A.setTranslation(ri->item->r());
-// 		// TODO - Use proper element colour
-// // 		col = PeriodicTable::element(ri->item->element()).colour();
-// // 		colour[0] = col[0];
-// // 		colour[1] = col[1];
-// // 		colour[2] = col[2];
-// // 		colour[3] = 0.5;
-// 		colour[0] = 0.0;
-// 		colour[1] = 0.0;
-// 		colour[2] = 0.0;
-// 		colour[3] = 0.5;
-// // 		renderPrimitive(&spherePrimitive04_, colour, A);
-// 	}
 
 	// Draw Bonds
 	Vec3<double> vij;
@@ -214,4 +205,32 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 		colour = ElementColours::colour(b->i()->element());
 		speciesPrimitive_->add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 	}
+}
+
+// Recreate selection Primitive
+void RenderableSpecies::recreateSelectionPrimitive()
+{
+	if (selectionPrimitiveVersion_ == source_->atomSelectionVersion()) return;
+
+	// Clear existing data
+	selectionPrimitive_->clear();
+
+	// Set basic styling
+	selectionPrimitive_->add(true, GL_LINE);
+
+	Matrix4 A;
+
+	ListIterator<SpeciesAtom> atomIterator(source_->atoms());
+	while (SpeciesAtom* i = atomIterator.iterate())
+	{
+		if (!i->isSelected()) continue;
+
+		A.setIdentity();
+		A.setTranslation(i->r());
+		A.applyScaling(0.3);
+
+		selectionPrimitive_->add(selectedAtomPrimitive_, A, 0.5, 0.5, 0.5, 1.0);
+	}
+
+	selectionPrimitiveVersion_ = source_->atomSelectionVersion();
 }

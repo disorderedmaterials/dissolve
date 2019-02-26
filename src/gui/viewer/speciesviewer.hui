@@ -25,6 +25,7 @@
 #include "gui/viewer/viewer.hui"
 
 // Forward Declarations
+class RenderableSpecies;
 class Species;
 class SpeciesAtom;
 
@@ -126,16 +127,23 @@ class SpeciesViewer : public BaseViewer
 
 
 	/*
+	 * Renderable
+	 */
+	private:
+	RenderableSpecies* speciesRenderable_;
+
+
+	/*
 	 * Custom Data
 	 */
 	public:
 	// Draw Style
 	enum DrawStyle
 	{
-		PointStyle,		/* Draw source Species/Configuration with points (atoms only) */
-		LineStyle,		/* Draw source Species/Configuration with lines */
-		BallAndStickStyle,	/* Draw source Species/Configuration with balls and sticks */
-		nDrawStyles		/* Number of drawing styles */
+		PointsDrawStyle,		/* Draw source Species with points (atoms only) */
+		LinesDrawStyle,			/* Draw source Species with lines */
+		BallAndStickDrawStyle,		/* Draw source Species with balls and sticks */
+		nDrawStyles			/* Number of drawing styles */
 	};
 	
 	private:
