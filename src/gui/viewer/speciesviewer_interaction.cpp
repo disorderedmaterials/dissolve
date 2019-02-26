@@ -53,7 +53,7 @@ SpeciesAtom* SpeciesViewer::atomAt(int x, int y)
  */
 
 // Start interaction at the specified screen coordinates
-void SpeciesViewer::startInteraction(Qt::KeyboardModifiers modifiers)
+void SpeciesViewer::startInteraction()
 {
 	switch (interactionMode_)
 	{

@@ -92,7 +92,7 @@ class SpeciesViewer : public BaseViewer
 
 	protected:
 	// Start interaction at the specified screen coordinates
-	void startInteraction(Qt::KeyboardModifiers modifiers);
+	void startInteraction();
 	// End interaction at the specified screen coordinates
 	void endInteraction();
 	// Cancel current interaction
