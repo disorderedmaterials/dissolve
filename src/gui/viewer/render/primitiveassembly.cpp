@@ -55,10 +55,10 @@ void PrimitiveAssembly::add(Primitive* primitive, const Matrix4& matrix, GLfloat
 }
 
 // Add styling information
-void PrimitiveAssembly::add(bool lighting, GLenum polygonFillMode, GLfloat lineWidth)
+void PrimitiveAssembly::add(bool lighting, GLenum polygonFillMode)
 {
 	StylePrimitiveInfo* pi = stylePrimitiveFactory_.produce();
-	(*pi) = StylePrimitiveInfo(lighting, polygonFillMode, lineWidth);
+	(*pi) = StylePrimitiveInfo(lighting, polygonFillMode);
 	assembly_.add(pi);
 }
 

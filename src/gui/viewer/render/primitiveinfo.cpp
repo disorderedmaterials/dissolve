@@ -102,7 +102,7 @@ void ColouredPrimitiveInfo::sendToGL(double lineWidthScaling)
  */
 
 // Constructor
-StylePrimitiveInfo::StylePrimitiveInfo(bool lighting, GLenum polygonFillMode, GLfloat lineWidth) : lighting_(lighting), fillMode_(polygonFillMode), lineWidth_(lineWidth)
+StylePrimitiveInfo::StylePrimitiveInfo(bool lighting, GLenum polygonFillMode) : lighting_(lighting), fillMode_(polygonFillMode)
 {
 }
 
@@ -114,9 +114,34 @@ StylePrimitiveInfo::~StylePrimitiveInfo()
 // Expose contained info to GL
 void StylePrimitiveInfo::sendToGL(double lineWidthScaling)
 {
-	// Apply style
+	// Enable / disable lighting
 	if (lighting_) glEnable(GL_LIGHTING);
 	else glDisable(GL_LIGHTING);
+
+	// Set polygon rendering mode and smoothing
 	glPolygonMode(GL_FRONT_AND_BACK, fillMode_);
-	glLineWidth(lineWidth_);
+	if (fillMode_ == GL_POINT) glEnable(GL_POINT_SMOOTH);
+	else glDisable(GL_POINT_SMOOTH);
+	if (fillMode_ == GL_LINE) glEnable(GL_LINE_SMOOTH);
+	else glDisable(GL_LINE_SMOOTH);
+}
+
+/*
+ * LineStylePrimitiveInfo
+ */
+
+// Constructor
+LineStylePrimitiveInfo::LineStylePrimitiveInfo(LineStyle style) : lineStyle_(style)
+{
+}
+
+// Destructor
+LineStylePrimitiveInfo::~LineStylePrimitiveInfo()
+{
+}
+
+// Expose contained info to GL
+void LineStylePrimitiveInfo::sendToGL(double lineWidthScaling)
+{
+	lineStyle_.sendToGL(lineWidthScaling);
 }

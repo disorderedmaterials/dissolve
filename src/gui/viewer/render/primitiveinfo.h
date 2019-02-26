@@ -22,6 +22,7 @@
 #ifndef DISSOLVE_PRIMITIVEINFO_H
 #define DISSOLVE_PRIMITIVEINFO_H
 
+#include "gui/viewer/render/linestyle.h"
 #include "math/matrix4.h"
 
 // Forward Declarations
@@ -63,8 +64,27 @@ class UncolouredPrimitiveInfo : public PrimitiveInfo
 	Matrix4 transform_;
 
 	public:
+	// Expose contained info to GL// Style Information
+class StylePrimitiveInfo : public PrimitiveInfo
+{
+	public:
+	// Constructor / Destructor
+	StylePrimitiveInfo(bool lighting = true, GLenum polygonFillMode = GL_FILL);
+	~StylePrimitiveInfo();
+
+	private:
+	// Whether lighting is enabled
+	bool lighting_;
+	// Polygon fill mode
+	GLenum fillMode_;
+	// GL object line width (for GL_LINE etc.)
+	GLfloat lineWidth_;
+
+	public:
 	// Expose contained info to GL
-	void sendToGL(double lineWidthScaling = 1.0);
+	void sendToGL(double lineWidthScaling);
+};
+	void sendToGL(double lineWidthScaling);
 };
 
 // Primitive and Colour
@@ -93,7 +113,7 @@ class StylePrimitiveInfo : public PrimitiveInfo
 {
 	public:
 	// Constructor / Destructor
-	StylePrimitiveInfo(bool lighting = true, GLenum polygonFillMode = GL_FILL, GLfloat lineWidth = 1.0);
+	StylePrimitiveInfo(bool lighting = true, GLenum polygonFillMode = GL_FILL);
 	~StylePrimitiveInfo();
 
 	private:
@@ -101,12 +121,27 @@ class StylePrimitiveInfo : public PrimitiveInfo
 	bool lighting_;
 	// Polygon fill mode
 	GLenum fillMode_;
-	// GL object line width (for GL_LINE etc.)
-	GLfloat lineWidth_;
 
 	public:
 	// Expose contained info to GL
-	void sendToGL(double lineWidthScaling = 1.0);
+	void sendToGL(double lineWidthScaling);
+};
+
+// Line Style Information
+class LineStylePrimitiveInfo : public PrimitiveInfo
+{
+	public:
+	// Constructor / Destructor
+	LineStylePrimitiveInfo(LineStyle style = LineStyle());
+	~LineStylePrimitiveInfo();
+
+	private:
+	// Line styling to apply
+	LineStyle lineStyle_;
+
+	public:
+	// Expose contained info to GL
+	void sendToGL(double lineWidthScaling);
 };
 
 #endif

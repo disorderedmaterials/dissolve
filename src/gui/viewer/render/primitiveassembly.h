@@ -64,7 +64,9 @@ class PrimitiveAssembly : public ListItem<PrimitiveAssembly>
 	// Add Primitive with colour to the assembly
 	void add(Primitive* primitive, const Matrix4& matrix, GLfloat r, GLfloat g, GLfloat b, GLfloat a);
 	// Add styling information
-	void add(bool lighting, GLenum polygonFillMode, GLfloat lineWidth = 1.0);
+	void add(bool lighting, GLenum polygonFillMode);
+	// Add line styling information
+	void add(LineStyle& lineStyle);
 
 
 	/*
