@@ -80,6 +80,8 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	RefList<SpeciesAtom,bool> selectedAtoms_;
 	// List of AtomTypes, and their populations, used in the Species
 	AtomTypeList usedAtomTypes_;
+	// Version of the atom selection
+	VersionCounter atomSelectionVersion_;
 	
 	public:
 	// Add a new Atom to the Species
@@ -92,10 +94,14 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	SpeciesAtom* atom(int n);
 	// Return the list of SpeciesAtoms
 	const List<SpeciesAtom>& atoms() const;
-	// Clear current Atom selection
+	// Clear current atom selection
 	void clearAtomSelection();
-	// Add Atom to selection
+	// Add atom to selection
 	void selectAtom(SpeciesAtom* i);
+	// Remove atom from selection
+	void deselectAtom(SpeciesAtom* i);
+	// Toggle selection state of specified atom
+	void toggleAtomSelection(SpeciesAtom* i);
 	// Select Atoms along any path from the specified one, ignoring the bond(s) provided
 	void selectFromAtom(SpeciesAtom* i, SpeciesBond* exclude, SpeciesBond* excludeToo = NULL);
 	// Return current atom selection
@@ -106,6 +112,8 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	int nSelectedAtoms() const;
 	// Return whether specified Atom is selected
 	bool isAtomSelected(SpeciesAtom* i) const;
+	// Return version of the atom selection
+	const int atomSelectionVersion() const;
 	// Return total atomic mass of Species
 	double mass() const;
 	// Update used AtomTypeList

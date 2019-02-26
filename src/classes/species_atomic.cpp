@@ -63,7 +63,10 @@ const List<SpeciesAtom>& Species::atoms() const
 void Species::clearAtomSelection()
 {
 	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next) i->setSelected(false);
+
 	selectedAtoms_.clear();
+
+	++atomSelectionVersion_;
 }
 
 // Add Atom to selection
@@ -72,8 +75,31 @@ void Species::selectAtom(SpeciesAtom* i)
 	if (!i->isSelected())
 	{
 		i->setSelected(true);
+
 		selectedAtoms_.add(i);
+
+		++atomSelectionVersion_;
 	}
+}
+
+// Remove atom from selection
+void Species::deselectAtom(SpeciesAtom* i)
+{
+	if (i->isSelected())
+	{
+		i->setSelected(false);
+
+		selectedAtoms_.remove(i);
+
+		++atomSelectionVersion_;
+	}
+}
+
+// Toggle selection state of specified atom
+void Species::toggleAtomSelection(SpeciesAtom* i)
+{
+	if (i->isSelected()) deselectAtom(i);
+	else selectAtom(i);
 }
 
 // Select Atoms along any path from the specified one, ignoring the bond(s) provided
@@ -119,6 +145,12 @@ int Species::nSelectedAtoms() const
 bool Species::isAtomSelected(SpeciesAtom* i) const
 {
 	return selectedAtoms_.contains(i);
+}
+
+// Return version of the atom selection
+const int Species::atomSelectionVersion() const
+{
+	return atomSelectionVersion_;
 }
 
 // Return total atomic mass of Species
