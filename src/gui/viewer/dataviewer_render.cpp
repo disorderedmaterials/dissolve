@@ -112,24 +112,24 @@ void DataViewer::render2DOverlay()
 		glTranslated(0.0, -(overlayTextSize + overlaySpacing), 0.0);
 	}
 
-	// Draw interaction mode embellishments
+	/*
+	 * Draw interaction mode embellishments
+	 */
 	glLoadIdentity();
+
+	static LineStyle selectionBoxStyle(1.0, LineStipple::HalfDashStipple);
 
 	if (interacting()) switch (interactionMode_)
 	{
 		case (DataViewer::ZoomToAreaInteraction):
 			// Draw dashed box indicating selection area, form clicked to current mouse coordinates
-			glColor3d(0.0, 0.0, 0.0);
-			glLineWidth(1.0);
-			glEnable(GL_LINE_STIPPLE);
-			glLineStipple(1, 0xf0f0);
+			selectionBoxStyle.sendToGL();
 			glBegin(GL_LINE_LOOP);
 			glVertex2d(rMouseDown_.x, rMouseDown_.y);
 			glVertex2d(rMouseLast_.x, rMouseDown_.y);
 			glVertex2d(rMouseLast_.x, rMouseLast_.y);
 			glVertex2d(rMouseDown_.x, rMouseLast_.y);
 			glEnd();
-			glDisable(GL_LINE_STIPPLE);
 			break;
 		default:
 			break;
