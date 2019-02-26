@@ -75,6 +75,9 @@ void SpeciesViewer::mouseWheeled(int delta)
 	if (zrange < 1.0) zrange = 1.0;
 	view_.translateView(0.0, 0.0, 0.5*zrange*(scrollup ? -1.0 : 1.0));
 
+// 	// Never let camera z go below -1.0...
+// 	if (viewMatrix_[14] > -0.1) viewMatrix_[14] = -0.1;
+
 	postRedisplay();
 }
 
@@ -92,113 +95,3 @@ bool SpeciesViewer::keyPressed(int key)
 bool SpeciesViewer::keyReleased(int key)
 {
 }
-
-/*
-// Qt Signal (mouse release event)
-void SpeciesViewer::mouseReleaseEvent(QMouseEvent* event)
-{
-	// Handle button releases (button up) from the mouse
-	Qt::KeyboardModifiers km = event->modifiers();
-	
-	// Check mouse button state when the mousePressEvent occurred
-	if ((buttonStateOnPress_&Qt::LeftButton) && species_)
-	{
-		Vec4<double> v;
-		// If the selectionBox_ is smaller than some critical size, assume it was an attempt to click an Atom
-		if (abs(selectionBox_.width()*selectionBox_.height()) <= 9)
-		{
-			// Clear current selection (unless Ctrl is pressed)
-			if (!km.testFlag(Qt::ShiftModifier)) species_->clearAtomSelection();
-			for (SpeciesAtom* i = species_->atoms().first(); i != NULL; i = i->next)
-			{
-				v = modelToScreen(i->r(), 0.3);
-				v.x -= event->x();
-				v.y -= (height()-event->y());
-				if (sqrt(v.x*v.x + v.y*v.y) < v.w)
-				{
-					species_->selectAtom(i);
-					break;
-				}
-			}
-		}
-		else
-		{
-			// Perform Box Select
-
-			// Clear current selection (unless Shift is pressed)
-			if (!km.testFlag(Qt::ShiftModifier)) species_->clearAtomSelection();
-			for (SpeciesAtom* i = species_->atoms().first(); i != NULL; i = i->next)
-			{
-				v = modelToScreen(i->r());
-				if (selectionBox_.contains(v.x, height()-v.y)) species_->selectAtom(i); 
-			}
-		}
-		
-		update();
-	}
-	
-	selectionBox_.setRect(0,0,0,0);
-	buttonStateOnPress_ = 0;
-	
-	update();
-	
-// 	if (species_) mainWindow_->refresh(speciesUpdateTargets_);
-}
-
-// Qt Signal (mouse move event)
-void SpeciesViewer::mouseMoveEvent(QMouseEvent* event)
-{
-	Vec3<double> delta;
-	Matrix4 A;
-	
-	// Get event information and position delta
-	Qt::KeyboardModifiers km = event->modifiers();
-	delta.set(event->x(), event->y(), 0.0);
-	delta = delta - rMouseLast_;
-
-	if (buttonStateOnPress_&Qt::LeftButton)
-	{
-		selectionBox_.setRect(rMouseDown_.x, rMouseDown_.y, event->x()-rMouseDown_.x, event->y()-rMouseDown_.y);
-	}
-	else if (buttonStateOnPress_&Qt::RightButton)
-	{
-		// View manipulation
-		if (km&Qt::ShiftModifier)
-		{
-		}
-		else if (km&Qt::ControlModifier)
-		{
-		}
-		else 
-		{
-			// Rotate the view ('XY plane')
-			A.createRotationXY(delta.y/2.0, delta.x/2.0);
-			A.copyTranslationAndScaling(viewMatrix_);
-			// Reset translation and scaling on original matrix, and multiply
-			viewMatrix_.removeTranslationAndScaling();
-			viewMatrix_ = A * viewMatrix_;
-		}
-	}
-	else if (buttonStateOnPress_&Qt::MidButton)
-	{
-		viewMatrix_.adjustColumn(3, delta.x/5.0, -delta.y/15.0, 0.0, 0.0);
-	}
-	
-	rMouseLast_.set(event->x(), event->y(), 0.0);
-	setFocus();
-	postRedisplay();
-}
-
-// Qt Signal (mouse wheel event)
-void SpeciesViewer::wheelEvent(QWheelEvent* event)
-{
-	bool scrollup = event->delta() > 0;
-	
-	// Perform camera zoom
-	double dz = -viewMatrix_[14] * 0.15;
-	if (scrollup) dz = -dz;
-	viewMatrix_.adjustColumn(3, 0.0, 0.0, dz, 0.0);
-	// Never let camera z go below -1.0...
-	if (viewMatrix_[14] > -0.1) viewMatrix_[14] = -0.1;
-	postRedisplay();
-}*/
