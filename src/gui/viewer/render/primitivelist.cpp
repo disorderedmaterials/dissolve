@@ -31,10 +31,10 @@ PrimitiveList::~PrimitiveList()
 {
 }
 
-// Clear all existing primitives
+// Clear all existing Primitives
 void PrimitiveList::clear()
 {
-// 	for (Primitive* prim = primitives_.first(); prim != NULL; prim = prim->next) prim->clear();
+	primitives_.clear();
 }
 
 // Forget all data, leaving arrays intact

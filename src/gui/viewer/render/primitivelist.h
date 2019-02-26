@@ -45,7 +45,7 @@ class PrimitiveList
 	List<Primitive> primitives_;
 
 	public:
-	// Clear existing data
+	// Clear all existing Primitives
 	void clear();
 	// Forget all data, leaving arrays intact
 	void forgetAll();
