@@ -139,6 +139,9 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 	// -- Render axis text
 	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_BLEND);
+	glEnable(GL_LIGHTING);
+	LineStyle().sendToGL(lineWidthScaling_);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	if (fontInstance_.fontOK())
 	{
 		fontInstance_.font()->FaceSize(1);
@@ -167,6 +170,8 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 		view_.axes().gridLineMajorPrimitive(axis).sendToGL();
 // 		if (updateQueryDepth()) setQueryObject(DataViewer::GridLineMajorObject, DissolveSys::itoa(axis));
 	}
+
+	// -- Reset line style, ensure polygons are now filled, and render the axis lines
 	LineStyle().sendToGL(lineWidthScaling_);
 	for (int axis=0; axis<3; ++axis) if (view_.axes().visible(axis) && (axis != skipAxis))
 	{
