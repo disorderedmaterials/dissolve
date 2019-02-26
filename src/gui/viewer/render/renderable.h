@@ -238,10 +238,8 @@ class Renderable : public ListItem<Renderable>
 	virtual void recreatePrimitives(const View& view, const ColourDefinition& colourDefinition) = 0;
 
 	public:
-	// Update primitives and send for display
-	void updateAndSendPrimitives(const View& view, const RenderableGroupManager& groupManager, bool forceUpdate, bool pushAndPop, const QOpenGLContext* context);
-	// Send primitives to GL
-	void sendToGL();
+	// Update primitives and send to display
+	void updateAndSendPrimitives(const View& view, const RenderableGroupManager& groupManager, bool forceUpdate, bool pushAndPop, const QOpenGLContext* context, double lineWidthScaling);
 };
 
 #endif

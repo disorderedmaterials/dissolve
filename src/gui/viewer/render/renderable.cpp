@@ -367,9 +367,12 @@ void Renderable::removePrimitiveAssembly(PrimitiveAssembly* assembly)
 	assemblies_.remove(assembly);
 }
 
-// Update primitives and send for display
-void Renderable::updateAndSendPrimitives(const View& view, const RenderableGroupManager& groupManager, bool forceUpdate, bool pushAndPop, const QOpenGLContext* context)
+// Update primitives and send to display
+void Renderable::updateAndSendPrimitives(const View& view, const RenderableGroupManager& groupManager, bool forceUpdate, bool pushAndPop, const QOpenGLContext* context, double lineWidthScaling)
 {
+	// If this Renderable is not visible, return now
+	if (!visible_) return;
+
 	// Grab axes for the View
 	const Axes& axes = view.constAxes();
 
@@ -404,8 +407,12 @@ void Renderable::updateAndSendPrimitives(const View& view, const RenderableGroup
 	if ((basicPrimitives_.nInstances() == 0) || pushAndPop) basicPrimitives_.pushInstance(context);
 	if ((primitives_.nInstances() == 0) || pushAndPop) primitives_.pushInstance(context);
 
-	// Send primitive
-	sendToGL();
+	// Send Primitives to display
+	primitives_.sendToGL();
+
+	// Send Primitive assemblies to display
+	ListIterator<PrimitiveAssembly> assemblyIterator(assemblies_);
+	while (PrimitiveAssembly* assembly = assemblyIterator.iterate()) assembly->sendToGL(lineWidthScaling);
 
 	// Pop current instances if required
 	if (pushAndPop)
@@ -419,31 +426,4 @@ void Renderable::updateAndSendPrimitives(const View& view, const RenderableGroup
 	lastColourDefinitionFingerprint_.sprintf("%p@%i", group_, colourDefinition.version());
 	lastDataVersion_ = version();
 	lastStyleVersion_ = displayStyleVersion();
-}
-
-// Send primitives to GL
-void Renderable::sendToGL()
-{
-	// If this Renderable is not visible return now
-	if (!visible_) return;
-
-	// TODO This needs to be more general
-        if (displayStyle() == Renderable::SurfaceStyle)
-        {
-                glEnable(GL_LIGHTING);
-                glDisable(GL_LINE_SMOOTH);
-        }
-        else
-        {
-                glEnable(GL_LINE_SMOOTH);
-                lineStyle().apply();
-                glDisable(GL_LIGHTING);
-        }
-
-	// Send Primitives to display
-	primitives_.sendToGL();
-
-	// Send Primitive assemblies to display
-	ListIterator<PrimitiveAssembly> assemblyIterator(assemblies_);
-	while (PrimitiveAssembly* assembly = assemblyIterator.iterate()) assembly->sendToGL();
 }

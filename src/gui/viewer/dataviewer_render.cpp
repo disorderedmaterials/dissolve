@@ -88,7 +88,7 @@ void DataViewer::render2DOverlay()
 		// -- What are we drawing for the line indicator?
 		if (colourDefinition.style() == ColourDefinition::SingleColourStyle)
 		{
-			rend->lineStyle().apply();
+			rend->lineStyle().sendToGL(lineWidthScaling_);
 			GLfloat lineWidth;
 			glGetFloatv(GL_LINE_WIDTH, &lineWidth);
 			glLineWidth(lineWidth*2.0);
@@ -98,7 +98,6 @@ void DataViewer::render2DOverlay()
 			glVertex2i(0.0, 0.0);
 			glVertex2i(-legendLineLength, 0.0);
 			glEnd();
-			rend->lineStyle().revert();
 		}
 		glPopMatrix();
 

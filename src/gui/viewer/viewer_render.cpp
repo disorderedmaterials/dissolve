@@ -157,17 +157,17 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 	glEnable(GL_LINE_SMOOTH);
 	for (int axis=0; axis<3; ++axis) if (view_.axes().visible(axis) && (axis != skipAxis))
 	{
-		view_.axes().gridLineMinorStyle(axis).apply();
+		view_.axes().gridLineMinorStyle(axis).sendToGL(lineWidthScaling_);
 		view_.axes().gridLineMinorPrimitive(axis).sendToGL();
 // 		if (updateQueryDepth()) setQueryObject(DataViewer::GridLineMinorObject, DissolveSys::itoa(axis));
 	}
 	for (int axis=0; axis<3; ++axis) if (view_.axes().visible(axis) && (axis != skipAxis))
 	{
-		view_.axes().gridLineMajorStyle(axis).apply();
+		view_.axes().gridLineMajorStyle(axis).sendToGL(lineWidthScaling_);
 		view_.axes().gridLineMajorPrimitive(axis).sendToGL();
 // 		if (updateQueryDepth()) setQueryObject(DataViewer::GridLineMajorObject, DissolveSys::itoa(axis));
 	}
-	LineStyle::revert();
+	LineStyle().sendToGL(lineWidthScaling_);
 	for (int axis=0; axis<3; ++axis) if (view_.axes().visible(axis) && (axis != skipAxis))
 	{
 		view_.axes().axisPrimitive(axis).sendToGL();
@@ -187,7 +187,7 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 		// Set shininess for Renderable
 		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, rend->displaySurfaceShininess());
 
-		rend->updateAndSendPrimitives(view_, groupManager_, renderingOffScreen_, renderingOffScreen_, context());
+		rend->updateAndSendPrimitives(view_, groupManager_, renderingOffScreen_, renderingOffScreen_, context(), lineWidthScaling_);
 
 		// Update query
 // 		if (updateQueryDepth()) setQueryObject(DataViewer::RenderableObject, rend->objectTag());
@@ -344,7 +344,6 @@ void BaseViewer::setObjectScaling(double scaling)
 
 	// Pass this value on to those that depend on it
 	// TODO these should be local objects so that we don't interfere with other view types
-// 	LineStyle::setLineWidthScale(scaling);
 // 	TextPrimitive::setTextSizeScale(scaling);
 }
 

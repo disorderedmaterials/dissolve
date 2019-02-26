@@ -721,9 +721,9 @@ bool DataViewer::writeAxisBlock(LineParser& parser, Axes& axes, int axis)
 	parser.writeLineF("      %s %s\n", DataViewer::axisKeyword(DataViewer::FractionalPositioningKeyword), DissolveSys::btoa(axes.positionIsFractional(axis)));
 	parser.writeLineF("      %s %s %s %s\n", DataViewer::axisKeyword(DataViewer::GridLinesKeyword), DissolveSys::btoa(axes.gridLinesMajor(axis)), DissolveSys::btoa(axes.gridLinesMinor(axis)), DissolveSys::btoa(axes.gridLinesFull(axis)));
 	LineStyle style = axes.gridLineMajorStyle(axis);
-	parser.writeLineF("      %s %f '%s' %f %f %f %f\n", DataViewer::axisKeyword(DataViewer::GridLineMajorStyleKeyword), style.width(), LineStipple::stipple[style.stipple()].name, style.colour().redF(), style.colour().greenF(), style.colour().blueF(), style.colour().alphaF());
+	parser.writeLineF("      %s %f '%s' %f %f %f %f\n", DataViewer::axisKeyword(DataViewer::GridLineMajorStyleKeyword), style.width(), LineStipple::stipple[style.stipple()].name, style.colour()[0], style.colour()[1], style.colour()[2], style.colour()[3]);
 	style = axes.gridLineMinorStyle(axis);
-	parser.writeLineF("      %s %f '%s' %f %f %f %f\n", DataViewer::axisKeyword(DataViewer::GridLineMinorStyleKeyword), style.width(), LineStipple::stipple[style.stipple()].name, style.colour().redF(), style.colour().greenF(), style.colour().blueF(), style.colour().alphaF());
+	parser.writeLineF("      %s %f '%s' %f %f %f %f\n", DataViewer::axisKeyword(DataViewer::GridLineMinorStyleKeyword), style.width(), LineStipple::stipple[style.stipple()].name, style.colour()[0], style.colour()[1], style.colour()[2], style.colour()[3]);
 	parser.writeLineF("      %s %s\n", DataViewer::axisKeyword(DataViewer::InvertKeyword), DissolveSys::btoa(axes.inverted(axis)));
 	parser.writeLineF("      %s %s\n", DataViewer::axisKeyword(DataViewer::LabelAnchorKeyword), TextPrimitive::textAnchor(axes.labelAnchor(axis)));
 	parser.writeLineF("      %s %f %f %f\n", DataViewer::axisKeyword(DataViewer::LabelOrientationKeyword), axes.labelOrientation(axis).x, axes.labelOrientation(axis).y, axes.labelOrientation(axis).z);

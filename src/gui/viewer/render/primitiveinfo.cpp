@@ -51,7 +51,7 @@ UncolouredPrimitiveInfo::~UncolouredPrimitiveInfo()
 }
 
 // Expose contained info to GL
-void UncolouredPrimitiveInfo::sendToGL()
+void UncolouredPrimitiveInfo::sendToGL(double lineWidthScaling)
 {
 	// Render Primitive if one is present
 	if (primitive_)
@@ -82,7 +82,7 @@ ColouredPrimitiveInfo::~ColouredPrimitiveInfo()
 }
 
 // Expose contained info to GL
-void ColouredPrimitiveInfo::sendToGL()
+void ColouredPrimitiveInfo::sendToGL(double lineWidthScaling)
 {
 	// Apply colour
 	glColor4fv(colour_);
@@ -112,7 +112,7 @@ StylePrimitiveInfo::~StylePrimitiveInfo()
 }
 
 // Expose contained info to GL
-void StylePrimitiveInfo::sendToGL()
+void StylePrimitiveInfo::sendToGL(double lineWidthScaling)
 {
 	// Apply style
 	if (lighting_) glEnable(GL_LIGHTING);

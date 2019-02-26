@@ -31,6 +31,7 @@ BaseViewer::BaseViewer(QWidget* parent) : QOpenGLWidget(parent), view_(renderabl
 	valid_ = false;
 	drawing_ = false;
 	renderingOffScreen_ = false;
+	lineWidthScaling_ = 1.0;
 
 	// Interaction
 	interacting_ = false;
