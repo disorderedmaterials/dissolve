@@ -24,7 +24,7 @@
 #include <QtGui/QMouseEvent>
 
 // Mouse moved
-void SpeciesViewer::mouseMoved(int dx, int dy, Qt::KeyboardModifiers modifiers)
+void SpeciesViewer::mouseMoved(int dx, int dy)
 {
 	// If we are not actually interacting with the view, return now
 	if (!interacting()) return;
@@ -40,10 +40,10 @@ void SpeciesViewer::mouseMoved(int dx, int dy, Qt::KeyboardModifiers modifiers)
 			break;
 		case (SpeciesViewer::RotateViewInteraction):
 			// Rotate view
-			if (modifiers.testFlag(Qt::ShiftModifier))
+			if (mouseDownModifiers_.testFlag(Qt::ShiftModifier))
 			{
 			}
-			else if (modifiers.testFlag(Qt::ControlModifier))
+			else if (mouseDownModifiers_.testFlag(Qt::ControlModifier))
 			{
 			}
 			else 
@@ -84,12 +84,12 @@ void SpeciesViewer::mouseDoubleClicked()
 }
 
 // Key pressed
-bool SpeciesViewer::keyPressed(int key, Qt::KeyboardModifiers modifiers)
+bool SpeciesViewer::keyPressed(int key)
 {
 }
 
 // Key released
-bool SpeciesViewer::keyReleased(int key, Qt::KeyboardModifiers modifiers)
+bool SpeciesViewer::keyReleased(int key)
 {
 }
 

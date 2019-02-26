@@ -34,6 +34,7 @@ void BaseViewer::mousePressEvent(QMouseEvent* event)
 	buttonState_ = event->buttons();
 	rMouseDown_.set(event->x(), contextHeight_ - event->y(), 0.0);
 	rMouseLast_ = rMouseDown_;
+	mouseDownModifiers_ = event->modifiers();
 
 	// If a 2D view, store the clicked local coordinate
 	if (view_.isFlatView()) clicked2DAxesCoordinates_ = screenTo2DAxes(event->x(), contextHeight_ - event->y());
@@ -41,7 +42,7 @@ void BaseViewer::mousePressEvent(QMouseEvent* event)
 	interacting_ = true;
 
 	// Handle the event
-	startInteraction(event->modifiers());
+	startInteraction();
 }
 
 // Mouse release event
@@ -70,7 +71,7 @@ void BaseViewer::mouseMoveEvent(QMouseEvent* event)
 	if (view_.isFlatView()) current2DAxesCoordinates_ = screenTo2DAxes(rMouseLast_.x, rMouseLast_.y);
 
 	// Handle the event, passing the delta position
-	mouseMoved(dx, dy, event->modifiers());
+	mouseMoved(dx, dy);
 
 	setFocus();
 }
@@ -99,7 +100,7 @@ void BaseViewer::mouseDoubleClickEvent(QMouseEvent* event)
 void BaseViewer::keyPressEvent(QKeyEvent *event)
 {
 	// Handle the event
-	if (keyPressed(event->key(), event->modifiers())) event->accept();
+	if (keyPressed(event->key())) event->accept();
 	else event->ignore();
 }
 
@@ -107,7 +108,7 @@ void BaseViewer::keyPressEvent(QKeyEvent *event)
 void BaseViewer::keyReleaseEvent(QKeyEvent *event)
 {
 	// Handle the event
-	if (keyReleased(event->key(), event->modifiers())) event->accept();
+	if (keyReleased(event->key())) event->accept();
 	else event->ignore();
 }
 
@@ -116,7 +117,7 @@ void BaseViewer::keyReleaseEvent(QKeyEvent *event)
  */
 
 // Mouse moved
-void BaseViewer::mouseMoved(int dx, int dy, Qt::KeyboardModifiers modifiers)
+void BaseViewer::mouseMoved(int dx, int dy)
 {
 }
 
@@ -131,13 +132,13 @@ void BaseViewer::mouseDoubleClicked()
 }
 
 // Key pressed
-bool BaseViewer::keyPressed(int key, Qt::KeyboardModifiers modifiers)
+bool BaseViewer::keyPressed(int key)
 {
 	return false;
 }
 
 // Key released
-bool BaseViewer::keyReleased(int key, Qt::KeyboardModifiers modifiers)
+bool BaseViewer::keyReleased(int key)
 {
 	return false;
 }

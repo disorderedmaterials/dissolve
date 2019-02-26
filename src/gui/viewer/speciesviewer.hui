@@ -56,15 +56,15 @@ class SpeciesViewer : public BaseViewer
 	 */
 	protected:
 	// Mouse moved
-	void mouseMoved(int dx, int dy, Qt::KeyboardModifiers modifiers);
+	void mouseMoved(int dx, int dy);
 	// Mouse 'wheeled'
 	void mouseWheeled(int delta);
 	// Mouse double clicked
 	void mouseDoubleClicked();
 	// Key pressed
-	bool keyPressed(int key, Qt::KeyboardModifiers modifiers);
+	bool keyPressed(int key);
 	// Key released
-	bool keyReleased(int key, Qt::KeyboardModifiers modifiers);
+	bool keyReleased(int key);
 
 
 	/*

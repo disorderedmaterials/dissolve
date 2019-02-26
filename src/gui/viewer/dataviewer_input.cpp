@@ -24,7 +24,7 @@
 #include <QMenu>
 
 // Mouse Moved
-void DataViewer::mouseMoved(int dx, int dy, Qt::KeyboardModifiers modifiers)
+void DataViewer::mouseMoved(int dx, int dy)
 {
 	// If we are not actually interacting with the view, return now
 	if (!interacting())
@@ -45,10 +45,10 @@ void DataViewer::mouseMoved(int dx, int dy, Qt::KeyboardModifiers modifiers)
 			break;
 		case (DataViewer::RotateViewInteraction):
 			// Rotate view
-			if (modifiers.testFlag(Qt::ShiftModifier))
+			if (mouseDownModifiers_.testFlag(Qt::ShiftModifier))
 			{
 			}
-			else if (modifiers.testFlag(Qt::ControlModifier))
+			else if (mouseDownModifiers_.testFlag(Qt::ControlModifier))
 			{
 			}
 			else 
@@ -124,7 +124,7 @@ void DataViewer::mouseDoubleClicked()
 }
 
 // Key pressed
-bool DataViewer::keyPressed(int key, Qt::KeyboardModifiers modifiers)
+bool DataViewer::keyPressed(int key)
 {
 	bool refresh = true;
 	bool accept = true;
@@ -132,22 +132,22 @@ bool DataViewer::keyPressed(int key, Qt::KeyboardModifiers modifiers)
 	{
 		case (Qt::Key_Left):
 			if (view_.isFlatView()) view_.shiftFlatAxisLimitsFractional(-0.1, 0.0);
-			else view_.rotateView(0.0, modifiers.testFlag(Qt::ShiftModifier) ? -1.0 : -10.0);
+			else view_.rotateView(0.0, mouseDownModifiers_.testFlag(Qt::ShiftModifier) ? -1.0 : -10.0);
 			break;
 		case (Qt::Key_Right):
 			if (view_.isFlatView()) view_.shiftFlatAxisLimitsFractional(0.1, 0.0);
-			else view_.rotateView(0.0, modifiers.testFlag(Qt::ShiftModifier) ? 1.0 : 10.0);
+			else view_.rotateView(0.0, mouseDownModifiers_.testFlag(Qt::ShiftModifier) ? 1.0 : 10.0);
 			break;
 		case (Qt::Key_Up):
 			if (view_.isFlatView()) view_.shiftFlatAxisLimitsFractional(0.0, -0.1);
-			else view_.rotateView(modifiers.testFlag(Qt::ShiftModifier) ? -1.0 : -10.0, 0.0);
+			else view_.rotateView(mouseDownModifiers_.testFlag(Qt::ShiftModifier) ? -1.0 : -10.0, 0.0);
 			break;
 		case (Qt::Key_Down):
 			if (view_.isFlatView()) view_.shiftFlatAxisLimitsFractional(0.0, 0.1);
-			else view_.rotateView(modifiers.testFlag(Qt::ShiftModifier) ? 1.0 : 10.0, 0.0);
+			else view_.rotateView(mouseDownModifiers_.testFlag(Qt::ShiftModifier) ? 1.0 : 10.0, 0.0);
 			break;
 		case (Qt::Key_A):
-			if (modifiers.testFlag(Qt::ShiftModifier))
+			if (mouseDownModifiers_.testFlag(Qt::ShiftModifier))
 			{
 				// Show only top 20% of vertical axis
 				if (view_.viewType() == View::FlatXYView) view_.showAllData(1.0, 0.2);
@@ -160,7 +160,7 @@ bool DataViewer::keyPressed(int key, Qt::KeyboardModifiers modifiers)
 			view_.cycleAutoFollowType();
 			break;
 		case (Qt::Key_L):
-			if (modifiers.testFlag(Qt::ShiftModifier)) view_.axes().toggleLogarithmic(view_.viewType() == View::FlatXZView ? 2 : 1);
+			if (mouseDownModifiers_.testFlag(Qt::ShiftModifier)) view_.axes().toggleLogarithmic(view_.viewType() == View::FlatXZView ? 2 : 1);
 			else view_.axes().toggleLogarithmic(view_.viewType() == View::FlatZYView ? 2 : 0);
 			break;
 		case (Qt::Key_S):
@@ -179,7 +179,7 @@ bool DataViewer::keyPressed(int key, Qt::KeyboardModifiers modifiers)
 }
 
 // Key released
-bool DataViewer::keyReleased(int key, Qt::KeyboardModifiers modifiers)
+bool DataViewer::keyReleased(int key)
 {
 	bool refresh = false, accept = true;
 	

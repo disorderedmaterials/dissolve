@@ -176,6 +176,8 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	Vec3<int> rMouseLast_;
 	// Current state of mouse buttons
 	Qt::MouseButtons buttonState_;
+	// Modifier state on mouse down
+	Qt::KeyboardModifiers mouseDownModifiers_;
 
 	private:
 	// Mouse press event
@@ -197,15 +199,15 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 
 	protected:
 	// Mouse moved
-	virtual void mouseMoved(int dx, int dy, Qt::KeyboardModifiers modifiers);
+	virtual void mouseMoved(int dx, int dy);
 	// Mouse 'wheeled'
 	virtual void mouseWheeled(int delta);
 	// Mouse double clicked
 	virtual void mouseDoubleClicked();
 	// Key pressed
-	virtual bool keyPressed(int key, Qt::KeyboardModifiers modifiers);
+	virtual bool keyPressed(int key);
 	// Key released
-	virtual bool keyReleased(int key, Qt::KeyboardModifiers modifiers);
+	virtual bool keyReleased(int key);
 
 
 	/*
@@ -225,7 +227,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 
 	protected:
 	// Start interaction 
-	virtual void startInteraction(Qt::KeyboardModifiers modifiers);
+	virtual void startInteraction();
 	// End interaction
 	virtual void endInteraction();
 	// Cancel current interaction

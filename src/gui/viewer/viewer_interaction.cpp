@@ -26,7 +26,7 @@
  */
 
 // Start interaction
-void BaseViewer::startInteraction(Qt::KeyboardModifiers modifiers)
+void BaseViewer::startInteraction()
 {
 }
 
