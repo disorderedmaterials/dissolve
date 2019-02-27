@@ -78,7 +78,7 @@ class PlottableData
 	 */
 	public:
 	// Return data version
-	virtual const int version() const = 0;
+	virtual int version() const = 0;
 	// Return values Array
 	virtual const Array<double>& constValues() const;
 	// Return values Array

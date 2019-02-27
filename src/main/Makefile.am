@@ -6,4 +6,4 @@ libmain_la_SOURCES += keywords.cpp keywords_configuration.cpp keywords_layer.cpp
 
 noinst_HEADERS = dissolve.h keywords.h
 
-AM_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@ @DISSOLVE_READLINE@
+AM_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@

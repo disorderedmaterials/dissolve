@@ -207,33 +207,33 @@ bool AnalysisCollect2DNode::read(LineParser& parser, const CoreData& coreData, N
 		Collect2DNodeKeyword nk = collect2DNodeKeyword(parser.argc(0));
 		switch (nk)
 		{
-			case (Collect2DNodeKeyword::EndCollect2DKeyword):
+			case (AnalysisCollect2DNode::EndCollect2DKeyword):
 				return true;
-			case (Collect2DNodeKeyword::QuantityXKeyword):
+			case (AnalysisCollect2DNode::QuantityXKeyword):
 				// Determine observable from supplied argument
 				xObservable_ = (AnalysisCalculateNode*) contextStack.nodeInScope(parser.argc(1), AnalysisNode::CalculateNode);
 				if (!xObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect2DNodeKeyword(nk));
 				break;
-			case (Collect2DNodeKeyword::QuantityYKeyword):
+			case (AnalysisCollect2DNode::QuantityYKeyword):
 				// Determine observable from supplied argument
 				yObservable_ = (AnalysisCalculateNode*) contextStack.nodeInScope(parser.argc(1), AnalysisNode::CalculateNode);
 				if (!yObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect2DNodeKeyword(nk));
 				break;
-			case (Collect2DNodeKeyword::RangeXKeyword):
+			case (AnalysisCollect2DNode::RangeXKeyword):
 				// Check that we have the right number of arguments first...
-				if (parser.nArgs() != 4) return Messenger::error("Collect2D node keyword '%s' expects exactly three arguments (%i given).\n", collect2DNodeKeyword(Collect2DNodeKeyword::RangeXKeyword), parser.nArgs() - 1);
+				if (parser.nArgs() != 4) return Messenger::error("Collect2D node keyword '%s' expects exactly three arguments (%i given).\n", collect2DNodeKeyword(AnalysisCollect2DNode::RangeXKeyword), parser.nArgs() - 1);
 				xMinimum_ = parser.argd(1);
 				xMaximum_ = parser.argd(2);
 				xBinWidth_ = parser.argd(3);
 				break;
-			case (Collect2DNodeKeyword::RangeYKeyword):
+			case (AnalysisCollect2DNode::RangeYKeyword):
 				// Check that we have the right number of arguments first...
-				if (parser.nArgs() != 4) return Messenger::error("Collect2D node keyword '%s' expects exactly three arguments (%i given).\n", collect2DNodeKeyword(Collect2DNodeKeyword::RangeXKeyword), parser.nArgs() - 1);
+				if (parser.nArgs() != 4) return Messenger::error("Collect2D node keyword '%s' expects exactly three arguments (%i given).\n", collect2DNodeKeyword(AnalysisCollect2DNode::RangeXKeyword), parser.nArgs() - 1);
 				yMinimum_ = parser.argd(1);
 				yMaximum_ = parser.argd(2);
 				yBinWidth_ = parser.argd(3);
 				break;
-			case (Collect2DNodeKeyword::nCollect2DNodeKeywords):
+			case (AnalysisCollect2DNode::nCollect2DNodeKeywords):
 				return Messenger::error("Unrecognised Collect2D node keyword '%s' found.\n", parser.argc(0));
 				break;
 			default:

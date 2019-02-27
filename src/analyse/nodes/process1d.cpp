@@ -241,46 +241,46 @@ bool AnalysisProcess1DNode::read(LineParser& parser, const CoreData& coreData, N
 		Process1DNodeKeyword nk = process1DNodeKeyword(parser.argc(0));
 		switch (nk)
 		{
-			case (Process1DNodeKeyword::EndProcess1DKeyword):
+			case (AnalysisProcess1DNode::EndProcess1DKeyword):
 				return true;
-			case (Process1DNodeKeyword::FactorKeyword):
+			case (AnalysisProcess1DNode::FactorKeyword):
 				normalisationFactor_ = parser.argd(1);
 				normaliseByFactor_ = true;
 				break;
-			case (Process1DNodeKeyword::LabelValueKeyword):
+			case (AnalysisProcess1DNode::LabelValueKeyword):
 				valueLabel_ = parser.argc(1);
 				break;
-			case (Process1DNodeKeyword::LabelXKeyword):
+			case (AnalysisProcess1DNode::LabelXKeyword):
 				xAxisLabel_ = parser.argc(1);
 				break;
-			case (Process1DNodeKeyword::NSitesKeyword):
+			case (AnalysisProcess1DNode::NSitesKeyword):
 				// Need a valid collectNode_ so we can retrieve the context stack it's local to
 				if (collectNode_.isNull()) return Messenger::error("Can't set site-dependent normalisers without first setting the collect node target.\n");
 				if (!collectNode_.node()->parent()) return Messenger::error("Can't set site-dependent normalisers since the specified collect node has no analyser parent.\n");
 
 				selectNode = (AnalysisSelectNode*) collectNode_.node()->parent()->contextStack().node(parser.argc(1), AnalysisNode::SelectNode);
-				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), process1DNodeKeyword(Process1DNodeKeyword::NSitesKeyword));
+				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), process1DNodeKeyword(AnalysisProcess1DNode::NSitesKeyword));
 				sitePopulationNormalisers_.add(selectNode, 1.0);
 				break;
-			case (Process1DNodeKeyword::NumberDensityKeyword):
+			case (AnalysisProcess1DNode::NumberDensityKeyword):
 				// Need a valid collectNode_ so we can retrieve the context stack it's local to
 				if (collectNode_.isNull()) return Messenger::error("Can't set site-dependent normalisers without first setting the collect node target.\n");
 				if (!collectNode_.node()->parent()) return Messenger::error("Can't set site-dependent normalisers since the specified collect node has no analyser parent.\n");
 
 				selectNode = (AnalysisSelectNode*) collectNode_.node()->parent()->contextStack().node(parser.argc(1), AnalysisNode::SelectNode);
-				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), process1DNodeKeyword(Process1DNodeKeyword::NumberDensityKeyword));
+				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), process1DNodeKeyword(AnalysisProcess1DNode::NumberDensityKeyword));
 				numberDensityNormalisers_.add(selectNode, 1.0);
 				break;
-			case (Process1DNodeKeyword::SaveKeyword):
+			case (AnalysisProcess1DNode::SaveKeyword):
 				saveData_ = parser.argb(1);
 				break;
-			case (Process1DNodeKeyword::SourceDataKeyword):
+			case (AnalysisProcess1DNode::SourceDataKeyword):
 				if (!collectNode_.read(parser, 1, coreData, contextStack)) return Messenger::error("Couldn't set source data for node.\n");
 				break;
-			case (Process1DNodeKeyword::SphericalShellVolumeKeyword):
+			case (AnalysisProcess1DNode::SphericalShellVolumeKeyword):
 				normaliseBySphericalShellVolume_ = parser.argb(1);
 				break;
-			case (Process1DNodeKeyword::nProcess1DNodeKeywords):
+			case (AnalysisProcess1DNode::nProcess1DNodeKeywords):
 				return Messenger::error("Unrecognised Process1D node keyword '%s' found.\n", parser.argc(0));
 				break;
 			default:
@@ -289,7 +289,7 @@ bool AnalysisProcess1DNode::read(LineParser& parser, const CoreData& coreData, N
 	}
 
 	// Check that a valid collectNode_ has been set
-	if (collectNode_.isNull()) return Messenger::error("A valid Collect1D node must be set in the Process1D node '%s' using the '%s' keyword.\n", name(), process1DNodeKeyword(Process1DNodeKeyword::SourceDataKeyword));
+	if (collectNode_.isNull()) return Messenger::error("A valid Collect1D node must be set in the Process1D node '%s' using the '%s' keyword.\n", name(), process1DNodeKeyword(AnalysisProcess1DNode::SourceDataKeyword));
 
 	return true;
 }

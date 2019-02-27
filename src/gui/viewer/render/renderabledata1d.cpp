@@ -47,7 +47,7 @@ bool RenderableData1D::validateDataSource()
 }
 
 // Return version of data
-const int RenderableData1D::version() const
+int RenderableData1D::version() const
 {
 	return (source_ ? source_->version() : -99);
 }

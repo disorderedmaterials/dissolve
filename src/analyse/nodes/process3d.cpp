@@ -220,49 +220,49 @@ bool AnalysisProcess3DNode::read(LineParser& parser, const CoreData& coreData, N
 		Process3DNodeKeyword nk = process3DNodeKeyword(parser.argc(0));
 		switch (nk)
 		{
-			case (Process3DNodeKeyword::EndProcess3DKeyword):
+			case (AnalysisProcess3DNode::EndProcess3DKeyword):
 				return true;
-			case (Process3DNodeKeyword::FactorKeyword):
+			case (AnalysisProcess3DNode::FactorKeyword):
 				normalisationFactor_ = parser.argd(1);
 				normaliseByFactor_ = true;
 				break;
-			case (Process3DNodeKeyword::LabelValueKeyword):
+			case (AnalysisProcess3DNode::LabelValueKeyword):
 				valueLabel_ = parser.argc(1);
 				break;
-			case (Process3DNodeKeyword::LabelXKeyword):
+			case (AnalysisProcess3DNode::LabelXKeyword):
 				xAxisLabel_ = parser.argc(1);
 				break;
-			case (Process3DNodeKeyword::LabelYKeyword):
+			case (AnalysisProcess3DNode::LabelYKeyword):
 				yAxisLabel_ = parser.argc(1);
 				break;
-			case (Process3DNodeKeyword::LabelZKeyword):
+			case (AnalysisProcess3DNode::LabelZKeyword):
 				zAxisLabel_ = parser.argc(1);
 				break;
-			case (Process3DNodeKeyword::NSitesKeyword):
+			case (AnalysisProcess3DNode::NSitesKeyword):
 				// Need a valid collectNode_ so we can retrieve the context stack it's local to
 				if (collectNode_.isNull()) return Messenger::error("Can't set site-dependent normalisers without first setting the collect node target.\n");
 				if (!collectNode_.node()->parent()) return Messenger::error("Can't set site-dependent normalisers since the specified collect node has no analyser parent.\n");
 
 				selectNode = (AnalysisSelectNode*) contextStack.node(parser.argc(1), AnalysisNode::SelectNode);
-				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), process3DNodeKeyword(Process3DNodeKeyword::NSitesKeyword));
+				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), process3DNodeKeyword(AnalysisProcess3DNode::NSitesKeyword));
 				sitePopulationNormalisers_.add(selectNode, 1.0);
 				break;
-			case (Process3DNodeKeyword::NumberDensityKeyword):
+			case (AnalysisProcess3DNode::NumberDensityKeyword):
 				// Need a valid collectNode_ so we can retrieve the context stack it's local to
 				if (collectNode_.isNull()) return Messenger::error("Can't set site-dependent normalisers without first setting the collect node target.\n");
 				if (!collectNode_.node()->parent()) return Messenger::error("Can't set site-dependent normalisers since the specified collect node has no analyser parent.\n");
 
 				selectNode = (AnalysisSelectNode*) contextStack.node(parser.argc(1), AnalysisNode::SelectNode);
-				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), process3DNodeKeyword(Process3DNodeKeyword::NumberDensityKeyword));
+				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), process3DNodeKeyword(AnalysisProcess3DNode::NumberDensityKeyword));
 				numberDensityNormalisers_.add(selectNode, 1.0);
 				break;
-			case (Process3DNodeKeyword::SaveKeyword):
+			case (AnalysisProcess3DNode::SaveKeyword):
 				saveData_ = parser.argb(1);
 				break;
-			case (Process3DNodeKeyword::SourceDataKeyword):
+			case (AnalysisProcess3DNode::SourceDataKeyword):
 				if (!collectNode_.read(parser, 1, coreData ,contextStack)) return Messenger::error("Couldn't set source data for node.\n");
 				break;
-			case (Process3DNodeKeyword::nProcess3DNodeKeywords):
+			case (AnalysisProcess3DNode::nProcess3DNodeKeywords):
 				return Messenger::error("Unrecognised Process3D node keyword '%s' found.\n", parser.argc(0));
 				break;
 			default:
@@ -271,7 +271,7 @@ bool AnalysisProcess3DNode::read(LineParser& parser, const CoreData& coreData, N
 	}
 
 	// Check that a valid collectNode_ has been set
-	if (collectNode_.isNull()) return Messenger::error("A valid Collect3D node must be set in the Process3D node '%s' using the '%s' keyword.\n", name(), process3DNodeKeyword(Process3DNodeKeyword::SourceDataKeyword));
+	if (collectNode_.isNull()) return Messenger::error("A valid Collect3D node must be set in the Process3D node '%s' using the '%s' keyword.\n", name(), process3DNodeKeyword(AnalysisProcess3DNode::SourceDataKeyword));
 
 	return true;
 }

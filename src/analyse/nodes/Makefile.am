@@ -18,5 +18,5 @@ noinst_HEADERS += node.h nodereference.h nodes.h
 noinst_HEADERS += process1d.h process2d.h process3d.h
 noinst_HEADERS += select.h sequence.h
 
-AM_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@ @DISSOLVE_READLINE@
+AM_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@
 

@@ -180,21 +180,21 @@ bool AnalysisCollect1DNode::read(LineParser& parser, const CoreData& coreData, N
 		Collect1DNodeKeyword nk = collect1DNodeKeyword(parser.argc(0));
 		switch (nk)
 		{
-			case (Collect1DNodeKeyword::EndCollect1DKeyword):
+			case (AnalysisCollect1DNode::EndCollect1DKeyword):
 				return true;
-			case (Collect1DNodeKeyword::QuantityXKeyword):
+			case (AnalysisCollect1DNode::QuantityXKeyword):
 				// Determine observable from supplied argument
 				observable_ = (AnalysisCalculateNode*) contextStack.nodeInScope(parser.argc(1), AnalysisNode::CalculateNode);
 				if (!observable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect1DNodeKeyword(nk));
 				break;
-			case (Collect1DNodeKeyword::RangeXKeyword):
+			case (AnalysisCollect1DNode::RangeXKeyword):
 				// Check that we have the right number of arguments first...
-				if (parser.nArgs() != 4) return Messenger::error("Collect1D node keyword '%s' expects exactly three arguments (%i given).\n", collect1DNodeKeyword(Collect1DNodeKeyword::RangeXKeyword), parser.nArgs() - 1);
+				if (parser.nArgs() != 4) return Messenger::error("Collect1D node keyword '%s' expects exactly three arguments (%i given).\n", collect1DNodeKeyword(AnalysisCollect1DNode::RangeXKeyword), parser.nArgs() - 1);
 				minimum_ = parser.argd(1);
 				maximum_ = parser.argd(2);
 				binWidth_ = parser.argd(3);
 				break;
-			case (Collect1DNodeKeyword::nCollect1DNodeKeywords):
+			case (AnalysisCollect1DNode::nCollect1DNodeKeywords):
 				return Messenger::error("Unrecognised Collect1D node keyword '%s' found.\n", parser.argc(0));
 				break;
 			default:

@@ -21,13 +21,13 @@ GUI_INCLUDES=""
 
 
 # Determine C++ compiler - Parallel Build?
-AC_ARG_WITH([parallel], [AC_HELP_STRING([--with-parallel], [Request parallel code (requires mpic++ in path) [default="no"]])], [with_parallel="yes"], [with_parallel="no"])
-AM_CONDITIONAL([BUILDPARALLEL], [test "$with_parallel" = "yes"])
-if test "$with_parallel" = "yes"; then
+AC_ARG_WITH([parallel], [AC_HELP_STRING([--with-parallel], [Request parallel compilation with specified MPI compiler target (mpic++ if no arg is given) [default="no"]])], [if test "$withval" = "yes"; then with_parallel="mpic++"; else with_parallel="$withval"; fi], [with_parallel="no"])
+AM_CONDITIONAL([BUILDPARALLEL], [test "$with_parallel" != "no"])
+if test "$with_parallel" != "no"; then
   AC_DEFINE([PARALLEL], [1], [Parallel code enabled])
-  if test "x$CXX" = "x"; then
-    CXX="mpic++"
-  fi
+  #if test "x$CXX" = "x"; then
+    CXX="$with_parallel"
+  #fi
   PARALLEL_CFLAGS="-DPARALLEL"
 fi
 
@@ -85,15 +85,6 @@ if test "$with_gui" = "yes"; then
   GUI_INCLUDES=" $QTGUI_CFLAGS $QTWIDGETS_CFLAGS $QTPRINT_CFLAGS $FTGL_CFLAGS"
 fi
 
-# Readline include dir
-RLINCDIR=""
-AC_ARG_WITH([readline-includes],[AC_HELP_STRING([--with-readline-includes=<dir>],
-    [Specify location of readline include files [default="/usr/include/readline"]])], ,
-    [with_readline_includes="/usr/include/readline"])
-RLINCDIR="$with_readline_includes"
-AC_CHECK_HEADER([$RLINCDIR/readline.h],,[AC_MSG_ERROR([Cannot find headers for readline.])])
-
-
 # Build Directory (used when packaging)
 BUILDDIR=""
 AC_ARG_WITH([build-dir],[AC_HELP_STRING([--with-build-dir=<dir>],
@@ -128,8 +119,6 @@ VERSION=DISSOLVE_VERSION
 AC_SUBST(VERSION)
 DISSOLVE_CFLAGS="$PARALLEL_CFLAGS $CHECK_CFLAGS"
 AC_SUBST(DISSOLVE_CFLAGS)
-DISSOLVE_READLINE="-L$RLINCDIR"
-AC_SUBST(DISSOLVE_READLINE)
 AC_SUBST(QTMOC)
 AC_SUBST(QTUIC)
 AC_SUBST(QTRCC)

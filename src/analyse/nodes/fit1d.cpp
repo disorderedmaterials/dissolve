@@ -244,30 +244,30 @@ bool AnalysisFit1DNode::read(LineParser& parser, const CoreData& coreData, NodeC
 		Fit1DNodeKeyword nk = fit1DNodeKeyword(parser.argc(0));
 		switch (nk)
 		{
-			case (Fit1DNodeKeyword::ConstantKeyword):
+			case (AnalysisFit1DNode::ConstantKeyword):
 				if (!equation_.createVariableWithValue(parser.argc(1), parser.argd(2), true)) return Messenger::error("Failed to create constant.\n");
 				break;
-			case (Fit1DNodeKeyword::EndFit1DKeyword):
+			case (AnalysisFit1DNode::EndFit1DKeyword):
 				return true;
-			case (Fit1DNodeKeyword::EquationKeyword):
+			case (AnalysisFit1DNode::EquationKeyword):
 				equationString_ = parser.argc(1);
 				if (!equation_.generate(equationString_)) return Messenger::error("Failed to create expression.\n");
 				break;
-			case (Fit1DNodeKeyword::FitKeyword):
+			case (AnalysisFit1DNode::FitKeyword):
 				var = equation_.createVariableWithValue(parser.argc(1), parser.argd(2), true);
 				if (!var) return Messenger::error("Failed to create variable '%s'.\n", parser.argc(1));
 				fitTargets_.add(var);
 				break;
-			case (Fit1DNodeKeyword::MethodKeyword):
+			case (AnalysisFit1DNode::MethodKeyword):
 				return false;
 				break;
-			case (Fit1DNodeKeyword::SaveKeyword):
+			case (AnalysisFit1DNode::SaveKeyword):
 				saveData_ = parser.argb(1);
 				break;
-			case (Fit1DNodeKeyword::SourceData):
+			case (AnalysisFit1DNode::SourceData):
 				if (!dataNode_.read(parser, 1, coreData, contextStack)) return Messenger::error("Couldn't set source data for node.\n");
 				break;
-			case (Fit1DNodeKeyword::nFit1DNodeKeywords):
+			case (AnalysisFit1DNode::nFit1DNodeKeywords):
 				return Messenger::error("Unrecognised Fit1D node keyword '%s' found.\n", parser.argc(0));
 				break;
 			default:

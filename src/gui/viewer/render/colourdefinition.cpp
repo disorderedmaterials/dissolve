@@ -155,7 +155,7 @@ double ColourDefinition::globalAlpha() const
 }
 
 // Return version
-const int ColourDefinition::version() const
+int ColourDefinition::version() const
 {
 	return version_;
 }

@@ -156,7 +156,7 @@ bool AnalysisDynamicSiteNode::read(LineParser& parser, const CoreData& coreData,
 		DynamicSiteNodeKeyword nk = dynamicSiteNodeKeyword(parser.argc(0));
 		switch (nk)
 		{
-			case (DynamicSiteNodeKeyword::AtomTypeKeyword):
+			case (AnalysisDynamicSiteNode::AtomTypeKeyword):
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
 					AtomType* at = coreData.findAtomType(parser.argc(n));
@@ -165,7 +165,7 @@ bool AnalysisDynamicSiteNode::read(LineParser& parser, const CoreData& coreData,
 					atomTypes_.add(at, coreData.constAtomTypes().indexOf(at));
 				}
 				break;
-			case (DynamicSiteNodeKeyword::ElementKeyword):
+			case (AnalysisDynamicSiteNode::ElementKeyword):
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
 					Element* el = Elements::elementPointer(parser.argc(n));
@@ -174,9 +174,9 @@ bool AnalysisDynamicSiteNode::read(LineParser& parser, const CoreData& coreData,
 					elements_.add(el);
 				}
 				break;
-			case (DynamicSiteNodeKeyword::EndDynamicSiteKeyword):
+			case (AnalysisDynamicSiteNode::EndDynamicSiteKeyword):
 				return true;
-			case (DynamicSiteNodeKeyword::nDynamicSiteNodeKeywords):
+			case (AnalysisDynamicSiteNode::nDynamicSiteNodeKeywords):
 				return Messenger::error("Unrecognised DynamicSite node keyword '%s' found.\n", parser.argc(0));
 				break;
 			default:

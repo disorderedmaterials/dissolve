@@ -48,9 +48,9 @@ class VersionCounter
 	 */
 	public:
 	// Automatic conversion to integer
-	operator const int() const;
+	operator int() const;
 	// Prefix increment
-	const int operator++();
+	int operator++();
 };
 
 #endif
