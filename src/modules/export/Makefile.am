@@ -4,4 +4,4 @@ libexport_la_SOURCES = core.cpp definition.cpp formats.cpp functions_coordinates
 
 noinst_HEADERS = export.h formats.h
 
-AM_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@ @DISSOLVE_READLINE@
+AM_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@

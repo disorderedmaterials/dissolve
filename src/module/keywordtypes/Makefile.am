@@ -24,5 +24,5 @@ noinst_HEADERS += pairbroadeningfunction.h
 noinst_HEADERS += speciessite.h
 noinst_HEADERS += windowfunction.h
 
-AM_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@ @DISSOLVE_READLINE@
+AM_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@
 

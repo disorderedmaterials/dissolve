@@ -5,7 +5,7 @@ libmodulewidget_la_SOURCES = nogui.cpp
 
 noinst_HEADERS = neutronsq.h
 
-AM_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@ @DISSOLVE_READLINE@
+AM_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@
 
 # GUI elements
 if BUILDGUI

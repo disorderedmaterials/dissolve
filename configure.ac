@@ -85,15 +85,6 @@ if test "$with_gui" = "yes"; then
   GUI_INCLUDES=" $QTGUI_CFLAGS $QTWIDGETS_CFLAGS $QTPRINT_CFLAGS $FTGL_CFLAGS"
 fi
 
-# Readline include dir
-RLINCDIR=""
-AC_ARG_WITH([readline-includes],[AC_HELP_STRING([--with-readline-includes=<dir>],
-    [Specify location of readline include files [default="/usr/include/readline"]])], ,
-    [with_readline_includes="/usr/include/readline"])
-RLINCDIR="$with_readline_includes"
-AC_CHECK_HEADER([$RLINCDIR/readline.h],,[AC_MSG_ERROR([Cannot find headers for readline.])])
-
-
 # Build Directory (used when packaging)
 BUILDDIR=""
 AC_ARG_WITH([build-dir],[AC_HELP_STRING([--with-build-dir=<dir>],
@@ -128,8 +119,6 @@ VERSION=DISSOLVE_VERSION
 AC_SUBST(VERSION)
 DISSOLVE_CFLAGS="$PARALLEL_CFLAGS $CHECK_CFLAGS"
 AC_SUBST(DISSOLVE_CFLAGS)
-DISSOLVE_READLINE="-L$RLINCDIR"
-AC_SUBST(DISSOLVE_READLINE)
 AC_SUBST(QTMOC)
 AC_SUBST(QTUIC)
 AC_SUBST(QTRCC)

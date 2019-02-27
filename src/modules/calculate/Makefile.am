@@ -5,13 +5,13 @@ libcalculatemodules_la_SOURCES =
 libcalculatemodules_la_LIBADD = 
 libcalculatemodules_la_LDFLAGS = -static
 
-libcalculatemodules_CPPFLAGS = -I${top_srcdir}/src @DISSOLVE_CFLAGS@ @DISSOLVE_READLINE@
+libcalculatemodules_CPPFLAGS = -I${top_srcdir}/src @DISSOLVE_CFLAGS@
 
 libcalculatemodulesdummywidgets_la_SOURCES = 
 libcalculatemodulesdummywidgets_la_LIBADD = 
 libcalculatemodulesdummywidgets_la_LDFLAGS = -static
 
-libcalculatemodulesdummywidgets_CPPFLAGS = -I${top_srcdir}/src @DISSOLVE_CFLAGS@ @DISSOLVE_READLINE@
+libcalculatemodulesdummywidgets_CPPFLAGS = -I${top_srcdir}/src @DISSOLVE_CFLAGS@
 
 # Module targets
 SUBDIRS = dangle
@@ -30,7 +30,7 @@ libcalculatemoduleswidgets_la_SOURCES =
 libcalculatemoduleswidgets_la_LIBADD = 
 libcalculatemoduleswidgets_la_LDFLAGS = -static
 
-libcalculatemoduleswidgets_CPPFLAGS = -I${top_srcdir}/src @DISSOLVE_CFLAGS@ @DISSOLVE_READLINE@ @GUI_INCLUDES@
+libcalculatemoduleswidgets_CPPFLAGS = -I${top_srcdir}/src @DISSOLVE_CFLAGS@ @GUI_INCLUDES@
 
 libcalculatemoduleswidgets_la_LIBADD += dangle/gui/libmodulewidget.la
 libcalculatemoduleswidgets_la_LIBADD += rdf/gui/libmodulewidget.la

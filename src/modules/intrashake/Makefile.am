@@ -4,4 +4,4 @@ libintrashake_la_SOURCES = core.cpp definition.cpp functions.cpp options.cpp pro
 
 noinst_HEADERS = intrashake.h
 
-AM_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@ @DISSOLVE_READLINE@
+AM_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@

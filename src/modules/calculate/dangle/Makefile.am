@@ -5,7 +5,7 @@ libmodulewidget_la_SOURCES = nogui.cpp
 
 noinst_HEADERS = dangle.h
 
-AM_CPPFLAGS = -I${top_srcdir}/src @DISSOLVE_CFLAGS@ @DISSOLVE_READLINE@
+AM_CPPFLAGS = -I${top_srcdir}/src @DISSOLVE_CFLAGS@
 
 # GUI elements
 if BUILDGUI
