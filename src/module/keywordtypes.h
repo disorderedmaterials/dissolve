@@ -43,6 +43,7 @@
 #include "module/keywordtypes/modulegroups.h"
 #include "module/keywordtypes/modulereferencelist.h"
 #include "module/keywordtypes/pairbroadeningfunction.h"
+#include "module/keywordtypes/speciesreferencelist.h"
 #include "module/keywordtypes/speciessite.h"
 #include "module/keywordtypes/windowfunction.h"
 
