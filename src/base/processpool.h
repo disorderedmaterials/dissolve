@@ -279,6 +279,8 @@ class ProcessPool
 	bool broadcast(int* source, int count, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Broadcast single long integer
 	bool broadcast(long int& source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	// Broadcast long integer to all Processes
+	bool broadcast(long int* source, int count, int rootRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Broadcast single double
 	bool broadcast(double& source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Broadcast double(s)
@@ -362,7 +364,9 @@ class ProcessPool
 	// Check equality of Vec3<int> value across involved processes
 	bool equality(Vec3<int> v, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Check equality of double array across involved processes
-	bool equality(double* xArray, int nx, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool equality(double* array, int nx, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	// Check equality of long int array across involved processes
+	bool equality(long int* array, int nx, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Check equality of Array<int> across involved processes
 	bool equality(Array<int> array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Check equality of Array<double> across involved processes

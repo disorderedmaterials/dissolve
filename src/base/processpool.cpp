@@ -1112,6 +1112,21 @@ bool ProcessPool::broadcast(long int& source, int rootRank, ProcessPool::Communi
 	return true;
 }
 
+// Broadcast long integer to all Processes
+bool ProcessPool::broadcast(long int* source, int count, int rootRank, ProcessPool::CommunicatorType commType)
+{
+#ifdef PARALLEL
+	timer_.start();
+	if (MPI_Bcast(source, count, MPI_LONG, rootRank, communicator(commType)) != MPI_SUCCESS)
+	{
+		Messenger::print("Failed to broadcast long int data from root rank %i.\n", rootRank);
+		return false;
+	}
+	timer_.accumulate();
+#endif
+	return true;
+}
+
 // Broadcast single double
 bool ProcessPool::broadcast(double& source, int rootRank, ProcessPool::CommunicatorType commType)
 {
@@ -2151,11 +2166,20 @@ bool ProcessPool::equality(Vec3<int> v, ProcessPool::CommunicatorType commType)
 	return true;
 }
 
-// Check equality of double array across involved processes
-bool ProcessPool::equality(double* xArray, int nx, ProcessPool::CommunicatorType commType)
+// Check equality of long int array across involved processes
+bool ProcessPool::equality(long int* array, int nx, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-	for (int n=0; n<nx; ++n) if (!equality(xArray[n], commType)) return Messenger::error("Value %i of double array is not equivalent (process %i has %e).\n", n, poolRank_, xArray[n]);
+	for (int n=0; n<nx; ++n) if (!equality(array[n], commType)) return Messenger::error("Value %i of long int array is not equivalent (process %i has %li).\n", n, poolRank_, array[n]);
+#endif
+	return true;
+}
+
+// Check equality of double array across involved processes
+bool ProcessPool::equality(double* array, int nx, ProcessPool::CommunicatorType commType)
+{
+#ifdef PARALLEL
+	for (int n=0; n<nx; ++n) if (!equality(array[n], commType)) return Messenger::error("Value %i of double array is not equivalent (process %i has %e).\n", n, poolRank_, array[n]);
 #endif
 	return true;
 }
