@@ -393,9 +393,8 @@ bool LineParser::eofOrBlank() const
 // Read single line from internal file source
 LineParser::ParseReturnValue LineParser::readNextLine(int optionMask)
 {
-	LineParser::ParseReturnValue result;
 	// Master will check the file and broadcast the result
-	result = LineParser::Success;
+	LineParser::ParseReturnValue result = LineParser::Success;
 	if ((!processPool_) || processPool_->isMaster())
 	{
 		// Returns : 0=ok, 1=error, -1=eof
@@ -1010,34 +1009,36 @@ bool LineParser::writeBannerComment(const char* fmt, ...)
 	return true;
 }
 
-// Write int argument as single line
-bool LineParser::writeArg(int i) const
+// Write long int argument as single line
+bool LineParser::writeArg(long int i) const
 {
-	return writeLineF("%i\n", i);
+	return writeLineF("%li\n", i);
 }
 
-// Write double argument as single line
-bool LineParser::writeArg(double d) const
+// Write long long int argument as single line
+bool LineParser::writeArg(long long int i) const
 {
-	return writeLineF("%16.9e\n", d);
+	return writeLineF("%lli\n", i);
 }
 
-// Write bool argument as single line
-bool LineParser::writeArg(bool b) const
+// Read long int argument as single line
+bool LineParser::readArg(long int& i)
 {
-	return writeLineF("%s\n", DissolveSys::btoa(b));
+	if (readNextLine(LineParser::Defaults) != LineParser::Success) return false;
+
+	i = atol(line_);
+
+	return true;
 }
 
-// Write Vec3<int> argument as single line
-bool LineParser::writeArg(Vec3<int> v) const
+// Read long long int argument as single line
+bool LineParser::readArg(long long int& i)
 {
-	return writeLineF("%i  %i  %i\n", v.x, v.y, v.z);
-}
+	if (readNextLine(LineParser::Defaults) != LineParser::Success) return false;
 
-// Write Vec3<double> argument as single line
-bool LineParser::writeArg(Vec3<double> v) const
-{
-	return writeLineF("%16.9e  %16.9e  %16.9e\n", v.x, v.y, v.z);
+	i = atoll(line_);
+
+	return true;
 }
 
 // Commit cached output stream to actual output file

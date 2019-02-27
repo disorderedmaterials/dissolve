@@ -63,13 +63,16 @@ template <> class GenericItemContainer<streampos> : public GenericItem
 	// Write data through specified parser
 	bool write(LineParser& parser)
 	{
-		return parser.writeLineF("%li\n", data);
+		return parser.writeArg(data);
 	}
 	// Read data through specified parser
 	bool read(LineParser& parser, const CoreData& coreData)
 	{
-		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-		data = parser.argli(0);
+		// NOTE Can't implicit cast streampos into the arg for readArg(), so assume long long int for now.
+		long long int pos;
+		if (!parser.readArg(pos)) return false;
+		data = pos;
+
 		return true;
 	}
 
