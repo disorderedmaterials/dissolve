@@ -104,7 +104,7 @@ void ForcesModule::interatomicForces(ProcessPool& procPool, Configuration* cfg, 
 void ForcesModule::totalForces(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, Array<double>& fx, Array<double>& fy, Array<double>& fz)
 {
 	/*
-	 * Calculates the total forces within the system, arising from inter-Grain PairPotential interactions
+	 * Calculates the total forces within the system, arising from PairPotential interactions
 	 * and intramolecular contributions.
 	 * 
 	 * This is a serial routine (subroutines called from within are parallel).
