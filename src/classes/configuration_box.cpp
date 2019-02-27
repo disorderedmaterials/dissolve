@@ -23,6 +23,7 @@
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/grain.h"
+#include "base/lineparser.h"
 #include "base/processpool.h"
 
 // Set relative box lengths
@@ -209,17 +210,10 @@ bool Configuration::setUpBox(ProcessPool& procPool, double ppRange, int nExpecte
 		// Attempt to load existing Box normalisation file
 		if (!boxNormalisationFileName_.isEmpty())
 		{
-			// Master will open file and attempt to read it...
-			bool loadResult;
-			if (procPool.isMaster()) loadResult = boxNormalisation_.load(boxNormalisationFileName_);
-			if (!procPool.broadcast(loadResult)) return false;
+			// Open file and attempt to read it...
+			LineParser boxNormParser(&procPool);
 
-			// Did we successfully load the file?
-			if (loadResult)
-			{
-				Messenger::print("Successfully loaded box normalisation data from file '%s'.\n", boxNormalisationFileName_.get());
-				if (!boxNormalisation_.broadcast(procPool)) return false;
-			}
+			if (!boxNormalisation_.load(boxNormParser)) Messenger::print("Successfully loaded box normalisation data from file '%s'.\n", boxNormalisationFileName_.get());
 			else Messenger::print("Couldn't load Box normalisation data - it will be calculated.\n");
 		}
 

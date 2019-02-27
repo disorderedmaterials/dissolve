@@ -90,7 +90,7 @@ template <> class GenericItemContainer< Array< Vec3<double> > > : public Generic
 	 */
 	public:
 	// Broadcast item contents
-	bool broadcast(ProcessPool& procPool, int root)
+	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 	{
 		return procPool.broadcast(data, root);
 	}

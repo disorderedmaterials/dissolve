@@ -257,17 +257,17 @@ bool AtomTypeData::write(LineParser& parser)
  */
 
 // Broadcast data from Master to all Slaves
-bool AtomTypeData::broadcast(ProcessPool& procPool, int root)
+bool AtomTypeData::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 {
 #ifdef PARALLEL
-	// For atomType_, use the master instance of List<AtomType> to find the index (*not* the local listIndex_) and broadcast it
-	int typeIndex;
-	if (procPool.poolRank() == root) typeIndex = List<AtomType>::masterInstance().indexOf(atomType_);
-	procPool.broadcast(typeIndex, root);
-	atomType_ = List<AtomType>::masterInstance().item(typeIndex);
+	// For the atomType_, use the fact that the AtomType names are unique...
+	CharString typeName;
+	if (procPool.poolRank() == root) typeName = atomType_->name();
+	procPool.broadcast(typeName, root);
+	atomType_ = coreData.findAtomType(typeName);
 
 	// Broadcast the IsotopeData list
-	BroadcastList<IsotopeData> topeBroadcaster(procPool, root, isotopes_);
+	BroadcastList<IsotopeData> topeBroadcaster(procPool, root, isotopes_, coreData);
 	if (topeBroadcaster.failed()) return false;
 
 	procPool.broadcast(population_, root);

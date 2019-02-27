@@ -694,7 +694,7 @@ bool PartialSet::write(LineParser& parser)
  */
 
 // Broadcast data from root to all other processes
-bool PartialSet::broadcast(ProcessPool& procPool, int rootRank)
+bool PartialSet::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 {
 #ifdef PARALLEL
 	// The structure should have already been setup(), so arrays should be ready to copy
@@ -703,14 +703,14 @@ bool PartialSet::broadcast(ProcessPool& procPool, int rootRank)
 	{
 		for (int typeJ=typeI; typeJ<nTypes; ++typeJ)
 		{
-			if (!partials_.at(typeI, typeJ).broadcast(procPool, rootRank)) return Messenger::error("Failed to broadcast partials_ array.\n");
-			if (!boundPartials_.at(typeI, typeJ).broadcast(procPool, rootRank))  return Messenger::error("Failed to broadcast boundPartials_ array.\n");
-			if (!unboundPartials_.at(typeI, typeJ).broadcast(procPool, rootRank))  return Messenger::error("Failed to broadcast unboundPartials_ array.\n");
-			if (!braggPartials_.at(typeI, typeJ).broadcast(procPool, rootRank))  return Messenger::error("Failed to broadcast braggPartials_ array.\n");
+			if (!partials_.at(typeI, typeJ).broadcast(procPool, root, coreData)) return Messenger::error("Failed to broadcast partials_ array.\n");
+			if (!boundPartials_.at(typeI, typeJ).broadcast(procPool, root, coreData))  return Messenger::error("Failed to broadcast boundPartials_ array.\n");
+			if (!unboundPartials_.at(typeI, typeJ).broadcast(procPool, root, coreData))  return Messenger::error("Failed to broadcast unboundPartials_ array.\n");
+			if (!braggPartials_.at(typeI, typeJ).broadcast(procPool, root, coreData))  return Messenger::error("Failed to broadcast braggPartials_ array.\n");
 		}
 	}
 
-	if (!total_.broadcast(procPool, rootRank)) return Messenger::error("Failed to broadcast total_.\n");
+	if (!total_.broadcast(procPool, root, coreData)) return Messenger::error("Failed to broadcast total_.\n");
 
 	if (!procPool.broadcast(emptyBoundPartials_)) return Messenger::error("Failed to broadcast emptyBoundPartials_ array.\n");
 	if (!procPool.broadcast(objectNamePrefix_)) return false;

@@ -103,7 +103,7 @@ class IsotopologueMix : public MPIListItem<IsotopologueMix>, public GenericItemB
 	 */
 	public:
 	// Broadcast data
-	bool broadcast(ProcessPool& procPool, int root);
+	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
 	// Check item equality
 	bool equality(ProcessPool& procPool);
 };

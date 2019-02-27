@@ -38,7 +38,7 @@ template <class T> class BroadcastList
 
 	public:
 	// Constructor
-	BroadcastList(ProcessPool& procPool, int root, List<T>& items)
+	BroadcastList(ProcessPool& procPool, int root, List<T>& items, const CoreData& coreData)
 	{
 		result_ = false;
 		int count;
@@ -47,7 +47,7 @@ template <class T> class BroadcastList
 			// Broadcast number of items in list, then list items...
 			count = items.nItems();
 			if (!procPool.broadcast(count, root)) return;
-			for (MPIListItem<T>* item = items.first(); item != NULL; item = item->next) if (!item->broadcast(procPool, root)) return;
+			for (MPIListItem<T>* item = items.first(); item != NULL; item = item->next) if (!item->broadcast(procPool, root, coreData)) return;
 		}
 		else
 		{
@@ -60,7 +60,7 @@ template <class T> class BroadcastList
 			{
 				// Slaves must create a suitable structure first, and then join the broadcast
 				T* item = items.add();
-				if (!item->broadcast(procPool, root)) return;
+				if (!item->broadcast(procPool, root, coreData)) return;
 			}
 		}
 

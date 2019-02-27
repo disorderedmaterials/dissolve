@@ -450,12 +450,12 @@ bool Weights::write(LineParser& parser)
  */
 
 // Broadcast item contents
-bool Weights::broadcast(ProcessPool& procPool, int root)
+bool Weights::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 {
 #ifdef PARALLEL
-	BroadcastList<IsotopologueMix> isoMixBroadcaster(procPool, root, isotopologueMixtures_);
+	BroadcastList<IsotopologueMix> isoMixBroadcaster(procPool, root, isotopologueMixtures_, coreData);
 	if (isoMixBroadcaster.failed()) return false;
-	if (!atomTypes_.broadcast(procPool, root)) return false;
+	if (!atomTypes_.broadcast(procPool, root, coreData)) return false;
 	if (!procPool.broadcast(concentrationProducts_, root)) return false;
 	if (!procPool.broadcast(boundCoherentProducts_, root)) return false;
 	if (!procPool.broadcast(weights_, root)) return false;

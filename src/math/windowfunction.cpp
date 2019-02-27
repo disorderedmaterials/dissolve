@@ -304,7 +304,7 @@ bool WindowFunction::write(LineParser& parser)
  */
 
 // Broadcast data from Master to all Slaves
-bool WindowFunction::broadcast(ProcessPool& procPool, int root)
+bool WindowFunction::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 {
 #ifdef PARALLEL
 	if (!procPool.broadcast(EnumCast<WindowFunction::FunctionType>(function_), root)) return false;

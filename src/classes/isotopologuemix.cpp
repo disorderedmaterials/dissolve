@@ -244,13 +244,13 @@ bool IsotopologueMix::write(LineParser& parser)
  */
 
 // Broadcast data
-bool IsotopologueMix::broadcast(ProcessPool& procPool, int root)
+bool IsotopologueMix::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 {
 #ifdef PARALLEL
-	int speciesIndex;
-	if (procPool.poolRank() == root) speciesIndex = List<Species>::masterInstance().indexOf(species_);
-	procPool.broadcast(speciesIndex, root);
-	species_ = List<Species>::masterInstance().item(speciesIndex);
+	CharString speciesName;
+	if (procPool.poolRank() == root) speciesName = species_->name();
+	procPool.broadcast(speciesName, root);
+	species_ = coreData.findSpecies(speciesName);
 
 	if (!procPool.broadcast(speciesPopulation_, root)) return false;
 

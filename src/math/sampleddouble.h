@@ -104,7 +104,7 @@ class SampledDouble : public GenericItemBase
 	// Sum data over all processes within the pool
 	bool allSum(ProcessPool& procPool);
 	// Broadcast data
-	bool broadcast(ProcessPool& procPool, int rootRank);
+	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
 	// Check equality of all data
 	bool equality(ProcessPool& procPool);
 };

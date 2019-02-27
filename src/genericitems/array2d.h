@@ -84,7 +84,7 @@ template <class T> class GenericItemContainer< Array2D<T> > : public GenericItem
 	 */
 	public:
 	// Broadcast item contents
-	bool broadcast(ProcessPool& procPool, int root)
+	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 	{
 #ifdef PARALLEL
 		int nRows, nColumns;
@@ -102,7 +102,7 @@ template <class T> class GenericItemContainer< Array2D<T> > : public GenericItem
 			// Now broadcast Array data
 			if ((nRows*nColumns) > 0)
 			{
-				for (int n=0; n<data.linearArraySize(); ++n) if (!data.linearArray()[n].broadcast(procPool, root)) return false;
+				for (int n=0; n<data.linearArraySize(); ++n) if (!data.linearArray()[n].broadcast(procPool, root, coreData)) return false;
 			}
 		}
 		else
@@ -116,7 +116,7 @@ template <class T> class GenericItemContainer< Array2D<T> > : public GenericItem
 			data.initialise(nRows, nColumns, half);
 			if ((nRows*nColumns) > 0)
 			{
-				for (int n=0; n<data.linearArraySize(); ++n) if (!data.linearArray()[n].broadcast(procPool, root)) return false;
+				for (int n=0; n<data.linearArraySize(); ++n) if (!data.linearArray()[n].broadcast(procPool, root, coreData)) return false;
 			}
 			else data.clear();
 		}

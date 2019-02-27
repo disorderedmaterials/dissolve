@@ -95,7 +95,7 @@ class BraggPeak : public MPIListItem<BraggPeak>,  public GenericItemBase
 	 */
 	public:
 	// Broadcast data from root to all other processes
-	bool broadcast(ProcessPool& procPool, int rootRank);
+	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
 	// Check item equality
 	bool equality(ProcessPool& procPool);
 };

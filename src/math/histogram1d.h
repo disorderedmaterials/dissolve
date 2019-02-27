@@ -132,7 +132,7 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
 	// Sum histogram data onto all processes
 	bool allSum(ProcessPool& procPool);
 	// Broadcast data
-	bool broadcast(ProcessPool& procPool, int rootRank = 0);
+	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
 	// Check item equality
 	bool equality(ProcessPool& procPool);
 };

@@ -470,7 +470,7 @@ bool BroadeningFunction::write(LineParser& parser)
  */
 
 // Broadcast data from Master to all Slaves
-bool BroadeningFunction::broadcast(ProcessPool& procPool, int root)
+bool BroadeningFunction::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 {
 #ifdef PARALLEL
 	if (!procPool.broadcast(EnumCast<BroadeningFunction::FunctionType>(function_), root)) return false;

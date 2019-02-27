@@ -113,7 +113,7 @@ template <> class GenericItemContainer< Array2D< Array<double> > > : public Gene
 	 */
 	public:
 	// Broadcast item contents
-	bool broadcast(ProcessPool& procPool, int root)
+	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 	{
 #ifdef PARALLEL
 		int nRows, nColumns;

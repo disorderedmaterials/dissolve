@@ -153,7 +153,7 @@ bool IsotopologueReference::write(LineParser& parser)
  */
 
 // Broadcast data
-bool IsotopologueReference::broadcast(ProcessPool& procPool, int rootRank)
+bool IsotopologueReference::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 {
 	return false;
 }

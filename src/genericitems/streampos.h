@@ -79,7 +79,7 @@ template <> class GenericItemContainer<streampos> : public GenericItem
 	 */
 	public:
 	// Broadcast item contents
-	bool broadcast(ProcessPool& procPool, int root)
+	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 	{
 		long int pos = (long int) data;
 		return procPool.broadcast(pos, root);

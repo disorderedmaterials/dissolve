@@ -267,14 +267,14 @@ bool Dissolve::iterate(int nIterations)
 			if (!cfg->broadcastCoordinates(worldPool(), cfg->processPool().rootWorldRank())) return false;
 
 			Messenger::printVerbose("Broadcasting Module data for Configuration '%s'...\n", cfg->name());
-			if (!cfg->moduleData().broadcast(worldPool(), cfg->processPool().rootWorldRank())) return false;
+			if (!cfg->moduleData().broadcast(worldPool(), cfg->processPool().rootWorldRank(), coreData_)) return false;
 		}
 
 		// Sync up all processes
 		Messenger::printVerbose("Waiting for other processes at end of data reassembly...\n");
 		worldPool().wait(ProcessPool::PoolProcessesCommunicator);
 
-	
+
 		/*
 		 *  3)	Run processing Modules (using the world pool).
 		 */

@@ -537,14 +537,14 @@ bool Data2D::write(LineParser& parser)
  */
 
 // Broadcast data
-bool Data2D::broadcast(ProcessPool& procPool, int rootRank)
+bool Data2D::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 {
 #ifdef PARALLEL
-	if (!procPool.broadcast(x_, rootRank)) return false;
-	if (!procPool.broadcast(y_, rootRank)) return false;
-	if (!procPool.broadcast(values_, rootRank)) return false;
-	if (!procPool.broadcast(hasError_, rootRank)) return false;
-	if (!procPool.broadcast(errors_, rootRank)) return false;
+	if (!procPool.broadcast(x_, root)) return false;
+	if (!procPool.broadcast(y_, root)) return false;
+	if (!procPool.broadcast(values_, root)) return false;
+	if (!procPool.broadcast(hasError_, root)) return false;
+	if (!procPool.broadcast(errors_, root)) return false;
 #endif
 	return true;
 }

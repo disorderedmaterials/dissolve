@@ -330,11 +330,11 @@ bool AtomTypeList::write(LineParser& parser)
  */
 
 // Broadcast item contents
-bool AtomTypeList::broadcast(ProcessPool& procPool, int root)
+bool AtomTypeList::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 {
 #ifdef PARALLEL
 	// Broadcast AtomTypeData list
-	BroadcastList<AtomTypeData> atdBroadcaster(procPool, root, types_);
+	BroadcastList<AtomTypeData> atdBroadcaster(procPool, root, types_, coreData);
 	if (atdBroadcaster.failed()) return false;
 #endif
 	return true;

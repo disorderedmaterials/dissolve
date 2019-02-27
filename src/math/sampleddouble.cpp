@@ -234,12 +234,12 @@ bool SampledDouble::allSum(ProcessPool& procPool)
 }
 
 // Broadcast data
-bool SampledDouble::broadcast(ProcessPool& procPool, int rootRank)
+bool SampledDouble::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 {
 #ifdef PARALLEL
-	if (!procPool.broadcast(count_, rootRank)) return false;
-	if (!procPool.broadcast(mean_, rootRank)) return false;
-	if (!procPool.broadcast(m2_, rootRank)) return false;
+	if (!procPool.broadcast(count_, root)) return false;
+	if (!procPool.broadcast(mean_, root)) return false;
+	if (!procPool.broadcast(m2_, root)) return false;
 #endif
 	return true;
 }

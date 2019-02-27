@@ -21,6 +21,7 @@
 
 #include "classes/pairpotential.h"
 #include "classes/atomtype.h"
+#include "classes/coredata.h"
 #include "base/messenger.h"
 #include "base/lineparser.h"
 #include "base/parameters.h"
@@ -743,24 +744,21 @@ void PairPotential::adjustUAdditional(Data1D u, double factor)
  */
 
 // Broadcast data from Master to all Slaves
-bool PairPotential::broadcast(ProcessPool& procPool, int root)
+bool PairPotential::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 {
 #ifdef PARALLEL
-	// Need the master AtomType list ot proceed
-	const List<AtomType>& masterAtomTypes = List<AtomType>::masterInstance();
-
 	// PairPotential type
 	if (!procPool.broadcast(EnumCast<PairPotential::ShortRangeType>(shortRangeType_), root)) return false;
 	if (!procPool.broadcast(includeCoulomb_, root)) return false;
 
-	// Source Parameters - Master needs to determine AtomType indices
-	int index;
-	if (procPool.isMaster()) index = masterAtomTypes.indexOf(atomTypeI_);
-	if (!procPool.broadcast(index, root)) return false;
-	atomTypeI_ = masterAtomTypes.item(index);
-	if (procPool.isMaster()) index = masterAtomTypes.indexOf(atomTypeJ_);
-	if (!procPool.broadcast(index, root)) return false;
-	atomTypeJ_ = masterAtomTypes.item(index);
+	// Source Parameters
+	CharString typeName;
+	if (procPool.poolRank() == root) typeName = atomTypeI_->name();
+	if (!procPool.broadcast(typeName, root)) return false;
+	atomTypeI_ = coreData.findAtomType(typeName);
+	if (procPool.poolRank() == root) typeName = atomTypeJ_->name();
+	if (!procPool.broadcast(typeName, root)) return false;
+	atomTypeJ_ = coreData.findAtomType(typeName);
 	if (!procPool.broadcast(parameters_, MAXSRPARAMETERS, root)) return false;
 	if (!procPool.broadcast(chargeI_, root)) return false;
 	if (!procPool.broadcast(chargeJ_, root)) return false;
@@ -772,10 +770,10 @@ bool PairPotential::broadcast(ProcessPool& procPool, int root)
 	if (!procPool.broadcast(rDelta_, root)) return false;
 
 	// Tabulations
-	uOriginal_.broadcast(procPool, root);
-	uAdditional_.broadcast(procPool, root);
-	uFull_.broadcast(procPool, root);
-	dUFull_.broadcast(procPool, root);
+	uOriginal_.broadcast(procPool, root, coreData);
+	uAdditional_.broadcast(procPool, root, coreData);
+	uFull_.broadcast(procPool, root, coreData);
+	dUFull_.broadcast(procPool, root, coreData);
 #endif
 	return true;
 }

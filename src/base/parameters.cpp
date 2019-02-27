@@ -120,7 +120,7 @@ double Parameters::charge()
  */
 
 // Broadcast data from Master to all Slaves
-bool Parameters::broadcast(ProcessPool& procPool, int root)
+bool Parameters::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 {
 #ifdef PARALLEL
 	if (!procPool.broadcast(name_, root)) return false;

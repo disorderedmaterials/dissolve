@@ -630,15 +630,15 @@ bool Data3D::write(LineParser& parser)
  */
 
 // Broadcast data
-bool Data3D::broadcast(ProcessPool& procPool, int rootRank)
+bool Data3D::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 {
 #ifdef PARALLEL
-	if (!procPool.broadcast(x_, rootRank)) return false;
-	if (!procPool.broadcast(y_, rootRank)) return false;
-	if (!procPool.broadcast(z_, rootRank)) return false;
-	if (!procPool.broadcast(values_, rootRank)) return false;
-	if (!procPool.broadcast(hasError_, rootRank)) return false;
-	if (!procPool.broadcast(errors_, rootRank)) return false;
+	if (!procPool.broadcast(x_, root)) return false;
+	if (!procPool.broadcast(y_, root)) return false;
+	if (!procPool.broadcast(z_, root)) return false;
+	if (!procPool.broadcast(values_.linearArray(), values_.linearArraySize(), root)) return false;
+	if (!procPool.broadcast(hasError_, root)) return false;
+	if (!procPool.broadcast(errors_.linearArray(), errors_.linearArraySize(), root)) return false;
 #endif
 	return true;
 }
@@ -650,9 +650,9 @@ bool Data3D::equality(ProcessPool& procPool)
 	if (!procPool.equality(x_)) return Messenger::error("Data3D x axis values not equivalent.\n");
 	if (!procPool.equality(y_)) return Messenger::error("Data3D y axis values not equivalent.\n");
 	if (!procPool.equality(z_)) return Messenger::error("Data3D z axis values not equivalent.\n");
-	if (!procPool.equality(values_)) return Messenger::error("Data3D values not equivalent.\n");
+	if (!procPool.equality(values_.linearArray(), values_.linearArraySize())) return Messenger::error("Data3D values not equivalent.\n");
 	if (!procPool.equality(hasError_)) return Messenger::error("Data3D error flag not equivalent.\n");
-	if (!procPool.equality(errors_)) return Messenger::error("Data3D error values not equivalent.\n");
+	if (!procPool.equality(errors_.linearArray(), errors_.linearArraySize())) return Messenger::error("Data3D error values not equivalent.\n");
 #endif
 	return true;
 }

@@ -68,7 +68,7 @@ class GenericList
 	 */
 	public:
 	// Broadcast all data
-	bool broadcast(ProcessPool& procPool, int root);
+	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
 	// Check equality of all data
 	bool equality(ProcessPool& procPool);
 };

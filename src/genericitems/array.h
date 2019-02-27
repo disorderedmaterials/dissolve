@@ -89,10 +89,10 @@ template <class T> class GenericItemContainer< Array<T> > : public GenericItem
 	 */
 	public:
 	// Broadcast item contents
-	bool broadcast(ProcessPool& procPool, int root)
+	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 	{
 		bool success;
-		BroadcastArray<T>(procPool, root, data, success);
+		BroadcastArray<T>(procPool, root, data, coreData, success);
 		return success;
 	}
 	// Return equality between items

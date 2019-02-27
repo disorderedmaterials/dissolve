@@ -86,7 +86,7 @@ class Parameters : public MPIListItem<Parameters>
 	 */
 	public:
 	// Broadcast data from Master to all Slaves
-	bool broadcast(ProcessPool& procPool, int root = 0);
+	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
 };
 
 #endif

@@ -178,12 +178,12 @@ bool GenericList::rename(const char* oldName, const char* oldPrefix, const char*
  */
 
 // Broadcast all data
-bool GenericList::broadcast(ProcessPool& procPool, int root)
+bool GenericList::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 {
 	for (GenericItem* item = items_.first(); item != NULL; item = item->next) 
 	{
 		Messenger::printVerbose("Broadcasting data '%s' (%s)...\n", item->name(), item->itemClassName());
-		if (!item->broadcast(procPool, root)) return false;
+		if (!item->broadcast(procPool, root, coreData)) return false;
 	}
 	return true;
 }

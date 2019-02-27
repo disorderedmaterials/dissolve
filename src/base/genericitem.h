@@ -116,7 +116,7 @@ class GenericItem
 	 */
 	public:
 	// Broadcast item contents
-	virtual bool broadcast(ProcessPool& procPool, int root = 0) = 0;
+	virtual bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData) = 0;
 	// Return equality between items
 	virtual bool equality(ProcessPool& procPool) = 0;
 };

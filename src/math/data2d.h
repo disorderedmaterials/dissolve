@@ -151,7 +151,7 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
 	 */
 	public:
 	// Broadcast data
-	bool broadcast(ProcessPool& procPool, int rootRank = 0);
+	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
 	// Check item equality
 	bool equality(ProcessPool& procPool);
 };

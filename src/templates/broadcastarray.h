@@ -34,7 +34,7 @@ template <class T> class BroadcastArray
 	 */
 	public:
 	// Constructor
-	BroadcastArray(ProcessPool& procPool, int root, Array<T>& array, bool& result)
+	BroadcastArray(ProcessPool& procPool, int root, Array<T>& array, const CoreData& coreData, bool& result)
 	{
 		result = false;
 		int count;
@@ -43,7 +43,7 @@ template <class T> class BroadcastArray
 			// Broadcast number of items in list, then list items...
 			count = array.nItems();
 			if (!procPool.broadcast(count, root)) return;
-			for (int n=0; n<count; ++n) array[count].broadcast(procPool, root);
+			for (int n=0; n<count; ++n) array[count].broadcast(procPool, root, coreData);
 		}
 		else
 		{
@@ -52,7 +52,7 @@ template <class T> class BroadcastArray
 
 			// Clear list and reconstruct
 			array.initialise(count);
-			for (int n=0; n<count; ++n) array[n].broadcast(procPool, root);
+			for (int n=0; n<count; ++n) array[n].broadcast(procPool, root, coreData);
 		}
 
 		// All OK - success!

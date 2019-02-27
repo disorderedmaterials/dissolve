@@ -77,9 +77,9 @@ template <class T> class GenericItemContainer : public GenericItem
 	 */
 	public:
 	// Broadcast item contents
-	bool broadcast(ProcessPool& procPool, int root)
+	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 	{
-		return data.broadcast(procPool, root);
+		return data.broadcast(procPool, root, coreData);
 	}
 	// Check for equality
 	bool equality(ProcessPool& procPool)

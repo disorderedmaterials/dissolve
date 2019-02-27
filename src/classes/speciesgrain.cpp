@@ -195,7 +195,7 @@ bool SpeciesGrain::broadcast(ProcessPool& procPool, const List<SpeciesAtom>& ato
 	if (!procPool.broadcast(&count, 1)) return false;
 	for (n=0; n<count; ++n)
 	{
-		if (procPool.isMaster()) index = atoms_.item(n)->item->index();
+		if (procPool.isMaster()) index = atoms_.item(n)->index();
 		if (!procPool.broadcast(&index, 1)) return false;
 		if (procPool.isSlave()) addAtom(atoms.item(index));
 	}
@@ -205,7 +205,7 @@ bool SpeciesGrain::broadcast(ProcessPool& procPool, const List<SpeciesAtom>& ato
 	if (!procPool.broadcast(&count, 1)) return false;
 	for (n=0; n<count; ++n)
 	{
-		if (procPool.isMaster()) index = bonds.indexOf(internalBonds_.item(n)->item);
+		if (procPool.isMaster()) index = bonds.indexOf(internalBonds_.item(n));
 		if (!procPool.broadcast(&index, 1)) return false;
 		if (procPool.isSlave()) addInternalBond(bonds.item(index));
 	}
@@ -213,7 +213,7 @@ bool SpeciesGrain::broadcast(ProcessPool& procPool, const List<SpeciesAtom>& ato
 	if (!procPool.broadcast(&count, 1)) return false;
 	for (n=0; n<count; ++n)
 	{
-		if (procPool.isMaster()) index = angles.indexOf(internalAngles_.item(n)->item);
+		if (procPool.isMaster()) index = angles.indexOf(internalAngles_.item(n));
 		if (!procPool.broadcast(&index, 1)) return false;
 		if (procPool.isSlave()) addInternalAngle(angles.item(index));
 	}
@@ -223,7 +223,7 @@ bool SpeciesGrain::broadcast(ProcessPool& procPool, const List<SpeciesAtom>& ato
 	if (!procPool.broadcast(&count, 1)) return false;
 	for (n=0; n<count; ++n)
 	{
-		if (procPool.isMaster()) index = bonds.indexOf(bondConnections_.item(n)->item);
+		if (procPool.isMaster()) index = bonds.indexOf(bondConnections_.item(n));
 		if (!procPool.broadcast(&index, 1)) return false;
 		if (procPool.isSlave()) addBondConnection(bonds.item(index));
 	}
@@ -231,7 +231,7 @@ bool SpeciesGrain::broadcast(ProcessPool& procPool, const List<SpeciesAtom>& ato
 	if (!procPool.broadcast(&count, 1)) return false;
 	for (n=0; n<count; ++n)
 	{
-		if (procPool.isMaster()) index = angles.indexOf(angleConnections_.item(n)->item);
+		if (procPool.isMaster()) index = angles.indexOf(angleConnections_.item(n));
 		if (!procPool.broadcast(&index, 1)) return false;
 		if (procPool.isSlave()) addAngleConnection(angles.item(index));
 	}

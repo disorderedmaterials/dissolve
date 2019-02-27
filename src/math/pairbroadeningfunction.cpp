@@ -420,7 +420,7 @@ bool PairBroadeningFunction::write(LineParser& parser)
  */
 
 // Broadcast data from Master to all Slaves
-bool PairBroadeningFunction::broadcast(ProcessPool& procPool, int root)
+bool PairBroadeningFunction::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 {
 #ifdef PARALLEL
 	if (!procPool.broadcast(EnumCast<PairBroadeningFunction::FunctionType>(function_), root)) return false;

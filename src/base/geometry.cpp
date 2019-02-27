@@ -89,7 +89,7 @@ double Geometry::value()
  */
 
 // Broadcast data from Master to all Slaves
-bool Geometry::broadcast(ProcessPool& procPool, int root)
+bool Geometry::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 {
 	return false;
 }

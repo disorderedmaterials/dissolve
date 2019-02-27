@@ -130,7 +130,7 @@ bool IsotopeData::read(LineParser& parser, const CoreData& coreData)
  */
 
 // Broadcast data from Master to all Slaves
-bool IsotopeData::broadcast(ProcessPool& procPool, int root)
+bool IsotopeData::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 {
 #ifdef PARALLEL
 	// For isotope_, need to broadcast element Z and isotope A
