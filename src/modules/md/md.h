@@ -25,7 +25,7 @@
 #include "module/module.h"
 
 // Forward Declarations
-/* none */
+class Species;
 
 // Molecular Dynamics Module
 class MDModule : public Module
@@ -66,6 +66,10 @@ class MDModule : public Module
 	/*
 	 * Options
 	 */
+	private:
+	// List of specific Species types to target
+	RefList<Species,bool> targetSpecies_;
+
 	protected:
 	// Set up options for Module
 	void setUpKeywords();
