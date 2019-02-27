@@ -85,7 +85,7 @@ class ColourDefinition
 	// Return global alpha value
 	double globalAlpha() const;
 	// Return version
-	const int version() const;
+	int version() const;
 
 
 	/*

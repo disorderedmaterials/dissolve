@@ -116,7 +116,7 @@ void Data3D::zero()
 }
 
 // Return data version
-const int Data3D::version() const
+int Data3D::version() const
 {
 	return version_;
 }

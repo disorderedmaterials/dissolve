@@ -47,13 +47,13 @@ void VersionCounter::zero()
  */
 
 // Automatic conversion to integer
-VersionCounter::operator const int() const
+VersionCounter::operator int() const
 {
 	return version_;
 }
 
 // Prefix increment
-const int VersionCounter::operator++()
+int VersionCounter::operator++()
 {
 	return (++version_);
 }

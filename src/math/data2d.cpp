@@ -112,7 +112,7 @@ void Data2D::zero()
 }
 
 // Return data version
-const int Data2D::version() const
+int Data2D::version() const
 {
 	return version_;
 }

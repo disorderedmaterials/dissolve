@@ -106,7 +106,7 @@ void Data1D::zero()
 }
 
 // Return data version
-const int Data1D::version() const
+int Data1D::version() const
 {
 	return version_;
 }
