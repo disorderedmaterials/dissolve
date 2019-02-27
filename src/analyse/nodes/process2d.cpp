@@ -242,49 +242,49 @@ bool AnalysisProcess2DNode::read(LineParser& parser, const CoreData& coreData, N
 		Process2DNodeKeyword nk = process2DNodeKeyword(parser.argc(0));
 		switch (nk)
 		{
-			case (Process2DNodeKeyword::EndProcess2DKeyword):
+			case (AnalysisProcess2DNode::EndProcess2DKeyword):
 				return true;
-			case (Process2DNodeKeyword::FactorKeyword):
+			case (AnalysisProcess2DNode::FactorKeyword):
 				normalisationFactor_ = parser.argd(1);
 				normaliseByFactor_ = true;
 				break;
-			case (Process2DNodeKeyword::LabelValueKeyword):
+			case (AnalysisProcess2DNode::LabelValueKeyword):
 				valueLabel_ = parser.argc(1);
 				break;
-			case (Process2DNodeKeyword::LabelXKeyword):
+			case (AnalysisProcess2DNode::LabelXKeyword):
 				xAxisLabel_ = parser.argc(1);
 				break;
-			case (Process2DNodeKeyword::LabelYKeyword):
+			case (AnalysisProcess2DNode::LabelYKeyword):
 				yAxisLabel_ = parser.argc(1);
 				break;
-			case (Process2DNodeKeyword::NormaliseToOneKeyword):
+			case (AnalysisProcess2DNode::NormaliseToOneKeyword):
 				normaliseToOne_ = parser.argb(1);
 				break;
-			case (Process2DNodeKeyword::NSitesKeyword):
+			case (AnalysisProcess2DNode::NSitesKeyword):
 				// Need a valid collectNode_ so we can retrieve the context stack it's local to
 				if (collectNode_.isNull()) return Messenger::error("Can't set site-dependent normalisers without first setting the collect node target.\n");
 				if (!collectNode_.node()->parent()) return Messenger::error("Can't set site-dependent normalisers since the specified collect node has no analyser parent.\n");
 
 				selectNode = (AnalysisSelectNode*) contextStack.node(parser.argc(1), AnalysisNode::SelectNode);
-				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), process2DNodeKeyword(Process2DNodeKeyword::NSitesKeyword));
+				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), process2DNodeKeyword(AnalysisProcess2DNode::NSitesKeyword));
 				sitePopulationNormalisers_.add(selectNode, 1.0);
 				break;
-			case (Process2DNodeKeyword::NumberDensityKeyword):
+			case (AnalysisProcess2DNode::NumberDensityKeyword):
 				// Need a valid collectNode_ so we can retrieve the context stack it's local to
 				if (collectNode_.isNull()) return Messenger::error("Can't set site-dependent normalisers without first setting the collect node target.\n");
 				if (!collectNode_.node()->parent()) return Messenger::error("Can't set site-dependent normalisers since the specified collect node has no analyser parent.\n");
 
 				selectNode = (AnalysisSelectNode*) contextStack.node(parser.argc(1), AnalysisNode::SelectNode);
-				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), process2DNodeKeyword(Process2DNodeKeyword::NumberDensityKeyword));
+				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), process2DNodeKeyword(AnalysisProcess2DNode::NumberDensityKeyword));
 				numberDensityNormalisers_.add(selectNode, 1.0);
 				break;
-			case (Process2DNodeKeyword::SaveKeyword):
+			case (AnalysisProcess2DNode::SaveKeyword):
 				saveData_ = parser.argb(1);
 				break;
-			case (Process2DNodeKeyword::SourceDataKeyword):
+			case (AnalysisProcess2DNode::SourceDataKeyword):
 				if (!collectNode_.read(parser, 1, coreData, contextStack)) return Messenger::error("Couldn't set source data for node.\n");
 				break;
-			case (Process2DNodeKeyword::nProcess2DNodeKeywords):
+			case (AnalysisProcess2DNode::nProcess2DNodeKeywords):
 				return Messenger::error("Unrecognised Process2D node keyword '%s' found.\n", parser.argc(0));
 				break;
 			default:
@@ -293,7 +293,7 @@ bool AnalysisProcess2DNode::read(LineParser& parser, const CoreData& coreData, N
 	}
 
 	// Check that a valid collectNode_ has been set
-	if (collectNode_.isNull()) return Messenger::error("A valid Collect2D node must be set in the Process2D node '%s' using the '%s' keyword.\n", name(), process2DNodeKeyword(Process2DNodeKeyword::SourceDataKeyword));
+	if (collectNode_.isNull()) return Messenger::error("A valid Collect2D node must be set in the Process2D node '%s' using the '%s' keyword.\n", name(), process2DNodeKeyword(AnalysisProcess2DNode::SourceDataKeyword));
 
 	return true;
 }

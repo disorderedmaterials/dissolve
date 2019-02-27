@@ -140,7 +140,7 @@ bool AnalysisSequenceNode::read(LineParser& parser, const CoreData& coreData, No
 		SequenceNodeKeyword nk = sequenceNodeKeyword(parser.argc(0));
 		switch (nk)
 		{
-			case (SequenceNodeKeyword::nSequenceNodeKeywords):
+			case (AnalysisSequenceNode::nSequenceNodeKeywords):
 				break;
 		}
 
