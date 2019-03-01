@@ -81,6 +81,18 @@ template <class T> class PointerArray
 #endif
 		return items_[index];
 	}
+	// Const access operator
+	T* at(int index) const
+	{
+#ifdef CHECKS
+		if ((index < 0) || (index >= nItems_))
+		{
+			Messenger::error("PointerArray<T>::at(%i) - Array index out of bounds (%i items in array).\n", index, nItems_);
+			return NULL;
+		}
+#endif
+		return items_[index];
+	}
 
 
 	/*
