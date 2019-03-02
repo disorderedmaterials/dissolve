@@ -188,7 +188,7 @@ void ForceKernel::forcesWithMim(const Grain* grainI, const Grain* grainJ)
  * PairPotential Terms
  */
 
-// Calculate forces between atoms (provided as pointers)
+// Calculate forces between atoms
 void ForceKernel::forces(const Atom* i, const Atom* j, bool applyMim, bool excludeIgeJ)
 {
 #ifdef CHECKS
@@ -209,7 +209,7 @@ void ForceKernel::forces(const Atom* i, const Atom* j, bool applyMim, bool exclu
 // 		printf("Warning: Refusing to calculate self-energy in ForceKernel::forces(Atom,Atom,bool,bool).\n");
 		return;
 	}
-	
+
 	// Check indices of Atoms if required
 	if (excludeIgeJ && (i >= j)) return;
 
@@ -335,7 +335,7 @@ void ForceKernel::forces(const Atom* i, Cell* cell, int flags, ProcessPool::Divi
 	Atom* jj;
 	int j;
 	double scale;
-	
+
 	// Grab some information on the supplied atom
 	Molecule* moleculeI = i->molecule();
 
@@ -569,7 +569,7 @@ void ForceKernel::forces(const Bond* b)
 	Vec3<double> vecji;
 	if (cells_.useMim(i->cell(), j->cell())) vecji = box_->minimumVector(i, j);
 	else vecji = j->r() - i->r();
-	
+
 	// Get distance and normalise vector ready for force calculation
 	double distance = vecji.magAndNormalise();
 
@@ -591,11 +591,55 @@ void ForceKernel::forces(const Bond* b)
 	fz_[index] += vecji.z;
 }
 
+// Calculate Bond forces for specified Atom only
+void ForceKernel::forces(const Bond* b, const Atom* onlyThis)
+{
+	// Grab pointers to atoms involved in bond
+	Atom* i = b->i(), *j = b->j();
+
+#ifdef CHECKS
+	if ((i != onlyThis) && (j != onlyThis))
+	{
+		Messenger::error("Forces requested for specific Atom in Bond, but neither Atom in the Bond is the one specified.\n");
+		return;
+	}
+#endif
+
+	// Determine whether we need to apply minimum image to the vector calculation
+	Vec3<double> vecji;
+	if (cells_.useMim(i->cell(), j->cell())) vecji = box_->minimumVector(i, j);
+	else vecji = j->r() - i->r();
+
+	// Get distance and normalise vector ready for force calculation
+	double distance = vecji.magAndNormalise();
+
+#ifdef CHECKS
+	if (distance > 5.0) printf("!!! Long bond: %i-%i = %f Angstroms\n", i->arrayIndex(), j->arrayIndex(), distance);
+#endif
+
+	// Determine final forces
+	vecji *= b->force(distance);
+
+	// Calculate forces
+	int index = onlyThis->arrayIndex();
+	if (onlyThis == i)
+	{
+		fx_[index] -= vecji.x;
+		fy_[index] -= vecji.y;
+		fz_[index] -= vecji.z;
+	}
+	else
+	{
+		fx_[index] += vecji.x;
+		fy_[index] += vecji.y;
+		fz_[index] += vecji.z;
+	}
+}
+
 // Calculate Angle forces
 void ForceKernel::forces(const Angle* a)
 {
-	double angle, force, dp, magji, magjk;
-	Vec3<double> vecji, vecjk, forcei, forcek;
+	Vec3<double> vecji, vecjk;
 
 	// Grab pointers to atoms involved in angle
 	Atom* i = a->i(), *j = a->j(), *k = a->k();
@@ -605,19 +649,18 @@ void ForceKernel::forces(const Angle* a)
 	else vecji = i->r() - j->r();
 	if (cells_.useMim(j->cell(), k->cell())) vecjk = box_->minimumVector(j, k);
 	else vecjk = k->r() - j->r();
-	
+
 	// Calculate angle
-	magji = vecji.magAndNormalise();
-	magjk = vecjk.magAndNormalise();
-	angle = Box::angleInDegrees(vecji, vecjk, dp);
+	const double magji = vecji.magAndNormalise();
+	const double magjk = vecjk.magAndNormalise();
+	double dp;
+	const double angle = Box::angleInDegrees(vecji, vecjk, dp);
 
 	// Determine Angle force vectors for atoms
-	force = a->force(angle);
-	forcei = vecjk - vecji * dp;
-	forcei *= force / magji;
-	forcek = vecji - vecjk * dp;
-	forcek *= force / magjk;
-	
+	const double force = a->force(angle);
+	const Vec3<double> forcei = (vecjk - vecji * dp) * force / magji;
+	const Vec3<double> forcek = (vecji - vecjk * dp) * force / magjk;
+
 	// Store forces
 	int index = i->arrayIndex();
 	fx_[index] += forcei.x;
@@ -633,17 +676,69 @@ void ForceKernel::forces(const Angle* a)
 	fz_[index] += forcek.z;
 }
 
+// Calculate Angle forces for specified Atom only
+void ForceKernel::forces(const Angle* a, const Atom* onlyThis)
+{
+	Vec3<double> vecji, vecjk;
+
+	// Grab pointers to atoms involved in angle
+	Atom* i = a->i(), *j = a->j(), *k = a->k();
+
+#ifdef CHECKS
+	if ((i != onlyThis) && (j != onlyThis) && (k != onlyThis))
+	{
+		Messenger::error("Forces requested for specific Atom in Angle, but no Atom in the Angle is the one specified.\n");
+		return;
+	}
+#endif
+
+	// Determine whether we need to apply minimum image between 'j-i' and 'j-k'
+	if (cells_.useMim(j->cell(), i->cell())) vecji = box_->minimumVector(j, i);
+	else vecji = i->r() - j->r();
+	if (cells_.useMim(j->cell(), k->cell())) vecjk = box_->minimumVector(j, k);
+	else vecjk = k->r() - j->r();
+
+	// Calculate angle
+	const double magji = vecji.magAndNormalise();
+	const double magjk = vecjk.magAndNormalise();
+	double dp;
+	const double angle = Box::angleInDegrees(vecji, vecjk, dp);
+
+	// Determine Angle force vectors for atoms
+	const double force = a->force(angle);
+	const Vec3<double> forcei = (vecjk - vecji * dp) * force / magji;
+	const Vec3<double> forcek = (vecji - vecjk * dp) * force / magjk;
+
+	// Store forces
+	int index = onlyThis->arrayIndex();
+	if (onlyThis == i)
+	{
+		fx_[index] += forcei.x;
+		fy_[index] += forcei.y;
+		fz_[index] += forcei.z;
+	}
+	else if (onlyThis == j)
+	{
+		fx_[index] -= forcei.x + forcek.x;
+		fy_[index] -= forcei.y + forcek.y;
+		fz_[index] -= forcei.z + forcek.z;
+	}
+	else
+	{
+		fx_[index] += forcek.x;
+		fy_[index] += forcek.y;
+		fz_[index] += forcek.z;
+	}
+}
+
 // Return Torsion force
 void ForceKernel::forces(const Torsion* t)
 {
-	Vec3<double> vecji, vecjk, veckl, xpj, xpk, dcos_dxpj, dcos_dxpk, temp;
-	Matrix3 dxpj_dij, dxpj_dkj, dxpk_dkj, dxpk_dlk;
-	double magxpj, magxpk, dp, phi, du_dphi;
-	
 	// Grab pointers to atoms involved in angle
 	Atom* i = t->i(), *j = t->j(), *k = t->k(), *l = t->l();
 
 	// Calculate vectors, ensuring we account for minimum image
+	Vec3<double> vecji, vecjk, veckl;
 	if (cells_.useMim(j->cell(), i->cell())) vecji = box_->minimumVector(j, i);
 	else vecji = i->r() - j->r();
 	if (cells_.useMim(j->cell(), k->cell())) vecjk = box_->minimumVector(j, k);
@@ -652,17 +747,18 @@ void ForceKernel::forces(const Torsion* t)
 	else veckl = l->r() - k->r();
 
 	// Calculate cross products and torsion angle formed (in radians)
-	xpj = vecji * vecjk;
-	xpk = veckl * vecjk;
-	magxpj = xpj.magAndNormalise();
-	magxpk = xpk.magAndNormalise();
-	dp = xpj.dp(xpk);
+	Vec3<double> xpj = vecji * vecjk;
+	Vec3<double> xpk = veckl * vecjk;
+	const double magxpj = xpj.magAndNormalise();
+	const double magxpk = xpk.magAndNormalise();
+	double dp = xpj.dp(xpk);
 	if (dp < -1.0) dp = -1.0;
 	else if (dp > 1.0) dp = 1.0;
-	phi = acos(dp);
-	du_dphi = t->force(phi*DEGRAD);
+	const double phi = acos(dp);
+	const double du_dphi = t->force(phi*DEGRAD);
 
-	/* Construct derivatives of perpendicular axis (cross product) w.r.t. component vectors.
+	/*
+	 * Construct derivatives of perpendicular axis (cross product) w.r.t. component vectors.
 	 * E.g.
 	 *	d (rij x rkj) 
 	 *	------------- = rij[cp(n+2)] * U[cp(n+1)] - rij[cp(n+1)] * U[cp(n+2)]
@@ -680,16 +776,17 @@ void ForceKernel::forces(const Torsion* t)
 	 *			= (0,rij[z],-rij[y])
 	 */
 
+	Matrix3 dxpj_dij, dxpj_dkj, dxpk_dkj, dxpk_dlk;
 	dxpj_dij.makeCrossProductMatrix(vecjk);
-	temp = -vecji;
+	Vec3<double> temp = -vecji;
 	dxpj_dkj.makeCrossProductMatrix(temp);
 	temp = -veckl;
 	dxpk_dkj.makeCrossProductMatrix(temp);
 	dxpk_dlk.makeCrossProductMatrix(vecjk);
 
 	// Construct derivatives of cos(phi) w.r.t. perpendicular axes
-	dcos_dxpj = (xpk - xpj * dp) / magxpj;
-	dcos_dxpk = (xpj - xpk * dp) / magxpk;
+	const Vec3<double> dcos_dxpj = (xpk - xpj * dp) / magxpj;
+	const Vec3<double> dcos_dxpk = (xpj - xpk * dp) / magxpk;
 
 // 			printf("i-j-k-l %i-%i-%i-%i %f %f %f\n",i,j,k,l, phi, dphi_dcosphi, du_dphi);
 	// Calculate forces on atom i
@@ -712,6 +809,90 @@ void ForceKernel::forces(const Torsion* t)
 	fx_[index] += du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(0));
 	fy_[index] += du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(1));
 	fz_[index] += du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(2));
+}
 
-	return;
+// Calculate Torsion forces for specified Atom only
+void ForceKernel::forces(const Torsion* t, const Atom* onlyThis)
+{
+	// Grab pointers to atoms involved in angle
+	Atom* i = t->i(), *j = t->j(), *k = t->k(), *l = t->l();
+
+	// Calculate vectors, ensuring we account for minimum image
+	Vec3<double> vecji, vecjk, veckl;
+	if (cells_.useMim(j->cell(), i->cell())) vecji = box_->minimumVector(j, i);
+	else vecji = i->r() - j->r();
+	if (cells_.useMim(j->cell(), k->cell())) vecjk = box_->minimumVector(j, k);
+	else vecjk = k->r() - j->r();
+	if (cells_.useMim(k->cell(), l->cell())) veckl = box_->minimumVector(k, l);
+	else veckl = l->r() - k->r();
+
+	// Calculate cross products and torsion angle formed (in radians)
+	Vec3<double> xpj = vecji * vecjk;
+	Vec3<double> xpk = veckl * vecjk;
+	const double magxpj = xpj.magAndNormalise();
+	const double magxpk = xpk.magAndNormalise();
+	double dp = xpj.dp(xpk);
+	if (dp < -1.0) dp = -1.0;
+	else if (dp > 1.0) dp = 1.0;
+	const double phi = acos(dp);
+	const double du_dphi = t->force(phi*DEGRAD);
+
+	/*
+	 * Construct derivatives of perpendicular axis (cross product) w.r.t. component vectors.
+	 * E.g.
+	 *	d (rij x rkj) 
+	 *	------------- = rij[cp(n+2)] * U[cp(n+1)] - rij[cp(n+1)] * U[cp(n+2)]
+	 *	d rkj[n]  
+	 *
+	 * where cp is a cylic permutation spanning {0,1,2} == {x,y,z}, and U[n] is a unit vector in the n direction.
+	 * So,
+	 *	d (rij x rkj) 
+	 *	------------- = rij[2] * U[1] - rij[1] * U[2]
+	 *	d rkj[0]  
+	 *			= rij[z] * (0,1,0) - rij[y] * (0,0,1)
+	 *
+	 *			= (0,rij[z],0) - (0,0,rij[y])
+	 *
+	 *			= (0,rij[z],-rij[y])
+	 */
+
+	Matrix3 dxpj_dij, dxpj_dkj, dxpk_dkj, dxpk_dlk;
+	dxpj_dij.makeCrossProductMatrix(vecjk);
+	Vec3<double> temp = -vecji;
+	dxpj_dkj.makeCrossProductMatrix(temp);
+	temp = -veckl;
+	dxpk_dkj.makeCrossProductMatrix(temp);
+	dxpk_dlk.makeCrossProductMatrix(vecjk);
+
+	// Construct derivatives of cos(phi) w.r.t. perpendicular axes
+	const Vec3<double> dcos_dxpj = (xpk - xpj * dp) / magxpj;
+	const Vec3<double> dcos_dxpk = (xpj - xpk * dp) / magxpk;
+
+// 			printf("i-j-k-l %i-%i-%i-%i %f %f %f\n",i,j,k,l, phi, dphi_dcosphi, du_dphi);
+	// Calculate forces for specified atom
+	int index = onlyThis->arrayIndex();
+	if (onlyThis == i)
+	{
+		fx_[index] += du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(0));
+		fy_[index] += du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(1));
+		fz_[index] += du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(2));
+	}
+	else if (onlyThis == j)
+	{
+		fx_[index] += du_dphi * ( dcos_dxpj.dp( -dxpj_dij.columnAsVec3(0) - dxpj_dkj.columnAsVec3(0) ) - dcos_dxpk.dp(dxpk_dkj.columnAsVec3(0)) );
+		fy_[index] += du_dphi * ( dcos_dxpj.dp( -dxpj_dij.columnAsVec3(1) - dxpj_dkj.columnAsVec3(1) ) - dcos_dxpk.dp(dxpk_dkj.columnAsVec3(1)) );
+		fz_[index] += du_dphi * ( dcos_dxpj.dp( -dxpj_dij.columnAsVec3(2) - dxpj_dkj.columnAsVec3(2) ) - dcos_dxpk.dp(dxpk_dkj.columnAsVec3(2)) );
+	}
+	else if (onlyThis == k)
+	{
+		fx_[index] += du_dphi * ( dcos_dxpk.dp( dxpk_dkj.columnAsVec3(0) - dxpk_dlk.columnAsVec3(0) ) + dcos_dxpj.dp(dxpj_dkj.columnAsVec3(0)) );
+		fy_[index] += du_dphi * ( dcos_dxpk.dp( dxpk_dkj.columnAsVec3(1) - dxpk_dlk.columnAsVec3(1) ) + dcos_dxpj.dp(dxpj_dkj.columnAsVec3(1)) );
+		fz_[index] += du_dphi * ( dcos_dxpk.dp( dxpk_dkj.columnAsVec3(2) - dxpk_dlk.columnAsVec3(2) ) + dcos_dxpj.dp(dxpj_dkj.columnAsVec3(2)) );
+	}
+	else
+	{
+		fx_[index] += du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(0));
+		fy_[index] += du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(1));
+		fz_[index] += du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(2));
+	}
 }
