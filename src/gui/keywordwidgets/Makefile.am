@@ -34,6 +34,7 @@ libkeywordwidgets_la_SOURCES += fileandformat.ui fileandformat_funcs.cpp
 libkeywordwidgets_la_SOURCES += int.hui int_funcs.cpp
 libkeywordwidgets_la_SOURCES += isotopologuelist.ui isotopologuelist_funcs.cpp
 libkeywordwidgets_la_SOURCES += pairbroadeningfunction.ui pairbroadeningfunction_funcs.cpp
+libkeywordwidgets_la_SOURCES += speciesreferencelist.ui speciesreferencelist_funcs.cpp
 libkeywordwidgets_la_SOURCES += windowfunction.hui windowfunction_funcs.cpp
 
 noinst_HEADERS = atomtypeselection.h base.h broadeningfunction.h dropdown.h fileandformat.h isotopologuelist.h pairbroadeningfunction.h

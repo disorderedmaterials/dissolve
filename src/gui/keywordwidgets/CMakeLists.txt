@@ -8,6 +8,7 @@ SET(keywordwidgets_MOC_HDRS
   fileandformat.h
   isotopologuelist.h
   pairbroadeningfunction.h
+  speciesreferencelist.h
   dropdown.h
 
   bool.hui
@@ -28,6 +29,7 @@ SET(keywordwidgets_UIS
   fileandformat.ui
   isotopologuelist.ui
   pairbroadeningfunction.ui
+  speciesreferencelist.ui
 )
 QT5_WRAP_UI(keywordwidgets_UIS_H ${keywordwidgets_UIS})
 
@@ -47,6 +49,7 @@ SET(keywordwidgets_SRCS
   int_funcs.cpp
   isotopologuelist_funcs.cpp
   pairbroadeningfunction_funcs.cpp
+  speciesreferencelist_funcs.cpp
   windowfunction_funcs.cpp
 
   base.h
