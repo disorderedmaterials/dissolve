@@ -34,7 +34,7 @@ void MDModule::setUpKeywords()
 	group->add(new DoubleModuleKeyword(1.0e-4), "DeltaT", "Timestep (ps) to use in MD simulation");
 	group->add(new BoolModuleKeyword(true), "VariableTimestep", "Whether a variable timestep should be used, determined from the maximal force vector");
 	group->add(new BoolModuleKeyword(false), "RandomVelocities", "Whether random velocities should always be assigned before beginning MD simulation");
-	group->add(new SpeciesReferenceListModuleKeyword(targetSpecies_), "Species", "Specific Species to target within the Configurations (default = all).");
+	group->add(new SpeciesReferenceListModuleKeyword(targetSpecies_), "TargetSpecies", "Specific Species to target within the Configurations (default = all).");
 
 	// Output
 	group = addKeywordGroup("Output");

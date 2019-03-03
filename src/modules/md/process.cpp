@@ -27,6 +27,7 @@
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/forcekernel.h"
+#include "classes/species.h"
 #include "data/atomicmass.h"
 #include "base/timer.h"
 #include "base/lineparser.h"
@@ -76,6 +77,14 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	else Messenger::print("MD: Summary will not be written.\n");
 	if (variableTimestep) Messenger::print("MD: Variable timestep will be employed.");
 	else Messenger::print("MD: Constant timestep of %e ps will be used.\n", deltaT);
+	if (targetSpecies_.nItems() > 0)
+	{
+		CharString speciesNames;
+		RefListIterator<Species,bool> speciesIterator(targetSpecies_);
+		while (Species* sp = speciesIterator.iterate()) speciesNames.strcatf("  %s", sp->name());
+		Messenger::print("MD: Target Species for dynamics are:%s\n", speciesNames.get());
+		Messenger::print("MD: Species not named in this list will not have their positions propagated.\n");
+	}
 	Messenger::print("\n");
 
 	RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
@@ -84,12 +93,23 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Set up process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());
 
+		// Determine target Molecules (if there are entries in the targetSpecies_ list)
+		Array<Molecule*> targetMolecules;
+		if (targetSpecies_.nItems() > 0)
+		{
+			for (int n=0; n<cfg->nMolecules(); ++n)
+			{
+				Molecule* mol = cfg->molecule(n);
+				if (targetSpecies_.contains(mol->species())) targetMolecules.add(mol);
+			}
+		}
+
 		// Get temperature from Configuration
 		const double temperature = cfg->temperature();
 
 		// Create force arrays as simple double arrays (easier to sum with MPI) - others are Vec3<double> arrays
 		Array<double> mass(cfg->nAtoms()), fx(cfg->nAtoms()), fy(cfg->nAtoms()), fz(cfg->nAtoms());
-		Array< Vec3<double> > a(cfg->nAtoms()), deltaR(cfg->nAtoms());
+		Array< Vec3<double> > a(cfg->nAtoms());
 
 		// Variables
 		int n, nCapped = 0;
@@ -100,7 +120,7 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		/*
 		 * Calculation Begins
 		 */
-		
+
 		// Read in or assign random velocities
 		// Realise the velocity array from the moduleData
 		bool created;
@@ -182,7 +202,9 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Variable timestep requires forces to be available immediately
 		if (variableTimestep)
 		{
-			ForcesModule::totalForces(procPool, cfg, dissolve.potentialMap(), fx, fy, fz);
+			if (targetSpecies_.nItems() > 0) ForcesModule::totalForces(procPool, cfg, targetMolecules, dissolve.potentialMap(), fx, fy, fz);
+			else ForcesModule::totalForces(procPool, cfg, dissolve.potentialMap(), fx, fy, fz);
+
 			// Must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
 			fx *= 100.0;
 			fy *= 100.0;
@@ -216,7 +238,8 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			fx = 0.0;
 			fy = 0.0;
 			fz = 0.0;
-			ForcesModule::totalForces(procPool, cfg, dissolve.potentialMap(), fx, fy, fz);
+			if (targetSpecies_.nItems() > 0) ForcesModule::totalForces(procPool, cfg, targetMolecules, dissolve.potentialMap(), fx, fy, fz);
+			else ForcesModule::totalForces(procPool, cfg, dissolve.potentialMap(), fx, fy, fz);
 			fx *= 100.0;
 			fy *= 100.0;
 			fz *= 100.0;
