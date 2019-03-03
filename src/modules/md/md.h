@@ -67,8 +67,8 @@ class MDModule : public Module
 	 * Options
 	 */
 	private:
-	// List of specific Species types to target
-	RefList<Species,bool> targetSpecies_;
+	// Species types to restrict calculation to (if any)
+	RefList<Species,bool> restrictToSpecies_;
 
 	protected:
 	// Set up options for Module

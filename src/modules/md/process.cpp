@@ -77,13 +77,12 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	else Messenger::print("MD: Summary will not be written.\n");
 	if (variableTimestep) Messenger::print("MD: Variable timestep will be employed.");
 	else Messenger::print("MD: Constant timestep of %e ps will be used.\n", deltaT);
-	if (targetSpecies_.nItems() > 0)
+	if (restrictToSpecies_.nItems() > 0)
 	{
 		CharString speciesNames;
-		RefListIterator<Species,bool> speciesIterator(targetSpecies_);
+		RefListIterator<Species,bool> speciesIterator(restrictToSpecies_);
 		while (Species* sp = speciesIterator.iterate()) speciesNames.strcatf("  %s", sp->name());
-		Messenger::print("MD: Target Species for dynamics are:%s\n", speciesNames.get());
-		Messenger::print("MD: Species not named in this list will not have their positions propagated.\n");
+		Messenger::print("MD: Calculation will be restricted to Species:%s\n", speciesNames.get());
 	}
 	Messenger::print("\n");
 
@@ -95,12 +94,12 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Determine target Molecules (if there are entries in the targetSpecies_ list)
 		Array<Molecule*> targetMolecules;
-		if (targetSpecies_.nItems() > 0)
+		if (restrictToSpecies_.nItems() > 0)
 		{
 			for (int n=0; n<cfg->nMolecules(); ++n)
 			{
 				Molecule* mol = cfg->molecule(n);
-				if (targetSpecies_.contains(mol->species())) targetMolecules.add(mol);
+				if (restrictToSpecies_.contains(mol->species())) targetMolecules.add(mol);
 			}
 		}
 
@@ -202,7 +201,7 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Variable timestep requires forces to be available immediately
 		if (variableTimestep)
 		{
-			if (targetSpecies_.nItems() > 0) ForcesModule::totalForces(procPool, cfg, targetMolecules, dissolve.potentialMap(), fx, fy, fz);
+			if (restrictToSpecies_.nItems() > 0) ForcesModule::totalForces(procPool, cfg, targetMolecules, dissolve.potentialMap(), fx, fy, fz);
 			else ForcesModule::totalForces(procPool, cfg, dissolve.potentialMap(), fx, fy, fz);
 
 			// Must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
@@ -238,7 +237,7 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			fx = 0.0;
 			fy = 0.0;
 			fz = 0.0;
-			if (targetSpecies_.nItems() > 0) ForcesModule::totalForces(procPool, cfg, targetMolecules, dissolve.potentialMap(), fx, fy, fz);
+			if (restrictToSpecies_.nItems() > 0) ForcesModule::totalForces(procPool, cfg, targetMolecules, dissolve.potentialMap(), fx, fy, fz);
 			else ForcesModule::totalForces(procPool, cfg, dissolve.potentialMap(), fx, fy, fz);
 			fx *= 100.0;
 			fy *= 100.0;
