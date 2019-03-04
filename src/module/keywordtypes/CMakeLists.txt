@@ -14,6 +14,7 @@ add_library(keywordtypes
   modulegroups.cpp
   modulereferencelist.cpp
   pairbroadeningfunction.cpp
+  speciesreferencelist.cpp
   speciessite.cpp
   windowfunction.cpp
 
@@ -32,6 +33,7 @@ add_library(keywordtypes
   modulegroups.h
   modulereferencelist.h
   pairbroadeningfunction.h
+  speciesreferencelist.h
   speciessite.h
   windowfunction.h
 )

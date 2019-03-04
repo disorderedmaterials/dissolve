@@ -89,7 +89,7 @@ class ForceKernel
 	 * PairPotential Terms
 	 */
 	public:
-	// Calculate forces between atoms provided (as pointers)
+	// Calculate forces between atoms provided
 	void forces(const Atom* i, const Atom* j, bool applyMim, bool excludeIgeJ);
 	// Calculate forces between two cells
 	void forces(Cell* cell, Cell* otherCell, bool applyMim, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy);
@@ -109,10 +109,16 @@ class ForceKernel
 	public:
 	// Calculate Bond forces
 	void forces(const Bond* b);
+	// Calculate Bond forces for specified Atom only
+	void forces(const Bond* b, const Atom* onlyThis);
 	// Calculate Angle forces
 	void forces(const Angle* a);
-	// Return Torsion force
+	// Calculate Angle forces for specified Atom only
+	void forces(const Angle* a, const Atom* onlyThis);
+	// Calculate Torsion forces
 	void forces(const Torsion* t);
+	// Calculate Torsion forces for specified Atom only
+	void forces(const Torsion* t, const Atom* onlyThis);
 
 
 	/*
