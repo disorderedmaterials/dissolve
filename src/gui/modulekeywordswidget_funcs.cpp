@@ -184,7 +184,7 @@ void ModuleKeywordsWidget::setUp(DissolveWindow* dissolveWindow, Module* module)
 
 			if (!widget)
 			{
-				Messenger::error("Can't create widget for keyword '%s'.\n", keyword->keyword());
+				Messenger::error("Can't create widget for keyword '%s' (%s).\n", keyword->keyword(), ModuleKeywordBase::keywordDataType(keyword->type()));
 				continue;
 			}
 
