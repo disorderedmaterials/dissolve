@@ -119,6 +119,13 @@ QWidget* ModuleKeywordsWidget::createKeywordWidget(DissolveWindow* dissolveWindo
 		widget = pairBroadeningFunctionWidget;
 		base = pairBroadeningFunctionWidget;
 	}
+	else if (keyword->type() == ModuleKeywordBase::SpeciesReferenceListData)
+	{
+		SpeciesReferenceListKeywordWidget* speciesReferenceListWidget = new SpeciesReferenceListKeywordWidget(NULL, keyword, coreData, moduleData, uniqueName);
+		connect(speciesReferenceListWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
+		widget = speciesReferenceListWidget;
+		base = speciesReferenceListWidget;
+	}
 	else if (keyword->type() == ModuleKeywordBase::WindowFunctionData)
 	{
 		WindowFunctionKeywordWidget* windowFunctionWidget = new WindowFunctionKeywordWidget(NULL, keyword, coreData, moduleData, uniqueName);
