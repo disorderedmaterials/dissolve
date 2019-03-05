@@ -30,7 +30,7 @@ GuideWizard::GuideWizard(QWidget* parent)
 	dissolveReference_ = NULL;
 	dissolveWindow_ = NULL;
 
-	// Set up our UI, and attach the wizard's widgets to our vacant QFrame
+	// Set up our UI, and attach the wizard's widgets to placeholder widgets (if available)
 	ui_.setupUi(this);
 	setUpHeaderAndFooter(this);
 
