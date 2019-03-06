@@ -172,7 +172,7 @@ bool AddProcessingLayerWizard::prepareForPreviousPage(int currentIndex)
  * Controls
  */
 
-// Reset widget, ready for adding a new Configuration
+// Reset widget, ready for adding a new processing layer
 void AddProcessingLayerWizard::reset()
 {
 	// Reset the underlying WizardWidget
