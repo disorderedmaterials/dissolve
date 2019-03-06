@@ -475,8 +475,7 @@ bool Forcefield_UFF::generateBondTerm(const Species* sp, SpeciesBond* bondTerm, 
 	// Set the parameters and form of the new bond term
 	// Functional form is Harmonic : U = 0.5 * k * (r - eq)**2
 	bondTerm->setForm(SpeciesBond::HarmonicForm);
-	bondTerm->setParameter(0, k);
-	bondTerm->setParameter(1, rij);
+	bondTerm->setParameters(k, rij);
 
 	return true;
 }
@@ -538,19 +537,14 @@ bool Forcefield_UFF::generateAngleTerm(const Species* sp, SpeciesAngle* angleTer
 		const double c0 = c2 * (2.0 * cosTheta * cosTheta + 1.0);
 
 		angleTerm->setForm(SpeciesAngle::Cos2Form);
-		angleTerm->setParameter(0, forcek);
-		angleTerm->setParameter(1, c0);
-		angleTerm->setParameter(2, c1);
-		angleTerm->setParameter(3, c2);
+		angleTerm->setParameters(forcek, c0, c1, c2);
+
 		return true;
 	}
 
 	// Setup terms for the specific case (n != 0)
 	angleTerm->setForm(SpeciesAngle::Cos2Form);
-	angleTerm->setParameter(0, forcek/(n*n));
-	angleTerm->setParameter(1, n);
-	angleTerm->setParameter(2, 0.0);
-	angleTerm->setParameter(3, -1.0);
+	angleTerm->setParameters(forcek/(n*n), n, 0.0, -1.0);
 
 	return true;
 }
@@ -558,7 +552,105 @@ bool Forcefield_UFF::generateAngleTerm(const Species* sp, SpeciesAngle* angleTer
 // Generate torsion parameters for the supplied UFF atom types
 bool Forcefield_UFF::generateTorsionTerm(const Species* sp, SpeciesTorsion* torsionTerm, UFFAtomType* i, UFFAtomType* j, UFFAtomType* k, UFFAtomType* l) const
 {
-	return false;
+	/*
+	 * There are seven cases to consider, listed in decreasing complexity:
+	 *  a) j and k are both group 16 (old group 6) atoms, and both are sp3 centres
+	 *  b) j or k is a group 16 atom, while the other is an sp2 or resonant centre
+	 *  c) j or k is an sp3 atom, while the other is an sp2/resonant centre bound to another sp2/resonant centre
+	 *  d) j and k are both sp3 centres
+	 *  e) j and k are both sp2 centres
+	 *  f) j is sp2 and k is sp3 (or vice versa)
+	 *  g) everything else (no torsional barrier)
+	 */
+
+// 	# The original formula in the paper is given as a sum over cosine terms, but this reduces to: 0.5 * V * (1 - cos(n*eq) * cos(n*phi))
+// 	# Aten's single cosine potential has the form: forcek * (1 + s*cos(period*phi - eq))
+// 	# Therefore: forcek = 0.5 * V
+// 	#		  s = -cos(n*eq)
+// 	#	     period = n
+// 	#		 eq = 0.0
+
+	const int groupJ = group(j->Z());
+	const int groupK = group(k->Z());
+
+	const int geomI = i->geom() == 9 ? 2 : i->geom();
+	const int geomJ = j->geom() == 9 ? 2 : j->geom();
+	const int geomK = k->geom() == 9 ? 2 : k->geom();
+	const int geomL = l->geom() == 9 ? 2 : l->geom();
+	double V, n, phi0;
+
+	// Selection begins
+	if ((groupJ == 16) && (groupK == 16) && (geomJ == 3) && (geomK == 3))
+	{
+		// Case a) j and k are both group 16 (old group 6) atoms, and both are sp3 centres
+
+		// V value is 2.0 kcal for oxygen, 6.8 kcal otherwise
+		double vj = j->Z() == ELEMENT_O ? 2.0 : 6.8;
+		double vk = k->Z() == ELEMENT_O ? 2.0 : 6.8;
+		V = sqrt(vj*vk);
+		n = 2.0;
+		phi0 = 90.0;
+	}
+	else if ( ((groupJ == 16) && (geomJ == 3) && (geomK == 2)) || ((groupK == 16) && (geomK == 3) && (geomJ == 2)) )
+	{
+		// Case b) j or k is a group 16 atom, while the other is an sp2 or resonant centre
+		// Use eq 17, but since the bond order is 1 (single bond) ln term in eq 17 is zero...
+		V = 5.0 * sqrt(j->U()*k->U());
+		n = 2.0;
+		phi0 = 90.0;
+	}
+	else if ((geomJ == 3) && (geomK == 3))
+	{
+		// Case d) j and k are both sp3 centres
+		V = sqrt(j->V()*k->V());
+		n = 3.0;
+		phi0 = 180.0;
+	}
+	else if ((geomJ == 2) && (geomK == 2))
+	{
+		// Case e) j and k are both sp2 centres
+		// Force constant is adjusted based on current bond order
+		SpeciesBond* jk = sp->hasBond(torsionTerm->j(), torsionTerm->k());
+		if (jk) V = 5.0 * sqrt(j->U()*k->U()) * (1.0 + 4.18*log(jk->bondOrder()));
+		else
+		{
+			Messenger::error("Can't generate correct force constant for torsion, since the SpeciesBond jk is NULL.\n");
+			V = 5.0 * sqrt(j->U()*k->U());
+		}
+		n = 2.0;
+		phi0 = 180.0;
+	}
+	else if ( ((geomJ == 3) && (geomK == 2)) || ((geomK == 3) && (geomJ == 2)) )
+	{
+		// Case f) j is sp2 and k is sp3 (or vice versa)
+		V = 1.0;
+		n = 6.0;
+		phi0 = 0.0;
+	}
+	else if ( ((geomJ == 3) && (geomK == 2) && (geomL == 2)) || ((geomK == 3) && (geomJ == 2) && (geomI == 2)) )
+	{
+		// Case c) j or k is an sp3 atom, while the other is an sp2/resonant centre bound to another sp2/resonant centre
+		V = 2.0;
+		n = 3.0;
+		phi0 = 180.0;
+	}
+	else
+	{
+		// Case g) everything else
+		// Everything else....
+		V = 0.0;
+		n = 1.0;
+		phi0 = 0.0;
+	}
+
+	// Convert V from kcal to kJ
+	V *= 4.184;
+
+	// Store the generated parameters
+	torsionTerm->setForm(SpeciesTorsion::UFFCosineForm);
+	torsionTerm->setParameters(V, n, phi0);
+
+	return true;
 }
 
 // Create and assign suitable AtomTypes for the supplied Species
@@ -732,7 +824,7 @@ bool Forcefield_UFF::createIntramolecular(Species* sp, bool useExistingTypes, bo
 // 	else if ((geomj == 3) && (geomk == 3))
 // 	{
 // 		# Case d) j and k are both sp3 centres
-// 		forcek = sqrt(fj.dataD("V")*fk.dataD("V"));
+// 		forcek = sqrt(j->V()*k->V());
 // 		n = 3.0;
 // 		s = -cos(n*180.0);
 // 	}
