@@ -80,6 +80,8 @@ class Elements
 	static const char* name(int Z);
 	// Return symbol of element with specified Z
 	static const char* symbol(int Z);
+	// Return group for element with specified Z
+	static int group(int Z);
 
 
 	/*

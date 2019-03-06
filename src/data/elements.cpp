@@ -275,6 +275,12 @@ const char* Elements::symbol(int Z)
 	return element(Z).symbol();
 }
 
+// Return group for element with specified Z
+int Elements::group(int Z)
+{
+	return element(Z).group();
+}
+
 /*
  * ElementReference
  */
