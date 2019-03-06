@@ -34,6 +34,7 @@
 AddForcefieldTermsWizard::AddForcefieldTermsWizard(QWidget* parent) : temporaryDissolve_(temporaryCoreData_)
 {
 	dissolveReference_ = NULL;
+	modifiedSpecies_ = NULL;
 
 	// Set up our UI, and attach the wizard's widgets to placeholder widgets (if available)
 	ui_.setupUi(this);
@@ -138,7 +139,6 @@ bool AddForcefieldTermsWizard::progressionAllowed(int index) const
 // Perform any necessary actions before moving to the next page
 bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 {
-	Species* sp;
 	Forcefield* ff;
 	switch (currentIndex)
 	{
@@ -148,23 +148,23 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 			if (!ff) return false;
 
 			// Copy selected Species to our temporary instance, detach any MasterTerm references, and delete the MasterTerms
-			sp = temporaryDissolve_.copySpecies(currentSpecies());
-			sp->detachFromMasterTerms();
+			modifiedSpecies_ = temporaryDissolve_.copySpecies(currentSpecies());
+			modifiedSpecies_->detachFromMasterTerms();
 			temporaryDissolve_.clearMasterTerms();
 
 			// Assign AtomTypes
 			if (ui_.AtomTypesAssignAllRadio->isChecked())
 			{
 				// Remove all previous AtomType association from the Species, and subsequently from the main object
-				sp->clearAtomTypes();
+				modifiedSpecies_->clearAtomTypes();
 				temporaryDissolve_.clearAtomTypes();
 
-				if (!ff->createAtomTypes(sp, temporaryCoreData_)) return false;
+				if (!ff->createAtomTypes(modifiedSpecies_, temporaryCoreData_)) return false;
 			}
-			else if (ui_.AtomTypesAssignMissingRadio->isChecked()) if (!ff->createAtomTypes(sp, temporaryCoreData_, true)) return false;
+			else if (ui_.AtomTypesAssignMissingRadio->isChecked()) if (!ff->createAtomTypes(modifiedSpecies_, temporaryCoreData_, true)) return false;
 
 			// Create intramolecular terms
-			if (!ff->createIntramolecular(sp, ui_.UseTypesFromSpeciesCheck->isChecked(), ui_.BondTermsCheck->isChecked(), ui_.AngleTermsCheck->isChecked(), ui_.TorsionTermsCheck->isChecked())) return false;
+			if (!ff->createIntramolecular(modifiedSpecies_, ui_.UseTypesFromSpeciesCheck->isChecked(), ui_.BondTermsCheck->isChecked(), ui_.AngleTermsCheck->isChecked(), ui_.TorsionTermsCheck->isChecked())) return false;
 
 			updateAtomTypesPage();
 			updateMasterTermsPage();
