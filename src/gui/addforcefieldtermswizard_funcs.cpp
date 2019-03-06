@@ -210,7 +210,7 @@ bool AddForcefieldTermsWizard::prepareForPreviousPage(int currentIndex)
  * Controls
  */
 
-// Reset widget, ready for adding a new Configuration
+// Reset widget, ready for generating new terms for a Species
 void AddForcefieldTermsWizard::reset()
 {
 	// Reset the underlying WizardWidget
