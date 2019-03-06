@@ -46,8 +46,8 @@ class AddForcefieldTermsDialog : public QDialog
 	public:
 	// Reset, ready for adding a new Configuration
 	void reset();
-	// Move created / imported layer over to the specified Dissolve object
-	ModuleLayer* importModuleLayer(Dissolve& dissolve);
+	// Apply Forcefield terms to the targetted Species within the specified Dissolve object
+	bool applyForcefieldTerms(Dissolve& dissolve);
 };
 
 #endif

@@ -81,9 +81,10 @@ void AddForcefieldTermsWizard::setMainDissolveReference(const Dissolve* dissolve
 	dissolveReference_ = dissolveReference;
 }
 
-// Move created ModuleLayer to the specified Dissolve object, returning the new pointer to it
-ModuleLayer* AddForcefieldTermsWizard::importModuleLayer(Dissolve& dissolve)
+// Apply our Forcefield terms to the targetted Species within the specified Dissolve object
+bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve& dissolve)
 {
+	
 }
 
 /*

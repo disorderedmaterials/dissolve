@@ -43,8 +43,8 @@ void AddForcefieldTermsDialog::reset()
 	ui_.AddForcefieldTermsWidget->reset();
 }
 
-// Move created / imported layer over to the specified Dissolve object
-ModuleLayer* AddForcefieldTermsDialog::importModuleLayer(Dissolve& dissolve)
+// Apply Forcefield terms to the targetted Species within the specified Dissolve object
+bool AddForcefieldTermsDialog::applyForcefieldTerms(Dissolve& dissolve)
 {
-	return ui_.AddForcefieldTermsWidget->importModuleLayer(dissolve);
+	return ui_.AddForcefieldTermsWidget->applyForcefieldTerms(dissolve);
 }

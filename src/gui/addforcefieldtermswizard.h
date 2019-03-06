@@ -51,12 +51,14 @@ class AddForcefieldTermsWizard : public WizardWidget
 	CoreData temporaryCoreData_;
 	// Temporary Dissolve reference for creating / importing layers
 	Dissolve temporaryDissolve_;
+	// Species pointer with newly-applied Forcefield terms
+	Species* modifiedSpecies_;
 
 	public:
 	// Set Dissolve reference
 	void setMainDissolveReference(const Dissolve* dissolveReference);
-	// Move created ModuleLayer to the specified Dissolve object, returning the new pointer to it
-	ModuleLayer* importModuleLayer(Dissolve& dissolve);
+	// Apply our Forcefield terms to the targetted Species within the specified Dissolve object
+	bool applyForcefieldTerms(Dissolve& dissolve);
 
 
 	/*
