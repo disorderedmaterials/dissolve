@@ -90,6 +90,8 @@ class SpeciesIntra
 	int form() const;
 	// Set nth parameter
 	void setParameter(int id, double value);
+	// Set all parameters
+	void setParameters(double a, double b = 0.0, double c = 0.0, double d = 0.0);
 	// Return nth parameter
 	double parameter(int id) const;
 	// Return array of parameters

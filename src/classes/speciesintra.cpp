@@ -118,6 +118,22 @@ void SpeciesIntra::setParameter(int id, double value)
 	parameters_[id] = value;
 }
 
+// Set all parameters
+void SpeciesIntra::setParameters(double a, double b, double c, double d)
+{
+	// Does this intramolecular interaction reference a set of master parameters?
+	if (masterParameters_)
+	{
+		Messenger::error("Refused to set intramolecular parameter since master parameters are referenced.\n");
+		return;
+	}
+
+	parameters_[0] = a;
+	parameters_[1] = b;
+	parameters_[2] = c;
+	parameters_[3] = d;
+}
+
 // Return nth parameter
 double SpeciesIntra::parameter(int id) const
 {
