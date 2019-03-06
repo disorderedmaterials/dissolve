@@ -62,8 +62,10 @@ class UFFAtomType : public ElementReference, public ForcefieldAtomType, public L
 	double Z() const;
 	// Return GMP electronegativity (chi)
 	double chi() const;
-// 	V_, U_;
-
+	// Return torsional parameter 1 (V)
+	double V() const;
+	// Return torsional parameter 2 (U)
+	double U() const;
 	// Return integer representing geometry about the type (geom)
 	int geom() const;
 };

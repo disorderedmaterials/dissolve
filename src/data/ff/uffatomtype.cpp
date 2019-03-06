@@ -104,6 +104,18 @@ double UFFAtomType::chi() const
 	return chi_;
 }
 
+// Return torsional parameter 1 (V)
+double UFFAtomType::V() const
+{
+	return V_;
+}
+
+// Return torsional parameter 2 (U)
+double UFFAtomType::U() const
+{
+	return U_;
+}
+
 // Return integer representing geometry about the type (geom)
 int UFFAtomType::geom() const
 {
