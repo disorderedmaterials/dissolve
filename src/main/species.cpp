@@ -96,6 +96,28 @@ void Dissolve::removeSpeciesIsotopologue(Species* species, Isotopologue* iso)
 	setUp_ = false;
 }
 
+// Copy AtomType, creating a new one if necessary
+void Dissolve::copyAtomType(SpeciesAtom* sourceAtom, SpeciesAtom* destAtom)
+{
+	// Check for no AtomType being set
+	if (!sourceAtom->atomType())
+	{
+		destAtom->setAtomType(NULL);
+		return;
+	}
+
+	// Search for the existing atom's AtomType by name, and create it if it doesn't exist
+	AtomType* at = findAtomType(sourceAtom->atomType()->name());
+	if (!at)
+	{
+		at = addAtomType(sourceAtom->element());
+		at->setName(sourceAtom->atomType()->name());
+		at->parameters() = sourceAtom->atomType()->parameters();
+	}
+
+	destAtom->setAtomType(at);
+}
+
 // Copy intramolecular interaction parameters, adding MasterIntra if necessary
 void Dissolve::copySpeciesIntra(SpeciesIntra* sourceIntra, SpeciesIntra* destIntra)
 {
@@ -162,18 +184,7 @@ Species* Dissolve::copySpecies(const Species* species)
 		SpeciesAtom* newAtom = newSpecies->addAtom(i->element(), i->r());
 
 		// Search for the existing atom's AtomType by name, and create it if it doesn't exist
-		if (i->atomType())
-		{
-			AtomType* at = findAtomType(i->atomType()->name());
-			if (!at)
-			{
-				at = addAtomType(i->element());
-				at->setName(i->atomType()->name());
-				at->parameters() = i->atomType()->parameters();
-			}
-
-			newAtom->setAtomType(at);
-		}
+		copyAtomType(i, newAtom);
 	}
 
 	// Duplicate bonds
