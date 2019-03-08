@@ -33,14 +33,18 @@ SpeciesAtom* SpeciesViewer::atomAt(int x, int y)
 {
 	if (!species_) return NULL;
 
-	double lengthScale = 0.3;
+	double lengthScale;
 	Vec3<double> rScreen;
 
+	// Loop over atoms, converting the local coordinates into screen coordinates, and testing distance from the point provided
 	ListIterator<SpeciesAtom> atomIterator(species_->atoms());
 	while (SpeciesAtom* i = atomIterator.iterate())
 	{
+		// Set the lengthscale to the appropriate atom radius for the current display style - it will be replaced with the atom's screen radius
 		lengthScale = 0.3;
 		rScreen = view_.dataToScreen(i->r(), lengthScale);
+
+		// Subtract the reference coordinates and test against the screen radius
 		rScreen.x -= x;
 		rScreen.y -= y;
 		if (sqrt(rScreen.x*rScreen.x + rScreen.y*rScreen.y) < lengthScale) return i;
