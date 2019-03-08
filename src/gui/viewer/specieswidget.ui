@@ -82,7 +82,7 @@
         </property>
         <property name="icon">
          <iconset resource="../main.qrc">
-          <normaloff>:/control/icons/control_pause.svg</normaloff>:/control/icons/control_pause.svg</iconset>
+          <normaloff>:/viewer/icons/viewer_interact.svg</normaloff>:/viewer/icons/viewer_interact.svg</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -127,7 +127,7 @@
         </property>
         <property name="icon">
          <iconset resource="../main.qrc">
-          <normaloff>:/general/icons/general_edit.svg</normaloff>:/general/icons/general_edit.svg</iconset>
+          <normaloff>:/viewer/icons/viewer_edit.svg</normaloff>:/viewer/icons/viewer_edit.svg</iconset>
         </property>
         <property name="iconSize">
          <size>
