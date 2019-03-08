@@ -121,10 +121,11 @@ void SpeciesViewer::endInteraction()
 					rScreen = view_.dataToScreen(i->r());
 					if (selectionRect.contains(rScreen.x, rScreen.y)) species_->selectAtom(i);
 				}
-
-				// Update the selection
-				speciesRenderable_->recreateSelectionPrimitive();
 			}
+
+			// Update the selection
+			speciesRenderable_->recreateSelectionPrimitive();
+
 			// Revert to default interaction mode
 			interactionMode_ = SpeciesViewer::DefaultInteraction;
 			break;
