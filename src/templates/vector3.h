@@ -333,18 +333,25 @@ template <class T> class Vec3
 	// Returns an orthogonal, normalised unit vector
 	Vec3<T> orthogonal() const
 	{
-		// Check dot product of (1,0,0) with the current vector - if greater than 0.5, use (0,1,0) instead
 		Vec3<T> result;
-		if (x > y)
+		const int maxComponent = absMaxElement();
+		if (maxComponent == 0)
 		{
-			// XP with (0,1,0)
+			// X component is largest so return XP with (0,1,0)
 			result.x = -z;
 			result.y = 0.0;
 			result.z = x;
 		}
+		else if (maxComponent == 1)
+		{
+			// Y component is largest, so return XP with (0,0,1)
+			result.x = y;
+			result.y = -x;
+			result.z = 0.0;
+		}
 		else
 		{
-			// XP with (1,0,0)
+			// Z component is largest, so return XP with (1,0,0)
 			result.x = 0.0;
 			result.y = z;
 			result.z = -y;
