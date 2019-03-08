@@ -252,6 +252,7 @@ double SpeciesAngle::energy(double angleInDegrees) const
 		const double angleInRadians = angleInDegrees /DEGRAD;
 		return params[0] * (params[1] + params[2] * cos(angleInRadians) + params[3] * cos(2.0 * angleInRadians));
 	}
+
 	Messenger::error("Functional form of SpeciesAngle term not set, so can't calculate energy.\n");
 	return 0.0;
 }
