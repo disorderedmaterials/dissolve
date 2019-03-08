@@ -167,6 +167,7 @@ Array<double> SpeciesIntra::parametersAsArray() const
 // Set parameters from Array<double>
 void SpeciesIntra::setParametersFromArray(Array<double> params)
 {
+	// TODO Has a warning been added here in a separate feature branch?
 	for (int n=0; n<MAXINTRAPARAMS; ++n)
 	{
 		if (params.nItems() <= n) break;
