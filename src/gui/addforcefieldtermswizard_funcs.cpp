@@ -21,7 +21,7 @@
 
 #include "gui/addforcefieldtermswizard.h"
 #include "gui/helpers/listwidgetupdater.h"
-// #include "gui/helpers/treewidgetupdater.h"  FIXPOSTCOMMIT
+#include "gui/helpers/treewidgetupdater.h"
 #include "main/dissolve.h"
 #include "classes/atomtype.h"
 #include "classes/species.h"
@@ -414,7 +414,7 @@ void AddForcefieldTermsWizard::updateAtomTypesPage()
 		conflicts = true;
 		break;
 	}
-// 	ui_.AtomTypesIndicator->setNotOK(conflicts);  FIXPOSTCOMMIT
+	ui_.AtomTypesIndicator->setNotOK(conflicts);
 	if (conflicts) ui_.AtomTypesIndicatorLabel->setText("One or more AtomTypes in the imported Species conflict with existing types");
 	else ui_.AtomTypesIndicatorLabel->setText("There are no naming conflicts with the imported AtomTypes");
 }
@@ -494,41 +494,41 @@ void AddForcefieldTermsWizard::updateMasterTermsTreeChild(QTreeWidgetItem* paren
 	else item = parent->child(childIndex);
 
 	// Set item data
-	item->setText(0, masterIntra->name()); // FIXPOSTCOMMIT
-// 	item->setIcon(0, QIcon(dissolveReference_->findMasterTerm(masterIntra->name()) ?  ":/general/icons/general_warn.svg" : ":/general/icons/general_true.svg"));
+	item->setText(0, masterIntra->name());
+	item->setIcon(0, QIcon(dissolveReference_->findMasterTerm(masterIntra->name()) ?  ":/general/icons/general_warn.svg" : ":/general/icons/general_true.svg"));
 }
 
 // Update page with MasterTerms in our temporary Dissolve reference
 void AddForcefieldTermsWizard::updateMasterTermsPage()
 {
-	// Update the list against the global MasterTerm tree  FIXPOSTCOMMIT
-// 	TreeWidgetUpdater<AddForcefieldTermsWizard,MasterIntra> bondUpdater(masterBondItemParent_, temporaryDissolve_.masterBonds(), this, &AddForcefieldTermsWizard::updateMasterTermsTreeChild);
-// 	TreeWidgetUpdater<AddForcefieldTermsWizard,MasterIntra> angleUpdater(masterAngleItemParent_, temporaryDissolve_.masterAngles(), this, &AddForcefieldTermsWizard::updateMasterTermsTreeChild);
-// 	TreeWidgetUpdater<AddForcefieldTermsWizard,MasterIntra> torsionUpdater(masterTorsionItemParent_, temporaryDissolve_.masterTorsions(), this, &AddForcefieldTermsWizard::updateMasterTermsTreeChild);
-// 
-// 	// Determine whether we have any naming conflicts
-// 	bool conflicts = false;
-// 	ListIterator<MasterIntra> bondIterator(temporaryDissolve_.masterBonds());
-// 	while (MasterIntra* intra = bondIterator.iterate()) if (dissolveReference_->findMasterTerm(intra->name()))
-// 	{
-// 		conflicts = true;
-// 		break;
-// 	}
-// 	ListIterator<MasterIntra> angleIterator(temporaryDissolve_.masterAngles());
-// 	while (MasterIntra* intra = angleIterator.iterate()) if (dissolveReference_->findMasterTerm(intra->name()))
-// 	{
-// 		conflicts = true;
-// 		break;
-// 	}
-// 	ListIterator<MasterIntra> torsionIterator(temporaryDissolve_.masterTorsions());
-// 	while (MasterIntra* intra = torsionIterator.iterate()) if (dissolveReference_->findMasterTerm(intra->name()))
-// 	{
-// 		conflicts = true;
-// 		break;
-// 	}
-// 	ui_.MasterTermsIndicator->setNotOK(conflicts);
-// 	if (conflicts) ui_.MasterTermsIndicatorLabel->setText("One or more MasterTerms in the imported Species conflict with existing ones");
-// 	else ui_.MasterTermsIndicatorLabel->setText("There are no naming conflicts with the imported MasterTerms");
+	// Update the list against the global MasterTerm tree
+	TreeWidgetUpdater<AddForcefieldTermsWizard,MasterIntra> bondUpdater(masterBondItemParent_, temporaryDissolve_.masterBonds(), this, &AddForcefieldTermsWizard::updateMasterTermsTreeChild);
+	TreeWidgetUpdater<AddForcefieldTermsWizard,MasterIntra> angleUpdater(masterAngleItemParent_, temporaryDissolve_.masterAngles(), this, &AddForcefieldTermsWizard::updateMasterTermsTreeChild);
+	TreeWidgetUpdater<AddForcefieldTermsWizard,MasterIntra> torsionUpdater(masterTorsionItemParent_, temporaryDissolve_.masterTorsions(), this, &AddForcefieldTermsWizard::updateMasterTermsTreeChild);
+
+	// Determine whether we have any naming conflicts
+	bool conflicts = false;
+	ListIterator<MasterIntra> bondIterator(temporaryDissolve_.masterBonds());
+	while (MasterIntra* intra = bondIterator.iterate()) if (dissolveReference_->findMasterTerm(intra->name()))
+	{
+		conflicts = true;
+		break;
+	}
+	ListIterator<MasterIntra> angleIterator(temporaryDissolve_.masterAngles());
+	while (MasterIntra* intra = angleIterator.iterate()) if (dissolveReference_->findMasterTerm(intra->name()))
+	{
+		conflicts = true;
+		break;
+	}
+	ListIterator<MasterIntra> torsionIterator(temporaryDissolve_.masterTorsions());
+	while (MasterIntra* intra = torsionIterator.iterate()) if (dissolveReference_->findMasterTerm(intra->name()))
+	{
+		conflicts = true;
+		break;
+	}
+	ui_.MasterTermsIndicator->setNotOK(conflicts);
+	if (conflicts) ui_.MasterTermsIndicatorLabel->setText("One or more MasterTerms in the imported Species conflict with existing ones");
+	else ui_.MasterTermsIndicatorLabel->setText("There are no naming conflicts with the imported MasterTerms");
 }
 
 void AddForcefieldTermsWizard::on_MasterTermsTree_itemSelectionChanged()
