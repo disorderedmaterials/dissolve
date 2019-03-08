@@ -190,7 +190,6 @@ void SpeciesIntra::setParametersFromArray(Array<double> params)
 	}
 }
 
-
 /*
  * Connections
  */
