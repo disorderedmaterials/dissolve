@@ -24,7 +24,7 @@
 
 #include "gui/keywordwidgets/base.h"
 #include "templates/reflist.h"
-#include <QWidget>
+#include <QToolBox>
 
 // Forward Declarations
 class Dissolve;
@@ -34,7 +34,7 @@ class ModuleKeywordBase;
 class ModuleReference;
 
 // Module Keywords Widget
-class ModuleKeywordsWidget : public QWidget
+class ModuleKeywordsWidget : public QToolBox
 {
 	private:
 	// Whether the widget is currently refreshing

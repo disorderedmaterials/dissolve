@@ -25,11 +25,12 @@
 #include "module/module.h"
 #include "main/dissolve.h"
 #include "base/lineparser.h"
+#include <QToolBox>
 #include <QFormLayout>
 #include <QLabel>
 
 // Constructor
-ModuleKeywordsWidget::ModuleKeywordsWidget(QWidget* parent) : QWidget(parent)
+ModuleKeywordsWidget::ModuleKeywordsWidget(QWidget* parent) : QToolBox(parent)
 {
 	refreshing_ = false;
 }
@@ -152,18 +153,13 @@ void ModuleKeywordsWidget::setUp(DissolveWindow* dissolveWindow, Module* module)
 	module_ = module;
 	dissolveWindow_ = dissolveWindow;
 
-	// Create keyword widgets in a new grid layout
-	QVBoxLayout* keywordsLayout = new QVBoxLayout(this);
-	keywordsLayout->setContentsMargins(4,4,4,4);
-	keywordsLayout->setSpacing(4);
-
 	// Select source list for keywords that have potentially been replicated / updated there
 	GenericList& moduleData = module->configurationLocal() ? module->targetConfigurations().firstItem()->moduleData() : dissolveWindow_->dissolve().processingModuleData();
 
 	// Get reference to Dissolve's core data for convenience
 	const CoreData& coreData = dissolveWindow_->dissolve().coreData();
 
-	// Loop over keyword groups first - we'll keep track of which keywords are not part of a group, and these at the end
+	// Loop over keyword groups first - we'll keep track of which keywords are not part of a group, and these in an 'Other' tab at the end
 	RefList<ModuleKeywordBase,bool> remainingKeywords;
 	ListIterator<ModuleKeywordBase> keywordIterator(module->keywords().keywords());
 	while (ModuleKeywordBase* keyword = keywordIterator.iterate()) remainingKeywords.add(keyword);
@@ -171,9 +167,9 @@ void ModuleKeywordsWidget::setUp(DissolveWindow* dissolveWindow, Module* module)
 	ListIterator<ModuleKeywordGroup> groupIterator(module->keywordGroups());
 	while (ModuleKeywordGroup* group = groupIterator.iterate())
 	{
-		// Create a QGroupBox and layout for our widgets
-		QGroupBox* groupBox = new QGroupBox(group->name());
-		QFormLayout* groupLayout = new QFormLayout(groupBox);
+		// Create a new QWidget and layout for our widgets
+		QWidget* groupWidget = new QWidget;
+		QFormLayout* groupLayout = new QFormLayout(groupWidget);
 
 		// Loop over keywords in the group and add them to our groupbox
 		RefListIterator<ModuleKeywordBase,bool> groupKeywordIterator(group->keywords());
@@ -197,16 +193,17 @@ void ModuleKeywordsWidget::setUp(DissolveWindow* dissolveWindow, Module* module)
 			remainingKeywords.remove(keyword);
 		}
 
-		// Group is finished - add it to the layout
-		keywordsLayout->addWidget(groupBox);
+		// Group is finished, so add the widget as a new tab in our QToolBox
+		addItem(groupWidget, group->name());
+// 		keywordsLayout->addWidget(groupBox);
 	}
 
 	// If there are any 'group-orphaned' keywords, add these at the bottom
 	if (remainingKeywords.nItems() > 0)
 	{
 		// Need a widget with a QFormLayout...
-		QWidget* otherKeywordsWidget = new QWidget;
-		QFormLayout* layout = new QFormLayout(otherKeywordsWidget);
+		QWidget* groupWidget = new QWidget;
+		QFormLayout* groupLayout = new QFormLayout(groupWidget);
 
 		RefListIterator<ModuleKeywordBase,bool> remainingKeywordsIterator(remainingKeywords);
 		while (ModuleKeywordBase* keyword = remainingKeywordsIterator.iterate())
@@ -223,14 +220,12 @@ void ModuleKeywordsWidget::setUp(DissolveWindow* dissolveWindow, Module* module)
 			// Create a label and add it and the widget to our layout
 			QLabel* nameLabel = new QLabel(keyword->keyword());
 			nameLabel->setToolTip(keyword->description());
-			layout->addRow(nameLabel, widget);
+			groupLayout->addRow(nameLabel, widget);
 		}
 
-		keywordsLayout->addWidget(otherKeywordsWidget);
+		// Group is finished, so add the widget as a new tab in our QToolBox
+		addItem(groupWidget, "Other");
 	}
-
-	// Add a vertical spacer at the end to take up any extra space
-	keywordsLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
 }
 
 // Update controls within widget
