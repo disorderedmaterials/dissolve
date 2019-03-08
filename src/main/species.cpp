@@ -121,7 +121,8 @@ void Dissolve::copyAtomType(SpeciesAtom* sourceAtom, SpeciesAtom* destAtom)
 // Copy intramolecular interaction parameters, adding MasterIntra if necessary
 void Dissolve::copySpeciesIntra(SpeciesIntra* sourceIntra, SpeciesIntra* destIntra)
 {
-	// We can always copy the form of the interaction, regardless of whether it is a MasterIntra or not
+	// Remove any existing master parameters link from the destination object
+	if (destIntra->masterParameters()) destIntra->detachFromMasterIntra();
 
 	// If sourceIntra referneces a MasterIntra, check for its presence in the supplied Dissolve reference, and create it if necessary
 	if (sourceIntra->masterParameters())
