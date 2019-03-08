@@ -523,7 +523,7 @@ bool Forcefield_UFF::generateAngleTerm(const Species* sp, SpeciesAngle* angleTer
 	// This idea is shamelessly stolen from MCCCS Towhee!
 	int n = 0;
 	const int geom = j->geom();
-	// TODO CHECK THIS SECTION
+
 	if (geom == 0) Messenger::error("Unable to generate angle function around central atom '%s'.\n", j->typeName());
 	else if (geom == 1) n = 1;
 	else if (geom == 2) n = 3;
@@ -543,7 +543,7 @@ bool Forcefield_UFF::generateAngleTerm(const Species* sp, SpeciesAngle* angleTer
 	}
 
 	// Setup terms for the specific case (n != 0)
-	angleTerm->setForm(SpeciesAngle::Cos2Form);
+	angleTerm->setForm(SpeciesAngle::CosineForm);
 	angleTerm->setParameters(forcek/(n*n), n, 0.0, -1.0);
 
 	return true;
