@@ -188,7 +188,7 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 		vij = b->j()->r() - b->i()->r();
 		A.setTranslation(b->i()->r()+vij*0.5);
 		mag = vij.magAndNormalise();
-		
+
 		// Create rotation matrix for Bond
 		A.setColumn(2, vij.x, vij.y, vij.z, 0.0);
 		A.setColumn(0, vij.orthogonal(), 0.0);
@@ -199,7 +199,7 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 		// Render half of Bond in colour of Atom j
 		colour = ElementColours::colour(b->j()->element());
 		speciesPrimitive_->add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
-		
+
 		// Render half of Bond in colour of Atom i
 		A.columnMultiply(2,-1.0);
 		colour = ElementColours::colour(b->i()->element());

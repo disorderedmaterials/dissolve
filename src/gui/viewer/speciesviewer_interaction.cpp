@@ -74,7 +74,6 @@ void SpeciesViewer::startInteraction()
 			clickedAtom_ = atomAt(rMouseDown_.x, rMouseDown_.y);
 			break;
 		default:
-
 			break;
 	}
 }
