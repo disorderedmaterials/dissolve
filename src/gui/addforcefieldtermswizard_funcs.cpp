@@ -85,7 +85,76 @@ void AddForcefieldTermsWizard::setMainDissolveReference(const Dissolve* dissolve
 // Apply our Forcefield terms to the targetted Species within the specified Dissolve object
 bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve& dissolve)
 {
-	
+	/*
+	 * We have the original Species (which should exist in the provided Dissolve object) in currentSpecies()
+	 * and the temporary species modifiedSpecies_ which contains the new Forcefield terms.
+	 *
+	 * So, we will assume that the ordering of all data (atoms, bonds etc.) in the two are the same, and then:
+	 *
+	 * 1) Loop over atoms and copy / reassign AtomTypes
+	 * 2) Loop over bonds and create / assign parameters / MasterTerms (if BondTermsCheck is checked)
+	 * 3) Loop over angles and create / assign parameters / MasterTerms (if AngleTermsCheck is checked)
+	 * 4) Loop over torsions and create / assign parameters / MasterTerms (if TorsionTermsCheck is checked)
+	 */
+
+	Species* originalSpecies = currentSpecies();
+	if (!originalSpecies) return false;
+
+	// 1) Set AtomTypes
+	ListIterator<SpeciesAtom> atomIterator(originalSpecies->atoms());
+	SpeciesAtom* modifiedI = modifiedSpecies_->atoms().first();
+	while (SpeciesAtom* i = atomIterator.iterate())
+	{
+		// Copy AtomType
+		dissolve.copyAtomType(modifiedI, i);
+
+		// Move to next modified atom
+		modifiedI = modifiedI->next;
+	}
+
+	// Copy bond terms
+	if (ui_.BondTermsCheck->isChecked())
+	{
+		ListIterator<SpeciesBond> originalBondIterator(originalSpecies->bonds());
+		ListIterator<SpeciesBond> modifiedBondIterator(modifiedSpecies_->bonds());
+		while (SpeciesBond* originalBond = originalBondIterator.iterate())
+		{
+			SpeciesBond* modifiedBond = modifiedBondIterator.iterate();
+
+			// Copy interaction parameters, including MasterIntra if necessary
+			dissolve.copySpeciesIntra(modifiedBond, originalBond);
+		}
+	}
+
+	// Copy angle terms
+	if (ui_.AngleTermsCheck->isChecked())
+	{
+		ListIterator<SpeciesAngle> originalAngleIterator(originalSpecies->angles());
+		ListIterator<SpeciesAngle> modifiedAngleIterator(modifiedSpecies_->angles());
+		while (SpeciesAngle* originalAngle = originalAngleIterator.iterate())
+		{
+			SpeciesAngle* modifiedAngle = modifiedAngleIterator.iterate();
+
+			// Copy interaction parameters, including MasterIntra if necessary
+			dissolve.copySpeciesIntra(modifiedAngle, originalAngle);
+		}
+	}
+
+	// Copy torsion terms
+	if (ui_.TorsionTermsCheck->isChecked())
+	{
+		ListIterator<SpeciesTorsion> originalTorsionIterator(originalSpecies->torsions());
+		ListIterator<SpeciesTorsion> modifiedTorsionIterator(modifiedSpecies_->torsions());
+		while (SpeciesTorsion* originalTorsion = originalTorsionIterator.iterate())
+		{
+			SpeciesTorsion* modifiedTorsion = modifiedTorsionIterator.iterate();
+
+			// Copy interaction parameters, including MasterIntra if necessary
+			dissolve.copySpeciesIntra(modifiedTorsion, originalTorsion);
+		}
+	}
+
+	return true;
 }
 
 /*

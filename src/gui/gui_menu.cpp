@@ -289,7 +289,7 @@ void DissolveWindow::on_SimulationAddForcefieldTermsAction_triggered(bool checke
 
 	if (addForcefieldTermsDialog.exec() == QDialog::Accepted)
 	{
-// 		ModuleLayer* layer = addProcessingLayerDialog.importModuleLayer(dissolve_);
+		addForcefieldTermsDialog.applyForcefieldTerms(dissolve_);
 
 		// Fully update GUI
 		setModified();
