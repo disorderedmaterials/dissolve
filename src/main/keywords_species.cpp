@@ -33,6 +33,7 @@ KeywordData SpeciesBlockData[] = {
 	{ "Atom",			6,	"Define an Atom in the Species" },
 	{ "AutoAddGrains",		0,	"Automatically add Grains to cover all atoms in the Species" },
 	{ "Bond",			3,	"Define a bond interaction within the Species" },
+	{ "BondType",			3,	"Sets the type of a specific bond" },
 	{ "Charge",			2,	"Specify the atomic charge for an individual atom" },
 	{ "EndSpecies",			0,	"Ends the current Species definition" },
 	{ "Grain",			1,	"Define a Grain within the Species " },
@@ -78,6 +79,7 @@ bool SpeciesBlock::parse(LineParser& parser, Dissolve* dissolve, Species* specie
 	SpeciesBond::BondFunction bf;
 	SpeciesAngle::AngleFunction af;
 	SpeciesTorsion::TorsionFunction tf;
+	SpeciesBond::BondType bt;
 	Isotope* tope;
 	bool blockDone = false, error = false;
 
@@ -238,6 +240,26 @@ bool SpeciesBlock::parse(LineParser& parser, Dissolve* dissolve, Species* specie
 
 				// Perform any final setup on the Bond
 				b->setUp();
+				break;
+			case (SpeciesBlock::BondTypeKeyword):
+				// Find the specified bond
+				b = species->hasBond(parser.argi(1)-1, parser.argi(2)-1);
+				if (!b)
+				{
+					Messenger::error("Tried to set the bond type of bond between atoms %i and %i, but this bond does not exist.\n", parser.argi(1), parser.argi(2));
+					error = true;
+					break;
+				}
+
+				// Get the bond type
+				bt = SpeciesBond::bondType(parser.argc(3));
+				if (bt == SpeciesBond::nBondTypes)
+				{
+					Messenger::error("Bond function type '%s' requires %i parameters\n", SpeciesBond::bondFunction(bf), SpeciesBond::nFunctionParameters(bf));
+					error = true;
+					break;
+				}
+				b->setBondType(bt);
 				break;
 			case (SpeciesBlock::ChargeKeyword):
 				i = species->atom(parser.argi(1) - 1);

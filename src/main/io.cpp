@@ -180,7 +180,7 @@ bool Dissolve::saveInput(const char* filename)
 	}
 
 	// Write Species data
-	parser.writeBannerComment("Define Species");
+	parser.writeBannerComment("Species");
 	for (Species* sp = species().first(); sp != NULL; sp = sp->next)
 	{
 		if (!parser.writeLineF("\n%s '%s'\n", BlockKeywords::blockKeyword(BlockKeywords::SpeciesBlockKeyword), sp->name())) return false;
@@ -202,6 +202,7 @@ bool Dissolve::saveInput(const char* filename)
 		}
 
 		// Bonds
+		RefList<SpeciesBond,bool> bondTypes[SpeciesBond::nBondTypes];
 		if (sp->nBonds() > 0)
 		{
 			if (!parser.writeLineF("\n  # Bonds\n")) return false;
@@ -217,6 +218,23 @@ bool Dissolve::saveInput(const char* filename)
 					for (int n=0; n<SpeciesBond::nFunctionParameters( (SpeciesBond::BondFunction) b->form()); ++n) s.strcatf("  %8.3f", b->parameter(n));
 					if (!parser.writeLineF("%s\n", s.get())) return false;
 				}
+
+				// Add the bond to the reflist corresponding to its indicated bond type (unless it is a SingleBond, which we will ignore as this is the default)
+				if (b->bondType() != SpeciesBond::SingleBond) bondTypes[b->bondType()].add(b);
+			}
+
+			// Any bond type information to write?
+			bool bondTypeHeaderWritten = false;
+			for (int bt=1; bt<SpeciesBond::nBondTypes; ++bt) if (bondTypes[bt].nItems() > 0)
+			{
+				// Write header if it hasn't been written already
+				if (!bondTypeHeaderWritten)
+				{
+					if (!parser.writeLineF("\n  # Bond Types\n")) return false;
+					bondTypeHeaderWritten = true;
+				}
+				RefListIterator<SpeciesBond,bool> bondIterator(bondTypes[bt]);
+				while (SpeciesBond* bond = bondIterator.iterate()) if (!parser.writeLineF("  %s  %3i  %3i  %s\n", SpeciesBlock::keyword(SpeciesBlock::BondTypeKeyword), bond->indexI()+1, bond->indexJ()+1, SpeciesBond::bondType((SpeciesBond::BondType) bt))) return false;
 			}
 		}
 
@@ -327,7 +345,7 @@ bool Dissolve::saveInput(const char* filename)
 	if (!parser.writeLineF("%s\n", PairPotentialsBlock::keyword(PairPotentialsBlock::EndPairPotentialsKeyword))) return false;
 
 	// Write Configurations
-	if (!parser.writeBannerComment("Define Configurations")) return false;
+	if (!parser.writeBannerComment("Configurations")) return false;
 	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next)
 	{
 		if (!parser.writeLineF("\n%s  '%s'\n", BlockKeywords::blockKeyword(BlockKeywords::ConfigurationBlockKeyword), cfg->name())) return false;

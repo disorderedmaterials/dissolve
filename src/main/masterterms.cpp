@@ -174,3 +174,11 @@ MasterIntra* Dissolve::findMasterTerm(const char* name) const
 
 	return NULL;
 }
+
+// Clear all MasterTerms
+void Dissolve::clearMasterTerms()
+{
+	masterBonds_.clear();
+	masterAngles_.clear();
+	masterTorsions_.clear();
+}

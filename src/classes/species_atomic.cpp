@@ -52,7 +52,7 @@ SpeciesAtom* Species::atom(int n)
 }
 
 // Return the list of SpeciesAtoms
-List<SpeciesAtom>& Species::atoms()
+const List<SpeciesAtom>& Species::atoms() const
 {
 	return atoms_;
 }
@@ -80,14 +80,16 @@ void Species::selectFromAtom(SpeciesAtom* i, SpeciesBond* exclude, SpeciesBond* 
 	// Loop over Bonds on specified Atom
 	selectAtom(i);
 	SpeciesAtom* j;
-	for (RefListItem<SpeciesBond,int>* refBond = i->bonds(); refBond != NULL; refBond = refBond->next)
+	RefListIterator<SpeciesBond,int> bondIterator(i->bonds());
+	while (SpeciesBond* bond = bondIterator.iterate())
 	{
 		// Is this either of the excluded bonds?
-		if (exclude == refBond->item) continue;
-		if (excludeToo == refBond->item) continue;
+		if (exclude == bond) continue;
+		if (excludeToo == bond) continue;
 
-		// Get partner atom and continue selection
-		j = refBond->item->partner(i);
+		// Get the partner atom in the bond and select it (if it is not selected already)
+		j = bond->partner(i);
+
 		if (selectedAtoms_.contains(j)) continue;
 		selectFromAtom(j, exclude);
 	}
@@ -138,4 +140,11 @@ void Species::updateUsedAtomTypes()
 const AtomTypeList& Species::usedAtomTypes()
 {
 	return usedAtomTypes_;
+}
+
+// Clear AtomType assignments for all atoms
+void Species::clearAtomTypes()
+{
+	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next) i->setAtomType(NULL);
+	usedAtomTypes_.clear();
 }

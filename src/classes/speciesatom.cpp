@@ -189,10 +189,16 @@ int SpeciesAtom::nBonds() const
 	return bonds_.nItems();
 }
 
-// Return first Bond reference
-RefListItem<SpeciesBond,int>* SpeciesAtom::bonds()
+// Return specified bond
+SpeciesBond* SpeciesAtom::bond(int index)
 {
-	return bonds_.first();
+	return bonds_.item(index);
+}
+
+// Return bonds list
+const RefList<SpeciesBond,int>& SpeciesAtom::bonds() const
+{
+	return bonds_;
 }
 
 // Return whether Bond to specified Atom exists

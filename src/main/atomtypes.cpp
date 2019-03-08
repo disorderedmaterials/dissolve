@@ -26,12 +26,7 @@
 // Add AtomType with specified Element
 AtomType* Dissolve::addAtomType(Element* el)
 {
-	AtomType* newAtomType = coreData_.addAtomType();
-
-	// Create a suitable name...
-	newAtomType->setName(coreData_.uniqueAtomTypeName(el->symbol()));
-	newAtomType->setElement(el);
-	newAtomType->setIndex(coreData_.nAtomTypes() - 1);
+	AtomType* newAtomType = coreData_.addAtomType(el);
 
 	setUp_ = false;
 
@@ -60,4 +55,10 @@ AtomType* Dissolve::atomType(int n)
 AtomType* Dissolve::findAtomType(const char* name) const
 {
 	return coreData_.findAtomType(name);
+}
+
+// Clear all AtomTypes
+void Dissolve::clearAtomTypes()
+{
+	coreData_.atomTypes().clear();
 }

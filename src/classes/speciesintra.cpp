@@ -77,6 +77,18 @@ MasterIntra* SpeciesIntra::masterParameters()
 	return masterParameters_;
 }
 
+// Detach from MasterIntra, if we are currently referencing one
+void SpeciesIntra::detachFromMasterIntra()
+{
+	if (!masterParameters_) return;
+
+	// Copy master term parameters over our own
+	form_ = masterParameters_->form();
+	for (int n=0; n<MAXINTRAPARAMS; ++n) parameters_[n] = masterParameters_->parameter(n);
+
+	masterParameters_ = NULL;
+}
+
 // Return parameter source
 SpeciesIntra* SpeciesIntra::parameterSource()
 {
@@ -113,6 +125,22 @@ void SpeciesIntra::setParameter(int id, double value)
 	}
 
 	parameters_[id] = value;
+}
+
+// Set all parameters
+void SpeciesIntra::setParameters(double a, double b, double c, double d)
+{
+	// Does this intramolecular interaction reference a set of master parameters?
+	if (masterParameters_)
+	{
+		Messenger::error("Refused to set intramolecular parameter since master parameters are referenced.\n");
+		return;
+	}
+
+	parameters_[0] = a;
+	parameters_[1] = b;
+	parameters_[2] = c;
+	parameters_[3] = d;
 }
 
 // Return nth parameter

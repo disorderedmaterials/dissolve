@@ -89,6 +89,8 @@ class Dissolve
 	AtomType* atomType(int n);
 	// Search for AtomType by name
 	AtomType* findAtomType(const char* name) const;
+	// Clear all AtomTypes
+	void clearAtomTypes();
 
 
 	/*
@@ -135,6 +137,8 @@ class Dissolve
 	MasterIntra* hasMasterTorsion(const char* name) const;
 	// Return the named master term (of any form) if it exists
 	MasterIntra* findMasterTerm(const char* name) const;
+	// Clear all MasterTerms
+	void clearMasterTerms();
 
 
 	/*
@@ -158,6 +162,12 @@ class Dissolve
 	void updateIsotopologues(Species* species = NULL, Isotopologue* iso = NULL);
 	// Remove Isotopologue from Species
 	void removeSpeciesIsotopologue(Species* species, Isotopologue* iso);
+	// Copy AtomType, creating a new one if necessary
+	void copyAtomType(SpeciesAtom* sourceAtom, SpeciesAtom* destAtom);
+	// Copy intramolecular interaction parameters, adding MasterIntra if necessary
+	void copySpeciesIntra(SpeciesIntra* sourceIntra, SpeciesIntra* destIntra);
+	// Copy Species
+	Species* copySpecies(const Species* species);
 
 
 	/*

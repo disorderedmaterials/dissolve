@@ -123,16 +123,7 @@ double Isotope::absorptionXS() const
 List<Isotope>& Isotopes::isotopesByElement(int Z)
 {
 	// Has the master array been initialised yet? If not, do it now, before the Sears data is constructed
-	if (isotopesByElementPrivate_.nItems() == 0)
-	{
-		/*
-		 * Create the array, and set all Lists to only disown their items on destruction, rather than deleting them.
-		 * Need to do this otherwise each Isotope will be destructed twice - once from the List<T> destructor, and once
-		 * again from the destruction of the static array sears91Data.
-		 */
-		isotopesByElementPrivate_.initialise(Elements::nElements());
-		for (int n=0; n<Elements::nElements(); ++n) isotopesByElementPrivate_[n].setDisownOnDestruction(true);
-	}
+	if (isotopesByElementPrivate_.nItems() == 0) Elements::createElementListArray<Isotope>(isotopesByElementPrivate_);
 
 	/*
 	 * Neutron Scattering Lengths and Cross Sections

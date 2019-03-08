@@ -139,6 +139,23 @@ SpeciesBond* Species::hasBond(SpeciesAtom* i, SpeciesAtom* j) const
 	return NULL;
 }
 
+// Return whether SpeciesBond between specified atom indices exists
+SpeciesBond* Species::hasBond(int i, int j)
+{
+	if ((i < 0) || (i >= nAtoms()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'i' supplied to Species::hasBond() is out of range (%i) for Species '%s'\n", i, name_.get());
+		return NULL;
+	}
+	if ((j < 0) || (j >= nAtoms()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'j' supplied to Species::hasBond() is out of range (%i) for Species '%s'\n", j, name_.get());
+		return NULL;
+	}
+
+	return hasBond(atoms_[i], atoms_[j]);
+}
+
 // Return index of specified SpeciesBond
 int Species::bondIndex(SpeciesBond* spb)
 {
@@ -535,4 +552,12 @@ void Species::generateAttachedAtomLists()
 	}
 
 	attachedAtomListsGenerated_ = true;
+}
+
+// Detach master term links for all interaction types, copying parameters to local SpeciesIntra
+void Species::detachFromMasterTerms()
+{
+	for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next) b->detachFromMasterIntra(); 
+	for (SpeciesAngle* a = angles_.first(); a != NULL; a = a->next) a->detachFromMasterIntra();
+	for (SpeciesTorsion* t = torsions_.first(); t != NULL; t = t->next) t->detachFromMasterIntra();
 }

@@ -289,6 +289,7 @@ namespace SpeciesBlock
 		AtomKeyword,			/* 'Atom' - Specifies an Atom in the Species */
 		AutoAddGrainsKeyword,		/* 'AutoAddGrains' - Automatically add Grains to cover all atoms in the Species */
 		BondKeyword,			/* 'Bond' - Defines a Bond joining two atoms */
+		BondTypeKeyword,		/* 'BondType' - Sets the type of a specific bond */
 		ChargeKeyword,			/* 'Charge' - Specifies the atomic charge for an individual atom */
 		EndSpeciesKeyword,		/* 'EndSpecies' - Signals the end of the current Species */
 		GrainKeyword,			/* 'Grain' - Defines a Grain containing a number of Atoms */

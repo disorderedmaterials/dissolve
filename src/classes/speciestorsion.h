@@ -1,6 +1,6 @@
 /*
 	*** SpeciesTorsion Definition
-	*** src/classes/speciesangle.h
+	*** src/classes/speciestorsion.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -93,6 +93,7 @@ class SpeciesTorsion : public SpeciesIntra, public ListItem<SpeciesTorsion>
 		Cos3Form,
 		Cos4Form,
 		Cos3CForm,
+		UFFCosineForm,
 		nTorsionFunctions
 	};
 	// Convert string to functional form

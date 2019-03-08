@@ -61,8 +61,8 @@ class Species : public ListItem<Species>
 	void setName(const char* name);
 	// Return the name of the Species
 	const char* name() const;
-	// Check setup
-	bool checkSetup(const List<AtomType>& atomTypes);
+	// Check set-up of Species
+	bool checkSetUp(const List<AtomType>& atomTypes);
 	// Print Species information
 	void print();
 
@@ -88,7 +88,7 @@ class Species : public ListItem<Species>
 	// Return the nth atom in the Species
 	SpeciesAtom* atom(int n);
 	// Return the list of SpeciesAtoms
-	List<SpeciesAtom>& atoms();
+	const List<SpeciesAtom>& atoms() const;
 	// Clear current Atom selection
 	void clearAtomSelection();
 	// Add Atom to selection
@@ -109,6 +109,8 @@ class Species : public ListItem<Species>
 	void updateUsedAtomTypes();
 	// Return used AtomTypesList
 	const AtomTypeList& usedAtomTypes();
+	// Clear AtomType assignments for all atoms
+	void clearAtomTypes();
 
 
 	/*
@@ -139,8 +141,10 @@ class Species : public ListItem<Species>
 	const List<SpeciesBond>& bonds() const;
 	// Return nth SpeciesBond
 	SpeciesBond* bond(int n);
-	// Return whether SpeciesBond between SpeciesAtomss exists
+	// Return whether SpeciesBond between SpeciesAtoms exists
 	SpeciesBond* hasBond(SpeciesAtom* i, SpeciesAtom* j) const;
+	// Return whether SpeciesBond between specified atom indices exists
+	SpeciesBond* hasBond(int i, int j);
 	// Return index of specified SpeciesBond
 	int bondIndex(SpeciesBond* spb);
 	// Add new SpeciesAngle definition
@@ -183,6 +187,8 @@ class Species : public ListItem<Species>
 	bool attachedAtomListsGenerated() const;
 	// Generate attached Atom lists for all intramolecular terms
 	void generateAttachedAtomLists();
+	// Detach master term links for all interaction types, copying parameters to local SpeciesIntra
+	void detachFromMasterTerms();
 
 
 	/*

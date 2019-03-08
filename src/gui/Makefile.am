@@ -30,16 +30,16 @@ libgui_la_SOURCES += modulechartinsertionblock.ui modulechartmoduleblock.ui modu
 libgui_la_SOURCES += modulechart.hui
 # UI - Widgets
 libgui_la_SOURCES += wizardwidgetfooter.ui wizardwidgetheader.ui wizardwidget.hui
-libgui_la_SOURCES += addconfigurationwizard.ui addprocessinglayerwizard.ui addspecieswizard.ui guidewizard.ui pairpotentialwidget.ui
+libgui_la_SOURCES += addconfigurationwizard.ui addforcefieldtermswizard.ui addprocessinglayerwizard.ui addspecieswizard.ui guidewizard.ui pairpotentialwidget.ui
 # UI - Dialogs
-libgui_la_SOURCES += addconfigurationdialog.ui addprocessinglayerdialog.ui addspeciesdialog.ui
+libgui_la_SOURCES += addconfigurationdialog.ui addforcefieldtermsdialog.ui addprocessinglayerdialog.ui addspeciesdialog.ui
 # UI - Main Tabs
 libgui_la_SOURCES += gui.ui configurationtab.ui forcefieldtab.ui modulelayertab.ui moduletab.ui speciestab.ui workspacetab.ui
 # UI - Utility Classes
 libgui_la_SOURCES += outputhandler.hui thread.hui
 
 # Implementations
-libgui_la_SOURCES += addconfigurationdialog_funcs.cpp addconfigurationwizard_funcs.cpp addprocessinglayerdialog_funcs.cpp addprocessinglayerwizard_funcs.cpp addspeciesdialog_funcs.cpp addspecieswizard_funcs.cpp
+libgui_la_SOURCES += addconfigurationdialog_funcs.cpp addconfigurationwizard_funcs.cpp addforcefieldtermsdialog_funcs.cpp addforcefieldtermswizard_funcs.cpp addprocessinglayerdialog_funcs.cpp addprocessinglayerwizard_funcs.cpp addspeciesdialog_funcs.cpp addspecieswizard_funcs.cpp
 libgui_la_SOURCES += configurationtab_funcs.cpp
 libgui_la_SOURCES += forcefieldtab_funcs.cpp
 libgui_la_SOURCES += guidewizard_funcs.cpp gui_funcs.cpp gui_menu.cpp gui_simulation_control.cpp gui_simulation_guide.cpp gui_simulation_state.cpp gui_simulation_tabs.cpp gui_stack.cpp gui_start.cpp guide.cpp guidepage.cpp guidepagehighlight.cpp
@@ -56,7 +56,7 @@ libgui_la_SOURCES += wizardwidget_funcs.cpp wizardwidgethighlight.cpp wizardwidg
 # DGuidEd
 libdguided_la_SOURCES = dguided.ui dguided_funcs.cpp
 
-noinst_HEADERS = addconfigurationdialog.h addconfigurationwizard.h addprocessinglayerdialog.h addprocessinglayerwizard.h addspeciesdialog.h addspecieswizard.h
+noinst_HEADERS = addconfigurationdialog.h addconfigurationwizard.h addforcefieldtermsdialog.h addforcefieldtermswizard.h addprocessinglayerdialog.h addprocessinglayerwizard.h addspeciesdialog.h addspecieswizard.h
 noinst_HEADERS += configurationtab.h
 noinst_HEADERS += dguided.h
 noinst_HEADERS += forcefieldtab.h

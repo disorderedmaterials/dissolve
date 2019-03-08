@@ -21,6 +21,7 @@
 
 #include "gui/gui.h"
 #include "gui/addconfigurationdialog.h"
+#include "gui/addforcefieldtermsdialog.h"
 #include "gui/addprocessinglayerdialog.h"
 #include "gui/addspeciesdialog.h"
 #include "gui/modulecontrolwidget.h"
@@ -277,6 +278,22 @@ void DissolveWindow::on_SimulationAddProcessingLayerAction_triggered(bool checke
 		fullUpdate();
 
 		setCurrentTab(layer);
+	}
+}
+
+void DissolveWindow::on_SimulationAddForcefieldTermsAction_triggered(bool checked)
+{
+	static AddForcefieldTermsDialog addForcefieldTermsDialog(this, dissolve_);
+
+	addForcefieldTermsDialog.reset();
+
+	if (addForcefieldTermsDialog.exec() == QDialog::Accepted)
+	{
+		addForcefieldTermsDialog.applyForcefieldTerms(dissolve_);
+
+		// Fully update GUI
+		setModified();
+		fullUpdate();
 	}
 }
 

@@ -1,6 +1,6 @@
 /*
-	*** Add Species Wizard
-	*** src/gui/addspecieswizard.h
+	*** Add Forcefield Terms Wizard
+	*** src/gui/addforcefieldtermswizard.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,26 +19,26 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ADDSPECIESWIZARD_H
-#define DISSOLVE_ADDSPECIESWIZARD_H
+#ifndef DISSOLVE_ADDFORCEFIELDTERMSWIZARD_H
+#define DISSOLVE_ADDFORCEFIELDTERMSWIZARD_H
 
-#include "gui/ui_addspecieswizard.h"
+#include "gui/ui_addforcefieldtermswizard.h"
 #include "gui/wizardwidget.hui"
 #include "main/dissolve.h"
 
 // Forward Declarations
-class MasterIntra;
+class Forcefield;
 
-// Add Species Wizard
-class AddSpeciesWizard : public WizardWidget
+// Add Forcefield Terms Wizard
+class AddForcefieldTermsWizard : public WizardWidget
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
 	public:
 	// Constructor / Destructor
-	AddSpeciesWizard(QWidget* parent);
-	~AddSpeciesWizard();
+	AddForcefieldTermsWizard(QWidget* parent);
+	~AddForcefieldTermsWizard();
 
 
 	/*
@@ -47,18 +47,18 @@ class AddSpeciesWizard : public WizardWidget
 	private:
 	// Main instance of Dissolve that we're using as a reference
 	const Dissolve* dissolveReference_;
-	// Temporary core data for creating / importing new Species
+	// Temporary core data for applying Forcefield terms
 	CoreData temporaryCoreData_;
-	// Temporary Dissolve reference for creating / importing new Species
+	// Temporary Dissolve reference for creating / importing layers
 	Dissolve temporaryDissolve_;
-	// Target Species (in temporaryCoreData_) for import
-	Species* importTarget_;
+	// Species pointer with newly-applied Forcefield terms
+	Species* modifiedSpecies_;
 
 	public:
 	// Set Dissolve reference
 	void setMainDissolveReference(const Dissolve* dissolveReference);
-	// Copy imported Species over to the specified Dissolve object, returning the new pointer to it
-	Species* importSpecies(Dissolve& dissolve);
+	// Apply our Forcefield terms to the targetted Species within the specified Dissolve object
+	bool applyForcefieldTerms(Dissolve& dissolve);
 
 
 	/*
@@ -66,19 +66,18 @@ class AddSpeciesWizard : public WizardWidget
 	 */
 	private:
 	// Main form declaration
-	Ui::AddSpeciesWizard ui_;
+	Ui::AddForcefieldTermsWizard ui_;
 	// Lock counter for the widget refreshing
 	int lockedForRefresh_;
 	// Pages Enum
 	enum WidgetPage
 	{
-		StartPage,			/* Starting page, offering choices of how to proceed */
-		CreateAtomicPage,		/* Create atomic Species, optionally with new AtomType */
-		ImportSpeciesSelectFilePage,	/* Import Species - select file */
-		ImportSpeciesSelectSpeciesPage,	/* Import Species - choose species */
+		SelectSpeciesPage,		/* Selection of target Species for Forcefield terms */
+		SelectForcefieldPage,		/* Select Forcefield to apply to Species */
+		SelectTermsPage,		/* Select terms to generate */
 		AtomTypesPage,			/* AtomTypes page - check / re-map AtomTypes */
 		MasterTermsPage,		/* MasterTerms page - check / re-map MasterTerms */
-		SpeciesNamePage,		/* Final page, setting name for Species */
+		FinishPage,			/* Finish page */
 		nPages
 	};
 
@@ -95,36 +94,44 @@ class AddSpeciesWizard : public WizardWidget
 	bool prepareForPreviousPage(int currentIndex);
 
 	public:
-	// Reset, ready for adding a new Species
+	// Reset, ready for adding a new layer
 	void reset();
 
 
 	/*
-	 * Start Page
+	 * Select Species Page
 	 */
+	private:
+	// SpeciesList row update function
+	void updateSpeciesListRow(int row, Species* sp, bool createItem);
+	// Update Select Species page
+	void updateSelectSpeciesPage();
+	// Return currently-selected Species
+	Species* currentSpecies() const;
+
 	private slots:
-	void on_StartCreateEmptyButton_clicked(bool checked);
-	void on_StartCreateAtomicButton_clicked(bool checked);
-	void on_StartAddPredefinedButton_clicked(bool checked);
-	void on_StartImportCoordinatesButton_clicked(bool checked);
-	void on_StartImportSpeciesButton_clicked(bool checked);
+	void on_SpeciesList_currentRowChanged(int row);
 
 
 	/*
-	 * Create Atomic Page
+	 * Select Forcefield Page
 	 */
 	private slots:
-	void createAtomicElementChanged();
+	// ForcefieldList row update function
+	void updateForcefieldListRow(int row, Forcefield* ff, bool createItem);
+	// Update Select Forcefield page
+	void updateSelectForcefieldPage();
+	// Return currently-selected Forcefield
+	Forcefield* currentForcefield() const;
+
+	private slots:
+	void on_ForcefieldList_currentRowChanged(int row);
 
 
 	/*
-	 * Import Species Pages
+	 * Select Terms Page
 	 */
-	private slots:
-	// Input File Page
-	void on_InputFileEdit_textChanged(const QString text);
-	void on_InputFileSelectButton_clicked(bool checked);
-	void on_SpeciesList_currentRowChanged(int currentRow);
+	private:
 
 
 	/*
@@ -160,17 +167,6 @@ class AddSpeciesWizard : public WizardWidget
 	void masterTermsTreeEdited(QWidget* lineEdit);
 	void on_MasterTermsPrefixButton_clicked(bool checked);
 	void on_MasterTermsSuffixButton_clicked(bool checked);
-
-
-	/*
-	 * Species Name Page (final page)
-	 */
-	private slots:
-	void on_SpeciesNameEdit_textChanged(const QString text);
-
-	public:
-	// Return name of new Species to be
-	const char* speciesName() const;
 };
 
 #endif

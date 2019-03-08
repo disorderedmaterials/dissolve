@@ -50,7 +50,7 @@ class CoreData
 
 	public:
 	// Add new AtomType
-	AtomType* addAtomType();
+	AtomType* addAtomType(Element* el);
 	// Return number of AtomTypes in list
 	int nAtomTypes() const;
 	// Return core AtomTypes list
