@@ -131,58 +131,61 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 	glLoadMatrixd(viewMatrix.matrix());
 	glColor4fv(colourBlack);
 
-	int skipAxis = -1;
-	if (view_.viewType() == View::FlatXYView) skipAxis = 2;
-	else if (view_.viewType() == View::FlatXZView) skipAxis = 1;
-	else if (view_.viewType() == View::FlatZYView) skipAxis = 0;
-
-	// -- Render axis text
-	glEnable(GL_MULTISAMPLE);
-	glEnable(GL_BLEND);
-	glEnable(GL_LIGHTING);
-	LineStyle().sendToGL(lineWidthScaling_);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	if (fontInstance_.fontOK())
+	if (axesVisible_)
 	{
-		fontInstance_.font()->FaceSize(1);
+		int skipAxis = -1;
+		if (view_.viewType() == View::FlatXYView) skipAxis = 2;
+		else if (view_.viewType() == View::FlatXZView) skipAxis = 1;
+		else if (view_.viewType() == View::FlatZYView) skipAxis = 0;
+
+		// -- Render axis text
+		glEnable(GL_MULTISAMPLE);
+		glEnable(GL_BLEND);
+		glEnable(GL_LIGHTING);
+		LineStyle().sendToGL(lineWidthScaling_);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		if (fontInstance_.fontOK())
+		{
+			fontInstance_.font()->FaceSize(1);
+			for (int axis=0; axis<3; ++axis) if (view_.axes().visible(axis) && (axis != skipAxis))
+			{
+				view_.axes().labelPrimitive(axis).renderAll(fontInstance_, viewMatrix, viewRotationInverse, view_.textZScale());
+	// 			if (updateQueryDepth()) setQueryObject(DataViewer::AxisTickLabelObject, DissolveSys::itoa(axis));
+				view_.axes().titlePrimitive(axis).renderAll(fontInstance_, viewMatrix, viewRotationInverse, view_.textZScale());
+	// 			if (updateQueryDepth()) setQueryObject(DataViewer::AxisTitleLabelObject, DissolveSys::itoa(axis));
+			}
+		}
+
+		// -- Render axis (and grid) lines
+		glLoadMatrixd(viewMatrix.matrix());
+		glDisable(GL_LIGHTING);
+		glEnable(GL_LINE_SMOOTH);
 		for (int axis=0; axis<3; ++axis) if (view_.axes().visible(axis) && (axis != skipAxis))
 		{
-			view_.axes().labelPrimitive(axis).renderAll(fontInstance_, viewMatrix, viewRotationInverse, view_.textZScale());
-// 			if (updateQueryDepth()) setQueryObject(DataViewer::AxisTickLabelObject, DissolveSys::itoa(axis));
-			view_.axes().titlePrimitive(axis).renderAll(fontInstance_, viewMatrix, viewRotationInverse, view_.textZScale());
-// 			if (updateQueryDepth()) setQueryObject(DataViewer::AxisTitleLabelObject, DissolveSys::itoa(axis));
+			view_.axes().gridLineMinorStyle(axis).sendToGL(lineWidthScaling_);
+			view_.axes().gridLineMinorPrimitive(axis).sendToGL();
+	// 		if (updateQueryDepth()) setQueryObject(DataViewer::GridLineMinorObject, DissolveSys::itoa(axis));
 		}
-	}
+		for (int axis=0; axis<3; ++axis) if (view_.axes().visible(axis) && (axis != skipAxis))
+		{
+			view_.axes().gridLineMajorStyle(axis).sendToGL(lineWidthScaling_);
+			view_.axes().gridLineMajorPrimitive(axis).sendToGL();
+	// 		if (updateQueryDepth()) setQueryObject(DataViewer::GridLineMajorObject, DissolveSys::itoa(axis));
+		}
 
-	// -- Render axis (and grid) lines
-	glLoadMatrixd(viewMatrix.matrix());
-	glDisable(GL_LIGHTING);
-	glEnable(GL_LINE_SMOOTH);
-	for (int axis=0; axis<3; ++axis) if (view_.axes().visible(axis) && (axis != skipAxis))
-	{
-		view_.axes().gridLineMinorStyle(axis).sendToGL(lineWidthScaling_);
-		view_.axes().gridLineMinorPrimitive(axis).sendToGL();
-// 		if (updateQueryDepth()) setQueryObject(DataViewer::GridLineMinorObject, DissolveSys::itoa(axis));
+		// -- Reset line style, ensure polygons are now filled, and render the axis lines
+		LineStyle().sendToGL(lineWidthScaling_);
+		for (int axis=0; axis<3; ++axis) if (view_.axes().visible(axis) && (axis != skipAxis))
+		{
+			view_.axes().axisPrimitive(axis).sendToGL();
+	// 		if (updateQueryDepth()) setQueryObject(DataViewer::AxisLineObject, DissolveSys::itoa(axis));
+		}
+		glEnable(GL_LIGHTING);
+		glDisable(GL_LINE_SMOOTH);
 	}
-	for (int axis=0; axis<3; ++axis) if (view_.axes().visible(axis) && (axis != skipAxis))
-	{
-		view_.axes().gridLineMajorStyle(axis).sendToGL(lineWidthScaling_);
-		view_.axes().gridLineMajorPrimitive(axis).sendToGL();
-// 		if (updateQueryDepth()) setQueryObject(DataViewer::GridLineMajorObject, DissolveSys::itoa(axis));
-	}
-
-	// -- Reset line style, ensure polygons are now filled, and render the axis lines
-	LineStyle().sendToGL(lineWidthScaling_);
-	for (int axis=0; axis<3; ++axis) if (view_.axes().visible(axis) && (axis != skipAxis))
-	{
-		view_.axes().axisPrimitive(axis).sendToGL();
-// 		if (updateQueryDepth()) setQueryObject(DataViewer::AxisLineObject, DissolveSys::itoa(axis));
-	}
-	glEnable(GL_LIGHTING);
-	glDisable(GL_LINE_SMOOTH);
 
 	// Enable clip planes to enforce limits in Axes volume
-	enableClipping();
+	if (clipToAxesVolume_) enableClipping();
 
 	// Draw all Renderables
 	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next)
@@ -201,7 +204,7 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 	}
 
 	// Disable clip planes
-	disableClipping();
+	if (clipToAxesVolume_) disableClipping();
 
 	// Set up an orthographic matrix for any 2D overlays
 	glMatrixMode(GL_PROJECTION);

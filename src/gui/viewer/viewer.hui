@@ -97,6 +97,26 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 
 
 	/*
+	 * Options
+	 */
+	private:
+	// Whether Axes are visible
+	bool axesVisible_;
+	// Whether to apply clip planes about Axes volume for Renderables
+	bool clipToAxesVolume_;
+
+	public:
+	// Set whether Axes are visible
+	void setAxesVisible(bool visible);
+	// Return whether Axes are visible
+	bool axesVisible() const;
+	// Set whether to apply clip planes about Axes volume for Renderables
+	void setClipToAxesVolume(bool clip);
+	// Return whether clip planes are applied about Axes volume for Renderables
+	bool clipToAxesVolume() const;
+
+
+	/*
 	 * Rendering
 	 */
 	protected:

@@ -33,6 +33,10 @@ BaseViewer::BaseViewer(QWidget* parent) : QOpenGLWidget(parent), view_(renderabl
 	renderingOffScreen_ = false;
 	lineWidthScaling_ = 1.0;
 
+	// Options
+	axesVisible_ = true;
+	clipToAxesVolume_ = true;
+
 	// Interaction
 	interacting_ = false;
 	interactionMode_ = -1;
@@ -53,4 +57,32 @@ BaseViewer::BaseViewer(QWidget* parent) : QOpenGLWidget(parent), view_(renderabl
 // Destructor
 BaseViewer::~BaseViewer()
 {
+}
+
+/*
+ * Options
+ */
+
+// Set whether Axes are visible
+void BaseViewer::setAxesVisible(bool visible)
+{
+	axesVisible_ = visible;
+}
+
+// Return whether Axes are visible
+bool BaseViewer::axesVisible() const
+{
+	return axesVisible_;
+}
+
+// Set whether to apply clip planes about Axes volume for Renderables
+void BaseViewer::setClipToAxesVolume(bool clip)
+{
+	clipToAxesVolume_ = clip;
+}
+
+// Return whether clip planes are applied about Axes volume for Renderables
+bool BaseViewer::clipToAxesVolume() const
+{
+	return clipToAxesVolume_;
 }
