@@ -71,7 +71,19 @@ void SpeciesViewer::startInteraction()
 			break;
 		// Draw
 		case (SpeciesViewer::DrawInteraction):
+			// If the left mouse button is not flagged, do nothing
+			if (!buttonState_.testFlag(Qt::LeftButton)) break;
+
+			// Set starting atom (if there is one at the current position)
 			clickedAtom_ = atomAt(rMouseDown_.x, rMouseDown_.y);
+
+			// Get the clicked position in the coordinate space of the Species
+			drawCoordinateStart_ = clickedAtom_ ? clickedAtom_->r() : view().screenToData(rMouseDown_.x, rMouseDown_.y, 0.0);
+			drawCoordinateCurrent_ = drawCoordinateStart_;
+
+			// Update the interaction Primitive
+			if (clickedAtom_) speciesRenderable_->recreateDrawInteractionPrimitive(clickedAtom_, drawCoordinateCurrent_, drawElement_);
+			else speciesRenderable_->recreateDrawInteractionPrimitive(drawCoordinateStart_, drawElement_, drawCoordinateCurrent_, drawElement_);
 			break;
 		default:
 			break;
@@ -138,6 +150,11 @@ void SpeciesViewer::endInteraction()
 			interactionMode_ = SpeciesViewer::DefaultInteraction;
 			break;
 		case (SpeciesViewer::DrawInteraction):
+			// If the left mouse button is not flagged, do nothing
+			if (!buttonState_.testFlag(Qt::LeftButton)) break;
+
+			// Clear the interaction Primitive
+			speciesRenderable_->clearInteractionPrimitive();
 			break;
 		default:
 			printf("Internal Error: Don't know how to complete interaction mode %i\n", interactionMode_);
@@ -160,4 +177,16 @@ void SpeciesViewer::cancelInteraction()
 
 	// Reset back to DefaultInteraction
 	interactionMode_ = SpeciesViewer::DefaultInteraction;
+}
+
+// Set current Element for DrawInteraction
+void SpeciesViewer::setDrawElement(Element* element)
+{
+	drawElement_ = element;
+}
+
+// Return current Element for DrawInteraction
+Element* SpeciesViewer::drawElement() const
+{
+	return drawElement_;
 }

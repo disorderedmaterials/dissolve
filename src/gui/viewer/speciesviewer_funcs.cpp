@@ -22,6 +22,7 @@
 #include "gui/viewer/speciesviewer.hui"
 #include "gui/viewer/render/renderablespecies.h"
 #include "classes/species.h"
+#include "data/elements.h"
 
 // Constructor
 SpeciesViewer::SpeciesViewer(QWidget* parent) : BaseViewer(parent)
@@ -33,6 +34,7 @@ SpeciesViewer::SpeciesViewer(QWidget* parent) : BaseViewer(parent)
 	// Interaction
 	setInteractionMode(SpeciesViewer::DefaultInteraction);
 	clickedAtom_ = NULL;
+	drawElement_ = &Elements::element(6);  // FIXPOSTCOMMIT - Use ELEMENT_C instead
 
 	// Set up the view
 	view_.setViewType(View::NormalView);

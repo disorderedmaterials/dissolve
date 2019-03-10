@@ -20,6 +20,7 @@
 */
 
 #include "gui/viewer/specieswidget.h"
+#include "gui/widgets/elementselector.hui"
 #include "classes/empiricalformula.h"
 #include "classes/species.h"
 
@@ -67,6 +68,18 @@ void SpeciesWidget::on_InteractionDrawButton_clicked(bool checked)
 	if (checked) speciesViewer()->setInteractionMode(SpeciesViewer::DrawInteraction);
 }
 
+void SpeciesWidget::on_InteractionDrawElementButton_clicked(bool checked)
+{
+	// Select a new element for drawing
+	bool ok;
+	Element* newElement = ElementSelector::getElement(this, "Choose Element", "Select element to use for drawn atoms", speciesViewer()->drawElement(), &ok);
+	if (!ok) return;
+
+	speciesViewer()->setDrawElement(newElement);
+
+	updateToolbar();
+}
+
 void SpeciesWidget::on_ViewResetButton_clicked(bool checked)
 {
 	speciesViewer()->view().showAllData();
@@ -98,6 +111,9 @@ void SpeciesWidget::updateToolbar()
 			ui_.InteractionDrawButton->setChecked(true);
 			break;
 	}
+
+	// Set drawing element symbol
+	ui_.InteractionDrawElementButton->setText(speciesViewer()->drawElement()->symbol());
 
 	// Set checkable buttons
 	ui_.ViewAxesVisibleButton->setChecked(speciesViewer()->axesVisible());

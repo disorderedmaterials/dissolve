@@ -20,6 +20,7 @@
 */
 
 #include "gui/viewer/speciesviewer.hui"
+#include "gui/viewer/render/renderablespecies.h"
 #include "classes/species.h"
 #include <QtGui/QMouseEvent>
 
@@ -30,6 +31,7 @@ void SpeciesViewer::mouseMoved(int dx, int dy)
 	if (!interacting()) return;
 
 	bool refresh = false;
+	SpeciesAtom* currentAtom = NULL;
 
 	// What we do here depends on the current mode
 	switch (interactionMode_)
@@ -56,6 +58,27 @@ void SpeciesViewer::mouseMoved(int dx, int dy)
 			// If this is a flat view, shift the axis limits rather than translating the view
 			if (view_.isFlatView()) view_.shiftFlatAxisLimits(dx, dy);
 			else view_.translateView(dx/15.0, dy/15.0, 0.0);
+			refresh = true;
+			break;
+		case (SpeciesViewer::DrawInteraction):
+			if (buttonState_.testFlag(Qt::LeftButton))
+			{
+				// Get atom at the current position (if any)
+				currentAtom = atomAt(rMouseLast_.x, rMouseLast_.y);
+
+				// Set the current drawing coordinates in data-space
+				drawCoordinateCurrent_ = currentAtom ? currentAtom->r() : view().screenToData(rMouseLast_.x, rMouseLast_.y, drawCoordinateCurrent_.z);
+
+				// Update the interaction Primitive
+				if (clickedAtom_)
+				{
+					if (currentAtom) speciesRenderable_->recreateDrawInteractionPrimitive(clickedAtom_, currentAtom);
+					else speciesRenderable_->recreateDrawInteractionPrimitive(clickedAtom_, drawCoordinateCurrent_, drawElement_);
+				}
+				else speciesRenderable_->recreateDrawInteractionPrimitive(drawCoordinateStart_, drawElement_, drawCoordinateCurrent_, drawElement_);
+			}
+			else if (buttonState_.testFlag(Qt::RightButton)) view_.rotateView(-dy/2.0, dx/2.0);
+
 			refresh = true;
 			break;
 		default:

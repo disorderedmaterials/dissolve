@@ -25,6 +25,7 @@
 #include "gui/viewer/viewer.hui"
 
 // Forward Declarations
+class Element;
 class RenderableSpecies;
 class Species;
 class SpeciesAtom;
@@ -86,6 +87,8 @@ class SpeciesViewer : public BaseViewer
 	private:
 	// Clicked atom at the start of the interaction (if any)
 	SpeciesAtom* clickedAtom_;
+	// Element for created atoms in DrawInteraction
+	Element* drawElement_;
 	// Species-space coordinates at clicked position for DrawInteraction
 	Vec3<double> drawCoordinateStart_;
 	// Species-space coordinates at current position for DrawInteraction
@@ -102,6 +105,12 @@ class SpeciesViewer : public BaseViewer
 	void endInteraction();
 	// Cancel current interaction
 	void cancelInteraction();
+
+	public:
+	// Set current Element for DrawInteraction
+	void setDrawElement(Element* element);
+	// Return current Element for DrawInteraction
+	Element* drawElement() const;
 
 
 	/*

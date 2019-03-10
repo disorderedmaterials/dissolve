@@ -262,7 +262,7 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom* fromAtom, 
 }
 
 // Recreate interaction Primitive to display drawing interaction (from existing atom to point)
-void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom* fromAtom, Vec3<double> toPoint)
+void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom* fromAtom, Vec3<double> toPoint, Element* toElement)
 {
 	// Clear existing data
 	clearInteractionPrimitive();
@@ -272,7 +272,7 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom* fromAtom, 
 
 	// Temporary SpeciesAtom
 	static SpeciesAtom j;
-	j.setElement(&Elements::element(6));
+	j.setElement(toElement);
 	j.setCoordinates(toPoint);
 
 	// Draw the temporary atom
@@ -287,7 +287,7 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom* fromAtom, 
 }
 
 // Recreate interaction Primitive to display drawing interaction (from point to point)
-void RenderableSpecies::recreateDrawInteractionPrimitive(Vec3<double> fromPoint, Vec3<double> toPoint)
+void RenderableSpecies::recreateDrawInteractionPrimitive(Vec3<double> fromPoint, Element* fromElement, Vec3<double> toPoint, Element* toElement)
 {
 	// Clear existing data
 	clearInteractionPrimitive();
@@ -297,9 +297,9 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(Vec3<double> fromPoint,
 
 	// Temporary SpeciesAtoms
 	static SpeciesAtom i, j;
-	i.setElement(&Elements::element(6));
+	i.setElement(fromElement);
 	i.setCoordinates(fromPoint);
-	j.setElement(&Elements::element(6));
+	j.setElement(toElement);
 	j.setCoordinates(toPoint);
 
 	// Draw the temporary atoms

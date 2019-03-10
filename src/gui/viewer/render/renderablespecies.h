@@ -88,9 +88,9 @@ class RenderableSpecies : public Renderable
 	// Recreate interaction Primitive to display drawing interaction (from existing atom to existing atom)
 	void recreateDrawInteractionPrimitive(SpeciesAtom* fromAtom, SpeciesAtom* toAtom);
 	// Recreate interaction Primitive to display drawing interaction (from existing atom to point)
-	void recreateDrawInteractionPrimitive(SpeciesAtom* fromAtom, Vec3<double> toPoint);
+	void recreateDrawInteractionPrimitive(SpeciesAtom* fromAtom, Vec3<double> toPoint, Element* toElement);
 	// Recreate interaction Primitive to display drawing interaction (from point to point)
-	void recreateDrawInteractionPrimitive(Vec3<double> fromPoint, Vec3<double> toPoint);
+	void recreateDrawInteractionPrimitive(Vec3<double> fromPoint, Element* fromElement, Vec3<double> toPoint, Element* toElement);
 };
 
 #endif
