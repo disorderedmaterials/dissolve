@@ -1,5 +1,5 @@
 /*
-	*** Empirical Formula Generator
+	*** Empirical Formula Generation
 	*** src/classes/empiricalformula.h
 	Copyright T. Youngs 2012-2019
 
@@ -24,9 +24,12 @@
 
 #include "base/charstring.h"
 #include "templates/array.h"
+#include "templates/reflist.h"
 
 // Forward Declarations
 class Element;
+class Species;
+class SpeciesAtom;
 
 // Empirical Formula Generator
 class EmpiricalFormula
@@ -37,6 +40,10 @@ class EmpiricalFormula
 	// Destructor
 	~EmpiricalFormula();
 
+
+	/*
+	 * Construction
+	 */
 	private:
 	// Element counts
 	Array<int> elementCounts_;
@@ -50,6 +57,18 @@ class EmpiricalFormula
 	void add(Element* element, int count = 1);
 	// Return current empirical formula
 	const char* formula();
+	// Return rich text of current empirical formula
+	const char* richTextFormula();
+
+
+	/*
+	 * Convenience Functions
+	 */
+	public:
+	// Return empirical formula for supplied Species
+	static const char* formula(const Species* species, bool richText = false);
+	// Return empirical formula for supplied SpeciesAtom reflist
+	static const char* formula(const RefList<SpeciesAtom,bool>& atoms, bool richText = false);
 };
 
 #endif
