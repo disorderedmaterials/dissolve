@@ -93,6 +93,8 @@ void SpeciesViewer::startInteraction()
 // End interaction at the specified screen coordinates
 void SpeciesViewer::endInteraction()
 {
+	SpeciesAtom* i, *j;
+
 	// Finalise interaction type
 	switch (interactionMode_)
 	{
@@ -153,8 +155,21 @@ void SpeciesViewer::endInteraction()
 			// If the left mouse button is not flagged, do nothing
 			if (!buttonState_.testFlag(Qt::LeftButton)) break;
 
+			// If an atom was not clicked at the start of the interaction, create a new one now
+			i = clickedAtom_ ? clickedAtom_ : species_->addAtom(drawElement_, drawCoordinateStart_);
+
+			// Get atom at current coordinates - if there isn't one, create one now
+			j = atomAt(rMouseLast_.x, rMouseLast_.y);
+			if (!j) j = species_->addAtom(drawElement_, drawCoordinateCurrent_);
+
+			// Create a bond between the two atoms, if one doesn't currently exist
+			if (!species_->hasBond(i, j)) species_->addBond(i, j);
+
 			// Clear the interaction Primitive
 			speciesRenderable_->clearInteractionPrimitive();
+
+			// Update display
+			postRedisplay();
 			break;
 		default:
 			printf("Internal Error: Don't know how to complete interaction mode %i\n", interactionMode_);
