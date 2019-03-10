@@ -43,14 +43,29 @@ class GraphWidget : public QWidget
 	Ui::GraphWidget ui_;
 
 	public:
-	// Return contained DataViewWidget
+	// Return contained DataViewer
 	DataViewer* dataViewer();
+
+
+	/*
+	 * Tools
+	 */
+	private slots:
+	// Interaction
+	void on_InteractionViewButton_clicked(bool checked);
+	// View
+	void on_ViewShowAllButton_clicked(bool checked);
+	void on_ViewFollowAllButton_clicked(bool checked);
+	void on_ViewFollowXButton_clicked(bool checked);
+	void on_ViewFollowXLengthSpin_valueChanged(double value);
 
 
 	/*
 	 * Signals / Slots
 	 */
 	public slots:
+	// Update toolbar
+	void updateToolbar();
 	// Update coordinate info
 	void updateCoordinateInfo();
 };

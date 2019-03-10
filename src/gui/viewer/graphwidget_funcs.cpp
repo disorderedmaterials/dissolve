@@ -21,6 +21,7 @@
 
 #include "gui/viewer/graphwidget.h"
 #include "gui/viewer/render/view.h"
+#include <QButtonGroup>
 
 // Constructor
 GraphWidget::GraphWidget(QWidget* parent) : QWidget(parent)
@@ -28,8 +29,15 @@ GraphWidget::GraphWidget(QWidget* parent) : QWidget(parent)
 	// Set up our UI
 	ui_.setupUi(this);
 
+	// Create button group for interaction tools
+	QButtonGroup* interactionToolsGroup = new QButtonGroup;
+	interactionToolsGroup->addButton(ui_.InteractionViewButton);
+
 	// Connect signals / slots
 	connect(ui_.DataView, SIGNAL(currentCoordinateChanged()), this, SLOT(updateCoordinateInfo()));
+
+	// Make sure that our controls reflect the state of the underlying DataViewer
+	updateToolbar();
 }
 
 // Destructor
@@ -37,15 +45,84 @@ GraphWidget::~GraphWidget()
 {
 }
 
-// Return contained DataViewWidget
+// Return contained DataViewer
 DataViewer* GraphWidget::dataViewer()
 {
 	return ui_.DataView;
 }
 
 /*
+ * Tools
+ */
+
+// Interaction
+void GraphWidget::on_InteractionViewButton_clicked(bool checked)
+{
+}
+
+// View
+void GraphWidget::on_ViewShowAllButton_clicked(bool checked)
+{
+}
+
+void GraphWidget::on_ViewFollowAllButton_clicked(bool checked)
+{
+	if (checked)
+	{
+		dataViewer()->view().setAutoFollowType(View::AllAutoFollow);
+		if (ui_.ViewFollowXButton->isChecked()) ui_.ViewFollowXButton->setChecked(false);
+	}
+	else dataViewer()->view().setAutoFollowType(View::NoAutoFollow);
+
+	dataViewer()->postRedisplay();
+}
+
+void GraphWidget::on_ViewFollowXButton_clicked(bool checked)
+{
+	if (checked)
+	{
+		dataViewer()->view().setAutoFollowType(View::XAutoFollow);
+		if (ui_.ViewFollowAllButton->isChecked()) ui_.ViewFollowAllButton->setChecked(false);
+	}
+	else dataViewer()->view().setAutoFollowType(View::NoAutoFollow);
+
+	dataViewer()->postRedisplay();
+}
+
+void GraphWidget::on_ViewFollowXLengthSpin_valueChanged(double value)
+{
+	dataViewer()->view().setAutoFollowXLength(value);
+
+	dataViewer()->postRedisplay();
+}
+
+/*
  * Signals / Slots
  */
+
+// Update toolbar
+void GraphWidget::updateToolbar()
+{
+	// Set current interaction mode
+	switch (dataViewer()->interactionMode())
+	{
+		case (DataViewer::ViewInteraction):
+			ui_.InteractionViewButton->setChecked(true);
+			break;
+// 		case (DataViewer::ZoomInteraction):
+// 			ui_.InteractionZoomutton->setChecked(true);
+// 			break;
+	}
+
+	// Controls reflecting the state of options in the underlying DataViewer
+	View::ViewType vt = dataViewer()->view().viewType();
+	View::AutoFollowType aft = dataViewer()->view().autoFollowType();
+	ui_.ViewFollowAllButton->setChecked(aft == View::AllAutoFollow);
+	ui_.ViewFollowXButton->setChecked(aft == View::XAutoFollow);
+	ui_.ViewFollowXLengthSpin->setValue(dataViewer()->view().autoFollowXLength());
+	ui_.ViewFollowXButton->setEnabled(vt == View::FlatXYView);
+	ui_.ViewFollowXLengthSpin->setEnabled(vt == View::FlatXYView);
+}
 
 // Update coordinate info
 void GraphWidget::updateCoordinateInfo()
