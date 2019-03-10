@@ -191,7 +191,7 @@ void ElementSelector::setCurrentElement(Element* element)
 	currentElement_ = element;
 
 	// Find and check the related button
-	if (currentElement_ == NULL)
+	if (currentElement_ != NULL)
 	{
 		QToolButton* button = elementButtons_.itemWithData(currentElement_);
 		if (button) button->setChecked(true);
