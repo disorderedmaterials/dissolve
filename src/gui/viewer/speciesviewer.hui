@@ -86,6 +86,10 @@ class SpeciesViewer : public BaseViewer
 	private:
 	// Clicked atom at the start of the interaction (if any)
 	SpeciesAtom* clickedAtom_;
+	// Species-space coordinates at clicked position for DrawInteraction
+	Vec3<double> drawCoordinateStart_;
+	// Species-space coordinates at current position for DrawInteraction
+	Vec3<double> drawCoordinateCurrent_;
 
 	private:
 	// Return atom at specified coordinates
@@ -120,17 +124,14 @@ class SpeciesViewer : public BaseViewer
 	private:
 	// Source Species to display
 	Species* species_;
+	// Renderable for source Species
+	RenderableSpecies* speciesRenderable_;
 
 	public:
 	// Set target Species
 	void setSpecies(Species* sp);
-
-
-	/*
-	 * Renderable
-	 */
-	private:
-	RenderableSpecies* speciesRenderable_;
+	// Return target Species
+	const Species* species() const;
 
 
 	/*

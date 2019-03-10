@@ -63,6 +63,11 @@ void SpeciesViewer::setSpecies(Species *sp)
 		ownRenderable(speciesRenderable_);
 		view_.showAllData();
 	}
+
+// Return target Species
+const Species* SpeciesViewer::species() const
+{
+	return species_;
 }
 
 /*
