@@ -36,6 +36,9 @@ SpeciesViewer::SpeciesViewer(QWidget* parent) : BaseViewer(parent)
 
 	// Set up the view
 	view_.setViewType(View::NormalView);
+
+	// Tweak the options of the underlying BaseViewer
+	setClipToAxesVolume(false);
 }
 
 // Destructor
