@@ -38,8 +38,9 @@ RenderableSpecies::RenderableSpecies(const Species* source, const char* objectTa
 // 	unitCellPrimitive_->wireCube(1.0, 4, 0, 0, 0);
 
 	// Create main primitive assemblies
-	speciesPrimitive_ = createPrimitiveAssembly();
-	selectionPrimitive_ = createPrimitiveAssembly();
+	speciesAssembly_ = createPrimitiveAssembly();
+	selectionAssembly_ = createPrimitiveAssembly();
+	interactionAssembly_ = createPrimitiveAssembly();
 
 	// Set versions
 	selectionPrimitiveVersion_ = -1;
@@ -129,6 +130,33 @@ bool RenderableSpecies::yRangeOverX(double xMin, double xMax, double& yMin, doub
  * Rendering Primitives
  */
 
+// Create cylinder bond between supplied atoms in specified assembly
+void RenderableSpecies::createCylinderBond(PrimitiveAssembly* assembly, const SpeciesAtom* i, const SpeciesAtom* j, double radialScaling)
+{
+	Matrix4 A;
+
+	// Get vector between Atoms i->j and move to Bond centre
+	Vec3<double> vij = j->r() - i->r();
+	A.setTranslation(i->r()+vij*0.5);
+	const double mag = vij.magAndNormalise();
+
+	// Create rotation matrix for Bond
+	A.setColumn(2, vij.x, vij.y, vij.z, 0.0);
+	A.setColumn(0, vij.orthogonal(), 0.0);
+	A.setColumn(1, vij * A.columnAsVec3(0), 0.0);
+	A.columnMultiply(2, 0.5*mag);
+	A.applyScaling(radialScaling, radialScaling, 1.0);
+
+	// Render half of Bond in colour of Atom j
+	const float* colour = ElementColours::colour(j->element());
+	assembly->add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+
+	// Render half of Bond in colour of Atom i
+	A.columnMultiply(2,-1.0);
+	colour = ElementColours::colour(i->element());
+	assembly->add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+}
+
 // Recreate necessary primitives / primitive assemblies for the data
 void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinition& colourDefinition)
 {
@@ -137,12 +165,12 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 	const float colourBlack[4] = { 0.0, 0.0, 0.0, 1.0 };
 
 	// Clear existing data
-	speciesPrimitive_->clear();
-	selectionPrimitive_->clear();
+	speciesAssembly_->clear();
+	selectionAssembly_->clear();
 
 	// Set basic styling for assemblies
-	speciesPrimitive_->add(true, GL_FILL);
-	selectionPrimitive_->add(true, GL_LINE);
+	speciesAssembly_->add(true, GL_FILL);
+	selectionAssembly_->add(true, GL_LINE);
 
 	/*
 	 * Draw Atoms
@@ -156,7 +184,7 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 
 		// The atom itself
 		colour = ElementColours::colour(i->element());
-		speciesPrimitive_->add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+		speciesAssembly_->add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 
 		// Label
 // 		text.clear();
@@ -173,7 +201,7 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 		// Is the atom selected?
 		if (i->isSelected())
 		{
-			selectionPrimitive_->add(selectedAtomPrimitive_, A, colourBlack[0], colourBlack[1], colourBlack[2], colourBlack[3]);
+			selectionAssembly_->add(selectedAtomPrimitive_, A, colourBlack[0], colourBlack[1], colourBlack[2], colourBlack[3]);
 		}
 	}
 
@@ -182,28 +210,7 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 	double mag;
 	for (SpeciesBond* b = source_->bonds().first(); b != NULL; b = b->next)
 	{
-		A.setIdentity();
-
-		// Get vector between Atoms i->j and move to Bond centre
-		vij = b->j()->r() - b->i()->r();
-		A.setTranslation(b->i()->r()+vij*0.5);
-		mag = vij.magAndNormalise();
-
-		// Create rotation matrix for Bond
-		A.setColumn(2, vij.x, vij.y, vij.z, 0.0);
-		A.setColumn(0, vij.orthogonal(), 0.0);
-		A.setColumn(1, vij * A.columnAsVec3(0), 0.0);
-		A.columnMultiply(2, 0.5*mag);
-		A.applyScaling(0.1, 0.1, 1.0);
-
-		// Render half of Bond in colour of Atom j
-		colour = ElementColours::colour(b->j()->element());
-		speciesPrimitive_->add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
-
-		// Render half of Bond in colour of Atom i
-		A.columnMultiply(2,-1.0);
-		colour = ElementColours::colour(b->i()->element());
-		speciesPrimitive_->add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+		createCylinderBond(speciesAssembly_, b->i(), b->j(), 0.1);
 	}
 }
 
@@ -213,10 +220,10 @@ void RenderableSpecies::recreateSelectionPrimitive()
 	if (selectionPrimitiveVersion_ == source_->atomSelectionVersion()) return;
 
 	// Clear existing data
-	selectionPrimitive_->clear();
+	selectionAssembly_->clear();
 
 	// Set basic styling
-	selectionPrimitive_->add(true, GL_LINE);
+	selectionAssembly_->add(true, GL_LINE);
 
 	Matrix4 A;
 
@@ -229,8 +236,86 @@ void RenderableSpecies::recreateSelectionPrimitive()
 		A.setTranslation(i->r());
 		A.applyScaling(0.3);
 
-		selectionPrimitive_->add(selectedAtomPrimitive_, A, 0.5, 0.5, 0.5, 1.0);
+		selectionAssembly_->add(selectedAtomPrimitive_, A, 0.5, 0.5, 0.5, 1.0);
 	}
 
 	selectionPrimitiveVersion_ = source_->atomSelectionVersion();
+}
+
+// Clear interaction Primitive
+void RenderableSpecies::clearInteractionPrimitive()
+{
+	interactionAssembly_->clear();
+}
+
+// Recreate interaction Primitive to display drawing interaction (from existing atom to existing atom)
+void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom* fromAtom, SpeciesAtom* toAtom)
+{
+	// Clear existing data
+	clearInteractionPrimitive();
+
+	// Set basic styling for assembly
+	interactionAssembly_->add(true, GL_FILL);
+
+	// Draw the temporary bond between the atoms
+	createCylinderBond(interactionAssembly_, fromAtom, toAtom, 0.1);
+}
+
+// Recreate interaction Primitive to display drawing interaction (from existing atom to point)
+void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom* fromAtom, Vec3<double> toPoint)
+{
+	// Clear existing data
+	clearInteractionPrimitive();
+
+	// Set basic styling for assembly
+	interactionAssembly_->add(true, GL_FILL);
+
+	// Temporary SpeciesAtom
+	static SpeciesAtom j;
+	j.setElement(&Elements::element(6));
+	j.setCoordinates(toPoint);
+
+	// Draw the temporary atom
+	Matrix4 A;
+	A.setTranslation(j.r());
+	A.applyScaling(0.3);
+	const float* colour = ElementColours::colour(j.element());
+	interactionAssembly_->add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+
+	// Draw the temporary bond between the atoms
+	createCylinderBond(interactionAssembly_, fromAtom, &j, 0.1);
+}
+
+// Recreate interaction Primitive to display drawing interaction (from point to point)
+void RenderableSpecies::recreateDrawInteractionPrimitive(Vec3<double> fromPoint, Vec3<double> toPoint)
+{
+	// Clear existing data
+	clearInteractionPrimitive();
+
+	// Set basic styling for assembly
+	interactionAssembly_->add(true, GL_FILL);
+
+	// Temporary SpeciesAtoms
+	static SpeciesAtom i, j;
+	i.setElement(&Elements::element(6));
+	i.setCoordinates(fromPoint);
+	j.setElement(&Elements::element(6));
+	j.setCoordinates(toPoint);
+
+	// Draw the temporary atoms
+	Matrix4 A;
+
+	A.setTranslation(i.r());
+	A.applyScaling(0.3);
+	const float* colour = ElementColours::colour(i.element());
+	interactionAssembly_->add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+
+	A.setIdentity();
+	A.setTranslation(j.r());
+	A.applyScaling(0.3);
+	colour = ElementColours::colour(j.element());
+	interactionAssembly_->add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+
+	// Draw the temporary bond between the atoms
+	createCylinderBond(interactionAssembly_, &i, &j, 0.1);
 }

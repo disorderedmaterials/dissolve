@@ -70,17 +70,27 @@ class RenderableSpecies : public Renderable
 	// Basic primitives
 	Primitive* atomPrimitive_, *selectedAtomPrimitive_, *unitCellPrimitive_, *bondPrimitive_;
 	// Main primitives
-	PrimitiveAssembly* speciesPrimitive_, *selectionPrimitive_;
+	PrimitiveAssembly* speciesAssembly_, *selectionAssembly_, *interactionAssembly_;
 	// Version at which selection primitive was created, relative to selection version
 	int selectionPrimitiveVersion_;
 
 	private:
 	// Recreate necessary primitives / primitive assemblies for the data
 	void recreatePrimitives(const View& view, const ColourDefinition& colourDefinition);
+	// Create cylinder bond between supplied atoms in specified assembly
+	void createCylinderBond(PrimitiveAssembly* assembly, const SpeciesAtom* i, const SpeciesAtom* j, double radialScaling);
 
 	public:
 	// Recreate selection Primitive
 	void recreateSelectionPrimitive();
+	// Clear interaction Primitive
+	void clearInteractionPrimitive();
+	// Recreate interaction Primitive to display drawing interaction (from existing atom to existing atom)
+	void recreateDrawInteractionPrimitive(SpeciesAtom* fromAtom, SpeciesAtom* toAtom);
+	// Recreate interaction Primitive to display drawing interaction (from existing atom to point)
+	void recreateDrawInteractionPrimitive(SpeciesAtom* fromAtom, Vec3<double> toPoint);
+	// Recreate interaction Primitive to display drawing interaction (from point to point)
+	void recreateDrawInteractionPrimitive(Vec3<double> fromPoint, Vec3<double> toPoint);
 };
 
 #endif
