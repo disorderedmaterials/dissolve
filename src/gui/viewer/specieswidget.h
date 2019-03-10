@@ -48,15 +48,25 @@ class SpeciesWidget : public QWidget
 
 
 	/*
+	 * ToolBar
+	 */
+	private slots:
+	// Interaction
+	void on_InteractionViewButton_clicked(bool checked);
+	void on_InteractionDrawButton_clicked(bool checked);
+	// View
+	void on_ViewResetButton_clicked(bool checked);
+	void on_ViewAxesVisibleButton_clicked(bool checked);
+
+	
+	/*
 	 * Signals / Slots
 	 */
 	public slots:
-	// Toolbar
-	void on_ViewToolButton_clicked(bool checked);
-	void on_DrawToolButton_clicked(bool checked);
-
-	// Update info label
-	void updateInfoLabel();
+	// Update toolbar to reflect current viewer state
+	void updateToolbar();
+	// Update status bar
+	void updateStatusBar();
 };
 
 #endif

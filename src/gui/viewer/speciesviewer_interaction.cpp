@@ -124,6 +124,7 @@ void SpeciesViewer::endInteraction()
 
 			// Update the selection
 			speciesRenderable_->recreateSelectionPrimitive();
+			emit(atomSelectionChanged());
 
 			// Revert to default interaction mode
 			interactionMode_ = SpeciesViewer::DefaultInteraction;

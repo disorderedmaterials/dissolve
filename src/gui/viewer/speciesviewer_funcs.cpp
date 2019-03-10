@@ -67,6 +67,10 @@ void SpeciesViewer::setSpecies(Species *sp)
 		view_.showAllData();
 	}
 
+	// Send relevant signals
+	emit(atomSelectionChanged());
+}
+
 // Return target Species
 const Species* SpeciesViewer::species() const
 {

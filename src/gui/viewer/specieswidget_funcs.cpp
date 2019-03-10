@@ -20,6 +20,8 @@
 */
 
 #include "gui/viewer/specieswidget.h"
+#include "classes/empiricalformula.h"
+#include "classes/species.h"
 
 // Constructor
 SpeciesWidget::SpeciesWidget(QWidget* parent) : QWidget(parent)
@@ -27,8 +29,17 @@ SpeciesWidget::SpeciesWidget(QWidget* parent) : QWidget(parent)
 	// Set up our UI
 	ui_.setupUi(this);
 
+	// Create a button group for the interaction modes
+	QButtonGroup* group = new QButtonGroup;
+	group->addButton(ui_.InteractionViewButton);
+	group->addButton(ui_.InteractionDrawButton);
+
 	// Connect signals / slots
-// 	connect(ui_.SpeciesView, SIGNAL(currentCoordinateChanged()), this, SLOT(updateCoordinateInfo()));
+	connect(ui_.SpeciesView, SIGNAL(atomSelectionChanged()), this, SLOT(updateStatusBar()));
+
+	// Make sure our controls are consistent with the underlying viewer / data
+	updateToolbar();
+	updateStatusBar();
 }
 
 // Destructor
@@ -43,21 +54,65 @@ SpeciesViewer* SpeciesWidget::speciesViewer()
 }
 
 /*
- * Signals / Slots
+ * Toolbar
  */
 
-void SpeciesWidget::on_ViewToolButton_clicked(bool checked)
+void SpeciesWidget::on_InteractionViewButton_clicked(bool checked)
 {
 	if (checked) speciesViewer()->setInteractionMode(SpeciesViewer::DefaultInteraction);
 }
 
-void SpeciesWidget::on_DrawToolButton_clicked(bool checked)
+void SpeciesWidget::on_InteractionDrawButton_clicked(bool checked)
 {
 	if (checked) speciesViewer()->setInteractionMode(SpeciesViewer::DrawInteraction);
 }
 
-// Update info label
-void SpeciesWidget::updateInfoLabel()
+void SpeciesWidget::on_ViewResetButton_clicked(bool checked)
 {
-// 	ui_.InfoLabel->setText(text);
+	speciesViewer()->view().showAllData();
+
+	speciesViewer()->postRedisplay();
+}
+
+void SpeciesWidget::on_ViewAxesVisibleButton_clicked(bool checked)
+{
+	speciesViewer()->setAxesVisible(checked);
+
+	speciesViewer()->postRedisplay();
+}
+
+/*
+ * Signals / Slots
+ */
+
+// Update toolbar to reflect current viewer state
+void SpeciesWidget::updateToolbar()
+{
+	// Set current interaction mode
+	switch (speciesViewer()->interactionMode())
+	{
+		case (SpeciesViewer::DefaultInteraction):
+			ui_.InteractionViewButton->setChecked(true);
+			break;
+		case (SpeciesViewer::DrawInteraction):
+			ui_.InteractionDrawButton->setChecked(true);
+			break;
+	}
+
+	// Set checkable buttons
+	ui_.ViewAxesVisibleButton->setChecked(speciesViewer()->axesVisible());
+}
+
+// Update status bar
+void SpeciesWidget::updateStatusBar()
+{
+	// Get displayed Species
+	const Species* sp = speciesViewer()->species();
+
+	// Set interaction mode text
+	// TODO #45
+
+	// Set / update empirical formula for the Species and its current atom selection
+	ui_.FormulaLabel->setText(sp ? EmpiricalFormula::formula(sp, true) : "--");
+	ui_.SelectionLabel->setText(sp && (sp->nSelectedAtoms() > 0) ? EmpiricalFormula::formula(sp->selectedAtoms(), true) : "--");
 }

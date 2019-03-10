@@ -154,6 +154,14 @@ class SpeciesViewer : public BaseViewer
 	public:
 	// Set draw style
 	void setDrawStyle(SpeciesViewer::DrawStyle style);
+
+
+	/*
+	 * Signals
+	 */
+	signals:
+	// Atom selection changed
+	void atomSelectionChanged();
 };
 
 #endif
