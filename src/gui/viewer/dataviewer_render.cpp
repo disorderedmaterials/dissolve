@@ -232,7 +232,7 @@ void DataViewer::render(int xOffset, int yOffset)
 
 	CharString indicatorText;
 	if (view_.autoFollowType() == View::AllAutoFollow) indicatorText += "|A| ";
-	else if (view_.autoFollowType() == View::XFollow) indicatorText += "A\\sub{X} ";
+	else if (view_.autoFollowType() == View::XAutoFollow) indicatorText += "A\\sub{X} ";
 	if (groupManager_.verticalShift() > 0) indicatorText.strcatf("S\\sub{%i}", groupManager_.verticalShift());
 	TextPrimitive indicatorPrimitive;
 	indicatorPrimitive.set(fontInstance_, indicatorText.get(), Vec3<double>(overlaySpacing, view_.viewportMatrix()[3] - overlaySpacing,0.0), TextPrimitive::TopLeftAnchor, Vec3<double>(), Matrix4(), overlayTextSize, false);

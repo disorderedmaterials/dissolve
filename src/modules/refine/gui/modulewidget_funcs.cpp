@@ -106,7 +106,7 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, Dissolve
 	phiMagGraph_->view().axes().setTitle(1, "\\sym{Delta}\\sym{phi}(\\it{r}), kJ mol\\sup{-1} \\sum{angstrom}\\sup{-1}");
 	phiMagGraph_->view().axes().setMin(1, 0.0);
 	phiMagGraph_->view().axes().setMax(1, 1.0);
-	phiMagGraph_->view().setAutoFollowType(View::XFollow);
+	phiMagGraph_->view().setAutoFollowType(View::XAutoFollow);
 
 	// Errors Graph
 
@@ -120,7 +120,7 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, Dissolve
 	errorsGraph_->view().axes().setTitle(1, "%Error");
 	errorsGraph_->view().axes().setMin(1, 0.0);
 	errorsGraph_->view().axes().setMax(1, 100.0);
-	errorsGraph_->view().setAutoFollowType(View::XFollow);
+	errorsGraph_->view().setAutoFollowType(View::XAutoFollow);
 
 	setGraphDataTargets(module_);
 
