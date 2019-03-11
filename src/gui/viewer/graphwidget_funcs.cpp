@@ -58,11 +58,15 @@ DataViewer* GraphWidget::dataViewer()
 // Interaction
 void GraphWidget::on_InteractionViewButton_clicked(bool checked)
 {
+// 	dataViewer()->setInteractionMode(DataViewer::ViewInteraction) FIXPOSTCOMMIT
 }
 
 // View
 void GraphWidget::on_ViewShowAllButton_clicked(bool checked)
 {
+	dataViewer()->view().showAllData();
+
+	dataViewer()->postRedisplay();
 }
 
 void GraphWidget::on_ViewFollowAllButton_clicked(bool checked)
