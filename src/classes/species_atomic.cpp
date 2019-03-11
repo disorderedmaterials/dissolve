@@ -59,6 +59,21 @@ const List<SpeciesAtom>& Species::atoms() const
 	return atoms_;
 }
 
+// Transmute specified SpeciesAtom
+void Species::transmuteAtom(SpeciesAtom* i, Element* el)
+{
+	if (!i) return;
+
+	// Nothing to do if current element matches that supplied
+	if (i->element() == el) return;
+
+	// Remove any AtomType assignment from the specified SpeciesAngle * Species::addAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k)
+	i->setAtomType(NULL);
+	i->setElement(el);
+
+	++version_;
+}
+
 // Clear current Atom selection
 void Species::clearAtomSelection()
 {

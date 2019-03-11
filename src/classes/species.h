@@ -94,6 +94,8 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	SpeciesAtom* atom(int n);
 	// Return the list of SpeciesAtoms
 	const List<SpeciesAtom>& atoms() const;
+	// Transmute specified SpeciesAtom
+	void transmuteAtom(SpeciesAtom* i, Element* el);
 	// Clear current atom selection
 	void clearAtomSelection();
 	// Add atom to selection
