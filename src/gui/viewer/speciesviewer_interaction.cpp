@@ -168,6 +168,10 @@ void SpeciesViewer::endInteraction()
 			// Clear the interaction Primitive
 			speciesRenderable_->clearInteractionPrimitive();
 
+			// Notify that the data has changed
+			emit(dataModified(true));
+			emit(dataChanged());
+
 			// Update display
 			postRedisplay();
 			break;

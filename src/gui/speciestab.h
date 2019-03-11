@@ -84,7 +84,7 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	// IsotopologuesIsotopesTable row update function
 	void updateIsotopeTableRow(int row, AtomType* atomType, Isotope* isotope, bool createItems);
 
-	protected:
+	protected slots:
 	// Update controls in tab
 	void updateControls();
 	// Disable sensitive controls within tab, ready for main code to run

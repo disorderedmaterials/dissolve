@@ -61,6 +61,10 @@ SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabW
 	// Set target for SpeciesViewer
 	ui.ViewerWidget->speciesViewer()->setSpecies(species_);
 
+	// Connect signals / slots
+	connect(ui.ViewerWidget->speciesViewer(), SIGNAL(dataChanged()), this, SLOT(updateControls()));
+	connect(ui.ViewerWidget->speciesViewer(), SIGNAL(dataModified(bool)), dissolveWindow_, SLOT(setModified(bool)));
+
 	refreshing_ = false;
 }
 

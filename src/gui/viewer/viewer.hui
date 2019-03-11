@@ -300,6 +300,17 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	ViewerObject objectAtQueryCoordinates() const;
 	// Info for object at query coordinates
 	const char* infoAtQueryCoordinates() const;
+
+
+
+	/*
+	 * Signals
+	 */
+	signals:
+	// Notify that the represented data has been modified
+	void dataModified(bool invalidatesSetUp = false);
+	// Notify that any other GUi controls displaying the underlying data should be refreshed
+	void dataChanged();
 };
 
 #endif
