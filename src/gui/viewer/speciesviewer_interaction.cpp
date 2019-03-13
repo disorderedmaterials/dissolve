@@ -81,6 +81,9 @@ void SpeciesViewer::startInteraction()
 			drawCoordinateStart_ = clickedAtom_ ? clickedAtom_->r() : view().screenToData(rMouseDown_.x, rMouseDown_.y, 0.0);
 			drawCoordinateCurrent_ = drawCoordinateStart_;
 
+			// If Ctrl is pressed, we transmute the atom under the mouse, but don't allow drawing of anything else
+			if (clickedAtom_ && mouseDownModifiers_.testFlag(Qt::ControlModifier)) break;
+
 			// Update the interaction Primitive
 			if (clickedAtom_) speciesRenderable_->recreateDrawInteractionPrimitive(clickedAtom_, drawCoordinateCurrent_, drawElement_);
 			else speciesRenderable_->recreateDrawInteractionPrimitive(drawCoordinateStart_, drawElement_, drawCoordinateCurrent_, drawElement_);
@@ -154,6 +157,25 @@ void SpeciesViewer::endInteraction()
 		case (SpeciesViewer::DrawInteraction):
 			// If the left mouse button is not flagged, do nothing
 			if (!buttonState_.testFlag(Qt::LeftButton)) break;
+
+			// If Ctrl was pressed, and an atom was clicked, transmute it to the current element
+			if (mouseDownModifiers_.testFlag(Qt::ControlModifier))
+			{
+				if (clickedAtom_)
+				{
+					species_->transmuteAtom(clickedAtom_, drawElement_);
+
+					// Notify that the data has changed
+					emit(dataModified(true));
+					emit(dataChanged());
+
+					// Update display
+					postRedisplay();
+				}
+
+				// We're done - nothing more to add
+				break;
+			}
 
 			// If an atom was not clicked at the start of the interaction, create a new one now
 			i = clickedAtom_ ? clickedAtom_ : species_->addAtom(drawElement_, drawCoordinateStart_);
