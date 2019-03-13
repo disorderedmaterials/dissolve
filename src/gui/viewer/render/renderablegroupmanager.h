@@ -85,7 +85,7 @@ class RenderableGroupManager
 
 	public:
 	// Return colour definition for specified Renderable
-	const ColourDefinition& colourDefinition(Renderable* renderable);
+	const ColourDefinition& colourDefinition(Renderable* renderable) const;
 	// Cycle vertical shift applied to RenderableGroups
 	void cycleVerticalShifts();
 	// Set vertical shift applied to RenderableGroups

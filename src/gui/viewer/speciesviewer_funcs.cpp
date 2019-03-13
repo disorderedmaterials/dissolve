@@ -1,7 +1,7 @@
 /*
-	*** Species Viewer Functions
+	*** Species Viewer - Functions
 	*** src/gui/viewer/speciesviewer_funcs.cpp
-	Copyright T. Youngs 2012-2013
+	Copyright T. Youngs 2019
 
 	This file is part of Dissolve.
 
@@ -20,20 +20,27 @@
 */
 
 #include "gui/viewer/speciesviewer.hui"
-#include "base/messenger.h"
+#include "gui/viewer/render/renderablespecies.h"
+#include "classes/species.h"
+#include "data/elements.h"
 
 // Constructor
 SpeciesViewer::SpeciesViewer(QWidget* parent) : BaseViewer(parent)
 {
 	// Source data
-	sourceSpecies_ = NULL;
-	drawStyle_ = SpeciesViewer::LineStyle;
+	species_ = NULL;
+	drawStyle_ = SpeciesViewer::LinesDrawStyle;
 
-	// Input
-// 	atomContextMenu_ = NULL;
-// 	speciesUpdateTargets_ = 0;
+	// Interaction
+	setInteractionMode(SpeciesViewer::DefaultInteraction);
+	clickedAtom_ = NULL;
+	drawElement_ = &Elements::element(6);  // FIXPOSTCOMMIT - Use ELEMENT_C instead
 
-	createPrimitives();
+	// Set up the view
+	view_.setViewType(View::NormalView);
+
+	// Tweak the options of the underlying BaseViewer
+	setClipToAxesVolume(false);
 }
 
 // Destructor
@@ -41,3 +48,44 @@ SpeciesViewer::~SpeciesViewer()
 {
 }
 
+/*
+ * Target Species
+ */
+
+// Set target Species
+void SpeciesViewer::setSpecies(Species *sp)
+{
+	species_ = sp;
+	speciesRenderable_ = NULL;
+
+	// Clear Renderables
+	clearRenderables();
+
+	// Create a new Renderable for the supplied Species
+	if (species_)
+	{
+		speciesRenderable_ = new RenderableSpecies(species_, species_->objectTag());
+		ownRenderable(speciesRenderable_);
+		view_.showAllData();
+	}
+
+	// Send relevant signals
+	emit(atomSelectionChanged());
+}
+
+// Return target Species
+const Species* SpeciesViewer::species() const
+{
+	return species_;
+}
+
+/*
+ * Style
+ */
+
+// Set draw style
+void SpeciesViewer::setDrawStyle(SpeciesViewer::DrawStyle style)
+{
+	drawStyle_ = style;
+	update();
+}

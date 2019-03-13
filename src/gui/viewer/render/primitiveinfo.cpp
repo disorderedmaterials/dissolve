@@ -1,7 +1,7 @@
 /*
 	*** Primitive Info
 	*** src/gui/viewer/render/primitiveinfo.cpp
-	Copyright T. Youngs 2012-2013
+	Copyright T. Youngs 2019
 
 	This file is part of Dissolve.
 
@@ -19,66 +19,129 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifdef _WIN32
-#include <windows.h>
-#include <GL/gl.h>
-#endif
 #include "gui/viewer/render/primitiveinfo.h"
+#include "gui/viewer/render/primitive.h"
+
+/*
+ * PrimitiveInfo
+ */
 
 // Constructor
 PrimitiveInfo::PrimitiveInfo()
 {
-	// Private variables
-	primitive_ = NULL;
-	fillMode_ = GL_FILL;
-	lineWidth_ = 1.0f;
-	colour_[0] = 0.0;
-	colour_[1] = 0.0;
-	colour_[2] = 0.0;
-	colour_[3] = 1.0;
-
-	// Public variables
-	prev = NULL;
-	next = NULL;
 }
 
-// Set primitive info data
-void PrimitiveInfo::set(Primitive* prim, const GLfloat* colour, Matrix4& transform, GLenum fillMode, GLfloat lineWidth)
+// Destructor
+PrimitiveInfo::~PrimitiveInfo()
 {
-	primitive_ = prim;
-	localTransform_ = transform;
-	fillMode_ = fillMode;
-	lineWidth_ = lineWidth;
-	if (colour != NULL) for (int n=0; n<4; ++n) colour_[n] = colour[n];
 }
 
-// Return pointer to primitive
-Primitive *PrimitiveInfo::primitive()
+/*
+ * UncolouredPrimitiveInfo
+ */
+
+// Constructor
+UncolouredPrimitiveInfo::UncolouredPrimitiveInfo(Primitive* prim, Matrix4 transform) : primitive_(prim), transform_(transform)
 {
-	return primitive_;
 }
 
-// Return local transformation of primitive
-Matrix4& PrimitiveInfo::localTransform()
+// Destructor
+UncolouredPrimitiveInfo::~UncolouredPrimitiveInfo()
 {
-	return localTransform_;
 }
 
-// Return colour array
-GLfloat *PrimitiveInfo::colour()
+// Expose contained info to GL
+void UncolouredPrimitiveInfo::sendToGL(double lineWidthScaling)
 {
-	return colour_;
+	// Render Primitive if one is present
+	if (primitive_)
+	{
+		glPushMatrix();
+		glMultMatrixd(transform_.matrix());
+		primitive_->sendToGL();
+		glPopMatrix();
+	}
 }
 
-// Return polygon fill mode
-GLenum PrimitiveInfo::fillMode()
+/*
+ * ColouredPrimitiveInfo
+ */
+
+// Constructor
+ColouredPrimitiveInfo::ColouredPrimitiveInfo(Primitive* prim, Matrix4 transform, GLfloat r, GLfloat g, GLfloat b, GLfloat a) : primitive_(prim), transform_(transform)
 {
-	return fillMode_;
+	colour_[0] = r;
+	colour_[1] = g;
+	colour_[2] = b;
+	colour_[3] = a;
 }
 
-// Return line width
-GLfloat PrimitiveInfo::lineWidth()
+// Destructor
+ColouredPrimitiveInfo::~ColouredPrimitiveInfo()
 {
-	return lineWidth_;
 }
 
+// Expose contained info to GL
+void ColouredPrimitiveInfo::sendToGL(double lineWidthScaling)
+{
+	// Apply colour
+	glColor4fv(colour_);
+
+	// Render Primitive if one is present
+	if (primitive_)
+	{
+		glPushMatrix();
+		glMultMatrixd(transform_.matrix());
+		primitive_->sendToGL();
+		glPopMatrix();
+	}
+}
+
+/*
+ * StylePrimitiveInfo
+ */
+
+// Constructor
+StylePrimitiveInfo::StylePrimitiveInfo(bool lighting, GLenum polygonFillMode) : lighting_(lighting), fillMode_(polygonFillMode)
+{
+}
+
+// Destructor
+StylePrimitiveInfo::~StylePrimitiveInfo()
+{
+}
+
+// Expose contained info to GL
+void StylePrimitiveInfo::sendToGL(double lineWidthScaling)
+{
+	// Enable / disable lighting
+	if (lighting_) glEnable(GL_LIGHTING);
+	else glDisable(GL_LIGHTING);
+
+	// Set polygon rendering mode and smoothing
+	glPolygonMode(GL_FRONT_AND_BACK, fillMode_);
+	if (fillMode_ == GL_POINT) glEnable(GL_POINT_SMOOTH);
+	else glDisable(GL_POINT_SMOOTH);
+	if (fillMode_ == GL_LINE) glEnable(GL_LINE_SMOOTH);
+	else glDisable(GL_LINE_SMOOTH);
+}
+
+/*
+ * LineStylePrimitiveInfo
+ */
+
+// Constructor
+LineStylePrimitiveInfo::LineStylePrimitiveInfo(LineStyle style) : lineStyle_(style)
+{
+}
+
+// Destructor
+LineStylePrimitiveInfo::~LineStylePrimitiveInfo()
+{
+}
+
+// Expose contained info to GL
+void LineStylePrimitiveInfo::sendToGL(double lineWidthScaling)
+{
+	lineStyle_.sendToGL(lineWidthScaling);
+}

@@ -26,21 +26,10 @@
 DataViewer::DataViewer(QWidget* parent) : BaseViewer(parent)
 {
 	// Interaction
-	interactionMode_ = DataViewer::ViewInteraction;
-	interactionAxis_ = -1;
-	interactionStarted_ = false;
-	clickedInteractionValue_ = 0.0;
-	currentInteractionValue_ = 0.0;
-	highlightedRenderable_ = NULL;
+	setInteractionMode(DataViewer::DefaultInteraction);
 
-	// Query
-	objectQueryX_ = -1;
-	objectQueryY_ = -1;
-	depthAtQueryCoordinates_ = 1.0;
-	objectAtQueryCoordinates_ = DataViewer::NoObject;
-
-	// Set up context menu
-	initialiseContextMenu();
+	// Set up the view
+	view_.setViewType(View::FlatXYView);
 }
 
 // Destructor

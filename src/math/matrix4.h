@@ -72,11 +72,11 @@ class Matrix4
 	// Set the zero matrix
 	void zero();
 	// Return matrix array
-	double* matrix();
+	const double* matrix() const;
 	// Return transpose of current matrix
-	Matrix4& transpose();
+	Matrix4& transpose() const;
 	// Calculate determinant
-	double determinant();
+	double determinant() const;
 	// Invert matrix
 	void invert();
 

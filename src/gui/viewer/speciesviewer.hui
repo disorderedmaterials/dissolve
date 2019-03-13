@@ -1,7 +1,7 @@
 /*
 	*** Species Viewer
 	*** src/gui/viewer/speciesviewer.uih
-	Copyright T. Youngs 2012-2013
+	Copyright T. Youngs 2019
 
 	This file is part of Dissolve.
 
@@ -25,7 +25,10 @@
 #include "gui/viewer/viewer.hui"
 
 // Forward Declarations
+class Element;
+class RenderableSpecies;
 class Species;
+class SpeciesAtom;
 
 // Species Rendering Widget
 class SpeciesViewer : public BaseViewer
@@ -39,62 +42,135 @@ class SpeciesViewer : public BaseViewer
 
 
 	/*
-	// Mouse / Keyboard Input
-	*/
-	protected:
-	// Qt Virtual (mouse press event)
-	void mousePressEvent(QMouseEvent*);
-	// Qt Virtual (mouse release event)
-	void mouseReleaseEvent(QMouseEvent*);
-	// Qt Virtual (mouse move event)
-	void mouseMoveEvent(QMouseEvent*);
-	// Qt Virtual (mouse wheel event)
-	void wheelEvent(QWheelEvent*);
+	 * Rendering (BaseViewer virtuals)
+	 */
+	private:
+	// Perform post-initialisation operations
+	void postInitialiseGL();
+	// Perform post-resize operations
+	void postResizeGL();
+	// Render 2D overlay content
+	void render2DOverlay();
 
 
 	/*
-	 * Rendering Callbacks / Data
+	 * Mouse / Keyboard Input (BaseViewer virtuals)
 	 */
 	protected:
-	// Create necessary primitives (called once when Viewer is constructed)
-	void createPrimitives();
-	// Setup basic GL properties
-	void setupGL();
-	// Draw source Species
-	void drawScene();
-	
+	// Mouse moved
+	void mouseMoved(int dx, int dy);
+	// Mouse 'wheeled'
+	void mouseWheeled(int delta);
+	// Mouse double clicked
+	void mouseDoubleClicked();
+	// Key pressed
+	bool keyPressed(int key);
+	// Key released
+	bool keyReleased(int key);
+
+
 	/*
-	// Custom Data
-	*/
+	 * Interaction (BaseViewer virtuals)
+	 */
 	public:
-	/// Draw Style enum
+	// Interaction Mode enum
+	enum InteractionMode
+	{
+		DefaultInteraction,
+		SelectAreaInteraction,
+		TranslateViewInteraction,
+		RotateViewInteraction,
+		DrawInteraction,
+		nInteractionModes
+	};
+
+	private:
+	// Clicked atom at the start of the interaction (if any)
+	SpeciesAtom* clickedAtom_;
+	// Element for created atoms in DrawInteraction
+	Element* drawElement_;
+	// Species-space coordinates at clicked position for DrawInteraction
+	Vec3<double> drawCoordinateStart_;
+	// Species-space coordinates at current position for DrawInteraction
+	Vec3<double> drawCoordinateCurrent_;
+
+	private:
+	// Return atom at specified coordinates
+	SpeciesAtom* atomAt(int x, int y);
+
+	protected:
+	// Start interaction at the specified screen coordinates
+	void startInteraction();
+	// End interaction at the specified screen coordinates
+	void endInteraction();
+	// Cancel current interaction
+	void cancelInteraction();
+
+	public:
+	// Set current Element for DrawInteraction
+	void setDrawElement(Element* element);
+	// Return current Element for DrawInteraction
+	Element* drawElement() const;
+
+
+	/*
+	 * Context Menu (BaseViewer virtuals)
+	 */
+	private:
+	// Special QMenu items
+	QMenu* currentDataMenu_;
+
+	private:
+	// Initialise context menu
+	void initialiseContextMenu();
+	// Update dynamic aspects of context menu before display
+	void updateContextMenu();
+
+
+	/*
+	 * Source Species
+	 */
+	private:
+	// Source Species to display
+	Species* species_;
+	// Renderable for source Species
+	RenderableSpecies* speciesRenderable_;
+
+	public:
+	// Set target Species
+	void setSpecies(Species* sp);
+	// Return target Species
+	const Species* species() const;
+
+
+	/*
+	 * Custom Data
+	 */
+	public:
+	// Draw Style
 	enum DrawStyle
 	{
-		PointStyle,		/**> Draw source Species/Configuration with points (atoms only) */
-		LineStyle,		/**> Draw source Species/Configuration with lines */
-		BallAndStickStyle,	/**> Draw source Species/Configuration with balls and sticks */
-		nDrawStyles		/**> Number of drawing styles */
+		PointsDrawStyle,		/* Draw source Species with points (atoms only) */
+		LinesDrawStyle,			/* Draw source Species with lines */
+		BallAndStickDrawStyle,		/* Draw source Species with balls and sticks */
+		nDrawStyles			/* Number of drawing styles */
 	};
 	
 	private:
-	// Source Species to display
-	Species *sourceSpecies_;
-	// Selection box (if any)
-	QRect selectionBox_;
-	// Basic primtives
-	Primitive spherePrimitive03_, spherePrimitive04_, cubePrimitive_, wireCubePrimitive_, cylinderPrimitive_;
 	// Style in which to draw source
 	SpeciesViewer::DrawStyle drawStyle_;
 
 	public:
-	// Set source (Species)
-	void setSource(Species *sp);
 	// Set draw style
 	void setDrawStyle(SpeciesViewer::DrawStyle style);
-	
-	public slots:
-	// Change draw style
-	void changeDrawStyle(int style);
+
+
+	/*
+	 * Signals
+	 */
+	signals:
+	// Atom selection changed
+	void atomSelectionChanged();
 };
 
 #endif

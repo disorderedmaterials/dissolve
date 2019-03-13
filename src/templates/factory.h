@@ -40,9 +40,8 @@ template <class T> class ObjectChunk
 		objectArray_ = new T[nObjects_];
 		objectUsed_ = new bool[nObjects_];
 		objectSize_ = sizeof(T);
-		for (int n=0; n<nObjects_; ++n) objectUsed_[n] = false;
-		nextAvailableObject_ = 0;
-		nUnusedObjects_ = nObjects_;
+
+		markAllObjectsUnused();
 
 		prev = NULL;
 		next = NULL;
@@ -144,6 +143,13 @@ template <class T> class ObjectChunk
 		if (nextAvailableObject_ == -1) nextAvailableObject_ = offset;
 		return true;
 	}
+	// Mark all objects as unused
+	void markAllObjectsUnused()
+	{
+		for (int n=0; n<nObjects_; ++n) objectUsed_[n] = false;
+		nextAvailableObject_ = 0;
+		nUnusedObjects_ = nObjects_;
+	}
 	// Return whether object is part of this chunk
 	bool ownsObject(T* object)
 	{
@@ -225,7 +231,6 @@ template <class T> class ObjectFactory
 		printf("Internal Error - Couldn't find an empty chunk to return an object from.\n");
 		return NULL;
 	}
-
 	// Return specified object to factory
 	void returnObject(T* object)
 	{
@@ -234,6 +239,11 @@ template <class T> class ObjectFactory
 
 		// Couldn't find it!
 		printf("Internal Error - Tried to return an object to an ObjectFactory which didn't produce it.\n");
+	}
+	// Mark all objects as unused
+	void markAllObjectsUnused()
+	{
+		for (ObjectChunk<T>* chunk = objectChunks_.first(); chunk != NULL; chunk = chunk->next) chunk->markAllObjectsUnused();
 	}
 };
 

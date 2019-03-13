@@ -20,208 +20,20 @@
 */
 
 #include "gui/viewer/dataviewer.hui"
-#include "base/messenger.h"
-#include "base/sysfunc.h"
-#include <QOpenGLFramebufferObjectFormat>
-#include <QPainter>
-#include <QProgressDialog>
 
 // Perform post-initialisation operations
 void DataViewer::postInitialiseGL()
 {
-	// Recalculate viewport
-	view_.recalculateViewport(contextWidth_, contextHeight_);
-	view_.recalculateView();
 }
 
 // Perform post-resize operations
 void DataViewer::postResizeGL()
 {
-	// Recalculate viewport
-	view_.recalculateViewport(contextWidth_, contextHeight_);
-	view_.recalculateView();
 }
 
-// Render content
-void DataViewer::render(int xOffset, int yOffset)
+// Render 2D overlay content
+void DataViewer::render2DOverlay()
 {
-	int axis;
-
-	// Set colour mode
-	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-	glEnable(GL_COLOR_MATERIAL);
-	glEnable(GL_TEXTURE_2D);
-
-	// Clear view
-	glClear(GL_COLOR_BUFFER_BIT);
-	glClear(GL_DEPTH_BUFFER_BIT);
-
-	// Set some colours
-	GLfloat colourBlack[4] = { 0.0, 0.0, 0.0, 1.0 };
-	GLfloat colourGray[4] = { 0.8, 0.8, 0.8, 1.0 };
-// 	GLfloat colourBlue[4] = { 0.88, 0.95, 1.0, 1.0 };
-// 	GLfloat colourWhite[4] = { 1.0, 1.0, 1.0, 1.0 };
-
-	// If we are auto-following, set the axis limits here
-	if (view_.autoFollowType() != View::NoAutoFollow) view_.autoFollowData();
-	
-	// Before we do anything else, make sure the view is up to date
-	view_.recalculateView();
-
-	// Set viewport
-	glViewport(view_.viewportMatrix()[0] + xOffset, view_.viewportMatrix()[1] + yOffset, view_.viewportMatrix()[2], view_.viewportMatrix()[3]);
-// 		printf("Viewport for pane '%s' is %i %i %i %i (offset = %i %i)\n" , qPrintable(view_.name()), view_.viewportMatrix()[0], view_.viewportMatrix()[1], view_.viewportMatrix()[2], view_.viewportMatrix()[3], xOffset, yOffset);
-
-	// Setup an orthographic matrix
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, view_.viewportMatrix()[2], 0, view_.viewportMatrix()[3], -10, 10);
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glDisable(GL_LIGHTING);
-
-	// Draw a box around the pane
-	if (!renderingOffScreen_)
-	{
-		glColor4fv(colourGray);
-		glBegin(GL_LINE_LOOP);
-		glVertex3i(0, 0, 1);
-		glVertex3i(0, view_.viewportMatrix()[3]-1, 1);
-		glVertex3i(view_.viewportMatrix()[2]-1, view_.viewportMatrix()[3]-1, 1);
-		glVertex3i(view_.viewportMatrix()[2]-1, 0, 1);
-		glEnd();
-	}
-
-	// Set projection matrix
-	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixd(view_.projectionMatrix().matrix());
-
-	// Set modelview matrix as target for the remainder of the routine
-	glMatrixMode(GL_MODELVIEW);
-	glClear(GL_DEPTH_BUFFER_BIT);
-
-	// Get the view matrix and rotation matrix inverse
-	Matrix4 viewMatrix = view_.viewMatrix();
-	Matrix4 viewRotationInverse = view_.viewRotationInverse();
-
-	// Send axis primitives to the display first
-	glLoadMatrixd(viewMatrix.matrix());
-	glColor4fv(colourBlack);
-	int skipAxis = -1;
-	if (view_.viewType() == View::FlatXYView) skipAxis = 2;
-	else if (view_.viewType() == View::FlatXZView) skipAxis = 1;
-	else if (view_.viewType() == View::FlatZYView) skipAxis = 0;
-
-	// -- Render axis text
-	glEnable(GL_MULTISAMPLE);
-	glEnable(GL_BLEND);
-	if (fontInstance_.fontOK())
-	{
-		fontInstance_.font()->FaceSize(1);
-		for (axis=0; axis<3; ++axis) if (view_.axes().visible(axis) && (axis != skipAxis))
-		{
-			view_.axes().labelPrimitive(axis).renderAll(fontInstance_, viewMatrix, viewRotationInverse, view_.textZScale());
-			if (updateQueryDepth()) setQueryObject(DataViewer::AxisTickLabelObject, DissolveSys::itoa(axis));
-			view_.axes().titlePrimitive(axis).renderAll(fontInstance_, viewMatrix, viewRotationInverse, view_.textZScale());
-			if (updateQueryDepth()) setQueryObject(DataViewer::AxisTitleLabelObject, DissolveSys::itoa(axis));
-		}
-	}
-
-	// -- Render axis (and grid) lines
-	glLoadMatrixd(viewMatrix.matrix());
-	glDisable(GL_LIGHTING);
-	glEnable(GL_LINE_SMOOTH);
-	for (axis=0; axis<3; ++axis) if (view_.axes().visible(axis) && (axis != skipAxis))
-	{
-		view_.axes().gridLineMinorStyle(axis).apply();
-		view_.axes().gridLineMinorPrimitive(axis).sendToGL();
-		if (updateQueryDepth()) setQueryObject(DataViewer::GridLineMinorObject, DissolveSys::itoa(axis));
-	}
-	for (axis=0; axis<3; ++axis) if (view_.axes().visible(axis) && (axis != skipAxis))
-	{
-		view_.axes().gridLineMajorStyle(axis).apply();
-		view_.axes().gridLineMajorPrimitive(axis).sendToGL();
-		if (updateQueryDepth()) setQueryObject(DataViewer::GridLineMajorObject, DissolveSys::itoa(axis));
-	}
-	LineStyle::revert();
-	for (axis=0; axis<3; ++axis) if (view_.axes().visible(axis) && (axis != skipAxis))
-	{
-		view_.axes().axisPrimitive(axis).sendToGL();
-		if (updateQueryDepth()) setQueryObject(DataViewer::AxisLineObject, DissolveSys::itoa(axis));
-	}
-	glEnable(GL_LIGHTING);
-	glDisable(GL_LINE_SMOOTH);
-
-	// Render bounding box
-	view_.boundingBoxPrimitive().sendToGL();
-
-	// Render selection markers (if needed)
-	glLoadMatrixd(viewMatrix.matrix());
-	if (interactionAxis() != -1)
-	{
-		// Note - we do not need to check for inverted or logarithmic axes here, since the transformation matrix A takes care of that
-		Vec3<double> v;
-
-		// Draw starting interaction point (if the interaction has been started)
-		if (interactionStarted())
-		{
-			v[interactionAxis()] = clickedInteractionCoordinate() * view_.axes().stretch(interactionAxis());
-			glTranslated(v.x, v.y, v.z);
-			glColor4d(0.0, 0.0, 1.0, 0.5);
-			view_.interactionPrimitive().sendToGL();
-			view_.interactionBoxPrimitive().sendToGL();
-		}
-
-		// Draw current selection position
-		v[interactionAxis()] = currentInteractionCoordinate() * view_.axes().stretch(interactionAxis()) - v[interactionAxis()];
-		glTranslated(v.x, v.y, v.z);
-		glColor4d(1.0, 0.0, 0.0, 0.5);
-		view_.interactionPrimitive().sendToGL();
-		view_.interactionBoxPrimitive().sendToGL();
-	}
-
-	// Setup clip planes to enforce Y-axis limits
-	enableClipping();
-
-	// Draw all renderables
-	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next)
-	{
-		if (!rend->isVisible()) continue;
-
-		// If this is the collection to highlight, set color to transparent grey and disable material colouring....
-		if (rend == highlightedRenderable_)
-		{
-			glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
-			glDisable(GL_COLOR_MATERIAL);
-		}
-
-		// Set shininess for collection
-		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, rend->displaySurfaceShininess());
-
-		rend->updateAndSendPrimitives(view_, groupManager_, renderingOffScreen_, renderingOffScreen_, context());
-
-		// Update query
-		if (updateQueryDepth()) setQueryObject(DataViewer::CollectionObject, rend->objectTag());
-
-		glEnable(GL_COLOR_MATERIAL);
-	}
-
-	// Disable current clip planes
-	disableClipping();
-
-	/*
-	 * Set orthographic, one-to-one pixel view
-	 */
-
-	// Setup an orthographic matrix
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, view_.viewportMatrix()[2], 0, view_.viewportMatrix()[3], -1, 1);
-
-	glMatrixMode(GL_MODELVIEW);
-	glDisable(GL_LIGHTING);
-
 	const double overlaySpacing = 2.0;
 	const double overlayTextSize = 12.0;
 	const double legendLineLength = 10.0;
@@ -248,7 +60,6 @@ void DataViewer::render(int xOffset, int yOffset)
 	RefList<Renderable,double> legendEntries;
 
 	double maxTextWidth = -1.0;
-	// Render pane data - loop over collection targets
 	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next)
 	{
 		if (!rend->isVisible()) continue;
@@ -268,7 +79,7 @@ void DataViewer::render(int xOffset, int yOffset)
 	RefListIterator<Renderable,double> legendEntryIterator(legendEntries);
 	while (Renderable* rend = legendEntryIterator.iterate())
 	{
-		// Grab copy of the relevant colour definition for this Collection
+		// Grab copy of the relevant colour definition for this Renderable
 		ColourDefinition colourDefinition = groupManager_.colourDefinition(rend);
 
 		// Draw line indicator
@@ -277,7 +88,7 @@ void DataViewer::render(int xOffset, int yOffset)
 		// -- What are we drawing for the line indicator?
 		if (colourDefinition.style() == ColourDefinition::SingleColourStyle)
 		{
-			rend->lineStyle().apply();
+			rend->lineStyle().sendToGL(lineWidthScaling_);
 			GLfloat lineWidth;
 			glGetFloatv(GL_LINE_WIDTH, &lineWidth);
 			glLineWidth(lineWidth*2.0);
@@ -287,7 +98,6 @@ void DataViewer::render(int xOffset, int yOffset)
 			glVertex2i(0.0, 0.0);
 			glVertex2i(-legendLineLength, 0.0);
 			glEnd();
-			rend->lineStyle().revert();
 		}
 		glPopMatrix();
 
@@ -302,34 +112,50 @@ void DataViewer::render(int xOffset, int yOffset)
 		glTranslated(0.0, -(overlayTextSize + overlaySpacing), 0.0);
 	}
 
-	// Draw 2D interaction primitives
-	glViewport(xOffset, yOffset, contextWidth_, contextHeight_);
-
-	// Setup an orthographic matrix
-	glMatrixMode(GL_PROJECTION);
+	/*
+	 * Draw interaction mode embellishments
+	 */
 	glLoadIdentity();
-	glOrtho(0, contextWidth_, 0, contextHeight_, -10, 10);
 
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glDisable(GL_LIGHTING);
+	static LineStyle selectionBoxStyle(1.0, LineStipple::HalfDashStipple);
 
-	if (interactionMode() == ViewInteraction)
+	if (interacting()) switch (interactionMode_)
 	{
-		// Draw selection box, if the interaction has started
-		if (interactionStarted())
-		{
-			glColor3d(0.0, 0.0, 0.0);
-			glLineWidth(1.0);
-			glEnable(GL_LINE_STIPPLE);
-			glLineStipple(1, 0xf0f0);
+		case (DataViewer::ZoomToAreaInteraction):
+			// Draw dashed box indicating selection area, form clicked to current mouse coordinates
+			selectionBoxStyle.sendToGL();
 			glBegin(GL_LINE_LOOP);
-			glVertex2d(rMouseDown_.x, contextHeight_-rMouseDown_.y);
-			glVertex2d(rMouseLast_.x, contextHeight_-rMouseDown_.y);
-			glVertex2d(rMouseLast_.x, contextHeight_-rMouseLast_.y);
-			glVertex2d(rMouseDown_.x, contextHeight_-rMouseLast_.y);
+			glVertex2d(rMouseDown_.x, rMouseDown_.y);
+			glVertex2d(rMouseLast_.x, rMouseDown_.y);
+			glVertex2d(rMouseLast_.x, rMouseLast_.y);
+			glVertex2d(rMouseDown_.x, rMouseLast_.y);
 			glEnd();
-			glDisable(GL_LINE_STIPPLE);
-		}
+			break;
+		default:
+			break;
 	}
 }
+
+// // Grab axes, and knock out values in the supplied vectors which correspond to the activated axis
+// Vec3<double> axisMinA, axisMinB, axisMaxA, axisMaxB;
+// int axis = interactionMode_ - DataViewer::ZoomXRangeInteraction;
+// axisMinA[(axis+1)%3] = view_.axes().coordMin((axis+1)%3)[(axis+1)%3];
+// axisMaxA[(axis+1)%3] = view_.axes().coordMax((axis+1)%3)[(axis+1)%3];
+// axisMinB[(axis+2)%3] = view_.axes().coordMin((axis+2)%3)[(axis+2)%3];
+// axisMaxB[(axis+2)%3] = view_.axes().coordMax((axis+2)%3)[(axis+2)%3];
+// axisMinA[axis] = 0.0;
+// axisMaxA[axis] = 0.0;
+// axisMinB[axis] = 0.0;
+// axisMaxB[axis] = 0.0;
+//
+// // Create 'bounding box' for slice primitive
+// Vec3<double> normal(0.0, 0.0, 1.0);
+//
+// interactionBoxPrimitive_.defineVertex(axisMinA + axisMinB, normal);
+// interactionBoxPrimitive_.defineVertex(axisMinA + axisMaxB, normal);
+// interactionBoxPrimitive_.defineVertex(axisMaxA + axisMaxB, normal);
+// interactionBoxPrimitive_.defineVertex(axisMaxA + axisMinB, normal);
+// interactionBoxPrimitive_.defineIndices(0,1);
+// interactionBoxPrimitive_.defineIndices(1,2);
+// interactionBoxPrimitive_.defineIndices(2,3);
+// interactionBoxPrimitive_.defineIndices(3,0);

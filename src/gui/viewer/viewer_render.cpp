@@ -54,10 +54,15 @@ void BaseViewer::initializeGL()
 
 	valid_ = true;
 
+	// Recalculate viewport
+	view_.recalculateViewport(contextWidth_, contextHeight_);
+	view_.recalculateView();
+
 	// Perform any custom post-initialisation operations
-	postResizeGL();
+	postInitialiseGL();
 }
 
+// Widget repaint
 void BaseViewer::paintGL()
 {
 	// Do nothing if the canvas is not valid, or we are still drawing from last time
@@ -70,7 +75,7 @@ void BaseViewer::paintGL()
 	setupGL();
 
 	// Render full scene
-	render();
+	renderGL();
 
 	// Set the rendering flag to false
 	drawing_ = false;
@@ -83,8 +88,134 @@ void BaseViewer::resizeGL(int newwidth, int newheight)
 	contextWidth_ = (GLsizei) newwidth;
 	contextHeight_ = (GLsizei) newheight;
 
+	// Recalculate viewport
+	view_.recalculateViewport(contextWidth_, contextHeight_);
+	view_.recalculateView();
+
 	// Perform any custom post-resize operations
 	postResizeGL();
+}
+
+// Main rendering function
+void BaseViewer::renderGL(int xOffset, int yOffset)
+{
+	GLfloat colourBlack[4] = { 0.0, 0.0, 0.0, 1.0 };
+
+	// Set colour mode
+	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+	glEnable(GL_COLOR_MATERIAL);
+	glEnable(GL_TEXTURE_2D);
+
+	// Clear the colour and depth buffers
+	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_DEPTH_BUFFER_BIT);
+
+	// Update the View
+	if (view_.autoFollowType() != View::NoAutoFollow) view_.autoFollowData();
+	view_.recalculateView();
+
+	// Set-up the GL viewport
+	glViewport(view_.viewportMatrix()[0] + xOffset, view_.viewportMatrix()[1] + yOffset, view_.viewportMatrix()[2], view_.viewportMatrix()[3]);
+// 		printf("Viewport for pane '%s' is %i %i %i %i (offset = %i %i)\n" , qPrintable(view_.name()), view_.viewportMatrix()[0], view_.viewportMatrix()[1], view_.viewportMatrix()[2], view_.viewportMatrix()[3], xOffset, yOffset);
+
+	// Apply our View's projection matrix
+	glMatrixMode(GL_PROJECTION);
+	glLoadMatrixd(view_.projectionMatrix().matrix());
+
+	// Grab the View's standard and inverse matrices
+	Matrix4 viewMatrix = view_.viewMatrix();
+	Matrix4 viewRotationInverse = view_.viewRotationInverse();
+
+	// Apply the view matrix, and render the Axes associated to the View
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixd(viewMatrix.matrix());
+	glColor4fv(colourBlack);
+
+	if (axesVisible_)
+	{
+		int skipAxis = -1;
+		if (view_.viewType() == View::FlatXYView) skipAxis = 2;
+		else if (view_.viewType() == View::FlatXZView) skipAxis = 1;
+		else if (view_.viewType() == View::FlatZYView) skipAxis = 0;
+
+		// -- Render axis text
+		glEnable(GL_MULTISAMPLE);
+		glEnable(GL_BLEND);
+		glEnable(GL_LIGHTING);
+		LineStyle().sendToGL(lineWidthScaling_);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		if (fontInstance_.fontOK())
+		{
+			fontInstance_.font()->FaceSize(1);
+			for (int axis=0; axis<3; ++axis) if (view_.axes().visible(axis) && (axis != skipAxis))
+			{
+				view_.axes().labelPrimitive(axis).renderAll(fontInstance_, viewMatrix, viewRotationInverse, view_.textZScale());
+	// 			if (updateQueryDepth()) setQueryObject(DataViewer::AxisTickLabelObject, DissolveSys::itoa(axis));
+				view_.axes().titlePrimitive(axis).renderAll(fontInstance_, viewMatrix, viewRotationInverse, view_.textZScale());
+	// 			if (updateQueryDepth()) setQueryObject(DataViewer::AxisTitleLabelObject, DissolveSys::itoa(axis));
+			}
+		}
+
+		// -- Render axis (and grid) lines
+		glLoadMatrixd(viewMatrix.matrix());
+		glDisable(GL_LIGHTING);
+		glEnable(GL_LINE_SMOOTH);
+		for (int axis=0; axis<3; ++axis) if (view_.axes().visible(axis) && (axis != skipAxis))
+		{
+			view_.axes().gridLineMinorStyle(axis).sendToGL(lineWidthScaling_);
+			view_.axes().gridLineMinorPrimitive(axis).sendToGL();
+	// 		if (updateQueryDepth()) setQueryObject(DataViewer::GridLineMinorObject, DissolveSys::itoa(axis));
+		}
+		for (int axis=0; axis<3; ++axis) if (view_.axes().visible(axis) && (axis != skipAxis))
+		{
+			view_.axes().gridLineMajorStyle(axis).sendToGL(lineWidthScaling_);
+			view_.axes().gridLineMajorPrimitive(axis).sendToGL();
+	// 		if (updateQueryDepth()) setQueryObject(DataViewer::GridLineMajorObject, DissolveSys::itoa(axis));
+		}
+
+		// -- Reset line style, ensure polygons are now filled, and render the axis lines
+		LineStyle().sendToGL(lineWidthScaling_);
+		for (int axis=0; axis<3; ++axis) if (view_.axes().visible(axis) && (axis != skipAxis))
+		{
+			view_.axes().axisPrimitive(axis).sendToGL();
+	// 		if (updateQueryDepth()) setQueryObject(DataViewer::AxisLineObject, DissolveSys::itoa(axis));
+		}
+		glEnable(GL_LIGHTING);
+		glDisable(GL_LINE_SMOOTH);
+	}
+
+	// Enable clip planes to enforce limits in Axes volume
+	if (clipToAxesVolume_) enableClipping();
+
+	// Draw all Renderables
+	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next)
+	{
+		if (!rend->isVisible()) continue;
+
+		// Set shininess for Renderable
+		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, rend->displaySurfaceShininess());
+
+		rend->updateAndSendPrimitives(view_, groupManager_, renderingOffScreen_, renderingOffScreen_, context(), lineWidthScaling_);
+
+		// Update query
+// 		if (updateQueryDepth()) setQueryObject(DataViewer::RenderableObject, rend->objectTag());
+
+		glEnable(GL_COLOR_MATERIAL);
+	}
+
+	// Disable clip planes
+	if (clipToAxesVolume_) disableClipping();
+
+	// Set up an orthographic matrix for any 2D overlays
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, view_.viewportMatrix()[2], 0, view_.viewportMatrix()[3], -1, 1);
+
+	glMatrixMode(GL_MODELVIEW);
+	glDisable(GL_LIGHTING);
+
+	// Call the derived-class overlay function
+	render2DOverlay();
 }
 
 // Perform post-initialisation operations
@@ -221,7 +352,6 @@ void BaseViewer::setObjectScaling(double scaling)
 
 	// Pass this value on to those that depend on it
 	// TODO these should be local objects so that we don't interfere with other view types
-// 	LineStyle::setLineWidthScale(scaling);
 // 	TextPrimitive::setTextSizeScale(scaling);
 }
 
@@ -343,7 +473,7 @@ QPixmap BaseViewer::generateImage(int imageWidth, int imageHeight)
 			// Generate this tile
 			if (!frameBufferObject.bind()) printf("Failed to bind framebuffer object.\n");
 			setupGL();
-			render(-x*tileWidth, -y*tileHeight);
+			renderGL(-x*tileWidth, -y*tileHeight);
 			QImage fboImage(frameBufferObject.toImage());
 			QImage tile(fboImage.constBits(), fboImage.width(), fboImage.height(), QImage::Format_ARGB32);
 

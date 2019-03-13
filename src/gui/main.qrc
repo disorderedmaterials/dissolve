@@ -6,6 +6,17 @@
     <file>icons/file_save.svg</file>
     <file>icons/file_connect.svg</file>
   </qresource>
+  <qresource prefix="viewer_toolbar">
+    <file>icons/viewer_toolbar_interaction.svg</file>
+    <file>icons/viewer_toolbar_view.svg</file>
+  </qresource>
+  <qresource prefix="viewer">
+    <file>icons/viewer_edit.svg</file>
+    <file>icons/viewer_interact.svg</file>
+    <file>icons/viewer_reset.svg</file>
+    <file>icons/viewer_axes.svg</file>
+    <file>icons/viewer_delete.svg</file>
+  </qresource>
   <qresource prefix="fonts">
     <file>fonts/FreeSans.ttf</file>
     <file>fonts/FreeSerif.ttf</file>

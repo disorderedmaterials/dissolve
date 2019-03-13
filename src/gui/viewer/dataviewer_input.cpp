@@ -23,68 +23,53 @@
 #include <QMouseEvent>
 #include <QMenu>
 
-// Mouse pressed
-void DataViewer::mousePressed(Qt::KeyboardModifiers modifiers)
-{
-	// Do something with the button press event (e.g. context menu function, or interaction start)
-	if (buttonState_&Qt::LeftButton) startInteraction(rMouseDown_.x, contextHeight_-rMouseDown_.y, modifiers);
-	else if (buttonState_&Qt::RightButton)
-	{
-
-	}
-}
-
-// Mouse released
-void DataViewer::mouseReleased()
-{
-	// Notify that the mouse button has been released (if relevant)
-	if (buttonState_&Qt::LeftButton) endInteraction(rMouseLast_.x, contextHeight_-rMouseLast_.y);
-
-	postRedisplay();
-}
-
 // Mouse Moved
-void DataViewer::mouseMoved(int dx, int dy, Qt::KeyboardModifiers modifiers)
+void DataViewer::mouseMoved(int dx, int dy)
 {
+	// If we are not actually interacting with the view, return now
+	if (!interacting())
+	{
+		emit(currentCoordinateChanged());
+
+		return;
+	}
+
 	bool refresh = false;
 
-	if (buttonState_&Qt::LeftButton)
+	// What we do here depends on the current mode
+	switch (interactionMode())
 	{
-		// What we do here depends on the current mode, and whether interaction has started
-		switch (interactionMode())
-		{
-			case (DataViewer::ViewInteraction):
-				if (interactionStarted()) refresh = true;
-				break;
-			default:
-				break;
-		}
-	}
-	else if (buttonState_&Qt::RightButton)
-	{
-		// View manipulation
-		if (modifiers&Qt::ShiftModifier)
-		{
-		}
-		else if (modifiers&Qt::ControlModifier)
-		{
-		}
-		else 
-		{
-			view_.rotateView(dy/2.0, dx/2.0);
+		case (DataViewer::ZoomToAreaInteraction):
+			// No action to take - the selection box will be drawn from the clicked and current positions (already stored)
 			refresh = true;
-		}
+			break;
+		case (DataViewer::RotateViewInteraction):
+			// Rotate view
+			if (mouseDownModifiers_.testFlag(Qt::ShiftModifier))
+			{
+			}
+			else if (mouseDownModifiers_.testFlag(Qt::ControlModifier))
+			{
+			}
+			else 
+			{
+				view_.rotateView(-dy/2.0, dx/2.0);
+				refresh = true;
+			}
+			break;
+		case (DataViewer::TranslateViewInteraction):
+			// If this is a flat view, shift the axis limits rather than translating the view
+			if (view_.isFlatView()) view_.shiftFlatAxisLimits(dx, dy);
+			else view_.translateView(dx/15.0, dy/15.0, 0.0);
+			refresh = true;
+			break;
+		case (DataViewer::ZoomXRangeInteraction):
+			// No action to take - the range will be drawn from the clicked and current positionss (already stored)
+			refresh = true;
+			break;
+		default:
+			break;
 	}
-	else if (buttonState_&Qt::MidButton)
-	{
-		// If this is a flat view, shift the axis limits rather than the view
-		if (view_.isFlatView()) view_.shiftFlatAxisLimits(dx, -dy);
-		else view_.translateView(dx/15.0, -dy/15.0, 0.0);
-		refresh = true;
-	}
-	
-	// Update interaction position
-	if (updateInteractionPosition(rMouseLast_.x, contextHeight_-rMouseLast_.y)) refresh = true;
 
 	// Notify any interested widgets that our current coordinate has changed
 	emit(currentCoordinateChanged());
@@ -108,12 +93,38 @@ void DataViewer::mouseWheeled(int delta)
 // Mouse double clicked
 void DataViewer::mouseDoubleClicked()
 {
-	printf("Mouse double-click event has occurred!\n");
-	doubleClickInteraction(rMouseLast_.x, height()-rMouseLast_.y);
+	setQueryCoordinates(rMouseLast_.x, contextHeight() - rMouseLast_.y);
+	repaint();
+
+	switch (objectAtQueryCoordinates())
+	{
+		case (NoObject):
+			break;
+		case (AxisLineObject):
+//			i = clickedObjectInfo_.asInteger();
+// 			axesWindow_.updateAndShow();
+// 			axesWindow_.ui.AxesTabs->setCurrentIndex(i);
+// 			axesWindow_.ui.
+			break;
+		case (AxisTickLabelObject):
+			break;
+		case (AxisTitleLabelObject):
+			break;
+		case (RenderableObject):
+			break;
+		case (GridLineMajorObject):
+			break;
+		case (GridLineMinorObject):
+			break;
+	}
+
+	// Reset clicked object info
+// 	clickedObject_ = NoObject;
+// 	clickedObjectInfo_.clear();
 }
 
 // Key pressed
-bool DataViewer::keyPressed(int key, Qt::KeyboardModifiers modifiers)
+bool DataViewer::keyPressed(int key)
 {
 	bool refresh = true;
 	bool accept = true;
@@ -121,22 +132,22 @@ bool DataViewer::keyPressed(int key, Qt::KeyboardModifiers modifiers)
 	{
 		case (Qt::Key_Left):
 			if (view_.isFlatView()) view_.shiftFlatAxisLimitsFractional(-0.1, 0.0);
-			else view_.rotateView(0.0, modifiers.testFlag(Qt::ShiftModifier) ? -1.0 : -10.0);
+			else view_.rotateView(0.0, mouseDownModifiers_.testFlag(Qt::ShiftModifier) ? -1.0 : -10.0);
 			break;
 		case (Qt::Key_Right):
 			if (view_.isFlatView()) view_.shiftFlatAxisLimitsFractional(0.1, 0.0);
-			else view_.rotateView(0.0, modifiers.testFlag(Qt::ShiftModifier) ? 1.0 : 10.0);
+			else view_.rotateView(0.0, mouseDownModifiers_.testFlag(Qt::ShiftModifier) ? 1.0 : 10.0);
 			break;
 		case (Qt::Key_Up):
 			if (view_.isFlatView()) view_.shiftFlatAxisLimitsFractional(0.0, -0.1);
-			else view_.rotateView(modifiers.testFlag(Qt::ShiftModifier) ? -1.0 : -10.0, 0.0);
+			else view_.rotateView(mouseDownModifiers_.testFlag(Qt::ShiftModifier) ? -1.0 : -10.0, 0.0);
 			break;
 		case (Qt::Key_Down):
 			if (view_.isFlatView()) view_.shiftFlatAxisLimitsFractional(0.0, 0.1);
-			else view_.rotateView(modifiers.testFlag(Qt::ShiftModifier) ? 1.0 : 10.0, 0.0);
+			else view_.rotateView(mouseDownModifiers_.testFlag(Qt::ShiftModifier) ? 1.0 : 10.0, 0.0);
 			break;
 		case (Qt::Key_A):
-			if (modifiers.testFlag(Qt::ShiftModifier))
+			if (mouseDownModifiers_.testFlag(Qt::ShiftModifier))
 			{
 				// Show only top 20% of vertical axis
 				if (view_.viewType() == View::FlatXYView) view_.showAllData(1.0, 0.2);
@@ -149,7 +160,7 @@ bool DataViewer::keyPressed(int key, Qt::KeyboardModifiers modifiers)
 			view_.cycleAutoFollowType();
 			break;
 		case (Qt::Key_L):
-			if (modifiers.testFlag(Qt::ShiftModifier)) view_.axes().toggleLogarithmic(view_.viewType() == View::FlatXZView ? 2 : 1);
+			if (mouseDownModifiers_.testFlag(Qt::ShiftModifier)) view_.axes().toggleLogarithmic(view_.viewType() == View::FlatXZView ? 2 : 1);
 			else view_.axes().toggleLogarithmic(view_.viewType() == View::FlatZYView ? 2 : 0);
 			break;
 		case (Qt::Key_S):
@@ -168,7 +179,7 @@ bool DataViewer::keyPressed(int key, Qt::KeyboardModifiers modifiers)
 }
 
 // Key released
-bool DataViewer::keyReleased(int key, Qt::KeyboardModifiers modifiers)
+bool DataViewer::keyReleased(int key)
 {
 	bool refresh = false, accept = true;
 	

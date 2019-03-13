@@ -37,7 +37,7 @@ GraphWidget::~GraphWidget()
 {
 }
 
-// Return contained DataViewWidget
+// Return contained DataViewer
 DataViewer* GraphWidget::dataViewer()
 {
 	return ui_.DataView;
@@ -51,7 +51,7 @@ DataViewer* GraphWidget::dataViewer()
 void GraphWidget::updateCoordinateInfo()
 {
 	View& view = ui_.DataView->view();
-	Vec3<double> rLocal = ui_.DataView->rCurrentLocal();
+	Vec3<double> rLocal = ui_.DataView->current2DAxesCoordinates();
 	QString text;
 	switch (view.viewType())
 	{
@@ -71,4 +71,3 @@ void GraphWidget::updateCoordinateInfo()
 
 	ui_.CoordinateLabel->setText(text);
 }
-

@@ -30,6 +30,8 @@ SpeciesAtom* Species::addAtom(Element* element, Vec3<double> r)
 	i->set(element, r.x, r.y, r.z);
 	i->setIndex(atoms_.nItems()-1);
 
+	++version_;
+
 	return i;
 }
 
@@ -57,11 +59,29 @@ const List<SpeciesAtom>& Species::atoms() const
 	return atoms_;
 }
 
+// Transmute specified SpeciesAtom
+void Species::transmuteAtom(SpeciesAtom* i, Element* el)
+{
+	if (!i) return;
+
+	// Nothing to do if current element matches that supplied
+	if (i->element() == el) return;
+
+	// Remove any AtomType assignment from the specified SpeciesAngle * Species::addAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k)
+	i->setAtomType(NULL);
+	i->setElement(el);
+
+	++version_;
+}
+
 // Clear current Atom selection
 void Species::clearAtomSelection()
 {
 	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next) i->setSelected(false);
+
 	selectedAtoms_.clear();
+
+	++atomSelectionVersion_;
 }
 
 // Add Atom to selection
@@ -70,8 +90,31 @@ void Species::selectAtom(SpeciesAtom* i)
 	if (!i->isSelected())
 	{
 		i->setSelected(true);
+
 		selectedAtoms_.add(i);
+
+		++atomSelectionVersion_;
 	}
+}
+
+// Remove atom from selection
+void Species::deselectAtom(SpeciesAtom* i)
+{
+	if (i->isSelected())
+	{
+		i->setSelected(false);
+
+		selectedAtoms_.remove(i);
+
+		++atomSelectionVersion_;
+	}
+}
+
+// Toggle selection state of specified atom
+void Species::toggleAtomSelection(SpeciesAtom* i)
+{
+	if (i->isSelected()) deselectAtom(i);
+	else selectAtom(i);
 }
 
 // Select Atoms along any path from the specified one, ignoring the bond(s) provided
@@ -119,6 +162,12 @@ int Species::nSelectedAtoms() const
 bool Species::isAtomSelected(SpeciesAtom* i) const
 {
 	return selectedAtoms_.contains(i);
+}
+
+// Return version of the atom selection
+const int Species::atomSelectionVersion() const
+{
+	return atomSelectionVersion_;
 }
 
 // Return total atomic mass of Species

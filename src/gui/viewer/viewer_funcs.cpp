@@ -31,16 +31,27 @@ BaseViewer::BaseViewer(QWidget* parent) : QOpenGLWidget(parent), view_(renderabl
 	valid_ = false;
 	drawing_ = false;
 	renderingOffScreen_ = false;
+	lineWidthScaling_ = 1.0;
+
+	// Options
+	axesVisible_ = true;
+	clipToAxesVolume_ = true;
+
+	// Interaction
+	interacting_ = false;
+	interactionMode_ = -1;
+
+	// Query
+	objectQueryX_ = -1;
+	objectQueryY_ = -1;
+	depthAtQueryCoordinates_ = 1.0;
+	objectAtQueryCoordinates_ = BaseViewer::NoObject;
 
 	// Prevent QPainter from autofilling widget background
 	setAutoFillBackground(false);
 
         // Set up the font instance
 	fontInstance_.setUp();
-
-	// Set up context menu
-	setContextMenuPolicy(Qt::CustomContextMenu);
-	connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
 }
 
 // Destructor
@@ -49,13 +60,29 @@ BaseViewer::~BaseViewer()
 }
 
 /*
- * Context Menu
+ * Options
  */
 
-// Show context menu
-void BaseViewer::showContextMenu(const QPoint& pos)
+// Set whether Axes are visible
+void BaseViewer::setAxesVisible(bool visible)
 {
-	updateContextMenu();
+	axesVisible_ = visible;
+}
 
-	contextMenu_.exec(mapToGlobal(pos));
+// Return whether Axes are visible
+bool BaseViewer::axesVisible() const
+{
+	return axesVisible_;
+}
+
+// Set whether to apply clip planes about Axes volume for Renderables
+void BaseViewer::setClipToAxesVolume(bool clip)
+{
+	clipToAxesVolume_ = clip;
+}
+
+// Return whether clip planes are applied about Axes volume for Renderables
+bool BaseViewer::clipToAxesVolume() const
+{
+	return clipToAxesVolume_;
 }

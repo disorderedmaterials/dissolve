@@ -58,6 +58,13 @@ SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabW
 	// -- Isotope Table
 	ui.IsotopeTable->setItemDelegateForColumn(1, new IsotopeComboDelegate(this));
 
+	// Set target for SpeciesViewer
+	ui.ViewerWidget->speciesViewer()->setSpecies(species_);
+
+	// Connect signals / slots
+	connect(ui.ViewerWidget->speciesViewer(), SIGNAL(dataChanged()), this, SLOT(updateControls()));
+	connect(ui.ViewerWidget->speciesViewer(), SIGNAL(dataModified(bool)), dissolveWindow_, SLOT(setModified(bool)));
+
 	refreshing_ = false;
 }
 

@@ -23,34 +23,55 @@
 #include <QMouseEvent>
 #include <QMenu>
 
+/*
+ * Private Functions
+ */
+
 // Mouse press event
 void BaseViewer::mousePressEvent(QMouseEvent* event)
 {
-	// Store the current button state and mouse position
+	// Store the current button state and mouse position (with inverted y coordinate)
 	buttonState_ = event->buttons();
-	rMouseDown_.set(event->x(), event->y(), 0.0);
+	rMouseDown_.set(event->x(), contextHeight_ - event->y(), 0.0);
+	rMouseLast_ = rMouseDown_;
+	mouseDownModifiers_ = event->modifiers();
+
+	// If a 2D view, store the clicked local coordinate
+	if (view_.isFlatView()) clicked2DAxesCoordinates_ = screenTo2DAxes(event->x(), contextHeight_ - event->y());
+
+	interacting_ = true;
 
 	// Handle the event
-	mousePressed(event->modifiers());
+	startInteraction();
 }
 
 // Mouse release event
 void BaseViewer::mouseReleaseEvent(QMouseEvent* event)
 {
 	// Handle the event
-	mouseReleased();
+	endInteraction();
 
-	// Clear button state
+	postRedisplay();
+
+	// Clear button state and interaction flag
 	buttonState_ = 0;
+	interacting_ = false;
 }
 
 // Mouse move event
 void BaseViewer::mouseMoveEvent(QMouseEvent* event)
 {
-	// Handle the event
-	mouseMoved(event->x() - rMouseLast_.x, event->y() - rMouseLast_.y, event->modifiers());
+	const int dx = event->x() - rMouseLast_.x;
+	const int dy = (contextHeight_ - event->y()) - rMouseLast_.y;
 
-	rMouseLast_.set(event->x(), event->y(), 0.0);
+	// Store the new mouse coordinate with inverted y coordinate
+	rMouseLast_.set(event->x(), contextHeight_ - event->y(), 0.0);
+
+	// If a 2D view, store the current local Axes coordinate
+	if (view_.isFlatView()) current2DAxesCoordinates_ = screenTo2DAxes(rMouseLast_.x, rMouseLast_.y);
+
+	// Handle the event, passing the delta position
+	mouseMoved(dx, dy);
 
 	setFocus();
 }
@@ -71,23 +92,15 @@ void BaseViewer::mouseDoubleClickEvent(QMouseEvent* event)
 	mouseDoubleClicked();
 }
 
-// Return mouse coordinates at last mousedown event
-Vec3<int> BaseViewer::rMouseDown() const
-{
-	return rMouseDown_;
-}
-
-// Return mouse coordinates at last mousemove event
-Vec3<int> BaseViewer::rMouseLast() const
-{
-	return rMouseLast_;
-}
+/*
+ * Private Slots
+ */
 
 // Key press event
 void BaseViewer::keyPressEvent(QKeyEvent *event)
 {
 	// Handle the event
-	if (keyPressed(event->key(), event->modifiers())) event->accept();
+	if (keyPressed(event->key())) event->accept();
 	else event->ignore();
 }
 
@@ -95,6 +108,37 @@ void BaseViewer::keyPressEvent(QKeyEvent *event)
 void BaseViewer::keyReleaseEvent(QKeyEvent *event)
 {
 	// Handle the event
-	if (keyReleased(event->key(), event->modifiers())) event->accept();
+	if (keyReleased(event->key())) event->accept();
 	else event->ignore();
+}
+
+/*
+ * Protected Virtuals
+ */
+
+// Mouse moved
+void BaseViewer::mouseMoved(int dx, int dy)
+{
+}
+
+// Mouse 'wheeled'
+void BaseViewer::mouseWheeled(int delta)
+{
+}
+
+// Mouse double clicked
+void BaseViewer::mouseDoubleClicked()
+{
+}
+
+// Key pressed
+bool BaseViewer::keyPressed(int key)
+{
+	return false;
+}
+
+// Key released
+bool BaseViewer::keyReleased(int key)
+{
+	return false;
 }

@@ -1,7 +1,7 @@
 /*
-	*** Viewer Input Functions
+	*** Species Viewer - Input
 	*** src/gui/viewer/speciesviewer_input.cpp
-	Copyright T. Youngs 2012-2013
+	Copyright T. Youngs 2019
 
 	This file is part of Dissolve.
 
@@ -20,206 +20,101 @@
 */
 
 #include "gui/viewer/speciesviewer.hui"
-// #include "gui/mainwindow.h"
-// #include "classes/atomtype.h"
+#include "gui/viewer/render/renderablespecies.h"
 #include "classes/species.h"
 #include <QtGui/QMouseEvent>
 
-/*
- * Mouse Input
- */
-
-// Qt Signal (mouse press event)
-void SpeciesViewer::mousePressEvent(QMouseEvent* event)
+// Mouse moved
+void SpeciesViewer::mouseMoved(int dx, int dy)
 {
-	// Handle button presses (button down) from the mouse
-	buttonStateOnPress_ = event->buttons();
-// 	Qt::KeyboardModifiers km = event->modifiers();
+	// If we are not actually interacting with the view, return now
+	if (!interacting()) return;
 
-	// Store event information
-	rMouseDown_.set(event->x(), event->y(), 0.0);
-	
-	// Do something with the button press event (e.g. context menu function)?
-	if ((buttonStateOnPress_.testFlag(Qt::RightButton)) && sourceSpecies_)
+	bool refresh = false;
+	SpeciesAtom* currentAtom = NULL;
+
+	// What we do here depends on the current mode
+	switch (interactionMode_)
 	{
-		// Firstly, determine whether we are on top of an Atom...
-		Vec4<double> v;
-		SpeciesAtom* i;
-		for (i = sourceSpecies_->atoms().first(); i != NULL; i = i->next)
-		{
-			v = modelToScreen(i->r(), 0.3);
-			v.x -= event->x();
-			v.y -= (height()-event->y());
-			if (sqrt(v.x*v.x + v.y*v.y) < v.w) break;
-		}
-
-		// If we *are* over an Atom, then there is more to do...
-		if (i != NULL)
-		{
-			// If this Atom is *not* currently selected, select it after deselecting all others
-			if (!sourceSpecies_->isAtomSelected(i))
+		case (SpeciesViewer::SelectAreaInteraction):
+			// No action to take - the selection box will be drawn from the clicked and current positions (already stored)
+			refresh = true;
+			break;
+		case (SpeciesViewer::RotateViewInteraction):
+			// Rotate view
+			if (mouseDownModifiers_.testFlag(Qt::ShiftModifier))
 			{
-				sourceSpecies_->clearAtomSelection();
-				sourceSpecies_->selectAtom(i);
 			}
-			
-			// Now we have update the Atom selection (if it was necessary) we must update the
-			// available isotope options in the context menu. This depends on all Atoms in the
-			// current selection being of the same element.
-// 			int el = sourceSpecies_->selectedAtoms()->item->element();
-// 			bool same = true;
-// 			for (RefListItem<SpeciesAtom,int>* ri = sourceSpecies_->selectedAtoms(); ri != NULL; ri = ri->next)
-// 			{
-// 				if (ri->item->element() != el)
-// 				{
-// 					same = false;
-// 					break;
-// 				}
-// 			}
-
-			// If all Atoms in the selection are *not* the same element, then disable the SetIsotope menu and the SelectSame action
-// 			QMenu* typeMenu = mainWindow_->ui.menuSelectionSetAtomType;
-// 			typeMenu->setEnabled(same);
-// 			mainWindow_->ui.actionSelectionSelectSame->setEnabled(same);
-			// TODO TODO TODO
-// 			if (same)
-// 			{
-// 				Dnchar text;
-// 				QAction* action;
-// 				// Elements are all the same, so present list of available AtomTypes in menu
-// 				typeMenu->setEnabled(true);
-// 				typeMenu->clear();
-// 				int count = 0;
-// 				for (AtomType* at = mainWindow_->Dissolve().atomTypes(); at != NULL; at = at->next)
-// 				{
-// 					if (at->element() != el) continue;
-// 					action = typeMenu->addAction(at->name());
-// 					QObject::connect(action, SIGNAL(triggered(bool)), mainWindow_, SLOT(selectionAtomTypeChanged(bool)));
-// 					++count;
-// 				}
-// 				
-// 				// Add dummy entry if there were no available AtomTypes
-// 				if (count == 0)
-// 				{
-// 					action = typeMenu->addAction("No AtomTypes Available");
-// 					action->setEnabled(false);
-// 				}
-// 			}
-// 			
-			// Ready - execute the popup menu
-// 			if (atomContextMenu_) atomContextMenu_->exec(event->globalPos());
-			
-			// Clear buttonstate
-			buttonStateOnPress_ = 0;
-		}
-	}
-}
-
-// Qt Signal (mouse release event)
-void SpeciesViewer::mouseReleaseEvent(QMouseEvent* event)
-{
-	// Handle button releases (button up) from the mouse
-	Qt::KeyboardModifiers km = event->modifiers();
-	
-	// Check mouse button state when the mousePressEvent occurred
-	if ((buttonStateOnPress_&Qt::LeftButton) && sourceSpecies_)
-	{
-		Vec4<double> v;
-		// If the selectionBox_ is smaller than some critical size, assume it was an attempt to click an Atom
-		if (abs(selectionBox_.width()*selectionBox_.height()) <= 9)
-		{
-			// Clear current selection (unless Ctrl is pressed)
-			if (!km.testFlag(Qt::ShiftModifier)) sourceSpecies_->clearAtomSelection();
-			for (SpeciesAtom* i = sourceSpecies_->atoms().first(); i != NULL; i = i->next)
+			else if (mouseDownModifiers_.testFlag(Qt::ControlModifier))
 			{
-				v = modelToScreen(i->r(), 0.3);
-				v.x -= event->x();
-				v.y -= (height()-event->y());
-				if (sqrt(v.x*v.x + v.y*v.y) < v.w)
+			}
+			else 
+			{
+				view_.rotateView(-dy/2.0, dx/2.0);
+				refresh = true;
+			}
+			break;
+		case (SpeciesViewer::TranslateViewInteraction):
+			// If this is a flat view, shift the axis limits rather than translating the view
+			if (view_.isFlatView()) view_.shiftFlatAxisLimits(dx, dy);
+			else view_.translateView(dx/15.0, dy/15.0, 0.0);
+			refresh = true;
+			break;
+		case (SpeciesViewer::DrawInteraction):
+			if (buttonState_.testFlag(Qt::LeftButton))
+			{
+				// Get atom at the current position (if any)
+				currentAtom = atomAt(rMouseLast_.x, rMouseLast_.y);
+
+				// Set the current drawing coordinates in data-space
+				drawCoordinateCurrent_ = currentAtom ? currentAtom->r() : view().screenToData(rMouseLast_.x, rMouseLast_.y, drawCoordinateCurrent_.z);
+
+				// Update the interaction Primitive
+				if (clickedAtom_)
 				{
-					sourceSpecies_->selectAtom(i);
-					break;
+					if (currentAtom) speciesRenderable_->recreateDrawInteractionPrimitive(clickedAtom_, currentAtom);
+					else speciesRenderable_->recreateDrawInteractionPrimitive(clickedAtom_, drawCoordinateCurrent_, drawElement_);
 				}
+				else speciesRenderable_->recreateDrawInteractionPrimitive(drawCoordinateStart_, drawElement_, drawCoordinateCurrent_, drawElement_);
 			}
-		}
-		else
-		{
-			// Perform Box Select
+			else if (buttonState_.testFlag(Qt::RightButton)) view_.rotateView(-dy/2.0, dx/2.0);
 
-			// Clear current selection (unless Shift is pressed)
-			if (!km.testFlag(Qt::ShiftModifier)) sourceSpecies_->clearAtomSelection();
-			for (SpeciesAtom* i = sourceSpecies_->atoms().first(); i != NULL; i = i->next)
-			{
-				v = modelToScreen(i->r());
-				if (selectionBox_.contains(v.x, height()-v.y)) sourceSpecies_->selectAtom(i); 
-			}
-		}
-		
-		update();
+			refresh = true;
+			break;
+		default:
+			break;
 	}
-	
-	selectionBox_.setRect(0,0,0,0);
-	buttonStateOnPress_ = 0;
-	
-	update();
-	
-// 	if (sourceSpecies_) mainWindow_->refresh(speciesUpdateTargets_);
+
+	if (refresh) postRedisplay();
 }
 
-// Qt Signal (mouse move event)
-void SpeciesViewer::mouseMoveEvent(QMouseEvent* event)
+// Mouse 'wheeled'
+void SpeciesViewer::mouseWheeled(int delta)
 {
-	Vec3<double> delta;
-	Matrix4 A;
-	
-	// Get event information and position delta
-	Qt::KeyboardModifiers km = event->modifiers();
-	delta.set(event->x(), event->y(), 0.0);
-	delta = delta - rMouseLast_;
+	bool scrollup = delta > 0;
 
-	if (buttonStateOnPress_&Qt::LeftButton)
-	{
-		selectionBox_.setRect(rMouseDown_.x, rMouseDown_.y, event->x()-rMouseDown_.x, event->y()-rMouseDown_.y);
-	}
-	else if (buttonStateOnPress_&Qt::RightButton)
-	{
-		// View manipulation
-		if (km&Qt::ShiftModifier)
-		{
-		}
-		else if (km&Qt::ControlModifier)
-		{
-		}
-		else 
-		{
-			// Rotate the view ('XY plane')
-			A.createRotationXY(delta.y/2.0, delta.x/2.0);
-			A.copyTranslationAndScaling(viewMatrix_);
-			// Reset translation and scaling on original matrix, and multiply
-			viewMatrix_.removeTranslationAndScaling();
-			viewMatrix_ = A * viewMatrix_;
-		}
-	}
-	else if (buttonStateOnPress_&Qt::MidButton)
-	{
-		viewMatrix_.adjustColumn(3, delta.x/5.0, -delta.y/15.0, 0.0, 0.0);
-	}
-	
-	rMouseLast_.set(event->x(), event->y(), 0.0);
-	setFocus();
-	postRedisplay();
-}
-
-// Qt Signal (mouse wheel event)
-void SpeciesViewer::wheelEvent(QWheelEvent* event)
-{
-	bool scrollup = event->delta() > 0;
-	
 	// Perform camera zoom
-	double dz = -viewMatrix_[14] * 0.15;
-	if (scrollup) dz = -dz;
-	viewMatrix_.adjustColumn(3, 0.0, 0.0, dz, 0.0);
-	// Never let camera z go below -1.0...
-	if (viewMatrix_[14] > -0.1) viewMatrix_[14] = -0.1;
+	double zrange = view_.axes().stretch(2) * view_.axes().realRange(2);
+	if (zrange < 1.0) zrange = 1.0;
+	view_.translateView(0.0, 0.0, 0.5*zrange*(scrollup ? -1.0 : 1.0));
+
+// 	// Never let camera z go below -1.0...
+// 	if (viewMatrix_[14] > -0.1) viewMatrix_[14] = -0.1;
+
 	postRedisplay();
+}
+
+// Mouse double clicked
+void SpeciesViewer::mouseDoubleClicked()
+{
+}
+
+// Key pressed
+bool SpeciesViewer::keyPressed(int key)
+{
+}
+
+// Key released
+bool SpeciesViewer::keyReleased(int key)
+{
 }

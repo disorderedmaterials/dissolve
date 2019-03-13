@@ -46,154 +46,55 @@ class DataViewer : public BaseViewer
 	void postInitialiseGL();
 	// Perform post-resize operations
 	void postResizeGL();
-	// Render content
-	void render(int xOffset = 0, int yOffset = 0);
+	// Render 2D overlay content
+	void render2DOverlay();
 
 
 	/*
 	 * Mouse / Keyboard Input (BaseViewer virtuals)
 	 */
 	protected:
-	// Mouse pressed
-	void mousePressed(Qt::KeyboardModifiers modifiers);
-	// Mouse released
-	void mouseReleased();
 	// Mouse moved
-	void mouseMoved(int dx, int dy, Qt::KeyboardModifiers modifiers);
+	void mouseMoved(int dx, int dy);
 	// Mouse 'wheeled'
 	void mouseWheeled(int delta);
 	// Mouse double clicked
 	void mouseDoubleClicked();
 	// Key pressed
-	bool keyPressed(int key, Qt::KeyboardModifiers modifiers);
+	bool keyPressed(int key);
 	// Key released
-	bool keyReleased(int key, Qt::KeyboardModifiers modifiers);
+	bool keyReleased(int key);
 
 	signals:
 	void currentCoordinateChanged();
 
 
 	/*
-	 * Context Menu (BaseViewer virtuals)
-	 */
-	private:
-	// Special QMenu items
-	QMenu* currentDataMenu_;
-
-	private:
-	// Initialise context menu
-	void initialiseContextMenu();
-	// Update dynamic aspects of context menu before display
-	void updateContextMenu();
-
-	private slots:
-	// Show dialog
-	void showDialog(bool checked);
-	// Set data visibility
-	void contextMenuSetDataVisible(bool checked);
-
-
-	/*
-	 * Interaction
+	 * Interaction (BaseViewer Virtuals)
 	 */
 	public:
 	// Interaction Mode enum
 	enum InteractionMode
 	{
-		ViewInteraction,
-		ZoomInteraction,
+		DefaultInteraction,
+		ZoomToAreaInteraction,
+		TranslateViewInteraction,
+		RotateViewInteraction,
+		ZoomXRangeInteraction,
 		nInteractionModes
 	};
-	// Return InteractionMode name
-	static const char* interactionModeName(InteractionMode mode);
-	// Return InteractionMode help text
-	static const char* interactionModeHelp(InteractionMode mode);
-
-	protected:
-	// Current interaction mode
-	InteractionMode interactionMode_;
-	// Current axis target for interaction
-	int interactionAxis_;
-	// Whether interaction has started (i.e. mouse is down)
-	bool interactionStarted_;
-	// Starting (clicked) value when interacting
-	double clickedInteractionValue_;
-	// Starting (clicked) keyboard modifiers when interacting
-	Qt::KeyboardModifiers clickedInteractionModifiers_;
-	// Current interaction position on axis
-	double currentInteractionValue_;
-	// Data to highlight in this pass
-	Renderable* highlightedRenderable_;
-	// Clicked local coordinate under mouse in 2D view
-	Vec3<double> rClickedLocal_;
-	// Current local coordinate under mouse in 2D view
-	Vec3<double> rCurrentLocal_;
 
 	public:
-	// Set interaction mode and target axis
-	void setInteractionMode(InteractionMode mode, int axis);
-	// Return interaction mode
-	InteractionMode interactionMode() const;
-	// Return current axis target for interaction
-	int interactionAxis() const;
-	// Return whether interaction has started (i.e. mouse is down)
-	bool interactionStarted() const;
+	// Start interaction
+	void startInteraction(Qt::KeyboardModifiers modifiers);
+	// End interaction
+	void endInteraction();
 	// Cancel current interaction
 	void cancelInteraction();
-	// Start interaction at the specified screen coordinates
-	void startInteraction(int mouseX, int mouseY, Qt::KeyboardModifiers modifiers);
-	// Update current interaction value
-	bool updateInteractionPosition(int mouseX, int mouseY);
-	// End interaction at the specified screen coordinates
-	void endInteraction(int mouseX, int mouseY);
-	// Return clicked interaction value on axis
-	double clickedInteractionValue();
-	// Return current interaction value on axis
-	double currentInteractionValue();
 	// Return clicked interaction coordinate on axis
 	double clickedInteractionCoordinate();
 	// Return current interaction coordinate on axis
 	double currentInteractionCoordinate();
-	// Perform relevant double-click action, occurring at specified coordinate
-	void doubleClickInteraction(int mouseX, int mouseY);
-	// Calculate local coordinate from supplied screen coordinates
-	Vec3<double> screenToLocal(int mouseX, int mouseY);
-	// Return current local coordinate under mouse in 2D view
-	Vec3<double> rCurrentLocal() const;
-
-
-	/*
-	 * Object Querying
-	 */
-	public:
-	// Drawing object type
-	enum ViewObject { AxisTickLabelObject, AxisLineObject, AxisTitleLabelObject, CollectionObject, GridLineMinorObject, GridLineMajorObject, NoObject };
-
-	private:
-	// View coordinates to probe for objects at next redraw
-	int objectQueryX_, objectQueryY_;
-	// Width and height of area about clicked position
-	int objectQueryWidth_, objectQueryHeight_;
-	// Maximum depth value found at query pixel
-	GLfloat depthAtQueryCoordinates_;
-	// Type of object found at query coordinates
-	ViewObject objectAtQueryCoordinates_;
-	// Information describing object at query coordinates
-	CharString infoAtQueryCoordinates_;
-
-	private:
-	// Update depth at query coordinates, returning whether it is closer
-	bool updateQueryDepth();
-	// Set information of query object
-	void setQueryObject(ViewObject objectType, const char* info);
-
-	public:
-	// Set coordinates to query at next redraw
-	void setQueryCoordinates(int mouseX, int mouseY);
-	// Return object type at query coordinates
-	ViewObject objectAtQueryCoordinates() const;
-	// Info for object at query coordinates
-	const char* infoAtQueryCoordinates() const;
 
 
 	/*
@@ -210,8 +111,8 @@ class DataViewer : public BaseViewer
 // 	TransformWindow transformWindow_;
 // 	// View Window
 // 	ViewWindow viewWindow_;
-// 	// Create Collection Dialog
-// 	CreateCollectionDialog createCollectionDialog_;
+// 	// Create Renderable Dialog
+// 	CreateRenderableDialog createRenderableDialog_;
 // 	// Import Dialog
 // 	ImportDialog importDialog_;
 // 	// Fit Window
@@ -221,7 +122,7 @@ class DataViewer : public BaseViewer
 
 	public:
 // 	// Dialog enum
-// 	enum DialogWindow { AxesWindow, DataWindow, StyleWindow, TransformWindow, ViewWindow, CreateCollectionDialog, ImportDialog, EditFitKernelDialog, SaveImageDialog };
+// 	enum DialogWindow { AxesWindow, DataWindow, StyleWindow, TransformWindow, ViewWindow, CreateRenderableDialog, ImportDialog, EditFitKernelDialog, SaveImageDialog };
 // 	// Show specified window / dialog
 // 	void showDialog(int window);
 
@@ -317,8 +218,6 @@ class DataViewer : public BaseViewer
 		AutoFollowTypeKeyword,
 		AutoPositionTitlesKeyword,
 		AxisBlockKeyword,
-		BoundingBoxKeyword,
-		BoundingBoxPlaneYKeyword,
 		EndViewKeyword,
 		FlatLabelsKeyword,
 		LabelPointSizeKeyword,

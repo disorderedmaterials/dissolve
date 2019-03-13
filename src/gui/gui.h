@@ -81,7 +81,9 @@ class DissolveWindow : public QMainWindow
 	public slots:
 	// Flag that data has been modified via the GUI
 	void setModified();
-	// Flag that data has been modified via the GUI, and that the set up is now invalid
+	// Flag that data has been modified via the GUI, and whether this invalidates the current setup
+	void setModified(bool invalidatesSetUp);
+	// Flag that data has been modified via the GUI, and that the setup is now invalid
 	void setModifiedAndInvalidated();
 
 	public:

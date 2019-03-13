@@ -32,11 +32,6 @@ const double View::zOffset_ = -10.0;
 View::View(const List<Renderable>& renderables, FontInstance& fontInstance) : fontInstance_(fontInstance), renderables_(renderables), axes_(*this, fontInstance)
 {
 	clear();
-
-	// Set GL primitive styles
-	interactionPrimitive_.setNoInstances();
-	interactionBoxPrimitive_.setNoInstances();
-	boundingBoxPrimitive_.setNoInstances();
 }
 
 // Destructor
@@ -66,15 +61,15 @@ void View::clear()
 	viewViewportUsedAt_ = -1;
 	viewAxesUsedAt_ = -1;
 	viewRotationPoint_ = 0;
+	viewRotation_.setIdentity();
 	viewRotationInversePoint_ = -1;
+	updateViewMatrix();
 
 	// Role
 	viewType_ = View::AutoStretchedView;
 	autoFollowType_ = View::NoAutoFollow;
 
 	// Style
-	boundingBox_ = View::NoBox;
-	boundingBoxPlaneY_ = 0.0;
 	labelPointSize_ = 16.0;
 	titlePointSize_ = 18.0;
 	textZScale_ = -1.0;
@@ -213,6 +208,23 @@ Matrix4 View::calculateProjectionMatrix(bool hasPerspective, double orthoZoom) c
 	return result;
 }
 
+// Update view matrix
+void View::updateViewMatrix()
+{
+	// Create translation to centre of Axes coordinates
+	viewMatrix_.createTranslation(-axes_.coordCentre());
+
+	// Apply rotation matrix about this local centre
+	viewMatrix_.preMultiply(viewRotation_);
+
+	// Apply translation to apply view shift and zoom (the latter only if using perspective)
+	viewMatrix_.applyPreTranslation(viewTranslation_.x, viewTranslation_.y, hasPerspective_ ? viewTranslation_.z : 0.0);
+
+	// Calculate inverse
+	viewMatrixInverse_ = viewMatrix_;
+	viewMatrixInverse_.invert();
+}
+
 // Set view type
 void View::setViewType(View::ViewType vt)
 {
@@ -264,6 +276,8 @@ void View::setViewRotation(Matrix4& mat)
 
 	viewRotation_ = mat;
 
+	updateViewMatrix();
+
 	++viewRotationPoint_;
 }
 
@@ -274,6 +288,8 @@ void View::setViewRotationColumn(int column, double x, double y, double z)
 	if ((viewType_ != View::NormalView) && (viewType_ != View::AutoStretchedView)) return;
 	
 	viewRotation_.setColumn(column, x, y, z, 0.0);
+
+	updateViewMatrix();
 
 	++viewRotationPoint_;
 }
@@ -287,6 +303,8 @@ void View::rotateView(double dx, double dy)
 	Matrix4 A;
 	A.createRotationXY(dx, dy);	// TODO Create Matrix4::applyPreRotationXY() function.
 	viewRotation_.preMultiply(A);
+
+	updateViewMatrix();
 
 	++viewRotationPoint_;
 }
@@ -316,17 +334,23 @@ void View::setViewTranslation(double x, double y, double z)
 {
 	viewTranslation_.set(x, y, z);
 	if (!hasPerspective_) projectionMatrix_ = calculateProjectionMatrix(false, viewTranslation_.z);
+
+	updateViewMatrix();
+
 	calculateFontScaling();
 }
 
 // Translate view matrix by amounts specified
 void View::translateView(double dx, double dy, double dz)
 {
-	// If this is a two-dimensional or linked view, ignore the request
+	// If this is a two-dimensional view, ignore the request
 	if ((viewType_ != View::NormalView) && (viewType_ != View::AutoStretchedView)) return;
 
 	viewTranslation_.add(dx, dy, dz);
 	if ((!hasPerspective_) && (fabs(dz) > 1.0e-4)) projectionMatrix_ = calculateProjectionMatrix(false, viewTranslation_.z);
+
+	updateViewMatrix();
+
 	calculateFontScaling();
 }
 
@@ -337,53 +361,37 @@ Vec3<double> View::viewTranslation() const
 }
 
 // Return full view matrix (rotation + translation)
-Matrix4 View::viewMatrix()
+const Matrix4& View::viewMatrix() const
 {
-	Matrix4 viewMatrix;
-
-	// Apply translation to centre of axes coordinates
-	viewMatrix.createTranslation(-axes_.coordCentre());
-
-	// Apply rotation matrix about this local centre
-	viewMatrix.preMultiply(viewRotation_);
-
-	// Apply translation to apply view shift and zoom (the latter only if using perspective)
-	viewMatrix.applyPreTranslation(viewTranslation_.x, viewTranslation_.y, hasPerspective_ ? viewTranslation_.z : 0.0 );
-
-	return viewMatrix;
+	return viewMatrix_;
 }
 
-// Project given model coordinates into world coordinates
-Vec3<double> View::modelToWorld(Vec3<double> modelr)
+// Project given data coordinates into world coordinates
+Vec3<double> View::dataToWorld(Vec3<double> r) const
 {
-	Vec3<double> worldr;
 	Matrix4 vmat;
 	Vec4<double> pos, temp;
 
-	// Projection formula is : worldr = P x M x modelr
-	pos.set(modelr, 1.0);
-	// Get the world coordinates of the atom - Multiply by modelview matrix 'view'
-	vmat = viewMatrix();
-	temp = vmat * pos;
-	worldr.set(temp.x, temp.y, temp.z);
+	// Get the world coordinates of r - multiply by view matrix
+	pos.set(r, 1.0);
+	temp = viewMatrix_ * pos;
 
-	return worldr;
+	return Vec3<double>(temp.x, temp.y, temp.z);
 }
 
-// Project given model coordinates into screen coordinates
-Vec3<double> View::modelToScreen(Vec3<double> modelr)
+// Project given data coordinates into screen coordinates
+Vec3<double> View::dataToScreen(Vec3<double> r) const
 {
 	Vec4<double> screenr, tempscreen;
 	Vec4<double> worldr;
 	Matrix4 vmat;
 	Vec4<double> pos;
 
-	// Projection formula is : worldr = P x M x modelr
-	pos.set(modelr, 1.0);
+	// Projection formula is : worldr = P x M x r
+	pos.set(r, 1.0);
 
-	// Get the world coordinates of the point - Multiply by modelview matrix 'view'
-	vmat = viewMatrix();
-	worldr = vmat * pos;
+	// Get the world coordinates of the point - Multiply by view matrix
+	worldr = viewMatrix_ * pos;
 	screenr = projectionMatrix_ * worldr;
 	screenr.x /= screenr.w;
 	screenr.y /= screenr.w;
@@ -394,18 +402,47 @@ Vec3<double> View::modelToScreen(Vec3<double> modelr)
 	return Vec3<double>(screenr.x, screenr.y, screenr.z);
 }
 
-// Project given model coordinates into screen coordinates using supplied projection matrix, rotation matrix and translation vector
-Vec3<double> View::modelToScreen(Vec3<double> modelr, Matrix4 projectionMatrix, Matrix4 rotationMatrix, Vec3<double> translation)
+// Project given data coordinates into screen coordinates, with corresponding distance 'delta' in data
+Vec3<double> View::dataToScreen(Vec3<double> r, double& lengthScale) const
+{
+	Vec4<double> screenr;
+	Vec4<double> worldr;
+	Matrix4 vmat;
+	Vec4<double> pos;
+
+	// Projection formula is : worldr = P x M x r
+	pos.set(r, 1.0);
+
+	// Get the world coordinates of the point - Multiply by view matrix
+	worldr = viewMatrix_ * pos;
+	screenr = projectionMatrix_ * worldr;
+	screenr.x /= screenr.w;
+	screenr.y /= screenr.w;
+	screenr.x = viewportMatrix_[0] + viewportMatrix_[2]*(screenr.x+1)*0.5;
+	screenr.y = viewportMatrix_[1] + viewportMatrix_[3]*(screenr.y+1)*0.5;
+	screenr.z = screenr.z / screenr.w;
+
+	// Calculate 2D lengthscale around the point - multiply world[x+lengthScale] coordinates by P
+	worldr.x += lengthScale;
+	Vec4<double> tempScreen = projectionMatrix_ * worldr;
+	tempScreen.x /= tempScreen.w;
+	lengthScale = fabs( (viewportMatrix_[0] + viewportMatrix_[2]*(tempScreen.x+1)*0.5) - screenr.x);
+
+	return Vec3<double>(screenr.x, screenr.y, screenr.z);
+}
+
+// Project given data coordinates into screen coordinates using supplied projection matrix, rotation matrix and translation vector
+Vec3<double> View::dataToScreen(Vec3<double> r, Matrix4 projectionMatrix, Matrix4 rotationMatrix, Vec3<double> translation) const
 {
 	Vec4<double> screenr, tempscreen;
 	Vec4<double> worldr;
 	Matrix4 vmat;
 	Vec4<double> pos;
 
-	// Projection formula is : worldr = P x M x modelr
-	pos.set(modelr, 1.0);
+	// Projection formula is : worldr = P x M x r
+	pos.set(r, 1.0);
 
-	// Get the world coordinates of the point - Multiply by modelview matrix 'view'
+	// Get the screen coordinates of the point
 	vmat = rotationMatrix;
 	vmat.applyPreTranslation(translation);
 	worldr = vmat * pos;
@@ -420,7 +457,7 @@ Vec3<double> View::modelToScreen(Vec3<double> modelr, Matrix4 projectionMatrix, 
 }
 
 // Return z translation necessary to display coordinates supplied, assuming the identity view matrix
-double View::calculateRequiredZoom(double xMax, double yMax, double fraction)
+double View::calculateRequiredZoom(double xMax, double yMax, double fraction) const
 {
 	// The supplied x and y extents should indicate the number of units in those directions
 	// from the origin that are to be displaye on-screen. The 'fraction' indicates how much of the
@@ -467,17 +504,12 @@ double View::calculateRequiredZoom(double xMax, double yMax, double fraction)
 	return translation.z;
 }
 
-// Convert screen coordinates into model space coordinates
-Vec3<double> View::screenToModel(int x, int y, double z)
+// Convert screen coordinates into data space coordinates
+Vec3<double> View::screenToData(int x, int y, double z) const
 {
-	static Vec3<double> modelr;
 	Vec4<double> temp, worldr;
 	int newx, newy;
 	double dx, dy;
-
-	// Grab full transformation matrix (not just rotation matrix) and invert
-	Matrix4 itransform = viewMatrix();
-	itransform.invert();
 
 	// Project points at guide z-position and two other points along literal x and y to get scaling factors for screen coordinates
 	worldr.set(0.0,0.0,z, 1.0);
@@ -502,13 +534,11 @@ Vec3<double> View::screenToModel(int x, int y, double z)
 	}
 
 	// Finally, invert to model coordinates
-	modelr = itransform * Vec3<double>(worldr.x, worldr.y, worldr.z);
-
-	return modelr;
+	return viewMatrixInverse_ * Vec3<double>(worldr.x, worldr.y, worldr.z);
 }
 
 // Calculate selection axis coordinate from supplied screen coordinates
-double View::screenToAxis(int axis, int x, int y, bool clamp)
+double View::screenToAxis(int axis, int x, int y, bool clamp) const
 {
 	// Check for a valid axis
 	if (axis == -1) return 0.0;
@@ -517,8 +547,8 @@ double View::screenToAxis(int axis, int x, int y, bool clamp)
 // 	rMouseLast_.print();
 // 	axisCoordMin_[0].print();
 	// Project axis coordinates to get a screen-based yardstick
-	Vec3<double> axmin = modelToScreen(axes_.coordMin(axis));
-	Vec3<double> axmax = modelToScreen(axes_.coordMax(axis));
+	Vec3<double> axmin = dataToScreen(axes_.coordMin(axis));
+	Vec3<double> axmax = dataToScreen(axes_.coordMax(axis));
 // 	axmin.print();
 // 	axmax.print();
 
@@ -561,7 +591,7 @@ void View::recalculateView(bool force)
 	// If we are already up-to-date (w.r.t. the associated axes) then we can also return now
 	bool upToDate = true;
 	if (force) upToDate = false;
-	else if (viewAxesUsedAt_ != axes().axesVersion()) upToDate = false;
+	else if (viewAxesUsedAt_ != axes().version()) upToDate = false;
 	else if (viewViewportUsedAt_ != viewportVersion_) upToDate = false;
 
 	if (upToDate) return;
@@ -581,7 +611,7 @@ void View::recalculateView(bool force)
 	 */
 
 	// -- Project a point one unit each along X and Y and subtract off the viewport centre coordinate in order to get literal 'pixels per unit' for (screen) X and Y
-	Vec3<double> unit = modelToScreen(Vec3<double>(1.0, 1.0, 0.0), tempProjection, Matrix4());
+	Vec3<double> unit = dataToScreen(Vec3<double>(1.0, 1.0, 0.0), tempProjection, Matrix4());
 	unit.x -= viewportMatrix_[0] + viewportMatrix_[2]/2.0;
 	unit.y -= viewportMatrix_[1] + viewportMatrix_[3]/2.0;
 	unit.z = unit.y;
@@ -641,8 +671,8 @@ void View::recalculateView(bool force)
 			if ((axis != axisX) && (axis != axisY)) continue;
 
 			// Project axis min/max coordinates onto screen
-			a = modelToScreen(axes_.coordMin(axis), tempProjection, viewMat);
-			b = modelToScreen(axes_.coordMax(axis), tempProjection, viewMat);
+			a = dataToScreen(axes_.coordMin(axis), tempProjection, viewMat);
+			b = dataToScreen(axes_.coordMax(axis), tempProjection, viewMat);
 			coordMin[axis].set(std::min(a.x,b.x), std::min(a.y,b.y),  std::min(a.z,b.z)); 
 			coordMax[axis].set(std::max(a.x,b.x), std::max(a.y,b.y),  std::max(a.z,b.z)); 
 
@@ -659,8 +689,8 @@ void View::recalculateView(bool force)
 			cuboid = axes_.titlePrimitive(axis).boundingCuboid(fontInstance_, viewMatrixInverse, textZScale_, cuboid);
 
 			// Project cuboid extremes and store projected coordinates
-			a = modelToScreen(cuboid.minima(), tempProjection, viewMat);
-			b = modelToScreen(cuboid.maxima(), tempProjection, viewMat);
+			a = dataToScreen(cuboid.minima(), tempProjection, viewMat);
+			b = dataToScreen(cuboid.maxima(), tempProjection, viewMat);
 
 			// Update global and label min/max
 			for (int n=0; n<3; ++n)
@@ -711,8 +741,11 @@ void View::recalculateView(bool force)
 	// Recalculate font scaling
 	calculateFontScaling();
 
+	// Recalculate view matrix (translation may have changed)
+	updateViewMatrix();
+
 	// Store new versions of view
-	viewAxesUsedAt_ = axes().axesVersion();
+	viewAxesUsedAt_ = axes().version();
 	viewViewportUsedAt_ = viewportVersion_;
 }
 
@@ -1091,6 +1124,12 @@ Axes& View::axes()
 	return axes_;
 }
 
+// Return axes for the view (const)
+const Axes& View::constAxes() const
+{
+	return axes_;
+}
+
 /*
  * Style
  */
@@ -1101,39 +1140,9 @@ void View::calculateFontScaling()
 	// Calculate text scaling factor
 	Vec3<double> translate(0.0, 0.0, zOffset_);
 	if (hasPerspective_) translate.z = 0.5;
-	Vec3<double> unit = modelToScreen(Vec3<double>(0.0, 1.0, viewTranslation_.z), projectionMatrix_, Matrix4(), translate);
+	Vec3<double> unit = dataToScreen(Vec3<double>(0.0, 1.0, viewTranslation_.z), projectionMatrix_, Matrix4(), translate);
 	unit.y -= viewportMatrix_[1] + viewportMatrix_[3]*0.5;
 	textZScale_ = unit.y;
-}
-
-// Set current bounding box type
-void View::setBoundingBox(View::BoundingBox type)
-{
-	boundingBox_ = type;
-
-	// Bounding boxes are generated as part of the axes primitives, so need to regenerate them
-	// TODO regenerateAxes_ = true;
-}
-
-// Return current bounding box type
-View::BoundingBox View::boundingBox()
-{
-	return boundingBox_;
-}
-
-// Set y intercept for plane bounding box
-void View::setBoundingBoxPlaneY(double value)
-{
-	boundingBoxPlaneY_ = value;
-
-	// Bounding boxes are generated as part of the axes primitives, so need to regenerate them
-	// TODO 0regenerateAxes_ = true;
-}
-
-// Return y intercept for plane bounding box
-double View::boundingBoxPlaneY()
-{
-	return boundingBoxPlaneY_;
 }
 
 // Set font point size for axis value labels
@@ -1188,6 +1197,7 @@ bool View::flatLabelsIn3D()
  * Interaction
  */
 
+// TODO Old code, unused. Useful?
 // Return axis title at specified coordinates (if any)
 int View::axisTitleAt(int screenX, int screenY)
 {
@@ -1205,108 +1215,7 @@ int View::axisTitleAt(int screenX, int screenY)
 		Cuboid cuboid = axes_.titlePrimitive(axis).boundingCuboid(fontInstance_, viewRotInverse, textZScale_);
 
 		// Determine whether the screen point specified is within the projected cuboid
-		if (cuboid.isPointWithinProjection(screenX, screenY, viewMatrix(), projectionMatrix_, viewportMatrix_)) return axis;
+		if (cuboid.isPointWithinProjection(screenX, screenY, viewMatrix_, projectionMatrix_, viewportMatrix_)) return axis;
 	}
 	return -1;
-}
-
-/*
- * GL
- */
-
-// Create bounding box
-void View::createBoundingBox(int type, double planeY)
-{
-	boundingBoxPrimitive_.forgetAll();
-	
-	if (type == 0) return;
-	else if (type == 1)
-	{
-		// Plane in XZ, spanning data range   // TODO
-// 		boundingBoxPrimitive_.plotLine(Vec3<double>(axisCoordMin_[0].x, planeY, axisCoordMin_[2].z), Vec3<double>(axisCoordMin_[0].x, planeY, axisCoordMax_[2].z));
-// 		boundingBoxPrimitive_.plotLine(Vec3<double>(axisCoordMin_[0].x, planeY, axisCoordMax_[2].z), Vec3<double>(axisCoordMax_[0].x, planeY, axisCoordMax_[2].z));
-// 		boundingBoxPrimitive_.plotLine(Vec3<double>(axisCoordMax_[0].x, planeY, axisCoordMax_[2].z), Vec3<double>(axisCoordMax_[0].x, planeY, axisCoordMin_[2].z));
-// 		boundingBoxPrimitive_.plotLine(Vec3<double>(axisCoordMax_[0].x, planeY, axisCoordMin_[2].z), Vec3<double>(axisCoordMin_[0].x, planeY, axisCoordMin_[2].z));
-	}
-}
-
-
-// Update interaction primitive
-void View::updateInteractionPrimitive(int axis)
-{
-	const int nPoints = 16;
-	
-	interactionPrimitive_.initialise(GL_TRIANGLES, false);
-	interactionPrimitive_.forgetAll();
-	interactionBoxPrimitive_.initialise(GL_LINES, false);
-	interactionBoxPrimitive_.forgetAll();
-
-	if (axis == -1) return;
-
-	// Grab axes, and knock out values in the supplied vectors which correspond to the activated axis
-	Vec3<double> axisMinA, axisMinB, axisMaxA, axisMaxB;
-	axisMinA[(axis+1)%3] = axes_.coordMin((axis+1)%3)[(axis+1)%3];
-	axisMaxA[(axis+1)%3] = axes_.coordMax((axis+1)%3)[(axis+1)%3];
-	axisMinB[(axis+2)%3] = axes_.coordMin((axis+2)%3)[(axis+2)%3];
-	axisMaxB[(axis+2)%3] = axes_.coordMax((axis+2)%3)[(axis+2)%3];
-	axisMinA[axis] = 0.0;
-	axisMaxA[axis] = 0.0;
-	axisMinB[axis] = 0.0;
-	axisMaxB[axis] = 0.0;
-
-	// Create 'bounding box' for slice primitive
-	Vec3<double> normal(0.0, 0.0, 1.0);
-	
-	interactionBoxPrimitive_.defineVertex(axisMinA + axisMinB, normal);
-	interactionBoxPrimitive_.defineVertex(axisMinA + axisMaxB, normal);
-	interactionBoxPrimitive_.defineVertex(axisMaxA + axisMaxB, normal);
-	interactionBoxPrimitive_.defineVertex(axisMaxA + axisMinB, normal);
-	interactionBoxPrimitive_.defineIndices(0,1);
-	interactionBoxPrimitive_.defineIndices(1,2);
-	interactionBoxPrimitive_.defineIndices(2,3);
-	interactionBoxPrimitive_.defineIndices(3,0);
-
-	// Work out deltas for each direction
-	Vec3<double> deltaA, deltaB, pos;
-	deltaA = (axisMaxA - axisMinA) / nPoints;
-	deltaB = (axisMaxB - axisMinB) / nPoints;
-
-	// Set normal
-	normal.zero();
-	normal[axis] = 1.0;
-
-	// Construct plane
-	GLuint a, b, c, d;
-	for (int n=0; n<nPoints; ++n)
-	{
-		pos = axisMinA + axisMinB + deltaA*n;
-		for (int m=0; m<nPoints; ++m)
-		{
-			a = interactionPrimitive_.defineVertex(pos, normal);
-			b = interactionPrimitive_.defineVertex(pos + deltaA, normal);
-			c = interactionPrimitive_.defineVertex(pos + deltaA + deltaB, normal);
-			d = interactionPrimitive_.defineVertex(pos + deltaB, normal);
-			interactionPrimitive_.defineIndices(a, b, c);
-			interactionPrimitive_.defineIndices(c, d, a);
-			pos += deltaB;
-		}
-	}
-}
-
-// Return interaction primitive
-Primitive& View::interactionPrimitive()
-{
-	return interactionPrimitive_;
-}
-
-// Return interaction box primitive
-Primitive& View::interactionBoxPrimitive()
-{
-	return interactionBoxPrimitive_;
-}
-
-// Return bounding box primitive
-Primitive& View::boundingBoxPrimitive()
-{
-	return boundingBoxPrimitive_;
 }

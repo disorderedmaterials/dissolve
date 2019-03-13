@@ -112,6 +112,10 @@ class View
 	int viewRotationInversePoint_;
 	// Current translation of view
 	Vec3<double> viewTranslation_;
+	// Full view matrix (rotation + translation)
+	Matrix4 viewMatrix_;
+	// Inverse of view matrix
+	Matrix4 viewMatrixInverse_;
 	// Standard zOffset for translation matrix
 	static const double zOffset_;
 	// Axes version at which view matrix was last calculated (mostly for keeping 2D view correct)
@@ -154,20 +158,24 @@ class View
 	void translateView(double dx, double dy, double dz);
 	// Return current view translation
 	Vec3<double> viewTranslation() const;
+	// Update view matrix
+	void updateViewMatrix();
 	// Return full view matrix (rotation + translation)
-	Matrix4 viewMatrix();
-	// Project given model coordinates into world coordinates
-	Vec3<double> modelToWorld(Vec3<double> modelr);
-	// Project given model coordinates into screen coordinates
-	Vec3<double> modelToScreen(Vec3<double> modelr);
-	// Project given model coordinates into screen coordinates using supplied rotation matrix and translation vector
-	Vec3<double> modelToScreen(Vec3<double> modelr, Matrix4 projectionMatrix, Matrix4 rotationMatrix, Vec3<double> translation = Vec3<double>());
+	const Matrix4& viewMatrix() const;
+	// Project given data coordinates into world coordinates
+	Vec3<double> dataToWorld(Vec3<double> r) const;
+	// Project given data coordinates into screen coordinates
+	Vec3<double> dataToScreen(Vec3<double> r) const;
+	// Project given data coordinates into screen coordinates, with corresponding distance 'delta' in data
+	Vec3<double> dataToScreen(Vec3<double> r, double& delta) const;
+	// Project given data coordinates into screen coordinates using supplied rotation matrix and translation vector
+	Vec3<double> dataToScreen(Vec3<double> r, Matrix4 projectionMatrix, Matrix4 rotationMatrix, Vec3<double> translation = Vec3<double>()) const;
 	// Return z translation necessary to display coordinates supplied, assuming the identity view matrix
-	double calculateRequiredZoom(double xMax, double yMax, double fraction);
-	// Convert screen coordinates into model space coordinates
-	Vec3<double> screenToModel(int x, int y, double z);
+	double calculateRequiredZoom(double xMax, double yMax, double fraction) const;
+	// Convert screen coordinates into data space coordinates
+	Vec3<double> screenToData(int x, int y, double z) const;
 	// Calculate selection axis coordinate from supplied screen coordinates
-	double screenToAxis(int axis, int x, int y, bool clamp);
+	double screenToAxis(int axis, int x, int y, bool clamp) const;
 	// Recalculate current view parameters (e.g. for 2D, autostretched 3D etc.)
 	void recalculateView(bool force = false);
 	// Reset view matrix to face XY plane
@@ -212,20 +220,14 @@ class View
 	void shiftFlatAxisLimitsFractional(double fracH, double fracV);
 	// Return axes for the view
 	Axes& axes();
+	// Return axes for the view (const)
+	const Axes& constAxes() const;
 
 
 	/*
 	 * Style
 	 */
-	public:
-	// Available Bounding Boxes
-	enum BoundingBox { NoBox, PlaneBox, CubeBox, nBoundingBoxes };
-
 	private:
-	// Current bounding box type
-	BoundingBox boundingBox_;
-	// Y-intercept of bounding XZ plane
-	double boundingBoxPlaneY_;
 	// Font scaling for axis value labels
 	double labelPointSize_;
 	// Font scaling for titles
@@ -240,14 +242,6 @@ class View
 	void calculateFontScaling();
 
 	public:
-	// Set current bounding box type
-	void setBoundingBox(View::BoundingBox type);
-	// Return current bounding box type
-	View::BoundingBox boundingBox();
-	// Set y intercept for plane bounding box
-	void setBoundingBoxPlaneY(double value);
-	// Return y intercept for plane bounding box
-	double boundingBoxPlaneY();
 	// Set font point size for axis value labels
 	void setLabelPointSize(double value);
 	// Return font point size for axis value labels
@@ -270,26 +264,6 @@ class View
 	public:
 	// Return axis title at specified coordinates (if any)
 	int axisTitleAt(int screenX, int screenY);
-
-
-	/*
-	 * GL
-	 */
-	private:
-	// Display primitives
-	Primitive interactionPrimitive_, interactionBoxPrimitive_, boundingBoxPrimitive_;
-
-	public:
-	// Create bounding box
-	void createBoundingBox(int type, double planeY);
-	// Update interaction primitive
-	void updateInteractionPrimitive(int axis);
-	// Return interaction primitive
-	Primitive& interactionPrimitive();
-	// Return interaction box primitive
-	Primitive& interactionBoxPrimitive();
-	// Return bounding box primitive
-	Primitive& boundingBoxPrimitive();
 };
 
 #endif

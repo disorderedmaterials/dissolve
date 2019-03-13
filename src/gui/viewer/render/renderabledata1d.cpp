@@ -26,6 +26,7 @@
 // Constructor
 RenderableData1D::RenderableData1D(const Data1D* source, const char* objectTag) : Renderable(Renderable::Data1DRenderable, objectTag), source_(source)
 {
+	dataPrimitive_ = createPrimitive();
 }
 
 // Destructor
@@ -59,10 +60,10 @@ int RenderableData1D::version() const
 // Transform data according to current settings
 void RenderableData1D::transformData()
 {
-	// If the transformed data is already up-to-date, no need to do anything
+	// If the transformed data are already up-to-date, no need to do anything
 	if (transformDataVersion_ == version()) return;
 
-	// Copy original data and transform it now. We do this even if the transformers are disabled, since they may have previously been active
+	// Copy original data and transform now. We do this even if the transformers are disabled, since they may have previously been active
 	if (!validateDataSource()) transformedData_.clear();
 	else transformedData_ = *source_;
 	Transformer::transform(transformedData_, transforms_[0], transforms_[1]);
@@ -152,83 +153,17 @@ bool RenderableData1D::yRangeOverX(double xMin, double xMax, double& yMin, doubl
  * Rendering Primitives
  */
 
-// Update primitives and send for display
-void RenderableData1D::updateAndSendPrimitives(View& view, RenderableGroupManager& groupManager, bool forceUpdate, bool pushAndPop, const QOpenGLContext* context)
+// Recreate necessary primitives / primitive assemblies for the data
+void RenderableData1D::recreatePrimitives(const View& view, const ColourDefinition& colourDefinition)
 {
-	// Grab axes for the View
-	const Axes& axes = view.axes();
-
-	// Grab copy of the relevant colour definition for this Collection
-	ColourDefinition colourDefinition = groupManager.colourDefinition(this);
-
-	// Check whether the primitive for this collection needs updating
-	bool upToDate = true;
-	if (forceUpdate) upToDate = false;
-	else if (primitivesAxesVersion_!= axes.displayVersion()) upToDate = false;
-	else if (!DissolveSys::sameString(primitivesColourDefinitionFingerprint_, CharString("%p@%i", group_, colourDefinition.version()), true)) upToDate = false;
-	else if (primitivesDataVersion_ != version()) upToDate = false;
-	else if (primitivesStyleVersion_ != displayStyleVersion()) upToDate = false;
-
-	// If the primitive is out of date, recreate it's data.
-	if (!upToDate)
-	{
-		// Forget all current data
-		primitives_.forgetAll();
-
-		// Recreate primitive depending on current style
-		switch (displayStyle())
-		{
-			case (RenderableData1D::LineXYStyle):
-				primitives_.reinitialise(1, true, GL_LINE_STRIP, true);
-				constructLineXY(transformedData().constXAxis(), transformedData().constValues(), primitives_[0], axes, colourDefinition);
-				break;
-// 			case (RenderableData1D::LineZYStyle):
-// 				Surface::constructLineZY(primitive_, axes, collection_->displayAbscissa(), collection_->displayData(), colourDefinition.colourScale());
-// 				break;
-// 			case (RenderableData1D::GridStyle):
-// 				Surface::constructGrid(primitive_, axes, collection_->displayAbscissa(), collection_->displayData(), colourDefinition.colourScale());
-// 				break;
-// 			case (RenderableData1D::SurfaceStyle):
-// 			case (RenderableData1D::UnlitSurfaceStyle):
-// 				Surface::constructFull(primitive_, axes, collection_->displayAbscissa(), collection_->displayData(), colourDefinition.colourScale());
-// 				break;
-			default:
-				printf("Internal Error: Display style %i not accounted for in RenderableData1D::updateAndSendPrimitive().\n", displayStyle());
-				break;
-		}
-
-		// Pop old primitive instance (unless flagged not to)
-		if ((!pushAndPop) && (primitives_.nInstances() != 0)) primitives_.popInstance(context);
-	
-		// Push a new instance to create the new display list / vertex array
-		primitives_.pushInstance(context);
-	}
-
-	// Send primitive
-	sendToGL();
-
-	// Pop current instance (if flagged)
-	if (pushAndPop) primitives_.popInstance(context);
-
-	// Store version points for the up-to-date primitive
-	primitivesAxesVersion_ = axes.displayVersion();
-	primitivesColourDefinitionFingerprint_.sprintf("%p@%i", group_, colourDefinition.version());
-	primitivesDataVersion_ = version();
-	primitivesStyleVersion_ = displayStyleVersion();
-
-	return;
+	dataPrimitive_->initialise(GL_LINE_STRIP, true);
+	constructLineXY(transformedData().constXAxis(), transformedData().constValues(), dataPrimitive_, view.constAxes(), colourDefinition);
 }
 
 // Create line strip primitive
 void RenderableData1D::constructLineXY(const Array<double>& displayAbscissa, const Array<double>& displayValues, Primitive* primitive, const Axes& axes, const ColourDefinition& colourDefinition, double zCoordinate)
 {
-// 	// Get extents of displayData to use based on current axes limits
-// 	Vec3<int> minIndex, maxIndex;
-// 	if (!calculateExtents(axes, displayAbscissa, displayData, minIndex, maxIndex)) return;
-// 	int nZ = (maxIndex.z - minIndex.z) + 1;
-
 	// Copy and transform abscissa values (still in data space) into axes coordinates
-// 	Array<double> x(displayAbscissa, minIndex.x, maxIndex.x);
 	Array<double> x = displayAbscissa;
 	axes.transformX(x);
 	int nX = x.nItems();
@@ -284,25 +219,3 @@ void RenderableData1D::constructLineXY(const Array<double>& displayAbscissa, con
 		}
 	}
 }
-
-// Calculate integer index extents for display data given supplied axes
-// bool Surface::calculateExtents(const Axes& axes, const Array<double>& abscissa, List<DisplayDataSet>& displayData, Vec3<int>& minIndex, Vec3<int>& maxIndex)
-// {
-// 	// Grab some stuff from the pane's axes
-// 	Vec3<double> axisMin(axes.min(0), axes.min(1), axes.min(2));
-// 	Vec3<double> axisMax(axes.max(0), axes.max(1), axes.max(2));
-// 
-// 	// Get x index limits
-// 	for (minIndex.x = 0; minIndex.x < abscissa.nItems(); ++minIndex.x) if (abscissa.constAt(minIndex.x) >= axisMin.x) break;
-// 	if (minIndex.x == abscissa.nItems()) return false;
-// 	for (maxIndex.x = abscissa.nItems()-1; maxIndex.x >= 0; --maxIndex.x) if (abscissa.constAt(maxIndex.x) <= axisMax.x) break;
-// 	if (maxIndex.x < 0) return false;
-// 
-// 	// Get z index limits
-// 	for (minIndex.z = 0; minIndex.z < displayData.nItems(); ++minIndex.z) if (displayData[minIndex.z]->z() >= axisMin.z) break;
-// 	if (minIndex.z == displayData.nItems()) return false;
-// 	for (maxIndex.z = displayData.nItems()-1; maxIndex.z >= 0; --maxIndex.z)  if (displayData[maxIndex.z]->z() <= axisMax.z) break;
-// 	if (maxIndex.z < 0) return false;
-// 
-// 	return true;
-// }

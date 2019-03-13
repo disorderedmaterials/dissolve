@@ -22,6 +22,7 @@
 #ifndef DISSOLVE_RENDERABLE_H
 #define DISSOLVE_RENDERABLE_H
 
+#include "gui/viewer/render/primitiveassembly.h"
 #include "gui/viewer/render/primitivelist.h"
 #include "gui/viewer/render/colourdefinition.h"
 #include "gui/viewer/render/linestyle.h"
@@ -38,7 +39,7 @@ class Renderable : public ListItem<Renderable>
 {
 	public:
 	// Renderable type
-	enum RenderableType { Data1DRenderable, nRenderableTypes };
+	enum RenderableType { Data1DRenderable, SpeciesRenderable, nRenderableTypes };
 	// Convert text string to RenderableType
 	static RenderableType renderableType(const char* s);
 	// Convert RenderableType to text string
@@ -202,23 +203,43 @@ class Renderable : public ListItem<Renderable>
 	/*
 	 * Rendering Primitives
 	 */
-	protected:
-	// Primitives representing the data
+	private:
+	// Basic Primitives managed by the Renderable, and used in the creation of assemblies
+	PrimitiveList basicPrimitives_;
+	// Standard Primitives managed by the Renderable, and drawn automatically
 	PrimitiveList primitives_;
-	// Data version at which primitives were last created
-	int primitivesDataVersion_;
+	// Primitive assemblies managed by the Renderable, and drawn automatically
+	List<PrimitiveAssembly> assemblies_;
+	// Data version at which bespoke primitives / assembled list were last created
+	int lastDataVersion_;
 	// ColourDefinition fingerprint at which primitives were last created
-	CharString primitivesColourDefinitionFingerprint_;
+	CharString lastColourDefinitionFingerprint_;
 	// Axes version at which primitives were last created
-	int primitivesAxesVersion_;
+	int lastAxesVersion_;
 	// Style version at which primitives were last created
-	int primitivesStyleVersion_;
+	int lastStyleVersion_;
+
+	protected:
+	// Create new basic Primitive
+	Primitive* createBasicPrimitive(GLenum type = GL_LINES, bool colourData = false);
+	// Remove specified basic Primitive
+	void removeBasicPrimitive(Primitive* primitive);
+	// Create new Primitive
+	Primitive* createPrimitive();
+	// Remove specified Primitive
+	void removePrimitive(Primitive* primitive);
+	// Create new PrimitiveAssembly
+	PrimitiveAssembly* createPrimitiveAssembly();
+	// Remove specified PrimitiveAssembly
+	void removePrimitiveAssembly(PrimitiveAssembly* assembly);
+	
+	private:
+	// Recreate necessary primitives / primitive assemblies for the data
+	virtual void recreatePrimitives(const View& view, const ColourDefinition& colourDefinition) = 0;
 
 	public:
-	// Update primitives and send for display
-	virtual void updateAndSendPrimitives(View& view, RenderableGroupManager& groupManager, bool forceUpdate, bool pushAndPop, const QOpenGLContext* context) = 0;
-	// Send primitives to GL
-	void sendToGL();
+	// Update primitives and send to display
+	void updateAndSendPrimitives(const View& view, const RenderableGroupManager& groupManager, bool forceUpdate, bool pushAndPop, const QOpenGLContext* context, double lineWidthScaling);
 };
 
 #endif

@@ -20,6 +20,7 @@
 */
 
 #include "gui/viewer/render/renderable.h"
+#include "gui/viewer/render/renderablegroupmanager.h"
 #include "gui/viewer/render/view.h"
 #include "math/interpolator.h"
 #include "base/lineparser.h"
@@ -27,7 +28,7 @@
 #include <limits>
 
 // Renderable Type
-const char* RenderableTypeKeywords[] = { "Data1D" };
+const char* RenderableTypeKeywords[] = { "Data1D", "Species" };
 
 // Convert text string to RenderableType
 Renderable::RenderableType Renderable::renderableType(const char* s)
@@ -68,10 +69,10 @@ Renderable::Renderable(Renderable::RenderableType type, const char* objectTag)
 	transforms_[1].setEquation("y");
 	transforms_[2].setEquation("z");
 
-	// GL
-	primitivesDataVersion_ = -1;
-	primitivesAxesVersion_ = -1;
-	primitivesStyleVersion_ = -1;
+	// Rendering Versions
+	lastDataVersion_ = -1;
+	lastAxesVersion_ = -1;
+	lastStyleVersion_ = -1;
 
 	// Display
 	visible_ = true;
@@ -330,24 +331,99 @@ bool Renderable::hasTitle() const
  * Rendering Primitives
  */
 
-// Send primitives to GL
-void Renderable::sendToGL()
+// Create new basic Primitive
+Primitive* Renderable::createBasicPrimitive(GLenum type, bool colourData)
 {
-        // If this collection is not visible return now
-        if (!visible_) return;
+	return basicPrimitives_.add(type, colourData);
+}
 
-        if (displayStyle() == Renderable::SurfaceStyle)
-        {
-                glEnable(GL_LIGHTING);
-                glDisable(GL_LINE_SMOOTH);
-        }
-        else
-        {
-                glEnable(GL_LINE_SMOOTH);
-                lineStyle().apply();
-                glDisable(GL_LIGHTING);
-        }
+// Remove specified basic Primitive
+void Renderable::removeBasicPrimitive(Primitive* primitive)
+{
+	basicPrimitives_.remove(primitive);
+}
 
-        // Send Primitives to display
-        primitives_.sendToGL();
+// Create new Primitive
+Primitive* Renderable::createPrimitive()
+{
+	return primitives_.add();
+}
+
+// Remove specified Primitive
+void Renderable::removePrimitive(Primitive* primitive)
+{
+	primitives_.remove(primitive);
+}
+
+// Create new PrimitiveAssembly
+PrimitiveAssembly* Renderable::createPrimitiveAssembly()
+{
+	return assemblies_.add();
+}
+
+// Remove specified PrimitiveAssembly
+void Renderable::removePrimitiveAssembly(PrimitiveAssembly* assembly)
+{
+	assemblies_.remove(assembly);
+}
+
+// Update primitives and send to display
+void Renderable::updateAndSendPrimitives(const View& view, const RenderableGroupManager& groupManager, bool forceUpdate, bool pushAndPop, const QOpenGLContext* context, double lineWidthScaling)
+{
+	// If this Renderable is not visible, return now
+	if (!visible_) return;
+
+	// Grab axes for the View
+	const Axes& axes = view.constAxes();
+
+	// Grab copy of the relevant colour definition for this Renderable
+	const ColourDefinition& colourDefinition = groupManager.colourDefinition(this);
+
+	// Check whether the primitive for this Renderable needs updating
+	bool upToDate = true;
+	if (forceUpdate) upToDate = false;
+	else if (lastAxesVersion_ != axes.version()) upToDate = false;
+	else if (!DissolveSys::sameString(lastColourDefinitionFingerprint_, CharString("%p@%i", group_, colourDefinition.version()), true)) upToDate = false;
+	else if (lastDataVersion_ != version()) upToDate = false;
+	else if (lastStyleVersion_ != displayStyleVersion()) upToDate = false;
+
+	// If the primitive is out of date, recreate it's data.
+	if (!upToDate)
+	{
+		// Forget all current data for primtives and assemblies (not basic primitives)
+		primitives_.forgetAll();
+		ListIterator<PrimitiveAssembly> assemblyIterator(assemblies_);
+		while (PrimitiveAssembly* assembly = assemblyIterator.iterate()) assembly->clear();
+
+		// Recreate Primitives for the underlying data
+		recreatePrimitives(view, colourDefinition);
+
+		// Pop old Primitive instance (if they exist)
+		if (basicPrimitives_.nInstances() != 0) basicPrimitives_.popInstance(context);
+		if (primitives_.nInstances() != 0) primitives_.popInstance(context);
+	}
+
+	// If there are no current instances, or we are forcing a push/pop of an instance, push an instance here
+	if ((basicPrimitives_.nInstances() == 0) || pushAndPop) basicPrimitives_.pushInstance(context);
+	if ((primitives_.nInstances() == 0) || pushAndPop) primitives_.pushInstance(context);
+
+	// Send Primitives to display
+	primitives_.sendToGL();
+
+	// Send Primitive assemblies to display
+	ListIterator<PrimitiveAssembly> assemblyIterator(assemblies_);
+	while (PrimitiveAssembly* assembly = assemblyIterator.iterate()) assembly->sendToGL(lineWidthScaling);
+
+	// Pop current instances if required
+	if (pushAndPop)
+	{
+		basicPrimitives_.popInstance(context);
+		primitives_.popInstance(context);
+	}
+
+	// Store version points for the up-to-date primitive
+	lastAxesVersion_ = axes.version();
+	lastColourDefinitionFingerprint_.sprintf("%p@%i", group_, colourDefinition.version());
+	lastDataVersion_ = version();
+	lastStyleVersion_ = displayStyleVersion();
 }

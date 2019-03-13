@@ -31,19 +31,18 @@
 #include "classes/speciessite.h"
 #include "classes/isotopologue.h"
 #include "base/charstring.h"
+#include "base/version.h"
+#include "templates/objectstore.h"
 
 // Forward Declarations
 class Box;
 
-/*
- * Species Definition
- */
-class Species : public ListItem<Species>
+//Species Definition
+class Species : public ListItem<Species>, public ObjectStore<Species>
 {
 	public:
-	// Constructor
+	// Constructor / Destructor
 	Species();
-	// Destructor
 	~Species();
 	// Clear Data
 	void clear();
@@ -55,6 +54,8 @@ class Species : public ListItem<Species>
 	private:
 	// Name of the Species
 	CharString name_;
+	// Version of the Species
+	VersionCounter version_;
 
 	public:
 	// Set name of the Species
@@ -65,6 +66,8 @@ class Species : public ListItem<Species>
 	bool checkSetUp(const List<AtomType>& atomTypes);
 	// Print Species information
 	void print();
+	// Return version
+	const int version() const;
 
 
 	/*
@@ -77,9 +80,11 @@ class Species : public ListItem<Species>
 	RefList<SpeciesAtom,bool> selectedAtoms_;
 	// List of AtomTypes, and their populations, used in the Species
 	AtomTypeList usedAtomTypes_;
+	// Version of the atom selection
+	VersionCounter atomSelectionVersion_;
 	
 	public:
-	// Add a new Atom to the Species
+	// Add a new atom to the Species
 	SpeciesAtom* addAtom(Element* element, Vec3<double> r);
 	// Return the number of atoms in the species
 	int nAtoms() const;
@@ -87,22 +92,30 @@ class Species : public ListItem<Species>
 	SpeciesAtom* firstAtom() const;
 	// Return the nth atom in the Species
 	SpeciesAtom* atom(int n);
-	// Return the list of SpeciesAtoms
+	// Return the list of atoms
 	const List<SpeciesAtom>& atoms() const;
-	// Clear current Atom selection
+	// Transmute specified atom
+	void transmuteAtom(SpeciesAtom* i, Element* el);
+	// Clear current atom selection
 	void clearAtomSelection();
-	// Add Atom to selection
+	// Add atom to selection
 	void selectAtom(SpeciesAtom* i);
-	// Select Atoms along any path from the specified one, ignoring the bond(s) provided
+	// Remove atom from selection
+	void deselectAtom(SpeciesAtom* i);
+	// Toggle selection state of specified atom
+	void toggleAtomSelection(SpeciesAtom* i);
+	// Select atoms along any path from the specified one, ignoring the bond(s) provided
 	void selectFromAtom(SpeciesAtom* i, SpeciesBond* exclude, SpeciesBond* excludeToo = NULL);
 	// Return current atom selection
 	const RefList<SpeciesAtom,bool>& selectedAtoms() const;
-	// Return nth selected Atom
+	// Return nth selected atom
 	SpeciesAtom* selectedAtom(int n);
-	// Return number of selected Atoms
+	// Return number of selected atoms
 	int nSelectedAtoms() const;
-	// Return whether specified Atom is selected
+	// Return whether specified atom is selected
 	bool isAtomSelected(SpeciesAtom* i) const;
+	// Return version of the atom selection
+	const int atomSelectionVersion() const;
 	// Return total atomic mass of Species
 	double mass() const;
 	// Update used AtomTypeList
@@ -117,11 +130,11 @@ class Species : public ListItem<Species>
 	 * Intramolecular Data
 	 */
 	private:
-	// List of Bonds between Atoms in the Species
+	// List of bonds between atoms in the Species
 	List<SpeciesBond> bonds_;
-	// List of Angles between Atoms in the Species
+	// List of angles between atoms in the Species
 	List<SpeciesAngle> angles_;
-	// List of Torsions between Atoms in the Species
+	// List of torsions between atoms in the Species
 	List<SpeciesTorsion> torsions_;
 	// Whether the attached atoms lists have been created
 	bool attachedAtomListsGenerated_;

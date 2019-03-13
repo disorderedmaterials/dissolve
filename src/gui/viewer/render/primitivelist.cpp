@@ -31,10 +31,10 @@ PrimitiveList::~PrimitiveList()
 {
 }
 
-// Clear all existing primitives
+// Clear all existing Primitives
 void PrimitiveList::clear()
 {
-// 	for (Primitive* prim = primitives_.first(); prim != NULL; prim = prim->next) prim->clear();
+	primitives_.clear();
 }
 
 // Forget all data, leaving arrays intact
@@ -63,13 +63,25 @@ void PrimitiveList::reinitialise(int newSize, bool allowShrink, GLenum type, boo
 	}
 }
 
-// Add a new primitive to the end of the list
-Primitive* PrimitiveList::addPrimitive(GLenum type, bool colourData)
+// Add a new Primitive to the end of the list
+Primitive* PrimitiveList::add(GLenum type, bool colourData)
 {
 	Primitive* newPrim = primitives_.add();
 	newPrim->initialise(type, colourData);
 
 	return newPrim;
+}
+
+// Register an existing Primitive with the list
+void PrimitiveList::add(Primitive* primitive)
+{
+	primitives_.own(primitive);
+}
+
+// Remove specified Primitive
+void PrimitiveList::remove(Primitive* primitive)
+{
+	primitives_.remove(primitive);
 }
 
 // Return total number of defined vertices

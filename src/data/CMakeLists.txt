@@ -1,5 +1,6 @@
 add_library(data
   atomicmass.cpp
+  elementcolours.cpp
   elements.cpp
   ff.cpp
   ffatomtype.cpp
@@ -7,6 +8,7 @@ add_library(data
   isotopes.cpp
 
   atomicmass.h
+  elementcolours.h
   elements.h
   ff.h
   ffatomtype.h

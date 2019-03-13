@@ -103,10 +103,10 @@ int DataViewer::axisKeywordNArguments(DataViewer::AxisKeyword kwd)
 }
 
 /*
- * Collection Keywords
+ * Renderable Keywords
  */
 
-// Collection Block Keywords
+// Renderable Block Keywords
 const char* DataViewerRenderableBlockKeywords[] = {
 	"ColourAlphaIsGlobal", "ColourCustom", "ColourGlobalAlpha", "ColourHSVEnd", "ColourHSVStart", "ColourRGBEnd", "ColourRGBStart", "ColourSingle", "ColourStyle",
 	"EndRenderable",
@@ -117,7 +117,7 @@ const char* DataViewerRenderableBlockKeywords[] = {
 	"Visible"
 };
 
-// Collection Block NArguments
+// Renderable Block NArguments
 int DataViewerRenderableKeywordNArguments[] = {
 	1, 5, 1, 5, 5, 5, 5, 4, 1,
 	0,	
@@ -154,7 +154,6 @@ int DataViewer::renderableKeywordNArguments(DataViewer::RenderableKeyword kwd)
 // View Block Keywords
 const char* DataViewerViewBlockKeywords[] = {
 	"AutoFollowType", "AutoPositionTitles", "Axis",
-	"BoundingBox", "BoundingBoxPlaneY",
 	"EndView",
 	"FlatLabels",
 	"LabelPointSize",
@@ -168,7 +167,6 @@ const char* DataViewerViewBlockKeywords[] = {
 // View Block NArguments
 int DataViewerViewKeywordNArguments[] = {
 	1, 1, 1, 
-	1, 1,
 	0,
 	1,
 	1,
@@ -576,15 +574,6 @@ bool DataViewer::readViewBlock(LineParser& parser, bool strictBlockEnd)
 				if ((axis < 0) || (axis > 2)) Messenger::warn("Axis index is out of range in input file. Defaults will be used.\n");
 				else if (!readAxisBlock(parser, view_.axes(), axis)) return false;
 				break;
-			// Bounding Box
-			case (DataViewer::BoundingBoxKeyword):
-				if ((parser.argi(1) < 0) || (parser.argi(1) >= View::nBoundingBoxes)) Messenger::warn("Value is out of range for %s keyword.\n", DataViewer::viewKeyword(viewKwd));
-				else view_.setBoundingBox((View::BoundingBox) parser.argi(1));
-				break;
-			// Bounding Box plane y intercept
-			case (DataViewer::BoundingBoxPlaneYKeyword):
-				view_.setBoundingBoxPlaneY(parser.argd(1));
-				break;
 			// End input block
 			case (DataViewer::EndViewKeyword):
 				return true;
@@ -732,9 +721,9 @@ bool DataViewer::writeAxisBlock(LineParser& parser, Axes& axes, int axis)
 	parser.writeLineF("      %s %s\n", DataViewer::axisKeyword(DataViewer::FractionalPositioningKeyword), DissolveSys::btoa(axes.positionIsFractional(axis)));
 	parser.writeLineF("      %s %s %s %s\n", DataViewer::axisKeyword(DataViewer::GridLinesKeyword), DissolveSys::btoa(axes.gridLinesMajor(axis)), DissolveSys::btoa(axes.gridLinesMinor(axis)), DissolveSys::btoa(axes.gridLinesFull(axis)));
 	LineStyle style = axes.gridLineMajorStyle(axis);
-	parser.writeLineF("      %s %f '%s' %f %f %f %f\n", DataViewer::axisKeyword(DataViewer::GridLineMajorStyleKeyword), style.width(), LineStipple::stipple[style.stipple()].name, style.colour().redF(), style.colour().greenF(), style.colour().blueF(), style.colour().alphaF());
+	parser.writeLineF("      %s %f '%s' %f %f %f %f\n", DataViewer::axisKeyword(DataViewer::GridLineMajorStyleKeyword), style.width(), LineStipple::stipple[style.stipple()].name, style.colour()[0], style.colour()[1], style.colour()[2], style.colour()[3]);
 	style = axes.gridLineMinorStyle(axis);
-	parser.writeLineF("      %s %f '%s' %f %f %f %f\n", DataViewer::axisKeyword(DataViewer::GridLineMinorStyleKeyword), style.width(), LineStipple::stipple[style.stipple()].name, style.colour().redF(), style.colour().greenF(), style.colour().blueF(), style.colour().alphaF());
+	parser.writeLineF("      %s %f '%s' %f %f %f %f\n", DataViewer::axisKeyword(DataViewer::GridLineMinorStyleKeyword), style.width(), LineStipple::stipple[style.stipple()].name, style.colour()[0], style.colour()[1], style.colour()[2], style.colour()[3]);
 	parser.writeLineF("      %s %s\n", DataViewer::axisKeyword(DataViewer::InvertKeyword), DissolveSys::btoa(axes.inverted(axis)));
 	parser.writeLineF("      %s %s\n", DataViewer::axisKeyword(DataViewer::LabelAnchorKeyword), TextPrimitive::textAnchor(axes.labelAnchor(axis)));
 	parser.writeLineF("      %s %f %f %f\n", DataViewer::axisKeyword(DataViewer::LabelOrientationKeyword), axes.labelOrientation(axis).x, axes.labelOrientation(axis).y, axes.labelOrientation(axis).z);
@@ -826,8 +815,6 @@ bool DataViewer::writeViewBlock(LineParser& parser)
 	parser.writeLineF("    %s %s\n", DataViewer::viewKeyword(DataViewer::AutoFollowTypeKeyword), View::autoFollowType(view_.autoFollowType()));
 	parser.writeLineF("    %s %s\n", DataViewer::viewKeyword(DataViewer::AutoPositionTitlesKeyword), DissolveSys::btoa(view_.axes().autoPositionTitles()));
 	for (int axis=0; axis < 3; ++axis) writeAxisBlock(parser, view_.axes(), axis);
-	parser.writeLineF("    %s %i\n", DataViewer::viewKeyword(DataViewer::BoundingBoxKeyword), view_.boundingBox());
-	parser.writeLineF("    %s %f\n", DataViewer::viewKeyword(DataViewer::BoundingBoxPlaneYKeyword), view_.boundingBoxPlaneY());
 	parser.writeLineF("    %s %s\n", DataViewer::viewKeyword(DataViewer::FlatLabelsKeyword), DissolveSys::btoa(view_.flatLabelsIn3D()));
 	parser.writeLineF("    %s %f\n", DataViewer::viewKeyword(DataViewer::LabelPointSizeKeyword), view_.labelPointSize());
 	parser.writeLineF("    %s %f\n", DataViewer::viewKeyword(DataViewer::TitlePointSizeKeyword), view_.titlePointSize());

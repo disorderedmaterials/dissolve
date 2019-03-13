@@ -37,7 +37,7 @@ void BaseViewer::clear()
 	view_.clear();
 }
 
-// Own supplied renderable and display it
+// Own supplied Renderable and display it
 void BaseViewer::ownRenderable(Renderable* newRenderable)
 {
 	// Warn if an existing Renderable has the same name as this one
@@ -132,13 +132,13 @@ bool BaseViewer::isRenderableVisible(const char* name) const
 	return rend->isVisible();
 }
 
-// Return the group manager for the data
+// Return the group manager for Renderables
 RenderableGroupManager& BaseViewer::groupManager()
 {
 	return groupManager_;
 }
 
-// Return the view
+// Return the View definition
 View& BaseViewer::view()
 {
 	return view_;

@@ -217,13 +217,13 @@ void Matrix4::zero()
 }
 
 // Return matrix array
-double *Matrix4::matrix()
+const double* Matrix4::matrix() const
 {
 	return matrix_;
 }
 
 // Return transpose of current matrix
-Matrix4& Matrix4::transpose()
+Matrix4& Matrix4::transpose() const
 {
 	static Matrix4 A;
 	A.matrix_[0] = matrix_[0];
@@ -246,9 +246,8 @@ Matrix4& Matrix4::transpose()
 }
 
 // Calculate determinant
-double Matrix4::determinant()
+double Matrix4::determinant() const
 {
-
 	double a = matrix_[0] * (matrix_[5]*(matrix_[10]*matrix_[15]-matrix_[11]*matrix_[14]) - matrix_[9]*(matrix_[6]*matrix_[15]-matrix_[7]*matrix_[14]) + matrix_[13]*(matrix_[6]*matrix_[11]-matrix_[7]*matrix_[10]) );
 	double b = matrix_[4] * (matrix_[1]*(matrix_[10]*matrix_[15]-matrix_[11]*matrix_[14]) - matrix_[9]*(matrix_[2]*matrix_[15]-matrix_[3]*matrix_[14]) + matrix_[13]*(matrix_[2]*matrix_[11]-matrix_[3]*matrix_[10]) );
 	double c = matrix_[8] * (matrix_[1]*(matrix_[6]*matrix_[15]-matrix_[7]*matrix_[14]) - matrix_[5]*(matrix_[2]*matrix_[15]-matrix_[3]*matrix_[14]) + matrix_[13]*(matrix_[2]*matrix_[7]-matrix_[3]*matrix_[6]) );

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1028</width>
-    <height>819</height>
+    <width>955</width>
+    <height>810</height>
    </rect>
   </property>
   <property name="font">
@@ -161,6 +161,12 @@
           </item>
           <item>
            <widget class="QTableWidget" name="AtomTable">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>1</verstretch>
+             </sizepolicy>
+            </property>
             <property name="showDropIndicator" stdset="0">
              <bool>false</bool>
             </property>
@@ -221,6 +227,16 @@
            </widget>
           </item>
          </layout>
+        </item>
+        <item>
+         <widget class="SpeciesWidget" name="ViewerWidget" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>2</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -950,6 +966,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SpeciesWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/viewer/specieswidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="main.qrc"/>
  </resources>

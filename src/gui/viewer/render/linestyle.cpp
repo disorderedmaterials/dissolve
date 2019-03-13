@@ -22,15 +22,12 @@
 #include "gui/viewer/render/linestyle.h"
 #include <stdio.h>
 
-// Static members
-double LineStyle::lineWidthScale_ = 1.0;
-
 // Constructor
-LineStyle::LineStyle()
+LineStyle::LineStyle(double width, LineStipple::StippleType stipple, double r, double g, double b, double a)
 {
-	width_ = 1.0;
-	colour_.setRgb(0, 0, 0, 255);
-	stipple_ = LineStipple::NoStipple;
+	width_ = width;
+	stipple_ = stipple;
+	setColour(r, g, b, a);
 }
 
 // Destructor
@@ -49,7 +46,10 @@ void LineStyle::operator=(const LineStyle& source)
 {
 	width_ = source.width_;
 	stipple_ = source.stipple_;
-	colour_ = source.colour_;
+	colour_[0] = source.colour_[0];
+	colour_[1] = source.colour_[1];
+	colour_[2] = source.colour_[2];
+	colour_[3] = source.colour_[3];
 }
 
 /*
@@ -68,7 +68,7 @@ void LineStyle::set(double width, LineStipple::StippleType stipple, QColor colou
 {
 	width_ = width;
 	stipple_ = stipple;
-	colour_ = colour;
+	setColour(colour);
 }
 
 // Set line style
@@ -76,7 +76,7 @@ void LineStyle::set(double width, LineStipple::StippleType stipple, double r, do
 {
 	width_ = width;
 	stipple_ = stipple;
-	colour_.setRgbF(r, g, b, a);
+	setColour(r, g, b, a);
 }
 
 // Set line width
@@ -104,19 +104,25 @@ LineStipple::StippleType LineStyle::stipple() const
 }
 
 // Set line colour
-void LineStyle::setColour(QColor colour)
+void LineStyle::setColour(double r, double g, double b, double a)
 {
-	colour_ = colour;
+	colour_[0] = r;
+	colour_[1] = g;
+	colour_[2] = b;
+	colour_[3] = a;
 }
 
 // Set line colour
-void LineStyle::setColour(double r, double g, double b, double a)
+void LineStyle::setColour(QColor colour)
 {
-	colour_.setRgbF(r, g, b, a);
+	colour_[0] = colour.redF();
+	colour_[1] = colour.greenF();
+	colour_[2] = colour.blueF();
+	colour_[3] = colour.alphaF();
 }
 
 // Return line colour
-QColor LineStyle::colour() const
+const GLfloat* LineStyle::colour() const
 {
 	return colour_;
 }
@@ -125,33 +131,20 @@ QColor LineStyle::colour() const
  * GL
  */
 
-// Set line width scaling to use
-void LineStyle::setLineWidthScale(double lineWidthScale)
+// Send line styling to GL
+void LineStyle::sendToGL(double widthScaling)
 {
-	lineWidthScale_ = lineWidthScale;
-}
+	// Set line width, including any supplied scaling factor
+	glLineWidth(width_ * widthScaling);
 
-// Apply line style
-void LineStyle::apply()
-{
-	// -- Render axis (grid) lines
-	glLineWidth(width_ * lineWidthScale_);
-	glEnable(GL_LINE_STIPPLE);
-	LineStipple::stipple[stipple_].apply();
-	GLfloat c[4];
-	c[0] = colour_.redF();
-	c[1] = colour_.greenF();
-	c[2] = colour_.blueF();
-	c[3] = colour_.alphaF();
-	glColor4fv(c);
-}
+	// Enable / disable stippling
+	if (stipple_ == LineStipple::NoStipple) glDisable(GL_LINE_STIPPLE);
+	else
+	{
+		glEnable(GL_LINE_STIPPLE);
+		LineStipple::stipple[stipple_].apply();
+	}
 
-// Revert to normal line style (black, solid, 1.0px)
-void LineStyle::revert()
-{
-	glLineWidth(lineWidthScale_);
-	LineStipple::stipple[LineStipple::NoStipple].apply();
-	glDisable(GL_LINE_STIPPLE);
-	GLfloat c[4] = { 0.0, 0.0, 0.0, 1.0 };
-	glColor4fv(c);
+	// Apply colour
+	glColor4fv(colour_);
 }

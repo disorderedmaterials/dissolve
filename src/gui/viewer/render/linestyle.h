@@ -33,7 +33,7 @@ class LineStyle
 {
 	public:
 	// Constructor / Destructor
-	LineStyle();
+	LineStyle(double width = 1.0, LineStipple::StippleType stipple = LineStipple::NoStipple, double r = 0.0, double g = 0.0, double b = 0.0, double a = 1.0);
 	~LineStyle();
 	// Copy constructor
 	LineStyle(const LineStyle& source);
@@ -50,15 +50,15 @@ class LineStyle
 	// Line stipple
 	LineStipple::StippleType stipple_;
 	// Line colour
-	QColor colour_;
+	GLfloat colour_[4];
 
 	public:
 	// Set line style
 	void set(double width, LineStipple::StippleType stipple);
 	// Set line style and colour
-	void set(double width, LineStipple::StippleType stipple, QColor colour);
-	// Set line style and colour
 	void set(double width, LineStipple::StippleType stipple, double r, double g, double b, double a = 1.0);
+	// Set line style and colour
+	void set(double width, LineStipple::StippleType stipple, QColor colour);
 	// Set line width
 	void setWidth(double width);
 	// Return line width
@@ -68,27 +68,19 @@ class LineStyle
 	// Return line stipple
 	LineStipple::StippleType stipple() const;
 	// Set line colour
-	void setColour(QColor colour);
-	// Set line colour
 	void setColour(double r, double g, double b, double a = 1.0);
+	// Set line colour
+	void setColour(QColor colour);
 	// Return line colour
-	QColor colour() const;
+	const GLfloat* colour() const;
 
 
 	/*
 	 * GL
 	 */
-	private:
-	// Scaling to use for line width
-	static double lineWidthScale_;
-
 	public:
-	// Set line width scaling to use
-	static void setLineWidthScale(double lineWidthScale);
-	// Apply line style
-	void apply();
-	// Revert to normal line style (black, solid, 1.0px)
-	static void revert();
+	// Send line styling to GL
+	void sendToGL(double widthScaling = 1.0);
 };
 
 #endif

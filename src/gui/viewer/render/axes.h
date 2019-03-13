@@ -27,6 +27,7 @@
 #include "gui/viewer/render/textprimitivelist.h"
 #include "gui/viewer/render/linestyle.h"
 #include "base/charstring.h"
+#include "base/version.h"
 #include "templates/objectstore.h"
 #include "templates/vector3.h"
 #include "templates/vector4.h"
@@ -86,11 +87,9 @@ class Axes
 	Vec3<double> positionFractional_[3];
 	// Autoscaling method employed for each axis
 	Axes::AutoScaleMethod autoScale_[3];
-	// Version at which coordinate extremes/centre were last generated
-	int coordinateVersion_;
 
 	private:
-	// Recalculate centre coordinate of axes
+	// Recalculate minimum, maximum, and centre coordinates of axes
 	void updateCoordinates();
 	// Clamp axis position and min/max to current limits
 	void clamp(int axis);
@@ -127,11 +126,11 @@ class Axes
 	// Set all axis limits at once
 	void expandLimits(bool noShrink);
 	// Return coordinate at centre of axes
-	Vec3<double> coordCentre();
+	Vec3<double> coordCentre() const;
 	// Return coordinate at minimum of specified axis
-	Vec3<double> coordMin(int axis);
+	Vec3<double> coordMin(int axis) const;
 	// Return coordinate at maximum of specified axis
-	Vec3<double> coordMax(int axis);
+	Vec3<double> coordMax(int axis) const;
 	// Set whether axis is inverted
 	void setInverted(int axis, bool b);
 	// Return whether axis is inverted
@@ -167,7 +166,7 @@ class Axes
 	// Set autoscaling method employed for specified axis
 	void setAutoScale(int axis, Axes::AutoScaleMethod method);
 	// Return autoscaling method employed for specified axis
-	Axes::AutoScaleMethod autoScale(int axis);
+	Axes::AutoScaleMethod autoScale(int axis) const;
 
 
 	/*
@@ -215,23 +214,23 @@ class Axes
 	// Set axis tick size (relative to font size)
 	void setTickSize(int axis, double size);
 	// Return axis tick size (relative to font size)
-	double tickSize(int axis);
+	double tickSize(int axis) const;
 	// Set position of first tick delta on specified axis
 	void setFirstTick(int axis, double value);
 	// Return position of first tick delta on specified axis
-	double tickFirst(int axis);
+	double tickFirst(int axis) const;
 	// Set tick delta for specified axis
 	void setTickDelta(int axis, double value);
 	// Return tick delta for specified axis
-	double tickDelta(int axis);
+	double tickDelta(int axis) const;
 	// Set whether to calculate ticks automatically for specified axis
 	void setAutoTicks(int axis, bool b);
 	// Return whether to calculate ticks automatically for specified axis
-	bool autoTicks(int axis);
+	bool autoTicks(int axis) const;
 	// Set number of minor ticks in major tick intervals for specified axis
 	void setMinorTicks(int axis, int value);
 	// Return number of minor ticks in major tick intervals for specified axis
-	int minorTicks(int axis);
+	int minorTicks(int axis) const;
 
 
 	/*
@@ -289,11 +288,11 @@ class Axes
 	// Set whether to use best tick/label orientation for view
 	void setUseBestFlatView(bool b);
 	// Return whether to use best tick/label orientation for view
-	bool useBestFlatView();
+	bool useBestFlatView() const;
 	// Set whether to automatically place titles at a sensible position after label text
 	void setAutoPositionTitles(bool b);
 	// Return whether to automatically place titles at a sensible position after label text
-	bool autoPositionTitles();
+	bool autoPositionTitles() const;
 
 
 	/*
@@ -326,16 +325,12 @@ class Axes
 	 * Versions
 	 */
 	private:
-	// Version of axis definitions
-	int axesVersion_;
-	// Version of axis properties affecting data display
-	int displayVersion_;
+	// Version of axes definitions
+	VersionCounter version_;
 
 	public:
-	// Return version of axis definitions
-	int axesVersion();
-	// Return version of axis properties affecting data display
-	int displayVersion() const;
+	// Return version of axws definitions
+	const int version() const;
 
 
 	/*
