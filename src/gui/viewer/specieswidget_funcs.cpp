@@ -83,6 +83,7 @@ void SpeciesWidget::on_InteractionDrawElementButton_clicked(bool checked)
 void SpeciesWidget::on_ViewResetButton_clicked(bool checked)
 {
 	speciesViewer()->view().showAllData();
+	speciesViewer()->view().resetViewMatrix();
 
 	speciesViewer()->postRedisplay();
 }
