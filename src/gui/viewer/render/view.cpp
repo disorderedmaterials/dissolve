@@ -779,7 +779,11 @@ void View::resetViewMatrix()
 		projectionMatrix_ = calculateProjectionMatrix(false, zOffset_);
 	}
 
+	updateViewMatrix();
+
 	calculateFontScaling();
+
+	++viewRotationPoint_;
 }
 
 // Set display limits to show all available data
