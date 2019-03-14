@@ -3,7 +3,10 @@
 
 # Meta-Objects
 SET(viewer_MOC_HDRS
-  # configurationviewer.hui
+  graphwidget.h
+  selectsymbol.h
+
+  #configurationviewer.hui
   dataviewer.hui
   speciesviewer.hui
   viewer.hui
@@ -19,32 +22,32 @@ QT5_WRAP_UI(viewer_UIS_H ${viewer_UIS})
 
 # Source files (not Qt UI files or custom .h [uih])
 SET(viewer_SRCS
-  graphwidget.h
-  selectsymbol.h
-  specieswidget.h
-
-  configurationviewer_input.cpp
-  configurationviewer_scene.cpp
+  #configurationviewer_input.cpp
+  #configurationviewer_scene.cpp
+  dataviewer_contextmenu.cpp
   dataviewer_funcs.cpp
   dataviewer_input.cpp
   dataviewer_interaction.cpp
-  dataviewer_io.cpp
+  dataviewer_query.cpp
   dataviewer_render.cpp
   graphwidget_funcs.cpp
   selectsymbol_funcs.cpp
-  speciesviewer_contextmenu.cpp
   speciesviewer_funcs.cpp
   speciesviewer_input.cpp
-  speciesviewer_interaction.cpp
-  speciesviewer_render.cpp
-  specieswidget_funcs.cpp
+  speciesviewer_scene.cpp
   viewer_data.cpp
   viewer_funcs.cpp
   viewer_input.cpp
-  viewer_interaction.cpp
-  viewer_query.cpp
+  viewer_io.cpp
   viewer_render.cpp
 )
+
+# User Interface Files
+SET(viewer_UIS
+  graphwidget.ui
+  selectsymbol.ui
+}
+QT5_WRAP_UI(viewer_UIS_H ${viewer_UIS})
 
 # Target 'viewer'
 add_library(viewer

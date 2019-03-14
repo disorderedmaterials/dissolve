@@ -87,7 +87,7 @@ class View
 	// Convert ViewType to text string
 	static const char* viewType(ViewType vt);
 	// AutoFollow type
-	enum AutoFollowType { NoAutoFollow, AllAutoFollow, XFollow, nAutoFollowTypes };
+	enum AutoFollowType { NoAutoFollow, AllAutoFollow, XAutoFollow, nAutoFollowTypes };
 	// Convert text string to AutoFollowType
 	static AutoFollowType autoFollowType(const char* s);
 	// Convert AutoFollowType to text string
@@ -124,6 +124,8 @@ class View
 	int viewViewportUsedAt_;
 	// Auto-follow type in effect
 	AutoFollowType autoFollowType_;
+	// Length of X region to follow, if autoFollowType_ == XFollow
+	double autoFollowXLength_;
 
 	private:
 	// Return calculated projection matrix
@@ -190,6 +192,10 @@ class View
 	void cycleAutoFollowType();
 	// Return auto-follow type in effect
 	AutoFollowType autoFollowType() const;
+	// Set length of X region to follow, if autoFollowType_ == XFollow
+	void setAutoFollowXLength(double length);
+	// Return length of X region to follow, if autoFollowType_ == XFollow
+	double autoFollowXLength() const;
 	// Set axis limits based on current auto-follow type
 	void autoFollowData();
 

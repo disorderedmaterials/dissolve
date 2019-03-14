@@ -133,7 +133,7 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	phiMagGraph_->view().axes().setTitle(1, "\\sym{Delta}\\sym{phi}(\\it{r}), kJ mol\\sup{-1} \\sum{angstrom}\\sup{-1}");
 	phiMagGraph_->view().axes().setMin(1, 0.0);
 	phiMagGraph_->view().axes().setMax(1, 1.0);
-	phiMagGraph_->view().setAutoFollowType(View::XFollow);
+	phiMagGraph_->view().setAutoFollowType(View::XAutoFollow);
 
 	// R-Factor Graph
 

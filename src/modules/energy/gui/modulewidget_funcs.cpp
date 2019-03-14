@@ -48,7 +48,7 @@ EnergyModuleWidget::EnergyModuleWidget(QWidget* parent, Module* module, Dissolve
 	view.axes().setMax(1, 1.0);
 	view.axes().numberFormat(1).setType(NumberFormat::ScientificFormat);
 	view.axes().numberFormat(1).setUseENotation(true);
-	view.setAutoFollowType(View::XFollow);
+	view.setAutoFollowType(View::XAutoFollow);
 
 	currentConfiguration_ = NULL;
 

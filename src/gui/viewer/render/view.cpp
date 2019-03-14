@@ -68,6 +68,7 @@ void View::clear()
 	// Role
 	viewType_ = View::AutoStretchedView;
 	autoFollowType_ = View::NoAutoFollow;
+	autoFollowXLength_= 20.0;
 
 	// Style
 	labelPointSize_ = 16.0;
@@ -845,20 +846,29 @@ View::AutoFollowType View::autoFollowType() const
 	return autoFollowType_;
 }
 
+// Set length of X region to follow, if autoFollowType_ == XFollow
+void View::setAutoFollowXLength(double length)
+{
+	autoFollowXLength_ = length;
+}
+
+// Return length of X region to follow, if autoFollowType_ == XFollow
+double View::autoFollowXLength() const
+{
+	return autoFollowXLength_;
+}
+
 // Set axis limits based on current auto-follow type
 void View::autoFollowData()
 {
 	if (autoFollowType_ == View::NoAutoFollow) return;
 	else if (autoFollowType_ == View::AllAutoFollow) showAllData();
-	else if (autoFollowType_ == View::XFollow)
+	else if (autoFollowType_ == View::XAutoFollow)
 	{
-		// This is the window x 'width' we will follow
-		const double width = 20.0;
-
 		// Establish min / max limits on x axis
 		double xMin = transformedDataMinima().x;
 		double xMax = transformedDataMaxima().x;
-		if ((xMax - xMin) > width) xMin = xMax - width;
+		if ((xMax - xMin) > autoFollowXLength_) xMin = xMax - autoFollowXLength_;
 
 		// Get y range over the horizontal range we've established
 		bool first = true;
