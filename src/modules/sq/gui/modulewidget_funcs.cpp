@@ -88,6 +88,8 @@ SQModuleWidget::SQModuleWidget(QWidget* parent, Module* module, Dissolve& dissol
 
 	setGraphDataTargets(module_);
 
+	updateControls();
+
 	refreshing_ = false;
 }
 
@@ -98,6 +100,11 @@ SQModuleWidget::~SQModuleWidget()
 // Update controls within widget
 void SQModuleWidget::updateControls()
 {
+	ui.PartialGRPlotWidget->updateToolbar();
+	ui.PartialSQPlotWidget->updateToolbar();
+	ui.TotalGRPlotWidget->updateToolbar();
+	ui.TotalSQPlotWidget->updateToolbar();
+
 	partialGRGraph_->postRedisplay();
 	partialSQGraph_->postRedisplay();
 	totalGRGraph_->postRedisplay();

@@ -124,6 +124,8 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, Dissolve
 
 	setGraphDataTargets(module_);
 
+	updateControls();
+
 	refreshing_ = false;
 }
 
@@ -141,6 +143,13 @@ void RefineModuleWidget::updateControls()
 	ListIterator<PairPotential> ppIterator(dissolve_.pairPotentials());
 	while (PairPotential* pp = ppIterator.iterate()) phiLevel += Integrator::absTrapezoid(pp->uAdditional());
 	ui.PhiLevelSpin->setValue(phiLevel);
+
+	ui.DataPlotWidget->updateToolbar();
+	ui.PartialSQPlotWidget->updateToolbar();	
+	ui.PartialGRPlotWidget->updateToolbar();
+	ui.DeltaPhiRPlotWidget->updateToolbar();
+	ui.PhiMagPlotWidget->updateToolbar();
+	ui.ErrorsPlotWidget->updateToolbar();
 
 	dataGraph_->postRedisplay();
 	partialSQGraph_->postRedisplay();

@@ -54,6 +54,8 @@ EnergyModuleWidget::EnergyModuleWidget(QWidget* parent, Module* module, Dissolve
 
 	setGraphDataTargets(module_);
 
+	updateControls();
+
 	refreshing_ = false;
 }
 
@@ -99,6 +101,8 @@ void EnergyModuleWidget::updateControls()
 		ui.StableLabel->setText("No");
 	}
 	ui.StableLabel->setPalette(labelPalette);
+
+	ui.PlotWidget->updateToolbar();
 
 	energyGraph_->postRedisplay();
 }

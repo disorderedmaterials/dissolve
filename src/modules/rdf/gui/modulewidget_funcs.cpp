@@ -64,6 +64,8 @@ RDFModuleWidget::RDFModuleWidget(QWidget* parent, Module* module, Dissolve& diss
 
 	currentConfiguration_ = NULL;
 
+	updateControls();
+
 	setGraphDataTargets(module_);
 }
 
@@ -74,6 +76,9 @@ RDFModuleWidget::~RDFModuleWidget()
 // Update controls within widget
 void RDFModuleWidget::updateControls()
 {
+	ui.PartialsPlotWidget->updateToolbar();
+	ui.TotalsPlotWidget->updateToolbar();
+
 	partialsGraph_->postRedisplay();
 	totalsGraph_->postRedisplay();
 }

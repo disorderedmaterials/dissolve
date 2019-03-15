@@ -151,6 +151,8 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 
 	setGraphDataTargets(module_);
 
+	updateControls();
+
 	refreshing_ = false;
 }
 
@@ -162,6 +164,15 @@ EPSRModuleWidget::~EPSRModuleWidget()
 void EPSRModuleWidget::updateControls()
 {
 	refreshing_ = true;
+
+	ui.FQPlotWidget->updateToolbar();
+	ui.FQFitPlotWidget->updateToolbar();
+	ui.SQPlotWidget->updateToolbar();
+	ui.GRPlotWidget->updateToolbar();
+	ui.FRPlotWidget->updateToolbar();
+	ui.PhiRPlotWidget->updateToolbar();
+	ui.PhiMagPlotWidget->updateToolbar();
+	ui.RFactorPlotWidget->updateToolbar();
 
 	FQGraph_->postRedisplay();
 	FQFitGraph_->postRedisplay();

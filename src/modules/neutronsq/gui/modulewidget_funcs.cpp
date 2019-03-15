@@ -88,6 +88,8 @@ NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget* parent, Module* module, Di
 
 	setGraphDataTargets(module_);
 
+	updateControls();
+
 	refreshing_ = false;
 }
 
@@ -98,6 +100,11 @@ NeutronSQModuleWidget::~NeutronSQModuleWidget()
 // Update controls within widget
 void NeutronSQModuleWidget::updateControls()
 {
+	ui.PartialGRPlotWidget->updateToolbar();
+	ui.PartialSQPlotWidget->updateToolbar();
+	ui.TotalGRPlotWidget->updateToolbar();
+	ui.TotalSQPlotWidget->updateToolbar();
+
 	partialGRGraph_->postRedisplay();
 	partialSQGraph_->postRedisplay();
 	totalGRGraph_->postRedisplay();

@@ -44,12 +44,16 @@ CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget* parent, Calcul
 
 	setGraphDataTargets(module_);
 
+	updateControls();
+
 	refreshing_ = false;
 }
 
 // Update controls within widget
 void CalculateDAngleModuleWidget::updateControls()
 {
+	ui.RDFPlotWidget->updateToolbar();
+
 	rdfGraph_->postRedisplay();
 }
 
