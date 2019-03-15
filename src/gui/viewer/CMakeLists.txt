@@ -3,7 +3,7 @@
 
 # Meta-Objects
 SET(viewer_MOC_HDRS
-  graphwidget.h
+  datawidget.h
   selectsymbol.h
 
   #configurationviewer.hui
@@ -15,7 +15,7 @@ QT5_WRAP_CPP(viewer_MOC_SRCS ${viewer_MOC_HDRS})
 
 # User Interface Files
 SET(viewer_UIS
-  graphwidget.ui
+  datawidget.ui
   specieswidget.ui
 }
 QT5_WRAP_UI(viewer_UIS_H ${viewer_UIS})
@@ -30,7 +30,7 @@ SET(viewer_SRCS
   dataviewer_interaction.cpp
   dataviewer_query.cpp
   dataviewer_render.cpp
-  graphwidget_funcs.cpp
+  datawidget_funcs.cpp
   selectsymbol_funcs.cpp
   speciesviewer_funcs.cpp
   speciesviewer_input.cpp
@@ -44,7 +44,7 @@ SET(viewer_SRCS
 
 # User Interface Files
 SET(viewer_UIS
-  graphwidget.ui
+  datawidget.ui
   selectsymbol.ui
 }
 QT5_WRAP_UI(viewer_UIS_H ${viewer_UIS})

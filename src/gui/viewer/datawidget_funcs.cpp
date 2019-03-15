@@ -1,6 +1,6 @@
 /*
 	*** Graph Widget - Functions 
-	*** src/gui/viewer/graphwidget_funcs.cpp
+	*** src/gui/viewer/datawidget_funcs.cpp
 	Copyright T. Youngs 2013-2019
 
 	This file is part of Dissolve.
@@ -19,12 +19,12 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/viewer/graphwidget.h"
+#include "gui/viewer/datawidget.h"
 #include "gui/viewer/render/view.h"
 #include <QButtonGroup>
 
 // Constructor
-GraphWidget::GraphWidget(QWidget* parent) : QWidget(parent)
+DataWidget::DataWidget(QWidget* parent) : QWidget(parent)
 {
 	// Set up our UI
 	ui_.setupUi(this);
@@ -41,12 +41,12 @@ GraphWidget::GraphWidget(QWidget* parent) : QWidget(parent)
 }
 
 // Destructor
-GraphWidget::~GraphWidget()
+DataWidget::~DataWidget()
 {
 }
 
 // Return contained DataViewer
-DataViewer* GraphWidget::dataViewer()
+DataViewer* DataWidget::dataViewer()
 {
 	return ui_.DataView;
 }
@@ -56,27 +56,27 @@ DataViewer* GraphWidget::dataViewer()
  */
 
 // Interaction
-void GraphWidget::on_InteractionViewButton_clicked(bool checked)
+void DataWidget::on_InteractionViewButton_clicked(bool checked)
 {
 	dataViewer()->setInteractionMode(DataViewer::DefaultInteraction);
 }
 
 // View
-void GraphWidget::on_ViewResetButton_clicked(bool checked)
+void DataWidget::on_ViewResetButton_clicked(bool checked)
 {
 	dataViewer()->view().showAllData();
 
 	dataViewer()->postRedisplay();
 }
 
-void GraphWidget::on_ViewAxesVisibleButton_clicked(bool checked)
+void DataWidget::on_ViewAxesVisibleButton_clicked(bool checked)
 {
 	dataViewer()->setAxesVisible(checked);
 
 	dataViewer()->postRedisplay();
 }
 
-void GraphWidget::on_ViewFollowAllButton_clicked(bool checked)
+void DataWidget::on_ViewFollowAllButton_clicked(bool checked)
 {
 	if (checked)
 	{
@@ -88,7 +88,7 @@ void GraphWidget::on_ViewFollowAllButton_clicked(bool checked)
 	dataViewer()->postRedisplay();
 }
 
-void GraphWidget::on_ViewFollowXButton_clicked(bool checked)
+void DataWidget::on_ViewFollowXButton_clicked(bool checked)
 {
 	if (checked)
 	{
@@ -100,7 +100,7 @@ void GraphWidget::on_ViewFollowXButton_clicked(bool checked)
 	dataViewer()->postRedisplay();
 }
 
-void GraphWidget::on_ViewFollowXLengthSpin_valueChanged(double value)
+void DataWidget::on_ViewFollowXLengthSpin_valueChanged(double value)
 {
 	dataViewer()->view().setAutoFollowXLength(value);
 
@@ -112,7 +112,7 @@ void GraphWidget::on_ViewFollowXLengthSpin_valueChanged(double value)
  */
 
 // Update toolbar
-void GraphWidget::updateToolbar()
+void DataWidget::updateToolbar()
 {
 	// Set current interaction mode
 	switch (dataViewer()->interactionMode())
@@ -137,7 +137,7 @@ void GraphWidget::updateToolbar()
 }
 
 // Update coordinate info
-void GraphWidget::updateCoordinateInfo()
+void DataWidget::updateCoordinateInfo()
 {
 	View& view = ui_.DataView->view();
 	Vec3<double> rLocal = ui_.DataView->current2DAxesCoordinates();

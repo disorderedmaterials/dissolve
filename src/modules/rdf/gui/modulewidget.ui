@@ -102,7 +102,7 @@
            <widget class="QComboBox" name="TargetCombo"/>
           </item>
           <item>
-           <widget class="GraphWidget" name="PartialsPlotWidget" native="true">
+           <widget class="DataWidget" name="PartialsPlotWidget" native="true">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -170,7 +170,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="GraphWidget" name="TotalsPlotWidget" native="true"/>
+           <widget class="DataWidget" name="TotalsPlotWidget" native="true"/>
           </item>
          </layout>
         </widget>
@@ -183,9 +183,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>GraphWidget</class>
+   <class>DataWidget</class>
    <extends>QWidget</extends>
-   <header>gui/viewer/graphwidget.h</header>
+   <header>gui/viewer/datawidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

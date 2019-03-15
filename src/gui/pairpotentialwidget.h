@@ -29,7 +29,7 @@
 class Collection;
 class Dissolve;
 class PairPotential;
-class GraphWidget;
+class DataWidget;
 
 // PairPotential Widget
 class PairPotentialWidget : public SubWidget

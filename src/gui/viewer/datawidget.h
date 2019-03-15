@@ -1,6 +1,6 @@
 /*
 	*** Graph Widget
-	*** src/gui/viewer/graphwidget.h
+	*** src/gui/viewer/datawidget.h
 	Copyright T. Youngs 2013-2019
 
 	This file is part of Dissolve.
@@ -19,28 +19,28 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_GRAPHWIDGET_H
-#define DISSOLVE_GRAPHWIDGET_H
+#ifndef DISSOLVE_DATAWIDGET_H
+#define DISSOLVE_DATAWIDGET_H
 
-#include "gui/viewer/ui_graphwidget.h"
+#include "gui/viewer/ui_datawidget.h"
 
 // Forward Declarations
 /* none */
 
 // Graph Widget
-class GraphWidget : public QWidget
+class DataWidget : public QWidget
 {
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
 	public:
 	// Constructor / Destructor
-	GraphWidget(QWidget* parent = 0);
-	~GraphWidget();
+	DataWidget(QWidget* parent = 0);
+	~DataWidget();
 
 	private:
 	// Main form declaration
-	Ui::GraphWidget ui_;
+	Ui::DataWidget ui_;
 
 	public:
 	// Return contained DataViewer

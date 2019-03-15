@@ -21,7 +21,7 @@
 
 #include "gui/pairpotentialwidget.h"
 #include "gui/gui.h"
-#include "gui/viewer/graphwidget.h"
+#include "gui/viewer/datawidget.h"
 #include "gui/widgets/subwindow.h"
 #include "main/dissolve.h"
 #include "math/integrator.h"

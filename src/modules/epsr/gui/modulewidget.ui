@@ -104,7 +104,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="GraphWidget" name="SQPlotWidget" native="true"/>
+           <widget class="DataWidget" name="SQPlotWidget" native="true"/>
           </item>
          </layout>
         </widget>
@@ -165,7 +165,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="GraphWidget" name="FQPlotWidget" native="true"/>
+           <widget class="DataWidget" name="FQPlotWidget" native="true"/>
           </item>
          </layout>
         </widget>
@@ -226,7 +226,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="GraphWidget" name="FQFitPlotWidget" native="true"/>
+           <widget class="DataWidget" name="FQFitPlotWidget" native="true"/>
           </item>
          </layout>
         </widget>
@@ -287,7 +287,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="GraphWidget" name="GRPlotWidget" native="true"/>
+           <widget class="DataWidget" name="GRPlotWidget" native="true"/>
           </item>
          </layout>
         </widget>
@@ -348,7 +348,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="GraphWidget" name="FRPlotWidget" native="true"/>
+           <widget class="DataWidget" name="FRPlotWidget" native="true"/>
           </item>
          </layout>
         </widget>
@@ -409,7 +409,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="GraphWidget" name="PhiRPlotWidget" native="true"/>
+           <widget class="DataWidget" name="PhiRPlotWidget" native="true"/>
           </item>
          </layout>
         </widget>
@@ -470,7 +470,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="GraphWidget" name="PhiMagPlotWidget" native="true"/>
+           <widget class="DataWidget" name="PhiMagPlotWidget" native="true"/>
           </item>
          </layout>
         </widget>
@@ -509,7 +509,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="GraphWidget" name="RFactorPlotWidget" native="true"/>
+           <widget class="DataWidget" name="RFactorPlotWidget" native="true"/>
           </item>
          </layout>
         </widget>
@@ -522,9 +522,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>GraphWidget</class>
+   <class>DataWidget</class>
    <extends>QWidget</extends>
-   <header>gui/viewer/graphwidget.h</header>
+   <header>gui/viewer/datawidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
