@@ -54,7 +54,8 @@ class GraphWidget : public QWidget
 	// Interaction
 	void on_InteractionViewButton_clicked(bool checked);
 	// View
-	void on_ViewShowAllButton_clicked(bool checked);
+	void on_ViewResetButton_clicked(bool checked);
+	void on_ViewAxesVisibleButton_clicked(bool checked);
 	void on_ViewFollowAllButton_clicked(bool checked);
 	void on_ViewFollowXButton_clicked(bool checked);
 	void on_ViewFollowXLengthSpin_valueChanged(double value);

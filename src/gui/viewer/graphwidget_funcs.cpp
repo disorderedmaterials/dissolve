@@ -58,13 +58,20 @@ DataViewer* GraphWidget::dataViewer()
 // Interaction
 void GraphWidget::on_InteractionViewButton_clicked(bool checked)
 {
-// 	dataViewer()->setInteractionMode(DataViewer::ViewInteraction) FIXPOSTCOMMIT
+	dataViewer()->setInteractionMode(DataViewer::DefaultInteraction);
 }
 
 // View
-void GraphWidget::on_ViewShowAllButton_clicked(bool checked)
+void GraphWidget::on_ViewResetButton_clicked(bool checked)
 {
 	dataViewer()->view().showAllData();
+
+	dataViewer()->postRedisplay();
+}
+
+void GraphWidget::on_ViewAxesVisibleButton_clicked(bool checked)
+{
+	dataViewer()->setAxesVisible(checked);
 
 	dataViewer()->postRedisplay();
 }
@@ -119,6 +126,7 @@ void GraphWidget::updateToolbar()
 	}
 
 	// Controls reflecting the state of options in the underlying DataViewer
+	ui_.ViewAxesVisibleButton->setChecked(dataViewer()->axesVisible());
 	View::ViewType vt = dataViewer()->view().viewType();
 	View::AutoFollowType aft = dataViewer()->view().autoFollowType();
 	ui_.ViewFollowAllButton->setChecked(aft == View::AllAutoFollow);
