@@ -102,12 +102,16 @@
           <height>26</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>View mode</string>
+        </property>
         <property name="text">
          <string/>
         </property>
         <property name="icon">
          <iconset resource="../main.qrc">
-          <normaloff>:/viewer/icons/viewer_interact.svg</normaloff>:/viewer/icons/viewer_interact.svg</iconset>
+          <normaloff>:/viewer/icons/viewer_interact.svg</normaloff>
+          <normalon>:/viewer/icons/viewer_interact_on.svg</normalon>:/viewer/icons/viewer_interact.svg</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -153,12 +157,16 @@
           <height>26</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>Draw mode</string>
+        </property>
         <property name="text">
          <string/>
         </property>
         <property name="icon">
          <iconset resource="../main.qrc">
-          <normaloff>:/viewer/icons/viewer_edit.svg</normaloff>:/viewer/icons/viewer_edit.svg</iconset>
+          <normaloff>:/viewer/icons/viewer_edit.svg</normaloff>
+          <normalon>:/viewer/icons/viewer_edit_on.svg</normalon>:/viewer/icons/viewer_edit.svg</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -255,6 +263,9 @@
           <height>26</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>Reset view, showing all data</string>
+        </property>
         <property name="text">
          <string/>
         </property>
@@ -293,12 +304,16 @@
           <height>26</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>Toggle visibility of axes</string>
+        </property>
         <property name="text">
          <string/>
         </property>
         <property name="icon">
          <iconset resource="../main.qrc">
-          <normaloff>:/viewer/icons/viewer_axes.svg</normaloff>:/viewer/icons/viewer_axes.svg</iconset>
+          <normaloff>:/viewer/icons/viewer_axes.svg</normaloff>
+          <normalon>:/viewer/icons/viewer_axes_on.svg</normalon>:/viewer/icons/viewer_axes.svg</iconset>
         </property>
         <property name="iconSize">
          <size>

@@ -12,9 +12,16 @@
   </qresource>
   <qresource prefix="viewer">
     <file>icons/viewer_edit.svg</file>
+    <file>icons/viewer_edit_on.svg</file>
     <file>icons/viewer_interact.svg</file>
+    <file>icons/viewer_interact_on.svg</file>
     <file>icons/viewer_reset.svg</file>
+    <file>icons/viewer_followx_on.svg</file>
+    <file>icons/viewer_followall.svg</file>
+    <file>icons/viewer_followall_on.svg</file>
+    <file>icons/viewer_followx.svg</file>
     <file>icons/viewer_axes.svg</file>
+    <file>icons/viewer_axes_on.svg</file>
     <file>icons/viewer_delete.svg</file>
   </qresource>
   <qresource prefix="fonts">

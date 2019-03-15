@@ -65,17 +65,42 @@
        <number>0</number>
       </property>
       <item>
+       <widget class="QLabel" name="ToolbarInteractionLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16</width>
+          <height>16</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="../main.qrc">:/viewer_toolbar/icons/viewer_toolbar_interaction.svg</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QToolButton" name="InteractionViewButton">
         <property name="minimumSize">
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>26</width>
+          <height>26</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>26</width>
+          <height>26</height>
          </size>
         </property>
         <property name="toolTip">
@@ -83,6 +108,17 @@
         </property>
         <property name="text">
          <string>I</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../main.qrc">
+          <normaloff>:/viewer/icons/viewer_interact.svg</normaloff>
+          <normalon>:/viewer/icons/viewer_interact_on.svg</normalon>:/viewer/icons/viewer_interact.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
         </property>
         <property name="checkable">
          <bool>true</bool>
@@ -109,24 +145,110 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="ViewShowAllButton">
+       <widget class="QLabel" name="ToolbarVIewLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16</width>
+          <height>16</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="../main.qrc">:/viewer_toolbar/icons/viewer_toolbar_view.svg</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="ViewResetButton">
         <property name="minimumSize">
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>26</width>
+          <height>26</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>26</width>
+          <height>26</height>
          </size>
         </property>
         <property name="toolTip">
-         <string>Expand axis limits to show all data</string>
+         <string>Reset view, showing all data</string>
         </property>
         <property name="text">
-         <string>A</string>
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../main.qrc">
+          <normaloff>:/viewer/icons/viewer_reset.svg</normaloff>:/viewer/icons/viewer_reset.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="checkable">
+         <bool>false</bool>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+        <property name="autoExclusive">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="ViewAxesVisibleButton">
+        <property name="minimumSize">
+         <size>
+          <width>26</width>
+          <height>26</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>26</width>
+          <height>26</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Toggle visibility of axes</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../main.qrc">
+          <normaloff>:/viewer/icons/viewer_axes.svg</normaloff>
+          <normalon>:/viewer/icons/viewer_axes_on.svg</normalon>:/viewer/icons/viewer_axes.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+        <property name="autoExclusive">
+         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -134,14 +256,14 @@
        <widget class="QToolButton" name="ViewFollowAllButton">
         <property name="minimumSize">
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>26</width>
+          <height>26</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>26</width>
+          <height>26</height>
          </size>
         </property>
         <property name="toolTip">
@@ -149,6 +271,17 @@
         </property>
         <property name="text">
          <string>FA</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../main.qrc">
+          <normaloff>:/viewer/icons/viewer_followall.svg</normaloff>
+          <normalon>:/viewer/icons/viewer_followall_on.svg</normalon>:/viewer/icons/viewer_followall.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
         </property>
         <property name="checkable">
          <bool>true</bool>
@@ -159,21 +292,32 @@
        <widget class="QToolButton" name="ViewFollowXButton">
         <property name="minimumSize">
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>26</width>
+          <height>26</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>26</width>
+          <height>26</height>
          </size>
         </property>
         <property name="toolTip">
          <string>Follow abscissa, showing only data over the range specified</string>
         </property>
         <property name="text">
-         <string>F</string>
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../main.qrc">
+          <normaloff>:/viewer/icons/viewer_followx.svg</normaloff>
+          <normalon>:/viewer/icons/viewer_followx_on.svg</normalon>:/viewer/icons/viewer_followx.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
         </property>
         <property name="checkable">
          <bool>true</bool>
@@ -332,6 +476,8 @@
    <header>gui/widgets/exponentialspin.hui</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../main.qrc"/>
+ </resources>
  <connections/>
 </ui>
