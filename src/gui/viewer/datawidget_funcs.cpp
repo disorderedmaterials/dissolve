@@ -78,6 +78,11 @@ void DataWidget::on_ViewAxesVisibleButton_clicked(bool checked)
 	dataViewer()->postRedisplay();
 }
 
+void DataWidget::on_ViewCopyToClipboardButton_clicked(bool checked)
+{
+	dataViewer()->copyViewToClipboard(checked);
+}
+
 void DataWidget::on_ViewFollowAllButton_clicked(bool checked)
 {
 	if (checked)

@@ -58,6 +58,7 @@ class SpeciesWidget : public QWidget
 	// View
 	void on_ViewResetButton_clicked(bool checked);
 	void on_ViewAxesVisibleButton_clicked(bool checked);
+	void on_ViewCopyToClipboardButton_clicked(bool checked);
 
 	
 	/*

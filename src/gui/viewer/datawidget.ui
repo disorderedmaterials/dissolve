@@ -253,6 +253,47 @@
        </widget>
       </item>
       <item>
+       <widget class="QToolButton" name="ViewCopyToClipboardButton">
+        <property name="minimumSize">
+         <size>
+          <width>26</width>
+          <height>26</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>26</width>
+          <height>26</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Copy current view contents to clipboard</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../main.qrc">
+          <normaloff>:/viewer/icons/viewer_snapshot.svg</normaloff>:/viewer/icons/viewer_snapshot.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="checkable">
+         <bool>false</bool>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+        <property name="autoExclusive">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QToolButton" name="ViewFollowAllButton">
         <property name="minimumSize">
          <size>

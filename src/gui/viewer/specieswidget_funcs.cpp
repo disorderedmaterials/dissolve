@@ -96,6 +96,11 @@ void SpeciesWidget::on_ViewAxesVisibleButton_clicked(bool checked)
 	speciesViewer()->postRedisplay();
 }
 
+void SpeciesWidget::on_ViewCopyToClipboardButton_clicked(bool checked)
+{
+	speciesViewer()->copyViewToClipboard(checked);
+}
+
 /*
  * Signals / Slots
  */

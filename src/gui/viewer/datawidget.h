@@ -56,6 +56,7 @@ class DataWidget : public QWidget
 	// View
 	void on_ViewResetButton_clicked(bool checked);
 	void on_ViewAxesVisibleButton_clicked(bool checked);
+	void on_ViewCopyToClipboardButton_clicked(bool checked);
 	void on_ViewFollowAllButton_clicked(bool checked);
 	void on_ViewFollowXButton_clicked(bool checked);
 	void on_ViewFollowXLengthSpin_valueChanged(double value);
