@@ -125,7 +125,7 @@ bool BaseViewer::isRenderableVisible(const char* name) const
 	Renderable* rend = renderable(name);
 	if (!rend)
 	{
-		Messenger::error("No Renderable named '%s' exists, so can'' return its visibility.\n", name);
+		Messenger::error("No Renderable named '%s' exists, so can't return its visibility.\n", name);
 		return false;
 	}
 	
