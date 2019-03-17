@@ -448,16 +448,12 @@ QPixmap BaseViewer::generateImage(int imageWidth, int imageHeight)
 	painter.setBrush(Qt::white);
 	painter.drawRect(0,0,imageWidth, imageHeight);
 
-	// Calculate scale factors for ViewLayout, so that the context width/height is scaled to the desired image size
-// 	double xScale = double(imageWidth) / double(tileWidth);
-// 	double yScale = double(imageHeight) / double(tileHeight);
+	// Calculate the number of tiles required to cover the requested image size
 	int nX = imageWidth / tileWidth + ((imageWidth %tileWidth) ? 1 : 0);
 	int nY = imageHeight / tileHeight + ((imageHeight %tileHeight) ? 1 : 0);
 
-	// Recalculate view layout - no offset or scaling, just to the desired full image size
-	// TODO Need call to a general virtual to do this...
-// 	uChromaBase_->viewLayout().setOffsetAndScale(0, 0, 1.0, 1.0);
-// 	uChromaBase_->viewLayout().recalculate(imageWidth, imageHeight);
+	// Set the viewport of our View to be the new image size
+	view_.recalculateViewport(imageWidth, imageHeight);
 
 	// Loop over tiles in x and y
 	QProgressDialog progress("Generating tiled image", "Cancel", 0, nX*nY);
@@ -490,13 +486,11 @@ QPixmap BaseViewer::generateImage(int imageWidth, int imageHeight)
 	// Reset line width and text size
 	setObjectScaling(1.0);
 
-	// Make sure the Viewer knows we no longer want offscreen rendering, and revert to normal quality primitives
+	// Turn off offscreen rendering
 	renderingOffScreen_ = false;
 
 	// The sizes of panes may now be incorrect, so reset everything
-	// TODO Need call to a general virtual to do this...
-// 	uChromaBase_->viewLayout().setOffsetAndScale(0, 0, 1.0, 1.0);
-// 	uChromaBase_->viewLayout().recalculate(contextWidth_, contextHeight_);
+	view_.recalculateViewport(contextWidth_, contextHeight_);
 
 	// Reset context back to main view
 	makeCurrent();
