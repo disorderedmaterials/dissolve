@@ -116,20 +116,6 @@ class SpeciesViewer : public BaseViewer
 
 
 	/*
-	 * Context Menu (BaseViewer virtuals)
-	 */
-	private:
-	// Special QMenu items
-	QMenu* currentDataMenu_;
-
-	private:
-	// Initialise context menu
-	void initialiseContextMenu();
-	// Update dynamic aspects of context menu before display
-	void updateContextMenu();
-
-
-	/*
 	 * Source Species
 	 */
 	private:
