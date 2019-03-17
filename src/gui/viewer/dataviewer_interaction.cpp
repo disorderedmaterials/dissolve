@@ -26,7 +26,7 @@
  */
 
 // Start interaction at the specified screen coordinates
-void DataViewer::startInteraction(Qt::KeyboardModifiers modifiers)
+void DataViewer::startInteraction()
 {
 	switch (interactionMode())
 	{

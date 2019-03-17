@@ -86,7 +86,7 @@ class DataViewer : public BaseViewer
 
 	protected:
 	// Start interaction
-	void startInteraction(Qt::KeyboardModifiers modifiers);
+	void startInteraction();
 	// End interaction
 	void endInteraction();
 	// Cancel current interaction
