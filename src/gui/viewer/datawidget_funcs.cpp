@@ -60,7 +60,6 @@ DataViewer* DataWidget::dataViewer()
 // Interaction
 void DataWidget::on_InteractionViewButton_clicked(bool checked)
 {
-	printf("Hi\n");
 	dataViewer()->setInteractionMode(DataViewer::DefaultInteraction);
 }
 
