@@ -129,6 +129,12 @@ const char* DataViewer::interactionModeText() const
 		case (DataViewer::DefaultInteraction):
 			if (constView().isFlatView()) return "2D View: <b>Left</b> Zoom to area; <b>Middle</b> Translate view";
 			else return "3D View: <b>Right</b> Rotate view; <b>Middle</b> Translate view; <b>Wheel</b> Zoom in/out";
+		case (DataViewer::ZoomToAreaInteraction):
+			return "Zoom to area";
+		case (DataViewer::RotateViewInteraction):
+			return "Rotate view";
+		case (DataViewer::TranslateViewInteraction):
+			return "Translate view";
 		default:
 			return "Unknown DataViewerInteraction";
 	}
