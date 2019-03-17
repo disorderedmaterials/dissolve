@@ -143,3 +143,9 @@ View& BaseViewer::view()
 {
 	return view_;
 }
+
+// Return the View definition (const)
+const View& BaseViewer::constView() const
+{
+	return view_;
+}

@@ -82,6 +82,8 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	bool isRenderableVisible(const char* name) const;
 	// Return the View definition
 	View& view();
+	// Return the View definition (const)
+	const View& constView() const;
 
 	signals:
 	// Notify that the represented data has been modified
