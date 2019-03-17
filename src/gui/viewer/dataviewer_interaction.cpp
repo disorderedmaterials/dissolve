@@ -78,12 +78,17 @@ void DataViewer::endInteraction()
 				{
 				}
 			}
+
+			// Revert to default interaction mode
+			setInteractionMode(DataViewer::DefaultInteraction);
 			break;
 		case (DataViewer::RotateViewInteraction):
-			// Nothing more to do - rotation matrix has already been modified
+			// Nothing more to do - rotation matrix has already been modified, so revert to default interaction mode
+			setInteractionMode(DataViewer::DefaultInteraction);
 			break;
 		case (DataViewer::TranslateViewInteraction):
-			// Nothing more to do - translation has already been applied
+			// Nothing more to do - translation has already been applied, so revert to default interaction mode
+			setInteractionMode(DataViewer::DefaultInteraction);
 			break;
 		case (DataViewer::ZoomXRangeInteraction):
 			// Zoom to defined X range
@@ -99,9 +104,6 @@ void DataViewer::endInteraction()
 			printf("Internal Error: Don't know how to complete interaction mode %i\n", interactionMode());
 			break;
 	}
-
-	// Reset (cancel) the interaction mode
-	cancelInteraction(); 
 }
 
 // Cancel current interaction
