@@ -34,10 +34,12 @@ DataWidget::DataWidget(QWidget* parent) : QWidget(parent)
 	interactionToolsGroup->addButton(ui_.InteractionViewButton);
 
 	// Connect signals / slots
-	connect(ui_.DataView, SIGNAL(currentCoordinateChanged()), this, SLOT(updateCoordinateInfo()));
+	connect(ui_.DataView, SIGNAL(currentCoordinateChanged()), this, SLOT(updateStatusBar()));
+	connect(ui_.DataView, SIGNAL(interactionModeChanged()), this, SLOT(updateStatusBar()));
 
 	// Make sure that our controls reflect the state of the underlying DataViewer
 	updateToolbar();
+	updateStatusBar();
 }
 
 // Destructor
@@ -58,6 +60,7 @@ DataViewer* DataWidget::dataViewer()
 // Interaction
 void DataWidget::on_InteractionViewButton_clicked(bool checked)
 {
+	printf("Hi\n");
 	dataViewer()->setInteractionMode(DataViewer::DefaultInteraction);
 }
 
@@ -136,11 +139,15 @@ void DataWidget::updateToolbar()
 	ui_.ViewFollowXLengthSpin->setEnabled(vt == View::FlatXYView);
 }
 
-// Update coordinate info
-void DataWidget::updateCoordinateInfo()
+// Update status bar
+void DataWidget::updateStatusBar()
 {
-	View& view = ui_.DataView->view();
-	Vec3<double> rLocal = ui_.DataView->current2DAxesCoordinates();
+	// Update mode text
+	ui_.ModeLabel->setText(dataViewer()->interactionModeText());
+
+	// Update coordinate information
+	View& view = dataViewer()->view();
+	Vec3<double> rLocal = dataViewer()->current2DAxesCoordinates();
 	QString text;
 	switch (view.viewType())
 	{

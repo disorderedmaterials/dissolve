@@ -67,8 +67,8 @@ class DataWidget : public QWidget
 	public slots:
 	// Update toolbar
 	void updateToolbar();
-	// Update coordinate info
-	void updateCoordinateInfo();
+	// Update status bar
+	void updateStatusBar();
 };
 
 #endif

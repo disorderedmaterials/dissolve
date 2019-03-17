@@ -37,6 +37,7 @@ SpeciesWidget::SpeciesWidget(QWidget* parent) : QWidget(parent)
 
 	// Connect signals / slots
 	connect(ui_.SpeciesView, SIGNAL(atomSelectionChanged()), this, SLOT(updateStatusBar()));
+	connect(ui_.SpeciesView, SIGNAL(interactionModeChanged()), this, SLOT(updateStatusBar()));
 
 	// Make sure our controls are consistent with the underlying viewer / data
 	updateToolbar();
@@ -127,7 +128,7 @@ void SpeciesWidget::updateStatusBar()
 	const Species* sp = speciesViewer()->species();
 
 	// Set interaction mode text
-	// TODO #45
+	ui_.ModeLabel->setText(speciesViewer()->interactionModeText());
 
 	// Set / update empirical formula for the Species and its current atom selection
 	ui_.FormulaLabel->setText(sp ? EmpiricalFormula::formula(sp, true) : "--");

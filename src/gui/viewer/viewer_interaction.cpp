@@ -25,6 +25,12 @@
  * Protected Virtuals
  */
 
+// Return text describing current interaction mode
+const char* BaseViewer::interactionModeText() const
+{
+	return "??? Unknown interaction mode";
+}
+
 // Start interaction
 void BaseViewer::startInteraction()
 {
@@ -51,6 +57,8 @@ void BaseViewer::setInteractionMode(int mode)
 	cancelInteraction();
 
 	interactionMode_ = mode;
+
+	emit(interactionModeChanged());
 }
 
 // Return current interaction mode

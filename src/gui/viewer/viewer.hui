@@ -246,8 +246,6 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	Vec3<double> clicked2DAxesCoordinates_;
 	// Current coordinates (in Axes frame) under mouse in 2D view
 	Vec3<double> current2DAxesCoordinates_;
-
-	protected:
 	// Whether the viewer is currently being interacted with
 	bool interacting_;
 	// Current interaction mode
@@ -268,12 +266,18 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	int interactionMode() const;
 	// Return whether the viewer is currently being interacted with
 	bool interacting() const;
+	// Return text describing current interaction mode
+	virtual const char* interactionModeText() const;
 	// Return clicked coordinates (in Axes frame) in 2D view
 	Vec3<double> clicked2DAxesCoordinates() const;
 	// Return current coordinates (in Axes frame) under mouse in 2D view
 	Vec3<double> current2DAxesCoordinates() const;
 	// Calculate 2D Axes coordinate from screen coordinates
 	Vec3<double> screenTo2DAxes(int mouseX, int mouseY);
+
+	signals:
+	// Notification that interaction mode has changed
+	void interactionModeChanged();
 
 
 	/*

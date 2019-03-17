@@ -28,14 +28,14 @@
 // Start interaction at the specified screen coordinates
 void DataViewer::startInteraction(Qt::KeyboardModifiers modifiers)
 {
-	switch (interactionMode_)
+	switch (interactionMode())
 	{
 		// Default Interaction Mode
 		case (DataViewer::DefaultInteraction):
 			// This is the standard mode, giving access to view manipulation
-			if (buttonState_.testFlag(Qt::LeftButton)) interactionMode_ = DataViewer::ZoomToAreaInteraction;
-			else if (buttonState_.testFlag(Qt::RightButton)) interactionMode_ = DataViewer::RotateViewInteraction;
-			else if (buttonState_.testFlag(Qt::MiddleButton)) interactionMode_ = DataViewer::TranslateViewInteraction;
+			if (buttonState_.testFlag(Qt::LeftButton)) setInteractionMode(DataViewer::ZoomToAreaInteraction);
+			else if (buttonState_.testFlag(Qt::RightButton)) setInteractionMode(DataViewer::RotateViewInteraction);
+			else if (buttonState_.testFlag(Qt::MiddleButton)) setInteractionMode(DataViewer::TranslateViewInteraction);
 			break;
 		default:
 			break;
@@ -50,7 +50,7 @@ void DataViewer::endInteraction()
 	double rangeStart, rangeEnd;
 
 	// Finalise interaction type
-	switch (interactionMode_)
+	switch (interactionMode())
 	{
 		case (DataViewer::ZoomToAreaInteraction):
 			// Check the pixel area of the clicked region and determine whether this was actually a targeted click rather than an area select
@@ -96,7 +96,7 @@ void DataViewer::endInteraction()
 			}
 			break;
 		default:
-			printf("Internal Error: Don't know how to complete interaction mode %i\n", interactionMode_);
+			printf("Internal Error: Don't know how to complete interaction mode %i\n", interactionMode());
 			break;
 	}
 
@@ -107,15 +107,29 @@ void DataViewer::endInteraction()
 // Cancel current interaction
 void DataViewer::cancelInteraction()
 {
-	// Perform any actions necessary to properly cancel the interaction
-	switch (interactionMode_)
+	// Perform any actions necessary to properly cancel the current interaction
+	switch (interactionMode())
 	{
 		default:
 			break;
 	}
+}
 
-	// Reset back to DefaultInteraction
-	interactionMode_ = DataViewer::DefaultInteraction;
+/*
+ * Public Functions
+ */
+
+// Return text describing current interaction mode
+const char* DataViewer::interactionModeText() const
+{
+	switch (interactionMode())
+	{
+		case (DataViewer::DefaultInteraction):
+			if (constView().isFlatView()) return "2D View: <b>Left</b> Zoom to area; <b>Middle</b> Translate view";
+			else return "3D View: <b>Right</b> Rotate view; <b>Middle</b> Translate view; <b>Wheel</b> Zoom in/out";
+		default:
+			return "Unknown DataViewerInteraction";
+	}
 }
 
 // // Return clicked interaction coordinate on axis

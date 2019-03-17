@@ -60,14 +60,14 @@ SpeciesAtom* SpeciesViewer::atomAt(int x, int y)
 // Start interaction at the specified screen coordinates
 void SpeciesViewer::startInteraction()
 {
-	switch (interactionMode_)
+	switch (interactionMode())
 	{
 		// Default Interaction Mode
 		case (SpeciesViewer::DefaultInteraction):
 			// This is the standard mode, giving access to view manipulation
-			if (buttonState_.testFlag(Qt::LeftButton)) interactionMode_ = SpeciesViewer::SelectAreaInteraction;
-			else if (buttonState_.testFlag(Qt::RightButton)) interactionMode_ = SpeciesViewer::RotateViewInteraction;
-			else if (buttonState_.testFlag(Qt::MiddleButton)) interactionMode_ = SpeciesViewer::TranslateViewInteraction;
+			if (buttonState_.testFlag(Qt::LeftButton)) setInteractionMode(SpeciesViewer::SelectAreaInteraction);
+			else if (buttonState_.testFlag(Qt::RightButton)) setInteractionMode(SpeciesViewer::RotateViewInteraction);
+			else if (buttonState_.testFlag(Qt::MiddleButton)) setInteractionMode(SpeciesViewer::TranslateViewInteraction);
 			break;
 		// Draw
 		case (SpeciesViewer::DrawInteraction):
@@ -99,7 +99,7 @@ void SpeciesViewer::endInteraction()
 	SpeciesAtom* i, *j;
 
 	// Finalise interaction type
-	switch (interactionMode_)
+	switch (interactionMode())
 	{
 		case (SpeciesViewer::SelectAreaInteraction):
 			// Check the pixel area of the clicked region and determine whether this was actually a targeted click rather than an area select
@@ -144,15 +144,15 @@ void SpeciesViewer::endInteraction()
 			emit(atomSelectionChanged());
 
 			// Revert to default interaction mode
-			interactionMode_ = SpeciesViewer::DefaultInteraction;
+			setInteractionMode(SpeciesViewer::DefaultInteraction);
 			break;
 		case (SpeciesViewer::RotateViewInteraction):
 			// Rotation matrix has already been modified. Revert to default interaction mode
-			interactionMode_ = SpeciesViewer::DefaultInteraction;
+			setInteractionMode(SpeciesViewer::DefaultInteraction);
 			break;
 		case (SpeciesViewer::TranslateViewInteraction):
 			// Translation has already been applied. Revert to default interaction mode
-			interactionMode_ = SpeciesViewer::DefaultInteraction;
+			setInteractionMode(SpeciesViewer::DefaultInteraction);
 			break;
 		case (SpeciesViewer::DrawInteraction):
 			// If the left mouse button is not flagged, do nothing
@@ -198,7 +198,7 @@ void SpeciesViewer::endInteraction()
 			postRedisplay();
 			break;
 		default:
-			printf("Internal Error: Don't know how to complete interaction mode %i\n", interactionMode_);
+			printf("Internal Error: Don't know how to complete interaction mode %i\n", interactionMode());
 			break;
 	}
 }
@@ -206,8 +206,8 @@ void SpeciesViewer::endInteraction()
 // Cancel current interaction
 void SpeciesViewer::cancelInteraction()
 {
-	// Perform any actions necessary to properly cancel the interaction
-	switch (interactionMode_)
+	// Perform any actions necessary to properly cancel the current interaction
+	switch (interactionMode())
 	{
 		default:
 			break;
@@ -215,9 +215,30 @@ void SpeciesViewer::cancelInteraction()
 
 	// Reset other data
 	clickedAtom_ = NULL;
+}
 
-	// Reset back to DefaultInteraction
-	interactionMode_ = SpeciesViewer::DefaultInteraction;
+/*
+ * Public Functions
+ */
+
+// Return text describing current interaction mode
+const char* SpeciesViewer::interactionModeText() const
+{
+	switch (interactionMode())
+	{
+		case (SpeciesViewer::DefaultInteraction):
+			return "View: <b>Left</b> Select; <b>Right</b> Rotate; <b>Middle</b> Translate; <b>Wheel</b> Zoom";
+		case (SpeciesViewer::SelectAreaInteraction):
+			return "Select atoms: <b>Left-Click</b> Select individual atoms; <b>Left-Click-Drag</b> Area select; <i>+Shift</i> Toggle";
+		case (SpeciesViewer::RotateViewInteraction):
+			return "Rotate view";
+		case (SpeciesViewer::TranslateViewInteraction):
+			return "Translate";
+		case (SpeciesViewer::DrawInteraction):
+			return "Draw: <b>Left</b> Draw; <b>Right</b> Rotate view";
+		default:
+			return "Unknown SpeciesViewerInteraction";
+	}
 }
 
 // Set current Element for DrawInteraction

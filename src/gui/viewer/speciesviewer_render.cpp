@@ -41,7 +41,7 @@ void SpeciesViewer::render2DOverlay()
 
 	static LineStyle selectionBoxStyle(1.0, LineStipple::HalfDashStipple);
 
-	if (interacting()) switch (interactionMode_)
+	if (interacting()) switch (interactionMode())
 	{
 		case (SpeciesViewer::SelectAreaInteraction):
 			// Draw dashed box indicating selection area, form clicked to current mouse coordinates

@@ -84,13 +84,17 @@ class DataViewer : public BaseViewer
 		nInteractionModes
 	};
 
-	public:
+	protected:
 	// Start interaction
 	void startInteraction(Qt::KeyboardModifiers modifiers);
 	// End interaction
 	void endInteraction();
 	// Cancel current interaction
 	void cancelInteraction();
+
+	public:
+	// Return text describing current interaction mode
+	const char* interactionModeText() const;
 	// Return clicked interaction coordinate on axis
 	double clickedInteractionCoordinate();
 	// Return current interaction coordinate on axis

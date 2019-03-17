@@ -107,6 +107,8 @@ class SpeciesViewer : public BaseViewer
 	void cancelInteraction();
 
 	public:
+	// Return text describing current interaction mode
+	const char* interactionModeText() const;
 	// Set current Element for DrawInteraction
 	void setDrawElement(Element* element);
 	// Return current Element for DrawInteraction

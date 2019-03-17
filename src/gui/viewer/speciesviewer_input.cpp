@@ -34,7 +34,7 @@ void SpeciesViewer::mouseMoved(int dx, int dy)
 	SpeciesAtom* currentAtom = NULL;
 
 	// What we do here depends on the current mode
-	switch (interactionMode_)
+	switch (interactionMode())
 	{
 		case (SpeciesViewer::SelectAreaInteraction):
 			// No action to take - the selection box will be drawn from the clicked and current positions (already stored)
