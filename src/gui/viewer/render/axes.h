@@ -108,7 +108,7 @@ class Axes
 	// Return real axis range (accounting for log axes)
 	double realRange(int axis) const;
 	// Ensure a sensible (non-zero) range, modifying the supplied values
-	static void ensureSensibleRange(double& minValue, double& maxValue, bool expandOnlyIfZero = false, double expansionFactor = 0.05);
+	static void ensureSensibleRange(double& minValue, double& maxValue, bool expandOnlyIfZero = true, double expansionFactor = -1.0);
 	// Return real axis minimum (accounting for log axes)
 	double realMin(int axis) const;
 	// Return real axis maximum (accounting for log axes)
