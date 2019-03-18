@@ -20,7 +20,7 @@
 */
 
 #ifndef DISSOLVE_TEXTPRIMITIVE_H
-#define DISSOLVE_ATEXTPRIMITIVE_H
+#define DISSOLVE_TEXTPRIMITIVE_H
 
 #include "gui/viewer/render/textfragment.h"
 #include "gui/viewer/render/textformat.h"
