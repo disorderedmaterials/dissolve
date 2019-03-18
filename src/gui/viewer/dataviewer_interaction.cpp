@@ -45,8 +45,6 @@ void DataViewer::startInteraction()
 // End interaction at the specified screen coordinates
 void DataViewer::endInteraction()
 {
-	ViewerObject clickedObject = NoObject;
-	CharString clickedObjectInfo;
 	double rangeStart, rangeEnd;
 
 	// Finalise interaction type
@@ -57,11 +55,9 @@ void DataViewer::endInteraction()
 			if ((rMouseDown_ - rMouseLast_).magnitude() < 9.0)
 			{
 				// Single, targetted click - get the clicked object
-				setQueryCoordinates(rMouseLast_.x, rMouseLast_.y);
-				// TODO Offscreen paint instead of repaint
-				repaint();
-				clickedObject = objectAtQueryCoordinates();
-				clickedObjectInfo = infoAtQueryCoordinates();
+				// TODO What action are we performing here? Would this be better as a right-click action, raising a context menu?
+// 				ViewerObject obj = queryAt(rMouseLast_.x, rMouseLast_.y);
+// 				printf("Object Type = %s, info = [%s]\n", BaseViewer::viewerObject(obj), queryObjectInfo());
 			}
 			else
 			{

@@ -149,9 +149,9 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 			for (int axis=0; axis<3; ++axis) if (view_.axes().visible(axis) && (axis != skipAxis))
 			{
 				view_.axes().labelPrimitive(axis).renderAll(fontInstance_, viewMatrix, viewRotationInverse, view_.textZScale());
-	// 			if (updateQueryDepth()) setQueryObject(DataViewer::AxisTickLabelObject, DissolveSys::itoa(axis));
+				updateQuery(BaseViewer::AxisTickLabelObject, DissolveSys::itoa(axis));
 				view_.axes().titlePrimitive(axis).renderAll(fontInstance_, viewMatrix, viewRotationInverse, view_.textZScale());
-	// 			if (updateQueryDepth()) setQueryObject(DataViewer::AxisTitleLabelObject, DissolveSys::itoa(axis));
+				updateQuery(BaseViewer::AxisTitleLabelObject, DissolveSys::itoa(axis));
 			}
 		}
 
@@ -163,13 +163,13 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 		{
 			view_.axes().gridLineMinorStyle(axis).sendToGL(pixelScaling_);
 			view_.axes().gridLineMinorPrimitive(axis).sendToGL();
-	// 		if (updateQueryDepth()) setQueryObject(DataViewer::GridLineMinorObject, DissolveSys::itoa(axis));
+			updateQuery(BaseViewer::GridLineMinorObject, DissolveSys::itoa(axis));
 		}
 		for (int axis=0; axis<3; ++axis) if (view_.axes().visible(axis) && (axis != skipAxis))
 		{
 			view_.axes().gridLineMajorStyle(axis).sendToGL(pixelScaling_);
 			view_.axes().gridLineMajorPrimitive(axis).sendToGL();
-	// 		if (updateQueryDepth()) setQueryObject(DataViewer::GridLineMajorObject, DissolveSys::itoa(axis));
+			updateQuery(BaseViewer::GridLineMajorObject, DissolveSys::itoa(axis));
 		}
 
 		// -- Reset line style, ensure polygons are now filled, and render the axis lines
@@ -177,7 +177,7 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 		for (int axis=0; axis<3; ++axis) if (view_.axes().visible(axis) && (axis != skipAxis))
 		{
 			view_.axes().axisPrimitive(axis).sendToGL();
-	// 		if (updateQueryDepth()) setQueryObject(DataViewer::AxisLineObject, DissolveSys::itoa(axis));
+			updateQuery(BaseViewer::AxisLineObject, DissolveSys::itoa(axis));
 		}
 		glEnable(GL_LIGHTING);
 		glDisable(GL_LINE_SMOOTH);
@@ -197,7 +197,7 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 		rend->updateAndSendPrimitives(view_, groupManager_, renderingOffScreen_, renderingOffScreen_, context(), pixelScaling_);
 
 		// Update query
-// 		if (updateQueryDepth()) setQueryObject(DataViewer::RenderableObject, rend->objectTag());
+		updateQuery(BaseViewer::RenderableObject, rend->objectTag());
 
 		glEnable(GL_COLOR_MATERIAL);
 	}
@@ -430,9 +430,9 @@ QPixmap BaseViewer::generateImage(int imageWidth, int imageHeight)
 	fboFormat.setMipmap(true);
 	fboFormat.setSamples(4);
 	fboFormat.setAttachment(QOpenGLFramebufferObject::Depth);
-	QOpenGLFramebufferObject frameBufferObject(tileWidth, tileHeight, fboFormat);
+	offscreenBuffer_ = new QOpenGLFramebufferObject(tileWidth, tileHeight, fboFormat);
 
-	if (!frameBufferObject.bind())
+	if (!offscreenBuffer_->bind())
 	{
 		Messenger::print("Failed to bind framebuffer object when generating image.");
 		return QPixmap();
@@ -464,15 +464,15 @@ QPixmap BaseViewer::generateImage(int imageWidth, int imageHeight)
 			progress.setValue(x*nY+y);
 
 			// Generate this tile
-			if (!frameBufferObject.bind()) printf("Failed to bind framebuffer object.\n");
+			if (!offscreenBuffer_->bind()) printf("Failed to bind framebuffer object.\n");
 			setupGL();
 			renderGL(-x*tileWidth, -y*tileHeight);
-			QImage fboImage(frameBufferObject.toImage());
+			QImage fboImage(offscreenBuffer_->toImage());
 			QImage tile(fboImage.constBits(), fboImage.width(), fboImage.height(), QImage::Format_ARGB32);
 
 			// Paste this tile into the main image
 			painter.drawImage(x*tileWidth, imageHeight-(y+1)*tileHeight, tile);
-// 			tile.save(QString("tile-%1%2.png").arg(x).arg(y), "png");
+// 			tile.save(QString("tile-%1x%2.png").arg(x).arg(y), "png");
 		}
 		if (progress.wasCanceled()) break;
 	}
@@ -486,11 +486,14 @@ QPixmap BaseViewer::generateImage(int imageWidth, int imageHeight)
 	// Turn off offscreen rendering
 	renderingOffScreen_ = false;
 
-	// The sizes of panes may now be incorrect, so reset everything
+	// Reset the viewport of the View
 	view_.recalculateViewport(contextWidth_, contextHeight_);
 
 	// Reset context back to main view
 	makeCurrent();
+
+	// Delete the temporary buffer
+	delete offscreenBuffer_;
 
 	return pixmap;
 }

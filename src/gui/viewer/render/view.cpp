@@ -109,6 +109,11 @@ void View::recalculateViewport(int width, int height)
 	else projectionMatrix_ = calculateProjectionMatrix(false, zOffset_);
 
 	calculateFontScaling();
+
+	// Recalculate view matrix
+	updateViewMatrix();
+
+	recalculateView(true);
 }
 
 // Translate viewport by specified pixel amounts
@@ -933,6 +938,9 @@ Vec3<double> View::transformedDataMinima()
 	Vec3<double> v, minima;
 	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next)
 	{
+		// Skip this Renderable if it is not currently visible
+		if (!rend->isVisible()) continue;
+
 		if (nCounted == 0) minima = rend->transformMin();
 		else
 		{

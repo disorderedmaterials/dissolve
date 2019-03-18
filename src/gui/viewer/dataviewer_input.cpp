@@ -93,10 +93,9 @@ void DataViewer::mouseWheeled(int delta)
 // Mouse double clicked
 void DataViewer::mouseDoubleClicked()
 {
-	setQueryCoordinates(rMouseLast_.x, contextHeight() - rMouseLast_.y);
-	repaint();
+	ViewerObject objectType = queryAt(rMouseLast_.x, rMouseLast_.y);
 
-	switch (objectAtQueryCoordinates())
+	switch (objectType)
 	{
 		case (NoObject):
 			break;

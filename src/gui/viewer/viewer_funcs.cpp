@@ -31,6 +31,7 @@ BaseViewer::BaseViewer(QWidget* parent) : QOpenGLWidget(parent), view_(renderabl
 	valid_ = false;
 	drawing_ = false;
 	renderingOffScreen_ = false;
+	offscreenBuffer_ = NULL;
 	pixelScaling_ = 1.0;
 
 	// Options
@@ -41,11 +42,8 @@ BaseViewer::BaseViewer(QWidget* parent) : QOpenGLWidget(parent), view_(renderabl
 	interacting_ = false;
 	interactionMode_ = -1;
 
-	// Query
-	objectQueryX_ = -1;
-	objectQueryY_ = -1;
-	depthAtQueryCoordinates_ = 1.0;
-	objectAtQueryCoordinates_ = BaseViewer::NoObject;
+	// Object Querying
+	queryingObjects_ = false;
 
 	// Prevent QPainter from autofilling widget background
 	setAutoFillBackground(false);

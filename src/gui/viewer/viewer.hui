@@ -37,7 +37,7 @@
 #include <QMenu>
 
 // Forward Declarations
-/* none */
+class QOpenGLFramebufferObject;
 
 // Base rendering widget
 class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
@@ -144,6 +144,8 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
         QOpenGLContext offscreenContext_;
 	// Offscreen surface
 	QOffscreenSurface offscreenSurface_;
+	// Current offscreen buffer
+	QOpenGLFramebufferObject* offscreenBuffer_;
 
 	private:
 	// Initialise context widget (when created by Qt)
@@ -283,33 +285,47 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	 */
 	public:
 	// Drawing object type
-	enum ViewerObject { AxisLineObject, AxisTickLabelObject, AxisTitleLabelObject, GridLineMajorObject, GridLineMinorObject, NoObject, RenderableObject };
+	enum ViewerObject { NoObject, AxisLineObject, AxisTickLabelObject, AxisTitleLabelObject, GridLineMajorObject, GridLineMinorObject, RenderableObject, CustomObject };
+	// Return description of viewer object
+	static const char* viewerObject(ViewerObject vo);
 
-	protected:
-	// View coordinates to probe for objects at next redraw
-	int objectQueryX_, objectQueryY_;
-	// Width and height of area about clicked position
-	int objectQueryWidth_, objectQueryHeight_;
-	// Maximum depth value found at query pixel
-	GLfloat depthAtQueryCoordinates_;
+	private:
+	// Whether we are currently running an object query
+	bool queryingObjects_;
+	// Bottom-left coordinates of region to probe for objects at next redraw
+	int queryRegionBottom_, queryRegionLeft_;
+	// Size of area to sample, starting from bottom-left coordinates
+	int queryRegionWidth_, queryRegionHeight_;
+	// Colour contents of sample region
+	Array<GLfloat> queryRegionR_, queryRegionG_, queryRegionB_;
+	// Scaling of generated query image
+	double queryImageScale_;
+	// Width of query image
+	int queryImageWidth_;
+	// Height of query image
+	int queryImageHeight_;
 	// Type of object found at query coordinates
-	ViewerObject objectAtQueryCoordinates_;
+	ViewerObject queryObjectType_;
 	// Information describing object at query coordinates
-	CharString infoAtQueryCoordinates_;
+	CharString queryObjectInfo_;
+	// Secondary information describing object at query coordinates
+	CharString queryObjectSubInfo_;
+
+	private:
+	// Generate query image at specified scaling
+	void generateQueryImage();
 
 	protected:
-	// Update depth at query coordinates, returning whether it is closer
-	bool updateQueryDepth();
-	// Set information of query object
-	void setQueryObject(ViewerObject objectType, const char* info);
+	// Update object query, setting supplied information if the depth is closere
+	void updateQuery(BaseViewer::ViewerObject objectType, const char* info, const char* subInfo = NULL);
 
 	public:
-	// Set coordinates to query at next redraw
-	void setQueryCoordinates(int mouseX, int mouseY);
-	// Return object type at query coordinates
-	ViewerObject objectAtQueryCoordinates() const;
-	// Info for object at query coordinates
-	const char* infoAtQueryCoordinates() const;
+	// Return the type of object at the specified coordinates
+	ViewerObject queryAt(int x, int y);
+	// Return info for object at query coordinates
+	const char* queryObjectInfo() const;
+	// Return sub-info for object at query coordinates
+	const char* queryObjectSubInfo() const;
 
 
 	/*
