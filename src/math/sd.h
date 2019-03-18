@@ -1,28 +1,38 @@
 /*
- */
+	*** Steepest-Descent Minmiser
+	*** src/math/sd.h
+	Copyright T. Youngs 2019
 
-#ifndef DISSOLVE_SD_H
-#define DISSOLVE_SD_H
+	This file is part of Dissolve.
 
+	Dissolve is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	Dissolve is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef DISSOLVE_SDMIN_H
+#define DISSOLVE_SDMIN_H
+
+#include "math/minimiser.h"
 #include "base/messenger.h"
 #include "templates/array.h"
 
-template <class T> class SteepestDescent
+template <class T> class SteepestDescentMinimiser : public MinimiserBase<T>
 {
-	// Command pointer typedef
-	typedef double (T::*SteepestDescentCostFunction)(double* alpha, int nAlpha);
-
 	public:
 	// Constructor
-	SteepestDescent<T>(T& object, SteepestDescentCostFunction func) : object_(object), costFunction_(func)
-	{
-	}
+	SteepestDescentMinimiser<T>(T& object, typename MinimiserBase<T>::MinimiserCostFunction costFunction, bool pokeBeforeCost = false) : MinimiserBase<T>(object, costFunction, pokeBeforeCost)
 
 	private:
-	// Object used to call specified function
-	T& object_;
-	// Pointer to cost function
-	SteepestDescentCostFunction costFunction_;
 	// Pointers to double values to be fit
 	Array<double*> targets_;
 	// Local values for fitting
