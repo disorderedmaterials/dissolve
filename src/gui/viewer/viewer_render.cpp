@@ -29,7 +29,6 @@
 #include <QPainter>
 #include <QProgressDialog>
 
-
 // Initialise context widget (when created by Qt)
 void BaseViewer::initializeGL()
 {
