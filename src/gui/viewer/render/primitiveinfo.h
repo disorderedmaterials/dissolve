@@ -42,7 +42,7 @@ class PrimitiveInfo
 	 */
 	public:
 	// Expose contained info to GL
-	virtual void sendToGL(double lineWidthScaling) = 0;
+	virtual void sendToGL(double pixelScaling) = 0;
 };
 
 /*
@@ -82,9 +82,9 @@ class StylePrimitiveInfo : public PrimitiveInfo
 
 	public:
 	// Expose contained info to GL
-	void sendToGL(double lineWidthScaling);
+	void sendToGL(double pixelScaling);
 };
-	void sendToGL(double lineWidthScaling);
+	void sendToGL(double pixelScaling);
 };
 
 // Primitive and Colour
@@ -105,7 +105,7 @@ class ColouredPrimitiveInfo : public PrimitiveInfo
 
 	public:
 	// Expose contained info to GL
-	void sendToGL(double lineWidthScaling);
+	void sendToGL(double pixelScaling);
 };
 
 // Style Information
@@ -124,7 +124,7 @@ class StylePrimitiveInfo : public PrimitiveInfo
 
 	public:
 	// Expose contained info to GL
-	void sendToGL(double lineWidthScaling);
+	void sendToGL(double pixelScaling);
 };
 
 // Line Style Information
@@ -141,7 +141,7 @@ class LineStylePrimitiveInfo : public PrimitiveInfo
 
 	public:
 	// Expose contained info to GL
-	void sendToGL(double lineWidthScaling);
+	void sendToGL(double pixelScaling);
 };
 
 #endif

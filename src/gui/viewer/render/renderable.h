@@ -239,7 +239,7 @@ class Renderable : public ListItem<Renderable>
 
 	public:
 	// Update primitives and send to display
-	void updateAndSendPrimitives(const View& view, const RenderableGroupManager& groupManager, bool forceUpdate, bool pushAndPop, const QOpenGLContext* context, double lineWidthScaling);
+	void updateAndSendPrimitives(const View& view, const RenderableGroupManager& groupManager, bool forceUpdate, bool pushAndPop, const QOpenGLContext* context, double pixelScaling);
 };
 
 #endif

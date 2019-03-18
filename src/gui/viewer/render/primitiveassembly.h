@@ -74,7 +74,7 @@ class PrimitiveAssembly : public ListItem<PrimitiveAssembly>
 	 */
 	public:
 	// Send to OpenGL (i.e. render)
-	void sendToGL(double lineWidthScaling);
+	void sendToGL(double pixelScaling);
 };
 
 #endif

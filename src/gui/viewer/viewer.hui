@@ -138,8 +138,8 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	FontInstance fontInstance_;
 	// Flag specifying whether we are currently rendering offscreen
 	bool renderingOffScreen_;
-	// Line width scaling factor to use (to adjust line width when saving images)
-	double lineWidthScaling_;
+	// Scaling to use for objects measured in pixel widths / point sizes
+	double pixelScaling_;
 	// Offscreen context
         QOpenGLContext offscreenContext_;
 	// Offscreen surface
@@ -162,8 +162,8 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	virtual void setupGL();
 	// Render 2D overlay content
 	virtual void render2DOverlay() = 0;
-	// Set line width and text scaling to use
-	void setObjectScaling(double scaling);
+	// Set scaling to use for objects measured in pixel widths / point sizes
+	void setPixelScaling(double scaling);
 
 	protected:
 	// Set and enable clip planes suitable for current axis limits and view

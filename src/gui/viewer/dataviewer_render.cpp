@@ -34,9 +34,10 @@ void DataViewer::postResizeGL()
 // Render 2D overlay content
 void DataViewer::render2DOverlay()
 {
-	const double overlaySpacing = 2.0;
-	const double overlayTextSize = 12.0;
-	const double legendLineLength = 10.0;
+	// Set up some metrics
+	const double overlaySpacing = 2.0 * pixelScaling_;
+	const double overlayTextSize = 12.0 * pixelScaling_;
+	const double legendLineLength = 20.0 * pixelScaling_;
 
 	/*
 	 * Draw indicators in top-left corner
@@ -88,7 +89,7 @@ void DataViewer::render2DOverlay()
 		// -- What are we drawing for the line indicator?
 		if (colourDefinition.style() == ColourDefinition::SingleColourStyle)
 		{
-			rend->lineStyle().sendToGL(lineWidthScaling_);
+			rend->lineStyle().sendToGL(pixelScaling_);
 			GLfloat lineWidth;
 			glGetFloatv(GL_LINE_WIDTH, &lineWidth);
 			glLineWidth(lineWidth*2.0);

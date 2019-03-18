@@ -368,7 +368,7 @@ void Renderable::removePrimitiveAssembly(PrimitiveAssembly* assembly)
 }
 
 // Update primitives and send to display
-void Renderable::updateAndSendPrimitives(const View& view, const RenderableGroupManager& groupManager, bool forceUpdate, bool pushAndPop, const QOpenGLContext* context, double lineWidthScaling)
+void Renderable::updateAndSendPrimitives(const View& view, const RenderableGroupManager& groupManager, bool forceUpdate, bool pushAndPop, const QOpenGLContext* context, double pixelScaling)
 {
 	// If this Renderable is not visible, return now
 	if (!visible_) return;
@@ -412,7 +412,7 @@ void Renderable::updateAndSendPrimitives(const View& view, const RenderableGroup
 
 	// Send Primitive assemblies to display
 	ListIterator<PrimitiveAssembly> assemblyIterator(assemblies_);
-	while (PrimitiveAssembly* assembly = assemblyIterator.iterate()) assembly->sendToGL(lineWidthScaling);
+	while (PrimitiveAssembly* assembly = assemblyIterator.iterate()) assembly->sendToGL(pixelScaling);
 
 	// Pop current instances if required
 	if (pushAndPop)

@@ -67,7 +67,7 @@ void PrimitiveAssembly::add(bool lighting, GLenum polygonFillMode)
  */
 
 // Send to OpenGL (i.e. render)
-void PrimitiveAssembly::sendToGL(double lineWidthScaling)
+void PrimitiveAssembly::sendToGL(double pixelScaling)
 {
-	for (int n=0; n<assembly_.nItems(); ++n) assembly_[n]->sendToGL(lineWidthScaling);
+	for (int n=0; n<assembly_.nItems(); ++n) assembly_[n]->sendToGL(pixelScaling);
 }

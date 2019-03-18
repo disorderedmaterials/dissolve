@@ -142,7 +142,7 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 		glEnable(GL_MULTISAMPLE);
 		glEnable(GL_BLEND);
 		glEnable(GL_LIGHTING);
-		LineStyle().sendToGL(lineWidthScaling_);
+		LineStyle().sendToGL(pixelScaling_);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		if (fontInstance_.fontOK())
 		{
@@ -162,19 +162,19 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 		glEnable(GL_LINE_SMOOTH);
 		for (int axis=0; axis<3; ++axis) if (view_.axes().visible(axis) && (axis != skipAxis))
 		{
-			view_.axes().gridLineMinorStyle(axis).sendToGL(lineWidthScaling_);
+			view_.axes().gridLineMinorStyle(axis).sendToGL(pixelScaling_);
 			view_.axes().gridLineMinorPrimitive(axis).sendToGL();
 	// 		if (updateQueryDepth()) setQueryObject(DataViewer::GridLineMinorObject, DissolveSys::itoa(axis));
 		}
 		for (int axis=0; axis<3; ++axis) if (view_.axes().visible(axis) && (axis != skipAxis))
 		{
-			view_.axes().gridLineMajorStyle(axis).sendToGL(lineWidthScaling_);
+			view_.axes().gridLineMajorStyle(axis).sendToGL(pixelScaling_);
 			view_.axes().gridLineMajorPrimitive(axis).sendToGL();
 	// 		if (updateQueryDepth()) setQueryObject(DataViewer::GridLineMajorObject, DissolveSys::itoa(axis));
 		}
 
 		// -- Reset line style, ensure polygons are now filled, and render the axis lines
-		LineStyle().sendToGL(lineWidthScaling_);
+		LineStyle().sendToGL(pixelScaling_);
 		for (int axis=0; axis<3; ++axis) if (view_.axes().visible(axis) && (axis != skipAxis))
 		{
 			view_.axes().axisPrimitive(axis).sendToGL();
@@ -195,7 +195,7 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 		// Set shininess for Renderable
 		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, rend->displaySurfaceShininess());
 
-		rend->updateAndSendPrimitives(view_, groupManager_, renderingOffScreen_, renderingOffScreen_, context(), lineWidthScaling_);
+		rend->updateAndSendPrimitives(view_, groupManager_, renderingOffScreen_, renderingOffScreen_, context(), pixelScaling_);
 
 		// Update query
 // 		if (updateQueryDepth()) setQueryObject(DataViewer::RenderableObject, rend->objectTag());
@@ -345,14 +345,12 @@ void BaseViewer::postRedisplay()
 	update();
 }
 
-// Set line width and text scaling to use
-void BaseViewer::setObjectScaling(double scaling)
+// Set scaling to use for objects measured in pixel widths / point sizes
+void BaseViewer::setPixelScaling(double scaling)
 {
-	lineWidthScaling_ = scaling;
+	pixelScaling_ = scaling;
 
-	// Pass this value on to those that depend on it
-	// TODO these should be local objects so that we don't interfere with other view types
-// 	TextPrimitive::setTextSizeScale(scaling);
+	fontInstance_.setScaleFactor(scaling);
 }
 
 // Set and enable clip planes suitable for current axis limits and view
@@ -418,8 +416,8 @@ QPixmap BaseViewer::generateImage(int imageWidth, int imageHeight)
 	// Flag that we are rendering offscreen
 	renderingOffScreen_ = true;
 
-	// Scale current line width and text scaling to reflect size of exported image
-	setObjectScaling( double(imageHeight) / double(contextHeight()) );
+	// Scale pixel-based measures to reflect size of exported image
+	setPixelScaling( double(imageHeight) / double(contextHeight()) );
 
 	// Make the offscreen surface the current context
 	offscreenContext_.makeCurrent(&offscreenSurface_);
@@ -483,8 +481,8 @@ QPixmap BaseViewer::generateImage(int imageWidth, int imageHeight)
 	// Finalise and save
 	painter.end();
 
-	// Reset line width and text size
-	setObjectScaling(1.0);
+	// Reset pixel scaling
+	setPixelScaling(1.0);
 
 	// Turn off offscreen rendering
 	renderingOffScreen_ = false;

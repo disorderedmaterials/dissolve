@@ -30,7 +30,12 @@ FontInstance::FontInstance()
 	fontBaseHeight_ = 0.0;
 	fontFullHeight_ = 0.0;
 	dotWidth_ = 0.0;
+	scaleFactor_ = 1.0;
 }
+
+/*
+ * Font Data
+ */
 
 // Set up font with font filename specified
 bool FontInstance::setUp(QString fontFileName)
@@ -117,24 +122,42 @@ FTBBox FontInstance::boundingBox(QString text) const
 	return FTBBox(box.Lower(), FTPoint(box.Upper().X()-dotWidth_, box.Upper().Y()));
 }
 
+// Set general scaling factor for primitives rendered with this font instance
+void FontInstance::setScaleFactor(double scaleFactor)
+{
+	scaleFactor_ = scaleFactor;
+}
+
+// Return general scaling factor for primitives rendered with this font instance
+double FontInstance::scaleFactor() const
+{
+	return scaleFactor_;
+}
+
+/*
+ * Bounding Box Calculation
+ */
+
 // Calculate bounding box for specified string
 void FontInstance::boundingBox(QString text, Vec3<double>& lowerLeft, Vec3<double>& upperRight) const
 {
 	FTBBox box = boundingBox(text);
 	lowerLeft.set(box.Lower().X(), box.Lower().Y(), box.Lower().Z());
 	upperRight.set(box.Upper().X(), box.Upper().Y(), box.Upper().Z());
+	lowerLeft *= scaleFactor_;
+	upperRight *= scaleFactor_;
 }
 
 // Calculate bounding box width for specified string
 double FontInstance::boundingBoxWidth(QString text) const
 {
 	FTBBox box = boundingBox(text);
-	return (box.Upper().X() - box.Lower().X());
+	return scaleFactor_ * (box.Upper().X() - box.Lower().X());
 }
 
 // Calculate bounding box height for specified string
 double FontInstance::boundingBoxHeight(QString text) const
 {
 	FTBBox box = boundingBox(text);
-	return (box.Upper().Y() - box.Lower().Y());
+	return scaleFactor_ * (box.Upper().Y() - box.Lower().Y());
 }

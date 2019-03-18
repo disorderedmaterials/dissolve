@@ -59,8 +59,6 @@ class TextPrimitive : public ListItem<TextPrimitive>
 	 * Definition
 	 */
 	private:
-	// General text scaling factor
-	static double textSizeScale_;
 	// Coordinates of anchorpoint of text
 	Vec3<double> anchorPoint_;
 	// Location of anchorpoint on text bounding box
@@ -77,8 +75,6 @@ class TextPrimitive : public ListItem<TextPrimitive>
 	List<TextFragment> fragments_;
 
 	public:
-	// Set text scaling factor
-	static void setTextSizeScale(double textSizeScale);
 	// Set data
 	void set(FontInstance& fontInstance, QString text, Vec3<double> anchorPoint, TextAnchor anchorPosition, Vec3<double> adjustmentVector, Matrix4 localRotation, double textSize, bool flat);
 	// Return transformation matrix to use when rendering (including fragment scale/translation if one is specified)

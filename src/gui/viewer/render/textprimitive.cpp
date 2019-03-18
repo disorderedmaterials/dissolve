@@ -32,7 +32,6 @@ QString TextPrimitive::stringSource_;
 int TextPrimitive::stringPos_, TextPrimitive::stringLength_;
 List<TextFormat> TextPrimitive::formatStack_;
 double TextPrimitive::horizontalPosition_;
-double TextPrimitive::textSizeScale_ = 1.0;
 
 // Constructor
 TextPrimitive::TextPrimitive() : ListItem<TextPrimitive>()
@@ -70,12 +69,6 @@ TextPrimitive::EscapeSequence TextPrimitive::escapeSequence(const char* s)
 	return TextPrimitive::nEscapeSequences;
 }
 
-// Set text scaling facotor
-void TextPrimitive::setTextSizeScale(double textSizeScale)
-{
-	textSizeScale_ = textSizeScale;
-}
-
 // Set data
 void TextPrimitive::set(FontInstance& fontInstance, QString text, Vec3<double> anchorPoint, TextPrimitive::TextAnchor anchorPosition, Vec3<double> adjustmentVector, Matrix4 localRotation, double textSize, bool flat)
 {
@@ -97,7 +90,7 @@ Matrix4 TextPrimitive::transformationMatrix(FontInstance& fontInstance, const Ma
 	Vec3<double> lowerLeft, upperRight, anchorPos, anchorPosRotated, textCentre;
 
 	// Calculate scaling factor for font
-	double scale = fontInstance.fontBaseHeight() * textSizeScale_ * textSize_ / baseFontSize;
+	double scale = fontInstance.fontBaseHeight() * textSize_ / baseFontSize;
 
 	// Calculate bounding box and anchor position on it
 	boundingBox(fontInstance, lowerLeft, upperRight);
@@ -226,6 +219,9 @@ void TextPrimitive::render(FontInstance& fontInstance, const Matrix4& viewMatrix
 			glVertex3d(ll.x, ur.y, 0.0);
 			glEnd();
 		}
+
+		// Apply any scaling stored in the FontInstance
+		glScaled(fontInstance.scaleFactor(), fontInstance.scaleFactor(), fontInstance.scaleFactor());
 
 		if (fragment->bold())
 		{

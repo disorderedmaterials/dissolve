@@ -36,7 +36,11 @@ class FontInstance
 	public:
 	// Constructor
 	FontInstance();
-	
+
+
+	/*
+	 * Font Data
+	 */
 	private:
 	// Font file last passed to setupFont()
 	QString fontFile_;
@@ -50,6 +54,8 @@ class FontInstance
 	double fontBaseHeight_;
 	// Width of double dot (used for correction of width of strings with trailing spaces)
 	double dotWidth_;
+	// General scaling factor for primitives rendered with this font instance
+	double scaleFactor_;
 
 	public:
 	// Set up font with font filename specified
@@ -62,8 +68,20 @@ class FontInstance
 	double fontFullHeight() const;
 	// Return base height of font
 	double fontBaseHeight() const;
+	// Set general scaling factor for primitives rendered with this font instance
+	void setScaleFactor(double scaleFactor);
+	// Return general scaling factor for primitives rendered with this font instance
+	double scaleFactor() const;
+
+
+	/*
+	 * Bounding Box Calculation
+	 */
+	private:
 	// Return bounding box for specified string
 	FTBBox boundingBox(QString text) const;
+
+	public:
 	// Calculate bounding box for specified string
 	void boundingBox(QString text, Vec3<double>& lowerLeft, Vec3<double>& upperRight) const;
 	// Calculate bounding box width for specified string

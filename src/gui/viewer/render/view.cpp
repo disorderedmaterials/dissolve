@@ -21,6 +21,7 @@
 
 #include "gui/viewer/render/view.h"
 #include "gui/viewer/render/renderable.h"
+#include "gui/viewer/render/fontinstance.h"
 #include "math/cuboid.h"
 #include <algorithm>
 #include <cmath>
@@ -642,7 +643,7 @@ void View::recalculateView(bool force)
 		if (!std::isnormal(axes_.stretch(axis))) axes_.setStretch(axis, 1.0);
 	}
 
-	const double margin = 10.0;
+	const double margin = 10.0 * fontInstance_.scaleFactor();
 	Matrix4 viewMat, B, viewMatrixInverse;
 	double tempMin, tempMax;
 	Vec3<double> coordMin[3], coordMax[3], labelMin, labelMax, a, b, globalMin, globalMax;
