@@ -102,7 +102,7 @@ void DoubleExp::set(double value)
 	if (exponent_ == floor(log10(std::numeric_limits<double>::min()))) exponent_ = 0;
 	mantissa_ = value / pow(10.0,exponent_);
 	recalculate();
-// 	printf("Input value %f gives mantissa of %f and exponent of %i\n", value, mantissa_, exponent_);
+// 	printf("  -- Input value %f gives mantissa of %f and exponent of %i, giving value of %e\n", value, mantissa_, exponent_, value_);
 }
 
 // Set from supplied text
@@ -154,7 +154,7 @@ int DoubleExp::exponent() const
 }
 
 // Return value as string
-CharString DoubleExp::asString(const double formatThreshold, const int maxDecimals) const
+CharString DoubleExp::asString(const int exponentThreshold, const int maxDecimals) const
 {
 	/*
 	 * Check the absolute value against the provided threshold, and decide whether to use scientific or normal formatting.
@@ -167,7 +167,7 @@ CharString DoubleExp::asString(const double formatThreshold, const int maxDecima
 	 * Then, return the final formatted string, adding the exponent on if using scientificNotation.
 	 */
 
-	bool scientificNotation = fabs(value_) >= formatThreshold;
+	bool scientificNotation = abs(exponent_) > exponentThreshold;
 	char formatString[32];
 	sprintf(formatString, "%%.%if", maxDecimals);
 
