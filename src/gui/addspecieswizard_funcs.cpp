@@ -98,13 +98,6 @@ Species* AddSpeciesWizard::importSpecies(Dissolve& dissolve)
 	// Copy the importTarget_ over
 	Species* newSpecies = dissolve.copySpecies(importTarget_);
 
-	// Finalise the new Species
-	newSpecies->updateUsedAtomTypes();
-	newSpecies->addNaturalIsotopologue(dissolve.atomTypes());
-	newSpecies->updateGrains();
-	newSpecies->centreAtOrigin();
-	newSpecies->orderAtomsWithinGrains();
-
 	return newSpecies;
 }
 
