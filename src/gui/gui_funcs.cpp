@@ -120,12 +120,9 @@ void DissolveWindow::setModified(bool invalidatesSetUp)
 {
 	modified_ = true;
 
-	if (invalidatesSetUp)
-	{
-		dissolve_.invalidateSetUp();
+	if (invalidatesSetUp) dissolve_.invalidateSetUp();
 
-		updateWindowTitle();
-	}
+	updateWindowTitle();
 }
 
 // Flag that data has been modified via the GUI, and that the set up is now invalid
