@@ -94,6 +94,8 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	SpeciesAtom* atom(int n);
 	// Return the list of atoms
 	const List<SpeciesAtom>& atoms() const;
+	// Set coordinates of specified atom
+	void setAtomCoordinates(SpeciesAtom* i, Vec3<double> r);
 	// Transmute specified atom
 	void transmuteAtom(SpeciesAtom* i, Element* el);
 	// Clear current atom selection

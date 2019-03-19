@@ -59,6 +59,16 @@ const List<SpeciesAtom>& Species::atoms() const
 	return atoms_;
 }
 
+// Set coordinates of specified atom
+void Species::setAtomCoordinates(SpeciesAtom* i, Vec3<double> r)
+{
+	if (!i) return;
+
+	i->setCoordinates(r);
+
+	++version_;
+}
+
 // Transmute specified SpeciesAtom
 void Species::transmuteAtom(SpeciesAtom* i, Element* el)
 {
