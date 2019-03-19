@@ -27,7 +27,7 @@ void OptimiseModule::setUpKeywords()
 {
 	// Method Control
 	ModuleKeywordGroup* group = addKeywordGroup("Method Control");
-	group->add(new IntegerModuleKeyword(1, 1), "NCycles", "Number of minimisation cycles to perform");
+	group->add(new IntegerModuleKeyword(200, 1), "NCycles", "Number of minimisation cycles to perform");
 	group->add(new DoubleModuleKeyword(1.0e-5, 1.0e-10), "StepSize", "Initial step size to employ");
 	group->add(new DoubleModuleKeyword(1.0e-4, 1.0e-10), "Tolerance", "Tolerance controlling convergence of algorithm)");
 }
