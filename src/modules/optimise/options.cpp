@@ -25,7 +25,11 @@
 // Set up keywords for Module
 void OptimiseModule::setUpKeywords()
 {
-// 	keywords_.add(new BoolModuleKeyword(true), "ExampleKeyword", "Example keyword description", "<args>");
+	// Method Control
+	ModuleKeywordGroup* group = addKeywordGroup("Method Control");
+	group->add(new IntegerModuleKeyword(1, 1), "NCycles", "Number of minimisation cycles to perform");
+	group->add(new DoubleModuleKeyword(1.0e-5, 1.0e-10), "StepSize", "Initial step size to employ");
+	group->add(new DoubleModuleKeyword(1.0e-4, 1.0e-10), "Tolerance", "Tolerance controlling convergence of algorithm)");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised

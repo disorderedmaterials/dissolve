@@ -28,16 +28,17 @@
 // Run main processing
 bool OptimiseModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {
-	/*
-	 * This is a XXX routine.
-	 * XXX
-	 */
+	// Retrieve Module options
+	const int nCycles = keywords_.asInt("NCycles");
+	const double tolerance = keywords_.asDouble("Tolerance");
+	const double initialStepSize = keywords_.asDouble("StepSize");
+	const int nStepSizeResetsAllowed = 5;
 
-	// TODO For options
-	int nCycles_ = 200;
-	const double tolerance_ = 1.0e-4;
-	const double initialStepSize_ = 1.0e-5;
-	const int nStepSizeResetsAllowed_ = 5;
+	// Print argument/parameter summary
+	Messenger::print("Optimise: Maximum number of cycles is %i.\n", nCycles);
+	Messenger::print("Optimise: Base convergence tolerance is %e.\n", tolerance);
+	Messenger::print("Optimise: Initial step size to be used is %e.\n", initialStepSize);
+	Messenger::print("\n");
 
 	// Check for zero Configuration targets
 	if (targetConfigurations_.nItems() == 0)
@@ -74,19 +75,19 @@ bool OptimiseModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		double oldRMSForce = rmsForce();
 
 		// Set initial step size - the line minimiser will modify this as we proceed
-		double stepSize = initialStepSize_;
+		double stepSize = initialStepSize;
 
 		Messenger::print("Cycle  %-16s  %-16s  %-16s  %-16s  %-16s\n", "E(total), kJ/mol", "dE, kJ/mol", "RMS(force)", "dRMS", "Step Size");
 		Messenger::print(" --    %16.9e  %-16s  %16.9e  %-16s  %16.9e\n", oldEnergy, "------", oldRMSForce, "------", stepSize);
 
 		int nStepSizeResets = 0;
-		for (int cycle = 1; cycle <= nCycles_; ++cycle)
+		for (int cycle = 1; cycle <= nCycles; ++cycle)
 		{
 			// Copy current Configuration coordinates as our reference (they will be modified by lineMinimise())
 			setReferenceCoordinates(cfg);
 
 			// Line minimise along the force gradient
-			double newEnergy = lineMinimise(procPool, cfg, dissolve.potentialMap(), tolerance_*0.01, stepSize);
+			double newEnergy = lineMinimise(procPool, cfg, dissolve.potentialMap(), tolerance*0.01, stepSize);
 
 			// Get new forces and RMS for the adjusted coordinates (now stored in the Configuration) and determine new step size
 			ForcesModule::totalForces(procPool, cfg, dissolve.potentialMap(), xForce_, yForce_, zForce_);
@@ -100,13 +101,13 @@ bool OptimiseModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			Messenger::print("%5i  %16.9e  %16.9e  %16.9e  %16.9e  %16.9e\n", cycle, newEnergy, dE, newRMSForce, dF, stepSize);
 
 			// Check convergence
-			if ((fabs(dE) < tolerance_) || (fabs(dF) < tolerance_))
+			if ((fabs(dE) < tolerance) || (fabs(dF) < tolerance))
 			{
 				// Reset the step size and try again?
-				if (nStepSizeResets < nStepSizeResetsAllowed_)
+				if (nStepSizeResets < nStepSizeResetsAllowed)
 				{
 					++nStepSizeResets;
-					stepSize = initialStepSize_;
+					stepSize = initialStepSize;
 				}
 				else
 				{
