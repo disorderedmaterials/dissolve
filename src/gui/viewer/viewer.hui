@@ -84,6 +84,10 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	View& view();
 	// Return the View definition (const)
 	const View& constView() const;
+	// Emit the signal to notify that the data represented in the Viewer has been changed
+	void notifyDataModified(bool invalidateSetUp = false);
+	// Emit the signal to notify that the data has changed and dependent widgets should be updated
+	void notifyDataChanged();
 
 	signals:
 	// Notify that the represented data has been modified
