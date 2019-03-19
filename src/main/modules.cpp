@@ -103,6 +103,8 @@ bool Dissolve::registerMasterModules()
 		Messenger::print(" --> %s\n", module->type());
 		Messenger::print("     %s\n", module->brief());
 	}
+
+	return true;
 }
 
 // Search for master Module of the named type
