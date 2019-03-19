@@ -301,6 +301,8 @@ class Dissolve
 	List<ModuleLayer>& processingLayers();
 	// Return data associated with main processing Modules
 	GenericList& processingModuleData();
+	// Create and add a named Module to the named layer (creating it if necessary), with optional Configuration target
+	Module* createModuleInLayer(const char* moduleType, const char* layerName, Configuration* cfg = NULL);
 
 
 	/*

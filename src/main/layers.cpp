@@ -93,3 +93,26 @@ GenericList& Dissolve::processingModuleData()
 	return processingModuleData_;
 }
 
+// Create and add a named Module to the named layer (creating it if necessary), with optional Configuration target
+Module* Dissolve::createModuleInLayer(const char* moduleType, const char* layerName, Configuration* cfg)
+{
+	// First, attempt to create a new Module with the specified name
+	Module* module = createModuleInstance(moduleType);
+	if (!module) return NULL;
+
+	// Find / create the specified layer
+	ModuleLayer* layer = findProcessingLayer(layerName);
+	if (!layer)
+	{
+		layer = addProcessingLayer();
+		layer->setName(layerName);
+	}
+
+	// Add the new Module to the layer
+	layer->add(module);
+
+	// Set Configuration target in the Module if specified
+	if (cfg) module->addTargetConfiguration(cfg);
+
+	return module;
+}
