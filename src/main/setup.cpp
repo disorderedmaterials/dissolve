@@ -99,6 +99,7 @@ bool Dissolve::setUpSimulation()
 			{
 				Messenger::error("A PairPotential between AtomTypes '%s' and '%s' is required, but has not been defined.\n", at1->name(), at2->name());
 				++nMissingPots;
+				continue;
 			}
 
 			// Setup PairPotential
@@ -113,7 +114,6 @@ bool Dissolve::setUpSimulation()
 
 			if (!processingModuleData_.contains(itemName, "Dissolve")) continue;
 			pot->setUAdditional(GenericListHelper<Data1D>::retrieve(processingModuleData_, itemName, "Dissolve", Data1D()));
-
 		}
 	}
 	if (nMissingPots > 0) return false;
