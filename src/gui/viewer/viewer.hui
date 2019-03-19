@@ -88,7 +88,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	signals:
 	// Notify that the represented data has been modified
 	void dataModified(bool invalidatesSetUp = false);
-	// Notify that any other GUi controls displaying the underlying data should be refreshed
+	// Notify that any other GUI controls displaying the underlying data should be refreshed
 	void dataChanged();
 
 
