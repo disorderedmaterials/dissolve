@@ -34,7 +34,10 @@ bool OptimiseModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	 */
 
 	// TODO For options
-	int nCycles_ = 10;
+	int nCycles_ = 200;
+	const double tolerance_ = 1.0e-4;
+	const double initialStepSize_ = 1.0e-5;
+	const int nStepSizeResetsAllowed_ = 5;
 
 	// Check for zero Configuration targets
 	if (targetConfigurations_.nItems() == 0)
@@ -63,58 +66,61 @@ bool OptimiseModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		yForce_.initialise(cfg->nAtoms());
 		zForce_.initialise(cfg->nAtoms());
 
-		// Get the current energy of the Configuration
-		double currentEnergy = EnergyModule::totalEnergy(procPool, cfg, dissolve.potentialMap());
-
 		bool converged = false, lineDone = false;
 
-		double stepSize = 1.0e-4;
-		for (int cycle = 0; cycle < nCycles_; ++cycle)
+		// Get the initial energy and forces of the Configuration
+		double oldEnergy = EnergyModule::totalEnergy(procPool, cfg, dissolve.potentialMap());
+		ForcesModule::totalForces(procPool, cfg, dissolve.potentialMap(), xForce_, yForce_, zForce_);
+		double oldRMSForce = rmsForce();
+
+		// Set initial step size - the line minimiser will modify this as we proceed
+		double stepSize = initialStepSize_;
+
+		Messenger::print("Cycle  %-16s  %-16s  %-16s  %-16s  %-16s\n", "E(total), kJ/mol", "dE, kJ/mol", "RMS(force)", "dRMS", "Step Size");
+		Messenger::print(" --    %16.9e  %-16s  %16.9e  %-16s  %16.9e\n", oldEnergy, "------", oldRMSForce, "------", stepSize);
+
+		int nStepSizeResets = 0;
+		for (int cycle = 1; cycle <= nCycles_; ++cycle)
 		{
-			// Simple method begins here
-			double oldEnergy = currentEnergy;
-// 			double oldForceRMS = newForceRMS;
-
-// 				// Minimise along gradient vector
-// 				if (simple)
-// 				{
-// 					// Step along gradient (with reducing step size until energy decreases)
-// 					nattempts = 0;
-// 					do
-// 					{
-// 						++nattempts;
-// 						gradientMove(sourceModel, stepsize);
-// 						currentEnergy = sourceModel->totalEnergy(&tempModel_, success);
-// 						if (currentEnergy > oldEnergy) stepsize *= 0.5;
-// 					} while (currentEnergy > oldEnergy);
-// 					// If the very first attempt was successful, increase the stepsize again
-// 					if (nattempts == 1) stepsize *= 1.5;
-// 				}
-// 				else 
-
 			// Copy current Configuration coordinates as our reference (they will be modified by lineMinimise())
 			setReferenceCoordinates(cfg);
 
-			// Calculate current forces and corresponding RMS
+			// Line minimise along the force gradient
+			double newEnergy = lineMinimise(procPool, cfg, dissolve.potentialMap(), tolerance_*0.01, stepSize);
+
+			// Get new forces and RMS for the adjusted coordinates (now stored in the Configuration) and determine new step size
 			ForcesModule::totalForces(procPool, cfg, dissolve.potentialMap(), xForce_, yForce_, zForce_);
-	// 		douoble currentRMSForce = sourceModel->rmsForce();
-			
-			currentEnergy = lineMinimise(procPool, cfg, dissolve.potentialMap(), 0.0001, stepSize);
+			double newRMSForce = rmsForce();
 
-			printf("ENERGY = %f\n", currentEnergy);
+			// Calculate deltas
+			double dE = newEnergy - oldEnergy;
+			double dF = newRMSForce - oldRMSForce;
+
+			// Print summary
+			Messenger::print("%5i  %16.9e  %16.9e  %16.9e  %16.9e  %16.9e\n", cycle, newEnergy, dE, newRMSForce, dF, stepSize);
+
+			// Check convergence
+			if ((fabs(dE) < tolerance_) || (fabs(dF) < tolerance_))
+			{
+				// Reset the step size and try again?
+				if (nStepSizeResets < nStepSizeResetsAllowed_)
+				{
+					++nStepSizeResets;
+					stepSize = initialStepSize_;
+				}
+				else
+				{
+					Messenger::print(" *** Steepest Descent converged at step %i ***", cycle);
+					break;
+				}
+			}
+
+			// Store new energy / forces as current forces
+			oldEnergy = newEnergy;
+			oldRMSForce = newRMSForce;
 		}
-
-// 			// Print out the step data
-// 			if (cycle%5 == 0)
-// 			{
-// 				Messenger::print("%-5i %12.5e  %12.5e  %12.5e  %12.5e  %12.5e  %12.5e  %12.5e  %12.5e", cycle+1, currentEnergy, currentEnergy-lastPrintedEnergy, newForce, sourceModel->energy.vdw(), sourceModel->energy.electrostatic(), sourceModel->energy.bond(), sourceModel->energy.angle(), sourceModel->energy.torsion());
-// 				lastPrintedEnergy = currentEnergy;
-// 			}
-
-// 			if (lineDone || converged) break;
-// 		}
 	}
 
-	return false;
+	return true;
 }
 

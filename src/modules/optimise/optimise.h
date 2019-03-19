@@ -91,6 +91,12 @@ class OptimiseModule : public Module
 	private:
 	// Copy coordinates from supplied Configuration into reference arrays
 	void setReferenceCoordinates(Configuration* cfg);
+	// Revert Configuration to reference coordinates
+	void revertToReferenceCoordinates(Configuration* cfg);
+	// Return current RMS force
+	double rmsForce() const;
+	// Determine suitable step size from current forces
+	double gradientStepSize();
 	// Sort bounds / energies so that minimum energy is in the central position
 	void sortBoundsAndEnergies(Vec3<double>& bounds, Vec3<double>& energies);
 	// Return energy of adjusted coordinates, following the force vectors by the supplied amount
@@ -98,7 +104,7 @@ class OptimiseModule : public Module
 	// Perform Golden Search within specified bounds
 	double goldenSearch(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, const double tolerance, Vec3<double>& bounds, Vec3<double>& energies);
 	// Line minimise supplied Configuration from the reference coordinates along the stored force vectors
-	double lineMinimise(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, const double tolerance, double initialDelta);
+	double lineMinimise(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, const double tolerance, double& stepSize);
 
 
 	/*

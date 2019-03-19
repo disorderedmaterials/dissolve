@@ -36,6 +36,35 @@ void OptimiseModule::setReferenceCoordinates(Configuration* cfg)
 	}
 }
 
+// Revert Configuration to reference coordinates
+void OptimiseModule::revertToReferenceCoordinates(Configuration* cfg)
+{
+	for (int n=0; n<cfg->nAtoms(); ++n) cfg->atom(n)->setCoordinates(xRef_[n], yRef_[n], zRef_[n]);
+}
+
+// Return current RMS force
+double OptimiseModule::rmsForce() const
+{
+	double rmsf = 0.0;
+	for (int n=0; n<xForce_.nItems(); ++n) rmsf += xForce_.at(n)*xForce_.at(n) + yForce_.at(n)*yForce_.at(n) + zForce_.at(n)*zForce_.at(n);
+	rmsf /= xForce_.nItems();
+
+	return sqrt(rmsf);
+}
+
+// Determine suitable step size from current forces
+double OptimiseModule::gradientStepSize()
+{
+	double fMax = xForce_.maxAbs();
+	double fTemp = yForce_.maxAbs();
+	if (fTemp > fMax) fMax = fTemp;
+	fTemp = zForce_.maxAbs();
+	if (fTemp > fMax) fMax = fTemp;
+
+	return 1.0e-5;
+	return 1.0 / fMax;
+}
+
 // Sort bounds / energies so that minimum energy is in the central position
 void OptimiseModule::sortBoundsAndEnergies(Vec3<double>& bounds, Vec3<double>& energies)
 {
@@ -99,22 +128,24 @@ double OptimiseModule::goldenSearch(ProcessPool& procPool, Configuration* cfg, c
 		}
 	}
 
-	// Nothing better than the current central energy value
+	// Nothing better than the current central energy value, so revert to the stored reference coordinates
+	revertToReferenceCoordinates(cfg);
+
 	return energies.y;
 }
 
 // Line minimise supplied Configuration from the reference coordinates along the stored force vectors
-double OptimiseModule::lineMinimise(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, const double tolerance, double initialDelta)
+double OptimiseModule::lineMinimise(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, const double tolerance, double& stepSize)
 {
-	// Brent-style line minimiser with parabolic interpolation and Golden Search backup.
+	// Brent-style line minimiser with parabolic interpolation and Golden Search backup
 
 	// Set initial bounding values
 	Vec3<double> bounds, energies;
 	bounds.x = 0.0;
 	energies.x = EnergyModule::totalEnergy(procPool, cfg, potentialMap);
-	bounds.y = initialDelta;
+	bounds.y = stepSize;
 	energies.y = energyAtGradientPoint(procPool, cfg, potentialMap, bounds.y);
-	bounds.z = 2.0 * initialDelta;
+	bounds.z = 2.0 * stepSize;
 	energies.z = energyAtGradientPoint(procPool, cfg, potentialMap, bounds.z);
 
 	Messenger::printVerbose("Initial bounding values/energies = %12.5e (%12.5e) %12.5e (%12.5e) %12.5e (%12.5e)", bounds[0], energies[0], bounds[1], energies[1], bounds[2], energies[2]);
@@ -144,16 +175,11 @@ double OptimiseModule::lineMinimise(ProcessPool& procPool, Configuration* cfg, c
 			Messenger::printVerbose("--> PARABOLIC point is new minimum...");
 
 			// Overwrite the largest of bounds[0] and bounds[2] with the old minimum
-			if (energies[2] > energies[0])
-			{
-				bounds[2] = bounds[1];
-				energies[2] = energies[1];
-			}
-			else
-			{
-				bounds[0] = bounds[1];
-				energies[0] = energies[1];
-			}
+			int largest = energies[2] > energies[0] ? 2 : 0;
+			bounds.swap(1, largest);
+			energies.swap(1, largest);
+
+			// Set the new central values
 			bounds[1] = newBound;
 			energies[1] = eNew;
 		}
@@ -175,6 +201,10 @@ double OptimiseModule::lineMinimise(ProcessPool& procPool, Configuration* cfg, c
 			else
 			{
 				Messenger::printVerbose("--> PARABOLIC point is worse than all current values...");
+
+				// Revert to the stored reference coordinates
+				revertToReferenceCoordinates(cfg);
+
 				// Try recursive Golden Search instead, into the largest of the two sections
 				goldenSearch(procPool, cfg, potentialMap, tolerance, bounds, energies);
 			}
@@ -188,6 +218,9 @@ double OptimiseModule::lineMinimise(ProcessPool& procPool, Configuration* cfg, c
 
 	// Sort w.r.t. energy so that the minimum is in the central point
 	sortBoundsAndEnergies(bounds, energies);
+
+	// Set an updated step size based on the current bounds
+	stepSize = (bounds.x + bounds.y + bounds.z);
 
 	return energies.y;
 }
