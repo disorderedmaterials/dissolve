@@ -401,28 +401,28 @@ void ColourDefinition::removeCustomGradientPoint(int id)
  */
 
 // Return (set) colour for specified value
-void ColourDefinition::colour(double value, Vec4<GLfloat>& target) const
+void ColourDefinition::colour(double value, GLfloat* rgba) const
 {
 	if (style_ == ColourStyle::SingleColourStyle)
 	{
-		target.x = singleColour_.redF();
-		target.y = singleColour_.greenF();
-		target.z = singleColour_.blueF();
-		target.w = useGlobalAlpha_ ? globalAlpha_ : singleColour_.alphaF();
+		rgba[0] = singleColour_.redF();
+		rgba[1] = singleColour_.greenF();
+		rgba[2] = singleColour_.blueF();
+		rgba[3] = useGlobalAlpha_ ? globalAlpha_ : singleColour_.alphaF();
 	}
 	else if (style_ == ColourStyle::RGBGradientStyle)
 	{
-		rgbGradient_.colour(value, target);
-		if (useGlobalAlpha_) target.w = globalAlpha_;
+		rgbGradient_.colour(value, rgba);
+		if (useGlobalAlpha_) rgba[3] = globalAlpha_;
 	}
 	else if (style_ == ColourStyle::HSVGradientStyle)
 	{
-		hsvGradient_.colour(value, target);
-		if (useGlobalAlpha_) target.w = globalAlpha_;
+		hsvGradient_.colour(value, rgba);
+		if (useGlobalAlpha_) rgba[3] = globalAlpha_;
 	}
 	else
 	{
-		customGradient_.colour(value, target);
-		if (useGlobalAlpha_) target.w = globalAlpha_;
+		customGradient_.colour(value, rgba);
+		if (useGlobalAlpha_) rgba[3] = globalAlpha_;
 	}
 }

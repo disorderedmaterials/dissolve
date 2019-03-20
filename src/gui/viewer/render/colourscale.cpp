@@ -203,28 +203,28 @@ QColor ColourScale::colour(double value) const
 	return QColor(0,0,0,255);
 }
 
-// Get colour associated with value supplied (as Vec4<GLfloat>)
-void ColourScale::colour(double value, Vec4<GLfloat>& target) const
+// Get colour associated with value supplied, setting as GLfloat[4]
+void ColourScale::colour(double value, GLfloat* rgba) const
 {
 	// Check for no points being defined
 	if (points_.nItems() == 0)
 	{
-		target.x = 0.0;
-		target.y = 0.0;
-		target.z = 0.0;
-		target.w = 1.0;
+		rgba[0] = 0.0;
+		rgba[1] = 0.0;
+		rgba[2] = 0.0;
+		rgba[3] = 1.0;
 		return;
 	}
 
 	// Is supplied value less than the value at the first point?
 	if (value < points_.at(0).value())
 	{
-		points_.at(0).colour(target);
+		points_.at(0).colour(rgba);
 		return;
 	}
 	else if (value > points_.at(nPoints()-1).value())
 	{
-		points_.at(nPoints()-1).colour(target);
+		points_.at(nPoints()-1).colour(rgba);
 		return;
 	}
 	
@@ -233,18 +233,18 @@ void ColourScale::colour(double value, Vec4<GLfloat>& target) const
 	{
 		if (deltas_.at(n).containsValue(value))
 		{
-			if (interpolated_) return deltas_.at(n).colour(value, target);
-			else return deltas_.at(n).startColour(target);
+			if (interpolated_) return deltas_.at(n).colour(value, rgba);
+			else return deltas_.at(n).startColour(rgba);
 			return;
 		}
 	}
 
 	// Shouldn't ever get here
 	printf("Oh dear - fell through to the bottom of ColourScale::colour().\n");
-	target.x = 0.0;
-	target.y = 0.0;
-	target.z = 0.0;
-	target.w = 1.0;
+	rgba[0] = 0.0;
+	rgba[1] = 0.0;
+	rgba[2] = 0.0;
+	rgba[3] = 1.0;
 }
 
 // Set all alpha values to that specified

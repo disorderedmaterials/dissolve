@@ -99,17 +99,11 @@ class Primitive : public ListItem<Primitive>
 	 */
 	public:
 	// Define next vertex and normal
-	GLuint defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz);
-	// Define next vertex and normal (as Vec3<double>)
-	GLuint defineVertex(Vec3<double> vertex, Vec3<double> normal);
-	// Define next vertex, normal, and colour
-	GLuint defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, GLfloat r, GLfloat g, GLfloat b, GLfloat a);
+	GLuint defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, const GLfloat* rgba = NULL);
 	// Define next vertex and normal
-	GLuint defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, Vec4<GLfloat>& colour);
-	// Define next vertex, normal, and colour
-	GLuint defineVertex(GLfloat x, GLfloat y, GLfloat z, Vec3<double>& normal, Vec4<GLfloat>& colour);
-	// Define next vertex, normal, and colour (as Vec3<double>s and array)
-	GLuint defineVertex(Vec3<double>& v, Vec3<double>& u, Vec4<GLfloat>& colour);
+	GLuint defineVertex(GLfloat x, GLfloat y, GLfloat z, Vec3<double>& normal, const GLfloat* rgba = NULL);
+	// Define next vertex and normal
+	GLuint defineVertex(Vec3<double>& vertex, Vec3<double>& normal, const GLfloat* rgba = NULL);
 	// Define next index double
 	void defineIndices(GLuint a, GLuint b);
 	// Define next index triple
@@ -121,9 +115,9 @@ class Primitive : public ListItem<Primitive>
 	 */
 	public:
 	// Draw line
-	void line(double x1, double y1, double z1, double x2, double y2, double z2);
+	void line(double x1, double y1, double z1, double x2, double y2, double z2, const GLfloat* rgba = NULL);
 	// Draw line
-	void line(Vec3<double> v1, Vec3<double> v2);
+	void line(Vec3<double> v1, Vec3<double> v2, const GLfloat* rgba = NULL);
 	// Create vertices of sphere with specified radius and quality
 	void sphere(double radius, int nstacks, int nslices);
 	// Plot cylinder vertices from origin {ox,oy,oz}, following vector {vx,vy,vz}, with radii and quality specified
@@ -133,7 +127,7 @@ class Primitive : public ListItem<Primitive>
 	// Plot circle of specified radius
 	void circle(double radius, int nStacks, int nSegments, bool segmented);
 	// Create vertices of cross with specified width
-	void cross(double halfWidth, Matrix4& transform, GLfloat colour[4]);
+	void cross(double halfWidth, Matrix4& transform, const GLfloat* rgba = NULL);
 	// Plot solid cube of specified size at specified origin, and with sides subdivided into triangles ( ntriangles = 2*nSubs )
 	void cube(double size, int nSubs, double ox, double oy, double oz);
 	// Plot solid orthorhomboid of specified size at specified origin, and with sides subdivided into triangles ( ntriangles = 2*nSubs )

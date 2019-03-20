@@ -59,8 +59,8 @@ class ColourScalePoint
 	void setColour(QColor colour);
 	// Return colour
 	QColor colour() const;
-	// Return colour as GLfloat*
-	void colour(Vec4<GLfloat>& target) const;
+	// Return colour as GLfloat[4]
+	void colour(GLfloat* rgba) const;
 	// Set alpha value
 	void setAlpha(int alpha);
 };

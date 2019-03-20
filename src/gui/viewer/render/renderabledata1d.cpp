@@ -176,7 +176,7 @@ void RenderableData1D::constructLineXY(const Array<double>& displayAbscissa, con
 	double yStretch = axes.stretch(1);
 
 	// Temporary variables
-	Vec4<GLfloat> colour(0,0,0,1);
+	GLfloat colour[4];
 	Vec3<double> nrm(0.0, 1.0, 0.0);
 
 	// Create lines for slices
