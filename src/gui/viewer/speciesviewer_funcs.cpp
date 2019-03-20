@@ -29,7 +29,6 @@ SpeciesViewer::SpeciesViewer(QWidget* parent) : BaseViewer(parent)
 {
 	// Source data
 	species_ = NULL;
-	drawStyle_ = SpeciesViewer::LinesDrawStyle;
 
 	// Interaction
 	setInteractionMode(SpeciesViewer::DefaultInteraction);
@@ -77,15 +76,4 @@ void SpeciesViewer::setSpecies(Species *sp)
 Species* SpeciesViewer::species() const
 {
 	return species_;
-}
-
-/*
- * Style
- */
-
-// Set draw style
-void SpeciesViewer::setDrawStyle(SpeciesViewer::DrawStyle style)
-{
-	drawStyle_ = style;
-	update();
 }

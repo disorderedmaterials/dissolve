@@ -27,6 +27,9 @@
 // Constructor
 RenderableSpecies::RenderableSpecies(const Species* source, const char* objectTag) : Renderable(Renderable::SpeciesRenderable, objectTag), source_(source)
 {
+	// Set defaults
+	displayStyle_ = SpheresStyle;
+
 	// Create basic primitives
 	atomPrimitive_ = createBasicPrimitive(GL_TRIANGLES, false);
 	atomPrimitive_->sphere(1.0, 8, 10);
@@ -318,4 +321,27 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(Vec3<double> fromPoint,
 
 	// Draw the temporary bond between the atoms
 	createCylinderBond(interactionAssembly_, &i, &j, 0.1);
+}
+
+/*
+ * Style
+ */
+
+// Display Style Keywords
+const char* SpeciesDisplayStyleKeywords[] = { "Lines", "Spheres" };
+
+// Convert display style index to text string
+const char* RenderableSpecies::displayStyle(int id)
+{
+	if ((id < 0) || (id >= RenderableSpecies::nDisplayStyles)) return "INVALID_STYLE";
+
+	return SpeciesDisplayStyleKeywords[id];
+}
+
+// Convert text string to display style index
+int RenderableSpecies::displayStyle(const char* s)
+{
+	for (int n=0; n<nDisplayStyles; ++n) if (DissolveSys::sameString(s, SpeciesDisplayStyleKeywords[n])) return (RenderableSpecies::DisplayStyle) n;
+
+	return -1;
 }

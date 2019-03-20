@@ -76,7 +76,7 @@ Renderable::Renderable(Renderable::RenderableType type, const char* objectTag)
 
 	// Display
 	visible_ = true;
-	displayStyle_ = Renderable::LineXYStyle;
+	displayStyle_ = -1;
 	displaySurfaceShininess_ = 128.0;
 	displayStyleVersion_ = 0;
 }
@@ -228,35 +228,19 @@ RenderableGroup* Renderable::group() const
 }
 
 /*
- * Display
+ * Style
  */
 
-// Display Style Keywords
-const char* DisplayStyleKeywords[] = { "LineXY", "LineZY", "Grid", "Surface", "UnlitSurface" };
-
-// Convert text string to DisplayStyle
-Renderable::DisplayStyle Renderable::displayStyle(const char* s)
+// Set display style index
+void Renderable::setDisplayStyle(int id)
 {
-	for (int n=0; n<nDisplayStyles; ++n) if (DissolveSys::sameString(s, DisplayStyleKeywords[n])) return (Renderable::DisplayStyle) n;
-	return nDisplayStyles;
-}
-
-// Convert DisplayStyle to text string
-const char* Renderable::displayStyle(Renderable::DisplayStyle kwd)
-{
-	return DisplayStyleKeywords[kwd];
-}
-
-// Set display style of data
-void Renderable::setDisplayStyle(DisplayStyle style)
-{
-	displayStyle_ = style;
+	displayStyle_ = id;
 
 	++displayStyleVersion_;
 }
 
-// Return display style of data
-Renderable::DisplayStyle Renderable::displayStyle() const
+// Return display style index
+int Renderable::displayStyle() const
 {
 	return displayStyle_;
 }

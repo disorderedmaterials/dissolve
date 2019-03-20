@@ -26,6 +26,8 @@
 // Constructor
 RenderableData1D::RenderableData1D(const Data1D* source, const char* objectTag) : Renderable(Renderable::Data1DRenderable, objectTag), source_(source)
 {
+	// Set defaults
+	displayStyle_ = LinesStyle;
 	dataPrimitive_ = createPrimitive();
 }
 
@@ -218,4 +220,27 @@ void RenderableData1D::constructLineXY(const Array<double>& displayAbscissa, con
 			vertexA = vertexB;
 		}
 	}
+}
+
+/*
+ * Style
+ */
+
+// Display Style Keywords
+const char* Data1DDisplayStyleKeywords[] = { "Lines" };
+
+// Return keyword for display style index
+const char* RenderableData1D::displayStyle(int id)
+{
+	if ((id < 0) || (id >= RenderableData1D::nDisplayStyles)) return "INVALID_STYLE";
+
+	return Data1DDisplayStyleKeywords[id];
+}
+
+// Return display style index from string
+int RenderableData1D::displayStyle(const char* s)
+{
+	for (int n=0; n<nDisplayStyles; ++n) if (DissolveSys::sameString(s, Data1DDisplayStyleKeywords[n])) return (RenderableData1D::DisplayStyle) n;
+
+	return -1;
 }

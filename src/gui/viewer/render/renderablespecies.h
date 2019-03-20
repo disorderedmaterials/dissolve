@@ -91,6 +91,18 @@ class RenderableSpecies : public Renderable
 	void recreateDrawInteractionPrimitive(SpeciesAtom* fromAtom, Vec3<double> toPoint, Element* toElement);
 	// Recreate interaction Primitive to display drawing interaction (from point to point)
 	void recreateDrawInteractionPrimitive(Vec3<double> fromPoint, Element* fromElement, Vec3<double> toPoint, Element* toElement);
+
+
+	/*
+	 * Style
+	 */
+	public:
+	// Display Styles enum
+	enum DisplayStyle { LinesStyle, SpheresStyle, nDisplayStyles };
+	// Return keyword for display style index
+	const char* displayStyle(int id);
+	// Return display style index from string
+	int displayStyle(const char* s);
 };
 
 #endif

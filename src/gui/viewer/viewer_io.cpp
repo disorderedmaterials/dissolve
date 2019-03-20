@@ -444,7 +444,7 @@ bool BaseViewer::readRenderableBlock(LineParser& parser, Renderable* renderable,
 	ColourDefinition::ColourStyle cs;
 	ColourDefinition& colourDefinition = renderable->colour();
 	QColor hsvColour;
-	Renderable::DisplayStyle ds;
+	int ds;
 	LineStipple::StippleType stipple;
 
 	while (!parser.eofOrBlank())
@@ -536,8 +536,8 @@ bool BaseViewer::readRenderableBlock(LineParser& parser, Renderable* renderable,
 				break;
 			// Display style
 			case (BaseViewer::StyleKeyword):
-				ds = Renderable::displayStyle(parser.argc(1));
-				if (ds == Renderable::nDisplayStyles) Messenger::warn("Unrecognised display style '%s'.\n", parser.argc(1));
+				ds = renderable->displayStyle(parser.argc(1));
+				if (ds == -1) Messenger::warn("Unrecognised display style '%s'.\n", parser.argc(1));
 				else renderable->setDisplayStyle(ds);
 				break;
 			// Transforms
@@ -620,7 +620,7 @@ bool BaseViewer::writeRenderableBlock(LineParser& parser, Renderable* renderable
 	// Display
 	parser.writeLineF("%s  %s %f '%s'\n", indent, BaseViewer::renderableKeyword(BaseViewer::LineStyleKeyword), renderable->lineStyle().width(), LineStipple::stipple[renderable->lineStyle().stipple()].name);
 	parser.writeLineF("%s  %s %f\n", indent, BaseViewer::renderableKeyword(BaseViewer::ShininessKeyword), renderable->displaySurfaceShininess());
-	parser.writeLineF("%s  %s %s\n", indent, BaseViewer::renderableKeyword(BaseViewer::StyleKeyword), Renderable::displayStyle(renderable->displayStyle()));
+	parser.writeLineF("%s  %s %s\n", indent, BaseViewer::renderableKeyword(BaseViewer::StyleKeyword), renderable->displayStyle(renderable->displayStyle()));
 	parser.writeLineF("%s  %s %s\n", indent, BaseViewer::renderableKeyword(BaseViewer::VisibleKeyword), DissolveSys::btoa(renderable->isVisible()));
 
 	// Write Group if set

@@ -147,23 +147,15 @@ class Renderable : public ListItem<Renderable>
 
 
 	/*
-	 * Display
+	 * Style
 	 */
-	public:
-	// Display Styles enum
-	enum DisplayStyle { LineXYStyle, LineZYStyle, GridStyle, SurfaceStyle, UnlitSurfaceStyle, nDisplayStyles };
-	// Convert text string to DisplayStyle
-	static DisplayStyle displayStyle(const char* s);
-	// Convert DisplayStyle to text string
-	static const char* displayStyle(DisplayStyle kwd);
-
 	protected:
+	// Display style for Renderable (set from derived class enum)
+	int displayStyle_;
 	// Colour definition for data
 	ColourDefinition colour_;
 	// Whether data is visible
 	bool visible_;
-	// Display style of data
-	DisplayStyle displayStyle_;
 	// Line style
 	LineStyle lineStyle_;
 	// Surface shininess
@@ -172,10 +164,14 @@ class Renderable : public ListItem<Renderable>
 	int displayStyleVersion_;
 
 	public:
-	// Set display style of data
-	void setDisplayStyle(DisplayStyle style);
-	// Return display style of data
-	DisplayStyle displayStyle() const;
+	// Return keyword for display style index
+	virtual const char* displayStyle(int id) = 0;
+	// Return display style index from string
+	virtual int displayStyle(const char* s) = 0;
+	// Set display style index
+	void setDisplayStyle(int id);
+	// Return display style index
+	int displayStyle() const;
 	// Set basic colour
 	void setColour(int r, int g, int b, int a = 255);
 	// Set basic colour
