@@ -161,7 +161,7 @@ class Renderable : public ListItem<Renderable>
 	// Surface shininess
 	double displaySurfaceShininess_;
 	// Style version (relative to data version)
-	int displayStyleVersion_;
+	int styleVersion_;
 
 	public:
 	// Return keyword for display style index
@@ -191,7 +191,7 @@ class Renderable : public ListItem<Renderable>
 	// Return surface shininess
 	double displaySurfaceShininess() const;
 	// Return style version
-	int displayStyleVersion() const;
+	int styleVersion() const;
 
 
 	/*

@@ -78,7 +78,7 @@ Renderable::Renderable(Renderable::RenderableType type, const char* objectTag)
 	visible_ = true;
 	displayStyle_ = -1;
 	displaySurfaceShininess_ = 128.0;
-	displayStyleVersion_ = 0;
+	styleVersion_ = 0;
 }
 
 // Destructor
@@ -236,7 +236,7 @@ void Renderable::setDisplayStyle(int id)
 {
 	displayStyle_ = id;
 
-	++displayStyleVersion_;
+	++styleVersion_;
 }
 
 // Return display style index
@@ -300,9 +300,9 @@ double Renderable::displaySurfaceShininess() const
 }
 
 // Return style version
-int Renderable::displayStyleVersion() const
+int Renderable::styleVersion() const
 {
-	return displayStyleVersion_;
+	return styleVersion_;
 }
 
 /*
@@ -363,7 +363,7 @@ void Renderable::updateAndSendPrimitives(const View& view, const RenderableGroup
 	else if (lastAxesVersion_ != axes.version()) upToDate = false;
 	else if (!DissolveSys::sameString(lastColourDefinitionFingerprint_, CharString("%p@%i", group_, colourDefinition.version()), true)) upToDate = false;
 	else if (lastDataVersion_ != dataVersion()) upToDate = false;
-	else if (lastStyleVersion_ != displayStyleVersion()) upToDate = false;
+	else if (lastStyleVersion_ != styleVersion()) upToDate = false;
 
 	// If the primitive is out of date, recreate it's data.
 	if (!upToDate)
@@ -403,5 +403,5 @@ void Renderable::updateAndSendPrimitives(const View& view, const RenderableGroup
 	lastAxesVersion_ = axes.version();
 	lastColourDefinitionFingerprint_.sprintf("%p@%i", group_, colourDefinition.version());
 	lastDataVersion_ = dataVersion();
-	lastStyleVersion_ = displayStyleVersion();
+	lastStyleVersion_ = styleVersion();
 }
