@@ -401,7 +401,7 @@ const char* BaseViewerRenderableBlockKeywords[] = {
 	"EndRenderable",
 	"Group",
 	"LineStyle",
-	"Shininess", "Style",
+	"Style",
 	"TransformX", "TransformY", "TransformZ",
 	"Visible"
 };
@@ -412,7 +412,7 @@ int BaseViewerRenderableKeywordNArguments[] = {
 	0,	
 	1,
 	2,
-	1, 1,
+	1,
 	2, 2, 2,
 	1
 };
@@ -530,10 +530,6 @@ bool BaseViewer::readRenderableBlock(LineParser& parser, Renderable* renderable,
 				}
 				renderable->lineStyle().setStipple(stipple);
 				break;
-			// Surface shininess
-			case (BaseViewer::ShininessKeyword):
-				renderable->setDisplaySurfaceShininess(parser.argd(1));
-				break;
 			// Display style
 			case (BaseViewer::StyleKeyword):
 				ds = renderable->displayStyle(parser.argc(1));
@@ -619,7 +615,6 @@ bool BaseViewer::writeRenderableBlock(LineParser& parser, Renderable* renderable
 
 	// Display
 	parser.writeLineF("%s  %s %f '%s'\n", indent, BaseViewer::renderableKeyword(BaseViewer::LineStyleKeyword), renderable->lineStyle().width(), LineStipple::stipple[renderable->lineStyle().stipple()].name);
-	parser.writeLineF("%s  %s %f\n", indent, BaseViewer::renderableKeyword(BaseViewer::ShininessKeyword), renderable->displaySurfaceShininess());
 	parser.writeLineF("%s  %s %s\n", indent, BaseViewer::renderableKeyword(BaseViewer::StyleKeyword), renderable->displayStyle(renderable->displayStyle()));
 	parser.writeLineF("%s  %s %s\n", indent, BaseViewer::renderableKeyword(BaseViewer::VisibleKeyword), DissolveSys::btoa(renderable->isVisible()));
 

@@ -287,18 +287,6 @@ LineStyle& Renderable::lineStyle()
 	return lineStyle_;
 }
 
-// Set surface shininess
-void Renderable::setDisplaySurfaceShininess(double shininess)
-{
-	displaySurfaceShininess_ = shininess;
-}
-
-// Return surface shininess
-double Renderable::displaySurfaceShininess() const
-{
-	return displaySurfaceShininess_;
-}
-
 // Return style version
 int Renderable::styleVersion() const
 {

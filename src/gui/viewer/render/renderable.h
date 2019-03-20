@@ -186,10 +186,6 @@ class Renderable : public ListItem<Renderable>
 	const ColourDefinition& constColour() const;
 	// Return line style
 	LineStyle& lineStyle();
-	// Set surface shininess
-	void setDisplaySurfaceShininess(double shininess);
-	// Return surface shininess
-	double displaySurfaceShininess() const;
 	// Return style version
 	int styleVersion() const;
 
