@@ -91,6 +91,7 @@ libmodulewidgets_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@ @GUI_INCLUDES@
 
 libmodulewidgets_la_LIBADD += analyse/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += atomshake/gui/libmodulewidget.la
+libmodulewidgets_la_LIBADD += bragg/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += calibration/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += datatest/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += energy/gui/libmodulewidget.la
