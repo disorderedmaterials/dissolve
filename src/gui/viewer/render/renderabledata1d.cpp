@@ -48,7 +48,7 @@ bool RenderableData1D::validateDataSource()
 }
 
 // Return version of data
-int RenderableData1D::version() const
+int RenderableData1D::dataVersion() const
 {
 	return (source_ ? source_->version() : -99);
 }
@@ -61,7 +61,7 @@ int RenderableData1D::version() const
 void RenderableData1D::transformData()
 {
 	// If the transformed data are already up-to-date, no need to do anything
-	if (transformDataVersion_ == version()) return;
+	if (transformDataVersion_ == dataVersion()) return;
 
 	// Copy original data and transform now. We do this even if the transformers are disabled, since they may have previously been active
 	if (!validateDataSource()) transformedData_.clear();
@@ -102,7 +102,7 @@ void RenderableData1D::transformData()
 	if (transformMaxPositive_.z < 0.0) transformMaxPositive_.z = 1.0;
 
 	// Update the transformed data 'version'
-	transformDataVersion_ = version();
+	transformDataVersion_ = dataVersion();
 }
 
 // Return reference to transformed data

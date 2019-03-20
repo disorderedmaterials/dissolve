@@ -384,7 +384,7 @@ void Renderable::updateAndSendPrimitives(const View& view, const RenderableGroup
 	if (forceUpdate) upToDate = false;
 	else if (lastAxesVersion_ != axes.version()) upToDate = false;
 	else if (!DissolveSys::sameString(lastColourDefinitionFingerprint_, CharString("%p@%i", group_, colourDefinition.version()), true)) upToDate = false;
-	else if (lastDataVersion_ != version()) upToDate = false;
+	else if (lastDataVersion_ != dataVersion()) upToDate = false;
 	else if (lastStyleVersion_ != displayStyleVersion()) upToDate = false;
 
 	// If the primitive is out of date, recreate it's data.
@@ -424,6 +424,6 @@ void Renderable::updateAndSendPrimitives(const View& view, const RenderableGroup
 	// Store version points for the up-to-date primitive
 	lastAxesVersion_ = axes.version();
 	lastColourDefinitionFingerprint_.sprintf("%p@%i", group_, colourDefinition.version());
-	lastDataVersion_ = version();
+	lastDataVersion_ = dataVersion();
 	lastStyleVersion_ = displayStyleVersion();
 }

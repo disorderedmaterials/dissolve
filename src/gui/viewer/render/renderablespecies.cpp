@@ -65,7 +65,7 @@ bool RenderableSpecies::validateDataSource()
 }
 
 // Return version of data
-int RenderableSpecies::version() const
+int RenderableSpecies::dataVersion() const
 {
 	return (source_ ? source_->version() : -99);
 }
@@ -80,7 +80,7 @@ void RenderableSpecies::transformData()
 	if (!source_) return;
 
 	// If the transformed data are already up-to-date, no need to do anything
-	if (transformDataVersion_ == version()) return;
+	if (transformDataVersion_ == dataVersion()) return;
 
 	// Loop over Atoms, seeking extreme x, y, and z values
 	ListIterator<SpeciesAtom> atomIterator(source_->atoms());
@@ -114,7 +114,7 @@ void RenderableSpecies::transformData()
 	transformMaxPositive_.z = transformMax_.z < 0.0 ? 1.0 : transformMax_.z;
 
 	// Update the transformed data 'version'
-	transformDataVersion_ = version();
+	transformDataVersion_ = dataVersion();
 }
 
 // Calculate min/max y value over specified x range (if possible in the underlying data)

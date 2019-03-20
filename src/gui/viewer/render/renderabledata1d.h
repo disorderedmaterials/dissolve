@@ -48,7 +48,7 @@ class RenderableData1D : public Renderable
 	// Return whether a valid data source is available (attempting to set it if not)
 	bool validateDataSource();
 	// Return version of data
-	int version() const;
+	int dataVersion() const;
 
 
 	/*

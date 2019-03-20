@@ -79,7 +79,7 @@ class Renderable : public ListItem<Renderable>
 	// Return whether a valid data source is available (attempting to set it if not)
 	virtual bool validateDataSource() = 0;
 	// Return version of data
-	virtual int version() const = 0;
+	virtual int dataVersion() const = 0;
 
 	public:
 	// Return identifying tag for source data object
