@@ -72,9 +72,9 @@ bool ExponentialSpin::clamp()
 // Create text from current value, and display in lineEdit
 void ExponentialSpin::updateTextFromValue()
 {
-	const double formatThreshold = 1.0e3;
+	const int exponentFormatThreshold = 3;
 // 	printf("Here we are in updateText, setting [%s].\n", qPrintable(value_.text(precision)));
-	lineEdit()->setText(value_.asString(formatThreshold, 4).get());
+	lineEdit()->setText(value_.asString(exponentFormatThreshold, 4).get());
 	textChanged_ = false;
 }
 

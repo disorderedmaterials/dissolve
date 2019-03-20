@@ -20,6 +20,7 @@
 */
 
 #include "classes/speciesinfo.h"
+#include "base/sysfunc.h"
 
 // Constructor
 SpeciesInfo::SpeciesInfo() : ListItem<SpeciesInfo>()
@@ -27,7 +28,7 @@ SpeciesInfo::SpeciesInfo() : ListItem<SpeciesInfo>()
 	species_ = NULL;
 	population_ = 0.0;
 	rotateOnInsertion_ = true;
-	translateOnInsertion_ = true;
+	insertionPositioning_ = SpeciesInfo::RandomPositioning;
 }
 
 // Destructor
@@ -51,10 +52,6 @@ Species* SpeciesInfo::species()
 	return species_;
 }
 
-/*
- * Information
- */
-	
 // Set relative population of the Species
 void SpeciesInfo::setPopulation(double pop)
 {
@@ -62,9 +59,35 @@ void SpeciesInfo::setPopulation(double pop)
 }
 
 // Return relative population of the Species
-double SpeciesInfo::population()
+double SpeciesInfo::population() const
 {
 	return population_;
+}
+
+/*
+ * Insertion Control
+ */
+
+const char* PositioningTypeKeywords[] = { "Central", "Current", "Random" };
+
+// Return permitted PositioningType keywords
+const char** SpeciesInfo::positioningTypeKeywords()
+{
+	return PositioningTypeKeywords;
+}
+
+// Convert string to positioning type keyword
+SpeciesInfo::PositioningType SpeciesInfo::positioningType(const char* s)
+{
+	for (int pt=0; pt < SpeciesInfo::nPositioningTypes; ++pt) if (DissolveSys::sameString(s, PositioningTypeKeywords[pt])) return (SpeciesInfo::PositioningType) pt;
+
+	return SpeciesInfo::nPositioningTypes;
+}
+
+// Convert positioning type to string
+const char* SpeciesInfo::positioningType(SpeciesInfo::PositioningType pt)
+{
+	return PositioningTypeKeywords[pt];
 }
 
 // Set whether to randomly rotate Species on insertion
@@ -74,20 +97,19 @@ void SpeciesInfo::setRotateOnInsertion(bool b)
 }
 
 // Return whether to randomly rotate Species on insertion
-bool SpeciesInfo::rotateOnInsertion()
+bool SpeciesInfo::rotateOnInsertion() const
 {
 	return rotateOnInsertion_;
 }
 
-// Set whether to randomly translate Species on insertion
-void SpeciesInfo::setTranslateOnInsertion(bool b)
+// Set positioning type for Species on insertion
+void SpeciesInfo::setInsertionPositioning(SpeciesInfo::PositioningType posType)
 {
-	translateOnInsertion_ = b;
+	insertionPositioning_ = posType;
 }
 
-// Return whether to randomly translate Species on insertion
-bool SpeciesInfo::translateOnInsertion()
+// Return positioning type for Species on insertion
+SpeciesInfo::PositioningType SpeciesInfo::insertionPositioning() const
 {
-	return translateOnInsertion_;
+	return insertionPositioning_;
 }
-

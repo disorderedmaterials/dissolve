@@ -278,6 +278,34 @@ class Dissolve
 
 
 	/*
+	 * Layers
+	 */
+	private:
+	// List of defined processing layers
+	List<ModuleLayer> processingLayers_;
+	// Data associated with processing Modules
+	GenericList processingModuleData_;
+
+	public:
+	// Add new processing layer
+	ModuleLayer* addProcessingLayer();
+	// Find named processing layer
+	ModuleLayer* findProcessingLayer(const char* name) const;
+	// Own the specified processing layer
+	bool ownProcessingLayer(ModuleLayer* layer);
+	// Return number of defined processing layers
+	int nProcessingLayers() const;
+	// Generate unique processing layer name, with base name provided
+	const char* uniqueProcessingLayerName(const char* baseName) const;
+	// Return list of processing layers
+	List<ModuleLayer>& processingLayers();
+	// Return data associated with main processing Modules
+	GenericList& processingModuleData();
+	// Create and add a named Module to the named layer (creating it if necessary), with optional Configuration target
+	Module* createModuleInLayer(const char* moduleType, const char* layerName, Configuration* cfg = NULL);
+
+
+	/*
 	 * Simulation
 	 */
 	private:
@@ -287,10 +315,6 @@ class Dissolve
 	int seed_;
 	// Frequency at which to write restart file
 	int restartFileFrequency_;
-	// List of defined processing layers
-	List<ModuleLayer> processingLayers_;
-	// Data associated with processing Modules
-	GenericList processingModuleData_;
 	// Current simulation step
 	int iteration_;
 	// Number of iterations performed
@@ -311,20 +335,6 @@ class Dissolve
 	void setRestartFileFrequency(int n);
 	// Return frequency with which to write restart file
 	int restartFileFrequency() const;
-	// Add new processing layer
-	ModuleLayer* addProcessingLayer();
-	// Find named processing layer
-	ModuleLayer* findProcessingLayer(const char* name) const;
-	// Own the specified processing layer
-	bool ownProcessingLayer(ModuleLayer* layer);
-	// Return number of defined processing layers
-	int nProcessingLayers() const;
-	// Generate unique processing layer name, with base name provided
-	const char* uniqueProcessingLayerName(const char* baseName) const;
-	// Return list of processing layers
-	List<ModuleLayer>& processingLayers();
-	// Return data associated with main processing Modules
-	GenericList& processingModuleData();
 	// Iterate main simulation
 	bool iterate(int nIterations = -1);
 	// Return current simulation step

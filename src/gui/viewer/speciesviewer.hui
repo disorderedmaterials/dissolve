@@ -128,7 +128,7 @@ class SpeciesViewer : public BaseViewer
 	// Set target Species
 	void setSpecies(Species* sp);
 	// Return target Species
-	const Species* species() const;
+	Species* species() const;
 
 
 	/*

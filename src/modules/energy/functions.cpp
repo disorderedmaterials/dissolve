@@ -118,6 +118,21 @@ double EnergyModule::interAtomicEnergy(ProcessPool& procPool, Configuration* cfg
 	return totalEnergy;
 }
 
+// Return total energy (interatomic and intramolecular)
+double EnergyModule::totalEnergy(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap)
+{
+	return (interAtomicEnergy(procPool, cfg, potentialMap) + intraMolecularEnergy(procPool, cfg, potentialMap));
+}
+
+// Return total energy (interatomic and intramolecular), storing components in provided variables
+double EnergyModule::totalEnergy(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, double& interEnergy, double& bondEnergy, double& angleEnergy, double& torsionEnergy)
+{
+	interEnergy = interAtomicEnergy(procPool, cfg, potentialMap);
+	intraMolecularEnergy(procPool, cfg, potentialMap, bondEnergy, angleEnergy, torsionEnergy);
+
+	return interEnergy + bondEnergy + angleEnergy + torsionEnergy;
+}
+
 // Return total intermolecular energy
 double EnergyModule::interMolecularEnergy(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap)
 {

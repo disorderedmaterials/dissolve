@@ -432,6 +432,13 @@ template <class T> class Vec3
 		printf("Vec3 - array access failed - index %i is out of bounds.\n", index);
 		return Vec3<T>();
 	}
+	// Swap the two specified elements
+	void swap(int a, int b)
+	{
+		T temp = get(a);
+		set(a, get(b));
+		set(b, temp);
+	}
 };
 
 /*

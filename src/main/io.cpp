@@ -365,7 +365,7 @@ bool Dissolve::saveInput(const char* filename)
 
 			if (!parser.writeLineF("    %s  %f\n", SpeciesInfoBlock::keyword(SpeciesInfoBlock::PopulationKeyword), spInfo->population())) return false;
 			if (!spInfo->rotateOnInsertion() && (!parser.writeLineF("    %s  %s\n", SpeciesInfoBlock::keyword(SpeciesInfoBlock::NoRotationKeyword), DissolveSys::btoa(false)))) return false;
-			if (!spInfo->translateOnInsertion() && (!parser.writeLineF("    %s  %s\n", SpeciesInfoBlock::keyword(SpeciesInfoBlock::NoTranslationKeyword), DissolveSys::btoa(false)))) return false;
+			if ((spInfo->insertionPositioning() != SpeciesInfo::RandomPositioning) && (!parser.writeLineF("    %s  %s\n", SpeciesInfoBlock::keyword(SpeciesInfoBlock::PositioningKeyword), SpeciesInfo::positioningType(spInfo->insertionPositioning())))) return false;
 
 			if (!parser.writeLineF("  %s\n", SpeciesInfoBlock::keyword(SpeciesInfoBlock::EndSpeciesInfoKeyword))) return false;
 		}

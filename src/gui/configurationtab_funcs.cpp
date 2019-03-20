@@ -46,6 +46,7 @@ ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dis
 	// -- SpeciesInfo
 	ui.SpeciesInfoTable->setItemDelegateForColumn(0, new ComboListDelegate(this, new ComboNameListItems<Species>(dissolve.species())));
 	ui.SpeciesInfoTable->setItemDelegateForColumn(1, new ExponentialSpinDelegate(this));
+	ui.SpeciesInfoTable->setItemDelegateForColumn(3, new ComboListDelegate(this, new ComboListEnumItems(SpeciesInfo::nPositioningTypes, SpeciesInfo::positioningTypeKeywords())));
 
 	// Ensure fonts for table headers are set correctly
 	ui.SpeciesInfoTable->horizontalHeader()->setFont(font());
@@ -123,16 +124,15 @@ void ConfigurationTab::updateSpeciesInfoTableRow(int row, SpeciesInfo* speciesIn
 	else item = ui.SpeciesInfoTable->item(row, 2);
 	item->setCheckState(speciesInfo->rotateOnInsertion() ? Qt::Checked : Qt::Unchecked);
 
-	// Translate on insertion?
+	// Positioning type
 	if (createItems)
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<SpeciesInfo>(speciesInfo));
-		item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
 		ui.SpeciesInfoTable->setItem(row, 3, item);
 	}
 	else item = ui.SpeciesInfoTable->item(row, 3);
-	item->setCheckState(speciesInfo->translateOnInsertion() ? Qt::Checked : Qt::Unchecked);
+	item->setText(SpeciesInfo::positioningType(speciesInfo->insertionPositioning()));
 }
 
 // Update controls in tab
@@ -336,6 +336,7 @@ void ConfigurationTab::on_SpeciesInfoTable_itemChanged(QTableWidgetItem* w)
 
 	// Column of passed item tells us the type of data we need to change
 	Species* sp;
+	SpeciesInfo::PositioningType pt;
 	switch (w->column())
 	{
 		// Species
@@ -362,7 +363,8 @@ void ConfigurationTab::on_SpeciesInfoTable_itemChanged(QTableWidgetItem* w)
 			break;
 		// Translate on insertion
 		case (3):
-			spInfo->setTranslateOnInsertion(w->checkState() == Qt::Checked);
+			pt = SpeciesInfo::positioningType(qPrintable(w->text()));
+			if (pt != SpeciesInfo::nPositioningTypes) spInfo->setInsertionPositioning(pt);
 			dissolveWindow_->setModified();
 			break;
 		default:

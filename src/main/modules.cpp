@@ -23,6 +23,7 @@
 #include "modules/analyse/analyse.h"
 #include "modules/atomshake/atomshake.h"
 #include "modules/calculate/rdf/rdf.h"
+#include "modules/calibration/calibration.h"
 #include "modules/checks/checks.h"
 #include "modules/datatest/datatest.h"
 #include "modules/energy/energy.h"
@@ -33,12 +34,12 @@
 #include "modules/intrashake/intrashake.h"
 #include "modules/md/md.h"
 #include "modules/molshake/molshake.h"
-#include "modules/calibration/calibration.h"
+#include "modules/neutronsq/neutronsq.h"
+#include "modules/optimise/optimise.h"
 #include "modules/rdf/rdf.h"
 #include "modules/refine/refine.h"
 #include "modules/sanitycheck/sanitycheck.h"
 #include "modules/sq/sq.h"
-#include "modules/neutronsq/neutronsq.h"
 #include "modules/test/test.h"
 
 /*
@@ -87,11 +88,12 @@ bool Dissolve::registerMasterModules()
 	if (!registerMasterModule(new IntraShakeModule)) return false;
 	if (!registerMasterModule(new MDModule)) return false;
 	if (!registerMasterModule(new MolShakeModule)) return false;
+	if (!registerMasterModule(new NeutronSQModule)) return false;
+	if (!registerMasterModule(new OptimiseModule)) return false;
 	if (!registerMasterModule(new RDFModule)) return false;
 	if (!registerMasterModule(new RefineModule)) return false;
 	if (!registerMasterModule(new SanityCheckModule)) return false;
 	if (!registerMasterModule(new SQModule)) return false;
-	if (!registerMasterModule(new NeutronSQModule)) return false;
 	if (!registerMasterModule(new TestModule)) return false;
 
 	Messenger::print("Module Information (%i available):\n", masterModules_.nItems());
@@ -101,6 +103,8 @@ bool Dissolve::registerMasterModules()
 		Messenger::print(" --> %s\n", module->type());
 		Messenger::print("     %s\n", module->brief());
 	}
+
+	return true;
 }
 
 // Search for master Module of the named type

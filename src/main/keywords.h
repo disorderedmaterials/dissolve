@@ -319,8 +319,8 @@ namespace SpeciesInfoBlock
 	{
 		EndSpeciesInfoKeyword,		/* 'EndSpeciesInfo' - Signals the end of the SpeciesInfo */
 		NoRotationKeyword,		/* Flag that the Species should not be rotated when making a random configuration */
-		NoTranslationKeyword,		/* Flag that the Species should not be translated when making a random configuration */
 		PopulationKeyword,		/* Relative population of the Species */
+		PositioningKeyword,		/* Positioning type to use for Species */
 		nSpeciesInfoKeywords		/* Number of keywords defined for this block */
 	};
 	// Convert text string to SpeciesInfoKeyword

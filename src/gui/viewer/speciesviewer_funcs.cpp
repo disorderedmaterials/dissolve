@@ -74,7 +74,7 @@ void SpeciesViewer::setSpecies(Species *sp)
 }
 
 // Return target Species
-const Species* SpeciesViewer::species() const
+Species* SpeciesViewer::species() const
 {
 	return species_;
 }

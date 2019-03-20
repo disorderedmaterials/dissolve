@@ -124,14 +124,26 @@ bool Configuration::initialise(ProcessPool& procPool, bool randomise, double pai
 			// Generate random positions and orientations if needed
 			if (randomise)
 			{
-				// Generate a new random centre of geometry for the molecule
-				if (spInfo->translateOnInsertion())
+				// Set / generate position of Molecule
+				switch (spInfo->insertionPositioning())
 				{
-					fr.set(procPool.random(), procPool.random(), procPool.random());
-					newCentre = box_->fracToReal(fr);
-					mol->setCentreOfGeometry(box_, newCentre);
+					case (SpeciesInfo::RandomPositioning):
+						fr.set(procPool.random(), procPool.random(), procPool.random());
+						newCentre = box_->fracToReal(fr);
+						mol->setCentreOfGeometry(box_, newCentre);
+						break;
+					case (SpeciesInfo::CentralPositioning):
+						fr.set(0.5, 0.5, 0.5);
+						newCentre = box_->fracToReal(fr);
+						mol->setCentreOfGeometry(box_, newCentre);
+						break;
+					case (SpeciesInfo::CurrentPositioning):
+						break;
+					default:
+						Messenger::error("Unrecognised positioning type.\n");
+						break;
 				}
-			
+
 				// Generate and apply a random rotation matrix
 				if (spInfo->rotateOnInsertion())
 				{

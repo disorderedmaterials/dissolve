@@ -1,6 +1,6 @@
 /*
-	*** Energy Module
-	*** src/modules/energy/energy.h
+	*** Optimise Module
+	*** src/modules/optimise/optimise.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,26 +19,22 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ENERGYMODULE_H
-#define DISSOLVE_ENERGYMODULE_H
+#ifndef DISSOLVE_OPTIMISEMODULE_H
+#define DISSOLVE_OPTIMISEMODULE_H
 
 #include "module/module.h"
 
 // Forward Declarations
 class PotentialMap;
 
-// Energy Module
-class EnergyModule : public Module
+// Optimise Module
+class OptimiseModule : public Module
 {
-	/*
-	 * Calculates the total energy of the system by one of several methods
-	 */
-
 	public:
 	// Constructor
-	EnergyModule();
+	OptimiseModule();
 	// Destructor
-	~EnergyModule();
+	~OptimiseModule();
 
 
 	/*
@@ -80,29 +76,35 @@ class EnergyModule : public Module
 	// Run main processing
 	bool process(Dissolve& dissolve, ProcessPool& procPool);
 
-	public:
-	// Run set-up stage
-	bool setUp(Dissolve& dissolve, ProcessPool& procPool);
 
-
-	/* 
+	/*
 	 * Functions
 	 */
-	public:
-	// Return total intramolecular energy
-	static double intraMolecularEnergy(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap);
-	// Return total intramolecular energy, storing components in provided variables
-	static double intraMolecularEnergy(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, double& bondEnergy, double& angleEnergy, double& torsionEnergy);
-	// Return total interatomic energy
-	static double interAtomicEnergy(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap);
-	// Return total energy (interatomic and intramolecular)
-	static double totalEnergy(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap);
-	// Return total energy (interatomic and intramolecular), storing components in provided variables
-	static double totalEnergy(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, double& interEnergy, double& bondEnergy, double& angleEnergy, double& torsionEnergy);
-	// Return total intermolecular energy
-	static double interMolecularEnergy(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap);
-	// Check energy stability of specified Configurations, returning the number that failed, or -1 if stability could not be assessed
-	static int checkStability(const RefList<Configuration,bool>& configurations);
+	private:
+	// Current (reference) coordinates
+	Array<double> xRef_, yRef_, zRef_;
+	// Temporary test coordinates
+	Array<double> xTemp_, yTemp_, zTemp_;
+	// Current forces
+	Array<double> xForce_, yForce_, zForce_;
+
+	private:
+	// Copy coordinates from supplied Configuration into reference arrays
+	void setReferenceCoordinates(Configuration* cfg);
+	// Revert Configuration to reference coordinates
+	void revertToReferenceCoordinates(Configuration* cfg);
+	// Return current RMS force
+	double rmsForce() const;
+	// Determine suitable step size from current forces
+	double gradientStepSize();
+	// Sort bounds / energies so that minimum energy is in the central position
+	void sortBoundsAndEnergies(Vec3<double>& bounds, Vec3<double>& energies);
+	// Return energy of adjusted coordinates, following the force vectors by the supplied amount
+	double energyAtGradientPoint(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, double delta);
+	// Perform Golden Search within specified bounds
+	double goldenSearch(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, const double tolerance, Vec3<double>& bounds, Vec3<double>& energies, int& nPointsAccepted);
+	// Line minimise supplied Configuration from the reference coordinates along the stored force vectors
+	double lineMinimise(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, const double tolerance, double& stepSize);
 
 
 	/*
