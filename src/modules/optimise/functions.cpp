@@ -88,7 +88,7 @@ double OptimiseModule::energyAtGradientPoint(ProcessPool& procPool, Configuratio
 }
 
 // Perform Golden Search within specified bounds
-double OptimiseModule::goldenSearch(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, const double tolerance, Vec3<double>& bounds, Vec3<double>& energies)
+double OptimiseModule::goldenSearch(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, const double tolerance, Vec3<double>& bounds, Vec3<double>& energies, int& nPointsAccepted)
 {
 	// Ensure that the energy minimum is the midpoint
 	sortBoundsAndEnergies(bounds, energies);
@@ -123,8 +123,10 @@ double OptimiseModule::goldenSearch(ProcessPool& procPool, Configuration* cfg, c
 			bounds[xyLargest ? 0 : 2] = newMinimum;
 			energies[xyLargest ? 0 : 2] = eNew;
 
+			++nPointsAccepted;
+
 			// Recurse into the new region
-			return goldenSearch(procPool, cfg, potentialMap, tolerance, bounds, energies);
+			return goldenSearch(procPool, cfg, potentialMap, tolerance, bounds, energies, nPointsAccepted);
 		}
 	}
 
@@ -156,7 +158,7 @@ double OptimiseModule::lineMinimise(ProcessPool& procPool, Configuration* cfg, c
 		// Sort w.r.t. energy so that the minimum is in the central point
 		sortBoundsAndEnergies(bounds, energies);
 
-		Messenger::printVerbose("Energies [Bounds] = %12.5e (%12.5e) %12.5e (%12.5e) %12.5e (%12.5e)",energies[0],bounds[0],energies[1],bounds[1],energies[2],bounds[2]);
+		Messenger::printVerbose("Energies [Bounds] = %12.5e (%12.5e) %12.5e (%12.5e) %12.5e (%12.5e)", energies[0], bounds[0], energies[1], bounds[1], energies[2], bounds[2]);
 
 		// Perform parabolic interpolation to find new minimium point
 		double b10 = bounds[1] - bounds[0];
@@ -183,33 +185,31 @@ double OptimiseModule::lineMinimise(ProcessPool& procPool, Configuration* cfg, c
 			bounds[1] = newBound;
 			energies[1] = eNew;
 		}
+		else if ((energies[2] - eNew) > tolerance)
+		{
+			Messenger::printVerbose("--> PARABOLIC point is better than bounds[2]...");
+			bounds[2] = newBound;
+			energies[2] = eNew;
+		}
+		else if ((energies[0] - eNew) > tolerance)
+		{
+			Messenger::printVerbose("--> PARABOLIC point is better than bounds[0]...");
+			bounds[0] = newBound;
+			energies[0] = eNew;
+		}
 		else
 		{
-			// Is the parabolic point better than the relevant bound in that direction?
-			if ((energies[2] - eNew) > tolerance)
-			{
-				Messenger::printVerbose("--> PARABOLIC point is better than bounds[2]...");
-				bounds[2] = newBound;
-				energies[2] = eNew;
-			}
-			else if ((energies[0] - eNew) > tolerance)
-			{
-				Messenger::printVerbose("--> PARABOLIC point is better than bounds[0]...");
-				bounds[0] = newBound;
-				energies[0] = eNew;
-			}
-			else
-			{
-				Messenger::printVerbose("--> PARABOLIC point is worse than all current values...");
+			Messenger::printVerbose("--> PARABOLIC point is worse than all current values...");
 
-				// Revert to the stored reference coordinates
-				revertToReferenceCoordinates(cfg);
+			// Revert to the stored reference coordinates
+			revertToReferenceCoordinates(cfg);
 
-				// Try recursive Golden Search instead, into the largest of the two sections
-				goldenSearch(procPool, cfg, potentialMap, tolerance, bounds, energies);
-			}
+			// Try recursive Golden Search instead, into the largest of the two sections
+			int nPointsAccepted = 0;
+			goldenSearch(procPool, cfg, potentialMap, tolerance, bounds, energies, nPointsAccepted);
+			if (nPointsAccepted == 0) break;
 		}
-// 		printf("DIFF = %f, 2tol = %f\n", fabs(bounds[0]-bounds[2]), 2.0 * tolerance_);
+// 		printf("DIFF = %f, 2tol = %f\n", fabs(bounds[0]-bounds[2]), 2.0 * tolerance);
 // 		++count;
 // 		if (count > 10) break;
 	} while (fabs(bounds[0]-bounds[2]) > (2.0 * tolerance));

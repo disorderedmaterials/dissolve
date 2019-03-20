@@ -102,7 +102,7 @@ class OptimiseModule : public Module
 	// Return energy of adjusted coordinates, following the force vectors by the supplied amount
 	double energyAtGradientPoint(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, double delta);
 	// Perform Golden Search within specified bounds
-	double goldenSearch(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, const double tolerance, Vec3<double>& bounds, Vec3<double>& energies);
+	double goldenSearch(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, const double tolerance, Vec3<double>& bounds, Vec3<double>& energies, int& nPointsAccepted);
 	// Line minimise supplied Configuration from the reference coordinates along the stored force vectors
 	double lineMinimise(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, const double tolerance, double& stepSize);
 
