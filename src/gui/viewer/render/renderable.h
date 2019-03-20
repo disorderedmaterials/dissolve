@@ -58,6 +58,8 @@ class Renderable : public ListItem<Renderable>
 	CharString name_;
 	// Type of Renderable
 	RenderableType type_;
+	// Legend text to display
+	CharString legendText_;
 
 	public:
 	// Set name of Renderable
@@ -66,6 +68,10 @@ class Renderable : public ListItem<Renderable>
 	const char* name();
 	// Return type of Renderable
 	RenderableType type() const;
+	// Set legend text to display
+	void setLegendText(const char* legendText);
+	// Return legend text to display
+	const char* legendText() const;
 
 
 	/*
@@ -164,8 +170,6 @@ class Renderable : public ListItem<Renderable>
 	double displaySurfaceShininess_;
 	// Style version (relative to data version)
 	int displayStyleVersion_;
-	// Title to display in legend, if any
-	CharString title_;
 
 	public:
 	// Set display style of data
@@ -192,12 +196,6 @@ class Renderable : public ListItem<Renderable>
 	double displaySurfaceShininess() const;
 	// Return style version
 	int displayStyleVersion() const;
-	// Set title to display in legend
-	void setTitle(const char* title);
-	// Return title to display in legend, if any
-	const char* title() const;
-	// Return whether a title to display in legend has been set
-	bool hasTitle() const;
 
 
 	/*

@@ -108,6 +108,18 @@ Renderable::RenderableType Renderable::type() const
 	return type_;
 }
 
+// Set legend text to display
+void Renderable::setLegendText(const char* legendText)
+{
+	legendText_ = legendText;
+}
+
+// Return legend text to display
+const char* Renderable::legendText() const
+{
+	return legendText_.get();
+}
+
 /*
  * Data
  */
@@ -307,24 +319,6 @@ double Renderable::displaySurfaceShininess() const
 int Renderable::displayStyleVersion() const
 {
 	return displayStyleVersion_;
-}
-
-// Set title to display in legend
-void Renderable::setTitle(const char* title)
-{
-	title_ = title;
-}
-
-// Return title to display in legend, if any
-const char* Renderable::title() const
-{
-	return title_.get();
-}
-
-// Return whether a title to display in legend has been set
-bool Renderable::hasTitle() const
-{
-	return (!title_.isEmpty());
 }
 
 /*

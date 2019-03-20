@@ -48,14 +48,14 @@ void BaseViewer::ownRenderable(Renderable* newRenderable)
 }
 
 // Create Renderable by type and object identifier
-Renderable* BaseViewer::createRenderable(Renderable::RenderableType type, const char* objectTag, const char* name, const char* title, const char* groupName)
+Renderable* BaseViewer::createRenderable(Renderable::RenderableType type, const char* objectTag, const char* name, const char* legendText, const char* groupName)
 {
 	Renderable* renderable = RenderableFactory::create(type, objectTag);
 	if (renderable)
 	{
 		// Set name and title
 		renderable->setName(name);
-		renderable->setTitle(title ? title : name);
+		renderable->setLegendText(legendText ? legendText : name);
 
 		// Own the new Renderable
 		renderables_.own(renderable);
