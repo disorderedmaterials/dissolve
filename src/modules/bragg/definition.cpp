@@ -36,7 +36,7 @@ const char* BraggModule::category() const
 // Return brief description of module
 const char* BraggModule::brief() const
 {
-	return "Calculate partial and total g(r) and S(Q)";
+	return "Calculate Bragg scattering";
 }
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
