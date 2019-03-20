@@ -9,6 +9,7 @@
   <qresource prefix="viewer_toolbar">
     <file>icons/viewer_toolbar_interaction.svg</file>
     <file>icons/viewer_toolbar_view.svg</file>
+    <file>icons/viewer_toolbar_tools.svg</file>
   </qresource>
   <qresource prefix="viewer">
     <file>icons/viewer_edit.svg</file>
@@ -19,6 +20,7 @@
     <file>icons/viewer_followx_on.svg</file>
     <file>icons/viewer_followall.svg</file>
     <file>icons/viewer_followall_on.svg</file>
+    <file>icons/viewer_medic.svg</file>
     <file>icons/viewer_followx.svg</file>
     <file>icons/viewer_axes.svg</file>
     <file>icons/viewer_axes_on.svg</file>
