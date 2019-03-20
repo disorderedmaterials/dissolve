@@ -231,6 +231,18 @@ RenderableGroup* Renderable::group() const
  * Style
  */
 
+// Set whether data is visible
+void Renderable::setVisible(bool visible)
+{
+	visible_ = visible;
+}
+
+// Return whether data is visible
+bool Renderable::isVisible() const
+{
+	return visible_;
+}
+
 // Set display style index
 void Renderable::setDisplayStyle(int id)
 {
@@ -267,18 +279,6 @@ ColourDefinition& Renderable::colour()
 const ColourDefinition& Renderable::constColour() const
 {
 	return colour_;
-}
-
-// Set whether data is visible
-void Renderable::setVisible(bool visible)
-{
-	visible_ = visible;
-}
-
-// Return whether data is visible
-bool Renderable::isVisible() const
-{
-	return visible_;
 }
 
 // Return line style

@@ -150,12 +150,12 @@ class Renderable : public ListItem<Renderable>
 	 * Style
 	 */
 	protected:
+	// Whether data is visible
+	bool visible_;
 	// Display style for Renderable (set from derived class enum)
 	int displayStyle_;
 	// Colour definition for data
 	ColourDefinition colour_;
-	// Whether data is visible
-	bool visible_;
 	// Line style
 	LineStyle lineStyle_;
 	// Surface shininess
@@ -164,6 +164,10 @@ class Renderable : public ListItem<Renderable>
 	int styleVersion_;
 
 	public:
+	// Set whether data is visible
+	void setVisible(bool visible);
+	// Return whether data is visible
+	bool isVisible() const;
 	// Return keyword for display style index
 	virtual const char* displayStyle(int id) = 0;
 	// Return display style index from string
@@ -180,10 +184,6 @@ class Renderable : public ListItem<Renderable>
 	ColourDefinition& colour();
 	// Return local colour definition for display (const)
 	const ColourDefinition& constColour() const;
-	// Set whether data is visible
-	void setVisible(bool visible);
-	// Return whether data is visible
-	bool isVisible() const;
 	// Return line style
 	LineStyle& lineStyle();
 	// Set surface shininess
