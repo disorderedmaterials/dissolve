@@ -21,8 +21,10 @@
 
 #include "gui/viewer/specieswidget.h"
 #include "gui/widgets/elementselector.hui"
+#include "classes/coredata.h"
 #include "classes/empiricalformula.h"
 #include "classes/species.h"
+#include "main/dissolve.h"
 
 // Constructor
 SpeciesWidget::SpeciesWidget(QWidget* parent) : QWidget(parent)
@@ -99,6 +101,51 @@ void SpeciesWidget::on_ViewAxesVisibleButton_clicked(bool checked)
 void SpeciesWidget::on_ViewCopyToClipboardButton_clicked(bool checked)
 {
 	speciesViewer()->copyViewToClipboard(checked);
+}
+
+// Tools
+void SpeciesWidget::on_ToolsMinimiseButton_clicked(bool checked)
+{
+	// Get displayed Species
+	Species* sp = speciesViewer()->species();
+	if (!sp) return;
+
+	// Create a temporary CoreData and Dissolve
+	CoreData temporaryCoreData;
+	Dissolve temporaryDissolve(temporaryCoreData);
+	if (!temporaryDissolve.registerMasterModules()) return;
+
+	// Copy our target species to the temporary structure, and create a simple Configuration from it
+	Species* temporarySpecies = temporaryDissolve.copySpecies(sp);
+	Configuration* temporaryCfg = temporaryDissolve.addConfiguration();
+	SpeciesInfo* spInfo = temporaryCfg->addUsedSpecies(temporarySpecies, 1.0);
+	spInfo->setRotateOnInsertion(false);
+	spInfo->setInsertionPositioning(SpeciesInfo::CentralPositioning);
+	temporaryCfg->setMultiplier(1);
+	temporaryCfg->setNonPeriodic(true);
+	temporaryCfg->setAtomicDensity(0.001);
+
+	// Create an Optimise Module in a new processing layer, and set everything up
+	if (!temporaryDissolve.createModuleInLayer("Optimise", "Processing", temporaryCfg)) return;
+	if (!temporaryDissolve.generateMissingPairPotentials(PairPotential::LennardJonesGeometricType)) return;
+	if (!temporaryDissolve.setUp()) return;
+
+	// Run the calculation
+	temporaryDissolve.iterate(1);
+
+	// Copy the optimised coordinates from the temporary Configuration to the target Species
+	ListIterator<SpeciesAtom> atomIterator(sp->atoms());
+	int index = 0;
+	while (SpeciesAtom* i = atomIterator.iterate()) sp->setAtomCoordinates(i, temporaryCfg->atom(index++)->r());
+
+	// Centre the Species back at the origin
+	sp->centreAtOrigin();
+
+	// Need to update the SpeciesViewer, and signal that the data shown has been modified
+	speciesViewer()->view().showAllData();
+	speciesViewer()->postRedisplay();
+	speciesViewer()->notifyDataModified();
+	speciesViewer()->notifyDataChanged();
 }
 
 /*
