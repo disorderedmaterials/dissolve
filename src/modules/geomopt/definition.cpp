@@ -1,6 +1,6 @@
 /*
-	*** Optimise Module - Definition
-	*** src/modules/optimise/definition.cpp
+	*** Geometry Optimisation Module - Definition
+	*** src/modules/geomopt/definition.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,28 +19,28 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/optimise/optimise.h"
+#include "modules/geomopt/geomopt.h"
 
 // Return type of module
-const char* OptimiseModule::type() const
+const char* GeometryOptimisationModule::type() const
 {
-	return "Optimise";
+	return "GeometryOptimisation";
 }
 
 // Return category for module
-const char* OptimiseModule::category() const
+const char* GeometryOptimisationModule::category() const
 {
-	return "NO CATEGORY ASSIGNED";
+	return "Optimisation";
 }
 
 // Return brief description of module
-const char* OptimiseModule::brief() const
+const char* GeometryOptimisationModule::brief() const
 {
 	return "Optimise geometry with respect to energy (minimise)";
 }
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
-int OptimiseModule::nTargetableConfigurations() const
+int GeometryOptimisationModule::nTargetableConfigurations() const
 {
 	return -1;
 }

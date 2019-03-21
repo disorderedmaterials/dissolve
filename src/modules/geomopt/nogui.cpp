@@ -1,6 +1,6 @@
 /*
-	*** Optimise Module - GUI
-	*** src/modules/optimise/nogui.cpp
+	*** Geometry Optimisation Module - GUI
+	*** src/modules/geomopt/nogui.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,10 +19,10 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/optimise/optimise.h"
+#include "modules/geomopt/geomopt.h"
 
 // Return a new widget controlling this Module
-ModuleWidget* OptimiseModule::createWidget(QWidget* parent, Dissolve& dissolve)
+ModuleWidget* GeometryOptimisationModule::createWidget(QWidget* parent, Dissolve& dissolve)
 {
 	return NULL;
 }

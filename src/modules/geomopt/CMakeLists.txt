@@ -1,16 +1,16 @@
 # Main Module Library
-add_library(optimisemodule
+add_library(geomoptmodule
   core.cpp
   definition.cpp
   functions.cpp
   options.cpp
   process.cpp
 
-  optimise.h
+  geomopt.h
 )
 
 # 'nogui' library
-add_library(optimisemodulenogui
+add_library(geomoptmodulenogui
   nogui.cpp
 )
 

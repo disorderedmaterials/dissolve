@@ -1,6 +1,6 @@
 /*
-	*** Optimise Module Widget - Functions
-	*** src/modules/optimise/gui/modulewidget_funcs.cpp
+	*** Geometry Optimisation Module Widget - Functions
+	*** src/modules/geomopt/gui/modulewidget_funcs.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,10 +19,10 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/optimise/gui/modulewidget.h"
+#include "modules/geomopt/gui/modulewidget.h"
 
 // Constructor
-OptimiseModuleWidget::OptimiseModuleWidget(QWidget* parent, Module* module) : ModuleWidget(parent), module_(module)
+GeometryOptimisationModuleWidget::GeometryOptimisationModuleWidget(QWidget* parent, Module* module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
 	ui.setupUi(this);
@@ -31,17 +31,17 @@ OptimiseModuleWidget::OptimiseModuleWidget(QWidget* parent, Module* module) : Mo
 }
 
 // Update controls within widget
-void OptimiseModuleWidget::updateControls()
+void GeometryOptimisationModuleWidget::updateControls()
 {
 }
 
 // Disable sensitive controls within widget, ready for main code to run
-void OptimiseModuleWidget::disableSensitiveControls()
+void GeometryOptimisationModuleWidget::disableSensitiveControls()
 {
 }
 
 // Enable sensitive controls within widget, ready for main code to run
-void OptimiseModuleWidget::enableSensitiveControls()
+void GeometryOptimisationModuleWidget::enableSensitiveControls()
 {
 }
 
@@ -50,13 +50,13 @@ void OptimiseModuleWidget::enableSensitiveControls()
  */
 
 // Write widget state through specified LineParser
-bool OptimiseModuleWidget::writeState(LineParser& parser)
+bool GeometryOptimisationModuleWidget::writeState(LineParser& parser)
 {
 	return false;
 }
 
 // Read widget state through specified LineParser
-bool OptimiseModuleWidget::readState(LineParser& parser)
+bool GeometryOptimisationModuleWidget::readState(LineParser& parser)
 {
 	return false;
 }

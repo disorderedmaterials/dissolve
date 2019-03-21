@@ -1,6 +1,6 @@
 /*
-	*** Optimise Module - Core
-	*** src/modules/optimise/core.cpp
+	*** Geometry Optimisation Module - GUI
+	*** src/modules/geomopt/gui/gui.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,30 +19,12 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/optimise/optimise.h"
+#include "modules/geomopt/geomopt.h"
+#include "modules/geomopt/gui/modulewidget.h"
 
-/*
- * Constructor / Destructor
- */
-
-// Constructor
-OptimiseModule::OptimiseModule() : Module()
+// Return a new widget controlling this Module
+ModuleWidget* GeometryOptimisationModule::createWidget(QWidget* parent, Dissolve& dissolve)
 {
-	// Set up variables / control parameters
-	setUpKeywords();
+	return new GeometryOptimisationModuleWidget(parent, this);
 }
 
-// Destructor
-OptimiseModule::~OptimiseModule()
-{
-}
-
-/*
- * Instances
- */
-
-// Create instance of this module
-Module* OptimiseModule::createInstance() const
-{
-	return new OptimiseModule;
-}

@@ -126,7 +126,7 @@ void SpeciesWidget::on_ToolsMinimiseButton_clicked(bool checked)
 	temporaryCfg->setNonPeriodic(true);
 	temporaryCfg->setAtomicDensity(0.001);
 
-	// Create an Optimise Module in a new processing layer, and set everything up
+	// Create an Geometry Optimisation Module in a new processing layer, and set everything up
 	if (!temporaryDissolve.createModuleInLayer("Optimise", "Processing", temporaryCfg)) return;
 	if (!temporaryDissolve.generateMissingPairPotentials(PairPotential::LennardJonesGeometricType)) return;
 	if (!temporaryDissolve.setUp()) return;

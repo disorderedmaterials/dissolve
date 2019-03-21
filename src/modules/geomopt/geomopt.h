@@ -1,6 +1,6 @@
 /*
-	*** Optimise Module
-	*** src/modules/optimise/optimise.h
+	*** Geometry Optimisiation Module
+	*** src/modules/geomopt/geomopt.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,22 +19,22 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_OPTIMISEMODULE_H
-#define DISSOLVE_OPTIMISEMODULE_H
+#ifndef DISSOLVE_GEOMETRYOPTIMISATIONMODULE_H
+#define DISSOLVE_GEOMETRYOPTIMISATIONMODULE_H
 
 #include "module/module.h"
 
 // Forward Declarations
 class PotentialMap;
 
-// Optimise Module
-class OptimiseModule : public Module
+// Geometry Optimisation Module
+class GeometryOptimisationModule : public Module
 {
 	public:
 	// Constructor
-	OptimiseModule();
+	GeometryOptimisationModule();
 	// Destructor
-	~OptimiseModule();
+	~GeometryOptimisationModule();
 
 
 	/*

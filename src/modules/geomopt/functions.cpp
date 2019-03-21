@@ -1,6 +1,6 @@
 /*
-	*** Optimise Module - Functions
-	*** src/modules/optimise/functions.cpp
+	*** Geometry Optimisation Module - Functions
+	*** src/modules/geomopt/functions.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,13 +19,13 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/optimise/optimise.h"
+#include "modules/geomopt/geomopt.h"
 #include "modules/energy/energy.h"
 #include "classes/atom.h"
 #include "classes/configuration.h"
 
 // Copy coordinates from supplied Configuration into reference arrays
-void OptimiseModule::setReferenceCoordinates(Configuration* cfg)
+void GeometryOptimisationModule::setReferenceCoordinates(Configuration* cfg)
 {
 	for (int n=0; n<cfg->nAtoms(); ++n)
 	{
@@ -37,13 +37,13 @@ void OptimiseModule::setReferenceCoordinates(Configuration* cfg)
 }
 
 // Revert Configuration to reference coordinates
-void OptimiseModule::revertToReferenceCoordinates(Configuration* cfg)
+void GeometryOptimisationModule::revertToReferenceCoordinates(Configuration* cfg)
 {
 	for (int n=0; n<cfg->nAtoms(); ++n) cfg->atom(n)->setCoordinates(xRef_[n], yRef_[n], zRef_[n]);
 }
 
 // Return current RMS force
-double OptimiseModule::rmsForce() const
+double GeometryOptimisationModule::rmsForce() const
 {
 	double rmsf = 0.0;
 	for (int n=0; n<xForce_.nItems(); ++n) rmsf += xForce_.at(n)*xForce_.at(n) + yForce_.at(n)*yForce_.at(n) + zForce_.at(n)*zForce_.at(n);
@@ -53,7 +53,7 @@ double OptimiseModule::rmsForce() const
 }
 
 // Determine suitable step size from current forces
-double OptimiseModule::gradientStepSize()
+double GeometryOptimisationModule::gradientStepSize()
 {
 	double fMax = xForce_.maxAbs();
 	double fTemp = yForce_.maxAbs();
@@ -66,7 +66,7 @@ double OptimiseModule::gradientStepSize()
 }
 
 // Sort bounds / energies so that minimum energy is in the central position
-void OptimiseModule::sortBoundsAndEnergies(Vec3<double>& bounds, Vec3<double>& energies)
+void GeometryOptimisationModule::sortBoundsAndEnergies(Vec3<double>& bounds, Vec3<double>& energies)
 {
 	// Ensure that the energy minimum is the midpoint
 	int minVal = energies.minElement();
@@ -78,7 +78,7 @@ void OptimiseModule::sortBoundsAndEnergies(Vec3<double>& bounds, Vec3<double>& e
 }
 
 // Return energy of adjusted coordinates, following the force vectors by the supplied amount
-double OptimiseModule::energyAtGradientPoint(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, double delta)
+double GeometryOptimisationModule::energyAtGradientPoint(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, double delta)
 {
 	Atom** atoms = cfg->atoms().array();
 	for (int n=0; n<cfg->nAtoms(); ++n) atoms[n]->setCoordinates(xRef_[n]+xForce_[n]*delta, yRef_[n]+yForce_[n]*delta, zRef_[n]+zForce_[n]*delta);
@@ -88,7 +88,7 @@ double OptimiseModule::energyAtGradientPoint(ProcessPool& procPool, Configuratio
 }
 
 // Perform Golden Search within specified bounds
-double OptimiseModule::goldenSearch(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, const double tolerance, Vec3<double>& bounds, Vec3<double>& energies, int& nPointsAccepted)
+double GeometryOptimisationModule::goldenSearch(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, const double tolerance, Vec3<double>& bounds, Vec3<double>& energies, int& nPointsAccepted)
 {
 	// Ensure that the energy minimum is the midpoint
 	sortBoundsAndEnergies(bounds, energies);
@@ -137,7 +137,7 @@ double OptimiseModule::goldenSearch(ProcessPool& procPool, Configuration* cfg, c
 }
 
 // Line minimise supplied Configuration from the reference coordinates along the stored force vectors
-double OptimiseModule::lineMinimise(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, const double tolerance, double& stepSize)
+double GeometryOptimisationModule::lineMinimise(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, const double tolerance, double& stepSize)
 {
 	// Brent-style line minimiser with parabolic interpolation and Golden Search backup
 

@@ -1,6 +1,6 @@
 /*
 	*** Module Widget
-	*** src/modules/optimise/gui/modulewidget.h
+	*** src/modules/geomopt/gui/modulewidget.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -22,14 +22,14 @@
 #ifndef DISSOLVE_OPTIMISEMODULEWIDGET_H
 #define DISSOLVE_OPTIMISEMODULEWIDGET_H
 
-#include "modules/optimise/gui/ui_modulewidget.h"
+#include "modules/geomopt/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
 
 // Forward Declarations
 class Module;
 
 // Module Widget
-class OptimiseModuleWidget : public ModuleWidget
+class GeometryOptimisationModuleWidget : public ModuleWidget
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
@@ -40,9 +40,9 @@ class OptimiseModuleWidget : public ModuleWidget
 
 	public:
 	// Constructor
-	OptimiseModuleWidget(QWidget* parent, Module* module);
+	GeometryOptimisationModuleWidget(QWidget* parent, Module* module);
 	// Main form declaration
-	Ui::OptimiseModuleWidget ui;
+	Ui::GeometryOptimisationModuleWidget ui;
 	// Update controls within widget
 	void updateControls();
 	// Disable sensitive controls within widget, ready for main code to run

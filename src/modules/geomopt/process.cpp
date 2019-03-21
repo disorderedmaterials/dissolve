@@ -1,6 +1,6 @@
 /*
-	*** Optimise Module - Processing
-	*** src/modules/optimise/process.cpp
+	*** Geometry Optimisation Module - Processing
+	*** src/modules/geomopt/process.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,14 +19,14 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/optimise/optimise.h"
+#include "modules/geomopt/geomopt.h"
 #include "modules/energy/energy.h"
 #include "modules/forces/forces.h"
 #include "main/dissolve.h"
 #include "base/sysfunc.h"
 
 // Run main processing
-bool OptimiseModule::process(Dissolve& dissolve, ProcessPool& procPool)
+bool GeometryOptimisationModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {
 	// Retrieve Module options
 	const int nCycles = keywords_.asInt("NCycles");
