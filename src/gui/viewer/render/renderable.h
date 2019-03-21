@@ -58,6 +58,8 @@ class Renderable : public ListItem<Renderable>
 	CharString name_;
 	// Type of Renderable
 	RenderableType type_;
+	// Legend text to display
+	CharString legendText_;
 
 	public:
 	// Set name of Renderable
@@ -66,6 +68,10 @@ class Renderable : public ListItem<Renderable>
 	const char* name();
 	// Return type of Renderable
 	RenderableType type() const;
+	// Set legend text to display
+	void setLegendText(const char* legendText);
+	// Return legend text to display
+	const char* legendText() const;
 
 
 	/*
@@ -79,7 +85,7 @@ class Renderable : public ListItem<Renderable>
 	// Return whether a valid data source is available (attempting to set it if not)
 	virtual bool validateDataSource() = 0;
 	// Return version of data
-	virtual int version() const = 0;
+	virtual int dataVersion() const = 0;
 
 	public:
 	// Return identifying tag for source data object
@@ -141,37 +147,35 @@ class Renderable : public ListItem<Renderable>
 
 
 	/*
-	 * Display
+	 * Style
 	 */
-	public:
-	// Display Styles enum
-	enum DisplayStyle { LineXYStyle, LineZYStyle, GridStyle, SurfaceStyle, UnlitSurfaceStyle, nDisplayStyles };
-	// Convert text string to DisplayStyle
-	static DisplayStyle displayStyle(const char* s);
-	// Convert DisplayStyle to text string
-	static const char* displayStyle(DisplayStyle kwd);
-
 	protected:
-	// Colour definition for data
-	ColourDefinition colour_;
 	// Whether data is visible
 	bool visible_;
-	// Display style of data
-	DisplayStyle displayStyle_;
+	// Display style for Renderable (set from derived class enum)
+	int displayStyle_;
+	// Colour definition for data
+	ColourDefinition colour_;
 	// Line style
 	LineStyle lineStyle_;
 	// Surface shininess
 	double displaySurfaceShininess_;
 	// Style version (relative to data version)
-	int displayStyleVersion_;
-	// Title to display in legend, if any
-	CharString title_;
+	int styleVersion_;
 
 	public:
-	// Set display style of data
-	void setDisplayStyle(DisplayStyle style);
-	// Return display style of data
-	DisplayStyle displayStyle() const;
+	// Set whether data is visible
+	void setVisible(bool visible);
+	// Return whether data is visible
+	bool isVisible() const;
+	// Return keyword for display style index
+	virtual const char* displayStyle(int id) = 0;
+	// Return display style index from string
+	virtual int displayStyle(const char* s) = 0;
+	// Set display style index
+	void setDisplayStyle(int id);
+	// Return display style index
+	int displayStyle() const;
 	// Set basic colour
 	void setColour(int r, int g, int b, int a = 255);
 	// Set basic colour
@@ -180,24 +184,10 @@ class Renderable : public ListItem<Renderable>
 	ColourDefinition& colour();
 	// Return local colour definition for display (const)
 	const ColourDefinition& constColour() const;
-	// Set whether data is visible
-	void setVisible(bool visible);
-	// Return whether data is visible
-	bool isVisible() const;
 	// Return line style
 	LineStyle& lineStyle();
-	// Set surface shininess
-	void setDisplaySurfaceShininess(double shininess);
-	// Return surface shininess
-	double displaySurfaceShininess() const;
 	// Return style version
-	int displayStyleVersion() const;
-	// Set title to display in legend
-	void setTitle(const char* title);
-	// Return title to display in legend, if any
-	const char* title() const;
-	// Return whether a title to display in legend has been set
-	bool hasTitle() const;
+	int styleVersion() const;
 
 
 	/*

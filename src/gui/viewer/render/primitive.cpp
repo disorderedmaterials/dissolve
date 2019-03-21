@@ -285,52 +285,27 @@ void Primitive::sendToGL()
  * Vertex / Index Generation
  */
 
-GLuint Primitive::defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz)
+// Define next vertex and normal
+GLuint Primitive::defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, const GLfloat* rgba)
 {
 	if (colouredVertexData_)
 	{
-		printf("Internal Error: No colour given to defineVertex(), but the primitive requires one.\n");
-		return -1;
+		if (rgba == NULL)
+		{
+			printf("Internal Error: No colour given to defineVertex(), but the Primitive requires one.\n");
+			return -1;
+		}
+
+		// Store colour
+		vertexData_.add(rgba[0]);
+		vertexData_.add(rgba[1]);
+		vertexData_.add(rgba[2]);
+		vertexData_.add(rgba[3]);
 	}
-
-	// Store normal
-	vertexData_.add(nx);
-	vertexData_.add(ny);
-	vertexData_.add(nz);
-
-	// Store vertex
-	vertexData_.add(x);
-	vertexData_.add(y);
-	vertexData_.add(z);
-
-	// Increase vertex counter
-	++nDefinedVertices_;
-
-	// Return index of vertex
-	return (nDefinedVertices_-1);
-}
-
-// Define next vertex and normal (as Vec3<double>)
-GLuint Primitive::defineVertex(Vec3<double> vertex, Vec3<double> normal)
-{
-	return defineVertex(vertex.x, vertex.y, vertex.z, normal.x, normal.y, normal.z);
-}
-
-// Define next vertex and normal with colour
-GLuint Primitive::defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, GLfloat r, GLfloat g, GLfloat b, GLfloat a)
-{
-	// Store colour
-	if (!colouredVertexData_)
+	else if (rgba != NULL)
 	{
-		printf("Internal Error: Colour specified in vertex creation, but it is not required for primitive.\n");
+		printf("Internal Error: Colour given to defineVertex(), but the Primitive does not require one.\n");
 		return -1;
-	}
-	else
-	{
-		vertexData_.add(r);
-		vertexData_.add(g);
-		vertexData_.add(b);
-		vertexData_.add(a);
 	}
 
 	// Store normal
@@ -351,21 +326,15 @@ GLuint Primitive::defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfl
 }
 
 // Define next vertex and normal
-GLuint Primitive::defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, Vec4<GLfloat>& colour)
+GLuint Primitive::defineVertex(GLfloat x, GLfloat y, GLfloat z, Vec3<double>& normal, const GLfloat* rgba)
 {
-	return defineVertex(x, y, z, nx, ny, nz, colour.x, colour.y, colour.z, colour.w);
+	return defineVertex(x, y, z, normal.x, normal.y, normal.z, rgba);
 }
 
-// Define next vertex and normal with colour (as array)
-GLuint Primitive::defineVertex(GLfloat x, GLfloat y, GLfloat z, Vec3<double>& normal, Vec4<GLfloat>& colour)
+// Define next vertex and normal
+GLuint Primitive::defineVertex(Vec3<double>& vertex, Vec3<double>& normal, const GLfloat* rgba)
 {
-	return defineVertex(x, y, z, normal.x, normal.y, normal.z, colour.x, colour.y, colour.z, colour.w);
-}
-
-// Define next vertex, normal, and colour (as Vec3<double>s and array)
-GLuint Primitive::defineVertex(Vec3<double>& v, Vec3<double>& u, Vec4<GLfloat>& colour)
-{
-	return defineVertex(v.x, v.y, v.z, u.x, u.y, u.z, colour.x, colour.y, colour.z, colour.w);
+	return defineVertex(vertex.x, vertex.y, vertex.z, normal.x, normal.y, normal.z, rgba);
 }
 
 // Define next index double
@@ -388,17 +357,17 @@ void Primitive::defineIndices(GLuint a, GLuint b, GLuint c)
  */
 
 // Draw line
-void Primitive::line(double x1, double y1, double z1, double x2, double y2, double z2)
+void Primitive::line(double x1, double y1, double z1, double x2, double y2, double z2, const GLfloat* rgba)
 {
-	defineVertex(x1, y1, z1, 1.0, 0.0, 0.0);
-	defineVertex(x2, y2, z2, 1.0, 0.0, 0.0);
+	defineVertex(x1, y1, z1, 1.0, 0.0, 0.0, rgba);
+	defineVertex(x2, y2, z2, 1.0, 0.0, 0.0, rgba);
 }
 
 // Add line to axis primitive
-void Primitive::line(Vec3<double> v1, Vec3<double> v2)
+void Primitive::line(Vec3<double> v1, Vec3<double> v2, const GLfloat* rgba)
 {
-	defineVertex(v1.x, v1.y, v1.z, 1.0, 0.0, 0.0);
-	defineVertex(v2.x, v2.y, v2.z, 1.0, 0.0, 0.0);
+	defineVertex(v1.x, v1.y, v1.z, 1.0, 0.0, 0.0, rgba);
+	defineVertex(v2.x, v2.y, v2.z, 1.0, 0.0, 0.0, rgba);
 }
 
 // Create vertices of sphere with specified radius and quality
@@ -610,14 +579,14 @@ void Primitive::circle(double radius, int nStacks, int nSegments, bool segmented
 }
 
 // Create vertices of cross with specified width
-void Primitive::cross(double halfWidth, Matrix4& transform, GLfloat colour[4])
+void Primitive::cross(double halfWidth, Matrix4& transform, const GLfloat* rgba)
 {
 	Vec3<double> v, centre(transform[12], transform[13], transform[14]);
 	for (int i=0; i<3; ++i)
 	{
 		v = transform.columnAsVec3(i) * halfWidth;
-		defineVertex(centre.x+v.x, centre.y+v.y, centre.z+v.z, 1.0, 1.0, 1.0, colour[0], colour[1], colour[2], colour[3]);
-		defineVertex(centre.x-v.x, centre.y-v.y, centre.z-v.z, 1.0, 1.0, 1.0, colour[0], colour[1], colour[2], colour[3]);
+		defineVertex(centre.x+v.x, centre.y+v.y, centre.z+v.z, 1.0, 1.0, 1.0, rgba);
+		defineVertex(centre.x-v.x, centre.y-v.y, centre.z-v.z, 1.0, 1.0, 1.0, rgba);
 	}
 }
 

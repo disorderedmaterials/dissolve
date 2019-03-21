@@ -401,7 +401,7 @@ const char* BaseViewerRenderableBlockKeywords[] = {
 	"EndRenderable",
 	"Group",
 	"LineStyle",
-	"Shininess", "Style",
+	"Style",
 	"TransformX", "TransformY", "TransformZ",
 	"Visible"
 };
@@ -412,7 +412,7 @@ int BaseViewerRenderableKeywordNArguments[] = {
 	0,	
 	1,
 	2,
-	1, 1,
+	1,
 	2, 2, 2,
 	1
 };
@@ -444,7 +444,7 @@ bool BaseViewer::readRenderableBlock(LineParser& parser, Renderable* renderable,
 	ColourDefinition::ColourStyle cs;
 	ColourDefinition& colourDefinition = renderable->colour();
 	QColor hsvColour;
-	Renderable::DisplayStyle ds;
+	int ds;
 	LineStipple::StippleType stipple;
 
 	while (!parser.eofOrBlank())
@@ -530,14 +530,10 @@ bool BaseViewer::readRenderableBlock(LineParser& parser, Renderable* renderable,
 				}
 				renderable->lineStyle().setStipple(stipple);
 				break;
-			// Surface shininess
-			case (BaseViewer::ShininessKeyword):
-				renderable->setDisplaySurfaceShininess(parser.argd(1));
-				break;
 			// Display style
 			case (BaseViewer::StyleKeyword):
-				ds = Renderable::displayStyle(parser.argc(1));
-				if (ds == Renderable::nDisplayStyles) Messenger::warn("Unrecognised display style '%s'.\n", parser.argc(1));
+				ds = renderable->displayStyle(parser.argc(1));
+				if (ds == -1) Messenger::warn("Unrecognised display style '%s'.\n", parser.argc(1));
 				else renderable->setDisplayStyle(ds);
 				break;
 			// Transforms
@@ -577,7 +573,7 @@ bool BaseViewer::writeRenderableBlock(LineParser& parser, Renderable* renderable
 	for (int n=0; n<indentLevel*2; ++n) indent[n] = ' ';
 	indent[indentLevel*2] = '\0';
 
-	parser.writeLineF("%s%s  %s  '%s'  '%s'  '%s'\n", indent, BaseViewer::inputBlock(BaseViewer::RenderableBlock), Renderable::renderableType(renderable->type()), renderable->objectTag(), renderable->name(), renderable->title());
+	parser.writeLineF("%s%s  %s  '%s'  '%s'  '%s'\n", indent, BaseViewer::inputBlock(BaseViewer::RenderableBlock), Renderable::renderableType(renderable->type()), renderable->objectTag(), renderable->name(), renderable->legendText());
 
 	// -- Transforms
 	parser.writeLineF("%s  %s %s %s\n", indent, BaseViewer::renderableKeyword(BaseViewer::TransformXKeyword), DissolveSys::btoa(renderable->transformEnabled(0)), renderable->transformEquation(0));
@@ -619,8 +615,7 @@ bool BaseViewer::writeRenderableBlock(LineParser& parser, Renderable* renderable
 
 	// Display
 	parser.writeLineF("%s  %s %f '%s'\n", indent, BaseViewer::renderableKeyword(BaseViewer::LineStyleKeyword), renderable->lineStyle().width(), LineStipple::stipple[renderable->lineStyle().stipple()].name);
-	parser.writeLineF("%s  %s %f\n", indent, BaseViewer::renderableKeyword(BaseViewer::ShininessKeyword), renderable->displaySurfaceShininess());
-	parser.writeLineF("%s  %s %s\n", indent, BaseViewer::renderableKeyword(BaseViewer::StyleKeyword), Renderable::displayStyle(renderable->displayStyle()));
+	parser.writeLineF("%s  %s %s\n", indent, BaseViewer::renderableKeyword(BaseViewer::StyleKeyword), renderable->displayStyle(renderable->displayStyle()));
 	parser.writeLineF("%s  %s %s\n", indent, BaseViewer::renderableKeyword(BaseViewer::VisibleKeyword), DissolveSys::btoa(renderable->isVisible()));
 
 	// Write Group if set

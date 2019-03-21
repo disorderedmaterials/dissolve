@@ -26,6 +26,8 @@
 // Constructor
 RenderableData1D::RenderableData1D(const Data1D* source, const char* objectTag) : Renderable(Renderable::Data1DRenderable, objectTag), source_(source)
 {
+	// Set defaults
+	displayStyle_ = LinesStyle;
 	dataPrimitive_ = createPrimitive();
 }
 
@@ -48,7 +50,7 @@ bool RenderableData1D::validateDataSource()
 }
 
 // Return version of data
-int RenderableData1D::version() const
+int RenderableData1D::dataVersion() const
 {
 	return (source_ ? source_->version() : -99);
 }
@@ -61,7 +63,7 @@ int RenderableData1D::version() const
 void RenderableData1D::transformData()
 {
 	// If the transformed data are already up-to-date, no need to do anything
-	if (transformDataVersion_ == version()) return;
+	if (transformDataVersion_ == dataVersion()) return;
 
 	// Copy original data and transform now. We do this even if the transformers are disabled, since they may have previously been active
 	if (!validateDataSource()) transformedData_.clear();
@@ -102,7 +104,7 @@ void RenderableData1D::transformData()
 	if (transformMaxPositive_.z < 0.0) transformMaxPositive_.z = 1.0;
 
 	// Update the transformed data 'version'
-	transformDataVersion_ = version();
+	transformDataVersion_ = dataVersion();
 }
 
 // Return reference to transformed data
@@ -174,7 +176,7 @@ void RenderableData1D::constructLineXY(const Array<double>& displayAbscissa, con
 	double yStretch = axes.stretch(1);
 
 	// Temporary variables
-	Vec4<GLfloat> colour(0,0,0,1);
+	GLfloat colour[4];
 	Vec3<double> nrm(0.0, 1.0, 0.0);
 
 	// Create lines for slices
@@ -218,4 +220,27 @@ void RenderableData1D::constructLineXY(const Array<double>& displayAbscissa, con
 			vertexA = vertexB;
 		}
 	}
+}
+
+/*
+ * Style
+ */
+
+// Display Style Keywords
+const char* Data1DDisplayStyleKeywords[] = { "Lines" };
+
+// Return keyword for display style index
+const char* RenderableData1D::displayStyle(int id)
+{
+	if ((id < 0) || (id >= RenderableData1D::nDisplayStyles)) return "INVALID_STYLE";
+
+	return Data1DDisplayStyleKeywords[id];
+}
+
+// Return display style index from string
+int RenderableData1D::displayStyle(const char* s)
+{
+	for (int n=0; n<nDisplayStyles; ++n) if (DissolveSys::sameString(s, Data1DDisplayStyleKeywords[n])) return (RenderableData1D::DisplayStyle) n;
+
+	return -1;
 }

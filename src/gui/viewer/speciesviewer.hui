@@ -132,28 +132,6 @@ class SpeciesViewer : public BaseViewer
 
 
 	/*
-	 * Custom Data
-	 */
-	public:
-	// Draw Style
-	enum DrawStyle
-	{
-		PointsDrawStyle,		/* Draw source Species with points (atoms only) */
-		LinesDrawStyle,			/* Draw source Species with lines */
-		BallAndStickDrawStyle,		/* Draw source Species with balls and sticks */
-		nDrawStyles			/* Number of drawing styles */
-	};
-	
-	private:
-	// Style in which to draw source
-	SpeciesViewer::DrawStyle drawStyle_;
-
-	public:
-	// Set draw style
-	void setDrawStyle(SpeciesViewer::DrawStyle style);
-
-
-	/*
 	 * Signals
 	 */
 	signals:

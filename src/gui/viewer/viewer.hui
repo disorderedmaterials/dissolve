@@ -65,7 +65,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	// Own supplied Renderable and display it
 	void ownRenderable(Renderable* newRenderable);
 	// Create Renderable by type and object identifier
-	Renderable* createRenderable(Renderable::RenderableType type, const char* objectTag, const char* name, const char* title = NULL, const char* groupName = NULL);
+	Renderable* createRenderable(Renderable::RenderableType type, const char* objectTag, const char* name, const char* legendText = NULL, const char* groupName = NULL);
 	// Remove existing Renderable
 	void removeRenderable(Renderable* data);
 	// Clear all Renderables
@@ -410,7 +410,6 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 		EndRenderableKeyword,
 		GroupKeyword,
 		LineStyleKeyword,
-		ShininessKeyword,
 		StyleKeyword,
 		TransformXKeyword,
 		TransformYKeyword,

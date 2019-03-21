@@ -64,12 +64,12 @@ QColor ColourScalePoint::colour() const
 }
 
 // Return colour as GLfloat*
-void ColourScalePoint::colour(Vec4<GLfloat>& target) const
+void ColourScalePoint::colour(GLfloat* rgba) const
 {
-	target.x = colour_.redF();
-	target.y = colour_.greenF();
-	target.z = colour_.blueF();
-	target.w = colour_.alphaF();
+	rgba[0] = colour_.redF();
+	rgba[1] = colour_.greenF();
+	rgba[2] = colour_.blueF();
+	rgba[3] = colour_.alphaF();
 }
 
 // Set alpha value

@@ -76,9 +76,9 @@ Renderable::Renderable(Renderable::RenderableType type, const char* objectTag)
 
 	// Display
 	visible_ = true;
-	displayStyle_ = Renderable::LineXYStyle;
+	displayStyle_ = -1;
 	displaySurfaceShininess_ = 128.0;
-	displayStyleVersion_ = 0;
+	styleVersion_ = 0;
 }
 
 // Destructor
@@ -106,6 +106,18 @@ const char* Renderable::name()
 Renderable::RenderableType Renderable::type() const
 {
 	return type_;
+}
+
+// Set legend text to display
+void Renderable::setLegendText(const char* legendText)
+{
+	legendText_ = legendText;
+}
+
+// Return legend text to display
+const char* Renderable::legendText() const
+{
+	return legendText_.get();
 }
 
 /*
@@ -216,35 +228,31 @@ RenderableGroup* Renderable::group() const
 }
 
 /*
- * Display
+ * Style
  */
 
-// Display Style Keywords
-const char* DisplayStyleKeywords[] = { "LineXY", "LineZY", "Grid", "Surface", "UnlitSurface" };
-
-// Convert text string to DisplayStyle
-Renderable::DisplayStyle Renderable::displayStyle(const char* s)
+// Set whether data is visible
+void Renderable::setVisible(bool visible)
 {
-	for (int n=0; n<nDisplayStyles; ++n) if (DissolveSys::sameString(s, DisplayStyleKeywords[n])) return (Renderable::DisplayStyle) n;
-	return nDisplayStyles;
+	visible_ = visible;
 }
 
-// Convert DisplayStyle to text string
-const char* Renderable::displayStyle(Renderable::DisplayStyle kwd)
+// Return whether data is visible
+bool Renderable::isVisible() const
 {
-	return DisplayStyleKeywords[kwd];
+	return visible_;
 }
 
-// Set display style of data
-void Renderable::setDisplayStyle(DisplayStyle style)
+// Set display style index
+void Renderable::setDisplayStyle(int id)
 {
-	displayStyle_ = style;
+	displayStyle_ = id;
 
-	++displayStyleVersion_;
+	++styleVersion_;
 }
 
-// Return display style of data
-Renderable::DisplayStyle Renderable::displayStyle() const
+// Return display style index
+int Renderable::displayStyle() const
 {
 	return displayStyle_;
 }
@@ -273,58 +281,16 @@ const ColourDefinition& Renderable::constColour() const
 	return colour_;
 }
 
-// Set whether data is visible
-void Renderable::setVisible(bool visible)
-{
-	visible_ = visible;
-}
-
-// Return whether data is visible
-bool Renderable::isVisible() const
-{
-	return visible_;
-}
-
 // Return line style
 LineStyle& Renderable::lineStyle()
 {
 	return lineStyle_;
 }
 
-// Set surface shininess
-void Renderable::setDisplaySurfaceShininess(double shininess)
-{
-	displaySurfaceShininess_ = shininess;
-}
-
-// Return surface shininess
-double Renderable::displaySurfaceShininess() const
-{
-	return displaySurfaceShininess_;
-}
-
 // Return style version
-int Renderable::displayStyleVersion() const
+int Renderable::styleVersion() const
 {
-	return displayStyleVersion_;
-}
-
-// Set title to display in legend
-void Renderable::setTitle(const char* title)
-{
-	title_ = title;
-}
-
-// Return title to display in legend, if any
-const char* Renderable::title() const
-{
-	return title_.get();
-}
-
-// Return whether a title to display in legend has been set
-bool Renderable::hasTitle() const
-{
-	return (!title_.isEmpty());
+	return styleVersion_;
 }
 
 /*
@@ -384,8 +350,8 @@ void Renderable::updateAndSendPrimitives(const View& view, const RenderableGroup
 	if (forceUpdate) upToDate = false;
 	else if (lastAxesVersion_ != axes.version()) upToDate = false;
 	else if (!DissolveSys::sameString(lastColourDefinitionFingerprint_, CharString("%p@%i", group_, colourDefinition.version()), true)) upToDate = false;
-	else if (lastDataVersion_ != version()) upToDate = false;
-	else if (lastStyleVersion_ != displayStyleVersion()) upToDate = false;
+	else if (lastDataVersion_ != dataVersion()) upToDate = false;
+	else if (lastStyleVersion_ != styleVersion()) upToDate = false;
 
 	// If the primitive is out of date, recreate it's data.
 	if (!upToDate)
@@ -424,6 +390,6 @@ void Renderable::updateAndSendPrimitives(const View& view, const RenderableGroup
 	// Store version points for the up-to-date primitive
 	lastAxesVersion_ = axes.version();
 	lastColourDefinitionFingerprint_.sprintf("%p@%i", group_, colourDefinition.version());
-	lastDataVersion_ = version();
-	lastStyleVersion_ = displayStyleVersion();
+	lastDataVersion_ = dataVersion();
+	lastStyleVersion_ = styleVersion();
 }

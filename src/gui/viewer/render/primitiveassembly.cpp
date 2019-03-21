@@ -62,6 +62,14 @@ void PrimitiveAssembly::add(bool lighting, GLenum polygonFillMode)
 	assembly_.add(pi);
 }
 
+// Add line styling information
+void PrimitiveAssembly::add(LineStyle lineStyle)
+{
+	LineStylePrimitiveInfo* pi = lineStylePrimitiveFactory_.produce();
+	(*pi) = LineStylePrimitiveInfo(lineStyle);
+	assembly_.add(pi);
+}
+
 /*
  * GL
  */

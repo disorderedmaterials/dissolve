@@ -195,7 +195,7 @@ class ColourDefinition
 	 */
 	public:
 	// Return (set) colour for specified value
-	void colour(double value, Vec4<GLfloat>& target) const;
+	void colour(double value, GLfloat* rgba) const;
 };
 
 #endif

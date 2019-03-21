@@ -27,6 +27,12 @@
 // Constructor
 RenderableSpecies::RenderableSpecies(const Species* source, const char* objectTag) : Renderable(Renderable::SpeciesRenderable, objectTag), source_(source)
 {
+	// Set defaults
+	displayStyle_ = LinesStyle;
+	linesAtomRadius_ = 0.05;
+	spheresAtomRadius_ = 0.3;
+	spheresBondRadius_ = 0.1;
+
 	// Create basic primitives
 	atomPrimitive_ = createBasicPrimitive(GL_TRIANGLES, false);
 	atomPrimitive_->sphere(1.0, 8, 10);
@@ -36,6 +42,11 @@ RenderableSpecies::RenderableSpecies(const Species* source, const char* objectTa
 	bondPrimitive_->cylinder(0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1, 8);
 	unitCellPrimitive_ = createBasicPrimitive(GL_LINES, false);
 // 	unitCellPrimitive_->wireCube(1.0, 4, 0, 0, 0);
+	lineSpeciesPrimitive_ = createBasicPrimitive(GL_LINES, true);
+	lineSelectionPrimitive_ = createBasicPrimitive(GL_LINES, true);
+	lineSelectionPrimitive_->setNoInstances();
+	lineInteractionPrimitive_ = createBasicPrimitive(GL_LINES, true);
+	lineInteractionPrimitive_->setNoInstances();
 
 	// Create main primitive assemblies
 	speciesAssembly_ = createPrimitiveAssembly();
@@ -65,7 +76,7 @@ bool RenderableSpecies::validateDataSource()
 }
 
 // Return version of data
-int RenderableSpecies::version() const
+int RenderableSpecies::dataVersion() const
 {
 	return (source_ ? source_->version() : -99);
 }
@@ -80,7 +91,7 @@ void RenderableSpecies::transformData()
 	if (!source_) return;
 
 	// If the transformed data are already up-to-date, no need to do anything
-	if (transformDataVersion_ == version()) return;
+	if (transformDataVersion_ == dataVersion()) return;
 
 	// Loop over Atoms, seeking extreme x, y, and z values
 	ListIterator<SpeciesAtom> atomIterator(source_->atoms());
@@ -114,7 +125,7 @@ void RenderableSpecies::transformData()
 	transformMaxPositive_.z = transformMax_.z < 0.0 ? 1.0 : transformMax_.z;
 
 	// Update the transformed data 'version'
-	transformDataVersion_ = version();
+	transformDataVersion_ = dataVersion();
 }
 
 // Calculate min/max y value over specified x range (if possible in the underlying data)
@@ -161,56 +172,77 @@ void RenderableSpecies::createCylinderBond(PrimitiveAssembly* assembly, const Sp
 void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinition& colourDefinition)
 {
 	Matrix4 A;
-	const float* colour;
-	const float colourBlack[4] = { 0.0, 0.0, 0.0, 1.0 };
+	const GLfloat* colour;
+	const GLfloat colourBlack[4] = { 0.0, 0.0, 0.0, 1.0 };
 
 	// Clear existing data
+	lineSpeciesPrimitive_->forgetAll();
+	lineSelectionPrimitive_->forgetAll();
 	speciesAssembly_->clear();
 	selectionAssembly_->clear();
 
-	// Set basic styling for assemblies
-	speciesAssembly_->add(true, GL_FILL);
-	selectionAssembly_->add(true, GL_LINE);
-
-	/*
-	 * Draw Atoms
-	 */
-	ListIterator<SpeciesAtom> atomIterator(source_->atoms());
-	while (SpeciesAtom* i = atomIterator.iterate())
+	// Render according to the current displayStyle
+	if (displayStyle_ == LinesStyle)
 	{
-		A.setIdentity();
-		A.setTranslation(i->r());
-		A.applyScaling(0.3);
+		// Set basic styling and content for assemblies
+		speciesAssembly_->add(false, GL_LINE);
+		speciesAssembly_->add(lineSpeciesPrimitive_, A);
 
-		// The atom itself
-		colour = ElementColours::colour(i->element());
-		speciesAssembly_->add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
-
-		// Label
-// 		text.clear();
-// 		if (atomTypeLabel) text.strcatf("%s ", i->atomType()->name());
-// 		if (indexLabel) text.strcatf("%i ", i->userIndex());
-// 		if (species_->highlightedIsotopologue())
-// 		{
-// 			iso = species_->highlightedIsotopologue()->atomTypeIsotope(i->atomType());
-// 			if (iso == NULL) text.sprintf("%s [???]", i->atomType()->name());
-// 			else text.strcatf("[%i-%s]", iso->A(), PeriodicTable::element(i->element()).symbol());
-// 		}
-// 		renderTextPrimitive(i->r(), text.get(), false, false);
-
-		// Is the atom selected?
-		if (i->isSelected())
+		// Draw Atoms
+		ListIterator<SpeciesAtom> atomIterator(source_->atoms());
+		while (SpeciesAtom* i = atomIterator.iterate())
 		{
-			selectionAssembly_->add(selectedAtomPrimitive_, A, colourBlack[0], colourBlack[1], colourBlack[2], colourBlack[3]);
+			// Only draw the atom if it has no bonds, in which case draw it as a 'cross'
+			if (i->nBonds() != 0) continue;
+
+			const Vec3<double> r = i->r();
+			colour = ElementColours::colour(i->element());
+
+			lineSpeciesPrimitive_->line(r.x - linesAtomRadius_, r.y, r.z, r.x + linesAtomRadius_, r.y, r.z, colour);
+			lineSpeciesPrimitive_->line(r.x, r.y - linesAtomRadius_, r.z, r.x, r.y + linesAtomRadius_, r.z, colour);
+			lineSpeciesPrimitive_->line(r.x, r.y, r.z - linesAtomRadius_, r.x, r.y, r.z + linesAtomRadius_, colour);
+		}
+
+		// Draw bonds
+		for (SpeciesBond* b = source_->bonds().first(); b != NULL; b = b->next)
+		{
+			// Determine half delta i-j for bond
+			const Vec3<double> ri = b->i()->r();
+			const Vec3<double> rj = b->j()->r();
+			const Vec3<double> dij = (rj - ri) * 0.5;
+
+			// Draw bond halves
+			lineSpeciesPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z, ElementColours::colour(b->i()->element()));
+			lineSpeciesPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z, ElementColours::colour(b->j()->element()));
 		}
 	}
-
-	// Draw Bonds
-	Vec3<double> vij;
-	double mag;
-	for (SpeciesBond* b = source_->bonds().first(); b != NULL; b = b->next)
+	else if (displayStyle_ == SpheresStyle)
 	{
-		createCylinderBond(speciesAssembly_, b->i(), b->j(), 0.1);
+		// Set basic styling for assemblies
+		speciesAssembly_->add(true, GL_FILL);
+		selectionAssembly_->add(true, GL_LINE);
+
+		// Draw Atoms
+		ListIterator<SpeciesAtom> atomIterator(source_->atoms());
+		while (SpeciesAtom* i = atomIterator.iterate())
+		{
+			A.setIdentity();
+			A.setTranslation(i->r());
+			A.applyScaling(spheresAtomRadius_);
+
+			// The atom itself
+			colour = ElementColours::colour(i->element());
+			speciesAssembly_->add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+
+			// Is the atom selected?
+			if (i->isSelected())
+			{
+				selectionAssembly_->add(selectedAtomPrimitive_, A, colourBlack[0], colourBlack[1], colourBlack[2], colourBlack[3]);
+			}
+		}
+
+		// Draw bonds
+		for (SpeciesBond* b = source_->bonds().first(); b != NULL; b = b->next) createCylinderBond(speciesAssembly_, b->i(), b->j(), spheresBondRadius_);
 	}
 }
 
@@ -221,22 +253,66 @@ void RenderableSpecies::recreateSelectionPrimitive()
 
 	// Clear existing data
 	selectionAssembly_->clear();
+	lineSelectionPrimitive_->forgetAll();
 
-	// Set basic styling
-	selectionAssembly_->add(true, GL_LINE);
-
+	const GLfloat* colour;
 	Matrix4 A;
 
-	ListIterator<SpeciesAtom> atomIterator(source_->atoms());
-	while (SpeciesAtom* i = atomIterator.iterate())
+	if (displayStyle_ == LinesStyle)
 	{
-		if (!i->isSelected()) continue;
+		// Set basic styling for assemblies
+		selectionAssembly_->add(false, GL_LINE);
+		selectionAssembly_->add(LineStyle(3.0));
+		selectionAssembly_->add(lineSelectionPrimitive_, A);
 
-		A.setIdentity();
-		A.setTranslation(i->r());
-		A.applyScaling(0.3);
+		// Draw selection
+		ListIterator<SpeciesAtom> atomIterator(source_->atoms());
+		while (SpeciesAtom* i = atomIterator.iterate())
+		{
+			// If not selected, continue
+			if (!i->isSelected()) continue;
 
-		selectionAssembly_->add(selectedAtomPrimitive_, A, 0.5, 0.5, 0.5, 1.0);
+			// Get element colour
+			colour = ElementColours::colour(i->element());
+
+			// If the atom has no bonds, draw it as a 'cross', otherwise render all bond halves
+			if (i->nBonds() == 0)
+			{
+				const Vec3<double> r = i->r();
+
+				lineSelectionPrimitive_->line(r.x - linesAtomRadius_, r.y, r.z, r.x + linesAtomRadius_, r.y, r.z, colour);
+				lineSelectionPrimitive_->line(r.x, r.y - linesAtomRadius_, r.z, r.x, r.y + linesAtomRadius_, r.z, colour);
+				lineSelectionPrimitive_->line(r.x, r.y, r.z - linesAtomRadius_, r.x, r.y, r.z + linesAtomRadius_, colour);
+			}
+			else
+			{
+				RefListIterator<SpeciesBond,int> bondIterator(i->bonds());
+				while (SpeciesBond* b = bondIterator.iterate())
+				{
+					// Determine half delta i-j for bond
+					const Vec3<double> ri = i->r();
+					const Vec3<double> dij = (b->partner(i)->r() - ri) * 0.5;
+					lineSelectionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z, colour);
+				}
+			}
+		}
+	}
+	else if (displayStyle_ == SpheresStyle)
+	{
+		// Set basic styling
+		selectionAssembly_->add(true, GL_LINE);
+
+		ListIterator<SpeciesAtom> atomIterator(source_->atoms());
+		while (SpeciesAtom* i = atomIterator.iterate())
+		{
+			if (!i->isSelected()) continue;
+
+			A.setIdentity();
+			A.setTranslation(i->r());
+			A.applyScaling(spheresAtomRadius_);
+
+			selectionAssembly_->add(selectedAtomPrimitive_, A, 0.5, 0.5, 0.5, 1.0);
+		}
 	}
 
 	selectionPrimitiveVersion_ = source_->atomSelectionVersion();
@@ -246,6 +322,7 @@ void RenderableSpecies::recreateSelectionPrimitive()
 void RenderableSpecies::clearInteractionPrimitive()
 {
 	interactionAssembly_->clear();
+	lineInteractionPrimitive_->forgetAll();
 }
 
 // Recreate interaction Primitive to display drawing interaction (from existing atom to existing atom)
@@ -254,11 +331,32 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom* fromAtom, 
 	// Clear existing data
 	clearInteractionPrimitive();
 
-	// Set basic styling for assembly
-	interactionAssembly_->add(true, GL_FILL);
+	Matrix4 A;
 
-	// Draw the temporary bond between the atoms
-	createCylinderBond(interactionAssembly_, fromAtom, toAtom, 0.1);
+	// Render based on the current drawing style
+	if (displayStyle_ == LinesStyle)
+	{
+		// Set basic styling for assembly
+		interactionAssembly_->add(false, GL_LINE);
+		interactionAssembly_->add(lineInteractionPrimitive_, A);
+
+		// Determine half delta i-j for bond
+		const Vec3<double> ri = fromAtom->r();
+		const Vec3<double> rj = toAtom->r();
+		const Vec3<double> dij = (rj - ri) * 0.5;
+
+		// Draw bond halves
+		lineInteractionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z, ElementColours::colour(fromAtom->element()));
+		lineInteractionPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z, ElementColours::colour(toAtom->element()));
+	}
+	else if (displayStyle_ == SpheresStyle)
+	{
+		// Set basic styling for assembly
+		interactionAssembly_->add(true, GL_FILL);
+
+		// Draw the temporary bond between the atoms
+		createCylinderBond(interactionAssembly_, fromAtom, toAtom, spheresBondRadius_);
+	}
 }
 
 // Recreate interaction Primitive to display drawing interaction (from existing atom to point)
@@ -267,23 +365,43 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom* fromAtom, 
 	// Clear existing data
 	clearInteractionPrimitive();
 
-	// Set basic styling for assembly
-	interactionAssembly_->add(true, GL_FILL);
+	Matrix4 A;
 
 	// Temporary SpeciesAtom
 	static SpeciesAtom j;
 	j.setElement(toElement);
 	j.setCoordinates(toPoint);
 
-	// Draw the temporary atom
-	Matrix4 A;
-	A.setTranslation(j.r());
-	A.applyScaling(0.3);
-	const float* colour = ElementColours::colour(j.element());
-	interactionAssembly_->add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+	// Render based on the current drawing style
+	if (displayStyle_ == LinesStyle)
+	{
+		// Set basic styling for assembly
+		interactionAssembly_->add(false, GL_LINE);
+		interactionAssembly_->add(lineInteractionPrimitive_, A);
 
-	// Draw the temporary bond between the atoms
-	createCylinderBond(interactionAssembly_, fromAtom, &j, 0.1);
+		// Determine half delta i-j for bond
+		const Vec3<double> ri = fromAtom->r();
+		const Vec3<double> rj = j.r();
+		const Vec3<double> dij = (rj - ri) * 0.5;
+
+		// Draw bond halves
+		lineInteractionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z, ElementColours::colour(fromAtom->element()));
+		lineInteractionPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z, ElementColours::colour(j.element()));
+	}
+	else if (displayStyle_ == SpheresStyle)
+	{
+		// Set basic styling for assembly
+		interactionAssembly_->add(true, GL_FILL);
+
+		// Draw the temporary atom
+		A.setTranslation(j.r());
+		A.applyScaling(spheresAtomRadius_);
+		const float* colour = ElementColours::colour(j.element());
+		interactionAssembly_->add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+
+		// Draw the temporary bond between the atoms
+		createCylinderBond(interactionAssembly_, fromAtom, &j, spheresBondRadius_);
+	}
 }
 
 // Recreate interaction Primitive to display drawing interaction (from point to point)
@@ -292,8 +410,7 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(Vec3<double> fromPoint,
 	// Clear existing data
 	clearInteractionPrimitive();
 
-	// Set basic styling for assembly
-	interactionAssembly_->add(true, GL_FILL);
+	Matrix4 A;
 
 	// Temporary SpeciesAtoms
 	static SpeciesAtom i, j;
@@ -302,20 +419,63 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(Vec3<double> fromPoint,
 	j.setElement(toElement);
 	j.setCoordinates(toPoint);
 
-	// Draw the temporary atoms
-	Matrix4 A;
+	// Render based on the current drawing style
+	if (displayStyle_ == LinesStyle)
+	{
+		// Set basic styling for assembly
+		interactionAssembly_->add(false, GL_LINE);
+		interactionAssembly_->add(lineInteractionPrimitive_, A);
 
-	A.setTranslation(i.r());
-	A.applyScaling(0.3);
-	const float* colour = ElementColours::colour(i.element());
-	interactionAssembly_->add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+		// Determine half delta i-j for bond
+		const Vec3<double> ri = i.r();
+		const Vec3<double> rj = j.r();
+		const Vec3<double> dij = (rj - ri) * 0.5;
 
-	A.setIdentity();
-	A.setTranslation(j.r());
-	A.applyScaling(0.3);
-	colour = ElementColours::colour(j.element());
-	interactionAssembly_->add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+		// Draw bond halves
+		lineInteractionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z, ElementColours::colour(i.element()));
+		lineInteractionPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z, ElementColours::colour(j.element()));
+	}
+	else if (displayStyle_ == SpheresStyle)
+	{
+		// Set basic styling for assembly
+		interactionAssembly_->add(true, GL_FILL);
 
-	// Draw the temporary bond between the atoms
-	createCylinderBond(interactionAssembly_, &i, &j, 0.1);
+		// Draw the temporary atoms
+		A.setTranslation(i.r());
+		A.applyScaling(spheresAtomRadius_);
+		const float* colour = ElementColours::colour(i.element());
+		interactionAssembly_->add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+
+		A.setIdentity();
+		A.setTranslation(j.r());
+		A.applyScaling(spheresAtomRadius_);
+		colour = ElementColours::colour(j.element());
+		interactionAssembly_->add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+
+		// Draw the temporary bond between the atoms
+		createCylinderBond(interactionAssembly_, &i, &j, spheresBondRadius_);
+	}
+}
+
+/*
+ * Style
+ */
+
+// Display Style Keywords
+const char* SpeciesDisplayStyleKeywords[] = { "Lines", "Spheres" };
+
+// Convert display style index to text string
+const char* RenderableSpecies::displayStyle(int id)
+{
+	if ((id < 0) || (id >= RenderableSpecies::nDisplayStyles)) return "INVALID_STYLE";
+
+	return SpeciesDisplayStyleKeywords[id];
+}
+
+// Convert text string to display style index
+int RenderableSpecies::displayStyle(const char* s)
+{
+	for (int n=0; n<nDisplayStyles; ++n) if (DissolveSys::sameString(s, SpeciesDisplayStyleKeywords[n])) return (RenderableSpecies::DisplayStyle) n;
+
+	return -1;
 }

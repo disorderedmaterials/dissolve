@@ -48,7 +48,7 @@ class RenderableData1D : public Renderable
 	// Return whether a valid data source is available (attempting to set it if not)
 	bool validateDataSource();
 	// Return version of data
-	int version() const;
+	int dataVersion() const;
 
 
 	/*
@@ -81,6 +81,19 @@ class RenderableData1D : public Renderable
 	void constructLineXY(const Array<double>& displayAbscissa, const Array<double>& displayValues, Primitive* primitive, const Axes& axes, const ColourDefinition& colourDefinition, double zCoordinate = 0.0);
 	// Recreate necessary primitives / primitive assemblies for the data
 	void recreatePrimitives(const View& view, const ColourDefinition& colourDefinition);
+
+
+	/*
+	 * Style
+	 */
+	public:
+	// Display Styles enum
+	enum DisplayStyle { LinesStyle, nDisplayStyles };
+	// Return keyword for display style index
+	const char* displayStyle(int id);
+	// Return display style index from string
+	int displayStyle(const char* s);
+
 };
 
 #endif

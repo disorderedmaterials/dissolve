@@ -77,12 +77,12 @@ QColor ColourScaleDelta::startColour() const
 }
 
 // Return colour of the delta's starting point as GLfloat*
-void ColourScaleDelta::startColour(Vec4<GLfloat>& target) const
+void ColourScaleDelta::startColour(GLfloat* rgba) const
 {
-	target.x = startColour_.redF();
-	target.y = startColour_.greenF();
-	target.z = startColour_.blueF();
-	target.w = startColour_.alphaF();
+	rgba[0] = startColour_.redF();
+	rgba[1] = startColour_.greenF();
+	rgba[2] = startColour_.blueF();
+	rgba[3] = startColour_.alphaF();
 }
 
 // Get colour for value v
@@ -110,7 +110,7 @@ QColor ColourScaleDelta::colour(double value) const
 }
 
 // Get colour for value as GLfloat* ranged from 0.0-1.0, assuming that v is within the range 0 -> value_
-void ColourScaleDelta::colour(double v, Vec4<GLfloat>& target) const
+void ColourScaleDelta::colour(double v, GLfloat* rgba) const
 {
 	// Clamp 'v' to range 0.0 - 1.0 to span range of delta
 	double clampv = (v - start_) / delta_;
@@ -120,17 +120,17 @@ void ColourScaleDelta::colour(double v, Vec4<GLfloat>& target) const
 	{
 		QColor col;
 		col.setHsvF(startColour_.hueF() + deltaColourF_[0] * clampv, startColour_.saturationF() + deltaColourF_[1] * clampv, startColour_.valueF() + deltaColourF_[2] * clampv);
-		target.x = col.redF();
-		target.y = col.greenF();
-		target.z = col.blueF();
+		rgba[0] = col.redF();
+		rgba[1] = col.greenF();
+		rgba[2] = col.blueF();
 	}
 	else
 	{
-		target.x = startColour_.redF() + deltaColourF_[0] * clampv;
-		target.y = startColour_.greenF() + deltaColourF_[1] * clampv;
-		target.z = startColour_.blueF() + deltaColourF_[2]* clampv;
+		rgba[0] = startColour_.redF() + deltaColourF_[0] * clampv;
+		rgba[1] = startColour_.greenF() + deltaColourF_[1] * clampv;
+		rgba[2] = startColour_.blueF() + deltaColourF_[2]* clampv;
 	}
-	target.w = startColour_.alphaF() + deltaColourF_[3] * clampv;
+	rgba[3] = startColour_.alphaF() + deltaColourF_[3] * clampv;
 }
 
 // Return the starting value of the range

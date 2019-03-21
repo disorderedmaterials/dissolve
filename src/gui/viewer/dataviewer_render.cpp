@@ -76,7 +76,7 @@ void DataViewer::render2DOverlay()
 	glTranslated(view_.viewportMatrix()[2] - maxTextWidth - overlaySpacing, view_.viewportMatrix()[3] - overlayTextSize - overlaySpacing, 0);
 
 	// Loop over legend entries
-	Vec4<float> colour;
+	GLfloat colour[4];
 	RefListIterator<Renderable,double> legendEntryIterator(legendEntries);
 	while (Renderable* rend = legendEntryIterator.iterate())
 	{
@@ -94,7 +94,7 @@ void DataViewer::render2DOverlay()
 			glGetFloatv(GL_LINE_WIDTH, &lineWidth);
 			glLineWidth(lineWidth*2.0);
 			colourDefinition.colour(0.0, colour);
-			glColor4f(colour.x, colour.y, colour.z, colour.w);
+			glColor4f(colour[0], colour[1], colour[2], colour[3]);
 			glBegin(GL_LINES);
 			glVertex2i(0.0, 0.0);
 			glVertex2i(-legendLineLength, 0.0);

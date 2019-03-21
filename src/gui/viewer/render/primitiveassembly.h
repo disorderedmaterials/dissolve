@@ -47,6 +47,7 @@ class PrimitiveAssembly : public ListItem<PrimitiveAssembly>
 	ObjectFactory<UncolouredPrimitiveInfo> uncolouredPrimitiveFactory_;
 	ObjectFactory<ColouredPrimitiveInfo> colouredPrimitiveFactory_;
 	ObjectFactory<StylePrimitiveInfo> stylePrimitiveFactory_;
+	ObjectFactory<LineStylePrimitiveInfo> lineStylePrimitiveFactory_;
 
 
 	/*
@@ -66,7 +67,7 @@ class PrimitiveAssembly : public ListItem<PrimitiveAssembly>
 	// Add styling information
 	void add(bool lighting, GLenum polygonFillMode);
 	// Add line styling information
-	void add(LineStyle& lineStyle);
+	void add(LineStyle lineStyle);
 
 
 	/*

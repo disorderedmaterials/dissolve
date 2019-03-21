@@ -189,11 +189,10 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 	// Draw all Renderables
 	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next)
 	{
+		// If the Renderable is hidden, don't draw it!
 		if (!rend->isVisible()) continue;
 
-		// Set shininess for Renderable
-		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, rend->displaySurfaceShininess());
-
+		// Make sure the Renderable is up to date, and draw it
 		rend->updateAndSendPrimitives(view_, groupManager_, renderingOffScreen_, renderingOffScreen_, context(), pixelScaling_);
 
 		// Update query
