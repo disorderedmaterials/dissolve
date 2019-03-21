@@ -186,6 +186,10 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 	// Enable clip planes to enforce limits in Axes volume
 	if (clipToAxesVolume_) enableClipping();
 
+	// Disable lighting
+	// TODO This is to allow line renderables DataViewer to display correctly, but needs to be more general
+	glDisable(GL_LIGHTING);
+
 	// Draw all Renderables
 	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next)
 	{
