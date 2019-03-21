@@ -46,6 +46,7 @@ RenderableSpecies::RenderableSpecies(const Species* source, const char* objectTa
 	lineSelectionPrimitive_ = createBasicPrimitive(GL_LINES, true);
 	lineSelectionPrimitive_->setNoInstances();
 	lineInteractionPrimitive_ = createBasicPrimitive(GL_LINES, true);
+	lineInteractionPrimitive_->setNoInstances();
 
 	// Create main primitive assemblies
 	speciesAssembly_ = createPrimitiveAssembly();
@@ -321,6 +322,7 @@ void RenderableSpecies::recreateSelectionPrimitive()
 void RenderableSpecies::clearInteractionPrimitive()
 {
 	interactionAssembly_->clear();
+	lineInteractionPrimitive_->forgetAll();
 }
 
 // Recreate interaction Primitive to display drawing interaction (from existing atom to existing atom)
@@ -329,11 +331,32 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom* fromAtom, 
 	// Clear existing data
 	clearInteractionPrimitive();
 
-	// Set basic styling for assembly
-	interactionAssembly_->add(true, GL_FILL);
+	Matrix4 A;
 
-	// Draw the temporary bond between the atoms
-	createCylinderBond(interactionAssembly_, fromAtom, toAtom, spheresBondRadius_);
+	// Render based on the current drawing style
+	if (displayStyle_ == LinesStyle)
+	{
+		// Set basic styling for assembly
+		interactionAssembly_->add(false, GL_LINE);
+		interactionAssembly_->add(lineInteractionPrimitive_, A);
+
+		// Determine half delta i-j for bond
+		const Vec3<double> ri = fromAtom->r();
+		const Vec3<double> rj = toAtom->r();
+		const Vec3<double> dij = (rj - ri) * 0.5;
+
+		// Draw bond halves
+		lineInteractionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z, ElementColours::colour(fromAtom->element()));
+		lineInteractionPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z, ElementColours::colour(toAtom->element()));
+	}
+	else if (displayStyle_ == SpheresStyle)
+	{
+		// Set basic styling for assembly
+		interactionAssembly_->add(true, GL_FILL);
+
+		// Draw the temporary bond between the atoms
+		createCylinderBond(interactionAssembly_, fromAtom, toAtom, spheresBondRadius_);
+	}
 }
 
 // Recreate interaction Primitive to display drawing interaction (from existing atom to point)
@@ -342,23 +365,43 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom* fromAtom, 
 	// Clear existing data
 	clearInteractionPrimitive();
 
-	// Set basic styling for assembly
-	interactionAssembly_->add(true, GL_FILL);
+	Matrix4 A;
 
 	// Temporary SpeciesAtom
 	static SpeciesAtom j;
 	j.setElement(toElement);
 	j.setCoordinates(toPoint);
 
-	// Draw the temporary atom
-	Matrix4 A;
-	A.setTranslation(j.r());
-	A.applyScaling(spheresAtomRadius_);
-	const float* colour = ElementColours::colour(j.element());
-	interactionAssembly_->add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+	// Render based on the current drawing style
+	if (displayStyle_ == LinesStyle)
+	{
+		// Set basic styling for assembly
+		interactionAssembly_->add(false, GL_LINE);
+		interactionAssembly_->add(lineInteractionPrimitive_, A);
 
-	// Draw the temporary bond between the atoms
-	createCylinderBond(interactionAssembly_, fromAtom, &j, spheresBondRadius_);
+		// Determine half delta i-j for bond
+		const Vec3<double> ri = fromAtom->r();
+		const Vec3<double> rj = j.r();
+		const Vec3<double> dij = (rj - ri) * 0.5;
+
+		// Draw bond halves
+		lineInteractionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z, ElementColours::colour(fromAtom->element()));
+		lineInteractionPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z, ElementColours::colour(j.element()));
+	}
+	else if (displayStyle_ == SpheresStyle)
+	{
+		// Set basic styling for assembly
+		interactionAssembly_->add(true, GL_FILL);
+
+		// Draw the temporary atom
+		A.setTranslation(j.r());
+		A.applyScaling(spheresAtomRadius_);
+		const float* colour = ElementColours::colour(j.element());
+		interactionAssembly_->add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+
+		// Draw the temporary bond between the atoms
+		createCylinderBond(interactionAssembly_, fromAtom, &j, spheresBondRadius_);
+	}
 }
 
 // Recreate interaction Primitive to display drawing interaction (from point to point)
@@ -367,8 +410,7 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(Vec3<double> fromPoint,
 	// Clear existing data
 	clearInteractionPrimitive();
 
-	// Set basic styling for assembly
-	interactionAssembly_->add(true, GL_FILL);
+	Matrix4 A;
 
 	// Temporary SpeciesAtoms
 	static SpeciesAtom i, j;
@@ -377,22 +419,42 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(Vec3<double> fromPoint,
 	j.setElement(toElement);
 	j.setCoordinates(toPoint);
 
-	// Draw the temporary atoms
-	Matrix4 A;
+	// Render based on the current drawing style
+	if (displayStyle_ == LinesStyle)
+	{
+		// Set basic styling for assembly
+		interactionAssembly_->add(false, GL_LINE);
+		interactionAssembly_->add(lineInteractionPrimitive_, A);
 
-	A.setTranslation(i.r());
-	A.applyScaling(spheresAtomRadius_);
-	const float* colour = ElementColours::colour(i.element());
-	interactionAssembly_->add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+		// Determine half delta i-j for bond
+		const Vec3<double> ri = i.r();
+		const Vec3<double> rj = j.r();
+		const Vec3<double> dij = (rj - ri) * 0.5;
 
-	A.setIdentity();
-	A.setTranslation(j.r());
-	A.applyScaling(spheresAtomRadius_);
-	colour = ElementColours::colour(j.element());
-	interactionAssembly_->add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+		// Draw bond halves
+		lineInteractionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z, ElementColours::colour(i.element()));
+		lineInteractionPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z, ElementColours::colour(j.element()));
+	}
+	else if (displayStyle_ == SpheresStyle)
+	{
+		// Set basic styling for assembly
+		interactionAssembly_->add(true, GL_FILL);
 
-	// Draw the temporary bond between the atoms
-	createCylinderBond(interactionAssembly_, &i, &j, spheresBondRadius_);
+		// Draw the temporary atoms
+		A.setTranslation(i.r());
+		A.applyScaling(spheresAtomRadius_);
+		const float* colour = ElementColours::colour(i.element());
+		interactionAssembly_->add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+
+		A.setIdentity();
+		A.setTranslation(j.r());
+		A.applyScaling(spheresAtomRadius_);
+		colour = ElementColours::colour(j.element());
+		interactionAssembly_->add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+
+		// Draw the temporary bond between the atoms
+		createCylinderBond(interactionAssembly_, &i, &j, spheresBondRadius_);
+	}
 }
 
 /*
