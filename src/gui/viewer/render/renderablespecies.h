@@ -70,6 +70,8 @@ class RenderableSpecies : public Renderable
 	// Basic primitives
 	Primitive* atomPrimitive_, *selectedAtomPrimitive_, *unitCellPrimitive_, *bondPrimitive_;
 	// Main primitives
+	Primitive* lineSpeciesPrimitive_, *lineSelectionPrimitive_, *lineInteractionPrimitive_;
+	// Main assemblies
 	PrimitiveAssembly* speciesAssembly_, *selectionAssembly_, *interactionAssembly_;
 	// Version at which selection primitive was created, relative to selection version
 	int selectionPrimitiveVersion_;

@@ -28,7 +28,7 @@
 RenderableSpecies::RenderableSpecies(const Species* source, const char* objectTag) : Renderable(Renderable::SpeciesRenderable, objectTag), source_(source)
 {
 	// Set defaults
-	displayStyle_ = SpheresStyle;
+	displayStyle_ = LinesStyle;
 
 	// Create basic primitives
 	atomPrimitive_ = createBasicPrimitive(GL_TRIANGLES, false);
@@ -39,6 +39,9 @@ RenderableSpecies::RenderableSpecies(const Species* source, const char* objectTa
 	bondPrimitive_->cylinder(0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1, 8);
 	unitCellPrimitive_ = createBasicPrimitive(GL_LINES, false);
 // 	unitCellPrimitive_->wireCube(1.0, 4, 0, 0, 0);
+	lineSpeciesPrimitive_ = createBasicPrimitive(GL_LINES, true);
+	lineSelectionPrimitive_ = createBasicPrimitive(GL_LINES, true);
+	lineInteractionPrimitive_ = createBasicPrimitive(GL_LINES, true);
 
 	// Create main primitive assemblies
 	speciesAssembly_ = createPrimitiveAssembly();
@@ -164,56 +167,78 @@ void RenderableSpecies::createCylinderBond(PrimitiveAssembly* assembly, const Sp
 void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinition& colourDefinition)
 {
 	Matrix4 A;
-	const float* colour;
-	const float colourBlack[4] = { 0.0, 0.0, 0.0, 1.0 };
+	const GLfloat* colour;
+	const GLfloat colourBlack[4] = { 0.0, 0.0, 0.0, 1.0 };
 
 	// Clear existing data
+	lineSpeciesPrimitive_->forgetAll();
+	lineSelectionPrimitive_->forgetAll();
 	speciesAssembly_->clear();
 	selectionAssembly_->clear();
 
-	// Set basic styling for assemblies
-	speciesAssembly_->add(true, GL_FILL);
-	selectionAssembly_->add(true, GL_LINE);
-
-	/*
-	 * Draw Atoms
-	 */
-	ListIterator<SpeciesAtom> atomIterator(source_->atoms());
-	while (SpeciesAtom* i = atomIterator.iterate())
+	// Render according to the current displayStyle
+	if (displayStyle_ == LinesStyle)
 	{
-		A.setIdentity();
-		A.setTranslation(i->r());
-		A.applyScaling(0.3);
+		// Set basic styling and content for assemblies
+		speciesAssembly_->add(false, GL_LINE);
+		speciesAssembly_->add(lineSpeciesPrimitive_, A);
 
-		// The atom itself
-		colour = ElementColours::colour(i->element());
-		speciesAssembly_->add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
-
-		// Label
-// 		text.clear();
-// 		if (atomTypeLabel) text.strcatf("%s ", i->atomType()->name());
-// 		if (indexLabel) text.strcatf("%i ", i->userIndex());
-// 		if (species_->highlightedIsotopologue())
-// 		{
-// 			iso = species_->highlightedIsotopologue()->atomTypeIsotope(i->atomType());
-// 			if (iso == NULL) text.sprintf("%s [???]", i->atomType()->name());
-// 			else text.strcatf("[%i-%s]", iso->A(), PeriodicTable::element(i->element()).symbol());
-// 		}
-// 		renderTextPrimitive(i->r(), text.get(), false, false);
-
-		// Is the atom selected?
-		if (i->isSelected())
+		// Draw Atoms
+		ListIterator<SpeciesAtom> atomIterator(source_->atoms());
+		while (SpeciesAtom* i = atomIterator.iterate())
 		{
-			selectionAssembly_->add(selectedAtomPrimitive_, A, colourBlack[0], colourBlack[1], colourBlack[2], colourBlack[3]);
+			// Only draw the atom if it has no bonds, in which case draw it as a 'cross'
+			if (i->nBonds() != 0) continue;
+
+			const double lineLength = 0.05;
+			const Vec3<double> r = i->r();
+			colour = ElementColours::colour(i->element());
+
+			lineSpeciesPrimitive_->line(r.x - lineLength, r.y, r.z, r.x + lineLength, r.y, r.z, colour);
+			lineSpeciesPrimitive_->line(r.x, r.y - lineLength, r.z, r.x, r.y + lineLength, r.z, colour);
+			lineSpeciesPrimitive_->line(r.x, r.y, r.z - lineLength, r.x, r.y, r.z + lineLength, colour);
+		}
+
+		// Draw bonds
+		for (SpeciesBond* b = source_->bonds().first(); b != NULL; b = b->next)
+		{
+			// Determine half delta i-j for bond
+			const Vec3<double> ri = b->i()->r();
+			const Vec3<double> rj = b->j()->r();
+			const Vec3<double> dij = (rj - ri) * 0.5;
+
+			// Draw bond halves
+			lineSpeciesPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z, ElementColours::colour(b->i()->element()));
+			lineSpeciesPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z, ElementColours::colour(b->j()->element()));
 		}
 	}
-
-	// Draw Bonds
-	Vec3<double> vij;
-	double mag;
-	for (SpeciesBond* b = source_->bonds().first(); b != NULL; b = b->next)
+	else if (displayStyle_ == SpheresStyle)
 	{
-		createCylinderBond(speciesAssembly_, b->i(), b->j(), 0.1);
+		// Set basic styling for assemblies
+		speciesAssembly_->add(true, GL_FILL);
+		selectionAssembly_->add(true, GL_LINE);
+
+		// Draw Atoms
+		ListIterator<SpeciesAtom> atomIterator(source_->atoms());
+		while (SpeciesAtom* i = atomIterator.iterate())
+		{
+			A.setIdentity();
+			A.setTranslation(i->r());
+			A.applyScaling(0.3);
+
+			// The atom itself
+			colour = ElementColours::colour(i->element());
+			speciesAssembly_->add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+
+			// Is the atom selected?
+			if (i->isSelected())
+			{
+				selectionAssembly_->add(selectedAtomPrimitive_, A, colourBlack[0], colourBlack[1], colourBlack[2], colourBlack[3]);
+			}
+		}
+
+		// Draw bonds
+		for (SpeciesBond* b = source_->bonds().first(); b != NULL; b = b->next) createCylinderBond(speciesAssembly_, b->i(), b->j(), 0.1);
 	}
 }
 
@@ -224,22 +249,67 @@ void RenderableSpecies::recreateSelectionPrimitive()
 
 	// Clear existing data
 	selectionAssembly_->clear();
+	lineSelectionPrimitive_->forgetAll();
 
-	// Set basic styling
-	selectionAssembly_->add(true, GL_LINE);
-
+	const GLfloat* colour;
 	Matrix4 A;
 
-	ListIterator<SpeciesAtom> atomIterator(source_->atoms());
-	while (SpeciesAtom* i = atomIterator.iterate())
+	if (displayStyle_ == LinesStyle)
 	{
-		if (!i->isSelected()) continue;
+		// Set basic styling for assemblies
+		selectionAssembly_->add(false, GL_LINE);
+		selectionAssembly_->add(LineStyle(2.0));
+		selectionAssembly_->add(lineSelectionPrimitive_, A);
 
-		A.setIdentity();
-		A.setTranslation(i->r());
-		A.applyScaling(0.3);
+		// Draw selection
+		ListIterator<SpeciesAtom> atomIterator(source_->atoms());
+		while (SpeciesAtom* i = atomIterator.iterate())
+		{
+			// If not selected, continue
+			if (!i->isSelected()) continue;
 
-		selectionAssembly_->add(selectedAtomPrimitive_, A, 0.5, 0.5, 0.5, 1.0);
+			// Get element colour
+			colour = ElementColours::colour(i->element());
+
+			// If the atom has no bonds, draw it as a 'cross', otherwise render all bond halves
+			if (i->nBonds() == 0)
+			{
+				const double lineLength = 0.05;
+				const Vec3<double> r = i->r();
+
+				lineSelectionPrimitive_->line(r.x - lineLength, r.y, r.z, r.x + lineLength, r.y, r.z, colour);
+				lineSelectionPrimitive_->line(r.x, r.y - lineLength, r.z, r.x, r.y + lineLength, r.z, colour);
+				lineSelectionPrimitive_->line(r.x, r.y, r.z - lineLength, r.x, r.y, r.z + lineLength, colour);
+			}
+			else
+			{
+				RefListIterator<SpeciesBond,int> bondIterator(i->bonds());
+				while (SpeciesBond* b = bondIterator.iterate())
+				{
+					// Determine half delta i-j for bond
+					const Vec3<double> ri = b->i()->r();
+					const Vec3<double> dij = (b->j()->r() - ri) * 0.5;
+					lineSelectionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z, colour);
+				}
+			}
+		}
+	}
+	else if (displayStyle_ == SpheresStyle)
+	{
+		// Set basic styling
+		selectionAssembly_->add(true, GL_LINE);
+
+		ListIterator<SpeciesAtom> atomIterator(source_->atoms());
+		while (SpeciesAtom* i = atomIterator.iterate())
+		{
+			if (!i->isSelected()) continue;
+
+			A.setIdentity();
+			A.setTranslation(i->r());
+			A.applyScaling(0.3);
+
+			selectionAssembly_->add(selectedAtomPrimitive_, A, 0.5, 0.5, 0.5, 1.0);
+		}
 	}
 
 	selectionPrimitiveVersion_ = source_->atomSelectionVersion();
