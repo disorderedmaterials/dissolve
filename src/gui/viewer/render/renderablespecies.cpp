@@ -261,7 +261,7 @@ void RenderableSpecies::recreateSelectionPrimitive()
 	{
 		// Set basic styling for assemblies
 		selectionAssembly_->add(false, GL_LINE);
-		selectionAssembly_->add(LineStyle(2.0));
+		selectionAssembly_->add(LineStyle(3.0));
 		selectionAssembly_->add(lineSelectionPrimitive_, A);
 
 		// Draw selection
