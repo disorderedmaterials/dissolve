@@ -178,6 +178,9 @@ void ModuleKeywordsWidget::setUp(DissolveWindow* dissolveWindow, Module* module)
 			// Create / setup the keyword widget
 			QWidget* widget = createKeywordWidget(dissolveWindow_, keywordWidgets_, keyword, coreData, moduleData, module->uniqueName());
 
+			// Can now remove this keyword from our reference list
+			remainingKeywords.remove(keyword);
+
 			if (!widget)
 			{
 				Messenger::error("Can't create widget for keyword '%s' (%s).\n", keyword->keyword(), ModuleKeywordBase::keywordDataType(keyword->type()));
@@ -188,9 +191,6 @@ void ModuleKeywordsWidget::setUp(DissolveWindow* dissolveWindow, Module* module)
 			QLabel* nameLabel = new QLabel(keyword->keyword());
 			nameLabel->setToolTip(keyword->description());
 			groupLayout->addRow(nameLabel, widget);
-
-			// Can now remove this keyword from our reference list
-			remainingKeywords.remove(keyword);
 		}
 
 		// Group is finished, so add the widget as a new tab in our QToolBox
