@@ -41,6 +41,7 @@ RenderableSpecies::RenderableSpecies(const Species* source, const char* objectTa
 // 	unitCellPrimitive_->wireCube(1.0, 4, 0, 0, 0);
 	lineSpeciesPrimitive_ = createBasicPrimitive(GL_LINES, true);
 	lineSelectionPrimitive_ = createBasicPrimitive(GL_LINES, true);
+	lineSelectionPrimitive_->setNoInstances();
 	lineInteractionPrimitive_ = createBasicPrimitive(GL_LINES, true);
 
 	// Create main primitive assemblies
