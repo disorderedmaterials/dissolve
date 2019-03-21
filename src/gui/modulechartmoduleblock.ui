@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>291</width>
-    <height>217</height>
+    <width>200</width>
+    <height>194</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -105,7 +105,7 @@
            <widget class="QLabel" name="FrequencyLabel">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-              <horstretch>0</horstretch>
+              <horstretch>2</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
@@ -201,7 +201,7 @@
                <enum>Qt::Horizontal</enum>
               </property>
               <property name="sizeType">
-               <enum>QSizePolicy::Minimum</enum>
+               <enum>QSizePolicy::Expanding</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
@@ -259,7 +259,7 @@
                <enum>Qt::Horizontal</enum>
               </property>
               <property name="sizeType">
-               <enum>QSizePolicy::Minimum</enum>
+               <enum>QSizePolicy::Expanding</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
@@ -368,6 +368,12 @@
           </item>
           <item row="1" column="0" rowspan="2" colspan="2">
            <widget class="QFrame" name="IconFrame">
+            <property name="maximumSize">
+             <size>
+              <width>60</width>
+              <height>16777215</height>
+             </size>
+            </property>
             <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
             </property>
