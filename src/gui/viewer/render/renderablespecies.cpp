@@ -289,8 +289,8 @@ void RenderableSpecies::recreateSelectionPrimitive()
 				while (SpeciesBond* b = bondIterator.iterate())
 				{
 					// Determine half delta i-j for bond
-					const Vec3<double> ri = b->i()->r();
-					const Vec3<double> dij = (b->j()->r() - ri) * 0.5;
+					const Vec3<double> ri = i->r();
+					const Vec3<double> dij = (b->partner(i)->r() - ri) * 0.5;
 					lineSelectionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z, colour);
 				}
 			}
