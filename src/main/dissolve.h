@@ -379,10 +379,12 @@ class Dissolve
 	void setInputFilename(const char* filename);
 	// Return current input filename
 	const char* inputFilename() const;
-	// Return whether a restart filename has been set
-	bool hasRestartFilename() const;
+	// Set restart filename
+	void setRestartFilename(const char* filename);
 	// Return restart filename
 	const char* restartFilename() const;
+	// Return whether a restart filename has been set
+	bool hasRestartFilename() const;
 
 
 	/*

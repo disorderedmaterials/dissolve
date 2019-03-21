@@ -64,7 +64,7 @@ int main(int argc, char **argv)
 					printf("\t-q\t\tQuiet mode - print no output\n");
 					printf("\t-r <file>\tRedirect output from all process to 'file.N', where N is the process rank\n");
 					printf("\t-s\t\tPerform single main loop iteration and then quit\n");
-					printf("\t-t <file>\tLoad restart data from specified file, rather than the associated restart file\n");
+					printf("\t-t <file>\tLoad restart data from specified file (but still write to associated restart file)\n");
 					printf("\t-v\t\tVerbose mode - be a little more descriptive throughout\n");
 					printf("\t-x\t\tDon't write any restart information (but still read in the restart file if present)\n");
 					ProcessPool::finalise();
@@ -213,6 +213,9 @@ int main(int argc, char **argv)
 				Messenger::ceaseRedirect();
 				return 1;
 			}
+
+			// Reset the restart filename to be the standard one
+			dissolve.setRestartFilename(CharString("%s.restart", inputFile.get()));
 		}
 		else Messenger::print("Restart file '%s' does not exist.\n", restartFile.get());
 	}

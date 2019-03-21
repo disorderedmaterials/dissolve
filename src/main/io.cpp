@@ -678,6 +678,12 @@ const char* Dissolve::inputFilename() const
 	return filename_.get();
 }
 
+// Set restart filename
+void Dissolve::setRestartFilename(const char* filename)
+{
+	restartFilename_ = filename;
+}
+
 // Return restart filename
 const char* Dissolve::restartFilename() const
 {
