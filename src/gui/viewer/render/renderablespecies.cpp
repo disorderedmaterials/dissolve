@@ -29,6 +29,9 @@ RenderableSpecies::RenderableSpecies(const Species* source, const char* objectTa
 {
 	// Set defaults
 	displayStyle_ = LinesStyle;
+	linesAtomRadius_ = 0.05;
+	spheresAtomRadius_ = 0.3;
+	spheresBondRadius_ = 0.1;
 
 	// Create basic primitives
 	atomPrimitive_ = createBasicPrimitive(GL_TRIANGLES, false);
@@ -191,13 +194,12 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 			// Only draw the atom if it has no bonds, in which case draw it as a 'cross'
 			if (i->nBonds() != 0) continue;
 
-			const double lineLength = 0.05;
 			const Vec3<double> r = i->r();
 			colour = ElementColours::colour(i->element());
 
-			lineSpeciesPrimitive_->line(r.x - lineLength, r.y, r.z, r.x + lineLength, r.y, r.z, colour);
-			lineSpeciesPrimitive_->line(r.x, r.y - lineLength, r.z, r.x, r.y + lineLength, r.z, colour);
-			lineSpeciesPrimitive_->line(r.x, r.y, r.z - lineLength, r.x, r.y, r.z + lineLength, colour);
+			lineSpeciesPrimitive_->line(r.x - linesAtomRadius_, r.y, r.z, r.x + linesAtomRadius_, r.y, r.z, colour);
+			lineSpeciesPrimitive_->line(r.x, r.y - linesAtomRadius_, r.z, r.x, r.y + linesAtomRadius_, r.z, colour);
+			lineSpeciesPrimitive_->line(r.x, r.y, r.z - linesAtomRadius_, r.x, r.y, r.z + linesAtomRadius_, colour);
 		}
 
 		// Draw bonds
@@ -225,7 +227,7 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 		{
 			A.setIdentity();
 			A.setTranslation(i->r());
-			A.applyScaling(0.3);
+			A.applyScaling(spheresAtomRadius_);
 
 			// The atom itself
 			colour = ElementColours::colour(i->element());
@@ -239,7 +241,7 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 		}
 
 		// Draw bonds
-		for (SpeciesBond* b = source_->bonds().first(); b != NULL; b = b->next) createCylinderBond(speciesAssembly_, b->i(), b->j(), 0.1);
+		for (SpeciesBond* b = source_->bonds().first(); b != NULL; b = b->next) createCylinderBond(speciesAssembly_, b->i(), b->j(), spheresBondRadius_);
 	}
 }
 
@@ -275,12 +277,11 @@ void RenderableSpecies::recreateSelectionPrimitive()
 			// If the atom has no bonds, draw it as a 'cross', otherwise render all bond halves
 			if (i->nBonds() == 0)
 			{
-				const double lineLength = 0.05;
 				const Vec3<double> r = i->r();
 
-				lineSelectionPrimitive_->line(r.x - lineLength, r.y, r.z, r.x + lineLength, r.y, r.z, colour);
-				lineSelectionPrimitive_->line(r.x, r.y - lineLength, r.z, r.x, r.y + lineLength, r.z, colour);
-				lineSelectionPrimitive_->line(r.x, r.y, r.z - lineLength, r.x, r.y, r.z + lineLength, colour);
+				lineSelectionPrimitive_->line(r.x - linesAtomRadius_, r.y, r.z, r.x + linesAtomRadius_, r.y, r.z, colour);
+				lineSelectionPrimitive_->line(r.x, r.y - linesAtomRadius_, r.z, r.x, r.y + linesAtomRadius_, r.z, colour);
+				lineSelectionPrimitive_->line(r.x, r.y, r.z - linesAtomRadius_, r.x, r.y, r.z + linesAtomRadius_, colour);
 			}
 			else
 			{
@@ -307,7 +308,7 @@ void RenderableSpecies::recreateSelectionPrimitive()
 
 			A.setIdentity();
 			A.setTranslation(i->r());
-			A.applyScaling(0.3);
+			A.applyScaling(spheresAtomRadius_);
 
 			selectionAssembly_->add(selectedAtomPrimitive_, A, 0.5, 0.5, 0.5, 1.0);
 		}
@@ -332,7 +333,7 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom* fromAtom, 
 	interactionAssembly_->add(true, GL_FILL);
 
 	// Draw the temporary bond between the atoms
-	createCylinderBond(interactionAssembly_, fromAtom, toAtom, 0.1);
+	createCylinderBond(interactionAssembly_, fromAtom, toAtom, spheresBondRadius_);
 }
 
 // Recreate interaction Primitive to display drawing interaction (from existing atom to point)
@@ -352,12 +353,12 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom* fromAtom, 
 	// Draw the temporary atom
 	Matrix4 A;
 	A.setTranslation(j.r());
-	A.applyScaling(0.3);
+	A.applyScaling(spheresAtomRadius_);
 	const float* colour = ElementColours::colour(j.element());
 	interactionAssembly_->add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 
 	// Draw the temporary bond between the atoms
-	createCylinderBond(interactionAssembly_, fromAtom, &j, 0.1);
+	createCylinderBond(interactionAssembly_, fromAtom, &j, spheresBondRadius_);
 }
 
 // Recreate interaction Primitive to display drawing interaction (from point to point)
@@ -380,18 +381,18 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(Vec3<double> fromPoint,
 	Matrix4 A;
 
 	A.setTranslation(i.r());
-	A.applyScaling(0.3);
+	A.applyScaling(spheresAtomRadius_);
 	const float* colour = ElementColours::colour(i.element());
 	interactionAssembly_->add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 
 	A.setIdentity();
 	A.setTranslation(j.r());
-	A.applyScaling(0.3);
+	A.applyScaling(spheresAtomRadius_);
 	colour = ElementColours::colour(j.element());
 	interactionAssembly_->add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 
 	// Draw the temporary bond between the atoms
-	createCylinderBond(interactionAssembly_, &i, &j, 0.1);
+	createCylinderBond(interactionAssembly_, &i, &j, spheresBondRadius_);
 }
 
 /*

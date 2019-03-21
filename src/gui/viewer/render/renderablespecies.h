@@ -101,10 +101,21 @@ class RenderableSpecies : public Renderable
 	public:
 	// Display Styles enum
 	enum DisplayStyle { LinesStyle, SpheresStyle, nDisplayStyles };
+
+	private:
+	// Radius of free (unbound) atoms when drawing with lines
+	double linesAtomRadius_;
+	// Radius of atoms when drawing with spheres
+	double spheresAtomRadius_;
+	// Radius of bonds when drawing with spheres
+	double spheresBondRadius_;
+
+	public:
 	// Return keyword for display style index
 	const char* displayStyle(int id);
 	// Return display style index from string
 	int displayStyle(const char* s);
+
 };
 
 #endif
