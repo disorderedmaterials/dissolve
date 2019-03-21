@@ -25,6 +25,7 @@
 #include "classes/empiricalformula.h"
 #include "classes/species.h"
 #include "main/dissolve.h"
+#include <QButtonGroup>
 
 // Constructor
 SpeciesWidget::SpeciesWidget(QWidget* parent) : QWidget(parent)
