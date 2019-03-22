@@ -143,6 +143,11 @@ template <class A> class Array : public ListItem< Array<A> >
 	{
 		return array_;
 	}
+	// Return const data array
+	const A* constArray() const
+	{
+		return array_;
+	}
 	// Create array of specified size
 	void initialise(int size)
 	{
