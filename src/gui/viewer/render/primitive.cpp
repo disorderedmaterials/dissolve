@@ -224,7 +224,7 @@ void Primitive::popInstance(const QOpenGLContext* context)
 
 
 // Return number of instances available
-int Primitive::nInstances()
+int Primitive::nInstances() const
 {
 	return instances_.nItems();
 }
