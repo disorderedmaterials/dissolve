@@ -195,7 +195,6 @@ void ModuleKeywordsWidget::setUp(DissolveWindow* dissolveWindow, Module* module)
 
 		// Group is finished, so add the widget as a new tab in our QToolBox
 		addItem(groupWidget, group->name());
-// 		keywordsLayout->addWidget(groupBox);
 	}
 
 	// If there are any 'group-orphaned' keywords, add these at the bottom
