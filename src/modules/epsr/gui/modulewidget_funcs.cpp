@@ -128,7 +128,7 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	// Start a new, empty session
 	phiMagGraph_->view().setViewType(View::FlatXYView);
 	phiMagGraph_->view().axes().setTitle(0, "Iteration");
-	phiMagGraph_->view().axes().numberFormat(0).setNDecimals(0);
+	phiMagGraph_->view().axes().numberFormat(0).setType(NumberFormat::IntegerFormat);
 	phiMagGraph_->view().axes().setMax(0, 10.0);
 	phiMagGraph_->view().axes().setTitle(1, "\\sym{Delta}\\sym{phi}(\\it{r}), kJ mol\\sup{-1} \\sum{angstrom}\\sup{-1}");
 	phiMagGraph_->view().axes().setMin(1, 0.0);
@@ -142,9 +142,10 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	// Start a new, empty session
 	rFactorGraph_->view().setViewType(View::FlatXYView);
 	rFactorGraph_->view().axes().setTitle(0, "Iteration");
-	rFactorGraph_->view().axes().numberFormat(0).setNDecimals(0);
+	rFactorGraph_->view().axes().numberFormat(0).setType(NumberFormat::IntegerFormat);
 	rFactorGraph_->view().axes().setMax(0, 10.0);
 	rFactorGraph_->view().axes().setTitle(1, "R-Factor");
+	rFactorGraph_->view().axes().numberFormat(1).setType(NumberFormat::ScientificFormat);
 	rFactorGraph_->view().axes().setMin(1, 0.0);
 	rFactorGraph_->view().axes().setMax(1, 0.5);
 	rFactorGraph_->view().setAutoFollowType(View::AllAutoFollow);
