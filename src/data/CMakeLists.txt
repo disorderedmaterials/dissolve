@@ -6,6 +6,7 @@ add_library(data
   ffatomtype.cpp
   fflibrary.cpp
   isotopes.cpp
+  spacegroups.cpp
 
   atomicmass.h
   elementcolours.h
@@ -14,6 +15,7 @@ add_library(data
   ffatomtype.h
   fflibrary.h
   isotopes.h
+  spacegroups.h
 )
 
 include_directories(
@@ -22,3 +24,7 @@ ${CMAKE_SOURCE_DIR}
 ${CMAKE_BINARY_DIR}
 ${CMAKE_BINARY_DIR}/src
 )
+
+add_subdirectory(ff)
+add_subdirectory(sg)
+
