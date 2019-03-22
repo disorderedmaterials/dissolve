@@ -245,7 +245,8 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 	CharString blockData;
 
 	// Add total R-Factor before any dataset R-Factors
-	rFactorGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//RFactor", module->uniqueName()), "TotalRFactor", "Total");
+	Renderable* rFacTot = rFactorGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//RFactor", module->uniqueName()), "TotalRFactor", "Total");
+	rFacTot->lineStyle().setStipple(LineStipple::HalfDashStipple);
 
 	// Add reference data & calculated data to the FQGraph_, and percentage errors to the rFactorGraph_
 	RefListIterator<Module,bool> targetIterator(module->allTargets());
@@ -260,6 +261,7 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 		{
 			// F(Q)
 			Renderable* calcFQ = FQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedSQ//Total", targetModule->uniqueName()), CharString("CalcFQ//%s", targetModule->uniqueName()), CharString("%s Calc", targetModule->uniqueName()));
+			calcFQ->lineStyle().setStipple(LineStipple::HalfDashStipple);
 			FQGraph_->groupManager().addToGroup(calcFQ, targetModule->uniqueName());
 
 			// F(Q) diff w.r.t. reference
@@ -277,6 +279,7 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 
 			// Simulated F(r) (from FT of the calculated F(Q))
 			Renderable* calcFR = FRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//SimulatedFR//%s", module->uniqueName(), targetModule->uniqueName()), CharString("CalcFR//%s//%s", module->uniqueName(), targetModule->uniqueName()), CharString("%s Calc", targetModule->uniqueName()));
+			calcFR->lineStyle().setStipple(LineStipple::HalfDashStipple);
 			FRGraph_->groupManager().addToGroup(calcFR, targetModule->uniqueName());
 		}
 
