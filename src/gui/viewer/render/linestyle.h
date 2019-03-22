@@ -80,7 +80,7 @@ class LineStyle
 	 */
 	public:
 	// Send line styling to GL
-	void sendToGL(double widthScaling = 1.0);
+	const void sendToGL(const double pixelScaling = 1.0);
 };
 
 #endif

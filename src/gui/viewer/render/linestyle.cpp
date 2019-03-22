@@ -132,10 +132,10 @@ const GLfloat* LineStyle::colour() const
  */
 
 // Send line styling to GL
-void LineStyle::sendToGL(double widthScaling)
+const void LineStyle::sendToGL(const double pixelScaling)
 {
 	// Set line width, including any supplied scaling factor
-	glLineWidth(width_ * widthScaling);
+	glLineWidth(width_ * pixelScaling);
 
 	// Enable / disable stippling
 	if (stipple_ == LineStipple::NoStipple) glDisable(GL_LINE_STIPPLE);
