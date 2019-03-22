@@ -44,10 +44,10 @@ const char* NumberFormat::formatType(NumberFormat::FormatType ft)
 NumberFormat::NumberFormat()
 {
 	type_ = NumberFormat::DecimalFormat;
-	nDecimals_ = 3;
+	nDecimals_ = 1;
 	forcePrecedingPlus_ = false;
 	useUpperCaseExponent_ = true;
-	useENotation_ = false;
+	useENotation_ = true;
 }
 
 // Destructor
