@@ -194,12 +194,8 @@ class Renderable : public ListItem<Renderable>
 	 * Rendering Primitives
 	 */
 	private:
-	// Basic Primitives managed by the Renderable, and used in the creation of assemblies
-	PrimitiveList basicPrimitives_;
-	// Standard Primitives managed by the Renderable, and drawn automatically
+	// Primitives instance-managed by the Renderable
 	PrimitiveList primitives_;
-	// Primitive assemblies managed by the Renderable, and drawn automatically
-	List<PrimitiveAssembly> assemblies_;
 	// Data version at which bespoke primitives / assembled list were last created
 	int lastDataVersion_;
 	// ColourDefinition fingerprint at which primitives were last created
@@ -210,22 +206,14 @@ class Renderable : public ListItem<Renderable>
 	int lastStyleVersion_;
 
 	protected:
-	// Create new basic Primitive
-	Primitive* createBasicPrimitive(GLenum type = GL_LINES, bool colourData = false);
-	// Remove specified basic Primitive
-	void removeBasicPrimitive(Primitive* primitive);
-	// Create new Primitive
-	Primitive* createPrimitive();
+	// Create new Primitive, whose instances will be managed by the Renderable
+	Primitive* createPrimitive(GLenum type = GL_LINES, bool colourData = false);
 	// Remove specified Primitive
 	void removePrimitive(Primitive* primitive);
-	// Create new PrimitiveAssembly
-	PrimitiveAssembly* createPrimitiveAssembly();
-	// Remove specified PrimitiveAssembly
-	void removePrimitiveAssembly(PrimitiveAssembly* assembly);
-	
-	private:
 	// Recreate necessary primitives / primitive assemblies for the data
 	virtual void recreatePrimitives(const View& view, const ColourDefinition& colourDefinition) = 0;
+	// Send primitives for rendering
+	virtual const void sendToGL(const double pixelScaling) = 0;
 
 	public:
 	// Update primitives and send to display

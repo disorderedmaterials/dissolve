@@ -72,15 +72,19 @@ class RenderableSpecies : public Renderable
 	// Main primitives
 	Primitive* lineSpeciesPrimitive_, *lineSelectionPrimitive_, *lineInteractionPrimitive_;
 	// Main assemblies
-	PrimitiveAssembly* speciesAssembly_, *selectionAssembly_, *interactionAssembly_;
+	PrimitiveAssembly speciesAssembly_, selectionAssembly_, interactionAssembly_;
 	// Version at which selection primitive was created, relative to selection version
 	int selectionPrimitiveVersion_;
 
 	private:
+	// Create cylinder bond between supplied atoms in specified assembly
+	void createCylinderBond(PrimitiveAssembly& assembly, const SpeciesAtom* i, const SpeciesAtom* j, double radialScaling);
+
+	protected:
 	// Recreate necessary primitives / primitive assemblies for the data
 	void recreatePrimitives(const View& view, const ColourDefinition& colourDefinition);
-	// Create cylinder bond between supplied atoms in specified assembly
-	void createCylinderBond(PrimitiveAssembly* assembly, const SpeciesAtom* i, const SpeciesAtom* j, double radialScaling);
+	// Send primitives for rendering
+	const void sendToGL(const double pixelScaling);
 
 	public:
 	// Recreate selection Primitive

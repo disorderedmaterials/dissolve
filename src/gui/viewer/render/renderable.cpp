@@ -297,40 +297,16 @@ int Renderable::styleVersion() const
  * Rendering Primitives
  */
 
-// Create new basic Primitive
-Primitive* Renderable::createBasicPrimitive(GLenum type, bool colourData)
+// Create new Primitive, whose instances will be managed by the Renderable
+Primitive* Renderable::createPrimitive(GLenum type, bool colourData)
 {
-	return basicPrimitives_.add(type, colourData);
-}
-
-// Remove specified basic Primitive
-void Renderable::removeBasicPrimitive(Primitive* primitive)
-{
-	basicPrimitives_.remove(primitive);
-}
-
-// Create new Primitive
-Primitive* Renderable::createPrimitive()
-{
-	return primitives_.add();
+	return primitives_.add(type, colourData);
 }
 
 // Remove specified Primitive
 void Renderable::removePrimitive(Primitive* primitive)
 {
 	primitives_.remove(primitive);
-}
-
-// Create new PrimitiveAssembly
-PrimitiveAssembly* Renderable::createPrimitiveAssembly()
-{
-	return assemblies_.add();
-}
-
-// Remove specified PrimitiveAssembly
-void Renderable::removePrimitiveAssembly(PrimitiveAssembly* assembly)
-{
-	assemblies_.remove(assembly);
 }
 
 // Update primitives and send to display
@@ -356,36 +332,21 @@ void Renderable::updateAndSendPrimitives(const View& view, const RenderableGroup
 	// If the primitive is out of date, recreate it's data.
 	if (!upToDate)
 	{
-		// Forget all current data for primtives and assemblies (not basic primitives)
-		primitives_.forgetAll();
-		ListIterator<PrimitiveAssembly> assemblyIterator(assemblies_);
-		while (PrimitiveAssembly* assembly = assemblyIterator.iterate()) assembly->clear();
-
 		// Recreate Primitives for the underlying data
 		recreatePrimitives(view, colourDefinition);
 
 		// Pop old Primitive instance (if they exist)
-		if (basicPrimitives_.nInstances() != 0) basicPrimitives_.popInstance(context);
 		if (primitives_.nInstances() != 0) primitives_.popInstance(context);
 	}
 
 	// If there are no current instances, or we are forcing a push/pop of an instance, push an instance here
-	if ((basicPrimitives_.nInstances() == 0) || pushAndPop) basicPrimitives_.pushInstance(context);
 	if ((primitives_.nInstances() == 0) || pushAndPop) primitives_.pushInstance(context);
 
-	// Send Primitives to display
-	primitives_.sendToGL();
-
-	// Send Primitive assemblies to display
-	ListIterator<PrimitiveAssembly> assemblyIterator(assemblies_);
-	while (PrimitiveAssembly* assembly = assemblyIterator.iterate()) assembly->sendToGL(pixelScaling);
+	// Send to GL
+	sendToGL(pixelScaling);
 
 	// Pop current instances if required
-	if (pushAndPop)
-	{
-		basicPrimitives_.popInstance(context);
-		primitives_.popInstance(context);
-	}
+	if (pushAndPop) primitives_.popInstance(context);
 
 	// Store version points for the up-to-date primitive
 	lastAxesVersion_ = axes.version();

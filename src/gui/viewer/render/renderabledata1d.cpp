@@ -157,9 +157,25 @@ bool RenderableData1D::yRangeOverX(double xMin, double xMax, double& yMin, doubl
 
 // Recreate necessary primitives / primitive assemblies for the data
 void RenderableData1D::recreatePrimitives(const View& view, const ColourDefinition& colourDefinition)
-{
+{	
 	dataPrimitive_->initialise(GL_LINE_STRIP, true);
+
 	constructLineXY(transformedData().constXAxis(), transformedData().constValues(), dataPrimitive_, view.constAxes(), colourDefinition);
+}
+
+// Send primitives for rendering
+const void RenderableData1D::sendToGL(const double pixelScaling)
+{
+	// Apply the LineStyle of the Renderable
+	lineStyle_.sendToGL(pixelScaling);
+
+	// Disable lighting
+	glDisable(GL_LIGHTING);
+
+	dataPrimitive_->sendToGL();
+
+	// Reset LineStyle back to defaults
+	LineStyle().sendToGL();
 }
 
 // Create line strip primitive
