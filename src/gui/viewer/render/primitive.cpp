@@ -230,7 +230,7 @@ int Primitive::nInstances() const
 }
 
 // Send to OpenGL (i.e. render)
-void Primitive::sendToGL()
+void Primitive::sendToGL() const
 {
 	// If no vertices are defined, nothing to do...
 	if (nDefinedVertices_ == 0) return;
@@ -273,10 +273,10 @@ void Primitive::sendToGL()
 	else
 	{
 		// Does the vertex data contain colour-per-vertex information?
-		glInterleavedArrays(colouredVertexData_ ? GL_C4F_N3F_V3F : GL_N3F_V3F, 0, vertexData_.array());
+		glInterleavedArrays(colouredVertexData_ ? GL_C4F_N3F_V3F : GL_N3F_V3F, 0, vertexData_.constArray());
 
 		// Check if we are using indices
-		if (indexData_.nItems() != 0) glDrawElements(type_, indexData_.nItems(), GL_UNSIGNED_INT, indexData_.array());
+		if (indexData_.nItems() != 0) glDrawElements(type_, indexData_.nItems(), GL_UNSIGNED_INT, indexData_.constArray());
 		else glDrawArrays(type_, 0, nDefinedVertices_);
 	}
 }

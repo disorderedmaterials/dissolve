@@ -91,7 +91,7 @@ class Primitive : public ListItem<Primitive>
 	// Return number of instances available
 	int nInstances() const;
 	// Send to OpenGL (i.e. render)
-	void sendToGL();
+	void sendToGL() const;
 
 
 	/*
