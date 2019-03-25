@@ -831,7 +831,7 @@ double EnergyKernel::intraEnergy(const Atom* i)
 // Return intramolecular energy for the supplied Molecule
 double EnergyKernel::intraEnergy(const Molecule* mol)
 {
-	// If no Atom is given, return zero
+	// If no Molecule is given, return zero
 	if (mol == NULL) return 0.0;
 
 	double intraEnergy = 0.0;
