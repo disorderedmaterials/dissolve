@@ -128,7 +128,7 @@ bool MolShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
 			}
 
-			// Loop over target Molecule
+			// Loop over target Molecules
 			for (int n = 0; n<targetMolecules.nItems(); ++n)
 			{
 				/*
@@ -139,7 +139,7 @@ bool MolShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				molId = targetMolecules[n];
 				Molecule* mol = cfg->molecule(molId);
 
-				// Set current atom targets in ChangeStore (whole molecule)
+				// Set current atom targets in ChangeStore (whole Molecule)
 				changeStore.add(mol);
 
 				// Calculate reference energy for Molecule, including intramolecular terms
