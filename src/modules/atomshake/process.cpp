@@ -22,11 +22,10 @@
 #include "modules/atomshake/atomshake.h"
 #include "main/dissolve.h"
 #include "classes/box.h"
-#include "classes/cell.h"
-#include "classes/celldistributor.h"
 #include "classes/changestore.h"
 #include "classes/configuration.h"
 #include "classes/energykernel.h"
+#include "classes/regionaldistributor.h"
 #include "base/processpool.h"
 #include "base/timer.h"
 #include "templates/genericlisthelper.h"
@@ -77,9 +76,9 @@ bool AtomShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
 
-		// Initialise a CellDistributor
-		CellArray& cellArray = cfg->cells();
-		CellDistributor distributor(cellArray, procPool, strategy, false);
+		// Create a Molecule distributor
+		DynamicArray<Molecule>& moleculeArray = cfg->molecules();
+		RegionalDistributor distributor(moleculeArray, cfg->cells(), procPool, strategy);
 
 		// Create a local ChangeStore and EnergyKernel
 		ChangeStore changeStore(procPool);
@@ -88,111 +87,124 @@ bool AtomShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Initialise the random number buffer so it is suitable for our parallel strategy within the main loop
 		procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
 
-		int cellId, shake, n;
-		int nTries = 0, nAccepted = 0;
+		int shake, n, m;
+		int nAttempts = 0, nAccepted = 0;
 		bool accept;
-		double currentEnergy, intraEnergy, newEnergy, newIntraEnergy, delta, totalDelta = 0.0;
-		Cell* cell;
-		Vec3<double> centre, rDelta;
-		bool changesBroadcastRequired;
+		double currentEnergy, currentIntraEnergy, newEnergy, newIntraEnergy, delta, totalDelta = 0.0;
+		Vec3<double> rDelta;
+
+		int molId;
 
 		Timer timer;
 		procPool.resetAccumulatedTime();
-		while (cellId = distributor.nextAvailableObject(changesBroadcastRequired), cellId != Distributor::AllComplete)
+		while (distributor.cycle())
 		{
-			// Upkeep - Do we need to broadcast changes before we begin the calculation?
-			if (changesBroadcastRequired)
+			// Get next set of Molecule targets from the distributor
+			Array<int> targetMolecules = distributor.assignedMolecules();
+
+			// Switch parallel strategy if necessary
+			if (distributor.currentStrategy() != strategy)
 			{
-				changeStore.distributeAndApply(cfg);
-				changeStore.reset();
+				// Set the new strategy
+				strategy = distributor.currentStrategy();
+
+				// Re-initialise the random buffer
+				procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
 			}
 
-			// Check for valid cell
-			if (cellId == CellDistributor::NoneAvailable)
+			// Loop over target Molecules
+			for (m = 0; m<targetMolecules.nItems(); ++m)
 			{
-				distributor.finishedWithObject();
-				continue;
-			}
+				/*
+				 * Calculation Begins
+				 */
 
-			/*
-			 * Calculation Begins
-			 */
+				// Get Molecule index and pointer
+				molId = targetMolecules[m];
+				Molecule* mol = cfg->molecule(molId);
 
-			cell = cellArray.cell(cellId);
-			Messenger::printVerbose("Cell %i now the target on process %s, containing %i Atoms interacting with %i neighbour cells.\n", cellId, procPool.processInfo(), cell->nAtoms(), cell->nTotalCellNeighbours());
+				// Set current Atom targets in ChangeStore (whole Molecule)
+				changeStore.add(mol);
 
-			// Set current atom targets in ChangeStore (entire cell contents)
-			changeStore.add(cell);
-
-			// Loop over atoms in this cell
-			OrderedPointerArray<Atom>& cellAtoms = cell->atoms();
-			for (n = 0; n < cellAtoms.nItems(); ++n)
-			{
-				// Grab Atom pointer
-				Atom* i = cellAtoms[n];
-
-				// Calculate reference energy for atom, including intramolecular terms
-				currentEnergy = kernel.energy(i, ProcessPool::subDivisionStrategy(strategy), true);
-				intraEnergy = kernel.intraEnergy(i) * termScale;
-
-				// Loop over number of shakes per atom
-				for (shake=0; shake<nShakesPerAtom; ++shake)
+				// Loop over atoms in the Molecule
+				Atom** atoms = mol->atoms();
+				for (n = 0; n < mol->nAtoms(); ++n)
 				{
-					// Create a random translation vector
-					rDelta.set(procPool.randomPlusMinusOne()*stepSize, procPool.randomPlusMinusOne()*stepSize, procPool.randomPlusMinusOne()*stepSize);
+					// Grab Atom pointer
+					Atom* i = atoms[n];
 
-					// Translate atom, update Cell if necssary, and calculate new energy
-					i->translateCoordinates(rDelta);
-					cfg->updateCellLocation(i);
-					newEnergy = kernel.energy(i, ProcessPool::subDivisionStrategy(strategy), true);
-					newIntraEnergy = kernel.intraEnergy(i) * termScale;
-					
-					// Trial the transformed atom position
-					delta = (newEnergy + newIntraEnergy) - (currentEnergy + intraEnergy);
-					accept = delta < 0 ? true : (procPool.random() < exp(-delta*rRT));
+					// Calculate reference energy for the Atom
+					currentEnergy = kernel.energy(i, ProcessPool::subDivisionStrategy(strategy), true);
+					currentIntraEnergy = kernel.intraEnergy(i) * termScale;
 
-					if (accept)
+					// Loop over number of shakes per Atom
+					for (shake=0; shake<nShakesPerAtom; ++shake)
 					{
-						// Accept new (current) position of target Atom
-						changeStore.updateAtom(n);
-						currentEnergy = newEnergy;
-						intraEnergy = newIntraEnergy;
-						totalDelta += delta;
-						++nAccepted;
+						// Create a random translation vector
+						rDelta.set(procPool.randomPlusMinusOne()*stepSize, procPool.randomPlusMinusOne()*stepSize, procPool.randomPlusMinusOne()*stepSize);
+
+						// Translate Atom and update its Cell position
+						i->translateCoordinates(rDelta);
+						cfg->updateCellLocation(i);
+
+						// Calculate new energy
+						newEnergy = kernel.energy(i, ProcessPool::subDivisionStrategy(strategy), true);
+						newIntraEnergy = kernel.intraEnergy(i) * termScale;
+						
+						// Trial the transformed Atom position
+						delta = (newEnergy + newIntraEnergy) - (currentEnergy + currentIntraEnergy);
+						accept = delta < 0 ? true : (procPool.random() < exp(-delta*rRT));
+
+						if (accept)
+						{
+							// Accept new (current) position of target Atom
+							changeStore.updateAtom(n);
+							currentEnergy = newEnergy;
+						}
+						else changeStore.revert(n);
+
+						// Increase attempt counters
+						// The strategy in force at any one time may vary, so use the distributor's helper functions.
+						if (distributor.collectStatistics())
+						{
+							if (accept)
+							{
+								totalDelta += delta;
+								++nAccepted;
+							}
+							++nAttempts;
+						}
 					}
-					else changeStore.revert(n);
-					
-					++nTries;
+
 				}
 
+				// Store modifications to Atom positions ready for broadcast later
+				changeStore.storeAndReset();
+
+				/*
+				 * Calculation End
+				 */
 			}
 
-			// Store modifications to Atom positions ready for broadcast later
-			changeStore.storeAndReset();
-
-			/*
-			* Calculation End
-			*/
-
-			// Tell the distributor we are done
-			distributor.finishedWithObject();
+			// Now all target Molecules have been processes, broadcast the changes made
+			changeStore.distributeAndApply(cfg);
+			changeStore.reset();
 		}
-
-		// Make sure any remaining changes are broadcast
-		changeStore.distributeAndApply(cfg);
-		changeStore.reset();
-
-		timer.stop();
 
 		// Collect statistics across all processe
 		if (!procPool.allSum(&nAccepted, 1, strategy)) return false;
-		if (!procPool.allSum(&nTries, 1, strategy)) return false;
+		if (!procPool.allSum(&nAttempts, 1, strategy)) return false;
 		if (!procPool.allSum(&totalDelta, 1, strategy)) return false;
 
-		double rate = double(nAccepted)/nTries;
+		timer.stop();
 
-		Messenger::print("Overall acceptance rate was %4.2f% (%i of %i attempted moves) (%s work, %s comms, %i nodists, %i broadcasts)\n", 100.0*rate, nAccepted, nTries, timer.totalTimeString(), procPool.accumulatedTimeString(), distributor.nUnavailableInstances(), distributor.nChangeBroadcastsRequired());
 		Messenger::print("Total energy delta was %10.4e kJ/mol.\n", totalDelta);
+
+		// Calculate and print acceptance rate
+		double rate = double(nAccepted)/nAttempts;
+		Messenger::print("Total number of attempted moves was %i (%s work, %s comms)\n", nAttempts, timer.totalTimeString(), procPool.accumulatedTimeString());
+
+		Messenger::print("Overall acceptance rate was %4.2f% (%i of %i attempted moves)\n", 100.0*rate, nAccepted, nAttempts);
 
 		// Update and set translation step size
 		stepSize *= (nAccepted == 0) ? 0.8 : rate/targetAcceptanceRate;
