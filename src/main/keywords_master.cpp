@@ -181,5 +181,12 @@ bool MasterBlock::parse(LineParser& parser, Dissolve* dissolve)
 		if (blockDone) break;
 	}
 
+	// If the blockdone flag isn't set, return an error
+	if (!blockDone)
+	{
+		Messenger::error("Unterminated %s block found.\n", BlockKeywords::blockKeyword(BlockKeywords::MasterBlockKeyword));
+		error = true;
+	}
+
 	return (!error);
 }

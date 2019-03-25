@@ -111,5 +111,12 @@ bool SpeciesInfoBlock::parse(LineParser& parser, Dissolve* dissolve, SpeciesInfo
 		if (blockDone) break;
 	}
 
+	// If the blockdone flag isn't set, return an error
+	if (!blockDone)
+	{
+		Messenger::error("Unterminated %s block found.\n", ConfigurationBlock::keyword(ConfigurationBlock::SpeciesInfoKeyword));
+		error = true;
+	}
+
 	return (!error);
 }
