@@ -811,6 +811,9 @@ double EnergyKernel::intraEnergy(const Atom* i)
 	// If no Atom is given, return zero
 	if (i == NULL) return 0.0;
 
+	// If no terms are present, return zero
+	if ((i->nBonds() == 0) && (i->nAngles() == 0) && (i->nTorsions() == 0)) return 0.0;
+
 	double intraEnergy = 0.0;
 
 	// Add energy from Bond terms
