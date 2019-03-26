@@ -20,13 +20,17 @@
 */
 
 #include "data/ffatomtype.h"
+#include "data/ff.h"
 
 // Constructor / Destructor
-ForcefieldAtomType::ForcefieldAtomType(int index, const char* name, const char* description)
+ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int z, const char* symbol, int index, const char* name, const char* description, double q, double data1, double data2, double data3, double data4) : ElementReference(z, symbol), ListItem<ForcefieldAtomType>()
 {
 	index_ = index;
 	typeName_ = name;
 	typeDescription_ = description;
+
+	// Register this atom type with the parent forcefield
+	if (parent) parent->registerAtomType(this, z);
 }
 
 ForcefieldAtomType::~ForcefieldAtomType()

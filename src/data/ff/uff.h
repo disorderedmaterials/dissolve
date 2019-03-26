@@ -56,19 +56,7 @@ class Forcefield_UFF : public Forcefield
 	/*
 	 * Atom Type Data
 	 */
-	private:
-	// Atom type data, grouped by element
-	static Array< List<UFFAtomType> > atomTypesByElementPrivate_;
-
-	private:
-	// Return atom type data for specified Element
-	static List<UFFAtomType>& atomTypesByElement(int Z);
-
 	public:
-	// Register specified atom type to given Element
-	static void registerAtomType(UFFAtomType* atomType, int Z);
-	// Return the named UFFAtomType (if it exists)
-	UFFAtomType* atomTypeByName(const char* name, Element* element = NULL) const;
 	// Determine and return AtomType for specified SpeciesAtom
 	UFFAtomType* determineAtomType(SpeciesAtom* i) const;
 

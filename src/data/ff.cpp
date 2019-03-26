@@ -20,17 +20,46 @@
 */
 
 #include "data/ff.h"
+#include "data/ffatomtype.h"
 #include "classes/box.h"
 #include "classes/speciesatom.h"
 #include "classes/speciesbond.h"
+#include "base/sysfunc.h"
 
 // Constructor / Destructor
 Forcefield::Forcefield() : ListItem<Forcefield>()
 {
+	// Initialise the Element RefList Array
+	Elements::createElementRefListArray<ForcefieldAtomType>(atomTypesByElementPrivate_);
 }
 
 Forcefield::~Forcefield()
 {
+}
+
+/*
+ * Atom Type Data
+ */
+
+// Register specified atom type to given Element
+void Forcefield::registerAtomType(ForcefieldAtomType* atomType, int Z)
+{
+	atomTypesByElementPrivate_[Z].add(atomType);
+}
+
+// Return the named ForcefieldAtomType (if it exists)
+ForcefieldAtomType* Forcefield::atomTypeByName(const char* name, Element* element) const
+{
+	int startZ = (element ? element->Z() : 0);
+	int endZ = (element ? element->Z() : nElements()-1);
+	for (int Z=startZ; Z<=endZ; ++Z)
+	{
+		// Go through types associated to the Element
+		RefListIterator<ForcefieldAtomType,bool> typeIterator(atomTypesByElementPrivate_.at(Z));
+		while (ForcefieldAtomType* type = typeIterator.iterate()) if (DissolveSys::sameString(type->typeName(), name)) return type;
+	}
+
+	return NULL;
 }
 
 /*

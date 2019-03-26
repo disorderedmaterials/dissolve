@@ -22,17 +22,19 @@
 #ifndef DISSOLVE_FORCEFIELDATOMTYPE_H
 #define DISSOLVE_FORCEFIELDATOMTYPE_H
 
+#include "data/elements.h"
 #include "base/charstring.h"
+#include "base/parameters.h"
 
 // Forward Declarations
 class Forcefield;
 
 // Forcefield AtomType Base Class
-class ForcefieldAtomType
+class ForcefieldAtomType : public ElementReference, public ListItem<ForcefieldAtomType>
 {
 	public:
 	// Constructor / Destructor
-	ForcefieldAtomType(int index, const char* name, const char* description);
+	ForcefieldAtomType(Forcefield* parent = NULL, int z = 0, const char* symbol = NULL, int index = -1, const char* name = NULL, const char* description = NULL, double q = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0, double data4 = 0.0);
 	virtual ~ForcefieldAtomType();
 
 
@@ -54,6 +56,16 @@ class ForcefieldAtomType
 	const char* typeName() const;
 	// Return description for type
 	const char* typeDescription() const;
+
+
+	/*
+	 * Parameters
+	 */
+	private:
+	// Charge on atom type (if specified)
+	double q_;
+	// Short-range parameters
+	Parameters parameters_;
 };
 
 #endif

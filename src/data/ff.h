@@ -23,9 +23,11 @@
 #define DISSOLVE_FORCEFIELD_H
 
 #include "data/elements.h"
+#include "templates/reflist.h"
 
 // Forward Declarations
 class CoreData;
+class ForcefieldAtomType;
 class Species;
 class SpeciesAtom;
 
@@ -44,6 +46,20 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 	public:
 	// Return name of Forcefield
 	virtual const char* name() = 0;
+
+
+	/*
+	 * Atom Type Data
+	 */
+	protected:
+	// Atom type data, grouped by element
+	Array< RefList<ForcefieldAtomType,bool> > atomTypesByElementPrivate_;
+
+	public:
+	// Register specified atom type to given Element
+	void registerAtomType(ForcefieldAtomType* atomType, int Z);
+	// Return the named ForcefieldAtomType (if it exists)
+	ForcefieldAtomType* atomTypeByName(const char* name, Element* element = NULL) const;
 
 
 	/*
