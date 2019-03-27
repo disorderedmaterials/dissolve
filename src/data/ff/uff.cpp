@@ -320,97 +320,95 @@ const char* Forcefield_UFF::name()
  * Atom Type Data
  */
 
-// Determine and return AtomType for specified SpeciesAtom
-UFFAtomType* Forcefield_UFF::determineAtomType(SpeciesAtom* i) const
+// Determine and return atom type for specified SpeciesAtom
+ForcefieldAtomType* Forcefield_UFF::determineAtomType(SpeciesAtom* i) const
 {
-	ForcefieldAtomType* result = NULL;
-
 	switch (i->element()->Z())
 	{
 		// H
 		case (ELEMENT_H): 
-				if (isBoundTo(i, &Elements::element(5), 2)) result = atomTypeByName("H_b", i->element());
-				else result = atomTypeByName("H_", i->element());
+				if (isBoundTo(i, &Elements::element(5), 2)) return atomTypeByName("H_b", i->element());
+				else return atomTypeByName("H_", i->element());
 			break;
 		// Boron
 		case (ELEMENT_B):
-				if (isAtomGeometry(i, Forcefield::TetrahedralGeometry)) result = atomTypeByName("B_3", i->element());
-				else result = atomTypeByName("B_2", i->element());
+				if (isAtomGeometry(i, Forcefield::TetrahedralGeometry)) return atomTypeByName("B_3", i->element());
+				else return atomTypeByName("B_2", i->element());
 			break;
 		// Carbon
 		case (ELEMENT_C):
-				if (isBondPattern(i, 0, 0, 0, 0, -1)) result = atomTypeByName("C_R", i->element());
-				else if (isBondPattern(i, 2, 1)) result = atomTypeByName("C_2", i->element());
-				else if (isBondPattern(i, 1, 0, 1) || isAtomGeometry(i, Forcefield::LinearGeometry)) result = atomTypeByName("C_1", i->element());
-				else result = atomTypeByName("C_3", i->element());
+				if (isBondPattern(i, 0, 0, 0, 0, -1)) return atomTypeByName("C_R", i->element());
+				else if (isBondPattern(i, 2, 1)) return atomTypeByName("C_2", i->element());
+				else if (isBondPattern(i, 1, 0, 1) || isAtomGeometry(i, Forcefield::LinearGeometry)) return atomTypeByName("C_1", i->element());
+				else return atomTypeByName("C_3", i->element());
 			break;
 		// Nitrogen
 		case (ELEMENT_N):
-				if (isBondPattern(i, 0, 0, 0, 0, -1)) result = atomTypeByName("N_R", i->element());
-				else if (isBondPattern(i, 1, 1)) result = atomTypeByName("N_2", i->element());
-				else if (isBondPattern(i, 0, 0, 1) || isAtomGeometry(i, Forcefield::LinearGeometry)) result = atomTypeByName("N_1", i->element());
-				else result = atomTypeByName("N_3", i->element());
+				if (isBondPattern(i, 0, 0, 0, 0, -1)) return atomTypeByName("N_R", i->element());
+				else if (isBondPattern(i, 1, 1)) return atomTypeByName("N_2", i->element());
+				else if (isBondPattern(i, 0, 0, 1) || isAtomGeometry(i, Forcefield::LinearGeometry)) return atomTypeByName("N_1", i->element());
+				else return atomTypeByName("N_3", i->element());
 			break;
 		// Oxygen
 		case (ELEMENT_O):
-				if (isBondPattern(i, 0, 0, 0, 0, -1)) result = atomTypeByName("O_R", i->element());
-				else if (isBondPattern(i, 0, 1)) result = atomTypeByName("O_2", i->element());
-				else if (isBondPattern(i, 0, 0, 1) || isAtomGeometry(i, Forcefield::LinearGeometry)) result = atomTypeByName("O_1", i->element());
-				else if (isBoundTo(i, &Elements::element(ELEMENT_SI), 2)) result = atomTypeByName("O_3_z", i->element());
-				else result = atomTypeByName("O_3", i->element());
+				if (isBondPattern(i, 0, 0, 0, 0, -1)) return atomTypeByName("O_R", i->element());
+				else if (isBondPattern(i, 0, 1)) return atomTypeByName("O_2", i->element());
+				else if (isBondPattern(i, 0, 0, 1) || isAtomGeometry(i, Forcefield::LinearGeometry)) return atomTypeByName("O_1", i->element());
+				else if (isBoundTo(i, &Elements::element(ELEMENT_SI), 2)) return atomTypeByName("O_3_z", i->element());
+				else return atomTypeByName("O_3", i->element());
 			break;
 		// Phosphorus
 		case (ELEMENT_P):
-				if (guessOxidationState(i) == 5) result = atomTypeByName("P_3+5", i->element());
-				else if (guessOxidationState(i) == 3) result = atomTypeByName("P_3+3", i->element());
-				else if ((i->nBonds() == 4) && (isAtomGeometry(i, Forcefield::TetrahedralGeometry))) result = atomTypeByName("P_3+q", i->element());
+				if (guessOxidationState(i) == 5) return atomTypeByName("P_3+5", i->element());
+				else if (guessOxidationState(i) == 3) return atomTypeByName("P_3+3", i->element());
+				else if ((i->nBonds() == 4) && (isAtomGeometry(i, Forcefield::TetrahedralGeometry))) return atomTypeByName("P_3+q", i->element());
 			break;
 		// Sulphur
 		case (ELEMENT_S):
-				if (guessOxidationState(i) == 2) result = atomTypeByName("S_3+2", i->element());
-				else if (guessOxidationState(i) == 4) result = atomTypeByName("S_3+4", i->element());
-				else if (guessOxidationState(i) == 6) result = atomTypeByName("S_3+6", i->element());
-				else if (isBondPattern(i, 0, 0, 0, 0, -1)) result = atomTypeByName("S_R", i->element());
-				else if (isAtomGeometry(i, Forcefield::TrigonalPlanarGeometry)) result = atomTypeByName("S_2", i->element());
+				if (guessOxidationState(i) == 2) return atomTypeByName("S_3+2", i->element());
+				else if (guessOxidationState(i) == 4) return atomTypeByName("S_3+4", i->element());
+				else if (guessOxidationState(i) == 6) return atomTypeByName("S_3+6", i->element());
+				else if (isBondPattern(i, 0, 0, 0, 0, -1)) return atomTypeByName("S_R", i->element());
+				else if (isAtomGeometry(i, Forcefield::TrigonalPlanarGeometry)) return atomTypeByName("S_2", i->element());
 			break;
 		// Titanium
 		case (ELEMENT_TI):
-				if (isAtomGeometry(i, Forcefield::OctahedralGeometry)) result = atomTypeByName("Ti6+4", i->element());
-				else result = atomTypeByName("Ti3+4", i->element());
+				if (isAtomGeometry(i, Forcefield::OctahedralGeometry)) return atomTypeByName("Ti6+4", i->element());
+				else return atomTypeByName("Ti3+4", i->element());
 			break;
 		// Iron
 		case (ELEMENT_FE):
-				if (isAtomGeometry(i, Forcefield::OctahedralGeometry)) result = atomTypeByName("Fe6+2", i->element());
-				else result = atomTypeByName("Fe3+2", i->element());
+				if (isAtomGeometry(i, Forcefield::OctahedralGeometry)) return atomTypeByName("Fe6+2", i->element());
+				else return atomTypeByName("Fe3+2", i->element());
 				
 			break;
 		// Molybdenum
 		case (ELEMENT_MO):
-				if (isAtomGeometry(i, Forcefield::OctahedralGeometry)) result = atomTypeByName("Mo6+6", i->element());
-				else result = atomTypeByName("Mo3+6", i->element());
+				if (isAtomGeometry(i, Forcefield::OctahedralGeometry)) return atomTypeByName("Mo6+6", i->element());
+				else return atomTypeByName("Mo3+6", i->element());
 			break;
 		// Tungsten
 		case (ELEMENT_W):
-				if (isAtomGeometry(i, Forcefield::OctahedralGeometry)) result = atomTypeByName("W_6+6", i->element());
-				else if (guessOxidationState(i) == 4) result = atomTypeByName("W_3+4", i->element());
-				else result = atomTypeByName("W_3+6", i->element());
+				if (isAtomGeometry(i, Forcefield::OctahedralGeometry)) return atomTypeByName("W_6+6", i->element());
+				else if (guessOxidationState(i) == 4) return atomTypeByName("W_3+4", i->element());
+				else return atomTypeByName("W_3+6", i->element());
 			break;
 		// Rhenium
 		case (ELEMENT_RE):
-				if (isAtomGeometry(i, Forcefield::OctahedralGeometry)) result = atomTypeByName("Re6+5", i->element());
-				else result = atomTypeByName("Re3+7", i->element());
+				if (isAtomGeometry(i, Forcefield::OctahedralGeometry)) return atomTypeByName("Re6+5", i->element());
+				else return atomTypeByName("Re3+7", i->element());
 			break;
 		// Default - all elements with only one type
 		default:
-			result = atomTypesByElementPrivate_.constAt(i->element()->Z()).firstItem();
+			return atomTypesByElementPrivate_.constAt(i->element()->Z()).firstItem();
 			break;
 	}
 
-	return (UFFAtomType*) result;
+	return NULL;
 }
 
 /*
- * Term Generation
+ * Term Assignment
  */
 
 // Generate bond parameters for the supplied UFF atom types
@@ -615,8 +613,8 @@ bool Forcefield_UFF::generateTorsionTerm(const Species* sp, SpeciesTorsion* tors
 	return true;
 }
 
-// Create and assign suitable AtomTypes for the supplied Species
-bool Forcefield_UFF::createAtomTypes(Species* sp, CoreData& coreData, bool keepExisting) const
+// Assign suitable AtomTypes to the supplied Species
+bool Forcefield_UFF::assignAtomTypes(Species* sp, CoreData& coreData, bool keepExisting) const
 {
 	// Loop over Species atoms
 	for (SpeciesAtom* i = sp->atoms().first(); i != NULL; i = i->next)
@@ -624,7 +622,7 @@ bool Forcefield_UFF::createAtomTypes(Species* sp, CoreData& coreData, bool keepE
 		// If keepExisting == true, don't reassign a type to this atom if one already exists
 		if (keepExisting && i->atomType()) continue;
 
-		UFFAtomType* uffType = determineAtomType(i);
+		UFFAtomType* uffType = (UFFAtomType*) determineAtomType(i);
 		if (!uffType) Messenger::print("No UFF type available for Atom %i of Species (%s).\n", i->index()+1, i->element()->symbol());
 		else
 		{
@@ -654,8 +652,8 @@ bool Forcefield_UFF::createAtomTypes(Species* sp, CoreData& coreData, bool keepE
 	return true;
 }
 
-// Generate intramolecular parameters description for the supplied Species
-bool Forcefield_UFF::createIntramolecular(Species* sp, bool useExistingTypes, bool createBonds, bool createAngles, bool createTorsions) const
+// Assign intramolecular parameters to the supplied Species
+bool Forcefield_UFF::assignIntramolecular(Species* sp, bool useExistingTypes, bool assignBonds, bool assignAngles, bool assignTorsions) const
 {
 	// Create an array of the UFFAtomTypes for the atoms in the Species for speed
 	Array<UFFAtomType*> atomTypes;
@@ -677,14 +675,14 @@ bool Forcefield_UFF::createIntramolecular(Species* sp, bool useExistingTypes, bo
 		ListIterator<SpeciesAtom> atomIterator(sp->atoms());
 		while (SpeciesAtom* i = atomIterator.iterate())
 		{
-			UFFAtomType* at = determineAtomType(i);
+			UFFAtomType* at = (UFFAtomType*) determineAtomType(i);
 			if (!at) return Messenger::error("Couldn't determine a suitable AtomType for atom %i.\n", i->userIndex());
 			atomTypes.add(at);
 		}
 	}
 
-	// Set Bond terms
-	if (createBonds)
+	// Generate bond terms
+	if (assignBonds)
 	{
 		// Generate bond parameters
 		ListIterator<SpeciesBond> bondIterator(sp->bonds());
@@ -696,7 +694,8 @@ bool Forcefield_UFF::createIntramolecular(Species* sp, bool useExistingTypes, bo
 		}
 	}
 
-	if (createAngles)
+	// Generate angle terms
+	if (assignTorsions)
 	{
 		// Generate angle parameters
 		ListIterator<SpeciesAngle> angleIterator(sp->angles());
@@ -709,7 +708,8 @@ bool Forcefield_UFF::createIntramolecular(Species* sp, bool useExistingTypes, bo
 		}
 	}
 
-	if (createTorsions)
+	// Generate torsion terms
+	if (assignTorsions)
 	{
 		// Generate torsion parameters
 		ListIterator<SpeciesTorsion> torsionIterator(sp->torsions());

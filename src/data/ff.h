@@ -55,6 +55,10 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 	// Atom type data, grouped by element
 	Array< RefList<ForcefieldAtomType,bool> > atomTypesByElementPrivate_;
 
+	protected:
+	// Determine and return atom type for specified SpeciesAtom
+	virtual ForcefieldAtomType* determineAtomType(SpeciesAtom* i) const = 0;
+
 	public:
 	// Register specified atom type to given Element
 	void registerAtomType(ForcefieldAtomType* atomType, int Z);
@@ -66,10 +70,10 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 	 * Term Generation
 	 */
 	public:
-	// Create and assign suitable AtomTypes for the supplied Species
-	virtual bool createAtomTypes(Species* sp, CoreData& coreData, bool keepExisting = false) const = 0;
-	// Generate intramolecular parameters description for the supplied Species
-	virtual bool createIntramolecular(Species* sp, bool useExistingTypes, bool createBonds, bool createAngles, bool createTorsions) const = 0;
+	// Assign suitable AtomTypes to the supplied Species
+	virtual bool assignAtomTypes(Species* sp, CoreData& coreData, bool keepExisting = false) const = 0;
+	// Assign intramolecular parameters to the supplied Species
+	virtual bool assignIntramolecular(Species* sp, bool useExistingTypes, bool assignBonds, bool assignAngles, bool assignTorsions) const = 0;
 
 
 	/*

@@ -228,12 +228,12 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 				modifiedSpecies_->clearAtomTypes();
 				temporaryDissolve_.clearAtomTypes();
 
-				if (!ff->createAtomTypes(modifiedSpecies_, temporaryCoreData_)) return false;
+				if (!ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_)) return false;
 			}
-			else if (ui_.AtomTypesAssignMissingRadio->isChecked()) if (!ff->createAtomTypes(modifiedSpecies_, temporaryCoreData_, true)) return false;
+			else if (ui_.AtomTypesAssignMissingRadio->isChecked()) if (!ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, true)) return false;
 
-			// Create intramolecular terms
-			if (!ff->createIntramolecular(modifiedSpecies_, ui_.UseTypesFromSpeciesCheck->isChecked(), ui_.BondTermsCheck->isChecked(), ui_.AngleTermsCheck->isChecked(), ui_.TorsionTermsCheck->isChecked())) return false;
+			// Assign intramolecular terms
+			if (!ff->assignIntramolecular(modifiedSpecies_, ui_.UseTypesFromSpeciesCheck->isChecked(), ui_.BondTermsCheck->isChecked(), ui_.AngleTermsCheck->isChecked(), ui_.TorsionTermsCheck->isChecked())) return false;
 
 			updateAtomTypesPage();
 			updateMasterTermsPage();
