@@ -23,11 +23,16 @@
 #include "data/ff.h"
 
 // Constructor / Destructor
-ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int z, const char* symbol, int index, const char* name, const char* description, double q, double data1, double data2, double data3, double data4) : ElementReference(z, symbol), ListItem<ForcefieldAtomType>()
+ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int z, const char* symbol, int index, const char* name, const char* description, double q, double data0, double data1, double data2, double data3) : ElementReference(z, symbol), ListItem<ForcefieldAtomType>()
 {
 	index_ = index;
 	typeName_ = name;
 	typeDescription_ = description;
+	parameters_.setCharge(q);
+	parameters_.setParameter(0, data0);
+	parameters_.setParameter(1, data1);
+	parameters_.setParameter(2, data2);
+	parameters_.setParameter(3, data3);
 
 	// Register this atom type with the parent forcefield
 	if (parent) parent->registerAtomType(this, z);
@@ -57,4 +62,14 @@ const char* ForcefieldAtomType::typeName() const
 const char* ForcefieldAtomType::typeDescription() const
 {
 	return typeDescription_.get();
+}
+
+/*
+ * Parameters
+ */
+
+// Return short-range parameters
+const Parameters& ForcefieldAtomType::parameters() const
+{
+	return parameters_;
 }
