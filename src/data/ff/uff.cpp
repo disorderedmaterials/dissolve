@@ -30,9 +30,9 @@
  * J. Am. Chem. Soc. 114, 10024-10039 (1992)
  * 
  * Notes:
+ * Any inconsistencies between the forcefield as implemented here and the original work are the sole responsibility of TGAY.
  * Generator data 8 (THyb) are used to quickly determine the method of torsional parameter generation.
- * Torsional parameters U(i) are assigned to the second through sixth periods, following M. G. Martin's
- * implementation in MCCCS Towhee.
+ * Torsional parameters U(i) are assigned to the second through sixth periods, following M. G. Martin's implementation in MCCCS Towhee.
  * Other modifications from the original paper are made following the MCCCS Towhee implementation.
  * All energy values are in kcal.
  */
