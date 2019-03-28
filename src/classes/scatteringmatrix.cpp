@@ -55,7 +55,7 @@ int ScatteringMatrix::pairIndex(AtomType* typeI, AtomType* typeJ) const
 }
 
 // Return weight of the specified AtomType pair in the inverse matrix
-int ScatteringMatrix::pairWeightInverse(AtomType* typeI, AtomType* typeJ, int dataIndex) const
+double ScatteringMatrix::pairWeightInverse(AtomType* typeI, AtomType* typeJ, int dataIndex) const
 {
 	/*
 	 * The required row of the inverse matrix is the index of the AtomType pair.
