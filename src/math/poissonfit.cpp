@@ -161,6 +161,7 @@ void PoissonFit::set(FunctionSpace::SpaceType space, double rMax, Array<double> 
 	// Pre-calculate the necessary terms and function data
 	preCalculateTerms();
 	updatePrecalculatedFunctions(space);
+	generateApproximation(space);
 }
 
 // Return number of Poisson functions in fit
