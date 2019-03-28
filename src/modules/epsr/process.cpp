@@ -114,6 +114,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	double rminpt = keywords_.asDouble("RMinPT");
 	const bool saveData = keywords_.asBool("Save");
 	const bool testMode = keywords_.asBool("Test");
+	const bool overwritePotentials = keywords_.asBool("OverwritePotentials");
 	const double testThreshold = keywords_.asDouble("TestThreshold");
 
 	// EPSR constants
@@ -628,6 +629,10 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 			{
 				Array<double>& potCoeff = coefficients.at(i, j);
+
+				// Zero potential before adding in fluctuation coefficients?
+				if (overwritePotentials) potCoeff = 0.0;
+
 				for (int n=0; n<ncoeffp; ++n) potCoeff[n] += fluctuationCoefficients.constAt(i, j, n);
 			}
 		}
