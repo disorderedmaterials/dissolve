@@ -291,7 +291,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			x = x1.constAt(n);
 
 			// If this x value is below the minimum Q value we are fitting, set the difference to zero. Otherwise, store the "inverse" value ([sim - exp], for consistency with EPSR)
-			if (x < deltaSQMin) deltaFQ.addPoint(x, 0.0);
+			if (x < deltaSQMin) continue;
 			else if (x > deltaSQMax) break;
 			else deltaFQ.addPoint(x, interpolatedSimFQ.y(x) - y1.constAt(n));
 		}
