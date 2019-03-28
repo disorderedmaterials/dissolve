@@ -56,7 +56,7 @@ Array2D< Array<double> >& EPSRModule::potentialCoefficients(Dissolve& dissolve, 
 }
 
 // Generate empirical potentials from current coefficients
-bool EPSRModule::generateEmpiricalPotentials(Dissolve& dissolve, EPSRModule::ExpansionFunctionType functionType, int ncoeffp, double rminpt, double rmaxpt, double sigma1, double sigma2)
+bool EPSRModule::generateEmpiricalPotentials(Dissolve& dissolve, EPSRModule::ExpansionFunctionType functionType, double averagedRho, int ncoeffp, double rminpt, double rmaxpt, double sigma1, double sigma2)
 {
 	const int nAtomTypes = dissolve.nAtomTypes();
 	int i, j;
@@ -88,6 +88,9 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve& dissolve, EPSRModule::Exp
 				generator.set(FunctionSpace::ReciprocalSpace, rmaxpt, potCoeff, sigma1, sigma2);
 				ep = generator.approximation(FunctionSpace::RealSpace, 1.0, 0.0, dissolve.pairPotentialDelta(), dissolve.pairPotentialRange());
 			}
+
+			// Normalise by density
+			ep.values() /= averagedRho;
 
 			// Multiply by truncation function
 			truncate(ep, rminpt, rmaxpt);

@@ -54,19 +54,34 @@ bool EPSRModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 		double rmaxpt = keywords_.asDouble("RMaxPT");
 		double rminpt = keywords_.asDouble("RMinPT");
 
+		// Calculate representative rho
+		double averagedRho = 0.0;
+		RefList<Configuration,bool> configs;
+		RefListIterator<Module,bool> allTargetsIterator(groupedTargets_.modules());
+		while (Module* module = allTargetsIterator.iterate())
+		{
+			RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
+			while (Configuration* cfg = configIterator.iterate())
+			{
+				configs.addUnique(cfg);
+				averagedRho += cfg->atomicDensity();
+			}
+		}
+		averagedRho /= configs.nItems();
+
 		// Set up the additional potentials - reconstruct them from the current coefficients
 		ExpansionFunctionType functionType = expansionFunctionType(keywords_.asString("ExpansionFunction"));
 		if (functionType == EPSRModule::GaussianExpansionFunction)
 		{
 			const double gsigma1 = keywords_.asDouble("GSigma1");
 			const double gsigma2 = keywords_.asDouble("GSigma2");
-			if (!generateEmpiricalPotentials(dissolve, functionType, ncoeffp, rminpt, rmaxpt, gsigma1, gsigma2)) return false; 
+			if (!generateEmpiricalPotentials(dissolve, functionType, averagedRho, ncoeffp, rminpt, rmaxpt, gsigma1, gsigma2)) return false;
 		}
 		else
 		{
 			const double psigma1 = keywords_.asDouble("PSigma1");
 			const double psigma2 = keywords_.asDouble("PSigma2");
-			if (!generateEmpiricalPotentials(dissolve, functionType, ncoeffp, rminpt, rmaxpt, psigma1, psigma2)) return false; 
+			if (!generateEmpiricalPotentials(dissolve, functionType, averagedRho, ncoeffp, rminpt, rmaxpt, psigma1, psigma2)) return false;
 		}
 	}
 
@@ -133,12 +148,18 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	 */
 	RefList<Configuration,bool> configs;
 	RefListIterator<Module,bool> allTargetsIterator(groupedTargets_.modules());
+	double averagedRho = 0.0;
 	while (Module* module = allTargetsIterator.iterate())
 	{
 		RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
-		while (Configuration* cfg = configIterator.iterate()) configs.addUnique(cfg);
+		while (Configuration* cfg = configIterator.iterate())
+		{
+			configs.addUnique(cfg);
+			averagedRho += cfg->atomicDensity();
+		}
 	}
 	Messenger::print("%i Configuration(s) are involved over all target data.\n", configs.nItems());
+	averagedRho /= configs.nItems();
 
 
 	/*
@@ -583,9 +604,6 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					// Halve contribution from unlike terms to avoid adding double the potential for those partials
 					if (i != j) weight *= 0.5;
 
-					// Apply the (1.0/rho) factor here, since our expansion function normalisations don't contain it
-					weight /= combinedRho.at(i,j);
-
 					// Store fluctuation coefficients ready for addition to potential coefficients later on.
 					for (int n=0; n<ncoeffp; ++n) fluctuationCoefficients.at(i, j, n) += weight * fitCoefficients.constAt(n);
 				}
@@ -650,7 +668,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		double sigma1 = functionType == EPSRModule::PoissonExpansionFunction ? psigma1 : gsigma1;
 		double sigma2 = functionType == EPSRModule::PoissonExpansionFunction ? psigma2 : gsigma2;
 		
-		if (!generateEmpiricalPotentials(dissolve, functionType, ncoeffp, rminpt, rmaxpt, sigma1, sigma2)) return false;
+		if (!generateEmpiricalPotentials(dissolve, functionType, averagedRho, ncoeffp, rminpt, rmaxpt, sigma1, sigma2)) return false;
 	}
 	else energabs = absEnergyEP(dissolve);
 
