@@ -90,6 +90,10 @@ class ModuleTab : public QWidget, public ListItem<ModuleTab>, public MainTab
 	// Enable sensitive controls within tab, ready for main code to run
 	void enableSensitiveControls();
 
+	public slots:
+	// Update controls in module widget only
+	void updateModuleWidget();
+
 
 	/*
 	 * State
