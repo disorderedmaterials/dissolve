@@ -133,24 +133,25 @@ template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
 		{
 			// Copy current best alpha
 			trialValues = values;
-
-			// Perform a Monte Carlo move on the parameters
-			for (int i=0; i<trialValues.nItems(); ++i)
-			{
-				if (fabs(trialValues[i]) < 1.0e-8) trialValues[i] += DissolveMath::randomPlusMinusOne()*0.01*stepSize_;
-				else trialValues[i] += DissolveMath::randomPlusMinusOne()*trialValues[i]*stepSize_;
-			}
+		
+			// Perform a Monte Carlo move on a random parameter
+			int i = trialValues.nItems() * DissolveMath::random();
+			if (i >= trialValues.nItems()) i = trialValues.nItems() - 1;
+			
+			if (fabs(trialValues[i]) < 1.0e-8) trialValues[i] += DissolveMath::randomPlusMinusOne()*0.01*stepSize_;
+			else trialValues[i] += DissolveMath::randomPlusMinusOne()*trialValues[i]*stepSize_;
 
 			// Get error for the new parameters, and store if improved
 			trialError = MinimiserBase<T>::cost(trialValues);
 			accepted = trialError < currentError;
 			if (accepted)
 			{
-				values = trialValues;
+				values[i] = trialValues[i];
 				currentError = trialError;
 
 				++smoothingNAccepted;
 			}
+			else trialValues[i] = values[i];
 
 			// Accumulate acceptance memory
 			accepts.add(accepted);
