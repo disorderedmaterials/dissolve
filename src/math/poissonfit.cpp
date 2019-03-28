@@ -124,7 +124,6 @@ const Data1D& PoissonFit::approximation() const
 	return approximateData_;
 }
 
-
 // Calculate and return approximate function in requested space
 Data1D PoissonFit::approximation(FunctionSpace::SpaceType space, double preFactor, double xMin, double xStep, double xMax) const
 {
