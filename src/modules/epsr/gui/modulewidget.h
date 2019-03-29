@@ -45,13 +45,13 @@ class EPSRModuleWidget : public ModuleWidget
 	DataViewer* FQGraph_, *FQFitGraph_, *SQGraph_, *GRGraph_, *FRGraph_, *phiRGraph_, *phiMagGraph_, *rFactorGraph_;
 	// Reference to Dissolve
 	Dissolve& dissolve_;
+	// Main form declaration
+	Ui::EPSRModuleWidget ui_;
 
 	public:
 	// Constructor / Destructor
 	EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
 	~EPSRModuleWidget();
-	// Main form declaration
-	Ui::EPSRModuleWidget ui;
 	// Update controls within widget
 	void updateControls();
 	// Disable sensitive controls within widget, ready for main code to run
