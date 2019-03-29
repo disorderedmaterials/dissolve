@@ -3,16 +3,22 @@ add_library(data
   elementcolours.cpp
   elements.cpp
   ff.cpp
+  ffangleterm.cpp
   ffatomtype.cpp
+  ffbondterm.cpp
   fflibrary.cpp
+  fftorsionterm.cpp
   isotopes.cpp
 
   atomicmass.h
   elementcolours.h
   elements.h
   ff.h
+  ffangleterm.h
   ffatomtype.h
+  ffbondterm.h
   fflibrary.h
+  fftorsionterm.h
   isotopes.h
 )
 
