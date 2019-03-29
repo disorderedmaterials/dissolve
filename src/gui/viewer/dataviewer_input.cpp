@@ -64,7 +64,7 @@ void DataViewer::mouseMoved(int dx, int dy)
 			refresh = true;
 			break;
 		case (DataViewer::ZoomXRangeInteraction):
-			// No action to take - the range will be drawn from the clicked and current positionss (already stored)
+			// No action to take - the range will be drawn from the clicked and current positions (already stored)
 			refresh = true;
 			break;
 		default:
