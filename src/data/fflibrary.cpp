@@ -20,6 +20,7 @@
 */
 
 #include "data/fflibrary.h"
+#include "data/ff/spcfw.h"
 #include "data/ff/uff.h"
 #include "base/sysfunc.h"
 
@@ -33,6 +34,7 @@ List<Forcefield> ForcefieldLibrary::forcefields_;
 // Register Forcefields for use
 void ForcefieldLibrary::registerForcefields()
 {
+	forcefields_.own(new Forcefield_SPCFw);
 	forcefields_.own(new Forcefield_UFF);
 }
 
