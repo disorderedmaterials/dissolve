@@ -61,7 +61,7 @@ void EPSRModule::setUpKeywords()
 	group->add(new DoubleModuleKeyword(0.1, 0.001, 1.0), "GSigma1", "Width for Gaussian function in reciprocal space");
 	group->add(new DoubleModuleKeyword(0.2, 0.001, 1.0), "GSigma2", "Width for Gaussian function in real space");
 	group->add(new IntegerModuleKeyword(-1, -1), "NCoeffP", "Number of coefficients user to define the empirical potential (-1 for automatic)");
-	group->add(new IntegerModuleKeyword(1000, 10), "NPItSs", "Number of steps for refining the potential");
+	group->add(new IntegerModuleKeyword(1000, 0), "NPItSs", "Number of steps for refining the potential");
 	group->add(new CharStringModuleKeyword(""), "PCofFile", "EPSR pcof file from which to read starting coefficients from");
 	group->add(new DoubleModuleKeyword(0.1, 0.001, 10.0), "PCofRho", "Atomic number density with which to weight coefficients from pcof file");
 	group->add(new DoubleModuleKeyword(0.01, 0.001, 1.0), "PSigma1", "Width for Poisson functions in reciprocal space (N.B. this is psigma2 in EPSR)");
