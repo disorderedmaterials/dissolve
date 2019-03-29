@@ -43,7 +43,7 @@ int main(int argc, char **argv)
 
 	// Parse CLI options...
 	int n = 1;
-	CharString inputFile;
+	CharString inputFile, restartFile;
 	int nIterations = 0;
 	bool ignoreRestart = false, ignoreLayout = false, dontWriteRestart = false;
 	while (n < argc)
@@ -84,6 +84,18 @@ int main(int argc, char **argv)
 					break;
 				case ('q'):
 					Messenger::setQuiet(true);
+					break;
+				case ('t'):
+					// Next argument is filename
+					++n;
+					if (n == argc)
+					{
+						Messenger::error("Expected restart data filename.\n");
+						Messenger::ceaseRedirect();
+						return 1;
+					}
+					restartFile = argv[n];
+					Messenger::print("Restart data will be loaded from '%s'.\n", restartFile.get());
 					break;
 				case ('v'):
 					Messenger::setVerbose(true);
@@ -161,7 +173,7 @@ int main(int argc, char **argv)
 	DissolveWindow dissolveWindow(dissolve);
 
 	// If an input file was specified, load it here
-	if ((!inputFile.isEmpty()) && (!dissolveWindow.openFileFromCLI(inputFile, ignoreRestart, ignoreLayout)))
+	if ((!inputFile.isEmpty()) && (!dissolveWindow.openFileFromCLI(inputFile, restartFile, ignoreRestart, ignoreLayout)))
 	{
 		ProcessPool::finalise();
 		return 1;

@@ -181,22 +181,41 @@ const Data1D& GaussFit::approximation() const
 }
 
 // Calculate and return approximate function in requested space
-Data1D GaussFit::approximation(FunctionSpace::SpaceType space, double preFactor, double xMin, double xStep, double xMax, double fwhmFactor) const
+Data1D GaussFit::approximation(FunctionSpace::SpaceType space, double factor, double xMin, double xStep, double xMax, double fwhmFactor) const
 {
-	Data1D ft;
+	Data1D approx;
 	double x = xMin;
 	while (x <= xMax)
 	{
-		ft.addPoint(x, 0.0);
+		approx.addPoint(x, 0.0);
 		x += xStep;
 	}
 
 	// Loop over defined Gaussians
-	for (int n=0; n<nGaussians_; ++n) addFunction(ft, space, x_.constAt(n), A_.constAt(n), fwhm_.constAt(n)*fwhmFactor);
+	for (int n=0; n<nGaussians_; ++n) addFunction(approx, space, x_.constAt(n), A_.constAt(n), fwhm_.constAt(n)*fwhmFactor);
 
-	ft.values() *= preFactor;
+	approx.values() *= factor;
 
-	return ft;
+	return approx;
+}
+
+// Calculate and return single function in requested space
+Data1D GaussFit::singleFunction(int index, FunctionSpace::SpaceType space, double factor, double xMin, double xStep, double xMax, double fwhmFactor) const
+{
+	Data1D func;
+	double x = xMin;
+	while (x <= xMax)
+	{
+		func.addPoint(x, 0.0);
+		x += xStep;
+	}
+
+	// Loop over defined Gaussians
+	addFunction(func, space, x_.constAt(index), A_.constAt(index), fwhm_.constAt(index)*fwhmFactor);
+
+	func.values() *= factor;
+
+	return func;
 }
 
 // Set coefficients from supplied values

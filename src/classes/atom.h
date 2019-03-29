@@ -146,16 +146,22 @@ class Atom : public DynamicArrayObject<Atom>
 	public:
 	// Add specified Bond to Atom
 	void addBond(Bond* bond);
+	// Return the number of Bonds in which the Atom is involved
+	int nBonds() const;
 	// Return array of Bonds in which the Atom is involved
 	const PointerArray<Bond>& bonds() const;
 	// Return Bond (if it exists) between this Atom and the Atom specified
 	Bond* findBond(Atom* j);
 	// Add specified Angle to Atom
 	void addAngle(Angle* angle);
+	// Return the number of Angles in which the Atom is involved
+	int nAngles() const;
 	// Return array of Angles in which the Atom is involved
 	const PointerArray<Angle>& angles() const;
 	// Add specified Torsion to Atom
 	void addTorsion(Torsion* torsion, double scaling14);
+	// Return the number of Torsions in which the Atom is involved
+	int nTorsions() const;
 	// Return array of Torsions in which the Atom is involved
 	const PointerArray<Torsion>& torsions() const;
 	// Return scaling factor to employ with specified Atom

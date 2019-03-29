@@ -102,6 +102,9 @@ void ModuleTab::initialiseControls(Module* module)
 		moduleWidget_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 		splitter_->addWidget(moduleWidget_);
 		splitter_->setStretchFactor(1, 5);
+
+		// Connect signals/slots between the controlsWidget_ and the moduleWidget_
+		connect(controlsWidget_, SIGNAL(moduleRun()), this, SLOT(updateModuleWidget()));
 	}
 }
 
@@ -136,6 +139,12 @@ void ModuleTab::enableSensitiveControls()
 	if (controlsWidget_) controlsWidget_->enableSensitiveControls();
 
 	if (moduleWidget_) moduleWidget_->enableSensitiveControls();
+}
+
+// Update controls in module widget only
+void ModuleTab::updateModuleWidget()
+{
+	if (moduleWidget_) moduleWidget_->updateControls();
 }
 
 /*

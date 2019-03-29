@@ -54,19 +54,34 @@ bool EPSRModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 		double rmaxpt = keywords_.asDouble("RMaxPT");
 		double rminpt = keywords_.asDouble("RMinPT");
 
+		// Calculate representative rho
+		double averagedRho = 0.0;
+		RefList<Configuration,bool> configs;
+		RefListIterator<Module,bool> allTargetsIterator(groupedTargets_.modules());
+		while (Module* module = allTargetsIterator.iterate())
+		{
+			RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
+			while (Configuration* cfg = configIterator.iterate())
+			{
+				configs.addUnique(cfg);
+				averagedRho += cfg->atomicDensity();
+			}
+		}
+		averagedRho /= configs.nItems();
+
 		// Set up the additional potentials - reconstruct them from the current coefficients
 		ExpansionFunctionType functionType = expansionFunctionType(keywords_.asString("ExpansionFunction"));
 		if (functionType == EPSRModule::GaussianExpansionFunction)
 		{
 			const double gsigma1 = keywords_.asDouble("GSigma1");
 			const double gsigma2 = keywords_.asDouble("GSigma2");
-			if (!generateEmpiricalPotentials(dissolve, functionType, ncoeffp, rminpt, rmaxpt, gsigma1, gsigma2)) return false; 
+			if (!generateEmpiricalPotentials(dissolve, functionType, averagedRho, ncoeffp, rminpt, rmaxpt, gsigma1, gsigma2)) return false;
 		}
 		else
 		{
 			const double psigma1 = keywords_.asDouble("PSigma1");
 			const double psigma2 = keywords_.asDouble("PSigma2");
-			if (!generateEmpiricalPotentials(dissolve, functionType, ncoeffp, rminpt, rmaxpt, psigma1, psigma2)) return false; 
+			if (!generateEmpiricalPotentials(dissolve, functionType, averagedRho, ncoeffp, rminpt, rmaxpt, psigma1, psigma2)) return false;
 		}
 	}
 
@@ -99,6 +114,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	double rminpt = keywords_.asDouble("RMinPT");
 	const bool saveData = keywords_.asBool("Save");
 	const bool testMode = keywords_.asBool("Test");
+	const bool overwritePotentials = keywords_.asBool("OverwritePotentials");
 	const double testThreshold = keywords_.asDouble("TestThreshold");
 
 	// EPSR constants
@@ -133,12 +149,18 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	 */
 	RefList<Configuration,bool> configs;
 	RefListIterator<Module,bool> allTargetsIterator(groupedTargets_.modules());
+	double averagedRho = 0.0;
 	while (Module* module = allTargetsIterator.iterate())
 	{
 		RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
-		while (Configuration* cfg = configIterator.iterate()) configs.addUnique(cfg);
+		while (Configuration* cfg = configIterator.iterate())
+		{
+			configs.addUnique(cfg);
+			averagedRho += cfg->atomicDensity();
+		}
 	}
 	Messenger::print("%i Configuration(s) are involved over all target data.\n", configs.nItems());
+	averagedRho /= configs.nItems();
 
 
 	/*
@@ -269,7 +291,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			x = x1.constAt(n);
 
 			// If this x value is below the minimum Q value we are fitting, set the difference to zero. Otherwise, store the "inverse" value ([sim - exp], for consistency with EPSR)
-			if (x < deltaSQMin) deltaFQ.addPoint(x, 0.0);
+			if (x < deltaSQMin) continue;
 			else if (x > deltaSQMax) break;
 			else deltaFQ.addPoint(x, interpolatedSimFQ.y(x) - y1.constAt(n));
 		}
@@ -287,15 +309,15 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			// Construct our fitting object
 			GaussFit coeffMinimiser(deltaFQ);
 
-			if (created) coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gsigma1, npitss, 0.01, 10, 3, 3, false);
+			if (created) coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gsigma1, npitss, 0.01, 100, 3, 3, false);
 			else
 			{
 				if (fitCoefficients.nItems() != ncoeffp)
 				{
 					Messenger::warn("Number of terms (%i) in existing FitCoefficients array for target '%s' does not match the current number (%i), so will fit from scratch.\n", fitCoefficients.nItems(), module->uniqueName(), ncoeffp);
-					coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gsigma1, npitss, 0.01, 10, 3, 3, false);
+					coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gsigma1, npitss, 0.01, 100, 3, 3, false);
 				}
-				else coeffMinimiser.constructReciprocal(0.0, rmaxpt, fitCoefficients, gsigma1, npitss, 0.01, 10, 3, 3, false);
+				else coeffMinimiser.constructReciprocal(0.0, rmaxpt, fitCoefficients, gsigma1, npitss, 0.01, 100, 3, 3, false);
 			}
 
 			// Store the new fit coefficients
@@ -308,13 +330,13 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			// Construct our fitting object
 			PoissonFit coeffMinimiser(deltaFQ);
 
-			if (created) coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, psigma1, psigma2, npitss, 0.01, 10, 3, 3, false);
+			if (created) coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, psigma1, psigma2, npitss, 0.1, 100, 3, 3, false);
 			else
 			{
 				if (fitCoefficients.nItems() != ncoeffp)
 				{
 					Messenger::warn("Number of terms (%i) in existing FitCoefficients array for target '%s' does not match the current number (%i), so will fit from scratch.\n", fitCoefficients.nItems(), module->uniqueName(), ncoeffp);
-					coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, psigma1, psigma2, npitss, 0.01, 10, 3, 3, false);
+					coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, psigma1, psigma2, npitss, 0.01, 100, 3, 3, false);
 				}
 				else coeffMinimiser.constructReciprocal(0.0, rmaxpt, fitCoefficients, psigma1, psigma2, npitss, 0.01, 100, 3, 3, false);
 			}
@@ -583,9 +605,6 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					// Halve contribution from unlike terms to avoid adding double the potential for those partials
 					if (i != j) weight *= 0.5;
 
-					// Apply the (1.0/rho) factor here, since our expansion function normalisations don't contain it
-					weight /= combinedRho.at(i,j);
-
 					// Store fluctuation coefficients ready for addition to potential coefficients later on.
 					for (int n=0; n<ncoeffp; ++n) fluctuationCoefficients.at(i, j, n) += weight * fitCoefficients.constAt(n);
 				}
@@ -610,7 +629,15 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 			{
 				Array<double>& potCoeff = coefficients.at(i, j);
+
+				// Zero potential before adding in fluctuation coefficients?
+				if (overwritePotentials) potCoeff = 0.0;
+
+				// Add in fluctuation coefficients
 				for (int n=0; n<ncoeffp; ++n) potCoeff[n] += fluctuationCoefficients.constAt(i, j, n);
+
+				// Set first term to zero (following EPSR)
+				potCoeff[0] = 0.0;
 			}
 		}
 
@@ -650,9 +677,26 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		double sigma1 = functionType == EPSRModule::PoissonExpansionFunction ? psigma1 : gsigma1;
 		double sigma2 = functionType == EPSRModule::PoissonExpansionFunction ? psigma2 : gsigma2;
 		
-		if (!generateEmpiricalPotentials(dissolve, functionType, ncoeffp, rminpt, rmaxpt, sigma1, sigma2)) return false;
+		if (!generateEmpiricalPotentials(dissolve, functionType, averagedRho, ncoeffp, rminpt, rmaxpt, sigma1, sigma2)) return false;
 	}
 	else energabs = absEnergyEP(dissolve);
+
+	// Save data?
+	if (saveData)
+	{
+		i = 0;
+		for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
+		{
+			j = i;
+			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
+			{
+				// Grab pointer to the relevant pair potential
+				PairPotential* pp = dissolve.pairPotential(at1, at2);
+
+				if (!pp->uAdditional().save(CharString("EP-%s-%s.txt", at1->name(), at2->name()))) return false;
+			}
+		}
+	}
 
 	// Realise the phiMag array and make sure its object name is set
 	Data1D& phiArray = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "EPMag", uniqueName_, GenericItem::InRestartFileFlag);

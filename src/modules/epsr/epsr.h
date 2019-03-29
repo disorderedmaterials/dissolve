@@ -122,7 +122,9 @@ class EPSRModule : public Module
 	// Create / retrieve arrays for storage of empirical potential coefficients
 	Array2D< Array<double> >& potentialCoefficients(Dissolve& dissolve, const int nAtomTypes, const int ncoeffp = -1);
 	// Generate empirical potentials from current coefficients
-	bool generateEmpiricalPotentials(Dissolve& dissolve, EPSRModule::ExpansionFunctionType functionType, int ncoeffp, double rminpt, double rmaxpt, double sigma1, double sigma2);
+	bool generateEmpiricalPotentials(Dissolve& dissolve, EPSRModule::ExpansionFunctionType functionType, double rho, int ncoeffp, double rminpt, double rmaxpt, double sigma1, double sigma2);
+	// Generate and return single empirical potential function
+	Data1D generateEmpiricalPotentialFunction(Dissolve& dissolve, int i, int j, int n);
 	// Calculate absolute energy of empirical potentials
 	double absEnergyEP(Dissolve& dissolve);
 	// Truncate the supplied data

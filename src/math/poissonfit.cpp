@@ -124,24 +124,41 @@ const Data1D& PoissonFit::approximation() const
 	return approximateData_;
 }
 
-
 // Calculate and return approximate function in requested space
-Data1D PoissonFit::approximation(FunctionSpace::SpaceType space, double preFactor, double xMin, double xStep, double xMax) const
+Data1D PoissonFit::approximation(FunctionSpace::SpaceType space, double factor, double xMin, double xStep, double xMax) const
 {
-	Data1D ft;
+	Data1D approx;
 	double x = xMin;
 	while (x <= xMax)
 	{
-		ft.addPoint(x, 0.0);
+		approx.addPoint(x, 0.0);
 		x += xStep;
 	}
 
 	// Loop over defined functions
-	for (int n=0; n<nPoissons_; ++n) addFunction(ft, space, C_.constAt(n), n);
+	for (int n=0; n<nPoissons_; ++n) addFunction(approx, space, C_.constAt(n), n);
 
-	ft.values() *= preFactor;
+	approx.values() *= factor;
 
-	return ft;
+	return approx;
+}
+
+// Calculate and return single function in requested space
+Data1D PoissonFit::singleFunction(int index, FunctionSpace::SpaceType space, double factor, double xMin, double xStep, double xMax) const
+{
+	Data1D func;
+	double x = xMin;
+	while (x <= xMax)
+	{
+		func.addPoint(x, 0.0);
+		x += xStep;
+	}
+
+	addFunction(func, space, C_.constAt(index), index);
+
+	func.values() *= factor;
+
+	return func;
 }
 
 // Set coefficients from supplied values
@@ -162,6 +179,7 @@ void PoissonFit::set(FunctionSpace::SpaceType space, double rMax, Array<double> 
 	// Pre-calculate the necessary terms and function data
 	preCalculateTerms();
 	updatePrecalculatedFunctions(space);
+	generateApproximation(space);
 }
 
 // Return number of Poisson functions in fit

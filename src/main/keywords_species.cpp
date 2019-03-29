@@ -416,5 +416,12 @@ bool SpeciesBlock::parse(LineParser& parser, Dissolve* dissolve, Species* specie
 		if (blockDone) break;
 	}
 
+	// If the blockdone flag isn't set, return an error
+	if (!blockDone)
+	{
+		Messenger::error("Unterminated %s block found.\n", BlockKeywords::blockKeyword(BlockKeywords::SpeciesBlockKeyword));
+		error = true;
+	}
+
 	return (!error);
 }

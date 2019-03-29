@@ -64,7 +64,7 @@ void DataViewer::mouseMoved(int dx, int dy)
 			refresh = true;
 			break;
 		case (DataViewer::ZoomXRangeInteraction):
-			// No action to take - the range will be drawn from the clicked and current positionss (already stored)
+			// No action to take - the range will be drawn from the clicked and current positions (already stored)
 			refresh = true;
 			break;
 		default:
@@ -157,6 +157,7 @@ bool DataViewer::keyPressed(int key)
 			break;
 		case (Qt::Key_F):
 			view_.cycleAutoFollowType();
+			emit(controlAspectChanged());
 			break;
 		case (Qt::Key_L):
 			if (mouseDownModifiers_.testFlag(Qt::ShiftModifier)) view_.axes().toggleLogarithmic(view_.viewType() == View::FlatXZView ? 2 : 1);

@@ -33,13 +33,13 @@
 EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_((EPSRModule*) module), dissolve_(dissolve)
 {
 	// Set up user interface
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	refreshing_ = true;
 
 	// F(Q) Graph
 
-	FQGraph_ = ui.FQPlotWidget->dataViewer();
+	FQGraph_ = ui_.FQPlotWidget->dataViewer();
 
 	// Start a new, empty session
 	FQGraph_->view().setViewType(View::FlatXYView);
@@ -53,7 +53,7 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 
 	// F(Q) Fitting Graph
 
-	FQFitGraph_ = ui.FQFitPlotWidget->dataViewer();
+	FQFitGraph_ = ui_.FQFitPlotWidget->dataViewer();
 
 	// Start a new, empty session
 	FQFitGraph_->view().setViewType(View::FlatXYView);
@@ -67,7 +67,7 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 
 	// Partial S(Q) Graph
 	
-	SQGraph_ = ui.SQPlotWidget->dataViewer();
+	SQGraph_ = ui_.SQPlotWidget->dataViewer();
 
 	// Start a new, empty session
 	SQGraph_->view().setViewType(View::FlatXYView);
@@ -81,7 +81,7 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 
 	// g(r) Graph
 	
-	GRGraph_ = ui.GRPlotWidget->dataViewer();
+	GRGraph_ = ui_.GRPlotWidget->dataViewer();
 
 	// Start a new, empty session
 	GRGraph_->view().setViewType(View::FlatXYView);
@@ -95,7 +95,7 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 
 	// F(r) Graph
 	
-	FRGraph_ = ui.FRPlotWidget->dataViewer();
+	FRGraph_ = ui_.FRPlotWidget->dataViewer();
 
 	// Start a new, empty session
 	FRGraph_->view().setViewType(View::FlatXYView);
@@ -109,7 +109,7 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 
 	// Phi(r) (Empirical Potentials) Graph
 
-	phiRGraph_ = ui.PhiRPlotWidget->dataViewer();
+	phiRGraph_ = ui_.PhiRPlotWidget->dataViewer();
 
 	// Start a new, empty session
 	phiRGraph_->view().setViewType(View::FlatXYView);
@@ -123,7 +123,7 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 
 	// phi(r) Magnitude Graph
 
-	phiMagGraph_ = ui.PhiMagPlotWidget->dataViewer();
+	phiMagGraph_ = ui_.PhiMagPlotWidget->dataViewer();
 
 	// Start a new, empty session
 	phiMagGraph_->view().setViewType(View::FlatXYView);
@@ -137,7 +137,7 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 
 	// R-Factor Graph
 
-	rFactorGraph_ = ui.RFactorPlotWidget->dataViewer();
+	rFactorGraph_ = ui_.RFactorPlotWidget->dataViewer();
 
 	// Start a new, empty session
 	rFactorGraph_->view().setViewType(View::FlatXYView);
@@ -151,6 +151,19 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	rFactorGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	setGraphDataTargets(module_);
+
+	// Debug Tab - EP Functions Graph
+
+	DataViewer* epView = ui_.DebugEPFunctionsPlotWidget->dataViewer();
+
+	// Start a new, empty session
+	epView->view().setViewType(View::FlatXYView);
+	epView->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+	epView->view().axes().setMax(0, 10.0);
+	epView->view().axes().setTitle(1, "\\sym{phi}(\\it{r})");
+	epView->view().axes().setMin(1, -1.0);
+	epView->view().axes().setMax(1, 1.0);
+	epView->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
 
 	updateControls();
 
@@ -166,14 +179,14 @@ void EPSRModuleWidget::updateControls()
 {
 	refreshing_ = true;
 
-	ui.FQPlotWidget->updateToolbar();
-	ui.FQFitPlotWidget->updateToolbar();
-	ui.SQPlotWidget->updateToolbar();
-	ui.GRPlotWidget->updateToolbar();
-	ui.FRPlotWidget->updateToolbar();
-	ui.PhiRPlotWidget->updateToolbar();
-	ui.PhiMagPlotWidget->updateToolbar();
-	ui.RFactorPlotWidget->updateToolbar();
+	ui_.FQPlotWidget->updateToolbar();
+	ui_.FQFitPlotWidget->updateToolbar();
+	ui_.SQPlotWidget->updateToolbar();
+	ui_.GRPlotWidget->updateToolbar();
+	ui_.FRPlotWidget->updateToolbar();
+	ui_.PhiRPlotWidget->updateToolbar();
+	ui_.PhiMagPlotWidget->updateToolbar();
+	ui_.RFactorPlotWidget->updateToolbar();
 
 	FQGraph_->postRedisplay();
 	FQFitGraph_->postRedisplay();
@@ -356,4 +369,53 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 
 	// Add phi magnitude data
 	phiMagGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//EPMag", module_->uniqueName()), "EReq", "EReq");
+}
+
+/*
+ * Debug Tab
+ */
+
+// Update data shown on fit coefficients viewer
+void EPSRModuleWidget::updateDebugEPFunctionsGraph(int from, int to)
+{
+	DataViewer* viewer = ui_.DebugEPFunctionsPlotWidget->dataViewer();
+	viewer->clearRenderables();
+	debugFunctionData_.clear();
+
+	if (!module_) return;
+
+	int i = 0;
+	for (AtomType* at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
+	{
+		int j = i;
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
+		{
+			CharString id("%s-%s", at1->name(), at2->name());
+
+			// Add generate potential to graph
+			Renderable* phi = viewer->createRenderable(Renderable::Data1DRenderable, CharString("PairPotential//%s//Additional", id.get()), id.get(), id.get());
+			viewer->groupManager().addToGroup(phi, id.get());
+
+			// Generate data for function range specified
+			for (int n=from; n<=to; ++n)
+			{
+				Data1D* data = debugFunctionData_.add();
+				(*data) = module_->generateEmpiricalPotentialFunction(dissolve_, i, j, n);
+				data->setObjectTag(CharString("PairPotential//%s//Function//%i", id.get(), n));
+				Renderable* rend = viewer->createRenderable(Renderable::Data1DRenderable, CharString("PairPotential//%s//Function//%i", id.get(), n), DissolveSys::itoa(n), CharString("%s/%i", id.get(), n));
+				viewer->groupManager().addToGroup(rend, id.get());
+			}
+		}
+	}
+
+}
+
+void EPSRModuleWidget::on_DebugFromSpin_valueChanged(int value)
+{
+	updateDebugEPFunctionsGraph(value, ui_.DebugToSpin->value());
+}
+
+void EPSRModuleWidget::on_DebugToSpin_valueChanged(int value)
+{
+	updateDebugEPFunctionsGraph(ui_.DebugFromSpin->value(), value);
 }
