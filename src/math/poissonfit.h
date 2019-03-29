@@ -81,7 +81,9 @@ class PoissonFit
 	// Return approximate function
 	const Data1D& approximation() const;
 	// Calculate and return approximate function in requested space
-	Data1D approximation(FunctionSpace::SpaceType space, double factor, double xMin, double xStep, double xMax) const; 
+	Data1D approximation(FunctionSpace::SpaceType space, double factor, double xMin, double xStep, double xMax) const;
+	// Calculate and return single function in requested space
+	Data1D singleFunction(int index, FunctionSpace::SpaceType space, double factor, double xMin, double xStep, double xMax) const;
 	// Set coefficients from supplied values
 	void set(FunctionSpace::SpaceType space, double rMax, Array<double> coefficients, double sigmaQ = 0.02, double sigmaR = 0.08);
 	// Return number of Poisson functions in fit
