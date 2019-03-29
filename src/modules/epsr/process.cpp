@@ -681,6 +681,23 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	}
 	else energabs = absEnergyEP(dissolve);
 
+	// Save data?
+	if (saveData)
+	{
+		i = 0;
+		for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
+		{
+			j = i;
+			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
+			{
+				// Grab pointer to the relevant pair potential
+				PairPotential* pp = dissolve.pairPotential(at1, at2);
+
+				if (!pp->uAdditional().save(CharString("EP-%s-%s.txt", at1->name(), at2->name()))) return false;
+			}
+		}
+	}
+
 	// Realise the phiMag array and make sure its object name is set
 	Data1D& phiArray = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "EPMag", uniqueName_, GenericItem::InRestartFileFlag);
 	phiArray.setObjectTag(CharString("%s//EPMag", uniqueName_.get()));
