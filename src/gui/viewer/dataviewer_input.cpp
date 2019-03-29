@@ -157,6 +157,7 @@ bool DataViewer::keyPressed(int key)
 			break;
 		case (Qt::Key_F):
 			view_.cycleAutoFollowType();
+			emit(controlAspectChanged());
 			break;
 		case (Qt::Key_L):
 			if (mouseDownModifiers_.testFlag(Qt::ShiftModifier)) view_.axes().toggleLogarithmic(view_.viewType() == View::FlatXZView ? 2 : 1);

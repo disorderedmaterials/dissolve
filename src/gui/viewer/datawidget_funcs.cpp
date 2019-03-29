@@ -36,6 +36,7 @@ DataWidget::DataWidget(QWidget* parent) : QWidget(parent)
 	// Connect signals / slots
 	connect(ui_.DataView, SIGNAL(currentCoordinateChanged()), this, SLOT(updateStatusBar()));
 	connect(ui_.DataView, SIGNAL(interactionModeChanged()), this, SLOT(updateStatusBar()));
+	connect(ui_.DataView, SIGNAL(controlAspectChanged()), this, SLOT(updateToolbar()));
 
 	// Make sure that our controls reflect the state of the underlying DataViewer
 	updateToolbar();
