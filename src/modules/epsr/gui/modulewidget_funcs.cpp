@@ -152,6 +152,19 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 
 	setGraphDataTargets(module_);
 
+	// Debug Tab - EP Functions Graph
+
+	DataViewer* epView = ui_.DebugEPFunctionsPlotWidget->dataViewer();
+
+	// Start a new, empty session
+	epView->view().setViewType(View::FlatXYView);
+	epView->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+	epView->view().axes().setMax(0, 10.0);
+	epView->view().axes().setTitle(1, "\\sym{phi}(\\it{r})");
+	epView->view().axes().setMin(1, -1.0);
+	epView->view().axes().setMax(1, 1.0);
+	epView->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
+
 	updateControls();
 
 	refreshing_ = false;
@@ -356,4 +369,53 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 
 	// Add phi magnitude data
 	phiMagGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//EPMag", module_->uniqueName()), "EReq", "EReq");
+}
+
+/*
+ * Debug Tab
+ */
+
+// Update data shown on fit coefficients viewer
+void EPSRModuleWidget::updateDebugEPFunctionsGraph(int from, int to)
+{
+	DataViewer* viewer = ui_.DebugEPFunctionsPlotWidget->dataViewer();
+	viewer->clearRenderables();
+	debugFunctionData_.clear();
+
+	if (!module_) return;
+
+	int i = 0;
+	for (AtomType* at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
+	{
+		int j = i;
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
+		{
+			CharString id("%s-%s", at1->name(), at2->name());
+
+			// Add generate potential to graph
+			Renderable* phi = viewer->createRenderable(Renderable::Data1DRenderable, CharString("PairPotential//%s//Additional", id.get()), id.get(), id.get());
+			viewer->groupManager().addToGroup(phi, id.get());
+
+			// Generate data for function range specified
+			for (int n=from; n<=to; ++n)
+			{
+				Data1D* data = debugFunctionData_.add();
+				(*data) = module_->generateEmpiricalPotentialFunction(dissolve_, i, j, n);
+				data->setObjectTag(CharString("PairPotential//%s//Function//%i", id.get(), n));
+				Renderable* rend = viewer->createRenderable(Renderable::Data1DRenderable, CharString("PairPotential//%s//Function//%i", id.get(), n), DissolveSys::itoa(n), CharString("%s/%i", id.get(), n));
+				viewer->groupManager().addToGroup(rend, id.get());
+			}
+		}
+	}
+
+}
+
+void EPSRModuleWidget::on_DebugFromSpin_valueChanged(int value)
+{
+	updateDebugEPFunctionsGraph(value, ui_.DebugToSpin->value());
+}
+
+void EPSRModuleWidget::on_DebugToSpin_valueChanged(int value)
+{
+	updateDebugEPFunctionsGraph(ui_.DebugFromSpin->value(), value);
 }

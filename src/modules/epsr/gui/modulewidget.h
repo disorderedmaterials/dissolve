@@ -76,6 +76,22 @@ class EPSRModuleWidget : public ModuleWidget
 	private:
 	// Set data targets in graphs
 	void setGraphDataTargets(EPSRModule* module);
+
+
+	/*
+	 * Debug Tab
+	 */
+	private:
+	// Temporary data currently shown on debug tab
+	List<Data1D> debugFunctionData_;
+
+	private:
+	// Update data shown on EP functions viewer
+	void updateDebugEPFunctionsGraph(int from, int to);
+
+	private slots:
+	void on_DebugFromSpin_valueChanged(int value);
+	void on_DebugToSpin_valueChanged(int value);
 };
 
 #endif
