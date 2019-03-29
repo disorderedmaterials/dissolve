@@ -633,7 +633,11 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				// Zero potential before adding in fluctuation coefficients?
 				if (overwritePotentials) potCoeff = 0.0;
 
+				// Add in fluctuation coefficients
 				for (int n=0; n<ncoeffp; ++n) potCoeff[n] += fluctuationCoefficients.constAt(i, j, n);
+
+				// Set first term to zero (following EPSR)
+				potCoeff[0] = 0.0;
 			}
 		}
 
