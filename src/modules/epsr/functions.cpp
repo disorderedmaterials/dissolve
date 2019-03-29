@@ -110,6 +110,56 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve& dissolve, EPSRModule::Exp
 	return true;
 }
 
+// Generate and return single empirical potential function
+Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve& dissolve, int i, int j, int n)
+{
+	const int nAtomTypes = dissolve.nAtomTypes();
+	ExpansionFunctionType functionType = expansionFunctionType(keywords_.asString("ExpansionFunction"));
+	const double gsigma1 = keywords_.asDouble("GSigma1");
+	const double gsigma2 = keywords_.asDouble("GSigma2");
+	int ncoeffp = keywords_.asInt("NCoeffP");
+	const double psigma1 = keywords_.asDouble("PSigma1");
+	const double psigma2 = keywords_.asDouble("PSigma2");
+	const double qMax = keywords_.asDouble("QMax");
+	const double qMin = keywords_.asDouble("QMin");
+	double rmaxpt = keywords_.asDouble("RMaxPT");
+	double rminpt = keywords_.asDouble("RMinPT");
+
+	// EPSR constants
+	const int mcoeff = 200;
+
+	// Calculate some values if they were not provided
+	if (rmaxpt < 0.0) rmaxpt = dissolve.pairPotentialRange();
+	if (rminpt < 0.0) rminpt = rmaxpt - 2.0;
+	if (ncoeffp <= 0) ncoeffp = std::min(int(10.0*rmaxpt+0.0001), mcoeff);
+
+	// Get coefficients array
+	Array2D< Array<double> >& coefficients = potentialCoefficients(dissolve, nAtomTypes);
+	Array<double>& potCoeff = coefficients.at(i, j);
+
+	// Regenerate empirical potential from the stored coefficients
+	Data1D result;
+	if (functionType == EPSRModule::GaussianExpansionFunction)
+	{
+		// Construct our fitting object and generate the potential using it
+		GaussFit generator(result);
+		generator.set(rmaxpt, potCoeff, gsigma1);
+		result = generator.singleFunction(n, FunctionSpace::RealSpace, 1.0, 0.0, dissolve.pairPotentialDelta(), dissolve.pairPotentialRange(), gsigma2 / gsigma1);
+	}
+	else if (functionType == EPSRModule::PoissonExpansionFunction)
+	{
+		// Construct our fitting object and generate the potential using it
+		PoissonFit generator(result);
+		generator.set(FunctionSpace::ReciprocalSpace, rmaxpt, potCoeff, psigma1, psigma2);
+		result = generator.singleFunction(n, FunctionSpace::RealSpace, 1.0, 0.0, dissolve.pairPotentialDelta(), dissolve.pairPotentialRange());
+	}
+
+	// Multiply by truncation function
+	truncate(result, rminpt, rmaxpt);
+
+	return result;
+}
+
 // Calculate absolute energy of empirical potentials
 double EPSRModule::absEnergyEP(Dissolve& dissolve)
 {
