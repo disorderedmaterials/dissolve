@@ -1,6 +1,6 @@
 /*
-	*** Universal Forcefield
-	*** src/data/ff/uff.h
+	*** SPC/Fw Forcefield
+	*** src/data/ff/spcfw.h
 	Copyright T. Youngs 2019
 
 	This file is part of Dissolve.
@@ -19,13 +19,11 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FORCEFIELD_UFF_H
-#define DISSOLVE_FORCEFIELD_UFF_H
+#ifndef DISSOLVE_FORCEFIELD_SPCFW_H
+#define DISSOLVE_FORCEFIELD_SPCFW_H
 
 #include "data/ff.h"
-#include "data/ff/uffatomtype.h"
 #include "templates/array.h"
-#include "templates/list.h"
 
 // Forward Declarations
 class CoreData;
@@ -36,13 +34,13 @@ class SpeciesBond;
 class SpeciesIntra;
 class SpeciesTorsion;
 
-// Universal Forcefield
-class Forcefield_UFF : public Forcefield
+// SPC/Fw Forcefield
+class Forcefield_SPCFw : public Forcefield
 {
 	public:
 	// Constructor / Destructor
-	Forcefield_UFF();
-	~Forcefield_UFF();
+	Forcefield_SPCFw();
+	~Forcefield_SPCFw();
 
 
 	/*
@@ -62,23 +60,19 @@ class Forcefield_UFF : public Forcefield
 
 
 	/*
-	 * Term Assignment
+	 * Term Generation
 	 */
 	private:
 	// Generate bond parameters for the supplied UFF atom types
-	bool generateBondTerm(const Species* sp, SpeciesBond* bondTerm, UFFAtomType* i, UFFAtomType* j) const;
+	bool generateBondTerm(const Species* sp, SpeciesBond* bondTerm, ForcefieldAtomType* i, ForcefieldAtomType* j) const;
 	// Generate angle parameters for the supplied UFF atom types
-	bool generateAngleTerm(const Species* sp, SpeciesAngle* angleTerm, UFFAtomType* i, UFFAtomType* j, UFFAtomType* k) const;
+	bool generateAngleTerm(const Species* sp, SpeciesAngle* angleTerm, ForcefieldAtomType* i, ForcefieldAtomType* j, ForcefieldAtomType* k) const;
 	// Generate torsion parameters for the supplied UFF atom types
-	bool generateTorsionTerm(const Species* sp, SpeciesTorsion* torsionTerm, UFFAtomType* i, UFFAtomType* j, UFFAtomType* k, UFFAtomType* l) const;
+	bool generateTorsionTerm(const Species* sp, SpeciesTorsion* torsionTerm, ForcefieldAtomType* i, ForcefieldAtomType* j, ForcefieldAtomType* k, ForcefieldAtomType* l) const;
 
 	public:
-	// Assign suitable AtomTypes to the supplied Species
+	// Assign suitable atom types to the supplied Species
 	bool assignAtomTypes(Species* sp, CoreData& coreData, bool keepExisting = false) const;
-	// Assign intramolecular parameters to the supplied Species
-	bool assignIntramolecular(Species* sp, bool useExistingTypes, bool assignBonds, bool assignAngles, bool assignTorsions) const;
-	// Perform some test calculations
-	void test() const;
 };
 
 #endif

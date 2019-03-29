@@ -23,9 +23,14 @@
 #define DISSOLVE_FORCEFIELD_H
 
 #include "data/elements.h"
+#include "templates/reflist.h"
 
 // Forward Declarations
 class CoreData;
+class ForcefieldAngleTerm;
+class ForcefieldAtomType;
+class ForcefieldBondTerm;
+class ForcefieldTorsionTerm;
 class Species;
 class SpeciesAtom;
 
@@ -47,13 +52,57 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 
 
 	/*
-	 * Term Generation
+	 * Atom Type Data
+	 */
+	protected:
+	// Atom type data, grouped by element
+	Array< RefList<ForcefieldAtomType,bool> > atomTypesByElementPrivate_;
+
+	protected:
+	// Determine and return atom type for specified SpeciesAtom
+	virtual ForcefieldAtomType* determineAtomType(SpeciesAtom* i) const = 0;
+
+	public:
+	// Register specified atom type to given Element
+	void registerAtomType(ForcefieldAtomType* atomType, int Z);
+	// Return the named ForcefieldAtomType (if it exists)
+	ForcefieldAtomType* atomTypeByName(const char* name, Element* element = NULL) const;
+
+
+	/*
+	 * Term Data
+	 */
+	private:
+	// Bond terms of the Forcefield
+	RefList<ForcefieldBondTerm,bool> bondTerms_;
+	// Angle terms of the Forcefield
+	RefList<ForcefieldAngleTerm,bool> angleTerms_;
+	// Torsion terms of the Forcefield
+	RefList<ForcefieldTorsionTerm,bool> torsionTerms_;
+
+	public:
+	// Register specified bond term
+	void registerBondTerm(ForcefieldBondTerm* bondTerm);
+	// Return bond term for the supplied atom type pair (if it exists)
+	ForcefieldBondTerm* bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const;
+	// Register specified angle term
+	void registerAngleTerm(ForcefieldAngleTerm* angleTerm);
+	// Return angle term for the supplied atom type trio (if it exists)
+	ForcefieldAngleTerm* angleTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const;
+	// Register specified torsion term
+	void registerTorsionTerm(ForcefieldTorsionTerm* torsionTerm);
+	// Return torsion term for the supplied atom type quartet (if it exists)
+	ForcefieldTorsionTerm* torsionTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const;
+
+
+	/*
+	 * Term Assignment
 	 */
 	public:
-	// Create and assign suitable AtomTypes for the supplied Species
-	virtual bool createAtomTypes(Species* sp, CoreData& coreData, bool keepExisting = false) const = 0;
-	// Generate intramolecular parameters description for the supplied Species
-	virtual bool createIntramolecular(Species* sp, bool useExistingTypes, bool createBonds, bool createAngles, bool createTorsions) const = 0;
+	// Assign suitable AtomTypes to the supplied Species
+	virtual bool assignAtomTypes(Species* sp, CoreData& coreData, bool keepExisting = false) const = 0;
+	// Assign intramolecular parameters to the supplied Species
+	virtual bool assignIntramolecular(Species* sp, bool useExistingTypes, bool assignBonds, bool assignAngles, bool assignTorsions) const;
 
 
 	/*

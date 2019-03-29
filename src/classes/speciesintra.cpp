@@ -173,8 +173,8 @@ Array<double> SpeciesIntra::parametersAsArray() const
 	return params;
 }
 
-// Set parameters from Array<double>
-void SpeciesIntra::setParametersFromArray(Array<double> params)
+// Set parameters from double*
+void SpeciesIntra::setParameters(const double* params)
 {
 	// Does this intramolecular interaction reference a set of master parameters?
 	if (masterParameters_)
@@ -183,11 +183,13 @@ void SpeciesIntra::setParametersFromArray(Array<double> params)
 		return;
 	}
 
-	for (int n=0; n<MAXINTRAPARAMS; ++n)
-	{
-		if (params.nItems() <= n) break;
-		parameters_[n] = params[n];
-	}
+	for (int n=0; n<MAXINTRAPARAMS; ++n) parameters_[n] = params[n];
+}
+
+// Set parameters from Array<double>
+void SpeciesIntra::setParameters(Array<double> params)
+{
+	setParameters(params.array());
 }
 
 /*

@@ -20,17 +20,198 @@
 */
 
 #include "data/ff.h"
+#include "data/ffangleterm.h"
+#include "data/ffatomtype.h"
+#include "data/ffbondterm.h"
+#include "data/fftorsionterm.h"
+#include "classes/atomtype.h"
 #include "classes/box.h"
+#include "classes/species.h"
 #include "classes/speciesatom.h"
 #include "classes/speciesbond.h"
+#include "base/sysfunc.h"
 
 // Constructor / Destructor
 Forcefield::Forcefield() : ListItem<Forcefield>()
 {
+	// Initialise the Element RefList Array
+	Elements::createElementRefListArray<ForcefieldAtomType>(atomTypesByElementPrivate_);
 }
 
 Forcefield::~Forcefield()
 {
+}
+
+/*
+ * Atom Type Data
+ */
+
+// Register specified atom type to given Element
+void Forcefield::registerAtomType(ForcefieldAtomType* atomType, int Z)
+{
+	atomTypesByElementPrivate_[Z].add(atomType);
+}
+
+// Return the named ForcefieldAtomType (if it exists)
+ForcefieldAtomType* Forcefield::atomTypeByName(const char* name, Element* element) const
+{
+	int startZ = (element ? element->Z() : 0);
+	int endZ = (element ? element->Z() : nElements()-1);
+	for (int Z=startZ; Z<=endZ; ++Z)
+	{
+		// Go through types associated to the Element
+		RefListIterator<ForcefieldAtomType,bool> typeIterator(atomTypesByElementPrivate_.at(Z));
+		while (ForcefieldAtomType* type = typeIterator.iterate()) if (DissolveSys::sameString(type->typeName(), name)) return type;
+	}
+
+	return NULL;
+}
+
+/*
+ * Term Data
+ */
+
+// Register specified bond term
+void Forcefield::registerBondTerm(ForcefieldBondTerm* bondTerm)
+{
+	bondTerms_.add(bondTerm);
+}
+
+// Return bond term for the supplied atom type pair (if it exists)
+ForcefieldBondTerm* Forcefield::bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const
+{
+	RefListIterator<ForcefieldBondTerm,bool> termIterator(bondTerms_);
+	while (ForcefieldBondTerm* term = termIterator.iterate()) if (term->matches(i, j)) return term;
+
+	return NULL;
+}
+
+// Register specified angle term
+void Forcefield::registerAngleTerm(ForcefieldAngleTerm* angleTerm)
+{
+	angleTerms_.add(angleTerm);
+}
+
+// Return angle term for the supplied atom type trio (if it exists)
+ForcefieldAngleTerm* Forcefield::angleTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const
+{
+	RefListIterator<ForcefieldAngleTerm,bool> termIterator(angleTerms_);
+	while (ForcefieldAngleTerm* term = termIterator.iterate()) if (term->matches(i, j, k)) return term;
+
+	return NULL;
+}
+
+// Register specified torsion term
+void Forcefield::registerTorsionTerm(ForcefieldTorsionTerm* torsionTerm)
+{
+	torsionTerms_.add(torsionTerm);
+}
+
+// Return torsion term for the supplied atom type quartet (if it exists)
+ForcefieldTorsionTerm* Forcefield::torsionTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const
+{
+	RefListIterator<ForcefieldTorsionTerm,bool> termIterator(torsionTerms_);
+	while (ForcefieldTorsionTerm* term = termIterator.iterate()) if (term->matches(i, j, k, l)) return term;
+
+	return NULL;
+}
+
+/*
+ * Term Assignment
+ */
+
+
+// Assign intramolecular parameters to the supplied Species
+bool Forcefield::assignIntramolecular(Species* sp, bool useExistingTypes, bool assignBonds, bool assignAngles, bool assignTorsions) const
+{
+	/*
+	 * Default implementation - search through term lists for suitable ones to apply, based on ForcefieldAtomType names.
+	 */
+
+	// Create an array of the ForcefieldAtomTypes for the atoms in the Species for speed
+	Array<ForcefieldAtomType*> atomTypes;
+	if (useExistingTypes)
+	{
+		// For each SpeciesAtom, search for the AtomType by name...
+		ListIterator<SpeciesAtom> atomIterator(sp->atoms());
+		while (SpeciesAtom* i = atomIterator.iterate())
+		{
+			if (!i->atomType()) return Messenger::error("No AtomType assigned to SpeciesAtom %i, so can't generate intramolecular terms based on existing types.\n", i->userIndex());
+			ForcefieldAtomType* at = atomTypeByName(i->atomType()->name(), i->element());
+			if (!at) return Messenger::error("Existing AtomType name '%s' does not correspond to a type in this forcefield.\n", i->atomType()->name());
+			atomTypes.add(at);
+		}
+	}
+	else
+	{
+		// Use on-the-fly generated types for all atoms
+		ListIterator<SpeciesAtom> atomIterator(sp->atoms());
+		while (SpeciesAtom* i = atomIterator.iterate())
+		{
+			ForcefieldAtomType* at = determineAtomType(i);
+			if (!at) return Messenger::error("Couldn't determine a suitable AtomType for atom %i.\n", i->userIndex());
+			atomTypes.add(at);
+		}
+	}
+
+	// Assign bond terms
+	if (assignBonds)
+	{
+		ListIterator<SpeciesBond> bondIterator(sp->bonds());
+		while (SpeciesBond* bond = bondIterator.iterate())
+		{
+			ForcefieldAtomType* i = atomTypes[bond->indexI()];
+			ForcefieldAtomType* j = atomTypes[bond->indexJ()];
+
+			ForcefieldBondTerm* term = bondTerm(i, j);
+			if (!term) return Messenger::error("Failed to create parameters for bond %i-%i (%s-%s).\n", bond->indexI()+1, bond->indexJ()+1, i->typeName(), j->typeName());
+
+			// Functional form is Harmonic : U = 0.5 * k * (r - eq)**2
+			bond->setForm(term->form());
+			bond->setParameters(term->parameters());
+		}
+	}
+
+	// Assign angle terms
+	if (assignAngles)
+	{
+		// Generate angle parameters
+		ListIterator<SpeciesAngle> angleIterator(sp->angles());
+		while (SpeciesAngle* angle = angleIterator.iterate())
+		{
+			ForcefieldAtomType* i = atomTypes[angle->indexI()];
+			ForcefieldAtomType* j = atomTypes[angle->indexJ()];
+			ForcefieldAtomType* k = atomTypes[angle->indexK()];
+
+			ForcefieldAngleTerm* term = angleTerm(i, j, k);
+			if (!term) return Messenger::error("Failed to create parameters for angle %i-%i-%i (%s-%s-%s).\n", angle->indexI()+1, angle->indexJ()+1, angle->indexK()+1, i->typeName(), j->typeName(), k->typeName());
+
+			angle->setForm(term->form());
+			angle->setParameters(term->parameters());
+		}
+	}
+
+	// Assign torsion terms
+	if (assignTorsions)
+	{
+		// Generate torsion parameters
+		ListIterator<SpeciesTorsion> torsionIterator(sp->torsions());
+		while (SpeciesTorsion* torsion = torsionIterator.iterate())
+		{
+			ForcefieldAtomType* i = atomTypes[torsion->indexI()];
+			ForcefieldAtomType* j = atomTypes[torsion->indexJ()];
+			ForcefieldAtomType* k = atomTypes[torsion->indexK()];
+			ForcefieldAtomType* l = atomTypes[torsion->indexL()];
+
+			ForcefieldAngleTerm* term = angleTerm(i, j, k);
+			if (!term) return Messenger::error("Failed to create parameters for torsion %i-%i-%i-%i (%s-%s-%s-%s).\n", torsion->indexI()+1, torsion->indexJ()+1, torsion->indexK()+1, torsion->indexL()+1, i->typeName(), j->typeName(), k->typeName(), l->typeName());
+
+			torsion->setForm(term->form());
+			torsion->setParameters(term->parameters());
+		}
+	}
+
+	return true;
 }
 
 /*

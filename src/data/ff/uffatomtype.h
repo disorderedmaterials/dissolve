@@ -22,7 +22,6 @@
 #ifndef DISSOLVE_FORCEFIELD_UFFATOMTYPE_H
 #define DISSOLVE_FORCEFIELD_UFFATOMTYPE_H
 
-#include "data/elements.h"
 #include "data/ffatomtype.h"
 #include "templates/list.h"
 
@@ -30,11 +29,11 @@
 /* none */
 
 // Universal Forcefield AtomType Data
-class UFFAtomType : public ElementReference, public ForcefieldAtomType, public ListItem<UFFAtomType>
+class UFFAtomType : public ForcefieldAtomType
 {
 	public:
 	// Constructor
-	UFFAtomType(int z = 0, const char* symbol = NULL, int index = -1, const char* name = NULL, const char* description = NULL, double r = 0.0, double theta = 0.0, double x = 0.0, double D = 0.0, double zeta = 0.0, double Z = 0.0, double chi = 0.0, int geom = 0, double V = 0.0, double U = 0.0);
+	UFFAtomType(Forcefield* parent, int z = 0, const char* symbol = NULL, int index = -1, const char* name = NULL, const char* description = NULL, double r = 0.0, double theta = 0.0, double x = 0.0, double D = 0.0, double zeta = 0.0, double Z = 0.0, double chi = 0.0, int geom = 0, double V = 0.0, double U = 0.0);
 	// Assignment Operator
 	UFFAtomType& operator=(const UFFAtomType& source);
 
