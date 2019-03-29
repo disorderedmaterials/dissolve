@@ -153,7 +153,7 @@ void DissolveWindow::addOutputHandler()
  */
 
 // Open specified input file from the CLI
-bool DissolveWindow::openFileFromCLI(const char* inputFile, bool ignoreRestartFile, bool ignoreLayoutFile)
+bool DissolveWindow::openFileFromCLI(const char* inputFile, const char* restartFile, bool ignoreRestartFile, bool ignoreLayoutFile)
 {
 	// Clear any existing tabs etc.
 	clearTabs();
@@ -173,18 +173,23 @@ bool DissolveWindow::openFileFromCLI(const char* inputFile, bool ignoreRestartFi
 	Messenger::banner("Parse Restart File");
 	if (!ignoreRestartFile)
 	{
-		CharString restartFile("%s.restart", inputFile);
-		if (DissolveSys::fileExists(restartFile))
+		CharString actualRestartFile = restartFile;
+		if (actualRestartFile.isEmpty()) actualRestartFile.sprintf("%s.restart", inputFile);
+		
+		if (DissolveSys::fileExists(actualRestartFile))
 		{
-			Messenger::print("\nRestart file '%s' exists and will be loaded.\n", restartFile.get());
-			if (!dissolve_.loadRestart(restartFile.get()))
+			Messenger::print("\nRestart file '%s' exists and will be loaded.\n", actualRestartFile);
+			if (!dissolve_.loadRestart(actualRestartFile))
 			{
 				Messenger::error("Restart file contained errors.\n");
 				ProcessPool::finalise();
 				return 1;
 			}
+
+			// Reset the restart filename to be the standard one
+			dissolve_.setRestartFilename(CharString("%s.restart", inputFile));
 		}
-		else Messenger::print("\nRestart file '%s' does not exist.\n", restartFile.get());
+		else Messenger::print("\nRestart file '%s' does not exist.\n", actualRestartFile.get());
 	}
 	else Messenger::print("\nRestart file (if it exists) will be ignored.\n");
 
