@@ -28,3 +28,5 @@ ${CMAKE_SOURCE_DIR}
 ${CMAKE_BINARY_DIR}
 ${CMAKE_BINARY_DIR}/src
 )
+
+add_subdirectory(ff)

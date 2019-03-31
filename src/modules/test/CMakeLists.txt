@@ -8,7 +8,6 @@ add_library(testmodule
 
   test.h
 )
-
 # 'nogui' library
 add_library(testmodulenogui
   nogui.cpp
