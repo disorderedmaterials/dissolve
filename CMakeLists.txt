@@ -149,7 +149,6 @@ add_executable(${target_name}
   MACOSX_BUNDLE
   ${SRCS}/main.cpp 
 )
-
 # Set project-local include directories for target
 target_include_directories(${target_name} PRIVATE
   ${PROJECT_SOURCE_DIR}/src
@@ -198,7 +197,7 @@ endif(GUI)
 set(BASIC_LINK_LIBS
 
   # Main libs
-  main classes module analyse analysisnodes keywordtypes expression base math data ff
+  main classes module analyse analysisnodes keywordtypes expression base math data ff 
 
   # Modules
   analysemodule
@@ -251,13 +250,14 @@ target_link_libraries( ${target_name}
   datatestmodulenogui
   energymodulenogui
   epsrmodulenogui
+  geomoptmodule
+  geomoptmodulenogui
   neutronsqmodulenogui
   rdfmodulenogui
   refinemodulenogui
   skeletonmodulenogui
   sqmodulenogui
   testmodulenogui
-
   ${NO_WHOLE_ARCHIVE_FLAG}
 
   ${EXTRA_LINK_LIBS}
@@ -282,6 +282,7 @@ if(GUI)
     datatestmodulegui
     energymodulegui
     epsrmodulegui
+    geomoptmodule
     neutronsqmodulegui
     rdfmodulegui
     refinemodulegui
