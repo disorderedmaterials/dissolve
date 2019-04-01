@@ -71,9 +71,9 @@ void Filters::convolveNormalised(Data1D& data, BroadeningFunction function)
 }
 
 // Apply Kolmogorov–Zurbenko filter
-void Filters::kolmogorovZurbenko(Data1D& data, int k, int m)
+void Filters::kolmogorovZurbenko(Data1D& data, int k, int m, bool normalised)
 {
-	for (int iteration=0; iteration<k; ++iteration) movingAverage(data, m);
+	for (int iteration=0; iteration<k; ++iteration) normalised ? normalisedMovingAverage(data, m) : movingAverage(data, m);
 }
 
 // Apply median filter to data
@@ -160,6 +160,21 @@ void Filters::movingAverage(Data1D& data, int avgSize)
 	}
 
 	y = newY;
+}
+
+// Perform moving average smoothing, normalising area after smooth
+void Filters::normalisedMovingAverage(Data1D& data, int avgSize)
+{
+	// Calculate the original integral
+	double originalIntegral = Integrator::absTrapezoid(data);
+
+	// Perform the smoothing
+	movingAverage(data, avgSize);
+
+	// Calculate the new integral
+	double newIntegral = Integrator::absTrapezoid(data);
+
+	data.values() *= (originalIntegral / newIntegral);
 }
 
 // Subtract average level from data, forming average from supplied x value

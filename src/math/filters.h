@@ -36,11 +36,13 @@ class Filters
 	// Perform point-wise convolution of data with the supplied BroadeningFunction, normalising to the original integral of the function
 	static void convolveNormalised(Data1D& data, BroadeningFunction function);
 	// Apply Kolmogorov–Zurbenko filter to data
-	static void kolmogorovZurbenko(Data1D& data, int k, int m);
+	static void kolmogorovZurbenko(Data1D& data, int k, int m, bool normalised = false);
 	// Apply median filter to data
 	static void median(Data1D& data, int length);
 	// Perform moving average smoothing on data
 	static void movingAverage(Data1D& data, int avgSize);
+	// Perform moving average smoothing on data, normalising area after smooth
+	static void normalisedMovingAverage(Data1D& data, int avgSize);
 	// Subtract average level (starting at supplied x value) from data
 	static double subtractAverage(Data1D& data, double xStart);
 	// Trim supplied data to specified range
