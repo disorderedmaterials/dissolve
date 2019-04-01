@@ -61,7 +61,7 @@ class Parameters : public MPIListItem<Parameters>
 	 * Potential Parameters
 	 */
 	private:
-	// Whether the parameters / charge are empty (none have never been set)
+	// Whether the parameters / charge are empty (i.e. none have ever been set)
 	bool empty_;
 	// Parameter array
 	double parameters_[MAXSRPARAMETERS];
@@ -69,16 +69,16 @@ class Parameters : public MPIListItem<Parameters>
 	double charge_;
 
 	public:
-	// Return whether the parameters / charge are empty (none have never been set)
-	bool empty();
+	// Return whether the parameters / charge are empty (i.e. none have ever been set)
+	bool empty() const;
 	// Set parameter with index specified
 	void setParameter(int index, double value);
 	// Return parameter with index specified
-	double parameter(int index);
+	double parameter(int index) const;
 	// Set atomic charge
 	void setCharge(double charge);
 	// Return atomic charge
-	double charge();
+	double charge() const;
 
 
 	/*

@@ -24,6 +24,7 @@
 
 #include "templates/array.h"
 #include "templates/list.h"
+#include "templates/reflist.h"
 
 // Basic Element Definition (Z, name, symbol)
 class Element
@@ -88,6 +89,7 @@ class Elements
 	 * Helper Functions
 	 */
 	public:
+	// Create array of Lists, with array size equal to number of elements defined
 	template <class T> static void createElementListArray(Array< List<T> >& listArray)
 	{
 		/*
@@ -97,6 +99,11 @@ class Elements
 		 */
 		listArray.initialise(Elements::nElements());
 		for (int n=0; n<nElements(); ++n) listArray[n].setDisownOnDestruction(true);
+	}
+	// Create array of RefLists, with array size equal to number of elements defined
+	template <class T> static void createElementRefListArray(Array< RefList<T,bool> >& listArray)
+	{
+		listArray.initialise(Elements::nElements());
 	}
 };
 

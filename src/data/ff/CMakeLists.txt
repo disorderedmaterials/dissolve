@@ -1,4 +1,9 @@
 add_library(ff
+  # SPC/Fw
+  spcfw.cpp
+  spcfw.h
+
+  # UFF
   uff.cpp
   uffatomtype.cpp
   uff.h

@@ -23,7 +23,7 @@
 #include "data/ff/uff.h"
 
 // Constructor
-UFFAtomType::UFFAtomType(int z, const char* symbol, int index, const char* name, const char* description, double r, double theta, double x, double D, double zeta, double Z, double chi, int geom, double V, double U) : ElementReference(z, symbol), ForcefieldAtomType(index, name, description), ListItem<UFFAtomType>()
+UFFAtomType::UFFAtomType(Forcefield* parent, int z, const char* symbol, int index, const char* name, const char* description, double r, double theta, double x, double D, double zeta, double Z, double chi, int geom, double V, double U) : ForcefieldAtomType(parent, z, symbol, index, name, description)
 {
 	// Set the atomtype's data
 	r_ = r;
@@ -36,9 +36,6 @@ UFFAtomType::UFFAtomType(int z, const char* symbol, int index, const char* name,
 	geom_ = geom;
 	V_ = V;
 	U_ = U;
-
-	// Add this atomtype to its parent element's list
-	Forcefield_UFF::registerAtomType(this, z);
 }
 
 // Assignment Operator

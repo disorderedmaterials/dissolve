@@ -135,7 +135,7 @@ void Dissolve::copySpeciesIntra(SpeciesIntra* sourceIntra, SpeciesIntra* destInt
 			if (!master)
 			{
 				master = addMasterBond(sourceIntra->masterParameters()->name());
-				master->setParametersFromArray(sourceIntra->parametersAsArray());
+				master->setParameters(sourceIntra->parametersAsArray());
 			}
 		}
 		else if (sourceIntra->type() == SpeciesIntra::IntramolecularAngle)
@@ -144,7 +144,7 @@ void Dissolve::copySpeciesIntra(SpeciesIntra* sourceIntra, SpeciesIntra* destInt
 			if (!master)
 			{
 				master = addMasterAngle(sourceIntra->masterParameters()->name());
-				master->setParametersFromArray(sourceIntra->parametersAsArray());
+				master->setParameters(sourceIntra->parametersAsArray());
 			}
 		}
 		else if (sourceIntra->type() == SpeciesIntra::IntramolecularTorsion)
@@ -153,7 +153,7 @@ void Dissolve::copySpeciesIntra(SpeciesIntra* sourceIntra, SpeciesIntra* destInt
 			if (!master)
 			{
 				master = addMasterTorsion(sourceIntra->masterParameters()->name());
-				master->setParametersFromArray(sourceIntra->parametersAsArray());
+				master->setParameters(sourceIntra->parametersAsArray());
 			}
 		}
 
@@ -166,7 +166,7 @@ void Dissolve::copySpeciesIntra(SpeciesIntra* sourceIntra, SpeciesIntra* destInt
 	{
 		// Just copy over form / parameters
 		destIntra->setForm(sourceIntra->form());
-		destIntra->setParametersFromArray(sourceIntra->parametersAsArray());
+		destIntra->setParameters(sourceIntra->parametersAsArray());
 	}
 }
 
