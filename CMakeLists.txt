@@ -212,6 +212,7 @@ set(BASIC_LINK_LIBS
   epsrmodule
   exportmodule
   forcesmodule
+  geomoptmodule
   importmodule
   intrashakemodule
   mdmodule
@@ -250,7 +251,6 @@ target_link_libraries( ${target_name}
   datatestmodulenogui
   energymodulenogui
   epsrmodulenogui
-  geomoptmodule
   geomoptmodulenogui
   neutronsqmodulenogui
   rdfmodulenogui
@@ -282,7 +282,7 @@ if(GUI)
     datatestmodulegui
     energymodulegui
     epsrmodulegui
-    geomoptmodule
+    geomoptmodulegui
     neutronsqmodulegui
     rdfmodulegui
     refinemodulegui
@@ -291,12 +291,7 @@ if(GUI)
     testmodulegui
 
     # Main gui libs
-    uchromagui
-    uchroma
-    uchromaclasses
-    uchromarender
-    uchromakernels
-    uchromasession
+    render
     viewer
     widgets
     keywordwidgets
@@ -330,6 +325,7 @@ if(GUI)
     datatestmodulegui
     energymodulegui
     epsrmodulegui
+    geomoptmodulegui
     neutronsqmodulegui
     rdfmodulegui
     refinemodulegui
@@ -338,12 +334,7 @@ if(GUI)
     testmodulegui
 
     # Main gui libs
-    uchromagui
-    uchroma
-    uchromaclasses
-    uchromarender
-    uchromakernels
-    uchromasession
+    render
     viewer
     widgets
     keywordwidgets
