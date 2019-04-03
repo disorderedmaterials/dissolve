@@ -32,8 +32,14 @@
 #include "modules/energy/energy.h"
 #include "modules/export/export.h"
 
+// Static Members (ObjectStore)
+template<class Configuration> RefList<Configuration,int> ObjectStore<Configuration>::objects_;
+template<class Configuration> int ObjectStore<Configuration>::objectCount_ = 0;
+template<class Configuration> int ObjectStore<Configuration>::objectType_ = ObjectInfo::ConfigurationObject;
+template<class Configuration> const char* ObjectStore<Configuration>::objectTypeName_ = "Configuration";
+
 // Constructor
-Configuration::Configuration() : ListItem<Configuration>(), boxNormalisationInterpolation_(boxNormalisation_)
+Configuration::Configuration() : ListItem<Configuration>(), ObjectStore<Configuration>(this), boxNormalisationInterpolation_(boxNormalisation_)
 {
 	box_ = NULL;
 	clear();

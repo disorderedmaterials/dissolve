@@ -39,6 +39,7 @@
 #include "base/processpool.h"
 #include "base/genericlist.h"
 #include "templates/vector3.h"
+#include "templates/objectstore.h"
 #include "templates/orderedlist.h"
 #include "templates/array.h"
 #include "templates/dynamicarray.h"
@@ -52,7 +53,7 @@ class PotentialMap;
 class Species;
 
 // Configuration
-class Configuration : public ListItem<Configuration>
+class Configuration : public ListItem<Configuration>, public ObjectStore<Configuration>
 {
 	public:
 	// Constructor
