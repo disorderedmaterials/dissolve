@@ -961,7 +961,7 @@ bool Axes::gridLinesMinor(int axis) const
  */
 
 // Return version of axws definitions
-const int Axes::version() const
+int Axes::version() const
 {
 	return version_;
 }

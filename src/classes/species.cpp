@@ -273,7 +273,7 @@ void Species::print()
 }
 
 // Return version
-const int Species::version() const
+int Species::version() const
 {
 	return version_;
 }

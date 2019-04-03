@@ -329,8 +329,8 @@ class Axes
 	VersionCounter version_;
 
 	public:
-	// Return version of axws definitions
-	const int version() const;
+	// Return version of axes definitions
+	int version() const;
 
 
 	/*

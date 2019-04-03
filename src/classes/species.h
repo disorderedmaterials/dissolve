@@ -67,7 +67,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	// Print Species information
 	void print();
 	// Return version
-	const int version() const;
+	int version() const;
 
 
 	/*
