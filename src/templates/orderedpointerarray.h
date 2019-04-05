@@ -139,6 +139,11 @@ template <class T> class OrderedPointerArray
 	{
 		return items_;
 	}
+	// Return pointer array (const)
+	T** constItems() const
+	{
+		return items_;
+	}
 
 
 	/*
