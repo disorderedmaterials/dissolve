@@ -30,7 +30,7 @@
 /* none */
 
 /*
- * Simple Orderd Pointer Array Class
+ * Simple Ordered Pointer Array Class
  * A contiguous pointer array class designed to be as lightweight as possible.
  * Each pointer may exist in the list only once.
  * Order of pointers, based on their increasing value, is maintained.
