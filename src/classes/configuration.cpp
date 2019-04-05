@@ -95,6 +95,41 @@ void Configuration::clear()
 }
 
 /*
+ * Basic Information
+ */
+
+// Set name of the Configuration
+void Configuration::setName(const char* name)
+{
+	name_ = name;
+
+	// Generate a nice name (i.e. no spaces, slashes etc.)
+	niceName_ = DissolveSys::niceName(name_);
+
+	// Set box normalisation filename based on Configuration name
+	boxNormalisationFileName_ = niceName_;
+	boxNormalisationFileName_.strcat(".boxnorm");
+}
+
+// Return name of the Configuration
+const char* Configuration::name()
+{
+	return name_.get();
+}
+
+// Return nice name of the Configuration
+const char* Configuration::niceName()
+{
+	return niceName_.get();
+}
+
+// Return version
+int Configuration::version() const
+{
+	return version_;
+}
+
+/*
  * Calculation Limits
  */
 

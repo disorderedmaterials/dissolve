@@ -43,6 +43,7 @@ void Configuration::empty()
 	cells_.clear();
 
 	coordinateIndex_ = 0;
+	++version_;
 }
 
 // Initialise all content arrays
@@ -159,6 +160,8 @@ bool Configuration::initialise(ProcessPool& procPool, bool randomise, double pai
 
 	// Set fractional populations in usedAtomTypes_
 	usedAtomTypes_.finalise();
+
+	++version_;
 
 	return true;
 }

@@ -38,6 +38,7 @@
 #include "math/data1d.h"
 #include "base/processpool.h"
 #include "base/genericlist.h"
+#include "base/version.h"
 #include "templates/vector3.h"
 #include "templates/objectstore.h"
 #include "templates/orderedlist.h"
@@ -67,13 +68,31 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 
 
 	/*
-	 * Composition
+	 * Basic Information
 	 */
 	private:
-	// Name of the configuration
+	// Name of the Configuration
 	CharString name_;
 	// Nice name (generated from name_) used for output files
 	CharString niceName_;
+	// Version of the Configuration
+	VersionCounter version_;
+
+	public:
+	// Set name of the Configuration
+	void setName(const char* name);
+	// Return name of the Configuration
+	const char* name();
+	// Return nice name of the Configuration
+	const char* niceName();
+	// Return version
+	int version() const;
+
+
+	/*
+	 * Composition
+	 */
+	private:
 	// Reference list of Species used by the Configuration and their relative populations
 	List<SpeciesInfo> usedSpecies_;
 	// Integer multiplier of used relative species populations
@@ -88,12 +107,6 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	double temperature_;
 
 	public:
-	// Set name of the configuration
-	void setName(const char* name);
-	// Return name of the configuration
-	const char* name();
-	// Return nice name of the configuration
-	const char* niceName();
 	// Add Species to list of those used by the Configuration
 	SpeciesInfo* addUsedSpecies(Species* sp, double relativePopulation);
 	// Return SpeciesInfo for specified Species
