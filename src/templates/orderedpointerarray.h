@@ -149,6 +149,26 @@ template <class T> class OrderedPointerArray
 	/*
 	 * Item Management
 	 */
+	protected:
+	// Compare the two objects, returning if their 'indices' are equal
+	virtual inline bool itemIndicesEqual(T* a, T* b)
+	{
+		// Default implementation compares the pointers
+		return (a == b);
+	}
+	// Compare the two objects, returning if the 'index' of a is greater than that of b
+	virtual inline bool itemIndexGreaterThan(T* a, T* b)
+	{
+		// Default implementation compares the pointers
+		return (a > b);
+	}
+	// Compare the two objects, returning if the 'index' of a is less than that of b
+	virtual inline bool itemIndexLessThan(T* a, T* b)
+	{
+		// Default implementation compares the pointers
+		return (a < b);
+	}
+
 	public:
 	// Add an item to the list
 	void add(T* ptr)
@@ -158,8 +178,8 @@ template <class T> class OrderedPointerArray
 		int insertAt, n;
 		for (insertAt = 0; insertAt<nItems_; ++insertAt)
 		{
-			if (items_[insertAt] == ptr) return;
-			if (items_[insertAt] > ptr) break;
+			if (itemIndicesEqual(items_[insertAt], ptr)) return;
+			if (itemIndexGreaterThan(items_[insertAt], ptr)) break;
 		}
 
 		// The pointer is not currently in the list, and we have the position at which it should be inserted in 'insertAt'.
@@ -203,8 +223,8 @@ template <class T> class OrderedPointerArray
 		// Step through the items until we find the specified pointer
 		for (int n=0; n<nItems_; ++n)
 		{
-			if (items_[n] > ptr) return false;
-			if (items_[n] == ptr)
+			if (itemIndexGreaterThan(items_[n], ptr)) return false;
+			if (itemIndicesEqual(items_[n], ptr))
 			{
 				// Found it. Move all items from this point forward back one place
 				for (int m=n+1; m<nItems_; ++m) items_[m-1] = items_[m];
