@@ -42,8 +42,12 @@ class RegionalDistributor
 	~RegionalDistributor();
 	// Molecule Status Flag
 	enum MoleculeStatusFlag { WaitingFlag, DistributedFlag };
+	// Return string for specified MoleculeStatusFlag
+	const char* moleculeStatusFlag(MoleculeStatusFlag flag);
 	// Cell Status Flag
 	enum CellStatusFlag { UnusedFlag, LockedForEditingFlag, ReadByOneFlag, ReadByManyFlag };
+	// Return string for specified CellStatusFlag
+	const char* cellStatusFlag(CellStatusFlag flag);
 
 
 	/*
