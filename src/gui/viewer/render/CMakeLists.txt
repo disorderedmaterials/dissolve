@@ -16,11 +16,12 @@ SET(render_SRCS
   primitiveinfo.h
   primitiveinstance.h
   primitivelist.h
+  renderable.h
+  renderableconfiguration.h
   renderabledata1d.h
   renderablefactory.h
   renderablegroup.h
   renderablegroupmanager.h
-  renderable.h
   renderablespecies.h
   symbol.h
   textformat.h
@@ -45,6 +46,7 @@ SET(render_SRCS
   primitiveinstance.cpp
   primitivelist.cpp
   renderable.cpp
+  renderableconfiguration.cpp
   renderabledata1d.cpp
   renderablefactory.cpp
   renderablegroup.cpp
