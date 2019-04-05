@@ -193,6 +193,8 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	int nAtoms() const;
 	// Return Atom array
 	DynamicArray<Atom>& atoms();
+	// Return Atom array (const)
+	const DynamicArray<Atom>& constAtoms() const;
 	// Return nth Atom
 	Atom* atom(int n);
 	// Add new Bond to Configuration, with Molecule parent specified
@@ -203,6 +205,8 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	int nBonds() const;
 	// Return Bond array
 	DynamicArray<Bond>& bonds();
+	// Return Bond array (const)
+	const DynamicArray<Bond>& constBonds() const;
 	// Return nth Bond
 	Bond* bond(int n);
 	// Add new Angle to Configuration, with Molecule parent specified

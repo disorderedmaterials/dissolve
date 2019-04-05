@@ -365,6 +365,12 @@ DynamicArray<Atom>& Configuration::atoms()
 	return atoms_;
 }
 
+// Return Atom array (const)
+const DynamicArray<Atom>& Configuration::constAtoms() const
+{
+	return atoms_;
+}
+
 // Return nth atom
 Atom* Configuration::atom(int n)
 {
@@ -407,6 +413,12 @@ int Configuration::nBonds() const
 
 // Return Bond array
 DynamicArray<Bond>& Configuration::bonds()
+{
+	return bonds_;
+}
+
+// Return Bond array (const)
+const DynamicArray<Bond>& Configuration::constBonds() const
 {
 	return bonds_;
 }
