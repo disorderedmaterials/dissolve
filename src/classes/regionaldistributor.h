@@ -1,5 +1,5 @@
 /*
-	*** RegionalDistributor
+	*** Regional Distributor
 	*** src/classes/regionaldistributor.h
 	Copyright T. Youngs 2012-2019
 
@@ -32,7 +32,7 @@
 class ProcessPool;
 class Molecule;
 
-// RegionalDistributor
+// Regional Distributor
 class RegionalDistributor
 {
 	public:
