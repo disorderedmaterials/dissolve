@@ -289,3 +289,9 @@ CellArray& Configuration::cells()
 {
 	return cells_;
 }
+
+// Return cell array
+const CellArray& Configuration::constCells() const
+{
+	return cells_;
+}

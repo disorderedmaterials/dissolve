@@ -317,6 +317,8 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	Interpolator& boxNormalisationInterpolation();
 	// Return cell array
 	CellArray& cells();
+	// Return cell array
+	const CellArray& constCells() const;
 
 
 	/*
