@@ -544,6 +544,7 @@ int Configuration::coordinateIndex() const
 void Configuration::incrementCoordinateIndex()
 {
 	++coordinateIndex_;
+	++version_;
 }
 
 // Load coordinates from file
