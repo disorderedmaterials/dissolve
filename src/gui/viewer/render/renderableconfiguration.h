@@ -72,7 +72,7 @@ class RenderableConfiguration : public Renderable
 	// Main primitives
 	Primitive* lineConfigurationPrimitive_, *lineInteractionPrimitive_;
 	// Main assemblies
-	PrimitiveAssembly configurationAssembly_, interactionAssembly_;
+	PrimitiveAssembly configurationAssembly_, interactionAssembly_, unitCellAssembly_;
 
 	private:
 	// Create cylinder bond between supplied atoms in specified assembly

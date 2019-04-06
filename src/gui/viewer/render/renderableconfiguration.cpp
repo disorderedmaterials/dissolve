@@ -23,6 +23,7 @@
 #include "gui/viewer/render/renderablegroupmanager.h"
 #include "gui/viewer/render/view.h"
 #include "data/elementcolours.h"
+#include "classes/box.h"
 
 // Constructor
 RenderableConfiguration::RenderableConfiguration(const Configuration* source, const char* objectTag) : Renderable(Renderable::ConfigurationRenderable, objectTag), source_(source)
@@ -39,7 +40,7 @@ RenderableConfiguration::RenderableConfiguration(const Configuration* source, co
 	bondPrimitive_ = createPrimitive(GL_TRIANGLES, false);
 	bondPrimitive_->cylinder(0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1, 8);
 	unitCellPrimitive_ = createPrimitive(GL_LINES, false);
-// 	unitCellPrimitive_->wireCube(1.0, 4, 0, 0, 0);
+	unitCellPrimitive_->wireOrthorhomboid(1.0, 1.0, 1.0, 0.5, 0.5, 0.5);
 	lineConfigurationPrimitive_ = createPrimitive(GL_LINES, true);
 	lineInteractionPrimitive_ = createPrimitive(GL_LINES, true);
 	lineInteractionPrimitive_->setNoInstances();
@@ -167,6 +168,7 @@ void RenderableConfiguration::recreatePrimitives(const View& view, const ColourD
 	// Clear existing data
 	lineConfigurationPrimitive_->forgetAll();
 	configurationAssembly_.clear();
+	unitCellAssembly_.clear();
 
 	// Render according to the current displayStyle
 	if (displayStyle_ == LinesStyle)
@@ -237,6 +239,11 @@ void RenderableConfiguration::recreatePrimitives(const View& view, const ColourD
 			createCylinderBond(configurationAssembly_, b->i(), b->j(), spheresBondRadius_);
 		}
 	}
+
+	// Add unit cell
+	A.setIdentity();
+	A = source_->box()->axes();
+	unitCellAssembly_.add(unitCellPrimitive_, A, colourBlack);
 }
 
 // Send primitives for rendering
@@ -247,6 +254,10 @@ const void RenderableConfiguration::sendToGL(const double pixelScaling)
 	else glEnable(GL_LIGHTING);
 	configurationAssembly_.sendToGL(pixelScaling);
 	interactionAssembly_.sendToGL(pixelScaling);
+
+	// Draw unit cell
+	glDisable(GL_LIGHTING);
+	unitCellAssembly_.sendToGL(pixelScaling);
 }
 
 /*
