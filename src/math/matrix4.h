@@ -33,6 +33,9 @@
 #include <GL/gl.h>
 #endif
 
+// Forward Declarations
+class Matrix3;
+
 // Column-major 4x4 matrix
 class Matrix4
 {
@@ -57,6 +60,7 @@ class Matrix4
 	Vec4<double> operator*(const Vec4<double>& v) const;
 	Matrix4& operator*=(const Matrix4& B);
 	double& operator[](int);
+	void operator=(const Matrix3& B);
 	// Pre-multiply this matrix by the supplied matrix
 	void preMultiply(const Matrix4& B);
 
