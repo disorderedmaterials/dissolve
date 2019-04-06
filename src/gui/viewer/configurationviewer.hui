@@ -1,7 +1,7 @@
 /*
 	*** Configuration Viewer
-	*** src/gui/viewer/configurationviewer.hui
-	Copyright T. Youngs 2012-2013
+	*** src/gui/viewer/configurationviewer.uih
+	Copyright T. Youngs 2019
 
 	This file is part of Dissolve.
 
@@ -25,7 +25,9 @@
 #include "gui/viewer/viewer.hui"
 
 // Forward Declarations
+class RenderableConfiguration;
 class Configuration;
+class Atom;
 
 // Configuration Rendering Widget
 class ConfigurationViewer : public BaseViewer
@@ -39,62 +41,77 @@ class ConfigurationViewer : public BaseViewer
 
 
 	/*
-	// Mouse / Keyboard Input
-	*/
-	protected:
-	// Qt Virtual (mouse press event)
-	void mousePressEvent(QMouseEvent*);
-	// Qt Virtual (mouse release event)
-	void mouseReleaseEvent(QMouseEvent*);
-	// Qt Virtual (mouse move event)
-	void mouseMoveEvent(QMouseEvent*);
-	// Qt Virtual (mouse wheel event)
-	void wheelEvent(QWheelEvent*);
+	 * Rendering (BaseViewer virtuals)
+	 */
+	private:
+	// Perform post-initialisation operations
+	void postInitialiseGL();
+	// Perform post-resize operations
+	void postResizeGL();
+	// Render 2D overlay content
+	void render2DOverlay();
 
 
 	/*
-	 * Rendering Callbacks / Data
+	 * Mouse / Keyboard Input (BaseViewer virtuals)
 	 */
 	protected:
-	// Create necessary primitives (called once when Viewer is constructed)
-	void createPrimitives();
-	// Setup basic GL properties
-	void setupGL();
-	// Draw source Species
-	void drawScene();
-	
+	// Mouse moved
+	void mouseMoved(int dx, int dy);
+	// Mouse 'wheeled'
+	void mouseWheeled(int delta);
+	// Mouse double clicked
+	void mouseDoubleClicked();
+	// Key pressed
+	bool keyPressed(int key);
+	// Key released
+	bool keyReleased(int key);
+
+
 	/*
-	// Custom Data
-	*/
+	 * Interaction (BaseViewer virtuals)
+	 */
 	public:
-	/// Draw Style enum
-	enum DrawStyle
+	// Interaction Mode enum
+	enum InteractionMode
 	{
-		PointStyle,		/**> Draw source Species/Configuration with points (atoms only) */
-		LineStyle,		/**> Draw source Species/Configuration with lines */
-		BallAndStickStyle,	/**> Draw source Species/Configuration with balls and sticks */
-		nDrawStyles		/**> Number of drawing styles */
+		DefaultInteraction,
+		TranslateViewInteraction,
+		RotateViewInteraction,
+		nInteractionModes
 	};
-	
+
 	private:
-	// Source Configuration to display
-	Configuration* sourceConfiguration_;
-	// Selection box (if any)
-	QRect selectionBox_;
-	// Basic primtives
-	Primitive spherePrimitive03_, spherePrimitive04_, cubePrimitive_, wireCubePrimitive_, cylinderPrimitive_;
-	// Style in which to draw source
-	ConfigurationViewer::DrawStyle drawStyle_;
+	// Return atom at specified coordinates
+	const Atom* atomAt(int x, int y);
+
+	protected:
+	// Start interaction at the specified screen coordinates
+	void startInteraction();
+	// End interaction at the specified screen coordinates
+	void endInteraction();
+	// Cancel current interaction
+	void cancelInteraction();
 
 	public:
-	// Set source (Configuration)
-	void setSource(Configuration *cfg);
-	// Set draw style
-	void setDrawStyle(ConfigurationViewer::DrawStyle style);
-	
-	public slots:
-	// Change draw style
-	void changeDrawStyle(int style);
+	// Return text describing current interaction mode
+	const char* interactionModeText() const;
+
+
+	/*
+	 * Source Configuration
+	 */
+	private:
+	// Source Configuration to display
+	Configuration* configuration_;
+	// Renderable for source Configuration
+	RenderableConfiguration* configurationRenderable_;
+
+	public:
+	// Set target Configuration
+	void setConfiguration(Configuration* sp);
+	// Return target Configuration
+	Configuration* configuration() const;
 };
 
 #endif

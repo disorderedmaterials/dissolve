@@ -1,6 +1,6 @@
 # GUI Module Library
 
-set(lib_name optimisemodulegui)
+set(lib_name geomoptmodulegui)
 
 # Don't forget to include output directory, otherwise
 # the UI file won't be wrapped!

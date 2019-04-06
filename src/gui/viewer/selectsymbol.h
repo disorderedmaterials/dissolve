@@ -1,6 +1,6 @@
 /*
 	*** Select Text Symbol Dialog
-	*** src/gui/viewer/render/selectsymbol.h
+	*** src/gui/viewer/selectsymbol.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_SELECTSYMBOL_H
 #define DISSOLVE_SELECTSYMBOL_H
 
-#include "gui/viewer/render/ui_selectsymbol.h"
+#include "gui/viewer/ui_selectsymbol.h"
 #include <QDialog>
 #include <QObject>
 

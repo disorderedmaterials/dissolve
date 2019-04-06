@@ -20,7 +20,7 @@
 */
 
 #include "gui/viewer/selectsymbol.h"
-#include "gui/viewer/symbol.h"
+#include "gui/viewer/render/symbol.h"
 #include "templates/variantpointer.h"
 #include <QScrollBar>
 

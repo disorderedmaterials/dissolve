@@ -128,10 +128,10 @@ class Primitive : public ListItem<Primitive>
 	void circle(double radius, int nStacks, int nSegments, bool segmented);
 	// Create vertices of cross with specified width
 	void cross(double halfWidth, Matrix4& transform, const GLfloat* rgba = NULL);
-	// Plot solid cube of specified size at specified origin, and with sides subdivided into triangles ( ntriangles = 2*nSubs )
-	void cube(double size, int nSubs, double ox, double oy, double oz);
 	// Plot solid orthorhomboid of specified size at specified origin, and with sides subdivided into triangles ( ntriangles = 2*nSubs )
-	void orthorhomboid(double sizex, double sizey, double sizez, int nSubs, double ox, double oy, double oz);
+	void orthorhomboid(double sizex = 1.0, double sizey = 1.0, double sizez = 1.0, int nSubs = 4, double ox = 0.0, double oy = 0.0, double oz = 0.0);
+	// Plot wireframe orthorhomboid of specified size at specified origin, and with sides subdivided into triangles ( ntriangles = 2*nSubs )
+	void wireOrthorhomboid(double sizex = 1.0, double sizey = 1.0, double sizez = 1.0, double ox = 0.0, double oy = 0.0, double oz = 0.0);
 };
 
 #endif

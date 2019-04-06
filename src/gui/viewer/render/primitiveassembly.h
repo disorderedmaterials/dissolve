@@ -63,6 +63,8 @@ class PrimitiveAssembly : public ListItem<PrimitiveAssembly>
 	// Add Primitive to the assembly
 	void add(Primitive* primitive, const Matrix4& matrix);
 	// Add Primitive with colour to the assembly
+	void add(Primitive* primitive, const Matrix4& matrix, const GLfloat* rgba);
+	// Add Primitive with colour to the assembly
 	void add(Primitive* primitive, const Matrix4& matrix, GLfloat r, GLfloat g, GLfloat b, GLfloat a);
 	// Add styling information
 	void add(bool lighting, GLenum polygonFillMode);

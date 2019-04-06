@@ -38,7 +38,9 @@
 #include "math/data1d.h"
 #include "base/processpool.h"
 #include "base/genericlist.h"
+#include "base/version.h"
 #include "templates/vector3.h"
+#include "templates/objectstore.h"
 #include "templates/orderedlist.h"
 #include "templates/array.h"
 #include "templates/dynamicarray.h"
@@ -52,7 +54,7 @@ class PotentialMap;
 class Species;
 
 // Configuration
-class Configuration : public ListItem<Configuration>
+class Configuration : public ListItem<Configuration>, public ObjectStore<Configuration>
 {
 	public:
 	// Constructor
@@ -66,13 +68,31 @@ class Configuration : public ListItem<Configuration>
 
 
 	/*
-	 * Composition
+	 * Basic Information
 	 */
 	private:
-	// Name of the configuration
+	// Name of the Configuration
 	CharString name_;
 	// Nice name (generated from name_) used for output files
 	CharString niceName_;
+	// Version of the Configuration
+	VersionCounter version_;
+
+	public:
+	// Set name of the Configuration
+	void setName(const char* name);
+	// Return name of the Configuration
+	const char* name();
+	// Return nice name of the Configuration
+	const char* niceName();
+	// Return version
+	int version() const;
+
+
+	/*
+	 * Composition
+	 */
+	private:
 	// Reference list of Species used by the Configuration and their relative populations
 	List<SpeciesInfo> usedSpecies_;
 	// Integer multiplier of used relative species populations
@@ -87,12 +107,6 @@ class Configuration : public ListItem<Configuration>
 	double temperature_;
 
 	public:
-	// Set name of the configuration
-	void setName(const char* name);
-	// Return name of the configuration
-	const char* name();
-	// Return nice name of the configuration
-	const char* niceName();
 	// Add Species to list of those used by the Configuration
 	SpeciesInfo* addUsedSpecies(Species* sp, double relativePopulation);
 	// Return SpeciesInfo for specified Species
@@ -179,6 +193,8 @@ class Configuration : public ListItem<Configuration>
 	int nAtoms() const;
 	// Return Atom array
 	DynamicArray<Atom>& atoms();
+	// Return Atom array (const)
+	const DynamicArray<Atom>& constAtoms() const;
 	// Return nth Atom
 	Atom* atom(int n);
 	// Add new Bond to Configuration, with Molecule parent specified
@@ -189,6 +205,8 @@ class Configuration : public ListItem<Configuration>
 	int nBonds() const;
 	// Return Bond array
 	DynamicArray<Bond>& bonds();
+	// Return Bond array (const)
+	const DynamicArray<Bond>& constBonds() const;
 	// Return nth Bond
 	Bond* bond(int n);
 	// Add new Angle to Configuration, with Molecule parent specified
@@ -218,9 +236,9 @@ class Configuration : public ListItem<Configuration>
 	// Return AtomTypeList for this Configuration
 	const AtomTypeList& usedAtomTypesList() const;
 	// Return number of atom types used in this Configuration
-	int nUsedAtomTypes();
+	int nUsedAtomTypes() const;
 	// Return current coordinate index
-	int coordinateIndex();
+	int coordinateIndex() const;
 	// Increment current coordinate index
 	void incrementCoordinateIndex();
 	// Load coordinates from specified parser
@@ -299,6 +317,8 @@ class Configuration : public ListItem<Configuration>
 	Interpolator& boxNormalisationInterpolation();
 	// Return cell array
 	CellArray& cells();
+	// Return cell array
+	const CellArray& constCells() const;
 
 
 	/*

@@ -192,13 +192,12 @@ target_include_directories(ed PRIVATE
   ${PROJECT_SOURCE_DIR}/src
   ${PROJECT_BINARY_DIR}/src
   ${Qt5Widgets_INCLUDE_DIRS}
-  ${FREETYPE_INCLUDE_DIRS}
 )
 
 add_subdirectory(delegates)
 add_subdirectory(keywordwidgets)
-add_subdirectory(uchroma)
+add_subdirectory(viewer)
 add_subdirectory(widgets)
 
-target_link_libraries(gui keywordwidgets delegates widgets uchroma)
+target_link_libraries(gui keywordwidgets delegates viewer widgets)
 

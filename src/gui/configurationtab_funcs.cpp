@@ -54,6 +54,9 @@ ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dis
 	// Populate coordinates file format combo
 	ComboPopulator(ui.CoordinatesFileFormatCombo, cfg->inputCoordinates().nFormats(), cfg->inputCoordinates().niceFormats());
 
+	// Set target for ConfigurationViewer
+	ui.ViewerWidget->configurationViewer()->setConfiguration(configuration_);
+
 	refreshing_ = false;
 
 	// Set up the ModuleEditor
@@ -167,6 +170,9 @@ void ConfigurationTab::updateControls()
 	ui.CoordinatesFileEdit->setText(configuration_->inputCoordinates().filename());
 	ui.CoordinatesFileFormatCombo->setCurrentIndex(configuration_->inputCoordinates().formatIndex());
 // 	ui.CoordinatesFromFileGroup->setChecked(configuration_->inputCoordinates().is);
+
+	// Viewer
+	ui.ViewerWidget->configurationViewer()->postRedisplay();
 
 	refreshing_ = false;
 }

@@ -250,7 +250,7 @@ const void RenderableSpecies::sendToGL(const double pixelScaling)
 	speciesAssembly_.sendToGL(pixelScaling);
 	interactionAssembly_.sendToGL(pixelScaling);
 
-	// Selection assemtly is always drawn with no lighting as it comprises only of lines
+	// Selection assembly is always drawn with no lighting as it comprises only of lines
 	glDisable(GL_LIGHTING);
 	selectionAssembly_.sendToGL(pixelScaling);
 }

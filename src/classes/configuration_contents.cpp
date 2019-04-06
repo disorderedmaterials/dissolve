@@ -43,6 +43,7 @@ void Configuration::empty()
 	cells_.clear();
 
 	coordinateIndex_ = 0;
+	++version_;
 }
 
 // Initialise all content arrays
@@ -159,6 +160,8 @@ bool Configuration::initialise(ProcessPool& procPool, bool randomise, double pai
 
 	// Set fractional populations in usedAtomTypes_
 	usedAtomTypes_.finalise();
+
+	++version_;
 
 	return true;
 }
@@ -362,6 +365,12 @@ DynamicArray<Atom>& Configuration::atoms()
 	return atoms_;
 }
 
+// Return Atom array (const)
+const DynamicArray<Atom>& Configuration::constAtoms() const
+{
+	return atoms_;
+}
+
 // Return nth atom
 Atom* Configuration::atom(int n)
 {
@@ -404,6 +413,12 @@ int Configuration::nBonds() const
 
 // Return Bond array
 DynamicArray<Bond>& Configuration::bonds()
+{
+	return bonds_;
+}
+
+// Return Bond array (const)
+const DynamicArray<Bond>& Configuration::constBonds() const
 {
 	return bonds_;
 }
@@ -514,13 +529,13 @@ const AtomTypeList& Configuration::usedAtomTypesList() const
 }
 
 // Return number of atom types used in this Configuration
-int Configuration::nUsedAtomTypes()
+int Configuration::nUsedAtomTypes() const
 {
 	return usedAtomTypes_.nItems();
 }
 
 // Return current coordinate index
-int Configuration::coordinateIndex()
+int Configuration::coordinateIndex() const
 {
 	return coordinateIndex_;
 }
@@ -529,6 +544,7 @@ int Configuration::coordinateIndex()
 void Configuration::incrementCoordinateIndex()
 {
 	++coordinateIndex_;
+	++version_;
 }
 
 // Load coordinates from file

@@ -20,6 +20,7 @@
 */
 
 #include "math/matrix4.h"
+#include "math/matrix3.h"
 #include "base/messenger.h"
 
 // Constructor
@@ -131,6 +132,14 @@ Matrix4& Matrix4::operator*=(const Matrix4& B)
 double &Matrix4::operator[](int index)
 {
 	return matrix_[index];
+}
+
+// Convert Matrix3 to Matrix4
+void Matrix4::operator=(const Matrix3& B)
+{
+	setColumn(0, B.columnAsVec3(0), 0.0);
+	setColumn(1, B.columnAsVec3(1), 0.0);
+	setColumn(2, B.columnAsVec3(2), 0.0);
 }
 
 // Pre-multiply this matrix by the supplied matrix

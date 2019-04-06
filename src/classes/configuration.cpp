@@ -32,8 +32,14 @@
 #include "modules/energy/energy.h"
 #include "modules/export/export.h"
 
+// Static Members (ObjectStore)
+template<class Configuration> RefList<Configuration,int> ObjectStore<Configuration>::objects_;
+template<class Configuration> int ObjectStore<Configuration>::objectCount_ = 0;
+template<class Configuration> int ObjectStore<Configuration>::objectType_ = ObjectInfo::ConfigurationObject;
+template<class Configuration> const char* ObjectStore<Configuration>::objectTypeName_ = "Configuration";
+
 // Constructor
-Configuration::Configuration() : ListItem<Configuration>(), boxNormalisationInterpolation_(boxNormalisation_)
+Configuration::Configuration() : ListItem<Configuration>(), ObjectStore<Configuration>(this), boxNormalisationInterpolation_(boxNormalisation_)
 {
 	box_ = NULL;
 	clear();
@@ -86,6 +92,41 @@ void Configuration::clear()
 	// Reset ensemble data
 	appendEnsemble_ = false;
 	ensembleFrequency_ = 10;
+}
+
+/*
+ * Basic Information
+ */
+
+// Set name of the Configuration
+void Configuration::setName(const char* name)
+{
+	name_ = name;
+
+	// Generate a nice name (i.e. no spaces, slashes etc.)
+	niceName_ = DissolveSys::niceName(name_);
+
+	// Set box normalisation filename based on Configuration name
+	boxNormalisationFileName_ = niceName_;
+	boxNormalisationFileName_.strcat(".boxnorm");
+}
+
+// Return name of the Configuration
+const char* Configuration::name()
+{
+	return name_.get();
+}
+
+// Return nice name of the Configuration
+const char* Configuration::niceName()
+{
+	return niceName_.get();
+}
+
+// Return version
+int Configuration::version() const
+{
+	return version_;
 }
 
 /*

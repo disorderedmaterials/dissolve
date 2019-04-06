@@ -1,3 +1,5 @@
+bison_target(TextPrimitiveParser textprimitive_grammar.yy ${CMAKE_CURRENT_BINARY_DIR}/textprimitive_grammar.cc COMPILE_FLAGS -y )
+
 # Source files (not Qt UI files or custom .h [uih])
 SET(render_SRCS
   axes.h
@@ -9,16 +11,17 @@ SET(render_SRCS
   linestipple.h
   linestyle.h
   numberformat.h
-  primitive.h
   primitiveassembly.h
+  primitive.h
   primitiveinfo.h
   primitiveinstance.h
   primitivelist.h
+  renderable.h
+  renderableconfiguration.h
   renderabledata1d.h
   renderablefactory.h
   renderablegroup.h
   renderablegroupmanager.h
-  renderable.h
   renderablespecies.h
   symbol.h
   textformat.h
@@ -37,13 +40,13 @@ SET(render_SRCS
   linestipple.cpp
   linestyle.cpp
   numberformat.cpp
-  primitive.cpp
   primitiveassembly.cpp
+  primitive.cpp
   primitiveinfo.cpp
   primitiveinstance.cpp
   primitivelist.cpp
-  primitivevertex.cpp
   renderable.cpp
+  renderableconfiguration.cpp
   renderabledata1d.cpp
   renderablefactory.cpp
   renderablegroup.cpp
@@ -56,15 +59,17 @@ SET(render_SRCS
   textprimitivelist.cpp
   vertexchunk.cpp
   view.cpp
-)
+  )
 
 # Target 'render'
 add_library(render
+  ${BISON_TextPrimitiveParser_OUTPUTS}
   ${render_SRCS}
 )
-target_include_directories(viewer PRIVATE
+target_include_directories(render PRIVATE
   ${PROJECT_SOURCE_DIR}/src
   ${PROJECT_BINARY_DIR}/src
   ${Qt5Widgets_INCLUDE_DIRS}
+  ${FREETYPE_INCLUDE_DIRS}
 )
 

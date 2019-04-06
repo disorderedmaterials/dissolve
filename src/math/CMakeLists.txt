@@ -24,6 +24,7 @@ add_library(math
   regression.cpp
   sampleddouble.cpp
   svd.cpp
+  transformer.cpp
   windowfunction.cpp
 
   broadeningfunction.h
@@ -57,6 +58,7 @@ add_library(math
   sampleddouble.h
   sd.h
   svd.h
+  transformer.h
   windowfunction.h
 )
 
