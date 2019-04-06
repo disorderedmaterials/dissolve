@@ -47,6 +47,14 @@ void PrimitiveAssembly::add(Primitive* primitive, const Matrix4& matrix)
 }
 
 // Add Primitive with colour to the assembly
+void PrimitiveAssembly::add(Primitive* primitive, const Matrix4& matrix, const GLfloat* rgba)
+{
+	ColouredPrimitiveInfo* pi = colouredPrimitiveFactory_.produce();
+	(*pi) = ColouredPrimitiveInfo(primitive, matrix, rgba[0], rgba[1], rgba[2], rgba[3]);
+	assembly_.add(pi);
+}
+
+// Add Primitive with colour to the assembly
 void PrimitiveAssembly::add(Primitive* primitive, const Matrix4& matrix, GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
 	ColouredPrimitiveInfo* pi = colouredPrimitiveFactory_.produce();
