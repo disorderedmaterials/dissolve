@@ -103,10 +103,6 @@ void RenderableConfiguration::transformData()
 		}
 	}
 
-	// Need to add on a little extra to the limits since the atoms have a radius
-	transformMin_ -= 1.0;
-	transformMax_ += 1.0;
-
 	transformMinPositive_.x = transformMin_.x < 0.0 ? 0.01 : transformMin_.x;
 	transformMinPositive_.y = transformMin_.y < 0.0 ? 0.01 : transformMin_.y;
 	transformMinPositive_.z = transformMin_.z < 0.0 ? 0.01 : transformMin_.z;
