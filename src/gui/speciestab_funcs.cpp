@@ -344,6 +344,9 @@ void SpeciesTab::updateControls()
 	ui.AngleTable->resizeColumnsToContents();
 	ui.TorsionTable->resizeColumnsToContents();
 
+	// Viewer
+	ui.ViewerWidget->speciesViewer()->postRedisplay();
+
 	refreshing_ = false;
 }
 
