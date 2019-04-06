@@ -128,30 +128,46 @@ bool RenderableConfiguration::yRangeOverX(double xMin, double xMax, double& yMin
  */
 
 // Create cylinder bond between supplied atoms in specified assembly
-void RenderableConfiguration::createCylinderBond(PrimitiveAssembly& assembly, const Atom* i, const Atom* j, double radialScaling)
+void RenderableConfiguration::createCylinderBond(PrimitiveAssembly& assembly, const Atom* i, const Atom* j, const Vec3<double> vij, bool drawFromAtoms, double radialScaling)
 {
 	Matrix4 A;
-
-	// Get vector between Atoms i->j and move to Bond centre
-	Vec3<double> vij = j->r() - i->r();
-	A.setTranslation(i->r()+vij*0.5);
-	const double mag = vij.magAndNormalise();
+	Vec3<double> unit = vij;
+	const double mag = unit.magAndNormalise();
 
 	// Create rotation matrix for Bond
-	A.setColumn(2, vij.x, vij.y, vij.z, 0.0);
-	A.setColumn(0, vij.orthogonal(), 0.0);
-	A.setColumn(1, vij * A.columnAsVec3(0), 0.0);
+	A.setColumn(2, unit.x, unit.y, unit.z, 0.0);
+	A.setColumn(0, unit.orthogonal(), 0.0);
+	A.setColumn(1, unit * A.columnAsVec3(0), 0.0);
 	A.columnMultiply(2, 0.5*mag);
 	A.applyScaling(radialScaling, radialScaling, 1.0);
 
-	// Render half of Bond in colour of Atom j
-	const float* colour = ElementColours::colour(j->element());
-	assembly.add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+	// If drawing from individual Atoms, locate on each Atom and draw the bond halves from there. If not, locate to the bond centre.
+	if (drawFromAtoms)
+	{
+		// Render half of Bond in colour of Atom j
+		A.setTranslation(i->r());
+		const float* colour = ElementColours::colour(j->element());
+		assembly.add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 
-	// Render half of Bond in colour of Atom i
-	A.columnMultiply(2,-1.0);
-	colour = ElementColours::colour(i->element());
-	assembly.add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+		// Render half of Bond in colour of Atom i
+		A.setTranslation(j->r());
+		A.columnMultiply(2,-1.0);
+		colour = ElementColours::colour(i->element());
+		assembly.add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+	}
+	else
+	{
+		A.setTranslation(i->r()+vij*0.5);
+
+		// Render half of Bond in colour of Atom j
+		const float* colour = ElementColours::colour(j->element());
+		assembly.add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+
+		// Render half of Bond in colour of Atom i
+		A.columnMultiply(2,-1.0);
+		colour = ElementColours::colour(i->element());
+		assembly.add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
+	}
 }
 
 // Recreate necessary primitives / primitive assemblies for the data
@@ -165,6 +181,10 @@ void RenderableConfiguration::recreatePrimitives(const View& view, const ColourD
 	lineConfigurationPrimitive_->forgetAll();
 	configurationAssembly_.clear();
 	unitCellAssembly_.clear();
+
+	// Grab the Configuration's Box and CellArray
+	const Box* box = source_->box();
+	const CellArray& cellArray = source_->constCells();
 
 	// Render according to the current displayStyle
 	if (displayStyle_ == LinesStyle)
@@ -196,10 +216,11 @@ void RenderableConfiguration::recreatePrimitives(const View& view, const ColourD
 		{
 			const Bond* b = bonds.constValue(n);
 
-			// Determine half delta i-j for bond
 			const Vec3<double> ri = b->i()->r();
 			const Vec3<double> rj = b->j()->r();
-			const Vec3<double> dij = (rj - ri) * 0.5;
+
+			// Determine half delta i-j for bond
+			const Vec3<double> dij = (cellArray.useMim(b->i()->cell(), b->j()->cell()) ? box->minimumVector(ri, rj) : rj - ri) * 0.5;
 
 			// Draw bond halves
 			lineConfigurationPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z, ElementColours::colour(b->i()->element()));
@@ -232,7 +253,8 @@ void RenderableConfiguration::recreatePrimitives(const View& view, const ColourD
 		{
 			const Bond* b = bonds.constValue(n);
 
-			createCylinderBond(configurationAssembly_, b->i(), b->j(), spheresBondRadius_);
+			if (cellArray.useMim(b->i()->cell(), b->j()->cell())) createCylinderBond(configurationAssembly_, b->i(), b->j(), box->minimumVector(b->i()->r(), b->j()->r()), true, spheresBondRadius_);
+			else createCylinderBond(configurationAssembly_, b->i(), b->j(), b->j()->r() - b->i()->r(), false, spheresBondRadius_);
 		}
 	}
 
