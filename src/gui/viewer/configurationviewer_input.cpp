@@ -1,7 +1,7 @@
 /*
-	*** Configuration Viewer Input Functions
+	*** Configuration Viewer - Input
 	*** src/gui/viewer/configurationviewer_input.cpp
-	Copyright T. Youngs 2012-2013
+	Copyright T. Youngs 2019
 
 	This file is part of Dissolve.
 
@@ -20,99 +20,76 @@
 */
 
 #include "gui/viewer/configurationviewer.hui"
-#include "classes/species.h"
+#include "gui/viewer/render/renderableconfiguration.h"
+#include "classes/configuration.h"
 #include <QtGui/QMouseEvent>
 
-/*
- * Mouse Input
- */
-
-// Qt Signal (mouse press event)
-void ConfigurationViewer::mousePressEvent(QMouseEvent* event)
+// Mouse moved
+void ConfigurationViewer::mouseMoved(int dx, int dy)
 {
-	// Handle button presses (button down) from the mouse
-	buttonStateOnPress_ = event->buttons();
-// 	Qt::KeyboardModifiers km = event->modifiers();
+	// If we are not actually interacting with the view, return now
+	if (!interacting()) return;
 
-	// Store event information
-	rMouseDown_.set(event->x(), event->y(), 0.0);
-	
-	// Do something with the button press event (e.g. context menu function)?
-	if (buttonStateOnPress_.testFlag(Qt::RightButton))
+	bool refresh = false;
+	Atom* currentAtom = NULL;
+
+	// What we do here depends on the current mode
+	switch (interactionMode())
 	{
-	
+		case (ConfigurationViewer::RotateViewInteraction):
+			// Rotate view
+			if (mouseDownModifiers_.testFlag(Qt::ShiftModifier))
+			{
+			}
+			else if (mouseDownModifiers_.testFlag(Qt::ControlModifier))
+			{
+			}
+			else 
+			{
+				view_.rotateView(-dy/2.0, dx/2.0);
+				refresh = true;
+			}
+			break;
+		case (ConfigurationViewer::TranslateViewInteraction):
+			// If this is a flat view, shift the axis limits rather than translating the view
+			if (view_.isFlatView()) view_.shiftFlatAxisLimits(dx, dy);
+			else view_.translateView(dx/15.0, dy/15.0, 0.0);
+			refresh = true;
+			break;
+		default:
+			break;
 	}
+
+	if (refresh) postRedisplay();
 }
 
-// Qt Signal (mouse release event)
-void ConfigurationViewer::mouseReleaseEvent(QMouseEvent* event)
+// Mouse 'wheeled'
+void ConfigurationViewer::mouseWheeled(int delta)
 {
-	// Handle button releases (button up) from the mouse
-	Qt::KeyboardModifiers km = event->modifiers();
-	
-	// Check mouse button state when the mousePressEvent occurred
-	if (buttonStateOnPress_&Qt::LeftButton)
-	{
-	}
-	
-	selectionBox_.setRect(0,0,0,0);
-	buttonStateOnPress_ = 0;
-}
+	bool scrollup = delta > 0;
 
-// Qt Signal (mouse move event)
-void ConfigurationViewer::mouseMoveEvent(QMouseEvent* event)
-{
-	Vec3<double> delta;
-	Matrix4 A;
-	
-	// Get event information and position delta
-	Qt::KeyboardModifiers km = event->modifiers();
-	delta.set(event->x(), event->y(), 0.0);
-	delta = delta - rMouseLast_;
-
-	if (buttonStateOnPress_&Qt::LeftButton)
-	{
-		selectionBox_.setRect(rMouseDown_.x, rMouseDown_.y, event->x()-rMouseDown_.x, event->y()-rMouseDown_.y);
-	}
-	else if (buttonStateOnPress_&Qt::RightButton)
-	{
-		// View manipulation
-		if (km&Qt::ShiftModifier)
-		{
-		}
-		else if (km&Qt::ControlModifier)
-		{
-		}
-		else 
-		{
-			// Rotate the view ('XY plane')
-			A.createRotationXY(delta.y/2.0, delta.x/2.0);
-			A.copyTranslationAndScaling(viewMatrix_);
-			// Reset translation and scaling on original matrix, and multiply
-			viewMatrix_.removeTranslationAndScaling();
-			viewMatrix_ = A * viewMatrix_;
-		}
-	}
-	else if (buttonStateOnPress_&Qt::MidButton)
-	{
-		viewMatrix_.adjustColumn(3, delta.x/5.0, -delta.y/15.0, 0.0, 0.0);
-	}
-	
-	rMouseLast_.set(event->x(), event->y(), 0.0);
-	setFocus();
-	postRedisplay();
-}
-
-// Qt Signal (mouse wheel event)
-void ConfigurationViewer::wheelEvent(QWheelEvent* event)
-{
-	bool scrollup = event->delta() > 0;
-	
 	// Perform camera zoom
-	double dz = -viewMatrix_[14] * 0.15;
-	if (scrollup) dz = -dz;
-	viewMatrix_.adjustColumn(3, 0.0, 0.0, dz, 0.0);
-	// Never let camera z go below -1.0...
-	if (viewMatrix_[14] > -0.1) viewMatrix_[14] = -0.1;
+	double zrange = view_.axes().stretch(2) * view_.axes().realRange(2);
+	if (zrange < 1.0) zrange = 1.0;
+	view_.translateView(0.0, 0.0, 0.5*zrange*(scrollup ? -1.0 : 1.0));
+
+// 	// Never let camera z go below -1.0...
+// 	if (viewMatrix_[14] > -0.1) viewMatrix_[14] = -0.1;
+
 	postRedisplay();
+}
+
+// Mouse double clicked
+void ConfigurationViewer::mouseDoubleClicked()
+{
+}
+
+// Key pressed
+bool ConfigurationViewer::keyPressed(int key)
+{
+}
+
+// Key released
+bool ConfigurationViewer::keyReleased(int key)
+{
 }

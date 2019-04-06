@@ -7,7 +7,7 @@ SET(viewer_MOC_HDRS
   selectsymbol.h
   specieswidget.h
 
-  #configurationviewer.hui
+  configurationviewer.hui
   dataviewer.hui
   speciesviewer.hui
   viewer.hui
@@ -16,6 +16,7 @@ QT5_WRAP_CPP(viewer_MOC_SRCS ${viewer_MOC_HDRS})
 
 # User Interface Files
 SET(viewer_UIS
+  configurationwidget.ui
   datawidget.ui
   selectsymbol.ui
   specieswidget.ui
@@ -24,6 +25,12 @@ QT5_WRAP_UI(viewer_UIS_H ${viewer_UIS})
 
 # Source files (not Qt UI files or custom .h [uih])
 SET(viewer_SRCS
+  configurationviewer_funcs.cpp
+  configurationviewer_input.cpp
+  configurationviewer_interaction.cpp
+  configurationviewer_render.cpp
+  configurationviewer_scene.cpp
+  configurationwidget_funcs.cpp
   dataviewer_funcs.cpp
   dataviewer_input.cpp
   dataviewer_interaction.cpp
