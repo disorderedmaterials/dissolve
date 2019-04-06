@@ -236,9 +236,9 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	// Return AtomTypeList for this Configuration
 	const AtomTypeList& usedAtomTypesList() const;
 	// Return number of atom types used in this Configuration
-	int nUsedAtomTypes();
+	int nUsedAtomTypes() const;
 	// Return current coordinate index
-	int coordinateIndex();
+	int coordinateIndex() const;
 	// Increment current coordinate index
 	void incrementCoordinateIndex();
 	// Load coordinates from specified parser
