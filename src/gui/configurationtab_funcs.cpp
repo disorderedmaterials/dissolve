@@ -171,6 +171,9 @@ void ConfigurationTab::updateControls()
 	ui.CoordinatesFileFormatCombo->setCurrentIndex(configuration_->inputCoordinates().formatIndex());
 // 	ui.CoordinatesFromFileGroup->setChecked(configuration_->inputCoordinates().is);
 
+	// Viewer
+	ui.ViewerWidget->configurationViewer()->postRedisplay();
+
 	refreshing_ = false;
 }
 
