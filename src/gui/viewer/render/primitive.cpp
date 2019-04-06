@@ -590,12 +590,6 @@ void Primitive::cross(double halfWidth, Matrix4& transform, const GLfloat* rgba)
 	}
 }
 
-// Plot solid cube of specified size at specified origin, and with sides subdivided into triangles ( ntriangles = 2*nSubs )
-void Primitive::cube(double size, int nSubs, double ox, double oy, double oz)
-{
-	orthorhomboid(size, size, size, nSubs, ox, oy, oz);
-}
-
 // Plot solid orthorhomboid of specified size at specified origin, and with sides subdivided into triangles ( ntriangles = 2*nSubs )
 void Primitive::orthorhomboid(double sizex, double sizey, double sizez, int nSubs, double ox, double oy, double oz)
 {
@@ -651,4 +645,40 @@ void Primitive::orthorhomboid(double sizex, double sizey, double sizez, int nSub
 			}
 		}
 	}
+}
+
+// Plot wireframe orthorhomboid of specified size at specified origin, and with sides subdivided into triangles ( ntriangles = 2*nSubs )
+void Primitive::wireOrthorhomboid(double sizex, double sizey, double sizez, double ox, double oy, double oz)
+{
+	GLfloat offset[3];
+	offset[0] = ox - sizex*0.5;
+	offset[1] = oy - sizey*0.5;
+	offset[2] = oz - sizez*0.5;
+
+	// Define the eight vertices of the orthorhomboid
+	defineVertex(offset[0],		offset[1],	   offset[2],	      1.0, 0.0, 0.0);	// 0
+	defineVertex(offset[0] + sizex, offset[1],	   offset[2],	      1.0, 0.0, 0.0);	// 1
+	defineVertex(offset[0],		offset[1] + sizey, offset[2],	      1.0, 0.0, 0.0);	// 2
+	defineVertex(offset[0] + sizex, offset[1] + sizey, offset[2],	      1.0, 0.0, 0.0);	// 3
+	defineVertex(offset[0],		offset[1],	   offset[2] + sizez, 1.0, 0.0, 0.0);	// 4
+	defineVertex(offset[0] + sizex, offset[1],	   offset[2] + sizez, 1.0, 0.0, 0.0);	// 5
+	defineVertex(offset[0],		offset[1] + sizey, offset[2] + sizez, 1.0, 0.0, 0.0);	// 6
+	defineVertex(offset[0] + sizex, offset[1] + sizey, offset[2] + sizez, 1.0, 0.0, 0.0);	// 7
+
+	// Define edges
+	// -- Along X
+	defineIndices(0, 1);
+	defineIndices(2, 3);
+	defineIndices(4, 5);
+	defineIndices(6, 7);
+	// -- Along Y
+	defineIndices(0, 2);
+	defineIndices(1, 3);
+	defineIndices(4, 6);
+	defineIndices(5, 7);
+	// -- Along Z
+	defineIndices(0, 4);
+	defineIndices(1, 5);
+	defineIndices(2, 6);
+	defineIndices(3, 7);
 }
