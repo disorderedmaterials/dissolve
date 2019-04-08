@@ -120,6 +120,11 @@ class ImportModule : public Module
 	static bool readData1D(Data1DImportFileFormat::Data1DImportFormat format, LineParser& parser, Data1D& data);
 	// Read simple XY data from specified file
 	static bool readXYData1D(LineParser& parser, Data1D& data);
+	// Read simple histogram data from specified file
+	static bool readHistogramData1D(LineParser& parser, Data1D& data);
+	// Read Gudrun merged interference cross-section (mint) data from specified file
+	static bool readGudrunMintData1D(LineParser& parser, Data1D& data);
+
 };
 
 #endif

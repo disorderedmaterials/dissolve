@@ -125,7 +125,7 @@ class Data1DImportFileFormat : public FileAndFormat
 	 */
 	public:
 	// Available Data1D formats
- 	enum Data1DImportFormat { XYData1D, nData1DImportFormats };
+	enum Data1DImportFormat { XYData1D, HistogramData1D, GudrunMintData1D, nData1DImportFormats };
 	// Return number of available formats
 	int nFormats() const;
 	// Return formats array

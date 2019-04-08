@@ -21,6 +21,7 @@
 
 #include "modules/import/import.h"
 #include "math/data1d.h"
+#include "math/filters.h"
 #include "base/lineparser.h"
 
 // Read Data1D in specified format
@@ -28,6 +29,8 @@ bool ImportModule::readData1D(Data1DImportFileFormat::Data1DImportFormat format,
 {
 	// Check supplied format
 	if (format == Data1DImportFileFormat::XYData1D) return readXYData1D(parser, data);
+	else if (format == Data1DImportFileFormat::HistogramData1D) return readHistogramData1D(parser, data);
+	else if (format == Data1DImportFileFormat::GudrunMintData1D) return readGudrunMintData1D(parser, data);
 
 	Messenger::error("Don't know how to load Data1D of format '%s'.\n", Data1DImportFileFormat().format(format));
 
@@ -40,3 +43,26 @@ bool ImportModule::readXYData1D(LineParser& parser, Data1D& data)
 	return data.load(parser);
 }
 
+// Read simple histogram data from specified file
+bool ImportModule::readHistogramData1D(LineParser& parser, Data1D& data)
+{
+	// Read in the data first (assuming simple XY format)
+	if (!data.load(parser)) return false;
+
+	// Convert bin boundaries to centre-bin values
+	Filters::convertBinBoundaries(data);
+
+	return true;
+}
+
+// Read Gudrun merged interference cross-section (mint) data from specified file
+bool ImportModule::readGudrunMintData1D(LineParser& parser, Data1D& data)
+{
+	// Read in the data first (assuming simple XY format)
+	if (!data.load(parser)) return false;
+
+	// Gudrun mint01 files are in histogram format, so convert bin boundaries to centre-bin values
+	Filters::convertBinBoundaries(data);
+
+	return true;
+}
