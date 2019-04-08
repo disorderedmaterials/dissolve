@@ -47,6 +47,8 @@ class Filters
 	static double subtractAverage(Data1D& data, double xStart);
 	// Trim supplied data to specified range
 	static void trim(Data1D& data, double xMin, double xMax, bool interpolateEnds = false, double interpolationThreshold = 0.01);
+	// Convert bin boundaries to centre-bin values
+	static void convertBinBoundaries(Data1D& data);
 };
 
 #endif

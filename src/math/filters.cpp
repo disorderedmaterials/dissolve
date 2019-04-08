@@ -249,3 +249,20 @@ void Filters::trim(Data1D& data, double xMin, double xMax, bool interpolateEnds,
 	data.xAxis() = newX;
 	data.values() = newY;
 }
+
+// Convert bin boundaries to centre-bin values
+void Filters::convertBinBoundaries(Data1D& data)
+{
+	// Assume that input x values are histogram bin left-boundaries, so x(n) = 0.5[x(n)+x(n_1)]
+	Array<double>& x = data.xAxis();
+	double a = x[0], b;
+	for (int n=0; n<data.nValues()-1; ++n)
+	{
+		b = x[n+1];
+		x[n] = 0.5*(a+b);
+		a = b;
+	}
+
+	// Remove last point
+	data.removeLastPoint();
+}
