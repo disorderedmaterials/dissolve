@@ -65,7 +65,7 @@ class ForceImportFileFormat : public FileAndFormat
 	 */
 	public:
 	// Available forces formats
- 	enum ForceImportFormat { XYZForces, DLPOLYForces, nForceImportFormats };
+	enum ForceImportFormat { XYZForces, DLPOLYForces, nForceImportFormats };
 	// Return number of available formats
 	int nFormats() const;
 	// Return formats array
@@ -95,7 +95,7 @@ class TrajectoryImportFileFormat : public FileAndFormat
 	 */
 	public:
 	// Available trajectory formats
- 	enum TrajectoryImportFormat { XYZTrajectory, nTrajectoryImportFormats };
+	enum TrajectoryImportFormat { XYZTrajectory, nTrajectoryImportFormats };
 	// Return number of available formats
 	int nFormats() const;
 	// Return formats array
