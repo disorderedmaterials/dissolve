@@ -96,6 +96,13 @@ bool NeutronSQModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 		storedDataFT.setObjectTag(CharString("%s//ReferenceDataFT", uniqueName()));
 		storedDataFT = referenceData;
 		Fourier::sineFT(storedDataFT, 1.0 / (2.0 * PI * PI * RDFModule::summedRho(this, dissolve.processingModuleData())), 0.05, 0.05, 30.0, WindowFunction(WindowFunction::Lorch0Window));
+
+		// Save data?
+		if (keywords_.asBool("SaveReferenceData"))
+		{
+			if (!storedData.save(CharString("%s-ReferenceData.q", uniqueName()))) return false;
+			if (!storedDataFT.save(CharString("%s-ReferenceData.r", uniqueName()))) return false;
+		}
 	}
 
 	return true;
@@ -127,7 +134,8 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	const double qMin = keywords_.asDouble("QMin");
 	double qMax = keywords_.asDouble("QMax");
 	if (qMax < 0.0) qMax = 30.0;
-	const bool saveData = keywords_.asBool("Save");
+	const bool saveUnweighted = keywords_.asBool("SaveUnweighted");
+	const bool saveWeighted = keywords_.asBool("SaveWeighted");
 	const WindowFunction& windowFunction = KeywordListHelper<WindowFunction>::retrieve(keywords_, "WindowFunction", WindowFunction());
 
 	// Print argument/parameter summary
@@ -139,7 +147,8 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	else if (normalisation == NeutronSQModule::SquareOfAverageNormalisation) Messenger::print("NeutronSQ: Total F(Q) will be normalised to <b**2>");
 	if (qBroadening.function() == BroadeningFunction::NoFunction) Messenger::print("NeutronSQ: No broadening will be applied to calculated S(Q).");
 	else Messenger::print("NeutronSQ: Broadening to be applied in calculated S(Q) is %s (%s).", BroadeningFunction::functionType(qBroadening.function()), qBroadening.parameterSummary().get());
-	Messenger::print("NeutronSQ: Save data is %s.\n", DissolveSys::onOff(saveData));
+	if (saveUnweighted) Messenger::print("NeutronSQ: Unweighted partials and totals will be saved.\n");
+	if (saveWeighted) Messenger::print("NeutronSQ: Weighted partials and totals will be saved.\n");
 	Messenger::print("\n");
 
 
@@ -180,7 +189,7 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		unweightedsq.setFingerprint(CharString("%i", cfg->moduleData().version("UnweightedGR")));
 
 		// Save data if requested
-		if (saveData && (!MPIRunMaster(procPool, unweightedsq.save()))) return false;
+		if (saveUnweighted && (!MPIRunMaster(procPool, unweightedsq.save()))) return false;
 
 		// Construct weights matrix based on Isotopologue specifications in some Module (specified by mixSource) and the populations of AtomTypes in the Configuration
 		Weights weights;
@@ -222,7 +231,7 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		weightedsq.setObjectTags(CharString("%s//%s//%s", cfg->niceName(), uniqueName_.get(), "WeightedSQ"));
 
 		// Save data if requested
-		if (saveData && (!MPIRunMaster(procPool, weightedsq.save()))) return false;
+		if (saveWeighted && (!MPIRunMaster(procPool, weightedsq.save()))) return false;
 	}
 
 	/*
@@ -236,7 +245,7 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	if (!SQModule::sumUnweightedSQ(procPool, this, dissolve.processingModuleData(), summedUnweightedSQ)) return false;
 
 	// Save data if requested
-	if (saveData && (!MPIRunMaster(procPool, summedUnweightedSQ.save()))) return false;
+	if (saveUnweighted && (!MPIRunMaster(procPool, summedUnweightedSQ.save()))) return false;
 
 	// Create/retrieve PartialSet for summed partial S(Q)
 	PartialSet& summedWeightedSQ = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "WeightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
@@ -267,7 +276,7 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	calculateWeightedGR(summedUnweightedGR, summedWeightedGR, summedWeights, normalisation);
 
 	// Save data if requested
-	if (saveData && (!MPIRunMaster(procPool, summedWeightedSQ.save()))) return false;
+	if (saveWeighted && (!MPIRunMaster(procPool, summedWeightedSQ.save()))) return false;
 
 	return true;
 }

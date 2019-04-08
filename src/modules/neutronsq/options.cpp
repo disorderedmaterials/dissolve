@@ -69,7 +69,9 @@ void NeutronSQModule::setUpKeywords()
 
 	// Export
 	group = addKeywordGroup("Export");
-	group->add(new BoolModuleKeyword(false), "Save", "Whether to save partials to disk after calculation", "<True|False>");
+	group->add(new BoolModuleKeyword(false), "SaveReferenceData", "Whether to save the reference data and its Fourier transform", "<True|False>");
+	group->add(new BoolModuleKeyword(false), "SaveUnweighted", "Whether to save unweighted totals / partials to disk after calculation", "<True|False>");
+	group->add(new BoolModuleKeyword(false), "SaveWeighted", "Whether to save weighted totals / partials to disk after calculation", "<True|False>");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
