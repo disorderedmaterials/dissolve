@@ -309,15 +309,15 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			// Construct our fitting object
 			GaussFit coeffMinimiser(deltaFQ);
 
-			if (created) coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gsigma1, npitss, 0.01, 100, 3, 3, false);
+			if (created) coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gsigma1, npitss, 0.01, 0, 3, 3, false);
 			else
 			{
 				if (fitCoefficients.nItems() != ncoeffp)
 				{
 					Messenger::warn("Number of terms (%i) in existing FitCoefficients array for target '%s' does not match the current number (%i), so will fit from scratch.\n", fitCoefficients.nItems(), module->uniqueName(), ncoeffp);
-					coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gsigma1, npitss, 0.01, 100, 3, 3, false);
+					coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gsigma1, npitss, 0.01, 0, 3, 3, false);
 				}
-				else coeffMinimiser.constructReciprocal(0.0, rmaxpt, fitCoefficients, gsigma1, npitss, 0.01, 100, 3, 3, false);
+				else coeffMinimiser.constructReciprocal(0.0, rmaxpt, fitCoefficients, gsigma1, npitss, 0.01, 0, 3, 3, false);
 			}
 
 			// Store the new fit coefficients
@@ -330,15 +330,15 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			// Construct our fitting object
 			PoissonFit coeffMinimiser(deltaFQ);
 
-			if (created) coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, psigma1, psigma2, npitss, 0.1, 100, 3, 3, false);
+			if (created) coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, psigma1, psigma2, npitss, 0.1, 0, 3, 3, false);
 			else
 			{
 				if (fitCoefficients.nItems() != ncoeffp)
 				{
 					Messenger::warn("Number of terms (%i) in existing FitCoefficients array for target '%s' does not match the current number (%i), so will fit from scratch.\n", fitCoefficients.nItems(), module->uniqueName(), ncoeffp);
-					coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, psigma1, psigma2, npitss, 0.01, 100, 3, 3, false);
+					coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, psigma1, psigma2, npitss, 0.01, 0, 3, 3, false);
 				}
-				else coeffMinimiser.constructReciprocal(0.0, rmaxpt, fitCoefficients, psigma1, psigma2, npitss, 0.01, 100, 3, 3, false);
+				else coeffMinimiser.constructReciprocal(0.0, rmaxpt, fitCoefficients, psigma1, psigma2, npitss, 0.01, 0, 3, 3, false);
 			}
 
 			// Store the new fit coefficients
@@ -633,8 +633,13 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				// Zero potential before adding in fluctuation coefficients?
 				if (overwritePotentials) potCoeff = 0.0;
 
+				// Perform smoothing of the fluctuation coefficients before we sum them into the potential (the un-smoothed coefficients are stored)
+				Data1D smoothedCoefficients;
+				for (int n=0; n<ncoeffp; ++n) smoothedCoefficients.addPoint(n, fluctuationCoefficients.constAt(i, j, n));
+				Filters::kolmogorovZurbenko(smoothedCoefficients, 3, 5);
+
 				// Add in fluctuation coefficients
-				for (int n=0; n<ncoeffp; ++n) potCoeff[n] += fluctuationCoefficients.constAt(i, j, n);
+				for (int n=0; n<ncoeffp; ++n) potCoeff[n] += smoothedCoefficients.value(n);
 
 				// Set first term to zero (following EPSR)
 				potCoeff[0] = 0.0;
