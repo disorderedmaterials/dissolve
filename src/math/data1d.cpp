@@ -134,6 +134,17 @@ void Data1D::addPoint(double x, double value, double error)
 	++version_;
 }
 
+// Remove last point
+void Data1D::removeLastPoint()
+{
+	if (values_.nItems() == 0) return;
+
+	x_.removeLast();
+	values_.removeLast();
+
+	++version_;
+}
+
 // Return x value specified
 double& Data1D::xAxis(int index)
 {
