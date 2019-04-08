@@ -129,7 +129,7 @@ void Data1D::addPoint(double x, double value, double error)
 	values_.add(value);
 
 	if (hasError_) errors_.add(error);
-	else Messenger::warn("Tried to addPoint() with an error to Data1D, but this Data1D () has no error information associated with it.\n", name(), objectTag());
+	else Messenger::warn("Tried to addPoint() with an error to Data1D, but this Data1D (name='%s', tag='%s') has no error information associated with it.\n", name(), objectTag());
 
 	++version_;
 }
