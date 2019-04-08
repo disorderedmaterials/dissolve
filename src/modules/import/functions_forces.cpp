@@ -29,7 +29,8 @@ bool ImportModule::readForces(ForceImportFileFormat::ForceImportFormat format, L
 	if (format == ForceImportFileFormat::XYZForces) return readSimpleForces(parser, fx, fy, fz);
 	else if (format == ForceImportFileFormat::DLPOLYForces) return readDLPOLYForces(parser, fx, fy, fz);
 
-	Messenger::error("Unrecognised force format - '%s'.\nKnown formats are: %s.\n", format, ForceImportFileFormat().formats());
+	Messenger::error("Don't know how to load forces in format '%s'.\n", ForceImportFileFormat().format(format));
+
 	return false;
 }
 

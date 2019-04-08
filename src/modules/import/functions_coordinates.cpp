@@ -30,7 +30,8 @@ bool ImportModule::readCoordinates(CoordinateImportFileFormat::CoordinateImportF
 	else if (format == CoordinateImportFileFormat::DLPOLYCoordinates) return readDLPOLYCoordinates(parser, r);
 	else if (format == CoordinateImportFileFormat::EPSRCoordinates) return readEPSRCoordinates(parser, r);
 
-	Messenger::error("Unrecognised coordinate format - '%s'.\nKnown formats are: %s.\n", format, CoordinateImportFileFormat().formats());
+	Messenger::error("Don't know how to load coordinates in format '%s'.\n", CoordinateImportFileFormat().format(format));
+
 	return false;
 }
 

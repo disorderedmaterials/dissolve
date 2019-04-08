@@ -29,7 +29,8 @@ bool ImportModule::readData1D(Data1DImportFileFormat::Data1DImportFormat format,
 	// Check supplied format
 	if (format == Data1DImportFileFormat::XYData1D) return readXYData1D(parser, data);
 
-	Messenger::error("Unrecognised force format - '%s'.\nKnown formats are: %s.\n", format, Data1DImportFileFormat().formats());
+	Messenger::error("Don't know how to load Data1D of format '%s'.\n", Data1DImportFileFormat().format(format));
+
 	return false;
 }
 
