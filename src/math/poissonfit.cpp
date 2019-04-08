@@ -70,12 +70,16 @@ double PoissonFit::poisson(const double x, const int nIndex) const
 	/*
 	 * Functional Form [Phys. Rev. B, 72, 104204 (2005) - Eq 7]
 	 * 
-	 * 			       1	    (   r   )n     (     r   )
-	 * p[n](r,sigma) = ------------------------ ( ----- )  exp ( - ----- )
-	 * 		   4 pi rho sigma**3 (n+2)! ( sigma )      (   sigma )
+	 * 			    1	        (   r   )n     (     r   )
+	 * p[n](r,sigma) = -------------------- ( ----- )  exp ( - ----- )
+	 * 		   4 pi sigma**3 (n+2)! ( sigma )      (   sigma )
 	 *
 	 * Overflows possible from large values of n, so treat everything logged and explicitly check for 
 	 * values going over some predefined limit (expMax_).
+	 *
+	 * Note: Equation as written does not contain a factor of rho in the denominator, but such a factor
+	 * is present in the generating function (calc_pwrexpr) in EPSR. The factor of rho is not applied here,
+	 * being introduced in the process of generating the empirical potentials instead.
 	 */
 
 	 // Calculate natural log of denominator in prefactor
