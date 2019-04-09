@@ -66,6 +66,7 @@ void NeutronSQModule::setUpKeywords()
 	group->add(new FileAndFormatModuleKeyword(referenceFQ_), "Reference", "F(Q) reference data", "<format> <filename>");
 	group->add(new EnumStringModuleKeyword(NeutronSQModule::NoNormalisation, NeutronSQModule::nNormalisationTypes, NormalisationTypeKeywords), "ReferenceNormalisation", "Normalisation to remove from reference data before use");
 	group->add(new DoubleModuleKeyword(-1.0, -1.0), "ReferenceRemoveAverage", "Q value at which to form average level to be subtracted from reference data before use (-1 for no subtraction)");
+	group->add(new BoolModuleKeyword(false), "ReferenceIgnoreFirst", "Ignore the first point in the supplied reference data");
 
 	// Export
 	group = addKeywordGroup("Export");

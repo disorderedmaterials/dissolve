@@ -56,6 +56,13 @@ bool NeutronSQModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 		if (referenceData.constXAxis().lastValue() < qMax) Messenger::warn("Qmax limit of %e Angstroms**-1 for calculated NeutronSQ (%s) is beyond limit of reference data (Qmax = %e Angstroms**-1).\n", qMax, uniqueName(), referenceData.constXAxis().lastValue());
 		else while (referenceData.constXAxis().lastValue() > qMax) referenceData.removeLastPoint();
 
+		// Remove first point?
+		if (keywords_.asBool("ReferenceIgnoreFirst"))
+		{
+			referenceData.removeFirstPoint();
+			Messenger::print("Removed first point from supplied reference data - new Qmin = %e Angstroms**-1.\n", referenceData.constXAxis().firstValue());
+		}
+
 		// Subtract average level from data?
 		double removeAverage = keywords_.asDouble("ReferenceRemoveAverage");
 		if (removeAverage >= 0.0)
