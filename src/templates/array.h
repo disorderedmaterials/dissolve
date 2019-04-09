@@ -235,6 +235,19 @@ template <class A> class Array : public ListItem< Array<A> >
 		array_ = NULL;
 		size_ = 0;
 	}
+	// Drop the first item from the array
+	void removeFirst()
+	{
+		if (nItems_ == 0)
+		{
+			Messenger::warn("Tried to drop the first item of an empty array...\n");
+			return;
+		}
+
+		for (int n=0; n<nItems_-1; ++n) array_[n] = array_[n+1];
+
+		--nItems_;
+	}
 	// Drop the last item from the array
 	void removeLast()
 	{
