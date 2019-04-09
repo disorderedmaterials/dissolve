@@ -76,6 +76,8 @@ class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore
 	void addPoint(double x, double value);
 	// Add new data point with error
 	void addPoint(double x, double value, double error);
+	// Remove first point
+	void removeFirstPoint();
 	// Remove last point
 	void removeLastPoint();
 	// Return x axis value specified
