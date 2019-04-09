@@ -51,6 +51,11 @@ bool NeutronSQModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 			return false;
 		}
 
+		// Truncate data beyond QMax
+		const double qMax = keywords_.asDouble("QMax") < 0.0 ? 30.0 : keywords_.asDouble("QMax");
+		if (referenceData.constXAxis().lastValue() < qMax) Messenger::warn("Qmax limit of %e Angstroms**-1 for calculated NeutronSQ (%s) is beyond limit of reference data (Qmax = %e Angstroms**-1).\n", qMax, uniqueName(), referenceData.constXAxis().lastValue());
+		else while (referenceData.constXAxis().lastValue() > qMax) referenceData.removeLastPoint();
+
 		// Subtract average level from data?
 		double removeAverage = keywords_.asDouble("ReferenceRemoveAverage");
 		if (removeAverage >= 0.0)
@@ -95,7 +100,7 @@ bool NeutronSQModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 		Data1D& storedDataFT = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "ReferenceDataFT", uniqueName(), GenericItem::InRestartFileFlag);
 		storedDataFT.setObjectTag(CharString("%s//ReferenceDataFT", uniqueName()));
 		storedDataFT = referenceData;
-		Fourier::sineFT(storedDataFT, 1.0 / (2.0 * PI * PI * RDFModule::summedRho(this, dissolve.processingModuleData())), 0.05, 0.05, 30.0, WindowFunction(WindowFunction::Lorch0Window));
+		Fourier::sineFT(storedDataFT, 1.0 / (2.0 * PI * PI * RDFModule::summedRho(this, dissolve.processingModuleData())), 0.0, 0.05, 30.0, WindowFunction(WindowFunction::Lorch0Window));
 
 		// Save data?
 		if (keywords_.asBool("SaveReferenceData"))
