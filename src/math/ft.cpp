@@ -63,21 +63,39 @@ bool Fourier::sineFT(Data1D& data, double normFactor, double wMin, double wStep,
 	while (omega <= wMax)
 	{
 		ft = 0.0;
-		for (m=0; m<nX-1; ++m)
+		if (omega > 0.0)
 		{
-			deltaX = x.constAt(m+1) - x.constAt(m);
+			for (m=0; m<nX-1; ++m)
+			{
+				deltaX = x.constAt(m+1) - x.constAt(m);
 
-			// Get window value at this position in the function
-			window = windowFunction.y(x.constAt(m), omega);
+				// Get window value at this position in the function
+				window = windowFunction.y(x.constAt(m), omega);
 
-			// Calculate broadening
-			broaden = broadening.yFT(x.constAt(m), omega);
+				// Calculate broadening
+				broaden = broadening.yFT(x.constAt(m), omega);
 
-			ft += sin(x.constAt(m)*omega) * x.constAt(m) * broaden * window * y.constAt(m) * deltaX;
+				ft += sin(x.constAt(m)*omega) * x.constAt(m) * broaden * window * y.constAt(m) * deltaX;
+			}
+
+			// Normalise w.r.t. omega
+			if (omega > 0.0) ft /= omega;
 		}
+		else
+		{
+			for (m=0; m<nX-1; ++m)
+			{
+				deltaX = x.constAt(m+1) - x.constAt(m);
 
-		// Normalise w.r.t. omega
-		if (omega > 0.0) ft /= omega;
+				// Get window value at this position in the function
+				window = windowFunction.y(x.constAt(m), omega);
+
+				// Calculate broadening
+				broaden = broadening.yFT(x.constAt(m), omega);
+
+				ft += x.constAt(m) * broaden * window * y.constAt(m) * deltaX;
+			}
+		}
 
 		// Add point
 		newX.add(omega);
