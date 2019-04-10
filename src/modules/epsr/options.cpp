@@ -77,9 +77,11 @@ void EPSRModule::setUpKeywords()
 	group->add(new DoubleModuleKeyword(0.1, 1.0e-5), "TestThreshold", "Test threshold (%%error) above which test fails", "<threshold[0.1]>");
 	group->add(new BoolModuleKeyword(false), "OverwritePotentials", "Overwrite potentials each time rather than summing them", "<True|False>");
 
-	// Save
-	group = addKeywordGroup("Save");
-	group->add(new BoolModuleKeyword(false), "Save", "Whether to save data to disk after calculation", "<True|False>");
+	// Export
+	group = addKeywordGroup("Export");
+	group->add(new BoolModuleKeyword(false), "SaveDifferenceFunctions", "Whether to save difference function and fit", "<True|False>");
+	group->add(new BoolModuleKeyword(false), "SaveEmpiricalPotentials", "Whether to save empirical potentials", "<True|False>");
+	group->add(new BoolModuleKeyword(false), "SaveEstimatedPartials", "Whether to save estimated partials", "<True|False>");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised

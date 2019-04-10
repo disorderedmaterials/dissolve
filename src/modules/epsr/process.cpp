@@ -112,7 +112,9 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	const double qMin = keywords_.asDouble("QMin");
 	double rmaxpt = keywords_.asDouble("RMaxPT");
 	double rminpt = keywords_.asDouble("RMinPT");
-	const bool saveData = keywords_.asBool("Save");
+	const bool saveDifferences = keywords_.asBool("SaveDifferenceFunctions");
+	const bool saveEmpiricalPotentials = keywords_.asBool("SaveEmpiricalPotentials");
+	const bool saveEstimatedPartials = keywords_.asBool("SaveEstimatedPartials");
 	const bool testMode = keywords_.asBool("Test");
 	const bool overwritePotentials = keywords_.asBool("OverwritePotentials");
 	const double testThreshold = keywords_.asDouble("TestThreshold");
@@ -134,7 +136,10 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	else Messenger::print("EPSR: Perturbations to interatomic potentials will be generated only (current potentials will not be modified).\n");
 	if (onlyWhenEnergyStable) Messenger::print("EPSR: Potential refinement will only be performed if all related Configuration energies are stable.\n");
 	Messenger::print("EPSR: Range for potential generation is %f < Q < %f Angstroms**-1.\n", qMin, qMax);
-	Messenger::print("EPSR: Save data is %s.\n", DissolveSys::onOff(saveData));
+	Messenger::print("EPSR: Weighting factor used when applying fluctuation coefficients is %f\n", weighting);
+	if (saveDifferences) Messenger::print("EPSR: Difference functions will be saved.\n");
+	if (saveEstimatedPartials) Messenger::print("EPSR: Estimated partials will be saved.\n");
+	if (saveEmpiricalPotentials) Messenger::print("EPSR: Empirical potentials will be saved.\n");
 	if (testMode) Messenger::print("EPSR: Test mode is enabled (threshold = %f%%).", testThreshold);
 	Messenger::print("\n");
 
@@ -217,6 +222,8 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 			// Calculate difference function
 			Interpolator::addInterpolated(differenceData, calcSQTotal, -1.0);
+
+			if (saveDifferences && (!differenceData.save(CharString("%s-Diff.q", module->uniqueName())))) return false;
 		}
 		else return Messenger::error("Unrecognised Module type '%s', so can't calculate error.", module->type());
 
@@ -355,12 +362,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		Fourier::sineFT(simulatedFR, 1.0 / (2*PI*PI*GenericListHelper<double>::value(dissolve.processingModuleData(), "EffectiveRho", module->uniqueName(), 0.0)), 0.0, 0.03, 30.0, WindowFunction(WindowFunction::Lorch0Window));
 
 		// Save data?
-		if (saveData)
-		{
-			if (!simulatedFR.save(CharString("SimulatedFR-%s.gr", module->uniqueName()))) return false;
-			const Data1D& referenceDataFR = GenericListHelper<Data1D>::value(dissolve.processingModuleData(), "ReferenceDataFT", module->uniqueName(), Data1D(), &found);
-			if (found) referenceDataFR.save(CharString("ExperimentalFR-%s.gr", module->uniqueName()));
-		}
+		if (saveDifferences && (!deltaFQFit.save(CharString("%s-DiffFit.q", module->uniqueName())))) return false;
 
 		// Test Mode
 		if (testMode)
@@ -526,7 +528,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		scatteringMatrix.generatePartials(generatedSQ);
 
 		// Save data?
-		if (saveData)
+		if (saveEstimatedPartials)
 		{
 			Data1D* generatedArray = generatedSQ.linearArray();
 			for (int n=0; n<generatedSQ.linearArraySize(); ++n) generatedArray[n].save(generatedArray[n].name());
@@ -688,7 +690,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	else energabs = absEnergyEP(dissolve);
 
 	// Save data?
-	if (saveData)
+	if (saveEmpiricalPotentials)
 	{
 		i = 0;
 		for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
