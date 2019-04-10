@@ -116,6 +116,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	const bool testMode = keywords_.asBool("Test");
 	const bool overwritePotentials = keywords_.asBool("OverwritePotentials");
 	const double testThreshold = keywords_.asDouble("TestThreshold");
+	const double weighting = keywords_.asDouble("Weighting");
 
 	// EPSR constants
 	const int mcoeff = 200;
@@ -639,7 +640,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				Filters::kolmogorovZurbenko(smoothedCoefficients, 3, 5);
 
 				// Add in fluctuation coefficients
-				for (int n=0; n<ncoeffp; ++n) potCoeff[n] += smoothedCoefficients.value(n);
+				for (int n=0; n<ncoeffp; ++n) potCoeff[n] += weighting * smoothedCoefficients.value(n);
 
 				// Set first term to zero (following EPSR)
 				potCoeff[0] = 0.0;

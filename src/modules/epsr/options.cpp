@@ -54,6 +54,7 @@ void EPSRModule::setUpKeywords()
 	group->add(new ModuleGroupsModuleKeyword(groupedTargets_, "NeutronSQ"), "Target", "Add specified Module (and it's Reference data) as a refinement target", "<ModuleName> [GroupName]");
 	group->add(new DoubleModuleKeyword(30.0, -1.0), "QMax", "Maximum Q value over which to generate potentials from total scattering data");
 	group->add(new DoubleModuleKeyword(0.5, -1.0), "QMin", "Minimum Q value over which to generate potentials from total scattering data");
+	group->add(new DoubleModuleKeyword(1.0, 0.0, 10.0), "Weighting", "Factor used when adding fluctuation coefficients to pair potentials");
 
 	// Expansion Function
 	group = addKeywordGroup("Expansion Function");
@@ -68,7 +69,6 @@ void EPSRModule::setUpKeywords()
 	group->add(new DoubleModuleKeyword(0.01, 0.001, 1.0), "PSigma2", "Width for Poisson functions in real space");
 	group->add(new DoubleModuleKeyword(-1.0), "RMaxPT", "Radius at which potential truncation goes to zero (-1.0 to use pair potential maximum range)");
 	group->add(new DoubleModuleKeyword(-1.0), "RMinPT", "Radius at which potential truncation begins (-1.0 to set to 2.0 Angstroms under rmaxpt)");
-	group->add(new DoubleModuleKeyword(1.0, 0.0, 10.0), "Weighting", "Fractional (maximal) amounts of generated perturbations to apply to pair potentials");
 
 	// Test
 	group = addKeywordGroup("Test");
