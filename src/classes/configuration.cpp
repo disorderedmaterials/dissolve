@@ -359,13 +359,12 @@ bool Configuration::prepare(const PotentialMap& potentialMap)
  */
 
 // Set up process pool for this Configuration
-bool Configuration::setUpProcessPool(Array<int> worldRanks)
+bool Configuration::setUpProcessPool(Array<int> worldRanks, int groupPopulation)
 {
 	// Create pool
-	processPool_.setUp(name_, worldRanks);
+	processPool_.setUp(name_, worldRanks, groupPopulation);
 
-	// Give Cell info to our processPool_ so a suitable parallel strategy can be created
-	processPool_.determineMaxProcessGroups(cells_.divisions(), cells_.extents(), cells_.neighbourIndices());
+	// Assign processes, and 
 	if (!processPool_.assignProcessesToGroups()) return false;
 	processPool_.setGroupsFixed();
 

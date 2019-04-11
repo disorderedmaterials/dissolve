@@ -448,7 +448,7 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 
 	public:
 	// Set up process pool for this Configuration
-	bool setUpProcessPool(Array<int> worldRanks);
+	bool setUpProcessPool(Array<int> worldRanks, int groupPopulation);
 	// Return process pool for this Configuration
 	ProcessPool& processPool();
 	// Broadcast coordinate from specified root process

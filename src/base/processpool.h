@@ -140,6 +140,10 @@ class ProcessPool
 	/*
 	 * Pool Data
 	 */
+	public:
+	// Group Population Enum
+	enum GroupPopulation { HalfMaximumGroupPopulation = -1, MaximumGroupPopulation = 0, MinimumGroupPopulation = 1 };
+
 	private:
 	// Name of this pool
 	CharString name_;
@@ -170,15 +174,13 @@ class ProcessPool
 
 	public:
 	// Set up pool with processes specified
-	bool setUp(const char* name, Array<int> worldRanks);
+	bool setUp(const char* name, Array<int> worldRanks, int groupPopulation);
 	// Return name of pool
 	const char* name();
 	// Return total number of processes in pool
 	int nProcesses() const;
 	// Return root (first) world rank of this pool
 	int rootWorldRank() const;
-	// Determine how many simultaneous processes (groups) we can have at once, based on the Cell divisions
-	void determineMaxProcessGroups(const Vec3<int>& divisions, const Vec3<int>& cellExtents, const List< ListVec3<int> >& neighbours);
 	// Assign processes to groups
 	bool assignProcessesToGroups();
 	// Assign processes to groups taken from supplied ProcessPool

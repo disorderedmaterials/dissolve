@@ -42,6 +42,7 @@ Dissolve::Dissolve(CoreData& coreData) : coreData_(coreData)
 
 	// Parallel Comms
 	parallelStrategy_ = Dissolve::SequentialConfigStrategy;
+	parallelGroupPopulation_ = ProcessPool::MinimumGroupPopulation;
 
 	// Register GenericItems
 	registerGenericItems();

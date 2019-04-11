@@ -29,6 +29,7 @@ KeywordData SimulationBlockData[] = {
 	{ "BoxNormalisationPoints",		1,	"Number of random insertions to use when generating the normalisation array" },
 	{ "EndSimulation",			0,	"Signals the end of the Simulation block" },
 	{ "ParallelStrategy",			1, 	"Determines the distribution of processes across Configurations" },
+	{ "ParallelGroupPopulation",		1,	"Maximum number of groups to split processes in a pool in to" },
 	{ "RestartFileFrequency",		1,	"Frequency with which to write restart file (0 = never)" },
 	{ "Seed",				1,	"Random seed to use" }
 };
@@ -87,6 +88,9 @@ bool SimulationBlock::parse(LineParser& parser, Dissolve* dissolve)
 					error = true;
 				}
 				else dissolve->setParallelStrategy(Dissolve::parallelStrategy(parser.argc(1)));
+				break;
+			case (SimulationBlock::ParallelGroupPopulationKeyword):
+				dissolve->setParallelGroupPopulation(parser.argi(1));
 				break;
 			case (SimulationBlock::RestartFileFrequencyKeyword):
 				dissolve->setRestartFileFrequency(parser.argi(1));

@@ -85,7 +85,7 @@ void ProcessPool::clear()
 	groupRank_ = -1;
 	worldRanks_.clear();
 	processGroups_.clear();
-	maxProcessGroups_ = 0;
+	maxProcessGroups_ = 1;
 	groupLeaders_.clear();
 	groupsModifiable_ = true;
 #ifdef PARALLEL
@@ -277,7 +277,7 @@ const char* ProcessPool::processInfo()
  */
 
 // Set up pool with world ranks specified
-bool ProcessPool::setUp(const char* name, Array<int> worldRanks)
+bool ProcessPool::setUp(const char* name, Array<int> worldRanks, int groupPopulation)
 {
 	clear();
 
@@ -299,7 +299,23 @@ bool ProcessPool::setUp(const char* name, Array<int> worldRanks)
 		}
 	}
 
-	Messenger::print("There are %i processes in pool '%s'.\n", worldRanks_.nItems(), name_.get());
+	// Set default maximum number of groups
+	switch (groupPopulation)
+	{
+		case (ProcessPool::MaximumGroupPopulation):
+			maxProcessGroups_ = worldRanks_.nItems();
+			break;
+		case (ProcessPool::MinimumGroupPopulation):
+			maxProcessGroups_ = 1;
+			break;
+		case (ProcessPool::HalfMaximumGroupPopulation):
+			maxProcessGroups_ = worldRanks_.nItems() / 2;
+			break;
+		default:
+			maxProcessGroups_ = groupPopulation;
+	}
+
+	Messenger::print("There are %i processes in pool '%s' (max groups = %i).\n", worldRanks_.nItems(), name_.get(), maxProcessGroups_);
 
 #ifdef PARALLEL
 	// Create pool group and communicator
@@ -328,84 +344,6 @@ int ProcessPool::nProcesses() const
 int ProcessPool::rootWorldRank() const
 {
 	return worldRanks_.constAt(0);
-}
-
-// Determine how many simultaneous processes (groups) we can have at once, based on the Cell divisions
-void ProcessPool::determineMaxProcessGroups(const Vec3<int>& divisions, const Vec3<int>& cellExtents, const List< ListVec3<int> >& neighbours)
-{
-#ifdef PARALLEL
-	// Check that this pool actually involves us - if not we can leave now
-	if (!involvesMe())
-	{
-		Messenger::print("... Process with world rank %i is not involved in the process pool '%s', so we will ignore its setup.\n", worldRank_, name_.get());
-		return;
-	}
-
-	// Construct a temporary array of 'Cells'
-	int*** cells = new int**[divisions.x];
-	for (int x = 0; x<divisions.x; ++x)
-	{
-		cells[x] = new int*[divisions.y];
-		for (int y = 0; y<divisions.y; ++y)
-		{
-			cells[x][y] = new int[divisions.z];
-			for (int z = 0; z < divisions.z; ++z) cells[x][y][z] = 0;
-		}
-	}
-
-	// Test assignment - how many processes can we get onto one XY slice, and how many in total at once?
-	maxProcessGroups_ = 0;
-	int xx, yy, zz;
-	for (int x = 0; x<divisions.x; ++x)
-	{
-		for (int y = 0; y<divisions.y; ++y)
-		{
-			for (int z = 0; z < divisions.z; ++z)
-			{
-				if (cells[x][y][z] != 0) continue;
-
-				// Cell not yet assigned, so set to -1 for now and check we can mark off neighbours
-				cells[x][y][z] = -1;
-				for (int pass = 0; pass < 2; ++pass)
-				{
-					if (cells[x][y][z] != -1) break;
-					// Check availability on first pass, set flags on second
-					for (ListVec3<int>* item = neighbours.first(); item != NULL; item = item->next)
-					{
-						// Get wrapped Cell grid reference
-						xx = (x+item->x)%divisions.x;
-						yy = (y+item->y)%divisions.y;
-						zz = (z+item->z)%divisions.z;
-						if (xx < 0) xx += divisions.x;
-						if (yy < 0) yy += divisions.y;
-						if (zz < 0) zz += divisions.z;
-						// Check for availability / Lock Cell
-						if (pass == 0)
-						{
-							if (cells[xx][yy][zz] == -1)
-							{
-								cells[x][y][z] = 0;
-								break;
-							}
-						}
-						else ++cells[xx][yy][zz];
-					}
-				}
-				// If the central cell has been unset, we couldn't lock it so continue the search
-				if (cells[x][y][z] != -1) continue;
-
-				// Otherwise, we found a Cell and locked it, so increase group count
-				++maxProcessGroups_;
-			}
-		}
-	}
-	Messenger::print("For the current Cell division and extent values, a maximum of %i simultaneous Cell-modifying processes are possible.\n", maxProcessGroups_);
-	// Maximum number of groups possible is the number of processes available, but we want all groups to contain the same number
-	// of processes...
-	while (worldRanks_.nItems()%maxProcessGroups_ != 0) --maxProcessGroups_;
-
-	Messenger::print("Processes will be divided into %i groups.\n", maxProcessGroups_);
-#endif
 }
 
 // Assign processes to groups

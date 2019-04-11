@@ -47,6 +47,18 @@ Dissolve::ParallelStrategy Dissolve::parallelStrategy() const
 	return parallelStrategy_;
 }
 
+// Set default process group population (per Configuration)
+void Dissolve::setParallelGroupPopulation(int groupPopulation)
+{
+	parallelGroupPopulation_ = groupPopulation;
+}
+
+// Return default process group population (per Configuration)
+int Dissolve::parallelGroupPopulation() const
+{
+	return parallelGroupPopulation_;
+}
+
 // Return a world process pool
 ProcessPool& Dissolve::worldPool()
 {
@@ -59,7 +71,7 @@ ProcessPool& Dissolve::worldPool()
 		// Assemble list of (world) process ranks for the pool
 		Array<int> ranks;
 		for (int n=0; n<ProcessPool::nWorldProcesses(); ++n) ranks.add(n);
-		world.setUp("World", ranks);
+		world.setUp("World", ranks, ProcessPool::MaximumGroupPopulation);
 		firstRun = false;
 	}
 
@@ -96,7 +108,7 @@ bool Dissolve::setUpMPIPools()
 		if (parallelStrategy_ == Dissolve::SequentialConfigStrategy)
 		{
 			// Simple, sequential strategy - all processes assigned to all Configurations
-			if (!cfg->setUpProcessPool(allProcesses)) return false;
+			if (!cfg->setUpProcessPool(allProcesses, parallelGroupPopulation_)) return false;
 		}
 		else if (parallelStrategy_ == Dissolve::EvenStrategy)
 		{
@@ -116,7 +128,7 @@ bool Dissolve::setUpMPIPools()
 			int procsPerConfig = ProcessPool::nWorldProcesses() / nConfigurations();
 			Array<int> poolProcesses;
 			for (int n=0; n<procsPerConfig; ++n) poolProcesses.add(procsPerConfig*cfgIndex + n);
-			if (!cfg->setUpProcessPool(poolProcesses)) return false;
+			if (!cfg->setUpProcessPool(poolProcesses, parallelGroupPopulation_)) return false;
 		}
 
 		// Increase Configuration index
