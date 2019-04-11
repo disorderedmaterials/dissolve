@@ -520,7 +520,7 @@ bool ProcessPool::assignProcessesToGroups(ProcessPool& groupsSource)
 	 * Since we have the ability to run Modules with any ProcessPool and at any point, we must occasionally
 	 * re-assign the processes in the pool (typically the Dissolve::worldPool_) to a different set of groups in
 	 * order to utilise all available processing power (e.g. when a Module is run as, or is performing, a
-	 * post-processing step.
+	 * post-processing step).
 	 */
 
 	// If we have been supplied with ourself as the reference ProcessPool, we can exit gracefully now
