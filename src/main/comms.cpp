@@ -42,7 +42,7 @@ void Dissolve::setParallelStrategy(Dissolve::ParallelStrategy ps)
 }
 
 // Return parallel strategy for Configuration work
-Dissolve::ParallelStrategy Dissolve::parallelStrategy()
+Dissolve::ParallelStrategy Dissolve::parallelStrategy() const
 {
 	return parallelStrategy_;
 }

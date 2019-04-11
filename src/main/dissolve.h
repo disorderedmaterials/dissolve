@@ -404,7 +404,7 @@ class Dissolve
 	// Set parallel strategy for Configuration work
 	void setParallelStrategy(ParallelStrategy ps);
 	// Return parallel strategy for Configuration work
-	ParallelStrategy parallelStrategy();
+	ParallelStrategy parallelStrategy() const;
 	// Return world process pool
 	ProcessPool& worldPool();
 	// Set up local MPI pools
