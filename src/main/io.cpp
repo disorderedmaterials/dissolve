@@ -1,5 +1,5 @@
 /*
-	*** Dissolve I/O
+	*** I/O
 	*** src/main/io.cpp
 	Copyright T. Youngs 2012-2019
 
