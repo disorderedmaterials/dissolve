@@ -393,16 +393,19 @@ bool Dissolve::saveInput(const char* filename)
 			// Write frequency and disabled keywords
 			if (!parser.writeLineF("    Frequency  %i\n", module->frequency())) return false;
 			if (!module->enabled() && (!parser.writeLineF("    Disabled\n"))) return false;
-			if (!parser.writeLineF("\n")) return false;
 
 			// Print keyword options
+			bool isFirstOption = true;
 			ListIterator<ModuleKeywordBase> keywordIterator(module->keywords().keywords());
 			while (ModuleKeywordBase* keyword = keywordIterator.iterate())
 			{
 				// If the keyword has never been set (i.e. it still has its default value) don't bother to write it
 				if (!keyword->isSet()) continue;
 
+				if (isFirstOption && (!parser.writeLineF("\n"))) return false;
 				if (!keyword->write(parser, "    ")) return false;
+
+				isFirstOption = false;
 			}
 
 			if (!parser.writeLineF("  %s\n", ModuleBlock::keyword(ModuleBlock::EndModuleKeyword))) return false;
@@ -426,21 +429,27 @@ bool Dissolve::saveInput(const char* filename)
 			// Write frequency and disabled keywords
 			if (!parser.writeLineF("    Frequency  %i\n", module->frequency())) return false;
 			if (!module->enabled() && (!parser.writeLineF("    Disabled\n"))) return false;
-			if (!parser.writeLineF("\n")) return false;
 
 			// Write Configuration target(s)
 			RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
-			while (Configuration* cfg = configIterator.iterate()) if (!parser.writeLineF("    %s  '%s'\n", ModuleBlock::keyword(ModuleBlock::ConfigurationKeyword), cfg->name())) return false;
-			if (!parser.writeLineF("\n")) return false;
+			while (Configuration* cfg = configIterator.iterate())
+			{
+				if (configIterator.isFirst() && (!parser.writeLineF("\n"))) return false;
+				if (!parser.writeLineF("    %s  '%s'\n", ModuleBlock::keyword(ModuleBlock::ConfigurationKeyword), cfg->name())) return false;
+			}
 
 			// Print keyword options
+			bool isFirstOption = true;
 			ListIterator<ModuleKeywordBase> keywordIterator(module->keywords().keywords());
 			while (ModuleKeywordBase* keyword = keywordIterator.iterate())
 			{
 				// If the keyword has never been set (i.e. it still has its default value) don't bother to write it
 				if (!keyword->isSet()) continue;
 
+				if (isFirstOption && (!parser.writeLineF("\n"))) return false;
 				if (!keyword->write(parser, "    ")) return false;
+
+				isFirstOption = false;
 			}
 
 			if (!parser.writeLineF("  %s\n", ModuleBlock::keyword(ModuleBlock::EndModuleKeyword))) return false;
