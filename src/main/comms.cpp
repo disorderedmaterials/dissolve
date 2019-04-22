@@ -71,7 +71,7 @@ ProcessPool& Dissolve::worldPool()
 		// Assemble list of (world) process ranks for the pool
 		Array<int> ranks;
 		for (int n=0; n<ProcessPool::nWorldProcesses(); ++n) ranks.add(n);
-		world.setUp("World", ranks, ProcessPool::MaximumGroupPopulation);
+		world.setUp("World", ranks, ProcessPool::MinimumGroupPopulation);
 		firstRun = false;
 	}
 
