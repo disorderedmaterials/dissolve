@@ -112,8 +112,10 @@ void FileAndFormatKeywordWidget::on_FileSelectButton_clicked(bool checked)
 
 	if (!filename.isEmpty())
 	{
-		fileAndFormat.setFilename(qPrintable(filename));
+		ui.FileEdit->setText(filename);
+		updateKeywordData();
 		updateWidgetValues(coreData_);
+		emit(keywordValueChanged());
 	}
 }
 
@@ -185,4 +187,6 @@ void FileAndFormatKeywordWidget::updateKeywordData()
 
 	fileAndFormat.setFilename(qPrintable(ui.FileEdit->text()));
 	fileAndFormat.setFormatIndex(ui.FileFormatCombo->currentIndex());
+
+	keyword_->dataHasBeenSet();
 }
