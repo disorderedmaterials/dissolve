@@ -94,7 +94,7 @@ QWidget* ModuleKeywordsWidget::createKeywordWidget(DissolveWindow* dissolveWindo
 	}
 	else if (keyword->type() == ModuleKeywordBase::FileAndFormatData)
 	{
-		FileAndFormatKeywordWidget* fileAndFormatWidget = new FileAndFormatKeywordWidget(NULL, keyword, coreData, moduleData, uniqueName);
+		FileAndFormatKeywordWidget* fileAndFormatWidget = new FileAndFormatKeywordWidget(NULL, keyword, dissolveWindow->constDissolve(), coreData, moduleData, uniqueName);
 		connect(fileAndFormatWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
 		widget = fileAndFormatWidget;
 		base = fileAndFormatWidget;

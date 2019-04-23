@@ -21,6 +21,7 @@
 
 #include "gui/keywordwidgets/fileandformat.h"
 #include "gui/keywordwidgets/dropdown.h"
+#include "main/dissolve.h"
 #include "base/fileandformat.h"
 #include "templates/genericlisthelper.h"
 #include <QHBoxLayout>
@@ -30,7 +31,7 @@
 #include <QFileInfo>
 
 // Constructor
-FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QWidget(parent), KeywordWidgetBase(coreData, moduleData, prefix)
+FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const Dissolve& dissolve, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QWidget(parent), dissolve_(dissolve), KeywordWidgetBase(coreData, moduleData, prefix)
 {
 	// Create and set up our UI
 	ui.setupUi(this);
@@ -112,7 +113,9 @@ void FileAndFormatKeywordWidget::on_FileSelectButton_clicked(bool checked)
 
 	if (!filename.isEmpty())
 	{
-		ui.FileEdit->setText(filename);
+		// Set relative path to file, using the current input file as the reference point
+		QFileInfo fileInfo(dissolve_.inputFilename());
+		ui.FileEdit->setText(fileInfo.dir().relativeFilePath(filename));
 		updateKeywordData();
 		updateWidgetValues(coreData_);
 		emit(keywordValueChanged());
