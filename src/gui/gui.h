@@ -89,6 +89,8 @@ class DissolveWindow : public QMainWindow
 	public:
 	// Return reference to Dissolve
 	Dissolve& dissolve();
+	// Return const reference to Dissolve
+	const Dissolve& constDissolve() const;
 	// Link the Messenger in to the GUI output device
 	void addOutputHandler();
 

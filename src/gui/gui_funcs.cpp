@@ -141,6 +141,12 @@ Dissolve& DissolveWindow::dissolve()
 	return dissolve_;
 }
 
+// Return const reference to Dissolve
+const Dissolve& DissolveWindow::constDissolve() const
+{
+	return dissolve_;
+}
+
 // Link output handler in to the Messenger
 void DissolveWindow::addOutputHandler()
 {
