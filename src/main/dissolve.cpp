@@ -116,7 +116,7 @@ void Dissolve::clear()
 	nIterationsPerformed_ = 0;
 
 	// I/O
-	filename_.clear();
+	inputFilename_.clear();
 	restartFilename_.clear();
 	saveRestartTimes_ = 0.0;
 }

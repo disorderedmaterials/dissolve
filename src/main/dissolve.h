@@ -356,7 +356,7 @@ class Dissolve
 	 */
 	private:
 	// Filename of current input file
-	CharString filename_;
+	CharString inputFilename_;
 	// Filename of current restart file
 	CharString restartFilename_;
 	// Accumulated timing information for saving restart file

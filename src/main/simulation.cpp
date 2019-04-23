@@ -134,7 +134,7 @@ bool Dissolve::iterate(int nIterations)
 		{
 			Messenger::print("Write heartbeat file...");
 
-			CharString heartBeatFile("%s.beat", filename_.get());
+			CharString heartBeatFile("%s.beat", inputFilename_.get());
 
 			saveHeartBeat(heartBeatFile, thisTime);
 		}
@@ -266,7 +266,7 @@ bool Dissolve::iterate(int nIterations)
 			 */
 
 			// If a restart filename isn't currently set, generate one now.
-			if (restartFilename_.isEmpty()) restartFilename_ = CharString("%s.restart", filename_.get());
+			if (restartFilename_.isEmpty()) restartFilename_ = CharString("%s.restart", inputFilename_.get());
 			CharString restartFileBackup("%s.prev", restartFilename_.get());
 
 			// Check and remove restart file backup

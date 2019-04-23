@@ -118,7 +118,7 @@ bool Dissolve::loadInput(const char* filename)
 	}
 
 	if (!error) Messenger::print("Finished reading input file.\n");
-	filename_ = filename;
+	inputFilename_ = filename;
 
 	// Error encountered?
 	if (error)
@@ -672,19 +672,19 @@ bool Dissolve::saveHeartBeat(const char* filename, double estimatedNSecs)
 // Return whether an input filename has been set
 bool Dissolve::hasInputFilename() const
 {
-	return (!filename_.isEmpty());
+	return (!inputFilename_.isEmpty());
 }
 
 // Set current input filename
 void Dissolve::setInputFilename(const char* filename)
 {
-	filename_ = filename;
+	inputFilename_ = filename;
 }
 
 // Return current input filename
 const char* Dissolve::inputFilename() const
 {
-	return filename_.get();
+	return inputFilename_.get();
 }
 
 // Set restart filename
