@@ -266,8 +266,8 @@ AtomTypeData* AtomTypeList::atomTypeData(AtomType* atomType)
 // Print AtomType populations
 void AtomTypeList::print() const
 {
-	Messenger::print("  AtomType  El  Isotope  Population  Fraction           bc (fm)\n");
-	Messenger::print("  -------------------------------------------------------------\n");
+	Messenger::print("  AtomType  El  Isotope  Population      Fraction           bc (fm)\n");
+	Messenger::print("  -----------------------------------------------------------------\n");
 	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next)
 	{
 		char exch = atd->exchangeable() ? 'E' : ' ';
@@ -275,17 +275,17 @@ void AtomTypeList::print() const
 		// If there are isotopes defined, print them
 		if (atd->isotopeData())
 		{
-			Messenger::print("%c %-8s  %-3s    -     %-10i  %8.6f (of world) %6.3f\n", exch, atd->atomTypeName(), atd->atomType()->element()->symbol(), atd->population(), atd->fraction(), atd->boundCoherent());
+			Messenger::print("%c %-8s  %-3s    -     %-10i    %10.6f (of world) %6.3f\n", exch, atd->atomTypeName(), atd->atomType()->element()->symbol(), atd->population(), atd->fraction(), atd->boundCoherent());
 
 			for (IsotopeData* topeData = atd->isotopeData(); topeData != NULL; topeData = topeData->next)
 			{
-				Messenger::print("                   %-3i   %-10i  %8.6f (of type)  %6.3f\n", topeData->isotope()->A(), topeData->population(), topeData->fraction(), topeData->isotope()->boundCoherent());
+				Messenger::print("                   %-3i   %-10.6e  %10.6f (of type)  %6.3f\n", topeData->isotope()->A(), topeData->population(), topeData->fraction(), topeData->isotope()->boundCoherent());
 			}
 
 		}
 		else Messenger::print("%c %-8s  %-3s          %-10i  %8.6f     --- N/A ---\n", exch, atd->atomTypeName(), atd->atomType()->element()->symbol(), atd->population(), atd->fraction());
 
-		Messenger::print("  -------------------------------------------------------------\n");	
+		Messenger::print("  -----------------------------------------------------------------\n");	
 	}
 }
 
