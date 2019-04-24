@@ -66,8 +66,8 @@ void RDFModule::setUpKeywords()
 
 	// Calculation
 	ModuleKeywordGroup* group = addKeywordGroup("Calculation");
-	group->add(new IntegerModuleKeyword(5, 0), "Averaging", "Number of historical partial sets to combine into final partials", "<N[5]>");
-	group->add(new EnumStringModuleKeyword(RDFModule::SimpleAveraging, RDFModule::nAveragingSchemes, AveragingSchemeKeywords), "AveragingScheme", "Weighting scheme to use when averaging partials", "<scheme[Exponential]>");
+	group->add(new IntegerModuleKeyword(5, 0), "Averaging", "Number of historical partial sets to combine into final partials", "<n = 5>");
+	group->add(new EnumStringModuleKeyword(RDFModule::SimpleAveraging, RDFModule::nAveragingSchemes, AveragingSchemeKeywords), "AveragingScheme", "Weighting scheme to use when averaging partials", "<[Simple] Exponential>");
 	group->add(new PairBroadeningFunctionModuleKeyword(PairBroadeningFunction()), "IntraBroadening", "Type of broadening to apply to intramolecular g(r)");
 	group->add(new EnumStringModuleKeyword(RDFModule::AutoMethod, RDFModule::nPartialsMethods, PartialsMethodKeywords), "Method", "Calculation method for partial radial distribution functions");
 	group->add(new IntegerModuleKeyword(0, 0, 100), "Smoothing", "Specifies the degree of smoothing 'n' to apply to calculated g(r), where 2n+1 controls the length in the applied Spline smooth");
