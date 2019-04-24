@@ -61,7 +61,7 @@ bool ExportModule::writeXYZCoordinates(LineParser& parser, Configuration* cfg)
 {
 	// Write number of atoms and title
 	if (!parser.writeLineF("%i\n", cfg->nAtoms())) return false;
-	if (!parser.writeLineF("%s @ %i\n", cfg->name(), cfg->coordinateIndex())) return false;
+	if (!parser.writeLineF("%s @ %i\n", cfg->name(), cfg->contentsVersion())) return false;
 	
 	// Write Atoms
 	for (int n=0; n<cfg->nAtoms(); ++n)
@@ -77,7 +77,7 @@ bool ExportModule::writeXYZCoordinates(LineParser& parser, Configuration* cfg)
 bool ExportModule::writeDLPOLYCoordinates(LineParser& parser, Configuration* cfg)
 {
 	// Write title
-	if (!parser.writeLineF("%s @ %i\n", cfg->name(), cfg->coordinateIndex())) return false;
+	if (!parser.writeLineF("%s @ %i\n", cfg->name(), cfg->contentsVersion())) return false;
 
 	// Write keytrj and imcon
 	if (cfg->box()->type() == Box::NonPeriodicBoxType) if (!parser.writeLineF("%10i%10i\n", 0, 0)) return false;

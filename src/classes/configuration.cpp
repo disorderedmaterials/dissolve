@@ -72,7 +72,7 @@ void Configuration::clear()
 
 	// Reset box / Cells
 	requestedCellDivisionLength_ = 10.0;
-	coordinateIndex_ = 0;
+	contentsVersion_.zero();
 
 	// Reset set-up
 	rdfBinWidth_ = 0.025;

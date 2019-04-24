@@ -148,7 +148,7 @@ bool Dissolve::twist(Configuration& cfg, double cutoffDistance, int nTwistsPerTe
 // 		Messenger::print("New steps = %f %f\n", translationStep_, rotationStep_);
 	}
 
-	// Increase coordinate index in Configuration
+	// Increase contents version in Configuration
 	if (nAccepted > 0) cfg.incrementCoordinateIndex();
 
 	return true;

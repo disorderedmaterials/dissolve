@@ -42,7 +42,7 @@ void Configuration::empty()
 	box_ = NULL;
 	cells_.clear();
 
-	coordinateIndex_ = 0;
+	++contentsVersion_;
 }
 
 // Initialise all content arrays
@@ -519,16 +519,16 @@ int Configuration::nUsedAtomTypes()
 	return usedAtomTypes_.nItems();
 }
 
-// Return current coordinate index
-int Configuration::coordinateIndex()
+// Return version of current contents
+int Configuration::contentsVersion() const
 {
-	return coordinateIndex_;
+	return contentsVersion_;
 }
 
-// Increment current coordinate index
-void Configuration::incrementCoordinateIndex()
+// Increment version of current contents
+void Configuration::incrementContentsVersion()
 {
-	++coordinateIndex_;
+	++contentsVersion_;
 }
 
 // Load coordinates from file

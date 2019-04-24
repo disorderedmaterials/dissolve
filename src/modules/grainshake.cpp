@@ -248,7 +248,7 @@ bool GrainShakeModule::execute(Dissolve& dissolve)
 	cfg->registerEnergyChange(totalDelta);
 	cfg->accumulateEnergyChange();
 
-	// Increase coordinate index in Configuration
+	// Increase contents version in Configuration
 	if (nAccepted > 0) cfg->incrementCoordinateIndex();
 
 	return true;

@@ -268,8 +268,8 @@ bool MolShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		Messenger::print("Updated step size for rotations is %f degrees.\n", rotationStepSize); 
 		GenericListHelper<double>::realise(moduleData, "RotationStepSize", uniqueName(), GenericItem::InRestartFileFlag) = rotationStepSize;
 
-		// Increase coordinate index in Configuration
-		if ((nRotationsAccepted > 0) || (nTranslationsAccepted > 0)) cfg->incrementCoordinateIndex();
+		// Increase contents version in Configuration
+		if ((nRotationsAccepted > 0) || (nTranslationsAccepted > 0)) cfg->incrementContentsVersion();
 	}
 
 	return true;

@@ -348,7 +348,7 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 	// Is the PartialSet already up-to-date?
 	// If so, can exit now, *unless* the Test method is requested, in which case we go ahead and calculate anyway
 	alreadyUpToDate = false;
-	if (DissolveSys::sameString(originalgr.fingerprint(), CharString("%i", cfg->coordinateIndex())) && (method != RDFModule::TestMethod))
+	if (DissolveSys::sameString(originalgr.fingerprint(), CharString("%i", cfg->contentsVersion())) && (method != RDFModule::TestMethod))
 	{
 		Messenger::print("Partial g(r) are up-to-date for Configuration '%s'.\n", cfg->name());
 		alreadyUpToDate = true;
@@ -494,7 +494,7 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 	 * Partials are now up-to-date
 	 */
 	
-	originalgr.setFingerprint(CharString("%i", cfg->coordinateIndex()));
+	originalgr.setFingerprint(CharString("%i", cfg->contentsVersion()));
 
 	return true;
 }
@@ -808,7 +808,7 @@ bool RDFModule::sumUnweightedGR(ProcessPool& procPool, Module* module, GenericLi
 	while (Configuration* cfg = weightsIterator.iterate())
 	{
 		// Update fingerprint
-		fingerprint += fingerprint.isEmpty() ? CharString("%i", cfg->coordinateIndex()) : CharString("_%i", cfg->coordinateIndex());
+		fingerprint += fingerprint.isEmpty() ? CharString("%i", cfg->contentsVersion()) : CharString("_%i", cfg->contentsVersion());
 
 		// Calculate weighting factor
 		double weight = ((weightsIterator.currentData() / totalWeight) * cfg->atomicDensity()) / rho0;
@@ -877,7 +877,7 @@ bool RDFModule::sumUnweightedGR(ProcessPool& procPool, Module* parentModule, Mod
 	while (Configuration* cfg = weightsIterator.iterate())
 	{
 		// Update fingerprint
-		fingerprint += fingerprint.isEmpty() ? CharString("%i", cfg->coordinateIndex()) : CharString("_%i", cfg->coordinateIndex());
+		fingerprint += fingerprint.isEmpty() ? CharString("%i", cfg->contentsVersion()) : CharString("_%i", cfg->contentsVersion());
 
 		// Calculate weighting factor
 		double weight = (weightsIterator.currentData() * cfg->atomicDensity()) / rho0;

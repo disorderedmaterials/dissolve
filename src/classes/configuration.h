@@ -38,6 +38,7 @@
 #include "math/data1d.h"
 #include "base/processpool.h"
 #include "base/genericlist.h"
+#include "base/version.h"
 #include "templates/vector3.h"
 #include "templates/orderedlist.h"
 #include "templates/array.h"
@@ -143,8 +144,8 @@ class Configuration : public ListItem<Configuration>
 	DynamicArray<Torsion> torsions_;
 	// AtomType list, containing unique (non-isotopic) atom types over all Species used in this configuration
 	AtomTypeList usedAtomTypes_;
-	// Coordinate index, incremented whenever Atom positions change
-	int coordinateIndex_;
+	// Contents version, incremented whenever Configuration content or Atom positions change
+	VersionCounter contentsVersion_;
 
 	public:
 	// Empty contents of Configuration, leaving core definitions intact
@@ -219,10 +220,10 @@ class Configuration : public ListItem<Configuration>
 	const AtomTypeList& usedAtomTypesList() const;
 	// Return number of atom types used in this Configuration
 	int nUsedAtomTypes();
-	// Return current coordinate index
-	int coordinateIndex();
-	// Increment current coordinate index
-	void incrementCoordinateIndex();
+	// Return version of current contents
+	int contentsVersion() const;
+	// Increment version of current contents
+	void incrementContentsVersion();
 	// Load coordinates from specified parser
 	bool loadCoordinates(LineParser& parser, CoordinateImportFileFormat::CoordinateImportFormat format);
 

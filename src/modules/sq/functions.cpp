@@ -95,7 +95,7 @@ bool SQModule::sumUnweightedSQ(ProcessPool& procPool, Module* module, GenericLis
 	while (Configuration* cfg = configIterator.iterate())
 	{
 		// Update fingerprint
-		fingerprint += fingerprint.isEmpty() ? CharString("%i", cfg->coordinateIndex()) : CharString("_%i", cfg->coordinateIndex());
+		fingerprint += fingerprint.isEmpty() ? CharString("%i", cfg->contentsVersion()) : CharString("_%i", cfg->contentsVersion());
 
 		// Get weighting factor for this Configuration to contribute to the summed partials
 		double weight = GenericListHelper<double>::value(moduleData, CharString("ConfigurationWeight_%s", cfg->niceName()), module->uniqueName(), 1.0);

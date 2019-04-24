@@ -205,7 +205,7 @@ bool Dissolve::intraShake(Configuration& cfg, int nShakesPerMol)
 	cfg.registerEnergyChange(totalDelta);
 	cfg.accumulateEnergyChange();
 
-	// Increase coordinate index in Configuration
+	// Increase contents version in Configuration
 	if (nAccepted > 0) cfg.incrementCoordinateIndex();
 
 	return true;
@@ -370,7 +370,7 @@ bool Dissolve::interShake(Configuration& cfg)
 // 		Messenger::print("New steps = %f %f\n", translationStep_, rotationStep_);
 	}
 
-	// Increase coordinate index in Configuration
+	// Increase contents version in Configuration
 	if (nAccepted > 0) cfg.incrementCoordinateIndex();
 
 	return true;
@@ -562,7 +562,7 @@ bool Dissolve::termShake(Configuration& cfg, int nShakesPerTerm)
 	cfg.registerEnergyChange(totalDelta);
 	cfg.accumulateEnergyChange();
 
-	// Increase coordinate index in Configuration
+	// Increase contents version in Configuration
 	if (nAccepted > 0) cfg.incrementCoordinateIndex();
 
 	return true;

@@ -72,14 +72,14 @@ bool Analyser::execute(ProcessPool& procPool, Configuration* cfg, const char* pr
 	if (ri)
 	{
 		// A Configuration we've processed before - check the index
-		if (cfg->coordinateIndex() == ri->data)
+		if (cfg->contentsVersion() == ri->data)
 		{
 			Messenger::warn("Refusing to analyse Configuration '%s' since it has not changed.\n", cfg->name());
 			return true;
 		}
-		else ri->data = cfg->coordinateIndex();
+		else ri->data = cfg->contentsVersion();
 	}
-	else configurationPoints_.add(cfg, cfg->coordinateIndex());
+	else configurationPoints_.add(cfg, cfg->contentsVersion());
 
 	// Prepare the nodes
 	if (!rootSequence_.prepare(cfg, prefix, targetList)) return Messenger::error("Failed to prepare analysis sequence for execution.\n");
