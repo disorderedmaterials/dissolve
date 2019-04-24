@@ -358,38 +358,42 @@ void Dissolve::printTiming()
 {
 	Messenger::banner("Timing Information");
 
-	Messenger::print("Configuration Processing:\n");
 	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next)
 	{
 		if (cfg->nModules() == 0) continue;
 
-		Messenger::print("   * '%s'\n", cfg->name());
+		Messenger::print("Accumulated timing for Configuration '%s' processing:\n", cfg->name());
+
 		ListIterator<Module> modIterator(cfg->modules().modules());
 		while (Module* module = modIterator.iterate())
 		{
 			SampledDouble timingInfo = module->processTimes();
 			Messenger::print("      --> %30s  %7.2f s/iteration (%i iterations)\n", CharString("%s (%s)", module->type(), module->uniqueName()).get(), timingInfo.value(), timingInfo.count());
 		}
+
+		Messenger::print("\n");
 	}
-	Messenger::print("\n");
 
 	ListIterator<ModuleLayer> processingLayerIterator(processingLayers_);
 	while (ModuleLayer* layer = processingLayerIterator.iterate())
 	{
-		Messenger::print("Processing Layer '%s':\n", layer->name());
+		Messenger::print("Accumulated timing for layer '%s':\n", layer->name());
 		ListIterator<Module> processingIterator(layer->modules());
 		while (Module* module = processingIterator.iterate())
 		{
 			SampledDouble timingInfo = module->processTimes();
 			Messenger::print("      --> %30s  %7.2f s/iteration (%i iterations)\n", CharString("%s (%s)", module->type(), module->uniqueName()).get(), timingInfo.value(), timingInfo.count());
 		}
+
+		Messenger::print("\n");
 	}
 
+	Messenger::print("Accumulated timing for general upkeep:\n");
 	Messenger::print("      --> %30s  %7.2f s/write     (%i writes)\n", "Restart File", saveRestartTimes_.value(), saveRestartTimes_.count());
 	Messenger::print("\n");
 
-
-	Messenger::print("Total time taken for %i iterations was %s (%s / iteration).\n", nIterationsPerformed_, mainLoopTimer_.elapsedTimeString(), Timer::timeString(mainLoopTimer_.secondsElapsed() / nIterationsPerformed_));
+	if (nIterationsPerformed_ == 0) Messenger::print("No iterations performed, so no per-iteration timing available.\n");
+	else Messenger::print("Total time taken for %i iterations was %s (%s / iteration).\n", nIterationsPerformed_, mainLoopTimer_.elapsedTimeString(), Timer::timeString(mainLoopTimer_.secondsElapsed() / nIterationsPerformed_));
 
 	Messenger::print("\n");
 }
