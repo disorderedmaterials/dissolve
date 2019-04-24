@@ -46,8 +46,6 @@ bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 	CharString varName;
 
-	GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : dissolve.processingModuleData();
-
 	const int averaging = keywords_.asInt("Averaging");
 	RDFModule::AveragingScheme averagingScheme = RDFModule::averagingScheme(keywords_.asString("AveragingScheme"));
 	if (averagingScheme == RDFModule::nAveragingSchemes)
