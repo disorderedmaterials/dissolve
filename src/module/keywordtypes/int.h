@@ -85,14 +85,6 @@ class IntegerModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<
 
 
 	/*
-	 * Validation
-	 */
-	public:
-	// Set maximum value (no minimum limit)
-	ModuleKeywordBase* max(int value);
-
-
-	/*
 	 * Conversion
 	 */
 	public:

@@ -85,14 +85,6 @@ class DoubleModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<d
 
 
 	/*
-	 * Validation
-	 */
-	public:
-	// Set maximum value (no minimum limit)
-	ModuleKeywordBase* max(double value);
-
-
-	/*
 	 * Conversion
 	 */
 	public:
