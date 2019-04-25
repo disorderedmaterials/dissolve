@@ -97,13 +97,7 @@ void BraggPeak::addIntensity(int typeI, int typeJ, double intensity)
 // Scale intensities between all atom types by factor provided
 void BraggPeak::scaleIntensity(double factor)
 {
-// 	printf("1  Q = %f M = %i  ", q_, nKVectors_);
-// 	for (int n=0; n<intensities_.linearArraySize(); ++n) printf("%f ", intensities_.linearArray()[n]);
-// 	printf("\n");
 	for (int n=0; n<intensities_.linearArraySize(); ++n) intensities_.linearArray()[n] *= factor;
-// 	printf("2  Q = %f M = %i  ", q_, nKVectors_);
-// 	for (int n=0; n<intensities_.linearArraySize(); ++n) printf("%f ", intensities_.linearArray()[n]);
-// 	printf("\n");
 }
 
 // Return literal intensity between specified atom types for this peak
