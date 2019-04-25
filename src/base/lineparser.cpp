@@ -353,10 +353,21 @@ bool LineParser::eofOrBlank() const
 	bool result = false;
 	if ((!processPool_) || processPool_->isMaster())
 	{
-		if (inputStream() == NULL) return true;
+		// Do we have a valid input stream?
+		if (inputStream() == NULL)
+		{
+			result = true;
+			if (processPool_ && (!processPool_->broadcast(result))) return false;
+			return true;
+		}
 
 		// Simple check first - is this the end of the file?
-		if (inputStream()->eof()) return true;
+		if (inputStream()->eof())
+		{
+			result = true;
+			if (processPool_ && (!processPool_->broadcast(result))) return false;
+			return true;
+		}
 
 		// Otherwise, store the current file position and search for a non-whitespace character (or end of file)
 		streampos pos = inputStream()->tellg();
