@@ -2004,7 +2004,7 @@ bool ProcessPool::decision(int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	bool data;
-	if (!broadcast(data, rootRank, commType)) Messenger::print("Error receiving decision from root rank %i.\n", rootRank);
+	if (!broadcast(data, rootRank, commType)) Messenger::error("Error receiving decision from root rank %i.\n", rootRank);
 	return data;
 #endif
 	return true;
