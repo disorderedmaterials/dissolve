@@ -130,6 +130,34 @@ const char* ModuleKeywordList::asString(const char* keywordName) const
 	return keyword->asString();
 }
 
+// Return simple keyword value (as Vec3<int>)
+Vec3<int> ModuleKeywordList::asVec3Int(const char* keywordName) const
+{
+	// Find the named keyword
+	ModuleKeywordBase* keyword = find(keywordName);
+	if (!keyword)
+	{
+		Messenger::warn("No Module keyword named '%s' exists to return as a Vec3<int>. Returning '(0,0,0)'...\n", keywordName);
+		return Vec3<int>(0,0,0);
+	}
+
+	return keyword->asVec3Int();
+}
+
+// Return simple keyword value (as Vec3<double>)
+Vec3<double> ModuleKeywordList::asVec3Double(const char* keywordName) const
+{
+	// Find the named keyword
+	ModuleKeywordBase* keyword = find(keywordName);
+	if (!keyword)
+	{
+		Messenger::warn("No Module keyword named '%s' exists to return as a Vec3<double>. Returning '(0.0,0.0,0.0)'...\n", keywordName);
+		return Vec3<double>(0.0,0.0,0.0);
+	}
+
+	return keyword->asVec3Double();
+}
+
 // Return whether the specified keyword data has ever been set
 bool ModuleKeywordList::isSet(const char* keywordName) const
 {

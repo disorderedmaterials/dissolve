@@ -72,6 +72,10 @@ class ModuleKeywordList
 	double asDouble(const char* keywordName) const;
 	// Return simple keyword value (as string)
 	const char* asString(const char* keywordName) const;
+	// Return simple keyword value (as Vec3<int>)
+	Vec3<int> asVec3Int(const char* keywordName) const;
+	// Return simple keyword value (as Vec3<double>)
+	Vec3<double> asVec3Double(const char* keywordName) const;
 	// Return whether the specified keyword data has ever been set
 	bool isSet(const char* keywordName) const;
 };

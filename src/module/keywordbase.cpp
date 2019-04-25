@@ -32,7 +32,7 @@ ModuleKeywordBase::~ModuleKeywordBase()
 }
 
 // Value Keyword Data Type Keywords
-const char* KeywordDataTypeKeywords[] = { "Analyser", "AtomTypeSelection", "Bool", "BroadeningFunction", "CharString", "Complex", "DataStore", "Double", "EnumString", "FileAndFormat", "Integer", "IsotopologueList", "ModuleRereferenceList", "PairBroadeningFunction", "SpeciesReferenceList", "SpeciesSite", "WindowFunction" };
+const char* KeywordDataTypeKeywords[] = { "Analyser", "AtomTypeSelection", "Bool", "BroadeningFunction", "CharString", "Complex", "DataStore", "Double", "EnumString", "FileAndFormat", "Integer", "IsotopologueList", "ModuleRereferenceList", "PairBroadeningFunction", "SpeciesReferenceList", "SpeciesSite", "Vec3<Double>", "Vec3<Integer>", "WindowFunction" };
 
 // Return ValueType name
 const char* ModuleKeywordBase::keywordDataType(KeywordDataType kdt)
@@ -123,4 +123,18 @@ const char* ModuleKeywordBase::asString()
 {
 	Messenger::warn("No suitable conversion to string from KeywordDataType %i (%s) exists. Returning 'NULL'.\n", type_, ModuleKeywordBase::keywordDataType(type_));
 	return "NULL";
+}
+
+// Return value as Vec3<int>
+Vec3<int> ModuleKeywordBase::asVec3Int()
+{
+	Messenger::warn("No suitable conversion to Vec3<int> from KeywordDataType %i (%s) exists. Returning '(0,0,0)'.\n", type_, ModuleKeywordBase::keywordDataType(type_));
+	return Vec3<int>(0,0,0);
+}
+
+// Return value as Vec3<double>
+Vec3<double> ModuleKeywordBase::asVec3Double()
+{
+	Messenger::warn("No suitable conversion to Vec3<double> from KeywordDataType %i (%s) exists. Returning '(0.0,0.0,0.0)'.\n", type_, ModuleKeywordBase::keywordDataType(type_));
+	return Vec3<double>(0.0,0.0,0.0);
 }

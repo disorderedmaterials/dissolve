@@ -45,6 +45,8 @@
 #include "module/keywordtypes/pairbroadeningfunction.h"
 #include "module/keywordtypes/speciesreferencelist.h"
 #include "module/keywordtypes/speciessite.h"
+#include "module/keywordtypes/vec3double.h"
+#include "module/keywordtypes/vec3int.h"
 #include "module/keywordtypes/windowfunction.h"
 
 #endif
