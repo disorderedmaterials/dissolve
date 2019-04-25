@@ -25,7 +25,7 @@
 #include "templates/array.h"
 
 
-// Perform point-wise convolution of this data with the supplied BroadeningFunction
+// Perform point-wise convolution of data with the supplied BroadeningFunction
 void Filters::convolve(Data1D& data, BroadeningFunction function)
 {
 	// Grab x and y arrays
@@ -52,7 +52,7 @@ void Filters::convolve(Data1D& data, BroadeningFunction function)
 	y = newY;
 }
 
-// Perform point-wise convolution of this data with the supplied BroadeningFunction, normalising to the original integral of the function
+// Perform point-wise convolution of data with the supplied BroadeningFunction, normalising to the original integral of the function
 void Filters::convolveNormalised(Data1D& data, BroadeningFunction function)
 {
 	// Calculate the original integral
