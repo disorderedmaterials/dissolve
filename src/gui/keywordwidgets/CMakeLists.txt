@@ -5,11 +5,11 @@
 SET(keywordwidgets_MOC_HDRS
   atomtypeselection.h
   broadeningfunction.h
+  dropdown.h
   fileandformat.h
   isotopologuelist.h
   pairbroadeningfunction.h
   speciesreferencelist.h
-  dropdown.h
   vec3double.h
   vec3integer.h
 
