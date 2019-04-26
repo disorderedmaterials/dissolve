@@ -122,42 +122,6 @@ double Configuration::requestedRDFRange()
 	return requestedRDFRange_;
 }
 
-// Set minimum Q value for Bragg calculation
-void Configuration::setBraggQMin(double qMin)
-{
-	braggQMin_ = qMin;
-}
-
-// Return minimum Q value for Bragg calculation
-double Configuration::braggQMin()
-{
-	return braggQMin_;
-}
-
-// Set maximum Q value for Bragg calculation
-void Configuration::setBraggQMax(double qMax)
-{
-	braggQMax_ = qMax;
-}
-
-// Return maximum Q value for Bragg calculation
-double Configuration::braggQMax()
-{
-	return braggQMax_;
-}
-
-// Set multiplicities reflecting any crystal supercell
-void Configuration::setBraggMultiplicity(Vec3<int> mult)
-{
-	braggMultiplicity_ = mult;
-}
-
-// Return multiplicities reflecting any crystal supercell
-Vec3<int> Configuration::braggMultiplicity()
-{
-	return braggMultiplicity_;
-}
-
 /*
  * Modules
  */
