@@ -19,14 +19,15 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_BRAGGMODULEWIDGET_H
-#define DISSOLVE_BRAGGMODULEWIDGET_H
+#ifndef DISSOLVE_BRAGGSQMODULEWIDGET_H
+#define DISSOLVE_BRAGGSQMODULEWIDGET_H
 
 #include "modules/braggsq/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
 
 // Forward Declarations
 class BraggSQModule;
+class Configuration;
 class Dissolve;
 class Module;
 class PartialSet;
@@ -41,8 +42,8 @@ class BraggSQModuleWidget : public ModuleWidget
 	private:
 	// Associated Module
 	BraggSQModule* module_;
-	// DataViewer contained within this widget
-	DataViewer* dataView_;
+	// DataViewers contained within this widget
+	DataViewer* sqGraph_, *fqGraph_;
 	// Reference to Dissolve
 	Dissolve& dissolve_;
 
@@ -74,6 +75,15 @@ class BraggSQModuleWidget : public ModuleWidget
 	 * Widgets / Functions
 	 */
 	private:
+	// Current Configuration whose data is being displayed
+	Configuration* currentConfiguration_;
+
+	private:
+	// Set data targets in graphs
+	void setGraphDataTargets();
+
+	private slots:
+	void on_TargetCombo_currentIndexChanged(int index);
 };
 
 #endif

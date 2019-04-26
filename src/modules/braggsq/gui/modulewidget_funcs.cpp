@@ -1,6 +1,6 @@
 /*
-	*** BraggSQ Module Widget - Functions
-	*** src/modules/braggsq/gui/modulewidget_funcs.cpp
+	*** RDF Module Widget - Functions
+	*** src/modules/rdf/gui/modulewidget_funcs.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -23,6 +23,7 @@
 #include "gui/viewer/dataviewer.hui"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
+#include "modules/braggsq/braggsq.h"
 #include "classes/atomtype.h"
 #include "templates/variantpointer.h"
 #include "templates/genericlisthelper.h"
@@ -33,19 +34,39 @@ BraggSQModuleWidget::BraggSQModuleWidget(QWidget* parent, Module* module, Dissol
 	// Set up user interface
 	ui.setupUi(this);
 
-	// Grab our DataViewer widget
-	dataView_ = ui.PlotWidget->dataViewer();
+	// Set up Bragg S(Q) graph
 
-	// Set up the view
-	View& view = dataView_->view();
-	view.setViewType(View::FlatXYView);
-	view.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
-	view.axes().setMax(0, 10.0);
-	view.axes().setTitle(1, "g(r) / S(Q)");
-	view.axes().setMin(1, -1.0);
-	view.axes().setMax(1, 1.0);
+	sqGraph_ = ui.BraggSQPlotWidget->dataViewer();
+
+	sqGraph_->view().setViewType(View::FlatXYView);
+	sqGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
+	sqGraph_->view().axes().setMax(0, 10.0);
+	sqGraph_->view().axes().setTitle(1, "Intensity");
+	sqGraph_->view().axes().setMin(1, -1.0);
+	sqGraph_->view().axes().setMax(1, 1.0);
+	sqGraph_->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
+	sqGraph_->view().setAutoFollowType(View::AllAutoFollow);
+
+	// Set up total G(r) graph
+
+	fqGraph_ = ui.BraggFQPlotWidget->dataViewer();
+
+	fqGraph_->view().setViewType(View::FlatXYView);
+	fqGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
+	fqGraph_->view().axes().setMax(0, 10.0);
+	fqGraph_->view().axes().setTitle(1, "Intensity");
+	fqGraph_->view().axes().setMin(1, -1.0);
+	fqGraph_->view().axes().setMax(1, 1.0);
+	fqGraph_->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
+	fqGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	refreshing_ = false;
+
+	currentConfiguration_ = NULL;
+
+	updateControls();
+
+	setGraphDataTargets();
 }
 
 BraggSQModuleWidget::~BraggSQModuleWidget()
@@ -55,7 +76,11 @@ BraggSQModuleWidget::~BraggSQModuleWidget()
 // Update controls within widget
 void BraggSQModuleWidget::updateControls()
 {
-	dataView_->postRedisplay();
+	ui.BraggSQPlotWidget->updateToolbar();
+	ui.BraggFQPlotWidget->updateToolbar();
+
+	sqGraph_->postRedisplay();
+	fqGraph_->postRedisplay();
 }
 
 // Disable sensitive controls within widget, ready for main code to run
@@ -75,8 +100,9 @@ void BraggSQModuleWidget::enableSensitiveControls()
 // Write widget state through specified LineParser
 bool BraggSQModuleWidget::writeState(LineParser& parser)
 {
-	// Write DataViewer session
-	if (!dataView_->writeSession(parser)) return false;
+	// Write DataViewer sessions
+	if (!sqGraph_->writeSession(parser)) return false;
+	if (!fqGraph_->writeSession(parser)) return false;
 
 	return true;
 }
@@ -84,9 +110,10 @@ bool BraggSQModuleWidget::writeState(LineParser& parser)
 // Read widget state through specified LineParser
 bool BraggSQModuleWidget::readState(LineParser& parser)
 {
-	// Read DataViewer session
-	if (!dataView_->readSession(parser)) return false;
-	
+	// Read DataViewer sessions
+	if (!sqGraph_->readSession(parser)) return false;
+	if (!fqGraph_->readSession(parser)) return false;
+
 	return true;
 }
 
@@ -94,3 +121,54 @@ bool BraggSQModuleWidget::readState(LineParser& parser)
  * Widgets / Functions
  */
 
+// Set data targets in graphs
+void BraggSQModuleWidget::setGraphDataTargets()
+{
+	if (!module_) return;
+
+	// Add Configuration targets to the combo box
+	ui.TargetCombo->clear();
+	RefListIterator<Configuration,bool> configIterator(module_->targetConfigurations());
+	while (Configuration* config = configIterator.iterate()) ui.TargetCombo->addItem(config->name(), VariantPointer<Configuration>(config));
+
+	// Loop over Configurations and add total Bragg F(Q)
+	CharString blockData;
+	configIterator.restart();
+	while (Configuration* cfg = configIterator.iterate())
+	{
+		// Original F(Q)
+		Renderable* refData = fqGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//OriginalBraggFQ//Total", cfg->niceName()), cfg->niceName(), cfg->niceName());
+		fqGraph_->groupManager().addToGroup(refData, "Calc");
+	}
+}
+
+void BraggSQModuleWidget::on_TargetCombo_currentIndexChanged(int index)
+{
+	// Remove any current data
+	sqGraph_->clearRenderables();
+
+	// Get target Configuration
+	currentConfiguration_ = (Configuration*) VariantPointer<Configuration>(ui.TargetCombo->itemData(index));
+	if (!currentConfiguration_) return;
+
+	CharString blockData;
+	const AtomTypeList cfgTypes = currentConfiguration_->usedAtomTypesList();
+	int n = 0;
+	for (AtomType* at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next, ++n)
+	{
+		int m = n;
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
+		{
+			CharString id("%s-%s", at1->name(), at2->name());
+
+			// Original S(Q)
+			Renderable* originalSQ = sqGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//OriginalBraggSQ//%s-%s", currentConfiguration_->niceName(), at1->name(), at2->name()), CharString("Full//%s", id.get()), id.get());
+			sqGraph_->groupManager().addToGroup(originalSQ, id.get());
+
+			// Broadened S(Q)
+// 			Renderable* boundGR = sqGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s-%s//Bound", currentConfiguration_->niceName(), at1->name(), at2->name()), CharString("Bound//%s", id.get()), id.get());
+// 			boundGR->lineStyle().setStipple(LineStipple::HalfDashStipple);
+// 			sqGraph_->groupManager().addToGroup(boundGR, id.get());
+		}
+	}
+}
