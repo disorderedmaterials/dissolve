@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Vec3DoubleWidget</class>
+ <widget class="QWidget" name="Vec3DoubleWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>94</width>
+    <height>81</height>
+   </rect>
+  </property>
+  <property name="font">
+   <font>
+    <pointsize>10</pointsize>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="ExponentialSpin" name="Spin3"/>
+   </item>
+   <item>
+    <widget class="ExponentialSpin" name="Spin2"/>
+   </item>
+   <item>
+    <widget class="ExponentialSpin" name="Spin1"/>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ExponentialSpin</class>
+   <extends>QDoubleSpinBox</extends>
+   <header>gui/widgets/exponentialspin.hui</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../main.qrc"/>
+ </resources>
+ <connections/>
+</ui>

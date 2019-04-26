@@ -34,3 +34,5 @@
 #include "gui/keywordwidgets/pairbroadeningfunction.h"
 #include "gui/keywordwidgets/speciesreferencelist.h"
 #include "gui/keywordwidgets/windowfunction.hui"
+#include "gui/keywordwidgets/vec3double.h"
+#include "gui/keywordwidgets/vec3integer.h"

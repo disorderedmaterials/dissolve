@@ -10,6 +10,8 @@ SET(keywordwidgets_MOC_HDRS
   pairbroadeningfunction.h
   speciesreferencelist.h
   dropdown.h
+  vec3double.h
+  vec3integer.h
 
   bool.hui
   charstring.hui
@@ -30,6 +32,8 @@ SET(keywordwidgets_UIS
   isotopologuelist.ui
   pairbroadeningfunction.ui
   speciesreferencelist.ui
+  vec3double.ui
+  vec3integer.ui
 )
 QT5_WRAP_UI(keywordwidgets_UIS_H ${keywordwidgets_UIS})
 
@@ -51,6 +55,8 @@ SET(keywordwidgets_SRCS
   pairbroadeningfunction_funcs.cpp
   speciesreferencelist_funcs.cpp
   windowfunction_funcs.cpp
+  vec3double_funcs.cpp
+  vec3integer_funcs.cpp
 
   base.h
 )

@@ -134,6 +134,20 @@ QWidget* ModuleKeywordsWidget::createKeywordWidget(DissolveWindow* dissolveWindo
 		widget = windowFunctionWidget;
 		base = windowFunctionWidget;
 	}
+	else if (keyword->type() == ModuleKeywordBase::Vec3DoubleData)
+	{
+		Vec3DoubleKeywordWidget* vec3DoubleWidget = new Vec3DoubleKeywordWidget(NULL, keyword, coreData, moduleData, uniqueName);
+		connect(vec3DoubleWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
+		widget = vec3DoubleWidget;
+		base = vec3DoubleWidget;
+	}
+	else if (keyword->type() == ModuleKeywordBase::Vec3IntegerData)
+	{
+		Vec3IntegerKeywordWidget* vec3IntWidget = new Vec3IntegerKeywordWidget(NULL, keyword, coreData, moduleData, uniqueName);
+		connect(vec3IntWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
+		widget = vec3IntWidget;
+		base = vec3IntWidget;
+	}
 
 	// Set tooltip on widget, and add to the layout and our list of controls
 	if (widget)
