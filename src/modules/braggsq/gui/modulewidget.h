@@ -1,6 +1,6 @@
 /*
 	*** Module Widget
-	*** src/modules/bragg/gui/modulewidget.h
+	*** src/modules/braggsq/gui/modulewidget.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -22,25 +22,25 @@
 #ifndef DISSOLVE_BRAGGMODULEWIDGET_H
 #define DISSOLVE_BRAGGMODULEWIDGET_H
 
-#include "modules/bragg/gui/ui_modulewidget.h"
+#include "modules/braggsq/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
 
 // Forward Declarations
-class BraggModule;
+class BraggSQModule;
 class Dissolve;
 class Module;
 class PartialSet;
 class DataViewer;
 
 // Module Widget
-class BraggModuleWidget : public ModuleWidget
+class BraggSQModuleWidget : public ModuleWidget
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
 	private:
 	// Associated Module
-	BraggModule* module_;
+	BraggSQModule* module_;
 	// DataViewer contained within this widget
 	DataViewer* dataView_;
 	// Reference to Dissolve
@@ -48,10 +48,10 @@ class BraggModuleWidget : public ModuleWidget
 
 	public:
 	// Constructor / Destructor
-	BraggModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
-	~BraggModuleWidget();
+	BraggSQModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
+	~BraggSQModuleWidget();
 	// Main form declaration
-	Ui::BraggModuleWidget ui;
+	Ui::BraggSQModuleWidget ui;
 	// Update controls within widget
 	void updateControls();
 	// Disable sensitive controls within widget, ready for main code to run

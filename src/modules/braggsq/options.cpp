@@ -1,6 +1,6 @@
 /*
-	*** Bragg Module - Options
-	*** src/modules/bragg/options.cpp
+	*** BraggSQ Module - Options
+	*** src/modules/braggsq/options.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/bragg/bragg.h"
+#include "modules/braggsq/braggsq.h"
 #include "module/keywordtypes.h"
 #include "main/dissolve.h"
 #include "classes/species.h"
@@ -28,7 +28,7 @@
 #include "templates/genericlisthelper.h"
 
 // Set up keywords for Module
-void BraggModule::setUpKeywords()
+void BraggSQModule::setUpKeywords()
 {
 	frequency_ = 5;
 	keywords_.add(new DoubleModuleKeyword(0.001), "QDelta", "Resolution (binwidth) in Q space to use when calculating Bragg peaks");
@@ -40,7 +40,7 @@ void BraggModule::setUpKeywords()
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int BraggModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
+int BraggSQModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
 	return -1;
 }

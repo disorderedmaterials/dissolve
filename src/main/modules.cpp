@@ -22,7 +22,7 @@
 #include "main/dissolve.h"
 #include "modules/analyse/analyse.h"
 #include "modules/atomshake/atomshake.h"
-#include "modules/bragg/bragg.h"
+#include "modules/braggsq/braggsq.h"
 #include "modules/calculate/rdf/rdf.h"
 #include "modules/calibration/calibration.h"
 #include "modules/checks/checks.h"
@@ -77,7 +77,7 @@ bool Dissolve::registerMasterModules()
 {
 	if (!registerMasterModule(new AnalyseModule)) return false;
 	if (!registerMasterModule(new AtomShakeModule)) return false;
-	if (!registerMasterModule(new BraggModule)) return false;
+	if (!registerMasterModule(new BraggSQModule)) return false;
 	if (!registerMasterModule(new CalculateRDFModule)) return false;
 	if (!registerMasterModule(new CalibrationModule)) return false;
 	if (!registerMasterModule(new ChecksModule)) return false;

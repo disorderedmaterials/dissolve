@@ -1,6 +1,6 @@
 /*
-	*** Bragg Module - GUI
-	*** src/modules/bragg/nogui.cpp
+	*** BraggSQ Module - GUI
+	*** src/modules/braggsq/gui/gui.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,11 +19,12 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/bragg/bragg.h"
+#include "modules/braggsq/braggsq.h"
+#include "modules/braggsq/gui/modulewidget.h"
 
 // Return a new widget controlling this Module
-ModuleWidget* BraggModule::createWidget(QWidget* parent, Dissolve& dissolve)
+ModuleWidget* BraggSQModule::createWidget(QWidget* parent, Dissolve& dissolve)
 {
-	return NULL;
+	return new BraggSQModuleWidget(parent, this, dissolve);
 }
 

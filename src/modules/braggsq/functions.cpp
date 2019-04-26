@@ -1,6 +1,6 @@
 /*
-	*** Bragg Module - Functions
-	*** src/modules/bragg/functions.cpp
+	*** BraggSQ Module - Functions
+	*** src/modules/braggsq/functions.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/bragg/bragg.h"
+#include "modules/braggsq/braggsq.h"
 #include "classes/configuration.h"
 #include "classes/atom.h"
 #include "classes/box.h"
@@ -38,7 +38,7 @@
  */
 
 // Calculate unweighted Bragg scattering for specified Configuration
-bool BraggModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cfg, const double qMin, const double qDelta, const double qMax, Vec3<int> multiplicity, bool& alreadyUpToDate)
+bool BraggSQModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cfg, const double qMin, const double qDelta, const double qMax, Vec3<int> multiplicity, bool& alreadyUpToDate)
 {
 	// Check to see if the arrays are up-to-date
 	int& braggDataVersion = GenericListHelper<int>::retrieve(cfg->moduleData(), "BraggVersion", "", -1);
@@ -323,7 +323,7 @@ bool BraggModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cfg,
 }
 
 // // Calculate unweighted Bragg partials from pre-stored BraggPeak data
-// bool BraggModule::calculateUnweightedBraggSQ(ProcessPool& procPool, Configuration* cfg, const double qMin, const double qDelta, const double qMax, const BroadeningFunction& broadening)
+// bool BraggSQModule::calculateUnweightedBraggSQ(ProcessPool& procPool, Configuration* cfg, const double qMin, const double qDelta, const double qMax, const BroadeningFunction& broadening)
 // {
 // 	// Retrieve BraggPeak data from the Configuration's module data
 // 	bool found = false;
@@ -381,7 +381,7 @@ bool BraggModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cfg,
 // // 					q = braggSQ.x(m);
 // 
 // 					// No broadening
-// // 					if (broadeningType == BraggModule::NoBroadening)
+// // 					if (broadeningType == BraggSQModule::NoBroadening)
 // // 					{
 // // 						if (int(qCentre/qDelta) == m)
 // // 						{
@@ -389,7 +389,7 @@ bool BraggModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cfg,
 // // 							break;
 // // 						}
 // // 					}
-// // 					else if (broadeningType == BraggModule::GaussianBroadening)
+// // 					else if (broadeningType == BraggSQModule::GaussianBroadening)
 // // 					{
 // // 						// broadeningA = FWHM
 // // 						x = qCentre - q;

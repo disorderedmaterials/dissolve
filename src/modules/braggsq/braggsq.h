@@ -1,6 +1,6 @@
 /*
-	*** Bragg Module
-	*** src/modules/bragg/bragg.h
+	*** BraggSQ Module
+	*** src/modules/braggsq/braggsq.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_BRAGGMODULE_H
-#define DISSOLVE_BRAGGMODULE_H
+#ifndef DISSOLVE_BRAGGSQMODULE_H
+#define DISSOLVE_BRAGGSQMODULE_H
 
 #include "module/module.h"
 #include "math/broadeningfunction.h"
@@ -33,13 +33,13 @@ class PartialSet;
 class Weights;
 
 // Bragg Module
-class BraggModule : public Module
+class BraggSQModule : public Module
 {
 	public:
 	// Constructor
-	BraggModule();
+	BraggSQModule();
 	// Destructor
-	~BraggModule();
+	~BraggSQModule();
 
 
 	/*

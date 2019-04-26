@@ -1,6 +1,6 @@
 /*
-	*** Bragg Module - Core Functions
-	*** src/modules/bragg/core.cpp
+	*** BraggSQ Module - GUI
+	*** src/modules/braggsq/nogui.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,31 +19,11 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/bragg/bragg.h"
+#include "modules/braggsq/braggsq.h"
 
-/*
- * Constructor / Destructor
- */
-
-// Constructor
-BraggModule::BraggModule() : Module()
+// Return a new widget controlling this Module
+ModuleWidget* BraggSQModule::createWidget(QWidget* parent, Dissolve& dissolve)
 {
-	// Set up variables / control parameters
-	setUpKeywords();
-}
-
-// Destructor
-BraggModule::~BraggModule()
-{
-}
-
-/*
- * Instances
- */
-
-// Create instance of this module
-Module* BraggModule::createInstance() const
-{
-	return new BraggModule;
+	return NULL;
 }
 

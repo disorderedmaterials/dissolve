@@ -1,6 +1,6 @@
 /*
-	*** Bragg Module - GUI
-	*** src/modules/bragg/gui/gui.cpp
+	*** BraggSQ Module - Definition
+	*** src/modules/braggsq/definition.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,12 +19,28 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/bragg/bragg.h"
-#include "modules/bragg/gui/modulewidget.h"
+#include "modules/braggsq/braggsq.h"
 
-// Return a new widget controlling this Module
-ModuleWidget* BraggModule::createWidget(QWidget* parent, Dissolve& dissolve)
+// Return type of module
+const char* BraggSQModule::type() const
 {
-	return new BraggModuleWidget(parent, this, dissolve);
+	return "BraggSQ";
 }
 
+// Return category for module
+const char* BraggSQModule::category() const
+{
+	return "Correlation Functions";
+}
+
+// Return brief description of module
+const char* BraggSQModule::brief() const
+{
+	return "Calculate Bragg scattering";
+}
+
+// Return the maximum number of Configurations the Module can target (or -1 for any number)
+int BraggSQModule::nTargetableConfigurations() const
+{
+	return (configurationLocal_ ? 1 : -1);
+}

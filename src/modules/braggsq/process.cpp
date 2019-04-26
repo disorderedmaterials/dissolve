@@ -1,6 +1,6 @@
 /*
-	*** Bragg Module - Processing
-	*** src/modules/bragg/process.cpp
+	*** BraggSQ Module - Processing
+	*** src/modules/braggsq/process.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/bragg/bragg.h"
+#include "modules/braggsq/braggsq.h"
 #include "main/dissolve.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
@@ -28,7 +28,7 @@
 #include "templates/genericlisthelper.h"
 
 // Run main processing
-bool BraggModule::process(Dissolve& dissolve, ProcessPool& procPool)
+bool BraggSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {
 	/*
 	 * Calculate Bragg contributions.

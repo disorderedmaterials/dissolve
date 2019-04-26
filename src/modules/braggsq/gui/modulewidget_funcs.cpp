@@ -1,6 +1,6 @@
 /*
-	*** Bragg Module Widget - Functions
-	*** src/modules/bragg/gui/modulewidget_funcs.cpp
+	*** BraggSQ Module Widget - Functions
+	*** src/modules/braggsq/gui/modulewidget_funcs.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/bragg/gui/modulewidget.h"
+#include "modules/braggsq/gui/modulewidget.h"
 #include "gui/viewer/dataviewer.hui"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
@@ -28,7 +28,7 @@
 #include "templates/genericlisthelper.h"
 
 // Constructor
-BraggModuleWidget::BraggModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_((BraggModule*) module), dissolve_(dissolve)
+BraggSQModuleWidget::BraggSQModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_((BraggSQModule*) module), dissolve_(dissolve)
 {
 	// Set up user interface
 	ui.setupUi(this);
@@ -48,23 +48,23 @@ BraggModuleWidget::BraggModuleWidget(QWidget* parent, Module* module, Dissolve& 
 	refreshing_ = false;
 }
 
-BraggModuleWidget::~BraggModuleWidget()
+BraggSQModuleWidget::~BraggSQModuleWidget()
 {
 }
 
 // Update controls within widget
-void BraggModuleWidget::updateControls()
+void BraggSQModuleWidget::updateControls()
 {
 	dataView_->postRedisplay();
 }
 
 // Disable sensitive controls within widget, ready for main code to run
-void BraggModuleWidget::disableSensitiveControls()
+void BraggSQModuleWidget::disableSensitiveControls()
 {
 }
 
 // Enable sensitive controls within widget, ready for main code to run
-void BraggModuleWidget::enableSensitiveControls()
+void BraggSQModuleWidget::enableSensitiveControls()
 {
 }
 
@@ -73,7 +73,7 @@ void BraggModuleWidget::enableSensitiveControls()
  */
 
 // Write widget state through specified LineParser
-bool BraggModuleWidget::writeState(LineParser& parser)
+bool BraggSQModuleWidget::writeState(LineParser& parser)
 {
 	// Write DataViewer session
 	if (!dataView_->writeSession(parser)) return false;
@@ -82,7 +82,7 @@ bool BraggModuleWidget::writeState(LineParser& parser)
 }
 
 // Read widget state through specified LineParser
-bool BraggModuleWidget::readState(LineParser& parser)
+bool BraggSQModuleWidget::readState(LineParser& parser)
 {
 	// Read DataViewer session
 	if (!dataView_->readSession(parser)) return false;
