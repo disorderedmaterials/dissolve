@@ -53,7 +53,7 @@ void NeutronSQModule::setUpKeywords()
 	group->add(new DoubleModuleKeyword(0.05, 1.0e-5), "QDelta", "Step size in Q for S(Q) calculation");
 	group->add(new DoubleModuleKeyword(-1.0, -1.0), "QMax", "Maximum Q for calculated S(Q)");
 	group->add(new DoubleModuleKeyword(0.01, 0.0), "QMin", "Minimum Q for calculated S(Q)");
-	group->add(new BroadeningFunctionModuleKeyword(BroadeningFunction()), "QBroadening", "Instrument broadening function to apply when calculating S(Q)");
+	group->add(new BroadeningFunctionModuleKeyword(BroadeningFunction()), "QBroadening", "Broadening function to apply when calculating S(Q)");
 	group->add(new WindowFunctionModuleKeyword(WindowFunction(WindowFunction::Lorch0Window)), "WindowFunction", "Window function to apply when Fourier-transforming g(r) to S(Q)");
 
 	group = addKeywordGroup("Neutron Isotopes");
