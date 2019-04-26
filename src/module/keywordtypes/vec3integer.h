@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEKEYWORDVEC3INTEGER_H
-#define DISSOLVE_MODULEKEYWORDVEC3INTEGER_H
+#ifndef DISSOLVE_MODULEKEYWORD_VEC3INTEGER_H
+#define DISSOLVE_MODULEKEYWORD_VEC3INTEGER_H
 
 #include "module/keyworddata.h"
 #include "module/keywordbase.h"
