@@ -41,7 +41,7 @@ AtomTypeSelectionKeywordWidget::AtomTypeSelectionKeywordWidget(QWidget* parent, 
 
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<AtomTypeSelectionModuleKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base module keyword into AtomTypeSelectionModuleKeyword.\n");
+	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into AtomTypeSelectionModuleKeyword.\n", keyword->keyword());
 	else
 	{
 		// Set current information

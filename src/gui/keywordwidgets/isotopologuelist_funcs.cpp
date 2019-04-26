@@ -53,7 +53,7 @@ IsotopologueListKeywordWidget::IsotopologueListKeywordWidget(QWidget* parent, Mo
 
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<IsotopologueListModuleKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base module keyword into IsotopologueListModuleKeyword.\n");
+	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into IsotopologueListModuleKeyword.\n", keyword->keyword());
 	else
 	{
 		// Set current information
