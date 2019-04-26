@@ -29,6 +29,7 @@
 #include "classes/species.h"
 #include "classes/weights.h"
 #include "math/broadeningfunction.h"
+#include "math/filters.h"
 #include "templates/array3d.h"
 #include "templates/genericlisthelper.h"
 
@@ -37,29 +38,43 @@
  */
 
 // Calculate unweighted Bragg scattering for specified Configuration
-bool BraggModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cfg, double braggQMin, double braggQResolution, double braggQMax, double braggMultiplicity)
+bool BraggModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cfg, const double qMin, const double qDelta, const double qMax, Vec3<int> multiplicity, bool& alreadyUpToDate)
 {
 	// Check to see if the arrays are up-to-date
-	// TODO
+	int& braggDataVersion = GenericListHelper<int>::retrieve(cfg->moduleData(), "BraggVersion", "", -1);
+	alreadyUpToDate = braggDataVersion == cfg->contentsVersion();
+	if (alreadyUpToDate) return true;
 
 	// Realise the arrays from the Configuration
-	Array<KVector>& braggKVectors = GenericListHelper< Array<KVector> >::realise(cfg->moduleData(), "BraggKVectors", uniqueName());
-	Array<BraggPeak>& braggPeaks = GenericListHelper< Array<BraggPeak> >::realise(cfg->moduleData(), "BraggPeaks", uniqueName());
-	Array2D<double>& braggAtomVectorXCos = GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "BraggAtomVectorXCos", uniqueName());
-	Array2D<double>& braggAtomVectorYCos = GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "BraggAtomVectorYCos", uniqueName());
-	Array2D<double>& braggAtomVectorZCos = GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "BraggAtomVectorZCos", uniqueName());
-	Array2D<double>& braggAtomVectorXSin = GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "BraggAtomVectorXSin", uniqueName());
-	Array2D<double>& braggAtomVectorYSin = GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "BraggAtomVectorYSin", uniqueName());
-	Array2D<double>& braggAtomVectorZSin = GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "BraggAtomVectorZSin", uniqueName());
-	Vec3<int>& braggMaximumHKL = GenericListHelper< Vec3<int> >::realise(cfg->moduleData(), "BraggMaximumHKL", uniqueName());
+	Array<KVector>& braggKVectors = GenericListHelper< Array<KVector> >::realise(cfg->moduleData(), "BraggKVectors");
+	Array<BraggPeak>& braggPeaks = GenericListHelper< Array<BraggPeak> >::realise(cfg->moduleData(), "BraggPeaks");
+	Array2D<double>& braggAtomVectorXCos = GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "BraggAtomVectorXCos");
+	Array2D<double>& braggAtomVectorYCos = GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "BraggAtomVectorYCos");
+	Array2D<double>& braggAtomVectorZCos = GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "BraggAtomVectorZCos");
+	Array2D<double>& braggAtomVectorXSin = GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "BraggAtomVectorXSin");
+	Array2D<double>& braggAtomVectorYSin = GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "BraggAtomVectorYSin");
+	Array2D<double>& braggAtomVectorZSin = GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "BraggAtomVectorZSin");
+	Vec3<int>& braggMaximumHKL = GenericListHelper< Vec3<int> >::realise(cfg->moduleData(), "BraggMaximumHKL");
 
 	// Grab some useful values
 	const Box* box = cfg->box();
-	Matrix3 rAxes = box->reciprocalAxes();
-	Vec3<double> rI, v, rLengths = box->reciprocalAxisLengths();
 	int nTypes = cfg->nUsedAtomTypes();
 	int nAtoms = cfg->nAtoms();
 	Atom** atoms = cfg->atoms().array();
+
+	// Set up reciprocal axes and lengths - take those from the Box and scale based on the multiplicity
+	Matrix3 rAxes = box->reciprocalAxes();
+	rAxes.columnMultiply(0, multiplicity.x);
+	rAxes.columnMultiply(1, multiplicity.y);
+	rAxes.columnMultiply(2, multiplicity.z);
+	Vec3<double> rLengths = box->reciprocalAxisLengths();
+	rLengths.x *= multiplicity.x;
+	rLengths.y *= multiplicity.y;
+	rLengths.z *= multiplicity.z;
+	Messenger::print("BraggSQ: Reciprocal axes and lengths (accounting for multiplicity) are:\n");
+	Messenger::print("BraggSQ:        r(x) = %e %e %e (%e)\n", rAxes.columnAsVec3(0).x, rAxes.columnAsVec3(0).y, rAxes.columnAsVec3(0).z, rLengths.x);
+	Messenger::print("BraggSQ:        r(y) = %e %e %e (%e)\n", rAxes.columnAsVec3(1).x, rAxes.columnAsVec3(1).y, rAxes.columnAsVec3(1).z, rLengths.y);
+	Messenger::print("BraggSQ:        r(z) = %e %e %e (%e)\n", rAxes.columnAsVec3(2).x, rAxes.columnAsVec3(2).y, rAxes.columnAsVec3(2).z, rLengths.z);
 
 	int n, m, h, k, l, kAbs, lAbs;
 	double* cosTermsH, *sinTermsH, *cosTermsK, *sinTermsK, *cosTermsL, *sinTermsL;
@@ -68,42 +83,40 @@ bool BraggModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cfg,
 	// Create a timer
 	Timer timer;
 
-	rAxes.print();
-
-	// Calculate number of k-vectors within cutoff range
+	// Calculate k-vectors within specified Q range
 	double mag, magSq;
 	int braggIndex;
 	timer.start();
 	if (braggKVectors.nItems() == 0)
 	{
-		Messenger::print("Partials: Performing initial set up of Bragg arrays...\n");
+		Messenger::print("BraggSQ: Performing initial set up of Bragg arrays...\n");
 		timer.start();
 
-		double braggQMaxSq = braggQMax*braggQMax, braggQMinSQ = braggQMin*braggQMin;
-		int nBraggBins = braggQMax / braggQResolution + 1;
+		double qMaxSq = qMax*qMax, qMinSQ = qMin*qMin;
+		int nBraggBins = qMax / qDelta + 1;
 
 		// Determine extents of hkl indices to use
-		braggMaximumHKL.x = braggQMax / rLengths.x;
-		braggMaximumHKL.y = braggQMax / rLengths.y;
-		braggMaximumHKL.z = braggQMax / rLengths.z;
+		braggMaximumHKL.x = qMax / rLengths.x;
+		braggMaximumHKL.y = qMax / rLengths.y;
+		braggMaximumHKL.z = qMax / rLengths.z;
 
-		// Clear old arrays
+		// Clear old arrays, and set a suitable chunk size for the k-vectors array
 		braggPeaks.clear();
 		braggKVectors.clear();
+		braggKVectors.setChunkSize(braggMaximumHKL.x * braggMaximumHKL.y * braggMaximumHKL.z);
 
 		// Create temporary 3D array for k-vectors, and linear array for Bragg peaks
 		OffsetArray3D<KVector> tempKVectors(0, braggMaximumHKL.x, -braggMaximumHKL.y, braggMaximumHKL.y, -braggMaximumHKL.z, braggMaximumHKL.z);
 		Array<BraggPeak> tempPeaks(nBraggBins);
 
-		// Initialise Bragg peaks
-		// The Q value reflects the centre-bin value of the peak.
-		double q = 0.5 * braggQResolution;
+		// Initialise Bragg peaks - Q values reflect the centre-bins of the peak.
+		double q = 0.5 * qDelta;
 		for (int n=0; n<nBraggBins; ++n)
 		{
 			tempPeaks[n].initialise(q, -1, nTypes);
-			q += braggQResolution;
+			q += qDelta;
 		}
-		Vec3<double> kVec;
+		Vec3<double> kVec, v;
 		for (h = 0; h <= braggMaximumHKL.x; ++h)
 		{
 			kVec.x = h;
@@ -119,12 +132,12 @@ bool BraggModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cfg,
 
 					// Calculate magnitude of this k vector
 					magSq = v.magnitudeSq();
-					if ((magSq >= braggQMinSQ) && (magSq <= braggQMaxSq))
+					if ((magSq >= qMinSQ) && (magSq <= qMaxSq))
 					{
 						mag = sqrt(magSq);
 
 						// Calculate index of associated Bragg peak in the peaks array
-						braggIndex = int(mag/braggQResolution);
+						braggIndex = int(mag/qDelta);
 
 						// Point this (h,k,l) value to this Bragg peak
 						tempKVectors.at(h, k, l).initialise(h, k, l, braggIndex, nTypes);
@@ -158,8 +171,8 @@ bool BraggModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cfg,
 			braggPeaks.add(tempPeaks[n]);
 		}
 
-		Messenger::print("Partials: Bragg calculation spans %i hkl indices (max HKL = %i x %i x %i) over %f <= Q <= %f (%s elapsed).\n", braggKVectors.nItems(), braggMaximumHKL.x, braggMaximumHKL.y, braggMaximumHKL.z, braggQMin, braggQMax, timer.elapsedTimeString());
-		Messenger::print("Partials: %i unique Bragg peaks found using a Q resolution of %f Angstroms**-1)\n", braggPeaks.nItems(), braggQResolution);
+		Messenger::print("BraggSQ: Bragg calculation spans %i k-vectors (max HKL = %i x %i x %i) over %f <= Q <= %f (%s elapsed).\n", braggKVectors.nItems(), braggMaximumHKL.x, braggMaximumHKL.y, braggMaximumHKL.z, qMin, qMax, timer.elapsedTimeString());
+		Messenger::print("BraggSQ: %i unique Bragg peaks found using a Q resolution of %f Angstroms**-1)\n", braggPeaks.nItems(), qDelta);
 
 		// Create atom working arrays
 		braggAtomVectorXCos.initialise(nAtoms, braggMaximumHKL.x+1);
@@ -174,9 +187,11 @@ bool BraggModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cfg,
 	timer.stop();
 	timer.zero();
 	timer.start();
+	Vec3<double> v, rI;
 	for (n = 0; n<nAtoms; ++n)
 	{
 		// Calculate reciprocal lattice atom coordinates
+		// TODO CHECK Test this in a non-cubic system!
 		v = atoms[n]->r();
 		rI.x = v.x*rAxes[0] + v.y*rAxes[1] + v.z*rAxes[2];
 		rI.y = v.x*rAxes[3] + v.y*rAxes[4] + v.z*rAxes[5];
@@ -230,7 +245,7 @@ bool BraggModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cfg,
 		}
 	}
 	timer.stop();
-	Messenger::print("Partials: Calculated atomic cos/sin terms (%s elapsed)\n", timer.totalTimeString());
+	Messenger::print("BraggSQ: Calculated atomic cos/sin terms (%s elapsed)\n", timer.totalTimeString());
 
 	// Calculate k-vector contributions
 	KVector* kVectors = braggKVectors.array();
@@ -277,7 +292,7 @@ bool BraggModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cfg,
 		}
 	}
 	timer.stop();
-	Messenger::print("Partials: Calculated atomic contributions to k-vectors (%s elapsed)\n", timer.totalTimeString());
+	Messenger::print("BraggSQ: Calculated atomic contributions to k-vectors (%s elapsed)\n", timer.totalTimeString());
 
 	// Zero Bragg peak intensities
 	BraggPeak* peaks = braggPeaks.array();
@@ -287,123 +302,114 @@ bool BraggModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cfg,
 	// Calculate intensities for individual KVectors - this will be automatically summed into the corresponding BraggPeak
 	for (m = 0; m < nKVectors; ++m) kVectors[m].calculateIntensities(peaks);
 
-	// Scale intensities for number of atoms and multiplicity
-	double factor = 1.0 / (nAtoms * braggMultiplicity);
-	for (m=0; m<nPeaks; ++m) peaks[m].scaleIntensity(factor);
-
-	return true;
-}
-
-// Calculate unweighted Bragg partials from calculated peak data
-bool BraggModule::calculateUnweightedBraggSQ(ProcessPool& procPool, Configuration* cfg, Array< BraggPeak >& braggPeaks, PartialSet& partialsq, const BroadeningFunction& broadening)
-{
-	double factor, qCentre, inten;
-	int nTypes = partialsq.nAtomTypes();
-	AtomTypeList atomTypes = partialsq.atomTypes();
-	int nPeaks = braggPeaks.nItems();
-	//double qDelta = partialsq.partial(0,0).x(1) - partialsq.partial(0,0).x(0);
-
-	// Print out a bit of info first
-	Messenger::print("Partials: Calculating Bragg contributions to S(Q)...\n");
-	// BRAGG TODO
-	Messenger::error("BROADENING OF BRAGG SCATTERING IS CURRENTLY DISABLED - FIX ME!\n");
-// 	if (broadeningType == BraggModule::NoBroadening) Messenger::warn("Partials: No broadening will be applied to Bragg contributions.\n");
-// 	else if (broadeningType == BraggModule::GaussianBroadening)
-// 	{
-// 		fwhm = GenericListHelper<double>::retrieve(cfg->moduleData(), "BraggBroadeningParameter1", uniqueName(), 0.01);
-// 		factor = sqrt(4.0 * log(2.0) / PI);
-// 		Messenger::print("Partials: Gaussian broadening will be applied to Bragg contributions with FWHM = %f Angstroms**-1.\n", fwhm);
-// 	}
-
-	// Loop over pairs of atom types, constructing Bragg partial SQ for each
-	for (int typeI = 0; typeI < nTypes; ++typeI)
+	// Normalise intensities against number of atoms, atom type fraction, and multiplicity
+	AtomTypeData* atd1 = cfg->usedAtomTypes();
+	for (int i = 0; i<cfg->nUsedAtomTypes(); ++i, atd1 = atd1->next)
 	{
-		for (int typeJ = typeI; typeJ < nTypes; ++typeJ)
+		AtomTypeData* atd2 = atd1;
+		for (int j = i; j<cfg->nUsedAtomTypes(); ++j, atd2 = atd2->next)
 		{
-			Data1D& braggSQ = partialsq.braggPartial(typeI, typeJ);
+			double factor = (atd1->fraction() * atd2->fraction()) / (nAtoms * multiplicity.x * multiplicity.y * multiplicity.z);
+			if (i != j) factor *= 2.0;
 
-			// Loop over defined Bragg peaks
-			for (int n=0; n<nPeaks; ++n)
-			{
-				// Get q value and intensity of peak
-				qCentre = braggPeaks[n].q();
-				inten = braggPeaks[n].intensity(typeI, typeJ);
-// 				lambda = braggQIndepBroadening + qCentre * qDepBroadening;
-// 				lambdaCubed = lambda * lambda * lambda;
-// 				tempBraggSQ.addY(qCentre/braggQDelta, inten);
-				if (inten > 0.01) printf("BRG  %i  %i  %i  %f  %f\n", typeI, typeJ, n, qCentre, inten);
-
-				// Loop over points in braggSQ Data1D (which will provide our Q values)
-				for (int m=0; m<braggSQ.nValues(); ++m)
-				{
-					// Get q value from array
-					//q = braggSQ.x(m);
-
-					// No broadening
-// 					if (broadeningType == BraggModule::NoBroadening)
-// 					{
-// 						if (int(qCentre/qDelta) == m)
-// 						{
-// 							braggSQ.addY(m, inten);
-// 							break;
-// 						}
-// 					}
-// 					else if (broadeningType == BraggModule::GaussianBroadening)
-// 					{
-// 						// broadeningA = FWHM
-// 						x = qCentre - q;
-// 						braggSQ.addY(m, inten * exp(-4.0*log(2.0) * (x * x) / (fwhm * fwhm)));
-// 					}
-// 
-// 					// Set up Lorentzian parameters
-// 					qSub = (qCentre - q) / lambda;
-// 					qAdd = (qCentre + q) / lambda;
-// 					broaden = lFactor / ((1.0 + qSub*qSub) * (1.0 + qAdd*qAdd) * lambdaCubed);
-// 					printf("y = %f   %f\n", braggSQ.y(m), inten*broaden);
-// 					braggSQ.addY(m, inten * broaden);
-				}
-			}
-
-			// Normalise to atomic fractions
-			factor = atomTypes[typeI]->fraction() * atomTypes[typeJ]->fraction() * (typeI == typeJ ? 1.0 : 2.0);
-			braggSQ.values() *= factor;
+			for (m=0; m<nPeaks; ++m) peaks[m].scaleIntensity(i, j, factor);
 		}
 	}
 
+	// Store the new version of the data
+	braggDataVersion = cfg->contentsVersion();
+
 	return true;
 }
 
-
-
-// 	// Generate final partial S(Q) combining pair correlations and Bragg partials
-// 	for (typeI=0; typeI<usedAtomTypes_.nItems(); ++typeI)
+// // Calculate unweighted Bragg partials from pre-stored BraggPeak data
+// bool BraggModule::calculateUnweightedBraggSQ(ProcessPool& procPool, Configuration* cfg, const double qMin, const double qDelta, const double qMax, const BroadeningFunction& broadening)
+// {
+// 	// Retrieve BraggPeak data from the Configuration's module data
+// 	bool found = false;
+// 	const Array<BraggPeak>& braggPeaks = GenericListHelper< Array<BraggPeak> >::value(cfg->moduleData(), "BraggPeaks", "", Array<BraggPeak>(), &found);
+// 	if (!found) return Messenger::error("Failed to find BraggPeak array in module data for Configuration '%s'.\n", cfg->name());
+// 
+// 	const int nPeaks = braggPeaks.nItems();
+// 	const int nTypes = cfg->nUsedAtomTypes();
+// 
+// 	// Realise / retrieve storage array for the Bragg partial S(Q)
+// 	bool wasCreated;
+// 	Array2D< Data1D >& braggSQ = GenericListHelper< Array2D< Data1D > >::realise(cfg->moduleData(), "BraggSQ", "", GenericItem::InRestartFileFlag, &wasCreated);
+// 	if (wasCreated)
 // 	{
-// 		for (typeJ=typeI; typeJ<usedAtomTypes_.nItems(); ++typeJ)
+// 		// Create the triangular array
+// 		braggSQ.initialise(nTypes, nTypes, true);
+// 	
+// 		// Generate empty Data1D over the Q range / resolution specified
+// 		Data1D temp;
+// 		double q = qMin;
+// 		while (q <= qMax)
 // 		{
-// 			// Grab references:
-// 			// -- Full atom pair-pair structure factors (bound + unbound)
-// 			Data1D& pairSQ = pairSQMatrix_.ref(typeI,typeJ);
-// 			// -- Bragg partial structure factors
-// 			Data1D& braggSQ = braggSQMatrix_.ref(typeI,typeJ);
-// 			// -- Full partial structure factors (destination)
-// 			Data1D& partialSQ = partialSQMatrix_.ref(typeI,typeJ);
+// 			temp.addPoint(q, 0.0);
+// 			q += qDelta;
+// 		}
 // 
-// 			// Copy atomic pair S(Q) information
-// 			partialSQ = pairSQ;
+// 		// Set up Data1D array with our empty data
+// 		for (int n=0; n<braggSQ.linearArraySize(); ++n) braggSQ.linearArray()[n] = temp;
+// 	}
 // 
-// 			// Combine Bragg(Q) data if it was calculated
-// 			if (braggOn)
+// // 	AtomTypeList atomTypes = partialsq.atomTypes();
+// 
+// 	// Loop over pairs of atom types, constructing Bragg partial SQ for each
+// 	double factor, qCentre, inten;
+// 	AtomTypeData* atd1 = cfg->usedAtomTypes();
+// 	for (int typeI = 0; typeI < nTypes; ++typeI, atd1 = atd1->next)
+// 	{
+// 		AtomTypeData* atd2 = atd1;
+// 		for (int typeJ = typeI; typeJ < nTypes; ++typeJ, atd2 = atd2->next)
+// 		{
+// 			Data1D& partial = braggSQ.at(typeI, typeJ);
+// 
+// 			// Loop over defined Bragg peaks
+// 			for (int n=0; n<nPeaks; ++n)
 // 			{
-// 				double xRange = 0.1, x;
-// 				double xMin = braggQMax - xRange - qDelta*0.5;
-// 				for (int n=0; n<braggSQ.nPoints(); ++n)
+// 				// Get q value and intensity of peak
+// 				qCentre = braggPeaks.constAt(n).q();
+// 				inten = braggPeaks.constAt(n).intensity(typeI, typeJ);
+// 
+// // 				Filters::convolveNormalised();
+// 				// Loop over Q values
+// 				for (int m=0; m<partial.nValues(); ++m)
 // 				{
-// 					x = (braggSQ.x(n) <= xMin ? 0.0 : (braggSQ.x(n) - xMin) / xRange);
-// 					partialSQ.setY(n, pairSQ.y(n)*x + braggSQ.y(n)*(1.0-x));
-// 					// TEST - Straight replacement of original pair data
-// // 					partialSQ.setY(n, braggSQ.y(n));
+// 					// Get q value from array
+// // 					q = braggSQ.x(m);
+// 
+// 					// No broadening
+// // 					if (broadeningType == BraggModule::NoBroadening)
+// // 					{
+// // 						if (int(qCentre/qDelta) == m)
+// // 						{
+// // 							braggSQ.addY(m, inten);
+// // 							break;
+// // 						}
+// // 					}
+// // 					else if (broadeningType == BraggModule::GaussianBroadening)
+// // 					{
+// // 						// broadeningA = FWHM
+// // 						x = qCentre - q;
+// // 						braggSQ.addY(m, inten * exp(-4.0*log(2.0) * (x * x) / (fwhm * fwhm)));
+// // 					}
+// // 
+// // 					// Set up Lorentzian parameters
+// // 					qSub = (qCentre - q) / lambda;
+// // 					qAdd = (qCentre + q) / lambda;
+// // 					broaden = lFactor / ((1.0 + qSub*qSub) * (1.0 + qAdd*qAdd) * lambdaCubed);
+// // 					printf("y = %f   %f\n", braggSQ.y(m), inten*broaden);
+// // 					braggSQ.addY(m, inten * broaden);
 // 				}
 // 			}
+// 
+// 			// Normalise to atomic fractions
+// 			factor = atd1->fraction() * atd2->fraction() * (typeI == typeJ ? 1.0 : 2.0);
+// 			partial.values() *= factor;
 // 		}
 // 	}
-
+// 
+// 	return true;
+// }

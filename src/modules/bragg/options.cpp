@@ -31,8 +31,12 @@
 void BraggModule::setUpKeywords()
 {
 	frequency_ = 5;
-	keywords_.add(new DoubleModuleKeyword(0.001), "QResolution", "Binwidth in Q to use when calculating Bragg peaks");
-	keywords_.add(new BoolModuleKeyword(false), "Save", "Whether to save partials to disk after calculation", "<True|False>");
+	keywords_.add(new DoubleModuleKeyword(0.001), "QDelta", "Resolution (binwidth) in Q space to use when calculating Bragg peaks");
+	keywords_.add(new DoubleModuleKeyword(1.0), "QMax", "Maximum Q value for Bragg calculation");
+	keywords_.add(new DoubleModuleKeyword(0.01), "QMin", "Minimum Q value for Bragg calculation");
+	keywords_.add(new Vec3IntegerModuleKeyword(Vec3<int>(1,1,1), Vec3<int>(1,1,1)), "Multiplicity", "Bragg intensity scaling factor accounting for number of repeat units in Configuration", "<1 1 1>");
+	keywords_.add(new BoolModuleKeyword(false), "SavePartials", "Whether to save Bragg partials to disk after calculation", "<True|False>");
+	keywords_.add(new BoolModuleKeyword(false), "SaveReflections", "Whether to save Bragg reflection data to disk", "<True|False>");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
