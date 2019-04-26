@@ -88,8 +88,8 @@ class BraggSQModule : public Module
 	public:
 	// Calculate Bragg terms for specified Configuration
 	bool calculateBraggTerms(ProcessPool& procPool, Configuration* cfg, const double qMin, const double qDelta, const double qMax, Vec3<int> multiplicity, bool& alreadyUpToDate);
-	// Calculate unweighted Bragg partials from calculated peak data
-// 	bool calculateUnweightedBraggSQ(ProcessPool& procPool, Configuration* cfg, const double qMin, const double qDelta, const double qMax, const BroadeningFunction& broadening);
+	// Form unweighted Bragg partials from calculated peak data
+	bool formBraggSQ(ProcessPool& procPool, Configuration* cfg, const double qMin, const double qDelta, const double qMax);
 
 
 	/*

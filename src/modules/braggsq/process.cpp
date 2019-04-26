@@ -73,8 +73,8 @@ bool BraggSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// If we are already up-to-date, then theres nothing more to do for this Configuration
 		if (alreadyUpToDate) continue;
 
-		// Calculate unweighted Bragg S(Q)
-// 		calculateUnweightedBraggSQ(procPool, cfg, qMin, qDelta, qMax, BroadeningFunction());
+		// Form partial Bragg S(Q)
+		formBraggSQ(procPool, cfg, qMin, qDelta, qMax);
 
 		// Save partials data?
 		if (savePartials)

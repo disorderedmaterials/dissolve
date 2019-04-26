@@ -322,56 +322,76 @@ bool BraggSQModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cf
 	return true;
 }
 
-// // Calculate unweighted Bragg partials from pre-stored BraggPeak data
-// bool BraggSQModule::calculateUnweightedBraggSQ(ProcessPool& procPool, Configuration* cfg, const double qMin, const double qDelta, const double qMax, const BroadeningFunction& broadening)
-// {
-// 	// Retrieve BraggPeak data from the Configuration's module data
-// 	bool found = false;
-// 	const Array<BraggPeak>& braggPeaks = GenericListHelper< Array<BraggPeak> >::value(cfg->moduleData(), "BraggPeaks", "", Array<BraggPeak>(), &found);
-// 	if (!found) return Messenger::error("Failed to find BraggPeak array in module data for Configuration '%s'.\n", cfg->name());
-// 
-// 	const int nPeaks = braggPeaks.nItems();
-// 	const int nTypes = cfg->nUsedAtomTypes();
-// 
-// 	// Realise / retrieve storage array for the Bragg partial S(Q)
-// 	bool wasCreated;
-// 	Array2D< Data1D >& braggSQ = GenericListHelper< Array2D< Data1D > >::realise(cfg->moduleData(), "BraggSQ", "", GenericItem::InRestartFileFlag, &wasCreated);
-// 	if (wasCreated)
-// 	{
-// 		// Create the triangular array
-// 		braggSQ.initialise(nTypes, nTypes, true);
-// 	
-// 		// Generate empty Data1D over the Q range / resolution specified
-// 		Data1D temp;
-// 		double q = qMin;
-// 		while (q <= qMax)
-// 		{
-// 			temp.addPoint(q, 0.0);
-// 			q += qDelta;
-// 		}
-// 
-// 		// Set up Data1D array with our empty data
-// 		for (int n=0; n<braggSQ.linearArraySize(); ++n) braggSQ.linearArray()[n] = temp;
-// 	}
-// 
-// // 	AtomTypeList atomTypes = partialsq.atomTypes();
-// 
-// 	// Loop over pairs of atom types, constructing Bragg partial SQ for each
-// 	double factor, qCentre, inten;
-// 	AtomTypeData* atd1 = cfg->usedAtomTypes();
-// 	for (int typeI = 0; typeI < nTypes; ++typeI, atd1 = atd1->next)
-// 	{
-// 		AtomTypeData* atd2 = atd1;
-// 		for (int typeJ = typeI; typeJ < nTypes; ++typeJ, atd2 = atd2->next)
-// 		{
-// 			Data1D& partial = braggSQ.at(typeI, typeJ);
-// 
-// 			// Loop over defined Bragg peaks
-// 			for (int n=0; n<nPeaks; ++n)
-// 			{
-// 				// Get q value and intensity of peak
-// 				qCentre = braggPeaks.constAt(n).q();
-// 				inten = braggPeaks.constAt(n).intensity(typeI, typeJ);
+// Form unweighted Bragg partials from pre-stored BraggPeak data
+bool BraggSQModule::formBraggSQ(ProcessPool& procPool, Configuration* cfg, const double qMin, const double qDelta, const double qMax)
+{
+	// Retrieve BraggPeak data from the Configuration's module data
+	bool found = false;
+	const Array<BraggPeak>& braggPeaks = GenericListHelper< Array<BraggPeak> >::value(cfg->moduleData(), "BraggPeaks", "", Array<BraggPeak>(), &found);
+	if (!found) return Messenger::error("Failed to find BraggPeak array in module data for Configuration '%s'.\n", cfg->name());
+
+	const int nPeaks = braggPeaks.nItems();
+	const int nTypes = cfg->nUsedAtomTypes();
+
+	// Realise / retrieve storage for the Bragg partial S(Q) and combined F(Q)
+	bool wasCreated;
+	Array2D< Data1D >& braggSQ = GenericListHelper< Array2D< Data1D > >::realise(cfg->moduleData(), "OriginalBraggSQ", "", GenericItem::InRestartFileFlag, &wasCreated);
+	if (wasCreated)
+	{
+		// Create the triangular array
+		braggSQ.initialise(nTypes, nTypes, true);
+	
+		// Generate empty Data1D over the Q range specified, setting bin centres
+		Data1D temp;
+		double q = 0.5*qDelta;
+		while (q <= qMax)
+		{
+			temp.addPoint(q, 0.0);
+			q += qDelta;
+		}
+
+		// Set up Data1D array with our empty data
+		for (int n=0; n<braggSQ.linearArraySize(); ++n) braggSQ.linearArray()[n] = temp;
+	}
+	Data1D& braggFQ = GenericListHelper<Data1D>::realise(cfg->moduleData(), "OriginalBraggFQ", "", GenericItem::InRestartFileFlag, &wasCreated);
+	if (wasCreated) braggFQ.setObjectTag(CharString("%s//OriginalBraggFQ//Total", cfg->niceName()));
+	braggFQ.clear();
+
+	// Zero Bragg partials
+	for (int n=0; n<braggSQ.linearArraySize(); ++n) braggSQ.linearArray()[n].values() = 0.0;
+
+	// Loop over pairs of atom types, adding in contributions from our calculated BraggPeaks
+	double qCentre, inten;
+	int bin;
+	AtomTypeData* atd1 = cfg->usedAtomTypes();
+	for (int typeI = 0; typeI < nTypes; ++typeI, atd1 = atd1->next)
+	{
+		AtomTypeData* atd2 = atd1;
+		for (int typeJ = typeI; typeJ < nTypes; ++typeJ, atd2 = atd2->next)
+		{
+			// Retrieve partial container and make sure its object tag is set
+			Data1D& partial = braggSQ.at(typeI, typeJ);
+			partial.setObjectTag(CharString("%s//OriginalBraggSQ//%s-%s", cfg->niceName(), atd1->atomTypeName(), atd2->atomTypeName()));
+
+			// Loop over defined Bragg peaks
+			for (int n=0; n<nPeaks; ++n)
+			{
+				// Get q value and intensity of peak
+				qCentre = braggPeaks.constAt(n).q();
+				bin = qCentre / qDelta;
+				inten = braggPeaks.constAt(n).intensity(typeI, typeJ);
+
+				partial.value(bin) += inten;
+			}
+
+			// Add this partial into the total function
+			braggFQ += partial;
+		}
+	}
+
+	return true;
+}
+
 // 
 // // 				Filters::convolveNormalised();
 // 				// Loop over Q values
