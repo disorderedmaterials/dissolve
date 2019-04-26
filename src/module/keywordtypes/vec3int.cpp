@@ -24,20 +24,20 @@
 #include "templates/genericlisthelper.h"
 
 // Constructors
-Vec3IntegerModuleKeyword::Vec3IntegerModuleKeyword(Vec3<int> value) : ModuleKeywordBase(ModuleKeywordBase::IntegerData), ModuleKeywordData< Vec3<int> >(value)
+Vec3IntegerModuleKeyword::Vec3IntegerModuleKeyword(Vec3<int> value) : ModuleKeywordBase(ModuleKeywordBase::Vec3IntegerData), ModuleKeywordData< Vec3<int> >(value)
 {
 	minimumLimit_ = false;
 	maximumLimit_ = false;
 }
 
-Vec3IntegerModuleKeyword::Vec3IntegerModuleKeyword(Vec3<int> value, Vec3<int> minValue) : ModuleKeywordBase(ModuleKeywordBase::IntegerData), ModuleKeywordData< Vec3<int> >(value)
+Vec3IntegerModuleKeyword::Vec3IntegerModuleKeyword(Vec3<int> value, Vec3<int> minValue) : ModuleKeywordBase(ModuleKeywordBase::Vec3IntegerData), ModuleKeywordData< Vec3<int> >(value)
 {
 	minimumLimit_ = true;
 	min_ = minValue;
 	maximumLimit_ = false;
 }
 
-Vec3IntegerModuleKeyword::Vec3IntegerModuleKeyword(Vec3<int> value, Vec3<int> minValue, Vec3<int> maxValue) : ModuleKeywordBase(ModuleKeywordBase::IntegerData), ModuleKeywordData< Vec3<int> >(value)
+Vec3IntegerModuleKeyword::Vec3IntegerModuleKeyword(Vec3<int> value, Vec3<int> minValue, Vec3<int> maxValue) : ModuleKeywordBase(ModuleKeywordBase::Vec3IntegerData), ModuleKeywordData< Vec3<int> >(value)
 {
 	minimumLimit_ = true;
 	min_ = minValue;

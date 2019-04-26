@@ -24,20 +24,20 @@
 #include "templates/genericlisthelper.h"
 
 // Constructors
-Vec3DoubleModuleKeyword::Vec3DoubleModuleKeyword(Vec3<double> value) : ModuleKeywordBase(ModuleKeywordBase::DoubleData), ModuleKeywordData< Vec3<double> >(value)
+Vec3DoubleModuleKeyword::Vec3DoubleModuleKeyword(Vec3<double> value) : ModuleKeywordBase(ModuleKeywordBase::Vec3DoubleData), ModuleKeywordData< Vec3<double> >(value)
 {
 	minimumLimit_ = false;
 	maximumLimit_ = false;
 }
 
-Vec3DoubleModuleKeyword::Vec3DoubleModuleKeyword(Vec3<double> value, Vec3<double> minValue) : ModuleKeywordBase(ModuleKeywordBase::DoubleData), ModuleKeywordData< Vec3<double> >(value)
+Vec3DoubleModuleKeyword::Vec3DoubleModuleKeyword(Vec3<double> value, Vec3<double> minValue) : ModuleKeywordBase(ModuleKeywordBase::Vec3DoubleData), ModuleKeywordData< Vec3<double> >(value)
 {
 	minimumLimit_ = true;
 	min_ = minValue;
 	maximumLimit_ = false;
 }
 
-Vec3DoubleModuleKeyword::Vec3DoubleModuleKeyword(Vec3<double> value, Vec3<double> minValue, Vec3<double> maxValue) : ModuleKeywordBase(ModuleKeywordBase::DoubleData), ModuleKeywordData< Vec3<double> >(value)
+Vec3DoubleModuleKeyword::Vec3DoubleModuleKeyword(Vec3<double> value, Vec3<double> minValue, Vec3<double> maxValue) : ModuleKeywordBase(ModuleKeywordBase::Vec3DoubleData), ModuleKeywordData< Vec3<double> >(value)
 {
 	minimumLimit_ = true;
 	min_ = minValue;
