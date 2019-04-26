@@ -67,10 +67,6 @@ class BraggModule : public Module
 	/*
 	 * Options
 	 */
-	private:
-	// Isotopologue references
-	List<IsotopologueReference> isotopologues_;
-
 	protected:
 	// Set up keywords for Module
 	void setUpKeywords();
