@@ -1,6 +1,6 @@
 /*
-	*** Module Keyword - Integer Triplet
-	*** src/module/keywordtypes/vec3int.h
+	*** Module Keyword - Integer
+	*** src/module/keywordtypes/integer.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEKEYWORDVEC3INT_H
-#define DISSOLVE_MODULEKEYWORDVEC3INT_H
+#ifndef DISSOLVE_MODULEKEYWORDINTEGER_H
+#define DISSOLVE_MODULEKEYWORDINTEGER_H
 
 #include "module/keyworddata.h"
 #include "module/keywordbase.h"
@@ -28,16 +28,16 @@
 // Forward Declarations
 /* none */
 
-// Keyword with Integer Triplet Data
-class Vec3IntegerModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData< Vec3<int> >
+// Keyword with Integer Data
+class IntegerModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<int>
 {
 	public:
 	// Constructors
-	Vec3IntegerModuleKeyword(Vec3<int> value);
-	Vec3IntegerModuleKeyword(Vec3<int> value, Vec3<int> minValue);
-	Vec3IntegerModuleKeyword(Vec3<int> value, Vec3<int> minValue, Vec3<int> maxValue);
+	IntegerModuleKeyword(int value);
+	IntegerModuleKeyword(int value, int minValue);
+	IntegerModuleKeyword(int value, int minValue, int maxValue);
 	// Destructor
-	~Vec3IntegerModuleKeyword();
+	~IntegerModuleKeyword();
 
 
 	/*
@@ -53,23 +53,21 @@ class Vec3IntegerModuleKeyword : public ModuleKeywordBase, public ModuleKeywordD
 	 */
 	private:
 	// Validation limits to apply (if any)
-	Vec3<bool> minimumLimit_, maximumLimit_;
+	bool minimumLimit_, maximumLimit_;
 	// Validation range (if appropriate)
-	Vec3<int> min_, max_;
+	int min_, max_;
 
 	public:
-	// Return whether a minimum validation limit has been set for supplied index
-	bool hasValidationMin(int index);
-	// Return validation minimum limit for supplied index
-	int validationMin(int index);
-	// Return whether a maximum validation limit has been set for supplied index
-	bool hasValidationMax(int index);
-	// Return validation maximum limit for supplied index
-	int validationMax(int index);
+	// Return whether a minimum validation limit has been set
+	bool hasValidationMin();
+	// Return validation minimum limit
+	int validationMin();
+	// Return whether a maximum validation limit has been set
+	bool hasValidationMax();
+	// Return validation maximum limit
+	int validationMax();
 	// Validate supplied value
-	bool isValid(Vec3<int> value);
-	// Validate supplied single
-	bool isValid(int index, int value);
+	bool isValid(int value);
 
 
 	/*
@@ -90,10 +88,14 @@ class Vec3IntegerModuleKeyword : public ModuleKeywordBase, public ModuleKeywordD
 	 * Conversion
 	 */
 	public:
-	// Return value (as Vec3<int>)
-	Vec3<int> asVec3Int();
-	// Return value (as Vec3<double>)
-	Vec3<double> asVec3Double();
+	// Return value (as bool)
+	bool asBool();
+	// Return value (as int)
+	int asInt();
+	// Return value (as double)
+	double asDouble();
+	// Return value (as string)
+	const char* asString();
 };
 
 #endif

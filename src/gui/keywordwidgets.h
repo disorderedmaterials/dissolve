@@ -29,7 +29,7 @@
 #include "gui/keywordwidgets/dropwidget.hui"
 #include "gui/keywordwidgets/enumstring.hui"
 #include "gui/keywordwidgets/fileandformat.h"
-#include "gui/keywordwidgets/int.hui"
+#include "gui/keywordwidgets/integer.hui"
 #include "gui/keywordwidgets/isotopologuelist.h"
 #include "gui/keywordwidgets/pairbroadeningfunction.h"
 #include "gui/keywordwidgets/speciesreferencelist.h"

@@ -9,7 +9,7 @@ add_library(keywordtypes
   double.cpp
   enumstring.cpp
   fileandformat.cpp
-  int.cpp
+  integer.cpp
   isotopologuelist.cpp
   modulegroups.cpp
   modulereferencelist.cpp
@@ -17,7 +17,7 @@ add_library(keywordtypes
   speciesreferencelist.cpp
   speciessite.cpp
   vec3double.cpp
-  vec3int.cpp
+  vec3integer.cpp
   windowfunction.cpp
 
   analyser.h
@@ -30,7 +30,7 @@ add_library(keywordtypes
   double.h
   enumstring.h
   fileandformat.h
-  int.h
+  integer.h
   isotopologuelist.h
   modulegroups.h
   modulereferencelist.h
@@ -38,7 +38,7 @@ add_library(keywordtypes
   speciesreferencelist.h
   speciessite.h
   vec3double.h
-  vec3int.h
+  vec3integer.h
   windowfunction.h
 )
 

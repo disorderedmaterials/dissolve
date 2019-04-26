@@ -1,6 +1,6 @@
 /*
 	*** Keyword Widget - Integer
-	*** src/gui/keywordwidgets/int_funcs.cpp
+	*** src/gui/keywordwidgets/integer_funcs.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/keywordwidgets/int.hui"
+#include "gui/keywordwidgets/integer.hui"
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "templates/genericlisthelper.h"
 

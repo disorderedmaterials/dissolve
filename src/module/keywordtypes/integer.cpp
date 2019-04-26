@@ -1,6 +1,6 @@
 /*
 	*** Module Keyword - Integer
-	*** src/module/keywordtypes/int.cpp
+	*** src/module/keywordtypes/integer.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "module/keywordtypes/int.h"
+#include "module/keywordtypes/integer.h"
 #include "base/lineparser.h"
 #include "templates/genericlisthelper.h"
 

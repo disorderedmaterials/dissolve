@@ -38,7 +38,7 @@
 #include "module/keywordtypes/double.h"
 #include "module/keywordtypes/enumstring.h"
 #include "module/keywordtypes/fileandformat.h"
-#include "module/keywordtypes/int.h"
+#include "module/keywordtypes/integer.h"
 #include "module/keywordtypes/isotopologuelist.h"
 #include "module/keywordtypes/modulegroups.h"
 #include "module/keywordtypes/modulereferencelist.h"
@@ -46,7 +46,7 @@
 #include "module/keywordtypes/speciesreferencelist.h"
 #include "module/keywordtypes/speciessite.h"
 #include "module/keywordtypes/vec3double.h"
-#include "module/keywordtypes/vec3int.h"
+#include "module/keywordtypes/vec3integer.h"
 #include "module/keywordtypes/windowfunction.h"
 
 #endif

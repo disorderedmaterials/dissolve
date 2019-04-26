@@ -1,6 +1,6 @@
 /*
 	*** Keyword Widget - Integer
-	*** src/gui/keywordwidgets/int.hui
+	*** src/gui/keywordwidgets/integer.hui
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_INTEGERKEYWORDWIDGET_H
 #define DISSOLVE_INTEGERKEYWORDWIDGET_H
 
-#include "module/keywordtypes/int.h"
+#include "module/keywordtypes/integer.h"
 #include "gui/keywordwidgets/base.h"
 #include <QSpinBox>
 
