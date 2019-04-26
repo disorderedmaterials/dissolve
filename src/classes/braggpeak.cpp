@@ -95,18 +95,36 @@ void BraggPeak::addIntensity(int typeI, int typeJ, double intensity)
 }
 
 // Scale intensities between all atom types by factor provided
-void BraggPeak::scaleIntensity(double factor)
+void BraggPeak::scaleIntensities(double factor)
 {
 	for (int n=0; n<intensities_.linearArraySize(); ++n) intensities_.linearArray()[n] *= factor;
 }
 
-// Return literal intensity between specified atom types for this peak
+// Scale intensity between all specific atom types by factor provided
+void BraggPeak::scaleIntensity(int typeI, int typeJ, double factor)
+{
+#ifdef CHECKS
+	if ((typeI < 0) || (typeI > intensities_.nRows()))
+	{
+		Messenger::error("Type index i of %i is out of range for BraggPeak intensities.\n", typeI);
+		return;
+	}
+	if ((typeJ < 0) || (typeJ > intensities_.nColumns()))
+	{
+		Messenger::error("Type index j of %i is out of range for BraggPeak intensities.\n", typeJ);
+		return;
+	}
+#endif
+	intensities_.at(typeI, typeJ) *= factor;
+}
+
+// Return intensity between specified atom types for this peak
 double BraggPeak::intensity(int typeI, int typeJ)
 {
 	return intensities_.at(typeI, typeJ);
 }
 
-// Increment number of k-vectors by specified amount
+// Increment number of contributing k-vectors
 void BraggPeak::addKVectors(int count)
 {
 	nKVectors_ += count;
