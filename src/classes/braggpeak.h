@@ -77,11 +77,11 @@ class BraggPeak : public MPIListItem<BraggPeak>,  public GenericItemBase
 	// Scale intensity between all specific atom types by factor provided
 	void scaleIntensity(int typeI, int typeJ, double factor);
 	// Return intensity between specified atom types for this peak
-	double intensity(int typeI, int typeJ);
+	double intensity(int typeI, int typeJ) const;
 	// Increment number of contributing k-vectors
 	void addKVectors(int count);
 	// Return number of k-vectors contributing to this peak
-	int nKVectors();
+	int nKVectors() const;
 
 
 	/*

@@ -119,9 +119,9 @@ void BraggPeak::scaleIntensity(int typeI, int typeJ, double factor)
 }
 
 // Return intensity between specified atom types for this peak
-double BraggPeak::intensity(int typeI, int typeJ)
+double BraggPeak::intensity(int typeI, int typeJ) const
 {
-	return intensities_.at(typeI, typeJ);
+	return intensities_.constAt(typeI, typeJ);
 }
 
 // Increment number of contributing k-vectors
@@ -131,7 +131,7 @@ void BraggPeak::addKVectors(int count)
 }
 
 // Return number of k-vectors contributing to this peak
-int BraggPeak::nKVectors()
+int BraggPeak::nKVectors() const
 {
 	return nKVectors_;
 }
