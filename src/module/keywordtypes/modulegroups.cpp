@@ -28,7 +28,7 @@
 #include "base/sysfunc.h"
 
 // Constructor
-ModuleGroupsModuleKeyword::ModuleGroupsModuleKeyword(ModuleGroups& groups, const char* moduleType) : ModuleKeywordBase(ModuleKeywordBase::ModuleReferenceListData), ModuleKeywordData<ModuleGroups&>(groups)
+ModuleGroupsModuleKeyword::ModuleGroupsModuleKeyword(ModuleGroups& groups, const char* moduleType) : ModuleKeywordBase(ModuleKeywordBase::ModuleGroupsData), ModuleKeywordData<ModuleGroups&>(groups)
 {
 	moduleType_ = moduleType;
 }

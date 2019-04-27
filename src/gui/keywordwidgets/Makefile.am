@@ -33,10 +33,17 @@ libkeywordwidgets_la_SOURCES += enumstring.hui enumstring_funcs.cpp
 libkeywordwidgets_la_SOURCES += fileandformat.ui fileandformat_funcs.cpp
 libkeywordwidgets_la_SOURCES += int.hui int_funcs.cpp
 libkeywordwidgets_la_SOURCES += isotopologuelist.ui isotopologuelist_funcs.cpp
+libkeywordwidgets_la_SOURCES += modulereferencelist.ui modulereferencelist_funcs.cpp
 libkeywordwidgets_la_SOURCES += pairbroadeningfunction.ui pairbroadeningfunction_funcs.cpp
 libkeywordwidgets_la_SOURCES += speciesreferencelist.ui speciesreferencelist_funcs.cpp
 libkeywordwidgets_la_SOURCES += windowfunction.hui windowfunction_funcs.cpp
 
-noinst_HEADERS = atomtypeselection.h base.h broadeningfunction.h dropdown.h fileandformat.h isotopologuelist.h pairbroadeningfunction.h
+noinst_HEADERS = atomtypeselection.h
+noinst_HEADERS += base.h broadeningfunction.h
+noinst_HEADERS += dropdown.h
+noinst_HEADERS += fileandformat.h
+noinst_HEADERS += isotopologuelist.h
+noinst_HEADERS += modulereferencelist.h
+noinst_HEADERS += pairbroadeningfunction.h
 
 AM_CPPFLAGS = -I$(top_srcdir)/src @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@

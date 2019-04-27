@@ -53,6 +53,10 @@ class ModuleReferenceListModuleKeyword : public ModuleKeywordBase, public Module
 	bool currentDataIsSet() const;
 
 	public:
+	// Return the Module type to allow
+	const char* moduleType() const;
+	// Return maximum number of Modules to allow in the list
+	int maxModules() const;
 	// Return whether the current data value has ever been set
 	bool isSet();
 

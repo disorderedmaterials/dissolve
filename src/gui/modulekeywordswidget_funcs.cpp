@@ -113,6 +113,14 @@ QWidget* ModuleKeywordsWidget::createKeywordWidget(DissolveWindow* dissolveWindo
 		widget = isotopologueListWidget;
 		base = isotopologueListWidget;
 	}
+	else if (keyword->type() == ModuleKeywordBase::ModuleReferenceListData)
+	{
+		printf("KEYWORD NAME = %s\n", keyword->keyword());
+		ModuleReferenceListKeywordWidget* moduleReferenceListWidget = new ModuleReferenceListKeywordWidget(NULL, keyword, coreData, moduleData, uniqueName);
+		connect(moduleReferenceListWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
+		widget = moduleReferenceListWidget;
+		base = moduleReferenceListWidget;
+	}
 	else if (keyword->type() == ModuleKeywordBase::PairBroadeningFunctionData)
 	{
 		PairBroadeningFunctionKeywordWidget* pairBroadeningFunctionWidget = new PairBroadeningFunctionKeywordWidget(NULL, keyword, coreData, moduleData, uniqueName);

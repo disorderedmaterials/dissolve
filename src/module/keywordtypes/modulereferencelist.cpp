@@ -42,6 +42,18 @@ ModuleReferenceListModuleKeyword::~ModuleReferenceListModuleKeyword()
  * Data
  */
 
+// Return the Module type to allow
+const char* ModuleReferenceListModuleKeyword::moduleType() const
+{
+	return moduleType_.get();
+}
+
+// Return maximum number of Modules to allow in the list
+int ModuleReferenceListModuleKeyword::maxModules() const
+{
+	return maxModules_;
+}
+
 // Determine whether current data is actually 'set'
 bool ModuleReferenceListModuleKeyword::currentDataIsSet() const
 {
