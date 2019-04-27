@@ -273,3 +273,14 @@ Module* CoreData::findModule(const char* uniqueName) const
 
 	return NULL;
 }
+
+// Search for and return any instance(s) of the specified Module type
+RefList<Module,bool> CoreData::findModules(const char* moduleType) const
+{
+	RefList<Module,bool> modules;
+
+	RefListIterator<Module,bool> moduleIterator(*moduleInstances_);
+	while (Module* module = moduleIterator.iterate()) if (DissolveSys::sameString(module->type(), moduleType)) modules.add(module);
+
+	return modules;
+}

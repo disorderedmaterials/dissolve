@@ -125,6 +125,8 @@ class CoreData
 	void setModuleInstances(RefList<Module,bool>* moduleInstances);
 	// Search for any instance of any module with the specified unique name
 	Module* findModule(const char* uniqueName) const;
+	// Search for and return any instance(s) of the specified Module type
+	RefList<Module,bool> findModules(const char* moduleType) const;
 };
 
 #endif
