@@ -42,6 +42,12 @@ ModuleReferenceListModuleKeyword::~ModuleReferenceListModuleKeyword()
  * Data
  */
 
+// Determine whether current data is actually 'set'
+bool ModuleReferenceListModuleKeyword::currentDataIsSet() const
+{
+	return data_.nItems() > 0;
+}
+
 // Return the Module type to allow
 const char* ModuleReferenceListModuleKeyword::moduleType() const
 {
@@ -52,12 +58,6 @@ const char* ModuleReferenceListModuleKeyword::moduleType() const
 int ModuleReferenceListModuleKeyword::maxModules() const
 {
 	return maxModules_;
-}
-
-// Determine whether current data is actually 'set'
-bool ModuleReferenceListModuleKeyword::currentDataIsSet() const
-{
-	return data_.nItems() > 0;
 }
 
 // Return whether the current data value has ever been set
