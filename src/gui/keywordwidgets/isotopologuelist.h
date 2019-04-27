@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ISOTOPOLOGUELISTKEYWORDWIDGET_H
-#define DISSOLVE_ISOTOPOLOGUELISTKEYWORDWIDGET_H
+#ifndef DISSOLVE_KEYWORDWIDGET_ISOTOPOLOGUELIST_H
+#define DISSOLVE_KEYWORDWIDGET_ISOTOPOLOGUELIST_H
 
 #include "gui/keywordwidgets/ui_isotopologuelist.h"
 #include "gui/keywordwidgets/dropdown.h"

@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FILEANDFORMATKEYWORDWIDGET_H
-#define DISSOLVE_FILEANDFORMATKEYWORDWIDGET_H
+#ifndef DISSOLVE_KEYWORDWIDGET_FILEANDFORMAT_H
+#define DISSOLVE_KEYWORDWIDGET_FILEANDFORMAT_H
 
 #include "gui/keywordwidgets/ui_fileandformat.h"
 #include "gui/keywordwidgets/dropdown.h"

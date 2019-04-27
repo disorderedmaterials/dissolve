@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SPECIESREFERENCELISTKEYWORDWIDGET_H
-#define DISSOLVE_SPECIESREFERENCELISTKEYWORDWIDGET_H
+#ifndef DISSOLVE_KEYWORDWIDGET_SPECIESREFERENCELIST_H
+#define DISSOLVE_KEYWORDWIDGET_SPECIESREFERENCELIST_H
 
 #include "gui/keywordwidgets/ui_speciesreferencelist.h"
 #include "gui/keywordwidgets/dropdown.h"

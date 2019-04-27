@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_BROADENINGFUNCTIONKEYWORDWIDGET_H
-#define DISSOLVE_BROADENINGFUNCTIONKEYWORDWIDGET_H
+#ifndef DISSOLVE_KEYWORDWIDGET_BROADENINGFUNCTION_H
+#define DISSOLVE_KEYWORDWIDGET_BROADENINGFUNCTION_H
 
 #include "gui/keywordwidgets/ui_broadeningfunction.h"
 #include "gui/keywordwidgets/dropdown.h"

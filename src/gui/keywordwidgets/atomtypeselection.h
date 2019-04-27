@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ATOMTYPESELECTIONKEYWORDWIDGET_H
-#define DISSOLVE_ATOMTYPESELECTIONKEYWORDWIDGET_H
+#ifndef DISSOLVE_KEYWORDWIDGET_ATOMTYPESELECTION_H
+#define DISSOLVE_KEYWORDWIDGET_ATOMTYPESELECTION_H
 
 #include "gui/keywordwidgets/ui_atomtypeselection.h"
 #include "gui/keywordwidgets/dropdown.h"

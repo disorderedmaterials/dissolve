@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEREFERENCELISTKEYWORDWIDGET_H
-#define DISSOLVE_MODULEREFERENCELISTKEYWORDWIDGET_H
+#ifndef DISSOLVE_KEYWORDWIDGET_MODULEREFERENCELIST_H
+#define DISSOLVE_KEYWORDWIDGET_MODULEREFERENCELIST_H
 
 #include "gui/keywordwidgets/ui_modulereferencelist.h"
 #include "gui/keywordwidgets/dropdown.h"
