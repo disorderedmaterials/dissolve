@@ -53,7 +53,7 @@ SpeciesReferenceListKeywordWidget::SpeciesReferenceListKeywordWidget(QWidget* pa
  */
 
 // Selection list update function
-void SpeciesReferenceListKeywordWidget::updateSelectionRow(int row, Species* atomType, bool createItem)
+void SpeciesReferenceListKeywordWidget::updateSelectionRow(int row, Species* sp, bool createItem)
 {
 	// Grab the target reference list
 	RefList<Species,bool>& selection = keyword_->data();
@@ -61,13 +61,13 @@ void SpeciesReferenceListKeywordWidget::updateSelectionRow(int row, Species* ato
 	QListWidgetItem* item;
 	if (createItem)
 	{
-		item = new QListWidgetItem(atomType->name());
-		item->setData(Qt::UserRole, VariantPointer<Species>(atomType));
+		item = new QListWidgetItem(sp->name());
+		item->setData(Qt::UserRole, VariantPointer<Species>(sp));
 		item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
 		ui.SelectionList->insertItem(row, item);
 	}
 	else item = ui.SelectionList->item(row);
-	item->setCheckState(selection.contains(atomType) ? Qt::Checked : Qt::Unchecked);
+	item->setCheckState(selection.contains(sp) ? Qt::Checked : Qt::Unchecked);
 }
 
 // Function type combo changed

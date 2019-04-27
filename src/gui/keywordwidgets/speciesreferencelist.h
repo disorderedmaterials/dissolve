@@ -56,7 +56,7 @@ class SpeciesReferenceListKeywordWidget: public KeywordDropDown, public KeywordW
 	 */
 	private:
 	// Selection list update function
-	void updateSelectionRow(int row, Species* atomType, bool createItem);
+	void updateSelectionRow(int row, Species* sp, bool createItem);
 
 	private slots:
 	// List item changed
