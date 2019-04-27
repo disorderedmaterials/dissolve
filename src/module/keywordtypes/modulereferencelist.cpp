@@ -42,6 +42,12 @@ ModuleReferenceListModuleKeyword::~ModuleReferenceListModuleKeyword()
  * Data
  */
 
+// Determine whether current data is actually 'set'
+bool ModuleReferenceListModuleKeyword::currentDataIsSet() const
+{
+	return data_.nItems() > 0;
+}
+
 // Return whether the current data value has ever been set
 bool ModuleReferenceListModuleKeyword::isSet()
 {

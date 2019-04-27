@@ -48,6 +48,10 @@ class ModuleReferenceListModuleKeyword : public ModuleKeywordBase, public Module
 	// Maximum number of modules to allow in list (-1 for any number)
 	int maxModules_;
 
+	protected:
+	// Determine whether current data is actually 'set'
+	bool currentDataIsSet() const;
+
 	public:
 	// Return whether the current data value has ever been set
 	bool isSet();

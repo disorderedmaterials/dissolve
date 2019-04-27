@@ -42,6 +42,10 @@ class SpeciesReferenceListModuleKeyword : public ModuleKeywordBase, public Modul
 	/*
 	 * Data
 	 */
+	protected:
+	// Determine whether current data is actually 'set'
+	bool currentDataIsSet() const;
+
 	public:
 	// Return whether the current data value has ever been set
 	bool isSet();
