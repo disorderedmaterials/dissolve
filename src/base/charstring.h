@@ -1,5 +1,5 @@
 /*
-	*** Dynamic character array
+	*** Character String
 	*** src/base/charstring.h
 	Copyright T. Youngs 2012-2019
 
@@ -24,7 +24,7 @@
 
 #include "templates/listitem.h"
 
-// Dynamic character array
+// Character String
 class CharString : public ListItem<CharString>
 {
 	public:

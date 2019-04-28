@@ -1,6 +1,5 @@
-
 /*
-	*** Dynamic character string
+	*** Character String
 	*** src/base/charstring.cpp
 	Copyright T. Youngs 2012-2019
 
