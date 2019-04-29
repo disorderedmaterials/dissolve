@@ -24,9 +24,8 @@
 #include "math/data1d.h"
 #include "templates/array.h"
 
-
 // Perform point-wise convolution of data with the supplied BroadeningFunction
-void Filters::convolve(Data1D& data, BroadeningFunction function)
+void Filters::convolve(Data1D& data, const BroadeningFunction& function)
 {
 	// Grab x and y arrays
 	const Array<double>& x = data.constXAxis();
@@ -53,7 +52,7 @@ void Filters::convolve(Data1D& data, BroadeningFunction function)
 }
 
 // Perform point-wise convolution of data with the supplied BroadeningFunction, normalising to the original integral of the function
-void Filters::convolveNormalised(Data1D& data, BroadeningFunction function)
+void Filters::convolveNormalised(Data1D& data, const BroadeningFunction& function)
 {
 	// Calculate the original integral
 	double originalIntegral = Integrator::absTrapezoid(data);
