@@ -43,6 +43,7 @@ PartialSet::~PartialSet()
 	boundPartials_.clear();
 	emptyBoundPartials_.clear();
 	unboundPartials_.clear();
+	braggPartials_.clear();
 }
 
 /*
@@ -391,7 +392,7 @@ bool PartialSet::save()
 			Data1D& unbound = unboundPartials_.at(typeI,typeJ);
 			Data1D& bragg = braggPartials_.at(typeI,typeJ);
 			parser.writeLineF("# %-14s  %-16s  %-16s  %-16s  %-16s\n", abscissaUnits_.get(), "Full", "Bound", "Unbound", "Bragg"); 
-			for (n=0; n<full.nValues(); ++n) parser.writeLineF("%16.9e  %16.9e  %16.9e  %16.9e  %16.9e\n", full.constXAxis(n), full.constValue(n), bound.constValue(n), unbound.constValue(n), n < bragg.nValues() ? bragg.constValue(n) : 0.0);
+			for (n=0; n<full.nValues(); ++n) parser.writeLineF("%16.9e  %16.9e  %16.9e  %16.9e  %16.9e\n", full.constXAxis(n), full.constValue(n), bound.constValue(n), unbound.constValue(n), bragg.constValue(n));
 			parser.closeFiles();
 		}
 	}
@@ -538,6 +539,7 @@ bool PartialSet::addPartials(PartialSet& source, double weighting)
 			Interpolator::addInterpolated(partials_.at(localI, localJ), source.partial(typeI, typeJ), weighting);
 			Interpolator::addInterpolated(boundPartials_.at(localI, localJ), source.boundPartial(typeI, typeJ), weighting);
 			Interpolator::addInterpolated(unboundPartials_.at(localI, localJ), source.unboundPartial(typeI, typeJ), weighting);
+			Interpolator::addInterpolated(braggPartials_.at(localI, localJ), source.braggPartial(typeI, typeJ), weighting);
 
 			// If the source data bound partial is *not* empty, ensure that our emptyBoundPartials_ flag is set correctly
 			if (!source.isBoundPartialEmpty(typeI, typeJ)) emptyBoundPartials_.at(typeI, typeJ) = false;
@@ -565,6 +567,7 @@ void PartialSet::reweightPartials(double factor)
 			partials_.at(n, m).values() *= factor;
 			boundPartials_.at(n, m).values() *= factor;
 			unboundPartials_.at(n, m).values() *= factor;
+			braggPartials_.at(n, m).values() *= factor;
 		}
 	}
 

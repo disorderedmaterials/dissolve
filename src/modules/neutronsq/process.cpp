@@ -29,6 +29,7 @@
 #include "math/filters.h"
 #include "math/ft.h"
 #include "modules/import/import.h"
+#include "modules/braggsq/braggsq.h"
 #include "modules/rdf/rdf.h"
 #include "modules/sq/sq.h"
 #include "templates/genericlisthelper.h"
@@ -120,6 +121,8 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 	CharString varName;
 
+	const bool includeBragg = keywords_.asBool("IncludeBragg");
+	const BroadeningFunction& braggBroadening = KeywordListHelper<BroadeningFunction>::retrieve(keywords_, "BraggBroadening", BroadeningFunction());
 	NeutronSQModule::NormalisationType normalisation = normalisationType(keywords_.asString("Normalisation"));
 	if (normalisation == NeutronSQModule::nNormalisationTypes) return Messenger::error("NeutronSQ: Invalid normalisation type '%s' found.\n", keywords_.asString("Normalisation"));
 	const BroadeningFunction& qBroadening = KeywordListHelper<BroadeningFunction>::retrieve(keywords_, "QBroadening", BroadeningFunction());
@@ -139,6 +142,12 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	else if (normalisation == NeutronSQModule::SquareOfAverageNormalisation) Messenger::print("NeutronSQ: Total F(Q) will be normalised to <b**2>");
 	if (qBroadening.function() == BroadeningFunction::NoFunction) Messenger::print("NeutronSQ: No broadening will be applied to calculated S(Q).");
 	else Messenger::print("NeutronSQ: Broadening to be applied in calculated S(Q) is %s (%s).", BroadeningFunction::functionType(qBroadening.function()), qBroadening.parameterSummary().get());
+	if (includeBragg)
+	{
+		Messenger::print("NeutronSQ: Bragg scattering will be calculated from peak data in target Configurations, if present.\n");
+		if (braggBroadening.function() == BroadeningFunction::NoFunction) Messenger::print("NeutronSQ: No additional broadening will be applied to calculated Bragg S(Q).");
+		else Messenger::print("NeutronSQ: Additional broadening to be applied in calculated Bragg S(Q) is %s (%s).", BroadeningFunction::functionType(braggBroadening.function()), braggBroadening.parameterSummary().get());
+	}
 	Messenger::print("NeutronSQ: Save data is %s.\n", DissolveSys::onOff(saveData));
 	Messenger::print("\n");
 
@@ -174,6 +183,14 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Transform g(r) into S(Q)
 		if (!SQModule::calculateUnweightedSQ(procPool, cfg, unweightedgr, unweightedsq, qMin, qDelta, qMax, cfg->atomicDensity(), windowFunction, qBroadening)) return false;
+
+		// Include Bragg scattering?
+		if (includeBragg)
+		{
+			// Check if reflection data is present
+			if (!cfg->moduleData().contains("BraggReflections")) return Messenger::error("Bragg scattering requested to be included, but Configuration '%s' contains no reflection data.\n", cfg->name());
+			else if (!BraggSQModule::calculateUnweightedBraggSQ(procPool, cfg, unweightedsq, braggBroadening)) return false;
+		}
 
 		// Set names of resources (Data1D) within the PartialSet, and tag it with the fingerprint from the source unweighted g(r)
 		unweightedsq.setObjectTags(CharString("%s//%s//%s", cfg->niceName(), "NeutronSQ", "UnweightedSQ"));

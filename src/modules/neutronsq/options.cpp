@@ -56,10 +56,16 @@ void NeutronSQModule::setUpKeywords()
 	group->add(new BroadeningFunctionModuleKeyword(BroadeningFunction()), "QBroadening", "Broadening function to apply when calculating S(Q)");
 	group->add(new WindowFunctionModuleKeyword(WindowFunction(WindowFunction::Lorch0Window)), "WindowFunction", "Window function to apply when Fourier-transforming g(r) to S(Q)");
 
+	// Neutron Isotopes
 	group = addKeywordGroup("Neutron Isotopes");
 	group->add(new AtomTypeSelectionModuleKeyword(exchangeableTypes_, targetConfigurations_), "Exchangeable", "Specify AtomTypes that are exchangeable", "<AtomType> [AtomType...]");
 	group->add(new IsotopologueListModuleKeyword(isotopologues_), "Isotopologue", "Set Isotopologue (and its population) to use for a particular Species in a given Configuration");
 	group->add(new EnumStringModuleKeyword(NeutronSQModule::NoNormalisation, NeutronSQModule::nNormalisationTypes, NormalisationTypeKeywords), "Normalisation", "Normalisation to apply to total weighted F(Q)");
+
+	// Bragg Scattering
+	group = addKeywordGroup("Bragg Scattering");
+	group->add(new BoolModuleKeyword(false), "IncludeBragg", "Include Bragg scattering (if reflection data are present in the Configuration)");
+	group->add(new BroadeningFunctionModuleKeyword(BroadeningFunction()), "BraggBroadening", "Broadening function to apply, on top of any QBroadening, to Bragg scattering");
 
 	// Reference Data
 	group = addKeywordGroup("Reference Data");

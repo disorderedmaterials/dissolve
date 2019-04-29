@@ -26,7 +26,7 @@
 #include "math/broadeningfunction.h"
 #include "classes/partialset.h"
 #include "classes/isotopologuereference.h"
-#include "classes/braggpeak.h"
+#include "classes/braggreflection.h"
 
 // Forward Declarations
 class PartialSet;
@@ -88,8 +88,10 @@ class BraggSQModule : public Module
 	public:
 	// Calculate Bragg terms for specified Configuration
 	bool calculateBraggTerms(ProcessPool& procPool, Configuration* cfg, const double qMin, const double qDelta, const double qMax, Vec3<int> multiplicity, bool& alreadyUpToDate);
-	// Form unweighted Bragg partials from calculated peak data
+	// Form Bragg partials from calculated reflection data
 	bool formBraggSQ(ProcessPool& procPool, Configuration* cfg, const double qMin, const double qDelta, const double qMax);
+	// Calculate unweighted, broadened Bragg partials from calculated reflection data, summing in to supplied PartialSet
+	static bool calculateUnweightedBraggSQ(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet, BroadeningFunction broadening);
 
 
 	/*

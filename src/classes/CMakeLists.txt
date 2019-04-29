@@ -11,7 +11,7 @@ add_library(classes
   box_nonperiodic.cpp
   box_orthorhombic.cpp
   box_triclinic.cpp
-  braggpeak.cpp
+  braggreflection.cpp
   cell.cpp
   cellarray.cpp
   celldistributor.cpp
@@ -74,7 +74,7 @@ add_library(classes
   atomtypelist.h
   bond.h
   box.h
-  braggpeak.h
+  braggreflection.h
   cell.h
   cellarray.h
   celldistributor.h

@@ -44,7 +44,6 @@ BraggSQModuleWidget::BraggSQModuleWidget(QWidget* parent, Module* module, Dissol
 	sqGraph_->view().axes().setTitle(1, "Intensity");
 	sqGraph_->view().axes().setMin(1, -1.0);
 	sqGraph_->view().axes().setMax(1, 1.0);
-	sqGraph_->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
 	sqGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Set up total G(r) graph
@@ -57,7 +56,6 @@ BraggSQModuleWidget::BraggSQModuleWidget(QWidget* parent, Module* module, Dissol
 	fqGraph_->view().axes().setTitle(1, "Intensity");
 	fqGraph_->view().axes().setMin(1, -1.0);
 	fqGraph_->view().axes().setMax(1, 1.0);
-	fqGraph_->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
 	fqGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	refreshing_ = false;
@@ -137,8 +135,8 @@ void BraggSQModuleWidget::setGraphDataTargets()
 	while (Configuration* cfg = configIterator.iterate())
 	{
 		// Original F(Q)
-		Renderable* refData = fqGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//OriginalBraggFQ//Total", cfg->niceName()), cfg->niceName(), cfg->niceName());
-		fqGraph_->groupManager().addToGroup(refData, "Calc");
+		Renderable* originalFQ = fqGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//OriginalBraggFQ//Total", cfg->niceName()), cfg->niceName(), cfg->niceName());
+		fqGraph_->groupManager().addToGroup(originalFQ, cfg->niceName());
 	}
 }
 
@@ -164,11 +162,6 @@ void BraggSQModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 			// Original S(Q)
 			Renderable* originalSQ = sqGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//OriginalBraggSQ//%s-%s", currentConfiguration_->niceName(), at1->name(), at2->name()), CharString("Full//%s", id.get()), id.get());
 			sqGraph_->groupManager().addToGroup(originalSQ, id.get());
-
-			// Broadened S(Q)
-// 			Renderable* boundGR = sqGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s-%s//Bound", currentConfiguration_->niceName(), at1->name(), at2->name()), CharString("Bound//%s", id.get()), id.get());
-// 			boundGR->lineStyle().setStipple(LineStipple::HalfDashStipple);
-// 			sqGraph_->groupManager().addToGroup(boundGR, id.get());
 		}
 	}
 }

@@ -1,6 +1,6 @@
 /*
-	*** BraggPeak
-	*** src/classes/braggpeak.cpp
+	*** Bragg Reflection
+	*** src/classes/braggreflection.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,11 +19,11 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "classes/braggpeak.h"
+#include "classes/braggreflection.h"
 #include "base/processpool.h"
 
 // Constructor
-BraggPeak::BraggPeak()
+BraggReflection::BraggReflection()
 {
 	q_ = 0.0;
 	index_ = -1;
@@ -31,18 +31,18 @@ BraggPeak::BraggPeak()
 }
 
 // Destructor
-BraggPeak::~BraggPeak()
+BraggReflection::~BraggReflection()
 {
 }
 
 // Copy constructor
-BraggPeak::BraggPeak(const BraggPeak& source)
+BraggReflection::BraggReflection(const BraggReflection& source)
 {
 	(*this) = source;
 }
 
 // Operator=
-void BraggPeak::operator=(const BraggPeak& source)
+void BraggReflection::operator=(const BraggReflection& source)
 {
 	q_ = source.q_;
 	index_ = source.index_;
@@ -55,7 +55,7 @@ void BraggPeak::operator=(const BraggPeak& source)
  */
 
 // Initialise arrays
-void BraggPeak::initialise(double q, int index, int nTypes)
+void BraggReflection::initialise(double q, int index, int nTypes)
 {
 	q_ = q;
 	index_ = index;
@@ -64,74 +64,74 @@ void BraggPeak::initialise(double q, int index, int nTypes)
 }
 
 // Return Q value
-double BraggPeak::q() const
+double BraggReflection::q() const
 {
 	return q_;
 }
 
 // Set index 
-void BraggPeak::setIndex(int index)
+void BraggReflection::setIndex(int index)
 {
 	index_ = index;
 }
 
 // Return index
-int BraggPeak::index() const
+int BraggReflection::index() const
 {
 	return index_;
 }
 
 // Reset stored intensities
-void BraggPeak::resetIntensities()
+void BraggReflection::resetIntensities()
 {
 	intensities_ = 0.0;
 	nKVectors_ = 0;
 }
 
 // Add intensity between specified atomtypes
-void BraggPeak::addIntensity(int typeI, int typeJ, double intensity)
+void BraggReflection::addIntensity(int typeI, int typeJ, double intensity)
 {
 	intensities_.at(typeI, typeJ) += intensity;
 }
 
 // Scale intensities between all atom types by factor provided
-void BraggPeak::scaleIntensities(double factor)
+void BraggReflection::scaleIntensities(double factor)
 {
 	for (int n=0; n<intensities_.linearArraySize(); ++n) intensities_.linearArray()[n] *= factor;
 }
 
 // Scale intensity between all specific atom types by factor provided
-void BraggPeak::scaleIntensity(int typeI, int typeJ, double factor)
+void BraggReflection::scaleIntensity(int typeI, int typeJ, double factor)
 {
 #ifdef CHECKS
 	if ((typeI < 0) || (typeI > intensities_.nRows()))
 	{
-		Messenger::error("Type index i of %i is out of range for BraggPeak intensities.\n", typeI);
+		Messenger::error("Type index i of %i is out of range for BraggReflection intensities.\n", typeI);
 		return;
 	}
 	if ((typeJ < 0) || (typeJ > intensities_.nColumns()))
 	{
-		Messenger::error("Type index j of %i is out of range for BraggPeak intensities.\n", typeJ);
+		Messenger::error("Type index j of %i is out of range for BraggReflection intensities.\n", typeJ);
 		return;
 	}
 #endif
 	intensities_.at(typeI, typeJ) *= factor;
 }
 
-// Return intensity between specified atom types for this peak
-double BraggPeak::intensity(int typeI, int typeJ) const
+// Return intensity between specified atom types for this reflection
+double BraggReflection::intensity(int typeI, int typeJ) const
 {
 	return intensities_.constAt(typeI, typeJ);
 }
 
 // Increment number of contributing k-vectors
-void BraggPeak::addKVectors(int count)
+void BraggReflection::addKVectors(int count)
 {
 	nKVectors_ += count;
 }
 
-// Return number of k-vectors contributing to this peak
-int BraggPeak::nKVectors() const
+// Return number of k-vectors contributing to this reflection
+int BraggReflection::nKVectors() const
 {
 	return nKVectors_;
 }
@@ -141,9 +141,9 @@ int BraggPeak::nKVectors() const
  */
 
 // Return class name
-const char* BraggPeak::itemClassName()
+const char* BraggReflection::itemClassName()
 {
-	return "BraggPeak";
+	return "BraggReflection";
 }
 
 /*
@@ -151,7 +151,7 @@ const char* BraggPeak::itemClassName()
  */
 
 // Broadcast data from Master to all Slaves
-bool BraggPeak::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
+bool BraggReflection::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 {
 #ifdef PARALLEL
 	if (!procPool.broadcast(q_, root)) return false;
@@ -163,13 +163,13 @@ bool BraggPeak::broadcast(ProcessPool& procPool, const int root, const CoreData&
 }
 
 // Check item equality
-bool BraggPeak::equality(ProcessPool& procPool)
+bool BraggReflection::equality(ProcessPool& procPool)
 {
 #ifdef PARALLEL
-	if (!procPool.equality(q_)) return Messenger::error("BraggPeak Q value is not equivalent (process %i has %e).\n", procPool.poolRank(), q_);
-	if (!procPool.equality(index_)) return Messenger::error("BraggPeak index is not equivalent (process %i has %i).\n", procPool.poolRank(), index_);
-	if (!procPool.equality(nKVectors_)) return Messenger::error("BraggPeak nKVectors is not equivalent (process %i has %i).\n", procPool.poolRank(), nKVectors_);
-	if (!procPool.equality(intensities_)) return Messenger::error("BraggPeak intensities are not equivalent.\n");
+	if (!procPool.equality(q_)) return Messenger::error("BraggReflection Q value is not equivalent (process %i has %e).\n", procPool.poolRank(), q_);
+	if (!procPool.equality(index_)) return Messenger::error("BraggReflection index is not equivalent (process %i has %i).\n", procPool.poolRank(), index_);
+	if (!procPool.equality(nKVectors_)) return Messenger::error("BraggReflection nKVectors is not equivalent (process %i has %i).\n", procPool.poolRank(), nKVectors_);
+	if (!procPool.equality(intensities_)) return Messenger::error("BraggReflection intensities are not equivalent.\n");
 #endif
 	return true;
 }

@@ -22,7 +22,7 @@
 #include "main/dissolve.h"
 #include "classes/species.h"
 #include "classes/atomtype.h"
-#include "classes/braggpeak.h"
+#include "classes/braggreflection.h"
 #include "classes/kvector.h"
 #include "classes/partialset.h"
 #include "classes/weights.h"
@@ -142,7 +142,7 @@ void Dissolve::registerGenericItems()
 	GenericItem::addItemClass(new GenericItemContainer< Array< Vec3<int> > >("Array<Vec3<int>>"));
 	GenericItem::addItemClass(new GenericItemContainer< Array< Vec3<double> > >("Array<Vec3<double>>"));
 
-	GenericItem::addItemClass(new GenericItemContainer<BraggPeak>(BraggPeak::itemClassName()));
+	GenericItem::addItemClass(new GenericItemContainer<BraggReflection>(BraggReflection::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<Data1D>(Data1D::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<Histogram1D>(Histogram1D::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<IsotopologueMix>(IsotopologueMix::itemClassName()));

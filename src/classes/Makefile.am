@@ -1,7 +1,7 @@
 noinst_LTLIBRARIES = libclasses.la
 
 libclasses_la_SOURCES = angle.cpp atom.cpp atomtype.cpp atomtypedata.cpp atomtypelist.cpp
-libclasses_la_SOURCES += bond.cpp box.cpp box_cubic.cpp box_monoclinic.cpp box_nonperiodic.cpp box_orthorhombic.cpp box_triclinic.cpp braggpeak.cpp
+libclasses_la_SOURCES += bond.cpp box.cpp box_cubic.cpp box_monoclinic.cpp box_nonperiodic.cpp box_orthorhombic.cpp box_triclinic.cpp braggreflection.cpp
 libclasses_la_SOURCES += cell.cpp cellarray.cpp celldistributor.cpp cellneighbour.cpp changedata.cpp changestore.cpp configuration.cpp configuration_box.cpp configuration_composition.cpp configuration_contents.cpp configuration_sites.cpp configuration_upkeep.cpp coredata.cpp
 libclasses_la_SOURCES += datastore.cpp distributor.cpp
 libclasses_la_SOURCES += empiricalformula.cpp energykernel.cpp
@@ -18,7 +18,7 @@ libclasses_la_SOURCES += torsion.cpp
 libclasses_la_SOURCES += weights.cpp
 
 noinst_HEADERS = angle.h atom.h atomtype.h atomtypedata.h atomtypelist.h
-noinst_HEADERS += bond.h box.h braggpeak.h
+noinst_HEADERS += bond.h box.h braggreflection.h
 noinst_HEADERS += cell.h cellarray.h celldistributor.h cellneighbour.h changedata.h changestore.h configuration.h coredata.h
 noinst_HEADERS += datastore.h distributor.h
 noinst_HEADERS += empiricalformula.h energykernel.h

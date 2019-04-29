@@ -1,6 +1,6 @@
 /*
-	*** BraggPeak
-	*** src/classes/braggpeak.h
+	*** Bragg Reflection
+	*** src/classes/braggreflection.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_BRAGGPEAK_H
-#define DISSOLVE_BRAGGPEAK_H
+#ifndef DISSOLVE_BRAGGREFLECTION_H
+#define DISSOLVE_BRAGGREFLECTION_H
 
 #include "templates/array2d.h"
 #include "templates/mpilistitem.h"
@@ -29,28 +29,28 @@
 // Forward Declarations
 /* none */
 
-// BraggPeak Class
-class BraggPeak : public MPIListItem<BraggPeak>,  public GenericItemBase
+// BraggReflection Class
+class BraggReflection : public MPIListItem<BraggReflection>,  public GenericItemBase
 {
 	/*
-	 *  BraggPeak acts as a 'bin' for collecting contributions arising from a set of KVectors which occur at the same Q value.
+	 *  BraggReflection acts as a 'bin' for collecting contributions arising from a set of KVectors which occur at the same Q value.
 	 */
 	public:
 	// Constructor
-	BraggPeak();
+	BraggReflection();
 	// Destructor
-	~BraggPeak();
+	~BraggReflection();
 	// Copy constructor
-	BraggPeak(const BraggPeak& source);
+	BraggReflection(const BraggReflection& source);
 	// Operator=
-	void operator=(const BraggPeak& source);
+	void operator=(const BraggReflection& source);
 
 
 	/*
 	 * Data
 	 */
 	private:
-	// Q-position of peak
+	// Q-position of reflection
 	double q_;
 	// Integer index (derived from q_)
 	int index_;
@@ -62,7 +62,7 @@ class BraggPeak : public MPIListItem<BraggPeak>,  public GenericItemBase
 	public:
 	// Initialise arrays
 	void initialise(double q, int index, int nTypes);
-	// Return Q value of peak
+	// Return Q value of reflection
 	double q() const;
 	// Set index 
 	void setIndex(int index);
@@ -76,11 +76,11 @@ class BraggPeak : public MPIListItem<BraggPeak>,  public GenericItemBase
 	void scaleIntensities(double factor);
 	// Scale intensity between all specific atom types by factor provided
 	void scaleIntensity(int typeI, int typeJ, double factor);
-	// Return intensity between specified atom types for this peak
+	// Return intensity between specified atom types for this reflection
 	double intensity(int typeI, int typeJ) const;
 	// Increment number of contributing k-vectors
 	void addKVectors(int count);
-	// Return number of k-vectors contributing to this peak
+	// Return number of k-vectors contributing to this reflection
 	int nKVectors() const;
 
 

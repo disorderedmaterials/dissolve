@@ -28,14 +28,14 @@
 #include "base/genericitembase.h"
 
 // Forward Declarations
-class BraggPeak;
+class BraggReflection;
 
 // K-Vector
 class KVector : public MPIListItem<KVector>,  public GenericItemBase
 {
 	public:
 	// Constructor
-	KVector(int h = 0, int k = 0, int l = 0, int peakIndex = -1, int nAtomTypes = 0);
+	KVector(int h = 0, int k = 0, int l = 0, int reflectionIndex = -1, int nAtomTypes = 0);
 	// Destructor
 	~KVector();
 	// Copy constructor
@@ -50,14 +50,14 @@ class KVector : public MPIListItem<KVector>,  public GenericItemBase
 	private:
 	// Integer hkl indices of vector
 	Vec3<int> hkl_;
-	// Associated BraggPeak index
-	int braggPeakIndex_;
+	// Associated BraggReflection index
+	int braggReflectionIndex_;
 	// Contributions to this kvector from individual atom types
 	Array<double> cosTerms_, sinTerms_;
 
 	public:
 	// Initialise
-	void initialise(int h, int k, int l, int peakIndex, int nAtomTypes);
+	void initialise(int h, int k, int l, int reflectionIndex, int nAtomTypes);
 	// Return hkl indices
 	const Vec3<int>& hkl() const;
 	// Return h index
@@ -66,18 +66,18 @@ class KVector : public MPIListItem<KVector>,  public GenericItemBase
 	int k() const;
 	// Return l index
 	int l() const;
-	// Set BraggPeak index 
-	void setBraggPeakIndex(int index);
-	// Return associated BraggPeak index
-	int braggPeakIndex() const;
+	// Set BraggReflection index 
+	void setBraggReflectionIndex(int index);
+	// Return associated BraggReflection index
+	int braggReflectionIndex() const;
 	// Zero cos/sin term arrays
 	void zeroCosSinTerms();
 	// Add value to cosTerm index specified
 	void addCosTerm(int atomTypeIndex, double value);
 	// Add value to sinTerm index specified
 	void addSinTerm(int atomTypeIndex, double value);
-	// Calculate intensities and sum into associated BraggPeak
-	void calculateIntensities(BraggPeak* peakArray);
+	// Calculate intensities and sum into associated BraggReflection
+	void calculateIntensities(BraggReflection* reflectionArray);
 	// Return specified intensity
 	double intensity(int typeI, int typeJ);
 
