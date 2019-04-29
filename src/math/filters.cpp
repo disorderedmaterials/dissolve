@@ -51,6 +51,22 @@ void Filters::convolve(Data1D& data, const BroadeningFunction& function)
 	y = newY;
 }
 
+// Perform convolution of the supplied delta function into the supplied data
+void Filters::convolve(double xCentre, double value, const BroadeningFunction& function, Data1D& dest)
+{
+	// Grab x and y arrays
+	const Array<double>& x = dest.constXAxis();
+	Array<double>& y = dest.values();
+
+	// Loop over existing datapoints
+	double xBroad;
+	for (int n=0; n<x.nItems(); ++n)
+	{
+		xBroad = x.constAt(n) - xCentre;
+		y[n] += value * function.y(xBroad);
+	}
+}
+
 // Perform point-wise convolution of data with the supplied BroadeningFunction, normalising to the original integral of the function
 void Filters::convolveNormalised(Data1D& data, const BroadeningFunction& function)
 {
