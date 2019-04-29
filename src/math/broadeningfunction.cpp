@@ -50,7 +50,7 @@ void BroadeningFunction::operator=(const BroadeningFunction& source)
 	function_ = source.function_;
 	for (int n=0; n<MAXBROADENINGFUNCTIONPARAMS; ++n) parameters_[n] = source.parameters_[n];
 	inverted_ = source.inverted_;
-
+	staticOmega_ = source.staticOmega_;
 }
 
 const char* BroadeningFunctionKeywords[] = { "None", "Gaussian", "ScaledGaussian", "OmegaDependentGaussian", "GaussianC2" };
@@ -274,6 +274,12 @@ void BroadeningFunction::setInverted(bool state)
 	inverted_ = state;
 }
 
+// Set static omega value
+void BroadeningFunction::setOmega(double omega)
+{
+	staticOmega_ = omega;
+}
+
 // Return value of function given parameters x and omega
 double BroadeningFunction::y(double x, double omega) const
 {
@@ -436,6 +442,30 @@ double BroadeningFunction::yFTActual(double x, double omega) const
 	}
 
 	return 0.0;
+}
+
+// Return value of function given parameter x, and using static omega if necessary
+double BroadeningFunction::y(double x) const
+{
+	return y(x, staticOmega_);
+}
+
+// Return value of Fourier transform of function, given parameter x, and using static omega if necessary
+double BroadeningFunction::yFT(double x) const
+{
+	return yFT(x, staticOmega_);
+}
+
+// Return value of function given parameter x, and using static omega if necessary, regardless of inversion state
+double BroadeningFunction::yActual(double x) const
+{
+	return yActual(x, staticOmega_);
+}
+
+// Return value of Fourier transform of function, given parameter x, and using static omega if necessary, regardless of inversion state
+double BroadeningFunction::yFTActual(double x) const
+{
+	return yFTActual(x, staticOmega_);
 }
 
 /*

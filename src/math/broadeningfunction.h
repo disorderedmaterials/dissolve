@@ -67,6 +67,8 @@ class BroadeningFunction : public GenericItemBase
 	double parameters_[MAXBROADENINGFUNCTIONPARAMS];
 	// Whether function is inverted - y returns yFT, and vice versa
 	bool inverted_;
+	// Static value of omega to use if required
+	double staticOmega_;
 
 	public:
 	// Set function data
@@ -89,6 +91,8 @@ class BroadeningFunction : public GenericItemBase
 	void setUpDependentParameters();
 	// Set inversion state
 	void setInverted(bool state);
+	// Set static omega value
+	void setOmega(double omega);
 	// Return value of function given parameters x and omega
 	double y(double x, double omega) const;
 	// Return value of Fourier transform of function, given parameters x and omega
@@ -97,6 +101,14 @@ class BroadeningFunction : public GenericItemBase
 	double yActual(double x, double omega) const;
 	// Return value of Fourier transform of function, given parameters x and omega, regardless of inversion state
 	double yFTActual(double x, double omega) const;
+	// Return value of function given parameter x, and using static omega if necessary
+	double y(double x) const;
+	// Return value of Fourier transform of function, given parameter x, and using static omega if necessary
+	double yFT(double x) const;
+	// Return value of function given parameter x, and using static omega if necessary, regardless of inversion state
+	double yActual(double x) const;
+	// Return value of Fourier transform of function, given parameter x, and using static omega if necessary, regardless of inversion state
+	double yFTActual(double x) const;
 
 
 	/*
