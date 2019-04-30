@@ -1,5 +1,6 @@
 add_library(base
   charstring.cpp
+  charstringlist.cpp
   fileandformat.cpp
   genericitem.cpp
   genericitembase.cpp
@@ -18,6 +19,7 @@ add_library(base
   version.cpp
   
   charstring.h
+  charstringlist.h
   constants.h
   fileandformat.h
   genericitem.h

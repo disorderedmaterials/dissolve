@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = libbase.la
 
-libbase_la_SOURCES = charstring.cpp
+libbase_la_SOURCES = charstring.cpp charstringlist.cpp
 libbase_la_SOURCES += fileandformat.cpp
 libbase_la_SOURCES += genericitem.cpp genericitembase.cpp genericlist.cpp geometry.cpp
 libbase_la_SOURCES += lineparser.cpp
@@ -11,7 +11,7 @@ libbase_la_SOURCES += sysfunc.cpp
 libbase_la_SOURCES += timer.cpp
 libbase_la_SOURCES += version.cpp
 
-noinst_HEADERS = charstring.h constants.h
+noinst_HEADERS = charstring.h charstringlist.h constants.h
 noinst_HEADERS += dummyclass.h
 noinst_HEADERS += fileandformat.h
 noinst_HEADERS += genericitem.h genericitembase.h genericlist.h geometry.h
