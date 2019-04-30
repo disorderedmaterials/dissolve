@@ -22,6 +22,7 @@
 #ifndef DISSOLVE_MODULEGROUPS_H
 #define DISSOLVE_MODULEGROUPS_H
 
+#include "base/charstringlist.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
 
@@ -40,23 +41,43 @@ class ModuleGroups
 
 
 	/*
+	 * Module Types
+	 */
+	private:
+	// List of allowed Module types in any group
+	CharStringList allowedModuleTypes_;
+
+	public:
+	// Add allowed Module type
+	void addAllowedModuleType(const char* moduleType);
+	// Return if specified Module type is allowed in any group
+	bool moduleTypeIsAllowed(const char* moduleType) const;
+	// Return list of allowed Module types
+	const CharStringList& allowedModuleTypes() const;
+
+
+	/*
 	 * Module Groups
 	 */
 	private:
 	// Current list of groups
 	List<ModuleGroup> groups_;
 	// RefList of all Modules present in all groups
-	RefList<Module,bool> allModules_;
+	RefList<Module,ModuleGroup*> allModules_;
 
 	public:
 	// Add Module to specified group, creating it if necessary
 	ModuleGroup* addModule(Module* module, const char* groupName);
+	// Number of Modules present of all groups
+	int nModules() const;
 	// Return current list of groups
 	const List<ModuleGroup>& groups() const;
 	// Return reflist of all Modules present over all groups
-	const RefList<Module,bool>& modules() const;
-	// Number of Modules present of all groups
-	int nModules() const;
+	const RefList<Module,ModuleGroup*>& modules() const;
+	// Return whether the specified Module is present (in any group)
+	bool contains(Module* module) const;
+	// Return name of group assigned to specified Module (if present)
+	const char* groupName(Module* module) const;
 };
 
 #endif

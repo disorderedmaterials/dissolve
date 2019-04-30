@@ -338,7 +338,7 @@ void RefineModule::sumFitEquation(Data1D& target, double xCentre, double delta, 
 }
 
 // Return list of target Modules / data for fitting process
-const RefList<Module,bool>& RefineModule::allTargets() const
+const RefList<Module,ModuleGroup*>& RefineModule::allTargets() const
 {
 	return groupedTargets_.modules();
 }

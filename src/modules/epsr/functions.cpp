@@ -27,7 +27,7 @@
 #include "templates/genericlisthelper.h"
 
 // Return list of target Modules / data for refeinement
-const RefList<Module,bool>& EPSRModule::allTargets() const
+const RefList<Module,ModuleGroup*>& EPSRModule::allTargets() const
 {
 	return groupedTargets_.modules();
 }

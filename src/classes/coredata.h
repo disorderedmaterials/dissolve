@@ -22,6 +22,7 @@
 #ifndef DISSOLVE_COREDATA_H
 #define DISSOLVE_COREDATA_H
 
+#include "base/charstringlist.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
 

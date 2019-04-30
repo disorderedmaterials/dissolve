@@ -34,6 +34,31 @@ ModuleGroups::~ModuleGroups()
 }
 
 /*
+ * Module Types
+ */
+
+// Add allowed Module type
+void ModuleGroups::addAllowedModuleType(const char* moduleType)
+{
+	// Check if the provided type is already present...
+	if (moduleTypeIsAllowed(moduleType)) return;
+
+	allowedModuleTypes_.add(moduleType);
+}
+
+// Return if specified Module type is allowed in any group
+bool ModuleGroups::moduleTypeIsAllowed(const char* moduleType) const
+{
+	return allowedModuleTypes_.contains(moduleType);
+}
+
+// Return list of allowed Module types
+const CharStringList& ModuleGroups::allowedModuleTypes() const
+{
+	return allowedModuleTypes_;
+}
+
+/*
  * Module Groups
  */
 
@@ -49,10 +74,16 @@ ModuleGroup* ModuleGroups::addModule(Module* module, const char* groupName)
 		groups_.own(moduleGroup);
 	}
 
-	allModules_.add(module);
+	allModules_.add(module, moduleGroup);
 	moduleGroup->add(module);
 
 	return moduleGroup;
+}
+
+// Number of Modules present of all groups
+int ModuleGroups::nModules() const
+{
+	return allModules_.nItems();
 }
 
 // Return current list of groups
@@ -62,13 +93,21 @@ const List<ModuleGroup>& ModuleGroups::groups() const
 }
 
 // Return reflist of all Modules present over all groups
-const RefList<Module,bool>& ModuleGroups::modules() const
+const RefList<Module,ModuleGroup*>& ModuleGroups::modules() const
 {
 	return allModules_;
 }
 
-// Number of Modules present of all groups
-int ModuleGroups::nModules() const
+// Return whether the specified Module is present (in any group)
+bool ModuleGroups::contains(Module* module) const
 {
-	return allModules_.nItems();
+	return allModules_.contains(module);
+}
+
+// Return name of group assigned to specified Module (if present)
+const char* ModuleGroups::groupName(Module* module) const
+{
+	RefListItem<Module,ModuleGroup*>* ri = allModules_.contains(module);
+
+	return (ri ? ri->data->name() : "Default");
 }

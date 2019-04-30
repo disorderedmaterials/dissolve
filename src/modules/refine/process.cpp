@@ -99,7 +99,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	 * Make a list of all Configurations related to all targets
 	 */
 	RefList<Configuration,bool> configs;
-	RefListIterator<Module,bool> allTargetsIterator(groupedTargets_.modules());
+	RefListIterator<Module,ModuleGroup*> allTargetsIterator(groupedTargets_.modules());
 	while (Module* module = allTargetsIterator.iterate())
 	{
 		RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
