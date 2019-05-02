@@ -128,6 +128,8 @@ class CoreData
 	Module* findModule(const char* uniqueName) const;
 	// Search for and return any instance(s) of the specified Module type
 	RefList<Module,bool> findModules(const char* moduleType) const;
+	// Search for and return any instance(s) of the specified List of Module types
+	RefList<Module,bool> findModules(const CharStringList& moduleTypes) const;
 };
 
 #endif
