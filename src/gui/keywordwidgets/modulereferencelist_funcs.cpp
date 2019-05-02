@@ -105,7 +105,7 @@ void ModuleReferenceListKeywordWidget::updateWidgetValues(const CoreData& coreDa
 	refreshing_ = true;
 
 	// Get a RefList of current Modules that are of the correct type
-	RefList<Module,bool> availableModules = coreData.findModules(keyword_->moduleType());
+	RefList<Module,bool> availableModules = coreData.findModules(keyword_->moduleTypes());
 
 	// Update the list widget
 	ListWidgetUpdater<ModuleReferenceListKeywordWidget,Module> listUpdater(ui.SelectionList, availableModules, this, &ModuleReferenceListKeywordWidget::updateSelectionRow);

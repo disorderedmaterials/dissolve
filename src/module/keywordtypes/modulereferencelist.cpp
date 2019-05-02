@@ -29,7 +29,7 @@
 // Constructor
 ModuleReferenceListModuleKeyword::ModuleReferenceListModuleKeyword(RefList<Module,bool>& references, const char* moduleType, int maxModules) : ModuleKeywordBase(ModuleKeywordBase::ModuleReferenceListData), ModuleKeywordData< RefList<Module,bool>& >(references)
 {
-	moduleType_ = moduleType;
+	moduleTypes_.add(moduleType);
 	maxModules_ = maxModules;
 }
 
@@ -48,10 +48,10 @@ bool ModuleReferenceListModuleKeyword::currentDataIsSet() const
 	return data_.nItems() > 0;
 }
 
-// Return the Module type to allow
-const char* ModuleReferenceListModuleKeyword::moduleType() const
+// Return the Module type(s) to allow
+const CharStringList& ModuleReferenceListModuleKeyword::moduleTypes() const
 {
-	return moduleType_.get();
+	return moduleTypes_;
 }
 
 // Return maximum number of Modules to allow in the list
@@ -97,9 +97,9 @@ bool ModuleReferenceListModuleKeyword::read(LineParser& parser, int startArg, co
 		}
 
 		// Check the module's type
-		if ((!DissolveSys::sameString(moduleType_, "*")) && (!DissolveSys::sameString(module->type(), moduleType_)))
+		if ((moduleTypes_.nItems() > 0) && (!moduleTypes_.contains(module->type())))
 		{
-			Messenger::error("Module '%s' is not of the correct type (%s).\n", parser.argc(n), module->type());
+			Messenger::error("Module '%s' is of type '%s', and is not permitted in this list (allowed types = %s).\n", parser.argc(n), module->type(), moduleTypes_.get());
 			return false;
 		}
 
