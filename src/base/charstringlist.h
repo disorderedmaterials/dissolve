@@ -50,8 +50,12 @@ class CharStringList
 	void clear();
 	// Add string to list
 	void add(const char* s);
+	// Return number of strings in list
+	int nItems() const;
 	// Return whether specified string is currently in the list
 	bool contains(const char* s, bool caseSensitive = false) const;
+	// Return list as comma-separated string
+	const char* get() const;
 };
 
 #endif

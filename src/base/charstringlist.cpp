@@ -63,6 +63,12 @@ void CharStringList::add(const char* s)
 	newString->set(s);
 }
 
+// Return number of strings in list
+int CharStringList::nItems() const
+{
+	return strings_.nItems();
+}
+
 // Return whether specified string is currently in the list
 bool CharStringList::contains(const char* s, bool caseSensitive) const
 {
@@ -70,4 +76,19 @@ bool CharStringList::contains(const char* s, bool caseSensitive) const
 	while (CharString* str = stringIterator.iterate()) if (DissolveSys::sameString(str->get(), s, caseSensitive)) return true;
 
 	return false;
+}
+
+// Return list as comma-separated string
+const char* CharStringList::get() const
+{
+	static CharString result;
+	result.clear();
+	ListIterator<CharString> stringIterator(strings_);
+	while (CharString* str = stringIterator.iterate())
+	{
+		if (stringIterator.isFirst()) result = str->get();
+		else result.strcatf(", %s", str->get());
+	};
+
+	return result.get();
 }
