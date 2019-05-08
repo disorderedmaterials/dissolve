@@ -44,6 +44,7 @@ const char* EPSRModule::expansionFunctionType(EPSRModule::ExpansionFunctionType 
 void EPSRModule::setUpKeywords()
 {
 	frequency_ = 5;
+	groupedTargets_.addAllowedModuleType("NeutronSQ");
 
 	// Calculation
 	ModuleKeywordGroup* group = addKeywordGroup("Calculation");
@@ -51,7 +52,7 @@ void EPSRModule::setUpKeywords()
 	group->add(new DoubleModuleKeyword(3.0, -1.0), "EReq", "Limit of magnitude of additional potential for any one pair potential");
 	group->add(new DoubleModuleKeyword(0.9), "Feedback", "Confidence factor");
 	group->add(new BoolModuleKeyword(true), "ModifyPotential", "Whether to apply generated perturbations to interatomic potentials");
-	group->add(new ModuleGroupsModuleKeyword(groupedTargets_, "NeutronSQ"), "Target", "Add specified Module (and it's Reference data) as a refinement target", "<ModuleName> [GroupName]");
+	group->add(new ModuleGroupsModuleKeyword(groupedTargets_), "Target", "Add specified Module (and it's Reference data) as a refinement target", "<ModuleName> [GroupName]");
 	group->add(new DoubleModuleKeyword(30.0, -1.0), "QMax", "Maximum Q value over which to generate potentials from total scattering data");
 	group->add(new DoubleModuleKeyword(0.5, -1.0), "QMin", "Minimum Q value over which to generate potentials from total scattering data");
 	group->add(new DoubleModuleKeyword(1.0, 0.0, 10.0), "Weighting", "Factor used when adding fluctuation coefficients to pair potentials");

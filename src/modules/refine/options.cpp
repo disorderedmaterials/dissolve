@@ -59,6 +59,9 @@ const char* RefineModule::matrixAugmentationStyle(RefineModule::MatrixAugmentati
 // Set up keywords for Module
 void RefineModule::setUpKeywords()
 {
+	frequency_ = 5;
+	groupedTargets_.addAllowedModuleType("NeutronSQ");
+
 	keywords_.add(new EnumStringModuleKeyword(RefineModule::PartialsAugmentation, RefineModule::nMatrixAugmentationStyles, MatrixAugmentationStyleKeywords), "Augmentation", "Style used to augment (overdetermine) scattering matrix");
 	keywords_.add(new DoubleModuleKeyword(0.9), "AugmentationParam", "Parameter used to in augmentation (overdetermination) of scattering matrix (dependent on augmentation style selected)");
 	keywords_.add(new BoolModuleKeyword(true), "AutoMinimumRadius", "Automatically determine minimum radii between atom types for potential generation");
@@ -78,7 +81,7 @@ void RefineModule::setUpKeywords()
 	keywords_.add(new DoubleModuleKeyword(3.0, -1.0), "PhiMax", "Limit of magnitude of additional potential for any one pair potential");
 	keywords_.add(new DoubleModuleKeyword(30.0, -1.0), "QMax", "Maximum Q value over which to generate potentials from total scattering data");
 	keywords_.add(new DoubleModuleKeyword(0.1, -1.0), "QMin", "Minimum Q value over which to generate potentials from total scattering data");
-	keywords_.add(new ModuleGroupsModuleKeyword(groupedTargets_, "NeutronSQ"), "Target", "Add specified Module (and it's Reference data) as a refinement target", "<ModuleName> [GroupName]");
+	keywords_.add(new ModuleGroupsModuleKeyword(groupedTargets_), "Target", "Add specified Module (and it's Reference data) as a refinement target", "<ModuleName> [GroupName]");
 	keywords_.add(new DoubleModuleKeyword(0.2, 0.01, 1.0), "TruncationWidth", "Width of truncation zone, below the minimum radius, over which additional potential smoothly decreases to zero");
 	keywords_.add(new DoubleModuleKeyword(1.0, 0.0, 10.0), "Weighting", "Fractional (maximal) amounts of generated perturbations to apply to pair potentials");
 	keywords_.add(new WindowFunctionModuleKeyword(WindowFunction(WindowFunction::SineWindow)), "WindowFunction", "Window function to apply when back-transforming delta S(Q) to g(r)");

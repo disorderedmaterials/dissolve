@@ -22,6 +22,7 @@
 #ifndef DISSOLVE_MODULEKEYWORD_MODULEGROUPS_H
 #define DISSOLVE_MODULEKEYWORD_MODULEGROUPS_H
 
+#include "base/charstringlist.h"
 #include "module/keyworddata.h"
 #include "module/keywordbase.h"
 #include "templates/reflist.h"
@@ -34,7 +35,7 @@ class ModuleGroupsModuleKeyword : public ModuleKeywordBase, public ModuleKeyword
 {
 	public:
 	// Constructor
-	ModuleGroupsModuleKeyword(ModuleGroups& groups, const char* moduleType);
+	ModuleGroupsModuleKeyword(ModuleGroups& groups);
 	// Destructor
 	~ModuleGroupsModuleKeyword();
 
@@ -42,10 +43,6 @@ class ModuleGroupsModuleKeyword : public ModuleKeywordBase, public ModuleKeyword
 	/*
 	 * Data
 	 */
-	private:
-	// Module type to allow
-	CharString moduleType_;
-
 	public:
 	// Return whether the current data value has ever been set
 	bool isSet();

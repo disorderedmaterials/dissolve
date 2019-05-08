@@ -28,9 +28,8 @@
 #include "base/sysfunc.h"
 
 // Constructor
-ModuleGroupsModuleKeyword::ModuleGroupsModuleKeyword(ModuleGroups& groups, const char* moduleType) : ModuleKeywordBase(ModuleKeywordBase::ModuleGroupsData), ModuleKeywordData<ModuleGroups&>(groups)
+ModuleGroupsModuleKeyword::ModuleGroupsModuleKeyword(ModuleGroups& groups) : ModuleKeywordBase(ModuleKeywordBase::ModuleGroupsData), ModuleKeywordData<ModuleGroups&>(groups)
 {
-	moduleType_ = moduleType;
 }
 
 // Destructor
@@ -77,9 +76,9 @@ bool ModuleGroupsModuleKeyword::read(LineParser& parser, int startArg, const Cor
 	}
 
 	// Check the module's type
-	if ((!DissolveSys::sameString(moduleType_, "*")) && (!DissolveSys::sameString(module->type(), moduleType_)))
+	if (!data_.moduleTypeIsAllowed(module->type()))
 	{
-		Messenger::error("Module '%s' is not of the correct type (%s).\n", parser.argc(startArg), module->type());
+		Messenger::error("Module '%s' is of type '%s', and is not permitted in these groups (allowed types = %s).\n", parser.argc(startArg), module->type(), data_.allowedModuleTypes().get());
 		return false;
 	}
 
