@@ -27,23 +27,29 @@ CharStringList::CharStringList()
 {
 }
 
-// Copy constructor
-CharStringList::CharStringList(const CharStringList &source)
-{
-	clear();
-
-	for (CharString* s = source.strings_.first(); s != NULL; s = s->next) add(s->get());
-}
-
 // Destructor
 CharStringList::~CharStringList()
 {
 }
 
 // Conversion operator
-CharStringList::operator const List<CharString>&()
+CharStringList::operator const List<CharString>&() const
 {
 	return strings_;
+}
+
+// Copy constructor
+CharStringList::CharStringList(const CharStringList& source)
+{
+	(*this) = source;
+}
+
+// Assignment operator
+void CharStringList::operator=(const CharStringList& source)
+{
+	clear();
+
+	for (CharString* s = source.strings_.first(); s != NULL; s = s->next) add(s->get());
 }
 
 /*
