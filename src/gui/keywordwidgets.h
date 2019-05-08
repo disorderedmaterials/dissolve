@@ -31,6 +31,7 @@
 #include "gui/keywordwidgets/fileandformat.h"
 #include "gui/keywordwidgets/int.hui"
 #include "gui/keywordwidgets/isotopologuelist.h"
+#include "gui/keywordwidgets/modulegroups.h"
 #include "gui/keywordwidgets/modulereferencelist.h"
 #include "gui/keywordwidgets/pairbroadeningfunction.h"
 #include "gui/keywordwidgets/speciesreferencelist.h"

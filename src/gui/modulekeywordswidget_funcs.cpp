@@ -113,6 +113,13 @@ QWidget* ModuleKeywordsWidget::createKeywordWidget(DissolveWindow* dissolveWindo
 		widget = isotopologueListWidget;
 		base = isotopologueListWidget;
 	}
+	else if (keyword->type() == ModuleKeywordBase::ModuleGroupsData)
+	{
+		ModuleGroupsKeywordWidget* moduleGroupsWidget = new ModuleGroupsKeywordWidget(NULL, keyword, coreData, moduleData, uniqueName);
+		connect(moduleGroupsWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
+		widget = moduleGroupsWidget;
+		base = moduleGroupsWidget;
+	}
 	else if (keyword->type() == ModuleKeywordBase::ModuleReferenceListData)
 	{
 		ModuleReferenceListKeywordWidget* moduleReferenceListWidget = new ModuleReferenceListKeywordWidget(NULL, keyword, coreData, moduleData, uniqueName);
