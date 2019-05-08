@@ -101,7 +101,7 @@ bool ModuleGroupsModuleKeyword::write(LineParser& parser, const char* prefix)
 		RefListIterator<Module,bool> refIterator(group->modules());
 		while (Module* module = refIterator.iterate())
 		{
-			if (!parser.writeLineF("%s%s  '%s'\n", prefix, keyword(), module->uniqueName())) return false;
+			if (!parser.writeLineF("%s%s  '%s'  '%s'\n", prefix, keyword(), module->uniqueName(), group->name())) return false;
 		}
 	}
 
