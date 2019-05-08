@@ -50,6 +50,8 @@ class ModuleGroups
 	public:
 	// Add allowed Module type
 	void addAllowedModuleType(const char* moduleType);
+	// Set list of allowed Module types
+	void setAllowedModuleTypes(const CharStringList& moduleTypes);
 	// Return if specified Module type is allowed in any group
 	bool moduleTypeIsAllowed(const char* moduleType) const;
 	// Return list of allowed Module types

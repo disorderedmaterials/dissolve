@@ -46,6 +46,17 @@ void ModuleGroups::addAllowedModuleType(const char* moduleType)
 	allowedModuleTypes_.add(moduleType);
 }
 
+// Set list of allowed Module types
+void ModuleGroups::setAllowedModuleTypes(const CharStringList& moduleTypes)
+{
+	// Clear existing list
+	allowedModuleTypes_.clear();
+
+	// Add types from source list
+	ListIterator<CharString> stringIterator(moduleTypes);
+	while (CharString* s = stringIterator.iterate()) addAllowedModuleType(*s);
+}
+
 // Return if specified Module type is allowed in any group
 bool ModuleGroups::moduleTypeIsAllowed(const char* moduleType) const
 {
