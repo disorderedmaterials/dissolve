@@ -125,6 +125,8 @@ void ModuleGroupsKeywordWidget::updateWidgetValues(const CoreData& coreData)
 	// Update the list widget
 	TableWidgetRefListUpdater<ModuleGroupsKeywordWidget,Module,bool> tableUpdater(ui.SelectionTable, availableModules, this, &ModuleGroupsKeywordWidget::updateSelectionRow);
 
+	ui.SelectionTable->resizeColumnToContents(0);
+
 	updateSummaryText();
 
 	refreshing_ = false;
