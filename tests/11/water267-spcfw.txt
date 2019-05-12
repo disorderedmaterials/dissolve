@@ -91,7 +91,9 @@ EndConfiguration
 #   Define Processing    #
 #------------------------#
 
-# Import 
+Layer  'Processing'
+
+# Trajectory Processing
 Module  Import
   Configuration  'Bulk'
   ReadTrajectory  True
@@ -252,6 +254,8 @@ Module  Analyse
   EndAnalyser
 
 EndModule
+
+EndLayer
 
 Simulation
   # Prevent writing of restart file
