@@ -29,7 +29,7 @@
 class Timer
 {
 	/*
-	 * Simple class to store and manipulate time information in order to provide timings for routines etc.
+	 * Simple class to store and manipulate tick information in order to provide timings for routines etc.
 	 */
 	public:
 	// Constructor
