@@ -144,8 +144,8 @@ bool LayerBlock::parse(LineParser& parser, Dissolve* dissolve, ModuleLayer* laye
 		if (blockDone) break;
 	}
 
-	// If the blockdone flag isn't set, return an error
-	if (!blockDone)
+	// If there's no error and the blockDone flag isn't set, return an error
+	if (!error && !blockDone)
 	{
 		Messenger::error("Unterminated %s block found.\n", BlockKeywords::blockKeyword(BlockKeywords::LayerBlockKeyword));
 		error = true;
