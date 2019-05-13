@@ -1,5 +1,5 @@
 /*
-	*** File And Format
+	*** File/Format Base Class
 	*** src/base/fileandformat.cpp
 	Copyright T. Youngs 2012-2019
 
@@ -53,6 +53,14 @@ const char* FileAndFormat::format(int id) const
 	if ((id < 0) || (id >= nFormats())) return "???";
 
 	return formats()[id];
+}
+
+// Convert format index to nice text string
+const char* FileAndFormat::niceFormat(int id) const
+{
+	if ((id < 0) || (id >= nFormats())) return "???";
+
+	return niceFormats()[id];
 }
 
 // Set format index
@@ -125,7 +133,14 @@ bool FileAndFormat::read(LineParser& parser, int startArg)
 {
 	// Convert first argument to format type
 	format_ = format(parser.argc(startArg));
-	if (format_ == nFormats()) return Messenger::error("Unrecognised format '%s' given for file.\n", parser.argc(startArg));
+	if (format_ == nFormats())
+	{
+		Messenger::print("Unrecognised format '%s' given for file. Recognised formats are:\n\n", parser.argc(startArg));
+
+		for (int n=0; n<nFormats(); ++n) Messenger::print("  %12s  %s\n", format(n), niceFormat(n));
+
+		return false;
+	}
 
 	// Set filename if present
 	if (parser.hasArg(startArg+1))

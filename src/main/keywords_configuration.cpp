@@ -263,8 +263,8 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 		if (blockDone) break;
 	}
 
-	// If the blockdone flag isn't set, return an error
-	if (!blockDone)
+	// If there's no error and the blockDone flag isn't set, return an error
+	if (!error && !blockDone)
 	{
 		Messenger::error("Unterminated %s block found.\n", BlockKeywords::blockKeyword(BlockKeywords::ConfigurationBlockKeyword));
 		error = true;
