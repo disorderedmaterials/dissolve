@@ -549,10 +549,10 @@ bool Dissolve::loadRestart(const char* filename)
 			module = findModuleInstance(parser.argc(1));
 			if (!module)
 			{
-				Messenger::error("No Module with unique name '%s' exists.\n", parser.argc(1));
-				error = true;
+				Messenger::warn("Timing information for Module '%s' found, but no Module with this unique name exists...\n", parser.argc(1));
+				if (!SampledDouble().read(parser, coreData_)) error = true;
 			}
-			else if (!module->readProcessTimes(parser)) error = false;
+			else if (!module->readProcessTimes(parser)) error = true;
 		}
 		else
 		{
