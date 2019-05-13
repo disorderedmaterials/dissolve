@@ -172,7 +172,7 @@ bool BraggSQModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cf
 		}
 
 		Messenger::print("BraggSQ: Bragg calculation spans %i k-vectors (max HKL = %i x %i x %i) over %f <= Q <= %f (%s elapsed).\n", braggKVectors.nItems(), braggMaximumHKL.x, braggMaximumHKL.y, braggMaximumHKL.z, qMin, qMax, timer.elapsedTimeString());
-		Messenger::print("BraggSQ: %i unique Bragg reflections found using a Q resolution of %f Angstroms**-1)\n", braggReflections.nItems(), qDelta);
+		Messenger::print("BraggSQ: %i unique Bragg reflections found using a Q resolution of %f Angstroms**-1.\n", braggReflections.nItems(), qDelta);
 
 		// Create atom working arrays
 		braggAtomVectorXCos.initialise(nAtoms, braggMaximumHKL.x+1);
