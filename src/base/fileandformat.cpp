@@ -55,6 +55,14 @@ const char* FileAndFormat::format(int id) const
 	return formats()[id];
 }
 
+// Convert format index to nice text string
+const char* FileAndFormat::niceFormat(int id) const
+{
+	if ((id < 0) || (id >= nFormats())) return "???";
+
+	return niceFormats()[id];
+}
+
 // Set format index
 void FileAndFormat::setFormatIndex(int id)
 {
