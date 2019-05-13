@@ -36,7 +36,6 @@ void BraggSQModule::setUpKeywords()
 	group->add(new DoubleModuleKeyword(0.001), "QDelta", "Resolution (binwidth) in Q space to use when calculating Bragg reflections", "<0.001>");
 	group->add(new DoubleModuleKeyword(1.0), "QMax", "Maximum Q value for Bragg calculation", "<1.0>");
 	group->add(new DoubleModuleKeyword(0.01), "QMin", "Minimum Q value for Bragg calculation", "<0.01>");
-	group->add(new BroadeningFunctionModuleKeyword(BroadeningFunction()), "QBroadening", "Broadening function to apply to form unweighted Bragg S(Q)", "<None>");
 	group->add(new Vec3IntegerModuleKeyword(Vec3<int>(1,1,1), Vec3<int>(1,1,1)), "Multiplicity", "Bragg intensity scaling factor accounting for number of repeat units in Configuration", "<1 1 1>");
 
 	group = addKeywordGroup("Export");
