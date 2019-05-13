@@ -552,7 +552,7 @@ bool Dissolve::loadRestart(const char* filename)
 				Messenger::error("No Module with unique name '%s' exists.\n", parser.argc(1));
 				error = true;
 			}
-			else if (!module->readProcessTimes(parser)) error = false;
+			else if (!module->readProcessTimes(parser)) error = true;
 		}
 		else
 		{
