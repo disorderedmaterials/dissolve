@@ -89,7 +89,7 @@ const char* Timer::totalTimeString()
 }
 
 // Return number of seconds elapsed
-double Timer::secondsElapsed()
+double Timer::secondsElapsed() const
 {
 	if (running_) return (clock() - startTime_) / double(CLOCKS_PER_SEC);
 	else return totalTime_ / double(CLOCKS_PER_SEC);

@@ -67,7 +67,7 @@ class Timer
 	// Return total time (after stop()) as a time string
 	const char* totalTimeString();
 	// Return number of seconds elapsed
-	double secondsElapsed();
+	double secondsElapsed() const;
 	// Return time string for number of seconds provided
 	static const char* timeString(double seconds);
 };
