@@ -124,7 +124,7 @@ TrajectoryImportFileFormat::TrajectoryImportFormat TrajectoryImportFileFormat::t
 
 // Data1D Type Keywords
 const char* Data1DImportFormatKeywords[] = { "xy", "histogram", "mint" };
-const char* NiceData1DImportFormatKeywords[] = { "Simple XY data (centre-bins)", "Histogrammed Data (x = bin left-boundaries)", "Gudrun output (mint01)" };
+const char* NiceData1DImportFormatKeywords[] = { "Simple XY data (x = bin centres)", "Histogrammed Data (x = bin left-boundaries)", "Gudrun output (mint01)" };
 
 // Return number of available formats
 int Data1DImportFileFormat::nFormats() const
