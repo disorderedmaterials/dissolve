@@ -1,6 +1,6 @@
 /*
-	*** Import Module - Formats
-	*** src/modules/import/formats.h
+	*** File/Format Base Class
+	*** src/base/fileandformat.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.

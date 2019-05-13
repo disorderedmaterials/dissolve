@@ -1,5 +1,5 @@
 /*
-	*** File And Format
+	*** File/Format Base Class
 	*** src/base/fileandformat.cpp
 	Copyright T. Youngs 2012-2019
 
