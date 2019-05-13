@@ -54,6 +54,7 @@ void Timer::start()
 {
 	running_ = true;
 	startTime_ = clock();
+	splitTime_ = startTime_;
 }
 
 // Set total time
@@ -61,6 +62,17 @@ void Timer::stop()
 {
 	totalTime_ = clock() - startTime_;
 	running_ = false;
+}
+
+// Return split time
+double Timer::split()
+{
+	clock_t newSplit = clock();
+	double splitTime = (newSplit - splitTime_) / double(CLOCKS_PER_SEC);
+
+	splitTime_ = newSplit;
+
+	return splitTime;
 }
 
 // Accumulate time since last start

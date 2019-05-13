@@ -42,6 +42,8 @@ class Timer
 	private:
 	// Start time
 	clock_t startTime_;
+	// Split time
+	clock_t splitTime_;
 	// Total time
 	clock_t totalTime_;
 	// Local string storage
@@ -58,6 +60,8 @@ class Timer
 	void start();
 	// Stop timer and set total time
 	void stop();
+	// Return split time
+	double split();
 	// Accumulate time since last start
 	void accumulate();
 	// Zero total time
