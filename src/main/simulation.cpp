@@ -338,6 +338,7 @@ bool Dissolve::iterate(int nIterations)
 		Messenger::printVerbose("Waiting for other processes at end of data write section...\n");
 		worldPool().wait(ProcessPool::PoolProcessesCommunicator);
 
+		mainLoopTimes_ += mainLoopTimer_.split();
 
 		Messenger::banner("END OF MAIN LOOP ITERATION %10i         %s", iteration_, DissolveSys::currentTimeAndDate());
 	}
@@ -393,7 +394,7 @@ void Dissolve::printTiming()
 	Messenger::print("\n");
 
 	if (nIterationsPerformed_ == 0) Messenger::print("No iterations performed, so no per-iteration timing available.\n");
-	else Messenger::print("Total time taken for %i iterations was %s (%s / iteration).\n", nIterationsPerformed_, mainLoopTimer_.elapsedTimeString(), Timer::timeString(mainLoopTimer_.secondsElapsed() / nIterationsPerformed_));
+	else Messenger::print("Total time taken for %i iterations was %s (%0.2f s/iteration).\n", nIterationsPerformed_, mainLoopTimer_.elapsedTimeString(), mainLoopTimes_.value());
 
 	Messenger::print("\n");
 }

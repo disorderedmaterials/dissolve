@@ -321,6 +321,8 @@ class Dissolve
 	int nIterationsPerformed_;
 	// Main loop timer
 	Timer mainLoopTimer_;
+	// Accumulated timing information for main loop iterations
+	SampledDouble mainLoopTimes_;
 
 	public:
 	// Set number of test points to use when calculating Box normalisation arrays
