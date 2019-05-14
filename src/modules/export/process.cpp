@@ -102,6 +102,43 @@ bool ExportModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		else if (!procPool.decision()) return false; 
 	}
 
+	/*
+	 * Write trajectories
+	 */
+
+	if (trajectoryFormat_.hasValidFileAndFormat())
+	{
+		// Check for zero Configuration targets
+		if (targetConfigurations_.nItems() == 0) Messenger::warn("No Configuration targets for Module.\n");
+		else
+		{
+			// Loop over target Configurations
+			for (RefListItem<Configuration,bool>* ri = targetConfigurations_.first(); ri != NULL; ri = ri->next)
+			{
+				// Grab Configuration pointer
+				Configuration* cfg = ri->item;
+
+				// Set up process pool - must do this to ensure we are using all available processes
+				procPool.assignProcessesToGroups(cfg->processPool());
+
+				// Only the pool master saves the data
+				if (procPool.isMaster())
+				{
+					Messenger::print("Export: Appending trajectory file (%s) for Configuration '%s'...\n", trajectoryFormat_.niceFormat(), cfg->name());
+
+					if (!ExportModule::writeTrajectory(trajectoryFormat_.trajectoryFormat(), trajectoryFormat_.filename(), cfg))
+					{
+						Messenger::print("Export: Failed to append trajectory file '%s'.\n", trajectoryFormat_.filename());
+						procPool.decideFalse();
+						return false;
+					}
+
+					procPool.decideTrue();
+				}
+				else if (!procPool.decision()) return false;
+			}
+		}
+	}
+
 	return true;
 }
-

@@ -117,5 +117,35 @@ class PairPotentialExportFileFormat : public FileAndFormat
 	}
 };
 
+// Trajectory Export Formats
+class TrajectoryExportFileFormat : public FileAndFormat
+{
+	/*
+	 * Available Formats
+	 */
+	public:
+	// Available trajectory formats
+	enum TrajectoryExportFormat { XYZTrajectory, nTrajectoryExportFormats };
+	// Return number of available formats
+	int nFormats() const;
+	// Return formats array
+	const char** formats() const;
+	// Return nice formats array
+	const char** niceFormats() const;
+	// Return current format as TrajectoryExportFormat
+	TrajectoryExportFormat trajectoryFormat() const;
+
+
+	/*
+	 * Filename / Basename
+	 */
+	public:
+	// Return whether the file must exist
+	bool fileMustExist() const
+	{
+		return false;
+	}
+};
+
 #endif
 

@@ -85,6 +85,8 @@ class ExportModule : public Module
 	CoordinateExportFileFormat coordinatesFormat_;
 	// Basename and format for PairPotential export
 	PairPotentialExportFileFormat pairPotentialFormat_;
+	// Filename and format for trajectory export
+	TrajectoryExportFileFormat trajectoryFormat_;
 
 
 	/*
@@ -133,6 +135,16 @@ class ExportModule : public Module
 	static bool writeBlockPairPotential(LineParser& parser, PairPotential* pp);
 	// Write PairPotential as a DL_POLY TABLE file
 	static bool writeDLPOLYTABLEPairPotential(LineParser& parser, PairPotential* pp);
+
+
+	/*
+	 * Static Functions - Trajectory
+	 */
+	public:
+	// Append trajectory in specified format to file
+	static bool writeTrajectory(TrajectoryExportFileFormat::TrajectoryExportFormat format, const char* filename, Configuration* cfg);
+	// Append XYZ frame to trajectory
+	static bool writeXYZTrajectory(LineParser& parser, Configuration* cfg);
 };
 
 #endif

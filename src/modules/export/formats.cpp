@@ -117,3 +117,35 @@ PairPotentialExportFileFormat::PairPotentialExportFormat PairPotentialExportFile
 {
 	return (PairPotentialExportFileFormat::PairPotentialExportFormat) format_;
 }
+
+/*
+ * Trajectory Formats
+ */
+
+// Trajectory Type Keywords
+const char* TrajectoryExportFormatKeywords[] = { "xyz" };
+const char* NiceTrajectoryExportFormatKeywords[] = { "XYZ Trajectory" };
+
+// Return number of available formats
+int TrajectoryExportFileFormat::nFormats() const
+{
+	return TrajectoryExportFileFormat::nTrajectoryExportFormats;
+}
+
+// Return formats array
+const char** TrajectoryExportFileFormat::formats() const
+{
+	return TrajectoryExportFormatKeywords;
+}
+
+// Return nice formats array
+const char** TrajectoryExportFileFormat::niceFormats() const
+{
+	return NiceTrajectoryExportFormatKeywords;
+}
+
+// Return current format as TrajectoryExportFormat
+TrajectoryExportFileFormat::TrajectoryExportFormat TrajectoryExportFileFormat::trajectoryFormat() const
+{
+	return (TrajectoryExportFileFormat::TrajectoryExportFormat) format_;
+}
