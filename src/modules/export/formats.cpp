@@ -28,7 +28,7 @@
 
 // Coordinate Type Keywords
 const char* CoordinateExportFormatKeywords[] = { "xyz", "dlpoly" };
-const char* NiceCoordinateExportFormatKeywords[] = { "XYZ", "DL_POLY" };
+const char* NiceCoordinateExportFormatKeywords[] = { "XYZ Coordinates", "DL_POLY CONFIG File" };
 
 // Return number of available formats
 int CoordinateExportFileFormat::nFormats() const
