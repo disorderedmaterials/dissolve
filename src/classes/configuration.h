@@ -408,26 +408,6 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 
 
 	/*
-	 * Ensemble
-	 */
-	private:
-	// Whether ensemble file is to be appended
-	bool appendEnsemble_;
-	// Frequency at which to append ensemble
-	int ensembleFrequency_;
-
-	public:
-	// Set whether ensemble file is to be appended
-	void setAppendEnsemble(bool b);
-	// Return whether ensemble file is to be appended
-	bool appendEnsemble() const;
-	// Set  frequency at which to append ensemble
-	void setEnsembleFrequency(int frequency);
-	// Return frequency at which to append ensemble
-	int ensembleFrequency() const;
-
-
-	/*
 	 * Site Stacks
 	 */
 	private:

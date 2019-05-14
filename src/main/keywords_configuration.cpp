@@ -37,8 +37,6 @@ KeywordData ConfigurationBlockData[] = {
 	{ "CellLengths",		3,	"Relative lengths of the unit cell" },
 	{ "Density",			2,	"Density of the Configuration, along with its units" },
 	{ "EndConfiguration",		0,	"Signals the end of the Configuration block" },
-	{ "Ensemble",			1,	"Whether an ensemble file should be appended to" },
-	{ "EnsembleFrequency",		1,	"Frequency at which to append ensemble file" },
 	{ "InputCoordinates",		2,	"Format and filename which contains the starting coordinates" },
 	{ "Module",			1,	"Starts the set up of a Module for this Configuration" },
 	{ "Multiplier",			1,	"Factor by which relative populations are multiplied when generating the Configuration data" },
@@ -127,12 +125,6 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 			case (ConfigurationBlock::EndConfigurationKeyword):
 				Messenger::print("Found end of %s block.\n", BlockKeywords::blockKeyword(BlockKeywords::ConfigurationBlockKeyword));
 				blockDone = true;
-				break;
-			case (ConfigurationBlock::EnsembleKeyword):
-				cfg->setAppendEnsemble(parser.argb(1));
-				break;
-			case (ConfigurationBlock::EnsembleFrequencyKeyword):
-				cfg->setEnsembleFrequency(parser.argi(1));
 				break;
 			case (ConfigurationBlock::InputCoordinatesKeyword):
 				if (!cfg->inputCoordinates().read(parser, 1))

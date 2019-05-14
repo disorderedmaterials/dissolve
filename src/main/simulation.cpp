@@ -242,7 +242,7 @@ bool Dissolve::iterate(int nIterations)
 
 
 		/*
-		 *  5)	Write restart / ensemble data.
+		 *  5)	Write restart file.
 		 */
 		if (worldPool().isMaster() && (restartFileFrequency_ > 0) && (iteration_%restartFileFrequency_ == 0))
 		{
@@ -262,7 +262,7 @@ bool Dissolve::iterate(int nIterations)
 			}
 
 			/*
-			 * Restart File
+			 * Write Restart File
 			 */
 
 			// If a restart filename isn't currently set, generate one now.
@@ -298,36 +298,6 @@ bool Dissolve::iterate(int nIterations)
 
 			saveRestartTimer.stop();
 			saveRestartTimes_ += saveRestartTimer.secondsElapsed();
-
-			/*
-			 * Configuration Data
-			 */
-
-			// Keep track of number of Configurations saved / to save
-			for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next)
-			{
-				// Append ensemble file
-				if (cfg->appendEnsemble() && (iteration_%cfg->ensembleFrequency() != 0))
-				{
-					CharString ensembleFile("%s.xyz.ensemble", cfg->name());
-					Messenger::print("Appending Configuration ensemble file '%s'...\n", ensembleFile.get());
-
-					LineParser ensembleParser;
-					if (!ensembleParser.appendOutput(ensembleFile.get()))
-					{
-						ensembleParser.closeFiles();
-						worldPool().decideFalse();
-						return false;
-					}
-					else if (!ExportModule::writeXYZCoordinates(ensembleParser, cfg))
-					{
-						Messenger::print("Export: Failed to append Configuration ensemble output file.\n");
-						ensembleParser.closeFiles();
-						worldPool().decideFalse();
-						return false;
-					}
-				}
-			}
 
 			// All good. Carry on!
 			worldPool().decideTrue();

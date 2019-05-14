@@ -95,8 +95,6 @@ namespace ConfigurationBlock
 		CellLengthsKeyword,		/* 'CellLengths' - Gives the relative lengths of the unit cell */
 		DensityKeyword,			/* 'Density' - Specifies the density of the simulation, along with its units */
 		EndConfigurationKeyword,	/* 'EndConfiguration' - Signals the end of the Configuration block */
-		EnsembleKeyword,		/* 'Ensemble' - Whether to append to an ensemble file */
-		EnsembleFrequencyKeyword,	/* 'EnsembleFrequency' - Frequency with which to append to ensemble file */
 		InputCoordinatesKeyword,	/* 'InputCoordinates' - Specifies the file which contains the starting coordinates */
 		ModuleKeyword,			/* 'Module' - Starts the set up of a Module for this configuration */
 		MultiplierKeyword,		/* 'Multiplier' - Specifies the factor by which relative populations are multiplied when generating the Configuration data */

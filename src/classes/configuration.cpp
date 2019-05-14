@@ -88,10 +88,6 @@ void Configuration::clear()
 	braggQMax_ = 0.01;
 	braggQMax_ = 2.0;
 	braggMultiplicity_.set(1,1,1);
-
-	// Reset ensemble data
-	appendEnsemble_ = false;
-	ensembleFrequency_ = 10;
 }
 
 /*
@@ -231,34 +227,6 @@ ModuleList& Configuration::modules()
 GenericList& Configuration::moduleData()
 {
 	return moduleData_;
-}
-
-/*
- * Ensemble
- */
-
-// Set whether ensemble file is to be appended
-void Configuration::setAppendEnsemble(bool b)
-{
-	appendEnsemble_ = b;
-}
-
-// Return whether ensemble file is to be appended
-bool Configuration::appendEnsemble() const
-{
-	return appendEnsemble_;
-}
-
-// Set frequency at which to append ensemble
-void Configuration::setEnsembleFrequency(int frequency)
-{
-	ensembleFrequency_ = frequency;
-}
-
-// Return frequency at which to append ensemble
-int Configuration::ensembleFrequency() const
-{
-	return ensembleFrequency_;
 }
 
 /*
