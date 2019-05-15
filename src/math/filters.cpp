@@ -27,6 +27,9 @@
 // Perform point-wise convolution of data with the supplied BroadeningFunction
 void Filters::convolve(Data1D& data, const BroadeningFunction& function, bool variableOmega)
 {
+	// Check for no broadening function specified
+	if (function.function() == BroadeningFunction::NoFunction) return;
+
 	// Grab x and y arrays
 	const Array<double>& x = data.constXAxis();
 	Array<double>& y = data.values();
@@ -66,6 +69,9 @@ void Filters::convolve(Data1D& data, const BroadeningFunction& function, bool va
 // Perform convolution of the supplied delta function into the supplied data
 void Filters::convolve(double xCentre, double value, const BroadeningFunction& function, Data1D& dest)
 {
+	// Check for no broadening function specified
+	if (function.function() == BroadeningFunction::NoFunction) return;
+
 	// Grab x and y arrays
 	const Array<double>& x = dest.constXAxis();
 	Array<double>& y = dest.values();
@@ -82,6 +88,9 @@ void Filters::convolve(double xCentre, double value, const BroadeningFunction& f
 // Perform point-wise convolution of data with the supplied BroadeningFunction, normalising to the original integral of the function
 void Filters::convolveNormalised(Data1D& data, const BroadeningFunction& function)
 {
+	// Check for no broadening function specified
+	if (function.function() == BroadeningFunction::NoFunction) return;
+
 	// Calculate the original integral
 	double originalIntegral = Integrator::absTrapezoid(data);
 
