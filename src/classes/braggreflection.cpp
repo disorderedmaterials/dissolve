@@ -121,7 +121,7 @@ void BraggReflection::scaleIntensity(int typeI, int typeJ, double factor)
 // Return intensity between specified atom types for this reflection
 double BraggReflection::intensity(int typeI, int typeJ) const
 {
-	return intensities_.constAt(typeI, typeJ);
+	return intensities_.constAt(typeI, typeJ) / nKVectors_;
 }
 
 // Increment number of contributing k-vectors
