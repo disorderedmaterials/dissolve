@@ -235,7 +235,7 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Save data if requested
 		if (saveData && (!MPIRunMaster(procPool, unweightedsq.save()))) return false;
 
-		// Construct weights matrix based on Isotopologue specifications in some Module (specified by mixSource) and the populations of AtomTypes in the Configuration
+		// Construct weights matrix based on Isotopologue specifications and the populations of AtomTypes in the Configuration
 		Weights weights;
 		ListIterator<IsotopologueReference> refIterator(isotopologues_);
 		while (IsotopologueReference* ref = refIterator.iterate())
