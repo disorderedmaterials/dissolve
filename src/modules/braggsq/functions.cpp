@@ -423,11 +423,18 @@ bool BraggSQModule::calculateUnweightedBraggSQ(ProcessPool& procPool, Configurat
 				qCentre = braggReflections.constAt(n).q();
 				inten = braggReflections.constAt(n).intensity(typeI, typeJ);
 
+				// TODO Prune reflections based on intensity to speed-up convolution?
+
 				// Need to set omega (Q) value for independent broadening terms to the qCentre of the current reflection
 				broadening.setOmega(qCentre);
 
-				// Add the broadened function in to our data
-				Filters::convolve(qCentre, inten, broadening, braggPartial);
+				// Add the (un)broadened function in to our data
+				if (broadening.function() == BroadeningFunction::NoFunction)
+				{
+					int bin = qCentre / (braggPartial.xAxis(1) - braggPartial.xAxis(0));
+					braggPartial.value(bin) += inten;
+				}
+				else Filters::convolve(qCentre, inten, broadening, braggPartial);
 			}
 		}
 	}
