@@ -310,7 +310,6 @@ bool BraggSQModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cf
 		for (int j = i; j<cfg->nUsedAtomTypes(); ++j, atd2 = atd2->next)
 		{
 			double factor = (atd1->fraction() * atd2->fraction()) / (nAtoms * multiplicity.x * multiplicity.y * multiplicity.z);
-			if (i != j) factor *= 2.0;
 
 			for (m=0; m<nReflections; ++m) reflections[m].scaleIntensity(i, j, factor);
 		}
@@ -360,7 +359,7 @@ bool BraggSQModule::formBraggSQ(ProcessPool& procPool, Configuration* cfg, const
 	for (int n=0; n<braggSQ.linearArraySize(); ++n) braggSQ.linearArray()[n].values() = 0.0;
 
 	// Loop over pairs of atom types, adding in contributions from our calculated BraggReflections
-	double qCentre, inten;
+	double qCentre, inten, factor;
 	int bin;
 	AtomTypeData* atd1 = cfg->usedAtomTypes();
 	for (int typeI = 0; typeI < nTypes; ++typeI, atd1 = atd1->next)
@@ -380,7 +379,10 @@ bool BraggSQModule::formBraggSQ(ProcessPool& procPool, Configuration* cfg, const
 				bin = qCentre / qDelta;
 				inten = braggReflections.constAt(n).intensity(typeI, typeJ);
 
-				partial.value(bin) += inten;
+				// Account for doubling of partials between unlike atom types
+				factor = (typeI == typeJ ? 1.0 : 2.0);
+
+				partial.value(bin) += inten * factor;
 			}
 
 			// Add this partial into the total function
