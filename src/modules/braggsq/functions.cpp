@@ -393,8 +393,8 @@ bool BraggSQModule::formBraggSQ(ProcessPool& procPool, Configuration* cfg, const
 	return true;
 }
 
-// Calculate unweighted, broadened Bragg partials from calculated reflection data, summing in to supplied PartialSet
-bool BraggSQModule::calculateUnweightedBraggSQ(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet, BroadeningFunction broadening)
+// Calculate unweighted, broadened Bragg partials from calculated reflection data, summing in to supplied array
+bool BraggSQModule::calculateUnweightedBraggSQ(ProcessPool& procPool, Configuration* cfg, Array2D< Data1D >& braggPartials, BroadeningFunction broadening)
 {
 	// Retrieve BraggReflection data from the Configuration's module data
 	bool found = false;
@@ -413,8 +413,7 @@ bool BraggSQModule::calculateUnweightedBraggSQ(ProcessPool& procPool, Configurat
 		for (int typeJ = typeI; typeJ < nTypes; ++typeJ, atd2 = atd2->next)
 		{
 			// Retrieve partial container
-			Data1D& braggPartial = partialSet.braggPartial(typeI, typeJ);
-			braggPartial.values() = 0.0;
+			Data1D& braggPartial = braggPartials.at(typeI, typeJ);
 
 			// Loop over defined Bragg reflections
 			for (int n=0; n<nReflections; ++n)

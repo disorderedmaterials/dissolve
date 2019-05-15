@@ -191,8 +191,25 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			// Check if reflection data is present
 			if (!cfg->moduleData().contains("BraggReflections")) return Messenger::error("Bragg scattering requested to be included, but Configuration '%s' contains no reflection data.\n", cfg->name());
 
+			// Create a temporary array into which our broadened Bragg partials will be placed
+			Array2D< Data1D >& braggPartials = GenericListHelper< Array2D< Data1D > >::realise(cfg->moduleData(), "BraggPartials", uniqueName(), GenericItem::NoFlag, &created);
+			if (created)
+			{
+				// Initialise the array
+				braggPartials.initialise(unweightedsq.nAtomTypes(), unweightedsq.nAtomTypes(), true);
+
+				for (int i=0; i<unweightedsq.nAtomTypes(); ++i)
+				{
+					for (int j=i; j<unweightedsq.nAtomTypes(); ++j) braggPartials.at(i,j) = unweightedsq.constPartial(0,0);
+				}
+			}
+			for (int i=0; i<unweightedsq.nAtomTypes(); ++i)
+			{
+				for (int j=i; j<unweightedsq.nAtomTypes(); ++j) braggPartials.at(i,j).values() = 0.0;
+			}
+
 			// First, calculate the broadened Bragg scattering, placing it into the unweighted partials container
-			if (!BraggSQModule::calculateUnweightedBraggSQ(procPool, cfg, unweightedsq, braggQBroadening)) return false;
+			if (!BraggSQModule::calculateUnweightedBraggSQ(procPool, cfg, braggPartials, braggQBroadening)) return false;
 
 			// Apply the local 'QBroadening' term
 			for (int i=0; i<unweightedsq.nAtomTypes(); ++i)
@@ -208,12 +225,11 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					// TODO Intramolecular broadening will not be applied to bound terms - need to separate out intramolecular Bragg contributions
 					Data1D& bound = unweightedsq.boundPartial(i,j);
 					Data1D& unbound = unweightedsq.unboundPartial(i,j);
-					Data1D& full = unweightedsq.partial(i,j);
-					Data1D& bragg = unweightedsq.braggPartial(i,j);
+					Data1D& bragg = braggPartials.at(i,j);
 
-					for (int n=0; n<full.nValues(); ++n)
+					for (int n=0; n<bound.nValues(); ++n)
 					{
-						const double q = full.xAxis(n);
+						const double q = bound.xAxis(n);
 						// TODO Need upper Q limit for Bragg calculation here in order to blend properly
 						if (q < 10.0)
 						{
