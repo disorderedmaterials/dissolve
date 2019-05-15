@@ -65,7 +65,7 @@ void NeutronSQModule::setUpKeywords()
 	// Bragg Scattering
 	group = addKeywordGroup("Bragg Scattering");
 	group->add(new BoolModuleKeyword(false), "IncludeBragg", "Include Bragg scattering (if reflection data are present in the Configuration)");
-	group->add(new BroadeningFunctionModuleKeyword(BroadeningFunction()), "BraggBroadening", "Broadening function to apply, on top of any QBroadening, to Bragg scattering");
+	group->add(new BroadeningFunctionModuleKeyword(BroadeningFunction()), "BraggQBroadening", "Broadening function to apply, on top of any QBroadening, to Bragg scattering");
 
 	// Reference Data
 	group = addKeywordGroup("Reference Data");

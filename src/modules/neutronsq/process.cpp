@@ -122,7 +122,7 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	CharString varName;
 
 	const bool includeBragg = keywords_.asBool("IncludeBragg");
-	const BroadeningFunction& braggBroadening = KeywordListHelper<BroadeningFunction>::retrieve(keywords_, "BraggBroadening", BroadeningFunction());
+	const BroadeningFunction& braggQBroadening = KeywordListHelper<BroadeningFunction>::retrieve(keywords_, "BraggQBroadening", BroadeningFunction());
 	NeutronSQModule::NormalisationType normalisation = normalisationType(keywords_.asString("Normalisation"));
 	if (normalisation == NeutronSQModule::nNormalisationTypes) return Messenger::error("NeutronSQ: Invalid normalisation type '%s' found.\n", keywords_.asString("Normalisation"));
 	const BroadeningFunction& qBroadening = KeywordListHelper<BroadeningFunction>::retrieve(keywords_, "QBroadening", BroadeningFunction());
@@ -145,8 +145,8 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	if (includeBragg)
 	{
 		Messenger::print("NeutronSQ: Bragg scattering will be calculated from peak data in target Configurations, if present.\n");
-		if (braggBroadening.function() == BroadeningFunction::NoFunction) Messenger::print("NeutronSQ: No additional broadening will be applied to calculated Bragg S(Q).");
-		else Messenger::print("NeutronSQ: Additional broadening to be applied in calculated Bragg S(Q) is %s (%s).", BroadeningFunction::functionType(braggBroadening.function()), braggBroadening.parameterSummary().get());
+		if (braggQBroadening.function() == BroadeningFunction::NoFunction) Messenger::print("NeutronSQ: No additional broadening will be applied to calculated Bragg S(Q).");
+		else Messenger::print("NeutronSQ: Additional broadening to be applied in calculated Bragg S(Q) is %s (%s).", BroadeningFunction::functionType(braggQBroadening.function()), braggQBroadening.parameterSummary().get());
 	}
 	Messenger::print("NeutronSQ: Save data is %s.\n", DissolveSys::onOff(saveData));
 	Messenger::print("\n");
@@ -174,7 +174,8 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Is the PartialSet already up-to-date? Do we force its calculation anyway?
 		bool& forceCalculation = GenericListHelper<bool>::retrieve(cfg->moduleData(), "_ForceNeutronSQ", NULL, false);
-		if ((!forceCalculation) && DissolveSys::sameString(unweightedsq.fingerprint(), CharString("%i", cfg->moduleData().version("UnweightedGR"))))
+		const bool sqUpToDate = DissolveSys::sameString(unweightedsq.fingerprint(), CharString("%i/%i", cfg->moduleData().version("UnweightedGR"), includeBragg ? cfg->moduleData().version("BraggReflections") : -1));
+		if ((!forceCalculation) && sqUpToDate)
 		{
 			Messenger::print("Unweighted partial S(Q) are up-to-date for Configuration '%s'.\n", cfg->name());
 			continue;
@@ -189,12 +190,47 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		{
 			// Check if reflection data is present
 			if (!cfg->moduleData().contains("BraggReflections")) return Messenger::error("Bragg scattering requested to be included, but Configuration '%s' contains no reflection data.\n", cfg->name());
-			else if (!BraggSQModule::calculateUnweightedBraggSQ(procPool, cfg, unweightedsq, braggBroadening)) return false;
+
+			// First, calculate the broadened Bragg scattering, placing it into the unweighted partials container
+			if (!BraggSQModule::calculateUnweightedBraggSQ(procPool, cfg, unweightedsq, braggQBroadening)) return false;
+
+			// Apply the local 'QBroadening' term
+			for (int i=0; i<unweightedsq.nAtomTypes(); ++i)
+			{
+				for (int j=i; j<unweightedsq.nAtomTypes(); ++j) Filters::convolve(unweightedsq.braggPartial(i,j), qBroadening, true);
+			}
+
+			// Blend the bound/unbound and Bragg partials at the higher Q limit
+			for (int i=0; i<unweightedsq.nAtomTypes(); ++i)
+			{
+				for (int j=i; j<unweightedsq.nAtomTypes(); ++j)
+				{
+					// TODO Intramolecular broadening will not be applied to bound terms - need to separate out intramolecular Bragg contributions
+					Data1D& bound = unweightedsq.boundPartial(i,j);
+					Data1D& unbound = unweightedsq.unboundPartial(i,j);
+					Data1D& full = unweightedsq.partial(i,j);
+					Data1D& bragg = unweightedsq.braggPartial(i,j);
+
+					for (int n=0; n<full.nValues(); ++n)
+					{
+						const double q = full.xAxis(n);
+						// TODO Need upper Q limit for Bragg calculation here in order to blend properly
+						if (q < 10.0)
+						{
+							bound.value(n) = 0.0;
+							unbound.value(n) = bragg.value(n);
+						}
+					}
+				}
+			}
+
+			// Re-form the total function
+			unweightedsq.formTotal(true);
 		}
 
 		// Set names of resources (Data1D) within the PartialSet, and tag it with the fingerprint from the source unweighted g(r)
 		unweightedsq.setObjectTags(CharString("%s//%s//%s", cfg->niceName(), "NeutronSQ", "UnweightedSQ"));
-		unweightedsq.setFingerprint(CharString("%i", cfg->moduleData().version("UnweightedGR")));
+		unweightedsq.setFingerprint(CharString("%i/%i", cfg->moduleData().version("UnweightedGR"), includeBragg ? cfg->moduleData().version("BraggReflections") : -1));
 
 		// Save data if requested
 		if (saveData && (!MPIRunMaster(procPool, unweightedsq.save()))) return false;
