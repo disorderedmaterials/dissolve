@@ -25,7 +25,7 @@
 #include "templates/array.h"
 
 // Perform point-wise convolution of data with the supplied BroadeningFunction
-void Filters::convolve(Data1D& data, const BroadeningFunction& function)
+void Filters::convolve(Data1D& data, const BroadeningFunction& function, bool variableOmega)
 {
 	// Grab x and y arrays
 	const Array<double>& x = data.constXAxis();
@@ -33,9 +33,21 @@ void Filters::convolve(Data1D& data, const BroadeningFunction& function)
 
 	Array<double> newY(data.nValues());
 
-	// Outer loop over existing data points
+	// Outer loop over existing data points - if variableOmega == true then we use the x value as the omega broadening parameter
 	double xCentre, xBroad;
-	for (int n=0; n<x.nItems(); ++n)
+	if (variableOmega) for (int n=0; n<x.nItems(); ++n)
+	{
+		// Grab x value as our current xCentre
+		xCentre = x.constAt(n);
+
+		// Inner loop over whole array
+		for (int m=0; m<x.nItems(); ++m)
+		{
+			xBroad = x.constAt(m) - xCentre;
+			newY[m] += y.constAt(n) * function.y(xBroad, x.constAt(m));
+		}
+	}
+	else for (int n=0; n<x.nItems(); ++n)
 	{
 		// Grab x value as our current xCentre
 		xCentre = x.constAt(n);

@@ -32,7 +32,7 @@ class Filters
 {
 	public:
 	// Perform point-wise convolution of data with the supplied BroadeningFunction
-	static void convolve(Data1D& data, const BroadeningFunction& function);
+	static void convolve(Data1D& data, const BroadeningFunction& function, bool variableOmega = false);
 	// Perform convolution of the supplied delta function into the supplied data
 	static void convolve(double xCentre, double value, const BroadeningFunction& function, Data1D& dest);
 	// Perform point-wise convolution of data with the supplied BroadeningFunction, normalising to the original integral of the function
