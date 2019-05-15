@@ -65,8 +65,6 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	Array2D<Data1D> unboundPartials_;
 	// Bound matrix, containing atom-atom partial of bound pairs
 	Array2D<Data1D> boundPartials_;
-	// Bragg matrix, derived from summation of HKL terms
-	Array2D<Data1D> braggPartials_;
 	// Bound flag matrix, specifying if bound partials are empty
 	Array2D<bool> emptyBoundPartials_;
 	// Total function
@@ -111,10 +109,6 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	Data1D& boundPartial(int i, int j);
 	// Return atom-atom partial for bound pairs (const)
 	Data1D& constBoundPartial(int i, int j) const;
-	// Return atom-atom Bragg partial
-	Data1D& braggPartial(int i, int j);
-	// Return atom-atom Bragg partial (const)
-	Data1D& constBraggPartial(int i, int j) const;
 	// Return whether specified bound partial is empty
 	bool isBoundPartialEmpty(int i, int j) const;
 	// Sum partials into total

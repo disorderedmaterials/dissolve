@@ -923,11 +923,6 @@ bool RDFModule::testReferencePartials(PartialSet& setA, PartialSet& setB, double
 			error = Error::percent(setA.unboundPartial(n,m), setB.unboundPartial(n,m));
 			Messenger::print("Test reference unbound partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 			if (error > testThreshold) return false;
-
-			// Bragg reference
-			error = Error::percent(setA.braggPartial(n,m), setB.braggPartial(n,m));
-			Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-			if (error > testThreshold) return false;
 		}
 	}
 

@@ -214,7 +214,7 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			// Apply the local 'QBroadening' term
 			for (int i=0; i<unweightedsq.nAtomTypes(); ++i)
 			{
-				for (int j=i; j<unweightedsq.nAtomTypes(); ++j) Filters::convolve(unweightedsq.braggPartial(i,j), qBroadening, true);
+				for (int j=i; j<unweightedsq.nAtomTypes(); ++j) Filters::convolve(braggPartials.at(i,j), qBroadening, true);
 			}
 
 			// Blend the bound/unbound and Bragg partials at the higher Q limit

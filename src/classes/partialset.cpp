@@ -43,7 +43,6 @@ PartialSet::~PartialSet()
 	boundPartials_.clear();
 	emptyBoundPartials_.clear();
 	unboundPartials_.clear();
-	braggPartials_.clear();
 }
 
 /*
@@ -82,7 +81,6 @@ bool PartialSet::setUpPartials(const AtomTypeList& atomTypes, const char* prefix
 	partials_.initialise(nTypes, nTypes, true);
 	boundPartials_.initialise(nTypes, nTypes, true);
 	unboundPartials_.initialise(nTypes, nTypes, true);
-	braggPartials_.initialise(nTypes, nTypes, true);
 	emptyBoundPartials_.initialise(nTypes, nTypes, true);
 
 	// Set up array matrices for partials
@@ -97,7 +95,6 @@ bool PartialSet::setUpPartials(const AtomTypeList& atomTypes, const char* prefix
 			partials_.at(n,m).setName(title.get());
 			boundPartials_.at(n,m).setName(title.get());
 			unboundPartials_.at(n,m).setName(title.get());
-			braggPartials_.at(n,m).setName(title.get());
 		}
 	}
 
@@ -147,7 +144,6 @@ void PartialSet::reset()
 			partials_.at(n,m).values() = 0.0;
 			boundPartials_.at(n,m).values() = 0.0;
 			unboundPartials_.at(n,m).values() = 0.0;
-			braggPartials_.at(n,m).values() = 0.0;
 			emptyBoundPartials_.at(n,m) = true;
 		}
 	}
@@ -234,18 +230,6 @@ Data1D& PartialSet::constBoundPartial(int i, int j) const
 	return boundPartials_.constAt(i, j);
 }
 
-// Return atom-atom Bragg partial
-Data1D& PartialSet::braggPartial(int i, int j)
-{
-	return braggPartials_.at(i, j);
-}
-
-// Return atom-atom Bragg partial (const)
-Data1D& PartialSet::constBraggPartial(int i, int j) const
-{
-	return braggPartials_.constAt(i, j);
-}
-
 // Return whether specified bound partial is empty
 bool PartialSet::isBoundPartialEmpty(int i, int j) const
 {
@@ -280,9 +264,8 @@ void PartialSet::formTotal(bool applyConcentrationWeights)
 				factor *= ci * cj * (typeI == typeJ ? 1.0 : 2.0);
 			}
 
-			// Add contribution from partial (bound + unbound)
+			// Add contribution from partials (bound + unbound)
 			total_.values() += partials_.at(typeI,typeJ).values() * factor;
-			// TODO Does not include contributions from Bragg partials
 		}
 	}
 }
@@ -390,9 +373,8 @@ bool PartialSet::save()
 			Data1D& full = partials_.at(typeI,typeJ);
 			Data1D& bound = boundPartials_.at(typeI,typeJ);
 			Data1D& unbound = unboundPartials_.at(typeI,typeJ);
-			Data1D& bragg = braggPartials_.at(typeI,typeJ);
-			parser.writeLineF("# %-14s  %-16s  %-16s  %-16s  %-16s\n", abscissaUnits_.get(), "Full", "Bound", "Unbound", "Bragg"); 
-			for (n=0; n<full.nValues(); ++n) parser.writeLineF("%16.9e  %16.9e  %16.9e  %16.9e  %16.9e\n", full.constXAxis(n), full.constValue(n), bound.constValue(n), unbound.constValue(n), bragg.constValue(n));
+			parser.writeLineF("# %-14s  %-16s  %-16s  %-16s\n", abscissaUnits_.get(), "Full", "Bound", "Unbound");
+			for (n=0; n<full.nValues(); ++n) parser.writeLineF("%16.9e  %16.9e  %16.9e  %16.9e  %16.9e\n", full.constXAxis(n), full.constValue(n), bound.constValue(n), unbound.constValue(n));
 			parser.closeFiles();
 		}
 	}
@@ -421,7 +403,6 @@ void PartialSet::setObjectTags(const char* prefix, const char* suffix)
 			partials_.at(typeI,typeJ).setObjectTag(CharString("%s//%s-%s//Full%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
 			boundPartials_.at(typeI,typeJ).setObjectTag(CharString("%s//%s-%s//Bound%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
 			unboundPartials_.at(typeI,typeJ).setObjectTag(CharString("%s//%s-%s//Unbound%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
-			braggPartials_.at(typeI,typeJ).setObjectTag(CharString("%s//%s-%s//Bragg%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
 		}
 	}
 
@@ -451,7 +432,6 @@ void PartialSet::setFileNames(const char* prefix, const char* tag, const char* s
 			partials_.at(n,m).setName(title.get());
 			boundPartials_.at(n,m).setName(title.get());
 			unboundPartials_.at(n,m).setName(title.get());
-			braggPartials_.at(n,m).setName(title.get());
 		}
 	}
 
@@ -539,7 +519,6 @@ bool PartialSet::addPartials(PartialSet& source, double weighting)
 			Interpolator::addInterpolated(partials_.at(localI, localJ), source.partial(typeI, typeJ), weighting);
 			Interpolator::addInterpolated(boundPartials_.at(localI, localJ), source.boundPartial(typeI, typeJ), weighting);
 			Interpolator::addInterpolated(unboundPartials_.at(localI, localJ), source.unboundPartial(typeI, typeJ), weighting);
-			Interpolator::addInterpolated(braggPartials_.at(localI, localJ), source.braggPartial(typeI, typeJ), weighting);
 
 			// If the source data bound partial is *not* empty, ensure that our emptyBoundPartials_ flag is set correctly
 			if (!source.isBoundPartialEmpty(typeI, typeJ)) emptyBoundPartials_.at(typeI, typeJ) = false;
@@ -567,7 +546,6 @@ void PartialSet::reweightPartials(double factor)
 			partials_.at(n, m).values() *= factor;
 			boundPartials_.at(n, m).values() *= factor;
 			unboundPartials_.at(n, m).values() *= factor;
-			braggPartials_.at(n, m).values() *= factor;
 		}
 	}
 
@@ -637,7 +615,6 @@ bool PartialSet::read(LineParser& parser, const CoreData& coreData)
 	partials_.initialise(nTypes, nTypes, true);
 	boundPartials_.initialise(nTypes, nTypes, true);
 	unboundPartials_.initialise(nTypes, nTypes, true);
-	braggPartials_.initialise(nTypes, nTypes, true);
 	for (int typeI=0; typeI<nTypes; ++typeI)
 	{
 		for (int typeJ=typeI; typeJ<nTypes; ++typeJ)
@@ -645,7 +622,6 @@ bool PartialSet::read(LineParser& parser, const CoreData& coreData)
 			if (!partials_.at(typeI, typeJ).read(parser, coreData)) return false;
 			if (!boundPartials_.at(typeI, typeJ).read(parser, coreData)) return false;
 			if (!unboundPartials_.at(typeI, typeJ).read(parser, coreData)) return false;
-			if (!braggPartials_.at(typeI, typeJ).read(parser, coreData)) return false;
 		}
 	}
 
@@ -679,7 +655,6 @@ bool PartialSet::write(LineParser& parser)
 			if (!partials_.at(typeI, typeJ).write(parser)) return false;
 			if (!boundPartials_.at(typeI, typeJ).write(parser)) return false;
 			if (!unboundPartials_.at(typeI, typeJ).write(parser)) return false;
-			if (!braggPartials_.at(typeI, typeJ).write(parser)) return false;
 		}
 	}
 
@@ -709,7 +684,6 @@ bool PartialSet::broadcast(ProcessPool& procPool, const int root, const CoreData
 			if (!partials_.at(typeI, typeJ).broadcast(procPool, root, coreData)) return Messenger::error("Failed to broadcast partials_ array.\n");
 			if (!boundPartials_.at(typeI, typeJ).broadcast(procPool, root, coreData))  return Messenger::error("Failed to broadcast boundPartials_ array.\n");
 			if (!unboundPartials_.at(typeI, typeJ).broadcast(procPool, root, coreData))  return Messenger::error("Failed to broadcast unboundPartials_ array.\n");
-			if (!braggPartials_.at(typeI, typeJ).broadcast(procPool, root, coreData))  return Messenger::error("Failed to broadcast braggPartials_ array.\n");
 		}
 	}
 
@@ -733,7 +707,6 @@ bool PartialSet::equality(ProcessPool& procPool)
 			if (!partials_.at(typeI, typeJ).equality(procPool)) return Messenger::error("PartialSet full partial %i-%i is not equivalent.\n", typeI, typeJ);
 			if (!boundPartials_.at(typeI, typeJ).equality(procPool)) return Messenger::error("PartialSet bound partial %i-%i is not equivalent.\n", typeI, typeJ);
 			if (!unboundPartials_.at(typeI, typeJ).equality(procPool)) return Messenger::error("PartialSet unbound partial %i-%i is not equivalent.\n", typeI, typeJ);
-			if (!braggPartials_.at(typeI, typeJ).equality(procPool)) return Messenger::error("PartialSet Bragg partial %i-%i is not equivalent.\n", typeI, typeJ);
 		}
 	}
 	if (!total_.equality(procPool)) return Messenger::error("PartialSet total sum is not equivalent.\n");

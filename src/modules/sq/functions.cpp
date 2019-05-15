@@ -59,9 +59,6 @@ bool SQModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, 
 			unweightedsq.unboundPartial(n,m).copyArrays(unweightedgr.constUnboundPartial(n,m));
 			unweightedsq.unboundPartial(n,m).values() -= 1.0;
 			if (!Fourier::sineFT(unweightedsq.unboundPartial(n,m), 4.0*PI*rho, qMin, qDelta, qMax, windowFunction, broadening)) return false;
-
-			// Zero Bragg partial, leave x array intact for use if needed
-			unweightedsq.braggPartial(n,m).initialise(unweightedsq.partial(n,m));
 		}
 	}
 
