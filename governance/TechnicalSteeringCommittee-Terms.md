@@ -1,24 +1,21 @@
 Technical Steering Committee
 ============================
 
-The Technical Steering Committee is responsible for providing expert recommendation for the technical direction of the GoodRun Software in terms of development and technologies which may be adopted.
+The Technical Steering Committee is responsible for providing expert recommendation for the technical direction of the Dissolve software in terms of development strategies and technologies which may be adopted.
 
 Purpose
 -------
 
 The Technical Steering Committee is responsible for the following documents and processes:
 
- * To come up with the best technical solutions for a given major and submitted problems.
+ * To come up with the best technical solutions for given major and submitted problems.
  * Provides answers to technical questions posed by the Project Management Committee.
  * Provides recommendations on infrastructure and processes.
- * Deals with pull requests from entities that are outside the GoodRun development team.
- * Reviews and approves all major Design Documents or feature requests before implementation of proposed features.
- * Approves changes to the 3rd Party dependencies of GoodRun, and makes recommendations  for changes / updates.
+ * Approves changes to the 3rd Party dependencies of the software, and makes recommendations for changes / updates.
 
 The Technical Steering Committee operates on the following basis:
 
- * The Committee meets at least every month in person.
- * The Technical Steering Committee can be reached via a mailing list.
+ * The Committee meets quarterly in person.
  * The Committee will elect a chair who should be an STFC employee.
  * The Committee chair (or delegate) will attend the Project Management Committee meetings.
  * The Committee reports to the Project Management Committee.
@@ -33,4 +30,4 @@ Members
  - Tristan Youngs (Chair)
  - Daniel Bowron
  - Lamar Moore
- - Catherine Jones (Suggested from SCD)
+ - Catherine Jones
