@@ -69,10 +69,10 @@ endif(GUI)
 # -- Windows
 if(WIN32)
   if(PARALLEL)
-    set (target_name dissolve)
+    set (target_name Dissolve)
   else(PARALLEL)
-    set (target_name Dissolve-serial)
-    set (gui_target_name Dissolve-gui)
+    set (target_name Dissolve-Serial)
+    set (gui_target_name Dissolve-GUI)
     set (ed_target_name DGuidEd)
   endif(PARALLEL)
 
