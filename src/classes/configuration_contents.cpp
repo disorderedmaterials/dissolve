@@ -501,6 +501,12 @@ AtomType* Configuration::usedAtomType(int index)
 	return usedAtomTypes_.atomType(index);
 }
 
+// Return specified used type data
+AtomTypeData* Configuration::usedAtomTypeData(int index)
+{
+	return usedAtomTypes_[index];
+}
+
 // Return first AtomTypeData for this Configuration
 AtomTypeData* Configuration::usedAtomTypes()
 {

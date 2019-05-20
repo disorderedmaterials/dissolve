@@ -214,6 +214,8 @@ class Configuration : public ListItem<Configuration>
 	Torsion* torsion(int n);
 	// Return specified used type
 	AtomType* usedAtomType(int index);
+	// Return specified used type data
+	AtomTypeData* usedAtomTypeData(int index);
 	// Return first AtomTypeData for this Configuration
 	AtomTypeData* usedAtomTypes();
 	// Return AtomTypeList for this Configuration
