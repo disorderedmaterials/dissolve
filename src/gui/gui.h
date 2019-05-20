@@ -216,6 +216,7 @@ class DissolveWindow : public QMainWindow
 	private slots: 
 	void on_ControlSetUpButton_clicked(bool checked);
 	void on_ControlRunButton_clicked(bool checked);
+	void on_ControlStepButton_clicked(bool checked);
 	void on_ControlPauseButton_clicked(bool checked);
 	void on_ControlReloadButton_clicked(bool checked);
 
