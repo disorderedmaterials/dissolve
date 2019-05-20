@@ -38,7 +38,7 @@
     <item>
      <widget class="QStackedWidget" name="MainStack">
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="StartPage">
        <layout class="QVBoxLayout" name="verticalLayout_11">
@@ -1184,9 +1184,6 @@
                      <height>20</height>
                     </size>
                    </property>
-                   <property name="shortcut">
-                    <string>Ctrl+R</string>
-                   </property>
                    <property name="toolButtonStyle">
                     <enum>Qt::ToolButtonTextUnderIcon</enum>
                    </property>
@@ -1248,9 +1245,6 @@
                      <height>20</height>
                     </size>
                    </property>
-                   <property name="shortcut">
-                    <string>Esc</string>
-                   </property>
                    <property name="toolButtonStyle">
                     <enum>Qt::ToolButtonTextUnderIcon</enum>
                    </property>
@@ -1295,9 +1289,6 @@
                      <width>20</width>
                      <height>20</height>
                     </size>
-                   </property>
-                   <property name="shortcut">
-                    <string>Ctrl+R</string>
                    </property>
                    <property name="toolButtonStyle">
                     <enum>Qt::ToolButtonTextUnderIcon</enum>
@@ -1640,7 +1631,7 @@
     <string>&amp;Pause</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+P</string>
+    <string>Esc</string>
    </property>
   </action>
   <action name="SessionNewAction">
