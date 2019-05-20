@@ -224,6 +224,9 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				}
 			}
 
+			// Remove self-scattering level from partials between the same atom type
+			for (int i=0; i<unweightedsq.nAtomTypes(); ++i) braggPartials.at(i,i) -= cfg->usedAtomTypeData(i)->fraction();
+
 			// Blend the bound/unbound and Bragg partials at the higher Q limit
 			for (int i=0; i<unweightedsq.nAtomTypes(); ++i)
 			{
