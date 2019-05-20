@@ -219,7 +219,7 @@ class Configuration : public ListItem<Configuration>
 	// Return AtomTypeList for this Configuration
 	const AtomTypeList& usedAtomTypesList() const;
 	// Return number of atom types used in this Configuration
-	int nUsedAtomTypes();
+	int nUsedAtomTypes() const;
 	// Return version of current contents
 	int contentsVersion() const;
 	// Increment version of current contents

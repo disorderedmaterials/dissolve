@@ -514,7 +514,7 @@ const AtomTypeList& Configuration::usedAtomTypesList() const
 }
 
 // Return number of atom types used in this Configuration
-int Configuration::nUsedAtomTypes()
+int Configuration::nUsedAtomTypes() const
 {
 	return usedAtomTypes_.nItems();
 }
