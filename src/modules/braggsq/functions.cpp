@@ -302,16 +302,14 @@ bool BraggSQModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cf
 	// Calculate intensities for individual KVectors - this will be automatically summed into the corresponding BraggReflection
 	for (m = 0; m < nKVectors; ++m) kVectors[m].calculateIntensities(reflections);
 
-	// Normalise intensities against number of atoms, atom type fraction, and multiplicity
+	// Normalise intensities against number of atoms and unit cell multiplicity
 	AtomTypeData* atd1 = cfg->usedAtomTypes();
 	for (int i = 0; i<cfg->nUsedAtomTypes(); ++i, atd1 = atd1->next)
 	{
 		AtomTypeData* atd2 = atd1;
 		for (int j = i; j<cfg->nUsedAtomTypes(); ++j, atd2 = atd2->next)
 		{
-			double factor = (atd1->fraction() * atd2->fraction()) / (nAtoms * multiplicity.x * multiplicity.y * multiplicity.z);
-
-			for (m=0; m<nReflections; ++m) reflections[m].scaleIntensity(i, j, factor);
+			for (m=0; m<nReflections; ++m) reflections[m].scaleIntensity(i, j, 1.0 / (nAtoms * multiplicity.x * multiplicity.y * multiplicity.z));
 		}
 	}
 
