@@ -83,13 +83,32 @@ bool BraggSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			const Array<BraggReflection>& braggReflections = GenericListHelper< Array<BraggReflection> >::value(cfg->moduleData(), "BraggReflections", "", Array<BraggReflection>(), &found);
 			if (!found) return Messenger::error("Failed to find BraggReflection array in module data for Configuration '%s'.\n", cfg->name());
 
-			// Open a file and save the data
+			// Open a file and save the basic reflection data
 			LineParser braggParser(&procPool);
-			if (!braggParser.openOutput(CharString("Bragg-%s.txt", cfg->niceName()))) return false;
+			if (!braggParser.openOutput(CharString("%s-Bragg.txt", cfg->niceName()))) return false;
 			braggParser.writeLineF("#   ID      Q       nKVecs    Intensity(0,0)\n");
 			for (int n = 0; n<braggReflections.nItems(); ++n)
 			{
 				if (!braggParser.writeLineF("%6i  %10.6f  %8i  %10.6e\n", n, braggReflections.constAt(n).q(), braggReflections.constAt(n).nKVectors(), braggReflections.constAt(n).intensity(0, 0))) return false;
+			}
+			braggParser.closeFiles();
+
+			// Save intensity data
+			int i = 0;
+			for (AtomTypeData* atd1 = cfg->usedAtomTypes(); atd1 != NULL; atd1 = atd1->next, ++i)
+			{
+				int j = i;
+				for (AtomTypeData* atd2 = atd1; atd2 != NULL; atd2 = atd2->next, ++j)
+				{
+					LineParser intensityParser(&procPool);
+					if (!intensityParser.openOutput(CharString("%s-Bragg-%s-%s.txt", cfg->niceName(), atd1->atomTypeName(), atd2->atomTypeName()))) return false;
+					intensityParser.writeLineF("#     Q      Intensity(%s,%s)\n", atd1->atomTypeName(), atd2->atomTypeName());
+					for (int n = 0; n<braggReflections.nItems(); ++n)
+					{
+						if (!intensityParser.writeLineF("%10.6f  %10.6e\n", braggReflections.constAt(n).q(), braggReflections.constAt(n).intensity(i, j))) return false;
+					}
+					intensityParser.closeFiles();
+				}
 			}
 		}
 	}
