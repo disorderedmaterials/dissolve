@@ -208,13 +208,20 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				for (int j=i; j<unweightedsq.nAtomTypes(); ++j) braggPartials.at(i,j).values() = 0.0;
 			}
 
-			// First, calculate the broadened Bragg scattering, placing it into the unweighted partials container
-			if (!BraggSQModule::calculateUnweightedBraggSQ(procPool, cfg, braggPartials, braggQBroadening)) return false;
+			// First, calculate the Bragg partials, placing them into the unweighted partials container
+			if (!BraggSQModule::calculateUnweightedBraggSQ(procPool, cfg, braggPartials)) return false;
 
-			// Apply the local 'QBroadening' term
+			// Apply necessary broadening
 			for (int i=0; i<unweightedsq.nAtomTypes(); ++i)
 			{
-				for (int j=i; j<unweightedsq.nAtomTypes(); ++j) Filters::convolve(braggPartials.at(i,j), qBroadening, true);
+				for (int j=i; j<unweightedsq.nAtomTypes(); ++j)
+				{
+					// Bragg-specific broadening
+					Filters::convolve(braggPartials.at(i,j), braggQBroadening, true);
+
+					// Local 'QBroadening' term
+					Filters::convolveNormalised(braggPartials.at(i,j), qBroadening, true);
+				}
 			}
 
 			// Blend the bound/unbound and Bragg partials at the higher Q limit

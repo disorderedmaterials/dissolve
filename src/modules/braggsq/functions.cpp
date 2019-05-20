@@ -391,8 +391,8 @@ bool BraggSQModule::formBraggSQ(ProcessPool& procPool, Configuration* cfg, const
 	return true;
 }
 
-// Calculate unweighted, broadened Bragg partials from calculated reflection data, summing in to supplied array
-bool BraggSQModule::calculateUnweightedBraggSQ(ProcessPool& procPool, Configuration* cfg, Array2D< Data1D >& braggPartials, BroadeningFunction broadening)
+// Calculate unweighted Bragg partials from calculated reflection data, summing in to supplied array
+bool BraggSQModule::calculateUnweightedBraggSQ(ProcessPool& procPool, Configuration* cfg, Array2D< Data1D >& braggPartials)
 {
 	// Retrieve BraggReflection data from the Configuration's module data
 	bool found = false;
@@ -402,39 +402,47 @@ bool BraggSQModule::calculateUnweightedBraggSQ(ProcessPool& procPool, Configurat
 
 	const int nTypes = cfg->nUsedAtomTypes();
 
-	// Loop over pairs of atom types, adding in contributions from our calculated BraggReflections
-	double qCentre, inten;
-	AtomTypeData* atd1 = cfg->usedAtomTypes();
-	for (int typeI = 0; typeI < nTypes; ++typeI, atd1 = atd1->next)
+	// Create a temporary Data1D into which we will generate individual Bragg peak contributions
+	const double qDelta = braggPartials.at(0,0).xAxis(1) - braggPartials.at(0,0).xAxis(0);
+	const int nBins = braggPartials.at(0,0).nValues();
+	Array<int> nAdded(nBins);
+
+	nAdded = 0;
+
+	// Loop over defined Bragg reflections
+	// TODO Prune reflections based on intensity to speed-up process?
+	int bin;
+	for (int n=0; n<nReflections; ++n)
 	{
-		AtomTypeData* atd2 = atd1;
-		for (int typeJ = typeI; typeJ < nTypes; ++typeJ, atd2 = atd2->next)
+		// Get Q bin (in the braggPartials) of the reflection
+		bin = braggReflections.constAt(n).q() / qDelta;
+		if ((bin < 0) || (bin >= nBins))
 		{
-			// Retrieve partial container
-			Data1D& braggPartial = braggPartials.at(typeI, typeJ);
+			Messenger::warn("Reflection %i is at Q = %f Angstroms**-1, which is outside of the current Q range.\n", n, braggReflections.constAt(n).q());
+			continue;
+		}
 
-			// Loop over defined Bragg reflections
-			for (int n=0; n<nReflections; ++n)
+		++nAdded[bin];
+
+		// Loop over pairs of atom types, binning intensity contributions from this reflection
+		AtomTypeData* atd1 = cfg->usedAtomTypes();
+		for (int typeI = 0; typeI < nTypes; ++typeI, atd1 = atd1->next)
+		{
+			AtomTypeData* atd2 = atd1;
+			for (int typeJ = typeI; typeJ < nTypes; ++typeJ, atd2 = atd2->next)
 			{
-				// Get q value and intensity of reflection
-				qCentre = braggReflections.constAt(n).q();
-				inten = braggReflections.constAt(n).intensity(typeI, typeJ);
-
-				// TODO Prune reflections based on intensity to speed-up convolution?
-
-				// Need to set omega (Q) value for independent broadening terms to the qCentre of the current reflection
-				broadening.setOmega(qCentre);
-
-				// Add the (un)broadened function in to our data
-				if (broadening.function() == BroadeningFunction::NoFunction)
-				{
-					int bin = qCentre / (braggPartial.xAxis(1) - braggPartial.xAxis(0));
-					braggPartial.value(bin) += inten;
-				}
-				else Filters::convolve(qCentre, inten, broadening, braggPartial);
+				braggPartials.at(typeI, typeJ).value(bin) += braggReflections.constAt(n).intensity(typeI, typeJ);
 			}
 		}
 	}
 
+	// Normalise data against number of intensities added to each bin
+	for (int typeI = 0; typeI < nTypes; ++typeI)
+	{
+		for (int typeJ = typeI; typeJ < nTypes; ++typeJ)
+		{
+			for (int n=0; n<nBins; ++n) if (nAdded[n] > 0) braggPartials.at(typeI, typeJ).value(n)  /= nAdded[n];
+		}
+	}
 	return true;
 }
