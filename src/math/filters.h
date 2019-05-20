@@ -36,7 +36,7 @@ class Filters
 	// Perform convolution of the supplied delta function into the supplied data
 	static void convolve(double xCentre, double value, const BroadeningFunction& function, Data1D& dest);
 	// Perform point-wise convolution of data with the supplied BroadeningFunction, normalising to the original integral of the function
-	static void convolveNormalised(Data1D& data, const BroadeningFunction& function);
+	static void convolveNormalised(Data1D& data, const BroadeningFunction& function, bool variableOmega = false);
 	// Apply Kolmogorov–Zurbenko filter to data
 	static void kolmogorovZurbenko(Data1D& data, int k, int m);
 	// Apply median filter to data

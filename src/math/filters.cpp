@@ -86,7 +86,7 @@ void Filters::convolve(double xCentre, double value, const BroadeningFunction& f
 }
 
 // Perform point-wise convolution of data with the supplied BroadeningFunction, normalising to the original integral of the function
-void Filters::convolveNormalised(Data1D& data, const BroadeningFunction& function)
+void Filters::convolveNormalised(Data1D& data, const BroadeningFunction& function, bool variableOmega)
 {
 	// Check for no broadening function specified
 	if (function.function() == BroadeningFunction::NoFunction) return;
@@ -98,7 +98,7 @@ void Filters::convolveNormalised(Data1D& data, const BroadeningFunction& functio
 	if (originalIntegral == 0.0) return;
 
 	// Convolve the function
-	convolve(data, function);
+	convolve(data, function, variableOmega);
 
 	// Calculate the new integral
 	double newIntegral = Integrator::absTrapezoid(data);
