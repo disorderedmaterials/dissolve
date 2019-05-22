@@ -245,7 +245,7 @@ bool BraggSQModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cf
 		}
 	}
 	timer.stop();
-	Messenger::print("BraggSQ: Calculated atomic cos/sin terms (%s elapsed)\n", timer.totalTimeString());
+	Messenger::print("Calculated atomic cos/sin terms (%s elapsed)\n", timer.totalTimeString());
 
 	// Calculate k-vector contributions
 	KVector* kVectors = braggKVectors.array();
@@ -292,7 +292,7 @@ bool BraggSQModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cf
 		}
 	}
 	timer.stop();
-	Messenger::print("BraggSQ: Calculated atomic contributions to k-vectors (%s elapsed)\n", timer.totalTimeString());
+	Messenger::print("Calculated atomic contributions to k-vectors (%s elapsed)\n", timer.totalTimeString());
 
 	// Zero Bragg reflection intensities
 	BraggReflection* reflections = braggReflections.array();

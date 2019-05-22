@@ -54,6 +54,7 @@ bool BraggSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	// Print argument/parameter summary
 	Messenger::print("BraggSQ: Calculating Bragg S(Q) over %f < Q < %f Angstroms**-1 using bin size of %f Angstroms**-1.\n", qMin, qMax, qDelta);
 	Messenger::print("BraggSQ: Multiplicity is (%i %i %i).\n", multiplicity.x, multiplicity.y, multiplicity.z);
+	Messenger::print("\n");
 
 	/*
 	 * Regardless of whether we are a main processing task (summing some combination of Configuration's partials) or multiple independent Configurations,
