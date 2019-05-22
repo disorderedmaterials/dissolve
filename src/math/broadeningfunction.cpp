@@ -303,11 +303,11 @@ double BroadeningFunction::yActual(double x, double omega) const
 		case (BroadeningFunction::GaussianFunction):
 			/*
 			 * Unnormalised Gaussian with no prefactor, centred at zero
-			 * 
+			 *
 			 * Parameters:  0 = FWHM
 			 * 		1 = c     	(precalculated from FWHM)
 			 * 		2 = 1.0 / c
-			 * 
+			 *
 			 * 	      (     x * x   ) 			  FWHM
 			 * f(x) = exp ( - --------- )      where c = --------------
 			 * 	      (   2 * c * c )		     2 sqrt(2 ln 2) 
@@ -317,12 +317,12 @@ double BroadeningFunction::yActual(double x, double omega) const
 		case (BroadeningFunction::ScaledGaussianFunction):
 			/*
 			 * Gaussian with prefactor, centred at zero
-			 * 
+			 *
 			 * Parameters:  0 = A, prefactor
 			 * 		1 = FWHM
 			 * 		2 = c     	(precalculated from FWHM)
 			 * 		3 = 1.0 / c
-			 * 
+			 *
 			 * 	        (     x * x   ) 		    FWHM
 			 * f(x) = A exp ( - --------- )      where c = --------------
 			 * 	        (   2 * c * c )		       2 sqrt(2 ln 2) 
@@ -332,11 +332,11 @@ double BroadeningFunction::yActual(double x, double omega) const
 		case (BroadeningFunction::OmegaDependentGaussianFunction):
 			/*
 			 * Unnormalised Gaussian with no prefactor, centred at zero, with variable FWHM
-			 * 
+			 *
 			 * Parameters:  0 = FWHM
 			 * 		1 = c     	(precalculated from FWHM)
 			 * 		2 = 1.0 / c
-			 * 
+			 *
 			 * 	      (         x * x      )		        FWHM
 			 * f(x) = exp ( - ---------------- )      where c = --------------
 			 * 	      (   2 * (c*omega)**2 )		    2 sqrt(2 ln 2) 
@@ -346,14 +346,14 @@ double BroadeningFunction::yActual(double x, double omega) const
 		case (BroadeningFunction::GaussianC2Function):
 			/*
 			 * Unnormalised Gaussian with no prefactor, centred at zero, with variable FWHM
-			 * 
+			 *
 			 * Parameters:  0 = FWHM1
 			 * 		1 = FWHM2
 			 * 		2 = c1     	(precalculated from FWHM1)
 			 * 		3 = c2     	(precalculated from FWHM2)
 			 * 		4 = 1.0 / c1
 			 * 		5 = 1.0 / c2
-			 * 
+			 *
 			 * 	      (         a1 * a1       )			   FWHMn
 			 * f(x) = exp ( - ------------------- )      where cn = --------------
 			 * 	      (   2 * (c1 + c2*a2)**2 )		       2 sqrt(2 ln 2) 
@@ -379,11 +379,11 @@ double BroadeningFunction::yFTActual(double x, double omega) const
 		case (BroadeningFunction::GaussianFunction):
 			/*
 			 * Unnormalised Gaussian with no prefactor, centred at zero
-			 * 
+			 *
 			 * Parameters:  0 = FWHM
 			 * 		1 = c     	(precalculated from FWHM)
 			 * 		2 = 1.0 / c
-			 * 
+			 *
 			 * 	      (   x * x * c * c ) 		      FWHM
 			 * f(x) = exp ( - ------------- )      where c = --------------
 			 * 	      (         2       )	         2 sqrt(2 ln 2) 
@@ -393,12 +393,12 @@ double BroadeningFunction::yFTActual(double x, double omega) const
 		case (BroadeningFunction::ScaledGaussianFunction):
 			/*
 			 * Gaussian with prefactor, centred at zero
-			 * 
+			 *
 			 * Parameters:  0 = A, prefactor
 			 * 		1 = FWHM
 			 * 		2 = c     	(precalculated from FWHM)
 			 * 		3 = 1.0 / c
-			 * 
+			 *
 			 * 	        (   x * x * c * c ) 		        FWHM
 			 * f(x) = A exp ( - ------------- )      where c = --------------
 			 * 	        (	  2	  )		   2 sqrt(2 ln 2) 
@@ -408,11 +408,11 @@ double BroadeningFunction::yFTActual(double x, double omega) const
 		case (BroadeningFunction::OmegaDependentGaussianFunction):
 			/*
 			 * Unnormalised Gaussian with no prefactor, centred at zero, with variable FWHM
-			 * 
+			 *
 			 * Parameters:  0 = FWHM
 			 * 		1 = c     	(precalculated from FWHM)
 			 * 		2 = 1.0 / c
-			 * 
+			 *
 			 * 	      (   x*x * (c*omega)**2 ) 		           FWHM
 			 * f(x) = exp ( - ------------------ )      where c = --------------
 			 * 	      (		   2         )	              2 sqrt(2 ln 2) 
@@ -422,14 +422,14 @@ double BroadeningFunction::yFTActual(double x, double omega) const
 		case (BroadeningFunction::GaussianC2Function):
 			/*
 			 * Unnormalised Gaussian with no prefactor, centred at zero, with variable FWHM
-			 * 
+			 *
 			 * Parameters:  0 = FWHM1
 			 * 		1 = FWHM2
 			 * 		2 = c1     	(precalculated from FWHM1)
 			 * 		3 = c2     	(precalculated from FWHM2)
 			 * 		4 = 1.0 / c1
 			 * 		5 = 1.0 / c2
-			 * 
+			 *
 			 * 	      (   x * x * (c1 + c2*omega)**2 ) 		           FWHMn
 			 * f(x) = exp ( - -------------------------- )      where cn = --------------
 			 * 	      (                2             )	               2 sqrt(2 ln 2) 
