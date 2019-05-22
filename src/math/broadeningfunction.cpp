@@ -409,8 +409,8 @@ double BroadeningFunction::yFTActual(double x, double omega) const
 			/*
 			 * Unnormalised Gaussian with no prefactor, centred at zero, with variable FWHM
 			 * 
-			 * Parameters:  0 = FWHM1
-			 * 		1 = c     	(precalculated from FWHM1)
+			 * Parameters:  0 = FWHM
+			 * 		1 = c     	(precalculated from FWHM)
 			 * 		2 = 1.0 / c
 			 * 
 			 * 	      (   x*x * (c*omega)**2 ) 		           FWHM
