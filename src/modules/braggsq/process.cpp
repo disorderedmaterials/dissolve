@@ -70,7 +70,11 @@ bool BraggSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		if (!calculateBraggTerms(procPool, cfg, qMin, qDelta, qMax, multiplicity, alreadyUpToDate)) return false;
 
 		// If we are already up-to-date, then theres nothing more to do for this Configuration
-		if (alreadyUpToDate) continue;
+		if (alreadyUpToDate)
+		{
+			Messenger::print("Bragg data is up-to-date for Configuration '%s'.\n", cfg->name());
+			continue;
+		}
 
 		// Form partial Bragg S(Q)
 		formBraggSQ(procPool, cfg, qMin, qDelta, qMax);

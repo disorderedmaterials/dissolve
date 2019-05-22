@@ -41,7 +41,7 @@
 bool BraggSQModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cfg, const double qMin, const double qDelta, const double qMax, Vec3<int> multiplicity, bool& alreadyUpToDate)
 {
 	// Check to see if the arrays are up-to-date
-	int& braggDataVersion = GenericListHelper<int>::retrieve(cfg->moduleData(), "BraggVersion", "", -1);
+	int braggDataVersion = GenericListHelper<int>::retrieve(cfg->moduleData(), "BraggVersion", "", -1);
 	alreadyUpToDate = braggDataVersion == cfg->contentsVersion();
 	if (alreadyUpToDate) return true;
 
@@ -314,7 +314,7 @@ bool BraggSQModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cf
 	}
 
 	// Store the new version of the data
-	braggDataVersion = cfg->contentsVersion();
+	GenericListHelper<int>::realise(cfg->moduleData(), "BraggVersion", "") = cfg->contentsVersion();
 
 	return true;
 }
