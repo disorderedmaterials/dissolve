@@ -109,6 +109,10 @@ class BroadeningFunction : public GenericItemBase
 	double yActual(double x) const;
 	// Return value of Fourier transform of function, given parameter x, and using static omega if necessary, regardless of inversion state
 	double yFTActual(double x) const;
+	// Return the discrete kernel normalisation factor for the current function, given the underlying data binwidth, and using static omega if necessary
+	double discreteKernelNormalisation(double deltaX) const;
+	// Return the discrete kernel normalisation factor for the current function, given the underlying data binwidth and omega value
+	double discreteKernelNormalisation(double deltaX, double omega) const;
 
 
 	/*
