@@ -581,7 +581,6 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 		}
 
 		// TODO Parallelise this
-		printf("HOLA!\n");
 
 		RefListIterator<SpeciesIntra,SpeciesBond*> bondIterator(bondIntra);
 		while (SpeciesIntra* intra = bondIterator.iterate())
@@ -651,7 +650,6 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 		}
 
 		// TODO Parallelise this
-		printf("MiHALA!\n");
 
 		RefListIterator<SpeciesIntra,SpeciesAngle*> angleIterator(angleIntra);
 		while (SpeciesIntra* intra = angleIterator.iterate())
