@@ -528,7 +528,7 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 				BroadeningFunction function = intraBroadening.broadeningFunction(typeI->atomType(), typeJ->atomType());
 
 				// Convolute the bound partial with the broadening function
-				Filters::convolveNormalised(unweightedgr.boundPartial(i, j), function);
+				Filters::convolve(unweightedgr.boundPartial(i, j), function);
 			}
 		}
 	}
@@ -623,7 +623,7 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 					BroadeningFunction function = intraBroadening.broadeningFunction(typeI->atomType(), typeJ->atomType(), bondIterator.currentData());
 
 					// Convolute the bound partial with the broadening function
-					Filters::convolveNormalised(tempgr.boundPartial(i, j), function);
+					Filters::convolve(tempgr.boundPartial(i, j), function);
 
 					// Sum into our broadened g(r) partial set
 					broadgr.boundPartial(i,j) += tempgr.boundPartial(i,j);
@@ -694,7 +694,7 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 					BroadeningFunction function = intraBroadening.broadeningFunction(typeI->atomType(), typeJ->atomType(), angleIterator.currentData());
 
 					// Convolute the bound partial with the broadening function
-					Filters::convolveNormalised(tempgr.boundPartial(i, j), function);
+					Filters::convolve(tempgr.boundPartial(i, j), function);
 
 					// Sum into our broadened g(r) partial set
 					broadgr.boundPartial(i,j) += tempgr.boundPartial(i,j);

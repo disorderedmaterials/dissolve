@@ -220,7 +220,7 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					Filters::convolve(braggPartials.at(i,j), braggQBroadening, true);
 
 					// Local 'QBroadening' term
-					Filters::convolveNormalised(braggPartials.at(i,j), qBroadening, true);
+					Filters::convolve(braggPartials.at(i,j), qBroadening, true);
 				}
 			}
 
