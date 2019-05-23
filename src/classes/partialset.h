@@ -143,8 +143,6 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	void formPartials(double boxVolume, Interpolator& boxNormalisation);
 	// Add in partials from source PartialSet to our own, with specified weighting
 	bool addPartials(PartialSet& source, double weighting);
-	// Re-weight partials (including total) with supplied weighting factor
-	void reweightPartials(double factor);
 	// Calculate RDF from supplied Histogram and normalisation data
 	static void calculateRDF(Data1D& destination, Histogram1D& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, Interpolator& boxNormalisation);
 
@@ -154,7 +152,9 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	 */
 	public:
 	void operator+=(const double delta);
+	void operator+=(const PartialSet& source);
 	void operator-=(const double delta);
+	void operator*=(const double factor);
 
 
 	/*

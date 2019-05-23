@@ -531,27 +531,6 @@ bool PartialSet::addPartials(PartialSet& source, double weighting)
 	return true;
 }
 
-// Re-weight partials (including total) with supplied weighting factor
-void PartialSet::reweightPartials(double factor)
-{
-	int n, m;
-	int nTypes = atomTypes_.nItems();
-
-	AtomTypeData* at1 = atomTypes_.first(), *at2;
-	for (n=0; n<nTypes; ++n, at1 = at1->next)
-	{
-		at2 = at1;
-		for (m=n; m<nTypes; ++m, at2 = at2->next)
-		{
-			partials_.at(n, m).values() *= factor;
-			boundPartials_.at(n, m).values() *= factor;
-			unboundPartials_.at(n, m).values() *= factor;
-		}
-	}
-
-	total_.values() *= factor;
-}
-
 // Calculate and return RDF from supplied Histogram and normalisation data
 void PartialSet::calculateRDF(Data1D& destination, Histogram1D& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, Interpolator& boxNormalisation)
 {
@@ -584,9 +563,76 @@ void PartialSet::operator+=(const double delta)
 	adjust(delta);
 }
 
+void PartialSet::operator+=(const PartialSet& source)
+{
+	// If we currently contain no data, just copy the source data
+	if (atomTypes_.nItems() == 0)
+	{
+// 		setUpPartials(source.atomTypes(), source.objectNamePrefix(), "", CharString("%p", this), source.abscissaUnits_.get());
+		(*this) = source;
+		return;
+	}
+
+	int typeI, typeJ, localI, localJ;
+	int sourceNTypes = source.atomTypes_.nItems();
+
+	// Loop over partials in source set
+	AtomTypeData* atd1 = source.atomTypes().first();
+	for (typeI=0; typeI<sourceNTypes; ++typeI, atd1 = atd1->next)
+	{
+		AtomType* atI = atd1->atomType();
+		localI = atomTypes_.indexOf(atI);
+		if (localI == -1)
+		{
+			Messenger::error("AtomType '%s' not present in this PartialSet, so can't add in the associated data.\n", atI->name());
+			return;
+		}
+
+		AtomTypeData* atd2 = atd1;
+		for (typeJ=typeI; typeJ<sourceNTypes; ++typeJ, atd2 = atd2->next)
+		{
+			AtomType* atJ = atd2->atomType();
+			localJ = atomTypes_.indexOf(atJ);
+			if (localJ == -1)
+			{
+				Messenger::error("AtomType '%s' not present in this PartialSet, so can't add in the associated data.\n", atJ->name());
+				return;
+			}
+
+			// Add interpolated source partials to our set
+			Interpolator::addInterpolated(partials_.at(localI, localJ), source.constPartial(typeI, typeJ));
+			Interpolator::addInterpolated(boundPartials_.at(localI, localJ), source.constBoundPartial(typeI, typeJ));
+			Interpolator::addInterpolated(unboundPartials_.at(localI, localJ), source.constUnboundPartial(typeI, typeJ));
+
+			// If the source data bound partial is *not* empty, ensure that our emptyBoundPartials_ flag is set correctly
+			if (!source.isBoundPartialEmpty(typeI, typeJ)) emptyBoundPartials_.at(typeI, typeJ) = false;
+		}
+	}
+
+	// Add total function
+	Interpolator::addInterpolated(total_, source.constTotal());
+}
+
 void PartialSet::operator-=(const double delta)
 {
 	adjust(-delta);
+}
+
+void PartialSet::operator*=(const double factor)
+{
+	int nTypes = atomTypes_.nItems();
+
+	for (int n=0; n<nTypes; ++n)
+	{
+		for (int m=n; m<nTypes; ++m)
+		{
+			partials_.at(n, m).values() *= factor;
+			boundPartials_.at(n, m).values() *= factor;
+			unboundPartials_.at(n, m).values() *= factor;
+		}
+	}
+
+	total_.values() *= factor;
 }
 
 /*

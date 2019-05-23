@@ -108,7 +108,7 @@ bool SQModule::sumUnweightedSQ(ProcessPool& procPool, Module* module, GenericLis
 
 	// Now must normalise our partials to the overall weight of the source configurations
 	// TODO CHECK Is this correct?
-	summedUnweightedSQ.reweightPartials(1.0 / totalWeight);
+	summedUnweightedSQ *= 1.0 / totalWeight;
 
 	return true;
 }
