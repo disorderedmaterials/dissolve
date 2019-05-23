@@ -521,11 +521,10 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 	AtomTypeData* typeI, *typeJ;
 
 	// Remove bound partial from full partial
-	typeI = unweightedgr.atomTypes().first();
-	for (int i=0; i<unweightedgr.nAtomTypes(); ++i, typeI = typeI->next)
+	for (int i=0; i<unweightedgr.nAtomTypes(); ++i)
 	{
 		typeJ = typeI;
-		for (int j=i; j<unweightedgr.nAtomTypes(); ++j, typeJ = typeJ->next) unweightedgr.partial(i, j) -= originalgr.constBoundPartial(i, j);
+		for (int j=i; j<unweightedgr.nAtomTypes(); ++j) unweightedgr.partial(i, j) -= originalgr.constBoundPartial(i, j);
 	}
 
 	// Broaden the bound partials according to the supplied PairBroadeningFunction
