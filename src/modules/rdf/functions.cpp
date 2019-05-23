@@ -502,8 +502,21 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 // Calculate smoothed/broadened partial g(r) from supplied partials
 bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg, const PartialSet& originalgr, PartialSet& unweightedgr, PairBroadeningFunction& intraBroadening, int smoothing)
 {
-	// Copy data
-	unweightedgr = originalgr;
+	// If the unweightedgr is not yet initialised, copy the originalgr. Otherwise, just copy the values (in order to maintain the incremental versioning of the data)
+	if (unweightedgr.nAtomTypes() == 0) unweightedgr = originalgr;
+	else
+	{
+		for (int i=0; i<unweightedgr.nAtomTypes(); ++i)
+		{
+			for (int j=i; j<unweightedgr.nAtomTypes(); ++j)
+			{
+				unweightedgr.boundPartial(i, j).copyArrays(originalgr.constBoundPartial(i, j));
+				unweightedgr.unboundPartial(i, j).copyArrays(originalgr.constUnboundPartial(i, j));
+				unweightedgr.partial(i, j).copyArrays(originalgr.constPartial(i, j));
+			}
+		}
+		unweightedgr.total().copyArrays(originalgr.constTotal());
+	}
 
 	AtomTypeData* typeI, *typeJ;
 
