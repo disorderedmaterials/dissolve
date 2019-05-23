@@ -190,6 +190,10 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		{
 			// Check if reflection data is present
 			if (!cfg->moduleData().contains("BraggReflections")) return Messenger::error("Bragg scattering requested to be included, but Configuration '%s' contains no reflection data.\n", cfg->name());
+			const Array<BraggReflection>& braggReflections = GenericListHelper< Array<BraggReflection> >::value(cfg->moduleData(), "BraggReflections", "", Array<BraggReflection>());
+			const int nReflections = braggReflections.nItems();
+			const double braggQMax = braggReflections.constAt(nReflections-1).q();
+			Messenger::print("Found BraggReflections data for Configuration '%s' (nReflections = %i, QMax = %f Angstroms**-1).\n", cfg->name(), nReflections, braggQMax);
 
 			// Create a temporary array into which our broadened Bragg partials will be placed
 			Array2D< Data1D >& braggPartials = GenericListHelper< Array2D< Data1D > >::realise(cfg->moduleData(), "BraggPartials", uniqueName(), GenericItem::NoFlag, &created);
@@ -250,8 +254,7 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					for (int n=0; n<bound.nValues(); ++n)
 					{
 						const double q = bound.xAxis(n);
-						// TODO Need upper Q limit for Bragg calculation here in order to blend properly
-						if (q < 10.0)
+						if (q <= braggQMax)
 						{
 							bound.value(n) = 0.0;
 							unbound.value(n) = bragg.value(n);
