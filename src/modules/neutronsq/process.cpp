@@ -246,7 +246,7 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			{
 				for (int j=i; j<unweightedsq.nAtomTypes(); ++j)
 				{
-					// TODO Intramolecular broadening will not be applied to bound terms - need to separate out intramolecular Bragg contributions
+					// Note: Intramolecular broadening will not be applied to bound terms within the calculated Bragg scattering
 					Data1D& bound = unweightedsq.boundPartial(i,j);
 					Data1D& unbound = unweightedsq.unboundPartial(i,j);
 					Data1D& bragg = braggPartials.at(i,j);
