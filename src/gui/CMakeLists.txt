@@ -7,7 +7,8 @@
 
 # Meta-Objects
 SET(gui_MOC_HDRS
-  # Module Chart
+  # Layer Editor
+  layereditor.h
   modulechartblock.h
   modulecharthotspot.h
   modulechartinsertionblock.h
@@ -15,12 +16,12 @@ SET(gui_MOC_HDRS
   modulechartmoduleblock.h
   modulekeywordswidget.h
   modulecontrolwidget.h
-  moduleeditor.h
   modulelayertab.h
   moduletab.h
   modulewidget.h
 
   modulechart.hui
+
   # Widgets
   addconfigurationwizard.h
   addforcefieldtermswizard.h
@@ -33,17 +34,20 @@ SET(gui_MOC_HDRS
   wizardwidgetheader.h
   wizardwidgethighlight.h
   wizardwidgetpageinfo.h
+
   # Dialogs
   addconfigurationdialog.h
   addforcefieldtermsdialog.h
   addprocessinglayerdialog.h
   addspeciesdialog.h
+
   # Main Tabs
   configurationtab.h
   forcefieldtab.h
   maintab.h
   speciestab.h
   workspacetab.h
+
   # Main UI
   gui.h
   guide.h
@@ -58,13 +62,14 @@ QT5_WRAP_CPP(gui_MOC_SRCS ${gui_MOC_HDRS})
 
 # User Interface Files
 SET(gui_UIS
-  # Module Chart
+  # Layer Editor
+  layereditor.ui
   modulechartinsertionblock.ui
   modulechartmoduleblock.ui
   modulecontrolwidget.ui
-  moduleeditor.ui
   modulelayertab.ui
   moduletab.ui
+
   # Widgets
   addconfigurationwizard.ui
   addforcefieldtermswizard.ui
@@ -74,16 +79,19 @@ SET(gui_UIS
   pairpotentialwidget.ui
   wizardwidgetfooter.ui
   wizardwidgetheader.ui
+
   # Dialogs
   addconfigurationdialog.ui
   addforcefieldtermsdialog.ui
   addprocessinglayerdialog.ui
   addspeciesdialog.ui
+
   # Main Tabs
   configurationtab.ui
   forcefieldtab.ui
   speciestab.ui
   workspacetab.ui
+
   # Main UI
   gui.ui
 )
@@ -91,18 +99,19 @@ QT5_WRAP_UI(gui_UIS_H ${gui_UIS})
 
 # Source files (not Qt UI files or custom .h [uih])
 SET(gui_SRCS
-  # Module Chart
+  # Layer Editor
+  layereditor_funcs.cpp
   modulechart_funcs.cpp
   modulechartblock.cpp
   modulecharthotspot.cpp
   modulechartinsertionblock_funcs.cpp
   modulechartmoduleblock_funcs.cpp
   modulecontrolwidget_funcs.cpp
-  moduleeditor_funcs.cpp
   modulekeywordswidget_funcs.cpp
   modulelayertab_funcs.cpp
   moduletab_funcs.cpp
   modulewidget.cpp
+
   # Widgets
   addconfigurationwizard_funcs.cpp
   addforcefieldtermswizard_funcs.cpp
@@ -113,17 +122,20 @@ SET(gui_SRCS
   wizardwidget_funcs.cpp
   wizardwidgethighlight.cpp
   wizardwidgetpageinfo.cpp
+
   # Dialogs
   addconfigurationdialog_funcs.cpp
   addforcefieldtermsdialog_funcs.cpp
   addprocessinglayerdialog_funcs.cpp
   addspeciesdialog_funcs.cpp
+
   # Main Tabs
   configurationtab_funcs.cpp
   forcefieldtab_funcs.cpp
   maintab.cpp
   speciestab_funcs.cpp
   workspacetab_funcs.cpp
+
   # Main UI
   gui_funcs.cpp
   gui_menu.cpp

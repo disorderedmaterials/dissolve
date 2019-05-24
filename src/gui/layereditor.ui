@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ModuleEditor</class>
- <widget class="QWidget" name="ModuleEditor">
+ <class>LayerEditor</class>
+ <widget class="QWidget" name="LayerEditor">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -117,7 +117,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QScrollArea" name="ModuleScrollArea">
+      <widget class="QScrollArea" name="LayerScrollArea">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -133,7 +133,7 @@
        <property name="widgetResizable">
         <bool>true</bool>
        </property>
-       <widget class="QWidget" name="ModuleScrollAreaContents">
+       <widget class="QWidget" name="LayerScrollAreaContents">
         <property name="geometry">
          <rect>
           <x>0</x>

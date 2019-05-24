@@ -138,7 +138,7 @@
       <number>4</number>
      </property>
      <item>
-      <widget class="ModuleEditor" name="ModulePanel" native="true">
+      <widget class="LayerEditor" name="ModulePanel" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -153,9 +153,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ModuleEditor</class>
+   <class>LayerEditor</class>
    <extends>QWidget</extends>
-   <header>gui/moduleeditor.h</header>
+   <header>gui/layereditor.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

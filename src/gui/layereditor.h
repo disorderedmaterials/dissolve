@@ -1,6 +1,6 @@
 /*
-	*** Module Editor
-	*** src/gui/moduleeditor.h
+	*** Layer Editor
+	*** src/gui/layereditor.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,10 +19,10 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEEDITOR_H
-#define DISSOLVE_MODULEEDITOR_H
+#ifndef DISSOLVE_LAYEREDITOR_H
+#define DISSOLVE_LAYEREDITOR_H
 
-#include "gui/ui_moduleeditor.h"
+#include "gui/ui_layereditor.h"
 #include "base/charstring.h"
 #include "templates/reflist.h"
 
@@ -35,18 +35,18 @@ class ModuleChart;
 class ModuleLayer;
 class ModulePalette;
 
-// ModuleEditor
-class ModuleEditor : public QWidget
+// Layer Editor
+class LayerEditor : public QWidget
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
 	public:
 	// Constructor / Destructor
-	ModuleEditor(QWidget* parent = NULL);
-	~ModuleEditor();
+	LayerEditor(QWidget* parent = NULL);
+	~LayerEditor();
 	// Main form declaration
-	Ui::ModuleEditor ui;
+	Ui::LayerEditor ui;
 
 
 	/*
@@ -63,7 +63,7 @@ class ModuleEditor : public QWidget
 	RefList<MimeTreeWidgetItem,CharString> moduleCategories_;
 
 	public:
-	// Set up the ModuleEditor for the specified ModuleLayer
+	// Set up the LayerEditor for the specified ModuleLayer
 	bool setUp(DissolveWindow* dissolveWindow, ModuleLayer* moduleLayer, Configuration* localConfiguration = NULL);
 
 

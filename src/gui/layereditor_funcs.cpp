@@ -1,6 +1,6 @@
 /*
-	*** Module Editor Functions
-	*** src/gui/moduleeditor_funcs.cpp
+	*** Layer Editor Functions
+	*** src/gui/layereditor_funcs.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/moduleeditor.h"
+#include "gui/layereditor.h"
 #include "gui/gui.h"
 #include "gui/modulechart.hui"
 #include "gui/widgets/mimetreewidgetitem.h"
@@ -28,7 +28,7 @@
 #include "templates/variantpointer.h"
 
 // Constructor / Destructor
-ModuleEditor::ModuleEditor(QWidget* parent) : QWidget(parent)
+LayerEditor::LayerEditor(QWidget* parent) : QWidget(parent)
 {
 	ui.setupUi(this);
 
@@ -37,7 +37,7 @@ ModuleEditor::ModuleEditor(QWidget* parent) : QWidget(parent)
 	refreshing_ = false;
 }
 
-ModuleEditor::~ModuleEditor()
+LayerEditor::~LayerEditor()
 {
 }
 
@@ -45,8 +45,8 @@ ModuleEditor::~ModuleEditor()
  * Setup
  */
 
-// Setup up the ModuleEditor for the specified Module list
-bool ModuleEditor::setUp(DissolveWindow* dissolveWindow, ModuleLayer* moduleLayer, Configuration* localConfiguration)
+// Setup up the LayerEditor for the specified Module list
+bool LayerEditor::setUp(DissolveWindow* dissolveWindow, ModuleLayer* moduleLayer, Configuration* localConfiguration)
 {
 	dissolveWindow_ = dissolveWindow;
 	moduleLayer_ = moduleLayer;
@@ -55,7 +55,7 @@ bool ModuleEditor::setUp(DissolveWindow* dissolveWindow, ModuleLayer* moduleLaye
 	// Create a ModuleChart widget and set its source list
 	chartWidget_ = new ModuleChart(dissolveWindow, *moduleLayer_, localConfiguration_);
 	chartWidget_->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
-	ui.ModuleScrollArea->setWidget(chartWidget_);
+	ui.LayerScrollArea->setWidget(chartWidget_);
 
 	// Add MimeTreeWidgetItems for each Module, adding them to a parent category item
 	moduleCategories_.clear();
@@ -106,7 +106,7 @@ bool ModuleEditor::setUp(DissolveWindow* dissolveWindow, ModuleLayer* moduleLaye
  */
 
 // Update controls in tab
-void ModuleEditor::updateControls()
+void LayerEditor::updateControls()
 {
 	if (!chartWidget_) return;
 
@@ -118,14 +118,14 @@ void ModuleEditor::updateControls()
 }
 
 // Disable sensitive controls within tab, ready for main code to run
-void ModuleEditor::disableSensitiveControls()
+void LayerEditor::disableSensitiveControls()
 {
 	ui.AvailableModulesTree->setEnabled(false);
 	chartWidget_->disableSensitiveControls();
 }
 
 // Enable sensitive controls within tab, ready for main code to run
-void ModuleEditor::enableSensitiveControls()
+void LayerEditor::enableSensitiveControls()
 {
 	ui.AvailableModulesTree->setEnabled(true);
 	chartWidget_->enableSensitiveControls();
@@ -135,7 +135,7 @@ void ModuleEditor::enableSensitiveControls()
  * Widget Functions
  */
 
-void ModuleEditor::on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* item)
+void LayerEditor::on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* item)
 {
 	if (!moduleLayer_) return;
 
@@ -175,7 +175,7 @@ void ModuleEditor::on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* it
  */
 
 // Write widget state through specified LineParser
-bool ModuleEditor::writeState(LineParser& parser)
+bool LayerEditor::writeState(LineParser& parser)
 {
 	if ((!chartWidget_) || (!chartWidget_->writeState(parser))) return false;
 
@@ -183,7 +183,7 @@ bool ModuleEditor::writeState(LineParser& parser)
 }
 
 // Read widget state through specified LineParser
-bool ModuleEditor::readState(LineParser& parser)
+bool LayerEditor::readState(LineParser& parser)
 {
 	if ((!chartWidget_) || (!chartWidget_->readState(parser))) return false;
 
