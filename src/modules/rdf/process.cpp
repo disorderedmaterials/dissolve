@@ -49,18 +49,10 @@ bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 	const int averaging = keywords_.asInt("Averaging");
 	Averaging::AveragingScheme averagingScheme = Averaging::averagingSchemes().option(keywords_.asString("AveragingScheme"));
-	if (averagingScheme == Averaging::nAveragingSchemes)
-	{
-		Messenger::error("RDF: Invalid averaging scheme '%s' found.\n", keywords_.asString("AveragingScheme"));
-		return false;
-	}
+	if (averagingScheme == Averaging::nAveragingSchemes) return Messenger::error("Invalid averaging scheme '%s' found.\n", keywords_.asString("AveragingScheme"));
 	PairBroadeningFunction& intraBroadening = KeywordListHelper<PairBroadeningFunction>::retrieve(keywords_, "IntraBroadening", PairBroadeningFunction());
 	RDFModule::PartialsMethod method = RDFModule::partialsMethod(keywords_.asString("Method"));
-	if (method == RDFModule::nPartialsMethods)
-	{
-		Messenger::error("RDF: Invalid calculation method '%s' found.\n", keywords_.asString("Method"));
-		return false;
-	}
+	if (method == RDFModule::nPartialsMethods) return Messenger::error("RDF: Invalid calculation method '%s' found.\n", keywords_.asString("Method"));
 	const bool allIntra = true;
 	const bool internalTest = keywords_.asBool("InternalTest");
 	const bool saveData = keywords_.asBool("Save");
