@@ -83,6 +83,7 @@ bool LayerEditor::setUp(DissolveWindow* dissolveWindow, ModuleLayer* moduleLayer
 		item->setText(0, module->type());
 		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsDragEnabled);
 		item->setData(0, Qt::UserRole, VariantPointer<const Module>(module));
+		item->setToolTip(0, module->brief());
 		item->addMimeString(MimeString::ModuleType, module->type());
 	}
 
