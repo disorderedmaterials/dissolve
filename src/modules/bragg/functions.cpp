@@ -47,7 +47,7 @@ bool BraggModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cfg,
 
 	// Realise the arrays from the Configuration
 	Array<KVector>& braggKVectors = GenericListHelper< Array<KVector> >::realise(cfg->moduleData(), "BraggKVectors");
-	Array<BraggReflection>& braggReflections = GenericListHelper< Array<BraggReflection> >::realise(cfg->moduleData(), "BraggReflections");
+	Array<BraggReflection>& braggReflections = GenericListHelper< Array<BraggReflection> >::realise(cfg->moduleData(), "BraggReflections", "", GenericItem::InRestartFileFlag);
 	Array2D<double>& braggAtomVectorXCos = GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "BraggAtomVectorXCos");
 	Array2D<double>& braggAtomVectorYCos = GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "BraggAtomVectorYCos");
 	Array2D<double>& braggAtomVectorZCos = GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "BraggAtomVectorZCos");
