@@ -1,6 +1,6 @@
 /*
-	*** Module Keyword - Data Store
-	*** src/modules/keywordtypes/datastore.h
+	*** Module Keyword - Data1D Store
+	*** src/modules/keywordtypes/data1dstore.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,24 +19,24 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEKEYWORD_DATASTORE_H
-#define DISSOLVE_MODULEKEYWORD_DATASTORE_H
+#ifndef DISSOLVE_MODULEKEYWORD_DATA1DSTORE_H
+#define DISSOLVE_MODULEKEYWORD_DATA1DSTORE_H
 
 #include "module/keyworddata.h"
 #include "module/keywordbase.h"
-#include "classes/datastore.h"
+#include "classes/data1dstore.h"
 
 // Forward Declarations
 /* none */
 
-// Keyword with a store of data
-class DataStoreModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<DataStore&>
+// Keyword with a store of Data1D
+class Data1DStoreModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<Data1DStore&>
 {
 	public:
 	// Constructor
-	DataStoreModuleKeyword(DataStore& dataStore);
+	Data1DStoreModuleKeyword(Data1DStore& dataStore);
 	// Destructor
-	~DataStoreModuleKeyword();
+	~Data1DStoreModuleKeyword();
 
 
 	/*

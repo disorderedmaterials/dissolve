@@ -23,7 +23,7 @@
 #define DISSOLVE_DATATESTMODULE_H
 
 #include "module/module.h"
-#include "classes/datastore.h"
+#include "classes/data1dstore.h"
 
 // Forward Declarations
 /* none */
@@ -85,7 +85,7 @@ class DataTestModule : public Module
 	// Target module containing / owning data to test
 	RefList<Module,bool> targetModule_;
 	// Test datasets
-	DataStore testData_;
+	Data1DStore testData_;
 
 
 	/*

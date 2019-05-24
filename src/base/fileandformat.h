@@ -33,6 +33,8 @@ class FileAndFormat
 	public:
 	// Constructor
 	FileAndFormat();
+	// Destructor
+	virtual ~FileAndFormat();
 	// Conversion to const char*
 	operator const char*() const;
 
@@ -94,6 +96,14 @@ class FileAndFormat
 	/*
 	 * Read / Write
 	 */
+	protected:
+	// Parse additional argument
+	virtual bool parseArgument(const char* arg);
+	// Return whether this file/format has any additional arguments to write
+	virtual bool hasAdditionalArguments() const;
+	// Return additional arguments as string
+	virtual const char* additionalArguments() const;
+
 	public:
 	// Read format / filename from specified parser
 	bool read(LineParser& parser, int startArg);

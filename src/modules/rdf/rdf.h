@@ -24,7 +24,7 @@
 
 #include "module/module.h"
 #include "classes/partialset.h"
-#include "classes/datastore.h"
+#include "classes/data1dstore.h"
 #include "math/pairbroadeningfunction.h"
 
 // Forward Declarations
@@ -96,7 +96,7 @@ class RDFModule : public Module
 	 */
 	private:
 	// Test data
-	DataStore testData_;
+	Data1DStore testData_;
 
 	private:
 	// Calculate partial g(r) in serial with simple double-loop
@@ -122,9 +122,9 @@ class RDFModule : public Module
 	// Test calculated partial against supplied reference data
 	static bool testReferencePartial(const PartialSet& partials, double testThreshold, const Data1D& testData, const char* typeIorTotal, const char* typeJ = NULL, const char* target = NULL);
 	// Test calculated vs reference data (two source sets)
-	static bool testReferencePartials(const DataStore& testData, double testThreshold, const PartialSet& partials, const char* prefix);
+	static bool testReferencePartials(const Data1DStore& testData, double testThreshold, const PartialSet& partials, const char* prefix);
 	// Test calculated vs reference data (two source sets)
-	static bool testReferencePartials(const DataStore& testData, double testThreshold, const PartialSet& partialsA, const char* prefixA, const PartialSet& partialsB, const char* prefixB);
+	static bool testReferencePartials(const Data1DStore& testData, double testThreshold, const PartialSet& partialsA, const char* prefixA, const PartialSet& partialsB, const char* prefixB);
 
 
 	/*

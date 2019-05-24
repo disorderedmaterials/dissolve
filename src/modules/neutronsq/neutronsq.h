@@ -26,7 +26,7 @@
 #include "modules/import/formats.h"
 #include "classes/partialset.h"
 #include "classes/isotopologuereference.h"
-#include "classes/datastore.h"
+#include "classes/data1dstore.h"
 
 // Forward Declarations
 class PartialSet;
@@ -115,7 +115,7 @@ class NeutronSQModule : public Module
 	 */
 	private:
 	// Test data
-	DataStore testData_;
+	Data1DStore testData_;
 
 	public:
 	// Calculate weighted g(r) from supplied unweighted g(r) and Weights

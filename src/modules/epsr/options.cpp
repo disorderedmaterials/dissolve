@@ -73,7 +73,7 @@ void EPSRModule::setUpKeywords()
 	// Test
 	group = addKeywordGroup("Test");
 	group->add(new BoolModuleKeyword(false), "Test", "Test against supplied reference data", "<True|False>");
-	group->add(new DataStoreModuleKeyword(testData_), "TestReference", "Specify test reference data", "<filename> <target> [xcol] [ycol]");
+	group->add(new Data1DStoreModuleKeyword(testData_), "TestReference", "Specify test reference data", "<target> <fileformat> <filename> [x=1] [y=2]");
 	group->add(new DoubleModuleKeyword(0.1, 1.0e-5), "TestThreshold", "Test threshold (%%error) above which test fails", "<threshold[0.1]>");
 
 	// Save

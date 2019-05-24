@@ -24,7 +24,7 @@
 
 #include "module/module.h"
 #include "module/groups.h"
-#include "classes/datastore.h"
+#include "classes/data1dstore.h"
 #include "math/data1d.h"
 #include "templates/array3d.h"
 
@@ -108,7 +108,7 @@ class EPSRModule : public Module
 	 */
 	private:
 	// Test datasets (if any)
-	DataStore testData_;
+	Data1DStore testData_;
 	// Target Modules, divided into groups
 	ModuleGroups groupedTargets_;
 	// Simulated data added as reference data

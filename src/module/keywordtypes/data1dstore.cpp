@@ -19,16 +19,16 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "module/keywordtypes/datastore.h"
+#include "module/keywordtypes/data1dstore.h"
 #include "base/lineparser.h"
 
 // Constructor
-DataStoreModuleKeyword::DataStoreModuleKeyword(DataStore& dataStore) : ModuleKeywordBase(ModuleKeywordBase::DataStoreData), ModuleKeywordData<DataStore&>(dataStore)
+Data1DStoreModuleKeyword::Data1DStoreModuleKeyword(Data1DStore& dataStore) : ModuleKeywordBase(ModuleKeywordBase::DataStoreData), ModuleKeywordData<Data1DStore&>(dataStore)
 {
 }
 
 // Destructor
-DataStoreModuleKeyword::~DataStoreModuleKeyword()
+Data1DStoreModuleKeyword::~Data1DStoreModuleKeyword()
 {
 }
 
@@ -37,7 +37,7 @@ DataStoreModuleKeyword::~DataStoreModuleKeyword()
  */
 
 // Return whether the current data value has ever been set
-bool DataStoreModuleKeyword::isSet()
+bool Data1DStoreModuleKeyword::isSet()
 {
 	return set_;
 }
@@ -47,33 +47,29 @@ bool DataStoreModuleKeyword::isSet()
  */
 
 // Return minimum number of arguments accepted
-int DataStoreModuleKeyword::minArguments()
+int Data1DStoreModuleKeyword::minArguments()
 {
-	// Must have filename and name of data
+	// Must have reference data name and format as a minimum
 	return 2;
 }
 
 // Return maximum number of arguments accepted
-int DataStoreModuleKeyword::maxArguments()
+int Data1DStoreModuleKeyword::maxArguments()
 {
-	// Filename, name of data, x column, y column
-	return 4;
+	// Filename, name of data, and other args
+	return 99;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool DataStoreModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+bool Data1DStoreModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	Messenger::print("Reading test data '%s' from file '%s'...\n", parser.argc(startArg), parser.argc(startArg+1));
 
-	// N+2 and N+3 arguments are x and y columns respectively (defaulting to 0,1 if not given)
-	int xcol = parser.hasArg(startArg+2) ? parser.argi(startArg+2)-1 : 0;
-	int ycol = parser.hasArg(startArg+3) ? parser.argi(startArg+3)-1 : 1;
+	// Target data is named as the first argument - a FileAndFormat specifies the rest...
+	Data1DImportFileFormat ff;
+	if (!ff.read(parser, startArg+1)) return false;
 
-	if (!data_.addData1D(procPool, parser.argc(startArg), parser.argc(startArg+1), xcol, ycol))
-	{
-		Messenger::error("Failed to add data.\n");
-		return false;
-	}
+	if (!data_.addData(procPool, ff, parser.argc(startArg))) return Messenger::error("Failed to add data.\n");
 
 	set_ = true;
 
@@ -81,14 +77,14 @@ bool DataStoreModuleKeyword::read(LineParser& parser, int startArg, const CoreDa
 }
 
 // Write keyword data to specified LineParser
-bool DataStoreModuleKeyword::write(LineParser& parser, const char* prefix)
+bool Data1DStoreModuleKeyword::write(LineParser& parser, const char* prefix)
 {
 	// Loop over list of one-dimensional data
-	RefListIterator<Data1D,FileReference> dataIterator(data_.data1DReferences());
+	RefListIterator<Data1D,Data1DImportFileFormat> dataIterator(data_.dataReferences());
 	while (Data1D* data = dataIterator.iterate())
 	{
-		FileReference ref = dataIterator.currentData();
-		if (!parser.writeLineF("%s%s  '%s'  '%s'  '%s'  %f\n", prefix, keyword(), ref.filename(), data->name(), ref.xColumn(), ref.yColumn())) return false;
+		Data1DImportFileFormat ff = dataIterator.currentData();
+		if (!parser.writeLineF("%s%s  '%s'  %s\n", prefix, keyword(), data->name(), ff.asString())) return false;
 	}
 
 	return true;

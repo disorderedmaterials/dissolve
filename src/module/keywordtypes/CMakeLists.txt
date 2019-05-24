@@ -5,7 +5,7 @@ add_library(keywordtypes
   broadeningfunction.cpp
   charstring.cpp
   complex.cpp
-  datastore.cpp
+  data1dstore.cpp
   double.cpp
   enumstring.cpp
   fileandformat.cpp
@@ -26,7 +26,7 @@ add_library(keywordtypes
   broadeningfunction.h
   charstring.h
   complex.h
-  datastore.h
+  data1dstore.h
   double.h
   enumstring.h
   fileandformat.h

@@ -890,12 +890,12 @@ bool RDFModule::testReferencePartial(const PartialSet& partials, double testThre
 }
 
 // Test calculated vs reference data (two source sets)
-bool RDFModule::testReferencePartials(const DataStore& testData, double testThreshold, const PartialSet& partials, const char* prefix)
+bool RDFModule::testReferencePartials(const Data1DStore& testData, double testThreshold, const PartialSet& partials, const char* prefix)
 {
 	LineParser parser;
 
 	// Loop over supplied test data and see if we can locate it amongst our PartialSets
-	ListIterator<Data1D> dataIterator(testData.data1D());
+	ListIterator<Data1D> dataIterator(testData.data());
 	while (Data1D* data = dataIterator.iterate())
 	{
 		// Grab the name, replace hyphens with '-', and parse the string into arguments
@@ -916,12 +916,12 @@ bool RDFModule::testReferencePartials(const DataStore& testData, double testThre
 }
 
 // Test calculated vs reference data (two source sets)
-bool RDFModule::testReferencePartials(const DataStore& testData, double testThreshold, const PartialSet& partialsA, const char* prefixA, const PartialSet& partialsB, const char* prefixB)
+bool RDFModule::testReferencePartials(const Data1DStore& testData, double testThreshold, const PartialSet& partialsA, const char* prefixA, const PartialSet& partialsB, const char* prefixB)
 {
 	LineParser parser;
 
 	// Loop over supplied test data and see if we can locate it amongst our PartialSets
-	ListIterator<Data1D> dataIterator(testData.data1D());
+	ListIterator<Data1D> dataIterator(testData.data());
 	while (Data1D* data = dataIterator.iterate())
 	{
 		// Grab the name, replace hyphens with '-', and parse the string into arguments

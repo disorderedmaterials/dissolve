@@ -25,7 +25,7 @@ add_library(classes
   configuration_sites.cpp
   configuration_upkeep.cpp
   coredata.cpp
-  datastore.cpp
+  data1dstore.cpp
   distributor.cpp
   empiricalformula.cpp
   energykernel.cpp
@@ -83,7 +83,7 @@ add_library(classes
   changestore.h
   configuration.h
   coredata.h
-  datastore.h
+  data1dstore.h
   distributor.h
   empiricalformula.h
   energykernel.h

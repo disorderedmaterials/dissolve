@@ -34,7 +34,7 @@
 #include "module/keywordtypes/broadeningfunction.h"
 #include "module/keywordtypes/charstring.h"
 #include "module/keywordtypes/complex.h"
-#include "module/keywordtypes/datastore.h"
+#include "module/keywordtypes/data1dstore.h"
 #include "module/keywordtypes/double.h"
 #include "module/keywordtypes/enumstring.h"
 #include "module/keywordtypes/fileandformat.h"
