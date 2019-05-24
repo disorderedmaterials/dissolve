@@ -71,10 +71,10 @@ bool BraggModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cfg,
 	rLengths.x *= multiplicity.x;
 	rLengths.y *= multiplicity.y;
 	rLengths.z *= multiplicity.z;
-	Messenger::print("Bragg: Reciprocal axes and lengths (accounting for multiplicity) are:\n");
-	Messenger::print("Bragg:        r(x) = %e %e %e (%e)\n", rAxes.columnAsVec3(0).x, rAxes.columnAsVec3(0).y, rAxes.columnAsVec3(0).z, rLengths.x);
-	Messenger::print("Bragg:        r(y) = %e %e %e (%e)\n", rAxes.columnAsVec3(1).x, rAxes.columnAsVec3(1).y, rAxes.columnAsVec3(1).z, rLengths.y);
-	Messenger::print("Bragg:        r(z) = %e %e %e (%e)\n", rAxes.columnAsVec3(2).x, rAxes.columnAsVec3(2).y, rAxes.columnAsVec3(2).z, rLengths.z);
+	Messenger::print("Reciprocal axes and lengths (accounting for multiplicity) are:\n");
+	Messenger::print("	r(x) = %e %e %e (%e)\n", rAxes.columnAsVec3(0).x, rAxes.columnAsVec3(0).y, rAxes.columnAsVec3(0).z, rLengths.x);
+	Messenger::print("	r(y) = %e %e %e (%e)\n", rAxes.columnAsVec3(1).x, rAxes.columnAsVec3(1).y, rAxes.columnAsVec3(1).z, rLengths.y);
+	Messenger::print("	r(z) = %e %e %e (%e)\n", rAxes.columnAsVec3(2).x, rAxes.columnAsVec3(2).y, rAxes.columnAsVec3(2).z, rLengths.z);
 
 	int n, m, h, k, l, kAbs, lAbs;
 	double* cosTermsH, *sinTermsH, *cosTermsK, *sinTermsK, *cosTermsL, *sinTermsL;
@@ -89,7 +89,7 @@ bool BraggModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cfg,
 	timer.start();
 	if (braggKVectors.nItems() == 0)
 	{
-		Messenger::print("Bragg: Performing initial set up of Bragg arrays...\n");
+		Messenger::print("Performing initial set up of Bragg arrays...\n");
 		timer.start();
 
 		double qMaxSq = qMax*qMax, qMinSQ = qMin*qMin;
@@ -171,8 +171,8 @@ bool BraggModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cfg,
 			braggReflections.add(tempReflections[n]);
 		}
 
-		Messenger::print("Bragg: Bragg calculation spans %i k-vectors (max HKL = %i x %i x %i) over %f <= Q <= %f (%s elapsed).\n", braggKVectors.nItems(), braggMaximumHKL.x, braggMaximumHKL.y, braggMaximumHKL.z, qMin, qMax, timer.elapsedTimeString());
-		Messenger::print("Bragg: %i unique Bragg reflections found using a Q resolution of %f Angstroms**-1.\n", braggReflections.nItems(), qDelta);
+		Messenger::print("Bragg calculation spans %i k-vectors (max HKL = %i x %i x %i) over %f <= Q <= %f (%s elapsed).\n", braggKVectors.nItems(), braggMaximumHKL.x, braggMaximumHKL.y, braggMaximumHKL.z, qMin, qMax, timer.elapsedTimeString());
+		Messenger::print("%i unique Bragg reflections found using a Q resolution of %f Angstroms**-1.\n", braggReflections.nItems(), qDelta);
 
 		// Create atom working arrays
 		braggAtomVectorXCos.initialise(nAtoms, braggMaximumHKL.x+1);
