@@ -1,6 +1,6 @@
 /*
-	*** BraggSQ Module - Core Functions
-	*** src/modules/braggsq/core.cpp
+	*** Bragg Module - Definition
+	*** src/modules/braggsq/definition.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,31 +19,28 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/braggsq/braggsq.h"
+#include "modules/bragg/bragg.h"
 
-/*
- * Constructor / Destructor
- */
-
-// Constructor
-BraggSQModule::BraggSQModule() : Module()
+// Return type of module
+const char* BraggModule::type() const
 {
-	// Set up variables / control parameters
-	setUpKeywords();
+	return "Bragg";
 }
 
-// Destructor
-BraggSQModule::~BraggSQModule()
+// Return category for module
+const char* BraggModule::category() const
 {
+	return "Correlation Functions";
 }
 
-/*
- * Instances
- */
-
-// Create instance of this module
-Module* BraggSQModule::createInstance() const
+// Return brief description of module
+const char* BraggModule::brief() const
 {
-	return new BraggSQModule;
+	return "Calculate Bragg scattering";
 }
 
+// Return the maximum number of Configurations the Module can target (or -1 for any number)
+int BraggModule::nTargetableConfigurations() const
+{
+	return (configurationLocal_ ? 1 : -1);
+}

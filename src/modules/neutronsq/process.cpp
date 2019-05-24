@@ -29,7 +29,7 @@
 #include "math/filters.h"
 #include "math/ft.h"
 #include "modules/import/import.h"
-#include "modules/braggsq/braggsq.h"
+#include "modules/bragg/bragg.h"
 #include "modules/rdf/rdf.h"
 #include "modules/sq/sq.h"
 #include "templates/genericlisthelper.h"
@@ -212,8 +212,8 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				for (int j=i; j<unweightedsq.nAtomTypes(); ++j) braggPartials.at(i,j).values() = 0.0;
 			}
 
-			// First, calculate the Bragg partials, placing them into the unweighted partials container
-			if (!BraggSQModule::calculateUnweightedBraggSQ(procPool, cfg, braggPartials)) return false;
+			// First, re-bin the reflection data into the arrays we have just set up
+			if (!BraggModule::reBinReflections(procPool, cfg, braggPartials)) return false;
 
 			// Apply necessary broadening
 			for (int i=0; i<unweightedsq.nAtomTypes(); ++i)

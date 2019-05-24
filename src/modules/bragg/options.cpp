@@ -1,5 +1,5 @@
 /*
-	*** BraggSQ Module - Options
+	*** Bragg Module - Options
 	*** src/modules/braggsq/options.cpp
 	Copyright T. Youngs 2012-2019
 
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/braggsq/braggsq.h"
+#include "modules/bragg/bragg.h"
 #include "module/keywordtypes.h"
 #include "main/dissolve.h"
 #include "math/averaging.h"
@@ -29,7 +29,7 @@
 #include "templates/genericlisthelper.h"
 
 // Set up keywords for Module
-void BraggSQModule::setUpKeywords()
+void BraggModule::setUpKeywords()
 {
 	frequency_ = 5;
 
@@ -47,7 +47,7 @@ void BraggSQModule::setUpKeywords()
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int BraggSQModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
+int BraggModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
 	return -1;
 }

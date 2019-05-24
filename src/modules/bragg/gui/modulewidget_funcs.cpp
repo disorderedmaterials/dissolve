@@ -19,17 +19,17 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/braggsq/gui/modulewidget.h"
+#include "modules/bragg/gui/modulewidget.h"
 #include "gui/viewer/dataviewer.hui"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
-#include "modules/braggsq/braggsq.h"
+#include "modules/bragg/bragg.h"
 #include "classes/atomtype.h"
 #include "templates/variantpointer.h"
 #include "templates/genericlisthelper.h"
 
 // Constructor
-BraggSQModuleWidget::BraggSQModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_((BraggSQModule*) module), dissolve_(dissolve)
+BraggModuleWidget::BraggModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_((BraggModule*) module), dissolve_(dissolve)
 {
 	// Set up user interface
 	ui.setupUi(this);
@@ -67,12 +67,12 @@ BraggSQModuleWidget::BraggSQModuleWidget(QWidget* parent, Module* module, Dissol
 	setGraphDataTargets();
 }
 
-BraggSQModuleWidget::~BraggSQModuleWidget()
+BraggModuleWidget::~BraggModuleWidget()
 {
 }
 
 // Update controls within widget
-void BraggSQModuleWidget::updateControls()
+void BraggModuleWidget::updateControls()
 {
 	ui.ReflectionsPlotWidget->updateToolbar();
 	ui.TotalsPlotWidget->updateToolbar();
@@ -82,12 +82,12 @@ void BraggSQModuleWidget::updateControls()
 }
 
 // Disable sensitive controls within widget, ready for main code to run
-void BraggSQModuleWidget::disableSensitiveControls()
+void BraggModuleWidget::disableSensitiveControls()
 {
 }
 
 // Enable sensitive controls within widget, ready for main code to run
-void BraggSQModuleWidget::enableSensitiveControls()
+void BraggModuleWidget::enableSensitiveControls()
 {
 }
 
@@ -96,7 +96,7 @@ void BraggSQModuleWidget::enableSensitiveControls()
  */
 
 // Write widget state through specified LineParser
-bool BraggSQModuleWidget::writeState(LineParser& parser)
+bool BraggModuleWidget::writeState(LineParser& parser)
 {
 	// Write DataViewer sessions
 	if (!reflectionsGraph_->writeSession(parser)) return false;
@@ -106,7 +106,7 @@ bool BraggSQModuleWidget::writeState(LineParser& parser)
 }
 
 // Read widget state through specified LineParser
-bool BraggSQModuleWidget::readState(LineParser& parser)
+bool BraggModuleWidget::readState(LineParser& parser)
 {
 	// Read DataViewer sessions
 	if (!reflectionsGraph_->readSession(parser)) return false;
@@ -120,7 +120,7 @@ bool BraggSQModuleWidget::readState(LineParser& parser)
  */
 
 // Set data targets in graphs
-void BraggSQModuleWidget::setGraphDataTargets()
+void BraggModuleWidget::setGraphDataTargets()
 {
 	if (!module_) return;
 
@@ -135,12 +135,12 @@ void BraggSQModuleWidget::setGraphDataTargets()
 	while (Configuration* cfg = configIterator.iterate())
 	{
 		// Original F(Q)
-		Renderable* originalFQ = totalsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//OriginalBraggFQ//Total", cfg->niceName()), cfg->niceName(), cfg->niceName());
+		Renderable* originalFQ = totalsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//OriginalBraggTotal//Total", cfg->niceName()), cfg->niceName(), cfg->niceName());
 		totalsGraph_->groupManager().addToGroup(originalFQ, cfg->niceName());
 	}
 }
 
-void BraggSQModuleWidget::on_TargetCombo_currentIndexChanged(int index)
+void BraggModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 {
 	// Remove any current data
 	reflectionsGraph_->clearRenderables();
@@ -160,7 +160,7 @@ void BraggSQModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 			CharString id("%s-%s", at1->name(), at2->name());
 
 			// Original S(Q)
-			Renderable* originalSQ = reflectionsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//OriginalBraggSQ//%s-%s", currentConfiguration_->niceName(), at1->name(), at2->name()), CharString("Full//%s", id.get()), id.get());
+			Renderable* originalSQ = reflectionsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//OriginalBragg//%s-%s", currentConfiguration_->niceName(), at1->name(), at2->name()), CharString("Full//%s", id.get()), id.get());
 			reflectionsGraph_->groupManager().addToGroup(originalSQ, id.get());
 		}
 	}

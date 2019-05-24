@@ -1,5 +1,5 @@
 /*
-	*** BraggSQ Module - Processing
+	*** Bragg Module - Processing
 	*** src/modules/braggsq/process.cpp
 	Copyright T. Youngs 2012-2019
 
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/braggsq/braggsq.h"
+#include "modules/bragg/bragg.h"
 #include "main/dissolve.h"
 #include "math/averaging.h"
 #include "classes/box.h"
@@ -29,7 +29,7 @@
 #include "templates/genericlisthelper.h"
 
 // Run main processing
-bool BraggSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
+bool BraggModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {
 	/*
 	 * Calculate Bragg contributions.
@@ -56,10 +56,10 @@ bool BraggSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	const bool saveReflections = keywords_.asBool("SaveReflections");
 
 	// Print argument/parameter summary
-	Messenger::print("BraggSQ: Calculating Bragg S(Q) over %f < Q < %f Angstroms**-1 using bin size of %f Angstroms**-1.\n", qMin, qMax, qDelta);
-	Messenger::print("BraggSQ: Multiplicity is (%i %i %i).\n", multiplicity.x, multiplicity.y, multiplicity.z);
-	if (averaging <= 1) Messenger::print("BraggSQ: No averaging of reflections will be performed.\n");
-	else Messenger::print("BraggSQ: Reflections will be averaged over %i sets (scheme = %s).\n", averaging, Averaging::averagingSchemes().option(averagingScheme));
+	Messenger::print("Bragg: Calculating Bragg S(Q) over %f < Q < %f Angstroms**-1 using bin size of %f Angstroms**-1.\n", qMin, qMax, qDelta);
+	Messenger::print("Bragg: Multiplicity is (%i %i %i).\n", multiplicity.x, multiplicity.y, multiplicity.z);
+	if (averaging <= 1) Messenger::print("Bragg: No averaging of reflections will be performed.\n");
+	else Messenger::print("Bragg: Reflections will be averaged over %i sets (scheme = %s).\n", averaging, Averaging::averagingSchemes().option(averagingScheme));
 	Messenger::print("\n");
 
 	/*
@@ -89,8 +89,8 @@ bool BraggSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			Averaging::arrayAverage< Array<BraggReflection> >(cfg->moduleData(), "BraggReflections", "", averaging, averagingScheme);
 		}
 
-		// Form partial Bragg S(Q)
-		formBraggSQ(procPool, cfg, qMin, qDelta, qMax);
+		// Form partial and total reflection functions
+		formReflectionFunctions(procPool, cfg, qMin, qDelta, qMax);
 
 		// Save reflection data?
 		if (saveReflections)

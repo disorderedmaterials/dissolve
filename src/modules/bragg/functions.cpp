@@ -1,5 +1,5 @@
 /*
-	*** BraggSQ Module - Functions
+	*** Bragg Module - Functions
 	*** src/modules/braggsq/functions.cpp
 	Copyright T. Youngs 2012-2019
 
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/braggsq/braggsq.h"
+#include "modules/bragg/bragg.h"
 #include "classes/configuration.h"
 #include "classes/atom.h"
 #include "classes/box.h"
@@ -38,7 +38,7 @@
  */
 
 // Calculate unweighted Bragg scattering for specified Configuration
-bool BraggSQModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cfg, const double qMin, const double qDelta, const double qMax, Vec3<int> multiplicity, bool& alreadyUpToDate)
+bool BraggModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cfg, const double qMin, const double qDelta, const double qMax, Vec3<int> multiplicity, bool& alreadyUpToDate)
 {
 	// Check to see if the arrays are up-to-date
 	int braggDataVersion = GenericListHelper<int>::retrieve(cfg->moduleData(), "BraggVersion", "", -1);
@@ -71,10 +71,10 @@ bool BraggSQModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cf
 	rLengths.x *= multiplicity.x;
 	rLengths.y *= multiplicity.y;
 	rLengths.z *= multiplicity.z;
-	Messenger::print("BraggSQ: Reciprocal axes and lengths (accounting for multiplicity) are:\n");
-	Messenger::print("BraggSQ:        r(x) = %e %e %e (%e)\n", rAxes.columnAsVec3(0).x, rAxes.columnAsVec3(0).y, rAxes.columnAsVec3(0).z, rLengths.x);
-	Messenger::print("BraggSQ:        r(y) = %e %e %e (%e)\n", rAxes.columnAsVec3(1).x, rAxes.columnAsVec3(1).y, rAxes.columnAsVec3(1).z, rLengths.y);
-	Messenger::print("BraggSQ:        r(z) = %e %e %e (%e)\n", rAxes.columnAsVec3(2).x, rAxes.columnAsVec3(2).y, rAxes.columnAsVec3(2).z, rLengths.z);
+	Messenger::print("Bragg: Reciprocal axes and lengths (accounting for multiplicity) are:\n");
+	Messenger::print("Bragg:        r(x) = %e %e %e (%e)\n", rAxes.columnAsVec3(0).x, rAxes.columnAsVec3(0).y, rAxes.columnAsVec3(0).z, rLengths.x);
+	Messenger::print("Bragg:        r(y) = %e %e %e (%e)\n", rAxes.columnAsVec3(1).x, rAxes.columnAsVec3(1).y, rAxes.columnAsVec3(1).z, rLengths.y);
+	Messenger::print("Bragg:        r(z) = %e %e %e (%e)\n", rAxes.columnAsVec3(2).x, rAxes.columnAsVec3(2).y, rAxes.columnAsVec3(2).z, rLengths.z);
 
 	int n, m, h, k, l, kAbs, lAbs;
 	double* cosTermsH, *sinTermsH, *cosTermsK, *sinTermsK, *cosTermsL, *sinTermsL;
@@ -89,7 +89,7 @@ bool BraggSQModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cf
 	timer.start();
 	if (braggKVectors.nItems() == 0)
 	{
-		Messenger::print("BraggSQ: Performing initial set up of Bragg arrays...\n");
+		Messenger::print("Bragg: Performing initial set up of Bragg arrays...\n");
 		timer.start();
 
 		double qMaxSq = qMax*qMax, qMinSQ = qMin*qMin;
@@ -171,8 +171,8 @@ bool BraggSQModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cf
 			braggReflections.add(tempReflections[n]);
 		}
 
-		Messenger::print("BraggSQ: Bragg calculation spans %i k-vectors (max HKL = %i x %i x %i) over %f <= Q <= %f (%s elapsed).\n", braggKVectors.nItems(), braggMaximumHKL.x, braggMaximumHKL.y, braggMaximumHKL.z, qMin, qMax, timer.elapsedTimeString());
-		Messenger::print("BraggSQ: %i unique Bragg reflections found using a Q resolution of %f Angstroms**-1.\n", braggReflections.nItems(), qDelta);
+		Messenger::print("Bragg: Bragg calculation spans %i k-vectors (max HKL = %i x %i x %i) over %f <= Q <= %f (%s elapsed).\n", braggKVectors.nItems(), braggMaximumHKL.x, braggMaximumHKL.y, braggMaximumHKL.z, qMin, qMax, timer.elapsedTimeString());
+		Messenger::print("Bragg: %i unique Bragg reflections found using a Q resolution of %f Angstroms**-1.\n", braggReflections.nItems(), qDelta);
 
 		// Create atom working arrays
 		braggAtomVectorXCos.initialise(nAtoms, braggMaximumHKL.x+1);
@@ -319,8 +319,8 @@ bool BraggSQModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cf
 	return true;
 }
 
-// Form Bragg partials from pre-stored BraggReflection data
-bool BraggSQModule::formBraggSQ(ProcessPool& procPool, Configuration* cfg, const double qMin, const double qDelta, const double qMax)
+// Form partial and total reflection functions from calculated reflection data
+bool BraggModule::formReflectionFunctions(ProcessPool& procPool, Configuration* cfg, const double qMin, const double qDelta, const double qMax)
 {
 	// Retrieve BraggReflection data from the Configuration's module data
 	bool found = false;
@@ -331,11 +331,11 @@ bool BraggSQModule::formBraggSQ(ProcessPool& procPool, Configuration* cfg, const
 	// Realise / retrieve storage for the Bragg partial S(Q) and combined F(Q)
 	const int nTypes = cfg->nUsedAtomTypes();
 	bool wasCreated;
-	Array2D<Data1D>& braggSQ = GenericListHelper< Array2D<Data1D> >::realise(cfg->moduleData(), "OriginalBraggSQ", "", GenericItem::InRestartFileFlag, &wasCreated);
+	Array2D<Data1D>& braggPartials = GenericListHelper< Array2D<Data1D> >::realise(cfg->moduleData(), "OriginalBragg", "", GenericItem::InRestartFileFlag, &wasCreated);
 	if (wasCreated)
 	{
 		// Create the triangular array
-		braggSQ.initialise(nTypes, nTypes, true);
+		braggPartials.initialise(nTypes, nTypes, true);
 	
 		// Generate empty Data1D over the Q range specified, setting bin centres
 		Data1D temp;
@@ -347,14 +347,14 @@ bool BraggSQModule::formBraggSQ(ProcessPool& procPool, Configuration* cfg, const
 		}
 
 		// Set up Data1D array with our empty data
-		for (int n=0; n<braggSQ.linearArraySize(); ++n) braggSQ.linearArray()[n] = temp;
+		for (int n=0; n<braggPartials.linearArraySize(); ++n) braggPartials.linearArray()[n] = temp;
 	}
-	Data1D& braggFQ = GenericListHelper<Data1D>::realise(cfg->moduleData(), "OriginalBraggFQ", "", GenericItem::InRestartFileFlag, &wasCreated);
-	if (wasCreated) braggFQ.setObjectTag(CharString("%s//OriginalBraggFQ//Total", cfg->niceName()));
-	braggFQ.clear();
+	Data1D& braggTotal = GenericListHelper<Data1D>::realise(cfg->moduleData(), "OriginalBraggTotal", "", GenericItem::InRestartFileFlag, &wasCreated);
+	if (wasCreated) braggTotal.setObjectTag(CharString("%s//OriginalBragg//Total", cfg->niceName()));
+	braggTotal.clear();
 
 	// Zero Bragg partials
-	for (int n=0; n<braggSQ.linearArraySize(); ++n) braggSQ.linearArray()[n].values() = 0.0;
+	for (int n=0; n<braggPartials.linearArraySize(); ++n) braggPartials.linearArray()[n].values() = 0.0;
 
 	// Loop over pairs of atom types, adding in contributions from our calculated BraggReflections
 	double qCentre, inten, factor;
@@ -366,8 +366,8 @@ bool BraggSQModule::formBraggSQ(ProcessPool& procPool, Configuration* cfg, const
 		for (int typeJ = typeI; typeJ < nTypes; ++typeJ, atd2 = atd2->next)
 		{
 			// Retrieve partial container and make sure its object tag is set
-			Data1D& partial = braggSQ.at(typeI, typeJ);
-			partial.setObjectTag(CharString("%s//OriginalBraggSQ//%s-%s", cfg->niceName(), atd1->atomTypeName(), atd2->atomTypeName()));
+			Data1D& partial = braggPartials.at(typeI, typeJ);
+			partial.setObjectTag(CharString("%s//OriginalBragg//%s-%s", cfg->niceName(), atd1->atomTypeName(), atd2->atomTypeName()));
 
 			// Loop over defined Bragg reflections
 			for (int n=0; n<nReflections; ++n)
@@ -384,15 +384,15 @@ bool BraggSQModule::formBraggSQ(ProcessPool& procPool, Configuration* cfg, const
 			}
 
 			// Add this partial into the total function
-			braggFQ += partial;
+			braggTotal += partial;
 		}
 	}
 
 	return true;
 }
 
-// Calculate unweighted Bragg partials from calculated reflection data, summing in to supplied array
-bool BraggSQModule::calculateUnweightedBraggSQ(ProcessPool& procPool, Configuration* cfg, Array2D< Data1D >& braggPartials)
+// Re-bin reflection data into supplied arrays
+bool BraggModule::reBinReflections(ProcessPool& procPool, Configuration* cfg, Array2D<Data1D>& braggPartials)
 {
 	// Retrieve BraggReflection data from the Configuration's module data
 	bool found = false;

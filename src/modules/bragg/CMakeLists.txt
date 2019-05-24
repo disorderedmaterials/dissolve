@@ -1,16 +1,16 @@
 # Main Module Library
-add_library(braggsqmodule
+add_library(braggmodule
   core.cpp
   definition.cpp
   functions.cpp
   options.cpp
   process.cpp
 
-  braggsq.h
+  bragg.h
 )
 
 # 'nogui' library
-add_library(braggsqmodulenogui
+add_library(braggmodulenogui
   nogui.cpp
 )
 

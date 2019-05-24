@@ -1,6 +1,6 @@
 /*
-	*** BraggSQ Module
-	*** src/modules/braggsq/braggsq.h
+	*** Bragg Module
+	*** src/modules/bragg/bragg.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_BRAGGSQMODULE_H
-#define DISSOLVE_BRAGGSQMODULE_H
+#ifndef DISSOLVE_BRAGGMODULE_H
+#define DISSOLVE_BRAGGMODULE_H
 
 #include "module/module.h"
 #include "math/broadeningfunction.h"
@@ -33,13 +33,13 @@ class PartialSet;
 class Weights;
 
 // Bragg Module
-class BraggSQModule : public Module
+class BraggModule : public Module
 {
 	public:
 	// Constructor
-	BraggSQModule();
+	BraggModule();
 	// Destructor
-	~BraggSQModule();
+	~BraggModule();
 
 
 	/*
@@ -88,10 +88,10 @@ class BraggSQModule : public Module
 	public:
 	// Calculate Bragg terms for specified Configuration
 	bool calculateBraggTerms(ProcessPool& procPool, Configuration* cfg, const double qMin, const double qDelta, const double qMax, Vec3<int> multiplicity, bool& alreadyUpToDate);
-	// Form Bragg partials from calculated reflection data
-	bool formBraggSQ(ProcessPool& procPool, Configuration* cfg, const double qMin, const double qDelta, const double qMax);
-	// Calculate unweighted Bragg partials from calculated reflection data, summing in to supplied array
-	static bool calculateUnweightedBraggSQ(ProcessPool& procPool, Configuration* cfg, Array2D< Data1D >& braggPartials);
+	// Form partial and total reflection functions from calculated reflection data
+	bool formReflectionFunctions(ProcessPool& procPool, Configuration* cfg, const double qMin, const double qDelta, const double qMax);
+	// Re-bin reflection data into supplied arrays
+	static bool reBinReflections(ProcessPool& procPool, Configuration* cfg, Array2D<Data1D>& braggPartials);
 
 
 	/*
