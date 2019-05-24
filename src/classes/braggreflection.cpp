@@ -20,6 +20,8 @@
 */
 
 #include "classes/braggreflection.h"
+#include "genericitems/array2ddouble.h"
+#include "base/lineparser.h"
 #include "base/processpool.h"
 
 // Constructor
@@ -163,6 +165,33 @@ int BraggReflection::nKVectors() const
 const char* BraggReflection::itemClassName()
 {
 	return "BraggReflection";
+}
+
+// Read data through specified parser
+bool BraggReflection::read(LineParser& parser, const CoreData& coreData)
+{
+	// Read index, Q centre, and number of contributing K-vectors
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	index_ = parser.argi(0);
+	q_ = parser.argd(1);
+	nKVectors_ = parser.argi(2);
+
+	// Read intensities array
+	if (!GenericItemContainer< Array2D<double> >::read(intensities_, parser)) return false;
+
+	return true;
+}
+
+// Write data through specified parser
+bool BraggReflection::write(LineParser& parser)
+{
+	// Write index, Q centre, and number of contributing K-vectors
+	if (!parser.writeLineF("%i  %f  %i\n", index_, q_, nKVectors_)) return false;
+
+	// Write intensities array
+	if (!GenericItemContainer< Array2D<double> >::write(intensities_, parser)) return false;
+
+	return true;
 }
 
 /*

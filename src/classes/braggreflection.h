@@ -25,6 +25,7 @@
 #include "templates/array2d.h"
 #include "templates/mpilistitem.h"
 #include "base/genericitembase.h"
+#include "base/lineparser.h"
 
 // Forward Declarations
 /* none */
@@ -94,6 +95,10 @@ class BraggReflection : public MPIListItem<BraggReflection>,  public GenericItem
 	public:
 	// Return class name
 	static const char* itemClassName();
+	// Read data through specified parser
+	bool read(LineParser& parser, const CoreData& coreData);
+	// Write data through specified parser
+	bool write(LineParser& parser);
 
 
 	/*
