@@ -50,6 +50,25 @@ void BraggReflection::operator=(const BraggReflection& source)
 	nKVectors_ = source.nKVectors_;
 }
 
+// Operator+= (intensity addition)
+void BraggReflection::operator+=(const BraggReflection& source)
+{
+	// If we have no intensities array, just copy the source's array
+	if (intensities_.nRows() == 0) intensities_ = source.intensities_;
+	else intensities_ += source.intensities_;
+
+	// Copy other data to ensure completeness
+	q_ = source.q_;
+	index_ = source.index_;
+	nKVectors_ = source.nKVectors_;
+}
+
+// Operator*= (intensity scaling)
+void BraggReflection::operator*=(double scale)
+{
+	intensities_ *= scale;
+}
+
 /*
  * Data
  */
@@ -82,7 +101,7 @@ int BraggReflection::index() const
 }
 
 // Reset stored intensities
-void BraggReflection::resetIntensities()
+void BraggReflection::reset()
 {
 	intensities_ = 0.0;
 	nKVectors_ = 0;

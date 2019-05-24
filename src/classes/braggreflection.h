@@ -44,6 +44,10 @@ class BraggReflection : public MPIListItem<BraggReflection>,  public GenericItem
 	BraggReflection(const BraggReflection& source);
 	// Operator=
 	void operator=(const BraggReflection& source);
+	// Operator+= (intensity addition)
+	void operator+=(const BraggReflection& source);
+	// Operator*= (intensity scaling)
+	void operator*=(double factor);
 
 
 	/*
@@ -69,7 +73,7 @@ class BraggReflection : public MPIListItem<BraggReflection>,  public GenericItem
 	// Return index
 	int index() const;
 	// Reset stored intensities
-	void resetIntensities();
+	void reset();
 	// Add intensity between specified atomtypes from k-vector
 	void addIntensity(int typeI, int typeJ, double intensity);
 	// Scale intensities between all atom types by factor provided

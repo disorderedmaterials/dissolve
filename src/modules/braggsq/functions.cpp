@@ -297,7 +297,7 @@ bool BraggSQModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cf
 	// Zero Bragg reflection intensities
 	BraggReflection* reflections = braggReflections.array();
 	int nReflections = braggReflections.nItems();
-	for (m=0; m<nReflections; ++m) reflections[m].resetIntensities();
+	for (m=0; m<nReflections; ++m) reflections[m].reset();
 
 	// Calculate intensities for individual KVectors - this will be automatically summed into the corresponding BraggReflection
 	for (m = 0; m < nKVectors; ++m) kVectors[m].calculateIntensities(reflections);
