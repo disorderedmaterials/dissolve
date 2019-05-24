@@ -43,7 +43,7 @@ class BraggSQModuleWidget : public ModuleWidget
 	// Associated Module
 	BraggSQModule* module_;
 	// DataViewers contained within this widget
-	DataViewer* sqGraph_, *fqGraph_;
+	DataViewer* reflectionsGraph_, *totalsGraph_;
 	// Reference to Dissolve
 	Dissolve& dissolve_;
 

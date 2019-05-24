@@ -45,9 +45,9 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="BraggSQTab">
+     <widget class="QWidget" name="ReflectionsTab">
       <attribute name="title">
-       <string>Partial g(r)</string>
+       <string>Reflections</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <property name="spacing">
@@ -66,7 +66,7 @@
         <number>4</number>
        </property>
        <item>
-        <widget class="QFrame" name="BraggSQPlotFrame">
+        <widget class="QFrame" name="ReflectionsPlotFrame">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>6</horstretch>
@@ -102,7 +102,7 @@
            <widget class="QComboBox" name="TargetCombo"/>
           </item>
           <item>
-           <widget class="DataWidget" name="BraggSQPlotWidget" native="true">
+           <widget class="DataWidget" name="ReflectionsPlotWidget" native="true">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -137,7 +137,7 @@
         <number>4</number>
        </property>
        <item>
-        <widget class="QFrame" name="BraggFQPlotFrame">
+        <widget class="QFrame" name="TotalsPlotFrame">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -170,7 +170,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="DataWidget" name="BraggFQPlotWidget" native="true"/>
+           <widget class="DataWidget" name="TotalsPlotWidget" native="true"/>
           </item>
          </layout>
         </widget>

@@ -34,29 +34,29 @@ BraggSQModuleWidget::BraggSQModuleWidget(QWidget* parent, Module* module, Dissol
 	// Set up user interface
 	ui.setupUi(this);
 
-	// Set up Bragg S(Q) graph
+	// Set up Bragg reflections graph
 
-	sqGraph_ = ui.BraggSQPlotWidget->dataViewer();
+	reflectionsGraph_ = ui.ReflectionsPlotWidget->dataViewer();
 
-	sqGraph_->view().setViewType(View::FlatXYView);
-	sqGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
-	sqGraph_->view().axes().setMax(0, 10.0);
-	sqGraph_->view().axes().setTitle(1, "Intensity");
-	sqGraph_->view().axes().setMin(1, -1.0);
-	sqGraph_->view().axes().setMax(1, 1.0);
-	sqGraph_->view().setAutoFollowType(View::AllAutoFollow);
+	reflectionsGraph_->view().setViewType(View::FlatXYView);
+	reflectionsGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
+	reflectionsGraph_->view().axes().setMax(0, 10.0);
+	reflectionsGraph_->view().axes().setTitle(1, "Intensity");
+	reflectionsGraph_->view().axes().setMin(1, -1.0);
+	reflectionsGraph_->view().axes().setMax(1, 1.0);
+	reflectionsGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Set up total G(r) graph
 
-	fqGraph_ = ui.BraggFQPlotWidget->dataViewer();
+	totalsGraph_ = ui.TotalsPlotWidget->dataViewer();
 
-	fqGraph_->view().setViewType(View::FlatXYView);
-	fqGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
-	fqGraph_->view().axes().setMax(0, 10.0);
-	fqGraph_->view().axes().setTitle(1, "Intensity");
-	fqGraph_->view().axes().setMin(1, -1.0);
-	fqGraph_->view().axes().setMax(1, 1.0);
-	fqGraph_->view().setAutoFollowType(View::AllAutoFollow);
+	totalsGraph_->view().setViewType(View::FlatXYView);
+	totalsGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
+	totalsGraph_->view().axes().setMax(0, 10.0);
+	totalsGraph_->view().axes().setTitle(1, "Intensity");
+	totalsGraph_->view().axes().setMin(1, -1.0);
+	totalsGraph_->view().axes().setMax(1, 1.0);
+	totalsGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	refreshing_ = false;
 
@@ -74,11 +74,11 @@ BraggSQModuleWidget::~BraggSQModuleWidget()
 // Update controls within widget
 void BraggSQModuleWidget::updateControls()
 {
-	ui.BraggSQPlotWidget->updateToolbar();
-	ui.BraggFQPlotWidget->updateToolbar();
+	ui.ReflectionsPlotWidget->updateToolbar();
+	ui.TotalsPlotWidget->updateToolbar();
 
-	sqGraph_->postRedisplay();
-	fqGraph_->postRedisplay();
+	reflectionsGraph_->postRedisplay();
+	totalsGraph_->postRedisplay();
 }
 
 // Disable sensitive controls within widget, ready for main code to run
@@ -99,8 +99,8 @@ void BraggSQModuleWidget::enableSensitiveControls()
 bool BraggSQModuleWidget::writeState(LineParser& parser)
 {
 	// Write DataViewer sessions
-	if (!sqGraph_->writeSession(parser)) return false;
-	if (!fqGraph_->writeSession(parser)) return false;
+	if (!reflectionsGraph_->writeSession(parser)) return false;
+	if (!totalsGraph_->writeSession(parser)) return false;
 
 	return true;
 }
@@ -109,8 +109,8 @@ bool BraggSQModuleWidget::writeState(LineParser& parser)
 bool BraggSQModuleWidget::readState(LineParser& parser)
 {
 	// Read DataViewer sessions
-	if (!sqGraph_->readSession(parser)) return false;
-	if (!fqGraph_->readSession(parser)) return false;
+	if (!reflectionsGraph_->readSession(parser)) return false;
+	if (!totalsGraph_->readSession(parser)) return false;
 
 	return true;
 }
@@ -135,15 +135,15 @@ void BraggSQModuleWidget::setGraphDataTargets()
 	while (Configuration* cfg = configIterator.iterate())
 	{
 		// Original F(Q)
-		Renderable* originalFQ = fqGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//OriginalBraggFQ//Total", cfg->niceName()), cfg->niceName(), cfg->niceName());
-		fqGraph_->groupManager().addToGroup(originalFQ, cfg->niceName());
+		Renderable* originalFQ = totalsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//OriginalBraggFQ//Total", cfg->niceName()), cfg->niceName(), cfg->niceName());
+		totalsGraph_->groupManager().addToGroup(originalFQ, cfg->niceName());
 	}
 }
 
 void BraggSQModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 {
 	// Remove any current data
-	sqGraph_->clearRenderables();
+	reflectionsGraph_->clearRenderables();
 
 	// Get target Configuration
 	currentConfiguration_ = (Configuration*) VariantPointer<Configuration>(ui.TargetCombo->itemData(index));
@@ -160,8 +160,8 @@ void BraggSQModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 			CharString id("%s-%s", at1->name(), at2->name());
 
 			// Original S(Q)
-			Renderable* originalSQ = sqGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//OriginalBraggSQ//%s-%s", currentConfiguration_->niceName(), at1->name(), at2->name()), CharString("Full//%s", id.get()), id.get());
-			sqGraph_->groupManager().addToGroup(originalSQ, id.get());
+			Renderable* originalSQ = reflectionsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//OriginalBraggSQ//%s-%s", currentConfiguration_->niceName(), at1->name(), at2->name()), CharString("Full//%s", id.get()), id.get());
+			reflectionsGraph_->groupManager().addToGroup(originalSQ, id.get());
 		}
 	}
 }
