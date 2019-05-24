@@ -24,6 +24,7 @@
 
 #include "module/keyworddata.h"
 #include "module/keywordbase.h"
+#include "base/enumoptions.h"
 
 // Forward Declarations
 /* none */
@@ -34,6 +35,7 @@ class EnumStringModuleKeyword : public ModuleKeywordBase, public ModuleKeywordDa
 	public:
 	// Constructor
 	EnumStringModuleKeyword(int value, int nOptions, const char** options);
+	EnumStringModuleKeyword(EnumOptionsBase options);
 	// Destructor
 	~EnumStringModuleKeyword();
 

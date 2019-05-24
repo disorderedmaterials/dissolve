@@ -1,6 +1,7 @@
 noinst_LTLIBRARIES = libmath.la
 
-libmath_la_SOURCES = broadeningfunction.cpp
+libmath_la_SOURCES = averaging.cpp
+libmath_la_SOURCES += broadeningfunction.cpp
 libmath_la_SOURCES += cuboid.cpp
 libmath_la_SOURCES += data1d.cpp data2d.cpp data3d.cpp doubleexp.cpp
 libmath_la_SOURCES += error.cpp
@@ -15,7 +16,8 @@ libmath_la_SOURCES += transformer.cpp
 libmath_la_SOURCES += sampleddouble.cpp svd.cpp
 libmath_la_SOURCES += windowfunction.cpp
 
-noinst_HEADERS = broadeningfunction.h
+noinst_HEADERS = averaging.h
+noinst_HEADERS += broadeningfunction.h
 noinst_HEADERS += constants.h cuboid.h
 noinst_HEADERS += data1d.h data2d.h data3d.h doubleexp.h
 noinst_HEADERS += error.h
