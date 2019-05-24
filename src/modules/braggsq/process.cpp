@@ -21,6 +21,7 @@
 
 #include "modules/braggsq/braggsq.h"
 #include "main/dissolve.h"
+#include "math/averaging.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
@@ -44,6 +45,9 @@ bool BraggSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		return true;
 	}
 
+	const int averaging = keywords_.asInt("Averaging");
+	Averaging::AveragingScheme averagingScheme = Averaging::averagingSchemes().option(keywords_.asString("AveragingScheme"));
+	if (averagingScheme == Averaging::nAveragingSchemes) return Messenger::error("Invalid averaging scheme '%s' found.\n", keywords_.asString("AveragingScheme"));
 	const double qDelta = keywords_.asDouble("QDelta");
 	const double qMax = keywords_.asDouble("QMax");
 	const double qMin = keywords_.asDouble("QMin");
@@ -54,6 +58,8 @@ bool BraggSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	// Print argument/parameter summary
 	Messenger::print("BraggSQ: Calculating Bragg S(Q) over %f < Q < %f Angstroms**-1 using bin size of %f Angstroms**-1.\n", qMin, qMax, qDelta);
 	Messenger::print("BraggSQ: Multiplicity is (%i %i %i).\n", multiplicity.x, multiplicity.y, multiplicity.z);
+	if (averaging <= 1) Messenger::print("BraggSQ: No averaging of reflections will be performed.\n");
+	else Messenger::print("BraggSQ: Reflections will be averaged over %i sets (scheme = %s).\n", averaging, Averaging::averagingSchemes().option(averagingScheme));
 	Messenger::print("\n");
 
 	/*
@@ -75,6 +81,12 @@ bool BraggSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		{
 			Messenger::print("Bragg data is up-to-date for Configuration '%s'.\n", cfg->name());
 			continue;
+		}
+
+		// Perform averaging of reflections data if requested
+		if (averaging > 1)
+		{
+			Averaging::arrayAverage< Array<BraggReflection> >(cfg->moduleData(), "BraggReflections", "", averaging, averagingScheme);
 		}
 
 		// Form partial Bragg S(Q)

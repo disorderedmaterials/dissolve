@@ -22,6 +22,7 @@
 #include "modules/braggsq/braggsq.h"
 #include "module/keywordtypes.h"
 #include "main/dissolve.h"
+#include "math/averaging.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
 #include "templates/enumhelpers.h"
@@ -33,6 +34,8 @@ void BraggSQModule::setUpKeywords()
 	frequency_ = 5;
 
 	ModuleKeywordGroup* group = addKeywordGroup("Calculation");
+	group->add(new IntegerModuleKeyword(5, 1), "Averaging", "Number of historical data sets to combine into final reflection data", "<5>");
+	group->add(new EnumStringModuleKeyword(Averaging::averagingSchemes() = Averaging::LinearAveraging), "AveragingScheme", "Weighting scheme to use when averaging reflection data", "<Linear>");
 	group->add(new DoubleModuleKeyword(0.001), "QDelta", "Resolution (binwidth) in Q space to use when calculating Bragg reflections", "<0.001>");
 	group->add(new DoubleModuleKeyword(1.0), "QMax", "Maximum Q value for Bragg calculation", "<1.0>");
 	group->add(new DoubleModuleKeyword(0.01), "QMin", "Minimum Q value for Bragg calculation", "<0.01>");
