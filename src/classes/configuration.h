@@ -314,12 +314,6 @@ class Configuration : public ListItem<Configuration>
 	double rdfRange_;
 	// Maximum extent (requested) of calculated g(r)
 	double requestedRDFRange_;
-	// Minimum Q value for Bragg calculation
-	double braggQMin_;
-	// Maximum Q value for Bragg calculation
-	double braggQMax_;
-	// Multiplicities reflecting any crystal supercell
-	Vec3<int> braggMultiplicity_;
 
 	public:
 	// Set RDF bin width

@@ -79,9 +79,6 @@ void Configuration::clear()
 	rdfRange_ = -1.0;
 	requestedRDFRange_ = -2.0;
 	temperature_ = 300.0;
-	braggQMax_ = 0.01;
-	braggQMax_ = 2.0;
-	braggMultiplicity_.set(1,1,1);
 
 	// Reset ensemble data
 	appendEnsemble_ = false;
