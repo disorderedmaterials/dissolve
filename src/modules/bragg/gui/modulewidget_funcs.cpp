@@ -135,7 +135,7 @@ void BraggModuleWidget::setGraphDataTargets()
 	while (Configuration* cfg = configIterator.iterate())
 	{
 		// Original F(Q)
-		Renderable* originalFQ = totalsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//OriginalBraggTotal//Total", cfg->niceName()), cfg->niceName(), cfg->niceName());
+		Renderable* originalFQ = totalsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//OriginalBragg//Total", cfg->niceName()), cfg->niceName(), cfg->niceName());
 		totalsGraph_->groupManager().addToGroup(originalFQ, cfg->niceName());
 	}
 }
