@@ -43,3 +43,6 @@ The new style type casting must be used in place of the old C style type casts. 
 	- Comments should be used in particular to explain branch conditions in if ... else and switch { case ...-like statements.
 	- Comments should be written at a higher level of abstraction than the code to which they pertain, rather than merely restating it.
 - ‘Dead code’ (e.g. large commented blocks) must not be kept in the source.
+
+### External Dependencies
+- Dependence on external libraries should be kept to an absolute minimum.

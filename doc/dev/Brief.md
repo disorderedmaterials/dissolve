@@ -42,10 +42,10 @@ All source files are contained within the src/ directory which is laid out as fo
 - **classes**: Classes providing core contextual objects used in the operation of Dissolve, and which depend only on other classes in the same directory or those in base/.
 - **data**: Objects providing static data such as the periodic table, scattering lengths, forcefield parameters etc.
 - **expression**: Mathematical expression parser / generator.
-- **genericitems**: Container wrappers for PODs, or assemblies of PODs, to enable (data management)[DataManagement.md].
+- **genericitems**: Container wrappers for PODs, or assemblies of PODs, to enable (data management)[overviews/DataManagement.md].
 - **gui**: Qt-based GUi for Dissolve and DGuidEd
 - **main**: Main class providing Dissolve's core object.
 - **math**: Math-related classes, including classes containing (static) data operations and methods.
-- **module**: Base definition and associated helper classes for defining / handling (Modules)[Modules.md].
+- **module**: Base definition and associated helper classes for defining / handling (Modules)[overviews/Modules.md].
 - **modules**: Module repository.
 - **templates**: Template classes providing general, context-free functionality.
