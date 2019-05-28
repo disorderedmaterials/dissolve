@@ -21,7 +21,7 @@
 
 #include "gui/keywordwidgets/enumstring.hui"
 #include "gui/helpers/mousewheeladjustmentguard.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructor
 EnumStringKeywordWidget::EnumStringKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QComboBox(parent), KeywordWidgetBase(coreData, moduleData, prefix)

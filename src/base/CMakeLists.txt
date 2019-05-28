@@ -2,9 +2,6 @@ add_library(base
   charstring.cpp
   charstringlist.cpp
   fileandformat.cpp
-  genericitem.cpp
-  genericitembase.cpp
-  genericlist.cpp
   geometry.cpp
   lineparser.cpp
   messenger.cpp
@@ -22,9 +19,6 @@ add_library(base
   charstringlist.h
   constants.h
   fileandformat.h
-  genericitem.h
-  genericitembase.h
-  genericlist.h
   geometry.h
   lineparser.h
   messenger.h

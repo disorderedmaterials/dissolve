@@ -21,7 +21,7 @@
 
 #include "module/keywordtypes/bool.h"
 #include "base/lineparser.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructor
 BoolModuleKeyword::BoolModuleKeyword(bool value) : ModuleKeywordBase(ModuleKeywordBase::BoolData), ModuleKeywordData<bool>(value)

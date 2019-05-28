@@ -24,7 +24,7 @@
 #include "gui/helpers/listwidgetupdater.h"
 #include "module/module.h"
 #include "classes/coredata.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 #include <QHBoxLayout>
 #include <QComboBox>
 #include <QString>

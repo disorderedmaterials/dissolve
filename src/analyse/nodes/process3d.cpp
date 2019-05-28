@@ -27,7 +27,7 @@
 #include "classes/configuration.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructor
 AnalysisProcess3DNode::AnalysisProcess3DNode(AnalysisCollect3DNode* target) : AnalysisNode(AnalysisNode::Process3DNode)

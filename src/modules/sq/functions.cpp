@@ -23,7 +23,7 @@
 #include "math/ft.h"
 #include "classes/configuration.h"
 #include "classes/box.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 /*
  * Public Functions

@@ -3,7 +3,6 @@ noinst_HEADERS += broadcastarray.h broadcastlist.h
 noinst_HEADERS += dynamicarray.h dynamicarrayobject.h
 noinst_HEADERS += enumhelpers.h
 noinst_HEADERS += factory.h
-noinst_HEADERS += genericlisthelper.h
 noinst_HEADERS += list.h listitem.h
 noinst_HEADERS += mpilistitem.h
 noinst_HEADERS += objectstore.h ordereddaoarray.h orderedlist.h orderedpointerdatalist.h orderedpointerlist.h

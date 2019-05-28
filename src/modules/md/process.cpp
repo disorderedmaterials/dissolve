@@ -31,7 +31,7 @@
 #include "data/atomicmass.h"
 #include "base/timer.h"
 #include "base/lineparser.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Run main processing
 bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)

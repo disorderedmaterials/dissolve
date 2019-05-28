@@ -35,7 +35,7 @@
 #include "classes/partialset.h"
 #include "data/isotopes.h"
 #include "base/sysfunc.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 #include "templates/array3d.h"
 
 // Run set-up stage

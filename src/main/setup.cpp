@@ -22,7 +22,7 @@
 #include "main/dissolve.h"
 #include "classes/atomtype.h"
 #include "classes/species.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Set up all simulation data, checking it as we go
 bool Dissolve::setUpSimulation()

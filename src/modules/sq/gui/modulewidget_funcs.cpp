@@ -26,7 +26,7 @@
 #include "modules/sq/sq.h"
 #include "classes/atomtype.h"
 #include "templates/variantpointer.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructor
 SQModuleWidget::SQModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_((SQModule*) module), dissolve_(dissolve)

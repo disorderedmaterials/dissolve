@@ -26,7 +26,7 @@
 #include "data/isotopes.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 #include "version.h"
 #include <string.h>
 

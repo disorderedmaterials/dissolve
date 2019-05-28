@@ -23,7 +23,7 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructor
 AnalyserModuleKeyword::AnalyserModuleKeyword(Analyser& analyser) : ModuleKeywordBase(ModuleKeywordBase::AnalyserData), ModuleKeywordData<Analyser&>(analyser)

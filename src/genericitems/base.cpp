@@ -1,6 +1,6 @@
 /*
 	*** Generic Item Base
-	*** src/base/genericitembase.h
+	*** src/genericitems/base.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,40 +19,33 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_GENERICITEMBASE_H
-#define DISSOLVE_GENERICITEMBASE_H
+#include "genericitems/base.h"
 
-#include "base/messenger.h"
-
-// Forward Declarations
-class CoreData;
-
-// Base function templates for a Class that is to be used as a GenericItem
-class GenericItemBase
+// Constructor
+GenericItemBase::GenericItemBase()
 {
-	public:
-	// Constructor
-	GenericItemBase();
-	// Destructor
-	virtual ~GenericItemBase();
+}
 
+// Destructor
+GenericItemBase::~GenericItemBase()
+{
+}
 
-	/*
-	 * Item Class
-	 */
-	public:
-	// Return class name
-	static const char* itemClassName();
+/*
+ * I/O
+ */
 
+// Write data through specified parser
+bool GenericItemBase::write(LineParser& parser)
+{
+	Messenger::error("Tried to write() a class that doesn't support it.\n");
+	return false;
+}
 
-	/*
-	 * I/O
-	 */
-	public:
-	// Read data through specified parser
-	virtual bool read(LineParser& parser, const CoreData& coreData);
-	// Write data through specified parser
-	virtual bool write(LineParser& parser);
-};
+// Read data through specified parser
+bool GenericItemBase::read(LineParser& parser, const CoreData& coreData)
+{
+	Messenger::error("Tried to read() a class that doesn't support it.\n");
+	return false;
+}
 
-#endif

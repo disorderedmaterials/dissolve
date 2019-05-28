@@ -25,7 +25,7 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "classes/weights.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Run main processing
 bool BraggModule::process(Dissolve& dissolve, ProcessPool& procPool)

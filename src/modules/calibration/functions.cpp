@@ -26,7 +26,7 @@
 #include "math/error.h"
 #include "classes/configuration.h"
 #include "classes/partialset.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 /*
  * CalibrationModuleCostFunctions

@@ -25,7 +25,7 @@
 #include "modules/rdf/rdf.h"
 #include "classes/partialset.h"
 #include "base/sysfunc.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 #include "math/praxis.h"
 
 // Run main processing

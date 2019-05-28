@@ -24,7 +24,7 @@
 #include "classes/configuration.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Run main processing
 bool ImportModule::process(Dissolve& dissolve, ProcessPool& procPool)

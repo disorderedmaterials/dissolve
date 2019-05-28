@@ -26,7 +26,7 @@
 #include "classes/configuration.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructors
 AnalysisCollect3DNode::AnalysisCollect3DNode(AnalysisCalculateNode* xObservable, AnalysisCalculateNode* yObservable, AnalysisCalculateNode* zObservable, double xMin, double xMax, double xBinWidth, double yMin, double yMax, double yBinWidth, double zMin, double zMax, double zBinWidth) : AnalysisNode(AnalysisNode::Collect3DNode)

@@ -28,8 +28,8 @@
 #include "classes/weights.h"
 #include "math/histogram1d.h"
 #include "math/pairbroadeningfunction.h"
-#include "base/genericitem.h"
-#include "genericitems/genericitems.h"
+#include "genericitems/item.h"
+#include "genericitems/items.h"
 
 // Constructor
 Dissolve::Dissolve(CoreData& coreData) : coreData_(coreData)

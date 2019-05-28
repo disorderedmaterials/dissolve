@@ -24,7 +24,7 @@
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "modules/rdf/rdf.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Run main processing
 bool SQModule::process(Dissolve& dissolve, ProcessPool& procPool)

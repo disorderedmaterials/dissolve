@@ -25,7 +25,7 @@
 #include "templates/mpilistitem.h"
 #include "templates/vector3.h"
 #include "templates/array.h"
-#include "base/genericitembase.h"
+#include "genericitems/base.h"
 
 // Forward Declarations
 class BraggPeak;

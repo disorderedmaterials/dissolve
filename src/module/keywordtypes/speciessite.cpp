@@ -23,7 +23,7 @@
 #include "classes/coredata.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructor
 SpeciesSiteModuleKeyword::SpeciesSiteModuleKeyword(SpeciesSite* site) : ModuleKeywordBase(ModuleKeywordBase::SpeciesSiteData), ModuleKeywordData<SpeciesSite*>(site)

@@ -27,7 +27,7 @@
 #include "classes/speciesbond.h"
 #include "classes/partialset.h"
 #include "math/praxis.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Calculate c(r) from supplied S(Q)
 Data1D RefineModule::calculateCR(const Data1D& sq, double normFactor, double rMin, double rStep, double rMax, WindowFunction windowFunction, BroadeningFunction broadening, bool unbroaden)

@@ -25,7 +25,7 @@
 #include "main/dissolve.h"
 #include "classes/atomtype.h"
 #include "templates/variantpointer.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructor
 BraggModuleWidget::BraggModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_((BraggModule*) module), dissolve_(dissolve)

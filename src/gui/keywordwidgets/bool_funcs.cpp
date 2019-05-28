@@ -20,7 +20,7 @@
 */
 
 #include "gui/keywordwidgets/bool.hui"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructor
 BoolKeywordWidget::BoolKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QCheckBox(parent), KeywordWidgetBase(coreData, moduleData, prefix)

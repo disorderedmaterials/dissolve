@@ -36,7 +36,7 @@
 #include "classes/partialset.h"
 #include "data/isotopes.h"
 #include "base/sysfunc.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Run main processing
 bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)

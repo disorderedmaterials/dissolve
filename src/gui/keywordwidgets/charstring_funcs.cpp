@@ -20,7 +20,7 @@
 */
 
 #include "gui/keywordwidgets/charstring.hui"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructor
 CharStringKeywordWidget::CharStringKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QLineEdit(parent), KeywordWidgetBase(coreData, moduleData, prefix)

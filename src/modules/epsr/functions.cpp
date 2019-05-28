@@ -24,7 +24,7 @@
 #include "classes/atomtype.h"
 #include "math/gaussfit.h"
 #include "math/poissonfit.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Return list of target Modules / data for refeinement
 const RefList<Module,ModuleGroup*>& EPSRModule::allTargets() const

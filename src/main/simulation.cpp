@@ -23,7 +23,7 @@
 #include "modules/export/export.h"
 #include "base/sysfunc.h"
 #include "base/lineparser.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 #include <cstdio>
 
 /*

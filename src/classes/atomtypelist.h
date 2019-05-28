@@ -24,7 +24,7 @@
 
 #include "classes/atomtypedata.h"
 #include "templates/list.h"
-#include "base/genericitembase.h"
+#include "genericitems/base.h"
 
 // Forward Declarations
 class AtomType;

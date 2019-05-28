@@ -30,7 +30,7 @@
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 #include "classes/species.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 #include "templates/variantpointer.h"
 
 // Constructor

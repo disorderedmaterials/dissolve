@@ -24,7 +24,7 @@
 #include "module/keywordtypes.h"
 #include "main/dissolve.h"
 #include "base/lineparser.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Set up keywords for Module
 void ForcesModule::setUpKeywords()

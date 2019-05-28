@@ -21,7 +21,7 @@
 
 #include "gui/keywordwidgets/double.hui"
 #include "gui/helpers/mousewheeladjustmentguard.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructor
 DoubleKeywordWidget::DoubleKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : ExponentialSpin(parent), KeywordWidgetBase(coreData, moduleData, prefix)

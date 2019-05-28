@@ -31,7 +31,7 @@
 #include "classes/cell.h"
 #include "classes/speciesangle.h"
 #include "classes/speciesbond.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 #include "templates/orderedpointerarray.h"
 
 /*

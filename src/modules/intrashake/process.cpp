@@ -30,7 +30,7 @@
 #include "classes/speciesbond.h"
 #include "classes/speciestorsion.h"
 #include "base/sysfunc.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Run main processing
 bool IntraShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)

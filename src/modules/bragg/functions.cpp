@@ -30,7 +30,7 @@
 #include "classes/weights.h"
 #include "math/broadeningfunction.h"
 #include "templates/array3d.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 /*
  * Private Functions

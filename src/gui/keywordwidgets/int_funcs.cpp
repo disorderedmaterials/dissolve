@@ -21,7 +21,7 @@
 
 #include "gui/keywordwidgets/int.hui"
 #include "gui/helpers/mousewheeladjustmentguard.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructor
 IntegerKeywordWidget::IntegerKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QSpinBox(parent), KeywordWidgetBase(coreData, moduleData, prefix)

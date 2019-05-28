@@ -25,7 +25,7 @@
 #include "main/dissolve.h"
 #include "classes/atomtype.h"
 #include "templates/variantpointer.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructor
 CalibrationModuleWidget::CalibrationModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_((CalibrationModule*) module), dissolve_(dissolve)

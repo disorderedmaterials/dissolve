@@ -1,6 +1,6 @@
 /*
 	*** Generic List
-	*** src/base/genericlist.h
+	*** src/genericitems/list.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_GENERICLIST_H
 #define DISSOLVE_GENERICLIST_H
 
-#include "base/genericitem.h"
+#include "genericitems/item.h"
 #include "base/sysfunc.h"
 #include "templates/list.h"
 #include "templates/reflist.h"

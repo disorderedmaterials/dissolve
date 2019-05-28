@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_SAMPLEDDOUBLE_H
 #define DISSOLVE_SAMPLEDDOUBLE_H
 
-#include "base/genericitembase.h"
+#include "genericitems/base.h"
 #include <ctime>
 
 // Forward Declarations

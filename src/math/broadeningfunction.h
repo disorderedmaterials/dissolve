@@ -25,7 +25,7 @@
 #define MAXBROADENINGFUNCTIONPARAMS 6
 
 #include "base/charstring.h"
-#include "base/genericitembase.h"
+#include "genericitems/base.h"
 
 // Forward Declarations
 class LineParser;

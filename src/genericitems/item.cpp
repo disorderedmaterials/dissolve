@@ -1,6 +1,6 @@
 /*
 	*** Generic Item
-	*** src/base/genericitem.cpp
+	*** src/genericitems/item.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "base/genericitem.h"
+#include "genericitems/item.h"
 
 // Static Members
 List<GenericItem> GenericItem::itemClasses_;

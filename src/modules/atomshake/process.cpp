@@ -28,7 +28,7 @@
 #include "classes/regionaldistributor.h"
 #include "base/processpool.h"
 #include "base/timer.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Run main processing
 bool AtomShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)

@@ -23,7 +23,7 @@
 #define DISSOLVE_PAIRBROADENINGFUNCTION_H
 
 #include "base/charstring.h"
-#include "base/genericitembase.h"
+#include "genericitems/base.h"
 #include "math/broadeningfunction.h"
 #include "templates/array.h"
 #include "templates/array2d.h"

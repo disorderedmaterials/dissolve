@@ -24,7 +24,7 @@
 
 #include "math/data3d.h"
 #include "math/sampleddouble.h"
-#include "base/genericitembase.h"
+#include "genericitems/base.h"
 #include "templates/array3d.h"
 #include "templates/objectstore.h"
 

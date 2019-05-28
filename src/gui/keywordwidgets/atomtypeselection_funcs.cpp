@@ -25,7 +25,7 @@
 #include "classes/atomtype.h"
 #include "classes/atomtypelist.h"
 #include "classes/coredata.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 #include <QHBoxLayout>
 #include <QComboBox>
 #include <QString>

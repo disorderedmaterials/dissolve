@@ -29,7 +29,7 @@
 #include "math/mc.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructor
 AnalysisFit1DNode::AnalysisFit1DNode(AnalysisCollect1DNode* target) : AnalysisNode(AnalysisNode::Fit1DNode)

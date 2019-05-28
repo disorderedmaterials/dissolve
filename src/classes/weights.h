@@ -26,7 +26,7 @@
 #include "classes/isotopologuemix.h"
 #include "templates/list.h"
 #include "templates/array2d.h"
-#include "base/genericitembase.h"
+#include "genericitems/base.h"
 
 // Forward Declarations
 /* none */

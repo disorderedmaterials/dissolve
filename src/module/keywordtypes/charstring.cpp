@@ -21,7 +21,7 @@
 
 #include "module/keywordtypes/charstring.h"
 #include "base/lineparser.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructor
 CharStringModuleKeyword::CharStringModuleKeyword(CharString value) : ModuleKeywordBase(ModuleKeywordBase::CharStringData), ModuleKeywordData<CharString>(value)

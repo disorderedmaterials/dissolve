@@ -29,7 +29,7 @@
 #include "classes/configuration.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructor
 AnalysisProcess2DNode::AnalysisProcess2DNode(AnalysisCollect2DNode* target) : AnalysisNode(AnalysisNode::Process2DNode)

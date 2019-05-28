@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_ISOTOPOLOGUEMIX_H
 #define DISSOLVE_ISOTOPOLOGUEMIX_H
 
-#include "base/genericitembase.h"
+#include "genericitems/base.h"
 #include "templates/mpilistitem.h"
 #include "templates/reflist.h"
 

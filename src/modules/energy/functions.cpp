@@ -22,7 +22,7 @@
 #include "modules/energy/energy.h"
 #include "classes/configuration.h"
 #include "classes/energykernel.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Return total intramolecular energy
 double EnergyModule::intraMolecularEnergy(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap)

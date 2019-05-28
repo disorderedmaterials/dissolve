@@ -23,7 +23,7 @@
 #include "main/dissolve.h"
 #include "math/error.h"
 #include "base/sysfunc.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Run main processing
 bool DataTestModule::process(Dissolve& dissolve, ProcessPool& procPool)

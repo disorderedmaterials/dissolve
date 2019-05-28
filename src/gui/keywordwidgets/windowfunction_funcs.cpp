@@ -20,7 +20,7 @@
 */
 
 #include "gui/keywordwidgets/windowfunction.hui"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 #include <QHBoxLayout>
 #include <QComboBox>
 

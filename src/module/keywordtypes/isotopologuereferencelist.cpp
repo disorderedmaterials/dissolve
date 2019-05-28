@@ -23,7 +23,7 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructor
 IsotopologueReferenceListModuleKeyword::IsotopologueReferenceListModuleKeyword(List<IsotopologueReference>& references) : ModuleKeywordBase(ModuleKeywordBase::IsotopologueReferenceData), ModuleKeywordData<IsotopologueReference>(IsotopologueReference()), references_(references)

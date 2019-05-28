@@ -1,6 +1,6 @@
 /*
 	*** Generic List
-	*** src/base/genericlist.cpp
+	*** src/genericitems/list.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "base/genericlist.h"
+#include "genericitems/list.h"
 
 // Clear all items
 void GenericList::clear()

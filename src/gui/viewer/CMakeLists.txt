@@ -3,6 +3,7 @@
 
 # Meta-Objects
 SET(viewer_MOC_HDRS
+  configurationwidget.h
   datawidget.h
   selectsymbol.h
   specieswidget.h
@@ -29,7 +30,6 @@ SET(viewer_SRCS
   configurationviewer_input.cpp
   configurationviewer_interaction.cpp
   configurationviewer_render.cpp
-  configurationviewer_scene.cpp
   configurationwidget_funcs.cpp
   dataviewer_funcs.cpp
   dataviewer_input.cpp

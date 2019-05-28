@@ -26,7 +26,7 @@
 #include "classes/configuration.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructor
 AnalysisCollect1DNode::AnalysisCollect1DNode(AnalysisCalculateNode* observable, double rMin, double rMax, double binWidth) : AnalysisNode(AnalysisNode::Collect1DNode)

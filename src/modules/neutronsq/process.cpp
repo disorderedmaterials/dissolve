@@ -31,7 +31,7 @@
 #include "modules/import/import.h"
 #include "modules/rdf/rdf.h"
 #include "modules/sq/sq.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Run set-up stage
 bool NeutronSQModule::setUp(Dissolve& dissolve, ProcessPool& procPool)

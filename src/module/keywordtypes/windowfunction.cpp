@@ -21,7 +21,7 @@
 
 #include "module/keywordtypes/windowfunction.h"
 #include "base/lineparser.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructor
 WindowFunctionModuleKeyword::WindowFunctionModuleKeyword(WindowFunction value) : ModuleKeywordBase(ModuleKeywordBase::WindowFunctionData), ModuleKeywordData<WindowFunction>(value)

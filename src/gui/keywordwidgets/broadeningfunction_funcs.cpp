@@ -21,7 +21,7 @@
 
 #include "gui/keywordwidgets/broadeningfunction.h"
 #include "gui/keywordwidgets/dropdown.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 #include <QHBoxLayout>
 #include <QComboBox>
 

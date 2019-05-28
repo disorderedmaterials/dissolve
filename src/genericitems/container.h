@@ -23,7 +23,7 @@
 #define DISSOLVE_GENERICITEMCONTAINER_H
 
 #include "base/processpool.h"
-#include "base/genericitem.h"
+#include "genericitems/item.h"
 
 // GenericItemContainer Template Class
 template <class T> class GenericItemContainer : public GenericItem

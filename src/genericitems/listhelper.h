@@ -1,6 +1,6 @@
 /*
 	*** Generic List Helper
-	*** src/templates/genericlisthelper.h
+	*** src/genericitems/listhelper.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -22,9 +22,9 @@
 #ifndef DISSOLVE_GENERICLISTHELPER_H
 #define DISSOLVE_GENERICLISTHELPER_H
 
-#include "base/genericlist.h"
+#include "genericitems/list.h"
 #include "base/sysfunc.h"
-#include "genericitems/genericitems.h"
+#include "genericitems/items.h"
 
 // Generic List Helper
 template <class T> class GenericListHelper

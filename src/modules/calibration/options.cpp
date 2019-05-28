@@ -22,7 +22,7 @@
 #include "modules/calibration/calibration.h"
 #include "module/keywordtypes.h"
 #include "module/list.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Set up keywords for Module
 void CalibrationModule::setUpKeywords()

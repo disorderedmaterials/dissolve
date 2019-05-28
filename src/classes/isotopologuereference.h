@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_ISOTOPOLOGUEREFERENCE_H
 #define DISSOLVE_ISOTOPOLOGUEREFERENCE_H
 
-#include "base/genericitembase.h"
+#include "genericitems/base.h"
 #include "templates/listitem.h"
 
 // Forward Declarations

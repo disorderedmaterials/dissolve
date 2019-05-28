@@ -37,7 +37,7 @@
 #include "math/interpolator.h"
 #include "math/data1d.h"
 #include "base/processpool.h"
-#include "base/genericlist.h"
+#include "genericitems/list.h"
 #include "base/version.h"
 #include "templates/vector3.h"
 #include "templates/objectstore.h"

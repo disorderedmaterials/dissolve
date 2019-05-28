@@ -21,7 +21,7 @@
 
 #include "module/keywordtypes/enumstring.h"
 #include "base/lineparser.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 EnumStringModuleKeyword::EnumStringModuleKeyword(int value, int nOptions, const char** options) : ModuleKeywordBase(ModuleKeywordBase::EnumStringData), ModuleKeywordData<CharString>(options[value])
 {

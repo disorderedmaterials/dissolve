@@ -197,7 +197,7 @@ endif(GUI)
 set(BASIC_LINK_LIBS
 
   # Main libs
-  main classes module analyse analysisnodes keywordtypes expression base math data ff 
+  main classes module analyse analysisnodes keywordtypes expression genericitems base math data ff 
 
   # Modules
   analysemodule

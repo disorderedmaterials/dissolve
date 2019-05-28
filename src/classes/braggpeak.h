@@ -24,7 +24,7 @@
 
 #include "templates/array2d.h"
 #include "templates/mpilistitem.h"
-#include "base/genericitembase.h"
+#include "genericitems/base.h"
 
 // Forward Declarations
 /* none */

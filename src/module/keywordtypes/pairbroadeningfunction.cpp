@@ -21,7 +21,7 @@
 
 #include "module/keywordtypes/pairbroadeningfunction.h"
 #include "base/lineparser.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructor
 PairBroadeningFunctionModuleKeyword::PairBroadeningFunctionModuleKeyword(PairBroadeningFunction value) : ModuleKeywordBase(ModuleKeywordBase::PairBroadeningFunctionData), ModuleKeywordData<PairBroadeningFunction>(value)

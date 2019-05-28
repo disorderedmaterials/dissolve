@@ -23,7 +23,7 @@
 #define DISSOLVE_MODULE_H
 
 #include "base/messenger.h"
-#include "base/genericlist.h"
+#include "genericitems/list.h"
 #include "math/sampleddouble.h"
 #include "module/keywordgroup.h"
 #include "module/keywordlist.h"
