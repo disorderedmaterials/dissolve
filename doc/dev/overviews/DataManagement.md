@@ -15,7 +15,7 @@ This overview provides implementation details on the XXX used with the Dissolve 
 
 ### Brief
 
-The core functionality of Dissolve is contained within independent (modules)[overviews/Modules.md], which may run in any order. Each module typically creates useful data that are of interest to the user (e.g. calculations which yield some specific property of interest), to other modules (which take pre-existing data and use it as the basis for other calculations), or which is necessary to store in order to permit a successful restart of the simulation (i.e. historic data used when performing averaging). These data may be PODs, simple classes, or templated objects.
+The core functionality of Dissolve is contained within independent (modules)[overviews/Modules.md], which may run in any order. Each module typically creates useful data that are of interest to the user (e.g. calculations which yield some specific property of interest), to other modules (which take pre-existing data and use it as the basis for other calculations), or which is necessary to store in order to permit a successful restart of the simulation (i.e. historic data used when performing averaging). These data may be PODs, opaque classes, or templated objects.
 
 ### Rationale
 
@@ -29,6 +29,19 @@ This 'blackboard-style' approach to the storage of data has the following benefi
 
 
 
-### Implementation
+## Implementation
+
+### Relevant Classes
+
+- (GenericList)[https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/list.h]
+- (GenericListHelper)[https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/listhelper.h] (template)
+- (GenericItem)[https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/item.h]
+- (GenericItemBase)[https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/base.h]
+
+### Details
 
 The primary storage class for Dissolve's type-agnostic data is the GenericList 
+
+TODO Class Dependency
+TODO Mechanism for opaque classes
+TODO Template specialisations for PODs
