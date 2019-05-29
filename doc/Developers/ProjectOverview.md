@@ -1,19 +1,34 @@
 # Project Overview
 
-## Language
+## Introduction
+
+### Purpose
+This document provides a high-level overview of the structure of the Dissolve project, its language and associated build systems, and source tree layout.
+
+### Scope
+This overview provides basic information suitable for developers wishing to build and contribute to the project, spanning on the coding language, executable targets, build systems, external dependencies and source tree layout.
+
+## Basics
+
+### Project Purpose
+Dissolve is a code to permit interrogation of scattering data through the classical simulation of underlying experimental systems.
+
+### Language
 Dissolve is written entirely in C++. For relevant conventions and guidelines regarding style see the (coding standards)[CodingStandards.md] document.
 
 ## Build System
+
 Both cmake and autotools (Makefile) build systems are used in order to provide cross-platform compatibility. The integrity of both must be maintained when modifying/adding files associated to the project.
 
-## Build Targets
+### Executable Targets
 - **dissolve-serial**: Serial CLI version.
-- **dissolve**: (Optional) Parallel, CLI version (requires suitable MPI compiler).
+- **dissolve**: (Optional) Parallel CLI version (requires suitable MPI compiler).
 - **dissolve-gui**: (Optional) Graphical user interface for Dissolve.
 - **dguided**: (Optional) Graphical user interface for Dissolve's tutorial / guide editor. Currently built automatically alongside the GUI.
+
 Note that binaries are named as listed above only on Linux and OSX. Windows binaries are built as **Dissolve-Serial**, **Dissolve**, **Dissolve-GUI** and **DGuidEd**.
 
-## External Dependencies
+### External Dependencies
 - **dissolve-serial**: Bison (required for construction of various parser-lexers).
 - **dissolve**: Suitable MPI library (e.g. OpenMPI 1.10+).
 - **dissolve-gui** and **dguided**: Qt 5 (Qt5Gui, Qt5OpenGL, Qt5Widgets, and Qt5PrintSupport), Freetype2, FTGL.
@@ -31,10 +46,10 @@ Use -DCHECKS=1, -DGUI=1, or -DPARALLEL=1 to enable the options described above i
 All source files are contained within the src/ directory which is laid out as follows:
 
 ### Files
-- **dguided.cpp**: Main entry point for guide editor
-- **dissolve-gui.cpp**: Main entry point for GUI
-- **main.cpp**: Main entry point for serial and parallel versions (determined via PARALLEL define)
-- **version.h**: Header containing code version information.
+- **dguided.cpp**: Main entry point for guide editor.
+- **dissolve-gui.cpp**: Main entry point for GUI.
+- **main.cpp**: Main entry point for serial and parallel versions (determined via PARALLEL define).
+- **version.h**: Header containing version information.
 
 ### Sub-directories
 - **analyse**:
@@ -42,10 +57,10 @@ All source files are contained within the src/ directory which is laid out as fo
 - **classes**: Classes providing core contextual objects used in the operation of Dissolve, and which depend only on other classes in the same directory or those in base/.
 - **data**: Objects providing static data such as the periodic table, scattering lengths, forcefield parameters etc.
 - **expression**: Mathematical expression parser / generator.
-- **genericitems**: Container wrappers for PODs, or assemblies of PODs, to enable (data management)[overviews/DataManagement.md].
-- **gui**: Qt-based GUi for Dissolve and DGuidEd
+- **genericitems**: Classes permitting storage of data in atype-agnostic way in order to enable suitable (data management)[overviews/DataManagement.md].
+- **gui**: Qt-based GUI for Dissolve and DGuidEd.
 - **main**: Main class providing Dissolve's core object.
 - **math**: Math-related classes, including classes containing (static) data operations and methods.
-- **module**: Base definition and associated helper classes for defining / handling (Modules)[overviews/Modules.md].
+- **module**: Base definition and associated helper classes for defining and handling (modules)[overviews/Modules.md].
 - **modules**: Module repository.
 - **templates**: Template classes providing general, context-free functionality.

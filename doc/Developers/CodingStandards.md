@@ -1,6 +1,20 @@
-# Coding Standards (C++) for Dissolve
+# Coding Standards
 
-### General Style
+## Introduction
+
+### Purpose
+This document describes the coding standards and stylistic choices for the Dissolve project.
+
+### Scope
+This document is essential reading for any developer or power-user who wishes to contribute to the Dissolve codebase.
+
+## Overview
+
+Dissolve is written entirely in C++. The following standards and style requirements apply specifically to C++ source files.
+
+## Style
+
+### General
 - Indentation shall be made using tabs, not spaces
 - Class names and namespaces shall be written in upper camel case (e.g. ThisIsAClass).
 - Public and private member variables and functions shall be written in lower camel case (e.g. thisIsAFunction()).
@@ -24,7 +38,7 @@
 
 ### Expressions and Statements
 - Integers should not be cast to Booleans. For example, prefer if (x != 0) rather than if(x)
-The new style type casting must be used in place of the old C style type casts. If casting up or down an inheritance hierarchy, use dynamic_cast (which performs a run-time type check) rather than static_cast.
+The new style type casting must be used in place of the old C-style type casts. If casting up or down an inheritance hierarchy, use dynamic_cast (which performs a run-time type check) rather than static_cast.
 - Function calls with side effects, and the ++/--/assignment operators, should only be called as a standalone statement rather than embedded inside an expression.
 - It is permissible, although discouraged, to have a function call with side effects as the right-operand of && or ||. Any such instances must be commented in detail to alert other developers to the fact that the function is not always called.
 - A for loop should only have one control variable, and should not modify it in the body.
@@ -46,3 +60,5 @@ The new style type casting must be used in place of the old C style type casts. 
 
 ### External Dependencies
 - Dependence on external libraries should be kept to an absolute minimum.
+- Classes from external libraries relevant to the GUI must *not* be used outside of the GUI-related aspects of the code, so as to provide a non-GUI build of the code with a clean set of dependencies.
+
