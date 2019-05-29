@@ -1,3 +1,7 @@
+---
+parent: Developer's Handbook
+nav_order: 10
+---
 # Architecture
 
 ## Introduction

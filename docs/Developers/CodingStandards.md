@@ -1,3 +1,7 @@
+---
+parent: Developer's Handbook
+nav_order: 3
+---
 # Coding Standards
 
 ## Introduction

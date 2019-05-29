@@ -1,3 +1,7 @@
+---
+parent: Project Governance
+---
+
 Technical Steering Committee
 ============================
 
@@ -22,7 +26,7 @@ The Technical Steering Committee operates on the following basis:
  * The regular Technical Committee meetings are open to all interested parties, but the Committee seeks only to find consensus amongst Committee members, and representatives from the team that submitted any proposal under consideration.
  * The members of the committee should have deep technical knowledge and experience over a wide range of programming, best practices and infrastructure areas.
  * Acts as an arbitration/triage point for old, controversial and large issues.
- * If the committee cannot come to a majority consensus, then the issue will be raised at the PMC.
+ * If the committee cannot come to a majority consensus, then the issue will be raised at the Project Management Committee.
 
 Members
 -------

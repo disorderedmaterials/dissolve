@@ -1,3 +1,7 @@
+---
+parent: Developer's Handbook
+nav_order: 6
+---
 # Workflow
 
 ## Introduction
@@ -10,7 +14,7 @@ This overview provides essential information for developers wishing to contribut
 
 ## Basics
 
-Dissolve is version controlled through Git, and is available from ()[https://www.github.com/trisyoungs/dissolve]. Dissolve adopts the Git Flow methodology for development, with the repository laid out as follows:
+Dissolve is version controlled through Git, and is available from [https://www.github.com/trisyoungs/dissolve](). Dissolve adopts the Git Flow methodology for development, with the repository laid out as follows:
 
 
 Code review by the principal author (trisyoungs) should always be requested when making a pull request.
@@ -21,5 +25,4 @@ Herein are described the best practices employed for several different magnitude
 
 ### Minor Changes
 
-The main branch of the project is ```develop```
-### 
+The main branch of the project is `develop`
