@@ -1,7 +1,7 @@
 /*
 	*** Configuration - Composition 
 	*** src/classes/configuration_composition.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -21,31 +21,6 @@
 
 #include "main/dissolve.h"
 #include "classes/species.h"
-
-// Set name of the configuration
-void Configuration::setName(const char* name)
-{
-	name_ = name;
-
-	// Generate a nice name (i.e. no spaces, slashes etc.)
-	niceName_ = DissolveSys::niceName(name_);
-
-	// Set box normalisation filename based on Configuration name
-	boxNormalisationFileName_ = niceName_;
-	boxNormalisationFileName_.strcat(".boxnorm");
-}
-
-// Return name of the configuration
-const char* Configuration::name()
-{
-	return name_.get();
-}
-
-// Return nice name of the configuration
-const char* Configuration::niceName()
-{
-	return niceName_.get();
-}
 
 // Add Species to list of those used by the Configuration
 SpeciesInfo* Configuration::addUsedSpecies(Species* sp, double relativePopulation)

@@ -1,7 +1,7 @@
 /*
 	*** Keyword Parsing - Configuration Block
 	*** src/main/keywords_configuration.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -37,8 +37,6 @@ KeywordData ConfigurationBlockData[] = {
 	{ "CellLengths",		3,	"Relative lengths of the unit cell" },
 	{ "Density",			2,	"Density of the Configuration, along with its units" },
 	{ "EndConfiguration",		0,	"Signals the end of the Configuration block" },
-	{ "Ensemble",			1,	"Whether an ensemble file should be appended to" },
-	{ "EnsembleFrequency",		1,	"Frequency at which to append ensemble file" },
 	{ "InputCoordinates",		2,	"Format and filename which contains the starting coordinates" },
 	{ "Module",			1,	"Starts the set up of a Module for this Configuration" },
 	{ "Multiplier",			1,	"Factor by which relative populations are multiplied when generating the Configuration data" },
@@ -75,7 +73,7 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 	Messenger::print("\nParsing %s block '%s'...\n", BlockKeywords::blockKeyword(BlockKeywords::ConfigurationBlockKeyword), cfg->name());
 
 	Species* sp;
-	Module* masterInstance, *module;
+	Module* module;
 	CharString niceName;
 	SpeciesInfo* spInfo;
 	bool blockDone = false, error = false;
@@ -106,13 +104,13 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 				cfg->setBraggMultiplicity(parser.arg3i(1));
 				break;
 			case (ConfigurationBlock::CellAnglesKeyword):
-				cfg->setBoxAngles(Vec3<double>(parser.argd(1),  parser.argd(2), parser.argd(3)));
+				cfg->setBoxAngles(parser.arg3d(1));
 				break;
 			case (ConfigurationBlock::CellDivisionLengthKeyword):
 				cfg->setRequestedCellDivisionLength(parser.argd(1));
 				break;
 			case (ConfigurationBlock::CellLengthsKeyword):
-				cfg->setRelativeBoxLengths(Vec3<double>(parser.argd(1), parser.argd(2), parser.argd(3)));
+				cfg->setRelativeBoxLengths(parser.arg3d(1));
 				break;
 			case (ConfigurationBlock::DensityKeyword):
 				// Determine units given
@@ -128,12 +126,6 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 				Messenger::print("Found end of %s block.\n", BlockKeywords::blockKeyword(BlockKeywords::ConfigurationBlockKeyword));
 				blockDone = true;
 				break;
-			case (ConfigurationBlock::EnsembleKeyword):
-				cfg->setAppendEnsemble(parser.argb(1));
-				break;
-			case (ConfigurationBlock::EnsembleFrequencyKeyword):
-				cfg->setEnsembleFrequency(parser.argi(1));
-				break;
 			case (ConfigurationBlock::InputCoordinatesKeyword):
 				if (!cfg->inputCoordinates().read(parser, 1))
 				{
@@ -141,24 +133,22 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 					error = true;
 					break;
 				}
-				Messenger::print("Initial coordinates will be loaded from file '%s' (format: %s)\n", cfg->inputCoordinates().filename(), cfg->inputCoordinates().formatString());
+				Messenger::print("Initial coordinates will be loaded from file '%s' (%s)\n", cfg->inputCoordinates().filename(), cfg->inputCoordinates().format());
 				break;
 			case (ConfigurationBlock::ModuleKeyword):
-				// The argument following the keyword is the module name
-				masterInstance = ModuleList::findMasterInstance(parser.argc(1));
-				if (!masterInstance)
+				// The argument following the keyword is the module name, so try to create an instance of that Module
+				module = dissolve->createModuleInstance(parser.argc(1));
+				if (!module)
 				{
-					Messenger::error("No Module named '%s' exists.\n", parser.argc(1));
 					error = true;
 					break;
 				}
 
-				// Try to add this module (or an instance of it) to the current Configuration
-				module = cfg->addModule(masterInstance);
-				if (module)
+				// Add the new instance to the current Configuration
+				if (cfg->addModule(module))
 				{
 					// Add our pointer to the Module's list of associated Configurations
-					if (!module->addConfigurationTarget(cfg))
+					if (!module->addTargetConfiguration(cfg))
 					{
 						Messenger::error("Failed to add Configuration '%s' to Module '%s' as a target.\n", cfg->name(), module->type());
 						error = true;
@@ -175,14 +165,14 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 				if (parser.hasArg(2))
 				{
 					niceName = DissolveSys::niceName(parser.argc(2));
-					Module* existingModule = ModuleList::findInstanceByUniqueName(niceName);
+					Module* existingModule = dissolve->findModuleInstance(niceName);
 					if (existingModule && (existingModule != module))
 					{
 						Messenger::error("A Module with the unique name '%s' already exist.\n", niceName.get());
 						error = true;
 						break;
 					}
-					else if (dissolve->findConfiguration(niceName, true))
+					else if (dissolve->findConfigurationByNiceName(niceName))
 					{
 						Messenger::error("A Configuration with the unique name '%s' already exist, and so cannot be used as a Module name.\n", niceName.get());
 						error = true;
@@ -263,6 +253,13 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 		
 		// End of block?
 		if (blockDone) break;
+	}
+
+	// If there's no error and the blockDone flag isn't set, return an error
+	if (!error && !blockDone)
+	{
+		Messenger::error("Unterminated %s block found.\n", BlockKeywords::blockKeyword(BlockKeywords::ConfigurationBlockKeyword));
+		error = true;
 	}
 
 	return (!error);

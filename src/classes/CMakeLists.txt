@@ -24,6 +24,7 @@ add_library(classes
   configuration_contents.cpp
   configuration_sites.cpp
   configuration_upkeep.cpp
+  coredata.cpp
   datastore.cpp
   distributor.cpp
   empiricalformula.cpp
@@ -49,20 +50,20 @@ add_library(classes
   sitestack.cpp
   speciesangle.cpp
   speciesatom.cpp
-  species_atomic.cpp
   speciesbond.cpp
   species.cpp
-  speciesgrain.cpp
-  speciesinfo.cpp
-  speciesintra.cpp
-  speciessite.cpp
-  speciestorsion.cpp
+  species_atomic.cpp
   species_grains.cpp
   species_intra.cpp
   species_io.cpp
   species_isotopologues.cpp
   species_site.cpp
   species_transform.cpp
+  speciesgrain.cpp
+  speciesinfo.cpp
+  speciesintra.cpp
+  speciessite.cpp
+  speciestorsion.cpp
   torsion.cpp
   weights.cpp
   
@@ -81,6 +82,7 @@ add_library(classes
   changedata.h
   changestore.h
   configuration.h
+  coredata.h
   datastore.h
   distributor.h
   empiricalformula.h

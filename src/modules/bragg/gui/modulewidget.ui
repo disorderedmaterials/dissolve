@@ -155,7 +155,7 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="UChromaViewWidget" name="PlotWidget" native="true"/>
+          <widget class="DataWidget" name="PlotWidget" native="true"/>
          </item>
         </layout>
        </widget>
@@ -174,9 +174,9 @@
    <header>gui/widgets/mimetreewidget.hui</header>
   </customwidget>
   <customwidget>
-   <class>UChromaViewWidget</class>
+   <class>DataWidget</class>
    <extends>QWidget</extends>
-   <header>gui/uchroma/gui/uchromaview.h</header>
+   <header>gui/viewer/datawidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

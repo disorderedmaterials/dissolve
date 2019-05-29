@@ -1,7 +1,7 @@
 /*
 	*** Bragg Module - Options
 	*** src/modules/bragg/options.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -25,7 +25,7 @@
 #include "classes/species.h"
 #include "base/lineparser.h"
 #include "templates/enumhelpers.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Set up keywords for Module
 void BraggModule::setUpKeywords()

@@ -1,7 +1,7 @@
 /*
 	*** KVector
 	*** src/classes/kvector.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -25,7 +25,7 @@
 #include "templates/mpilistitem.h"
 #include "templates/vector3.h"
 #include "templates/array.h"
-#include "base/genericitembase.h"
+#include "genericitems/base.h"
 
 // Forward Declarations
 class BraggPeak;
@@ -95,7 +95,7 @@ class KVector : public MPIListItem<KVector>,  public GenericItemBase
 	 */
 	public:
 	// Broadcast data from root to all other processes
-	bool broadcast(ProcessPool& procPool, int rootRank);
+	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
 	// Check item equality
 	bool equality(ProcessPool& procPool);
 };

@@ -1,7 +1,7 @@
 /*
 	*** Dissolve Main Structure
 	*** src/main/dissolve.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -23,36 +23,26 @@
 #include "classes/species.h"
 #include "classes/atomtype.h"
 #include "classes/braggpeak.h"
-#include "math/histogram1d.h"
 #include "classes/kvector.h"
 #include "classes/partialset.h"
 #include "classes/weights.h"
-#include "base/genericitem.h"
-#include "templates/genericitems.h"
-
-// List<T> Master Instances
-template <class T> List<T> List<T>::masterInstance_;
+#include "math/histogram1d.h"
+#include "math/pairbroadeningfunction.h"
+#include "genericitems/item.h"
+#include "genericitems/items.h"
 
 // Constructor
-Dissolve::Dissolve() : atomTypes_(List<AtomType>::master()), species_(List<Species>::master()), configurations_(List<Configuration>::master())
+Dissolve::Dissolve(CoreData& coreData) : coreData_(coreData)
 {
-	// PairPotentials
-	pairPotentialDelta_ = 0.005;
-	pairPotentialRange_ = 15.0;
-	pairPotentialsIncludeCoulomb_ = true;
+	// Set Module instances list in our core data
+	coreData_.setModuleInstances(&moduleInstances_);
 
-	// Simulation
-	iteration_ = 0;
-	nIterationsPerformed_ = 0;
-	setUp_ = false;
-
-	// Simulation Setup
-	nBoxNormalisationPoints_ = 500000000;
-	seed_ = -1;
-	restartFileFrequency_ = 10;
+	// Clear everything
+	clear();
 
 	// Parallel Comms
 	parallelStrategy_ = Dissolve::SequentialConfigStrategy;
+	parallelGroupPopulation_ = ProcessPool::MinimumGroupPopulation;
 
 	// Register GenericItems
 	registerGenericItems();
@@ -61,32 +51,74 @@ Dissolve::Dissolve() : atomTypes_(List<AtomType>::master()), species_(List<Speci
 // Destructor
 Dissolve::~Dissolve()
 {
+	// Clear main data
 	clear();
+
+	// Delete all master Modules
+	masterModules_.clear();
 }
 
 /*
  * Core
  */
 
+// Return reference to CoreData
+const CoreData& Dissolve::coreData() const
+{
+	return coreData_;
+}
+
 // Clear all data
 void Dissolve::clear()
 {
-	Messenger::printVerbose("Clearing Configurations...\n");
-	configurations_.clear();
+	// Core
+	setUp_ = false;
 
+	// Atom Types
+	Messenger::printVerbose("Clearing Atom Types...\n");
+	atomTypes().clear();
+
+	// Master Terms
+	Messenger::printVerbose("Clearing Master Terms...\n");
+	masterBonds_.clear();
+	masterAngles_.clear();
+	masterTorsions_.clear();
+
+	// Species
 	Messenger::printVerbose("Clearing Species...\n");
-	species_.clear();
+	species().clear();
 
-	Messenger::printVerbose("Clearing PotentialMap...\n");
+	// PairPotentials
+	Messenger::printVerbose("Clearing Pair Potentials...\n");
+	pairPotentialDelta_ = 0.005;
+	pairPotentialRange_ = 15.0;
+	pairPotentialRangeSquared_ = pairPotentialRange_*pairPotentialRange_;
+	pairPotentialsIncludeCoulomb_ = true;
+	pairPotentials_.clear();
 	potentialMap_.clear();
 
-	Messenger::printVerbose("Clearing AtomTypes...\n");
-	atomTypes_.clear();
+	// Configurations
+	Messenger::printVerbose("Clearing Configurations...\n");
+	configurations().clear();
 
-	Messenger::printVerbose("Clearing misc...\n");
-	filename_.clear();
+	// Modules
+	Messenger::printVerbose("Clearing Modules...\n");
+	moduleInstances_.clear();
 
-	setUp_ = false;
+	// Simulation
+	Messenger::printVerbose("Clearing Simulation...\n");
+	nBoxNormalisationPoints_ = 500000000;
+	seed_ = -1;
+	restartFileFrequency_ = 10;
+	processingLayers_.clear();
+	processingModuleData_.clear();
+	iteration_ = 0;
+	nIterationsPerformed_ = 0;
+
+	// I/O
+	inputFilename_.clear();
+	restartFilename_.clear();
+	saveRestartTimes_ = 0.0;
 }
 
 // Register GenericItems
@@ -116,6 +148,7 @@ void Dissolve::registerGenericItems()
 	GenericItem::addItemClass(new GenericItemContainer<Histogram1D>(Histogram1D::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<IsotopologueMix>(IsotopologueMix::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<KVector>(KVector::itemClassName()));
+	GenericItem::addItemClass(new GenericItemContainer<PairBroadeningFunction>(PairBroadeningFunction::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<PartialSet>(PartialSet::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<Weights>(Weights::itemClassName()));
 }
@@ -148,6 +181,12 @@ bool Dissolve::setUp()
 	setUp_ = true;
 
 	return true;
+}
+
+// Flag that the set up is no longer valid and should be done again
+void Dissolve::invalidateSetUp()
+{
+	setUp_ = false;
 }
 
 // Return whether the simulation has been set up

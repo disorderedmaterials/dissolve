@@ -1,7 +1,7 @@
 /*
 	*** SanityCheck Module - Processing
 	*** src/modules/sanitycheck/process.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -34,7 +34,7 @@ bool SanityCheckModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 	// Basic checks on data from Dissolve
 	int i = 0;
-	for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+	for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
 	{
 		int j = i;
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)

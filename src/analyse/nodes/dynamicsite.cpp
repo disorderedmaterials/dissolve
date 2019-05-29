@@ -1,7 +1,7 @@
 /*
 	*** Analysis Node - Dynamic Site
 	*** src/analyse/nodes/dynamicsite.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -24,9 +24,11 @@
 #include "analyse/nodecontextstack.h"
 #include "classes/atom.h"
 #include "classes/configuration.h"
+#include "classes/coredata.h"
 #include "classes/molecule.h"
 #include "classes/site.h"
 #include "data/elements.h"
+#include "classes/atomtype.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "templates/dynamicarray.h"
@@ -47,7 +49,7 @@ AnalysisDynamicSiteNode::~AnalysisDynamicSiteNode()
  */
 
 // Node Keywords
-const char* DynamicSiteNodeKeywords[] = { "Element", "EndDynamicSite" };
+const char* DynamicSiteNodeKeywords[] = { "AtomType", "Element", "EndDynamicSite" };
 
 // Convert string to node keyword
 AnalysisDynamicSiteNode::DynamicSiteNodeKeyword AnalysisDynamicSiteNode::dynamicSiteNodeKeyword(const char* s)
@@ -74,14 +76,21 @@ const char* AnalysisDynamicSiteNode::dynamicSiteNodeKeyword(AnalysisDynamicSiteN
 // Generate sites from the specified Molecule
 void AnalysisDynamicSiteNode::generateSites(const Molecule* molecule)
 {
-	// Select by element
-	if (elements_.nItems() > 0)
+	// Loop over Atoms in the Molecule
+	for (int n=0; n<molecule->nAtoms(); ++n)
 	{
-		// Loop over Atoms in the Molecule
-		for (int n=0; n<molecule->nAtoms(); ++n)
+		// If the element is listed in our target elements list, add this atom as a site
+		if (elements_.contains(molecule->atom(n)->element()))
 		{
-			// If the element is listed in our target elements list, add this atom as a site
-			if (elements_.contains(molecule->atom(n)->element())) generatedSites_.add(Site(molecule, molecule->atom(n)->r()));
+			generatedSites_.add(Site(molecule, molecule->atom(n)->r()));
+			continue;
+		}
+
+		// If the Atom's AtomType is listed in our target AtomTYpe list, add this atom as a site
+		if (atomTypes_.containsData(molecule->atom(n)->masterTypeIndex()))
+		{
+			generatedSites_.add(Site(molecule, molecule->atom(n)->r()));
+			continue;
 		}
 	}
 }
@@ -123,10 +132,9 @@ AnalysisNode::NodeExecutionResult AnalysisDynamicSiteNode::execute(ProcessPool& 
 			if (excludedMolecules.contains(molecules[n])) continue;
 
 			// All OK, so generate sites
-			generateSites(moleculeParent);
+			generateSites(molecules[n]);
 		}
 	}
-
 
 	return AnalysisNode::Success;
 }
@@ -136,7 +144,7 @@ AnalysisNode::NodeExecutionResult AnalysisDynamicSiteNode::execute(ProcessPool& 
  */
 
 // Read structure from specified LineParser
-bool AnalysisDynamicSiteNode::read(LineParser& parser, NodeContextStack& contextStack)
+bool AnalysisDynamicSiteNode::read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack)
 {
 	// Read until we encounter the EndExclude keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
@@ -148,18 +156,27 @@ bool AnalysisDynamicSiteNode::read(LineParser& parser, NodeContextStack& context
 		DynamicSiteNodeKeyword nk = dynamicSiteNodeKeyword(parser.argc(0));
 		switch (nk)
 		{
-			case (DynamicSiteNodeKeyword::ElementKeyword):
+			case (AnalysisDynamicSiteNode::AtomTypeKeyword):
+				for (int n=1; n<parser.nArgs(); ++n)
+				{
+					AtomType* at = coreData.findAtomType(parser.argc(n));
+					if (!at) return Messenger::error("Unrecognised AtomType '%s' given to %s keyword.\n", parser.argc(n), dynamicSiteNodeKeyword(nk));
+					if (atomTypes_.contains(at)) return Messenger::error("Duplicate AtomType target given to %s keyword.\n", dynamicSiteNodeKeyword(nk));
+					atomTypes_.add(at, coreData.constAtomTypes().indexOf(at));
+				}
+				break;
+			case (AnalysisDynamicSiteNode::ElementKeyword):
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
 					Element* el = Elements::elementPointer(parser.argc(n));
 					if (!el) return Messenger::error("Unrecognised element '%s' given to %s keyword.\n", parser.argc(n), dynamicSiteNodeKeyword(nk));
-					if (elements_.contains(el)) return Messenger::error("Duplicate site given to %s keyword.\n", dynamicSiteNodeKeyword(nk));
+					if (elements_.contains(el)) return Messenger::error("Duplicate Element target given to %s keyword.\n", dynamicSiteNodeKeyword(nk));
 					elements_.add(el);
 				}
 				break;
-			case (DynamicSiteNodeKeyword::EndDynamicSiteKeyword):
+			case (AnalysisDynamicSiteNode::EndDynamicSiteKeyword):
 				return true;
-			case (DynamicSiteNodeKeyword::nDynamicSiteNodeKeywords):
+			case (AnalysisDynamicSiteNode::nDynamicSiteNodeKeywords):
 				return Messenger::error("Unrecognised DynamicSite node keyword '%s' found.\n", parser.argc(0));
 				break;
 			default:

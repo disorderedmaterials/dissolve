@@ -1,7 +1,7 @@
 /*
 	*** Module Widget
 	*** src/modules/neutronsq/gui/modulewidget.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -30,7 +30,7 @@ class Dissolve;
 class Module;
 class NeutronSQModule;
 class PartialSet;
-class UChromaViewWidget;
+class DataViewer;
 
 // Module Widget
 class NeutronSQModuleWidget : public ModuleWidget
@@ -41,8 +41,8 @@ class NeutronSQModuleWidget : public ModuleWidget
 	private:
 	// Associated Module
 	NeutronSQModule* module_;
-	// UChromaViews contained within this widget
-	UChromaViewWidget* partialGRGraph_, *partialSQGraph_, *totalGRGraph_, *totalSQGraph_;
+	// DataViewers contained within this widget
+	DataViewer* partialGRGraph_, *partialSQGraph_, *totalGRGraph_, *totalFQGraph_;
 	// Reference to Dissolve
 	Dissolve& dissolve_;
 

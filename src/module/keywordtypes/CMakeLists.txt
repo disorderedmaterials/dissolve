@@ -7,11 +7,14 @@ add_library(keywordtypes
   complex.cpp
   datastore.cpp
   double.cpp
+  enumstring.cpp
   fileandformat.cpp
   int.cpp
   isotopologuelist.cpp
+  modulegroups.cpp
   modulereferencelist.cpp
   pairbroadeningfunction.cpp
+  speciesreferencelist.cpp
   speciessite.cpp
   windowfunction.cpp
 
@@ -23,11 +26,14 @@ add_library(keywordtypes
   complex.h
   datastore.h
   double.h
+  enumstring.h
   fileandformat.h
   int.h
   isotopologuelist.h
+  modulegroups.h
   modulereferencelist.h
   pairbroadeningfunction.h
+  speciesreferencelist.h
   speciessite.h
   windowfunction.h
 )

@@ -1,1 +1,0 @@
-/home/tris/src/duq/tests/03/epsr/watermeth.EPSR.inp

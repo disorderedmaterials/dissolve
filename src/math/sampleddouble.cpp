@@ -1,7 +1,7 @@
 /*
 	*** SampledDouble
 	*** src/math/sampleddouble.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -26,9 +26,7 @@
 // Constructor
 SampledDouble::SampledDouble()
 {
-	count_ = 0;
-	mean_ = 0.0;
-	m2_ = 0.0;
+	clear();
 }
 
 SampledDouble::SampledDouble(const double x)
@@ -41,6 +39,14 @@ SampledDouble::SampledDouble(const double x)
 /*
  * Data
  */
+
+// Clear data
+void SampledDouble::clear()
+{
+	count_ = 0;
+	mean_ = 0.0;
+	m2_ = 0.0;
+}
 
 // Return current (mean) value
 double SampledDouble::value() const
@@ -173,14 +179,8 @@ const char* SampledDouble::itemClassName()
 	return "SampledDouble";
 }
 
-// Write data through specified LineParser
-bool SampledDouble::write(LineParser& parser)
-{
-	return parser.writeLineF("%f  %i  %f\n", mean_, count_, m2_);
-}
-
 // Read data through specified LineParser
-bool SampledDouble::read(LineParser& parser)
+bool SampledDouble::read(LineParser& parser, const CoreData& coreData)
 {
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	mean_ = parser.argd(0);
@@ -188,6 +188,12 @@ bool SampledDouble::read(LineParser& parser)
 	m2_ = parser.argd(2);
 
 	return true;
+}
+
+// Write data through specified LineParser
+bool SampledDouble::write(LineParser& parser)
+{
+	return parser.writeLineF("%f  %i  %f\n", mean_, count_, m2_);
 }
 
 /*
@@ -228,12 +234,12 @@ bool SampledDouble::allSum(ProcessPool& procPool)
 }
 
 // Broadcast data
-bool SampledDouble::broadcast(ProcessPool& procPool, int rootRank)
+bool SampledDouble::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 {
 #ifdef PARALLEL
-	if (!procPool.broadcast(count_, rootRank)) return false;
-	if (!procPool.broadcast(mean_, rootRank)) return false;
-	if (!procPool.broadcast(m2_, rootRank)) return false;
+	if (!procPool.broadcast(count_, root)) return false;
+	if (!procPool.broadcast(mean_, root)) return false;
+	if (!procPool.broadcast(m2_, root)) return false;
 #endif
 	return true;
 }

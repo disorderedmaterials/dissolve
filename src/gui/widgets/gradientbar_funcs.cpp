@@ -1,7 +1,7 @@
 /*
 	*** Gradient Bar
 	*** src/gui/widgets/gradientbar_funcs.cpp
-	Copyright T. Youngs 2013-2018
+	Copyright T. Youngs 2013-2019
 
 	This file is part of Dissolve.
 
@@ -44,8 +44,8 @@ void GradientBar::setColourScale(const ColourScale& colourScale)
 		if (colourScale.nPoints() > 0)
 		{
 			const int nPoints = 101;
-			double value = colourScale.firstPoint()->value();
-			double delta = (colourScale.lastPoint()->value() - value) / nPoints;
+			double value = colourScale.firstPoint().value();
+			double delta = (colourScale.lastPoint().value() - value) / nPoints;
 			for (int n=0; n<nPoints; ++n)
 			{
 				colourScale_.addPoint(value, colourScale.colour(value));
@@ -67,14 +67,14 @@ void GradientBar::setColourScale(const ColourScale& colourScale)
 	}
 	else if (colourScale_.nPoints() == 1)
 	{
-		gradient_.setColorAt(0.0, colourScale_.firstPoint()->colour());
-		gradient_.setColorAt(1.0, colourScale_.firstPoint()->colour());
+		gradient_.setColorAt(0.0, colourScale_.firstPoint().colour());
+		gradient_.setColorAt(1.0, colourScale_.firstPoint().colour());
 	}
 	else
 	{
-		double zero = colourScale_.firstPoint()->value();
-		double span = colourScale_.lastPoint()->value() - zero;
-		for (ColourScalePoint* csp = colourScale_.firstPoint(); csp != NULL; csp = csp->next) gradient_.setColorAt((csp->value() - zero) / span, csp->colour());
+		double zero = colourScale_.firstPoint().value();
+		double span = colourScale_.lastPoint().value() - zero;
+		for (int n=0; n<colourScale_.nPoints(); ++n) gradient_.setColorAt((colourScale_.point(n).value() - zero) / span, colourScale_.point(n).colour());
 	}
 	
 	repaint();

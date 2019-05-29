@@ -1,7 +1,7 @@
 /*
 	*** Process Pool
 	*** src/base/processpool.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -85,7 +85,7 @@ void ProcessPool::clear()
 	groupRank_ = -1;
 	worldRanks_.clear();
 	processGroups_.clear();
-	maxProcessGroups_ = 0;
+	maxProcessGroups_ = 1;
 	groupLeaders_.clear();
 	groupsModifiable_ = true;
 #ifdef PARALLEL
@@ -277,7 +277,7 @@ const char* ProcessPool::processInfo()
  */
 
 // Set up pool with world ranks specified
-bool ProcessPool::setUp(const char* name, Array<int> worldRanks)
+bool ProcessPool::setUp(const char* name, Array<int> worldRanks, int groupPopulation)
 {
 	clear();
 
@@ -299,7 +299,23 @@ bool ProcessPool::setUp(const char* name, Array<int> worldRanks)
 		}
 	}
 
-	Messenger::print("There are %i processes in pool '%s'.\n", worldRanks_.nItems(), name_.get());
+	// Set default maximum number of groups
+	switch (groupPopulation)
+	{
+		case (ProcessPool::MaximumGroupPopulation):
+			maxProcessGroups_ = worldRanks_.nItems();
+			break;
+		case (ProcessPool::MinimumGroupPopulation):
+			maxProcessGroups_ = 1;
+			break;
+		case (ProcessPool::HalfMaximumGroupPopulation):
+			maxProcessGroups_ = worldRanks_.nItems() / 2;
+			break;
+		default:
+			maxProcessGroups_ = groupPopulation;
+	}
+
+	Messenger::print("There are %i processes in pool '%s' (max groups = %i).\n", worldRanks_.nItems(), name_.get(), maxProcessGroups_);
 
 #ifdef PARALLEL
 	// Create pool group and communicator
@@ -328,84 +344,6 @@ int ProcessPool::nProcesses() const
 int ProcessPool::rootWorldRank() const
 {
 	return worldRanks_.constAt(0);
-}
-
-// Determine how many simultaneous processes (groups) we can have at once, based on the Cell divisions
-void ProcessPool::determineMaxProcessGroups(const Vec3<int>& divisions, const Vec3<int>& cellExtents, const List< ListVec3<int> >& neighbours)
-{
-#ifdef PARALLEL
-	// Check that this pool actually involves us - if not we can leave now
-	if (!involvesMe())
-	{
-		Messenger::print("... Process with world rank %i is not involved in the process pool '%s', so we will ignore its setup.\n", worldRank_, name_.get());
-		return;
-	}
-
-	// Construct a temporary array of 'Cells'
-	int*** cells = new int**[divisions.x];
-	for (int x = 0; x<divisions.x; ++x)
-	{
-		cells[x] = new int*[divisions.y];
-		for (int y = 0; y<divisions.y; ++y)
-		{
-			cells[x][y] = new int[divisions.z];
-			for (int z = 0; z < divisions.z; ++z) cells[x][y][z] = 0;
-		}
-	}
-
-	// Test assignment - how many processes can we get onto one XY slice, and how many in total at once?
-	maxProcessGroups_ = 0;
-	int xx, yy, zz;
-	for (int x = 0; x<divisions.x; ++x)
-	{
-		for (int y = 0; y<divisions.y; ++y)
-		{
-			for (int z = 0; z < divisions.z; ++z)
-			{
-				if (cells[x][y][z] != 0) continue;
-
-				// Cell not yet assigned, so set to -1 for now and check we can mark off neighbours
-				cells[x][y][z] = -1;
-				for (int pass = 0; pass < 2; ++pass)
-				{
-					if (cells[x][y][z] != -1) break;
-					// Check availability on first pass, set flags on second
-					for (ListVec3<int>* item = neighbours.first(); item != NULL; item = item->next)
-					{
-						// Get wrapped Cell grid reference
-						xx = (x+item->x)%divisions.x;
-						yy = (y+item->y)%divisions.y;
-						zz = (z+item->z)%divisions.z;
-						if (xx < 0) xx += divisions.x;
-						if (yy < 0) yy += divisions.y;
-						if (zz < 0) zz += divisions.z;
-						// Check for availability / Lock Cell
-						if (pass == 0)
-						{
-							if (cells[xx][yy][zz] == -1)
-							{
-								cells[x][y][z] = 0;
-								break;
-							}
-						}
-						else ++cells[xx][yy][zz];
-					}
-				}
-				// If the central cell has been unset, we couldn't lock it so continue the search
-				if (cells[x][y][z] != -1) continue;
-
-				// Otherwise, we found a Cell and locked it, so increase group count
-				++maxProcessGroups_;
-			}
-		}
-	}
-	Messenger::print("For the current Cell division and extent values, a maximum of %i simultaneous Cell-modifying processes are possible.\n", maxProcessGroups_);
-	// Maximum number of groups possible is the number of processes available, but we want all groups to contain the same number
-	// of processes...
-	while (worldRanks_.nItems()%maxProcessGroups_ != 0) --maxProcessGroups_;
-	
-	Messenger::print("Processes will be divided into %i groups.\n", maxProcessGroups_);
-#endif
 }
 
 // Assign processes to groups
@@ -470,7 +408,7 @@ bool ProcessPool::assignProcessesToGroups()
 				// Is this us, the master process?
 				if (prank == poolRank_) leader = groupLeader();
 				else if (!receive(leader, prank)) return false;
-				
+
 				// Is this process the leader?
 				if (leader)
 				{
@@ -520,7 +458,7 @@ bool ProcessPool::assignProcessesToGroups(ProcessPool& groupsSource)
 	 * Since we have the ability to run Modules with any ProcessPool and at any point, we must occasionally
 	 * re-assign the processes in the pool (typically the Dissolve::worldPool_) to a different set of groups in
 	 * order to utilise all available processing power (e.g. when a Module is run as, or is performing, a
-	 * post-processing step.
+	 * post-processing step).
 	 */
 
 	// If we have been supplied with ourself as the reference ProcessPool, we can exit gracefully now
@@ -749,7 +687,7 @@ int ProcessPool::twoBodyLoopStart(int nItems) const
 		// Update startAtom
 		startAtom = finishAtom+1;
 	}
-	
+
 	return -1;
 }
 
@@ -781,7 +719,7 @@ int ProcessPool::twoBodyLoopEnd(int nItems) const
 			return finishAtom;
 		}
 	}
-	
+
 	return -1;
 }
 
@@ -949,13 +887,13 @@ bool ProcessPool::broadcast(CharString& source, int rootRank, ProcessPool::Commu
 #ifdef PARALLEL
 	timer_.start();
 	static char buffer[4096];
-	
+
 	// Get length of string, and make a local copy to avoid the const-ness of CharString.get().
 	if (poolRank_ == rootRank) strcpy(buffer, source.get());
 
 	// Broadcast data
 	if (!broadcast(buffer, rootRank, commType)) return false;
-	
+
 	if (isSlave()) source = buffer;
 	timer_.accumulate();
 #endif
@@ -977,7 +915,7 @@ bool ProcessPool::broadcast(char* source, int rootRank, ProcessPool::Communicato
 			Messenger::print("Failed to broadcast char length data from root rank %i.\n", rootRank);
 			return false;
 		}
-		
+
 		// Now broadcast character data
 		if (MPI_Bcast(source, length, MPI_CHARACTER, rootRank, communicator(commType)) != MPI_SUCCESS)
 		{
@@ -994,7 +932,7 @@ bool ProcessPool::broadcast(char* source, int rootRank, ProcessPool::Communicato
 			Messenger::print("Slave %i (world rank %i) failed to receive char length data from root rank %i.\n", poolRank_, worldRank_, rootRank);
 			return false;
 		}
-		
+
 		if (MPI_Bcast(source, length, MPI_CHARACTER, rootRank, communicator(commType)) != MPI_SUCCESS)
 		{
 			Messenger::print("Slave %i (world rank %i) failed to receive char data from root rank %i.\n", poolRank_, worldRank_, rootRank);
@@ -1103,6 +1041,21 @@ bool ProcessPool::broadcast(long int& source, int rootRank, ProcessPool::Communi
 #ifdef PARALLEL
 	timer_.start();
 	if (MPI_Bcast(&source, 1, MPI_LONG, rootRank, communicator(commType)) != MPI_SUCCESS)
+	{
+		Messenger::print("Failed to broadcast long int data from root rank %i.\n", rootRank);
+		return false;
+	}
+	timer_.accumulate();
+#endif
+	return true;
+}
+
+// Broadcast long integer to all Processes
+bool ProcessPool::broadcast(long int* source, int count, int rootRank, ProcessPool::CommunicatorType commType)
+{
+#ifdef PARALLEL
+	timer_.start();
+	if (MPI_Bcast(source, count, MPI_LONG, rootRank, communicator(commType)) != MPI_SUCCESS)
 	{
 		Messenger::print("Failed to broadcast long int data from root rank %i.\n", rootRank);
 		return false;
@@ -1566,7 +1519,7 @@ bool ProcessPool::broadcast(Array2D<double>& array, int rootRank, ProcessPool::C
 			Messenger::print("Failed to broadcast Array2D<double> half-diagonal status from root rank %i.\n", rootRank);
 			return false;
 		}
-		
+
 		// Now broadcast Array data
 		if ((nRows*nColumns) > 0)
 		{
@@ -1603,6 +1556,83 @@ bool ProcessPool::broadcast(Array2D<double>& array, int rootRank, ProcessPool::C
 			if (MPI_Bcast(array.linearArray(), array.linearArraySize(), MPI_DOUBLE, rootRank, communicator(commType)) != MPI_SUCCESS)
 			{
 				Messenger::print("Slave %i (world rank %i) failed to receive ArrayD<double> data from root rank %i.\n", poolRank_, worldRank_, rootRank);
+				return false;
+			}
+		}
+		else array.clear();
+	}
+
+	timer_.accumulate();
+#endif
+	return true;
+}
+
+// Broadcast Array2D<bool>
+bool ProcessPool::broadcast(Array2D<bool>& array, int rootRank, ProcessPool::CommunicatorType commType)
+{
+#ifdef PARALLEL
+	timer_.start();
+
+	int nRows, nColumns;
+	bool half;
+	if (poolRank_ == rootRank)
+	{
+		// Broadcast array size first...
+		nRows = array.nRows();
+		if (!broadcast(nRows, rootRank))
+		{
+			Messenger::print("Failed to broadcast Array2D<bool> nRows from root rank %i.\n", rootRank);
+			return false;
+		}
+		nColumns = array.nColumns();
+		if (!broadcast(nColumns, rootRank))
+		{
+			Messenger::print("Failed to broadcast Array2D<bool> nColmnns from root rank %i.\n", rootRank);
+			return false;
+		}
+		half = array.halved();
+		if (!broadcast(half, rootRank))
+		{
+			Messenger::print("Failed to broadcast Array2D<bool> half-diagonal status from root rank %i.\n", rootRank);
+			return false;
+		}
+
+		// Now broadcast Array data
+		if ((nRows*nColumns) > 0)
+		{
+			if (MPI_Bcast(array.linearArray(), array.linearArraySize(), MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
+			{
+				Messenger::print("Failed to broadcast Array2D<bool> data from root rank %i.\n", rootRank);
+				return false;
+			}
+		}
+	}
+	else
+	{
+		// Slaves receive the size, and then create and receive the array
+		if (!broadcast(nRows, rootRank))
+		{
+			Messenger::print("Slave %i (world rank %i) failed to receive Array2D<bool> nRows from root rank %i.\n", poolRank_, worldRank_, rootRank);
+			return false;
+		}
+		if (!broadcast(nColumns, rootRank))
+		{
+			Messenger::print("Slave %i (world rank %i) failed to receive Array2D<bool> nRows from root rank %i.\n", poolRank_, worldRank_, rootRank);
+			return false;
+		}
+		if (!broadcast(half, rootRank))
+		{
+			Messenger::print("Slave %i (world rank %i) failed to receive Array2D<bool> halved status from root rank %i.\n", poolRank_, worldRank_, rootRank);
+			return false;
+		}
+
+		// Resize and receive array
+		array.initialise(nRows, nColumns, half);
+		if ((nRows*nColumns) > 0)
+		{
+			if (MPI_Bcast(array.linearArray(), array.linearArraySize(), MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
+			{
+				Messenger::print("Slave %i (world rank %i) failed to receive ArrayD<bool> data from root rank %i.\n", poolRank_, worldRank_, rootRank);
 				return false;
 			}
 		}
@@ -1838,10 +1868,10 @@ bool ProcessPool::assemble(double* array, int nLocalData, double* rootDest, int 
 		for (int n=0; n<worldRanks_.nItems(); ++n)
 		{
 			if (poolRank_ == n) continue;
-			
+
 			// Get length of data to receive
 			if (!receive(slaveNData, n, commType)) return false;
-			
+
 			// Check buffer length
 			if ((nLocalData + slaveNData) > rootMaxData)
 			{
@@ -1975,7 +2005,7 @@ bool ProcessPool::equality(int i, ProcessPool::CommunicatorType commType)
 		}
 		decideTrue(0, commType);
 	}
-	
+
 #endif
 	return true;
 }
@@ -2004,7 +2034,7 @@ bool ProcessPool::equality(long int i, ProcessPool::CommunicatorType commType)
 		}
 		decideTrue(0, commType);
 	}
-	
+
 #endif
 	return true;
 }
@@ -2034,7 +2064,7 @@ bool ProcessPool::equality(double x, ProcessPool::CommunicatorType commType)
 		}
 		decideTrue(0, commType);
 	}
-	
+
 #endif
 	return true;
 }
@@ -2074,11 +2104,20 @@ bool ProcessPool::equality(Vec3<int> v, ProcessPool::CommunicatorType commType)
 	return true;
 }
 
-// Check equality of double array across involved processes
-bool ProcessPool::equality(double* xArray, int nx, ProcessPool::CommunicatorType commType)
+// Check equality of long int array across involved processes
+bool ProcessPool::equality(long int* array, int nx, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-	for (int n=0; n<nx; ++n) if (!equality(xArray[n], commType)) return Messenger::error("Value %i of double array is not equivalent (process %i has %e).\n", n, poolRank_, xArray[n]);
+	for (int n=0; n<nx; ++n) if (!equality(array[n], commType)) return Messenger::error("Value %i of long int array is not equivalent (process %i has %li).\n", n, poolRank_, array[n]);
+#endif
+	return true;
+}
+
+// Check equality of double array across involved processes
+bool ProcessPool::equality(double* array, int nx, ProcessPool::CommunicatorType commType)
+{
+#ifdef PARALLEL
+	for (int n=0; n<nx; ++n) if (!equality(array[n], commType)) return Messenger::error("Value %i of double array is not equivalent (process %i has %e).\n", n, poolRank_, array[n]);
 #endif
 	return true;
 }
@@ -2139,6 +2178,21 @@ bool ProcessPool::equality(Array2D<double> array, ProcessPool::CommunicatorType 
 	return true;
 }
 
+// Check equality of Array2D<bool> across involved processes
+bool ProcessPool::equality(Array2D<bool> array, ProcessPool::CommunicatorType commType)
+{
+#ifdef PARALLEL
+	// Verify array size and state first
+	if (!equality(array.nRows(), commType)) return Messenger::error("Array2D<bool> nRows are not equal (process %i has %i).\n", poolRank_, array.nRows());
+	if (!equality(array.nColumns(), commType)) return Messenger::error("Array2D<bool> nColumns are not equal (process %i has %i).\n", poolRank_, array.nColumns());
+	if (!equality(array.halved(), commType)) return Messenger::error("Array2D<bool> half-status are not equivalent (process %i has %i).\n", poolRank_, array.halved());
+
+	// Keep it simple (and slow) and check/send one value at a time
+	for (int n=0; n<array.linearArraySize(); ++n) if (!equality(array.linearArray()[n], commType)) return Messenger::error("Array2D<bool> value %i is not equivalent (process %i has %i).\n", n, poolRank_, array.linearArray()[n]);
+#endif
+	return true;
+}
+
 /*
  * Buffered Random Numbers
  */
@@ -2149,7 +2203,7 @@ void ProcessPool::refillRandomBuffer()
 #ifdef PARALLEL
 	// Reset index
 	randomBufferIndex_ = 0;
-	
+
 	// Generate new random numbers in array
 	if (randomBufferCommGroup_ == ProcessPool::PoolProcessesCommunicator)
 	{

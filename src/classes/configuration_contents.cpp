@@ -1,7 +1,7 @@
 /*
 	*** Configuration - Contents
 	*** src/classes/configuration_contents.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -28,11 +28,29 @@
 #include "base/processpool.h"
 #include "modules/import/import.h"
 
+// Clear contents of Configuration, leaving core definitions intact
+void Configuration::empty()
+{
+	bonds_.clear();
+	angles_.clear();
+	torsions_.clear();
+	molecules_.clear();
+	grains_.clear();
+	atoms_.clear();
+	usedAtomTypes_.clear();
+	if (box_ != NULL) delete box_;
+	box_ = NULL;
+	cells_.clear();
+
+	coordinateIndex_ = 0;
+	++version_;
+}
+
 // Initialise all content arrays
 void Configuration::initialise(int nMolecules, int nGrains)
 {
 	// Clear current contents
-	clear();
+	empty();
 
 	molecules_.initialise(nMolecules);
 	grains_.initialise(nGrains);
@@ -44,7 +62,7 @@ bool Configuration::initialise(ProcessPool& procPool, bool randomise, double pai
 	Messenger::print("Setting up Configuration from Species / multiplier definition...\n");
 
 	// Clear current contents
-	clear();
+	empty();
 
 	/*
 	 * Check Species populations, and calculate total number of expected Atoms
@@ -107,14 +125,26 @@ bool Configuration::initialise(ProcessPool& procPool, bool randomise, double pai
 			// Generate random positions and orientations if needed
 			if (randomise)
 			{
-				// Generate a new random centre of geometry for the molecule
-				if (spInfo->translateOnInsertion())
+				// Set / generate position of Molecule
+				switch (spInfo->insertionPositioning())
 				{
-					fr.set(procPool.random(), procPool.random(), procPool.random());
-					newCentre = box_->fracToReal(fr);
-					mol->setCentreOfGeometry(box_, newCentre);
+					case (SpeciesInfo::RandomPositioning):
+						fr.set(procPool.random(), procPool.random(), procPool.random());
+						newCentre = box_->fracToReal(fr);
+						mol->setCentreOfGeometry(box_, newCentre);
+						break;
+					case (SpeciesInfo::CentralPositioning):
+						fr.set(0.5, 0.5, 0.5);
+						newCentre = box_->fracToReal(fr);
+						mol->setCentreOfGeometry(box_, newCentre);
+						break;
+					case (SpeciesInfo::CurrentPositioning):
+						break;
+					default:
+						Messenger::error("Unrecognised positioning type.\n");
+						break;
 				}
-			
+
 				// Generate and apply a random rotation matrix
 				if (spInfo->rotateOnInsertion())
 				{
@@ -131,6 +161,8 @@ bool Configuration::initialise(ProcessPool& procPool, bool randomise, double pai
 	// Set fractional populations in usedAtomTypes_
 	usedAtomTypes_.finalise();
 
+	++version_;
+
 	return true;
 }
 
@@ -146,9 +178,6 @@ bool Configuration::finaliseAfterLoad(ProcessPool& procPool, double pairPotentia
 
 	// Finalise used AtomType list
 	usedAtomTypes_.finalise();
-	
-	// Assemble attached Atom lists for all Molecules
-	for (int n=0; n<nMolecules(); ++n) molecules_[n]->updateAttachedAtomLists();
 
 	return true;
 }
@@ -233,9 +262,6 @@ Molecule* Configuration::addMolecule(Species* sp)
 		Torsion* t = addTorsion(newMolecule, i, j, k, l);
 		t->setSpeciesTorsion(spt);
 	}
-
-	// Now that all intramolecular terms have been added, we can assemble the attached lists for each
-	newMolecule->updateAttachedAtomLists();
 
 	return newMolecule;
 }
@@ -339,6 +365,12 @@ DynamicArray<Atom>& Configuration::atoms()
 	return atoms_;
 }
 
+// Return Atom array (const)
+const DynamicArray<Atom>& Configuration::constAtoms() const
+{
+	return atoms_;
+}
+
 // Return nth atom
 Atom* Configuration::atom(int n)
 {
@@ -381,6 +413,12 @@ int Configuration::nBonds() const
 
 // Return Bond array
 DynamicArray<Bond>& Configuration::bonds()
+{
+	return bonds_;
+}
+
+// Return Bond array (const)
+const DynamicArray<Bond>& Configuration::constBonds() const
 {
 	return bonds_;
 }
@@ -491,13 +529,13 @@ const AtomTypeList& Configuration::usedAtomTypesList() const
 }
 
 // Return number of atom types used in this Configuration
-int Configuration::nUsedAtomTypes()
+int Configuration::nUsedAtomTypes() const
 {
 	return usedAtomTypes_.nItems();
 }
 
 // Return current coordinate index
-int Configuration::coordinateIndex()
+int Configuration::coordinateIndex() const
 {
 	return coordinateIndex_;
 }
@@ -506,6 +544,7 @@ int Configuration::coordinateIndex()
 void Configuration::incrementCoordinateIndex()
 {
 	++coordinateIndex_;
+	++version_;
 }
 
 // Load coordinates from file

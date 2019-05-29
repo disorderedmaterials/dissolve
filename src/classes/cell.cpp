@@ -1,7 +1,7 @@
 /*
 	*** Cell Definition
 	*** src/classes/cell.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -95,6 +95,12 @@ OrderedPointerArray<Atom>& Cell::atoms()
 	return atoms_;
 }
 
+// Return array of contained Atoms, ordered by their array indices
+Atom** Cell::indexOrderedAtoms() const
+{
+	return indexOrderedAtoms_.constItems();
+}
+
 // Return number of Atoms in list
 int Cell::nAtoms() const
 {
@@ -111,8 +117,9 @@ bool Cell::addAtom(Atom* i)
 		return false;
 	}
 #endif
-	// Add Atom to our array
+	// Add Atom to our pointer- and index-ordered arrays
 	atoms_.add(i);
+	indexOrderedAtoms_.add(i);
 
 	if (i->cell()) Messenger::warn("About to set Cell pointer in Atom %i, but this will overwrite an existing value.\n", i->arrayIndex());
 	i->setCell(this);
@@ -131,7 +138,11 @@ bool Cell::removeAtom(Atom* i)
 	}
 #endif
 	// Remove atom from this cell
-	if (atoms_.remove(i)) i->setCell(NULL);
+	if (atoms_.remove(i))
+	{
+		indexOrderedAtoms_.remove(i);
+		i->setCell(NULL);
+	}
 	else
 	{
 		Messenger::error("Tried to remove Atom %i from Cell %i, but it was not present.\n", i->arrayIndex(), index_);

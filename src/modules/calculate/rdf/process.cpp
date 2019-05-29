@@ -1,7 +1,7 @@
 /*
 	*** Calculate RDF Module - Processing
 	*** src/modules/calculate/rdf/process.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -97,15 +97,15 @@ bool CalculateRDFModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	otherSelect->addToForEachBranch(collect1D);
 
 	// Process1D: @dataName
-	AnalysisProcess1DNode* normalise1D = new AnalysisProcess1DNode(collect1D);
-	normalise1D->setName(dataName);
-	normalise1D->addSitePopulationNormaliser(originSelect);
-	normalise1D->addNumberDensityNormaliser(otherSelect);
-	normalise1D->setNormaliseBySphericalShellVolume(true);
-	normalise1D->setSaveData(true);
-	normalise1D->setValueLabel("g(r)");
-	normalise1D->setXAxisLabel("r, \\symbol{Angstrom}");
-	analyser_.addRootSequenceNode(normalise1D);
+	AnalysisProcess1DNode* process1D = new AnalysisProcess1DNode(collect1D);
+	process1D->setName(dataName);
+	process1D->addSitePopulationNormaliser(originSelect);
+	process1D->addNumberDensityNormaliser(otherSelect);
+	process1D->setNormaliseBySphericalShellVolume(true);
+	process1D->setSaveData(true);
+	process1D->setValueLabel("g(r)");
+	process1D->setXAxisLabel("r, \\symbol{Angstrom}");
+	analyser_.addRootSequenceNode(process1D);
 
 	return true;
 }

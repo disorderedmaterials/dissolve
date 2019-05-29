@@ -1,7 +1,7 @@
 /*
 	*** Analysis Node - Process3D
 	*** src/analyse/nodes/process3d.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -23,6 +23,7 @@
 #define DISSOLVE_ANALYSISPROCESS3D_H
 
 #include "analyse/nodes/node.h"
+#include "analyse/nodes/nodereference.h"
 #include "math/data3d.h"
 #include "base/charstring.h"
 #include "templates/reflist.h"
@@ -49,19 +50,21 @@ class AnalysisProcess3DNode : public AnalysisNode
 	 */
 	public:
 	// Node Keywords
-	enum Process3DNodeKeyword { EndProcess3DKeyword, FactorKeyword, LabelValueKeyword, LabelXKeyword, LabelYKeyword, LabelZKeyword, NSitesKeyword, NumberDensityKeyword, SaveKeyword, nProcess3DNodeKeywords };
+	enum Process3DNodeKeyword { EndProcess3DKeyword, FactorKeyword, LabelValueKeyword, LabelXKeyword, LabelYKeyword, LabelZKeyword, NSitesKeyword, NumberDensityKeyword, SaveKeyword, SourceDataKeyword, nProcess3DNodeKeywords };
 	// Convert string to control keyword
-	static Process3DNodeKeyword normalise3DNodeKeyword(const char* s);
+	static Process3DNodeKeyword process3DNodeKeyword(const char* s);
 	// Convert control keyword to string
-	static const char* normalise3DNodeKeyword(Process3DNodeKeyword nk);
+	static const char* process3DNodeKeyword(Process3DNodeKeyword nk);
 
 
 	/*
 	 * Data
 	 */
 	private:
-	// Collect3D node which we are normalising
-	AnalysisCollect3DNode* collectNode_;
+	// Collect3D node that we are processing
+	AnalysisNodeReference collectNode_;
+	// Pointer to processed data (stored in processing data list)
+	Data3D* processedData_;
 	// Reference to sites against which we will normalise by population
 	RefList<AnalysisSelectNode,double> sitePopulationNormalisers_;
 	// Reference to sites against which we will normalise by number density
@@ -78,6 +81,8 @@ class AnalysisProcess3DNode : public AnalysisNode
 	CharString xAxisLabel_, yAxisLabel_, zAxisLabel_;
 
 	public:
+	// Return processed data
+	const Data3D& processedData() const;
 	// Add site population normaliser
 	void addSitePopulationNormaliser(AnalysisSelectNode* selectNode);
 	// Add number density normaliser
@@ -115,7 +120,7 @@ class AnalysisProcess3DNode : public AnalysisNode
 	 */
 	public:
 	// Read structure from specified LineParser
-	bool read(LineParser& parser, NodeContextStack& contextStack);
+	bool read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack);
 	// Write structure to specified LineParser
 	bool write(LineParser& parser, const char* prefix);
 };

@@ -1,7 +1,7 @@
 /*
 	*** Calculate Distance-Angle Module - Options
 	*** src/modules/calculate/dangle/options.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -25,17 +25,25 @@
 // Set up keywords for Module
 void CalculateDAngleModule::setUpKeywords()
 {
-	keywords_.add(new DoubleModuleKeyword(1.0, 0.0001, 90.0), "AngleBin", "Width of angle bins", "<dtheta, degrees>");
-	keywords_.add(new DoubleModuleKeyword(180.0, 0.0, 180.0), "AngleMax", "Maximum angle to bin", "<theta, degrees>");
-	keywords_.add(new DoubleModuleKeyword(0.0, 0.0, 180.0), "AngleMin", "Minimum angle to bin", "<theta, degrees>");
-	keywords_.add(new DoubleModuleKeyword(0.05, 0.0001), "DistanceBin", "Width of distance bins", "<dr, Angstroms>");
-	keywords_.add(new DoubleModuleKeyword(10.0, 0.0), "DistanceMax", "Maximum distance to bin", "<r, Angstroms>");
-	keywords_.add(new DoubleModuleKeyword(0.0, 0.0), "DistanceMin", "Minimum distance to bin", "<r, Angstroms>");
-	keywords_.add(new BoolModuleKeyword(false), "ExcludeSameMolecule", "Whether to exclude correlations between sites on the same molecule", "<True|False>");
-	keywords_.add(new SpeciesSiteModuleKeyword(), "SiteA", "Add a site which represents 'A' in the interaction A-B...C", "<Species> <Site>");
-	keywords_.add(new SpeciesSiteModuleKeyword(), "SiteB", "Add a site which represents 'B' in the interaction A-B...C", "<Species> <Site>");
-	keywords_.add(new SpeciesSiteModuleKeyword(), "SiteC", "Add a site which represents 'C' in the interaction A-B...C", "<Species> <Site>");
-	keywords_.add(new CharStringModuleKeyword(), "Name", "Set the name of the calculated distance-angle map", "<name>");
+	// Quantity Name
+	ModuleKeywordGroup* group = addKeywordGroup("Quantity Name");
+	group->add(new CharStringModuleKeyword(), "Name", "Set the name of the calculated distance-angle map", "<name>");
+
+	// Calculation
+	group = addKeywordGroup("Calculation");
+	group->add(new DoubleModuleKeyword(1.0, 0.0001, 90.0), "AngleBin", "Width of angle bins", "<dtheta, degrees>");
+	group->add(new DoubleModuleKeyword(180.0, 0.0, 180.0), "AngleMax", "Maximum angle to bin", "<theta, degrees>");
+	group->add(new DoubleModuleKeyword(0.0, 0.0, 180.0), "AngleMin", "Minimum angle to bin", "<theta, degrees>");
+	group->add(new DoubleModuleKeyword(0.05, 0.0001), "DistanceBin", "Width of distance bins", "<dr, Angstroms>");
+	group->add(new DoubleModuleKeyword(10.0, 0.0), "DistanceMax", "Maximum distance to bin", "<r, Angstroms>");
+	group->add(new DoubleModuleKeyword(0.0, 0.0), "DistanceMin", "Minimum distance to bin", "<r, Angstroms>");
+
+	// Sites
+	group = addKeywordGroup("Sites");
+	group->add(new SpeciesSiteModuleKeyword(), "SiteA", "Add a site which represents 'A' in the interaction A-B...C", "<Species> <Site>");
+	group->add(new SpeciesSiteModuleKeyword(), "SiteB", "Add a site which represents 'B' in the interaction A-B...C", "<Species> <Site>");
+	group->add(new SpeciesSiteModuleKeyword(), "SiteC", "Add a site which represents 'C' in the interaction A-B...C", "<Species> <Site>");
+	group->add(new BoolModuleKeyword(false), "ExcludeSameMolecule", "Whether to exclude correlations between sites on the same molecule", "<True|False>");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised

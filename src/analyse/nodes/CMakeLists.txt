@@ -5,7 +5,9 @@ add_library(analysisnodes
   collect3d.cpp
   dynamicsite.cpp
   exclude.cpp
+  fit1d.cpp
   node.cpp
+  nodereference.cpp
   process1d.cpp
   process2d.cpp
   process3d.cpp
@@ -18,7 +20,9 @@ add_library(analysisnodes
   collect3d.h
   dynamicsite.h
   exclude.h
+  fit1d.h
   node.h
+  nodereference.h
   nodes.h
   process1d.h
   process2d.h

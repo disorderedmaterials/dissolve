@@ -1,0 +1,152 @@
+/*
+	*** Wizard Widget
+	*** src/gui/wizardwidget.hui
+	Copyright T. Youngs 2012-2019
+
+	This file is part of Dissolve.
+
+	Dissolve is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	Dissolve is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef DISSOLVE_WIZARDWIDGET_H
+#define DISSOLVE_WIZARDWIDGET_H
+
+#include "gui/ui_wizardwidgetfooter.h"
+#include "gui/ui_wizardwidgetheader.h"
+#include "gui/wizardwidgetpageinfo.h"
+#include "templates/list.h"
+#include "templates/reflist.h"
+
+// Forward Declarations
+/* none */
+
+// Wizard Widget
+class WizardWidget : public QWidget
+{
+	// All Qt declarations derived from QObject must include this macro
+	Q_OBJECT
+
+	public:
+	// Constructor / Destructor
+	WizardWidget();
+	~WizardWidget();
+
+
+	/*
+	 * Widgets
+	 */
+	private:
+	// Header form declaration
+	Ui::WizardWidgetHeader headerUi_;
+	// Footer form declaration
+	Ui::WizardWidgetFooter footerUi_;
+	// Whether header controls are available
+	bool headerAvailable_;
+	// Whether the close button is available
+	bool closeButtonAvailable_;
+	// Whether footer controls are available
+	bool footerAvailable_;
+
+	protected:
+	// Attach header and footer to existing named widgets in specified widget
+	void setUpHeaderAndFooter(QWidget* widget);
+	// Set icon in header
+	void setWizardHeaderIcon(QString iconResource);
+	// Update controls in header and footer widgets to reflect the specified page
+	void updateHeaderAndFooter(WizardWidgetPageInfo* page);
+
+	public:
+	// Set whether the close button is available
+	void setCloseButtonAvailable(bool b);
+	// Return whether header controls are available
+	bool headerAvailable() const;
+	// Return whether footer controls are available
+	bool footerAvailable() const;
+
+
+	/*
+	 * Page Management
+	 */
+	private:
+	// List of pages that we know about
+	List<WizardWidgetPageInfo> pages_;
+	// History of traversed pages
+	RefList<WizardWidgetPageInfo,bool> history_;
+
+	public:
+	// Clear all registered pages
+	void clearPages();
+	// Add empty page
+	WizardWidgetPageInfo* addPage();
+	// Register normal page
+	WizardWidgetPageInfo* registerPage(int index, const char* title, int nextIndex = -1);
+	// Register choice page (no Finish / Next buttons)
+	void registerChoicePage(int index, const char* title);
+	// Register exit (finish) page
+	void registerFinishPage(int index, const char* title);
+	// Find page with specified index
+	WizardWidgetPageInfo* findPage(int index);
+
+
+	/*
+	 * Control
+	 */
+	private:
+	// Current page
+	WizardWidgetPageInfo* currentPage_;
+
+	protected:
+	// Go to specified page index in the controls widget
+	virtual bool displayControlPage(int index) = 0;
+	// Return whether progression to the next page from the current page is allowed
+	virtual bool progressionAllowed(int index) const = 0;
+	// Perform any necessary actions before moving to the next page
+	virtual bool prepareForNextPage(int currentIndex) = 0;
+	// Determine next page for the current page, based on current data
+	virtual int determineNextPage(int currentIndex) = 0;
+	// Perform any necessary actions before moving to the previous page
+	virtual bool prepareForPreviousPage(int currentIndex) = 0;
+
+	protected slots:
+	// Update state of progression ('Next' / 'Finish') controls
+	bool updateProgressionControls();
+	// Go to previous page
+	void goToPreviousPage(bool checked);
+	// Go to previous page
+	void goToPreviousPage();
+	// Go to next page
+	void goToNextPage(bool checked);
+	// Go to next page
+	void goToNextPage();
+	// End the wizard
+	void finishWizard(bool checked);
+	// Close the wizard
+	void closeWizard(bool checked);
+
+	public:
+	// Reset wizard and begin again from specified page
+	void resetToPage(int index);
+	// Display specified page in controls widget
+	void goToPage(int index);
+	// Go back one page in the history
+	void goBack();
+
+	signals:
+	// Finish button pressed
+	void finished();
+	// Cancel button pressed
+	void canceled();
+};
+
+#endif

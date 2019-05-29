@@ -1,7 +1,7 @@
 /*
 	*** Object Store
 	*** src/templates/objectstore.h
-	Copyright T. Youngs 2013-2018
+	Copyright T. Youngs 2013-2019
 
 	This file is part of Dissolve.
 
@@ -43,15 +43,14 @@ class ObjectInfo
 	enum ObjectType
 	{
 		NoObject = 0,
+		ConfigurationObject,
 		Data1DObject,
 		Data2DObject,
 		Data3DObject,
 		Histogram1DObject,
 		Histogram2DObject,
 		Histogram3DObject,
-		UChromaAxesObject,
-		UChromaCollectionObject,
-		UChromaViewPaneObject,
+		SpeciesObject,
 		nObjectTypes
 	};
 
@@ -110,7 +109,7 @@ template <class T> class ObjectStore
 		// Store the parent object pointer, and add it to the master list
 		object_ = object;
 		objectInfo_.set(objectType_, objectCount_++);
-		setObjectTag("");
+		setObjectTag(CharString("%p", object_));
 		objects_.add(object_, objectInfo_.id());
 	}
 	// Destructor

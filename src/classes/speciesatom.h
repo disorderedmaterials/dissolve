@@ -1,7 +1,7 @@
 /*
 	*** Species Atom Definition
 	*** src/classes/speciesatom.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -63,6 +63,8 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	AtomType* atomType_;
 	// Index in Species
 	int index_;
+	// Whether the atom is currently selected
+	bool selected_;
 
 	public:
 	// Set Species parent
@@ -93,6 +95,10 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	int index() const;
 	// Return 'user' index (1->N)
 	int userIndex() const;
+	// Set whether the atom is currently selected
+	void setSelected(bool selected);
+	// Return whether the atom is currently selected
+	bool isSelected() const;
 	// Copy properties from supplied Atom
 	void copyProperties(const SpeciesAtom* source);
 
@@ -127,8 +133,10 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	void clearBonds();
 	// Return number of bonds
 	int nBonds() const;
-	// Return first bond reference
-	RefListItem<SpeciesBond,int>* bonds();
+	// Return specified bond
+	SpeciesBond* bond(int index);
+	// Return bonds list
+	const RefList<SpeciesBond,int>& bonds() const;
 	// Return whether bond to specified atom exists
 	SpeciesBond* hasBond(SpeciesAtom* j);
 

@@ -1,7 +1,7 @@
 /*
 	*** Keyword Widget - WindowFunction
 	*** src/gui/keywordwidgets/windowfunction_funcs.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -20,12 +20,12 @@
 */
 
 #include "gui/keywordwidgets/windowfunction.hui"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 #include <QHBoxLayout>
 #include <QComboBox>
 
 // Constructor
-WindowFunctionKeywordWidget::WindowFunctionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, GenericList& moduleData, const char* prefix) : QWidget(parent), KeywordWidgetBase(moduleData, prefix)
+WindowFunctionKeywordWidget::WindowFunctionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QWidget(parent), KeywordWidgetBase(coreData, moduleData, prefix)
 {
 	// Create the necessary subwidgets
 	QHBoxLayout* layout = new QHBoxLayout(this);

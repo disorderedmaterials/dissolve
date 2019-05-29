@@ -1,7 +1,7 @@
 /*
 	*** Analyse Module
 	*** src/modules/analyse/analyse.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -41,15 +41,9 @@ class AnalyseModule : public Module
 	/*
 	 * Instances
 	 */
-	protected:
-	// List of all instances of this Module type
-	static List<Module> instances_;
-
 	public:
-	// Return list of all created instances of this Module
-	List<Module>& instances();
 	// Create instance of this module
-	Module* createInstance();
+	Module* createInstance() const;
 
 
 	/*
@@ -58,10 +52,10 @@ class AnalyseModule : public Module
 	public:
 	// Return type of module
 	const char* type() const;
+	// Return category for module
+	const char* category() const;
 	// Return brief description of module
 	const char* brief() const;
-	// Return instance type for module
-	InstanceType instanceType() const;
 	// Return the maximum number of Configurations the Module can target (or -1 for any number)
 	int nTargetableConfigurations() const;
 
@@ -90,6 +84,10 @@ class AnalyseModule : public Module
 	private:
 	// Analyser to be run
 	Analyser analyser_;
+
+	public:
+	// Return the Analyser's context stack
+	const NodeContextStack& analyserContextStack() const;
 
 
 	/*

@@ -1,7 +1,7 @@
 /*
 	*** Dissolve Main Structure
 	*** src/main/dissolve.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -24,7 +24,9 @@
 
 #include "data/elements.h"
 #include "module/module.h"
+#include "module/layer.h"
 #include "classes/configuration.h"
+#include "classes/coredata.h"
 #include "classes/pairpotential.h"
 #include "classes/potentialmap.h"
 #include "classes/masterintra.h"
@@ -37,14 +39,13 @@ class Grain;
 class Isotopologue;
 class Molecule;
 class ChangeStore;
-class ModuleProxyBase;
 
 // Dissolve Main Class
 class Dissolve
 {
 	public:
 	// Constructor
-	Dissolve();
+	Dissolve(CoreData& coreData);
 	// Destructor
 	~Dissolve();
 
@@ -53,42 +54,43 @@ class Dissolve
 	 * Core
 	 */
 	private:
+	// Reference to CoreData 
+	CoreData& coreData_;
 	// Whether we are set up, ready for simulation
 	bool setUp_;
 
 	public:
+	// Return reference to CoreData
+	const CoreData& coreData() const;
 	// Clear all data
 	void clear();
 	// Register GenericItems
 	void registerGenericItems();
 	// Set up everything needed to run the simulation
 	bool setUp();
+	// Flag that the set up is no longer valid and should be done again
+	void invalidateSetUp();
 	// Return whether the simulation has been set up
 	bool isSetUp() const;
 
 
 	/*
 	 * Atom Types
+	 * (Exposes List<AtomType> in coreData_)
 	 */
-	private:
-	// Master list of allowed AtomTypes for all Species (referenced from List<T>::masterInstance_)
-	List<AtomType>& atomTypes_;
-	
 	public:
 	// Add AtomType with specified Element
 	AtomType* addAtomType(Element* el);
 	// Return number of AtomTypes in list
 	int nAtomTypes() const;
-	// Return first AtomType in list
-	AtomType* atomTypes() const;
 	// Return AtomTypes list
-	const List<AtomType>& atomTypeList() const;
+	List<AtomType>& atomTypes();
 	// Return nth AtomType in list
 	AtomType* atomType(int n);
-	// Generate unique AtomType name with base name provided
-	const char* uniqueAtomTypeName(const char* base, AtomType* exclude = 0) const;
 	// Search for AtomType by name
 	AtomType* findAtomType(const char* name) const;
+	// Clear all AtomTypes
+	void clearAtomTypes();
 
 
 	/*
@@ -133,15 +135,16 @@ class Dissolve
 	MasterIntra* masterTorsion(int n);
 	// Return whether named master Torsion parameters exist
 	MasterIntra* hasMasterTorsion(const char* name) const;
+	// Return the named master term (of any form) if it exists
+	MasterIntra* findMasterTerm(const char* name) const;
+	// Clear all MasterTerms
+	void clearMasterTerms();
 
 
 	/*
 	 * Species Definitions
+	 * (Exposes List<Species> in coreData_)
 	 */
-	private:
-	// Master List of defined Species (referenced from List<T>::masterInstance_)
-	List<Species>& species_;
-	
 	public:
 	// Add a new Species to the list
 	Species* addSpecies();
@@ -159,6 +162,12 @@ class Dissolve
 	void updateIsotopologues(Species* species = NULL, Isotopologue* iso = NULL);
 	// Remove Isotopologue from Species
 	void removeSpeciesIsotopologue(Species* species, Isotopologue* iso);
+	// Copy AtomType, creating a new one if necessary
+	void copyAtomType(SpeciesAtom* sourceAtom, SpeciesAtom* destAtom);
+	// Copy intramolecular interaction parameters, adding MasterIntra if necessary
+	void copySpeciesIntra(SpeciesIntra* sourceIntra, SpeciesIntra* destIntra);
+	// Copy Species
+	Species* copySpecies(const Species* species);
 
 
 	/*
@@ -207,8 +216,6 @@ class Dissolve
 	PairPotential* pairPotential(AtomType* at1, AtomType* at2) const;
 	// Return whether specified PairPotential is defined
 	PairPotential* pairPotential(const char* at1, const char* at2) const;
-	// Save all PairPotentials
-	bool savePairPotentials(const char* baseName) const;
 	// Return map for PairPotentials
 	const PotentialMap& potentialMap();
 	// Regenerate all PairPotentials, replacing those currently defined
@@ -221,22 +228,81 @@ class Dissolve
 
 	/*
 	 * Configurations
+	 * (Exposes List<Configuration> in coreData_)
 	 */
-	private:
-	// Master lst of all atomic configurations (referenced from List<T>::masterInstance_)
-	List<Configuration>& configurations_;
-
 	public:
 	// Add new Configuration
 	Configuration* addConfiguration();
-	// Return first Configuration in list
-	const List<Configuration>& configurations() const;
+	// Own the specified Configuration
+	bool ownConfiguration(Configuration* cfg);
+	// Return number of defined Configurations
+	int nConfigurations() const;
+	// Return Configuration list
+	List<Configuration>& configurations();
+	// Return Configuration list (const)
+	const List<Configuration>& constConfigurations() const;
 	// Find configuration by name
-	Configuration* findConfiguration(const char* name, bool useNiceName = false) const;
+	Configuration* findConfiguration(const char* name) const;
+	// Find configuration by 'nice' name
+	Configuration* findConfigurationByNiceName(const char* name) const;
 	// Write Configuration through specified LineParser
 	bool writeConfiguration(Configuration* cfg, LineParser& parser);
 	// Read Configuration through specified LineParser
 	bool readConfiguration(Configuration* cfg, LineParser& parser);
+
+
+	/*
+	 * Modules
+	 */
+	private:
+	// List of all instances of all used Modules
+	RefList<Module,bool> moduleInstances_;
+	// List of master Module instances
+	List<Module> masterModules_;
+
+	private:
+	// Register master Module
+	bool registerMasterModule(Module* masterInstance);
+
+	public:
+	// Register master instances for all Modules
+	bool registerMasterModules();
+	// Return master Module instances
+	const List<Module>& masterModules() const;
+	// Search for master Module of the named type
+	Module* findMasterModule(const char* moduleType) const;
+	// Create a Module instance for the named Module type
+	Module* createModuleInstance(const char* moduleType);
+	// Search for any instance of any module with the specified unique name
+	Module* findModuleInstance(const char* uniqueName);
+
+
+	/*
+	 * Layers
+	 */
+	private:
+	// List of defined processing layers
+	List<ModuleLayer> processingLayers_;
+	// Data associated with processing Modules
+	GenericList processingModuleData_;
+
+	public:
+	// Add new processing layer
+	ModuleLayer* addProcessingLayer();
+	// Find named processing layer
+	ModuleLayer* findProcessingLayer(const char* name) const;
+	// Own the specified processing layer
+	bool ownProcessingLayer(ModuleLayer* layer);
+	// Return number of defined processing layers
+	int nProcessingLayers() const;
+	// Generate unique processing layer name, with base name provided
+	const char* uniqueProcessingLayerName(const char* baseName) const;
+	// Return list of processing layers
+	List<ModuleLayer>& processingLayers();
+	// Return data associated with main processing Modules
+	GenericList& processingModuleData();
+	// Create and add a named Module to the named layer (creating it if necessary), with optional Configuration target
+	Module* createModuleInLayer(const char* moduleType, const char* layerName, Configuration* cfg = NULL);
 
 
 	/*
@@ -249,18 +315,14 @@ class Dissolve
 	int seed_;
 	// Frequency at which to write restart file
 	int restartFileFrequency_;
-	// List of main processing Modules to run
-	ModuleList mainProcessingModules_;
-	// List of analysis processing Modules to run
-	ModuleList analysisProcessingModules_;
-	// Data associated with main processing Modules
-	GenericList processingModuleData_;
 	// Current simulation step
 	int iteration_;
 	// Number of iterations performed
 	int nIterationsPerformed_;
 	// Main loop timer
 	Timer mainLoopTimer_;
+	// Accumulated timing information for main loop iterations
+	SampledDouble mainLoopTimes_;
 
 	public:
 	// Set number of test points to use when calculating Box normalisation arrays
@@ -275,12 +337,6 @@ class Dissolve
 	void setRestartFileFrequency(int n);
 	// Return frequency with which to write restart file
 	int restartFileFrequency() const;
-	// Return list of main processing Modules to run
-	ModuleList& mainProcessingModules();
-	// Return list of analysis processing Modules to run
-	ModuleList& analysisProcessingModules();
-	// Return data associated with main processing Modules
-	GenericList& processingModuleData();
 	// Iterate main simulation
 	bool iterate(int nIterations = -1);
 	// Return current simulation step
@@ -302,15 +358,13 @@ class Dissolve
 	 */
 	private:
 	// Filename of current input file
-	CharString filename_;
+	CharString inputFilename_;
 	// Filename of current restart file
 	CharString restartFilename_;
 	// Accumulated timing information for saving restart file
 	SampledDouble saveRestartTimes_;
 
 	public:
-	// Load Species from specified file
-	bool loadSpecies(const char* filename);
 	// Load input file
 	bool loadInput(const char* filename);
 	// Save input file
@@ -327,10 +381,12 @@ class Dissolve
 	void setInputFilename(const char* filename);
 	// Return current input filename
 	const char* inputFilename() const;
-	// Return whether a restart filename has been set
-	bool hasRestartFilename() const;
+	// Set restart filename
+	void setRestartFilename(const char* filename);
 	// Return restart filename
 	const char* restartFilename() const;
+	// Return whether a restart filename has been set
+	bool hasRestartFilename() const;
 
 
 	/*
@@ -345,12 +401,18 @@ class Dissolve
 	private:
 	// Parallel strategy for Configuration work
 	ParallelStrategy parallelStrategy_;
+	// Default process group population (per Configuration)
+	int parallelGroupPopulation_;
 
 	public:
 	// Set parallel strategy for Configuration work
 	void setParallelStrategy(ParallelStrategy ps);
 	// Return parallel strategy for Configuration work
-	ParallelStrategy parallelStrategy();
+	ParallelStrategy parallelStrategy() const;
+	// Set default process group population (per Configuration)
+	void setParallelGroupPopulation(int groupPopulation);
+	// Return default process group population (per Configuration)
+	int parallelGroupPopulation() const;
 	// Return world process pool
 	ProcessPool& worldPool();
 	// Set up local MPI pools

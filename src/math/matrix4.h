@@ -1,7 +1,7 @@
 /*
 	*** Column-Major (OpenGL-friendly) 4x4 Matrix class
 	*** src/math/matrix4.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -33,6 +33,9 @@
 #include <GL/gl.h>
 #endif
 
+// Forward Declarations
+class Matrix3;
+
 // Column-major 4x4 matrix
 class Matrix4
 {
@@ -57,6 +60,7 @@ class Matrix4
 	Vec4<double> operator*(const Vec4<double>& v) const;
 	Matrix4& operator*=(const Matrix4& B);
 	double& operator[](int);
+	void operator=(const Matrix3& B);
 	// Pre-multiply this matrix by the supplied matrix
 	void preMultiply(const Matrix4& B);
 
@@ -72,11 +76,11 @@ class Matrix4
 	// Set the zero matrix
 	void zero();
 	// Return matrix array
-	double* matrix();
+	const double* matrix() const;
 	// Return transpose of current matrix
-	Matrix4& transpose();
+	Matrix4& transpose() const;
 	// Calculate determinant
-	double determinant();
+	double determinant() const;
 	// Invert matrix
 	void invert();
 

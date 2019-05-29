@@ -1,7 +1,7 @@
 /*
 	*** Module Keyword - Complex
 	*** src/module/keywordtypes/complex.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -68,7 +68,7 @@ class ComplexModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<
 	// Return maximum number of arguments accepted
 	int maxArguments();
 	// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-	bool read(LineParser& parser, int startArg, ProcessPool& procPool);
+	bool read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool);
 	// Write keyword data to specified LineParser
 	bool write(LineParser& parser, const char* prefix);
 };

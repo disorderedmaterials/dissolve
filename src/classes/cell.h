@@ -1,7 +1,7 @@
 /*
 	*** Cell Definition
 	*** src/classes/cell.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -25,6 +25,7 @@
 #include "classes/grain.h"
 #include "templates/vector3.h"
 #include "templates/reflist.h"
+#include "templates/ordereddaoarray.h"
 #include "templates/orderedpointerarray.h"
 
 // Forward Declarations
@@ -75,10 +76,14 @@ class Cell
 	private:
 	// Array of Atoms contained in this Cell
 	OrderedPointerArray<Atom> atoms_;
+	// Return array of contained Atoms, ordered by their array indices
+	OrderedDAOArray<Atom> indexOrderedAtoms_;
 
 	public:
 	// Return array of contained Atoms
 	OrderedPointerArray<Atom>& atoms();
+	// Return array of contained Atoms, ordered by their array indices
+	Atom** indexOrderedAtoms() const;
 	// Return number of Atoms in array
 	int nAtoms() const;
 	// Add atom to Cell

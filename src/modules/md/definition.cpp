@@ -1,7 +1,7 @@
 /*
 	*** MD Module - Definition
 	*** src/modules/md/definition.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -27,16 +27,16 @@ const char* MDModule::type() const
 	return "MD";
 }
 
+// Return category for module
+const char* MDModule::category() const
+{
+	return "Evolution";
+}
+
 // Return brief description of module
 const char* MDModule::brief() const
 {
 	return "Evolve a Configuration using molecular dynamics";
-}
-
-// Return instance type for module
-Module::InstanceType MDModule::instanceType() const
-{
-	return Module::MultipleInstance;
 }
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)

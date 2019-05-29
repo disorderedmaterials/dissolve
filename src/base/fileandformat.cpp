@@ -1,7 +1,7 @@
 /*
-	*** File And Format
+	*** File/Format Base Class
 	*** src/base/fileandformat.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -26,7 +26,7 @@
 // Constructor
 FileAndFormat::FileAndFormat()
 {
-	format_ = -1;
+	format_ = 0;
 }
 
 // Conversion operators
@@ -55,24 +55,51 @@ const char* FileAndFormat::format(int id) const
 	return formats()[id];
 }
 
-// Return format
-int FileAndFormat::format() const
+// Convert format index to nice text string
+const char* FileAndFormat::niceFormat(int id) const
+{
+	if ((id < 0) || (id >= nFormats())) return "???";
+
+	return niceFormats()[id];
+}
+
+// Set format index
+void FileAndFormat::setFormatIndex(int id)
+{
+	format_ = id;
+}
+
+// Return format index
+int FileAndFormat::formatIndex() const
 {
 	return format_;
 }
 
 // Return format string
-const char* FileAndFormat::formatString() const
+const char* FileAndFormat::format() const
 {
 	if ((format_ < 0) || (format_ >= nFormats())) return "???";
 	else return format(format_);
+}
+
+// Return nice format string
+const char* FileAndFormat::niceFormat() const
+{
+	if ((format_ < 0) || (format_ >= nFormats())) return "???";
+	else return niceFormats()[format_];
 }
 
 /*
  * Filename
  */
 
-// Return filename
+// Set filename / basename
+void FileAndFormat::setFilename(const char* filename)
+{
+	filename_ = filename;
+}
+
+// Return filename / basename
 const char* FileAndFormat::filename() const
 {
 	return filename_.get();
@@ -82,7 +109,13 @@ const char* FileAndFormat::filename() const
  * Check
  */
 
-// Return whether a valid filename and format have been set
+// Return whether a filename has been set
+bool FileAndFormat::hasFilename() const
+{
+	return (!filename_.isEmpty());
+}
+
+// Return whether a filename and format have been set
 bool FileAndFormat::hasValidFileAndFormat() const
 {
 	if (filename_.isEmpty()) return false;
@@ -96,11 +129,18 @@ bool FileAndFormat::hasValidFileAndFormat() const
  */
 
 // Read format / filename from specified parser
-bool FileAndFormat::read(LineParser& parser, int startArg, bool checkFileExists)
+bool FileAndFormat::read(LineParser& parser, int startArg)
 {
 	// Convert first argument to format type
 	format_ = format(parser.argc(startArg));
-	if (format_ == nFormats()) return Messenger::error("Unrecognised format '%s' given for file.\n", parser.argc(startArg));
+	if (format_ == nFormats())
+	{
+		Messenger::print("Unrecognised format '%s' given for file. Recognised formats are:\n\n", parser.argc(startArg));
+
+		for (int n=0; n<nFormats(); ++n) Messenger::print("  %12s  %s\n", format(n), niceFormat(n));
+
+		return false;
+	}
 
 	// Set filename if present
 	if (parser.hasArg(startArg+1))
@@ -108,7 +148,7 @@ bool FileAndFormat::read(LineParser& parser, int startArg, bool checkFileExists)
 		filename_ = parser.argc(startArg+1);
 
 		// Check that the file exists?
-		if (checkFileExists && (!DissolveSys::fileExists(filename_))) return Messenger::error("Specified file '%s' does not exist.\n", filename_.get());
+		if (fileMustExist() && (!DissolveSys::fileExists(filename_))) return Messenger::error("Specified file '%s' does not exist.\n", filename_.get());
 	}
 
 	return true;
@@ -117,4 +157,9 @@ bool FileAndFormat::read(LineParser& parser, int startArg, bool checkFileExists)
 // Return formatted string for writing
 const char* FileAndFormat::asString() const
 {
+	static CharString result;
+
+	result.sprintf("%s  '%s'", format(format_), filename_.get());
+
+	return result.get();
 }

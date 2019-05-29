@@ -1,7 +1,7 @@
 /*
 	*** EnergyKernel
 	*** src/classes/energykernel.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -811,6 +811,9 @@ double EnergyKernel::intraEnergy(const Atom* i)
 	// If no Atom is given, return zero
 	if (i == NULL) return 0.0;
 
+	// If no terms are present, return zero
+	if ((i->nBonds() == 0) && (i->nAngles() == 0) && (i->nTorsions() == 0)) return 0.0;
+
 	double intraEnergy = 0.0;
 
 	// Add energy from Bond terms
@@ -831,7 +834,7 @@ double EnergyKernel::intraEnergy(const Atom* i)
 // Return intramolecular energy for the supplied Molecule
 double EnergyKernel::intraEnergy(const Molecule* mol)
 {
-	// If no Atom is given, return zero
+	// If no Molecule is given, return zero
 	if (mol == NULL) return 0.0;
 
 	double intraEnergy = 0.0;

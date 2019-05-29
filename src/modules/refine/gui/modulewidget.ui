@@ -95,7 +95,7 @@
           </widget>
          </item>
          <item>
-          <widget class="TExponentialSpin" name="PhiLevelSpin">
+          <widget class="ExponentialSpin" name="PhiLevelSpin">
            <property name="enabled">
             <bool>false</bool>
            </property>
@@ -192,7 +192,7 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="UChromaViewWidget" name="DataPlotWidget" native="true"/>
+              <widget class="DataWidget" name="DataPlotWidget" native="true"/>
              </item>
             </layout>
            </widget>
@@ -256,7 +256,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="UChromaViewWidget" name="PartialSQPlotWidget" native="true"/>
+           <widget class="DataWidget" name="PartialSQPlotWidget" native="true"/>
           </item>
          </layout>
         </widget>
@@ -317,7 +317,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="UChromaViewWidget" name="PartialGRPlotWidget" native="true"/>
+           <widget class="DataWidget" name="PartialGRPlotWidget" native="true"/>
           </item>
          </layout>
         </widget>
@@ -378,7 +378,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="UChromaViewWidget" name="DeltaPhiRPlotWidget" native="true"/>
+           <widget class="DataWidget" name="DeltaPhiRPlotWidget" native="true"/>
           </item>
          </layout>
         </widget>
@@ -439,7 +439,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="UChromaViewWidget" name="PhiMagPlotWidget" native="true"/>
+           <widget class="DataWidget" name="PhiMagPlotWidget" native="true"/>
           </item>
          </layout>
         </widget>
@@ -478,7 +478,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="UChromaViewWidget" name="ErrorsPlotWidget" native="true"/>
+           <widget class="DataWidget" name="ErrorsPlotWidget" native="true"/>
           </item>
          </layout>
         </widget>
@@ -491,15 +491,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>UChromaViewWidget</class>
+   <class>DataWidget</class>
    <extends>QWidget</extends>
-   <header>gui/uchroma/gui/uchromaview.h</header>
+   <header>gui/viewer/datawidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>TExponentialSpin</class>
+   <class>ExponentialSpin</class>
    <extends>QDoubleSpinBox</extends>
-   <header>gui/widgets/texponentialspin.hui</header>
+   <header>gui/widgets/exponentialspin.hui</header>
   </customwidget>
  </customwidgets>
  <resources>

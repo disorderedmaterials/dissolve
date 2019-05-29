@@ -1,7 +1,7 @@
 /*
 	*** Broadening Function
 	*** src/math/broadeningfunction.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -25,7 +25,7 @@
 #define MAXBROADENINGFUNCTIONPARAMS 6
 
 #include "base/charstring.h"
-#include "base/genericitembase.h"
+#include "genericitems/base.h"
 
 // Forward Declarations
 class LineParser;
@@ -105,10 +105,10 @@ class BroadeningFunction : public GenericItemBase
 	public:
 	// Return class name
 	static const char* itemClassName();
+	// Read data through specified LineParser
+	bool read(LineParser& parser, const CoreData& coreData);
 	// Write data through specified LineParser
 	bool write(LineParser& parser);
-	// Read data through specified LineParser
-	bool read(LineParser& parser);
 
 
 	/*
@@ -116,7 +116,7 @@ class BroadeningFunction : public GenericItemBase
 	 */
 	public:
 	// Broadcast data from Master to all Slaves
-	bool broadcast(ProcessPool& procPool, int root = 0);
+	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
 	// Check item equality
 	bool equality(ProcessPool& procPool);
 };

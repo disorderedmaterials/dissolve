@@ -1,7 +1,7 @@
 /*
 	*** Module Widget
 	*** src/modules/rdf/gui/modulewidget.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -31,7 +31,7 @@ class Dissolve;
 class Module;
 class RDFModule;
 class PartialSet;
-class UChromaViewWidget;
+class DataViewer;
 
 // Module Widget
 class RDFModuleWidget : public ModuleWidget
@@ -42,8 +42,8 @@ class RDFModuleWidget : public ModuleWidget
 	private:
 	// Associated Module
 	RDFModule* module_;
-	// UChromaViews contained within this widget
-	UChromaViewWidget* partialsGraph_, *totalsGraph_;
+	// DataViewers contained within this widget
+	DataViewer* partialsGraph_, *totalsGraph_;
 	// Reference to Dissolve
 	Dissolve& dissolve_;
 

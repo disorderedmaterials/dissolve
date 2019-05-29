@@ -1,7 +1,7 @@
 /*
 	*** MD Module - Options
 	*** src/modules/md/options.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -25,16 +25,22 @@
 // Set up keywords for Module
 void MDModule::setUpKeywords()
 {
-	keywords_.add(new BoolModuleKeyword(false), "CapForces", "Control whether atomic forces are capped every step");
-	keywords_.add(new DoubleModuleKeyword(1.0e7), "CapForcesAt", "Set cap on allowable force (kJ/mol) per atom");
-	keywords_.add(new DoubleModuleKeyword(-1.0), "CutoffDistance", "Interatomic cutoff distance to employ");
-	keywords_.add(new DoubleModuleKeyword(1.0e-4), "DeltaT", "Timestep (ps) to use in MD simulation");
-	keywords_.add(new IntegerModuleKeyword(10), "EnergyFrequency", "Frequency at which to calculate total system energy (or 0 to inhibit)");
-	keywords_.add(new IntegerModuleKeyword(100), "NSteps", "Number of MD steps to perform");
-	keywords_.add(new IntegerModuleKeyword(5), "OutputFrequency", "Frequency at which to output step information (or 0 to inhibit)");
-	keywords_.add(new BoolModuleKeyword(false), "RandomVelocities", "Whether random velocities should always be assigned before beginning MD simulation");
-	keywords_.add(new IntegerModuleKeyword(0), "TrajectoryFrequency", "Write frequency for trajectory file (or 0 to inhibit)");
-	keywords_.add(new BoolModuleKeyword(true), "VariableTimestep", "Whether a variable timestep should be used, determined from the maximal force vector");
+	// Calculation
+	ModuleKeywordGroup* group = addKeywordGroup("Calculation");
+	group->add(new DoubleModuleKeyword(-1.0), "CutoffDistance", "Interatomic cutoff distance to employ");
+	group->add(new IntegerModuleKeyword(100), "NSteps", "Number of MD steps to perform");
+	group->add(new BoolModuleKeyword(false), "CapForces", "Control whether atomic forces are capped every step");
+	group->add(new DoubleModuleKeyword(1.0e7), "CapForcesAt", "Set cap on allowable force (kJ/mol) per atom");
+	group->add(new DoubleModuleKeyword(1.0e-4), "DeltaT", "Timestep (ps) to use in MD simulation");
+	group->add(new BoolModuleKeyword(true), "VariableTimestep", "Whether a variable timestep should be used, determined from the maximal force vector");
+	group->add(new BoolModuleKeyword(false), "RandomVelocities", "Whether random velocities should always be assigned before beginning MD simulation");
+	group->add(new SpeciesReferenceListModuleKeyword(restrictToSpecies_), "RestrictToSpecies", "Restrict the calculation to the specified Species");
+
+	// Output
+	group = addKeywordGroup("Output");
+	group->add(new IntegerModuleKeyword(10), "EnergyFrequency", "Frequency at which to calculate total system energy (or 0 to inhibit)");
+	group->add(new IntegerModuleKeyword(5), "OutputFrequency", "Frequency at which to output step information (or 0 to inhibit)");
+	group->add(new IntegerModuleKeyword(0), "TrajectoryFrequency", "Write frequency for trajectory file (or 0 to inhibit)");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised

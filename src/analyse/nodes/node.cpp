@@ -1,7 +1,7 @@
 /*
 	*** Analysis Base Node
 	*** src/analyse/nodes/node.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -27,6 +27,8 @@
 // Constructor
 AnalysisNode::AnalysisNode(AnalysisNode::NodeType nodeType) : ListItem<AnalysisNode>()
 {
+	parent_ = NULL;
+
 	type_ = nodeType;
 
 	// Assign default, unique name to the node
@@ -44,7 +46,7 @@ AnalysisNode::~AnalysisNode()
  */
 
 // Control keywords
-const char* NodeTypes[] = { "Calculate", "Collect1D", "Collect2D", "Collect3D", "DynamicSite", "Exclude", "Process1D", "Process2D", "Process3D", "Select", "Sequence" };
+const char* NodeTypes[] = { "Calculate", "Collect1D", "Collect2D", "Collect3D", "DynamicSite", "Exclude", "Fit1D", "Process1D", "Process2D", "Process3D", "Select", "Sequence" };
 
 // Convert string to node type
 AnalysisNode::NodeType AnalysisNode::nodeType(const char* s)
@@ -85,6 +87,18 @@ const char* AnalysisNode::name() const
 const char* AnalysisNode::niceName() const
 {
 	return niceName_.get();
+}
+
+// Set Analyser parent in which the node exists
+void AnalysisNode::setParent(Analyser* parent)
+{
+	parent_ = parent;
+}
+
+// Return Analyser parent in which the node exists
+Analyser* AnalysisNode::parent() const
+{
+	return parent_;
 }
 
 /*

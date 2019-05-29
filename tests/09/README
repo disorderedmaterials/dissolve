@@ -1,8 +1,0 @@
-Unit Test 09 - Broadening Functions
-===================================
-
-argon.txt
--------------------------
-Cubic box of argon atoms, loaded from equilibrated EPSR configuration. Reference data supplied by multiple EPSR
-simulations utilising a range of Q-dependent and Q-independent broadenings in order to test consistency with 
-the application of general broadening employed within the code.

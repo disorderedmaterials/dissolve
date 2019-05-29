@@ -1,7 +1,7 @@
 /*
 	*** EPSR Module
 	*** src/modules/epsr/epsr.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -23,7 +23,7 @@
 #define DISSOLVE_EPSRMODULE_H
 
 #include "module/module.h"
-#include "module/group.h"
+#include "module/groups.h"
 #include "classes/datastore.h"
 #include "math/data1d.h"
 #include "templates/array3d.h"
@@ -49,15 +49,9 @@ class EPSRModule : public Module
 	/*
 	 * Instances
 	 */
-	protected:
-	// List of all instances of this Module type
-	static List<Module> instances_;
-
 	public:
-	// Return list of all created instances of this Module
-	List<Module>& instances();
 	// Create instance of this module
-	Module* createInstance();
+	Module* createInstance() const;
 
 
 	/*
@@ -66,10 +60,10 @@ class EPSRModule : public Module
 	public:
 	// Return type of module
 	const char* type() const;
+	// Return category for module
+	const char* category() const;
 	// Return brief description of module
 	const char* brief() const;
-	// Return instance type for module
-	InstanceType instanceType() const;
 	// Return the maximum number of Configurations the Module can target (or -1 for any number)
 	int nTargetableConfigurations() const;
 
@@ -115,26 +109,22 @@ class EPSRModule : public Module
 	private:
 	// Test datasets (if any)
 	DataStore testData_;
-	// List of target Modules to be targetted in refinement process
-	RefList<Module,bool> targets_;
-	// Target groups
-	List<ModuleGroup> targetGroups_;
+	// Target Modules, divided into groups
+	ModuleGroups groupedTargets_;
 	// Simulated data added as reference data
 	Array<Data1D> simulatedReferenceData_;
 
-	private:
-	// Add Module target to specified group
-	bool addTarget(const char* moduleTarget, const char* group);
-
 	public:
-	// Return list of target Modules / data for fitting process
-	const RefList<Module,bool>& targets() const;
-	// Return list of target groups defined
-	const List<ModuleGroup>& targetGroups() const;
+	// Return list of target Modules / data for refeinement
+	const RefList<Module,ModuleGroup*>& allTargets() const;
+	// Return grouped target Modules
+	const ModuleGroups& groupedTargets() const;
 	// Create / retrieve arrays for storage of empirical potential coefficients
 	Array2D< Array<double> >& potentialCoefficients(Dissolve& dissolve, const int nAtomTypes, const int ncoeffp = -1);
 	// Generate empirical potentials from current coefficients
-	bool generateEmpiricalPotentials(Dissolve& dissolve, EPSRModule::ExpansionFunctionType functionType, int ncoeffp, double rminpt, double rmaxpt, double sigma1, double sigma2);
+	bool generateEmpiricalPotentials(Dissolve& dissolve, EPSRModule::ExpansionFunctionType functionType, double rho, int ncoeffp, double rminpt, double rmaxpt, double sigma1, double sigma2);
+	// Generate and return single empirical potential function
+	Data1D generateEmpiricalPotentialFunction(Dissolve& dissolve, int i, int j, int n);
 	// Calculate absolute energy of empirical potentials
 	double absEnergyEP(Dissolve& dissolve);
 	// Truncate the supplied data

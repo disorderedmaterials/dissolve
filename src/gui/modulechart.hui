@@ -1,7 +1,7 @@
 /*
 	*** Module Chart
 	*** src/gui/modulechart.hui
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -30,13 +30,13 @@
 #include <QWidget>
 
 // Forward Declarations
+class Configuration;
 class DissolveWindow;
 class FlowLayout;
 class LineParser;
 class Module;
 class ModuleChartInsertionBlock;
 class ModuleList;
-class ModuleReference;
 class QDragEnterEvent;
 class QDragLeaveEvent;
 class QDropEvent;
@@ -53,7 +53,7 @@ class ModuleChart : public QWidget
 
 	public:
 	// Constructor / Destructor
-	ModuleChart(DissolveWindow* dissolveWindow, ModuleList& moduleList, QWidget* parent = NULL);
+	ModuleChart(DissolveWindow* dissolveWindow, ModuleList& moduleList, Configuration* localConfiguration = NULL);
 	virtual ~ModuleChart();
 
 	private:
@@ -97,6 +97,10 @@ class ModuleChart : public QWidget
 	private:
 	// Position of last mouse click
 	QPoint mouseDownPosition_;
+	// Name of new Module to add (dragged from palette) if any
+	QString paletteModuleToAdd_;
+	// Whether a Module is currently being dragged from the palette
+	bool paletteModuleDragged_;
 	// ModuleChartModuleBlock being dragged (if a local drag)
 	ModuleChartModuleBlock* draggedBlock_;
 	// Drop hotspots avialable on the chart
@@ -117,6 +121,8 @@ class ModuleChart : public QWidget
 	private:
 	// Target ModuleList
 	ModuleList& modules_;
+	// Parent Configuration (if we are local to one)
+	Configuration* localConfiguration_;
 	// Module widgets for Modules in target ModuleList
 	RefList<ModuleChartModuleBlock,bool> moduleWidgets_;
 	// Insertion point widget
@@ -127,8 +133,8 @@ class ModuleChart : public QWidget
 	private:
 	// Recreate list of widgets for display, reflecting current state of widget (e.g. drag/drop etc.)
 	void recreateDisplayWidgets();
-	// Find ModuleChartModuleBlock displaying specified ModuleReference
-	RefListItem<ModuleChartModuleBlock,bool>* moduleChartModuleBlockReference(ModuleReference* modRef);
+	// Find ModuleChartModuleBlock displaying specified Module
+	RefListItem<ModuleChartModuleBlock,bool>* moduleChartModuleBlockReference(Module* module);
 	// Return the ModuleChartModuleBlock clicked on its header at the specified position (if any)
 	ModuleChartModuleBlock* moduleChartModuleBlockHeaderAt(QPoint pos);
 

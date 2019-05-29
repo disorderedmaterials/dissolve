@@ -1,7 +1,7 @@
 /*
 	*** Analysis Node - Collect2D
 	*** src/analyse/nodes/collect2d.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -26,7 +26,7 @@
 #include "classes/configuration.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructor
 AnalysisCollect2DNode::AnalysisCollect2DNode(AnalysisCalculateNode* xObservable, AnalysisCalculateNode* yObservable, double xMin, double xMax, double xBinWidth, double yMin, double yMax, double yBinWidth) : AnalysisNode(AnalysisNode::Collect2DNode)
@@ -188,14 +188,14 @@ bool AnalysisCollect2DNode::finalise(ProcessPool& procPool, Configuration* cfg, 
  */
 
 // Read structure from specified LineParser
-bool AnalysisCollect2DNode::read(LineParser& parser, NodeContextStack& contextStack)
+bool AnalysisCollect2DNode::read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack)
 {
 	// The current line in the parser must also contain a node name (which is not necessarily unique...)
 	if (parser.nArgs() != 2) return Messenger::error("A Collect2D node must be given a suitable name.\n");
 	setName(parser.argc(1));
 
-	// Add ourselves to the stack
-	contextStack.add(this);
+	// Add ourselves to the context stack
+	if (!contextStack.add(this)) return Messenger::error("Error adding Collect2D node '%s' to context stack.\n", name());
 
 	// Read until we encounter the EndCollect2D keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
@@ -207,33 +207,33 @@ bool AnalysisCollect2DNode::read(LineParser& parser, NodeContextStack& contextSt
 		Collect2DNodeKeyword nk = collect2DNodeKeyword(parser.argc(0));
 		switch (nk)
 		{
-			case (Collect2DNodeKeyword::EndCollect2DKeyword):
+			case (AnalysisCollect2DNode::EndCollect2DKeyword):
 				return true;
-			case (Collect2DNodeKeyword::QuantityXKeyword):
+			case (AnalysisCollect2DNode::QuantityXKeyword):
 				// Determine observable from supplied argument
-				xObservable_ = contextStack.calculateNodeInScope(parser.argc(1));
+				xObservable_ = (AnalysisCalculateNode*) contextStack.nodeInScope(parser.argc(1), AnalysisNode::CalculateNode);
 				if (!xObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect2DNodeKeyword(nk));
 				break;
-			case (Collect2DNodeKeyword::QuantityYKeyword):
+			case (AnalysisCollect2DNode::QuantityYKeyword):
 				// Determine observable from supplied argument
-				yObservable_ = contextStack.calculateNodeInScope(parser.argc(1));
+				yObservable_ = (AnalysisCalculateNode*) contextStack.nodeInScope(parser.argc(1), AnalysisNode::CalculateNode);
 				if (!yObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect2DNodeKeyword(nk));
 				break;
-			case (Collect2DNodeKeyword::RangeXKeyword):
+			case (AnalysisCollect2DNode::RangeXKeyword):
 				// Check that we have the right number of arguments first...
-				if (parser.nArgs() != 4) return Messenger::error("Collect2D node keyword '%s' expects exactly three arguments (%i given).\n", collect2DNodeKeyword(Collect2DNodeKeyword::RangeXKeyword), parser.nArgs() - 1);
+				if (parser.nArgs() != 4) return Messenger::error("Collect2D node keyword '%s' expects exactly three arguments (%i given).\n", collect2DNodeKeyword(AnalysisCollect2DNode::RangeXKeyword), parser.nArgs() - 1);
 				xMinimum_ = parser.argd(1);
 				xMaximum_ = parser.argd(2);
 				xBinWidth_ = parser.argd(3);
 				break;
-			case (Collect2DNodeKeyword::RangeYKeyword):
+			case (AnalysisCollect2DNode::RangeYKeyword):
 				// Check that we have the right number of arguments first...
-				if (parser.nArgs() != 4) return Messenger::error("Collect2D node keyword '%s' expects exactly three arguments (%i given).\n", collect2DNodeKeyword(Collect2DNodeKeyword::RangeXKeyword), parser.nArgs() - 1);
+				if (parser.nArgs() != 4) return Messenger::error("Collect2D node keyword '%s' expects exactly three arguments (%i given).\n", collect2DNodeKeyword(AnalysisCollect2DNode::RangeXKeyword), parser.nArgs() - 1);
 				yMinimum_ = parser.argd(1);
 				yMaximum_ = parser.argd(2);
 				yBinWidth_ = parser.argd(3);
 				break;
-			case (Collect2DNodeKeyword::nCollect2DNodeKeywords):
+			case (AnalysisCollect2DNode::nCollect2DNodeKeywords):
 				return Messenger::error("Unrecognised Collect2D node keyword '%s' found.\n", parser.argc(0));
 				break;
 			default:

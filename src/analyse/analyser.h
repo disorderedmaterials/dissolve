@@ -1,7 +1,7 @@
 /*
 	*** Analyser
 	*** src/analyse/analyser.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -54,6 +54,8 @@ class Analyser
 	void clear();
 	// Add (own) specified node to root sequence
 	void addRootSequenceNode(AnalysisNode* node);
+	// Return the context stack
+	const NodeContextStack& contextStack() const;
 
 
 	/*
@@ -73,7 +75,7 @@ class Analyser
 	 */
 	public:
 	// Read structure from specified LineParser
-	bool read(LineParser& parser);
+	bool read(LineParser& parser, const CoreData& coreData);
 	// Write structure to specified LineParser
 	bool write(LineParser& parser, const char* prefix);
 };

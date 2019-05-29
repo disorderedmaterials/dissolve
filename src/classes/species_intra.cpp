@@ -1,7 +1,7 @@
 /*
 	*** Species Definition - Intramolecular Terms
 	*** src/classes/species_intra.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -52,6 +52,8 @@ SpeciesBond* Species::addBond(SpeciesAtom* i, SpeciesAtom* j)
 	i->addBond(b);
 	j->addBond(b);
 
+	++version_;
+
 	return b;
 }
 
@@ -86,6 +88,7 @@ bool Species::reconnectBond(SpeciesBond* bond, SpeciesAtom* i, SpeciesAtom* j)
 	if (hasBond(i, j)) return Messenger::error("A bond between atoms %i and %i already exists in Species '%s', so refusing to reconnect a duplicate.\n", i->userIndex(), j->userIndex(), name_.get());
 
 	// Disconnect the existing Bond
+	// TODO Shouldn't this be the SpeciesAtoms specified in the bond, rather than the "new" i and j?
 	i->removeBond(bond);
 	j->removeBond(bond);
 
@@ -93,6 +96,8 @@ bool Species::reconnectBond(SpeciesBond* bond, SpeciesAtom* i, SpeciesAtom* j)
 	bond->setAtoms(i, j);
 	i->addBond(bond);
 	j->addBond(bond);
+
+	++version_;
 
 	return true;
 }
@@ -139,6 +144,23 @@ SpeciesBond* Species::hasBond(SpeciesAtom* i, SpeciesAtom* j) const
 	return NULL;
 }
 
+// Return whether SpeciesBond between specified atom indices exists
+SpeciesBond* Species::hasBond(int i, int j)
+{
+	if ((i < 0) || (i >= nAtoms()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'i' supplied to Species::hasBond() is out of range (%i) for Species '%s'\n", i, name_.get());
+		return NULL;
+	}
+	if ((j < 0) || (j >= nAtoms()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'j' supplied to Species::hasBond() is out of range (%i) for Species '%s'\n", j, name_.get());
+		return NULL;
+	}
+
+	return hasBond(atoms_[i], atoms_[j]);
+}
+
 // Return index of specified SpeciesBond
 int Species::bondIndex(SpeciesBond* spb)
 {
@@ -176,6 +198,8 @@ SpeciesAngle* Species::addAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k)
 	SpeciesAngle* a = angles_.add();
 	a->setParent(this);
 	a->setAtoms(i, j, k);
+
+	++version_;
 
 	return a;
 }
@@ -218,6 +242,8 @@ bool Species::reconnectAngle(SpeciesAngle* angle, SpeciesAtom* i, SpeciesAtom* j
 
 	// Set the new angle atoms
 	angle->setAtoms(i, j, k);
+
+	++version_;
 
 	return true;
 }
@@ -312,6 +338,8 @@ SpeciesTorsion* Species::addTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom*
 	t->setParent(this);
 	t->setAtoms(i, j, k, l);
 
+	++version_;
+
 	return t;
 }
 
@@ -359,6 +387,8 @@ bool Species::reconnectTorsion(SpeciesTorsion* torsion, SpeciesAtom* i, SpeciesA
 
 	// Set the new angle atoms
 	torsion->setAtoms(i, j, k, l);
+
+	++version_;
 
 	return true;
 }
@@ -419,4 +449,128 @@ bool Species::hasTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, Species
 int Species::torsionIndex(SpeciesTorsion* spt)
 {
 	return torsions_.indexOf(spt);
+}
+
+// Return whether the attached atoms lists have been created
+bool Species::attachedAtomListsGenerated() const
+{
+	return attachedAtomListsGenerated_;
+}
+
+// Generate attached SpeciesAtom lists for all intramolecular terms
+void Species::generateAttachedAtomLists()
+{
+	// Bonds
+	for (int n=0; n<bonds_.nItems(); ++n)
+	{
+		// Grab Bond pointer
+		SpeciesBond* b = bonds_[n];
+
+		// Select all Atoms attached to Atom 'i', excluding the Bond as a path
+		clearAtomSelection();
+		selectFromAtom(b->i(), b);
+
+		// If the list now contains Atom j, the two atoms are present in a cycle of some sort, and we can only add the Atom 'i' itself
+		// In that case we can also finish the list for Atom 'j', and continue the loop.
+		if (selectedAtoms_.contains(b->j()))
+		{
+			Messenger::printVerbose("Bond between Atoms %i-%i is present in a cycle, so a minimal set of attached atoms will be used.\n", b->i()->userIndex(), b->j()->userIndex());
+			b->setAttachedAtoms(0, b->i());
+			b->setAttachedAtoms(1, b->j());
+			b->setInCycle(true);
+			continue;
+		}
+		else b->setAttachedAtoms(0, selectedAtoms_);
+
+		// Select all Atoms attached to Atom 'i', excluding the Bond as a path
+		clearAtomSelection();
+		selectFromAtom(b->j(), b);
+		b->setAttachedAtoms(1, selectedAtoms_);
+	}
+
+	// Angles - termini are 'i' and 'k'
+	for (int n=0; n<angles_.nItems(); ++n)
+	{
+		// Grab Angle pointer
+		SpeciesAngle* a = angles_[n];
+
+		// Grab relevant Bonds (if they exist)
+		SpeciesBond* ji = a->j()->hasBond(a->i());
+		SpeciesBond* jk = a->j()->hasBond(a->k());
+
+		// Select all Atoms attached to Atom 'i', excluding the Bond ji as a path
+		clearAtomSelection();
+		selectFromAtom(a->i(), ji, jk);
+
+		// Remove Atom 'j' from the list if it's there
+		selectedAtoms_.remove(a->j());
+
+		// If the list now contains Atom k, the two atoms are present in a cycle of some sort, and we can only add the Atom 'i' itself
+		// In that case we can also finish the list for Atom 'k', and continue the loop.
+		if (selectedAtoms_.contains(a->k()))
+		{
+			Messenger::printVerbose("Angle between Atoms %i-%i-%i is present in a cycle, so a minimal set of attached atoms will be used.\n", a->i()->userIndex(), a->j()->userIndex(), a->k()->userIndex());
+			a->setAttachedAtoms(0, a->i());
+			a->setAttachedAtoms(1, a->k());
+			a->setInCycle(true);
+			continue;
+		}
+		else a->setAttachedAtoms(0, selectedAtoms_);
+
+		// Select all Atoms attached to Atom 'k', excluding the Bond jk as a path
+		clearAtomSelection();
+		selectFromAtom(a->k(), ji, jk);
+
+		// Remove Atom 'j' from the list if it's there
+		selectedAtoms_.remove(a->j());
+
+		a->setAttachedAtoms(1, selectedAtoms_);
+	}
+
+	// Torsions - termini are 'j' and 'k'
+	for (int n=0; n<torsions_.nItems(); ++n)
+	{
+		// Grab Torsion pointer
+		SpeciesTorsion* t = torsions_[n];
+
+		// Grab relevant Bond (if it exists)
+		SpeciesBond* jk = t->j()->hasBond(t->k());
+
+		// Select all Atoms attached to Atom 'j', excluding the Bond ji as a path
+		clearAtomSelection();
+		selectFromAtom(t->j(), jk);
+
+		// Remove Atom 'j' from the list
+		selectedAtoms_.remove(t->j());
+
+		// If the list now contains Atom k, the two atoms are present in a cycle of some sort, and we can only add the Atom 'i'
+		if (selectedAtoms_.contains(t->k()))
+		{
+			Messenger::printVerbose("Torsion between Atoms %i-%i-%i-%i is present in a cycle, so a minimal set of attached atoms will be used.\n", t->i()->userIndex(), t->j()->userIndex(), t->k()->userIndex(), t->l()->userIndex());
+			t->setAttachedAtoms(0, t->i());
+			t->setAttachedAtoms(1, t->l());
+			t->setInCycle(true);
+			continue;
+		}
+		else t->setAttachedAtoms(0, selectedAtoms_);
+
+		// Select all Atoms attached to Atom 'k', excluding the Bond jk as a path
+		clearAtomSelection();
+		selectFromAtom(t->k(), jk);
+
+		// Remove Atom 'k' from the list
+		selectedAtoms_.remove(t->k());
+
+		t->setAttachedAtoms(1, selectedAtoms_);
+	}
+
+	attachedAtomListsGenerated_ = true;
+}
+
+// Detach master term links for all interaction types, copying parameters to local SpeciesIntra
+void Species::detachFromMasterTerms()
+{
+	for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next) b->detachFromMasterIntra(); 
+	for (SpeciesAngle* a = angles_.first(); a != NULL; a = a->next) a->detachFromMasterIntra();
+	for (SpeciesTorsion* t = torsions_.first(); t != NULL; t = t->next) t->detachFromMasterIntra();
 }

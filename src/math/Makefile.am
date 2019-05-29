@@ -11,6 +11,7 @@ libmath_la_SOURCES += integrator.cpp interpolator.cpp
 libmath_la_SOURCES += mathfunc.cpp matrix3.cpp matrix4.cpp
 libmath_la_SOURCES += pairbroadeningfunction.cpp plottable.cpp poissonfit.cpp
 libmath_la_SOURCES += regression.cpp 
+libmath_la_SOURCES += transformer.cpp
 libmath_la_SOURCES += sampleddouble.cpp svd.cpp
 libmath_la_SOURCES += windowfunction.cpp
 
@@ -22,9 +23,10 @@ noinst_HEADERS += filters.h ft.h functionspace.h
 noinst_HEADERS += gaussfit.h gj.h
 noinst_HEADERS += histogram1d.h histogram2d.h histogram3d.h
 noinst_HEADERS += integrator.h interpolator.h
-noinst_HEADERS += mathfunc.h matrix3.h matrix4.h mc.h
+noinst_HEADERS += mathfunc.h matrix3.h matrix4.h mc.h minimiser.h
 noinst_HEADERS += pairbroadeningfunction.h plottable.h poissonfit.h praxis.h
 noinst_HEADERS += regression.h
+noinst_HEADERS += transformer.h
 noinst_HEADERS += sampleddouble.h svd.h
 noinst_HEADERS += windowfunction.h
 

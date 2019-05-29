@@ -1,7 +1,7 @@
 /*
 	*** DataTest Module - Core
 	*** src/modules/datatest/core.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -21,9 +21,6 @@
 
 #include "modules/datatest/datatest.h"
 
-// Static Members
-List<Module> DataTestModule::instances_;
-
 /*
  * Constructor / Destructor
  */
@@ -31,10 +28,6 @@ List<Module> DataTestModule::instances_;
 // Constructor
 DataTestModule::DataTestModule() : Module()
 {
-	// Add to instances list and set unique name for this instance
-	instances_.own(this);
-	uniqueName_.sprintf("%s%02i", type(), instances_.nItems()-1);
-
 	// Set up variables / control parameters
 	setUpKeywords();
 }
@@ -49,13 +42,7 @@ DataTestModule::~DataTestModule()
  */
 
 // Create instance of this module
-List<Module>& DataTestModule::instances()
-{
-	return instances_;
-}
-
-// Create instance of this module
-Module* DataTestModule::createInstance()
+Module* DataTestModule::createInstance() const
 {
 	return new DataTestModule;
 }

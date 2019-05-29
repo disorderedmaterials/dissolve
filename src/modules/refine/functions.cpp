@@ -1,7 +1,7 @@
 /*
 	*** Refine Module - Functions
 	*** src/modules/refine/functions.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -27,33 +27,7 @@
 #include "classes/speciesbond.h"
 #include "classes/partialset.h"
 #include "math/praxis.h"
-#include "templates/genericlisthelper.h"
-
-// Add Module target to specified group
-bool RefineModule::addTarget(const char* moduleTarget, const char* group)
-{
-	// First, find the named Module
-	Module* module = ModuleList::findInstanceByUniqueName(moduleTarget);
-	if (!module) return Messenger::error("Couldn't find Module '%s' to add to RefineModule's list of targets.\n", moduleTarget);
-
-	// Check on the type of the Module given... if OK, add to the specified group
-	if (DissolveSys::sameString(module->type(), "NeutronSQ")) Messenger::print("Adding NeutronSQ target '%s' to '%s'.\n", moduleTarget, uniqueName());
-	else return Messenger::error("Can't use Module of type '%s' as a fitting target.\n", module->type());
-
-	// Does the specified group exist?
-	ModuleGroup* moduleGroup;
-	for (moduleGroup = targetGroups_.first(); moduleGroup != NULL; moduleGroup = moduleGroup->next) if (DissolveSys::sameString(moduleGroup->name(), group)) break;
-	if (moduleGroup == NULL)
-	{
-		moduleGroup = new ModuleGroup(group);
-		targetGroups_.own(moduleGroup);
-	}
-
-	targets_.add(module);
-	moduleGroup->add(module);
-
-	return true;
-}
+#include "genericitems/listhelper.h"
 
 // Calculate c(r) from supplied S(Q)
 Data1D RefineModule::calculateCR(const Data1D& sq, double normFactor, double rMin, double rStep, double rMax, WindowFunction windowFunction, BroadeningFunction broadening, bool unbroaden)
@@ -125,7 +99,7 @@ bool RefineModule::modifyBondTerms(Dissolve& dissolve, const Data1D& deltaGR, At
 	// Create a minimiser, and add our target variables - the order here is important, as the costFunction() is just
 	// provided with an array of doubles in the same order.
 	double xCentre, delta, width, AL, AC, AR;
-	PrAxis<RefineModule> minimiserLCR(*this, &RefineModule::costFunction3Exp);
+	PrAxisMinimiser<RefineModule> minimiserLCR(*this, &RefineModule::costFunction3Exp);
 	minimiserLCR.addTarget(xCentre);
 	minimiserLCR.addTarget(delta);
 	minimiserLCR.addTarget(width);
@@ -133,7 +107,7 @@ bool RefineModule::modifyBondTerms(Dissolve& dissolve, const Data1D& deltaGR, At
 	minimiserLCR.addTarget(AC);
 	minimiserLCR.addTarget(AR);
 
-	PrAxis<RefineModule> minimiserLR(*this, &RefineModule::costFunction2Exp);
+	PrAxisMinimiser<RefineModule> minimiserLR(*this, &RefineModule::costFunction2Exp);
 	minimiserLR.addTarget(xCentre);
 	minimiserLR.addTarget(delta);
 	minimiserLR.addTarget(width);
@@ -364,13 +338,13 @@ void RefineModule::sumFitEquation(Data1D& target, double xCentre, double delta, 
 }
 
 // Return list of target Modules / data for fitting process
-const RefList<Module,bool>& RefineModule::targets() const
+const RefList<Module,ModuleGroup*>& RefineModule::allTargets() const
 {
-	return targets_;
+	return groupedTargets_.modules();
 }
 
 // Return list of target groups defined
-const List<ModuleGroup>& RefineModule::targetGroups() const
+const ModuleGroups& RefineModule::groupedTargets() const
 {
-	return targetGroups_;
+	return groupedTargets_;
 }

@@ -1,7 +1,7 @@
 /*
 	*** Molecular Dynamics Module
 	*** src/modules/md/md.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -25,7 +25,7 @@
 #include "module/module.h"
 
 // Forward Declarations
-/* none */
+class Species;
 
 // Molecular Dynamics Module
 class MDModule : public Module
@@ -44,15 +44,9 @@ class MDModule : public Module
 	/*
 	 * Instances
 	 */
-	protected:
-	// List of all instances of this Module type
-	static List<Module> instances_;
-
 	public:
-	// Return list of all created instances of this Module
-	List<Module>& instances();
 	// Create instance of this module
-	Module* createInstance();
+	Module* createInstance() const;
 
 
 	/*
@@ -61,10 +55,10 @@ class MDModule : public Module
 	public:
 	// Return type of module
 	const char* type() const;
+	// Return category for module
+	const char* category() const;
 	// Return brief description of module
 	const char* brief() const;
-	// Return instance type for module
-	InstanceType instanceType() const;
 	// Return the maximum number of Configurations the Module can target (or -1 for any number)
 	int nTargetableConfigurations() const;
 
@@ -72,6 +66,10 @@ class MDModule : public Module
 	/*
 	 * Options
 	 */
+	private:
+	// Species types to restrict calculation to (if any)
+	RefList<Species,bool> restrictToSpecies_;
+
 	protected:
 	// Set up options for Module
 	void setUpKeywords();

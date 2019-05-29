@@ -1,7 +1,7 @@
 /*
 	*** Calculate Distance-Angle Module - Core
 	*** src/modules/calculate/dangle/core.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -21,9 +21,6 @@
 
 #include "modules/calculate/dangle/dangle.h"
 
-// Static Members
-List<Module> CalculateDAngleModule::instances_;
-
 /*
  * Constructor / Destructor
  */
@@ -31,9 +28,9 @@ List<Module> CalculateDAngleModule::instances_;
 // Constructor
 CalculateDAngleModule::CalculateDAngleModule() : Module()
 {
-	// Add to instances list and set unique name for this instance
-	instances_.own(this);
-	uniqueName_.sprintf("%s%02i", type(), instances_.nItems()-1);
+	// Set unique name for this instance of the Module
+	static int instanceId = 0;
+	uniqueName_.sprintf("%s%02i", type(), instanceId++);
 
 	// Set up variables / control parameters
 	setUpKeywords();
@@ -49,13 +46,7 @@ CalculateDAngleModule::~CalculateDAngleModule()
  */
 
 // Create instance of this module
-List<Module>& CalculateDAngleModule::instances()
-{
-	return instances_;
-}
-
-// Create instance of this module
-Module* CalculateDAngleModule::createInstance()
+Module* CalculateDAngleModule::createInstance() const
 {
 	return new CalculateDAngleModule;
 }

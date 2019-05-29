@@ -1,7 +1,7 @@
 /*
 	*** Species Definition
 	*** src/classes/species.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -29,9 +29,16 @@
 #include <string.h>
 #include <base/sysfunc.h>
 
+// Static Members (ObjectStore)
+template<class Species> RefList<Species,int> ObjectStore<Species>::objects_;
+template<class Species> int ObjectStore<Species>::objectCount_ = 0;
+template<class Species> int ObjectStore<Species>::objectType_ = ObjectInfo::SpeciesObject;
+template<class Species> const char* ObjectStore<Species>::objectTypeName_ = "Species";
+
 // Constructor
-Species::Species() : ListItem<Species>()
+Species::Species() : ListItem<Species>(), ObjectStore<Species>(this)
 {
+	attachedAtomListsGenerated_ = false;
 }
 
 // Destructor
@@ -65,20 +72,21 @@ const char* Species::name() const
 	return name_.get();
 }
 
-/*
- * Check setup
- */
-bool Species::checkSetup(const List<AtomType>& atomTypes)
+// Check set-up of Species
+bool Species::checkSetUp(const List<AtomType>& atomTypes)
 {
 	int nErrors = 0;
+
 	// Must have at least one atom...
 	if (atoms_.nItems() == 0)
 	{
 		Messenger::error("Species contains no Atoms.\n");
 		return false;
 	}
-	
-	/* Check AtomTypes */
+
+	/*
+	 * AtomTypes
+	 */
 	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next)
 	{
 		if (i->atomType() == NULL)
@@ -94,8 +102,10 @@ bool Species::checkSetup(const List<AtomType>& atomTypes)
 	}
 	if (nErrors > 0) return false;
 
-	/* GrainDefinitions */
-	/* Each Atom must be in exactly one GrainDefinition */
+	/*
+	 * GrainDefinitions
+	 * Each Atom must be in exactly one GrainDefinition
+	 */
 	RefList<SpeciesAtom,int> grainCount;
 	for (SpeciesAtom* sa = atoms_.first(); sa != NULL; sa = sa->next) grainCount.add(sa, 0);
 	for (SpeciesGrain* sg = grains_.first(); sg != NULL; sg = sg->next)
@@ -126,7 +136,9 @@ bool Species::checkSetup(const List<AtomType>& atomTypes)
 	}
 	if (nErrors > 0) return false;
 
-	/* Check IntraMolecular Data */
+	/*
+	 * IntraMolecular Data
+	 */
 	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next)
 	{
 		if ((i->nBonds() == 0) && (atoms_.nItems() > 1))
@@ -136,9 +148,10 @@ bool Species::checkSetup(const List<AtomType>& atomTypes)
 		}
 		
 		/* Check each Bond for two-way consistency */
-		for (RefListItem<SpeciesBond,int>* ri = i->bonds(); ri != NULL; ri = ri->next)
+		RefListIterator<SpeciesBond,int> bondIterator(i->bonds());
+		while (SpeciesBond* bond = bondIterator.iterate())
 		{
-			SpeciesAtom* j = ri->item->partner(i);
+			SpeciesAtom* j = bond->partner(i);
 			if (!j->hasBond(i))
 			{
 				Messenger::error("SpeciesAtom %i references a Bond to SpeciesAtom %i, but SpeciesAtom %i does not.\n", i->userIndex(), j->userIndex(), j->userIndex());
@@ -148,7 +161,9 @@ bool Species::checkSetup(const List<AtomType>& atomTypes)
 	}
 	if (nErrors > 0) return false;
 
-	/* Check Isotopologues */
+	/*
+	 * Check Isotopologues
+	 */
 	if (isotopologues_.nItems() == 0)
 	{
 		Messenger::error("No Isotopologues defined in Species.\n");
@@ -255,4 +270,10 @@ void Species::print()
 			Messenger::print("       %2i atoms: %s\n", grain->nAtoms(), grainAtoms.get());
 		}
 	}
+}
+
+// Return version
+int Species::version() const
+{
+	return version_;
 }

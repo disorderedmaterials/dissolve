@@ -12,7 +12,7 @@
   </property>
   <property name="font">
    <font>
-    <pointsize>8</pointsize>
+    <pointsize>10</pointsize>
    </font>
   </property>
   <property name="windowTitle">
@@ -67,7 +67,7 @@
     </widget>
    </item>
    <item row="2" column="1">
-    <widget class="TExponentialSpin" name="Parameter0Spin">
+    <widget class="ExponentialSpin" name="Parameter0Spin">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
        <horstretch>2</horstretch>
@@ -96,7 +96,7 @@
     </widget>
    </item>
    <item row="3" column="1">
-    <widget class="TExponentialSpin" name="Parameter1Spin">
+    <widget class="ExponentialSpin" name="Parameter1Spin">
      <property name="decimals">
       <number>3</number>
      </property>
@@ -119,7 +119,7 @@
     </widget>
    </item>
    <item row="4" column="1">
-    <widget class="TExponentialSpin" name="Parameter2Spin">
+    <widget class="ExponentialSpin" name="Parameter2Spin">
      <property name="decimals">
       <number>3</number>
      </property>
@@ -142,7 +142,7 @@
     </widget>
    </item>
    <item row="5" column="1">
-    <widget class="TExponentialSpin" name="Parameter3Spin">
+    <widget class="ExponentialSpin" name="Parameter3Spin">
      <property name="decimals">
       <number>3</number>
      </property>
@@ -165,7 +165,7 @@
     </widget>
    </item>
    <item row="6" column="1">
-    <widget class="TExponentialSpin" name="Parameter4Spin">
+    <widget class="ExponentialSpin" name="Parameter4Spin">
      <property name="decimals">
       <number>3</number>
      </property>
@@ -188,7 +188,7 @@
     </widget>
    </item>
    <item row="7" column="1">
-    <widget class="TExponentialSpin" name="Parameter5Spin">
+    <widget class="ExponentialSpin" name="Parameter5Spin">
      <property name="decimals">
       <number>3</number>
      </property>
@@ -198,9 +198,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>TExponentialSpin</class>
+   <class>ExponentialSpin</class>
    <extends>QDoubleSpinBox</extends>
-   <header>gui/widgets/texponentialspin.hui</header>
+   <header>gui/widgets/exponentialspin.hui</header>
   </customwidget>
  </customwidgets>
  <resources/>

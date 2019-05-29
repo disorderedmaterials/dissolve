@@ -1,7 +1,7 @@
 /*
 	*** Energy Module - Processing
 	*** src/modules/energy/process.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -26,7 +26,7 @@
 #include "classes/box.h"
 #include "base/sysfunc.h"
 #include "base/lineparser.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Run set-up stage
 bool EnergyModule::setUp(Dissolve& dissolve, ProcessPool& procPool)

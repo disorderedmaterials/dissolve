@@ -1,7 +1,7 @@
 /*
 	*** Module Keyword - Analyser
 	*** src/modules/keywordtypes/analyser.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -23,7 +23,7 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructor
 AnalyserModuleKeyword::AnalyserModuleKeyword(Analyser& analyser) : ModuleKeywordBase(ModuleKeywordBase::AnalyserData), ModuleKeywordData<Analyser&>(analyser)
@@ -62,9 +62,9 @@ int AnalyserModuleKeyword::maxArguments()
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool AnalyserModuleKeyword::read(LineParser& parser, int startArg, ProcessPool& procPool)
+bool AnalyserModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
-	if (!data_.read(parser)) return false;
+	if (!data_.read(parser, coreData)) return false;
 
 	set_ = true;
 

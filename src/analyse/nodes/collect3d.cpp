@@ -1,7 +1,7 @@
 /*
 	*** Analysis Node - Collect3D
 	*** src/analyse/nodes/collect3d.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -26,7 +26,7 @@
 #include "classes/configuration.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructors
 AnalysisCollect3DNode::AnalysisCollect3DNode(AnalysisCalculateNode* xObservable, AnalysisCalculateNode* yObservable, AnalysisCalculateNode* zObservable, double xMin, double xMax, double xBinWidth, double yMin, double yMax, double yBinWidth, double zMin, double zMax, double zBinWidth) : AnalysisNode(AnalysisNode::Collect3DNode)
@@ -242,14 +242,14 @@ bool AnalysisCollect3DNode::finalise(ProcessPool& procPool, Configuration* cfg, 
  */
 
 // Read structure from specified LineParser
-bool AnalysisCollect3DNode::read(LineParser& parser, NodeContextStack& contextStack)
+bool AnalysisCollect3DNode::read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack)
 {
 	// The current line in the parser must also contain a node name (which is not necessarily unique...)
 	if (parser.nArgs() != 2) return Messenger::error("A Collect3D node must be given a suitable name.\n");
 	setName(parser.argc(1));
 
-	// Add ourselves to the stack
-	contextStack.add(this);
+	// Add ourselves to the context stack
+	if (!contextStack.add(this)) return Messenger::error("Error adding Collect3D node '%s' to context stack.\n", name());
 
 	// Read until we encounter the EndCollect3D keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
@@ -261,58 +261,58 @@ bool AnalysisCollect3DNode::read(LineParser& parser, NodeContextStack& contextSt
 		Collect3DNodeKeyword nk = collect3DNodeKeyword(parser.argc(0));
 		switch (nk)
 		{
-			case (Collect3DNodeKeyword::EndCollect3DKeyword):
+			case (AnalysisCollect3DNode::EndCollect3DKeyword):
 				return true;
-			case (Collect3DNodeKeyword::QuantityXYZKeyword):
+			case (AnalysisCollect3DNode::QuantityXYZKeyword):
 				if (xObservable_ || yObservable_ || zObservable_) return Messenger::error("Can't combine QuantityXYZ with one-dimensional Quantity commands.\n");
 
 				// Determine observable from supplied argument
-				xyzObservable_ = contextStack.calculateNodeInScope(parser.argc(1));
+				xyzObservable_ = (AnalysisCalculateNode*) contextStack.nodeInScope(parser.argc(1), AnalysisNode::CalculateNode);
 				if (!xyzObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeyword(nk));
 				break;
-			case (Collect3DNodeKeyword::QuantityXKeyword):
+			case (AnalysisCollect3DNode::QuantityXKeyword):
 				if (xyzObservable_) return Messenger::error("Can't combine QuantityXYZ with one-dimensional Quantity commands.\n");
 
 				// Determine observable from supplied argument
-				xObservable_ = contextStack.calculateNodeInScope(parser.argc(1));
+				xObservable_ = (AnalysisCalculateNode*) contextStack.nodeInScope(parser.argc(1), AnalysisNode::CalculateNode);
 				if (!xObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeyword(nk));
 				break;
-			case (Collect3DNodeKeyword::QuantityYKeyword):
+			case (AnalysisCollect3DNode::QuantityYKeyword):
 				if (xyzObservable_) return Messenger::error("Can't combine QuantityXYZ with one-dimensional Quantity commands.\n");
 
 				// Determine observable from supplied argument
-				yObservable_ = contextStack.calculateNodeInScope(parser.argc(1));
+				yObservable_ = (AnalysisCalculateNode*) contextStack.nodeInScope(parser.argc(1), AnalysisNode::CalculateNode);
 				if (!yObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeyword(nk));
 				break;
-			case (Collect3DNodeKeyword::QuantityZKeyword):
+			case (AnalysisCollect3DNode::QuantityZKeyword):
 				if (xyzObservable_) return Messenger::error("Can't combine QuantityXYZ with one-dimensional Quantity commands.\n");
 
 				// Determine observable from supplied argument
-				zObservable_ = contextStack.calculateNodeInScope(parser.argc(1));
+				zObservable_ = (AnalysisCalculateNode*) contextStack.nodeInScope(parser.argc(1), AnalysisNode::CalculateNode);
 				if (!zObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeyword(nk));
 				break;
-			case (Collect3DNodeKeyword::RangeXKeyword):
+			case (AnalysisCollect3DNode::RangeXKeyword):
 				// Check that we have the right number of arguments first...
 				if (parser.nArgs() != 4) return Messenger::error("Collect3D node keyword '%s' expects exactly three arguments (%i given).\n", collect3DNodeKeyword(nk), parser.nArgs() - 1);
 				xMinimum_ = parser.argd(1);
 				xMaximum_ = parser.argd(2);
 				xBinWidth_ = parser.argd(3);
 				break;
-			case (Collect3DNodeKeyword::RangeYKeyword):
+			case (AnalysisCollect3DNode::RangeYKeyword):
 				// Check that we have the right number of arguments first...
 				if (parser.nArgs() != 4) return Messenger::error("Collect3D node keyword '%s' expects exactly three arguments (%i given).\n", collect3DNodeKeyword(nk), parser.nArgs() - 1);
 				yMinimum_ = parser.argd(1);
 				yMaximum_ = parser.argd(2);
 				yBinWidth_ = parser.argd(3);
 				break;
-			case (Collect3DNodeKeyword::RangeZKeyword):
+			case (AnalysisCollect3DNode::RangeZKeyword):
 				// Check that we have the right number of arguments first...
 				if (parser.nArgs() != 4) return Messenger::error("Collect3D node keyword '%s' expects exactly three arguments (%i given).\n", collect3DNodeKeyword(nk), parser.nArgs() - 1);
 				zMinimum_ = parser.argd(1);
 				zMaximum_ = parser.argd(2);
 				zBinWidth_ = parser.argd(3);
 				break;
-			case (Collect3DNodeKeyword::nCollect3DNodeKeywords):
+			case (AnalysisCollect3DNode::nCollect3DNodeKeywords):
 				return Messenger::error("Unrecognised Collect3D node keyword '%s' found.\n", parser.argc(0));
 				break;
 			default:

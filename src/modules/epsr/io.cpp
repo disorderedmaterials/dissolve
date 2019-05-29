@@ -1,7 +1,7 @@
 /*
 	*** EPSR Module - I/O
 	*** src/modules/epsr/io.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -23,7 +23,7 @@
 #include "module/keywordtypes.h"
 #include "modules/epsr/epsr.h"
 #include "classes/atomtype.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // EPSR PCof Keywords
 const char* EPSRPCofKeywordKeywords[] = { "addpottype", "expecf", "gaussian", "ncoeffp",  "npitss", "paccept", "pdmax", "pdstep", "power", "psigma2", "q", "rbroad", "rcharge",  "refpotfac",  "reppottype", "rmaxpt", "rminfac", "rminpt", "roverlap" };

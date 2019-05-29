@@ -5,13 +5,13 @@ libmodules_la_SOURCES =
 libmodules_la_LIBADD = 
 libmodules_la_LDFLAGS = -static
 
-libmodules_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@ @DISSOLVE_READLINE@
+libmodules_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@
 
 libmoduledummywidgets_la_SOURCES = 
 libmoduledummywidgets_la_LIBADD = 
 libmoduledummywidgets_la_LDFLAGS = -static
 
-libmoduledummywidgets_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@ @DISSOLVE_READLINE@
+libmoduledummywidgets_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@
 
 # Module targets
 SUBDIRS = analyse
@@ -52,6 +52,9 @@ libmodules_la_LIBADD += molshake/libmolshake.la
 SUBDIRS += neutronsq
 libmodules_la_LIBADD += neutronsq/libneutronsq.la
 libmoduledummywidgets_la_LIBADD += neutronsq/libmodulewidget.la
+SUBDIRS += geomopt
+libmodules_la_LIBADD += geomopt/libgeomopt.la
+libmoduledummywidgets_la_LIBADD += geomopt/libmodulewidget.la
 SUBDIRS += rdf
 libmodules_la_LIBADD += rdf/librdf.la
 libmoduledummywidgets_la_LIBADD += rdf/libmodulewidget.la
@@ -84,7 +87,7 @@ libmodulewidgets_la_SOURCES =
 libmodulewidgets_la_LIBADD = 
 libmodulewidgets_la_LDFLAGS = -static
 
-libmodulewidgets_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@ @DISSOLVE_READLINE@ @GUI_INCLUDES@
+libmodulewidgets_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@ @GUI_INCLUDES@
 
 libmodulewidgets_la_LIBADD += analyse/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += atomshake/gui/libmodulewidget.la
@@ -93,6 +96,7 @@ libmodulewidgets_la_LIBADD += datatest/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += energy/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += epsr/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += neutronsq/gui/libmodulewidget.la
+libmodulewidgets_la_LIBADD += geomopt/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += rdf/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += refine/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += skeleton/gui/libmodulewidget.la

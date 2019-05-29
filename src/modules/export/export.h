@@ -1,7 +1,7 @@
 /*
 	*** Export Module
 	*** src/modules/export/export.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -29,6 +29,7 @@
 class Data1D;
 class Data2D;
 class Data3D;
+class PairPotential;
 
 // Export Module
 class ExportModule : public Module
@@ -47,15 +48,9 @@ class ExportModule : public Module
 	/*
 	 * Instances
 	 */
-	protected:
-	// List of all instances of this Module type
-	static List<Module> instances_;
-
 	public:
-	// Return list of all created instances of this Module
-	List<Module>& instances();
 	// Create instance of this module
-	Module* createInstance();
+	Module* createInstance() const;
 
 
 	/*
@@ -64,10 +59,10 @@ class ExportModule : public Module
 	public:
 	// Return type of module
 	const char* type() const;
+	// Return category for module
+	const char* category() const;
 	// Return brief description of module
 	const char* brief() const;
-	// Return instance type for module
-	InstanceType instanceType() const;
 	// Return the maximum number of Configurations the Module can target (or -1 for any number)
 	int nTargetableConfigurations() const;
 
@@ -80,6 +75,18 @@ class ExportModule : public Module
 	void setUpKeywords();
 	// Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 	int parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix);
+
+
+	/*
+	 * Data
+	 */
+	private:
+	// Filename and format for coordinate export
+	CoordinateExportFileFormat coordinatesFormat_;
+	// Basename and format for PairPotential export
+	PairPotentialExportFileFormat pairPotentialFormat_;
+	// Filename and format for trajectory export
+	TrajectoryExportFileFormat trajectoryFormat_;
 
 
 	/*
@@ -114,6 +121,30 @@ class ExportModule : public Module
 	static bool writeData2D(Data2DExportFileFormat::Data2DExportFormat format, const char* filename, Data2D& data);
 	// Write Data2D as simple block data
 	static bool writeBlockData2D(LineParser& parser, Data2D& data);
+
+
+	/*
+	 * Static Functions - PairPotentials
+	 */
+	public:
+	// Write PairPotential in specified format through parser
+	static bool writePairPotential(PairPotentialExportFileFormat::PairPotentialExportFormat format, LineParser& parser, PairPotential* pp);
+	// Write PairPotential in specified format to file
+	static bool writePairPotential(PairPotentialExportFileFormat::PairPotentialExportFormat format, const char* filename, PairPotential* pp);
+	// Write PairPotential as simple block data
+	static bool writeBlockPairPotential(LineParser& parser, PairPotential* pp);
+	// Write PairPotential as a DL_POLY TABLE file
+	static bool writeDLPOLYTABLEPairPotential(LineParser& parser, PairPotential* pp);
+
+
+	/*
+	 * Static Functions - Trajectory
+	 */
+	public:
+	// Append trajectory in specified format to file
+	static bool writeTrajectory(TrajectoryExportFileFormat::TrajectoryExportFormat format, const char* filename, Configuration* cfg);
+	// Append XYZ frame to trajectory
+	static bool writeXYZTrajectory(LineParser& parser, Configuration* cfg);
 };
 
 #endif

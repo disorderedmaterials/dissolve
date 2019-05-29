@@ -1,7 +1,7 @@
 /*
 	*** SpeciesBond Definition
 	*** src/classes/speciesbond.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -59,7 +59,7 @@ class SpeciesBond : public SpeciesIntra, public ListItem<SpeciesBond>
 	// Return second SpeciesAtom
 	SpeciesAtom* j() const;
 	// Return the 'other' SpeciesAtom
-	SpeciesAtom* partner(SpeciesAtom* i) const;
+	SpeciesAtom* partner(const SpeciesAtom* i) const;
 	// Return index (in parent Species) of first SpeciesAtom
 	int indexI() const;
 	// Return index (in parent Species) of second SpeciesAtom
@@ -68,6 +68,32 @@ class SpeciesBond : public SpeciesIntra, public ListItem<SpeciesBond>
 	int index(int n) const;
 	// Return whether SpeciesAtoms match those specified
 	bool matches(SpeciesAtom* i, SpeciesAtom* j) const;
+
+
+	/*
+	 * Bond Type
+	 */
+	public:
+	// Bond Type enum
+	enum BondType { SingleBond, DoubleBond, TripleBond, QuadrupleBond, AromaticBond, nBondTypes };
+	// Convert bond type string to functional form
+	static BondType bondType(const char* s);
+	// Return bond type functional form text
+	static const char* bondType(BondType bt);
+	// Return bond order for specified bond type
+	static double bondOrder(BondType bt);
+
+	private:
+	// Bond type
+	BondType bondType_;
+
+	public:
+	// Set bond type
+	void setBondType(BondType type);
+	// Return bond type
+	BondType bondType() const;
+	// Return bond order for current bond type
+	double bondOrder() const;
 
 
 	/*
@@ -94,6 +120,10 @@ class SpeciesBond : public SpeciesIntra, public ListItem<SpeciesBond>
 	public:
 	// Set up any necessary parameters
 	void setUp();
+	// Return fundamental frequency for the interaction
+	double fundamentalFrequency(double reducedMass) const;
+	// Return type of this interaction
+	SpeciesIntra::IntramolecularType type() const;
 	// Return energy for specified distance
 	double energy(double distance) const;
 	// Return force multiplier for specified distance

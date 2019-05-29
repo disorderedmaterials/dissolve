@@ -1,7 +1,7 @@
 /*
 	*** Keyword Parsing - Simulation Block
 	*** src/main/keywords_simulation.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -29,6 +29,7 @@ KeywordData SimulationBlockData[] = {
 	{ "BoxNormalisationPoints",		1,	"Number of random insertions to use when generating the normalisation array" },
 	{ "EndSimulation",			0,	"Signals the end of the Simulation block" },
 	{ "ParallelStrategy",			1, 	"Determines the distribution of processes across Configurations" },
+	{ "ParallelGroupPopulation",		1,	"Maximum number of groups to split processes in a pool in to" },
 	{ "RestartFileFrequency",		1,	"Frequency with which to write restart file (0 = never)" },
 	{ "Seed",				1,	"Random seed to use" }
 };
@@ -88,6 +89,9 @@ bool SimulationBlock::parse(LineParser& parser, Dissolve* dissolve)
 				}
 				else dissolve->setParallelStrategy(Dissolve::parallelStrategy(parser.argc(1)));
 				break;
+			case (SimulationBlock::ParallelGroupPopulationKeyword):
+				dissolve->setParallelGroupPopulation(parser.argi(1));
+				break;
 			case (SimulationBlock::RestartFileFrequencyKeyword):
 				dissolve->setRestartFileFrequency(parser.argi(1));
 				Messenger::print("Restart data will be written to disk every %i iteration(s).\n", dissolve->restartFileFrequency());
@@ -112,6 +116,13 @@ bool SimulationBlock::parse(LineParser& parser, Dissolve* dissolve)
 		
 		// End of block?
 		if (blockDone) break;
+	}
+
+	// If there's no error and the blockDone flag isn't set, return an error
+	if (!error && !blockDone)
+	{
+		Messenger::error("Unterminated %s block found.\n", BlockKeywords::blockKeyword(BlockKeywords::SimulationBlockKeyword));
+		error = true;
 	}
 
 	return (!error);

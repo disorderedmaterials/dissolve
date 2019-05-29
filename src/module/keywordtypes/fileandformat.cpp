@@ -1,7 +1,7 @@
 /*
 	*** Module Keyword - File and Format
 	*** src/modules/keywordtypes/fileandformat.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -62,7 +62,7 @@ int FileAndFormatModuleKeyword::maxArguments()
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool FileAndFormatModuleKeyword::read(LineParser& parser, int startArg, ProcessPool& procPool)
+bool FileAndFormatModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	if (!data_.read(parser, startArg)) return Messenger::error("Failed to read file/format.\n");
 

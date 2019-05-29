@@ -1,7 +1,7 @@
 /*
 	*** Process Pool
 	*** src/base/processpool.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -140,6 +140,10 @@ class ProcessPool
 	/*
 	 * Pool Data
 	 */
+	public:
+	// Group Population Enum
+	enum GroupPopulation { HalfMaximumGroupPopulation = -1, MaximumGroupPopulation = 0, MinimumGroupPopulation = 1 };
+
 	private:
 	// Name of this pool
 	CharString name_;
@@ -170,15 +174,13 @@ class ProcessPool
 
 	public:
 	// Set up pool with processes specified
-	bool setUp(const char* name, Array<int> worldRanks);
+	bool setUp(const char* name, Array<int> worldRanks, int groupPopulation);
 	// Return name of pool
 	const char* name();
 	// Return total number of processes in pool
 	int nProcesses() const;
 	// Return root (first) world rank of this pool
 	int rootWorldRank() const;
-	// Determine how many simultaneous processes (groups) we can have at once, based on the Cell divisions
-	void determineMaxProcessGroups(const Vec3<int>& divisions, const Vec3<int>& cellExtents, const List< ListVec3<int> >& neighbours);
 	// Assign processes to groups
 	bool assignProcessesToGroups();
 	// Assign processes to groups taken from supplied ProcessPool
@@ -279,6 +281,8 @@ class ProcessPool
 	bool broadcast(int* source, int count, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Broadcast single long integer
 	bool broadcast(long int& source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	// Broadcast long integer to all Processes
+	bool broadcast(long int* source, int count, int rootRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Broadcast single double
 	bool broadcast(double& source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Broadcast double(s)
@@ -299,6 +303,8 @@ class ProcessPool
 	bool broadcast(Array< Vec3<double> >& array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Broadcast Array2D<double>
 	bool broadcast(Array2D<double>& array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	// Broadcast Array2D<bool>
+	bool broadcast(Array2D<bool>& array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 
 
 	/*
@@ -360,7 +366,9 @@ class ProcessPool
 	// Check equality of Vec3<int> value across involved processes
 	bool equality(Vec3<int> v, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Check equality of double array across involved processes
-	bool equality(double* xArray, int nx, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool equality(double* array, int nx, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	// Check equality of long int array across involved processes
+	bool equality(long int* array, int nx, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Check equality of Array<int> across involved processes
 	bool equality(Array<int> array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Check equality of Array<double> across involved processes
@@ -369,6 +377,8 @@ class ProcessPool
 	bool equality(Array2D<int> array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Check equality of Array2D<double> across involved processes
 	bool equality(Array2D<double> array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	// Check equality of Array2D<bool> across involved processes
+	bool equality(Array2D<bool> array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 
 
 	/*

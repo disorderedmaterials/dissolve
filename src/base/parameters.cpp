@@ -1,7 +1,7 @@
 /*
 	*** Parameters Definition
 	*** src/base/parameters.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -67,8 +67,8 @@ const char* Parameters::description() const
  * Potential Parameters
  */
 
-// Return whether the parameters / charge are empty (none have never been set)
-bool Parameters::empty()
+// Return whether the parameters / charge are empty (i.e. none have ever been set)
+bool Parameters::empty() const
 {
 	return empty_;
 }
@@ -89,7 +89,7 @@ void Parameters::setParameter(int index, double value)
 }
 
 // Return parameter with index specified
-double Parameters::parameter(int index)
+double Parameters::parameter(int index) const
 {
 #ifdef CHECKS
 	if ((index < 0) || (index >= MAXSRPARAMETERS))
@@ -110,7 +110,7 @@ void Parameters::setCharge(double charge)
 }
 
 // Return atomic charge
-double Parameters::charge()
+double Parameters::charge() const
 {
 	return charge_;
 }
@@ -120,7 +120,7 @@ double Parameters::charge()
  */
 
 // Broadcast data from Master to all Slaves
-bool Parameters::broadcast(ProcessPool& procPool, int root)
+bool Parameters::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 {
 #ifdef PARALLEL
 	if (!procPool.broadcast(name_, root)) return false;

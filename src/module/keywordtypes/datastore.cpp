@@ -1,7 +1,7 @@
 /*
 	*** Module Keyword - Data Store
 	*** src/modules/keywordtypes/datastore.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -61,7 +61,7 @@ int DataStoreModuleKeyword::maxArguments()
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool DataStoreModuleKeyword::read(LineParser& parser, int startArg, ProcessPool& procPool)
+bool DataStoreModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	Messenger::print("Reading test data '%s' from file '%s'...\n", parser.argc(startArg), parser.argc(startArg+1));
 

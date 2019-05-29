@@ -1,7 +1,7 @@
 /*
 	*** Plottable Data
 	*** src/math/plottable.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PLOTTABLE_H
-#define DISSOLVE_PLOTTABLE_H
+#ifndef DISSOLVE_PLOTTABLEDATA_H
+#define DISSOLVE_PLOTTABLEDATA_H
 
 #include "math/sampleddouble.h"
 #include "base/charstring.h"
@@ -30,17 +30,17 @@
 template <class T> class Array3D;
 
 // Plottable
-class Plottable
+class PlottableData
 {
 	public:
 	// Plottable Types
-	enum PlottableType {
+	enum PlottableDataType {
 		OneAxisPlottable, 		/* Contains data points plotted against one axis (x) */
 		TwoAxisPlottable,		/* Contains data points plotted against two axes (x and y) */
 		ThreeAxisPlottable		/* Contains data points plotted againas three axes (x, y, and z) */
 	};
 	// Constructor
-	Plottable(PlottableType type);
+	PlottableData(PlottableDataType type);
 
 	
 	/*
@@ -48,7 +48,7 @@ class Plottable
 	 */
 	private:
 	// Type of plottable
-	PlottableType type_;
+	PlottableDataType type_;
 
 	protected:
 	// Name of plottable
@@ -77,6 +77,8 @@ class Plottable
 	 * Values / Errors
 	 */
 	public:
+	// Return data version
+	virtual int version() const = 0;
 	// Return values Array
 	virtual const Array<double>& constValues() const;
 	// Return values Array

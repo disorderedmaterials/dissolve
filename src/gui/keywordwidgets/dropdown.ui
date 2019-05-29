@@ -12,7 +12,7 @@
   </property>
   <property name="font">
    <font>
-    <pointsize>8</pointsize>
+    <pointsize>10</pointsize>
    </font>
   </property>
   <property name="windowTitle">
@@ -40,13 +40,13 @@
       <string>Summary</string>
      </property>
      <property name="icon">
-      <iconset resource="../icons.qrc">
+      <iconset resource="../main.qrc">
        <normaloff>:/general/icons/general_options.svg</normaloff>:/general/icons/general_options.svg</iconset>
      </property>
      <property name="iconSize">
       <size>
-       <width>12</width>
-       <height>12</height>
+       <width>16</width>
+       <height>16</height>
       </size>
      </property>
      <property name="shortcut">
@@ -63,7 +63,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../icons.qrc"/>
+  <include location="../main.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -1,7 +1,7 @@
 /*
 	*** Module Keyword - Module Reference List
 	*** src/modules/keywordtypes/modulereferencelist.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -22,13 +22,14 @@
 #include "module/keywordtypes/modulereferencelist.h"
 #include "module/list.h"
 #include "module/module.h"
+#include "classes/coredata.h"
 #include "base/lineparser.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructor
 ModuleReferenceListModuleKeyword::ModuleReferenceListModuleKeyword(RefList<Module,bool>& references, const char* moduleType, int maxModules) : ModuleKeywordBase(ModuleKeywordBase::ModuleReferenceListData), ModuleKeywordData< RefList<Module,bool>& >(references)
 {
-	moduleType_ = moduleType;
+	moduleTypes_.add(moduleType);
 	maxModules_ = maxModules;
 }
 
@@ -40,6 +41,24 @@ ModuleReferenceListModuleKeyword::~ModuleReferenceListModuleKeyword()
 /*
  * Data
  */
+
+// Determine whether current data is actually 'set'
+bool ModuleReferenceListModuleKeyword::currentDataIsSet() const
+{
+	return data_.nItems() > 0;
+}
+
+// Return the Module type(s) to allow
+const CharStringList& ModuleReferenceListModuleKeyword::moduleTypes() const
+{
+	return moduleTypes_;
+}
+
+// Return maximum number of Modules to allow in the list
+int ModuleReferenceListModuleKeyword::maxModules() const
+{
+	return maxModules_;
+}
 
 // Return whether the current data value has ever been set
 bool ModuleReferenceListModuleKeyword::isSet()
@@ -64,13 +83,13 @@ int ModuleReferenceListModuleKeyword::maxArguments()
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool ModuleReferenceListModuleKeyword::read(LineParser& parser, int startArg, ProcessPool& procPool)
+bool ModuleReferenceListModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	// Loop over arguments provided to the keyword
 	for (int n = startArg; n<parser.nArgs(); ++n)
 	{
 		// Find specified Module by its unique name
-		Module* module = ModuleList::findInstanceByUniqueName(parser.argc(n));
+		Module* module = coreData.findModule(parser.argc(n));
 		if (!module)
 		{
 			Messenger::error("No Module named '%s' exists.\n", parser.argc(n));
@@ -78,9 +97,9 @@ bool ModuleReferenceListModuleKeyword::read(LineParser& parser, int startArg, Pr
 		}
 
 		// Check the module's type
-		if ((!DissolveSys::sameString(moduleType_, "*")) && (!DissolveSys::sameString(module->type(), moduleType_)))
+		if ((moduleTypes_.nItems() > 0) && (!moduleTypes_.contains(module->type())))
 		{
-			Messenger::error("Module '%s' is not of the correct type (%s).\n", parser.argc(n), module->type());
+			Messenger::error("Module '%s' is of type '%s', and is not permitted in this list (allowed types = %s).\n", parser.argc(n), module->type(), moduleTypes_.get());
 			return false;
 		}
 
@@ -95,7 +114,7 @@ bool ModuleReferenceListModuleKeyword::read(LineParser& parser, int startArg, Pr
 // Write keyword data to specified LineParser
 bool ModuleReferenceListModuleKeyword::write(LineParser& parser, const char* prefix)
 {
-	// Loop over list of IsotopologueReferences
+	// Loop over list of referenced Modules
 	RefListIterator<Module,bool> refIterator(data_);
 	while (Module* module = refIterator.iterate())
 	{

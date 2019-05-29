@@ -1,7 +1,7 @@
 /*
 	*** ModuleChart Module Block Widget - Functions
 	*** src/gui/modulechartmoduleblock_funcs.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -25,29 +25,35 @@
 #include "gui/keywordwidgets.h"
 #include "main/dissolve.h"
 #include "classes/configuration.h"
+#include "templates/variantpointer.h"
+#include <QFile>
 #include <QPainter>
 
 // Constructor
-ModuleChartModuleBlock::ModuleChartModuleBlock(QWidget* parent, DissolveWindow* dissolveWindow, ModuleReference* modRef) : QWidget(parent), ModuleChartBlock(dissolveWindow, dissolveWindow->dissolve())
+ModuleChartModuleBlock::ModuleChartModuleBlock(QWidget* parent, DissolveWindow* dissolveWindow, Module* module) : QWidget(parent), ModuleChartBlock(dissolveWindow, dissolveWindow->dissolve())
 {
 	// Set up user interface
 	ui.setupUi(this);
 
+	refreshing_ = false;
+
 	// Set necessary values on the widget itself
 	ModuleChartMetrics metrics;
 	setContentsMargins(metrics.blockMargins());
-// 	setAutoFillBackground(true);
 
 	// Hide the keywords control frame to start with
-	ui.KeywordsControlFrame->setVisible(false);
+	ui.KeywordsControlWidget->setVisible(false);
 
-	// Set ModuleReference and Module pointers
-	moduleReference_ = modRef;
-	module_ = moduleReference_ ? moduleReference_->module() : NULL;
+	// Set Module pointers
+	module_ = module;
 
 	// Set up our keywords widget
 	ui.KeywordsWidget->setUp(dissolveWindow_, module_);
 
+	// Set the icon label
+	ui.IconLabel->setPixmap(modulePixmap(module_));
+
+	// Update our controls
 	updateControls();
 }
 
@@ -56,13 +62,13 @@ ModuleChartModuleBlock::~ModuleChartModuleBlock()
 }
 
 /*
- * Module / Reference Data
+ * Module
  */
 
-// Return reference for associated Module
-ModuleReference* ModuleChartModuleBlock::moduleReference()
+// Return associated Module
+Module* ModuleChartModuleBlock::module()
 {
-	return moduleReference_;
+	return module_;
 }
 
 /*
@@ -91,13 +97,7 @@ void ModuleChartModuleBlock::paintEvent(QPaintEvent* event)
 	borderPath.lineTo(width()-metrics.blockBorderWidth(), metrics.blockBorderMidPoint());
 	borderPath.closeSubpath();
 
-	const int* colour = module_->colour();
-	QColor blockColour = QColor(colour[0], colour[1], colour[2]).lighter(200);
-	QLinearGradient linearGrad(QPointF(0, 0), QPointF(100, 50));
-	linearGrad.setColorAt(0, blockColour);
-	linearGrad.setColorAt(1, Qt::white);
-	painter.setBrush(linearGrad);
-// 	painter.setBrush(Qt::white);
+	painter.setBrush(Qt::white);
 
 	// Ready - draw the border + fill!
 	painter.drawPath(borderPath);
@@ -123,55 +123,101 @@ QWidget* ModuleChartModuleBlock::widget()
 	return this;
 }
 
+// Set whether the settings are expanded or not, and whether this is permanent
+void ModuleChartModuleBlock::setSettingsExpanded(bool expanded, bool permanent)
+{
+	on_ToggleSettingsButton_clicked(expanded);
+
+	ui.ToggleSettingsButton->setDisabled(permanent);
+}
+
 // Update controls within widget
 void ModuleChartModuleBlock::updateControls()
 {
 	if (!module_) return;
 
+	refreshing_ = true;
+
 	// Set information panel contents
 	CharString topText("%s (%s)", module_->type(), module_->uniqueName());
 	ui.TopLabel->setText(topText.get());
-	CharString bottomText("Runs @ %s", module_->frequencyDetails(dissolve_.iteration()));
-	ui.BottomLabel->setText(bottomText.get());
-	
-	// Make sure tooltip on HeaderFrame is up-to-date
+	ui.FrequencyLabel->setText(QString("(%1)").arg(module_->frequencyDetails(dissolve_.iteration())));
+
+	// Set 'enabled' button status
+	ui.EnabledButton->setChecked(module_->enabled());
+
+	// Set frequency spin
+	ui.FrequencySpin->setValue(module_->frequency());
+
+	// Update Configuration list and HeaderFrame tooltip
+	ui.ConfigurationTargetList->clear();
 	CharString toolTip("Targets: ");
-	RefListIterator<Configuration,bool> configIterator(module_->targetConfigurations());
+	ListIterator<Configuration> configIterator(dissolveWindow_->dissolve().configurations());
 	while (Configuration* cfg = configIterator.iterate())
 	{
-		if (configIterator.isFirst()) toolTip.strcatf("%s", cfg->name());
-		else toolTip.strcatf(", %s", cfg->name());
-	}
-	ui.HeaderFrame->setToolTip(toolTip.get());
+		QListWidgetItem* item = new QListWidgetItem(cfg->name(), ui.ConfigurationTargetList);
+		item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+		item->setData(Qt::UserRole, VariantPointer<Configuration>(cfg));
 
-	// Set button status
-	ui.EnabledButton->setChecked(module_->enabled());
+		if (module_->isTargetConfiguration(cfg))
+		{
+			item->setCheckState(Qt::Checked);
+
+			if (configIterator.isFirst()) toolTip.strcatf("%s", cfg->name());
+			else toolTip.strcatf(", %s", cfg->name());
+		}
+		else item->setCheckState(Qt::Unchecked);
+	}
+	ui.ConfigurationTargetGroup->setVisible(!module_->configurationLocal());
+	ui.HeaderFrame->setToolTip(toolTip.get());
 
 	// Update keywords
 	ui.KeywordsWidget->updateControls();
+
+	refreshing_ = false;
+}
+
+// Return suitable QPixmap for supplied Module
+QPixmap ModuleChartModuleBlock::modulePixmap(const Module* module)
+{
+	if (module) return modulePixmap(module->type());
+
+	return QPixmap(":/modules/icons/modules_generic.svg");
+}
+
+// Return suitable QPixmap for supplied Module type
+QPixmap ModuleChartModuleBlock::modulePixmap(QString moduleType)
+{
+	// Construct the name of the icon for this module in our resource file
+	QString iconName = QString(":/modules/icons/modules_%1.svg").arg(moduleType.toLower());
+	if (QFile::exists(iconName)) return QPixmap(iconName);
+
+	return QPixmap(":/modules/icons/modules_generic.svg");
 }
 
 // Disable sensitive controls, ready for main code to run
 void ModuleChartModuleBlock::disableSensitiveControls()
 {
-	ui.KeywordsControlFrame->setEnabled(false);
+	ui.KeywordsControlWidget->setEnabled(false);
 	ui.RunButton->setEnabled(false);
 	ui.EnabledButton->setEnabled(false);
+	ui.FrequencySpin->setEnabled(false);
 	ui.RemoveButton->setEnabled(false);
 }
 
 // Enable sensitive controls, ready for main code to run
 void ModuleChartModuleBlock::enableSensitiveControls()
 {
-	ui.KeywordsControlFrame->setEnabled(true);
+	ui.KeywordsControlWidget->setEnabled(true);
 	ui.RunButton->setEnabled(true);
 	ui.EnabledButton->setEnabled(true);
+	ui.FrequencySpin->setEnabled(true);
 	ui.RemoveButton->setEnabled(true);
 }
 
-void ModuleChartModuleBlock::on_ToggleKeywordsButton_clicked(bool checked)
+void ModuleChartModuleBlock::on_ToggleSettingsButton_clicked(bool checked)
 {
-	ui.KeywordsControlFrame->setVisible(checked);
+	ui.KeywordsControlWidget->setVisible(checked);
 
 	adjustSize();
 	updateGeometry();
@@ -181,7 +227,7 @@ void ModuleChartModuleBlock::on_ToggleKeywordsButton_clicked(bool checked)
 
 void ModuleChartModuleBlock::on_RemoveButton_clicked(bool checked)
 {
-	emit (removeModule(moduleReference_));
+	emit (removeModule(module_));
 }
 
 void ModuleChartModuleBlock::on_RunButton_clicked(bool checked)
@@ -204,6 +250,27 @@ void ModuleChartModuleBlock::on_EnabledButton_clicked(bool checked)
 	module_->setEnabled(checked);
 
 	dissolveWindow_->setModified();
+}
+
+void ModuleChartModuleBlock::on_FrequencySpin_valueChanged(int value)
+{
+	if (refreshing_) return;
+
+	module_->setFrequency(value);
+
+	ui.FrequencyLabel->setText(QString("(%1)").arg(module_->frequencyDetails(dissolve_.iteration())));
+}
+
+void ModuleChartModuleBlock::on_ConfigurationTargetList_itemChanged(QListWidgetItem* item)
+{
+	if (refreshing_) return;
+
+	// Get Configuration for item
+	Configuration* cfg = (Configuration*) VariantPointer<Configuration>(item->data(Qt::UserRole));
+
+	// If the item is unchecked, make sure it is not present in the Module's Configuration targets
+	if (item->checkState() == Qt::Checked) module_->removeTargetConfiguration(cfg);
+	else module_->addTargetConfiguration(cfg);
 }
 
 /*

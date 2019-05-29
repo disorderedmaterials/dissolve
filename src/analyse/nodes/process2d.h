@@ -1,7 +1,7 @@
 /*
 	*** Analysis Node - Process2D
 	*** src/analyse/nodes/process2d.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -23,6 +23,7 @@
 #define DISSOLVE_ANALYSISPROCESS2D_H
 
 #include "analyse/nodes/node.h"
+#include "analyse/nodes/nodereference.h"
 #include "math/data2d.h"
 #include "base/charstring.h"
 #include "templates/reflist.h"
@@ -49,19 +50,21 @@ class AnalysisProcess2DNode : public AnalysisNode
 	 */
 	public:
 	// Node Keywords
-	enum Process2DNodeKeyword { EndProcess2DKeyword, FactorKeyword, LabelValueKeyword, LabelXKeyword, LabelYKeyword, NormaliseToOneKeyword, NSitesKeyword, NumberDensityKeyword, SaveKeyword, nProcess2DNodeKeywords };
+	enum Process2DNodeKeyword { EndProcess2DKeyword, FactorKeyword, LabelValueKeyword, LabelXKeyword, LabelYKeyword, NormaliseToOneKeyword, NSitesKeyword, NumberDensityKeyword, SaveKeyword, SourceDataKeyword, nProcess2DNodeKeywords };
 	// Convert string to control keyword
-	static Process2DNodeKeyword normalise2DNodeKeyword(const char* s);
+	static Process2DNodeKeyword process2DNodeKeyword(const char* s);
 	// Convert control keyword to string
-	static const char* normalise2DNodeKeyword(Process2DNodeKeyword nk);
+	static const char* process2DNodeKeyword(Process2DNodeKeyword nk);
 
 
 	/*
 	 * Data
 	 */
 	private:
-	// Collect2D node which we are normalising
-	AnalysisCollect2DNode* collectNode_;
+	// Collect2D node that we are processing
+	AnalysisNodeReference collectNode_;
+	// Pointer to processed data (stored in processing data list)
+	Data2D* processedData_;
 	// Reference to sites against which we will normalise by population
 	RefList<AnalysisSelectNode,double> sitePopulationNormalisers_;
 	// Reference to sites against which we will normalise by number density
@@ -80,6 +83,8 @@ class AnalysisProcess2DNode : public AnalysisNode
 	CharString xAxisLabel_, yAxisLabel_;
 
 	public:
+	// Return processed data
+	const Data2D& processedData() const;
 	// Add site population normaliser
 	void addSitePopulationNormaliser(AnalysisSelectNode* selectNode);
 	// Add number density normaliser
@@ -125,7 +130,7 @@ class AnalysisProcess2DNode : public AnalysisNode
 	 */
 	public:
 	// Read structure from specified LineParser
-	bool read(LineParser& parser, NodeContextStack& contextStack);
+	bool read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack);
 	// Write structure to specified LineParser
 	bool write(LineParser& parser, const char* prefix);
 };

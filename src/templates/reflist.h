@@ -1,7 +1,7 @@
 /*
 	*** Linked List Reference Class
 	*** src/templates/reflist.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -87,6 +87,8 @@ template <class T, class D> class RefList
 	RefListItem<T,D>* last() const;
 	// Returns the T referenced by the head of the item list
 	T* firstItem() const;
+	// Returns the T referenced by the tail of the item list
+	T* lastItem() const;
 	// Returns the number of atoms in the list
 	int nItems() const;
 	// Add reference to the list
@@ -127,14 +129,16 @@ template <class T, class D> class RefList
 	void operator=(const RefList<T,D>& source);
 	// Element access operator
 	RefListItem<T,D>* operator[](int);
-	// Item access operator
-	RefListItem<T,D>* item(int n) const;
 	// Search references for item
 	RefListItem<T,D>* contains(T* item) const;
 	// Search references for item and data
 	RefListItem<T,D>* contains(T* item, D data) const;
 	// Search references for data
 	RefListItem<T,D>* containsData(D data) const;
+	// Return nth item in list
+	T* item(int n);
+	// Return (first) item with specified data
+	T* itemWithData(D data);
 	// Clear the list of all references
 	void clear();
 	// Prune items with specified data
@@ -204,6 +208,13 @@ template <class T, class D> RefListItem<T,D>* RefList<T,D>::last() const
 template <class T, class D> T* RefList<T,D>::firstItem() const
 {
 	if (listHead_) return listHead_->item;
+	else return NULL;
+}
+
+// Returns the T associated to the tail of the item list
+template <class T, class D> T* RefList<T,D>::lastItem() const
+{
+	if (listTail_) return listTail_->item;
 	else return NULL;
 }
 
@@ -459,22 +470,6 @@ template <class T, class D> RefListItem<T,D>* RefList<T,D>::operator[](int index
 	return array()[index];
 }
 
-// Item access operator
-template <class T, class D> RefListItem<T,D>* RefList<T,D>::item(int n) const
-{
-#ifdef CHECKS
-	if ((n < 0) || (n >= nItems_))
-	{
-		printf("REFLIST_OPERATOR[] - Array index (%i) out of bounds (%i items in RefList) >>>>\n", n, nItems_);
-		return NULL;
-	}
-#endif
-	int count = -1;
-	for (RefListItem<T,D>* r = listHead_; r != NULL; r = r->next) if (++count == n) return r;
-
-	return NULL;
-}
-
 // Search for item
 template <class T, class D> RefListItem<T,D>* RefList<T,D>::contains(T* xitem) const
 {
@@ -498,6 +493,30 @@ template <class T, class D> RefListItem<T,D>* RefList<T,D>::containsData(D data)
 {
 	// Search references for specified data
 	for (RefListItem<T,D>* r = listHead_; r != NULL; r = r->next) if (r->data == data) return r;
+
+	return NULL;
+}
+
+// Element access operator
+template <class T, class D> T* RefList<T,D>::item(int index)
+{
+#ifdef CHECKS
+	if ((index < 0) || (index >= nItems_))
+	{
+		printf("REFLIST_OPERATOR[] - Array index (%i) out of bounds (%i items in RefList) >>>>\n", index, nItems_);
+		return NULL;
+	}
+#endif
+	// Use array() function to return item
+	return array()[index]->item;
+}
+
+// Return (first) item with specified data
+template <class T, class D> T* RefList<T,D>::itemWithData(D data)
+{
+	// Search references for specified data
+	for (RefListItem<T,D>* r = listHead_; r != NULL; r = r->next) if (r->data == data) return r->item;
+
 	return NULL;
 }
 
@@ -710,12 +729,12 @@ template <class T, class D> class RefListIterator
 		currentItem_ = NULL;
 	}
 	// Return whether we are on the first item in the list
-	bool isFirst()
+	bool isFirst() const
 	{
 		return (currentItem_ == targetRefList_.first());
 	}
 	// Return whether we are on the last item in the list
-	bool isLast()
+	bool isLast() const
 	{
 		return (currentItem_ == targetRefList_.last());
 	}

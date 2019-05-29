@@ -1,7 +1,7 @@
 /*
 	*** Refine Module
 	*** src/modules/refine/refine.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -23,7 +23,7 @@
 #define DISSOLVE_REFINEMODULE_H
 
 #include "module/module.h"
-#include "module/group.h"
+#include "module/groups.h"
 #include "math/broadeningfunction.h"
 #include "math/windowfunction.h"
 #include "classes/scatteringmatrix.h"
@@ -50,15 +50,9 @@ class RefineModule : public Module
 	/*
 	 * Instances
 	 */
-	protected:
-	// List of all instances of this Module type
-	static List<Module> instances_;
-
 	public:
-	// Return list of all created instances of this Module
-	List<Module>& instances();
 	// Create instance of this module
-	Module* createInstance();
+	Module* createInstance() const;
 
 
 	/*
@@ -67,10 +61,10 @@ class RefineModule : public Module
 	public:
 	// Return type of module
 	const char* type() const;
+	// Return category for module
+	const char* category() const;
 	// Return brief description of module
 	const char* brief() const;
-	// Return instance type for module
-	InstanceType instanceType() const;
 	// Return the maximum number of Configurations the Module can target (or -1 for any number)
 	int nTargetableConfigurations() const;
 
@@ -123,10 +117,8 @@ class RefineModule : public Module
 	 * Functions
 	 */
 	private:
-	// List of target Modules to be targetted in refinement process
-	RefList<Module,bool> targets_;
-	// Target groups
-	List<ModuleGroup> targetGroups_;
+	// Target Modules, divided into groups
+	ModuleGroups groupedTargets_;
 	// Full scattering matrix containing reference dat
 	ScatteringMatrix scatteringMatrix_;
 	// Simulated data added as reference data
@@ -139,8 +131,6 @@ class RefineModule : public Module
 	double xCentreStart_, xCentreDeltaLimit_;
 
 	private:
-	// Add Module target to specified group
-	bool addTarget(const char* moduleTarget, const char* group);
 	// Calculate c(r) from supplied S(Q)
 	Data1D calculateCR(const Data1D& sq, double normFactor, double rMin, double rStep, double rMax, WindowFunction windowFunction = WindowFunction(), BroadeningFunction broadening = BroadeningFunction(), bool unbroaden = false);
 	// Determine modification to bonds based on supplied delta g(r)
@@ -156,9 +146,9 @@ class RefineModule : public Module
 
 	public:
 	// Return list of target Modules / data for fitting process
-	const RefList<Module,bool>& targets() const;
-	// Return list of target groups defined
-	const List<ModuleGroup>& targetGroups() const;
+	const RefList<Module,ModuleGroup*>& allTargets() const;
+	// Return grouped target Modules
+	const ModuleGroups& groupedTargets() const;
 
 
 	/*

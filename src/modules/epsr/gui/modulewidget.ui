@@ -104,7 +104,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="UChromaViewWidget" name="SQPlotWidget" native="true"/>
+           <widget class="DataWidget" name="SQPlotWidget" native="true"/>
           </item>
          </layout>
         </widget>
@@ -165,7 +165,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="UChromaViewWidget" name="FQPlotWidget" native="true"/>
+           <widget class="DataWidget" name="FQPlotWidget" native="true"/>
           </item>
          </layout>
         </widget>
@@ -226,7 +226,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="UChromaViewWidget" name="FQFitPlotWidget" native="true"/>
+           <widget class="DataWidget" name="FQFitPlotWidget" native="true"/>
           </item>
          </layout>
         </widget>
@@ -287,7 +287,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="UChromaViewWidget" name="GRPlotWidget" native="true"/>
+           <widget class="DataWidget" name="GRPlotWidget" native="true"/>
           </item>
          </layout>
         </widget>
@@ -348,7 +348,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="UChromaViewWidget" name="FRPlotWidget" native="true"/>
+           <widget class="DataWidget" name="FRPlotWidget" native="true"/>
           </item>
          </layout>
         </widget>
@@ -409,16 +409,16 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="UChromaViewWidget" name="PhiRPlotWidget" native="true"/>
+           <widget class="DataWidget" name="PhiRPlotWidget" native="true"/>
           </item>
          </layout>
         </widget>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="ErrorsTab">
+     <widget class="QWidget" name="RFactorTab">
       <attribute name="title">
-       <string>Errors</string>
+       <string>R-Factor</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <property name="spacing">
@@ -470,13 +470,13 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="UChromaViewWidget" name="PhiMagPlotWidget" native="true"/>
+           <widget class="DataWidget" name="PhiMagPlotWidget" native="true"/>
           </item>
          </layout>
         </widget>
        </item>
        <item>
-        <widget class="QFrame" name="ErrorsPlotFrame">
+        <widget class="QFrame" name="RFactorPlotFrame">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -509,7 +509,119 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="UChromaViewWidget" name="ErrorsPlotWidget" native="true"/>
+           <widget class="DataWidget" name="RFactorPlotWidget" native="true"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="DebugTab">
+      <attribute name="title">
+       <string>Debug</string>
+      </attribute>
+      <layout class="QHBoxLayout" name="horizontalLayout_16">
+       <property name="spacing">
+        <number>4</number>
+       </property>
+       <property name="leftMargin">
+        <number>4</number>
+       </property>
+       <property name="topMargin">
+        <number>4</number>
+       </property>
+       <property name="rightMargin">
+        <number>4</number>
+       </property>
+       <property name="bottomMargin">
+        <number>4</number>
+       </property>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_15">
+           <property name="spacing">
+            <number>4</number>
+           </property>
+           <item>
+            <widget class="QSpinBox" name="DebugFromSpin">
+             <property name="maximum">
+              <number>400</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>to</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="DebugToSpin">
+             <property name="maximum">
+              <number>400</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QFrame" name="DebugEPFunctionsPlotFrame">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="acceptDrops">
+          <bool>true</bool>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Sunken</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_14">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="DataWidget" name="DebugEPFunctionsPlotWidget" native="true"/>
           </item>
          </layout>
         </widget>
@@ -522,14 +634,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>UChromaViewWidget</class>
+   <class>DataWidget</class>
    <extends>QWidget</extends>
-   <header>gui/uchroma/gui/uchromaview.h</header>
+   <header>gui/viewer/datawidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../gui/icons.qrc"/>
+  <include location="../../../gui/main.qrc"/>
  </resources>
  <connections/>
 </ui>

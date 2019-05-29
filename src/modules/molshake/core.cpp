@@ -1,7 +1,7 @@
 /*
 	*** MolShake Module - Core
 	*** src/modules/molshake/core.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -21,9 +21,6 @@
 
 #include "modules/molshake/molshake.h"
 
-// Static Members
-List<Module> MolShakeModule::instances_;
-
 /*
  * Constructor / Destructor
  */
@@ -31,17 +28,8 @@ List<Module> MolShakeModule::instances_;
 // Constructor
 MolShakeModule::MolShakeModule() : Module()
 {
-	// Add to instances list and set unique name for this instance
-	uniqueName_.sprintf("%s%02i", type(), instances_.nItems());
-	instances_.own(this);
-
 	// Set up variables / control parameters
 	setUpKeywords();
-
-	// Set representative colour
-	colour_[0] = 200;
-	colour_[1] = 0;
-	colour_[2] = 0;
 }
 
 // Destructor
@@ -54,13 +42,7 @@ MolShakeModule::~MolShakeModule()
  */
 
 // Create instance of this module
-List<Module>& MolShakeModule::instances()
-{
-	return instances_;
-}
-
-// Create instance of this module
-Module* MolShakeModule::createInstance()
+Module* MolShakeModule::createInstance() const
 {
 	return new MolShakeModule;
 }

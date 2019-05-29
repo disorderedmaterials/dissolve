@@ -1,7 +1,7 @@
 /*
 	*** Atomic Mass Data
 	*** src/data/atomicmass.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -202,4 +202,28 @@ double AtomicMass::mass(Element* element)
 double AtomicMass::mass(int Z)
 {
 	return massData(Z).mass();
+}
+
+// Return reduced mass for specified pair of Z's
+double AtomicMass::reducedMass(int Z1, int Z2)
+{
+	return (massData(Z1).mass() * massData(Z2).mass()) / (massData(Z1).mass() + massData(Z2).mass());
+}
+
+// Return reduced mass for specified pair of Elements
+double AtomicMass::reducedMass(Element* e1, Element* e2)
+{
+#ifdef CHECKS
+	if (e1 == NULL)
+	{
+		Messenger::error("AtomicMass::reducedMass() - Element 1 is NULL.\n");
+		return 1.0;
+	}
+	if (e2 == NULL)
+	{
+		Messenger::error("AtomicMass::reducedMass() - Element 2 is NULL.\n");
+		return 1.0;
+	}
+#endif
+	return (massData(e1->Z()).mass() * massData(e2->Z()).mass()) / (massData(e1->Z()).mass() + massData(e2->Z()).mass());
 }

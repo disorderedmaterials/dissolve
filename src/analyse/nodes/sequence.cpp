@@ -1,7 +1,7 @@
 /*
 	*** Analysis Node - Node Sequence
 	*** src/analyse/nodes/sequence.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -122,9 +122,9 @@ bool AnalysisSequenceNode::finalise(ProcessPool& procPool, Configuration* cfg, c
  */
 
 // Read structure from specified LineParser
-bool AnalysisSequenceNode::read(LineParser& parser, NodeContextStack& contextStack)
+bool AnalysisSequenceNode::read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack)
 {
-	// The sequence node constructs a new context...
+	// The sequence node now constructs a new context...
 	contextStack.push();
 
 	// Read until we encounter the block-ending keyword, or we fail for some reason
@@ -140,7 +140,7 @@ bool AnalysisSequenceNode::read(LineParser& parser, NodeContextStack& contextSta
 		SequenceNodeKeyword nk = sequenceNodeKeyword(parser.argc(0));
 		switch (nk)
 		{
-			case (SequenceNodeKeyword::nSequenceNodeKeywords):
+			case (AnalysisSequenceNode::nSequenceNodeKeywords):
 				break;
 		}
 
@@ -163,6 +163,9 @@ bool AnalysisSequenceNode::read(LineParser& parser, NodeContextStack& contextSta
 				break;
 			case (AnalysisNode::ExcludeNode):
 				newNode = new AnalysisExcludeNode;
+				break;
+			case (AnalysisNode::Fit1DNode):
+				newNode = new AnalysisFit1DNode;
 				break;
 			case (AnalysisNode::Process1DNode):
 				newNode = new AnalysisProcess1DNode;
@@ -190,8 +193,11 @@ bool AnalysisSequenceNode::read(LineParser& parser, NodeContextStack& contextSta
 		// Add the new node to our list
 		sequence_.own(newNode);
 
+		// Set the parent of the new node to be the same as ours
+		newNode->setParent(parent());
+
 		// Read the new node
-		if (!newNode->read(parser, contextStack)) return Messenger::error("Failed to read analysis sequence.\n");
+		if (!newNode->read(parser, coreData, contextStack)) return Messenger::error("Failed to read analysis sequence.\n");
 	}
 
 	// Remove our context, since it is now 'out-of-scope'

@@ -1,7 +1,7 @@
 /*
 	*** Energy Module - Core
 	*** src/modules/energy/core.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -21,9 +21,6 @@
 
 #include "modules/energy/energy.h"
 
-// Static Members
-List<Module> EnergyModule::instances_;
-
 /*
  * Constructor / Destructor
  */
@@ -31,17 +28,8 @@ List<Module> EnergyModule::instances_;
 // Constructor
 EnergyModule::EnergyModule() : Module()
 {
-	// Add to instances list and set unique name for this instance
-	instances_.own(this);
-	uniqueName_.sprintf("%s%02i", type(), instances_.nItems()-1);
-
 	// Set up variables / control parameters
 	setUpKeywords();
-
-	// Set representative colour
-	colour_[0] = 0;
-	colour_[1] = 200;
-	colour_[2] = 200;
 }
 
 // Destructor
@@ -54,13 +42,7 @@ EnergyModule::~EnergyModule()
  */
 
 // Create instance of this module
-List<Module>& EnergyModule::instances()
-{
-	return instances_;
-}
-
-// Create instance of this module
-Module* EnergyModule::createInstance()
+Module* EnergyModule::createInstance() const
 {
 	return new EnergyModule;
 }

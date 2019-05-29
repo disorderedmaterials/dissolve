@@ -1,7 +1,7 @@
 /*
 	*** Array Classes
 	*** src/templates/array.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -123,11 +123,8 @@ template <class A> class Array : public ListItem< Array<A> >
 		}
 
 		// Copy old data into new array
-		if (nItems_ > 0)
-		{
-			for (int n=0; n<nItems_; ++n) array_[n] = oldItems[n];
-			delete[] oldItems;
-		}
+		for (int n=0; n<nItems_; ++n) array_[n] = oldItems[n];
+		delete[] oldItems;
 	}
 
 	public:
@@ -143,6 +140,11 @@ template <class A> class Array : public ListItem< Array<A> >
 	}
 	// Return data array
 	A* array()
+	{
+		return array_;
+	}
+	// Return const data array
+	const A* constArray() const
 	{
 		return array_;
 	}
@@ -200,6 +202,26 @@ template <class A> class Array : public ListItem< Array<A> >
 		// Store new value
 		array_[nItems_++] = data;
 	}
+	// Insert new element in array
+	void insert(A data, const int position)
+	{
+#ifdef CHECKS
+		if ((position < 0) || (position >= nItems_))
+		{
+			Messenger::print("OUT_OF_RANGE - Position index %i is out of range in Array::insert() (nItems = %i).\n", position, nItems_);
+			return;
+		}
+#endif
+
+		// Is current array large enough?
+		if (nItems_ == size_) resize(size_+chunkSize_);
+
+		// Working from the top of the array, shift all items after or at 'position' up one place
+		for (int n=nItems_; n>position; --n) array_[n] = array_[n-1];
+
+		array_[position] = data;
+		++nItems_;
+	}
 	// Forget data (set nItems to zero) leaving array intact
 	void forgetData()
 	{
@@ -213,6 +235,19 @@ template <class A> class Array : public ListItem< Array<A> >
 		array_ = NULL;
 		size_ = 0;
 	}
+	// Drop the first item from the array
+	void removeFirst()
+	{
+		if (nItems_ == 0)
+		{
+			Messenger::warn("Tried to drop the first item of an empty array...\n");
+			return;
+		}
+
+		for (int n=0; n<nItems_-1; ++n) array_[n] = array_[n+1];
+
+		--nItems_;
+	}
 	// Drop the last item from the array
 	void removeLast()
 	{
@@ -223,7 +258,20 @@ template <class A> class Array : public ListItem< Array<A> >
 		}
 		--nItems_;
 	}
+	// Remove the specified index
+	void remove(const int position)
+	{
+#ifdef CHECKS
+		if ((position < 0) || (position >= nItems_))
+		{
+			Messenger::print("OUT_OF_RANGE - Array index %i is out of range in Array::remove() (nItems = %i).\n", position, nItems_);
+			return;
+		}
+#endif
+		for (int n=position; n<nItems_-1; ++n) array_[n] = array_[n+1];
 
+		--nItems_;
+	}
 
 	/*
 	 * Set / Get
@@ -309,6 +357,46 @@ template <class A> class Array : public ListItem< Array<A> >
 			return dummy;
 		}
 		return array_[nItems_-1];
+	}
+
+
+	/*
+	 * Move
+	 */
+	public:
+	// Shift item up in the array (towards higher indices)
+	void shiftUp(int position)
+	{
+#ifdef CHECKS
+		if ((position < 0) || (position >= nItems_))
+		{
+			Messenger::print("OUT_OF_RANGE - Array index %i is out of range in Array::shiftUp() (nItems = %i).\n", position, nItems_);
+			return;
+		}
+#endif
+		// If this item is already last in the list, return now
+		if (position == (nItems_-1)) return;
+
+		A temporary(array_[position+1]);
+		array_[position+1] = array_[position];
+		array_[position] = temporary;
+	}
+	// Shift item down in the array (towards lower indices)
+	void shiftDown(int position)
+	{
+#ifdef CHECKS
+		if ((position < 0) || (position >= nItems_))
+		{
+			Messenger::print("OUT_OF_RANGE - Array index %i is out of range in Array::shiftDown() (nItems = %i).\n", position, nItems_);
+			return;
+		}
+#endif
+		// If this item is already first in the list, return now
+		if (position == 0) return;
+
+		A temporary(array_[position-1]);
+		array_[position-1] = array_[position];
+		array_[position] = temporary;
 	}
 
 

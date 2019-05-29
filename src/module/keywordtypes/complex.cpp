@@ -1,7 +1,7 @@
 /*
 	*** Module Keyword - Complex
 	*** src/module/keywordtypes/complex.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -66,7 +66,7 @@ int ComplexModuleKeyword::maxArguments()
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool ComplexModuleKeyword::read(LineParser& parser, int startArg, ProcessPool& procPool)
+bool ComplexModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	return false;
 }

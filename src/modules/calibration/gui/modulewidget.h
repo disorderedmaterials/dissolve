@@ -1,7 +1,7 @@
 /*
 	*** Calibration Module Widget
 	*** src/modules/calibration/gui/modulewidget.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -30,7 +30,7 @@ class CalibrationModule;
 class Dissolve;
 class Module;
 class PartialSet;
-class UChromaViewWidget;
+class DataViewer;
 
 // Module Widget
 class CalibrationModuleWidget : public ModuleWidget
@@ -41,8 +41,8 @@ class CalibrationModuleWidget : public ModuleWidget
 	private:
 	// Associated Module
 	CalibrationModule* module_;
-	// UChromaView contained within this widget
-	UChromaViewWidget* uChromaView_;
+	// DataViewer contained within this widget
+	DataViewer* dataView_;
 	// Reference to Dissolve
 	Dissolve& dissolve_;
 

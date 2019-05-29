@@ -1,7 +1,7 @@
 /*
 	*** Dissolve Version Information
 	*** src/version.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_VERSION_H
 #define DISSOLVE_VERSION_H
 
-#define DISSOLVEVERSION "0.36.0"
+#define DISSOLVEVERSION "0.4.0"
 #define DISSOLVEREPO "https://github.com/trisyoungs/dissolve.git"
 
 #endif

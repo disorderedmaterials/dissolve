@@ -1,7 +1,7 @@
 /*
 	*** BraggPeak
 	*** src/classes/braggpeak.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -139,13 +139,13 @@ const char* BraggPeak::itemClassName()
  */
 
 // Broadcast data from Master to all Slaves
-bool BraggPeak::broadcast(ProcessPool& procPool, int rootRank)
+bool BraggPeak::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 {
 #ifdef PARALLEL
-	if (!procPool.broadcast(q_, rootRank)) return false;
-	if (!procPool.broadcast(index_, rootRank)) return false;
-	if (!procPool.broadcast(nKVectors_, rootRank)) return false;
-	if (!procPool.broadcast(intensities_, rootRank)) return false;
+	if (!procPool.broadcast(q_, root)) return false;
+	if (!procPool.broadcast(index_, root)) return false;
+	if (!procPool.broadcast(nKVectors_, root)) return false;
+	if (!procPool.broadcast(intensities_, root)) return false;
 #endif
 	return true;
 }

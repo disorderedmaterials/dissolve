@@ -1,7 +1,7 @@
 /*
 	*** Refine Module - Options
 	*** src/modules/refine/options.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -59,7 +59,10 @@ const char* RefineModule::matrixAugmentationStyle(RefineModule::MatrixAugmentati
 // Set up keywords for Module
 void RefineModule::setUpKeywords()
 {
-	keywords_.add(new CharStringModuleKeyword("Partials", RefineModule::nMatrixAugmentationStyles, MatrixAugmentationStyleKeywords), "Augmentation", "Style used to augment (overdetermine) scattering matrix");
+	frequency_ = 5;
+	groupedTargets_.addAllowedModuleType("NeutronSQ");
+
+	keywords_.add(new EnumStringModuleKeyword(RefineModule::PartialsAugmentation, RefineModule::nMatrixAugmentationStyles, MatrixAugmentationStyleKeywords), "Augmentation", "Style used to augment (overdetermine) scattering matrix");
 	keywords_.add(new DoubleModuleKeyword(0.9), "AugmentationParam", "Parameter used to in augmentation (overdetermination) of scattering matrix (dependent on augmentation style selected)");
 	keywords_.add(new BoolModuleKeyword(true), "AutoMinimumRadius", "Automatically determine minimum radii between atom types for potential generation");
 	keywords_.add(new BoolModuleKeyword(true), "DeltaPhiRSmoothing", "Whether to smooth generated phi(r)");
@@ -68,7 +71,7 @@ void RefineModule::setUpKeywords()
 	keywords_.add(new DoubleModuleKeyword(0.005), "ErrorStabilityThreshold", "Threshold value at which error is deemed stable over the defined windowing period", "<value[0.0-1.0]>");
 	keywords_.add(new IntegerModuleKeyword(10), "ErrorStabilityWindow", "Number of points over which to assess the stability of errors");
 	keywords_.add(new DoubleModuleKeyword(0.5, 0.01, 100.0), "GaussianAccuracy", "Requested percentage error of Gaussian approximation (if InversionMethod == Gaussian)");
-	keywords_.add(new CharStringModuleKeyword("Gaussian", RefineModule::nPotentialInversionMethods, PotentialInversionMethodKeywords), "InversionMethod", "Potential inversion method to employ");
+	keywords_.add(new EnumStringModuleKeyword(RefineModule::DirectGaussianPotentialInversion, RefineModule::nPotentialInversionMethods, PotentialInversionMethodKeywords), "InversionMethod", "Potential inversion method to employ");
 	keywords_.add(new DoubleModuleKeyword(0.9, 0.0, 5.0), "MinimumRadius", "Minimum value of r at which additional potential is allowed to take effect (neglecting width of truncation strip)");
 	keywords_.add(new DoubleModuleKeyword(3.0, 0.0, 100.0), "MaximumRadius", "Maximum value of r (if AutoMinimumRadii = true) at which additional potential is zeroed");
 // 	keywords_.add(new BoolModuleKeyword(false), "ModifyBonds", "Modify equilibrium distances of bonds based on signatures in difference functions");
@@ -78,7 +81,7 @@ void RefineModule::setUpKeywords()
 	keywords_.add(new DoubleModuleKeyword(3.0, -1.0), "PhiMax", "Limit of magnitude of additional potential for any one pair potential");
 	keywords_.add(new DoubleModuleKeyword(30.0, -1.0), "QMax", "Maximum Q value over which to generate potentials from total scattering data");
 	keywords_.add(new DoubleModuleKeyword(0.1, -1.0), "QMin", "Minimum Q value over which to generate potentials from total scattering data");
-	keywords_.add(new ComplexModuleKeyword(1,2), "Target", "Add specified Module (and it's Reference data) as a fitting target", "<ModuleName> [GroupName]");
+	keywords_.add(new ModuleGroupsModuleKeyword(groupedTargets_), "Target", "Add specified Module (and it's Reference data) as a refinement target", "<ModuleName> [GroupName]");
 	keywords_.add(new DoubleModuleKeyword(0.2, 0.01, 1.0), "TruncationWidth", "Width of truncation zone, below the minimum radius, over which additional potential smoothly decreases to zero");
 	keywords_.add(new DoubleModuleKeyword(1.0, 0.0, 10.0), "Weighting", "Fractional (maximal) amounts of generated perturbations to apply to pair potentials");
 	keywords_.add(new WindowFunctionModuleKeyword(WindowFunction(WindowFunction::SineWindow)), "WindowFunction", "Window function to apply when back-transforming delta S(Q) to g(r)");
@@ -87,8 +90,5 @@ void RefineModule::setUpKeywords()
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 int RefineModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
-	if (DissolveSys::sameString(parser.argc(0), "Target")) return addTarget(parser.argc(1), parser.hasArg(2) ? parser.argc(2) : "Default");
-	else return -1;
-
-	return true;
+	return -1;
 }

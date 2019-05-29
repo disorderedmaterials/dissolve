@@ -1,7 +1,7 @@
 /*
 	*** Keyword Widget - PairBroadeningFunction
 	*** src/gui/keywordwidgets/pairbroadeningfunction.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PAIRBROADENINGFUNCTIONKEYWORDWIDGET_H
-#define DISSOLVE_PAIRBROADENINGFUNCTIONKEYWORDWIDGET_H
+#ifndef DISSOLVE_KEYWORDWIDGET_PAIRBROADENINGFUNCTION_H
+#define DISSOLVE_KEYWORDWIDGET_PAIRBROADENINGFUNCTION_H
 
 #include "gui/keywordwidgets/ui_pairbroadeningfunction.h"
 #include "gui/keywordwidgets/dropdown.h"
@@ -38,7 +38,7 @@ class PairBroadeningFunctionKeywordWidget : public KeywordDropDown, public Keywo
 
 	public:
 	// Constructor
-	PairBroadeningFunctionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, GenericList& moduleData, const char* prefix);
+	PairBroadeningFunctionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
         // Main form declaration
         Ui::PairBroadeningFunctionWidget ui;
 
@@ -55,10 +55,10 @@ class PairBroadeningFunctionKeywordWidget : public KeywordDropDown, public Keywo
 	 * Signals / Slots
 	 */
 	private slots:
-	// Function type combo changed
-	void functionCombo_currentIndexChanged(int index);
-	// Parameter value changed
-	void parameterSpin_valueChanged(double value);
+	// Function type radio changed
+	void functionRadioChanged(bool checked);
+	// Function parameter value changed
+	void functionParameterChanged(double value);
 
 	signals:
 	// Keyword value changed
@@ -72,7 +72,7 @@ class PairBroadeningFunctionKeywordWidget : public KeywordDropDown, public Keywo
 	// Update value displayed in widget, using specified source if necessary
 	void updateValue();
 	// Update widget values data based on keyword data
-	void updateWidgetValues();
+	void updateWidgetValues(const CoreData& coreData);
 	// Update keyword data based on widget values
 	void updateKeywordData();
 };

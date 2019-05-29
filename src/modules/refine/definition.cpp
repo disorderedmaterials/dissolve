@@ -1,7 +1,7 @@
 /*
 	*** Refine Module - Definition
 	*** src/modules/refine/definition.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -27,16 +27,16 @@ const char* RefineModule::type() const
 	return "Refine";
 }
 
+// Return category for module
+const char* RefineModule::category() const
+{
+	return "Forcefield";
+}
+
 // Return brief description of module
 const char* RefineModule::brief() const
 {
 	return "Refine interatomic potentials based on differences between calculated and reference data";
-}
-
-// Return instance type for module
-Module::InstanceType RefineModule::instanceType() const
-{
-	return Module::MultipleInstance;
 }
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)

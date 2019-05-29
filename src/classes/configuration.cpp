@@ -1,7 +1,7 @@
 /*
 	*** Configuration
 	*** src/classes/configuration.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Configuration.
 
@@ -32,36 +32,17 @@
 #include "modules/energy/energy.h"
 #include "modules/export/export.h"
 
+// Static Members (ObjectStore)
+template<class Configuration> RefList<Configuration,int> ObjectStore<Configuration>::objects_;
+template<class Configuration> int ObjectStore<Configuration>::objectCount_ = 0;
+template<class Configuration> int ObjectStore<Configuration>::objectType_ = ObjectInfo::ConfigurationObject;
+template<class Configuration> const char* ObjectStore<Configuration>::objectTypeName_ = "Configuration";
+
 // Constructor
-Configuration::Configuration() : ListItem<Configuration>(), boxNormalisationInterpolation_(boxNormalisation_)
+Configuration::Configuration() : ListItem<Configuration>(), ObjectStore<Configuration>(this), boxNormalisationInterpolation_(boxNormalisation_)
 {
-	// Composition
-	multiplier_ = 1;
-	density_ = -1.0;
-	densityIsAtomic_ = true;
-	boxAngles_.set(90.0, 90.0, 90.0);
-	relativeBoxLengths_.set(1.0, 1.0, 1.0);
-	requestedSizeFactor_ = 1.0;
-	appliedSizeFactor_ = 1.0;
-	nonPeriodic_ = false;
-
-	// Box / Cells
 	box_ = NULL;
-	requestedCellDivisionLength_ = 10.0;
-	coordinateIndex_ = 0;
-
-	// Set up
-	rdfBinWidth_ = 0.025;
-	rdfRange_ = -1.0;
-	requestedRDFRange_ = -2.0;
-	temperature_ = 300.0;
-	braggQMax_ = 0.01;
-	braggQMax_ = 2.0;
-	braggMultiplicity_.set(1,1,1);
-
-	// Ensemble
-	appendEnsemble_ = false;
-	ensembleFrequency_ = 10;
+	clear();
 }
 
 // Destructor
@@ -76,21 +57,72 @@ void Configuration::operator=(Configuration& source)
 	Messenger::error("XXX CONFIGURATION COPY (via ASSIGNMENT OPERATOR) IS NOT YET IMPLEMENTED.\n");
 }
 
-// Clear data
+// Clear all data
 void Configuration::clear()
 {
-	bonds_.clear();
-	angles_.clear();
-	torsions_.clear();
-	molecules_.clear();
-	grains_.clear();
-	atoms_.clear();
-	usedAtomTypes_.clear();
-	if (box_ != NULL) delete box_;
-	box_ = NULL;
-	cells_.clear();
+	// Clear generated content
+	empty();
 
+	// Clear used species
+	usedSpecies_.clear();
+
+	// Reset composition
+	multiplier_ = 1;
+	density_ = -1.0;
+	densityIsAtomic_ = true;
+	boxAngles_.set(90.0, 90.0, 90.0);
+	relativeBoxLengths_.set(1.0, 1.0, 1.0);
+	requestedSizeFactor_ = 1.0;
+	appliedSizeFactor_ = 1.0;
+	nonPeriodic_ = false;
+
+	// Reset box / Cells
+	requestedCellDivisionLength_ = 10.0;
 	coordinateIndex_ = 0;
+
+	// Reset set-up
+	rdfBinWidth_ = 0.025;
+	rdfRange_ = -1.0;
+	requestedRDFRange_ = -2.0;
+	temperature_ = 300.0;
+	braggQMax_ = 0.01;
+	braggQMax_ = 2.0;
+	braggMultiplicity_.set(1,1,1);
+}
+
+/*
+ * Basic Information
+ */
+
+// Set name of the Configuration
+void Configuration::setName(const char* name)
+{
+	name_ = name;
+
+	// Generate a nice name (i.e. no spaces, slashes etc.)
+	niceName_ = DissolveSys::niceName(name_);
+
+	// Set box normalisation filename based on Configuration name
+	boxNormalisationFileName_ = niceName_;
+	boxNormalisationFileName_.strcat(".boxnorm");
+}
+
+// Return name of the Configuration
+const char* Configuration::name()
+{
+	return name_.get();
+}
+
+// Return nice name of the Configuration
+const char* Configuration::niceName()
+{
+	return niceName_.get();
+}
+
+// Return version
+int Configuration::version() const
+{
+	return version_;
 }
 
 /*
@@ -167,56 +199,34 @@ Vec3<int> Configuration::braggMultiplicity()
  * Modules
  */
 
-// Add Module (or an instance of it) to the Configuration
-Module* Configuration::addModule(Module* masterInstance)
+// Add Module to the Configuration
+bool Configuration::addModule(Module* module)
 {
-	return modules_.add(masterInstance, this);
+	return moduleLayer_.add(module);
 }
 
 // Return number of Modules associated to this Configuration
 int Configuration::nModules() const
 {
-	return modules_.nModules();
+	return moduleLayer_.nModules();
+}
+
+// Return Module layer for this Configuration
+ModuleLayer& Configuration::moduleLayer()
+{
+	return moduleLayer_;
 }
 
 // Return list of Modules associated to this Configuration
 ModuleList& Configuration::modules()
 {
-	return modules_;
+	return moduleLayer_;
 }
 
 // Return list of data variables set by Modules
 GenericList& Configuration::moduleData()
 {
 	return moduleData_;
-}
-
-/*
- * Ensemble
- */
-
-// Set whether ensemble file is to be appended
-void Configuration::setAppendEnsemble(bool b)
-{
-	appendEnsemble_ = b;
-}
-
-// Return whether ensemble file is to be appended
-bool Configuration::appendEnsemble() const
-{
-	return appendEnsemble_;
-}
-
-// Set frequency at which to append ensemble
-void Configuration::setEnsembleFrequency(int frequency)
-{
-	ensembleFrequency_ = frequency;
-}
-
-// Return frequency at which to append ensemble
-int Configuration::ensembleFrequency() const
-{
-	return ensembleFrequency_;
 }
 
 /*
@@ -317,13 +327,12 @@ bool Configuration::prepare(const PotentialMap& potentialMap)
  */
 
 // Set up process pool for this Configuration
-bool Configuration::setUpProcessPool(Array<int> worldRanks)
+bool Configuration::setUpProcessPool(Array<int> worldRanks, int groupPopulation)
 {
 	// Create pool
-	processPool_.setUp(name_, worldRanks);
+	processPool_.setUp(name_, worldRanks, groupPopulation);
 
-	// Give Cell info to our processPool_ so a suitable parallel strategy can be created
-	processPool_.determineMaxProcessGroups(cells_.divisions(), cells_.extents(), cells_.neighbourIndices());
+	// Assign processes, and 
 	if (!processPool_.assignProcessesToGroups()) return false;
 	processPool_.setGroupsFixed();
 

@@ -1,7 +1,7 @@
 /*
 	*** Module Keyword - Pair Broadening Function
 	*** src/modules/keywordtypes/pairbroadeningfunction.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -21,7 +21,7 @@
 
 #include "module/keywordtypes/pairbroadeningfunction.h"
 #include "base/lineparser.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructor
 PairBroadeningFunctionModuleKeyword::PairBroadeningFunctionModuleKeyword(PairBroadeningFunction value) : ModuleKeywordBase(ModuleKeywordBase::PairBroadeningFunctionData), ModuleKeywordData<PairBroadeningFunction>(value)
@@ -56,24 +56,24 @@ int PairBroadeningFunctionModuleKeyword::minArguments()
 // Return maximum number of arguments accepted
 int PairBroadeningFunctionModuleKeyword::maxArguments()
 {
-	return MAXBROADENINGFUNCTIONPARAMS;
+	return 2;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool PairBroadeningFunctionModuleKeyword::read(LineParser& parser, int startArg, ProcessPool& procPool)
+bool PairBroadeningFunctionModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
-	bool result = data_.set(parser, startArg);
-	if (result) set_ = true;
+	if (data_.readAsKeyword(parser, startArg, coreData)) set_ = true;
+	else return false;
 
-	return result;
+	return true;
 }
 
 // Write keyword data to specified LineParser
 bool PairBroadeningFunctionModuleKeyword::write(LineParser& parser, const char* prefix)
 {
-	CharString params;
-	for (int n=0; n<PairBroadeningFunction::nFunctionParameters(data_.function()); ++n) params.strcatf("  %f", data_.parameter(n));
-	return parser.writeLineF("%s%s  '%s'%s\n", prefix, keyword(), PairBroadeningFunction::functionType(data_.function()), params.get());
+	if (!parser.writeLineF("%s%s", prefix, keyword())) return false;
+
+	return data_.writeAsKeyword(parser, prefix, true);
 }
 
 /*

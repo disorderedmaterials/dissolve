@@ -1,7 +1,7 @@
 /*
 	*** Checks Module - Options
 	*** src/modules/checks/options.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -26,10 +26,15 @@
 // Set up keywords for Module
 void ChecksModule::setUpKeywords()
 {
-	keywords_.add(new ComplexModuleKeyword(4,4), "Angle", "Define an angle between Atoms to be checked", "<i> <j> <k> <referenceAngle>");
-	keywords_.add(new DoubleModuleKeyword(0.05, 1.0e-5), "AngleThreshold", "Threshold at which angle checks will fail", "<threshold[0.05]>");
-	keywords_.add(new ComplexModuleKeyword(3,3), "Distance", "Define a distance between Atoms to be checked", "<i> <j> <referenceDistance>");
-	keywords_.add(new DoubleModuleKeyword(0.001, 1.0e-5), "DistanceThreshold", "Threshold at which distance checks will fail (Angstroms)", "<threshold[0.001]>");
+	// Distance
+	ModuleKeywordGroup* group = addKeywordGroup("Distance");
+	group->add(new ComplexModuleKeyword(3,3), "Distance", "Define a distance between Atoms to be checked", "<i> <j> <referenceDistance>");
+	group->add(new DoubleModuleKeyword(0.001, 1.0e-5), "DistanceThreshold", "Threshold at which distance checks will fail (Angstroms)", "<threshold[0.001]>");
+
+	// Angle
+	group = addKeywordGroup("Angle");
+	group->add(new ComplexModuleKeyword(4,4), "Angle", "Define an angle between Atoms to be checked", "<i> <j> <k> <referenceAngle>");
+	group->add(new DoubleModuleKeyword(0.05, 1.0e-5), "AngleThreshold", "Threshold at which angle checks will fail", "<threshold[0.05]>");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised

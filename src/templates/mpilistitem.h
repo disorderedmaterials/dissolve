@@ -1,7 +1,7 @@
 /*
 	*** MPI Linked List Item Class
 	*** src/templates/mpilistitem.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -25,6 +25,7 @@
 #include <stdlib.h>     // To get NULL
 
 // Forward Declarations
+class CoreData;
 class ProcessPool;
 
 /*
@@ -50,7 +51,7 @@ template <class T> class MPIListItem
 
 	public:
 	// Broadcast data from Master to all Slaves
-	virtual bool broadcast(ProcessPool& procPool, int root = 0) = 0;
+	virtual bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData) = 0;
 };
 
 #endif

@@ -1,7 +1,7 @@
 /*
 	*** Calibration Module
 	*** src/modules/calibration/calibration.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -44,15 +44,9 @@ class CalibrationModule : public Module
 	/*
 	 * Instances
 	 */
-	protected:
-	// List of all instances of this Module type
-	static List<Module> instances_;
-
 	public:
-	// Return list of all created instances of this Module
-	List<Module>& instances();
 	// Create instance of this module
-	Module* createInstance();
+	Module* createInstance() const;
 
 
 	/*
@@ -61,10 +55,10 @@ class CalibrationModule : public Module
 	public:
 	// Return type of module
 	const char* type() const;
+	// Return category for module
+	const char* category() const;
 	// Return brief description of module
 	const char* brief() const;
-	// Return instance type for module
-	InstanceType instanceType() const;
 	// Return the maximum number of Configurations the Module can target (or -1 for any number)
 	int nTargetableConfigurations() const;
 
@@ -81,10 +75,6 @@ class CalibrationModule : public Module
 		IntraBroadeningTargetBoth,
 		nIntraBroadeningFitTargets
 	};
-	// Convert string to functional form
-	static IntraBroadeningFitTarget intraBroadeningFitTarget(const char* s);
-	// Return fit target text
-	static const char* intraBroadeningFitTarget(IntraBroadeningFitTarget ft);
 	protected:
 	// Set up options for Module
 	void setUpKeywords();
@@ -106,8 +96,10 @@ class CalibrationModule : public Module
 	private:
 	// RDF Module targets for IntraBroadening calibration
 	RefList<Module,bool> intraBroadeningModules_;
-	// NeutronSQ Module targets for IntraBroadening calibration
-	RefList<Module,IntraBroadeningFitTarget> intraBroadeningReferences_;
+	// NeutronSQ Module targets for IntraBroadening calibration (S(Q) data)
+	RefList<Module,bool> intraBroadeningNeutronSQReferences_;
+	// NeutronSQ Module targets for IntraBroadening calibration (G(r) data)
+	RefList<Module,bool> intraBroadeningNeutronGRReferences_;
 
 
 	/*

@@ -6,27 +6,42 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1028</width>
-    <height>819</height>
+    <width>955</width>
+    <height>810</height>
    </rect>
   </property>
   <property name="font">
    <font>
-    <pointsize>8</pointsize>
+    <pointsize>10</pointsize>
    </font>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_4">
+   <property name="spacing">
+    <number>4</number>
+   </property>
+   <property name="leftMargin">
+    <number>4</number>
+   </property>
+   <property name="topMargin">
+    <number>4</number>
+   </property>
+   <property name="rightMargin">
+    <number>4</number>
+   </property>
+   <property name="bottomMargin">
+    <number>4</number>
+   </property>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_9">
      <item>
-      <widget class="QGroupBox" name="ControlGroup">
+      <widget class="QGroupBox" name="ContentsGroup">
        <property name="title">
-        <string>Control</string>
+        <string>Contents</string>
        </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_8">
+       <layout class="QHBoxLayout" name="horizontalLayout">
         <property name="spacing">
          <number>4</number>
         </property>
@@ -43,114 +58,184 @@
          <number>4</number>
         </property>
         <item>
-         <widget class="QToolButton" name="SpeciesImportButton">
+         <layout class="QVBoxLayout" name="verticalLayout_5">
+          <property name="spacing">
+           <number>4</number>
+          </property>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_8">
+            <property name="spacing">
+             <number>4</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="AtomsLabel">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>Atoms</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_6">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QToolButton" name="AtomRemoveButton">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Remove</string>
+              </property>
+              <property name="icon">
+               <iconset resource="main.qrc">
+                <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>16</width>
+                <height>16</height>
+               </size>
+              </property>
+              <property name="shortcut">
+               <string>Return</string>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextBesideIcon</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="AtomAddButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Add</string>
+              </property>
+              <property name="icon">
+               <iconset resource="main.qrc">
+                <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>16</width>
+                <height>16</height>
+               </size>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextBesideIcon</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QTableWidget" name="AtomTable">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>1</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="showDropIndicator" stdset="0">
+             <bool>false</bool>
+            </property>
+            <property name="dragDropOverwriteMode">
+             <bool>false</bool>
+            </property>
+            <property name="selectionBehavior">
+             <enum>QAbstractItemView::SelectRows</enum>
+            </property>
+            <property name="showGrid">
+             <bool>true</bool>
+            </property>
+            <property name="columnCount">
+             <number>6</number>
+            </property>
+            <attribute name="horizontalHeaderVisible">
+             <bool>true</bool>
+            </attribute>
+            <attribute name="horizontalHeaderStretchLastSection">
+             <bool>true</bool>
+            </attribute>
+            <attribute name="verticalHeaderVisible">
+             <bool>false</bool>
+            </attribute>
+            <attribute name="verticalHeaderStretchLastSection">
+             <bool>false</bool>
+            </attribute>
+            <column>
+             <property name="text">
+              <string>E</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>AtomType</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>X</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Y</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Z</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Charge</string>
+             </property>
+            </column>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="SpeciesWidget" name="ViewerWidget" native="true">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
             <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
+            <verstretch>2</verstretch>
            </sizepolicy>
           </property>
-          <property name="text">
-           <string>Import</string>
-          </property>
-          <property name="icon">
-           <iconset resource="icons.qrc">
-            <normaloff>:/file/icons/file_open.svg</normaloff>:/file/icons/file_open.svg</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>16</width>
-            <height>16</height>
-           </size>
-          </property>
-          <property name="toolButtonStyle">
-           <enum>Qt::ToolButtonTextBesideIcon</enum>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="QGroupBox" name="AtomsGroup">
-       <property name="title">
-        <string>Atoms</string>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <property name="spacing">
-         <number>4</number>
-        </property>
-        <property name="leftMargin">
-         <number>4</number>
-        </property>
-        <property name="topMargin">
-         <number>4</number>
-        </property>
-        <property name="rightMargin">
-         <number>4</number>
-        </property>
-        <property name="bottomMargin">
-         <number>4</number>
-        </property>
-        <item>
-         <widget class="QTableWidget" name="AtomTable">
-          <property name="showDropIndicator" stdset="0">
-           <bool>false</bool>
-          </property>
-          <property name="dragDropOverwriteMode">
-           <bool>false</bool>
-          </property>
-          <property name="selectionBehavior">
-           <enum>QAbstractItemView::SelectRows</enum>
-          </property>
-          <property name="showGrid">
-           <bool>true</bool>
-          </property>
-          <property name="columnCount">
-           <number>6</number>
-          </property>
-          <attribute name="horizontalHeaderVisible">
-           <bool>true</bool>
-          </attribute>
-          <attribute name="horizontalHeaderStretchLastSection">
-           <bool>true</bool>
-          </attribute>
-          <attribute name="verticalHeaderVisible">
-           <bool>true</bool>
-          </attribute>
-          <attribute name="verticalHeaderStretchLastSection">
-           <bool>false</bool>
-          </attribute>
-          <column>
-           <property name="text">
-            <string>E</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>X</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Y</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Z</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Charge</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>AtomType</string>
-           </property>
-          </column>
          </widget>
         </item>
        </layout>
@@ -222,7 +307,10 @@
            </spacer>
           </item>
           <item>
-           <widget class="QToolButton" name="BondRemoveButtom">
+           <widget class="QToolButton" name="BondRemoveButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -233,7 +321,7 @@
              <string>Remove</string>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="main.qrc">
               <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
             </property>
             <property name="iconSize">
@@ -262,7 +350,7 @@
              <string>Add</string>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="main.qrc">
               <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
             </property>
             <property name="iconSize">
@@ -302,7 +390,7 @@
            <bool>true</bool>
           </attribute>
           <attribute name="verticalHeaderVisible">
-           <bool>true</bool>
+           <bool>false</bool>
           </attribute>
           <attribute name="verticalHeaderStretchLastSection">
            <bool>false</bool>
@@ -389,7 +477,10 @@
            </spacer>
           </item>
           <item>
-           <widget class="QToolButton" name="AngleRemoveButtom">
+           <widget class="QToolButton" name="AngleRemoveButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -400,7 +491,7 @@
              <string>Remove</string>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="main.qrc">
               <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
             </property>
             <property name="iconSize">
@@ -429,7 +520,7 @@
              <string>Add</string>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="main.qrc">
               <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
             </property>
             <property name="iconSize">
@@ -469,7 +560,7 @@
            <bool>true</bool>
           </attribute>
           <attribute name="verticalHeaderVisible">
-           <bool>true</bool>
+           <bool>false</bool>
           </attribute>
           <attribute name="verticalHeaderStretchLastSection">
            <bool>false</bool>
@@ -562,6 +653,9 @@
           </item>
           <item>
            <widget class="QToolButton" name="TorsionRemoveButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -572,7 +666,7 @@
              <string>Remove</string>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="main.qrc">
               <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
             </property>
             <property name="iconSize">
@@ -601,7 +695,7 @@
              <string>Add</string>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="main.qrc">
               <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
             </property>
             <property name="iconSize">
@@ -641,7 +735,7 @@
            <bool>true</bool>
           </attribute>
           <attribute name="verticalHeaderVisible">
-           <bool>true</bool>
+           <bool>false</bool>
           </attribute>
           <attribute name="verticalHeaderStretchLastSection">
            <bool>false</bool>
@@ -743,7 +837,7 @@
          <bool>true</bool>
         </attribute>
         <attribute name="verticalHeaderVisible">
-         <bool>true</bool>
+         <bool>false</bool>
         </attribute>
         <attribute name="verticalHeaderStretchLastSection">
          <bool>false</bool>
@@ -799,6 +893,9 @@
         </item>
         <item>
          <widget class="QToolButton" name="IsotopologueRemoveButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -809,7 +906,7 @@
            <string>Remove</string>
           </property>
           <property name="icon">
-           <iconset resource="icons.qrc">
+           <iconset resource="main.qrc">
             <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
           </property>
           <property name="iconSize">
@@ -838,7 +935,7 @@
            <string>Add</string>
           </property>
           <property name="icon">
-           <iconset resource="icons.qrc">
+           <iconset resource="main.qrc">
             <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
           </property>
           <property name="iconSize">
@@ -869,8 +966,16 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SpeciesWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/viewer/specieswidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="main.qrc"/>
  </resources>
  <connections/>
 </ui>

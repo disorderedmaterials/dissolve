@@ -1,0 +1,45 @@
+# Test Case 04 - Internal test of 'cells' RDF calculation method
+
+# Define Atomic Species
+Species 'Ball'
+  # Atoms
+  Atom    1    Ar     0.0  0.0  0.0  'Ar'
+
+  Isotopologue  'Natural'
+EndSpecies
+
+# Define Configuration
+Configuration  'Box'
+  Density  0.05  atoms/A3
+  Multiplier  1
+  SpeciesInfo  'Ball'  10000.0
+  RDFRange 20.0
+  CellDivisionLength  5.0
+
+  # Test 'Cells' method of RDF calculation
+  Module  RDF
+    Frequency  1
+    InternalTest  On
+    Method  Cells
+  EndModule
+EndConfiguration
+
+Layer  'Processing'
+
+  Module SanityCheck
+  EndModule
+
+EndLayer
+
+# Pair Potentials
+PairPotentials
+  Range  15.000000
+  Delta  0.050000
+  Parameters  'Ar'  0.0  0.0  0.0
+  GenerateAll  'LJ'
+EndPairPotentials
+
+Simulation
+  RestartFileFrequency  -1
+EndSimulation
+

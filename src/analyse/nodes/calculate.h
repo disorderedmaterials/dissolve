@@ -1,7 +1,7 @@
 /*
 	*** Analysis Node - Calculate
 	*** src/analyse/nodes/calculate.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -102,7 +102,7 @@ class AnalysisCalculateNode : public AnalysisNode
 	 */
 	public:
 	// Read structure from specified LineParser
-	bool read(LineParser& parser, NodeContextStack& contextStack);
+	bool read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack);
 	// Write structure to specified LineParser
 	bool write(LineParser& parser, const char* prefix);
 };

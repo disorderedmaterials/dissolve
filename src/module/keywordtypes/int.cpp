@@ -1,7 +1,7 @@
 /*
 	*** Module Keyword - Integer
 	*** src/module/keywordtypes/int.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -21,7 +21,7 @@
 
 #include "module/keywordtypes/int.h"
 #include "base/lineparser.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructors
 IntegerModuleKeyword::IntegerModuleKeyword(int value) : ModuleKeywordBase(ModuleKeywordBase::IntegerData), ModuleKeywordData<int>(value)
@@ -123,7 +123,7 @@ int IntegerModuleKeyword::maxArguments()
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool IntegerModuleKeyword::read(LineParser& parser, int startArg, ProcessPool& procPool)
+bool IntegerModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	if (parser.hasArg(startArg))
 	{

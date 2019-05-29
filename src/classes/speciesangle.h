@@ -1,7 +1,7 @@
 /*
 	*** SpeciesAngle Definition
 	*** src/classes/speciesangle.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -82,6 +82,8 @@ class SpeciesAngle : public SpeciesIntra, public ListItem<SpeciesAngle>
 	enum AngleFunction
 	{
 		HarmonicForm,
+		CosineForm,
+		Cos2Form,
 		nAngleFunctions
 	};
 	// Convert string to functional form
@@ -94,6 +96,12 @@ class SpeciesAngle : public SpeciesIntra, public ListItem<SpeciesAngle>
 	static int nFunctionParameters(AngleFunction func);
 
 	public:
+	// Set up any necessary parameters
+	void setUp();
+	// Return fundamental frequency for the interaction
+	double fundamentalFrequency(double reducedMass) const;
+	// Return type of this interaction
+	SpeciesIntra::IntramolecularType type() const;
 	// Return energy for specified angle
 	double energy(double angleInDegrees) const;
 	// Return force multiplier for specified angle

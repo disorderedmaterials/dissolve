@@ -1,7 +1,7 @@
 /*
 	*** Gaussian Function Approximation
 	*** src/math/gaussfit.cpp
-	Copyright T. Youngs 2018
+	Copyright T. Youngs 2019
 
 	This file is part of Dissolve.
 
@@ -181,22 +181,41 @@ const Data1D& GaussFit::approximation() const
 }
 
 // Calculate and return approximate function in requested space
-Data1D GaussFit::approximation(FunctionSpace::SpaceType space, double preFactor, double xMin, double xStep, double xMax, double fwhmFactor) const
+Data1D GaussFit::approximation(FunctionSpace::SpaceType space, double factor, double xMin, double xStep, double xMax, double fwhmFactor) const
 {
-	Data1D ft;
+	Data1D approx;
 	double x = xMin;
 	while (x <= xMax)
 	{
-		ft.addPoint(x, 0.0);
+		approx.addPoint(x, 0.0);
 		x += xStep;
 	}
 
 	// Loop over defined Gaussians
-	for (int n=0; n<nGaussians_; ++n) addFunction(ft, space, x_.constAt(n), A_.constAt(n), fwhm_.constAt(n)*fwhmFactor);
+	for (int n=0; n<nGaussians_; ++n) addFunction(approx, space, x_.constAt(n), A_.constAt(n), fwhm_.constAt(n)*fwhmFactor);
 
-	ft.values() *= preFactor;
+	approx.values() *= factor;
 
-	return ft;
+	return approx;
+}
+
+// Calculate and return single function in requested space
+Data1D GaussFit::singleFunction(int index, FunctionSpace::SpaceType space, double factor, double xMin, double xStep, double xMax, double fwhmFactor) const
+{
+	Data1D func;
+	double x = xMin;
+	while (x <= xMax)
+	{
+		func.addPoint(x, 0.0);
+		x += xStep;
+	}
+
+	// Loop over defined Gaussians
+	addFunction(func, space, x_.constAt(index), A_.constAt(index), fwhm_.constAt(index)*fwhmFactor);
+
+	func.values() *= factor;
+
+	return func;
 }
 
 // Set coefficients from supplied values
@@ -273,6 +292,8 @@ double GaussFit::sweepFitA(FunctionSpace::SpaceType space, double xMin, int samp
 
 			// Set up minimiser for the next batch
 			MonteCarloMinimiser<GaussFit> gaussMinimiser(*this, &GaussFit::costAnalyticA);
+			gaussMinimiser.setMaxIterations(100);
+			gaussMinimiser.setStepSize(0.01);
 			alphaSpace_ = space;
 
 			// Add Gaussian parameters as fitting targets
@@ -294,7 +315,7 @@ double GaussFit::sweepFitA(FunctionSpace::SpaceType space, double xMin, int samp
 			}
 
 			// Optimise this set of Gaussians
-			currentError_ = gaussMinimiser.minimise(100, 0.01);
+			currentError_ = gaussMinimiser.minimise();
 			Messenger::printVerbose("GaussFit::reFitA() - G = %i, error = %f\n", g, currentError_);
 
 			// If we are not at the end of the Gaussian array, move the index backwards so the next set overlaps a little with this one
@@ -357,12 +378,14 @@ double GaussFit::constructReal(double requiredError, int maxGaussians)
 				Messenger::printVerbose("Attempting Gaussian addition for peak/trough located at x = %f\n", trialX);
 
 				// Set up minimiser, minimising test Gaussian only
-				PrAxis<GaussFit> gaussMinimiser(*this, &GaussFit::costAnalyticAFX);
-				alphaSpace_ = FunctionSpace::RealSpace;
+				PrAxisMinimiser<GaussFit> gaussMinimiser(*this, &GaussFit::costAnalyticAFX);
+				gaussMinimiser.setMaxStep(0.1);
+				gaussMinimiser.setTolerance(0.01);
 				gaussMinimiser.addTarget(trialA);
 				gaussMinimiser.addTarget(trialFWHM);
 				gaussMinimiser.addTarget(trialX);
-				double trialError = gaussMinimiser.minimise(0.01, 0.1);
+				alphaSpace_ = FunctionSpace::RealSpace;
+				double trialError = gaussMinimiser.minimise();
 
 				// Sanity check fitted parameters before we (potentially) accept the new function
 				if (fabs(trialA) < 1.0e-4)
@@ -459,6 +482,8 @@ double GaussFit::constructReciprocal(double rMin, double rMax, int nGaussians, d
 
 	// Perform Monte Carlo minimisation on the amplitudes
 	MonteCarloMinimiser<GaussFit> gaussMinimiser(*this, &GaussFit::costTabulatedA);
+	gaussMinimiser.setMaxIterations(nIterations);
+	gaussMinimiser.setStepSize(initialStepSize);
 	gaussMinimiser.enableParameterSmoothing(smoothingThreshold, smoothingK, smoothingM);
 	alphaSpace_ = FunctionSpace::ReciprocalSpace;
 
@@ -471,7 +496,7 @@ double GaussFit::constructReciprocal(double rMin, double rMax, int nGaussians, d
 	}
 
 	// Optimise this set of Gaussians
-	currentError_ = gaussMinimiser.minimise(nIterations, initialStepSize);
+	currentError_ = gaussMinimiser.minimise();
 
 	// Perform a final grouped refit of the amplitudes
 	if (reFitAtEnd) sweepFitA(FunctionSpace::ReciprocalSpace, rMin);
@@ -505,6 +530,8 @@ double GaussFit::constructReciprocal(double rMin, double rMax, const Array<doubl
 
 	// Perform Monte Carlo minimisation on the amplitudes
 	MonteCarloMinimiser<GaussFit> gaussMinimiser(*this, &GaussFit::costTabulatedA);
+	gaussMinimiser.setMaxIterations(nIterations);
+	gaussMinimiser.setStepSize(initialStepSize);
 	gaussMinimiser.enableParameterSmoothing(smoothingThreshold, smoothingK, smoothingM);
 	alphaSpace_ = FunctionSpace::ReciprocalSpace;
 
@@ -517,7 +544,7 @@ double GaussFit::constructReciprocal(double rMin, double rMax, const Array<doubl
 	}
 
 	// Optimise this set of Gaussians
-	currentError_ = gaussMinimiser.minimise(nIterations, initialStepSize);
+	currentError_ = gaussMinimiser.minimise();
 
 	// Perform a final grouped refit of the amplitudes
 	if (reFitAtEnd) sweepFitA(FunctionSpace::ReciprocalSpace, rMin);

@@ -1,7 +1,7 @@
 /*
 	*** Bond Definition
 	*** src/classes/bond.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -47,7 +47,6 @@ void Bond::clear()
 	j_ = NULL;
 
 	// Intra
-	deleteAttachedAtomArrays();
 	molecule_ = NULL;
 }
 
@@ -84,7 +83,7 @@ Atom* Bond::partner(Atom* i) const
 	return (i == i_ ? j_ : i_);
 }
 
-// Return whether Atoms in Angle match those specified
+// Return whether Atoms in Bond match those specified
 bool Bond::matches(Atom* i, Atom* j) const
 {
 	if ((i_ == i) && (j_ == j)) return true;

@@ -1,7 +1,7 @@
 /*
 	*** Dissolve Main
 	*** src/main.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -22,7 +22,6 @@
 #include "version.h"
 #include "base/messenger.h"
 #include "main/dissolve.h"
-#include "module/registry.h"
 #include "base/processpool.h"
 #include <time.h>
 #include <ctime>
@@ -35,12 +34,13 @@ int main(int argc, char **argv)
 	ProcessPool::initialiseMPI(&argc, &argv);
 #endif
 
-	// Instantiate main class
-	Dissolve dissolve;
+	// Instantiate main classes
+	CoreData coreData;
+	Dissolve dissolve(coreData);
 
 	// Parse CLI options...
 	int n = 1;
-	CharString inputFile, redirectFileName;
+	CharString inputFile, redirectFileName, restartDataFile;
 	int nIterations = 5;
 	bool ignoreRestart = false, dontWriteRestart = false;
 	while (n < argc)
@@ -52,9 +52,9 @@ int main(int argc, char **argv)
 			{
 				case ('h'):
 #ifdef PARALLEL
-					printf("Dissolve PARALLEL version %s, Copyright (C) 2012-2018 T. Youngs.\n\n", DISSOLVEVERSION);
+					printf("Dissolve PARALLEL version %s, Copyright (C) 2012-2019 T. Youngs.\n\n", DISSOLVEVERSION);
 #else
-					printf("Dissolve SERIAL version %s, Copyright (C) 2012-2018 T. Youngs.\n\n", DISSOLVEVERSION);
+					printf("Dissolve SERIAL version %s, Copyright (C) 2012-2019 T. Youngs.\n\n", DISSOLVEVERSION);
 #endif
 					printf("Recognised CLI options are:\n\n");
 					printf("\t-c\t\tCheck input and set-up only - don't perform any main-loop iterations\n");
@@ -64,6 +64,7 @@ int main(int argc, char **argv)
 					printf("\t-q\t\tQuiet mode - print no output\n");
 					printf("\t-r <file>\tRedirect output from all process to 'file.N', where N is the process rank\n");
 					printf("\t-s\t\tPerform single main loop iteration and then quit\n");
+					printf("\t-t <file>\tLoad restart data from specified file (but still write to associated restart file)\n");
 					printf("\t-v\t\tVerbose mode - be a little more descriptive throughout\n");
 					printf("\t-x\t\tDon't write any restart information (but still read in the restart file if present)\n");
 					ProcessPool::finalise();
@@ -111,6 +112,18 @@ int main(int argc, char **argv)
 					Messenger::print("Single main-loop iteration will be performed, then Dissolve will exit.\n");
 					nIterations = 1;
 					break;
+				case ('t'):
+					// Next argument is filename
+					++n;
+					if (n == argc)
+					{
+						Messenger::error("Expected restart data filename.\n");
+						Messenger::ceaseRedirect();
+						return 1;
+					}
+					restartDataFile = argv[n];
+					Messenger::print("Restart data will be loaded from '%s'.\n", restartDataFile.get());
+					break;
 				case ('v'):
 					Messenger::setVerbose(true);
 					Messenger::printVerbose("Verbose mode enabled.\n");
@@ -146,19 +159,18 @@ int main(int argc, char **argv)
 
 	// Print GPL license information
 #ifdef PARALLEL
-	Messenger::print("Dissolve PARALLEL version %s, Copyright (C) 2012-2018 T. Youngs.\n", DISSOLVEVERSION);
+	Messenger::print("Dissolve PARALLEL version %s, Copyright (C) 2012-2019 T. Youngs.\n", DISSOLVEVERSION);
 #else
-	Messenger::print("Dissolve SERIAL version %s, Copyright (C) 2012-2018 T. Youngs.\n", DISSOLVEVERSION);
+	Messenger::print("Dissolve SERIAL version %s, Copyright (C) 2012-2019 T. Youngs.\n", DISSOLVEVERSION);
 #endif
 	Messenger::print("Source repository: %s.\n", DISSOLVEREPO);
 	Messenger::print("Dissolve comes with ABSOLUTELY NO WARRANTY.\n");
 	Messenger::print("This is free software, and you are welcome to redistribute it under certain conditions.\n");
 	Messenger::print("For more details read the GPL at <http://www.gnu.org/copyleft/gpl.html>.\n");
 
-	// Register modules and print info
-	Messenger::banner("Register Modules");
-	ModuleRegistry moduleRegistry;
-	if (!ModuleList::printMasterModuleInformation())
+	// Check module registration 
+	Messenger::banner("Available Modules");
+	if (!dissolve.registerMasterModules())
 	{
 		ProcessPool::finalise();
 		Messenger::ceaseRedirect();
@@ -186,7 +198,11 @@ int main(int argc, char **argv)
 	Messenger::banner("Parse Restart File");
 	if (!ignoreRestart)
 	{
-		CharString restartFile("%s.restart", inputFile.get());
+		// We may have been provided the name of a restart file to read in...
+		CharString restartFile;
+		if (restartDataFile.isEmpty()) restartFile.sprintf("%s.restart", inputFile.get());
+		else restartFile = restartDataFile;
+		
 		if (DissolveSys::fileExists(restartFile))
 		{
 			Messenger::print("Restart file '%s' exists and will be loaded.\n", restartFile.get());
@@ -197,6 +213,9 @@ int main(int argc, char **argv)
 				Messenger::ceaseRedirect();
 				return 1;
 			}
+
+			// Reset the restart filename to be the standard one
+			dissolve.setRestartFilename(CharString("%s.restart", inputFile.get()));
 		}
 		else Messenger::print("Restart file '%s' does not exist.\n", restartFile.get());
 	}

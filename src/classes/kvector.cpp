@@ -1,7 +1,7 @@
 /*
 	*** KVector
 	*** src/classes/kvector.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -185,13 +185,13 @@ const char* KVector::itemClassName()
  */
 
 // Broadcast data from Master to all Slaves
-bool KVector::broadcast(ProcessPool& procPool, int rootRank)
+bool KVector::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 {
 #ifdef PARALLEL
-	if (!procPool.broadcast(hkl_, rootRank)) return false;
-	if (!procPool.broadcast(braggPeakIndex_, rootRank)) return false;
-	if (!procPool.broadcast(cosTerms_, rootRank)) return false;
-	if (!procPool.broadcast(sinTerms_, rootRank)) return false;
+	if (!procPool.broadcast(hkl_, root)) return false;
+	if (!procPool.broadcast(braggPeakIndex_, root)) return false;
+	if (!procPool.broadcast(cosTerms_, root)) return false;
+	if (!procPool.broadcast(sinTerms_, root)) return false;
 #endif
 	return true;
 }

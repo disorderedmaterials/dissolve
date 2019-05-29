@@ -1,7 +1,7 @@
 /*
 	*** AtomTypeData Definition
 	*** src/classes/atomtypedata.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -21,6 +21,7 @@
 
 #include "classes/atomtypelist.h"
 #include "classes/atomtype.h"
+#include "classes/coredata.h"
 #include "classes/isotopedata.h"
 #include "data/isotopes.h"
 #include "base/constants.h"
@@ -63,7 +64,7 @@ void AtomTypeData::operator=(const AtomTypeData& source)
  */
 
 // Initialise
-bool AtomTypeData::initialise(int listIndex, AtomType* atomType, int population)
+bool AtomTypeData::initialise(int listIndex, AtomType* atomType, double population)
 {
 	listIndex_ = listIndex;
 	atomType_ = atomType;
@@ -78,13 +79,13 @@ bool AtomTypeData::initialise(int listIndex, AtomType* atomType, int population)
 }
 
 // Add to population
-void AtomTypeData::add(int nAdd)
+void AtomTypeData::add(double nAdd)
 {
 	population_ += nAdd;
 }
 
 // Add to population of Isotope
-void AtomTypeData::add(Isotope* tope, int nAdd)
+void AtomTypeData::add(Isotope* tope, double nAdd)
 {
 	// Has this isotope already been added to the list?
 	IsotopeData* topeData = NULL;
@@ -109,7 +110,7 @@ void AtomTypeData::zeroPopulations()
 	for (IsotopeData* topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next) topeData->zeroPopulation();
 
 	// Zero totals
-	population_ = 0;
+	population_ = 0.0;
 	fraction_ = 0.0;
 }
 
@@ -138,10 +139,10 @@ bool AtomTypeData::exchangeable() const
 }
 
 // Finalise, calculating fractional populations etc.
-void AtomTypeData::finalise(int totalAtoms)
+void AtomTypeData::finalise(double totalAtoms)
 {
 	// Calculate fractional world population
-	fraction_ = double(population_) / totalAtoms;
+	fraction_ = population_ / totalAtoms;
 
 	// Calculate isotope fractional populations (of AtomType)
 	for (IsotopeData* topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next) topeData->finalise(population_);
@@ -222,23 +223,13 @@ const char* AtomTypeData::atomTypeName() const
  * I/O
  */
 
-// Write data through specified LineParser
-bool AtomTypeData::write(LineParser& parser)
-{
-	// Line Contains: AtomType name, exchangeable flag, population, fraction, boundCoherent, and nIsotopes
-	if (!parser.writeLineF("%s %i %f %f %i\n", atomType_->name(), population_, fraction_, boundCoherent_, isotopes_.nItems())) return false;
-	ListIterator<IsotopeData> isotopeIterator(isotopes_);
-	while (IsotopeData* topeData = isotopeIterator.iterate()) if (!topeData->write(parser)) return false;
-	return true;
-}
-
 // Read data through specified LineParser
-bool AtomTypeData::read(LineParser& parser)
+bool AtomTypeData::read(LineParser& parser, const CoreData& coreData)
 {
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-	for (atomType_ = List<AtomType>::masterInstance().first(); atomType_ != NULL; atomType_ = atomType_->next) if (DissolveSys::sameString(atomType_->name(), parser.argc(0))) break;
+	atomType_ = coreData.findAtomType(parser.argc(0));
 	if (!atomType_) return false;
-	population_ = parser.argi(1);
+	population_ = parser.argd(1);
 	fraction_ = parser.argd(2);
 	boundCoherent_ = parser.argd(3);
 	isotopes_.clear();
@@ -246,8 +237,18 @@ bool AtomTypeData::read(LineParser& parser)
 	for (int n = 0; n<nIso; ++n)
 	{
 		IsotopeData* tope = isotopes_.add();
-		if (!tope->read(parser)) return false;
+		if (!tope->read(parser, coreData)) return false;
 	}
+	return true;
+}
+
+// Write data through specified LineParser
+bool AtomTypeData::write(LineParser& parser)
+{
+	// Line Contains: AtomType name, exchangeable flag, population, fraction, boundCoherent, and nIsotopes
+	if (!parser.writeLineF("%s %f %f %f %i\n", atomType_->name(), population_, fraction_, boundCoherent_, isotopes_.nItems())) return false;
+	ListIterator<IsotopeData> isotopeIterator(isotopes_);
+	while (IsotopeData* topeData = isotopeIterator.iterate()) if (!topeData->write(parser)) return false;
 	return true;
 }
 
@@ -256,17 +257,17 @@ bool AtomTypeData::read(LineParser& parser)
  */
 
 // Broadcast data from Master to all Slaves
-bool AtomTypeData::broadcast(ProcessPool& procPool, int root)
+bool AtomTypeData::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 {
 #ifdef PARALLEL
-	// For atomType_, use the master instance of List<AtomType> to find the index (*not* the local listIndex_) and broadcast it
-	int typeIndex;
-	if (procPool.poolRank() == root) typeIndex = List<AtomType>::masterInstance().indexOf(atomType_);
-	procPool.broadcast(typeIndex, root);
-	atomType_ = List<AtomType>::masterInstance().item(typeIndex);
+	// For the atomType_, use the fact that the AtomType names are unique...
+	CharString typeName;
+	if (procPool.poolRank() == root) typeName = atomType_->name();
+	procPool.broadcast(typeName, root);
+	atomType_ = coreData.findAtomType(typeName);
 
 	// Broadcast the IsotopeData list
-	BroadcastList<IsotopeData> topeBroadcaster(procPool, root, isotopes_);
+	BroadcastList<IsotopeData> topeBroadcaster(procPool, root, isotopes_, coreData);
 	if (topeBroadcaster.failed()) return false;
 
 	procPool.broadcast(population_, root);

@@ -1,7 +1,7 @@
 /*
 	*** Atomic Mass Data
 	*** src/data/atomicmass.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -52,6 +52,10 @@ class AtomicMass : public Elements
 	static double mass(int Z);
 	// Return atomic mass for specified Element
 	static double mass(Element* element);
+	// Return reduced mass for specified pair of Z's
+	static double reducedMass(int Z1, int Z2);
+	// Return reduced mass for specified pair of Elements
+	static double reducedMass(Element* e1, Element* e2);
 };
 
 #endif

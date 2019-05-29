@@ -1,7 +1,7 @@
 /*
 	*** Analyse Module Widget - Functions
 	*** src/modules/analyse/gui/modulewidget_funcs.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 

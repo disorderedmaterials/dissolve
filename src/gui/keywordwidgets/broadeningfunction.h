@@ -1,7 +1,7 @@
 /*
 	*** Keyword Widget - BroadeningFunction
 	*** src/gui/keywordwidgets/broadeningfunction.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_BROADENINGFUNCTIONKEYWORDWIDGET_H
-#define DISSOLVE_BROADENINGFUNCTIONKEYWORDWIDGET_H
+#ifndef DISSOLVE_KEYWORDWIDGET_BROADENINGFUNCTION_H
+#define DISSOLVE_KEYWORDWIDGET_BROADENINGFUNCTION_H
 
 #include "gui/keywordwidgets/ui_broadeningfunction.h"
 #include "gui/keywordwidgets/dropdown.h"
@@ -38,7 +38,7 @@ class BroadeningFunctionKeywordWidget : public KeywordDropDown, public KeywordWi
 
 	public:
 	// Constructor
-	BroadeningFunctionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, GenericList& moduleData, const char* prefix);
+	BroadeningFunctionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
         // Main form declaration
         Ui::BroadeningFunctionWidget ui;
 
@@ -72,7 +72,7 @@ class BroadeningFunctionKeywordWidget : public KeywordDropDown, public KeywordWi
 	// Update value displayed in widget, using specified source if necessary
 	void updateValue();
 	// Update widget values data based on keyword data
-	void updateWidgetValues();
+	void updateWidgetValues(const CoreData& coreData);
 	// Update keyword data based on widget values
 	void updateKeywordData();
 };

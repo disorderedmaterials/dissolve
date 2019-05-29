@@ -1,7 +1,7 @@
 /*
 	*** Broadening Function
 	*** src/math/broadeningfunction.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -448,6 +448,15 @@ const char* BroadeningFunction::itemClassName()
 	return "BroadeningFunction";
 }
 
+// Read data through specified LineParser
+bool BroadeningFunction::read(LineParser& parser, const CoreData& coreData)
+{
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	function_ = functionType(parser.argc(0));
+	for (int n=0; n<nFunctionParameters(function_); ++n) parameters_[n] = parser.argd(n+1);
+	return true;
+}
+
 // Write data through specified LineParser
 bool BroadeningFunction::write(LineParser& parser)
 {
@@ -456,21 +465,12 @@ bool BroadeningFunction::write(LineParser& parser)
 	return parser.writeLine(line.get());
 }
 
-// Read data through specified LineParser
-bool BroadeningFunction::read(LineParser& parser)
-{
-	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-	function_ = functionType(parser.argc(0));
-	for (int n=0; n<nFunctionParameters(function_); ++n) parameters_[n] = parser.argd(n+1);
-	return true;
-}
-
 /*
  * Parallel Comms
  */
 
 // Broadcast data from Master to all Slaves
-bool BroadeningFunction::broadcast(ProcessPool& procPool, int root)
+bool BroadeningFunction::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 {
 #ifdef PARALLEL
 	if (!procPool.broadcast(EnumCast<BroadeningFunction::FunctionType>(function_), root)) return false;

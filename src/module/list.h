@@ -1,7 +1,7 @@
 /*
 	*** Module List
 	*** src/module/list.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -22,7 +22,6 @@
 #ifndef DISSOLVE_MODULELIST_H
 #define DISSOLVE_MODULELIST_H
 
-#include "module/reference.h"
 #include "templates/list.h"
 
 // Forward Declarations
@@ -37,48 +36,30 @@ class ModuleList
 	ModuleList();
 	// Destructor
 	~ModuleList();
+	// Conversion operator (List<Module>&)
+	operator List<Module>&();
 
 
 	/*
 	 * Module List
 	 */
 	private:
-	// List of Module References
-	List<ModuleReference> modules_;
+	// List of Modules
+	List<Module> modules_;
 
 	public:
+	// Clear list
+	void clear();
 	// Associate Module to list
-	Module* add(Module* module, Configuration* location = NULL, Module* addBeforeThis = NULL);
-	// Find associated Module by name
-	Module* find(const char* name) const;
-	// Find ModuleReference for specified Module
-	ModuleReference* contains(Module* module);
+	bool add(Module* module, Module* addBeforeThis = NULL);
+	// Find associated Module by unique name
+	Module* find(const char* uniqueName) const;
+	// Return whether specified Module is present in the list
+	bool contains(Module* searchModule) const;
 	// Return number of Modules in the list
 	int nModules() const;
-	// Return list of ModuleReferences
-	List<ModuleReference>& modules();
-
-
-	/*
-	 * Master Module Instances
-	 */
-	private:
-	// List of master Module instances
-	static List<ModuleReference> masterInstances_;
-	// List of Modules that failed to register
-	static List<ModuleReference> failedRegistrations_;
-
-	public:
-	// Register Module
-	static void registerMasterInstance(Module* mainInstance);
-	// Find master instance of specified Module type
-	static Module* findMasterInstance(const char* type);
-	// Print out registered module information, and return false if any registration errors were encountered
-	static bool printMasterModuleInformation();
-	// Return list of all master instances
-	static List<ModuleReference>& masterInstances();
-	// Search for any instance of any module with the specified unique name
-	static Module* findInstanceByUniqueName(const char* uniqueName);
+	// Return list of Modules
+	List<Module>& modules();
 };
 
 #endif

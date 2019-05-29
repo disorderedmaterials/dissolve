@@ -1,7 +1,7 @@
 /*
 	*** Module Keyword - AtomType Selection
 	*** src/modules/keywordtypes/atomtypeselection.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -23,6 +23,7 @@
 #include "classes/atomtype.h"
 #include "classes/atomtypelist.h"
 #include "classes/configuration.h"
+#include "classes/coredata.h"
 #include "base/lineparser.h"
 
 // Constructor
@@ -98,7 +99,7 @@ int AtomTypeSelectionModuleKeyword::maxArguments()
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool AtomTypeSelectionModuleKeyword::read(LineParser& parser, int startArg, ProcessPool& procPool)
+bool AtomTypeSelectionModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	// Make sure our list is up-to-date
 	checkSelection();
@@ -108,7 +109,7 @@ bool AtomTypeSelectionModuleKeyword::read(LineParser& parser, int startArg, Proc
 	{
 		// Do we recognise the AtomType?
 		AtomType* atomType = NULL;
-		ListIterator<AtomType> typeIterator(List<AtomType>::masterInstance());
+		ListIterator<AtomType> typeIterator(coreData.constAtomTypes());
 		while (atomType = typeIterator.iterate()) if (DissolveSys::sameString(atomType->name(), parser.argc(n))) break;
 		if (!atomType) return Messenger::error("Unrecognised AtomType '%s' found in list.\n", parser.argc(n));
 
@@ -132,7 +133,7 @@ bool AtomTypeSelectionModuleKeyword::write(LineParser& parser, const char* prefi
 	ListIterator<AtomTypeData> typeIterator(data_.types());
 	while (AtomTypeData* atd = typeIterator.iterate()) selection.strcatf("  %s", atd->atomTypeName());
 
-	if (!parser.writeLineF("%s%s%s", prefix, keyword(), selection.get())) return false;
+	if (!parser.writeLineF("%s%s%s\n", prefix, keyword(), selection.get())) return false;
 
 	return true;
 }

@@ -1,7 +1,7 @@
 /*
 	*** Gaussian Function Approximation
 	*** src/math/gaussfit.h
-	Copyright T. Youngs 2018
+	Copyright T. Youngs 2019
 
 	This file is part of Dissolve.
 
@@ -70,6 +70,8 @@ class GaussFit
 	const Data1D& approximation() const;
 	// Calculate and return approximate function in requested space
 	Data1D approximation(FunctionSpace::SpaceType space, double factor, double xMin, double xStep, double xMax, double fwhmFactor = 1.0) const;
+	// Calculate and return single function in requested space
+	Data1D singleFunction(int index, FunctionSpace::SpaceType space, double factor, double xMin, double xStep, double xMax, double fwhmFactor = 1.0) const;
 	// Set coefficients from supplied values
 	void set(double rMax, const Array<double>& A, double sigma);
 	// Return number of Gaussians in fit

@@ -1,7 +1,7 @@
 /*
 	*** Calibration Module - Options
 	*** src/modules/calibration/options.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -22,61 +22,27 @@
 #include "modules/calibration/calibration.h"
 #include "module/keywordtypes.h"
 #include "module/list.h"
-#include "templates/genericlisthelper.h"
-
-// IntraBroadening Fitting Targets
-const char* IntraBroadeningFitTargetKeywords[] = { "S(Q)", "g(r)", "Both" };
-
-// Convert string to functional form
-CalibrationModule::IntraBroadeningFitTarget CalibrationModule::intraBroadeningFitTarget(const char* s)
-{
-	for (int n=0; n<CalibrationModule::nIntraBroadeningFitTargets; ++n) if (DissolveSys::sameString(s, IntraBroadeningFitTargetKeywords[n])) return (CalibrationModule::IntraBroadeningFitTarget) n;
-	return CalibrationModule::nIntraBroadeningFitTargets;
-}
-
-// Return fit target text
-const char* CalibrationModule::intraBroadeningFitTarget(CalibrationModule::IntraBroadeningFitTarget ft)
-{
-	return IntraBroadeningFitTargetKeywords[ft];
-}
+#include "genericitems/listhelper.h"
 
 // Set up keywords for Module
 void CalibrationModule::setUpKeywords()
 {
-	keywords_.add(new ModuleReferenceListModuleKeyword(intraBroadeningModules_, "RDF"), "AdjustIntraBroadening", "Add specified RDF module as a target for IntraBroadening adjustment", "<RDFModule>");
-	keywords_.add(new ComplexModuleKeyword(1,2), "IntraBroadeningNeutronReference", "Add specified NeutronSQ module as a reference for IntraBroadening adjustment", "<NeutronSQModule> [target=S(Q)]");
-	keywords_.add(new BoolModuleKeyword(true), "OnlyWhenEnergyStable", "Only perform calibrations when all related Configuration energies are stable");
+	// Calculation
+	ModuleKeywordGroup* group = addKeywordGroup("Calculation");
+	group->add(new BoolModuleKeyword(true), "OnlyWhenEnergyStable", "Only perform calibrations when all related Configuration energies are stable");
+
+	// RDF Calibration
+	group = addKeywordGroup("RDF Calibration");
+	group->add(new ModuleReferenceListModuleKeyword(intraBroadeningModules_, "RDF"), "AdjustIntraBroadening", "Add specified RDF module as a target for IntraBroadening adjustment", "<RDFModule>");
+
+	// NeutronSQ Calibration
+	group = addKeywordGroup("NeutronSQ Calibration");
+	group->add(new ModuleReferenceListModuleKeyword(intraBroadeningNeutronGRReferences_, "NeutronSQ"), "IntraBroadeningNeutronGRReference", "Add G(r) data in the specified NeutronSQ module as a reference for IntraBroadening adjustment", "<NeutronSQModule>");
+	group->add(new ModuleReferenceListModuleKeyword(intraBroadeningNeutronSQReferences_, "NeutronSQ"), "IntraBroadeningNeutronSQReference", "Add S(Q) data in the specified NeutronSQ module as a reference for IntraBroadening adjustment", "<NeutronSQModule>");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 int CalibrationModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
-	if (DissolveSys::sameString(parser.argc(0), "IntraBroadeningNeutronReference"))
-	{
-		// Find specified RDFModule
-		Module* module = ModuleList::findInstanceByUniqueName(parser.argc(1));
-		if (!module)
-		{
-			Messenger::error("Error adding NeutronSQ reference target - no Module named '%s' exists.\n", parser.argc(1));
-			return false;
-		}
-		if (!DissolveSys::sameString(module->type(), "NeutronSQ"))
-		{
-			Messenger::error("Error adding NeutronSQ reference target - Module '%s' is not a NeutronSQ Module (%s).\n", parser.argc(1), module->type());
-			return false;
-		}
-
-		// Was a specific target supplied?
-		CalibrationModule::IntraBroadeningFitTarget target = CalibrationModule::IntraBroadeningTargetSQ;
-		if (parser.hasArg(2))
-		{
-			target = CalibrationModule::intraBroadeningFitTarget(parser.argc(2));
-			if (target == CalibrationModule::nIntraBroadeningFitTargets) return false;
-		}
-
-		intraBroadeningReferences_.add(module, target);
-	}
-	else return -1;
-
-	return true;
+	return -1;
 }

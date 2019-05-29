@@ -3,7 +3,7 @@ project(Dissolve)
 set(DESCRIPTION "Dissolve")
 set(AUTHOR "Tristan Youngs")
 set(VERSION_MAJOR "0")
-set(VERSION_MINOR "36")
+set(VERSION_MINOR "4")
 set(VERSION_PATCH "0")
 
 set(CMAKE_BUILD_TYPE "Release")
@@ -38,19 +38,21 @@ if(CHECKS)
   ADD_DEFINITIONS("-DCHECKS")
 endif(CHECKS)
 
+# Find basic requirements
+include(FindBISON)
+# -- Force first look for Bison to be /usr/local/bin, since version provided by XCode on OSX is too old (v2.3) 
+find_package(BISON PATHS /usr/local/bin NO_DEFAULT_PATH QUIET)
+find_package(BISON REQUIRED)
+
 if(GUI)
   # Add extra functions
   LIST(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
-  include(FindBISON)
   include(FindFTGL)
   include(FindGLEXT)
   find_package(Qt5Widgets REQUIRED)
   find_package(Qt5Core REQUIRED)
   find_package(Qt5Gui REQUIRED)
   find_package(Qt5PrintSupport REQUIRED)
-  # -- Force first look for Bison to be /usr/local/bin, since version provided by XCode on OSX is too old (v2.3) 
-  find_package(BISON PATHS /usr/local/bin NO_DEFAULT_PATH QUIET)
-  find_package(BISON REQUIRED)
   find_package(OpenGL REQUIRED)
   find_package(FTGL REQUIRED)
   find_package(Freetype REQUIRED)
@@ -67,10 +69,11 @@ endif(GUI)
 # -- Windows
 if(WIN32)
   if(PARALLEL)
-    set (target_name dissolve)
+    set (target_name Dissolve)
   else(PARALLEL)
-    set (target_name Dissolve-serial)
-    set (gui_target_name Dissolve-gui)
+    set (target_name Dissolve-Serial)
+    set (gui_target_name Dissolve-GUI)
+    set (ed_target_name DGuidEd)
   endif(PARALLEL)
 
   # Adjust external include directories for GUI
@@ -96,6 +99,7 @@ if(UNIX)
   else(PARALLEL)
     set (target_name dissolve-serial)
     set (gui_target_name dissolve-gui)
+    set (ed_target_name dguided)
   endif(PARALLEL)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 endif(UNIX)
@@ -110,6 +114,7 @@ if(APPLE)
   else(PARALLEL)
     set (target_name dissolve-serial)
     set (gui_target_name dissolve-gui)
+    set (ed_target_name dguided)
   endif(PARALLEL)
 
   set(CMAKE_OSX_ARCHITECTURES "x86_64")
@@ -144,7 +149,6 @@ add_executable(${target_name}
   MACOSX_BUNDLE
   ${SRCS}/main.cpp 
 )
-
 # Set project-local include directories for target
 target_include_directories(${target_name} PRIVATE
   ${PROJECT_SOURCE_DIR}/src
@@ -152,8 +156,10 @@ target_include_directories(${target_name} PRIVATE
   ${FREETYPE_INCLUDE_DIRS}
 )
 
-# Add GUI target
+# Add GUI targets
 if(GUI)
+
+  # Main Dissolve GUI
   add_executable(${gui_target_name}
     MACOSX_BUNDLE
     ${SRCS}/dissolve-gui.cpp 
@@ -169,19 +175,36 @@ if(GUI)
     ${Qt5Widgets_INCLUDE_DIRS}
   )
 
+  # Dissolve Guide Editor (dguided)
+  add_executable(${ed_target_name}
+    MACOSX_BUNDLE
+    ${SRCS}/dguided.cpp 
+  )
+
+  # Set project-local include directories for target
+  target_include_directories(${ed_target_name} PRIVATE
+    ${PROJECT_SOURCE_DIR}/src
+    ${PROJECT_BINARY_DIR}/src
+    ${FREETYPE_INCLUDE_DIRS}
+    ${Qt5Core_INCLUDE_DIRS}
+    ${Qt5Gui_INCLUDE_DIRS}
+    ${Qt5Widgets_INCLUDE_DIRS}
+  )
+
 endif(GUI)
 
 # Set basic link libs for executables
 set(BASIC_LINK_LIBS
 
   # Main libs
-  main classes module analyse analysisnodes keywordtypes base math data
+  main classes module analyse analysisnodes keywordtypes expression genericitems base math data ff 
 
   # Modules
   analysemodule
   atomshakemodule
   braggmodule
-  calculatemodules
+  calculatedanglemodule
+  calculaterdfmodule
   calibrationmodule
   checksmodule
   datatestmodule
@@ -189,6 +212,7 @@ set(BASIC_LINK_LIBS
   epsrmodule
   exportmodule
   forcesmodule
+  geomoptmodule
   importmodule
   intrashakemodule
   mdmodule
@@ -221,25 +245,28 @@ target_link_libraries( ${target_name}
   analysemodulenogui
   atomshakemodulenogui
   braggmodulenogui
-  calculatemodulesnogui
+  calculatedanglemodulenogui
+  calculaterdfmodulenogui
   calibrationmodulenogui
   datatestmodulenogui
   energymodulenogui
   epsrmodulenogui
+  geomoptmodulenogui
   neutronsqmodulenogui
   rdfmodulenogui
   refinemodulenogui
   skeletonmodulenogui
   sqmodulenogui
   testmodulenogui
-
   ${NO_WHOLE_ARCHIVE_FLAG}
 
   ${EXTRA_LINK_LIBS}
 )
 
-# Build GUI target executable
+# Build GUI target executables
 if(GUI)
+
+  # Main Dissolve GUI
   target_link_libraries( ${gui_target_name}
     ${WHOLE_ARCHIVE_FLAG}
 
@@ -249,11 +276,13 @@ if(GUI)
     analysemodulegui
     atomshakemodulegui
     braggmodulegui
-    calculatemodulesgui
+    calculatedanglemodulegui
+    calculaterdfmodulegui
     calibrationmodulegui
     datatestmodulegui
     energymodulegui
     epsrmodulegui
+    geomoptmodulegui
     neutronsqmodulegui
     rdfmodulegui
     refinemodulegui
@@ -262,17 +291,56 @@ if(GUI)
     testmodulegui
 
     # Main gui libs
-    uchromagui
-    uchroma
-    uchromaclasses
-    uchromarender
-    uchromaexpression
-    uchromakernels
-    uchromasession
+    render
+    viewer
     widgets
     keywordwidgets
     delegates
     gui
+
+    ${NO_WHOLE_ARCHIVE_FLAG}
+
+    # External libs
+    Qt5::Widgets Qt5::Core Qt5::PrintSupport
+    ${FTGL_LIBRARIES}
+    ${OPENGL_LIBRARIES}
+    ${FREETYPE_LIBRARIES}
+
+    ${EXTRA_LINK_LIBS}
+  )
+
+  # Dissolve Guide Editor
+  target_link_libraries( ${ed_target_name}
+    ${WHOLE_ARCHIVE_FLAG}
+
+    ${BASIC_LINK_LIBS}
+
+    # Module gui libs
+    analysemodulegui
+    atomshakemodulegui
+    braggmodulegui
+    calculatedanglemodulegui
+    calculaterdfmodulegui
+    calibrationmodulegui
+    datatestmodulegui
+    energymodulegui
+    epsrmodulegui
+    geomoptmodulegui
+    neutronsqmodulegui
+    rdfmodulegui
+    refinemodulegui
+    skeletonmodulegui
+    sqmodulegui
+    testmodulegui
+
+    # Main gui libs
+    render
+    viewer
+    widgets
+    keywordwidgets
+    delegates
+    gui
+    ed
 
     ${NO_WHOLE_ARCHIVE_FLAG}
 

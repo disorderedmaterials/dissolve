@@ -1,7 +1,7 @@
 /*
 	*** Line Parsing Routines
 	*** src/base/lineparser.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -186,16 +186,14 @@ class LineParser
 	bool writeLineF(const char* fmt, ...) const;
 	// Print banner comment of fixed width
 	bool writeBannerComment(const char* fmt, ...);
-	// Write int argument as single line
-	bool writeArg(int i) const;
-	// Write double argument as single line
-	bool writeArg(double d) const;
-	// Write bool argument as single line
-	bool writeArg(bool b) const;
-	// Write Vec3<double> argument as single line
-	bool writeArg(Vec3<double> v) const;
-	// Write Vec3<int> argument as single line
-	bool writeArg(Vec3<int> v) const;
+	// Write long int argument as single line
+	bool writeArg(long int i) const;
+	// Write long long int argument as single line
+	bool writeArg(long long int i) const;
+	// Read long int argument as single line
+	bool readArg(long int& i);
+	// Read long long int argument as single line
+	bool readArg(long long int& i);
 	// Commit cached output stream to actual output file
 	bool commitCache();
 

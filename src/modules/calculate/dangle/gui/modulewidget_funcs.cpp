@@ -1,7 +1,7 @@
 /*
 	*** CalculateRDF Module Widget - Functions
 	*** src/modules/calculate/dangle/gui/modulewidget_funcs.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -30,20 +30,21 @@ CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget* parent, Calcul
 	ui.setupUi(this);
 
 	// Set up RDF graph
-	rdfGraph_ = ui.RDFPlotWidget;
+	rdfGraph_ = ui.RDFPlotWidget->dataViewer();
 
-	rdfGraph_->startNewSession(true);
-	ViewPane* viewPane = rdfGraph_->currentViewPane();
-	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
-	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "g(r)");
-	viewPane->axes().setMin(1, 0.0);
-	viewPane->axes().setMax(1, 1.0);
-	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
-	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
+	View& view = rdfGraph_->view();
+	view.setViewType(View::FlatXYView);
+	view.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+	view.axes().setMax(0, 10.0);
+	view.axes().setTitle(1, "g(r)");
+	view.axes().setMin(1, 0.0);
+	view.axes().setMax(1, 1.0);
+	rdfGraph_->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
+	view.setAutoFollowType(View::AllAutoFollow);
 
 	setGraphDataTargets(module_);
+
+	updateControls();
 
 	refreshing_ = false;
 }
@@ -51,9 +52,9 @@ CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget* parent, Calcul
 // Update controls within widget
 void CalculateDAngleModuleWidget::updateControls()
 {
-	rdfGraph_->refreshReferencedDataSets();
+	ui.RDFPlotWidget->updateToolbar();
 
-	rdfGraph_->updateDisplay();
+	rdfGraph_->postRedisplay();
 }
 
 // Disable sensitive controls within widget, ready for main code to run
@@ -73,7 +74,7 @@ void CalculateDAngleModuleWidget::enableSensitiveControls()
 // Write widget state through specified LineParser
 bool CalculateDAngleModuleWidget::writeState(LineParser& parser)
 {
-	// Write UChromaWidget sessions
+	// Write DataViewer sessions
 	if (!rdfGraph_->writeSession(parser)) return false;
 
 	return true;
@@ -82,7 +83,7 @@ bool CalculateDAngleModuleWidget::writeState(LineParser& parser)
 // Read widget state through specified LineParser
 bool CalculateDAngleModuleWidget::readState(LineParser& parser)
 {
-	// Read UChromaWidget sessions
+	// Read DataViewer sessions
 	if (!rdfGraph_->readSession(parser)) return false;
 
 	return true;
@@ -95,18 +96,15 @@ bool CalculateDAngleModuleWidget::readState(LineParser& parser)
 // Set data targets in graphs
 void CalculateDAngleModuleWidget::setGraphDataTargets(CalculateDAngleModule* module)
 {
-	// Remove any current collections
-	rdfGraph_->clearCollections();
+	// Remove any current data
+	rdfGraph_->clearRenderables();
 
-	printf("LKjlkjklj\n");
 	// Loop over Configuration targets in Module
 	RefListIterator<Configuration,bool> configIterator(module_->targetConfigurations());
 	while (Configuration* cfg = configIterator.iterate())
 	{
 		// Calculated RDF
-		CharString blockData;
-		blockData.sprintf("Collection '%s'; Group '%s'; DataSet '%s (%s)'; Source Data1D '%s//Process1D//%s//%s'; EndDataSet; EndCollection", cfg->name(), cfg->name(), module_->keywords().asString("Name"), cfg->name(), module_->uniqueName(), cfg->niceName(), module_->rdfName());
-		printf("BLOCK = [%s]\n", blockData.get());
-		rdfGraph_->addCollectionFromBlock(blockData);
+		Renderable* rdf = rdfGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//%s", module_->uniqueName(), cfg->niceName(), module_->rdfName()), CharString("RDF//%s", cfg->niceName()), cfg->niceName());
+		rdf->setColour(ColourDefinition::BlackStockColour);
 	}
 }

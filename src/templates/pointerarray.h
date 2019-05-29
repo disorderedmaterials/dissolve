@@ -1,7 +1,7 @@
 /*
 	*** Simple Pointer Array Class
 	*** src/templates/pointerarray.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -76,6 +76,18 @@ template <class T> class PointerArray
 		if ((index < 0) || (index >= nItems_))
 		{
 			Messenger::error("PointerArray<T>::operator[](%i) - Array index out of bounds (%i items in array).\n", index, nItems_);
+			return NULL;
+		}
+#endif
+		return items_[index];
+	}
+	// Const access operator
+	T* at(int index) const
+	{
+#ifdef CHECKS
+		if ((index < 0) || (index >= nItems_))
+		{
+			Messenger::error("PointerArray<T>::at(%i) - Array index out of bounds (%i items in array).\n", index, nItems_);
 			return NULL;
 		}
 #endif
@@ -187,6 +199,25 @@ template <class T> class PointerArray
 			}
 		}
 		Messenger::print("PointerArray<T>::remove(%p) - Couldn't find pointer in array.\n", ptr);
+	}
+	// Remove indexed item from the array, leaving the remaining items contiguous in memory
+	void remove(int index)
+	{
+#ifdef CHECKS
+		if ((index < 0) || (index >= nItems_))
+		{
+			Messenger::error("Can't remove index '%i' from PointerArray<T>, since it is out of range (nItems = %i).\n", index, nItems_);
+			return;
+		}
+#endif
+		// If it is at the end of the list, just decrease nItems_.
+		// If not, switch the current last item into this slot, and then decrease nItems_.
+		if (index < (nItems_-1))
+		{
+			items_[index] = items_[nItems_-1];
+			items_[nItems_-1] = NULL;
+		}
+		--nItems_;
 	}
 	// Return array index of pointer within the list
 	int indexOf(const T* ptr) const

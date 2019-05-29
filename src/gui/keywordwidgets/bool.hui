@@ -1,7 +1,7 @@
 /*
 	*** Keyword Widget - Bool
 	*** src/gui/keywordwidgets/bool.hui
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -36,7 +36,7 @@ class BoolKeywordWidget : public QCheckBox, public KeywordWidgetBase
 
 	public:
 	// Constructor
-	BoolKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, GenericList& moduleData, const char* prefix);
+	BoolKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
 
 
 	/*

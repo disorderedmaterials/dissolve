@@ -1,7 +1,7 @@
 /*
 	*** Analysis Node - Process1D
 	*** src/analyse/nodes/process1d.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -23,6 +23,7 @@
 #define DISSOLVE_ANALYSISPROCESS1D_H
 
 #include "analyse/nodes/node.h"
+#include "analyse/nodes/nodereference.h"
 #include "math/data1d.h"
 #include "base/charstring.h"
 #include "templates/reflist.h"
@@ -49,19 +50,21 @@ class AnalysisProcess1DNode : public AnalysisNode
 	 */
 	public:
 	// Node Keywords
-	enum Process1DNodeKeyword { EndProcess1DKeyword, FactorKeyword, LabelValueKeyword, LabelXKeyword, NSitesKeyword, NumberDensityKeyword, SaveKeyword, SphericalShellVolumeKeyword, nProcess1DNodeKeywords };
+	enum Process1DNodeKeyword { EndProcess1DKeyword, FactorKeyword, LabelValueKeyword, LabelXKeyword, NSitesKeyword, NumberDensityKeyword, SaveKeyword, SourceDataKeyword, SphericalShellVolumeKeyword, nProcess1DNodeKeywords };
 	// Convert string to control keyword
-	static Process1DNodeKeyword normalise1DNodeKeyword(const char* s);
+	static Process1DNodeKeyword process1DNodeKeyword(const char* s);
 	// Convert control keyword to string
-	static const char* normalise1DNodeKeyword(Process1DNodeKeyword nk);
+	static const char* process1DNodeKeyword(Process1DNodeKeyword nk);
 
 
 	/*
 	 * Data
 	 */
 	private:
-	// Collect1D node which we are normalising
-	AnalysisCollect1DNode* collectNode_;
+	// Collect1D node that we are processing
+	AnalysisNodeReference collectNode_;
+	// Pointer to processed data (stored in processing data list)
+	Data1D* processedData_;
 	// Reference to sites against which we will normalise by population
 	RefList<AnalysisSelectNode,double> sitePopulationNormalisers_;
 	// Reference to sites against which we will normalise by number density
@@ -80,6 +83,8 @@ class AnalysisProcess1DNode : public AnalysisNode
 	CharString xAxisLabel_;
 
 	public:
+	// Return processed data
+	const Data1D& processedData() const;
 	// Add site population normaliser
 	void addSitePopulationNormaliser(AnalysisSelectNode* selectNode);
 	// Add number density normaliser
@@ -101,6 +106,7 @@ class AnalysisProcess1DNode : public AnalysisNode
 	// Return x axis label
 	const char* xAxisLabel() const;
 
+
 	/*
 	 * Execute
 	 */
@@ -118,7 +124,7 @@ class AnalysisProcess1DNode : public AnalysisNode
 	 */
 	public:
 	// Read structure from specified LineParser
-	bool read(LineParser& parser, NodeContextStack& contextStack);
+	bool read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack);
 	// Write structure to specified LineParser
 	bool write(LineParser& parser, const char* prefix);
 };

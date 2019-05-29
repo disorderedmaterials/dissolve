@@ -1,7 +1,7 @@
 /*
 	*** Scattering Matrix Helper Class
 	*** src/classes/scatteringmatrix.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -65,7 +65,7 @@ class ScatteringMatrix
 	// Return index of specified AtomType pair
 	int pairIndex(AtomType* typeI, AtomType* typeJ) const;
 	// Return weight of the specified AtomType pair in the inverse matrix
-	int pairWeightInverse(AtomType* typeI, AtomType* typeJ, int dataIndex) const;
+	double pairWeightInverse(AtomType* typeI, AtomType* typeJ, int dataIndex) const;
 	// Print the matrix
 	void print() const;
 	// Print the inverse matrix

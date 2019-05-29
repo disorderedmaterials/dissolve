@@ -1,7 +1,7 @@
 /*
 	*** 3-Component vector class
 	*** src/templates/vector3.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -330,19 +330,34 @@ template <class T> class Vec3
 			z /= mag;
 		}
 	}
-	// Returns an orthogonal unit vector
-	Vec3<T> orthogonal(bool isNormalised = false) const
+	// Returns an orthogonal, normalised unit vector
+	Vec3<T> orthogonal() const
 	{
-		// Static test vectors
-		static Vec3<T> unitX(1.0,0.0,0.0), unitY(0.0,1.0,0.0);
-		
-		// Normalise current vector unless told not to
-		Vec3<T> currentVec(x,y,z);
-		if (!isNormalised) currentVec.normalise();
-		
-		// Check dot product of unitX with the current vector - if greater than 0.5, use unitY instead
-		if (unitX.dp(currentVec) > 0.5) return currentVec * unitY;
-		else return currentVec * unitX;
+		Vec3<T> result;
+		const int maxComponent = absMaxElement();
+		if (maxComponent == 0)
+		{
+			// X component is largest so return XP with (0,1,0)
+			result.x = -z;
+			result.y = 0.0;
+			result.z = x;
+		}
+		else if (maxComponent == 1)
+		{
+			// Y component is largest, so return XP with (0,0,1)
+			result.x = y;
+			result.y = -x;
+			result.z = 0.0;
+		}
+		else
+		{
+			// Z component is largest, so return XP with (1,0,0)
+			result.x = 0.0;
+			result.y = z;
+			result.z = -y;
+		}
+		result.normalise();
+		return result;
 	}
 	// Orthogonalise (Gram-Schmidt) w.r.t. supplied vector
 	void orthogonalise(const Vec3<T>& reference)
@@ -416,6 +431,13 @@ template <class T> class Vec3
 
 		printf("Vec3 - array access failed - index %i is out of bounds.\n", index);
 		return Vec3<T>();
+	}
+	// Swap the two specified elements
+	void swap(int a, int b)
+	{
+		T temp = get(a);
+		set(a, get(b));
+		set(b, temp);
 	}
 };
 

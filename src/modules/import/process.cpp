@@ -1,7 +1,7 @@
 /*
 	*** Import Module
 	*** src/modules/import.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -24,7 +24,7 @@
 #include "classes/configuration.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Run main processing
 bool ImportModule::process(Dissolve& dissolve, ProcessPool& procPool)

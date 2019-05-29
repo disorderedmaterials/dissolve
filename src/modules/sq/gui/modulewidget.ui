@@ -99,7 +99,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="UChromaViewWidget" name="TotalGRPlotWidget" native="true"/>
+           <widget class="DataWidget" name="TotalGRPlotWidget" native="true"/>
           </item>
          </layout>
         </widget>
@@ -138,7 +138,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="UChromaViewWidget" name="TotalSQPlotWidget" native="true"/>
+           <widget class="DataWidget" name="TotalSQPlotWidget" native="true"/>
           </item>
          </layout>
         </widget>
@@ -199,7 +199,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="UChromaViewWidget" name="PartialGRPlotWidget" native="true"/>
+           <widget class="DataWidget" name="PartialGRPlotWidget" native="true"/>
           </item>
          </layout>
         </widget>
@@ -260,7 +260,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="UChromaViewWidget" name="PartialSQPlotWidget" native="true"/>
+           <widget class="DataWidget" name="PartialSQPlotWidget" native="true"/>
           </item>
          </layout>
         </widget>
@@ -273,9 +273,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>UChromaViewWidget</class>
+   <class>DataWidget</class>
    <extends>QWidget</extends>
-   <header>gui/uchroma/gui/uchromaview.h</header>
+   <header>gui/viewer/datawidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

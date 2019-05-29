@@ -1,7 +1,7 @@
 /*
 	*** Double with Exponent class
 	*** src/math/doubleexp.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -85,7 +85,7 @@ class DoubleExp
 	// Return exponent
 	int exponent() const;
 	// Return value as string
-	CharString asString(const double formatThreshold = 1.0e3, const int maxDecimals = 4) const;
+	CharString asString(const int exponentThreshold = 3, const int maxDecimals = 4) const;
 };
 
 #endif

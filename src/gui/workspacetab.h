@@ -1,7 +1,7 @@
 /*
 	*** Workspace Tab
 	*** src/gui/workspacetab.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -30,7 +30,7 @@ class TMdiArea;
 class QMenu;
 
 // Workspace Tab
-class WorkspaceTab : public QWidget, public MainTab
+class WorkspaceTab : public QWidget, public ListItem<WorkspaceTab>, public MainTab
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
@@ -50,7 +50,7 @@ class WorkspaceTab : public QWidget, public MainTab
 	// Return tab type
 	const char* tabType() const;
 	// Return whether the title of the tab can be changed
-	bool canChangeTitle();
+	bool canChangeTitle() const;
 
 
 	/*
@@ -127,10 +127,10 @@ class WorkspaceTab : public QWidget, public MainTab
 	 * State
 	 */
 	public:
+	// Read widget state through specified LineParser
+	bool readState(LineParser& parser, const CoreData& coreData);
 	// Write widget state through specified LineParser
 	bool writeState(LineParser& parser);
-	// Read widget state through specified LineParser
-	bool readState(LineParser& parser);
 };
 
 #endif

@@ -1,7 +1,7 @@
 /*
 	*** SQ Module Widget - Functions
 	*** src/modules/sq/gui/modulewidget_funcs.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -20,13 +20,13 @@
 */
 
 #include "modules/sq/gui/modulewidget.h"
-#include "gui/uchroma/gui/uchromaview.h"
+#include "gui/viewer/dataviewer.hui"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "modules/sq/sq.h"
 #include "classes/atomtype.h"
 #include "templates/variantpointer.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructor
 SQModuleWidget::SQModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_((SQModule*) module), dissolve_(dissolve)
@@ -34,69 +34,61 @@ SQModuleWidget::SQModuleWidget(QWidget* parent, Module* module, Dissolve& dissol
 	// Set up user interface
 	ui.setupUi(this);
 
-	ViewPane* viewPane;
-
 	// Set up partial g(r) graph
 
-	partialGRGraph_ = ui.PartialGRPlotWidget;
+	partialGRGraph_ = ui.PartialGRPlotWidget->dataViewer();
 
-	partialGRGraph_->startNewSession(true);
-	viewPane = partialGRGraph_->currentViewPane();
-	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
-	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "g(r)");
-	viewPane->axes().setMin(1, -1.0);
-	viewPane->axes().setMax(1, 1.0);
-	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::HalfVerticalShift);
-	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
+	partialGRGraph_->view().setViewType(View::FlatXYView);
+	partialGRGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+	partialGRGraph_->view().axes().setMax(0, 10.0);
+	partialGRGraph_->view().axes().setTitle(1, "g(r)");
+	partialGRGraph_->view().axes().setMin(1, -1.0);
+	partialGRGraph_->view().axes().setMax(1, 1.0);
+	partialGRGraph_->groupManager().setVerticalShift(RenderableGroupManager::HalfVerticalShift);
+	partialGRGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Set up partial S(Q) graph
 
-	partialSQGraph_ = ui.PartialSQPlotWidget;
+	partialSQGraph_ = ui.PartialSQPlotWidget->dataViewer();
 
-	partialSQGraph_->startNewSession(true);
-	viewPane = partialSQGraph_->currentViewPane();
-	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
-	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "S(Q)");
-	viewPane->axes().setMin(1, -1.0);
-	viewPane->axes().setMax(1, 1.0);
-	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::HalfVerticalShift);
-	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
+	partialSQGraph_->view().setViewType(View::FlatXYView);
+	partialSQGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
+	partialSQGraph_->view().axes().setMax(0, 10.0);
+	partialSQGraph_->view().axes().setTitle(1, "S(Q)");
+	partialSQGraph_->view().axes().setMin(1, -1.0);
+	partialSQGraph_->view().axes().setMax(1, 1.0);
+	partialSQGraph_->groupManager().setVerticalShift(RenderableGroupManager::HalfVerticalShift);
+	partialSQGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Set up total G(r) graph
 
-	totalGRGraph_ = ui.TotalGRPlotWidget;
+	totalGRGraph_ = ui.TotalGRPlotWidget->dataViewer();
 
-	totalGRGraph_->startNewSession(true);
-	viewPane = totalGRGraph_->currentViewPane();
-	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
-	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "g(r)");
-	viewPane->axes().setMin(1, -1.0);
-	viewPane->axes().setMax(1, 1.0);
-	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::NoVerticalShift);
-	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
+	totalGRGraph_->view().setViewType(View::FlatXYView);
+	totalGRGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+	totalGRGraph_->view().axes().setMax(0, 10.0);
+	totalGRGraph_->view().axes().setTitle(1, "g(r)");
+	totalGRGraph_->view().axes().setMin(1, -1.0);
+	totalGRGraph_->view().axes().setMax(1, 1.0);
+	totalGRGraph_->groupManager().setVerticalShift(RenderableGroupManager::NoVerticalShift);
+	totalGRGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Set up total S(Q) graph
 
-	totalSQGraph_ = ui.TotalSQPlotWidget;
+	totalSQGraph_ = ui.TotalSQPlotWidget->dataViewer();
 
-	totalSQGraph_->startNewSession(true);
-	viewPane = totalSQGraph_->currentViewPane();
-	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
-	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "S(Q)");
-	viewPane->axes().setMin(1, -1.0);
-	viewPane->axes().setMax(1, 1.0);
-	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::NoVerticalShift);
-	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
+	totalSQGraph_->view().setViewType(View::FlatXYView);
+	totalSQGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
+	totalSQGraph_->view().axes().setMax(0, 10.0);
+	totalSQGraph_->view().axes().setTitle(1, "S(Q)");
+	totalSQGraph_->view().axes().setMin(1, -1.0);
+	totalSQGraph_->view().axes().setMax(1, 1.0);
+	totalSQGraph_->groupManager().setVerticalShift(RenderableGroupManager::NoVerticalShift);
+	totalSQGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	setGraphDataTargets(module_);
+
+	updateControls();
 
 	refreshing_ = false;
 }
@@ -108,16 +100,15 @@ SQModuleWidget::~SQModuleWidget()
 // Update controls within widget
 void SQModuleWidget::updateControls()
 {
-	// Ensure that any displayed data are up-to-date
-	partialGRGraph_->refreshReferencedDataSets();
-	partialSQGraph_->refreshReferencedDataSets();
-	totalGRGraph_->refreshReferencedDataSets();
-	totalSQGraph_->refreshReferencedDataSets();
+	ui.PartialGRPlotWidget->updateToolbar();
+	ui.PartialSQPlotWidget->updateToolbar();
+	ui.TotalGRPlotWidget->updateToolbar();
+	ui.TotalSQPlotWidget->updateToolbar();
 
-	partialGRGraph_->updateDisplay();
-	partialSQGraph_->updateDisplay();
-	totalGRGraph_->updateDisplay();
-	totalSQGraph_->updateDisplay();
+	partialGRGraph_->postRedisplay();
+	partialSQGraph_->postRedisplay();
+	totalGRGraph_->postRedisplay();
+	totalSQGraph_->postRedisplay();
 }
 
 // Disable sensitive controls within widget, ready for main code to run
@@ -137,7 +128,7 @@ void SQModuleWidget::enableSensitiveControls()
 // Write widget state through specified LineParser
 bool SQModuleWidget::writeState(LineParser& parser)
 {
-	// Write UChromaWidget sessions
+	// Write DataViewer sessions
 	if (!partialGRGraph_->writeSession(parser)) return false;
 	if (!partialSQGraph_->writeSession(parser)) return false;
 	if (!totalGRGraph_->writeSession(parser)) return false;
@@ -149,7 +140,7 @@ bool SQModuleWidget::writeState(LineParser& parser)
 // Read widget state through specified LineParser
 bool SQModuleWidget::readState(LineParser& parser)
 {
-	// Read UChromaWidget sessions
+	// Read DataViewer sessions
 	if (!partialGRGraph_->readSession(parser)) return false;
 	if (!partialSQGraph_->readSession(parser)) return false;
 	if (!totalGRGraph_->readSession(parser)) return false;
@@ -169,46 +160,42 @@ void SQModuleWidget::setGraphDataTargets(SQModule* module)
 
 	// Add partials
 	int n = 0;
-	for (AtomType* at1 = dissolve_.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
+	for (AtomType* at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next, ++n)
 	{
 		int m = n;
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
 		{
 			CharString id("%s-%s", at1->name(), at2->name());
 
-			/*
-			 * Partial g(r)
-			 */
+			// Partial g(r)
 
-			blockData.sprintf("Collection '%s'; Group '%s'; DataSet 'Calculated %s'; Source Data1D '%s//UnweightedGR//%s-%s//Full'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), at1->name(), at2->name());
-			partialGRGraph_->addCollectionFromBlock(blockData);
+			Renderable* fullGR = partialGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s-%s//Full", module_->uniqueName(), at1->name(), at2->name()), CharString("GR//%s", id.get()), id.get());
+			partialGRGraph_->groupManager().addToGroup(fullGR, id.get());
 
-			/*
-			 * Partial S(Q)
-			 */
+			// Partial S(Q)
 
-			blockData.sprintf("Collection '%s'; Group '%s'; DataSet 'Calculated %s'; Source Data1D '%s//UnweightedSQ//%s-%s//Full'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), at1->name(), at2->name());
-			partialSQGraph_->addCollectionFromBlock(blockData);
+			Renderable* fullSQ = partialSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedSQ//%s-%s//Full", module_->uniqueName(), at1->name(), at2->name()), CharString("SQ//%s", id.get()), id.get());
+			partialSQGraph_->groupManager().addToGroup(fullSQ, id.get());
 		}
 	}
 
 	// Add calculated total G(r)
-	blockData.sprintf("Collection 'G(r)'; Group 'Calc'; DataSet 'Calculated'; Source Data1D '%s//WeightedGR//Total'; EndDataSet; EndCollection", module_->uniqueName());
-	totalGRGraph_->addCollectionFromBlock(blockData);
+	Renderable* totalGR = totalGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedGR//Total", module_->uniqueName()), "G(r) Calc");
+	totalGRGraph_->groupManager().addToGroup(totalGR, "Calc");
 
 	// Add calculate total F(Q)
-	blockData.sprintf("Collection 'F(Q)'; Group 'Calc'; DataSet 'Calculated'; Source Data1D '%s//WeightedSQ//Total'; EndDataSet; EndCollection", module_->uniqueName());
-	totalSQGraph_->addCollectionFromBlock(blockData);
+	Renderable* totalFQ = totalSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedSQ//Total", module_->uniqueName()), "F(Q) Calc");
+	totalSQGraph_->groupManager().addToGroup(totalFQ, "Calc");
 
 	// Add on reference data if present
 	if (module->keywords().find("Reference"))
 	{
 		// Add FT of reference data total G(r)
-		blockData.sprintf("Collection 'Reference'; Group 'Reference'; DataSet 'Reference'; Source Data1D '%s//ReferenceDataFT'; EndDataSet; EndCollection", module_->uniqueName());
-		totalGRGraph_->addCollectionFromBlock(blockData);
+		Renderable* refGR = totalGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//ReferenceDataFT", module_->uniqueName()), "G(r) Exp");
+		totalGRGraph_->groupManager().addToGroup(refGR, "Exp");
 
 		// Add calculate total F(Q)
-		blockData.sprintf("Collection 'Reference'; Group 'Reference'; DataSet 'Reference'; Source Data1D '%s//ReferenceData'; EndDataSet; EndCollection", module_->uniqueName());
-		totalSQGraph_->addCollectionFromBlock(blockData);
+		Renderable* refFQ = totalSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//ReferenceData", module_->uniqueName()), "F(Q) Exp");
+		totalSQGraph_->groupManager().addToGroup(refFQ, "Exp");
 	}
 }

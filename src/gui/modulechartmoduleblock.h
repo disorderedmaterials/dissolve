@@ -1,7 +1,7 @@
 /*
 	*** ModuleChart Module Block Widget
 	*** src/gui/modulechartmoduleblock.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -31,7 +31,6 @@ class Dissolve;
 class DissolveWindow;
 class KeywordWidgetBase;
 class Module;
-class ModuleReference;
 
 // ModuleChart Module Block Widget
 class ModuleChartModuleBlock : public QWidget, public ModuleChartBlock
@@ -41,7 +40,7 @@ class ModuleChartModuleBlock : public QWidget, public ModuleChartBlock
 
 	public:
 	// Constructor / Destructor
-	ModuleChartModuleBlock(QWidget* parent, DissolveWindow* dissolveWindow, ModuleReference* moduleReference);
+	ModuleChartModuleBlock(QWidget* parent, DissolveWindow* dissolveWindow, Module* module);
 	~ModuleChartModuleBlock();
 	// Main form declaration
 	Ui::ModuleChartModuleWidget ui;
@@ -53,14 +52,12 @@ class ModuleChartModuleBlock : public QWidget, public ModuleChartBlock
 	private:
 	// Associated Module
 	Module* module_;
-	// Reference for associated Module
-	ModuleReference* moduleReference_;
 	// List of keyword widgets displayed
 	RefList<KeywordWidgetBase,bool> keywordWidgets_;
 
 	public:
-	// Return reference for associated Module
-	ModuleReference* moduleReference();
+	// Return associated Module
+	Module* module();
 
 
 	/*
@@ -85,18 +82,26 @@ class ModuleChartModuleBlock : public QWidget, public ModuleChartBlock
 	public:
 	// Return underlying widget
 	QWidget* widget();
+	// Set whether the settings are expanded or not, and whether this is permanent
+	void setSettingsExpanded(bool expanded, bool permanent = false);
 	// Update controls within widget
 	void updateControls();
+	// Return suitable QPixmap for supplied Module
+	static QPixmap modulePixmap(const Module* module);
+	// Return suitable QPixmap for supplied Module type
+	static QPixmap modulePixmap(QString moduleType);
 	// Disable sensitive controls, ready for main code to run
 	void disableSensitiveControls();
 	// Enable sensitive controls, ready for main code to run
 	void enableSensitiveControls();
 
 	public slots:
-	void on_ToggleKeywordsButton_clicked(bool checked);
+	void on_ToggleSettingsButton_clicked(bool checked);
 	void on_RemoveButton_clicked(bool checked);
 	void on_RunButton_clicked(bool checked);
 	void on_EnabledButton_clicked(bool checked);
+	void on_FrequencySpin_valueChanged(int value);
+	void on_ConfigurationTargetList_itemChanged(QListWidgetItem* item);
 
 	signals:
 	void settingsToggled();

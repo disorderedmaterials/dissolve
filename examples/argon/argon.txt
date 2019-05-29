@@ -1,78 +1,109 @@
-# Liquid Argon Example
+# Input file written by Dissolve v0.4.0 at 12:57:11 on 08-05-2019.
 
-#----------------------#
-# Define Argon Species #
-#----------------------#
+#------------------------------------------------------------------------------#
+#                                   Species                                    #
+#------------------------------------------------------------------------------#
 
-Species 'Argon'
+Species 'Ar'
   # Atoms
-  Atom    1   Ar     0.000    0.000    0.000    'Ar'
+  Atom    1   Ar     0.000     0.000     0.000  'Ar'
 
   # Isotopologues
-  Isotopologue  'Ar36'  Ar=36
+  Isotopologue  'Argon36'    Ar=36
 EndSpecies
 
-#----------------------#
-#   Pair Potentials    #
-#----------------------#
+#------------------------------------------------------------------------------#
+#                               Pair Potentials                                #
+#------------------------------------------------------------------------------#
 
 PairPotentials
-  GenerateAll  'LJ'
+  # Atom Type Parameters
+  # Note: These are for reference only (unless GenerateAll is used).
+  # If you wish to modify the potential, change the relevant Generate lines below.
+  Parameters  Ar  0.000000e+00  9.790000e-01  3.401000e+00  0.000000e+00  0.000000e+00
+  GenerateAll  LJ
+  Range  15.000000
+  Delta  0.005000
+  CoulombTruncation  Shifted
+  ShortRangeTruncation  Shifted
+  Generate  LJ  Ar  Ar  0.000000e+00  0.000000e+00  9.790000e-01  3.401000e+00  0.000000e+00  0.000000e+00
 EndPairPotentials
 
-#----------------------#
-# Define Configuration #
-#----------------------#
+#------------------------------------------------------------------------------#
+#                                Configurations                                #
+#------------------------------------------------------------------------------#
 
-Configuration 'liquid'
-  Multiplier  10000
+Configuration  'Bulk'
+  Multiplier  1000
   Density  0.021300  atoms/A3
-  SpeciesInfo  'Argon'  1.0
-  UseOutputAsInput
+  CellLengths  36.075038  36.075038  36.075038
+  CellAngles  90.000000  90.000000  90.000000
+
+  # Species Information
+  SpeciesInfo  'Ar'
+    Population  1.000000
+  EndSpeciesInfo
+
+  BoxNormalisationFile  'Bulk.boxnorm'
+  BraggQMax  2.000000
+  BraggQMin  nan
+  BraggMultiplicity  1 1 1
+  RDFBinWidth  0.025000
+  RDFRange  18.000000
+  Temperature  85.000000
+
+  # Modules
+  # -- None
 EndConfiguration
 
-#-----------------------#
-# Define Reference Data #
-#-----------------------#
+#------------------------------------------------------------------------------#
+#                              Processing Layers                               #
+#------------------------------------------------------------------------------#
 
-# Experimental data taken from Table 1 of Yarnell, Katz, Wenzel, and Koenig, Phys. Rev. A 7, 2130 (1973).
-# Liquid Ar36 at 85 K. Data are normalised to <b2>, and oscillate around 1.0.
-Data  'Yarnell-85K'
-  File  'data/yarnell.sq'
-  NeutronNormalisation  AverageSquared
-  SubtractAverageLevel  10.0
-  AssociatedTo  'Yarnell-85K'
-EndData
+Layer  'Main Processing'
 
-#----------------------#
-#      Processing      #
-#----------------------#
+  Module  AtomShake  'AtomShake01'
+    Frequency  1
 
-# 1) Move atoms with an MC atom 'shake'
-Module AtomShake
-  Configuration  'liquid'
-EndModule
+    Configuration  'Bulk'
+  EndModule
 
-# 2) Calculate total energy of system, so we can assess the stability (i.e. equilibrium) of the configuration
-Module Energy
-  Configuration 'liquid'
-EndModule
+  Module  Energy  'Energy01'
+    Frequency  1
 
-# 3) Calculate partials (every five iterations)
-Module Partials 'Yarnell-85K'
-  Configuration  'liquid'
-  Weights neutron
-  Isotopologue  'liquid'  'Argon'  'Ar36'  1.0
-  StructureFactor  on
-  Averaging  5
-  AveragingScheme  Simple
-  Frequency 5
-EndModule
+    Configuration  'Bulk'
+  EndModule
 
-# 4) Apply potential refinement (every 25 iterations)
-Module Refine
-  Data  'Yarnell-85K'
-  Frequency  25
-  OnlyWhenStable  True
-EndModule
+  Module  RDF  'RDF01'
+    Frequency  5
+
+    Configuration  'Bulk'
+  EndModule
+
+  Module  NeutronSQ  'NeutronSQ01'
+    Frequency  5
+
+    Configuration  'Bulk'
+
+    Isotopologue  'Bulk'  'Ar'  'Argon36'  1.000000
+    Reference  xy  'data/yarnell.sq'
+    ReferenceNormalisation  'AverageSquared'
+    ReferenceRemoveAverage   1.00000e+01
+  EndModule
+
+  Module  EPSR  'EPSR01'
+    Frequency  5
+
+    Target  'NeutronSQ01'  'Default'
+  EndModule
+EndLayer
+
+#------------------------------------------------------------------------------#
+#                                  Simulation                                  #
+#------------------------------------------------------------------------------#
+
+Simulation
+  BoxNormalisationPoints  500000000
+  Seed  -1
+EndSimulation
 

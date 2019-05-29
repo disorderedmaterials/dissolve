@@ -1,0 +1,159 @@
+#!/bin/bash -l
+
+# Run all system tests, or those explictily specified on the command line
+
+NFAILED=0
+EXITONFAIL="TRUE"
+
+# Set path to binary and data and check that it exists
+while getopts "a" op
+do
+  case $op in
+    a ) EXITONFAIL="FALSE"
+        echo "Run all tests, regardless of the success or failure of each test.";;
+    \? ) echo "Error: Unrecognised switch '$op'"
+         exit 1;;
+    * ) echo "Error: Extra operands given."
+        echo -e $USAGE
+        exit 1;;
+  esac
+done
+
+DUQS=../src/dissolve-serial
+DUQP=../src/dissolve
+if [ ! -e $DUQS ]
+then
+	echo "Couldn't find serial binary, so no serial tests will be performed."
+	DUQS="NO"
+fi
+if [ ! -e $DUQP ]
+then
+	echo "Couldn't find parallel binary, so no parallel tests will be performed."
+	DUQP="NO"
+fi
+
+if [ "$DUQS" == "NO" ] && [ "$DUQP" == "NO" ]
+then
+	echo "No binaries available to perform tests!"
+	exit 1
+fi
+
+# Do we have a parallel exe?
+PARALLEL="FALSE"
+PROCS=""
+if [ "$DUQS" != "NO" ]
+then
+	echo "Serial version available - serial tests will be performed."
+	PROCS="S"
+fi
+if [ "$DUQP" != "NO" ]
+then
+	PARALLEL="TRUE"
+	PROCS="$PROCS 1 2 3 4"
+	echo "Parallel version available - checks will be performed over ($PROCS) processes."
+fi
+
+# Loop over all test directories, or supplied dirs
+if [ "$#" -eq "0" ]
+then
+  TESTS=`ls -d [0-9][0-9]`
+else
+  TESTS="$*"
+fi
+for test in $TESTS
+do
+	# Strip trailing directory delimiter if present
+	test=`echo $test | sed -e 's/\(.*\)\//\1/g'`
+	echo "Test directory: "$test
+
+	# Descend into test directory, and print out first two lines from README (containing description of test)
+	cd $test
+	if [ -e README ]
+	then
+	  head -n2 README
+	else
+	  echo "<<< No README file in this directory >>>"
+	fi
+
+	# Check for the presence of flag files
+	TARGETPROCS=$PROCS
+	if [ -e NOPARALLEL ]
+	then
+		if [ "$DUQS" != "NO" ]
+		then
+			echo "NOPARALLEL found - test will be performed in serial mode only."
+			TARGETPROCS="S"
+		else
+			echo "NOPARALLEL found, but no serial binary available. Test will be skipped..."
+
+			# Move up to base directory and continue
+			cd ../
+			continue
+		fi
+	fi
+	
+	# Loop over all input files (*.txt)
+	for input in *.txt
+	do
+		# Are there specific arguments for the test?
+		if [ -e ${input%.txt}.args ]
+		then
+			ARGS=$(<${input%.txt}.args)
+		else
+			ARGS="-s"
+		fi
+
+		for nprocs in $TARGETPROCS
+		do
+			# Set output filename path
+			if [ "$nprocs" = "S" ]
+			then
+				output=../${test}.${input%.txt}.out
+				echo -e "\nRunning test \"${input}\" (serial)..."
+				echo "Arguments are: $ARGS"
+				../$DUQS $ARGS $input > $output
+			else
+				output=../${test}.${input%.txt}.${nprocs}.out
+				echo -e "\nRunning test \"${input}\" (${nprocs} processes)..."
+				echo "Arguments are: $ARGS"
+				mpirun -np $nprocs ../$DUQP $ARGS $input -r $output > $output
+			fi
+
+			if [ "$?" -eq "0" ]
+			then
+				echo "Success!"
+			else
+				echo "*****************"
+				echo "*  TEST FAILED  *"
+				echo "*****************"
+				echo ""
+				echo "Obvious errors (if any) from output file '$output' are:"
+				echo ""
+				grep "ERROR\|NOT OK" $output
+
+				NFAILED=$(( NFAILED+1 ))
+
+				# Exit early?
+				if [ "$EXITONFAIL" = "TRUE" ]
+				then
+					exit 1
+				fi
+			fi
+
+		done
+	done
+
+	# Done, so move up to base test directory
+	cd ../
+	echo ""
+done
+
+# Did we have any failures
+
+if [ "$NFAILED" -gt "0" ]
+then
+	echo -e "\nOne or more tests failed.\n"
+	exit 1
+fi
+
+exit 0

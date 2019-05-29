@@ -24,6 +24,7 @@ moc_*
 src/dissolve
 src/dissolve-gui
 src/dissolve-serial
+src/dguided
 .kdev4/
 build/
 

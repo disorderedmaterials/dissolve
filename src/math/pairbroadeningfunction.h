@@ -1,7 +1,7 @@
 /*
 	*** Pair Broadening Function
 	*** src/math/pairbroadeningfunction.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -23,34 +23,33 @@
 #define DISSOLVE_PAIRBROADENINGFUNCTION_H
 
 #include "base/charstring.h"
-#include "base/genericitembase.h"
+#include "genericitems/base.h"
 #include "math/broadeningfunction.h"
-
-#define MAXPAIRBROADENINGPARAMS 6
+#include "templates/array.h"
+#include "templates/array2d.h"
 
 // Forward Declarations
 class AtomType;
 class LineParser;
 class ProcessPool;
+class SpeciesIntra;
 
 // Pair Broadening Function
 class PairBroadeningFunction : public GenericItemBase
 {
 	public:
 	// Function Types
-	enum FunctionType { NoFunction, GaussianFunction, YoungsA, YoungsB, YoungsC, nFunctionTypes };
+	enum FunctionType { NoFunction, GaussianFunction, GaussianElementPairFunction, FrequencyFunction, nFunctionTypes };
 	// Return FunctionType from supplied string
 	static FunctionType functionType(const char* s);
 	// Return FunctionType name
 	static const char* functionType(FunctionType func);
 	// Return number of parameters needed to define FunctionType
 	static int nFunctionParameters(FunctionType func);
-	// Return description for FunctionType
-	static const char* functionDescription(FunctionType func);
 
 	public:
 	// Constructor
-	PairBroadeningFunction(FunctionType function = NoFunction, double p1 = 0.0, double p2 = 0.0, double p3 = 0.0, double p4 = 0.0, double p5 = 0.0, double p6 = 0.0);
+	PairBroadeningFunction(FunctionType function = NoFunction);
 	// Destructor
 	~PairBroadeningFunction();
 	// Copy Constructor
@@ -65,28 +64,44 @@ class PairBroadeningFunction : public GenericItemBase
 	private:
 	// Function Type
 	FunctionType function_;
-	// Parameters
-	double parameters_[MAXPAIRBROADENINGPARAMS];
+	// Gaussian FWHM parameter
+	double gaussianFWHM_;
+	// Elemental pair Gaussian FWHM parameters
+	Array2D<double> elementPairGaussianFWHM_;
+	// Elemental pair flags (whether a valid value exists)
+	Array2D<bool> elementPairGaussianFlags_;
+	// Frequency-based bond broadening constant
+	double frequencyBondConstant_;
+	// Frequency-based angle broadening constant
+	double frequencyAngleConstant_;
 
 	public:
+	// Read function data from LineParser source
+	bool readAsKeyword(LineParser& parser, int startArg, const CoreData& coreData);
+	// Write function data to LineParser source
+	bool writeAsKeyword(LineParser& parser, const char* prefix, bool writeBlockMarker = true);
 	// Set function type
-	void set(FunctionType function, double p1 = 0.0, double p2 = 0.0, double p3 = 0.0, double p4 = 0.0, double p5 = 0.0, double p6 = 0.0);
-	// Set function data from LineParser source
-	bool set(LineParser& parser, int startArg);
+	void setFunction(FunctionType function);
 	// Return function type
 	FunctionType function() const;
-	// Return number of parameters required
-	int nParameters() const;
-	// Return specified parameter
-	double parameter(int index) const;
-	// Return parameters array
-	double* parameters();
-	// Return specified parameter name
-	const char* parameterName(int index) const;
-	// Return short summary of function parameters
-	CharString parameterSummary() const;
+	// Set Gaussian FWHM parameters
+	void setGaussianFWHM(double fwhm);
+	// Return Gaussian FWHM parameter
+	double gaussianFWHM() const;
+	// Set frequency bond constant
+	void setFrequencyBondConstant(double k);
+	// Return frequency bond constant
+	double frequencyBondConstant() const;
+	// Set frequency angle constant
+	void setFrequencyAngleConstant(double k);
+	// Return frequency angle constant
+	double frequencyAngleConstant() const;
+	// Return array of pointers to all adjustable parameters
+	Array<double*> parameters();
+	// Return short summary of function and its parameters
+	CharString summary() const;
 	// Return a BroadeningFunction tailored to the specified AtomType pair
-	BroadeningFunction broadeningFunction(AtomType* at1, AtomType* at2);
+	BroadeningFunction broadeningFunction(AtomType* at1, AtomType* at2, SpeciesIntra* intra = NULL);
 
 
 	/*
@@ -95,10 +110,10 @@ class PairBroadeningFunction : public GenericItemBase
 	public:
 	// Return class name
 	static const char* itemClassName();
+	// Read data through specified LineParser
+	bool read(LineParser& parser, const CoreData& coreData);
 	// Write data through specified LineParser
 	bool write(LineParser& parser);
-	// Read data through specified LineParser
-	bool read(LineParser& parser);
 
 
 	/*
@@ -106,7 +121,7 @@ class PairBroadeningFunction : public GenericItemBase
 	 */
 	public:
 	// Broadcast data from Master to all Slaves
-	bool broadcast(ProcessPool& procPool, int root = 0);
+	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
 	// Check item equality
 	bool equality(ProcessPool& procPool);
 };

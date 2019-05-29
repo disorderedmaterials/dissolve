@@ -1,7 +1,7 @@
 /*
 	*** Timer
 	*** src/base/timer.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -43,9 +43,9 @@ const char* Timer::timeString(clock_t ticks)
 	int minutes = n / 60;
 	n %= 60;
 	double seconds = ticks /  double(CLOCKS_PER_SEC) - hours*3600 - minutes*60;
-	if (hours != 0) timeString_.sprintf("%i hours, %i minutes, and %0.1f seconds", hours, minutes, seconds);
-	else if (minutes != 0) timeString_.sprintf("%i minutes and %0.1f seconds", minutes, seconds);
-	else timeString_.sprintf("%0.1f seconds", seconds);
+	if (hours != 0) timeString_.sprintf("%i hours, %i minutes, and %0.2f seconds", hours, minutes, seconds);
+	else if (minutes != 0) timeString_.sprintf("%i minutes and %0.2f seconds", minutes, seconds);
+	else timeString_.sprintf("%0.2f seconds", seconds);
 	return timeString_.get();
 }
 
@@ -54,6 +54,7 @@ void Timer::start()
 {
 	running_ = true;
 	startTime_ = clock();
+	splitTime_ = startTime_;
 }
 
 // Set total time
@@ -61,6 +62,17 @@ void Timer::stop()
 {
 	totalTime_ = clock() - startTime_;
 	running_ = false;
+}
+
+// Return split time
+double Timer::split()
+{
+	clock_t newSplit = clock();
+	double splitTime = (newSplit - splitTime_) / double(CLOCKS_PER_SEC);
+
+	splitTime_ = newSplit;
+
+	return splitTime;
 }
 
 // Accumulate time since last start
@@ -89,7 +101,7 @@ const char* Timer::totalTimeString()
 }
 
 // Return number of seconds elapsed
-double Timer::secondsElapsed()
+double Timer::secondsElapsed() const
 {
 	if (running_) return (clock() - startTime_) / double(CLOCKS_PER_SEC);
 	else return totalTime_ / double(CLOCKS_PER_SEC);

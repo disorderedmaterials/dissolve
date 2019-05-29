@@ -1,7 +1,7 @@
 /*
 	*** Calculate RDF Module - Definition
 	*** src/modules/calculate/rdf/definition.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -27,16 +27,16 @@ const char* CalculateRDFModule::type() const
 	return "CalculateRDF";
 }
 
+// Return category for module
+const char* CalculateRDFModule::category() const
+{
+	return "Property Calculation";
+}
+
 // Return brief description of module
 const char* CalculateRDFModule::brief() const
 {
 	return "Calculate radial distribution functions between sites";
-}
-
-// Return instance type for module
-Module::InstanceType CalculateRDFModule::instanceType() const
-{
-	return Module::MultipleInstance;
 }
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)

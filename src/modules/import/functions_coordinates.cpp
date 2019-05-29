@@ -1,7 +1,7 @@
 /*
 	*** Import Module - Coordinates Functions
 	*** src/modules/import/functions_coordinates.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -30,7 +30,8 @@ bool ImportModule::readCoordinates(CoordinateImportFileFormat::CoordinateImportF
 	else if (format == CoordinateImportFileFormat::DLPOLYCoordinates) return readDLPOLYCoordinates(parser, r);
 	else if (format == CoordinateImportFileFormat::EPSRCoordinates) return readEPSRCoordinates(parser, r);
 
-	Messenger::error("Unrecognised coordinate format - '%s'.\nKnown formats are: %s.\n", format, CoordinateImportFileFormat().formats());
+	Messenger::error("Don't know how to load coordinates in format '%s'.\n", CoordinateImportFileFormat().format(format));
+
 	return false;
 }
 

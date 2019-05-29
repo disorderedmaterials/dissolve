@@ -1,7 +1,7 @@
 /*
 	*** Main Tab
 	*** src/gui/maintab.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -24,7 +24,6 @@
 
 #include "gui/widgets/subwindow.h"
 #include "module/module.h"
-#include "module/reference.h"
 #include "base/charstring.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
@@ -39,7 +38,7 @@ class QTabWidget;
 class QWidget;
 
 // Base 
-class MainTab : public ListItem<MainTab>
+class MainTab
 {
 	public:
 	// Constructor / Destructor
@@ -95,10 +94,10 @@ class MainTab : public ListItem<MainTab>
 	 * State
 	 */
 	public:
+	// Read widget state through specified LineParser
+	virtual bool readState(LineParser& parser, const CoreData& coreData) = 0;
 	// Write widget state through specified LineParser
 	virtual bool writeState(LineParser& parser) = 0;
-	// Read widget state through specified LineParser
-	virtual bool readState(LineParser& parser) = 0;
 };
 
 #endif

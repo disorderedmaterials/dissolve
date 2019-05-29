@@ -1,7 +1,7 @@
 /*
 	*** Module Keyword - Broadening Function
 	*** src/modules/keywordtypes/broadeningfunction.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -21,7 +21,7 @@
 
 #include "module/keywordtypes/broadeningfunction.h"
 #include "base/lineparser.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructor
 BroadeningFunctionModuleKeyword::BroadeningFunctionModuleKeyword(BroadeningFunction value) : ModuleKeywordBase(ModuleKeywordBase::BroadeningFunctionData), ModuleKeywordData<BroadeningFunction>(value)
@@ -60,7 +60,7 @@ int BroadeningFunctionModuleKeyword::maxArguments()
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool BroadeningFunctionModuleKeyword::read(LineParser& parser, int startArg, ProcessPool& procPool)
+bool BroadeningFunctionModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	bool result = data_.set(parser, startArg);
 	if (result) set_ = true;

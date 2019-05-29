@@ -1,7 +1,7 @@
 /*
 	*** Interatomic Pair Potential
 	*** src/classes/pairpotential.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -205,8 +205,12 @@ class PairPotential : public ListItem<PairPotential>
 	public:
 	// Set up and perform initial generation of potential
 	bool setUp(double maxR, double delta, bool includeCoulomb);
+	// Return number of tabulated points in potential
+	int nPoints() const;
 	// Return range of potential
 	double range() const;
+	// Return spacing between points
+	double delta() const;
 	// (Re)generate original potential (uOriginal) from current parameters
 	void calculateUOriginal(bool recalculateUFull = true);
 	// Return potential at specified r
@@ -238,19 +242,11 @@ class PairPotential : public ListItem<PairPotential>
 
 
 	/*
-	 * File I/O
-	 */
-	public:
-	// Save PairPotential data to specified file
-	bool save(const char* filename);
-
-
-	/*
 	 * Parallel Comms
 	 */
 	public:
 	// Broadcast data from Master to all Slaves
-	bool broadcast(ProcessPool& procPool, int root = 0);
+	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
 };
 
 #endif

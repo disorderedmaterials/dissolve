@@ -1,7 +1,7 @@
 /*
 	*** 3-Dimensional Data
 	*** src/math/data3d.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -23,6 +23,7 @@
 #define DISSOLVE_DATA3D_H
 
 #include "math/plottable.h"
+#include "base/version.h"
 #include "templates/array3d.h"
 #include "templates/objectstore.h"
 
@@ -30,7 +31,7 @@
 class Histogram3D;
 
 // One-Dimensional Data
-class Data3D : public Plottable, public ListItem<Data3D>, public ObjectStore<Data3D>, public GenericItemBase
+class Data3D : public PlottableData, public ListItem<Data3D>, public ObjectStore<Data3D>, public GenericItemBase
 {
 	public:
 	// Constructor
@@ -59,6 +60,8 @@ class Data3D : public Plottable, public ListItem<Data3D>, public ObjectStore<Dat
 	bool hasError_;
 	// Errors of values, if present
 	Array3D<double> errors_;
+	// Data version
+	VersionCounter version_;
 
 	public:
 	// Initialise arrays to specified size
@@ -71,6 +74,8 @@ class Data3D : public Plottable, public ListItem<Data3D>, public ObjectStore<Dat
 	void zero();
 	// Accumulate specified histogram data
 	void accumulate(const Histogram3D& source);
+	// Return data version
+	int version() const;
 	// Return x axis value specified
 	double& xAxis(int index);
 	// Return x axis value specified (const)
@@ -149,10 +154,10 @@ class Data3D : public Plottable, public ListItem<Data3D>, public ObjectStore<Dat
 	public:
 	// Return class name
 	static const char* itemClassName();
+	// Read data through specified LineParser
+	bool read(LineParser& parser, const CoreData& coreData);
 	// Write data through specified LineParser
 	bool write(LineParser& parser);
-	// Read data through specified LineParser
-	bool read(LineParser& parser);
 
 
 	/*
@@ -160,7 +165,7 @@ class Data3D : public Plottable, public ListItem<Data3D>, public ObjectStore<Dat
 	 */
 	public:
 	// Broadcast data
-	bool broadcast(ProcessPool& procPool, int rootRank = 0);
+	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
 	// Check item equality
 	bool equality(ProcessPool& procPool);
 };

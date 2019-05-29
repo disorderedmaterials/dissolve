@@ -1,7 +1,7 @@
 /*
 	*** AtomTypeData Definition
 	*** src/classes/atomtypedata.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -27,6 +27,7 @@
 
 // Forward Declarations
 class AtomType;
+class CoreData;
 class IsotopeData;
 class Isotope;
 
@@ -56,8 +57,8 @@ class AtomTypeData : public MPIListItem<AtomTypeData>
 	bool exchangeable_;
 	// Isotopes information (if any)
 	List<IsotopeData> isotopes_;
-	// Total integer population
-	int population_;
+	// Total population
+	double population_;
 	// World fractional population over all Isotopes
 	double fraction_;
 	// Calculated bound coherent scattering over all Isotopes
@@ -65,11 +66,11 @@ class AtomTypeData : public MPIListItem<AtomTypeData>
 
 	public:
 	// Initialise
-	bool initialise(int listIndex, AtomType* atomType, int population = 0);
+	bool initialise(int listIndex, AtomType* atomType, double population = 0);
 	// Add to population
-	void add(int nAdd);
+	void add(double nAdd);
 	// Add to population of Isotope
-	void add(Isotope* tope, int nAdd);
+	void add(Isotope* tope, double nAdd);
 	// Zero populations
 	void zeroPopulations();
 	// Return list index of AtomTypeData in AtomTypeList
@@ -81,7 +82,7 @@ class AtomTypeData : public MPIListItem<AtomTypeData>
 	// Return whether the associated AtomType is exchangeable
 	bool exchangeable() const;
 	// Finalise, calculating fractional populations etc.
-	void finalise(int nWorldAtoms);
+	void finalise(double nWorldAtoms);
 	// Remove any existing isotopes, and add only the natural isotope
 	void naturalise();
 	// Return if specified Isotope is already in the list
@@ -106,10 +107,10 @@ class AtomTypeData : public MPIListItem<AtomTypeData>
 	 * I/O
 	 */
 	public:
+	// Read data through specified LineParser
+	bool read(LineParser& parser, const CoreData& coreData);
 	// Write data through specified LineParser
 	bool write(LineParser& parser);
-	// Read data through specified LineParser
-	bool read(LineParser& parser);
 
 
 	/*
@@ -117,7 +118,7 @@ class AtomTypeData : public MPIListItem<AtomTypeData>
 	 */
 	public:
 	// Broadcast data from Master to all Slaves
-	bool broadcast(ProcessPool& procPool, int root = 0);
+	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
 	// Check item equality
 	bool equality(ProcessPool& procPool);
 };

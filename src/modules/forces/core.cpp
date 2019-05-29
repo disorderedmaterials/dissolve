@@ -1,7 +1,7 @@
 /*
 	*** Forces Module - Core
 	*** src/modules/forces/core.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -21,9 +21,6 @@
 
 #include "modules/forces/forces.h"
 
-// Static Members
-List<Module> ForcesModule::instances_;
-
 /*
  * Constructor / Destructor
  */
@@ -31,10 +28,6 @@ List<Module> ForcesModule::instances_;
 // Constructor
 ForcesModule::ForcesModule() : Module()
 {
-	// Add to instances list and set unique name for this instance
-	instances_.own(this);
-	uniqueName_.sprintf("%s%02i", type(), instances_.nItems()-1);
-
 	// Set up variables / control parameters
 	setUpKeywords();
 }
@@ -48,14 +41,8 @@ ForcesModule::~ForcesModule()
  * Instances
  */
 
-// Return list of all created instances of this Module
-List<Module>& ForcesModule::instances()
-{
-	return instances_;
-}
-
 // Create instance of this module
-Module* ForcesModule::createInstance()
+Module* ForcesModule::createInstance() const
 {
 	return new ForcesModule;
 }

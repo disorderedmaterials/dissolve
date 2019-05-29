@@ -1,7 +1,7 @@
 /*
 	*** Keyword Widget - AtomTypeSelection
 	*** src/gui/keywordwidgets/atomtypeselection.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ATOMTYPESELECTIONKEYWORDWIDGET_H
-#define DISSOLVE_ATOMTYPESELECTIONKEYWORDWIDGET_H
+#ifndef DISSOLVE_KEYWORDWIDGET_ATOMTYPESELECTION_H
+#define DISSOLVE_KEYWORDWIDGET_ATOMTYPESELECTION_H
 
 #include "gui/keywordwidgets/ui_atomtypeselection.h"
 #include "gui/keywordwidgets/dropdown.h"
@@ -38,7 +38,7 @@ class AtomTypeSelectionKeywordWidget : public KeywordDropDown, public KeywordWid
 
 	public:
 	// Constructor
-	AtomTypeSelectionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, GenericList& moduleData, const char* prefix);
+	AtomTypeSelectionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
         // Main form declaration
         Ui::AtomTypeSelectionWidget ui;
 
@@ -74,9 +74,11 @@ class AtomTypeSelectionKeywordWidget : public KeywordDropDown, public KeywordWid
 	// Update value displayed in widget, using specified source if necessary
 	void updateValue();
 	// Update widget values data based on keyword data
-	void updateWidgetValues();
+	void updateWidgetValues(const CoreData& coreData);
 	// Update keyword data based on widget values
 	void updateKeywordData();
+	// Update summary text
+	void updateSummaryText();
 };
 
 #endif

@@ -1,7 +1,7 @@
 /*
 	*** Dissolve Module Interface
 	*** src/module/module.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -25,12 +25,8 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Static Members
-int Module::staticLogPoint_ = 0;
-int Module::staticBroadcastPoint_ = 0;
-
 // Constructor
-Module::Module()
+Module::Module() : keywords_(this)
 {
 	frequency_ = 1;
 	enabled_ = true;
@@ -39,33 +35,11 @@ Module::Module()
 	// LogPoints
 	logPoint_ = 0;
 	broadcastPoint_ = 0;
-
-	// Colour (used in GUI)
-	colour_[0] = 255;
-	colour_[1] = 255;
-	colour_[2] = 255;
 }
 
 // Destructor
 Module::~Module()
 {
-}
-
-/*
- * Instances
- */
-
-// Find instance with unique name specified
-Module* Module::findInstance(const char* uniqueName)
-{
-	for (Module* instance = instances().first(); instance != NULL; instance = instance->next) if (DissolveSys::sameString(instance->uniqueName(), uniqueName)) return instance;
-	return NULL;
-}
-
-// Delete all instances of this Module
-void Module::deleteInstances()
-{
-	while (instances().first()) instances().removeFirst();
 }
 
 /*
@@ -84,20 +58,37 @@ const char* Module::uniqueName() const
 	return uniqueName_.get();
 }
 
-// Return colour used in visual representation of Module
-const int* Module::colour() const
-{
-	return colour_;
-}
-
 /*
  * Keywords
  */
+
+// Create and return named keyword group
+ModuleKeywordGroup* Module::addKeywordGroup(const char* name)
+{
+	// Check that a group with the specified name doesn't already exist
+	ModuleKeywordGroup* group = NULL;
+	for (group = keywordGroups_.first(); group != NULL; group = group->next) if (DissolveSys::sameString(name, group->name())) break;
+
+	if (!group)
+	{
+		group = new ModuleKeywordGroup(keywords_);
+		group->setName(name);
+		keywordGroups_.own(group);
+	}
+
+	return group;
+}
 
 // Return list of recognised keywords
 ModuleKeywordList& Module::keywords()
 {
 	return keywords_;
+}
+
+// Return list of defined keyword groups
+const List<ModuleKeywordGroup>& Module::keywordGroups() const
+{
+	return keywordGroups_;
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
@@ -131,7 +122,7 @@ int Module::parseKeyword(LineParser& parser, Dissolve* dissolve, GenericList& ta
 		}
 
 		// All OK, so parse the keyword
-		if (!keyword->read(parser, 1, dissolve->worldPool()))
+		if (!keyword->read(parser, 1, dissolve->coreData(), dissolve->worldPool()))
 		{
 			Messenger::error("Failed to parse arguments for Module keyword '%s'.\n", keyword->keyword());
 			return 0;
@@ -161,13 +152,13 @@ void Module::setFrequency(int freq)
 }
 
 // Frequency with which to run Module (relative to master simulation loop counter)
-int Module::frequency()
+int Module::frequency() const
 {
 	return frequency_;
 }
 
 // Return whether the Module should run this iteration
-bool Module::runThisIteration(int iteration)
+bool Module::runThisIteration(int iteration) const
 {
 	if ((frequency_ < 1) || (!enabled_)) return false;
 	else if ((iteration%frequency_) == 0) return true;
@@ -175,7 +166,7 @@ bool Module::runThisIteration(int iteration)
 }
 
 // Return short descriptive text relating frequency to supplied iteration number
-const char* Module::frequencyDetails(int iteration)
+const char* Module::frequencyDetails(int iteration) const
 {
 	static CharString result;
 
@@ -201,7 +192,7 @@ void Module::setEnabled(bool b)
 }
 
 // Return whether the Module is enabled
-bool Module::enabled()
+bool Module::enabled() const
 {
 	return enabled_;
 }
@@ -211,7 +202,7 @@ bool Module::enabled()
  */
 
 // Add Configuration target
-bool Module::addConfigurationTarget(Configuration* cfg)
+bool Module::addTargetConfiguration(Configuration* cfg)
 {
 	// Check how many Configurations we accept before we do anything else
 	if ((nTargetableConfigurations() == -1) || (targetConfigurations_.nItems() < nTargetableConfigurations()))
@@ -228,20 +219,30 @@ bool Module::addConfigurationTarget(Configuration* cfg)
 	return false;
 }
 
+// Remove Configuration target
+bool Module::removeTargetConfiguration(Configuration* cfg)
+{
+	if (!targetConfigurations_.contains(cfg)) return Messenger::error("Can't remove Configuration '%s' from Module '%s' as it isn't currently a target.\n", cfg->name(), uniqueName());
+
+	targetConfigurations_.remove(cfg);
+
+	return true;
+}
+
 // Return number of targeted Configurations
-int Module::nConfigurationTargets()
+int Module::nTargetConfigurations() const
 {
 	return targetConfigurations_.nItems();
 }
 
 // Return first targeted Configuration
-RefList<Configuration,bool>& Module::targetConfigurations()
+const RefList<Configuration,bool>& Module::targetConfigurations() const
 {
 	return targetConfigurations_;
 }
 
 // Return if the specified Configuration is in the targets list
-bool Module::isTargetConfiguration(Configuration* cfg)
+bool Module::isTargetConfiguration(Configuration* cfg) const
 {
 	return targetConfigurations_.contains(cfg);
 }
@@ -250,13 +251,13 @@ bool Module::isTargetConfiguration(Configuration* cfg)
 void Module::copyTargetConfigurations(Module* sourceModule)
 {
 	// First, check if this module actually accepts target Configurations
-	if ((nTargetableConfigurations() < sourceModule->nConfigurationTargets()) && (nTargetableConfigurations() != -1))
+	if ((nTargetableConfigurations() < sourceModule->nTargetConfigurations()) && (nTargetableConfigurations() != -1))
 	{
 		Messenger::warn("Dependent Module '%s' does not accept Configuration targets, but the source Module '%s' lists %i.\n", type(), sourceModule->type());
 		return;
 	}
 	RefListIterator<Configuration,bool> configIterator(sourceModule->targetConfigurations());
-	while (Configuration* cfg = configIterator.iterate()) addConfigurationTarget(cfg);
+	while (Configuration* cfg = configIterator.iterate()) addTargetConfiguration(cfg);
 }
 
 // Set whether this module is a local Module in a Configuration
@@ -266,7 +267,7 @@ void Module::setConfigurationLocal(bool b)
 }
 
 // Return whether this module is a local Module in a Configuration
-bool Module::configurationLocal()
+bool Module::configurationLocal() const
 {
 	return configurationLocal_;
 }
@@ -317,7 +318,8 @@ SampledDouble Module::processTimes() const
 // Read timing information through specified parser
 bool Module::readProcessTimes(LineParser& parser)
 {
-	return processTimes_.read(parser);
+	static CoreData dummyData;
+	return processTimes_.read(parser, dummyData);
 }
 
 /*

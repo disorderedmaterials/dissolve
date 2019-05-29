@@ -1,7 +1,7 @@
 /*
 	*** Linked List Class
 	*** src/templates/list.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -95,36 +95,6 @@ template <class T> class List
 			return NULL;
 		}
 		return array()[index];
-	}
-
-
-	/*
-	 * Master Instance
-	 */
-	private:
-	// Static master instance for this List<T>
-	static List<T> masterInstance_;
-
-	public:
-	// Return reference to master instance for this List<T> (non-const)
-	static List<T>& master()
-	{
-		static bool retrieved = false;
-		if (retrieved)
-		{
-			Messenger::error("Master list for this type has already been retrieved, so refusing to give it out again.\n");
-			static List<T> dummy;
-			return dummy;
-		}
-
-		retrieved = true;
-
-		return masterInstance_;
-	}
-	// Return reference to master instance for this List<T>
-	static const List<T>& masterInstance()
-	{
-		return masterInstance_;
 	}
 
 
@@ -295,6 +265,37 @@ template <class T> class List
 		++nItems_;
 		regenerate_ = true;
 	}
+	// Own an item into the list (before supplied item)
+	void ownBefore(T* oldItem, T* beforeItem)
+	{
+		if (beforeItem == NULL)
+		{
+			Messenger::error("No item supplied to List<T>::ownBefore().\n");
+			return;
+		}
+		if (oldItem == NULL)
+		{
+			Messenger::error("Internal Error: NULL pointer passed to List<T>::own().\n");
+			return;
+		}
+		// In the interests of 'pointer etiquette', refuse to own the item if its pointers are not NULL
+		if ((oldItem->next != NULL) || (oldItem->prev != NULL))
+		{
+			Messenger::error("List::own() <<<< Refused to own an item that still had links to other items >>>>\n");
+			return;
+		}
+		// Get pointer to next item after the supplied item (our newprev)
+		T* newPrev = beforeItem->prev;
+		// Re-point newnext and the new item
+		beforeItem->prev = oldItem;
+		oldItem->next = beforeItem;
+		// Re-point newprev and the new item
+		if (newPrev != NULL) newPrev->next = oldItem;
+		else listHead_ = oldItem;
+		oldItem->prev = newPrev;
+		++nItems_;
+		regenerate_ = true;
+	}
 
 
 	/*
@@ -351,6 +352,16 @@ template <class T> class List
 		delete item;
 		--nItems_;
 		regenerate_ = true;
+	}
+	// Remove the item at the specified position
+	void remove(int pos)
+	{
+		if ((pos < 0) || (pos >= nItems_))
+		{
+			Messenger::error("Internal Error: Invalid position %i passed to List<T>::remove(int pos) (nItems_ = %i)\n", pos, nItems_);
+			return;
+		}
+		remove(array()[pos]);
 	}
 	// Remove first item from the list
 	void removeFirst()
@@ -818,10 +829,34 @@ template <class T> class ListIterator
 		currentItem_ = NULL;
 	}
 	// Return whether we are on the first item in the list
-	bool first()
+	bool isFirst() const
 	{
 		return (currentItem_ == targetList_.first());
 	}
+	// Return whether we are on the last item in the list
+	bool isLast() const
+	{
+		return (currentItem_ == targetList_.last());
+	}
+        // Peek the next item (if any)
+        T* peek()
+        {
+                if (reverse_)
+                {
+                        return (currentItem_ ? currentItem_->prev : NULL);
+                }
+                else return (currentItem_ ? currentItem_->next : NULL);
+        }
+        // Peek the previous item (if any)
+        T* peekPrevious()
+        {
+                if (reverse_)
+                {
+                        return (currentItem_ ? currentItem_->next : NULL);
+                }
+                else return (currentItem_ ? currentItem_->prev : NULL);
+        }
+
 };
 
 #endif

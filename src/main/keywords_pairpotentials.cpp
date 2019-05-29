@@ -1,7 +1,7 @@
 /*
 	*** Keyword Parsing - PairPotentials Block
 	*** src/main/keywords_pairpotentials.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -209,6 +209,13 @@ bool PairPotentialsBlock::parse(LineParser& parser, Dissolve* dissolve)
 		
 		// End of block?
 		if (blockDone) break;
+	}
+
+	// If there's no error and the blockDone flag isn't set, return an error
+	if (!error && !blockDone)
+	{
+		Messenger::error("Unterminated %s block found.\n", BlockKeywords::blockKeyword(BlockKeywords::PairPotentialsBlockKeyword));
+		error = true;
 	}
 
 	return (!error);

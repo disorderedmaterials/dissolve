@@ -1,7 +1,7 @@
 /*
 	*** Module Keyword - Window Function
 	*** src/modules/keywordtypes/windowfunction.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -21,7 +21,7 @@
 
 #include "module/keywordtypes/windowfunction.h"
 #include "base/lineparser.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructor
 WindowFunctionModuleKeyword::WindowFunctionModuleKeyword(WindowFunction value) : ModuleKeywordBase(ModuleKeywordBase::WindowFunctionData), ModuleKeywordData<WindowFunction>(value)
@@ -60,7 +60,7 @@ int WindowFunctionModuleKeyword::maxArguments()
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool WindowFunctionModuleKeyword::read(LineParser& parser, int startArg, ProcessPool& procPool)
+bool WindowFunctionModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	bool result = data_.set(parser, startArg);
 	if (result) set_ = true;

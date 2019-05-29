@@ -1,7 +1,7 @@
 /*
-	*** Empirical Formula Generator
+	*** Empirical Formula Generation
 	*** src/classes/empiricalformula.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -20,6 +20,7 @@
 */
 
 #include "classes/empiricalformula.h"
+#include "classes/species.h"
 #include "data/elements.h"
 
 // Constructor
@@ -35,7 +36,7 @@ EmpiricalFormula::~EmpiricalFormula()
 }
 
 /*
- * Identity
+ * Construction
  */
 
 // Clear counts array
@@ -73,3 +74,48 @@ const char* EmpiricalFormula::formula()
 	return formula_.get();
 }
 
+// Return rich text of current empirical formula
+const char* EmpiricalFormula::richTextFormula()
+{
+	formula_.clear();
+
+	// Loop over elements in descending order
+	for (int n=Elements::nElements()-1; n>=0; --n)
+	{
+		if (elementCounts_[n] == 0) continue;
+		else if (elementCounts_[n] > 1) formula_.strcatf("%s<sub>%i</sub>", Elements::symbol(n), elementCounts_[n]);
+		else formula_.strcatf("%s", Elements::symbol(n));
+	}
+
+	return formula_.get();
+}
+
+/*
+ * Convenience Functions
+ */
+
+// Return empirical formula for supplied Species
+const char* EmpiricalFormula::formula(const Species* species, bool richText)
+{
+	static EmpiricalFormula formula;
+
+	formula.reset();
+
+	ListIterator<SpeciesAtom> atomIterator(species->atoms());
+	while (SpeciesAtom* i = atomIterator.iterate()) formula.add(i->element());
+
+	return (richText ? formula.richTextFormula() : formula.formula());
+}
+
+// Return empirical formula for supplied SpeciesAtom reflist
+const char* EmpiricalFormula::formula(const RefList<SpeciesAtom,bool>& atoms, bool richText)
+{
+	static EmpiricalFormula formula;
+
+	formula.reset();
+
+	RefListIterator<SpeciesAtom,bool> atomIterator(atoms);
+	while (SpeciesAtom* i = atomIterator.iterate()) formula.add(i->element());
+
+	return (richText ? formula.richTextFormula() : formula.formula());
+}

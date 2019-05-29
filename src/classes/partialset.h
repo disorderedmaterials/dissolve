@@ -1,7 +1,7 @@
 /*
 	*** Set of Partials
 	*** src/classes/partialset.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -61,12 +61,14 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	Array2D<Histogram1D> unboundHistograms_;
 	// Pair matrix, containing full atom-atom partial
 	Array2D<Data1D> partials_;
-	// Unbound matrix, containing atom-atom partial of pairs not joined by bonds or angles
+	// Unbound matrix, containing atom-atom partial of unbound pairs
 	Array2D<Data1D> unboundPartials_;
-	// Bound matrix, containing atom-atom partial of pairs joined by bonds or angles
+	// Bound matrix, containing atom-atom partial of bound pairs
 	Array2D<Data1D> boundPartials_;
 	// Bragg matrix, derived from summation of HKL terms
 	Array2D<Data1D> braggPartials_;
+	// Bound flag matrix, specifying if bound partials are empty
+	Array2D<bool> emptyBoundPartials_;
 	// Total function
 	Data1D total_;
 	// Prefix applied to object names
@@ -101,18 +103,20 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	Data1D& partial(int i, int j);
 	// Return full atom-atom partial specified (const)
 	Data1D& constPartial(int i, int j) const;
-	// Return atom-atom partial for pairs not joined by bonds or angles
+	// Return atom-atom partial for unbound pairs
 	Data1D& unboundPartial(int i, int j);
-	// Return atom-atom partial for pairs not joined by bonds or angles (const)
+	// Return atom-atom partial for unbound pairs (const)
 	Data1D& constUnboundPartial(int i, int j) const;
-	// Return atom-atom partial for pairs joined by bonds or angles
+	// Return atom-atom partial for bound pairs
 	Data1D& boundPartial(int i, int j);
-	// Return atom-atom partial for pairs joined by bonds or angles (const)
+	// Return atom-atom partial for bound pairs (const)
 	Data1D& constBoundPartial(int i, int j) const;
 	// Return atom-atom Bragg partial
 	Data1D& braggPartial(int i, int j);
 	// Return atom-atom Bragg partial (const)
 	Data1D& constBraggPartial(int i, int j) const;
+	// Return whether specified bound partial is empty
+	bool isBoundPartialEmpty(int i, int j) const;
 	// Sum partials into total
 	void formTotal(bool applyConcentrationWeights);
 	// Return total function
@@ -165,10 +169,10 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	public:
 	// Return class name
 	static const char* itemClassName();
+	// Read data through specified LineParser
+	bool read(LineParser& parser, const CoreData& coreData);
 	// Write data through specified LineParser
 	bool write(LineParser& parser);
-	// Read data through specified LineParser
-	bool read(LineParser& parser);
 
 
 	/*
@@ -176,7 +180,7 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	 */
 	public:
 	// Broadcast data from root to all other processes
-	bool broadcast(ProcessPool& procPool, int rootRank);
+	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
 	// Check item equality
 	bool equality(ProcessPool& procPool);
 };

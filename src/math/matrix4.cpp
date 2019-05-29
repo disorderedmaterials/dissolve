@@ -1,7 +1,7 @@
 /*
 	*** Column-Major 4x4 Matrix4 class
 	*** src/math/matrix4.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -20,6 +20,7 @@
 */
 
 #include "math/matrix4.h"
+#include "math/matrix3.h"
 #include "base/messenger.h"
 
 // Constructor
@@ -133,6 +134,14 @@ double &Matrix4::operator[](int index)
 	return matrix_[index];
 }
 
+// Convert Matrix3 to Matrix4
+void Matrix4::operator=(const Matrix3& B)
+{
+	setColumn(0, B.columnAsVec3(0), 0.0);
+	setColumn(1, B.columnAsVec3(1), 0.0);
+	setColumn(2, B.columnAsVec3(2), 0.0);
+}
+
 // Pre-multiply this matrix by the supplied matrix
 void Matrix4::preMultiply(const Matrix4& B)
 {
@@ -217,13 +226,13 @@ void Matrix4::zero()
 }
 
 // Return matrix array
-double *Matrix4::matrix()
+const double* Matrix4::matrix() const
 {
 	return matrix_;
 }
 
 // Return transpose of current matrix
-Matrix4& Matrix4::transpose()
+Matrix4& Matrix4::transpose() const
 {
 	static Matrix4 A;
 	A.matrix_[0] = matrix_[0];
@@ -246,9 +255,8 @@ Matrix4& Matrix4::transpose()
 }
 
 // Calculate determinant
-double Matrix4::determinant()
+double Matrix4::determinant() const
 {
-
 	double a = matrix_[0] * (matrix_[5]*(matrix_[10]*matrix_[15]-matrix_[11]*matrix_[14]) - matrix_[9]*(matrix_[6]*matrix_[15]-matrix_[7]*matrix_[14]) + matrix_[13]*(matrix_[6]*matrix_[11]-matrix_[7]*matrix_[10]) );
 	double b = matrix_[4] * (matrix_[1]*(matrix_[10]*matrix_[15]-matrix_[11]*matrix_[14]) - matrix_[9]*(matrix_[2]*matrix_[15]-matrix_[3]*matrix_[14]) + matrix_[13]*(matrix_[2]*matrix_[11]-matrix_[3]*matrix_[10]) );
 	double c = matrix_[8] * (matrix_[1]*(matrix_[6]*matrix_[15]-matrix_[7]*matrix_[14]) - matrix_[5]*(matrix_[2]*matrix_[15]-matrix_[3]*matrix_[14]) + matrix_[13]*(matrix_[2]*matrix_[7]-matrix_[3]*matrix_[6]) );

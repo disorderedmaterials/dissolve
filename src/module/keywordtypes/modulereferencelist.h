@@ -1,7 +1,7 @@
 /*
 	*** Module Keyword - Module Reference List
 	*** src/modules/keywordtypes/modulereferencelist.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -22,6 +22,7 @@
 #ifndef DISSOLVE_MODULEKEYWORD_MODULEREFERENCELIST_H
 #define DISSOLVE_MODULEKEYWORD_MODULEREFERENCELIST_H
 
+#include "base/charstringlist.h"
 #include "module/keyworddata.h"
 #include "module/keywordbase.h"
 #include "templates/reflist.h"
@@ -43,12 +44,20 @@ class ModuleReferenceListModuleKeyword : public ModuleKeywordBase, public Module
 	 * Data
 	 */
 	private:
-	// Module type to allow
-	CharString moduleType_;
+	// Module type(s) to allow
+	CharStringList moduleTypes_;
 	// Maximum number of modules to allow in list (-1 for any number)
 	int maxModules_;
 
+	protected:
+	// Determine whether current data is actually 'set'
+	bool currentDataIsSet() const;
+
 	public:
+	// Return the Module type(s) to allow
+	const CharStringList& moduleTypes() const;
+	// Return maximum number of Modules to allow in the list
+	int maxModules() const;
 	// Return whether the current data value has ever been set
 	bool isSet();
 
@@ -62,7 +71,7 @@ class ModuleReferenceListModuleKeyword : public ModuleKeywordBase, public Module
 	// Return maximum number of arguments accepted
 	int maxArguments();
 	// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-	bool read(LineParser& parser, int startArg, ProcessPool& procPool);
+	bool read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool);
 	// Write keyword data to specified LineParser
 	bool write(LineParser& parser, const char* prefix);
 };

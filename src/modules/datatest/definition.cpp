@@ -1,7 +1,7 @@
 /*
 	*** DataTest Module - Definition
 	*** src/modules/datatest/definition.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -27,16 +27,16 @@ const char* DataTestModule::type() const
 	return "DataTest";
 }
 
+// Return category for module
+const char* DataTestModule::category() const
+{
+	return "Checks & Tests";
+}
+
 // Return brief description of module
 const char* DataTestModule::brief() const
 {
 	return "Test named data in other modules against reference data";
-}
-
-// Return instance type for module
-Module::InstanceType DataTestModule::instanceType() const
-{
-	return Module::MultipleInstance;
 }
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)

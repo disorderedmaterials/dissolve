@@ -1,7 +1,7 @@
 /*
 	*** Main Tab
 	*** src/gui/maintab.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -35,15 +35,12 @@
 #include <QTabWidget>
 
 // Constructor / Destructor
-MainTab::MainTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* tabWidget, const char* title, QWidget* page) : ListItem<MainTab>(), dissolve_(dissolve)
+MainTab::MainTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* tabWidget, const char* title, QWidget* page) : dissolve_(dissolve)
 {
 	dissolveWindow_ = dissolveWindow;
 	tabWidget_ = tabWidget;
 	page_ = page;
 	title_ = title;
-
-	// Add tab to the parent tabwidget
-	if (tabWidget_) tabWidget_->addTab(page_, title_.get());
 }
 
 MainTab::~MainTab()

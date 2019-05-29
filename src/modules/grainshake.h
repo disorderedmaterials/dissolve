@@ -1,7 +1,7 @@
 /*
 	*** GrainShake Module
 	*** src/modules/grainshake.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -47,7 +47,7 @@ class GrainShakeModule : public Module
 	 */
 	public:
 	// Create instance of this module
-	Module* createInstance();
+	Module* createInstance() const;
 
 
 	/*
@@ -56,6 +56,8 @@ class GrainShakeModule : public Module
 	public:
 	// Return type of module
 	const char* type() const;
+	// Return category for module
+	const char* category() const;
 	// Return brief description of module
 	const char* brief() const;
 	// Return type of module

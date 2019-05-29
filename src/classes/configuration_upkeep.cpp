@@ -1,7 +1,7 @@
 /*
 	*** Configuration - Upkeep
 	*** src/classes/configuration_upkeep.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -57,8 +57,9 @@ void Configuration::updateCellLocation(Molecule* mol)
 	for (int n = 0; n < mol->nAtoms(); ++n) updateCellLocation(mol->atom(n));
 }
 
-// Update Cell location of specified Atoms (in array)
-void Configuration::updateCellLocation(int nAtoms, Atom** atoms)
+// Update Cell location of specified Atom indices (in array)
+void Configuration::updateCellLocation(int nIndices, int* atomIndices, int indexOffset)
 {
-	for (int n = 0; n < nAtoms; ++n) updateCellLocation(atoms[n]);
+	for (int n = 0; n < nIndices; ++n) updateCellLocation(atoms_[atomIndices[n]+indexOffset]);
 }
+

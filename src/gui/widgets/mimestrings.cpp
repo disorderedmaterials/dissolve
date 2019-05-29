@@ -1,7 +1,7 @@
 /*
 	*** Mime Strings
 	*** src/gui/widgets/mimestrings.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -81,6 +81,22 @@ void MimeStrings::add(MimeString::MimeStringType type, QString data)
 void MimeStrings::add(MimeStrings& sourceStrings)
 {
 	for (MimeString* mimeString = sourceStrings.mimeStrings().first(); mimeString != NULL; mimeString = mimeString->next) add(mimeString->type(), mimeString->data());
+}
+
+// Return whether the specified MimeString data is present
+bool MimeStrings::hasData(MimeString::MimeStringType type) const
+{
+	for (MimeString* mimeString = mimeStrings_.first(); mimeString != NULL; mimeString = mimeString->next) if (mimeString->type() == type) return true;
+
+	return false;
+}
+
+// Return the data for the specified type
+QString MimeStrings::data(MimeString::MimeStringType type) const
+{
+	for (MimeString* mimeString = mimeStrings_.first(); mimeString != NULL; mimeString = mimeString->next) if (mimeString->type() == type) return mimeString->data();
+
+	return QString();
 }
 
 // Return mime strings

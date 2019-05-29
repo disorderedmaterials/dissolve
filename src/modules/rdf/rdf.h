@@ -1,7 +1,7 @@
 /*
 	*** RDF Module
 	*** src/modules/rdf/rdf.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -46,15 +46,9 @@ class RDFModule : public Module
 	/*
 	 * Instances
 	 */
-	protected:
-	// List of all instances of this Module type
-	static List<Module> instances_;
-
 	public:
-	// Return list of all created instances of this Module
-	List<Module>& instances();
 	// Create instance of this module
-	Module* createInstance();
+	Module* createInstance() const;
 
 
 	/*
@@ -63,10 +57,10 @@ class RDFModule : public Module
 	public:
 	// Return type of module
 	const char* type() const;
+	// Return category for module
+	const char* category() const;
 	// Return brief description of module
 	const char* brief() const;
-	// Return instance type for module
-	InstanceType instanceType() const;
 	// Return the maximum number of Configurations the Module can target (or -1 for any number)
 	int nTargetableConfigurations() const;
 
@@ -124,7 +118,7 @@ class RDFModule : public Module
 	// (Re)calculate partial g(r) for the specified Configuration
 	bool calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule::PartialsMethod method, bool allIntra, bool& alreadyUpToDate);
 	// Calculate smoothed/broadened partial g(r) from supplied partials
-	static bool calculateUnweightedGR(const PartialSet& originalgr, PartialSet& weightedgr, PairBroadeningFunction intraBroadening, int smoothing);
+	static bool calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg, const PartialSet& originalgr, PartialSet& weightedgr, PairBroadeningFunction& intraBroadening, int smoothing);
 	// Return effective density for specified Module's target Configurations
 	static double summedRho(Module* module, GenericList& processingModuleData);
 	// Sum unweighted g(r) over the supplied Module's target Configurations

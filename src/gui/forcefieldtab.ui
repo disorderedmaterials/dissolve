@@ -12,7 +12,7 @@
   </property>
   <property name="font">
    <font>
-    <pointsize>8</pointsize>
+    <pointsize>10</pointsize>
    </font>
   </property>
   <property name="windowTitle">
@@ -56,445 +56,454 @@
        <number>4</number>
       </property>
       <item>
-       <widget class="QGroupBox" name="MasterBondsGroup">
-        <property name="title">
-         <string>Bonds</string>
+       <layout class="QVBoxLayout" name="MasterBondsLayout">
+        <property name="spacing">
+         <number>4</number>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_2">
-         <property name="spacing">
-          <number>4</number>
-         </property>
-         <property name="leftMargin">
-          <number>4</number>
-         </property>
-         <property name="topMargin">
-          <number>4</number>
-         </property>
-         <property name="rightMargin">
-          <number>4</number>
-         </property>
-         <property name="bottomMargin">
-          <number>4</number>
-         </property>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <property name="spacing">
-            <number>4</number>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <property name="spacing">
+           <number>4</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Bonds</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QToolButton" name="MasterTermRemoveBondButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Remove</string>
+            </property>
+            <property name="icon">
+             <iconset resource="main.qrc">
+              <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>16</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="shortcut">
+             <string>Return</string>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextBesideIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="MasterTermAddBondButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Add</string>
+            </property>
+            <property name="icon">
+             <iconset resource="main.qrc">
+              <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>16</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextBesideIcon</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QTableWidget" name="MasterBondsTable">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="columnCount">
+           <number>6</number>
+          </property>
+          <attribute name="horizontalHeaderVisible">
+           <bool>true</bool>
+          </attribute>
+          <attribute name="verticalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+          <column>
+           <property name="text">
+            <string>Name</string>
            </property>
-           <item>
-            <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QToolButton" name="MasterTermRemoveBondButton">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Remove</string>
-             </property>
-             <property name="icon">
-              <iconset resource="icons.qrc">
-               <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>16</width>
-               <height>16</height>
-              </size>
-             </property>
-             <property name="shortcut">
-              <string>Return</string>
-             </property>
-             <property name="toolButtonStyle">
-              <enum>Qt::ToolButtonTextBesideIcon</enum>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QToolButton" name="MasterTermAddBondButton">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Add</string>
-             </property>
-             <property name="icon">
-              <iconset resource="icons.qrc">
-               <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>16</width>
-               <height>16</height>
-              </size>
-             </property>
-             <property name="toolButtonStyle">
-              <enum>Qt::ToolButtonTextBesideIcon</enum>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="QTableWidget" name="MasterBondsTable">
-           <property name="font">
-            <font>
-             <pointsize>8</pointsize>
-            </font>
+          </column>
+          <column>
+           <property name="text">
+            <string>Form</string>
            </property>
-           <property name="columnCount">
-            <number>6</number>
+          </column>
+          <column>
+           <property name="text">
+            <string>Parameter 1</string>
            </property>
-           <attribute name="horizontalHeaderVisible">
-            <bool>true</bool>
-           </attribute>
-           <attribute name="verticalHeaderVisible">
-            <bool>false</bool>
-           </attribute>
-           <column>
-            <property name="text">
-             <string>Name</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Form</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Parameter 1</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Parameter 2</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Parameter 3</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Parameter 4</string>
-            </property>
-           </column>
-          </widget>
-         </item>
-        </layout>
-       </widget>
+          </column>
+          <column>
+           <property name="text">
+            <string>Parameter 2</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Parameter 3</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Parameter 4</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
-       <widget class="QGroupBox" name="MasterAnglesGroup">
-        <property name="title">
-         <string>Angles</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_3">
-         <property name="spacing">
-          <number>4</number>
-         </property>
-         <property name="leftMargin">
-          <number>4</number>
-         </property>
-         <property name="topMargin">
-          <number>4</number>
-         </property>
-         <property name="rightMargin">
-          <number>4</number>
-         </property>
-         <property name="bottomMargin">
-          <number>4</number>
-         </property>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <property name="spacing">
-            <number>4</number>
+       <layout class="QVBoxLayout" name="MasterAnglesLayout">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <property name="spacing">
+           <number>4</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="label_2">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Angles</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QToolButton" name="MasterTermRemoveAngleButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Remove</string>
+            </property>
+            <property name="icon">
+             <iconset resource="main.qrc">
+              <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>16</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="shortcut">
+             <string>Return</string>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextBesideIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="MasterTermAddAngleButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Add</string>
+            </property>
+            <property name="icon">
+             <iconset resource="main.qrc">
+              <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>16</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextBesideIcon</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QTableWidget" name="MasterAnglesTable">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="columnCount">
+           <number>6</number>
+          </property>
+          <attribute name="horizontalHeaderVisible">
+           <bool>true</bool>
+          </attribute>
+          <attribute name="verticalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+          <column>
+           <property name="text">
+            <string>Name</string>
            </property>
-           <item>
-            <spacer name="horizontalSpacer_2">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QToolButton" name="MasterTermRemoveAngleButton">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Remove</string>
-             </property>
-             <property name="icon">
-              <iconset resource="icons.qrc">
-               <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>16</width>
-               <height>16</height>
-              </size>
-             </property>
-             <property name="shortcut">
-              <string>Return</string>
-             </property>
-             <property name="toolButtonStyle">
-              <enum>Qt::ToolButtonTextBesideIcon</enum>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QToolButton" name="MasterTermAddAngleButton">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Add</string>
-             </property>
-             <property name="icon">
-              <iconset resource="icons.qrc">
-               <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>16</width>
-               <height>16</height>
-              </size>
-             </property>
-             <property name="toolButtonStyle">
-              <enum>Qt::ToolButtonTextBesideIcon</enum>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="QTableWidget" name="MasterAnglesTable">
-           <property name="font">
-            <font>
-             <pointsize>8</pointsize>
-            </font>
+          </column>
+          <column>
+           <property name="text">
+            <string>Form</string>
            </property>
-           <property name="columnCount">
-            <number>6</number>
+          </column>
+          <column>
+           <property name="text">
+            <string>Parameter 1</string>
            </property>
-           <attribute name="horizontalHeaderVisible">
-            <bool>true</bool>
-           </attribute>
-           <attribute name="verticalHeaderVisible">
-            <bool>false</bool>
-           </attribute>
-           <column>
-            <property name="text">
-             <string>Name</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Form</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Parameter 1</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Parameter 2</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Parameter 3</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Parameter 4</string>
-            </property>
-           </column>
-          </widget>
-         </item>
-        </layout>
-       </widget>
+          </column>
+          <column>
+           <property name="text">
+            <string>Parameter 2</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Parameter 3</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Parameter 4</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
-       <widget class="QGroupBox" name="MasterTorsionsGroup">
-        <property name="title">
-         <string>Torsions</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout">
-         <property name="spacing">
-          <number>4</number>
-         </property>
-         <property name="leftMargin">
-          <number>4</number>
-         </property>
-         <property name="topMargin">
-          <number>4</number>
-         </property>
-         <property name="rightMargin">
-          <number>4</number>
-         </property>
-         <property name="bottomMargin">
-          <number>4</number>
-         </property>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_3">
-           <property name="spacing">
-            <number>4</number>
+       <layout class="QVBoxLayout" name="MasterTorsionsLayout">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <property name="spacing">
+           <number>4</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="label_3">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Torsions</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QToolButton" name="MasterTermRemoveTorsionButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Remove</string>
+            </property>
+            <property name="icon">
+             <iconset resource="main.qrc">
+              <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>16</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="shortcut">
+             <string>Return</string>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextBesideIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="MasterTermAddTorsionButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Add</string>
+            </property>
+            <property name="icon">
+             <iconset resource="main.qrc">
+              <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>16</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextBesideIcon</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QTableWidget" name="MasterTorsionsTable">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="columnCount">
+           <number>6</number>
+          </property>
+          <attribute name="horizontalHeaderVisible">
+           <bool>true</bool>
+          </attribute>
+          <attribute name="verticalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+          <column>
+           <property name="text">
+            <string>Name</string>
            </property>
-           <item>
-            <spacer name="horizontalSpacer_3">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QToolButton" name="MasterTermRemoveTorsionButton">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Remove</string>
-             </property>
-             <property name="icon">
-              <iconset resource="icons.qrc">
-               <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>16</width>
-               <height>16</height>
-              </size>
-             </property>
-             <property name="shortcut">
-              <string>Return</string>
-             </property>
-             <property name="toolButtonStyle">
-              <enum>Qt::ToolButtonTextBesideIcon</enum>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QToolButton" name="MasterTermAddTorsionButton">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Add</string>
-             </property>
-             <property name="icon">
-              <iconset resource="icons.qrc">
-               <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>16</width>
-               <height>16</height>
-              </size>
-             </property>
-             <property name="toolButtonStyle">
-              <enum>Qt::ToolButtonTextBesideIcon</enum>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="QTableWidget" name="MasterTorsionsTable">
-           <property name="font">
-            <font>
-             <pointsize>8</pointsize>
-            </font>
+          </column>
+          <column>
+           <property name="text">
+            <string>Form</string>
            </property>
-           <property name="columnCount">
-            <number>6</number>
+          </column>
+          <column>
+           <property name="text">
+            <string>Parameter 1</string>
            </property>
-           <attribute name="horizontalHeaderVisible">
-            <bool>true</bool>
-           </attribute>
-           <attribute name="verticalHeaderVisible">
-            <bool>false</bool>
-           </attribute>
-           <column>
-            <property name="text">
-             <string>Name</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Form</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Parameter 1</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Parameter 2</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Parameter 3</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Parameter 4</string>
-            </property>
-           </column>
-          </widget>
-         </item>
-        </layout>
-       </widget>
+          </column>
+          <column>
+           <property name="text">
+            <string>Parameter 2</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Parameter 3</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Parameter 4</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
@@ -540,7 +549,7 @@
            <string>Library</string>
           </property>
           <property name="icon">
-           <iconset resource="icons.qrc">
+           <iconset resource="main.qrc">
             <normaloff>:/general/icons/general_library.svg</normaloff>:/general/icons/general_library.svg</iconset>
           </property>
           <property name="iconSize">
@@ -572,6 +581,9 @@
         </item>
         <item>
          <widget class="QToolButton" name="AtomTypeRemoveButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -582,7 +594,7 @@
            <string>Remove</string>
           </property>
           <property name="icon">
-           <iconset resource="icons.qrc">
+           <iconset resource="main.qrc">
             <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
           </property>
           <property name="iconSize">
@@ -611,7 +623,7 @@
            <string>Add</string>
           </property>
           <property name="icon">
-           <iconset resource="icons.qrc">
+           <iconset resource="main.qrc">
             <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
           </property>
           <property name="iconSize">
@@ -631,7 +643,7 @@
        <widget class="QTableWidget" name="AtomTypesTable">
         <property name="font">
          <font>
-          <pointsize>8</pointsize>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="columnCount">
@@ -650,7 +662,7 @@
         </column>
         <column>
          <property name="text">
-          <string>Exch</string>
+          <string>El</string>
          </property>
         </column>
         <column>
@@ -736,7 +748,7 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="TExponentialSpin" name="ShortRangeTruncationWidthSpin">
+          <widget class="ExponentialSpin" name="ShortRangeTruncationWidthSpin">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -816,7 +828,7 @@
           <number>4</number>
          </property>
          <item row="0" column="1">
-          <widget class="TExponentialSpin" name="PairPotentialRangeSpin">
+          <widget class="ExponentialSpin" name="PairPotentialRangeSpin">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -859,7 +871,7 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="TExponentialSpin" name="PairPotentialDeltaSpin">
+          <widget class="ExponentialSpin" name="PairPotentialDeltaSpin">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -967,7 +979,7 @@
               <string>Update All</string>
              </property>
              <property name="icon">
-              <iconset resource="icons.qrc">
+              <iconset resource="main.qrc">
                <normaloff>:/general/icons/general_repeat.svg</normaloff>:/general/icons/general_repeat.svg</iconset>
              </property>
              <property name="iconSize">
@@ -1009,7 +1021,7 @@
           <widget class="QTableWidget" name="PairPotentialsTable">
            <property name="font">
             <font>
-             <pointsize>8</pointsize>
+             <pointsize>10</pointsize>
             </font>
            </property>
            <property name="columnCount">
@@ -1078,13 +1090,13 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>TExponentialSpin</class>
+   <class>ExponentialSpin</class>
    <extends>QDoubleSpinBox</extends>
-   <header>gui/widgets/texponentialspin.hui</header>
+   <header>gui/widgets/exponentialspin.hui</header>
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="main.qrc"/>
  </resources>
  <connections/>
 </ui>

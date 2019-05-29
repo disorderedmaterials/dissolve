@@ -1,7 +1,7 @@
 /*
 	*** Module Keyword - Isotopologue Reference List
 	*** src/modules/keywordtypes/isotopologuelist.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -21,9 +21,10 @@
 
 #include "module/keywordtypes/isotopologuelist.h"
 #include "classes/configuration.h"
+#include "classes/coredata.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructor
 IsotopologueListModuleKeyword::IsotopologueListModuleKeyword(List<IsotopologueReference>& references) : ModuleKeywordBase(ModuleKeywordBase::IsotopologueListData), ModuleKeywordData< List<IsotopologueReference>& >(references)
@@ -62,11 +63,10 @@ int IsotopologueListModuleKeyword::maxArguments()
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool IsotopologueListModuleKeyword::read(LineParser& parser, int startArg, ProcessPool& procPool)
+bool IsotopologueListModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	// Find target Configuration (first argument)
-	Configuration* cfg = NULL;
-	for (cfg = List<Configuration>::masterInstance().first(); cfg != NULL; cfg = cfg->next) if (DissolveSys::sameString(parser.argc(startArg), cfg->name())) break;
+	Configuration* cfg = coreData.findConfiguration(parser.argc(startArg));
 	if (!cfg)
 	{
 		Messenger::error("Error defining Isotopologue reference - no Configuration named '%s' exists.\n", parser.argc(startArg));
@@ -74,8 +74,7 @@ bool IsotopologueListModuleKeyword::read(LineParser& parser, int startArg, Proce
 	}
 
 	// Find specified Species (second argument) - must be present in the target Configuration
-	Species* sp = NULL;
-	for (sp = List<Species>::masterInstance().first(); sp != NULL; sp = sp->next) if (DissolveSys::sameString(parser.argc(startArg+1), sp->name())) break;
+	Species* sp = coreData.findSpecies(parser.argc(startArg+1));
 	if (!sp) return Messenger::error("Error defining Isotopologue reference - no Species named '%s' exists.\n", parser.argc(startArg+1));
 	if (!cfg->hasUsedSpecies(sp))return Messenger::error("Error defining Isotopologue reference - Species '%s' is not present in Configuration '%s'.\n", sp->name(), cfg->name());
 

@@ -12,7 +12,7 @@
   </property>
   <property name="font">
    <font>
-    <pointsize>8</pointsize>
+    <pointsize>10</pointsize>
    </font>
   </property>
   <property name="windowTitle">
@@ -90,7 +90,7 @@
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="TExponentialSpin" name="TemperatureSpin">
+         <widget class="ExponentialSpin" name="TemperatureSpin">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -127,7 +127,7 @@
          <number>4</number>
         </property>
         <item row="1" column="1">
-         <widget class="TExponentialSpin" name="BoxBSpin">
+         <widget class="ExponentialSpin" name="BoxBSpin">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -195,7 +195,7 @@
          </widget>
         </item>
         <item row="2" column="1">
-         <widget class="TExponentialSpin" name="BoxCSpin">
+         <widget class="ExponentialSpin" name="BoxCSpin">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -221,7 +221,7 @@
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="TExponentialSpin" name="BoxASpin">
+         <widget class="ExponentialSpin" name="BoxASpin">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -244,7 +244,7 @@
          </widget>
         </item>
         <item row="0" column="3">
-         <widget class="TExponentialSpin" name="BoxAlphaSpin">
+         <widget class="ExponentialSpin" name="BoxAlphaSpin">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -254,7 +254,7 @@
          </widget>
         </item>
         <item row="1" column="3">
-         <widget class="TExponentialSpin" name="BoxBetaSpin">
+         <widget class="ExponentialSpin" name="BoxBetaSpin">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -264,7 +264,7 @@
          </widget>
         </item>
         <item row="2" column="3">
-         <widget class="TExponentialSpin" name="BoxGammaSpin">
+         <widget class="ExponentialSpin" name="BoxGammaSpin">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -361,7 +361,7 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="TExponentialSpin" name="DensitySpin">
+           <widget class="ExponentialSpin" name="DensitySpin">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -429,7 +429,7 @@
              <string>Remove</string>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="main.qrc">
               <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
             </property>
             <property name="iconSize">
@@ -458,7 +458,7 @@
              <string>Add</string>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="main.qrc">
               <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
             </property>
             <property name="iconSize">
@@ -476,6 +476,12 @@
         </item>
         <item>
          <widget class="QTableWidget" name="SpeciesInfoTable">
+          <property name="selectionMode">
+           <enum>QAbstractItemView::ExtendedSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
           <attribute name="verticalHeaderVisible">
            <bool>false</bool>
           </attribute>
@@ -540,7 +546,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="icons.qrc">
+              <iconset resource="main.qrc">
                <normaloff>:/file/icons/file_open.svg</normaloff>:/file/icons/file_open.svg</iconset>
              </property>
              <property name="iconSize">
@@ -605,7 +611,7 @@
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="TExponentialSpin" name="RequestedSizeFactorSpin">
+         <widget class="ExponentialSpin" name="RequestedSizeFactorSpin">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -621,7 +627,7 @@
          </widget>
         </item>
         <item row="0" column="3">
-         <widget class="TExponentialSpin" name="AppliedSizeFactorSpin">
+         <widget class="ExponentialSpin" name="AppliedSizeFactorSpin">
           <property name="enabled">
            <bool>false</bool>
           </property>
@@ -681,7 +687,7 @@
            <string>Regenerate Now</string>
           </property>
           <property name="icon">
-           <iconset resource="icons.qrc">
+           <iconset resource="main.qrc">
             <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
           </property>
           <property name="iconSize">
@@ -710,7 +716,7 @@
            <string>Export XYZ</string>
           </property>
           <property name="icon">
-           <iconset resource="icons.qrc">
+           <iconset resource="main.qrc">
             <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
           </property>
           <property name="iconSize">
@@ -743,9 +749,41 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <widget class="QWidget" name="ViewerTab">
+      <attribute name="title">
+       <string>Viewer</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <property name="spacing">
+        <number>4</number>
+       </property>
+       <property name="leftMargin">
+        <number>4</number>
+       </property>
+       <property name="topMargin">
+        <number>4</number>
+       </property>
+       <property name="rightMargin">
+        <number>4</number>
+       </property>
+       <property name="bottomMargin">
+        <number>4</number>
+       </property>
+       <item>
+        <widget class="ConfigurationWidget" name="ViewerWidget" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>2</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="ModulesTab">
       <attribute name="title">
-       <string>Modules</string>
+       <string>Local Processing</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <property name="spacing">
@@ -764,7 +802,7 @@
         <number>4</number>
        </property>
        <item>
-        <widget class="ModuleEditor" name="ModulePanel" native="true">
+        <widget class="LayerEditor" name="ModulePanel" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -781,19 +819,25 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>TExponentialSpin</class>
+   <class>ExponentialSpin</class>
    <extends>QDoubleSpinBox</extends>
-   <header>gui/widgets/texponentialspin.hui</header>
+   <header>gui/widgets/exponentialspin.hui</header>
   </customwidget>
   <customwidget>
-   <class>ModuleEditor</class>
+   <class>LayerEditor</class>
    <extends>QWidget</extends>
-   <header>gui/moduleeditor.h</header>
+   <header>gui/layereditor.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ConfigurationWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/viewer/configurationwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="main.qrc"/>
  </resources>
  <connections/>
 </ui>

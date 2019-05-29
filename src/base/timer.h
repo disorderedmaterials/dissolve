@@ -1,7 +1,7 @@
 /*
 	*** Timer
 	*** src/base/timer.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -29,7 +29,7 @@
 class Timer
 {
 	/*
-	 * Simple class to store and manipulate time information in order to provide timings for routines etc.
+	 * Simple class to store and manipulate tick information in order to provide timings for routines etc.
 	 */
 	public:
 	// Constructor
@@ -42,6 +42,8 @@ class Timer
 	private:
 	// Start time
 	clock_t startTime_;
+	// Split time
+	clock_t splitTime_;
 	// Total time
 	clock_t totalTime_;
 	// Local string storage
@@ -58,6 +60,8 @@ class Timer
 	void start();
 	// Stop timer and set total time
 	void stop();
+	// Return split time
+	double split();
 	// Accumulate time since last start
 	void accumulate();
 	// Zero total time
@@ -67,7 +71,7 @@ class Timer
 	// Return total time (after stop()) as a time string
 	const char* totalTimeString();
 	// Return number of seconds elapsed
-	double secondsElapsed();
+	double secondsElapsed() const;
 	// Return time string for number of seconds provided
 	static const char* timeString(double seconds);
 };

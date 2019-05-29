@@ -1,7 +1,7 @@
 /*
 	*** WorkspaceTab Functions
 	*** src/gui/workspacetab_funcs.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -34,7 +34,7 @@
 #include <QMenu>
 
 // Constructor / Destructor
-WorkspaceTab::WorkspaceTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title) : MainTab(dissolveWindow, dissolve, parent, title, this)
+WorkspaceTab::WorkspaceTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title) : ListItem<WorkspaceTab>(), MainTab(dissolveWindow, dissolve, parent, title, this)
 {
 	ui.setupUi(this);
 
@@ -59,7 +59,7 @@ const char* WorkspaceTab::tabType() const
 }
 
 // Return whether the title of the tab can be changed
-bool WorkspaceTab::canChangeTitle()
+bool WorkspaceTab::canChangeTitle() const
 {
 	return true;
 }
@@ -227,35 +227,35 @@ void WorkspaceTab::createContextMenu(QMenu* parent)
 			moduleItem->setFont(italicFont);
 			moduleItem->setEnabled(false);
 		}
-		ListIterator<ModuleReference> moduleIterator(cfg->modules().modules());
-		while (ModuleReference* modRef = moduleIterator.iterate())
+		ListIterator<Module> moduleIterator(cfg->modules());
+		while (Module* module= moduleIterator.iterate())
 		{
-			Module* module = modRef->module();
-
 			QAction* moduleItem = cfgMenu->addAction(CharString("%s (%s)", module->type(), module->uniqueName()).get());
 			moduleItem->setData(VariantPointer<Module>(module));
 			connect(moduleItem, SIGNAL(triggered(bool)), this, SLOT(contextMenuModuleSelected(bool)));
 		}
 	}
 
-	// Processing Modules
-	menuItem = parent->addAction("Processing");
-	menuItem->setFont(italicFont);
-	menuItem->setEnabled(false);
-	if (dissolve_.mainProcessingModules().nModules() == 0)
+	// Processing Layer Modules
+	ListIterator<ModuleLayer> layerIterator(dissolve_.processingLayers());
+	while (ModuleLayer* layer = layerIterator.iterate())
 	{
-		QAction* moduleItem = parent->addAction("None");
-		moduleItem->setFont(italicFont);
-		moduleItem->setEnabled(false);
-	}
-	ListIterator<ModuleReference> moduleIterator(dissolve_.mainProcessingModules().modules());
-	while (ModuleReference* modRef = moduleIterator.iterate())
-	{
-		Module* module = modRef->module();
-
-		QAction* moduleItem = parent->addAction(CharString("%s (%s)", module->type(), module->uniqueName()).get());
-		moduleItem->setData(VariantPointer<Module>(module));
-		connect(moduleItem, SIGNAL(triggered(bool)), this, SLOT(contextMenuModuleSelected(bool)));
+		menuItem = parent->addAction(layer->name());
+		menuItem->setFont(italicFont);
+		menuItem->setEnabled(false);
+		if (layer->nModules() == 0)
+		{
+			QAction* moduleItem = parent->addAction("None");
+			moduleItem->setFont(italicFont);
+			moduleItem->setEnabled(false);
+		}
+		ListIterator<Module> moduleIterator(layer->modules());
+		while (Module* module = moduleIterator.iterate())
+		{
+			QAction* moduleItem = parent->addAction(CharString("%s (%s)", module->type(), module->uniqueName()).get());
+			moduleItem->setData(VariantPointer<Module>(module));
+			connect(moduleItem, SIGNAL(triggered(bool)), this, SLOT(contextMenuModuleSelected(bool)));
+		}
 	}
 }
 
@@ -302,12 +302,12 @@ SubWindow* WorkspaceTab::addModuleControlWidget(Module* module)
 	if (!window)
 	{
 		// Create a new ModuleWidget
-		ModuleControlWidget* moduleControlWidget = new ModuleControlWidget(dissolveWindow_, module, module->uniqueName(), false);
+		ModuleControlWidget* moduleControlWidget = new ModuleControlWidget(dissolveWindow_, module, module->uniqueName());
 		connect(moduleControlWidget, SIGNAL(windowClosed(QString)), this, SLOT(removeSubWindow(QString)));
 		window = addSubWindow(moduleControlWidget, module);
 
 		// If we are currently running, we need to disable sensitive controls in the newly-created widget
-		if ((dissolveWindow_->dissolveState() != DissolveWindow::StoppedState) && window && window->subWidget()) window->subWidget()->disableSensitiveControls();
+		if ((dissolveWindow_->dissolveState() != DissolveWindow::EditingState) && window && window->subWidget()) window->subWidget()->disableSensitiveControls();
 	}
 	else window->raise();
 
@@ -342,6 +342,45 @@ SubWindow* WorkspaceTab::addNamedWidget(const char* widgetName, const char* titl
  * State
  */
 
+// Read widget state through specified LineParser
+bool WorkspaceTab::readState(LineParser& parser, const CoreData& coreData)
+{
+	// Read tab state information:   nSubWindows
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	const int nWidgets = parser.argi(0);
+
+	// Read in widgets
+	for (int n=0; n<nWidgets; ++n)
+	{
+		// Read line from the file, which should contain the window type, title, and any identifying info
+		if (parser.getArgsDelim(LineParser::UseQuotes) != LineParser::Success) return false;
+		SubWindow* subWindow = NULL;
+		if (DissolveSys::sameString(parser.argc(1), "ModuleControl"))
+		{
+			// Create a new ModuleControl widget - the target module's unique name is the title of the window
+			Module* module = coreData.findModule(parser.argc(0));
+			if (!module) return Messenger::error("Module '%s' could not be located and added to workspace '%s'.\n", parser.argc(0), title());
+			subWindow = addModuleControlWidget(module);
+		}
+		else subWindow = addNamedWidget(parser.argc(1), parser.argc(0));
+		
+		if (subWindow == NULL) return Messenger::error("Unrecognised widget type '%s' in workspace '%s'.\n", parser.argc(1), title());
+
+		// Read in the widget's geometry / state / flags
+		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+		QMdiSubWindow* window = subWindow->window();
+		window->setGeometry(parser.argi(0), parser.argi(1), parser.argi(2), parser.argi(3));
+		// -- Is the window maximised, or shaded?
+		if (parser.argb(4)) window->showMaximized();
+		else if (parser.argb(5)) window->showShaded();
+
+		// Now call the widget's local readState()
+		if (!subWindow->subWidget()->readState(parser)) return false;
+	}
+
+	return true;
+}
+
 // Write widget state through specified LineParser
 bool WorkspaceTab::writeState(LineParser& parser)
 {
@@ -361,45 +400,6 @@ bool WorkspaceTab::writeState(LineParser& parser)
 
 		// Write widget-specific state information
 		if (!subWindow->subWidget()->writeState(parser)) return false;
-	}
-
-	return true;
-}
-
-// Read widget state through specified LineParser
-bool WorkspaceTab::readState(LineParser& parser)
-{
-	// Read tab state information:   nSubWindows
-	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-	const int nWidgets = parser.argi(0);
-
-	// Read in widgets
-	for (int n=0; n<nWidgets; ++n)
-	{
-		// Read line from the file, which should contain the window type, title, and any identifying info
-		if (parser.getArgsDelim(LineParser::UseQuotes) != LineParser::Success) return false;
-		SubWindow* subWindow = NULL;
-		if (DissolveSys::sameString(parser.argc(1), "ModuleControl"))
-		{
-			// Create a new ModuleControl widget - the target module's unique name is the title of the window
-			Module* module = ModuleList::findInstanceByUniqueName(parser.argc(0));
-			if (!module) return Messenger::error("Module '%s' could not be located and added to workspace '%s'.\n", parser.argc(0), title());
-			subWindow = addModuleControlWidget(module);
-		}
-		else subWindow = addNamedWidget(parser.argc(1), parser.argc(0));
-		
-		if (subWindow == NULL) return Messenger::error("Unrecognised widget type '%s' in workspace '%s'.\n", parser.argc(1), title());
-
-		// Read in the widget's geometry / state / flags
-		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-		QMdiSubWindow* window = subWindow->window();
-		window->setGeometry(parser.argi(0), parser.argi(1), parser.argi(2), parser.argi(3));
-		// -- Is the window maximised, or shaded?
-		if (parser.argb(4)) window->showMaximized();
-		else if (parser.argb(5)) window->showShaded();
-
-		// Now call the widget's local readState()
-		if (!subWindow->subWidget()->readState(parser)) return false;
 	}
 
 	return true;

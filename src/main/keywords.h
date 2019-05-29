@@ -1,7 +1,7 @@
 /*
 	*** Keyword Definitions
 	*** src/main/keywords.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -29,6 +29,7 @@ class Sample;
 class Configuration;
 class Species;
 class Module;
+class ModuleLayer;
 class GenericList;
 class Data;
 class SpeciesInfo;
@@ -58,6 +59,7 @@ namespace BlockKeywords
 	enum BlockKeyword
 	{
 		ConfigurationBlockKeyword,		/* 'Configuration' - Defines a single Configuration for use in the simulation */
+		LayerBlockKeyword,			/* 'Layer' - Defines a sequence of Modules in a processing layer */
 		MasterBlockKeyword,			/* 'Master' - Contains master intramolecular terms for use in Species */
 		ModuleBlockKeyword,			/* 'Module' - Sets up a Module to run after Configuration processing */
 		PairPotentialsBlockKeyword,		/* 'PairPotentials' - Contains definitions of the PairPotentials for the simulation */
@@ -93,8 +95,6 @@ namespace ConfigurationBlock
 		CellLengthsKeyword,		/* 'CellLengths' - Gives the relative lengths of the unit cell */
 		DensityKeyword,			/* 'Density' - Specifies the density of the simulation, along with its units */
 		EndConfigurationKeyword,	/* 'EndConfiguration' - Signals the end of the Configuration block */
-		EnsembleKeyword,		/* 'Ensemble' - Whether to append to an ensemble file */
-		EnsembleFrequencyKeyword,	/* 'EnsembleFrequency' - Frequency with which to append to ensemble file */
 		InputCoordinatesKeyword,	/* 'InputCoordinates' - Specifies the file which contains the starting coordinates */
 		ModuleKeyword,			/* 'Module' - Starts the set up of a Module for this configuration */
 		MultiplierKeyword,		/* 'Multiplier' - Specifies the factor by which relative populations are multiplied when generating the Configuration data */
@@ -118,28 +118,27 @@ namespace ConfigurationBlock
 
 
 /*
- * Data Block Keywords
+ * Layer Block Keywords
  */
-namespace DataBlock
+namespace LayerBlock
 {
-	// Data Block Keyword Enum
-	enum DataKeyword
+	// Layer Block Keyword Enum
+	enum LayerKeyword
 	{
-		AssociatedToKeyword,		/* 'AssociatedTo' - Name of Module to which this data is associated, if any */
-		EndDataKeyword,			/* 'EndData' - Signals the end of the Data block */
-		FileKeyword,			/* 'File' - Datafile containing reference data */
-		SubtractAverageLevelKeyword,	/* 'SubtractAverageLevel' - Minimum x value from which to calculate and subtract mean value from y data */
-		TypeKeyword,			/* 'Type' - Type of the supplied reference data */
-		nDataKeywords			/* Number of keywords defined for this block */
+		EnabledKeyword,			/* 'Enabled' - Specify whether the layer is enabled or not */
+		EndLayerKeyword,		/* 'EndLayer' - Signals the end of the Layer block */
+		FrequencyKeyword,		/* 'Frequency' - Frequency at which the layer is executed, relative to the main iteration counter */
+		ModuleKeyword,			/* 'Module' - Begin a Module definition within this layer */
+		nLayerKeywords			/* Number of keywords defined for this block */
 	};
-	// Convert text string to DataKeyword
-	DataKeyword keyword(const char* s);
-	// Convert DataKeyword to text string
-	const char* keyword(DataKeyword id);
+	// Convert text string to LayerKeyword
+	LayerKeyword keyword(const char* s);
+	// Convert LayerKeyword to text string
+	const char* keyword(LayerKeyword id);
 	// Return expected number of expected arguments
-	int nArguments(DataKeyword id);
-	// Parse Data block
-	bool parse(LineParser& parser, Dissolve* dissolve, Data* data);
+	int nArguments(LayerKeyword id);
+	// Parse Layer block
+	bool parse(LineParser& parser, Dissolve* dissolve, ModuleLayer* layer);
 };
 
 
@@ -153,7 +152,7 @@ namespace MasterBlock
 	{
 		AngleKeyword,			/* 'Angle' - Define master Angle parameters that can be referred to */
 		BondKeyword,			/* 'Bond' - Define master Bond parameters that can be referred to */
-		EndMasterKeyword,		/* 'EndModule' - Signals the end of the Module block */
+		EndMasterKeyword,		/* 'EndMaster' - Signals the end of the Master block */
 		TorsionKeyword,			/* 'Torsion' - Define master Torsion parameters that can be referred to */
 		nMasterKeywords			/* Number of keywords defined for this block */
 	};
@@ -163,7 +162,7 @@ namespace MasterBlock
 	const char* keyword(MasterKeyword id);
 	// Return expected number of expected arguments
 	int nArguments(MasterKeyword id);
-	// Parse Module block
+	// Parse Master block
 	bool parse(LineParser& parser, Dissolve* dissolve);
 };
 
@@ -235,6 +234,7 @@ namespace SimulationBlock
 		BoxNormalisationPointsKeyword,	/* 'BoxNormalisationPoints' - Number of random insertions to use when generating the normalisation array */
 		EndSimulationKeyword,		/* 'EndSimulation' - Signals the end of the Simulation block */
 		ParallelStrategyKeyword,	/* 'ParallelStrategy' - Determines the distribution of processes across Configurations */
+		ParallelGroupPopulationKeyword,	/* 'ParallelGroupPopulation' - Controls the maximum number of groups to split processes in a pool in to */
 		RestartFileFrequencyKeyword,	/* 'RestartFileFrequency' - Frequency at which to write restart file */
 		SeedKeyword,			/* 'Seed' - Random seed to use */
 		nSimulationKeywords		/* Number of keywords defined for this block */
@@ -288,6 +288,7 @@ namespace SpeciesBlock
 		AtomKeyword,			/* 'Atom' - Specifies an Atom in the Species */
 		AutoAddGrainsKeyword,		/* 'AutoAddGrains' - Automatically add Grains to cover all atoms in the Species */
 		BondKeyword,			/* 'Bond' - Defines a Bond joining two atoms */
+		BondTypeKeyword,		/* 'BondType' - Sets the type of a specific bond */
 		ChargeKeyword,			/* 'Charge' - Specifies the atomic charge for an individual atom */
 		EndSpeciesKeyword,		/* 'EndSpecies' - Signals the end of the current Species */
 		GrainKeyword,			/* 'Grain' - Defines a Grain containing a number of Atoms */
@@ -317,8 +318,8 @@ namespace SpeciesInfoBlock
 	{
 		EndSpeciesInfoKeyword,		/* 'EndSpeciesInfo' - Signals the end of the SpeciesInfo */
 		NoRotationKeyword,		/* Flag that the Species should not be rotated when making a random configuration */
-		NoTranslationKeyword,		/* Flag that the Species should not be translated when making a random configuration */
 		PopulationKeyword,		/* Relative population of the Species */
+		PositioningKeyword,		/* Positioning type to use for Species */
 		nSpeciesInfoKeywords		/* Number of keywords defined for this block */
 	};
 	// Convert text string to SpeciesInfoKeyword

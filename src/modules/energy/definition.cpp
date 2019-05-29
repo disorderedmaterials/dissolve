@@ -1,7 +1,7 @@
 /*
 	*** Energy Module - Definition
 	*** src/modules/energy/definition.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -27,16 +27,16 @@ const char* EnergyModule::type() const
 	return "Energy";
 }
 
+// Return category for module
+const char* EnergyModule::category() const
+{
+	return "Forcefield";
+}
+
 // Return brief description of module
 const char* EnergyModule::brief() const
 {
 	return "Calculate the total energy of a Configuration";
-}
-
-// Return instance type for module
-Module::InstanceType EnergyModule::instanceType() const
-{
-	return Module::MultipleInstance;
 }
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)

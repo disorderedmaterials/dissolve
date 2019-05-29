@@ -1,7 +1,7 @@
 /*
-	*** RegionalDistributor
+	*** Regional Distributor
 	*** src/classes/regionaldistributor.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -32,7 +32,7 @@
 class ProcessPool;
 class Molecule;
 
-// RegionalDistributor
+// Regional Distributor
 class RegionalDistributor
 {
 	public:
@@ -42,8 +42,12 @@ class RegionalDistributor
 	~RegionalDistributor();
 	// Molecule Status Flag
 	enum MoleculeStatusFlag { WaitingFlag, DistributedFlag };
+	// Return string for specified MoleculeStatusFlag
+	const char* moleculeStatusFlag(MoleculeStatusFlag flag);
 	// Cell Status Flag
 	enum CellStatusFlag { UnusedFlag, LockedForEditingFlag, ReadByOneFlag, ReadByManyFlag };
+	// Return string for specified CellStatusFlag
+	const char* cellStatusFlag(CellStatusFlag flag);
 
 
 	/*

@@ -1,7 +1,7 @@
 /*
 	*** 3-Dimensional Data With Statistics
 	*** src/math/data3d.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -31,7 +31,7 @@ template<class Data3D> int ObjectStore<Data3D>::objectType_ = ObjectInfo::Data3D
 template<class Data3D> const char* ObjectStore<Data3D>::objectTypeName_ = "Data3D";
 
 // Constructor
-Data3D::Data3D() : ListItem<Data3D>(), ObjectStore<Data3D>(this), Plottable(Plottable::TwoAxisPlottable)
+Data3D::Data3D() : ListItem<Data3D>(), ObjectStore<Data3D>(this), PlottableData(PlottableData::TwoAxisPlottable)
 {
 	hasError_ = false;
 
@@ -44,7 +44,7 @@ Data3D::~Data3D()
 }
 
 // Copy Constructor
-Data3D::Data3D(const Data3D& source) : ObjectStore<Data3D>(this), Plottable(Plottable::TwoAxisPlottable)
+Data3D::Data3D(const Data3D& source) : ObjectStore<Data3D>(this), PlottableData(PlottableData::TwoAxisPlottable)
 {
 	(*this) = source;
 }
@@ -57,6 +57,8 @@ void Data3D::clear()
 	z_.clear();
 	values_.clear();
 	errors_.clear();
+
+	++version_;
 }
 
 /*
@@ -73,6 +75,8 @@ void Data3D::initialise(int xSize, int ySize, int zSize, bool withError)
 	hasError_ = withError;
 	if (hasError_) errors_.initialise(xSize, ySize, zSize);
 	else errors_.clear();
+
+	++version_;
 }
 
 // Initialise to be consistent in size and x axis with supplied object
@@ -85,6 +89,8 @@ void Data3D::initialise(const Data3D& source)
 	hasError_ = source.hasError_;
 	if (hasError_) errors_.initialise(x_.nItems(), y_.nItems(), z_.nItems());
 	else errors_.clear();
+
+	++version_;
 }
 
 // Copy arrays from supplied object
@@ -96,6 +102,8 @@ void Data3D::copyArrays(const Data3D& source)
 	values_ = source.values_;
 	errors_ = source.errors_;
 	hasError_ = source.hasError_;
+
+	++version_;
 }
 
 // Zero values array
@@ -103,6 +111,14 @@ void Data3D::zero()
 {
 	values_ = 0.0;
 	if (hasError_) errors_ = 0.0;
+
+	++version_;
+}
+
+// Return data version
+int Data3D::version() const
+{
+	return version_;
 }
 
 // Return x value specified
@@ -116,6 +132,9 @@ double& Data3D::xAxis(int index)
 		return dummy;
 	}
 #endif
+
+	++version_;
+
 	return x_[index];
 }
 
@@ -136,6 +155,8 @@ double Data3D::constXAxis(int index) const
 Array<double>& Data3D::xAxis()
 {
 	return x_;
+
+	++version_;
 }
 
 // Return x axis Array (const)
@@ -155,6 +176,8 @@ double& Data3D::yAxis(int index)
 		return dummy;
 	}
 #endif
+	++version_;
+
 	return y_[index];
 }
 
@@ -174,6 +197,8 @@ double Data3D::constYAxis(int index) const
 // Return y Array
 Array<double>& Data3D::yAxis()
 {
+	++version_;
+
 	return y_;
 }
 
@@ -194,6 +219,8 @@ double& Data3D::zAxis(int index)
 		return dummy;
 	}
 #endif
+	++version_;
+
 	return z_[index];
 }
 
@@ -213,6 +240,8 @@ double Data3D::constZAxis(int index) const
 // Return z Array
 Array<double>& Data3D::zAxis()
 {
+	++version_;
+
 	return z_;
 }
 
@@ -245,6 +274,8 @@ double& Data3D::value(int xIndex, int yIndex, int zIndex)
 		return dummy;
 	}
 #endif
+	++version_;
+
 	return values_.at(xIndex, yIndex, zIndex);
 }
 
@@ -274,6 +305,8 @@ double Data3D::constValue(int xIndex, int yIndex, int zIndex) const
 // Return values Array
 Array3D<double>& Data3D::values()
 {
+	++version_;
+
 	return values_;
 }
 
@@ -319,6 +352,8 @@ void Data3D::addErrors()
 	errors_.initialise(x_.nItems(), y_.nItems(), z_.nItems());
 
 	hasError_ = true;
+
+	++version_;
 }
 
 // Return whether the values have associated errors
@@ -356,6 +391,7 @@ double& Data3D::error(int xIndex, int yIndex, int zIndex)
 		return dummy;
 	}
 #endif
+	++version_;
 
 	return errors_.at(xIndex, yIndex, zIndex);
 }
@@ -393,7 +429,9 @@ double Data3D::constError(int xIndex, int yIndex, int zIndex) const
 Array3D<double>& Data3D::errors()
 {
 	if (!hasError_) Messenger::warn("This Data3D (name='%s', tag='%s') has no errors to return, but errors() was requested.\n", name(), objectTag());
-	
+
+	++version_;
+
 	return errors_;
 }
 
@@ -401,7 +439,7 @@ Array3D<double>& Data3D::errors()
 const Array3D<double>& Data3D::constErrors3D() const
 {
 	if (!hasError_) Messenger::warn("This Data3D (name='%s', tag='%s') has no errors to return, but constErrors() was requested.\n", name(), objectTag());
-	
+
 	return errors_;
 }
 
@@ -419,18 +457,24 @@ void Data3D::operator=(const Data3D& source)
 	values_ = source.values_;
 	hasError_ = source.hasError_;
 	errors_ = source.errors_;
+
+	++version_;
 }
 
 // Operator +=
 void Data3D::operator+=(const double delta)
 {
 	for (int n=0; n<values_.linearArraySize(); ++n) values_.linearValue(n) += delta;
+
+	++version_;
 }
 
 // Operator -=
 void Data3D::operator-=(const double delta)
 {
 	for (int n=0; n<values_.linearArraySize(); ++n) values_.linearValue(n) -= delta;
+
+	++version_;
 }
 
 // Operator *=
@@ -438,6 +482,8 @@ void Data3D::operator*=(const double factor)
 {
 	values_ *= factor;
 	if (hasError_) errors_ *= factor;
+
+	++version_;
 }
 
 // Operator /=
@@ -445,6 +491,8 @@ void Data3D::operator/=(const double factor)
 {
 	values_ /= factor;
 	if (hasError_) errors_ /= factor;
+
+	++version_;
 }
 
 /*
@@ -457,56 +505,19 @@ const char* Data3D::itemClassName()
 	return "Data3D";
 }
 
-// Write data through specified LineParser
-bool Data3D::write(LineParser& parser)
-{
-	if (!parser.writeLineF("%s\n", objectTag())) return false;
-
-	// Write axis sizes and errors flag
-	if (!parser.writeLineF("%i  %i  %i  %s\n", x_.nItems(), y_.nItems(), z_.nItems(), DissolveSys::btoa(hasError_))) return false;
-
-	// Write x axis array
-	for (int x=0; x<x_.nItems(); ++x) if (!parser.writeLineF("%e\n", x_[x])) return false;
-
-	// Write y axis array
-	for (int y=0; y<y_.nItems(); ++y) if (!parser.writeLineF("%e\n", y_[y])) return false;
-
-	// Write z axis array
-	for (int z=0; z<z_.nItems(); ++z) if (!parser.writeLineF("%e\n", z_[z])) return false;
-
-	// Write values / errors
-	if (hasError_)
-	{
-		for (int x=0; x<x_.nItems(); ++x)
-		{
-			for (int y=0; y<y_.nItems(); ++y)
-			{
-				for (int z=0; z<z_.nItems(); ++z) if (!parser.writeLineF("%e  %e\n", values_.constAt(x,y,z), errors_.constAt(x,y,z))) return false;
-			}
-		}
-	}
-	else
-	{
-		for (int x=0; x<x_.nItems(); ++x)
-		{
-			for (int y=0; y<y_.nItems(); ++y)
-			{
-				for (int z=0; z<z_.nItems(); ++z) if (!parser.writeLineF("%e\n", values_.constAt(x,y,z))) return false;
-			}
-		}
-	}
-
-	return true;
-}
-
 // Read data through specified LineParser
-bool Data3D::read(LineParser& parser)
+bool Data3D::read(LineParser& parser, const CoreData& coreData)
 {
 	clear();
 
+	// Read object tag
 	if (parser.readNextLine(LineParser::Defaults) != LineParser::Success) return false;
 	setObjectTag(parser.line());
 
+	// Read object name
+	if (parser.readNextLine(LineParser::Defaults) != LineParser::Success) return false;
+	name_ = parser.line();
+	
 	// Read axis sizes and initialise arrays
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	int xSize = parser.argi(0);
@@ -570,20 +581,64 @@ bool Data3D::read(LineParser& parser)
 	return true;
 }
 
+// Write data through specified LineParser
+bool Data3D::write(LineParser& parser)
+{
+	// Write object tag and name
+	if (!parser.writeLineF("%s\n", objectTag())) return false;
+	if (!parser.writeLineF("%s\n", name())) return false;
+
+	// Write axis sizes and errors flag
+	if (!parser.writeLineF("%i  %i  %i  %s\n", x_.nItems(), y_.nItems(), z_.nItems(), DissolveSys::btoa(hasError_))) return false;
+
+	// Write x axis array
+	for (int x=0; x<x_.nItems(); ++x) if (!parser.writeLineF("%e\n", x_[x])) return false;
+
+	// Write y axis array
+	for (int y=0; y<y_.nItems(); ++y) if (!parser.writeLineF("%e\n", y_[y])) return false;
+
+	// Write z axis array
+	for (int z=0; z<z_.nItems(); ++z) if (!parser.writeLineF("%e\n", z_[z])) return false;
+
+	// Write values / errors
+	if (hasError_)
+	{
+		for (int x=0; x<x_.nItems(); ++x)
+		{
+			for (int y=0; y<y_.nItems(); ++y)
+			{
+				for (int z=0; z<z_.nItems(); ++z) if (!parser.writeLineF("%e  %e\n", values_.constAt(x,y,z), errors_.constAt(x,y,z))) return false;
+			}
+		}
+	}
+	else
+	{
+		for (int x=0; x<x_.nItems(); ++x)
+		{
+			for (int y=0; y<y_.nItems(); ++y)
+			{
+				for (int z=0; z<z_.nItems(); ++z) if (!parser.writeLineF("%e\n", values_.constAt(x,y,z))) return false;
+			}
+		}
+	}
+
+	return true;
+}
+
 /*
  * Parallel Comms
  */
 
 // Broadcast data
-bool Data3D::broadcast(ProcessPool& procPool, int rootRank)
+bool Data3D::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 {
 #ifdef PARALLEL
-	if (!procPool.broadcast(x_, rootRank)) return false;
-	if (!procPool.broadcast(y_, rootRank)) return false;
-	if (!procPool.broadcast(z_, rootRank)) return false;
-	if (!procPool.broadcast(values_, rootRank)) return false;
-	if (!procPool.broadcast(hasError_, rootRank)) return false;
-	if (!procPool.broadcast(errors_, rootRank)) return false;
+	if (!procPool.broadcast(x_, root)) return false;
+	if (!procPool.broadcast(y_, root)) return false;
+	if (!procPool.broadcast(z_, root)) return false;
+	if (!procPool.broadcast(values_.linearArray(), values_.linearArraySize(), root)) return false;
+	if (!procPool.broadcast(hasError_, root)) return false;
+	if (!procPool.broadcast(errors_.linearArray(), errors_.linearArraySize(), root)) return false;
 #endif
 	return true;
 }
@@ -595,9 +650,9 @@ bool Data3D::equality(ProcessPool& procPool)
 	if (!procPool.equality(x_)) return Messenger::error("Data3D x axis values not equivalent.\n");
 	if (!procPool.equality(y_)) return Messenger::error("Data3D y axis values not equivalent.\n");
 	if (!procPool.equality(z_)) return Messenger::error("Data3D z axis values not equivalent.\n");
-	if (!procPool.equality(values_)) return Messenger::error("Data3D values not equivalent.\n");
+	if (!procPool.equality(values_.linearArray(), values_.linearArraySize())) return Messenger::error("Data3D values not equivalent.\n");
 	if (!procPool.equality(hasError_)) return Messenger::error("Data3D error flag not equivalent.\n");
-	if (!procPool.equality(errors_)) return Messenger::error("Data3D error values not equivalent.\n");
+	if (!procPool.equality(errors_.linearArray(), errors_.linearArraySize())) return Messenger::error("Data3D error values not equivalent.\n");
 #endif
 	return true;
 }

@@ -1,7 +1,7 @@
 /*
 	*** Module Widget
 	*** src/modules/epsr/gui/modulewidget.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -30,7 +30,7 @@ class Dissolve;
 class Module;
 class PartialSet;
 class EPSRModule;
-class UChromaViewWidget;
+class DataViewer;
 
 // Module Widget
 class EPSRModuleWidget : public ModuleWidget
@@ -41,17 +41,17 @@ class EPSRModuleWidget : public ModuleWidget
 	private:
 	// Associated Module
 	EPSRModule* module_;
-	// UChromaViews contained within this widget
-	UChromaViewWidget* FQGraph_, *FQFitGraph_, *SQGraph_, *GRGraph_, *FRGraph_, *phiRGraph_, *phiMagGraph_, *errorsGraph_;
+	// DataViewers contained within this widget
+	DataViewer* FQGraph_, *FQFitGraph_, *SQGraph_, *GRGraph_, *FRGraph_, *phiRGraph_, *phiMagGraph_, *rFactorGraph_;
 	// Reference to Dissolve
 	Dissolve& dissolve_;
+	// Main form declaration
+	Ui::EPSRModuleWidget ui_;
 
 	public:
 	// Constructor / Destructor
 	EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
 	~EPSRModuleWidget();
-	// Main form declaration
-	Ui::EPSRModuleWidget ui;
 	// Update controls within widget
 	void updateControls();
 	// Disable sensitive controls within widget, ready for main code to run
@@ -76,6 +76,22 @@ class EPSRModuleWidget : public ModuleWidget
 	private:
 	// Set data targets in graphs
 	void setGraphDataTargets(EPSRModule* module);
+
+
+	/*
+	 * Debug Tab
+	 */
+	private:
+	// Temporary data currently shown on debug tab
+	List<Data1D> debugFunctionData_;
+
+	private:
+	// Update data shown on EP functions viewer
+	void updateDebugEPFunctionsGraph(int from, int to);
+
+	private slots:
+	void on_DebugFromSpin_valueChanged(int value);
+	void on_DebugToSpin_valueChanged(int value);
 };
 
 #endif

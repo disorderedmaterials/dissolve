@@ -1,7 +1,7 @@
 /*
 	*** Isotope Data
 	*** src/classes/isotopedata.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -25,6 +25,7 @@
 #include "templates/mpilistitem.h"
 
 // Forward Declarations
+class CoreData;
 class Isotope;
 class LineParser;
 
@@ -48,8 +49,8 @@ class IsotopeData : public MPIListItem<IsotopeData>
 	private:
 	// Reference Isotope
 	Isotope* isotope_;
-	// Integer population of Isotope
-	int population_;
+	// Population of Isotope
+	double population_;
 	// Local fractional population (e.g. within an AtomTypeData)
 	double fraction_;
 
@@ -57,15 +58,15 @@ class IsotopeData : public MPIListItem<IsotopeData>
 	// Initialise
 	bool initialise(Isotope* isotope);
 	// Add to population of Isotope
-	void add(int nAdd);
+	void add(double nAdd);
 	// Finalise, calculating local fractional population (e.g. within an AtomTypeData)
-	void finalise(int totalAtoms);
+	void finalise(double totalAtoms);
 	// Zero population and fraction
 	void zeroPopulation();
 	// Return reference Isotope
 	Isotope* isotope() const;
-	// Return population
-	int population() const;
+	// Return total population
+	double population() const;
 	// Return local fractional population (e.g. within an AtomTypeData)
 	double fraction() const;
 
@@ -77,7 +78,7 @@ class IsotopeData : public MPIListItem<IsotopeData>
 	// Write data through specified LineParser
 	bool write(LineParser& parser);
 	// Read data through specified LineParser
-	bool read(LineParser& parser);
+	bool read(LineParser& parser, const CoreData& coreData);
 
 
 	/*
@@ -85,7 +86,7 @@ class IsotopeData : public MPIListItem<IsotopeData>
 	 */
 	public:
 	// Broadcast data from Master to all Slaves
-	bool broadcast(ProcessPool& procPool, int root = 0);
+	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
 	// Check item equality
 	bool equality(ProcessPool& procPool);
 };

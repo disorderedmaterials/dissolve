@@ -1,7 +1,7 @@
 /*
 	*** Isotopologue Reference
 	*** src/classes/isotopologuereference.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -22,6 +22,7 @@
 #ifndef DISSOLVE_ISOTOPOLOGUEREFERENCE_H
 #define DISSOLVE_ISOTOPOLOGUEREFERENCE_H
 
+#include "genericitems/base.h"
 #include "templates/listitem.h"
 
 // Forward Declarations
@@ -32,7 +33,7 @@ class LineParser;
 class ProcessPool;
 
 // Isotopologue Reference
-class IsotopologueReference : public ListItem<IsotopologueReference>
+class IsotopologueReference : public ListItem<IsotopologueReference>, public GenericItemBase
 {
 	public:
 	// Constructor
@@ -73,6 +74,8 @@ class IsotopologueReference : public ListItem<IsotopologueReference>
 	void setWeight(double weight);
 	// Return weight
 	double weight();
+	// Return whether the supplied Configuration and Species match
+	bool matches(Configuration* cfg, Species* sp) const;
 
 
 	/*
@@ -81,10 +84,10 @@ class IsotopologueReference : public ListItem<IsotopologueReference>
 	public:
 	// Return class name
 	static const char* itemClassName();
+	// Read data through specified LineParser
+	bool read(LineParser& parser, const CoreData& coreData);
 	// Write data through specified LineParser
 	bool write(LineParser& parser);
-	// Read data through specified LineParser
-	bool read(LineParser& parser);
 
 
 	/*
@@ -92,7 +95,7 @@ class IsotopologueReference : public ListItem<IsotopologueReference>
 	 */
 	public:
 	// Broadcast data
-	bool broadcast(ProcessPool& procPool, int rootRank = 0);
+	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
 	// Check item equality
 	bool equality(ProcessPool& procPool);
 };

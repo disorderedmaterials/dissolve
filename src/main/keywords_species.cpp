@@ -1,7 +1,7 @@
 /*
 	*** Keyword Parsing - Species Block
 	*** src/main/keywords_species.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -33,6 +33,7 @@ KeywordData SpeciesBlockData[] = {
 	{ "Atom",			6,	"Define an Atom in the Species" },
 	{ "AutoAddGrains",		0,	"Automatically add Grains to cover all atoms in the Species" },
 	{ "Bond",			3,	"Define a bond interaction within the Species" },
+	{ "BondType",			3,	"Sets the type of a specific bond" },
 	{ "Charge",			2,	"Specify the atomic charge for an individual atom" },
 	{ "EndSpecies",			0,	"Ends the current Species definition" },
 	{ "Grain",			1,	"Define a Grain within the Species " },
@@ -78,6 +79,7 @@ bool SpeciesBlock::parse(LineParser& parser, Dissolve* dissolve, Species* specie
 	SpeciesBond::BondFunction bf;
 	SpeciesAngle::AngleFunction af;
 	SpeciesTorsion::TorsionFunction tf;
+	SpeciesBond::BondType bt;
 	Isotope* tope;
 	bool blockDone = false, error = false;
 
@@ -158,7 +160,7 @@ bool SpeciesBlock::parse(LineParser& parser, Dissolve* dissolve, Species* specie
 					error = true;
 					break;
 				}
-				i = species->addAtom(el, parser.argd(3), parser.argd(4), parser.argd(5));
+				i = species->addAtom(el, parser.arg3d(3));
 				if (parser.hasArg(7)) i->setCharge(parser.argd(7));
 
 				// Locate the AtomType assigned to the Atom
@@ -172,6 +174,13 @@ bool SpeciesBlock::parse(LineParser& parser, Dissolve* dissolve, Species* specie
 
 				// Finally, set AtomType for the Atom
 				i->setAtomType(at);
+
+				// Check that the AtomType was successfully assigned, and raise an error if not
+				if (!i->atomType())
+				{
+					error = true;
+					break;
+				}
 				break;
 			case (SpeciesBlock::AutoAddGrainsKeyword):
 				species->autoAddGrains();
@@ -232,6 +241,26 @@ bool SpeciesBlock::parse(LineParser& parser, Dissolve* dissolve, Species* specie
 				// Perform any final setup on the Bond
 				b->setUp();
 				break;
+			case (SpeciesBlock::BondTypeKeyword):
+				// Find the specified bond
+				b = species->hasBond(parser.argi(1)-1, parser.argi(2)-1);
+				if (!b)
+				{
+					Messenger::error("Tried to set the bond type of bond between atoms %i and %i, but this bond does not exist.\n", parser.argi(1), parser.argi(2));
+					error = true;
+					break;
+				}
+
+				// Get the bond type
+				bt = SpeciesBond::bondType(parser.argc(3));
+				if (bt == SpeciesBond::nBondTypes)
+				{
+					Messenger::error("Bond function type '%s' requires %i parameters\n", SpeciesBond::bondFunction(bf), SpeciesBond::nFunctionParameters(bf));
+					error = true;
+					break;
+				}
+				b->setBondType(bt);
+				break;
 			case (SpeciesBlock::ChargeKeyword):
 				i = species->atom(parser.argi(1) - 1);
 				if (i) i->setCharge(parser.argd(2));
@@ -243,7 +272,6 @@ bool SpeciesBlock::parse(LineParser& parser, Dissolve* dissolve, Species* specie
 				break;
 			case (SpeciesBlock::EndSpeciesKeyword):
 				species->updateUsedAtomTypes();
-				species->addNaturalIsotopologue();
 				species->updateGrains();
 				species->centreAtOrigin();
 				species->orderAtomsWithinGrains();
@@ -266,7 +294,7 @@ bool SpeciesBlock::parse(LineParser& parser, Dissolve* dissolve, Species* specie
 				}
 				break;
 			case (SpeciesBlock::IsotopologueKeyword):
-				iso = species->addIsotopologue(species->uniqueIsotopologueName(parser.argc(1)));
+				iso = species->addIsotopologue(species->uniqueIsotopologueName(parser.argc(1)), dissolve->atomTypes());
 				Messenger::print("Added Isotopologue '%s' to Species '%s'\n", iso->name(), species->name());
 				// Each parser argument is a string of the form ATOMTYPE=ISO
 				for (int n=2; n<parser.nArgs(); ++n)
@@ -386,6 +414,13 @@ bool SpeciesBlock::parse(LineParser& parser, Dissolve* dissolve, Species* specie
 		
 		// End of block?
 		if (blockDone) break;
+	}
+
+	// If there's no error and the blockDone flag isn't set, return an error
+	if (!error && !blockDone)
+	{
+		Messenger::error("Unterminated %s block found.\n", BlockKeywords::blockKeyword(BlockKeywords::SpeciesBlockKeyword));
+		error = true;
 	}
 
 	return (!error);

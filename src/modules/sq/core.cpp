@@ -1,7 +1,7 @@
 /*
 	*** SQ Module - Core Functions
 	*** src/modules/sq/core.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -21,9 +21,6 @@
 
 #include "modules/sq/sq.h"
 
-// Static Members
-List<Module> SQModule::instances_;
-
 /*
  * Constructor / Destructor
  */
@@ -31,17 +28,8 @@ List<Module> SQModule::instances_;
 // Constructor
 SQModule::SQModule() : Module()
 {
-	// Add to instances list and set unique name for this instance
-	uniqueName_.sprintf("%s%02i", type(), instances_.nItems());
-	instances_.own(this);
-
 	// Set up variables / control parameters
 	setUpKeywords();
-
-	// Set representative colour
-	colour_[0] = 0;
-	colour_[1] = 0;
-	colour_[2] = 200;
 }
 
 // Destructor
@@ -54,13 +42,7 @@ SQModule::~SQModule()
  */
 
 // Create instance of this module
-List<Module>& SQModule::instances()
-{
-	return instances_;
-}
-
-// Create instance of this module
-Module* SQModule::createInstance()
+Module* SQModule::createInstance() const
 {
 	return new SQModule;
 }

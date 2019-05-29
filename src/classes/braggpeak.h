@@ -1,7 +1,7 @@
 /*
 	*** BraggPeak
 	*** src/classes/braggpeak.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -24,7 +24,7 @@
 
 #include "templates/array2d.h"
 #include "templates/mpilistitem.h"
-#include "base/genericitembase.h"
+#include "genericitems/base.h"
 
 // Forward Declarations
 /* none */
@@ -95,7 +95,7 @@ class BraggPeak : public MPIListItem<BraggPeak>,  public GenericItemBase
 	 */
 	public:
 	// Broadcast data from root to all other processes
-	bool broadcast(ProcessPool& procPool, int rootRank);
+	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
 	// Check item equality
 	bool equality(ProcessPool& procPool);
 };

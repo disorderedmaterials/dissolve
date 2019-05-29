@@ -1,7 +1,7 @@
 /*
 	*** Calculate RDF Module - Core
 	*** src/modules/calculate/rdf/core.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -21,9 +21,6 @@
 
 #include "modules/calculate/rdf/rdf.h"
 
-// Static Members
-List<Module> CalculateRDFModule::instances_;
-
 /*
  * Constructor / Destructor
  */
@@ -31,9 +28,9 @@ List<Module> CalculateRDFModule::instances_;
 // Constructor
 CalculateRDFModule::CalculateRDFModule() : Module()
 {
-	// Add to instances list and set unique name for this instance
-	instances_.own(this);
-	uniqueName_.sprintf("%s%02i", type(), instances_.nItems()-1);
+	// Set unique name for this instance of the Module
+	static int instanceId = 0;
+	uniqueName_.sprintf("%s%02i", type(), instanceId++);
 
 	// Set up variables / control parameters
 	setUpKeywords();
@@ -49,13 +46,7 @@ CalculateRDFModule::~CalculateRDFModule()
  */
 
 // Create instance of this module
-List<Module>& CalculateRDFModule::instances()
-{
-	return instances_;
-}
-
-// Create instance of this module
-Module* CalculateRDFModule::createInstance()
+Module* CalculateRDFModule::createInstance() const
 {
 	return new CalculateRDFModule;
 }

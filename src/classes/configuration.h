@@ -1,7 +1,7 @@
 /*
 	*** Configuration
 	*** src/classes/configuration.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -31,14 +31,16 @@
 #include "classes/molecule.h"
 #include "classes/speciesinfo.h"
 #include "classes/sitestack.h"
-#include "module/list.h"
+#include "module/layer.h"
 #include "modules/import/formats.h"
 #include "math/histogram1d.h"
 #include "math/interpolator.h"
 #include "math/data1d.h"
 #include "base/processpool.h"
-#include "base/genericlist.h"
+#include "genericitems/list.h"
+#include "base/version.h"
 #include "templates/vector3.h"
+#include "templates/objectstore.h"
 #include "templates/orderedlist.h"
 #include "templates/array.h"
 #include "templates/dynamicarray.h"
@@ -52,7 +54,7 @@ class PotentialMap;
 class Species;
 
 // Configuration
-class Configuration : public ListItem<Configuration>
+class Configuration : public ListItem<Configuration>, public ObjectStore<Configuration>
 {
 	public:
 	// Constructor
@@ -61,16 +63,36 @@ class Configuration : public ListItem<Configuration>
 	~Configuration();
 	// Assignment operator
 	void operator=(Configuration& source);
+	// Clear all data
+	void clear();
+
+
+	/*
+	 * Basic Information
+	 */
+	private:
+	// Name of the Configuration
+	CharString name_;
+	// Nice name (generated from name_) used for output files
+	CharString niceName_;
+	// Version of the Configuration
+	VersionCounter version_;
+
+	public:
+	// Set name of the Configuration
+	void setName(const char* name);
+	// Return name of the Configuration
+	const char* name();
+	// Return nice name of the Configuration
+	const char* niceName();
+	// Return version
+	int version() const;
 
 
 	/*
 	 * Composition
 	 */
 	private:
-	// Name of the configuration
-	CharString name_;
-	// Nice name (generated from name_) used for output files
-	CharString niceName_;
 	// Reference list of Species used by the Configuration and their relative populations
 	List<SpeciesInfo> usedSpecies_;
 	// Integer multiplier of used relative species populations
@@ -85,12 +107,6 @@ class Configuration : public ListItem<Configuration>
 	double temperature_;
 
 	public:
-	// Set name of the configuration
-	void setName(const char* name);
-	// Return name of the configuration
-	const char* name();
-	// Return nice name of the configuration
-	const char* niceName();
 	// Add Species to list of those used by the Configuration
 	SpeciesInfo* addUsedSpecies(Species* sp, double relativePopulation);
 	// Return SpeciesInfo for specified Species
@@ -121,8 +137,6 @@ class Configuration : public ListItem<Configuration>
 	void setTemperature(double t);
 	// Return configuration temperature
 	double temperature();
-	// Clear all data
-	void clear();
 
 
 	/*
@@ -147,6 +161,8 @@ class Configuration : public ListItem<Configuration>
 	int coordinateIndex_;
 
 	public:
+	// Empty contents of Configuration, leaving core definitions intact
+	void empty();
 	// Initialise empty Molecule and Grain arrays
 	void initialise(int nMolecules, int nGrains);
 	// Initialise from assigned Species populations
@@ -177,6 +193,8 @@ class Configuration : public ListItem<Configuration>
 	int nAtoms() const;
 	// Return Atom array
 	DynamicArray<Atom>& atoms();
+	// Return Atom array (const)
+	const DynamicArray<Atom>& constAtoms() const;
 	// Return nth Atom
 	Atom* atom(int n);
 	// Add new Bond to Configuration, with Molecule parent specified
@@ -187,6 +205,8 @@ class Configuration : public ListItem<Configuration>
 	int nBonds() const;
 	// Return Bond array
 	DynamicArray<Bond>& bonds();
+	// Return Bond array (const)
+	const DynamicArray<Bond>& constBonds() const;
 	// Return nth Bond
 	Bond* bond(int n);
 	// Add new Angle to Configuration, with Molecule parent specified
@@ -216,9 +236,9 @@ class Configuration : public ListItem<Configuration>
 	// Return AtomTypeList for this Configuration
 	const AtomTypeList& usedAtomTypesList() const;
 	// Return number of atom types used in this Configuration
-	int nUsedAtomTypes();
+	int nUsedAtomTypes() const;
 	// Return current coordinate index
-	int coordinateIndex();
+	int coordinateIndex() const;
 	// Increment current coordinate index
 	void incrementCoordinateIndex();
 	// Load coordinates from specified parser
@@ -297,6 +317,8 @@ class Configuration : public ListItem<Configuration>
 	Interpolator& boxNormalisationInterpolation();
 	// Return cell array
 	CellArray& cells();
+	// Return cell array
+	const CellArray& constCells() const;
 
 
 	/*
@@ -351,24 +373,26 @@ class Configuration : public ListItem<Configuration>
 	void updateCellLocation(Atom* i);
 	// Update Cell location of specified Molecule
 	void updateCellLocation(Molecule* mol);
-	// Update Cell location of specified Atoms (in array)
-	void updateCellLocation(int nAtoms, Atom** atoms);
+	// Update Cell location of specified Atom indices (in array)
+	void updateCellLocation(int nIndices, int* atomIndices, int indexOffset);
 
 
 	/*
 	 * Modules
 	 */
 	private:
-	// List of Modules associated to this Configuration
-	ModuleList modules_;
+	// Module layer associated to this Configuration
+	ModuleLayer moduleLayer_;
 	// Variables set by Modules
 	GenericList moduleData_;
 
 	public:
-	// Add Module (or an instance of it) to the Configuration
-	Module* addModule(Module* masterInstance);
+	// Add Module to the Configuration
+	bool addModule(Module* module);
 	// Return number of Modules associated to this Configuration
 	int nModules() const;
+	// Return Module layer for this Configuration
+	ModuleLayer& moduleLayer();
 	// Return list of Modules associated to this Configuration
 	ModuleList& modules();
 	// Return list of variables set by Modules
@@ -381,26 +405,6 @@ class Configuration : public ListItem<Configuration>
 	public:
 	// Perform any preparative tasks for the Configuration, before Module processing begins
 	bool prepare(const PotentialMap& potentialMap);
-
-
-	/*
-	 * Ensemble
-	 */
-	private:
-	// Whether ensemble file is to be appended
-	bool appendEnsemble_;
-	// Frequency at which to append ensemble
-	int ensembleFrequency_;
-
-	public:
-	// Set whether ensemble file is to be appended
-	void setAppendEnsemble(bool b);
-	// Return whether ensemble file is to be appended
-	bool appendEnsemble() const;
-	// Set  frequency at which to append ensemble
-	void setEnsembleFrequency(int frequency);
-	// Return frequency at which to append ensemble
-	int ensembleFrequency() const;
 
 
 	/*
@@ -424,7 +428,7 @@ class Configuration : public ListItem<Configuration>
 
 	public:
 	// Set up process pool for this Configuration
-	bool setUpProcessPool(Array<int> worldRanks);
+	bool setUpProcessPool(Array<int> worldRanks, int groupPopulation);
 	// Return process pool for this Configuration
 	ProcessPool& processPool();
 	// Broadcast coordinate from specified root process

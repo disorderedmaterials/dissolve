@@ -1,7 +1,7 @@
 /*
 	*** Dissolve - Master Terms
 	*** src/main/masterterms.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -37,6 +37,7 @@ MasterIntra* Dissolve::addMasterBond(const char* name)
 	// OK to add new master Bond
 	MasterIntra* b = masterBonds_.add();
 	b->setName(name);
+	b->setType(SpeciesIntra::IntramolecularBond);
 
 	return b;
 }
@@ -82,6 +83,7 @@ MasterIntra* Dissolve::addMasterAngle(const char* name)
 	// OK to add new master Angle
 	MasterIntra* a = masterAngles_.add();
 	a->setName(name);
+	a->setType(SpeciesIntra::IntramolecularAngle);
 
 	return a;
 }
@@ -127,6 +129,7 @@ MasterIntra* Dissolve::addMasterTorsion(const char* name)
 	// OK to add new master Torsion
 	MasterIntra* t = masterTorsions_.add();
 	t->setName(name);
+	t->setType(SpeciesIntra::IntramolecularTorsion);
 
 	return t;
 }
@@ -157,4 +160,25 @@ MasterIntra* Dissolve::hasMasterTorsion(const char* name) const
 
 	for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next) if (DissolveSys::sameString(trimmedName, t->name())) return t;
 	return NULL;
+}
+
+// Return the named master term (of any form) if it exists
+MasterIntra* Dissolve::findMasterTerm(const char* name) const
+{
+	// Remove leading '@' if necessary
+	const char* trimmedName = name[0] == '@' ? &name[1] : name;
+
+	for (MasterIntra* b = masterBonds_.first(); b != NULL; b = b->next) if (DissolveSys::sameString(trimmedName, b->name())) return b;
+	for (MasterIntra* a = masterAngles_.first(); a != NULL; a = a->next) if (DissolveSys::sameString(trimmedName, a->name())) return a;
+	for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next) if (DissolveSys::sameString(trimmedName, t->name())) return t;
+
+	return NULL;
+}
+
+// Clear all MasterTerms
+void Dissolve::clearMasterTerms()
+{
+	masterBonds_.clear();
+	masterAngles_.clear();
+	masterTorsions_.clear();
 }

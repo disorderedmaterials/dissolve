@@ -1,7 +1,7 @@
 /*
 	*** Poisson Function Approximation
 	*** src/math/poissonfit.cpp
-	Copyright T. Youngs 2018
+	Copyright T. Youngs 2019
 
 	This file is part of Dissolve.
 
@@ -70,12 +70,16 @@ double PoissonFit::poisson(const double x, const int nIndex) const
 	/*
 	 * Functional Form [Phys. Rev. B, 72, 104204 (2005) - Eq 7]
 	 * 
-	 * 			       1	    (   r   )n     (     r   )
-	 * p[n](r,sigma) = ------------------------ ( ----- )  exp ( - ----- )
-	 * 		   4 pi rho sigma**3 (n+2)! ( sigma )      (   sigma )
+	 * 			    1	        (   r   )n     (     r   )
+	 * p[n](r,sigma) = -------------------- ( ----- )  exp ( - ----- )
+	 * 		   4 pi sigma**3 (n+2)! ( sigma )      (   sigma )
 	 *
 	 * Overflows possible from large values of n, so treat everything logged and explicitly check for 
 	 * values going over some predefined limit (expMax_).
+	 *
+	 * Note: Equation as written does not contain a factor of rho in the denominator, but such a factor
+	 * is present in the generating function (calc_pwrexpr) in EPSR. The factor of rho is not applied here,
+	 * being introduced in the process of generating the empirical potentials instead.
 	 */
 
 	 // Calculate natural log of denominator in prefactor
@@ -124,24 +128,41 @@ const Data1D& PoissonFit::approximation() const
 	return approximateData_;
 }
 
-
 // Calculate and return approximate function in requested space
-Data1D PoissonFit::approximation(FunctionSpace::SpaceType space, double preFactor, double xMin, double xStep, double xMax) const
+Data1D PoissonFit::approximation(FunctionSpace::SpaceType space, double factor, double xMin, double xStep, double xMax) const
 {
-	Data1D ft;
+	Data1D approx;
 	double x = xMin;
 	while (x <= xMax)
 	{
-		ft.addPoint(x, 0.0);
+		approx.addPoint(x, 0.0);
 		x += xStep;
 	}
 
 	// Loop over defined functions
-	for (int n=0; n<nPoissons_; ++n) addFunction(ft, space, C_.constAt(n), n);
+	for (int n=0; n<nPoissons_; ++n) addFunction(approx, space, C_.constAt(n), n);
 
-	ft.values() *= preFactor;
+	approx.values() *= factor;
 
-	return ft;
+	return approx;
+}
+
+// Calculate and return single function in requested space
+Data1D PoissonFit::singleFunction(int index, FunctionSpace::SpaceType space, double factor, double xMin, double xStep, double xMax) const
+{
+	Data1D func;
+	double x = xMin;
+	while (x <= xMax)
+	{
+		func.addPoint(x, 0.0);
+		x += xStep;
+	}
+
+	addFunction(func, space, C_.constAt(index), index);
+
+	func.values() *= factor;
+
+	return func;
 }
 
 // Set coefficients from supplied values
@@ -162,6 +183,7 @@ void PoissonFit::set(FunctionSpace::SpaceType space, double rMax, Array<double> 
 	// Pre-calculate the necessary terms and function data
 	preCalculateTerms();
 	updatePrecalculatedFunctions(space);
+	generateApproximation(space);
 }
 
 // Return number of Poisson functions in fit
@@ -321,7 +343,9 @@ double PoissonFit::sweepFitC(FunctionSpace::SpaceType space, double xMin, int sa
 			}
 
 			// Optimise this set of Gaussians
-			currentError_ = poissonMinimiser.minimise(100, 0.01);
+			poissonMinimiser.setMaxIterations(100);
+			poissonMinimiser.setStepSize(0.01);
+			currentError_ = poissonMinimiser.minimise();
 			Messenger::printVerbose("PoissonFit::reFitC() - P = %i, error = %f\n", p, currentError_);
 
 			// If we are not at the end of the Gaussian array, move the index backwards so the next set overlaps a little with this one
@@ -357,6 +381,8 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, int nPoissons, 
 
 	// Perform Monte Carlo minimisation on the amplitudes
 	MonteCarloMinimiser<PoissonFit> poissonMinimiser(*this, &PoissonFit::costTabulatedC);
+	poissonMinimiser.setMaxIterations(nIterations);
+	poissonMinimiser.setStepSize(initialStepSize);
 	poissonMinimiser.enableParameterSmoothing(smoothingThreshold, smoothingK, smoothingM);
 	alphaSpace_ = FunctionSpace::ReciprocalSpace;
 
@@ -369,7 +395,7 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, int nPoissons, 
 		poissonMinimiser.addTarget(C_[n]);
 	}
 
-	currentError_ = poissonMinimiser.minimise(nIterations, initialStepSize);
+	currentError_ = poissonMinimiser.minimise();
 
 	// Perform a final grouped refit of the amplitudes
 	if (reFitAtEnd) sweepFitC(FunctionSpace::ReciprocalSpace, rMin);
@@ -402,6 +428,8 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, Array<double> c
 
 	// Perform Monte Carlo minimisation on the amplitudes
 	MonteCarloMinimiser<PoissonFit> poissonMinimiser(*this, &PoissonFit::costTabulatedC);
+	poissonMinimiser.setMaxIterations(nIterations);
+	poissonMinimiser.setStepSize(initialStepSize);
 	poissonMinimiser.enableParameterSmoothing(smoothingThreshold, smoothingK, smoothingM);
 	alphaSpace_ = FunctionSpace::ReciprocalSpace;
 
@@ -414,7 +442,7 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, Array<double> c
 		poissonMinimiser.addTarget(C_[n]);
 	}
 
-	currentError_ = poissonMinimiser.minimise(nIterations, initialStepSize);
+	currentError_ = poissonMinimiser.minimise();
 
 	// Perform a final grouped refit of the amplitudes
 	if (reFitAtEnd) sweepFitC(FunctionSpace::ReciprocalSpace, rMin);

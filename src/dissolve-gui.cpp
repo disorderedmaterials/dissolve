@@ -1,7 +1,7 @@
 /*
 	*** Dissolve GUI Main
 	*** src/dissolve-gui.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of dissolve.
 
@@ -22,7 +22,6 @@
 #include "version.h"
 #include "base/messenger.h"
 #include "main/dissolve.h"
-#include "module/registry.h"
 #include "base/processpool.h"
 #include "gui/gui.h"
 #include <time.h>
@@ -38,12 +37,13 @@ int main(int argc, char **argv)
 	ProcessPool::initialiseMPI(&argc, &argv);
 #endif
 
-	// Instantiate main class
-	Dissolve dissolve;
+	// Instantiate main classes
+	CoreData coreData;
+	Dissolve dissolve(coreData);
 
 	// Parse CLI options...
 	int n = 1;
-	CharString inputFile;
+	CharString inputFile, restartFile;
 	int nIterations = 0;
 	bool ignoreRestart = false, ignoreLayout = false, dontWriteRestart = false;
 	while (n < argc)
@@ -85,6 +85,18 @@ int main(int argc, char **argv)
 				case ('q'):
 					Messenger::setQuiet(true);
 					break;
+				case ('t'):
+					// Next argument is filename
+					++n;
+					if (n == argc)
+					{
+						Messenger::error("Expected restart data filename.\n");
+						Messenger::ceaseRedirect();
+						return 1;
+					}
+					restartFile = argv[n];
+					Messenger::print("Restart data will be loaded from '%s'.\n", restartFile.get());
+					break;
 				case ('v'):
 					Messenger::setVerbose(true);
 					Messenger::printVerbose("Verbose mode enabled.\n");
@@ -116,16 +128,15 @@ int main(int argc, char **argv)
 	}
 
 	// Print GPL license information
-	Messenger::print("Dissolve-GUI version %s, Copyright (C) 2012-2018 T. Youngs.\n", DISSOLVEVERSION);
+	Messenger::print("Dissolve-GUI version %s, Copyright (C) 2012-2019 T. Youngs.\n", DISSOLVEVERSION);
 	Messenger::print("Source repository: %s.\n", DISSOLVEREPO);
 	Messenger::print("Dissolve comes with ABSOLUTELY NO WARRANTY.\n");
 	Messenger::print("This is free software, and you are welcome to redistribute it under certain conditions.\n");
 	Messenger::print("For more details read the GPL at <http://www.gnu.org/copyleft/gpl.html>.\n");
 
-	// Register modules and print info
-	Messenger::banner("Register Modules");
-	ModuleRegistry moduleRegistry;
-	if (!ModuleList::printMasterModuleInformation())
+	// Register master Modules
+	Messenger::banner("Available Modules");
+	if (!dissolve.registerMasterModules())
 	{
 		ProcessPool::finalise();
 		return 1;
@@ -162,7 +173,7 @@ int main(int argc, char **argv)
 	DissolveWindow dissolveWindow(dissolve);
 
 	// If an input file was specified, load it here
-	if ((!inputFile.isEmpty()) && (!dissolveWindow.openFile(inputFile, ignoreRestart, ignoreLayout)))
+	if ((!inputFile.isEmpty()) && (!dissolveWindow.openFileFromCLI(inputFile, restartFile, ignoreRestart, ignoreLayout)))
 	{
 		ProcessPool::finalise();
 		return 1;
@@ -179,9 +190,7 @@ int main(int argc, char **argv)
 	}
 
 	// Update and show the main window
-	dissolveWindow.updateControls();
-	dissolveWindow.updateStatus();
-	dissolveWindow.updateFileLabels();
+	dissolveWindow.fullUpdate();
 	dissolveWindow.addOutputHandler();
 	dissolveWindow.show();
 

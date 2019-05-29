@@ -1,7 +1,7 @@
 /*
 	*** SpeciesBond Definition
 	*** src/classes/speciesbond.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -32,6 +32,7 @@ SpeciesBond::SpeciesBond() : SpeciesIntra(), ListItem<SpeciesBond>()
 	parent_ = NULL;
 	i_ = NULL;
 	j_ = NULL;
+	bondType_ = SpeciesBond::SingleBond;
 	form_ = SpeciesBond::nBondFunctions;
 }
 
@@ -68,7 +69,7 @@ SpeciesAtom* SpeciesBond::j() const
 }
 
 // Return the 'other' SpeciesAtom in the SpeciesBond
-SpeciesAtom* SpeciesBond::partner(SpeciesAtom* i) const
+SpeciesAtom* SpeciesBond::partner(const SpeciesAtom* i) const
 {
 	return (i == i_ ? j_ : i_);
 }
@@ -115,6 +116,51 @@ bool SpeciesBond::matches(SpeciesAtom* i, SpeciesAtom* j) const
 	if ((i_ == i) && (j_ == j)) return true;
 	if ((i_ == j) && (j_ == i)) return true;
 	return false;
+}
+
+/*
+ * Bond Type
+ */
+
+// Bond type keywords
+const char* BondTypeKeywords[] = { "Single", "Double", "Triple", "Quadruple", "Aromatic" };
+double BondTypeOrders[] = { 1.0, 2.0, 3.0, 4.0, 1.5 };
+
+// Convert bond type string to functional form
+SpeciesBond::BondType SpeciesBond::bondType(const char* s)
+{
+	for (int n=0; n<SpeciesBond::nBondTypes; ++n) if (DissolveSys::sameString(s, BondTypeKeywords[n])) return (SpeciesBond::BondType) n;
+	return SpeciesBond::nBondTypes;
+}
+
+// Return bond type functional form text
+const char* SpeciesBond::bondType(SpeciesBond::BondType bt)
+{
+	return BondTypeKeywords[bt];
+}
+
+// Return bond order for specified bond type
+double SpeciesBond::bondOrder(SpeciesBond::BondType bt)
+{
+	return BondTypeOrders[bt];
+}
+
+// Set bond type
+void SpeciesBond::setBondType(BondType type)
+{
+	bondType_ = type;
+}
+
+// Return bond type
+SpeciesBond::BondType SpeciesBond::bondType() const
+{
+	return bondType_;
+}
+
+// Return bond order for current bond type
+double SpeciesBond::bondOrder() const
+{
+	return SpeciesBond::bondOrder(bondType_);
 }
 
 /*
@@ -175,6 +221,43 @@ void SpeciesBond::setUp()
 		double massJ = AtomicMass::mass(j_->element());
 		parameters_[3] = params[1] / sqrt((massI + massJ) / (massI * massJ));
 	}
+}
+
+// Return fundamental frequency for the interaction
+double SpeciesBond::fundamentalFrequency(double reducedMass) const
+{
+	// Get pointer to relevant parameters array
+	const double* params = parameters();
+
+	double k = 0.0;
+	if (form() == SpeciesBond::HarmonicForm) k = params[0];
+	else if (form() == SpeciesBond::EPSRForm) k = params[0];
+	else if (form() == SpeciesBond::SoftHarmonicForm) k = params[0];
+	else
+	{
+		Messenger::error("Functional form of SpeciesBond term not set, or no force constant available, so can't determine fundamental frequency.\n");
+		return 0.0;
+	}
+
+	// Convert force constant from (assumed) kJ mol-1 A-2 into J m-2 (kg s-2)
+	k *= 1000.0 * 1.0e20 / AVOGADRO;
+// 	printf("K = %f\n", k);
+
+	// Convert reduced mass from amu to kg
+	double mu = reducedMass / (AVOGADRO * 1000.0);
+// 	printf("mu = %e\n", mu);
+
+	// Calculate fundamental frequency
+	double v = (1.0 / TWOPI) * sqrt(k / mu);
+// 	printf("v = %e\n", v);
+
+	return v;
+}
+
+// Return type of this interaction
+SpeciesIntra::IntramolecularType SpeciesBond::type() const
+{
+	return SpeciesIntra::IntramolecularBond;
 }
 
 // Return energy for specified distance

@@ -1,7 +1,7 @@
 /*
 	*** Molecule
 	*** src/classes/molecule.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -130,8 +130,6 @@ class Molecule : public DynamicArrayObject<Molecule>
 	public:
 	// Select Atoms along any path from the specified one
 	void selectFromAtom(Atom* i, RefList<Atom,bool>& selectedAtoms, Bond* excludedBond1 = NULL, Bond* excludedBond2 = NULL);
-	// Recalculate attached Atom lists for all intramolecular terms involved in the Molecule
-	void updateAttachedAtomLists();
 
 
 	/*
@@ -145,13 +143,11 @@ class Molecule : public DynamicArrayObject<Molecule>
 	// Transform molecule with supplied matrix, using centre of geometry as the origin
 	void transform(const Box* box, const Matrix3& transformationMatrix);
 	// Transform selected atoms with supplied matrix, around specified origin
-	void transform(const Box* box, const Matrix3& transformationMatrix, const Vec3< double >& origin, int nTargetAtoms, Atom** targetAtoms);
+	void transform(const Box* box, const Matrix3& transformationMatrix, const Vec3< double >& origin, int nTargetAtoms, int* targetAtoms);
 	// Translate whole molecule by the delta specified
 	void translate(const Vec3<double> delta);
 	// Translate specified atoms by the delta specified
-	void translate(const Vec3<double>& delta, int nTargetAtoms, Atom** targetAtoms);
-	// Randomise conformation by rotating around bond terms
-	void randomiseConformation(const Box* box);
+	void translate(const Vec3<double>& delta, int nTargetAtoms, int* targetAtoms);
 };
 
 #endif

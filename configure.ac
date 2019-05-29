@@ -3,7 +3,7 @@
 AC_PREREQ(2.60)
 
 # Set program name, version and source directory
-m4_define([DISSOLVE_VERSION],[0.36.0])
+m4_define([DISSOLVE_VERSION],[0.4.0])
 AC_INIT([dissolve], DISSOLVE_VERSION)
 AC_CONFIG_AUX_DIR(config)
 AC_CANONICAL_TARGET
@@ -21,13 +21,13 @@ GUI_INCLUDES=""
 
 
 # Determine C++ compiler - Parallel Build?
-AC_ARG_WITH([parallel], [AC_HELP_STRING([--with-parallel], [Request parallel code (requires mpic++ in path) [default="no"]])], [with_parallel="yes"], [with_parallel="no"])
-AM_CONDITIONAL([BUILDPARALLEL], [test "$with_parallel" = "yes"])
-if test "$with_parallel" = "yes"; then
+AC_ARG_WITH([parallel], [AC_HELP_STRING([--with-parallel], [Request parallel compilation with specified MPI compiler target (mpic++ if no arg is given) [default="no"]])], [if test "$withval" = "yes"; then with_parallel="mpic++"; else with_parallel="$withval"; fi], [with_parallel="no"])
+AM_CONDITIONAL([BUILDPARALLEL], [test "$with_parallel" != "no"])
+if test "$with_parallel" != "no"; then
   AC_DEFINE([PARALLEL], [1], [Parallel code enabled])
-  if test "x$CXX" = "x"; then
-    CXX="mpic++"
-  fi
+  #if test "x$CXX" = "x"; then
+    CXX="$with_parallel"
+  #fi
   PARALLEL_CFLAGS="-DPARALLEL"
 fi
 
@@ -42,6 +42,7 @@ fi
 # Check other basic requirements
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
+AC_PROG_YACC
 
 
 # Configuration options - Qt Tools
@@ -74,9 +75,6 @@ if test "$with_gui" = "yes"; then
   PKG_CHECK_MODULES(QTWIDGETS, Qt5Widgets >= 5.0.0)
   PKG_CHECK_MODULES(QTPRINT, Qt5PrintSupport >= 5.0.0)
 
-  # Make sure Yacc/Bison is available
-  AC_PROG_YACC
-
   # Find Freetype and FTGL (with pkgconfig)
   PKG_CHECK_MODULES(FREETYPE, freetype2 >= 2.0)
   PKG_CHECK_MODULES(FTGL, ftgl >= 2.0)
@@ -86,15 +84,6 @@ if test "$with_gui" = "yes"; then
   GUI_CFLAGS="-fPIC"
   GUI_INCLUDES=" $QTGUI_CFLAGS $QTWIDGETS_CFLAGS $QTPRINT_CFLAGS $FTGL_CFLAGS"
 fi
-
-# Readline include dir
-RLINCDIR=""
-AC_ARG_WITH([readline-includes],[AC_HELP_STRING([--with-readline-includes=<dir>],
-    [Specify location of readline include files [default="/usr/include/readline"]])], ,
-    [with_readline_includes="/usr/include/readline"])
-RLINCDIR="$with_readline_includes"
-AC_CHECK_HEADER([$RLINCDIR/readline.h],,[AC_MSG_ERROR([Cannot find headers for readline.])])
-
 
 # Build Directory (used when packaging)
 BUILDDIR=""
@@ -130,8 +119,6 @@ VERSION=DISSOLVE_VERSION
 AC_SUBST(VERSION)
 DISSOLVE_CFLAGS="$PARALLEL_CFLAGS $CHECK_CFLAGS"
 AC_SUBST(DISSOLVE_CFLAGS)
-DISSOLVE_READLINE="-L$RLINCDIR"
-AC_SUBST(DISSOLVE_READLINE)
 AC_SUBST(QTMOC)
 AC_SUBST(QTUIC)
 AC_SUBST(QTRCC)
@@ -161,6 +148,8 @@ AC_CONFIG_FILES(src/analyse/nodes/Makefile)
 AC_CONFIG_FILES(src/base/Makefile)
 AC_CONFIG_FILES(src/classes/Makefile)
 AC_CONFIG_FILES(src/data/Makefile)
+AC_CONFIG_FILES(src/data/ff/Makefile)
+AC_CONFIG_FILES(src/expression/Makefile)
 AC_CONFIG_FILES(src/main/Makefile)
 AC_CONFIG_FILES(src/math/Makefile)
 AC_CONFIG_FILES(src/module/Makefile)
@@ -179,6 +168,7 @@ AC_CONFIG_FILES(src/modules/energy/Makefile)
 AC_CONFIG_FILES(src/modules/epsr/Makefile)
 AC_CONFIG_FILES(src/modules/export/Makefile)
 AC_CONFIG_FILES(src/modules/forces/Makefile)
+AC_CONFIG_FILES(src/modules/geomopt/Makefile)
 AC_CONFIG_FILES(src/modules/import/Makefile)
 AC_CONFIG_FILES(src/modules/intrashake/Makefile)
 AC_CONFIG_FILES(src/modules/md/Makefile)
@@ -190,19 +180,15 @@ AC_CONFIG_FILES(src/modules/sanitycheck/Makefile)
 AC_CONFIG_FILES(src/modules/skeleton/Makefile)
 AC_CONFIG_FILES(src/modules/sq/Makefile)
 AC_CONFIG_FILES(src/modules/test/Makefile)
+AC_CONFIG_FILES(src/genericitems/Makefile)
 AC_CONFIG_FILES(src/templates/Makefile)
 if test "$with_gui" = "yes"; then
   AC_CONFIG_FILES(src/gui/Makefile)
   AC_CONFIG_FILES(src/gui/delegates/Makefile)
   AC_CONFIG_FILES(src/gui/keywordwidgets/Makefile)
-  AC_CONFIG_FILES(src/gui/uchroma/Makefile)
+  AC_CONFIG_FILES(src/gui/viewer/Makefile)
+  AC_CONFIG_FILES(src/gui/viewer/render/Makefile)
   AC_CONFIG_FILES(src/gui/widgets/Makefile)
-  AC_CONFIG_FILES(src/gui/uchroma/classes/Makefile)
-  AC_CONFIG_FILES(src/gui/uchroma/expression/Makefile)
-  AC_CONFIG_FILES(src/gui/uchroma/gui/Makefile)
-  AC_CONFIG_FILES(src/gui/uchroma/kernels/Makefile)
-  AC_CONFIG_FILES(src/gui/uchroma/render/Makefile)
-  AC_CONFIG_FILES(src/gui/uchroma/session/Makefile)
   AC_CONFIG_FILES(src/modules/analyse/gui/Makefile)
   AC_CONFIG_FILES(src/modules/atomshake/gui/Makefile)
   AC_CONFIG_FILES(src/modules/bragg/gui/Makefile)
@@ -212,6 +198,7 @@ if test "$with_gui" = "yes"; then
   AC_CONFIG_FILES(src/modules/datatest/gui/Makefile)
   AC_CONFIG_FILES(src/modules/energy/gui/Makefile)
   AC_CONFIG_FILES(src/modules/epsr/gui/Makefile)
+  AC_CONFIG_FILES(src/modules/geomopt/gui/Makefile)
   AC_CONFIG_FILES(src/modules/neutronsq/gui/Makefile)
   AC_CONFIG_FILES(src/modules/rdf/gui/Makefile)
   AC_CONFIG_FILES(src/modules/refine/gui/Makefile)

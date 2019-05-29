@@ -1,7 +1,7 @@
 /*
 	*** Energy Module - Functions
 	*** src/modules/energy/functions.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -22,7 +22,7 @@
 #include "modules/energy/energy.h"
 #include "classes/configuration.h"
 #include "classes/energykernel.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Return total intramolecular energy
 double EnergyModule::intraMolecularEnergy(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap)
@@ -116,6 +116,21 @@ double EnergyModule::interAtomicEnergy(ProcessPool& procPool, Configuration* cfg
 	Messenger::printVerbose("Interatomic Energy (World) is %15.9e\n", totalEnergy);
 
 	return totalEnergy;
+}
+
+// Return total energy (interatomic and intramolecular)
+double EnergyModule::totalEnergy(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap)
+{
+	return (interAtomicEnergy(procPool, cfg, potentialMap) + intraMolecularEnergy(procPool, cfg, potentialMap));
+}
+
+// Return total energy (interatomic and intramolecular), storing components in provided variables
+double EnergyModule::totalEnergy(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, double& interEnergy, double& bondEnergy, double& angleEnergy, double& torsionEnergy)
+{
+	interEnergy = interAtomicEnergy(procPool, cfg, potentialMap);
+	intraMolecularEnergy(procPool, cfg, potentialMap, bondEnergy, angleEnergy, torsionEnergy);
+
+	return interEnergy + bondEnergy + angleEnergy + torsionEnergy;
 }
 
 // Return total intermolecular energy

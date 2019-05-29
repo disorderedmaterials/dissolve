@@ -1,7 +1,7 @@
 /*
 	*** SpeciesTorsion Definition
 	*** src/classes/speciestorsion.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -172,8 +172,8 @@ bool SpeciesTorsion::matches(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, Spe
  */
 
 // Torsion function keywords
-const char* TorsionFunctionKeywords[] = { "Cos", "Cos3", "Cos4", "Cos3C" };
-int TorsionFunctionNParameters[] = { 4, 3, 4, 4 };
+const char* TorsionFunctionKeywords[] = { "Cos", "Cos3", "Cos4", "Cos3C", "UFFCosine" };
+int TorsionFunctionNParameters[] = { 4, 3, 4, 4, 3 };
 
 // Convert string to functional form
 SpeciesTorsion::TorsionFunction SpeciesTorsion::torsionFunction(const char* s)
@@ -198,6 +198,24 @@ const char** SpeciesTorsion::torsionFunctions()
 int SpeciesTorsion::nFunctionParameters(SpeciesTorsion::TorsionFunction func)
 {
 	return TorsionFunctionNParameters[func];
+}
+
+// Set up any necessary parameters
+void SpeciesTorsion::setUp()
+{
+}
+
+// Calculate and return fundamental frequency for the interaction
+double SpeciesTorsion::fundamentalFrequency(double reducedMass) const
+{
+	Messenger::warn("No fundamental frequency can be calculated for this torsion interaction.\n");
+	return 0.0;
+}
+
+// Return type of this interaction
+SpeciesIntra::IntramolecularType SpeciesTorsion::type() const
+{
+	return SpeciesIntra::IntramolecularTorsion;
 }
 
 // Return energy for specified angle
@@ -259,6 +277,18 @@ double SpeciesTorsion::energy(double angleInDegrees) const
 		 * 3 : force constant k3
 		 */
 		return params[0] + 0.5 * (params[1]*(1.0+cos(phi)) + params[2]*(1.0-cos(2.0*phi)) + params[3]*(1.0+cos(3.0*phi)) );
+	}
+	else if (form() == SpeciesTorsion::UFFCosineForm)
+	{
+		/*
+		 * U(phi) = 0.5 * V * (1 - cos(n*eq) * cos(n*phi))
+		 *
+		 * Parameters:
+		 * 0 : Force constant, V
+		 * 1 : Periodicity, n
+		 * 2 : Equilibrium angle, eq (degrees)
+		 */
+		return 0.5 * params[0] * (1.0 - cos(params[1]*params[2]/DEGRAD) * cos(params[1]*phi));
 	}
 
 	Messenger::error("Functional form of SpeciesTorsion term not set, so can't calculate energy.\n");
@@ -325,6 +355,18 @@ double SpeciesTorsion::force(double angleInDegrees) const
 		 * 3 : force constant k3
 		 */
 		return dphi_dcosphi * 0.5 * ( -params[1]*sin(phi) + 2.0*params[2]*sin(2.0*phi) - 3.0*params[3]*sin(3.0*phi));
+	}
+	else if (form() == SpeciesTorsion::UFFCosineForm)
+	{
+		/*
+		 * dU/d(phi) = 0.5 * V * cos(n*eq) * n * sin(n*phi)
+		 *
+		 * Parameters:
+		 * 0 : Force constant, V
+		 * 1 : Periodicity, n
+		 * 2 : Equilibrium angle, eq (degrees)
+		 */
+		return 0.5 * params[0] * params[0] * cos(params[1]*params[2]/DEGRAD) * params[1] * sin(params[1]*phi);
 	}
 
 	Messenger::error("Functional form of SpeciesTorsion term not set, so can't calculate force.\n");

@@ -1,7 +1,7 @@
 /*
 	*** Analyser
 	*** src/analyse/analyser.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -27,6 +27,7 @@
 // Constructor
 Analyser::Analyser() : rootSequence_("EndAnalyser")
 {
+	rootSequence_.setParent(this);
 }
 
 // Destructor
@@ -49,6 +50,14 @@ void Analyser::clear()
 void Analyser::addRootSequenceNode(AnalysisNode* node)
 {
 	rootSequence_.addNode(node);
+
+	node->setParent(this);
+}
+
+// Return the context stack
+const NodeContextStack& Analyser::contextStack() const
+{
+	return contextStack_;
 }
 
 /*
@@ -89,11 +98,11 @@ bool Analyser::execute(ProcessPool& procPool, Configuration* cfg, const char* pr
  */
 
 // Read structure from specified LineParser
-bool Analyser::read(LineParser& parser)
+bool Analyser::read(LineParser& parser, const CoreData& coreData)
 {
 	contextStack_.clear();
 
-	return rootSequence_.read(parser, contextStack_);
+	return rootSequence_.read(parser, coreData, contextStack_);
 }
 
 // Write structure to specified LineParser

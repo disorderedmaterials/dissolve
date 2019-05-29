@@ -1,7 +1,7 @@
 /*
 	*** Module Keywords Widget
 	*** src/gui/modulekeywordswidget.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -24,16 +24,17 @@
 
 #include "gui/keywordwidgets/base.h"
 #include "templates/reflist.h"
-#include <QWidget>
+#include <QToolBox>
 
 // Forward Declarations
 class Dissolve;
 class DissolveWindow;
 class Module;
+class ModuleKeywordBase;
 class ModuleReference;
 
 // Module Keywords Widget
-class ModuleKeywordsWidget : public QWidget
+class ModuleKeywordsWidget : public QToolBox
 {
 	private:
 	// Whether the widget is currently refreshing
@@ -55,6 +56,10 @@ class ModuleKeywordsWidget : public QWidget
 	private:
 	// List of keyword widgets displayed
 	RefList<KeywordWidgetBase,bool> keywordWidgets_;
+
+	private:
+	// Create widget for specified keyword
+	QWidget* createKeywordWidget(DissolveWindow* dissolveWindow, RefList<KeywordWidgetBase,bool>& keywordWidgets, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* uniqueName);
 
 	public:
 	// Set up keyword controls for specified Module

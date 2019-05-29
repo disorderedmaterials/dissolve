@@ -1,7 +1,7 @@
 /*
 	*** Sears '91 Neutron Scattering Length Data
 	*** src/data/isotopes.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -34,6 +34,7 @@ class Isotope : public ElementReference, public ListItem<Isotope>
 	Isotope(int z = 0, const char* symbol = NULL, int A = 0, const char* spin = NULL, double mass = 0.0, double bc = 0.0, double bi = 0.0, double sc = 0.0, double si = 0.0, double totalxs = 0.0, double absxs = 0.0);
 	// Assignment Operator
 	Isotope& operator=(const Isotope& source);
+
 
 	/*
 	 * Isotope Data

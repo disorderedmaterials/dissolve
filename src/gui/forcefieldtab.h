@@ -1,7 +1,7 @@
 /*
 	*** Forcefield Tab
 	*** src/gui/forcefieldtab.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -82,6 +82,16 @@ class ForcefieldTab : public QWidget, public MainTab
 	private:
 
 	private slots:
+	// Master Terms
+	void on_MasterTermAddBondButton_clicked(bool checked);
+	void on_MasterTermRemoveBondButton_clicked(bool checked);
+	void on_MasterBondsTable_itemChanged(QTableWidgetItem* w);
+	void on_MasterTermAddAngleButton_clicked(bool checked);
+	void on_MasterTermRemoveAngleButton_clicked(bool checked);
+	void on_MasterAnglesTable_itemChanged(QTableWidgetItem* w);
+	void on_MasterTermAddTorsionButton_clicked(bool checked);
+	void on_MasterTermRemoveTorsionButton_clicked(bool checked);
+	void on_MasterTorsionsTable_itemChanged(QTableWidgetItem* w);
 	// Atom Types
 	void on_AtomTypeAddButton_clicked(bool checked);
 	void on_AtomTypeRemoveButton_clicked(bool checked);
@@ -103,10 +113,10 @@ class ForcefieldTab : public QWidget, public MainTab
 	 * State
 	 */
 	public:
+	// Read widget state through specified LineParser
+	bool readState(LineParser& parser, const CoreData& coreData);
 	// Write widget state through specified LineParser
 	bool writeState(LineParser& parser);
-	// Read widget state through specified LineParser
-	bool readState(LineParser& parser);
 };
 
 #endif

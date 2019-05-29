@@ -1,7 +1,7 @@
 /*
 	*** 1-Dimensional Data
 	*** src/math/data1d.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -23,6 +23,7 @@
 #define DISSOLVE_DATA1D_H
 
 #include "math/plottable.h"
+#include "base/version.h"
 #include "templates/array.h"
 #include "templates/objectstore.h"
 
@@ -30,7 +31,7 @@
 class Histogram1D;
 
 // One-Dimensional Data
-class Data1D : public Plottable, public ListItem<Data1D>, public ObjectStore<Data1D>, public GenericItemBase
+class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore<Data1D>, public GenericItemBase
 {
 	public:
 	// Constructor
@@ -55,6 +56,8 @@ class Data1D : public Plottable, public ListItem<Data1D>, public ObjectStore<Dat
 	bool hasError_;
 	// Errors of values, if present
 	Array<double> errors_;
+	// Data version
+	VersionCounter version_;
 
 	public:
 	// Initialise arrays to specified size
@@ -65,12 +68,18 @@ class Data1D : public Plottable, public ListItem<Data1D>, public ObjectStore<Dat
 	void copyArrays(const Data1D& source);
 	// Zero values array
 	void zero();
+	// Return data version
+	int version() const;
 	// Accumulate specified histogram data
 	void accumulate(const Histogram1D& source);
 	// Add new data point
 	void addPoint(double x, double value);
 	// Add new data point with error
 	void addPoint(double x, double value, double error);
+	// Remove first point
+	void removeFirstPoint();
+	// Remove last point
+	void removeLastPoint();
 	// Return x axis value specified
 	double& xAxis(int index);
 	// Return x axis value specified (const)
@@ -137,8 +146,10 @@ class Data1D : public Plottable, public ListItem<Data1D>, public ObjectStore<Dat
 	bool load(const char* filename, int xcol = 0, int ycol = 1);
 	// Load data from specified file through ProcessPool, using columns specified
 	bool load(ProcessPool& pool, const char* filename, int xcol = 0, int ycol = 1);
-	// Save data to specified filevalues
+	// Save data to specified file
 	bool save(const char* filename) const;
+	// Save data through specified parser
+	bool save(LineParser& parser) const;
 
 
 	/*
@@ -147,10 +158,10 @@ class Data1D : public Plottable, public ListItem<Data1D>, public ObjectStore<Dat
 	public:
 	// Return class name
 	static const char* itemClassName();
+	// Read data through specified LineParser
+	bool read(LineParser& parser, const CoreData& coreData);
 	// Write data through specified LineParser
 	bool write(LineParser& parser);
-	// Read data through specified LineParser
-	bool read(LineParser& parser);
 
 
 	/*
@@ -158,7 +169,7 @@ class Data1D : public Plottable, public ListItem<Data1D>, public ObjectStore<Dat
 	 */
 	public:
 	// Broadcast data
-	bool broadcast(ProcessPool& procPool, int rootRank = 0);
+	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
 	// Check item equality
 	bool equality(ProcessPool& procPool);
 };

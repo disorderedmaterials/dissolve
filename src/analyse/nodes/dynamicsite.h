@@ -1,7 +1,7 @@
 /*
 	*** Analysis Node - Dynamic Site
 	*** src/analyse/nodes/dynamicsite.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -28,6 +28,7 @@
 
 // Forward Declarations
 class AnalysisSelectNode;
+class AtomType;
 class Element;
 class LineParser;
 class Molecule;
@@ -48,7 +49,7 @@ class AnalysisDynamicSiteNode : public AnalysisNode
 	 */
 	public:
 	// Node Keywords
-	enum DynamicSiteNodeKeyword { ElementKeyword, EndDynamicSiteKeyword, nDynamicSiteNodeKeywords };
+	enum DynamicSiteNodeKeyword { AtomTypeKeyword, ElementKeyword, EndDynamicSiteKeyword, nDynamicSiteNodeKeywords };
 	// Convert string to control keyword
 	static DynamicSiteNodeKeyword dynamicSiteNodeKeyword(const char* s);
 	// Convert control keyword to string
@@ -63,6 +64,8 @@ class AnalysisDynamicSiteNode : public AnalysisNode
 	AnalysisSelectNode* parent_;
 	// Target Elements for selection as sites
 	RefList<Element,bool> elements_;
+	// Target AtomTypes for selection as sites
+	RefList<AtomType,int> atomTypes_;
 
 
 	/*
@@ -94,7 +97,7 @@ class AnalysisDynamicSiteNode : public AnalysisNode
 	 */
 	public:
 	// Read structure from specified LineParser
-	bool read(LineParser& parser, NodeContextStack& contextStack);
+	bool read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack);
 	// Write structure to specified LineParser
 	bool write(LineParser& parser, const char* prefix);
 };

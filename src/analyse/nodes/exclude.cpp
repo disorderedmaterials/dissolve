@@ -1,7 +1,7 @@
 /*
 	*** Analysis Node - Exclude
 	*** src/analyse/nodes/exclude.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -80,7 +80,7 @@ AnalysisNode::NodeExecutionResult AnalysisExcludeNode::execute(ProcessPool& proc
  */
 
 // Read structure from specified LineParser
-bool AnalysisExcludeNode::read(LineParser& parser, NodeContextStack& contextStack)
+bool AnalysisExcludeNode::read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack)
 {
 	// Read until we encounter the EndExclude keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
@@ -92,21 +92,21 @@ bool AnalysisExcludeNode::read(LineParser& parser, NodeContextStack& contextStac
 		ExcludeNodeKeyword nk = excludeNodeKeyword(parser.argc(0));
 		switch (nk)
 		{
-			case (ExcludeNodeKeyword::EndExcludeKeyword):
+			case (AnalysisExcludeNode::EndExcludeKeyword):
 				return true;
-			case (ExcludeNodeKeyword::SameSiteKeyword):
-				if (parser.nArgs() != 3) return Messenger::error("The %s keyword expects exactly two arguments.\n", excludeNodeKeyword(ExcludeNodeKeyword::SameSiteKeyword));
+			case (AnalysisExcludeNode::SameSiteKeyword):
+				if (parser.nArgs() != 3) return Messenger::error("The %s keyword expects exactly two arguments.\n", excludeNodeKeyword(AnalysisExcludeNode::SameSiteKeyword));
 
 				// First Site argument
-				sameSiteA_ = contextStack.selectNodeInScope(parser.argc(1));
-				if (!sameSiteA_) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(1), excludeNodeKeyword(ExcludeNodeKeyword::SameSiteKeyword));
+				sameSiteA_ = (AnalysisSelectNode*) contextStack.nodeInScope(parser.argc(1), AnalysisNode::SelectNode);
+				if (!sameSiteA_) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(1), excludeNodeKeyword(AnalysisExcludeNode::SameSiteKeyword));
 
 				// Second Site argument
-				sameSiteB_ = contextStack.selectNodeInScope(parser.argc(2));
-				if (!sameSiteB_) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(2), excludeNodeKeyword(ExcludeNodeKeyword::SameSiteKeyword));
+				sameSiteB_ = (AnalysisSelectNode*) contextStack.nodeInScope(parser.argc(2), AnalysisNode::SelectNode);
+				if (!sameSiteB_) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(2), excludeNodeKeyword(AnalysisExcludeNode::SameSiteKeyword));
 				else 
 				break;
-			case (ExcludeNodeKeyword::nExcludeNodeKeywords):
+			case (AnalysisExcludeNode::nExcludeNodeKeywords):
 				return Messenger::error("Unrecognised Exclude node keyword '%s' found.\n", parser.argc(0));
 				break;
 			default:

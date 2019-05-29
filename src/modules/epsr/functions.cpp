@@ -1,7 +1,7 @@
 /*
 	*** EPSR Module - Functions
 	*** src/modules/epsr/functions.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -24,44 +24,18 @@
 #include "classes/atomtype.h"
 #include "math/gaussfit.h"
 #include "math/poissonfit.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
-// Add Module target to specified group
-bool EPSRModule::addTarget(const char* moduleTarget, const char* group)
+// Return list of target Modules / data for refeinement
+const RefList<Module,ModuleGroup*>& EPSRModule::allTargets() const
 {
-	// First, find the named Module
-	Module* module = ModuleList::findInstanceByUniqueName(moduleTarget);
-	if (!module) return Messenger::error("Couldn't find Module '%s' to add to EPSRModule's list of targets.\n", moduleTarget);
-
-	// Check on the type of the Module given... if OK, add to the specified group
-	if (DissolveSys::sameString(module->type(), "NeutronSQ")) Messenger::print("Adding NeutronSQ target '%s' to '%s'.\n", moduleTarget, uniqueName());
-	else return Messenger::error("Can't use Module of type '%s' as a fitting target.\n", module->type());
-
-	// Does the specified group exist?
-	ModuleGroup* moduleGroup;
-	for (moduleGroup = targetGroups_.first(); moduleGroup != NULL; moduleGroup = moduleGroup->next) if (DissolveSys::sameString(moduleGroup->name(), group)) break;
-	if (moduleGroup == NULL)
-	{
-		moduleGroup = new ModuleGroup(group);
-		targetGroups_.own(moduleGroup);
-	}
-
-	targets_.add(module);
-	moduleGroup->add(module);
-
-	return true;
+	return groupedTargets_.modules();
 }
 
-// Return list of target Modules / data for fitting process
-const RefList<Module,bool>& EPSRModule::targets() const
+// Return grouped target Modules
+const ModuleGroups& EPSRModule::groupedTargets() const
 {
-	return targets_;
-}
-
-// Return list of target groups defined
-const List<ModuleGroup>& EPSRModule::targetGroups() const
-{
-	return targetGroups_;
+	return groupedTargets_;
 }
 
 // Create / retrieve arrays for storage of empirical potential coefficients
@@ -82,7 +56,7 @@ Array2D< Array<double> >& EPSRModule::potentialCoefficients(Dissolve& dissolve, 
 }
 
 // Generate empirical potentials from current coefficients
-bool EPSRModule::generateEmpiricalPotentials(Dissolve& dissolve, EPSRModule::ExpansionFunctionType functionType, int ncoeffp, double rminpt, double rmaxpt, double sigma1, double sigma2)
+bool EPSRModule::generateEmpiricalPotentials(Dissolve& dissolve, EPSRModule::ExpansionFunctionType functionType, double averagedRho, int ncoeffp, double rminpt, double rmaxpt, double sigma1, double sigma2)
 {
 	const int nAtomTypes = dissolve.nAtomTypes();
 	int i, j;
@@ -91,7 +65,7 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve& dissolve, EPSRModule::Exp
 	Array2D< Array<double> >& coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
 
 	i = 0;
-	for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+	for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
 	{
 		j = i;
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
@@ -115,6 +89,9 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve& dissolve, EPSRModule::Exp
 				ep = generator.approximation(FunctionSpace::RealSpace, 1.0, 0.0, dissolve.pairPotentialDelta(), dissolve.pairPotentialRange());
 			}
 
+			// Normalise by density
+			ep.values() /= averagedRho;
+
 			// Multiply by truncation function
 			truncate(ep, rminpt, rmaxpt);
 
@@ -133,6 +110,56 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve& dissolve, EPSRModule::Exp
 	return true;
 }
 
+// Generate and return single empirical potential function
+Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve& dissolve, int i, int j, int n)
+{
+	const int nAtomTypes = dissolve.nAtomTypes();
+	ExpansionFunctionType functionType = expansionFunctionType(keywords_.asString("ExpansionFunction"));
+	const double gsigma1 = keywords_.asDouble("GSigma1");
+	const double gsigma2 = keywords_.asDouble("GSigma2");
+	int ncoeffp = keywords_.asInt("NCoeffP");
+	const double psigma1 = keywords_.asDouble("PSigma1");
+	const double psigma2 = keywords_.asDouble("PSigma2");
+	const double qMax = keywords_.asDouble("QMax");
+	const double qMin = keywords_.asDouble("QMin");
+	double rmaxpt = keywords_.asDouble("RMaxPT");
+	double rminpt = keywords_.asDouble("RMinPT");
+
+	// EPSR constants
+	const int mcoeff = 200;
+
+	// Calculate some values if they were not provided
+	if (rmaxpt < 0.0) rmaxpt = dissolve.pairPotentialRange();
+	if (rminpt < 0.0) rminpt = rmaxpt - 2.0;
+	if (ncoeffp <= 0) ncoeffp = std::min(int(10.0*rmaxpt+0.0001), mcoeff);
+
+	// Get coefficients array
+	Array2D< Array<double> >& coefficients = potentialCoefficients(dissolve, nAtomTypes);
+	Array<double>& potCoeff = coefficients.at(i, j);
+
+	// Regenerate empirical potential from the stored coefficients
+	Data1D result;
+	if (functionType == EPSRModule::GaussianExpansionFunction)
+	{
+		// Construct our fitting object and generate the potential using it
+		GaussFit generator(result);
+		generator.set(rmaxpt, potCoeff, gsigma1);
+		result = generator.singleFunction(n, FunctionSpace::RealSpace, 1.0, 0.0, dissolve.pairPotentialDelta(), dissolve.pairPotentialRange(), gsigma2 / gsigma1);
+	}
+	else if (functionType == EPSRModule::PoissonExpansionFunction)
+	{
+		// Construct our fitting object and generate the potential using it
+		PoissonFit generator(result);
+		generator.set(FunctionSpace::ReciprocalSpace, rmaxpt, potCoeff, psigma1, psigma2);
+		result = generator.singleFunction(n, FunctionSpace::RealSpace, 1.0, 0.0, dissolve.pairPotentialDelta(), dissolve.pairPotentialRange());
+	}
+
+	// Multiply by truncation function
+	truncate(result, rminpt, rmaxpt);
+
+	return result;
+}
+
 // Calculate absolute energy of empirical potentials
 double EPSRModule::absEnergyEP(Dissolve& dissolve)
 {
@@ -148,7 +175,7 @@ double EPSRModule::absEnergyEP(Dissolve& dissolve)
 	double absEnergyEP = 0.0;
 
 	int i = 0;
-	for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+	for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
 	{
 		int j = i;
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)

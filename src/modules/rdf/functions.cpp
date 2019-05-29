@@ -1,7 +1,7 @@
 /*
 	*** RDF Module - Functions
 	*** src/modules/rdf/functions.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -29,7 +29,9 @@
 #include "classes/atom.h"
 #include "classes/box.h"
 #include "classes/cell.h"
-#include "templates/genericlisthelper.h"
+#include "classes/speciesangle.h"
+#include "classes/speciesbond.h"
+#include "genericitems/listhelper.h"
 #include "templates/orderedpointerarray.h"
 
 /*
@@ -493,41 +495,245 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 	 */
 	
 	originalgr.setFingerprint(CharString("%i", cfg->coordinateIndex()));
-	++staticLogPoint_;
 
 	return true;
 }
 
 // Calculate smoothed/broadened partial g(r) from supplied partials
-bool RDFModule::calculateUnweightedGR(const PartialSet& originalgr, PartialSet& unweightedgr, PairBroadeningFunction intraBroadening, int smoothing)
+bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg, const PartialSet& originalgr, PartialSet& unweightedgr, PairBroadeningFunction& intraBroadening, int smoothing)
 {
 	// Copy data
 	unweightedgr = originalgr;
 
-	AtomTypeData* typeI = unweightedgr.atomTypes().first();
+	AtomTypeData* typeI, *typeJ;
+
+	// Remove bound partial from full partial
+	typeI = unweightedgr.atomTypes().first();
 	for (int i=0; i<unweightedgr.nAtomTypes(); ++i, typeI = typeI->next)
 	{
-		AtomTypeData* typeJ = typeI;
-		for (int j=i; j<unweightedgr.nAtomTypes(); ++j, typeJ = typeJ->next)
+		typeJ = typeI;
+		for (int j=i; j<unweightedgr.nAtomTypes(); ++j, typeJ = typeJ->next) unweightedgr.partial(i, j) -= originalgr.constBoundPartial(i, j);
+	}
+
+	// Broaden the bound partials according to the supplied PairBroadeningFunction
+	if ((intraBroadening.function() == PairBroadeningFunction::GaussianFunction) || (intraBroadening.function() == PairBroadeningFunction::GaussianElementPairFunction))
+	{
+		typeI = unweightedgr.atomTypes().first();
+		for (int i=0; i<unweightedgr.nAtomTypes(); ++i, typeI = typeI->next)
 		{
-			// Broaden bound partials?
-			if (intraBroadening.function() != PairBroadeningFunction::NoFunction)
+			typeJ = typeI;
+			for (int j=i; j<unweightedgr.nAtomTypes(); ++j, typeJ = typeJ->next)
 			{
 				// Set up the broadening function for these AtomTypes
 				BroadeningFunction function = intraBroadening.broadeningFunction(typeI->atomType(), typeJ->atomType());
 
-				// Remove bound part from full partial
-				unweightedgr.partial(i, j) -= unweightedgr.boundPartial(i, j);
-
 				// Convolute the bound partial with the broadening function
 				Filters::convolveNormalised(unweightedgr.boundPartial(i, j), function);
+			}
+		}
+	}
+	else if (intraBroadening.function() == PairBroadeningFunction::FrequencyFunction)
+	{
+		/*
+		 * Reassemble the bound partial as follows:
+		 *
+		 * 1) Recalculate individual bond / angle g(r), grouping by the original SpeciesIntra parameters (which contains our force constant)
+		 * 2) Subtract this from its related bound partial in 'unweightedgr'.
+		 * 3) Broaden it according to the PairBroadeningFunction
+		 * 4) Sum the broadened version back into the bound partial in 'unweightedgr'
+		 */
 
-				// Add the broadened bound partial back into the full partial array
-				unweightedgr.partial(i, j) += unweightedgr.boundPartial(i, j) ;
+		Atom* i, *j, *k;
+
+		double distance;
+		const Box* box = cfg->box();
+		CellArray& cellArray = cfg->cells();
+
+		// Set up working PartialSets to use when calculating our g(r)
+		PartialSet tempgr, broadgr = unweightedgr;
+		tempgr.setUp(cfg, "Working", "TemporaryGR", "Dummy", "r, Angstroms");
+		tempgr.setUpHistograms(cfg->rdfRange(), cfg->rdfBinWidth());
+
+		// Make sure bound g(r) are zeroed
+		typeI = broadgr.atomTypes().first();
+		for (int i=0; i<broadgr.nAtomTypes(); ++i, typeI = typeI->next)
+		{
+			typeJ = typeI;
+			for (int j=i; j<broadgr.nAtomTypes(); ++j, typeJ = typeJ->next) broadgr.boundPartial(i,j).values() = 0.0;
+		}
+
+		/*
+		 * Bonds
+		 */
+
+		// Copy the dynamic Bond array from the Configuration
+		PointerArray<Bond> bondPointers;
+		bondPointers.initialise(cfg->nBonds());
+		Bond** bonds = cfg->bonds().array();
+		for (int n=0; n<cfg->nBonds(); ++n) bondPointers.append(bonds[n]);
+
+		// 1) Assemble a list of unique (in terms of parameters) SpeciesIntra pointers, accompanied by their associated SpeciesBond
+		RefList<SpeciesIntra,SpeciesBond*> bondIntra;
+		for (int n=0; n<cfg->nBonds(); ++n)
+		{
+			SpeciesBond* sb = bonds[n]->speciesBond();
+			bondIntra.addUnique(sb->parameterSource(), sb);
+		}
+
+		// TODO Parallelise this
+		printf("HOLA!\n");
+
+		RefListIterator<SpeciesIntra,SpeciesBond*> bondIterator(bondIntra);
+		while (SpeciesIntra* intra = bondIterator.iterate())
+		{
+			// Reset the dummy PartialSet
+			tempgr.reset();
+
+			// Add contributions from this SpeciesIntra only
+			for (int n=bondPointers.nItems()-1; n>=0; --n)
+			{
+				Bond* b = bondPointers[n];
+				if (b->speciesBond()->parameterSource() != intra) continue;
+
+				i = b->i();
+				j = b->j();
+				if (cellArray.useMim(i->cell(), j->cell())) distance = box->minimumDistance(i, j);
+				else distance = (i->r() - j->r()).magnitude();
+				tempgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
+
+				// Won't need this Bond pointer again, so remove it from our pointer array
+				bondPointers.remove(n);
 			}
 
-			// Smooth partials if requested
-			if (smoothing > 0)
+			// Normalise our bond's histogram data into the g(r)
+			tempgr.formPartials(box->volume(), cfg->boxNormalisationInterpolation());
+
+			// Broaden our g(r) (after subtracting it from the original full partial) and sum into our broadened partial set
+			typeI = tempgr.atomTypes().first();
+			for (int i=0; i<tempgr.nAtomTypes(); ++i, typeI = typeI->next)
+			{
+				typeJ = typeI;
+				for (int j=i; j<tempgr.nAtomTypes(); ++j, typeJ = typeJ->next)
+				{
+					if (tempgr.isBoundPartialEmpty(i, j)) continue;
+
+					// Remove contribution from original full partial in unweightedgr
+					unweightedgr.boundPartial(i,j) -= tempgr.boundPartial(i,j);
+
+					// Set up the broadening function for these AtomTypes
+					BroadeningFunction function = intraBroadening.broadeningFunction(typeI->atomType(), typeJ->atomType(), bondIterator.currentData());
+
+					// Convolute the bound partial with the broadening function
+					Filters::convolveNormalised(tempgr.boundPartial(i, j), function);
+
+					// Sum into our broadened g(r) partial set
+					broadgr.boundPartial(i,j) += tempgr.boundPartial(i,j);
+				}
+			}
+		}
+
+		/*
+		 * Angles
+		 */
+
+		// Copy the dynamic Angle array from the Configuration
+		PointerArray<Angle> anglePointers;
+		anglePointers.initialise(cfg->nAngles());
+		Angle** angles = cfg->angles().array();
+		for (int n=0; n<cfg->nAngles(); ++n) anglePointers.append(angles[n]);
+
+		// 1) Assemble a list of unique (in terms of parameters) SpeciesIntra pointers, accompanied by their associated SpeciesBond
+		RefList<SpeciesIntra,SpeciesAngle*> angleIntra;
+		for (int n=0; n<cfg->nAngles(); ++n)
+		{
+			SpeciesAngle* sa = angles[n]->speciesAngle();
+			angleIntra.addUnique(sa->parameterSource(), sa);
+		}
+
+		// TODO Parallelise this
+		printf("MiHALA!\n");
+
+		RefListIterator<SpeciesIntra,SpeciesAngle*> angleIterator(angleIntra);
+		while (SpeciesIntra* intra = angleIterator.iterate())
+		{
+			// Reset the dummy PartialSet
+			tempgr.reset();
+
+			// Add contributions from this SpeciesIntra only
+			for (int n=anglePointers.nItems()-1; n>=0; --n)
+			{
+				Angle* a = anglePointers[n];
+				if (a->speciesAngle()->parameterSource() != intra) continue;
+
+				i = a->i();
+				k = a->k();
+
+				// Determine whether we need to apply minimum image between atoms 'i' and 'k'
+				if (cellArray.useMim(i->cell(), k->cell())) distance = box->minimumDistance(i, k);
+				else distance = (i->r() - k->r()).magnitude();
+				tempgr.boundHistogram(i->localTypeIndex(), k->localTypeIndex()).bin(distance);
+
+				// Won't need this Angle pointer again, so remove it from our pointer array
+				anglePointers.remove(n);
+			}
+
+			// Normalise our bond's histogram data into the g(r)
+			tempgr.formPartials(box->volume(), cfg->boxNormalisationInterpolation());
+
+			// Broaden our g(r) (after subtracting it from the original full partial) and sum into our broadened partial set
+			typeI = tempgr.atomTypes().first();
+			for (int i=0; i<tempgr.nAtomTypes(); ++i, typeI = typeI->next)
+			{
+				typeJ = typeI;
+				for (int j=i; j<tempgr.nAtomTypes(); ++j, typeJ = typeJ->next)
+				{
+					if (tempgr.isBoundPartialEmpty(i, j)) continue;
+
+					// Remove contribution from original full partial in unweightedgr
+					unweightedgr.boundPartial(i,j) -= tempgr.boundPartial(i,j);
+
+					// Set up the broadening function for these AtomTypes
+					BroadeningFunction function = intraBroadening.broadeningFunction(typeI->atomType(), typeJ->atomType(), angleIterator.currentData());
+
+					// Convolute the bound partial with the broadening function
+					Filters::convolveNormalised(tempgr.boundPartial(i, j), function);
+
+					// Sum into our broadened g(r) partial set
+					broadgr.boundPartial(i,j) += tempgr.boundPartial(i,j);
+				}
+			}
+		}
+
+		/*
+		 * Copy Data
+		 */
+
+		// TODO FIXME There is serious limitation for Frequency-broadening which means that it cannot be used with RDF averaging (as we are calculating the intramolecular RDFs afresh).
+
+		typeI = broadgr.atomTypes().first();
+		for (int i=0; i<broadgr.nAtomTypes(); ++i, typeI = typeI->next)
+		{
+			typeJ = typeI;
+			for (int j=i; j<broadgr.nAtomTypes(); ++j, typeJ = typeJ->next) unweightedgr.boundPartial(i,j) += broadgr.boundPartial(i,j);
+		}
+	}
+
+	// Add broadened bound partials back in to full partials
+	typeI = unweightedgr.atomTypes().first();
+	for (int i=0; i<unweightedgr.nAtomTypes(); ++i, typeI = typeI->next)
+	{
+		typeJ = typeI;
+		for (int j=i; j<unweightedgr.nAtomTypes(); ++j, typeJ = typeJ->next) unweightedgr.partial(i, j) += unweightedgr.constBoundPartial(i, j);
+	}
+
+	// Apply smoothing if requested
+	if (smoothing > 0)
+	{
+		AtomTypeData* typeI = unweightedgr.atomTypes().first();
+		for (int i=0; i<unweightedgr.nAtomTypes(); ++i, typeI = typeI->next)
+		{
+			AtomTypeData* typeJ = typeI;
+			for (int j=i; j<unweightedgr.nAtomTypes(); ++j, typeJ = typeJ->next)
 			{
 				Filters::movingAverage(unweightedgr.partial(i,j), smoothing);
 				Filters::movingAverage(unweightedgr.boundPartial(i,j), smoothing);
@@ -549,7 +755,7 @@ double RDFModule::summedRho(Module* module, GenericList& processingModuleData)
 	RefListIterator<Configuration,bool> targetIterator(module->targetConfigurations());
 	while (Configuration* cfg = targetIterator.iterate())
 	{
-		double weight = GenericListHelper<double>::value(processingModuleData, CharString("Weight_%s", cfg->niceName()), module->uniqueName(), 1.0);
+		double weight = GenericListHelper<double>::value(processingModuleData, CharString("ConfigurationWeight_%s", cfg->niceName()), module->uniqueName(), 1.0);
 		totalWeight += weight;
 
 		rho0 += weight / cfg->atomicDensity();
@@ -582,7 +788,7 @@ bool RDFModule::sumUnweightedGR(ProcessPool& procPool, Module* module, GenericLi
 	while (Configuration* cfg = targetIterator.iterate())
 	{
 		// Get weighting factor for this Configuration to contribute to the summed partials
-		double weight = GenericListHelper<double>::value(processingModuleData, CharString("Weight_%s", cfg->niceName()), module->uniqueName(), 1.0);
+		double weight = GenericListHelper<double>::value(processingModuleData, CharString("ConfigurationWeight_%s", cfg->niceName()), module->uniqueName(), 1.0);
 		Messenger::print("Weight for Configuration '%s' is %f.\n", cfg->name(), weight);
 	
 		// Add our Configuration target
@@ -634,7 +840,7 @@ bool RDFModule::sumUnweightedGR(ProcessPool& procPool, Module* parentModule, Mod
 		while (Configuration* cfg = targetIterator.iterate())
 		{
 			// Get weighting factor for this Configuration to contribute to the summed partials
-			double weight = GenericListHelper<double>::value(processingModuleData, CharString("Weight_%s", cfg->niceName()), module->uniqueName(), 1.0);
+			double weight = GenericListHelper<double>::value(processingModuleData, CharString("ConfigurationWeight_%s", cfg->niceName()), module->uniqueName(), 1.0);
 			Messenger::print("Weight for Configuration '%s' is %f.\n", cfg->name(), weight);
 		
 			// Add our Configuration target

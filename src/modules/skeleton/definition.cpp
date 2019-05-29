@@ -1,7 +1,7 @@
 /*
 	*** Skeleton Module - Definition
 	*** src/modules/skeleton/definition.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -27,16 +27,16 @@ const char* SkeletonModule::type() const
 	return "Skeleton";
 }
 
+// Return category for module
+const char* SkeletonModule::category() const
+{
+	return "NO CATEGORY ASSIGNED";
+}
+
 // Return brief description of module
 const char* SkeletonModule::brief() const
 {
 	return "Empty Module providing skeletal structure for new Module development";
-}
-
-// Return instance type for module
-Module::InstanceType SkeletonModule::instanceType() const
-{
-	return Module::MultipleInstance;
 }
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)

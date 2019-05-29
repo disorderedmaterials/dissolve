@@ -1,7 +1,7 @@
 /*
 	*** Box Definition
 	*** src/classes/box.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -41,12 +41,12 @@ class Box
 	virtual ~Box();
 	// Box Type Enum
 	enum BoxType {
-		NonPeriodicBox,		/* Non-periodic system - cubic box, but no minimum image calculation */
-		CubicBox,		/* Cubic box with equivalent cell lengths, and right-angles */
-		OrthorhombicBox,	/* Orthorhombic box with inequivalent cell lengths, and right-angles */
-		MonoclinicBox,		/* Monoclinic box with cell angles a != 90, and b == c == 90 */
-		TriclinicBox,		/* Triclinic box with cell angles a != b != c != 90 */
-		nBoxTypes		/* Number of Box types */
+		NonPeriodicBoxType,		/* Non-periodic system - cubic box, but no minimum image calculation */
+		CubicBoxType,			/* Cubic box with equivalent cell lengths, and right-angles */
+		OrthorhombicBoxType,		/* Orthorhombic box with inequivalent cell lengths, and right-angles */
+		MonoclinicBoxType,		/* Monoclinic box with cell angles a != 90, and b == c == 90 */
+		TriclinicBoxType,		/* Triclinic box with cell angles a != b != c != 90 */
+		nBoxTypes			/* Number of Box types */
 	};
 	// Convert text string to BoxType
 	static BoxType boxType(const char* s);
@@ -150,6 +150,8 @@ class Box
 	 * Utility Routines
 	 */
 	public:
+	// Generate a suitable Box given the supplied relative lengths, angles, and volume
+	static Box* generate(Vec3<double> relativeLengths, Vec3<double> angles, double volume);
 	// Return radius of largest possible inscribed sphere for box
 	double inscribedSphereRadius() const;
 	// Calculate the RDF normalisation for the Box
@@ -192,9 +194,7 @@ class Box
 	static double torsionInRadians(const Vec3<double>& vecji, const Vec3<double>& vecjk, const Vec3<double>& veckl, Vec3<double>& xpj, double& magxpj, Vec3<double>& xpk, double& magxpk);
 };
 
-/*
- * Non-Periodic Box Definition
- */
+// Non-Periodic Box Definition
 class NonPeriodicBox : public Box
 {
 	public:

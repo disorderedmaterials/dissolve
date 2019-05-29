@@ -1,7 +1,7 @@
 /*
 	*** SampledDouble
 	*** src/math/sampleddouble.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_SAMPLEDDOUBLE_H
 #define DISSOLVE_SAMPLEDDOUBLE_H
 
-#include "base/genericitembase.h"
+#include "genericitems/base.h"
 #include <ctime>
 
 // Forward Declarations
@@ -49,6 +49,8 @@ class SampledDouble : public GenericItemBase
 	double m2_;
 
 	public:
+	// Clear data
+	void clear();
 	// Return current (mean) value
 	double value() const;
 	// Return number of samples contributing to averages etc.
@@ -89,10 +91,10 @@ class SampledDouble : public GenericItemBase
 	public:
 	// Return class name
 	static const char* itemClassName();
+	// Read data through specified LineParser
+	bool read(LineParser& parser, const CoreData& coreData);
 	// Write data through specified LineParser
 	bool write(LineParser& parser);
-	// Read data through specified LineParser
-	bool read(LineParser& parser);
 
 
 	/*
@@ -102,7 +104,7 @@ class SampledDouble : public GenericItemBase
 	// Sum data over all processes within the pool
 	bool allSum(ProcessPool& procPool);
 	// Broadcast data
-	bool broadcast(ProcessPool& procPool, int rootRank);
+	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
 	// Check equality of all data
 	bool equality(ProcessPool& procPool);
 };

@@ -1,7 +1,7 @@
 /*
 	*** Gradient Bar
 	*** src/gui/widgets/gradientbar.hui
-	Copyright T. Youngs 2018
+	Copyright T. Youngs 2019
 
 	This file is part of Dissolve.
 
@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_GRADIENTBAR_H
 #define DISSOLVE_GRADIENTBAR_H
 
-#include "gui/uchroma/classes/colourscale.h"
+#include "gui/viewer/render/colourscale.h"
 #include <QWidget>
 
 // Forward declarations

@@ -1,7 +1,7 @@
 /*
 	*** Atom Definition
 	*** src/classes/atom.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -231,6 +231,12 @@ void Atom::addBond(Bond* bond)
 	exclusions_.add(bond->partner(this));
 }
 
+// Return the number of Bonds in which the Atom is involved
+int Atom::nBonds() const
+{
+	return bonds_.nItems();
+}
+
 // Return array of Bonds in which the Atom is involved
 const PointerArray<Bond>& Atom::bonds() const
 {
@@ -253,6 +259,12 @@ void Atom::addAngle(Angle* angle)
 	if (angle->i() != this) exclusions_.add(angle->i());
 	if (angle->j() != this) exclusions_.add(angle->j());
 	if (angle->k() != this) exclusions_.add(angle->k());
+}
+
+// Return the number of Angles in which the Atom is involved
+int Atom::nAngles() const
+{
+	return angles_.nItems();
 }
 
 // Return array of Angles in which the Atom is involved
@@ -286,6 +298,12 @@ void Atom::addTorsion(Torsion* torsion, double scaling14)
 		if (torsion->j() != this) exclusions_.add(torsion->j());
 		if (torsion->k() != this) exclusions_.add(torsion->k());
 	}
+}
+
+// Return the number of Torsions in which the Atom is involved
+int Atom::nTorsions() const
+{
+	return torsions_.nItems();
 }
 
 // Return array of Torsions in which the Atom is involved

@@ -1,7 +1,7 @@
 /*
 	*** Isotope Data
 	*** src/classes/isotopedata.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -62,28 +62,28 @@ bool IsotopeData::initialise(Isotope* isotope)
 		return false;
 	}
 
-	population_ = 0;
+	population_ = 0.0;
 	fraction_ = 0.0;
 
 	return true;
 }
 
 // Add to population of Isotope
-void IsotopeData::add(int nAdd)
+void IsotopeData::add(double nAdd)
 {
 	population_ += nAdd;
 }
 
 // Finalise, calculating local fractional population (e.g. within an IsotopeData)
-void IsotopeData::finalise(int totalAtoms)
+void IsotopeData::finalise(double totalAtoms)
 {
-	fraction_ = double(population_) / double(totalAtoms);
+	fraction_ = population_ / totalAtoms;
 }
 
 // Zero populations
 void IsotopeData::zeroPopulation()
 {
-	population_ = 0;
+	population_ = 0.0;
 	fraction_ = 0.0;
 }
 
@@ -94,7 +94,7 @@ Isotope* IsotopeData::isotope() const
 }
 
 // Return total population over all isotopes
-int IsotopeData::population() const
+double IsotopeData::population() const
 {
 	return population_;
 }
@@ -116,7 +116,7 @@ bool IsotopeData::write(LineParser& parser)
 }
 
 // Read data through specified LineParser
-bool IsotopeData::read(LineParser& parser)
+bool IsotopeData::read(LineParser& parser, const CoreData& coreData)
 {
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	isotope_ = Isotopes::isotope(parser.argi(0), parser.argi(1));
@@ -130,7 +130,7 @@ bool IsotopeData::read(LineParser& parser)
  */
 
 // Broadcast data from Master to all Slaves
-bool IsotopeData::broadcast(ProcessPool& procPool, int root)
+bool IsotopeData::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 {
 #ifdef PARALLEL
 	// For isotope_, need to broadcast element Z and isotope A

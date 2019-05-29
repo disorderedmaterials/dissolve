@@ -1,7 +1,7 @@
 /*
 	*** Dissolve - Communications
 	*** src/main/comms.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -42,9 +42,21 @@ void Dissolve::setParallelStrategy(Dissolve::ParallelStrategy ps)
 }
 
 // Return parallel strategy for Configuration work
-Dissolve::ParallelStrategy Dissolve::parallelStrategy()
+Dissolve::ParallelStrategy Dissolve::parallelStrategy() const
 {
 	return parallelStrategy_;
+}
+
+// Set default process group population (per Configuration)
+void Dissolve::setParallelGroupPopulation(int groupPopulation)
+{
+	parallelGroupPopulation_ = groupPopulation;
+}
+
+// Return default process group population (per Configuration)
+int Dissolve::parallelGroupPopulation() const
+{
+	return parallelGroupPopulation_;
 }
 
 // Return a world process pool
@@ -59,7 +71,7 @@ ProcessPool& Dissolve::worldPool()
 		// Assemble list of (world) process ranks for the pool
 		Array<int> ranks;
 		for (int n=0; n<ProcessPool::nWorldProcesses(); ++n) ranks.add(n);
-		world.setUp("World", ranks);
+		world.setUp("World", ranks, ProcessPool::MinimumGroupPopulation);
 		firstRun = false;
 	}
 
@@ -80,7 +92,7 @@ bool Dissolve::setUpMPIPools()
 
 	// Get relative atom counts between each configuration
 	Array<int> configSizes;
-	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next) configSizes.add(cfg->nAtoms());
+	for (Configuration* cfg = coreData_.configurations().first(); cfg != NULL; cfg = cfg->next) configSizes.add(cfg->nAtoms());
 // 	configSizes /= configSizes.min();
 
 	// Default pool - all world ranks
@@ -89,34 +101,34 @@ bool Dissolve::setUpMPIPools()
 
 	// Set up pool based on selected strategy
 	int cfgIndex = 0;
-	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
+	for (Configuration* cfg = coreData_.configurations().first(); cfg != NULL; cfg = cfg->next)
 	{
 		Messenger::print("Configuration '%s':\n", cfg->name());
 
 		if (parallelStrategy_ == Dissolve::SequentialConfigStrategy)
 		{
 			// Simple, sequential strategy - all processes assigned to all Configurations
-			if (!cfg->setUpProcessPool(allProcesses)) return false;
+			if (!cfg->setUpProcessPool(allProcesses, parallelGroupPopulation_)) return false;
 		}
 		else if (parallelStrategy_ == Dissolve::EvenStrategy)
 		{
 			// All processes divided equally amongst Configurations - do we have enough?
-			if (ProcessPool::nWorldProcesses() < configurations_.nItems())
+			if (ProcessPool::nWorldProcesses() < nConfigurations())
 			{
-				Messenger::error("Number of processes (%i) is less than the number of Configurations (%i) so Even strategy can't be employed.\n", ProcessPool::nWorldProcesses(), configurations_.nItems());
+				Messenger::error("Number of processes (%i) is less than the number of Configurations (%i) so Even strategy can't be employed.\n", ProcessPool::nWorldProcesses(), nConfigurations());
 				return false;
 			}
-			else if (ProcessPool::nWorldProcesses()%configurations_.nItems() != 0)
+			else if (ProcessPool::nWorldProcesses()%nConfigurations() != 0)
 			{
-				Messenger::error("Number of processes (%i) does not divide equally amongst the number of Configurations (%i) so Even strategy can't be employed.\n", ProcessPool::nWorldProcesses(), configurations_.nItems());
+				Messenger::error("Number of processes (%i) does not divide equally amongst the number of Configurations (%i) so Even strategy can't be employed.\n", ProcessPool::nWorldProcesses(), coreData_.nConfigurations());
 				return false;
 			}
 
 			// Create new pool
-			int procsPerConfig = ProcessPool::nWorldProcesses() / configurations_.nItems();
+			int procsPerConfig = ProcessPool::nWorldProcesses() / nConfigurations();
 			Array<int> poolProcesses;
 			for (int n=0; n<procsPerConfig; ++n) poolProcesses.add(procsPerConfig*cfgIndex + n);
-			if (!cfg->setUpProcessPool(poolProcesses)) return false;
+			if (!cfg->setUpProcessPool(poolProcesses, parallelGroupPopulation_)) return false;
 		}
 
 		// Increase Configuration index

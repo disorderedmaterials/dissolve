@@ -1,7 +1,7 @@
 /*
 	*** Module Widget
 	*** src/modules/calculate/rdf/gui/modulewidget.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -27,7 +27,7 @@
 
 // Forward Declarations
 class CalculateRDFModule;
-class UChromaViewWidget;
+class DataViewer;
 
 // Module Widget
 class CalculateRDFModuleWidget : public ModuleWidget
@@ -38,8 +38,8 @@ class CalculateRDFModuleWidget : public ModuleWidget
 	private:
 	// Associated Module
 	CalculateRDFModule* module_;
-	// UChromaViews contained within this widget
-	UChromaViewWidget* rdfGraph_;
+	// DataViewer contained within this widget
+	DataViewer* rdfGraph_;
 
 	public:
 	// Constructor

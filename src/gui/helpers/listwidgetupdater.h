@@ -1,7 +1,7 @@
 /*
 	*** ListWidgetUpdater
 	*** src/gui/helpers/listwidgetupdater.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -21,6 +21,7 @@
 
 #include "templates/variantpointer.h"
 #include "templates/list.h"
+#include "templates/reflist.h"
 #include <QListWidget>
 
 #ifndef DISSOLVE_LISTWIDGETUPDATER_H
@@ -73,12 +74,11 @@ template <class T, class I> class ListWidgetUpdater
 			}
 
 			++currentRow;
-
 		}
 	}
 
 	// Update widget from supplied List, assuming that the name() function in class I is the desired text to show in the list
-	ListWidgetUpdater(QListWidget* listWidget, const List<I>& data)
+	ListWidgetUpdater(QListWidget* listWidget, const List<I>& data, Qt::ItemFlags flags = Qt::NoItemFlags)
 	{
 		QListWidgetItem* listWidgetItem;
 
@@ -117,10 +117,53 @@ template <class T, class I> class ListWidgetUpdater
 				listWidget->addItem(listWidgetItem);
 				listWidgetItem->setData(Qt::UserRole, VariantPointer<I>(dataItem));
 				listWidgetItem->setText(dataItem->name());
+				if (flags != Qt::NoItemFlags) listWidgetItem->setFlags(listWidgetItem->flags() | flags);
 			}
 
 			++currentRow;
+		}
+	}
 
+	// Update widget from supplied RefList, calling supplied function to create / modify data
+	ListWidgetUpdater(QListWidget* listWidget, const RefList<I,bool>& data, T* functionParent, ListWidgetRowUpdateFunction updateRow)
+	{
+		QListWidgetItem* listWidgetItem;
+
+		int currentRow = 0;
+
+		RefListIterator<I,bool> dataIterator(data);
+		while (I* dataItem = dataIterator.iterate())
+		{
+			// Our table may or may not be populated, and with different items to those in the list.
+
+			// If there is an item already on this row, check it
+			// If it represents the current pointer data, just update it and move on. Otherwise, delete it and check again
+			while (currentRow < listWidget->count())
+			{
+				listWidgetItem = listWidget->item(currentRow);
+				I* rowData = (listWidgetItem ? VariantPointer<I>(listWidgetItem->data(Qt::UserRole)) : NULL);
+				if (rowData == dataItem)
+				{
+					// Update the current row and quit the loop
+					(functionParent->*updateRow)(currentRow, dataItem, false);
+
+					break;
+				}
+				else
+				{
+					QListWidgetItem* oldItem = listWidget->takeItem(currentRow);
+					if (oldItem) delete oldItem;
+				}
+			}
+
+			// If the current row index is (now) out of range, add a new row to the list
+			if (currentRow == listWidget->count())
+			{
+				// Create new items
+				(functionParent->*updateRow)(currentRow, dataItem, true);
+			}
+
+			++currentRow;
 		}
 	}
 };

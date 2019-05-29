@@ -5,98 +5,95 @@
 #define DISSOLVE_MCMIN_H
 
 #include "base/messenger.h"
+#include "math/minimiser.h"
 #include <iomanip>
 
-template <class T> class MonteCarloMinimiser
+template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
 {
-	// Command pointer typedef
-	typedef double (T::*MonteCarloMinimiserCostFunction)(const Array<double>& alpha);
-
 	public:
 	// Constructor
-	MonteCarloMinimiser<T>(T& object, MonteCarloMinimiserCostFunction func) : object_(object), costFunction_(func)
+	MonteCarloMinimiser<T>(T& object, typename MinimiserBase<T>::MinimiserCostFunction costFunction, bool pokeBeforeCost = false) : MinimiserBase<T>(object, costFunction, pokeBeforeCost)
 	{
 		parameterSmoothingFrequency_ = 0;
 		acceptanceMemoryLength_ = 25;
 		targetAcceptanceRatio_ = 0.33;
+		maxIterations_ = 100;
+		stepSize_ = 0.1;
+		minStepSize_ = 1.0e-5;
 	}
 
 	private:
-	// Object used to call specified function
-	T& object_;
-	// Pointer to cost function
-	MonteCarloMinimiserCostFunction costFunction_;
-	// Pointers to double values to be fit
-	Array<double*> targets_;
+	// Maximum number of iterations to perform
+	int maxIterations_;
+	// Step size
+	double stepSize_;
+	// Minimum step size
+	double minStepSize_;
 	// Parameter smoothing frequency (required number of accepted moves)
 	int parameterSmoothingFrequency_;
 	// Parameter smoothing control (Kolmogorov-Zurbenko)
 	int parameterSmoothingK_, parameterSmoothingM_;
-	// Step size
-	double stepSize_;
 	// Acceptance memory length
 	int acceptanceMemoryLength_;
 	// Target acceptance ratio
 	double targetAcceptanceRatio_;
 
 	private:
-	// Return Array of fit target values
-	Array<double> currentTargetValues()
-	{
-		Array<double> values;
-		for (int n=0; n<targets_.nItems(); ++n) values.add(*targets_.constAt(n));
-		return values;
-	}
-	// Set Array of fit target values
-	void setCurrentTargetValues(Array<double> values)
-	{
-		for (int n=0; n<targets_.nItems(); ++n) (*targets_.at(n)) = values.constAt(n);
-	}
 	// Smooth current parameter set
-	void smoothParameters()
+	void smoothParameters(Array<double>& values)
 	{
 		// Apply Kolmogorov–Zurbenko filter
 		for (int k = 0; k<parameterSmoothingK_; ++k)
 		{
-			Array<double> newY(targets_.nItems());
+			Array<double> newY(values.nItems());
 			newY = 0.0;
 			int n, m, i = parameterSmoothingM_/2;
 
 			// Left-most region of data
 			for (n=0; n<i; ++n)
 			{
-				for (m=0; m<=n+i; ++m) newY[n] += (*targets_[m]);
+				for (m=0; m<=n+i; ++m) newY[n] += values[m];
 				newY[n] /= (i + 1 + n);
 			}
 
 			// Central region (full average width available)
-			for (n=i; n < targets_.nItems()-i; ++n)
+			for (n=i; n < values.nItems()-i; ++n)
 			{
-				for (m=n-i; m <= n+i; ++m) newY[n] += (*targets_[m]);
+				for (m=n-i; m <= n+i; ++m) newY[n] += (values[m]);
 				newY[n] /= parameterSmoothingM_;
 			}
 
 			// Right-most region of data
-			for (n=targets_.nItems()-i; n<targets_.nItems(); ++n)
+			for (n=values.nItems()-i; n<values.nItems(); ++n)
 			{
-				for (m=n-i; m<targets_.nItems(); ++m) newY[n] += (*targets_[m]);
-				newY[n] /= (targets_.nItems() - n + i + 1);
+				for (m=n-i; m<values.nItems(); ++m) newY[n] += values[m];
+				newY[n] /= (values.nItems() - n + i + 1);
 			}
 
-			for (int n=0; n<targets_.nItems(); ++n) (*targets_[n]) = newY[n];
+			for (int n=0; n<values.nItems(); ++n) values[n] = newY[n];
 		}
 	}
 
 	public:
-	// Add double value to be fit
-	void addTarget(double& var)
+	// Set maximum number of iterations to perform
+	void setMaxIterations(int maxIterations)
 	{
-		targets_.add(&var);
+		maxIterations_ = maxIterations;
 	}
-	// Add Array of double values to be fit
-	void addTargets(Array<double> variables)
+	// Set step size
+	void setStepSize(double stepSize)
 	{
-		for (int n=0; n<variables.nItems(); ++n) targets_.add(&(variables.array()[n]));
+		stepSize_ = stepSize;
+	}
+	// Return step size
+	double stepSize()
+	{
+		return stepSize_;
+	}
+	// Set minimum step size
+	void setMinStepSize(double minStepSize)
+	{
+		minStepSize_ = minStepSize;
 	}
 	// Enable parameter smoothing
 	void enableParameterSmoothing(int everyNAccepted, int smoothK, int smoothM)
@@ -118,41 +115,43 @@ template <class T> class MonteCarloMinimiser
 	{
 		targetAcceptanceRatio_ = ratio;
 	}
-
 	// Perform minimisation
-	double minimise(const int maxIterations, double stepSize, const double stepSizeMin = 1.0e-5)
+	double execute(Array<double>& values)
 	{
 		// Get initial error of input parameters
-		double currentError = (object_.*costFunction_)(currentTargetValues());
+		double currentError = MinimiserBase<T>::cost(values);
 		Messenger::printVerbose("MonteCarloMinimiser<T>::minimise() - Initial error = %f\n", currentError);
 		
 		double trialError;
-		stepSize_ = stepSize;
 		Array<double> trialValues;
 		Array<int> accepts;
 		bool accepted;
 		int smoothingNAccepted = 0;
 
 		// Outer loop
-		for (int iter=0; iter<maxIterations; ++iter)
+		for (int iter=0; iter<maxIterations_; ++iter)
 		{
 			// Copy current best alpha
-			trialValues = currentTargetValues();
+			trialValues = values;
+		
+			// Perform a Monte Carlo move on a random parameter
+			int i = trialValues.nItems() * DissolveMath::random();
+			if (i >= trialValues.nItems()) i = trialValues.nItems() - 1;
+			
+			if (fabs(trialValues[i]) < 1.0e-8) trialValues[i] += DissolveMath::randomPlusMinusOne()*0.01*stepSize_;
+			else trialValues[i] += DissolveMath::randomPlusMinusOne()*trialValues[i]*stepSize_;
 
-			// Perform a Monte Carlo move on the parameters
-			for (int i=0; i<trialValues.nItems(); ++i) trialValues[i] += DissolveMath::randomPlusMinusOne()*stepSize_;
-
-			// Get new error for the large move
-			trialError = (object_.*costFunction_)(trialValues);
-
-			// If we accept this large move, perform a fine adjustment around the new parameters
+			// Get error for the new parameters, and store if improved
+			trialError = MinimiserBase<T>::cost(trialValues);
 			accepted = trialError < currentError;
 			if (accepted)
 			{
-				setCurrentTargetValues(trialValues);
+				values[i] = trialValues[i];
 				currentError = trialError;
+
 				++smoothingNAccepted;
 			}
+			else trialValues[i] = values[i];
 
 			// Accumulate acceptance memory
 			accepts.add(accepted);
@@ -162,7 +161,7 @@ template <class T> class MonteCarloMinimiser
 			{
 				double ratio = targetAcceptanceRatio_ / (double(accepts.sum()) / acceptanceMemoryLength_);
 				stepSize_ /= ratio;
-				if (stepSize_ < stepSizeMin) stepSize_ = stepSizeMin;
+				if (stepSize_ < minStepSize_) stepSize_ = minStepSize_;
 
 				accepts.clear();
 			}
@@ -170,20 +169,15 @@ template <class T> class MonteCarloMinimiser
 			// Perform periodic smoothing if requested
 			if ((parameterSmoothingFrequency_ > 0) && (smoothingNAccepted == parameterSmoothingFrequency_))
 			{
-				smoothParameters();
-				currentError = (object_.*costFunction_)(currentTargetValues());
+				smoothParameters(values);
+				currentError = MinimiserBase<T>::cost(values);
 				smoothingNAccepted = 0;
 			}
 
-			if (iter%100 == 0) Messenger::printVerbose("MonteCarloMinimiser<T>::minimise() - Iteration %04i error = %f, stepSize = %f\n", iter+1, currentError, stepSize_);
+			if (iter%(maxIterations_/10) == 0) Messenger::printVerbose("MonteCarloMinimiser<T>::minimise() - Iteration %04i error = %f, stepSize = %f\n", iter+1, currentError, stepSize_);
 		}
 
 		return currentError;
-	}
-	// Return step size
-	double stepSize()
-	{
-		return stepSize_;
 	}
 };
 

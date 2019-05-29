@@ -1,7 +1,7 @@
 /*
 	*** Module Tab
 	*** src/gui/moduletab.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -28,9 +28,11 @@
 
 // Forward Declarations
 class Module;
+class ModuleChartModuleBlock;
+class QSplitter;
 
 // Module Tab
-class ModuleTab : public QWidget, public MainTab
+class ModuleTab : public QWidget, public ListItem<ModuleTab>, public MainTab
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
@@ -57,20 +59,30 @@ class ModuleTab : public QWidget, public MainTab
 	public:
 	// Module displayed in this tab
 	Module* module_;
+	// Module control widget displayed
+	ModuleChartModuleBlock* controlsWidget_;
 	// ModuleWidget displayed in this control widget (if any)
 	ModuleWidget* moduleWidget_;
+
+	public:
+	// Initialise controls for the specified Module
+	void initialiseControls(Module* module);
+	// Return displayed Module
+	const Module* module() const;
+
+
+	/*
+	 * Widgets
+	 */
+	private:
+	// Splitter which contains the controls and module widgets
+	QSplitter* splitter_;
 
 
 	/*
 	 * Update
 	 */
-	private:
-	// Initialise controls for the specified Module
-	void initialiseControls(Module* module);
-	// Update header texts
-	void updateHeaderTexts();
-
-	protected:
+	public:
 	// Update controls in tab
 	void updateControls();
 	// Disable sensitive controls within tab, ready for main code to run
@@ -78,28 +90,19 @@ class ModuleTab : public QWidget, public MainTab
 	// Enable sensitive controls within tab, ready for main code to run
 	void enableSensitiveControls();
 
-
-	/*
-	 * Widget Functions
-	 */
 	public slots:
-	void on_ToggleKeywordsButton_clicked(bool checked);
-	void on_RunButton_clicked(bool checked);
-	void on_EnabledButton_clicked(bool checked);
-	void on_FrequencySpin_valueChanged(int value);
-
-	signals:
-	void moduleRun();
+	// Update controls in module widget only
+	void updateModuleWidget();
 
 
 	/*
 	 * State
 	 */
 	public:
+	// Read widget state through specified LineParser
+	bool readState(LineParser& parser, const CoreData& coreData);
 	// Write widget state through specified LineParser
 	bool writeState(LineParser& parser);
-	// Read widget state through specified LineParser
-	bool readState(LineParser& parser);
 };
 
 #endif

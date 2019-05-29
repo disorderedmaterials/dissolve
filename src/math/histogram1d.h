@@ -1,7 +1,7 @@
 /*
 	*** 1-Dimensional Histogram
 	*** src/math/histogram1d.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -24,7 +24,7 @@
 
 #include "math/data1d.h"
 #include "math/sampleddouble.h"
-#include "base/genericitembase.h"
+#include "genericitems/base.h"
 #include "templates/array.h"
 #include "templates/objectstore.h"
 
@@ -91,6 +91,8 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
 	int nBins() const;
 	// Bin specified value
 	void bin(double x);
+	// Return number of values binned over all bins
+	long int nBinned() const;
 	// Accumulate current histogram bins into averages
 	void accumulate();
 	// Return Array of x centre-bin values
@@ -117,10 +119,10 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
 	public:
 	// Return class name
 	static const char* itemClassName();
+	// Read data through specified LineParser
+	bool read(LineParser& parser, const CoreData& coreData);
 	// Write data through specified LineParser
 	bool write(LineParser& parser);
-	// Read data through specified LineParser
-	bool read(LineParser& parser);
 
 
 	/*
@@ -130,7 +132,7 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
 	// Sum histogram data onto all processes
 	bool allSum(ProcessPool& procPool);
 	// Broadcast data
-	bool broadcast(ProcessPool& procPool, int rootRank = 0);
+	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
 	// Check item equality
 	bool equality(ProcessPool& procPool);
 };

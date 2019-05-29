@@ -1,7 +1,7 @@
 /*
 	*** DataTest Module - Processing
 	*** src/modules/datatest/process.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -23,7 +23,7 @@
 #include "main/dissolve.h"
 #include "math/error.h"
 #include "base/sysfunc.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Run main processing
 bool DataTestModule::process(Dissolve& dissolve, ProcessPool& procPool)

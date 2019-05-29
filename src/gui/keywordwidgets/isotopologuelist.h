@@ -1,7 +1,7 @@
 /*
 	*** Keyword Widget - IsotopologueList
 	*** src/gui/keywordwidgets/isotopologuelist.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ISOTOPOLOGUELISTKEYWORDWIDGET_H
-#define DISSOLVE_ISOTOPOLOGUELISTKEYWORDWIDGET_H
+#ifndef DISSOLVE_KEYWORDWIDGET_ISOTOPOLOGUELIST_H
+#define DISSOLVE_KEYWORDWIDGET_ISOTOPOLOGUELIST_H
 
 #include "gui/keywordwidgets/ui_isotopologuelist.h"
 #include "gui/keywordwidgets/dropdown.h"
@@ -38,9 +38,7 @@ class IsotopologueListKeywordWidget : public KeywordDropDown, public KeywordWidg
 
 	public:
 	// Constructor
-	IsotopologueListKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, GenericList& moduleData, const char* prefix);
-        // Main form declaration
-        Ui::IsotopologueListWidget ui;
+	IsotopologueListKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
 
 
 	/*
@@ -52,9 +50,14 @@ class IsotopologueListKeywordWidget : public KeywordDropDown, public KeywordWidg
 
 
 	/*
-	 * Signals / Slots
+	 * Widgets
 	 */
+	private:
+        // Main form declaration
+        Ui::IsotopologueListWidget ui_;
+
 	private slots:
+	void autoButton_clicked(bool checked);
 	void addButton_clicked(bool checked);
 	void removeButton_clicked(bool checked);
 	void isotopologueTable_itemChanged(QTableWidgetItem* w);
@@ -75,7 +78,7 @@ class IsotopologueListKeywordWidget : public KeywordDropDown, public KeywordWidg
 	// Update value displayed in widget, using specified source if necessary
 	void updateValue();
 	// Update widget values data based on keyword data
-	void updateWidgetValues();
+	void updateWidgetValues(const CoreData& coreData);
 	// Update keyword data based on widget values
 	void updateKeywordData();
 };

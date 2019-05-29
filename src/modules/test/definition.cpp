@@ -1,7 +1,7 @@
 /*
 	*** Test Module - Definition
 	*** src/modules/test/definition.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -27,16 +27,16 @@ const char* TestModule::type() const
 	return "Test";
 }
 
+// Return category for module
+const char* TestModule::category() const
+{
+	return "HIDDEN";
+}
+
 // Return brief description of module
 const char* TestModule::brief() const
 {
 	return "Development Module";
-}
-
-// Return instance type for module
-Module::InstanceType TestModule::instanceType() const
-{
-	return Module::MultipleInstance;
 }
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)

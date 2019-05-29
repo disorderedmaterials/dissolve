@@ -1,7 +1,7 @@
 /*
 	*** Keyword Widget - Double
 	*** src/gui/keywordwidgets/double_funcs.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -20,10 +20,11 @@
 */
 
 #include "gui/keywordwidgets/double.hui"
-#include "templates/genericlisthelper.h"
+#include "gui/helpers/mousewheeladjustmentguard.h"
+#include "genericitems/listhelper.h"
 
 // Constructor
-DoubleKeywordWidget::DoubleKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, GenericList& moduleData, const char* prefix) : TExponentialSpin(parent), KeywordWidgetBase(moduleData, prefix)
+DoubleKeywordWidget::DoubleKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : ExponentialSpin(parent), KeywordWidgetBase(coreData, moduleData, prefix)
 {
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<DoubleModuleKeyword*>(keyword);
@@ -39,8 +40,10 @@ DoubleKeywordWidget::DoubleKeywordWidget(QWidget* parent, ModuleKeywordBase* key
 
 	// Connect the valueChanged signal to our own slot
 	connect(this, SIGNAL(valueChanged(double)), this, SLOT(myValueChanged(double)));
-}
 
+	// Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a QScrollArea)
+	installEventFilter(new MouseWheelWidgetAdjustmentGuard(this));
+}
 
 /*
  * Slots

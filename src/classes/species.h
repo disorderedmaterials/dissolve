@@ -1,7 +1,7 @@
 /*
 	*** Species Definition
 	*** src/classes/species.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -31,19 +31,18 @@
 #include "classes/speciessite.h"
 #include "classes/isotopologue.h"
 #include "base/charstring.h"
+#include "base/version.h"
+#include "templates/objectstore.h"
 
 // Forward Declarations
 class Box;
 
-/*
- * Species Definition
- */
-class Species : public ListItem<Species>
+//Species Definition
+class Species : public ListItem<Species>, public ObjectStore<Species>
 {
 	public:
-	// Constructor
+	// Constructor / Destructor
 	Species();
-	// Destructor
 	~Species();
 	// Clear Data
 	void clear();
@@ -55,16 +54,20 @@ class Species : public ListItem<Species>
 	private:
 	// Name of the Species
 	CharString name_;
+	// Version of the Species
+	VersionCounter version_;
 
 	public:
 	// Set name of the Species
 	void setName(const char* name);
 	// Return the name of the Species
 	const char* name() const;
-	// Check setup
-	bool checkSetup(const List<AtomType>& atomTypes);
+	// Check set-up of Species
+	bool checkSetUp(const List<AtomType>& atomTypes);
 	// Print Species information
 	void print();
+	// Return version
+	int version() const;
 
 
 	/*
@@ -74,53 +77,69 @@ class Species : public ListItem<Species>
 	// List of Atoms in the Species
 	List<SpeciesAtom> atoms_;
 	// List of selected Atoms
-	RefList<SpeciesAtom,int> selectedAtoms_;
+	RefList<SpeciesAtom,bool> selectedAtoms_;
 	// List of AtomTypes, and their populations, used in the Species
 	AtomTypeList usedAtomTypes_;
+	// Version of the atom selection
+	VersionCounter atomSelectionVersion_;
 	
 	public:
-	// Add a new Atom to the Species
-	SpeciesAtom* addAtom(Element* element = NULL, double rx = 0.0, double ry = 0.0, double rz = 0.0);
+	// Add a new atom to the Species
+	SpeciesAtom* addAtom(Element* element, Vec3<double> r);
 	// Return the number of atoms in the species
 	int nAtoms() const;
 	// Return the first atom in the Species
 	SpeciesAtom* firstAtom() const;
 	// Return the nth atom in the Species
 	SpeciesAtom* atom(int n);
-	// Return the list of SpeciesAtoms
-	List<SpeciesAtom>& atoms();
-	// Clear current Atom selection
+	// Return the list of atoms
+	const List<SpeciesAtom>& atoms() const;
+	// Set coordinates of specified atom
+	void setAtomCoordinates(SpeciesAtom* i, Vec3<double> r);
+	// Transmute specified atom
+	void transmuteAtom(SpeciesAtom* i, Element* el);
+	// Clear current atom selection
 	void clearAtomSelection();
-	// Add Atom to selection
+	// Add atom to selection
 	void selectAtom(SpeciesAtom* i);
-	// Select Atoms along any path from the specified one
-	void selectFromAtom(SpeciesAtom* i, SpeciesBond* exclude);
-	// Return first selected Atom reference
-	RefListItem<SpeciesAtom,int>* selectedAtoms() const;
-	// Return nth selected Atom
+	// Remove atom from selection
+	void deselectAtom(SpeciesAtom* i);
+	// Toggle selection state of specified atom
+	void toggleAtomSelection(SpeciesAtom* i);
+	// Select atoms along any path from the specified one, ignoring the bond(s) provided
+	void selectFromAtom(SpeciesAtom* i, SpeciesBond* exclude, SpeciesBond* excludeToo = NULL);
+	// Return current atom selection
+	const RefList<SpeciesAtom,bool>& selectedAtoms() const;
+	// Return nth selected atom
 	SpeciesAtom* selectedAtom(int n);
-	// Return number of selected Atoms
+	// Return number of selected atoms
 	int nSelectedAtoms() const;
-	// Return whether specified Atom is selected
+	// Return whether specified atom is selected
 	bool isAtomSelected(SpeciesAtom* i) const;
+	// Return version of the atom selection
+	const int atomSelectionVersion() const;
 	// Return total atomic mass of Species
 	double mass() const;
 	// Update used AtomTypeList
 	void updateUsedAtomTypes();
 	// Return used AtomTypesList
 	const AtomTypeList& usedAtomTypes();
+	// Clear AtomType assignments for all atoms
+	void clearAtomTypes();
 
 
 	/*
 	 * Intramolecular Data
 	 */
 	private:
-	// List of Bonds between Atoms in the Species
+	// List of bonds between atoms in the Species
 	List<SpeciesBond> bonds_;
-	// List of Angles between Atoms in the Species
+	// List of angles between atoms in the Species
 	List<SpeciesAngle> angles_;
-	// List of Torsions between Atoms in the Species
+	// List of torsions between atoms in the Species
 	List<SpeciesTorsion> torsions_;
+	// Whether the attached atoms lists have been created
+	bool attachedAtomListsGenerated_;
 
 	public:
 	// Add new SpeciesBond definition (from SpeciesAtom*)
@@ -137,8 +156,10 @@ class Species : public ListItem<Species>
 	const List<SpeciesBond>& bonds() const;
 	// Return nth SpeciesBond
 	SpeciesBond* bond(int n);
-	// Return whether SpeciesBond between SpeciesAtomss exists
+	// Return whether SpeciesBond between SpeciesAtoms exists
 	SpeciesBond* hasBond(SpeciesAtom* i, SpeciesAtom* j) const;
+	// Return whether SpeciesBond between specified atom indices exists
+	SpeciesBond* hasBond(int i, int j);
 	// Return index of specified SpeciesBond
 	int bondIndex(SpeciesBond* spb);
 	// Add new SpeciesAngle definition
@@ -177,6 +198,12 @@ class Species : public ListItem<Species>
 	bool hasTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const;
 	// Return index of specified SpeciesTorsion
 	int torsionIndex(SpeciesTorsion* spt);
+	// Return whether the attached atoms lists have been created
+	bool attachedAtomListsGenerated() const;
+	// Generate attached Atom lists for all intramolecular terms
+	void generateAttachedAtomLists();
+	// Detach master term links for all interaction types, copying parameters to local SpeciesIntra
+	void detachFromMasterTerms();
 
 
 	/*
@@ -222,9 +249,9 @@ class Species : public ListItem<Species>
 	// Update current Isotopologues
 	void updateIsotopologues(const List<AtomType>& atomTypes);
 	// Add a new Isotopologue to this Species
-	Isotopologue* addIsotopologue(const char* baseName = "UnnamedIsotopologue");
+	Isotopologue* addIsotopologue(const char* baseName, const List<AtomType>& masterAtomTypes);
 	// Add natural isotopologue to this species, if it hasn't already been defined
-	Isotopologue* addNaturalIsotopologue();
+	Isotopologue* addNaturalIsotopologue(const List<AtomType>& masterAtomTypes);
 	// Remove specified Isotopologue from this Species
 	void removeIsotopologue(Isotopologue* iso);
 	// Return number of defined Isotopologues

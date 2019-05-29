@@ -1,7 +1,7 @@
 /*
 	*** Import Module
 	*** src/modules/import/import.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -26,7 +26,7 @@
 #include "modules/import/formats.h"
 
 // Forward Declarations
-/* none */
+class Data1D;
 
 // Import Module
 class ImportModule : public Module
@@ -41,15 +41,9 @@ class ImportModule : public Module
 	/*
 	 * Instances
 	 */
-	protected:
-	// List of all instances of this Module type
-	static List<Module> instances_;
-
 	public:
-	// Return list of all created instances of this Module
-	List<Module>& instances();
 	// Create instance of this module
-	Module* createInstance();
+	Module* createInstance() const;
 
 
 	/*
@@ -58,10 +52,10 @@ class ImportModule : public Module
 	public:
 	// Return type of module
 	const char* type() const;
+	// Return category for module
+	const char* category() const;
 	// Return brief description of module
 	const char* brief() const;
-	// Return instance type for module
-	InstanceType instanceType() const;
 	// Return the maximum number of Configurations the Module can target (or -1 for any number)
 	int nTargetableConfigurations() const;
 
@@ -116,6 +110,21 @@ class ImportModule : public Module
 	static bool readSimpleForces(LineParser& parser, Array<double>& fx, Array<double>& fy, Array<double>& fz);
 	// Read DL_POLY forces from specified file
 	static bool readDLPOLYForces(LineParser& parser, Array<double>& fx, Array<double>& fy, Array<double>& fz);
+
+
+	/*
+	 * Static Functions - Data1D
+	 */
+	public:
+	// Read Data1D in specified format
+	static bool readData1D(Data1DImportFileFormat::Data1DImportFormat format, LineParser& parser, Data1D& data);
+	// Read simple XY data from specified file
+	static bool readXYData1D(LineParser& parser, Data1D& data);
+	// Read simple histogram data from specified file
+	static bool readHistogramData1D(LineParser& parser, Data1D& data);
+	// Read Gudrun merged interference cross-section (mint) data from specified file
+	static bool readGudrunMintData1D(LineParser& parser, Data1D& data);
+
 };
 
 #endif

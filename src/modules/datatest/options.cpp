@@ -1,7 +1,7 @@
 /*
 	*** DataTest Module - Options
 	*** src/modules/datatest/options.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -25,9 +25,11 @@
 // Set up keywords for Module
 void DataTestModule::setUpKeywords()
 {
-	keywords_.add(new DataStoreModuleKeyword(testData_), "Data1D", "Specify one-dimensional test reference data", "<filename> <target> [xcol] [ycol]");
-	keywords_.add(new ModuleReferenceListModuleKeyword(targetModule_, "*", 1), "Target", "Module containing target data", "<Module>");
-	keywords_.add(new DoubleModuleKeyword(0.1, 1.0e-5), "Threshold", "Test threshold (%%error) above which test fails", "<threshold[0.1]>");
+	// Test
+	ModuleKeywordGroup* group = addKeywordGroup("Test");
+	group->add(new DataStoreModuleKeyword(testData_), "Data1D", "Specify one-dimensional test reference data", "<filename> <target> [xcol] [ycol]");
+	group->add(new ModuleReferenceListModuleKeyword(targetModule_, "*", 1), "Target", "Module containing target data", "<Module>");
+	group->add(new DoubleModuleKeyword(0.1, 1.0e-5), "Threshold", "Test threshold (%%error) above which test fails", "<threshold[0.1]>");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised

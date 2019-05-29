@@ -13,7 +13,7 @@
    width="120"
    height="70"
    id="svg2"
-   inkscape:version="0.91 r13725"
+   inkscape:version="0.92.2 5c3e80d, 2017-08-06"
    sodipodi:docname="slider-off.svg">
   <metadata
      id="metadata3050">
@@ -37,18 +37,24 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:window-width="1920"
-     inkscape:window-height="1016"
+     inkscape:window-height="983"
      id="namedview3048"
      showgrid="false"
-     inkscape:zoom="4.0000001"
-     inkscape:cx="32.292663"
-     inkscape:cy="88.109394"
+     inkscape:zoom="8.0000002"
+     inkscape:cx="19.425291"
+     inkscape:cy="54.306482"
      inkscape:window-x="0"
      inkscape:window-y="27"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg2" />
   <defs
      id="defs4" />
+  <circle
+     style="opacity:1;fill:#ffffeb;fill-opacity:1;fill-rule:nonzero;stroke:#ffffeb;stroke-width:3.77952766;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="path814"
+     cx="33.5625"
+     cy="35.0625"
+     r="21.9375" />
   <g
      id="g4286"
      transform="matrix(1.1101625,0,0,1.1101625,132.17737,-57.28944)"

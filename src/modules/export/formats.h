@@ -1,7 +1,7 @@
 /*
 	*** Export Module - Formats
 	*** src/modules/export/formats.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -30,9 +30,12 @@
 // Coordinate Export Formats
 class CoordinateExportFileFormat : public FileAndFormat
 {
+	/*
+	 * Available Formats
+	 */
 	public:
 	// Available coordinate formats
- 	enum CoordinateExportFormat { XYZCoordinates, DLPOLYCoordinates, nCoordinateExportFormats };
+	enum CoordinateExportFormat { XYZCoordinates, DLPOLYCoordinates, nCoordinateExportFormats };
 	// Return number of available formats
 	int nFormats() const;
 	// Return formats array
@@ -41,14 +44,28 @@ class CoordinateExportFileFormat : public FileAndFormat
 	const char** niceFormats() const;
 	// Return current format as CoordinateExportFormat
 	CoordinateExportFormat coordinateFormat() const;
+
+
+	/*
+	 * Filename / Basename
+	 */
+	public:
+	// Return whether the file must exist
+	bool fileMustExist() const
+	{
+		return false;
+	}
 };
 
 // Data2D Export Formats
 class Data2DExportFileFormat : public FileAndFormat
 {
+	/*
+	 * Available Formats
+	 */
 	public:
 	// Available data formats
- 	enum Data2DExportFormat { BlockData, nCoordinateExportFormats };
+	enum Data2DExportFormat { BlockData, nData2DExportFormats };
 	// Return number of available formats
 	int nFormats() const;
 	// Return formats array
@@ -57,6 +74,77 @@ class Data2DExportFileFormat : public FileAndFormat
 	const char** niceFormats() const;
 	// Return current format as Data2DExportFormat
 	Data2DExportFormat data2DFormat() const;
+
+
+	/*
+	 * Filename / Basename
+	 */
+	public:
+	// Return whether the file must exist
+	bool fileMustExist() const
+	{
+		return false;
+	}
+};
+
+// PairPotential Export Formats
+class PairPotentialExportFileFormat : public FileAndFormat
+{
+	/*
+	 * Available Formats
+	 */
+	public:
+	// Available data formats
+	enum PairPotentialExportFormat { BlockPairPotential, DLPOLYTABLEPairPotential, nPairPotentialExportFormats };
+	// Return number of available formats
+	int nFormats() const;
+	// Return formats array
+	const char** formats() const;
+	// Return nice formats array
+	const char** niceFormats() const;
+	// Return current format as PairPotentialExportFormat
+	PairPotentialExportFormat pairPotentialFormat() const;
+
+
+	/*
+	 * Filename / Basename
+	 */
+	public:
+	// Return whether the file must exist
+	bool fileMustExist() const
+	{
+		return false;
+	}
+};
+
+// Trajectory Export Formats
+class TrajectoryExportFileFormat : public FileAndFormat
+{
+	/*
+	 * Available Formats
+	 */
+	public:
+	// Available trajectory formats
+	enum TrajectoryExportFormat { XYZTrajectory, nTrajectoryExportFormats };
+	// Return number of available formats
+	int nFormats() const;
+	// Return formats array
+	const char** formats() const;
+	// Return nice formats array
+	const char** niceFormats() const;
+	// Return current format as TrajectoryExportFormat
+	TrajectoryExportFormat trajectoryFormat() const;
+
+
+	/*
+	 * Filename / Basename
+	 */
+	public:
+	// Return whether the file must exist
+	bool fileMustExist() const
+	{
+		return false;
+	}
 };
 
 #endif

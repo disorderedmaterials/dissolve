@@ -1,7 +1,7 @@
 /*
 	*** SpeciesAtom Definition
 	*** src/classes/speciesatom.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -22,6 +22,7 @@
 #include "classes/speciesatom.h"
 #include "classes/atomtype.h"
 #include "classes/speciesbond.h"
+#include "data/elements.h"
 #include "base/processpool.h"
 
 // Constructor
@@ -33,6 +34,7 @@ SpeciesAtom::SpeciesAtom() : ListItem<SpeciesAtom>()
 	grain_ = NULL;
 	r_.zero();
 	index_= -1;
+	selected_ = false;
 }
 
 // Destructor
@@ -102,7 +104,7 @@ void SpeciesAtom::setAtomType(AtomType* at)
 	// Check elements
 	if (at && (at->element() != element_))
 	{
-		Messenger::warn("Refused to assign AtomType '%s' to SpeciesAtom, since their elements differ.\n", at->name());
+		Messenger::warn("Refused to assign AtomType '%s' to an atom of element %s, since the element of the AtomType is %s.\n", at->name(), element_->symbol(), at->element()->symbol());
 	}
 	else atomType_ = at;
 }
@@ -129,6 +131,18 @@ int SpeciesAtom::index() const
 int SpeciesAtom::userIndex() const
 {
 	return index_+1;
+}
+
+// Set whether the atom is currently selected
+void SpeciesAtom::setSelected(bool selected)
+{
+	selected_ = selected;
+}
+
+// Return whether the atom is currently selected
+bool SpeciesAtom::isSelected() const
+{
+	return selected_;
 }
 
 /*
@@ -175,10 +189,16 @@ int SpeciesAtom::nBonds() const
 	return bonds_.nItems();
 }
 
-// Return first Bond reference
-RefListItem<SpeciesBond,int>* SpeciesAtom::bonds()
+// Return specified bond
+SpeciesBond* SpeciesAtom::bond(int index)
 {
-	return bonds_.first();
+	return bonds_.item(index);
+}
+
+// Return bonds list
+const RefList<SpeciesBond,int>& SpeciesAtom::bonds() const
+{
+	return bonds_;
 }
 
 // Return whether Bond to specified Atom exists

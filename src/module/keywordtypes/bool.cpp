@@ -1,7 +1,7 @@
 /*
 	*** Module Keyword - Bool
 	*** src/module/keywordtypes/bool.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -21,7 +21,7 @@
 
 #include "module/keywordtypes/bool.h"
 #include "base/lineparser.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructor
 BoolModuleKeyword::BoolModuleKeyword(bool value) : ModuleKeywordBase(ModuleKeywordBase::BoolData), ModuleKeywordData<bool>(value)
@@ -66,7 +66,7 @@ int BoolModuleKeyword::maxArguments()
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool BoolModuleKeyword::read(LineParser& parser, int startArg, ProcessPool& procPool)
+bool BoolModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	if (parser.hasArg(startArg))
 	{

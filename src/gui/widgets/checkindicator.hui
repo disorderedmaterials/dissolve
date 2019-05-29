@@ -1,0 +1,66 @@
+/*
+	*** Check Indicator
+	*** src/gui/widgets/checkindicator.hui
+	Copyright T. Youngs 2012-2019
+
+	This file is part of Dissolve.
+
+	Dissolve is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	Dissolve is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef DISSOLVE_CHECKINDICATOR_H
+#define DISSOLVE_CHECKINDICATOR_H
+
+#include <QLabel>
+
+// Forward Declarations
+/* none */
+
+// Check Indicator - simple widget display either a tick or a cross
+class CheckIndicator : public QLabel
+{
+	Q_OBJECT
+
+	public:
+	// Constructor / Destructor
+	CheckIndicator(QWidget* parent = NULL);
+	// Indicator State enum
+	enum IndicatorState { OKState, NotOKState, WarningState };
+
+	private:
+	// State of indicator
+	IndicatorState state_;
+
+	public:
+	// Return state of indicator
+	IndicatorState state() const;
+
+
+	/*
+	 * State Update
+	 */
+	private:
+	// Update state icon
+	void updateStateIcon();
+
+	public slots:
+	// Set indicator to OK (green tick)
+	void setOK(bool isOK = true);
+	// Set indicator to Not OK (red cross)
+	void setNotOK(bool isNotOK = true);
+	// Set indicator to Warning (orange bang)
+	void setWarning();
+};
+
+#endif

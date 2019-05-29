@@ -1,7 +1,7 @@
 /*
 	*** Node Context Stack
 	*** src/analyse/nodecontextstack.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -22,16 +22,13 @@
 #ifndef DISSOLVE_NODECONTEXTSTACK_H
 #define DISSOLVE_NODECONTEXTSTACK_H
 
+#include "analyse/nodes/node.h"
 #include "base/charstring.h"
 #include "templates/array.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
-class AnalysisSelectNode;
-class AnalysisCalculateNode;
-class AnalysisCollect1DNode;
-class AnalysisCollect2DNode;
-class AnalysisCollect3DNode;
+/* none */
 
 // Node Context Stack
 class NodeContextStack
@@ -49,18 +46,10 @@ class NodeContextStack
 	private:
 	// Counter for SelectNode added to the stack at any point
 	int nSelectNodesAdded_;
-	// SelectNode context stack
-	Array< RefList<AnalysisSelectNode,CharString> > selectStack_;
-	// CalculateNode context stack
-	Array< RefList<AnalysisCalculateNode,bool> > calculateStack_;
-	// References for all Collect1DNodes added
-	RefList<AnalysisSelectNode,CharString> selectNodes_;
-	// References for all Collect1DNodes added
-	RefList<AnalysisCollect1DNode,bool> collect1DNodes_;
-	// References for all Collect2DNodes added
-	RefList<AnalysisCollect2DNode,bool> collect2DNodes_;
-	// References for all Collect3DNodes added
-	RefList<AnalysisCollect3DNode,bool> collect3DNodes_;
+	// Context stack
+	Array< RefList<AnalysisNode,bool> > stack_;
+	// References for all nodes added
+	RefList<AnalysisNode,bool> nodes_;
 
 	public:
 	// Clear all layers from stack
@@ -69,16 +58,8 @@ class NodeContextStack
 	void push();
 	// Pop topmost context layer from the stack
 	bool pop();
-	// Add new selection node the topmost context layer
-	bool add(AnalysisSelectNode* selectBaseNode, const char* name);
-	// Add new calculation node the topmost context layer
-	bool add(AnalysisCalculateNode* calculateNode);
-	// Add reference to one-dimensional collect node
-	void add(AnalysisCollect1DNode* collect1DNode);
-	// Add reference to two-dimensional collect node
-	void add(AnalysisCollect2DNode* collect2DNode);
-	// Add reference to three-dimensional collect node
-	void add(AnalysisCollect3DNode* collect3DNode);
+	// Add new node to the topmost context layer
+	bool add(AnalysisNode* node);
 
 
 	/*
@@ -87,18 +68,10 @@ class NodeContextStack
 	public:
 	// Return next available generic name for a SelectNode
 	const char* nextSelectName() const;
-	// Return named Select node if it is currently in scope
-	AnalysisSelectNode* selectNodeInScope(const char* name) const;
-	// Return named Calculate node if it is currently in scope
-	AnalysisCalculateNode* calculateNodeInScope(const char* name) const;
-	// Return named Collect1D node (if it exists)
-	AnalysisCollect1DNode* collect1DNode(const char* name) const;
-	// Return named Collect2D node (if it exists)
-	AnalysisCollect2DNode* collect2DNode(const char* name) const;
-	// Return named Collect3D node (if it exists)
-	AnalysisCollect3DNode* collect3DNode(const char* name) const;
-	// Return named Select node (if it exists)
-	AnalysisSelectNode* selectNode(const char* name) const;
+	// Return named node if it is currently in scope, and optionally matches the type given
+	AnalysisNode* nodeInScope(const char* name, AnalysisNode::NodeType nt = AnalysisNode::nNodeTypes) const;
+	// Return named node if known, and which matches the (optional) type given
+	AnalysisNode* node(const char* name, AnalysisNode::NodeType nt = AnalysisNode::nNodeTypes) const;
 };
 
 #endif

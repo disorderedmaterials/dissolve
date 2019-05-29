@@ -1,7 +1,7 @@
 /*
 	*** Orthorhombic Box
 	*** src/classes/box_orthorhombic.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -26,7 +26,7 @@
 // Constructor
 OrthorhombicBox::OrthorhombicBox(double volume, const Vec3<double> relativeLengths) : Box()
 {
-	type_ = Box::OrthorhombicBox;
+	type_ = Box::OrthorhombicBoxType;
 	
 	// Construct axes_
 	axes_.setColumn(0, relativeLengths.x, 0.0, 0.0);

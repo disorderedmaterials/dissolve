@@ -1,7 +1,7 @@
 /*
 	*** Module Keyword - Isotopologue Reference List
 	*** src/modules/keywordtypes/isotopologuereferencelist.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -23,7 +23,7 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructor
 IsotopologueReferenceListModuleKeyword::IsotopologueReferenceListModuleKeyword(List<IsotopologueReference>& references) : ModuleKeywordBase(ModuleKeywordBase::IsotopologueReferenceData), ModuleKeywordData<IsotopologueReference>(IsotopologueReference()), references_(references)
@@ -62,7 +62,7 @@ int IsotopologueReferenceListModuleKeyword::maxArguments()
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool IsotopologueReferenceListModuleKeyword::read(LineParser& parser, int startArg, ProcessPool& procPool)
+bool IsotopologueReferenceListModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	// Find target Configuration (first argument)
 	Configuration* cfg = NULL;

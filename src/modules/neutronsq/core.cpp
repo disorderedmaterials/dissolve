@@ -1,7 +1,7 @@
 /*
 	*** Neutron SQ Module - Core Functions
 	*** src/modules/neutronsq/core.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -21,9 +21,6 @@
 
 #include "modules/neutronsq/neutronsq.h"
 
-// Static Members
-List<Module> NeutronSQModule::instances_;
-
 /*
  * Constructor / Destructor
  */
@@ -31,17 +28,8 @@ List<Module> NeutronSQModule::instances_;
 // Constructor
 NeutronSQModule::NeutronSQModule() : Module()
 {
-	// Add to instances list and set unique name for this instance
-	uniqueName_.sprintf("%s%02i", type(), instances_.nItems());
-	instances_.own(this);
-
 	// Set up variables / control parameters
 	setUpKeywords();
-
-	// Set representative colour
-	colour_[0] = 0;
-	colour_[1] = 0;
-	colour_[2] = 200;
 }
 
 // Destructor
@@ -54,13 +42,7 @@ NeutronSQModule::~NeutronSQModule()
  */
 
 // Create instance of this module
-List<Module>& NeutronSQModule::instances()
-{
-	return instances_;
-}
-
-// Create instance of this module
-Module* NeutronSQModule::createInstance()
+Module* NeutronSQModule::createInstance() const
 {
 	return new NeutronSQModule;
 }

@@ -1,7 +1,7 @@
 /*
 	*** Keyword Widget - Integer
 	*** src/gui/keywordwidgets/int_funcs.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -20,10 +20,11 @@
 */
 
 #include "gui/keywordwidgets/int.hui"
-#include "templates/genericlisthelper.h"
+#include "gui/helpers/mousewheeladjustmentguard.h"
+#include "genericitems/listhelper.h"
 
 // Constructor
-IntegerKeywordWidget::IntegerKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, GenericList& moduleData, const char* prefix) : QSpinBox(parent), KeywordWidgetBase(moduleData, prefix)
+IntegerKeywordWidget::IntegerKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QSpinBox(parent), KeywordWidgetBase(coreData, moduleData, prefix)
 {
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<IntegerModuleKeyword*>(keyword);
@@ -39,8 +40,10 @@ IntegerKeywordWidget::IntegerKeywordWidget(QWidget* parent, ModuleKeywordBase* k
 
 	// Connect the
 	connect(this, SIGNAL(valueChanged(int)), this, SLOT(myValueChanged(int)));
-}
 
+	// Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a QScrollArea)
+	installEventFilter(new MouseWheelWidgetAdjustmentGuard(this));
+}
 
 /*
  * Signals / Slots

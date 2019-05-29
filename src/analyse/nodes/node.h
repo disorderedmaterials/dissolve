@@ -1,7 +1,7 @@
 /*
 	*** Analysis Base Node
 	*** src/analyse/nodes/node.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -26,7 +26,9 @@
 #include "templates/listitem.h"
 
 // Forward Declarations
+class Analyser;
 class Configuration;
+class CoreData;
 class GenericList;
 class LineParser;
 class ProcessPool;
@@ -38,7 +40,7 @@ class AnalysisNode : public ListItem<AnalysisNode>
 {
 	public:
 	// Available Node Types
-	enum NodeType { CalculateNode, Collect1DNode, Collect2DNode, Collect3DNode, DynamicSiteNode, ExcludeNode, Process1DNode, Process2DNode, Process3DNode, SelectNode, SequenceNode, nNodeTypes };
+	enum NodeType { CalculateNode, Collect1DNode, Collect2DNode, Collect3DNode, DynamicSiteNode, ExcludeNode, Fit1DNode, Process1DNode, Process2DNode, Process3DNode, SelectNode, SequenceNode, nNodeTypes };
 	// Convert string to node type
 	static NodeType nodeType(const char* s);
 	// Convert node type to string
@@ -59,6 +61,8 @@ class AnalysisNode : public ListItem<AnalysisNode>
 	CharString name_;
 	// Node nice name
 	CharString niceName_;
+	// Analyser parent in which the node exists
+	Analyser* parent_;
 
 	public:
 	// Return node type
@@ -69,6 +73,10 @@ class AnalysisNode : public ListItem<AnalysisNode>
 	const char* name() const;
 	// Return node nice name
 	const char* niceName() const;
+	// Set Analyser parent in which the node exists
+	void setParent(Analyser* parent);
+	// Return Analyser parent in which the node exists
+	Analyser* parent() const;
 
 
 	/*
@@ -90,7 +98,7 @@ class AnalysisNode : public ListItem<AnalysisNode>
 	 */
 	public:
 	// Read structure from specified LineParser
-	virtual bool read(LineParser& parser, NodeContextStack& contextStack) = 0;
+	virtual bool read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack) = 0;
 	// Write structure to specified LineParser
 	virtual bool write(LineParser& parser, const char* prefix) = 0;
 };

@@ -1,7 +1,7 @@
 /*
 	*** Analyse Module - Definition
 	*** src/modules/analyse/definition.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -27,16 +27,16 @@ const char* AnalyseModule::type() const
 	return "Analyse";
 }
 
+// Return category for module
+const char* AnalyseModule::category() const
+{
+	return "Property Calculation";
+}
+
 // Return brief description of module
 const char* AnalyseModule::brief() const
 {
 	return "Perform analysis of one or more Configurations";
-}
-
-// Return instance type for module
-Module::InstanceType AnalyseModule::instanceType() const
-{
-	return Module::MultipleInstance;
 }
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)

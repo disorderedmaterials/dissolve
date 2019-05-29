@@ -1,7 +1,7 @@
 /*
 	*** SpeciesTorsion Definition
-	*** src/classes/speciesangle.h
-	Copyright T. Youngs 2012-2018
+	*** src/classes/speciestorsion.h
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -93,6 +93,7 @@ class SpeciesTorsion : public SpeciesIntra, public ListItem<SpeciesTorsion>
 		Cos3Form,
 		Cos4Form,
 		Cos3CForm,
+		UFFCosineForm,
 		nTorsionFunctions
 	};
 	// Convert string to functional form
@@ -105,6 +106,12 @@ class SpeciesTorsion : public SpeciesIntra, public ListItem<SpeciesTorsion>
 	static int nFunctionParameters(TorsionFunction func);
 
 	public:
+	// Set up any necessary parameters
+	void setUp();
+	// Return fundamental frequency for the interaction
+	double fundamentalFrequency(double reducedMass) const;
+	// Return type of this interaction
+	SpeciesIntra::IntramolecularType type() const;
 	// Return energy for specified angle
 	double energy(double angleInDegrees) const;
 	// Return force multiplier for specified angle

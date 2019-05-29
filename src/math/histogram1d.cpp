@@ -1,7 +1,7 @@
 /*
 	*** 1-Dimensional Histogram
 	*** src/math/histogram1d.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -165,6 +165,12 @@ void Histogram1D::bin(double x)
 	++nBinned_;
 }
 
+// Return number of values binned over all bins
+long int Histogram1D::nBinned() const
+{
+	return nBinned_;
+}
+
 // Accumulate current histogram bins into averages
 void Histogram1D::accumulate()
 {
@@ -231,19 +237,8 @@ const char* Histogram1D::itemClassName()
 	return "Histogram1D";
 }
 
-// Write data through specified LineParser
-bool Histogram1D::write(LineParser& parser)
-{
-	if (!parser.writeLineF("%s\n", objectTag())) return false;
-	if (!parser.writeLineF("%f %f %f\n", minimum_, maximum_, binWidth_)) return false;
-	if (!parser.writeLineF("%li  %li\n", nBinned_, nMissed_)) return false;
-	for (int n=0; n<nBins_; ++n) if (!averages_[n].write(parser)) return false;
-
-	return true;
-}
-
 // Read data through specified LineParser
-bool Histogram1D::read(LineParser& parser)
+bool Histogram1D::read(LineParser& parser, const CoreData& coreData)
 {
 	clear();
 
@@ -257,7 +252,18 @@ bool Histogram1D::read(LineParser& parser)
 	nBinned_ = parser.argli(0);
 	nMissed_ = parser.argli(1);
 
-	for (int n=0; n<nBins_; ++n) if (!averages_[n].read(parser)) return false;
+	for (int n=0; n<nBins_; ++n) if (!averages_[n].read(parser, coreData)) return false;
+
+	return true;
+}
+
+// Write data through specified LineParser
+bool Histogram1D::write(LineParser& parser)
+{
+	if (!parser.writeLineF("%s\n", objectTag())) return false;
+	if (!parser.writeLineF("%f %f %f\n", minimum_, maximum_, binWidth_)) return false;
+	if (!parser.writeLineF("%li  %li\n", nBinned_, nMissed_)) return false;
+	for (int n=0; n<nBins_; ++n) if (!averages_[n].write(parser)) return false;
 
 	return true;
 }
@@ -272,26 +278,25 @@ bool Histogram1D::allSum(ProcessPool& procPool)
 #ifdef PARALLEL
 	if (!procPool.allSum(bins_, nBins_)) return false;
 #endif
-
 	return true;
 }
 
 // Broadcast data
-bool Histogram1D::broadcast(ProcessPool& procPool, int rootRank)
+bool Histogram1D::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 {
 #ifdef PARALLEL
 	// Range data
-	if (!procPool.broadcast(minimum_, rootRank)) return false;
-	if (!procPool.broadcast(maximum_, rootRank)) return false;
-	if (!procPool.broadcast(binWidth_, rootRank)) return false;
-	if (!procPool.broadcast(nBins_, rootRank)) return false;
+	if (!procPool.broadcast(minimum_, root)) return false;
+	if (!procPool.broadcast(maximum_, root)) return false;
+	if (!procPool.broadcast(binWidth_, root)) return false;
+	if (!procPool.broadcast(nBins_, root)) return false;
 
 	// Data
-	if (!procPool.broadcast(nBinned_, rootRank)) return false;
-	if (!procPool.broadcast(nMissed_, rootRank)) return false;
-	if (!procPool.broadcast(binCentres_, rootRank)) return false;
-	if (!procPool.broadcast(bins_, rootRank)) return false;
-	for (int n=0; n<averages_.nItems(); ++n) if (!averages_[n].broadcast(procPool, rootRank)) return false;
+	if (!procPool.broadcast(nBinned_, root)) return false;
+	if (!procPool.broadcast(nMissed_, root)) return false;
+	if (!procPool.broadcast(binCentres_, root)) return false;
+	if (!procPool.broadcast(bins_, root)) return false;
+	for (int n=0; n<averages_.nItems(); ++n) if (!averages_[n].broadcast(procPool, root, coreData)) return false;
 #endif
 	return true;
 }

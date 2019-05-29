@@ -1,7 +1,7 @@
 /*
 	*** Dissolve - PairPotentials
 	*** src/main/pairpotentials.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -128,21 +128,6 @@ PairPotential* Dissolve::pairPotential(const char* at1, const char* at2) const
 	return NULL;
 }
 
-// Save all PairPotentials
-bool Dissolve::savePairPotentials(const char* baseName) const
-{
-	bool result = true;
-
-	for (PairPotential* pp = pairPotentials_.first(); pp != NULL; pp = pp->next)
-	{
-		// Generate filename
-		result = pp->save(CharString("%s-%s-%s.pp", baseName, pp->atomTypeNameI(), pp->atomTypeNameJ()));
-		if (!result) break;
-	}
-	
-	return result;
-}
-
 // Return map for PairPotentials
 const PotentialMap& Dissolve::potentialMap()
 {
@@ -168,7 +153,7 @@ void Dissolve::updateCurrentPairPotentials()
 bool Dissolve::generateMissingPairPotentials(PairPotential::ShortRangeType srType)
 {
 	// Loop over all atomtype pairs and generate any missing potentials
-	for (AtomType* at1 = atomTypes_.first(); at1 != NULL; at1 = at1->next)
+	for (AtomType* at1 = coreData_.atomTypes().first(); at1 != NULL; at1 = at1->next)
 	{
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next)
 		{

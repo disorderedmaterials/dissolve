@@ -1,7 +1,7 @@
 /*
 	*** Analysis Node - Collect1D
 	*** src/analyse/nodes/collect1d.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -26,7 +26,7 @@
 #include "classes/configuration.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 
 // Constructor
 AnalysisCollect1DNode::AnalysisCollect1DNode(AnalysisCalculateNode* observable, double rMin, double rMax, double binWidth) : AnalysisNode(AnalysisNode::Collect1DNode)
@@ -161,14 +161,14 @@ bool AnalysisCollect1DNode::finalise(ProcessPool& procPool, Configuration* cfg, 
  */
 
 // Read structure from specified LineParser
-bool AnalysisCollect1DNode::read(LineParser& parser, NodeContextStack& contextStack)
+bool AnalysisCollect1DNode::read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack)
 {
 	// The current line in the parser must also contain a node name (which is not necessarily unique...)
 	if (parser.nArgs() != 2) return Messenger::error("A Collect1D node must be given a suitable name.\n");
 	setName(parser.argc(1));
 
-	// Add ourselves to the stack
-	contextStack.add(this);
+	// Add ourselves to the context stack
+	if (!contextStack.add(this)) return Messenger::error("Error adding Collect1D node '%s' to context stack.\n", name());
 
 	// Read until we encounter the EndCollect1D keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
@@ -180,21 +180,21 @@ bool AnalysisCollect1DNode::read(LineParser& parser, NodeContextStack& contextSt
 		Collect1DNodeKeyword nk = collect1DNodeKeyword(parser.argc(0));
 		switch (nk)
 		{
-			case (Collect1DNodeKeyword::EndCollect1DKeyword):
+			case (AnalysisCollect1DNode::EndCollect1DKeyword):
 				return true;
-			case (Collect1DNodeKeyword::QuantityXKeyword):
+			case (AnalysisCollect1DNode::QuantityXKeyword):
 				// Determine observable from supplied argument
-				observable_ = contextStack.calculateNodeInScope(parser.argc(1));
+				observable_ = (AnalysisCalculateNode*) contextStack.nodeInScope(parser.argc(1), AnalysisNode::CalculateNode);
 				if (!observable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect1DNodeKeyword(nk));
 				break;
-			case (Collect1DNodeKeyword::RangeXKeyword):
+			case (AnalysisCollect1DNode::RangeXKeyword):
 				// Check that we have the right number of arguments first...
-				if (parser.nArgs() != 4) return Messenger::error("Collect1D node keyword '%s' expects exactly three arguments (%i given).\n", collect1DNodeKeyword(Collect1DNodeKeyword::RangeXKeyword), parser.nArgs() - 1);
+				if (parser.nArgs() != 4) return Messenger::error("Collect1D node keyword '%s' expects exactly three arguments (%i given).\n", collect1DNodeKeyword(AnalysisCollect1DNode::RangeXKeyword), parser.nArgs() - 1);
 				minimum_ = parser.argd(1);
 				maximum_ = parser.argd(2);
 				binWidth_ = parser.argd(3);
 				break;
-			case (Collect1DNodeKeyword::nCollect1DNodeKeywords):
+			case (AnalysisCollect1DNode::nCollect1DNodeKeywords):
 				return Messenger::error("Unrecognised Collect1D node keyword '%s' found.\n", parser.argc(0));
 				break;
 			default:

@@ -1,7 +1,7 @@
 /*
 	*** Configuration Tab
 	*** src/gui/configurationtab.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -31,7 +31,7 @@ class Configuration;
 class SpeciesInfo;
 
 // Configuration Tab
-class ConfigurationTab : public QWidget, public MainTab
+class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, public MainTab
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
@@ -53,11 +53,15 @@ class ConfigurationTab : public QWidget, public MainTab
 
 
 	/*
-	 * Target
+	 * Configuration Target
 	 */
 	private:
 	// Configuration data to display
 	Configuration* configuration_;
+
+	public:
+	// Return displayed Configuration
+	const Configuration* configuration() const;
 
 
 	/*
@@ -90,6 +94,8 @@ class ConfigurationTab : public QWidget, public MainTab
 	 * Signals / Slots
 	 */
 	private:
+	// Return current SpeciesInfo
+	SpeciesInfo* currentSpeciesInfo() const;
 
 	private slots:
 	// Definition
@@ -121,10 +127,10 @@ class ConfigurationTab : public QWidget, public MainTab
 	 * State
 	 */
 	public:
+	// Read widget state through specified LineParser
+	bool readState(LineParser& parser, const CoreData& coreData);
 	// Write widget state through specified LineParser
 	bool writeState(LineParser& parser);
-	// Read widget state through specified LineParser
-	bool readState(LineParser& parser);
 };
 
 #endif

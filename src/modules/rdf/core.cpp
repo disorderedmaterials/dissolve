@@ -1,7 +1,7 @@
 /*
 	*** RDF Module - Core Functions
 	*** src/modules/rdf/core.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -21,9 +21,6 @@
 
 #include "modules/rdf/rdf.h"
 
-// Static Members
-List<Module> RDFModule::instances_;
-
 /*
  * Constructor / Destructor
  */
@@ -31,17 +28,8 @@ List<Module> RDFModule::instances_;
 // Constructor
 RDFModule::RDFModule() : Module()
 {
-	// Add to instances list and set unique name for this instance
-	uniqueName_.sprintf("%s%02i", type(), instances_.nItems());
-	instances_.own(this);
-
 	// Set up variables / control parameters
 	setUpKeywords();
-
-	// Set representative colour
-	colour_[0] = 0;
-	colour_[1] = 0;
-	colour_[2] = 200;
 }
 
 // Destructor
@@ -54,13 +42,7 @@ RDFModule::~RDFModule()
  */
 
 // Create instance of this module
-List<Module>& RDFModule::instances()
-{
-	return instances_;
-}
-
-// Create instance of this module
-Module* RDFModule::createInstance()
+Module* RDFModule::createInstance() const
 {
 	return new RDFModule;
 }

@@ -1,7 +1,7 @@
 /*
 	*** Import Module - Formats
 	*** src/modules/import/formats.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -116,4 +116,36 @@ const char** TrajectoryImportFileFormat::niceFormats() const
 TrajectoryImportFileFormat::TrajectoryImportFormat TrajectoryImportFileFormat::trajectoryFormat() const
 {
 	return (TrajectoryImportFileFormat::TrajectoryImportFormat) format_;
+}
+
+/*
+ * Data1D Formats
+ */
+
+// Data1D Type Keywords
+const char* Data1DImportFormatKeywords[] = { "xy", "histogram", "mint" };
+const char* NiceData1DImportFormatKeywords[] = { "Simple XY data (x = bin centres)", "Histogrammed Data (x = bin left-boundaries)", "Gudrun output (mint01)" };
+
+// Return number of available formats
+int Data1DImportFileFormat::nFormats() const
+{
+	return Data1DImportFileFormat::nData1DImportFormats;
+}
+
+// Return formats array
+const char** Data1DImportFileFormat::formats() const
+{
+	return Data1DImportFormatKeywords;
+}
+
+// Return nice formats array
+const char** Data1DImportFileFormat::niceFormats() const
+{
+	return NiceData1DImportFormatKeywords;
+}
+
+// Return current format as Data1DImportFormat
+Data1DImportFileFormat::Data1DImportFormat Data1DImportFileFormat::data1DFormat() const
+{
+	return (Data1DImportFileFormat::Data1DImportFormat) format_;
 }

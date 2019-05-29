@@ -1,7 +1,7 @@
 /*
 	*** IsotopologueMix Definition
 	*** src/classes/isotopologuemix.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_ISOTOPOLOGUEMIX_H
 #define DISSOLVE_ISOTOPOLOGUEMIX_H
 
-#include "base/genericitembase.h"
+#include "genericitems/base.h"
 #include "templates/mpilistitem.h"
 #include "templates/reflist.h"
 
@@ -92,10 +92,10 @@ class IsotopologueMix : public MPIListItem<IsotopologueMix>, public GenericItemB
 	public:
 	// Return class name
 	static const char* itemClassName();
+	// Read data through specified LineParser
+	bool read(LineParser& parser, const CoreData& coreData);
 	// Write data through specified LineParser
 	bool write(LineParser& parser);
-	// Read data through specified LineParser
-	bool read(LineParser& parser);
 
 
 	/*
@@ -103,7 +103,7 @@ class IsotopologueMix : public MPIListItem<IsotopologueMix>, public GenericItemB
 	 */
 	public:
 	// Broadcast data
-	bool broadcast(ProcessPool& procPool, int root);
+	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
 	// Check item equality
 	bool equality(ProcessPool& procPool);
 };

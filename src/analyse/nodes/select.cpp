@@ -1,7 +1,7 @@
 /*
 	*** Analysis Node - Select
 	*** src/analyse/nodes/select.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -25,6 +25,7 @@
 #include "analyse/nodecontextstack.h"
 #include "analyse/sitereference.h"
 #include "classes/configuration.h"
+#include "classes/coredata.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
@@ -163,6 +164,8 @@ AnalysisSequenceNode* AnalysisSelectNode::addForEachBranch()
 {
 	if (!forEachBranch_) forEachBranch_ = new AnalysisSequenceNode();
 
+	forEachBranch_->setParent(parent());
+
 	return forEachBranch_;
 }
 
@@ -293,13 +296,13 @@ bool AnalysisSelectNode::finalise(ProcessPool& procPool, Configuration* cfg, con
  */
 
 // Read structure from specified LineParser
-bool AnalysisSelectNode::read(LineParser& parser, NodeContextStack& contextStack)
+bool AnalysisSelectNode::read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack)
 {
 	// The current line in the parser may contain a specific label for the sites we are to select, which we set as our node name
 	setName(parser.nArgs() == 2 ? parser.argc(1) : contextStack.nextSelectName());
 
 	// Add ourselves to the context stack
-	if (!contextStack.add(this, name())) return Messenger::error("Error adding Select node '%s' to context stack.\n", name());
+	if (!contextStack.add(this)) return Messenger::error("Error adding Select node '%s' to context stack.\n", name());
 
 	AnalysisDynamicSiteNode* dynamicSiteNode;
 	Species* sp;
@@ -314,45 +317,46 @@ bool AnalysisSelectNode::read(LineParser& parser, NodeContextStack& contextStack
 		SelectNodeKeyword nk = selectNodeKeyword(parser.argc(0));
 		switch (nk)
 		{
-			case (SelectNodeKeyword::DynamicSiteKeyword):
+			case (AnalysisSelectNode::DynamicSiteKeyword):
 				dynamicSiteNode = new AnalysisDynamicSiteNode(this);
 				dynamicSites_.add(dynamicSiteNode);
-				if (!dynamicSiteNode->read(parser, contextStack)) return false;
+				if (!dynamicSiteNode->read(parser, coreData, contextStack)) return false;
 				break;
-			case (SelectNodeKeyword::EndSelectKeyword):
+			case (AnalysisSelectNode::EndSelectKeyword):
 				return true;
-			case (SelectNodeKeyword::ExcludeSameMoleculeKeyword):
+			case (AnalysisSelectNode::ExcludeSameMoleculeKeyword):
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
-					AnalysisSelectNode* otherNode = contextStack.selectNodeInScope(parser.argc(n));
+					AnalysisSelectNode* otherNode = (AnalysisSelectNode*) contextStack.nodeInScope(parser.argc(n), AnalysisNode::SelectNode);
 					if (!otherNode) return Messenger::error("Unrecognised selection node '%s' given to %s keyword.\n", parser.argc(n), selectNodeKeyword(nk));
 					if (!addSameMoleculeExclusion(otherNode)) return Messenger::error("Duplicate site given to %s keyword.\n", selectNodeKeyword(nk));
 				}
 				break;
-			case (SelectNodeKeyword::ExcludeSameSiteKeyword):
+			case (AnalysisSelectNode::ExcludeSameSiteKeyword):
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
-					AnalysisSelectNode* otherNode = contextStack.selectNodeInScope(parser.argc(n));
+					AnalysisSelectNode* otherNode = (AnalysisSelectNode*) contextStack.nodeInScope(parser.argc(n), AnalysisNode::SelectNode);
 					if (!otherNode) return Messenger::error("Unrecognised selection node '%s' given to %s keyword.\n", parser.argc(n), selectNodeKeyword(nk));
 					if (!addSameSiteExclusion(otherNode)) return Messenger::error("Duplicate site given to %s keyword.\n", selectNodeKeyword(nk));
 				}
 				break;
-			case (SelectNodeKeyword::ForEachKeyword):
+			case (AnalysisSelectNode::ForEachKeyword):
 				// Check that a ForEach branch hasn't already been defined
 				if (forEachBranch_) return Messenger::error("Only one ForEach branch may be defined in a selection node.\n");
 
 				// Create and parse a new branch
 				forEachBranch_ = new AnalysisSequenceNode("EndForEach");
-				if (!forEachBranch_->read(parser, contextStack)) return false;
+				forEachBranch_->setParent(parent());
+				if (!forEachBranch_->read(parser, coreData, contextStack)) return false;
 				break;
-			case (SelectNodeKeyword::SameMoleculeAsSiteKeyword):
+			case (AnalysisSelectNode::SameMoleculeAsSiteKeyword):
 				if (sameMolecule_) return Messenger::error("Same molecule restriction has already been set, and cannot be set again.\n");
-				sameMolecule_ = contextStack.selectNodeInScope(parser.argc(1));
+				sameMolecule_ = (AnalysisSelectNode*) contextStack.nodeInScope(parser.argc(1), AnalysisNode::SelectNode);
 				if (!sameMolecule_) return Messenger::error("Unrecognised selection node '%s' given to %s keyword.\n", parser.argc(1), selectNodeKeyword(nk));
 				break;
-			case (SelectNodeKeyword::SiteKeyword):
+			case (AnalysisSelectNode::SiteKeyword):
 				// First argument is the target Species, second is a site within it
-				for (sp = List<Species>::masterInstance().first(); sp != NULL; sp = sp->next) if (DissolveSys::sameString(sp->name(), parser.argc(1))) break;
+				sp = coreData.findSpecies(parser.argc(1));
 
 				// Did we find the named Species?
 				if (sp)
@@ -369,7 +373,7 @@ bool AnalysisSelectNode::read(LineParser& parser, NodeContextStack& contextStack
 				}
 				else return Messenger::error("Couldn't find named Species '%s'.\n", parser.argc(1));
 				break;
-			case (SelectNodeKeyword::nSelectNodeKeywords):
+			case (AnalysisSelectNode::nSelectNodeKeywords):
 				return Messenger::error("Unrecognised Select node keyword '%s' found.\n", parser.argc(0));
 				break;
 			default:

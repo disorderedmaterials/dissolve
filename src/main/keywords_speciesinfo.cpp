@@ -1,7 +1,7 @@
 /*
 	*** Keyword Parsing - SpeciesInfo Block
 	*** src/main/keywords_speciesinfo.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -30,8 +30,8 @@
 KeywordData SpeciesInfoBlockData[] = {
 	{ "EndSpeciesInfo",		0,	"Signals the end of the SpeciesInfo" },
 	{ "NoRotation",			0,	"Flag that the Species should not be rotated when making a random configuration" },
-	{ "NoTranslation",		0,	"Flag that the Species should not be translated when making a random configuration" },
-	{ "Population",			1,	"Relative population of the Species" }
+	{ "Population",			1,	"Relative population of the Species" },
+	{ "Positioning",		1,	"Positioning type to use for Species" }
 };
 
 // Convert text string to SpeciesInfoKeyword
@@ -58,6 +58,7 @@ bool SpeciesInfoBlock::parse(LineParser& parser, Dissolve* dissolve, SpeciesInfo
 {
 	Messenger::print("\nParsing %s block '%s'...\n", ConfigurationBlock::keyword(ConfigurationBlock::SpeciesInfoKeyword), speciesInfo->species()->name());
 
+	SpeciesInfo::PositioningType pt;
 	bool blockDone = false, error = false;
 
 	while (!parser.eofOrBlank())
@@ -80,11 +81,17 @@ bool SpeciesInfoBlock::parse(LineParser& parser, Dissolve* dissolve, SpeciesInfo
 			case (SpeciesInfoBlock::NoRotationKeyword):
 				speciesInfo->setRotateOnInsertion(false);
 				break;
-			case (SpeciesInfoBlock::NoTranslationKeyword):
-				speciesInfo->setTranslateOnInsertion(false);
-				break;
 			case (SpeciesInfoBlock::PopulationKeyword):
 				speciesInfo->setPopulation(parser.argd(1));
+				break;
+			case (SpeciesInfoBlock::PositioningKeyword):
+				pt = SpeciesInfo::positioningType(parser.argc(1));
+				if (pt == SpeciesInfo::nPositioningTypes)
+				{
+					Messenger::error("Unrecognised positioning type '%s' found.\n", parser.argc(1));
+					error = true;
+				}
+				else speciesInfo->setInsertionPositioning(pt);
 				break;
 			case (SpeciesInfoBlock::nSpeciesInfoKeywords):
 				Messenger::error("Unrecognised %s block keyword '%s' found.\n", ConfigurationBlock::keyword(ConfigurationBlock::SpeciesInfoKeyword), parser.argc(0));
@@ -102,6 +109,13 @@ bool SpeciesInfoBlock::parse(LineParser& parser, Dissolve* dissolve, SpeciesInfo
 		
 		// End of block?
 		if (blockDone) break;
+	}
+
+	// If there's no error and the blockDone flag isn't set, return an error
+	if (!error && !blockDone)
+	{
+		Messenger::error("Unterminated %s block found.\n", ConfigurationBlock::keyword(ConfigurationBlock::SpeciesInfoKeyword));
+		error = true;
 	}
 
 	return (!error);

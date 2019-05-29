@@ -1,7 +1,7 @@
 /*
 	*** Interatomic Pair Potential
 	*** src/classes/pairpotential.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -21,6 +21,7 @@
 
 #include "classes/pairpotential.h"
 #include "classes/atomtype.h"
+#include "classes/coredata.h"
 #include "base/messenger.h"
 #include "base/lineparser.h"
 #include "base/parameters.h"
@@ -561,10 +562,22 @@ bool PairPotential::setUp(double maxR, double delta, bool includeCoulomb)
 	return true;
 }
 
+// Return number of tabulated points in potential
+int PairPotential::nPoints() const
+{
+	return nPoints_;
+}
+
 // Return range of potential
 double PairPotential::range() const
 {
 	return range_;
+}
+
+// Return spacing between points
+double PairPotential::delta() const
+{
+	return delta_;
 }
 
 // (Re)generate potential from current parameters
@@ -727,56 +740,25 @@ void PairPotential::adjustUAdditional(Data1D u, double factor)
 }
 
 /*
- * File I/O
- */
-
-// Save PairPotential data to specified file
-bool PairPotential::save(const char* filename)
-{
-	// Open file and check that we're OK to proceed writing to it
-	LineParser parser;
-	Messenger::print("Writing PairPotential file '%s'...\n", filename);
-
-	parser.openOutput(filename, true);
-	if (!parser.isFileGoodForWriting())
-	{
-		Messenger::error("Couldn't open file '%s' for writing.\n", filename);
-		return false;
-	}
-	
-	parser.writeLineF("#%9s  %12s  %12s  %12s  %12s  %12s  %12s\n", "", "Full", "Derivative", "Original", "Additional", "Exact(Orig)", "Exact(Deriv)");
-	parser.writeLineF("#%9s  %12s  %12s  %12s  %12s  %12s  %12s  %12s  %12s\n", "r(Angs)", "U(kJ/mol)", "dU(kJ/mol/Ang)", "U(kJ/mol)", "U(kJ/mol)", "U(kJ/mol)", "dU(kJ/mol/Ang)", "rFine(Angs)", "Derivative");
-	double fineDelta = delta_*0.05;
-	for (int n = 0; n<nPoints_; ++n) parser.writeLineF("%10.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e\n", uOriginal_.constXAxis(n), uFull_.constValue(n), dUFull_.constValue(n), uOriginal_.constValue(n), uAdditional_.constValue(n), analyticEnergy(uOriginal_.constXAxis(n)), analyticForce(uOriginal_.constXAxis(n)), fineDelta*n, dUFull_.constXAxis(fineDelta*n));
-
-	parser.closeFiles();
-
-	return true;
-}
-
-/*
  * Parallel Comms
  */
 
 // Broadcast data from Master to all Slaves
-bool PairPotential::broadcast(ProcessPool& procPool, int root)
+bool PairPotential::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 {
 #ifdef PARALLEL
-	// Need the master AtomType list ot proceed
-	const List<AtomType>& masterAtomTypes = List<AtomType>::masterInstance();
-
 	// PairPotential type
 	if (!procPool.broadcast(EnumCast<PairPotential::ShortRangeType>(shortRangeType_), root)) return false;
 	if (!procPool.broadcast(includeCoulomb_, root)) return false;
 
-	// Source Parameters - Master needs to determine AtomType indices
-	int index;
-	if (procPool.isMaster()) index = masterAtomTypes.indexOf(atomTypeI_);
-	if (!procPool.broadcast(index, root)) return false;
-	atomTypeI_ = masterAtomTypes.item(index);
-	if (procPool.isMaster()) index = masterAtomTypes.indexOf(atomTypeJ_);
-	if (!procPool.broadcast(index, root)) return false;
-	atomTypeJ_ = masterAtomTypes.item(index);
+	// Source Parameters
+	CharString typeName;
+	if (procPool.poolRank() == root) typeName = atomTypeI_->name();
+	if (!procPool.broadcast(typeName, root)) return false;
+	atomTypeI_ = coreData.findAtomType(typeName);
+	if (procPool.poolRank() == root) typeName = atomTypeJ_->name();
+	if (!procPool.broadcast(typeName, root)) return false;
+	atomTypeJ_ = coreData.findAtomType(typeName);
 	if (!procPool.broadcast(parameters_, MAXSRPARAMETERS, root)) return false;
 	if (!procPool.broadcast(chargeI_, root)) return false;
 	if (!procPool.broadcast(chargeJ_, root)) return false;
@@ -788,10 +770,10 @@ bool PairPotential::broadcast(ProcessPool& procPool, int root)
 	if (!procPool.broadcast(rDelta_, root)) return false;
 
 	// Tabulations
-	uOriginal_.broadcast(procPool, root);
-	uAdditional_.broadcast(procPool, root);
-	uFull_.broadcast(procPool, root);
-	dUFull_.broadcast(procPool, root);
+	uOriginal_.broadcast(procPool, root, coreData);
+	uAdditional_.broadcast(procPool, root, coreData);
+	uFull_.broadcast(procPool, root, coreData);
+	dUFull_.broadcast(procPool, root, coreData);
 #endif
 	return true;
 }

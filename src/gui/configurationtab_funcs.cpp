@@ -1,7 +1,7 @@
 /*
 	*** ConfigurationTab Functions
 	*** src/gui/configurationtab_funcs.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -22,7 +22,7 @@
 #include "gui/configurationtab.h"
 #include "gui/gui.h"
 #include "gui/delegates/combolist.hui"
-#include "gui/delegates/texponentialspin.hui"
+#include "gui/delegates/exponentialspin.hui"
 #include "gui/helpers/combopopulator.h"
 #include "gui/helpers/tablewidgetupdater.h"
 #include "main/dissolve.h"
@@ -34,7 +34,7 @@
 #include <QMessageBox>
 
 // Constructor / Destructor
-ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, Configuration* cfg) : MainTab(dissolveWindow, dissolve, parent, CharString("Configuration: %s", title), this)
+ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, Configuration* cfg) : ListItem<ConfigurationTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Configuration: %s", title), this)
 {
 	ui.setupUi(this);
 
@@ -44,8 +44,9 @@ ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dis
 
 	// Set item delegates for tables
 	// -- SpeciesInfo
-	ui.SpeciesInfoTable->setItemDelegateForColumn(0, new ComboListDelegate(this, new ComboNameListItems<Species>(List<Species>::masterInstance())));
-	ui.SpeciesInfoTable->setItemDelegateForColumn(1, new TExponentialSpinDelegate(this));
+	ui.SpeciesInfoTable->setItemDelegateForColumn(0, new ComboListDelegate(this, new ComboNameListItems<Species>(dissolve.species())));
+	ui.SpeciesInfoTable->setItemDelegateForColumn(1, new ExponentialSpinDelegate(this));
+	ui.SpeciesInfoTable->setItemDelegateForColumn(3, new ComboListDelegate(this, new ComboListEnumItems(SpeciesInfo::nPositioningTypes, SpeciesInfo::positioningTypeKeywords())));
 
 	// Ensure fonts for table headers are set correctly
 	ui.SpeciesInfoTable->horizontalHeader()->setFont(font());
@@ -53,10 +54,13 @@ ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dis
 	// Populate coordinates file format combo
 	ComboPopulator(ui.CoordinatesFileFormatCombo, cfg->inputCoordinates().nFormats(), cfg->inputCoordinates().niceFormats());
 
+	// Set target for ConfigurationViewer
+	ui.ViewerWidget->configurationViewer()->setConfiguration(configuration_);
+
 	refreshing_ = false;
 
 	// Set up the ModuleEditor
-	ui.ModulePanel->setUp(dissolveWindow, cfg->modules());
+	ui.ModulePanel->setUp(dissolveWindow, &cfg->moduleLayer(), configuration_);
 }
 
 ConfigurationTab::~ConfigurationTab()
@@ -71,6 +75,16 @@ ConfigurationTab::~ConfigurationTab()
 const char* ConfigurationTab::tabType() const
 {
 	return "ConfigurationTab";
+}
+
+/*
+ * Configuration Target
+ */
+
+// Return displayed Configuration
+const Configuration* ConfigurationTab::configuration() const
+{
+	return configuration_;
 }
 
 /*
@@ -113,16 +127,15 @@ void ConfigurationTab::updateSpeciesInfoTableRow(int row, SpeciesInfo* speciesIn
 	else item = ui.SpeciesInfoTable->item(row, 2);
 	item->setCheckState(speciesInfo->rotateOnInsertion() ? Qt::Checked : Qt::Unchecked);
 
-	// Translate on insertion?
+	// Positioning type
 	if (createItems)
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<SpeciesInfo>(speciesInfo));
-		item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
 		ui.SpeciesInfoTable->setItem(row, 3, item);
 	}
 	else item = ui.SpeciesInfoTable->item(row, 3);
-	item->setCheckState(speciesInfo->translateOnInsertion() ? Qt::Checked : Qt::Unchecked);
+	item->setText(SpeciesInfo::positioningType(speciesInfo->insertionPositioning()));
 }
 
 // Update controls in tab
@@ -150,13 +163,16 @@ void ConfigurationTab::updateControls()
 	ui.MultiplierSpin->setValue(configuration_->multiplier());
 	ui.DensitySpin->setValue(configuration_->density());
 	ui.DensityUnitsCombo->setCurrentIndex(configuration_->densityIsAtomic() ? 0 : 1);
-	TableWidgetUpdater<ConfigurationTab,SpeciesInfo> bondsUpdater(ui.SpeciesInfoTable, configuration_->usedSpecies(), this, &ConfigurationTab::updateSpeciesInfoTableRow);
+	TableWidgetUpdater<ConfigurationTab,SpeciesInfo> speciesInfoUpdater(ui.SpeciesInfoTable, configuration_->usedSpecies(), this, &ConfigurationTab::updateSpeciesInfoTableRow);
 	ui.SpeciesInfoTable->resizeColumnsToContents();
 
 	// Input Coordinates
 	ui.CoordinatesFileEdit->setText(configuration_->inputCoordinates().filename());
-	ui.CoordinatesFileFormatCombo->setCurrentIndex(configuration_->inputCoordinates().format());
+	ui.CoordinatesFileFormatCombo->setCurrentIndex(configuration_->inputCoordinates().formatIndex());
 // 	ui.CoordinatesFromFileGroup->setChecked(configuration_->inputCoordinates().is);
+
+	// Viewer
+	ui.ViewerWidget->configurationViewer()->postRedisplay();
 
 	refreshing_ = false;
 }
@@ -184,6 +200,16 @@ void ConfigurationTab::enableSensitiveControls()
 /*
  * Signals / Slots
  */
+
+// Return current SpeciesInfo
+SpeciesInfo* ConfigurationTab::currentSpeciesInfo() const
+{
+	if (!ui.SpeciesInfoTable->currentItem()) return NULL;
+
+	SpeciesInfo* spInfo = (SpeciesInfo*) VariantPointer<SpeciesInfo>(ui.SpeciesInfoTable->currentItem()->data(Qt::UserRole));
+
+	return spInfo;
+}
 
 void ConfigurationTab::on_NameEdit_textChanged(QString text)
 {
@@ -263,9 +289,9 @@ void ConfigurationTab::on_MultiplierSpin_valueChanged(int value)
 {
 	if (refreshing_) return;
 
-	configuration_->setBoxAngle(2, value);
+	configuration_->setMultiplier(value);
 
-	dissolveWindow_->setModified();
+	dissolveWindow_->setModifiedAndInvalidated();
 }
 
 void ConfigurationTab::on_DensitySpin_valueChanged(double value)
@@ -275,14 +301,18 @@ void ConfigurationTab::on_DensitySpin_valueChanged(double value)
 	if (ui.DensityUnitsCombo->currentIndex() == 0) configuration_->setAtomicDensity(value);
 	else configuration_->setChemicalDensity(value);
 
-	dissolveWindow_->setModified();
+	dissolveWindow_->setModifiedAndInvalidated();
 }
 
 void ConfigurationTab::on_SpeciesInfoAddButton_clicked(bool checked)
 {
 	if (refreshing_) return;
 
-// 	dissolveWindow_->setModified();
+	configuration_->addUsedSpecies(dissolve_.species().first(), 1.0);
+
+	updateControls();
+
+	dissolveWindow_->setModifiedAndInvalidated();
 }
 
 void ConfigurationTab::on_SpeciesInfoRemoveButton_clicked(bool checked)
@@ -305,6 +335,48 @@ void ConfigurationTab::on_DensityUnitsCombo_currentIndexChanged(int index)
 void ConfigurationTab::on_SpeciesInfoTable_itemChanged(QTableWidgetItem* w)
 {
 	if (refreshing_) return;
+
+	// Get the currently-selected SpeciesInfo
+	SpeciesInfo* spInfo = currentSpeciesInfo();
+	if (!spInfo) return;
+
+	// Column of passed item tells us the type of data we need to change
+	Species* sp;
+	SpeciesInfo::PositioningType pt;
+	switch (w->column())
+	{
+		// Species
+		case (0):
+			// Find the named Species
+			sp = dissolve_.findSpecies(qPrintable(w->text()));
+			if (!sp)
+			{
+				Messenger::error("Unrecognised Species '%s' found in SpeciesInfo table for Configuration '%s'.\n", qPrintable(w->text()), configuration_->name());
+				return;
+			}
+			spInfo->setSpecies(sp);
+			dissolveWindow_->setModifiedAndInvalidated();
+			break;
+		// Relative Population
+		case (1):
+			spInfo->setPopulation(w->text().toDouble());
+			dissolveWindow_->setModifiedAndInvalidated();
+			break;
+		// Rotation on insertion
+		case (2):
+			spInfo->setRotateOnInsertion(w->checkState() == Qt::Checked);
+			dissolveWindow_->setModified();
+			break;
+		// Translate on insertion
+		case (3):
+			pt = SpeciesInfo::positioningType(qPrintable(w->text()));
+			if (pt != SpeciesInfo::nPositioningTypes) spInfo->setInsertionPositioning(pt);
+			dissolveWindow_->setModified();
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of SpeciesInfo table.\n", w->column());
+			break;
+	}
 }
 
 // Initial Coordinates
@@ -346,14 +418,14 @@ void ConfigurationTab::on_ExportButton_clicked(bool checked)
  * State
  */
 
-// Write widget state through specified LineParser
-bool ConfigurationTab::writeState(LineParser& parser)
+// Read widget state through specified LineParser
+bool ConfigurationTab::readState(LineParser& parser, const CoreData& coreData)
 {
 	return true;
 }
 
-// Read widget state through specified LineParser
-bool ConfigurationTab::readState(LineParser& parser)
+// Write widget state through specified LineParser
+bool ConfigurationTab::writeState(LineParser& parser)
 {
 	return true;
 }

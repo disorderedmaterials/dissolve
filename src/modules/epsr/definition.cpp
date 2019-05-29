@@ -1,7 +1,7 @@
 /*
 	*** EPSR Module - Definition
 	*** src/modules/epsr/definition.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -27,16 +27,16 @@ const char* EPSRModule::type() const
 	return "EPSR";
 }
 
+// Return category for module
+const char* EPSRModule::category() const
+{
+	return "Forcefield";
+}
+
 // Return brief description of module
 const char* EPSRModule::brief() const
 {
 	return "Refine interatomic potentials in a manner consistent with EPSR";
-}
-
-// Return instance type for module
-Module::InstanceType EPSRModule::instanceType() const
-{
-	return Module::MultipleInstance;
 }
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)

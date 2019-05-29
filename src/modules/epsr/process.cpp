@@ -1,7 +1,7 @@
 /*
 	*** EPSR Module - Processing
 	*** src/modules/epsr/process.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -23,7 +23,9 @@
 #include "main/dissolve.h"
 #include "modules/energy/energy.h"
 #include "modules/rdf/rdf.h"
+#include "module/group.h"
 #include "math/error.h"
+#include "math/filters.h"
 #include "math/ft.h"
 #include "math/gaussfit.h"
 #include "math/poissonfit.h"
@@ -33,7 +35,7 @@
 #include "classes/partialset.h"
 #include "data/isotopes.h"
 #include "base/sysfunc.h"
-#include "templates/genericlisthelper.h"
+#include "genericitems/listhelper.h"
 #include "templates/array3d.h"
 
 // Run set-up stage
@@ -52,19 +54,34 @@ bool EPSRModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 		double rmaxpt = keywords_.asDouble("RMaxPT");
 		double rminpt = keywords_.asDouble("RMinPT");
 
+		// Calculate representative rho
+		double averagedRho = 0.0;
+		RefList<Configuration,bool> configs;
+		RefListIterator<Module,ModuleGroup*> allTargetsIterator(groupedTargets_.modules());
+		while (Module* module = allTargetsIterator.iterate())
+		{
+			RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
+			while (Configuration* cfg = configIterator.iterate())
+			{
+				configs.addUnique(cfg);
+				averagedRho += cfg->atomicDensity();
+			}
+		}
+		averagedRho /= configs.nItems();
+
 		// Set up the additional potentials - reconstruct them from the current coefficients
 		ExpansionFunctionType functionType = expansionFunctionType(keywords_.asString("ExpansionFunction"));
 		if (functionType == EPSRModule::GaussianExpansionFunction)
 		{
 			const double gsigma1 = keywords_.asDouble("GSigma1");
 			const double gsigma2 = keywords_.asDouble("GSigma2");
-			if (!generateEmpiricalPotentials(dissolve, functionType, ncoeffp, rminpt, rmaxpt, gsigma1, gsigma2)) return false; 
+			if (!generateEmpiricalPotentials(dissolve, functionType, averagedRho, ncoeffp, rminpt, rmaxpt, gsigma1, gsigma2)) return false;
 		}
 		else
 		{
 			const double psigma1 = keywords_.asDouble("PSigma1");
 			const double psigma2 = keywords_.asDouble("PSigma2");
-			if (!generateEmpiricalPotentials(dissolve, functionType, ncoeffp, rminpt, rmaxpt, psigma1, psigma2)) return false; 
+			if (!generateEmpiricalPotentials(dissolve, functionType, averagedRho, ncoeffp, rminpt, rmaxpt, psigma1, psigma2)) return false;
 		}
 	}
 
@@ -95,9 +112,13 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	const double qMin = keywords_.asDouble("QMin");
 	double rmaxpt = keywords_.asDouble("RMaxPT");
 	double rminpt = keywords_.asDouble("RMinPT");
-	const bool saveData = keywords_.asBool("Save");
+	const bool saveDifferences = keywords_.asBool("SaveDifferenceFunctions");
+	const bool saveEmpiricalPotentials = keywords_.asBool("SaveEmpiricalPotentials");
+	const bool saveEstimatedPartials = keywords_.asBool("SaveEstimatedPartials");
 	const bool testMode = keywords_.asBool("Test");
+	const bool overwritePotentials = keywords_.asBool("OverwritePotentials");
 	const double testThreshold = keywords_.asDouble("TestThreshold");
+	const double weighting = keywords_.asDouble("Weighting");
 
 	// EPSR constants
 	const int mcoeff = 200;
@@ -115,7 +136,10 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	else Messenger::print("EPSR: Perturbations to interatomic potentials will be generated only (current potentials will not be modified).\n");
 	if (onlyWhenEnergyStable) Messenger::print("EPSR: Potential refinement will only be performed if all related Configuration energies are stable.\n");
 	Messenger::print("EPSR: Range for potential generation is %f < Q < %f Angstroms**-1.\n", qMin, qMax);
-	Messenger::print("EPSR: Save data is %s.\n", DissolveSys::onOff(saveData));
+	Messenger::print("EPSR: Weighting factor used when applying fluctuation coefficients is %f\n", weighting);
+	if (saveDifferences) Messenger::print("EPSR: Difference functions will be saved.\n");
+	if (saveEstimatedPartials) Messenger::print("EPSR: Estimated partials will be saved.\n");
+	if (saveEmpiricalPotentials) Messenger::print("EPSR: Empirical potentials will be saved.\n");
 	if (testMode) Messenger::print("EPSR: Test mode is enabled (threshold = %f%%).", testThreshold);
 	Messenger::print("\n");
 
@@ -123,37 +147,48 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	/*
 	 * Do we have targets to refine against?
 	 */
-	if (targets_.nItems() == 0) return Messenger::error("At least one Module target containing suitable data must be provided.\n");
+	if (groupedTargets_.nModules() == 0) return Messenger::error("At least one Module target containing suitable data must be provided.\n");
 
 
 	/*
 	 * Make a list of all Configurations related to all targets
 	 */
 	RefList<Configuration,bool> configs;
-	RefListIterator<Module,bool> allTargetsIterator(targets_);
+	RefListIterator<Module,ModuleGroup*> allTargetsIterator(groupedTargets_.modules());
+	double averagedRho = 0.0;
 	while (Module* module = allTargetsIterator.iterate())
 	{
 		RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
-		while (Configuration* cfg = configIterator.iterate()) configs.addUnique(cfg);
+		while (Configuration* cfg = configIterator.iterate())
+		{
+			configs.addUnique(cfg);
+			averagedRho += cfg->atomicDensity();
+		}
 	}
 	Messenger::print("%i Configuration(s) are involved over all target data.\n", configs.nItems());
+	averagedRho /= configs.nItems();
 
 
 	/*
 	 * Calculate difference functions and current percentage errors in calculated vs reference target data
 	 */
+	double rFacTot = 0.0;
 	allTargetsIterator.restart();
 	while (Module* module = allTargetsIterator.iterate())
 	{
 		// Realise the error array and make sure its object name is set
-		Data1D& errors = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), CharString("Error_%s", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
-		errors.setObjectTag(CharString("%s//Error//%s", uniqueName_.get(), module->uniqueName()));
+		Data1D& errors = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), CharString("RFactor_%s", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
+		errors.setObjectTag(CharString("%s//RFactor//%s", uniqueName_.get(), module->uniqueName()));
 
 		// Calculate our error based on the type of Module
-		double error = 100.0;
+		double rFactor = 100.0;
 		if (DissolveSys::sameString(module->type(), "NeutronSQ"))
 		{
 			bool found;
+
+			// Get difference data container
+			Data1D& differenceData = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), CharString("DifferenceData_%s", module->uniqueName()), uniqueName(), GenericItem::InRestartFileFlag);
+			differenceData.setObjectTag(CharString("%s//Difference//%s", uniqueName_.get(), module->uniqueName()));
 
 			// Retrieve the ReferenceData from the Module (as Data1D)
 			const Data1D& referenceData = GenericListHelper<Data1D>::value(dissolve.processingModuleData(), "ReferenceData", module->uniqueName(), Data1D(), &found);
@@ -162,6 +197,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				Messenger::warn("Could not locate ReferenceData for target '%s'.\n", module->uniqueName());
 				return false;
 			}
+			differenceData = referenceData;
 
 			// Retrieve the PartialSet from the Module
 			const PartialSet& calcSQ = GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "WeightedSQ", module->uniqueName(), PartialSet(), &found);
@@ -172,20 +208,36 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			}
 			Data1D calcSQTotal = calcSQ.constTotal();
 
-			error = Error::percent(referenceData, calcSQTotal);
+			// Determine overlapping Q range between the two datasets
+			double FQMin = qMin, FQMax = qMax;
+			if ((FQMin < differenceData.xAxis().firstValue()) || (FQMin < calcSQTotal.xAxis().firstValue())) FQMin = max(differenceData.xAxis().firstValue(), calcSQTotal.xAxis().firstValue());
+			if ((FQMax > differenceData.xAxis().lastValue()) || (FQMax > calcSQTotal.xAxis().lastValue())) FQMax = min(differenceData.xAxis().lastValue(), calcSQTotal.xAxis().lastValue());
 
-			// Calculate difference
-			Data1D& differenceData = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), CharString("DifferenceData_%s", module->uniqueName()), uniqueName(), GenericItem::InRestartFileFlag);
-			differenceData.setObjectTag(CharString("%s//Difference//%s", uniqueName_.get(), module->uniqueName()));
-			differenceData = referenceData;
+			// Trim both datasets to the common range
+			Filters::trim(calcSQTotal, FQMin, FQMax, true);
+			Filters::trim(differenceData, FQMin, FQMax, true);
+
+			rFactor = Error::rFactor(referenceData, calcSQTotal, true);
+			rFacTot += rFactor;
+
+			// Calculate difference function
 			Interpolator::addInterpolated(differenceData, calcSQTotal, -1.0);
+
+			if (saveDifferences && (!differenceData.save(CharString("%s-Diff.q", module->uniqueName())))) return false;
 		}
 		else return Messenger::error("Unrecognised Module type '%s', so can't calculate error.", module->type());
 
-		// Store the percentage error
-		errors.addPoint(dissolve.iteration(), error);
-		Messenger::print("Current error for reference data '%s' is %f%%.\n", module->uniqueName(), error);
+		// Store the rFactor for this reference dataset
+		errors.addPoint(dissolve.iteration(), rFactor);
+		Messenger::print("Current R-Factor for reference data '%s' is %f.\n", module->uniqueName(), rFactor);
 	}
+	rFacTot /= groupedTargets_.nModules();
+
+	// Realise the total rFactor array and make sure its object name is set
+	Data1D& totalRFactor = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "RFactor", uniqueName_, GenericItem::InRestartFileFlag);
+	totalRFactor.setObjectTag(CharString("%s//RFactor", uniqueName_.get()));
+	totalRFactor.addPoint(dissolve.iteration(), rFacTot);
+	Messenger::print("Current total R-Factor is %f.\n", rFacTot);
 
 
 	/*
@@ -228,7 +280,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		deltaFQ.setObjectTag(CharString("%s//DeltaFQ//%s", uniqueName_.get(), module->uniqueName()));
 		deltaFQFit.setObjectTag(CharString("%s//DeltaFQFit//%s", uniqueName_.get(), module->uniqueName()));
 
-		// Create the difference partial
+		// Set up data for construction of the deltaFQ
 		deltaFQ.clear();
 		const Array<double> x1 = referenceData.constXAxis();
 		const Array<double> y1 = referenceData.constValues();
@@ -247,7 +299,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			x = x1.constAt(n);
 
 			// If this x value is below the minimum Q value we are fitting, set the difference to zero. Otherwise, store the "inverse" value ([sim - exp], for consistency with EPSR)
-			if (x < deltaSQMin) deltaFQ.addPoint(x, 0.0);
+			if (x < deltaSQMin) continue;
 			else if (x > deltaSQMax) break;
 			else deltaFQ.addPoint(x, interpolatedSimFQ.y(x) - y1.constAt(n));
 		}
@@ -265,15 +317,15 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			// Construct our fitting object
 			GaussFit coeffMinimiser(deltaFQ);
 
-			if (created) coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gsigma1, npitss, 0.01, 10, 3, 3, false);
+			if (created) coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gsigma1, npitss, 0.01, 0, 3, 3, false);
 			else
 			{
 				if (fitCoefficients.nItems() != ncoeffp)
 				{
 					Messenger::warn("Number of terms (%i) in existing FitCoefficients array for target '%s' does not match the current number (%i), so will fit from scratch.\n", fitCoefficients.nItems(), module->uniqueName(), ncoeffp);
-					coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gsigma1, npitss, 0.01, 10, 3, 3, false);
+					coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gsigma1, npitss, 0.01, 0, 3, 3, false);
 				}
-				else coeffMinimiser.constructReciprocal(0.0, rmaxpt, fitCoefficients, gsigma1, npitss, 0.01, 10, 3, 3, false);
+				else coeffMinimiser.constructReciprocal(0.0, rmaxpt, fitCoefficients, gsigma1, npitss, 0.01, 0, 3, 3, false);
 			}
 
 			// Store the new fit coefficients
@@ -286,15 +338,15 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			// Construct our fitting object
 			PoissonFit coeffMinimiser(deltaFQ);
 
-			if (created) coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, psigma1, psigma2, npitss, 0.01, 10, 3, 3, false);
+			if (created) coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, psigma1, psigma2, npitss, 0.1, 0, 3, 3, false);
 			else
 			{
 				if (fitCoefficients.nItems() != ncoeffp)
 				{
 					Messenger::warn("Number of terms (%i) in existing FitCoefficients array for target '%s' does not match the current number (%i), so will fit from scratch.\n", fitCoefficients.nItems(), module->uniqueName(), ncoeffp);
-					coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, psigma1, psigma2, npitss, 0.01, 10, 3, 3, false);
+					coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, psigma1, psigma2, npitss, 0.01, 0, 3, 3, false);
 				}
-				else coeffMinimiser.constructReciprocal(0.0, rmaxpt, fitCoefficients, psigma1, psigma2, npitss, 0.01, 100, 3, 3, false);
+				else coeffMinimiser.constructReciprocal(0.0, rmaxpt, fitCoefficients, psigma1, psigma2, npitss, 0.01, 0, 3, 3, false);
 			}
 
 			// Store the new fit coefficients
@@ -308,6 +360,9 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		simulatedFR.setObjectTag(CharString("%s//SimulatedFR//%s", uniqueName_.get(), module->uniqueName()));
 		simulatedFR = simulatedFQ;
 		Fourier::sineFT(simulatedFR, 1.0 / (2*PI*PI*GenericListHelper<double>::value(dissolve.processingModuleData(), "EffectiveRho", module->uniqueName(), 0.0)), 0.0, 0.03, 30.0, WindowFunction(WindowFunction::Lorch0Window));
+
+		// Save data?
+		if (saveDifferences && (!deltaFQFit.save(CharString("%s-DiffFit.q", module->uniqueName())))) return false;
 
 		// Test Mode
 		if (testMode)
@@ -332,7 +387,8 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	Array3D<double> fluctuationCoefficients(nAtomTypes, nAtomTypes, ncoeffp);
 	fluctuationCoefficients = 0.0;
 
-	for (ModuleGroup* group = targetGroups_.first(); group != NULL; group = group->next)
+	ListIterator<ModuleGroup> groupIterator(groupedTargets_.groups());
+	while (ModuleGroup* group = groupIterator.iterate())
 	{
 		Messenger::print("Generating dPhiR from target group '%s'...\n", group->name());
 
@@ -357,7 +413,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Set object names in combinedUnweightedSQ
 		i = 0;
-		for (AtomType* at1 = dissolve.atomTypes(); at1 != NULL; at1 = at1->next, ++i)
+		for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
 		{
 			j = i;
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j) combinedUnweightedSQ.at(i,j).setObjectTag(CharString("%s//UnweightedSQ//%s//%s-%s", uniqueName(), group->name(), at1->name(), at2->name()));
@@ -366,7 +422,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Realise storage for generated S(Q), and initialise a scattering matrix
 		Array2D<Data1D>& generatedSQ = GenericListHelper< Array2D<Data1D> >::realise(dissolve.processingModuleData(), "GeneratedSQ", uniqueName_, GenericItem::InRestartFileFlag);
 		ScatteringMatrix scatteringMatrix;
-		scatteringMatrix.initialise(dissolve.atomTypeList(), generatedSQ, uniqueName_, group->name());
+		scatteringMatrix.initialise(dissolve.atomTypes(), generatedSQ, uniqueName_, group->name());
 
 		// Add a row in the scattering matrix for each target in the group
 		targetIterator.restart();
@@ -439,7 +495,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Create the array
 		simulatedReferenceData_.createEmpty(combinedUnweightedSQ.linearArraySize());
 		i = 0;
-		for (AtomType* at1 = dissolve.atomTypes(); at1 != NULL; at1 = at1->next, ++i)
+		for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
 		{
 			j = i;
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
@@ -472,7 +528,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		scatteringMatrix.generatePartials(generatedSQ);
 
 		// Save data?
-		if (saveData)
+		if (saveEstimatedPartials)
 		{
 			Data1D* generatedArray = generatedSQ.linearArray();
 			for (int n=0; n<generatedSQ.linearArraySize(); ++n) generatedArray[n].save(generatedArray[n].name());
@@ -482,7 +538,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		if (testMode)
 		{
 			i = 0;
-			for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+			for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
 			{
 				j = i;
 				for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
@@ -503,9 +559,9 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		 */
 
 		Array2D<Data1D>& generatedGR = GenericListHelper< Array2D<Data1D> >::realise(dissolve.processingModuleData(), "GeneratedGR", uniqueName_, GenericItem::InRestartFileFlag);
-		generatedGR.initialise(dissolve.atomTypeList().nItems(), dissolve.atomTypeList().nItems(), true);
+		generatedGR.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
 		i = 0;
-		for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+		for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
 		{
 			j = i;
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
@@ -542,7 +598,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			
 			// Loop over pair potentials and retrieve the inverse weight from the scattering matrix
 			i = 0;
-			for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+			for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
 			{
 				j = i;
 				for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
@@ -551,9 +607,6 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 					// Halve contribution from unlike terms to avoid adding double the potential for those partials
 					if (i != j) weight *= 0.5;
-
-					// Apply the (1.0/rho) factor here, since our expansion function normalisations don't contain it
-					weight /= combinedRho.at(i,j);
 
 					// Store fluctuation coefficients ready for addition to potential coefficients later on.
 					for (int n=0; n<ncoeffp; ++n) fluctuationCoefficients.at(i, j, n) += weight * fitCoefficients.constAt(n);
@@ -573,13 +626,26 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		Array2D< Array<double> >& coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
 
 		i = 0;
-		for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+		for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
 		{
 			j = i;
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 			{
 				Array<double>& potCoeff = coefficients.at(i, j);
-				for (int n=0; n<ncoeffp; ++n) potCoeff[n] += fluctuationCoefficients.constAt(i, j, n);
+
+				// Zero potential before adding in fluctuation coefficients?
+				if (overwritePotentials) potCoeff = 0.0;
+
+				// Perform smoothing of the fluctuation coefficients before we sum them into the potential (the un-smoothed coefficients are stored)
+				Data1D smoothedCoefficients;
+				for (int n=0; n<ncoeffp; ++n) smoothedCoefficients.addPoint(n, fluctuationCoefficients.constAt(i, j, n));
+				Filters::kolmogorovZurbenko(smoothedCoefficients, 3, 5);
+
+				// Add in fluctuation coefficients
+				for (int n=0; n<ncoeffp; ++n) potCoeff[n] += weighting * smoothedCoefficients.value(n);
+
+				// Set first term to zero (following EPSR)
+				potCoeff[0] = 0.0;
 			}
 		}
 
@@ -619,9 +685,26 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		double sigma1 = functionType == EPSRModule::PoissonExpansionFunction ? psigma1 : gsigma1;
 		double sigma2 = functionType == EPSRModule::PoissonExpansionFunction ? psigma2 : gsigma2;
 		
-		if (!generateEmpiricalPotentials(dissolve, functionType, ncoeffp, rminpt, rmaxpt, sigma1, sigma2)) return false;
+		if (!generateEmpiricalPotentials(dissolve, functionType, averagedRho, ncoeffp, rminpt, rmaxpt, sigma1, sigma2)) return false;
 	}
 	else energabs = absEnergyEP(dissolve);
+
+	// Save data?
+	if (saveEmpiricalPotentials)
+	{
+		i = 0;
+		for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
+		{
+			j = i;
+			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
+			{
+				// Grab pointer to the relevant pair potential
+				PairPotential* pp = dissolve.pairPotential(at1, at2);
+
+				if (!pp->uAdditional().save(CharString("EP-%s-%s.txt", at1->name(), at2->name()))) return false;
+			}
+		}
+	}
 
 	// Realise the phiMag array and make sure its object name is set
 	Data1D& phiArray = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "EPMag", uniqueName_, GenericItem::InRestartFileFlag);

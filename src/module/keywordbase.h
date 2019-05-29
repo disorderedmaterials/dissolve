@@ -1,7 +1,7 @@
 /*
 	*** Module Keyword Base Class
 	*** src/module/keywordbase.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -27,6 +27,8 @@
 #include "templates/listitem.h"
 
 // Forward Declarations
+class CoreData;
+class Module;
 class ProcessPool;
 
 // Module Keyword Base Class
@@ -34,13 +36,27 @@ class ModuleKeywordBase : public ListItem<ModuleKeywordBase>
 {
 	public:
 	// Keyword Data Type
-	enum KeywordDataType { AnalyserData, AtomTypeSelectionData, BoolData, BroadeningFunctionData, CharStringData, ComplexData, DataStoreData, DoubleData, FileAndFormatData, IntegerData, IsotopologueListData, ModuleReferenceListData, PairBroadeningFunctionData, SpeciesSiteData, WindowFunctionData };
+	enum KeywordDataType { AnalyserData, AtomTypeSelectionData, BoolData, BroadeningFunctionData, CharStringData, ComplexData, DataStoreData, DoubleData, EnumStringData, FileAndFormatData, IntegerData, IsotopologueListData, ModuleGroupsData, ModuleReferenceListData, PairBroadeningFunctionData, SpeciesReferenceListData, SpeciesSiteData, WindowFunctionData };
 	// Constructor
 	ModuleKeywordBase(KeywordDataType type);
 	// Destructor
 	virtual ~ModuleKeywordBase();
 	// Return DataType name
 	static const char* keywordDataType(KeywordDataType kdt);
+
+
+	/*
+	 * Module Parent
+	 */
+	private:
+	// Module to which this keyword belongs
+	const Module* moduleParent_;
+
+	public:
+	// Set Module to which this keyword belongs
+	void setModuleParent(const Module* parent);
+	// Return Module to which this keyword belongs
+	const Module* moduleParent() const;
 
 
 	/*
@@ -84,7 +100,7 @@ class ModuleKeywordBase : public ListItem<ModuleKeywordBase>
 	// Return maxnimum number of arguments accepted
 	virtual int maxArguments() = 0;
 	// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-	virtual bool read(LineParser& parser, int startArg, ProcessPool& procPool) = 0;
+	virtual bool read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool) = 0;
 	// Write keyword data to specified LineParser
 	virtual bool write(LineParser& parser, const char* prefix) = 0;
 

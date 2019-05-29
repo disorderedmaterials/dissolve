@@ -1,7 +1,7 @@
 /*
 	*** Module Keyword Data
 	*** src/module/keyworddata.h
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -49,6 +49,17 @@ template <class T> class ModuleKeywordData
 	// Whether the current data value has ever been set
 	bool set_;
 
+	protected:
+	// Determine whether current data is actually 'set'
+	virtual bool currentDataIsSet() const
+	{
+		/*
+		 * Return true if data_ represents a non-default value.
+		 * Override this function to handle cases where, for instance, checks for empty lists need to be made (in which case return 'false').
+		 */
+		return true;
+	}
+
 	public:
 	// Set data, validating as necessary
 	bool setData(T value)
@@ -56,7 +67,7 @@ template <class T> class ModuleKeywordData
 		if (isValid(value))
 		{
 			data_ = value;
-			set_ = true;
+			set_ = currentDataIsSet();
 			return true;
 		}
 

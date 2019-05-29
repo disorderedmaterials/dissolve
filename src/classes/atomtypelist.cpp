@@ -1,7 +1,7 @@
 /*
 	*** AtomTypeList Definition
 	*** src/classes/atomtypelist.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -28,7 +28,6 @@
 #include "base/processpool.h"
 #include "base/sysfunc.h"
 #include "templates/broadcastlist.h"
-#include "templates/listio.h"
 #include <string.h>
 
 // Constructor
@@ -83,7 +82,7 @@ void AtomTypeList::zero()
 }
 
 // Add the specified AtomType to the list, returning the index of the AtomType in the list
-AtomTypeData* AtomTypeList::add(AtomType* atomType, int population)
+AtomTypeData* AtomTypeList::add(AtomType* atomType, double population)
 {
 	// Search the list for the AtomType provided.
 	AtomTypeData* atd = NULL;
@@ -116,7 +115,7 @@ void AtomTypeList::add(const AtomTypeList& source)
 }
 
 // Add/increase this AtomType/Isotope pair
-void AtomTypeList::addIsotope(AtomType* atomType, Isotope* tope, int popAdd)
+void AtomTypeList::addIsotope(AtomType* atomType, Isotope* tope, double popAdd)
 {
 	AtomTypeData* atd = add(atomType, 0);
 	
@@ -128,7 +127,7 @@ void AtomTypeList::addIsotope(AtomType* atomType, Isotope* tope, int popAdd)
 void AtomTypeList::finalise()
 {
 	// Finalise AtomTypeData
-	int total = totalPopulation();
+	double total = totalPopulation();
 	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next) atd->finalise(total);
 }
 
@@ -236,9 +235,9 @@ int AtomTypeList::indexOf(const char* name) const
 }
 
 // Return total population of all types in list
-int AtomTypeList::totalPopulation() const
+double AtomTypeList::totalPopulation() const
 {
-	int total = 0;
+	double total = 0;
 	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next) total += atd->population();
 	return total;
 }
@@ -267,8 +266,8 @@ AtomTypeData* AtomTypeList::atomTypeData(AtomType* atomType)
 // Print AtomType populations
 void AtomTypeList::print() const
 {
-	Messenger::print("  AtomType  El  Isotope  Population  Fraction           bc (fm)\n");
-	Messenger::print("  -------------------------------------------------------------\n");
+	Messenger::print("  AtomType  El  Isotope  Population      Fraction           bc (fm)\n");
+	Messenger::print("  -----------------------------------------------------------------\n");
 	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next)
 	{
 		char exch = atd->exchangeable() ? 'E' : ' ';
@@ -276,17 +275,17 @@ void AtomTypeList::print() const
 		// If there are isotopes defined, print them
 		if (atd->isotopeData())
 		{
-			Messenger::print("%c %-8s  %-3s    -     %-10i  %8.6f (of world) %6.3f\n", exch, atd->atomTypeName(), atd->atomType()->element()->symbol(), atd->population(), atd->fraction(), atd->boundCoherent());
+			Messenger::print("%c %-8s  %-3s    -     %-10i    %10.6f (of world) %6.3f\n", exch, atd->atomTypeName(), atd->atomType()->element()->symbol(), atd->population(), atd->fraction(), atd->boundCoherent());
 
 			for (IsotopeData* topeData = atd->isotopeData(); topeData != NULL; topeData = topeData->next)
 			{
-				Messenger::print("                   %-3i   %-10i  %8.6f (of type)  %6.3f\n", topeData->isotope()->A(), topeData->population(), topeData->fraction(), topeData->isotope()->boundCoherent());
+				Messenger::print("                   %-3i   %-10.6e  %10.6f (of type)  %6.3f\n", topeData->isotope()->A(), topeData->population(), topeData->fraction(), topeData->isotope()->boundCoherent());
 			}
 
 		}
 		else Messenger::print("%c %-8s  %-3s          %-10i  %8.6f     --- N/A ---\n", exch, atd->atomTypeName(), atd->atomType()->element()->symbol(), atd->population(), atd->fraction());
 
-		Messenger::print("  -------------------------------------------------------------\n");	
+		Messenger::print("  -----------------------------------------------------------------\n");	
 	}
 }
 
@@ -300,16 +299,30 @@ const char* AtomTypeList::itemClassName()
 	return "AtomTypeList";
 }
 
+// Read data through specified LineParser
+bool AtomTypeList::read(LineParser& parser, const CoreData& coreData)
+{
+	types_.clear();
+
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	int nItems = parser.argi(0);
+	for (int n=0; n<nItems; ++n)
+	{
+		AtomTypeData* atd = types_.add();
+		if (!atd->read(parser, coreData)) return false;
+	}
+
+	return true;
+}
+
 // Write data through specified LineParser
 bool AtomTypeList::write(LineParser& parser)
 {
-	return ListIO<AtomTypeData>::write(types_, parser);
-}
+	if (!parser.writeLineF("%i  # nItems\n", types_.nItems())) return false;
+	ListIterator<AtomTypeData> atdIterator(types_);
+	while (AtomTypeData* atd = atdIterator.iterate()) if (!atd->write(parser)) return false;
 
-// Read data through specified LineParser
-bool AtomTypeList::read(LineParser& parser)
-{
-	return ListIO<AtomTypeData>::read(types_, parser);
+	return true;
 }
 
 /*
@@ -317,11 +330,11 @@ bool AtomTypeList::read(LineParser& parser)
  */
 
 // Broadcast item contents
-bool AtomTypeList::broadcast(ProcessPool& procPool, int root)
+bool AtomTypeList::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 {
 #ifdef PARALLEL
 	// Broadcast AtomTypeData list
-	BroadcastList<AtomTypeData> atdBroadcaster(procPool, root, types_);
+	BroadcastList<AtomTypeData> atdBroadcaster(procPool, root, types_, coreData);
 	if (atdBroadcaster.failed()) return false;
 #endif
 	return true;

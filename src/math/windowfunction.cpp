@@ -1,7 +1,7 @@
 /*
 	*** Window Function
 	*** src/math/windowfunction.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -282,6 +282,15 @@ const char* WindowFunction::itemClassName()
 	return "WindowFunction";
 }
 
+// Read data through specified LineParser
+bool WindowFunction::read(LineParser& parser, const CoreData& coreData)
+{
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	function_ = functionType(parser.argc(0));
+	for (int n=0; n<nFunctionParameters(function_); ++n) parameters_[n] = parser.argd(n+1);
+	return true;
+}
+
 // Write data through specified LineParser
 bool WindowFunction::write(LineParser& parser)
 {
@@ -290,21 +299,12 @@ bool WindowFunction::write(LineParser& parser)
 	return parser.writeLine(line.get());
 }
 
-// Read data through specified LineParser
-bool WindowFunction::read(LineParser& parser)
-{
-	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-	function_ = functionType(parser.argc(0));
-	for (int n=0; n<nFunctionParameters(function_); ++n) parameters_[n] = parser.argd(n+1);
-	return true;
-}
-
 /*
  * Parallel Comms
  */
 
 // Broadcast data from Master to all Slaves
-bool WindowFunction::broadcast(ProcessPool& procPool, int root)
+bool WindowFunction::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 {
 #ifdef PARALLEL
 	if (!procPool.broadcast(EnumCast<WindowFunction::FunctionType>(function_), root)) return false;

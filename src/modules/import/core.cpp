@@ -1,7 +1,7 @@
 /*
 	*** Import Module - Core
 	*** src/modules/import/core.cpp
-	Copyright T. Youngs 2012-2018
+	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
 
@@ -21,10 +21,6 @@
 
 #include "modules/import/import.h"
 
-
-// Static Members
-List<Module> ImportModule::instances_;
-
 /*
  * Constructor / Destructor
  */
@@ -32,10 +28,6 @@ List<Module> ImportModule::instances_;
 // Constructor
 ImportModule::ImportModule() : Module()
 {
-	// Add to instances list and set unique name for this instance
-	instances_.own(this);
-	uniqueName_.sprintf("%s%02i", type(), instances_.nItems()-1);
-
 	// Set up variables / control parameters
 	setUpKeywords();
 }
@@ -50,13 +42,7 @@ ImportModule::~ImportModule()
  */
 
 // Create instance of this module
-List<Module>& ImportModule::instances()
-{
-	return instances_;
-}
-
-// Create instance of this module
-Module* ImportModule::createInstance()
+Module* ImportModule::createInstance() const
 {
 	return new ImportModule;
 }
