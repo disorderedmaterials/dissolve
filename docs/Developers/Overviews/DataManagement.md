@@ -1,9 +1,12 @@
+---
+parent: Overviews
+---
 # Data Management
 
 ## Introduction
 
 ### Purpose
-This document gives an overview of XXX.
+This document gives an overview of the handling (storage, retrieval, I/O) of generic data within Dissolve.
 
 ### Scope
 This overview provides implementation details on the XXX used with the Dissolve code, presenting the salient design decisions, architectures, and classes relevant to its implementation. The document is suitable for developers wishing to understand, modify, fix, or otherwise extend the code.
@@ -15,11 +18,11 @@ This overview provides implementation details on the XXX used with the Dissolve 
 
 ### Brief
 
-The core functionality of Dissolve is contained within independent (modules)[overviews/Modules.md], which may run in any order. Each module typically creates useful data that are of interest to the user (e.g. calculations which yield some specific property of interest), to other modules (which take pre-existing data and use it as the basis for other calculations), or which is necessary to store in order to permit a successful restart of the simulation (i.e. historic data used when performing averaging). These data may be PODs, opaque classes, or templated objects.
+The core functionality of Dissolve is contained within independent [modules](Developers/Overviews/Modules.md), which may run in any order. Each module typically creates useful data that are of interest to the user (e.g. calculations which yield some specific property of interest), to other modules (which take pre-existing data and use it as the basis for other calculations), or which is necessary to store in order to permit a successful restart of the simulation (i.e. historic data used when performing averaging). These data may be PODs, opaque classes, or templated objects.
 
 ### Rationale
 
-Storage of these data locally within the modules itself and providing standard accessors is undesirable since this requires that modules requiring data stored in another module must know the address and relevant member accessor function to retrieve it, increasing the interface complexity as well as the fragility between (strictly independent) modules. Instead, data are stored in a type-agnostic container class, tagged with a descriptive name in order to permit retrieval. These containers are used as centralised repositories (located in the main Dissolve class or locally in configurations) for data created during the main simulation loop
+Storage of these data locally within the modules itself and providing standard accessors is undesirable since this requires that modules requiring data stored in another module must know the address and relevant member accessor function to retrieve it, increasing the interface complexity as well as the fragility between (strictly independent) modules. Instead, data are stored in a type-agnostic container class, tagged with a descriptive name in order to permit retrieval. These containers are used as centralised repositories (located in the main `Dissolve` class or locally in configurations) for data created during the main simulation loop
 
 This 'blackboard-style' approach to the storage of data has the following benefits:
 1. Since the sequence of modules to be executed is not known _a priori_, the lack of availabilty of a named piece of data is meaningful, and eliminates the need to check for specific module types having already been executed and their data prepared for others to use.
@@ -33,14 +36,14 @@ This 'blackboard-style' approach to the storage of data has the following benefi
 
 ### Relevant Classes
 
-- (GenericList)[https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/list.h]
-- (GenericListHelper)[https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/listhelper.h] (template)
-- (GenericItem)[https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/item.h]
-- (GenericItemBase)[https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/base.h]
+- [GenericList](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/list.h)
+- [GenericListHelper](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/listhelper.h) (template)
+- [GenericItem](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/item.h)
+- [GenericItemBase](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/base.h)
 
 ### Details
 
-The primary storage class for Dissolve's type-agnostic data is the GenericList 
+The primary storage class for Dissolve's type-agnostic data is the `GenericList`.
 
 TODO Class Dependency
 TODO Mechanism for opaque classes

@@ -1,3 +1,6 @@
+---
+parent: Overviews
+---
 # Modules
 
 ## Introduction
@@ -25,7 +28,7 @@ TODO
 
 ### Relevant Classes
 
-- (Module)[https://github.com/trisyoungs/dissolve/tree/develop/src/module/module.h]
+- [Module](https://github.com/trisyoungs/dissolve/tree/develop/src/module/module.h)
 
 ### Details
 

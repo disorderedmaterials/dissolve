@@ -1,4 +1,7 @@
-# Modules
+---
+parent: Overviews
+---
+# GUI
 
 ## Introduction
 
