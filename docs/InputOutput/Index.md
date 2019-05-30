@@ -1,7 +1,7 @@
 ---
-title: Input / Output Files
+title: Input / Output
 has_children: true
-permalink: /docs/Files
+permalink: /docs/InputOutput
 nav_order: 20
 ---
 # Input / Output Files

@@ -1,5 +1,5 @@
 ---
-parent: Input / Output Files
+parent: Input / Output
 nav_order: 50
 ---
 # The Restart File
