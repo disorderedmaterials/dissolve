@@ -2,6 +2,9 @@
 
 <html lang="{{ site.lang | default: "en-US" }}">
 {% include head.html %}
+{% if page.mathjax %}
+{% include mathjax.html %}
+{% endif %}
 <body>
 
   <div class="page-wrap">
@@ -77,6 +80,8 @@
 
 </body>
 
+{% if page.mermaid == true %}
 {% include mermaid.html %}
+{% endif %}
 
 </html>
