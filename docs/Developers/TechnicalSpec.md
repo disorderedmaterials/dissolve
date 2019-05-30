@@ -11,7 +11,7 @@ This document lists the core technical specifications for the Dissolve project. 
 
 ## Background
 
-See the (project description)[ProjectDescription.md] for an overview of the purpose and intention of Dissolve.
+See the [project description](ProjectDescription.md) for an overview of the purpose and intention of Dissolve.
 
 ## General Requirements
 
@@ -37,3 +37,4 @@ See the (project description)[ProjectDescription.md] for an overview of the purp
 ### Context-Specific
 
 1. 
+TODO
