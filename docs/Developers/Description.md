@@ -27,3 +27,4 @@ As well as the need to provide succession planning in light of the retirement of
 3. Large molecule simulation (e.g. proteins)
 4. Ionic systems where the degree of dissociation is unknown, or is affected by external factors
 
+Dissolve is intended to handle these, and future, cases in order to enhance and extend the scientific output of the Disordered Materials group.
