@@ -22,12 +22,12 @@ Dissolve is written entirely in C++. The following standards and style requireme
 - Indentation shall be made using tabs, not spaces
 - Class names and namespaces shall be written in upper camel case (e.g. `ThisIsAClass`).
 - Public and private member variables and functions shall be written in lower camel case (e.g. `thisIsAFunction()`).
-- Private class variables shall be suffixed with an underscore (e.g. `aPrivateInteger_`) in order to differentiate them from public / local function variables.
 
 ### Classes and Namespaces
 - There should be only one class or namespace declared in each header file, except where it makes sense to group multiple closely-related, small classes together.
 - There should be only one class or namespace defined per body file (unless classes are closely related as described above). All definitions for that class/namespace should be contained in one file, except for larger classes where definitions may be grouped into separate files in order to reduce single-file size.
-- Data members should be `private`. Access to data from other classes should only be through `protected` or `public` methods.
+- Data members should be `private` and suffixed with an underscore (e.g. `aPrivateInteger_`) in order to differentiate them from public / local function variables.
+- Access to data from other classes should only be through `protected` or `public` methods.
 - All constructors for a class must initialise all its member variables that do not have a default constructor (including primitive and pointer types).
 - The use of `friend` should be avoided and its use requires justification.
 - Unions and bitfields should only be used where essential.
