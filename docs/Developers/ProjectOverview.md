@@ -1,5 +1,5 @@
 ---
-parent: Developer's Handbook
+parent: Developer Documentation
 nav_order: 2
 ---
 # Project Overview

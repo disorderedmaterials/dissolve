@@ -1,5 +1,5 @@
 ---
-parent: Developer's Handbook
+parent: Developer Documentation
 nav_order: 3
 ---
 # Coding Standards

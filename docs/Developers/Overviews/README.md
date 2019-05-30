@@ -1,6 +1,6 @@
 ---
 title: Overviews
-parent: Developer's Handbook
+parent: Developer Documentation
 has_children: true
 permalink: /docs/Developers/Overviews
 nav_order: 99

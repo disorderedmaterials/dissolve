@@ -1,10 +1,10 @@
 ---
-title: Developer's Handbook
+title: Developer Documentation
 has_children: true
 permalink: /docs/Developers
 nav_order: 95
 ---
-# Developer's Handbook
+# Developer Documentation
 
 Documents and guides that describe the style, architecture, and approaches undertaken by Dissolve.
 
