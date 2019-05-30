@@ -1,8 +1,8 @@
 ---
 title: Project Governance
-nav_order: 96
 has_children: true
 permalink: /docs/Governance
+nav_order: 96
 ---
 # Project Governance
 

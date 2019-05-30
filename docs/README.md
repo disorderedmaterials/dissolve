@@ -1,3 +1,4 @@
-# Dissolve Manual
+# Table of Contents
 
-Welcome to the Dissolve manual.
+1. TOC
+{:toc}
