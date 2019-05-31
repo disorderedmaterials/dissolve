@@ -26,17 +26,11 @@
 
 // Forward Declarations
 class CoreData;
+class ProcessPool;
 
 // Base function templates for a Class that is to be used as a GenericItem
 class GenericItemBase
 {
-	public:
-	// Constructor
-	GenericItemBase();
-	// Destructor
-	virtual ~GenericItemBase();
-
-
 	/*
 	 * Item Class
 	 */
@@ -53,6 +47,16 @@ class GenericItemBase
 	virtual bool read(LineParser& parser, const CoreData& coreData);
 	// Write data through specified parser
 	virtual bool write(LineParser& parser);
+
+
+	/*
+	 * Parallel Comms
+	 */
+	public:
+	// Broadcast item contents
+	virtual bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
+	// Return equality between items
+	virtual bool equality(ProcessPool& procPool);
 };
 
 #endif
