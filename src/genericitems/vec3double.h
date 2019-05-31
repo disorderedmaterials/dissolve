@@ -32,8 +32,21 @@ template <> class GenericItemContainer< Vec3<double> > : public GenericItem
 	GenericItemContainer< Vec3<double> >(const char* name, int flags = 0) : GenericItem(name, flags)
 	{
 	}
+
+
+	/*
+	 * Data
+	 */
+	private:
 	// Data item
-	Vec3<double> data;
+	Vec3<double> data_;
+
+	public:
+	// Return data item
+	Vec3<double>& data()
+	{
+		return data_;
+	}
 
 
 	/*
@@ -62,13 +75,13 @@ template <> class GenericItemContainer< Vec3<double> > : public GenericItem
 	// Write data through specified parser
 	bool write(LineParser& parser)
 	{
-		return parser.writeLineF("%16.9e %16.9e %16.9e\n", data.x, data.y, data.z);
+		return parser.writeLineF("%16.9e %16.9e %16.9e\n", data_.x, data_.y, data_.z);
 	}
 	// Read data through specified parser
 	bool read(LineParser& parser, const CoreData& coreData)
 	{
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-		data = parser.arg3d(0);
+		data_ = parser.arg3d(0);
 		return true;
 	}
 
@@ -80,14 +93,14 @@ template <> class GenericItemContainer< Vec3<double> > : public GenericItem
 	// Broadcast item contents
 	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 	{
-		return procPool.broadcast(data, root);
+		return procPool.broadcast(data_, root);
 	}
 	// Check item equality
 	bool equality(ProcessPool& procPool)
 	{
-		if (!procPool.equality(data.x)) return false;
-		if (!procPool.equality(data.y)) return false;
-		if (!procPool.equality(data.z)) return false;
+		if (!procPool.equality(data_.x)) return false;
+		if (!procPool.equality(data_.y)) return false;
+		if (!procPool.equality(data_.z)) return false;
 		return true;
 	}
 };

@@ -32,8 +32,21 @@ template <> class GenericItemContainer< Array2D< Array<double> > > : public Gene
 	GenericItemContainer< Array2D< Array<double> > >(const char* name, int flags = 0) : GenericItem(name, flags)
 	{
 	}
+
+
+	/*
+	 * Data
+	 */
+	private:
 	// Data item
-	Array2D< Array<double> > data;
+	Array2D< Array<double> > data_;
+
+	public:
+	// Return data item
+	Array2D< Array<double> >& data()
+	{
+		return data_;
+	}
 
 
 	/*
@@ -62,12 +75,12 @@ template <> class GenericItemContainer< Array2D< Array<double> > > : public Gene
 	// Write data through specified parser
 	bool write(LineParser& parser)
 	{
-		return write(data, parser);
+		return write(data_, parser);
 	}
 	// Read data through specified parser
 	bool read(LineParser& parser, const CoreData& coreData)
 	{
-		return read(data, parser);
+		return read(data_, parser);
 	}
 	// Write specified data through specified parser
 	static bool write(const Array2D< Array<double> >& thisData, LineParser& parser)
@@ -121,19 +134,19 @@ template <> class GenericItemContainer< Array2D< Array<double> > > : public Gene
 		if (root == procPool.poolRank())
 		{
 			// Broadcast array size first...
-			nRows = data.nRows();
+			nRows = data_.nRows();
 			if (!procPool.broadcast(nRows, root))
 			{
 				Messenger::print("Failed to broadcast Array2D< Array<double> > nRows from root rank %i.\n", root);
 				return false;
 			}
-			nColumns = data.nColumns();
+			nColumns = data_.nColumns();
 			if (!procPool.broadcast(nColumns, root))
 			{
 				Messenger::print("Failed to broadcast Array2D< Array<double> > nColmnns from root rank %i.\n", root);
 				return false;
 			}
-			half = data.halved();
+			half = data_.halved();
 			if (!procPool.broadcast(half, root))
 			{
 				Messenger::print("Failed to broadcast Array2D< Array<double> > half-diagonal status from root rank %i.\n", root);
@@ -141,9 +154,9 @@ template <> class GenericItemContainer< Array2D< Array<double> > > : public Gene
 			}
 			
 			// Now broadcast Array elements
-			for (int n=0; n<data.linearArraySize(); ++n)
+			for (int n=0; n<data_.linearArraySize(); ++n)
 			{
-				if (!procPool.broadcast(data.linearArray()[n], root)) return false;
+				if (!procPool.broadcast(data_.linearArray()[n], root)) return false;
 			}
 		}
 		else
@@ -166,10 +179,10 @@ template <> class GenericItemContainer< Array2D< Array<double> > > : public Gene
 			}
 
 			// Resize and receive array
-			data.initialise(nRows, nColumns, half);
-			for (int n=0; n<data.linearArraySize(); ++n)
+			data_.initialise(nRows, nColumns, half);
+			for (int n=0; n<data_.linearArraySize(); ++n)
 			{
-				if (!procPool.broadcast(data.linearArray()[n], root)) return false;
+				if (!procPool.broadcast(data_.linearArray()[n], root)) return false;
 			}
 		}
 #endif
@@ -180,12 +193,12 @@ template <> class GenericItemContainer< Array2D< Array<double> > > : public Gene
 	{
 #ifdef PARALLEL
 		// Verify array size and state first
-		if (!procPool.equality(data.nRows())) return Messenger::error("Array2D<double> nRows are not equal (process %i has %i).\n", procPool.poolRank(), data.nRows());
-		if (!procPool.equality(data.nColumns())) return Messenger::error("Array2D<double> nColumns are not equal (process %i has %i).\n", procPool.poolRank(), data.nColumns());
-		if (!procPool.equality(data.halved())) return Messenger::error("Array2D<double> half-status are not equivalent (process %i has %i).\n", procPool.poolRank(), data.halved());
+		if (!procPool.equality(data_.nRows())) return Messenger::error("Array2D<double> nRows are not equal (process %i has %i).\n", procPool.poolRank(), data_.nRows());
+		if (!procPool.equality(data_.nColumns())) return Messenger::error("Array2D<double> nColumns are not equal (process %i has %i).\n", procPool.poolRank(), data_.nColumns());
+		if (!procPool.equality(data_.halved())) return Messenger::error("Array2D<double> half-status are not equivalent (process %i has %i).\n", procPool.poolRank(), data_.halved());
 
 		// Keep it simple (and slow) and check/send one object at a time
-		for (int n=0; n<data.linearArraySize(); ++n) if (!procPool.equality(data.linearArray()[n])) return Messenger::error("Array<double> index %i is not equivalent (process %i.\n", procPool.poolRank());
+		for (int n=0; n<data_.linearArraySize(); ++n) if (!procPool.equality(data_.linearArray()[n])) return Messenger::error("Array<double> index %i is not equivalent (process %i.\n", procPool.poolRank());
 #endif
 		return true;
 	}

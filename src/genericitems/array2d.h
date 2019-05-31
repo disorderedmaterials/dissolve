@@ -32,8 +32,21 @@ template <class T> class GenericItemContainer< Array2D<T> > : public GenericItem
 	GenericItemContainer< Array2D<T> >(const char* name, int flags = 0) : GenericItem(name, flags)
 	{
 	}
+
+
+	/*
+	 * Data
+	 */
+	private:
 	// Data item
-	Array2D<T> data;
+	Array2D<T> data_;
+
+	public:
+	// Return data item
+	Array2D<T>& data()
+	{
+		return data_;
+	}
 
 
 	/*
@@ -63,8 +76,8 @@ template <class T> class GenericItemContainer< Array2D<T> > : public GenericItem
 	// Write data through specified parser
 	bool write(LineParser& parser)
 	{
-		parser.writeLineF("%i  %i  %s\n", data.nRows(), data.nColumns(), DissolveSys::btoa(data.halved()));
-		for (int n=0; n<data.linearArraySize(); ++n) if (!data.linearValue(n).write(parser)) return false;
+		parser.writeLineF("%i  %i  %s\n", data_.nRows(), data_.nColumns(), DissolveSys::btoa(data_.halved()));
+		for (int n=0; n<data_.linearArraySize(); ++n) if (!data_.linearValue(n).write(parser)) return false;
 		return true;
 	}
 	// Read data through specified parser
@@ -72,9 +85,9 @@ template <class T> class GenericItemContainer< Array2D<T> > : public GenericItem
 	{
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 		int nRows = parser.argi(0), nColumns = parser.argi(1);
-		data.initialise(nRows, nColumns, parser.argb(2));
+		data_.initialise(nRows, nColumns, parser.argb(2));
 
-		for (int n=0; n<data.linearArraySize(); ++n) if (!data.linearArray()[n].read(parser, coreData)) return false;
+		for (int n=0; n<data_.linearArraySize(); ++n) if (!data_.linearArray()[n].read(parser, coreData)) return false;
 		return true;
 	}
 
@@ -92,17 +105,17 @@ template <class T> class GenericItemContainer< Array2D<T> > : public GenericItem
 		if (procPool.poolRank() == root)
 		{
 			// Broadcast array size first...
-			nRows = data.nRows();
+			nRows = data_.nRows();
 			if (!procPool.broadcast(nRows, root)) return false;
-			nColumns = data.nColumns();
+			nColumns = data_.nColumns();
 			if (!procPool.broadcast(nColumns, root)) return false;
-			half = data.halved();
+			half = data_.halved();
 			if (!procPool.broadcast(half, root)) return false;
 			
 			// Now broadcast Array data
 			if ((nRows*nColumns) > 0)
 			{
-				for (int n=0; n<data.linearArraySize(); ++n) if (!data.linearArray()[n].broadcast(procPool, root, coreData)) return false;
+				for (int n=0; n<data_.linearArraySize(); ++n) if (!data_.linearArray()[n].broadcast(procPool, root, coreData)) return false;
 			}
 		}
 		else
@@ -113,12 +126,12 @@ template <class T> class GenericItemContainer< Array2D<T> > : public GenericItem
 			if (!procPool.broadcast(half, root)) return false;
 	
 			// Resize and receive array
-			data.initialise(nRows, nColumns, half);
+			data_.initialise(nRows, nColumns, half);
 			if ((nRows*nColumns) > 0)
 			{
-				for (int n=0; n<data.linearArraySize(); ++n) if (!data.linearArray()[n].broadcast(procPool, root, coreData)) return false;
+				for (int n=0; n<data_.linearArraySize(); ++n) if (!data_.linearArray()[n].broadcast(procPool, root, coreData)) return false;
 			}
-			else data.clear();
+			else data_.clear();
 		}
 #endif
 		return true;
@@ -127,11 +140,11 @@ template <class T> class GenericItemContainer< Array2D<T> > : public GenericItem
 	bool equality(ProcessPool& procPool)
 	{
 		// Verify array size and state first
-		if (!procPool.equality(data.nRows())) return Messenger::error("Array2D<double> nRows are not equal.\n");
-		if (!procPool.equality(data.nColumns())) return Messenger::error("Array2D<double> nColumns are not equal.\n");
-		if (!procPool.equality(data.halved())) return Messenger::error("Array2D<double> half-status are not equivalent.\n");
+		if (!procPool.equality(data_.nRows())) return Messenger::error("Array2D<double> nRows are not equal.\n");
+		if (!procPool.equality(data_.nColumns())) return Messenger::error("Array2D<double> nColumns are not equal.\n");
+		if (!procPool.equality(data_.halved())) return Messenger::error("Array2D<double> half-status are not equivalent.\n");
 		// Keep it simple (and slow) and check/send one value at a time
-		for (int n=0; n<data.linearArraySize(); ++n) if (!data.linearArray()[n].equality(procPool)) return false;
+		for (int n=0; n<data_.linearArraySize(); ++n) if (!data_.linearArray()[n].equality(procPool)) return false;
 		return true;
 	}
 };

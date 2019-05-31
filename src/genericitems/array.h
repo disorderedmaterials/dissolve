@@ -33,8 +33,21 @@ template <class T> class GenericItemContainer< Array<T> > : public GenericItem
 	GenericItemContainer< Array<T> >(const char* name, int flags = 0) : GenericItem(name, flags)
 	{
 	}
+
+
+	/*
+	 * Data
+	 */
+	private:
 	// Data item
-	Array<T> data;
+	Array<T> data_;
+
+	public:
+	// Return data item
+	Array<T>& data()
+	{
+		return data_;
+	}
 
 
 	/*
@@ -64,9 +77,9 @@ template <class T> class GenericItemContainer< Array<T> > : public GenericItem
 	// Write data through specified parser
 	bool write(LineParser& parser)
 	{
-		parser.writeLineF("%i\n", data.nItems());
-		T* array = data.array();
-		for (int n=0; n<data.nItems(); ++n)
+		parser.writeLineF("%i\n", data_.nItems());
+		T* array = data_.array();
+		for (int n=0; n<data_.nItems(); ++n)
 		{
 			if (!array[n].write(parser)) return false;
 		}
@@ -77,9 +90,9 @@ template <class T> class GenericItemContainer< Array<T> > : public GenericItem
 	{
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 		int nItems = parser.argi(0);
-		data.initialise(nItems);
+		data_.initialise(nItems);
 
-		for (int n=0; n<nItems; ++n) if (!data[n].read(parser, coreData)) return false;
+		for (int n=0; n<nItems; ++n) if (!data_[n].read(parser, coreData)) return false;
 		return true;
 	}
 
@@ -92,7 +105,7 @@ template <class T> class GenericItemContainer< Array<T> > : public GenericItem
 	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 	{
 		bool success;
-		BroadcastArray<T>(procPool, root, data, coreData, success);
+		BroadcastArray<T>(procPool, root, data_, coreData, success);
 		return success;
 	}
 	// Return equality between items

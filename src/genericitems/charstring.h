@@ -32,8 +32,21 @@ template <> class GenericItemContainer<CharString> : public GenericItem
 	GenericItemContainer<CharString>(const char* name, int flags = 0) : GenericItem(name, flags)
 	{
 	}
+
+
+	/*
+	 * Data
+	 */
+	private:
 	// Data item
-	CharString data;
+	CharString data_;
+
+	public:
+	// Return data item
+	CharString& data()
+	{
+		return data_;
+	}
 
 
 	/*
@@ -62,13 +75,13 @@ template <> class GenericItemContainer<CharString> : public GenericItem
 	// Write data through specified parser
 	bool write(LineParser& parser)
 	{
-		return parser.writeLineF("%s\n", data.get());
+		return parser.writeLineF("%s\n", data_.get());
 	}
 	// Read data through specified parser
 	bool read(LineParser& parser, const CoreData& coreData)
 	{
 		if (parser.readNextLine(LineParser::Defaults) == LineParser::Success) return false;
-		data = parser.line();
+		data_ = parser.line();
 		return true;
 	}
 
@@ -80,12 +93,12 @@ template <> class GenericItemContainer<CharString> : public GenericItem
 	// Broadcast item contents
 	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 	{
-		return procPool.broadcast(data, root);
+		return procPool.broadcast(data_, root);
 	}
 	// Check item equality
 	bool equality(ProcessPool& procPool)
 	{
-		return procPool.equality(data);
+		return procPool.equality(data_);
 	}
 };
 

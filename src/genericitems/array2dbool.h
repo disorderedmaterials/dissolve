@@ -32,8 +32,21 @@ template <> class GenericItemContainer< Array2D<bool> > : public GenericItem
 	GenericItemContainer< Array2D<bool> >(const char* name, int flags = 0) : GenericItem(name, flags)
 	{
 	}
+
+
+	/*
+	 * Data
+	 */
+	private:
 	// Data item
-	Array2D<bool> data;
+	Array2D<bool> data_;
+
+	public:
+	// Return data item
+	Array2D<bool>& data()
+	{
+		return data_;
+	}
 
 
 	/*
@@ -62,12 +75,12 @@ template <> class GenericItemContainer< Array2D<bool> > : public GenericItem
 	// Write data through specified parser
 	bool write(LineParser& parser)
 	{
-		return write(data, parser);
+		return write(data_, parser);
 	}
 	// Read data through specified parser
 	bool read(LineParser& parser, const CoreData& coreData)
 	{
-		return read(data, parser);
+		return read(data_, parser);
 	}
 	// Write specified data through specified parser
 	static bool write(const Array2D<bool>& thisData, LineParser& parser)
@@ -99,12 +112,12 @@ template <> class GenericItemContainer< Array2D<bool> > : public GenericItem
 	// Broadcast item contents
 	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 	{
-		return procPool.broadcast(data, root);
+		return procPool.broadcast(data_, root);
 	}
 	// Return equality between items
 	bool equality(ProcessPool& procPool)
 	{
-		return procPool.equality(data);
+		return procPool.equality(data_);
 	}
 };
 

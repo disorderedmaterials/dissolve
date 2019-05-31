@@ -32,9 +32,21 @@ template <> class GenericItemContainer< Array< Vec3<int> > > : public GenericIte
 	GenericItemContainer< Array< Vec3<int> > >(const char* name, int flags = 0) : GenericItem(name, flags)
 	{
 	}
-	// Data item
-	Array< Vec3<int> > data;
 
+
+	/*
+	 * Data
+	 */
+	private:
+	// Data item
+	Array< Vec3<int> > data_;
+
+	public:
+	// Return data item
+	Array< Vec3<int> >& data()
+	{
+		return data_;
+	}
 
 	/*
 	 * Item Class
@@ -62,9 +74,9 @@ template <> class GenericItemContainer< Array< Vec3<int> > > : public GenericIte
 	// Write data through specified parser
 	bool write(LineParser& parser)
 	{
-		parser.writeLineF("%i\n", data.nItems());
-		Vec3<int>* array = data.array();
-		for (int n=0; n<data.nItems(); ++n)
+		parser.writeLineF("%i\n", data_.nItems());
+		Vec3<int>* array = data_.array();
+		for (int n=0; n<data_.nItems(); ++n)
 		{
 			if (!parser.writeLineF("%i %i %i\n", array[n].x, array[n].y, array[n].z)) return false;
 		}
@@ -75,11 +87,11 @@ template <> class GenericItemContainer< Array< Vec3<int> > > : public GenericIte
 	{
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 		int nItems = parser.argi(0);
-		data.createEmpty(nItems);
+		data_.createEmpty(nItems);
 		for (int n=0; n<nItems; ++n)
 		{
 			if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-			data.add(parser.arg3i(0));
+			data_.add(parser.arg3i(0));
 		}
 		return true;
 	}
@@ -92,15 +104,15 @@ template <> class GenericItemContainer< Array< Vec3<int> > > : public GenericIte
 	// Broadcast item contents
 	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 	{
-		return procPool.broadcast(data, root);
+		return procPool.broadcast(data_, root);
 	}
 	// Return equality between items
 	bool equality(ProcessPool& procPool)
 	{
 		// Verify array size first
-		if (!procPool.equality(data.nItems())) return false;
+		if (!procPool.equality(data_.nItems())) return false;
 		// Keep it simple (and slow) and check/send one value at a time
-		for (int n=0; n<data.nItems(); ++n) if (!procPool.equality(data.constAt(n))) return false;
+		for (int n=0; n<data_.nItems(); ++n) if (!procPool.equality(data_.constAt(n))) return false;
 		return true;
 	}
 };
