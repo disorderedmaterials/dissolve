@@ -38,21 +38,19 @@ This 'blackboard-style' approach to the storage of data has the following benefi
 ### Relevant Classes
 
 - [GenericList](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/list.h)
-- [GenericListHelper](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/listhelper.h) (template)
+- [GenericListHelper<T>](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/listhelper.h) (template)
 - [GenericItem](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/item.h)
-- [GenericItemContainer](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/container.h) (template)
+- [GenericItemContainer<T>](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/container.h) (template)
 - [GenericItemBase](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/base.h)
-- [LineParser](https://github.com/trisyoungs/dissolve/tree/develop/src/base/lineparser.h)
-- [CoreData](https://github.com/trisyoungs/dissolve/tree/develop/src/classes/coredata.h)
 
 ### Core Container Class
 
-The `GenericItemContainer` is a template with single class parameter `T`, and derives from the non-template `GenericItem` class as follows to form the basic storage container:
+The [`GenericItemContainer`](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/container.h) is a template with single class parameter `T`, and derives from the non-template [`GenericItem`](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/item.h) class as follows to form the basic storage container:
 
 ```mermaid
 classDiagram
   GenericItemContainer <-- GenericItem
-  GenericItemContainer : T data
+  GenericItemContainer : T data_
   GenericItemContainer : virtual const char* itemClassName()
   GenericItemContainer : virtual bool read(LineParser& parser)
   GenericItemContainer : virtual bool write(LineParser& parser, const CoreData& coreData)
@@ -70,26 +68,52 @@ classDiagram
   GenericItem : pure virtual bool equality(ProcessPool& procPool)
 ```
 
-`GenericItem` defines the basic interface required for any object to be committed to our data store, and provides a common base to all templated containers in order to allow congruent list storage and searching. Necessarily `GenericItem` contains a handful of pure `virtual` functions providing read/write capability for the data, as well as some related to data transfer when running in parallel (the `broadcast()` and `equality()` member functions). Generic implementations of all four of these functions are provided by `GenericItemContainer<T>` which simply assumes the presence of functions with identical signatures in `T data_`. For PODs this of course is not the case, and so template specialisations are written for each relevant POD (see, for instance, the specialisation for [`bool`](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/bool.h)). Classes that are to be stored within a `GenericItemContainer` must 
+[`GenericItem`](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/item.h) defines the basic interface required for any object to be committed to our data store, and provides a common base to all templated containers in order to allow congruent list storage and searching. Necessarily [`GenericItem`](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/item.h) contains a handful of pure virtual functions providing read/write capability for the data, as well as some related to data transfer when running in parallel (the `broadcast()` and `equality()` member functions). Generic implementations of all four of these functions are provided by [`GenericItemContainer<T>`](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/container.h) which simply assumes the presence of functions with identical signatures in `T data_`. For PODs this of course is not the case, and so template specialisations are written for each relevant POD (see, for instance, the specialisation for [`bool`](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/bool.h)). Classes that are to be stored within a [`GenericItemContainer`](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/container.h) must therefor provide suitable implementations of these functions - to help enforce this such classes should derive from [`GenericItemBase`](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/base.h), which contains the virtual functions required, and provides default implementations with suitable error messaging if they are not overriden by the parent class.
 
-```C++
+### Storing the Container Class
 
+The main storage class for a collection of generic data is the [`GenericList`](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/list.h) class, which stores a searchable-by-name list of [`GenericItem`](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/item.h) objects. Locating data of a specific name is simply a case of querying [`GenericList`](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/list.h) as to its presence. However, creation and retrieval of the actual data (i.e. the templated data contained in [`GenericItemContainer<T>`](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/container.h)) requires templated methods to match. This is the role of [`GenericListHelper`](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/listhelper.h), which provides static functions to operate on a target [`GenericList`](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/list.h) and create and/or return named data of a specific type.
+
+For example, creation, retrieval, and usage of a user-defined class data object proceeds as follows:
+
+```cpp
+// A Custom Class
+class MyClass : public GenericItemBase
+{
+	int i_;
+	SomeOtherClass val_;
+	/* ... */
+};
+
+// Create a list
+GenericList dataList;
+
+// Create a new MyClass data item in the list
+MyClass& newData = GenericListHelper<MyClass>::add(dataList, "SomeNewData", "NamePrefix");
+
+// Do something with the data
+newData.init();
+newData.setI(99);
+/* ... */
+
+// Retrieve the named data from the list
+MyClass& newData = GenericListHelper<MyClass>::retrieve(dataList, "SomeNewData");
+
+// Fails - named data does not exist, default value returned (MyClass())
+MyClass& newData = GenericListHelper<MyClass>::retrieve(dataList, "DifferentNewData");
+
+// Fails - can't convert class types, default value returned (SomeOtherClass())
+SomeOtherClass& otherData = GenericListHelper<SomeOtherClass>::retrieve(dataList, "SomeNewData");
 ```
 
-that must be implemented by any class cont
+### Versioning
 
+[`GenericItem`](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/item.h) is able to store rudimentary version information (`GenericItem::version_`). In conjunction with [`GenericListHelper`](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/listhelper.h) the modification of data within in a [`GenericItemContainer`](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/container.h) can be loosely tracked. The `GenericListHelper<T>::retrieve()` method returns a non-const reference to the contained data - as such it makes the assumption that the data will be modified, and calls `GenericItem::bumpVersion()` before returning the reference. Contrarily, the `GenericListHelper<T>::value()` method returns a const reference to the contained data, and so leaves the current version intact. The latter method should be strongly preferred if it is known that the data is only required for examination rather than modification.
 
+### Item Flags
 
+As well as the descriptive name of the data, [`GenericItem`](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/item.h) can also store relevant flags that affect its handling.  At present the only flag is `GenericList::InRestartFileFlag`, which states that the data should be written to the [restart file](../../InputOutput/Restart.md) at the appropriate time.
 
+### Type Information 
 
-
-TODO Static members in GenericItem for registering available types.
-For a POD
-
-### Class Dependen
-
-The primary storage class for Dissolve's type-agnostic data is the `GenericList`.
-
-TODO Class Dependency
-TODO Mechanism for opaque classes
-TODO Template specialisations for PODs
+To enable the creation of suitably-templated data programmatically, [`GenericItem`](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/item.h) also maintains a list of all the valid names of storable classes (from their `itemClassName()` member functions, or the specialisations thereof). Various static members hold the list of available item classes and functions to create typed data by name. As-implemented, the available classes is itself stored as a list of [`GenericItem`](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/item.h)s created in [`Dissolve::registerGenericItems()`](https://github.com/trisyoungs/dissolve/tree/develop/src/main/dissolve.cpp#L124) and passed to `GenericItem::addItemClass()` where they are stored in a list. When a new item of a named type is required (e.g. when reading in the [restart file](../../InputOutput/Restart.md)) `GenericItem::newItem()` scans through the list of registered item types for a matching name and (assuming it is found) invokes the virtual `createItem()` function to return a new [`GenericItemContainer`](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/container.h) of the underlying type.
