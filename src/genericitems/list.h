@@ -30,6 +30,9 @@
 // Generic List
 class GenericList
 {
+	/*
+	 * List Contents
+	 */
 	private:
 	// List of generic items
 	List<GenericItem> items_;
