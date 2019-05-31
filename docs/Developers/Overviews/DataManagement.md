@@ -54,8 +54,8 @@ classDiagram
   GenericItemContainer <-- GenericItem
   GenericItemContainer : T data
   GenericItemContainer : virtual const char* itemClassName()
-  GenericItemContainer : pure virtual bool read(LineParser& parser)
-  GenericItemContainer : pure virtual bool write(LineParser& parser, const CoreData& coreData)
+  GenericItemContainer : virtual bool read(LineParser& parser)
+  GenericItemContainer : virtual bool write(LineParser& parser, const CoreData& coreData)
   GenericItemContainer : bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
   GenericItemContainer : bool equality(ProcessPool& procPool)
   GenericItem : CharString name_
@@ -64,13 +64,19 @@ classDiagram
   GenericItem : int flags_
   GenericItem : pure virtual GenericItem* createItem(const char* className, const char* name, int flags = 0)
   GenericItem : pure virtual const char* itemClassName()
-  GenericItemContainer : pure virtual bool read(LineParser& parser)
-  GenericItemContainer : pure virtual bool write(LineParser& parser, const CoreData& coreData)
-  GenericItemContainer : pure virtual bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
-  GenericItemContainer : pure virtual bool equality(ProcessPool& procPool)
+  GenericItem : pure virtual bool read(LineParser& parser)
+  GenericItem : pure virtual bool write(LineParser& parser, const CoreData& coreData)
+  GenericItem : pure virtual bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
+  GenericItem : pure virtual bool equality(ProcessPool& procPool)
 ```
 
-`GenericItem` defines the basic interface required for any object to be committed to our data store, and as such contains a 
+`GenericItem` defines the basic interface required for any object to be committed to our data store, and provides a common base to all templated containers in order to allow congruent list storage and searching. Necessarily `GenericItem` contains a handful of pure `virtual` functions providing read/write capability for the data, as well as some related to data transfer when running in parallel (the `broadcast()` and `equality()` member functions). Generic implementations of all four of these functions are provided by `GenericItemContainer<T>` which simply assumes the presence of functions with identical signatures in `T data_`. For PODs this of course is not the case, and so template specialisations are written for each relevant POD (see, for instance, the specialisation for [`bool`](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/bool.h)). Classes that are to be stored within a `GenericItemContainer` must 
+
+```C++
+
+```
+
+that must be implemented by any class cont
 
 
 
