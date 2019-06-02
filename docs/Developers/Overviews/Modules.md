@@ -59,10 +59,24 @@ It is strongly recommended to maintain this file structure as far as is possible
 
 ### Class Diagram
 
-_Note: Only virtual and pure virtual functions are listed, for the purpose of discussion._
+_Note: For brevity on only the key (private) member variables and virtual functions are listed._
 
-  Module : virtual bool setUp(Dissolve& dissolve, ProcessPool& procPool)
-  Module : pure virtual bool process(Dissolve& dissolve, ProcessPool& procPool)
+```mermaid
+classDiagram
+  Module --> ModuleKeywordList
+  Module --> Configuration
+  Module : # frequency_ : int
+  Module : # enabled_ : bool
+  Module : # configurationLocal_ : bool
+  Module : # targetConfigurations_ : RefList<Configuration,bool>
+  Module : + virtual createInstance() = 0 : Module*
+  Module : + virtual type() = 0 : const char*
+  Module : + virtual brief() = 0 : const char*
+  Module : + virtual category() = 0 : const char*
+  Module : + virtual nTargetableConfigurations() = 0 : int
+  Module : # virtual setUpKeywords() = 0 : void
+  Module : + virtual setUp(Dissolve& dissolve, ProcessPool& procPool) : bool
+  Module : - virtual process(Dissolve& dissolve, ProcessPool& procPool) = 0 : bool
 ```
 
 

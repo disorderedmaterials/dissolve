@@ -50,22 +50,22 @@ The [`GenericItemContainer`](https://github.com/trisyoungs/dissolve/tree/develop
 ```mermaid
 classDiagram
   GenericItemContainer <-- GenericItem
-  GenericItemContainer : T data_
-  GenericItemContainer : virtual const char* itemClassName()
-  GenericItemContainer : virtual bool read(LineParser& parser)
-  GenericItemContainer : virtual bool write(LineParser& parser, const CoreData& coreData)
-  GenericItemContainer : bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
-  GenericItemContainer : bool equality(ProcessPool& procPool)
-  GenericItem : CharString name_
-  GenericItem : CharString description_
-  GenericItem : int version_
-  GenericItem : int flags_
-  GenericItem : pure virtual GenericItem* createItem(const char* className, const char* name, int flags = 0)
-  GenericItem : pure virtual const char* itemClassName()
-  GenericItem : pure virtual bool read(LineParser& parser)
-  GenericItem : pure virtual bool write(LineParser& parser, const CoreData& coreData)
-  GenericItem : pure virtual bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
-  GenericItem : pure virtual bool equality(ProcessPool& procPool)
+  GenericItemContainer : - data_ T
+  GenericItemContainer : + virtual itemClassName() : const char*
+  GenericItemContainer : + virtual read(LineParser& parser) : bool
+  GenericItemContainer : + virtual write(LineParser& parser, const CoreData& coreData) : bool
+  GenericItemContainer : + broadcast(ProcessPool& procPool, const int root, const CoreData& coreData) : bool
+  GenericItemContainer : + equality(ProcessPool& procPool) : bool
+  GenericItem : - name_ : CharString
+  GenericItem : - description_ : CharString
+  GenericItem : - version_ : int
+  GenericItem : - flags_ : int
+  GenericItem : # virtual createItem(const char* className, const char* name, int flags = 0) = 0 : GenericItem*
+  GenericItem : + virtual itemClassName() = 0 : const char*
+  GenericItem : + virtual read(LineParser& parser) = 0 : bool
+  GenericItem : + virtual write(LineParser& parser, const CoreData& coreData) = 0 : bool
+  GenericItem : + virtual broadcast(ProcessPool& procPool, const int root, const CoreData& coreData) = 0 : bool
+  GenericItem : + virtual equality(ProcessPool& procPool) = 0 : bool
 ```
 
 [`GenericItem`](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/item.h) defines the basic interface required for any object to be committed to our data store, and provides a common base to all templated containers in order to allow congruent list storage and searching. Necessarily [`GenericItem`](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/item.h) contains a handful of pure virtual functions providing read/write capability for the data, as well as some related to data transfer when running in parallel (the `broadcast()` and `equality()` member functions). Generic implementations of all four of these functions are provided by [`GenericItemContainer<T>`](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/container.h) which simply assumes the presence of functions with identical signatures in `T data_`. For PODs this of course is not the case, and so template specialisations are written for each relevant POD (see, for instance, the specialisation for [`bool`](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/bool.h)). Classes that are to be stored within a [`GenericItemContainer`](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/container.h) must therefor provide suitable implementations of these functions - to help enforce this such classes should derive from [`GenericItemBase`](https://github.com/trisyoungs/dissolve/tree/develop/src/genericitems/base.h), which contains the virtual functions required, and provides default implementations with suitable error messaging if they are not overriden by the parent class.
