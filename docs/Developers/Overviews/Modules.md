@@ -18,7 +18,7 @@ This overview provides architecture and implementation details for modules withi
 
 ### Brief
 
-The critical (read 'interesting') functionality of Dissolve is contained within independent modules. This functionality tends to focus on modifying the contents of, or calculating properties from, one or more configurations. In the latter case, this data may be consumed primarily by either the code itself (i.e. used by other modules) or the user (i.e. graphed to illustrate calculated quantities of interest). Because Dissolve aims to be flexible in its approach, writing specific functionality into independent objects aids in designing and constructing simulations to achieve specific tasks. For more information on Dissolve's main workflow in this regard, see the [architecture](../Architecture.md) document. 
+The critical (read 'interesting') functionality of Dissolve is contained within independent modules. This functionality tends to focus on modifying the contents of, or calculating properties from, one or more configurations. In the latter case, this data may be consumed primarily by either the code itself (i.e. used by other modules) or the user (i.e. graphed to illustrate calculated quantities of interest). Because Dissolve aims to be flexible in its approach, writing specific functionality into independent objects aids in designing and constructing simulations to achieve specific tasks. For more information on Dissolve's main workflow in this regard, see the [architecture](../Architecture.md) document.
 
 A module can be used multiple times within the same simulation, typically targetting different configurations or utilising different sets of control variables / options. Modules can store and retrieve data they create or need from a suitable `GenericList` (see [data management](DataManagement.md) document) but otherwise have no context of other modules, their position in a `ModuleLayer`, or the overall purpose of the simulation. In this sense they operate as independent processing steps or operations in a linear analysis pipeline.
 
@@ -59,7 +59,7 @@ It is strongly recommended to maintain this file structure as far as is possible
 
 ### Class Diagram
 
-_Note: For brevity on only the key (private) member variables and virtual functions are listed._
+_Note: For brevity on only the key (protected) member variables and virtual functions are listed._
 
 ```mermaid
 classDiagram
@@ -77,8 +77,8 @@ classDiagram
   Module : # virtual setUpKeywords() = 0 : void
   Module : + virtual setUp(Dissolve& dissolve, ProcessPool& procPool) : bool
   Module : - virtual process(Dissolve& dissolve, ProcessPool& procPool) = 0 : bool
+  Module : + virtual createWidget(QWidget* parent, Dissolve& dissolve) : ModuleWidget*
 ```
-
 
 ## Module Definition
 
@@ -94,6 +94,14 @@ Controlling the behaviour of the module is achieved by defining a set of keyword
 
 `Module::setUpKeywords()` should also be used to set the execution `frequency_` if it is required to do so.
 
+Note that keywords are constructed for each instance of the module, and so are independent between modules of the same type.
+
+### Set-Up and Processing (`process.cpp`)
+
+Each module has the opportunity to set-up any necessary data prior to it being run through the `Module::setUp(Dissolve& dissolve, ProcessPool& procPool)` virtual. For each module instance the function is called only once as one of the final acts of [`Dissolve::setUpSimulation()`](https://github.com/trisyoungs/dissolve/tree/develop/src/main/dissolve.cpp#L276). References to the master `Dissolve` and current `ProcessPool` are provided to permit full access to necessary data and allow master-only processing and/or distribution of any data.
+
+Useful work is performed by `Module::process(Dissolve& dissolve, ProcessPool& procPool)` and which should contain the implementation of the desired algorithm, calculation, or processing to be performed. The function itself is private and only called by the public `Module::executeProcessing()` method, which also obtains and stores suitable timing information. Often it is not practical to perform the whole processing in one linear function call, and so any required additional functions may be implemented in `functions.cpp`.
+
 ### Auxiliary Functions (`functions.cpp`)
 
 Contains auxiliary functions for the module, typically called from the main `Module::process()` function.
@@ -102,6 +110,47 @@ Contains auxiliary functions for the module, typically called from the main `Mod
 
 Contains the constructor and destructor, and implements the new instance return function (`Module* Module::createInstance()`) which simply returns a `new` instance of the derived class. There is usually no need to modify this file when implementing a new module.
 
+### Dummy GUI Creation (`nogui.cpp`)
 
-TODO Options (esp. link to GUI)
-## Steps Implementing New Modules
+Although a default implementation for the `createWidget(QWidget* parent, Dissolve& dissolve)` virtual is provided by `Module` (and which returns `NULL`), when a GUI **is** required for the module it is necessary to reimplement the same function in `nogui.cpp`. This is to allow a proper GUI widget to be created and returned by the implementation found in the module's `gui/gui.cpp`, but still allow the module to be built cleanlyi without a GUI (or any associated dependencies) when required. As such, the `nogui.cpp` implementation of the function is used when a GUI is present, but is not being built.
+
+Note that, since the necessary `QWidget` is declared as a pointer and is forward-declared in `src/module/module.h' the modules can be built cleanly and without introducing dependencies on the Qt libraries when required.
+
+### GUI Widget (`gui/`)
+
+XXX TODO
+
+## Steps for Implementing New Modules
+
+### 1) Copy Module Template
+
+Create a copy of an existing module and rename its classes accordingly to avoid clashes. A [`SkeletonModule`](https://github.com/trisyoungs/dissolve/tree/develop/src/modules/skeleton) providing the basic file structure and build files is included in the source, and may be used as a fresh starting point. On Linux a [shell script](https://github.com/trisyoungs/dissolve/tree/develop/src/modules/skeleton/renamemodule) is available to rename the class, files, and header blocks of `SkeletonModule`.
+
+`SkeletonModule` contains files for an associated GUI. If this is **not** required, remove the `gui` subdirectory, delete the `SUBDIRS` target and `libmodulewidget_la_SOURCES += nogui.cpp` line from the module's `Makefile.am`, and remove the 'add_subdirectory(gui)` line from the module's `CMakeLists.txt`. The `nogui.cpp` source file can also be safely deleted.
+
+### 2) Update Build System
+
+Next, add the new module to **both** build systems. Assuming the new module is located in `src/modules/mystery`:
+
+#### Autotools
+
+The module's associated base library name is `libmysterymodule.la`:
+
+- In `configure.ac` add suitable `AC_CONFIG_FILES` entries for the main makefile (e.g. `AC_CONFIG_FILES(src/modules/mystery/Makefile)`)
+- If a GUI for the module exists, add a second `AC_CONFIG_FILES` entry (e.g. `AC_CONFIG_FILES(src/modules/mystery/gui/Makefile)`
+- In `src/modules/Makefile.am`, add the module's subdirectory as a `SUBDIRS` target, followed by its library as a `libmodules` target (e.g. `libmodules_la_LIBADD += mystery/libmystery.la`).
+- In `src/modules/Makefile.am`, if the module has a GUI add the generic dummy library as a target after the main library (e.g. `libmoduledummywidgets_la_LIBADD += mystery/libmodulewidget.la`) and add the GUI library itself as a target (e.g. `libmodulewidgets_la_LIBADD += mystery/gui/libmodulewidget.la`, found towards the end of the file).
+
+#### CMake
+
+The module's associated base library name is `mysterymodule`:
+
+- In the root `CMakeLists.txt` add the module library target to the `BASIC_LINK_LIBS` variable.
+- In the root `CMakeLists.txt` add the 'nogui' module library target (e.g. `mysterymodulenogui`) to the `target_link_libraries( {$target_name} ...` section.
+- In the root `CMakeLists.txt` add the 'gui' module library target (e.g. `mysterymodulegui`) to the `target_link_libraries( {$gui_target_name} ...` and `target_link_libraries( {$ed_target_name} ...` sections.
+- In `src/modules/CMakeLists.txt`, add the new module's directory as a subdirectory target with the `add_subdirectory` directive.
+
+### 3) Clean and Rebuild
+
+A rebuild at this point should find and include the new module, but experience with the autotools chain suggests that sometimes a `make distclean` is necessary in order to remove some sticky dependencies related to the GUI/nogui targets.
+
