@@ -1,6 +1,0 @@
-# Define root folder
-root: ./doc
-
-structure:
-  readme: README.md
-  summary: SUMMARY.md
