@@ -38,27 +38,29 @@ Since the nature, size, and content of the experimentally-measured systems is by
 
 ## Class Dependency
 
+_Note: For brevity only the critical variables and members are shown._
+
 ```mermaid
 classDiagram
 Dissolve-->CoreData
 Dissolve-->Module
-Dissolve : CoreData coreData_
-Dissolve : List<Module> masterModules_
-Dissolve : RefList<Module> moduleInstances_
-Dissolve : bool registerMasterModules()
-Dissolve : bool loadInput(const char* filename)
-Dissolve : bool loadRestart(const char* filename)
-Dissolve : bool setUp()
-Dissolve : bool iterate(int nIterations)
+Dissolve : - coreData_ : CoreData
+Dissolve : - masterModules_ : List<Module>
+Dissolve : - moduleInstances_ : RefList<Module,bool>
+Dissolve : + registerMasterModules() : bool
+Dissolve : + loadInput(const char* filename) : bool
+Dissolve : + loadRestart(const char* filename) : bool
+Dissolve : + setUp() : bool
+Dissolve : + iterate(int nIterations) : bool
 CoreData-->Species
 CoreData-->ModuleLayer
 CoreData-->Configuration
-CoreData : List<Species> species_
-CoreData : List<Configuration> configurations_
-CoreData : List<ModuleLayer> processingLayers_
+CoreData : - species_ : List<Species>
+CoreData : - configurations_ : List<Configuration>
+CoreData : - processingLayers_ : List<ModuleLayer>
 ModuleLayer-->Module
 Configuration o-- Species
-Configuration : RefList<Species> usedSpecies_
+Configuration : - usedSpecies_ : List<SpeciesInfo>
 ```
 
 ## Implementation
