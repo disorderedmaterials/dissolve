@@ -3,15 +3,15 @@ parent: Developer Documentation
 nav_order: 6
 mermaid: true
 ---
-# Workflow
+# Contributing
 
 ## Introduction
 
 ### Purpose
-This document describes the workflows applied during the development of the Dissolve project.
+This document describes how to contribute to the Dissolve project.
 
 ### Scope
-This overview provides essential information for developers wishing to contribute to the project.
+This overview provides essential information for those wishing to contribute to Dissolve, covering processes and workflows for light-touch contributions from end-users through to more in-depth development.
 
 ## Basics
 
