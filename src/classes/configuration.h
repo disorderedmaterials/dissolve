@@ -113,7 +113,7 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	SpeciesInfo* usedSpeciesInfo(Species* sp);
 	// Return list of SpeciesInfo for the Configuration
 	List<SpeciesInfo>& usedSpecies();
-	// Return if the specifeid Species is present in the usedSpecies list
+	// Return if the specified Species is present in the usedSpecies list
 	bool hasUsedSpecies(Species* sp);
 	// Return total relative population of Species used by this Configuration
 	double totalRelative() const;

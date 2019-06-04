@@ -30,7 +30,7 @@
 /* none */
 
 // Keyword with PairBroadeningFunction Data
-class PairBroadeningFunctionModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<PairBroadeningFunction>
+class PairBroadeningFunctionModuleKeyword : public ModuleKeywordData<PairBroadeningFunction>
 {
 	public:
 	// Constructor

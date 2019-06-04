@@ -30,7 +30,7 @@
 class SpeciesSite;
 
 // Keyword with Site Data
-class SpeciesSiteModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<SpeciesSite*>
+class SpeciesSiteModuleKeyword : public ModuleKeywordData<SpeciesSite*>
 {
 	public:
 	// Constructor

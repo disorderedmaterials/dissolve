@@ -1,1 +1,5 @@
 remote_theme: 'pmarsceill/just-the-docs'
+<<<<<<< HEAD
+=======
+search_enabled: true
+>>>>>>> release/0.4.1

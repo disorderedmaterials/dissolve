@@ -22,7 +22,7 @@
 #include "module/keywordtypes/complex.h"
 
 // Constructors
-ComplexModuleKeyword::ComplexModuleKeyword(int minArgs, int maxArgs) : ModuleKeywordBase(ModuleKeywordBase::ComplexData), ModuleKeywordData<int>(0)
+ComplexModuleKeyword::ComplexModuleKeyword(int minArgs, int maxArgs) : ModuleKeywordData<int>(ModuleKeywordBase::ComplexData, 0)
 {
 	minArguments_ = minArgs;
 	maxArguments_ = maxArgs;

@@ -29,7 +29,7 @@
 /* none */
 
 // Keyword with Enum Value
-class EnumStringModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<CharString>
+class EnumStringModuleKeyword : public ModuleKeywordData<CharString>
 {
 	public:
 	// Constructor

@@ -24,7 +24,7 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-BoolModuleKeyword::BoolModuleKeyword(bool value) : ModuleKeywordBase(ModuleKeywordBase::BoolData), ModuleKeywordData<bool>(value)
+BoolModuleKeyword::BoolModuleKeyword(bool value) : ModuleKeywordData<bool>(ModuleKeywordBase::BoolData, value)
 {
 }
 
@@ -48,7 +48,7 @@ bool BoolModuleKeyword::isValid(bool value)
 {
 	return true;
 }
-	
+
 /*
  * Arguments
  */
@@ -96,13 +96,13 @@ bool BoolModuleKeyword::asBool()
 // Return value (as int)
 int BoolModuleKeyword::asInt()
 {
-	return data_;
+	return data_ ? 1 : 0;
 }
 
 // Return value (as double)
 double BoolModuleKeyword::asDouble()
 {
-	return data_*1.0;
+	return data_ ? 1.0 : 0.0;
 }
 
 // Return value (as string)

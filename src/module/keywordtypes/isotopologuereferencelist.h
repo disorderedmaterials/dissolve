@@ -31,7 +31,7 @@
 /* none */
 
 // Keyword with IsotopologueReference Data
-class IsotopologueReferenceListModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<IsotopologueReference>
+class IsotopologueReferenceListModuleKeyword : public ModuleKeywordData<IsotopologueReference>
 {
 	public:
 	// Constructor

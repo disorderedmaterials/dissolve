@@ -24,7 +24,7 @@
 #include "base/lineparser.h"
 
 // Constructor
-FileAndFormatModuleKeyword::FileAndFormatModuleKeyword(FileAndFormat& fileAndFormat) : ModuleKeywordBase(ModuleKeywordBase::FileAndFormatData), ModuleKeywordData<FileAndFormat&>(fileAndFormat)
+FileAndFormatModuleKeyword::FileAndFormatModuleKeyword(FileAndFormat& fileAndFormat) : ModuleKeywordData<FileAndFormat&>(ModuleKeywordBase::FileAndFormatData, fileAndFormat)
 {
 }
 

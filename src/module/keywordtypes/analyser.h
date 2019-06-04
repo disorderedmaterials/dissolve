@@ -30,7 +30,7 @@
 /* none */
 
 // Keyword with Analyser data
-class AnalyserModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<Analyser&>
+class AnalyserModuleKeyword : public ModuleKeywordData<Analyser&>
 {
 	public:
 	// Constructor

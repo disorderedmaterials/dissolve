@@ -29,7 +29,7 @@
 class FileAndFormat;
 
 // Keyword with a file format 
-class FileAndFormatModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<FileAndFormat&>
+class FileAndFormatModuleKeyword : public ModuleKeywordData<FileAndFormat&>
 {
 	public:
 	// Constructor

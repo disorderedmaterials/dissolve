@@ -25,7 +25,7 @@
 #include "base/lineparser.h"
 
 // Constructor
-SpeciesReferenceListModuleKeyword::SpeciesReferenceListModuleKeyword(RefList<Species,bool>& references) : ModuleKeywordBase(ModuleKeywordBase::SpeciesReferenceListData), ModuleKeywordData< RefList<Species,bool>& >(references)
+SpeciesReferenceListModuleKeyword::SpeciesReferenceListModuleKeyword(RefList<Species,bool>& references) : ModuleKeywordData< RefList<Species,bool>& >(ModuleKeywordBase::SpeciesReferenceListData, references)
 {
 }
 

@@ -24,7 +24,7 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-PairBroadeningFunctionModuleKeyword::PairBroadeningFunctionModuleKeyword(PairBroadeningFunction value) : ModuleKeywordBase(ModuleKeywordBase::PairBroadeningFunctionData), ModuleKeywordData<PairBroadeningFunction>(value)
+PairBroadeningFunctionModuleKeyword::PairBroadeningFunctionModuleKeyword(PairBroadeningFunction value) : ModuleKeywordData<PairBroadeningFunction>(ModuleKeywordBase::PairBroadeningFunctionData, value)
 {
 }
 

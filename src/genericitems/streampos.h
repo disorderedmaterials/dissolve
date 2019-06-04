@@ -33,8 +33,21 @@ template <> class GenericItemContainer<streampos> : public GenericItem
 	GenericItemContainer<streampos>(const char* name, int flags = 0) : GenericItem(name, flags)
 	{
 	}
+
+
+	/*
+	 * Data
+	 */
+	private:
 	// Data item
-	streampos data;
+	streampos data_;
+
+	public:
+	// Return data item
+	streampos& data()
+	{
+		return data_;
+	}
 
 
 	/*
@@ -63,7 +76,7 @@ template <> class GenericItemContainer<streampos> : public GenericItem
 	// Write data through specified parser
 	bool write(LineParser& parser)
 	{
-		return parser.writeArg(data);
+		return parser.writeArg(data_);
 	}
 	// Read data through specified parser
 	bool read(LineParser& parser, const CoreData& coreData)
@@ -71,7 +84,7 @@ template <> class GenericItemContainer<streampos> : public GenericItem
 		// NOTE Can't implicit cast streampos into the arg for readArg(), so assume long long int for now.
 		long long int pos;
 		if (!parser.readArg(pos)) return false;
-		data = pos;
+		data_ = pos;
 
 		return true;
 	}
@@ -84,14 +97,14 @@ template <> class GenericItemContainer<streampos> : public GenericItem
 	// Broadcast item contents
 	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 	{
-		long int pos = (long int) data;
+		long int pos = (long int) data_;
 		return procPool.broadcast(pos, root);
-		data = (streampos) pos;
+		data_ = (streampos) pos;
 	}
 	// Check item equality
 	bool equality(ProcessPool& procPool)
 	{
-		return procPool.equality(data);
+		return procPool.equality(data_);
 	}
 };
 

@@ -31,7 +31,7 @@
 class Configuration;
 
 // Keyword with IsotopologueReference Data
-class AtomTypeSelectionModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<AtomTypeList&>
+class AtomTypeSelectionModuleKeyword : public ModuleKeywordData<AtomTypeList&>
 {
 	public:
 	// Constructor

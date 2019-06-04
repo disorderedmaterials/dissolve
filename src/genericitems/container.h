@@ -33,8 +33,21 @@ template <class T> class GenericItemContainer : public GenericItem
 	GenericItemContainer<T>(const char* name, int flags = 0) : GenericItem(name, flags)
 	{
 	}
+
+
+	/*
+	 * Data
+	 */
+	private:
 	// Data item
-	T data;
+	T data_;
+
+	public:
+	// Return data item
+	T& data()
+	{
+		return data_;
+	}
 
 
 	/*
@@ -63,12 +76,12 @@ template <class T> class GenericItemContainer : public GenericItem
 	// Write data through specified parser
 	bool write(LineParser& parser)
 	{
-		return data.write(parser);
+		return data_.write(parser);
 	}
 	// Read data through specified parser
 	bool read(LineParser& parser, const CoreData& coreData)
 	{
-		return data.read(parser, coreData);
+		return data_.read(parser, coreData);
 	}
 
 
@@ -79,12 +92,12 @@ template <class T> class GenericItemContainer : public GenericItem
 	// Broadcast item contents
 	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
 	{
-		return data.broadcast(procPool, root, coreData);
+		return data_.broadcast(procPool, root, coreData);
 	}
 	// Check for equality
 	bool equality(ProcessPool& procPool)
 	{
-		return data.equality(procPool);
+		return data_.equality(procPool);
 	}
 };
 

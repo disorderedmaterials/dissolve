@@ -30,7 +30,7 @@
 /* none */
 
 // Keyword with a store of data
-class DataStoreModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<DataStore&>
+class DataStoreModuleKeyword : public ModuleKeywordData<DataStore&>
 {
 	public:
 	// Constructor

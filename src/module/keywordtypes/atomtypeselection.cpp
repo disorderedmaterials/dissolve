@@ -27,7 +27,7 @@
 #include "base/lineparser.h"
 
 // Constructor
-AtomTypeSelectionModuleKeyword::AtomTypeSelectionModuleKeyword(AtomTypeList& selection, RefList<Configuration,bool>& sourceConfigurations) : ModuleKeywordBase(ModuleKeywordBase::AtomTypeSelectionData), ModuleKeywordData<AtomTypeList&>(selection), sourceConfigurations_(sourceConfigurations)
+AtomTypeSelectionModuleKeyword::AtomTypeSelectionModuleKeyword(AtomTypeList& selection, RefList<Configuration,bool>& sourceConfigurations) : ModuleKeywordData<AtomTypeList&>(ModuleKeywordBase::AtomTypeSelectionData, selection), sourceConfigurations_(sourceConfigurations)
 {
 }
 

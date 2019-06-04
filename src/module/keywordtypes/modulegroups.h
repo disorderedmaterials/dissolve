@@ -31,7 +31,7 @@
 class ModuleGroups;
 
 // Keyword with ModuleGroups data
-class ModuleGroupsModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<ModuleGroups&>
+class ModuleGroupsModuleKeyword : public ModuleKeywordData<ModuleGroups&>
 {
 	public:
 	// Constructor

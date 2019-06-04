@@ -26,7 +26,7 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-AnalyserModuleKeyword::AnalyserModuleKeyword(Analyser& analyser) : ModuleKeywordBase(ModuleKeywordBase::AnalyserData), ModuleKeywordData<Analyser&>(analyser)
+AnalyserModuleKeyword::AnalyserModuleKeyword(Analyser& analyser) : ModuleKeywordData<Analyser&>(ModuleKeywordBase::AnalyserData, analyser)
 {
 }
 

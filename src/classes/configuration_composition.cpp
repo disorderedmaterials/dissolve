@@ -54,7 +54,7 @@ List<SpeciesInfo>& Configuration::usedSpecies()
 	return usedSpecies_;
 }
 
-// Return if the specifeid Species is present in the usedSpecies list
+// Return if the specified Species is present in the usedSpecies list
 bool Configuration::hasUsedSpecies(Species* sp)
 {
 	for (SpeciesInfo* spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next) if (spInfo->species() == sp) return true;

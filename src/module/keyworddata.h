@@ -23,18 +23,18 @@
 #define DISSOLVE_KEYWORDDATA_H
 
 #include "templates/array.h"
+#include "module/keywordbase.h"
 
 // Forward Declarations
 class GenericList;
 class LineParser;
-class ModuleKeywordBase;
 
 // Module Keyword Interface
-template <class T> class ModuleKeywordData
+template <class T> class ModuleKeywordData : public ModuleKeywordBase
 {
 	public:
 	// Constructor
-	ModuleKeywordData(T data) : data_(data)
+	ModuleKeywordData(ModuleKeywordBase::KeywordDataType type, T data) : ModuleKeywordBase(type), data_(data)
 	{
 		set_ = false;
 	}

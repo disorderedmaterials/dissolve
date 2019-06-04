@@ -24,7 +24,7 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-CharStringModuleKeyword::CharStringModuleKeyword(CharString value) : ModuleKeywordBase(ModuleKeywordBase::CharStringData), ModuleKeywordData<CharString>(value)
+CharStringModuleKeyword::CharStringModuleKeyword(CharString value) : ModuleKeywordData<CharString>(ModuleKeywordBase::CharStringData, value)
 {
 }
 

@@ -51,7 +51,7 @@ template <class T> class GenericListHelper
 		GenericItemContainer<T>* newItem = new GenericItemContainer<T>(varName);
 		if (flags >= 0) newItem->setFlags(flags);
 		targetList.add(newItem);
-		return newItem->data;
+		return newItem->data();
 	}
 	// Return named (const) item from specified list as template-guided type
 	static const T& value(GenericList& sourceList, const char* name, const char* prefix = NULL, T defaultValue = T(), bool* found = NULL)
@@ -83,7 +83,7 @@ template <class T> class GenericListHelper
 		}
 
 		if (found != NULL) (*found) = true;
-		return castItem->data;
+		return castItem->data();
 	}
 	// Retrieve named item from specified list as template-guided type, assuming that it is going to be modified
 	static T& retrieve(GenericList& sourceList, const char* name, const char* prefix = NULL, T defaultValue = T(), bool* found = NULL)
@@ -118,7 +118,7 @@ template <class T> class GenericListHelper
 		item->bumpVersion();
 
 		if (found != NULL) (*found) = true;
-		return castItem->data;
+		return castItem->data();
 	}
 	// Create or retrieve named item from specified list as template-guided type
 	static T& realise(GenericList& sourceList, const char* name, const char* prefix = NULL, int flags = -1, bool* created = NULL)
@@ -152,7 +152,7 @@ template <class T> class GenericListHelper
 		item->bumpVersion();
 
 		if (created != NULL) (*created) = false;
-		return castItem->data;
+		return castItem->data();
 	}
 };
 

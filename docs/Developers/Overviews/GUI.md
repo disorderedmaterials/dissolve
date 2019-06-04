@@ -1,4 +1,8 @@
-# Modules
+---
+parent: Overviews
+grand_parent: Developer Documentation
+---
+# GUI
 
 ## Introduction
 
@@ -10,6 +14,7 @@ This overview provides implementation details on several core aspects of the Dis
 
 ### Definitions
 
+TODO
 
 ## Overview
 
@@ -25,7 +30,7 @@ TODO
 
 ### Relevant Classes
 
-- (Module)[https://github.com/trisyoungs/dissolve/tree/develop/src/module/module.h]
+TODO
 
 ### Class Dependency
 

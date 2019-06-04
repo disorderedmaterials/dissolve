@@ -23,7 +23,7 @@
 #include "base/lineparser.h"
 
 // Constructor
-DataStoreModuleKeyword::DataStoreModuleKeyword(DataStore& dataStore) : ModuleKeywordBase(ModuleKeywordBase::DataStoreData), ModuleKeywordData<DataStore&>(dataStore)
+DataStoreModuleKeyword::DataStoreModuleKeyword(DataStore& dataStore) : ModuleKeywordData<DataStore&>(ModuleKeywordBase::DataStoreData, dataStore)
 {
 }
 

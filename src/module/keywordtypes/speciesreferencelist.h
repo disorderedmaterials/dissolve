@@ -30,7 +30,7 @@
 class Species;
 
 // Keyword with SpeciesReference Data
-class SpeciesReferenceListModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData< RefList<Species,bool>& >
+class SpeciesReferenceListModuleKeyword : public ModuleKeywordData< RefList<Species,bool>& >
 {
 	public:
 	// Constructor
