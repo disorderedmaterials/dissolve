@@ -7,6 +7,8 @@ permalink: /
 
 **Structure Refinement for Scattering Data**
 
+&copy; Dr Tristan Youngs 2012-2019
+
 _Current Version: 0.4.0, 30th May 2019_
 
 Dissolve is a classical simulation code intended to help in analysing experimental scattering (diffraction) measurements through generating representative atomic configurations consistent with supplied reference data. Its primary use is for disordered systems such as those comprised of (or containing) liquids and glasses, but it can be applied to much more complex systems.
@@ -20,6 +22,8 @@ Dissolve is a classical simulation code intended to help in analysing experiment
 
 Dissolve's file format and syntax, and output file roles.
 
+TODO
+{: .label .label-red }
 [Overview](Files/InputFile/Index.md){: .btn .btn-blue}
 [Configuration Block](Files/InputFile/Configuration.md){: .btn .btn-outline}
 [Layer Block](Files/InputFile/Layer.md){: .btn .btn-outline}
@@ -38,6 +42,9 @@ Dissolve's file format and syntax, and output file roles.
 ## Modules
 
 All of Dissolve's modules - their purpose, options, and inner workings.
+
+TODO
+{: .label .label-red }
 
 [Overview](Modules/Index.md){: .btn .btn-blue}
 
@@ -111,10 +118,15 @@ Architecture and style guidelines, specifications, and workflow descriptions.
 Overviews of classes and implementations relevant to core Dissolve methodology.
 
 [Generic Data Management and Storage](Developers/Overviews/DataManagement.md){: .btn}
-[Data Visualisers (GUI)](Developers/Overviews/DataViewers.md){: .btn}
-[Aspects of the GUI](Developers/Overviews/GUI.md){: .btn}
 [Developing Modules](Developers/Overviews/Modules.md){: .btn}
 [Keyword Options](Developers/Overviews/KeywordOptions.md){: .btn}
+
+TODO
+{: .label .label-red }
+[Data Visualisers (GUI)](Developers/Overviews/DataViewers.md){: .btn}
+[Aspects of the GUI](Developers/Overviews/GUI.md){: .btn}
+[Understanding Configurations](Developers/Overviews/Configurations.md){: .btn}
+[Dissolve's Template Classes](Developers/Overviews/Templates.md){: .btn}
 
 * * *
 ## Project Governance
