@@ -9,7 +9,7 @@ permalink: /
 
 &copy; Dr Tristan Youngs 2012-2019
 
-_Current Version: 0.4.0, 30th May 2019_
+_Current Version: 0.4.1, 30th May 2019_
 
 Dissolve is a classical simulation code intended to help in analysing experimental scattering (diffraction) measurements through generating representative atomic configurations consistent with supplied reference data. Its primary use is for disordered systems such as those comprised of (or containing) liquids and glasses, but it can be applied to much more complex systems.
 
