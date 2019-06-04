@@ -73,7 +73,7 @@ template <class T> class GenericListHelper
 		}
 
 		// Cast to correct type
-		GenericItemContainer<T>* castItem = (GenericItemContainer<T>*) item;
+		GenericItemContainer<T>* castItem = dynamic_cast< GenericItemContainer<T>* >(item);
 		if (!castItem)
 		{
 			printf("That didn't work, because its of the wrong type.\n");
@@ -105,7 +105,7 @@ template <class T> class GenericListHelper
 		}
 
 		// Cast to correct type
-		GenericItemContainer<T>* castItem = (GenericItemContainer<T>*) item;
+		GenericItemContainer<T>* castItem = dynamic_cast< GenericItemContainer<T>* >(item);
 		if (!castItem)
 		{
 			printf("That didn't work, because its of the wrong type.\n");
@@ -137,7 +137,7 @@ template <class T> class GenericListHelper
 		}
 
 		// Cast to correct type
-		GenericItemContainer<T>* castItem = (GenericItemContainer<T>*) item;
+		GenericItemContainer<T>* castItem = dynamic_cast< GenericItemContainer<T>* >(item);
 		if (!castItem)
 		{
 			printf("That didn't work, because its of the wrong type.\n");

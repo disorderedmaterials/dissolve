@@ -142,7 +142,7 @@ void ModuleGroupsKeywordWidget::updateKeywordData()
 	{
 		// Get selection status and Module pointer from first column
 		QTableWidgetItem* item = ui.SelectionTable->item(n, 0);
-		Module* module = (Module*) VariantPointer<Module>(item->data(Qt::UserRole));
+		Module* module = VariantPointer<Module>(item->data(Qt::UserRole));
 		if ((!module) || (item->checkState() != Qt::Checked)) continue;
 
 		// Second column contains group name

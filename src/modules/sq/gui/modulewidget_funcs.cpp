@@ -29,7 +29,7 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-SQModuleWidget::SQModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_((SQModule*) module), dissolve_(dissolve)
+SQModuleWidget::SQModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_(dynamic_cast<SQModule*>(module)), dissolve_(dissolve)
 {
 	// Set up user interface
 	ui.setupUi(this);

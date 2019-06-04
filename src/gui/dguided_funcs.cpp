@@ -269,7 +269,7 @@ GuidePage* DGuidEdWindow::currentPage()
 	QListWidgetItem* item = ui_.PageList->currentItem();
 	if (!item) return NULL;
 
-	GuidePage* page = (GuidePage*) VariantPointer<GuidePage>(item->data(Qt::UserRole));
+	GuidePage* page = VariantPointer<GuidePage>(item->data(Qt::UserRole));
 
 	return page;
 }
@@ -402,7 +402,7 @@ void DGuidEdWindow::on_PageList_currentItemChanged(QListWidgetItem* current, QLi
 	// If the current document has been modified, stash its content back into the current page
 	if (previous && ui_.TextEdit->document()->isModified())
 	{
-		GuidePage* page = (GuidePage*) VariantPointer<GuidePage>(previous->data(Qt::UserRole));
+		GuidePage* page = VariantPointer<GuidePage>(previous->data(Qt::UserRole));
 		stashPageContent(page);
 	}
 
@@ -428,7 +428,7 @@ void DGuidEdWindow::on_NextPageCombo_currentIndexChanged(int index)
 	GuidePage* page = currentPage();
 	if (!page) return;
 
-	page->setNextPage((GuidePage*) VariantPointer<GuidePage>(ui_.NextPageCombo->currentData()));
+	page->setNextPage(VariantPointer<GuidePage>(ui_.NextPageCombo->currentData()));
 
 	setModified();
 }

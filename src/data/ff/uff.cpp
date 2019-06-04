@@ -622,7 +622,7 @@ bool Forcefield_UFF::assignAtomTypes(Species* sp, CoreData& coreData, bool keepE
 		// If keepExisting == true, don't reassign a type to this atom if one already exists
 		if (keepExisting && i->atomType()) continue;
 
-		UFFAtomType* uffType = (UFFAtomType*) determineAtomType(i);
+		UFFAtomType* uffType = dynamic_cast<UFFAtomType*>(determineAtomType(i));
 		if (!uffType) Messenger::print("No UFF type available for Atom %i of Species (%s).\n", i->index()+1, i->element()->symbol());
 		else
 		{
@@ -664,7 +664,7 @@ bool Forcefield_UFF::assignIntramolecular(Species* sp, bool useExistingTypes, bo
 		while (SpeciesAtom* i = atomIterator.iterate())
 		{
 			if (!i->atomType()) return Messenger::error("No AtomType assigned to SpeciesAtom %i, so can't generate intramolecular terms based on existing types.\n", i->userIndex());
-			UFFAtomType* at = (UFFAtomType*) atomTypeByName(i->atomType()->name(), i->element());
+			UFFAtomType* at = dynamic_cast<UFFAtomType*>(atomTypeByName(i->atomType()->name(), i->element()));
 			if (!at) return Messenger::error("Existing AtomType name '%s' does not correspond to a type in this forcefield.\n", i->atomType()->name());
 			atomTypes.add(at);
 		}
@@ -675,7 +675,7 @@ bool Forcefield_UFF::assignIntramolecular(Species* sp, bool useExistingTypes, bo
 		ListIterator<SpeciesAtom> atomIterator(sp->atoms());
 		while (SpeciesAtom* i = atomIterator.iterate())
 		{
-			UFFAtomType* at = (UFFAtomType*) determineAtomType(i);
+			UFFAtomType* at = dynamic_cast<UFFAtomType*>(determineAtomType(i));
 			if (!at) return Messenger::error("Couldn't determine a suitable AtomType for atom %i.\n", i->userIndex());
 			atomTypes.add(at);
 		}

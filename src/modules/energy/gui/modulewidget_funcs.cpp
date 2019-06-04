@@ -29,7 +29,7 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-EnergyModuleWidget::EnergyModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_((EnergyModule*) module), dissolve_(dissolve)
+EnergyModuleWidget::EnergyModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_(dynamic_cast<EnergyModule*>(module)), dissolve_(dissolve)
 {
 	// Set up user interface
 	ui.setupUi(this);
@@ -160,7 +160,7 @@ void EnergyModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 	energyGraph_->clearRenderables();
 
 	// Get target Configuration
-	currentConfiguration_ = (Configuration*) VariantPointer<Configuration>(ui.TargetCombo->itemData(index));
+	currentConfiguration_ = VariantPointer<Configuration>(ui.TargetCombo->itemData(index));
 	if (!currentConfiguration_) return;
 
 	// Add data targets

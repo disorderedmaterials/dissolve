@@ -433,7 +433,7 @@ void AddForcefieldTermsWizard::atomTypesListEdited(QWidget* lineEdit)
 	for (int n=0; n<ui_.AtomTypesList->count(); ++n)
 	{
 		QListWidgetItem* item = ui_.AtomTypesList->item(n);
-		AtomType* at = (AtomType*) VariantPointer<AtomType>(item->data(Qt::UserRole));
+		AtomType* at = VariantPointer<AtomType>(item->data(Qt::UserRole));
 		if (!at) continue;
 
 		at->setName(qPrintable(item->text()));
@@ -452,7 +452,7 @@ void AddForcefieldTermsWizard::on_AtomTypesPrefixButton_clicked(bool checked)
 	QList<QListWidgetItem*>::iterator i;
 	for (i = selectedItems.begin(); i != selectedItems.end(); ++i)
 	{
-		AtomType* at = (AtomType*) VariantPointer<AtomType>((*i)->data(Qt::UserRole));
+		AtomType* at = VariantPointer<AtomType>((*i)->data(Qt::UserRole));
 		at->setName(CharString("%s%s", qPrintable(prefix), at->name()));
 	}
 
@@ -469,7 +469,7 @@ void AddForcefieldTermsWizard::on_AtomTypesSuffixButton_clicked(bool checked)
 	QList<QListWidgetItem*>::iterator i;
 	for (i = selectedItems.begin(); i != selectedItems.end(); ++i)
 	{
-		AtomType* at = (AtomType*) VariantPointer<AtomType>((*i)->data(Qt::UserRole));
+		AtomType* at = VariantPointer<AtomType>((*i)->data(Qt::UserRole));
 		at->setName(CharString("%s%s", at->name(), qPrintable(suffix)));
 	}
 
@@ -545,7 +545,7 @@ void AddForcefieldTermsWizard::masterTermsTreeEdited(QWidget* lineEdit)
 	for (int n=0; n<masterBondItemParent_->childCount(); ++n)
 	{
 		QTreeWidgetItem* item = masterBondItemParent_->child(n);
-		MasterIntra* intra = (MasterIntra*) VariantPointer<MasterIntra>(item->data(0, Qt::UserRole));
+		MasterIntra* intra = VariantPointer<MasterIntra>(item->data(0, Qt::UserRole));
 		if (!intra) continue;
 
 		intra->setName(qPrintable(item->text(0)));
@@ -553,7 +553,7 @@ void AddForcefieldTermsWizard::masterTermsTreeEdited(QWidget* lineEdit)
 	for (int n=0; n<masterAngleItemParent_->childCount(); ++n)
 	{
 		QTreeWidgetItem* item = masterAngleItemParent_->child(n);
-		MasterIntra* intra = (MasterIntra*) VariantPointer<MasterIntra>(item->data(0, Qt::UserRole));
+		MasterIntra* intra = VariantPointer<MasterIntra>(item->data(0, Qt::UserRole));
 		if (!intra) continue;
 
 		intra->setName(qPrintable(item->text(0)));
@@ -561,7 +561,7 @@ void AddForcefieldTermsWizard::masterTermsTreeEdited(QWidget* lineEdit)
 	for (int n=0; n<masterTorsionItemParent_->childCount(); ++n)
 	{
 		QTreeWidgetItem* item = masterTorsionItemParent_->child(n);
-		MasterIntra* intra = (MasterIntra*) VariantPointer<MasterIntra>(item->data(0, Qt::UserRole));
+		MasterIntra* intra = VariantPointer<MasterIntra>(item->data(0, Qt::UserRole));
 		if (!intra) continue;
 
 		intra->setName(qPrintable(item->text(0)));
@@ -580,7 +580,7 @@ void AddForcefieldTermsWizard::on_MasterTermsPrefixButton_clicked(bool checked)
 	QList<QTreeWidgetItem*>::iterator i;
 	for (i = selectedItems.begin(); i != selectedItems.end(); ++i)
 	{
-		MasterIntra* intra = (MasterIntra*) VariantPointer<MasterIntra>((*i)->data(0, Qt::UserRole));
+		MasterIntra* intra = VariantPointer<MasterIntra>((*i)->data(0, Qt::UserRole));
 		intra->setName(CharString("%s%s", qPrintable(prefix), intra->name()));
 	}
 
@@ -597,7 +597,7 @@ void AddForcefieldTermsWizard::on_MasterTermsSuffixButton_clicked(bool checked)
 	QList<QTreeWidgetItem*>::iterator i;
 	for (i = selectedItems.begin(); i != selectedItems.end(); ++i)
 	{
-		MasterIntra* intra = (MasterIntra*) VariantPointer<MasterIntra>((*i)->data(0, Qt::UserRole));
+		MasterIntra* intra = VariantPointer<MasterIntra>((*i)->data(0, Qt::UserRole));
 		intra->setName(CharString("%s%s", intra->name(), qPrintable(suffix)));
 	}
 

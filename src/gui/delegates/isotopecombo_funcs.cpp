@@ -41,7 +41,7 @@ QWidget* IsotopeComboDelegate::createEditor(QWidget* parent, const QStyleOptionV
 	QComboBox* editor = new QComboBox(parent);
 
 	// Get the data from the model index - it should be an Isotope*
-	Isotope* isotope = (Isotope*) VariantPointer<Isotope>(index.data(Qt::UserRole));
+	Isotope* isotope = VariantPointer<Isotope>(index.data(Qt::UserRole));
 	if (isotope)
 	{
 		// Populate combo with all possible Isotopes for this Element
@@ -61,7 +61,7 @@ void IsotopeComboDelegate::setEditorData(QWidget* editor, const QModelIndex& ind
 	QComboBox* comboBox = static_cast<QComboBox*>(editor);
 
 	// Get the data from the model index - it should be an Isotope*
-	Isotope* isotope = (Isotope*) VariantPointer<Isotope>(index.data(Qt::UserRole));
+	Isotope* isotope = VariantPointer<Isotope>(index.data(Qt::UserRole));
 	if (isotope)
 	{
 		comboBox->setCurrentIndex(isotope->index());
@@ -77,7 +77,7 @@ void IsotopeComboDelegate::setModelData(QWidget* editor, QAbstractItemModel* mod
 	QComboBox* comboBox = static_cast<QComboBox*>(editor);
 
 	// Get existing Isotope
-	Isotope* isotope = (Isotope*) VariantPointer<Isotope>(index.data(Qt::UserRole));
+	Isotope* isotope = VariantPointer<Isotope>(index.data(Qt::UserRole));
 	if (isotope)
 	{
 		// Get parent Element, and find index of new Isotope

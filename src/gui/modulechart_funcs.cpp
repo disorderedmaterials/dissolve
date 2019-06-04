@@ -273,7 +273,7 @@ void ModuleChart::dragEnterEvent(QDragEnterEvent* event)
 	else if (event->mimeData()->hasFormat("dissolve/mimestrings"))
 	{
 		// Cast into a MimeStrings object
-		MimeStrings* mimeStrings = (MimeStrings*) event->mimeData();
+		const MimeStrings* mimeStrings = dynamic_cast<const MimeStrings*>(event->mimeData());
 		if (!mimeStrings) return;
 
 		// Check if the relevant datum is present
@@ -376,7 +376,7 @@ void ModuleChart::dropEvent(QDropEvent* event)
 	else if (event->mimeData()->hasFormat("dissolve/mimestrings"))
 	{
 		// Cast into a MimeStrings object
-		MimeStrings* mimeStrings = (MimeStrings*) event->mimeData();
+		const MimeStrings* mimeStrings = dynamic_cast<const MimeStrings*>(event->mimeData());
 		if (!mimeStrings) return;
 		if (!mimeStrings->hasData(MimeString::ModuleType))
 		{

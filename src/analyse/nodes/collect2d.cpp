@@ -211,12 +211,12 @@ bool AnalysisCollect2DNode::read(LineParser& parser, const CoreData& coreData, N
 				return true;
 			case (AnalysisCollect2DNode::QuantityXKeyword):
 				// Determine observable from supplied argument
-				xObservable_ = (AnalysisCalculateNode*) contextStack.nodeInScope(parser.argc(1), AnalysisNode::CalculateNode);
+				xObservable_ = dynamic_cast<AnalysisCalculateNode*>(contextStack.nodeInScope(parser.argc(1), AnalysisNode::CalculateNode));
 				if (!xObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect2DNodeKeyword(nk));
 				break;
 			case (AnalysisCollect2DNode::QuantityYKeyword):
 				// Determine observable from supplied argument
-				yObservable_ = (AnalysisCalculateNode*) contextStack.nodeInScope(parser.argc(1), AnalysisNode::CalculateNode);
+				yObservable_ = dynamic_cast<AnalysisCalculateNode*>(contextStack.nodeInScope(parser.argc(1), AnalysisNode::CalculateNode));
 				if (!yObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect2DNodeKeyword(nk));
 				break;
 			case (AnalysisCollect2DNode::RangeXKeyword):

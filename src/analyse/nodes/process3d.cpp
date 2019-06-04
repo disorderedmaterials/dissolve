@@ -166,7 +166,7 @@ bool AnalysisProcess3DNode::finalise(ProcessPool& procPool, Configuration* cfg, 
 	data.setObjectTag(CharString("%s//Process3D//%s//%s", prefix, cfg->name(), name()));
 
 	// Get the node pointer
-	AnalysisCollect3DNode* node = (AnalysisCollect3DNode*) collectNode_.node();
+	AnalysisCollect3DNode* node = dynamic_cast<AnalysisCollect3DNode*>(collectNode_.node());
 	if (!node) return Messenger::error("No Collect1D node available in AnalysisProcess3DNode::finalise().\n");
 
 	// Copy the averaged data from the associated Collect3D node, and normalise it accordingly
@@ -243,7 +243,7 @@ bool AnalysisProcess3DNode::read(LineParser& parser, const CoreData& coreData, N
 				if (collectNode_.isNull()) return Messenger::error("Can't set site-dependent normalisers without first setting the collect node target.\n");
 				if (!collectNode_.node()->parent()) return Messenger::error("Can't set site-dependent normalisers since the specified collect node has no analyser parent.\n");
 
-				selectNode = (AnalysisSelectNode*) contextStack.node(parser.argc(1), AnalysisNode::SelectNode);
+				selectNode = dynamic_cast<AnalysisSelectNode*>(contextStack.node(parser.argc(1), AnalysisNode::SelectNode));
 				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), process3DNodeKeyword(AnalysisProcess3DNode::NSitesKeyword));
 				sitePopulationNormalisers_.add(selectNode, 1.0);
 				break;
@@ -252,7 +252,7 @@ bool AnalysisProcess3DNode::read(LineParser& parser, const CoreData& coreData, N
 				if (collectNode_.isNull()) return Messenger::error("Can't set site-dependent normalisers without first setting the collect node target.\n");
 				if (!collectNode_.node()->parent()) return Messenger::error("Can't set site-dependent normalisers since the specified collect node has no analyser parent.\n");
 
-				selectNode = (AnalysisSelectNode*) contextStack.node(parser.argc(1), AnalysisNode::SelectNode);
+				selectNode = dynamic_cast<AnalysisSelectNode*>(contextStack.node(parser.argc(1), AnalysisNode::SelectNode));
 				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), process3DNodeKeyword(AnalysisProcess3DNode::NumberDensityKeyword));
 				numberDensityNormalisers_.add(selectNode, 1.0);
 				break;

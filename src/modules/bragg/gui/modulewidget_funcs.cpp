@@ -23,12 +23,13 @@
 #include "gui/viewer/dataviewer.hui"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
+#include "modules/bragg/bragg.h"
 #include "classes/atomtype.h"
 #include "templates/variantpointer.h"
 #include "genericitems/listhelper.h"
 
 // Constructor
-BraggModuleWidget::BraggModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_((BraggModule*) module), dissolve_(dissolve)
+BraggModuleWidget::BraggModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_(dynamic_cast<BraggModule*>(module)), dissolve_(dissolve)
 {
 	// Set up user interface
 	ui.setupUi(this);

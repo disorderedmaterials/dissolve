@@ -43,7 +43,7 @@ QWidget* UsedSpeciesComboDelegate::createEditor(QWidget* parent, const QStyleOpt
 	QComboBox* editor = new QComboBox(parent);
 
 	// Get the model UserData for the current index - it should be a Configuration
-	Configuration* cfg = (Configuration*) VariantPointer<Configuration>(index.data(Qt::UserRole));
+	Configuration* cfg = VariantPointer<Configuration>(index.data(Qt::UserRole));
 	if (cfg)
 	{
 		for (SpeciesInfo* spInfo = cfg->usedSpecies().first(); spInfo != NULL; spInfo = spInfo->next)

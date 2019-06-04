@@ -160,7 +160,7 @@ bool AddConfigurationWizard::prepareForNextPage(int currentIndex)
 		case (AddConfigurationWizard::MonoSpeciesPage):
 			// Clear Configuration, and add used Species
 			importTarget_->clear();
-			sp = (Species*) VariantPointer<Species>(ui_.MonoSpeciesSpeciesCombo->currentData());
+			sp = VariantPointer<Species>(ui_.MonoSpeciesSpeciesCombo->currentData());
 			importTarget_->addUsedSpecies(sp, 1.0);
 			if (ui_.MonoSpeciesDensityUnitsCombo->currentIndex() == 0) importTarget_->setAtomicDensity(ui_.MonoSpeciesDensitySpin->value());
 			else importTarget_->setChemicalDensity(ui_.MonoSpeciesDensitySpin->value());

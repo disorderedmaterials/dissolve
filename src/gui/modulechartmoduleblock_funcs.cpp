@@ -266,7 +266,7 @@ void ModuleChartModuleBlock::on_ConfigurationTargetList_itemChanged(QListWidgetI
 	if (refreshing_) return;
 
 	// Get Configuration for item
-	Configuration* cfg = (Configuration*) VariantPointer<Configuration>(item->data(Qt::UserRole));
+	Configuration* cfg = VariantPointer<Configuration>(item->data(Qt::UserRole));
 
 	// If the item is unchecked, make sure it is not present in the Module's Configuration targets
 	if (item->checkState() == Qt::Checked) module_->removeTargetConfiguration(cfg);

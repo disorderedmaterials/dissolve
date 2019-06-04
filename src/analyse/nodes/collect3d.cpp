@@ -267,28 +267,28 @@ bool AnalysisCollect3DNode::read(LineParser& parser, const CoreData& coreData, N
 				if (xObservable_ || yObservable_ || zObservable_) return Messenger::error("Can't combine QuantityXYZ with one-dimensional Quantity commands.\n");
 
 				// Determine observable from supplied argument
-				xyzObservable_ = (AnalysisCalculateNode*) contextStack.nodeInScope(parser.argc(1), AnalysisNode::CalculateNode);
+				xyzObservable_ = dynamic_cast<AnalysisCalculateNode*>(contextStack.nodeInScope(parser.argc(1), AnalysisNode::CalculateNode));
 				if (!xyzObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeyword(nk));
 				break;
 			case (AnalysisCollect3DNode::QuantityXKeyword):
 				if (xyzObservable_) return Messenger::error("Can't combine QuantityXYZ with one-dimensional Quantity commands.\n");
 
 				// Determine observable from supplied argument
-				xObservable_ = (AnalysisCalculateNode*) contextStack.nodeInScope(parser.argc(1), AnalysisNode::CalculateNode);
+				xObservable_ = dynamic_cast<AnalysisCalculateNode*>(contextStack.nodeInScope(parser.argc(1), AnalysisNode::CalculateNode));
 				if (!xObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeyword(nk));
 				break;
 			case (AnalysisCollect3DNode::QuantityYKeyword):
 				if (xyzObservable_) return Messenger::error("Can't combine QuantityXYZ with one-dimensional Quantity commands.\n");
 
 				// Determine observable from supplied argument
-				yObservable_ = (AnalysisCalculateNode*) contextStack.nodeInScope(parser.argc(1), AnalysisNode::CalculateNode);
+				yObservable_ = dynamic_cast<AnalysisCalculateNode*>(contextStack.nodeInScope(parser.argc(1), AnalysisNode::CalculateNode));
 				if (!yObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeyword(nk));
 				break;
 			case (AnalysisCollect3DNode::QuantityZKeyword):
 				if (xyzObservable_) return Messenger::error("Can't combine QuantityXYZ with one-dimensional Quantity commands.\n");
 
 				// Determine observable from supplied argument
-				zObservable_ = (AnalysisCalculateNode*) contextStack.nodeInScope(parser.argc(1), AnalysisNode::CalculateNode);
+				zObservable_ = dynamic_cast<AnalysisCalculateNode*>(contextStack.nodeInScope(parser.argc(1), AnalysisNode::CalculateNode));
 				if (!zObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeyword(nk));
 				break;
 			case (AnalysisCollect3DNode::RangeXKeyword):

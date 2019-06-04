@@ -23,12 +23,13 @@
 #include "gui/viewer/dataviewer.hui"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
+#include "modules/calibration/calibration.h"
 #include "classes/atomtype.h"
 #include "templates/variantpointer.h"
 #include "genericitems/listhelper.h"
 
 // Constructor
-CalibrationModuleWidget::CalibrationModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_((CalibrationModule*) module), dissolve_(dissolve)
+CalibrationModuleWidget::CalibrationModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_(dynamic_cast<CalibrationModule*>(module)), dissolve_(dissolve)
 {
 	// Set up user interface
 	ui.setupUi(this);

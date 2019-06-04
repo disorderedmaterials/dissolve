@@ -120,7 +120,7 @@ void SpeciesReferenceListKeywordWidget::updateKeywordData()
 	for (int n=0; n<ui.SelectionList->count(); ++n)
 	{
 		QListWidgetItem* item = ui.SelectionList->item(n);
-		if (item->checkState() == Qt::Checked) newSelection.add( (Species*) VariantPointer<Species>(item->data(Qt::UserRole)));
+		if (item->checkState() == Qt::Checked) newSelection.add(VariantPointer<Species>(item->data(Qt::UserRole)));
 	}
 	keyword_->setData(newSelection);
 }

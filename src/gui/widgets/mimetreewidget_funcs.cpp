@@ -91,7 +91,7 @@ void MimeTreeWidget::mouseMoveEvent(QMouseEvent* event)
 	if (!item) return;
 
 	// Cast the item into a MimeTreeWidgetItem
-	MimeTreeWidgetItem* mimeItem = (MimeTreeWidgetItem*) item;
+	MimeTreeWidgetItem* mimeItem = dynamic_cast<MimeTreeWidgetItem*>(item);
 	if (!item)
 	{
 		printf("Failed to cast QTreeWidgetItem into MimeTreeWidgetItem.\n");

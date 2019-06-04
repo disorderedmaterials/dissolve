@@ -31,7 +31,7 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_((RefineModule*) module), dissolve_(dissolve)
+RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_(dynamic_cast<RefineModule*>(module)), dissolve_(dissolve)
 {
 	// Set up user interface
 	ui.setupUi(this);
