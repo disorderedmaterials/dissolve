@@ -9,7 +9,7 @@ permalink: /
 
 _Current Version: 0.4.0, 30th May 2019_
 
-Dissolve is a classical simulation code intended to help in analysing experimental scattering data through generating representative atomic configurations consistent with supplied reference data.
+Dissolve is a classical simulation code intended to help in analysing experimental scattering (diffraction) measurements through generating representative atomic configurations consistent with supplied reference data. Its primary use is for disordered systems such as those comprised of (or containing) liquids and glasses, but it can be applied to much more complex systems.
 
 ## Introduction
 
@@ -37,12 +37,12 @@ Dissolve's file format and syntax, and output file roles.
 * * *
 ## Modules
 
-All of Dissolve's modules, their purpose, options, and inner workings.
+All of Dissolve's modules - their purpose, options, and inner workings.
 
 [Overview](Modules/Index.md){: .btn .btn-blue}
 
 ### Analysis
-Calculation of properties of interest from configurations
+Calculation of properties of interest from configurations.
 
 #### General
 [Analyse](Modules/Analyse.md){: .btn .btn-outline}
@@ -65,7 +65,7 @@ Methods to calculate real- and reciprocal-space correlation functions.
 [SQ](Modules/SQ.md){: .btn .btn-outline}
 
 ### Evolution
-Methods to evolve the coordinates of configurations
+Methods to evolve the coordinates of configurations.
 
 [AtomShake](Modules/AtomShake.md){: .btn .btn-outline}
 [IntraShake](Modules/IntraShake.md){: .btn .btn-outline}
@@ -119,7 +119,7 @@ Overviews of classes and implementations relevant to core Dissolve methodology.
 * * *
 ## Project Governance
 
-How Dissolve is managed and governed.
+How the evolution of Dissolve is managed and governed.
 
 [Project Management Committee](Governance/ProjectManagementCommittee.md){: .btn}
 [Technical Steering Committee](Governance/TechnicalSteeringCommittee.md){: .btn}
