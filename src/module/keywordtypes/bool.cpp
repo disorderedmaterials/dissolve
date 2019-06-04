@@ -48,7 +48,7 @@ bool BoolModuleKeyword::isValid(bool value)
 {
 	return true;
 }
-	
+
 /*
  * Arguments
  */
