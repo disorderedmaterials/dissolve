@@ -30,7 +30,7 @@ const char* CalculateRDFModule::type() const
 // Return category for module
 const char* CalculateRDFModule::category() const
 {
-	return "Property Calculation";
+	return "Analysis";
 }
 
 // Return brief description of module

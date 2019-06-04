@@ -30,13 +30,13 @@ const char* AnalyseModule::type() const
 // Return category for module
 const char* AnalyseModule::category() const
 {
-	return "Property Calculation";
+	return "Analysis";
 }
 
 // Return brief description of module
 const char* AnalyseModule::brief() const
 {
-	return "Perform analysis of one or more Configurations";
+	return "Perform custom analysis of one or more Configurations";
 }
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
