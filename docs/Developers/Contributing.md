@@ -1,7 +1,6 @@
 ---
 parent: Developer Documentation
 nav_order: 6
-mermaid: true
 ---
 # Contributing
 
@@ -15,9 +14,13 @@ This overview provides essential information for those wishing to contribute to 
 
 ## Basics
 
-Dissolve is version controlled through Git, and is available from [https://www.github.com/trisyoungs/dissolve](). Dissolve adopts the Gitflow workflow for development, with `developt` being the main branch of the repository. `master` is reserved for released versions of the code, and associated hotfixes. All significant additions or fixes to the code should be made through a separate `feature` branch, rather than committing directly to `develop`. Minor changes (e.g. typographical errors) may be made directly to `develop`.
+Dissolve is version controlled through Git, and is available from [https://www.github.com/trisyoungs/dissolve](). Dissolve adopts the Gitflow workflow for development, with `develop` being the main branch of the repository. `master` is reserved for released versions of the code, and associated hotfixes. All significant additions or fixes to the code should be made through a separate `feature` branch, rather than committing directly to `develop`. Minor changes (e.g. typographical errors) may be made directly to `develop`.
 
 For a more in-depth explanation of gitflow please refer to the excellent guide at [Atlassian.com](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow) or the original [presentation of the workflow](https://nvie.com/posts/a-successful-git-branching-model/) by Vincent Driessen.
+
+## Flagging Issues
+
+If coding is not your intent or desire and the mere thought of it makes you feel ill, there are still valuable ways that you can contribute. Current issues with Dissolve are [listed at the main repository](https://github.com/trisyoungs/dissolve/issues) and contain feature requests, bug reports, suggestions, and discussions regarding all aspects of the code. If you think you have found a bug, or have a suggestion for improving the code, submit it as a new issue.
 
 ## External Contributors
 
@@ -35,12 +38,12 @@ Go to the [Dissolve repository](httpsL//www.github.com/trisyoungs/Dissolve) and 
 
 You can freely experiment with the source code without fear of breaking the actual version, as all the changes you make are isolated to your repository until such time as you choose to try and merge them back in to the main project. Follow the gitflow approach for moderate/major changes, or commit directly to `develop` for minor things.
 
-### 4) Example
+### 4) Example (Small Fix)
 
 Firstly, clone the repository if you haven't already:
 
 ```
-bob@linux:~> git clone https://github.com/YOURGITHUBNAME/dissolve.git ./dissolve
+bob@linux:~> git clone https://github.com/YOUR_GITHUB_USER_NAME/dissolve.git ./dissolve
 
 Cloning into './dissolve'...
 remote: Enumerating objects: 240, done.
@@ -133,10 +136,20 @@ nothing to commit, working tree clean
 `git status` now tells us that there are no more changes to any other files, but that we are one commit ahead of the repository on the server (the 'origin'). It is worth stating that all of these changes are still stored only on your local machine - to send them to the server you must 'push' them as follows:
 
 ```
-git push
+bob@linux:~> git push
 
+Counting objects: 5, done.
+Delta compression using up to 12 threads.
+Compressing objects: 100% (5/5), done.
+Writing objects: 100% (5/5), 462 bytes | 462.00 KiB/s, done.
+Total 5 (delta 4), reused 0 (delta 0)
+remote: Resolving deltas: 100% (4/4), completed with 4 local objects.
+To https://www.github.com/YOUR_GITHUB_USER_NAME/dissolve.git
+   218d7884..758678a6  develop -> develop
+```
 
-Code review by the principal author (trisyoungs) should always be requested when making a pull request.
+At this stage, you can create a 'pull request' to ask for those changes to be copied from your repository and merged into the main Dissolve repository. The changes you've made will be reviewed by the lead author(s), and may be immediately accepted, commented on, or more changes / corrections may be requested.
 
 ## Collaborators
-For instance, to clone the repository on Linux, make a small fix to a typo (which I've just found), and commit your changes (to `develop`):
+
+If you wish to become an official collaborator on Dissolve and want direct access to the main repository, e-mail the lead author [Tristan Youngs](mailto:tristan.youngs@stfc.ac.uk) to discuss.
