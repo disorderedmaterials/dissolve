@@ -205,7 +205,7 @@ set(BASIC_LINK_LIBS
   braggmodule
   calculatedanglemodule
   calculaterdfmodule
-  calibrationmodule
+  calibratemodule
   checksmodule
   datatestmodule
   energymodule
@@ -247,7 +247,7 @@ target_link_libraries( ${target_name}
   braggmodulenogui
   calculatedanglemodulenogui
   calculaterdfmodulenogui
-  calibrationmodulenogui
+  calibratemodulenogui
   datatestmodulenogui
   energymodulenogui
   epsrmodulenogui
@@ -278,7 +278,7 @@ if(GUI)
     braggmodulegui
     calculatedanglemodulegui
     calculaterdfmodulegui
-    calibrationmodulegui
+    calibratemodulegui
     datatestmodulegui
     energymodulegui
     epsrmodulegui
@@ -321,7 +321,7 @@ if(GUI)
     braggmodulegui
     calculatedanglemodulegui
     calculaterdfmodulegui
-    calibrationmodulegui
+    calibratemodulegui
     datatestmodulegui
     energymodulegui
     epsrmodulegui
