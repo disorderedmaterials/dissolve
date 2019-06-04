@@ -24,7 +24,7 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-BoolModuleKeyword::BoolModuleKeyword(bool value) : ModuleKeywordBase(ModuleKeywordBase::BoolData), ModuleKeywordData<bool>(value)
+BoolModuleKeyword::BoolModuleKeyword(bool value) : ModuleKeywordData<bool>(ModuleKeywordBase::BoolData, value)
 {
 }
 

@@ -27,7 +27,7 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-ModuleReferenceListModuleKeyword::ModuleReferenceListModuleKeyword(RefList<Module,bool>& references, const char* moduleType, int maxModules) : ModuleKeywordBase(ModuleKeywordBase::ModuleReferenceListData), ModuleKeywordData< RefList<Module,bool>& >(references)
+ModuleReferenceListModuleKeyword::ModuleReferenceListModuleKeyword(RefList<Module,bool>& references, const char* moduleType, int maxModules) : ModuleKeywordData< RefList<Module,bool>& >(ModuleKeywordBase::ModuleReferenceListData, references)
 {
 	moduleTypes_.add(moduleType);
 	maxModules_ = maxModules;

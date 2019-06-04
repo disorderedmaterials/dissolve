@@ -29,7 +29,7 @@
 /* none */
 
 // Keyword with CharString Data
-class CharStringModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<CharString>
+class CharStringModuleKeyword : public ModuleKeywordData<CharString>
 {
 	public:
 	// Constructor

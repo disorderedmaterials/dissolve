@@ -29,7 +29,7 @@
 /* none */
 
 // Keyword with Complex Data
-class ComplexModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<int>
+class ComplexModuleKeyword : public ModuleKeywordData<int>
 {
 	public:
 	// Constructors

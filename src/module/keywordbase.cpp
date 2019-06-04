@@ -20,6 +20,7 @@
 */
 
 #include "module/keywordbase.h"
+#include "base/messenger.h"
 
 // Constructor
 ModuleKeywordBase::ModuleKeywordBase(KeywordDataType type) : ListItem<ModuleKeywordBase>(), type_(type)

@@ -30,7 +30,7 @@
 /* none */
 
 // Keyword with WindowFunction Data
-class WindowFunctionModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<WindowFunction>
+class WindowFunctionModuleKeyword : public ModuleKeywordData<WindowFunction>
 {
 	public:
 	// Constructor

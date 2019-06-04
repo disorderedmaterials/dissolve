@@ -29,7 +29,7 @@
 /* none */
 
 // Keyword with Double Data
-class DoubleModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<double>
+class DoubleModuleKeyword : public ModuleKeywordData<double>
 {
 	public:
 	// Constructors

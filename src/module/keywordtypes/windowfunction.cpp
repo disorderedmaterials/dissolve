@@ -24,7 +24,7 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-WindowFunctionModuleKeyword::WindowFunctionModuleKeyword(WindowFunction value) : ModuleKeywordBase(ModuleKeywordBase::WindowFunctionData), ModuleKeywordData<WindowFunction>(value)
+WindowFunctionModuleKeyword::WindowFunctionModuleKeyword(WindowFunction value) : ModuleKeywordData<WindowFunction>(ModuleKeywordBase::WindowFunctionData, value)
 {
 }
 

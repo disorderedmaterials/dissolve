@@ -29,7 +29,7 @@
 /* none */
 
 // Keyword with Bool Data
-class BoolModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<bool>
+class BoolModuleKeyword : public ModuleKeywordData<bool>
 {
 	public:
 	// Constructor

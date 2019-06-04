@@ -31,7 +31,7 @@
 class Module;
 
 // Keyword with Module reference list data
-class ModuleReferenceListModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData< RefList<Module,bool>& >
+class ModuleReferenceListModuleKeyword : public ModuleKeywordData< RefList<Module,bool>& >
 {
 	public:
 	// Constructor

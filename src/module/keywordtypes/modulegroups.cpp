@@ -28,7 +28,7 @@
 #include "base/sysfunc.h"
 
 // Constructor
-ModuleGroupsModuleKeyword::ModuleGroupsModuleKeyword(ModuleGroups& groups) : ModuleKeywordBase(ModuleKeywordBase::ModuleGroupsData), ModuleKeywordData<ModuleGroups&>(groups)
+ModuleGroupsModuleKeyword::ModuleGroupsModuleKeyword(ModuleGroups& groups) : ModuleKeywordData<ModuleGroups&>(ModuleKeywordBase::ModuleGroupsData, groups)
 {
 }
 

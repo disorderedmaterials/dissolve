@@ -24,20 +24,20 @@
 #include "genericitems/listhelper.h"
 
 // Constructors
-IntegerModuleKeyword::IntegerModuleKeyword(int value) : ModuleKeywordBase(ModuleKeywordBase::IntegerData), ModuleKeywordData<int>(value)
+IntegerModuleKeyword::IntegerModuleKeyword(int value) : ModuleKeywordData<int>(ModuleKeywordBase::IntegerData, value)
 {
 	minimumLimit_ = false;
 	maximumLimit_ = false;
 }
 
-IntegerModuleKeyword::IntegerModuleKeyword(int value, int minValue) : ModuleKeywordBase(ModuleKeywordBase::IntegerData), ModuleKeywordData<int>(value)
+IntegerModuleKeyword::IntegerModuleKeyword(int value, int minValue) : ModuleKeywordData<int>(ModuleKeywordBase::IntegerData, value)
 {
 	minimumLimit_ = true;
 	min_ = minValue;
 	maximumLimit_ = false;
 }
 
-IntegerModuleKeyword::IntegerModuleKeyword(int value, int minValue, int maxValue) : ModuleKeywordBase(ModuleKeywordBase::IntegerData), ModuleKeywordData<int>(value)
+IntegerModuleKeyword::IntegerModuleKeyword(int value, int minValue, int maxValue) : ModuleKeywordData<int>(ModuleKeywordBase::IntegerData, value)
 {
 	minimumLimit_ = true;
 	min_ = minValue;

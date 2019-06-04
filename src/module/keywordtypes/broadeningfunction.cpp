@@ -24,7 +24,7 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-BroadeningFunctionModuleKeyword::BroadeningFunctionModuleKeyword(BroadeningFunction value) : ModuleKeywordBase(ModuleKeywordBase::BroadeningFunctionData), ModuleKeywordData<BroadeningFunction>(value)
+BroadeningFunctionModuleKeyword::BroadeningFunctionModuleKeyword(BroadeningFunction value) : ModuleKeywordData<BroadeningFunction>(ModuleKeywordBase::BroadeningFunctionData, value)
 {
 }
 

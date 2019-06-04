@@ -26,7 +26,7 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-SpeciesSiteModuleKeyword::SpeciesSiteModuleKeyword(SpeciesSite* site) : ModuleKeywordBase(ModuleKeywordBase::SpeciesSiteData), ModuleKeywordData<SpeciesSite*>(site)
+SpeciesSiteModuleKeyword::SpeciesSiteModuleKeyword(SpeciesSite* site) : ModuleKeywordData<SpeciesSite*>(ModuleKeywordBase::SpeciesSiteData, site)
 {
 }
 

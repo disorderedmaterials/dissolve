@@ -23,12 +23,12 @@
 #define DISSOLVE_KEYWORDBASE_H
 
 #include "base/charstring.h"
-#include "module/keyworddata.h"
 #include "templates/listitem.h"
 
 // Forward Declarations
 class CoreData;
 class Module;
+class LineParser;
 class ProcessPool;
 
 // Module Keyword Base Class

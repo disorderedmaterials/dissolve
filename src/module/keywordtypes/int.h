@@ -29,7 +29,7 @@
 /* none */
 
 // Keyword with Integer Data
-class IntegerModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<int>
+class IntegerModuleKeyword : public ModuleKeywordData<int>
 {
 	public:
 	// Constructors

@@ -23,7 +23,7 @@
 #include "base/lineparser.h"
 #include "genericitems/listhelper.h"
 
-EnumStringModuleKeyword::EnumStringModuleKeyword(int value, int nOptions, const char** options) : ModuleKeywordBase(ModuleKeywordBase::EnumStringData), ModuleKeywordData<CharString>(options[value])
+EnumStringModuleKeyword::EnumStringModuleKeyword(int value, int nOptions, const char** options) : ModuleKeywordData<CharString>(ModuleKeywordBase::EnumStringData, options[value])
 {
 	// Set our array of valid values
 	for (int n=0; n<nOptions; ++n) validValues_.add(options[n]);
