@@ -42,7 +42,7 @@ QWidget* IsotopologueComboDelegate::createEditor(QWidget* parent, const QStyleOp
 	QComboBox* editor = new QComboBox(parent);
 
 	// Get the model UserData for the current index - it should be a Species
-	Species* sp = (Species*) VariantPointer<Species>(index.data(Qt::UserRole));
+	Species* sp = VariantPointer<Species>(index.data(Qt::UserRole));
 	if (sp)
 	{
 		ComboNameListPopulator<Isotopologue>(editor, sp->isotopologues());

@@ -206,7 +206,7 @@ SpeciesInfo* ConfigurationTab::currentSpeciesInfo() const
 {
 	if (!ui.SpeciesInfoTable->currentItem()) return NULL;
 
-	SpeciesInfo* spInfo = (SpeciesInfo*) VariantPointer<SpeciesInfo>(ui.SpeciesInfoTable->currentItem()->data(Qt::UserRole));
+	SpeciesInfo* spInfo = VariantPointer<SpeciesInfo>(ui.SpeciesInfoTable->currentItem()->data(Qt::UserRole));
 
 	return spInfo;
 }

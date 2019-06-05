@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calibration/calibration.h"
+#include "modules/calibrate/calibrate.h"
 #include "module/keywordtypes.h"
 #include "module/list.h"
 #include "genericitems/listhelper.h"

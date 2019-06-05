@@ -29,7 +29,7 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-RDFModuleWidget::RDFModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_((RDFModule*) module), dissolve_(dissolve)
+RDFModuleWidget::RDFModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_(dynamic_cast<RDFModule*>(module)), dissolve_(dissolve)
 {
 	// Set up user interface
 	ui.setupUi(this);
@@ -148,7 +148,7 @@ void RDFModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 	partialsGraph_->clearRenderables();
 
 	// Get target Configuration
-	currentConfiguration_ = (Configuration*) VariantPointer<Configuration>(ui.TargetCombo->itemData(index));
+	currentConfiguration_ = VariantPointer<Configuration>(ui.TargetCombo->itemData(index));
 	if (!currentConfiguration_) return;
 
 	CharString blockData;

@@ -273,7 +273,7 @@ void WorkspaceTab::showContextMenu(const QPoint& pos)
 void WorkspaceTab::contextMenuModuleSelected(bool checked)
 {
 	// Get the sender QAction
-	QAction* action = (QAction*) sender();
+	QAction* action = dynamic_cast<QAction*>(sender());
 	if (!action) return;
 
 	// If the QAction's data is valid then it should contain a Module pointer
@@ -287,7 +287,7 @@ void WorkspaceTab::contextMenuModuleSelected(bool checked)
 void WorkspaceTab::contextMenuWidgetSelected(bool checked)
 {
 	// Get the sender QAction
-	QAction* action = (QAction*) sender();
+	QAction* action = dynamic_cast<QAction*>(sender());
 	if (!action) return;
 
 	// The text of the sender QAction is the name of the widget we need to create

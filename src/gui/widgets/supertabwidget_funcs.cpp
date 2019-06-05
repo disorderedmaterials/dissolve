@@ -97,7 +97,7 @@ QToolButton* SuperTabWidget::addTabCloseButton(QWidget* pageWidget)
 void SuperTabWidget::tabCloseButtonClicked(bool checked)
 {
 	// Find the close button that sent the signal in our buttons reflist
-	QToolButton* toolButton = (QToolButton*) sender();
+	QToolButton* toolButton = dynamic_cast<QToolButton*>(sender());
 	if (!toolButton) return;
 
 	RefListItem<QToolButton,QWidget*>* item = closeButtons_.contains(toolButton);

@@ -23,7 +23,7 @@
 #include "modules/analyse/analyse.h"
 #include "modules/atomshake/atomshake.h"
 #include "modules/calculate/rdf/rdf.h"
-#include "modules/calibration/calibration.h"
+#include "modules/calibrate/calibrate.h"
 #include "modules/checks/checks.h"
 #include "modules/datatest/datatest.h"
 #include "modules/energy/energy.h"

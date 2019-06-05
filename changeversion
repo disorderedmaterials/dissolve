@@ -2,6 +2,16 @@
 
 # Change the version of the source code to the supplied value
 
+# Day Suffix Function
+DaySuffix() {
+  case `date +%d` in
+    1|21|31) echo "st";;
+    2|22)    echo "nd";;
+    3|23)    echo "rd";;
+    *)       echo "th";;
+  esac
+}
+
 # Check that a version information was correctly supplied
 if [ "$#" -eq "0" ]
 then
@@ -109,10 +119,26 @@ grep 'Version=' extra/appimage/usr/share/applications/com.projectaten.Dissolve.d
 # Documentation
 if [ "$TEST" = "false" ]
 then
-  sed -i -e "s/Current Version: [0-9\.]*/Current Version: $MAJOR.$MINOR.$PATCH/g" docs/Index.md
+  DAYSUFFIX=`DaySuffix`
+  TODAY=`date "+%A %-d${DAYSUFFIX} %B %Y"`
+  sed -i -e "s/Current Version: [0-9\.]*, \(.*\)_/Current Version: $MAJOR.$MINOR.$PATCH, ${TODAY}_/g" docs/Index.md
 fi
 echo -n "   Documentation (Program Version) : "
 grep 'Current Version:' docs/Index.md | sed -e 's/.*Version: \([0-9\.]*\),.*/\1/g'
+echo -n "              Documentation (Date) : "
+grep 'Current Version:' docs/Index.md | sed -e "s/.*Version: .*, \(.*\)_/\1/g"
+
+# README
+if [ "$TEST" = "false" ]
+then
+  DAYSUFFIX=`DaySuffix`
+  TODAY=`date "+%A %-d${DAYSUFFIX} %B %Y"`
+  sed -i -e "s/Current Version: [0-9\.]*, \(.*\)_/Current Version: $MAJOR.$MINOR.$PATCH, ${TODAY}_/g" README
+fi
+echo -n "   Documentation (Program Version) : "
+grep 'Current Version:' README | sed -e 's/.*Version: \([0-9\.]*\),.*/\1/g'
+echo -n "              Documentation (Date) : "
+grep 'Current Version:' README | sed -e "s/.*Version: .*, \(.*\)_/\1/g"
 
 exit 0
 

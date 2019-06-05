@@ -5,6 +5,8 @@ SUFFIXES: .dt
 .dt.desktop:
 	sed -e "s:PREFIX:@INSTALLDIR@:" -e "s:VERSION:@VERSION@:" $< > $@
 
+README: README.md
+
 EXTRA_DIST = CMakeLists.txt src/CMakeLists.txt src/*/CMakeLists.txt src/gui/*/CMakeLists.txt src/gui/uchroma/*/CMakeLists.txt
 EXTRA_DIST += src/gui/icons/*.* src/gui/uchroma/gui/icons/* src/gui/uchroma/gui/freefont/*
 

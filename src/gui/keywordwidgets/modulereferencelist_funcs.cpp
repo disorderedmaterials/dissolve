@@ -123,7 +123,7 @@ void ModuleReferenceListKeywordWidget::updateKeywordData()
 	for (int n=0; n<ui.SelectionList->count(); ++n)
 	{
 		QListWidgetItem* item = ui.SelectionList->item(n);
-		if (item->checkState() == Qt::Checked) newSelection.add( (Module*) VariantPointer<Module>(item->data(Qt::UserRole)));
+		if (item->checkState() == Qt::Checked) newSelection.add(VariantPointer<Module>(item->data(Qt::UserRole)));
 	}
 
 	// Update the data

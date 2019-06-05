@@ -141,7 +141,7 @@ void LayerEditor::on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* ite
 	if (!moduleLayer_) return;
 
 	// Get the Module associated to the double-clicked item
-	const Module* module = (const Module*) VariantPointer<const Module>(item->data(0, Qt::UserRole));
+	const Module* module = VariantPointer<const Module>(item->data(0, Qt::UserRole));
 	if (!module) return;
 
 	// Create a new instance of the Module

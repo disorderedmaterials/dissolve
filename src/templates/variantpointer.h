@@ -43,16 +43,16 @@ template <class A> class VariantPointer
 		pointer_ = (A*) variant.value<void*>();
 	}
 
-	// Convert from class pointer to QVariant
+	// Conversion operator (to QVariant)
 	operator QVariant()
 	{
 		return QVariant::fromValue((void*) pointer_);
 	}
 
-	// Convert from QVariant to class pointer
+	// Conversion operator (to class pointer)
 	operator A*()
 	{
-		return pointer_;
+		return dynamic_cast<A*>(pointer_);
 	}
 };
 

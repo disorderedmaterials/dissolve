@@ -19,12 +19,12 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calibration/calibration.h"
+#include "modules/calibrate/calibrate.h"
 
 // Return type of module
 const char* CalibrationModule::type() const
 {
-	return "Calibration";
+	return "Calibrate";
 }
 
 // Return category for module

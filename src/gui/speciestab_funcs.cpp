@@ -371,7 +371,7 @@ Isotopologue* SpeciesTab::currentIsotopologue()
 {
 	QListWidgetItem* item = ui.IsotopologueList->currentItem();
 	if (!item) return NULL;
-	return (Isotopologue*) VariantPointer<Isotopologue>(item->data(Qt::UserRole));
+	return VariantPointer<Isotopologue>(item->data(Qt::UserRole));
 }
 
 void SpeciesTab::on_AtomAddButton_clicked(bool checked)
@@ -696,7 +696,7 @@ void SpeciesTab::on_IsotopologueList_itemChanged(QListWidgetItem* item)
 	if (refreshing_) return;
 
 	// Get Isotopologue pointer
-	Isotopologue* isotopologue = (Isotopologue*) VariantPointer<Isotopologue>(item->data(Qt::UserRole));
+	Isotopologue* isotopologue = VariantPointer<Isotopologue>(item->data(Qt::UserRole));
 	if (!isotopologue) return;
 
 	// Need to ensure new name is unique within the Species

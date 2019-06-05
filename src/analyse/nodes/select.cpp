@@ -327,7 +327,7 @@ bool AnalysisSelectNode::read(LineParser& parser, const CoreData& coreData, Node
 			case (AnalysisSelectNode::ExcludeSameMoleculeKeyword):
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
-					AnalysisSelectNode* otherNode = (AnalysisSelectNode*) contextStack.nodeInScope(parser.argc(n), AnalysisNode::SelectNode);
+					AnalysisSelectNode* otherNode = dynamic_cast<AnalysisSelectNode*>(contextStack.nodeInScope(parser.argc(n), AnalysisNode::SelectNode));
 					if (!otherNode) return Messenger::error("Unrecognised selection node '%s' given to %s keyword.\n", parser.argc(n), selectNodeKeyword(nk));
 					if (!addSameMoleculeExclusion(otherNode)) return Messenger::error("Duplicate site given to %s keyword.\n", selectNodeKeyword(nk));
 				}
@@ -335,7 +335,7 @@ bool AnalysisSelectNode::read(LineParser& parser, const CoreData& coreData, Node
 			case (AnalysisSelectNode::ExcludeSameSiteKeyword):
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
-					AnalysisSelectNode* otherNode = (AnalysisSelectNode*) contextStack.nodeInScope(parser.argc(n), AnalysisNode::SelectNode);
+					AnalysisSelectNode* otherNode = dynamic_cast<AnalysisSelectNode*>(contextStack.nodeInScope(parser.argc(n), AnalysisNode::SelectNode));
 					if (!otherNode) return Messenger::error("Unrecognised selection node '%s' given to %s keyword.\n", parser.argc(n), selectNodeKeyword(nk));
 					if (!addSameSiteExclusion(otherNode)) return Messenger::error("Duplicate site given to %s keyword.\n", selectNodeKeyword(nk));
 				}
@@ -351,7 +351,7 @@ bool AnalysisSelectNode::read(LineParser& parser, const CoreData& coreData, Node
 				break;
 			case (AnalysisSelectNode::SameMoleculeAsSiteKeyword):
 				if (sameMolecule_) return Messenger::error("Same molecule restriction has already been set, and cannot be set again.\n");
-				sameMolecule_ = (AnalysisSelectNode*) contextStack.nodeInScope(parser.argc(1), AnalysisNode::SelectNode);
+				sameMolecule_ = dynamic_cast<AnalysisSelectNode*>(contextStack.nodeInScope(parser.argc(1), AnalysisNode::SelectNode));
 				if (!sameMolecule_) return Messenger::error("Unrecognised selection node '%s' given to %s keyword.\n", parser.argc(1), selectNodeKeyword(nk));
 				break;
 			case (AnalysisSelectNode::SiteKeyword):

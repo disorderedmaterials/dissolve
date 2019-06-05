@@ -181,7 +181,7 @@ bool AnalysisProcess2DNode::finalise(ProcessPool& procPool, Configuration* cfg, 
 	processedData_ = &data;
 
 	// Get the node pointer
-	AnalysisCollect2DNode* node = (AnalysisCollect2DNode*) collectNode_.node();
+	AnalysisCollect2DNode* node = dynamic_cast<AnalysisCollect2DNode*>(collectNode_.node());
 	if (!node) return Messenger::error("No Collect2D node available in AnalysisProcess2DNode::finalise().\n");
 
 	// Copy the averaged data from the associated Collect2D node, and normalise it accordingly
@@ -265,7 +265,7 @@ bool AnalysisProcess2DNode::read(LineParser& parser, const CoreData& coreData, N
 				if (collectNode_.isNull()) return Messenger::error("Can't set site-dependent normalisers without first setting the collect node target.\n");
 				if (!collectNode_.node()->parent()) return Messenger::error("Can't set site-dependent normalisers since the specified collect node has no analyser parent.\n");
 
-				selectNode = (AnalysisSelectNode*) contextStack.node(parser.argc(1), AnalysisNode::SelectNode);
+				selectNode = dynamic_cast<AnalysisSelectNode*>(contextStack.node(parser.argc(1), AnalysisNode::SelectNode));
 				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), process2DNodeKeyword(AnalysisProcess2DNode::NSitesKeyword));
 				sitePopulationNormalisers_.add(selectNode, 1.0);
 				break;
@@ -274,7 +274,7 @@ bool AnalysisProcess2DNode::read(LineParser& parser, const CoreData& coreData, N
 				if (collectNode_.isNull()) return Messenger::error("Can't set site-dependent normalisers without first setting the collect node target.\n");
 				if (!collectNode_.node()->parent()) return Messenger::error("Can't set site-dependent normalisers since the specified collect node has no analyser parent.\n");
 
-				selectNode = (AnalysisSelectNode*) contextStack.node(parser.argc(1), AnalysisNode::SelectNode);
+				selectNode = dynamic_cast<AnalysisSelectNode*>(contextStack.node(parser.argc(1), AnalysisNode::SelectNode));
 				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), process2DNodeKeyword(AnalysisProcess2DNode::NumberDensityKeyword));
 				numberDensityNormalisers_.add(selectNode, 1.0);
 				break;

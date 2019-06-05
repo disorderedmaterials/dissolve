@@ -127,13 +127,19 @@ AnalysisNode::NodeExecutionResult AnalysisFit1DNode::execute(ProcessPool& procPo
 bool AnalysisFit1DNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 	// Copy reference data from the associated node
+	AnalysisCollect1DNode* collect1DNode;
+	AnalysisProcess1DNode* process1DNode;
 	switch (dataNode_.type())
 	{
 		case (AnalysisNode::Collect1DNode):
-			referenceData_ = ((AnalysisCollect1DNode*) dataNode_.node())->accumulatedData();
+			collect1DNode = dynamic_cast<AnalysisCollect1DNode*>(dataNode_.node());
+			if (collect1DNode) return Messenger::error("Failed to cast dataNode_ into an AnalysisCollect1DNode.\n");
+			referenceData_ = collect1DNode->accumulatedData();
 			break;
 		case (AnalysisNode::Process1DNode):
-			referenceData_ = ((AnalysisProcess1DNode*) dataNode_.node())->processedData();
+			process1DNode = dynamic_cast<AnalysisProcess1DNode*>(dataNode_.node());
+			if (process1DNode) return Messenger::error("Failed to cast dataNode_ into an AnalysisCollect1DNode.\n");
+			referenceData_ = process1DNode->processedData();
 			break;
 		case (AnalysisNode::nNodeTypes):
 			return Messenger::error("No node type set in AnalysisFit1DNode::finalise().\n");

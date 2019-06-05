@@ -184,7 +184,7 @@ bool AnalysisCollect1DNode::read(LineParser& parser, const CoreData& coreData, N
 				return true;
 			case (AnalysisCollect1DNode::QuantityXKeyword):
 				// Determine observable from supplied argument
-				observable_ = (AnalysisCalculateNode*) contextStack.nodeInScope(parser.argc(1), AnalysisNode::CalculateNode);
+				observable_ = dynamic_cast<AnalysisCalculateNode*>(contextStack.nodeInScope(parser.argc(1), AnalysisNode::CalculateNode));
 				if (!observable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect1DNodeKeyword(nk));
 				break;
 			case (AnalysisCollect1DNode::RangeXKeyword):
