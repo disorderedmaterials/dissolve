@@ -112,7 +112,7 @@ Architecture and style guidelines, specifications, and workflow descriptions.
 [Coding Standards](Developers/CodingStandards.md){: .btn}
 [Technical Specification](Developers/TechnicalSpec.md){: .btn}
 [Architecture](Developers/Architecture.md){: .btn}
-[COntributing](Developers/Contributing.md){: .btn}
+[Contributing](Developers/Contributing.md){: .btn}
 
 
 ### Developer Guides
