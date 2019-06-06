@@ -3,6 +3,9 @@
 # Enforce verbosity for commands and exit on first failure
 set -ev
 
+# Source the new Qt installation
+/opt/qt512/bin/qt512-env.sh
+
 # Execute autogen.sh
 ./autogen.sh
 

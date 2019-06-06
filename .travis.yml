@@ -25,6 +25,11 @@ matrix:
       dist: xenial
       compiler: g++
 
+before_install:
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo add-apt-repository ppa:beineri/opt-qt-5.12.3-xenial -y; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get update -q; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get install qt512base -y; fi
+
 # Build Stages
 jobs:
   include:
