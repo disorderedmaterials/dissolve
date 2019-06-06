@@ -7,6 +7,15 @@ addons:
     packages:
       - bison
       - qttools5-dev-tools
+      - libqt5gui5
+      - libqt5widgets5
+      - qtbase5-dev
+      - qt5-default
+      - libfreetype6-dev
+      - libftgl-dev
+      - pkg-config
+      - libtool
+      - automake
 
 # Main build matrix
 matrix:
@@ -20,7 +29,7 @@ jobs:
   include:
     - stage: Build
       script: 
-        - if [ "$TRAVIS_OS_NAME" = "linux" ]; then ./autogen.sh && ./configure --with-gui && make; fi
+        - if [ "$TRAVIS_OS_NAME" = "linux" ]; then ./autogen.sh && ./configure --with-gui --with-qtmoc=moc --with-qtrcc=rcc --with-qtuic=uic && make; fi
         - if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./autogen.sh && ./configure --with-gui && make; fi
     - stage: System Tests
       script: echo "Hello!"
