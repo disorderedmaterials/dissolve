@@ -1,0 +1,26 @@
+# Set language for the project
+language: cpp
+
+# Package dependencies
+addons:
+  apt:
+    packages:
+      - bison
+      - qt5-dev-tool
+
+# Main build matrix
+matrix:
+  include:
+    - os: linux
+      dist: xenial
+      compiler: g++
+
+# Build Stages
+jobs:
+  include:
+    - stage: Build
+      script: 
+        - if [ "$TRAVIS_OS_NAME" = "linux" ]; then ./autogen.sh && ./configure --with-gui && make; fi
+        - if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./autogen.sh && ./configure --with-gui && make; fi
+    - stage: System Tests
+      script: echo "Hello!"
