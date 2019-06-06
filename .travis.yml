@@ -6,7 +6,7 @@ addons:
   apt:
     packages:
       - bison
-      - qt5-dev-tool
+      - qt5-dev-tools
 
 # Main build matrix
 matrix:
