@@ -70,10 +70,10 @@ AC_ARG_WITH([gui], [AC_HELP_STRING([--with-gui], [Enable building of GUI [defaul
 AM_CONDITIONAL([BUILDGUI], [test "$with_gui" = "yes"])
 if test "$with_gui" = "yes"; then
   # Check for required Qt packages
-  PKG_CHECK_MODULES(QTGUI, Qt5Gui >= 5.0.0)
-  PKG_CHECK_MODULES(QTOPENGL, Qt5OpenGL >= 5.0.0)
-  PKG_CHECK_MODULES(QTWIDGETS, Qt5Widgets >= 5.0.0)
-  PKG_CHECK_MODULES(QTPRINT, Qt5PrintSupport >= 5.0.0)
+  PKG_CHECK_MODULES(QTGUI, Qt5Gui >= 5.4.0)
+  PKG_CHECK_MODULES(QTOPENGL, Qt5OpenGL >= 5.4.0)
+  PKG_CHECK_MODULES(QTWIDGETS, Qt5Widgets >= 5.4.0)
+  PKG_CHECK_MODULES(QTPRINT, Qt5PrintSupport >= 5.4.0)
 
   # Find Freetype and FTGL (with pkgconfig)
   PKG_CHECK_MODULES(FREETYPE, freetype2 >= 2.0)
