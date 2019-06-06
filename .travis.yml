@@ -29,8 +29,13 @@ matrix:
 jobs:
   include:
     - stage: Build
+      name: Serial (CLI, GUI)
       script: 
-        - if [ "$TRAVIS_OS_NAME" = "linux" ]; then ./autogen.sh && ./configure --with-gui --with-qtmoc=moc --with-qtrcc=rcc --with-qtuic=uic && make; fi
+        - if [ "$TRAVIS_OS_NAME" = "linux" ]; then ./ci/ubuntu.build.serial.gui; fi
         - if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./autogen.sh && ./configure --with-gui && make; fi
+    - script:
+        - if [ "$TRAVIS_OS_NAME" = "linux" ]; then ./ci/ubuntu.build.parallel; fi
+        - if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./autogen.sh && ./configure --with-gui && make; fi
+      name: Parallel (CLI)
     - stage: System Tests
       script: echo "Hello!"
