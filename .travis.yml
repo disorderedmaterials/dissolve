@@ -35,17 +35,17 @@ jobs:
       name: Linux (Serial, GUI)
       env: PARALLEL=false
       os: linux
-      script: ./ci/ubuntu.build.serial.gui
+      script: ./ci/ubuntu.trusty/ubuntu.build.serial.gui
     - stage: Build
       name: Linux (Parallel)
       env: PARALLEL=true
       os: linux
-      script: ./ci/ubuntu.build.parallel
+      script: ./ci/ubuntu.trusty/ubuntu.build.parallel
     - stage: Build
       name: OSX (Serial, GUI)
       env: PARALLEL=false
       os: osx
-      script: ./ci/osx.build.serial.gui
+      script: ./ci/osx.highsierra/osx.build.serial.gui
     - stage: Build
       name: OSx (Parallel)
       env: PARALLEL=true

@@ -21,5 +21,5 @@ RUN apt-get install -y qt510base
 RUN git clone --depth  1 https://github.com/trisyoungs/dissolve.git ./dissolve
 
 # Copy in build script, and run
-COPY build.sh /
-RUN /build.sh
+COPY ./ubuntu.build.serial.gui /
+RUN cd dissolve && /ubuntu.build.serial.gui
