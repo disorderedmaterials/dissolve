@@ -11,6 +11,8 @@ addons:
       - pkg-config
       - libtool
       - automake
+      - libopenmpi-dev
+      - openmpi
   homebrew:
     packages:
       - qt5
