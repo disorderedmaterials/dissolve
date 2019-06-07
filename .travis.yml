@@ -39,15 +39,25 @@ before_install:
 # Build Stages
 jobs:
   include:
-    - stage: Serial Build
+    - stage: Build
+      name: Linux (Serial, GUI)
       env: PARALLEL=false
-      script:
-        - if [ "$TRAVIS_OS_NAME" = "linux" ]; then ./ci/ubuntu.build.serial.gui; fi
-          if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./ci/osx.build.serial.gui; fi
-    - stage: Parallel Build
+      os: linux
+      script: ./ci/ubuntu.build.serial.gui
+    - stage: Build
+      name: Linux (Parallel)
       env: PARALLEL=true
-      script:
-        - if [ "$TRAVIS_OS_NAME" = "linux" ]; then ./ci/ubuntu.build.parallel; fi
-          if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./ci/osx.build.parallel; fi
+      os: linux
+      script: ./ci/ubuntu.build.parallel
+    - stage: Build
+      name: OSX (Serial, GUI)
+      env: PARALLEL=false
+      os: osx
+      script: ./ci/osx.build.serial.gui
+    - stage: Build
+      name: OSx (Parallel)
+      env: PARALLEL=true
+      os: osx
+      script: ./ci/osx.build.parallel
     - stage: System Tests
       script: echo "Hello!"
