@@ -23,9 +23,6 @@ addons:
       - bison
 
 # Build matrix
-os:
-  - linux
-#  - osx
 env:
   - PARALLEL=false
   - PARALLEL=true
