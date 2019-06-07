@@ -21,8 +21,8 @@ addons:
 # Main build matrix
 matrix:
   include:
-    - dist: xenial
-    - compiler: g++
+    - os: linux
+      dist: xenial
 
 # Add PPA repo for updated Qt libs
 before_install:
