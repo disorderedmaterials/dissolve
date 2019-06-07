@@ -17,29 +17,33 @@ addons:
       - pkg-config
       - libtool
       - automake
+  homebrew:
+    packages:
+      - qt5
+      - bison
 
-# Main build matrix
-matrix:
-  include:
-    - os: linux
+# Build matrix
+os:
+  - linux
+#  - osx
+env:
+  - PARALLEL=false
+  - PARALLEL=true
 
-# Add PPA repo for updated Qt libs
+# UBUNTU: Add PPA repo for updated Qt libs (serial build only)
 before_install:
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo add-apt-repository ppa:beineri/opt-qt-5.10.1-trusty -y; fi
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get update -q; fi
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get install qt510base -y; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" && "$PARALLEL" == false ]; then sudo add-apt-repository ppa:beineri/opt-qt-5.10.1-trusty -y; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" && "$PARALLEL" == false ]; then sudo apt-get update -q; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" && "$PARALLEL" == false ]; then sudo apt-get install qt510base -y; fi
 
 # Build Stages
 jobs:
   include:
     - stage: Build
-      name: Serial (CLI, GUI)
       script: 
-        - if [ "$TRAVIS_OS_NAME" = "linux" ]; then ./ci/ubuntu.build.serial.gui; fi
-        - if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./autogen.sh && ./configure --with-gui && make; fi
-    - script:
-        - if [ "$TRAVIS_OS_NAME" = "linux" ]; then ./ci/ubuntu.build.parallel; fi
-        - if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./autogen.sh && ./configure --with-gui && make; fi
-      name: Parallel (CLI)
+        - if [ "$TRAVIS_OS_NAME" = "linux" && "$PARALLEL" == false ]; then ./ci/ubuntu.build.serial.gui; fi
+        - if [ "$TRAVIS_OS_NAME" = "linux" && "$PARALLEL" == true ]; then ./ci/ubuntu.build.parallel; fi
+        - if [ "$TRAVIS_OS_NAME" = "osx" && "$PARALLEL" == false ]; then ./ci/osx.build.serial.gui; fi
+        - if [ "$TRAVIS_OS_NAME" = "osx" && "$PARALLEL" == true ]; then ./ci/osx.build.parallel; fi
     - stage: System Tests
       script: echo "Hello!"
