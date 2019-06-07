@@ -8,7 +8,7 @@ mkdir build
 cd build
 
 # Prep CMake
-cmake ../ -DGUI
+cmake ../ -DGUI:bool=true
 
 # Make
 make
