@@ -6,12 +6,6 @@ addons:
   apt:
     packages:
       - bison
-      - qttools5-dev-tools
-      - libqt5gui5
-      - libqt5widgets5
-      - libqt5opengl5-dev
-      - qtbase5-dev
-      - qt5-default
       - libfreetype6-dev
       - libftgl-dev
       - pkg-config
