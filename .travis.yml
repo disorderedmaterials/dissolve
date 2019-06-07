@@ -50,6 +50,6 @@ jobs:
       name: OSx (Parallel)
       env: PARALLEL=true
       os: osx
-      script: ./ci/osx.build.parallel
+      script: ./ci/osx.highsierra/osx.build.parallel
     - stage: System Tests
       script: echo "Hello!"
