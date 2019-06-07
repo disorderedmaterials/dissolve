@@ -43,11 +43,11 @@ jobs:
       env: PARALLEL=false
       script:
         - if [ "$TRAVIS_OS_NAME" = "linux" ]; then ./ci/ubuntu.build.serial.gui; fi
-        - if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./ci/osx.build.serial.gui; fi
+          if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./ci/osx.build.serial.gui; fi
     - stage: Parallel Build
       env: PARALLEL=true
       script:
         - if [ "$TRAVIS_OS_NAME" = "linux" ]; then ./ci/ubuntu.build.parallel; fi
-        - if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./ci/osx.build.parallel; fi
+          if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./ci/osx.build.parallel; fi
     - stage: System Tests
       script: echo "Hello!"
