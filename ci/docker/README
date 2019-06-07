@@ -1,0 +1,1 @@
+This dir contains several Dockerfiles used to set up test machines / builds to enable local testing before updating Travis builds.
