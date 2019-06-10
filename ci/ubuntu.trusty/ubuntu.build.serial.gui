@@ -27,3 +27,21 @@ export PKG_CONFIG_PATH=$QT_BASE_DIR/lib/pkgconfig:$PKG_CONFIG_PATH
 # Make
 make
 
+# Retrieve appimage build script
+wget -q https://raw.githubusercontent.com/trisyoungs/scripts/master/build-appimage.sh -O build-appimage.sh
+chmod u+x build-appimage.sh
+
+# Get current program version that we're building
+VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
+
+# Build AppImage for serial version
+./build-appimage.sh -a Dissolve-Serial -v ${VERSION} -b src/dissolve-serial
+
+# Build AppImage for GUI
+./build-appimage.sh -a Dissolve-GUI -v ${VERSION} -b src/dissolve-gui
+
+# Build AppImage for DGuidEd
+./build-appimage.sh -a DGuidEd -v ${VERSION} -b src/dguided
+
+# Store artifacts (the dir will have been created already by Travis)
+cp Dissolve*.AppImage DGuidEd*.AppImage artifacts/
