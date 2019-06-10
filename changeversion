@@ -108,14 +108,6 @@ grep 'define MyAppVersion' extra/Win32/dissolve.iss | sed -e 's/#define MyAppVer
 echo -n "    dissolve.iss (Output Filename) : "
 grep 'OutputBaseFilename' extra/Win32/dissolve.iss | sed -e 's/OutputBaseFilename=Dissolve-\([0-9\.]*\)/\1/g'
 
-# AppImage build files
-if [ "$TEST" = "false" ]
-then
-  sed -i -e "s/Version=[0-9\.]*/Version=$MAJOR.$MINOR.$PATCH/g" extra/appimage/usr/share/applications/com.projectaten.Dissolve.desktop
-fi
-echo -n "appimage.desktop (Program Version) : "
-grep 'Version=' extra/appimage/usr/share/applications/com.projectaten.Dissolve.desktop | sed -e 's/Version=\([0-9\.]*\)/\1/g'
-
 # Documentation
 if [ "$TEST" = "false" ]
 then
