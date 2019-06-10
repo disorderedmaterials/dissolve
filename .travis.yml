@@ -12,7 +12,7 @@ addons:
       - libtool
       - automake
       - libopenmpi-dev
-      - openmpi
+      - openmpi-bin
   homebrew:
     packages:
       - qt5
