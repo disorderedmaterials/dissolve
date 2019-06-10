@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop">
-  <id>com.projectaten.Dissolve.desktop</id>
-  <name>Dissolve</name>
-  <summary>Dissolve - Potential-based refinement of total scattering data</summary>
+  <id>com.projectaten.DissolveGUI.desktop</id>
+  <name>Dissolve-GUI</name>
+  <summary>Dissolve GUI - Potential-based refinement of total scattering data</summary>
   <developer_name>Tristan Youngs</developer_name>
   <description>
   <p>
