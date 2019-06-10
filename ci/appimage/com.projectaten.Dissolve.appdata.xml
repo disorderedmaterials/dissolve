@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+  <id>com.projectaten.Dissolve.desktop</id>
+  <name>Dissolve</name>
+  <summary>Dissolve - Potential-based refinement of total scattering data</summary>
+  <developer_name>Tristan Youngs</developer_name>
+  <description>
+  <p>
+Dissolve simulates a given system using standard interatomic potentials, and refines the potentials against
+reference experimental (or otherwise) data, e.g. as obtained from neutron diffraction experiments.
+  </p>
+</description>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0</project_license>
+  <url type="bugtracker">https://www.projectaten.com</url>
+  <url type="donation">https://www.projectaten.com</url>
+  <url type="faq">https://www.projectaten.com</url>
+  <url type="help">https://www.projectaten.com</url>
+  <url type="homepage">https://www.projectaten.com</url>
+  <metadata>
+    <value key="X-SuSE-translate">false</value>
+  </metadata>
+</component>
