@@ -27,23 +27,23 @@ before_install:
 # Build Stages
 jobs:
   include:
-    - stage: Build Stage A
-      name: Linux (Serial, GUI)
+    - stage: Linux Build
+      name: Serial, GUI
       env: PARALLEL=false
       os: linux
       cache:
         directories:
           - artifacts
       script: ./ci/ubuntu.trusty/ubuntu.build.serial.gui
-    - stage: Build Stage B
-      name: Linux (Parallel)
+    - stage: Linux Build
+      name: Parallel
       env: PARALLEL=true
       os: linux
       cache:
         directories:
           - artifacts
       script: ./ci/ubuntu.trusty/ubuntu.build.parallel
-    - stage: System Tests
+    - stage: System Tests (Serial)
       name: Serial
       env: PARALLEL=false
       os: linux
@@ -51,20 +51,28 @@ jobs:
         directories:
           - artifacts
       script: ./ci/ubuntu.trusty/ubuntu.test.serial
-    - stage: Build Stage B
-      name: OSX (Serial, GUI)
+    - stage: System Tests (Parallel)
+      name: Parallel
+      env: PARALLEL=true
+      os: linux
+      cache:
+        directories:
+          - artifacts
+      script: ./ci/ubuntu.trusty/ubuntu.test.parallel
+    - stage: OSX Build
+      name: Serial, GUI
       env: PARALLEL=false
       os: osx
       script: ./ci/osx.highsierra/osx.build.serial.gui
-    - stage: Build Stage B
-      name: OSX (Parallel)
+    - stage: OSX Build
+      name: Parallel
       env: PARALLEL=true
       os: osx
       script: ./ci/osx.highsierra/osx.build.parallel
 
 # Build Stage Order
 stages:
-  - Build Stage A
+  - Linux Build
   - System Tests (Serial)
   - System Tests (Parallel)
-  - Build Stage B
+  - OSX Build
