@@ -70,26 +70,6 @@ then
 fi
 grep 'm4_define(\[DISSOLVE_VERSION\]' ./configure.ac | sed -e 's/m4_define(\[DISSOLVE_VERSION\],\[\([0-9a-z\.]\+\)\])/\1/g'
 
-
-# Change specfile name and contents
-#if [ "$TEST" = "false" ]
-#then
-#  echo "Writing new specfile..."
-#  sed -i -e "s/Version: [0-9a-z\.]\+/Version: $MAJOR.$MINOR.$PATCH/g" extra/OpenSuSE13.2/dissolve.spec
-#  grep "Version:" extra/OpenSuSE13.2/dissolve.spec
-#else
-#  echo -n "                          Specfile : "
-#  grep "Version:" extra/OpenSuSE13.2/dissolve.spec | sed -e 's/Version: \([0-9a-z\.]\+\)/\1/g'
-#fi
-
-# Debian build files
-#echo -n "       *.control (Program Version) : "
-#if [ "$TEST" = "false" ]
-#then
-#  sed -i -e "s/Version: \([0-9a-z\.]\+\)/Version: $MAJOR.$MINOR.$PATCH/g" -e "s/^ \([a-z0-9]*\) \([0-9]*\) .*/ \1 \2 dissolve-$MAJOR.$MINOR.$PATCH.tar.gz/g" ./extra/*/control
-#fi
-#grep 'Version:' ./extra/*/control | sed -e 's/Version: \([0-9a-z\.]\+\)/\1/g'
-
 # OSX build files
 echo -n "dissolve.dmginfo (Program Version) : "
 if [ "$TEST" = "false" ]
