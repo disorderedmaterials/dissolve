@@ -2,9 +2,9 @@
 Version=1.0
 Comment=Dissolve - Potential-based refinement of total scattering data
 Exec=dissolve-serial %f
-GenericName=DissolveSerial
-Icon=DissolveSerial
-Name=DissolveSerial
+GenericName=Dissolve-Serial
+Icon=Dissolve-Serial
+Name=Dissolve-Serial
 StartupNotify=false
 Terminal=false
 Type=Application
