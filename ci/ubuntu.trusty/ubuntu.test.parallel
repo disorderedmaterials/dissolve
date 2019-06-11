@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Run system tests under serial conditions
+# Run system tests under parallel conditions
 # Assume that the binary is an AppImage and available in artifacts/
-APPIMAGE=`ls -1 artifacts/*Serial*AppImage | head -n 1`
+APPIMAGE=`ls -1 artifacts/*Parallel*AppImage | head -n 1`
 if [ ! -e $APPIMAGE ]
 then
-	echo "Error: Couldn't locate serial binary for testing."
+	echo "Error: Couldn't locate parallel binary for testing."
 	echo "Artifacts dir contents:"
 	ls -1 artifacts/*
 	exit 1
@@ -13,4 +13,4 @@ fi
 
 # Change to the tests directory
 cd tests
-./go -s ../${APPIMAGE}
+./go -p ../${APPIMAGE}
