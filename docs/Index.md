@@ -20,6 +20,15 @@ Check out [Dissolve on GitHub](https://www.github.com/trisyoungs/dissolve) and [
 [What is / isn't Dissolve?](Introduction/WhatIsDissolve.md){: .btn}
 
 * * *
+## Getting Started
+
+Obtaining, installing, and building Dissolve, and setting up and running your first simulation.
+
+[Where to get Dissolve](GettingStarted/GettingDissolve.md){: .btn .btn-blue}
+[Building Dissolve](GettingStarted/BuildingDissolve.md){: .btn .btn-blue}
+
+
+* * *
 ## Input / Output
 
 Dissolve's file format and syntax, and output file roles.
