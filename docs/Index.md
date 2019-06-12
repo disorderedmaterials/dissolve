@@ -113,6 +113,7 @@ Architecture and style guidelines, specifications, and workflow descriptions.
 [Technical Specification](Developers/TechnicalSpec.md){: .btn}
 [Architecture](Developers/Architecture.md){: .btn}
 [Contributing](Developers/Contributing.md){: .btn}
+[Releases](Developers/Releases.md){: .btn}
 
 
 ### Developer Guides
