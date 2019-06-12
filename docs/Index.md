@@ -17,7 +17,19 @@ Check out [Dissolve on GitHub](https://www.github.com/trisyoungs/dissolve) and [
 
 ## Introduction
 
+Basic overviews and referencing.
+
 [What is / isn't Dissolve?](Introduction/WhatIsDissolve.md){: .btn}
+[Referencing Dissolve](Introduction/Referencing.md){: .btn}
+
+* * *
+## Getting Started
+
+Obtaining, installing, and building Dissolve, and setting up and running your first simulation.
+
+[Where to get Dissolve](GettingStarted/GettingDissolve.md){: .btn .btn-blue}
+[Building Dissolve](GettingStarted/BuildingDissolve.md){: .btn .btn-blue}
+
 
 * * *
 ## Input / Output
@@ -113,6 +125,7 @@ Architecture and style guidelines, specifications, and workflow descriptions.
 [Technical Specification](Developers/TechnicalSpec.md){: .btn}
 [Architecture](Developers/Architecture.md){: .btn}
 [Contributing](Developers/Contributing.md){: .btn}
+[Releases](Developers/Releases.md){: .btn}
 
 
 ### Developer Guides
