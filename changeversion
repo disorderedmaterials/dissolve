@@ -100,17 +100,17 @@ grep 'Current Version:' docs/Index.md | sed -e 's/.*Version: \([0-9\.]*\),.*/\1/
 echo -n "              Documentation (Date) : "
 grep 'Current Version:' docs/Index.md | sed -e "s/.*Version: .*, \(.*\)_/\1/g"
 
-# README
+# README.md
 if [ "$TEST" = "false" ]
 then
   DAYSUFFIX=`DaySuffix`
   TODAY=`date "+%A %-d${DAYSUFFIX} %B %Y"`
-  sed -i -e "s/Current Version: [0-9\.]*, \(.*\)_/Current Version: $MAJOR.$MINOR.$PATCH, ${TODAY}_/g" README
+  sed -i -e "s/Current Version: [0-9\.]*, \(.*\)_/Current Version: $MAJOR.$MINOR.$PATCH, ${TODAY}_/g" README.md
 fi
 echo -n "   Documentation (Program Version) : "
-grep 'Current Version:' README | sed -e 's/.*Version: \([0-9\.]*\),.*/\1/g'
+grep 'Current Version:' README.md | sed -e 's/.*Version: \([0-9\.]*\),.*/\1/g'
 echo -n "              Documentation (Date) : "
-grep 'Current Version:' README | sed -e "s/.*Version: .*, \(.*\)_/\1/g"
+grep 'Current Version:' README.md | sed -e "s/.*Version: .*, \(.*\)_/\1/g"
 
 exit 0
 
