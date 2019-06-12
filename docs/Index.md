@@ -17,7 +17,10 @@ Check out [Dissolve on GitHub](https://www.github.com/trisyoungs/dissolve) and [
 
 ## Introduction
 
+Basic overviews and referencing.
+
 [What is / isn't Dissolve?](Introduction/WhatIsDissolve.md){: .btn}
+[Referencing Dissolve](Introduction/Referencing.md){: .btn}
 
 * * *
 ## Getting Started
