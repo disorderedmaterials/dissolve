@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Comment=Dissolve GUI - Potential-based refinement of total scattering data
+Exec=dissolve-gui %f
+GenericName=Dissolve-GUI
+Icon=Dissolve-GUI
+Name=Dissolve-GUI
+StartupNotify=false
+Terminal=false
+Type=Application
+Categories=Education;Chemistry;Physics;
+X-SuSE-translate=false

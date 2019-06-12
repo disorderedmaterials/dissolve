@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Comment=Dissolve - Potential-based refinement of total scattering data
+Exec=dissolve-serial %f
+GenericName=Dissolve-Serial
+Icon=Dissolve-Serial
+Name=Dissolve-Serial
+StartupNotify=false
+Terminal=false
+Type=Application
+Categories=Education;Chemistry;Physics;
+X-SuSE-translate=false

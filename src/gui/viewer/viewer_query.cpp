@@ -21,7 +21,6 @@
 
 #include "gui/viewer/dataviewer.hui"
 #include "base/messenger.h"
-#include <QOpenGLExtraFunctions>
 #include <QOpenGLFramebufferObject>
 
 // ViewerObject Keywords

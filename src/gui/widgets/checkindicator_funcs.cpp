@@ -20,7 +20,7 @@
 */
 
 #include "gui/widgets/checkindicator.hui"
-#include <qt5/QtWidgets/QSizePolicy>
+#include <QSizePolicy>
 #include <QLabel>
 #include <QPixmap>
 

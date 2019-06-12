@@ -70,26 +70,6 @@ then
 fi
 grep 'm4_define(\[DISSOLVE_VERSION\]' ./configure.ac | sed -e 's/m4_define(\[DISSOLVE_VERSION\],\[\([0-9a-z\.]\+\)\])/\1/g'
 
-
-# Change specfile name and contents
-#if [ "$TEST" = "false" ]
-#then
-#  echo "Writing new specfile..."
-#  sed -i -e "s/Version: [0-9a-z\.]\+/Version: $MAJOR.$MINOR.$PATCH/g" extra/OpenSuSE13.2/dissolve.spec
-#  grep "Version:" extra/OpenSuSE13.2/dissolve.spec
-#else
-#  echo -n "                          Specfile : "
-#  grep "Version:" extra/OpenSuSE13.2/dissolve.spec | sed -e 's/Version: \([0-9a-z\.]\+\)/\1/g'
-#fi
-
-# Debian build files
-#echo -n "       *.control (Program Version) : "
-#if [ "$TEST" = "false" ]
-#then
-#  sed -i -e "s/Version: \([0-9a-z\.]\+\)/Version: $MAJOR.$MINOR.$PATCH/g" -e "s/^ \([a-z0-9]*\) \([0-9]*\) .*/ \1 \2 dissolve-$MAJOR.$MINOR.$PATCH.tar.gz/g" ./extra/*/control
-#fi
-#grep 'Version:' ./extra/*/control | sed -e 's/Version: \([0-9a-z\.]\+\)/\1/g'
-
 # OSX build files
 echo -n "dissolve.dmginfo (Program Version) : "
 if [ "$TEST" = "false" ]
@@ -108,14 +88,6 @@ grep 'define MyAppVersion' extra/Win32/dissolve.iss | sed -e 's/#define MyAppVer
 echo -n "    dissolve.iss (Output Filename) : "
 grep 'OutputBaseFilename' extra/Win32/dissolve.iss | sed -e 's/OutputBaseFilename=Dissolve-\([0-9\.]*\)/\1/g'
 
-# AppImage build files
-if [ "$TEST" = "false" ]
-then
-  sed -i -e "s/Version=[0-9\.]*/Version=$MAJOR.$MINOR.$PATCH/g" extra/appimage/usr/share/applications/com.projectaten.Dissolve.desktop
-fi
-echo -n "appimage.desktop (Program Version) : "
-grep 'Version=' extra/appimage/usr/share/applications/com.projectaten.Dissolve.desktop | sed -e 's/Version=\([0-9\.]*\)/\1/g'
-
 # Documentation
 if [ "$TEST" = "false" ]
 then
@@ -128,17 +100,17 @@ grep 'Current Version:' docs/Index.md | sed -e 's/.*Version: \([0-9\.]*\),.*/\1/
 echo -n "              Documentation (Date) : "
 grep 'Current Version:' docs/Index.md | sed -e "s/.*Version: .*, \(.*\)_/\1/g"
 
-# README
+# README.md
 if [ "$TEST" = "false" ]
 then
   DAYSUFFIX=`DaySuffix`
   TODAY=`date "+%A %-d${DAYSUFFIX} %B %Y"`
-  sed -i -e "s/Current Version: [0-9\.]*, \(.*\)_/Current Version: $MAJOR.$MINOR.$PATCH, ${TODAY}_/g" README
+  sed -i -e "s/Current Version: [0-9\.]*, \(.*\)_/Current Version: $MAJOR.$MINOR.$PATCH, ${TODAY}_/g" README.md
 fi
 echo -n "   Documentation (Program Version) : "
-grep 'Current Version:' README | sed -e 's/.*Version: \([0-9\.]*\),.*/\1/g'
+grep 'Current Version:' README.md | sed -e 's/.*Version: \([0-9\.]*\),.*/\1/g'
 echo -n "              Documentation (Date) : "
-grep 'Current Version:' README | sed -e "s/.*Version: .*, \(.*\)_/\1/g"
+grep 'Current Version:' README.md | sed -e "s/.*Version: .*, \(.*\)_/\1/g"
 
 exit 0
 

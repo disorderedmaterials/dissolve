@@ -3,7 +3,7 @@
 AC_PREREQ(2.60)
 
 # Set program name, version and source directory
-m4_define([DISSOLVE_VERSION],[0.4.1])
+m4_define([DISSOLVE_VERSION],[0.4.3])
 AC_INIT([dissolve], DISSOLVE_VERSION)
 AC_CONFIG_AUX_DIR(config)
 AC_CANONICAL_TARGET
@@ -81,8 +81,8 @@ if test "$with_gui" = "yes"; then
 
   # Update CFLAGS, includes etc.
   GUI_LDLIBS="$QTGUI_LIBS $QTOPENGL_LIBS $QTPRINT_LIBS $FTGL_LIBS $FREETYPE_LIBS -lGL"
-  GUI_CFLAGS="-fPIC"
-  GUI_INCLUDES=" $QTGUI_CFLAGS $QTWIDGETS_CFLAGS $QTPRINT_CFLAGS $FTGL_CFLAGS"
+  GUI_CFLAGS="-fPIC -std=c++11"
+  GUI_INCLUDES=" $QTGUI_CFLAGS $QTWIDGETS_CFLAGS $QTOPENGL_CFLAGS $QTPRINT_CFLAGS $FTGL_CFLAGS"
 fi
 
 # Build Directory (used when packaging)

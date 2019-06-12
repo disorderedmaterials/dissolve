@@ -14,17 +14,29 @@ This overview provides essential information for those wishing to contribute to 
 
 ## Basics
 
-Dissolve is version controlled through Git, and is available from [https://www.github.com/trisyoungs/dissolve](). Dissolve adopts the Gitflow workflow for development, with `develop` being the main branch of the repository. `master` is reserved for released versions of the code, and associated hotfixes. All significant additions or fixes to the code should be made through a separate `feature` branch, rather than committing directly to `develop`. Minor changes (e.g. typographical errors) may be made directly to `develop`.
+Contributions to Dissolve are welcome, and can come in many forms - the ability to write code is not a prerequisite! For instance, you could:
+
+- Fix typos, grammer, or inconsistencies in the documentation, or add to sections that are missing content or could be improved.
+- Test it by attempting to reproduce results obtained previously with EPSR.
+- Break it somehow, and [submit an issue](https://www.github.com/trisyoungs/dissolve/issues) describing the problem and how you created it.
+- Document an example use-case (most likely a system you're interested in) and submit it for inclusion.
+- Fix something in the code, or add a missing feature (see the current list of [issues](https://www.github.com/trisyoungs/dissolve/issues)).
+- Open a new [issue](https://www.github.com/trisyoungs/dissolve/issues) describing something you'd like to see added, and why.
+- Create a new [module](Overviews/Modules) with new functionality.
+
+Most of these require at least an account on [GitHub](https://www.github.com), so if you want to contribute the first step is to register and go to the [Dissolve repository](https://www.github.com/trisyoungs/dissolve).
+
+## Contributing to Documentation
+
+Making changes to the documentation is one of the easiest routes to contributing. While a GitHub account is still required, the documentation can be edited directly in the Dissolve repository on the GitHub website. The repository will automatically be [forked](https://help.github.com/en/articles/fork-a-repo) and a [pull request](https://help.github.com/en/articles/about-pull-requests) made on your behalf once you've finished editing the file, which will then go to the developers for review before the changes are incorporated into the main repository.
+
+More details can be found in this [GitHub guide](https://help.github.com/en/articles/editing-files-in-another-users-repository).
+
+## Contributing to the Codebase
+
+Contributing code to Dissolve as an interested third party is relatively straightforward. Dissolve is version controlled with git, and is available from [https://www.github.com/trisyoungs/dissolve](). Dissolve adopts the Gitflow workflow for development, with `develop` being the main branch of the repository. `master` is reserved for released versions of the code, and associated hotfixes. All significant additions or fixes to the code should be made through a separate `feature` branch, rather than committing directly to `develop`. Minor changes (e.g. typographical errors) may be made directly to `develop`.
 
 For a more in-depth explanation of gitflow please refer to the excellent guide at [Atlassian.com](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow) or the original [presentation of the workflow](https://nvie.com/posts/a-successful-git-branching-model/) by Vincent Driessen.
-
-## Flagging Issues
-
-If coding is not your intent or desire and the mere thought of it makes you feel ill, there are still valuable ways that you can contribute. Current issues with Dissolve are [listed at the main repository](https://github.com/trisyoungs/dissolve/issues) and contain feature requests, bug reports, suggestions, and discussions regarding all aspects of the code. If you think you have found a bug, or have a suggestion for improving the code, submit it as a new issue.
-
-## External Contributors
-
-Contributing to Dissolve as an interested third party is relatively straightforward. Follow the steps below.
 
 ### 1) Register on GitHub
 
@@ -32,7 +44,7 @@ Register an account on [GitHub](https://www.github.com) if you don't already hav
 
 ### 2) Fork Dissolve
 
-Go to the [Dissolve repository](httpsL//www.github.com/trisyoungs/Dissolve) and hit the **Fork** button at the top-right. This will give you your own copy of the Dissolve code as it currently stands. GitHub will take you to your own copy of Dissolve once the fork is completed, which you can should then clone / download on to your own machine.
+Go to the [Dissolve repository](https://www.github.com/trisyoungs/dissolve) and hit the **Fork** button at the top-right. This will give you your own copy of the Dissolve code as it currently stands. GitHub will take you to your own copy of Dissolve once the fork is completed, which you can should then clone / download on to your own machine.
 
 ### 3) Experiment / Fix / Break / Play
 

@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Comment=DGuidEd - Guide editor for Dissolve
+Exec=dguided %f
+GenericName=DGuidEd
+Icon=DGuidEd
+Name=DGuidEd
+StartupNotify=false
+Terminal=false
+Type=Application
+Categories=Education;Chemistry;Physics;
+X-SuSE-translate=false

@@ -4,35 +4,51 @@
 
 NFAILED=0
 EXITONFAIL="TRUE"
+SERIALBINARY=../src/dissolve-serial
+PARALLELBINARY=../src/dissolve
+TESTS=""
+NTESTS="0"
 
-# Set path to binary and data and check that it exists
-while getopts "a" op
+while getopts "as:p:" op
 do
-  case $op in
-    a ) EXITONFAIL="FALSE"
-        echo "Run all tests, regardless of the success or failure of each test.";;
-    \? ) echo "Error: Unrecognised switch '$op'"
-         exit 1;;
-    * ) echo "Error: Extra operands given."
-        echo -e $USAGE
-        exit 1;;
-  esac
+	case $op in
+		a)
+			EXITONFAIL="FALSE"
+			echo "Run all tests, regardless of the success or failure of each test."
+			;;
+		s)
+			SERIALBINARY=${OPTARG}
+			echo "Serial binary to use is '${SERIALBINARY}'"
+			;;
+		p)
+			PARALLELBINARY=${OPTARG}
+			echo "Parallel binary to use is '${PARALLELBINARY}'"
+			;;
+		\?)
+			echo "Error: Unrecognised switch '$op'"
+			exit 1
+			;;
+		*)
+			echo "Error: Extra operands given."
+			echo "Usage: $0 [-a] [-s <serial binary>] [-p <parallel binary>]"
+			exit 1
+			;;
+	esac
 done
 
-DUQS=../src/dissolve-serial
-DUQP=../src/dissolve
-if [ ! -e $DUQS ]
+# Check binaries
+if [ ! -e $SERIALBINARY ]
 then
 	echo "Couldn't find serial binary, so no serial tests will be performed."
-	DUQS="NO"
+	SERIALBINARY="NO"
 fi
-if [ ! -e $DUQP ]
+if [ ! -e $PARALLELBINARY ]
 then
 	echo "Couldn't find parallel binary, so no parallel tests will be performed."
-	DUQP="NO"
+	PARALLELBINARY="NO"
 fi
 
-if [ "$DUQS" == "NO" ] && [ "$DUQP" == "NO" ]
+if [ "$SERIALBINARY" == "NO" ] && [ "$PARALLELBINARY" == "NO" ]
 then
 	echo "No binaries available to perform tests!"
 	exit 1
@@ -41,26 +57,46 @@ fi
 # Do we have a parallel exe?
 PARALLEL="FALSE"
 PROCS=""
-if [ "$DUQS" != "NO" ]
+if [ "$SERIALBINARY" != "NO" ]
 then
 	echo "Serial version available - serial tests will be performed."
 	PROCS="S"
 fi
-if [ "$DUQP" != "NO" ]
+if [ "$PARALLELBINARY" != "NO" ]
 then
 	PARALLEL="TRUE"
 	PROCS="$PROCS 1 2 3 4"
 	echo "Parallel version available - checks will be performed over ($PROCS) processes."
 fi
 
-# Loop over all test directories, or supplied dirs
-if [ "$#" -eq "0" ]
+# Assemble list of tests supplied, or construct list of all tests
+shift $(expr $OPTIND - 1)
+while test $# -gt 0
+do
+	if [ ! -d $1 ]
+	then
+		echo "Error: No such test '$1' exists, or it is not a directory."
+		exit 1
+	fi
+	TEST[NTESTS]=$1
+	((NTESTS++))
+	shift
+done
+
+if [ "$NTESTS" -eq "0" ]
 then
-  TESTS=`ls -d [0-9][0-9]`
-else
-  TESTS="$*"
+	for test in [a-z]*
+	do
+		if [ -d $test ]
+		then
+			TEST[NTESTS]=$test
+			((NTESTS++))
+		fi
+	done
 fi
-for test in $TESTS
+echo "There are $NTESTS tests to run: ${TEST[@]}"
+
+for test in ${TEST[@]}
 do
 	# Strip trailing directory delimiter if present
 	test=`echo $test | sed -e 's/\(.*\)\//\1/g'`
@@ -79,7 +115,7 @@ do
 	TARGETPROCS=$PROCS
 	if [ -e NOPARALLEL ]
 	then
-		if [ "$DUQS" != "NO" ]
+		if [ "$SERIALBINARY" != "NO" ]
 		then
 			echo "NOPARALLEL found - test will be performed in serial mode only."
 			TARGETPROCS="S"
@@ -111,12 +147,12 @@ do
 				output=../${test}.${input%.txt}.out
 				echo -e "\nRunning test \"${input}\" (serial)..."
 				echo "Arguments are: $ARGS"
-				../$DUQS $ARGS $input > $output
+				../$SERIALBINARY $ARGS $input > $output
 			else
 				output=../${test}.${input%.txt}.${nprocs}.out
 				echo -e "\nRunning test \"${input}\" (${nprocs} processes)..."
 				echo "Arguments are: $ARGS"
-				mpirun -np $nprocs ../$DUQP $ARGS $input -r $output > $output
+				mpirun -np $nprocs ../$PARALLELBINARY $ARGS $input -r $output > $output
 			fi
 
 			if [ "$?" -eq "0" ]

@@ -403,19 +403,19 @@ void ColourDefinition::removeCustomGradientPoint(int id)
 // Return (set) colour for specified value
 void ColourDefinition::colour(double value, GLfloat* rgba) const
 {
-	if (style_ == ColourStyle::SingleColourStyle)
+	if (style_ == ColourDefinition::SingleColourStyle)
 	{
 		rgba[0] = singleColour_.redF();
 		rgba[1] = singleColour_.greenF();
 		rgba[2] = singleColour_.blueF();
 		rgba[3] = useGlobalAlpha_ ? globalAlpha_ : singleColour_.alphaF();
 	}
-	else if (style_ == ColourStyle::RGBGradientStyle)
+	else if (style_ == ColourDefinition::RGBGradientStyle)
 	{
 		rgbGradient_.colour(value, rgba);
 		if (useGlobalAlpha_) rgba[3] = globalAlpha_;
 	}
-	else if (style_ == ColourStyle::HSVGradientStyle)
+	else if (style_ == ColourDefinition::HSVGradientStyle)
 	{
 		hsvGradient_.colour(value, rgba);
 		if (useGlobalAlpha_) rgba[3] = globalAlpha_;

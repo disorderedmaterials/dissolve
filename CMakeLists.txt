@@ -4,7 +4,7 @@ set(DESCRIPTION "Dissolve")
 set(AUTHOR "Tristan Youngs")
 set(VERSION_MAJOR "0")
 set(VERSION_MINOR "4")
-set(VERSION_PATCH "1")
+set(VERSION_PATCH "3")
 
 set(CMAKE_BUILD_TYPE "Release")
 
@@ -49,10 +49,10 @@ if(GUI)
   LIST(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
   include(FindFTGL)
   include(FindGLEXT)
-  find_package(Qt5Widgets REQUIRED)
-  find_package(Qt5Core REQUIRED)
-  find_package(Qt5Gui REQUIRED)
-  find_package(Qt5PrintSupport REQUIRED)
+  find_package(Qt5Widgets 5.4 REQUIRED)
+  find_package(Qt5Core 5.4 REQUIRED)
+  find_package(Qt5Gui 5.4 REQUIRED)
+  find_package(Qt5PrintSupport 5.4 REQUIRED)
   find_package(OpenGL REQUIRED)
   find_package(FTGL REQUIRED)
   find_package(Freetype REQUIRED)
@@ -172,6 +172,7 @@ if(GUI)
     ${FREETYPE_INCLUDE_DIRS}
     ${Qt5Core_INCLUDE_DIRS}
     ${Qt5Gui_INCLUDE_DIRS}
+    ${Qt5OpenGL_INCLUDE_DIRS}
     ${Qt5Widgets_INCLUDE_DIRS}
   )
 
