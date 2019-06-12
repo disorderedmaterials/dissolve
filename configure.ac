@@ -3,7 +3,7 @@
 AC_PREREQ(2.60)
 
 # Set program name, version and source directory
-m4_define([DISSOLVE_VERSION],[0.4.1])
+m4_define([DISSOLVE_VERSION],[0.4.3])
 AC_INIT([dissolve], DISSOLVE_VERSION)
 AC_CONFIG_AUX_DIR(config)
 AC_CANONICAL_TARGET
