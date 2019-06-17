@@ -144,7 +144,7 @@ void KVector::calculateIntensities(BraggReflection* reflectionArray)
 #ifdef CHECKS
 	if (reflectionArray == NULL)
 	{
-		Messenger::print("NULL_POINTER - NULL braggReflection array found in KVector::calculateIntensities().\n");
+		Messenger::print("NULL_POINTER - NULL BraggReflection array found in KVector::calculateIntensities().\n");
 		return;
 	}
 #endif
