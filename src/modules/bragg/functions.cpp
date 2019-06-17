@@ -441,7 +441,7 @@ bool BraggModule::reBinReflections(ProcessPool& procPool, Configuration* cfg, Ar
 	{
 		for (int typeJ = typeI; typeJ < nTypes; ++typeJ)
 		{
-			for (int n=0; n<nBins; ++n) if (nAdded[n] > 0) braggPartials.at(typeI, typeJ).value(n)  /= nAdded[n];
+			for (int n=0; n<nBins; ++n) if (nAdded[n] > 0) braggPartials.at(typeI, typeJ).value(n) /= nAdded[n];
 		}
 	}
 	return true;
