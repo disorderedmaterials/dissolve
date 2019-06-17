@@ -52,7 +52,7 @@ Configuration  'Bulk'
     Population  1.000000
   EndSpeciesInfo
 
-  InputCoordinates  epsr  epsr/nobragg/mgo.ato
+  InputCoordinates  epsr  epsr/mgo-nobragg/mgo.ato
 
   BoxNormalisationFile  'Bulk.boxnorm'
   RDFBinWidth  0.001
@@ -73,16 +73,17 @@ Layer  'Main Processing'
 
     Configuration  'Bulk'
 
-Save On
+    Save On
 
   EndModule
 
   # -- Partial g(r) (unbound terms)
   Module  DataTest  'Partial g(r) (unbound)'
+DISABLED
     Threshold  0.001
-    Data1D  'Bulk//OriginalGR//Mg-Mg//Unbound'  histo  'epsr/nobragg/mgo.EPSR.g01'  x=1  y=2
-    Data1D  'Bulk//OriginalGR//Mg-O//Unbound'  histo  'epsr/nobragg/mgo.EPSR.g01'  x=1  y=4
-    Data1D  'Bulk//OriginalGR//O-O//Unbound'  histo  'epsr/nobragg/mgo.EPSR.g01'  x=1  y=6
+    Data1D  'Bulk//OriginalGR//Mg-Mg//Unbound'  xy  'epsr/mgo-nobragg/mgo.EPSR.g01'  x=1  y=2
+    Data1D  'Bulk//OriginalGR//Mg-O//Unbound'  xy  'epsr/mgo-nobragg/mgo.EPSR.g01'  x=1  y=4
+    Data1D  'Bulk//OriginalGR//O-O//Unbound'  xy  'epsr/mgo-nobragg/mgo.EPSR.g01'  x=1  y=6
   EndModule
 
   Module  NeutronSQ  'NeutronSQ01'
@@ -94,21 +95,20 @@ Save On
     Isotopologue  'Bulk'  'O'  'Natural'  1.000000
 
     QBroadening  GaussianC2  0.0  0.02
-
   EndModule
 
   # -- Partial S(Q) (unbound terms)
   Module  DataTest  'Partial S(Q) (unbound)'
     Threshold  1.3
-    Data1D  'Bulk//UnweightedSQ//Mg-Mg//Unbound'  histo  'epsr/nobragg/mgo.EPSR.f01'  x=1  y=2
-    Data1D  'Bulk//UnweightedSQ//Mg-O//Unbound'  histo  'epsr/nobragg/mgo.EPSR.f01'  x=1  y=4
-    Data1D  'Bulk//UnweightedSQ//O-O//Unbound'  histo  'epsr/nobragg/mgo.EPSR.f01'  x=1  y=6
+    Data1D  'Bulk//UnweightedSQ//Mg-Mg//Unbound'  xy  'epsr/mgo-nobragg/mgo.EPSR.f01'  x=1  y=2
+    Data1D  'Bulk//UnweightedSQ//Mg-O//Unbound'  xy  'epsr/mgo-nobragg/mgo.EPSR.f01'  x=1  y=4
+    Data1D  'Bulk//UnweightedSQ//O-O//Unbound'  xy  'epsr/mgo-nobragg/mgo.EPSR.f01'  x=1  y=6
   EndModule
 
   # -- Total neutron-weighted F(Q)
   Module  DataTest  'F(Q) Bulk'
     Threshold  0.9
-    Data1D  'Bulk//WeightedSQ//Total'  histo  'epsr/nobragg/mgo.EPSR.u01'  x=1  y=2
+    Data1D  'Bulk//WeightedSQ//Total'  xy  'epsr/mgo-nobragg/mgo.EPSR.u01'  x=1  y=2
   EndModule
 
 EndLayer

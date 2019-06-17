@@ -52,7 +52,7 @@ Configuration  'Bulk'
     Population  1.000000
   EndSpeciesInfo
 
-  InputCoordinates  epsr  epsr/nobragg/mgo.ato
+  InputCoordinates  epsr  epsr/mgo-111/mgo.ato
 
   BoxNormalisationFile  'Bulk.boxnorm'
   RDFBinWidth  0.025000
@@ -82,6 +82,7 @@ Layer  'Main Processing'
 
     Multiplicity  1  1  1 
     QMax  10.0
+    SaveReflections  On
   EndModule
 
   Module  NeutronSQ  'NeutronSQ01'
@@ -95,23 +96,23 @@ Layer  'Main Processing'
     QMax  10.0
     QDelta  0.05
     IncludeBragg  On
-    QBroadening  GaussianC2  0.0  0.02
-    BraggQBroadening  Gaussian  0.5
+    #QBroadening  GaussianC2  0.0  0.02
+    #BraggQBroadening  Gaussian  0.5
 
   EndModule
 
   # -- Partial S(Q) (unbound terms)
   Module  DataTest  'Partial S(Q) (unbound)'
     Threshold  1.3
-    #Data1D  'Bulk//UnweightedSQ//Mg-Mg//Unbound'  histo  'epsr/nobragg/mgo.EPSR.f01'  x=1  y=2
-    #Data1D  'Bulk//UnweightedSQ//Mg-O//Unbound'  histo  'epsr/nobragg/mgo.EPSR.f01'  x=1  y=4
-    #Data1D  'Bulk//UnweightedSQ//O-O//Unbound'  histo  'epsr/nobragg/mgo.EPSR.f01'  x=1  y=6
+    #Data1D  'Bulk//UnweightedSQ//Mg-Mg//Unbound'  histo  'epsr/mgo-111/mgo.EPSR.f01'  x=1  y=2
+    #Data1D  'Bulk//UnweightedSQ//Mg-O//Unbound'  histo  'epsr/mgo-111/mgo.EPSR.f01'  x=1  y=4
+    #Data1D  'Bulk//UnweightedSQ//O-O//Unbound'  histo  'epsr/mgo-111/mgo.EPSR.f01'  x=1  y=6
   EndModule
 
   # -- Total neutron-weighted F(Q)
   Module  DataTest  'F(Q) Bulk'
     Threshold  0.9
-    #Data1D  'Bulk//WeightedSQ//Total'  histo  'epsr/nobragg/mgo.EPSR.u01'  x=1  y=2
+    #Data1D  'Bulk//WeightedSQ//Total'  histo  'epsr/mgo-111/mgo.EPSR.u01'  x=1  y=2
   EndModule
 
 EndLayer
