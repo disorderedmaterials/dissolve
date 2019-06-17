@@ -29,6 +29,8 @@ Vec3DoubleKeywordWidget::Vec3DoubleKeywordWidget(QWidget* parent, ModuleKeywordB
 	// Setup our UI
 	ui_.setupUi(this);
 
+	refreshing_ = true;
+
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<Vec3DoubleModuleKeyword*>(keyword);
 	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into Vec3DoubleModuleKeyword.\n", keyword->keyword());
@@ -47,6 +49,8 @@ Vec3DoubleKeywordWidget::Vec3DoubleKeywordWidget(QWidget* parent, ModuleKeywordB
 
 	// Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a QScrollArea)
 	installEventFilter(new MouseWheelWidgetAdjustmentGuard(this));
+
+	refreshing_ = true;
 }
 
 /*
