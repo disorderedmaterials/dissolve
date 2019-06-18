@@ -15,14 +15,14 @@ addons:
       - openmpi-bin
   homebrew:
     packages:
-      - qt5
       - bison
 
-# UBUNTU: Add PPA repo for updated Qt libs (serial build only)
+# Add updated Qt libs (serial build only)
 before_install:
   - if [[ "$TRAVIS_OS_NAME" = "linux" && "$PARALLEL" = "false" ]]; then sudo add-apt-repository ppa:beineri/opt-qt-5.10.1-trusty -y; fi
   - if [[ "$TRAVIS_OS_NAME" = "linux" && "$PARALLEL" = "false" ]]; then sudo apt-get update -q; fi
   - if [[ "$TRAVIS_OS_NAME" = "linux" && "$PARALLEL" = "false" ]]; then sudo apt-get install qt510base -y; fi
+  - if [[ "$TRAVIS_OS_NAME" = "osx" && "$PARALLEL" = "false" ]]; then brew install qt5; fi
 
 # Build Stages
 jobs:
@@ -51,11 +51,15 @@ jobs:
         directories:
           - artifacts
       script: ./ci/ubuntu.trusty/ubuntu.test.serial
+      before_deploy:
+        - wget -q https://raw.githubusercontent.com/trisyoungs/scripts/master/travis-deploy -O travis-deploy
+        - chmod u+x ./travis-deploy
       deploy:
-        provider: releases
-        api_key:
-          secure: HZQ/M926XJHnhjA+r9PbLtgSE8ZYsxJ7oEA/6xxBZiK5WpCsFSYV3m2Sd1UGtkiFa6eawdwdI+0U2P0UBe/B1S17Y2euR/kGLbUa6C6PDiMlRLxVQLGWAIpYh8/k+8KA0ZcQbTv9gOkVfsz/ZFNZZRuwFKTVwPDXxORjX43ghVOSpfaOSqxFbDOtn+q1ywLF385j9mzy65KS1BcZCz96atpuJzcl7gDFT0PNrXbPIHqj46HXQbpb17/0hkZ3XwR9Q2cp577RmrJfOxw0Ac9CQrLE7Y9Qz8y4qOd42f1WR3T14PwfJl9MzEc14SHgpTxDf4LsHZSKtcAOdKoQ9p4c6InQO29C/23tEVeiw/c+BQeL71HCJ/BbQUn3WbRgWMj1TagJRV8iZpV6+D+VTbwVJYys0B7qWN7cL++DWZGdjqsW/maqE4ZZw9awb41JGbM82zT1Vd/5RtqZc8vYXBjUuUwC+vOo3xJ5Sy7FPrzuzIOntCaZwdNqKmszQfC/s8QKzc3yq2JjvlLyVKf7ClsYTPEHmDpbaCCLODwrJYjaJti73vR6+0SqOR6i2MNBxAzsO/zbLOkLmvBQJ1DZosBFizJqM/t8f/mKxPlZRcNOSD9AoN6LeQ4CP8p/F+BQgs6F4drRJqWeU1IXvrEhflAr8U+lE0SqSj2vD7rri3Qqmi8=
-        file: artifacts/*AppImage
+        provider: script
+        skip_cleanup: true
+        on:
+          all_branches: true
+        script: ./travis-deploy -n "Release ${TRAVIS_TAG}" -f Recent.md -w artifacts/*AppImage
     - stage: Test / Deploy
       name: Parallel
       env: PARALLEL=true
@@ -64,33 +68,40 @@ jobs:
         directories:
           - artifacts
       script: ./ci/ubuntu.trusty/ubuntu.test.parallel
+      before_deploy:
+        - wget -q https://raw.githubusercontent.com/trisyoungs/scripts/master/travis-deploy -O travis-deploy
+        - chmod u+x ./travis-deploy
       deploy:
-        provider: releases
-        api_key:
-          secure: HZQ/M926XJHnhjA+r9PbLtgSE8ZYsxJ7oEA/6xxBZiK5WpCsFSYV3m2Sd1UGtkiFa6eawdwdI+0U2P0UBe/B1S17Y2euR/kGLbUa6C6PDiMlRLxVQLGWAIpYh8/k+8KA0ZcQbTv9gOkVfsz/ZFNZZRuwFKTVwPDXxORjX43ghVOSpfaOSqxFbDOtn+q1ywLF385j9mzy65KS1BcZCz96atpuJzcl7gDFT0PNrXbPIHqj46HXQbpb17/0hkZ3XwR9Q2cp577RmrJfOxw0Ac9CQrLE7Y9Qz8y4qOd42f1WR3T14PwfJl9MzEc14SHgpTxDf4LsHZSKtcAOdKoQ9p4c6InQO29C/23tEVeiw/c+BQeL71HCJ/BbQUn3WbRgWMj1TagJRV8iZpV6+D+VTbwVJYys0B7qWN7cL++DWZGdjqsW/maqE4ZZw9awb41JGbM82zT1Vd/5RtqZc8vYXBjUuUwC+vOo3xJ5Sy7FPrzuzIOntCaZwdNqKmszQfC/s8QKzc3yq2JjvlLyVKf7ClsYTPEHmDpbaCCLODwrJYjaJti73vR6+0SqOR6i2MNBxAzsO/zbLOkLmvBQJ1DZosBFizJqM/t8f/mKxPlZRcNOSD9AoN6LeQ4CP8p/F+BQgs6F4drRJqWeU1IXvrEhflAr8U+lE0SqSj2vD7rri3Qqmi8=
-        file: artifacts/*AppImage
+        provider: script
+        skip_cleanup: true
+        on:
+          all_branches: true
+        script: ./travis-deploy -n "Release ${TRAVIS_TAG}" -f Recent.md -w artifacts/*dmg
     - stage: OSX Build / Deploy
       name: Serial, GUI
       env: PARALLEL=false
       os: osx
       script: ./ci/osx.highsierra/osx.build.serial.gui
-    - stage: OSX Build
+    - stage: OSX Build / Deploy
       name: Parallel
       env: PARALLEL=true
       os: osx
       script: ./ci/osx.highsierra/osx.build.parallel
+      before_deploy:
+        - wget -q https://raw.githubusercontent.com/trisyoungs/scripts/master/travis-deploy -O travis-deploy
+        - chmod u+x ./travis-deploy
       deploy:
-        provider: releases
-        api_key:
-          secure: HZQ/M926XJHnhjA+r9PbLtgSE8ZYsxJ7oEA/6xxBZiK5WpCsFSYV3m2Sd1UGtkiFa6eawdwdI+0U2P0UBe/B1S17Y2euR/kGLbUa6C6PDiMlRLxVQLGWAIpYh8/k+8KA0ZcQbTv9gOkVfsz/ZFNZZRuwFKTVwPDXxORjX43ghVOSpfaOSqxFbDOtn+q1ywLF385j9mzy65KS1BcZCz96atpuJzcl7gDFT0PNrXbPIHqj46HXQbpb17/0hkZ3XwR9Q2cp577RmrJfOxw0Ac9CQrLE7Y9Qz8y4qOd42f1WR3T14PwfJl9MzEc14SHgpTxDf4LsHZSKtcAOdKoQ9p4c6InQO29C/23tEVeiw/c+BQeL71HCJ/BbQUn3WbRgWMj1TagJRV8iZpV6+D+VTbwVJYys0B7qWN7cL++DWZGdjqsW/maqE4ZZw9awb41JGbM82zT1Vd/5RtqZc8vYXBjUuUwC+vOo3xJ5Sy7FPrzuzIOntCaZwdNqKmszQfC/s8QKzc3yq2JjvlLyVKf7ClsYTPEHmDpbaCCLODwrJYjaJti73vR6+0SqOR6i2MNBxAzsO/zbLOkLmvBQJ1DZosBFizJqM/t8f/mKxPlZRcNOSD9AoN6LeQ4CP8p/F+BQgs6F4drRJqWeU1IXvrEhflAr8U+lE0SqSj2vD7rri3Qqmi8=
-        file: artifacts/*dmg
+        provider: script
+        skip_cleanup: true
+        on:
+          all_branches: true
+        script: ./travis-deploy -n "Release ${TRAVIS_TAG}" -f Recent.md -w artifacts/*dmg
 
-# Branch Safelist (explicitly allow tagged builds)
+# Branch Safelist (allow only develop and version-tagged builds)
 branches:
   only:
-    - master
     - develop
-    - /^\d+\.\d+(\.\d+)?(-\S*)?$/
+    - /^v\d+\.\d+(\.\d+)?(-\S*)?$/
 
 # Build Stage Order
 stages:
