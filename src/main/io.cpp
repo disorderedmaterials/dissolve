@@ -375,9 +375,6 @@ bool Dissolve::saveInput(const char* filename)
 		{
 			if (!parser.writeLineF("  %s  '%s'\n", ConfigurationBlock::keyword(ConfigurationBlock::BoxNormalisationFileKeyword), cfg->boxNormalisationFileName())) return false;
 		}
-		if (!parser.writeLineF("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::BraggQMaxKeyword), cfg->braggQMax())) return false;
-		if (!parser.writeLineF("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::BraggQMinKeyword), cfg->braggQMin())) return false;
-		if (!parser.writeLineF("  %s  %i %i %i\n", ConfigurationBlock::keyword(ConfigurationBlock::BraggMultiplicityKeyword), cfg->braggMultiplicity().x, cfg->braggMultiplicity().y, cfg->braggMultiplicity().z)) return false;
 		if (!parser.writeLineF("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::RDFBinWidthKeyword), cfg->rdfBinWidth())) return false;
 		if (!parser.writeLineF("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::RDFRangeKeyword), cfg->rdfRange())) return false;
 		if (!parser.writeLineF("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::TemperatureKeyword), cfg->temperature())) return false;

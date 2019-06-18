@@ -1,6 +1,6 @@
 /*
 	*** Bragg Module - Options
-	*** src/modules/bragg/options.cpp
+	*** src/modules/braggsq/options.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -22,6 +22,7 @@
 #include "modules/bragg/bragg.h"
 #include "module/keywordtypes.h"
 #include "main/dissolve.h"
+#include "math/averaging.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
 #include "templates/enumhelpers.h"
@@ -31,8 +32,18 @@
 void BraggModule::setUpKeywords()
 {
 	frequency_ = 5;
-	keywords_.add(new DoubleModuleKeyword(0.001), "QResolution", "Binwidth in Q to use when calculating Bragg peaks");
-	keywords_.add(new BoolModuleKeyword(false), "Save", "Whether to save partials to disk after calculation", "<True|False>");
+
+	ModuleKeywordGroup* group = addKeywordGroup("Calculation");
+	group->add(new IntegerModuleKeyword(5, 1), "Averaging", "Number of historical data sets to combine into final reflection data", "<5>");
+	group->add(new EnumStringModuleKeyword(Averaging::averagingSchemes() = Averaging::LinearAveraging), "AveragingScheme", "Weighting scheme to use when averaging reflection data", "<Linear>");
+	group->add(new DoubleModuleKeyword(0.001), "QDelta", "Resolution (binwidth) in Q space to use when calculating Bragg reflections", "<0.001>");
+	group->add(new DoubleModuleKeyword(1.0), "QMax", "Maximum Q value for Bragg calculation", "<1.0>");
+	group->add(new DoubleModuleKeyword(0.01), "QMin", "Minimum Q value for Bragg calculation", "<0.01>");
+	group->add(new Vec3IntegerModuleKeyword(Vec3<int>(1,1,1), Vec3<int>(1,1,1)), "Multiplicity", "Bragg intensity scaling factor accounting for number of repeat units in Configuration", "<1 1 1>");
+
+	group = addKeywordGroup("Export");
+	group->add(new BoolModuleKeyword(false), "SavePartials", "Whether to save Bragg partials to disk after calculation", "<True|False>");
+	group->add(new BoolModuleKeyword(false), "SaveReflections", "Whether to save Bragg reflection data to disk", "<True|False>");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised

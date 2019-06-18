@@ -157,8 +157,8 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	DynamicArray<Torsion> torsions_;
 	// AtomType list, containing unique (non-isotopic) atom types over all Species used in this configuration
 	AtomTypeList usedAtomTypes_;
-	// Coordinate index, incremented whenever Atom positions change
-	int coordinateIndex_;
+	// Contents version, incremented whenever Configuration content or Atom positions change
+	VersionCounter contentsVersion_;
 
 	public:
 	// Empty contents of Configuration, leaving core definitions intact
@@ -231,16 +231,18 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	Torsion* torsion(int n);
 	// Return specified used type
 	AtomType* usedAtomType(int index);
+	// Return specified used type data
+	AtomTypeData* usedAtomTypeData(int index);
 	// Return first AtomTypeData for this Configuration
 	AtomTypeData* usedAtomTypes();
 	// Return AtomTypeList for this Configuration
 	const AtomTypeList& usedAtomTypesList() const;
 	// Return number of atom types used in this Configuration
 	int nUsedAtomTypes() const;
-	// Return current coordinate index
-	int coordinateIndex() const;
-	// Increment current coordinate index
-	void incrementCoordinateIndex();
+	// Return version of current contents
+	int contentsVersion() const;
+	// Increment version of current contents
+	void incrementContentsVersion();
 	// Load coordinates from specified parser
 	bool loadCoordinates(LineParser& parser, CoordinateImportFileFormat::CoordinateImportFormat format);
 
@@ -331,12 +333,6 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	double rdfRange_;
 	// Maximum extent (requested) of calculated g(r)
 	double requestedRDFRange_;
-	// Minimum Q value for Bragg calculation
-	double braggQMin_;
-	// Maximum Q value for Bragg calculation
-	double braggQMax_;
-	// Multiplicities reflecting any crystal supercell
-	Vec3<int> braggMultiplicity_;
 
 	public:
 	// Set RDF bin width
@@ -349,18 +345,6 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	void setRequestedRDFRange(double range);
 	// Return requested RDF extent
 	double requestedRDFRange();
-	// Set minimum Q value for Bragg calculation
-	void setBraggQMin(double qMin);
-	// Return minimum Q value for Bragg calculation
-	double braggQMin();
-	// Set maximum Q value for Bragg calculation
-	void setBraggQMax(double qMax);
-	// Return maximum Q value for Bragg calculation
-	double braggQMax();
-	// Set multiplicities reflecting any crystal supercell
-	void setBraggMultiplicity(Vec3<int> mult);
-	// Return multiplicities reflecting any crystal supercell
-	Vec3<int> braggMultiplicity();
 
 
 	/*

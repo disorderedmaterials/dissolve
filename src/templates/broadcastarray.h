@@ -43,7 +43,7 @@ template <class T> class BroadcastArray
 			// Broadcast number of items in list, then list items...
 			count = array.nItems();
 			if (!procPool.broadcast(count, root)) return;
-			for (int n=0; n<count; ++n) array[count].broadcast(procPool, root, coreData);
+			for (int n=0; n<count; ++n) array[n].broadcast(procPool, root, coreData);
 		}
 		else
 		{

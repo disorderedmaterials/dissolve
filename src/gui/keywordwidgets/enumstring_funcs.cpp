@@ -28,7 +28,7 @@ EnumStringKeywordWidget::EnumStringKeywordWidget(QWidget* parent, ModuleKeywordB
 {
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<EnumStringModuleKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base module keyword into EnumStringModuleKeyword.\n");
+	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into EnumStringModuleKeyword.\n", keyword->keyword());
 	else
 	{
 		// Populate the combo with the allowed values

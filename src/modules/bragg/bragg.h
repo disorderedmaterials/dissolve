@@ -26,7 +26,7 @@
 #include "math/broadeningfunction.h"
 #include "classes/partialset.h"
 #include "classes/isotopologuereference.h"
-#include "classes/braggpeak.h"
+#include "classes/braggreflection.h"
 
 // Forward Declarations
 class PartialSet;
@@ -67,10 +67,6 @@ class BraggModule : public Module
 	/*
 	 * Options
 	 */
-	private:
-	// Isotopologue references
-	List<IsotopologueReference> isotopologues_;
-
 	protected:
 	// Set up keywords for Module
 	void setUpKeywords();
@@ -91,9 +87,11 @@ class BraggModule : public Module
 	 */
 	public:
 	// Calculate Bragg terms for specified Configuration
-	bool calculateBraggTerms(ProcessPool& procPool, Configuration* cfg, double braggQMin, double braggQResolution, double braggQMax, double braggMultiplicity);
-	// Calculate unweighted Bragg partials from calculated peak data
-	bool calculateUnweightedBraggSQ(ProcessPool& procPool, Configuration* cfg, Array<BraggPeak>& braggPeaks, PartialSet& partialsq, const BroadeningFunction& broadening);
+	bool calculateBraggTerms(ProcessPool& procPool, Configuration* cfg, const double qMin, const double qDelta, const double qMax, Vec3<int> multiplicity, bool& alreadyUpToDate);
+	// Form partial and total reflection functions from calculated reflection data
+	bool formReflectionFunctions(ProcessPool& procPool, Configuration* cfg, const double qMin, const double qDelta, const double qMax);
+	// Re-bin reflection data into supplied arrays
+	static bool reBinReflections(ProcessPool& procPool, Configuration* cfg, Array2D<Data1D>& braggPartials);
 
 
 	/*

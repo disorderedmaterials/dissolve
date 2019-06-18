@@ -214,8 +214,8 @@ bool AtomShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		Messenger::print("Updated step size is %f Angstroms.\n", stepSize); 
 		GenericListHelper<double>::realise(moduleData, "StepSize", uniqueName(), GenericItem::InRestartFileFlag) = stepSize;
 
-		// Increase coordinate index in Configuration
-		if (nAccepted > 0) cfg->incrementCoordinateIndex();
+		// Increase contents version in Configuration
+		if (nAccepted > 0) cfg->incrementContentsVersion();
 	}
 
 	return true;

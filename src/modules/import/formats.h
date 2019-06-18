@@ -120,6 +120,13 @@ class TrajectoryImportFileFormat : public FileAndFormat
 // Data1D Import Formats
 class Data1DImportFileFormat : public FileAndFormat
 {
+	public:
+	// Constructor
+	Data1DImportFileFormat();
+	// Destructor
+	~Data1DImportFileFormat();
+
+
 	/*
 	 * Available Formats
 	 */
@@ -137,6 +144,26 @@ class Data1DImportFileFormat : public FileAndFormat
 
 
 	/*
+	 * Column Designations
+	 */
+	private:
+	// Column to use for x values
+	int xColumn_;
+	// Column to use for y values
+	int yColumn_;
+	// Column to use for errors
+	int errorColumn_;
+	
+	public:
+	// Return column used for x values
+	int xColumn() const;
+	// Return column used for y values
+	int yColumn() const;
+	// Return column used for errors
+	int errorColumn() const;
+
+
+	/*
 	 * Filename / Basename
 	 */
 	public:
@@ -145,6 +172,18 @@ class Data1DImportFileFormat : public FileAndFormat
 	{
 		return true;
 	}
+
+
+	/*
+	 * Read / Write
+	 */
+	protected:
+	// Parse additional argument
+	bool parseArgument(const char* arg);
+	// Return whether this file/format has any additional arguments to write
+	bool hasAdditionalArguments() const;
+	// Return additional arguments as string
+	const char* additionalArguments() const;
 };
 
 #endif

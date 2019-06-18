@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEKEYWORDCHARSTRING_H
-#define DISSOLVE_MODULEKEYWORDCHARSTRING_H
+#ifndef DISSOLVE_MODULEKEYWORD_CHARSTRING_H
+#define DISSOLVE_MODULEKEYWORD_CHARSTRING_H
 
 #include "module/keyworddata.h"
 #include "module/keywordbase.h"

@@ -1,6 +1,6 @@
 /*
 	*** Bragg Module - Processing
-	*** src/modules/bragg/process.cpp
+	*** src/modules/braggsq/process.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -21,6 +21,7 @@
 
 #include "modules/bragg/bragg.h"
 #include "main/dissolve.h"
+#include "math/averaging.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
@@ -44,92 +45,90 @@ bool BraggModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		return true;
 	}
 
-	CharString varName;
-
-	//GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : dissolve.processingModuleData();
+	const int averaging = keywords_.asInt("Averaging");
+	Averaging::AveragingScheme averagingScheme = Averaging::averagingSchemes().option(keywords_.asString("AveragingScheme"));
+	if (averagingScheme == Averaging::nAveragingSchemes) return Messenger::error("Invalid averaging scheme '%s' found.\n", keywords_.asString("AveragingScheme"));
+	const double qDelta = keywords_.asDouble("QDelta");
+	const double qMax = keywords_.asDouble("QMax");
+	const double qMin = keywords_.asDouble("QMin");
+	const Vec3<int> multiplicity = keywords_.asVec3Int("Multiplicity");
+	// TODO Could look for this value in the Configuration's module data (could be set/stored if a known crystal repeat was used in the generation of the Configuration).
+	const bool saveReflections = keywords_.asBool("SaveReflections");
 
 	// Print argument/parameter summary
-	// TODO
+	Messenger::print("Bragg: Calculating Bragg S(Q) over %f < Q < %f Angstroms**-1 using bin size of %f Angstroms**-1.\n", qMin, qMax, qDelta);
+	Messenger::print("Bragg: Multiplicity is (%i %i %i).\n", multiplicity.x, multiplicity.y, multiplicity.z);
+	if (averaging <= 1) Messenger::print("Bragg: No averaging of reflections will be performed.\n");
+	else Messenger::print("Bragg: Reflections will be averaged over %i sets (scheme = %s).\n", averaging, Averaging::averagingSchemes().option(averagingScheme));
+	Messenger::print("\n");
 
 	/*
 	 * Regardless of whether we are a main processing task (summing some combination of Configuration's partials) or multiple independent Configurations,
-	 * we must loop over the specified targetConfigurations_ and calculate the Bragg contributions for each.
+	 * we must loop over the specified targetConfigurations_ and calculate the partials for each.
 	 */
-	Weights combinedWeights;
-	AtomTypeList combinedAtomTypes;
 	RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
 	while (Configuration* cfg = configIterator.iterate())
 	{
 		// Set up process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());
 
-		// Update total AtomTypeList
-		combinedAtomTypes.add(cfg->usedAtomTypesList());
+		// Calculate Bragg vectors and intensities for the current Configuration
+		bool alreadyUpToDate;
+		if (!calculateBraggTerms(procPool, cfg, qMin, qDelta, qMax, multiplicity, alreadyUpToDate)) return false;
 
-		// Calculate unweighted partials for this Configuration (under generic Module name 'Bragg', rather than the uniqueName_)
-		//bool alreadyUpToDate;
-// 		calculateBraggTerms(procPool, cfg, method, allIntra, alreadyUpToDate);
-//		const PartialSet& unweightedgr = GenericListHelper<PartialSet>::value(cfg->moduleData(), "Intensities", "Bragg");
+		// If we are already up-to-date, then theres nothing more to do for this Configuration
+		if (alreadyUpToDate)
+		{
+			Messenger::print("Bragg data is up-to-date for Configuration '%s'.\n", cfg->name());
+			continue;
+		}
 
-// 		// Set names of resources (Data1D) within the PartialSet
-// 		unweightedgr.setObjectTags(CharString("%s//%s//%s", cfg->niceName(), "Bragg", "UnweightedGR"));
-// 
-// 		// If we are associated to a local Configuration, copy the partial data over to the processing module list
-// 		if (configurationLocal_) GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedGR", uniqueName_) = unweightedgr;
-	}
+		// Perform averaging of reflections data if requested
+		if (averaging > 1)
+		{
+			Averaging::arrayAverage< Array<BraggReflection> >(cfg->moduleData(), "BraggReflections", "", averaging, averagingScheme);
+		}
 
-	// If we are a main processing task, construct the weighted sum of Configuration partials and store in the processing module data list
-	if (!configurationLocal_)
-	{
-		// Assemble partials from all target Configurations specified, weighting them accordingly
-		CharString varName;
-		CharString fingerprint;
+		// Form partial and total reflection functions
+		formReflectionFunctions(procPool, cfg, qMin, qDelta, qMax);
 
-		// Finalise and print the combined AtomTypes matrix
-		Messenger::print("Partials: AtomTypes used over all source Configurations:\n");
-		combinedAtomTypes.finalise();
-		combinedAtomTypes.print();
+		// Save reflection data?
+		if (saveReflections)
+		{
+			// Retrieve BraggReflection data from the Configuration's module data
+			bool found = false;
+			const Array<BraggReflection>& braggReflections = GenericListHelper< Array<BraggReflection> >::value(cfg->moduleData(), "BraggReflections", "", Array<BraggReflection>(), &found);
+			if (!found) return Messenger::error("Failed to find BraggReflection array in module data for Configuration '%s'.\n", cfg->name());
 
-// // 		// Set up partial set using the AtomTypeList we have just constructed.
-// // 		Configuration* refConfig = targetConfigurations_.firstItem();
-// // 		PartialSet& unweightedgr = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedGR", uniqueName_, GenericItem::InRestartFileFlag);
-// // 		unweightedgr.setUp(combinedAtomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), uniqueName(), "unweighted", "rdf", "r, Angstroms");
-// // 		unweightedgr.setObjectTags(CharString("%s//UnweightedGR", uniqueName_.get()));
-// // 
-// // 		// Loop over Configurations again, summing into the PartialSet we have just set up
-// // 		// We will keep a running total of the weights associated with each Configuration, and re-weight the entire set of partials at the end.
-// // 		double totalWeight = 0.0, density = 0.0, volume = 0.0;
-// // 		configIterator.restart();
-// // 		while (Configuration* cfg = configIterator.iterate())
-// // 		{
-// // 			// Update fingerprint
-// // 			fingerprint += fingerprint.isEmpty() ? CharString("%i", cfg->coordinateIndex()) : CharString("_%i", cfg->coordinateIndex());
-// // 
-// // 			// Get weighting factor for this Configuration to contribute to the summed partials
-// // 			double weight = GenericListHelper<double>::retrieve(moduleData, CharString("ConfigurationWeight_%s", cfg->niceName()), uniqueName_, 1.0);
-// // 			totalWeight += weight;
-// // 			Messenger::print("Partials: Weight for Configuration '%s' is %f (total weight is now %f).\n", cfg->name(), weight, totalWeight);
-// // 
-// // 			// Grab partials for Configuration and add into our set
-// // 			PartialSet& cfgPartials = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedGR", "Partials");
-// // 			unweightedgr.addPartials(cfgPartials, weight);
-// // 
-// // 			// Sum density weighted by volume, and total volume (both of which are multiplied by the overall weight)
-// // 			density += cfg->atomicDensity()*cfg->box()->volume()*weight;
-// // 			volume += cfg->box()->volume()*weight;
-// // 		}
-// // 		density /= volume;
-// // 		unweightedgr.setFingerprint(fingerprint);
-// // 
-// // 		// Now must normalise our partials to the overall weight of the source configurations
-// // 		// TODO This will not be correct - need to do proper weighting of configurations, unfolding g(r) normalisation etc.
-// // 		unweightedgr.reweightPartials(1.0 / totalWeight);
-// // 		if (saveData) if (!MPIRunMaster(procPool, unweightedgr.save())) return false;
-// // 
-// // 		// Store the blended density of our partials
-// // 		GenericListHelper<double>::realise(dissolve.processingModuleData(), "Density", uniqueName_, GenericItem::InRestartFileFlag) = density;
+			// Open a file and save the basic reflection data
+			LineParser braggParser(&procPool);
+			if (!braggParser.openOutput(CharString("%s-Bragg.txt", cfg->niceName()))) return false;
+			braggParser.writeLineF("#   ID      Q       nKVecs    Intensity(0,0)\n");
+			for (int n = 0; n<braggReflections.nItems(); ++n)
+			{
+				if (!braggParser.writeLineF("%6i  %10.6f  %8i  %10.6e\n", n, braggReflections.constAt(n).q(), braggReflections.constAt(n).nKVectors(), braggReflections.constAt(n).intensity(0, 0))) return false;
+			}
+			braggParser.closeFiles();
+
+			// Save intensity data
+			int i = 0;
+			for (AtomTypeData* atd1 = cfg->usedAtomTypes(); atd1 != NULL; atd1 = atd1->next, ++i)
+			{
+				int j = i;
+				for (AtomTypeData* atd2 = atd1; atd2 != NULL; atd2 = atd2->next, ++j)
+				{
+					LineParser intensityParser(&procPool);
+					if (!intensityParser.openOutput(CharString("%s-Bragg-%s-%s.txt", cfg->niceName(), atd1->atomTypeName(), atd2->atomTypeName()))) return false;
+					intensityParser.writeLineF("#     Q      Intensity(%s,%s)\n", atd1->atomTypeName(), atd2->atomTypeName());
+					for (int n = 0; n<braggReflections.nItems(); ++n)
+					{
+						if (!intensityParser.writeLineF("%10.6f  %10.6e\n", braggReflections.constAt(n).q(), braggReflections.constAt(n).intensity(i, j))) return false;
+					}
+					intensityParser.closeFiles();
+				}
+			}
+		}
 	}
 
 	return true;
 }
-

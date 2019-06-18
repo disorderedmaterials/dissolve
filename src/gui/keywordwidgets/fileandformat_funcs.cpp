@@ -40,7 +40,7 @@ FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget* parent, ModuleKe
 	keyword_ = dynamic_cast<FileAndFormatModuleKeyword*>(keyword);
 	if (!keyword_)
 	{
-		Messenger::error("Couldn't cast base module keyword into FileAndFormatModuleKeyword.\n");
+		Messenger::error("Couldn't cast base module keyword '%s' into FileAndFormatModuleKeyword.\n", keyword->keyword());
 		return;
 	}
 

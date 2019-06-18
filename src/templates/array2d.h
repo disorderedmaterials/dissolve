@@ -329,6 +329,28 @@ template <class A> class Array2D
 	void operator*=(const A value) { for (int n=0; n<linearSize_; ++n) array_[n] *= value; }
 	// Operator/= (divide all)
 	void operator/=(const A value) { for (int n=0; n<linearSize_; ++n) array_[n] /= value; }
+	// Operator+= (matrix addition)
+	void operator+=(const Array2D<A>& B) const
+	{
+		// Check array sizes are compatible
+		if (nColumns_ != B.nRows_)
+		{
+			Messenger::error("Can't add matrices together, as they have incompatible sizes (%ix%i and %ix%i, RxC)\n", nRows_, nColumns_, B.nRows_, B.nColumns_);
+			return;
+		}
+		for (int n=0; n<linearSize_; ++n) array_[n] += B.constLinearValue(n);
+	}
+	// Operator-= (matrix subtraction)
+	void operator-=(const Array2D<A>& B) const
+	{
+		// Check array sizes are compatible
+		if (nColumns_ != B.nRows_)
+		{
+			Messenger::error("Can't subtract matrices, as they have incompatible sizes (%ix%i and %ix%i, RxC)\n", nRows_, nColumns_, B.nRows_, B.nColumns_);
+			return;
+		}
+		for (int n=0; n<linearSize_; ++n) array_[n] -= B.constLinearValue(n);
+	}
 	// Operator* (matrix multiply)
 	Array2D<A> operator*(const Array2D<A>& B) const
 	{

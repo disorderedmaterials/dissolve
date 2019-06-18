@@ -1,6 +1,7 @@
 noinst_LTLIBRARIES = libbase.la
 
 libbase_la_SOURCES = charstring.cpp charstringlist.cpp
+libbase_la_SOURCES += enumoptions.cpp
 libbase_la_SOURCES += fileandformat.cpp
 libbase_la_SOURCES += geometry.cpp
 libbase_la_SOURCES += lineparser.cpp
@@ -12,6 +13,7 @@ libbase_la_SOURCES += timer.cpp
 libbase_la_SOURCES += version.cpp
 
 noinst_HEADERS = charstring.h charstringlist.h constants.h
+noinst_HEADERS += enumoptions.h
 noinst_HEADERS += dummyclass.h
 noinst_HEADERS += fileandformat.h
 noinst_HEADERS += geometry.h

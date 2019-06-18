@@ -22,6 +22,7 @@
 #include "modules/rdf/rdf.h"
 #include "module/keywordtypes.h"
 #include "main/dissolve.h"
+#include "math/averaging.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
 #include "templates/enumhelpers.h"
@@ -43,22 +44,6 @@ const char* RDFModule::partialsMethod(RDFModule::PartialsMethod pm)
 	return PartialsMethodKeywords[pm];
 }
 
-// Averaging scheme enum
-const char* AveragingSchemeKeywords[] = { "Simple", "Exponential" };
-
-// Convert character string to AveragingScheme
-RDFModule::AveragingScheme RDFModule::averagingScheme(const char* s)
-{
-	for (int n=0; n<nAveragingSchemes; ++n) if (DissolveSys::sameString(s, AveragingSchemeKeywords[n])) return (RDFModule::AveragingScheme) n;
-	return RDFModule::nAveragingSchemes;
-}
-
-// Return character string for AveragingScheme
-const char* RDFModule::averagingScheme(RDFModule::AveragingScheme as)
-{
-	return AveragingSchemeKeywords[as];
-}
-
 // Set up keywords for Module
 void RDFModule::setUpKeywords()
 {
@@ -66,8 +51,8 @@ void RDFModule::setUpKeywords()
 
 	// Calculation
 	ModuleKeywordGroup* group = addKeywordGroup("Calculation");
-	group->add(new IntegerModuleKeyword(5, 0), "Averaging", "Number of historical partial sets to combine into final partials", "<N[5]>");
-	group->add(new EnumStringModuleKeyword(RDFModule::SimpleAveraging, RDFModule::nAveragingSchemes, AveragingSchemeKeywords), "AveragingScheme", "Weighting scheme to use when averaging partials", "<scheme[Exponential]>");
+	group->add(new IntegerModuleKeyword(5, 1), "Averaging", "Number of historical partial sets to combine into final partials", "<5>");
+	group->add(new EnumStringModuleKeyword(Averaging::averagingSchemes() = Averaging::LinearAveraging), "AveragingScheme", "Weighting scheme to use when averaging partials", "<Linear>");
 	group->add(new PairBroadeningFunctionModuleKeyword(PairBroadeningFunction()), "IntraBroadening", "Type of broadening to apply to intramolecular g(r)");
 	group->add(new EnumStringModuleKeyword(RDFModule::AutoMethod, RDFModule::nPartialsMethods, PartialsMethodKeywords), "Method", "Calculation method for partial radial distribution functions");
 	group->add(new IntegerModuleKeyword(0, 0, 100), "Smoothing", "Specifies the degree of smoothing 'n' to apply to calculated g(r), where 2n+1 controls the length in the applied Spline smooth");
@@ -76,7 +61,7 @@ void RDFModule::setUpKeywords()
 	group = addKeywordGroup("Test");
 	group->add(new BoolModuleKeyword(false), "InternalTest", "Perform internal check of calculated partials (relative to Test method)");
 	group->add(new BoolModuleKeyword(false), "Test", "Test calculated total and partials against supplied reference data", "<True|False>");
-	group->add(new DataStoreModuleKeyword(testData_), "TestReference", "Specify test reference data", "<filename> <target> [xcol] [ycol]");
+	group->add(new Data1DStoreModuleKeyword(testData_), "TestReference", "Specify test reference data", "<target> <fileformat> <filename> [x=1] [y=2]");
 	group->add(new DoubleModuleKeyword(0.1, 1.0e-5), "TestThreshold", "Test threshold (%%error) above which test fails", "<threshold[0.1]>");
 
 	// Export

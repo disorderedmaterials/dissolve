@@ -380,8 +380,8 @@ bool IntraShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			GenericListHelper<double>::realise(moduleData, "TorsionStepSize", uniqueName(), GenericItem::InRestartFileFlag) = torsionStepSize;
 		}
 
-		// Increase coordinate index in Configuration
-		if ((nBondAccepted > 0) || (nAngleAccepted > 0) || (nTorsionAccepted > 0)) cfg->incrementCoordinateIndex();
+		// Increase contents version in Configuration
+		if ((nBondAccepted > 0) || (nAngleAccepted > 0) || (nTorsionAccepted > 0)) cfg->incrementContentsVersion();
 	}
 
 	return true;

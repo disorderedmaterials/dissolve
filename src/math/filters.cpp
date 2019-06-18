@@ -24,50 +24,75 @@
 #include "math/data1d.h"
 #include "templates/array.h"
 
-
-// Perform point-wise convolution of this data with the supplied BroadeningFunction
-void Filters::convolve(Data1D& data, BroadeningFunction function)
+// Perform point-wise convolution of data with the supplied BroadeningFunction
+void Filters::convolve(Data1D& data, const BroadeningFunction& function, bool variableOmega, bool normalise)
 {
+	// Check for no broadening function specified
+	if (function.function() == BroadeningFunction::NoFunction) return;
+
 	// Grab x and y arrays
 	const Array<double>& x = data.constXAxis();
+	const double xDelta = x.constAt(1) - x.constAt(0);
 	Array<double>& y = data.values();
 
 	Array<double> newY(data.nValues());
 
-	// Outer loop over existing data points
-	double xCentre, xBroad;
-	for (int n=0; n<x.nItems(); ++n)
+	// Outer loop over existing data points - if variableOmega == true then we use the x value as the omega broadening parameter
+	double xCentre, xBroad, norm;
+	if (variableOmega) for (int n=0; n<x.nItems(); ++n)
 	{
 		// Grab x value as our current xCentre
 		xCentre = x.constAt(n);
+
+		// Get normalisation for this convolution
+		norm = (normalise ? function.discreteKernelNormalisation(xDelta, xCentre) : 1.0);
 
 		// Inner loop over whole array
 		for (int m=0; m<x.nItems(); ++m)
 		{
 			xBroad = x.constAt(m) - xCentre;
-			newY[m] += y.constAt(n) * function.y(xBroad, 0.0);
+			newY[m] += y.constAt(n) * function.y(xBroad, xCentre) * norm;
+		}
+	}
+	else
+	{
+		// Get normalisation for this convolution
+		norm = (normalise ? function.discreteKernelNormalisation(xDelta) : 1.0);
+
+		for (int n=0; n<x.nItems(); ++n)
+		{
+			// Grab x value as our current xCentre
+			xCentre = x.constAt(n);
+
+			// Inner loop over whole array
+			for (int m=0; m<x.nItems(); ++m)
+			{
+				xBroad = x.constAt(m) - xCentre;
+				newY[m] += y.constAt(n) * function.y(xBroad) * norm;
+			}
 		}
 	}
 
 	y = newY;
 }
 
-// Perform point-wise convolution of this data with the supplied BroadeningFunction, normalising to the original integral of the function
-void Filters::convolveNormalised(Data1D& data, BroadeningFunction function)
+// Perform convolution of the supplied delta function into the supplied data
+void Filters::convolve(double xCentre, double value, const BroadeningFunction& function, Data1D& dest)
 {
-	// Calculate the original integral
-	double originalIntegral = Integrator::absTrapezoid(data);
+	// Check for no broadening function specified
+	if (function.function() == BroadeningFunction::NoFunction) return;
 
-	// If the original integral is zero, nothing to do
-	if (originalIntegral == 0.0) return;
+	// Grab x and y arrays
+	const Array<double>& x = dest.constXAxis();
+	Array<double>& y = dest.values();
 
-	// Convolve the function
-	convolve(data, function);
-
-	// Calculate the new integral
-	double newIntegral = Integrator::absTrapezoid(data);
-
-	data.values() *= (originalIntegral / newIntegral);
+	// Loop over existing datapoints
+	double xBroad;
+	for (int n=0; n<x.nItems(); ++n)
+	{
+		xBroad = x.constAt(n) - xCentre;
+		y[n] += value * function.y(xBroad);
+	}
 }
 
 // Apply Kolmogorov–Zurbenko filter

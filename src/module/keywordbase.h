@@ -24,6 +24,7 @@
 
 #include "base/charstring.h"
 #include "templates/listitem.h"
+#include "templates/vector3.h"
 
 // Forward Declarations
 class CoreData;
@@ -36,7 +37,7 @@ class ModuleKeywordBase : public ListItem<ModuleKeywordBase>
 {
 	public:
 	// Keyword Data Type
-	enum KeywordDataType { AnalyserData, AtomTypeSelectionData, BoolData, BroadeningFunctionData, CharStringData, ComplexData, DataStoreData, DoubleData, EnumStringData, FileAndFormatData, IntegerData, IsotopologueListData, ModuleGroupsData, ModuleReferenceListData, PairBroadeningFunctionData, SpeciesReferenceListData, SpeciesSiteData, WindowFunctionData };
+	enum KeywordDataType { AnalyserData, AtomTypeSelectionData, BoolData, BroadeningFunctionData, CharStringData, ComplexData, Data1DStoreData, DoubleData, EnumStringData, FileAndFormatData, IntegerData, IsotopologueListData, ModuleGroupsData, ModuleReferenceListData, PairBroadeningFunctionData, SpeciesReferenceListData, SpeciesSiteData, Vec3DoubleData, Vec3IntegerData, WindowFunctionData };
 	// Constructor
 	ModuleKeywordBase(KeywordDataType type);
 	// Destructor
@@ -117,6 +118,10 @@ class ModuleKeywordBase : public ListItem<ModuleKeywordBase>
 	virtual double asDouble();
 	// Return value (as string)
 	virtual const char* asString();
+	// Return value as Vec3<int>
+	virtual Vec3<int> asVec3Int();
+	// Return value as Vec3<double>
+	virtual Vec3<double> asVec3Double();
 };
 
 #endif

@@ -59,9 +59,6 @@ bool SQModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, 
 			unweightedsq.unboundPartial(n,m).copyArrays(unweightedgr.constUnboundPartial(n,m));
 			unweightedsq.unboundPartial(n,m).values() -= 1.0;
 			if (!Fourier::sineFT(unweightedsq.unboundPartial(n,m), 4.0*PI*rho, qMin, qDelta, qMax, windowFunction, broadening)) return false;
-
-			// Zero Bragg partial, leave x array intact for use if needed
-			unweightedsq.braggPartial(n,m).initialise(unweightedsq.partial(n,m));
 		}
 	}
 
@@ -95,7 +92,7 @@ bool SQModule::sumUnweightedSQ(ProcessPool& procPool, Module* module, GenericLis
 	while (Configuration* cfg = configIterator.iterate())
 	{
 		// Update fingerprint
-		fingerprint += fingerprint.isEmpty() ? CharString("%i", cfg->coordinateIndex()) : CharString("_%i", cfg->coordinateIndex());
+		fingerprint += fingerprint.isEmpty() ? CharString("%i", cfg->contentsVersion()) : CharString("_%i", cfg->contentsVersion());
 
 		// Get weighting factor for this Configuration to contribute to the summed partials
 		double weight = GenericListHelper<double>::value(moduleData, CharString("ConfigurationWeight_%s", cfg->niceName()), module->uniqueName(), 1.0);
@@ -111,7 +108,7 @@ bool SQModule::sumUnweightedSQ(ProcessPool& procPool, Module* module, GenericLis
 
 	// Now must normalise our partials to the overall weight of the source configurations
 	// TODO CHECK Is this correct?
-	summedUnweightedSQ.reweightPartials(1.0 / totalWeight);
+	summedUnweightedSQ *= 1.0 / totalWeight;
 
 	return true;
 }

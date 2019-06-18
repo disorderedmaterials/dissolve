@@ -368,9 +368,9 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		if (testMode)
 		{
 			testDataName = CharString("WeightedFR-%s-total", module->uniqueName());
-			if (testData_.containsData1D(testDataName))
+			if (testData_.containsData(testDataName))
 			{
-				double error = Error::percent(simulatedFR, testData_.data1D(testDataName));
+				double error = Error::percent(simulatedFR, testData_.data(testDataName));
 				Messenger::print("Simulated F(r) reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", testDataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 				if (error > testThreshold) return false;
 			}
@@ -544,9 +544,9 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 				{
 					testDataName = CharString("GeneratedSQ-%s-%s", at1->name(), at2->name());
-					if (testData_.containsData1D(testDataName))
+					if (testData_.containsData(testDataName))
 					{
-						double error = Error::percent(generatedSQ.at(i,j), testData_.data1D(testDataName));
+						double error = Error::percent(generatedSQ.at(i,j), testData_.data(testDataName));
 						Messenger::print("Generated S(Q) reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", testDataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 						if (error > testThreshold) return false;
 					}

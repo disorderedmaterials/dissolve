@@ -26,7 +26,7 @@
 #include "math/broadeningfunction.h"
 #include "math/windowfunction.h"
 #include "classes/partialset.h"
-#include "classes/datastore.h"
+#include "classes/data1dstore.h"
 
 // Forward Declarations
 class PartialSet;
@@ -87,7 +87,7 @@ class SQModule : public Module
 	 */
 	private:
 	// Test data
-	DataStore testData_;
+	Data1DStore testData_;
 
 	public:
 	// Calculate unweighted S(Q) from unweighted g(r)

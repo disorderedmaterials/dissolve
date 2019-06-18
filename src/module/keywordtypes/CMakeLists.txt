@@ -5,17 +5,19 @@ add_library(keywordtypes
   broadeningfunction.cpp
   charstring.cpp
   complex.cpp
-  datastore.cpp
+  data1dstore.cpp
   double.cpp
   enumstring.cpp
   fileandformat.cpp
-  int.cpp
+  integer.cpp
   isotopologuelist.cpp
   modulegroups.cpp
   modulereferencelist.cpp
   pairbroadeningfunction.cpp
   speciesreferencelist.cpp
   speciessite.cpp
+  vec3double.cpp
+  vec3integer.cpp
   windowfunction.cpp
 
   analyser.h
@@ -24,17 +26,19 @@ add_library(keywordtypes
   broadeningfunction.h
   charstring.h
   complex.h
-  datastore.h
+  data1dstore.h
   double.h
   enumstring.h
   fileandformat.h
-  int.h
+  integer.h
   isotopologuelist.h
   modulegroups.h
   modulereferencelist.h
   pairbroadeningfunction.h
   speciesreferencelist.h
   speciessite.h
+  vec3double.h
+  vec3integer.h
   windowfunction.h
 )
 

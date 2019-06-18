@@ -1,6 +1,6 @@
 /*
 	*** Bragg Module - GUI
-	*** src/modules/bragg/nogui.cpp
+	*** src/modules/braggsq/nogui.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.

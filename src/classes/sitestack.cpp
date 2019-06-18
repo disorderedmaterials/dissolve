@@ -49,7 +49,7 @@ SiteStack::~SiteStack()
 bool SiteStack::create(Configuration* cfg, SpeciesSite* speciesSite)
 {
 	// Are we already up-to-date?
-	if (configurationIndex_ == cfg->coordinateIndex()) return true;
+	if (configurationIndex_ == cfg->contentsVersion()) return true;
 
 	// Set the defining information for the stack
 	configuration_ = cfg;
@@ -71,7 +71,7 @@ bool SiteStack::create(Configuration* cfg, SpeciesSite* speciesSite)
 	}
 
 	// Set new index and clear old arrays
-	configurationIndex_ = cfg->coordinateIndex();
+	configurationIndex_ = cfg->contentsVersion();
 	sites_.clear();
 	orientedSites_.clear();
 

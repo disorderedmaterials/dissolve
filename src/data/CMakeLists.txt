@@ -9,6 +9,7 @@ add_library(data
   fflibrary.cpp
   fftorsionterm.cpp
   isotopes.cpp
+  spacegroups.cpp
 
   atomicmass.h
   elementcolours.h
@@ -20,6 +21,7 @@ add_library(data
   fflibrary.h
   fftorsionterm.h
   isotopes.h
+  spacegroups.h
 )
 
 include_directories(
@@ -30,3 +32,4 @@ ${CMAKE_BINARY_DIR}/src
 )
 
 add_subdirectory(ff)
+add_subdirectory(sg)

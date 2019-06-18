@@ -48,11 +48,6 @@ bool NeutronSQModule::calculateWeightedGR(PartialSet& unweightedgr, PartialSet& 
 			// Full partial, summing bound and unbound terms
 			weightedgr.partial(typeI, typeJ).copyArrays(weightedgr.unboundPartial(typeI, typeJ));
 			weightedgr.partial(typeI, typeJ) += weightedgr.boundPartial(typeI, typeJ);
-
-			weightedgr.braggPartial(typeI, typeJ).copyArrays(unweightedgr.braggPartial(typeI, typeJ));
-			// TODO Subtract 1.0 from Bragg partials before weighting?
-			weightedgr.braggPartial(typeI, typeJ).values() -= 1.0;
-			weightedgr.braggPartial(typeI, typeJ).values() *= weight;
 		}
 	}
 
@@ -72,7 +67,7 @@ bool NeutronSQModule::calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& 
 	{
 		for (typeJ=typeI; typeJ<unweightedsq.nAtomTypes(); ++typeJ)
 		{
-			// Weight S(Q), Bragg S(Q) and full partial S(Q)
+			// Weight bound and unbound S(Q) and sum into full partial
 			double weight = weights.weight(typeI, typeJ);
 			double boundWeight = weights.boundWeight(typeI, typeJ);
 
@@ -87,9 +82,6 @@ bool NeutronSQModule::calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& 
 			// Full partial (sum of bound and unbound terms)
 			weightedsq.partial(typeI, typeJ).copyArrays(weightedsq.unboundPartial(typeI, typeJ));
 			weightedsq.partial(typeI, typeJ) += weightedsq.boundPartial(typeI, typeJ);
-
-			weightedsq.braggPartial(typeI, typeJ).copyArrays(unweightedsq.braggPartial(typeI, typeJ));
-			weightedsq.braggPartial(typeI, typeJ).values() *= weight;
 		}
 	}
 

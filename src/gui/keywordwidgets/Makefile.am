@@ -31,12 +31,13 @@ libkeywordwidgets_la_SOURCES += charstring.hui charstring_funcs.cpp
 libkeywordwidgets_la_SOURCES += double.hui double_funcs.cpp
 libkeywordwidgets_la_SOURCES += enumstring.hui enumstring_funcs.cpp
 libkeywordwidgets_la_SOURCES += fileandformat.ui fileandformat_funcs.cpp
-libkeywordwidgets_la_SOURCES += int.hui int_funcs.cpp
+libkeywordwidgets_la_SOURCES += integer.hui integer_funcs.cpp
 libkeywordwidgets_la_SOURCES += isotopologuelist.ui isotopologuelist_funcs.cpp
 libkeywordwidgets_la_SOURCES += modulegroups.ui modulegroups_funcs.cpp modulereferencelist.ui modulereferencelist_funcs.cpp
 libkeywordwidgets_la_SOURCES += pairbroadeningfunction.ui pairbroadeningfunction_funcs.cpp
 libkeywordwidgets_la_SOURCES += speciesreferencelist.ui speciesreferencelist_funcs.cpp
 libkeywordwidgets_la_SOURCES += windowfunction.hui windowfunction_funcs.cpp
+libkeywordwidgets_la_SOURCES += vec3double.ui vec3double_funcs.cpp vec3integer.ui vec3integer_funcs.cpp
 
 noinst_HEADERS = atomtypeselection.h
 noinst_HEADERS += base.h broadeningfunction.h
@@ -45,5 +46,6 @@ noinst_HEADERS += fileandformat.h
 noinst_HEADERS += isotopologuelist.h
 noinst_HEADERS += modulegroups.h modulereferencelist.h
 noinst_HEADERS += pairbroadeningfunction.h
+noinst_HEADERS += vec3double.h vec3integer.h
 
 AM_CPPFLAGS = -I$(top_srcdir)/src @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@

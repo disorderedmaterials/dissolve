@@ -43,7 +43,7 @@ bool DataTestModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	Messenger::print("\n");
 
 	// Loop over reference one-dimensional data supplied
-	ListIterator<Data1D> data1DIterator(testData_.data1D());
+	ListIterator<Data1D> data1DIterator(testData_.data());
 	while (Data1D* testData = data1DIterator.iterate())
 	{
 		bool found = false;

@@ -149,3 +149,74 @@ Data1DImportFileFormat::Data1DImportFormat Data1DImportFileFormat::data1DFormat(
 {
 	return (Data1DImportFileFormat::Data1DImportFormat) format_;
 }
+
+// Constructor
+Data1DImportFileFormat::Data1DImportFileFormat()
+{
+	xColumn_ = 0;
+	yColumn_ = 1;
+	errorColumn_ = -1;
+}
+
+// Destructor
+Data1DImportFileFormat::~Data1DImportFileFormat()
+{
+}
+
+/*
+ * Column Designation
+ */
+
+// Return column used for x values
+int Data1DImportFileFormat::xColumn() const
+{
+	return xColumn_;
+}
+
+// Return column used for y values
+int Data1DImportFileFormat::yColumn() const
+{
+	return yColumn_;
+}
+
+// Return column used for errors
+int Data1DImportFileFormat::errorColumn() const
+{
+	return errorColumn_;
+}
+
+
+/*
+ * Read / Write
+ */
+
+// Parse additional argument
+bool Data1DImportFileFormat::parseArgument(const char* arg)
+{
+	// Split arg into parts before and after the '='
+	CharString key = DissolveSys::beforeChar(arg, '=');
+	CharString value = DissolveSys::afterChar(arg, '=');
+	if ((key == "x") || (key == "X")) xColumn_ = value.asInteger() - 1;
+	else if ((key == "y") || (key == "Y")) yColumn_ = value.asInteger() - 1;
+	else if ((key == "e") || (key == "E")) errorColumn_ = value.asInteger() - 1;
+	else return false;
+
+	return true;
+}
+
+// Return whether this file/format has any additional arguments to write
+bool Data1DImportFileFormat::hasAdditionalArguments() const
+{
+	return true;
+}
+
+// Return additional arguments as string
+const char* Data1DImportFileFormat::additionalArguments() const
+{
+	static CharString args;
+
+	args.clear();
+	args.sprintf("x=%i  y=%i  e=%i", xColumn_+1, yColumn_+1, errorColumn_+1);
+
+	return args.get();
+}

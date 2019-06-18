@@ -29,6 +29,12 @@ EnumStringModuleKeyword::EnumStringModuleKeyword(int value, int nOptions, const 
 	for (int n=0; n<nOptions; ++n) validValues_.add(options[n]);
 }
 
+EnumStringModuleKeyword::EnumStringModuleKeyword(EnumOptionsBase options) : ModuleKeywordData<CharString>(ModuleKeywordBase::EnumStringData, options.optionKeyword())
+{
+	// Set our array of valid values
+	for (int n=0; n<options.nOptions(); ++n) validValues_.add(options.option(n));
+}
+
 // Destructor
 EnumStringModuleKeyword::~EnumStringModuleKeyword()
 {

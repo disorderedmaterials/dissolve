@@ -11,7 +11,7 @@ add_library(classes
   box_nonperiodic.cpp
   box_orthorhombic.cpp
   box_triclinic.cpp
-  braggpeak.cpp
+  braggreflection.cpp
   cell.cpp
   cellarray.cpp
   celldistributor.cpp
@@ -25,7 +25,7 @@ add_library(classes
   configuration_sites.cpp
   configuration_upkeep.cpp
   coredata.cpp
-  datastore.cpp
+  data1dstore.cpp
   distributor.cpp
   empiricalformula.cpp
   energykernel.cpp
@@ -74,7 +74,7 @@ add_library(classes
   atomtypelist.h
   bond.h
   box.h
-  braggpeak.h
+  braggreflection.h
   cell.h
   cellarray.h
   celldistributor.h
@@ -83,7 +83,7 @@ add_library(classes
   changestore.h
   configuration.h
   coredata.h
-  datastore.h
+  data1dstore.h
   distributor.h
   empiricalformula.h
   energykernel.h

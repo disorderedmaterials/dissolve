@@ -32,9 +32,9 @@ class Filters
 {
 	public:
 	// Perform point-wise convolution of data with the supplied BroadeningFunction
-	static void convolve(Data1D& data, BroadeningFunction function);
-	// Perform point-wise convolution of data with the supplied BroadeningFunction, normalising to the original integral of the function
-	static void convolveNormalised(Data1D& data, BroadeningFunction function);
+	static void convolve(Data1D& data, const BroadeningFunction& function, bool variableOmega = false, bool normalise = true);
+	// Perform convolution of the supplied delta function into the supplied data
+	static void convolve(double xCentre, double value, const BroadeningFunction& function, Data1D& dest);
 	// Apply Kolmogorov–Zurbenko filter to data
 	static void kolmogorovZurbenko(Data1D& data, int k, int m, bool normalised = false);
 	// Apply median filter to data

@@ -332,7 +332,7 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		Messenger::print("%i steps performed (%s work, %s comms)\n", nSteps, timer.totalTimeString(), procPool.accumulatedTimeString());
 
 		// Increment configuration changeCount
-		cfg->incrementCoordinateIndex();
+		cfg->incrementContentsVersion();
 
 		/*
 		 * Calculation End

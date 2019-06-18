@@ -246,93 +246,6 @@ bool RDFModule::calculateGRCells(ProcessPool& procPool, Configuration* cfg, Part
 	return true;
 }
 
-// Perform averaging of specifed partials
-bool RDFModule::performGRAveraging(GenericList& moduleData, const char* name, const char* prefix, int nSetsInAverage, RDFModule::AveragingScheme averagingScheme)
-{
-	const int expDecay = 0.7;
-
-	// Find the 'root' PartialSet, which should currently contain the most recently-calculated data
-	if (!moduleData.contains(name, prefix))
-	{
-		Messenger::error("Couldn't find root PartialSet '%s' (prefix = '%s') in order to perform averaging.\n", name, prefix);
-		return false;
-	}
-	PartialSet& currentPartials = GenericListHelper<PartialSet>::retrieve(moduleData, name, prefix);
-
-	// Store the current fingerprint, since we must ensure we retain it in the averaged PartialSet.
-	CharString currentFingerprint = currentPartials.fingerprint();
-
-	// Establish how many stored datasets we have
-	int nStored = 0;
-	for (nStored = 0; nStored < nSetsInAverage; ++nStored) if (!moduleData.contains(CharString("%s_%i", name, nStored+1), prefix)) break;
-	Messenger::print("Average requested over %i datsets - %i available in module data (%i max).\n", nSetsInAverage, nStored, nSetsInAverage-1);
-
-	// If a stored PartialSet with index 1 exists, we need to check its index value against the current one.
-	// If it is the same, we do not store it since it is the same and does not add any new information to the averaging.
-	bool storeCurrent = true;
-	if (moduleData.contains(CharString("%s_1", name), prefix))
-	{
-		const PartialSet& lastPartials = GenericListHelper<PartialSet>::value(moduleData, CharString("%s_1", name), prefix);
-		if (DissolveSys::sameString(lastPartials.fingerprint(), currentFingerprint, true))
-		{
-			Messenger::print("Current partials will not form part of average, since they are the same as the last stored set.\n");
-			storeCurrent = false;
-		}
-	}
-
-	// So, store the current PartialSet?
-	if (storeCurrent)
-	{
-		// Remove the oldest dataset if it exists, and shuffle the others down
-		if (nStored == nSetsInAverage)
-		{
-			moduleData.remove(CharString("%s_%i", name, nStored), prefix);
-			--nStored;
-		}
-		for (int n=nStored; n>0; --n)
-		{
-			// Rename the module data
-			moduleData.rename(CharString("%s_%i", name, n), prefix, CharString("%s_%i", name, n+1), prefix);
-
-			// Grab it, and rename the resources within
-			PartialSet& previousPartials = GenericListHelper<PartialSet>::retrieve(moduleData, CharString("%s_%i", name, n+1), prefix);
-			previousPartials.setObjectTags(currentPartials.objectNamePrefix(), CharString("Avg%i", n+1));
-		}
-
-		// Store the current PartialSet as the earliest data (1)
-		PartialSet& recentPartials = GenericListHelper<PartialSet>::realise(moduleData, CharString("%s_1", name), prefix, GenericItem::InRestartFileFlag);
-		recentPartials = currentPartials;
-		recentPartials.setObjectTags(currentPartials.objectNamePrefix(), "Avg1");
-		++nStored;
-	}
-
-	// Calculate normalisation
-	double normalisation = 0.0;
-	if (averagingScheme == RDFModule::SimpleAveraging) normalisation = nStored;
-	else if (averagingScheme == RDFModule::ExponentialAveraging) normalisation = (1.0 - pow(expDecay,nStored)) / (1.0 - expDecay); 
-
-	// Perform averaging of the datsets that we have
-	currentPartials.reset();
-	double weight = 1.0;
-	for (int n=0; n<nStored; ++n)
-	{
-		// Get a copy of the (n+1)'th dataset
-		PartialSet set = GenericListHelper<PartialSet>::value(moduleData, CharString("%s_%i", name, n+1), prefix);
-
-		// Determine the weighting factor
-		if (averagingScheme == RDFModule::SimpleAveraging) weight = 1.0 / normalisation;
-		else if (averagingScheme == RDFModule::ExponentialAveraging) weight = pow(expDecay, n) / normalisation;
-
-		// Sum in partials
-		currentPartials.addPartials(set, weight);
-	}
-
-	// Reinstate the index of the averaged PartialSet
-	currentPartials.setFingerprint(currentFingerprint);
-
-	return true;
-}
-
 /*
  * Public Functions
  */
@@ -348,7 +261,7 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 	// Is the PartialSet already up-to-date?
 	// If so, can exit now, *unless* the Test method is requested, in which case we go ahead and calculate anyway
 	alreadyUpToDate = false;
-	if (DissolveSys::sameString(originalgr.fingerprint(), CharString("%i", cfg->coordinateIndex())) && (method != RDFModule::TestMethod))
+	if (DissolveSys::sameString(originalgr.fingerprint(), CharString("%i", cfg->contentsVersion())) && (method != RDFModule::TestMethod))
 	{
 		Messenger::print("Partial g(r) are up-to-date for Configuration '%s'.\n", cfg->name());
 		alreadyUpToDate = true;
@@ -494,7 +407,7 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 	 * Partials are now up-to-date
 	 */
 	
-	originalgr.setFingerprint(CharString("%i", cfg->coordinateIndex()));
+	originalgr.setFingerprint(CharString("%i", cfg->contentsVersion()));
 
 	return true;
 }
@@ -502,17 +415,29 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 // Calculate smoothed/broadened partial g(r) from supplied partials
 bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg, const PartialSet& originalgr, PartialSet& unweightedgr, PairBroadeningFunction& intraBroadening, int smoothing)
 {
-	// Copy data
-	unweightedgr = originalgr;
+	// If the unweightedgr is not yet initialised, copy the originalgr. Otherwise, just copy the values (in order to maintain the incremental versioning of the data)
+	if (unweightedgr.nAtomTypes() == 0) unweightedgr = originalgr;
+	else
+	{
+		for (int i=0; i<unweightedgr.nAtomTypes(); ++i)
+		{
+			for (int j=i; j<unweightedgr.nAtomTypes(); ++j)
+			{
+				unweightedgr.boundPartial(i, j).copyArrays(originalgr.constBoundPartial(i, j));
+				unweightedgr.unboundPartial(i, j).copyArrays(originalgr.constUnboundPartial(i, j));
+				unweightedgr.partial(i, j).copyArrays(originalgr.constPartial(i, j));
+			}
+		}
+		unweightedgr.total().copyArrays(originalgr.constTotal());
+	}
 
 	AtomTypeData* typeI, *typeJ;
 
 	// Remove bound partial from full partial
-	typeI = unweightedgr.atomTypes().first();
-	for (int i=0; i<unweightedgr.nAtomTypes(); ++i, typeI = typeI->next)
+	for (int i=0; i<unweightedgr.nAtomTypes(); ++i)
 	{
 		typeJ = typeI;
-		for (int j=i; j<unweightedgr.nAtomTypes(); ++j, typeJ = typeJ->next) unweightedgr.partial(i, j) -= originalgr.constBoundPartial(i, j);
+		for (int j=i; j<unweightedgr.nAtomTypes(); ++j) unweightedgr.partial(i, j) -= originalgr.constBoundPartial(i, j);
 	}
 
 	// Broaden the bound partials according to the supplied PairBroadeningFunction
@@ -528,7 +453,7 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 				BroadeningFunction function = intraBroadening.broadeningFunction(typeI->atomType(), typeJ->atomType());
 
 				// Convolute the bound partial with the broadening function
-				Filters::convolveNormalised(unweightedgr.boundPartial(i, j), function);
+				Filters::convolve(unweightedgr.boundPartial(i, j), function);
 			}
 		}
 	}
@@ -581,7 +506,6 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 		}
 
 		// TODO Parallelise this
-		printf("HOLA!\n");
 
 		RefListIterator<SpeciesIntra,SpeciesBond*> bondIterator(bondIntra);
 		while (SpeciesIntra* intra = bondIterator.iterate())
@@ -624,7 +548,7 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 					BroadeningFunction function = intraBroadening.broadeningFunction(typeI->atomType(), typeJ->atomType(), bondIterator.currentData());
 
 					// Convolute the bound partial with the broadening function
-					Filters::convolveNormalised(tempgr.boundPartial(i, j), function);
+					Filters::convolve(tempgr.boundPartial(i, j), function);
 
 					// Sum into our broadened g(r) partial set
 					broadgr.boundPartial(i,j) += tempgr.boundPartial(i,j);
@@ -651,7 +575,6 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 		}
 
 		// TODO Parallelise this
-		printf("MiHALA!\n");
 
 		RefListIterator<SpeciesIntra,SpeciesAngle*> angleIterator(angleIntra);
 		while (SpeciesIntra* intra = angleIterator.iterate())
@@ -696,7 +619,7 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 					BroadeningFunction function = intraBroadening.broadeningFunction(typeI->atomType(), typeJ->atomType(), angleIterator.currentData());
 
 					// Convolute the bound partial with the broadening function
-					Filters::convolveNormalised(tempgr.boundPartial(i, j), function);
+					Filters::convolve(tempgr.boundPartial(i, j), function);
 
 					// Sum into our broadened g(r) partial set
 					broadgr.boundPartial(i,j) += tempgr.boundPartial(i,j);
@@ -808,7 +731,7 @@ bool RDFModule::sumUnweightedGR(ProcessPool& procPool, Module* module, GenericLi
 	while (Configuration* cfg = weightsIterator.iterate())
 	{
 		// Update fingerprint
-		fingerprint += fingerprint.isEmpty() ? CharString("%i", cfg->coordinateIndex()) : CharString("_%i", cfg->coordinateIndex());
+		fingerprint += fingerprint.isEmpty() ? CharString("%i", cfg->contentsVersion()) : CharString("_%i", cfg->contentsVersion());
 
 		// Calculate weighting factor
 		double weight = ((weightsIterator.currentData() / totalWeight) * cfg->atomicDensity()) / rho0;
@@ -877,7 +800,7 @@ bool RDFModule::sumUnweightedGR(ProcessPool& procPool, Module* parentModule, Mod
 	while (Configuration* cfg = weightsIterator.iterate())
 	{
 		// Update fingerprint
-		fingerprint += fingerprint.isEmpty() ? CharString("%i", cfg->coordinateIndex()) : CharString("_%i", cfg->coordinateIndex());
+		fingerprint += fingerprint.isEmpty() ? CharString("%i", cfg->contentsVersion()) : CharString("_%i", cfg->contentsVersion());
 
 		// Calculate weighting factor
 		double weight = (weightsIterator.currentData() * cfg->atomicDensity()) / rho0;
@@ -923,11 +846,6 @@ bool RDFModule::testReferencePartials(PartialSet& setA, PartialSet& setB, double
 			error = Error::percent(setA.unboundPartial(n,m), setB.unboundPartial(n,m));
 			Messenger::print("Test reference unbound partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 			if (error > testThreshold) return false;
-
-			// Bragg reference
-			error = Error::percent(setA.braggPartial(n,m), setB.braggPartial(n,m));
-			Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-			if (error > testThreshold) return false;
 		}
 	}
 
@@ -972,12 +890,12 @@ bool RDFModule::testReferencePartial(const PartialSet& partials, double testThre
 }
 
 // Test calculated vs reference data (two source sets)
-bool RDFModule::testReferencePartials(const DataStore& testData, double testThreshold, const PartialSet& partials, const char* prefix)
+bool RDFModule::testReferencePartials(const Data1DStore& testData, double testThreshold, const PartialSet& partials, const char* prefix)
 {
 	LineParser parser;
 
 	// Loop over supplied test data and see if we can locate it amongst our PartialSets
-	ListIterator<Data1D> dataIterator(testData.data1D());
+	ListIterator<Data1D> dataIterator(testData.data());
 	while (Data1D* data = dataIterator.iterate())
 	{
 		// Grab the name, replace hyphens with '-', and parse the string into arguments
@@ -998,12 +916,12 @@ bool RDFModule::testReferencePartials(const DataStore& testData, double testThre
 }
 
 // Test calculated vs reference data (two source sets)
-bool RDFModule::testReferencePartials(const DataStore& testData, double testThreshold, const PartialSet& partialsA, const char* prefixA, const PartialSet& partialsB, const char* prefixB)
+bool RDFModule::testReferencePartials(const Data1DStore& testData, double testThreshold, const PartialSet& partialsA, const char* prefixA, const PartialSet& partialsB, const char* prefixB)
 {
 	LineParser parser;
 
 	// Loop over supplied test data and see if we can locate it amongst our PartialSets
-	ListIterator<Data1D> dataIterator(testData.data1D());
+	ListIterator<Data1D> dataIterator(testData.data());
 	while (Data1D* data = dataIterator.iterate())
 	{
 		// Grab the name, replace hyphens with '-', and parse the string into arguments

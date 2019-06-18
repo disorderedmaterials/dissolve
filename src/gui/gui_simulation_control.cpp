@@ -53,6 +53,11 @@ void DissolveWindow::on_ControlRunButton_clicked(bool checked)
 	ui.SimulationRunAction->trigger();
 }
 
+void DissolveWindow::on_ControlStepButton_clicked(bool checked)
+{
+	ui.SimulationStepAction->trigger();
+}
+
 void DissolveWindow::on_ControlPauseButton_clicked(bool checked)
 {
 	ui.SimulationPauseAction->trigger();
@@ -67,6 +72,7 @@ void DissolveWindow::setWidgetsForRun()
 {
 	// Disable / enable controls
 	ui.ControlRunButton->setEnabled(false);
+	ui.ControlStepButton->setEnabled(false);
 	ui.ControlPauseButton->setEnabled(true);
 
 	// Disable sensitive controls in all tabs
@@ -80,6 +86,7 @@ void DissolveWindow::setWidgetsAfterRun()
 {
 	// Disable / enable controls
 	ui.ControlRunButton->setEnabled(true);
+	ui.ControlStepButton->setEnabled(true);
 	ui.ControlPauseButton->setEnabled(false);
 
 	// Enable necessary controls in all tabs

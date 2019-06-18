@@ -4,6 +4,9 @@ add_library(importmodule
   definition.cpp
   formats.cpp
   functions_coordinates.cpp
+  functions_coordinates_dlpoly.cpp
+  functions_coordinates_epsr.cpp
+  functions_coordinates_xyz.cpp
   functions_data1d.cpp
   functions_forces.cpp
   options.cpp

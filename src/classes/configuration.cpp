@@ -78,16 +78,13 @@ void Configuration::clear()
 
 	// Reset box / Cells
 	requestedCellDivisionLength_ = 10.0;
-	coordinateIndex_ = 0;
+	contentsVersion_.zero();
 
 	// Reset set-up
 	rdfBinWidth_ = 0.025;
 	rdfRange_ = -1.0;
 	requestedRDFRange_ = -2.0;
 	temperature_ = 300.0;
-	braggQMax_ = 0.01;
-	braggQMax_ = 2.0;
-	braggMultiplicity_.set(1,1,1);
 }
 
 /*
@@ -157,42 +154,6 @@ void Configuration::setRequestedRDFRange(double range)
 double Configuration::requestedRDFRange()
 {
 	return requestedRDFRange_;
-}
-
-// Set minimum Q value for Bragg calculation
-void Configuration::setBraggQMin(double qMin)
-{
-	braggQMin_ = qMin;
-}
-
-// Return minimum Q value for Bragg calculation
-double Configuration::braggQMin()
-{
-	return braggQMin_;
-}
-
-// Set maximum Q value for Bragg calculation
-void Configuration::setBraggQMax(double qMax)
-{
-	braggQMax_ = qMax;
-}
-
-// Return maximum Q value for Bragg calculation
-double Configuration::braggQMax()
-{
-	return braggQMax_;
-}
-
-// Set multiplicities reflecting any crystal supercell
-void Configuration::setBraggMultiplicity(Vec3<int> mult)
-{
-	braggMultiplicity_ = mult;
-}
-
-// Return multiplicities reflecting any crystal supercell
-Vec3<int> Configuration::braggMultiplicity()
-{
-	return braggMultiplicity_;
 }
 
 /*

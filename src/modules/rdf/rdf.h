@@ -24,7 +24,7 @@
 
 #include "module/module.h"
 #include "classes/partialset.h"
-#include "classes/datastore.h"
+#include "classes/data1dstore.h"
 #include "math/pairbroadeningfunction.h"
 
 // Forward Declarations
@@ -81,12 +81,6 @@ class RDFModule : public Module
 	static PartialsMethod partialsMethod(const char* s);
 	// Return character string for PartialsMethod
 	static const char* partialsMethod(PartialsMethod pm);
-	// Averaging scheme enum
-	enum AveragingScheme { SimpleAveraging, ExponentialAveraging, nAveragingSchemes };
-	// Convert character string to AveragingScheme
-	static AveragingScheme averagingScheme(const char* s);
-	// Return character string for AveragingScheme
-	static const char* averagingScheme(AveragingScheme as);
 
 
 	/*
@@ -102,7 +96,7 @@ class RDFModule : public Module
 	 */
 	private:
 	// Test data
-	DataStore testData_;
+	Data1DStore testData_;
 
 	private:
 	// Calculate partial g(r) in serial with simple double-loop
@@ -111,8 +105,6 @@ class RDFModule : public Module
 	bool calculateGRSimple(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet);
 	// Calculate partial g(r) utilising Cell neighbour lists
 	bool calculateGRCells(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet);
-	// Perform averaging of named partial g(r)
-	bool performGRAveraging(GenericList& moduleData, const char* name, const char* prefix, int nSetsInAverage, RDFModule::AveragingScheme averagingScheme);
 
 	public:
 	// (Re)calculate partial g(r) for the specified Configuration
@@ -130,9 +122,9 @@ class RDFModule : public Module
 	// Test calculated partial against supplied reference data
 	static bool testReferencePartial(const PartialSet& partials, double testThreshold, const Data1D& testData, const char* typeIorTotal, const char* typeJ = NULL, const char* target = NULL);
 	// Test calculated vs reference data (two source sets)
-	static bool testReferencePartials(const DataStore& testData, double testThreshold, const PartialSet& partials, const char* prefix);
+	static bool testReferencePartials(const Data1DStore& testData, double testThreshold, const PartialSet& partials, const char* prefix);
 	// Test calculated vs reference data (two source sets)
-	static bool testReferencePartials(const DataStore& testData, double testThreshold, const PartialSet& partialsA, const char* prefixA, const PartialSet& partialsB, const char* prefixB);
+	static bool testReferencePartials(const Data1DStore& testData, double testThreshold, const PartialSet& partialsA, const char* prefixA, const PartialSet& partialsB, const char* prefixB);
 
 
 	/*

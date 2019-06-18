@@ -42,8 +42,7 @@ void Configuration::empty()
 	box_ = NULL;
 	cells_.clear();
 
-	coordinateIndex_ = 0;
-	++version_;
+	++contentsVersion_;
 }
 
 // Initialise all content arrays
@@ -516,6 +515,12 @@ AtomType* Configuration::usedAtomType(int index)
 	return usedAtomTypes_.atomType(index);
 }
 
+// Return specified used type data
+AtomTypeData* Configuration::usedAtomTypeData(int index)
+{
+	return usedAtomTypes_[index];
+}
+
 // Return first AtomTypeData for this Configuration
 AtomTypeData* Configuration::usedAtomTypes()
 {
@@ -534,17 +539,16 @@ int Configuration::nUsedAtomTypes() const
 	return usedAtomTypes_.nItems();
 }
 
-// Return current coordinate index
-int Configuration::coordinateIndex() const
+// Return version of current contents
+int Configuration::contentsVersion() const
 {
-	return coordinateIndex_;
+	return contentsVersion_;
 }
 
-// Increment current coordinate index
-void Configuration::incrementCoordinateIndex()
+// Increment version of current contents
+void Configuration::incrementContentsVersion()
 {
-	++coordinateIndex_;
-	++version_;
+	++contentsVersion_;
 }
 
 // Load coordinates from file

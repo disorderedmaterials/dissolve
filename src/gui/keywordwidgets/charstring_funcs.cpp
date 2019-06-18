@@ -27,7 +27,7 @@ CharStringKeywordWidget::CharStringKeywordWidget(QWidget* parent, ModuleKeywordB
 {
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<CharStringModuleKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base module keyword into CharStringModuleKeyword.\n");
+	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into CharStringModuleKeyword.\n", keyword->keyword());
 	else
 	{
 		setText(keyword_->asString());

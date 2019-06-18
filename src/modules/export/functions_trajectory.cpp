@@ -48,7 +48,7 @@ bool ExportModule::writeTrajectory(TrajectoryExportFileFormat::TrajectoryExportF
 	{
 		// if (format == OneThatNeedsAHeader) result = writeAHeader(parser, cfg);
 	}
-	
+
 	// Write frame in supplied format
 	if (format == TrajectoryExportFileFormat::XYZTrajectory) result = writeXYZTrajectory(parser, cfg);
 	else result = Messenger::error("Unrecognised trajectory format - '%s'.\nKnown formats are: %s.\n", format, TrajectoryExportFileFormat().formats());
@@ -63,8 +63,8 @@ bool ExportModule::writeXYZTrajectory(LineParser& parser, Configuration* cfg)
 {
 	// Write number of atoms and title
 	if (!parser.writeLineF("%i\n", cfg->nAtoms())) return false;
-	if (!parser.writeLineF("%s @ %i\n", cfg->name(), cfg->coordinateIndex())) return false;
-	
+	if (!parser.writeLineF("%s @ %i\n", cfg->name(), cfg->contentsVersion())) return false;
+
 	// Write Atoms
 	for (int n=0; n<cfg->nAtoms(); ++n)
 	{

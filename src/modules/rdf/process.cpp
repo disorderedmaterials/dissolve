@@ -26,6 +26,7 @@
 #include "classes/species.h"
 #include "classes/weights.h"
 #include "genericitems/listhelper.h"
+#include "math/averaging.h"
 
 // Run main processing
 bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
@@ -46,22 +47,12 @@ bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 	CharString varName;
 
-	GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : dissolve.processingModuleData();
-
 	const int averaging = keywords_.asInt("Averaging");
-	RDFModule::AveragingScheme averagingScheme = RDFModule::averagingScheme(keywords_.asString("AveragingScheme"));
-	if (averagingScheme == RDFModule::nAveragingSchemes)
-	{
-		Messenger::error("RDF: Invalid averaging scheme '%s' found.\n", keywords_.asString("AveragingScheme"));
-		return false;
-	}
+	Averaging::AveragingScheme averagingScheme = Averaging::averagingSchemes().option(keywords_.asString("AveragingScheme"));
+	if (averagingScheme == Averaging::nAveragingSchemes) return Messenger::error("Invalid averaging scheme '%s' found.\n", keywords_.asString("AveragingScheme"));
 	PairBroadeningFunction& intraBroadening = KeywordListHelper<PairBroadeningFunction>::retrieve(keywords_, "IntraBroadening", PairBroadeningFunction());
 	RDFModule::PartialsMethod method = RDFModule::partialsMethod(keywords_.asString("Method"));
-	if (method == RDFModule::nPartialsMethods)
-	{
-		Messenger::error("RDF: Invalid calculation method '%s' found.\n", keywords_.asString("Method"));
-		return false;
-	}
+	if (method == RDFModule::nPartialsMethods) return Messenger::error("RDF: Invalid calculation method '%s' found.\n", keywords_.asString("Method"));
 	const bool allIntra = true;
 	const bool internalTest = keywords_.asBool("InternalTest");
 	const bool saveData = keywords_.asBool("Save");
@@ -69,7 +60,7 @@ bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 	// Print argument/parameter summary
 	if (averaging <= 1) Messenger::print("RDF: No averaging of partials will be performed.\n");
-	else Messenger::print("RDF: Partials will be averaged over %i sets (scheme = %s).\n", averaging, RDFModule::averagingScheme(averagingScheme));
+	else Messenger::print("RDF: Partials will be averaged over %i sets (scheme = %s).\n", averaging, Averaging::averagingSchemes().option(averagingScheme));
 	if (intraBroadening.function() == PairBroadeningFunction::NoFunction) Messenger::print("RDF: No broadening will be applied to intramolecular g(r).");
 	else Messenger::print("RDF: Broadening to be applied to intramolecular g(r) is %s.", intraBroadening.summary().get());
 	Messenger::print("RDF: Calculation method is '%s'.\n", RDFModule::partialsMethod(method));
@@ -93,11 +84,28 @@ bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		calculateGR(procPool, cfg, method, allIntra, alreadyUpToDate);
 		PartialSet& originalgr = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "OriginalGR");
 
+		// Perform averaging of unweighted partials if requested, and if we're not already up-to-date
+		if ((averaging > 1) && (!alreadyUpToDate))
+		{
+			// Store the current fingerprint, since we must ensure we retain it in the averaged T.
+			CharString currentFingerprint = originalgr.fingerprint();
+
+			Averaging::average<PartialSet>(cfg->moduleData(), "OriginalGR", "", averaging, averagingScheme);
+
+			// Need to rename data within the contributing datasets to avoid clashes with the averaged data
+			for (int n=averaging; n>0; --n)
+			{
+				if (!cfg->moduleData().contains(CharString("OriginalGR_%i", n))) continue;
+				PartialSet& p = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), CharString("OriginalGR_%i", n));
+				p.setObjectTags(CharString("%s//OriginalGR", cfg->niceName()), CharString("Avg%i", n));
+			}
+
+			// Re-set the object names and fingerprints of the partials
+			originalgr.setFingerprint(currentFingerprint);
+		}
+
 		// Set names of resources (Data1D) within the PartialSet
 		originalgr.setObjectTags(CharString("%s//OriginalGR", cfg->niceName()));
-
-		// Perform averaging of unweighted partials if requested, and if we're not already up-to-date
-		if ((averaging > 1) && (!alreadyUpToDate)) performGRAveraging(cfg->moduleData(), "OriginalGR", "", averaging, averagingScheme);
 
 		// Perform internal test of original g(r)?
 		if (internalTest)
