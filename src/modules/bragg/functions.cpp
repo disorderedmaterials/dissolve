@@ -358,7 +358,7 @@ bool BraggModule::formReflectionFunctions(ProcessPool& procPool, Configuration* 
 	for (int n=0; n<braggPartials.linearArraySize(); ++n) braggPartials.linearArray()[n].values() = 0.0;
 
 	// Loop over pairs of atom types, adding in contributions from our calculated BraggReflections
-	double qCentre, inten, factor;
+	double qCentre, factor;
 	int bin;
 	AtomTypeData* atd1 = cfg->usedAtomTypes();
 	for (int typeI = 0; typeI < nTypes; ++typeI, atd1 = atd1->next)
@@ -376,16 +376,13 @@ bool BraggModule::formReflectionFunctions(ProcessPool& procPool, Configuration* 
 				// Get q value and intensity of reflection
 				qCentre = braggReflections.constAt(n).q();
 				bin = qCentre / qDelta;
-				inten = braggReflections.constAt(n).intensity(typeI, typeJ);
 
-				// Account for doubling of partials between unlike atom types
-				factor = (typeI == typeJ ? 1.0 : 2.0);
-
-				partial.value(bin) += inten * factor;
+				partial.value(bin) += braggReflections.constAt(n).intensity(typeI, typeJ);
 			}
 
-			// Add this partial into the total function
+			// Add this partial into the total function, accounting for doubling of partials between unlike atom types
 			braggTotal += partial;
+			if (typeI != typeJ) braggTotal += partial;
 		}
 	}
 
