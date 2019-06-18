@@ -304,12 +304,13 @@ bool BraggModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cfg,
 
 	// Normalise intensities against number of atoms and unit cell multiplicity
 	AtomTypeData* atd1 = cfg->usedAtomTypes();
+	const double divisor = 1.0 / (nAtoms * multiplicity.x * multiplicity.y * multiplicity.z);
 	for (int i = 0; i<cfg->nUsedAtomTypes(); ++i, atd1 = atd1->next)
 	{
 		AtomTypeData* atd2 = atd1;
 		for (int j = i; j<cfg->nUsedAtomTypes(); ++j, atd2 = atd2->next)
 		{
-			for (m=0; m<nReflections; ++m) reflections[m].scaleIntensity(i, j, 1.0 / (nAtoms * multiplicity.x * multiplicity.y * multiplicity.z));
+			for (m=0; m<nReflections; ++m) reflections[m].scaleIntensity(i, j, divisor);
 		}
 	}
 
