@@ -254,7 +254,7 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			{
 				for (int j=i; j<unweightedsq.nAtomTypes(); ++j)
 				{
-					// Subtract self-scattering level
+					// Subtract self-scattering level if types are equivalent
 					if (i == j) braggPartials.at(i,i) -= cfg->usedAtomTypeData(i)->fraction();
 
 					// Remove atomic fraction normalisation
