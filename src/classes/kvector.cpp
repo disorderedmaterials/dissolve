@@ -150,6 +150,7 @@ void KVector::calculateIntensities(BraggReflection* reflectionArray)
 #endif
 	// Calculate final intensities from stored cos/sin terms
 	// Take account of the half-sphere, doubling intensities of all k-vectors not on h == 0
+	// Do *not* multiply cross-terms (i != j) by 2 - we want to generate the unmultiplied intensity for consistency with other objects
 	int i, j, nTypes = cosTerms_.nItems(), halfSphereNorm = (hkl_.x == 0 ? 1 : 2);
 	double intensity;
 	BraggReflection& braggReflection = reflectionArray[braggReflectionIndex_];
