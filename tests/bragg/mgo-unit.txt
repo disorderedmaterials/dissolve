@@ -80,7 +80,6 @@ Layer  'Main Processing'
 
     Configuration  'Bulk'
 
-    Multiplicity  1  1  1 
     QMax  10.0
     SaveReflections  On
   EndModule
