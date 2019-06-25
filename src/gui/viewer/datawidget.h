@@ -60,16 +60,30 @@ class DataWidget : public QWidget
 	void on_ViewFollowAllButton_clicked(bool checked);
 	void on_ViewFollowXButton_clicked(bool checked);
 	void on_ViewFollowXLengthSpin_valueChanged(double value);
+	// Data
+	void on_DataToggleTreeButton_clicked(bool checked);
 
 
 	/*
-	 * Signals / Slots
+	 * Update Functions
 	 */
+	private:
+	// Whether the widget is currently refreshing
+	bool refreshing_;
+
+	private:
+	// Data tree top-level item update function
+	void dataTreeTopLevelUpdateFunction(QTreeWidget* treeWidget, int topLevelItemIndex, RenderableGroup* data, bool createItem);
+	// Data tree item update function
+	void dataTreeItemUpdateFunction(QTreeWidgetItem* parentItem, int childIndex, Renderable* data, bool createItem);
+
 	public slots:
 	// Update toolbar
 	void updateToolbar();
 	// Update status bar
 	void updateStatusBar();
+	// Update data tree
+	void updateDataTree();
 };
 
 #endif
