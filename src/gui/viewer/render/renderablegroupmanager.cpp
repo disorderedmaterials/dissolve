@@ -112,6 +112,12 @@ RenderableGroup* RenderableGroupManager::group(Renderable* renderable)
 	return NULL;
 }
 
+// Return current RenderableGroups in use
+const List<RenderableGroup>& RenderableGroupManager::groups() const
+{
+	return groups_;
+}
+
 // Remove Renderable from its specified group
 void RenderableGroupManager::removeFromGroup(Renderable* renderable)
 {

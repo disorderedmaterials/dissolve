@@ -55,6 +55,8 @@ class RenderableGroupManager
 	RenderableGroup* group(const char* name);
 	// Return group for specified Renderable, if one has been assigned
 	RenderableGroup* group(Renderable* renderable);
+	// Return current RenderableGroups in use
+	const List<RenderableGroup>& groups() const;
 	// Remove Renderable from its specified group
 	void removeFromGroup(Renderable* renderable);
 	// Empty all groups of Renderables
