@@ -1,5 +1,5 @@
 /*
-	*** Graph Widget - Functions 
+	*** Data Widget - Functions
 	*** src/gui/viewer/datawidget_funcs.cpp
 	Copyright T. Youngs 2013-2019
 

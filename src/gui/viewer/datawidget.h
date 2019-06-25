@@ -1,5 +1,5 @@
 /*
-	*** Graph Widget
+	*** Data Widget
 	*** src/gui/viewer/datawidget.h
 	Copyright T. Youngs 2013-2019
 
@@ -27,7 +27,7 @@
 // Forward Declarations
 /* none */
 
-// Graph Widget
+// Data Widget
 class DataWidget : public QWidget
 {
 	// All Qt declarations must include this macro
