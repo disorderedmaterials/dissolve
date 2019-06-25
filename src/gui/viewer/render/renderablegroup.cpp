@@ -83,6 +83,12 @@ bool RenderableGroup::usedByRenderable(Renderable* renderable) const
 	return renderables_.contains(renderable);
 }
 
+// Return list of Renderables using this group
+const RefList<Renderable,int>& RenderableGroup::renderables() const
+{
+	return renderables_;
+}
+
 // Return whether the group is empty
 bool RenderableGroup::isEmpty() const
 {

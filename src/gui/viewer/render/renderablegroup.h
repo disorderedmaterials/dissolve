@@ -62,6 +62,8 @@ class RenderableGroup : public ListItem<RenderableGroup>
 	void removeRenderable(Renderable* renderable);
 	// Return whether the group is used by the specified renderable
 	bool usedByRenderable(Renderable* renderable) const;
+	// Return list of Renderables using this group
+	const RefList<Renderable,int>& renderables() const;
 	// Return whether the group is empty
 	bool isEmpty() const;
 	// Empty the group, removing all Renderable targets
