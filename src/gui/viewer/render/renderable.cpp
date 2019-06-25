@@ -241,7 +241,7 @@ void Renderable::setVisible(bool visible)
 bool Renderable::isVisible() const
 {
 	// Group visibility overrides our own...
-	return (group_ ? group->isVisible() : visible_);
+	return (group_ ? group_->isVisible() : visible_);
 }
 
 // Set display style index
