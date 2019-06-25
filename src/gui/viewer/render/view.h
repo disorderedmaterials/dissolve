@@ -262,14 +262,6 @@ class View
 	void setFlatLabelsIn3D(bool flat);
 	// Whether axis text labels are drawn flat in 3D views
 	bool flatLabelsIn3D();
-
-
-	/*
-	 * Interaction
-	 */
-	public:
-	// Return axis title at specified coordinates (if any)
-	int axisTitleAt(int screenX, int screenY);
 };
 
 #endif

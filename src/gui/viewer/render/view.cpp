@@ -1215,30 +1215,3 @@ bool View::flatLabelsIn3D()
 {
 	return flatLabelsIn3D_;
 }
-
-/*
- * Interaction
- */
-
-// TODO Old code, unused. Useful?
-// Return axis title at specified coordinates (if any)
-int View::axisTitleAt(int screenX, int screenY)
-{
-	// Get view matrix inverse and FontInstance
-	Matrix4 viewRotInverse = viewRotationInverse();
-
-	Vec3<double> labelMin, labelMax;
-	for (int axis=0; axis<3; ++axis)
-	{
-		// Reset bounding box extreme values
-		labelMin.set(1e9,1e9,1e9);
-		labelMax = -labelMin;
-
-		// Calculate orthogonal bounding cuboid for this axis title (local coordinates)
-		Cuboid cuboid = axes_.titlePrimitive(axis).boundingCuboid(fontInstance_, viewRotInverse, textZScale_);
-
-		// Determine whether the screen point specified is within the projected cuboid
-		if (cuboid.isPointWithinProjection(screenX, screenY, viewMatrix_, projectionMatrix_, viewportMatrix_)) return axis;
-	}
-	return -1;
-}

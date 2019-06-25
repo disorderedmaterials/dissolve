@@ -54,8 +54,6 @@ class Cuboid
 	Vec3<double> minima() const;
 	// Return maxima for cuboid
 	Vec3<double> maxima() const;
-	// Return whether 2D coordinates are within projection of cuboid
-	bool isPointWithinProjection(int x, int y, Matrix4 viewMatrix, Matrix4 projectionMatrix, const uint* viewPort);
 };
 
 #endif
