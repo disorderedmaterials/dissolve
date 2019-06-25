@@ -45,6 +45,8 @@ void BaseViewer::ownRenderable(Renderable* newRenderable)
 
 	// Own the new Renderable
 	renderables_.own(newRenderable);
+
+	emit(renderableAdded());
 }
 
 // Create Renderable by type and object identifier
@@ -64,6 +66,8 @@ Renderable* BaseViewer::createRenderable(Renderable::RenderableType type, const 
 		if (groupName) groupManager_.addToGroup(renderable, groupName);
 	}
 
+	emit(renderableAdded());
+
 	return renderable;
 }
 
@@ -73,6 +77,8 @@ void BaseViewer::removeRenderable(Renderable* data)
 	renderables_.remove(data);
 
 	postRedisplay();
+
+	emit(renderableRemoved());
 }
 
 // Clear all Renderables
@@ -81,6 +87,8 @@ void BaseViewer::clearRenderables()
 	renderables_.clear();
 
 	postRedisplay();
+
+	emit(renderableRemoved());
 }
 
 // Return number of Renderables

@@ -90,6 +90,10 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	void notifyDataChanged();
 
 	signals:
+	// A Renderable has been added for display
+	void renderableAdded();
+	// A Renderable has been removed from display
+	void renderableRemoved();
 	// Notify that the represented data has been modified
 	void dataModified(bool invalidatesSetUp = false);
 	// Notify that any other GUI controls displaying the underlying data should be refreshed
