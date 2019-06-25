@@ -45,7 +45,7 @@ template <class T, class I> class TreeWidgetUpdater
 		{
 			// Our QTreeWidgetItem may or may not be populated, and with different items to those in the list.
 
-			// If there is an item already at this child posision, check it
+			// If there is an item already at this child position, check it
 			// If it represents the current pointer data, just update it and move on. Otherwise, delete it and check again
 			while (count < parentItem->childCount())
 			{
@@ -92,7 +92,7 @@ template <class T, class I, class D> class TreeWidgetRefListUpdater
 		{
 			// Our QTreeWidgetItem may or may not be populated, and with different items to those in the list.
 
-			// If there is an item already at this child posision, check it
+			// If there is an item already at this child position, check it
 			// If it represents the current pointer data, just update it and move on. Otherwise, delete it and check again
 			while (count < parentItem->childCount())
 			{
