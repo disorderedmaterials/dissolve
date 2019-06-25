@@ -29,6 +29,7 @@ RenderableGroup::RenderableGroup(const char* name, ColourDefinition::StockColour
 	stockColour_ = colour;
 	hasVerticalShift_ = false;
 	verticalShift_ = 0.0;
+	visible_ = true;
 
 	// Set up the ColourDefinition to be single (stock) colour
 	colour_.setStyle(ColourDefinition::SingleColourStyle);
@@ -111,6 +112,18 @@ void RenderableGroup::setVerticalShiftInRenderables()
 		renderable->setTransformEnabled(1, hasVerticalShift_);
 		renderable->setTransformEquation(1, CharString("y+%f", verticalShift_));
 	}
+}
+
+// Set whether data is visible
+void RenderableGroup::setVisible(bool visible)
+{
+	visible_ = visible;
+}
+
+// Return whether data is visible
+bool RenderableGroup::isVisible() const
+{
+	return visible_;
 }
 
 // Return colour associated to the group

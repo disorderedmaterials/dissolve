@@ -72,6 +72,8 @@ class RenderableGroup : public ListItem<RenderableGroup>
 	 * Style
 	 */
 	private:
+	// Whether data within the group is visible
+	bool visible_;
 	// Colour associated to this group
 	ColourDefinition::StockColour stockColour_;
 	// Colour definition for this group
@@ -86,6 +88,10 @@ class RenderableGroup : public ListItem<RenderableGroup>
 	void setVerticalShiftInRenderables();
 
 	public:
+	// Set whether data is visible
+	void setVisible(bool visible);
+	// Return whether data is visible
+	bool isVisible() const;
 	// Return colour associated to the group
 	ColourDefinition::StockColour stockColour() const;
 	// Return colour definition for the group

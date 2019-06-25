@@ -240,7 +240,8 @@ void Renderable::setVisible(bool visible)
 // Return whether data is visible
 bool Renderable::isVisible() const
 {
-	return visible_;
+	// Group visibility overrides our own...
+	return (group_ ? group->isVisible() : visible_);
 }
 
 // Set display style index
