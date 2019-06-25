@@ -24,6 +24,7 @@
 #include "gui/viewer/render/fontinstance.h"
 #include "gui/viewer/render/symbol.h"
 #include "base/sysfunc.h"
+#include <QtGui/qopengl.h>
 
 // Static members
 TextPrimitive* TextPrimitive::target_ = NULL;
