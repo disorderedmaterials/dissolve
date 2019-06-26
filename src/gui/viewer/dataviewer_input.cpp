@@ -58,6 +58,13 @@ void DataViewer::mouseMoved(int dx, int dy)
 			}
 			break;
 		case (DataViewer::TranslateViewInteraction):
+			// Turn off autofollow if it is currently on...
+			if (view_.autoFollowType() != View::NoAutoFollow)
+			{
+				view_.setAutoFollowType(View::NoAutoFollow);
+				emit(controlAspectChanged());
+			}
+
 			// If this is a flat view, shift the axis limits rather than translating the view
 			if (view_.isFlatView()) view_.shiftFlatAxisLimits(dx, dy);
 			else view_.translateView(dx/15.0, dy/15.0, 0.0);
@@ -146,6 +153,13 @@ bool DataViewer::keyPressed(int key)
 			else view_.rotateView(mouseDownModifiers_.testFlag(Qt::ShiftModifier) ? 1.0 : 10.0, 0.0);
 			break;
 		case (Qt::Key_A):
+			// Turn off autofollow if it is currently on...
+			if (view_.autoFollowType() != View::NoAutoFollow)
+			{
+				view_.setAutoFollowType(View::NoAutoFollow);
+				emit(controlAspectChanged());
+			}
+
 			if (mouseDownModifiers_.testFlag(Qt::ShiftModifier))
 			{
 				// Show only top 20% of vertical axis
