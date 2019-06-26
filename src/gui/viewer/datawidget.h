@@ -53,15 +53,15 @@ class DataWidget : public QWidget
 	private slots:
 	// Interaction
 	void on_InteractionViewButton_clicked(bool checked);
+	// Graph
+	void on_GraphResetButton_clicked(bool checked);
+	void on_GraphFollowAllButton_clicked(bool checked);
+	void on_GraphFollowXButton_clicked(bool checked);
+	void on_GraphFollowXLengthSpin_valueChanged(double value);
 	// View
-	void on_ViewResetButton_clicked(bool checked);
+	void on_ViewToggleDataButton_clicked(bool checked);
 	void on_ViewAxesVisibleButton_clicked(bool checked);
 	void on_ViewCopyToClipboardButton_clicked(bool checked);
-	void on_ViewFollowAllButton_clicked(bool checked);
-	void on_ViewFollowXButton_clicked(bool checked);
-	void on_ViewFollowXLengthSpin_valueChanged(double value);
-	// Data
-	void on_DataToggleTreeButton_clicked(bool checked);
 
 
 	/*
@@ -76,6 +76,10 @@ class DataWidget : public QWidget
 	void dataTreeTopLevelUpdateFunction(QTreeWidget* treeWidget, int topLevelItemIndex, RenderableGroup* data, bool createItem);
 	// Data tree item update function
 	void dataTreeItemUpdateFunction(QTreeWidgetItem* parentItem, int childIndex, Renderable* data, bool createItem);
+
+	private slots:
+	// Data tree item changed
+	void on_DataTree_itemChanged(QTreeWidgetItem* item, int column);
 
 	public slots:
 	// Update toolbar

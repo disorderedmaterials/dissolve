@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>323</width>
+    <width>480</width>
     <height>345</height>
    </rect>
   </property>
@@ -145,7 +145,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="ToolbarVIewLabel">
+       <widget class="QLabel" name="ToolbarGraphLabel">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -162,7 +162,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="../main.qrc">:/viewer_toolbar/icons/viewer_toolbar_view.svg</pixmap>
+         <pixmap resource="../main.qrc">:/viewer_toolbar/icons/viewer_toolbar_graph.svg</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -170,7 +170,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="ViewResetButton">
+       <widget class="QToolButton" name="GraphResetButton">
         <property name="minimumSize">
          <size>
           <width>26</width>
@@ -207,6 +207,169 @@
         </property>
         <property name="autoExclusive">
          <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="GraphFollowAllButton">
+        <property name="minimumSize">
+         <size>
+          <width>26</width>
+          <height>26</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>26</width>
+          <height>26</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Follow abscissa, showing only data over the range specified</string>
+        </property>
+        <property name="text">
+         <string>FA</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../main.qrc">
+          <normaloff>:/viewer/icons/viewer_followall.svg</normaloff>
+          <normalon>:/viewer/icons/viewer_followall_on.svg</normalon>:/viewer/icons/viewer_followall.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="GraphFollowXButton">
+        <property name="minimumSize">
+         <size>
+          <width>26</width>
+          <height>26</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>26</width>
+          <height>26</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Follow abscissa, showing only data over the range specified</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../main.qrc">
+          <normaloff>:/viewer/icons/viewer_followx.svg</normaloff>
+          <normalon>:/viewer/icons/viewer_followx_on.svg</normalon>:/viewer/icons/viewer_followx.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="ExponentialSpin" name="GraphFollowXLengthSpin">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <property name="toolTip">
+         <string>Range over which to follow abscissa</string>
+        </property>
+        <property name="buttonSymbols">
+         <enum>QAbstractSpinBox::NoButtons</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="Line" name="line_2">
+        <property name="frameShadow">
+         <enum>QFrame::Sunken</enum>
+        </property>
+        <property name="lineWidth">
+         <number>2</number>
+        </property>
+        <property name="midLineWidth">
+         <number>1</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="ToolbarStyleLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16</width>
+          <height>16</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="../main.qrc">:/viewer_toolbar/icons/viewer_toolbar_view.svg</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="ViewToggleDataButton">
+        <property name="minimumSize">
+         <size>
+          <width>26</width>
+          <height>26</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>26</width>
+          <height>26</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Toggle data tree, listing all displayed datasets and groups</string>
+        </property>
+        <property name="text">
+         <string>FA</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../main.qrc">
+          <normaloff>:/viewer/icons/viewer_data.svg</normaloff>:/viewer/icons/viewer_data.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -294,170 +457,6 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="ViewFollowAllButton">
-        <property name="minimumSize">
-         <size>
-          <width>26</width>
-          <height>26</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>26</width>
-          <height>26</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Follow abscissa, showing only data over the range specified</string>
-        </property>
-        <property name="text">
-         <string>FA</string>
-        </property>
-        <property name="icon">
-         <iconset resource="../main.qrc">
-          <normaloff>:/viewer/icons/viewer_followall.svg</normaloff>
-          <normalon>:/viewer/icons/viewer_followall_on.svg</normalon>:/viewer/icons/viewer_followall.svg</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>20</width>
-          <height>20</height>
-         </size>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="ViewFollowXButton">
-        <property name="minimumSize">
-         <size>
-          <width>26</width>
-          <height>26</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>26</width>
-          <height>26</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Follow abscissa, showing only data over the range specified</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="../main.qrc">
-          <normaloff>:/viewer/icons/viewer_followx.svg</normaloff>
-          <normalon>:/viewer/icons/viewer_followx_on.svg</normalon>:/viewer/icons/viewer_followx.svg</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>20</width>
-          <height>20</height>
-         </size>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="ExponentialSpin" name="ViewFollowXLengthSpin">
-        <property name="font">
-         <font>
-          <pointsize>8</pointsize>
-         </font>
-        </property>
-        <property name="toolTip">
-         <string>Range over which to follow abscissa</string>
-        </property>
-        <property name="buttonSymbols">
-         <enum>QAbstractSpinBox::NoButtons</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="Line" name="line_2">
-        <property name="frameShadow">
-         <enum>QFrame::Sunken</enum>
-        </property>
-        <property name="lineWidth">
-         <number>2</number>
-        </property>
-        <property name="midLineWidth">
-         <number>1</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="ToolbarDataLabel">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16</width>
-          <height>16</height>
-         </size>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="pixmap">
-         <pixmap resource="../main.qrc">:/viewer_toolbar/icons/viewer_toolbar_view.svg</pixmap>
-        </property>
-        <property name="scaledContents">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="DataToggleTreeButton">
-        <property name="minimumSize">
-         <size>
-          <width>26</width>
-          <height>26</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>26</width>
-          <height>26</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Toggle data tree, listing all displayed datasets and groups</string>
-        </property>
-        <property name="text">
-         <string>FA</string>
-        </property>
-        <property name="icon">
-         <iconset resource="../main.qrc">
-          <normaloff>:/viewer/icons/viewer_followall.svg</normaloff>
-          <normalon>:/viewer/icons/viewer_followall_on.svg</normalon>:/viewer/icons/viewer_followall.svg</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>20</width>
-          <height>20</height>
-         </size>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -495,10 +494,10 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <property name="spacing">
-       <number>0</number>
+       <number>4</number>
       </property>
       <property name="leftMargin">
-       <number>0</number>
+       <number>4</number>
       </property>
       <property name="topMargin">
        <number>0</number>
@@ -510,24 +509,48 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QTreeWidget" name="DataTree">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
+       <widget class="QGroupBox" name="DataGroup">
+        <property name="title">
+         <string>Data / Groups</string>
         </property>
-        <attribute name="headerVisible">
-         <bool>false</bool>
-        </attribute>
-        <attribute name="headerStretchLastSection">
-         <bool>false</bool>
-        </attribute>
-        <column>
-         <property name="text">
-          <string notr="true">1</string>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <property name="spacing">
+          <number>4</number>
          </property>
-        </column>
+         <property name="leftMargin">
+          <number>4</number>
+         </property>
+         <property name="topMargin">
+          <number>4</number>
+         </property>
+         <property name="rightMargin">
+          <number>4</number>
+         </property>
+         <property name="bottomMargin">
+          <number>4</number>
+         </property>
+         <item>
+          <widget class="QTreeWidget" name="DataTree">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <attribute name="headerVisible">
+            <bool>false</bool>
+           </attribute>
+           <attribute name="headerStretchLastSection">
+            <bool>true</bool>
+           </attribute>
+           <column>
+            <property name="text">
+             <string notr="true">1</string>
+            </property>
+           </column>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
       <item>
