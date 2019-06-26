@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   aria-hidden="true"
+   focusable="false"
+   data-prefix="fas"
+   data-icon="chart-area"
+   class="svg-inline--fa fa-chart-area fa-w-16"
+   role="img"
+   viewBox="0 0 100 100"
+   version="1.1"
+   id="svg4"
+   sodipodi:docname="viewer_toolbar_graph.svg"
+   width="100"
+   height="100"
+   inkscape:version="0.92.2 5c3e80d, 2017-08-06">
+  <metadata
+     id="metadata10">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs8" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1163"
+     id="namedview6"
+     showgrid="false"
+     inkscape:zoom="7.375"
+     inkscape:cx="33.590128"
+     inkscape:cy="88.651604"
+     inkscape:window-x="1920"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg4" />
+  <path
+     d="M 88.125,70 C 89.15625,70 90,70.84375 90,71.875 v 6.25 C 90,79.15625 89.15625,80 88.125,80 H 11.875 C 10.84375,80 10,79.15625 10,78.125 V 21.875 C 10,20.84375 10.84375,20 11.875,20 h 6.25 C 19.15625,20 20,20.84375 20,21.875 V 70 Z M 68.234375,34.921875 55,43.75 41.671875,25.984375 C 40.875,24.921875 39.25,25 38.5625,26.140625 L 25,48.75 V 65 H 85 L 70.953125,35.65625 c -0.5,-1.015625 -1.78125,-1.359375 -2.71875,-0.734375 z"
+     id="path2"
+     inkscape:connector-curvature="0"
+     style="fill:#646464;stroke-width:1;fill-opacity:1" />
+</svg>
