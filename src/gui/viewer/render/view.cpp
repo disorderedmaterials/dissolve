@@ -885,6 +885,9 @@ void View::autoFollowData()
 		double yMin, yMax, yMinTest, yMaxTest;
 		for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next)
 		{
+			// Skip this Renderable if it is not currently visible
+			if (!rend->isVisible()) continue;
+
 			// Get y limits for the this data
 			rend->yRangeOverX(xMin, xMax, yMinTest, yMaxTest);
 			if (first)
@@ -965,6 +968,9 @@ Vec3<double> View::transformedDataMaxima()
 	Vec3<double> v, maxima;
 	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next)
 	{
+		// Skip this Renderable if it is not currently visible
+		if (!rend->isVisible()) continue;
+
 		if (nCounted == 0) maxima = rend->transformMax();
 		else
 		{
@@ -986,6 +992,9 @@ Vec3<double> View::transformedDataPositiveMinima()
 	Vec3<double> v, minima;
 	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next)
 	{
+		// Skip this Renderable if it is not currently visible
+		if (!rend->isVisible()) continue;
+
 		if (nCounted == 0) minima = rend->transformMinPositive();
 		else
 		{
@@ -1009,6 +1018,9 @@ Vec3<double> View::transformedDataPositiveMaxima()
 	Vec3<double> v, maxima;
 	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next)
 	{
+		// Skip this Renderable if it is not currently visible
+		if (!rend->isVisible()) continue;
+
 		if (nCounted == 0) maxima = rend->transformMaxPositive();
 		else
 		{
