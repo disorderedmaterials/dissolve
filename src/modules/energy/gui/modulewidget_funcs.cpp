@@ -164,12 +164,19 @@ void EnergyModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 	if (!currentConfiguration_) return;
 
 	// Add data targets
-	energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Total", currentConfiguration_->niceName(), module_->uniqueName()), "Total", "Total", "GROUP");
-	energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Inter", currentConfiguration_->niceName(), module_->uniqueName()), "Inter", "Inter", "GROUP1");
-	energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Intra", currentConfiguration_->niceName(), module_->uniqueName()), "Intra", "Intra", "GROUP2");
-	energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Bond", currentConfiguration_->niceName(), module_->uniqueName()), "Bond", "Bond", "GROUP3");
-	energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Angle", currentConfiguration_->niceName(), module_->uniqueName()), "Angle", "Angle", "GROUP4");
-	energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Torsion", currentConfiguration_->niceName(), module_->uniqueName()), "Torsion", "Torsion", "GROUP5");
+	Renderable* rend;
+	energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Total", currentConfiguration_->niceName(), module_->uniqueName()), "Total", "Total", "Totals");
+	rend = energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Inter", currentConfiguration_->niceName(), module_->uniqueName()), "Inter", "Inter", "Totals");
+	rend->setColour(ColourDefinition::RedStockColour);
+	rend = energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Intra", currentConfiguration_->niceName(), module_->uniqueName()), "Intra", "Intra", "Totals");
+	rend->setColour(ColourDefinition::BlueStockColour);
+
+	rend = energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Bond", currentConfiguration_->niceName(), module_->uniqueName()), "Bond", "Bond", "Intramolecular");
+	rend->setColour(ColourDefinition::GreenStockColour);
+	rend = energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Angle", currentConfiguration_->niceName(), module_->uniqueName()), "Angle", "Angle", "Intramolecular");
+	rend->setColour(ColourDefinition::PurpleStockColour);
+	rend = energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Torsion", currentConfiguration_->niceName(), module_->uniqueName()), "Torsion", "Torsion", "Intramolecular");
+	rend->setColour(ColourDefinition::OrangeStockColour);
 
 	updateControls();
 }
