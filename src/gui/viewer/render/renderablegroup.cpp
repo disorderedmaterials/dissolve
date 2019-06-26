@@ -26,14 +26,17 @@
 RenderableGroup::RenderableGroup(const char* name, ColourDefinition::StockColour colour) : ListItem<RenderableGroup>()
 {
 	name_ = name;
-	stockColour_ = colour;
-	hasVerticalShift_ = false;
-	verticalShift_ = 0.0;
+
 	visible_ = true;
 
-	// Set up the ColourDefinition to be single (stock) colour
-	colour_.setStyle(ColourDefinition::SingleColourStyle);
-	colour_.setSingleColour(ColourDefinition::stockColour(stockColour_));
+	colouringStyle_ = RenderableGroup::FixedGroupColouring;
+	automaticStockColourUsageCount_.initialise(ColourDefinition::nStockColours);
+	automaticStockColourUsageCount_= 0;
+	setFixedStockColour(ColourDefinition::BlackStockColour);
+
+	verticalShiftStyle_ = GroupVerticalShifting;
+	verticalShift_ = 0.0;
+	verticalShiftMultiplier_ = 1.0;
 }
 
 /*
@@ -53,25 +56,33 @@ const char* RenderableGroup::name() const
 // Associate Renderable to group (if it isn't already)
 void RenderableGroup::associateRenderable(Renderable* renderable)
 {
-	renderables_.addUnique(renderable);
+	if (renderables_.contains(renderable))
+	{
+		Messenger::warn("Group '%s' already contains the Renderable '%s', so not adding it again.\n", name(), renderable->name());
+		return;
+	}
+
+	renderables_.add(renderable);
+
+	// Apply colouring information if necessary
+	setRenderableColour(renderable);
 
 	// Apply vertical shift to the renderable if necessary
-	if (hasVerticalShift_)
-	{
-		renderable->setTransformEnabled(1, true);
-		renderable->setTransformEquation(1, CharString("y+%f", verticalShift_));
-	}
+	setRenderableVerticalShift(renderable, renderables_.nItems()-1);
 }
 
 // Remove Renderable from group (if it exists)
 void RenderableGroup::removeRenderable(Renderable* renderable)
 {
-	// Remove shift from the renderable first, if one is being applied
-	if (hasVerticalShift_ && renderables_.contains(renderable))
+	if (!renderables_.contains(renderable))
 	{
-		renderable->setTransformEnabled(1, false);
-		renderable->setTransformEquation(1, "y");
+		Messenger::warn("Renderable '%s' is not present in the group '%s', so can't remove it.\n", renderable->name(), name());
+		return;
 	}
+
+	// Remove shift from the renderable first, if one is being applied
+	renderable->setTransformEnabled(1, false);
+	renderable->setTransformEquation(1, "y");
 
 	renderables_.remove(renderable);
 	renderable->setGroup(NULL);
@@ -103,64 +114,126 @@ void RenderableGroup::empty()
 		renderables_.remove(renderable);
 		renderable->setGroup(NULL);
 	}
+
+	// Reset colour counters
+	automaticStockColourUsageCount_ = 0;
 }
 
 /*
- * Style
+ * Visibility
  */
 
-// Set vertical shift in all Renderables in the group via their transform equations
-void RenderableGroup::setVerticalShiftInRenderables()
-{
-	RefListIterator<Renderable,int> renderableIterator(renderables_);
-	while (Renderable* renderable = renderableIterator.iterate())
-	{
-		renderable->setTransformEnabled(1, hasVerticalShift_);
-		renderable->setTransformEquation(1, CharString("y+%f", verticalShift_));
-	}
-}
-
-// Set whether data is visible
+// Set whether group contents are visible
 void RenderableGroup::setVisible(bool visible)
 {
 	visible_ = visible;
 }
 
-// Return whether data is visible
+// Return whether group contents are visible
 bool RenderableGroup::isVisible() const
 {
 	return visible_;
 }
 
-// Return colour associated to the group
-ColourDefinition::StockColour RenderableGroup::stockColour() const
+/*
+ * Colouring
+ */
+
+// Set colour information for the supplied Renderable, according to our settings
+void RenderableGroup::setRenderableColour(Renderable* rend)
 {
-	return stockColour_;
+	if (colouringStyle_ == FixedGroupColouring) rend->setColour(fixedStockColour_);
+	else if (colouringStyle_ == AutomaticIndividualColouring) 
+	{
+		// Find the StockColour with the lowest usage count
+		int lowestId = 0;
+		for (int colourId = 0; colourId < ColourDefinition::nStockColours; ++colourId)
+		{
+			if (automaticStockColourUsageCount_[colourId] < automaticStockColourUsageCount_[lowestId]) lowestId = colourId;
+		}
+
+		rend->setColour((ColourDefinition::StockColour) lowestId);
+
+		++automaticStockColourUsageCount_[lowestId];
+	}
 }
 
-// Return colour definition for the group
-const ColourDefinition& RenderableGroup::colour() const
+// Set all renderable colours
+void RenderableGroup::setRenderableColours()
 {
-	return colour_;
+	RefListIterator<Renderable,int> renderableIterator(renderables_);
+	while (Renderable* renderable = renderableIterator.iterate()) setRenderableColour(renderable);
+}
+
+// Set colouring style for the group
+void RenderableGroup::setColouringStyle(RenderableGroup::GroupColouring colouringStyle)
+{
+	colouringStyle_ = colouringStyle;
+
+	setRenderableColours();
+}
+
+// Return colouring style for the group
+RenderableGroup::GroupColouring RenderableGroup::colouringStyle() const
+{
+	return colouringStyle_;
+}
+
+// Set fixed stock colour for the group
+void RenderableGroup::setFixedStockColour(ColourDefinition::StockColour stockColour)
+{
+	fixedStockColour_ = stockColour;
+
+	setRenderableColours();
+}
+
+// Return fixed stock colour associated to the group
+ColourDefinition::StockColour RenderableGroup::fixedStockColour() const
+{
+	return fixedStockColour_;
+}
+
+/*
+ * Vertical Shifting
+ */
+
+// Set vertical shift in specified Renderable
+void RenderableGroup::setRenderableVerticalShift(Renderable* renderable, int rendIndex)
+{
+	renderable->setTransformEnabled(1, verticalShiftStyle_ != PreventVerticalShifting);
+
+	if (verticalShiftStyle_ == GroupVerticalShifting) renderable->setTransformEquation(1, CharString("y+%f", verticalShift_ * verticalShiftMultiplier_));
+	if (verticalShiftStyle_ == IndividualVerticalShifting) renderable->setTransformEquation(1, CharString("y+%f", verticalShift_ * rendIndex));
+	else renderable->setTransformEquation(1, "y");
+}
+
+// Set vertical shift in all Renderables in the group via their transform equations
+void RenderableGroup::setRenderableVerticalShifts()
+{
+	int index = 0;
+	RefListIterator<Renderable,int> renderableIterator(renderables_);
+	while (Renderable* renderable = renderableIterator.iterate()) setRenderableVerticalShift(renderable, index++);
 }
 
 // Set whether vertical shifting is enabled in this group
-void RenderableGroup::setVerticalShift(bool enabled, double verticalShift)
+void RenderableGroup::setVerticalShiftStyle(RenderableGroup::VerticalShiftStyle shiftStyle)
 {
-	hasVerticalShift_ = enabled;
-	verticalShift_ = verticalShift;
+	verticalShiftStyle_ = shiftStyle;
 
-	setVerticalShiftInRenderables();
+	setRenderableVerticalShifts();
 }
 
-// Whether vertical shifting is enabled in this group
-bool RenderableGroup::hasVerticalShift() const
+// Return vertical shifting in force for this group
+RenderableGroup::VerticalShiftStyle RenderableGroup::verticalShiftStyle() const
 {
-	return hasVerticalShift_;
+	return verticalShiftStyle_;
 }
 
-// Return shift (in vertical axis) to apply to Renderables
-double RenderableGroup::verticalShift() const
+// Apply the specified vertical shift (if VerticalShiftStyle != PreventVerticalShifting)
+void RenderableGroup::applyVerticalShift(double dy, int groupIndex)
 {
-	return verticalShift_;
+	verticalShift_ = dy;
+	verticalShiftMultiplier_ = groupIndex;
+
+	setRenderableVerticalShifts();
 }

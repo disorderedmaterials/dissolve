@@ -44,7 +44,7 @@ NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget* parent, Module* module, Di
 	partialGRGraph_->view().axes().setTitle(1, "g(r)");
 	partialGRGraph_->view().axes().setMin(1, -1.0);
 	partialGRGraph_->view().axes().setMax(1, 1.0);
-	partialGRGraph_->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
+	partialGRGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 	partialGRGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Set up partial S(Q) graph
@@ -57,7 +57,7 @@ NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget* parent, Module* module, Di
 	partialSQGraph_->view().axes().setTitle(1, "S(Q)");
 	partialSQGraph_->view().axes().setMin(1, -1.0);
 	partialSQGraph_->view().axes().setMax(1, 1.0);
-	partialSQGraph_->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
+	partialSQGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 	partialSQGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Set up total G(r) graph
@@ -70,7 +70,7 @@ NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget* parent, Module* module, Di
 	totalGRGraph_->view().axes().setTitle(1, "g(r)");
 	totalGRGraph_->view().axes().setMin(1, -1.0);
 	totalGRGraph_->view().axes().setMax(1, 1.0);
-	totalGRGraph_->groupManager().setVerticalShift(RenderableGroupManager::NoVerticalShift);
+	totalGRGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::NoVerticalShift);
 	totalGRGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Set up total S(Q) graph
@@ -83,7 +83,7 @@ NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget* parent, Module* module, Di
 	totalFQGraph_->view().axes().setTitle(1, "S(Q)");
 	totalFQGraph_->view().axes().setMin(1, -1.0);
 	totalFQGraph_->view().axes().setMax(1, 1.0);
-	totalFQGraph_->groupManager().setVerticalShift(RenderableGroupManager::NoVerticalShift);
+	totalFQGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::NoVerticalShift);
 	totalFQGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	setGraphDataTargets(module_);

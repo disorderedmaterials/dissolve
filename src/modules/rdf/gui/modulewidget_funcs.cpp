@@ -44,7 +44,7 @@ RDFModuleWidget::RDFModuleWidget(QWidget* parent, Module* module, Dissolve& diss
 	partialsGraph_->view().axes().setTitle(1, "g(r)");
 	partialsGraph_->view().axes().setMin(1, -1.0);
 	partialsGraph_->view().axes().setMax(1, 1.0);
-	partialsGraph_->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
+	partialsGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 	partialsGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Set up total G(r) graph
@@ -57,7 +57,7 @@ RDFModuleWidget::RDFModuleWidget(QWidget* parent, Module* module, Dissolve& diss
 	totalsGraph_->view().axes().setTitle(1, "g(r)");
 	totalsGraph_->view().axes().setMin(1, -1.0);
 	totalsGraph_->view().axes().setMax(1, 1.0);
-	totalsGraph_->groupManager().setVerticalShift(RenderableGroupManager::OneVerticalShift);
+	totalsGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::OneVerticalShift);
 	totalsGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	refreshing_ = false;

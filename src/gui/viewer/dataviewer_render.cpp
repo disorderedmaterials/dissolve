@@ -46,7 +46,7 @@ void DataViewer::render2DOverlay()
 	CharString indicatorText;
 	if (view_.autoFollowType() == View::AllAutoFollow) indicatorText += "|A| ";
 	else if (view_.autoFollowType() == View::XAutoFollow) indicatorText += "A\\sub{X} ";
-	if (groupManager_.verticalShift() > 0) indicatorText.strcatf("S\\sub{%i}", groupManager_.verticalShift());
+	if (groupManager_.verticalShiftAmount() > 0) indicatorText.strcatf("S\\sub{%i}", groupManager_.verticalShiftAmount());
 	TextPrimitive indicatorPrimitive;
 	indicatorPrimitive.set(fontInstance_, indicatorText.get(), Vec3<double>(overlaySpacing, view_.viewportMatrix()[3] - overlaySpacing,0.0), TextPrimitive::TopLeftAnchor, Vec3<double>(), Matrix4(), overlayTextSize, false);
 	glColor3d(0.0, 0.0, 0.0);
@@ -81,7 +81,7 @@ void DataViewer::render2DOverlay()
 	while (Renderable* rend = legendEntryIterator.iterate())
 	{
 		// Grab copy of the relevant colour definition for this Renderable
-		ColourDefinition colourDefinition = groupManager_.colourDefinition(rend);
+		const ColourDefinition& colourDefinition = rend->colour();
 
 		// Draw line indicator
 		glPushMatrix();

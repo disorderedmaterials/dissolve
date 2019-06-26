@@ -49,7 +49,7 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, Dissolve
 	dataGraph_->view().axes().setTitle(1, "S(Q)");
 	dataGraph_->view().axes().setMin(1, -1.0);
 	dataGraph_->view().axes().setMax(1, 1.0);
-	dataGraph_->groupManager().setVerticalShift(RenderableGroupManager::HalfVerticalShift);
+	dataGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::HalfVerticalShift);
 	dataGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Partial S(Q) Graph
@@ -63,7 +63,7 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, Dissolve
 	partialSQGraph_->view().axes().setTitle(1, "S(Q)");
 	partialSQGraph_->view().axes().setMin(1, -1.0);
 	partialSQGraph_->view().axes().setMax(1, 1.0);
-	partialSQGraph_->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
+	partialSQGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 	partialSQGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Partial g(r) Graph
@@ -77,7 +77,7 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, Dissolve
 	partialGRGraph_->view().axes().setTitle(1, "g(r)");
 	partialGRGraph_->view().axes().setMin(1, -1.0);
 	partialGRGraph_->view().axes().setMax(1, 1.0);
-	partialGRGraph_->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
+	partialGRGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 	partialGRGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Delta phi(r) Graph
@@ -91,7 +91,7 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, Dissolve
 	deltaPhiRGraph_->view().axes().setTitle(1, "\\sym{Delta}g(r), \\sym{Delta}\\sym{phi}(\\it{r})");
 	deltaPhiRGraph_->view().axes().setMin(1, -1.0);
 	deltaPhiRGraph_->view().axes().setMax(1, 1.0);
-	deltaPhiRGraph_->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
+	deltaPhiRGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 	deltaPhiRGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Phi(r) Magnitude Graph

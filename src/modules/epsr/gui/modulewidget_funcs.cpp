@@ -48,7 +48,7 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	FQGraph_->view().axes().setTitle(1, "F(\\it{Q})");
 	FQGraph_->view().axes().setMin(1, -1.0);
 	FQGraph_->view().axes().setMax(1, 1.0);
-	FQGraph_->groupManager().setVerticalShift(RenderableGroupManager::HalfVerticalShift);
+	FQGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::HalfVerticalShift);
 	FQGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// F(Q) Fitting Graph
@@ -62,7 +62,7 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	FQFitGraph_->view().axes().setTitle(1, "\\sym{Delta}F(\\it{Q})");
 	FQFitGraph_->view().axes().setMin(1, -1.0);
 	FQFitGraph_->view().axes().setMax(1, 1.0);
-	FQFitGraph_->groupManager().setVerticalShift(RenderableGroupManager::HalfVerticalShift);
+	FQFitGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::HalfVerticalShift);
 	FQFitGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Partial S(Q) Graph
@@ -76,7 +76,7 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	SQGraph_->view().axes().setTitle(1, "S(\\it{Q})");
 	SQGraph_->view().axes().setMin(1, -1.0);
 	SQGraph_->view().axes().setMax(1, 1.0);
-	SQGraph_->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
+	SQGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 	SQGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// g(r) Graph
@@ -90,7 +90,7 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	GRGraph_->view().axes().setTitle(1, "g(r)");
 	GRGraph_->view().axes().setMin(1, -1.0);
 	GRGraph_->view().axes().setMax(1, 1.0);
-	GRGraph_->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
+	GRGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 	GRGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// F(r) Graph
@@ -104,7 +104,7 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	FRGraph_->view().axes().setTitle(1, "F(r)");
 	FRGraph_->view().axes().setMin(1, -1.0);
 	FRGraph_->view().axes().setMax(1, 1.0);
-	FRGraph_->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
+	FRGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 	FRGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Phi(r) (Empirical Potentials) Graph
@@ -118,7 +118,7 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	phiRGraph_->view().axes().setTitle(1, "\\sym{phi}(\\it{r})");
 	phiRGraph_->view().axes().setMin(1, -1.0);
 	phiRGraph_->view().axes().setMax(1, 1.0);
-	phiRGraph_->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
+	phiRGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 	phiRGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// phi(r) Magnitude Graph
@@ -163,7 +163,7 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	epView->view().axes().setTitle(1, "\\sym{phi}(\\it{r})");
 	epView->view().axes().setMin(1, -1.0);
 	epView->view().axes().setMax(1, 1.0);
-	epView->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
+	epView->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 
 	updateControls();
 

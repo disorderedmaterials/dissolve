@@ -39,7 +39,7 @@ CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget* parent, CalculateRDF
 	view.axes().setTitle(1, "g(r)");
 	view.axes().setMin(1, 0.0);
 	view.axes().setMax(1, 1.0);
-	rdfGraph_->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
+	rdfGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 	view.setAutoFollowType(View::AllAutoFollow);
 
 	setGraphDataTargets(module_);

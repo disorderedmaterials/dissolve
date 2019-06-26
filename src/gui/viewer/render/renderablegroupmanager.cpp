@@ -35,7 +35,7 @@ RenderableGroupManager::RenderableGroupManager()
 void RenderableGroupManager::clear()
 {
 	stockColourUsageCount_ = 0;
-	verticalShift_ = NoVerticalShift;
+	verticalShiftAmount_ = NoVerticalShift;
 
 	emptyGroups();
 
@@ -131,7 +131,7 @@ void RenderableGroupManager::removeFromGroup(Renderable* renderable)
 	// If the group is now empty, we can delete it
 	if (renderableGroup->isEmpty())
 	{
-		--stockColourUsageCount_[renderableGroup->stockColour()];
+		if (renderableGroup->colouringStyle() == RenderableGroup::FixedGroupColouring) --stockColourUsageCount_[renderableGroup->fixedStockColour()];
 		groups_.remove(renderableGroup);
 	}
 }
@@ -142,6 +142,22 @@ void RenderableGroupManager::emptyGroups()
 	for (RenderableGroup* group = groups_.first(); group != NULL; group = group->next) group->empty();
 }
 
+/*
+ * Colouring
+ */
+
+// Set colouring style for named group
+void RenderableGroupManager::setGroupColouring(const char* groupName, RenderableGroup::GroupColouring colouringStyle)
+{
+	RenderableGroup* g = group(groupName);
+	if (!g) Messenger::warn("RenderableGroup '%s' does not exist, so can't set its colouring style.\n", groupName);
+	else g->setColouringStyle(colouringStyle);
+}
+
+/*
+ * Vertical Shifting
+ */
+
 // Vertical shifts
 double VerticalShiftAmounts[] = { 0.0, 0.5, 1.0, 2.0 };
 
@@ -149,50 +165,47 @@ double VerticalShiftAmounts[] = { 0.0, 0.5, 1.0, 2.0 };
 void RenderableGroupManager::setRenderableGroupShifts()
 {
 	// Loop over RenderableGroups
-	double verticalShift = 0.0;
+	int groupIndex = 0;
 	for (RenderableGroup* group = groups_.first(); group != NULL; group = group->next)
 	{
-		group->setVerticalShift(verticalShift_ > 0, verticalShift);
-
-		// Increase shift amount for the next group
-		verticalShift += VerticalShiftAmounts[verticalShift_];
+		group->applyVerticalShift(VerticalShiftAmounts[verticalShiftAmount_], groupIndex++);
 	}
 }
 
-// Return colour definition for specified Renderable
-const ColourDefinition& RenderableGroupManager::colourDefinition(Renderable* renderable) const
+// Set vertical shifting style for named group
+void RenderableGroupManager::setGroupVerticalShifting(const char* groupName, RenderableGroup::VerticalShiftStyle shiftStyle)
 {
-	for (RenderableGroup* group = groups_.first(); group != NULL; group = group->next) if (group->usedByRenderable(renderable)) return group->colour();
-
-	return renderable->colour();
+	RenderableGroup* g = group(groupName);
+	if (!g) Messenger::warn("RenderableGroup '%s' does not exist, so can't set its vertical shifting style.\n", groupName);
+	else g->setVerticalShiftStyle(shiftStyle);
 }
 
-// Cycle vertical shift applied to RenderableGroups
-void RenderableGroupManager::cycleVerticalShifts()
+// Cycle vertical shift amount applied to RenderableGroups
+void RenderableGroupManager::cycleVerticalShiftAmount()
 {
-	verticalShift_ = (RenderableGroupManager::VerticalShift) ((verticalShift_+1)%nVerticalShifts);
+	verticalShiftAmount_ = (RenderableGroupManager::VerticalShiftAmount) ((verticalShiftAmount_+1)%nVerticalShifts);
 
 	setRenderableGroupShifts();
 }
 
 // Set vertical shift applied to RenderableGroups
-void RenderableGroupManager::setVerticalShift(VerticalShift shiftType)
+void RenderableGroupManager::setVerticalShiftAmount(VerticalShiftAmount shiftType)
 {
-	verticalShift_ = shiftType;
+	verticalShiftAmount_ = shiftType;
 
 	setRenderableGroupShifts();
 }
 
-// Return current vertical shift type
-RenderableGroupManager::VerticalShift RenderableGroupManager::verticalShift() const
+// Return current vertical shift amount
+RenderableGroupManager::VerticalShiftAmount RenderableGroupManager::verticalShiftAmount() const
 {
-	return verticalShift_;
+	return verticalShiftAmount_;
 }
 
 // Remove all vertical shifts from RenderableGroups
 void RenderableGroupManager::removeVerticalShifts()
 {
-	verticalShift_ = NoVerticalShift;
+	verticalShiftAmount_ = NoVerticalShift;
 
 	setRenderableGroupShifts();
 }

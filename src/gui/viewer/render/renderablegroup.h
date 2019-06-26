@@ -71,39 +71,92 @@ class RenderableGroup : public ListItem<RenderableGroup>
 
 
 	/*
-	 * Style
+	 * Visibility
 	 */
 	private:
 	// Whether data within the group is visible
 	bool visible_;
-	// Colour associated to this group
-	ColourDefinition::StockColour stockColour_;
-	// Colour definition for this group
-	ColourDefinition colour_;
-	// Whether vertical shifting is enabled in this group
-	bool hasVerticalShift_;
-	// Shift (in vertical axis) to apply to Renderables
-	double verticalShift_;
-
-	private:
-	// Set vertical shift in all Renderables in the group via their transform equations
-	void setVerticalShiftInRenderables();
 
 	public:
-	// Set whether data is visible
+	// Set whether group contents are visible
 	void setVisible(bool visible);
-	// Return whether data is visible
+	// Return whether group contents are visible
 	bool isVisible() const;
-	// Return colour associated to the group
-	ColourDefinition::StockColour stockColour() const;
-	// Return colour definition for the group
-	const ColourDefinition& colour() const;
+
+
+	/*
+	 * Colouring
+	 */
+	public:
+	// Colouring to apply to targeted renderables
+	enum GroupColouring
+	{
+		NoGroupColouring,		/* Renderables will use their own colour definition */
+		FixedGroupColouring,		/* Renderables will be coloured as per the group colour definition */
+		AutomaticIndividualColouring,	/* Renderables will be coloured individually by the group */
+		nGroupColourings
+	};
+
+	private:
+	// Colouring style for the group
+	GroupColouring colouringStyle_;
+	// Stock colour associated to this group
+	ColourDefinition::StockColour fixedStockColour_;
+	// Usage counters for stock colours when colouringStyle_ == AutomaticIndividualColouring
+	Array<int> automaticStockColourUsageCount_;
+
+	private:
+	// Set colour information for the supplied Renderable, according to our settings
+	void setRenderableColour(Renderable* rend);
+	// Set all renderable colours
+	void setRenderableColours();
+
+	public:
+	// Set colouring style for the group
+	void setColouringStyle(GroupColouring colouringStyle);
+	// Return colouring style for the group
+	GroupColouring colouringStyle() const;
+	// Set fixed stock colour for the group
+	void setFixedStockColour(ColourDefinition::StockColour stockColour);
+	// Return fixed stock colour associated to the group
+	ColourDefinition::StockColour fixedStockColour() const;
+	// Return fixed colour definition for the group
+	const ColourDefinition& fixedColour() const;
+
+
+	/*
+	 * Vertical Shifting
+	 */
+	public:
+	// Vertical Shift Style
+	enum VerticalShiftStyle
+	{
+		PreventVerticalShifting,		/* Data within the group will not be subject to vertical shifting */
+		GroupVerticalShifting,			/* Data within the group will be shifted by the same amount */
+		IndividualVerticalShifting		/* Data within the group will be shifted individually and incrementally by the specified amount */
+	};
+
+	private:
+	// Vertical shifting style for this group
+	VerticalShiftStyle verticalShiftStyle_;
+	// Shift (in vertical axis) to apply to Renderables
+	double verticalShift_;
+	// Shift multiplier
+	int verticalShiftMultiplier_;
+
+	private:
+	// Set vertical shift in specified Renderable
+	void setRenderableVerticalShift(Renderable* renderable, int rendIndex);
+	// Set vertical shift in all Renderables in the group via their transform equations
+	void setRenderableVerticalShifts();
+
+	public:
 	// Set whether vertical shifting is enabled in this group
-	void setVerticalShift(bool enabled, double verticalShift);
-	// Whether vertical shifting is enabled in this group
-	bool hasVerticalShift() const;
-	// Return shift (in vertical axis) to apply to Renderables
-	double verticalShift() const;
+	void setVerticalShiftStyle(VerticalShiftStyle shiftStyle);
+	// Return vertical shifting in force for this group
+	VerticalShiftStyle verticalShiftStyle() const;
+	// Apply the specified vertical shift (if VerticalShiftStyle != PreventVerticalShifting)
+	void applyVerticalShift(double dy, int groupIndex);
 };
 
 #endif

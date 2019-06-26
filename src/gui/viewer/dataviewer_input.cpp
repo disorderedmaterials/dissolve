@@ -164,7 +164,7 @@ bool DataViewer::keyPressed(int key)
 			else view_.axes().toggleLogarithmic(view_.viewType() == View::FlatZYView ? 2 : 0);
 			break;
 		case (Qt::Key_S):
-			groupManager_.cycleVerticalShifts();
+			groupManager_.cycleVerticalShiftAmount();
 			break;
 		default:
 			refresh = false;

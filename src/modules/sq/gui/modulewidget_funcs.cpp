@@ -44,7 +44,7 @@ SQModuleWidget::SQModuleWidget(QWidget* parent, Module* module, Dissolve& dissol
 	partialGRGraph_->view().axes().setTitle(1, "g(r)");
 	partialGRGraph_->view().axes().setMin(1, -1.0);
 	partialGRGraph_->view().axes().setMax(1, 1.0);
-	partialGRGraph_->groupManager().setVerticalShift(RenderableGroupManager::HalfVerticalShift);
+	partialGRGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::HalfVerticalShift);
 	partialGRGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Set up partial S(Q) graph
@@ -57,7 +57,7 @@ SQModuleWidget::SQModuleWidget(QWidget* parent, Module* module, Dissolve& dissol
 	partialSQGraph_->view().axes().setTitle(1, "S(Q)");
 	partialSQGraph_->view().axes().setMin(1, -1.0);
 	partialSQGraph_->view().axes().setMax(1, 1.0);
-	partialSQGraph_->groupManager().setVerticalShift(RenderableGroupManager::HalfVerticalShift);
+	partialSQGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::HalfVerticalShift);
 	partialSQGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Set up total G(r) graph
@@ -70,7 +70,7 @@ SQModuleWidget::SQModuleWidget(QWidget* parent, Module* module, Dissolve& dissol
 	totalGRGraph_->view().axes().setTitle(1, "g(r)");
 	totalGRGraph_->view().axes().setMin(1, -1.0);
 	totalGRGraph_->view().axes().setMax(1, 1.0);
-	totalGRGraph_->groupManager().setVerticalShift(RenderableGroupManager::NoVerticalShift);
+	totalGRGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::NoVerticalShift);
 	totalGRGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Set up total S(Q) graph
@@ -83,7 +83,7 @@ SQModuleWidget::SQModuleWidget(QWidget* parent, Module* module, Dissolve& dissol
 	totalSQGraph_->view().axes().setTitle(1, "S(Q)");
 	totalSQGraph_->view().axes().setMin(1, -1.0);
 	totalSQGraph_->view().axes().setMax(1, 1.0);
-	totalSQGraph_->groupManager().setVerticalShift(RenderableGroupManager::NoVerticalShift);
+	totalSQGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::NoVerticalShift);
 	totalSQGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	setGraphDataTargets(module_);

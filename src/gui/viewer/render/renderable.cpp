@@ -320,7 +320,7 @@ void Renderable::updateAndSendPrimitives(const View& view, const RenderableGroup
 	const Axes& axes = view.constAxes();
 
 	// Grab copy of the relevant colour definition for this Renderable
-	const ColourDefinition& colourDefinition = groupManager.colourDefinition(this);
+	const ColourDefinition& colourDefinition = colour();
 
 	// Check whether the primitive for this Renderable needs updating
 	bool upToDate = true;
