@@ -138,7 +138,7 @@ void RDFModuleWidget::setGraphDataTargets(RDFModule* module)
 	{
 		// Add calculated total G(r)
 		Renderable* refData = totalsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//Total", cfg->niceName()), CharString("Calculated//%s", cfg->niceName()), cfg->niceName());
-		totalsGraph_->groupManager().addToGroup(refData, "Calc");
+		totalsGraph_->addRenderableToGroup(refData, "Calc");
 	}
 }
 
@@ -163,17 +163,17 @@ void RDFModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 
 			// Full partial
 			Renderable* fullGR = partialsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s-%s//Full", currentConfiguration_->niceName(), at1->name(), at2->name()), CharString("Full//%s", id.get()), id.get());
-			partialsGraph_->groupManager().addToGroup(fullGR, id.get());
+			partialsGraph_->addRenderableToGroup(fullGR, id.get());
 
 			// Bound partial
 			Renderable* boundGR = partialsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s-%s//Bound", currentConfiguration_->niceName(), at1->name(), at2->name()), CharString("Bound//%s", id.get()), id.get());
 			boundGR->lineStyle().setStipple(LineStipple::HalfDashStipple);
-			partialsGraph_->groupManager().addToGroup(boundGR, id.get());
+			partialsGraph_->addRenderableToGroup(boundGR, id.get());
 
 			// Unbound partial
 			Renderable* unboundGR = partialsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s-%s//Unbound", currentConfiguration_->niceName(), at1->name(), at2->name()), CharString("Unbound//%s", id.get()), id.get());
 			unboundGR->lineStyle().setStipple(LineStipple::DotStipple);
-			partialsGraph_->groupManager().addToGroup(unboundGR, id.get());
+			partialsGraph_->addRenderableToGroup(unboundGR, id.get());
 		}
 	}
 }

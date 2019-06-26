@@ -43,6 +43,7 @@ DataWidget::DataWidget(QWidget* parent) : QWidget(parent)
 	connect(ui_.DataView, SIGNAL(controlAspectChanged()), this, SLOT(updateToolbar()));
 	connect(ui_.DataView, SIGNAL(renderableAdded()), this, SLOT(updateDataTree()));
 	connect(ui_.DataView, SIGNAL(renderableRemoved()), this, SLOT(updateDataTree()));
+	connect(ui_.DataView, SIGNAL(renderableChanged()), this, SLOT(updateDataTree()));
 
 	refreshing_ = false;
 
@@ -259,8 +260,7 @@ void DataWidget::updateDataTree()
 {
 	refreshing_ = true;
 
-	RenderableGroupManager& groupManager = dataViewer()->groupManager();
-	TreeWidgetUpdater<DataWidget, RenderableGroup> dataTreeUpdater(ui_.DataTree, groupManager.groups(), this, &DataWidget::dataTreeTopLevelUpdateFunction);
+	TreeWidgetUpdater<DataWidget, RenderableGroup> dataTreeUpdater(ui_.DataTree, dataViewer()->groupManager().groups(), this, &DataWidget::dataTreeTopLevelUpdateFunction);
 
 	refreshing_ = false;
 }

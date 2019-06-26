@@ -24,6 +24,10 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
+/*
+ * Renderable Data
+ */
+
 // Clear existing data
 void BaseViewer::clear()
 {
@@ -140,11 +144,27 @@ bool BaseViewer::isRenderableVisible(const char* name) const
 	return rend->isVisible();
 }
 
+/*
+ * Renderable Groups
+ */
+
 // Return the group manager for Renderables
 RenderableGroupManager& BaseViewer::groupManager()
 {
 	return groupManager_;
 }
+
+// Add Renderable to specified group
+void BaseViewer::addRenderableToGroup(Renderable* rend, const char* group)
+{
+	groupManager_.addToGroup(rend, group);
+
+	emit(renderableChanged());
+}
+
+/*
+ * Options
+ */
 
 // Return the View definition
 View& BaseViewer::view()

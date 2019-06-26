@@ -268,7 +268,7 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 	{
 		// Reference data
 		Renderable* refData = FQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//ReferenceData", targetModule->uniqueName()), CharString("ExpFQ//%s", targetModule->uniqueName()), CharString("%s Exp", targetModule->uniqueName()));
-		FQGraph_->groupManager().addToGroup(refData, targetModule->uniqueName());
+		FQGraph_->addRenderableToGroup(refData, targetModule->uniqueName());
 	
 		// Calculated data from associated module
 		if (DissolveSys::sameString(targetModule->type(), "NeutronSQ"))
@@ -276,34 +276,34 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 			// F(Q)
 			Renderable* calcFQ = FQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedSQ//Total", targetModule->uniqueName()), CharString("CalcFQ//%s", targetModule->uniqueName()), CharString("%s Calc", targetModule->uniqueName()));
 			calcFQ->lineStyle().setStipple(LineStipple::HalfDashStipple);
-			FQGraph_->groupManager().addToGroup(calcFQ, targetModule->uniqueName());
+			FQGraph_->addRenderableToGroup(calcFQ, targetModule->uniqueName());
 
 			// F(Q) diff w.r.t. reference
 			Renderable* diffFQ = FQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Difference//%s", module->uniqueName(), targetModule->uniqueName()), CharString("DiffFQ//%s//%s", module->uniqueName(), targetModule->uniqueName()), CharString("%s Diff", targetModule->uniqueName()));
 			diffFQ->lineStyle().setStipple(LineStipple::DotStipple);
-			FQGraph_->groupManager().addToGroup(diffFQ, targetModule->uniqueName());
+			FQGraph_->addRenderableToGroup(diffFQ, targetModule->uniqueName());
 
 			// R-Factor between F(Q) and reference
 			Renderable* rFactor = rFactorGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//RFactor//%s", module->uniqueName(), targetModule->uniqueName()), CharString("RFactor//%s//%s", module->uniqueName(), targetModule->uniqueName()), targetModule->uniqueName());
-			rFactorGraph_->groupManager().addToGroup(rFactor, targetModule->uniqueName());
+			rFactorGraph_->addRenderableToGroup(rFactor, targetModule->uniqueName());
 
 			// Reference F(r) (from direct FT of input data)
 			Renderable* expFR = FRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//ReferenceDataFT", targetModule->uniqueName()), CharString("ExpFR//%s", targetModule->uniqueName()), CharString("%s Exp", targetModule->uniqueName()));
-			FRGraph_->groupManager().addToGroup(expFR, targetModule->uniqueName());
+			FRGraph_->addRenderableToGroup(expFR, targetModule->uniqueName());
 
 			// Simulated F(r) (from FT of the calculated F(Q))
 			Renderable* calcFR = FRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//SimulatedFR//%s", module->uniqueName(), targetModule->uniqueName()), CharString("CalcFR//%s//%s", module->uniqueName(), targetModule->uniqueName()), CharString("%s Calc", targetModule->uniqueName()));
 			calcFR->lineStyle().setStipple(LineStipple::HalfDashStipple);
-			FRGraph_->groupManager().addToGroup(calcFR, targetModule->uniqueName());
+			FRGraph_->addRenderableToGroup(calcFR, targetModule->uniqueName());
 		}
 
 		// Delta F(Q) and fit
 		Renderable* deltaFQ = FQFitGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//DeltaFQ//%s", module->uniqueName(), targetModule->uniqueName()), CharString("DeltaFQ//%s//%s", module->uniqueName(), targetModule->uniqueName()), CharString("%s Delta", targetModule->uniqueName()));
-		FQFitGraph_->groupManager().addToGroup(deltaFQ, targetModule->uniqueName());
+		FQFitGraph_->addRenderableToGroup(deltaFQ, targetModule->uniqueName());
 
 		Renderable* deltaFQFit = FQFitGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//DeltaFQFit//%s", module->uniqueName(), targetModule->uniqueName()), CharString("FitFQ//%s//%s", module->uniqueName(), targetModule->uniqueName()), CharString("%s Fit", targetModule->uniqueName()));
 		deltaFQFit->lineStyle().setStipple(LineStipple::QuarterDashStipple);
-		FQFitGraph_->groupManager().addToGroup(deltaFQFit, targetModule->uniqueName());
+		FQFitGraph_->addRenderableToGroup(deltaFQFit, targetModule->uniqueName());
 	}
 
 	// Loop over groups
@@ -325,17 +325,17 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 
 				// Experimentally-determined unweighted partial
 				Renderable* expSQ = SQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//GeneratedSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("ExpSQ//%s", id.get()), CharString("%s Exp", id.get()));
-				SQGraph_->groupManager().addToGroup(expSQ, id.get());
+				SQGraph_->addRenderableToGroup(expSQ, id.get());
 
 				// Calculated / summed partial
 				Renderable* calcSQ = SQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("CalcSQ//%s", id.get()), CharString("%s Calc", id.get()));
 				calcSQ->lineStyle().setStipple(LineStipple::QuarterDashStipple);
-				SQGraph_->groupManager().addToGroup(calcSQ, id.get());
+				SQGraph_->addRenderableToGroup(calcSQ, id.get());
 
 				// Deltas
 				Renderable* deltaSQ = SQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//DeltaSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("DeltaSQ//%s", id.get()), CharString("%s Delta", id.get()));
 				deltaSQ->lineStyle().setStipple(LineStipple::DotStipple);
-				SQGraph_->groupManager().addToGroup(deltaSQ, id.get());
+				SQGraph_->addRenderableToGroup(deltaSQ, id.get());
 
 				/*
 				 * Partial RDFs
@@ -343,12 +343,12 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 
 				// Experimentally-determined unweighted partial
 				Renderable* expGR = GRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//GeneratedGR//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("ExpGR//%s", id.get()), CharString("%s Exp", id.get()));
-				GRGraph_->groupManager().addToGroup(expGR, id.get());
+				GRGraph_->addRenderableToGroup(expGR, id.get());
 
 				// Calculated / summed partial
 				Renderable* calcGR = GRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s//%s-%s//Full", module_->uniqueName(), group->name(), at1->name(), at2->name()), CharString("CalcGR//%s", id.get()), CharString("%s Calc", id.get()));
 				calcGR->lineStyle().setStipple(LineStipple::QuarterDashStipple);
-				GRGraph_->groupManager().addToGroup(calcGR, id.get());
+				GRGraph_->addRenderableToGroup(calcGR, id.get());
 			}
 		}
 	}
@@ -363,7 +363,7 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 
 			// Generated potential
 			Renderable* phi = phiRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("PairPotential//%s//Additional", id.get()), CharString("PhiR//%s", id.get()), CharString("%s", id.get()));
-			phiRGraph_->groupManager().addToGroup(phi, id.get());
+			phiRGraph_->addRenderableToGroup(phi, id.get());
 		}
 	}
 
@@ -394,7 +394,7 @@ void EPSRModuleWidget::updateDebugEPFunctionsGraph(int from, int to)
 
 			// Add generate potential to graph
 			Renderable* phi = viewer->createRenderable(Renderable::Data1DRenderable, CharString("PairPotential//%s//Additional", id.get()), id.get(), id.get());
-			viewer->groupManager().addToGroup(phi, id.get());
+			viewer->addRenderableToGroup(phi, id.get());
 
 			// Generate data for function range specified
 			for (int n=from; n<=to; ++n)
@@ -403,7 +403,7 @@ void EPSRModuleWidget::updateDebugEPFunctionsGraph(int from, int to)
 				(*data) = module_->generateEmpiricalPotentialFunction(dissolve_, i, j, n);
 				data->setObjectTag(CharString("PairPotential//%s//Function//%i", id.get(), n));
 				Renderable* rend = viewer->createRenderable(Renderable::Data1DRenderable, CharString("PairPotential//%s//Function//%i", id.get(), n), DissolveSys::itoa(n), CharString("%s/%i", id.get(), n));
-				viewer->groupManager().addToGroup(rend, id.get());
+				viewer->addRenderableToGroup(rend, id.get());
 			}
 		}
 	}
