@@ -296,6 +296,12 @@ void Axes::ensureSensibleRange(double& minValue, double& maxValue, bool expandOn
 	}
 }
 
+// Return central value of axes
+Vec3<double> Axes::centre() const
+{
+	return min_ + (max_ - min_)*0.5;
+}
+
 // Return real axis minimum (accounting for log axes)
 double Axes::realMin(int axis) const
 {
