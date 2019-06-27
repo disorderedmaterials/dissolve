@@ -838,6 +838,41 @@ void View::zoomTo(Vec3<double> limit1, Vec3<double> limit2)
 	}
 }
 
+// Scale the currently displayed range
+void View::scaleRange(double factor)
+{
+	// Set the axis to skip (if any)
+	int skipAxis = -1;
+	if (viewType_ == View::FlatXYView) skipAxis = 2;
+	else if (viewType_ == View::FlatXZView) skipAxis = 1;
+	else if (viewType_ == View::FlatZYView) skipAxis = 0;
+
+	// Loop over axes
+	for (int axis = 0; axis < 3; ++axis)
+	{
+		if (axis == skipAxis) continue;
+		
+		// Get current range of axis (either the real or logged values stored)
+		double halfRange = 0.5 * (axes_.max(axis) - axes_.min(axis));
+		double mid = axes_.min(axis) + halfRange;
+		halfRange *= factor;
+		axes_.setMin(axis, mid - halfRange);
+		axes_.setMax(axis, mid + halfRange);
+	}
+}
+
+// Centre 2D view at specified coordinates, optionally moving only by a fraction of the distance required
+void View::centre2DAt(Vec3<double> centre, double fraction)
+{
+	// Get delta distance
+	Vec3<double> delta = (centre - axes_.centre()) * fraction;
+
+	// Add to current axis limits
+	axes_.setRange(0, axes_.min(0) + delta[0], axes_.max(0) + delta[0]);
+	axes_.setRange(1, axes_.min(1) + delta[1], axes_.max(1) + delta[1]);
+	axes_.setRange(2, axes_.min(2) + delta[2], axes_.max(2) + delta[2]);
+}
+
 // Set auto-follow type in effect
 void View::setAutoFollowType(AutoFollowType aft)
 {

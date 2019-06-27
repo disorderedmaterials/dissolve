@@ -87,12 +87,30 @@ void DataViewer::mouseMoved(int dx, int dy)
 // Mouse 'wheeled'
 void DataViewer::mouseWheeled(int delta)
 {
-	bool scrollup = delta > 0;
+	// Turn off autofollow if it is currently on...
+	if (view_.autoFollowType() != View::NoAutoFollow)
+	{
+		view_.setAutoFollowType(View::NoAutoFollow);
+		emit(controlAspectChanged());
+	}
 
-	// Perform camera zoom
-	double zrange = view_.axes().stretch(2) * view_.axes().realRange(2);
-	if (zrange < 1.0) zrange = 1.0;
-	view_.translateView(0.0, 0.0, 0.5*zrange*(scrollup ? -1.0 : 1.0));
+	bool scrollUp = delta > 0;
+
+	// Perform camera zoom in a 3D view, or view scaling in a 2D view
+	if (view_.isFlatView())
+	{
+		// Scale the range
+		view_.scaleRange(scrollUp ? 0.9 : 1.1);
+
+		// Move the centre of the axes towards the current mouse position
+		view_.centre2DAt(current2DAxesCoordinates(), 0.1);
+	}
+	else
+	{
+		double zrange = view_.axes().stretch(2) * view_.axes().realRange(2);
+		if (zrange < 1.0) zrange = 1.0;
+		view_.translateView(0.0, 0.0, 0.5*zrange*(scrollUp ? -1.0 : 1.0));
+	}
 
 	postRedisplay();
 }

@@ -186,6 +186,10 @@ class View
 	void showAllData(double xFrac = 1.0, double yFrac = 1.0, double zFrac = 1.0);
 	// Zoom to specified region
 	void zoomTo(Vec3<double> limit1, Vec3<double> limit2);
+	// Scale the currently displayed range
+	void scaleRange(double factor);
+	// Centre 2D view at specified coordinates, optionally moving only by a fraction of the distance required
+	void centre2DAt(Vec3<double> centre, double fraction);
 	// Set auto-follow type in effect
 	void setAutoFollowType(AutoFollowType aft);
 	// Cycle auto-follow type in effect
