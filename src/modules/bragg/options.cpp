@@ -1,6 +1,6 @@
 /*
 	*** Bragg Module - Options
-	*** src/modules/braggsq/options.cpp
+	*** src/modules/bragg/options.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
