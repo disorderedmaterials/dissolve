@@ -16,7 +16,11 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>DissolveGUI</string>
+   <string>Dissolve-GUI</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="main.qrc">
+    <normaloff>:/dissolve/icons/dissolve.png</normaloff>:/dissolve/icons/dissolve.png</iconset>
   </property>
   <widget class="QWidget" name="Centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">

@@ -1,4 +1,4 @@
-![Dissolve's Logo](extra/logo.png)
+![Dissolve's Logo](icon/logo.png)
 
 _Current Version: 0.4.3, Wednesday 12th June 2019_
 

@@ -6,6 +6,9 @@
     <file>icons/file_save.svg</file>
     <file>icons/file_connect.svg</file>
   </qresource>
+  <qresource prefix="dissolve">
+    <file>icons/dissolve.png</file>
+  </qresource>
   <qresource prefix="viewer_toolbar">
     <file>icons/viewer_toolbar_interaction.svg</file>
     <file>icons/viewer_toolbar_view.svg</file>
