@@ -135,9 +135,10 @@ void BraggModuleWidget::setGraphDataTargets()
 	while (Configuration* cfg = configIterator.iterate())
 	{
 		// Original F(Q)
-		Renderable* originalFQ = totalsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//OriginalBragg//Total", cfg->niceName()), cfg->niceName(), cfg->niceName(), cfg->niceName());
+		Renderable* originalFQ = totalsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//OriginalBragg//Total", cfg->niceName()), cfg->niceName(), cfg->niceName(), "Totals");
 // 		totalsGraph_->addRenderableToGroup(originalFQ, cfg->niceName());
 	}
+	totalsGraph_->groupManager().setGroupColouring("Totals", RenderableGroup::AutomaticIndividualColouring);
 }
 
 void BraggModuleWidget::on_TargetCombo_currentIndexChanged(int index)
@@ -160,8 +161,8 @@ void BraggModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 			CharString id("%s-%s", at1->name(), at2->name());
 
 			// Original S(Q)
-			Renderable* originalSQ = reflectionsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//OriginalBragg//%s-%s", currentConfiguration_->niceName(), at1->name(), at2->name()), CharString("Full//%s", id.get()), id.get());
-			reflectionsGraph_->addRenderableToGroup(originalSQ, id.get());
+			Renderable* originalSQ = reflectionsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//OriginalBragg//%s", currentConfiguration_->niceName(), id.get()), CharString("Full//%s", id.get()), id.get(), "Full");
 		}
 	}
+	reflectionsGraph_->groupManager().setGroupColouring("Full", RenderableGroup::AutomaticIndividualColouring);
 }
