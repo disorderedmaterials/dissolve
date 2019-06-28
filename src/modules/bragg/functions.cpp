@@ -205,7 +205,7 @@ bool BraggModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cfg,
 		sinTermsK = braggAtomVectorYSin.pointerAt(n, braggMaximumHKL.y);
 		sinTermsL = braggAtomVectorZSin.pointerAt(n, braggMaximumHKL.z);
 
-		// Initialise zero and first terms
+		// Initialise zeroth and first terms
 		cosTermsH[0] = 1.0;
 		cosTermsK[0] = 1.0;
 		cosTermsL[0] = 1.0;
