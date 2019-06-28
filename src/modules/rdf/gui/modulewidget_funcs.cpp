@@ -44,7 +44,7 @@ RDFModuleWidget::RDFModuleWidget(QWidget* parent, Module* module, Dissolve& diss
 	partialsGraph_->view().axes().setTitle(1, "g(r)");
 	partialsGraph_->view().axes().setMin(1, -1.0);
 	partialsGraph_->view().axes().setMax(1, 1.0);
-	partialsGraph_->groupManager().setVerticalShift(RenderableGroupManager::TwoVerticalShift);
+	partialsGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 	partialsGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Set up total G(r) graph
@@ -57,7 +57,7 @@ RDFModuleWidget::RDFModuleWidget(QWidget* parent, Module* module, Dissolve& diss
 	totalsGraph_->view().axes().setTitle(1, "g(r)");
 	totalsGraph_->view().axes().setMin(1, -1.0);
 	totalsGraph_->view().axes().setMax(1, 1.0);
-	totalsGraph_->groupManager().setVerticalShift(RenderableGroupManager::OneVerticalShift);
+	totalsGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::OneVerticalShift);
 	totalsGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	refreshing_ = false;
@@ -138,7 +138,7 @@ void RDFModuleWidget::setGraphDataTargets(RDFModule* module)
 	{
 		// Add calculated total G(r)
 		Renderable* refData = totalsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//Total", cfg->niceName()), CharString("Calculated//%s", cfg->niceName()), cfg->niceName());
-		totalsGraph_->groupManager().addToGroup(refData, "Calc");
+		totalsGraph_->addRenderableToGroup(refData, "Calc");
 	}
 }
 
@@ -162,18 +162,23 @@ void RDFModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 			CharString id("%s-%s", at1->name(), at2->name());
 
 			// Full partial
-			Renderable* fullGR = partialsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s-%s//Full", currentConfiguration_->niceName(), at1->name(), at2->name()), CharString("Full//%s", id.get()), id.get());
-			partialsGraph_->groupManager().addToGroup(fullGR, id.get());
+			Renderable* fullGR = partialsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s//Full", currentConfiguration_->niceName(), id.get()), CharString("Full//%s", id.get()), id.get(), "Full");
 
 			// Bound partial
-			Renderable* boundGR = partialsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s-%s//Bound", currentConfiguration_->niceName(), at1->name(), at2->name()), CharString("Bound//%s", id.get()), id.get());
+			Renderable* boundGR = partialsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s//Bound", currentConfiguration_->niceName(), id.get()), CharString("Bound//%s", id.get()), id.get(), "Bound");
 			boundGR->lineStyle().setStipple(LineStipple::HalfDashStipple);
-			partialsGraph_->groupManager().addToGroup(boundGR, id.get());
 
 			// Unbound partial
-			Renderable* unboundGR = partialsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s-%s//Unbound", currentConfiguration_->niceName(), at1->name(), at2->name()), CharString("Unbound//%s", id.get()), id.get());
+			Renderable* unboundGR = partialsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s//Unbound", currentConfiguration_->niceName(), id.get()), CharString("Unbound//%s", id.get()), id.get(), "Unbound");
 			unboundGR->lineStyle().setStipple(LineStipple::DotStipple);
-			partialsGraph_->groupManager().addToGroup(unboundGR, id.get());
 		}
 	}
+
+	// Set group styling
+	partialsGraph_->groupManager().setGroupColouring("Full", RenderableGroup::AutomaticIndividualColouring);
+	partialsGraph_->groupManager().setGroupVerticalShifting("Full", RenderableGroup::IndividualVerticalShifting);
+	partialsGraph_->groupManager().setGroupColouring("Bound", RenderableGroup::AutomaticIndividualColouring);
+	partialsGraph_->groupManager().setGroupVerticalShifting("Bound", RenderableGroup::IndividualVerticalShifting);
+	partialsGraph_->groupManager().setGroupColouring("Unbound", RenderableGroup::AutomaticIndividualColouring);
+	partialsGraph_->groupManager().setGroupVerticalShifting("Unbound", RenderableGroup::IndividualVerticalShifting);
 }

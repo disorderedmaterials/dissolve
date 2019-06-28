@@ -757,7 +757,7 @@ bool BaseViewer::readViewBlock(LineParser& parser, bool strictBlockEnd)
 				break;
 			// Vertical shift (renderable group manager)
 			case (BaseViewer::VerticalShiftKeyword):
-				groupManager_.setVerticalShift((RenderableGroupManager::VerticalShift) parser.argi(1));
+				groupManager_.setVerticalShiftAmount((RenderableGroupManager::VerticalShiftAmount) parser.argi(1));
 				break;
 			// View Type
 			case (BaseViewer::ViewTypeKeyword):
@@ -806,7 +806,7 @@ bool BaseViewer::writeViewBlock(LineParser& parser)
 	parser.writeLineF("    %s %f %f %f\n", BaseViewer::viewKeyword(BaseViewer::TranslationKeyword), trans.x, trans.y, trans.z);
 	parser.writeLineF("    %s %s\n", BaseViewer::viewKeyword(BaseViewer::PerspectiveKeyword), DissolveSys::btoa(view_.hasPerspective()));
 	parser.writeLineF("    %s %s\n", BaseViewer::viewKeyword(BaseViewer::UseBestFlatViewKeyword), DissolveSys::btoa(view_.axes().useBestFlatView()));
-	parser.writeLineF("    %s %i\n", BaseViewer::viewKeyword(BaseViewer::VerticalShiftKeyword), groupManager_.verticalShift());
+	parser.writeLineF("    %s %i\n", BaseViewer::viewKeyword(BaseViewer::VerticalShiftKeyword), groupManager_.verticalShiftAmount());
 	parser.writeLineF("    %s '%s'\n", BaseViewer::viewKeyword(BaseViewer::ViewTypeKeyword), View::viewType(view_.viewType()));
 	parser.writeLineF("  %s\n", BaseViewer::viewKeyword(BaseViewer::EndViewKeyword));
 

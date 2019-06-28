@@ -90,6 +90,12 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	void notifyDataChanged();
 
 	signals:
+	// A Renderable has been added for display
+	void renderableAdded();
+	// A Renderable has been removed from display
+	void renderableRemoved();
+	// A Renderable has been changed (re-grouped etc.)
+	void renderableChanged();
 	// Notify that the represented data has been modified
 	void dataModified(bool invalidatesSetUp = false);
 	// Notify that any other GUI controls displaying the underlying data should be refreshed
@@ -106,6 +112,8 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	public:
 	// Return the group manager for Renderables
 	RenderableGroupManager& groupManager();
+	// Add Renderable to specified group
+	void addRenderableToGroup(Renderable* rend, const char* group);
 
 
 	/*

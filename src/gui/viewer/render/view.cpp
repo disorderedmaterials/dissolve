@@ -838,6 +838,41 @@ void View::zoomTo(Vec3<double> limit1, Vec3<double> limit2)
 	}
 }
 
+// Scale the currently displayed range
+void View::scaleRange(double factor)
+{
+	// Set the axis to skip (if any)
+	int skipAxis = -1;
+	if (viewType_ == View::FlatXYView) skipAxis = 2;
+	else if (viewType_ == View::FlatXZView) skipAxis = 1;
+	else if (viewType_ == View::FlatZYView) skipAxis = 0;
+
+	// Loop over axes
+	for (int axis = 0; axis < 3; ++axis)
+	{
+		if (axis == skipAxis) continue;
+		
+		// Get current range of axis (either the real or logged values stored)
+		double halfRange = 0.5 * (axes_.max(axis) - axes_.min(axis));
+		double mid = axes_.min(axis) + halfRange;
+		halfRange *= factor;
+		axes_.setMin(axis, mid - halfRange);
+		axes_.setMax(axis, mid + halfRange);
+	}
+}
+
+// Centre 2D view at specified coordinates, optionally moving only by a fraction of the distance required
+void View::centre2DAt(Vec3<double> centre, double fraction)
+{
+	// Get delta distance
+	Vec3<double> delta = (centre - axes_.centre()) * fraction;
+
+	// Add to current axis limits
+	axes_.setRange(0, axes_.min(0) + delta[0], axes_.max(0) + delta[0]);
+	axes_.setRange(1, axes_.min(1) + delta[1], axes_.max(1) + delta[1]);
+	axes_.setRange(2, axes_.min(2) + delta[2], axes_.max(2) + delta[2]);
+}
+
 // Set auto-follow type in effect
 void View::setAutoFollowType(AutoFollowType aft)
 {
@@ -885,6 +920,9 @@ void View::autoFollowData()
 		double yMin, yMax, yMinTest, yMaxTest;
 		for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next)
 		{
+			// Skip this Renderable if it is not currently visible
+			if (!rend->isVisible()) continue;
+
 			// Get y limits for the this data
 			rend->yRangeOverX(xMin, xMax, yMinTest, yMaxTest);
 			if (first)
@@ -965,6 +1003,9 @@ Vec3<double> View::transformedDataMaxima()
 	Vec3<double> v, maxima;
 	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next)
 	{
+		// Skip this Renderable if it is not currently visible
+		if (!rend->isVisible()) continue;
+
 		if (nCounted == 0) maxima = rend->transformMax();
 		else
 		{
@@ -986,6 +1027,9 @@ Vec3<double> View::transformedDataPositiveMinima()
 	Vec3<double> v, minima;
 	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next)
 	{
+		// Skip this Renderable if it is not currently visible
+		if (!rend->isVisible()) continue;
+
 		if (nCounted == 0) minima = rend->transformMinPositive();
 		else
 		{
@@ -1009,6 +1053,9 @@ Vec3<double> View::transformedDataPositiveMaxima()
 	Vec3<double> v, maxima;
 	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next)
 	{
+		// Skip this Renderable if it is not currently visible
+		if (!rend->isVisible()) continue;
+
 		if (nCounted == 0) maxima = rend->transformMaxPositive();
 		else
 		{
@@ -1214,31 +1261,4 @@ void View::setFlatLabelsIn3D(bool flat)
 bool View::flatLabelsIn3D()
 {
 	return flatLabelsIn3D_;
-}
-
-/*
- * Interaction
- */
-
-// TODO Old code, unused. Useful?
-// Return axis title at specified coordinates (if any)
-int View::axisTitleAt(int screenX, int screenY)
-{
-	// Get view matrix inverse and FontInstance
-	Matrix4 viewRotInverse = viewRotationInverse();
-
-	Vec3<double> labelMin, labelMax;
-	for (int axis=0; axis<3; ++axis)
-	{
-		// Reset bounding box extreme values
-		labelMin.set(1e9,1e9,1e9);
-		labelMax = -labelMin;
-
-		// Calculate orthogonal bounding cuboid for this axis title (local coordinates)
-		Cuboid cuboid = axes_.titlePrimitive(axis).boundingCuboid(fontInstance_, viewRotInverse, textZScale_);
-
-		// Determine whether the screen point specified is within the projected cuboid
-		if (cuboid.isPointWithinProjection(screenX, screenY, viewMatrix_, projectionMatrix_, viewportMatrix_)) return axis;
-	}
-	return -1;
 }

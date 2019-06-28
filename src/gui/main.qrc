@@ -9,6 +9,7 @@
   <qresource prefix="viewer_toolbar">
     <file>icons/viewer_toolbar_interaction.svg</file>
     <file>icons/viewer_toolbar_view.svg</file>
+    <file>icons/viewer_toolbar_graph.svg</file>
     <file>icons/viewer_toolbar_tools.svg</file>
   </qresource>
   <qresource prefix="viewer">
@@ -26,6 +27,7 @@
     <file>icons/viewer_axes_on.svg</file>
     <file>icons/viewer_delete.svg</file>
     <file>icons/viewer_snapshot.svg</file>
+    <file>icons/viewer_data.svg</file>
   </qresource>
   <qresource prefix="fonts">
     <file>fonts/FreeSans.ttf</file>

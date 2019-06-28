@@ -22,14 +22,7 @@
 #ifndef DISSOLVE_LINESTIPPLE_H
 #define DISSOLVE_LINESTIPPLE_H
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
-#ifdef _MAC
-#include <OpenGL/gl.h>
-#else
-#include <GL/gl.h>
-#endif
+#include <QtGui/qopengl.h>
 #include <QVector>
 #include <QString>
 

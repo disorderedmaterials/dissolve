@@ -135,8 +135,8 @@ void BraggModuleWidget::setGraphDataTargets()
 	while (Configuration* cfg = configIterator.iterate())
 	{
 		// Original F(Q)
-		Renderable* originalFQ = totalsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//OriginalBragg//Total", cfg->niceName()), cfg->niceName(), cfg->niceName());
-		totalsGraph_->groupManager().addToGroup(originalFQ, cfg->niceName());
+		Renderable* originalFQ = totalsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//OriginalBragg//Total", cfg->niceName()), cfg->niceName(), cfg->niceName(), cfg->niceName());
+// 		totalsGraph_->addRenderableToGroup(originalFQ, cfg->niceName());
 	}
 }
 
@@ -161,7 +161,7 @@ void BraggModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 
 			// Original S(Q)
 			Renderable* originalSQ = reflectionsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//OriginalBragg//%s-%s", currentConfiguration_->niceName(), at1->name(), at2->name()), CharString("Full//%s", id.get()), id.get());
-			reflectionsGraph_->groupManager().addToGroup(originalSQ, id.get());
+			reflectionsGraph_->addRenderableToGroup(originalSQ, id.get());
 		}
 	}
 }

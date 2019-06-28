@@ -1095,14 +1095,6 @@ Vec3<double> Matrix4::transform(Vec3<double> vec) const
 	return result;
 }
 
-// Multiply against coordinates provided
-void Matrix4::multiply(GLfloat* r, GLfloat* transformed) const
-{
-	transformed[0] = r[0]*matrix_[0] + r[1]*matrix_[4] + r[2]*matrix_[8] + matrix_[12];
-	transformed[1] = r[0]*matrix_[1] + r[1]*matrix_[5] + r[2]*matrix_[9] + matrix_[13];
-	transformed[2] = r[0]*matrix_[2] + r[1]*matrix_[6] + r[2]*matrix_[10] + matrix_[14];
-}
-
 // Multiply against other matrix, but only rotational part, keeping translation/scaling intact
 void Matrix4::multiplyRotation(Matrix4 B)
 {

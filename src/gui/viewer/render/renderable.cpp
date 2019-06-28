@@ -240,7 +240,8 @@ void Renderable::setVisible(bool visible)
 // Return whether data is visible
 bool Renderable::isVisible() const
 {
-	return visible_;
+	// Group visibility overrides our own (*if* we are currently visible)...
+	return (visible_ ? (group_ ? group_->isVisible() : visible_) : false);
 }
 
 // Set display style index
@@ -319,7 +320,7 @@ void Renderable::updateAndSendPrimitives(const View& view, const RenderableGroup
 	const Axes& axes = view.constAxes();
 
 	// Grab copy of the relevant colour definition for this Renderable
-	const ColourDefinition& colourDefinition = groupManager.colourDefinition(this);
+	const ColourDefinition& colourDefinition = colour();
 
 	// Check whether the primitive for this Renderable needs updating
 	bool upToDate = true;
