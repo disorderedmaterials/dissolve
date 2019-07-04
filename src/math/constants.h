@@ -1,5 +1,5 @@
 /*
-	*** Numerical constants
+	*** Numerical Constants
 	*** src/math/constants.h
 	Copyright T. Youngs 2012-2019
 
