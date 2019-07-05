@@ -19,8 +19,6 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "base/constants.h"
-
 #ifndef DISSOLVE_CONSTANTS_H
 #define DISSOLVE_CONSTANTS_H
 

@@ -63,12 +63,12 @@ SpeciesBond* Species::addBond(int i, int j)
 	if ((i < 0) || (i >= atoms_.nItems()))
 	{
 		Messenger::print("OUT_OF_RANGE - Internal index 'i' supplied to Species::addBond() is out of range (%i) for Species '%s'.\n", i, name_.get());
-		return false;
+		return NULL;
 	}
 	if ((j < 0) || (j >= atoms_.nItems()))
 	{
 		Messenger::print("OUT_OF_RANGE - Internal index 'j' supplied to Species::addBond() is out of range (%i) for Species '%s'.\n", j, name_.get());
-		return false;
+		return NULL;
 	}
 
 	return addBond(atoms_[i], atoms_[j]);
@@ -210,17 +210,17 @@ SpeciesAngle* Species::addAngle(int i, int j, int k)
 	if ((i < 0) || (i >= atoms_.nItems()))
 	{
 		Messenger::print("OUT_OF_RANGE - Internal index 'i' supplied to Species::addAngle() is out of range (%i) for Species '%s'\n", i, name_.get());
-		return false;
+		return NULL;
 	}
 	if ((j < 0) || (j >= atoms_.nItems()))
 	{
 		Messenger::print("OUT_OF_RANGE - Internal index 'j' supplied to Species::addAngle() is out of range (%i) for Species '%s'\n", j, name_.get());
-		return false;
+		return NULL;
 	}
 	if ((k < 0) || (k >= atoms_.nItems()))
 	{
 		Messenger::print("OUT_OF_RANGE - Internal index 'k' supplied to Species::addAngle() is out of range (%i) for Species '%s'\n", k, name_.get());
-		return false;
+		return NULL;
 	}
 
 	return addAngle(atoms_[i], atoms_[j], atoms_[k]);
@@ -349,22 +349,22 @@ SpeciesTorsion* Species::addTorsion(int i, int j, int k, int l)
 	if ((i < 0) || (i >= atoms_.nItems()))
 	{
 		Messenger::print("OUT_OF_RANGE - Internal index 'i' supplied to Species::addTorsion() is out of range (%i) for Species '%s'\n", i, name_.get());
-		return false;
+		return NULL;
 	}
 	if ((j < 0) || (j >= atoms_.nItems()))
 	{
 		Messenger::print("OUT_OF_RANGE - Internal index 'j' supplied to Species::addTorsion() is out of range (%i) for Species '%s'\n", j, name_.get());
-		return false;
+		return NULL;
 	}
 	if ((k < 0) || (k >= atoms_.nItems()))
 	{
 		Messenger::print("OUT_OF_RANGE - Internal index 'k' supplied to Species::addTorsion() is out of range (%i) for Species '%s'\n", k, name_.get());
-		return false;
+		return NULL;
 	}
 	if ((l < 0) || (l >= atoms_.nItems()))
 	{
 		Messenger::print("OUT_OF_RANGE - Internal index 'l' supplied to Species::addTorsion() is out of range (%i) for Species '%s'\n", l, name_.get());
-		return false;
+		return NULL;
 	}
 
 	return addTorsion(atoms_[i], atoms_[j], atoms_[k], atoms_[l]);

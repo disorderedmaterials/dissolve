@@ -298,7 +298,7 @@ template <class T> class ObjectStore
 			if (!DissolveSys::sameString(typePrefix, objectTypeName_))
 			{
 				Messenger::error("Searched for object '%s' in a store containing objects of type '%s'.\n", typePrefix.get(), objectTypeName_);
-				return false;
+				return NULL;
 			}
 			for (RefListItem<T,int>* ri = objects_.first(); ri != NULL; ri = ri->next)
 			{

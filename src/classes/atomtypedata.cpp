@@ -24,7 +24,6 @@
 #include "classes/coredata.h"
 #include "classes/isotopedata.h"
 #include "data/isotopes.h"
-#include "base/constants.h"
 #include "base/lineparser.h"
 #include "base/messenger.h"
 #include "base/processpool.h"

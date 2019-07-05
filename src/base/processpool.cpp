@@ -21,7 +21,6 @@
 
 #include "base/processpool.h"
 #include "base/messenger.h"
-#include "base/constants.h"
 #include "base/sysfunc.h"
 #include <string.h>
 

@@ -18,7 +18,6 @@ add_library(base
   
   charstring.h
   charstringlist.h
-  constants.h
   enumoptions.h
   fileandformat.h
   geometry.h

@@ -12,7 +12,7 @@ libbase_la_SOURCES += sysfunc.cpp
 libbase_la_SOURCES += timer.cpp
 libbase_la_SOURCES += version.cpp
 
-noinst_HEADERS = charstring.h charstringlist.h constants.h
+noinst_HEADERS = charstring.h charstringlist.h
 noinst_HEADERS += enumoptions.h
 noinst_HEADERS += dummyclass.h
 noinst_HEADERS += fileandformat.h
