@@ -45,6 +45,8 @@ bool EPSRModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	CharString pcofFile = keywords_.asString("PCofFile");
 	if (!pcofFile.isEmpty())
 	{
+		Messenger::print("Reading potential coefficients from '%s'...\n", pcofFile.get());
+
 		// Read in the coefficients / setup from the supplied file
 		if (!readPCof(dissolve, procPool, pcofFile)) return Messenger::error("Failed to read in potential coefficients from EPSR pcof file.\n");
 
@@ -68,6 +70,7 @@ bool EPSRModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 			}
 		}
 		averagedRho /= configs.nItems();
+		if (configs.nItems() == 0) return Messenger::error("Can't generate empirical potential from supplied coefficients as there are no associated Configurations from which to retrieve a density.\n");
 
 		// Set up the additional potentials - reconstruct them from the current coefficients
 		ExpansionFunctionType functionType = expansionFunctionType(keywords_.asString("ExpansionFunction"));
