@@ -42,13 +42,3 @@ void DissolveWindow::on_StartCreateNewButton_clicked(bool checked)
 void DissolveWindow::on_StartSetupWizardButton_clicked(bool checked)
 {
 }
-
-void DissolveWindow::on_StartQuickStartButton_clicked(bool checked)
-{
-	ui.HelpViewQuickStartGuideAction->trigger();
-}
-
-void DissolveWindow::on_StartRunTutorialButton_clicked(bool checked)
-{
-	ui.HelpRunATutorialAction->trigger();
-}

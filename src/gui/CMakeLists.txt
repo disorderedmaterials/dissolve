@@ -140,7 +140,6 @@ SET(gui_SRCS
   gui_funcs.cpp
   gui_menu.cpp
   gui_simulation_control.cpp
-  gui_simulation_guide.cpp
   gui_simulation_state.cpp
   gui_simulation_tabs.cpp
   gui_stack.cpp

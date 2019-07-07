@@ -37,11 +37,12 @@ class Configuration;
 class ConfigurationTab;
 class Dissolve;
 class ForcefieldTab;
-class ModuleLayerTab;
 class QMdiSubWindow;
 class Species;
 class SpeciesTab;
 class ModuleTab;
+class ModuleLayer;
+class ModuleLayerTab;
 class WorkspaceTab;
 
 class DissolveWindow : public QMainWindow
@@ -188,9 +189,6 @@ class DissolveWindow : public QMainWindow
 	void on_StartOpenLocalButton_clicked(bool checked);
 	void on_StartOpenRemoteButton_clicked(bool checked);
 	void on_StartOpenRecentButton_clicked(bool checked);
-	// 'Learn' Group
-	void on_StartQuickStartButton_clicked(bool checked);
-	void on_StartRunTutorialButton_clicked(bool checked);
 
 
 	/*
@@ -305,14 +303,6 @@ class DissolveWindow : public QMainWindow
 	public slots:
 	// Remove tab containing the specified page widget
 	void removeTab(QWidget* page);
-
-
-	/*
-	 * 'Simulation' Stack Page - Guide
-	 */
-	private slots:
-	void guideWidgetCanceled();
-	void guideWidgetFinished();
 
 
 	/*

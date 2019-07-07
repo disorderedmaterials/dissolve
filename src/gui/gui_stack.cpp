@@ -31,7 +31,4 @@ void DissolveWindow::showMainStackPage(DissolveWindow::MainStackPage page)
 	ui.SimulationMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
 	ui.ControlMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
 	ui.WorkspaceMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
-
-	// Make sure the guide widget is hidden
-	ui.GuideWidget->setVisible(false);
 }
