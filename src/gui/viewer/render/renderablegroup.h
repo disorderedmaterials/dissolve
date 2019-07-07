@@ -23,6 +23,7 @@
 #define DISSOLVE_RENDERABLEGROUP_H
 
 #include "gui/viewer/render/colourdefinition.h"
+#include "gui/viewer/render/linestipple.h"
 #include "base/charstring.h"
 
 // Forward declarations
@@ -108,7 +109,7 @@ class RenderableGroup : public ListItem<RenderableGroup>
 	private:
 	// Set colour information for the supplied Renderable, according to our settings
 	void setRenderableColour(Renderable* rend);
-	// Set all renderable colours
+	// Set all Renderable colours
 	void setRenderableColours();
 
 	public:
@@ -122,6 +123,26 @@ class RenderableGroup : public ListItem<RenderableGroup>
 	ColourDefinition::StockColour fixedStockColour() const;
 	// Return fixed colour definition for the group
 	const ColourDefinition& fixedColour() const;
+
+
+	/*
+	 * Line Style
+	 */
+	private:
+	// Line stipple for the group
+	LineStipple::StippleType lineStipple_;
+
+	private:
+	// Set line style for the supplied Renderable, according to our settings
+	void setRenderableLineStyle(Renderable* rend);
+	// Set all Renderable line styles
+	void setRenderableLineStyles();
+
+	public:
+	// Set line stipple for the group
+	void setLineStipple(LineStipple::StippleType stipple);
+	// Return line stipple for the group
+	LineStipple::StippleType lineStipple() const;
 
 
 	/*

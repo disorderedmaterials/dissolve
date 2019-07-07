@@ -194,6 +194,37 @@ ColourDefinition::StockColour RenderableGroup::fixedStockColour() const
 }
 
 /*
+ * Line Style
+ */
+
+// Set line style for the supplied Renderable, according to our settings
+void RenderableGroup::setRenderableLineStyle(Renderable* rend)
+{
+	if (lineStipple_ != LineStipple::NoStipple) rend->lineStyle().setStipple(lineStipple_);
+}
+
+// Set all Renderable line styles
+void RenderableGroup::setRenderableLineStyles()
+{
+	RefListIterator<Renderable,int> renderableIterator(renderables_);
+	while (Renderable* renderable = renderableIterator.iterate()) setRenderableLineStyle(renderable);
+}
+
+// Set line stipple for the group
+void RenderableGroup::setLineStipple(LineStipple::StippleType stipple)
+{
+	lineStipple_ = stipple;
+
+	setRenderableLineStyles();
+}
+
+// Return line stipple for the group
+LineStipple::StippleType RenderableGroup::lineStipple() const
+{
+	return lineStipple_;
+}
+
+/*
  * Vertical Shifting
  */
 

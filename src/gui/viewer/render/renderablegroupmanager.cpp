@@ -155,6 +155,18 @@ void RenderableGroupManager::setGroupColouring(const char* groupName, Renderable
 }
 
 /*
+ * Line Styling
+ */
+
+// Line stipple to use for group
+void RenderableGroupManager::setGroupStipple(const char* groupName, LineStipple::StippleType stipple)
+{
+	RenderableGroup* g = group(groupName);
+	if (!g) Messenger::warn("RenderableGroup '%s' does not exist, so can't set its colouring style.\n", groupName);
+	else g->setLineStipple(stipple);
+}
+
+/*
  * Vertical Shifting
  */
 

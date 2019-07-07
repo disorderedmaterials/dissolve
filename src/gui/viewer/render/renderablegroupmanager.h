@@ -72,6 +72,14 @@ class RenderableGroupManager
 
 
 	/*
+	 * Line Styling
+	 */
+	public:
+	// Line stipple to use for group
+	void setGroupStipple(const char* groupName, LineStipple::StippleType stipple);
+
+
+	/*
 	 * Vertical Shifting
 	 */
 	public:
