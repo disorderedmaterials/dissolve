@@ -116,12 +116,6 @@ const char* Configuration::niceName()
 	return niceName_.get();
 }
 
-// Return version
-int Configuration::version() const
-{
-	return version_;
-}
-
 /*
  * Calculation Limits
  */

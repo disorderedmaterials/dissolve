@@ -75,8 +75,6 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	CharString name_;
 	// Nice name (generated from name_) used for output files
 	CharString niceName_;
-	// Version of the Configuration
-	VersionCounter version_;
 
 	public:
 	// Set name of the Configuration
@@ -85,8 +83,6 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	const char* name();
 	// Return nice name of the Configuration
 	const char* niceName();
-	// Return version
-	int version() const;
 
 
 	/*

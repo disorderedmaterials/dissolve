@@ -160,7 +160,7 @@ bool Configuration::initialise(ProcessPool& procPool, bool randomise, double pai
 	// Set fractional populations in usedAtomTypes_
 	usedAtomTypes_.finalise();
 
-	++version_;
+	++contentsVersion_;
 
 	return true;
 }
