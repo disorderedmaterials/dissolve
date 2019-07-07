@@ -132,9 +132,6 @@ bool EPSRModule::readPCof(Dissolve& dissolve, ProcessPool& procPool, const char*
 		potentialCoefficients.linearArray()[n] = 0.0;
 	}
 
-	// Get density to apply to coefficients (as 1.0/rho)
-	const double rho = keywords_.asDouble("PCofRho");
-
 	// Now we are ready to read in the potential coefficients - first line contains the number of pair potentials to expect coefficients for
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return Messenger::error("Failed to read number of pair potentials from pcof file.\n");
 	int nPots = parser.argi(0);
@@ -162,9 +159,6 @@ bool EPSRModule::readPCof(Dissolve& dissolve, ProcessPool& procPool, const char*
 
 		// Zero the first coefficient, which EPSR ignores
 		coefficients[0] = 0.0;
-
-		// Apply factor of (1.0/rho), since our Poisson function normalisations do not contain this term
-		coefficients /= rho;
 	}
 
 	return true;

@@ -84,13 +84,11 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve& dissolve, EPSRModule::Exp
 			else if (functionType == EPSRModule::PoissonExpansionFunction)
 			{
 				// Construct our fitting object and generate the potential using it
+				// We pass 1.0/rho as the factor to PossonFit::approximation() - this is the factor of rho not present in our denominator
 				PoissonFit generator(ep);
 				generator.set(FunctionSpace::ReciprocalSpace, rmaxpt, potCoeff, sigma1, sigma2);
-				ep = generator.approximation(FunctionSpace::RealSpace, 1.0, 0.0, dissolve.pairPotentialDelta(), dissolve.pairPotentialRange());
+				ep = generator.approximation(FunctionSpace::RealSpace, 1.0/averagedRho, 0.0, dissolve.pairPotentialDelta(), dissolve.pairPotentialRange());
 			}
-
-			// Normalise by density
-			ep.values() /= averagedRho;
 
 			// Multiply by truncation function
 			truncate(ep, rminpt, rmaxpt);

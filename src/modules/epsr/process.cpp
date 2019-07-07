@@ -652,6 +652,9 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Determine absolute energy of empirical potentials
 		energabs = absEnergyEP(dissolve);
 
+		// Apply factor of 1.0/rho to abs energy if using Poisson approximation (since this term is not present in the fit functions)
+		if (functionType == EPSRModule::PoissonExpansionFunction) energabs /= averagedRho;
+
 		/*
 		 * Determine the scaling we will apply to the coefficients (if any)
 		 * Notes:
