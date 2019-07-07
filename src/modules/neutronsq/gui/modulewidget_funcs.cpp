@@ -172,31 +172,26 @@ void NeutronSQModuleWidget::setGraphDataTargets(NeutronSQModule* module)
 			 */
 
 			// Full partial
-			Renderable* fullGR = partialGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedGR//%s//Full", module_->uniqueName(), id.get()), CharString("Total//%s", id.get()), id.get(), "Full");
+			partialGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedGR//%s//Full", module_->uniqueName(), id.get()), CharString("%s (Full)", id.get()), id.get(), "Full");
 
 			// Bound partial
-			Renderable* boundGR = partialGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedGR//%s//Bound", module_->uniqueName(), id.get()), CharString("Bound//%s", id.get()), CharString("%s Bound", id.get()), "Bound");
-			boundGR->lineStyle().setStipple(LineStipple::HalfDashStipple);
+			partialGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedGR//%s//Bound", module_->uniqueName(), id.get()), CharString("%s (Bound)", id.get()), CharString("%s Bound", id.get()), "Bound");
 
 			// Unbound partial
-			Renderable* unboundGR = partialGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedGR//%s//Unbound", module_->uniqueName(), id.get()), CharString("Unbound//%s", id.get()), CharString("%s Unbound", id.get()), "Unbound");
-			unboundGR->lineStyle().setStipple(LineStipple::DotStipple);
-			partialGRGraph_->addRenderableToGroup(unboundGR, id.get());
+			partialGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedGR//%s//Unbound", module_->uniqueName(), id.get()), CharString("%s (Unbound)", id.get()), CharString("%s Unbound", id.get()), "Unbound");
 
 			/*
 			 * Partial S(Q)
 			 */
 
 			// Full partial
-			Renderable* fullSQ = partialSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedSQ//%s//Full", module_->uniqueName(), id.get()), CharString("Total//%s", id.get()), id.get(), "Full");
+			partialSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedSQ//%s//Full", module_->uniqueName(), id.get()), CharString("%s (Full)", id.get()), id.get(), "Full");
 
 			// Bound partial
-			Renderable* boundSQ = partialSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedSQ//%s//Bound", module_->uniqueName(), id.get()), CharString("Bound//%s", id.get()), CharString("%s Bound", id.get()), "Bound");
-			boundSQ->lineStyle().setStipple(LineStipple::HalfDashStipple);
+			partialSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedSQ//%s//Bound", module_->uniqueName(), id.get()), CharString("%s (Bound)", id.get()), CharString("%s Bound", id.get()), "Bound");
 
 			// Unbound partial
-			Renderable* unboundSQ = partialSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedSQ//%s//Unbound", module_->uniqueName(), id.get()), CharString("Unbound//%s", id.get()), CharString("%s Unbound", id.get()), "Unbound");
-			unboundSQ->lineStyle().setStipple(LineStipple::DotStipple);
+			partialSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedSQ//%s//Unbound", module_->uniqueName(), id.get()), CharString("%s (Unbound)", id.get()), CharString("%s Unbound", id.get()), "Unbound");
 		}
 	}
 
@@ -205,14 +200,18 @@ void NeutronSQModuleWidget::setGraphDataTargets(NeutronSQModule* module)
 	partialGRGraph_->groupManager().setGroupVerticalShifting("Full", RenderableGroup::IndividualVerticalShifting);
 	partialGRGraph_->groupManager().setGroupColouring("Bound", RenderableGroup::AutomaticIndividualColouring);
 	partialGRGraph_->groupManager().setGroupVerticalShifting("Bound", RenderableGroup::IndividualVerticalShifting);
+	partialGRGraph_->groupManager().setGroupStipple("Bound", LineStipple::HalfDashStipple);
 	partialGRGraph_->groupManager().setGroupColouring("Unbound", RenderableGroup::AutomaticIndividualColouring);
 	partialGRGraph_->groupManager().setGroupVerticalShifting("Unbound", RenderableGroup::IndividualVerticalShifting);
+	partialGRGraph_->groupManager().setGroupStipple("Unbound", LineStipple::DotStipple);
 	partialSQGraph_->groupManager().setGroupColouring("Full", RenderableGroup::AutomaticIndividualColouring);
 	partialSQGraph_->groupManager().setGroupVerticalShifting("Full", RenderableGroup::IndividualVerticalShifting);
 	partialSQGraph_->groupManager().setGroupColouring("Bound", RenderableGroup::AutomaticIndividualColouring);
 	partialSQGraph_->groupManager().setGroupVerticalShifting("Bound", RenderableGroup::IndividualVerticalShifting);
+	partialSQGraph_->groupManager().setGroupStipple("Bound", LineStipple::HalfDashStipple);
 	partialSQGraph_->groupManager().setGroupColouring("Unbound", RenderableGroup::AutomaticIndividualColouring);
 	partialSQGraph_->groupManager().setGroupVerticalShifting("Unbound", RenderableGroup::IndividualVerticalShifting);
+	partialSQGraph_->groupManager().setGroupStipple("Unbound", LineStipple::DotStipple);
 
 	// Add calculated total G(r)
 	Renderable* totalGR = totalGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedGR//Total", module_->uniqueName()), "Calculated");

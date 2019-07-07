@@ -162,15 +162,13 @@ void RDFModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 			CharString id("%s-%s", at1->name(), at2->name());
 
 			// Full partial
-			Renderable* fullGR = partialsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s//Full", currentConfiguration_->niceName(), id.get()), CharString("Full//%s", id.get()), id.get(), "Full");
+			partialsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s//Full", currentConfiguration_->niceName(), id.get()), CharString("%s (Full)", id.get()), id.get(), "Full");
 
 			// Bound partial
-			Renderable* boundGR = partialsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s//Bound", currentConfiguration_->niceName(), id.get()), CharString("Bound//%s", id.get()), id.get(), "Bound");
-			boundGR->lineStyle().setStipple(LineStipple::HalfDashStipple);
+			partialsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s//Bound", currentConfiguration_->niceName(), id.get()), CharString("%s (Bound)", id.get()), id.get(), "Bound");
 
 			// Unbound partial
-			Renderable* unboundGR = partialsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s//Unbound", currentConfiguration_->niceName(), id.get()), CharString("Unbound//%s", id.get()), id.get(), "Unbound");
-			unboundGR->lineStyle().setStipple(LineStipple::DotStipple);
+			partialsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s//Unbound", currentConfiguration_->niceName(), id.get()), CharString("%s (Unbound)", id.get()), id.get(), "Unbound");
 		}
 	}
 
@@ -179,6 +177,8 @@ void RDFModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 	partialsGraph_->groupManager().setGroupVerticalShifting("Full", RenderableGroup::IndividualVerticalShifting);
 	partialsGraph_->groupManager().setGroupColouring("Bound", RenderableGroup::AutomaticIndividualColouring);
 	partialsGraph_->groupManager().setGroupVerticalShifting("Bound", RenderableGroup::IndividualVerticalShifting);
+	partialsGraph_->groupManager().setGroupStipple("Bound", LineStipple::HalfDashStipple);
 	partialsGraph_->groupManager().setGroupColouring("Unbound", RenderableGroup::AutomaticIndividualColouring);
 	partialsGraph_->groupManager().setGroupVerticalShifting("Unbound", RenderableGroup::IndividualVerticalShifting);
+	partialsGraph_->groupManager().setGroupStipple("Unbound", LineStipple::DotStipple);
 }
