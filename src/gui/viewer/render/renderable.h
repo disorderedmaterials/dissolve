@@ -58,8 +58,6 @@ class Renderable : public ListItem<Renderable>
 	CharString name_;
 	// Type of Renderable
 	RenderableType type_;
-	// Legend text to display
-	CharString legendText_;
 
 	public:
 	// Set name of Renderable
@@ -68,10 +66,6 @@ class Renderable : public ListItem<Renderable>
 	const char* name();
 	// Return type of Renderable
 	RenderableType type() const;
-	// Set legend text to display
-	void setLegendText(const char* legendText);
-	// Return legend text to display
-	const char* legendText() const;
 
 
 	/*

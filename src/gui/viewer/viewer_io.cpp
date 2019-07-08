@@ -573,7 +573,7 @@ bool BaseViewer::writeRenderableBlock(LineParser& parser, Renderable* renderable
 	for (int n=0; n<indentLevel*2; ++n) indent[n] = ' ';
 	indent[indentLevel*2] = '\0';
 
-	parser.writeLineF("%s%s  %s  '%s'  '%s'  '%s'\n", indent, BaseViewer::inputBlock(BaseViewer::RenderableBlock), Renderable::renderableType(renderable->type()), renderable->objectTag(), renderable->name(), renderable->legendText());
+	parser.writeLineF("%s%s  %s  '%s'  '%s'  '%s'\n", indent, BaseViewer::inputBlock(BaseViewer::RenderableBlock), Renderable::renderableType(renderable->type()), renderable->objectTag(), renderable->name());
 
 	// -- Transforms
 	parser.writeLineF("%s  %s %s %s\n", indent, BaseViewer::renderableKeyword(BaseViewer::TransformXKeyword), DissolveSys::btoa(renderable->transformEnabled(0)), renderable->transformEquation(0));

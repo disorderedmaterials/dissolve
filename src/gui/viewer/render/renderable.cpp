@@ -108,18 +108,6 @@ Renderable::RenderableType Renderable::type() const
 	return type_;
 }
 
-// Set legend text to display
-void Renderable::setLegendText(const char* legendText)
-{
-	legendText_ = legendText;
-}
-
-// Return legend text to display
-const char* Renderable::legendText() const
-{
-	return legendText_.get();
-}
-
 /*
  * Data
  */

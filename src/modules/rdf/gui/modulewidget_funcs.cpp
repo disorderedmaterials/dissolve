@@ -137,9 +137,11 @@ void RDFModuleWidget::setGraphDataTargets(RDFModule* module)
 	while (Configuration* cfg = configIterator.iterate())
 	{
 		// Add calculated total G(r)
-		Renderable* refData = totalsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//Total", cfg->niceName()), CharString("Calculated//%s", cfg->niceName()), cfg->niceName());
-		totalsGraph_->addRenderableToGroup(refData, "Calc");
+		totalsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//Total", cfg->niceName()), cfg->niceName(), "Calc");
 	}
+
+	// Set group styling
+	totalsGraph_->groupManager().setGroupColouring("Calc", RenderableGroup::AutomaticIndividualColouring);
 }
 
 void RDFModuleWidget::on_TargetCombo_currentIndexChanged(int index)
@@ -162,13 +164,13 @@ void RDFModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 			CharString id("%s-%s", at1->name(), at2->name());
 
 			// Full partial
-			partialsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s//Full", currentConfiguration_->niceName(), id.get()), CharString("%s (Full)", id.get()), id.get(), "Full");
+			partialsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s//Full", currentConfiguration_->niceName(), id.get()), CharString("%s (Full)", id.get()), "Full");
 
 			// Bound partial
-			partialsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s//Bound", currentConfiguration_->niceName(), id.get()), CharString("%s (Bound)", id.get()), id.get(), "Bound");
+			partialsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s//Bound", currentConfiguration_->niceName(), id.get()), CharString("%s (Bound)", id.get()), "Bound");
 
 			// Unbound partial
-			partialsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s//Unbound", currentConfiguration_->niceName(), id.get()), CharString("%s (Unbound)", id.get()), id.get(), "Unbound");
+			partialsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s//Unbound", currentConfiguration_->niceName(), id.get()), CharString("%s (Unbound)", id.get()), "Unbound");
 		}
 	}
 
