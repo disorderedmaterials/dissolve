@@ -24,20 +24,16 @@
 #include "module/keywordtypes.h"
 #include "base/lineparser.h"
 
-// Expansion Function Type
-const char* ExpansionFunctionTypeKeywords[] = { "Poisson", "Gaussian" };
-
-// Convert text string to ExpansionFunctionType
-EPSRModule::ExpansionFunctionType EPSRModule::expansionFunctionType(const char* s)
+// Return enum option info for AveragingScheme, with starting value provided
+EnumOptions<EPSRModule::ExpansionFunctionType> EPSRModule::expansionFunctionTypes()
 {
-	for (int n=0; n<EPSRModule::nExpansionFunctionTypes; ++n) if (DissolveSys::sameString(s, ExpansionFunctionTypeKeywords[n])) return (EPSRModule::ExpansionFunctionType) n;
-	return EPSRModule::nExpansionFunctionTypes;
-}
+	static EnumOptionsList ExpansionFunctionTypeOptions = EnumOptionsList() << 
+		EnumOption(EPSRModule::PoissonExpansionFunction, 	"Poisson") << 
+		EnumOption(EPSRModule::GaussianExpansionFunction, 	"Gaussian");
 
-// Convert ExpansionFunctionType to text string
-const char* EPSRModule::expansionFunctionType(EPSRModule::ExpansionFunctionType eft)
-{
-	return ExpansionFunctionTypeKeywords[eft];
+	static EnumOptions<EPSRModule::ExpansionFunctionType> options("ExpansionFunctionType", ExpansionFunctionTypeOptions, EPSRModule::PoissonExpansionFunction);
+
+	return options;
 }
 
 // Set up keywords for Module
@@ -59,7 +55,7 @@ void EPSRModule::setUpKeywords()
 
 	// Expansion Function
 	group = addKeywordGroup("Expansion Function");
-	group->add(new EnumStringModuleKeyword(EPSRModule::PoissonExpansionFunction, EPSRModule::nExpansionFunctionTypes, ExpansionFunctionTypeKeywords), "ExpansionFunction", "Form of expansion function to use when fitting difference data");
+	group->add(new EnumStringModuleKeyword(EPSRModule::expansionFunctionTypes() = EPSRModule::PoissonExpansionFunction), "ExpansionFunction", "Form of expansion function to use when fitting difference data");
 	group->add(new DoubleModuleKeyword(0.1, 0.001, 1.0), "GSigma1", "Width for Gaussian function in reciprocal space");
 	group->add(new DoubleModuleKeyword(0.2, 0.001, 1.0), "GSigma2", "Width for Gaussian function in real space");
 	group->add(new IntegerModuleKeyword(-1, -1), "NCoeffP", "Number of coefficients user to define the empirical potential (-1 for automatic)");

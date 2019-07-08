@@ -32,7 +32,7 @@
  */
 
 // Input File Block Keywords
-const char* BaseViewerInputBlockKeywords[] = { "EndSession", "Renderable", "View" };
+const char* BaseViewerInputBlockKeywords[] = { "EndSession", "Renderable", "RenderableGroup", "View" };
 
 // Convert text string to InputBlock
 BaseViewer::InputBlock BaseViewer::inputBlock(const char* s)
@@ -622,6 +622,92 @@ bool BaseViewer::writeRenderableBlock(LineParser& parser, Renderable* renderable
 	if (renderable->group()) parser.writeLineF("%s  %s '%s'\n", indent, BaseViewer::renderableKeyword(BaseViewer::GroupKeyword), renderable->group()->name());
 
 	parser.writeLineF("%s%s\n", indent, BaseViewer::renderableKeyword(BaseViewer::EndRenderableKeyword));
+
+	return true;
+}
+
+
+/*
+ * RenderableGroup Keywords
+ */
+
+// Return enum options for RenderableGroupKeyword
+EnumOptions<BaseViewer::RenderableGroupKeyword> BaseViewer::renderableGroupKeywords()
+{
+	static EnumOptionsList BaseViewerRenderableGroupBlockOptions = EnumOptionsList() <<
+		EnumOption(BaseViewer::ColouringStyleKeyword,		"ColouringStyle", 	1) <<
+		EnumOption(BaseViewer::EndRenderableGroupKeyword,	"EndRenderableGroup"	 ) <<
+		EnumOption(BaseViewer::FixedStockColourKeyword,		"FixedStockColour",	1) <<
+		EnumOption(BaseViewer::GroupVisibleKeyword,		"Visible",		1) <<
+		EnumOption(BaseViewer::StippleKeyword,			"Stipple",		1) <<
+		EnumOption(BaseViewer::VerticalShiftingKeyword, 	"VerticalShifting",	1);
+
+	static EnumOptions<BaseViewer::RenderableGroupKeyword> options("RenderableGroupKeyword", BaseViewerRenderableGroupBlockOptions);
+
+	return options;
+}
+
+// Read RenderableGroupBlock keywords
+bool BaseViewer::readRenderableGroupBlock(LineParser& parser, RenderableGroup* group, bool strictBlockEnd)
+{
+	while (!parser.eofOrBlank())
+	{
+		// Get line from file
+		parser.getArgsDelim(LineParser::UseQuotes + LineParser::SkipBlanks + LineParser::SemiColonLineBreaks);
+
+		// Get keyword and check number of arguments provided
+		const EnumOption& groupKwd = renderableGroupKeywords().option(parser.argc(0));
+		if (groupKwd.isValid() && (groupKwd.nArgs() > (parser.nArgs()-1)))
+		{
+			Messenger::error("RenderableGroup keyword '%s' requires %i arguments, but only %i have been provided.\n", groupKwd.keyword(), groupKwd.nArgs(), parser.nArgs()-1);
+			return false;
+		}
+		switch (groupKwd.enumeration())
+		{
+			// End input block
+			case (BaseViewer::EndRenderableGroupKeyword):
+				return true;
+				break;
+			// Fixed stock colour
+			case (BaseViewer::FixedStockColourKeyword):
+				if (!ColourDefinition::stockColours().isValid(parser.argc(1))) return ColourDefinition::stockColours().errorAndPrintValid(parser.argc(1));
+				group->setFixedStockColour(ColourDefinition::stockColours().enumeration(parser.argc(1)));
+				break;
+			// Group visibility flag
+			case (BaseViewer::GroupVisibleKeyword):
+				group->setVisible(parser.argb(1));
+				break;
+			// Unrecognised Keyword
+			default:
+				Messenger::warn("Unrecognised renderable keyword: %s\n", parser.argc(0));
+				return false;
+				break;
+		}
+	}
+
+	if (strictBlockEnd)
+	{
+		Messenger::print("Error : Unterminated 'RenderableGroup' block.\n");
+		return false;
+	}
+
+	return true;
+}
+
+// Write RenderableGroupBlock keywords
+bool BaseViewer::writeRenderableGroupBlock(LineParser& parser, RenderableGroup* group, int indentLevel)
+{
+	// Construct indent string
+	char* indent = new char[indentLevel*2+1];
+	for (int n=0; n<indentLevel*2; ++n) indent[n] = ' ';
+	indent[indentLevel*2] = '\0';
+
+	parser.writeLineF("%s%s  %s  '%s'\n", indent, BaseViewer::inputBlock(BaseViewer::RenderableGroupBlock), group->name());
+
+	
+	parser.writeLineF("%s  %s %s\n", indent, renderableGroupKeywords().keyword(BaseViewer::GroupVisibleKeyword), DissolveSys::btoa(group->isVisible()));
+
+	parser.writeLineF("%s%s\n", indent, renderableGroupKeywords().keyword(BaseViewer::EndRenderableGroupKeyword));
 
 	return true;
 }

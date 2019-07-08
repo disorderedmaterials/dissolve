@@ -46,8 +46,8 @@ bool BraggModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	}
 
 	const int averaging = keywords_.asInt("Averaging");
-	Averaging::AveragingScheme averagingScheme = Averaging::averagingSchemes().option(keywords_.asString("AveragingScheme"));
-	if (averagingScheme == Averaging::nAveragingSchemes) return Messenger::error("Invalid averaging scheme '%s' found.\n", keywords_.asString("AveragingScheme"));
+	if (!Averaging::averagingSchemes().isValid(keywords_.asString("AveragingScheme"))) return Averaging::averagingSchemes().errorAndPrintValid(keywords_.asString("AveragingScheme"));
+	Averaging::AveragingScheme averagingScheme = Averaging::averagingSchemes().enumeration(keywords_.asString("AveragingScheme"));
 	const double qDelta = keywords_.asDouble("QDelta");
 	const double qMax = keywords_.asDouble("QMax");
 	const double qMin = keywords_.asDouble("QMin");

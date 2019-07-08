@@ -34,7 +34,6 @@ class EnumStringModuleKeyword : public ModuleKeywordData<CharString>
 {
 	public:
 	// Constructor
-	EnumStringModuleKeyword(int value, int nOptions, const char** options);
 	EnumStringModuleKeyword(EnumOptionsBase options);
 	// Destructor
 	~EnumStringModuleKeyword();
@@ -52,7 +51,9 @@ class EnumStringModuleKeyword : public ModuleKeywordData<CharString>
 	 * Data Validation
 	 */
 	private:
-	// List of valid values (if appropriate)
+	// Copy of source EnumOptionsBase
+	EnumOptionsBase enumOptions_;
+	// List of valid values
 	Array<CharString> validValues_;
 
 	public:

@@ -22,41 +22,126 @@
 #ifndef DISSOLVE_ENUMOPTIONS_H
 #define DISSOLVE_ENUMOPTIONS_H
 
+#include "base/messenger.h"
 #include "base/sysfunc.h"
+#include "templates/array.h"
+
+// Enum Option
+class EnumOption
+{
+	public:
+	// Constructors
+	EnumOption(const int enumeration = 0, const char* keyword = NULL, int nArgs = 0);
+
+	private:
+	// Option enumeration (i.e. from enum value)
+	int enumeration_;
+	// Option keyword
+	const char* keyword_;
+	// Whether the option has any associated arguments
+	bool hasArguments_;
+	// Number of arguments the option takes
+	int nArgs_;
+
+	public:
+	// Return if the option is valid (true except in derived classes)
+	virtual bool isValid() const;
+	// Return option enumeration (i.e. from enum value)
+	int enumeration() const;
+	// Return option keyword
+	const char* keyword() const;
+	// Return whether the option has any associated arguments
+	bool hasArguments() const;
+	// Return number of arguments the option takes
+	int nArgs() const;
+};
+
+// Unrecognised Enum Option
+class UnrecognisedEnumOption : public EnumOption
+{
+	public:
+	// Constructor
+	UnrecognisedEnumOption() : EnumOption(0, "UNRECOGNISED_KEYWORD")
+	{
+	}
+
+	public:
+	// Return if the option is valid (true except in derived classes)
+	bool isValid() const
+	{
+		return false;
+	}
+};
+
+class EnumOptionsList
+{
+	private:
+	// List of options
+	Array<EnumOption> options_;
+
+	public:
+	// Return list of options
+	const Array<EnumOption>& options() const
+	{
+		return options_;
+	}
+	// Add item
+	EnumOptionsList& operator<<(EnumOption option)
+	{
+		options_.add(option);
+		return (*this);
+	}
+};
 
 // Enum Options Base
 class EnumOptionsBase
 {
 	public:
-	// Constructor
-	EnumOptionsBase(const char* name, int nOptions, const char** options, int currentOption);
+	// Constructors
+	EnumOptionsBase(const char* name, const EnumOptionsList& options);
+	EnumOptionsBase(const char* name, const EnumOptionsList& options, int defaultEnumeration);
 
 
 	/*
-	 * Name for Options
+	 * Name
 	 */
-	private:
+	protected:
+	// Name of options (e.g. from source enumeration)
 	const char* name_;
+
+	protected:
+	// Unrecognised option
+	static UnrecognisedEnumOption unrecognisedOption_;
 
 
 	/*
 	 * Enum Option Data
 	 */
 	protected:
-	// Number of options available
-	int nOptions_;
-	// Option keywords
-	const char** optionKeywords_;
-	// Current option index
-	int option_;
+	// Options
+	Array<EnumOption> options_;
+	// Current option index in local options_ array
+	int currentOptionIndex_;
 
 	public:
 	// Return number of options available
 	int nOptions() const;
-	// Return option keyword with index specified
-	const char* option(int index) const;
+	// Return nth keyword in the list
+	const char* keywordByIndex(int index) const;
+	// Return option by keyword
+	const EnumOption& option(const char* keyword) const;
 	// Return current option keyword
-	const char* optionKeyword() const;
+	const char* currentOptionKeyword() const;
+	// Return current option
+	const EnumOption& currentOption() const;
+
+
+	/*
+	 * Error Reporting
+	 */
+	public:
+	// Raise error, printing valid options
+	bool errorAndPrintValid(const char* badKeyword) const;
 
 
 	/*
@@ -70,31 +155,46 @@ class EnumOptionsBase
 template <class T> class EnumOptions : public EnumOptionsBase
 {
 	public:
-	// Constructor
-	EnumOptions(const char* name, int nOptions, const char** options, T currentOption) : EnumOptionsBase(name, nOptions, options, currentOption)
+	// Constructors
+	EnumOptions(const char* name, const EnumOptionsList& options) : EnumOptionsBase(name, options)
 	{
 	}
-
+	EnumOptions(const char* name, const EnumOptionsList& options, T defaultEnumeration) : EnumOptionsBase(name, options, defaultEnumeration)
+	{
+	}
 
 	/*
 	 * Enum Conversion
 	 */
 	public:
 	// Return enumeration in T
-	T option(const char* keyword) const
+	T enumeration(const char* keyword) const
 	{
-		for (int n=0; n<nOptions_; ++n) if (DissolveSys::sameString(keyword, optionKeywords_[n])) return (T) n;
-		return (T) nOptions_;
+		for (int n=0; n<options_.nItems(); ++n) if (DissolveSys::sameString(keyword, options_.at(n).keyword())) return (T) n;
+		return (T) options_.nItems();
 	}
-	// Return option keyword with index specified
-	const char* option(T index) const
+	// Return enumerated keyword
+	const char* keyword(T enumeration) const
 	{
-		return EnumOptionsBase::option((int) index);
+		for (int n=0; n<options_.nItems(); ++n) if (options_.at(n).enumeration() == enumeration) return options_.at(n).keyword();
+		return "ENUMERATION_NOT_VALID";
 	}
-	// Return current option
-	T option() const
+	// Return option with enumeration specified
+	const EnumOption& option(T enumeration) const
 	{
-		return (T) option_;
+		for (int n=0; n<options_.nItems(); ++n) if (options_.at(n).enumeration() == enumeration) return options_.at(n);
+		return unrecognisedOption_;
+	}
+	// Return option with keyword specified
+	const EnumOption& option(const char* keyword) const
+	{
+		return EnumOptionsBase::option(keyword);
+	}
+	// Return whether specified option keyword is valid
+	bool isValid(const char* keyword) const
+	{
+		for (int n=0; n<options_.nItems(); ++n) if (DissolveSys::sameString(keyword, options_.at(n).keyword())) return true;
+		return false;
 	}
 
 
@@ -104,7 +204,7 @@ template <class T> class EnumOptions : public EnumOptionsBase
 	public:
 	EnumOptions<T>& operator=(T value)
 	{
-		option_ = value;
+		currentOptionIndex_ = value;
 		return *this;
 	}
 };

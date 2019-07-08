@@ -19,42 +19,128 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "base/charstring.h"
 #include "base/enumoptions.h"
 #include "base/messenger.h"
+#include <stddef.h>
 
-// Constructor
-EnumOptionsBase::EnumOptionsBase(const char* name, int nOptions, const char** optionKeywords, int currentOption)
+// Static Singleton
+UnrecognisedEnumOption EnumOptionsBase::unrecognisedOption_;
+
+/*
+ * EnumOption
+ */
+
+EnumOption::EnumOption(const int enumeration, const char* keyword, int nArgs)
 {
-	name_ = name;
-	nOptions_ = nOptions;
-	optionKeywords_ = optionKeywords;
-	option_ = currentOption;
+	enumeration_ = enumeration;
+	keyword_ = keyword;
+	nArgs_ = nArgs;
+}
+
+// Return if the option is valid (true except in derived classes)
+bool EnumOption::isValid() const
+{
+	return true;
+}
+
+// Return option enumeration (i.e. from enum value)
+int EnumOption::enumeration() const
+{
+	return enumeration_;
+}
+
+// Return option keyword
+const char* EnumOption::keyword() const
+{
+	return keyword_;
+}
+
+// Return whether the option has any associated arguments
+bool EnumOption::hasArguments() const
+{
+	return (nArgs_ > 0);
+}
+
+// Return number of arguments the option takes
+int EnumOption::nArgs() const
+{
+	return nArgs_;
 }
 
 /*
- * Enum Options
+ * EnumOptionsBase
  */
+
+// Constructors
+EnumOptionsBase::EnumOptionsBase(const char* name, const EnumOptionsList& options)
+{
+	name_ = name;
+	options_ = options.options();
+
+	currentOptionIndex_ = -1;
+}
+
+EnumOptionsBase::EnumOptionsBase(const char* name, const EnumOptionsList& options, int defaultEnumeration)
+{
+	name_ = name;
+	options_ = options.options();;
+
+	currentOptionIndex_ = -1;
+	for (int n=0; n<options_.nItems(); ++n) if (options_[n].enumeration() == defaultEnumeration)
+	{
+		currentOptionIndex_ = n;
+		break;
+	}
+}
 
 // Return number of options available
 int EnumOptionsBase::nOptions() const
 {
-	return nOptions_;
+	return options_.nItems();
 }
 
-// Return option keyword with index specified
-const char* EnumOptionsBase::option(int index) const
+// Return nth keyword in the list
+const char* EnumOptionsBase::keywordByIndex(int index) const
 {
-	if ((index < 0) || (index >= nOptions_))
+	if ((index < 0) || (index >= options_.nItems()))
 	{
-		Messenger::error("Index %i is out of range for enum %s.\n", index, name_);
-		return "???";
+		Messenger::error("Keyword index %i out of range for EnumOptions '%s'.\n", index, name_);
+		return unrecognisedOption_.keyword();
 	}
 
-	return optionKeywords_[index];
+	return options_.at(index).keyword();
+}
+
+// Return option by keyword
+const EnumOption& EnumOptionsBase::option(const char* keyword) const
+{
+	for (int n=0; n<options_.nItems(); ++n) if (DissolveSys::sameString(keyword, options_.at(n).keyword())) return options_.at(n);
+	return unrecognisedOption_;
 }
 
 // Return current option keyword
-const char* EnumOptionsBase::optionKeyword() const
+const char* EnumOptionsBase::currentOptionKeyword() const
 {
-	return optionKeywords_[option_];
+	if (currentOptionIndex_ == -1) return "UNDEFINED";
+
+	return options_.at(currentOptionIndex_).keyword();
+}
+
+// Return current option
+const EnumOption& EnumOptionsBase::currentOption() const
+{
+	if (currentOptionIndex_ == -1) return unrecognisedOption_;
+
+	return options_.at(currentOptionIndex_);
+}
+
+// Raise error, printing valid options
+bool EnumOptionsBase::errorAndPrintValid(const char* badKeyword) const
+{
+	CharString validValueString;
+	for (int n=0; n<options_.nItems(); ++n) validValueString += CharString(n == 0 ? "%s" : ", %s", options_.at(n).keyword());
+	Messenger::error("'%s' is not a valid %s.\nValid options are:  %s", badKeyword, name_, validValueString.get());
+
+	return false;
 }

@@ -26,6 +26,7 @@
 #include "module/groups.h"
 #include "classes/data1dstore.h"
 #include "math/data1d.h"
+#include "base/enumoptions.h"
 #include "templates/array3d.h"
 
 // Forward Declarations
@@ -79,10 +80,8 @@ class EPSRModule : public Module
 		GaussianExpansionFunction,		/* Fit difference functiuns using Gaussian functions */
 		nExpansionFunctionTypes
 	};
-	// Convert text string to ExpansionFunctionType
-	static ExpansionFunctionType expansionFunctionType(const char* s);
-	// Convert ExpansionFunctionType to text string
-	static const char* expansionFunctionType(ExpansionFunctionType eft);
+	// Return enum option info for AveragingScheme, with starting value provided
+	static EnumOptions<EPSRModule::ExpansionFunctionType> expansionFunctionTypes();
 
 	protected:
 	// Set up options for Module

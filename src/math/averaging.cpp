@@ -21,13 +21,14 @@
 
 #include "math/averaging.h"
 
-// Averaging scheme enum
-const char* AveragingSchemeKeywords[] = { "Linear", "Exponential" };
-
 // Return enum option info for AveragingScheme, with starting value provided
 EnumOptions<Averaging::AveragingScheme> Averaging::averagingSchemes()
 {
-	static EnumOptions<Averaging::AveragingScheme> options("AveragingScheme", nAveragingSchemes, AveragingSchemeKeywords, Averaging::LinearAveraging);
+	static EnumOptionsList AveragingSchemeOptions = EnumOptionsList() << 
+		EnumOption(Averaging::LinearAveraging, 		"Linear") << 
+		EnumOption(Averaging::ExponentialAveraging, 	"Exponential");
+
+	static EnumOptions<Averaging::AveragingScheme> options("AveragingScheme", AveragingSchemeOptions, Averaging::LinearAveraging);
 
 	return options;
 }

@@ -28,6 +28,7 @@
 #include "gui/viewer/render/primitive.h"
 #include "gui/viewer/render/fontinstance.h"
 #include "math/data1d.h"
+#include "base/enumoptions.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
 #include <QOpenGLWidget>
@@ -328,7 +329,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	void generateQueryImage();
 
 	protected:
-	// Update object query, setting supplied information if the depth is closere
+	// Update object query, setting supplied information if the depth is closer
 	void updateQuery(BaseViewer::ViewerObject objectType, const char* info, const char* subInfo = NULL);
 
 	public:
@@ -349,6 +350,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	{
 		EndSessionBlock,
 		RenderableBlock,
+		RenderableGroupBlock,
 		ViewBlock,
 		nInputBlocks
 	};
@@ -435,6 +437,28 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	bool readRenderableBlock(LineParser& parser, Renderable* renderable, bool strictBlockEnd = true);
 	// Write RenderableBlock keywords
 	bool writeRenderableBlock(LineParser& parser, Renderable* renderable, int indentLevel = 0);
+
+	public:
+	// RenderableGroup Block Keyword Enum
+	enum RenderableGroupKeyword
+	{
+		
+		ColouringStyleKeyword,
+		EndRenderableGroupKeyword,
+		FixedStockColourKeyword,
+		GroupVisibleKeyword,
+		StippleKeyword,
+		VerticalShiftingKeyword,
+		nRenderableGroupKeywords
+	};
+	// Return enum options for RenderableGroupKeyword
+	static EnumOptions<BaseViewer::RenderableGroupKeyword> renderableGroupKeywords();
+
+	private:
+	// Read RenderableGroup block keywords
+	bool readRenderableGroupBlock(LineParser& parser, RenderableGroup* group, bool strictBlockEnd = true);
+	// Write RenderableGroup block keywords
+	bool writeRenderableGroupBlock(LineParser& parser, RenderableGroup* group, int indentLevel = 0);
 
 	private:
 	// View Block Keyword Enum
