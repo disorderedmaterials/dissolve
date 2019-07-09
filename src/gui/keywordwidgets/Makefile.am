@@ -29,7 +29,6 @@ libkeywordwidgets_la_SOURCES += bool.hui bool_funcs.cpp
 libkeywordwidgets_la_SOURCES += broadeningfunction.ui broadeningfunction_funcs.cpp
 libkeywordwidgets_la_SOURCES += charstring.hui charstring_funcs.cpp
 libkeywordwidgets_la_SOURCES += double.hui double_funcs.cpp
-libkeywordwidgets_la_SOURCES += enumstring.hui enumstring_funcs.cpp
 libkeywordwidgets_la_SOURCES += fileandformat.ui fileandformat_funcs.cpp
 libkeywordwidgets_la_SOURCES += integer.hui integer_funcs.cpp
 libkeywordwidgets_la_SOURCES += isotopologuelist.ui isotopologuelist_funcs.cpp

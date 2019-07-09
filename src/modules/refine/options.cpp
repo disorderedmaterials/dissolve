@@ -58,7 +58,7 @@ void RefineModule::setUpKeywords()
 	frequency_ = 5;
 	groupedTargets_.addAllowedModuleType("NeutronSQ");
 
-	keywords_.add(new EnumOptionsModuleKeyword(matrixAugmentationStyles() = RefineModule::PartialsAugmentation), "Augmentation", "Style used to augment (overdetermine) scattering matrix");
+	keywords_.add(new EnumOptionsModuleKeyword<RefineModule::MatrixAugmentationStyle>(matrixAugmentationStyles() = RefineModule::PartialsAugmentation), "Augmentation", "Style used to augment (overdetermine) scattering matrix");
 	keywords_.add(new DoubleModuleKeyword(0.9), "AugmentationParam", "Parameter used to in augmentation (overdetermination) of scattering matrix (dependent on augmentation style selected)");
 	keywords_.add(new BoolModuleKeyword(true), "AutoMinimumRadius", "Automatically determine minimum radii between atom types for potential generation");
 	keywords_.add(new BoolModuleKeyword(true), "DeltaPhiRSmoothing", "Whether to smooth generated phi(r)");
@@ -67,7 +67,7 @@ void RefineModule::setUpKeywords()
 	keywords_.add(new DoubleModuleKeyword(0.005), "ErrorStabilityThreshold", "Threshold value at which error is deemed stable over the defined windowing period", "<value[0.0-1.0]>");
 	keywords_.add(new IntegerModuleKeyword(10), "ErrorStabilityWindow", "Number of points over which to assess the stability of errors");
 	keywords_.add(new DoubleModuleKeyword(0.5, 0.01, 100.0), "GaussianAccuracy", "Requested percentage error of Gaussian approximation (if InversionMethod == Gaussian)");
-	keywords_.add(new EnumOptionsModuleKeyword(potentialInversionMethods() = RefineModule::DirectGaussianPotentialInversion), "InversionMethod", "Potential inversion method to employ");
+	keywords_.add(new EnumOptionsModuleKeyword<RefineModule::PotentialInversionMethod>(potentialInversionMethods() = RefineModule::DirectGaussianPotentialInversion), "InversionMethod", "Potential inversion method to employ");
 	keywords_.add(new DoubleModuleKeyword(0.9, 0.0, 5.0), "MinimumRadius", "Minimum value of r at which additional potential is allowed to take effect (neglecting width of truncation strip)");
 	keywords_.add(new DoubleModuleKeyword(3.0, 0.0, 100.0), "MaximumRadius", "Maximum value of r (if AutoMinimumRadii = true) at which additional potential is zeroed");
 // 	keywords_.add(new BoolModuleKeyword(false), "ModifyBonds", "Modify equilibrium distances of bonds based on signatures in difference functions");

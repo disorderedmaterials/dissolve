@@ -7,8 +7,6 @@ add_library(keywordtypes
   complex.cpp
   data1dstore.cpp
   double.cpp
-  enumstring.cpp
-  enumoptions.cpp
   fileandformat.cpp
   integer.cpp
   isotopologuelist.cpp
@@ -29,7 +27,6 @@ add_library(keywordtypes
   complex.h
   data1dstore.h
   double.h
-  enumstring.h
   enumoptions.h
   fileandformat.h
   integer.h

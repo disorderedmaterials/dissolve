@@ -149,16 +149,16 @@ template <class E> class KeywordEnumHelper
 		ModuleKeywordBase* item = sourceList.find(name);
 		if (!item)
 		{
-			Messenger::printVerbose("No item named '%s' in the keyword list - default enumeration of -1 will be returned.\n", name);
+			Messenger::error("No item named '%s' in the keyword list - default enumeration of -1 will be returned.\n", name);
 			if (found != NULL) (*found) = false;
 			return (E) -1;
 		}
 
-		// Attempt to cast to specified type
+		// Attempt to cast to EnumOptionsBase
 		ModuleKeywordData< EnumOptions<E> >* castItem = dynamic_cast<ModuleKeywordData< EnumOptions<E> >*>(item);
 		if (!castItem)
 		{
-			printf("Failed to cast keyword '%s' into EnumOptions<E> because it's of a different type.\n", name);
+			Messenger::error("Failed to cast keyword '%s' into EnumOptions<E> because it's of a different type.\n", name);
 			if (found != NULL) (*found) = false;
 			return (E) -1;
 		}

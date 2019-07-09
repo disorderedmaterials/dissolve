@@ -27,7 +27,6 @@
 #include "gui/keywordwidgets/charstring.hui"
 #include "gui/keywordwidgets/double.hui"
 #include "gui/keywordwidgets/dropwidget.hui"
-#include "gui/keywordwidgets/enumstring.hui"
 #include "gui/keywordwidgets/fileandformat.h"
 #include "gui/keywordwidgets/integer.hui"
 #include "gui/keywordwidgets/isotopologuelist.h"
