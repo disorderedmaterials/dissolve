@@ -24,7 +24,7 @@
 #include "module/keywordtypes.h"
 #include "base/lineparser.h"
 
-// Return enum option info for AveragingScheme, with starting value provided
+// Return enum option info for ExpansionFunctionType
 EnumOptions<EPSRModule::ExpansionFunctionType> EPSRModule::expansionFunctionTypes()
 {
 	static EnumOptionsList ExpansionFunctionTypeOptions = EnumOptionsList() << 
@@ -55,7 +55,7 @@ void EPSRModule::setUpKeywords()
 
 	// Expansion Function
 	group = addKeywordGroup("Expansion Function");
-	group->add(new EnumStringModuleKeyword(EPSRModule::expansionFunctionTypes() = EPSRModule::PoissonExpansionFunction), "ExpansionFunction", "Form of expansion function to use when fitting difference data");
+	group->add(new EnumOptionsModuleKeyword(EPSRModule::expansionFunctionTypes() = EPSRModule::PoissonExpansionFunction), "ExpansionFunction", "Form of expansion function to use when fitting difference data");
 	group->add(new DoubleModuleKeyword(0.1, 0.001, 1.0), "GSigma1", "Width for Gaussian function in reciprocal space");
 	group->add(new DoubleModuleKeyword(0.2, 0.001, 1.0), "GSigma2", "Width for Gaussian function in real space");
 	group->add(new IntegerModuleKeyword(-1, -1), "NCoeffP", "Number of coefficients user to define the empirical potential (-1 for automatic)");

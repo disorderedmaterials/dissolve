@@ -8,6 +8,7 @@ add_library(keywordtypes
   data1dstore.cpp
   double.cpp
   enumstring.cpp
+  enumoptions.cpp
   fileandformat.cpp
   integer.cpp
   isotopologuelist.cpp
@@ -29,6 +30,7 @@ add_library(keywordtypes
   data1dstore.h
   double.h
   enumstring.h
+  enumoptions.h
   fileandformat.h
   integer.h
   isotopologuelist.h

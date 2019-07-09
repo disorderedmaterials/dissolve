@@ -80,7 +80,7 @@ class EPSRModule : public Module
 		GaussianExpansionFunction,		/* Fit difference functiuns using Gaussian functions */
 		nExpansionFunctionTypes
 	};
-	// Return enum option info for AveragingScheme, with starting value provided
+	// Return enum option info for ExpansionFunctionType
 	static EnumOptions<EPSRModule::ExpansionFunctionType> expansionFunctionTypes();
 
 	protected:

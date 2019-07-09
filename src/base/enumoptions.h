@@ -134,6 +134,10 @@ class EnumOptionsBase
 	const char* currentOptionKeyword() const;
 	// Return current option
 	const EnumOption& currentOption() const;
+	// Set current option from keyword
+	bool setCurrentOption(const char* keyword);
+	// Return whether specified option keyword is valid
+	bool isValid(const char* keyword) const;
 
 
 	/*
@@ -163,6 +167,7 @@ template <class T> class EnumOptions : public EnumOptionsBase
 	{
 	}
 
+
 	/*
 	 * Enum Conversion
 	 */
@@ -172,6 +177,18 @@ template <class T> class EnumOptions : public EnumOptionsBase
 	{
 		for (int n=0; n<options_.nItems(); ++n) if (DissolveSys::sameString(keyword, options_.at(n).keyword())) return (T) n;
 		return (T) options_.nItems();
+	}
+	// Return current enumeration in T
+	T enumeration() const
+	{
+		// Use local index to return enumeration
+		if (currentOptionIndex_ == -1)
+		{
+			Messenger::warn("No current option set in EnumOptions, so can't return an enumeration.\n");
+			return (T) -1;
+		}
+
+		return (T) options_.at(currentOptionIndex_).enumeration();
 	}
 	// Return enumerated keyword
 	const char* keyword(T enumeration) const
@@ -189,12 +206,6 @@ template <class T> class EnumOptions : public EnumOptionsBase
 	const EnumOption& option(const char* keyword) const
 	{
 		return EnumOptionsBase::option(keyword);
-	}
-	// Return whether specified option keyword is valid
-	bool isValid(const char* keyword) const
-	{
-		for (int n=0; n<options_.nItems(); ++n) if (DissolveSys::sameString(keyword, options_.at(n).keyword())) return true;
-		return false;
 	}
 
 

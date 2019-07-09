@@ -21,7 +21,7 @@
 
 #include "math/averaging.h"
 
-// Return enum option info for AveragingScheme, with starting value provided
+// Return enum option info for AveragingScheme
 EnumOptions<Averaging::AveragingScheme> Averaging::averagingSchemes()
 {
 	static EnumOptionsList AveragingSchemeOptions = EnumOptionsList() << 

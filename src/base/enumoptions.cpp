@@ -135,6 +135,25 @@ const EnumOption& EnumOptionsBase::currentOption() const
 	return options_.at(currentOptionIndex_);
 }
 
+// Set current option from keyword
+bool EnumOptionsBase::setCurrentOption(const char* keyword)
+{
+	for (int n=0; n<options_.nItems(); ++n) if (DissolveSys::sameString(keyword, options_.at(n).keyword()))
+	{
+		currentOptionIndex_ = n;
+		return true;
+	}
+
+	return false;
+}
+
+// Return whether specified option keyword is valid
+bool EnumOptionsBase::isValid(const char* keyword) const
+{
+	for (int n=0; n<options_.nItems(); ++n) if (DissolveSys::sameString(keyword, options_.at(n).keyword())) return true;
+	return false;
+}
+
 // Raise error, printing valid options
 bool EnumOptionsBase::errorAndPrintValid(const char* badKeyword) const
 {
