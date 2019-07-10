@@ -113,6 +113,10 @@ class EnumOptionsBase
 	// Unrecognised option
 	static UnrecognisedEnumOption unrecognisedOption_;
 
+	public:
+	// Return name of options (e.g. from source enumeration)
+	const char* name() const;
+
 
 	/*
 	 * Enum Option Data
@@ -134,6 +138,10 @@ class EnumOptionsBase
 	const char* currentOptionKeyword() const;
 	// Return current option
 	const EnumOption& currentOption() const;
+	// Return current option index
+	int currentOptionIndex() const;
+	// Set current option index
+	void setCurrentOptionIndex(int index);
 	// Set current option from keyword
 	bool setCurrentOption(const char* keyword);
 	// Return whether specified option keyword is valid

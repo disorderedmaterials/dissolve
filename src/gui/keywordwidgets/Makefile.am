@@ -19,7 +19,7 @@ SUFFIXES: .ui .hui .qrc
 	rm $*.cpp
 
 clean-local:
-	-rm -f ui_* *.o moc_*.cpp bool.cpp charstring.cpp double.cpp int.cpp windowfunction.cpp
+	-rm -f ui_* *.o moc_*.cpp bool.cpp charstring.cpp double.cpp enumoptions.cpp int.cpp windowfunction.cpp
 
 libkeywordwidgets_la_SOURCES = base.cpp
 libkeywordwidgets_la_SOURCES += dropdown.ui dropwidget.hui dropdown_funcs.cpp dropwidget_funcs.cpp
@@ -29,6 +29,7 @@ libkeywordwidgets_la_SOURCES += bool.hui bool_funcs.cpp
 libkeywordwidgets_la_SOURCES += broadeningfunction.ui broadeningfunction_funcs.cpp
 libkeywordwidgets_la_SOURCES += charstring.hui charstring_funcs.cpp
 libkeywordwidgets_la_SOURCES += double.hui double_funcs.cpp
+libkeywordwidgets_la_SOURCES += enumoptions.hui enumoptions_funcs.cpp
 libkeywordwidgets_la_SOURCES += fileandformat.ui fileandformat_funcs.cpp
 libkeywordwidgets_la_SOURCES += integer.hui integer_funcs.cpp
 libkeywordwidgets_la_SOURCES += isotopologuelist.ui isotopologuelist_funcs.cpp

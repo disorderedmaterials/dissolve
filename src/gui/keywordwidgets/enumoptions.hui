@@ -1,6 +1,6 @@
 /*
-	*** Keyword Widget - Enum String
-	*** src/gui/keywordwidgets/enumstring.hui
+	*** Keyword Widget - EnumOptions
+	*** src/gui/keywordwidgets/enumoptions.hui
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,24 +19,24 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ENUMSTRINGKEYWORDWIDGET_H
-#define DISSOLVE_ENUMSTRINGKEYWORDWIDGET_H
+#ifndef DISSOLVE_ENUMOPTIONSKEYWORDWIDGET_H
+#define DISSOLVE_ENUMOPTIONSKEYWORDWIDGET_H
 
-#include "module/keywordtypes/enumstring.h"
+#include "module/keywordtypes/enumoptions.h"
 #include "gui/keywordwidgets/base.h"
 #include <QComboBox>
 
 // Forward Declarations
 /* none */
 
-class EnumStringKeywordWidget : public QComboBox, public KeywordWidgetBase
+class EnumOptionsKeywordWidget : public QComboBox, public KeywordWidgetBase
 {
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
 	public:
 	// Constructor
-	EnumStringKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
+	EnumOptionsKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
 
 
 	/*
@@ -44,15 +44,15 @@ class EnumStringKeywordWidget : public QComboBox, public KeywordWidgetBase
 	 */
 	private:
 	// Associated keyword
-	EnumStringModuleKeyword* keyword_;
+	EnumOptionsBaseModuleKeyword* keyword_;
 
 
 	/*
 	 * Signals / Slots
 	 */
 	private slots:
-	// Combo box text changed
-	void myCurrentTextChanged(const QString& text);
+	// Combo box index changed
+	void myCurrentIndexChanged(int index);
 
 	signals:
 	// Keyword value changed

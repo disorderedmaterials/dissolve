@@ -30,12 +30,37 @@
 // Forward Declarations
 /* none */
 
-// Keyword based on EnumOptions
-template <class E> class EnumOptionsModuleKeyword : public ModuleKeywordData< EnumOptions<E> >
+// Base keyword
+class EnumOptionsBaseModuleKeyword
 {
 	public:
 	// Constructor
-	EnumOptionsModuleKeyword(EnumOptions<E> options) : ModuleKeywordData< EnumOptions<E> >(ModuleKeywordBase::EnumOptionsData, options)
+	EnumOptionsBaseModuleKeyword(EnumOptionsBase& baseOptions) : baseOptions_(baseOptions)
+	{
+	}
+
+
+	/*
+	 * Source Options
+	 */
+	private:
+	// Source EnumBaseOptions
+	EnumOptionsBase& baseOptions_;
+
+	public:
+	// Return EnumBaseOptions
+	EnumOptionsBase& baseOptions()
+	{
+		return baseOptions_;
+	}
+};
+
+// Keyword based on EnumOptions
+template <class E> class EnumOptionsModuleKeyword : public EnumOptionsBaseModuleKeyword, public ModuleKeywordData< EnumOptions<E> >
+{
+	public:
+	// Constructor
+	EnumOptionsModuleKeyword(EnumOptions<E> options) : ModuleKeywordData< EnumOptions<E> >(ModuleKeywordBase::EnumOptionsData, options), EnumOptionsBaseModuleKeyword(ModuleKeywordData< EnumOptions<E> >::data_)
 	{
 		// Set our array of valid values
 		for (int n=0; n<ModuleKeywordData< EnumOptions<E> >::data_.nOptions(); ++n) validKeywords_.add(ModuleKeywordData< EnumOptions<E> >::data_.keywordByIndex(n));
@@ -65,11 +90,6 @@ template <class E> class EnumOptionsModuleKeyword : public ModuleKeywordData< En
 	Array<CharString> validKeywords_;
 
 	public:
-	// Return whether a validation list has been set
-	bool hasValidationList()
-	{
-		return true;
-	}
 	// Return validation list
 	const Array<CharString>& validationList()
 	{

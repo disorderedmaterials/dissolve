@@ -1,6 +1,6 @@
 /*
-	*** Keyword Widget - Enum String
-	*** src/gui/keywordwidgets/enumstring_funcs.cpp
+	*** Keyword Widget - EnumOptions
+	*** src/gui/keywordwidgets/enumoptions_funcs.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,24 +19,27 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/keywordwidgets/enumstring.hui"
+#include "gui/keywordwidgets/enumoptions.hui"
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "genericitems/listhelper.h"
 
 // Constructor
-EnumStringKeywordWidget::EnumStringKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QComboBox(parent), KeywordWidgetBase(coreData, moduleData, prefix)
+EnumOptionsKeywordWidget::EnumOptionsKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QComboBox(parent), KeywordWidgetBase(coreData, moduleData, prefix)
 {
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<EnumStringModuleKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into EnumStringModuleKeyword.\n", keyword->keyword());
+	keyword_ = dynamic_cast<EnumOptionsBaseModuleKeyword*>(keyword);
+	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into EnumOptionsBaseModuleKeyword.\n", keyword->keyword());
 	else
 	{
-		// Populate the combo with the allowed values
-		const Array<CharString>& items = keyword_->validationList();
-		for (int n=0; n<items.nItems(); ++n)
+		// Get the underlying EnumOptionsBase
+		EnumOptionsBase& options = keyword_->baseOptions();
+		printf("THING %s has %i keywords.\n", options.name(), options.nOptions());
+
+		// Populate the combo with the available keywords
+		for (int n=0; n<options.nOptions(); ++n)
 		{
-			addItem(items.constAt(n).get());
-			if (DissolveSys::sameString(keyword_->asString(), items.constAt(n))) setCurrentIndex(n);
+			addItem(options.keywordByIndex(n));
+			if (options.currentOptionIndex() == n) setCurrentIndex(n);
 		}
 
 		// Turn off editability
@@ -44,7 +47,7 @@ EnumStringKeywordWidget::EnumStringKeywordWidget(QWidget* parent, ModuleKeywordB
 	}
 
 	// Connect the currentTextChanged signal to our own slot
-	connect(this, SIGNAL(currentTextChanged(QString)), this, SLOT(myCurrentTextChanged(QString)));
+	connect(this, SIGNAL(currentIndexChanged(int)), this, SLOT(myCurrentIndexChanged(int)));
 
 	// Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a QScrollArea)
 	installEventFilter(new MouseWheelWidgetAdjustmentGuard(this));
@@ -54,12 +57,15 @@ EnumStringKeywordWidget::EnumStringKeywordWidget(QWidget* parent, ModuleKeywordB
  * Signals / Slots
  */
 
-// Combo box text changed
-void EnumStringKeywordWidget::myCurrentTextChanged(const QString& text)
+// Combo box index changed
+void EnumOptionsKeywordWidget::myCurrentIndexChanged(int index)
 {
 	if (refreshing_) return;
 
-	keyword_->setData(qPrintable(text));
+	// Get the underlying EnumOptionsBase
+	EnumOptionsBase& options = keyword_->baseOptions();
+
+	options.setCurrentOptionIndex(index);
 
 	emit(keywordValueChanged());
 }
@@ -69,29 +75,15 @@ void EnumStringKeywordWidget::myCurrentTextChanged(const QString& text)
  */
 
 // Update value displayed in widget, using specified source if necessary
-void EnumStringKeywordWidget::updateValue()
+void EnumOptionsKeywordWidget::updateValue()
 {
 	refreshing_ = true;
 
-	// Check to see if the associated Keyword may have been stored/updated in the specified moduleData
-	CharString newValue;
-	if ((keyword_->genericItemFlags()&GenericItem::InRestartFileFlag) && moduleData_.contains(keyword_->keyword(), modulePrefix_))
-	{
-		// Retrieve the item from the list
-		newValue = GenericListHelper<double>::value(moduleData_, keyword_->keyword(), modulePrefix_);
-	}
-	else newValue = keyword_->asString();
+	// Get the underlying EnumOptionsBase
+	EnumOptionsBase& options = keyword_->baseOptions();
 
-	// If we have a validation list, set the new index
-	if (keyword_->hasValidationList())
-	{
-		const Array<CharString>& items = keyword_->validationList();
-		for (int n=0; n<items.nItems(); ++n) if (DissolveSys::sameString(keyword_->asString(), items.constAt(n)))
-		{
-			setCurrentIndex(n);
-			break;
-		}
-	}
+	// Set the combo box index
+	setCurrentIndex(options.currentOptionIndex());
 
 	refreshing_ = false;
 }

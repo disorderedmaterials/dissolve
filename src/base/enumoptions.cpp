@@ -94,6 +94,12 @@ EnumOptionsBase::EnumOptionsBase(const char* name, const EnumOptionsList& option
 	}
 }
 
+// Return name of options (e.g. from source enumeration)
+const char* EnumOptionsBase::name() const
+{
+	return name_;
+}
+
 // Return number of options available
 int EnumOptionsBase::nOptions() const
 {
@@ -133,6 +139,18 @@ const EnumOption& EnumOptionsBase::currentOption() const
 	if (currentOptionIndex_ == -1) return unrecognisedOption_;
 
 	return options_.at(currentOptionIndex_);
+}
+
+// Return current option index
+int EnumOptionsBase::currentOptionIndex() const
+{
+	return currentOptionIndex_;
+}
+
+// Set current option index
+void EnumOptionsBase::setCurrentOptionIndex(int index)
+{
+	currentOptionIndex_ = index;
 }
 
 // Set current option from keyword

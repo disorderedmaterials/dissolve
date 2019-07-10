@@ -19,6 +19,7 @@ SET(keywordwidgets_MOC_HDRS
   charstring.hui
   double.hui
   dropwidget.hui
+  enumoptions.hui
   integer.hui
   windowfunction.hui
 )
@@ -51,6 +52,7 @@ SET(keywordwidgets_SRCS
   double_funcs.cpp
   dropdown_funcs.cpp
   dropwidget_funcs.cpp
+  enumoptions_funcs.cpp
   fileandformat_funcs.cpp
   integer_funcs.cpp
   isotopologuelist_funcs.cpp
