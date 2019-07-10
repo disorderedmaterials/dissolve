@@ -33,7 +33,6 @@ EnumOptionsKeywordWidget::EnumOptionsKeywordWidget(QWidget* parent, ModuleKeywor
 	{
 		// Get the underlying EnumOptionsBase
 		EnumOptionsBase& options = keyword_->baseOptions();
-		printf("THING %s has %i keywords.\n", options.name(), options.nOptions());
 
 		// Populate the combo with the available keywords
 		for (int n=0; n<options.nOptions(); ++n)
@@ -62,10 +61,8 @@ void EnumOptionsKeywordWidget::myCurrentIndexChanged(int index)
 {
 	if (refreshing_) return;
 
-	// Get the underlying EnumOptionsBase
-	EnumOptionsBase& options = keyword_->baseOptions();
-
-	options.setCurrentOptionIndex(index);
+	// Use the virtual EnumOptionsBaseModuleKeyword::setOptionByIndex() to set the new option and inform the underlying keyword structure that it has been modified
+	keyword_->setOptionByIndex(index);
 
 	emit(keywordValueChanged());
 }

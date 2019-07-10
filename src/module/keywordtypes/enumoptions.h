@@ -30,7 +30,7 @@
 // Forward Declarations
 /* none */
 
-// Base keyword
+// EnumOptionsModuleKeyword base class
 class EnumOptionsBaseModuleKeyword
 {
 	public:
@@ -53,6 +53,14 @@ class EnumOptionsBaseModuleKeyword
 	{
 		return baseOptions_;
 	}
+
+
+	/*
+	 * Set
+	 */
+	public:
+	// Set new option index, informing ModuleKeywordBase
+	virtual void setOptionByIndex(int optionIndex) = 0;
 };
 
 // Keyword based on EnumOptions
@@ -148,6 +156,18 @@ template <class E> class EnumOptionsModuleKeyword : public EnumOptionsBaseModule
 	const char* asString()
 	{
 		return ModuleKeywordData< EnumOptions<E> >::data_.currentOptionKeyword();
+	}
+
+
+	/*
+	 * Set (implementing pure virtual from EnumOptionsBaseModuleKeyword)
+	 */
+	public:
+	// Set new option index, informing ModuleKeywordBase
+	void setOptionByIndex(int optionIndex)
+	{
+		ModuleKeywordData< EnumOptions<E> >::data_.setCurrentOptionIndex(optionIndex);
+		ModuleKeywordData< EnumOptions<E> >::dataHasBeenSet();
 	}
 };
 
