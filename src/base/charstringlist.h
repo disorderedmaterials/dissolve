@@ -36,6 +36,8 @@ class CharStringList
 	operator const List<CharString>&() const;
 	// Copy constructor
 	CharStringList(const CharStringList& source);
+	// Conversion from const char*
+	CharStringList(const char* text);
 	// Assignment operator
 	void operator=(const CharStringList& source);
 

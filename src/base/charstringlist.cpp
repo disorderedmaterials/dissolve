@@ -44,6 +44,12 @@ CharStringList::CharStringList(const CharStringList& source)
 	(*this) = source;
 }
 
+// Conversion from const char*
+CharStringList::CharStringList(const char* text)
+{
+	strings_.add(text);
+}
+
 // Assignment operator
 void CharStringList::operator=(const CharStringList& source)
 {
