@@ -26,7 +26,12 @@
 #include "base/lineparser.h"
 #include "genericitems/listhelper.h"
 
-// Constructor
+// Constructors
+ModuleReferenceListModuleKeyword::ModuleReferenceListModuleKeyword(RefList<Module,bool>& references, int maxModules) : ModuleKeywordData< RefList<Module,bool>& >(ModuleKeywordBase::ModuleReferenceListData, references)
+{
+	maxModules_ = maxModules;
+}
+
 ModuleReferenceListModuleKeyword::ModuleReferenceListModuleKeyword(RefList<Module,bool>& references, CharStringList allowedModuleTypes, int maxModules) : ModuleKeywordData< RefList<Module,bool>& >(ModuleKeywordBase::ModuleReferenceListData, references)
 {
 	moduleTypes_ = allowedModuleTypes;
