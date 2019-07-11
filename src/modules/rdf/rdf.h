@@ -76,11 +76,9 @@ class RDFModule : public Module
 
 	public:
 	// Partial Calculation Method enum
-	enum PartialsMethod { AutoMethod, TestMethod, SimpleMethod, CellsMethod, nPartialsMethods };
-	// Convert character string to PartialsMethod
-	static PartialsMethod partialsMethod(const char* s);
-	// Return character string for PartialsMethod
-	static const char* partialsMethod(PartialsMethod pm);
+	enum PartialsMethod { AutoMethod, CellsMethod, SimpleMethod, TestMethod, nPartialsMethods };
+	// Return enum option info for PartialsMethod
+	EnumOptions<RDFModule::PartialsMethod> partialsMethods();
 
 
 	/*

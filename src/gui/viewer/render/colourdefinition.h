@@ -23,6 +23,7 @@
 #define DISSOLVE_COLOURDEFINITION_H
 
 #include "gui/viewer/render/colourscale.h"
+#include "base/enumoptions.h"
 #include "base/version.h"
 
 // Forward Declarations
@@ -54,6 +55,8 @@ class ColourDefinition
 	static const char* colourStyle(ColourDefinition::ColourStyle cs);
 	// Stock Colours
 	enum StockColour { BlackStockColour, RedStockColour, GreenStockColour, BlueStockColour, PurpleStockColour, CyanStockColour, OrangeStockColour, PinkStockColour, LightRedStockColour, LightGreenStockColour, LightBlueStockColour, SilverStockColour, GoldStockColour, nStockColours };
+	// Return enum options for AveragingScheme
+	static EnumOptions<ColourDefinition::StockColour> stockColours();
 	// Return stock colour (as QColor)
 	static QColor stockColour(StockColour colour);
 

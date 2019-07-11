@@ -28,20 +28,18 @@
 #include "templates/enumhelpers.h"
 #include "genericitems/listhelper.h"
 
-// Partial Calculation Method enum
-const char* PartialsMethodKeywords[] = { "Auto", "Test", "Simple", "Cells" };
-
-// Convert character string to PartialsMethod
-RDFModule::PartialsMethod RDFModule::partialsMethod(const char* s)
+// Return enum option info for NormalisationType
+EnumOptions<RDFModule::PartialsMethod> RDFModule::partialsMethods()
 {
-	for (int n=0; n<nPartialsMethods; ++n) if (DissolveSys::sameString(s, PartialsMethodKeywords[n])) return (RDFModule::PartialsMethod) n;
-	return RDFModule::nPartialsMethods;
-}
+	static EnumOptionsList PartialsMethodOptions = EnumOptionsList() << 
+		EnumOption(RDFModule::AutoMethod,	"Auto") << 
+		EnumOption(RDFModule::CellsMethod,	"Cells") << 
+		EnumOption(RDFModule::SimpleMethod,	"Simple") <<
+		EnumOption(RDFModule::TestMethod,	"TestSquaredAverage");
 
-// Return character string for PartialsMethod
-const char* RDFModule::partialsMethod(RDFModule::PartialsMethod pm)
-{
-	return PartialsMethodKeywords[pm];
+	static EnumOptions<RDFModule::PartialsMethod> options("PartialsMethod", PartialsMethodOptions, RDFModule::AutoMethod);
+
+	return options;
 }
 
 // Set up keywords for Module
@@ -52,9 +50,9 @@ void RDFModule::setUpKeywords()
 	// Calculation
 	ModuleKeywordGroup* group = addKeywordGroup("Calculation");
 	group->add(new IntegerModuleKeyword(5, 1), "Averaging", "Number of historical partial sets to combine into final partials", "<5>");
-	group->add(new EnumStringModuleKeyword(Averaging::averagingSchemes() = Averaging::LinearAveraging), "AveragingScheme", "Weighting scheme to use when averaging partials", "<Linear>");
+	group->add(new EnumOptionsModuleKeyword<Averaging::AveragingScheme>(Averaging::averagingSchemes() = Averaging::LinearAveraging), "AveragingScheme", "Weighting scheme to use when averaging partials", "<Linear>");
 	group->add(new PairBroadeningFunctionModuleKeyword(PairBroadeningFunction()), "IntraBroadening", "Type of broadening to apply to intramolecular g(r)");
-	group->add(new EnumStringModuleKeyword(RDFModule::AutoMethod, RDFModule::nPartialsMethods, PartialsMethodKeywords), "Method", "Calculation method for partial radial distribution functions");
+	group->add(new EnumOptionsModuleKeyword<RDFModule::PartialsMethod>(RDFModule::partialsMethods() = RDFModule::AutoMethod), "Method", "Calculation method for partial radial distribution functions");
 	group->add(new IntegerModuleKeyword(0, 0, 100), "Smoothing", "Specifies the degree of smoothing 'n' to apply to calculated g(r), where 2n+1 controls the length in the applied Spline smooth");
 
 	// Test

@@ -47,7 +47,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	/*
 	 * Get Keyword Options
 	 */
-	const RefineModule::MatrixAugmentationStyle augmentationStyle = RefineModule::matrixAugmentationStyle(keywords_.asString("Augmentation"));
+	const RefineModule::MatrixAugmentationStyle augmentationStyle = KeywordEnumHelper<RefineModule::MatrixAugmentationStyle>::enumeration(keywords_, "Augmentation");
 	const double augmentationParam = keywords_.asDouble("AugmentationParam");
 	const bool autoMinimumRadii = keywords_.asBool("AutoMinimumRadius");
 	const bool smoothPhiR = keywords_.asBool("DeltaPhiRSmoothing");
@@ -56,7 +56,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	const double errorStabilityThreshold = keywords_.asDouble("ErrorStabilityThreshold");
 	const int errorStabilityWindow = keywords_.asInt("ErrorStabilityWindow");
 	//const double gaussianAccuracy = keywords_.asDouble("GaussianAccuracy");
-	const RefineModule::PotentialInversionMethod inversionMethod = RefineModule::potentialInversionMethod(keywords_.asString("InversionMethod"));
+	const RefineModule::PotentialInversionMethod inversionMethod = KeywordEnumHelper<RefineModule::PotentialInversionMethod>::enumeration(keywords_, "InversionMethod");
 	const double globalMinimumRadius = keywords_.asDouble("MinimumRadius");
 	const double globalMaximumRadius = keywords_.asDouble("MaximumRadius");
 // 	const bool modifyBonds = keywords_.asBool("ModifyBonds");
@@ -71,7 +71,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 	// Print option summary
 	if (augmentationStyle == RefineModule::NoAugmentation) Messenger::print("Refine: No augmentation of scattering matrix will be performed.\n");
-	else Messenger::print("Refine: Augmentation of scattering matrix will be performed (style = '%s', parameter = %e).\n", RefineModule::matrixAugmentationStyle(augmentationStyle), augmentationParam);
+	else Messenger::print("Refine: Augmentation of scattering matrix will be performed (style = '%s', parameter = %e).\n", matrixAugmentationStyles().keyword(augmentationStyle), augmentationParam);
 	if (autoMinimumRadii) Messenger::print("Refine: Minimum radii of generated potentials will be determined automatically (min/max = %f/%f Angstroms).\n", globalMinimumRadius, globalMaximumRadius);
 	else Messenger::print("Refine: Minimum radius of %f Angstroms will be applied to all generated potentials.\n", globalMinimumRadius);
 	if (smoothPhiR) Messenger::print("Refine: Generated phi(r) will be smoothed using KZ filter (k = %i, m = %i).\n", phiRSmoothK, phiRSmoothM);
@@ -82,7 +82,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	if (onlyWhenErrorStable) Messenger::print("Refine: Potential refinement will only be performed if all percentage errors with reference data are stable.\n");
 	if (phiMax >= 0) Messenger::print("Refine: Limit of additional potential for any one pair potential is %f kJ/mol/Angstrom.\n", phiMax);
 	else Messenger::warn("Refine: No limits will be applied to the magnitudes of additional potentials.\n");
-	Messenger::print("Refine: Potential inversion method to employ is '%s'.\n", RefineModule::potentialInversionMethod(inversionMethod));
+	Messenger::print("Refine: Potential inversion method to employ is '%s'.\n", potentialInversionMethods().keyword(inversionMethod));
 	Messenger::print("Refine: Range for potential generation is %f < Q < %f Angstroms**-1.\n", qMin, qMax);
 	if (windowFunction.function() == WindowFunction::NoWindow) Messenger::print("Refine: No window function will be applied in Fourier transforms of S(Q) to g(r).\n");
 	else Messenger::print("Refine: Window function to be applied in Fourier transforms of S(Q) to g(r) is %s (%s).", WindowFunction::functionType(windowFunction.function()), windowFunction.parameterSummary().get());

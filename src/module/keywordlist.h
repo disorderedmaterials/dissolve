@@ -24,6 +24,7 @@
 
 #include "module/keywordbase.h"
 #include "module/keyworddata.h"
+#include "base/enumoptions.h"
 #include "templates/list.h"
 
 // Forward Declarations
@@ -137,5 +138,34 @@ template <class T> class KeywordListHelper
 	}
 };
 
-#endif
+// Keyword Enum Helper
+template <class E> class KeywordEnumHelper
+{
+	public:
+	// Retrieve named EnumOptions item from specified list as template-guided type, and return the current enumeration
+	static E enumeration(ModuleKeywordList& sourceList, const char* name, bool* found = NULL)
+	{
+		// Find item in the list
+		ModuleKeywordBase* item = sourceList.find(name);
+		if (!item)
+		{
+			Messenger::error("No item named '%s' in the keyword list - default enumeration of -1 will be returned.\n", name);
+			if (found != NULL) (*found) = false;
+			return (E) -1;
+		}
 
+		// Attempt to cast to EnumOptionsBase
+		ModuleKeywordData< EnumOptions<E> >* castItem = dynamic_cast<ModuleKeywordData< EnumOptions<E> >*>(item);
+		if (!castItem)
+		{
+			Messenger::error("Failed to cast keyword '%s' into EnumOptions<E> because it's of a different type.\n", name);
+			if (found != NULL) (*found) = false;
+			return (E) -1;
+		}
+
+		if (found != NULL) (*found) = true;
+		return castItem->data().enumeration();
+	}
+};
+
+#endif

@@ -24,36 +24,32 @@
 #include "module/keywordtypes.h"
 #include "base/lineparser.h"
 
-// Potential Inversion Method
-const char* PotentialInversionMethodKeywords[] = { "Direct", "Gaussian", "PY", "HNC" };
 
-// Convert text string to PotentialGenerationType
-RefineModule::PotentialInversionMethod RefineModule::potentialInversionMethod(const char* s)
+// Return enum options for PotentialInversionMethod
+EnumOptions<RefineModule::PotentialInversionMethod> RefineModule::potentialInversionMethods()
 {
-	for (int n=0; n<RefineModule::nPotentialInversionMethods; ++n) if (DissolveSys::sameString(s, PotentialInversionMethodKeywords[n])) return (RefineModule::PotentialInversionMethod) n;
-	return RefineModule::nPotentialInversionMethods;
+	static EnumOptionsList PotentialInversionMethodOptions = EnumOptionsList() <<
+		EnumOption(RefineModule::DirectFourierPotentialInversion,	"Direct") <<
+		EnumOption(RefineModule::DirectGaussianPotentialInversion,	"Gaussian") <<
+		EnumOption(RefineModule::PercusYevickPotentialInversion,	"PY") <<
+		EnumOption(RefineModule::HypernettedChainPotentialInversion,	"HNC");
+
+	static EnumOptions<RefineModule::PotentialInversionMethod> options("PotentialInversionMethod", PotentialInversionMethodOptions, RefineModule::DirectGaussianPotentialInversion);
+
+	return options;
 }
 
-// Convert PotentialGenerationType to text string
-const char* RefineModule::potentialInversionMethod(RefineModule::PotentialInversionMethod pim)
-{
-	return PotentialInversionMethodKeywords[pim];
-}
 
-// Matrix Augmentation Style
-const char* MatrixAugmentationStyleKeywords[] = { "None", "Partials" };
-
-// Convert text string to MatrixAugmentationStyle
-RefineModule::MatrixAugmentationStyle RefineModule::matrixAugmentationStyle(const char* s)
+// Return enum options for MatrixAugmentationStyle
+EnumOptions<RefineModule::MatrixAugmentationStyle> RefineModule::matrixAugmentationStyles()
 {
-	for (int n=0; n<RefineModule::nMatrixAugmentationStyles; ++n) if (DissolveSys::sameString(s, MatrixAugmentationStyleKeywords[n])) return (RefineModule::MatrixAugmentationStyle) n;
-	return RefineModule::nMatrixAugmentationStyles;
-}
+	static EnumOptionsList MatrixAugmentationStyleOptions = EnumOptionsList() <<
+		EnumOption(RefineModule::NoAugmentation,	"None") <<
+		EnumOption(RefineModule::PartialsAugmentation,	"Partials");
 
-// Convert MatrixAugmentationStyle to text string
-const char* RefineModule::matrixAugmentationStyle(RefineModule::MatrixAugmentationStyle mas)
-{
-	return MatrixAugmentationStyleKeywords[mas];
+	static EnumOptions<RefineModule::MatrixAugmentationStyle> options("MatrixAugmentationStyle", MatrixAugmentationStyleOptions, RefineModule::PartialsAugmentation);
+
+	return options;
 }
 
 // Set up keywords for Module
@@ -62,7 +58,7 @@ void RefineModule::setUpKeywords()
 	frequency_ = 5;
 	groupedTargets_.addAllowedModuleType("NeutronSQ");
 
-	keywords_.add(new EnumStringModuleKeyword(RefineModule::PartialsAugmentation, RefineModule::nMatrixAugmentationStyles, MatrixAugmentationStyleKeywords), "Augmentation", "Style used to augment (overdetermine) scattering matrix");
+	keywords_.add(new EnumOptionsModuleKeyword<RefineModule::MatrixAugmentationStyle>(matrixAugmentationStyles() = RefineModule::PartialsAugmentation), "Augmentation", "Style used to augment (overdetermine) scattering matrix");
 	keywords_.add(new DoubleModuleKeyword(0.9), "AugmentationParam", "Parameter used to in augmentation (overdetermination) of scattering matrix (dependent on augmentation style selected)");
 	keywords_.add(new BoolModuleKeyword(true), "AutoMinimumRadius", "Automatically determine minimum radii between atom types for potential generation");
 	keywords_.add(new BoolModuleKeyword(true), "DeltaPhiRSmoothing", "Whether to smooth generated phi(r)");
@@ -71,7 +67,7 @@ void RefineModule::setUpKeywords()
 	keywords_.add(new DoubleModuleKeyword(0.005), "ErrorStabilityThreshold", "Threshold value at which error is deemed stable over the defined windowing period", "<value[0.0-1.0]>");
 	keywords_.add(new IntegerModuleKeyword(10), "ErrorStabilityWindow", "Number of points over which to assess the stability of errors");
 	keywords_.add(new DoubleModuleKeyword(0.5, 0.01, 100.0), "GaussianAccuracy", "Requested percentage error of Gaussian approximation (if InversionMethod == Gaussian)");
-	keywords_.add(new EnumStringModuleKeyword(RefineModule::DirectGaussianPotentialInversion, RefineModule::nPotentialInversionMethods, PotentialInversionMethodKeywords), "InversionMethod", "Potential inversion method to employ");
+	keywords_.add(new EnumOptionsModuleKeyword<RefineModule::PotentialInversionMethod>(potentialInversionMethods() = RefineModule::DirectGaussianPotentialInversion), "InversionMethod", "Potential inversion method to employ");
 	keywords_.add(new DoubleModuleKeyword(0.9, 0.0, 5.0), "MinimumRadius", "Minimum value of r at which additional potential is allowed to take effect (neglecting width of truncation strip)");
 	keywords_.add(new DoubleModuleKeyword(3.0, 0.0, 100.0), "MaximumRadius", "Maximum value of r (if AutoMinimumRadii = true) at which additional potential is zeroed");
 // 	keywords_.add(new BoolModuleKeyword(false), "ModifyBonds", "Modify equilibrium distances of bonds based on signatures in difference functions");

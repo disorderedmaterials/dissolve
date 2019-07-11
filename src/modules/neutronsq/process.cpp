@@ -73,7 +73,7 @@ bool NeutronSQModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 		}
 
 		// Remove normalisation factor from data
-		NeutronSQModule::NormalisationType normType = NeutronSQModule::normalisationType(keywords_.asString("ReferenceNormalisation"));
+		NeutronSQModule::NormalisationType normType = KeywordEnumHelper<NeutronSQModule::NormalisationType>::enumeration(keywords_, "ReferenceNormalisation");
 		if (normType != NeutronSQModule::NoNormalisation)
 		{
 			// We need the summed Weights in order to do the normalisation
@@ -142,8 +142,7 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 	const bool includeBragg = keywords_.asBool("IncludeBragg");
 	const BroadeningFunction& braggQBroadening = KeywordListHelper<BroadeningFunction>::retrieve(keywords_, "BraggQBroadening", BroadeningFunction());
-	NeutronSQModule::NormalisationType normalisation = normalisationType(keywords_.asString("Normalisation"));
-	if (normalisation == NeutronSQModule::nNormalisationTypes) return Messenger::error("NeutronSQ: Invalid normalisation type '%s' found.\n", keywords_.asString("Normalisation"));
+	NeutronSQModule::NormalisationType normalisation = KeywordEnumHelper<NeutronSQModule::NormalisationType>::enumeration(keywords_, "Normalisation");
 	const BroadeningFunction& qBroadening = KeywordListHelper<BroadeningFunction>::retrieve(keywords_, "QBroadening", BroadeningFunction());
 	const double qDelta = keywords_.asDouble("QDelta");
 	const double qMin = keywords_.asDouble("QMin");

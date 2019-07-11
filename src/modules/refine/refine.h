@@ -82,10 +82,8 @@ class RefineModule : public Module
 		HypernettedChainPotentialInversion,	/* Use the hypernetted chain closure to generate potential from delta S(Q) */
 		nPotentialInversionMethods
 	};
-	// Convert text string to PotentialInversionMethod
-	static PotentialInversionMethod potentialInversionMethod(const char* s);
-	// Convert PotentialInversionMethod to text string
-	static const char* potentialInversionMethod(PotentialInversionMethod pim);
+	// Return enum options for PotentialInversionMethod
+	static EnumOptions<RefineModule::PotentialInversionMethod> potentialInversionMethods();
 	// Matrix Augmentation Style
 	enum MatrixAugmentationStyle
 	{
@@ -93,10 +91,8 @@ class RefineModule : public Module
 		PartialsAugmentation,			/* Augment scattering matrix with individual partial S(Q), as EPSR does */
 		nMatrixAugmentationStyles
 	};
-	// Convert text string to MatrixAugmentationStyle
-	static MatrixAugmentationStyle matrixAugmentationStyle(const char* s);
-	// Convert MatrixAugmentationStyle to text string
-	static const char* matrixAugmentationStyle(MatrixAugmentationStyle mas);
+	// Return enum options for MatrixAugmentationStyle
+	static EnumOptions<RefineModule::MatrixAugmentationStyle> matrixAugmentationStyles();
 
 	protected:
 	// Set up options for Module

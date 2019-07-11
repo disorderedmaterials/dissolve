@@ -102,6 +102,29 @@ QColor StockColours[] = {
 	QColor(128, 128, 50)	/* GoldStockColour */
 };
 
+// Return enum options for RenderableGroupKeyword
+EnumOptions<ColourDefinition::StockColour> ColourDefinition::stockColours()
+{
+	static EnumOptionsList StockColoursNew = EnumOptionsList() << 
+		EnumOption( ColourDefinition::BlackStockColour,		"Black" ) <<
+		EnumOption( ColourDefinition::RedStockColour,		"Red" ) <<
+		EnumOption( ColourDefinition::GreenStockColour,		"Green" ) <<
+		EnumOption( ColourDefinition::BlueStockColour,		"Blue" ) <<
+		EnumOption( ColourDefinition::PurpleStockColour,	"Purple" ) <<
+		EnumOption( ColourDefinition::CyanStockColour,		"Cyan" ) <<
+		EnumOption( ColourDefinition::OrangeStockColour,	"Orange" ) <<
+		EnumOption( ColourDefinition::PinkStockColour,		"Pink" ) <<
+		EnumOption( ColourDefinition::LightRedStockColour,	"LightRed" ) <<
+		EnumOption( ColourDefinition::LightGreenStockColour,	"LightGreen" ) <<
+		EnumOption( ColourDefinition::LightBlueStockColour,	"LightBlue" ) <<
+		EnumOption( ColourDefinition::SilverStockColour,	"Silver" ) <<
+		EnumOption( ColourDefinition::GoldStockColour,		"Gold" );
+
+	static EnumOptions<ColourDefinition::StockColour> options("StockColour", StockColoursNew);
+
+	return options;
+}
+
 // Return stock colour (as QColor)
 QColor ColourDefinition::stockColour(ColourDefinition::StockColour colour)
 {

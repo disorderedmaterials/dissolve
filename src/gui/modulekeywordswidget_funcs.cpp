@@ -85,12 +85,12 @@ QWidget* ModuleKeywordsWidget::createKeywordWidget(DissolveWindow* dissolveWindo
 		widget = doubleWidget;
 		base = doubleWidget;
 	}
-	else if (keyword->type() == ModuleKeywordBase::EnumStringData)
+	else if (keyword->type() == ModuleKeywordBase::EnumOptionsData)
 	{
-		EnumStringKeywordWidget* charWidget = new EnumStringKeywordWidget(NULL, keyword, coreData, moduleData, uniqueName);
-		connect(charWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
-		widget = charWidget;
-		base = charWidget;
+		EnumOptionsKeywordWidget* enumOptionsWidget = new EnumOptionsKeywordWidget(NULL, keyword, coreData, moduleData, uniqueName);
+		connect(enumOptionsWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
+		widget = enumOptionsWidget;
+		base = enumOptionsWidget;
 	}
 	else if (keyword->type() == ModuleKeywordBase::FileAndFormatData)
 	{

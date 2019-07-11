@@ -73,7 +73,7 @@ bool EPSRModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 		if (configs.nItems() == 0) return Messenger::error("Can't generate empirical potential from supplied coefficients as there are no associated Configurations from which to retrieve a density.\n");
 
 		// Set up the additional potentials - reconstruct them from the current coefficients
-		ExpansionFunctionType functionType = expansionFunctionType(keywords_.asString("ExpansionFunction"));
+		ExpansionFunctionType functionType = KeywordEnumHelper<EPSRModule::ExpansionFunctionType>::enumeration(keywords_, "ExpansionFunction");
 		if (functionType == EPSRModule::GaussianExpansionFunction)
 		{
 			const double gsigma1 = keywords_.asDouble("GSigma1");
@@ -101,7 +101,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	 * Get Keyword Options
 	 */
 	const double ereq = keywords_.asDouble("EReq");
-	ExpansionFunctionType functionType = expansionFunctionType(keywords_.asString("ExpansionFunction"));
+	ExpansionFunctionType functionType = KeywordEnumHelper<EPSRModule::ExpansionFunctionType>::enumeration(keywords_, "ExpansionFunction");
 	const double feedback = keywords_.asDouble("Feedback");
 	const double gsigma1 = keywords_.asDouble("GSigma1");
 	const double gsigma2 = keywords_.asDouble("GSigma2");
@@ -133,7 +133,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 	// Print option summary
 	Messenger::print("EPSR: Feedback factor is %f.\n", feedback);
-	Messenger::print("EPSR: %s functions will be used to approximate difference data.\n", expansionFunctionType(functionType));
+	Messenger::print("EPSR: %s functions will be used to approximate difference data.\n", expansionFunctionTypes().keyword(functionType));
 	Messenger::print("EPSR: Number of functions used in approximation is %i, sigma(Q) = %f.\n", ncoeffp, psigma2);
 	if (modifyPotential) Messenger::print("EPSR: Perturbations to interatomic potentials will be generated and applied.\n");
 	else Messenger::print("EPSR: Perturbations to interatomic potentials will be generated only (current potentials will not be modified).\n");

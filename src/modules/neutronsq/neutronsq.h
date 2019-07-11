@@ -84,10 +84,8 @@ class NeutronSQModule : public Module
 	public:
 	// Normalisation Type enum
 	enum NormalisationType { NoNormalisation, AverageOfSquaresNormalisation, SquareOfAverageNormalisation, nNormalisationTypes };
-	// Convert character string to NormalisationType
-	static NormalisationType normalisationType(const char* s);
-	// Return character string for NormalisationType
-	static const char* normalisationType(NormalisationType nt);
+	// Return enum option info for NormalisationType
+	EnumOptions<NeutronSQModule::NormalisationType> normalisationTypes();
 
 
 	/*
