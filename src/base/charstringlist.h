@@ -23,7 +23,7 @@
 #define DISSOLVE_CHARSTRINGLIST_H
 
 #include "base/charstring.h"
-#include "templates/list.h"
+#include "templates/array.h"
 
 // Character String List
 class CharStringList
@@ -32,8 +32,6 @@ class CharStringList
 	// Constructor / Destructor
 	CharStringList();
 	~CharStringList();
-	// Conversion operator
-	operator const List<CharString>&() const;
 	// Copy constructor
 	CharStringList(const CharStringList& source);
 	// Conversion from const char*
@@ -47,8 +45,8 @@ class CharStringList
 	 * Data
 	 */
 	private:
-	// List of CharStrings
-	List<CharString> strings_;
+	// Array of CharStrings
+	Array<CharString> strings_;
 
 	public:
 	// Clear list
@@ -57,6 +55,8 @@ class CharStringList
 	void add(const char* s);
 	// Return number of strings in list
 	int nItems() const;
+	// Return nth string in list
+	const char* at(int index) const;
 	// Return whether specified string is currently in the list
 	bool contains(const char* s, bool caseSensitive = false) const;
 	// Return list as comma-separated string

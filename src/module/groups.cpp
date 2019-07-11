@@ -52,9 +52,8 @@ void ModuleGroups::setAllowedModuleTypes(const CharStringList& moduleTypes)
 	// Clear existing list
 	allowedModuleTypes_.clear();
 
-	// Add types from source list
-	ListIterator<CharString> stringIterator(moduleTypes);
-	while (CharString* s = stringIterator.iterate()) addAllowedModuleType(*s);
+	// Add types from source list by hand, rather than copying, so we prune out duplicates
+	for (int n=0; n<moduleTypes.nItems(); ++n) addAllowedModuleType(moduleTypes.at(n));
 }
 
 // Return if specified Module type is allowed in any group
