@@ -91,7 +91,7 @@ bool CharStringList::contains(const char* s, bool caseSensitive) const
 }
 
 // Return list as comma-separated string
-const char* CharStringList::get() const
+const char* CharStringList::asCommaSeparatedList() const
 {
 	static CharString result;
 	result.clear();

@@ -99,7 +99,7 @@ bool ModuleReferenceListModuleKeyword::read(LineParser& parser, int startArg, co
 		// Check the module's type
 		if ((moduleTypes_.nItems() > 0) && (!moduleTypes_.contains(module->type())))
 		{
-			Messenger::error("Module '%s' is of type '%s', and is not permitted in this list (allowed types = %s).\n", parser.argc(n), module->type(), moduleTypes_.get());
+			Messenger::error("Module '%s' is of type '%s', and is not permitted in this list (allowed types = %s).\n", parser.argc(n), module->type(), moduleTypes_.asCommaSeparatedList());
 			return false;
 		}
 

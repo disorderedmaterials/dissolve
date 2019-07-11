@@ -78,7 +78,7 @@ bool ModuleGroupsModuleKeyword::read(LineParser& parser, int startArg, const Cor
 	// Check the module's type
 	if (!data_.moduleTypeIsAllowed(module->type()))
 	{
-		Messenger::error("Module '%s' is of type '%s', and is not permitted in these groups (allowed types = %s).\n", parser.argc(startArg), module->type(), data_.allowedModuleTypes().get());
+		Messenger::error("Module '%s' is of type '%s', and is not permitted in these groups (allowed types = %s).\n", parser.argc(startArg), module->type(), data_.allowedModuleTypes().asCommaSeparatedList());
 		return false;
 	}
 

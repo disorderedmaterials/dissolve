@@ -60,7 +60,7 @@ class CharStringList
 	// Return whether specified string is currently in the list
 	bool contains(const char* s, bool caseSensitive = false) const;
 	// Return list as comma-separated string
-	const char* get() const;
+	const char* asCommaSeparatedList() const;
 };
 
 #endif
