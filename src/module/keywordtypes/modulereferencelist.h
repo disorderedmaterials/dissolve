@@ -35,7 +35,7 @@ class ModuleReferenceListModuleKeyword : public ModuleKeywordData< RefList<Modul
 {
 	public:
 	// Constructor
-	ModuleReferenceListModuleKeyword(RefList<Module,bool>& references, const char* moduleType, int maxModules = -1);
+	ModuleReferenceListModuleKeyword(RefList<Module,bool>& references, CharStringList allowedModuleTypes, int maxModules = -1);
 	// Destructor
 	~ModuleReferenceListModuleKeyword();
 
