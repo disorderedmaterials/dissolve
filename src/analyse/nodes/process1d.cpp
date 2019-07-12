@@ -41,6 +41,7 @@ AnalysisProcess1DNode::AnalysisProcess1DNode(AnalysisCollect1DNode* target) : An
 	normalisationFactor_ = 0.0;
 	normaliseByFactor_ = false;
 	normaliseBySphericalShellVolume_ = false;
+	normaliseToOne_ = false;
 }
 
 // Destructor
@@ -53,7 +54,7 @@ AnalysisProcess1DNode::~AnalysisProcess1DNode()
  */
 
 // Node Keywords
-const char* Process1DNodeKeywords[] = { "EndProcess1D", "Factor", "LabelValue", "LabelX", "NSites", "NumberDensity", "Save", "SourceData", "SphericalShellVolume" };
+const char* Process1DNodeKeywords[] = { "EndProcess1D", "Factor", "LabelValue", "LabelX", "NormaliseToOne", "NSites", "NumberDensity", "Save", "SourceData", "SphericalShellVolume" };
 
 // Convert string to node keyword
 AnalysisProcess1DNode::Process1DNodeKeyword AnalysisProcess1DNode::process1DNodeKeyword(const char* s)
@@ -114,6 +115,12 @@ void AnalysisProcess1DNode::setNormalisationFactor(double factor)
 void AnalysisProcess1DNode::setNormaliseBySphericalShellVolume(bool on)
 {
 	normaliseBySphericalShellVolume_ = on;
+}
+
+// Set whether to normalise to one
+void AnalysisProcess1DNode::setNormaliseToOne(bool on)
+{
+	normaliseToOne_ = on;
 }
 
 // Set whether to save processed data
