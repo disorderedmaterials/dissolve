@@ -44,6 +44,10 @@ void CalculateDAngleModule::setUpKeywords()
 	group->add(new SpeciesSiteModuleKeyword(), "SiteB", "Add a site which represents 'B' in the interaction A-B...C", "<Species> <Site>");
 	group->add(new SpeciesSiteModuleKeyword(), "SiteC", "Add a site which represents 'C' in the interaction A-B...C", "<Species> <Site>");
 	group->add(new BoolModuleKeyword(false), "ExcludeSameMolecule", "Whether to exclude correlations between sites on the same molecule", "<True|False>");
+
+	// Export
+	group = addKeywordGroup("Export");
+	group->add(new BoolModuleKeyword(false), "Save", "Save calculated data to disk", "<True|False>");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised

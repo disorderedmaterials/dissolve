@@ -21,8 +21,32 @@
 
 #include "modules/calculate/dangle/dangle.h"
 
-// Return name of resulting RDF
-const char* CalculateDAngleModule::rdfName() const
+// Return name of B..C RDF
+const char* CalculateDAngleModule::rdfBCResultName() const
+{
+	static CharString result;
+	result = keywords_.asString("Name");
+	if (result.isEmpty()) result = uniqueName();
+
+	result += "_RDF(BC)";
+
+	return result.get();
+}
+
+// Return name of A-B...C angle distribution
+const char* CalculateDAngleModule::angleABCResultName() const
+{
+	static CharString result;
+	result = keywords_.asString("Name");
+	if (result.isEmpty()) result = uniqueName();
+
+	result += "_ANGLE(ABC)";
+
+	return result.get();
+}
+
+// Return name of resulting distance-angle map
+const char* CalculateDAngleModule::resultName() const
 {
 	static CharString result;
 	result = keywords_.asString("Name");

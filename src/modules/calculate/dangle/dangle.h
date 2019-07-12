@@ -88,8 +88,12 @@ class CalculateDAngleModule : public Module
 	Analyser analyser_;
 
 	public:
-	// Return name of resulting RDF
-	const char* rdfName() const;
+	// Return name of B..C RDF
+	const char* rdfBCResultName() const;
+	// Return name of A-B...C angle distribution
+	const char* angleABCResultName() const;
+	// Return name of resulting distance-angle map
+	const char* resultName() const;
 
 
 	/*
