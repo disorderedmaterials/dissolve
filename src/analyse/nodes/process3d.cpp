@@ -138,6 +138,30 @@ const char* AnalysisProcess3DNode::xAxisLabel() const
 	return xAxisLabel_.get();
 }
 
+// Set y axis label
+void AnalysisProcess3DNode::setYAxisLabel(const char* label)
+{
+	yAxisLabel_ = label;
+}
+
+// Return y axis label
+const char* AnalysisProcess3DNode::yAxisLabel() const
+{
+	return yAxisLabel_.get();
+}
+
+// Set z axis label
+void AnalysisProcess3DNode::setZAxisLabel(const char* label)
+{
+	zAxisLabel_ = label;
+}
+
+// Return z axis label
+const char* AnalysisProcess3DNode::zAxisLabel() const
+{
+	return zAxisLabel_.get();
+}
+
 /*
  * Execute
  */

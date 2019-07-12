@@ -101,6 +101,14 @@ class AnalysisProcess3DNode : public AnalysisNode
 	void setXAxisLabel(const char* label);
 	// Return x axis label
 	const char* xAxisLabel() const;
+	// Set y axis label
+	void setYAxisLabel(const char* label);
+	// Return y axis label
+	const char* yAxisLabel() const;
+	// Set z axis label
+	void setZAxisLabel(const char* label);
+	// Return z axis label
+	const char* zAxisLabel() const;
 
 
 	/*

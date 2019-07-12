@@ -153,6 +153,18 @@ const char* AnalysisProcess2DNode::xAxisLabel() const
 	return xAxisLabel_.get();
 }
 
+// Set y axis label
+void AnalysisProcess2DNode::setYAxisLabel(const char* label)
+{
+	yAxisLabel_ = label;
+}
+
+// Return y axis label
+const char* AnalysisProcess2DNode::yAxisLabel() const
+{
+	return yAxisLabel_.get();
+}
+
 /*
  * Execute
  */
