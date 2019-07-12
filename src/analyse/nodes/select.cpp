@@ -112,6 +112,15 @@ const RefList<const Site,bool>& AnalysisSelectNode::excludedSites() const
 	return excludedSites_;
 }
 
+// Set node containing molecule from which our site must also be contained within
+bool AnalysisSelectNode::setSameMolecule(AnalysisSelectNode* node)
+{
+	if (sameMolecule_) return Messenger::error("Same molecule restriction has already been set, and cannot be set again.\n");
+	sameMolecule_ = node;
+
+	return true;
+}
+
 // Return Molecule (from site) in which the site must exist
 const Molecule* AnalysisSelectNode::sameMoleculeMolecule()
 {
@@ -305,6 +314,7 @@ bool AnalysisSelectNode::read(LineParser& parser, const CoreData& coreData, Node
 	if (!contextStack.add(this)) return Messenger::error("Error adding Select node '%s' to context stack.\n", name());
 
 	AnalysisDynamicSiteNode* dynamicSiteNode;
+	AnalysisSelectNode* selectNode;
 	Species* sp;
 
 	// Read until we encounter the EndSelect keyword, or we fail for some reason
@@ -350,9 +360,9 @@ bool AnalysisSelectNode::read(LineParser& parser, const CoreData& coreData, Node
 				if (!forEachBranch_->read(parser, coreData, contextStack)) return false;
 				break;
 			case (AnalysisSelectNode::SameMoleculeAsSiteKeyword):
-				if (sameMolecule_) return Messenger::error("Same molecule restriction has already been set, and cannot be set again.\n");
-				sameMolecule_ = dynamic_cast<AnalysisSelectNode*>(contextStack.nodeInScope(parser.argc(1), AnalysisNode::SelectNode));
-				if (!sameMolecule_) return Messenger::error("Unrecognised selection node '%s' given to %s keyword.\n", parser.argc(1), selectNodeKeyword(nk));
+				selectNode = dynamic_cast<AnalysisSelectNode*>(contextStack.nodeInScope(parser.argc(1), AnalysisNode::SelectNode));
+				if (!selectNode) return Messenger::error("Unrecognised selection node '%s' given to %s keyword.\n", parser.argc(1), selectNodeKeyword(nk));
+				if (!setSameMolecule(selectNode)) return Messenger::error("Failed to set same molecule specification.\n");
 				break;
 			case (AnalysisSelectNode::SiteKeyword):
 				// First argument is the target Species, second is a site within it
