@@ -43,6 +43,7 @@ bool CalculateRDFModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	if (!otherSite) return Messenger::error("Other (surrounding) site is not defined.\n");
 	const double rMax = keywords_.asDouble("RMax");
 	const double rMin = keywords_.asDouble("RMin");
+	const bool saveData = keywords_.asBool("Save");
 
 	/*
 	 * Assemble the code below (@var indicates local variable 'var')
@@ -102,7 +103,7 @@ bool CalculateRDFModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	process1D->addSitePopulationNormaliser(originSelect);
 	process1D->addNumberDensityNormaliser(otherSelect);
 	process1D->setNormaliseBySphericalShellVolume(true);
-	process1D->setSaveData(true);
+	process1D->setSaveData(saveData);
 	process1D->setValueLabel("g(r)");
 	process1D->setXAxisLabel("r, \\symbol{Angstrom}");
 	analyser_.addRootSequenceNode(process1D);

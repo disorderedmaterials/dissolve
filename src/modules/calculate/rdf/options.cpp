@@ -40,6 +40,10 @@ void CalculateRDFModule::setUpKeywords()
 	group->add(new SpeciesSiteModuleKeyword(), "OriginSite", "Set the site which is to represent the origin of the RDF", "<Species> <Site>");
 	group->add(new SpeciesSiteModuleKeyword(), "OtherSite", "Set the site for which the distribution around the origin site is to be calculated", "<Species> <Site>");
 	group->add(new BoolModuleKeyword(false), "ExcludeSameMolecule", "Whether to exclude correlations between sites on the same molecule", "<True|False>");
+
+	// Export
+	group = addKeywordGroup("Export");
+	group->add(new BoolModuleKeyword(false), "Save", "Save calculated data to disk", "<True|False>");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
