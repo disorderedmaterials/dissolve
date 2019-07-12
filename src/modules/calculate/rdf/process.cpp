@@ -36,7 +36,6 @@ bool CalculateRDFModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	// Get relevant Module options
 	const double binWidth = keywords_.asDouble("BinWidth");
 	const bool excludeSameMolecule = keywords_.asBool("ExcludeSameMolecule");
-	CharString dataName = rdfName();
 	SpeciesSite* originSite = KeywordListHelper<SpeciesSite*>::retrieve(keywords_, "OriginSite", NULL);
 	if (!originSite) return Messenger::error("Origin site is not defined.\n");
 	SpeciesSite* otherSite = KeywordListHelper<SpeciesSite*>::retrieve(keywords_, "OtherSite", NULL);
@@ -59,7 +58,7 @@ bool CalculateRDFModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	 *         Calculate  'rAB'
 	 *           Distance  'A'  'B'
 	 *         EndCalculate
-	 *         Collect1D  @dataName
+	 *         Collect1D  @resultName
 	 *           QuantityX  'rAB'
 	 *           RangeX  @rMin  @rMax  @binWidth
 	 *         EndCollect1D
@@ -67,7 +66,7 @@ bool CalculateRDFModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	 *     EndSelect  'B'
 	 *   EndForEach  'A'
 	 * EndSelect  'A'
-	 * Process1D  @dataName
+	 * Process1D  @resultName
 	 *   NSites  'A'
 	 *   SphericalShellVolume  On
 	 *   NumberDensity  'B'
@@ -94,12 +93,12 @@ bool CalculateRDFModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 
 	// -- -- Collect1D: @dataName
 	AnalysisCollect1DNode* collect1D = new AnalysisCollect1DNode(calcDistance, rMin, rMax, binWidth);
-	collect1D->setName(dataName);
+	collect1D->setName(resultName());
 	otherSelect->addToForEachBranch(collect1D);
 
 	// Process1D: @dataName
 	AnalysisProcess1DNode* process1D = new AnalysisProcess1DNode(collect1D);
-	process1D->setName(dataName);
+	process1D->setName(resultName());
 	process1D->addSitePopulationNormaliser(originSelect);
 	process1D->addNumberDensityNormaliser(otherSelect);
 	process1D->setNormaliseBySphericalShellVolume(true);

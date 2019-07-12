@@ -89,7 +89,7 @@ class CalculateRDFModule : public Module
 
 	public:
 	// Return name of resulting RDF
-	const char* rdfName() const;
+	const char* resultName() const;
 
 
 	/*
