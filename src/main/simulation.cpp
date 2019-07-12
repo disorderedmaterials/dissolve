@@ -329,17 +329,28 @@ void Dissolve::printTiming()
 {
 	Messenger::banner("Timing Information");
 
+	// Determine format for timing information output, accounting for the longest Module name we have
+	int maxLength = 0, length;
+	RefListIterator<Module,bool> instanceIterator(moduleInstances_);
+	while (Module* module = instanceIterator.iterate())
+	{
+		length = strlen(module->uniqueName());
+		if (length > maxLength) maxLength = length;
+	}
+	CharString timingFormat("      --> %%20s  %%-%is  %%7.2f s/iteration (%%i iterations)\n", maxLength+2);
+	CharString restartFormat("      --> %%20s  %%-%is  %%7.2f s/write     (%%i writes)\n", maxLength+2);
+
 	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next)
 	{
 		if (cfg->nModules() == 0) continue;
 
-		Messenger::print("Accumulated timing for Configuration '%s' processing:\n", cfg->name());
+		Messenger::print("Accumulated timing for Configuration '%s' processing:\n\n", cfg->name());
 
 		ListIterator<Module> modIterator(cfg->modules().modules());
 		while (Module* module = modIterator.iterate())
 		{
 			SampledDouble timingInfo = module->processTimes();
-			Messenger::print("      --> %30s  %7.2f s/iteration (%i iterations)\n", CharString("%s (%s)", module->type(), module->uniqueName()).get(), timingInfo.value(), timingInfo.count());
+			Messenger::print(timingFormat.get(), module->type(), CharString("(%s)", module->uniqueName()).get(), timingInfo.value(), timingInfo.count());
 		}
 
 		Messenger::print("\n");
@@ -348,19 +359,19 @@ void Dissolve::printTiming()
 	ListIterator<ModuleLayer> processingLayerIterator(processingLayers_);
 	while (ModuleLayer* layer = processingLayerIterator.iterate())
 	{
-		Messenger::print("Accumulated timing for layer '%s':\n", layer->name());
+		Messenger::print("Accumulated timing for layer '%s':\n\n", layer->name());
 		ListIterator<Module> processingIterator(layer->modules());
 		while (Module* module = processingIterator.iterate())
 		{
 			SampledDouble timingInfo = module->processTimes();
-			Messenger::print("      --> %30s  %7.2f s/iteration (%i iterations)\n", CharString("%s (%s)", module->type(), module->uniqueName()).get(), timingInfo.value(), timingInfo.count());
+			Messenger::print(timingFormat.get(), module->type(), CharString("(%s)", module->uniqueName()).get(), timingInfo.value(), timingInfo.count());
 		}
 
 		Messenger::print("\n");
 	}
 
-	Messenger::print("Accumulated timing for general upkeep:\n");
-	Messenger::print("      --> %30s  %7.2f s/write     (%i writes)\n", "Restart File", saveRestartTimes_.value(), saveRestartTimes_.count());
+	Messenger::print("Accumulated timing for general upkeep:\n\n");
+	Messenger::print(restartFormat.get(), "Restart File", "", saveRestartTimes_.value(), saveRestartTimes_.count());
 	Messenger::print("\n");
 
 	if (nIterationsPerformed_ == 0) Messenger::print("No iterations performed, so no per-iteration timing available.\n");
