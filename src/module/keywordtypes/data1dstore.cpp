@@ -67,7 +67,7 @@ bool Data1DStoreModuleKeyword::read(LineParser& parser, int startArg, const Core
 
 	// Target data is named as the first argument - a FileAndFormat specifies the rest...
 	Data1DImportFileFormat ff;
-	if (!ff.read(parser, startArg+2)) return false;
+	if (!ff.read(parser, startArg+1)) return false;
 
 	if (!data_.addData(procPool, ff, parser.argc(startArg))) return Messenger::error("Failed to add data.\n");
 
