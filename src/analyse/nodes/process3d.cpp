@@ -191,7 +191,7 @@ bool AnalysisProcess3DNode::finalise(ProcessPool& procPool, Configuration* cfg, 
 
 	// Get the node pointer
 	AnalysisCollect3DNode* node = dynamic_cast<AnalysisCollect3DNode*>(collectNode_.node());
-	if (!node) return Messenger::error("No Collect1D node available in AnalysisProcess3DNode::finalise().\n");
+	if (!node) return Messenger::error("No Collect3D node available in AnalysisProcess3DNode::finalise().\n");
 
 	// Copy the averaged data from the associated Collect3D node, and normalise it accordingly
 	data = node->accumulatedData();
