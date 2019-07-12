@@ -325,15 +325,15 @@ int TextPrimitive::lex()
 		if (es == TextPrimitive::nEscapeSequences)
 		{
 			Messenger::printVerbose("Error: String '%s' is not a valid escape sequence.\n", qPrintable(token));
-			return UCR_TP_FAIL;
+			return DISSOLVE_TEXT_FAIL;
 		}
 		TextPrimitiveParser_lval.escSeq = es;
-		return UCR_TP_ESCAPE;
+		return DISSOLVE_TEXT_ESCAPE;
 	}
 	else
 	{
 		TextPrimitiveParser_lval.text = &token;
-		return UCR_TP_TEXT;
+		return DISSOLVE_TEXT_TEXT;
 	}
 
 	return 0;
