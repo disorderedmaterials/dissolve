@@ -43,10 +43,6 @@ class IsotopologueReferenceListModuleKeyword : public ModuleKeywordData<Isotopol
 	/*
 	 * Data
 	 */
-	private:
-	// List of IsotopologueReferences upon which we are operating
-	List<IsotopologueReference>& references_;
-
 	public:
 	// Return whether the current data value has ever been set
 	bool isSet();
