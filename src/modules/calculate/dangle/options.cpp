@@ -40,9 +40,9 @@ void CalculateDAngleModule::setUpKeywords()
 
 	// Sites
 	group = addKeywordGroup("Sites");
-	group->add(new SpeciesSiteModuleKeyword(), "SiteA", "Add a site which represents 'A' in the interaction A-B...C", "<Species> <Site>");
-	group->add(new SpeciesSiteModuleKeyword(), "SiteB", "Add a site which represents 'B' in the interaction A-B...C", "<Species> <Site>");
-	group->add(new SpeciesSiteModuleKeyword(), "SiteC", "Add a site which represents 'C' in the interaction A-B...C", "<Species> <Site>");
+	group->add(new SpeciesSiteReferenceListModuleKeyword(aSites_), "SiteA", "Add a site which represents 'A' in the interaction A-B...C", "<Species> <Site> [<Species> <Site> ... ]");
+	group->add(new SpeciesSiteReferenceListModuleKeyword(bSites_), "SiteB", "Add a site which represents 'B' in the interaction A-B...C", "<Species> <Site> [<Species> <Site> ... ]");
+	group->add(new SpeciesSiteReferenceListModuleKeyword(cSites_), "SiteC", "Add a site which represents 'C' in the interaction A-B...C", "<Species> <Site> [<Species> <Site> ... ]");
 	group->add(new BoolModuleKeyword(false), "ExcludeSameMolecule", "Whether to exclude correlations between sites on the same molecule", "<True|False>");
 
 	// Export

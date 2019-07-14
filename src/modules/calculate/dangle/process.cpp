@@ -45,25 +45,23 @@ bool CalculateDAngleModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	const bool excludeSameMolecule = keywords_.asBool("ExcludeSameMolecule");
 	const bool saveData = keywords_.asBool("Save");
 
-	SpeciesSite* siteA = KeywordListHelper<SpeciesSite*>::retrieve(keywords_, "SiteA", NULL);
-	if (!siteA) return Messenger::error("Site 'A' (of A-B...C) is not defined.\n");
-	SpeciesSite* siteB = KeywordListHelper<SpeciesSite*>::retrieve(keywords_, "SiteB", NULL);
-	if (!siteB) return Messenger::error("Site 'B' (of A-B...C) is not defined.\n");
-	SpeciesSite* siteC = KeywordListHelper<SpeciesSite*>::retrieve(keywords_, "SiteC", NULL);
-	if (!siteC) return Messenger::error("Site 'C' (of A-B...C) is not defined.\n");
+	// Check for sites being defined
+	if (aSites_.nItems() == 0) return Messenger::error("At least one 'A' Site (of A-B...C) must be defined.\n");
+	if (bSites_.nItems() == 0) return Messenger::error("At least one 'B' Site (of A-B...C) must be defined.\n");
+	if (cSites_.nItems() == 0) return Messenger::error("At least one 'C' Site (of A-B...C) must be defined.\n");
 
 	/*
 	 * Assemble the code below (@var indicates local variable 'var')
 	 *
 	 * Select  'A'
-	 *   Site  @siteA
+	 *   Site  @aSites_
 	 *   ForEach
 	 *     Select  'B'
-	 *       Site  @siteB
+	 *       Site  @bSites_
 	 *       SameMoleculeAsSite  'A'
 	 *       ForEach
 	 *         Select  'C'
-	 *           Site  @siteC
+	 *           Site  @cSites_
 	 *           ExcludeSameMolecule  (if @excludeSameMolecule then 'A')
 	 *           ForEach
 	 *             Calculate  'rBC'
@@ -102,18 +100,18 @@ bool CalculateDAngleModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	 */
 
 	// Select: Site 'A' (@siteA)
-	AnalysisSelectNode* selectA = new AnalysisSelectNode(siteA);
+	AnalysisSelectNode* selectA = new AnalysisSelectNode(aSites_);
 	selectA->setName("A");
 	analyser_.addRootSequenceNode(selectA);
 
 	// -- Select: Site 'B' (@siteB)
-	AnalysisSelectNode* selectB = new AnalysisSelectNode(siteB);
+	AnalysisSelectNode* selectB = new AnalysisSelectNode(bSites_);
 	selectB->setName("B");
 	selectB->setSameMolecule(selectA);
 	selectA->addToForEachBranch(selectB);
 
 	// -- -- Select: Site 'C' (@siteC)
-	AnalysisSelectNode* selectC = new AnalysisSelectNode(siteC);
+	AnalysisSelectNode* selectC = new AnalysisSelectNode(cSites_);
 	selectC->setName("C");
 	if (excludeSameMolecule) selectC->addSameMoleculeExclusion(selectA);
 	selectB->addToForEachBranch(selectC);

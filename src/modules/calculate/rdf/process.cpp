@@ -36,22 +36,22 @@ bool CalculateRDFModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	// Get relevant Module options
 	const double binWidth = keywords_.asDouble("BinWidth");
 	const bool excludeSameMolecule = keywords_.asBool("ExcludeSameMolecule");
-	SpeciesSite* originSite = KeywordListHelper<SpeciesSite*>::retrieve(keywords_, "OriginSite", NULL);
-	if (!originSite) return Messenger::error("Origin site is not defined.\n");
-	SpeciesSite* otherSite = KeywordListHelper<SpeciesSite*>::retrieve(keywords_, "OtherSite", NULL);
-	if (!otherSite) return Messenger::error("Other (surrounding) site is not defined.\n");
 	const double rMax = keywords_.asDouble("RMax");
 	const double rMin = keywords_.asDouble("RMin");
 	const bool saveData = keywords_.asBool("Save");
+
+	// Check for sites being defined
+	if (originSites_.nItems() == 0) return Messenger::error("At least one origin Site must be defined.\n");
+	if (otherSites_.nItems() == 0) return Messenger::error("At least one other Site must be defined.\n");
 
 	/*
 	 * Assemble the code below (@var indicates local variable 'var')
 	 *
 	 * Select  'A'
-	 *   Site  @originSite
+	 *   Site  @originSites_
 	 *   ForEach
 	 *     Select  'B'
-	 *       Site  @otherSite
+	 *       Site  @otherSites_
 	 *       ExcludeSameSite  'A'
 	 *       ExcludeSameMolecule  (if @excludeSameMolecule then 'A')
 	 *       ForEach
@@ -75,13 +75,13 @@ bool CalculateRDFModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	 * EndProcess1D
 	 */
 
-	// Select: Site 'A' (@originSite)
-	AnalysisSelectNode* originSelect = new AnalysisSelectNode(originSite);
+	// Select: Site 'A' (@originSites)
+	AnalysisSelectNode* originSelect = new AnalysisSelectNode(originSites_);
 	originSelect->setName("A");
 	analyser_.addRootSequenceNode(originSelect);
 
 	// -- Select: Site 'B' (@otherSite)
-	AnalysisSelectNode* otherSelect = new AnalysisSelectNode(otherSite);
+	AnalysisSelectNode* otherSelect = new AnalysisSelectNode(otherSites_);
 	otherSelect->setName("B");
 	otherSelect->addSameSiteExclusion(originSelect);
 	if (excludeSameMolecule) otherSelect->addSameMoleculeExclusion(originSelect);
