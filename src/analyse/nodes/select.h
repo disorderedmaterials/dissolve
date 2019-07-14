@@ -40,8 +40,9 @@ class SpeciesSite;
 class AnalysisSelectNode : public AnalysisNode
 {
 	public:
-	// Constructor
+	// Constructors
 	AnalysisSelectNode(SpeciesSite* site = NULL);
+	AnalysisSelectNode(const RefList<SpeciesSite,bool>& sites);
 	// Destructor
 	~AnalysisSelectNode();
 

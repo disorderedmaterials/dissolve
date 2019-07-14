@@ -30,10 +30,21 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Constructor
+// Constructors
 AnalysisSelectNode::AnalysisSelectNode(SpeciesSite* site) : AnalysisNode(AnalysisNode::SelectNode)
 {
 	if (site) speciesSites_.add(site);
+
+	sameMolecule_= NULL;
+	forEachBranch_ = NULL;
+	currentSiteIndex_ = -1;
+	nCumulativeSites_ = 0;
+	nSelections_ = 0;
+}
+
+AnalysisSelectNode::AnalysisSelectNode(const RefList<SpeciesSite,bool>& sites) : AnalysisNode(AnalysisNode::SelectNode)
+{
+	speciesSites_ = sites;
 
 	sameMolecule_= NULL;
 	forEachBranch_ = NULL;
