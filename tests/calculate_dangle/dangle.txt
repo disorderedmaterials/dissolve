@@ -105,7 +105,7 @@ EndModule
 Module  CalculateDAngle  'DAngle(X-H...O)'
   Configuration  'Bulk'
   SiteA  Water  'O'
-  SiteB  Water  'H1'
+  SiteB  Water  'H1'  Water  'H2'
   SiteC  Water  'O'
   DistanceMin  0.0
   DistanceMax  5.0
