@@ -143,6 +143,7 @@ bool CalculateDAngleModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	AnalysisProcess1DNode* processDistance = new AnalysisProcess1DNode(collectDistance);
 	processDistance->setName(rdfBCResultName());
 	processDistance->addSitePopulationNormaliser(selectA);
+	processDistance->addSitePopulationNormaliser(selectB);
 	processDistance->addNumberDensityNormaliser(selectC);
 	processDistance->setNormaliseBySphericalShellVolume(true);
 	processDistance->setSaveData(saveData);
