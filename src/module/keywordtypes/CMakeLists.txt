@@ -15,6 +15,7 @@ add_library(keywordtypes
   pairbroadeningfunction.cpp
   speciesreferencelist.cpp
   speciessite.cpp
+  speciessitereferencelist.cpp
   vec3double.cpp
   vec3integer.cpp
   windowfunction.cpp
@@ -36,6 +37,7 @@ add_library(keywordtypes
   pairbroadeningfunction.h
   speciesreferencelist.h
   speciessite.h
+  speciessitereferencelist.h
   vec3double.h
   vec3integer.h
   windowfunction.h

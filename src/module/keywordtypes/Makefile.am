@@ -8,7 +8,7 @@ libkeywordtypes_la_SOURCES += fileandformat.cpp
 libkeywordtypes_la_SOURCES += integer.cpp isotopologuelist.cpp
 libkeywordtypes_la_SOURCES += modulegroups.cpp modulereferencelist.cpp
 libkeywordtypes_la_SOURCES += pairbroadeningfunction.cpp
-libkeywordtypes_la_SOURCES += speciesreferencelist.cpp speciessite.cpp
+libkeywordtypes_la_SOURCES += speciesreferencelist.cpp speciessite.cpp speciessitereferencelist.cpp
 libkeywordtypes_la_SOURCES += vec3double.cpp vec3integer.cpp
 libkeywordtypes_la_SOURCES += windowfunction.cpp
 
@@ -21,7 +21,7 @@ noinst_HEADERS += fileandformat.h
 noinst_HEADERS += integer.h isotopologuelist.h
 noinst_HEADERS += modulegroups.h modulereferencelist.h
 noinst_HEADERS += pairbroadeningfunction.h
-noinst_HEADERS += speciesreferencelist.h speciessite.h
+noinst_HEADERS += speciesreferencelist.h speciessite.h speciessitereferencelist.h
 noinst_HEADERS += vec3double.h vec3integer.h
 noinst_HEADERS += windowfunction.h
 
