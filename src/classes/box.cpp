@@ -347,7 +347,7 @@ bool Box::calculateRDFNormalisation(ProcessPool& procPool, Data1D& boxNorm, doub
  * Utility Routines
  */
 
-// Return angle (in degrees, no MIM) between Atoms
+// Return angle (in degrees) between Atoms
 double Box::angleInDegrees(const Atom* i, const Atom* j, const Atom* k) const
 {
 	Vec3<double> vecji, vecjk;
@@ -360,19 +360,23 @@ double Box::angleInDegrees(const Atom* i, const Atom* j, const Atom* k) const
 	vecji.normalise();
 	vecjk.normalise();
 
-	// Determine Angle energy
+	// Determine Angle
 	return angleInDegrees(vecji, vecjk);
 }
 
-// Return angle (in degrees, no MIM) between coordinates
-double Box::angleInDegrees(const Vec3<double>& i, const Vec3<double>& j, const Vec3<double>& k)
+// Return angle (in degrees) between coordinates
+double Box::angleInDegrees(const Vec3<double>& i, const Vec3<double>& j, const Vec3<double>& k) const
 {
 	static Vec3<double> vecji, vecjk;
-	vecji = i - j;
+	vecji = minimumVector(j, i);
+	vecjk = minimumVector(j, k);
+	
+	// Normalise vectors
 	vecji.normalise();
-	vecjk = k - j;
 	vecjk.normalise();
-	return acos(vecji.dp(vecjk)) * DEGRAD;
+
+	// Determine Angle
+	return angleInDegrees(vecji, vecjk);
 }
 
 // Return angle (in degrees) between supplied normalised vectors
@@ -388,7 +392,18 @@ double Box::angleInDegrees(const Vec3<double>& normji, const Vec3<double>& normj
 	return acos(dotProduct) * DEGRAD;
 }
 
-// Return torsion (in degrees, no MIM) between supplied unnormalised vectors
+// Return literal angle (in degrees) between coordinates, without applying minimum image convention
+double Box::literalAngleInDegrees(const Vec3<double>& i, const Vec3<double>& j, const Vec3<double>& k)
+{
+	static Vec3<double> vecji, vecjk;
+	vecji = i - j;
+	vecji.normalise();
+	vecjk = k - j;
+	vecjk.normalise();
+	return acos(vecji.dp(vecjk)) * DEGRAD;
+}
+
+// Return torsion (in degrees) between supplied unnormalised vectors
 double Box::torsionInDegrees(const Vec3<double>& vecji, const Vec3<double>& vecjk, const Vec3<double>& veckl)
 {
 	// Calculate cross products and torsion angle formed (in radians)
@@ -398,13 +413,13 @@ double Box::torsionInDegrees(const Vec3<double>& vecji, const Vec3<double>& vecj
 	return torsionInRadians(vecji, vecjk, veckl, xpj, magxpj, xpk, magxpk)*DEGRAD;
 }
 
-// Return torsion (in degrees, no MIM) between supplied unnormalised vectors
+// Return torsion (in degrees) between supplied unnormalised vectors
 double Box::torsionInDegrees(const Vec3<double>& vecji, const Vec3<double>& vecjk, const Vec3<double>& veckl, Vec3<double>& xpj, double& magxpj, Vec3<double>& xpk, double& magxpk)
 {
 	return torsionInRadians(vecji, vecjk, veckl, xpj, magxpj, xpk, magxpk)*DEGRAD;
 }
 
-// Return torsion (in radians, no MIM) between supplied unnormalised vectors
+// Return torsion (in radians) between supplied unnormalised vectors
 double Box::torsionInRadians(const Vec3<double>& vecji, const Vec3<double>& vecjk, const Vec3<double>& veckl)
 {
 	// Calculate cross products and torsion angle formed (in radians)
@@ -414,7 +429,7 @@ double Box::torsionInRadians(const Vec3<double>& vecji, const Vec3<double>& vecj
 	return torsionInRadians(vecji, vecjk, veckl, xpj, magxpj, xpk, magxpk);
 }
 
-// Return torsion (in radians, no MIM) between supplied unnormalised vectors, storing cross products and magnitude in supplied variables
+// Return torsion (in radians) between supplied unnormalised vectors, storing cross products and magnitude in supplied variables
 double Box::torsionInRadians(const Vec3<double>& vecji, const Vec3<double>& vecjk, const Vec3<double>& veckl, Vec3<double>& xpj, double& magxpj, Vec3<double>& xpk, double& magxpk)
 {
 	xpj = vecjk * vecji;
@@ -423,4 +438,3 @@ double Box::torsionInRadians(const Vec3<double>& vecji, const Vec3<double>& vecj
 	magxpk = xpk.magAndNormalise();
 	return atan2(vecjk.dp(xpj*xpk) / vecjk.magnitude(), xpj.dp(xpk));
 }
-
