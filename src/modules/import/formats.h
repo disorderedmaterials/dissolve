@@ -186,5 +186,113 @@ class Data1DImportFileFormat : public FileAndFormat
 	const char* additionalArguments() const;
 };
 
+// Data2D Import Formats
+class Data2DImportFileFormat : public FileAndFormat
+{
+	public:
+	// Constructor
+	Data2DImportFileFormat();
+	// Destructor
+	~Data2DImportFileFormat();
+
+
+	/*
+	 * Available Formats
+	 */
+	public:
+	// Available Data2D formats
+	enum Data2DImportFormat { CartesianData2D, nData2DImportFormats };
+	// Return number of available formats
+	int nFormats() const;
+	// Return formats array
+	const char** formats() const;
+	// Return nice formats array
+	const char** niceFormats() const;
+	// Return current format as Data2DImportFormat
+	Data2DImportFormat data2DFormat() const;
+
+
+	/*
+	 * Ranges
+	 */
+	private:
+	// Minimum, Maximum, and bin delta along x
+	double xMin_, xDelta_, xMax_;
+	// Minimum, Maximum, and bin delta along y
+	double yMin_, yDelta_, yMax_;
+
+
+	/*
+	 * Filename / Basename
+	 */
+	public:
+	// Return whether the file must exist
+	bool fileMustExist() const
+	{
+		return true;
+	}
+
+
+	/*
+	 * Read / Write
+	 */
+	protected:
+	// Parse additional argument
+	bool parseArgument(const char* arg);
+	// Return whether this file/format has any additional arguments to write
+	bool hasAdditionalArguments() const;
+	// Return additional arguments as string
+	const char* additionalArguments() const;
+};
+
+// Data3D Import Formats
+class Data3DImportFileFormat : public FileAndFormat
+{
+	public:
+	// Constructor
+	Data3DImportFileFormat();
+	// Destructor
+	~Data3DImportFileFormat();
+
+
+	/*
+	 * Available Formats
+	 */
+	public:
+	// Available Data3D formats
+	enum Data3DImportFormat { nData3DImportFormats };
+	// Return number of available formats
+	int nFormats() const;
+	// Return formats array
+	const char** formats() const;
+	// Return nice formats array
+	const char** niceFormats() const;
+	// Return current format as Data3DImportFormat
+	Data3DImportFormat data3DFormat() const;
+
+
+	/*
+	 * Filename / Basename
+	 */
+	public:
+	// Return whether the file must exist
+	bool fileMustExist() const
+	{
+		return true;
+	}
+
+
+	/*
+	 * Read / Write
+	 */
+	protected:
+	// Parse additional argument
+	bool parseArgument(const char* arg);
+	// Return whether this file/format has any additional arguments to write
+	bool hasAdditionalArguments() const;
+	// Return additional arguments as string
+	const char* additionalArguments() const;
+};
+
 #endif
 

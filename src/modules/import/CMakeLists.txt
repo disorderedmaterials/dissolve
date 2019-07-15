@@ -8,6 +8,8 @@ add_library(importmodule
   functions_coordinates_epsr.cpp
   functions_coordinates_xyz.cpp
   functions_data1d.cpp
+  functions_data2d.cpp
+  functions_data3d.cpp
   functions_forces.cpp
   options.cpp
   process.cpp

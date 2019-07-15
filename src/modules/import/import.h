@@ -27,6 +27,8 @@
 
 // Forward Declarations
 class Data1D;
+class Data2D;
+class Data3D;
 
 // Import Module
 class ImportModule : public Module
@@ -125,6 +127,21 @@ class ImportModule : public Module
 	// Read Gudrun merged interference cross-section (mint) data from specified file
 	static bool readGudrunMintData1D(LineParser& parser, Data1D& data);
 
+
+	/*
+	 * Static Functions - Data2D
+	 */
+	public:
+	// Read Data2D in specified format
+	static bool readData2D(Data2DImportFileFormat::Data2DImportFormat format, LineParser& parser, Data2D& data);
+
+
+	/*
+	 * Static Functions - Data3D
+	 */
+	public:
+	// Read Data3D in specified format
+	static bool readData3D(Data3DImportFileFormat::Data3DImportFormat format, LineParser& parser, Data3D& data);
 };
 
 #endif
