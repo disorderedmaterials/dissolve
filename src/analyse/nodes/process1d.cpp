@@ -24,6 +24,7 @@
 #include "analyse/nodes/select.h"
 #include "analyse/nodecontextstack.h"
 #include "modules/analyse/analyse.h"
+#include "math/integrator.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "base/lineparser.h"
@@ -211,6 +212,14 @@ bool AnalysisProcess1DNode::finalise(ProcessPool& procPool, Configuration* cfg, 
 
 	// Normalisation by factor?
 	if (normaliseByFactor_) data /= normalisationFactor_;
+
+	// Normalise to 1.0?
+	if (normaliseToOne_)
+	{
+		// Get sum of absolute values
+		double sum = Integrator::absSum(data);
+		data /= sum;
+	}
 
 	// Save data?
 	if (saveData_ && procPool.isMaster())
