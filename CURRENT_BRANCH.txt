@@ -4,7 +4,7 @@
 - Remove unnecessary include "genericitems/listhelper.h" from keywordwidgets
 - Move KeywordWidgetData::set_ to KeywordWidgetBase (which is now derived from KeywordWidgetData)? No need for virtual implementation in derived classes then.
 - Fix Analysis test case
-- Allow multiple selections for sites to be defined for Calculate* modules
+- [PROCEDURES] Generate errors for argument numbers to nodes.
 - Spatial density function calculation
 - 2D plotting
 - 3D plotting of surfaces (marching cubes)
