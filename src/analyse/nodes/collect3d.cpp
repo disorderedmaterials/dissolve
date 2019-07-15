@@ -22,6 +22,7 @@
 #include "analyse/nodes/collect3d.h"
 #include "analyse/nodecontextstack.h"
 #include "analyse/nodes/calculate.h"
+#include "analyse/nodes/sequence.h"
 #include "math/data3d.h"
 #include "classes/configuration.h"
 #include "base/lineparser.h"
@@ -47,6 +48,9 @@ AnalysisCollect3DNode::AnalysisCollect3DNode(AnalysisCalculateNode* xObservable,
 	zMinimum_ = zMin;
 	zMaximum_ = zMax;
 	zBinWidth_ = zBinWidth;
+
+	// Branches
+	subCollectBranch_ = NULL;
 }
 
 AnalysisCollect3DNode::AnalysisCollect3DNode(AnalysisCalculateNode* xyzObservable, double xMin, double xMax, double xBinWidth, double yMin, double yMax, double yBinWidth, double zMin, double zMax, double zBinWidth) : AnalysisNode(AnalysisNode::Collect3DNode)
@@ -80,7 +84,7 @@ AnalysisCollect3DNode::~AnalysisCollect3DNode()
  */
 
 // Node Keywords
-const char* Collect3DNodeKeywords[] = { "EndCollect3D", "QuantityXYZ", "QuantityX", "QuantityY", "QuantityZ", "RangeX", "RangeY", "RangeZ" };
+const char* Collect3DNodeKeywords[] = { "EndCollect3D", "QuantityXYZ", "QuantityX", "QuantityY", "QuantityZ", "RangeX", "RangeY", "RangeZ", "SubCollect" };
 
 // Convert string to node keyword
 AnalysisCollect3DNode::Collect3DNodeKeyword AnalysisCollect3DNode::collect3DNodeKeyword(const char* s)
@@ -169,6 +173,26 @@ double AnalysisCollect3DNode::zBinWidth() const
 }
 
 /*
+ * Branches
+ */
+
+// Add and return subcollection sequence branch
+AnalysisSequenceNode* AnalysisCollect3DNode::addSubCollectBranch()
+{
+	if (!subCollectBranch_) subCollectBranch_ = new AnalysisSequenceNode();
+
+	subCollectBranch_->setParent(parent());
+
+	return subCollectBranch_;
+}
+
+// Add specified node to subcollection sequence
+void AnalysisCollect3DNode::addToSubCollectBranch(AnalysisNode* node)
+{
+	addSubCollectBranch()->addNode(node);
+}
+
+/*
  * Execute
  */
 
@@ -190,6 +214,9 @@ bool AnalysisCollect3DNode::prepare(Configuration* cfg, const char* prefix, Gene
 
 	// Store a pointer to the data
 	histogram_ = &target;
+
+	// Prepare any branches
+	if (subCollectBranch_ && (!subCollectBranch_->prepare(cfg, prefix, targetList))) return false;
 
 	return true;
 }
@@ -215,8 +242,14 @@ AnalysisNode::NodeExecutionResult AnalysisCollect3DNode::execute(ProcessPool& pr
 	}
 #endif
 	// Bin the current value of the observable
-	if (xyzObservable_) histogram_->bin(xyzObservable_->values());
-	else histogram_->bin(xObservable_->value(0), yObservable_->value(0), zObservable_->value(0));
+	if (xyzObservable_)
+	{
+		if (histogram_->bin(xyzObservable_->values()) && subCollectBranch_) return subCollectBranch_->execute(procPool, cfg, prefix, targetList);
+	}
+	else
+	{
+		if (histogram_->bin(xObservable_->value(0), yObservable_->value(0), zObservable_->value(0)) && subCollectBranch_) return subCollectBranch_->execute(procPool, cfg, prefix, targetList);
+	}
 
 	return AnalysisNode::Success;
 }
@@ -233,6 +266,9 @@ bool AnalysisCollect3DNode::finalise(ProcessPool& procPool, Configuration* cfg, 
 #endif
 	// Accumulate the current binned data
 	histogram_->accumulate();
+
+	// Finalise any branches
+	if (subCollectBranch_ && (!subCollectBranch_->finalise(procPool, cfg, prefix, targetList))) return false;
 
 	return true;
 }
@@ -311,6 +347,15 @@ bool AnalysisCollect3DNode::read(LineParser& parser, const CoreData& coreData, N
 				zMinimum_ = parser.argd(1);
 				zMaximum_ = parser.argd(2);
 				zBinWidth_ = parser.argd(3);
+				break;
+			case (AnalysisCollect3DNode::SubCollectKeyword):
+				// Check that a SubCollect branch hasn't already been defined
+				if (subCollectBranch_) return Messenger::error("Only one SubCollect branch may be defined in a Collect3D node.\n");
+
+				// Create and parse a new branch
+				subCollectBranch_ = new AnalysisSequenceNode("EndSubCollect");
+				subCollectBranch_->setParent(parent());
+				if (!subCollectBranch_->read(parser, coreData, contextStack)) return false;
 				break;
 			case (AnalysisCollect3DNode::nCollect3DNodeKeywords):
 				return Messenger::error("Unrecognised Collect3D node keyword '%s' found.\n", parser.argc(0));

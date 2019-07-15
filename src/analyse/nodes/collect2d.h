@@ -29,6 +29,7 @@
 
 // Forward Declarations
 class AnalysisCalculateNode;
+class AnalysisSequenceNode;
 class LineParser;
 class NodeContextStack;
 
@@ -47,7 +48,7 @@ class AnalysisCollect2DNode : public AnalysisNode
 	 */
 	public:
 	// Node Keywords
-	enum Collect2DNodeKeyword { EndCollect2DKeyword, QuantityXKeyword, QuantityYKeyword, RangeXKeyword, RangeYKeyword, nCollect2DNodeKeywords };
+	enum Collect2DNodeKeyword { EndCollect2DKeyword, QuantityXKeyword, QuantityYKeyword, RangeXKeyword, RangeYKeyword, SubCollectKeyword, nCollect2DNodeKeywords };
 	// Convert string to control keyword
 	static Collect2DNodeKeyword collect2DNodeKeyword(const char* s);
 	// Convert control keyword to string
@@ -92,6 +93,20 @@ class AnalysisCollect2DNode : public AnalysisNode
 	double yMaximum() const;
 	// Return y bin width
 	double yBinWidth() const;
+
+
+	/*
+	 * Branches
+	 */
+	private:
+	// Branch for subcollection (if defined), run if the target quantity is successfully binned
+	AnalysisSequenceNode* subCollectBranch_;
+
+	public:
+	// Add and return subcollection sequence branch
+	AnalysisSequenceNode* addSubCollectBranch();
+	// Add specified node to subcollection sequence
+	void addToSubCollectBranch(AnalysisNode* node);
 
 
 	/*

@@ -29,6 +29,7 @@
 
 // Forward Declarations
 class AnalysisCalculateNode;
+class AnalysisSequenceNode;
 class LineParser;
 class NodeContextStack;
 
@@ -48,7 +49,7 @@ class AnalysisCollect3DNode : public AnalysisNode
 	 */
 	public:
 	// Node Keywords
-	enum Collect3DNodeKeyword { EndCollect3DKeyword, QuantityXYZKeyword, QuantityXKeyword, QuantityYKeyword, QuantityZKeyword, RangeXKeyword, RangeYKeyword, RangeZKeyword, nCollect3DNodeKeywords };
+	enum Collect3DNodeKeyword { EndCollect3DKeyword, QuantityXYZKeyword, QuantityXKeyword, QuantityYKeyword, QuantityZKeyword, RangeXKeyword, RangeYKeyword, RangeZKeyword, SubCollectKeyword, nCollect3DNodeKeywords };
 	// Convert string to control keyword
 	static Collect3DNodeKeyword collect3DNodeKeyword(const char* s);
 	// Convert control keyword to string
@@ -109,6 +110,20 @@ class AnalysisCollect3DNode : public AnalysisNode
 	double zMaximum() const;
 	// Return z bin width
 	double zBinWidth() const;
+
+
+	/*
+	 * Branches
+	 */
+	private:
+	// Branch for subcollection (if defined), run if the target quantity is successfully binned
+	AnalysisSequenceNode* subCollectBranch_;
+
+	public:
+	// Add and return subcollection sequence branch
+	AnalysisSequenceNode* addSubCollectBranch();
+	// Add specified node to subcollection sequence
+	void addToSubCollectBranch(AnalysisNode* node);
 
 
 	/*

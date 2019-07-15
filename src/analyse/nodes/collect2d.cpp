@@ -22,6 +22,7 @@
 #include "analyse/nodes/collect2d.h"
 #include "analyse/nodecontextstack.h"
 #include "analyse/nodes/calculate.h"
+#include "analyse/nodes/sequence.h"
 #include "math/data2d.h"
 #include "classes/configuration.h"
 #include "base/lineparser.h"
@@ -39,6 +40,9 @@ AnalysisCollect2DNode::AnalysisCollect2DNode(AnalysisCalculateNode* xObservable,
 	yMinimum_ = yMin;
 	yMaximum_ = yMax;
 	yBinWidth_ = yBinWidth;
+
+	// Branches
+	subCollectBranch_ = NULL;
 }
 
 // Destructor
@@ -51,7 +55,7 @@ AnalysisCollect2DNode::~AnalysisCollect2DNode()
  */
 
 // Node Keywords
-const char* Collect2DNodeKeywords[] = { "EndCollect2D", "QuantityX", "QuantityY", "RangeX", "RangeY" };
+const char* Collect2DNodeKeywords[] = { "EndCollect2D", "QuantityX", "QuantityY", "RangeX", "RangeY", "SubCollect" };
 
 // Convert string to node keyword
 AnalysisCollect2DNode::Collect2DNodeKeyword AnalysisCollect2DNode::collect2DNodeKeyword(const char* s)
@@ -121,6 +125,26 @@ double AnalysisCollect2DNode::yBinWidth() const
 }
 
 /*
+ * Branches
+ */
+
+// Add and return subcollection sequence branch
+AnalysisSequenceNode* AnalysisCollect2DNode::addSubCollectBranch()
+{
+	if (!subCollectBranch_) subCollectBranch_ = new AnalysisSequenceNode();
+
+	subCollectBranch_->setParent(parent());
+
+	return subCollectBranch_;
+}
+
+// Add specified node to subcollection sequence
+void AnalysisCollect2DNode::addToSubCollectBranch(AnalysisNode* node)
+{
+	addSubCollectBranch()->addNode(node);
+}
+
+/*
  * Execute
  */
 
@@ -143,6 +167,9 @@ bool AnalysisCollect2DNode::prepare(Configuration* cfg, const char* prefix, Gene
 	// Store a pointer to the data
 	histogram_ = &target;
 
+	// Prepare any branches
+	if (subCollectBranch_ && (!subCollectBranch_->prepare(cfg, prefix, targetList))) return false;
+
 	return true;
 }
 
@@ -162,7 +189,7 @@ AnalysisNode::NodeExecutionResult AnalysisCollect2DNode::execute(ProcessPool& pr
 	}
 #endif
 	// Bin the current value of the observable
-	histogram_->bin(xObservable_->value(0), yObservable_->value(0));
+	if (histogram_->bin(xObservable_->value(0), yObservable_->value(0)) && subCollectBranch_) return subCollectBranch_->execute(procPool, cfg, prefix, targetList);
 
 	return AnalysisNode::Success;
 }
@@ -179,6 +206,9 @@ bool AnalysisCollect2DNode::finalise(ProcessPool& procPool, Configuration* cfg, 
 #endif
 	// Accumulate the current binned data
 	histogram_->accumulate();
+
+	// Finalise any branches
+	if (subCollectBranch_ && (!subCollectBranch_->finalise(procPool, cfg, prefix, targetList))) return false;
 
 	return true;
 }
@@ -232,6 +262,15 @@ bool AnalysisCollect2DNode::read(LineParser& parser, const CoreData& coreData, N
 				yMinimum_ = parser.argd(1);
 				yMaximum_ = parser.argd(2);
 				yBinWidth_ = parser.argd(3);
+				break;
+			case (AnalysisCollect2DNode::SubCollectKeyword):
+				// Check that a SubCollect branch hasn't already been defined
+				if (subCollectBranch_) return Messenger::error("Only one SubCollect branch may be defined in a Collect2D node.\n");
+
+				// Create and parse a new branch
+				subCollectBranch_ = new AnalysisSequenceNode("EndSubCollect");
+				subCollectBranch_->setParent(parent());
+				if (!subCollectBranch_->read(parser, coreData, contextStack)) return false;
 				break;
 			case (AnalysisCollect2DNode::nCollect2DNodeKeywords):
 				return Messenger::error("Unrecognised Collect2D node keyword '%s' found.\n", parser.argc(0));

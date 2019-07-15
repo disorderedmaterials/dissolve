@@ -29,6 +29,7 @@
 
 // Forward Declarations
 class AnalysisCalculateNode;
+class AnalysisSequenceNode;
 class LineParser;
 class NodeContextStack;
 
@@ -47,7 +48,7 @@ class AnalysisCollect1DNode : public AnalysisNode
 	 */
 	public:
 	// Node Keywords
-	enum Collect1DNodeKeyword { EndCollect1DKeyword, QuantityXKeyword, RangeXKeyword, nCollect1DNodeKeywords };
+	enum Collect1DNodeKeyword { EndCollect1DKeyword, QuantityXKeyword, RangeXKeyword, SubCollectKeyword, nCollect1DNodeKeywords };
 	// Convert string to control keyword
 	static Collect1DNodeKeyword collect1DNodeKeyword(const char* s);
 	// Convert control keyword to string
@@ -78,6 +79,20 @@ class AnalysisCollect1DNode : public AnalysisNode
 	double maximum() const;
 	// Return bin width
 	double binWidth() const;
+
+
+	/*
+	 * Branches
+	 */
+	private:
+	// Branch for subcollection (if defined), run if the target quantity is successfully binned
+	AnalysisSequenceNode* subCollectBranch_;
+
+	public:
+	// Add and return subcollection sequence branch
+	AnalysisSequenceNode* addSubCollectBranch();
+	// Add specified node to subcollection sequence
+	void addToSubCollectBranch(AnalysisNode* node);
 
 
 	/*
