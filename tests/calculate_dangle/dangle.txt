@@ -118,7 +118,7 @@ Module  CalculateDAngle  'DAngle(X-H...O)'
 EndModule
 
 # Distance-Angle Map X-H...O (using manual analyser)
-Module  Analyse
+Module  Analyse  'DAngle(X-H...O)-Analyser'
   Configuration  'Bulk'
   Analyser
 
@@ -183,7 +183,22 @@ Module  Analyse
 
     EndSelect
 
-    # Perform necessary normalisation
+    Process1D  'RDF'
+      SourceData  'RDF(BC)'
+      NSites  'X'  'H'
+      NumberDensity  'O'
+      SphericalShellVolume  On
+      LabelValue  'gBC(r)'
+      LabelX  'r, Angstroms'
+    EndProcess1D
+
+    Process1D  'Angle'
+      SourceData  'ANGLE(ABC)'
+      NormaliseToOne
+      LabelValue  'Probability'
+      LabelX  'Angle, \\sym{degree}'
+    EndProcess1D
+
     Process2D  'DistanceAngleMap(H_O-OH_O)'
       SourceData  'DistanceAngleMap(H_O-OH_O)'
       NormaliseToOne  On
@@ -206,10 +221,25 @@ EndModule
 
 Module DataTest
   Frequency  95
+  Target  'DAngle(X-H...O)-Analyser'
+  Data1D  'DAngle(X-H...O)-Analyser//Process1D//Bulk//RDF'  xy  '../_data/water267-dlpoly/water-267-298K.aardf_21_23_inter_sum'
+  Threshold  1.02
+EndModule
+
+Module DataTest
+  Frequency  95
   Target  'DAngle(X-H...O)'
   Data1D  'DAngle(X-H...O)_ANGLE(ABC)_Bulk'  xy  '../_data/water267-dlpoly/water-267-298K.dahist1_02_1_01_02.angle'
-  Threshold  0.0001
+  Threshold  0.3
 EndModule
+
+Module DataTest
+  Frequency  95
+  Target  'DAngle(X-H...O)-Analyser'
+  Data1D  'DAngle(X-H...O)-Analyser//Process1D//Bulk//Angle'  xy  '../_data/water267-dlpoly/water-267-298K.dahist1_02_1_01_02.angle'
+  Threshold  0.3
+EndModule
+
 
 EndLayer
 
