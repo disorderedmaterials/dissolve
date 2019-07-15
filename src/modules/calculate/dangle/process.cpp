@@ -70,19 +70,21 @@ bool CalculateDAngleModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	 *             Calculate  'aABC'
 	 *               Angle  'A'  'B'  'C'
 	 *             EndCalculate
-	 *             Collect1D  'RDF(BC)'
-	 *               QuantityX  'rBC'
-	 *               RangeX  @distanceMin  @distanceMax  @distanceBin
-	 *             EndCollect
-	 *             Collect1D  'ANGLE(ABC)'
-	 *               QuantityX  'aABC'
-	 *               RangeX  @angleMin  @angleMax  @angleBin
-	 *             EndCollect
 	 *             Collect2D  @dataName
 	 *               QuantityX  'rBC'
 	 *               QuantityY  'aABC'
 	 *               RangeX  @distanceMin  @distanceMax  @distanceBin
 	 *               RangeY  @angleMin  @angleMax  @angleBin
+	 *               SubCollect
+	 *                 Collect1D  'RDF(BC)'
+	 *                   QuantityX  'rBC'
+	 *                   RangeX  @distanceMin  @distanceMax  @distanceBin
+	 *                 EndCollect
+	 *                 Collect1D  'ANGLE(ABC)'
+	 *                   QuantityX  'aABC'
+	 *                   RangeX  @angleMin  @angleMax  @angleBin
+	 *                 EndCollect
+	 *               EndSubCollect
 	 *             EndCollect2D
 	 *           EndForEach  'C'
 	 *         EndSelect  'C'
@@ -124,20 +126,20 @@ bool CalculateDAngleModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	AnalysisCalculateNode* calcAngle = new AnalysisCalculateNode(AnalysisCalculateNode::AngleObservable, selectA, selectB, selectC);
 	selectC->addToForEachBranch(calcAngle);
 
-	// -- -- -- Collect1D:  'RDF(BC)
-	AnalysisCollect1DNode* collectDistance = new AnalysisCollect1DNode(calcDistance, distanceMin, distanceMax, distanceBin);
-	collectDistance->setName(rdfBCResultName());
-	selectC->addToForEachBranch(collectDistance);
-
-	// -- -- -- Collect1D:  'ANGLE(ABC)
-	AnalysisCollect1DNode* collectAngle = new AnalysisCollect1DNode(calcAngle, angleMin, angleMax, angleBin);
-	collectAngle->setName(angleABCResultName());
-	selectC->addToForEachBranch(collectAngle);
-
 	// -- -- -- Collect2D:  'Distance-Angle(B...C vs A-B...C)
 	AnalysisCollect2DNode* collectDAngle = new AnalysisCollect2DNode(calcDistance, calcAngle, distanceMin, distanceMax, distanceBin, angleMin, angleMax, angleBin);
-	collectAngle->setName(resultName());
+	collectDAngle->setName(resultName());
 	selectC->addToForEachBranch(collectDAngle);
+
+	// -- -- -- -- Collect1D:  'RDF(BC)
+	AnalysisCollect1DNode* collectDistance = new AnalysisCollect1DNode(calcDistance, distanceMin, distanceMax, distanceBin);
+	collectDistance->setName(rdfBCResultName());
+	collectDAngle->addToSubCollectBranch(collectDistance);
+
+	// -- -- -- -- Collect1D:  'ANGLE(ABC)
+	AnalysisCollect1DNode* collectAngle = new AnalysisCollect1DNode(calcAngle, angleMin, angleMax, angleBin);
+	collectAngle->setName(angleABCResultName());
+	collectDAngle->addToSubCollectBranch(collectAngle);
 
 	// Process1D: 'RDF(BC)'
 	AnalysisProcess1DNode* processDistance = new AnalysisProcess1DNode(collectDistance);
@@ -151,7 +153,7 @@ bool CalculateDAngleModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	processDistance->setXAxisLabel("r, \\symbol{Angstrom}");
 	analyser_.addRootSequenceNode(processDistance);
 
-	// Process1D: 'RDF(BC)'
+	// Process1D: 'ANGLE(ABC)'
 	AnalysisProcess1DNode* processAngle = new AnalysisProcess1DNode(collectAngle);
 	processAngle->setName(angleABCResultName());
 	processAngle->setNormaliseToOne(true);
