@@ -1,5 +1,5 @@
 /*
-	*** Data Store
+	*** Data1D Store
 	*** src/classes/data1dstore.cpp
 	Copyright T. Youngs 2012-2019
 

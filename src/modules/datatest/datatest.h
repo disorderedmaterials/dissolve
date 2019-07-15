@@ -84,8 +84,8 @@ class DataTestModule : public Module
 	private:
 	// Target module containing / owning data to test
 	RefList<Module,bool> targetModule_;
-	// Test datasets
-	Data1DStore testData_;
+	// Test 1D datasets
+	Data1DStore test1DData_;
 
 
 	/*

@@ -27,7 +27,7 @@ void DataTestModule::setUpKeywords()
 {
 	// Test
 	ModuleKeywordGroup* group = addKeywordGroup("Test");
-	group->add(new Data1DStoreModuleKeyword(testData_), "Data1D", "Specify one-dimensional test reference data", "<target> <fileformat> <filename> [x=1] [y=2]");
+	group->add(new Data1DStoreModuleKeyword(test1DData_), "Data1D", "Specify one-dimensional test reference data", "<target> <fileformat> <filename> [x=1] [y=2]");
 	group->add(new ModuleReferenceListModuleKeyword(targetModule_, 1), "Target", "Module containing target data", "<Module>");
 	group->add(new DoubleModuleKeyword(0.1, 1.0e-5), "Threshold", "Test threshold (%%error) above which test fails", "<threshold[0.1]>");
 }
