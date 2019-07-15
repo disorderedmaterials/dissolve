@@ -170,15 +170,15 @@ int Histogram2D::nYBins() const
 	return nYBins_;
 }
 
-// Bin specified value
-void Histogram2D::bin(double x, double y)
+// Bin specified value, returning success
+bool Histogram2D::bin(double x, double y)
 {
 	// Calculate target bin along x
 	int xBin = (x - xMinimum_) / xBinWidth_;
 	if ((xBin < 0) || (xBin >= nXBins_))
 	{
 		++nMissed_;
-		return;
+		return false;
 	}
 
 	// Calculate target bin along y
@@ -186,11 +186,13 @@ void Histogram2D::bin(double x, double y)
 	if ((yBin < 0) || (yBin >= nYBins_))
 	{
 		++nMissed_;
-		return;
+		return false;
 	}
 
 	++bins_.at(xBin, yBin);
 	++nBinned_;
+
+	return true;
 }
 
 // Return number of values binned over all bins
