@@ -62,7 +62,7 @@ bool DataTestModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				// All is OK, so get the data and check the error against the test set
 				Data1D& data = GenericListHelper<Data1D>::retrieve(moduleData, testData->name(), targetModule->uniqueName());
 				double error = Error::percent(data, *testData, true);
-				Messenger::print("Reference data '%s_%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", testData->name(), targetModule->uniqueName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+				Messenger::print("Reference data '%s' (module '%s') has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", testData->name(), targetModule->uniqueName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 				if (error > testThreshold) return false;
 				found = true;
 			}
