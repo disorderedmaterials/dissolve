@@ -220,3 +220,78 @@ const char* Data1DImportFileFormat::additionalArguments() const
 
 	return args.get();
 }
+
+/*
+ * Data2D Formats
+ */
+
+// Data2D Type Keywords
+const char* Data2DImportFormatKeywords[] = { "cartesian" };
+const char* NiceData2DImportFormatKeywords[] = { "Cartesian X,Y,f(X,Y) data" };
+
+// Return number of available formats
+int Data2DImportFileFormat::nFormats() const
+{
+	return Data2DImportFileFormat::nData2DImportFormats;
+}
+
+// Return formats array
+const char** Data2DImportFileFormat::formats() const
+{
+	return Data2DImportFormatKeywords;
+}
+
+// Return nice formats array
+const char** Data2DImportFileFormat::niceFormats() const
+{
+	return NiceData2DImportFormatKeywords;
+}
+
+// Return current format as Data2DImportFormat
+Data2DImportFileFormat::Data2DImportFormat Data2DImportFileFormat::data2DFormat() const
+{
+	return (Data2DImportFileFormat::Data2DImportFormat) format_;
+}
+
+// Constructor
+Data2DImportFileFormat::Data2DImportFileFormat()
+{
+}
+
+// Destructor
+Data2DImportFileFormat::~Data2DImportFileFormat()
+{
+}
+
+/*
+ * Read / Write
+ */
+
+// Parse additional argument
+bool Data2DImportFileFormat::parseArgument(const char* arg)
+{
+	// Split arg into parts before and after the '='
+	CharString key = DissolveSys::beforeChar(arg, '=');
+	CharString value = DissolveSys::afterChar(arg, '=');
+	if (key == "template") templateSourceObjectTag_ = value;
+	else return false;
+
+	return true;
+}
+
+// Return whether this file/format has any additional arguments to write
+bool Data2DImportFileFormat::hasAdditionalArguments() const
+{
+	return true;
+}
+
+// Return additional arguments as string
+const char* Data2DImportFileFormat::additionalArguments() const
+{
+	static CharString args;
+
+	args.clear();
+	if (!templateSourceObjectTag_.isEmpty()) args.sprintf("template='%s'", templateSourceObjectTag_.get());
+
+	return args.get();
+}

@@ -213,13 +213,11 @@ class Data2DImportFileFormat : public FileAndFormat
 
 
 	/*
-	 * Ranges
+	 * Templating
 	 */
 	private:
-	// Minimum, Maximum, and bin delta along x
-	double xMin_, xDelta_, xMax_;
-	// Minimum, Maximum, and bin delta along y
-	double yMin_, yDelta_, yMax_;
+	// Object tag of Data2D upon which to template arrays before reading
+	CharString templateSourceObjectTag_;
 
 
 	/*
@@ -243,6 +241,12 @@ class Data2DImportFileFormat : public FileAndFormat
 	bool hasAdditionalArguments() const;
 	// Return additional arguments as string
 	const char* additionalArguments() const;
+
+
+	/*
+	 * Data Import
+	 */
+	
 };
 
 // Data3D Import Formats

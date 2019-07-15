@@ -35,6 +35,8 @@
 #include "module/keywordtypes/charstring.h"
 #include "module/keywordtypes/complex.h"
 #include "module/keywordtypes/data1dstore.h"
+#include "module/keywordtypes/data2dstore.h"
+#include "module/keywordtypes/data3dstore.h"
 #include "module/keywordtypes/double.h"
 #include "module/keywordtypes/enumoptions.h"
 #include "module/keywordtypes/fileandformat.h"

@@ -134,6 +134,8 @@ class ImportModule : public Module
 	public:
 	// Read Data2D in specified format
 	static bool readData2D(Data2DImportFileFormat::Data2DImportFormat format, LineParser& parser, Data2D& data);
+	// Read cartesian data from specified file
+	static bool readCartesianData2D(LineParser& parser, Data2D& data);
 
 
 	/*

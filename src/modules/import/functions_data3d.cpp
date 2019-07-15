@@ -1,6 +1,6 @@
 /*
-	*** Import Module - Data2D Functions
-	*** src/modules/import/functions_data2d.cpp
+	*** Import Module - Data3D Functions
+	*** src/modules/import/functions_data3d.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -25,19 +25,20 @@
 #include "base/lineparser.h"
 
 // Read Data2D in specified format
-bool ImportModule::readData2D(Data2DImportFileFormat::Data2DImportFormat format, LineParser& parser, Data2D& data)
-{
-	// Check supplied format
-	if (format == Data2DImportFileFormat::CartesianData2D) return readCartesianData2D(parser, data);
-
-	Messenger::error("Don't know how to load Data2D of format '%s'.\n", Data2DImportFileFormat().format(format));
-
-	return false;
-}
-
-// Read cartesian XYV data from specified file
-bool ImportModule::readCartesianData2D(LineParser& parser, Data2D& data)
-{
-	return data.load(parser);
-}
+// bool ImportModule::readData3D(Data3DImportFileFormat::Data3DImportFormat format, LineParser& parser, Data2D& data)
+// {
+// 	// Check supplied format
+// 	if (format == Data2DImportFileFormat::CartesianData2D) return readCartesianData2D(parser, data);
+// 
+// 	Messenger::error("Don't know how to load Data2D of format '%s'.\n", Data2DImportFileFormat().format(format));
+// 
+// 	return false;
+// }
+// 
+// // Read cartesian XYV data from specified file
+// bool ImportModule::readCartesianData2D(LineParser& parser, Data2D& data)
+// {
+// // 	return data.load(parser);
+// 	return false;
+// }
 

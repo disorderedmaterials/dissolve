@@ -24,6 +24,8 @@
 
 #include "module/module.h"
 #include "classes/data1dstore.h"
+#include "classes/data2dstore.h"
+#include "classes/data3dstore.h"
 
 // Forward Declarations
 /* none */
@@ -86,7 +88,10 @@ class DataTestModule : public Module
 	RefList<Module,bool> targetModule_;
 	// Test 1D datasets
 	Data1DStore test1DData_;
-
+	// Test 2D datasets
+	Data2DStore test2DData_;
+	// Test 3D datasets
+	Data3DStore test3DData_;
 
 	/*
 	 * GUI Widget
@@ -97,4 +102,3 @@ class DataTestModule : public Module
 };
 
 #endif
-

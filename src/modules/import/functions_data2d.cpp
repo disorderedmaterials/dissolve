@@ -35,3 +35,15 @@ bool ImportModule::readData2D(Data2DImportFileFormat::Data2DImportFormat format,
 	return false;
 }
 
+// Read cartesian data from specified file
+bool ImportModule::readCartesianData2D(LineParser& parser, Data2D& data)
+{
+	// Expect blocks with three columns (x, y, f(x,y))
+
+	// Must have a template - otherwise tricky to work out axis limits without reading the whole file in twice
+// 	if (
+	
+// 	return data.load(parser);
+	return false;
+}
+
