@@ -287,6 +287,9 @@ bool AnalysisProcess1DNode::read(LineParser& parser, const CoreData& coreData, N
 				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(1), process1DNodeKeyword(AnalysisProcess1DNode::NumberDensityKeyword));
 				numberDensityNormalisers_.add(selectNode, 1.0);
 				break;
+			case (AnalysisProcess1DNode::NormaliseToOneKeyword):
+				normaliseToOne_ = true;
+				break;
 			case (AnalysisProcess1DNode::SaveKeyword):
 				saveData_ = parser.argb(1);
 				break;

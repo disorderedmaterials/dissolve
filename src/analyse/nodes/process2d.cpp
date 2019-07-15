@@ -270,7 +270,7 @@ bool AnalysisProcess2DNode::read(LineParser& parser, const CoreData& coreData, N
 				yAxisLabel_ = parser.argc(1);
 				break;
 			case (AnalysisProcess2DNode::NormaliseToOneKeyword):
-				normaliseToOne_ = parser.argb(1);
+				normaliseToOne_ = true;
 				break;
 			case (AnalysisProcess2DNode::NSitesKeyword):
 				// Need a valid collectNode_ so we can retrieve the context stack it's local to
