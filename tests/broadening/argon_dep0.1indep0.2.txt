@@ -34,7 +34,7 @@ EndModule
 
 Module DataTest
   Threshold  0.07
-  Data1D  'epsr_dep0.1indep0.2/argon.EPSR.u01'  'liquid//NeutronSQ01//WeightedSQ//Total'  1  2
+  Data1D  'liquid//NeutronSQ01//WeightedSQ//Total'  xy  'epsr_dep0.1indep0.2/argon.EPSR.u01'  y=2
 EndModule
 
 Module SanityCheck
