@@ -23,7 +23,7 @@
 #define DISSOLVE_NEUTRONSQMODULE_H
 
 #include "module/module.h"
-#include "modules/import/formats.h"
+#include "io/import/data1d.h"
 #include "classes/partialset.h"
 #include "classes/isotopologuereference.h"
 #include "classes/data1dstore.h"

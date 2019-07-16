@@ -1,6 +1,6 @@
 /*
-	*** Export Module - PairPotential Functions
-	*** src/modules/export/functions_pairpotential.cpp
+	*** Export - PairPotential
+	*** src/io/export/pairpotential.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,41 +19,51 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/export/export.h"
+#include "io/export/pairpotential.h"
 #include "classes/pairpotential.h"
+#include "math/data1d.h"
 #include "base/lineparser.h"
+#include "base/sysfunc.h"
 
-// Write PairPotential in specified format
-bool ExportModule::writePairPotential(PairPotentialExportFileFormat::PairPotentialExportFormat format, LineParser& parser, PairPotential* pp)
+// PairPotential Export Keywords
+const char* PairPotentialExportFormatKeywords[] = { "block", "TABLE" };
+const char* NicePairPotentialExportFormatKeywords[] = { "Block Data", "DL_POLY TABLE file" };
+
+// Return number of available formats
+int PairPotentialExportFileFormat::nFormats() const
 {
-	// Check supplied format
-	if (format == PairPotentialExportFileFormat::BlockPairPotential) return writeBlockPairPotential(parser, pp);
-	else if (format == PairPotentialExportFileFormat::DLPOLYTABLEPairPotential) return writeDLPOLYTABLEPairPotential(parser, pp);
-
-	Messenger::error("Unrecognised pair potential format - '%s'.\nKnown formats are: %s.\n", format, PairPotentialExportFileFormat().formats());
-	return false;
+	return PairPotentialExportFileFormat::nPairPotentialExportFormats;
 }
 
-// Write PairPotential in specified format to file
-bool ExportModule::writePairPotential(PairPotentialExportFileFormat::PairPotentialExportFormat format, const char* filename, PairPotential* pp)
+// Return formats array
+const char** PairPotentialExportFileFormat::formats() const
 {
-	// Open the file
-	LineParser parser;
-	if (!parser.openOutput(filename))
-	{
-		parser.closeFiles();
-		return false;
-	}
-
-	bool result = writePairPotential(format, parser, pp);
-
-	parser.closeFiles();
-
-	return result;
+	return PairPotentialExportFormatKeywords;
 }
+
+// Return nice formats array
+const char** PairPotentialExportFileFormat::niceFormats() const
+{
+	return NicePairPotentialExportFormatKeywords;
+}
+
+// Return current format as PairPotentialExportFormat
+PairPotentialExportFileFormat::PairPotentialExportFormat PairPotentialExportFileFormat::pairPotentialFormat() const
+{
+	return (PairPotentialExportFileFormat::PairPotentialExportFormat) format_;
+}
+
+// Constructor
+PairPotentialExportFileFormat::PairPotentialExportFileFormat(const char* filename, PairPotentialExportFormat format) : FileAndFormat(filename, format)
+{
+}
+
+/*
+ * Export Functions
+ */
 
 // Write PairPotential as simple block data
-bool ExportModule::writeBlockPairPotential(LineParser& parser, PairPotential* pp)
+bool PairPotentialExportFileFormat::exportBlock(LineParser& parser, PairPotential* pp)
 {
 	// Get array references for convenience
 	const Data1D& uOriginal = pp->uOriginal();
@@ -72,7 +82,7 @@ bool ExportModule::writeBlockPairPotential(LineParser& parser, PairPotential* pp
 }
 
 // Write PairPotential as a DL_POLY TABLE file
-bool ExportModule::writeDLPOLYTABLEPairPotential(LineParser& parser, PairPotential* pp)
+bool PairPotentialExportFileFormat::exportDLPOLY(LineParser& parser, PairPotential* pp)
 {
 	// Get array references for convenience
 	const Data1D& uFull = pp->uFull();
@@ -109,4 +119,24 @@ bool ExportModule::writeDLPOLYTABLEPairPotential(LineParser& parser, PairPotenti
 	}
 
 	return true;
+}
+
+// Write PairPotential using current filename and format
+bool PairPotentialExportFileFormat::exportData(PairPotential* pp)
+{
+	// Open the file
+	LineParser parser;
+	if (!parser.openOutput(filename_))
+	{
+		parser.closeFiles();
+		return false;
+	}
+
+	// Write data
+	bool result = false;
+	if (pairPotentialFormat() == PairPotentialExportFileFormat::BlockPairPotential) result = exportBlock(parser, pp);
+	else if (pairPotentialFormat() == PairPotentialExportFileFormat::DLPOLYTABLEPairPotential) result = exportDLPOLY(parser, pp);
+	else Messenger::error("Unrecognised pair potential format.\nKnown formats are: %s.\n", PairPotentialExportFileFormat().formats());
+
+	return result;
 }

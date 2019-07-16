@@ -1,6 +1,6 @@
 /*
-	*** Import Module - Data3D Functions
-	*** src/modules/import/functions_data3d.cpp
+	*** Import - Cartesian Data2D
+	*** src/io/import/data2d_cartesian.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,26 +19,20 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/import/import.h"
+#include "io/import/data2d.h"
 #include "math/data2d.h"
 #include "math/filters.h"
 #include "base/lineparser.h"
 
-// Read Data2D in specified format
-// bool ImportModule::readData3D(Data3DImportFileFormat::Data3DImportFormat format, LineParser& parser, Data2D& data)
-// {
-// 	// Check supplied format
-// 	if (format == Data2DImportFileFormat::CartesianData2D) return readCartesianData2D(parser, data);
-// 
-// 	Messenger::error("Don't know how to load Data2D of format '%s'.\n", Data2DImportFileFormat().format(format));
-// 
-// 	return false;
-// }
-// 
-// // Read cartesian XYV data from specified file
-// bool ImportModule::readCartesianData2D(LineParser& parser, Data2D& data)
-// {
-// // 	return data.load(parser);
-// 	return false;
-// }
+// Read cartesian data from specified file
+bool Data2DImportFileFormat::importCartesian(LineParser& parser, Data2D& data)
+{
+	// Expect blocks with three columns (x, y, f(x,y))
+
+	// Must have a template - otherwise tricky to work out axis limits without reading the whole file in twice
+// 	if (
+	
+// 	return data.load(parser);
+	return false;
+}
 

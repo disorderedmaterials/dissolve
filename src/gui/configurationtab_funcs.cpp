@@ -408,10 +408,9 @@ void ConfigurationTab::on_RegenerateNowButton_clicked(bool checked)
 
 void ConfigurationTab::on_ExportButton_clicked(bool checked)
 {
-	LineParser parser;
-	parser.openOutput(CharString("%s.xyz", configuration_->niceName()));
-	ExportModule::writeXYZCoordinates(parser, configuration_);
-	parser.closeFiles();
+	// TODO Offer more control here!
+	CoordinateExportFileFormat fileFormat(CharString("%s.xyz", configuration_->niceName()), CoordinateExportFileFormat::XYZCoordinates);
+	fileFormat.exportData(configuration_);
 }
 
 /*

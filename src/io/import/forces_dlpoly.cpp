@@ -1,6 +1,6 @@
 /*
-	*** Import Module - Forces Functions
-	*** src/modules/import/functions_forces.cpp
+	*** Import - DL_POLY Forces
+	*** src/io/import/forces_dlpoly.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,54 +19,11 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/import/import.h"
+#include "io/import/forces.h"
 #include "base/lineparser.h"
 
-// Read forces in specified format
-bool ImportModule::readForces(ForceImportFileFormat::ForceImportFormat format, LineParser& parser, Array<double>& fx, Array<double>& fy, Array<double>& fz)
-{
-	// Check supplied format
-	if (format == ForceImportFileFormat::XYZForces) return readSimpleForces(parser, fx, fy, fz);
-	else if (format == ForceImportFileFormat::DLPOLYForces) return readDLPOLYForces(parser, fx, fy, fz);
-
-	Messenger::error("Don't know how to load forces in format '%s'.\n", ForceImportFileFormat().format(format));
-
-	return false;
-}
-
-// Read simple forces from specified file
-bool ImportModule::readSimpleForces(LineParser& parser, Array<double>& fx, Array<double>& fy, Array<double>& fz)
-{
-	/*
-	 * Read force information through the specified line parser.
-	 * Assumed format is as follows:
-	 * 
-	 * Line 1:    nAtoms
-	 * Line 2:    <atom id>    <fx>    <fy>    <fz>
-	 *   ...
-	 */
-
-	// Read in number of atoms and initiliase arrays
-	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-	int nAtoms = parser.argi(0);
-	Messenger::print(" --> Expecting forces for %i atoms.\n", nAtoms);
-	fx.initialise(nAtoms);
-	fy.initialise(nAtoms);
-	fz.initialise(nAtoms);
-
-	for (int n=0; n<nAtoms; ++n)
-	{
-		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-		fx[n] = parser.argd(0);
-		fy[n] = parser.argd(1);
-		fz[n] = parser.argd(2);
-	}
-
-	return true;
-}
-
-// Read DL_POLY forces from specified file
-bool ImportModule::readDLPOLYForces(LineParser& parser, Array<double>& fx, Array<double>& fy, Array<double>& fz)
+// Import DL_POLY forces through specified parser
+bool ForceImportFileFormat::importDLPOLY(LineParser& parser, Array<double>& fx, Array<double>& fy, Array<double>& fz)
 {
 	/*
 	 * Read DL_POLY force information through the specified line parser.

@@ -23,7 +23,7 @@
 #define DISSOLVE_DATA3DSTORE_H
 
 #include "math/data3d.h"
-#include "modules/import/formats.h"
+#include "io/import/data3d.h"
 #include "templates/list.h"
 
 // Forward Declarations

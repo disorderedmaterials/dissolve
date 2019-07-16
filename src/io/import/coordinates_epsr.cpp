@@ -1,6 +1,6 @@
 /*
-	*** Import Module - EPSR Coordinates
-	*** src/modules/import/functions_coordinates_epsr.cpp
+	*** Import - EPSR Coordinates
+	*** src/io/import/coordinates_epsr.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,11 +19,12 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/import/import.h"
+#include "io/import/coordinates.h"
 #include "base/lineparser.h"
+#include "base/sysfunc.h"
 
-// Read EPSR ATO coordinates from specified file
-bool ImportModule::readEPSRCoordinates(LineParser& parser, Array< Vec3<double> >& r)
+// Import EPSR ATO coordinates through specified parser
+bool CoordinateImportFileFormat::importEPSR(LineParser& parser, Array< Vec3<double> >& r)
 {
 	// File header:
 	// Either  1   : nmols, box length, temperature   (for cubic systems)
@@ -70,7 +71,7 @@ bool ImportModule::readEPSRCoordinates(LineParser& parser, Array< Vec3<double> >
 	Vec3<double> com, delta;
 	for (int m=0; m<nMols; m++)
 	{
-		Messenger::printVerbose("Reading molecule %i from EPSR ato file...\n", m+1);
+		Messenger::printVerbose("Importing molecule %i from EPSR ato file...\n", m+1);
 
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 		nAtoms = parser.argi(0);
@@ -88,13 +89,13 @@ bool ImportModule::readEPSRCoordinates(LineParser& parser, Array< Vec3<double> >
 			// Add a new atom position to our list
 			r.add(com+delta);
 
-			// Read in number of restraints line
+			// Import in number of restraints line
 			if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 			nRestraints = parser.argi(0);
 			currentArg = 1;
 			while (nRestraints > 0)
 			{
-				// Look at next available argument - if none, read another line in
+				// Look at next available argument - if none, import another line in
 				if (currentArg >= parser.nArgs())
 				{
 					if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
@@ -116,7 +117,7 @@ bool ImportModule::readEPSRCoordinates(LineParser& parser, Array< Vec3<double> >
 		int nRotations = parser.argi(0);
 		while (nRotations > 0)
 		{
-			// Read line to find out which type of definition this is...
+			// Import line to find out which type of definition this is...
 			if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 
 			// Skip axis line
@@ -129,7 +130,7 @@ bool ImportModule::readEPSRCoordinates(LineParser& parser, Array< Vec3<double> >
 				if (parser.skipLines(parser.argi(0)) != LineParser::Success) return false;
 			}
 
-			// Finally, read in number of atoms affected by rotation and calculate next number of lines to discard
+			// Finally, import in number of atoms affected by rotation and calculate next number of lines to discard
 			if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 			if (parser.skipLines(parser.argi(0)/14) != LineParser::Success) return false;
 

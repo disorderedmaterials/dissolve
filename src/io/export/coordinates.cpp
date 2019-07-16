@@ -1,6 +1,6 @@
 /*
-	*** Export Module - Coordinate Functions
-	*** src/modules/export/functions_coordinates.cpp
+	*** Export - Coordinates
+	*** src/io/export/coordinates.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,51 +19,59 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/export/export.h"
-#include "classes/atom.h"
+#include "io/export/coordinates.h"
 #include "classes/atomtype.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "data/atomicmass.h"
 #include "base/lineparser.h"
+#include "base/sysfunc.h"
 
-// Write coordinates in specified format
-bool ExportModule::writeCoordinates(CoordinateExportFileFormat::CoordinateExportFormat format, LineParser& parser, Configuration* cfg)
+// Coordinate Type Keywords
+const char* CoordinateExportFormatKeywords[] = { "xyz", "dlpoly" };
+const char* NiceCoordinateExportFormatKeywords[] = { "XYZ Coordinates", "DL_POLY CONFIG File" };
+
+// Return number of available formats
+int CoordinateExportFileFormat::nFormats() const
 {
-	// Check supplied format
-	if (format == CoordinateExportFileFormat::XYZCoordinates) return writeXYZCoordinates(parser, cfg);
-	else if (format == CoordinateExportFileFormat::DLPOLYCoordinates) return writeDLPOLYCoordinates(parser, cfg);
-
-	Messenger::error("Unrecognised coordinate format - '%s'.\nKnown formats are: %s.\n", format, CoordinateExportFileFormat().formats());
-	return false;
+	return CoordinateExportFileFormat::nCoordinateExportFormats;
 }
 
-// Write Configuration in specified format
-bool ExportModule::writeCoordinates(CoordinateExportFileFormat::CoordinateExportFormat format, const char* filename, Configuration* cfg)
+// Return formats array
+const char** CoordinateExportFileFormat::formats() const
 {
-	// Open the file
-	LineParser parser;
-	if (!parser.openOutput(filename))
-	{
-		parser.closeFiles();
-		return false;
-	}
-
-	bool result = writeCoordinates(format, parser, cfg);
-
-	parser.closeFiles();
-
-	return result;
+	return CoordinateExportFormatKeywords;
 }
 
-// Write coordinates as XYZ
-bool ExportModule::writeXYZCoordinates(LineParser& parser, Configuration* cfg)
+// Return nice formats array
+const char** CoordinateExportFileFormat::niceFormats() const
 {
-	// Write number of atoms and title
+	return NiceCoordinateExportFormatKeywords;
+}
+
+// Return current format as CoordinateExportFormat
+CoordinateExportFileFormat::CoordinateExportFormat CoordinateExportFileFormat::coordinateFormat() const
+{
+	return (CoordinateExportFileFormat::CoordinateExportFormat) format_;
+}
+
+// Constructor
+CoordinateExportFileFormat::CoordinateExportFileFormat(const char* filename, CoordinateExportFormat format) : FileAndFormat(filename, format)
+{
+}
+
+/*
+ * Export Functions
+ */
+
+// Export coordinates as XYZ
+bool CoordinateExportFileFormat::exportXYZ(LineParser& parser, Configuration* cfg)
+{
+	// Export number of atoms and title
 	if (!parser.writeLineF("%i\n", cfg->nAtoms())) return false;
 	if (!parser.writeLineF("%s @ %i\n", cfg->name(), cfg->contentsVersion())) return false;
 	
-	// Write Atoms
+	// Export Atoms
 	for (int n=0; n<cfg->nAtoms(); ++n)
 	{
 		Atom* i = cfg->atom(n);
@@ -73,19 +81,19 @@ bool ExportModule::writeXYZCoordinates(LineParser& parser, Configuration* cfg)
 	return true;
 }
 
-// Write coordinates as CONFIG
-bool ExportModule::writeDLPOLYCoordinates(LineParser& parser, Configuration* cfg)
+// Export coordinates as CONFIG
+bool CoordinateExportFileFormat::exportDLPOLY(LineParser& parser, Configuration* cfg)
 {
-	// Write title
+	// Export title
 	if (!parser.writeLineF("%s @ %i\n", cfg->name(), cfg->contentsVersion())) return false;
 
-	// Write keytrj and imcon
+	// Export keytrj and imcon
 	if (cfg->box()->type() == Box::NonPeriodicBoxType) if (!parser.writeLineF("%10i%10i\n", 0, 0)) return false;
 	else if (cfg->box()->type() == Box::CubicBoxType) if (!parser.writeLineF("%10i%10i\n", 0, 1)) return false;
 	else if (cfg->box()->type() == Box::OrthorhombicBoxType) if (!parser.writeLineF("%10i%10i\n", 0, 2)) return false;
 	else parser.writeLineF("%10i%10i\n", 0, 3);
 	
-	// Write Cell
+	// Export Cell
 	if (cfg->box()->type() != Box::NonPeriodicBoxType)
 	{
 		Matrix3 axes = cfg->box()->axes();
@@ -94,7 +102,7 @@ bool ExportModule::writeDLPOLYCoordinates(LineParser& parser, Configuration* cfg
 		if (!parser.writeLineF("%20.12f%20.12f%20.12f\n", axes[6], axes[7], axes[8])) return false;
 	}
 
-	// Write Atoms
+	// Export Atoms
 	for (int n=0; n<cfg->nAtoms(); ++n)
 	{
 		Atom* i = cfg->atom(n);
@@ -102,4 +110,24 @@ bool ExportModule::writeDLPOLYCoordinates(LineParser& parser, Configuration* cfg
 	}
 
 	return true;
+}
+
+// Export coordinates using current filename and format
+bool CoordinateExportFileFormat::exportData(Configuration* cfg)
+{
+	// Open the file
+	LineParser parser;
+	if (!parser.openOutput(filename_))
+	{
+		parser.closeFiles();
+		return false;
+	}
+
+	// Write data
+	bool result = false;
+	if (coordinateFormat() == CoordinateExportFileFormat::XYZCoordinates) result = exportXYZ(parser, cfg);
+	else if (coordinateFormat() == CoordinateExportFileFormat::DLPOLYCoordinates) result = exportDLPOLY(parser, cfg);
+	else Messenger::error("Unrecognised coordinate format.\nKnown formats are: %s.\n", CoordinateExportFileFormat().formats());
+
+	return result;
 }

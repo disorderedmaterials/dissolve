@@ -23,7 +23,7 @@
 #define DISSOLVE_DATA2DSTORE_H
 
 #include "math/data2d.h"
-#include "modules/import/formats.h"
+#include "io/import/data2d.h"
 #include "templates/list.h"
 
 // Forward Declarations

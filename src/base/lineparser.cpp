@@ -27,15 +27,7 @@
 #include <string.h>
 #include <stdarg.h>
 
-// Constructors
-LineParser::LineParser()
-{
-	arguments_.clear();
-	reset();
-
-	processPool_ = NULL;
-}
-
+// Constructor
 LineParser::LineParser(ProcessPool* procPool)
 {
 	arguments_.clear();
@@ -47,6 +39,8 @@ LineParser::LineParser(ProcessPool* procPool)
 // Destructor
 LineParser::~LineParser()
 {
+	closeFiles();
+
 	if (inputFile_ != NULL) delete inputFile_;
 	if (outputFile_ != NULL) delete outputFile_;
 	if (cachedFile_ != NULL) delete cachedFile_;

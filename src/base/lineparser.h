@@ -40,9 +40,8 @@ using namespace std;
 class LineParser
 {
 	public:
-	// Constructors
-	LineParser();
-	LineParser(ProcessPool* procPool);
+	// Constructor
+	LineParser(ProcessPool* procPool = NULL);
 	// Destructor
 	~LineParser();
 	// Parse Options Enum

@@ -1,6 +1,6 @@
 /*
-	*** Import Module - DLPOY Coordinates
-	*** src/modules/import/functions_coordinates_dlpoly.cpp
+	*** Import - DLPOLY Coordinates
+	*** src/io/import/coordinates_dlpoly.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,14 +19,14 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/import/import.h"
+#include "io/import/coordinates.h"
 #include "base/lineparser.h"
 
-// Read DL_POLY coordinates from specified file
-bool ImportModule::readDLPOLYCoordinates(LineParser& parser, Array< Vec3<double> >& r)
+// Import DL_POLY coordinates through specified parser
+bool CoordinateImportFileFormat::importDLPOLY(LineParser& parser, Array< Vec3<double> >& r)
 {
 	/*
-	 * Read DL_POLY force information through the specified line parser.
+	 * Import DL_POLY force information through the specified line parser.
 	 * We assume CONFIG or REVCON format:
 	 * 
 	 * Line 1:    Title
@@ -39,11 +39,11 @@ bool ImportModule::readDLPOLYCoordinates(LineParser& parser, Array< Vec3<double>
 	 *   ...
 	 */
 
-	Messenger::print(" --> Reading coordinates in DL_POLY (CONFIG/REVCON) format...\n");
+	Messenger::print(" --> Importing coordinates in DL_POLY (CONFIG/REVCON) format...\n");
 	// Skip title
 	if (parser.skipLines(1) != LineParser::Success) return false;
 
-	// Read in keytrj, imcon, and number of atoms, and initiliase arrays
+	// Import in keytrj, imcon, and number of atoms, and initiliase arrays
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 
 	int keytrj = parser.argi(0);
@@ -70,4 +70,3 @@ bool ImportModule::readDLPOLYCoordinates(LineParser& parser, Array< Vec3<double>
 
 	return true;
 }
-

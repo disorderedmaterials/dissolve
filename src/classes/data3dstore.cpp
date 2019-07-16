@@ -20,7 +20,7 @@
 */
 
 #include "classes/data3dstore.h"
-#include "modules/import/import.h"
+#include "io/import/data3d.h"
 #include "base/lineparser.h"
 
 // Constructor
@@ -43,12 +43,8 @@ bool Data3DStore::addData(Data3DImportFileFormat fileAndFormat, const char* name
 	// Add reference
 	dataReferences_.add(data, fileAndFormat);
 
-	// Open file and check that we're OK to proceed reading from it
-	LineParser parser;
-	if ((!parser.openInput(fileAndFormat.filename())) || (!parser.isFileGoodForReading())) return Messenger::error("Couldn't open file '%s' for reading.\n", fileAndFormat.filename());
-
 	// Load the data
-	return ImportModule::readData3D(fileAndFormat.data3DFormat(), parser, *data);
+	return fileAndFormat.importData(*data);
 }
 
 // Load data into store using specified pool
@@ -61,12 +57,8 @@ bool Data3DStore::addData(ProcessPool& pool, Data3DImportFileFormat fileAndForma
 	// Add reference
 	dataReferences_.add(data, fileAndFormat);
 
-	// Open file and check that we're OK to proceed reading from it
-	LineParser parser(&pool);
-	if ((!parser.openInput(fileAndFormat.filename())) || (!parser.isFileGoodForReading())) return Messenger::error("Couldn't open file '%s' for reading.\n", fileAndFormat.filename());
-
 	// Load the data
-	return ImportModule::readData3D(fileAndFormat.data3DFormat(), parser, *data);
+	return fileAndFormat.importData(*data, &pool);
 }
 
 // Check to see if the named data is present in the store

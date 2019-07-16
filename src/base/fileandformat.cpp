@@ -23,10 +23,16 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Constructor
-FileAndFormat::FileAndFormat()
+// Constructors
+FileAndFormat::FileAndFormat(int format)
 {
-	format_ = 0;
+	format_ = format;
+}
+
+FileAndFormat::FileAndFormat(const char* filename, int format)
+{
+	filename_ = filename;
+	format_ = format;
 }
 
 // Destructor
