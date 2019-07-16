@@ -104,7 +104,7 @@ bool Data1DImportFileFormat::parseArgument(const char* arg)
 	if ((key == "x") || (key == "X")) xColumn_ = value.asInteger() - 1;
 	else if ((key == "y") || (key == "Y")) yColumn_ = value.asInteger() - 1;
 	else if ((key == "e") || (key == "E")) errorColumn_ = value.asInteger() - 1;
-	else return false;
+	else return Messenger::error("Unrecognised or badly formatted additional argument '%s' found for Data1DImportFileFormat.\n", arg);
 
 	return true;
 }
