@@ -55,6 +55,10 @@ double Error::error(ErrorType errorType, const Data1D& A, const Data1D& B, bool 
 	return 0.0;
 }
 
+/*
+ * Data1D
+ */
+
 // Return RMSE between supplied data
 double Error::rmse(const Data1D& A, const Data1D& B, bool quiet)
 {
