@@ -45,24 +45,48 @@ bool DataTestModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 	// Loop over reference one-dimensional data supplied
 	ListIterator<Data1D> data1DIterator(test1DData_.data());
-	while (Data1D* testData = data1DIterator.iterate())
+	while (Data1D* testData1D = data1DIterator.iterate())
 	{
 		// Locate the target reference data
 		bool found = false;
-		const Data1D& data = findReferenceData<Data1D>(testData->name(), targetModule, dissolve.processingModuleData(), found);
+		const Data1D& data = findReferenceData<Data1D>(testData1D->name(), targetModule, dissolve.processingModuleData(), found);
 
 		// Did we succeed?
 		if (!found)
 		{
-			if (targetModule) return Messenger::error("No data named '%s_%s' or '%s', or tagged '%s', exists.\n", targetModule->uniqueName(), testData->name(), testData->name(), testData->name());
-			else return Messenger::error("No data with tag '%s' exists.\n", testData->name());
+			if (targetModule) return Messenger::error("No data named '%s_%s' or '%s', or tagged '%s', exists.\n", targetModule->uniqueName(), testData1D->name(), testData1D->name(), testData1D->name());
+			else return Messenger::error("No data with tag '%s' exists.\n", testData1D->name());
 		}
 		Messenger::print("Located reference data with tag '%s'.\n", data.objectTag());
 
 		// Generate the error estimate and compare against the threshold value
-		double error = Error::error(errorType, data, *testData, true);
-		Messenger::print("Target data '%s' has error of %7.3f with calculated data and is %s (threshold is %6.3e)\n\n", testData->name(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+		double error = Error::error(errorType, data, *testData1D, true);
+		Messenger::print("Target data '%s' has error of %7.3f with calculated data and is %s (threshold is %6.3e)\n\n", testData1D->name(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 		if (error > testThreshold) return false;
+	}
+
+	// Loop over reference two-dimensional data supplied
+	ListIterator<Data2D> data2DIterator(test2DData_.data());
+	while (Data2D* testData2D = data2DIterator.iterate())
+	{
+		// Locate the target reference data
+		bool found = false;
+		const Data2D& data = findReferenceData<Data2D>(testData2D->name(), targetModule, dissolve.processingModuleData(), found);
+
+		// Did we succeed?
+		if (!found)
+		{
+			if (targetModule) return Messenger::error("No data named '%s_%s' or '%s', or tagged '%s', exists.\n", targetModule->uniqueName(), testData2D->name(), testData2D->name(), testData2D->name());
+			else return Messenger::error("No data with tag '%s' exists.\n", testData2D->name());
+		}
+		Messenger::print("Located reference data with tag '%s'.\n", data.objectTag());
+
+		// Generate the error estimate and compare against the threshold value
+// 		double error = Error::error(errorType, data, *testData2D, true);
+// 		Messenger::print("Target data '%s' has error of %7.3f with calculated data and is %s (threshold is %6.3e)\n\n", testData2D->name(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+// 		if (error > testThreshold) return false;
+
+		return Messenger::error("Error calculation between 2D datasets is not yet implemented.\n");
 	}
 
 	return true;

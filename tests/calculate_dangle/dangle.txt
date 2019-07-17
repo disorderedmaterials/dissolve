@@ -243,7 +243,7 @@ EndModule
 Module DataTest
   Frequency  95
   Target  'DAngle(X-H...O)'
-  Data2D  'DAngle(X-H...O)_DAngle(X-HO)_Bulk'  xy  '../_data/water267-dlpoly/water-267-298K.dahist1_02_1_01_02.angle'
+  # Data2D  'DAngle(X-H...O)_DAngle(X-HO)_Bulk'  cartesian  '../_data/water267-dlpoly/water-267-298K.dahist1_02_1_01_02.surf'  xaxis=0.0,5.0,0.01  yaxis=0.0,180,1.0
   Threshold  0.3
 EndModule
 
