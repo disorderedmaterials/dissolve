@@ -134,18 +134,20 @@ EndModule
 
 # Test partial g(r) (unbound terms)
 Module  DataTest  'Partial g(r) (unbound)'
-  Threshold  3.3
-  Data1D  'epsr25/benzene.EPSR.g01'  'Liquid//OriginalGR//CA-CA//Unbound'  1  2
-  Data1D  'epsr25/benzene.EPSR.g01'  'Liquid//OriginalGR//CA-HA//Unbound'  1  4
-  Data1D  'epsr25/benzene.EPSR.g01'  'Liquid//OriginalGR//HA-HA//Unbound'  1  6
+  ErrorType  RMSE
+  Threshold  0.22
+  Data1D  'Liquid//OriginalGR//CA-CA//Unbound'  xy  'epsr25/benzene.EPSR.g01'  y=2
+  Data1D  'Liquid//OriginalGR//CA-HA//Unbound'  xy  'epsr25/benzene.EPSR.g01'  y=4
+  Data1D  'Liquid//OriginalGR//HA-HA//Unbound'  xy  'epsr25/benzene.EPSR.g01'  y=6
 EndModule
 
 # Test partial g(r) (intramolecular terms)
 Module  DataTest  'Partial g(r) (bound)'
-  Threshold  15.0
-  Data1D  'epsr25/benzene.EPSR.y01'  'Liquid//OriginalGR//CA-CA//Bound'  1  2
-  Data1D  'epsr25/benzene.EPSR.y01'  'Liquid//OriginalGR//CA-HA//Bound'  1  4
-  Data1D  'epsr25/benzene.EPSR.y01'  'Liquid//OriginalGR//HA-HA//Bound'  1  6
+  ErrorType  RMSE
+  Threshold  1.3
+  Data1D  'Liquid//OriginalGR//CA-CA//Bound'  xy  'epsr25/benzene.EPSR.y01'  y=2
+  Data1D  'Liquid//OriginalGR//CA-HA//Bound'  xy  'epsr25/benzene.EPSR.y01'  y=4
+  Data1D  'Liquid//OriginalGR//HA-HA//Bound'  xy  'epsr25/benzene.EPSR.y01'  y=6
 EndModule
 
 # Calculate S(Q) for the C6H6 sample
@@ -159,24 +161,27 @@ EndModule
 
 # Test partial S(Q) (unbound terms)
 Module  DataTest  'Partial S(Q) (unbound)'
-  Threshold  1.9
-  Data1D  'epsr25/benzene.EPSR.f01'  'C6H6//UnweightedSQ//CA-CA//Unbound'  1  2
-  Data1D  'epsr25/benzene.EPSR.f01'  'C6H6//UnweightedSQ//CA-HA//Unbound'  1  4
-  Data1D  'epsr25/benzene.EPSR.f01'  'C6H6//UnweightedSQ//HA-HA//Unbound'  1  6
+  ErrorType  RMSE
+  Threshold  0.6
+  Data1D  'C6H6//UnweightedSQ//CA-CA//Unbound'  xy  'epsr25/benzene.EPSR.f01'  y=2
+  Data1D  'C6H6//UnweightedSQ//CA-HA//Unbound'  xy  'epsr25/benzene.EPSR.f01'  y=4
+  Data1D  'C6H6//UnweightedSQ//HA-HA//Unbound'  xy  'epsr25/benzene.EPSR.f01'  y=6
 EndModule
 
 # Test partial S(Q) (bound terms)
 Module  DataTest  'Partial S(Q) (bound)'
-  Threshold  2.1
-  Data1D  'epsr25/benzene.EPSR.s01'  'C6H6//UnweightedSQ//CA-CA//Bound'  1  2
-  Data1D  'epsr25/benzene.EPSR.s01'  'C6H6//UnweightedSQ//CA-HA//Bound'  1  4
-  Data1D  'epsr25/benzene.EPSR.s01'  'C6H6//UnweightedSQ//HA-HA//Bound'  1  6
+  ErrorType  RMSE
+  Threshold  0.7
+  Data1D  'C6H6//UnweightedSQ//CA-CA//Bound'  xy  'epsr25/benzene.EPSR.s01'  y=2
+  Data1D  'C6H6//UnweightedSQ//CA-HA//Bound'  xy  'epsr25/benzene.EPSR.s01'  y=4
+  Data1D  'C6H6//UnweightedSQ//HA-HA//Bound'  xy  'epsr25/benzene.EPSR.s01'  y=6
 EndModule
 
 # Test total neutron-weighted F(Q)
 Module  DataTest  'F(Q) C6H6'
-  Threshold  1.9
-  Data1D  'epsr25/benzene.EPSR.u01'  'C6H6//WeightedSQ//Total'  1  2
+  ErrorType  RMSE
+  Threshold  0.003
+  Data1D  'C6H6//WeightedSQ//Total'  xy  'epsr25/benzene.EPSR.u01'  y=2
 EndModule
 
 # Calculate S(Q) for the C6D6 sample
@@ -190,8 +195,9 @@ EndModule
 
 # Test total neutron-weighted F(Q)
 Module  DataTest  'F(Q) C6D6'
-  Threshold  2.4
-  Data1D  'epsr25/benzene.EPSR.u01'  'C6D6//WeightedSQ//Total'  1  4
+  ErrorType  RMSE
+  Threshold  0.05
+  Data1D  'C6D6//WeightedSQ//Total'  xy  'epsr25/benzene.EPSR.u01'  y=4
 EndModule
 
 # Calculate S(Q) for the 5050 sample
@@ -206,8 +212,9 @@ EndModule
 
 # Test total neutron-weighted F(Q)
 Module  DataTest  'F(Q) 5050'
-  Threshold  2.7
-  Data1D  'epsr25/benzene.EPSR.u01'  '5050//WeightedSQ//Total'  1  6
+  ErrorType  RMSE
+  Threshold  0.1
+  Data1D  '5050//WeightedSQ//Total'  xy  'epsr25/benzene.EPSR.u01'  y=6
 EndModule
 
 # Calculate energy of the Configuration
@@ -228,18 +235,20 @@ EndModule
 
 # Test total neutron-weighted F(r)
 Module DataTest
-  Threshold  2.5
-  Data1D  'epsr25/benzene.EPSR.x01'  'EPSR01//SimulatedFR//C6H6'  1  2
-  Data1D  'epsr25/benzene.EPSR.x01'  'EPSR01//SimulatedFR//C6D6'  1  4
-  Data1D  'epsr25/benzene.EPSR.x01'  'EPSR01//SimulatedFR//5050'  1  6
+  ErrorType  RMSE
+  Threshold  0.21
+  Data1D  'EPSR01//SimulatedFR//C6H6'  xy  'epsr25/benzene.EPSR.x01'  y=2
+  Data1D  'EPSR01//SimulatedFR//C6D6'  xy  'epsr25/benzene.EPSR.x01'  y=4
+  Data1D  'EPSR01//SimulatedFR//5050'  xy  'epsr25/benzene.EPSR.x01'  y=6
 EndModule
 
 # Test partial S(Q) derived from experiment via matrix inversion
 Module DataTest
-  Threshold  3.2
-  Data1D  'epsr25/benzene.EPSR.q01'  'EPSR01//GeneratedSQ//Default//CA-CA'  1  2
-  Data1D  'epsr25/benzene.EPSR.q01'  'EPSR01//GeneratedSQ//Default//CA-HA'  1  4
-  Data1D  'epsr25/benzene.EPSR.q01'  'EPSR01//GeneratedSQ//Default//HA-HA'  1  6
+  ErrorType  RMSE
+  Threshold  0.75
+  Data1D  'EPSR01//GeneratedSQ//Default//CA-CA'  xy  'epsr25/benzene.EPSR.q01'  y=2
+  Data1D  'EPSR01//GeneratedSQ//Default//CA-HA'  xy  'epsr25/benzene.EPSR.q01'  y=4
+  Data1D  'EPSR01//GeneratedSQ//Default//HA-HA'  xy  'epsr25/benzene.EPSR.q01'  y=6
 EndModule
 
 EndLayer
