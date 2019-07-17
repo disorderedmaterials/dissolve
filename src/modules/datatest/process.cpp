@@ -35,61 +35,21 @@ bool DataTestModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	// Get options and target Module
 	const double testThreshold = keywords_.asDouble("Threshold");
 	Module* targetModule = targetModule_.firstItem();
+	Error::ErrorType errorType = KeywordEnumHelper<Error::ErrorType>::enumeration(keywords_, "ErrorType");
 
 	// Print summary
 	if (!targetModule) Messenger::print("DataTest: No target Module specified for data location - only tags will be searched.\n");
 	else Messenger::print("DataTest: Target Module '%s' will be used as search prefix for data.\n", targetModule->uniqueName());
-	Messenger::print("DataTest: Threshold is %f%%.", testThreshold);
+	Messenger::print("DataTest: Error calculation is '%s', threshold is %e.", Error::errorTypes().keyword(errorType), testThreshold);
 	Messenger::print("\n");
 
 	// Loop over reference one-dimensional data supplied
 	ListIterator<Data1D> data1DIterator(test1DData_.data());
 	while (Data1D* testData = data1DIterator.iterate())
 	{
+		// Locate the target reference data
 		bool found = false;
-
-		if (targetModule)
-		{
-			// Get target module data list
-			GenericList& moduleData = targetModule->configurationLocal() ? targetModule->targetConfigurations().firstItem()->moduleData() : dissolve.processingModuleData();
-
-			// Does the named data (with module prefix) exist in the target list?
-			if (moduleData.contains(testData->name(), targetModule->uniqueName()))
-			{
-				// The named data exists - is it of the correct type?
-				if (!moduleData.isItemOfType(Data1D::itemClassName(), testData->name(), targetModule->uniqueName())) return Messenger::error("Data named '%s_%s' exists, but is not of the correct type (is %s rather than Data1D).\n", targetModule->uniqueName(), testData->name(), moduleData.find(testData->name(), targetModule->uniqueName())->itemClassName());
-
-				// All is OK, so get the data and check the error against the test set
-				Data1D& data = GenericListHelper<Data1D>::retrieve(moduleData, testData->name(), targetModule->uniqueName());
-				double error = Error::percent(data, *testData, true);
-				Messenger::print("Reference data '%s' (module '%s') has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", testData->name(), targetModule->uniqueName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-				if (error > testThreshold) return false;
-				found = true;
-			}
-			else if (moduleData.contains(testData->name()))
-			{
-				// The named data exists without the module name prefix - is it of the correct type?
-				if (!moduleData.isItemOfType(Data1D::itemClassName(), testData->name())) return Messenger::error("Data named '%s' exists, but is not of the correct type (is %s rather than Data1D).\n", testData->name(), moduleData.find(testData->name())->itemClassName());
-
-				// All is OK, so get the data and check the error against the test set
-				Data1D& data = GenericListHelper<Data1D>::retrieve(moduleData, testData->name());
-				double error = Error::percent(data, *testData, true);
-				Messenger::print("Reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", testData->name(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-				if (error > testThreshold) return false;
-				found = true;
-			}
-		}
-
-		// If we haven't found it yet, try a search by object tag
-		if ((!found) && Data1D::findObject(testData->name()))
-		{
-			// The tagged data exists...
-			Data1D* data = Data1D::findObject(testData->name());
-			double error = Error::percent(*data, *testData, true);
-			Messenger::print("Reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", testData->name(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-			if (error > testThreshold) return false;
-			found = true;
-		}
+		const Data1D& data = findReferenceData<Data1D>(testData->name(), targetModule, dissolve.processingModuleData(), found);
 
 		// Did we succeed?
 		if (!found)
@@ -97,6 +57,12 @@ bool DataTestModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			if (targetModule) return Messenger::error("No data named '%s_%s' or '%s', or tagged '%s', exists.\n", targetModule->uniqueName(), testData->name(), testData->name(), testData->name());
 			else return Messenger::error("No data with tag '%s' exists.\n", testData->name());
 		}
+		Messenger::print("Located reference data with tag '%s'.\n", data.objectTag());
+
+		// Generate the error estimate and compare against the threshold value
+		double error = Error::error(errorType, data, *testData, true);
+		Messenger::print("Target data '%s' has error of %7.3f with calculated data and is %s (threshold is %6.3e)\n\n", testData->name(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+		if (error > testThreshold) return false;
 	}
 
 	return true;
