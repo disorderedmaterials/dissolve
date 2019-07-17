@@ -77,7 +77,7 @@ void Data2D::initialise(int xSize, int ySize, bool withError)
 	++version_;
 }
 
-// Initialise to be consistent in size and x axis with supplied object
+// Initialise to be consistent in size and axes with supplied object
 void Data2D::initialise(const Data2D& source)
 {
 	x_ = source.x_;
