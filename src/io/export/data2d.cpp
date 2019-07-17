@@ -25,8 +25,8 @@
 #include "base/sysfunc.h"
 
 // Data2D Export Keywords
-const char* Data2DExportFormatKeywords[] = { "block" };
-const char* NiceData2DExportFormatKeywords[] = { "Block Data" };
+const char* Data2DExportFormatKeywords[] = { "block", "cartesian" };
+const char* NiceData2DExportFormatKeywords[] = { "Block Data", "Cartesian (x,y,value) Data" };
 
 // Return number of available formats
 int Data2DExportFileFormat::nFormats() const
@@ -78,6 +78,22 @@ bool Data2DExportFileFormat::exportBlock(LineParser& parser, Data2D& data)
 	return true;
 }
 
+// Export Data2D as cartesian data
+bool Data2DExportFileFormat::exportCartesian(LineParser& parser, Data2D& data)
+{
+	// Three-column format (x  y  value) in blocks of similar y value, separated by blank lines
+	const Array2D<double>& values = data.constValues2D();
+	const Array<double>& xAxis = data.constXAxis();
+	const Array<double>& yAxis = data.constYAxis();
+	for (int x=0; x<values.nRows(); ++x)
+	{
+		for (int y=0; y<values.nColumns(); ++y) if (!parser.writeLineF("%15.9f %15.9f %15.9f\n", xAxis.at(x), yAxis.at(y), values.constAt(x,y))) return false;
+		if (!parser.writeLineF("\n")) return false;
+	}
+
+	return true;
+}
+
 // Export Data2D using current filename and format
 bool Data2DExportFileFormat::exportData(Data2D& data)
 {
@@ -92,6 +108,7 @@ bool Data2DExportFileFormat::exportData(Data2D& data)
 	// Write data
 	bool result = false;
 	if (data2DFormat() == Data2DExportFileFormat::BlockData) result = exportBlock(parser, data);
+	else if (data2DFormat() == Data2DExportFileFormat::CartesianData) result = exportCartesian(parser, data);
 	else Messenger::error("Unrecognised data format.\nKnown formats are: %s.\n", Data2DExportFileFormat().formats());
 
 	return false;

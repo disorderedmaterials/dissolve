@@ -32,7 +32,7 @@ class Data2DExportFileFormat : public FileAndFormat
 {
 	public:
 	// Available data formats
-	enum Data2DExportFormat { BlockData, nData2DExportFormats };
+	enum Data2DExportFormat { BlockData, CartesianData, nData2DExportFormats };
 	// Return number of available formats
 	int nFormats() const;
 	// Return formats array
@@ -62,6 +62,8 @@ class Data2DExportFileFormat : public FileAndFormat
 	private:
 	// Export Data2D as simple block data
 	bool exportBlock(LineParser& parser, Data2D& data);
+	// Export Data2D as cartesian data
+	bool exportCartesian(LineParser& parser, Data2D& data);
 
 	public:
 	// Export Data2D using current filename and format

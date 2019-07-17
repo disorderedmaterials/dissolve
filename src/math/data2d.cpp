@@ -417,6 +417,7 @@ void Data2D::operator=(const Data2D& source)
 {
 	name_ = source.name_;
 	x_ = source.x_;
+	y_ = source.y_;
 	values_ = source.values_;
 	hasError_ = source.hasError_;
 	errors_ = source.errors_;
