@@ -70,8 +70,6 @@ class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore
 	void zero();
 	// Return data version
 	int version() const;
-	// Accumulate specified histogram data
-	void accumulate(const Histogram1D& source);
 	// Add new data point
 	void addPoint(double x, double value);
 	// Add new data point with error

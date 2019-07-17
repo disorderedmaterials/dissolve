@@ -72,8 +72,6 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
 	void copyArrays(const Data2D& source);
 	// Zero values array
 	void zero();
-	// Accumulate specified histogram data
-	void accumulate(const Histogram2D& source);
 	// Return data version
 	int version() const;
 	// Return x axis value specified
