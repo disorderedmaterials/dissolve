@@ -195,7 +195,7 @@ const char* FileAndFormat::asString() const
 	static CharString result;
 
 	if (hasAdditionalArguments()) result.sprintf("%s  '%s'  %s", format(format_), filename_.get(), additionalArguments());
-		else result.sprintf("%s  '%s'", format(format_), filename_.get());
+	else result.sprintf("%s  '%s'", format(format_), filename_.get());
 
 	return result.get();
 }
