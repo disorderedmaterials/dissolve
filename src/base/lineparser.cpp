@@ -632,7 +632,7 @@ bool LineParser::getNextArg(int optionMask, CharString* destarg)
 				done = true;
 				break;
 			// Normal character
-			default: 
+			default:
 				tempArg_[arglen++] = c;
 				break;
 		}
