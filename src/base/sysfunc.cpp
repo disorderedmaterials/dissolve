@@ -214,16 +214,17 @@ void DissolveSys::removeComments(char* s)
 			*c = '\0';
 			break;
 		}
-		else if ((*c == '/') && (!escaped) && (quotechar == '\0'))
-		{
-			char* c2 = c;
-			c2++;
-			if (*c2 == '/')
-			{
-				*c = '\0';
-				break;
-			}
-		}
+		// Removed July 2019 - C-style comments not permitted in input files as this breaks object tags (which contain '//' as delimiters)
+// 		else if ((*c == '/') && (!escaped) && (quotechar == '\0'))
+// 		{
+// 			char* c2 = c;
+// 			c2++;
+// 			if (*c2 == '/')
+// 			{
+// 				*c = '\0';
+// 				break;
+// 			}
+// 		}
 		escaped = *c == '\\';
 	}
 }

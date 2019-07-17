@@ -50,7 +50,7 @@ class AnalysisProcess1DNode : public AnalysisNode
 	 */
 	public:
 	// Node Keywords
-	enum Process1DNodeKeyword { EndProcess1DKeyword, FactorKeyword, LabelValueKeyword, LabelXKeyword, NSitesKeyword, NumberDensityKeyword, SaveKeyword, SourceDataKeyword, SphericalShellVolumeKeyword, nProcess1DNodeKeywords };
+	enum Process1DNodeKeyword { EndProcess1DKeyword, FactorKeyword, LabelValueKeyword, LabelXKeyword, NormaliseToOneKeyword, NSitesKeyword, NumberDensityKeyword, SaveKeyword, SourceDataKeyword, SphericalShellVolumeKeyword, nProcess1DNodeKeywords };
 	// Convert string to control keyword
 	static Process1DNodeKeyword process1DNodeKeyword(const char* s);
 	// Convert control keyword to string
@@ -75,6 +75,8 @@ class AnalysisProcess1DNode : public AnalysisNode
 	double normalisationFactor_;
 	// Whether to normalise by spherical shell volume
 	bool normaliseBySphericalShellVolume_;
+	// Whether to normalise the data to one
+	bool normaliseToOne_;
 	// Whether to save data after normalisation
 	bool saveData_;
 	// Value label
@@ -95,6 +97,8 @@ class AnalysisProcess1DNode : public AnalysisNode
 	void setNormalisationFactor(double factor);
 	// Set whether to normalise by spherical shell volume
 	void setNormaliseBySphericalShellVolume(bool on);
+	// Set whether to normalise to one
+	void setNormaliseToOne(bool on);
 	// Set whether to save processed data
 	void setSaveData(bool on);
 	// Set value label

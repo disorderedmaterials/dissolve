@@ -23,7 +23,7 @@
 #define DISSOLVE_FORCESMODULE_H
 
 #include "module/module.h"
-#include "modules/import/formats.h"
+#include "io/import/forces.h"
 
 // Forward Declarations
 class Molecule;

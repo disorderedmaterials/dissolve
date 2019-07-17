@@ -23,7 +23,7 @@
 #define DISSOLVE_DATA1DSTORE_H
 
 #include "math/data1d.h"
-#include "modules/import/formats.h"
+#include "io/import/data1d.h"
 #include "templates/list.h"
 
 // Forward Declarations

@@ -556,7 +556,8 @@ bool Configuration::loadCoordinates(LineParser& parser, CoordinateImportFileForm
 {
 	// Load coordinates into temporary array
 	Array< Vec3<double> > r;
-	if (!ImportModule::readCoordinates(format, parser, r)) return false;
+	CoordinateImportFileFormat coordinateFormat(format);
+	if (!coordinateFormat.importData(parser, r)) return false;
 
 	// Temporary array now contains some number of atoms - does it match the number in the configuration's molecules?
 	if (atoms_.nItems() != r.nItems())

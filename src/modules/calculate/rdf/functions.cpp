@@ -22,7 +22,7 @@
 #include "modules/calculate/rdf/rdf.h"
 
 // Return name of resulting RDF
-const char* CalculateRDFModule::rdfName() const
+const char* CalculateRDFModule::resultName() const
 {
 	static CharString result;
 	result = keywords_.asString("Name");

@@ -247,7 +247,7 @@ Forcefield::AtomGeometry Forcefield::geometryOfAtom(SpeciesAtom* i) const
 		case (2):
 			h = i->bond(0)->partner(i);
 			j = i->bond(1)->partner(i);
-			angle = NonPeriodicBox::angleInDegrees(h->r(), i->r(), j->r());
+			angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
 			if (angle > 150.0) result = Forcefield::LinearGeometry;
 // 			else if ((angle > 100.0) && (angle < 115.0)) result = Forcefield::TetrahedralGeometry;
 			else result = Forcefield::TetrahedralGeometry;
@@ -271,13 +271,13 @@ Forcefield::AtomGeometry Forcefield::geometryOfAtom(SpeciesAtom* i) const
 			// Get largest of the three angles around the central atom
 			h = i->bond(0)->partner(i);
 			j = i->bond(1)->partner(i);
-			angle = NonPeriodicBox::angleInDegrees(h->r(), i->r(), j->r());
+			angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
 			largest = angle;
 			j = i->bond(2)->partner(i);
-			angle = NonPeriodicBox::angleInDegrees(h->r(), i->r(), j->r());
+			angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
 			if (angle > largest) largest = angle;
 			h = i->bond(1)->partner(i);
-			angle = NonPeriodicBox::angleInDegrees(h->r(), i->r(), j->r());
+			angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
 			if (angle > largest) largest = angle;
 			if (largest > 150.0) result = Forcefield::TShapeGeometry;
 			else if ((largest > 115.0) && (largest < 125.0)) result = Forcefield::TrigonalPlanarGeometry;
@@ -294,7 +294,7 @@ Forcefield::AtomGeometry Forcefield::geometryOfAtom(SpeciesAtom* i) const
 				for (int m = n+1; m < i->nBonds(); ++m)
 				{
 					j = i->bond(m)->partner(i);
-					angle += NonPeriodicBox::angleInDegrees(h->r(), i->r(), j->r());
+					angle += NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
 				}
 			}
 			angle /= 6.0;

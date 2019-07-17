@@ -103,8 +103,8 @@ void CalculateDAngleModuleWidget::setGraphDataTargets(CalculateDAngleModule* mod
 	RefListIterator<Configuration,bool> configIterator(module_->targetConfigurations());
 	while (Configuration* cfg = configIterator.iterate())
 	{
-		// Calculated RDF
-		Renderable* rdf = rdfGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//%s", module_->uniqueName(), cfg->niceName(), module_->rdfName()), CharString("RDF//%s", cfg->niceName()), cfg->niceName());
+		// Calculated B...C RDF
+		Renderable* rdf = rdfGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//%s", module_->uniqueName(), cfg->niceName(), module_->rdfBCResultName()), CharString("RDF//%s", cfg->niceName()), cfg->niceName());
 		rdf->setColour(ColourDefinition::BlackStockColour);
 	}
 }

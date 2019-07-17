@@ -32,7 +32,7 @@
 #include "classes/speciesinfo.h"
 #include "classes/sitestack.h"
 #include "module/layer.h"
-#include "modules/import/formats.h"
+#include "io/import/coordinates.h"
 #include "math/histogram1d.h"
 #include "math/interpolator.h"
 #include "math/data1d.h"

@@ -23,7 +23,9 @@
 #include "main/dissolve.h"
 #include "analyse/nodes/calculate.h"
 #include "analyse/nodes/collect1d.h"
+#include "analyse/nodes/collect2d.h"
 #include "analyse/nodes/process1d.h"
+#include "analyse/nodes/process2d.h"
 #include "analyse/nodes/select.h"
 #include "base/sysfunc.h"
 
@@ -41,39 +43,48 @@ bool CalculateDAngleModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	const double distanceMax = keywords_.asDouble("DistanceMax");
 	const double distanceMin = keywords_.asDouble("DistanceMin");
 	const bool excludeSameMolecule = keywords_.asBool("ExcludeSameMolecule");
+	const bool saveData = keywords_.asBool("Save");
 
-	CharString dataName = rdfName();
-	SpeciesSite* originSite = KeywordListHelper<SpeciesSite*>::retrieve(keywords_, "OriginSite", NULL);
-	if (!originSite) return Messenger::error("Origin site is not defined.\n");
-	SpeciesSite* otherSite = KeywordListHelper<SpeciesSite*>::retrieve(keywords_, "OtherSite", NULL);
-	if (!otherSite) return Messenger::error("Other (surrounding) site is not defined.\n");
-
+	// Check for sites being defined
+	if (aSites_.nItems() == 0) return Messenger::error("At least one 'A' Site (of A-B...C) must be defined.\n");
+	if (bSites_.nItems() == 0) return Messenger::error("At least one 'B' Site (of A-B...C) must be defined.\n");
+	if (cSites_.nItems() == 0) return Messenger::error("At least one 'C' Site (of A-B...C) must be defined.\n");
 
 	/*
 	 * Assemble the code below (@var indicates local variable 'var')
 	 *
 	 * Select  'A'
-	 *   Site  @siteA
+	 *   Site  @aSites_
 	 *   ForEach
 	 *     Select  'B'
-	 *       Site  @siteB
+	 *       Site  @bSites_
 	 *       SameMoleculeAsSite  'A'
 	 *       ForEach
 	 *         Select  'C'
-	 *           Site  @siteC
+	 *           Site  @cSites_
 	 *           ExcludeSameMolecule  (if @excludeSameMolecule then 'A')
 	 *           ForEach
-	 *             Calculate  'rAB'
-	 *               Distance  'A'  'B'
+	 *             Calculate  'rBC'
+	 *               Distance  'B'  'C'
 	 *             EndCalculate
 	 *             Calculate  'aABC'
 	 *               Angle  'A'  'B'  'C'
 	 *             EndCalculate
 	 *             Collect2D  @dataName
-	 *               QuantityX  'rAB'
+	 *               QuantityX  'rBC'
 	 *               QuantityY  'aABC'
 	 *               RangeX  @distanceMin  @distanceMax  @distanceBin
 	 *               RangeY  @angleMin  @angleMax  @angleBin
+	 *               SubCollect
+	 *                 Collect1D  'RDF(BC)'
+	 *                   QuantityX  'rBC'
+	 *                   RangeX  @distanceMin  @distanceMax  @distanceBin
+	 *                 EndCollect
+	 *                 Collect1D  'ANGLE(ABC)'
+	 *                   QuantityX  'aABC'
+	 *                   RangeX  @angleMin  @angleMax  @angleBin
+	 *                 EndCollect
+	 *               EndSubCollect
 	 *             EndCollect2D
 	 *           EndForEach  'C'
 	 *         EndSelect  'C'
@@ -90,37 +101,76 @@ bool CalculateDAngleModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	 * EndProcess2D
 	 */
 
-	// Select: Site 'A' (@originSite)
-	AnalysisSelectNode* originSelect = new AnalysisSelectNode(originSite);
-	originSelect->setName("A");
-	analyser_.addRootSequenceNode(originSelect);
+	// Select: Site 'A' (@siteA)
+	AnalysisSelectNode* selectA = new AnalysisSelectNode(aSites_);
+	selectA->setName("A");
+	analyser_.addRootSequenceNode(selectA);
 
-	// -- Select: Site 'B' (@otherSite)
-	AnalysisSelectNode* otherSelect = new AnalysisSelectNode(otherSite);
-	otherSelect->setName("B");
-	otherSelect->addSameSiteExclusion(originSelect);
-	if (excludeSameMolecule) otherSelect->addSameMoleculeExclusion(originSelect);
-	originSelect->addToForEachBranch(otherSelect);
+	// -- Select: Site 'B' (@siteB)
+	AnalysisSelectNode* selectB = new AnalysisSelectNode(bSites_);
+	selectB->setName("B");
+	selectB->setSameMolecule(selectA);
+	selectA->addToForEachBranch(selectB);
 
-	// -- -- Calculate: 'rAB'
-	AnalysisCalculateNode* calcDistance = new AnalysisCalculateNode(AnalysisCalculateNode::DistanceObservable, originSelect, otherSelect);
-	otherSelect->addToForEachBranch(calcDistance);
+	// -- -- Select: Site 'C' (@siteC)
+	AnalysisSelectNode* selectC = new AnalysisSelectNode(cSites_);
+	selectC->setName("C");
+	if (excludeSameMolecule) selectC->addSameMoleculeExclusion(selectA);
+	selectB->addToForEachBranch(selectC);
 
-	// -- -- Collect1D: @dataName
-// 	AnalysisCollect1DNode* collect1D = new AnalysisCollect1DNode(calcDistance, rMin, rMax, binWidth);
-// 	collect1D->setName(dataName);
-// 	otherSelect->addToForEachBranch(collect1D);
-// 
-// 	// Process1D: @dataName
-// 	AnalysisProcess1DNode* process1D = new AnalysisProcess1DNode(collect1D);
-// 	process1D->setName(dataName);
-// 	process1D->addSitePopulationNormaliser(originSelect);
-// 	process1D->addNumberDensityNormaliser(otherSelect);
-// 	process1D->setNormaliseBySphericalShellVolume(true);
-// 	process1D->setSaveData(true);
-// 	process1D->setValueLabel("g(r)");
-// 	process1D->setXAxisLabel("r, \\symbol{Angstrom}");
-// 	analyser_.addRootSequenceNode(process1D);
+	// -- -- -- Calculate: 'rBC'
+	AnalysisCalculateNode* calcDistance = new AnalysisCalculateNode(AnalysisCalculateNode::DistanceObservable, selectB, selectC);
+	selectC->addToForEachBranch(calcDistance);
+
+	// -- -- -- Calculate: 'aABC'
+	AnalysisCalculateNode* calcAngle = new AnalysisCalculateNode(AnalysisCalculateNode::AngleObservable, selectA, selectB, selectC);
+	selectC->addToForEachBranch(calcAngle);
+
+	// -- -- -- Collect2D:  'Distance-Angle(B...C vs A-B...C)
+	AnalysisCollect2DNode* collectDAngle = new AnalysisCollect2DNode(calcDistance, calcAngle, distanceMin, distanceMax, distanceBin, angleMin, angleMax, angleBin);
+	collectDAngle->setName(resultName());
+	selectC->addToForEachBranch(collectDAngle);
+
+	// -- -- -- -- Collect1D:  'RDF(BC)
+	AnalysisCollect1DNode* collectDistance = new AnalysisCollect1DNode(calcDistance, distanceMin, distanceMax, distanceBin);
+	collectDistance->setName(rdfBCResultName());
+	collectDAngle->addToSubCollectBranch(collectDistance);
+
+	// -- -- -- -- Collect1D:  'ANGLE(ABC)
+	AnalysisCollect1DNode* collectAngle = new AnalysisCollect1DNode(calcAngle, angleMin, angleMax, angleBin);
+	collectAngle->setName(angleABCResultName());
+	collectDAngle->addToSubCollectBranch(collectAngle);
+
+	// Process1D: 'RDF(BC)'
+	AnalysisProcess1DNode* processDistance = new AnalysisProcess1DNode(collectDistance);
+	processDistance->setName(rdfBCResultName());
+	processDistance->addSitePopulationNormaliser(selectA);
+	processDistance->addSitePopulationNormaliser(selectB);
+	processDistance->addNumberDensityNormaliser(selectC);
+	processDistance->setNormaliseBySphericalShellVolume(true);
+	processDistance->setSaveData(saveData);
+	processDistance->setValueLabel("g(r)");
+	processDistance->setXAxisLabel("r, \\symbol{Angstrom}");
+	analyser_.addRootSequenceNode(processDistance);
+
+	// Process1D: 'ANGLE(ABC)'
+	AnalysisProcess1DNode* processAngle = new AnalysisProcess1DNode(collectAngle);
+	processAngle->setName(angleABCResultName());
+	processAngle->setNormaliseToOne(true);
+	processAngle->setSaveData(saveData);
+	processAngle->setValueLabel("Normalised Frequency");
+	processAngle->setXAxisLabel("\\symbol{theta}, \\symbol{degrees}");
+	analyser_.addRootSequenceNode(processAngle);
+
+	// Process1D: @dataName
+	AnalysisProcess2DNode* processDAngle = new AnalysisProcess2DNode(collectDAngle);
+	processDAngle->setName(resultName());
+	processDAngle->setNormaliseToOne(true);
+	processDAngle->setSaveData(saveData);
+	processDAngle->setValueLabel("g(r)");
+	processDAngle->setXAxisLabel("r, \\symbol{Angstrom}");
+	processDAngle->setYAxisLabel("\\symbol{theta}, \\symbol{degrees}");
+	analyser_.addRootSequenceNode(processDAngle);
 
 	return true;
 }

@@ -80,10 +80,6 @@ class Histogram2D : public ListItem<Histogram2D>, public ObjectStore<Histogram2D
 	// Accumulated data
 	Data2D accumulatedData_;
 
-	private:
-	// Update accumulated data
-	void updateAccumulatedData();
-
 	public:
 	// Initialise with specified bin range
 	void initialise(double xMinimum, double xMaximum, double xBinWidth, double yMinimum, double yMaximum, double yBinWidth);
@@ -105,8 +101,8 @@ class Histogram2D : public ListItem<Histogram2D>, public ObjectStore<Histogram2D
 	double yBinWidth() const;
 	// Return number of y bins
 	int nYBins() const;
-	// Bin specified value
-	void bin(double x, double y);
+	// Bin specified value, returning success
+	bool bin(double x, double y);
 	// Return number of values binned over all bins
 	long int nBinned() const;
 	// Accumulate current histogram bins into averages

@@ -31,8 +31,9 @@ class LineParser;
 class FileAndFormat
 {
 	public:
-	// Constructor
-	FileAndFormat();
+	// Constructors
+	FileAndFormat(int format = 0);
+	FileAndFormat(const char* filename = NULL, int format = 0);
 	// Destructor
 	virtual ~FileAndFormat();
 	// Conversion to const char*

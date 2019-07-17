@@ -27,15 +27,7 @@
 #include <string.h>
 #include <stdarg.h>
 
-// Constructors
-LineParser::LineParser()
-{
-	arguments_.clear();
-	reset();
-
-	processPool_ = NULL;
-}
-
+// Constructor
 LineParser::LineParser(ProcessPool* procPool)
 {
 	arguments_.clear();
@@ -47,6 +39,8 @@ LineParser::LineParser(ProcessPool* procPool)
 // Destructor
 LineParser::~LineParser()
 {
+	closeFiles();
+
 	if (inputFile_ != NULL) delete inputFile_;
 	if (outputFile_ != NULL) delete outputFile_;
 	if (cachedFile_ != NULL) delete cachedFile_;
@@ -583,7 +577,7 @@ bool LineParser::getNextArg(int optionMask, CharString* destarg)
 			// Delimiters
 			// If we encounter one and arg length != 0 this signals the end of the argument.
 			case (','):	// Comma
-				if (optionMask&LineParser::NormalCommas)
+				if (!(optionMask&LineParser::CommasAreDelimiters))
 				{
 					tempArg_[arglen++] = c;
 					break;
@@ -638,7 +632,7 @@ bool LineParser::getNextArg(int optionMask, CharString* destarg)
 				done = true;
 				break;
 			// Normal character
-			default: 
+			default:
 				tempArg_[arglen++] = c;
 				break;
 		}

@@ -22,16 +22,31 @@
 #ifndef DISSOLVE_ERROR_H
 #define DISSOLVE_ERROR_H
 
+#include "base/enumoptions.h"
+
 // Forward Declarations
 class Data1D;
+class Data2D;
 
 // Error Calculation
 class Error
 {
 	/*
-	 * Error Calculation
+	 * Error Type
 	 */
 	public:
+	// Error Types
+	enum ErrorType { RMSEError, MAAPEError, MAPEError, PercentError, RFactorError, nErrorCalculationTypes };
+	// Return enum options for ErrorType
+	static EnumOptions<Error::ErrorType> errorTypes();
+
+
+	/*
+	 * Data1D
+	 */
+	public:
+	// Return erorr of specified type between supplied data
+	static double error(ErrorType errorType, const Data1D& A, const Data1D& B, bool quiet = false);
 	// Return RMSE between supplied data
 	static double rmse(const Data1D& A, const Data1D& B, bool quiet = false);
 	// Return MAAPE between supplied data

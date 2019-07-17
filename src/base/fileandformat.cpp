@@ -23,10 +23,16 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Constructor
-FileAndFormat::FileAndFormat()
+// Constructors
+FileAndFormat::FileAndFormat(int format)
 {
-	format_ = 0;
+	format_ = format;
+}
+
+FileAndFormat::FileAndFormat(const char* filename, int format)
+{
+	filename_ = filename;
+	format_ = format;
 }
 
 // Destructor
@@ -189,7 +195,7 @@ const char* FileAndFormat::asString() const
 	static CharString result;
 
 	if (hasAdditionalArguments()) result.sprintf("%s  '%s'  %s", format(format_), filename_.get(), additionalArguments());
-		else result.sprintf("%s  '%s'", format(format_), filename_.get());
+	else result.sprintf("%s  '%s'", format(format_), filename_.get());
 
 	return result.get();
 }

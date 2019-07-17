@@ -23,7 +23,7 @@
 #include "analyse/nodes/collect2d.h"
 #include "analyse/nodes/select.h"
 #include "analyse/nodecontextstack.h"
-#include "modules/export/export.h"
+#include "io/export/data2d.h"
 #include "math/integrator.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
@@ -153,6 +153,18 @@ const char* AnalysisProcess2DNode::xAxisLabel() const
 	return xAxisLabel_.get();
 }
 
+// Set y axis label
+void AnalysisProcess2DNode::setYAxisLabel(const char* label)
+{
+	yAxisLabel_ = label;
+}
+
+// Return y axis label
+const char* AnalysisProcess2DNode::yAxisLabel() const
+{
+	return yAxisLabel_.get();
+}
+
 /*
  * Execute
  */
@@ -209,7 +221,8 @@ bool AnalysisProcess2DNode::finalise(ProcessPool& procPool, Configuration* cfg, 
 	// Save data?
 	if (saveData_ && procPool.isMaster())
 	{
-		if (ExportModule::writeData2D(Data2DExportFileFormat::BlockData, CharString("%s_%s.txt", name(), cfg->name()), data)) procPool.decideTrue();
+		Data2DExportFileFormat data2DFormat(CharString("%s_%s.txt", name(), cfg->name()), Data2DExportFileFormat::CartesianData);
+		if (data2DFormat.exportData(data)) procPool.decideTrue();
 		else return procPool.decideFalse();
 	}
 	else if (!procPool.decision()) return false;
@@ -229,8 +242,6 @@ bool AnalysisProcess2DNode::read(LineParser& parser, const CoreData& coreData, N
 
 	// Add ourselves to the context stack
 	if (!contextStack.add(this)) return Messenger::error("Error adding Process2D node '%s' to context stack.\n", name());
-
-	AnalysisSelectNode* selectNode;
 
 	// Read until we encounter the EndProcess2D keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
@@ -258,25 +269,31 @@ bool AnalysisProcess2DNode::read(LineParser& parser, const CoreData& coreData, N
 				yAxisLabel_ = parser.argc(1);
 				break;
 			case (AnalysisProcess2DNode::NormaliseToOneKeyword):
-				normaliseToOne_ = parser.argb(1);
+				normaliseToOne_ = true;
 				break;
 			case (AnalysisProcess2DNode::NSitesKeyword):
 				// Need a valid collectNode_ so we can retrieve the context stack it's local to
 				if (collectNode_.isNull()) return Messenger::error("Can't set site-dependent normalisers without first setting the collect node target.\n");
 				if (!collectNode_.node()->parent()) return Messenger::error("Can't set site-dependent normalisers since the specified collect node has no analyser parent.\n");
 
-				selectNode = dynamic_cast<AnalysisSelectNode*>(contextStack.node(parser.argc(1), AnalysisNode::SelectNode));
-				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), process2DNodeKeyword(AnalysisProcess2DNode::NSitesKeyword));
-				sitePopulationNormalisers_.add(selectNode, 1.0);
+				for (int n=1; n<parser.nArgs(); ++n)
+				{
+					AnalysisSelectNode* selectNode = dynamic_cast<AnalysisSelectNode*>(contextStack.node(parser.argc(n), AnalysisNode::SelectNode));
+					if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(n), process2DNodeKeyword(AnalysisProcess2DNode::NSitesKeyword));
+					sitePopulationNormalisers_.add(selectNode, 1.0);
+				}
 				break;
 			case (AnalysisProcess2DNode::NumberDensityKeyword):
 				// Need a valid collectNode_ so we can retrieve the context stack it's local to
 				if (collectNode_.isNull()) return Messenger::error("Can't set site-dependent normalisers without first setting the collect node target.\n");
 				if (!collectNode_.node()->parent()) return Messenger::error("Can't set site-dependent normalisers since the specified collect node has no analyser parent.\n");
 
-				selectNode = dynamic_cast<AnalysisSelectNode*>(contextStack.node(parser.argc(1), AnalysisNode::SelectNode));
-				if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(0), process2DNodeKeyword(AnalysisProcess2DNode::NumberDensityKeyword));
-				numberDensityNormalisers_.add(selectNode, 1.0);
+				for (int n=1; n<parser.nArgs(); ++n)
+				{
+					AnalysisSelectNode* selectNode = dynamic_cast<AnalysisSelectNode*>(contextStack.node(parser.argc(n), AnalysisNode::SelectNode));
+					if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(n), process2DNodeKeyword(AnalysisProcess2DNode::NumberDensityKeyword));
+					numberDensityNormalisers_.add(selectNode, 1.0);
+				}
 				break;
 			case (AnalysisProcess2DNode::SaveKeyword):
 				saveData_ = parser.argb(1);

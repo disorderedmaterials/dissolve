@@ -24,9 +24,9 @@ void TextPrimitiveParser_error(char *s);
 	bool success;				/* TextFragment pointer */
 };
 
-%token <text> UCR_TP_TEXT
-%token <escSeq> UCR_TP_ESCAPE
-%token UCR_TP_FAIL
+%token <text> DISSOLVE_TEXT_TEXT
+%token <escSeq> DISSOLVE_TEXT_ESCAPE
+%token DISSOLVE_TEXT_FAIL
 
 %type <success> fragment pushescape
 
@@ -47,14 +47,14 @@ fragmentsequence:
 /* ---------- */
 
 fragment:
-	UCR_TP_TEXT							{
+	DISSOLVE_TEXT_TEXT							{
 		$$ = TextPrimitive::target()->addFragment(*$1);
 		if (! $$) YYABORT;
 		}
-	| UCR_TP_ESCAPE pushescape '{' fragmentsequence '}' popescape	{
+	| DISSOLVE_TEXT_ESCAPE pushescape '{' fragmentsequence '}' popescape	{
 		$$ = $2;
 		}
-	| UCR_TP_FAIL							{
+	| DISSOLVE_TEXT_FAIL							{
 		YYABORT;
 		}
 	;

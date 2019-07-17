@@ -23,6 +23,7 @@
 #include "modules/analyse/analyse.h"
 #include "modules/atomshake/atomshake.h"
 #include "modules/bragg/bragg.h"
+#include "modules/calculate/dangle/dangle.h"
 #include "modules/calculate/rdf/rdf.h"
 #include "modules/calibrate/calibrate.h"
 #include "modules/checks/checks.h"
@@ -78,6 +79,7 @@ bool Dissolve::registerMasterModules()
 	if (!registerMasterModule(new AnalyseModule)) return false;
 	if (!registerMasterModule(new AtomShakeModule)) return false;
 	if (!registerMasterModule(new BraggModule)) return false;
+	if (!registerMasterModule(new CalculateDAngleModule)) return false;
 	if (!registerMasterModule(new CalculateRDFModule)) return false;
 	if (!registerMasterModule(new CalibrationModule)) return false;
 	if (!registerMasterModule(new ChecksModule)) return false;

@@ -41,9 +41,7 @@ bool ForcesModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 		Array<double>& fz = GenericListHelper< Array<double> >::realise(dissolve.processingModuleData(), "ReferenceFZ", uniqueName());
 
 		// Read in the forces
-		LineParser fileParser(&dissolve.worldPool());
-		if (!fileParser.openInput(referenceForces_.filename())) return false;
-		return ImportModule::readForces(referenceForces_.forceFormat(), fileParser, fx, fy, fz);
+		if (!referenceForces_.importData(fx, fy, fz, &procPool)) return false;
 	}
 
 	return true;

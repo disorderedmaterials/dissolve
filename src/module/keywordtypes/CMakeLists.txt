@@ -6,6 +6,8 @@ add_library(keywordtypes
   charstring.cpp
   complex.cpp
   data1dstore.cpp
+  data2dstore.cpp
+  data3dstore.cpp
   double.cpp
   fileandformat.cpp
   integer.cpp
@@ -15,6 +17,7 @@ add_library(keywordtypes
   pairbroadeningfunction.cpp
   speciesreferencelist.cpp
   speciessite.cpp
+  speciessitereferencelist.cpp
   vec3double.cpp
   vec3integer.cpp
   windowfunction.cpp
@@ -26,6 +29,8 @@ add_library(keywordtypes
   charstring.h
   complex.h
   data1dstore.h
+  data2dstore.h
+  data3dstore.h
   double.h
   enumoptions.h
   fileandformat.h
@@ -36,6 +41,7 @@ add_library(keywordtypes
   pairbroadeningfunction.h
   speciesreferencelist.h
   speciessite.h
+  speciessitereferencelist.h
   vec3double.h
   vec3integer.h
   windowfunction.h

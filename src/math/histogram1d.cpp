@@ -148,8 +148,8 @@ int Histogram1D::nBins() const
 	return nBins_;
 }
 
-// Bin specified value
-void Histogram1D::bin(double x)
+// Bin specified value, returning success
+bool Histogram1D::bin(double x)
 {
 	// Calculate target bin
 	int bin = (x - minimum_) / binWidth_;
@@ -158,11 +158,13 @@ void Histogram1D::bin(double x)
 	if ((bin < 0) || (bin >= nBins_))
 	{
 		++nMissed_;
-		return;
+		return false;
 	}
 
 	++bins_[bin];
 	++nBinned_;
+
+	return true;
 }
 
 // Return number of values binned over all bins

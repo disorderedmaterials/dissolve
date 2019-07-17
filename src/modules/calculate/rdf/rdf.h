@@ -26,7 +26,7 @@
 #include "analyse/analyser.h"
 
 // Forward Declarations
-/* none */
+class SpeciesSite;
 
 // Calculate RDF Module
 class CalculateRDFModule : public Module
@@ -86,10 +86,14 @@ class CalculateRDFModule : public Module
 	private:
 	// Analyser to be run
 	Analyser analyser_;
+	// List of origin Sites
+	RefList<SpeciesSite,bool> originSites_;
+	// List of other Sites
+	RefList<SpeciesSite,bool> otherSites_;
 
 	public:
 	// Return name of resulting RDF
-	const char* rdfName() const;
+	const char* resultName() const;
 
 
 	/*

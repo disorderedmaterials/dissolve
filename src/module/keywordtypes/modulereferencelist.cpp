@@ -26,10 +26,15 @@
 #include "base/lineparser.h"
 #include "genericitems/listhelper.h"
 
-// Constructor
-ModuleReferenceListModuleKeyword::ModuleReferenceListModuleKeyword(RefList<Module,bool>& references, const char* moduleType, int maxModules) : ModuleKeywordData< RefList<Module,bool>& >(ModuleKeywordBase::ModuleReferenceListData, references)
+// Constructors
+ModuleReferenceListModuleKeyword::ModuleReferenceListModuleKeyword(RefList<Module,bool>& references, int maxModules) : ModuleKeywordData< RefList<Module,bool>& >(ModuleKeywordBase::ModuleReferenceListData, references)
 {
-	moduleTypes_.add(moduleType);
+	maxModules_ = maxModules;
+}
+
+ModuleReferenceListModuleKeyword::ModuleReferenceListModuleKeyword(RefList<Module,bool>& references, CharStringList allowedModuleTypes, int maxModules) : ModuleKeywordData< RefList<Module,bool>& >(ModuleKeywordBase::ModuleReferenceListData, references)
+{
+	moduleTypes_ = allowedModuleTypes;
 	maxModules_ = maxModules;
 }
 
@@ -99,7 +104,7 @@ bool ModuleReferenceListModuleKeyword::read(LineParser& parser, int startArg, co
 		// Check the module's type
 		if ((moduleTypes_.nItems() > 0) && (!moduleTypes_.contains(module->type())))
 		{
-			Messenger::error("Module '%s' is of type '%s', and is not permitted in this list (allowed types = %s).\n", parser.argc(n), module->type(), moduleTypes_.get());
+			Messenger::error("Module '%s' is of type '%s', and is not permitted in this list (allowed types = %s).\n", parser.argc(n), module->type(), moduleTypes_.asCommaSeparatedList());
 			return false;
 		}
 

@@ -44,9 +44,7 @@ bool NeutronSQModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	{
 		// Load the data
 		Data1D referenceData;
-		LineParser parser(&procPool);
-		if (!parser.openInput(referenceFQ_.filename())) return 0;
-		if (!ImportModule::readData1D(referenceFQ_.data1DFormat(), parser, referenceData))
+		if (!referenceFQ_.importData(referenceData, &procPool))
 		{
 			Messenger::error("Failed to load reference data '%s'.\n", referenceFQ_.filename());
 			return false;

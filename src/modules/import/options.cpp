@@ -20,7 +20,6 @@
 */
 
 #include "modules/import/import.h"
-#include "modules/import/formats.h"
 #include "module/keywordtypes.h"
 
 // Set up keywords for Module

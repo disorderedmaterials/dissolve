@@ -26,7 +26,7 @@
 #include "analyse/analyser.h"
 
 // Forward Declarations
-/* none */
+class SpeciesSite;
 
 // Calculate Distance-Angle Module
 class CalculateDAngleModule : public Module
@@ -86,10 +86,20 @@ class CalculateDAngleModule : public Module
 	private:
 	// Analyser to be run
 	Analyser analyser_;
+	// List of Sites 'A'
+	RefList<SpeciesSite,bool> aSites_;
+	// List of Sites 'B'
+	RefList<SpeciesSite,bool> bSites_;
+	// List of Sites 'C'
+	RefList<SpeciesSite,bool> cSites_;
 
 	public:
-	// Return name of resulting RDF
-	const char* rdfName() const;
+	// Return name of B..C RDF
+	const char* rdfBCResultName() const;
+	// Return name of A-B...C angle distribution
+	const char* angleABCResultName() const;
+	// Return name of resulting distance-angle map
+	const char* resultName() const;
 
 
 	/*

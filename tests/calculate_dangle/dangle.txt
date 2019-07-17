@@ -1,0 +1,256 @@
+# Bulk Water Properties
+# Trajectory calculated using DL_POLY Classic v1.9
+
+# Potential uses SPC/Fw parameters:
+# 
+# Yujie Wu, Harald L. Tepper and Gregory A. Voth
+# "Flexible simple point-charge water model with improved liquid-state properties", Journal of Chemical Physics 124 024503 (2006)
+# http://dx.doi.org/10.1063/1.2136877
+# 
+#	  sigma(O) =    3.165492 Angstroms
+#	epsilon(O) =    0.6503	 kJ/mol
+#	 charge(O) =   -0.82	 e
+#	 charge(H) =    0.41	 e
+#	    k(O-H) = 4431.53	 kJ mol-1 Angstrom-2
+#	    r(O-H) =    1.0	 Angstroms
+#	  k(H-O-H) =  317.5656	 kJ mol-1 radian-2
+#     theta(H-O-H) =  113.24	 degrees
+
+#------------------------#
+#  Define Master Terms   #
+#------------------------#
+
+Master
+  Bond   OH   Harmonic  4431.53  1.0
+  Angle  HOH  Harmonic  317.5656 113.24
+EndMaster
+
+#------------------------#
+#     Define Species     #
+#------------------------#
+
+Species 'Water'
+  # Atoms
+  Atom    1    H     0.757    0.013    0.217   'HW'
+  Atom    2    O     0.015   -0.009   -0.373   'OW'
+  Atom    3    H    -0.771   -0.003    0.157   'HW'
+
+  # Intramolecular Terms
+  Bond  1    2  @OH
+  Bond  3    2  @OH
+  Angle 1    2    3  @HOH
+
+  # Isotopologues
+  Isotopologue  'Natural'  OW=0  HW=0
+  Isotopologue  'Deuteriated'  OW=0  HW=2
+
+  # Analysis Sites
+  Site  'origin'
+    Origin  2
+    XAxis  1 3
+    YAxis  3
+  EndSite
+  Site  'O'
+    Origin  2
+  EndSite
+  Site  'H1'
+    Origin  1
+  EndSite
+  Site  'H2'
+    Origin  3
+  EndSite
+  Site  'COM'
+    Origin  1  2  3
+    OriginMassWeighted  True
+  EndSite
+EndSpecies
+
+#------------------------#
+#     Pair Potentials    #
+#------------------------#
+
+PairPotentials
+  Range  9.000000
+  Delta  0.050000
+  Parameters  'OW'  -0.82      0.65	3.165492
+  Parameters  'HW'  0.41       0.0      0.0
+  GenerateAll  'LJ'
+EndPairPotentials
+
+#------------------------#
+#  Define Configuration  #
+#------------------------#
+
+Configuration  'Bulk'
+  Density  9.99999642E-02 atoms/A3
+  Multiplier  267
+  SpeciesInfo  'Water'  1.0
+EndConfiguration
+
+#------------------------#
+#   Define Processing    #
+#------------------------#
+
+Layer  'Processing'
+
+# Trajectory Processing
+Module  Import
+  Configuration  'Bulk'
+  ReadTrajectory  True
+  # Trajectory file contains 95 frames
+  TrajectoryFile  xyz  '../_data/water267-dlpoly/water-267-298K.xyz'
+EndModule
+
+# Distance-Angle Map X-H...O
+Module  CalculateDAngle  'DAngle(X-H...O)'
+  Configuration  'Bulk'
+  SiteA  Water  'O'
+  SiteB  Water  'H1'  Water  'H2'
+  SiteC  Water  'O'
+  DistanceMin  0.0
+  DistanceMax  5.0
+  DistanceBin  0.01
+  AngleMin  0.0
+  AngleMax  180.0
+  AngleBin  1.0
+  ExcludeSameMolecule  true
+  Save  On
+EndModule
+
+# Distance-Angle Map X-H...O (using manual analyser)
+Module  Analyse  'DAngle(X-H...O)-Analyser'
+  Configuration  'Bulk'
+  Analyser
+
+    # Distance-Angle Map X-H / X-H...O
+    Select  'X'
+
+      Site  Water  'O'
+
+      ForEach
+
+        Select  'H'
+
+          DynamicSite
+            Element  'H'
+          EndDynamicSite
+
+	  SameMoleculeAsSite  'X'
+
+          ForEach
+
+	    Select  'O'
+
+              Site  Water  'O'
+              ExcludeSameMolecule  'X'
+
+              ForEach
+
+                Calculate  'rHO'
+                  Distance  'H'  'O'
+                EndCalculate
+
+                Calculate  'aXHO'
+                  Angle  'X'  'H'  'O'
+                EndCalculate
+
+                Collect2D  'DAngle(X-HO)'
+                  QuantityX  'rHO'
+                  QuantityY  'aXHO'
+                  RangeX  0.0  5.0  0.01
+                  RangeY  0.0  180.0  1.0
+                  SubCollect
+                    Collect1D  'RDF(BC)'
+                      QuantityX  'rHO'
+		      RangeX  0.0  5.0  0.01
+                    EndCollect1D
+                    Collect1D  'ANGLE(ABC)'
+                      QuantityX  'aXHO'
+		      RangeX  0.0  180.0  1.0
+                    EndCollect1D
+                  EndSubCollect
+                EndCollect2D
+
+              EndForEach
+
+            EndSelect
+
+          EndForEach
+
+        EndSelect
+
+      EndForEach
+
+    EndSelect
+
+    Process1D  'RDF'
+      SourceData  'RDF(BC)'
+      NSites  'X'  'H'
+      NumberDensity  'O'
+      SphericalShellVolume  On
+      LabelValue  'gBC(r)'
+      LabelX  'r, Angstroms'
+    EndProcess1D
+
+    Process1D  'Angle'
+      SourceData  'ANGLE(ABC)'
+      NormaliseToOne
+      LabelValue  'Probability'
+      LabelX  'Angle, \\sym{degree}'
+    EndProcess1D
+
+    Process2D  'DAngle(X-HO)'
+      SourceData  'DAngle(X-HO)'
+      NormaliseToOne  On
+      Save  On
+      LabelX  '\\it{r}, \\sym{Angstrom}'
+      LabelY  'Angle, \\sym{degree}'
+      LabelValue  'Probability'
+    EndProcess2D
+
+  EndAnalyser
+
+EndModule
+
+Module DataTest
+  Frequency  95
+  Target  'DAngle(X-H...O)'
+  Data1D  'DAngle(X-H...O)_RDF(BC)_Bulk'  xy  '../_data/water267-dlpoly/water-267-298K.aardf_21_23_inter_sum'
+  Threshold  1.02
+EndModule
+
+Module DataTest
+  Frequency  95
+  Target  'DAngle(X-H...O)-Analyser'
+  Data1D  'DAngle(X-H...O)-Analyser//Process1D//Bulk//RDF'  xy  '../_data/water267-dlpoly/water-267-298K.aardf_21_23_inter_sum'
+  Threshold  1.02
+EndModule
+
+Module DataTest
+  Frequency  95
+  Target  'DAngle(X-H...O)'
+  Data1D  'DAngle(X-H...O)_ANGLE(ABC)_Bulk'  xy  '../_data/water267-dlpoly/water-267-298K.dahist1_02_1_01_02.angle'
+  Threshold  0.3
+EndModule
+
+Module DataTest
+  Frequency  95
+  Target  'DAngle(X-H...O)-Analyser'
+  Data1D  'DAngle(X-H...O)-Analyser//Process1D//Bulk//Angle'  xy  '../_data/water267-dlpoly/water-267-298K.dahist1_02_1_01_02.angle'
+  Threshold  0.3
+EndModule
+
+Module DataTest
+  Frequency  95
+  Target  'DAngle(X-H...O)'
+  # Data2D  'DAngle(X-H...O)_DAngle(X-HO)_Bulk'  cartesian  '../_data/water267-dlpoly/water-267-298K.dahist1_02_1_01_02.surf'  xaxis=0.0,5.0,0.01  yaxis=0.0,180,1.0
+  Threshold  0.3
+EndModule
+
+EndLayer
+
+Simulation
+  # Prevent writing of restart file
+  RestartFileFrequency  100
+EndSimulation
+

@@ -23,10 +23,12 @@
 #define DISSOLVE_IMPORTMODULE_H
 
 #include "module/module.h"
-#include "modules/import/formats.h"
+#include "io/import/trajectory.h"
 
 // Forward Declarations
 class Data1D;
+class Data2D;
+class Data3D;
 
 // Import Module
 class ImportModule : public Module
@@ -84,47 +86,6 @@ class ImportModule : public Module
 	private:
 	// Run main processing
 	bool process(Dissolve& dissolve, ProcessPool& procPool);
-
-
-	/*
-	 * Static Functions - Coordinates
-	 */
-	public:
-	// Read coordinates in specified format
-	static bool readCoordinates(CoordinateImportFileFormat::CoordinateImportFormat format, LineParser& parser, Array< Vec3<double> >& r);
-	// Read DL_POLY coordinates from specified file
-	static bool readDLPOLYCoordinates(LineParser& parser, Array< Vec3<double> >& r);
-	// Read EPSR ATO coordinates from specified file
-	static bool readEPSRCoordinates(LineParser& parser, Array< Vec3<double> >& r);
-	// Read xyz coordinates from specified file
-	static bool readXYZCoordinates(LineParser& parser, Array< Vec3<double> >& r);
-
-
-	/*
-	 * Static Functions - Forces
-	 */
-	public:
-	// Read forces in specified format
-	static bool readForces(ForceImportFileFormat::ForceImportFormat format, LineParser& parser, Array<double>& fx, Array<double>& fy, Array<double>& fz);
-	// Read simple forces from specified file
-	static bool readSimpleForces(LineParser& parser, Array<double>& fx, Array<double>& fy, Array<double>& fz);
-	// Read DL_POLY forces from specified file
-	static bool readDLPOLYForces(LineParser& parser, Array<double>& fx, Array<double>& fy, Array<double>& fz);
-
-
-	/*
-	 * Static Functions - Data1D
-	 */
-	public:
-	// Read Data1D in specified format
-	static bool readData1D(Data1DImportFileFormat::Data1DImportFormat format, LineParser& parser, Data1D& data);
-	// Read simple XY data from specified file
-	static bool readXYData1D(LineParser& parser, Data1D& data);
-	// Read simple histogram data from specified file
-	static bool readHistogramData1D(LineParser& parser, Data1D& data);
-	// Read Gudrun merged interference cross-section (mint) data from specified file
-	static bool readGudrunMintData1D(LineParser& parser, Data1D& data);
-
 };
 
 #endif

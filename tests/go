@@ -8,6 +8,7 @@ SERIALBINARY=../src/dissolve-serial
 PARALLELBINARY=../src/dissolve
 TESTS=""
 NTESTS="0"
+COMMONARGS="-x"
 
 while getopts "as:p:" op
 do
@@ -134,9 +135,9 @@ do
 		# Are there specific arguments for the test?
 		if [ -e ${input%.txt}.args ]
 		then
-			ARGS=$(<${input%.txt}.args)
+			ARGS="$COMMONARGS $(<${input%.txt}.args)"
 		else
-			ARGS="-s"
+			ARGS="$COMMONARGS"
 		fi
 
 		for nprocs in $TARGETPROCS

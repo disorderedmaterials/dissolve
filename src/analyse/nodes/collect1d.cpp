@@ -22,6 +22,7 @@
 #include "analyse/nodes/collect1d.h"
 #include "analyse/nodecontextstack.h"
 #include "analyse/nodes/calculate.h"
+#include "analyse/nodes/sequence.h"
 #include "math/data1d.h"
 #include "classes/configuration.h"
 #include "base/lineparser.h"
@@ -35,6 +36,9 @@ AnalysisCollect1DNode::AnalysisCollect1DNode(AnalysisCalculateNode* observable, 
 	minimum_ = rMin;
 	maximum_ = rMax;
 	binWidth_ = binWidth;
+
+	// Branches
+	subCollectBranch_ = NULL;
 }
 
 // Destructor
@@ -47,7 +51,7 @@ AnalysisCollect1DNode::~AnalysisCollect1DNode()
  */
 
 // Node Keywords
-const char* Collect1DNodeKeywords[] = { "EndCollect1D", "QuantityX", "RangeX" };
+const char* Collect1DNodeKeywords[] = { "EndCollect1D", "QuantityX", "RangeX", "SubCollect" };
 
 // Convert string to node keyword
 AnalysisCollect1DNode::Collect1DNodeKeyword AnalysisCollect1DNode::collect1DNodeKeyword(const char* s)
@@ -99,6 +103,26 @@ double AnalysisCollect1DNode::binWidth() const
 }
 
 /*
+ * Branches
+ */
+
+// Add and return subcollection sequence branch
+AnalysisSequenceNode* AnalysisCollect1DNode::addSubCollectBranch()
+{
+	if (!subCollectBranch_) subCollectBranch_ = new AnalysisSequenceNode();
+
+	subCollectBranch_->setParent(parent());
+
+	return subCollectBranch_;
+}
+
+// Add specified node to subcollection sequence
+void AnalysisCollect1DNode::addToSubCollectBranch(AnalysisNode* node)
+{
+	addSubCollectBranch()->addNode(node);
+}
+
+/*
  * Execute
  */
 
@@ -121,6 +145,9 @@ bool AnalysisCollect1DNode::prepare(Configuration* cfg, const char* prefix, Gene
 	// Store a pointer to the data
 	histogram_ = &target;
 
+	// Prepare any branches
+	if (subCollectBranch_ && (!subCollectBranch_->prepare(cfg, prefix, targetList))) return false;
+
 	return true;
 }
 
@@ -134,8 +161,8 @@ AnalysisNode::NodeExecutionResult AnalysisCollect1DNode::execute(ProcessPool& pr
 		return AnalysisNode::Failure;
 	}
 #endif
-	// Bin the current value of the observable
-	histogram_->bin(observable_->value(0));
+	// Bin the current value of the observable, and execute sub-collection branch on success
+	if (histogram_->bin(observable_->value(0)) && subCollectBranch_) return subCollectBranch_->execute(procPool, cfg, prefix, targetList);
 
 	return AnalysisNode::Success;
 }
@@ -152,6 +179,9 @@ bool AnalysisCollect1DNode::finalise(ProcessPool& procPool, Configuration* cfg, 
 #endif
 	// Accumulate the current binned data
 	histogram_->accumulate();
+
+	// Finalise any branches
+	if (subCollectBranch_ && (!subCollectBranch_->finalise(procPool, cfg, prefix, targetList))) return false;
 
 	return true;
 }
@@ -193,6 +223,15 @@ bool AnalysisCollect1DNode::read(LineParser& parser, const CoreData& coreData, N
 				minimum_ = parser.argd(1);
 				maximum_ = parser.argd(2);
 				binWidth_ = parser.argd(3);
+				break;
+			case (AnalysisCollect1DNode::SubCollectKeyword):
+				// Check that a SubCollect branch hasn't already been defined
+				if (subCollectBranch_) return Messenger::error("Only one SubCollect branch may be defined in a Collect1D node.\n");
+
+				// Create and parse a new branch
+				subCollectBranch_ = new AnalysisSequenceNode("EndSubCollect");
+				subCollectBranch_->setParent(parent());
+				if (!subCollectBranch_->read(parser, coreData, contextStack)) return false;
 				break;
 			case (AnalysisCollect1DNode::nCollect1DNodeKeywords):
 				return Messenger::error("Unrecognised Collect1D node keyword '%s' found.\n", parser.argc(0));

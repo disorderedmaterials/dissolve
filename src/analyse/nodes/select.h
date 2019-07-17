@@ -40,8 +40,9 @@ class SpeciesSite;
 class AnalysisSelectNode : public AnalysisNode
 {
 	public:
-	// Constructor
+	// Constructors
 	AnalysisSelectNode(SpeciesSite* site = NULL);
+	AnalysisSelectNode(const RefList<SpeciesSite,bool>& sites);
 	// Destructor
 	~AnalysisSelectNode();
 
@@ -92,6 +93,8 @@ class AnalysisSelectNode : public AnalysisNode
 	bool addSameSiteExclusion(AnalysisSelectNode* node);
 	// List of Sites currently excluded from selection
 	const RefList<const Site,bool>& excludedSites() const;
+	// Set node containing molecule from which our site must also be contained within
+	bool setSameMolecule(AnalysisSelectNode* node);
 	// Return Molecule (from site) in which the site must exist
 	const Molecule* sameMoleculeMolecule();
 

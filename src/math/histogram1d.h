@@ -89,8 +89,8 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
 	double binWidth() const;
 	// Return number of bins
 	int nBins() const;
-	// Bin specified value
-	void bin(double x);
+	// Bin specified value, returning success
+	bool bin(double x);
 	// Return number of values binned over all bins
 	long int nBinned() const;
 	// Accumulate current histogram bins into averages

@@ -72,8 +72,6 @@ class Data3D : public PlottableData, public ListItem<Data3D>, public ObjectStore
 	void copyArrays(const Data3D& source);
 	// Zero values array
 	void zero();
-	// Accumulate specified histogram data
-	void accumulate(const Histogram3D& source);
 	// Return data version
 	int version() const;
 	// Return x axis value specified
