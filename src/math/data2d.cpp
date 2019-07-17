@@ -90,6 +90,39 @@ void Data2D::initialise(const Data2D& source)
 	++version_;
 }
 
+// Initialise from supplied axis ranges
+void Data2D::initialise(double xMin, double xMax, double xBin, double yMin, double yMax, double yBin, bool withError)
+{
+	double xRange = xMax - xMin;
+	double yRange = yMax - yMin;
+	int nXBins = xRange / xBin;
+	int nYBins = yRange / yBin;
+
+	// We will clamp the maxima to the nearest bin boundary (not less than the supplied axis maxima)
+	if ((xMin + nXBins*xBin) < xMax) ++nXBins;
+	if ((yMin + nYBins*yBin) < yMax) ++nYBins;
+
+	// Create x_ axis array
+	x_.initialise(nXBins);
+	double xCentre = xMin + xBin*0.5;
+	for (int n=0; n<nXBins; ++n, xCentre += xBin) x_[n] = xCentre;
+
+	// Create y_ axis array
+	y_.initialise(nYBins);
+	double yCentre = yMin + yBin*0.5;
+	for (int n=0; n<nYBins; ++n, yCentre += yBin) y_[n] = yCentre;
+
+	// Initialise values array
+	values_.initialise(nXBins, nYBins);
+
+	// Initialise errors array if required
+	hasError_ = withError;
+	if (hasError_) errors_.initialise(nXBins, nYBins);
+	else errors_.clear();
+
+	++version_;
+}
+
 // Copy arrays from supplied object
 void Data2D::copyArrays(const Data2D& source)
 {
