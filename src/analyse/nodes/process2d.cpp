@@ -221,7 +221,7 @@ bool AnalysisProcess2DNode::finalise(ProcessPool& procPool, Configuration* cfg, 
 	// Save data?
 	if (saveData_ && procPool.isMaster())
 	{
-		Data2DExportFileFormat data2DFormat(CharString("%s_%s.txt", name(), cfg->name()), Data2DExportFileFormat::BlockData);
+		Data2DExportFileFormat data2DFormat(CharString("%s_%s.txt", name(), cfg->name()), Data2DExportFileFormat::CartesianData);
 		if (data2DFormat.exportData(data)) procPool.decideTrue();
 		else return procPool.decideFalse();
 	}
