@@ -54,7 +54,7 @@ class LineParser
 		StripBrackets = 8,		/* Remove parentheses during parsing */
 		NoEscapes = 16,			/* Don't convert excaped characters */
 		UseBraces = 32,			/* Text inside curly brackets is retaind as a single argument */
-		NormalCommas = 64,		/* Don't treat commas as delimiting marks in files */
+		CommasAreDelimiters = 64,	/* Treat commas as delimiting marks in files */
 		SemiColonLineBreaks = 128,	/* Treat semicolons as line-breaks */
 		nParseOptions = 9
 	};

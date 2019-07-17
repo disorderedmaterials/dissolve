@@ -577,7 +577,7 @@ bool LineParser::getNextArg(int optionMask, CharString* destarg)
 			// Delimiters
 			// If we encounter one and arg length != 0 this signals the end of the argument.
 			case (','):	// Comma
-				if (optionMask&LineParser::NormalCommas)
+				if (!(optionMask&LineParser::CommasAreDelimiters))
 				{
 					tempArg_[arglen++] = c;
 					break;
