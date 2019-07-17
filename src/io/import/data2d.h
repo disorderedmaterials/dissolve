@@ -23,6 +23,7 @@
 #define DISSOLVE_IMPORT_DATA2D_H
 
 #include "base/fileandformat.h"
+#include "templates/vector3.h"
 
 // Forward Declarations
 class Data2D;
@@ -55,11 +56,13 @@ class Data2DImportFileFormat : public FileAndFormat
 
 
 	/*
-	 * Templating
+	 * Array Specification
 	 */
 	private:
-	// Object tag of Data2D upon which to template arrays before importing
-	CharString templateSourceObjectTag_;
+	// Minima, maxima, and bin deltas for axes (if not directly obtainable from data
+	Vec3<double> axisMinimum_, axisMaximum_, axisDelta_;
+	// Whether any axis information has been set
+	Vec3<bool> axisRangeSet_;
 
 
 	/*

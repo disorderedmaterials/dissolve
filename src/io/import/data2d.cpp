@@ -30,6 +30,7 @@ const char* NiceData2DImportFormatKeywords[] = { "Cartesian X,Y,f(X,Y) data" };
 // Constructor
 Data2DImportFileFormat::Data2DImportFileFormat(Data2DImportFormat format) : FileAndFormat(format)
 {
+	axisRangeSet_.set(false, false, false);
 }
 
 // Destructor
@@ -75,7 +76,24 @@ bool Data2DImportFileFormat::parseArgument(const char* arg)
 	// Split arg into parts before and after the '='
 	CharString key = DissolveSys::beforeChar(arg, '=');
 	CharString value = DissolveSys::afterChar(arg, '=');
-	if (key == "template") templateSourceObjectTag_ = value;
+	if (key == "xaxis")
+	{
+		LineParser parser;
+		parser.getArgsDelim(LineParser::CommasAreDelimiters, value.get());
+		axisMinimum_.x = parser.argd(0);
+		axisMaximum_.x = parser.argd(1);
+		axisDelta_.x = parser.argd(2);
+		axisRangeSet_.x = true;
+	}
+	else if (key == "yaxis")
+	{
+		LineParser parser;
+		parser.getArgsDelim(LineParser::CommasAreDelimiters, value.get());
+		axisMinimum_.y = parser.argd(0);
+		axisMaximum_.y = parser.argd(1);
+		axisDelta_.y = parser.argd(2);
+		axisRangeSet_.y = true;
+	}
 	else return false;
 
 	return true;
@@ -93,7 +111,7 @@ const char* Data2DImportFileFormat::additionalArguments() const
 	static CharString args;
 
 	args.clear();
-	if (!templateSourceObjectTag_.isEmpty()) args.sprintf("template='%s'", templateSourceObjectTag_.get());
+	for (int n=0; n<2; ++n) if (axisRangeSet_.get(n)) args.strcatf(" %caxis=%f,%f,%f", 120+n, axisMinimum_.get(n), axisMaximum_.get(n), axisDelta_.get(n));
 
 	return args.get();
 }
