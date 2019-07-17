@@ -72,26 +72,6 @@ void Histogram2D::clear()
  * Data
  */
 
-// Update accumulated data
-void Histogram2D::updateAccumulatedData()
-{
-	// Set up arrays
-	accumulatedData_.initialise(nXBins_, nYBins_, true);
-
-	// Store bin centres and accumulated averages in the object
-	for (int x=0; x<nXBins_; ++x)
-	{
-		accumulatedData_.xAxis(x) = xBinCentres_[x];
-		for (int y=0; y<nYBins_; ++y)
-		{
-			if (x == 0) accumulatedData_.yAxis(y) = yBinCentres_[y];
-
-			accumulatedData_.value(x, y) = averages_.constAt(x, y);
-			accumulatedData_.error(x, y) = averages_.constAt(x, y).stDev();
-		}
-	}
-}
-
 // Initialise with specified bin range
 void Histogram2D::initialise(double xMin, double xMax, double xBinWidth, double yMin, double yMax, double yBinWidth)
 {
@@ -112,6 +92,11 @@ void Histogram2D::initialise(double xMin, double xMax, double xBinWidth, double 
 	// Create the main bins array
 	bins_.initialise(nXBins_, nYBins_);
 	averages_.initialise(nXBins_, nYBins_);
+
+	// Set up accumulated data array and set bin centres
+	accumulatedData_.initialise(nXBins_, nYBins_, true);
+	for (int x=0; x<nXBins_; ++x) accumulatedData_.xAxis(x) = xBinCentres_[x];
+	for (int y=0; y<nYBins_; ++y) accumulatedData_.yAxis(y) = yBinCentres_[y];
 }
 
 // Zero histogram bins
@@ -206,11 +191,16 @@ void Histogram2D::accumulate()
 {
 	for (int x=0; x<nXBins_; ++x)
 	{
-		for (int y=0; y<nYBins_; ++y) averages_.at(x,y) += double(bins_.at(x,y));
-	}
+		for (int y=0; y<nYBins_; ++y)
+		{
+			// Update averages
+			averages_.at(x,y) += double(bins_.at(x,y));
 
-	// Update accumulated data
-	updateAccumulatedData();
+			// Update accumulated data
+			accumulatedData_.value(x, y) = averages_.constAt(x, y);
+			accumulatedData_.error(x, y) = averages_.constAt(x, y).stDev();
+		}
+	}
 }
 
 // Return Array of x centre-bin values

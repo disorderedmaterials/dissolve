@@ -80,10 +80,6 @@ class Histogram2D : public ListItem<Histogram2D>, public ObjectStore<Histogram2D
 	// Accumulated data
 	Data2D accumulatedData_;
 
-	private:
-	// Update accumulated data
-	void updateAccumulatedData();
-
 	public:
 	// Initialise with specified bin range
 	void initialise(double xMinimum, double xMaximum, double xBinWidth, double yMinimum, double yMaximum, double yBinWidth);
