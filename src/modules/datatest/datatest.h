@@ -100,7 +100,7 @@ class DataTestModule : public Module
 	// Find reference Data
 	template <class T> const T& findReferenceData(const char* dataIdentifier, Module* targetModule, GenericList& processingModuleData, bool& found)
 	{
-		static Data1D dummy;
+		static T dummy;
 
 		found = false;
 
