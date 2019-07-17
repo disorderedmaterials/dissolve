@@ -22,9 +22,38 @@
 #include "math/error.h"
 #include "math/interpolator.h"
 #include "math/data1d.h"
+#include "base/enumoptions.h"
 #include <algorithm>
 
 using namespace std;
+
+// Return enum option info for AveragingScheme
+EnumOptions<Error::ErrorType> Error::errorTypes()
+{
+	static EnumOptionsList ErrorTypeOptions = EnumOptionsList() <<
+		EnumOption(Error::RMSEError, 		"RMSE") <<
+		EnumOption(Error::MAAPEError, 		"MAAPE") <<
+		EnumOption(Error::MAPEError, 		"MAPE") <<
+		EnumOption(Error::PercentError, 	"Percent") <<
+		EnumOption(Error::RFactorError, 	"RFactor");
+
+	static EnumOptions<Error::ErrorType> options("ErrorType", ErrorTypeOptions, Error::PercentError);
+
+	return options;
+}
+
+// Return erorr of specified type between supplied data
+double Error::error(ErrorType errorType, const Data1D& A, const Data1D& B, bool quiet)
+{
+	if (errorType == Error::RMSEError) return rmse(A, B, quiet);
+	else if (errorType == Error::MAAPEError) return maape(A, B, quiet);
+	else if (errorType == Error::MAPEError) return mape(A, B, quiet);
+	else if (errorType == Error::PercentError) return percent(A, B, quiet);
+	else if (errorType == Error::RFactorError) return rFactor(A, B, quiet);
+
+	Messenger::error("Error type %i is not accounted for! Take the developer's Kolkata privileges away...\n");
+	return 0.0;
+}
 
 // Return RMSE between supplied data
 double Error::rmse(const Data1D& A, const Data1D& B, bool quiet)
