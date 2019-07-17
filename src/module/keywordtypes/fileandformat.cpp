@@ -34,16 +34,6 @@ FileAndFormatModuleKeyword::~FileAndFormatModuleKeyword()
 }
 
 /*
- * Data
- */
-
-// Return whether the current data value has ever been set
-bool FileAndFormatModuleKeyword::isSet()
-{
-	return set_;
-}
-
-/*
  * Arguments
  */
 

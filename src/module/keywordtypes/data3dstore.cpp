@@ -33,16 +33,6 @@ Data3DStoreModuleKeyword::~Data3DStoreModuleKeyword()
 }
 
 /*
- * Data
- */
-
-// Return whether the current data value has ever been set
-bool Data3DStoreModuleKeyword::isSet()
-{
-	return set_;
-}
-
-/*
  * Arguments
  */
 

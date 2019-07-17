@@ -59,8 +59,6 @@ class ModuleReferenceListModuleKeyword : public ModuleKeywordData< RefList<Modul
 	const CharStringList& moduleTypes() const;
 	// Return maximum number of Modules to allow in the list
 	int maxModules() const;
-	// Return whether the current data value has ever been set
-	bool isSet();
 
 
 	/*

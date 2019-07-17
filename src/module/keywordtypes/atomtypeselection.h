@@ -48,8 +48,6 @@ class AtomTypeSelectionModuleKeyword : public ModuleKeywordData<AtomTypeList&>
 	RefList<Configuration,bool>& sourceConfigurations_;
 
 	public:
-	// Return whether the current data value has ever been set
-	bool isSet();
 	// Check selection and make sure it is consistent based on the source Configurations
 	void checkSelection();
 	// Return selection after checking it for validity

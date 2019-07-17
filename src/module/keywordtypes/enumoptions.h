@@ -80,17 +80,6 @@ template <class E> class EnumOptionsModuleKeyword : public EnumOptionsBaseModule
 
 
 	/*
-	 * Data
-	 */
-	public:
-	// Return whether the current data value has ever been set
-	bool isSet()
-	{
-		return ModuleKeywordData< EnumOptions<E> >::set_;
-	}
-
-
-	/*
 	 * Data Validation
 	 */
 	private:

@@ -34,16 +34,6 @@ PairBroadeningFunctionModuleKeyword::~PairBroadeningFunctionModuleKeyword()
 }
 
 /*
- * Data
- */
-
-// Return whether the current data value has ever been set
-bool PairBroadeningFunctionModuleKeyword::isSet()
-{
-	return set_;
-}
-
-/*
  * Arguments
  */
 

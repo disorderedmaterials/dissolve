@@ -75,6 +75,10 @@ class ModuleKeywordBase : public ListItem<ModuleKeywordBase>
 	// Flags to apply if reinstated as a GenericListItem (i.e. in a Module)
 	int genericItemFlags_;
 
+	protected:
+	// Whether the current data value has ever been set
+	bool set_;
+
 	public:
 	// Set name, description, and item flags
 	void set(const char* keyword, const char* description, const char* arguments, int genericItemFlags);
@@ -89,7 +93,7 @@ class ModuleKeywordBase : public ListItem<ModuleKeywordBase>
 	// Return flags to apply if reinstated as a GenericListItem (i.e. in a Module)
 	int genericItemFlags();
 	// Return whether the data has ever been set
-	virtual bool isSet() = 0;
+	bool isSet();
 
 
 	/*

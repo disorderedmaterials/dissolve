@@ -34,22 +34,6 @@ BoolModuleKeyword::~BoolModuleKeyword()
 }
 
 /*
- * Data
- */
-
-// Return whether the current data value has ever been set
-bool BoolModuleKeyword::isSet()
-{
-	return set_;
-}
-
-// Validate supplied value
-bool BoolModuleKeyword::isValid(bool value)
-{
-	return true;
-}
-
-/*
  * Arguments
  */
 

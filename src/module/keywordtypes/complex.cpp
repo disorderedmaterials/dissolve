@@ -37,12 +37,6 @@ ComplexModuleKeyword::~ComplexModuleKeyword()
  * Data
  */
 
-// Return whether the current data value has ever been set
-bool ComplexModuleKeyword::isSet()
-{
-	return set_;
-}
-
 // Validate supplied value
 bool ComplexModuleKeyword::isValid(int value)
 {

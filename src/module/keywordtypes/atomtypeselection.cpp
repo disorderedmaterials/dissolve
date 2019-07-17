@@ -40,12 +40,6 @@ AtomTypeSelectionModuleKeyword::~AtomTypeSelectionModuleKeyword()
  * Data
  */
 
-// Return whether the current data value has ever been set
-bool AtomTypeSelectionModuleKeyword::isSet()
-{
-	return set_;
-}
-
 // Return list of AtomTpe/bool references
 AtomTypeList& AtomTypeSelectionModuleKeyword::selection()
 {

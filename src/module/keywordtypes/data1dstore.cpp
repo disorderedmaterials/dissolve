@@ -33,16 +33,6 @@ Data1DStoreModuleKeyword::~Data1DStoreModuleKeyword()
 }
 
 /*
- * Data
- */
-
-// Return whether the current data value has ever been set
-bool Data1DStoreModuleKeyword::isSet()
-{
-	return set_;
-}
-
-/*
  * Arguments
  */
 

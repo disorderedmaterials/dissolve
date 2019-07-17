@@ -41,14 +41,6 @@ class DoubleModuleKeyword : public ModuleKeywordData<double>
 
 
 	/*
-	 * Data
-	 */
-	public:
-	// Return whether the current data value has ever been set
-	bool isSet();
-
-
-	/*
 	 * Data Validation
 	 */
 	private:

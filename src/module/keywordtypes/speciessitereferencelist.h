@@ -40,14 +40,6 @@ class SpeciesSiteReferenceListModuleKeyword : public ModuleKeywordData< RefList<
 
 
 	/*
-	 * Data
-	 */
-	public:
-	// Return whether the current data value has ever been set
-	bool isSet();
-
-
-	/*
 	 * Arguments
 	 */
 	public:

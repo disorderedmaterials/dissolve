@@ -37,16 +37,6 @@ EnumOptionsModuleKeyword::~EnumOptionsModuleKeyword()
 }
 
 /*
- * Data
- */
-
-// Return whether the current data value has ever been set
-bool EnumOptionsModuleKeyword::isSet()
-{
-	return set_;
-}
-
-/*
  * Arguments
  */
 

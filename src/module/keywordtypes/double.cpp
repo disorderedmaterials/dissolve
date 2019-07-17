@@ -51,16 +51,6 @@ DoubleModuleKeyword::~DoubleModuleKeyword()
 }
 
 /*
- * Data
- */
-
-// Return whether the current data value has ever been set
-bool DoubleModuleKeyword::isSet()
-{
-	return set_;
-}
-
-/*
  * Data Validation
  */
 

@@ -51,16 +51,6 @@ Vec3IntegerModuleKeyword::~Vec3IntegerModuleKeyword()
 }
 
 /*
- * Data
- */
-
-// Return whether the current data value has ever been set
-bool Vec3IntegerModuleKeyword::isSet()
-{
-	return set_;
-}
-
-/*
  * Data Validation
  */
 

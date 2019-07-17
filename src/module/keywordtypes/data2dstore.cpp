@@ -33,16 +33,6 @@ Data2DStoreModuleKeyword::~Data2DStoreModuleKeyword()
 }
 
 /*
- * Data
- */
-
-// Return whether the current data value has ever been set
-bool Data2DStoreModuleKeyword::isSet()
-{
-	return set_;
-}
-
-/*
  * Arguments
  */
 

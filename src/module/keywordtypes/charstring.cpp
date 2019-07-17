@@ -34,16 +34,6 @@ CharStringModuleKeyword::~CharStringModuleKeyword()
 }
 
 /*
- * Data
- */
-
-// Return whether the current data value has ever been set
-bool CharStringModuleKeyword::isSet()
-{
-	return set_;
-}
-
-/*
  * Arguments
  */
 
@@ -76,17 +66,6 @@ bool CharStringModuleKeyword::read(LineParser& parser, int startArg, const CoreD
 bool CharStringModuleKeyword::write(LineParser& parser, const char* prefix)
 {
 	return parser.writeLineF("%s%s  '%s'\n", prefix, keyword(), data_.get());
-}
-
-/*
- * Validation
- */
-
-// Validate supplied value
-bool CharStringModuleKeyword::isValid(CharString value)
-{
-	// Any string value is allowed
-	return true;
 }
 
 /*

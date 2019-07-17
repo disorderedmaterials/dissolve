@@ -65,12 +65,6 @@ int ModuleReferenceListModuleKeyword::maxModules() const
 	return maxModules_;
 }
 
-// Return whether the current data value has ever been set
-bool ModuleReferenceListModuleKeyword::isSet()
-{
-	return set_;
-}
-
 /*
  * Arguments
  */

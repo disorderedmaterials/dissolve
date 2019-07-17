@@ -36,16 +36,6 @@ AnalyserModuleKeyword::~AnalyserModuleKeyword()
 }
 
 /*
- * Data
- */
-
-// Return whether the current data value has ever been set
-bool AnalyserModuleKeyword::isSet()
-{
-	return set_;
-}
-
-/*
  * Arguments
  */
 

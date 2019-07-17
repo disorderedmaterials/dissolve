@@ -51,16 +51,6 @@ IntegerModuleKeyword::~IntegerModuleKeyword()
 }
 
 /*
- * Data
- */
-
-// Return whether the current data value has ever been set
-bool IntegerModuleKeyword::isSet()
-{
-	return set_;
-}
-
-/*
  * Data Validation
  */
 

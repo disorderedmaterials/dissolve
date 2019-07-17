@@ -25,6 +25,7 @@
 // Constructor
 ModuleKeywordBase::ModuleKeywordBase(KeywordDataType type) : ListItem<ModuleKeywordBase>(), type_(type)
 {
+	set_ = false;
 }
 
 // Destructor
@@ -92,6 +93,12 @@ const char* ModuleKeywordBase::description()
 int ModuleKeywordBase::genericItemFlags()
 {
 	return genericItemFlags_;
+}
+
+// Return whether the data has ever been set
+bool ModuleKeywordBase::isSet()
+{
+	return set_;
 }
 
 /*

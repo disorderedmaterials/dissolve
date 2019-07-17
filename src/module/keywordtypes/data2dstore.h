@@ -40,14 +40,6 @@ class Data2DStoreModuleKeyword : public ModuleKeywordData<Data2DStore&>
 
 
 	/*
-	 * Data
-	 */
-	public:
-	// Return whether the current data value has ever been set
-	bool isSet();
-
-
-	/*
 	 * Arguments
 	 */
 	public:

@@ -40,14 +40,6 @@ class SpeciesSiteModuleKeyword : public ModuleKeywordData<SpeciesSite*>
 
 
 	/*
-	 * Data
-	 */
-	public:
-	// Return whether the current data value has ever been set
-	bool isSet();
-
-
-	/*
 	 * Arguments
 	 */
 	public:

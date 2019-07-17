@@ -34,16 +34,6 @@ WindowFunctionModuleKeyword::~WindowFunctionModuleKeyword()
 }
 
 /*
- * Data
- */
-
-// Return whether the current data value has ever been set
-bool WindowFunctionModuleKeyword::isSet()
-{
-	return set_;
-}
-
-/*
  * Arguments
  */
 
@@ -74,14 +64,4 @@ bool WindowFunctionModuleKeyword::write(LineParser& parser, const char* prefix)
 	CharString params;
 	for (int n=0; n<WindowFunction::nFunctionParameters(data_.function()); ++n) params.strcatf("  %f", data_.parameter(n));
 	return parser.writeLineF("%s%s  '%s'%s\n", prefix, keyword(), WindowFunction::functionType(data_.function()), params.get());
-}
-
-/*
- * Validation
- */
-
-// Validate supplied value
-bool WindowFunctionModuleKeyword::isValid(WindowFunction value)
-{
-	return true;
 }

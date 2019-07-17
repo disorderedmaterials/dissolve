@@ -51,16 +51,6 @@ Vec3DoubleModuleKeyword::~Vec3DoubleModuleKeyword()
 }
 
 /*
- * Data
- */
-
-// Return whether the current data value has ever been set
-bool Vec3DoubleModuleKeyword::isSet()
-{
-	return set_;
-}
-
-/*
  * Data Validation
  */
 

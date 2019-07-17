@@ -40,22 +40,6 @@ class WindowFunctionModuleKeyword : public ModuleKeywordData<WindowFunction>
 
 
 	/*
-	 * Data
-	 */
-	public:
-	// Return whether the current data value has ever been set
-	bool isSet();
-
-
-	/*
-	 * Data Validation
-	 */
-	public:
-	// Validate supplied value
-	bool isValid(WindowFunction value);
-
-
-	/*
 	 * Arguments
 	 */
 	public:

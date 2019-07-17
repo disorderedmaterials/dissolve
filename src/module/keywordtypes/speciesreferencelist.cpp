@@ -44,12 +44,6 @@ bool SpeciesReferenceListModuleKeyword::currentDataIsSet() const
 	return data_.nItems() > 0;
 }
 
-// Return whether the current data value has ever been set
-bool SpeciesReferenceListModuleKeyword::isSet()
-{
-	return set_;
-}
-
 /*
  * Arguments
  */

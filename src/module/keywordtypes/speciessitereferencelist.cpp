@@ -36,16 +36,6 @@ SpeciesSiteReferenceListModuleKeyword::~SpeciesSiteReferenceListModuleKeyword()
 }
 
 /*
- * Data
- */
-
-// Return whether the current data value has ever been set
-bool SpeciesSiteReferenceListModuleKeyword::isSet()
-{
-	return set_;
-}
-
-/*
  * Arguments
  */
 

@@ -34,16 +34,6 @@ BroadeningFunctionModuleKeyword::~BroadeningFunctionModuleKeyword()
 }
 
 /*
- * Data
- */
-
-// Return whether the current data value has ever been set
-bool BroadeningFunctionModuleKeyword::isSet()
-{
-	return set_;
-}
-
-/*
  * Arguments
  */
 
@@ -74,14 +64,4 @@ bool BroadeningFunctionModuleKeyword::write(LineParser& parser, const char* pref
 	CharString params;
 	for (int n=0; n<BroadeningFunction::nFunctionParameters(data_.function()); ++n) params.strcatf("  %f", data_.parameter(n));
 	return parser.writeLineF("%s%s  '%s'%s\n", prefix, keyword(), BroadeningFunction::functionType(data_.function()), params.get());
-}
-
-/*
- * Validation
- */
-
-// Validate supplied value
-bool BroadeningFunctionModuleKeyword::isValid(BroadeningFunction value)
-{
-	return true;
 }

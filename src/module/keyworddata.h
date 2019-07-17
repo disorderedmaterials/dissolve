@@ -36,7 +36,6 @@ template <class T> class ModuleKeywordData : public ModuleKeywordBase
 	// Constructor
 	ModuleKeywordData(ModuleKeywordBase::KeywordDataType type, T data) : ModuleKeywordBase(type), data_(data)
 	{
-		set_ = false;
 	}
 
 
@@ -46,8 +45,6 @@ template <class T> class ModuleKeywordData : public ModuleKeywordBase
 	protected:
 	// Data (POD or otherwise) that is to be set by reading from an input file
 	T data_;
-	// Whether the current data value has ever been set
-	bool set_;
 
 	protected:
 	// Determine whether current data is actually 'set'

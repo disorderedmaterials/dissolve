@@ -36,16 +36,6 @@ IsotopologueReferenceListModuleKeyword::~IsotopologueReferenceListModuleKeyword(
 }
 
 /*
- * Data
- */
-
-// Return whether the current data value has ever been set
-bool IsotopologueReferenceListModuleKeyword::isSet()
-{
-	return set_;
-}
-
-/*
  * Arguments
  */
 
