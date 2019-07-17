@@ -61,7 +61,7 @@ class Data2DExportFileFormat : public FileAndFormat
 	 */
 	private:
 	// Export Data2D as simple block data
-	bool exportBlockData(LineParser& parser, Data2D& data);
+	bool exportBlock(LineParser& parser, Data2D& data);
 
 	public:
 	// Export Data2D using current filename and format

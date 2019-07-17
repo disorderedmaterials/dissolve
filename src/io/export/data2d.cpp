@@ -62,7 +62,7 @@ Data2DExportFileFormat::Data2DExportFileFormat(const char* filename, Data2DExpor
  */
 
 // Export Data2D as simple block data
-bool Data2DExportFileFormat::exportBlockData(LineParser& parser, Data2D& data)
+bool Data2DExportFileFormat::exportBlock(LineParser& parser, Data2D& data)
 {
 	// Export header comment
 	if (!parser.writeLineF("# %i blocks (nX) of %i points (nY).\n", data.xAxis().nItems(), data.yAxis().nItems())) return false;
@@ -91,7 +91,7 @@ bool Data2DExportFileFormat::exportData(Data2D& data)
 
 	// Write data
 	bool result = false;
-	if (data2DFormat() == Data2DExportFileFormat::BlockData) result = exportBlockData(parser, data);
+	if (data2DFormat() == Data2DExportFileFormat::BlockData) result = exportBlock(parser, data);
 	else Messenger::error("Unrecognised data format.\nKnown formats are: %s.\n", Data2DExportFileFormat().formats());
 
 	return false;
