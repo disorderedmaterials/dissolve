@@ -46,13 +46,13 @@ class Procedure
 	private:
 	// Context stack
 	NodeContextStack contextStack_;
-	// Sequence node from which the analysis starts
+	// Sequence node from which the procedure starts
 	SequenceProcedureNode rootSequence_;
 
 	public:
 	// Clear all data
 	void clear();
-	// Set End keyword for root sequence
+	// Set end keyword for root sequence
 	void setEndKeyword(const char* keyword);
 	// Add (own) specified node to root sequence
 	void addRootSequenceNode(ProcedureNode* node);
@@ -64,11 +64,11 @@ class Procedure
 	 * Execute
 	 */
 	private:
-	// List of Configurations and the coordinate indices at which they were last analysed
+	// List of Configurations and the coordinate indices at which they were last processed
 	RefList<Configuration,int> configurationPoints_;
 
 	public:
-	// Run analysis for specified Configuration, storing / retrieving generated data from supplied list 
+	// Run procedure on specified Configuration, storing / retrieving generated data from supplied list 
 	bool execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
 
 
@@ -76,9 +76,9 @@ class Procedure
 	 * Read / Write
 	 */
 	public:
-	// Read structure from specified LineParser
+	// Read procedure from specified LineParser
 	bool read(LineParser& parser, const CoreData& coreData);
-	// Write structure to specified LineParser
+	// Write procedure to specified LineParser
 	bool write(LineParser& parser, const char* prefix);
 };
 
