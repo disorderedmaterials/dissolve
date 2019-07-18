@@ -160,7 +160,7 @@ class SelectProcedureNode : public ProcedureNode
 	 */
 	public:
 	// Read structure from specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack);
+	bool read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack);
 	// Write structure to specified LineParser
 	bool write(LineParser& parser, const char* prefix);
 };

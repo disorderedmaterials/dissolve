@@ -23,7 +23,7 @@
 #define DISSOLVE_PROCEDURE_H
 
 #include "procedure/nodes/sequence.h"
-#include "procedure/nodecontextstack.h"
+#include "procedure/nodescopestack.h"
 
 // Forward Declarations
 class Configuration;
@@ -44,8 +44,8 @@ class Procedure
 	 * Data
 	 */
 	private:
-	// Context stack
-	NodeContextStack contextStack_;
+	// Scope stack
+	NodeScopeStack scopeStack_;
 	// Sequence node from which the procedure starts
 	SequenceProcedureNode rootSequence_;
 
@@ -56,8 +56,8 @@ class Procedure
 	void setEndKeyword(const char* keyword);
 	// Add (own) specified node to root sequence
 	void addRootSequenceNode(ProcedureNode* node);
-	// Return the context stack
-	const NodeContextStack& contextStack() const;
+	// Return the scope stack
+	const NodeScopeStack& scopeStack() const;
 
 
 	/*

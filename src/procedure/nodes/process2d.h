@@ -33,7 +33,7 @@ class Collect2DProcedureNode;
 class SelectProcedureNode;
 class Data2D;
 class LineParser;
-class NodeContextStack;
+class NodeScopeStack;
 
 // Procedure Node - Process2D
 class Process2DProcedureNode : public ProcedureNode
@@ -136,7 +136,7 @@ class Process2DProcedureNode : public ProcedureNode
 	 */
 	public:
 	// Read structure from specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack);
+	bool read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack);
 	// Write structure to specified LineParser
 	bool write(LineParser& parser, const char* prefix);
 };

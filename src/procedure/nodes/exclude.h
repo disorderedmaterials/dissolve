@@ -28,7 +28,7 @@
 // Forward Declarations
 class SelectProcedureNode;
 class LineParser;
-class NodeContextStack;
+class NodeScopeStack;
 
 // Procedure Node - Exclude
 class ExcludeProcedureNode : public ProcedureNode
@@ -81,7 +81,7 @@ class ExcludeProcedureNode : public ProcedureNode
 	 */
 	public:
 	// Read structure from specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack);
+	bool read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack);
 	// Write structure to specified LineParser
 	bool write(LineParser& parser, const char* prefix);
 };

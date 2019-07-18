@@ -21,7 +21,7 @@
 
 #include "procedure/nodes/calculate.h"
 #include "procedure/nodes/select.h"
-#include "procedure/nodecontextstack.h"
+#include "procedure/nodescopestack.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
@@ -188,14 +188,14 @@ ProcedureNode::NodeExecutionResult CalculateProcedureNode::execute(ProcessPool& 
  */
 
 // Read structure from specified LineParser
-bool CalculateProcedureNode::read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack)
+bool CalculateProcedureNode::read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack)
 {
-	// The current line in the parser must contain a label (name) for the node, and which must not currently exist on the context stack
+	// The current line in the parser must contain a label (name) for the node, and which must not currently exist on the scope stack
 	if (parser.nArgs() != 2) return Messenger::error("A Calculate node must be given a suitable name.\n");
 	setName(parser.argc(1));
 
-	// Add ourselves to the context stack
-	if (!contextStack.add(this)) return Messenger::error("Error adding Calculate node '%s' to context stack.\n", name());
+	// Add ourselves to the scope stack
+	if (!scopeStack.add(this)) return Messenger::error("Error adding Calculate node '%s' to scope stack.\n", name());
 
 	// Read until we encounter the EndCalculate keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
@@ -213,15 +213,15 @@ bool CalculateProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				observable_ = CalculateProcedureNode::AngleObservable;
 
 				// First Site argument (point 'i' in angle i-j-k)
-				sites_[0] = dynamic_cast<SelectProcedureNode*>(contextStack.nodeInScope(parser.argc(1), ProcedureNode::SelectNode));
+				sites_[0] = dynamic_cast<SelectProcedureNode*>(scopeStack.nodeInScope(parser.argc(1), ProcedureNode::SelectNode));
 				if (!sites_[0]) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(1), calculateNodeKeywords().keyword(CalculateProcedureNode::AngleKeyword));
 
 				// Second Site argument (point 'j' in angle i-j-k)
-				sites_[1] = dynamic_cast<SelectProcedureNode*>(contextStack.nodeInScope(parser.argc(2), ProcedureNode::SelectNode));
+				sites_[1] = dynamic_cast<SelectProcedureNode*>(scopeStack.nodeInScope(parser.argc(2), ProcedureNode::SelectNode));
 				if (!sites_[1]) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(2), calculateNodeKeywords().keyword(CalculateProcedureNode::AngleKeyword));
 
 				// Third Site argument (point 'k' in angle i-j-k)
-				sites_[2] = dynamic_cast<SelectProcedureNode*>(contextStack.nodeInScope(parser.argc(3), ProcedureNode::SelectNode));
+				sites_[2] = dynamic_cast<SelectProcedureNode*>(scopeStack.nodeInScope(parser.argc(3), ProcedureNode::SelectNode));
 				if (!sites_[2]) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(3), calculateNodeKeywords().keyword(CalculateProcedureNode::AngleKeyword));
 				break;
 			case (CalculateProcedureNode::DistanceKeyword):
@@ -230,11 +230,11 @@ bool CalculateProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				observable_ = CalculateProcedureNode::DistanceObservable;
 
 				// First Site argument (point 'i' in distance i-j)
-				sites_[0] = dynamic_cast<SelectProcedureNode*>(contextStack.nodeInScope(parser.argc(1), ProcedureNode::SelectNode));
+				sites_[0] = dynamic_cast<SelectProcedureNode*>(scopeStack.nodeInScope(parser.argc(1), ProcedureNode::SelectNode));
 				if (!sites_[0]) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(1), calculateNodeKeywords().keyword(CalculateProcedureNode::DistanceKeyword));
 
 				// Second Site argument (point 'j' in distance i-j)
-				sites_[1] = dynamic_cast<SelectProcedureNode*>(contextStack.nodeInScope(parser.argc(2), ProcedureNode::SelectNode));
+				sites_[1] = dynamic_cast<SelectProcedureNode*>(scopeStack.nodeInScope(parser.argc(2), ProcedureNode::SelectNode));
 				if (!sites_[1]) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(2), calculateNodeKeywords().keyword(CalculateProcedureNode::DistanceKeyword));
 				else 
 				break;

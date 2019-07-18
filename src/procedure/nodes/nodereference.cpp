@@ -94,7 +94,7 @@ void ProcedureNodeReference::operator=(const ProcedureNodeReference& nodeRef)
  */
 
 // Read structure from specified LineParser
-bool ProcedureNodeReference::read(LineParser& parser, int startArg, const CoreData& coreData, NodeContextStack& localStack)
+bool ProcedureNodeReference::read(LineParser& parser, int startArg, const CoreData& coreData, NodeScopeStack& localStack)
 {
 	node_ = NULL;
 
@@ -108,7 +108,7 @@ bool ProcedureNodeReference::read(LineParser& parser, int startArg, const CoreDa
 		// Found the target AnalyseModule, so cast it up and search for the named node in its Analyser
 		AnalyseModule* analyseModule = dynamic_cast<AnalyseModule*>(module);
 		if (!analyseModule) return Messenger::error("Couldn't cast module into an AnalyseModule.\n");
-		node_ = analyseModule->analyserContextStack().node(parser.argc(startArg));
+		node_ = analyseModule->analyserScopeStack().node(parser.argc(startArg));
 	}
 	else node_ = localStack.node(parser.argc(startArg));
 

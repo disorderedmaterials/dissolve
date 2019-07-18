@@ -1,6 +1,6 @@
 /*
-	*** Node Context Stack
-	*** src/procedure/nodecontextstack.h
+	*** Node Scope Stack
+	*** src/procedure/nodescopestack.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PROCEDURE_NODECONTEXTSTACK_H
-#define DISSOLVE_PROCEDURE_NODECONTEXTSTACK_H
+#ifndef DISSOLVE_PROCEDURE_NODESCOPESTACK_H
+#define DISSOLVE_PROCEDURE_NODESCOPESTACK_H
 
 #include "procedure/nodes/node.h"
 #include "base/charstring.h"
@@ -30,35 +30,35 @@
 // Forward Declarations
 /* none */
 
-// Node Context Stack
-class NodeContextStack
+// Node Scope Stack
+class NodeScopeStack
 {
 	public:
 	// Constructor
-	NodeContextStack();
+	NodeScopeStack();
 	// Destructor
-	~NodeContextStack();
+	~NodeScopeStack();
 
 
 	/*
-	 * Context / Reference Stacks
+	 * Scope / Reference Stacks
 	 */
 	private:
 	// Counter for SelectNode added to the stack at any point
 	int nSelectNodesAdded_;
-	// Context stack
+	// Scope stack
 	Array< RefList<ProcedureNode,bool> > stack_;
 	// References for all nodes added
 	RefList<ProcedureNode,bool> nodes_;
 
 	public:
-	// Clear all layers from stack
+	// Clear all scopes from stack
 	void clear();
-	// Push new context layer on to the stack
+	// Push new scope on to the stack
 	void push();
-	// Pop topmost context layer from the stack
+	// Pop topmost scope from the stack
 	bool pop();
-	// Add new node to the topmost context layer
+	// Add new node to the topmost scope
 	bool add(ProcedureNode* node);
 
 

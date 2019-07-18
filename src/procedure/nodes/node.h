@@ -34,7 +34,7 @@ class LineParser;
 class Procedure;
 class ProcessPool;
 class Site;
-class NodeContextStack;
+class NodeScopeStack;
 
 // Analysis Base Node
 class ProcedureNode : public ListItem<ProcedureNode>
@@ -101,7 +101,7 @@ class ProcedureNode : public ListItem<ProcedureNode>
 	 */
 	public:
 	// Read structure from specified LineParser
-	virtual bool read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack) = 0;
+	virtual bool read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack) = 0;
 	// Write structure to specified LineParser
 	virtual bool write(LineParser& parser, const char* prefix) = 0;
 };

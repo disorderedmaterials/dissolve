@@ -20,7 +20,7 @@
 */
 
 #include "procedure/nodes/collect3d.h"
-#include "procedure/nodecontextstack.h"
+#include "procedure/nodescopestack.h"
 #include "procedure/nodes/calculate.h"
 #include "procedure/nodes/sequence.h"
 #include "math/data3d.h"
@@ -291,14 +291,14 @@ bool Collect3DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg,
  */
 
 // Read structure from specified LineParser
-bool Collect3DProcedureNode::read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack)
+bool Collect3DProcedureNode::read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack)
 {
 	// The current line in the parser must also contain a node name (which is not necessarily unique...)
 	if (parser.nArgs() != 2) return Messenger::error("A Collect3D node must be given a suitable name.\n");
 	setName(parser.argc(1));
 
-	// Add ourselves to the context stack
-	if (!contextStack.add(this)) return Messenger::error("Error adding Collect3D node '%s' to context stack.\n", name());
+	// Add ourselves to the scope stack
+	if (!scopeStack.add(this)) return Messenger::error("Error adding Collect3D node '%s' to scope stack.\n", name());
 
 	// Read until we encounter the EndCollect3D keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
@@ -316,28 +316,28 @@ bool Collect3DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				if (xObservable_ || yObservable_ || zObservable_) return Messenger::error("Can't combine QuantityXYZ with one-dimensional Quantity commands.\n");
 
 				// Determine observable from supplied argument
-				xyzObservable_ = dynamic_cast<CalculateProcedureNode*>(contextStack.nodeInScope(parser.argc(1), ProcedureNode::CalculateNode));
+				xyzObservable_ = dynamic_cast<CalculateProcedureNode*>(scopeStack.nodeInScope(parser.argc(1), ProcedureNode::CalculateNode));
 				if (!xyzObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeywords().keyword(nk));
 				break;
 			case (Collect3DProcedureNode::QuantityXKeyword):
 				if (xyzObservable_) return Messenger::error("Can't combine QuantityXYZ with one-dimensional Quantity commands.\n");
 
 				// Determine observable from supplied argument
-				xObservable_ = dynamic_cast<CalculateProcedureNode*>(contextStack.nodeInScope(parser.argc(1), ProcedureNode::CalculateNode));
+				xObservable_ = dynamic_cast<CalculateProcedureNode*>(scopeStack.nodeInScope(parser.argc(1), ProcedureNode::CalculateNode));
 				if (!xObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeywords().keyword(nk));
 				break;
 			case (Collect3DProcedureNode::QuantityYKeyword):
 				if (xyzObservable_) return Messenger::error("Can't combine QuantityXYZ with one-dimensional Quantity commands.\n");
 
 				// Determine observable from supplied argument
-				yObservable_ = dynamic_cast<CalculateProcedureNode*>(contextStack.nodeInScope(parser.argc(1), ProcedureNode::CalculateNode));
+				yObservable_ = dynamic_cast<CalculateProcedureNode*>(scopeStack.nodeInScope(parser.argc(1), ProcedureNode::CalculateNode));
 				if (!yObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeywords().keyword(nk));
 				break;
 			case (Collect3DProcedureNode::QuantityZKeyword):
 				if (xyzObservable_) return Messenger::error("Can't combine QuantityXYZ with one-dimensional Quantity commands.\n");
 
 				// Determine observable from supplied argument
-				zObservable_ = dynamic_cast<CalculateProcedureNode*>(contextStack.nodeInScope(parser.argc(1), ProcedureNode::CalculateNode));
+				zObservable_ = dynamic_cast<CalculateProcedureNode*>(scopeStack.nodeInScope(parser.argc(1), ProcedureNode::CalculateNode));
 				if (!zObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeywords().keyword(nk));
 				break;
 			case (Collect3DProcedureNode::RangeXKeyword):
@@ -368,7 +368,7 @@ bool Collect3DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				// Create and parse a new branch
 				subCollectBranch_ = new SequenceProcedureNode("EndSubCollect");
 				subCollectBranch_->setProcedure(procedure());
-				if (!subCollectBranch_->read(parser, coreData, contextStack)) return false;
+				if (!subCollectBranch_->read(parser, coreData, scopeStack)) return false;
 				break;
 			case (Collect3DProcedureNode::nCollect3DNodeKeywords):
 				return Messenger::error("Unrecognised Collect3D node keyword '%s' found.\n", parser.argc(0));

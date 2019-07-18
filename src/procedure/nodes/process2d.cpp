@@ -22,7 +22,7 @@
 #include "procedure/nodes/process2d.h"
 #include "procedure/nodes/collect2d.h"
 #include "procedure/nodes/select.h"
-#include "procedure/nodecontextstack.h"
+#include "procedure/nodescopestack.h"
 #include "io/export/data2d.h"
 #include "math/integrator.h"
 #include "classes/box.h"
@@ -248,13 +248,13 @@ bool Process2DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg,
  */
 
 // Read structure from specified LineParser
-bool Process2DProcedureNode::read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack)
+bool Process2DProcedureNode::read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack)
 {
 	// The current line in the parser may contain a node name for us
 	if (parser.nArgs() == 2) setName(parser.argc(1));
 
-	// Add ourselves to the context stack
-	if (!contextStack.add(this)) return Messenger::error("Error adding Process2D node '%s' to context stack.\n", name());
+	// Add ourselves to the scope stack
+	if (!scopeStack.add(this)) return Messenger::error("Error adding Process2D node '%s' to scope stack.\n", name());
 
 	// Read until we encounter the EndProcess2D keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
@@ -285,25 +285,25 @@ bool Process2DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				normaliseToOne_ = true;
 				break;
 			case (Process2DProcedureNode::NSitesKeyword):
-				// Need a valid collectNode_ so we can retrieve the context stack it's local to
+				// Need a valid collectNode_ so we can retrieve the scope stack it's local to
 				if (collectNode_.isNull()) return Messenger::error("Can't set site-dependent normalisers without first setting the collect node target.\n");
 				if (!collectNode_.node()->procedure()) return Messenger::error("Can't set site-dependent normalisers since the specified collect node has no Procedure parent.\n");
 
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
-					SelectProcedureNode* selectNode = dynamic_cast<SelectProcedureNode*>(contextStack.node(parser.argc(n), ProcedureNode::SelectNode));
+					SelectProcedureNode* selectNode = dynamic_cast<SelectProcedureNode*>(scopeStack.node(parser.argc(n), ProcedureNode::SelectNode));
 					if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(n), process2DNodeKeywords().keyword(Process2DProcedureNode::NSitesKeyword));
 					sitePopulationNormalisers_.add(selectNode, 1.0);
 				}
 				break;
 			case (Process2DProcedureNode::NumberDensityKeyword):
-				// Need a valid collectNode_ so we can retrieve the context stack it's local to
+				// Need a valid collectNode_ so we can retrieve the scope stack it's local to
 				if (collectNode_.isNull()) return Messenger::error("Can't set site-dependent normalisers without first setting the collect node target.\n");
 				if (!collectNode_.node()->procedure()) return Messenger::error("Can't set site-dependent normalisers since the specified collect node has no Procedure parent.\n");
 
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
-					SelectProcedureNode* selectNode = dynamic_cast<SelectProcedureNode*>(contextStack.node(parser.argc(n), ProcedureNode::SelectNode));
+					SelectProcedureNode* selectNode = dynamic_cast<SelectProcedureNode*>(scopeStack.node(parser.argc(n), ProcedureNode::SelectNode));
 					if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(n), process2DNodeKeywords().keyword(Process2DProcedureNode::NumberDensityKeyword));
 					numberDensityNormalisers_.add(selectNode, 1.0);
 				}
@@ -312,7 +312,7 @@ bool Process2DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				saveData_ = parser.argb(1);
 				break;
 			case (Process2DProcedureNode::SourceDataKeyword):
-				if (!collectNode_.read(parser, 1, coreData, contextStack)) return Messenger::error("Couldn't set source data for node.\n");
+				if (!collectNode_.read(parser, 1, coreData, scopeStack)) return Messenger::error("Couldn't set source data for node.\n");
 				break;
 			case (Process2DProcedureNode::nProcess2DNodeKeywords):
 				return Messenger::error("Unrecognised Process2D node keyword '%s' found.\n", parser.argc(0));

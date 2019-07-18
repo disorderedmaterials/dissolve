@@ -42,7 +42,7 @@ Procedure::~Procedure()
 // Clear all data
 void Procedure::clear()
 {
-	contextStack_.clear();
+	scopeStack_.clear();
 	rootSequence_.clear();
 }
 
@@ -58,10 +58,10 @@ void Procedure::addRootSequenceNode(ProcedureNode* node)
 	rootSequence_.addNode(node);
 }
 
-// Return the context stack
-const NodeContextStack& Procedure::contextStack() const
+// Return the scope stack
+const NodeScopeStack& Procedure::scopeStack() const
 {
-	return contextStack_;
+	return scopeStack_;
 }
 
 /*
@@ -104,9 +104,9 @@ bool Procedure::execute(ProcessPool& procPool, Configuration* cfg, const char* p
 // Read structure from specified LineParser
 bool Procedure::read(LineParser& parser, const CoreData& coreData)
 {
-	contextStack_.clear();
+	scopeStack_.clear();
 
-	return rootSequence_.read(parser, coreData, contextStack_);
+	return rootSequence_.read(parser, coreData, scopeStack_);
 }
 
 // Write structure to specified LineParser

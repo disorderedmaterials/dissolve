@@ -21,7 +21,7 @@
 
 #include "procedure/nodes/sequence.h"
 #include "procedure/nodes/nodes.h"
-#include "procedure/nodecontextstack.h"
+#include "procedure/nodescopestack.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
@@ -134,10 +134,10 @@ void SequenceProcedureNode::setBlockTerminationKeyword(const char* endKeyword)
 }
 
 // Read structure from specified LineParser
-bool SequenceProcedureNode::read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack)
+bool SequenceProcedureNode::read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack)
 {
 	// The sequence node now constructs a new context...
-	contextStack.push();
+	scopeStack.push();
 
 	// Read until we encounter the block-ending keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
@@ -209,11 +209,11 @@ bool SequenceProcedureNode::read(LineParser& parser, const CoreData& coreData, N
 		newNode->setProcedure(procedure());
 
 		// Read the new node
-		if (!newNode->read(parser, coreData, contextStack)) return Messenger::error("Failed to read analysis sequence.\n");
+		if (!newNode->read(parser, coreData, scopeStack)) return Messenger::error("Failed to read analysis sequence.\n");
 	}
 
 	// Remove our context, since it is now 'out-of-scope'
-	if (!contextStack.pop()) return Messenger::error("Internal error while removing context layer for SequenceProcedureNode.\n");
+	if (!scopeStack.pop()) return Messenger::error("Internal error while removing context layer for SequenceProcedureNode.\n");
 
 	return true;
 }

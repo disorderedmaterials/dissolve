@@ -1,6 +1,6 @@
 /*
-	*** Node Context Stack
-	*** src/procedure/nodecontextstack.cpp
+	*** Node Scope Stack
+	*** src/procedure/nodescopestack.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "procedure/nodecontextstack.h"
+#include "procedure/nodescopestack.h"
 #include "procedure/nodes/calculate.h"
 #include "procedure/nodes/collect1d.h"
 #include "procedure/nodes/collect2d.h"
@@ -28,13 +28,13 @@
 #include "base/sysfunc.h"
 
 // Constructor
-NodeContextStack::NodeContextStack()
+NodeScopeStack::NodeScopeStack()
 {
 	nSelectNodesAdded_ = 0;
 }
 
 // Destructor
-NodeContextStack::~NodeContextStack()
+NodeScopeStack::~NodeScopeStack()
 {
 }
 
@@ -43,7 +43,7 @@ NodeContextStack::~NodeContextStack()
  */
 
 // Clear all layers from stack
-void NodeContextStack::clear()
+void NodeScopeStack::clear()
 {
 	stack_.clear();
 	nodes_.clear();
@@ -51,29 +51,29 @@ void NodeContextStack::clear()
 	nSelectNodesAdded_ = 0;
 }
 
-// Push new context layer on to the stack
-void NodeContextStack::push()
+// Push new scope on to the stack
+void NodeScopeStack::push()
 {
 	stack_.add(RefList<ProcedureNode,bool>());
 }
 
-// Pop topmost context layer from the stack
-bool NodeContextStack::pop()
+// Pop topmost scope from the stack
+bool NodeScopeStack::pop()
 {
-	if (stack_.nItems() == 0) return Messenger::error("Context stack is empty, so nothing to pop().\n");
+	if (stack_.nItems() == 0) return Messenger::error("Scope stack is empty, so nothing to pop().\n");
 
 	stack_.removeLast();
 
 	return true;
 }
 
-// Add new node to the topmost context layer
-bool NodeContextStack::add(ProcedureNode* node)
+// Add new node to the topmost scope layer
+bool NodeScopeStack::add(ProcedureNode* node)
 {
-	// Check that we have a context to add to
+	// Check that we have a scope to add to
 	if (stack_.nItems() == 0)
 	{
-		Messenger::error("No current context in which to add node '%s'.\n", node->name());
+		Messenger::error("No current scope in which to add node '%s'.\n", node->name());
 		return false;
 	}
 
@@ -98,7 +98,7 @@ bool NodeContextStack::add(ProcedureNode* node)
  */
 
 // Return next available generic name for a SelectNode
-const char* NodeContextStack::nextSelectName() const
+const char* NodeScopeStack::nextSelectName() const
 {
 	// Generic names range from A-Z, then AA through to AZ etc. (should we ever need that many)
 	static CharString result;
@@ -110,12 +110,12 @@ const char* NodeContextStack::nextSelectName() const
 }
 
 // Return named node if it is currently in scope, and optionally matches the type given
-ProcedureNode* NodeContextStack::nodeInScope(const char* name, ProcedureNode::NodeType nt) const
+ProcedureNode* NodeScopeStack::nodeInScope(const char* name, ProcedureNode::NodeType nt) const
 {
 	for (int n=0; n<stack_.nItems(); ++n)
 	{
-		RefListIterator<ProcedureNode,bool> contextIterator(stack_.constAt(n));
-		while (ProcedureNode* node = contextIterator.iterate())
+		RefListIterator<ProcedureNode,bool> scopeIterator(stack_.constAt(n));
+		while (ProcedureNode* node = scopeIterator.iterate())
 		{
 			if (DissolveSys::sameString(node->name(), name))
 			{
@@ -130,7 +130,7 @@ ProcedureNode* NodeContextStack::nodeInScope(const char* name, ProcedureNode::No
 }
 
 // Return named node if known, and which matches the (optional) type given
-ProcedureNode* NodeContextStack::node(const char* name, ProcedureNode::NodeType nt) const
+ProcedureNode* NodeScopeStack::node(const char* name, ProcedureNode::NodeType nt) const
 {
 	RefListIterator<ProcedureNode,bool> nodeIterator(nodes_);
 	while (ProcedureNode* node = nodeIterator.iterate())

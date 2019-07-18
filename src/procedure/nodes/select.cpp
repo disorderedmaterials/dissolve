@@ -22,7 +22,7 @@
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/dynamicsite.h"
 #include "procedure/nodes/sequence.h"
-#include "procedure/nodecontextstack.h"
+#include "procedure/nodescopestack.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 #include "classes/sitereference.h"
@@ -326,13 +326,13 @@ bool SelectProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, co
  */
 
 // Read structure from specified LineParser
-bool SelectProcedureNode::read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack)
+bool SelectProcedureNode::read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack)
 {
 	// The current line in the parser may contain a specific label for the sites we are to select, which we set as our node name
-	setName(parser.nArgs() == 2 ? parser.argc(1) : contextStack.nextSelectName());
+	setName(parser.nArgs() == 2 ? parser.argc(1) : scopeStack.nextSelectName());
 
-	// Add ourselves to the context stack
-	if (!contextStack.add(this)) return Messenger::error("Error adding Select node '%s' to context stack.\n", name());
+	// Add ourselves to the scope stack
+	if (!scopeStack.add(this)) return Messenger::error("Error adding Select node '%s' to scope stack.\n", name());
 
 	DynamicSiteProcedureNode* dynamicSiteNode;
 	SelectProcedureNode* selectNode;
@@ -351,14 +351,14 @@ bool SelectProcedureNode::read(LineParser& parser, const CoreData& coreData, Nod
 			case (SelectProcedureNode::DynamicSiteKeyword):
 				dynamicSiteNode = new DynamicSiteProcedureNode(this);
 				dynamicSites_.add(dynamicSiteNode);
-				if (!dynamicSiteNode->read(parser, coreData, contextStack)) return false;
+				if (!dynamicSiteNode->read(parser, coreData, scopeStack)) return false;
 				break;
 			case (SelectProcedureNode::EndSelectKeyword):
 				return true;
 			case (SelectProcedureNode::ExcludeSameMoleculeKeyword):
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
-					SelectProcedureNode* otherNode = dynamic_cast<SelectProcedureNode*>(contextStack.nodeInScope(parser.argc(n), ProcedureNode::SelectNode));
+					SelectProcedureNode* otherNode = dynamic_cast<SelectProcedureNode*>(scopeStack.nodeInScope(parser.argc(n), ProcedureNode::SelectNode));
 					if (!otherNode) return Messenger::error("Unrecognised selection node '%s' given to %s keyword.\n", parser.argc(n), selectNodeKeywords().keyword(nk));
 					if (!addSameMoleculeExclusion(otherNode)) return Messenger::error("Duplicate site given to %s keyword.\n", selectNodeKeywords().keyword(nk));
 				}
@@ -366,7 +366,7 @@ bool SelectProcedureNode::read(LineParser& parser, const CoreData& coreData, Nod
 			case (SelectProcedureNode::ExcludeSameSiteKeyword):
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
-					SelectProcedureNode* otherNode = dynamic_cast<SelectProcedureNode*>(contextStack.nodeInScope(parser.argc(n), ProcedureNode::SelectNode));
+					SelectProcedureNode* otherNode = dynamic_cast<SelectProcedureNode*>(scopeStack.nodeInScope(parser.argc(n), ProcedureNode::SelectNode));
 					if (!otherNode) return Messenger::error("Unrecognised selection node '%s' given to %s keyword.\n", parser.argc(n), selectNodeKeywords().keyword(nk));
 					if (!addSameSiteExclusion(otherNode)) return Messenger::error("Duplicate site given to %s keyword.\n", selectNodeKeywords().keyword(nk));
 				}
@@ -378,10 +378,10 @@ bool SelectProcedureNode::read(LineParser& parser, const CoreData& coreData, Nod
 				// Create and parse a new branch
 				forEachBranch_ = new SequenceProcedureNode("EndForEach");
 				forEachBranch_->setProcedure(procedure());
-				if (!forEachBranch_->read(parser, coreData, contextStack)) return false;
+				if (!forEachBranch_->read(parser, coreData, scopeStack)) return false;
 				break;
 			case (SelectProcedureNode::SameMoleculeAsSiteKeyword):
-				selectNode = dynamic_cast<SelectProcedureNode*>(contextStack.nodeInScope(parser.argc(1), ProcedureNode::SelectNode));
+				selectNode = dynamic_cast<SelectProcedureNode*>(scopeStack.nodeInScope(parser.argc(1), ProcedureNode::SelectNode));
 				if (!selectNode) return Messenger::error("Unrecognised selection node '%s' given to %s keyword.\n", parser.argc(1), selectNodeKeywords().keyword(nk));
 				if (!setSameMolecule(selectNode)) return Messenger::error("Failed to set same molecule specification.\n");
 				break;

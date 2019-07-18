@@ -21,7 +21,7 @@
 
 #include "procedure/nodes/exclude.h"
 #include "procedure/nodes/select.h"
-#include "procedure/nodecontextstack.h"
+#include "procedure/nodescopestack.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
@@ -85,7 +85,7 @@ ProcedureNode::NodeExecutionResult ExcludeProcedureNode::execute(ProcessPool& pr
  */
 
 // Read structure from specified LineParser
-bool ExcludeProcedureNode::read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack)
+bool ExcludeProcedureNode::read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack)
 {
 	// Read until we encounter the EndExclude keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
@@ -103,11 +103,11 @@ bool ExcludeProcedureNode::read(LineParser& parser, const CoreData& coreData, No
 				if (parser.nArgs() != 3) return Messenger::error("The %s keyword expects exactly two arguments.\n", excludeNodeKeywords().keyword(ExcludeProcedureNode::SameSiteKeyword));
 
 				// First Site argument
-				sameSiteA_ = dynamic_cast<SelectProcedureNode*>(contextStack.nodeInScope(parser.argc(1), ProcedureNode::SelectNode));
+				sameSiteA_ = dynamic_cast<SelectProcedureNode*>(scopeStack.nodeInScope(parser.argc(1), ProcedureNode::SelectNode));
 				if (!sameSiteA_) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(1), excludeNodeKeywords().keyword(ExcludeProcedureNode::SameSiteKeyword));
 
 				// Second Site argument
-				sameSiteB_ = dynamic_cast<SelectProcedureNode*>(contextStack.nodeInScope(parser.argc(2), ProcedureNode::SelectNode));
+				sameSiteB_ = dynamic_cast<SelectProcedureNode*>(scopeStack.nodeInScope(parser.argc(2), ProcedureNode::SelectNode));
 				if (!sameSiteB_) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(2), excludeNodeKeywords().keyword(ExcludeProcedureNode::SameSiteKeyword));
 				else 
 				break;
