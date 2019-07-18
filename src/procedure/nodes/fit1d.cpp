@@ -49,24 +49,34 @@ Fit1DProcedureNode::~Fit1DProcedureNode()
 }
 
 /*
+ * Identity
+ */
+
+// Return whether specified usage type is allowed for this node
+bool Fit1DProcedureNode::isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType)
+{
+	return (usageType == ProcedureNode::AnalysisUsageType);
+}
+
+/*
  * Node Keywords
  */
 
-// Node Keywords
-const char* Fit1DNodeKeywords[] = { "Constant", "EndFit1D", "Equation", "Fit", "Method", "Save", "SourceData" };
-
-// Convert string to node keyword
-Fit1DProcedureNode::Fit1DNodeKeyword Fit1DProcedureNode::fit1DNodeKeyword(const char* s)
+// Return enum option info for Fit1DNodeKeyword
+EnumOptions<Fit1DProcedureNode::Fit1DNodeKeyword> Fit1DProcedureNode::fit1DNodeKeywords()
 {
-	for (int nk=0; nk < Fit1DProcedureNode::nFit1DNodeKeywords; ++nk) if (DissolveSys::sameString(s, Fit1DNodeKeywords[nk])) return (Fit1DProcedureNode::Fit1DNodeKeyword) nk;
+	static EnumOptionsList Fit1DNodeTypeKeywords = EnumOptionsList() <<
+		EnumOption(Fit1DProcedureNode::ConstantKeyword,		"Constant") <<
+		EnumOption(Fit1DProcedureNode::EndFit1DKeyword,		"EndFit1D") <<
+		EnumOption(Fit1DProcedureNode::EquationKeyword,		"Equation") <<
+		EnumOption(Fit1DProcedureNode::FitKeyword,		"Fit") <<
+		EnumOption(Fit1DProcedureNode::MethodKeyword,		"Method") <<
+		EnumOption(Fit1DProcedureNode::SaveKeyword,		"Save") <<
+		EnumOption(Fit1DProcedureNode::SourceDataKeyword,	"SourceData");
 
-	return Fit1DProcedureNode::nFit1DNodeKeywords;
-}
+	static EnumOptions<Fit1DProcedureNode::Fit1DNodeKeyword> options("Fit1DNodeKeyword", Fit1DNodeTypeKeywords);
 
-// Convert node keyword to string
-const char* Fit1DProcedureNode::fit1DNodeKeyword(Fit1DProcedureNode::Fit1DNodeKeyword nk)
-{
-	return Fit1DNodeKeywords[nk];
+	return options;
 }
 
 /*
@@ -247,7 +257,7 @@ bool Fit1DProcedureNode::read(LineParser& parser, const CoreData& coreData, Node
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
 		// Is the first argument on the current line a valid control keyword?
-		Fit1DNodeKeyword nk = fit1DNodeKeyword(parser.argc(0));
+		Fit1DNodeKeyword nk = fit1DNodeKeywords().enumeration(parser.argc(0));
 		switch (nk)
 		{
 			case (Fit1DProcedureNode::ConstantKeyword):
@@ -270,7 +280,7 @@ bool Fit1DProcedureNode::read(LineParser& parser, const CoreData& coreData, Node
 			case (Fit1DProcedureNode::SaveKeyword):
 				saveData_ = parser.argb(1);
 				break;
-			case (Fit1DProcedureNode::SourceData):
+			case (Fit1DProcedureNode::SourceDataKeyword):
 				if (!dataNode_.read(parser, 1, coreData, contextStack)) return Messenger::error("Couldn't set source data for node.\n");
 				break;
 			case (Fit1DProcedureNode::nFit1DNodeKeywords):

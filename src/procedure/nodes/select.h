@@ -48,15 +48,21 @@ class SelectProcedureNode : public ProcedureNode
 
 
 	/*
+	 * Identity
+	 */
+	public:
+	// Return whether specified usage type is allowed for this node
+	bool isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType);
+
+
+	/*
 	 * Node Keywords
 	 */
 	public:
 	// Node Keywords
 	enum SelectNodeKeyword { DynamicSiteKeyword, EndSelectKeyword, ExcludeSameMoleculeKeyword, ExcludeSameSiteKeyword, ForEachKeyword, SameMoleculeAsSiteKeyword, SiteKeyword, nSelectNodeKeywords };
-	// Convert string to control keyword
-	static SelectNodeKeyword selectNodeKeyword(const char* s);
-	// Convert control keyword to string
-	static const char* selectNodeKeyword(SelectNodeKeyword nk);
+	// Return enum option info for SelectNodeKeyword
+	static EnumOptions<SelectNodeKeyword> selectNodeKeywords();
 
 
 	/*

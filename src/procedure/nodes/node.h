@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PROCEDURENODE_NODE_H
-#define DISSOLVE_PROCEDURENODE_NODE_H
+#ifndef DISSOLVE_PROCEDURENODE_H
+#define DISSOLVE_PROCEDURENODE_H
 
 #include "base/charstring.h"
 #include "base/enumoptions.h"
@@ -44,6 +44,8 @@ class ProcedureNode : public ListItem<ProcedureNode>
 	enum NodeType { CalculateNode, Collect1DNode, Collect2DNode, Collect3DNode, DynamicSiteNode, ExcludeNode, Fit1DNode, Process1DNode, Process2DNode, Process3DNode, SelectNode, SequenceNode, nNodeTypes };
 	// Return enum option info for NodeType
 	static EnumOptions<NodeType> nodeTypes();
+	// Node Usage Type
+	enum NodeUsageType { AnalysisUsageType = 1, GenerationUsageType = 2 };
 	// Constructor
 	ProcedureNode(NodeType nodeType);
 	// Destructor
@@ -51,7 +53,7 @@ class ProcedureNode : public ListItem<ProcedureNode>
 
 
 	/*
-	 * Data
+	 * Identity
 	 */
 	private:
 	// Node type
@@ -66,6 +68,8 @@ class ProcedureNode : public ListItem<ProcedureNode>
 	public:
 	// Return node type
 	NodeType type() const;
+	// Return whether specified usage type is allowed for this node
+	virtual bool isUsageTypeAllowed(NodeUsageType usageType) = 0;
 	// Set node name (and nice name)
 	void setName(const char* name);
 	// Return node name

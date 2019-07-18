@@ -39,24 +39,29 @@ ExcludeProcedureNode::~ExcludeProcedureNode()
 }
 
 /*
+ * Identity
+ */
+
+// Return whether specified usage type is allowed for this node
+bool ExcludeProcedureNode::isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType)
+{
+	return (usageType == ProcedureNode::AnalysisUsageType);
+}
+
+/*
  * Node Keywords
  */
 
-// Node Keywords
-const char* ExcludeNodeKeywords[] = { "EndExclude", "SameSite" };
-
-// Convert string to node keyword
-ExcludeProcedureNode::ExcludeNodeKeyword ExcludeProcedureNode::excludeNodeKeyword(const char* s)
+// Return enum option info for ExcludeNodeKeyword
+EnumOptions<ExcludeProcedureNode::ExcludeNodeKeyword> ExcludeProcedureNode::excludeNodeKeywords()
 {
-	for (int nk=0; nk < ExcludeProcedureNode::nExcludeNodeKeywords; ++nk) if (DissolveSys::sameString(s, ExcludeNodeKeywords[nk])) return (ExcludeProcedureNode::ExcludeNodeKeyword) nk;
+	static EnumOptionsList ExcludeNodeTypeKeywords = EnumOptionsList() <<
+		EnumOption(ExcludeProcedureNode::EndExcludeKeyword,		"EndExclude") <<
+		EnumOption(ExcludeProcedureNode::SameSiteKeyword,		"SameSite");
 
-	return ExcludeProcedureNode::nExcludeNodeKeywords;
-}
+	static EnumOptions<ExcludeProcedureNode::ExcludeNodeKeyword> options("ExcludeNodeKeyword", ExcludeNodeTypeKeywords);
 
-// Convert node keyword to string
-const char* ExcludeProcedureNode::excludeNodeKeyword(ExcludeProcedureNode::ExcludeNodeKeyword nk)
-{
-	return ExcludeNodeKeywords[nk];
+	return options;
 }
 
 /*
@@ -89,21 +94,21 @@ bool ExcludeProcedureNode::read(LineParser& parser, const CoreData& coreData, No
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
 		// Is the first argument on the current line a valid control keyword?
-		ExcludeNodeKeyword nk = excludeNodeKeyword(parser.argc(0));
+		ExcludeNodeKeyword nk = excludeNodeKeywords().enumeration(parser.argc(0));
 		switch (nk)
 		{
 			case (ExcludeProcedureNode::EndExcludeKeyword):
 				return true;
 			case (ExcludeProcedureNode::SameSiteKeyword):
-				if (parser.nArgs() != 3) return Messenger::error("The %s keyword expects exactly two arguments.\n", excludeNodeKeyword(ExcludeProcedureNode::SameSiteKeyword));
+				if (parser.nArgs() != 3) return Messenger::error("The %s keyword expects exactly two arguments.\n", excludeNodeKeywords().keyword(ExcludeProcedureNode::SameSiteKeyword));
 
 				// First Site argument
 				sameSiteA_ = dynamic_cast<SelectProcedureNode*>(contextStack.nodeInScope(parser.argc(1), ProcedureNode::SelectNode));
-				if (!sameSiteA_) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(1), excludeNodeKeyword(ExcludeProcedureNode::SameSiteKeyword));
+				if (!sameSiteA_) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(1), excludeNodeKeywords().keyword(ExcludeProcedureNode::SameSiteKeyword));
 
 				// Second Site argument
 				sameSiteB_ = dynamic_cast<SelectProcedureNode*>(contextStack.nodeInScope(parser.argc(2), ProcedureNode::SelectNode));
-				if (!sameSiteB_) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(2), excludeNodeKeyword(ExcludeProcedureNode::SameSiteKeyword));
+				if (!sameSiteB_) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(2), excludeNodeKeywords().keyword(ExcludeProcedureNode::SameSiteKeyword));
 				else 
 				break;
 			case (ExcludeProcedureNode::nExcludeNodeKeywords):

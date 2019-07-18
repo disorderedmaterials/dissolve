@@ -47,24 +47,37 @@ Process3DProcedureNode::~Process3DProcedureNode()
 }
 
 /*
+ * Identity
+ */
+
+// Return whether specified usage type is allowed for this node
+bool Process3DProcedureNode::isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType)
+{
+	return (usageType == ProcedureNode::AnalysisUsageType);
+}
+
+/*
  * Node Keywords
  */
 
-// Node Keywords
-const char* Process3DNodeKeywords[] = { "EndProcess3D", "Factor", "LabelValue", "LabelX", "LabelY", "LabelZ", "NSites", "NumberDensity", "Save", "SourceData" };
-
-// Convert string to node keyword
-Process3DProcedureNode::Process3DNodeKeyword Process3DProcedureNode::process3DNodeKeyword(const char* s)
+// Return enum option info for Process3DNodeKeyword
+EnumOptions<Process3DProcedureNode::Process3DNodeKeyword> Process3DProcedureNode::process3DNodeKeywords()
 {
-	for (int nk=0; nk < Process3DProcedureNode::nProcess3DNodeKeywords; ++nk) if (DissolveSys::sameString(s, Process3DNodeKeywords[nk])) return (Process3DProcedureNode::Process3DNodeKeyword) nk;
+	static EnumOptionsList Process3DNodeTypeKeywords = EnumOptionsList() <<
+		EnumOption(Process3DProcedureNode::EndProcess3DKeyword,			"EndProcess3D") <<
+		EnumOption(Process3DProcedureNode::FactorKeyword,			"Factor") <<
+		EnumOption(Process3DProcedureNode::LabelValueKeyword,			"LabelValue") <<
+		EnumOption(Process3DProcedureNode::LabelXKeyword,			"LabelX") <<
+		EnumOption(Process3DProcedureNode::LabelYKeyword,			"LabelY") <<
+		EnumOption(Process3DProcedureNode::LabelZKeyword,			"LabelZ") <<
+		EnumOption(Process3DProcedureNode::NSitesKeyword,			"NSites") <<
+		EnumOption(Process3DProcedureNode::NumberDensityKeyword,		"NumberDensity") <<
+		EnumOption(Process3DProcedureNode::SaveKeyword,				"Save") <<
+		EnumOption(Process3DProcedureNode::SourceDataKeyword,			"SourceData");
 
-	return Process3DProcedureNode::nProcess3DNodeKeywords;
-}
+	static EnumOptions<Process3DProcedureNode::Process3DNodeKeyword> options("Process3DNodeKeyword", Process3DNodeTypeKeywords);
 
-// Convert node keyword to string
-const char* Process3DProcedureNode::process3DNodeKeyword(Process3DProcedureNode::Process3DNodeKeyword nk)
-{
-	return Process3DNodeKeywords[nk];
+	return options;
 }
 
 /*
@@ -239,7 +252,7 @@ bool Process3DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
 		// Is the first argument on the current line a valid control keyword?
-		Process3DNodeKeyword nk = process3DNodeKeyword(parser.argc(0));
+		Process3DNodeKeyword nk = process3DNodeKeywords().enumeration(parser.argc(0));
 		switch (nk)
 		{
 			case (Process3DProcedureNode::EndProcess3DKeyword):
@@ -268,7 +281,7 @@ bool Process3DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
 					SelectProcedureNode* selectNode = dynamic_cast<SelectProcedureNode*>(contextStack.node(parser.argc(n), ProcedureNode::SelectNode));
-					if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(n), process3DNodeKeyword(Process3DProcedureNode::NSitesKeyword));
+					if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(n), process3DNodeKeywords().keyword(Process3DProcedureNode::NSitesKeyword));
 					sitePopulationNormalisers_.add(selectNode, 1.0);
 				}
 				break;
@@ -280,7 +293,7 @@ bool Process3DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
 					SelectProcedureNode* selectNode = dynamic_cast<SelectProcedureNode*>(contextStack.node(parser.argc(n), ProcedureNode::SelectNode));
-					if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(n), process3DNodeKeyword(Process3DProcedureNode::NumberDensityKeyword));
+					if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(n), process3DNodeKeywords().keyword(Process3DProcedureNode::NumberDensityKeyword));
 					numberDensityNormalisers_.add(selectNode, 1.0);
 				}
 				break;
@@ -299,7 +312,7 @@ bool Process3DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 	}
 
 	// Check that a valid collectNode_ has been set
-	if (collectNode_.isNull()) return Messenger::error("A valid Collect3D node must be set in the Process3D node '%s' using the '%s' keyword.\n", name(), process3DNodeKeyword(Process3DProcedureNode::SourceDataKeyword));
+	if (collectNode_.isNull()) return Messenger::error("A valid Collect3D node must be set in the Process3D node '%s' using the '%s' keyword.\n", name(), process3DNodeKeywords().keyword(Process3DProcedureNode::SourceDataKeyword));
 
 	return true;
 }

@@ -80,24 +80,36 @@ Collect3DProcedureNode::~Collect3DProcedureNode()
 }
 
 /*
+ * Identity
+ */
+
+// Return whether specified usage type is allowed for this node
+bool Collect3DProcedureNode::isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType)
+{
+	return (usageType == ProcedureNode::AnalysisUsageType);
+}
+
+/*
  * Node Keywords
  */
 
-// Node Keywords
-const char* Collect3DNodeKeywords[] = { "EndCollect3D", "QuantityXYZ", "QuantityX", "QuantityY", "QuantityZ", "RangeX", "RangeY", "RangeZ", "SubCollect" };
-
-// Convert string to node keyword
-Collect3DProcedureNode::Collect3DNodeKeyword Collect3DProcedureNode::collect3DNodeKeyword(const char* s)
+// Return enum option info for Collect3DNodeKeyword
+EnumOptions<Collect3DProcedureNode::Collect3DNodeKeyword> Collect3DProcedureNode::collect3DNodeKeywords()
 {
-	for (int nk=0; nk < Collect3DProcedureNode::nCollect3DNodeKeywords; ++nk) if (DissolveSys::sameString(s, Collect3DNodeKeywords[nk])) return (Collect3DProcedureNode::Collect3DNodeKeyword) nk;
+	static EnumOptionsList Collect3DNodeTypeKeywords = EnumOptionsList() <<
+		EnumOption(Collect3DProcedureNode::EndCollect3DKeyword,		"EndCollect3D") <<
+		EnumOption(Collect3DProcedureNode::QuantityXYZKeyword,		"QuantityXYZ") <<
+		EnumOption(Collect3DProcedureNode::QuantityXKeyword,		"QuantityX") <<
+		EnumOption(Collect3DProcedureNode::QuantityYKeyword,		"QuantityY") <<
+		EnumOption(Collect3DProcedureNode::QuantityZKeyword,		"QuantityZ") <<
+		EnumOption(Collect3DProcedureNode::RangeXKeyword,		"RangeX") <<
+		EnumOption(Collect3DProcedureNode::RangeYKeyword,		"RangeY") <<
+		EnumOption(Collect3DProcedureNode::RangeZKeyword,		"RangeZ") <<
+		EnumOption(Collect3DProcedureNode::SubCollectKeyword,		"SubCollect");
 
-	return Collect3DProcedureNode::nCollect3DNodeKeywords;
-}
+	static EnumOptions<Collect3DProcedureNode::Collect3DNodeKeyword> options("Collect3DNodeKeyword", Collect3DNodeTypeKeywords);
 
-// Convert node keyword to string
-const char* Collect3DProcedureNode::collect3DNodeKeyword(Collect3DProcedureNode::Collect3DNodeKeyword nk)
-{
-	return Collect3DNodeKeywords[nk];
+	return options;
 }
 
 /*
@@ -295,7 +307,7 @@ bool Collect3DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
 		// Is the first argument on the current line a valid control keyword?
-		Collect3DNodeKeyword nk = collect3DNodeKeyword(parser.argc(0));
+		Collect3DNodeKeyword nk = collect3DNodeKeywords().enumeration(parser.argc(0));
 		switch (nk)
 		{
 			case (Collect3DProcedureNode::EndCollect3DKeyword):
@@ -305,46 +317,46 @@ bool Collect3DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 
 				// Determine observable from supplied argument
 				xyzObservable_ = dynamic_cast<CalculateProcedureNode*>(contextStack.nodeInScope(parser.argc(1), ProcedureNode::CalculateNode));
-				if (!xyzObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeyword(nk));
+				if (!xyzObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeywords().keyword(nk));
 				break;
 			case (Collect3DProcedureNode::QuantityXKeyword):
 				if (xyzObservable_) return Messenger::error("Can't combine QuantityXYZ with one-dimensional Quantity commands.\n");
 
 				// Determine observable from supplied argument
 				xObservable_ = dynamic_cast<CalculateProcedureNode*>(contextStack.nodeInScope(parser.argc(1), ProcedureNode::CalculateNode));
-				if (!xObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeyword(nk));
+				if (!xObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeywords().keyword(nk));
 				break;
 			case (Collect3DProcedureNode::QuantityYKeyword):
 				if (xyzObservable_) return Messenger::error("Can't combine QuantityXYZ with one-dimensional Quantity commands.\n");
 
 				// Determine observable from supplied argument
 				yObservable_ = dynamic_cast<CalculateProcedureNode*>(contextStack.nodeInScope(parser.argc(1), ProcedureNode::CalculateNode));
-				if (!yObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeyword(nk));
+				if (!yObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeywords().keyword(nk));
 				break;
 			case (Collect3DProcedureNode::QuantityZKeyword):
 				if (xyzObservable_) return Messenger::error("Can't combine QuantityXYZ with one-dimensional Quantity commands.\n");
 
 				// Determine observable from supplied argument
 				zObservable_ = dynamic_cast<CalculateProcedureNode*>(contextStack.nodeInScope(parser.argc(1), ProcedureNode::CalculateNode));
-				if (!zObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeyword(nk));
+				if (!zObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeywords().keyword(nk));
 				break;
 			case (Collect3DProcedureNode::RangeXKeyword):
 				// Check that we have the right number of arguments first...
-				if (parser.nArgs() != 4) return Messenger::error("Collect3D node keyword '%s' expects exactly three arguments (%i given).\n", collect3DNodeKeyword(nk), parser.nArgs() - 1);
+				if (parser.nArgs() != 4) return Messenger::error("Collect3D node keyword '%s' expects exactly three arguments (%i given).\n", collect3DNodeKeywords().keyword(nk), parser.nArgs() - 1);
 				xMinimum_ = parser.argd(1);
 				xMaximum_ = parser.argd(2);
 				xBinWidth_ = parser.argd(3);
 				break;
 			case (Collect3DProcedureNode::RangeYKeyword):
 				// Check that we have the right number of arguments first...
-				if (parser.nArgs() != 4) return Messenger::error("Collect3D node keyword '%s' expects exactly three arguments (%i given).\n", collect3DNodeKeyword(nk), parser.nArgs() - 1);
+				if (parser.nArgs() != 4) return Messenger::error("Collect3D node keyword '%s' expects exactly three arguments (%i given).\n", collect3DNodeKeywords().keyword(nk), parser.nArgs() - 1);
 				yMinimum_ = parser.argd(1);
 				yMaximum_ = parser.argd(2);
 				yBinWidth_ = parser.argd(3);
 				break;
 			case (Collect3DProcedureNode::RangeZKeyword):
 				// Check that we have the right number of arguments first...
-				if (parser.nArgs() != 4) return Messenger::error("Collect3D node keyword '%s' expects exactly three arguments (%i given).\n", collect3DNodeKeyword(nk), parser.nArgs() - 1);
+				if (parser.nArgs() != 4) return Messenger::error("Collect3D node keyword '%s' expects exactly three arguments (%i given).\n", collect3DNodeKeywords().keyword(nk), parser.nArgs() - 1);
 				zMinimum_ = parser.argd(1);
 				zMaximum_ = parser.argd(2);
 				zBinWidth_ = parser.argd(3);

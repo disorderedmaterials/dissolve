@@ -45,15 +45,21 @@ class Collect3DProcedureNode : public ProcedureNode
 
 
 	/*
+	 * Identity
+	 */
+	public:
+	// Return whether specified usage type is allowed for this node
+	bool isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType);
+
+
+	/*
 	 * Node Keywords
 	 */
 	public:
 	// Node Keywords
 	enum Collect3DNodeKeyword { EndCollect3DKeyword, QuantityXYZKeyword, QuantityXKeyword, QuantityYKeyword, QuantityZKeyword, RangeXKeyword, RangeYKeyword, RangeZKeyword, SubCollectKeyword, nCollect3DNodeKeywords };
-	// Convert string to control keyword
-	static Collect3DNodeKeyword collect3DNodeKeyword(const char* s);
-	// Convert control keyword to string
-	static const char* collect3DNodeKeyword(Collect3DNodeKeyword nk);
+	// Return enum option info for Collect3DNodeKeyword
+	static EnumOptions<Collect3DNodeKeyword> collect3DNodeKeywords();
 
 
 	/*

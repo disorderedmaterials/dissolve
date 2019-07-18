@@ -46,15 +46,21 @@ class Process3DProcedureNode : public ProcedureNode
 
 
 	/*
+	 * Identity
+	 */
+	public:
+	// Return whether specified usage type is allowed for this node
+	bool isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType);
+
+
+	/*
 	 * Node Keywords
 	 */
 	public:
 	// Node Keywords
 	enum Process3DNodeKeyword { EndProcess3DKeyword, FactorKeyword, LabelValueKeyword, LabelXKeyword, LabelYKeyword, LabelZKeyword, NSitesKeyword, NumberDensityKeyword, SaveKeyword, SourceDataKeyword, nProcess3DNodeKeywords };
-	// Convert string to control keyword
-	static Process3DNodeKeyword process3DNodeKeyword(const char* s);
-	// Convert control keyword to string
-	static const char* process3DNodeKeyword(Process3DNodeKeyword nk);
+	// Return enum option info for Process3DNodeKeyword
+	static EnumOptions<Process3DNodeKeyword> process3DNodeKeywords();
 
 
 	/*

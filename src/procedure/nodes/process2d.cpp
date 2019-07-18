@@ -50,24 +50,37 @@ Process2DProcedureNode::~Process2DProcedureNode()
 }
 
 /*
+ * Identity
+ */
+
+// Return whether specified usage type is allowed for this node
+bool Process2DProcedureNode::isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType)
+{
+	return (usageType == ProcedureNode::AnalysisUsageType);
+}
+
+/*
  * Node Keywords
  */
 
-// Node Keywords
-const char* Process2DNodeKeywords[] = { "EndProcess2D", "Factor", "LabelValue", "LabelX", "LabelY", "NormaliseToOne", "NSites", "NumberDensity", "Save", "SourceData" };
-
-// Convert string to node keyword
-Process2DProcedureNode::Process2DNodeKeyword Process2DProcedureNode::process2DNodeKeyword(const char* s)
+// Return enum option info for Process2DNodeKeyword
+EnumOptions<Process2DProcedureNode::Process2DNodeKeyword> Process2DProcedureNode::process2DNodeKeywords()
 {
-	for (int nk=0; nk < Process2DProcedureNode::nProcess2DNodeKeywords; ++nk) if (DissolveSys::sameString(s, Process2DNodeKeywords[nk])) return (Process2DProcedureNode::Process2DNodeKeyword) nk;
+	static EnumOptionsList Process2DNodeTypeKeywords = EnumOptionsList() <<
+		EnumOption(Process2DProcedureNode::EndProcess2DKeyword,			"EndProcess2D") <<
+		EnumOption(Process2DProcedureNode::FactorKeyword,			"Factor") <<
+		EnumOption(Process2DProcedureNode::LabelValueKeyword,			"LabelValue") <<
+		EnumOption(Process2DProcedureNode::LabelXKeyword,			"LabelX") <<
+		EnumOption(Process2DProcedureNode::LabelYKeyword,			"LabelY") <<
+		EnumOption(Process2DProcedureNode::NormaliseToOneKeyword,		"NormaliseToOne") <<
+		EnumOption(Process2DProcedureNode::NSitesKeyword,			"NSites") <<
+		EnumOption(Process2DProcedureNode::NumberDensityKeyword,		"NumberDensity") <<
+		EnumOption(Process2DProcedureNode::SaveKeyword,				"Save") <<
+		EnumOption(Process2DProcedureNode::SourceDataKeyword,			"SourceData");
 
-	return Process2DProcedureNode::nProcess2DNodeKeywords;
-}
+	static EnumOptions<Process2DProcedureNode::Process2DNodeKeyword> options("Process2DNodeKeyword", Process2DNodeTypeKeywords);
 
-// Convert node keyword to string
-const char* Process2DProcedureNode::process2DNodeKeyword(Process2DProcedureNode::Process2DNodeKeyword nk)
-{
-	return Process2DNodeKeywords[nk];
+	return options;
 }
 
 /*
@@ -250,7 +263,7 @@ bool Process2DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
 		// Is the first argument on the current line a valid control keyword?
-		Process2DNodeKeyword nk = process2DNodeKeyword(parser.argc(0));
+		Process2DNodeKeyword nk = process2DNodeKeywords().enumeration(parser.argc(0));
 		switch (nk)
 		{
 			case (Process2DProcedureNode::EndProcess2DKeyword):
@@ -279,7 +292,7 @@ bool Process2DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
 					SelectProcedureNode* selectNode = dynamic_cast<SelectProcedureNode*>(contextStack.node(parser.argc(n), ProcedureNode::SelectNode));
-					if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(n), process2DNodeKeyword(Process2DProcedureNode::NSitesKeyword));
+					if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(n), process2DNodeKeywords().keyword(Process2DProcedureNode::NSitesKeyword));
 					sitePopulationNormalisers_.add(selectNode, 1.0);
 				}
 				break;
@@ -291,7 +304,7 @@ bool Process2DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
 					SelectProcedureNode* selectNode = dynamic_cast<SelectProcedureNode*>(contextStack.node(parser.argc(n), ProcedureNode::SelectNode));
-					if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(n), process2DNodeKeyword(Process2DProcedureNode::NumberDensityKeyword));
+					if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(n), process2DNodeKeywords().keyword(Process2DProcedureNode::NumberDensityKeyword));
 					numberDensityNormalisers_.add(selectNode, 1.0);
 				}
 				break;
@@ -310,7 +323,7 @@ bool Process2DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 	}
 
 	// Check that a valid collectNode_ has been set
-	if (collectNode_.isNull()) return Messenger::error("A valid Collect2D node must be set in the Process2D node '%s' using the '%s' keyword.\n", name(), process2DNodeKeyword(Process2DProcedureNode::SourceDataKeyword));
+	if (collectNode_.isNull()) return Messenger::error("A valid Collect2D node must be set in the Process2D node '%s' using the '%s' keyword.\n", name(), process2DNodeKeywords().keyword(Process2DProcedureNode::SourceDataKeyword));
 
 	return true;
 }

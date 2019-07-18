@@ -41,15 +41,21 @@ class ExcludeProcedureNode : public ProcedureNode
 
 
 	/*
+	 * Identity
+	 */
+	public:
+	// Return whether specified usage type is allowed for this node
+	bool isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType);
+
+
+	/*
 	 * Node Keywords
 	 */
 	public:
 	// Node Keywords
 	enum ExcludeNodeKeyword { EndExcludeKeyword, SameSiteKeyword, nExcludeNodeKeywords };
-	// Convert string to control keyword
-	static ExcludeNodeKeyword excludeNodeKeyword(const char* s);
-	// Convert control keyword to string
-	static const char* excludeNodeKeyword(ExcludeNodeKeyword nk);
+	// Return enum option info for ExcludeNodeKeyword
+	static EnumOptions<ExcludeNodeKeyword> excludeNodeKeywords();
 
 
 	/*

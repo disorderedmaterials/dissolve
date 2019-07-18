@@ -44,15 +44,21 @@ class Collect2DProcedureNode : public ProcedureNode
 
 
 	/*
+	 * Identity
+	 */
+	public:
+	// Return whether specified usage type is allowed for this node
+	bool isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType);
+
+
+	/*
 	 * Node Keywords
 	 */
 	public:
 	// Node Keywords
 	enum Collect2DNodeKeyword { EndCollect2DKeyword, QuantityXKeyword, QuantityYKeyword, RangeXKeyword, RangeYKeyword, SubCollectKeyword, nCollect2DNodeKeywords };
-	// Convert string to control keyword
-	static Collect2DNodeKeyword collect2DNodeKeyword(const char* s);
-	// Convert control keyword to string
-	static const char* collect2DNodeKeyword(Collect2DNodeKeyword nk);
+	// Return enum option info for Collect2DNodeKeyword
+	static EnumOptions<Collect2DNodeKeyword> collect2DNodeKeywords();
 
 
 	/*

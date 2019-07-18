@@ -45,15 +45,21 @@ class DynamicSiteProcedureNode : public ProcedureNode
 
 
 	/*
+	 * Identity
+	 */
+	public:
+	// Return whether specified usage type is allowed for this node
+	bool isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType);
+
+
+	/*
 	 * Node Keywords
 	 */
 	public:
 	// Node Keywords
 	enum DynamicSiteNodeKeyword { AtomTypeKeyword, ElementKeyword, EndDynamicSiteKeyword, nDynamicSiteNodeKeywords };
-	// Convert string to control keyword
-	static DynamicSiteNodeKeyword dynamicSiteNodeKeyword(const char* s);
-	// Convert control keyword to string
-	static const char* dynamicSiteNodeKeyword(DynamicSiteNodeKeyword nk);
+	// Return enum option info for DynamicSiteNodeKeyword
+	static EnumOptions<DynamicSiteNodeKeyword> dynamicSiteNodeKeywords();
 
 
 	/*

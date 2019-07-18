@@ -45,24 +45,31 @@ CalculateProcedureNode::~CalculateProcedureNode()
 }
 
 /*
+ * Identity
+ */
+
+// Return whether specified usage type is allowed for this node
+bool CalculateProcedureNode::isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType)
+{
+	return (usageType == ProcedureNode::AnalysisUsageType);
+}
+
+/*
  * Node Keywords
  */
 
-// Node Keywords
-const char* CalculateNodeKeywords[] = { "Angle", "Distance", "EndCalculate", "Vector" };
-
-// Convert string to node keyword
-CalculateProcedureNode::CalculateNodeKeyword CalculateProcedureNode::calculateNodeKeyword(const char* s)
+// Return enum option info for CalculateNodeKeyword
+EnumOptions<CalculateProcedureNode::CalculateNodeKeyword> CalculateProcedureNode::calculateNodeKeywords()
 {
-	for (int nk=0; nk < CalculateProcedureNode::nCalculateNodeKeywords; ++nk) if (DissolveSys::sameString(s, CalculateNodeKeywords[nk])) return (CalculateProcedureNode::CalculateNodeKeyword) nk;
+	static EnumOptionsList CalculateNodeTypeKeywords = EnumOptionsList() <<
+		EnumOption(CalculateProcedureNode::AngleKeyword,		"Angle") <<
+		EnumOption(CalculateProcedureNode::DistanceKeyword,		"Distance") <<
+		EnumOption(CalculateProcedureNode::EndCalculateKeyword,		"EndCalculate") <<
+		EnumOption(CalculateProcedureNode::VectorKeyword,		"Vector");
 
-	return CalculateProcedureNode::nCalculateNodeKeywords;
-}
+	static EnumOptions<CalculateProcedureNode::CalculateNodeKeyword> options("CalculateNodeKeyword", CalculateNodeTypeKeywords);
 
-// Convert node keyword to string
-const char* CalculateProcedureNode::calculateNodeKeyword(CalculateProcedureNode::CalculateNodeKeyword nk)
-{
-	return CalculateNodeKeywords[nk];
+	return options;
 }
 
 /*
@@ -197,38 +204,38 @@ bool CalculateProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
 		// Is the first argument on the current line a valid control keyword?
-		CalculateNodeKeyword nk = calculateNodeKeyword(parser.argc(0));
+		CalculateNodeKeyword nk = calculateNodeKeywords().enumeration(parser.argc(0));
 		switch (nk)
 		{
 			case (CalculateProcedureNode::AngleKeyword):
-				if (parser.nArgs() != 4) return Messenger::error("The %s keyword expects exactly three arguments.\n", calculateNodeKeyword(CalculateProcedureNode::AngleKeyword));
+				if (parser.nArgs() != 4) return Messenger::error("The %s keyword expects exactly three arguments.\n", calculateNodeKeywords().keyword(CalculateProcedureNode::AngleKeyword));
 
 				observable_ = CalculateProcedureNode::AngleObservable;
 
 				// First Site argument (point 'i' in angle i-j-k)
 				sites_[0] = dynamic_cast<SelectProcedureNode*>(contextStack.nodeInScope(parser.argc(1), ProcedureNode::SelectNode));
-				if (!sites_[0]) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(1), calculateNodeKeyword(CalculateProcedureNode::AngleKeyword));
+				if (!sites_[0]) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(1), calculateNodeKeywords().keyword(CalculateProcedureNode::AngleKeyword));
 
 				// Second Site argument (point 'j' in angle i-j-k)
 				sites_[1] = dynamic_cast<SelectProcedureNode*>(contextStack.nodeInScope(parser.argc(2), ProcedureNode::SelectNode));
-				if (!sites_[1]) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(2), calculateNodeKeyword(CalculateProcedureNode::AngleKeyword));
+				if (!sites_[1]) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(2), calculateNodeKeywords().keyword(CalculateProcedureNode::AngleKeyword));
 
 				// Third Site argument (point 'k' in angle i-j-k)
 				sites_[2] = dynamic_cast<SelectProcedureNode*>(contextStack.nodeInScope(parser.argc(3), ProcedureNode::SelectNode));
-				if (!sites_[2]) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(3), calculateNodeKeyword(CalculateProcedureNode::AngleKeyword));
+				if (!sites_[2]) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(3), calculateNodeKeywords().keyword(CalculateProcedureNode::AngleKeyword));
 				break;
 			case (CalculateProcedureNode::DistanceKeyword):
-				if (parser.nArgs() != 3) return Messenger::error("The %s keyword expects exactly two arguments.\n", calculateNodeKeyword(CalculateProcedureNode::DistanceKeyword));
+				if (parser.nArgs() != 3) return Messenger::error("The %s keyword expects exactly two arguments.\n", calculateNodeKeywords().keyword(CalculateProcedureNode::DistanceKeyword));
 
 				observable_ = CalculateProcedureNode::DistanceObservable;
 
 				// First Site argument (point 'i' in distance i-j)
 				sites_[0] = dynamic_cast<SelectProcedureNode*>(contextStack.nodeInScope(parser.argc(1), ProcedureNode::SelectNode));
-				if (!sites_[0]) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(1), calculateNodeKeyword(CalculateProcedureNode::DistanceKeyword));
+				if (!sites_[0]) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(1), calculateNodeKeywords().keyword(CalculateProcedureNode::DistanceKeyword));
 
 				// Second Site argument (point 'j' in distance i-j)
 				sites_[1] = dynamic_cast<SelectProcedureNode*>(contextStack.nodeInScope(parser.argc(2), ProcedureNode::SelectNode));
-				if (!sites_[1]) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(2), calculateNodeKeyword(CalculateProcedureNode::DistanceKeyword));
+				if (!sites_[1]) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(2), calculateNodeKeywords().keyword(CalculateProcedureNode::DistanceKeyword));
 				else 
 				break;
 			case (CalculateProcedureNode::EndCalculateKeyword):

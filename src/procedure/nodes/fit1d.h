@@ -47,15 +47,21 @@ class Fit1DProcedureNode : public ProcedureNode
 
 
 	/*
+	 * Identity
+	 */
+	public:
+	// Return whether specified usage type is allowed for this node
+	bool isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType);
+
+
+	/*
 	 * Node Keywords
 	 */
 	public:
 	// Node Keywords
-	enum Fit1DNodeKeyword { ConstantKeyword, EndFit1DKeyword, EquationKeyword, FitKeyword, MethodKeyword, SaveKeyword, SourceData, nFit1DNodeKeywords };
-	// Convert string to control keyword
-	static Fit1DNodeKeyword fit1DNodeKeyword(const char* s);
-	// Convert control keyword to string
-	static const char* fit1DNodeKeyword(Fit1DNodeKeyword nk);
+	enum Fit1DNodeKeyword { ConstantKeyword, EndFit1DKeyword, EquationKeyword, FitKeyword, MethodKeyword, SaveKeyword, SourceDataKeyword, nFit1DNodeKeywords };
+	// Return enum option info for Fit1DNodeKeyword
+	static EnumOptions<Fit1DNodeKeyword> fit1DNodeKeywords();
 
 
 	/*

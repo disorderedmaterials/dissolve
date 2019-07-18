@@ -40,15 +40,21 @@ class SequenceProcedureNode : public ProcedureNode
 
 
 	/*
+	 * Identity
+	 */
+	public:
+	// Return whether specified usage type is allowed for this node
+	bool isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType);
+
+
+	/*
 	 * Node Keywords
 	 */
 	public:
 	// Node Keywords
 	enum SequenceNodeKeyword { nSequenceNodeKeywords };
-	// Convert string to node keyword
-	static SequenceNodeKeyword sequenceNodeKeyword(const char* s);
-	// Convert node keyword to string
-	static const char* sequenceNodeKeyword(SequenceNodeKeyword nk);
+	// Return enum option info for SequenceNodeKeyword
+	static EnumOptions<SequenceNodeKeyword> sequenceNodeKeywords();
 
 
 	/*

@@ -58,15 +58,21 @@ class CalculateProcedureNode : public ProcedureNode
 
 
 	/*
+	 * Identity
+	 */
+	public:
+	// Return whether specified usage type is allowed for this node
+	bool isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType);
+
+
+	/*
 	 * Node Keywords
 	 */
 	public:
 	// Node Keywords
 	enum CalculateNodeKeyword { AngleKeyword, DistanceKeyword, EndCalculateKeyword, VectorKeyword, nCalculateNodeKeywords };
-	// Convert string to control keyword
-	static CalculateNodeKeyword calculateNodeKeyword(const char* s);
-	// Convert control keyword to string
-	static const char* calculateNodeKeyword(CalculateNodeKeyword nk);
+	// Return enum option info for CalculateNodeKeyword
+	static EnumOptions<CalculateNodeKeyword> calculateNodeKeywords();
 
 
 	/*

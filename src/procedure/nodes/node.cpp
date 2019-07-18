@@ -64,7 +64,7 @@ ProcedureNode::~ProcedureNode()
 }
 
 /*
- * Data
+ * Identity
  */
 
 // Return node type

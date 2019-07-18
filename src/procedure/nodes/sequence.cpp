@@ -38,24 +38,27 @@ SequenceProcedureNode::~SequenceProcedureNode()
 }
 
 /*
+ * Identity
+ */
+
+// Return whether specified usage type is allowed for this node
+bool SequenceProcedureNode::isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType)
+{
+	return true;
+}
+
+/*
  * Node Keywords
  */
 
-// Node Keywords
-const char* SequenceNodeKeywords[] = { "_DUMMY_" };
-
-// Convert string to node keyword
-SequenceProcedureNode::SequenceNodeKeyword SequenceProcedureNode::sequenceNodeKeyword(const char* s)
+// Return enum option info for SequenceNodeKeyword
+EnumOptions<SequenceProcedureNode::SequenceNodeKeyword> SequenceProcedureNode::sequenceNodeKeywords()
 {
-	for (int nk=0; nk < SequenceProcedureNode::nSequenceNodeKeywords; ++nk) if (DissolveSys::sameString(s, SequenceNodeKeywords[nk])) return (SequenceProcedureNode::SequenceNodeKeyword) nk;
+	static EnumOptionsList SequenceNodeTypeKeywords;
 
-	return SequenceProcedureNode::nSequenceNodeKeywords;
-}
+	static EnumOptions<SequenceProcedureNode::SequenceNodeKeyword> options("SequenceNodeKeyword", SequenceNodeTypeKeywords);
 
-// Convert node keyword to string
-const char* SequenceProcedureNode::sequenceNodeKeyword(SequenceProcedureNode::SequenceNodeKeyword nk)
-{
-	return SequenceNodeKeywords[nk];
+	return options;
 }
 
 /*
@@ -146,7 +149,7 @@ bool SequenceProcedureNode::read(LineParser& parser, const CoreData& coreData, N
 		if (DissolveSys::sameString(parser.argc(0), blockTerminationKeyword_)) break;
 
 		// Is the first argument on the current line a valid control keyword?
-		SequenceNodeKeyword nk = sequenceNodeKeyword(parser.argc(0));
+		SequenceNodeKeyword nk = sequenceNodeKeywords().enumeration(parser.argc(0));
 		switch (nk)
 		{
 			case (SequenceProcedureNode::nSequenceNodeKeywords):

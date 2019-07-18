@@ -65,24 +65,34 @@ SelectProcedureNode::~SelectProcedureNode()
 }
 
 /*
+ * Identity
+ */
+
+// Return whether specified usage type is allowed for this node
+bool SelectProcedureNode::isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType)
+{
+	return (usageType == ProcedureNode::AnalysisUsageType);
+}
+
+/*
  * Node Keywords
  */
 
-// Node Keywords
-const char* SelectNodeKeywords[] = { "DynamicSite", "EndSelect", "ExcludeSameMolecule", "ExcludeSameSite", "ForEach", "SameMoleculeAsSite", "Site" };
-
-// Convert string to node keyword
-SelectProcedureNode::SelectNodeKeyword SelectProcedureNode::selectNodeKeyword(const char* s)
+// Return enum option info for SelectNodeKeyword
+EnumOptions<SelectProcedureNode::SelectNodeKeyword> SelectProcedureNode::selectNodeKeywords()
 {
-	for (int nk=0; nk < SelectProcedureNode::nSelectNodeKeywords; ++nk) if (DissolveSys::sameString(s, SelectNodeKeywords[nk])) return (SelectProcedureNode::SelectNodeKeyword) nk;
+	static EnumOptionsList SelectNodeTypeKeywords = EnumOptionsList() <<
+		EnumOption(SelectProcedureNode::DynamicSiteKeyword,		"DynamicSite") <<
+		EnumOption(SelectProcedureNode::EndSelectKeyword,		"EndSelect") <<
+		EnumOption(SelectProcedureNode::ExcludeSameMoleculeKeyword,	"ExcludeSameMolecule") <<
+		EnumOption(SelectProcedureNode::ExcludeSameSiteKeyword,		"ExcludeSameSite") <<
+		EnumOption(SelectProcedureNode::ForEachKeyword,			"ForEach") <<
+		EnumOption(SelectProcedureNode::SameMoleculeAsSiteKeyword,	"SameMoleculeAsSite") <<
+		EnumOption(SelectProcedureNode::SiteKeyword,			"Site");
 
-	return SelectProcedureNode::nSelectNodeKeywords;
-}
+	static EnumOptions<SelectProcedureNode::SelectNodeKeyword> options("SelectNodeKeyword", SelectNodeTypeKeywords);
 
-// Convert node keyword to string
-const char* SelectProcedureNode::selectNodeKeyword(SelectProcedureNode::SelectNodeKeyword nk)
-{
-	return SelectNodeKeywords[nk];
+	return options;
 }
 
 /*
@@ -335,7 +345,7 @@ bool SelectProcedureNode::read(LineParser& parser, const CoreData& coreData, Nod
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
 		// Is the first argument on the current line a valid control keyword?
-		SelectNodeKeyword nk = selectNodeKeyword(parser.argc(0));
+		SelectNodeKeyword nk = selectNodeKeywords().enumeration(parser.argc(0));
 		switch (nk)
 		{
 			case (SelectProcedureNode::DynamicSiteKeyword):
@@ -349,16 +359,16 @@ bool SelectProcedureNode::read(LineParser& parser, const CoreData& coreData, Nod
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
 					SelectProcedureNode* otherNode = dynamic_cast<SelectProcedureNode*>(contextStack.nodeInScope(parser.argc(n), ProcedureNode::SelectNode));
-					if (!otherNode) return Messenger::error("Unrecognised selection node '%s' given to %s keyword.\n", parser.argc(n), selectNodeKeyword(nk));
-					if (!addSameMoleculeExclusion(otherNode)) return Messenger::error("Duplicate site given to %s keyword.\n", selectNodeKeyword(nk));
+					if (!otherNode) return Messenger::error("Unrecognised selection node '%s' given to %s keyword.\n", parser.argc(n), selectNodeKeywords().keyword(nk));
+					if (!addSameMoleculeExclusion(otherNode)) return Messenger::error("Duplicate site given to %s keyword.\n", selectNodeKeywords().keyword(nk));
 				}
 				break;
 			case (SelectProcedureNode::ExcludeSameSiteKeyword):
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
 					SelectProcedureNode* otherNode = dynamic_cast<SelectProcedureNode*>(contextStack.nodeInScope(parser.argc(n), ProcedureNode::SelectNode));
-					if (!otherNode) return Messenger::error("Unrecognised selection node '%s' given to %s keyword.\n", parser.argc(n), selectNodeKeyword(nk));
-					if (!addSameSiteExclusion(otherNode)) return Messenger::error("Duplicate site given to %s keyword.\n", selectNodeKeyword(nk));
+					if (!otherNode) return Messenger::error("Unrecognised selection node '%s' given to %s keyword.\n", parser.argc(n), selectNodeKeywords().keyword(nk));
+					if (!addSameSiteExclusion(otherNode)) return Messenger::error("Duplicate site given to %s keyword.\n", selectNodeKeywords().keyword(nk));
 				}
 				break;
 			case (SelectProcedureNode::ForEachKeyword):
@@ -372,7 +382,7 @@ bool SelectProcedureNode::read(LineParser& parser, const CoreData& coreData, Nod
 				break;
 			case (SelectProcedureNode::SameMoleculeAsSiteKeyword):
 				selectNode = dynamic_cast<SelectProcedureNode*>(contextStack.nodeInScope(parser.argc(1), ProcedureNode::SelectNode));
-				if (!selectNode) return Messenger::error("Unrecognised selection node '%s' given to %s keyword.\n", parser.argc(1), selectNodeKeyword(nk));
+				if (!selectNode) return Messenger::error("Unrecognised selection node '%s' given to %s keyword.\n", parser.argc(1), selectNodeKeywords().keyword(nk));
 				if (!setSameMolecule(selectNode)) return Messenger::error("Failed to set same molecule specification.\n");
 				break;
 			case (SelectProcedureNode::SiteKeyword):

@@ -45,29 +45,31 @@ DynamicSiteProcedureNode::~DynamicSiteProcedureNode()
 }
 
 /*
- * Node Keywords
+ * Identity
  */
 
-// Node Keywords
-const char* DynamicSiteNodeKeywords[] = { "AtomType", "Element", "EndDynamicSite" };
-
-// Convert string to node keyword
-DynamicSiteProcedureNode::DynamicSiteNodeKeyword DynamicSiteProcedureNode::dynamicSiteNodeKeyword(const char* s)
+// Return whether specified usage type is allowed for this node
+bool DynamicSiteProcedureNode::isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType)
 {
-	for (int nk=0; nk < DynamicSiteProcedureNode::nDynamicSiteNodeKeywords; ++nk) if (DissolveSys::sameString(s, DynamicSiteNodeKeywords[nk])) return (DynamicSiteProcedureNode::DynamicSiteNodeKeyword) nk;
-
-	return DynamicSiteProcedureNode::nDynamicSiteNodeKeywords;
-}
-
-// Convert node keyword to string
-const char* DynamicSiteProcedureNode::dynamicSiteNodeKeyword(DynamicSiteProcedureNode::DynamicSiteNodeKeyword nk)
-{
-	return DynamicSiteNodeKeywords[nk];
+	return (usageType == ProcedureNode::AnalysisUsageType);
 }
 
 /*
- * Site Criteria
+ * Node Keywords
  */
+
+// Return enum option info for DynamicSiteNodeKeyword
+EnumOptions<DynamicSiteProcedureNode::DynamicSiteNodeKeyword> DynamicSiteProcedureNode::dynamicSiteNodeKeywords()
+{
+	static EnumOptionsList DynamicSiteNodeTypeKeywords = EnumOptionsList() <<
+		EnumOption(DynamicSiteProcedureNode::AtomTypeKeyword,		"AtomType") <<
+		EnumOption(DynamicSiteProcedureNode::ElementKeyword,		"Element") <<
+		EnumOption(DynamicSiteProcedureNode::EndDynamicSiteKeyword,	"EndDynamicSite");
+
+	static EnumOptions<DynamicSiteProcedureNode::DynamicSiteNodeKeyword> options("DynamicSiteNodeKeyword", DynamicSiteNodeTypeKeywords);
+
+	return options;
+}
 
 /*
  * Site Generation
@@ -153,15 +155,15 @@ bool DynamicSiteProcedureNode::read(LineParser& parser, const CoreData& coreData
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
 		// Is the first argument on the current line a valid control keyword?
-		DynamicSiteNodeKeyword nk = dynamicSiteNodeKeyword(parser.argc(0));
+		DynamicSiteNodeKeyword nk = dynamicSiteNodeKeywords().enumeration(parser.argc(0));
 		switch (nk)
 		{
 			case (DynamicSiteProcedureNode::AtomTypeKeyword):
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
 					AtomType* at = coreData.findAtomType(parser.argc(n));
-					if (!at) return Messenger::error("Unrecognised AtomType '%s' given to %s keyword.\n", parser.argc(n), dynamicSiteNodeKeyword(nk));
-					if (atomTypes_.contains(at)) return Messenger::error("Duplicate AtomType target given to %s keyword.\n", dynamicSiteNodeKeyword(nk));
+					if (!at) return Messenger::error("Unrecognised AtomType '%s' given to %s keyword.\n", parser.argc(n), dynamicSiteNodeKeywords().keyword(nk));
+					if (atomTypes_.contains(at)) return Messenger::error("Duplicate AtomType target given to %s keyword.\n", dynamicSiteNodeKeywords().keyword(nk));
 					atomTypes_.add(at, coreData.constAtomTypes().indexOf(at));
 				}
 				break;
@@ -169,8 +171,8 @@ bool DynamicSiteProcedureNode::read(LineParser& parser, const CoreData& coreData
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
 					Element* el = Elements::elementPointer(parser.argc(n));
-					if (!el) return Messenger::error("Unrecognised element '%s' given to %s keyword.\n", parser.argc(n), dynamicSiteNodeKeyword(nk));
-					if (elements_.contains(el)) return Messenger::error("Duplicate Element target given to %s keyword.\n", dynamicSiteNodeKeyword(nk));
+					if (!el) return Messenger::error("Unrecognised element '%s' given to %s keyword.\n", parser.argc(n), dynamicSiteNodeKeywords().keyword(nk));
+					if (elements_.contains(el)) return Messenger::error("Duplicate Element target given to %s keyword.\n", dynamicSiteNodeKeywords().keyword(nk));
 					elements_.add(el);
 				}
 				break;

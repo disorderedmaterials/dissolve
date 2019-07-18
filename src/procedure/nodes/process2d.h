@@ -46,15 +46,21 @@ class Process2DProcedureNode : public ProcedureNode
 
 
 	/*
+	 * Identity
+	 */
+	public:
+	// Return whether specified usage type is allowed for this node
+	bool isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType);
+
+
+	/*
 	 * Node Keywords
 	 */
 	public:
 	// Node Keywords
 	enum Process2DNodeKeyword { EndProcess2DKeyword, FactorKeyword, LabelValueKeyword, LabelXKeyword, LabelYKeyword, NormaliseToOneKeyword, NSitesKeyword, NumberDensityKeyword, SaveKeyword, SourceDataKeyword, nProcess2DNodeKeywords };
-	// Convert string to control keyword
-	static Process2DNodeKeyword process2DNodeKeyword(const char* s);
-	// Convert control keyword to string
-	static const char* process2DNodeKeyword(Process2DNodeKeyword nk);
+	// Return enum option info for Process2DNodeKeyword
+	static EnumOptions<Process2DNodeKeyword> process2DNodeKeywords();
 
 
 	/*

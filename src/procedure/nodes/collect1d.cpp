@@ -47,24 +47,31 @@ Collect1DProcedureNode::~Collect1DProcedureNode()
 }
 
 /*
+ * Identity
+ */
+
+// Return whether specified usage type is allowed for this node
+bool Collect1DProcedureNode::isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType)
+{
+	return (usageType == ProcedureNode::AnalysisUsageType);
+}
+
+/*
  * Node Keywords
  */
 
-// Node Keywords
-const char* Collect1DNodeKeywords[] = { "EndCollect1D", "QuantityX", "RangeX", "SubCollect" };
-
-// Convert string to node keyword
-Collect1DProcedureNode::Collect1DNodeKeyword Collect1DProcedureNode::collect1DNodeKeyword(const char* s)
+// Return enum option info for Collect1DNodeKeyword
+EnumOptions<Collect1DProcedureNode::Collect1DNodeKeyword> Collect1DProcedureNode::collect1DNodeKeywords()
 {
-	for (int nk=0; nk < Collect1DProcedureNode::nCollect1DNodeKeywords; ++nk) if (DissolveSys::sameString(s, Collect1DNodeKeywords[nk])) return (Collect1DProcedureNode::Collect1DNodeKeyword) nk;
+	static EnumOptionsList Collect1DNodeTypeKeywords = EnumOptionsList() <<
+		EnumOption(Collect1DProcedureNode::EndCollect1DKeyword,		"EndCollect1D") <<
+		EnumOption(Collect1DProcedureNode::QuantityXKeyword,		"QuantityX") <<
+		EnumOption(Collect1DProcedureNode::RangeXKeyword,		"RangeX") <<
+		EnumOption(Collect1DProcedureNode::SubCollectKeyword,		"SubCollect");
 
-	return Collect1DProcedureNode::nCollect1DNodeKeywords;
-}
+	static EnumOptions<Collect1DProcedureNode::Collect1DNodeKeyword> options("Collect1DNodeKeyword", Collect1DNodeTypeKeywords);
 
-// Convert node keyword to string
-const char* Collect1DProcedureNode::collect1DNodeKeyword(Collect1DProcedureNode::Collect1DNodeKeyword nk)
-{
-	return Collect1DNodeKeywords[nk];
+	return options;
 }
 
 /*
@@ -208,7 +215,7 @@ bool Collect1DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
 		// Is the first argument on the current line a valid control keyword?
-		Collect1DNodeKeyword nk = collect1DNodeKeyword(parser.argc(0));
+		Collect1DNodeKeyword nk = collect1DNodeKeywords().enumeration(parser.argc(0));
 		switch (nk)
 		{
 			case (Collect1DProcedureNode::EndCollect1DKeyword):
@@ -216,11 +223,11 @@ bool Collect1DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 			case (Collect1DProcedureNode::QuantityXKeyword):
 				// Determine observable from supplied argument
 				observable_ = dynamic_cast<CalculateProcedureNode*>(contextStack.nodeInScope(parser.argc(1), ProcedureNode::CalculateNode));
-				if (!observable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect1DNodeKeyword(nk));
+				if (!observable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect1DNodeKeywords().keyword(nk));
 				break;
 			case (Collect1DProcedureNode::RangeXKeyword):
 				// Check that we have the right number of arguments first...
-				if (parser.nArgs() != 4) return Messenger::error("Collect1D node keyword '%s' expects exactly three arguments (%i given).\n", collect1DNodeKeyword(Collect1DProcedureNode::RangeXKeyword), parser.nArgs() - 1);
+				if (parser.nArgs() != 4) return Messenger::error("Collect1D node keyword '%s' expects exactly three arguments (%i given).\n", collect1DNodeKeywords().keyword(Collect1DProcedureNode::RangeXKeyword), parser.nArgs() - 1);
 				minimum_ = parser.argd(1);
 				maximum_ = parser.argd(2);
 				binWidth_ = parser.argd(3);

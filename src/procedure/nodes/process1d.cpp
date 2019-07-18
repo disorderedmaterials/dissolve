@@ -51,24 +51,37 @@ Process1DProcedureNode::~Process1DProcedureNode()
 }
 
 /*
+ * Identity
+ */
+
+// Return whether specified usage type is allowed for this node
+bool Process1DProcedureNode::isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType)
+{
+	return (usageType == ProcedureNode::AnalysisUsageType);
+}
+
+/*
  * Node Keywords
  */
 
-// Node Keywords
-const char* Process1DNodeKeywords[] = { "EndProcess1D", "Factor", "LabelValue", "LabelX", "NormaliseToOne", "NSites", "NumberDensity", "Save", "SourceData", "SphericalShellVolume" };
-
-// Convert string to node keyword
-Process1DProcedureNode::Process1DNodeKeyword Process1DProcedureNode::process1DNodeKeyword(const char* s)
+// Return enum option info for Process1DNodeKeyword
+EnumOptions<Process1DProcedureNode::Process1DNodeKeyword> Process1DProcedureNode::process1DNodeKeywords()
 {
-	for (int nk=0; nk < Process1DProcedureNode::nProcess1DNodeKeywords; ++nk) if (DissolveSys::sameString(s, Process1DNodeKeywords[nk])) return (Process1DProcedureNode::Process1DNodeKeyword) nk;
+	static EnumOptionsList Process1DNodeTypeKeywords = EnumOptionsList() <<
+		EnumOption(Process1DProcedureNode::EndProcess1DKeyword,			"EndProcess1D") <<
+		EnumOption(Process1DProcedureNode::FactorKeyword,			"Factor") <<
+		EnumOption(Process1DProcedureNode::LabelValueKeyword,			"LabelValue") <<
+		EnumOption(Process1DProcedureNode::LabelXKeyword,			"LabelX") <<
+		EnumOption(Process1DProcedureNode::NormaliseToOneKeyword,		"NormaliseToOne") <<
+		EnumOption(Process1DProcedureNode::NSitesKeyword,			"NSites") <<
+		EnumOption(Process1DProcedureNode::NumberDensityKeyword,		"NumberDensity") <<
+		EnumOption(Process1DProcedureNode::SaveKeyword,				"Save") <<
+		EnumOption(Process1DProcedureNode::SourceDataKeyword,			"SourceData") <<
+		EnumOption(Process1DProcedureNode::SphericalShellVolumeKeyword,		"SphericalShellVolume");
 
-	return Process1DProcedureNode::nProcess1DNodeKeywords;
-}
+	static EnumOptions<Process1DProcedureNode::Process1DNodeKeyword> options("Process1DNodeKeyword", Process1DNodeTypeKeywords);
 
-// Convert node keyword to string
-const char* Process1DProcedureNode::process1DNodeKeyword(Process1DProcedureNode::Process1DNodeKeyword nk)
-{
-	return Process1DNodeKeywords[nk];
+	return options;
 }
 
 /*
@@ -252,7 +265,7 @@ bool Process1DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
 		// Is the first argument on the current line a valid control keyword?
-		Process1DNodeKeyword nk = process1DNodeKeyword(parser.argc(0));
+		Process1DNodeKeyword nk = process1DNodeKeywords().enumeration(parser.argc(0));
 		switch (nk)
 		{
 			case (Process1DProcedureNode::EndProcess1DKeyword):
@@ -275,7 +288,7 @@ bool Process1DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
 					SelectProcedureNode* selectNode = dynamic_cast<SelectProcedureNode*>(collectNode_.node()->procedure()->contextStack().node(parser.argc(n), ProcedureNode::SelectNode));
-					if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(n), process1DNodeKeyword(Process1DProcedureNode::NSitesKeyword));
+					if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(n), process1DNodeKeywords().keyword(Process1DProcedureNode::NSitesKeyword));
 					sitePopulationNormalisers_.add(selectNode, 1.0);
 				}
 				break;
@@ -287,7 +300,7 @@ bool Process1DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
 					SelectProcedureNode* selectNode = dynamic_cast<SelectProcedureNode*>(collectNode_.node()->procedure()->contextStack().node(parser.argc(n), ProcedureNode::SelectNode));
-					if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(n), process1DNodeKeyword(Process1DProcedureNode::NumberDensityKeyword));
+					if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(n), process1DNodeKeywords().keyword(Process1DProcedureNode::NumberDensityKeyword));
 					numberDensityNormalisers_.add(selectNode, 1.0);
 				}
 				break;
@@ -312,7 +325,7 @@ bool Process1DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 	}
 
 	// Check that a valid collectNode_ has been set
-	if (collectNode_.isNull()) return Messenger::error("A valid Collect1D node must be set in the Process1D node '%s' using the '%s' keyword.\n", name(), process1DNodeKeyword(Process1DProcedureNode::SourceDataKeyword));
+	if (collectNode_.isNull()) return Messenger::error("A valid Collect1D node must be set in the Process1D node '%s' using the '%s' keyword.\n", name(), process1DNodeKeywords().keyword(Process1DProcedureNode::SourceDataKeyword));
 
 	return true;
 }
