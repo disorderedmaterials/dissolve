@@ -23,7 +23,7 @@
 #define DISSOLVE_ANALYSEMODULE_H
 
 #include "module/module.h"
-#include "analyse/analyser.h"
+#include "procedure/procedure.h"
 
 // Forward Declarations
 /* none */
@@ -82,8 +82,8 @@ class AnalyseModule : public Module
 	 * Function Data
 	 */
 	private:
-	// Analyser to be run
-	Analyser analyser_;
+	// Analysis procedure to be run
+	Procedure analyser_;
 
 	public:
 	// Return the Analyser's context stack

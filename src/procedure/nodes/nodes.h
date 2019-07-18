@@ -1,6 +1,6 @@
 /*
-	*** Analyse Module - Options
-	*** src/modules/analyse/options.cpp
+	*** Procedure Nodes
+	*** src/procedure/nodes/nodes.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,17 +19,24 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/analyse/analyse.h"
-#include "module/keywordtypes.h"
+#ifndef DISSOLVE_PROCEDURENODE_NODETYPES_H
+#define DISSOLVE_PROCEDURENODE_NODETYPES_H
 
-// Set up keywords for Module
-void AnalyseModule::setUpKeywords()
-{
-	keywords_.add(new ProcedureModuleKeyword(analyser_), "Analyser", "Analysis procedure to run");
-}
+/*
+ * Include all analysis node types at once.
+ */
 
-// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int AnalyseModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
-{
-	return -1;
-}
+#include "procedure/nodes/calculate.h"
+#include "procedure/nodes/collect1d.h"
+#include "procedure/nodes/collect2d.h"
+#include "procedure/nodes/collect3d.h"
+#include "procedure/nodes/dynamicsite.h"
+#include "procedure/nodes/exclude.h"
+#include "procedure/nodes/fit1d.h"
+#include "procedure/nodes/process1d.h"
+#include "procedure/nodes/process2d.h"
+#include "procedure/nodes/process3d.h"
+#include "procedure/nodes/select.h"
+#include "procedure/nodes/sequence.h"
+
+#endif

@@ -21,10 +21,10 @@
 
 #include "modules/calculate/rdf/rdf.h"
 #include "main/dissolve.h"
-#include "analyse/nodes/calculate.h"
-#include "analyse/nodes/collect1d.h"
-#include "analyse/nodes/process1d.h"
-#include "analyse/nodes/select.h"
+#include "procedure/nodes/calculate.h"
+#include "procedure/nodes/collect1d.h"
+#include "procedure/nodes/process1d.h"
+#include "procedure/nodes/select.h"
 #include "base/sysfunc.h"
 
 // Run set-up stage
@@ -76,28 +76,28 @@ bool CalculateRDFModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	 */
 
 	// Select: Site 'A' (@originSites)
-	AnalysisSelectNode* originSelect = new AnalysisSelectNode(originSites_);
+	SelectProcedureNode* originSelect = new SelectProcedureNode(originSites_);
 	originSelect->setName("A");
 	analyser_.addRootSequenceNode(originSelect);
 
 	// -- Select: Site 'B' (@otherSite)
-	AnalysisSelectNode* otherSelect = new AnalysisSelectNode(otherSites_);
+	SelectProcedureNode* otherSelect = new SelectProcedureNode(otherSites_);
 	otherSelect->setName("B");
 	otherSelect->addSameSiteExclusion(originSelect);
 	if (excludeSameMolecule) otherSelect->addSameMoleculeExclusion(originSelect);
 	originSelect->addToForEachBranch(otherSelect);
 
 	// -- -- Calculate: 'rAB'
-	AnalysisCalculateNode* calcDistance = new AnalysisCalculateNode(AnalysisCalculateNode::DistanceObservable, originSelect, otherSelect);
+	CalculateProcedureNode* calcDistance = new CalculateProcedureNode(CalculateProcedureNode::DistanceObservable, originSelect, otherSelect);
 	otherSelect->addToForEachBranch(calcDistance);
 
 	// -- -- Collect1D: @dataName
-	AnalysisCollect1DNode* collect1D = new AnalysisCollect1DNode(calcDistance, rMin, rMax, binWidth);
+	Collect1DProcedureNode* collect1D = new Collect1DProcedureNode(calcDistance, rMin, rMax, binWidth);
 	collect1D->setName(resultName());
 	otherSelect->addToForEachBranch(collect1D);
 
 	// Process1D: @dataName
-	AnalysisProcess1DNode* process1D = new AnalysisProcess1DNode(collect1D);
+	Process1DProcedureNode* process1D = new Process1DProcedureNode(collect1D);
 	process1D->setName(resultName());
 	process1D->addSitePopulationNormaliser(originSelect);
 	process1D->addNumberDensityNormaliser(otherSelect);

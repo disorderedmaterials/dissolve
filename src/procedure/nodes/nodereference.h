@@ -1,0 +1,84 @@
+/*
+	*** Procedure Node Reference
+	*** src/procedure/nodes/nodereference.h
+	Copyright T. Youngs 2012-2019
+
+	This file is part of Dissolve.
+
+	Dissolve is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	Dissolve is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef DISSOLVE_PROCEDURENODE_NODEREFERENCE_H
+#define DISSOLVE_PROCEDURENODE_NODEREFERENCE_H
+
+#include "procedure/nodes/node.h"
+#include "base/charstring.h"
+#include "templates/listitem.h"
+
+// Forward Declarations
+class CoreData;
+
+// Procedure Node Reference
+class ProcedureNodeReference : public ListItem<ProcedureNodeReference>
+{
+	public:
+	// Constructor
+	ProcedureNodeReference(ProcedureNode* node = NULL);
+	// Destructor
+	~ProcedureNodeReference();
+
+
+	/*
+	 * Data
+	 */
+	private:
+	// Target node
+	ProcedureNode* node_;
+	// Allowable node types (when reading / setting)
+	bool allowedTypes_[ProcedureNode::nNodeTypes];
+
+	public:
+	// Return target node
+	ProcedureNode* node();
+	// Return node type
+	ProcedureNode::NodeType type() const;
+	// Add allowable node type
+	void addAllowableNodeType(ProcedureNode::NodeType nt);
+	// Allow all node types
+	void setAllowAllNodeTypes();
+	// Return if node pointer is NULL
+	bool isNull() const;
+
+
+	/*
+	 * Operators
+	 */
+	public:
+	// Assignment operator
+	void operator=(ProcedureNode* node);
+	// Assignment operator
+	void operator=(const ProcedureNodeReference& nodeRef);
+
+
+	/*
+	 * Read / Write
+	 */
+	public:
+	// Read structure from specified LineParser
+	bool read(LineParser& parser, int startArg, const CoreData& coreData, NodeContextStack& localStack);
+	// Write structure to specified LineParser
+	bool write(LineParser& parser, const char* prefix);
+};
+
+#endif

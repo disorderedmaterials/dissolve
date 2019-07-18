@@ -37,7 +37,7 @@ class ModuleKeywordBase : public ListItem<ModuleKeywordBase>
 {
 	public:
 	// Keyword Data Type
-	enum KeywordDataType { AnalyserData, AtomTypeSelectionData, BoolData, BroadeningFunctionData, CharStringData, ComplexData, Data1DStoreData, Data2DStoreData, Data3DStoreData, DoubleData, EnumOptionsData, EnumStringData, FileAndFormatData, IntegerData, IsotopologueListData, ModuleGroupsData, ModuleReferenceListData, PairBroadeningFunctionData, SpeciesReferenceListData, SpeciesSiteData, SpeciesSiteReferenceListData, Vec3DoubleData, Vec3IntegerData, WindowFunctionData };
+	enum KeywordDataType { AtomTypeSelectionData, BoolData, BroadeningFunctionData, CharStringData, ComplexData, Data1DStoreData, Data2DStoreData, Data3DStoreData, DoubleData, EnumOptionsData, EnumStringData, FileAndFormatData, IntegerData, IsotopologueListData, ModuleGroupsData, ModuleReferenceListData, PairBroadeningFunctionData, ProcedureData, SpeciesReferenceListData, SpeciesSiteData, SpeciesSiteReferenceListData, Vec3DoubleData, Vec3IntegerData, WindowFunctionData };
 	// Constructor
 	ModuleKeywordBase(KeywordDataType type);
 	// Destructor

@@ -1,5 +1,4 @@
 add_library(keywordtypes
-  analyser.cpp
   atomtypeselection.cpp
   bool.cpp
   broadeningfunction.cpp
@@ -15,6 +14,7 @@ add_library(keywordtypes
   modulegroups.cpp
   modulereferencelist.cpp
   pairbroadeningfunction.cpp
+  procedure.cpp
   speciesreferencelist.cpp
   speciessite.cpp
   speciessitereferencelist.cpp
@@ -22,7 +22,6 @@ add_library(keywordtypes
   vec3integer.cpp
   windowfunction.cpp
 
-  analyser.h
   atomtypeselection.h
   bool.h
   broadeningfunction.h
@@ -39,6 +38,7 @@ add_library(keywordtypes
   modulegroups.h
   modulereferencelist.h
   pairbroadeningfunction.h
+  procedure.h
   speciesreferencelist.h
   speciessite.h
   speciessitereferencelist.h

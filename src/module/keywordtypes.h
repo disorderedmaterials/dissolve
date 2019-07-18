@@ -27,24 +27,26 @@
  * It simply includes all other derived classes and specialisations.
  */
 
-// Classes
-#include "module/keywordtypes/analyser.h"
-#include "module/keywordtypes/atomtypeselection.h"
+// PODs
 #include "module/keywordtypes/bool.h"
+#include "module/keywordtypes/double.h"
+#include "module/keywordtypes/integer.h"
+
+// Classes
+#include "module/keywordtypes/atomtypeselection.h"
 #include "module/keywordtypes/broadeningfunction.h"
 #include "module/keywordtypes/charstring.h"
 #include "module/keywordtypes/complex.h"
 #include "module/keywordtypes/data1dstore.h"
 #include "module/keywordtypes/data2dstore.h"
 #include "module/keywordtypes/data3dstore.h"
-#include "module/keywordtypes/double.h"
 #include "module/keywordtypes/enumoptions.h"
 #include "module/keywordtypes/fileandformat.h"
-#include "module/keywordtypes/integer.h"
 #include "module/keywordtypes/isotopologuelist.h"
 #include "module/keywordtypes/modulegroups.h"
 #include "module/keywordtypes/modulereferencelist.h"
 #include "module/keywordtypes/pairbroadeningfunction.h"
+#include "module/keywordtypes/procedure.h"
 #include "module/keywordtypes/speciesreferencelist.h"
 #include "module/keywordtypes/speciessite.h"
 #include "module/keywordtypes/speciessitereferencelist.h"

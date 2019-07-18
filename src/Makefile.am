@@ -4,11 +4,11 @@
 
 EXTRA_DIST = version.h
 
-SUBDIRS = analyse base classes data expression genericitems io main math module templates
+SUBDIRS = base classes data expression genericitems io main math module procedure templates
 
 noinst_LTLIBRARIES = libdissolve.la
 libdissolve_la_SOURCES = 
-libdissolve_la_LIBADD = main/libmain.la module/libmodule.la io/libimportexport.la module/keywordtypes/libkeywordtypes.la modules/libmodules.la classes/libclasses.la analyse/libanalyse.la analyse/nodes/libanalysisnodes.la expression/libexpression.la genericitems/libgenericitems.la base/libbase.la math/libmath.la data/libdata.la data/ff/libff.la @MPI_LDLIBS@
+libdissolve_la_LIBADD = main/libmain.la module/libmodule.la io/libimportexport.la module/keywordtypes/libkeywordtypes.la modules/libmodules.la classes/libclasses.la procedure/libprocedure.la procedure/nodes/libprocedurenodes.la expression/libexpression.la genericitems/libgenericitems.la base/libbase.la math/libmath.la data/libdata.la data/ff/libff.la @MPI_LDLIBS@
 libdissolve_la_LDFLAGS = -static
 
 #
