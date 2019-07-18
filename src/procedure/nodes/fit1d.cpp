@@ -145,7 +145,7 @@ bool Fit1DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, con
 			return Messenger::error("No node type set in Fit1DProcedureNode::finalise().\n");
 			break;
 		default:
-			return Messenger::error("No suitable data to extract from a node of type '%s'.\n", ProcedureNode::nodeType(dataNode_.type()));
+			return Messenger::error("No suitable data to extract from a node of type '%s'.\n", ProcedureNode::nodeTypes().keyword(dataNode_.type()));
 	}
 
 	// Print equation info

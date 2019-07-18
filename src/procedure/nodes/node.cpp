@@ -24,6 +24,28 @@
 #include "base/messenger.h"
 #include "base/sysfunc.h"
 
+// Return enum option info for NodeType
+EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
+{
+	static EnumOptionsList NodeTypeKeywords = EnumOptionsList() << 
+		EnumOption(ProcedureNode::CalculateNode,	"Calculate") <<
+		EnumOption(ProcedureNode::Collect1DNode,	"Collect1D") <<
+		EnumOption(ProcedureNode::Collect2DNode,	"Collect2D") <<
+		EnumOption(ProcedureNode::Collect3DNode,	"Collect3D") <<
+		EnumOption(ProcedureNode::DynamicSiteNode,	"DynamicSite") <<
+		EnumOption(ProcedureNode::ExcludeNode,		"Exclude") <<
+		EnumOption(ProcedureNode::Fit1DNode,		"Fit1D") <<
+		EnumOption(ProcedureNode::Process1DNode,	"Process1D") <<
+		EnumOption(ProcedureNode::Process2DNode,	"Process2D") <<
+		EnumOption(ProcedureNode::Process3DNode,	"Process3D") <<
+		EnumOption(ProcedureNode::SelectNode,		"Select") <<
+		EnumOption(ProcedureNode::SequenceNode,		"Sequence");
+
+	static EnumOptions<ProcedureNode::NodeType> options("NodeType", NodeTypeKeywords, ProcedureNode::nNodeTypes);
+
+	return options;
+}
+
 // Constructor
 ProcedureNode::ProcedureNode(ProcedureNode::NodeType nodeType) : ListItem<ProcedureNode>()
 {
@@ -42,25 +64,8 @@ ProcedureNode::~ProcedureNode()
 }
 
 /*
- * Node Types
+ * Data
  */
-
-// Control keywords
-const char* NodeTypes[] = { "Calculate", "Collect1D", "Collect2D", "Collect3D", "DynamicSite", "Exclude", "Fit1D", "Process1D", "Process2D", "Process3D", "Select", "Sequence" };
-
-// Convert string to node type
-ProcedureNode::NodeType ProcedureNode::nodeType(const char* s)
-{
-	for (int nt=0; nt < ProcedureNode::nNodeTypes; ++nt) if (DissolveSys::sameString(s, NodeTypes[nt])) return (ProcedureNode::NodeType) nt;
-
-	return ProcedureNode::nNodeTypes;
-}
-
-// Convert node type to string
-const char* ProcedureNode::nodeType(ProcedureNode::NodeType nt)
-{
-	return NodeTypes[nt];
-}
 
 // Return node type
 ProcedureNode::NodeType ProcedureNode::type() const
@@ -102,7 +107,7 @@ Procedure* ProcedureNode::procedure() const
 }
 
 /*
- * Execute
+ * Execution
  */
 
 // Prepare any necessary data, ready for execution

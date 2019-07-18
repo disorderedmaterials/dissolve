@@ -23,6 +23,7 @@
 #define DISSOLVE_PROCEDURENODE_NODE_H
 
 #include "base/charstring.h"
+#include "base/enumoptions.h"
 #include "templates/listitem.h"
 
 // Forward Declarations
@@ -39,12 +40,10 @@ class NodeContextStack;
 class ProcedureNode : public ListItem<ProcedureNode>
 {
 	public:
-	// Available Node Types
+	// Node Types
 	enum NodeType { CalculateNode, Collect1DNode, Collect2DNode, Collect3DNode, DynamicSiteNode, ExcludeNode, Fit1DNode, Process1DNode, Process2DNode, Process3DNode, SelectNode, SequenceNode, nNodeTypes };
-	// Convert string to node type
-	static NodeType nodeType(const char* s);
-	// Convert node type to string
-	static const char* nodeType(NodeType nt);
+	// Return enum option info for NodeType
+	static EnumOptions<NodeType> nodeTypes();
 	// Constructor
 	ProcedureNode(NodeType nodeType);
 	// Destructor
@@ -80,7 +79,7 @@ class ProcedureNode : public ListItem<ProcedureNode>
 
 
 	/*
-	 * Execute
+	 * Execution
 	 */
 	public:
 	// Node execution result

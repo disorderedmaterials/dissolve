@@ -155,7 +155,7 @@ bool SequenceProcedureNode::read(LineParser& parser, const CoreData& coreData, N
 
 		// Not a control keyword, so must be a node type
 		ProcedureNode* newNode = NULL;
-		ProcedureNode::NodeType nt = ProcedureNode::nodeType(parser.argc(0));
+		ProcedureNode::NodeType nt = ProcedureNode::nodeTypes().enumeration(parser.argc(0));
 		switch (nt)
 		{
 			case (ProcedureNode::CalculateNode):
