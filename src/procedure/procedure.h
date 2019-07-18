@@ -52,6 +52,8 @@ class Procedure
 	public:
 	// Clear all data
 	void clear();
+	// Set End keyword for root sequence
+	void setEndKeyword(const char* keyword);
 	// Add (own) specified node to root sequence
 	void addRootSequenceNode(ProcedureNode* node);
 	// Return the context stack

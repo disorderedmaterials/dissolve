@@ -46,6 +46,12 @@ void Procedure::clear()
 	rootSequence_.clear();
 }
 
+// Set End keyword for root sequence
+void Procedure::setEndKeyword(const char* keyword)
+{
+	rootSequence_.setBlockTerminationKeyword(keyword);
+}
+
 // Add (own) specified node to root sequence
 void Procedure::addRootSequenceNode(ProcedureNode* node)
 {

@@ -124,6 +124,12 @@ bool SequenceProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, 
  * Read / Write
  */
 
+// Set block termination keyword for current context when reading
+void SequenceProcedureNode::setBlockTerminationKeyword(const char* endKeyword)
+{
+	blockTerminationKeyword_ = endKeyword;
+}
+
 // Read structure from specified LineParser
 bool SequenceProcedureNode::read(LineParser& parser, const CoreData& coreData, NodeContextStack& contextStack)
 {

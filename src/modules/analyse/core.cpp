@@ -30,6 +30,9 @@ AnalyseModule::AnalyseModule() : Module()
 {
 	// Set up variables / control parameters
 	setUpKeywords();
+
+	// Set the End* keyword for the Analyser
+	analyser_.setEndKeyword("EndAnalyser");
 }
 
 // Destructor
