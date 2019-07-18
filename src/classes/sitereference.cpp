@@ -1,6 +1,6 @@
 /*
 	*** Site Reference
-	*** src/analyse/sitereference.h
+	*** src/classes/sitereference.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,33 +19,22 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SITEREFERENCE_H
-#define DISSOLVE_SITEREFERENCE_H
+#include "classes/sitereference.h"
 
-#include "base/charstring.h"
-#include "templates/list.h"
-
-// Forward Declarations
-class SiteStack;
-
-// Site Reference
-class SiteReference : public ListItem<SiteReference>
+// Constructor
+SiteReference::SiteReference(SiteStack& siteStack, const char* name) : ListItem<SiteReference>(), siteStack_(siteStack)
 {
-	public:
-	// Constructor
-	SiteReference(SiteStack& siteStack, const char* name);
+	name_ = name;
+}
 
-	private:
-	// Referenced stack of sites
-	SiteStack& siteStack_;
-	// Name of this site stack (in the context of an Analyser)
-	CharString name_;
+// Return referenced stack of sites
+SiteStack& SiteReference::siteStack() const
+{
+	return siteStack_;
+}
 
-	public:
-	// Return referenced stack of sites
-	SiteStack& siteStack() const;
-	// Return name of this site stack (in the context of an Analyser)
-	const char* name() const;
-};
-
-#endif
+// Return name of this site stack (in the context of an Analyser)
+const char* SiteReference::name() const
+{
+	return name_.get();
+}
