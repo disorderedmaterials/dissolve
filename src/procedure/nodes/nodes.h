@@ -23,7 +23,7 @@
 #define DISSOLVE_PROCEDURENODE_NODETYPES_H
 
 /*
- * Include all analysis node types at once.
+ * Include all procedure node types at once.
  */
 
 #include "procedure/nodes/calculate.h"
