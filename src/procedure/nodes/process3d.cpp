@@ -50,10 +50,10 @@ Process3DProcedureNode::~Process3DProcedureNode()
  * Identity
  */
 
-// Return whether specified usage type is allowed for this node
-bool Process3DProcedureNode::isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType)
+// Return whether specified context is relevant for this node type
+bool Process3DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
 {
-	return (usageType == ProcedureNode::AnalysisUsageType);
+	return (context == ProcedureNode::AnalysisContext);
 }
 
 /*
@@ -274,9 +274,8 @@ bool Process3DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				zAxisLabel_ = parser.argc(1);
 				break;
 			case (Process3DProcedureNode::NSitesKeyword):
-				// Need a valid collectNode_ so we can retrieve the scope stack it's local to
-				if (collectNode_.isNull()) return Messenger::error("Can't set site-dependent normalisers without first setting the collect node target.\n");
-				if (!collectNode_.node()->procedure()) return Messenger::error("Can't set site-dependent normalisers since the specified collect node has no Procedure parent.\n");
+				// Need a valid collectNode_...
+				if (collectNode_.isNull()) return Messenger::error("Can't set site-dependent normalisers without first setting the CollectNode target.\n");
 
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
@@ -286,9 +285,8 @@ bool Process3DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				}
 				break;
 			case (Process3DProcedureNode::NumberDensityKeyword):
-				// Need a valid collectNode_ so we can retrieve the scope stack it's local to
+				// Need a valid collectNode_...
 				if (collectNode_.isNull()) return Messenger::error("Can't set site-dependent normalisers without first setting the collect node target.\n");
-				if (!collectNode_.node()->procedure()) return Messenger::error("Can't set site-dependent normalisers since the specified collect node has no Procedure parent.\n");
 
 				for (int n=1; n<parser.nArgs(); ++n)
 				{

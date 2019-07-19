@@ -54,10 +54,10 @@ Collect2DProcedureNode::~Collect2DProcedureNode()
  * Identity
  */
 
-// Return whether specified usage type is allowed for this node
-bool Collect2DProcedureNode::isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType)
+// Return whether specified context is relevant for this node type
+bool Collect2DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
 {
-	return (usageType == ProcedureNode::AnalysisUsageType);
+	return (context == ProcedureNode::AnalysisContext);
 }
 
 /*
@@ -138,20 +138,11 @@ double Collect2DProcedureNode::yBinWidth() const
  */
 
 // Add and return subcollection sequence branch
-SequenceProcedureNode* Collect2DProcedureNode::addSubCollectBranch()
+SequenceProcedureNode* Collect2DProcedureNode::addSubCollectBranch(ProcedureNode::NodeContext context)
 {
-	if (!subCollectBranch_) subCollectBranch_ = new SequenceProcedureNode();
-
-	// Pass on our Procedure parent
-	subCollectBranch_->setProcedure(procedure());
+	if (!subCollectBranch_) subCollectBranch_ = new SequenceProcedureNode(context);
 
 	return subCollectBranch_;
-}
-
-// Add specified node to subcollection sequence
-void Collect2DProcedureNode::addToSubCollectBranch(ProcedureNode* node)
-{
-	addSubCollectBranch()->addNode(node);
 }
 
 /*
@@ -278,8 +269,7 @@ bool Collect2DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				if (subCollectBranch_) return Messenger::error("Only one SubCollect branch may be defined in a Collect2D node.\n");
 
 				// Create and parse a new branch
-				subCollectBranch_ = new SequenceProcedureNode("EndSubCollect");
-				subCollectBranch_->setProcedure(procedure());
+				subCollectBranch_ = new SequenceProcedureNode(scopeStack.currentContext(), "EndSubCollect");
 				if (!subCollectBranch_->read(parser, coreData, scopeStack)) return false;
 				break;
 			case (Collect2DProcedureNode::nCollect2DNodeKeywords):

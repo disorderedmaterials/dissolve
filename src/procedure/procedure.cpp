@@ -25,9 +25,9 @@
 #include "base/sysfunc.h"
 
 // Constructor
-Procedure::Procedure() : rootSequence_("EndProcedure")
+Procedure::Procedure(ProcedureNode::NodeContext context) : rootSequence_(context, "EndProcedure")
 {
-	rootSequence_.setProcedure(this);
+	context_ = context;
 }
 
 // Destructor
@@ -68,31 +68,35 @@ const NodeScopeStack& Procedure::scopeStack() const
  * Execute
  */
 
-// Run analysis for specified Configuration, storing / retrieving generated data from supplied list
+// Run procedure for specified Configuration, storing / retrieving generated data from supplied list
 bool Procedure::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
-	// Check that the Configuration has changed before we do any more analysis on it
-	RefListItem<Configuration,int>* ri = configurationPoints_.contains(cfg);
-	if (ri)
+	// Depending on context, we may or may not operate on the supplied Configuration
+	if (context_ == ProcedureNode::AnalysisContext)
 	{
-		// A Configuration we've processed before - check the index
-		if (cfg->contentsVersion() == ri->data)
+		// Check that the Configuration has changed before we do any more analysis on it
+		RefListItem<Configuration,int>* ri = configurationPoints_.contains(cfg);
+		if (ri)
 		{
-			Messenger::warn("Refusing to analyse Configuration '%s' since it has not changed.\n", cfg->name());
-			return true;
+			// A Configuration we've processed before - check the index
+			if (cfg->contentsVersion() == ri->data)
+			{
+				Messenger::warn("Refusing to analyse Configuration '%s' since it has not changed.\n", cfg->name());
+				return true;
+			}
+			else ri->data = cfg->contentsVersion();
 		}
-		else ri->data = cfg->contentsVersion();
+		else configurationPoints_.add(cfg, cfg->contentsVersion());
 	}
-	else configurationPoints_.add(cfg, cfg->contentsVersion());
 
 	// Prepare the nodes
-	if (!rootSequence_.prepare(cfg, prefix, targetList)) return Messenger::error("Failed to prepare analysis sequence for execution.\n");
+	if (!rootSequence_.prepare(cfg, prefix, targetList)) return Messenger::error("Failed to prepare procedure for execution.\n");
 
 	// Execute the root sequence
-	if (!rootSequence_.execute(procPool, cfg, prefix, targetList)) return Messenger::error("Failed to execute analysis sequence.\n");
+	if (!rootSequence_.execute(procPool, cfg, prefix, targetList)) return Messenger::error("Failed to execute procedure.\n");
 
 	// Finalise any nodes that need it
-	if (!rootSequence_.finalise(procPool, cfg, prefix, targetList)) return Messenger::error("Failed to finalise analysis sequence after execution.\n");
+	if (!rootSequence_.finalise(procPool, cfg, prefix, targetList)) return Messenger::error("Failed to finalise procedure after execution.\n");
 
 	return true;
 }

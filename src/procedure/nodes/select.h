@@ -51,8 +51,8 @@ class SelectProcedureNode : public ProcedureNode
 	 * Identity
 	 */
 	public:
-	// Return whether specified usage type is allowed for this node
-	bool isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType);
+	// Return whether specified context is relevant for this node type
+	bool isContextRelevant(ProcedureNode::NodeContext context);
 
 
 	/*
@@ -138,9 +138,7 @@ class SelectProcedureNode : public ProcedureNode
 
 	public:
 	// Add and return ForEach sequence
-	SequenceProcedureNode* addForEachBranch();
-	// Add specified node to ForEach sequence
-	void addToForEachBranch(ProcedureNode* node);
+	SequenceProcedureNode* addForEachBranch(ProcedureNode::NodeContext context);
 
 
 	/*

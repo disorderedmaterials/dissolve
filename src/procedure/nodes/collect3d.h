@@ -48,8 +48,8 @@ class Collect3DProcedureNode : public ProcedureNode
 	 * Identity
 	 */
 	public:
-	// Return whether specified usage type is allowed for this node
-	bool isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType);
+	// Return whether specified context is relevant for this node type
+	bool isContextRelevant(ProcedureNode::NodeContext context);
 
 
 	/*
@@ -127,9 +127,7 @@ class Collect3DProcedureNode : public ProcedureNode
 
 	public:
 	// Add and return subcollection sequence branch
-	SequenceProcedureNode* addSubCollectBranch();
-	// Add specified node to subcollection sequence
-	void addToSubCollectBranch(ProcedureNode* node);
+	SequenceProcedureNode* addSubCollectBranch(ProcedureNode::NodeContext context);
 
 
 	/*

@@ -68,10 +68,10 @@ SelectProcedureNode::~SelectProcedureNode()
  * Identity
  */
 
-// Return whether specified usage type is allowed for this node
-bool SelectProcedureNode::isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType)
+// Return whether specified context is relevant for this node type
+bool SelectProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
 {
-	return (usageType == ProcedureNode::AnalysisUsageType);
+	return (context == ProcedureNode::AnalysisContext);
 }
 
 /*
@@ -190,19 +190,11 @@ const Site* SelectProcedureNode::currentSite() const
  */
 
 // Add and return ForEach sequence
-SequenceProcedureNode* SelectProcedureNode::addForEachBranch()
+SequenceProcedureNode* SelectProcedureNode::addForEachBranch(ProcedureNode::NodeContext context_)
 {
-	if (!forEachBranch_) forEachBranch_ = new SequenceProcedureNode();
-
-	forEachBranch_->setProcedure(procedure());
+	if (!forEachBranch_) forEachBranch_ = new SequenceProcedureNode(context_);
 
 	return forEachBranch_;
-}
-
-// Add specified node to ForEach sequence
-void SelectProcedureNode::addToForEachBranch(ProcedureNode* node)
-{
-	addForEachBranch()->addNode(node);
 }
 
 /*
@@ -376,8 +368,7 @@ bool SelectProcedureNode::read(LineParser& parser, const CoreData& coreData, Nod
 				if (forEachBranch_) return Messenger::error("Only one ForEach branch may be defined in a selection node.\n");
 
 				// Create and parse a new branch
-				forEachBranch_ = new SequenceProcedureNode("EndForEach");
-				forEachBranch_->setProcedure(procedure());
+				forEachBranch_ = new SequenceProcedureNode(scopeStack.currentContext(), "EndForEach");
 				if (!forEachBranch_->read(parser, coreData, scopeStack)) return false;
 				break;
 			case (SelectProcedureNode::SameMoleculeAsSiteKeyword):

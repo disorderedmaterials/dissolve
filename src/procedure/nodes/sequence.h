@@ -34,7 +34,7 @@ class SequenceProcedureNode : public ProcedureNode
 {
 	public:
 	// Constructor
-	SequenceProcedureNode(const char* blockTerminationKeyword = NULL);
+	SequenceProcedureNode(ProcedureNode::NodeContext context, const char* blockTerminationKeyword = NULL);
 	// Destructor
 	~SequenceProcedureNode();
 
@@ -43,8 +43,8 @@ class SequenceProcedureNode : public ProcedureNode
 	 * Identity
 	 */
 	public:
-	// Return whether specified usage type is allowed for this node
-	bool isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType);
+	// Return whether specified context is relevant for this node type
+	bool isContextRelevant(ProcedureNode::NodeContext context);
 
 
 	/*
@@ -63,6 +63,8 @@ class SequenceProcedureNode : public ProcedureNode
 	protected:
 	// Sequential node list
 	List<ProcedureNode> sequence_;
+	// Context of the sequence
+	ProcedureNode::NodeContext context_;
 
 	public:
 	// Clear all data

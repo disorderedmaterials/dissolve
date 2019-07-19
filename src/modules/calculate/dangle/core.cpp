@@ -26,7 +26,7 @@
  */
 
 // Constructor
-CalculateDAngleModule::CalculateDAngleModule() : Module()
+CalculateDAngleModule::CalculateDAngleModule() : Module(), analyser_(ProcedureNode::AnalysisContext)
 {
 	// Set unique name for this instance of the Module
 	static int instanceId = 0;

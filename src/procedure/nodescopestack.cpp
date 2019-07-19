@@ -51,10 +51,12 @@ void NodeScopeStack::clear()
 	nSelectNodesAdded_ = 0;
 }
 
-// Push new scope on to the stack
-void NodeScopeStack::push()
+// Push new scope with the specified context on to the stack
+void NodeScopeStack::push(ProcedureNode::NodeContext context)
 {
-	stack_.add(RefList<ProcedureNode,bool>());
+	NodeScope* scope = new NodeScope(context);
+
+	stack_.own(scope);
 }
 
 // Pop topmost scope from the stack
@@ -87,10 +89,23 @@ bool NodeScopeStack::add(ProcedureNode* node)
 	// Increase the general counter for new references, and add it
 	++nSelectNodesAdded_;
 
-	stack_.last().add(node);
+	stack_.last()->add(node);
 	nodes_.add(node);
 
 	return true;
+}
+
+// Return context of topmost scope
+ProcedureNode::NodeContext NodeScopeStack::currentContext() const
+{
+	// Check that we have a current scope
+	if (stack_.nItems() == 0)
+	{
+		Messenger::error("No current scope from which to return a context.\n");
+		return ProcedureNode::NoContext;
+	}
+
+	return stack_.last()->context();
 }
 
 /*
@@ -112,18 +127,10 @@ const char* NodeScopeStack::nextSelectName() const
 // Return named node if it is currently in scope, and optionally matches the type given
 ProcedureNode* NodeScopeStack::nodeInScope(const char* name, ProcedureNode::NodeType nt) const
 {
-	for (int n=0; n<stack_.nItems(); ++n)
+	for (NodeScope* scope = stack_.first(); scope != NULL; scope = scope->next)
 	{
-		RefListIterator<ProcedureNode,bool> scopeIterator(stack_.constAt(n));
-		while (ProcedureNode* node = scopeIterator.iterate())
-		{
-			if (DissolveSys::sameString(node->name(), name))
-			{
-				// Check type
-				if (nt == ProcedureNode::nNodeTypes) return node;
-				else if (node->type() == nt) return node;
-			}
-		}
+		ProcedureNode* node = scope->node(name, nt);
+		if (node) return node;
 	}
 
 	return NULL;

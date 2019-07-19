@@ -25,6 +25,7 @@
 #include "procedure/nodes/collect1d.h"
 #include "procedure/nodes/process1d.h"
 #include "procedure/nodes/select.h"
+#include "procedure/nodes/sequence.h"
 #include "base/sysfunc.h"
 
 // Run set-up stage
@@ -76,31 +77,33 @@ bool CalculateRDFModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	 */
 
 	// Select: Site 'A' (@originSites)
-	SelectProcedureNode* originSelect = new SelectProcedureNode(originSites_);
-	originSelect->setName("A");
-	analyser_.addRootSequenceNode(originSelect);
+	SelectProcedureNode* selectA = new SelectProcedureNode(originSites_);
+	selectA->setName("A");
+	SequenceProcedureNode* forEachA = selectA->addForEachBranch(ProcedureNode::AnalysisContext);
+	analyser_.addRootSequenceNode(selectA);
 
 	// -- Select: Site 'B' (@otherSite)
-	SelectProcedureNode* otherSelect = new SelectProcedureNode(otherSites_);
-	otherSelect->setName("B");
-	otherSelect->addSameSiteExclusion(originSelect);
-	if (excludeSameMolecule) otherSelect->addSameMoleculeExclusion(originSelect);
-	originSelect->addToForEachBranch(otherSelect);
+	SelectProcedureNode* selectB = new SelectProcedureNode(otherSites_);
+	selectB->setName("B");
+	selectB->addSameSiteExclusion(selectA);
+	if (excludeSameMolecule) selectB->addSameMoleculeExclusion(selectA);
+	SequenceProcedureNode* forEachB = selectB->addForEachBranch(ProcedureNode::AnalysisContext);
+	forEachA->addNode(selectB);
 
 	// -- -- Calculate: 'rAB'
-	CalculateProcedureNode* calcDistance = new CalculateProcedureNode(CalculateProcedureNode::DistanceObservable, originSelect, otherSelect);
-	otherSelect->addToForEachBranch(calcDistance);
+	CalculateProcedureNode* calcDistance = new CalculateProcedureNode(CalculateProcedureNode::DistanceObservable, selectA, selectB);
+	forEachB->addNode(calcDistance);
 
 	// -- -- Collect1D: @dataName
 	Collect1DProcedureNode* collect1D = new Collect1DProcedureNode(calcDistance, rMin, rMax, binWidth);
 	collect1D->setName(resultName());
-	otherSelect->addToForEachBranch(collect1D);
+	forEachB->addNode(collect1D);
 
 	// Process1D: @dataName
 	Process1DProcedureNode* process1D = new Process1DProcedureNode(collect1D);
 	process1D->setName(resultName());
-	process1D->addSitePopulationNormaliser(originSelect);
-	process1D->addNumberDensityNormaliser(otherSelect);
+	process1D->addSitePopulationNormaliser(selectA);
+	process1D->addNumberDensityNormaliser(selectB);
 	process1D->setNormaliseBySphericalShellVolume(true);
 	process1D->setSaveData(saveData);
 	process1D->setValueLabel("g(r)");

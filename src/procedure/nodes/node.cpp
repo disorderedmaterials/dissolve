@@ -46,11 +46,22 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
 	return options;
 }
 
+// Return enum option info for NodeContext
+EnumOptions<ProcedureNode::NodeContext> ProcedureNode::nodeContexts()
+{
+	static EnumOptionsList NodeContextKeywords = EnumOptionsList() << 
+		EnumOption(ProcedureNode::NoContext,			"None") <<
+		EnumOption(ProcedureNode::AnalysisContext,		"Analysis") <<
+		EnumOption(ProcedureNode::GenerationContext,		"Generation");
+
+	static EnumOptions<ProcedureNode::NodeContext> options("NodeContext", NodeContextKeywords, ProcedureNode::NoContext);
+
+	return options;
+}
+
 // Constructor
 ProcedureNode::ProcedureNode(ProcedureNode::NodeType nodeType) : ListItem<ProcedureNode>()
 {
-	procedure_ = NULL;
-
 	type_ = nodeType;
 
 	// Assign default, unique name to the node
@@ -92,18 +103,6 @@ const char* ProcedureNode::name() const
 const char* ProcedureNode::niceName() const
 {
 	return niceName_.get();
-}
-
-// Set parent Procedure in which the node exists
-void ProcedureNode::setProcedure(Procedure* proc)
-{
-	procedure_ = proc;
-}
-
-// Return parent Procedure in which the node exists
-Procedure* ProcedureNode::procedure() const
-{
-	return procedure_;
 }
 
 /*

@@ -31,10 +31,10 @@ class Configuration;
 class CoreData;
 class GenericList;
 class LineParser;
+class NodeScopeStack;
 class Procedure;
 class ProcessPool;
 class Site;
-class NodeScopeStack;
 
 // Analysis Base Node
 class ProcedureNode : public ListItem<ProcedureNode>
@@ -44,8 +44,10 @@ class ProcedureNode : public ListItem<ProcedureNode>
 	enum NodeType { CalculateNode, Collect1DNode, Collect2DNode, Collect3DNode, DynamicSiteNode, ExcludeNode, Fit1DNode, Process1DNode, Process2DNode, Process3DNode, SelectNode, SequenceNode, nNodeTypes };
 	// Return enum option info for NodeType
 	static EnumOptions<NodeType> nodeTypes();
-	// Node Usage Type
-	enum NodeUsageType { AnalysisUsageType = 1, GenerationUsageType = 2 };
+	// Node Contexts
+	enum NodeContext { NoContext = 0, AnalysisContext = 1, GenerationContext = 2 };
+	// Return enum option info for NodeContext
+	static EnumOptions<NodeContext> nodeContexts();
 	// Constructor
 	ProcedureNode(NodeType nodeType);
 	// Destructor
@@ -55,31 +57,25 @@ class ProcedureNode : public ListItem<ProcedureNode>
 	/*
 	 * Identity
 	 */
-	private:
+	protected:
 	// Node type
 	NodeType type_;
 	// Node name
 	CharString name_;
 	// Node nice name
 	CharString niceName_;
-	// Procedure in which the node exists
-	Procedure* procedure_;
 
 	public:
 	// Return node type
 	NodeType type() const;
-	// Return whether specified usage type is allowed for this node
-	virtual bool isUsageTypeAllowed(NodeUsageType usageType) = 0;
+	// Return whether specified context is relevant for this node type
+	virtual bool isContextRelevant(NodeContext context) = 0;
 	// Set node name (and nice name)
 	void setName(const char* name);
 	// Return node name
 	const char* name() const;
 	// Return node nice name
 	const char* niceName() const;
-	// Set parent Procedure in which the node exists
-	void setProcedure(Procedure* proc);
-	// Return parent Procedure in which the node exists
-	Procedure* procedure() const;
 
 
 	/*

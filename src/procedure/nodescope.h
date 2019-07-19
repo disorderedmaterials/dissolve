@@ -1,6 +1,6 @@
 /*
-	*** Node Scope Stack
-	*** src/procedure/nodescopestack.h
+	*** Node Scope
+	*** src/procedure/nodescope.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,59 +19,46 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_PROCEDURE_NODESCOPESTACK_H
-#define DISSOLVE_PROCEDURE_NODESCOPESTACK_H
+#ifndef DISSOLVE_PROCEDURE_NODESCOPE_H
+#define DISSOLVE_PROCEDURE_NODESCOPE_H
 
 #include "procedure/nodes/node.h"
-#include "procedure/nodescope.h"
-#include "templates/list.h"
+#include "templates/listitem.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
 /* none */
 
-// Node Scope Stack
-class NodeScopeStack
+// Node Scope
+class NodeScope : public ListItem<NodeScope>
 {
 	public:
 	// Constructor
-	NodeScopeStack();
+	NodeScope(ProcedureNode::NodeContext context);
 	// Destructor
-	~NodeScopeStack();
+	~NodeScope();
 
 
 	/*
-	 * Scope Stack
+	 * Node Context / Content
 	 */
 	private:
-	// Scope stack
-	List<NodeScope> stack_;
-	// References for all nodes added
+	// Context for the scope
+	ProcedureNode::NodeContext context_;
+	// Nodes within the scope
 	RefList<ProcedureNode,bool> nodes_;
-	// Counter for SelectNode added to the stack at any point
-	int nSelectNodesAdded_;
 
 	public:
-	// Clear all scopes from stack
-	void clear();
-	// Push new scope with the specified context on to the stack
-	void push(ProcedureNode::NodeContext context);
-	// Pop topmost scope from the stack
-	bool pop();
-	// Add new node to the topmost scope
+	// Return the current context
+	ProcedureNode::NodeContext context() const;
+	// Add new node to the scope
 	bool add(ProcedureNode* node);
-	// Return context of topmost scope
-	ProcedureNode::NodeContext currentContext() const;
 
 
 	/*
 	 * Node Search
 	 */
 	public:
-	// Return next available generic name for a SelectNode
-	const char* nextSelectName() const;
-	// Return named node if it is currently in scope, and optionally matches the type given
-	ProcedureNode* nodeInScope(const char* name, ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
 	// Return named node if known, and which matches the (optional) type given
 	ProcedureNode* node(const char* name, ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
 };

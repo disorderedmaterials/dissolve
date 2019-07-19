@@ -48,10 +48,10 @@ DynamicSiteProcedureNode::~DynamicSiteProcedureNode()
  * Identity
  */
 
-// Return whether specified usage type is allowed for this node
-bool DynamicSiteProcedureNode::isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType)
+// Return whether specified context is relevant for this node type
+bool DynamicSiteProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
 {
-	return (usageType == ProcedureNode::AnalysisUsageType);
+	return (context == ProcedureNode::AnalysisContext);
 }
 
 /*

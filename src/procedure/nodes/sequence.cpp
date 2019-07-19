@@ -26,8 +26,9 @@
 #include "base/sysfunc.h"
 
 // Constructor
-SequenceProcedureNode::SequenceProcedureNode(const char* blockTerminationKeyword) : ProcedureNode(ProcedureNode::SequenceNode)
+SequenceProcedureNode::SequenceProcedureNode(ProcedureNode::NodeContext context, const char* blockTerminationKeyword) : ProcedureNode(ProcedureNode::SequenceNode)
 {
+	context_ = context;
 	blockTerminationKeyword_ = blockTerminationKeyword;
 }
 
@@ -41,8 +42,8 @@ SequenceProcedureNode::~SequenceProcedureNode()
  * Identity
  */
 
-// Return whether specified usage type is allowed for this node
-bool SequenceProcedureNode::isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType)
+// Return whether specified context is relevant for this node type
+bool SequenceProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
 {
 	return true;
 }
@@ -71,13 +72,14 @@ void SequenceProcedureNode::clear()
 	sequence_.clear();
 }
 
-// Add (own) node into sequence
+// Add (own) node into sequence, checking the context
 void SequenceProcedureNode::addNode(ProcedureNode* node)
 {
-	sequence_.own(node);
+	if (!node) return;
 
-	// Pass on our Procedure parent
-	node->setProcedure(procedure());
+	if (!node->isContextRelevant(context_)) Messenger::error("Node '%s' (type = '%s') is not relevant to the '%s' context.\n", node->name(), ProcedureNode::nodeTypes().keyword(node->type()), ProcedureNode::nodeContexts().keyword(context_));
+
+	sequence_.own(node);
 }
 
 /*
@@ -136,8 +138,8 @@ void SequenceProcedureNode::setBlockTerminationKeyword(const char* endKeyword)
 // Read structure from specified LineParser
 bool SequenceProcedureNode::read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack)
 {
-	// The sequence node now constructs a new context...
-	scopeStack.push();
+	// The sequence node now pushes a new scope (mirroring our own context)
+	scopeStack.push(context_);
 
 	// Read until we encounter the block-ending keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
@@ -162,38 +164,38 @@ bool SequenceProcedureNode::read(LineParser& parser, const CoreData& coreData, N
 		switch (nt)
 		{
 			case (ProcedureNode::CalculateNode):
-				newNode = new CalculateProcedureNode;
+				newNode = new CalculateProcedureNode();
 				break;
 			case (ProcedureNode::Collect1DNode):
-				newNode = new Collect1DProcedureNode;
+				newNode = new Collect1DProcedureNode();
 				break;
 			case (ProcedureNode::Collect2DNode):
-				newNode = new Collect2DProcedureNode;
+				newNode = new Collect2DProcedureNode();
 				break;
 			case (ProcedureNode::Collect3DNode):
-				newNode = new Collect3DProcedureNode;
+				newNode = new Collect3DProcedureNode();
 				break;
 			case (ProcedureNode::ExcludeNode):
-				newNode = new ExcludeProcedureNode;
+				newNode = new ExcludeProcedureNode();
 				break;
 			case (ProcedureNode::Fit1DNode):
-				newNode = new Fit1DProcedureNode;
+				newNode = new Fit1DProcedureNode();
 				break;
 			case (ProcedureNode::Process1DNode):
-				newNode = new Process1DProcedureNode;
+				newNode = new Process1DProcedureNode();
 				break;
 			case (ProcedureNode::Process2DNode):
-				newNode = new Process2DProcedureNode;
+				newNode = new Process2DProcedureNode();
 				break;
 			case (ProcedureNode::Process3DNode):
-				newNode = new Process3DProcedureNode;
+				newNode = new Process3DProcedureNode();
 				break;
 			case (ProcedureNode::SelectNode):
-				newNode = new SelectProcedureNode;
+				newNode = new SelectProcedureNode();
 				break;
 			case (ProcedureNode::SequenceNode):
 				/* This should never be called */
-				newNode = new SequenceProcedureNode;
+				newNode = new SequenceProcedureNode(ProcedureNode::NoContext);
 				break;
 			case (ProcedureNode::nNodeTypes):
 				return Messenger::error("Unrecognised analysis node type '%s' found.\n", parser.argc(0));
@@ -202,11 +204,14 @@ bool SequenceProcedureNode::read(LineParser& parser, const CoreData& coreData, N
 				return Messenger::error("Epic Developer Fail - Don't know how to create a node of type '%s'.\n", parser.argc(0));
 		}
 
+		// Is the new node permitted in the context of the current scope?
+		if (!newNode->isContextRelevant(scopeStack.currentContext()))
+		{
+			return Messenger::error("'%s' node not allowed / relevant in '%s' context.\n", ProcedureNode::nodeTypes().keyword(newNode->type()), ProcedureNode::nodeContexts().keyword(context_));
+		}
+
 		// Add the new node to our list
 		sequence_.own(newNode);
-
-		// Set the Procedure parent of the new node to be the same as ours
-		newNode->setProcedure(procedure());
 
 		// Read the new node
 		if (!newNode->read(parser, coreData, scopeStack)) return Messenger::error("Failed to read analysis sequence.\n");

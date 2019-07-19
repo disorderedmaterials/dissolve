@@ -2,9 +2,11 @@ add_subdirectory(nodes)
 
 add_library(procedure
   procedure.cpp
+  nodescope.cpp
   nodescopestack.cpp
   
   procedure.h
+  nodescope.h
   nodescopestack.h
 )
 

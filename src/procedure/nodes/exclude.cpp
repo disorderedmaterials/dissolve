@@ -42,10 +42,10 @@ ExcludeProcedureNode::~ExcludeProcedureNode()
  * Identity
  */
 
-// Return whether specified usage type is allowed for this node
-bool ExcludeProcedureNode::isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType)
+// Return whether specified context is relevant for this node type
+bool ExcludeProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
 {
-	return (usageType == ProcedureNode::AnalysisUsageType);
+	return (context == ProcedureNode::AnalysisContext);
 }
 
 /*

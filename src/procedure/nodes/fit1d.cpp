@@ -52,10 +52,10 @@ Fit1DProcedureNode::~Fit1DProcedureNode()
  * Identity
  */
 
-// Return whether specified usage type is allowed for this node
-bool Fit1DProcedureNode::isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType)
+// Return whether specified context is relevant for this node type
+bool Fit1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
 {
-	return (usageType == ProcedureNode::AnalysisUsageType);
+	return (context == ProcedureNode::AnalysisContext);
 }
 
 /*

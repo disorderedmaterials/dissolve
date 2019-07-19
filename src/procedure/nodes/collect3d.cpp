@@ -83,10 +83,10 @@ Collect3DProcedureNode::~Collect3DProcedureNode()
  * Identity
  */
 
-// Return whether specified usage type is allowed for this node
-bool Collect3DProcedureNode::isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType)
+// Return whether specified context is relevant for this node type
+bool Collect3DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
 {
-	return (usageType == ProcedureNode::AnalysisUsageType);
+	return (context == ProcedureNode::AnalysisContext);
 }
 
 /*
@@ -189,20 +189,11 @@ double Collect3DProcedureNode::zBinWidth() const
  */
 
 // Add and return subcollection sequence branch
-SequenceProcedureNode* Collect3DProcedureNode::addSubCollectBranch()
+SequenceProcedureNode* Collect3DProcedureNode::addSubCollectBranch(ProcedureNode::NodeContext context)
 {
-	if (!subCollectBranch_) subCollectBranch_ = new SequenceProcedureNode();
-
-	// Pass on our Procedure parent
-	subCollectBranch_->setProcedure(procedure());
+	if (!subCollectBranch_) subCollectBranch_ = new SequenceProcedureNode(context);
 
 	return subCollectBranch_;
-}
-
-// Add specified node to subcollection sequence
-void Collect3DProcedureNode::addToSubCollectBranch(ProcedureNode* node)
-{
-	addSubCollectBranch()->addNode(node);
 }
 
 /*
@@ -366,8 +357,7 @@ bool Collect3DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				if (subCollectBranch_) return Messenger::error("Only one SubCollect branch may be defined in a Collect3D node.\n");
 
 				// Create and parse a new branch
-				subCollectBranch_ = new SequenceProcedureNode("EndSubCollect");
-				subCollectBranch_->setProcedure(procedure());
+				subCollectBranch_ = new SequenceProcedureNode(scopeStack.currentContext(), "EndSubCollect");
 				if (!subCollectBranch_->read(parser, coreData, scopeStack)) return false;
 				break;
 			case (Collect3DProcedureNode::nCollect3DNodeKeywords):

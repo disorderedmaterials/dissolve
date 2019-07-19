@@ -54,10 +54,10 @@ Process1DProcedureNode::~Process1DProcedureNode()
  * Identity
  */
 
-// Return whether specified usage type is allowed for this node
-bool Process1DProcedureNode::isUsageTypeAllowed(ProcedureNode::NodeUsageType usageType)
+// Return whether specified context is relevant for this node type
+bool Process1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
 {
-	return (usageType == ProcedureNode::AnalysisUsageType);
+	return (context == ProcedureNode::AnalysisContext);
 }
 
 /*
@@ -281,25 +281,23 @@ bool Process1DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				xAxisLabel_ = parser.argc(1);
 				break;
 			case (Process1DProcedureNode::NSitesKeyword):
-				// Need a valid collectNode_ so we can retrieve the scope stack it's local to
+				// Need a valid collectNode_...
 				if (collectNode_.isNull()) return Messenger::error("Can't set site-dependent normalisers without first setting the collect node target.\n");
-				if (!collectNode_.node()->procedure()) return Messenger::error("Can't set site-dependent normalisers since the specified collect node has no Procedure parent.\n");
 
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
-					SelectProcedureNode* selectNode = dynamic_cast<SelectProcedureNode*>(collectNode_.node()->procedure()->scopeStack().node(parser.argc(n), ProcedureNode::SelectNode));
+					SelectProcedureNode* selectNode = dynamic_cast<SelectProcedureNode*>(scopeStack.node(parser.argc(n), ProcedureNode::SelectNode));
 					if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(n), process1DNodeKeywords().keyword(Process1DProcedureNode::NSitesKeyword));
 					sitePopulationNormalisers_.add(selectNode, 1.0);
 				}
 				break;
 			case (Process1DProcedureNode::NumberDensityKeyword):
-				// Need a valid collectNode_ so we can retrieve the scope stack it's local to
+				// Need a valid collectNode_...
 				if (collectNode_.isNull()) return Messenger::error("Can't set site-dependent normalisers without first setting the collect node target.\n");
-				if (!collectNode_.node()->procedure()) return Messenger::error("Can't set site-dependent normalisers since the specified collect node has no Procedure parent.\n");
 
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
-					SelectProcedureNode* selectNode = dynamic_cast<SelectProcedureNode*>(collectNode_.node()->procedure()->scopeStack().node(parser.argc(n), ProcedureNode::SelectNode));
+					SelectProcedureNode* selectNode = dynamic_cast<SelectProcedureNode*>(scopeStack.node(parser.argc(n), ProcedureNode::SelectNode));
 					if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(n), process1DNodeKeywords().keyword(Process1DProcedureNode::NumberDensityKeyword));
 					numberDensityNormalisers_.add(selectNode, 1.0);
 				}
