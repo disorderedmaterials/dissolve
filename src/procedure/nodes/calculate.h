@@ -28,7 +28,7 @@
 // Forward Declarations
 class SelectProcedureNode;
 
-// Select Node
+// Calculate Node
 class CalculateProcedureNode : public ProcedureNode
 {
 	/*
