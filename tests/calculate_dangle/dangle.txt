@@ -114,7 +114,6 @@ Module  CalculateDAngle  'DAngle(X-H...O)'
   AngleMax  180.0
   AngleBin  1.0
   ExcludeSameMolecule  true
-  Save  On
 EndModule
 
 # Distance-Angle Map X-H...O (using manual analyser)
@@ -202,7 +201,6 @@ Module  Analyse  'DAngle(X-H...O)-Analyser'
     Process2D  'DAngle(X-HO)'
       SourceData  'DAngle(X-HO)'
       NormaliseToOne  On
-      Save  On
       LabelX  '\\it{r}, \\sym{Angstrom}'
       LabelY  'Angle, \\sym{degree}'
       LabelValue  'Probability'
