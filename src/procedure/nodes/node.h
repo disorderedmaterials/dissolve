@@ -1,5 +1,5 @@
 /*
-	*** Analysis Base Node
+	*** Procedure Node
 	*** src/procedure/nodes/node.h
 	Copyright T. Youngs 2012-2019
 
@@ -36,7 +36,7 @@ class Procedure;
 class ProcessPool;
 class Site;
 
-// Analysis Base Node
+// Procedure Node
 class ProcedureNode : public ListItem<ProcedureNode>
 {
 	public:

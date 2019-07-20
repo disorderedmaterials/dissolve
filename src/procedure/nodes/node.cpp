@@ -1,5 +1,5 @@
 /*
-	*** Analysis Base Node
+	*** Procedure Node
 	*** src/procedure/nodes/node.cpp
 	Copyright T. Youngs 2012-2019
 
