@@ -215,7 +215,23 @@ template <class T> class EnumOptions : public EnumOptionsBase
 	{
 		return EnumOptionsBase::option(keyword);
 	}
+	// Check number of arguments provided to keyword
+	bool validNArgs(T enumeration, int nArgsProvided)
+	{
+		// Retrieve the relevant EnumOption
+		const EnumOption& opt = option(enumeration);
 
+		// No arguments?
+		if (opt.nArgs() == 0)
+		{
+			if (nArgsProvided == 0) return true;
+			else return Messenger::error("'%s' keyword '%s' does not take any arguments.\n", name(), opt.keyword());
+		}
+
+		// Some number of arguments
+		if (opt.nArgs() == nArgsProvided) return true;
+		else return Messenger::error("'%s' keyword '%s' requires %i arguments, but %i %s provided.\n", name(), opt.keyword(), opt.nArgs(), nArgsProvided == 1 ? "was" : "were");
+	}
 
 	/*
 	 * Operators
