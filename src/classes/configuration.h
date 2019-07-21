@@ -33,6 +33,7 @@
 #include "classes/sitestack.h"
 #include "module/layer.h"
 #include "io/import/coordinates.h"
+#include "procedure/procedure.h"
 #include "math/histogram1d.h"
 #include "math/interpolator.h"
 #include "math/data1d.h"
@@ -83,6 +84,18 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	const char* name();
 	// Return nice name of the Configuration
 	const char* niceName();
+
+
+	/*
+	 * Generation
+	 */
+	private:
+	// Procedure to generate the Configuration
+	Procedure generator_;
+
+	public:
+	// Read generator from supplied parser
+	bool readGenerator(LineParser& parser, const CoreData& coreData);
 
 
 	/*

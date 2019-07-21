@@ -92,6 +92,7 @@ namespace ConfigurationBlock
 		CellLengthsKeyword,		/* 'CellLengths' - Gives the relative lengths of the unit cell */
 		DensityKeyword,			/* 'Density' - Specifies the density of the simulation, along with its units */
 		EndConfigurationKeyword,	/* 'EndConfiguration' - Signals the end of the Configuration block */
+		GeneratorKeyword,		/* 'Generator' - Define the generator procedure for the Configuration */
 		InputCoordinatesKeyword,	/* 'InputCoordinates' - Specifies the file which contains the starting coordinates */
 		ModuleKeyword,			/* 'Module' - Starts the set up of a Module for this configuration */
 		MultiplierKeyword,		/* 'Multiplier' - Specifies the factor by which relative populations are multiplied when generating the Configuration data */

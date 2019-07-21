@@ -34,6 +34,7 @@ KeywordData ConfigurationBlockData[] = {
 	{ "CellLengths",		3,	"Relative lengths of the unit cell" },
 	{ "Density",			2,	"Density of the Configuration, along with its units" },
 	{ "EndConfiguration",		0,	"Signals the end of the Configuration block" },
+	{ "Generator",			0,	"Define the generator procedure for the Configuration" },
 	{ "InputCoordinates",		2,	"Format and filename which contains the starting coordinates" },
 	{ "Module",			1,	"Starts the set up of a Module for this Configuration" },
 	{ "Multiplier",			1,	"Factor by which relative populations are multiplied when generating the Configuration data" },
@@ -113,6 +114,13 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 			case (ConfigurationBlock::EndConfigurationKeyword):
 				Messenger::print("Found end of %s block.\n", BlockKeywords::blockKeyword(BlockKeywords::ConfigurationBlockKeyword));
 				blockDone = true;
+				break;
+			case (ConfigurationBlock::GeneratorKeyword):
+				if (!cfg->readGenerator(parser, dissolve->coreData()))
+				{
+					Messenger::error("Failed to read generator procedure for Configuration.\n");
+					error = true;
+				}
 				break;
 			case (ConfigurationBlock::InputCoordinatesKeyword):
 				if (!cfg->inputCoordinates().read(parser, 1))

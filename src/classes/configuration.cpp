@@ -39,7 +39,7 @@ template<class Configuration> int ObjectStore<Configuration>::objectType_ = Obje
 template<class Configuration> const char* ObjectStore<Configuration>::objectTypeName_ = "Configuration";
 
 // Constructor
-Configuration::Configuration() : ListItem<Configuration>(), ObjectStore<Configuration>(this), boxNormalisationInterpolation_(boxNormalisation_)
+Configuration::Configuration() : ListItem<Configuration>(), ObjectStore<Configuration>(this), generator_(ProcedureNode::GenerationContext), boxNormalisationInterpolation_(boxNormalisation_)
 {
 	box_ = NULL;
 	clear();
@@ -148,6 +148,16 @@ void Configuration::setRequestedRDFRange(double range)
 double Configuration::requestedRDFRange()
 {
 	return requestedRDFRange_;
+}
+
+/*
+ * Generation
+ */
+
+// Read generator from supplied parser
+bool Configuration::readGenerator(LineParser& parser, const CoreData& coreData)
+{
+	return generator_.read(parser, coreData);
 }
 
 /*
