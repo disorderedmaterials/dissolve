@@ -60,7 +60,7 @@ bool Dissolve::setUpSimulation()
 				if (cfg->nAtoms() == 0)
 				{
 					// No atoms, so presumably no data was read from the restart file. Set the Configuration up in the normal way (but without randomising molecules)
-					if (!cfg->initialise(worldPool(), false, pairPotentialRange_, nBoxNormalisationPoints_)) return false;
+					if (!cfg->initialise(worldPool(), false, pairPotentialRange_)) return false;
 				}
 
 				Messenger::print("Loading initial coordinates from file '%s'...\n", cfg->inputCoordinates().filename());
@@ -74,7 +74,7 @@ bool Dissolve::setUpSimulation()
 		else if (cfg->nAtoms() == 0)
 		{
 			// Set up the Configuration from the Species populations
-			if (!cfg->initialise(worldPool(), true, pairPotentialRange_, nBoxNormalisationPoints_)) return false;
+			if (!cfg->initialise(worldPool(), true, pairPotentialRange_)) return false;
 		}
 		else Messenger::print("Configuration loaded from the restart file.\n");
 

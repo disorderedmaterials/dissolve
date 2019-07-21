@@ -466,7 +466,7 @@ void PartialSet::adjust(double delta)
 }
 
 // Form partials from stored Histogram data
-void PartialSet::formPartials(double boxVolume, Interpolator& boxNormalisation)
+void PartialSet::formPartials(double boxVolume)
 {
 	int n, m;
 	int nTypes = atomTypes_.nItems();
@@ -478,9 +478,9 @@ void PartialSet::formPartials(double boxVolume, Interpolator& boxNormalisation)
 		for (m=n; m<nTypes; ++m, at2 = at2->next)
 		{
 			// Calculate RDFs from histogram data
-			calculateRDF(partials_.at(n, m), fullHistograms_.at(n, m), boxVolume, at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0, boxNormalisation);
-			calculateRDF(boundPartials_.at(n, m), boundHistograms_.at(n, m), boxVolume, at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0, boxNormalisation);
-			calculateRDF(unboundPartials_.at(n, m), unboundHistograms_.at(n, m), boxVolume, at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0, boxNormalisation);
+			calculateRDF(partials_.at(n, m), fullHistograms_.at(n, m), boxVolume, at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0);
+			calculateRDF(boundPartials_.at(n, m), boundHistograms_.at(n, m), boxVolume, at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0);
+			calculateRDF(unboundPartials_.at(n, m), unboundHistograms_.at(n, m), boxVolume, at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0);
 
 			// Set flags for bound partials specifying if they are empty (i.e. there are no contributions of that type)
 			emptyBoundPartials_.at(n, m) = boundHistograms_.at(n, m).nBinned() == 0;
@@ -532,7 +532,7 @@ bool PartialSet::addPartials(PartialSet& source, double weighting)
 }
 
 // Calculate and return RDF from supplied Histogram and normalisation data
-void PartialSet::calculateRDF(Data1D& destination, Histogram1D& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, Interpolator& boxNormalisation)
+void PartialSet::calculateRDF(Data1D& destination, Histogram1D& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier)
 {
 	int nBins = histogram.nBins();
 	double delta = histogram.binWidth();
@@ -540,14 +540,13 @@ void PartialSet::calculateRDF(Data1D& destination, Histogram1D& histogram, doubl
 
 	destination.clear();
 
-	double shellVolume, factor, r = 0.5*delta, lowerShellLimit = 0.0, numberDensity = nSurrounding / boxVolume, normalisation;
+	double shellVolume, factor, r = 0.5*delta, lowerShellLimit = 0.0, numberDensity = nSurrounding / boxVolume;
 	for (int n=0; n<nBins; ++n)
 	{
 		shellVolume = (4.0/3.0)*PI*(pow(lowerShellLimit+delta,3.0) - pow(lowerShellLimit,3.0));
 		factor = nCentres * (shellVolume * numberDensity);
-		normalisation = (multiplier / factor) * boxNormalisation.y(r+delta*0.5);
 
-		destination.addPoint(r, bins.constAt(n)*normalisation);
+		destination.addPoint(r, bins.constAt(n)*(multiplier / factor));
 
 		r += delta;
 		lowerShellLimit += delta;

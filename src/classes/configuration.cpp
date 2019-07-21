@@ -39,7 +39,7 @@ template<class Configuration> int ObjectStore<Configuration>::objectType_ = Obje
 template<class Configuration> const char* ObjectStore<Configuration>::objectTypeName_ = "Configuration";
 
 // Constructor
-Configuration::Configuration() : ListItem<Configuration>(), ObjectStore<Configuration>(this), generator_(ProcedureNode::GenerationContext), boxNormalisationInterpolation_(boxNormalisation_)
+Configuration::Configuration() : ListItem<Configuration>(), ObjectStore<Configuration>(this), generator_(ProcedureNode::GenerationContext)
 {
 	box_ = NULL;
 	clear();
@@ -83,7 +83,7 @@ void Configuration::clear()
 	// Reset set-up
 	rdfBinWidth_ = 0.025;
 	rdfRange_ = -1.0;
-	requestedRDFRange_ = -2.0;
+	requestedRDFRange_ = -1.0;
 	temperature_ = 300.0;
 }
 
@@ -98,10 +98,6 @@ void Configuration::setName(const char* name)
 
 	// Generate a nice name (i.e. no spaces, slashes etc.)
 	niceName_ = DissolveSys::niceName(name_);
-
-	// Set box normalisation filename based on Configuration name
-	boxNormalisationFileName_ = niceName_;
-	boxNormalisationFileName_.strcat(".boxnorm");
 }
 
 // Return name of the Configuration

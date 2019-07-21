@@ -26,7 +26,6 @@
 
 // Simulation Block Keywords
 KeywordData SimulationBlockData[] = {
-	{ "BoxNormalisationPoints",		1,	"Number of random insertions to use when generating the normalisation array" },
 	{ "EndSimulation",			0,	"Signals the end of the Simulation block" },
 	{ "ParallelStrategy",			1, 	"Determines the distribution of processes across Configurations" },
 	{ "ParallelGroupPopulation",		1,	"Maximum number of groups to split processes in a pool in to" },
@@ -73,10 +72,6 @@ bool SimulationBlock::parse(LineParser& parser, Dissolve* dissolve)
 		}
 		switch (simKeyword)
 		{
-			case (SimulationBlock::BoxNormalisationPointsKeyword):
-				dissolve->setNBoxNormalisationPoints(parser.argi(1));
-				Messenger::print("Number of points to use in Box normalisation calculation = %i\n", dissolve->nBoxNormalisationPoints());
-				break;
 			case (SimulationBlock::EndSimulationKeyword):
 				Messenger::print("Found end of %s block.\n", BlockKeywords::blockKeyword(BlockKeywords::SimulationBlockKeyword));
 				blockDone = true;

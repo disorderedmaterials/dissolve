@@ -89,9 +89,6 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 		}
 		switch (conKeyword)
 		{
-			case (ConfigurationBlock::BoxNormalisationFileKeyword):
-				cfg->setBoxNormalisationFile(parser.argc(1));
-				break;
 			case (ConfigurationBlock::CellAnglesKeyword):
 				cfg->setBoxAngles(parser.arg3d(1));
 				break;

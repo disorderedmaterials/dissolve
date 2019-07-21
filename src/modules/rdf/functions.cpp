@@ -396,7 +396,7 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 	}
 
 	// Transform histogram data into radial distribution functions
-	originalgr.formPartials(box->volume(), cfg->boxNormalisationInterpolation());
+	originalgr.formPartials(box->volume());
 
 	// Sum total functions
 	originalgr.formTotal(true);
@@ -530,7 +530,7 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 			}
 
 			// Normalise our bond's histogram data into the g(r)
-			tempgr.formPartials(box->volume(), cfg->boxNormalisationInterpolation());
+			tempgr.formPartials(box->volume());
 
 			// Broaden our g(r) (after subtracting it from the original full partial) and sum into our broadened partial set
 			typeI = tempgr.atomTypes().first();
@@ -601,7 +601,7 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 			}
 
 			// Normalise our bond's histogram data into the g(r)
-			tempgr.formPartials(box->volume(), cfg->boxNormalisationInterpolation());
+			tempgr.formPartials(box->volume());
 
 			// Broaden our g(r) (after subtracting it from the original full partial) and sum into our broadened partial set
 			typeI = tempgr.atomTypes().first();

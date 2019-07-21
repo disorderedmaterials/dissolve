@@ -371,10 +371,6 @@ bool Dissolve::saveInput(const char* filename)
 		}
 
 		if (!parser.writeLineF("\n")) return false;
-		if (cfg->boxNormalisation().nValues() != 0)
-		{
-			if (!parser.writeLineF("  %s  '%s'\n", ConfigurationBlock::keyword(ConfigurationBlock::BoxNormalisationFileKeyword), cfg->boxNormalisationFileName())) return false;
-		}
 		if (!parser.writeLineF("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::RDFBinWidthKeyword), cfg->rdfBinWidth())) return false;
 		if (!parser.writeLineF("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::RDFRangeKeyword), cfg->rdfRange())) return false;
 		if (!parser.writeLineF("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::TemperatureKeyword), cfg->temperature())) return false;
@@ -458,7 +454,6 @@ bool Dissolve::saveInput(const char* filename)
 	// Write Simulation block
 	if (!parser.writeBannerComment("Simulation")) return false;
 	if (!parser.writeLineF("\n%s\n", BlockKeywords::blockKeyword(BlockKeywords::SimulationBlockKeyword))) return false;
-	if (!parser.writeLineF("  %s  %i\n", SimulationBlock::keyword(SimulationBlock::BoxNormalisationPointsKeyword), nBoxNormalisationPoints_)) return false;
 	if (!parser.writeLineF("  %s  %i\n", SimulationBlock::keyword(SimulationBlock::SeedKeyword), seed_)) return false;
 	if (!parser.writeLineF("%s\n\n", SimulationBlock::keyword(SimulationBlock::EndSimulationKeyword))) return false;
 

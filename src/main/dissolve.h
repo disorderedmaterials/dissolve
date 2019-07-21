@@ -309,8 +309,6 @@ class Dissolve
 	 * Simulation
 	 */
 	private:
-	// Number of test points to use when calculating Box normalisation arrays
-	int nBoxNormalisationPoints_;
 	// Random seed
 	int seed_;
 	// Frequency at which to write restart file

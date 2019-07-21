@@ -56,7 +56,7 @@ void Configuration::initialise(int nMolecules, int nGrains)
 }
 
 // Initialise from assigned Species populations
-bool Configuration::initialise(ProcessPool& procPool, bool randomise, double pairPotentialRange, int boxNormalisationNPoints)
+bool Configuration::initialise(ProcessPool& procPool, bool randomise, double pairPotentialRange)
 {
 	Messenger::print("Setting up Configuration from Species / multiplier definition...\n");
 
@@ -94,7 +94,7 @@ bool Configuration::initialise(ProcessPool& procPool, bool randomise, double pai
 	 * Create a Box to contain the system
 	 */
 	Messenger::print("Creating periodic Box and Cell partitioning...\n");
-	if (!setUpBox(procPool, pairPotentialRange, nExpectedAtoms, boxNormalisationNPoints))
+	if (!setUpBox(procPool, pairPotentialRange, nExpectedAtoms))
 	{
 		Messenger::error("Failed to set up Box/Cells for Configuration.\n");
 		return false;
@@ -166,10 +166,10 @@ bool Configuration::initialise(ProcessPool& procPool, bool randomise, double pai
 }
 
 // Finalise Configuration after loading contents from restart file
-bool Configuration::finaliseAfterLoad(ProcessPool& procPool, double pairPotentialRange, int boxNormalisationNPoints)
+bool Configuration::finaliseAfterLoad(ProcessPool& procPool, double pairPotentialRange)
 {
 	// Set up Box and Cells
-	if (!setUpBox(procPool, pairPotentialRange, -1, boxNormalisationNPoints)) return false;
+	if (!setUpBox(procPool, pairPotentialRange, -1)) return false;
 
 	// Loaded coordinates will reflect any sizeFactor scaling, but Box and Cells will not, so scale them here
 	scaleBox(requestedSizeFactor_);

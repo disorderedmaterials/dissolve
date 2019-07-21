@@ -111,7 +111,7 @@ const Box* Configuration::box() const
 }
 
 // Set up periodic Box
-bool Configuration::setUpBox(ProcessPool& procPool, double ppRange, int nExpectedAtoms, int boxNormalisationNPoints)
+bool Configuration::setUpBox(ProcessPool& procPool, double ppRange, int nExpectedAtoms)
 {
 	// Remove old box if present
 	if (box_ != NULL)
@@ -161,90 +161,21 @@ bool Configuration::setUpBox(ProcessPool& procPool, double ppRange, int nExpecte
 	Messenger::print("\n");
 	Messenger::print("Maximal extent for g(r) is %f Angstrom (half cell diagonal distance).\n", maxR);
 	Messenger::print("Inscribed sphere radius (maximum RDF range avoiding periodic images) is %f Angstroms.\n", inscribedSphereRadius);
-	if (requestedRDFRange_ < -1.5)
+	if (requestedRDFRange_ < 0.0)
 	{
-		Messenger::print("Using maximal non-minimum image range for g(r).\n");
 		rdfRange_ = inscribedSphereRadius;
-	}
-	else if (requestedRDFRange_ < -0.5)
-	{
-		Messenger::print("Using 90%% of maximal extent for g(r).\n");
-		rdfRange_ = 0.90*maxR;
+		Messenger::print("Using maximal non-minimum image range for g(r) of %f Angstroms.\n", rdfRange_);
 	}
 	else
 	{
-		Messenger::print("Specific RDF range supplied (%f Angstroms).\n", requestedRDFRange_);
 		rdfRange_ = requestedRDFRange_;
-		if (rdfRange_ < 0.0)
-		{
-			Messenger::error("Negative RDF range requested.\n");
-			return false;
-		}
-		else if (rdfRange_ > maxR)
-		{
-			Messenger::error("Requested RDF range is greater then the maximum possible extent for the Box.\n");
-			return false;
-		}
-		else if (rdfRange_ > (0.90*maxR)) Messenger::warn("Requested RDF range is greater than 90%% of the maximum possible extent for the Box. FT may be suspect!\n");
+		if (rdfRange_ > inscribedSphereRadius) return Messenger::error("Requested RDF range (%f Angstroms) is out of range (max = %f Angstroms).\n", rdfRange_, inscribedSphereRadius);
+		Messenger::print("Specific RDF range supplied (%f Angstroms).\n", rdfRange_);
 	}
+
 	// 'Snap' rdfRange_ to nearest bin width...
 	rdfRange_ = int(rdfRange_/rdfBinWidth_) * rdfBinWidth_;
 	Messenger::print("RDF range (snapped to bin width) is %f Angstroms.\n", rdfRange_);
-
-	/*
-	 * Load or calculate Box normalisation file (if we need one)
-	 */
-	if (rdfRange_ <= inscribedSphereRadius)
-	{
-		Messenger::print("No need for Box normalisation array since rdfRange is within periodic range.\n");
-		boxNormalisation_.clear();
-		double x = rdfBinWidth_*0.5;
-		while (x < rdfRange_)
-		{
-			boxNormalisation_.addPoint(x, 1.0);
-			x += rdfBinWidth_;
-		}
-	}
-	else
-	{
-		// Attempt to load existing Box normalisation file
-		if (!boxNormalisationFileName_.isEmpty())
-		{
-			// Open file and attempt to read it...
-			LineParser boxNormParser(&procPool);
-
-			if (!boxNormalisation_.load(boxNormParser)) Messenger::print("Successfully loaded box normalisation data from file '%s'.\n", boxNormalisationFileName_.get());
-			else Messenger::print("Couldn't load Box normalisation data - it will be calculated.\n");
-		}
-
-		// Did we successfully load the file?
-		if (boxNormalisation_.nValues() <= 1)
-		{
-			// Only calculate if RDF range is greater than the inscribed sphere radius
-			if (rdfRange_ <= inscribedSphereRadius)
-			{
-				Messenger::print("No need to calculate Box normalisation array since rdfRange is within periodic range.\n");
-				boxNormalisation_.clear();
-				double x = rdfBinWidth_*0.5;
-				while (x < rdfRange_)
-				{
-					boxNormalisation_.addPoint(x, 1.0);
-					x += rdfBinWidth_;
-				}
-			}
-			else
-			{
-				Messenger::print("Calculating box normalisation array for g(r)...\n");
-				if (!box()->calculateRDFNormalisation(procPool, boxNormalisation_, rdfRange_, rdfBinWidth_, boxNormalisationNPoints)) return false;
-				
-				// Save normalisation file so we don't have to recalculate it next time
-				if (procPool.isMaster()) boxNormalisation_.save(boxNormalisationFileName_);
-			}
-		}
-	}
-
-	// Update the Box normalisation interpolation
-	boxNormalisationInterpolation_.interpolate(Interpolator::LinearInterpolation);
 
 	return true;
 }
@@ -258,31 +189,6 @@ void Configuration::scaleBox(double factor)
 	// Apply factor to Cells
 	cells_.scale(factor);
 }
-
-// Set box normalisation array to load/save for this configuration
-void Configuration::setBoxNormalisationFile(const char* filename)
-{
-	boxNormalisationFileName_ = filename;
-}
-
-// Return box normalisation file to load/save for this configuration
-const char* Configuration::boxNormalisationFileName() const
-{
-	return boxNormalisationFileName_.get();
-}
-
-// Return current Box normalisation array
-const Data1D& Configuration::boxNormalisation() const
-{
-	return boxNormalisation_;
-}
-
-// Return interpolation of Box normalisation function
-Interpolator& Configuration::boxNormalisationInterpolation()
-{
-	return boxNormalisationInterpolation_;
-}
-
 
 // Return cell array
 CellArray& Configuration::cells()

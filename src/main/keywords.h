@@ -229,7 +229,6 @@ namespace SimulationBlock
 	// Simulation Block Keyword Enum
 	enum SimulationKeyword
 	{
-		BoxNormalisationPointsKeyword,	/* 'BoxNormalisationPoints' - Number of random insertions to use when generating the normalisation array */
 		EndSimulationKeyword,		/* 'EndSimulation' - Signals the end of the Simulation block */
 		ParallelStrategyKeyword,	/* 'ParallelStrategy' - Determines the distribution of processes across Configurations */
 		ParallelGroupPopulationKeyword,	/* 'ParallelGroupPopulation' - Controls the maximum number of groups to split processes in a pool in to */

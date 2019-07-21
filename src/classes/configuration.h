@@ -175,9 +175,9 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	// Initialise empty Molecule and Grain arrays
 	void initialise(int nMolecules, int nGrains);
 	// Initialise from assigned Species populations
-	bool initialise(ProcessPool& procPool, bool randomise, double pairPotentialRange, int boxNormalisationNPoints);
+	bool initialise(ProcessPool& procPool, bool randomise, double pairPotentialRange);
 	// Finalise Configuration after loading contents from restart file
-	bool finaliseAfterLoad(ProcessPool& procPool, double pairPotentialRange, int boxNormalisationNPoints);
+	bool finaliseAfterLoad(ProcessPool& procPool, double pairPotentialRange);
 	// Add Molecule to Configuration based on the supplied Species
 	Molecule* addMolecule(Species* sp);
 	// Return number of Molecules in Configuration
@@ -274,12 +274,6 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	Box* box_;
 	// Requested side length for individual Cell
 	double requestedCellDivisionLength_;
-	// Box normalisation array to load/save for this configuration
-	CharString boxNormalisationFileName_;
-	// Normalisation function for Box shape/extent in radial distribution functions
-	Data1D boxNormalisation_;
-	// Interpolation of Box normalisation function
-	Interpolator boxNormalisationInterpolation_;
 	// Cell array
 	CellArray cells_;
 
@@ -313,19 +307,9 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	// Return Box
 	const Box* box() const;
 	// Set up periodic Box
-	bool setUpBox(ProcessPool& procPool, double ppRange, int nExpectedAtoms, int boxNormalisationNPoints);
+	bool setUpBox(ProcessPool& procPool, double ppRange, int nExpectedAtoms);
 	// Scale Box (and associated Cells) by specified factor
 	void scaleBox(double factor);
-	// Set box normalisation array to load/save for this configuration
-	void setBoxNormalisationFile(const char* filename);
-	// Return box normalisation file to load/save for this configuration
-	const char* boxNormalisationFileName() const;
-	// Load Box normalisation array from specified file
-	bool loadBoxNormalisationFile();
-	// Return current Box normalisation array
-	const Data1D& boxNormalisation() const;
-	// Return interpolation of Box normalisation function
-	Interpolator& boxNormalisationInterpolation();
 	// Return cell array
 	CellArray& cells();
 	// Return cell array

@@ -140,11 +140,11 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 
 	public:
 	// Form partials from stored Histogram data
-	void formPartials(double boxVolume, Interpolator& boxNormalisation);
+	void formPartials(double boxVolume);
 	// Add in partials from source PartialSet to our own, with specified weighting
 	bool addPartials(PartialSet& source, double weighting);
 	// Calculate RDF from supplied Histogram and normalisation data
-	static void calculateRDF(Data1D& destination, Histogram1D& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, Interpolator& boxNormalisation);
+	static void calculateRDF(Data1D& destination, Histogram1D& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier);
 
 
 	/*
