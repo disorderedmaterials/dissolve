@@ -45,7 +45,7 @@ SequenceProcedureNode::~SequenceProcedureNode()
 // Return whether specified context is relevant for this node type
 bool SequenceProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
 {
-	return true;
+	return (context != ProcedureNode::NoContext);
 }
 
 /*
