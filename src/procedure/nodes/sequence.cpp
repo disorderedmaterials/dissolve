@@ -198,7 +198,7 @@ bool SequenceProcedureNode::read(LineParser& parser, const CoreData& coreData, N
 				newNode = new SequenceProcedureNode(ProcedureNode::NoContext);
 				break;
 			case (ProcedureNode::nNodeTypes):
-				return Messenger::error("Unrecognised analysis node type '%s' found.\n", parser.argc(0));
+				return Messenger::error("Unrecognised procedure node type '%s' found.\n", parser.argc(0));
 				break;
 			default:
 				return Messenger::error("Epic Developer Fail - Don't know how to create a node of type '%s'.\n", parser.argc(0));
@@ -214,7 +214,7 @@ bool SequenceProcedureNode::read(LineParser& parser, const CoreData& coreData, N
 		sequence_.own(newNode);
 
 		// Read the new node
-		if (!newNode->read(parser, coreData, scopeStack)) return Messenger::error("Failed to read analysis sequence.\n");
+		if (!newNode->read(parser, coreData, scopeStack)) return Messenger::error("Failed to read node sequence.\n");
 	}
 
 	// Remove our context, since it is now 'out-of-scope'
