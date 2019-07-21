@@ -54,8 +54,6 @@ Configuration  'Bulk'
 
   InputCoordinates  epsr  epsr/mgo-nobragg/mgo.ato
 
-  BoxNormalisationFile  'Bulk.boxnorm'
-  RDFBinWidth  0.001
   Temperature  300.000000
 
   # Modules
@@ -71,6 +69,7 @@ Layer  'Main Processing'
   Module  RDF  'RDF01'
     Frequency  1
 
+  RDFBinWidth  0.001
     Configuration  'Bulk'
 
     Save On

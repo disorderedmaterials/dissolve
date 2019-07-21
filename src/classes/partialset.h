@@ -49,6 +49,10 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	private:
 	// AtomTypes used to generate matrices
 	AtomTypeList atomTypes_;
+	// RDF range used to initialise arrays
+	double rdfRange_;
+	// RDF bin width used to initialise arrays
+	double rdfBinWidth_;
 	// Fingerprint for these partials (e.g. reflecting Configuration indices at which they were calculated)
 	CharString fingerprint_;
 	// Abscissa units for contained data
@@ -73,8 +77,6 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	CharString objectNamePrefix_;
 
 	public:
-	// Set up using supplied Configuration
-	bool setUp(Configuration* cfg, const char* prefix, const char* tag, const char* suffix, const char* abscissaUnits);
 	// Set up PartialSet, including initialising histograms for g(r) use
 	bool setUp(const AtomTypeList& atomTypes, double rdfRange, double binWidth, const char* prefix, const char* tag, const char* suffix, const char* abscissaUnits);
 	// Set up PartialSet without initialising histogram arrays
@@ -87,6 +89,10 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	int nAtomTypes() const;
 	// Return atom types list
 	const AtomTypeList& atomTypes() const;
+	// Return RDF range used to initialise arrays
+	double rdfRange() const;
+	// Return RDF bin width used to initialise arrays
+	double rdfBinWidth() const;
 	// Set new fingerprint
 	void setFingerprint(const char* fingerprint);
 	// Return fingerprint of partials

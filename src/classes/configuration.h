@@ -317,30 +317,6 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 
 
 	/*
-	 * Calculation Limits
-	 */
-	private:
-	// RDF bin width
-	double rdfBinWidth_;
-	// Maximum extent (actual) of calculated g(r)
-	double rdfRange_;
-	// Maximum extent (requested) of calculated g(r)
-	double requestedRDFRange_;
-
-	public:
-	// Set RDF bin width
-	void setRDFBinWidth(double width);
-	// Return RDF bin width
-	double rdfBinWidth();
-	// Return working RDF extent
-	double rdfRange();
-	// Set requested RDF extent
-	void setRequestedRDFRange(double range);
-	// Return requested RDF extent
-	double requestedRDFRange();
-
-
-	/*
 	 * Upkeep
 	 */
 	public:

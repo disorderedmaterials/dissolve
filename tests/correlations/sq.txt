@@ -23,8 +23,6 @@ Configuration  'Bulk'
   Multiplier  1000
   SpeciesInfo  'Water'  1.0
   InputCoordinates  epsr  'epsr/waterbox.ato'
-  RDFBinWidth 0.03
-  RDFRange 15.5
 EndConfiguration
 
 Layer  'Processing'
@@ -33,6 +31,7 @@ Layer  'Processing'
   Module  RDF
     Configuration  'Bulk'
     Frequency  1
+    BinWidth 0.03
   EndModule
 
 # -- Partial g(r) (unbound terms)

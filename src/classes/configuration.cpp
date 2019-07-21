@@ -81,9 +81,6 @@ void Configuration::clear()
 	contentsVersion_.zero();
 
 	// Reset set-up
-	rdfBinWidth_ = 0.025;
-	rdfRange_ = -1.0;
-	requestedRDFRange_ = -1.0;
 	temperature_ = 300.0;
 }
 
@@ -110,40 +107,6 @@ const char* Configuration::name()
 const char* Configuration::niceName()
 {
 	return niceName_.get();
-}
-
-/*
- * Calculation Limits
- */
-
-// Set RDF bin width
-void Configuration::setRDFBinWidth(double width)
-{
-	rdfBinWidth_ = width;
-}
-
-// Return RDF bin width
-double Configuration::rdfBinWidth()
-{
-	return rdfBinWidth_;
-}
-
-// Return working RDF extent
-double Configuration::rdfRange()
-{
-	return rdfRange_;
-}
-
-// Set requested RDF extent
-void Configuration::setRequestedRDFRange(double range)
-{
-	requestedRDFRange_ = range;
-}
-
-// Return requested RDF extent
-double Configuration::requestedRDFRange()
-{
-	return requestedRDFRange_;
 }
 
 /*

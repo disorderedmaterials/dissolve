@@ -55,12 +55,12 @@ Configuration  'Mix'
   SpeciesInfo  'Water'  3.0
   SpeciesInfo  'Methanol'  6.0
   InputCoordinates  epsr  'epsr/watermeth.ato'
-  RDFBinWidth 0.03
 
   # Calculate and test g(r)
   Module  RDF  RDFs
     # Save  On
     Frequency  1
+    BinWidth 0.03
   EndModule
 
   # Sample Structure Factor Calculations

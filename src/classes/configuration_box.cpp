@@ -155,28 +155,6 @@ bool Configuration::setUpBox(ProcessPool& procPool, double ppRange, int nExpecte
 	// Generate cells within unit cell
 	cells_.generate(box_, requestedCellDivisionLength_, ppRange, atomicDensity());
 
-	// Determine maximal extent of RDF (from origin to centre of box)
-	Vec3<double> half = box()->axes() * Vec3<double>(0.5,0.5,0.5);
-	double maxR = half.magnitude(), inscribedSphereRadius = box()->inscribedSphereRadius();
-	Messenger::print("\n");
-	Messenger::print("Maximal extent for g(r) is %f Angstrom (half cell diagonal distance).\n", maxR);
-	Messenger::print("Inscribed sphere radius (maximum RDF range avoiding periodic images) is %f Angstroms.\n", inscribedSphereRadius);
-	if (requestedRDFRange_ < 0.0)
-	{
-		rdfRange_ = inscribedSphereRadius;
-		Messenger::print("Using maximal non-minimum image range for g(r) of %f Angstroms.\n", rdfRange_);
-	}
-	else
-	{
-		rdfRange_ = requestedRDFRange_;
-		if (rdfRange_ > inscribedSphereRadius) return Messenger::error("Requested RDF range (%f Angstroms) is out of range (max = %f Angstroms).\n", rdfRange_, inscribedSphereRadius);
-		Messenger::print("Specific RDF range supplied (%f Angstroms).\n", rdfRange_);
-	}
-
-	// 'Snap' rdfRange_ to nearest bin width...
-	rdfRange_ = int(rdfRange_/rdfBinWidth_) * rdfBinWidth_;
-	Messenger::print("RDF range (snapped to bin width) is %f Angstroms.\n", rdfRange_);
-
 	return true;
 }
 

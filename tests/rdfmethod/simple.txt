@@ -13,7 +13,6 @@ Configuration  'Box'
   Density  0.05  atoms/A3
   Multiplier  1
   SpeciesInfo  'Ball'  10000.0
-  RDFRange 20.0
   CellDivisionLength  5.0
 
   # Test 'Simple' Method

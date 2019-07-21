@@ -136,7 +136,6 @@ Configuration  'Liquid'
   Multiplier  2
   SpeciesInfo  'Hexane'  1.0
   InputCoordinates  dlpoly  'dlpoly_two/CONFIG'
-  RDFBinWidth 0.03
 EndConfiguration
 
 Layer  'Processing'

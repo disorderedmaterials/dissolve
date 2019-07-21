@@ -97,8 +97,6 @@ namespace ConfigurationBlock
 		ModuleKeyword,			/* 'Module' - Starts the set up of a Module for this configuration */
 		MultiplierKeyword,		/* 'Multiplier' - Specifies the factor by which relative populations are multiplied when generating the Configuration data */
 		NonPeriodicKeyword,		/* 'NonPeriodic' - States that the simulation should be treated as non-periodic */
-		RDFBinWidthKeyword,		/* 'RDFBinWidth' - Specified bin width for all RDF generation */
-		RDFRangeKeyword,		/* 'RDFRange' - Requested extent for RDF calculation */
 		SizeFactorKeyword,		/* 'SizeFactor' - Scaling factor for Box lengths, Cell size, and Molecule centres-of-geometry */
 		SpeciesInfoKeyword,		/* 'SpeciesInfo' - Specifies a Species to add to this Configuration */
 		TemperatureKeyword,		/* 'Temperature' - Defines the temperature of the simulation */

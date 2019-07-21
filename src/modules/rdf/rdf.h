@@ -100,13 +100,13 @@ class RDFModule : public Module
 	// Calculate partial g(r) in serial with simple double-loop
 	bool calculateGRTestSerial(Configuration* cfg, PartialSet& partialSet);
 	// Calculate partial g(r) with optimised double-loop
-	bool calculateGRSimple(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet);
+	bool calculateGRSimple(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet, const double rdfRange);
 	// Calculate partial g(r) utilising Cell neighbour lists
-	bool calculateGRCells(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet);
+	bool calculateGRCells(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet, const double binWidth);
 
 	public:
 	// (Re)calculate partial g(r) for the specified Configuration
-	bool calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule::PartialsMethod method, bool allIntra, bool& alreadyUpToDate);
+	bool calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule::PartialsMethod method, const double rdfRange, const double rdfBinWidth, bool allIntra, bool& alreadyUpToDate);
 	// Calculate smoothed/broadened partial g(r) from supplied partials
 	static bool calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg, const PartialSet& originalgr, PartialSet& weightedgr, PairBroadeningFunction& intraBroadening, int smoothing);
 	// Return effective density for specified Module's target Configurations

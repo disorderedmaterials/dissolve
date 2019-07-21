@@ -136,7 +136,6 @@ Configuration  'Liquid'
   Multiplier  200
   SpeciesInfo  'Hexane'  1.0
   InputCoordinates  dlpoly  'dlpoly_torsions/CONFIG'
-  RDFBinWidth 0.03
 EndConfiguration
 
 Layer  'Processing'

@@ -115,7 +115,6 @@ Configuration  'Liquid'
   Density  0.876  g/cm3
   Multiplier  200
   SpeciesInfo  'Benzene'  1.0
-  RDFBinWidth  0.03
   InputCoordinates  epsr  epsr25/boxbenz.ato
 EndConfiguration
 
@@ -129,6 +128,7 @@ Layer  'Processing'
 Module  RDF  'RDFs'
   Configuration  'Liquid'
   IntraBroadening  None
+  BinWidth  0.03
   Frequency  1
 EndModule
 

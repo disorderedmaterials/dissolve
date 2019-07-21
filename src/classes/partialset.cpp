@@ -49,12 +49,6 @@ PartialSet::~PartialSet()
  * Set of Partials
  */
 
-// Set up using supplied Configuration
-bool PartialSet::setUp(Configuration* cfg, const char* prefix, const char* tag, const char* suffix, const char* abscissaUnits)
-{
-	return setUp(cfg->usedAtomTypesList(), cfg->rdfRange(), cfg->rdfBinWidth(), prefix, tag, suffix, abscissaUnits);
-}
-
 // Set up PartialSet
 bool PartialSet::setUp(const AtomTypeList& atomTypes, double rdfRange, double binWidth, const char* prefix, const char* tag, const char* suffix, const char* abscissaUnits)
 {
@@ -111,6 +105,9 @@ bool PartialSet::setUpPartials(const AtomTypeList& atomTypes, const char* prefix
 // Set up histogram arrays for g(r) calculation
 void PartialSet::setUpHistograms(double rdfRange, double binWidth)
 {
+	rdfRange_ = rdfRange;
+	rdfBinWidth_ = binWidth;
+
 	int nTypes = atomTypes_.nItems();
 
 	fullHistograms_.initialise(nTypes, nTypes, true);
@@ -162,6 +159,18 @@ int PartialSet::nAtomTypes() const
 const AtomTypeList& PartialSet::atomTypes() const
 {
 	return atomTypes_;
+}
+
+// Return RDF range used to initialise arrays
+double PartialSet::rdfRange() const
+{
+	return rdfRange_;
+}
+
+// Return RDF bin width used to initialise arrays
+double PartialSet::rdfBinWidth() const
+{
+	return rdfBinWidth_;
 }
 
 // Set new fingerprint

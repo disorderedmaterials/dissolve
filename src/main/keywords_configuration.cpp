@@ -39,8 +39,6 @@ KeywordData ConfigurationBlockData[] = {
 	{ "Module",			1,	"Starts the set up of a Module for this Configuration" },
 	{ "Multiplier",			1,	"Factor by which relative populations are multiplied when generating the Configuration data" },
 	{ "NonPeriodic",		0,	"States that the simulation should be treated as non-periodic" },
-	{ "RDFBinWidth",		1,	"Bin width for all radial distribution functions" },
-	{ "RDFRange",			1,	"Requested extent for calculated radial distribution functions" },
 	{ "SizeFactor",			1,	"Scaling factor for Box lengths, Cell size, and Molecule centres-of-geometry" },
 	{ "SpeciesInfo",		1,	"Specify a Species to add to this Configuration" },
 	{ "Temperature",		1,	"Simulation temperature of the Configuration" }
@@ -185,12 +183,6 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 			case (ConfigurationBlock::NonPeriodicKeyword):
 				cfg->setNonPeriodic(true);
 				Messenger::print("Flag set for a non-periodic calculation.\n");
-				break;
-			case (ConfigurationBlock::RDFBinWidthKeyword):
-				cfg->setRDFBinWidth(parser.argd(1));
-				break;
-			case (ConfigurationBlock::RDFRangeKeyword):
-				cfg->setRequestedRDFRange(parser.argd(1));
 				break;
 			case (ConfigurationBlock::SizeFactorKeyword):
 				cfg->setRequestedSizeFactor(parser.argd(1));

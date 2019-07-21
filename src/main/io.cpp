@@ -371,8 +371,6 @@ bool Dissolve::saveInput(const char* filename)
 		}
 
 		if (!parser.writeLineF("\n")) return false;
-		if (!parser.writeLineF("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::RDFBinWidthKeyword), cfg->rdfBinWidth())) return false;
-		if (!parser.writeLineF("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::RDFRangeKeyword), cfg->rdfRange())) return false;
 		if (!parser.writeLineF("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::TemperatureKeyword), cfg->temperature())) return false;
 
 		// Modules
