@@ -36,7 +36,7 @@ class Procedure
 {
 	public:
 	// Constructor
-	Procedure(ProcedureNode::NodeContext context);
+	Procedure(ProcedureNode::NodeContext context, const char* endKeyword = "_NOTDEFINED_");
 	// Destructor
 	~Procedure();
 
@@ -55,8 +55,6 @@ class Procedure
 	public:
 	// Clear all data
 	void clear();
-	// Set end keyword for root sequence
-	void setEndKeyword(const char* keyword);
 	// Add (own) specified node to root sequence
 	void addRootSequenceNode(ProcedureNode* node);
 	// Return context for the main Procedure

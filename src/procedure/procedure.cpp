@@ -25,7 +25,7 @@
 #include "base/sysfunc.h"
 
 // Constructor
-Procedure::Procedure(ProcedureNode::NodeContext context) : rootSequence_(context, "EndProcedure")
+Procedure::Procedure(ProcedureNode::NodeContext context, const char* endKeyword) : rootSequence_(context, endKeyword)
 {
 	context_ = context;
 }
@@ -44,12 +44,6 @@ void Procedure::clear()
 {
 	scopeStack_.clear();
 	rootSequence_.clear();
-}
-
-// Set End keyword for root sequence
-void Procedure::setEndKeyword(const char* keyword)
-{
-	rootSequence_.setBlockTerminationKeyword(keyword);
 }
 
 // Add (own) specified node to root sequence

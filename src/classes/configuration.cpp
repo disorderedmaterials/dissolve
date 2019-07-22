@@ -39,7 +39,7 @@ template<class Configuration> int ObjectStore<Configuration>::objectType_ = Obje
 template<class Configuration> const char* ObjectStore<Configuration>::objectTypeName_ = "Configuration";
 
 // Constructor
-Configuration::Configuration() : ListItem<Configuration>(), ObjectStore<Configuration>(this), generator_(ProcedureNode::GenerationContext)
+Configuration::Configuration() : ListItem<Configuration>(), ObjectStore<Configuration>(this), generator_(ProcedureNode::GenerationContext, "EndGenerator")
 {
 	box_ = NULL;
 	clear();
