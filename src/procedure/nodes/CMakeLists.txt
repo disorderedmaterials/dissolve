@@ -1,4 +1,5 @@
 add_library(procedurenodes
+  box.cpp
   calculate.cpp
   collect1d.cpp
   collect2d.cpp
@@ -14,6 +15,7 @@ add_library(procedurenodes
   select.cpp
   sequence.cpp
 
+  box.h
   calculate.h
   collect1d.h
   collect2d.h

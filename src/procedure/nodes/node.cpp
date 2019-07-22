@@ -27,7 +27,8 @@
 // Return enum option info for NodeType
 EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
 {
-	static EnumOptionsList NodeTypeKeywords = EnumOptionsList() << 
+	static EnumOptionsList NodeTypeKeywords = EnumOptionsList() <<
+		EnumOption(ProcedureNode::BoxNode,		"Box") <<
 		EnumOption(ProcedureNode::CalculateNode,	"Calculate") <<
 		EnumOption(ProcedureNode::Collect1DNode,	"Collect1D") <<
 		EnumOption(ProcedureNode::Collect2DNode,	"Collect2D") <<
