@@ -8,6 +8,7 @@
 - AddSpeciesNode: Immediately adds the specified Species to the current cell, following the options set within. If the unit cell does not exist, it is created according to the definition provided in the UnitCell node (following specification of density if provided). If it already exists and has a prescribed density rather than volume, the volume is expanded to accommodate the new molecules to be created. Replicates and extends the content of the SpeciesInfo Configuration block
 - RandomiseConformers (or a better name): randomise individual molecules of the specified type by randomly rotating about bonds throughout the molecule. Need to check for internal overlaps (i.e. calculate internal energy)
 - Generate errors for argument numbers to nodes.
+- Implement ProcedureNode::save() virtuals properly.
 
 TODO:
 - Multiplier, Density, CellLengths, and CellAngles Configuration keywords, and the SpeciesInfo block, will be redundant after these changes.
