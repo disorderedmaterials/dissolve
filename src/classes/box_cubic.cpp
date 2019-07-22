@@ -24,21 +24,21 @@
 #include "classes/cell.h"
 
 // Constructor
-CubicBox::CubicBox(double volume, double boxLength) : Box()
+CubicBox::CubicBox(double length) : Box()
 {
 	type_ = Box::CubicBoxType;
 	
 	// Construct axes_
-	axes_.setColumn(0, boxLength, 0.0, 0.0);
-	axes_.setColumn(1, 0.0, boxLength, 0.0);
-	axes_.setColumn(2, 0.0, 0.0, boxLength);
-	
-	// Set up box, rescaling to desired volume
-	setUp(volume);
+	axes_.setColumn(0, length, 0.0, 0.0);
+	axes_.setColumn(1, 0.0, length, 0.0);
+	axes_.setColumn(2, 0.0, 0.0, length);
 
-	// Grab new cell length
-	a_ = axes_.columnMagnitude(0);
+	// Store box length and reciprocal
+	a_ = length;
 	ra_ = 1.0/a_;
+	
+	// Finalise associated data
+	finalise();
 }
 
 // Destructor

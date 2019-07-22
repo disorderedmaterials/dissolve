@@ -49,9 +49,11 @@ bool Dissolve::setUpSimulation()
 	{
 		Messenger::print("*** Configuration %2i: '%s'\n", index, cfg->name());
 
-		// If the restart file exists, we will take our coordinates from it - no need to set anything up here.
-		// However, if the inputCoordinatesFile_ is set, we create our config from the Species definition and load the coordinates.
-		// Otherwise, if the restart file does not exist, and the inputCoordinatesFile_ is not set, generate a random configuration.
+		/*
+		 * If an input coordinates file has been specified and exists then this overrides our generator *and* any
+		 * coordinates that may be present in the restart file. If no restart file data was read in (nAtoms will currently
+		 * be zero) then we will need to run the generator() anyway on order to set up the species / atoms.
+		 */
 		if (cfg->inputCoordinates().hasValidFileAndFormat())
 		{
 			if (DissolveSys::fileExists(cfg->inputCoordinates()))
@@ -59,8 +61,8 @@ bool Dissolve::setUpSimulation()
 				// Set up the Configuration from the Species populations, unless it has already been set up by reading the restart file
 				if (cfg->nAtoms() == 0)
 				{
-					// No atoms, so presumably no data was read from the restart file. Set the Configuration up in the normal way (but without randomising molecules)
-					if (!cfg->initialise(worldPool(), false, pairPotentialRange_)) return false;
+					// No atoms (presumably no data was read from the restart file) so run the generator
+					if (!cfg->generate(worldPool(), pairPotentialRange_)) return false;
 				}
 
 				Messenger::print("Loading initial coordinates from file '%s'...\n", cfg->inputCoordinates().filename());
@@ -73,8 +75,8 @@ bool Dissolve::setUpSimulation()
 		}
 		else if (cfg->nAtoms() == 0)
 		{
-			// Set up the Configuration from the Species populations
-			if (!cfg->initialise(worldPool(), true, pairPotentialRange_)) return false;
+			// Set up the Configuration from its generator
+			if (!cfg->generate(worldPool(), pairPotentialRange_)) return false;
 		}
 		else Messenger::print("Configuration loaded from the restart file.\n");
 

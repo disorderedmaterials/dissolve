@@ -13,7 +13,6 @@ add_library(main
   keywords_simulation.cpp
   keywords_site.cpp
   keywords_species.cpp
-  keywords_speciesinfo.cpp
   layers.cpp
   masterterms.cpp
   modules.cpp

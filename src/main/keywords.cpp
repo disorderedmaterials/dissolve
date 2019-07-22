@@ -54,9 +54,6 @@ void BlockKeywords::printValidKeywords(BlockKeywords::BlockKeyword block)
 		case (BlockKeywords::SpeciesBlockKeyword):
 			for (n=0; n<SpeciesBlock::nSpeciesKeywords; ++n) Messenger::print("  %s", SpeciesBlock::keyword( (SpeciesBlock::SpeciesKeyword) n ));
 			break;
-		case (BlockKeywords::SpeciesInfoBlockKeyword):
-			for (n=0; n<SpeciesInfoBlock::nSpeciesInfoKeywords; ++n) Messenger::print("  %s", SpeciesInfoBlock::keyword( (SpeciesInfoBlock::SpeciesInfoKeyword) n ));
-			break;
 		default:
 			Messenger::print("Unrecognised block given to BlockKeywords::printValidKeywords.\n");
 			break;
@@ -69,7 +66,7 @@ void BlockKeywords::printValidKeywords(BlockKeywords::BlockKeyword block)
  */
 
 // Block Keywords - Those beginning with an underscore are not meant to be used as a main block
-const char* BlockKeywordKeywords[] = { "Configuration", "Layer", "Master", "Module", "PairPotentials", "Simulation", "Site", "Species", "SpeciesInfo" };
+const char* BlockKeywordKeywords[] = { "Configuration", "Layer", "Master", "Module", "PairPotentials", "Simulation", "Site", "Species" };
 
 // Convert text string to MainInputKeyword
 BlockKeywords::BlockKeyword BlockKeywords::blockKeyword(const char* s)

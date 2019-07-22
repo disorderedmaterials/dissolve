@@ -82,10 +82,10 @@ class Box
 	double reciprocalVolume_;
 
 	public:
+	// Finalise Box, storing volume and reciprocal and inverted axes
+	void finalise();
 	// Return Box type
 	BoxType type() const;
-	// Set up box, scaling to volume specified (in cubic Angstroms)
-	void setUp(double volume);
 	// Return volume
 	double volume() const;
 	// Return axis lengths
@@ -151,7 +151,7 @@ class Box
 	 */
 	public:
 	// Generate a suitable Box given the supplied relative lengths, angles, and volume
-	static Box* generate(Vec3<double> relativeLengths, Vec3<double> angles, double volume);
+	static Box* generate(Vec3<double> lengths, Vec3<double> angles);
 	// Return radius of largest possible inscribed sphere for box
 	double inscribedSphereRadius() const;
 	// Calculate the RDF normalisation for the Box
@@ -201,7 +201,7 @@ class NonPeriodicBox : public Box
 {
 	public:
 	// Constructor
-	NonPeriodicBox(double volume);
+	NonPeriodicBox(double length);
 	// Destructor
 	~NonPeriodicBox();
 
@@ -261,7 +261,7 @@ class CubicBox : public Box
 {
 	public:
 	// Constructor
-	CubicBox(double volume, double boxLength);
+	CubicBox(double length);
 	// Destructor
 	~CubicBox();
 
@@ -321,7 +321,7 @@ class OrthorhombicBox : public Box
 {
 	public:
 	// Constructor
-	OrthorhombicBox(double volume, const Vec3<double> relativeLengths);
+	OrthorhombicBox(const Vec3<double> lengths);
 	// Destructor
 	~OrthorhombicBox();
 
@@ -381,7 +381,7 @@ class MonoclinicBox : public Box
 {
 	public:
 	// Constructor
-	MonoclinicBox(double volume, const Vec3<double> relativeLengths, double alpha);
+	MonoclinicBox(const Vec3<double> lengths, double beta);
 	// Destructor
 	~MonoclinicBox();
 
@@ -441,7 +441,7 @@ class TriclinicBox : public Box
 {
 	public:
 	// Constructor
-	TriclinicBox(double volume, const Vec3<double> relativeLengths, const Vec3<double> cellAngles);
+	TriclinicBox(const Vec3<double> lengths, const Vec3<double> angles);
 	// Destructor
 	~TriclinicBox();
 

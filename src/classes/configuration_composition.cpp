@@ -20,6 +20,7 @@
 */
 
 #include "main/dissolve.h"
+#include "classes/box.h"
 #include "classes/species.h"
 
 // Add Species to list of those used by the Configuration
@@ -70,66 +71,10 @@ double Configuration::totalRelative() const
 	return total;
 }
 
-// Set multiplier for System components
-void Configuration::setMultiplier(int mult)
-{
-	multiplier_ = mult;
-}
-
-// Return multiplier for System components
-int Configuration::multiplier() const
-{
-	return multiplier_;
-}
-
-// Set the atomic density of the system (atoms/A3)
-void Configuration::setAtomicDensity(double density)
-{
-	density_ = density;
-	densityIsAtomic_ = true;
-}
-
-// Set the chemical density of the system (g/cm3)
-void Configuration::setChemicalDensity(double density)
-{
-	density_ = density;
-	densityIsAtomic_ = false;
-}
-
-// Return the density of the system
-double Configuration::density() const
-{
-	return density_;
-}
-
-// Return whether the density is in atomic units (atoms/A3) or chemistry units (g/cm3)
-bool Configuration::densityIsAtomic() const
-{
-	return densityIsAtomic_;
-}
-
-// Return the atomic density of the system
+// Return the atomic density of the Configuration
 double Configuration::atomicDensity() const
 {
-	// Calculate atomic density from chemical density?
-	if (densityIsAtomic_) return density_;
-	
-	// Determine total atomic mass and number of atoms in system
-	double mass = 0.0, nAtoms = 0.0;
-	for (SpeciesInfo* spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next)
-	{
-		Species* sp = spInfo->species();
-
-		mass += multiplier_ * spInfo->population() * sp->mass();
-		nAtoms += multiplier_ * spInfo->population() * sp->nAtoms();
-	}
-
-	// Convert density from g/cm3 to g/A3
-	double rho = nAtoms  / ((mass / AVOGADRO) / (density_ / 1.0E24));
-	
-	Messenger::printVerbose("Converting %f atoms (mass = %f, density = %f) to atomic density = %f\n", nAtoms, mass, density_, rho);
-
-	return rho;
+	return nAtoms() / box_->volume();
 }
 
 // Return import coordinates file / format

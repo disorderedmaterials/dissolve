@@ -86,17 +86,6 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	const char* niceName();
 
 
-	/*
-	 * Generation
-	 */
-	private:
-	// Procedure to generate the Configuration
-	Procedure generator_;
-
-	public:
-	// Read generator from supplied parser
-	bool readGenerator(LineParser& parser, const CoreData& coreData);
-
 
 	/*
 	 * Composition
@@ -104,12 +93,6 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	private:
 	// Reference list of Species used by the Configuration and their relative populations
 	List<SpeciesInfo> usedSpecies_;
-	// Integer multiplier of used relative species populations
-	int multiplier_;
-	// Density of the configuration
-	double density_;
-	// Whether the density is in atomic units (atoms/A3) or chemistry units (g/cm3)
-	bool densityIsAtomic_;
 	// File / format of input coordinates file
 	CoordinateImportFileFormat inputCoordinates_;
 	// Temperature of this configuration (K)
@@ -126,19 +109,7 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	bool hasUsedSpecies(Species* sp);
 	// Return total relative population of Species used by this Configuration
 	double totalRelative() const;
-	// Set multiplier for System components
-	void setMultiplier(int mult);
-	// Return multiplier for System components
-	int multiplier() const;
-	// Set the atomic density of the system (atoms/A3)
-	void setAtomicDensity(double density);
-	// Set the chemical density of the system (g/cm3)
-	void setChemicalDensity(double density);
-	// Return the density of the system
-	double density() const;
-	// Return whether the density is in atomic units (atoms/A3) or chemistry units (g/cm3)
-	bool densityIsAtomic() const;
-	// Return the atomic density of the system
+	// Return the atomic density of the Configuration
 	double atomicDensity() const;
 	// Return import coordinates file / format
 	CoordinateImportFileFormat& inputCoordinates();
@@ -152,6 +123,8 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	 * Content
 	 */
 	private:
+	// Procedure to generate the Configuration
+	Procedure generator_;
 	// Array of Molecules
 	DynamicArray<Molecule> molecules_;
 	// Array of Grains
@@ -172,10 +145,14 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	public:
 	// Empty contents of Configuration, leaving core definitions intact
 	void empty();
-	// Initialise empty Molecule and Grain arrays
-	void initialise(int nMolecules, int nGrains);
-	// Initialise from assigned Species populations
-	bool initialise(ProcessPool& procPool, bool randomise, double pairPotentialRange);
+	// Initialise content arrays
+	void initialiseArrays(int nMolecules, int nGrains);
+	// Read generator from supplied parser
+	bool readGenerator(LineParser& parser, const CoreData& coreData);
+	// Write generator to supplied parser
+	bool writeGenerator(LineParser& parser, const char* prefix);
+	// Generate the Configuration ready for use, including Box and associated Cells
+	bool generate(ProcessPool& procPool, double pairPotentialRange);
 	// Finalise Configuration after loading contents from restart file
 	bool finaliseAfterLoad(ProcessPool& procPool, double pairPotentialRange);
 	// Add Molecule to Configuration based on the supplied Species
@@ -260,16 +237,10 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	 * Periodic Box and Cells
 	 */
 	private:
-	// Relative Box lengths
-	Vec3<double> relativeBoxLengths_;
-	// Box angles
-	Vec3<double> boxAngles_;
 	// Requested size factor for Box
 	double requestedSizeFactor_;
 	// Size factor currently applied to Box / Cells
 	double appliedSizeFactor_;
-	// Whether the Configuration is non-periodic
-	bool nonPeriodic_;
 	// Periodic Box definition for the Configuration
 	Box* box_;
 	// Requested side length for individual Cell
@@ -278,38 +249,22 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	CellArray cells_;
 
 	public:
-	// Set relative Box lengths
-	void setRelativeBoxLengths(const Vec3<double> lengths);
-	// Set relative Box length
-	void setRelativeBoxLength(int index, double length);
-	// Return relative Box lengths
-	Vec3<double> relativeBoxLengths() const;
-	// Set Box angles
-	void setBoxAngles(const Vec3<double> angles);
-	// Set Box angle
-	void setBoxAngle(int index, double angle);
-	// Return Box angles
-	Vec3<double> boxAngles() const;
+	// Create Box definition with specified lengths and angles
+	bool createBox(const Vec3<double> lengths, const Vec3<double> angles, bool nonPeriodic = false);
+	// Return Box
+	const Box* box() const;
+	// Scale Box (and associated Cells) by specified factor
+	void scaleBox(double factor);
 	// Set requested size factor for Box
 	void setRequestedSizeFactor(double factor);
 	// Return requested size factor for Box
 	double requestedSizeFactor();
 	// Return last size factor applied to Box / Cells
 	double appliedSizeFactor();
-	// Set whether the Box is non-periodic
-	void setNonPeriodic(bool b);
-	// Return whether the Box is non-periodic
-	bool nonPeriodic() const;
 	// Set requested side length for individual Cell
 	void setRequestedCellDivisionLength(double a);
 	// Return requested side length for individual Cell
 	double requestedCellDivisionLength() const;
-	// Return Box
-	const Box* box() const;
-	// Set up periodic Box
-	bool setUpBox(ProcessPool& procPool, double ppRange, int nExpectedAtoms);
-	// Scale Box (and associated Cells) by specified factor
-	void scaleBox(double factor);
 	// Return cell array
 	CellArray& cells();
 	// Return cell array

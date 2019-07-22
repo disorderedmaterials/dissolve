@@ -66,7 +66,6 @@ namespace BlockKeywords
 		SimulationBlockKeyword,			/* 'Simulation' - Setting of simulation variables affecting the calculation */
 		SiteBlockKeyword,			/* 'Site' - Defines an analysis site within a Species */
 		SpeciesBlockKeyword,			/* 'Species' - Begins a definition of a Species */
-		SpeciesInfoBlockKeyword,		/* 'SpeciesInfo' - Defines a Species for inclusion into a Configuration */
 		nBlockKeywords				/* Number of defined BlockKeyword keywords */
 	};
 	// Convert text string to BlockKeyword
@@ -86,19 +85,12 @@ namespace ConfigurationBlock
 	// Configuration Block Keyword Enum
 	enum ConfigurationKeyword
 	{
-		BoxNormalisationFileKeyword,	/* 'BoxNormalisationFile' - Specifies a file from which to load the RDF normalisation array */
-		CellAnglesKeyword,		/* 'CellAngles' - Gives the angles of the unit cell */
 		CellDivisionLengthKeyword,	/* 'CellDivisionLength' - Set the requested side length for regions when partitioning the unit cell */
-		CellLengthsKeyword,		/* 'CellLengths' - Gives the relative lengths of the unit cell */
-		DensityKeyword,			/* 'Density' - Specifies the density of the simulation, along with its units */
 		EndConfigurationKeyword,	/* 'EndConfiguration' - Signals the end of the Configuration block */
 		GeneratorKeyword,		/* 'Generator' - Define the generator procedure for the Configuration */
 		InputCoordinatesKeyword,	/* 'InputCoordinates' - Specifies the file which contains the starting coordinates */
 		ModuleKeyword,			/* 'Module' - Starts the set up of a Module for this configuration */
-		MultiplierKeyword,		/* 'Multiplier' - Specifies the factor by which relative populations are multiplied when generating the Configuration data */
-		NonPeriodicKeyword,		/* 'NonPeriodic' - States that the simulation should be treated as non-periodic */
 		SizeFactorKeyword,		/* 'SizeFactor' - Scaling factor for Box lengths, Cell size, and Molecule centres-of-geometry */
-		SpeciesInfoKeyword,		/* 'SpeciesInfo' - Specifies a Species to add to this Configuration */
 		TemperatureKeyword,		/* 'Temperature' - Defines the temperature of the simulation */
 		nConfigurationKeywords		/* Number of keywords defined for this block */
 	};
@@ -300,31 +292,6 @@ namespace SpeciesBlock
 	int nArguments(SpeciesKeyword id);
 	// Parse Species block
 	bool parse(LineParser& parser, Dissolve* dissolve, Species* species);
-};
-
-
-/*
- * SpeciesInfo Block Keywords
- */
-namespace SpeciesInfoBlock
-{
-	// SpeciesInfo Block Keyword Enum
-	enum SpeciesInfoKeyword
-	{
-		EndSpeciesInfoKeyword,		/* 'EndSpeciesInfo' - Signals the end of the SpeciesInfo */
-		NoRotationKeyword,		/* Flag that the Species should not be rotated when making a random configuration */
-		PopulationKeyword,		/* Relative population of the Species */
-		PositioningKeyword,		/* Positioning type to use for Species */
-		nSpeciesInfoKeywords		/* Number of keywords defined for this block */
-	};
-	// Convert text string to SpeciesInfoKeyword
-	SpeciesInfoKeyword keyword(const char* s);
-	// Convert SpeciesInfoKeyword to text string
-	const char* keyword(SpeciesInfoKeyword id);
-	// Return expected number of expected arguments
-	int nArguments(SpeciesInfoKeyword id);
-	// Parse SpeciesInfo block
-	bool parse(LineParser& parser, Dissolve* dissolve, SpeciesInfo* speciesInfo);
 };
 
 #endif

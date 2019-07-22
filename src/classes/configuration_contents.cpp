@@ -45,8 +45,8 @@ void Configuration::empty()
 	++contentsVersion_;
 }
 
-// Initialise all content arrays
-void Configuration::initialise(int nMolecules, int nGrains)
+// Initialise content arrays
+void Configuration::initialiseArrays(int nMolecules, int nGrains)
 {
 	// Clear current contents
 	empty();
@@ -55,121 +55,55 @@ void Configuration::initialise(int nMolecules, int nGrains)
 	grains_.initialise(nGrains);
 }
 
-// Initialise from assigned Species populations
-bool Configuration::initialise(ProcessPool& procPool, bool randomise, double pairPotentialRange)
+// Generate the Configuration ready for use, including Box and associated Cells
+bool Configuration::generate(ProcessPool& procPool, double pairPotentialRange)
 {
-	Messenger::print("Setting up Configuration from Species / multiplier definition...\n");
-
-	// Clear current contents
+	// Empty the current contents
 	empty();
 
-	/*
-	 * Check Species populations, and calculate total number of expected Atoms
-	 */
-	if (multiplier_ < 1)
+	// Generate the contents
+	bool result = generator_.execute(procPool, this, "Generator", moduleData_);
+	if (!result) return Messenger::error("Failed to generate Configuration '%s'.\n", niceName());
+
+	// Check Box extent against pair potential range
+	if (pairPotentialRange > box_->inscribedSphereRadius())
 	{
-		Messenger::error("Configuration multiplier is zero or negative (%i).\n", multiplier_);
-		return false;
-	}
-	int nExpectedAtoms = 0;
-	for (SpeciesInfo* spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next)
-	{
-		// Get Species pointer
-		Species* sp = spInfo->species();
-
-		// Determine the number of molecules of this component
-		int count =  spInfo->population() * multiplier_;
-
-		// Check for zero count
-		if (count == 0)
-		{
-			Messenger::error("Relative population for Species '%s' is too low (%e) to provide any Molecules in this Configuration.\n",  sp->name(),  spInfo->population());
-			return false;
-		}
-
-		nExpectedAtoms += count * sp->nAtoms();
-	}
-
-	/*
-	 * Create a Box to contain the system
-	 */
-	Messenger::print("Creating periodic Box and Cell partitioning...\n");
-	if (!setUpBox(procPool, pairPotentialRange, nExpectedAtoms))
-	{
-		Messenger::error("Failed to set up Box/Cells for Configuration.\n");
+		Messenger::error("PairPotential range (%f) is longer than the shortest non-minimum image distance (%f).\n", pairPotentialRange, box_->inscribedSphereRadius());
 		return false;
 	}
 
-	/*
-	 * Create Molecules
-	 */
-	Messenger::print("Setting up Molecules...\n");
-
-	procPool.initialiseRandomBuffer(ProcessPool::PoolProcessesCommunicator);
-	Vec3<double> r, cog, newCentre, fr;
-	Matrix3 transform;
-
-	ListIterator<SpeciesInfo> speciesInfoIterator(usedSpecies_);
-	while (SpeciesInfo* spInfo = speciesInfoIterator.iterate())
-	{
-		// Determine the number of molecules of this component
-		int count = spInfo->population() * multiplier_;
-
-		// Add copies of Species as Molecules
-		for (int n=0; n<count; ++n)
-		{
-			// Add the Molecule
-			Molecule* mol = addMolecule(spInfo->species());
-
-			// Generate random positions and orientations if needed
-			if (randomise)
-			{
-				// Set / generate position of Molecule
-				switch (spInfo->insertionPositioning())
-				{
-					case (SpeciesInfo::RandomPositioning):
-						fr.set(procPool.random(), procPool.random(), procPool.random());
-						newCentre = box_->fracToReal(fr);
-						mol->setCentreOfGeometry(box_, newCentre);
-						break;
-					case (SpeciesInfo::CentralPositioning):
-						fr.set(0.5, 0.5, 0.5);
-						newCentre = box_->fracToReal(fr);
-						mol->setCentreOfGeometry(box_, newCentre);
-						break;
-					case (SpeciesInfo::CurrentPositioning):
-						break;
-					default:
-						Messenger::error("Unrecognised positioning type.\n");
-						break;
-				}
-
-				// Generate and apply a random rotation matrix
-				if (spInfo->rotateOnInsertion())
-				{
-					transform.createRotationXY(procPool.randomPlusMinusOne()*180.0, procPool.randomPlusMinusOne()*180.0);
-					mol->transform(box_, transform);
-				}
-
-				// Explore conformation space within the molecule by rotating bonds
-				// TODO
-			}
-		}
-	}
-
-	// Set fractional populations in usedAtomTypes_
+	// Finalise used AtomType list
 	usedAtomTypes_.finalise();
 
-	++contentsVersion_;
+	// Generation was successful, so set-up Cells for the Box
+	cells_.generate(box_, requestedCellDivisionLength_, pairPotentialRange, atomicDensity());
 
 	return true;
+}
+
+// Read generator from supplied parser
+bool Configuration::readGenerator(LineParser& parser, const CoreData& coreData)
+{
+	generator_.clear();
+
+	return generator_.read(parser, coreData);
+}
+
+// Write generator to supplied parser
+bool Configuration::writeGenerator(LineParser& parser, const char* prefix)
+{
+	return generator_.write(parser, prefix);
 }
 
 // Finalise Configuration after loading contents from restart file
 bool Configuration::finaliseAfterLoad(ProcessPool& procPool, double pairPotentialRange)
 {
-	// Set up Box and Cells
-	if (!setUpBox(procPool, pairPotentialRange, -1)) return false;
+	// Check Box extent against pair potential range
+	if (pairPotentialRange > box_->inscribedSphereRadius())
+	{
+		Messenger::error("PairPotential range (%f) is longer than the shortest non-minimum image distance (%f).\n", pairPotentialRange, box_->inscribedSphereRadius());
+		return false;
+	}
 
 	// Loaded coordinates will reflect any sizeFactor scaling, but Box and Cells will not, so scale them here
 	scaleBox(requestedSizeFactor_);

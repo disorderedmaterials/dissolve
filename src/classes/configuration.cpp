@@ -67,14 +67,8 @@ void Configuration::clear()
 	usedSpecies_.clear();
 
 	// Reset composition
-	multiplier_ = 1;
-	density_ = -1.0;
-	densityIsAtomic_ = true;
-	boxAngles_.set(90.0, 90.0, 90.0);
-	relativeBoxLengths_.set(1.0, 1.0, 1.0);
 	requestedSizeFactor_ = 1.0;
 	appliedSizeFactor_ = 1.0;
-	nonPeriodic_ = false;
 
 	// Reset box / Cells
 	requestedCellDivisionLength_ = 10.0;
@@ -107,16 +101,6 @@ const char* Configuration::name()
 const char* Configuration::niceName()
 {
 	return niceName_.get();
-}
-
-/*
- * Generation
- */
-
-// Read generator from supplied parser
-bool Configuration::readGenerator(LineParser& parser, const CoreData& coreData)
-{
-	return generator_.read(parser, coreData);
 }
 
 /*

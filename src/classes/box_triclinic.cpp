@@ -24,34 +24,39 @@
 #include "classes/cell.h"
 
 // Constructor
-TriclinicBox::TriclinicBox(double volume, const Vec3<double> relativeLengths, const Vec3<double> cellAngles) : Box()
+TriclinicBox::TriclinicBox(const Vec3<double> lengths, const Vec3<double> angles) : Box()
 {
 	type_ = Box::TriclinicBoxType;
 	
 	// Construct axes_
-	alpha_ = cellAngles.x;
-	beta_ = cellAngles.y;
-	gamma_ = cellAngles.z;
+	alpha_ = angles.x;
+	beta_ = angles.y;
+	gamma_ = angles.z;
+
 	// Assume that A lays along x-axis
 	axes_.setColumn(0, 1.0, 0.0, 0.0);
+
 	// Assume that B lays in the xy plane. Since A={1,0,0}, cos(gamma) equals 'x' of the B vector.
 	double temp = cos(gamma_/DEGRAD);
 	axes_.setColumn(1, temp, sqrt(1.0 - temp*temp), 0.0);
+
 	// The C vector can now be determined in parts.
 	// It's x-component is equal to cos(beta) since {1,0,0}{x,y,z} = {1}{x} = cos(beta)
 	axes_.setColumn(2, cos(beta_/DEGRAD), 0.0, 0.0);
+
 	// The y-component can be determined by completing the dot product between the B and C vectors
 	axes_[7] = ( cos(alpha_/DEGRAD) - axes_[3]*axes_[6] ) / axes_[4];
+
 	// The z-component is simply the remainder of the unit vector...
 	axes_[8] = sqrt(1.0 - axes_[6]*axes_[6] - axes_[7]*axes_[7]);
 
-	// Multiply the unit vectors to have the correct relative lengths
-	axes_.columnMultiply(0, relativeLengths.x);
-	axes_.columnMultiply(1, relativeLengths.y);
-	axes_.columnMultiply(2, relativeLengths.z);
-	
-	// Set up box, rescaling to desired volume
-	setUp(volume);
+	// Multiply the unit vectors to have the correct lengths
+	axes_.columnMultiply(0, lengths.x);
+	axes_.columnMultiply(1, lengths.y);
+	axes_.columnMultiply(2, lengths.z);
+
+	// Finalise associated data
+	finalise();
 }
 
 // Destructor
