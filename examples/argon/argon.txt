@@ -34,22 +34,26 @@ EndPairPotentials
 #------------------------------------------------------------------------------#
 
 Configuration  'Bulk'
-  Multiplier  1000
-  Density  0.021300  atoms/A3
-  CellLengths  36.075038  36.075038  36.075038
-  CellAngles  90.000000  90.000000  90.000000
+  # BEGIN OLD DEFINITIONS
+  #Multiplier  1000
+  #Density  0.021300  atoms/A3
+  #CellLengths  36.075038  36.075038  36.075038
+  #CellAngles  90.000000  90.000000  90.000000
 
   # Species Information
-  SpeciesInfo  'Ar'
-    Population  1.000000
-  EndSpeciesInfo
+  #SpeciesInfo  'Ar'
+  #  Population  1.000000
+  #EndSpeciesInfo
+  # END OLD DEFINITIONS
 
-  BoxNormalisationFile  'Bulk.boxnorm'
-  BraggQMax  2.000000
-  BraggQMin  nan
-  BraggMultiplicity  1 1 1
-  RDFBinWidth  0.025000
-  RDFRange  18.000000
+  # BEGIN NEW DEFINITION
+  Generator
+    Box
+      Angles  90.0  90.0  90.0
+      Lengths  1.0  1.0  1.0
+    EndBox
+  EndGenerator
+
   Temperature  85.000000
 
   # Modules
@@ -86,9 +90,6 @@ Layer  'Main Processing'
     Configuration  'Bulk'
 
     Isotopologue  'Bulk'  'Ar'  'Argon36'  1.000000
-    Reference  xy  'data/yarnell.sq'
-    ReferenceNormalisation  'AverageSquared'
-    ReferenceRemoveAverage   1.00000e+01
   EndModule
 
   Module  EPSR  'EPSR01'
