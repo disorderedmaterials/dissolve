@@ -36,6 +36,7 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
 		EnumOption(ProcedureNode::DynamicSiteNode,	"DynamicSite") <<
 		EnumOption(ProcedureNode::ExcludeNode,		"Exclude") <<
 		EnumOption(ProcedureNode::Fit1DNode,		"Fit1D") <<
+		EnumOption(ProcedureNode::ParametersNode,	"Parameters") <<
 		EnumOption(ProcedureNode::Process1DNode,	"Process1D") <<
 		EnumOption(ProcedureNode::Process2DNode,	"Process2D") <<
 		EnumOption(ProcedureNode::Process3DNode,	"Process3D") <<

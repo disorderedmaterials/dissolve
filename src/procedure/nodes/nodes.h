@@ -34,6 +34,7 @@
 #include "procedure/nodes/dynamicsite.h"
 #include "procedure/nodes/exclude.h"
 #include "procedure/nodes/fit1d.h"
+#include "procedure/nodes/parameters.h"
 #include "procedure/nodes/process1d.h"
 #include "procedure/nodes/process2d.h"
 #include "procedure/nodes/process3d.h"

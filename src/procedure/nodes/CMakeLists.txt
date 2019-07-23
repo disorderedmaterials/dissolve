@@ -9,6 +9,7 @@ add_library(procedurenodes
   fit1d.cpp
   node.cpp
   nodereference.cpp
+  parameters.cpp
   process1d.cpp
   process2d.cpp
   process3d.cpp
@@ -26,6 +27,7 @@ add_library(procedurenodes
   node.h
   nodereference.h
   nodes.h
+  parameters.h
   process1d.h
   process2d.h
   process3d.h

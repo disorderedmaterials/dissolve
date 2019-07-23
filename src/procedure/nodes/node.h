@@ -41,7 +41,7 @@ class ProcedureNode : public ListItem<ProcedureNode>
 {
 	public:
 	// Node Types
-	enum NodeType { BoxNode, CalculateNode, Collect1DNode, Collect2DNode, Collect3DNode, DynamicSiteNode, ExcludeNode, Fit1DNode, Process1DNode, Process2DNode, Process3DNode, SelectNode, SequenceNode, nNodeTypes };
+	enum NodeType { BoxNode, CalculateNode, Collect1DNode, Collect2DNode, Collect3DNode, DynamicSiteNode, ExcludeNode, Fit1DNode, ParametersNode, Process1DNode, Process2DNode, Process3DNode, SelectNode, SequenceNode, nNodeTypes };
 	// Return enum option info for NodeType
 	static EnumOptions<NodeType> nodeTypes();
 	// Node Contexts

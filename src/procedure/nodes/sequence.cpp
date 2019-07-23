@@ -184,6 +184,9 @@ bool SequenceProcedureNode::read(LineParser& parser, const CoreData& coreData, N
 			case (ProcedureNode::Fit1DNode):
 				newNode = new Fit1DProcedureNode();
 				break;
+			case (ProcedureNode::ParametersNode):
+				newNode = new ParametersProcedureNode();
+				break;
 			case (ProcedureNode::Process1DNode):
 				newNode = new Process1DProcedureNode();
 				break;
