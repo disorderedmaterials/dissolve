@@ -57,6 +57,18 @@ Expression::~Expression()
 	clear();
 }
 
+// Copy constructor
+Expression::Expression(const Expression& source)
+{
+	(*this) = source;
+}
+
+// Assignment operator
+void Expression::operator=(const Expression& source)
+{
+	Messenger::error("Copy constructor for Expression not implemented.\n");
+}
+
 /*
  * Creation
  */

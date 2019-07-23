@@ -38,10 +38,15 @@ class ExpressionVariable;
 class Expression
 {
 	public:
-	// Constructor / Destructor
+	// Constructor
 	Expression();
 	Expression(const char* expression);
+	// Destructor
 	~Expression();
+	// Copy constructor
+	Expression(const Expression& source);
+	// Assignment operator
+	void operator=(const Expression& source);
 
 
 	/*
