@@ -26,7 +26,8 @@
 ExpressionVariable::ExpressionVariable(double value, bool readOnly) : ExpressionNode()
 {
 	// Private variables
-	name_ = "unnamedvariable";
+	static int count = 0;
+	name_.sprintf("_ExpressionVariable%02i", count++);
 	initialValue_ = NULL;
 	nodeType_ = ExpressionNode::VariableNode;
 	value_ = value;
