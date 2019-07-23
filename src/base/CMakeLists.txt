@@ -1,7 +1,9 @@
 add_library(base
   charstring.cpp
   charstringlist.cpp
-  enumoptions.cpp
+  enumoption.cpp
+  enumoptionsbase.cpp
+  enumoptionslist.cpp
   fileandformat.cpp
   geometry.cpp
   lineparser.cpp
@@ -18,7 +20,10 @@ add_library(base
   
   charstring.h
   charstringlist.h
+  enumoption.h
+  enumoptionsbase.h
   enumoptions.h
+  enumoptionslist.h
   fileandformat.h
   geometry.h
   lineparser.h
