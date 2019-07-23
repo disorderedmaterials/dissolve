@@ -25,6 +25,7 @@
 #include "procedure/nodes/collect2d.h"
 #include "procedure/nodes/collect3d.h"
 #include "procedure/nodes/select.h"
+#include "expression/variable.h"
 #include "base/sysfunc.h"
 
 // Constructor
@@ -151,4 +152,31 @@ ProcedureNode* NodeScopeStack::node(const char* name, ProcedureNode::NodeType nt
 	}
 
 	return NULL;
+}
+
+/*
+ * Expression Parameters
+ */
+
+// Add new parameter for Procedure
+bool NodeScopeStack::addParameter(const char* name, double value)
+{
+	ExpressionVariable* parameter = new ExpressionVariable;
+	parameters_.own(parameter);
+	parameter->setName(name);
+	if (!parameter->set(value))
+	{
+		Messenger::print("Failed to set initial value for parameter.\n");
+		return false;
+	}
+
+	parameterReferences_.add(parameter);
+
+	return true;
+}
+
+// Return reference list of parameters (for passing to Expression::generate())
+RefList<ExpressionVariable,bool> NodeScopeStack::parameterReferences() const
+{
+	return parameterReferences_;
 }

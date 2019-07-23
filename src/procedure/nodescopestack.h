@@ -24,6 +24,7 @@
 
 #include "procedure/nodes/node.h"
 #include "procedure/nodescope.h"
+#include "expression/expression.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
 
@@ -74,6 +75,22 @@ class NodeScopeStack
 	ProcedureNode* nodeInScope(const char* name, ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
 	// Return named node if known, and which matches the (optional) type given
 	ProcedureNode* node(const char* name, ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
+
+
+	/*
+	 * Expression Parameters
+	 */
+	private:
+	// List of parameters (as ExpressionVariables)
+	List<ExpressionNode> parameters_;
+	// Reference list of parameters (for passing to Expression::generate())
+	RefList<ExpressionVariable,bool> parameterReferences_;
+
+	public:
+	// Add new parameter for Procedure
+	bool addParameter(const char* name, double value);
+	// Return reference list of parameters (for passing to Expression::generate())
+	RefList<ExpressionVariable,bool> parameterReferences() const;
 };
 
 #endif
