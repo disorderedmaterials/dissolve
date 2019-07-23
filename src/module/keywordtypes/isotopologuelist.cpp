@@ -63,12 +63,11 @@ bool IsotopologueListModuleKeyword::read(LineParser& parser, int startArg, const
 		return false;
 	}
 
-	// Find specified Species (second argument) - must be present in the target Configuration
+	// Find specified Species (second argument)
 	Species* sp = coreData.findSpecies(parser.argc(startArg+1));
 	if (!sp) return Messenger::error("Error defining Isotopologue reference - no Species named '%s' exists.\n", parser.argc(startArg+1));
-	if (!cfg->hasUsedSpecies(sp))return Messenger::error("Error defining Isotopologue reference - Species '%s' is not present in Configuration '%s'.\n", sp->name(), cfg->name());
 
-	// Finally, locate isotopologue definition for species
+	// Finally, locate isotopologue definition for species (third argument)
 	Isotopologue* iso = sp->findIsotopologue(parser.argc(startArg+2));
 	if (!iso) return Messenger::error("Error defining Isotopologue reference - no Isotopologue named '%s' exists for Species '%s'.\n", parser.argc(startArg+2), sp->name());
 

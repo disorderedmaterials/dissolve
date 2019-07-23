@@ -127,12 +127,11 @@ bool IsotopologueReference::read(LineParser& parser, const CoreData& coreData)
 		return false;
 	}
 
-	// Find specified Species (second argument) - must be present in the target Configuration
+	// Find specified Species (second argument)
 	species_ = coreData.findSpecies(parser.argc(1));
 	if (!species_) return Messenger::error("Error defining Isotopologue reference - no Species named '%s' exists.\n", parser.argc(1));
-	if (!configuration_->hasUsedSpecies(species_))return Messenger::error("Error defining Isotopologue reference - Species '%s' is not present in Configuration '%s'.\n", species_->name(), configuration_->name());
 
-	// Finally, locate isotopologue definition for species
+	// Finally, locate isotopologue definition for species (third argument)
 	isotopologue_ = species_->findIsotopologue(parser.argc(2));
 	if (!isotopologue_) return Messenger::error("Error defining Isotopologue reference - no Isotopologue named '%s' exists for Species '%s'.\n", parser.argc(2), species_->name());
 
