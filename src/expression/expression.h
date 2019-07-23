@@ -82,7 +82,7 @@ class Expression
 	char peekChar();
 	// 'Replace' last character read from current input stream
 	void unGetChar();
-	// Perform expression generation for this expression
+	// Generate the expression from the supplied text
 	bool generate(const char* expressionText);
 	// Return whether current expression is valid
 	bool isValid();

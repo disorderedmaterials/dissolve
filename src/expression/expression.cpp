@@ -124,7 +124,7 @@ void Expression::unGetChar()
 	--stringPos_;
 }
 
-// Generate an expression
+// Generate the expression from the supplied text
 bool Expression::generate(const char* expressionText)
 {
 	resetParser();
