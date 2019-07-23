@@ -48,6 +48,9 @@ Configuration  'Bulk'
 
   # BEGIN NEW DEFINITION
   Generator
+    Parameters
+      Double multiplier 1000
+    EndParameters
     Box
       Angles  90.0  90.0  90.0
       Lengths  1.0  1.0  1.0
@@ -104,7 +107,6 @@ EndLayer
 #------------------------------------------------------------------------------#
 
 Simulation
-  BoxNormalisationPoints  500000000
   Seed  -1
 EndSimulation
 
