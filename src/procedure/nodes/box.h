@@ -23,6 +23,7 @@
 #define DISSOLVE_PROCEDURENODE_BOX_H
 
 #include "procedure/nodes/node.h"
+#include "procedure/nodevalue.h"
 #include "templates/array.h"
 
 // Forward Declarations
@@ -61,9 +62,9 @@ class BoxProcedureNode : public ProcedureNode
 	 */
 	private:
 	// Box lengths
-	Vec3<double> lengths_;
+	NodeValue lengthA_, lengthB_, lengthC_;
 	// Box angles
-	Vec3<double> angles_;
+	NodeValue angleAlpha_, angleBeta_, angleGamma_;
 	// Whether Box is non-periodic 
 	bool nonPeriodic_;
 
