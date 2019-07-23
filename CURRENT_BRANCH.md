@@ -9,6 +9,7 @@
 - RandomiseConformers (or a better name): randomise individual molecules of the specified type by randomly rotating about bonds throughout the molecule. Need to check for internal overlaps (i.e. calculate internal energy)
 - Generate errors for argument numbers to nodes.
 - Implement ProcedureNode::save() virtuals properly.
+- Implement Expression::asString() to return Expression as a string for saving.
 
 TODO:
 - Multiplier, Density, CellLengths, and CellAngles Configuration keywords, and the SpeciesInfo block, will be redundant after these changes.
