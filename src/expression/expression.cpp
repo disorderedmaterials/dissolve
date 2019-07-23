@@ -94,6 +94,7 @@ void Expression::clear()
 	// Clear variables and constants, except those that are persistent
 	variables_.removeIfData(false);
 	constants_.removeIfData(false);
+	externalVariables_.clear();
 
 	isValid_ = false;
 }
@@ -140,13 +141,44 @@ void Expression::unGetChar()
 bool Expression::generate(const char* expressionText)
 {
 	resetParser();
+	clear();
+
+	// Set target static pointer for the parser/lexer
 	target_ = this;
 
+	// Set parsing source
 	stringSource_ = expressionText;
 	stringSource_ += ';';
 	stringPos_ = 0;
 	stringLength_ = stringSource_.length();
 	Messenger::printVerbose("Parser source string is '%s', length is %i\n", stringSource_.get(), stringLength_);
+
+	// Perform the parsing
+	isValid_ = ExpressionParser_parse() == 0;
+
+	target_ = NULL;
+
+	return isValid_;
+}
+
+// Generate the expression from the supplied text, referencing the supplied external variables if required
+bool Expression::generate(const char* expressionText, RefList<ExpressionVariable,bool> externalVariables)
+{
+	resetParser();
+	clear();
+
+	// Set target static pointer for the parser/lexer
+	target_ = this;
+
+	// Set parsing source
+	stringSource_ = expressionText;
+	stringSource_ += ';';
+	stringPos_ = 0;
+	stringLength_ = stringSource_.length();
+	Messenger::printVerbose("Parser source string is '%s', length is %i\n", stringSource_.get(), stringLength_);
+
+	// Set the external variables list
+	externalVariables_ = externalVariables;
 
 	// Perform the parsing
 	isValid_ = ExpressionParser_parse() == 0;
@@ -371,22 +403,24 @@ ExpressionVariable* Expression::createVariableWithValue(const char* name, double
 // Search for variable in current scope
 ExpressionVariable* Expression::variable(const char* name)
 {
-	// Search global scope first
-	ExpressionVariable* result = NULL;
-
-	for (RefListItem<ExpressionVariable,bool>* ri = variables_.first(); ri != NULL; ri = ri->next)
+	// Search external variables
+	RefListIterator<ExpressionVariable,bool> externalIterator(externalVariables_);
+	while (ExpressionVariable* variable = externalIterator.iterate()) if (DissolveSys::sameString(variable->name(), name))
 	{
-		if (DissolveSys::sameString(ri->item->name(), name))
-		{
-			result = ri->item;
-			break;
-		}
+		Messenger::printVerbose("...external variable '%s' found.\n", name);
+		return variable;
 	}
 
-	if (result == NULL) Messenger::printVerbose("...variable '%s' not found.\n", name);
-	else Messenger::printVerbose("...variable '%s' found.\n", name);
+	// Search internal variables
+	RefListIterator<ExpressionVariable,bool> internalIterator(variables_);
+	while (ExpressionVariable* variable = internalIterator.iterate()) if (DissolveSys::sameString(variable->name(), name))
+	{
+		Messenger::printVerbose("...internal variable '%s' found.\n", name);
+		return variable;
+	}
 
-	return result;
+	Messenger::printVerbose("...variable '%s' not found.\n", name);
+	return NULL;
 }
 
 // Return variables

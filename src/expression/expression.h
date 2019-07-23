@@ -89,6 +89,8 @@ class Expression
 	void unGetChar();
 	// Generate the expression from the supplied text
 	bool generate(const char* expressionText);
+	// Generate the expression from the supplied text, referencing the supplied external variables if required
+	bool generate(const char* expressionText, RefList<ExpressionVariable,bool> externalVariables);
 	// Return whether current expression is valid
 	bool isValid();
 	// Return current expression target
@@ -131,10 +133,12 @@ class Expression
 	 * Variables / Constants
 	 */
 	private:
-	// List of variables
+	// Reference list of variables
 	RefList<ExpressionVariable,bool> variables_;
-	// List of constants
+	// Reference list of constants
 	RefList<ExpressionVariable,bool> constants_;
+	// Reference list of external variables
+	RefList<ExpressionVariable,bool> externalVariables_;
 
 	public:
 	// Add double constant
