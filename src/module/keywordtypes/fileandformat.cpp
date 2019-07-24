@@ -47,8 +47,8 @@ int FileAndFormatModuleKeyword::minArguments()
 // Return maximum number of arguments accepted
 int FileAndFormatModuleKeyword::maxArguments()
 {
-	// Data format and filename
-	return 2;
+	// Data format and filename, plus some number of optional arguments
+	return 99;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
