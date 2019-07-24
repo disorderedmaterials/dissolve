@@ -99,7 +99,7 @@ Layer  'Main Processing'
 
     Isotopologue  'Bulk'  'Ar'  'Argon36'  1.000000
 
-    Reference  xy  'data/yarnell.sq'
+    Reference  xy  'data/yarnell.sq'  removeaverage=10.0
     ReferenceNormalisation  AverageSquared
   EndModule
 

@@ -62,14 +62,6 @@ bool NeutronSQModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 			Messenger::print("Removed first point from supplied reference data - new Qmin = %e Angstroms**-1.\n", referenceData.constXAxis().firstValue());
 		}
 
-		// Subtract average level from data?
-		double removeAverage = keywords_.asDouble("ReferenceRemoveAverage");
-		if (removeAverage >= 0.0)
-		{
-			double level = Filters::subtractAverage(referenceData, removeAverage);
-			Messenger::print("NeutronSQ: Removed average level of %f from reference data, forming average over x >= %f.\n", level, removeAverage);
-		}
-
 		// Remove normalisation factor from data
 		NeutronSQModule::NormalisationType normType = KeywordEnumHelper<NeutronSQModule::NormalisationType>::enumeration(keywords_, "ReferenceNormalisation");
 		if (normType != NeutronSQModule::NoNormalisation)

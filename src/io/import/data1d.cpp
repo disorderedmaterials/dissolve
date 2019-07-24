@@ -20,6 +20,7 @@
 */
 
 #include "io/import/data1d.h"
+#include "math/filters.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
@@ -33,6 +34,7 @@ Data1DImportFileFormat::Data1DImportFileFormat(Data1DImportFileFormat::Data1DImp
 	xColumn_ = 0;
 	yColumn_ = 1;
 	errorColumn_ = -1;
+	removeAverageLevelXMin_ = -1.0;
 }
 
 // Destructor
@@ -69,8 +71,79 @@ Data1DImportFileFormat::Data1DImportFormat Data1DImportFileFormat::data1DFormat(
 }
 
 /*
- * Column Designation
+ * Additional Options
  */
+
+// Return enum option info for AdditionalOption
+EnumOptions<Data1DImportFileFormat::AdditionalOption> Data1DImportFileFormat::additionalOptions()
+{
+	static EnumOptionsList AdditionalOptionOptions = EnumOptionsList() <<
+		EnumOption(Data1DImportFileFormat::ErrorColumnOption, 	"e",			1) <<
+		EnumOption(Data1DImportFileFormat::RemoveAverageOption, 	"removeaverage",	1) <<
+		EnumOption(Data1DImportFileFormat::XColumnOption, 		"x",			1) <<
+		EnumOption(Data1DImportFileFormat::YColumnOption, 		"y",			1);
+
+	static EnumOptions<Data1DImportFileFormat::AdditionalOption> options("Data1DImportOption", AdditionalOptionOptions);
+
+	return options;
+}
+
+// Parse additional option
+bool Data1DImportFileFormat::parseOption(const char* arg)
+{
+	// Split arg into parts before and after the '=', and parse the value string into comma-delimited parts
+	CharString key = DissolveSys::beforeChar(arg, '=');
+	CharString value = DissolveSys::afterChar(arg, '=');
+	LineParser valueParser;
+	valueParser.getArgsDelim(LineParser::CommasAreDelimiters, value.get());
+
+	// Check if we have a valid key and, if so, have appropriately been provided a value
+	if (!additionalOptions().isValid(key)) return additionalOptions().errorAndPrintValid(key);
+	AdditionalOption aa = additionalOptions().enumeration(key);
+	if (!additionalOptions().validNArgs(aa, valueParser.nArgs())) return false;
+
+	// Act on the option
+	switch (aa)
+	{
+		case (Data1DImportFileFormat::ErrorColumnOption):
+			errorColumn_ = value.asInteger() - 1;
+			break;
+		case (Data1DImportFileFormat::RemoveAverageOption):
+			removeAverageLevelXMin_ = value.asDouble();
+			break;
+		case (Data1DImportFileFormat::XColumnOption):
+			xColumn_ = value.asInteger() - 1;
+			break;
+		case (Data1DImportFileFormat::YColumnOption):
+			yColumn_ = value.asInteger() - 1;
+			break;
+		default:
+			return Messenger::error("Epic Developer Fail - Don't know how to deal with the %s additional option.\n", key.get());
+			break;
+	}
+
+	return true;
+}
+
+// Return whether this file/format has any additional options to write
+bool Data1DImportFileFormat::hasAdditionalOptions() const
+{
+	return true;
+}
+
+// Return additional options as string
+const char* Data1DImportFileFormat::additionalOptionsAsString() const
+{
+	static CharString args;
+
+	args.clear();
+	if (xColumn_ != 0) args.strcatf(" x=%i", xColumn_+1);
+	if (yColumn_ != 1) args.strcatf(" y=%i", yColumn_+1);
+	if (errorColumn_ != -1) args.strcatf(" e=%i", errorColumn_+1);
+	if (removeAverageLevelXMin_ > 0.0) args.strcatf(" removeaverage=%f", removeAverageLevelXMin_);
+
+	return args.get();
+}
 
 // Return column used for x values
 int Data1DImportFileFormat::xColumn() const
@@ -88,42 +161,6 @@ int Data1DImportFileFormat::yColumn() const
 int Data1DImportFileFormat::errorColumn() const
 {
 	return errorColumn_;
-}
-
-
-/*
- * Import / Write
- */
-
-// Parse additional argument
-bool Data1DImportFileFormat::parseArgument(const char* arg)
-{
-	// Split arg into parts before and after the '='
-	CharString key = DissolveSys::beforeChar(arg, '=');
-	CharString value = DissolveSys::afterChar(arg, '=');
-	if ((key == "x") || (key == "X")) xColumn_ = value.asInteger() - 1;
-	else if ((key == "y") || (key == "Y")) yColumn_ = value.asInteger() - 1;
-	else if ((key == "e") || (key == "E")) errorColumn_ = value.asInteger() - 1;
-	else return Messenger::error("Unrecognised or badly formatted additional argument '%s' found for Data1DImportFileFormat.\n", arg);
-
-	return true;
-}
-
-// Return whether this file/format has any additional arguments to write
-bool Data1DImportFileFormat::hasAdditionalArguments() const
-{
-	return true;
-}
-
-// Return additional arguments as string
-const char* Data1DImportFileFormat::additionalArguments() const
-{
-	static CharString args;
-
-	args.clear();
-	args.sprintf("x=%i  y=%i  e=%i", xColumn_+1, yColumn_+1, errorColumn_+1);
-
-	return args.get();
 }
 
 /*
@@ -154,6 +191,17 @@ bool Data1DImportFileFormat::importData(LineParser& parser, Data1D& data)
 	else if (data1DFormat() == Data1DImportFileFormat::HistogramData1D) result = importHistogram(parser, data);
 	else if (data1DFormat() == Data1DImportFileFormat::GudrunMintData1D) result = importGudrunMint(parser, data);
 	else Messenger::error("Don't know how to load Data1D of format '%s'.\n", Data1DImportFileFormat().format(data1DFormat()));
+
+	// If we failed, may as well return now
+	if (!result) return false;
+
+	// Handle any additional options
+	// --Subtract average level from data?
+	if (removeAverageLevelXMin_ > 0.0)
+	{
+		double level = Filters::subtractAverage(data, removeAverageLevelXMin_);
+		Messenger::print("Removed average level of %f from data, forming average over x >= %f.\n", level, removeAverageLevelXMin_);
+	}
 
 	return result;
 }

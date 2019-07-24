@@ -23,6 +23,7 @@
 #define DISSOLVE_IMPORT_DATA1D_H
 
 #include "base/fileandformat.h"
+#include "base/enumoptions.h"
 
 // Forward Declarations
 class Data1D;
@@ -55,8 +56,14 @@ class Data1DImportFileFormat : public FileAndFormat
 
 
 	/*
-	 * Column Designations
+	 * Additional Options
 	 */
+	public:
+	// Additional Options
+	enum AdditionalOption { ErrorColumnOption, RemoveAverageOption, XColumnOption, YColumnOption };
+	// Return enum option info for AdditionalOptions
+	static EnumOptions<Data1DImportFileFormat::AdditionalOption> additionalOptions();
+
 	private:
 	// Column to use for x values
 	int xColumn_;
@@ -64,7 +71,17 @@ class Data1DImportFileFormat : public FileAndFormat
 	int yColumn_;
 	// Column to use for errors
 	int errorColumn_;
-	
+	// X value at which to start calculating average level to subtract (or -1.0 for no subtraction)
+	double removeAverageLevelXMin_;
+
+	protected:
+	// Parse additional option
+	bool parseOption(const char* arg);
+	// Return whether this file/format has any additional options to write
+	bool hasAdditionalOptions() const;
+	// Return additional options as string
+	const char* additionalOptionsAsString() const;
+
 	public:
 	// Return column used for x values
 	int xColumn() const;
@@ -83,18 +100,6 @@ class Data1DImportFileFormat : public FileAndFormat
 	{
 		return true;
 	}
-
-
-	/*
-	 * Import / Write
-	 */
-	protected:
-	// Parse additional argument
-	bool parseArgument(const char* arg);
-	// Return whether this file/format has any additional arguments to write
-	bool hasAdditionalArguments() const;
-	// Return additional arguments as string
-	const char* additionalArguments() const;
 
 
 	/*

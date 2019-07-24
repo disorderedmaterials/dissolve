@@ -136,26 +136,30 @@ bool FileAndFormat::hasValidFileAndFormat() const
 }
 
 /*
- * Read / Write
+ * Additional Options
  */
 
-// Parse additional argument
-bool FileAndFormat::parseArgument(const char* arg)
+// Parse additional option
+bool FileAndFormat::parseOption(const char* arg)
 {
-	return Messenger::error("This file type accepts no additional arguments (found '%s'.\n", arg);
+	return Messenger::error("This file type accepts no additional options (found '%s'.\n", arg);
 }
 
-// Return whether this file/format has any additional arguments to write
-bool FileAndFormat::hasAdditionalArguments() const
+// Return whether this file/format has any additional options to write
+bool FileAndFormat::hasAdditionalOptions() const
 {
 	return false;
 }
 
-// Return additional arguments as string
-const char* FileAndFormat::additionalArguments() const
+// Return additional options as string
+const char* FileAndFormat::additionalOptionsAsString() const
 {
 	return "";
 }
+
+/*
+ * Read / Write
+ */
 
 // Read format / filename from specified parser
 bool FileAndFormat::read(LineParser& parser, int startArg)
@@ -180,10 +184,10 @@ bool FileAndFormat::read(LineParser& parser, int startArg)
 		if (fileMustExist() && (!DissolveSys::fileExists(filename_))) return Messenger::error("Specified file '%s' does not exist.\n", filename_.get());
 	}
 
-	// Parse any additional arguments
+	// Parse any additional options
 	for (int n=startArg+2; n<parser.nArgs(); ++n)
 	{
-		if (!parseArgument(parser.argc(n))) return false;
+		if (!parseOption(parser.argc(n))) return false;
 	}
 
 	return true;
@@ -194,7 +198,7 @@ const char* FileAndFormat::asString() const
 {
 	static CharString result;
 
-	if (hasAdditionalArguments()) result.sprintf("%s  '%s'  %s", format(format_), filename_.get(), additionalArguments());
+	if (hasAdditionalOptions()) result.sprintf("%s  '%s'  %s", format(format_), filename_.get(), additionalOptionsAsString());
 	else result.sprintf("%s  '%s'", format(format_), filename_.get());
 
 	return result.get();
