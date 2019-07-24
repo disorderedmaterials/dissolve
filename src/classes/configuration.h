@@ -90,6 +90,8 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	const char* name();
 	// Return nice name of the Configuration
 	const char* niceName();
+	// Return the current generator
+	Procedure& generator();
 	// Read generator from supplied parser
 	bool readGenerator(LineParser& parser, const CoreData& coreData);
 	// Write generator to supplied parser

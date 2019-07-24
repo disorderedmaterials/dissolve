@@ -105,6 +105,11 @@ const char* Configuration::niceName()
 	return niceName_.get();
 }
 
+// Return the current generator
+Procedure& Configuration::generator()
+{
+	return generator_;
+}
 
 // Read generator from supplied parser
 bool Configuration::readGenerator(LineParser& parser, const CoreData& coreData)
