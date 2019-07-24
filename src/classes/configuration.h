@@ -107,8 +107,6 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	List<SpeciesInfo>& usedSpecies();
 	// Return if the specified Species is present in the usedSpecies list
 	bool hasUsedSpecies(Species* sp);
-	// Return total relative population of Species used by this Configuration
-	double totalRelative() const;
 	// Return the atomic density of the Configuration
 	double atomicDensity() const;
 	// Return import coordinates file / format

@@ -62,14 +62,6 @@ bool Configuration::hasUsedSpecies(Species* sp)
 	return false;
 }
 
-// Return total relative population of Species
-double Configuration::totalRelative() const
-{
-	double total = 0.0;
-	for (SpeciesInfo* spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next) total += spInfo->population();
-	return total;
-}
-
 // Return the atomic density of the Configuration
 double Configuration::atomicDensity() const
 {
