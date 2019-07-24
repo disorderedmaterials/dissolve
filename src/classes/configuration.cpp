@@ -184,6 +184,9 @@ bool Configuration::finaliseAfterLoad(ProcessPool& procPool, double pairPotentia
 		return false;
 	}
 
+	// Set-up Cells for the Box
+	cells_.generate(box_, requestedCellDivisionLength_, pairPotentialRange, atomicDensity());
+
 	// Loaded coordinates will reflect any sizeFactor scaling, but Box and Cells will not, so scale them here
 	scaleBox(requestedSizeFactor_);
 	appliedSizeFactor_ = requestedSizeFactor_;
