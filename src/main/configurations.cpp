@@ -196,7 +196,13 @@ bool Dissolve::readConfiguration(Configuration* cfg, LineParser& parser)
 		if (!sp) return Messenger::error("Unrecognised Species '%s' found in Configuration '%s' in restart file.\n", parser.argc(1), cfg->name());
 
 		// Set Species pointers for this range of Molecules
-		for (int n=0; n<parser.argi(0); ++n) cfg->molecule(nMolsRead+n)->setSpecies(sp);
+		int nMols = parser.argi(0);
+		for (int n=0; n<nMols; ++n) cfg->molecule(nMolsRead+n)->setSpecies(sp);
+
+		// Update the used species population
+		cfg->addUsedSpecies(sp, nMols);
+
+		// Increase our counter
 		nMolsRead += parser.argi(0);
 	}
 
