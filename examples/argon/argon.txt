@@ -98,6 +98,9 @@ Layer  'Main Processing'
     Configuration  'Bulk'
 
     Isotopologue  'Bulk'  'Ar'  'Argon36'  1.000000
+
+    Reference  xy  'data/yarnell.sq'
+    ReferenceNormalisation  AverageSquared
   EndModule
 
   Module  EPSR  'EPSR01'
