@@ -37,6 +37,12 @@ class NodeValue
 	NodeValue();
 	// Destructor
 	~NodeValue();
+	// Assignment from integer
+	void operator=(const int value);
+	// Assignment from integer
+	void operator=(const double value);
+	// Conversion (to double)
+	operator double();
 
 
 	/*
