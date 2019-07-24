@@ -23,20 +23,19 @@
 #include "classes/box.h"
 #include "classes/species.h"
 
-// Add Species to list of those used by the Configuration
-SpeciesInfo* Configuration::addUsedSpecies(Species* sp, double relativePopulation)
+// Add Species to list of those used by the Configuration, setting/adding the population specified
+SpeciesInfo* Configuration::addUsedSpecies(Species* sp, int population)
 {
-	// Check that we have not already added it to this Configuration
-	for (SpeciesInfo* spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next) if (spInfo->species() == sp) 
+	// Check if we have an existing info for this Species
+	SpeciesInfo* spInfo = usedSpeciesInfo(sp);
+	if (!spInfo)
 	{
-		Messenger::error("Configuration '%s' already references Species '%s'.", name(), sp->name());
-		return NULL;
+		spInfo = usedSpecies_.add();
+		spInfo->setSpecies(sp);
 	}
 
-	// Add new SpeciesInfo
-	SpeciesInfo* spInfo = usedSpecies_.add();
-	spInfo->setSpecies(sp);
-	spInfo->setPopulation(relativePopulation);
+	// Increase the population
+	spInfo->addPopulation(population);
 
 	return spInfo;
 }

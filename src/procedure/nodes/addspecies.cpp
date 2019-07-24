@@ -122,8 +122,6 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool&
 	double scaleFactor = pow((requiredVolume + currentVolume) / currentVolume, 1.0/3.0);
 	cfg->scaleBox(scaleFactor);
 
-	cfg->addUsedSpecies(species_, requestedPopulation);
-
 	// Now we add the molecules
 	procPool.initialiseRandomBuffer(ProcessPool::PoolProcessesCommunicator);
 	Vec3<double> r, cog, newCentre, fr;
@@ -161,11 +159,6 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool&
 			mol->transform(box, transform);
 		}
 	}
-
-	// Create a AddSpecies in the target Configuration with our lengths and angles
-// 	Vec3<double> lengths(lengthA_.asDouble(), lengthB_.asDouble(), lengthC_.asDouble());
-// 	Vec3<double> angles(angleAlpha_.asDouble(), angleBeta_.asDouble(), angleGamma_.asDouble());
-// 	if (!cfg->createAddSpecies(lengths, angles, nonPeriodic_)) return ProcedureNode::Failure;
 
 	return ProcedureNode::Success;
 }

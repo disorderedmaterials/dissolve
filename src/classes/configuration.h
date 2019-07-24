@@ -91,7 +91,7 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	 * Composition
 	 */
 	private:
-	// Reference list of Species used by the Configuration and their relative populations
+	// List of Species used by the Configuration and their populations
 	List<SpeciesInfo> usedSpecies_;
 	// File / format of input coordinates file
 	CoordinateImportFileFormat inputCoordinates_;
@@ -99,8 +99,8 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	double temperature_;
 
 	public:
-	// Add Species to list of those used by the Configuration
-	SpeciesInfo* addUsedSpecies(Species* sp, double relativePopulation);
+	// Add Species to list of those used by the Configuration, setting/adding the population specified
+	SpeciesInfo* addUsedSpecies(Species* sp, int population);
 	// Return SpeciesInfo for specified Species
 	SpeciesInfo* usedSpeciesInfo(Species* sp);
 	// Return list of SpeciesInfo for the Configuration

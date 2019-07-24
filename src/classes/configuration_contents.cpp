@@ -42,6 +42,10 @@ void Configuration::empty()
 	box_ = NULL;
 	cells_.clear();
 
+	// Set the populations of SpeciesInfo to zero, but leave the list intact
+	ListIterator<SpeciesInfo> speciesInfoIterator(usedSpecies_);
+	while (SpeciesInfo* spInfo = speciesInfoIterator.iterate()) spInfo->zeroPopulation();
+
 	++contentsVersion_;
 }
 
@@ -121,6 +125,9 @@ Molecule* Configuration::addMolecule(Species* sp)
 	// Create the new Molecule object and set its Species pointer
 	Molecule* newMolecule = molecules_.add();
 	newMolecule->setSpecies(sp);
+
+	// Update the relevant SpeciesInfo population
+	addUsedSpecies(sp, 1);
 
 	// Add Atoms from Species to the Molecule
 	SpeciesAtom* spi = sp->firstAtom();

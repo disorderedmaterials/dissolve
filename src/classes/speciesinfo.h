@@ -45,54 +45,20 @@ class SpeciesInfo : public ListItem<SpeciesInfo>
 	private:
 	// Target Species
 	Species* species_;
-	// Relative population of the Species
-	double population_;
+	// Population of the Species
+	int population_;
 
 	public:
 	// Set target Species
-	void setSpecies(Species* target);
+	void setSpecies(Species* sp);
 	// Return target Species
 	Species* species();
-	// Set relative population of the Species
-	void setPopulation(double pop);
-	// Return relative population of the Species
-	double population() const;
-
-
-	/*
-	 * Control
-	 */
-	public:
-	// Positioning Type
-	enum PositioningType
-	{
-		CentralPositioning,			/* Position the Species at the centre of the Box */
-		CurrentPositioning,			/* Use current Species coordinates */
-		RandomPositioning,			/* Set position randomly */
-		nPositioningTypes
-	};
-	// Return permitted PositioningType keywords
-	static const char** positioningTypeKeywords();
-	// Convert string to positioning type keyword
-	static PositioningType positioningType(const char* s);
-	// Convert positioning type to string
-	static const char* positioningType(SpeciesInfo::PositioningType pt);
-
-	private:
-	// Whether to randomly rotate Species on insertion
-	bool rotateOnInsertion_;
-	// Position of Species on insertion
-	PositioningType insertionPositioning_;
-	
-	public:
-	// Set whether to randomly rotate Species on insertion
-	void setRotateOnInsertion(bool b);
-	// Return whether to randomly rotate Species on insertion
-	bool rotateOnInsertion() const;
-	// Set positioning type for Species on insertion
-	void setInsertionPositioning(PositioningType posType);
-	// Return positioning type for Species on insertion
-	PositioningType insertionPositioning() const;
+	// Zero the population of the Species
+	void zeroPopulation();
+	// Add to population of the Species
+	void addPopulation(int pop);
+	// Return population of the Species
+	int population() const;
 };
 
 #endif
