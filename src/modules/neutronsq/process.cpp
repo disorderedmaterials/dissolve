@@ -304,6 +304,7 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 			// Find the referenced Species in our SpeciesInfo list
 			SpeciesInfo* spInfo = cfg->usedSpeciesInfo(ref->species());
+			if (!spInfo) return Messenger::error("Couldn't locate SpeciesInfo for '%s' in the Configuration '%s'.\n", ref->species()->name(), cfg->niceName());
 
 			// Add the isotopologue, in the isotopic proportions defined in the Isotopologue, to the weights.
 			weights.addIsotopologue(ref->species(), spInfo->population(), ref->isotopologue(), ref->weight());
