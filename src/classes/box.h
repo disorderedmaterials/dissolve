@@ -23,6 +23,7 @@
 #define DISSOLVE_BOX_H
 
 #include "math/matrix3.h"
+#include "base/enumoptions.h"
 #include "templates/array.h"
 
 // Forward Declarations
@@ -39,6 +40,14 @@ class Box
 	Box();
 	// Virtual Destructor
 	virtual ~Box();
+	// Assignment operator
+	void operator=(const Box& source);
+
+
+	/*
+	 * Basic Definition
+	 */
+	public:
 	// Box Type Enum
 	enum BoxType {
 		NonPeriodicBoxType,		/* Non-periodic system - cubic box, but no minimum image calculation */
@@ -48,17 +57,9 @@ class Box
 		TriclinicBoxType,		/* Triclinic box with cell angles a != b != c != 90 */
 		nBoxTypes			/* Number of Box types */
 	};
-	// Convert text string to BoxType
-	static BoxType boxType(const char* s);
-	// Convert BoxType to text string
-	static const char* boxType(BoxType id);
-	// Assignment operator
-	void operator=(const Box& source);
+	// Return enum options for BoxType
+	static EnumOptions<BoxType> boxTypes();
 
-
-	/*
-	 * Basic Definition
-	 */
 	protected:
 	// Box type
 	BoxType type_;

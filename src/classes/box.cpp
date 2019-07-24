@@ -39,22 +39,6 @@ Box::~Box()
 {
 }
 
-// Box Type Keywords
-const char* BoxTypeKeywords[] = { "NonPeriodic", "Cubic", "Orthorhombic", "Monoclinic", "Triclinic" };
-
-// Convert text string to BoxType
-Box::BoxType Box::boxType(const char* s)
-{
-	for (int n=0; n<Box::nBoxTypes; ++n) if (strcmp(s,BoxTypeKeywords[n]) == 0) return (Box::BoxType) n;
-	return Box::nBoxTypes;
-}
-
-// Convert BoxType to text string
-const char* Box::boxType(Box::BoxType id)
-{
-	return BoxTypeKeywords[id];
-}
-
 // Assignment operator
 void Box::operator=(const Box& source)
 {
@@ -77,6 +61,24 @@ void Box::operator=(const Box& source)
 /*
  * Basic Definition
  */
+
+// Box Type Keywords
+const char* BoxTypeKeywords[] = { "NonPeriodic", "Cubic", "Orthorhombic", "Monoclinic", "Triclinic" };
+
+// Return enum options for BoxType
+EnumOptions<Box::BoxType> Box::boxTypes()
+{
+	static EnumOptionsList BoxTypeOptions = EnumOptionsList() <<
+		EnumOption(Box::NonPeriodicBoxType,	"NonPeriodic") <<
+		EnumOption(Box::CubicBoxType,		"Cubic") <<
+		EnumOption(Box::OrthorhombicBoxType,	"Orthorhombic") <<
+		EnumOption(Box::MonoclinicBoxType,	"Monoclinic") <<
+		EnumOption(Box::TriclinicBoxType,	"Triclinic");
+
+	static EnumOptions<Box::BoxType> options("BoxType", BoxTypeOptions);
+
+	return options;
+}
 
 // Return Box type
 Box::BoxType Box::type() const
