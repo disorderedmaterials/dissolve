@@ -27,9 +27,15 @@
 #include "base/sysfunc.h"
 
 // Constructor
-BoxProcedureNode::BoxProcedureNode() : ProcedureNode(ProcedureNode::BoxNode)
+BoxProcedureNode::BoxProcedureNode(Vec3<double> lengths, Vec3<double> angles, bool nonPeriodic) : ProcedureNode(ProcedureNode::BoxNode)
 {
-	nonPeriodic_ = false;
+	lengthA_ = lengths.x;
+	lengthB_ = lengths.y;
+	lengthC_ = lengths.z;
+	angleAlpha_ = angles.x;
+	angleBeta_ = angles.y;
+	angleGamma_ = angles.z;
+	nonPeriodic_ = nonPeriodic;
 }
 
 // Destructor

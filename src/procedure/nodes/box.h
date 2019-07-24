@@ -34,7 +34,7 @@ class BoxProcedureNode : public ProcedureNode
 {
 	public:
 	// Constructor
-	BoxProcedureNode();
+	BoxProcedureNode(Vec3<double> lengths = Vec3<double>(), Vec3<double> angles = Vec3<double>(), bool nonPeriodic = false);
 	// Destructor
 	~BoxProcedureNode();
 
