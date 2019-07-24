@@ -34,7 +34,7 @@ class AddSpeciesProcedureNode : public ProcedureNode
 {
 	public:
 	// Constructor
-	AddSpeciesProcedureNode();
+	AddSpeciesProcedureNode(Species* sp = NULL, int population = 0, double atomicDensity = -1.0);
 	// Destructor
 	~AddSpeciesProcedureNode();
 
@@ -85,6 +85,12 @@ class AddSpeciesProcedureNode : public ProcedureNode
 	bool rotate_;
 	// Positioning of individual molecules
 	PositioningType positioning_;
+
+	public:
+	// Set whether to rotate molecules randomly on addition
+	void setRotate(bool rotate);
+	// Set positioning of individual molecules
+	void setPositioning(PositioningType posType);
 
 
 	/*

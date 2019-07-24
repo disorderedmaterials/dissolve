@@ -29,9 +29,12 @@
 #include "base/sysfunc.h"
 
 // Constructor
-AddSpeciesProcedureNode::AddSpeciesProcedureNode() : ProcedureNode(ProcedureNode::AddSpeciesNode)
+AddSpeciesProcedureNode::AddSpeciesProcedureNode(Species* sp, int population, double atomicDensity) : ProcedureNode(ProcedureNode::AddSpeciesNode)
 {
-	density_ = -1.0;
+	species_ = sp;
+	population_ = population;
+	density_ = atomicDensity;
+	densityUnits_ = Units::AtomsPerAngstromUnits;
 	rotate_ = true;
 	positioning_ = RandomPositioning;
 }
@@ -86,6 +89,18 @@ EnumOptions<AddSpeciesProcedureNode::PositioningType> AddSpeciesProcedureNode::p
 	static EnumOptions<AddSpeciesProcedureNode::PositioningType> options("PositioningType", PositioningTypeKeywords);
 
 	return options;
+}
+
+// Set whether to rotate molecules randomly on addition
+void AddSpeciesProcedureNode::setRotate(bool rotate)
+{
+	rotate_ = rotate;
+}
+
+// Set positioning of individual molecules
+void AddSpeciesProcedureNode::setPositioning(PositioningType posType)
+{
+	positioning_ = posType;
 }
 
 /* 
