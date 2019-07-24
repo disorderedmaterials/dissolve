@@ -55,6 +55,11 @@ Configuration  'Bulk'
       Angles  90.0  90.0  90.0
       Lengths  1.0  1.0  1.0
     EndBox
+    AddSpecies
+      Species  'Ar'
+      Population  multiplier
+      Density  0.0213  atoms/A3
+    EndAddSpecies
   EndGenerator
 
   Temperature  85.000000
