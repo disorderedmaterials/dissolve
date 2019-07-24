@@ -16,6 +16,7 @@ add_library(base
   processpool.cpp
   sysfunc.cpp
   timer.cpp
+  units.cpp
   version.cpp
   
   charstring.h
@@ -36,6 +37,7 @@ add_library(base
   processpool.h
   sysfunc.h
   timer.h
+  units.h
   version.h
 )
 

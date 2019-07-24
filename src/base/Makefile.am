@@ -10,6 +10,7 @@ libbase_la_SOURCES += outputhandler.cpp
 libbase_la_SOURCES += parameters.cpp plainvalue.cpp plainvaluelist.cpp processgroup.cpp processpool.cpp
 libbase_la_SOURCES += sysfunc.cpp
 libbase_la_SOURCES += timer.cpp
+libbase_la_SOURCES += units.cpp
 libbase_la_SOURCES += version.cpp
 
 noinst_HEADERS = charstring.h charstringlist.h
@@ -23,6 +24,7 @@ noinst_HEADERS += outputhandler.h
 noinst_HEADERS += parameters.h plainvalue.h plainvaluelist.h processgroup.h processpool.h
 noinst_HEADERS += sysfunc.h
 noinst_HEADERS += timer.h
+noinst_HEADERS += units.h
 noinst_HEADERS += version.h 
 
 AM_CPPFLAGS = -I../ @DISSOLVE_CFLAGS@
