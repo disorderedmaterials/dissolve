@@ -59,64 +59,91 @@ void Configuration::initialiseArrays(int nMolecules, int nGrains)
 	grains_.initialise(nGrains);
 }
 
-// Generate the Configuration ready for use, including Box and associated Cells
-bool Configuration::generate(ProcessPool& procPool, double pairPotentialRange)
+// Return specified used type
+AtomType* Configuration::usedAtomType(int index)
 {
-	// Empty the current contents
-	empty();
+	return usedAtomTypes_.atomType(index);
+}
 
-	// Generate the contents
-	bool result = generator_.execute(procPool, this, "Generator", moduleData_);
-	if (!result) return Messenger::error("Failed to generate Configuration '%s'.\n", niceName());
+// Return specified used type data
+AtomTypeData* Configuration::usedAtomTypeData(int index)
+{
+	return usedAtomTypes_[index];
+}
 
-	// Check Box extent against pair potential range
-	if (pairPotentialRange > box_->inscribedSphereRadius())
+// Return first AtomTypeData for this Configuration
+AtomTypeData* Configuration::usedAtomTypes()
+{
+	return usedAtomTypes_.first();
+}
+
+// Return AtomTypeList for this Configuration
+const AtomTypeList& Configuration::usedAtomTypesList() const
+{
+	return usedAtomTypes_;
+}
+
+// Return number of atom types used in this Configuration
+int Configuration::nUsedAtomTypes() const
+{
+	return usedAtomTypes_.nItems();
+}
+
+// Add Species to list of those used by the Configuration, setting/adding the population specified
+SpeciesInfo* Configuration::addUsedSpecies(Species* sp, int population)
+{
+	// Check if we have an existing info for this Species
+	SpeciesInfo* spInfo = usedSpeciesInfo(sp);
+	if (!spInfo)
 	{
-		Messenger::error("PairPotential range (%f) is longer than the shortest non-minimum image distance (%f).\n", pairPotentialRange, box_->inscribedSphereRadius());
-		return false;
+		spInfo = usedSpecies_.add();
+		spInfo->setSpecies(sp);
 	}
 
-	// Finalise used AtomType list
-	usedAtomTypes_.finalise();
+	// Increase the population
+	spInfo->addPopulation(population);
 
-	// Generation was successful, so set-up Cells for the Box
-	cells_.generate(box_, requestedCellDivisionLength_, pairPotentialRange, atomicDensity());
-
-	return true;
+	return spInfo;
 }
 
-// Read generator from supplied parser
-bool Configuration::readGenerator(LineParser& parser, const CoreData& coreData)
+// Return SpeciesInfo for specified Species
+SpeciesInfo* Configuration::usedSpeciesInfo(Species* sp)
 {
-	generator_.clear();
+	for (SpeciesInfo* spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next) if (spInfo->species() == sp) return spInfo;
 
-	return generator_.read(parser, coreData);
+	return NULL;
 }
 
-// Write generator to supplied parser
-bool Configuration::writeGenerator(LineParser& parser, const char* prefix)
+// Return list of SpeciesInfo for the Configuration
+List<SpeciesInfo>& Configuration::usedSpecies()
 {
-	return generator_.write(parser, prefix);
+	return usedSpecies_;
 }
 
-// Finalise Configuration after loading contents from restart file
-bool Configuration::finaliseAfterLoad(ProcessPool& procPool, double pairPotentialRange)
+// Return if the specified Species is present in the usedSpecies list
+bool Configuration::hasUsedSpecies(Species* sp)
 {
-	// Check Box extent against pair potential range
-	if (pairPotentialRange > box_->inscribedSphereRadius())
-	{
-		Messenger::error("PairPotential range (%f) is longer than the shortest non-minimum image distance (%f).\n", pairPotentialRange, box_->inscribedSphereRadius());
-		return false;
-	}
+	for (SpeciesInfo* spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next) if (spInfo->species() == sp) return true;
 
-	// Loaded coordinates will reflect any sizeFactor scaling, but Box and Cells will not, so scale them here
-	scaleBox(requestedSizeFactor_);
-	appliedSizeFactor_ = requestedSizeFactor_;
+	return false;
+}
 
-	// Finalise used AtomType list
-	usedAtomTypes_.finalise();
+// Return the atomic density of the Configuration
+double Configuration::atomicDensity() const
+{
+	return nAtoms() / box_->volume();
+}
 
-	return true;
+// Return version of current contents
+int Configuration::contentsVersion() const
+{
+	return contentsVersion_;
+}
+
+// Increment version of current contents
+void Configuration::incrementContentsVersion()
+{
+	++contentsVersion_;
 }
 
 // Add Molecule to Configuration based on the supplied Species
@@ -448,67 +475,4 @@ DynamicArray<Torsion>& Configuration::torsions()
 Torsion* Configuration::torsion(int n)
 {
 	return torsions_[n];
-}
-
-// Return specified used type
-AtomType* Configuration::usedAtomType(int index)
-{
-	return usedAtomTypes_.atomType(index);
-}
-
-// Return specified used type data
-AtomTypeData* Configuration::usedAtomTypeData(int index)
-{
-	return usedAtomTypes_[index];
-}
-
-// Return first AtomTypeData for this Configuration
-AtomTypeData* Configuration::usedAtomTypes()
-{
-	return usedAtomTypes_.first();
-}
-
-// Return AtomTypeList for this Configuration
-const AtomTypeList& Configuration::usedAtomTypesList() const
-{
-	return usedAtomTypes_;
-}
-
-// Return number of atom types used in this Configuration
-int Configuration::nUsedAtomTypes() const
-{
-	return usedAtomTypes_.nItems();
-}
-
-// Return version of current contents
-int Configuration::contentsVersion() const
-{
-	return contentsVersion_;
-}
-
-// Increment version of current contents
-void Configuration::incrementContentsVersion()
-{
-	++contentsVersion_;
-}
-
-// Load coordinates from file
-bool Configuration::loadCoordinates(LineParser& parser, CoordinateImportFileFormat::CoordinateImportFormat format)
-{
-	// Load coordinates into temporary array
-	Array< Vec3<double> > r;
-	CoordinateImportFileFormat coordinateFormat(format);
-	if (!coordinateFormat.importData(parser, r)) return false;
-
-	// Temporary array now contains some number of atoms - does it match the number in the configuration's molecules?
-	if (atoms_.nItems() != r.nItems())
-	{
-		Messenger::error("Number of atoms read from initial coordinates file (%i) does not match that in Configuration (%i).\n", r.nItems(), atoms_.nItems());
-		return false;
-	}
-
-	// All good, so copy atom coordinates over into our array
-	for (int n=0; n<atoms_.nItems(); ++n) atoms_[n]->setCoordinates(r[n]);
-
-	return true;
 }

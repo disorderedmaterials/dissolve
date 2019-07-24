@@ -20,7 +20,6 @@ add_library(classes
   changestore.cpp
   configuration.cpp
   configuration_box.cpp
-  configuration_composition.cpp
   configuration_contents.cpp
   configuration_sites.cpp
   configuration_upkeep.cpp

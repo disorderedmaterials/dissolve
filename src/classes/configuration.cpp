@@ -75,12 +75,13 @@ void Configuration::clear()
 	requestedCellDivisionLength_ = 10.0;
 	contentsVersion_.zero();
 
-	// Reset set-up
+	// Reset definition
 	temperature_ = 300.0;
+	generator_.clear();
 }
 
 /*
- * Basic Information
+ * Definition
  */
 
 // Set name of the Configuration
@@ -102,6 +103,107 @@ const char* Configuration::name()
 const char* Configuration::niceName()
 {
 	return niceName_.get();
+}
+
+
+// Read generator from supplied parser
+bool Configuration::readGenerator(LineParser& parser, const CoreData& coreData)
+{
+	generator_.clear();
+
+	return generator_.read(parser, coreData);
+}
+
+// Write generator to supplied parser
+bool Configuration::writeGenerator(LineParser& parser, const char* prefix)
+{
+	return generator_.write(parser, prefix);
+}
+
+
+// Generate the Configuration ready for use, including Box and associated Cells
+bool Configuration::generate(ProcessPool& procPool, double pairPotentialRange)
+{
+	// Empty the current contents
+	empty();
+
+	// Generate the contents
+	bool result = generator_.execute(procPool, this, "Generator", moduleData_);
+	if (!result) return Messenger::error("Failed to generate Configuration '%s'.\n", niceName());
+
+	// Check Box extent against pair potential range
+	if (pairPotentialRange > box_->inscribedSphereRadius())
+	{
+		Messenger::error("PairPotential range (%f) is longer than the shortest non-minimum image distance (%f).\n", pairPotentialRange, box_->inscribedSphereRadius());
+		return false;
+	}
+
+	// Finalise used AtomType list
+	usedAtomTypes_.finalise();
+
+	// Generation was successful, so set-up Cells for the Box
+	cells_.generate(box_, requestedCellDivisionLength_, pairPotentialRange, atomicDensity());
+
+	return true;
+}
+
+// Return import coordinates file / format
+CoordinateImportFileFormat& Configuration::inputCoordinates()
+{
+	return inputCoordinates_;
+}
+
+// Load coordinates from file
+bool Configuration::loadCoordinates(LineParser& parser, CoordinateImportFileFormat::CoordinateImportFormat format)
+{
+	// Load coordinates into temporary array
+	Array< Vec3<double> > r;
+	CoordinateImportFileFormat coordinateFormat(format);
+	if (!coordinateFormat.importData(parser, r)) return false;
+
+	// Temporary array now contains some number of atoms - does it match the number in the configuration's molecules?
+	if (atoms_.nItems() != r.nItems())
+	{
+		Messenger::error("Number of atoms read from initial coordinates file (%i) does not match that in Configuration (%i).\n", r.nItems(), atoms_.nItems());
+		return false;
+	}
+
+	// All good, so copy atom coordinates over into our array
+	for (int n=0; n<atoms_.nItems(); ++n) atoms_[n]->setCoordinates(r[n]);
+
+	return true;
+}
+
+// Finalise Configuration after loading contents from restart file
+bool Configuration::finaliseAfterLoad(ProcessPool& procPool, double pairPotentialRange)
+{
+	// Check Box extent against pair potential range
+	if (pairPotentialRange > box_->inscribedSphereRadius())
+	{
+		Messenger::error("PairPotential range (%f) is longer than the shortest non-minimum image distance (%f).\n", pairPotentialRange, box_->inscribedSphereRadius());
+		return false;
+	}
+
+	// Loaded coordinates will reflect any sizeFactor scaling, but Box and Cells will not, so scale them here
+	scaleBox(requestedSizeFactor_);
+	appliedSizeFactor_ = requestedSizeFactor_;
+
+	// Finalise used AtomType list
+	usedAtomTypes_.finalise();
+
+	return true;
+}
+
+// Set configuration temperature
+void Configuration::setTemperature(double t)
+{
+	temperature_ = t;
+}
+
+// Return configuration temperature
+double Configuration::temperature()
+{
+	return temperature_;
 }
 
 /*

@@ -69,13 +69,19 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 
 
 	/*
-	 * Basic Information
+	 * Definition
 	 */
 	private:
 	// Name of the Configuration
 	CharString name_;
 	// Nice name (generated from name_) used for output files
 	CharString niceName_;
+	// Procedure to generate the Configuration
+	Procedure generator_;
+	// File / format of input coordinates file, if provided
+	CoordinateImportFileFormat inputCoordinates_;
+	// Temperature of this configuration (K)
+	double temperature_;
 
 	public:
 	// Set name of the Configuration
@@ -84,33 +90,18 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	const char* name();
 	// Return nice name of the Configuration
 	const char* niceName();
-
-
-
-	/*
-	 * Composition
-	 */
-	private:
-	// List of Species used by the Configuration and their populations
-	List<SpeciesInfo> usedSpecies_;
-	// File / format of input coordinates file
-	CoordinateImportFileFormat inputCoordinates_;
-	// Temperature of this configuration (K)
-	double temperature_;
-
-	public:
-	// Add Species to list of those used by the Configuration, setting/adding the population specified
-	SpeciesInfo* addUsedSpecies(Species* sp, int population);
-	// Return SpeciesInfo for specified Species
-	SpeciesInfo* usedSpeciesInfo(Species* sp);
-	// Return list of SpeciesInfo for the Configuration
-	List<SpeciesInfo>& usedSpecies();
-	// Return if the specified Species is present in the usedSpecies list
-	bool hasUsedSpecies(Species* sp);
-	// Return the atomic density of the Configuration
-	double atomicDensity() const;
+	// Read generator from supplied parser
+	bool readGenerator(LineParser& parser, const CoreData& coreData);
+	// Write generator to supplied parser
+	bool writeGenerator(LineParser& parser, const char* prefix);
+	// Generate the Configuration ready for use, including Box and associated Cells
+	bool generate(ProcessPool& procPool, double pairPotentialRange);
 	// Return import coordinates file / format
 	CoordinateImportFileFormat& inputCoordinates();
+	// Load coordinates from specified parser
+	bool loadCoordinates(LineParser& parser, CoordinateImportFileFormat::CoordinateImportFormat format);
+	// Finalise Configuration after loading contents from restart file
+	bool finaliseAfterLoad(ProcessPool& procPool, double pairPotentialRange);
 	// Set configuration temperature
 	void setTemperature(double t);
 	// Return configuration temperature
@@ -121,8 +112,12 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	 * Content
 	 */
 	private:
-	// Procedure to generate the Configuration
-	Procedure generator_;
+	// List of Species used by the Configuration and their populations
+	List<SpeciesInfo> usedSpecies_;
+	// AtomType list, containing unique (non-isotopic) atom types over all Species used in this configuration
+	AtomTypeList usedAtomTypes_;
+	// Contents version, incremented whenever Configuration content or Atom positions change
+	VersionCounter contentsVersion_;
 	// Array of Molecules
 	DynamicArray<Molecule> molecules_;
 	// Array of Grains
@@ -135,24 +130,36 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	DynamicArray<Angle> angles_;
 	// Array of Torsions between Atoms
 	DynamicArray<Torsion> torsions_;
-	// AtomType list, containing unique (non-isotopic) atom types over all Species used in this configuration
-	AtomTypeList usedAtomTypes_;
-	// Contents version, incremented whenever Configuration content or Atom positions change
-	VersionCounter contentsVersion_;
 
 	public:
 	// Empty contents of Configuration, leaving core definitions intact
 	void empty();
 	// Initialise content arrays
 	void initialiseArrays(int nMolecules, int nGrains);
-	// Read generator from supplied parser
-	bool readGenerator(LineParser& parser, const CoreData& coreData);
-	// Write generator to supplied parser
-	bool writeGenerator(LineParser& parser, const char* prefix);
-	// Generate the Configuration ready for use, including Box and associated Cells
-	bool generate(ProcessPool& procPool, double pairPotentialRange);
-	// Finalise Configuration after loading contents from restart file
-	bool finaliseAfterLoad(ProcessPool& procPool, double pairPotentialRange);
+	// Return specified used type
+	AtomType* usedAtomType(int index);
+	// Return specified used type data
+	AtomTypeData* usedAtomTypeData(int index);
+	// Return first AtomTypeData for this Configuration
+	AtomTypeData* usedAtomTypes();
+	// Return AtomTypeList for this Configuration
+	const AtomTypeList& usedAtomTypesList() const;
+	// Return number of atom types used in this Configuration
+	int nUsedAtomTypes() const;
+	// Add Species to list of those used by the Configuration, setting/adding the population specified
+	SpeciesInfo* addUsedSpecies(Species* sp, int population);
+	// Return SpeciesInfo for specified Species
+	SpeciesInfo* usedSpeciesInfo(Species* sp);
+	// Return list of SpeciesInfo for the Configuration
+	List<SpeciesInfo>& usedSpecies();
+	// Return if the specified Species is present in the usedSpecies list
+	bool hasUsedSpecies(Species* sp);
+	// Return the atomic density of the Configuration
+	double atomicDensity() const;
+	// Return version of current contents
+	int contentsVersion() const;
+	// Increment version of current contents
+	void incrementContentsVersion();
 	// Add Molecule to Configuration based on the supplied Species
 	Molecule* addMolecule(Species* sp);
 	// Return number of Molecules in Configuration
@@ -213,22 +220,6 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	DynamicArray<Torsion>& torsions();
 	// Return nth Torsion
 	Torsion* torsion(int n);
-	// Return specified used type
-	AtomType* usedAtomType(int index);
-	// Return specified used type data
-	AtomTypeData* usedAtomTypeData(int index);
-	// Return first AtomTypeData for this Configuration
-	AtomTypeData* usedAtomTypes();
-	// Return AtomTypeList for this Configuration
-	const AtomTypeList& usedAtomTypesList() const;
-	// Return number of atom types used in this Configuration
-	int nUsedAtomTypes() const;
-	// Return version of current contents
-	int contentsVersion() const;
-	// Increment version of current contents
-	void incrementContentsVersion();
-	// Load coordinates from specified parser
-	bool loadCoordinates(LineParser& parser, CoordinateImportFileFormat::CoordinateImportFormat format);
 
 
 	/*
