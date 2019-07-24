@@ -28,6 +28,7 @@
 EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
 {
 	static EnumOptionsList NodeTypeKeywords = EnumOptionsList() <<
+		EnumOption(ProcedureNode::AddSpeciesNode,	"AddSpecies") <<
 		EnumOption(ProcedureNode::BoxNode,		"Box") <<
 		EnumOption(ProcedureNode::CalculateNode,	"Calculate") <<
 		EnumOption(ProcedureNode::Collect1DNode,	"Collect1D") <<

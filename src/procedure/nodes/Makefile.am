@@ -1,6 +1,7 @@
 noinst_LTLIBRARIES = libprocedurenodes.la
 
-libprocedurenodes_la_SOURCES = box.cpp
+libprocedurenodes_la_SOURCES = addspecies.cpp
+libprocedurenodes_la_SOURCES += box.cpp
 libprocedurenodes_la_SOURCES += calculate.cpp collect1d.cpp collect2d.cpp collect3d.cpp
 libprocedurenodes_la_SOURCES += dynamicsite.cpp
 libprocedurenodes_la_SOURCES += exclude.cpp
@@ -10,7 +11,8 @@ libprocedurenodes_la_SOURCES += parameters.cpp process1d.cpp process2d.cpp proce
 libprocedurenodes_la_SOURCES += select.cpp sequence.cpp
 
 
-noinst_HEADERS = box.h
+noinst_HEADERS = addspecies.h
+noinst_HEADERS += box.h
 noinst_HEADERS += calculate.h collect1d.h collect2d.h collect3d.h
 noinst_HEADERS += dynamicsite.h
 noinst_HEADERS += exclude.h

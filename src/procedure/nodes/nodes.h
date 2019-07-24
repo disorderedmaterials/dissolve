@@ -26,6 +26,7 @@
  * Include all procedure node types at once.
  */
 
+#include "procedure/nodes/addspecies.h"
 #include "procedure/nodes/box.h"
 #include "procedure/nodes/calculate.h"
 #include "procedure/nodes/collect1d.h"

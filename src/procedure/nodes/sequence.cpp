@@ -163,6 +163,9 @@ bool SequenceProcedureNode::read(LineParser& parser, const CoreData& coreData, N
 		ProcedureNode::NodeType nt = ProcedureNode::nodeTypes().enumeration(parser.argc(0));
 		switch (nt)
 		{
+			case (ProcedureNode::AddSpeciesNode):
+				newNode = new AddSpeciesProcedureNode();
+				break;
 			case (ProcedureNode::BoxNode):
 				newNode = new BoxProcedureNode();
 				break;
