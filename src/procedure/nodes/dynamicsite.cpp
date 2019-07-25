@@ -88,7 +88,7 @@ void DynamicSiteProcedureNode::generateSites(const Molecule* molecule)
 			continue;
 		}
 
-		// If the Atom's AtomType is listed in our target AtomTYpe list, add this atom as a site
+		// If the Atom's AtomType is listed in our target AtomType list, add this atom as a site
 		if (atomTypes_.containsData(molecule->atom(n)->masterTypeIndex()))
 		{
 			generatedSites_.add(Site(molecule, molecule->atom(n)->r()));
