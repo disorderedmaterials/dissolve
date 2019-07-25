@@ -35,6 +35,10 @@ class EnumOption
 	/*
 	 * Definition
 	 */
+	public:
+	// Argument Numbers
+	enum ArgumentNumber { NoArguments = 0, OneOrMoreArguments = -1, OptionalSecondArgument = -2 };
+
 	private:
 	// Option enumeration (i.e. from enum value)
 	int enumeration_;

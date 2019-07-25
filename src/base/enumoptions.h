@@ -83,17 +83,30 @@ template <class T> class EnumOptions : public EnumOptionsBase
 		// Retrieve the relevant EnumOption
 		const EnumOption& opt = option(enumeration);
 
-		// No arguments?
-		if (opt.nArgs() == 0)
+		switch (opt.nArgs())
 		{
-			if (nArgsProvided == 0) return true;
-			else return Messenger::error("'%s' keyword '%s' does not take any arguments.\n", name(), opt.keyword());
+			case (EnumOption::NoArguments):
+				if (nArgsProvided == 0) return true;
+				else return Messenger::error("'%s' keyword '%s' does not take any arguments.\n", name(), opt.keyword());
+				break;
+			case (EnumOption::OneOrMoreArguments):
+				if (nArgsProvided > 0) return true;
+				else return Messenger::error("'%s' keyword '%s' requires one or more arguments, but none were provided.\n", name(), opt.keyword());
+				break;
+			case (EnumOption::EnumOption::OptionalSecondArgument):
+				if ((nArgsProvided == 1) || (nArgsProvided == 2)) return true;
+				else return Messenger::error("'%s' keyword '%s' requires one or two arguments, but %i %s provided.\n", name(), opt.keyword(), nArgsProvided, nArgsProvided == 1 ? "was" : "were");
+				break;
+			default:
+				// Specific number of arguments required
+				if (opt.nArgs() == nArgsProvided) return true;
+				else return Messenger::error("'%s' keyword '%s' requires %i arguments, but %i %s provided.\n", name(), opt.keyword(), opt.nArgs(), nArgsProvided == 1 ? "was" : "were");
+				break;
 		}
 
-		// Some number of arguments
-		if (opt.nArgs() == nArgsProvided) return true;
-		else return Messenger::error("'%s' keyword '%s' requires %i arguments, but %i %s provided.\n", name(), opt.keyword(), opt.nArgs(), nArgsProvided == 1 ? "was" : "were");
+		return false;
 	}
+
 
 	/*
 	 * Operators
