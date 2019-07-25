@@ -39,13 +39,6 @@ bool Configuration::createBox(const Vec3<double> lengths, const Vec3<double> ang
 
 	if (nonPeriodic) box_ = new NonPeriodicBox(1.0);
 	else box_ = Box::generate(lengths, angles);
-	Messenger::print("Configuration box volume is %f cubic Angstroms (reciprocal volume = %e)\n", box_->volume(), box_->reciprocalVolume());
-
-	Messenger::print("%s box created for Configuration '%s':\n", Box::boxTypes().keyword(box_->type()), name());
-	Matrix3 axes = box_->axes();
-	Messenger::print("Axes Matrix : A = %10.4e %10.4e %10.4e, length = %10.4e Angstroms\n", axes[0], axes[1], axes[2], box_->axisLengths().x);
-	Messenger::print("              B = %10.4e %10.4e %10.4e, length = %10.4e Angstroms\n", axes[3], axes[4], axes[5], box_->axisLengths().y);
-	Messenger::print("              C = %10.4e %10.4e %10.4e, length = %10.4e Angstroms\n", axes[6], axes[7], axes[8], box_->axisLengths().z);
 
 	return true;
 }
