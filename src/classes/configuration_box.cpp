@@ -37,7 +37,7 @@ bool Configuration::createBox(const Vec3<double> lengths, const Vec3<double> ang
 		box_ = NULL;
 	}
 
-	if (nonPeriodic) box_ = new NonPeriodicBox(lengths.x);
+	if (nonPeriodic) box_ = new NonPeriodicBox(1.0);
 	else box_ = Box::generate(lengths, angles);
 	Messenger::print("Configuration box volume is %f cubic Angstroms (reciprocal volume = %e)\n", box_->volume(), box_->reciprocalVolume());
 
