@@ -236,7 +236,6 @@ bool CalculateProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				// Second Site argument (point 'j' in distance i-j)
 				sites_[1] = dynamic_cast<SelectProcedureNode*>(scopeStack.nodeInScope(parser.argc(2), ProcedureNode::SelectNode));
 				if (!sites_[1]) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(2), calculateNodeKeywords().keyword(CalculateProcedureNode::DistanceKeyword));
-				else 
 				break;
 			case (CalculateProcedureNode::EndCalculateKeyword):
 				return true;
