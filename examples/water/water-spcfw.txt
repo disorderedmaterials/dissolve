@@ -64,9 +64,13 @@ EndPairPotentials
 #------------------------#
 
 Configuration  'Bulk'
-  Density  9.99999642E-02 atoms/A3
-  Multiplier  1000
-  SpeciesInfo  'Water'  1.0
+  Generator
+    AddSpecies
+      Species  'Water'
+      Population  1000
+      Density  9.99999642E-02 atoms/A3
+    EndAddSpecies
+  EndGenerator
 EndConfiguration
 
 #------------------------#
@@ -81,10 +85,10 @@ Layer  'Processing'
   EndModule
   
   # 2) Perform intramolecular shake of bonds and angles
-  Module IntraShake
+  Module MD
     Configuration  'Bulk'
-    TermEnergyOnly  True
     Frequency  5
+    NSteps  30
   EndModule
   
   # 3) Calculate g(r) for the Configuration
