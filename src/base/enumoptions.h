@@ -100,7 +100,7 @@ template <class T> class EnumOptions : public EnumOptionsBase
 			default:
 				// Specific number of arguments required
 				if (opt.nArgs() == nArgsProvided) return true;
-				else return Messenger::error("'%s' keyword '%s' requires %i arguments, but %i %s provided.\n", name(), opt.keyword(), opt.nArgs(), nArgsProvided == 1 ? "was" : "were");
+				else return Messenger::error("'%s' keyword '%s' requires %i arguments, but %i %s provided.\n", name(), opt.keyword(), opt.nArgs(), nArgsProvided, nArgsProvided == 1 ? "was" : "were");
 				break;
 		}
 
