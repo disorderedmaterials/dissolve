@@ -50,10 +50,18 @@ EndSpecies
 
 # Define Configuration
 Configuration  'Mix'
-  Density  0.1  atoms/A3
-  Multiplier  100
-  SpeciesInfo  'Water'  3.0
-  SpeciesInfo  'Methanol'  6.0
+  Generator
+    AddSpecies
+     Density  0.1  atoms/A3
+     Population  300
+     Species  'Water'
+    EndAddSpecies
+    AddSpecies
+     Density  0.1  atoms/A3
+     Population  600
+     Species  'Methanol'
+    EndAddSpecies
+  EndGenerator
   InputCoordinates  epsr  'epsr/watermeth.ato'
 
   # Calculate and test g(r)

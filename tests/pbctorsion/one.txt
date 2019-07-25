@@ -132,9 +132,15 @@ EndSpecies
 
 # Define Configuration
 Configuration  'Liquid'
-  CellLengths  30.769064857500   46.153597286200  30.769064857500
-  Multiplier  1
-  SpeciesInfo  'Hexane'  1.0
+  Generator
+    Box
+      Lengths  30.769064857500  46.153597286200  30.769064857500
+    EndBox
+    AddSpecies
+      Population  1
+      Species  'Hexane'
+    EndAddSpecies
+  EndGenerator
   InputCoordinates  dlpoly  'dlpoly_one/CONFIG'
 EndConfiguration
 

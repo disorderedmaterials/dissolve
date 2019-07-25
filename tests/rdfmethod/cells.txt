@@ -10,9 +10,13 @@ EndSpecies
 
 # Define Configuration
 Configuration  'Box'
-  Density  0.05  atoms/A3
-  Multiplier  1
-  SpeciesInfo  'Ball'  10000.0
+  Generator
+    AddSpecies
+      Density  0.05  atoms/A3
+      Population  10000
+      Species  'Ball'
+    EndAddSpecies
+  EndGenerator
   CellDivisionLength  5.0
 
   # Test 'Cells' method of RDF calculation

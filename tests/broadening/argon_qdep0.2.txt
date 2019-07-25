@@ -11,9 +11,15 @@ EndSpecies
 
 # Define Configuration
 Configuration 'liquid'
-  Multiplier  10000
-  CellLengths  77.721314  77.721314  77.721314
-  SpeciesInfo  'Argon'  1.0
+  Generator
+    Box
+      Lengths  77.721314  77.721314  77.721314
+    EndBox
+    AddSpecies
+      Species  'Argon'
+      Population  10000
+    EndAddSpecies
+  EndGenerator
   InputCoordinates  epsr  'epsr_qdep0.2/argonbox.ato'
 EndConfiguration
 

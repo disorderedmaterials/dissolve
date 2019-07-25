@@ -82,9 +82,13 @@ EndPairPotentials
 #------------------------#
 
 Configuration  'Bulk'
-  Density  9.99999642E-02 atoms/A3
-  Multiplier  267
-  SpeciesInfo  'Water'  1.0
+  Generator
+    AddSpecies
+      Density  9.99999642E-02 atoms/A3
+      Population  267
+      Species  'Water'
+    EndAddSpecies
+  EndGenerator
 EndConfiguration
 
 #------------------------#
