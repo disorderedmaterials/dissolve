@@ -353,7 +353,7 @@ bool WorkspaceTab::readState(LineParser& parser, const CoreData& coreData)
 	for (int n=0; n<nWidgets; ++n)
 	{
 		// Read line from the file, which should contain the window type, title, and any identifying info
-		if (parser.getArgsDelim(LineParser::UseQuotes) != LineParser::Success) return false;
+		if (parser.getArgsDelim() != LineParser::Success) return false;
 		SubWindow* subWindow = NULL;
 		if (DissolveSys::sameString(parser.argc(1), "ModuleControl"))
 		{

@@ -66,7 +66,7 @@ bool ModuleBlock::parse(LineParser& parser, Dissolve* dissolve, Module* module, 
 	while (!parser.eofOrBlank())
 	{
 		// Read in a line, which should contain a keyword and a minimum number of arguments
-		parser.getArgsDelim(LineParser::SkipBlanks+LineParser::StripComments+LineParser::UseQuotes);
+		if (parser.getArgsDelim() != LineParser::Success) return false;
 		ModuleBlock::ModuleKeyword modKeyword = ModuleBlock::keyword(parser.argc(0));
 		if ((modKeyword != ModuleBlock::nModuleKeywords) && ((parser.nArgs()-1) < ModuleBlock::nArguments(modKeyword)))
 		{

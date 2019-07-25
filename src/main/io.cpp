@@ -52,7 +52,7 @@ bool Dissolve::loadInput(const char* filename)
 	while (!parser.eofOrBlank())
 	{
 		// Master will read the next line from the file, and broadcast it to slaves (who will then parse it)
-		if (parser.getArgsDelim(LineParser::SkipBlanks+LineParser::StripComments+LineParser::UseQuotes) != LineParser::Success) break;
+		if (parser.getArgsDelim() != LineParser::Success) break;
 		kwd = BlockKeywords::blockKeyword(parser.argc(0));
 		switch (kwd)
 		{
@@ -461,7 +461,7 @@ bool Dissolve::loadRestart(const char* filename)
 	while (!parser.eofOrBlank())
 	{
 		// Master will read the next line from the file, and broadcast it to slaves (who will then parse it)
-		if (parser.getArgsDelim(LineParser::SkipBlanks+LineParser::StripComments+LineParser::UseQuotes) != 0) break;
+		if (parser.getArgsDelim() != 0) break;
 
 		// First component of line indicates the destination for the module data
 		if (DissolveSys::sameString(parser.argc(0), "Local"))

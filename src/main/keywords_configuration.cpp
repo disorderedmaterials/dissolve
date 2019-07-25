@@ -70,7 +70,7 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 	while (!parser.eofOrBlank())
 	{
 		// Read in a line, which should contain a keyword and a minimum number of arguments
-		parser.getArgsDelim(LineParser::SkipBlanks+LineParser::StripComments+LineParser::UseQuotes);
+		if (parser.getArgsDelim() != LineParser::Success) return false;
 		ConfigurationBlock::ConfigurationKeyword conKeyword = ConfigurationBlock::keyword(parser.argc(0));
 		if ((conKeyword != ConfigurationBlock::nConfigurationKeywords) && ((parser.nArgs()-1) < ConfigurationBlock::nArguments(conKeyword)))
 		{

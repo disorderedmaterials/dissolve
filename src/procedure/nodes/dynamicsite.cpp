@@ -152,7 +152,7 @@ bool DynamicSiteProcedureNode::read(LineParser& parser, const CoreData& coreData
 	while (!parser.eofOrBlank())
 	{
 		// Read and parse the next line
-		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
+		if (parser.getArgsDelim() != LineParser::Success) return false;
 
 		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
 		if (!dynamicSiteNodeKeywords().isValid(parser.argc(0))) return dynamicSiteNodeKeywords().errorAndPrintValid(parser.argc(0));

@@ -108,7 +108,7 @@ bool BoxProcedureNode::read(LineParser& parser, const CoreData& coreData, NodeSc
 	while (!parser.eofOrBlank())
 	{
 		// Read and parse the next line
-		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
+		if (parser.getArgsDelim() != LineParser::Success) return false;
 
 		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
 		if (!boxNodeKeywords().isValid(parser.argc(0))) return boxNodeKeywords().errorAndPrintValid(parser.argc(0));

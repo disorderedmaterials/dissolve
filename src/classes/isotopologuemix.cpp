@@ -200,7 +200,7 @@ const char* IsotopologueMix::itemClassName()
 bool IsotopologueMix::read(LineParser& parser, const CoreData& coreData)
 {
 	// Read Species name
-	if (parser.getArgsDelim(LineParser::UseQuotes) != LineParser::Success) return false;
+	if (parser.getArgsDelim() != LineParser::Success) return false;
 	species_ = coreData.findSpecies(parser.argc(0));
 	if (species_ == NULL)
 	{
@@ -212,7 +212,7 @@ bool IsotopologueMix::read(LineParser& parser, const CoreData& coreData)
 	mix_.clear();
 	for (int n=0; n<nIso; ++n)
 	{
-		if (parser.getArgsDelim(LineParser::UseQuotes) != LineParser::Success) return false;
+		if (parser.getArgsDelim() != LineParser::Success) return false;
 		// Search for the named Isotopologue in the Species
 		Isotopologue* top = species_->findIsotopologue(parser.argc(0));
 		if (!top)

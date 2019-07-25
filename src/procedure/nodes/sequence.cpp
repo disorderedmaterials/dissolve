@@ -145,7 +145,7 @@ bool SequenceProcedureNode::read(LineParser& parser, const CoreData& coreData, N
 	while (!parser.eofOrBlank())
 	{
 		// Read and parse the next line
-		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
+		if (parser.getArgsDelim() != LineParser::Success) return false;
 
 		// Is the first argument the block termination keyword for the current context?
 		if (DissolveSys::sameString(parser.argc(0), blockTerminationKeyword_)) break;

@@ -60,14 +60,14 @@ bool DissolveWindow::loadWindowLayout()
 	if (!stateParser.isFileGoodForReading()) return false;
 
 	// Read current tab index - it may not yet exist, so store it now and set it later
-	if (stateParser.getArgsDelim(LineParser::UseQuotes) != LineParser::Success) return false;
+	if (stateParser.getArgsDelim() != LineParser::Success) return false;
 	int currentTab = stateParser.argi(0);
 
 	// Remainder of file references tab types. Core tabs and those for Configurations will exist already. Others must be created.
 	while (!stateParser.eofOrBlank())
 	{
 		// Parse the line, which contains the title and type of the tab
-		if (stateParser.getArgsDelim(LineParser::UseQuotes) != LineParser::Success) return false;
+		if (stateParser.getArgsDelim() != LineParser::Success) return false;
 
 		// If any of our current tabs match the title, call it's readState() function
 		MainTab* tab = findTab(stateParser.argc(0));

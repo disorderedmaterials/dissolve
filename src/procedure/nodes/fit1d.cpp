@@ -254,7 +254,7 @@ bool Fit1DProcedureNode::read(LineParser& parser, const CoreData& coreData, Node
 	while (!parser.eofOrBlank())
 	{
 		// Read and parse the next line
-		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
+		if (parser.getArgsDelim() != LineParser::Success) return false;
 
 		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
 		if (!fit1DNodeKeywords().isValid(parser.argc(0))) return fit1DNodeKeywords().errorAndPrintValid(parser.argc(0));

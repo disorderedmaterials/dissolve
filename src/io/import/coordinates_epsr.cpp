@@ -31,7 +31,7 @@ bool CoordinateImportFileFormat::importEPSR(LineParser& parser, Array< Vec3<doub
 	//    or   2   : nmols,   temperature             (for non-cubic systems)
 	// followed by : A, B, C
 	//             : phib, thetac, phic
-	if (parser.getArgsDelim(LineParser::SkipBlanks) != LineParser::Success) return false;
+	if (parser.getArgsDelim() != LineParser::Success) return false;
 	int nMols = parser.argi(0);
 	if (parser.nArgs() == 3)
 	{
@@ -43,9 +43,9 @@ bool CoordinateImportFileFormat::importEPSR(LineParser& parser, Array< Vec3<doub
 	{
 		Messenger::print("File has a full cell specification");
 		Vec3<double> lengths, angles;
-		if (parser.getArgsDelim(LineParser::SkipBlanks) != LineParser::Success) return false;
+		if (parser.getArgsDelim() != LineParser::Success) return false;
 		lengths = parser.arg3d(0);
-		if (parser.getArgsDelim(LineParser::SkipBlanks) != LineParser::Success) return false;
+		if (parser.getArgsDelim() != LineParser::Success) return false;
 		angles = parser.arg3d(0);
 
 		// angles.x = phib = angle between a and b (== gamma)
@@ -55,7 +55,7 @@ bool CoordinateImportFileFormat::importEPSR(LineParser& parser, Array< Vec3<doub
 	}
 
 	// 2 : step sizes etc. **IGNORED**
-	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	if (parser.getArgsDelim() != LineParser::Success) return false;
 
 	// Molecule/atom specifications are in the form:
 	// n  : natoms, comx, comy, comz, phix, phiy, phiz
@@ -73,24 +73,24 @@ bool CoordinateImportFileFormat::importEPSR(LineParser& parser, Array< Vec3<doub
 	{
 		Messenger::printVerbose("Importing molecule %i from EPSR ato file...\n", m+1);
 
-		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+		if (parser.getArgsDelim() != LineParser::Success) return false;
 		nAtoms = parser.argi(0);
 		com = parser.arg3d(1);
 
 		for (int n=0; n<nAtoms; n++)
 		{
 			// Atom name
-			if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+			if (parser.getArgsDelim() != LineParser::Success) return false;
 
 			// Atom coordinates (specified as offset from com)
-			if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+			if (parser.getArgsDelim() != LineParser::Success) return false;
 			delta = parser.arg3d(0);
 
 			// Add a new atom position to our list
 			r.add(com+delta);
 
 			// Import in number of restraints line
-			if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+			if (parser.getArgsDelim() != LineParser::Success) return false;
 			nRestraints = parser.argi(0);
 			currentArg = 1;
 			while (nRestraints > 0)
@@ -98,7 +98,7 @@ bool CoordinateImportFileFormat::importEPSR(LineParser& parser, Array< Vec3<doub
 				// Look at next available argument - if none, import another line in
 				if (currentArg >= parser.nArgs())
 				{
-					if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+					if (parser.getArgsDelim() != LineParser::Success) return false;
 					currentArg = 0;
 				}
 				//partnerId = parser.argi(currentArg) - 1;
@@ -113,12 +113,12 @@ bool CoordinateImportFileFormat::importEPSR(LineParser& parser, Array< Vec3<doub
 
 		// Discard molecular rotations and dihedrals
 		// There are 14 atoms per line - first line contains number of atoms followed by (up to) 13 indices
-		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+		if (parser.getArgsDelim() != LineParser::Success) return false;
 		int nRotations = parser.argi(0);
 		while (nRotations > 0)
 		{
 			// Import line to find out which type of definition this is...
-			if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+			if (parser.getArgsDelim() != LineParser::Success) return false;
 
 			// Skip axis line
 			if (parser.skipLines(1) != LineParser::Success) return false;
@@ -126,12 +126,12 @@ bool CoordinateImportFileFormat::importEPSR(LineParser& parser, Array< Vec3<doub
 			// If a DIHedral, we expect an integer which defines the number of constraints, and thus the number of lines to skip before the main
 			if (DissolveSys::sameString(parser.argc(0), "DIH"))
 			{
-				if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+				if (parser.getArgsDelim() != LineParser::Success) return false;
 				if (parser.skipLines(parser.argi(0)) != LineParser::Success) return false;
 			}
 
 			// Finally, import in number of atoms affected by rotation and calculate next number of lines to discard
-			if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+			if (parser.getArgsDelim() != LineParser::Success) return false;
 			if (parser.skipLines(parser.argi(0)/14) != LineParser::Success) return false;
 
 			--nRotations;
