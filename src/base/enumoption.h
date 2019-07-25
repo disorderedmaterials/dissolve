@@ -31,6 +31,7 @@ class EnumOption
 	// Constructors
 	EnumOption(const int enumeration = 0, const char* keyword = NULL, int nArgs = 0);
 
+
 	/*
 	 * Definition
 	 */
