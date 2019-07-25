@@ -95,6 +95,8 @@ class SequenceProcedureNode : public ProcedureNode
 	public:
 	// Set block termination keyword for current context when reading
 	void setBlockTerminationKeyword(const char* endKeyword);
+	// Return block termination keyword for current context
+	const char* blockTerminationKeyword() const;
 	// Read structure from specified LineParser
 	bool read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack);
 	// Write structure to specified LineParser

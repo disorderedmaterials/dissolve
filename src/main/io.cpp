@@ -349,13 +349,14 @@ bool Dissolve::saveInput(const char* filename)
 	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next)
 	{
 		if (!parser.writeLineF("\n%s  '%s'\n", BlockKeywords::blockKeyword(BlockKeywords::ConfigurationBlockKeyword), cfg->name())) return false;
+
+		if (!parser.writeLineF("  %s\n", ConfigurationBlock::keyword(ConfigurationBlock::GeneratorKeyword))) return false;
+		if (!cfg->generator().write(parser, "    ")) return false;
+		if (!parser.writeLineF("  %s\n", cfg->generator().blockTerminationKeyword())) return false;
 		if (cfg->inputCoordinates().hasValidFileAndFormat() && (!parser.writeLineF("  %s  '%s'\n", ConfigurationBlock::keyword(ConfigurationBlock::InputCoordinatesKeyword), cfg->inputCoordinates().asString()))) return false;
 
 		if (!parser.writeLineF("\n")) return false;
 		if (!parser.writeLineF("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::TemperatureKeyword), cfg->temperature())) return false;
-
-		// Generator
-		if (!cfg->writeGenerator(parser, "  ")) return false;
 
 		// Modules
 		if (!parser.writeLineF("\n  # Modules\n")) return false;

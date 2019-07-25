@@ -135,6 +135,12 @@ void SequenceProcedureNode::setBlockTerminationKeyword(const char* endKeyword)
 	blockTerminationKeyword_ = endKeyword;
 }
 
+// Return block termination keyword for current context
+const char* SequenceProcedureNode::blockTerminationKeyword() const
+{
+	return blockTerminationKeyword_.get();
+}
+
 // Read structure from specified LineParser
 bool SequenceProcedureNode::read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack)
 {

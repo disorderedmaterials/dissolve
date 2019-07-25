@@ -111,21 +111,6 @@ Procedure& Configuration::generator()
 	return generator_;
 }
 
-// Read generator from supplied parser
-bool Configuration::readGenerator(LineParser& parser, const CoreData& coreData)
-{
-	generator_.clear();
-
-	return generator_.read(parser, coreData);
-}
-
-// Write generator to supplied parser
-bool Configuration::writeGenerator(LineParser& parser, const char* prefix)
-{
-	return generator_.write(parser, prefix);
-}
-
-
 // Generate the Configuration ready for use, including Box and associated Cells
 bool Configuration::generate(ProcessPool& procPool, double pairPotentialRange)
 {

@@ -92,10 +92,6 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	const char* niceName();
 	// Return the current generator
 	Procedure& generator();
-	// Read generator from supplied parser
-	bool readGenerator(LineParser& parser, const CoreData& coreData);
-	// Write generator to supplied parser
-	bool writeGenerator(LineParser& parser, const char* prefix);
 	// Generate the Configuration ready for use, including Box and associated Cells
 	bool generate(ProcessPool& procPool, double pairPotentialRange);
 	// Return import coordinates file / format

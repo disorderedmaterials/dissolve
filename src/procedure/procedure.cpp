@@ -25,7 +25,7 @@
 #include "base/sysfunc.h"
 
 // Constructor
-Procedure::Procedure(ProcedureNode::NodeContext context, const char* endKeyword) : rootSequence_(context, endKeyword)
+Procedure::Procedure(ProcedureNode::NodeContext context, const char* blockTerminationKeyword) : rootSequence_(context, blockTerminationKeyword)
 {
 	context_ = context;
 }
@@ -56,6 +56,12 @@ void Procedure::addRootSequenceNode(ProcedureNode* node)
 const NodeScopeStack& Procedure::scopeStack() const
 {
 	return scopeStack_;
+}
+
+// Return the block termination keyword for the Procedure
+const char* Procedure::blockTerminationKeyword() const
+{
+	return rootSequence_.blockTerminationKeyword();
 }
 
 /*
@@ -102,7 +108,7 @@ bool Procedure::execute(ProcessPool& procPool, Configuration* cfg, const char* p
 // Read structure from specified LineParser
 bool Procedure::read(LineParser& parser, const CoreData& coreData)
 {
-	scopeStack_.clear();
+	clear();
 
 	return rootSequence_.read(parser, coreData, scopeStack_);
 }

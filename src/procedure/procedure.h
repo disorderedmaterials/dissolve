@@ -36,7 +36,7 @@ class Procedure
 {
 	public:
 	// Constructor
-	Procedure(ProcedureNode::NodeContext context, const char* endKeyword = "_NOTDEFINED_");
+	Procedure(ProcedureNode::NodeContext context, const char* blockTerminationKeyword = "EndProcedure");
 	// Destructor
 	~Procedure();
 
@@ -61,6 +61,8 @@ class Procedure
 	ProcedureNode::NodeContext context() const;
 	// Return the scope stack
 	const NodeScopeStack& scopeStack() const;
+	// Return the block termination keyword for the Procedure
+	const char* blockTerminationKeyword() const;
 
 
 	/*
