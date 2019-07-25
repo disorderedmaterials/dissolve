@@ -136,8 +136,11 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool&
 		if (densityUnits_ == Units::AtomsPerAngstromUnits) requiredVolume = nAtomsToAdd / density_;
 		else requiredVolume = ((species_->mass() * population_.asInteger()) / AVOGADRO) / (density_ / 1.0E24);
 
+		// If the current box has no atoms in it, absorb the current volume rather than adding to it
+		if (cfg->nAtoms() > 0) requiredVolume += currentVolume;
+
 		// Scale the current Box so there is enough space for our new species
-		double scaleFactor = pow((requiredVolume + currentVolume) / currentVolume, 1.0/3.0);
+		double scaleFactor = pow(requiredVolume / currentVolume, 1.0/3.0);
 		cfg->scaleBox(scaleFactor);
 
 		Messenger::print("[AddSpecies] Current Box scaled by %f - new volume is %e cubic Angstroms.\n", scaleFactor, cfg->box()->volume());
