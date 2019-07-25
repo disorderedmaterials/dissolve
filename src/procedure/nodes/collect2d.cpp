@@ -69,10 +69,10 @@ EnumOptions<Collect2DProcedureNode::Collect2DNodeKeyword> Collect2DProcedureNode
 {
 	static EnumOptionsList Collect2DNodeTypeKeywords = EnumOptionsList() <<
 		EnumOption(Collect2DProcedureNode::EndCollect2DKeyword,		"EndCollect2D") <<
-		EnumOption(Collect2DProcedureNode::QuantityXKeyword,		"QuantityX") <<
-		EnumOption(Collect2DProcedureNode::QuantityYKeyword,		"QuantityY") <<
-		EnumOption(Collect2DProcedureNode::RangeXKeyword,		"RangeX") <<
-		EnumOption(Collect2DProcedureNode::RangeYKeyword,		"RangeY") <<
+		EnumOption(Collect2DProcedureNode::QuantityXKeyword,		"QuantityX",	1) <<
+		EnumOption(Collect2DProcedureNode::QuantityYKeyword,		"QuantityY",	1) <<
+		EnumOption(Collect2DProcedureNode::RangeXKeyword,		"RangeX",	3) <<
+		EnumOption(Collect2DProcedureNode::RangeYKeyword,		"RangeY",	3) <<
 		EnumOption(Collect2DProcedureNode::SubCollectKeyword,		"SubCollect");
 
 	static EnumOptions<Collect2DProcedureNode::Collect2DNodeKeyword> options("Collect2DNodeKeyword", Collect2DNodeTypeKeywords);
@@ -234,8 +234,12 @@ bool Collect2DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 		// Read and parse the next line
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
-		// Is the first argument on the current line a valid control keyword?
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!collect2DNodeKeywords().isValid(parser.argc(0))) return collect2DNodeKeywords().errorAndPrintValid(parser.argc(0));
 		Collect2DNodeKeyword nk = collect2DNodeKeywords().enumeration(parser.argc(0));
+		if (!collect2DNodeKeywords().validNArgs(nk, parser.nArgs()-1)) return false;
+
+		// All OK, so process it
 		switch (nk)
 		{
 			case (Collect2DProcedureNode::EndCollect2DKeyword):
@@ -251,15 +255,11 @@ bool Collect2DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				if (!yObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect2DNodeKeywords().keyword(nk));
 				break;
 			case (Collect2DProcedureNode::RangeXKeyword):
-				// Check that we have the right number of arguments first...
-				if (parser.nArgs() != 4) return Messenger::error("Collect2D node keyword '%s' expects exactly three arguments (%i given).\n", collect2DNodeKeywords().keyword(Collect2DProcedureNode::RangeXKeyword), parser.nArgs() - 1);
 				xMinimum_ = parser.argd(1);
 				xMaximum_ = parser.argd(2);
 				xBinWidth_ = parser.argd(3);
 				break;
 			case (Collect2DProcedureNode::RangeYKeyword):
-				// Check that we have the right number of arguments first...
-				if (parser.nArgs() != 4) return Messenger::error("Collect2D node keyword '%s' expects exactly three arguments (%i given).\n", collect2DNodeKeywords().keyword(Collect2DProcedureNode::RangeXKeyword), parser.nArgs() - 1);
 				yMinimum_ = parser.argd(1);
 				yMaximum_ = parser.argd(2);
 				yBinWidth_ = parser.argd(3);

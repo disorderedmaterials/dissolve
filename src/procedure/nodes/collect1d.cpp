@@ -65,8 +65,8 @@ EnumOptions<Collect1DProcedureNode::Collect1DNodeKeyword> Collect1DProcedureNode
 {
 	static EnumOptionsList Collect1DNodeTypeKeywords = EnumOptionsList() <<
 		EnumOption(Collect1DProcedureNode::EndCollect1DKeyword,		"EndCollect1D") <<
-		EnumOption(Collect1DProcedureNode::QuantityXKeyword,		"QuantityX") <<
-		EnumOption(Collect1DProcedureNode::RangeXKeyword,		"RangeX") <<
+		EnumOption(Collect1DProcedureNode::QuantityXKeyword,		"QuantityX",	1) <<
+		EnumOption(Collect1DProcedureNode::RangeXKeyword,		"RangeX",	3) <<
 		EnumOption(Collect1DProcedureNode::SubCollectKeyword,		"SubCollect");
 
 	static EnumOptions<Collect1DProcedureNode::Collect1DNodeKeyword> options("Collect1DNodeKeyword", Collect1DNodeTypeKeywords);
@@ -205,8 +205,12 @@ bool Collect1DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 		// Read and parse the next line
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
-		// Is the first argument on the current line a valid control keyword?
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!collect1DNodeKeywords().isValid(parser.argc(0))) return collect1DNodeKeywords().errorAndPrintValid(parser.argc(0));
 		Collect1DNodeKeyword nk = collect1DNodeKeywords().enumeration(parser.argc(0));
+		if (!collect1DNodeKeywords().validNArgs(nk, parser.nArgs()-1)) return false;
+
+		// All OK, so process it
 		switch (nk)
 		{
 			case (Collect1DProcedureNode::EndCollect1DKeyword):
@@ -217,8 +221,6 @@ bool Collect1DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				if (!observable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect1DNodeKeywords().keyword(nk));
 				break;
 			case (Collect1DProcedureNode::RangeXKeyword):
-				// Check that we have the right number of arguments first...
-				if (parser.nArgs() != 4) return Messenger::error("Collect1D node keyword '%s' expects exactly three arguments (%i given).\n", collect1DNodeKeywords().keyword(Collect1DProcedureNode::RangeXKeyword), parser.nArgs() - 1);
 				minimum_ = parser.argd(1);
 				maximum_ = parser.argd(2);
 				binWidth_ = parser.argd(3);

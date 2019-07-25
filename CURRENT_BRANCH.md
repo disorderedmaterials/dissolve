@@ -8,7 +8,7 @@ Create new nodes for generating Configurations from 'recipes', for the purpose o
 - [DONE] CellNode: Provides basic or complete information for the unit cell to be used for the Configuration. It will encompass Configuration's existing Density, CellLengths, and CellAngles keywords. Defaults will be as currently set - cubic, 1.0 A box length. Density shall *not* have a default value - default behaviour will be that the provided cell lengths and angles are absolute, and cannot be modified. Providing a Density value will allow automatic box resizing.
 - [DONE] AddSpeciesNode: Immediately adds the specified Species to the current cell, following the options set within. If the unit cell does not exist, it is created according to the definition provided in the UnitCell node (following specification of density if provided). If it already exists and has a prescribed density rather than volume, the volume is expanded to accommodate the new molecules to be created. Replicates and extends the content of the SpeciesInfo Configuration block
 - [AS ISSUE] RandomiseConformers (or a better name): randomise individual molecules of the specified type by randomly rotating about bonds throughout the molecule. Need to check for internal overlaps (i.e. calculate internal energy)
-- Generate errors for argument numbers to nodes.
+- [DONE] Generate errors for argument numbers to nodes.
 - Implement ProcedureNode::save() virtuals properly.
 - Implement Expression::asString() to return Expression as a string for saving.
 - [DONE] Tidy Configuration header / functions - move stuff that was in Composition to be in Content, and put input file coordinates somewhere sensible.

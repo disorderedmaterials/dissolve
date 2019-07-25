@@ -191,7 +191,7 @@ bool AddSpeciesProcedureNode::read(LineParser& parser, const CoreData& coreData,
 		// Read and parse the next line
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
-		// Do we recognise this argument and, if so, do we have the appropriate number of arguments?
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
 		if (!addSpeciesNodeKeywords().isValid(parser.argc(0))) return addSpeciesNodeKeywords().errorAndPrintValid(parser.argc(0));
 		AddSpeciesNodeKeyword nk = addSpeciesNodeKeywords().enumeration(parser.argc(0));
 		if (!addSpeciesNodeKeywords().validNArgs(nk, parser.nArgs()-1)) return false;

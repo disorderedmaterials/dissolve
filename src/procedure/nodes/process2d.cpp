@@ -68,15 +68,15 @@ EnumOptions<Process2DProcedureNode::Process2DNodeKeyword> Process2DProcedureNode
 {
 	static EnumOptionsList Process2DNodeTypeKeywords = EnumOptionsList() <<
 		EnumOption(Process2DProcedureNode::EndProcess2DKeyword,			"EndProcess2D") <<
-		EnumOption(Process2DProcedureNode::FactorKeyword,			"Factor") <<
-		EnumOption(Process2DProcedureNode::LabelValueKeyword,			"LabelValue") <<
-		EnumOption(Process2DProcedureNode::LabelXKeyword,			"LabelX") <<
-		EnumOption(Process2DProcedureNode::LabelYKeyword,			"LabelY") <<
-		EnumOption(Process2DProcedureNode::NormaliseToOneKeyword,		"NormaliseToOne") <<
-		EnumOption(Process2DProcedureNode::NSitesKeyword,			"NSites") <<
-		EnumOption(Process2DProcedureNode::NumberDensityKeyword,		"NumberDensity") <<
-		EnumOption(Process2DProcedureNode::SaveKeyword,				"Save") <<
-		EnumOption(Process2DProcedureNode::SourceDataKeyword,			"SourceData");
+		EnumOption(Process2DProcedureNode::FactorKeyword,			"Factor",		1) <<
+		EnumOption(Process2DProcedureNode::LabelValueKeyword,			"LabelValue",		1) <<
+		EnumOption(Process2DProcedureNode::LabelXKeyword,			"LabelX",		1) <<
+		EnumOption(Process2DProcedureNode::LabelYKeyword,			"LabelY",		1) <<
+		EnumOption(Process2DProcedureNode::NormaliseToOneKeyword,		"NormaliseToOne",	1) <<
+		EnumOption(Process2DProcedureNode::NSitesKeyword,			"NSites",		EnumOption::OneOrMoreArguments) <<
+		EnumOption(Process2DProcedureNode::NumberDensityKeyword,		"NumberDensity",	EnumOption::OneOrMoreArguments) <<
+		EnumOption(Process2DProcedureNode::SaveKeyword,				"Save",			1) <<
+		EnumOption(Process2DProcedureNode::SourceDataKeyword,			"SourceData",		EnumOption::OptionalSecondArgument);
 
 	static EnumOptions<Process2DProcedureNode::Process2DNodeKeyword> options("Process2DNodeKeyword", Process2DNodeTypeKeywords);
 
@@ -262,8 +262,12 @@ bool Process2DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 		// Read and parse the next line
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
-		// Is the first argument on the current line a valid control keyword?
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!process2DNodeKeywords().isValid(parser.argc(0))) return process2DNodeKeywords().errorAndPrintValid(parser.argc(0));
 		Process2DNodeKeyword nk = process2DNodeKeywords().enumeration(parser.argc(0));
+		if (!process2DNodeKeywords().validNArgs(nk, parser.nArgs()-1)) return false;
+
+		// All OK, so process it
 		switch (nk)
 		{
 			case (Process2DProcedureNode::EndProcess2DKeyword):

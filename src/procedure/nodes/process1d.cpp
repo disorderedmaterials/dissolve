@@ -69,15 +69,15 @@ EnumOptions<Process1DProcedureNode::Process1DNodeKeyword> Process1DProcedureNode
 {
 	static EnumOptionsList Process1DNodeTypeKeywords = EnumOptionsList() <<
 		EnumOption(Process1DProcedureNode::EndProcess1DKeyword,			"EndProcess1D") <<
-		EnumOption(Process1DProcedureNode::FactorKeyword,			"Factor") <<
-		EnumOption(Process1DProcedureNode::LabelValueKeyword,			"LabelValue") <<
-		EnumOption(Process1DProcedureNode::LabelXKeyword,			"LabelX") <<
+		EnumOption(Process1DProcedureNode::FactorKeyword,			"Factor",		1) <<
+		EnumOption(Process1DProcedureNode::LabelValueKeyword,			"LabelValue",		1) <<
+		EnumOption(Process1DProcedureNode::LabelXKeyword,			"LabelX",		1) <<
 		EnumOption(Process1DProcedureNode::NormaliseToOneKeyword,		"NormaliseToOne") <<
-		EnumOption(Process1DProcedureNode::NSitesKeyword,			"NSites") <<
-		EnumOption(Process1DProcedureNode::NumberDensityKeyword,		"NumberDensity") <<
-		EnumOption(Process1DProcedureNode::SaveKeyword,				"Save") <<
-		EnumOption(Process1DProcedureNode::SourceDataKeyword,			"SourceData") <<
-		EnumOption(Process1DProcedureNode::SphericalShellVolumeKeyword,		"SphericalShellVolume");
+		EnumOption(Process1DProcedureNode::NSitesKeyword,			"NSites",		EnumOption::OneOrMoreArguments) <<
+		EnumOption(Process1DProcedureNode::NumberDensityKeyword,		"NumberDensity",	EnumOption::OneOrMoreArguments) <<
+		EnumOption(Process1DProcedureNode::SaveKeyword,				"Save",			1) <<
+		EnumOption(Process1DProcedureNode::SourceDataKeyword,			"SourceData",		EnumOption::OptionalSecondArgument) <<
+		EnumOption(Process1DProcedureNode::SphericalShellVolumeKeyword,		"SphericalShellVolume",	1);
 
 	static EnumOptions<Process1DProcedureNode::Process1DNodeKeyword> options("Process1DNodeKeyword", Process1DNodeTypeKeywords);
 
@@ -264,8 +264,12 @@ bool Process1DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 		// Read and parse the next line
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
-		// Is the first argument on the current line a valid control keyword?
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!process1DNodeKeywords().isValid(parser.argc(0))) return process1DNodeKeywords().errorAndPrintValid(parser.argc(0));
 		Process1DNodeKeyword nk = process1DNodeKeywords().enumeration(parser.argc(0));
+		if (!process1DNodeKeywords().validNArgs(nk, parser.nArgs()-1)) return false;
+
+		// All OK, so process it
 		switch (nk)
 		{
 			case (Process1DProcedureNode::EndProcess1DKeyword):

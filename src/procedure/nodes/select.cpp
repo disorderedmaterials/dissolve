@@ -84,11 +84,11 @@ EnumOptions<SelectProcedureNode::SelectNodeKeyword> SelectProcedureNode::selectN
 	static EnumOptionsList SelectNodeTypeKeywords = EnumOptionsList() <<
 		EnumOption(SelectProcedureNode::DynamicSiteKeyword,		"DynamicSite") <<
 		EnumOption(SelectProcedureNode::EndSelectKeyword,		"EndSelect") <<
-		EnumOption(SelectProcedureNode::ExcludeSameMoleculeKeyword,	"ExcludeSameMolecule") <<
-		EnumOption(SelectProcedureNode::ExcludeSameSiteKeyword,		"ExcludeSameSite") <<
+		EnumOption(SelectProcedureNode::ExcludeSameMoleculeKeyword,	"ExcludeSameMolecule",	EnumOption::OneOrMoreArguments) <<
+		EnumOption(SelectProcedureNode::ExcludeSameSiteKeyword,		"ExcludeSameSite",	EnumOption::OneOrMoreArguments) <<
 		EnumOption(SelectProcedureNode::ForEachKeyword,			"ForEach") <<
-		EnumOption(SelectProcedureNode::SameMoleculeAsSiteKeyword,	"SameMoleculeAsSite") <<
-		EnumOption(SelectProcedureNode::SiteKeyword,			"Site");
+		EnumOption(SelectProcedureNode::SameMoleculeAsSiteKeyword,	"SameMoleculeAsSite",	1) <<
+		EnumOption(SelectProcedureNode::SiteKeyword,			"Site",			2);
 
 	static EnumOptions<SelectProcedureNode::SelectNodeKeyword> options("SelectNodeKeyword", SelectNodeTypeKeywords);
 
@@ -336,8 +336,12 @@ bool SelectProcedureNode::read(LineParser& parser, const CoreData& coreData, Nod
 		// Read and parse the next line
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
-		// Is the first argument on the current line a valid control keyword?
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!selectNodeKeywords().isValid(parser.argc(0))) return selectNodeKeywords().errorAndPrintValid(parser.argc(0));
 		SelectNodeKeyword nk = selectNodeKeywords().enumeration(parser.argc(0));
+		if (!selectNodeKeywords().validNArgs(nk, parser.nArgs()-1)) return false;
+
+		// All OK, so process it
 		switch (nk)
 		{
 			case (SelectProcedureNode::DynamicSiteKeyword):

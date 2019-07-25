@@ -62,10 +62,10 @@ bool CalculateProcedureNode::isContextRelevant(ProcedureNode::NodeContext contex
 EnumOptions<CalculateProcedureNode::CalculateNodeKeyword> CalculateProcedureNode::calculateNodeKeywords()
 {
 	static EnumOptionsList CalculateNodeTypeKeywords = EnumOptionsList() <<
-		EnumOption(CalculateProcedureNode::AngleKeyword,		"Angle") <<
-		EnumOption(CalculateProcedureNode::DistanceKeyword,		"Distance") <<
+		EnumOption(CalculateProcedureNode::AngleKeyword,		"Angle",	3) <<
+		EnumOption(CalculateProcedureNode::DistanceKeyword,		"Distance",	2) <<
 		EnumOption(CalculateProcedureNode::EndCalculateKeyword,		"EndCalculate") <<
-		EnumOption(CalculateProcedureNode::VectorKeyword,		"Vector");
+		EnumOption(CalculateProcedureNode::VectorKeyword,		"Vector",	2);
 
 	static EnumOptions<CalculateProcedureNode::CalculateNodeKeyword> options("CalculateNodeKeyword", CalculateNodeTypeKeywords);
 
@@ -203,13 +203,15 @@ bool CalculateProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 		// Read and parse the next line
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
-		// Is the first argument on the current line a valid control keyword?
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!calculateNodeKeywords().isValid(parser.argc(0))) return calculateNodeKeywords().errorAndPrintValid(parser.argc(0));
 		CalculateNodeKeyword nk = calculateNodeKeywords().enumeration(parser.argc(0));
+		if (!calculateNodeKeywords().validNArgs(nk, parser.nArgs()-1)) return false;
+
+		// All OK, so process it
 		switch (nk)
 		{
 			case (CalculateProcedureNode::AngleKeyword):
-				if (parser.nArgs() != 4) return Messenger::error("The %s keyword expects exactly three arguments.\n", calculateNodeKeywords().keyword(CalculateProcedureNode::AngleKeyword));
-
 				observable_ = CalculateProcedureNode::AngleObservable;
 
 				// First Site argument (point 'i' in angle i-j-k)
@@ -225,8 +227,6 @@ bool CalculateProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				if (!sites_[2]) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(3), calculateNodeKeywords().keyword(CalculateProcedureNode::AngleKeyword));
 				break;
 			case (CalculateProcedureNode::DistanceKeyword):
-				if (parser.nArgs() != 3) return Messenger::error("The %s keyword expects exactly two arguments.\n", calculateNodeKeywords().keyword(CalculateProcedureNode::DistanceKeyword));
-
 				observable_ = CalculateProcedureNode::DistanceObservable;
 
 				// First Site argument (point 'i' in distance i-j)

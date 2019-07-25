@@ -65,15 +65,15 @@ EnumOptions<Process3DProcedureNode::Process3DNodeKeyword> Process3DProcedureNode
 {
 	static EnumOptionsList Process3DNodeTypeKeywords = EnumOptionsList() <<
 		EnumOption(Process3DProcedureNode::EndProcess3DKeyword,			"EndProcess3D") <<
-		EnumOption(Process3DProcedureNode::FactorKeyword,			"Factor") <<
-		EnumOption(Process3DProcedureNode::LabelValueKeyword,			"LabelValue") <<
-		EnumOption(Process3DProcedureNode::LabelXKeyword,			"LabelX") <<
-		EnumOption(Process3DProcedureNode::LabelYKeyword,			"LabelY") <<
-		EnumOption(Process3DProcedureNode::LabelZKeyword,			"LabelZ") <<
-		EnumOption(Process3DProcedureNode::NSitesKeyword,			"NSites") <<
-		EnumOption(Process3DProcedureNode::NumberDensityKeyword,		"NumberDensity") <<
-		EnumOption(Process3DProcedureNode::SaveKeyword,				"Save") <<
-		EnumOption(Process3DProcedureNode::SourceDataKeyword,			"SourceData");
+		EnumOption(Process3DProcedureNode::FactorKeyword,			"Factor",		1) <<
+		EnumOption(Process3DProcedureNode::LabelValueKeyword,			"LabelValue",		1) <<
+		EnumOption(Process3DProcedureNode::LabelXKeyword,			"LabelX",		1) <<
+		EnumOption(Process3DProcedureNode::LabelYKeyword,			"LabelY",		1) <<
+		EnumOption(Process3DProcedureNode::LabelZKeyword,			"LabelZ",		1) <<
+		EnumOption(Process3DProcedureNode::NSitesKeyword,			"NSites",		EnumOption::OneOrMoreArguments) <<
+		EnumOption(Process3DProcedureNode::NumberDensityKeyword,		"NumberDensity",	EnumOption::OneOrMoreArguments) <<
+		EnumOption(Process3DProcedureNode::SaveKeyword,				"Save",			1) <<
+		EnumOption(Process3DProcedureNode::SourceDataKeyword,			"SourceData",		EnumOption::OptionalSecondArgument);
 
 	static EnumOptions<Process3DProcedureNode::Process3DNodeKeyword> options("Process3DNodeKeyword", Process3DNodeTypeKeywords);
 
@@ -251,8 +251,12 @@ bool Process3DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 		// Read and parse the next line
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
-		// Is the first argument on the current line a valid control keyword?
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!process3DNodeKeywords().isValid(parser.argc(0))) return process3DNodeKeywords().errorAndPrintValid(parser.argc(0));
 		Process3DNodeKeyword nk = process3DNodeKeywords().enumeration(parser.argc(0));
+		if (!process3DNodeKeywords().validNArgs(nk, parser.nArgs()-1)) return false;
+
+		// All OK, so process it
 		switch (nk)
 		{
 			case (Process3DProcedureNode::EndProcess3DKeyword):

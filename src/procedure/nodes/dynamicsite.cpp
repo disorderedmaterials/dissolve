@@ -62,8 +62,8 @@ bool DynamicSiteProcedureNode::isContextRelevant(ProcedureNode::NodeContext cont
 EnumOptions<DynamicSiteProcedureNode::DynamicSiteNodeKeyword> DynamicSiteProcedureNode::dynamicSiteNodeKeywords()
 {
 	static EnumOptionsList DynamicSiteNodeTypeKeywords = EnumOptionsList() <<
-		EnumOption(DynamicSiteProcedureNode::AtomTypeKeyword,		"AtomType") <<
-		EnumOption(DynamicSiteProcedureNode::ElementKeyword,		"Element") <<
+		EnumOption(DynamicSiteProcedureNode::AtomTypeKeyword,		"AtomType",	EnumOption::OneOrMoreArguments) <<
+		EnumOption(DynamicSiteProcedureNode::ElementKeyword,		"Element",	EnumOption::OneOrMoreArguments) <<
 		EnumOption(DynamicSiteProcedureNode::EndDynamicSiteKeyword,	"EndDynamicSite");
 
 	static EnumOptions<DynamicSiteProcedureNode::DynamicSiteNodeKeyword> options("DynamicSiteNodeKeyword", DynamicSiteNodeTypeKeywords);
@@ -154,8 +154,12 @@ bool DynamicSiteProcedureNode::read(LineParser& parser, const CoreData& coreData
 		// Read and parse the next line
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
-		// Is the first argument on the current line a valid control keyword?
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!dynamicSiteNodeKeywords().isValid(parser.argc(0))) return dynamicSiteNodeKeywords().errorAndPrintValid(parser.argc(0));
 		DynamicSiteNodeKeyword nk = dynamicSiteNodeKeywords().enumeration(parser.argc(0));
+		if (!dynamicSiteNodeKeywords().validNArgs(nk, parser.nArgs()-1)) return false;
+
+		// All OK, so process it
 		switch (nk)
 		{
 			case (DynamicSiteProcedureNode::AtomTypeKeyword):

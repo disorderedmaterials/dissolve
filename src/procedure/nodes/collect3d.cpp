@@ -98,13 +98,13 @@ EnumOptions<Collect3DProcedureNode::Collect3DNodeKeyword> Collect3DProcedureNode
 {
 	static EnumOptionsList Collect3DNodeTypeKeywords = EnumOptionsList() <<
 		EnumOption(Collect3DProcedureNode::EndCollect3DKeyword,		"EndCollect3D") <<
-		EnumOption(Collect3DProcedureNode::QuantityXYZKeyword,		"QuantityXYZ") <<
-		EnumOption(Collect3DProcedureNode::QuantityXKeyword,		"QuantityX") <<
-		EnumOption(Collect3DProcedureNode::QuantityYKeyword,		"QuantityY") <<
-		EnumOption(Collect3DProcedureNode::QuantityZKeyword,		"QuantityZ") <<
-		EnumOption(Collect3DProcedureNode::RangeXKeyword,		"RangeX") <<
-		EnumOption(Collect3DProcedureNode::RangeYKeyword,		"RangeY") <<
-		EnumOption(Collect3DProcedureNode::RangeZKeyword,		"RangeZ") <<
+		EnumOption(Collect3DProcedureNode::QuantityXYZKeyword,		"QuantityXYZ",	1) <<
+		EnumOption(Collect3DProcedureNode::QuantityXKeyword,		"QuantityX",	1) <<
+		EnumOption(Collect3DProcedureNode::QuantityYKeyword,		"QuantityY",	1) <<
+		EnumOption(Collect3DProcedureNode::QuantityZKeyword,		"QuantityZ",	1) <<
+		EnumOption(Collect3DProcedureNode::RangeXKeyword,		"RangeX",	3) <<
+		EnumOption(Collect3DProcedureNode::RangeYKeyword,		"RangeY",	3) <<
+		EnumOption(Collect3DProcedureNode::RangeZKeyword,		"RangeZ",	3) <<
 		EnumOption(Collect3DProcedureNode::SubCollectKeyword,		"SubCollect");
 
 	static EnumOptions<Collect3DProcedureNode::Collect3DNodeKeyword> options("Collect3DNodeKeyword", Collect3DNodeTypeKeywords);
@@ -297,8 +297,12 @@ bool Collect3DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 		// Read and parse the next line
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
-		// Is the first argument on the current line a valid control keyword?
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!collect3DNodeKeywords().isValid(parser.argc(0))) return collect3DNodeKeywords().errorAndPrintValid(parser.argc(0));
 		Collect3DNodeKeyword nk = collect3DNodeKeywords().enumeration(parser.argc(0));
+		if (!collect3DNodeKeywords().validNArgs(nk, parser.nArgs()-1)) return false;
+
+		// All OK, so process it
 		switch (nk)
 		{
 			case (Collect3DProcedureNode::EndCollect3DKeyword):
@@ -332,22 +336,16 @@ bool Collect3DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				if (!zObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeywords().keyword(nk));
 				break;
 			case (Collect3DProcedureNode::RangeXKeyword):
-				// Check that we have the right number of arguments first...
-				if (parser.nArgs() != 4) return Messenger::error("Collect3D node keyword '%s' expects exactly three arguments (%i given).\n", collect3DNodeKeywords().keyword(nk), parser.nArgs() - 1);
 				xMinimum_ = parser.argd(1);
 				xMaximum_ = parser.argd(2);
 				xBinWidth_ = parser.argd(3);
 				break;
 			case (Collect3DProcedureNode::RangeYKeyword):
-				// Check that we have the right number of arguments first...
-				if (parser.nArgs() != 4) return Messenger::error("Collect3D node keyword '%s' expects exactly three arguments (%i given).\n", collect3DNodeKeywords().keyword(nk), parser.nArgs() - 1);
 				yMinimum_ = parser.argd(1);
 				yMaximum_ = parser.argd(2);
 				yBinWidth_ = parser.argd(3);
 				break;
 			case (Collect3DProcedureNode::RangeZKeyword):
-				// Check that we have the right number of arguments first...
-				if (parser.nArgs() != 4) return Messenger::error("Collect3D node keyword '%s' expects exactly three arguments (%i given).\n", collect3DNodeKeywords().keyword(nk), parser.nArgs() - 1);
 				zMinimum_ = parser.argd(1);
 				zMaximum_ = parser.argd(2);
 				zBinWidth_ = parser.argd(3);

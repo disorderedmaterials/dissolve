@@ -57,7 +57,7 @@ EnumOptions<ExcludeProcedureNode::ExcludeNodeKeyword> ExcludeProcedureNode::excl
 {
 	static EnumOptionsList ExcludeNodeTypeKeywords = EnumOptionsList() <<
 		EnumOption(ExcludeProcedureNode::EndExcludeKeyword,		"EndExclude") <<
-		EnumOption(ExcludeProcedureNode::SameSiteKeyword,		"SameSite");
+		EnumOption(ExcludeProcedureNode::SameSiteKeyword,		"SameSite",	2);
 
 	static EnumOptions<ExcludeProcedureNode::ExcludeNodeKeyword> options("ExcludeNodeKeyword", ExcludeNodeTypeKeywords);
 
@@ -93,15 +93,17 @@ bool ExcludeProcedureNode::read(LineParser& parser, const CoreData& coreData, No
 		// Read and parse the next line
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
-		// Is the first argument on the current line a valid control keyword?
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!excludeNodeKeywords().isValid(parser.argc(0))) return excludeNodeKeywords().errorAndPrintValid(parser.argc(0));
 		ExcludeNodeKeyword nk = excludeNodeKeywords().enumeration(parser.argc(0));
+		if (!excludeNodeKeywords().validNArgs(nk, parser.nArgs()-1)) return false;
+
+		// All OK, so process it
 		switch (nk)
 		{
 			case (ExcludeProcedureNode::EndExcludeKeyword):
 				return true;
 			case (ExcludeProcedureNode::SameSiteKeyword):
-				if (parser.nArgs() != 3) return Messenger::error("The %s keyword expects exactly two arguments.\n", excludeNodeKeywords().keyword(ExcludeProcedureNode::SameSiteKeyword));
-
 				// First Site argument
 				sameSiteA_ = dynamic_cast<SelectProcedureNode*>(scopeStack.nodeInScope(parser.argc(1), ProcedureNode::SelectNode));
 				if (!sameSiteA_) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(1), excludeNodeKeywords().keyword(ExcludeProcedureNode::SameSiteKeyword));

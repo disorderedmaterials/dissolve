@@ -66,13 +66,13 @@ bool Fit1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
 EnumOptions<Fit1DProcedureNode::Fit1DNodeKeyword> Fit1DProcedureNode::fit1DNodeKeywords()
 {
 	static EnumOptionsList Fit1DNodeTypeKeywords = EnumOptionsList() <<
-		EnumOption(Fit1DProcedureNode::ConstantKeyword,		"Constant") <<
+		EnumOption(Fit1DProcedureNode::ConstantKeyword,		"Constant",	1) <<
 		EnumOption(Fit1DProcedureNode::EndFit1DKeyword,		"EndFit1D") <<
-		EnumOption(Fit1DProcedureNode::EquationKeyword,		"Equation") <<
-		EnumOption(Fit1DProcedureNode::FitKeyword,		"Fit") <<
+		EnumOption(Fit1DProcedureNode::EquationKeyword,		"Equation",	1) <<
+		EnumOption(Fit1DProcedureNode::FitKeyword,		"Fit",		1) <<
 		EnumOption(Fit1DProcedureNode::MethodKeyword,		"Method") <<
-		EnumOption(Fit1DProcedureNode::SaveKeyword,		"Save") <<
-		EnumOption(Fit1DProcedureNode::SourceDataKeyword,	"SourceData");
+		EnumOption(Fit1DProcedureNode::SaveKeyword,		"Save",		1) <<
+		EnumOption(Fit1DProcedureNode::SourceDataKeyword,	"SourceData",	EnumOption::OptionalSecondArgument);
 
 	static EnumOptions<Fit1DProcedureNode::Fit1DNodeKeyword> options("Fit1DNodeKeyword", Fit1DNodeTypeKeywords);
 
@@ -256,8 +256,12 @@ bool Fit1DProcedureNode::read(LineParser& parser, const CoreData& coreData, Node
 		// Read and parse the next line
 		if (parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments) != LineParser::Success) return false;
 
-		// Is the first argument on the current line a valid control keyword?
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!fit1DNodeKeywords().isValid(parser.argc(0))) return fit1DNodeKeywords().errorAndPrintValid(parser.argc(0));
 		Fit1DNodeKeyword nk = fit1DNodeKeywords().enumeration(parser.argc(0));
+		if (!fit1DNodeKeywords().validNArgs(nk, parser.nArgs()-1)) return false;
+
+		// All OK, so process it
 		switch (nk)
 		{
 			case (Fit1DProcedureNode::ConstantKeyword):
