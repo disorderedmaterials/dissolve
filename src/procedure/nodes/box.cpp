@@ -89,6 +89,11 @@ ProcedureNode::NodeExecutionResult BoxProcedureNode::execute(ProcessPool& procPo
 	Vec3<double> angles(angleAlpha_.asDouble(), angleBeta_.asDouble(), angleGamma_.asDouble());
 	if (!cfg->createBox(lengths, angles, nonPeriodic_)) return ProcedureNode::Failure;
 
+	Messenger::print("[Box] Volume is %f cubic Angstroms (reciprocal volume = %e)\n", cfg->box()->volume(), cfg->box()->reciprocalVolume());
+	lengths = cfg->box()->axisLengths();
+	angles = cfg->box()->axisAngles();
+	Messenger::print("[Box] Type is %s: A = %10.4e B = %10.4e C = %10.4e, alpha = %10.4e beta = %10.4e gamma = %10.4e\n", Box::boxTypes().keyword(cfg->box()->type()), lengths.x, lengths.y, lengths.z, angles.x, angles.y, angles.z);
+
 	return ProcedureNode::Success;
 }
 
