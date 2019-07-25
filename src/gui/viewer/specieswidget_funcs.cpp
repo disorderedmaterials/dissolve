@@ -21,6 +21,8 @@
 
 #include "gui/viewer/specieswidget.h"
 #include "gui/widgets/elementselector.hui"
+#include "procedure/nodes/addspecies.h"
+#include "procedure/nodes/box.h"
 #include "classes/coredata.h"
 #include "classes/empiricalformula.h"
 #include "classes/species.h"
@@ -119,15 +121,18 @@ void SpeciesWidget::on_ToolsMinimiseButton_clicked(bool checked)
 	// Copy our target species to the temporary structure, and create a simple Configuration from it
 	Species* temporarySpecies = temporaryDissolve.copySpecies(sp);
 	Configuration* temporaryCfg = temporaryDissolve.addConfiguration();
-	SpeciesInfo* spInfo = temporaryCfg->addUsedSpecies(temporarySpecies, 1.0);
-	spInfo->setRotateOnInsertion(false);
-	spInfo->setInsertionPositioning(SpeciesInfo::CentralPositioning);
-	temporaryCfg->setMultiplier(1);
-	temporaryCfg->setNonPeriodic(true);
-	temporaryCfg->setAtomicDensity(0.001);
+	temporaryCfg->addMolecule(temporarySpecies);
+	Procedure& generator = temporaryCfg->generator();
+	generator.addRootSequenceNode(new BoxProcedureNode(Vec3<double>(), Vec3<double>(), true));
+	AddSpeciesProcedureNode* addSpeciesNode = new AddSpeciesProcedureNode(temporarySpecies, 1, 0.0001);
+	addSpeciesNode->setRotate(false);
+	addSpeciesNode->setPositioning(AddSpeciesProcedureNode::CentralPositioning);
+	generator.addRootSequenceNode(addSpeciesNode);
+	if (!temporaryCfg->generate(temporaryDissolve.worldPool(), 15.0)) return;
+
 
 	// Create an Geometry Optimisation Module in a new processing layer, and set everything up
-	if (!temporaryDissolve.createModuleInLayer("Optimise", "Processing", temporaryCfg)) return;
+	if (!temporaryDissolve.createModuleInLayer("GeometryOptimisation", "Processing", temporaryCfg)) return;
 	if (!temporaryDissolve.generateMissingPairPotentials(PairPotential::LennardJonesGeometricType)) return;
 	if (!temporaryDissolve.setUp()) return;
 
