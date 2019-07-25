@@ -116,26 +116,32 @@ bool AddSpeciesProcedureNode::prepare(Configuration* cfg, const char* prefix, Ge
 // Execute node, targetting the supplied Configuration
 ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
-	// Check supplied density
-	if (density_ < 0.0)
-	{
-		Messenger::error("Invalid density (%f) given to %s.\n", density_.asDouble(), ProcedureNode::nodeTypes().keyword(type_));
-		return ProcedureNode::Failure;
-	}
-
-	// Get current cell volume
-	double currentVolume = cfg->box()->volume();
-
-	// Determine volume required to contain the population of the specified Species at the requested density
 	const int requestedPopulation = population_.asInteger();
 	const int nAtomsToAdd = requestedPopulation * species_->nAtoms();
-	double requiredVolume = 0.0;
-	if (densityUnits_ == Units::AtomsPerAngstromUnits) requiredVolume = nAtomsToAdd / density_;
-	else requiredVolume = ((species_->mass() * population_.asInteger()) / AVOGADRO) / (density_ / 1.0E24);
 
-	// Scale the current Box so there is enough space for our new species
-	double scaleFactor = pow((requiredVolume + currentVolume) / currentVolume, 1.0/3.0);
-	cfg->scaleBox(scaleFactor);
+	// If a density was not given, just add new molecules to the current box without adjusting its size
+	if (density_ < 0.0)
+	{
+		Messenger::print("[AddSpecies] No density supplied - current box volume will remain unchanged.\n");
+	}
+	else
+	{
+		Messenger::print("[AddSpecies] Density for new species is %f %s.\n", density_.asDouble(), Units::densityUnits().keyword(densityUnits_));
+
+		// Get current cell volume
+		double currentVolume = cfg->box()->volume();
+
+		// Determine volume required to contain the population of the specified Species at the requested density
+		double requiredVolume = 0.0;
+		if (densityUnits_ == Units::AtomsPerAngstromUnits) requiredVolume = nAtomsToAdd / density_;
+		else requiredVolume = ((species_->mass() * population_.asInteger()) / AVOGADRO) / (density_ / 1.0E24);
+
+		// Scale the current Box so there is enough space for our new species
+		double scaleFactor = pow((requiredVolume + currentVolume) / currentVolume, 1.0/3.0);
+		cfg->scaleBox(scaleFactor);
+
+		Messenger::print("[AddSpecies] Current Box scaled by %f - new volume is %e cubic Angstroms.\n", scaleFactor, cfg->box()->volume());
+	}
 
 	// Now we add the molecules
 	procPool.initialiseRandomBuffer(ProcessPool::PoolProcessesCommunicator);
@@ -174,6 +180,8 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool&
 			mol->transform(box, transform);
 		}
 	}
+
+	Messenger::print("[AddSpecies] New Configuration density is %f atoms/Angstrom3.\n", cfg->atomicDensity());
 
 	return ProcedureNode::Success;
 }
