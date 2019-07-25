@@ -39,7 +39,7 @@ void Configuration::empty()
 	atoms_.clear();
 	usedAtomTypes_.clear();
 	if (box_ != NULL) delete box_;
-	box_ = NULL;
+	box_ = new CubicBox(1.0);
 	cells_.clear();
 
 	// Set the populations of SpeciesInfo to zero, but leave the list intact

@@ -41,7 +41,7 @@ template<class Configuration> const char* ObjectStore<Configuration>::objectType
 // Constructor
 Configuration::Configuration() : ListItem<Configuration>(), ObjectStore<Configuration>(this), generator_(ProcedureNode::GenerationContext, "EndGenerator")
 {
-	box_ = NULL;
+	box_ = new CubicBox(1.0);
 
 	clear();
 }
