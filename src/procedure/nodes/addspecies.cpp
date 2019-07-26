@@ -216,6 +216,8 @@ bool AddSpeciesProcedureNode::read(LineParser& parser, const CoreData& coreData,
 				densityUnits_ = Units::densityUnits().enumeration(parser.argc(2));
 				break;
 			case (AddSpeciesProcedureNode::EndAddSpeciesKeyword):
+				// Check that a Species was provided
+				if (!species_) return Messenger::error("A target %s must be set in %s.\n", addSpeciesNodeKeywords().keyword(AddSpeciesNodeKeyword::SpeciesKeyword), ProcedureNode::nodeTypes().keyword(type_));
 				return true;
 			case (AddSpeciesProcedureNode::NoRotationKeyword):
 				rotate_ = false;

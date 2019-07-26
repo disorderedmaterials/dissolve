@@ -260,6 +260,8 @@ bool Process3DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 		switch (nk)
 		{
 			case (Process3DProcedureNode::EndProcess3DKeyword):
+				// Check that a valid collectNode_ has been set
+				if (collectNode_.isNull()) return Messenger::error("A valid Collect3D node must be set in the Process3D node '%s' using the '%s' keyword.\n", name(), process3DNodeKeywords().keyword(Process3DProcedureNode::SourceDataKeyword));
 				return true;
 			case (Process3DProcedureNode::FactorKeyword):
 				normalisationFactor_ = parser.argd(1);
@@ -278,9 +280,6 @@ bool Process3DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				zAxisLabel_ = parser.argc(1);
 				break;
 			case (Process3DProcedureNode::NSitesKeyword):
-				// Need a valid collectNode_...
-				if (collectNode_.isNull()) return Messenger::error("Can't set site-dependent normalisers without first setting the CollectNode target.\n");
-
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
 					SelectProcedureNode* selectNode = dynamic_cast<SelectProcedureNode*>(scopeStack.node(parser.argc(n), ProcedureNode::SelectNode));
@@ -289,9 +288,6 @@ bool Process3DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				}
 				break;
 			case (Process3DProcedureNode::NumberDensityKeyword):
-				// Need a valid collectNode_...
-				if (collectNode_.isNull()) return Messenger::error("Can't set site-dependent normalisers without first setting the collect node target.\n");
-
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
 					SelectProcedureNode* selectNode = dynamic_cast<SelectProcedureNode*>(scopeStack.node(parser.argc(n), ProcedureNode::SelectNode));

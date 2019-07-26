@@ -271,6 +271,8 @@ bool Process2DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 		switch (nk)
 		{
 			case (Process2DProcedureNode::EndProcess2DKeyword):
+				// Check that a valid collectNode_ has been set
+				if (collectNode_.isNull()) return Messenger::error("A valid Collect2D node must be set in the Process2D node '%s' using the '%s' keyword.\n", name(), process2DNodeKeywords().keyword(Process2DProcedureNode::SourceDataKeyword));
 				return true;
 			case (Process2DProcedureNode::FactorKeyword):
 				normalisationFactor_ = parser.argd(1);
@@ -289,9 +291,6 @@ bool Process2DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				normaliseToOne_ = true;
 				break;
 			case (Process2DProcedureNode::NSitesKeyword):
-				// Need a valid collectNode_...
-				if (collectNode_.isNull()) return Messenger::error("Can't set site-dependent normalisers without first setting the collect node target.\n");
-
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
 					SelectProcedureNode* selectNode = dynamic_cast<SelectProcedureNode*>(scopeStack.node(parser.argc(n), ProcedureNode::SelectNode));
@@ -300,9 +299,6 @@ bool Process2DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				}
 				break;
 			case (Process2DProcedureNode::NumberDensityKeyword):
-				// Need a valid collectNode_...
-				if (collectNode_.isNull()) return Messenger::error("Can't set site-dependent normalisers without first setting the collect node target.\n");
-
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
 					SelectProcedureNode* selectNode = dynamic_cast<SelectProcedureNode*>(scopeStack.node(parser.argc(n), ProcedureNode::SelectNode));

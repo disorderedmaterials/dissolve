@@ -238,6 +238,8 @@ bool CalculateProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				if (!sites_[1]) return Messenger::error("Unrecognised site reference '%s' given to %s keyword.\n", parser.argc(2), calculateNodeKeywords().keyword(CalculateProcedureNode::DistanceKeyword));
 				break;
 			case (CalculateProcedureNode::EndCalculateKeyword):
+				// Check that valid Observable was set
+				if (observable_ == nObservables) return Messenger::error("A quantity to calculate must be specified in %s.\n", ProcedureNode::nodeTypes().keyword(type_));
 				return true;
 			case (CalculateProcedureNode::nCalculateNodeKeywords):
 				return Messenger::error("Unrecognised Calculate node keyword '%s' found.\n", parser.argc(0));
