@@ -8,18 +8,19 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include "expression/expression.h"
+#include "expression/generator.h"
 #include "expression/functions.h"
 #include "expression/variable.h"
 #include "base/messenger.h"
 
 /* Prototypes */
-int ExpressionParser_lex(void);
-void ExpressionParser_error(char *s);
+int ExpressionGenerator_lex(void);
+void ExpressionGenerator_error(char *s);
 
 %}
 
 // Redeclare function names
-%name-prefix="ExpressionParser_"
+%name-prefix="ExpressionGenerator_"
 
 /* Type Definition */
 %union {
@@ -64,10 +65,10 @@ programlist:
 /* Single Program 'Statement' */
 program:
 	statementlist					{
-		if (($1 != NULL) && (!Expression::target()->addStatement($1))) YYABORT;
+		if (($1 != NULL) && (!ExpressionGenerator::expression()->addStatement($1))) YYABORT;
 		}
 	| block						{
-		if (($1 != NULL) && (!Expression::target()->addStatement($1))) YYABORT;
+		if (($1 != NULL) && (!ExpressionGenerator::expression()->addStatement($1))) YYABORT;
 		}
 	;
 
@@ -77,7 +78,7 @@ program:
 
 constant:
 	DISSOLVE_EXPR_CONSTANT					{
-		$$ = Expression::target()->createConstant($1);
+		$$ = ExpressionGenerator::expression()->createConstant($1);
 		}
 	;
 
@@ -88,7 +89,7 @@ constant:
 /* Pre-Existing Variable */
 variable:
 	DISSOLVE_EXPR_VAR					{
-		$$ = Expression::target()->addValueNode($1);
+		$$ = ExpressionGenerator::expression()->addValueNode($1);
 		if ($$ == NULL) YYABORT;
 		}
 	| variable '('					{
@@ -104,12 +105,12 @@ variable:
 /* Built-In Functions */
 function:
 	DISSOLVE_EXPR_FUNCCALL '(' ')'				{
-		$$ = Expression::target()->addFunctionNode( (ExpressionFunctions::Function) $1);
+		$$ = ExpressionGenerator::expression()->addFunctionNode( (ExpressionFunctions::Function) $1);
 		if ($$ == NULL) YYABORT;
 		Messenger::printVerbose("PARSER: function : function '%s'\n", expressionFunctions.data[(ExpressionFunctions::Function) $1].keyword);
 		}
 	| DISSOLVE_EXPR_FUNCCALL '(' expressionlist ')'	{
-		$$ = Expression::target()->addFunctionNodeWithArglist( (ExpressionFunctions::Function) $1, $3);
+		$$ = ExpressionGenerator::expression()->addFunctionNodeWithArglist( (ExpressionFunctions::Function) $1, $3);
 		if ($$ == NULL) YYABORT;
 		Messenger::printVerbose("PARSER: function : function '%s' with exprlist\n", expressionFunctions.data[(ExpressionFunctions::Function) $1].keyword);
 		}
@@ -127,24 +128,24 @@ function:
 expression:
 	constant					{ $$ = $1; }
 	| function					{ $$ = $1; }
-	| '-' expression %prec DISSOLVE_EXPR_UMINUS		{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorNegate, $2); }
+	| '-' expression %prec DISSOLVE_EXPR_UMINUS		{ $$ = ExpressionGenerator::expression()->addOperator(ExpressionFunctions::OperatorNegate, $2); }
 	| variable					{ $$ = $1; }
-	| expression '+' expression			{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorAdd, $1, $3); }
-	| expression '-' expression			{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorSubtract, $1, $3); }
-	| expression '*' expression			{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorMultiply, $1, $3); }
-	| expression '/' expression			{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorDivide, $1, $3); }
-	| expression '^' expression			{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorPower, $1, $3); }
-	| expression '%' expression			{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorModulus, $1, $3); }
-	| expression DISSOLVE_EXPR_EQ expression		{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorEqualTo, $1, $3); }
-	| expression DISSOLVE_EXPR_NEQ expression		{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorNotEqualTo, $1, $3); }
-	| expression '>' expression			{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorGreaterThan, $1, $3); }
-	| expression DISSOLVE_EXPR_GEQ expression		{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorGreaterThanEqualTo, $1, $3); }
-	| expression '<' expression			{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorLessThan, $1, $3); }
-	| expression DISSOLVE_EXPR_LEQ expression		{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorLessThanEqualTo, $1, $3); }
-	| expression DISSOLVE_EXPR_AND expression		{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorAnd, $1, $3); }
-	| expression DISSOLVE_EXPR_OR expression		{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorOr, $1, $3); }
+	| expression '+' expression			{ $$ = ExpressionGenerator::expression()->addOperator(ExpressionFunctions::OperatorAdd, $1, $3); }
+	| expression '-' expression			{ $$ = ExpressionGenerator::expression()->addOperator(ExpressionFunctions::OperatorSubtract, $1, $3); }
+	| expression '*' expression			{ $$ = ExpressionGenerator::expression()->addOperator(ExpressionFunctions::OperatorMultiply, $1, $3); }
+	| expression '/' expression			{ $$ = ExpressionGenerator::expression()->addOperator(ExpressionFunctions::OperatorDivide, $1, $3); }
+	| expression '^' expression			{ $$ = ExpressionGenerator::expression()->addOperator(ExpressionFunctions::OperatorPower, $1, $3); }
+	| expression '%' expression			{ $$ = ExpressionGenerator::expression()->addOperator(ExpressionFunctions::OperatorModulus, $1, $3); }
+	| expression DISSOLVE_EXPR_EQ expression		{ $$ = ExpressionGenerator::expression()->addOperator(ExpressionFunctions::OperatorEqualTo, $1, $3); }
+	| expression DISSOLVE_EXPR_NEQ expression		{ $$ = ExpressionGenerator::expression()->addOperator(ExpressionFunctions::OperatorNotEqualTo, $1, $3); }
+	| expression '>' expression			{ $$ = ExpressionGenerator::expression()->addOperator(ExpressionFunctions::OperatorGreaterThan, $1, $3); }
+	| expression DISSOLVE_EXPR_GEQ expression		{ $$ = ExpressionGenerator::expression()->addOperator(ExpressionFunctions::OperatorGreaterThanEqualTo, $1, $3); }
+	| expression '<' expression			{ $$ = ExpressionGenerator::expression()->addOperator(ExpressionFunctions::OperatorLessThan, $1, $3); }
+	| expression DISSOLVE_EXPR_LEQ expression		{ $$ = ExpressionGenerator::expression()->addOperator(ExpressionFunctions::OperatorLessThanEqualTo, $1, $3); }
+	| expression DISSOLVE_EXPR_AND expression		{ $$ = ExpressionGenerator::expression()->addOperator(ExpressionFunctions::OperatorAnd, $1, $3); }
+	| expression DISSOLVE_EXPR_OR expression		{ $$ = ExpressionGenerator::expression()->addOperator(ExpressionFunctions::OperatorOr, $1, $3); }
 	| '(' expression ')'				{ $$ = $2; }
-	| '!' expression				{ $$ = Expression::target()->addOperator(ExpressionFunctions::OperatorNot, $2); }
+	| '!' expression				{ $$ = ExpressionGenerator::expression()->addOperator(ExpressionFunctions::OperatorNot, $2); }
 	| DISSOLVE_EXPR_NEWTOKEN				{ Messenger::error("'%s' has not been declared as a function or a variable.\n", (*yylval.name).get()); YYABORT; }
 	;
 
@@ -193,7 +194,7 @@ statementlist:
 		}
 	| statementlist statement			{
 		if ($2 == NULL) $$ = $1;
-		else $$ = Expression::target()->joinCommands($1, $2);
+		else $$ = ExpressionGenerator::expression()->joinCommands($1, $2);
 		}
 	;
 
@@ -203,7 +204,7 @@ block:
 		$$ = $2;
 		}
 	| '{' '}'					{
-		$$ = Expression::target()->addFunctionNode(ExpressionFunctions::NoFunction);
+		$$ = ExpressionGenerator::expression()->addFunctionNode(ExpressionFunctions::NoFunction);
 		}
 	;
 
@@ -220,10 +221,10 @@ blockment:
 /* Flow-Control Statement */
 flowstatement:
 	DISSOLVE_EXPR_IF '(' expression ')' blockment DISSOLVE_EXPR_ELSE blockment 	{
-		$$ = Expression::target()->addFunctionNode(ExpressionFunctions::If,$3,$5,$7);
+		$$ = ExpressionGenerator::expression()->addFunctionNode(ExpressionFunctions::If,$3,$5,$7);
 		}
 	| DISSOLVE_EXPR_IF '(' expression ')' blockment 			{
-		$$ = Expression::target()->addFunctionNode(ExpressionFunctions::If,$3,$5);
+		$$ = ExpressionGenerator::expression()->addFunctionNode(ExpressionFunctions::If,$3,$5);
 		}
 	;
 

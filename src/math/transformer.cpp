@@ -20,6 +20,7 @@
 */
 
 #include "math/transformer.h"
+#include "expression/generator.h"
 #include "expression/variable.h"
 #include "math/data1d.h"
 #include "templates/array.h"
@@ -69,7 +70,7 @@ bool Transformer::enabled() const
 bool Transformer::setEquation(const char* equation)
 {
 	text_ = equation;
-	valid_ = equation_.generate(equation);
+	valid_ = ExpressionGenerator::generate(equation_, text_);
 	return valid_;
 }
 

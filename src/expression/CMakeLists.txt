@@ -1,11 +1,11 @@
-bison_target(ExpressionParser expression_grammar.yy ${CMAKE_CURRENT_BINARY_DIR}/expression_grammar.cc COMPILE_FLAGS -y )
+bison_target(ExpressionGenerator generator_grammar.yy ${CMAKE_CURRENT_BINARY_DIR}/generator_grammar.cc COMPILE_FLAGS -y )
 
 add_library(expression
-  ${BISON_ExpressionParser_OUTPUTS}
+  ${BISON_ExpressionGenerator_OUTPUTS}
   expression.cpp
-  expression_lexer.cpp
   function.cpp
   functions.cpp
+  generator.cpp
   node.cpp
   value.cpp
   variable.cpp
@@ -13,6 +13,7 @@ add_library(expression
   expression.h
   function.h
   functions.h
+  generator.h
   node.h
   value.h
   variable.h

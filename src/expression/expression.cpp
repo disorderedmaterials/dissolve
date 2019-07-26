@@ -20,35 +20,23 @@
 */
 
 #include "expression/expression.h"
+#include "expression/generator.h"
 #include "expression/variable.h"
 #include "expression/function.h"
-#include "expression/expression_grammar.hh"
 #include "expression/value.h"
 #include "base/sysfunc.h"
 #include "base/messenger.h"
 #include <stdarg.h>
 #include <string.h>
 
-// Static members
-Expression* Expression::target_ = NULL;
-
-// Constructors
-Expression::Expression()
-{
-	// Private variables
-	generateMissingVariables_ = false;
-
-	// Initialise
-	clear();
-}
-
+// Constructor
 Expression::Expression(const char* expressionText)
 {
-	// Initialise
 	clear();
 
-	// Generate expression
-	generate(expressionText);
+	expressionString_ = expressionText;
+
+	if (expressionText != NULL) ExpressionGenerator::generate(*this, expressionString_.get());
 }
 
 // Destructor
@@ -69,23 +57,15 @@ void Expression::operator=(const Expression& source)
 	// Reset our structure, and regenerate from the expression string
 	clear();
 
-	generate(source.expressionString_.get());
+	ExpressionGenerator::generate(*this, source.expressionString_.get(), source.externalVariables_);
+
+	expressionString_ = source.expressionString_;
 }
 
 /*
- * Creation
+ * Data
  */
 
-// Reset values in parser, ready for next source
-void Expression::resetParser()
-{
-	stringPos_ = -1;
-	tokenStart_ = 0;
-	functionStart_ = -1;
-	stringLength_ = 0;
-	useAdditionalConstants_ = false;
-	target_ = NULL;
-}
 
 // Clear contents of expression
 void Expression::clear()
@@ -97,109 +77,18 @@ void Expression::clear()
 	variables_.removeIfData(false);
 	constants_.removeIfData(false);
 	externalVariables_.clear();
-
-	isValid_ = false;
-}
-
-// Set flag to specify that missing variables should be generated
-void Expression::setGenerateMissingVariables(bool generate)
-{
-	generateMissingVariables_ = generate;
-}
-
-// Return whether missing variables will be generated
-bool Expression::generateMissingVariables()
-{
-	return generateMissingVariables_;
-}
-
-// Get next character from current input stream
-char Expression::getChar()
-{
-	char c = 0;
-
-	// Are we at the end of the current string?
-	if (stringPos_ == stringLength_) return 0;
-
-	// Return current char
-	c = expressionString_[stringPos_];
-	stringPos_++;
-	return c;
-}
-
-// Peek next character from current input stream
-char Expression::peekChar()
-{
-	return (stringPos_ == stringLength_ ? 0 : expressionString_[stringPos_]);
-}
-
-// 'Replace' last character read from current input stream
-void Expression::unGetChar()
-{
-	--stringPos_;
-}
-
-// Generate the expression from the supplied text
-bool Expression::generate(const char* expressionText)
-{
-	resetParser();
-	clear();
-
-	// Set target static pointer for the parser/lexer
-	target_ = this;
-
-	// Set parsing source
-	expressionString_ = expressionText;
-	expressionString_ += ';';
-	stringPos_ = 0;
-	stringLength_ = expressionString_.length();
-	Messenger::printVerbose("Parser source string is '%s', length is %i\n", expressionString_.get(), stringLength_);
-
-	// Perform the parsing
-	isValid_ = ExpressionParser_parse() == 0;
-
-	target_ = NULL;
-
-	return isValid_;
-}
-
-// Generate the expression from the supplied text, referencing the supplied external variables if required
-bool Expression::generate(const char* expressionText, RefList<ExpressionVariable,bool> externalVariables)
-{
-	resetParser();
-	clear();
-
-	// Set target static pointer for the parser/lexer
-	target_ = this;
-
-	// Set parsing source
-	expressionString_ = expressionText;
-	expressionString_ += ';';
-	stringPos_ = 0;
-	stringLength_ = expressionString_.length();
-	Messenger::printVerbose("Parser source string is '%s', length is %i\n", expressionString_.get(), stringLength_);
-
-	// Set the external variables list
-	externalVariables_ = externalVariables;
-
-	// Perform the parsing
-	isValid_ = ExpressionParser_parse() == 0;
-
-	target_ = NULL;
-
-	return isValid_;
 }
 
 // Return whether current expression is valid
 bool Expression::isValid()
 {
-	return isValid_;
+	return (statements_.nItems() != 0); 
 }
 
-// Return current expression target
-Expression *Expression::target()
+// Return original generating string`
+const char* Expression::asString() const
 {
-	return target_;
+	return expressionString_.get();
 }
 
 /*
@@ -402,6 +291,12 @@ ExpressionVariable* Expression::createVariableWithValue(const char* name, double
 	return var;
 }
 
+// Set list of external variables
+void Expression::setExternalVariables(RefList<ExpressionVariable,bool> externalVariables)
+{
+	externalVariables_ = externalVariables;
+}
+
 // Search for variable in current scope
 ExpressionVariable* Expression::variable(const char* name)
 {
@@ -455,7 +350,7 @@ double Expression::execute(bool& success)
 
 	// Print some final verbose output
 // 	Messenger::print("Final result from expression = %f\n", expressionResult);
-	if (!success) Messenger::warn("Execution FAILED.\n");
+	if (!success) Messenger::error("Expression execution failed for '%s'.\n", expressionString_.get());
 
 	return expressionResult;
 }

@@ -27,9 +27,6 @@
 #include "base/charstring.h"
 #include "templates/list.h"
 
-// External declarations
-extern int ExpressionParser_parse();
-
 // Forward declarations
 class Node;
 class ExpressionVariable;
@@ -39,8 +36,7 @@ class Expression
 {
 	public:
 	// Constructor
-	Expression();
-	Expression(const char* expressionText);
+	Expression(const char* expressionText = NULL);
 	// Destructor
 	~Expression();
 	// Copy constructor
@@ -50,59 +46,23 @@ class Expression
 
 
 	/*
-	 * Creation
+	 * Data
 	 */
-	public:
-	// Multi-Character Symbols
-	enum SymbolToken { AssignSymbol, GEQSymbol, LEQSymbol, CNEQSymbol, FNEQSymbol, AndSymbol, OrSymbol, nSymbolTokens };
-
 	private:
-	// Source expression string
+	// Original generating string
 	CharString expressionString_;
-	// Integer position in stringSource, total length of string, and starting position of current token/function
-	int stringPos_, stringLength_, tokenStart_, functionStart_;
-	// Whether to use additional pre-defined constants
-	bool useAdditionalConstants_;
-	// Flag to specify that missing variables should be generated
-	bool generateMissingVariables_;
-	// Whether current expression is valid
-	bool isValid_;
-	// Target for expression generation
-	static Expression* target_;
 
 	public:
-	// Reset structure ready for next source
-	void resetParser();
 	// Clear all expression data
 	void clear();
-	// Set whether missing variables should be generated
-	void setGenerateMissingVariables(bool generate);
-	// Return whether missing variables will be generated
-	bool generateMissingVariables();
-	// Parser lexer, called by yylex()
-	int lex();
-	// Get next character from current input stream
-	char getChar();
-	// Peek next character from current input stream
-	char peekChar();
-	// 'Replace' last character read from current input stream
-	void unGetChar();
-	// Generate the expression from the supplied text
-	bool generate(const char* expressionText);
-	// Generate the expression from the supplied text, referencing the supplied external variables if required
-	bool generate(const char* expressionText, RefList<ExpressionVariable,bool> externalVariables);
-	// Return whether current expression is valid
+	// Return whether current expression is valid (contains at least one node)
 	bool isValid();
-	// Return current expression target
-	static Expression* target();
-	const char* asString() const
-	{
-		return expressionString_.get();
-	}
+	// Return original generating string`
+	const char* asString() const;
 
 
 	/*
-	 * Node Control
+	 * Nodes
 	 */
 	private:
 	// Node list - a disordered list of all nodes (except persistent ones) owned by the Expression
@@ -116,13 +76,13 @@ class Expression
 
 	public:
 	// Add a node representing a whole statement to the execution list
-	bool addStatement(ExpressionNode* leaf);
+	bool addStatement(ExpressionNode* node);
 	// Add an operator to the Expression
 	ExpressionNode* addOperator(ExpressionFunctions::Function func, ExpressionNode* arg1, ExpressionNode* arg2 = NULL);
-	// Associate a command-based leaf node to the Expression
+	// Associate a command-based node to the Expression
 	ExpressionNode* addFunctionNodeWithArglist(ExpressionFunctions::Function func, ExpressionNode* arglist);
 	// Add a function node to the list (overloaded to accept simple arguments instead of a list)
-	ExpressionNode* addFunctionNode(ExpressionFunctions::Function func, ExpressionNode* a1 = NULL, ExpressionNode* a2 = NULL, ExpressionNode* a3 = NULL, ExpressionNode* a4 = NULL);
+	ExpressionNode* addFunctionNode(ExpressionFunctions::Function func, ExpressionNode* arg1 = NULL, ExpressionNode* arg2 = NULL, ExpressionNode* arg3 = NULL, ExpressionNode* arg4 = NULL);
 	// Add a value node, targetting the supplied variable
 	ExpressionNode* addValueNode(ExpressionVariable* var);
 	// Join two nodes together
@@ -151,6 +111,8 @@ class Expression
 	ExpressionVariable* createVariable(const char* name, bool persistent = false, ExpressionNode* initialValue = NULL);
 	// Add variable, with double as initial value source
 	ExpressionVariable* createVariableWithValue(const char* name, double initialValue, bool persistent = false);
+	// Set list of external variables
+	void setExternalVariables(RefList<ExpressionVariable,bool> externalVariables);
 	// Search for variable
 	ExpressionVariable* variable(const char* name);
 	// Return list of variables

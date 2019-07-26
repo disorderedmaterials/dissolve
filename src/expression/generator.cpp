@@ -1,6 +1,6 @@
 /*
-	*** Expression Parser Lexer
-	*** src/expression/expression_lexer.cpp
+	*** Mathematical Expression Generator
+	*** src/expression/generator.cpp
 	Copyright T. Youngs 2015-2019
 
 	This file is part of Dissolve.
@@ -19,38 +19,127 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "expression/generator.h"
 #include "expression/expression.h"
-#include "expression/functions.h"
-#include "expression/expression_grammar.hh"
-#include "expression/variable.h"
-#include "math/constants.h"
+#include "expression/generator_grammar.hh"
 #include "base/sysfunc.h"
 #include "base/messenger.h"
-#include <math.h>
-#include <cctype>
+#include <stdarg.h>
+#include <string.h>
+#include <ctype.h>
 
-// Symbols
-const char* SymbolTokenKeywords[Expression::nSymbolTokens] = { "==", ">=", "<=", "!=", "<>", "&&", "||" };
-int SymbolTokenValues[Expression::nSymbolTokens] = { DISSOLVE_EXPR_EQ, DISSOLVE_EXPR_GEQ, DISSOLVE_EXPR_LEQ, DISSOLVE_EXPR_NEQ, DISSOLVE_EXPR_NEQ, DISSOLVE_EXPR_AND, DISSOLVE_EXPR_OR };
-Expression::SymbolToken symbolToken(const char* s)
+// Static members
+Expression* ExpressionGenerator::expression_ = NULL;
+ExpressionGenerator* ExpressionGenerator::generator_ = NULL;
+
+// Constructors
+ExpressionGenerator::ExpressionGenerator(Expression& expression, const char* expressionText)
 {
-	for (int n=0; n<Expression::nSymbolTokens; ++n) if (DissolveSys::sameString(s, SymbolTokenKeywords[n])) return (Expression::SymbolToken) n;
-	return Expression::nSymbolTokens;
+	// Private variables
+	generateMissingVariables_ = false;
+	useAdditionalConstants_ = false;
+
+	expression_ = &expression;
+	generator_ = this;
+
+	// Initialise Expression and generator
+	expression.clear();
+	setSource(expressionText);
+}
+
+// Destructor
+ExpressionGenerator::~ExpressionGenerator()
+{
 }
 
 /*
- * Bison Functions / Variables
+ * Target Expression and Generator
  */
 
-// Bison-generated ExpressionParser_lex()
-int ExpressionParser_lex()
+// Return target Expression (static to allow ExpressionGenerator_parse() to use it)
+Expression* ExpressionGenerator::expression()
 {
-	if (!Expression::target()) return 0;
-	return Expression::target()->lex();
+	return expression_;
+}
+
+// Return current ExpressionGenerator (static to allow ExpressionGenerator_parse() to use it)
+ExpressionGenerator* ExpressionGenerator::generator()
+{
+	return generator_;
+}
+
+/*
+ * Lexer
+ */
+
+// Return enum options for SymbolToken
+EnumOptions<int> ExpressionGenerator::symbolTokens()
+{
+	static EnumOptionsList SymbolTokenOptions = EnumOptionsList() <<
+		EnumOption(DISSOLVE_EXPR_EQ,		"==") <<
+		EnumOption(DISSOLVE_EXPR_GEQ,		">=") <<
+		EnumOption(DISSOLVE_EXPR_LEQ,		"<=") <<
+		EnumOption(DISSOLVE_EXPR_NEQ,		"!=") <<
+		EnumOption(DISSOLVE_EXPR_AND,		"&&") <<
+		EnumOption(DISSOLVE_EXPR_OR,		"||");
+	
+	static EnumOptions<int> options("SymbolToken", SymbolTokenOptions);
+
+	return options;
+}
+
+// Set string source for lexer
+void ExpressionGenerator::setSource(const char* expressionText)
+{
+	// Set parsing source, always ensuring that we have a terminating ';'
+	expressionString_ = expressionText;
+	expressionString_ += ';';
+
+	stringPos_ = 0;
+	stringLength_ = strlen(expressionString_);
+	tokenStart_ = 0;
+	functionStart_ = -1;
+
+	Messenger::printVerbose("Parser source string is '%s', length is %i\n", expressionString_, stringLength_);
+}
+
+// Get next character from current input stream
+char ExpressionGenerator::getChar()
+{
+	char c = 0;
+
+	// Are we at the end of the current string?
+	if (stringPos_ == stringLength_) return 0;
+
+	// Return current char
+	c = expressionString_[stringPos_];
+	stringPos_++;
+	return c;
+}
+
+// Peek next character from current input stream
+char ExpressionGenerator::peekChar()
+{
+	return (stringPos_ == stringLength_ ? 0 : expressionString_[stringPos_]);
+}
+
+// 'Replace' last character read from current input stream
+void ExpressionGenerator::unGetChar()
+{
+	--stringPos_;
+}
+
+
+// Bison-required ExpressionGenerator_lex()
+int ExpressionGenerator_lex()
+{
+	if (!ExpressionGenerator::expression()) return 0;
+	if (!ExpressionGenerator::generator()) return 0;
+	return ExpressionGenerator::generator()->lex();
 }
 
 // Parser lexer, called by yylex()
-int Expression::lex()
+int ExpressionGenerator::lex()
 {
 	int n;
 	bool done, hasExp;
@@ -67,8 +156,8 @@ int Expression::lex()
 	tokenStart_ = stringPos_-1;
 
 	/*
-	// Number Detection - Either '.' or  a digit begins a number
-	*/
+	 * Number Detection - Either '.' or  a digit begins a number
+	 */
 	if (c == '.' || isdigit(c))
 	{
 		Messenger::printVerbose("LEXER (%p): found the start of a number...\n", this);
@@ -109,14 +198,14 @@ int Expression::lex()
 			}
 		} while (!done);
 		// We now have the number as a text token...
-		ExpressionParser_lval.doubleConst = token.asDouble();
-		Messenger::printVerbose("LEXER (%p): found a numeric constant [%s] [%e]\n", this, token.get(), ExpressionParser_lval.doubleConst);
+		ExpressionGenerator_lval.doubleConst = token.asDouble();
+		Messenger::printVerbose("LEXER (%p): found a numeric constant [%s] [%e]\n", this, token.get(), ExpressionGenerator_lval.doubleConst);
 		return DISSOLVE_EXPR_CONSTANT;
 	}
 
 	/*
-	// Alpha-token - function or variable
-	*/
+	 * Alpha-token - function or variable
+	 */
 	if (isalpha (c))
 	{
 		do
@@ -131,7 +220,7 @@ int Expression::lex()
 		// Built-in numeric constants
 		if (token == "Pi")
 		{
-			ExpressionParser_lval.doubleConst = PI;
+			ExpressionGenerator_lval.doubleConst = PI;
 			return DISSOLVE_EXPR_CONSTANT;
 		}
 
@@ -140,37 +229,37 @@ int Expression::lex()
 		{
 			if (token == "DEGRAD")
 			{
-				ExpressionParser_lval.doubleConst = DEGRAD;
+				ExpressionGenerator_lval.doubleConst = DEGRAD;
 				return DISSOLVE_EXPR_CONSTANT;
 			}
 			else if (token == "Bohr")
 			{
-				ExpressionParser_lval.doubleConst = BOHRRADIUS;
+				ExpressionGenerator_lval.doubleConst = BOHRRADIUS;
 				return DISSOLVE_EXPR_CONSTANT;
 			}
 			else if (token == "NA")
 			{
-				ExpressionParser_lval.doubleConst = AVOGADRO;
+				ExpressionGenerator_lval.doubleConst = AVOGADRO;
 				return DISSOLVE_EXPR_CONSTANT;
 			}
 			else if (token == "c")
 			{
-				ExpressionParser_lval.doubleConst = SPEEDOFLIGHT;
+				ExpressionGenerator_lval.doubleConst = SPEEDOFLIGHT;
 				return DISSOLVE_EXPR_CONSTANT;
 			}
 			else if (token == "kb")
 			{
-				ExpressionParser_lval.doubleConst = BOLTZMANN;
+				ExpressionGenerator_lval.doubleConst = BOLTZMANN;
 				return DISSOLVE_EXPR_CONSTANT;
 			}
 			else if (token == "h")
 			{
-				ExpressionParser_lval.doubleConst = PLANCK;
+				ExpressionGenerator_lval.doubleConst = PLANCK;
 				return DISSOLVE_EXPR_CONSTANT;
 			}
 			else if (token == "hbar")
 			{
-				ExpressionParser_lval.doubleConst = HBAR;
+				ExpressionGenerator_lval.doubleConst = HBAR;
 				return DISSOLVE_EXPR_CONSTANT;
 			}
 		}
@@ -186,11 +275,11 @@ int Expression::lex()
 		}
 
 		// Is it an existing variable?
-		ExpressionVariable* v = variable(token);
+		ExpressionVariable* v = expression_->variable(token);
 		if (v != NULL)
 		{
 			Messenger::printVerbose("LEXER (%p): ...which is an existing variable (->VAR)\n", this);
-			ExpressionParser_lval.variable = v;
+			ExpressionGenerator_lval.variable = v;
 			return DISSOLVE_EXPR_VAR;
 		}
 
@@ -199,7 +288,7 @@ int Expression::lex()
 		if (n != ExpressionFunctions::nFunctions)
 		{
 			Messenger::printVerbose("LEXER (%p): ... which is a function (->FUNCCALL).\n", this);
-			ExpressionParser_lval.functionId = n;
+			ExpressionGenerator_lval.functionId = n;
 			functionStart_ = tokenStart_;
 			return DISSOLVE_EXPR_FUNCCALL;
 		}
@@ -209,14 +298,14 @@ int Expression::lex()
 		if (generateMissingVariables_)
 		{
 			Messenger::printVerbose("LEXER (%p): ...which has been autogenerated as a variable (->VAR)\n", this);
-			ExpressionParser_lval.variable = createVariable(token);
+			ExpressionGenerator_lval.variable = expression_->createVariable(token);
 			return DISSOLVE_EXPR_VAR;
 		}
 		else
 		{
 			Messenger::printVerbose("LEXER (%p): ...which is unrecognised (->NEWTOKEN)\n", this);
 			name = token;
-			ExpressionParser_lval.name = &name;
+			ExpressionGenerator_lval.name = &name;
 			return DISSOLVE_EXPR_NEWTOKEN;
 		}
 	}
@@ -243,9 +332,8 @@ int Expression::lex()
 		c = getChar();
 		token += c;
 		Messenger::printVerbose("LEXER (%p): found symbol [%s]\n", this, token.get());
-		SymbolToken st = symbolToken(token.get());
-		if (st != nSymbolTokens) return SymbolTokenValues[st];
-		else printf("Error: Unrecognised symbol found in input (%s).\n", token.get());
+		if (symbolTokens().isValid(token.get())) return symbolTokens().enumeration(token.get());
+		else Messenger::error("Unrecognised symbol '%s' found in input.\n", token.get());
  	}
 	else
 	{
@@ -258,4 +346,36 @@ int Expression::lex()
 	}
 
 	return 0;
+}
+
+/*
+ * Creation
+ */
+
+// Static generation functions
+bool ExpressionGenerator::generate(Expression& expression, const char* expressionText)
+{
+	// Create a generator
+	ExpressionGenerator generator(expression, expressionText);
+
+	// Generate expression
+	bool result = ExpressionGenerator_parse() == 0;
+	if (!result) expression_->clear();
+
+	return result;
+}
+
+bool ExpressionGenerator::generate(Expression& expression, const char* expressionText, RefList<ExpressionVariable,bool> externalVariables)
+{
+	// Create a generator
+	ExpressionGenerator generator(expression, expressionText);
+
+	// Set the external variable source
+	expression.setExternalVariables(externalVariables);
+
+	// Generate expression
+	bool result = ExpressionGenerator_parse() == 0;
+	if (!result) expression_->clear();
+
+	return result;
 }

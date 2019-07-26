@@ -24,7 +24,7 @@
 #include "procedure/nodes/process1d.h"
 #include "procedure/nodescopestack.h"
 #include "classes/configuration.h"
-#include "expression/expression.h"
+#include "expression/generator.h"
 #include "expression/variable.h"
 #include "math/mc.h"
 #include "base/lineparser.h"
@@ -272,7 +272,7 @@ bool Fit1DProcedureNode::read(LineParser& parser, const CoreData& coreData, Node
 			case (Fit1DProcedureNode::EndFit1DKeyword):
 				return true;
 			case (Fit1DProcedureNode::EquationKeyword):
-				if (!equation_.generate(parser.argc(1))) return Messenger::error("Failed to create expression.\n");
+				if (!ExpressionGenerator::generate(equation_, parser.argc(1))) return Messenger::error("Failed to create expression.\n");
 				break;
 			case (Fit1DProcedureNode::FitKeyword):
 				var = equation_.createVariableWithValue(parser.argc(1), parser.argd(2), true);

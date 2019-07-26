@@ -20,6 +20,7 @@
 */
 
 #include "procedure/nodevalue.h"
+#include "expression/generator.h"
 #include "base/sysfunc.h"
 
 // Constructor
@@ -79,7 +80,7 @@ bool NodeValue::set(double value)
 bool NodeValue::set(const char* expressionText, RefList<ExpressionVariable,bool> parameters)
 {
 	type_ = ExpressionNodeValue;
-	return expression_.generate(expressionText, parameters);
+	return ExpressionGenerator::generate(expression_, expressionText, parameters);
 }
 
 /*
