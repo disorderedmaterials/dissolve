@@ -42,13 +42,13 @@ Expression::Expression()
 	clear();
 }
 
-Expression::Expression(const char* commands)
+Expression::Expression(const char* expressionText)
 {
 	// Initialise
 	clear();
 
 	// Generate expression
-	generate(commands);
+	generate(expressionText);
 }
 
 // Destructor
@@ -66,7 +66,10 @@ Expression::Expression(const Expression& source)
 // Assignment operator
 void Expression::operator=(const Expression& source)
 {
-	Messenger::error("Copy constructor for Expression not implemented.\n");
+	// Reset our structure, and regenerate from the expression string
+	clear();
+
+	generate(source.expressionString_.get());
 }
 
 /*
@@ -79,7 +82,6 @@ void Expression::resetParser()
 	stringPos_ = -1;
 	tokenStart_ = 0;
 	functionStart_ = -1;
-	stringSource_.clear();
 	stringLength_ = 0;
 	useAdditionalConstants_ = false;
 	target_ = NULL;
@@ -120,7 +122,7 @@ char Expression::getChar()
 	if (stringPos_ == stringLength_) return 0;
 
 	// Return current char
-	c = stringSource_[stringPos_];
+	c = expressionString_[stringPos_];
 	stringPos_++;
 	return c;
 }
@@ -128,7 +130,7 @@ char Expression::getChar()
 // Peek next character from current input stream
 char Expression::peekChar()
 {
-	return (stringPos_ == stringLength_ ? 0 : stringSource_[stringPos_]);
+	return (stringPos_ == stringLength_ ? 0 : expressionString_[stringPos_]);
 }
 
 // 'Replace' last character read from current input stream
@@ -147,11 +149,11 @@ bool Expression::generate(const char* expressionText)
 	target_ = this;
 
 	// Set parsing source
-	stringSource_ = expressionText;
-	stringSource_ += ';';
+	expressionString_ = expressionText;
+	expressionString_ += ';';
 	stringPos_ = 0;
-	stringLength_ = stringSource_.length();
-	Messenger::printVerbose("Parser source string is '%s', length is %i\n", stringSource_.get(), stringLength_);
+	stringLength_ = expressionString_.length();
+	Messenger::printVerbose("Parser source string is '%s', length is %i\n", expressionString_.get(), stringLength_);
 
 	// Perform the parsing
 	isValid_ = ExpressionParser_parse() == 0;
@@ -171,11 +173,11 @@ bool Expression::generate(const char* expressionText, RefList<ExpressionVariable
 	target_ = this;
 
 	// Set parsing source
-	stringSource_ = expressionText;
-	stringSource_ += ';';
+	expressionString_ = expressionText;
+	expressionString_ += ';';
 	stringPos_ = 0;
-	stringLength_ = stringSource_.length();
-	Messenger::printVerbose("Parser source string is '%s', length is %i\n", stringSource_.get(), stringLength_);
+	stringLength_ = expressionString_.length();
+	Messenger::printVerbose("Parser source string is '%s', length is %i\n", expressionString_.get(), stringLength_);
 
 	// Set the external variables list
 	externalVariables_ = externalVariables;

@@ -40,7 +40,7 @@ class Expression
 	public:
 	// Constructor
 	Expression();
-	Expression(const char* expression);
+	Expression(const char* expressionText);
 	// Destructor
 	~Expression();
 	// Copy constructor
@@ -57,8 +57,8 @@ class Expression
 	enum SymbolToken { AssignSymbol, GEQSymbol, LEQSymbol, CNEQSymbol, FNEQSymbol, AndSymbol, OrSymbol, nSymbolTokens };
 
 	private:
-	// Character string source
-	CharString stringSource_;
+	// Source expression string
+	CharString expressionString_;
 	// Integer position in stringSource, total length of string, and starting position of current token/function
 	int stringPos_, stringLength_, tokenStart_, functionStart_;
 	// Whether to use additional pre-defined constants
@@ -95,6 +95,10 @@ class Expression
 	bool isValid();
 	// Return current expression target
 	static Expression* target();
+	const char* asString() const
+	{
+		return expressionString_.get();
+	}
 
 
 	/*
