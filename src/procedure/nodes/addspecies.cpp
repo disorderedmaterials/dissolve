@@ -134,7 +134,7 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool&
 		// Determine volume required to contain the population of the specified Species at the requested density
 		double requiredVolume = 0.0;
 		if (densityUnits_ == Units::AtomsPerAngstromUnits) requiredVolume = nAtomsToAdd / density_;
-		else requiredVolume = ((species_->mass() * population_.asInteger()) / AVOGADRO) / (density_ / 1.0E24);
+		else requiredVolume = ((species_->mass() * requestedPopulation) / AVOGADRO) / (density_ / 1.0E24);
 
 		// If the current box has no atoms in it, absorb the current volume rather than adding to it
 		if (cfg->nAtoms() > 0) requiredVolume += currentVolume;
