@@ -244,5 +244,22 @@ bool AddSpeciesProcedureNode::read(LineParser& parser, const CoreData& coreData,
 // Write structure to specified LineParser
 bool AddSpeciesProcedureNode::write(LineParser& parser, const char* prefix)
 {
-	// TODO
+	// Block Start
+	if (!parser.writeLineF("%s%s\n", ProcedureNode::nodeTypes().keyword(type_))) return false;
+
+	// Species and Population
+	if (species_ && !parser.writeLineF("%s  %s  '%s'\n", prefix, addSpeciesNodeKeywords().keyword(AddSpeciesProcedureNode::SpeciesKeyword), species_->name())) return false;
+	if (!parser.writeLineF("%s  %s  %i\n", prefix, addSpeciesNodeKeywords().keyword(AddSpeciesProcedureNode::PopulationKeyword), population_.asInteger())) return false;
+
+	// Density, if provided
+	if ((density_ > 0.0) && (!parser.writeLineF("%s  %s  %e  %s\n", prefix, addSpeciesNodeKeywords().keyword(AddSpeciesProcedureNode::DensityKeyword), density_.asDouble(), Units::densityUnits().keyword(densityUnits_)))) return false;
+
+	// Control
+	if ((!rotate_) && (!parser.writeLineF("%s  %s\n", prefix, addSpeciesNodeKeywords().keyword(AddSpeciesProcedureNode::NoRotationKeyword)))) return false;
+	if ((positioning_ != AddSpeciesProcedureNode::RandomPositioning) && (!parser.writeLineF("%s  %s  %s\n", prefix, addSpeciesNodeKeywords().keyword(AddSpeciesProcedureNode::PositionKeyword), positioningTypes().keyword(positioning_)))) return false;
+
+	// Block End
+	if (!parser.writeLineF("%s%s\n", addSpeciesNodeKeywords().keyword(AddSpeciesProcedureNode::EndAddSpeciesKeyword))) return false;
+
+	return true;
 }

@@ -413,5 +413,46 @@ bool SelectProcedureNode::read(LineParser& parser, const CoreData& coreData, Nod
 // Write structure to specified LineParser
 bool SelectProcedureNode::write(LineParser& parser, const char* prefix)
 {
-	// TODO
+	// Block Start
+	if (!parser.writeLineF("%s%s\n", ProcedureNode::nodeTypes().keyword(type_))) return false;
+
+	// Normal Sites
+	RefListIterator<SpeciesSite,bool> siteIterator(speciesSites_);
+	while (SpeciesSite* site = siteIterator.iterate())
+	{
+		if (!parser.writeLineF("%s  %s  '%s'  '%s'\n", prefix, selectNodeKeywords().keyword(SelectProcedureNode::SiteKeyword), site->name(), site->parent()->name())) return false;
+	}
+
+	// Dynamic Sites
+	RefListIterator<DynamicSiteProcedureNode,bool> dynamicSiteIterator(dynamicSites_);
+	while (DynamicSiteProcedureNode* site = dynamicSiteIterator.iterate()) if (!site->write(parser, CharString("%s  ", prefix))) return false;
+
+	// Same Molecule Exclusions
+	if (sameMoleculeExclusions_.nItems() > 0)
+	{
+		CharString sameMolExclusions;
+		RefListIterator<SelectProcedureNode,bool> exclusionIterator(sameMoleculeExclusions_);
+		while (SelectProcedureNode* node = exclusionIterator.iterate()) sameMolExclusions.strcatf("  %s", node->name());
+		if (!parser.writeLineF("%s  %s%s\n", prefix, selectNodeKeywords().keyword(SelectProcedureNode::ExcludeSameMoleculeKeyword), sameMolExclusions.get())) return false;
+	}
+
+	// Same Site Exclusions
+	if (sameSiteExclusions_.nItems() > 0)
+	{
+		CharString sameSiteExclusions;
+		RefListIterator<SelectProcedureNode,bool> exclusionIterator(sameSiteExclusions_);
+		while (SelectProcedureNode* node = exclusionIterator.iterate()) sameSiteExclusions.strcatf("  %s", node->name());
+		if (!parser.writeLineF("%s  %s%s\n", prefix, selectNodeKeywords().keyword(SelectProcedureNode::ExcludeSameSiteKeyword), sameSiteExclusions.get())) return false;
+	}
+
+	// Same Molecule As Site?
+	if (sameMolecule_ && (!parser.writeLineF("%s  %s  %s\n", prefix, selectNodeKeywords().keyword(SelectProcedureNode::SameMoleculeAsSiteKeyword), sameMolecule_->name()))) return false;
+
+	// ForEach Branch
+	if (forEachBranch_ && (!forEachBranch_->write(parser, CharString("%s  ", prefix)))) return false;
+
+	// Block End
+	if (!parser.writeLineF("%s%s\n", selectNodeKeywords().keyword(SelectProcedureNode::EndSelectKeyword))) return false;
+
+	return true;
 }

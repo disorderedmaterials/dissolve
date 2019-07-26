@@ -249,5 +249,20 @@ bool Collect1DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 // Write structure to specified LineParser
 bool Collect1DProcedureNode::write(LineParser& parser, const char* prefix)
 {
-	// TODO
+	// Block Start
+	if (!parser.writeLineF("%s%s\n", ProcedureNode::nodeTypes().keyword(type_))) return false;
+
+	// Quantity
+	if (observable_ && !parser.writeLineF("%s  %s  '%s'\n", prefix, collect1DNodeKeywords().keyword(Collect1DProcedureNode::QuantityXKeyword), observable_->name())) return false;
+
+	// Calculation Range
+	if (!parser.writeLineF("%s  %s  %12.6e  %12.6e  %12.6e\n", prefix, collect1DNodeKeywords().keyword(Collect1DProcedureNode::RangeXKeyword), minimum_, maximum_, binWidth_)) return false;
+
+	// Subcollect Branch
+	if (subCollectBranch_ && (!subCollectBranch_->write(parser, CharString("%s  ", prefix)))) return false;
+
+	// Block End
+	if (!parser.writeLineF("%s%s\n", collect1DNodeKeywords().keyword(Collect1DProcedureNode::EndCollect1DKeyword))) return false;
+
+	return true;
 }

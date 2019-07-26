@@ -71,8 +71,8 @@ EnumOptions<ExcludeProcedureNode::ExcludeNodeKeyword> ExcludeProcedureNode::excl
 // Execute node, targetting the supplied Configuration
 ProcedureNode::NodeExecutionResult ExcludeProcedureNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
-	// Check any defined exclusion rules
-	if (disallowSameSite_)
+	// Exclude based on Sites?
+	if (sameSiteA_ && sameSiteB_)
 	{
 		if (sameSiteA_->currentSite() == sameSiteB_->currentSite()) return ProcedureNode::SomethingElse;
 	}
@@ -127,5 +127,14 @@ bool ExcludeProcedureNode::read(LineParser& parser, const CoreData& coreData, No
 // Write structure to specified LineParser
 bool ExcludeProcedureNode::write(LineParser& parser, const char* prefix)
 {
-	// TODO
+	// Block Start
+	if (!parser.writeLineF("%s%s\n", ProcedureNode::nodeTypes().keyword(type_))) return false;
+
+	// Same Site Exclusion
+	if (sameSiteA_ && sameSiteB_ && (!parser.writeLineF("%s  %s  '%s'  '%s'\n", prefix, excludeNodeKeywords().keyword(ExcludeProcedureNode::SameSiteKeyword), sameSiteA_->name(), sameSiteB_->name()))) return false;
+
+	// Block End
+	if (!parser.writeLineF("%s%s\n", excludeNodeKeywords().keyword(ExcludeProcedureNode::EndExcludeKeyword))) return false;
+
+	return true;
 }

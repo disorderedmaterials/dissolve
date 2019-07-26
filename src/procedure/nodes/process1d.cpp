@@ -322,14 +322,30 @@ bool Process1DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 		}
 	}
 
-	// Check that a valid collectNode_ has been set
-	if (collectNode_.isNull()) return Messenger::error("A valid Collect1D node must be set in the Process1D node '%s' using the '%s' keyword.\n", name(), process1DNodeKeywords().keyword(Process1DProcedureNode::SourceDataKeyword));
-
 	return true;
 }
 
 // Write structure to specified LineParser
 bool Process1DProcedureNode::write(LineParser& parser, const char* prefix)
 {
-	// TODO
+	// Block Start
+	if (!parser.writeLineF("%s%s  '%s'\n", ProcedureNode::nodeTypes().keyword(type_), name())) return false;
+
+	// Source data
+	if (!collectNode_.write(parser, CharString("%s  %s", prefix, process1DNodeKeywords().keyword(Process1DProcedureNode::SourceDataKeyword)))) return false;
+
+	// Labels
+	if (!parser.writeLineF("%s  %s  '%s'\n", prefix, process1DNodeKeywords().keyword(Process1DProcedureNode::LabelValueKeyword), valueLabel_.get())) return false;
+	if (!parser.writeLineF("%s  %s  '%s'\n", prefix, process1DNodeKeywords().keyword(Process1DProcedureNode::LabelXKeyword), xAxisLabel_.get())) return false;
+
+	// Normalisation
+	// TODO Save Normalisations - will be reimplemented in forthcoming commits.
+
+	// Control
+	if (saveData_ && !parser.writeLineF("%s  %s  On\n", prefix, process1DNodeKeywords().keyword(Process1DProcedureNode::SaveKeyword))) return false;
+
+	// Block End
+	if (!parser.writeLineF("%s%s\n", process1DNodeKeywords().keyword(Process1DProcedureNode::EndProcess1DKeyword))) return false;
+
+	return true;
 }

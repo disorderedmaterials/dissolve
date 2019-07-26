@@ -159,7 +159,7 @@ bool Fit1DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, con
 	}
 
 	// Print equation info
-	Messenger::print("Expression to fit is: %s\n", equationString_.get());
+	Messenger::print("Expression to fit is: %s\n", equation_.asString());
 	RefListIterator<ExpressionVariable,bool> variableIterator(equation_.variables());
 	while (ExpressionVariable* var = variableIterator.iterate())
 	{
@@ -212,7 +212,7 @@ bool Fit1DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, con
 	{
 		LineParser parser;
 		if (!parser.openOutput(CharString("%s_%s.fit", name(), cfg->name()))) return procPool.decideFalse();
-		if (!parser.writeLineF("# Fit Equation : %s\n", equationString_.get())) return procPool.decideFalse();
+		if (!parser.writeLineF("# Fit Equation : %s\n", equation_.asString())) return procPool.decideFalse();
 		RefListIterator<ExpressionVariable,bool> variableIterator(equation_.variables());
 		while (ExpressionVariable* var = variableIterator.iterate())
 		{
@@ -265,13 +265,14 @@ bool Fit1DProcedureNode::read(LineParser& parser, const CoreData& coreData, Node
 		switch (nk)
 		{
 			case (Fit1DProcedureNode::ConstantKeyword):
-				if (!equation_.createVariableWithValue(parser.argc(1), parser.argd(2), true)) return Messenger::error("Failed to create constant.\n");
+				var = equation_.createVariableWithValue(parser.argc(1), parser.argd(2), true);
+				if (!var) return Messenger::error("Failed to create constant.\n");
+				constants_.add(var);
 				break;
 			case (Fit1DProcedureNode::EndFit1DKeyword):
 				return true;
 			case (Fit1DProcedureNode::EquationKeyword):
-				equationString_ = parser.argc(1);
-				if (!equation_.generate(equationString_)) return Messenger::error("Failed to create expression.\n");
+				if (!equation_.generate(parser.argc(1))) return Messenger::error("Failed to create expression.\n");
 				break;
 			case (Fit1DProcedureNode::FitKeyword):
 				var = equation_.createVariableWithValue(parser.argc(1), parser.argd(2), true);
@@ -301,5 +302,29 @@ bool Fit1DProcedureNode::read(LineParser& parser, const CoreData& coreData, Node
 // Write structure to specified LineParser
 bool Fit1DProcedureNode::write(LineParser& parser, const char* prefix)
 {
-	// TODO
+	// Block Start
+	if (!parser.writeLineF("%s%s\n", ProcedureNode::nodeTypes().keyword(type_))) return false;
+
+	// Constants
+	RefListIterator<ExpressionVariable,bool> constantsIterator(constants_);
+	while (ExpressionVariable* var = constantsIterator.iterate()) if (!parser.writeLineF("%s  %s  %s  %12.6e\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::ConstantKeyword), var->name(), var->value())) return false;
+
+	// Fit variables
+	// Constants
+	RefListIterator<ExpressionVariable,bool> targetsIterator(fitTargets_);
+	while (ExpressionVariable* var = targetsIterator.iterate()) if (!parser.writeLineF("%s  %s  %s  %12.6e\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::FitKeyword), var->name(), var->value())) return false;
+
+	// Equation
+	if (!parser.writeLineF("%s  %s  '%s'\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::EquationKeyword), equation_.asString())) return false;
+
+	// Source data
+	if (!dataNode_.write(parser, CharString("%s  %s", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::SourceDataKeyword)))) return false;
+
+	// Control
+	if (saveData_ && !parser.writeLineF("%s  %s  On\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::SaveKeyword))) return false;
+
+	// Block End
+	if (!parser.writeLineF("%s%s\n", fit1DNodeKeywords().keyword(Fit1DProcedureNode::EndFit1DKeyword))) return false;
+
+	return true;
 }

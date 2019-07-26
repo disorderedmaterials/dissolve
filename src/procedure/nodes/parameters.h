@@ -27,7 +27,7 @@
 #include "templates/array.h"
 
 // Forward Declarations
-/* none */
+class ExpressionVariable;
 
 // Parameters Node
 class ParametersProcedureNode : public ProcedureNode
@@ -55,6 +55,14 @@ class ParametersProcedureNode : public ProcedureNode
 	enum ParametersNodeKeyword { DoubleKeyword, EndParametersKeyword, nParametersNodeKeywords };
 	// Return enum option info for ParametersNodeKeyword
 	static EnumOptions<ParametersNodeKeyword> parametersNodeKeywords();
+
+
+	/*
+	 * Data
+	 */
+	private:
+	// Reference list of parameters
+	RefList<ExpressionVariable,bool> parameterReferences_;
 
 
 	/*

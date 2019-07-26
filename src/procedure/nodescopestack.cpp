@@ -159,20 +159,21 @@ ProcedureNode* NodeScopeStack::node(const char* name, ProcedureNode::NodeType nt
  */
 
 // Add new parameter for Procedure
-bool NodeScopeStack::addParameter(const char* name, double value)
+ExpressionVariable* NodeScopeStack::addParameter(const char* name, double value)
 {
 	ExpressionVariable* parameter = new ExpressionVariable;
 	parameters_.own(parameter);
 	parameter->setName(name);
+	parameter->setReadOnly();
 	if (!parameter->set(value))
 	{
 		Messenger::print("Failed to set initial value for parameter.\n");
-		return false;
+		return NULL;
 	}
 
 	parameterReferences_.add(parameter);
 
-	return true;
+	return parameter;
 }
 
 // Return reference list of parameters (for passing to Expression::generate())

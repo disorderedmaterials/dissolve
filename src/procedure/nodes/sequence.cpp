@@ -241,5 +241,14 @@ bool SequenceProcedureNode::read(LineParser& parser, const CoreData& coreData, N
 // Write structure to specified LineParser
 bool SequenceProcedureNode::write(LineParser& parser, const char* prefix)
 {
-	// TODO
+	// Block Start - should have already been written by the calling function, since we don't know the keyword we are linked to
+
+	// Loop over nodes in this sequence
+	ListIterator<ProcedureNode> nodeIterator(sequence_);
+	while (ProcedureNode* node = nodeIterator.iterate()) if (!node->write(parser, prefix)) return false;
+
+	// Block End
+	if (!parser.writeLineF("%s%s\n", blockTerminationKeyword_.get())) return false;
+
+	return true;
 }

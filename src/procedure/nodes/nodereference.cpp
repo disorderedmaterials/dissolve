@@ -106,9 +106,9 @@ bool ProcedureNodeReference::read(LineParser& parser, int startArg, const CoreDa
 		if (!DissolveSys::sameString("Analyse", module->type())) return Messenger::error("Specified module '%s' must be an Analyse module.\n", parser.argc(startArg+1));
 
 		// Found the target AnalyseModule, so cast it up and search for the named node in its Analyser
-		AnalyseModule* analyseModule = dynamic_cast<AnalyseModule*>(module);
-		if (!analyseModule) return Messenger::error("Couldn't cast module into an AnalyseModule.\n");
-		node_ = analyseModule->analyserScopeStack().node(parser.argc(startArg));
+		analyseModuleParent_ = dynamic_cast<AnalyseModule*>(module);
+		if (!analyseModuleParent_) return Messenger::error("Couldn't cast module into an AnalyseModule.\n");
+		node_ = analyseModuleParent_->analyserScopeStack().node(parser.argc(startArg));
 	}
 	else node_ = localStack.node(parser.argc(startArg));
 
@@ -124,4 +124,9 @@ bool ProcedureNodeReference::read(LineParser& parser, int startArg, const CoreDa
 // Write structure to specified LineParser
 bool ProcedureNodeReference::write(LineParser& parser, const char* prefix)
 {
+	if (analyseModuleParent_)
+	{
+		if (!parser.writeLineF("%s  '%s'  '%s'\n", prefix, node_->name(), analyseModuleParent_->uniqueName())) return false;
+	}
+	else return parser.writeLineF("%s  '%s'\n", prefix, node_->name());
 }

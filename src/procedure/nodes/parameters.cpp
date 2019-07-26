@@ -21,6 +21,7 @@
 
 #include "procedure/nodes/parameters.h"
 #include "procedure/nodescopestack.h"
+#include "expression/variable.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
@@ -83,6 +84,8 @@ ProcedureNode::NodeExecutionResult ParametersProcedureNode::execute(ProcessPool&
 // Read structure from specified LineParser
 bool ParametersProcedureNode::read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack)
 {
+	ExpressionVariable* parameter;
+
 	// Read until we encounter the EndParameters keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
 	{
@@ -98,7 +101,11 @@ bool ParametersProcedureNode::read(LineParser& parser, const CoreData& coreData,
 		switch (nk)
 		{
 			case (ParametersProcedureNode::DoubleKeyword):
-				if (!scopeStack.addParameter(parser.argc(1), parser.argd(2))) return false;
+				parameter = scopeStack.addParameter(parser.argc(1), parser.argd(2));
+				if (!parameter) return false;
+
+				// Add the parameter to our own RefList so we can write out its info
+				parameterReferences_.add(parameter);
 				break;
 			case (ParametersProcedureNode::EndParametersKeyword):
 				return true;
@@ -114,5 +121,18 @@ bool ParametersProcedureNode::read(LineParser& parser, const CoreData& coreData,
 // Write structure to specified LineParser
 bool ParametersProcedureNode::write(LineParser& parser, const char* prefix)
 {
-	// TODO
+	// Block Start
+	if (!parser.writeLineF("%s%s\n", ProcedureNode::nodeTypes().keyword(type_))) return false;
+
+	// Parameters
+	RefListIterator<ExpressionVariable,bool> parameterIterator(parameterReferences_);
+	while (ExpressionVariable* parameter = parameterIterator.iterate())
+	{
+		if (!parser.writeLineF("%s  %s  '%s'\n", prefix, parametersNodeKeywords().keyword(ParametersNodeKeyword::DoubleKeyword), parameter->name(), parameter->value())) return false;
+	}
+
+	// Block End
+	if (!parser.writeLineF("%s%s\n", parametersNodeKeywords().keyword(ParametersNodeKeyword::EndParametersKeyword))) return false;
+
+	return true;
 }

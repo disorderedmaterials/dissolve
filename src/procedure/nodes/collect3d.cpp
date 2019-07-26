@@ -372,5 +372,26 @@ bool Collect3DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 // Write structure to specified LineParser
 bool Collect3DProcedureNode::write(LineParser& parser, const char* prefix)
 {
-	// TODO
+	// Block Start
+	if (!parser.writeLineF("%s%s\n", ProcedureNode::nodeTypes().keyword(type_))) return false;
+
+	// X Quantity / Range
+	if (xObservable_ && !parser.writeLineF("%s  %s  '%s'\n", prefix, collect3DNodeKeywords().keyword(Collect3DProcedureNode::QuantityXKeyword), xObservable_->name())) return false;
+	if (!parser.writeLineF("%s  %s  %12.6e  %12.6e  %12.6e\n", prefix, collect3DNodeKeywords().keyword(Collect3DProcedureNode::RangeXKeyword), xMinimum_, xMaximum_, xBinWidth_)) return false;
+
+	// Y Quantity / Range
+	if (yObservable_ && !parser.writeLineF("%s  %s  '%s'\n", prefix, collect3DNodeKeywords().keyword(Collect3DProcedureNode::QuantityYKeyword), yObservable_->name())) return false;
+	if (!parser.writeLineF("%s  %s  %12.6e  %12.6e  %12.6e\n", prefix, collect3DNodeKeywords().keyword(Collect3DProcedureNode::RangeYKeyword), yMinimum_, yMaximum_, yBinWidth_)) return false;
+
+	// Z Quantity / Range
+	if (zObservable_ && !parser.writeLineF("%s  %s  '%s'\n", prefix, collect3DNodeKeywords().keyword(Collect3DProcedureNode::QuantityZKeyword), zObservable_->name())) return false;
+	if (!parser.writeLineF("%s  %s  %12.6e  %12.6e  %12.6e\n", prefix, collect3DNodeKeywords().keyword(Collect3DProcedureNode::RangeZKeyword), zMinimum_, zMaximum_, zBinWidth_)) return false;
+
+	// Subcollect Branch
+	if (subCollectBranch_ && (!subCollectBranch_->write(parser, CharString("%s  ", prefix)))) return false;
+
+	// Block End
+	if (!parser.writeLineF("%s%s\n", collect3DNodeKeywords().keyword(Collect3DProcedureNode::EndCollect3DKeyword))) return false;
+
+	return true;
 }

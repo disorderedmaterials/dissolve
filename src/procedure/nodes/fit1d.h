@@ -70,14 +70,14 @@ class Fit1DProcedureNode : public ProcedureNode
 	private:
 	// Node containing source data to fit
 	ProcedureNodeReference dataNode_;
-	// Fit equation string
-	CharString equationString_;
 	// Fit equation object
 	Expression equation_;
 	// Data against which to fit
 	Data1D referenceData_;
 	// X variable for equation
 	ExpressionVariable* xVariable_;
+	// List of variables that we use, but are not fitting
+	RefList<ExpressionVariable, bool> constants_;
 	// List of variables which we are fitting
 	RefList<ExpressionVariable, bool> fitTargets_;
 	// Whether to save data after normalisation

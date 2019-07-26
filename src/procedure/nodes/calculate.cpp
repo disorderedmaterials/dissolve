@@ -255,5 +255,25 @@ bool CalculateProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 // Write structure to specified LineParser
 bool CalculateProcedureNode::write(LineParser& parser, const char* prefix)
 {
-	// TODO
+	// Block Start
+	if (!parser.writeLineF("%s%s\n", ProcedureNode::nodeTypes().keyword(type_))) return false;
+
+	// Observable target
+	if (observable_ == CalculateProcedureNode::AngleObservable)
+	{
+		if (!parser.writeLineF("%s  %s  '%s'  '%s'  '%s'\n", prefix, calculateNodeKeywords().keyword(CalculateProcedureNode::AngleKeyword), sites_[0]->name(), sites_[1]->name(), sites_[2]->name())) return false;
+	}
+	else if (observable_ == CalculateProcedureNode::DistanceObservable)
+	{
+		if (!parser.writeLineF("%s  %s  '%s'  '%s'\n", prefix, calculateNodeKeywords().keyword(CalculateProcedureNode::DistanceKeyword), sites_[0]->name(), sites_[1]->name())) return false;
+	}
+	else if (observable_ == CalculateProcedureNode::VectorObservable)
+	{
+		if (!parser.writeLineF("%s  %s  '%s'  '%s'\n", prefix, calculateNodeKeywords().keyword(CalculateProcedureNode::VectorKeyword), sites_[0]->name(), sites_[1]->name())) return false;
+	}
+
+	// Block End
+	if (!parser.writeLineF("%s%s\n", calculateNodeKeywords().keyword(CalculateProcedureNode::EndCalculateKeyword))) return false;
+
+	return true;
 }

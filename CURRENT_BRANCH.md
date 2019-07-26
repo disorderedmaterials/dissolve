@@ -9,9 +9,9 @@ Create new nodes for generating Configurations from 'recipes', for the purpose o
 - [DONE] AddSpeciesNode: Immediately adds the specified Species to the current cell, following the options set within. If the unit cell does not exist, it is created according to the definition provided in the UnitCell node (following specification of density if provided). If it already exists and has a prescribed density rather than volume, the volume is expanded to accommodate the new molecules to be created. Replicates and extends the content of the SpeciesInfo Configuration block
 - [AS ISSUE] RandomiseConformers (or a better name): randomise individual molecules of the specified type by randomly rotating about bonds throughout the molecule. Need to check for internal overlaps (i.e. calculate internal energy)
 - [DONE] Generate errors for argument numbers to nodes.
-- Implement ProcedureNode::save() virtuals properly.
-- Implement Expression::asString() to return Expression as a string for saving.
 - [DONE] Tidy Configuration header / functions - move stuff that was in Composition to be in Content, and put input file coordinates somewhere sensible.
+- [DONE] Implement ProcedureNode::save() virtuals properly.
+- [DONE] Implement Expression::asString() to return Expression as a string for saving.
 
 FOLLOW_ON:
 - Importing CIF structures as Species - break up into molecular units? Need to provide basic information on the contained units, probably as empirical formula (e.g. for CuBTC would be 'Cu' and 'C9O6H3'). This info can then be used to find, rotate, and re-map those molecules in a unit cell (folded molecularly). The Species then contains a list of copies of that particular molecular unit, at real coordinates.  These can then be pasted into a supercell, replicating the crystal. Need to have options in the AddSpecies node to utilise symmetry copies. A species may also contain multiple variants of coordinates in the form of conformers (potentially weighted by some factor, e.g. deltaE??). Store both these in a list of copies_, storing coordinates only (we will always use the basic Species information as a template for elements, bonds etc., as well as forcefield terms.

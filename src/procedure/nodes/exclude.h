@@ -62,10 +62,8 @@ class ExcludeProcedureNode : public ProcedureNode
 	 * Data
 	 */
 	private:
-	// Whether to disallow Sites being the same
-	bool disallowSameSite_;
-	// Trio of nodes (sites) to compare when disallowing same Sites
-	SelectProcedureNode* sameSiteA_, *sameSiteB_, *sameSiteC_;
+	// Pair of nodes (sites) to compare when disallowing same Sites
+	SelectProcedureNode* sameSiteA_, *sameSiteB_;
 
 
 	/*

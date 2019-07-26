@@ -28,6 +28,7 @@
 
 // Forward Declarations
 class CoreData;
+class AnalyseModule;
 
 // Procedure Node Reference
 class ProcedureNodeReference : public ListItem<ProcedureNodeReference>
@@ -45,6 +46,8 @@ class ProcedureNodeReference : public ListItem<ProcedureNodeReference>
 	private:
 	// Target node
 	ProcedureNode* node_;
+	// Parent AnalyseModule owning the node (if relevant)
+	AnalyseModule* analyseModuleParent_;
 	// Allowable node types (when reading / setting)
 	bool allowedTypes_[ProcedureNode::nNodeTypes];
 

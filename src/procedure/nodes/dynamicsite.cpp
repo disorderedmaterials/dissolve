@@ -196,5 +196,29 @@ bool DynamicSiteProcedureNode::read(LineParser& parser, const CoreData& coreData
 // Write structure to specified LineParser
 bool DynamicSiteProcedureNode::write(LineParser& parser, const char* prefix)
 {
-	// TODO
+	// Block Start
+	if (!parser.writeLineF("%s%s\n", ProcedureNode::nodeTypes().keyword(type_))) return false;
+
+	// Atom Types
+	if (atomTypes_.nItems() > 0)
+	{
+		CharString s;
+		RefListIterator<AtomType,int> atomTypeIterator(atomTypes_);
+		while (AtomType* at = atomTypeIterator.iterate()) s.strcatf("  %s", at->name());
+		if (!parser.writeLineF("%s  %s  '%s'\n", prefix, dynamicSiteNodeKeywords().keyword(DynamicSiteProcedureNode::AtomTypeKeyword), s.get())) return false;
+	}
+
+	// Elements
+	if (elements_.nItems() > 0)
+	{
+		CharString s;
+		RefListIterator<Element,bool> elementsIterator(elements_);
+		while (Element* el = elementsIterator.iterate()) s.strcatf("  %s", el->symbol());
+		if (!parser.writeLineF("%s  %s  '%s'\n", prefix, dynamicSiteNodeKeywords().keyword(DynamicSiteProcedureNode::ElementKeyword), s.get())) return false;
+	}
+
+	// Block End
+	if (!parser.writeLineF("%s%s\n", dynamicSiteNodeKeywords().keyword(DynamicSiteProcedureNode::EndDynamicSiteKeyword))) return false;
+
+	return true;
 }

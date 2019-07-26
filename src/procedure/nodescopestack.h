@@ -88,7 +88,7 @@ class NodeScopeStack
 
 	public:
 	// Add new parameter for Procedure
-	bool addParameter(const char* name, double value);
+	ExpressionVariable* addParameter(const char* name, double value);
 	// Return reference list of parameters (for passing to Expression::generate())
 	RefList<ExpressionVariable,bool> parameterReferences() const;
 };
