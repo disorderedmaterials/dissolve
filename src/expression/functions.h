@@ -19,8 +19,10 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_EXPRESSIONFUNCTIONS_H
-#define DISSOLVE_EXPRESSIONFUNCTIONS_H
+#ifndef DISSOLVE_EXPRESSION_FUNCTIONS_H
+#define DISSOLVE_EXPRESSION_FUNCTIONS_H
+
+#include "expression/result.h"
 
 // Forward declarations
 class ExpressionFunction;

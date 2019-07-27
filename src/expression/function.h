@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_EXPRESSIONFUNCTION_H
-#define DISSOLVE_EXPRESSIONFUNCTION_H
+#ifndef DISSOLVE_EXPRESSION_FUNCTIONNODE_H
+#define DISSOLVE_EXPRESSION_FUNCTIONNODE_H
 
 #include "expression/functions.h"
 #include "expression/node.h"

@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_EXPRESSIONGENERATOR_H
-#define DISSOLVE_EXPRESSIONGENERATOR_H
+#ifndef DISSOLVE_EXPRESSION_GENERATOR_H
+#define DISSOLVE_EXPRESSION_GENERATOR_H
 
 #include "base/charstring.h"
 #include "base/enumoptions.h"
