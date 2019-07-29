@@ -71,7 +71,7 @@ IsotopologueListKeywordWidget::IsotopologueListKeywordWidget(QWidget* parent, Mo
 void IsotopologueListKeywordWidget::autoButton_clicked(bool checked)
 {
 	// First, assemble a list of all Species over all Configurations targeted by the Module that are currently missing from our definition
-	RefList<Species,Configuration*> missingSpecies;
+	RefDataList<Species,Configuration*> missingSpecies;
 	List<IsotopologueReference>& topeReferences = keyword_->data();
 	RefListIterator<Configuration,bool> configurationIterator(keyword_->moduleParent()->targetConfigurations());
 	while (Configuration* cfg = configurationIterator.iterate())
@@ -84,16 +84,16 @@ void IsotopologueListKeywordWidget::autoButton_clicked(bool checked)
 			// Loop over our isotopologue references to see if the Species / Configuration is already represented
 			ListIterator<IsotopologueReference> topeIterator(topeReferences);
 			IsotopologueReference* topeRef = NULL;
-			while (topeRef = topeIterator.iterate()) if (topeRef->matches(cfg, spInfo->species())) break;
+			while ((topeRef = topeIterator.iterate())) if (topeRef->matches(cfg, spInfo->species())) break;
 			
-			if (!topeRef) missingSpecies.add(spInfo->species(), cfg);
+			if (!topeRef) missingSpecies.append(spInfo->species(), cfg);
 		}
 	}
 
 	// Add missing entries...
 	if (missingSpecies.nItems() > 0)
 	{
-		RefListIterator<Species,Configuration*> missingIterator(missingSpecies);
+		RefDataListIterator<Species,Configuration*> missingIterator(missingSpecies);
 		while (Species* sp = missingIterator.iterate())
 		{
 			IsotopologueReference* topeRef = topeReferences.add();
