@@ -299,7 +299,7 @@ bool Dissolve::saveInput(const char* filename)
 			for (Isotopologue* iso = sp->isotopologues().first(); iso != NULL; iso = iso->next)
 			{
 				if (!parser.writeLineF("  %s  '%s'  ", SpeciesBlock::keyword(SpeciesBlock::IsotopologueKeyword), iso->name())) return false;
-				RefListIterator<AtomType,Isotope*> isotopeIterator(iso->isotopes());
+				RefDataListIterator<AtomType,Isotope*> isotopeIterator(iso->isotopes());
 				while (AtomType* atomType = isotopeIterator.iterate())
 				{
 					// No need to write anything that's the natural isotope...

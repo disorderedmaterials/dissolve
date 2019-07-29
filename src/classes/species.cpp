@@ -171,7 +171,7 @@ bool Species::checkSetUp(const List<AtomType>& atomTypes)
 	}
 	else for (Isotopologue* iso = isotopologues_.first(); iso != NULL; iso = iso->next)
 	{
-		RefListIterator<AtomType,Isotope*> isotopeIterator(iso->isotopes());
+		RefDataListIterator<AtomType,Isotope*> isotopeIterator(iso->isotopes());
 		while (AtomType* atomType = isotopeIterator.iterate())
 		{
 			if (!atomTypes.contains(atomType))
