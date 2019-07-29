@@ -34,22 +34,9 @@ EndPairPotentials
 #------------------------------------------------------------------------------#
 
 Configuration  'Bulk'
-  # BEGIN OLD DEFINITIONS
-  #Multiplier  1000
-  #Density  0.021300  atoms/A3
-  #CellLengths  36.075038  36.075038  36.075038
-  #CellAngles  90.000000  90.000000  90.000000
-
-  # Species Information
-  #SpeciesInfo  'Ar'
-  #  Population  1.000000
-  #EndSpeciesInfo
-  # END OLD DEFINITIONS
-
-  # BEGIN NEW DEFINITION
   Generator
     Parameters
-      Double multiplier 1000
+      Integer  multiplier  1000
     EndParameters
     Box
       Angles  90.0  90.0  90.0
