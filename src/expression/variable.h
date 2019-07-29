@@ -41,7 +41,7 @@ class ExpressionVariable : public ExpressionNode
 	// Name of the variable
 	CharString name_;
 	// Value of variable
-	double value_;
+	ExpressionValue value_;
 	// Initial value of new variable
 	ExpressionNode* initialValue_;
 
@@ -61,13 +61,13 @@ class ExpressionVariable : public ExpressionNode
 	 */
 	public:
 	// Return value of node
-	bool execute(double& value);
+	bool execute(ExpressionValue& value);
 	// Set value of node
-	bool set(double value);
+	bool set(ExpressionValue value);
 	// Return value
-	double value() const;
+	ExpressionValue value() const;
 	// Return pointer to value
-	double* valuePointer();
+	ExpressionValue* valuePointer();
 
 
 	/*

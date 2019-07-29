@@ -28,10 +28,12 @@ void ExpressionGenerator_error(char *s);
 	CharString* name;			/* Character pointer for names */
 	ExpressionNode* node;			/* Expression node pointer */
 	ExpressionVariable* variable;		/* Expression variable pointer */
+	int integerConst;			/* Constant integer value */
 	double doubleConst;			/* Constant double value */
 };
 
-%token <doubleConst> DISSOLVE_EXPR_CONSTANT
+%token <integerConst> DISSOLVE_EXPR_INTEGERCONSTANT
+%token <doubleConst> DISSOLVE_EXPR_DOUBLECONSTANT
 %token <name> DISSOLVE_EXPR_NEWTOKEN
 %token <variable> DISSOLVE_EXPR_VAR
 %token <functionId> DISSOLVE_EXPR_FUNCCALL
@@ -77,7 +79,10 @@ program:
 /* --------- */
 
 constant:
-	DISSOLVE_EXPR_CONSTANT					{
+	DISSOLVE_EXPR_INTEGERCONSTANT					{
+		$$ = ExpressionGenerator::expression()->createConstant($1);
+		}
+	| DISSOLVE_EXPR_DOUBLECONSTANT					{
 		$$ = ExpressionGenerator::expression()->createConstant($1);
 		}
 	;

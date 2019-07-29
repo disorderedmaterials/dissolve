@@ -91,14 +91,13 @@ double Fit1DProcedureNode::equationCost(const Array<double>& alpha)
 	const Array<double>& x = referenceData_.xAxis();
 	const Array<double>& y = referenceData_.values();
 	double equationY;
-	bool success;
 	for (int n=0; n<referenceData_.nValues(); ++n)
 	{
 		// Set axis value
 		xVariable_->set(x.constAt(n));
 
 		// Evaluate expression
-		equationY = equation_.execute(success);
+		equationY = equation_.asDouble();
 
 		// Sum squared error
 		cost += (equationY - y.constAt(n))*(equationY - y.constAt(n));
@@ -204,7 +203,7 @@ bool Fit1DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, con
 		xVariable_->set(x.constAt(n));
 
 		// Add point
-		data.addPoint(x.constAt(n), equation_.execute(success));
+		data.addPoint(x.constAt(n), equation_.asDouble());
 	}
 
 	// Save data?

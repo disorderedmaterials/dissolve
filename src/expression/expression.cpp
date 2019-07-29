@@ -24,6 +24,7 @@
 #include "expression/variable.h"
 #include "expression/function.h"
 #include "expression/value.h"
+#include "expression/variablevalue.h"
 #include "base/sysfunc.h"
 #include "base/messenger.h"
 #include <stdarg.h>
@@ -204,7 +205,7 @@ ExpressionNode* Expression::addFunctionNode(ExpressionFunctions::Function func, 
 // Add value node targetting specified variable
 ExpressionNode* Expression::addValueNode(ExpressionVariable* var)
 {
-	ExpressionValue* vnode = new ExpressionValue(var);
+	ExpressionVariableValue* vnode = new ExpressionVariableValue(var);
 	nodes_.own(vnode);
 	vnode->setParent(this);
 
@@ -337,20 +338,33 @@ RefList<ExpressionVariable,bool>& Expression::constants()
  */
 
 // Execute expression
-double Expression::execute(bool& success)
+bool Expression::execute(ExpressionValue& result)
 {
-	double expressionResult = 0.0;
-
+	bool success = true;
 	for (RefListItem<ExpressionNode,int> *ri = statements_.first(); ri != NULL; ri = ri->next)
 	{
 // 		ri->item->nodePrint(1);
-		success = ri->item->execute(expressionResult);
+		success = ri->item->execute(result);
 		if (!success) break;
 	}
 
-	// Print some final verbose output
-// 	Messenger::print("Final result from expression = %f\n", expressionResult);
 	if (!success) Messenger::error("Expression execution failed for '%s'.\n", expressionString_.get());
 
-	return expressionResult;
+	return success;
+}
+
+// Execute and return as integer
+int Expression::asInteger()
+{
+	ExpressionValue result;
+	if (!execute(result)) return 0;
+	else return result.asInteger();
+}
+
+// Execute and return as double
+int Expression::asDouble()
+{
+	ExpressionValue result;
+	if (!execute(result)) return 0.0;
+	else return result.asDouble();
 }

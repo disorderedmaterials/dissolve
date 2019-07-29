@@ -164,7 +164,6 @@ ExpressionVariable* NodeScopeStack::addParameter(const char* name, double value)
 	ExpressionVariable* parameter = new ExpressionVariable;
 	parameters_.own(parameter);
 	parameter->setName(name);
-	parameter->setReadOnly();
 	if (!parameter->set(value))
 	{
 		Messenger::print("Failed to set initial value for parameter.\n");

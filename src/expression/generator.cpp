@@ -100,7 +100,7 @@ void ExpressionGenerator::setSource(const char* expressionText)
 	tokenStart_ = 0;
 	functionStart_ = -1;
 
-	Messenger::printVerbose("Parser source string is '%s', length is %i\n", expressionString_, stringLength_);
+	Messenger::printVerbose("Parser source string is '%s', length is %i\n", expressionString_.get(), stringLength_);
 }
 
 // Get next character from current input stream
@@ -156,12 +156,12 @@ int ExpressionGenerator::lex()
 	tokenStart_ = stringPos_-1;
 
 	/*
-	 * Number Detection - Either '.' or  a digit begins a number
+	 * Number Detection - Either '.' or a digit begins a number
 	 */
 	if (c == '.' || isdigit(c))
 	{
 		Messenger::printVerbose("LEXER (%p): found the start of a number...\n", this);
-		// Default to integer, unless first char is '.'
+		bool isInteger = (c != '.');
 		hasExp = false;
 		token += c;
 		done = false;
@@ -169,7 +169,11 @@ int ExpressionGenerator::lex()
 		{
 			c = getChar();
 			if (isdigit(c)) token += c;
-			else if (c == '.') token += '.';
+			else if (c == '.')
+			{
+				token += '.';
+				isInteger = false;
+			}
 			else if ((c == 'e') || (c == 'E'))
 			{
 				// Check for previous exponential in number
@@ -197,10 +201,20 @@ int ExpressionGenerator::lex()
 				done = true;
 			}
 		} while (!done);
+
 		// We now have the number as a text token...
-		ExpressionGenerator_lval.doubleConst = token.asDouble();
-		Messenger::printVerbose("LEXER (%p): found a numeric constant [%s] [%e]\n", this, token.get(), ExpressionGenerator_lval.doubleConst);
-		return DISSOLVE_EXPR_CONSTANT;
+		if (isInteger)
+		{
+			ExpressionGenerator_lval.integerConst = token.asInteger();
+			Messenger::printVerbose("LEXER (%p): found an integer constant [%s] [%i]\n", this, token.get(), ExpressionGenerator_lval.integerConst);
+			return DISSOLVE_EXPR_INTEGERCONSTANT;
+		}
+		else
+		{
+			ExpressionGenerator_lval.doubleConst = token.asDouble();
+			Messenger::printVerbose("LEXER (%p): found a double constant [%s] [%e]\n", this, token.get(), ExpressionGenerator_lval.doubleConst);
+			return DISSOLVE_EXPR_DOUBLECONSTANT;
+		}
 	}
 
 	/*
@@ -221,7 +235,7 @@ int ExpressionGenerator::lex()
 		if (token == "Pi")
 		{
 			ExpressionGenerator_lval.doubleConst = PI;
-			return DISSOLVE_EXPR_CONSTANT;
+			return DISSOLVE_EXPR_DOUBLECONSTANT;
 		}
 
 		// Additional numeric constants
@@ -230,37 +244,37 @@ int ExpressionGenerator::lex()
 			if (token == "DEGRAD")
 			{
 				ExpressionGenerator_lval.doubleConst = DEGRAD;
-				return DISSOLVE_EXPR_CONSTANT;
+				return DISSOLVE_EXPR_DOUBLECONSTANT;
 			}
 			else if (token == "Bohr")
 			{
 				ExpressionGenerator_lval.doubleConst = BOHRRADIUS;
-				return DISSOLVE_EXPR_CONSTANT;
+				return DISSOLVE_EXPR_DOUBLECONSTANT;
 			}
 			else if (token == "NA")
 			{
 				ExpressionGenerator_lval.doubleConst = AVOGADRO;
-				return DISSOLVE_EXPR_CONSTANT;
+				return DISSOLVE_EXPR_DOUBLECONSTANT;
 			}
 			else if (token == "c")
 			{
 				ExpressionGenerator_lval.doubleConst = SPEEDOFLIGHT;
-				return DISSOLVE_EXPR_CONSTANT;
+				return DISSOLVE_EXPR_DOUBLECONSTANT;
 			}
 			else if (token == "kb")
 			{
 				ExpressionGenerator_lval.doubleConst = BOLTZMANN;
-				return DISSOLVE_EXPR_CONSTANT;
+				return DISSOLVE_EXPR_DOUBLECONSTANT;
 			}
 			else if (token == "h")
 			{
 				ExpressionGenerator_lval.doubleConst = PLANCK;
-				return DISSOLVE_EXPR_CONSTANT;
+				return DISSOLVE_EXPR_DOUBLECONSTANT;
 			}
 			else if (token == "hbar")
 			{
 				ExpressionGenerator_lval.doubleConst = HBAR;
-				return DISSOLVE_EXPR_CONSTANT;
+				return DISSOLVE_EXPR_DOUBLECONSTANT;
 			}
 		}
 

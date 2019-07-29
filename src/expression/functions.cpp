@@ -23,6 +23,7 @@
 #include "expression/functions.h"
 #include "expression/function.h"
 #include "math/constants.h"
+#include "math/mathfunc.h"
 #include "base/sysfunc.h"
 #include <cmath>
 #include <cstring>
@@ -175,201 +176,243 @@ ExpressionFunctions::Function ExpressionFunctions::function(const char* s)
  */
 
 // Add two quantities together
-bool ExpressionFunctions::function_OperatorAdd(ExpressionFunction* c, double& rv)
+bool ExpressionFunctions::function_OperatorAdd(ExpressionFunction* c, ExpressionValue& result)
 {
-	double lhs, rhs;
-	if (!c->arg(0,lhs)) return false;
-	if (!c->arg(1,rhs)) return false;
+	ExpressionValue a, b;
 
-	rv = lhs + rhs;
+	// Retrieve the two arguments
+	if (!c->arg(0, a)) return false;
+	if (!c->arg(1, b)) return false;
+
+	if (ExpressionValue::bothIntegers(a, b)) result = a.asInteger() + b.asInteger();
+	else result = a.asDouble() + b.asDouble();
 
 	return true;
 }
 
 // Logical AND check on two operators
-bool ExpressionFunctions::function_OperatorAnd(ExpressionFunction* c, double& rv)
+bool ExpressionFunctions::function_OperatorAnd(ExpressionFunction* c, ExpressionValue& result)
 {
-	double v1, v2;
-	if (!c->arg(0,v1)) return false;
-	if (!c->arg(1,v2)) return false;
+	ExpressionValue a, b;
 
-	rv = v1 && v2;
+	// Retrieve the two arguments
+	if (!c->arg(0, a)) return false;
+	if (!c->arg(1, b)) return false;
+
+	bool aa = a.isInteger() ? a.asInteger() > 0 : a.asDouble() > 0.0;
+	bool bb = b.isInteger() ? b.asInteger() > 0 : b.asDouble() > 0.0;
+
+	result = (aa && bb ? 1 : 0);
 
 	return true;
 }
 
 // Divide one quantity by another
-bool ExpressionFunctions::function_OperatorDivide(ExpressionFunction* c, double& rv)
+bool ExpressionFunctions::function_OperatorDivide(ExpressionFunction* c, ExpressionValue& result)
 {
-	// Grab both argument (return) values and send them to be operated on
-	double lhs, rhs;
-	if (!c->arg(0,lhs)) return false;
-	if (!c->arg(1,rhs)) return false;
+	ExpressionValue a, b;
 
-	rv = lhs / rhs;
+	// Retrieve the two arguments
+	if (!c->arg(0, a)) return false;
+	if (!c->arg(1, b)) return false;
+
+	if (ExpressionValue::bothIntegers(a, b)) result = a.asInteger() / b.asInteger();
+	else result = a.asDouble() / b.asDouble();
 
 	return true;
 }
 
 // Equal To
-bool ExpressionFunctions::function_OperatorEqualTo(ExpressionFunction* c, double& rv)
+bool ExpressionFunctions::function_OperatorEqualTo(ExpressionFunction* c, ExpressionValue& result)
 {
-	// Grab both argument (return) values and send them to be operated on
-	double lhs, rhs;
-	if (!c->arg(0,lhs)) return false;
-	if (!c->arg(1,rhs)) return false;
+	ExpressionValue a, b;
 
-	rv = lhs == rhs;
+	// Retrieve the two arguments
+	if (!c->arg(0, a)) return false;
+	if (!c->arg(1, b)) return false;
+
+	if (ExpressionValue::bothIntegers(a, b)) result = (a.asInteger() == b.asInteger() ? 1 : 0);
+	else result = (a.asDouble() == b.asDouble() ? 1 : 0);
 
 	return true;
 }
 
 // Greater Than
-bool ExpressionFunctions::function_OperatorGreaterThan(ExpressionFunction* c, double& rv)
+bool ExpressionFunctions::function_OperatorGreaterThan(ExpressionFunction* c, ExpressionValue& result)
 {
-	// Grab both argument (return) values and send them to be operated on
-	double lhs, rhs;
-	if (!c->arg(0,lhs)) return false;
-	if (!c->arg(1,rhs)) return false;
+	ExpressionValue a, b;
 
-	rv = lhs > rhs;
+	// Retrieve the two arguments
+	if (!c->arg(0, a)) return false;
+	if (!c->arg(1, b)) return false;
+
+	if (ExpressionValue::bothIntegers(a, b)) result = a.asInteger() + b.asInteger();
+	else result = a.asDouble() + b.asDouble();
 
 	return true;
 }
 
 // Greater Than Equal To
-bool ExpressionFunctions::function_OperatorGreaterThanEqualTo(ExpressionFunction* c, double& rv)
+bool ExpressionFunctions::function_OperatorGreaterThanEqualTo(ExpressionFunction* c, ExpressionValue& result)
 {
-	// Grab both argument (return) values and send them to be operated on
-	double lhs, rhs;
-	if (!c->arg(0,lhs)) return false;
-	if (!c->arg(1,rhs)) return false;
+	ExpressionValue a, b;
 
-	rv = lhs >= rhs;
+	// Retrieve the two arguments
+	if (!c->arg(0, a)) return false;
+	if (!c->arg(1, b)) return false;
+
+	if (ExpressionValue::bothIntegers(a, b)) result = (a.asInteger() >= b.asInteger() ? 1 : 0);
+	else result = (a.asDouble() >= b.asDouble() ? 1 : 0);
 
 	return true;
 }
 
 // Less Than
-bool ExpressionFunctions::function_OperatorLessThan(ExpressionFunction* c, double& rv)
+bool ExpressionFunctions::function_OperatorLessThan(ExpressionFunction* c, ExpressionValue& result)
 {
-	// Grab both argument (return) values and send them to be operated on
-	double lhs, rhs;
-	if (!c->arg(0,lhs)) return false;
-	if (!c->arg(1,rhs)) return false;
+	ExpressionValue a, b;
 
-	rv = lhs < rhs;
+	// Retrieve the two arguments
+	if (!c->arg(0, a)) return false;
+	if (!c->arg(1, b)) return false;
+
+	if (ExpressionValue::bothIntegers(a, b)) result = (a.asInteger() < b.asInteger() ? 1 : 0);
+	else result = (a.asDouble() < b.asDouble() ? 1 : 0);
 
 	return true;
 }
 
 // Less Than Equal To
-bool ExpressionFunctions::function_OperatorLessThanEqualTo(ExpressionFunction* c, double& rv)
+bool ExpressionFunctions::function_OperatorLessThanEqualTo(ExpressionFunction* c, ExpressionValue& result)
 {
-	// Grab both argument (return) values and send them to be operated on
-	double lhs, rhs;
-	if (!c->arg(0,lhs)) return false;
-	if (!c->arg(1,rhs)) return false;
+	ExpressionValue a, b;
 
-	rv = lhs <= rhs;
+	// Retrieve the two arguments
+	if (!c->arg(0, a)) return false;
+	if (!c->arg(1, b)) return false;
+
+	if (ExpressionValue::bothIntegers(a, b)) result = (a.asInteger() <= b.asInteger() ? 1 : 0);
+	else result = (a.asDouble() <= b.asDouble() ? 1 : 0);
 
 	return true;
 }
 
-// Integer remainder of A/B
-bool ExpressionFunctions::function_OperatorModulus(ExpressionFunction* c, double& rv)
+// Module of A/B
+bool ExpressionFunctions::function_OperatorModulus(ExpressionFunction* c, ExpressionValue& result)
 {
-	// Grab both argument (return) values and send them to be operated on
-	double lhs, rhs;
-	if (!c->arg(0,lhs)) return false;
-	if (!c->arg(1,rhs)) return false;
+	ExpressionValue a, b;
 
-	rv = int(lhs) % int(rhs);
+	// Retrieve the two arguments
+	if (!c->arg(0, a)) return false;
+	if (!c->arg(1, b)) return false;
+
+	if (ExpressionValue::bothIntegers(a, b)) result = a.asInteger() & b.asInteger();
+	else result = fmod(a.asDouble(), b.asDouble());
 
 	return true;
 }
 
-// Multiply one quantity by another
-bool ExpressionFunctions::function_OperatorMultiply(ExpressionFunction* c, double& rv)
+// Multiply A with B
+bool ExpressionFunctions::function_OperatorMultiply(ExpressionFunction* c, ExpressionValue& result)
 {
-	// Grab both argument (return) values and send them to be operated on
-	double lhs, rhs;
-	if (!c->arg(0,lhs)) return false;
-	if (!c->arg(1,rhs)) return false;
+	ExpressionValue a, b;
 
-	rv = lhs * rhs;
+	// Retrieve the two arguments
+	if (!c->arg(0, a)) return false;
+	if (!c->arg(1, b)) return false;
+
+	if (ExpressionValue::bothIntegers(a, b)) result = a.asInteger() * b.asInteger();
+	else result = a.asDouble() * b.asDouble();
 
 	return true;
 }
 
 // Negate value
-bool ExpressionFunctions::function_OperatorNegate(ExpressionFunction* c, double& rv)
+bool ExpressionFunctions::function_OperatorNegate(ExpressionFunction* c, ExpressionValue& result)
 {
-	if (!c->arg(0, rv)) return false;
+	ExpressionValue a;
 
-	rv = -rv;
+	// Retrieve the argument
+	if (!c->arg(0, a)) return false;
+
+	if (a.isInteger()) result = -a.asInteger();
+	else result = -a.asDouble();
 
 	return true;
 }
 
 // Not (Reverse Logic)
-bool ExpressionFunctions::function_OperatorNot(ExpressionFunction* c, double& rv)
+bool ExpressionFunctions::function_OperatorNot(ExpressionFunction* c, ExpressionValue& result)
 {
-	if (!c->arg(0, rv)) return false;
+	ExpressionValue a;
 
-	rv = (rv > 0 ? false : true);
+	// Retrieve the argument
+	if (!c->arg(0, a)) return false;
+
+	if (a.isInteger()) result = (a.asInteger() > 0 ? 1 : 0);
+	else if (a.isDouble()) result = (a.asDouble() > 0.0 ? 1 : 0);
 
 	return true;
 }
 
 // Not Equal To
-bool ExpressionFunctions::function_OperatorNotEqualTo(ExpressionFunction* c, double& rv)
+bool ExpressionFunctions::function_OperatorNotEqualTo(ExpressionFunction* c, ExpressionValue& result)
 {
-	// Grab both argument (return) values and send them to be operated on
-	double lhs, rhs;
-	if (!c->arg(0,lhs)) return false;
-	if (!c->arg(1,rhs)) return false;
+	ExpressionValue a, b;
 
-	rv = lhs != rhs;
+	// Retrieve the two arguments
+	if (!c->arg(0, a)) return false;
+	if (!c->arg(1, b)) return false;
+
+	if (ExpressionValue::bothIntegers(a, b)) result = (a.asInteger() != b.asInteger() ? 1 : 0);
+	else result = (a.asDouble() != b.asDouble() ? 1 : 0);
 
 	return true;
 }
 
 // Logical OR check on two operators
-bool ExpressionFunctions::function_OperatorOr(ExpressionFunction* c, double& rv)
+bool ExpressionFunctions::function_OperatorOr(ExpressionFunction* c, ExpressionValue& result)
 {
-	// Grab both argument (return) values and send them to be operated on
-	double lhs, rhs;
-	if (!c->arg(0,lhs)) return false;
-	if (!c->arg(1,rhs)) return false;
+	ExpressionValue a, b;
 
-	rv = lhs || rhs;
+	// Retrieve the two arguments
+	if (!c->arg(0, a)) return false;
+	if (!c->arg(1, b)) return false;
+
+	bool aa = a.isInteger() ? a.asInteger() > 0 : a.asDouble() > 0.0;
+	bool bb = b.isInteger() ? b.asInteger() > 0 : b.asDouble() > 0.0;
+
+	result = (aa || bb ? 1 : 0);
 
 	return true;
 }
 
 // Raise one quantity to the power of another
-bool ExpressionFunctions::function_OperatorPower(ExpressionFunction* c, double& rv)
+bool ExpressionFunctions::function_OperatorPower(ExpressionFunction* c, ExpressionValue& result)
 {
-	// Grab both argument (return) values and send them to be operated on
-	double lhs, rhs;
-	if (!c->arg(0,lhs)) return false;
-	if (!c->arg(1,rhs)) return false;
+	ExpressionValue a, b;
 
-	rv = pow(lhs,rhs);
+	// Retrieve the two arguments
+	if (!c->arg(0, a)) return false;
+	if (!c->arg(1, b)) return false;
+
+	if (ExpressionValue::bothIntegers(a, b)) result = DissolveMath::power(a.asInteger(), b.asInteger());
+	else result = pow(a.asDouble(), b.asDouble());
 
 	return true;
 }
 
 // Subtract one quantity from another
-bool ExpressionFunctions::function_OperatorSubtract(ExpressionFunction* c, double& rv)
+bool ExpressionFunctions::function_OperatorSubtract(ExpressionFunction* c, ExpressionValue& result)
 {
-	// Grab both argument (return) values and send them to be operated on
-	double lhs, rhs;
-	if (!c->arg(0,lhs)) return false;
-	if (!c->arg(1,rhs)) return false;
+	ExpressionValue a, b;
 
-	rv = lhs - rhs;
+	// Retrieve the two arguments
+	if (!c->arg(0, a)) return false;
+	if (!c->arg(1, b)) return false;
+
+	if (ExpressionValue::bothIntegers(a, b)) result = a.asInteger() - b.asInteger();
+	else result = a.asDouble() - b.asDouble();
 
 	return true;
 }
@@ -379,28 +422,33 @@ bool ExpressionFunctions::function_OperatorSubtract(ExpressionFunction* c, doubl
  */
 
 // Dummy Node
-bool ExpressionFunctions::function_NoFunction(ExpressionFunction* c, double& rv)
+bool ExpressionFunctions::function_NoFunction(ExpressionFunction* c, ExpressionValue& result)
 {
 	return true;
 }
 
 // Joiner
-bool ExpressionFunctions::function_Joiner(ExpressionFunction* c, double& rv)
+bool ExpressionFunctions::function_Joiner(ExpressionFunction* c, ExpressionValue& result)
 {
 	// Execute both commands
-	bool result = true;
-	if (c->hasArg(0)) result = c->arg(0, rv);
-	if (result && c->hasArg(1)) result = c->arg(1, rv);
-	return result;
+	bool success = true;
+
+	if (c->hasArg(0)) success = c->arg(0, result);
+	if (success && c->hasArg(1)) success = c->arg(1, result);
+
+	return success;
 }
 
 // If test
-bool ExpressionFunctions::function_If(ExpressionFunction* c, double& rv)
+bool ExpressionFunctions::function_If(ExpressionFunction* c, ExpressionValue& result)
 {
-	double ifval;
+	// Retrieve result of if test
+	ExpressionValue ifval;
 	if (!c->arg(0, ifval)) return false;
-	if (ifval) return (c->arg(1, rv));
-	else if (c->hasArg(2)) return (c->arg(2, rv));
+
+	if (ifval.isInteger() ? ifval.asInteger() > 0 : ifval.asDouble() > 0.0) return (c->arg(1, result));
+	else if (c->hasArg(2)) return (c->arg(2, result));
+
 	return true;
 }
 
@@ -409,86 +457,90 @@ bool ExpressionFunctions::function_If(ExpressionFunction* c, double& rv)
  */
 
 // Return absolute of argument
-bool ExpressionFunctions::function_Abs(ExpressionFunction* c, double& rv)
+bool ExpressionFunctions::function_Abs(ExpressionFunction* c, ExpressionValue& result)
 {
-	rv = fabs(c->argd(0));
+	ExpressionValue a;
+	if (!c->arg(0, a)) return false;
+
+	result = a.isInteger() ? abs(a.asInteger()) : fabs(a.asDouble());
+
 	return true;
 }
 
 // Return invserse cosine of argument
-bool ExpressionFunctions::function_ACos(ExpressionFunction* c, double& rv)
+bool ExpressionFunctions::function_ACos(ExpressionFunction* c, ExpressionValue& result)
 {
-	rv = (assumeDegrees_ ? acos(c->argd(0)) * DEGRAD : acos(c->argd(0)) );
+	result = (assumeDegrees_ ? acos(c->argd(0)) * DEGRAD : acos(c->argd(0)) );
 	return true;
 }
 
 // Return invserse sine of argument
-bool ExpressionFunctions::function_ASin(ExpressionFunction* c, double& rv)
+bool ExpressionFunctions::function_ASin(ExpressionFunction* c, ExpressionValue& result)
 {
-	rv = (assumeDegrees_ ? asin(c->argd(0)) * DEGRAD : asin(c->argd(0)) );
+	result = (assumeDegrees_ ? asin(c->argd(0)) * DEGRAD : asin(c->argd(0)) );
 	return true;
 }
 
 // Return invserse tangent of argument
-bool ExpressionFunctions::function_ATan(ExpressionFunction* c, double& rv)
+bool ExpressionFunctions::function_ATan(ExpressionFunction* c, ExpressionValue& result)
 {
-	rv = (assumeDegrees_ ? atan(c->argd(0)) * DEGRAD : atan(c->argd(0)) );
+	result = (assumeDegrees_ ? atan(c->argd(0)) * DEGRAD : atan(c->argd(0)) );
 	return true;
 }
 
 // Return cosine of argument (supplied in degrees)
-bool ExpressionFunctions::function_Cos(ExpressionFunction* c, double& rv)
+bool ExpressionFunctions::function_Cos(ExpressionFunction* c, ExpressionValue& result)
 {
-	rv = (assumeDegrees_ ? cos(c->argd(0) / DEGRAD) : cos(c->argd(0)) );
+	result = (assumeDegrees_ ? cos(c->argd(0) / DEGRAD) : cos(c->argd(0)) );
 	return true;
 }
 
 // Return exponential of of argument
-bool ExpressionFunctions::function_Exp(ExpressionFunction* c, double& rv)
+bool ExpressionFunctions::function_Exp(ExpressionFunction* c, ExpressionValue& result)
 {
-	rv = exp(c->argd(0));
+	result = exp(c->argd(0));
 	return true;
 }
 
 // Return natural logarithm of argument
-bool ExpressionFunctions::function_Ln(ExpressionFunction* c, double& rv)
+bool ExpressionFunctions::function_Ln(ExpressionFunction* c, ExpressionValue& result)
 {
-	rv = log(c->argd(0));
+	result = log(c->argd(0));
 	return true;
 }
 
 // Return base-10 logarithm of argument
-bool ExpressionFunctions::function_Log(ExpressionFunction* c, double& rv)
+bool ExpressionFunctions::function_Log(ExpressionFunction* c, ExpressionValue& result)
 {
-	rv = log10(c->argd(0));
+	result = log10(c->argd(0));
 	return true;
 }
 
 // Round real value to nearest integer
-bool ExpressionFunctions::function_Nint(ExpressionFunction* c, double& rv)
+bool ExpressionFunctions::function_Nint(ExpressionFunction* c, ExpressionValue& result)
 {
-	rv = floor(c->argd(0) + 0.5);
+	result = floor(c->argd(0) + 0.5);
 	return true;
 }
 
 // Return sine of argument (supplied in degrees)
-bool ExpressionFunctions::function_Sin(ExpressionFunction* c, double& rv)
+bool ExpressionFunctions::function_Sin(ExpressionFunction* c, ExpressionValue& result)
 {
-	rv = (assumeDegrees_ ? sin(c->argd(0) / DEGRAD) : sin(c->argd(0)) );
+	result = (assumeDegrees_ ? sin(c->argd(0) / DEGRAD) : sin(c->argd(0)) );
 	return true;
 }
 
 // Return square root of argument
-bool ExpressionFunctions::function_Sqrt(ExpressionFunction* c, double& rv)
+bool ExpressionFunctions::function_Sqrt(ExpressionFunction* c, ExpressionValue& result)
 {
-	rv = sqrt(c->argd(0));
+	result = sqrt(c->argd(0));
 	return true;
 }
 
 // Return tangent of argument (supplied in degrees)
-bool ExpressionFunctions::function_Tan(ExpressionFunction* c, double& rv)
+bool ExpressionFunctions::function_Tan(ExpressionFunction* c, ExpressionValue& result)
 {
-	rv = (assumeDegrees_ ? tan(c->argd(0) / DEGRAD) : tan(c->argd(0)) );
+	result = (assumeDegrees_ ? tan(c->argd(0) / DEGRAD) : tan(c->argd(0)) );
 	return true;
 }
 
@@ -573,8 +625,8 @@ void ExpressionFunctions::initPointers()
 }
 
 // Execute command
-bool ExpressionFunctions::call(ExpressionFunctions::Function cf, ExpressionFunction* node, double& rv)
+bool ExpressionFunctions::call(ExpressionFunctions::Function cf, ExpressionFunction* node, ExpressionValue& result)
 {
 // 	printf("Calling command '%s' (node is %p)...\n", data[cf].keyword, node);
-	return (this->pointers_[cf])(node, rv);
+	return (this->pointers_[cf])(node, result);
 }

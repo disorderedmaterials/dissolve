@@ -1,6 +1,6 @@
 /*
-	*** Expression Value Node
-	*** src/expression/value.h
+	*** Expression Variable Value Node
+	*** src/expression/variablevalue.h
 	Copyright T. Youngs 2015-2019
 
 	This file is part of Dissolve.
@@ -19,25 +19,25 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_EXPRESSION_VALUE_H
-#define DISSOLVE_EXPRESSION_VALUE_H
+#ifndef DISSOLVE_EXPRESSION_VARIABLEVALUE_H
+#define DISSOLVE_EXPRESSION_VARIABLEVALUE_H
 
 #include "expression/node.h"
 
 // Forward Declarations
 class ExpressionVariable;
 
-// Value Node (retrieves value of an ExpressionVariable)
-class ExpressionValue : public ExpressionNode
+// Expression Value Node (retrieves value of an ExpressionVariable)
+class ExpressionVariableValue: public ExpressionNode
 {
 	public:
 	// Constructor / Destructor
-	ExpressionValue(ExpressionVariable* var = 0);
-	~ExpressionValue();
+	ExpressionVariableValue(ExpressionVariable* var = 0);
+	~ExpressionVariableValue();
 
 
 	/*
-	 * Variable Data
+	 * Variable Target
 	 */
 	private:
 	// Variable that this node links to
@@ -57,11 +57,11 @@ class ExpressionValue : public ExpressionNode
 	 */
 	public:
 	// Execute node
-	bool execute(double& rv);
+	bool execute(ExpressionValue& result);
 	// Print node contents
 	void nodePrint(int offset, const char* prefix = "");
-	// Set from double value
-	bool set(double value);
+	// Set from ExpressionValue
+	bool set(ExpressionValue value);
 	// Initialise node
 	bool initialise();
 };

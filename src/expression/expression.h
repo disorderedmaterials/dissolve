@@ -125,8 +125,12 @@ class Expression
 	 * Execution
 	 */
 	public:
-	// Execute
-	double execute(bool& success);
+	// Execute, returning whether successful, and setting result value of some type
+	bool execute(ExpressionValue& result);
+	// Execute and return as integer
+	int asInteger();
+	// Execute and return as double
+	int asDouble();
 };
 
 #endif

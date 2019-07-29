@@ -76,11 +76,25 @@ bool NodeValue::set(double value)
 	return true;
 }
 
-// Set from expression test
+// Set from expression text
 bool NodeValue::set(const char* expressionText, RefList<ExpressionVariable,bool> parameters)
 {
-	type_ = ExpressionNodeValue;
-	return ExpressionGenerator::generate(expression_, expressionText, parameters);
+	// Is this just a plain number, rather than an equation.
+	bool isFloatingPoint;
+	if (DissolveSys::isNumber(expressionText, isFloatingPoint))
+	{
+		type_ = isFloatingPoint ? DoubleNodeValue : IntegerNodeValue;
+		if (isFloatingPoint) valueD_ = atof(expressionText);
+		else valueI_ = atoi(expressionText);
+	}
+	else
+	{
+		// Parse the supplied expression
+		type_ = ExpressionNodeValue;
+		return ExpressionGenerator::generate(expression_, expressionText, parameters);
+	}
+
+	return true;
 }
 
 /*
@@ -92,11 +106,7 @@ int NodeValue::asInteger()
 {
 	if (type_ == IntegerNodeValue) return valueI_;
 	else if (type_ == DoubleNodeValue) return (int) valueD_;
-	else
-	{
-		bool success;
-		return (int) expression_.execute(success);
-	}
+	else return expression_.asInteger();
 }
 
 // Return contained value as double
@@ -104,11 +114,7 @@ double NodeValue::asDouble()
 {
 	if (type_ == IntegerNodeValue) return (double) valueI_;
 	else if (type_ == DoubleNodeValue) return valueD_;
-	else
-	{
-		bool success;
-		return expression_.execute(success);
-	}
+	else return expression_.asDouble();
 }
 
 // Return value represented as a string
@@ -118,12 +124,7 @@ const char* NodeValue::asString()
 
 	if (type_ == IntegerNodeValue) result = DissolveSys::itoa(valueI_);
 	else if (type_ == DoubleNodeValue) result = DissolveSys::ftoa(valueD_, "%12.6e");
-	else 
-	{
-		// TODO
-		Messenger::error("Expression saving not implemented yet!\n");
-		result.clear();
-	}
+	else result = CharString("'%s'", expression_.asString());
 
 	return result.get();
 }

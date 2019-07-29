@@ -1,6 +1,6 @@
 /*
-	*** Expression Value Node
-	*** src/expression/value.cpp
+	*** Expression Variable Value Node
+	*** src/expression/variablevalue.cpp
 	Copyright T. Youngs 2015-2019
 
 	This file is part of Dissolve.
@@ -19,42 +19,42 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "expression/value.h"
+#include "expression/variablevalue.h"
 #include "expression/variable.h"
 #include <string.h>
 
 // Constructor
-ExpressionValue::ExpressionValue(ExpressionVariable* var) : ExpressionNode(), variable_(var)
+ExpressionVariableValue::ExpressionVariableValue(ExpressionVariable* var) : ExpressionNode(), variable_(var)
 {
 	// Private variables
 	readOnly_ = false;
-	nodeType_ = ExpressionNode::ValueNode;
+	nodeType_ = ExpressionNode::VariableValueNode;
 	if (variable_ != NULL) returnsNumber_ = var->returnsNumber();
 }
 
 // Destructor
-ExpressionValue::~ExpressionValue()
+ExpressionVariableValue::~ExpressionVariableValue()
 {
 }
 
 // Set function
-void ExpressionValue::setVariable(ExpressionVariable* variable)
+void ExpressionVariableValue::setVariable(ExpressionVariable* variable)
 {
 	variable_ = variable;
 }
 
 // Get function
-ExpressionVariable* ExpressionValue::variable() const
+ExpressionVariable* ExpressionVariableValue::variable() const
 {
 	return variable_;
 }
 
 // Return name of variable target
-const char* ExpressionValue::name() const
+const char* ExpressionVariableValue::name() const
 {
 	if (variable_ == NULL)
 	{
-		printf("Internal Error: ExpressionValue contains a NULL Variable pointer.\n");
+		printf("Internal Error: ExpressionVariableValue contains a NULL Variable pointer.\n");
 		return "NULL";
 	}
 	return variable_->name();
@@ -65,39 +65,39 @@ const char* ExpressionValue::name() const
  */
 
 // Execute command
-bool ExpressionValue::execute(double& rv)
+bool ExpressionVariableValue::execute(ExpressionValue& result)
 {
 	if (variable_ == NULL)
 	{
-		printf("Internal Error: ExpressionValue contains a NULL Variable pointer and can't be executed.\n");
+		printf("Internal Error: ExpressionVariableValue contains a NULL Variable pointer and can't be executed.\n");
 		return false;
 	}
 
 	// Call the local variable's execute() function to get the base value
-	bool result = variable_->execute(rv);
-	if (!result) printf("Variable retrieval ('%s') failed.\n", variable_->name());
+	bool success = variable_->execute(result);
+	if (!success) printf("Variable retrieval ('%s') failed.\n", variable_->name());
 
-	return result;
+	return success;
 }
 
 // Print node contents
-void ExpressionValue::nodePrint(int offset, const char* prefix)
+void ExpressionVariableValue::nodePrint(int offset, const char* prefix)
 {
 	if (variable_ == NULL)
 	{
-		printf("Internal Error: ExpressionValue contains a NULL Variable pointer and can't be printed.\n");
+		printf("Internal Error: ExpressionVariableValue contains a NULL Variable pointer and can't be printed.\n");
 		return;
 	}
 	// Call the local variables nodePrint() function
 	variable_->nodePrint(offset, prefix);
 }
 
-// Set from double value
-bool ExpressionValue::set(double value)
+// Set from ExpressionValue
+bool ExpressionVariableValue::set(ExpressionValue value)
 {
 	if (variable_ == NULL)
 	{
-		printf("Internal Error: ExpressionValue contains a NULL Variable pointer and can't be set.\n");
+		printf("Internal Error: ExpressionVariableValue contains a NULL Variable pointer and can't be set.\n");
 		return false;
 	}
 	bool result = true;
@@ -110,11 +110,11 @@ bool ExpressionValue::set(double value)
 }
 
 // Initialise node
-bool ExpressionValue::initialise()
+bool ExpressionVariableValue::initialise()
 {
 	if (variable_ == NULL)
 	{
-		printf("Internal Error: ExpressionValue contains a NULL Variable pointer and can't be initialised.\n");
+		printf("Internal Error: ExpressionVariableValue contains a NULL Variable pointer and can't be initialised.\n");
 		return false;
 	}
 	return variable_->initialise();

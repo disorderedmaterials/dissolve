@@ -22,6 +22,7 @@
 #ifndef DISSOLVE_EXPRESSION_NODE_H
 #define DISSOLVE_EXPRESSION_NODE_H
 
+#include "expression/value.h"
 #include "templates/listitem.h"
 #include "templates/reflist.h"
 
@@ -38,7 +39,7 @@ class ExpressionNode : public ListItem<ExpressionNode>
 	// List pointers (for argument list)
 	ExpressionNode* nextArgument, *prevArgument;
 	// Node Types
-	enum NodeType { BasicNode, FunctionNode, ValueNode, VariableNode, nNodeTypes };
+	enum NodeType { BasicNode, FunctionNode, ValueNode, VariableNode, VariableValueNode, nNodeTypes };
 	// Copy data
 	void copy(ExpressionNode* source);
 
@@ -84,7 +85,7 @@ class ExpressionNode : public ListItem<ExpressionNode>
 	// Check arguments stored in argument list
 	bool checkArguments(const char* arglist, const char* funcname);
 	// Return (execute) argument specified
-	bool arg(int i, double& rv);
+	bool arg(int i, ExpressionValue& result);
 	// Return (execute) argument specified as a bool
 	bool argb(int i);
 	// Return (execute) argument specified as an integer
@@ -94,7 +95,7 @@ class ExpressionNode : public ListItem<ExpressionNode>
 	// Return the Node corresponding to the argument, rather than executing it
 	ExpressionNode* argNode(int i);
 	// Set argument specified
-	bool setArg(int i, double& rv);
+	bool setArg(int i, ExpressionValue& result);
 	// Return whether argument i was given
 	bool hasArg(int i);
 
@@ -124,9 +125,9 @@ class ExpressionNode : public ListItem<ExpressionNode>
 	 */
 	public:
 	// Set from value
-	virtual bool set(double rv) = 0;
+	virtual bool set(ExpressionValue value) = 0;
 	// Get reduced value of node
-	virtual bool execute(double& rv) = 0;
+	virtual bool execute(ExpressionValue& result) = 0;
 	// Print layout of current node
 	virtual void nodePrint(int offset, const char* prefix = "") = 0;
 	// Reset node

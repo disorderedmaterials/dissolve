@@ -49,11 +49,11 @@ class ExpressionFunction : public ExpressionNode
 	// Get command function
 	ExpressionFunctions::Function function() const;
 	// Execute command
-	bool execute(double& rv);
+	bool execute(ExpressionValue& result);
 	// Print node contents
 	void nodePrint(int offset, const char* prefix = "");
-	// Set from double value
-	bool set(double value);
+	// Set from ExpressionValue
+	bool set(ExpressionValue value);
 	// Initialise node
 	bool initialise();
 };

@@ -9,6 +9,7 @@ add_library(expression
   node.cpp
   value.cpp
   variable.cpp
+  variablevalue.cpp
 
   expression.h
   function.h
@@ -17,6 +18,7 @@ add_library(expression
   node.h
   value.h
   variable.h
+  variablevalue.h
 )
 
 target_include_directories(expression PRIVATE
