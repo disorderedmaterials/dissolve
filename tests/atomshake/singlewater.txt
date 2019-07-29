@@ -24,7 +24,7 @@ Configuration  'Water'
       Population  1
       Species  'Water'
     EndAddSpecies
-  EndGEnerator
+  EndGenerator
 
   Temperature  0.0
 
