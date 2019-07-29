@@ -54,8 +54,6 @@ Configuration  'Bulk'
 
   InputCoordinates  epsr  epsr/mgo-111/mgo.ato
 
-  BoxNormalisationFile  'Bulk.boxnorm'
-  RDFBinWidth  0.025000
   Temperature  300.000000
 
   # Modules

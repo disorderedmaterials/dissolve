@@ -28,7 +28,7 @@ bool CoordinateImportFileFormat::importXYZ(LineParser& parser, Array< Vec3<doubl
 	Messenger::print(" --> Importing coordinates in xyz format...\n");
 
 	// Import in natoms
-	if (parser.getArgsDelim(LineParser::SkipBlanks) != LineParser::Success) return false;
+	if (parser.getArgsDelim() != LineParser::Success) return false;
 	int nAtoms = parser.argi(0);
 
 	// Skip title
@@ -38,7 +38,7 @@ bool CoordinateImportFileFormat::importXYZ(LineParser& parser, Array< Vec3<doubl
 	r.clear();
 	for (int n=0; n<nAtoms; ++n)
 	{
-		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+		if (parser.getArgsDelim() != LineParser::Success) return false;
 		r.add(parser.arg3d(1));
 	}
 

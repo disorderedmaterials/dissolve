@@ -18,10 +18,15 @@ EndSpecies
 
 # Define Configuration
 Configuration  'Water'
-  Density  9.99999642E-05 atoms/A3
-  Multiplier  1
-  SpeciesInfo  'Water'  1.0
-    Temperature  0.0
+  Generator
+    AddSpecies
+      Density  9.99999642E-05 atoms/A3
+      Population  1
+      Species  'Water'
+    EndAddSpecies
+  EndGenerator
+
+  Temperature  0.0
 
   Module  AtomShake
   EndModule

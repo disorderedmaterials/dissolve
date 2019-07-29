@@ -20,7 +20,6 @@ add_library(classes
   changestore.cpp
   configuration.cpp
   configuration_box.cpp
-  configuration_composition.cpp
   configuration_contents.cpp
   configuration_sites.cpp
   configuration_upkeep.cpp
@@ -49,6 +48,7 @@ add_library(classes
   scaledenergykernel.cpp
   scatteringmatrix.cpp
   site.cpp
+  sitereference.cpp
   sitestack.cpp
   speciesangle.cpp
   speciesatom.cpp
@@ -110,6 +110,7 @@ add_library(classes
   scaledenergykernel.h
   scatteringmatrix.h
   site.h
+  sitereference.h
   sitestack.h
   species.h
   speciesangle.h

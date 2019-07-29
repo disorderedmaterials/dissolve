@@ -23,7 +23,7 @@
 #define DISSOLVE_CALCULATEMODULE_DANGLE_H
 
 #include "module/module.h"
-#include "analyse/analyser.h"
+#include "procedure/procedure.h"
 
 // Forward Declarations
 class SpeciesSite;
@@ -84,8 +84,8 @@ class CalculateDAngleModule : public Module
 	 * Functions / Data
 	 */
 	private:
-	// Analyser to be run
-	Analyser analyser_;
+	// Analysis procedure to be run
+	Procedure analyser_;
 	// List of Sites 'A'
 	RefList<SpeciesSite,bool> aSites_;
 	// List of Sites 'B'

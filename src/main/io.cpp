@@ -52,7 +52,7 @@ bool Dissolve::loadInput(const char* filename)
 	while (!parser.eofOrBlank())
 	{
 		// Master will read the next line from the file, and broadcast it to slaves (who will then parse it)
-		if (parser.getArgsDelim(LineParser::SkipBlanks+LineParser::StripComments+LineParser::UseQuotes) != LineParser::Success) break;
+		if (parser.getArgsDelim() != LineParser::Success) break;
 		kwd = BlockKeywords::blockKeyword(parser.argc(0));
 		switch (kwd)
 		{
@@ -349,34 +349,13 @@ bool Dissolve::saveInput(const char* filename)
 	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next)
 	{
 		if (!parser.writeLineF("\n%s  '%s'\n", BlockKeywords::blockKeyword(BlockKeywords::ConfigurationBlockKeyword), cfg->name())) return false;
-		if (!parser.writeLineF("  %s  %i\n", ConfigurationBlock::keyword(ConfigurationBlock::MultiplierKeyword), cfg->multiplier())) return false;
-		if (!parser.writeLineF("  %s  %f  %s\n", ConfigurationBlock::keyword(ConfigurationBlock::DensityKeyword), cfg->density(), cfg->densityIsAtomic() ? "atoms/A3" : "g/cm3")) return false;
-		if (!parser.writeLineF("  %s  %f  %f  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::CellLengthsKeyword), cfg->relativeBoxLengths().x, cfg->relativeBoxLengths().y, cfg->relativeBoxLengths().z)) return false;
-		if (!parser.writeLineF("  %s  %f  %f  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::CellAnglesKeyword), cfg->boxAngles().x, cfg->boxAngles().y, cfg->boxAngles().z)) return false;
-		if (cfg->nonPeriodic() && (!parser.writeLineF("  %s\n", ConfigurationBlock::keyword(ConfigurationBlock::NonPeriodicKeyword)))) return false;
+
+		if (!parser.writeLineF("  %s\n", ConfigurationBlock::keyword(ConfigurationBlock::GeneratorKeyword))) return false;
+		if (!cfg->generator().write(parser, "  ")) return false;
+
 		if (cfg->inputCoordinates().hasValidFileAndFormat() && (!parser.writeLineF("  %s  '%s'\n", ConfigurationBlock::keyword(ConfigurationBlock::InputCoordinatesKeyword), cfg->inputCoordinates().asString()))) return false;
 
-		// Species
-		if (!parser.writeLineF("\n  # Species Information\n")) return false;
-		for (SpeciesInfo* spInfo = cfg->usedSpecies().first(); spInfo != NULL; spInfo = spInfo->next)
-		{
-			Species* sp = spInfo->species();
-			if (!parser.writeLineF("  %s  '%s'\n", ConfigurationBlock::keyword(ConfigurationBlock::SpeciesInfoKeyword), sp->name())) return false;
-
-			if (!parser.writeLineF("    %s  %f\n", SpeciesInfoBlock::keyword(SpeciesInfoBlock::PopulationKeyword), spInfo->population())) return false;
-			if (!spInfo->rotateOnInsertion() && (!parser.writeLineF("    %s  %s\n", SpeciesInfoBlock::keyword(SpeciesInfoBlock::NoRotationKeyword), DissolveSys::btoa(false)))) return false;
-			if ((spInfo->insertionPositioning() != SpeciesInfo::RandomPositioning) && (!parser.writeLineF("    %s  %s\n", SpeciesInfoBlock::keyword(SpeciesInfoBlock::PositioningKeyword), SpeciesInfo::positioningType(spInfo->insertionPositioning())))) return false;
-
-			if (!parser.writeLineF("  %s\n", SpeciesInfoBlock::keyword(SpeciesInfoBlock::EndSpeciesInfoKeyword))) return false;
-		}
-
 		if (!parser.writeLineF("\n")) return false;
-		if (cfg->boxNormalisation().nValues() != 0)
-		{
-			if (!parser.writeLineF("  %s  '%s'\n", ConfigurationBlock::keyword(ConfigurationBlock::BoxNormalisationFileKeyword), cfg->boxNormalisationFileName())) return false;
-		}
-		if (!parser.writeLineF("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::RDFBinWidthKeyword), cfg->rdfBinWidth())) return false;
-		if (!parser.writeLineF("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::RDFRangeKeyword), cfg->rdfRange())) return false;
 		if (!parser.writeLineF("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::TemperatureKeyword), cfg->temperature())) return false;
 
 		// Modules
@@ -458,7 +437,6 @@ bool Dissolve::saveInput(const char* filename)
 	// Write Simulation block
 	if (!parser.writeBannerComment("Simulation")) return false;
 	if (!parser.writeLineF("\n%s\n", BlockKeywords::blockKeyword(BlockKeywords::SimulationBlockKeyword))) return false;
-	if (!parser.writeLineF("  %s  %i\n", SimulationBlock::keyword(SimulationBlock::BoxNormalisationPointsKeyword), nBoxNormalisationPoints_)) return false;
 	if (!parser.writeLineF("  %s  %i\n", SimulationBlock::keyword(SimulationBlock::SeedKeyword), seed_)) return false;
 	if (!parser.writeLineF("%s\n\n", SimulationBlock::keyword(SimulationBlock::EndSimulationKeyword))) return false;
 
@@ -484,7 +462,7 @@ bool Dissolve::loadRestart(const char* filename)
 	while (!parser.eofOrBlank())
 	{
 		// Master will read the next line from the file, and broadcast it to slaves (who will then parse it)
-		if (parser.getArgsDelim(LineParser::SkipBlanks+LineParser::StripComments+LineParser::UseQuotes) != 0) break;
+		if (parser.getArgsDelim() != 0) break;
 
 		// First component of line indicates the destination for the module data
 		if (DissolveSys::sameString(parser.argc(0), "Local"))

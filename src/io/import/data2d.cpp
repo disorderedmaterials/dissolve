@@ -67,46 +67,66 @@ Data2DImportFileFormat::Data2DImportFormat Data2DImportFileFormat::data2DFormat(
 }
 
 /*
- * Import / Write
+ * Additional Options
  */
 
-// Parse additional argument
-bool Data2DImportFileFormat::parseArgument(const char* arg)
+// Return enum option info for AdditionalOption
+EnumOptions<Data2DImportFileFormat::AdditionalOption> Data2DImportFileFormat::additionalOptions()
 {
-	// Split arg into parts before and after the '='
+	static EnumOptionsList AdditionalOptionOptions = EnumOptionsList() <<
+		EnumOption(Data2DImportFileFormat::XAxisOption, 	"xaxis",	3) <<
+		EnumOption(Data2DImportFileFormat::YAxisOption, 	"yaxis",	3);
+
+	static EnumOptions<Data2DImportFileFormat::AdditionalOption> options("Data2DImportOption", AdditionalOptionOptions);
+
+	return options;
+}
+
+// Parse additional option
+bool Data2DImportFileFormat::parseOption(const char* arg)
+{
+	// Split arg into parts before and after the '=', and parse the value string into comma-delimited parts
 	CharString key = DissolveSys::beforeChar(arg, '=');
 	CharString value = DissolveSys::afterChar(arg, '=');
-	if (key == "xaxis")
+	LineParser valueParser;
+	valueParser.getArgsDelim(LineParser::CommasAreDelimiters, value.get());
+
+	// Check if we have a valid key and, if so, have appropriately been provided a value
+	if (!additionalOptions().isValid(key)) return additionalOptions().errorAndPrintValid(key);
+	AdditionalOption aa = additionalOptions().enumeration(key);
+	if (!additionalOptions().validNArgs(aa, valueParser.nArgs())) return false;
+
+	// Act on the option
+	switch (aa)
 	{
-		LineParser parser;
-		parser.getArgsDelim(LineParser::CommasAreDelimiters, value.get());
-		axisMinimum_.x = parser.argd(0);
-		axisMaximum_.x = parser.argd(1);
-		axisDelta_.x = parser.argd(2);
-		axisRangeSet_.x = true;
+		case (Data2DImportFileFormat::XAxisOption):
+			axisMinimum_.x = valueParser.argd(0);
+			axisMaximum_.x = valueParser.argd(1);
+			axisDelta_.x = valueParser.argd(2);
+			axisRangeSet_.x = true;
+			break;
+		case (Data2DImportFileFormat::YAxisOption):
+			axisMinimum_.y = valueParser.argd(0);
+			axisMaximum_.y = valueParser.argd(1);
+			axisDelta_.y = valueParser.argd(2);
+			axisRangeSet_.y = true;
+			break;
+		default:
+			return Messenger::error("Epic Developer Fail - Don't know how to deal with the %s additional option.\n", key.get());
+			break;
 	}
-	else if (key == "yaxis")
-	{
-		LineParser parser;
-		parser.getArgsDelim(LineParser::CommasAreDelimiters, value.get());
-		axisMinimum_.y = parser.argd(0);
-		axisMaximum_.y = parser.argd(1);
-		axisDelta_.y = parser.argd(2);
-		axisRangeSet_.y = true;
-	}
-	else return false;
 
 	return true;
 }
 
-// Return whether this file/format has any additional arguments to write
-bool Data2DImportFileFormat::hasAdditionalArguments() const
+// Return whether this file/format has any additional options to write
+bool Data2DImportFileFormat::hasAdditionalOptions() const
 {
 	return true;
 }
 
-// Return additional arguments as string
-const char* Data2DImportFileFormat::additionalArguments() const
+// Return additional options as string
+const char* Data2DImportFileFormat::additionalOptionsAsString() const
 {
 	static CharString args;
 

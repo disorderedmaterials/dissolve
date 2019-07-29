@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_EXPRESSIONVARIABLE_H
-#define DISSOLVE_EXPRESSIONVARIABLE_H
+#ifndef DISSOLVE_EXPRESSION_VARIABLE_H
+#define DISSOLVE_EXPRESSION_VARIABLE_H
 
 #include "expression/node.h"
 #include "base/charstring.h"
@@ -41,7 +41,7 @@ class ExpressionVariable : public ExpressionNode
 	// Name of the variable
 	CharString name_;
 	// Value of variable
-	double value_;
+	ExpressionValue value_;
 	// Initial value of new variable
 	ExpressionNode* initialValue_;
 
@@ -61,13 +61,13 @@ class ExpressionVariable : public ExpressionNode
 	 */
 	public:
 	// Return value of node
-	bool execute(double& value);
+	bool execute(ExpressionValue& value);
 	// Set value of node
-	bool set(double value);
+	bool set(ExpressionValue value);
 	// Return value
-	double value() const;
+	const ExpressionValue& value() const;
 	// Return pointer to value
-	double* valuePointer();
+	ExpressionValue* valuePointer();
 
 
 	/*

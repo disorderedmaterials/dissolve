@@ -144,7 +144,6 @@ class DataTestModule : public Module
 		{
 			// The tagged data exists...
 			const T& data = *T::findObject(dataIdentifier);
-				printf("Foudn object with tag '%s' (%s)\n", dataIdentifier, data.objectTag());
 			found = true;
 			return data;
 		}

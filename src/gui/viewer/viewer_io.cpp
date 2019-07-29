@@ -57,7 +57,7 @@ bool BaseViewer::parseInputBlocks(LineParser& parser)
 	bool success = true;
 	while (!parser.eofOrBlank())
 	{
-		parser.getArgsDelim(LineParser::UseQuotes + LineParser::SkipBlanks + LineParser::SemiColonLineBreaks);
+		if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success) return false;
 
 		// We expect a block keyword in this loop...
 		block = BaseViewer::inputBlock(parser.argc(0));
@@ -169,7 +169,7 @@ bool BaseViewer::readAxisBlock(LineParser& parser, Axes& axes, int axis, bool st
 	while (!parser.eofOrBlank())
 	{
 		// Get line from file
-		parser.getArgsDelim(LineParser::UseQuotes + LineParser::SkipBlanks + LineParser::SemiColonLineBreaks);
+		if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success) return false;
 
 		// Get keyword and check number of arguments provided
 		BaseViewer::AxisKeyword axisKwd = BaseViewer::axisKeyword(parser.argc(0));
@@ -450,7 +450,7 @@ bool BaseViewer::readRenderableBlock(LineParser& parser, Renderable* renderable,
 	while (!parser.eofOrBlank())
 	{
 		// Get line from file
-		parser.getArgsDelim(LineParser::UseQuotes + LineParser::SkipBlanks + LineParser::SemiColonLineBreaks);
+		if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success) return false;
 
 		// Get keyword and check number of arguments provided
 		BaseViewer::RenderableKeyword renderableKwd = renderableKeyword(parser.argc(0));
@@ -653,7 +653,7 @@ bool BaseViewer::readRenderableGroupBlock(LineParser& parser, RenderableGroup* g
 	while (!parser.eofOrBlank())
 	{
 		// Get line from file
-		parser.getArgsDelim(LineParser::UseQuotes + LineParser::SkipBlanks + LineParser::SemiColonLineBreaks);
+		if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success) return false;
 
 		// Get keyword and check number of arguments provided
 		const EnumOption& groupKwd = renderableGroupKeywords().option(parser.argc(0));
@@ -774,7 +774,7 @@ bool BaseViewer::readViewBlock(LineParser& parser, bool strictBlockEnd)
 	while (!parser.eofOrBlank())
 	{
 		// Get line from file
-		parser.getArgsDelim(LineParser::UseQuotes + LineParser::SkipBlanks + LineParser::SemiColonLineBreaks);
+		if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success) return false;
 
 		// Get keyword and check number of arguments provided
 		BaseViewer::ViewKeyword viewKwd = BaseViewer::viewKeyword(parser.argc(0));

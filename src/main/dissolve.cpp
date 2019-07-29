@@ -107,7 +107,6 @@ void Dissolve::clear()
 
 	// Simulation
 	Messenger::printVerbose("Clearing Simulation...\n");
-	nBoxNormalisationPoints_ = 500000000;
 	seed_ = -1;
 	restartFileFrequency_ = 10;
 	processingLayers_.clear();

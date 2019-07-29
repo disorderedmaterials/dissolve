@@ -97,16 +97,20 @@ class FileAndFormat
 
 
 	/*
-	 * Read / Write
+	 * Additional Options
 	 */
 	protected:
-	// Parse additional argument
-	virtual bool parseArgument(const char* arg);
-	// Return whether this file/format has any additional arguments to write
-	virtual bool hasAdditionalArguments() const;
-	// Return additional arguments as string
-	virtual const char* additionalArguments() const;
+	// Parse additional option
+	virtual bool parseOption(const char* arg);
+	// Return whether this file/format has any additional options to write
+	virtual bool hasAdditionalOptions() const;
+	// Return additional options as string
+	virtual const char* additionalOptionsAsString() const;
 
+
+	/*
+	 * Read / Write
+	 */
 	public:
 	// Read format / filename from specified parser
 	bool read(LineParser& parser, int startArg);

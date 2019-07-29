@@ -20,6 +20,7 @@
 */
 
 #include "math/transformer.h"
+#include "expression/generator.h"
 #include "expression/variable.h"
 #include "math/data1d.h"
 #include "templates/array.h"
@@ -69,7 +70,7 @@ bool Transformer::enabled() const
 bool Transformer::setEquation(const char* equation)
 {
 	text_ = equation;
-	valid_ = equation_.generate(equation);
+	valid_ = ExpressionGenerator::generate(equation_, text_);
 	return valid_;
 }
 
@@ -99,8 +100,7 @@ double Transformer::transform(double x, double y, double z)
 	y_->set(y);
 	z_->set(z);
 
-	bool success;
-	return equation_.execute(success);
+	return equation_.asDouble();
 }
 
 // Transform whole array, including application of pre/post transform shift
@@ -126,15 +126,13 @@ Array<double> Transformer::transformArray(Array<double> sourceX, Array<double> s
 	Array<double> newArray(sourceX.nItems());
 
 	z_->set(z);
-	bool success;
 	// Loop over x points
 	for (int n=0; n<sourceX.nItems(); ++n)
 	{
 		// Set x and y values in equation
 		x_->set(sourceX[n]);
 		y_->set(sourceY[n]);
-		newArray[n] = equation_.execute(success);
-		if (!success) break;
+		newArray[n] = equation_.asDouble();
 	}
 
 	return newArray;

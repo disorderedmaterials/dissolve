@@ -39,9 +39,10 @@ template<class Configuration> int ObjectStore<Configuration>::objectType_ = Obje
 template<class Configuration> const char* ObjectStore<Configuration>::objectTypeName_ = "Configuration";
 
 // Constructor
-Configuration::Configuration() : ListItem<Configuration>(), ObjectStore<Configuration>(this), boxNormalisationInterpolation_(boxNormalisation_)
+Configuration::Configuration() : ListItem<Configuration>(), ObjectStore<Configuration>(this), generator_(ProcedureNode::GenerationContext, "EndGenerator")
 {
-	box_ = NULL;
+	box_ = new CubicBox(1.0);
+
 	clear();
 }
 
@@ -67,28 +68,20 @@ void Configuration::clear()
 	usedSpecies_.clear();
 
 	// Reset composition
-	multiplier_ = 1;
-	density_ = -1.0;
-	densityIsAtomic_ = true;
-	boxAngles_.set(90.0, 90.0, 90.0);
-	relativeBoxLengths_.set(1.0, 1.0, 1.0);
 	requestedSizeFactor_ = 1.0;
 	appliedSizeFactor_ = 1.0;
-	nonPeriodic_ = false;
 
 	// Reset box / Cells
 	requestedCellDivisionLength_ = 10.0;
 	contentsVersion_.zero();
 
-	// Reset set-up
-	rdfBinWidth_ = 0.025;
-	rdfRange_ = -1.0;
-	requestedRDFRange_ = -2.0;
+	// Reset definition
 	temperature_ = 300.0;
+	generator_.clear();
 }
 
 /*
- * Basic Information
+ * Definition
  */
 
 // Set name of the Configuration
@@ -98,10 +91,6 @@ void Configuration::setName(const char* name)
 
 	// Generate a nice name (i.e. no spaces, slashes etc.)
 	niceName_ = DissolveSys::niceName(name_);
-
-	// Set box normalisation filename based on Configuration name
-	boxNormalisationFileName_ = niceName_;
-	boxNormalisationFileName_.strcat(".boxnorm");
 }
 
 // Return name of the Configuration
@@ -116,38 +105,100 @@ const char* Configuration::niceName()
 	return niceName_.get();
 }
 
-/*
- * Calculation Limits
- */
-
-// Set RDF bin width
-void Configuration::setRDFBinWidth(double width)
+// Return the current generator
+Procedure& Configuration::generator()
 {
-	rdfBinWidth_ = width;
+	return generator_;
 }
 
-// Return RDF bin width
-double Configuration::rdfBinWidth()
+// Generate the Configuration ready for use, including Box and associated Cells
+bool Configuration::generate(ProcessPool& procPool, double pairPotentialRange)
 {
-	return rdfBinWidth_;
+	// Empty the current contents
+	empty();
+
+	// Generate the contents
+	Messenger::print("\nExecuting generator procedure for Configuration '%s'...\n\n", niceName());
+	bool result = generator_.execute(procPool, this, "Generator", moduleData_);
+	if (!result) return Messenger::error("Failed to generate Configuration '%s'.\n", niceName());
+	Messenger::print("\n");
+
+	// Check Box extent against pair potential range
+	if (pairPotentialRange > box_->inscribedSphereRadius())
+	{
+		Messenger::error("PairPotential range (%f) is longer than the shortest non-minimum image distance (%f).\n", pairPotentialRange, box_->inscribedSphereRadius());
+		return false;
+	}
+
+	// Finalise used AtomType list
+	usedAtomTypes_.finalise();
+
+	// Generation was successful, so set-up Cells for the Box
+	cells_.generate(box_, requestedCellDivisionLength_, pairPotentialRange, atomicDensity());
+
+	return true;
 }
 
-// Return working RDF extent
-double Configuration::rdfRange()
+// Return import coordinates file / format
+CoordinateImportFileFormat& Configuration::inputCoordinates()
 {
-	return rdfRange_;
+	return inputCoordinates_;
 }
 
-// Set requested RDF extent
-void Configuration::setRequestedRDFRange(double range)
+// Load coordinates from file
+bool Configuration::loadCoordinates(LineParser& parser, CoordinateImportFileFormat::CoordinateImportFormat format)
 {
-	requestedRDFRange_ = range;
+	// Load coordinates into temporary array
+	Array< Vec3<double> > r;
+	CoordinateImportFileFormat coordinateFormat(format);
+	if (!coordinateFormat.importData(parser, r)) return false;
+
+	// Temporary array now contains some number of atoms - does it match the number in the configuration's molecules?
+	if (atoms_.nItems() != r.nItems())
+	{
+		Messenger::error("Number of atoms read from initial coordinates file (%i) does not match that in Configuration (%i).\n", r.nItems(), atoms_.nItems());
+		return false;
+	}
+
+	// All good, so copy atom coordinates over into our array
+	for (int n=0; n<atoms_.nItems(); ++n) atoms_[n]->setCoordinates(r[n]);
+
+	return true;
 }
 
-// Return requested RDF extent
-double Configuration::requestedRDFRange()
+// Finalise Configuration after loading contents from restart file
+bool Configuration::finaliseAfterLoad(ProcessPool& procPool, double pairPotentialRange)
 {
-	return requestedRDFRange_;
+	// Check Box extent against pair potential range
+	if (pairPotentialRange > box_->inscribedSphereRadius())
+	{
+		Messenger::error("PairPotential range (%f) is longer than the shortest non-minimum image distance (%f).\n", pairPotentialRange, box_->inscribedSphereRadius());
+		return false;
+	}
+
+	// Set-up Cells for the Box
+	cells_.generate(box_, requestedCellDivisionLength_, pairPotentialRange, atomicDensity());
+
+	// Loaded coordinates will reflect any sizeFactor scaling, but Box and Cells will not, so scale them here
+	scaleBox(requestedSizeFactor_);
+	appliedSizeFactor_ = requestedSizeFactor_;
+
+	// Finalise used AtomType list
+	usedAtomTypes_.finalise();
+
+	return true;
+}
+
+// Set configuration temperature
+void Configuration::setTemperature(double t)
+{
+	temperature_ = t;
+}
+
+// Return configuration temperature
+double Configuration::temperature()
+{
+	return temperature_;
 }
 
 /*

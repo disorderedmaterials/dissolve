@@ -117,21 +117,23 @@ bool ExpressionNode::isArgNumeric(int i)
 }
 
 // Set argument specified
-bool ExpressionNode::setArg(int i, double& rv)
+bool ExpressionNode::setArg(int i, ExpressionValue& result)
 {
 	if ((i < 0) || (i >= args_.nItems()))
 	{
 		Messenger::printVerbose("ExpressionNode::setArg : Argument index %i is out of range (node = %p).\n", i, this);
 		return false;
 	}
-	// Check readonly attribute of argument
+
+	// Check read-only attribute of argument
 	if (args_[i]->item->readOnly())
 	{
 		args_[i]->item->nodePrint(0);
 		//printf("Argument %i is read-only and can't be set.\n", i);
 		return false;
 	}
-	return args_[i]->item->set(rv);
+
+	return args_[i]->item->set(result);
 }
 
 // Return whether argument i was given
@@ -164,6 +166,7 @@ void ExpressionNode::addArguments(int nargs, ...)
 	// Create variable argument parser
 	va_list vars;
 	va_start(vars,nargs);
+
 	// Add arguments in the order they were provided
 	for (int n=0; n<nargs; n++) addArgument(va_arg(vars, ExpressionNode*));
 	va_end(vars);
@@ -186,12 +189,14 @@ bool ExpressionNode::checkArguments(const char* arglist, const char* funcname)
 	char upc;
 	int count = 0, ngroup = -1, repeat = 0;
 	bool optional = false, requireVar = false, result, cluster = false, reset = true;
+
 	// If the argument list begins with '_', arguments will have already been checked and added elsewhere...
 	if (*altargs == '_')
 	{
 // 		msg.exit("ExpressionNode::checkArguments");
 		return true;
 	}
+
 	// Search for an alternative set of arguments
 	result = true;
 	do
@@ -248,7 +253,7 @@ bool ExpressionNode::checkArguments(const char* arglist, const char* funcname)
 					case ('8'):
 					case ('9'):	repeat = *c - '0'; break;
 					default:
-						Messenger::printVerbose("Error: Bad character (%c) in command arguments\n", *c);
+						Messenger::error("Bad character (%c) in command arguments\n", *c);
 						break;
 				}
 				c++;
@@ -258,7 +263,7 @@ bool ExpressionNode::checkArguments(const char* arglist, const char* funcname)
 				// This is the start of a new set of argument specifiers - does the current set of arguments 'fit'?
 				if (args_.nItems() != count)
 				{
-					Messenger::printVerbose("Error: Number of arguments (%i) doesn't match number in this set (%i) - next!\n", args_.nItems(), count);
+					Messenger::error("Number of arguments (%i) doesn't match number in this set (%i) - next!\n", args_.nItems(), count);
 					reset = true;
 					continue;
 				}
@@ -286,14 +291,14 @@ bool ExpressionNode::checkArguments(const char* arglist, const char* funcname)
 			{
 				// If an alternative argument list is present, check this before we fail...
 				if (altargs != NULL) { reset = true; continue; }
-				Messenger::printVerbose("Error: The function '%s' requires argument %i.\n", funcname, count+1);
+				Messenger::error("The function '%s' requires argument %i.\n", funcname, count+1);
 // 				printf("       Command syntax is '%s(%s)'.\n", funcname, Command::data[function_].argText);
 // 				msg.exit("ExpressionNode::checkArguments");
 				return false;
 			}
 			else if (cluster && (ngroup != 0))
 			{
-				Messenger::printVerbose("Error: The optional argument %i to function '%s' is part of a group and must be specified.\n", count+1, funcname);
+				Messenger::error("The optional argument %i to function '%s' is part of a group and must be specified.\n", count+1, funcname);
 // 				printf("       Command syntax is '%s(%s)'.\n", funcname, arglist);
 // 				msg.exit("ExpressionNode::checkArguments");
 				return false;
@@ -314,7 +319,7 @@ bool ExpressionNode::checkArguments(const char* arglist, const char* funcname)
 				if (!isArgNumeric(count))
 				{
 					if (altargs != NULL) { reset = true; continue; }
-					Messenger::printVerbose("Error: Argument %i to function '%s' must be a number.\n", count+1, funcname);
+					Messenger::error("Argument %i to function '%s' must be a number.\n", count+1, funcname);
 					result = false;
 				}
 				break;
@@ -323,7 +328,7 @@ bool ExpressionNode::checkArguments(const char* arglist, const char* funcname)
 		// Was this argument requested to be a modifiable variable value?
 		if (requireVar && argNode(count)->readOnly())
 		{
-			Messenger::printVerbose("Error: Argument %i to function '%s' must be a variable and not a constant.\n", count+1, funcname);
+			Messenger::error("Argument %i to function '%s' must be a variable and not a constant.\n", count+1, funcname);
 			result = false;
 		}
 
@@ -337,7 +342,7 @@ bool ExpressionNode::checkArguments(const char* arglist, const char* funcname)
 	// End of the argument specification - do we still have arguments left over in the command?
 	if (result && (args_.nItems() > count))
 	{
-		Messenger::printVerbose("Error: %i extra arguments given to function '%s'.\n", args_.nItems()-count, funcname);
+		Messenger::error("%i extra arguments given to function '%s'.\n", args_.nItems()-count, funcname);
 // 		msg.exit("ExpressionNode::checkArguments");
 		return false;
 	}
@@ -346,14 +351,14 @@ bool ExpressionNode::checkArguments(const char* arglist, const char* funcname)
 }
 
 // Return (execute) argument specified
-bool ExpressionNode::arg(int i, double& rv)
+bool ExpressionNode::arg(int i, ExpressionValue& result)
 {
 	if ((i < 0) || (i >= args_.nItems()))
 	{
 		Messenger::printVerbose("ExpressionNode::arg : Argument index %i is out of range (node = %p).\n", i, this);
 		return false;
 	}
-	return args_[i]->item->execute(rv);
+	return args_[i]->item->execute(result);
 }
 
 // Return (execute) argument specified as a bool
@@ -364,11 +369,11 @@ bool ExpressionNode::argb(int i)
 		Messenger::printVerbose("ExpressionNode::argb : Argument index %i is out of range (node = %p).\n", i, this);
 		return false;
 	}
-	double rv;
-	bool result;
-	if (!args_[i]->item->execute(rv)) Messenger::printVerbose("Couldn't retrieve argument %i.\n", i+1);
-	result = (rv > 0);
-	return result;
+
+	ExpressionValue argValue;
+	if (!args_[i]->item->execute(argValue)) Messenger::printVerbose("Couldn't retrieve argument %i.\n", i+1);
+
+	return (argValue.isInteger() ? argValue.asInteger() > 0 : argValue.asDouble() > 0.0);
 }
 
 // Return (execute) argument specified as an integer
@@ -379,11 +384,11 @@ int ExpressionNode::argi(int i)
 		Messenger::printVerbose("ExpressionNode::argi : Argument index %i is out of range (node = %p).\n", i, this);
 		return false;
 	}
-	double rv;
-	int result = 0;
-	if (!args_[i]->item->execute(rv)) Messenger::printVerbose("Couldn't retrieve argument %i.\n", i+1);
-	result = (int) rv;
-	return result;
+
+	ExpressionValue argValue;
+	if (!args_[i]->item->execute(argValue)) Messenger::printVerbose("Couldn't retrieve argument %i.\n", i+1);
+
+	return argValue.asInteger();
 }
 
 // Return (execute) argument specified as a double
@@ -394,9 +399,11 @@ double ExpressionNode::argd(int i)
 		Messenger::printVerbose("ExpressionNode::argd : Argument index %i is out of range (node = %p).\n", i, this);
 		return false;
 	}
-	double result = 0.0;
-	if (!args_[i]->item->execute(result)) Messenger::printVerbose("Couldn't retrieve argument %i.\n", i+1);
-	return result;
+
+	ExpressionValue argValue;
+	if (!args_[i]->item->execute(argValue)) Messenger::printVerbose("Couldn't retrieve argument %i.\n", i+1);
+
+	return argValue.asDouble();
 }
 
 // Return the Node corresponding to the argument, rather than executing it
@@ -409,4 +416,3 @@ ExpressionNode* ExpressionNode::argNode(int i)
 	}
 	return args_[i]->item;
 }
-

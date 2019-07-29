@@ -24,8 +24,8 @@
 // Return enum option info for AveragingScheme
 EnumOptions<Averaging::AveragingScheme> Averaging::averagingSchemes()
 {
-	static EnumOptionsList AveragingSchemeOptions = EnumOptionsList() << 
-		EnumOption(Averaging::LinearAveraging, 		"Linear") << 
+	static EnumOptionsList AveragingSchemeOptions = EnumOptionsList() <<
+		EnumOption(Averaging::LinearAveraging, 		"Linear") <<
 		EnumOption(Averaging::ExponentialAveraging, 	"Exponential");
 
 	static EnumOptions<Averaging::AveragingScheme> options("AveragingScheme", AveragingSchemeOptions, Averaging::LinearAveraging);

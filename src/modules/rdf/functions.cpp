@@ -63,7 +63,7 @@ bool RDFModule::calculateGRTestSerial(Configuration* cfg, PartialSet& partialSet
 }
 
 // Calculate partial g(r) with optimised double-loop
-bool RDFModule::calculateGRSimple(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet)
+bool RDFModule::calculateGRSimple(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet, const double binWidth)
 {
 	// Variables
 	int n, m, nTypes, typeI, typeJ, i, j, nPoints;
@@ -99,7 +99,7 @@ bool RDFModule::calculateGRSimple(ProcessPool& procPool, Configuration* cfg, Par
 	// Loop over assigned Atoms
 	Vec3<double> centre, *ri, *rj, mim;
 	long int* histogram;
-	double rbin = 1.0 / cfg->rdfBinWidth();
+	double rbin = 1.0 / binWidth;
 
 	// Loop context is to use all processes in Pool as one group
 	int start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
@@ -159,12 +159,12 @@ bool RDFModule::calculateGRSimple(ProcessPool& procPool, Configuration* cfg, Par
 }
 
 // Calculate partial g(r) utilising Cell neighbour lists
-bool RDFModule::calculateGRCells(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet)
+bool RDFModule::calculateGRCells(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet, const double rdfRange)
 {
 	Atom* i, *j;
 	int n, m, ii, jj, nI, nJ, typeI;
 	Cell* cellI, *cellJ;
-	double distance, rdfRange = cfg->rdfRange();
+	double distance;
 	Vec3<double> rI;
 
 	// Grab the Box pointer and Cell array
@@ -251,12 +251,12 @@ bool RDFModule::calculateGRCells(ProcessPool& procPool, Configuration* cfg, Part
  */
 
 // Calculate unweighted partials for the specified Configuration
-bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule::PartialsMethod method, bool allIntra, bool& alreadyUpToDate)
+bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule::PartialsMethod method, const double rdfRange, const double rdfBinWidth, bool allIntra, bool& alreadyUpToDate)
 {
 	// Does a PartialSet already exist for this Configuration?
 	bool wasCreated;
 	PartialSet& originalgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "OriginalGR", "", GenericItem::InRestartFileFlag, &wasCreated);
-	if (wasCreated) originalgr.setUp(cfg, cfg->niceName(), "original", "rdf", "r, Angstroms");
+	if (wasCreated) originalgr.setUp(cfg->usedAtomTypesList(), rdfRange, rdfBinWidth, cfg->niceName(), "original", "rdf", "r, Angstroms");
 
 	// Is the PartialSet already up-to-date?
 	// If so, can exit now, *unless* the Test method is requested, in which case we go ahead and calculate anyway
@@ -274,7 +274,7 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 	 * Make sure histograms are set up, and reset any existing data
 	 */
 
-	originalgr.setUpHistograms(cfg->rdfRange(), cfg->rdfBinWidth());
+	originalgr.setUpHistograms(rdfRange, rdfBinWidth);
 	originalgr.reset();
 
 	/*
@@ -285,11 +285,11 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 	timer.start();
 	procPool.resetAccumulatedTime();
 	if (method == RDFModule::TestMethod) calculateGRTestSerial(cfg, originalgr);
-	else if (method == RDFModule::SimpleMethod) calculateGRSimple(procPool, cfg, originalgr);
-	else if (method == RDFModule::CellsMethod) calculateGRCells(procPool, cfg, originalgr);
+	else if (method == RDFModule::SimpleMethod) calculateGRSimple(procPool, cfg, originalgr, rdfBinWidth);
+	else if (method == RDFModule::CellsMethod) calculateGRCells(procPool, cfg, originalgr, rdfRange);
 	else if (method == RDFModule::AutoMethod)
 	{
-		cfg->nAtoms() > 10000 ? calculateGRCells(procPool, cfg, originalgr) : calculateGRSimple(procPool, cfg, originalgr);
+		cfg->nAtoms() > 10000 ? calculateGRCells(procPool, cfg, originalgr, rdfRange) : calculateGRSimple(procPool, cfg, originalgr, rdfBinWidth);
 	}
 	timer.stop();
 	Messenger::print("Finished calculation of partials (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
@@ -396,7 +396,7 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 	}
 
 	// Transform histogram data into radial distribution functions
-	originalgr.formPartials(box->volume(), cfg->boxNormalisationInterpolation());
+	originalgr.formPartials(box->volume());
 
 	// Sum total functions
 	originalgr.formTotal(true);
@@ -436,7 +436,6 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 	// Remove bound partial from full partial
 	for (int i=0; i<unweightedgr.nAtomTypes(); ++i)
 	{
-		typeJ = typeI;
 		for (int j=i; j<unweightedgr.nAtomTypes(); ++j) unweightedgr.partial(i, j) -= originalgr.constBoundPartial(i, j);
 	}
 
@@ -476,8 +475,8 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 
 		// Set up working PartialSets to use when calculating our g(r)
 		PartialSet tempgr, broadgr = unweightedgr;
-		tempgr.setUp(cfg, "Working", "TemporaryGR", "Dummy", "r, Angstroms");
-		tempgr.setUpHistograms(cfg->rdfRange(), cfg->rdfBinWidth());
+		tempgr.setUp(cfg->usedAtomTypesList(), unweightedgr.rdfRange(), unweightedgr.rdfBinWidth(), "Working", "TemporaryGR", "Dummy", "r, Angstroms");
+		tempgr.setUpHistograms(unweightedgr.rdfRange(), unweightedgr.rdfBinWidth());
 
 		// Make sure bound g(r) are zeroed
 		typeI = broadgr.atomTypes().first();
@@ -530,7 +529,7 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 			}
 
 			// Normalise our bond's histogram data into the g(r)
-			tempgr.formPartials(box->volume(), cfg->boxNormalisationInterpolation());
+			tempgr.formPartials(box->volume());
 
 			// Broaden our g(r) (after subtracting it from the original full partial) and sum into our broadened partial set
 			typeI = tempgr.atomTypes().first();
@@ -601,7 +600,7 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 			}
 
 			// Normalise our bond's histogram data into the g(r)
-			tempgr.formPartials(box->volume(), cfg->boxNormalisationInterpolation());
+			tempgr.formPartials(box->volume());
 
 			// Broaden our g(r) (after subtracting it from the original full partial) and sum into our broadened partial set
 			typeI = tempgr.atomTypes().first();

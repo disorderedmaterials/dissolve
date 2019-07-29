@@ -41,7 +41,7 @@ bool Data2DImportFileFormat::importCartesian(LineParser& parser, Data2D& data)
 	while (!parser.eofOrBlank())
 	{
 		// Read line
-		if (parser.getArgsDelim(LineParser::SkipBlanks) != LineParser::Success) return false;
+		if (parser.getArgsDelim() != LineParser::Success) return false;
 
 		// Check number of arguments
 		if (parser.nArgs() != 3)

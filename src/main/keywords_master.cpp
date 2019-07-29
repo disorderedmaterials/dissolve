@@ -67,7 +67,7 @@ bool MasterBlock::parse(LineParser& parser, Dissolve* dissolve)
 	while (!parser.eofOrBlank())
 	{
 		// Read in a line, which should contain a keyword and a minimum number of arguments
-		parser.getArgsDelim(LineParser::SkipBlanks+LineParser::StripComments+LineParser::UseQuotes);
+		if (parser.getArgsDelim() != LineParser::Success) return false;
 		MasterBlock::MasterKeyword masterKeyword = MasterBlock::keyword(parser.argc(0));
 		if ((masterKeyword != MasterBlock::nMasterKeywords) && ((parser.nArgs()-1) < MasterBlock::nArguments(masterKeyword)))
 		{

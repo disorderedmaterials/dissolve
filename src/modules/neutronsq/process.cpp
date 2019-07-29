@@ -62,14 +62,6 @@ bool NeutronSQModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 			Messenger::print("Removed first point from supplied reference data - new Qmin = %e Angstroms**-1.\n", referenceData.constXAxis().firstValue());
 		}
 
-		// Subtract average level from data?
-		double removeAverage = keywords_.asDouble("ReferenceRemoveAverage");
-		if (removeAverage >= 0.0)
-		{
-			double level = Filters::subtractAverage(referenceData, removeAverage);
-			Messenger::print("NeutronSQ: Removed average level of %f from reference data, forming average over x >= %f.\n", level, removeAverage);
-		}
-
 		// Remove normalisation factor from data
 		NeutronSQModule::NormalisationType normType = KeywordEnumHelper<NeutronSQModule::NormalisationType>::enumeration(keywords_, "ReferenceNormalisation");
 		if (normType != NeutronSQModule::NoNormalisation)
@@ -304,10 +296,10 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 			// Find the referenced Species in our SpeciesInfo list
 			SpeciesInfo* spInfo = cfg->usedSpeciesInfo(ref->species());
-			int speciesPopulation = spInfo->population() * cfg->multiplier();
+			if (!spInfo) return Messenger::error("Couldn't locate SpeciesInfo for '%s' in the Configuration '%s'.\n", ref->species()->name(), cfg->niceName());
 
 			// Add the isotopologue, in the isotopic proportions defined in the Isotopologue, to the weights.
-			weights.addIsotopologue(ref->species(), speciesPopulation, ref->isotopologue(), ref->weight());
+			weights.addIsotopologue(ref->species(), spInfo->population(), ref->isotopologue(), ref->weight());
 		}
 
 		// We will complain strongly if a species in the Configuration is not covered by at least one Isotopologue definition

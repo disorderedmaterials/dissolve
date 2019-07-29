@@ -20,27 +20,11 @@
 */
 
 #include "main/dissolve.h"
-#include "modules/export/export.h"
+// #include "modules/export/export.h"
 #include "base/sysfunc.h"
 #include "base/lineparser.h"
 #include "genericitems/listhelper.h"
 #include <cstdio>
-
-/*
- * Public Functions
- */
-
-// Set number of test points to use when calculating Box normalisation arrays
-void Dissolve::setNBoxNormalisationPoints(int nPoints)
-{
-	nBoxNormalisationPoints_ = nPoints;
-}
-
-// Return number of test points to use when calculating Box normalisation arrays
-int Dissolve::nBoxNormalisationPoints() const
-{
-	return nBoxNormalisationPoints_;
-}
 
 // Set random seed
 void Dissolve::setSeed(int seed)

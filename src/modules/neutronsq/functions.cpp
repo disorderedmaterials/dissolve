@@ -115,8 +115,7 @@ bool NeutronSQModule::calculateSummedWeights(Weights& summedWeights) const
 				if ((ref->configuration() != cfg) || (ref->species() != spInfo->species())) continue;
 
 				// Add the isotopologue, in the isotopic proportions defined in the Isotopologue, to the weights.
-				int speciesPopulation = spInfo->population() * cfg->multiplier();
-				summedWeights.addIsotopologue(ref->species(), speciesPopulation, ref->isotopologue(), ref->weight());
+				summedWeights.addIsotopologue(ref->species(), spInfo->population(), ref->isotopologue(), ref->weight());
 
 				++nAdded;
 			}

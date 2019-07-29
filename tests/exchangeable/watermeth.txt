@@ -50,17 +50,25 @@ EndSpecies
 
 # Define Configuration
 Configuration  'Mix'
-  Density  0.1  atoms/A3
-  Multiplier  100
-  SpeciesInfo  'Water'  3.0
-  SpeciesInfo  'Methanol'  6.0
+  Generator
+    AddSpecies
+     Density  0.1  atoms/A3
+     Population  300
+     Species  'Water'
+    EndAddSpecies
+    AddSpecies
+     Density  0.1  atoms/A3
+     Population  600
+     Species  'Methanol'
+    EndAddSpecies
+  EndGenerator
   InputCoordinates  epsr  'epsr/watermeth.ato'
-  RDFBinWidth 0.03
 
   # Calculate and test g(r)
   Module  RDF  RDFs
     # Save  On
     Frequency  1
+    BinWidth 0.03
   EndModule
 
   # Sample Structure Factor Calculations

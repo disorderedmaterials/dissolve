@@ -1,4 +1,3 @@
-add_subdirectory(analyse)
 add_subdirectory(base)
 add_subdirectory(classes)
 add_subdirectory(data)
@@ -8,6 +7,7 @@ add_subdirectory(io)
 add_subdirectory(main)
 add_subdirectory(math)
 add_subdirectory(module)
+add_subdirectory(procedure)
 
 if(GUI)
   add_subdirectory(gui)

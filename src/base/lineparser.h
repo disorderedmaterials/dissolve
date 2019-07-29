@@ -48,9 +48,9 @@ class LineParser
 	enum ParseOption
 	{
 		Defaults = 0,			/* Default parsing behaviour */
-		StripComments = 1,		/* Automatically strip comments (beginning # or //) from files */
-		UseQuotes = 2,			/* Quoted text in files is retained as a single delimited argument */
-		SkipBlanks = 4,			/* Skip blank lines (those containing nothing or only whitespace) */
+		KeepComments = 1,		/* Automatically strip comments (beginning # or //) from files */
+		IgnoreQuotes = 2,		/* Quoted text in files will not be retained as a single argument */
+		KeepBlanks = 4,			/* Don't automatically skip blank lines (those containing nothing or only whitespace) */
 		StripBrackets = 8,		/* Remove parentheses during parsing */
 		NoEscapes = 16,			/* Don't convert excaped characters */
 		UseBraces = 32,			/* Text inside curly brackets is retaind as a single argument */
@@ -160,7 +160,7 @@ class LineParser
 	// Gets next n chars from internal line
 	bool getNextN(int optionMask, int length, CharString* destarg = NULL);
 	// Read line from file and do delimited parse
-	ParseReturnValue getArgsDelim(int optionMask);
+	ParseReturnValue getArgsDelim(int optionMask = LineParser::Defaults);
 	// Get rest of line starting at next delimited part
 	bool getRestDelim(CharString* destarg = NULL);
 	// Set line and parse using delimiters

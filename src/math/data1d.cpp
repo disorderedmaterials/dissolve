@@ -464,7 +464,7 @@ bool Data1D::load(LineParser& parser, int xcol, int ycol)
 	clear();
 	while (!parser.eofOrBlank())
 	{
-		success = parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments);
+		success = parser.getArgsDelim();
 		if (success != 0)
 		{
 			parser.closeFiles();

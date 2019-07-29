@@ -1,7 +1,7 @@
 /*
-	*** Expression Value Node
+	*** Expression Value
 	*** src/expression/value.cpp
-	Copyright T. Youngs 2015-2019
+	Copyright T. Youngs 2010-2019
 
 	This file is part of Dissolve.
 
@@ -20,16 +20,27 @@
 */
 
 #include "expression/value.h"
-#include "expression/variable.h"
-#include <string.h>
 
-// Constructor
-ExpressionValue::ExpressionValue(ExpressionVariable* var) : ExpressionNode(), variable_(var)
+// Constructors
+ExpressionValue::ExpressionValue()
 {
-	// Private variables
-	readOnly_ = false;
-	nodeType_ = ExpressionNode::ValueNode;
-	if (variable_ != NULL) returnsNumber_ = var->returnsNumber();
+	valueI_ = 0;
+	valueD_ = 0.0;
+	type_ = IntegerType;
+}
+
+ExpressionValue::ExpressionValue(int value)
+{
+	valueI_ = value;
+	valueD_ = 0.0;
+	type_ = IntegerType;
+}
+
+ExpressionValue::ExpressionValue(double value)
+{
+	valueI_ = 0;
+	valueD_ = value;
+	type_ = DoubleType;
 }
 
 // Destructor
@@ -37,85 +48,72 @@ ExpressionValue::~ExpressionValue()
 {
 }
 
-// Set function
-void ExpressionValue::setVariable(ExpressionVariable* variable)
+/*
+ * Data
+ */
+
+// Assignment operator (integer)
+void ExpressionValue::operator=(int i)
 {
-	variable_ = variable;
+	valueI_ = i;
+	type_ = IntegerType;
 }
 
-// Get function
-ExpressionVariable* ExpressionValue::variable() const
+// Assignment operator (double)
+void ExpressionValue::operator=(double d)
 {
-	return variable_;
+	valueD_ = d;
+	type_ = DoubleType;
 }
 
-// Return name of variable target
-const char* ExpressionValue::name() const
+// Return result as integer (regardless of current type)
+int ExpressionValue::asInteger() const
 {
-	if (variable_ == NULL)
-	{
-		printf("Internal Error: ExpressionValue contains a NULL Variable pointer.\n");
-		return "NULL";
-	}
-	return variable_->name();
+	return (type_ == IntegerType ? valueI_ : int(valueD_));
+}
+
+// Return result as double (regardless of current type)
+double ExpressionValue::asDouble() const
+{
+	return (type_ == IntegerType ? double(valueI_) : valueD_);
+}
+
+// Return pointer to integer value
+int* ExpressionValue::integerPointer()
+{
+	return &valueI_;
+}
+
+// Return pointer to double value
+double* ExpressionValue::doublePointer()
+{
+	return &valueD_;
 }
 
 /*
- * Set / execute
+ * Tests
  */
 
-// Execute command
-bool ExpressionValue::execute(double& rv)
+// Return whether the contained type is an integer
+bool ExpressionValue::isInteger() const
 {
-	if (variable_ == NULL)
-	{
-		printf("Internal Error: ExpressionValue contains a NULL Variable pointer and can't be executed.\n");
-		return false;
-	}
-
-	// Call the local variable's execute() function to get the base value
-	bool result = variable_->execute(rv);
-	if (!result) printf("Variable retrieval ('%s') failed.\n", variable_->name());
-
-	return result;
+	return (type_ == IntegerType);
 }
 
-// Print node contents
-void ExpressionValue::nodePrint(int offset, const char* prefix)
+// Return whether the contained type is an double
+bool ExpressionValue::isDouble() const
 {
-	if (variable_ == NULL)
-	{
-		printf("Internal Error: ExpressionValue contains a NULL Variable pointer and can't be printed.\n");
-		return;
-	}
-	// Call the local variables nodePrint() function
-	variable_->nodePrint(offset, prefix);
+	return (type_ == DoubleType);
 }
 
-// Set from double value
-bool ExpressionValue::set(double value)
+// Return the supplied ExpressionValues both contain integer types
+bool ExpressionValue::bothIntegers(const ExpressionValue& a, const ExpressionValue& b)
 {
-	if (variable_ == NULL)
-	{
-		printf("Internal Error: ExpressionValue contains a NULL Variable pointer and can't be set.\n");
-		return false;
-	}
-	bool result = true;
-
-	// Call the local variable's set() function
-	result = variable_->set(value);
-	if (!result) printf("Variable set failed.\n");
-
-	return result;
+	return ((a.type_ == IntegerType) && (b.type_ == IntegerType));
 }
 
-// Initialise node
-bool ExpressionValue::initialise()
+// Return the supplied ExpressionValues both contain double types
+bool ExpressionValue::bothDoubles(const ExpressionValue& a, const ExpressionValue& b)
 {
-	if (variable_ == NULL)
-	{
-		printf("Internal Error: ExpressionValue contains a NULL Variable pointer and can't be initialised.\n");
-		return false;
-	}
-	return variable_->initialise();
+	return ((a.type_ == DoubleType) && (b.type_ == DoubleType));
 }

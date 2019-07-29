@@ -19,12 +19,14 @@ EndSpecies
 
 # Define Configuration
 Configuration  'Bulk'
-  Density  9.99999642E-02 atoms/A3
-  Multiplier  1000
-  SpeciesInfo  'Water'  1.0
+  Generator
+    AddSpecies
+      Density  9.99999642E-02 atoms/A3
+      Population  1000
+      Species  'Water'
+    EndAddSpecies
+  EndGenerator
   InputCoordinates  epsr  'epsr/waterbox.ato'
-  RDFBinWidth 0.03
-  RDFRange 15.5
 EndConfiguration
 
 Layer  'Processing'
@@ -33,6 +35,7 @@ Layer  'Processing'
   Module  RDF
     Configuration  'Bulk'
     Frequency  1
+    BinWidth 0.03
   EndModule
 
 # -- Partial g(r) (unbound terms)

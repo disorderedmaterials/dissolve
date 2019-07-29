@@ -20,13 +20,15 @@
 */
 
 #include "expression/variable.h"
+#include "base/messenger.h"
 #include <string.h>
 
 // Constructor
 ExpressionVariable::ExpressionVariable(double value, bool readOnly) : ExpressionNode()
 {
 	// Private variables
-	name_ = "unnamedvariable";
+	static int count = 0;
+	name_.sprintf("_ExpressionVariable%02i", count++);
 	initialValue_ = NULL;
 	nodeType_ = ExpressionNode::VariableNode;
 	value_ = value;
@@ -57,13 +59,13 @@ bool ExpressionVariable::initialise()
 	if (initialValue_ == NULL) value_ = 0.0;
 	else
 	{
-		double rv;
-		if (initialValue_->execute(rv))
+		ExpressionValue result;
+		if (initialValue_->execute(result))
 		{
-			if (set(rv)) return true;
+			if (set(result)) return true;
 			else
 			{
-				printf("Error: Failed to initialise variable '%s'.\n", name_.get());
+				Messenger::error("Failed to initialise variable '%s'.\n", name_.get());
 				return false;
 			}
 		}
@@ -99,7 +101,7 @@ ExpressionNode* ExpressionVariable::initialValue() const
  */
 
 // Set value of variable (real)
-bool ExpressionVariable::set(double value)
+bool ExpressionVariable::set(ExpressionValue value)
 {
 	if (readOnly_)
 	{
@@ -113,19 +115,19 @@ bool ExpressionVariable::set(double value)
 }
 
 // Return value
-double ExpressionVariable::value() const
+const ExpressionValue& ExpressionVariable::value() const
 {
 	return value_;
 }
 
 // Return pointer to value
-double* ExpressionVariable::valuePointer()
+ExpressionValue* ExpressionVariable::valuePointer()
 {
 	return &value_;
 }
 
 // Return value of node
-bool ExpressionVariable::execute(double& value)
+bool ExpressionVariable::execute(ExpressionValue& value)
 {
 	value = value_;
 
@@ -142,6 +144,14 @@ void ExpressionVariable::nodePrint(int offset, const char* prefix)
 	tab += prefix;
 
 	// Output node data
-	if (readOnly_) printf("[C]%s%f (constant value)\n", tab.get(), value_);
-	else printf("[V]%s%f (variable, name=%s)\n", tab.get(), value_, name_.get());
+	if (readOnly_)
+	{
+		if (value_.isInteger()) printf("[C]%s%i (constant integer value)\n", tab.get(), value_.asInteger());
+		else printf("[C]%s%f (constant double value)\n", tab.get(), value_.asDouble());
+	}
+	else
+	{
+		if (value_.isInteger()) printf("[V]%s%i (integer variable '%s')\n", tab.get(), value_.asInteger(), name());
+		else printf("[V]%s%f (double variable '%s')\n", tab.get(), value_.asDouble(), name());
+	}
 }

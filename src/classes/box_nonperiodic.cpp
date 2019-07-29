@@ -25,22 +25,22 @@
 #include "templates/array.h"
 
 // Constructor
-NonPeriodicBox::NonPeriodicBox(double volume) : Box()
+NonPeriodicBox::NonPeriodicBox(double length) : Box()
 {
 	type_ = Box::NonPeriodicBoxType;
 	periodic_.set(false, false, false);
 
 	// Construct axes_
-	axes_.setColumn(0, 1.0, 0.0, 0.0);
-	axes_.setColumn(1, 0.0, 1.0, 0.0);
-	axes_.setColumn(2, 0.0, 0.0, 1.0);
+	axes_.setColumn(0, length, 0.0, 0.0);
+	axes_.setColumn(1, 0.0, length, 0.0);
+	axes_.setColumn(2, 0.0, 0.0, length);
 
-	// Set up box, rescaling to desired volume
-	setUp(volume);
-
-	// Grab new cell length
-	a_ = axes_.columnMagnitude(0);
+	// Store Box length
+	a_ = length;
 	ra_ = 1.0/a_;
+
+	// Finalise associated data
+	finalise();
 }
 
 // Destructor

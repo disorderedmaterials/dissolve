@@ -21,12 +21,12 @@
 
 #include "modules/calculate/dangle/dangle.h"
 #include "main/dissolve.h"
-#include "analyse/nodes/calculate.h"
-#include "analyse/nodes/collect1d.h"
-#include "analyse/nodes/collect2d.h"
-#include "analyse/nodes/process1d.h"
-#include "analyse/nodes/process2d.h"
-#include "analyse/nodes/select.h"
+#include "procedure/nodes/calculate.h"
+#include "procedure/nodes/collect1d.h"
+#include "procedure/nodes/collect2d.h"
+#include "procedure/nodes/process1d.h"
+#include "procedure/nodes/process2d.h"
+#include "procedure/nodes/select.h"
 #include "base/sysfunc.h"
 
 // Run set-up stage
@@ -102,47 +102,51 @@ bool CalculateDAngleModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	 */
 
 	// Select: Site 'A' (@siteA)
-	AnalysisSelectNode* selectA = new AnalysisSelectNode(aSites_);
+	SelectProcedureNode* selectA = new SelectProcedureNode(aSites_);
 	selectA->setName("A");
+	SequenceProcedureNode* forEachA = selectA->addForEachBranch(ProcedureNode::AnalysisContext);
 	analyser_.addRootSequenceNode(selectA);
 
 	// -- Select: Site 'B' (@siteB)
-	AnalysisSelectNode* selectB = new AnalysisSelectNode(bSites_);
+	SelectProcedureNode* selectB = new SelectProcedureNode(bSites_);
 	selectB->setName("B");
 	selectB->setSameMolecule(selectA);
-	selectA->addToForEachBranch(selectB);
+	SequenceProcedureNode* forEachB = selectB->addForEachBranch(ProcedureNode::AnalysisContext);
+	forEachA->addNode(selectB);
 
 	// -- -- Select: Site 'C' (@siteC)
-	AnalysisSelectNode* selectC = new AnalysisSelectNode(cSites_);
+	SelectProcedureNode* selectC = new SelectProcedureNode(cSites_);
 	selectC->setName("C");
 	if (excludeSameMolecule) selectC->addSameMoleculeExclusion(selectA);
-	selectB->addToForEachBranch(selectC);
+	SequenceProcedureNode* forEachC = selectC->addForEachBranch(ProcedureNode::AnalysisContext);
+	forEachB->addNode(selectC);
 
 	// -- -- -- Calculate: 'rBC'
-	AnalysisCalculateNode* calcDistance = new AnalysisCalculateNode(AnalysisCalculateNode::DistanceObservable, selectB, selectC);
-	selectC->addToForEachBranch(calcDistance);
+	CalculateProcedureNode* calcDistance = new CalculateProcedureNode(CalculateProcedureNode::DistanceObservable, selectB, selectC);
+	forEachC->addNode(calcDistance);
 
 	// -- -- -- Calculate: 'aABC'
-	AnalysisCalculateNode* calcAngle = new AnalysisCalculateNode(AnalysisCalculateNode::AngleObservable, selectA, selectB, selectC);
-	selectC->addToForEachBranch(calcAngle);
+	CalculateProcedureNode* calcAngle = new CalculateProcedureNode(CalculateProcedureNode::AngleObservable, selectA, selectB, selectC);
+	forEachC->addNode(calcAngle);
 
 	// -- -- -- Collect2D:  'Distance-Angle(B...C vs A-B...C)
-	AnalysisCollect2DNode* collectDAngle = new AnalysisCollect2DNode(calcDistance, calcAngle, distanceMin, distanceMax, distanceBin, angleMin, angleMax, angleBin);
+	Collect2DProcedureNode* collectDAngle = new Collect2DProcedureNode(calcDistance, calcAngle, distanceMin, distanceMax, distanceBin, angleMin, angleMax, angleBin);
 	collectDAngle->setName(resultName());
-	selectC->addToForEachBranch(collectDAngle);
+	SequenceProcedureNode* subCollection = collectDAngle->addSubCollectBranch(ProcedureNode::AnalysisContext);
+	forEachC->addNode(collectDAngle);
 
 	// -- -- -- -- Collect1D:  'RDF(BC)
-	AnalysisCollect1DNode* collectDistance = new AnalysisCollect1DNode(calcDistance, distanceMin, distanceMax, distanceBin);
+	Collect1DProcedureNode* collectDistance = new Collect1DProcedureNode(calcDistance, distanceMin, distanceMax, distanceBin);
 	collectDistance->setName(rdfBCResultName());
-	collectDAngle->addToSubCollectBranch(collectDistance);
+	subCollection->addNode(collectDistance);
 
 	// -- -- -- -- Collect1D:  'ANGLE(ABC)
-	AnalysisCollect1DNode* collectAngle = new AnalysisCollect1DNode(calcAngle, angleMin, angleMax, angleBin);
+	Collect1DProcedureNode* collectAngle = new Collect1DProcedureNode(calcAngle, angleMin, angleMax, angleBin);
 	collectAngle->setName(angleABCResultName());
-	collectDAngle->addToSubCollectBranch(collectAngle);
+	subCollection->addNode(collectAngle);
 
 	// Process1D: 'RDF(BC)'
-	AnalysisProcess1DNode* processDistance = new AnalysisProcess1DNode(collectDistance);
+	Process1DProcedureNode* processDistance = new Process1DProcedureNode(collectDistance);
 	processDistance->setName(rdfBCResultName());
 	processDistance->addSitePopulationNormaliser(selectA);
 	processDistance->addSitePopulationNormaliser(selectB);
@@ -154,7 +158,7 @@ bool CalculateDAngleModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	analyser_.addRootSequenceNode(processDistance);
 
 	// Process1D: 'ANGLE(ABC)'
-	AnalysisProcess1DNode* processAngle = new AnalysisProcess1DNode(collectAngle);
+	Process1DProcedureNode* processAngle = new Process1DProcedureNode(collectAngle);
 	processAngle->setName(angleABCResultName());
 	processAngle->setNormaliseToOne(true);
 	processAngle->setSaveData(saveData);
@@ -163,7 +167,7 @@ bool CalculateDAngleModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	analyser_.addRootSequenceNode(processAngle);
 
 	// Process1D: @dataName
-	AnalysisProcess2DNode* processDAngle = new AnalysisProcess2DNode(collectDAngle);
+	Process2DProcedureNode* processDAngle = new Process2DProcedureNode(collectDAngle);
 	processDAngle->setName(resultName());
 	processDAngle->setNormaliseToOne(true);
 	processDAngle->setSaveData(saveData);

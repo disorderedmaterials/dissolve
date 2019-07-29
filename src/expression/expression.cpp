@@ -20,35 +20,24 @@
 */
 
 #include "expression/expression.h"
+#include "expression/generator.h"
 #include "expression/variable.h"
 #include "expression/function.h"
-#include "expression/expression_grammar.hh"
 #include "expression/value.h"
+#include "expression/variablevalue.h"
 #include "base/sysfunc.h"
 #include "base/messenger.h"
 #include <stdarg.h>
 #include <string.h>
 
-// Static members
-Expression* Expression::target_ = NULL;
-
-// Constructors
-Expression::Expression()
+// Constructor
+Expression::Expression(const char* expressionText)
 {
-	// Private variables
-	generateMissingVariables_ = false;
-
-	// Initialise
-	clear();
-}
-
-Expression::Expression(const char* commands)
-{
-	// Initialise
 	clear();
 
-	// Generate expression
-	generate(commands);
+	expressionString_ = expressionText;
+
+	if (expressionText != NULL) ExpressionGenerator::generate(*this, expressionString_.get());
 }
 
 // Destructor
@@ -57,21 +46,27 @@ Expression::~Expression()
 	clear();
 }
 
+// Copy constructor
+Expression::Expression(const Expression& source)
+{
+	(*this) = source;
+}
+
+// Assignment operator
+void Expression::operator=(const Expression& source)
+{
+	// Reset our structure, and regenerate from the expression string
+	clear();
+
+	ExpressionGenerator::generate(*this, source.expressionString_.get(), source.externalVariables_);
+
+	expressionString_ = source.expressionString_;
+}
+
 /*
- * Creation
+ * Data
  */
 
-// Reset values in parser, ready for next source
-void Expression::resetParser()
-{
-	stringPos_ = -1;
-	tokenStart_ = 0;
-	functionStart_ = -1;
-	stringSource_.clear();
-	stringLength_ = 0;
-	useAdditionalConstants_ = false;
-	target_ = NULL;
-}
 
 // Clear contents of expression
 void Expression::clear()
@@ -82,78 +77,19 @@ void Expression::clear()
 	// Clear variables and constants, except those that are persistent
 	variables_.removeIfData(false);
 	constants_.removeIfData(false);
-
-	isValid_ = false;
-}
-
-// Set flag to specify that missing variables should be generated
-void Expression::setGenerateMissingVariables(bool generate)
-{
-	generateMissingVariables_ = generate;
-}
-
-// Return whether missing variables will be generated
-bool Expression::generateMissingVariables()
-{
-	return generateMissingVariables_;
-}
-
-// Get next character from current input stream
-char Expression::getChar()
-{
-	char c = 0;
-
-	// Are we at the end of the current string?
-	if (stringPos_ == stringLength_) return 0;
-
-	// Return current char
-	c = stringSource_[stringPos_];
-	stringPos_++;
-	return c;
-}
-
-// Peek next character from current input stream
-char Expression::peekChar()
-{
-	return (stringPos_ == stringLength_ ? 0 : stringSource_[stringPos_]);
-}
-
-// 'Replace' last character read from current input stream
-void Expression::unGetChar()
-{
-	--stringPos_;
-}
-
-// Generate an expression
-bool Expression::generate(const char* expressionText)
-{
-	resetParser();
-	target_ = this;
-
-	stringSource_ = expressionText;
-	stringSource_ += ';';
-	stringPos_ = 0;
-	stringLength_ = stringSource_.length();
-	Messenger::printVerbose("Parser source string is '%s', length is %i\n", stringSource_.get(), stringLength_);
-
-	// Perform the parsing
-	isValid_ = ExpressionParser_parse() == 0;
-
-	target_ = NULL;
-
-	return isValid_;
+	externalVariables_.clear();
 }
 
 // Return whether current expression is valid
 bool Expression::isValid()
 {
-	return isValid_;
+	return (statements_.nItems() != 0); 
 }
 
-// Return current expression target
-Expression *Expression::target()
+// Return original generating string`
+const char* Expression::asString() const
 {
-	return target_;
+	return expressionString_.get();
 }
 
 /*
@@ -269,7 +205,7 @@ ExpressionNode* Expression::addFunctionNode(ExpressionFunctions::Function func, 
 // Add value node targetting specified variable
 ExpressionNode* Expression::addValueNode(ExpressionVariable* var)
 {
-	ExpressionValue* vnode = new ExpressionValue(var);
+	ExpressionVariableValue* vnode = new ExpressionVariableValue(var);
 	nodes_.own(vnode);
 	vnode->setParent(this);
 
@@ -356,25 +292,33 @@ ExpressionVariable* Expression::createVariableWithValue(const char* name, double
 	return var;
 }
 
+// Set list of external variables
+void Expression::setExternalVariables(RefList<ExpressionVariable,bool> externalVariables)
+{
+	externalVariables_ = externalVariables;
+}
+
 // Search for variable in current scope
 ExpressionVariable* Expression::variable(const char* name)
 {
-	// Search global scope first
-	ExpressionVariable* result = NULL;
-
-	for (RefListItem<ExpressionVariable,bool>* ri = variables_.first(); ri != NULL; ri = ri->next)
+	// Search external variables
+	RefListIterator<ExpressionVariable,bool> externalIterator(externalVariables_);
+	while (ExpressionVariable* variable = externalIterator.iterate()) if (DissolveSys::sameString(variable->name(), name))
 	{
-		if (DissolveSys::sameString(ri->item->name(), name))
-		{
-			result = ri->item;
-			break;
-		}
+		Messenger::printVerbose("...external variable '%s' found.\n", name);
+		return variable;
 	}
 
-	if (result == NULL) Messenger::printVerbose("...variable '%s' not found.\n", name);
-	else Messenger::printVerbose("...variable '%s' found.\n", name);
+	// Search internal variables
+	RefListIterator<ExpressionVariable,bool> internalIterator(variables_);
+	while (ExpressionVariable* variable = internalIterator.iterate()) if (DissolveSys::sameString(variable->name(), name))
+	{
+		Messenger::printVerbose("...internal variable '%s' found.\n", name);
+		return variable;
+	}
 
-	return result;
+	Messenger::printVerbose("...variable '%s' not found.\n", name);
+	return NULL;
 }
 
 // Return variables
@@ -394,20 +338,33 @@ RefList<ExpressionVariable,bool>& Expression::constants()
  */
 
 // Execute expression
-double Expression::execute(bool& success)
+bool Expression::execute(ExpressionValue& result)
 {
-	double expressionResult = 0.0;
-
+	bool success = true;
 	for (RefListItem<ExpressionNode,int> *ri = statements_.first(); ri != NULL; ri = ri->next)
 	{
 // 		ri->item->nodePrint(1);
-		success = ri->item->execute(expressionResult);
+		success = ri->item->execute(result);
 		if (!success) break;
 	}
 
-	// Print some final verbose output
-// 	Messenger::print("Final result from expression = %f\n", expressionResult);
-	if (!success) Messenger::warn("Execution FAILED.\n");
+	if (!success) Messenger::error("Expression execution failed for '%s'.\n", expressionString_.get());
 
-	return expressionResult;
+	return success;
+}
+
+// Execute and return as integer
+int Expression::asInteger()
+{
+	ExpressionValue result;
+	if (!execute(result)) return 0;
+	else return result.asInteger();
+}
+
+// Execute and return as double
+int Expression::asDouble()
+{
+	ExpressionValue result;
+	if (!execute(result)) return 0.0;
+	else return result.asDouble();
 }

@@ -18,9 +18,13 @@ EndSpecies
 
 # Define Configuration
 Configuration  'Bulk'
-  Density  9.99999642E-02 atoms/A3
-  Multiplier  1000
-  SpeciesInfo  'Water'  1.0
+  Generator
+    AddSpecies
+      Density  9.99999642E-02 atoms/A3
+      Population  1000
+      Species  'Water'
+    EndAddSpecies
+  EndGenerator
 
   InputCoordinates  dlpoly  'dlpoly_vdw/CONFIG'
 

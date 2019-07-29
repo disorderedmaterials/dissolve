@@ -64,7 +64,7 @@ bool SiteBlock::parse(LineParser& parser, Dissolve* dissolve, SpeciesSite* site)
 	while (!parser.eofOrBlank())
 	{
 		// Read in a line, which should contain a keyword and a minimum number of arguments
-		parser.getArgsDelim(LineParser::SkipBlanks+LineParser::StripComments+LineParser::UseQuotes);
+		if (parser.getArgsDelim() != LineParser::Success) return false;
 		SiteBlock::SiteKeyword siteKeyword = SiteBlock::keyword(parser.argc(0));
 		if ((siteKeyword != SiteBlock::nSiteKeywords) && ((parser.nArgs()-1) < SiteBlock::nArguments(siteKeyword)))
 		{

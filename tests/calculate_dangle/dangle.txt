@@ -82,9 +82,13 @@ EndPairPotentials
 #------------------------#
 
 Configuration  'Bulk'
-  Density  9.99999642E-02 atoms/A3
-  Multiplier  267
-  SpeciesInfo  'Water'  1.0
+  Generator
+    AddSpecies
+      Density  9.99999642E-02 atoms/A3
+      Population  267
+      Species  'Water'
+    EndAddSpecies
+  EndGenerator
 EndConfiguration
 
 #------------------------#
@@ -114,7 +118,6 @@ Module  CalculateDAngle  'DAngle(X-H...O)'
   AngleMax  180.0
   AngleBin  1.0
   ExcludeSameMolecule  true
-  Save  On
 EndModule
 
 # Distance-Angle Map X-H...O (using manual analyser)
@@ -202,7 +205,6 @@ Module  Analyse  'DAngle(X-H...O)-Analyser'
     Process2D  'DAngle(X-HO)'
       SourceData  'DAngle(X-HO)'
       NormaliseToOne  On
-      Save  On
       LabelX  '\\it{r}, \\sym{Angstrom}'
       LabelY  'Angle, \\sym{degree}'
       LabelValue  'Probability'

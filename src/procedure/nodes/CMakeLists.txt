@@ -1,0 +1,47 @@
+add_library(procedurenodes
+  addspecies.cpp
+  box.cpp
+  calculate.cpp
+  collect1d.cpp
+  collect2d.cpp
+  collect3d.cpp
+  dynamicsite.cpp
+  exclude.cpp
+  fit1d.cpp
+  node.cpp
+  nodereference.cpp
+  parameters.cpp
+  process1d.cpp
+  process2d.cpp
+  process3d.cpp
+  select.cpp
+  sequence.cpp
+
+  addspecies.h
+  box.h
+  calculate.h
+  collect1d.h
+  collect2d.h
+  collect3d.h
+  dynamicsite.h
+  exclude.h
+  fit1d.h
+  node.h
+  nodereference.h
+  nodes.h
+  parameters.h
+  process1d.h
+  process2d.h
+  process3d.h
+  select.h
+  sequence.h
+)
+
+include_directories(
+../
+../../
+${CMAKE_SOURCE_DIR}
+${CMAKE_BINARY_DIR}
+${CMAKE_BINARY_DIR}/src
+)
+

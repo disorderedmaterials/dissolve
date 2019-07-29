@@ -52,12 +52,18 @@ bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	Averaging::AveragingScheme averagingScheme = KeywordEnumHelper<Averaging::AveragingScheme>::enumeration(keywords_, "AveragingScheme");
 	PairBroadeningFunction& intraBroadening = KeywordListHelper<PairBroadeningFunction>::retrieve(keywords_, "IntraBroadening", PairBroadeningFunction());
 	RDFModule::PartialsMethod method = KeywordEnumHelper<RDFModule::PartialsMethod>::enumeration(keywords_, "Method");
+	const double useHalfCellRange = keywords_.asBool("UseHalfCellRange");
+	const double specifiedRange = keywords_.asDouble("Range");
+	const double binWidth = keywords_.asDouble("BinWidth");
 	const bool allIntra = true;
 	const bool internalTest = keywords_.asBool("InternalTest");
 	const bool saveData = keywords_.asBool("Save");
 	const int smoothing = keywords_.asInt("Smoothing");
 
 	// Print argument/parameter summary
+	if (useHalfCellRange) Messenger::print("RDF: Partials will be calculated up to the half-cell range limit.\n");
+	else Messenger::print("RDF: Partials will be calculated out to %f Angstroms.\n", specifiedRange);
+	Messenger::print("RDF: Bin-width to use is %f Angstroms.\n", binWidth);
 	if (averaging <= 1) Messenger::print("RDF: No averaging of partials will be performed.\n");
 	else Messenger::print("RDF: Partials will be averaged over %i sets (scheme = %s).\n", averaging, Averaging::averagingSchemes().keyword(averagingScheme));
 	if (intraBroadening.function() == PairBroadeningFunction::NoFunction) Messenger::print("RDF: No broadening will be applied to intramolecular g(r).");
@@ -78,9 +84,26 @@ bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Set up process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());
 
+		// Check RDF range
+		double rdfRange = cfg->box()->inscribedSphereRadius();
+		if (useHalfCellRange)
+		{
+			Messenger::print("Maximal cutoff used for Configuration '%s' (%f Angstroms).\n",  cfg->niceName(), rdfRange);
+		}
+		else
+		{
+			if (specifiedRange > rdfRange) return Messenger::error("Specified RDF range of %f Angstroms is out of range for Configuration '%s' (max = %f Angstroms).\n", specifiedRange, cfg->niceName(), rdfRange);
+			rdfRange = specifiedRange;
+			Messenger::print("Cutoff for Configuration '%s' is %f Angstroms.\n", cfg->niceName(), rdfRange);
+		}
+
+		// 'Snap' rdfRange_ to nearest bin width...
+		rdfRange = int(rdfRange/binWidth) * binWidth;
+		Messenger::print("Cutoff (snapped to bin width) is %f Angstroms.\n", rdfRange);
+
 		// Calculate unweighted partials for this Configuration (under generic Module name 'Partials', rather than the uniqueName_)
 		bool alreadyUpToDate;
-		calculateGR(procPool, cfg, method, allIntra, alreadyUpToDate);
+		calculateGR(procPool, cfg, method, rdfRange, binWidth, allIntra, alreadyUpToDate);
 		PartialSet& originalgr = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "OriginalGR");
 
 		// Perform averaging of unweighted partials if requested, and if we're not already up-to-date
@@ -111,7 +134,7 @@ bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		{
 			// Copy the already-calculated g(r), then calculate a new set using the Test method
 			PartialSet referencePartials = originalgr;
-			calculateGR(procPool, cfg, RDFModule::TestMethod, allIntra, alreadyUpToDate);
+			calculateGR(procPool, cfg, RDFModule::TestMethod, rdfRange, binWidth, allIntra, alreadyUpToDate);
 			if (!testReferencePartials(referencePartials, originalgr, 1.0e-6)) return false;
 		}
 

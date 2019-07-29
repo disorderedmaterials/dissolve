@@ -478,10 +478,10 @@ LineParser::ParseReturnValue LineParser::readNextLine(int optionMask)
 			Messenger::printVerbose("Line from file is: [%s]\n", line_);
 
 			// Remove comments from line
-			if (optionMask&LineParser::StripComments) DissolveSys::removeComments(line_);
+			if (!(optionMask&LineParser::KeepComments)) DissolveSys::removeComments(line_);
 			
 			// If we are skipping blank lines, check for a blank line here
-			if (optionMask&LineParser::SkipBlanks)
+			if (!(optionMask&LineParser::KeepBlanks))
 			{
 				// Now, see if our line contains only blanks
 				nchars = 0;
@@ -588,10 +588,10 @@ bool LineParser::getNextArg(int optionMask, CharString* destarg)
 				else if (arglen != 0) done = true;
 				break;
 			// Quote marks
-			// If LineParser::UseQuotes, keep delimiters and other quote marks inside the quoted text.
+			// If LineParser::IgnoreQuotes, don't keep delimiters and other quote marks inside the quoted text.
 			case (34):	// Double quotes
 			case (39):	// Single quotes
-				if (!(optionMask&LineParser::UseQuotes)) break;
+				if (optionMask&LineParser::IgnoreQuotes) break;
 				if (quotechar == '\0') quotechar = c;
 				else if (quotechar == c)
 				{
@@ -843,10 +843,10 @@ bool LineParser::getCharsDelim(int optionMask, CharString* source, CharString* d
 				else if (arglen != 0) done = true;
 				break;
 			// Quote marks
-			// If LineParser::UseQuotes, keep delimiters and other quote marks inside the quoted text.
+			// If LineParser::IgnoreQuotes, don't keep delimiters and other quote marks inside the quoted text.
 			case (34):	// Double quotes
 			case (39):	// Single quotes
-				if (!(optionMask&LineParser::UseQuotes)) break;
+				if (optionMask&LineParser::IgnoreQuotes) break;
 				if (quotechar == '\0') quotechar = c;
 				else if (quotechar == c)
 				{

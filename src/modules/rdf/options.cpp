@@ -49,6 +49,9 @@ void RDFModule::setUpKeywords()
 
 	// Calculation
 	ModuleKeywordGroup* group = addKeywordGroup("Calculation");
+	group->add(new DoubleModuleKeyword(0.025, 0.001), "BinWidth", "Specific RDF range to use (if UseHalfCellRange == false)");
+	group->add(new DoubleModuleKeyword(15.0, 0.1), "Range", "Specific RDF range to use (if UseHalfCellRange == false)");
+	group->add(new BoolModuleKeyword(true), "UseHalfCellRange", "Use the maximal RDF range possible, avoiding periodic images", "<True|False>");
 	group->add(new IntegerModuleKeyword(5, 1), "Averaging", "Number of historical partial sets to combine into final partials", "<5>");
 	group->add(new EnumOptionsModuleKeyword<Averaging::AveragingScheme>(Averaging::averagingSchemes() = Averaging::LinearAveraging), "AveragingScheme", "Weighting scheme to use when averaging partials", "<Linear>");
 	group->add(new PairBroadeningFunctionModuleKeyword(PairBroadeningFunction()), "IntraBroadening", "Type of broadening to apply to intramolecular g(r)");

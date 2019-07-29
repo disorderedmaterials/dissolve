@@ -50,11 +50,11 @@ ExpressionFunctions::Function ExpressionFunction::function() const
 }
 
 // Execute command
-bool ExpressionFunction::execute(double& rv)
+bool ExpressionFunction::execute(ExpressionValue& result)
 {
 	// Execute the command
 	//printf("Node function is %i (%s)\n", function_, commands.data[function_].keyword);
-	return expressionFunctions.call(function_, this, rv);
+	return expressionFunctions.call(function_, this, result);
 }
 
 // Print node contents
@@ -73,8 +73,8 @@ void ExpressionFunction::nodePrint(int offset, const char* prefix)
 	for (RefListItem<ExpressionNode,int>* ri = args_.first(); ri != NULL; ri = ri->next) ri->item->nodePrint(offset+1);
 }
 
-// Set from double value
-bool ExpressionFunction::set(double value)
+// Set from ExpressionValue
+bool ExpressionFunction::set(ExpressionValue value)
 {
 	printf("Internal Error: Trying to 'set' a FunctionNode.\n");
 	return false;

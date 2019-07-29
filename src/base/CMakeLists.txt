@@ -1,7 +1,9 @@
 add_library(base
   charstring.cpp
   charstringlist.cpp
-  enumoptions.cpp
+  enumoption.cpp
+  enumoptionsbase.cpp
+  enumoptionslist.cpp
   fileandformat.cpp
   geometry.cpp
   lineparser.cpp
@@ -14,11 +16,15 @@ add_library(base
   processpool.cpp
   sysfunc.cpp
   timer.cpp
+  units.cpp
   version.cpp
   
   charstring.h
   charstringlist.h
+  enumoption.h
+  enumoptionsbase.h
   enumoptions.h
+  enumoptionslist.h
   fileandformat.h
   geometry.h
   lineparser.h
@@ -31,6 +37,7 @@ add_library(base
   processpool.h
   sysfunc.h
   timer.h
+  units.h
   version.h
 )
 

@@ -93,34 +93,15 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
 	/*
 	 * Signals / Slots
 	 */
-	private:
-	// Return current SpeciesInfo
-	SpeciesInfo* currentSpeciesInfo() const;
-
 	private slots:
 	// Definition
 	void on_NameEdit_textChanged(QString text);
 	void on_TemperatureSpin_valueChanged(double value);
-	// Box
-	void on_BoxASpin_valueChanged(double value);
-	void on_BoxBSpin_valueChanged(double value);
-	void on_BoxCSpin_valueChanged(double value);
-	void on_BoxAlphaSpin_valueChanged(double value);
-	void on_BoxBetaSpin_valueChanged(double value);
-	void on_BoxGammaSpin_valueChanged(double value);
-	// Contents
-	void on_MultiplierSpin_valueChanged(int value);
-	void on_DensitySpin_valueChanged(double value);
-	void on_SpeciesInfoAddButton_clicked(bool checked);
-	void on_SpeciesInfoRemoveButton_clicked(bool checked);
-	void on_DensityUnitsCombo_currentIndexChanged(int index);
-	void on_SpeciesInfoTable_itemChanged(QTableWidgetItem* w);
 	// Initial Coordinates
 	void on_CoordinatesFileEdit_textChanged(QString text);
 	void on_CoordinatesFileSelectButton_clicked(bool checked);
-	// Actions
-	void on_RegenerateNowButton_clicked(bool checked);
-	void on_ExportButton_clicked(bool checked);
+	// Content
+	void on_GeneratorGenerateButton_clicked(bool checked);
 
 
 	/*
