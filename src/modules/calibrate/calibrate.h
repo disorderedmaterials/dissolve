@@ -23,6 +23,7 @@
 #define DISSOLVE_CALIBRATIONMODULE_H
 
 #include "module/module.h"
+#include "templates/refdatalist.h"
 
 // Forward Declarations
 /* none */
@@ -115,7 +116,7 @@ class CalibrationModuleCostFunctions
 {
 	public:
 	// Constructor
-	CalibrationModuleCostFunctions(Dissolve& dissolve, ProcessPool& procPool, RefList<Module,bool>& intraBroadeningModules, RefList<Module,CalibrationModule::IntraBroadeningFitTarget>& intraBroadeningReferences);
+	CalibrationModuleCostFunctions(Dissolve& dissolve, ProcessPool& procPool, RefList<Module,bool>& intraBroadeningModules, RefDataList<Module,CalibrationModule::IntraBroadeningFitTarget>& intraBroadeningReferences);
 
 	private:
 	// Dissolve Main Object
@@ -125,7 +126,7 @@ class CalibrationModuleCostFunctions
 	// RDFModule targets for IntraBroadening fitting
 	RefList<Module,bool>& intraBroadeningModules_;
 	// NeutronSQModule targets for IntraBroadening fitting
-	RefList<Module,CalibrationModule::IntraBroadeningFitTarget>& intraBroadeningReferences_;
+	RefDataList<Module,CalibrationModule::IntraBroadeningFitTarget>& intraBroadeningReferences_;
 
 	public:
 	// Cost function for intraBroadening minimisation

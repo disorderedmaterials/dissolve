@@ -78,7 +78,7 @@ bool CalibrationModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		/*
 		 * Create master reference lists of NeutronSQ modules over any specified S(Q) and/or G(r) data reference targets
 		 */
-		RefList<Module,CalibrationModule::IntraBroadeningFitTarget> neutronReferences;
+		RefDataList<Module,CalibrationModule::IntraBroadeningFitTarget> neutronReferences;
 
 		RefListIterator<Module,bool> neutronSQIterator(intraBroadeningNeutronSQReferences_);
 		while (Module* module = neutronSQIterator.iterate()) neutronReferences.addUnique(module, CalibrationModule::IntraBroadeningTargetSQ);
@@ -87,9 +87,9 @@ bool CalibrationModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		while (Module* module = neutronGRIterator.iterate())
 		{
 			// If the Module target is already in the list, just set its data to 'both'
-			RefListItem<Module,CalibrationModule::IntraBroadeningFitTarget>* oldItem = neutronReferences.contains(module);
-			if (oldItem) oldItem->data = CalibrationModule::IntraBroadeningTargetBoth;
-			else neutronReferences.add(module, CalibrationModule::IntraBroadeningTargetGR);
+			RefDataItem<Module,CalibrationModule::IntraBroadeningFitTarget>* oldItem = neutronReferences.contains(module);
+			if (oldItem) oldItem->setData(CalibrationModule::IntraBroadeningTargetBoth);
+			else neutronReferences.append(module, CalibrationModule::IntraBroadeningTargetGR);
 		}
 
 
@@ -162,7 +162,7 @@ bool CalibrationModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		}
 
 		// Go over NeutronSQ Modules and run the processing
-		RefListIterator<Module,CalibrationModule::IntraBroadeningFitTarget> neutronModuleIterator(neutronReferences);
+		RefDataListIterator<Module,CalibrationModule::IntraBroadeningFitTarget> neutronModuleIterator(neutronReferences);
 		while (Module* module = neutronModuleIterator.iterate())
 		{
 			// Make sure the structure factors will be updated by the NeutronSQ module - set flag in the target Configurations

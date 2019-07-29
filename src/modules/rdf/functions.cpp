@@ -752,7 +752,7 @@ bool RDFModule::sumUnweightedGR(ProcessPool& procPool, Module* module, GenericLi
 bool RDFModule::sumUnweightedGR(ProcessPool& procPool, Module* parentModule, ModuleGroup* moduleGroup, GenericList& processingModuleData, PartialSet& summedUnweightedGR)
 {
 	// Determine total weighting factor over all Configurations, and set up a Configuration/weight RefList for simplicity
-	RefList<Configuration,double> configWeights;
+	RefDataList<Configuration,double> configWeights;
 	double totalWeight = 0.0;
 	RefListIterator<Module,bool> moduleIterator(moduleGroup->modules());
 	while (Module* module = moduleIterator.iterate())
@@ -766,7 +766,7 @@ bool RDFModule::sumUnweightedGR(ProcessPool& procPool, Module* parentModule, Mod
 			Messenger::print("Weight for Configuration '%s' is %f.\n", cfg->name(), weight);
 		
 			// Add our Configuration target
-			configWeights.add(cfg, weight);
+			configWeights.append(cfg, weight);
 			totalWeight += weight;
 		}
 	}
@@ -775,10 +775,10 @@ bool RDFModule::sumUnweightedGR(ProcessPool& procPool, Module* parentModule, Mod
 	// Calculate overall density of combined system, normalising the Configuration weights as we go, and create an AtomTypeList to cover all used types
 	double rho0 = 0.0;
 	AtomTypeList combinedAtomTypes;
-	RefListIterator<Configuration,double> weightsIterator(configWeights);
+	RefDataListIterator<Configuration,double> weightsIterator(configWeights);
 	while (Configuration* cfg = weightsIterator.iterate())
 	{
-		weightsIterator.currentData() /= totalWeight;
+		weightsIterator.setCurrentData(weightsIterator.currentData() / totalWeight);
 		rho0 += weightsIterator.currentData() / cfg->atomicDensity();
 
 		combinedAtomTypes.add(cfg->usedAtomTypesList());

@@ -33,7 +33,7 @@
  */
 
 // Constructor
-CalibrationModuleCostFunctions::CalibrationModuleCostFunctions(Dissolve& dissolve, ProcessPool& procPool, RefList<Module,bool>& intraBroadeningModules, RefList<Module,CalibrationModule::IntraBroadeningFitTarget>& intraBroadeningReferences) : dissolve_(dissolve), processPool_(procPool), intraBroadeningModules_(intraBroadeningModules), intraBroadeningReferences_(intraBroadeningReferences)
+CalibrationModuleCostFunctions::CalibrationModuleCostFunctions(Dissolve& dissolve, ProcessPool& procPool, RefList<Module,bool>& intraBroadeningModules, RefDataList<Module,CalibrationModule::IntraBroadeningFitTarget>& intraBroadeningReferences) : dissolve_(dissolve), processPool_(procPool), intraBroadeningModules_(intraBroadeningModules), intraBroadeningReferences_(intraBroadeningReferences)
 {
 }
 
@@ -62,7 +62,7 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(const Array<double>& 
 
 	// Go over NeutronSQ Modules, run the processing, and sum errors in an ReferenceData we have
 	double totalError = 0.0;
-	RefListIterator<Module,CalibrationModule::IntraBroadeningFitTarget> neutronModuleIterator(intraBroadeningReferences_);
+	RefDataListIterator<Module,CalibrationModule::IntraBroadeningFitTarget> neutronModuleIterator(intraBroadeningReferences_);
 	while (Module* module = neutronModuleIterator.iterate())
 	{
 		// Check for ReferenceData first
