@@ -110,7 +110,7 @@ void Weights::print() const
 	Messenger::print("  ------------------------------------------------------\n");
 	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next)
 	{
-		RefListIterator<Isotopologue,double> topeIterator(mix->isotopologues());
+		RefDataListIterator<Isotopologue,double> topeIterator(mix->isotopologues());
 		while (Isotopologue* tope = topeIterator.iterate())
 		{
 			if (topeIterator.isFirst()) Messenger::print("  %-15s  %-15s  %-10i  %f\n", mix->species()->name(), tope->name(), mix->speciesPopulation(), topeIterator.currentData());
@@ -205,7 +205,7 @@ void Weights::calculateWeightingMatrices()
 		}
 
 		// Loop over Isotopologues defined for this mixture
-		RefListIterator<Isotopologue,double> topeIterator(mix->isotopologues());
+		RefDataListIterator<Isotopologue,double> topeIterator(mix->isotopologues());
 		while (Isotopologue* tope = topeIterator.iterate())
 		{
 			// Sum the scattering lengths of each pair of AtomTypes, weighted by the speciesWeight and the fractional Isotopologue weight in the mix.
@@ -286,7 +286,7 @@ void Weights::createFromIsotopologues(const AtomTypeList& exchangeableTypes)
 	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next)
 	{
 		// We must now loop over the Isotopologues in the mixture
-		RefListIterator<Isotopologue,double> topeIterator(mix->isotopologues());
+		RefDataListIterator<Isotopologue,double> topeIterator(mix->isotopologues());
 		while (Isotopologue* tope = topeIterator.iterate())
 		{
 			// Loop over Atoms in the Species, searching for the AtomType/Isotope entry in the isotopes list of the Isotopologue
