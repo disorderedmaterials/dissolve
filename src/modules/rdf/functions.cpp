@@ -497,7 +497,7 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 		for (int n=0; n<cfg->nBonds(); ++n) bondPointers.append(bonds[n]);
 
 		// 1) Assemble a list of unique (in terms of parameters) SpeciesIntra pointers, accompanied by their associated SpeciesBond
-		RefList<SpeciesIntra,SpeciesBond*> bondIntra;
+		RefDataList<SpeciesIntra,SpeciesBond*> bondIntra;
 		for (int n=0; n<cfg->nBonds(); ++n)
 		{
 			SpeciesBond* sb = bonds[n]->speciesBond();
@@ -506,7 +506,7 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 
 		// TODO Parallelise this
 
-		RefListIterator<SpeciesIntra,SpeciesBond*> bondIterator(bondIntra);
+		RefDataListIterator<SpeciesIntra,SpeciesBond*> bondIterator(bondIntra);
 		while (SpeciesIntra* intra = bondIterator.iterate())
 		{
 			// Reset the dummy PartialSet
@@ -566,7 +566,7 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 		for (int n=0; n<cfg->nAngles(); ++n) anglePointers.append(angles[n]);
 
 		// 1) Assemble a list of unique (in terms of parameters) SpeciesIntra pointers, accompanied by their associated SpeciesBond
-		RefList<SpeciesIntra,SpeciesAngle*> angleIntra;
+		RefDataList<SpeciesIntra,SpeciesAngle*> angleIntra;
 		for (int n=0; n<cfg->nAngles(); ++n)
 		{
 			SpeciesAngle* sa = angles[n]->speciesAngle();
@@ -575,7 +575,7 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 
 		// TODO Parallelise this
 
-		RefListIterator<SpeciesIntra,SpeciesAngle*> angleIterator(angleIntra);
+		RefDataListIterator<SpeciesIntra,SpeciesAngle*> angleIterator(angleIntra);
 		while (SpeciesIntra* intra = angleIterator.iterate())
 		{
 			// Reset the dummy PartialSet
