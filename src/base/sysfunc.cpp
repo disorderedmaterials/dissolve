@@ -26,6 +26,7 @@
 #include <fstream>
 #include <iostream>
 #include <string.h>
+#include <ctype.h>
 
 using namespace std;
 
@@ -332,6 +333,64 @@ const char* DissolveSys::niceName(const char* original)
 	result.replace(" /\\#*$", '_');
 
 	return result.get();
+}
+
+
+/*
+ * Number Detection
+ */
+
+// Return whether the supplied string is a number
+bool DissolveSys::isNumber(const char* text)
+{
+	bool isFloatingPoint;
+	return isNumber(text, isFloatingPoint);
+}
+
+// Return whether the supplied string is a number, and also whether it is floating-point
+bool DissolveSys::isNumber(const char* text, bool& isFloatingPoint)
+{
+	// Assume integer to start with
+	isFloatingPoint = false;
+
+	int exponentIndex = -1;
+
+	const int length = strlen(text);
+	for (int n=0; n<length; ++n)
+	{
+		char c = text[n];
+		switch (text[n])
+		{
+			// Decimal point
+			case ('.'):
+				isFloatingPoint = true;
+				break;
+			// Negate or plus
+			case ('-'):
+			case ('+'):
+				// Only allow as first character or immediately following an exponent
+				if (n != (exponentIndex+1)) return false;
+				break;
+			// Exponentiation
+			case ('e'):
+			case ('E'):
+				// Can't be first character
+				if (n == 0) return false;
+
+				// Can't have more than one
+				if (exponentIndex > 0) return false;
+
+				// Store position
+				exponentIndex = n;
+				break;
+			default:
+				// If not a digit, return false
+				if (!isdigit(c)) return false;
+				break;
+		}
+	}
+
+	return true;
 }
 
 /*
