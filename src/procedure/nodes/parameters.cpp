@@ -54,6 +54,7 @@ EnumOptions<ParametersProcedureNode::ParametersNodeKeyword> ParametersProcedureN
 {
 	static EnumOptionsList ParametersNodeTypeKeywords = EnumOptionsList() <<
 		EnumOption(ParametersProcedureNode::DoubleKeyword,		"Double",	2) <<
+		EnumOption(ParametersProcedureNode::IntegerKeyword,		"Integer",	2) <<
 		EnumOption(ParametersProcedureNode::EndParametersKeyword,	"EndParameters");
 
 	static EnumOptions<ParametersProcedureNode::ParametersNodeKeyword> options("ParametersNodeKeyword", ParametersNodeTypeKeywords);
@@ -107,6 +108,13 @@ bool ParametersProcedureNode::read(LineParser& parser, const CoreData& coreData,
 				// Add the parameter to our own RefList so we can write out its info
 				parameterReferences_.add(parameter);
 				break;
+			case (ParametersProcedureNode::IntegerKeyword):
+				parameter = scopeStack.addParameter(parser.argc(1), parser.argi(2));
+				if (!parameter) return false;
+
+				// Add the parameter to our own RefList so we can write out its info
+				parameterReferences_.add(parameter);
+				break;
 			case (ParametersProcedureNode::EndParametersKeyword):
 				return true;
 				break;
@@ -128,7 +136,14 @@ bool ParametersProcedureNode::write(LineParser& parser, const char* prefix)
 	RefListIterator<ExpressionVariable,bool> parameterIterator(parameterReferences_);
 	while (ExpressionVariable* parameter = parameterIterator.iterate())
 	{
-		if (!parser.writeLineF("%s  %s  '%s'\n", prefix, parametersNodeKeywords().keyword(ParametersNodeKeyword::DoubleKeyword), parameter->name(), parameter->value())) return false;
+		if (parameter->value().isInteger())
+		{
+			if (!parser.writeLineF("%s  %s  '%s'  %i\n", prefix, parametersNodeKeywords().keyword(ParametersNodeKeyword::IntegerKeyword), parameter->name(), parameter->value().asInteger())) return false;
+		}
+		else
+		{
+			if (!parser.writeLineF("%s  %s  '%s'  %12.6e\n", prefix, parametersNodeKeywords().keyword(ParametersNodeKeyword::DoubleKeyword), parameter->name(), parameter->value().asDouble())) return false;
+		}
 	}
 
 	// Block End

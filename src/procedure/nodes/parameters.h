@@ -52,7 +52,7 @@ class ParametersProcedureNode : public ProcedureNode
 	 */
 	public:
 	// Node Keywords
-	enum ParametersNodeKeyword { DoubleKeyword, EndParametersKeyword, nParametersNodeKeywords };
+	enum ParametersNodeKeyword { DoubleKeyword, IntegerKeyword, EndParametersKeyword, nParametersNodeKeywords };
 	// Return enum option info for ParametersNodeKeyword
 	static EnumOptions<ParametersNodeKeyword> parametersNodeKeywords();
 
