@@ -704,7 +704,7 @@ bool RDFModule::sumUnweightedGR(ProcessPool& procPool, Module* module, GenericLi
 	summedUnweightedGR.setObjectTags(CharString("%s//UnweightedGR", module->uniqueName()));
 
 	// Determine total weighting factors and combined density over all Configurations, and set up a Configuration/weight RefList for simplicity
-	RefList<Configuration,double> configWeights;
+	RefDataList<Configuration,double> configWeights;
 	targetIterator.restart();
 	double totalWeight = 0.0;
 	while (Configuration* cfg = targetIterator.iterate())
@@ -714,13 +714,13 @@ bool RDFModule::sumUnweightedGR(ProcessPool& procPool, Module* module, GenericLi
 		Messenger::print("Weight for Configuration '%s' is %f.\n", cfg->name(), weight);
 	
 		// Add our Configuration target
-		configWeights.add(cfg, weight);
+		configWeights.append(cfg, weight);
 		totalWeight += weight;
 	}
 
 	// Calculate overall density of combined system
 	double rho0 = 0.0;
-	RefListIterator<Configuration,double> weightsIterator(configWeights);
+	RefDataListIterator<Configuration,double> weightsIterator(configWeights);
 	while (Configuration* cfg = weightsIterator.iterate()) rho0 += (weightsIterator.currentData() / totalWeight) / cfg->atomicDensity();
 	rho0 = 1.0 / rho0;
 
