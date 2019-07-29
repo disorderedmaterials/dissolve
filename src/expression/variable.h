@@ -65,7 +65,7 @@ class ExpressionVariable : public ExpressionNode
 	// Set value of node
 	bool set(ExpressionValue value);
 	// Return value
-	ExpressionValue value() const;
+	const ExpressionValue& value() const;
 	// Return pointer to value
 	ExpressionValue* valuePointer();
 

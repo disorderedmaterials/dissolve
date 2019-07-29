@@ -115,7 +115,7 @@ bool ExpressionVariable::set(ExpressionValue value)
 }
 
 // Return value
-ExpressionValue ExpressionVariable::value() const
+const ExpressionValue& ExpressionVariable::value() const
 {
 	return value_;
 }
