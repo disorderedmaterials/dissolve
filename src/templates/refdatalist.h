@@ -291,7 +291,7 @@ template <class T, class D> class RefDataList
 	RefDataItem<T,D>* addUnique(T* item, D extradata)
 	{
 		RefDataItem<T,D>* srch = contains(item);
-		if (srch == NULL) return add(item, extradata);
+		if (srch == NULL) return append(item, extradata);
 		else return srch;
 	}
 	// Cut item from list (orphan it)
