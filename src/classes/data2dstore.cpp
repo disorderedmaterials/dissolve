@@ -41,7 +41,7 @@ bool Data2DStore::addData(Data2DImportFileFormat fileAndFormat, const char* name
 	data->setName(name);
 
 	// Add reference
-	dataReferences_.add(data, fileAndFormat);
+	dataReferences_.append(data, fileAndFormat);
 
 	// Load the data
 	return fileAndFormat.importData(*data);
@@ -55,7 +55,7 @@ bool Data2DStore::addData(ProcessPool& pool, Data2DImportFileFormat fileAndForma
 	data->setName(name);
 
 	// Add reference
-	dataReferences_.add(data, fileAndFormat);
+	dataReferences_.append(data, fileAndFormat);
 
 	// Load the data
 	return fileAndFormat.importData(*data, &pool);
@@ -88,7 +88,7 @@ const List<Data2D>& Data2DStore::data() const
 }
 
 // Return list of all data references
-const RefList<Data2D,Data2DImportFileFormat>& Data2DStore::dataReferences() const
+const RefDataList<Data2D,Data2DImportFileFormat>& Data2DStore::dataReferences() const
 {
 	return dataReferences_;
 }

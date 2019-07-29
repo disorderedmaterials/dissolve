@@ -25,6 +25,7 @@
 #include "math/data1d.h"
 #include "io/import/data1d.h"
 #include "templates/list.h"
+#include "templates/refdatalist.h"
 
 // Forward Declarations
 /* none */
@@ -46,7 +47,7 @@ class Data1DStore
 	// List of contained data
 	List<Data1D> data_;
 	// References for Data1D and associated file/format
-	RefList<Data1D,Data1DImportFileFormat> dataReferences_;
+	RefDataList<Data1D,Data1DImportFileFormat> dataReferences_;
 
 	public:
 	// Load  data into store
@@ -60,7 +61,7 @@ class Data1DStore
 	// Return list of all data
 	const List<Data1D>& data() const;
 	// Return list of all data references
-	const RefList<Data1D,Data1DImportFileFormat>& dataReferences() const;
+	const RefDataList<Data1D,Data1DImportFileFormat>& dataReferences() const;
 };
 
 #endif

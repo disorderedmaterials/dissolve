@@ -41,7 +41,7 @@ bool Data3DStore::addData(Data3DImportFileFormat fileAndFormat, const char* name
 	data->setName(name);
 
 	// Add reference
-	dataReferences_.add(data, fileAndFormat);
+	dataReferences_.append(data, fileAndFormat);
 
 	// Load the data
 	return fileAndFormat.importData(*data);
@@ -55,7 +55,7 @@ bool Data3DStore::addData(ProcessPool& pool, Data3DImportFileFormat fileAndForma
 	data->setName(name);
 
 	// Add reference
-	dataReferences_.add(data, fileAndFormat);
+	dataReferences_.append(data, fileAndFormat);
 
 	// Load the data
 	return fileAndFormat.importData(*data, &pool);
@@ -88,7 +88,7 @@ const List<Data3D>& Data3DStore::data() const
 }
 
 // Return list of all data references
-const RefList<Data3D,Data3DImportFileFormat>& Data3DStore::dataReferences() const
+const RefDataList<Data3D,Data3DImportFileFormat>& Data3DStore::dataReferences() const
 {
 	return dataReferences_;
 }

@@ -21,6 +21,7 @@
 
 #include "module/keywordtypes/data2dstore.h"
 #include "base/lineparser.h"
+#include "templates/refdatalist.h"
 
 // Constructor
 Data2DStoreModuleKeyword::Data2DStoreModuleKeyword(Data2DStore& data2DStore) : ModuleKeywordData<Data2DStore&>(ModuleKeywordBase::Data2DStoreData, data2DStore)
@@ -70,7 +71,7 @@ bool Data2DStoreModuleKeyword::read(LineParser& parser, int startArg, const Core
 bool Data2DStoreModuleKeyword::write(LineParser& parser, const char* prefix)
 {
 	// Loop over list of one-dimensional data
-	RefListIterator<Data2D,Data2DImportFileFormat> dataIterator(data_.dataReferences());
+	RefDataListIterator<Data2D,Data2DImportFileFormat> dataIterator(data_.dataReferences());
 	while (Data2D* data = dataIterator.iterate())
 	{
 		Data2DImportFileFormat ff = dataIterator.currentData();
