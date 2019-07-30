@@ -446,7 +446,7 @@ template <class T, class D> class RefDataList
 		}
 	#endif
 		// Use array() function to return item
-		return array()[n]->item;
+		return array()[n]->item();
 	}
 	// Return (first) item with specified data
 	T* itemWithData(D data)
