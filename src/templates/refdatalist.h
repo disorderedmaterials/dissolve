@@ -136,7 +136,7 @@ template <class T, class D> class RefDataList
 #ifdef CHECKS
 		if ((index < 0) || (index >= nItems_))
 		{
-			printf("REFLIST_OPERATOR[] - Array index (%i) out of bounds (%i items in RefList) >>>>\n", index, nItems_);
+			printf("Array index (%i) out of bounds (%i items in RefDataList)\n", index, nItems_);
 			return NULL;
 		}
 #endif
@@ -257,7 +257,7 @@ template <class T, class D> class RefDataList
 		RefDataItem<T,D>* target = contains(targetItem);
 		if (target) return addAfter(target, item);
 
-		printf("Couldn't find specified item %p in RefList, so adding to end.\n", item);
+		printf("Couldn't find specified item %p in RefDataList, so adding to end.\n", item);
 		return add(item);
 	}
 	// Add reference before the specified item
@@ -284,14 +284,14 @@ template <class T, class D> class RefDataList
 		RefDataItem<T,D>* target = contains(targetItem);
 		if (target) return addBefore(target, item);
 
-		printf("Couldn't find specified item %p in RefList, so adding to start.\n", item);
+		printf("Couldn't find specified item %p in RefDataList, so adding to start.\n", item);
 		return addStart(item);
 	}
 	// Add reference to list, unless already there
-	RefDataItem<T,D>* addUnique(T* item, D extradata)
+	RefDataItem<T,D>* addUnique(T* item, D data)
 	{
 		RefDataItem<T,D>* srch = contains(item);
-		if (srch == NULL) return append(item, extradata);
+		if (srch == NULL) return append(item, data);
 		else return srch;
 	}
 	// Cut item from list (orphan it)
@@ -299,7 +299,7 @@ template <class T, class D> class RefDataList
 	{
 		if (item == NULL)
 		{
-			printf("Internal Error: NULL pointer passed to RefList<T>::cut().\n");
+			printf("Internal Error: NULL pointer passed to RefDataList<T>::cut().\n");
 			return;
 		}
 		RefDataItem<T,D>* prev, *next;
@@ -431,7 +431,7 @@ template <class T, class D> class RefDataList
 			count ++;
 			if (count == n) break;
 			ri = ri->next_;
-			if (ri == NULL) printf("Internal Error: Not enough items in list (requested %i, had %i) in RefList::fillArray()\n", n, nItems_);
+			if (ri == NULL) printf("Internal Error: Not enough items in list (requested %i, had %i) in RefDataList::fillArray()\n", n, nItems_);
 		}
 		regenerate_ = true;
 	}
@@ -441,7 +441,7 @@ template <class T, class D> class RefDataList
 	#ifdef CHECKS
 		if ((n < 0) || (n >= nItems_))
 		{
-			printf("REFLIST_OPERATOR[] - Array index (%i) out of bounds (%i items in RefList) >>>>\n", n, nItems_);
+			printf("Array index (%i) out of bounds (%i items in RefDataList)\n", n, nItems_);
 			return NULL;
 		}
 	#endif
@@ -480,6 +480,7 @@ template <class T, class D> class RefDataList
 	/*
 	 * Search
 	 */
+	public:
 	// Search references for item
 	RefDataItem<T,D>* contains(T* item) const
 	{
@@ -593,7 +594,7 @@ template <class T, class D> class RefDataListIterator
 	void setCurrentData(D data)
 	{
 		if (currentItem_) currentItem_->setData(data);
-		else Messenger::error("No current item, so can't set data in RefDataListIterator.\n");
+		else printf("No current item, so can't set data in RefDataListIterator.\n");
 	}
 	// Return reference to current data
 	const D& currentData() const
