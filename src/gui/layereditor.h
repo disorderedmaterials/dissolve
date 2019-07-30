@@ -24,7 +24,7 @@
 
 #include "gui/ui_layereditor.h"
 #include "base/charstring.h"
-#include "templates/reflist.h"
+#include "templates/refdatalist.h"
 
 // Forward Declarations
 class Configuration;
@@ -60,7 +60,7 @@ class LayerEditor : public QWidget
 	// Parent Configuration (if we are local to one)
 	Configuration* localConfiguration_;
 	// Module categories and their associated MimeTreeWidgetItems
-	RefList<MimeTreeWidgetItem,CharString> moduleCategories_;
+	RefDataList<MimeTreeWidgetItem,CharString> moduleCategories_;
 
 	public:
 	// Set up the LayerEditor for the specified ModuleLayer
