@@ -337,7 +337,7 @@ void CharString::operator+=(const char* s)
 }
 
 // Conversion operators
-CharString::operator const char*()
+CharString::operator const char*() const
 {
 	return get();
 }
