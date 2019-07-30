@@ -44,7 +44,7 @@ ModuleKeywordsWidget::~ModuleKeywordsWidget()
  */
 
 // Create widget for specified keyword
-QWidget* ModuleKeywordsWidget::createKeywordWidget(DissolveWindow* dissolveWindow, RefList<KeywordWidgetBase,bool>& keywordWidgets, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* uniqueName)
+QWidget* ModuleKeywordsWidget::createKeywordWidget(DissolveWindow* dissolveWindow, RefList<KeywordWidgetBase>& keywordWidgets, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* uniqueName)
 {
 	QWidget* widget = NULL;
 	KeywordWidgetBase* base = NULL;
@@ -167,7 +167,7 @@ QWidget* ModuleKeywordsWidget::createKeywordWidget(DissolveWindow* dissolveWindo
 	if (widget)
 	{
 		widget->setToolTip(keyword->description());
-		keywordWidgets.add(base);
+		keywordWidgets.append(base);
 	}
 
 	return widget;
@@ -188,9 +188,9 @@ void ModuleKeywordsWidget::setUp(DissolveWindow* dissolveWindow, Module* module)
 	const CoreData& coreData = dissolveWindow_->dissolve().coreData();
 
 	// Loop over keyword groups first - we'll keep track of which keywords are not part of a group, and these in an 'Other' tab at the end
-	RefList<ModuleKeywordBase,bool> remainingKeywords;
+	RefList<ModuleKeywordBase> remainingKeywords;
 	ListIterator<ModuleKeywordBase> keywordIterator(module->keywords().keywords());
-	while (ModuleKeywordBase* keyword = keywordIterator.iterate()) remainingKeywords.add(keyword);
+	while (ModuleKeywordBase* keyword = keywordIterator.iterate()) remainingKeywords.append(keyword);
 
 	ListIterator<ModuleKeywordGroup> groupIterator(module->keywordGroups());
 	while (ModuleKeywordGroup* group = groupIterator.iterate())
@@ -200,7 +200,7 @@ void ModuleKeywordsWidget::setUp(DissolveWindow* dissolveWindow, Module* module)
 		QFormLayout* groupLayout = new QFormLayout(groupWidget);
 
 		// Loop over keywords in the group and add them to our groupbox
-		RefListIterator<ModuleKeywordBase,bool> groupKeywordIterator(group->keywords());
+		RefListIterator<ModuleKeywordBase> groupKeywordIterator(group->keywords());
 		while (ModuleKeywordBase* keyword = groupKeywordIterator.iterate())
 		{
 			// Create / setup the keyword widget
@@ -232,7 +232,7 @@ void ModuleKeywordsWidget::setUp(DissolveWindow* dissolveWindow, Module* module)
 		QWidget* groupWidget = new QWidget;
 		QFormLayout* groupLayout = new QFormLayout(groupWidget);
 
-		RefListIterator<ModuleKeywordBase,bool> remainingKeywordsIterator(remainingKeywords);
+		RefListIterator<ModuleKeywordBase> remainingKeywordsIterator(remainingKeywords);
 		while (ModuleKeywordBase* keyword = remainingKeywordsIterator.iterate())
 		{
 			// Create / setup the keyword widget
@@ -263,9 +263,8 @@ void ModuleKeywordsWidget::updateControls()
 	refreshing_ = true;
 
 	// Update all our keyword widgets
-	RefListIterator<KeywordWidgetBase,bool> keywordIterator(keywordWidgets_);
+	RefListIterator<KeywordWidgetBase> keywordIterator(keywordWidgets_);
 	while (KeywordWidgetBase* keywordWidget = keywordIterator.iterate()) keywordWidget->updateValue();
 
 	refreshing_ = false;
 }
-

@@ -26,7 +26,7 @@
 #include "base/lineparser.h"
 
 // Constructor
-SpeciesSiteReferenceListModuleKeyword::SpeciesSiteReferenceListModuleKeyword(RefList<SpeciesSite,bool>& references) : ModuleKeywordData< RefList<SpeciesSite,bool>& >(ModuleKeywordData::SpeciesSiteReferenceListData, references)
+SpeciesSiteReferenceListModuleKeyword::SpeciesSiteReferenceListModuleKeyword(RefList<SpeciesSite>& references) : ModuleKeywordData< RefList<SpeciesSite>& >(ModuleKeywordData::SpeciesSiteReferenceListData, references)
 {
 }
 
@@ -70,7 +70,7 @@ bool SpeciesSiteReferenceListModuleKeyword::read(LineParser& parser, int startAr
 		if (!site) return Messenger::error("Error setting SpeciesSite - no such site named '%s' exists in Species '%s'.\n", parser.argc(n+1), sp->name());
 
 		// Add site to the list
-		data_.add(site);
+		data_.append(site);
 	}
 
 	set_ = true;
@@ -83,7 +83,7 @@ bool SpeciesSiteReferenceListModuleKeyword::write(LineParser& parser, const char
 {
 	// Loop over list of SpeciesSiteReferences
 	CharString sites;
-	RefListIterator<SpeciesSite,bool> refIterator(data_);
+	RefListIterator<SpeciesSite> refIterator(data_);
 	while (SpeciesSite* site = refIterator.iterate()) sites.strcatf("  '%s'  '%s'", site->parent()->name(), site->name());
 
 	if (!parser.writeLineF("%s%s%s\n", prefix, keyword(), sites.get())) return false;

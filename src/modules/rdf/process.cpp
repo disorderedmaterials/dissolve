@@ -78,7 +78,7 @@ bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	 * Regardless of whether we are a main processing task (summing some combination of Configuration's partials) or multiple independent Configurations,
 	 * we must loop over the specified targetConfigurations_ and calculate the partials for each.
 	 */
-	RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
+	RefListIterator<Configuration> configIterator(targetConfigurations_);
 	while (Configuration* cfg = configIterator.iterate())
 	{
 		// Set up process pool - must do this to ensure we are using all available processes

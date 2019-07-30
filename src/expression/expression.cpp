@@ -74,9 +74,23 @@ void Expression::clear()
 	nodes_.clear();
 	statements_.clear();
 
-	// Clear variables and constants, except those that are persistent
-	variables_.removeIfData(false);
-	constants_.removeIfData(false);
+	// Clear variables and constants, except those that are in the persistent nodes list
+	RefListItem<ExpressionVariable>* varRef = variables_.first(), *nextRef;
+	while (varRef)
+	{
+		nextRef = varRef->next();
+		if (!persistentNodes_.contains(varRef->item())) variables_.remove(varRef);
+		varRef = nextRef;
+	}
+
+	varRef = constants_.first();
+	while (varRef)
+	{
+		nextRef = varRef->next();
+		if (!persistentNodes_.contains(varRef->item())) constants_.remove(varRef);
+		varRef = nextRef;
+	}
+
 	externalVariables_.clear();
 }
 
@@ -101,12 +115,12 @@ void Expression::print()
 {
 	printf("Leaf Structure (%i statements):\n", statements_.nItems());
 	int n=1;
-	for (RefListItem<ExpressionNode,int> *ri = statements_.first(); ri != NULL; ri = ri->next)
+	for (RefListItem<ExpressionNode> *ri = statements_.first(); ri != NULL; ri = ri->next())
 	{
 		printf("-------------------------------------------------------------\n");
 		printf("Statement %i:\n", n);
-		printf("item pointer is %p\n", ri->item);
-		ri->item->nodePrint(1);
+		printf("item pointer is %p\n", ri->item());
+		ri->item()->nodePrint(1);
 		n ++;
 	}
 	printf("-------------------------------------------------------------\n");
@@ -126,7 +140,7 @@ bool Expression::addStatement(ExpressionNode* leaf)
 	}
 	Messenger::printVerbose("Added statement node %p\n", leaf);
 	leaf->setParent(this);
-	statements_.add(leaf);
+	statements_.append(leaf);
 
 	return true;
 }
@@ -141,6 +155,7 @@ ExpressionNode* Expression::addOperator(ExpressionFunctions::Function func, Expr
 	ExpressionFunction* leaf = new ExpressionFunction(func);
 	nodes_.own(leaf);
 	Messenger::printVerbose("Added operator '%s' (%p)...\n", ExpressionFunctions::data[func].keyword, leaf);
+
 	// Add arguments and set parent
 	leaf->addArguments(1,arg1);
 	leaf->setParent(this);
@@ -251,7 +266,8 @@ ExpressionVariable* Expression::createConstant(double d, bool persistent)
 	if (persistent) persistentNodes_.own(var);
 	else nodes_.own(var);
 
-	constants_.add(var, persistent);
+	// Store reference
+	constants_.append(var);
 
 	return var;
 }
@@ -274,7 +290,8 @@ ExpressionVariable* Expression::createVariable(const char* name, bool persistent
 	if (persistent) persistentNodes_.own(var);
 	else nodes_.own(var);
 
-	variables_.add(var, persistent);
+	// Store reference
+	variables_.append(var);
 
 	Messenger::printVerbose("Created variable '%s'.\n", name);
 
@@ -293,7 +310,7 @@ ExpressionVariable* Expression::createVariableWithValue(const char* name, double
 }
 
 // Set list of external variables
-void Expression::setExternalVariables(RefList<ExpressionVariable,bool> externalVariables)
+void Expression::setExternalVariables(RefList<ExpressionVariable> externalVariables)
 {
 	externalVariables_ = externalVariables;
 }
@@ -302,7 +319,7 @@ void Expression::setExternalVariables(RefList<ExpressionVariable,bool> externalV
 ExpressionVariable* Expression::variable(const char* name)
 {
 	// Search external variables
-	RefListIterator<ExpressionVariable,bool> externalIterator(externalVariables_);
+	RefListIterator<ExpressionVariable> externalIterator(externalVariables_);
 	while (ExpressionVariable* variable = externalIterator.iterate()) if (DissolveSys::sameString(variable->name(), name))
 	{
 		Messenger::printVerbose("...external variable '%s' found.\n", name);
@@ -310,7 +327,7 @@ ExpressionVariable* Expression::variable(const char* name)
 	}
 
 	// Search internal variables
-	RefListIterator<ExpressionVariable,bool> internalIterator(variables_);
+	RefListIterator<ExpressionVariable> internalIterator(variables_);
 	while (ExpressionVariable* variable = internalIterator.iterate()) if (DissolveSys::sameString(variable->name(), name))
 	{
 		Messenger::printVerbose("...internal variable '%s' found.\n", name);
@@ -322,13 +339,13 @@ ExpressionVariable* Expression::variable(const char* name)
 }
 
 // Return variables
-RefList<ExpressionVariable,bool>& Expression::variables()
+RefList<ExpressionVariable>& Expression::variables()
 {
 	return variables_;
 }
 
 // Return constants
-RefList<ExpressionVariable,bool>& Expression::constants()
+RefList<ExpressionVariable>& Expression::constants()
 {
 	return constants_;
 }
@@ -341,10 +358,10 @@ RefList<ExpressionVariable,bool>& Expression::constants()
 bool Expression::execute(ExpressionValue& result)
 {
 	bool success = true;
-	for (RefListItem<ExpressionNode,int> *ri = statements_.first(); ri != NULL; ri = ri->next)
+	for (RefListItem<ExpressionNode> *ri = statements_.first(); ri != NULL; ri = ri->next())
 	{
-// 		ri->item->nodePrint(1);
-		success = ri->item->execute(result);
+// 		ri->item()->nodePrint(1);
+		success = ri->item()->execute(result);
 		if (!success) break;
 	}
 

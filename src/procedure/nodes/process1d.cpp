@@ -104,13 +104,13 @@ const Data1D& Process1DProcedureNode::processedData() const
 // Add site population normaliser
 void Process1DProcedureNode::addSitePopulationNormaliser(SelectProcedureNode* selectNode)
 {
-	sitePopulationNormalisers_.add(selectNode, 1.0);
+	sitePopulationNormalisers_.append(selectNode);
 }
 
 // Add number density normaliser
 void Process1DProcedureNode::addNumberDensityNormaliser(SelectProcedureNode* selectNode)
 {
-	numberDensityNormalisers_.add(selectNode);
+	numberDensityNormalisers_.append(selectNode);
 }
 
 // Set whether to normalise by factor
@@ -202,7 +202,7 @@ bool Process1DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg,
 	data = node->accumulatedData();
 
 	// Normalisation by number of sites?
-	RefListIterator<SelectProcedureNode,double> siteNormaliserIterator(sitePopulationNormalisers_);
+	RefListIterator<SelectProcedureNode> siteNormaliserIterator(sitePopulationNormalisers_);
 	while (SelectProcedureNode* selectNode = siteNormaliserIterator.iterate()) data /= selectNode->nAverageSites();
 
 	// Normalisation by spherical shell?
@@ -220,7 +220,7 @@ bool Process1DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg,
 	}
 
 	// Normalisation by number density of sites?
-	RefListIterator<SelectProcedureNode,double> numberDensityIterator(numberDensityNormalisers_);
+	RefListIterator<SelectProcedureNode> numberDensityIterator(numberDensityNormalisers_);
 	while (SelectProcedureNode* selectNode = numberDensityIterator.iterate()) data /= (selectNode->nAverageSites() / cfg->box()->volume());
 
 	// Normalisation by factor?
@@ -291,7 +291,7 @@ bool Process1DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				{
 					SelectProcedureNode* selectNode = dynamic_cast<SelectProcedureNode*>(scopeStack.node(parser.argc(n), ProcedureNode::SelectNode));
 					if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(n), process1DNodeKeywords().keyword(Process1DProcedureNode::NSitesKeyword));
-					sitePopulationNormalisers_.add(selectNode, 1.0);
+					sitePopulationNormalisers_.append(selectNode);
 				}
 				break;
 			case (Process1DProcedureNode::NumberDensityKeyword):
@@ -299,7 +299,7 @@ bool Process1DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				{
 					SelectProcedureNode* selectNode = dynamic_cast<SelectProcedureNode*>(scopeStack.node(parser.argc(n), ProcedureNode::SelectNode));
 					if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(n), process1DNodeKeywords().keyword(Process1DProcedureNode::NumberDensityKeyword));
-					numberDensityNormalisers_.add(selectNode, 1.0);
+					numberDensityNormalisers_.append(selectNode);
 				}
 				break;
 			case (Process1DProcedureNode::NormaliseToOneKeyword):

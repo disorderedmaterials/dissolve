@@ -62,7 +62,7 @@ void RenderableGroup::associateRenderable(Renderable* renderable)
 		return;
 	}
 
-	renderables_.add(renderable);
+	renderables_.append(renderable);
 
 	// Apply colouring information if necessary
 	setRenderableColour(renderable);
@@ -95,7 +95,7 @@ bool RenderableGroup::usedByRenderable(Renderable* renderable) const
 }
 
 // Return list of Renderables using this group
-const RefList<Renderable,int>& RenderableGroup::renderables() const
+const RefList<Renderable>& RenderableGroup::renderables() const
 {
 	return renderables_;
 }
@@ -161,7 +161,7 @@ void RenderableGroup::setRenderableColour(Renderable* rend)
 // Set all renderable colours
 void RenderableGroup::setRenderableColours()
 {
-	RefListIterator<Renderable,int> renderableIterator(renderables_);
+	RefListIterator<Renderable> renderableIterator(renderables_);
 	while (Renderable* renderable = renderableIterator.iterate()) setRenderableColour(renderable);
 }
 
@@ -206,7 +206,7 @@ void RenderableGroup::setRenderableLineStyle(Renderable* rend)
 // Set all Renderable line styles
 void RenderableGroup::setRenderableLineStyles()
 {
-	RefListIterator<Renderable,int> renderableIterator(renderables_);
+	RefListIterator<Renderable> renderableIterator(renderables_);
 	while (Renderable* renderable = renderableIterator.iterate()) setRenderableLineStyle(renderable);
 }
 
@@ -242,7 +242,7 @@ void RenderableGroup::setRenderableVerticalShift(Renderable* renderable, int ren
 void RenderableGroup::setRenderableVerticalShifts()
 {
 	int index = 0;
-	RefListIterator<Renderable,int> renderableIterator(renderables_);
+	RefListIterator<Renderable> renderableIterator(renderables_);
 	while (Renderable* renderable = renderableIterator.iterate()) setRenderableVerticalShift(renderable, index++);
 }
 

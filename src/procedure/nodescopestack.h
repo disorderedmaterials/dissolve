@@ -48,7 +48,7 @@ class NodeScopeStack
 	// Scope stack
 	List<NodeScope> stack_;
 	// References for all nodes added
-	RefList<ProcedureNode,bool> nodes_;
+	RefList<ProcedureNode> nodes_;
 	// Counter for SelectNode added to the stack at any point
 	int nSelectNodesAdded_;
 
@@ -84,13 +84,13 @@ class NodeScopeStack
 	// List of parameters (as ExpressionVariables)
 	List<ExpressionNode> parameters_;
 	// Reference list of parameters (for passing to Expression::generate())
-	RefList<ExpressionVariable,bool> parameterReferences_;
+	RefList<ExpressionVariable> parameterReferences_;
 
 	public:
 	// Add new parameter for Procedure
 	ExpressionVariable* addParameter(const char* name, ExpressionValue value);
 	// Return reference list of parameters (for passing to Expression::generate())
-	RefList<ExpressionVariable,bool> parameterReferences() const;
+	RefList<ExpressionVariable> parameterReferences() const;
 };
 
 #endif

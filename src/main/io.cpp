@@ -202,7 +202,7 @@ bool Dissolve::saveInput(const char* filename)
 		}
 
 		// Bonds
-		RefList<SpeciesBond,bool> bondTypes[SpeciesBond::nBondTypes];
+		RefList<SpeciesBond> bondTypes[SpeciesBond::nBondTypes];
 		if (sp->nBonds() > 0)
 		{
 			if (!parser.writeLineF("\n  # Bonds\n")) return false;
@@ -220,7 +220,7 @@ bool Dissolve::saveInput(const char* filename)
 				}
 
 				// Add the bond to the reflist corresponding to its indicated bond type (unless it is a SingleBond, which we will ignore as this is the default)
-				if (b->bondType() != SpeciesBond::SingleBond) bondTypes[b->bondType()].add(b);
+				if (b->bondType() != SpeciesBond::SingleBond) bondTypes[b->bondType()].append(b);
 			}
 
 			// Any bond type information to write?
@@ -233,7 +233,7 @@ bool Dissolve::saveInput(const char* filename)
 					if (!parser.writeLineF("\n  # Bond Types\n")) return false;
 					bondTypeHeaderWritten = true;
 				}
-				RefListIterator<SpeciesBond,bool> bondIterator(bondTypes[bt]);
+				RefListIterator<SpeciesBond> bondIterator(bondTypes[bt]);
 				while (SpeciesBond* bond = bondIterator.iterate()) if (!parser.writeLineF("  %s  %3i  %3i  %s\n", SpeciesBlock::keyword(SpeciesBlock::BondTypeKeyword), bond->indexI()+1, bond->indexJ()+1, SpeciesBond::bondType((SpeciesBond::BondType) bt))) return false;
 			}
 		}
@@ -283,9 +283,9 @@ bool Dissolve::saveInput(const char* filename)
 			for (SpeciesGrain* sg = sp->grains(); sg != NULL; sg = sg->next)
 			{
 				if (!parser.writeLineF("  %s  '%s'", SpeciesBlock::keyword(SpeciesBlock::GrainKeyword), sg->name())) return false;
-				for (RefListItem<SpeciesAtom,int>* ri = sg->atoms(); ri != NULL; ri = ri->next)
+				for (RefListItem<SpeciesAtom>* ri = sg->atoms(); ri != NULL; ri = ri->next())
 				{
-					if (!parser.writeLineF("  %i", ri->item->userIndex())) return false;
+					if (!parser.writeLineF("  %i", ri->item()->userIndex())) return false;
 				}
 				if (!parser.writeLineF("\n")) return false;
 			}
@@ -407,7 +407,7 @@ bool Dissolve::saveInput(const char* filename)
 			if (!module->enabled() && (!parser.writeLineF("    Disabled\n"))) return false;
 
 			// Write Configuration target(s)
-			RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
+			RefListIterator<Configuration> configIterator(module->targetConfigurations());
 			while (Configuration* cfg = configIterator.iterate())
 			{
 				if (configIterator.isFirst() && (!parser.writeLineF("\n"))) return false;
@@ -604,7 +604,7 @@ bool Dissolve::saveRestart(const char* filename)
 	}
 
 	// Module timing information
-	RefListIterator<Module,bool> moduleIterator(moduleInstances_);
+	RefListIterator<Module> moduleIterator(moduleInstances_);
 	while (Module* module = moduleIterator.iterate())
 	{
 		if (!parser.writeLineF("Timing  %s\n", module->uniqueName())) return false;

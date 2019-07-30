@@ -77,9 +77,9 @@ class Fit1DProcedureNode : public ProcedureNode
 	// X variable for equation
 	ExpressionVariable* xVariable_;
 	// List of variables that we use, but are not fitting
-	RefList<ExpressionVariable, bool> constants_;
+	RefList<ExpressionVariable> constants_;
 	// List of variables which we are fitting
-	RefList<ExpressionVariable, bool> fitTargets_;
+	RefList<ExpressionVariable> fitTargets_;
 	// Whether to save data after normalisation
 	bool saveData_;
 

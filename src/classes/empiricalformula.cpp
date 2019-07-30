@@ -108,13 +108,13 @@ const char* EmpiricalFormula::formula(const Species* species, bool richText)
 }
 
 // Return empirical formula for supplied SpeciesAtom reflist
-const char* EmpiricalFormula::formula(const RefList<SpeciesAtom,bool>& atoms, bool richText)
+const char* EmpiricalFormula::formula(const RefList<SpeciesAtom>& atoms, bool richText)
 {
 	static EmpiricalFormula formula;
 
 	formula.reset();
 
-	RefListIterator<SpeciesAtom,bool> atomIterator(atoms);
+	RefListIterator<SpeciesAtom> atomIterator(atoms);
 	while (SpeciesAtom* i = atomIterator.iterate()) formula.add(i->element());
 
 	return (richText ? formula.richTextFormula() : formula.formula());

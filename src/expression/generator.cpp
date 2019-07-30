@@ -379,7 +379,7 @@ bool ExpressionGenerator::generate(Expression& expression, const char* expressio
 	return result;
 }
 
-bool ExpressionGenerator::generate(Expression& expression, const char* expressionText, RefList<ExpressionVariable,bool> externalVariables)
+bool ExpressionGenerator::generate(Expression& expression, const char* expressionText, RefList<ExpressionVariable> externalVariables)
 {
 	// Create a generator
 	ExpressionGenerator generator(expression, expressionText);

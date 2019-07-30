@@ -260,7 +260,7 @@ bool Dissolve::setUpSimulation()
 			else
 			{
 				Messenger::print("      %i Configuration %s:\n", module->nTargetConfigurations(), module->nTargetConfigurations() == 1 ? "target" : "targets");
-				RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
+				RefListIterator<Configuration> configIterator(module->targetConfigurations());
 				while (Configuration* cfg = configIterator.iterate()) Messenger::print("      --> %s\n", cfg->name());
 			}
 		}
@@ -274,7 +274,7 @@ bool Dissolve::setUpSimulation()
 	Messenger::print("*** Performing Module set-up...\n");
 
 	// Loop over all used modules (in Configurations and ModuleLayers)
-	RefListIterator<Module,bool> moduleIterator(moduleInstances_);
+	RefListIterator<Module> moduleIterator(moduleInstances_);
 	while (Module* module = moduleIterator.iterate())
 	{
 		if (!module->setUp(*this, worldPool())) return false;

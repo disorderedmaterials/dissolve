@@ -143,7 +143,7 @@ bool IsotopologueMix::setIsotopologue(Isotopologue* iso, double relPop)
 		Messenger::warn("Warning: IsotopologueMix does not contain the Isotopologue '%s', so its fraction can't be set.\n", iso->name());
 		return false;
 	}
-	tope->setData(relPop);
+	tope->data() = relPop;
 
 	return true;
 }

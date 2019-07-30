@@ -56,7 +56,7 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 	 */
 	protected:
 	// Atom type data, grouped by element
-	Array< RefList<ForcefieldAtomType,bool> > atomTypesByElementPrivate_;
+	Array< RefList<ForcefieldAtomType> > atomTypesByElementPrivate_;
 
 	protected:
 	// Determine and return atom type for specified SpeciesAtom
@@ -74,11 +74,11 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 	 */
 	private:
 	// Bond terms of the Forcefield
-	RefList<ForcefieldBondTerm,bool> bondTerms_;
+	RefList<ForcefieldBondTerm> bondTerms_;
 	// Angle terms of the Forcefield
-	RefList<ForcefieldAngleTerm,bool> angleTerms_;
+	RefList<ForcefieldAngleTerm> angleTerms_;
 	// Torsion terms of the Forcefield
-	RefList<ForcefieldTorsionTerm,bool> torsionTerms_;
+	RefList<ForcefieldTorsionTerm> torsionTerms_;
 
 	public:
 	// Register specified bond term

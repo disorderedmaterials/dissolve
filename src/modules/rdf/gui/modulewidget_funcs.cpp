@@ -128,7 +128,7 @@ void RDFModuleWidget::setGraphDataTargets(RDFModule* module)
 
 	// Add Configuration targets to the combo box
 	ui.TargetCombo->clear();
-	RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
+	RefListIterator<Configuration> configIterator(module->targetConfigurations());
 	while (Configuration* config = configIterator.iterate()) ui.TargetCombo->addItem(config->name(), VariantPointer<Configuration>(config));
 
 	// Loop over Configurations and add total G(R)

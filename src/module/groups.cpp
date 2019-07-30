@@ -84,7 +84,7 @@ ModuleGroup* ModuleGroups::addModule(Module* module, const char* groupName)
 		groups_.own(moduleGroup);
 	}
 
-	allModules_.add(module, moduleGroup);
+	allModules_.append(module, moduleGroup);
 	moduleGroup->add(module);
 
 	return moduleGroup;
@@ -103,7 +103,7 @@ const List<ModuleGroup>& ModuleGroups::groups() const
 }
 
 // Return reflist of all Modules present over all groups
-const RefList<Module,ModuleGroup*>& ModuleGroups::modules() const
+const RefDataList<Module,ModuleGroup*>& ModuleGroups::modules() const
 {
 	return allModules_;
 }
@@ -117,7 +117,7 @@ bool ModuleGroups::contains(Module* module) const
 // Return name of group assigned to specified Module (if present)
 const char* ModuleGroups::groupName(Module* module) const
 {
-	RefListItem<Module,ModuleGroup*>* ri = allModules_.contains(module);
+	RefDataItem<Module,ModuleGroup*>* ri = allModules_.contains(module);
 
-	return (ri ? ri->data->name() : "Default");
+	return (ri ? ri->data()->name() : "Default");
 }

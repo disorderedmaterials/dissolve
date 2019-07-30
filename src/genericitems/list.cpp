@@ -121,14 +121,14 @@ int GenericList::version(const char* name, const char* prefix) const
 }
 
 // Return list of all items with specified prefix (before first '_')
-RefList<GenericItem,bool> GenericList::listWithPrefix(const char* prefix)
+RefList<GenericItem> GenericList::listWithPrefix(const char* prefix)
 {
-	RefList<GenericItem,bool> items;
+	RefList<GenericItem> items;
 	CharString itemUniqueName;
 	for (GenericItem* item = items_.first(); item != NULL; item = item->next)
 	{
 		itemUniqueName = DissolveSys::beforeChar(item->name(), '_');
-		if (itemUniqueName == prefix) items.add(item);
+		if (itemUniqueName == prefix) items.append(item);
 	}
 
 	return items;
@@ -194,7 +194,7 @@ bool GenericList::equality(ProcessPool& procPool)
 	// Loop over processes - the target process will loop over its module data, sending out the name to the slaves.
 	// If found, we note that we've already done this data, check it for equality, and move on.
 	// If we can't find the data, we'll complain but move on.
-	RefList<GenericItem,bool> checkedItems;
+	RefList<GenericItem> checkedItems;
 	CharString itemName, itemClassName;
 	int nFailed = 0;
 	for (int n=0; n<procPool.nProcesses(); ++n)
@@ -237,7 +237,7 @@ bool GenericList::equality(ProcessPool& procPool)
 				if (!item->equality(procPool)) return Messenger::error("Failed equality check for module data '%s'.\n", item->name());
 
 				// Add the item to our checked list
-				checkedItems.add(item);
+				checkedItems.append(item);
 			}
 
 			// No more items, so send the 'false' signal
@@ -272,7 +272,7 @@ bool GenericList::equality(ProcessPool& procPool)
 			if (!item->equality(procPool)) return Messenger::error("Failed equality check for module data '%s'.\n", item->name());
 
 			// Add the item to our checked list
-			checkedItems.add(item);
+			checkedItems.append(item);
 		}
 	}
 

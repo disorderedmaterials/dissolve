@@ -50,7 +50,7 @@ const char* ModuleKeywordGroup::name() const
 // Add specified keyword to the group
 void ModuleKeywordGroup::addKeywordToGroup(ModuleKeywordBase* object)
 {
-	keywords_.add(object);
+	keywords_.append(object);
 }
 
 // Add keyword (pass-thru to ModuleKeywordList)
@@ -74,7 +74,7 @@ bool ModuleKeywordGroup::add(ModuleKeywordBase* object, const char* keyword, con
 }
 
 // Return first keyword in list
-RefList<ModuleKeywordBase,bool>& ModuleKeywordGroup::keywords()
+RefList<ModuleKeywordBase>& ModuleKeywordGroup::keywords()
 {
 	return keywords_;
 }

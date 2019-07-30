@@ -26,7 +26,7 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-IsotopologueReferenceListModuleKeyword::IsotopologueReferenceListModuleKeyword(List<IsotopologueReference>& references) : ModuleKeywordData<IsotopologueReference>(RefList<SpeciesSite,bool>&, references)
+IsotopologueReferenceListModuleKeyword::IsotopologueReferenceListModuleKeyword(List<IsotopologueReference>& references) : ModuleKeywordData<IsotopologueReference>(RefList<SpeciesSite>&, references)
 {
 }
 

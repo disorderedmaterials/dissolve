@@ -196,7 +196,7 @@ SpeciesBond* SpeciesAtom::bond(int index)
 }
 
 // Return bonds list
-const RefList<SpeciesBond,int>& SpeciesAtom::bonds() const
+const RefList<SpeciesBond>& SpeciesAtom::bonds() const
 {
 	return bonds_;
 }
@@ -204,7 +204,7 @@ const RefList<SpeciesBond,int>& SpeciesAtom::bonds() const
 // Return whether Bond to specified Atom exists
 SpeciesBond* SpeciesAtom::hasBond(SpeciesAtom* j)
 {
-	for (RefListItem<SpeciesBond,int>* ri = bonds_.first(); ri != NULL; ri = ri->next) if (ri->item->partner(this) == j) return ri->item;
+	for (RefListItem<SpeciesBond>* ri = bonds_.first(); ri != NULL; ri = ri->next()) if (ri->item()->partner(this) == j) return ri->item();
 	return NULL;
 }
 

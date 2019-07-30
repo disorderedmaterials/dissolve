@@ -296,7 +296,7 @@ class DissolveWindow : public QMainWindow
 	// Make specified processing layer tab the current one
 	void setCurrentTab(ModuleLayer* layer);
 	// Return reference list of all current tabs
-	RefList<MainTab,bool> allTabs() const;
+	RefList<MainTab> allTabs() const;
 
 	public:
 	// Add tab for specified Module target

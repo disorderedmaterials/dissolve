@@ -144,7 +144,7 @@ bool Isotopologue::setAtomTypeIsotope(AtomType* at, Isotope* isotope)
 		return false;
 	}
 	
-	rdi->setData(isotope);
+	rdi->data() = isotope;
 
 	return true;
 }

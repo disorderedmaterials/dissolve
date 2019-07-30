@@ -357,16 +357,16 @@ void DissolveWindow::setCurrentTab(ModuleLayer* layer)
 }
 
 // Return reference list of all current tabs
-RefList<MainTab,bool> DissolveWindow::allTabs() const
+RefList<MainTab> DissolveWindow::allTabs() const
 {
-	RefList<MainTab,bool> tabs;
+	RefList<MainTab> tabs;
 
-	tabs.add(forcefieldTab_);
-	for (SpeciesTab* tab = speciesTabs_.first(); tab != NULL; tab = tab->next) tabs.add(tab);
-	for (ConfigurationTab* tab = configurationTabs_.first(); tab != NULL; tab = tab->next) tabs.add(tab);
-	for (ModuleLayerTab* tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next) tabs.add(tab);
-	for (ModuleTab* tab = moduleTabs_.first(); tab != NULL; tab = tab->next) tabs.add(tab);
-	for (WorkspaceTab* tab = workspaceTabs_.first(); tab != NULL; tab = tab->next) tabs.add(tab);
+	tabs.append(forcefieldTab_);
+	for (SpeciesTab* tab = speciesTabs_.first(); tab != NULL; tab = tab->next) tabs.append(tab);
+	for (ConfigurationTab* tab = configurationTabs_.first(); tab != NULL; tab = tab->next) tabs.append(tab);
+	for (ModuleLayerTab* tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next) tabs.append(tab);
+	for (ModuleTab* tab = moduleTabs_.first(); tab != NULL; tab = tab->next) tabs.append(tab);
+	for (WorkspaceTab* tab = workspaceTabs_.first(); tab != NULL; tab = tab->next) tabs.append(tab);
 
 	return tabs;
 }

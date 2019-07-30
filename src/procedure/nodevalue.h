@@ -66,7 +66,7 @@ class NodeValue
 	// Set double value
 	bool set(double value);
 	// Set from expression text
-	bool set(const char* expressionText, RefList<ExpressionVariable,bool> parameters);
+	bool set(const char* expressionText, RefList<ExpressionVariable> parameters);
 
 
 	/*

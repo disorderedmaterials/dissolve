@@ -295,7 +295,7 @@ void RenderableSpecies::recreateSelectionPrimitive()
 			}
 			else
 			{
-				RefListIterator<SpeciesBond,int> bondIterator(i->bonds());
+				RefListIterator<SpeciesBond> bondIterator(i->bonds());
 				while (SpeciesBond* b = bondIterator.iterate())
 				{
 					// Determine half delta i-j for bond

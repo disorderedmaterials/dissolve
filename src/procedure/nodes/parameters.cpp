@@ -106,14 +106,14 @@ bool ParametersProcedureNode::read(LineParser& parser, const CoreData& coreData,
 				if (!parameter) return false;
 
 				// Add the parameter to our own RefList so we can write out its info
-				parameterReferences_.add(parameter);
+				parameterReferences_.append(parameter);
 				break;
 			case (ParametersProcedureNode::IntegerKeyword):
 				parameter = scopeStack.addParameter(parser.argc(1), parser.argi(2));
 				if (!parameter) return false;
 
 				// Add the parameter to our own RefList so we can write out its info
-				parameterReferences_.add(parameter);
+				parameterReferences_.append(parameter);
 				break;
 			case (ParametersProcedureNode::EndParametersKeyword):
 				return true;
@@ -133,7 +133,7 @@ bool ParametersProcedureNode::write(LineParser& parser, const char* prefix)
 	if (!parser.writeLineF("%s%s\n", ProcedureNode::nodeTypes().keyword(type_))) return false;
 
 	// Parameters
-	RefListIterator<ExpressionVariable,bool> parameterIterator(parameterReferences_);
+	RefListIterator<ExpressionVariable> parameterIterator(parameterReferences_);
 	while (ExpressionVariable* parameter = parameterIterator.iterate())
 	{
 		if (parameter->value().isInteger())

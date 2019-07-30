@@ -53,7 +53,7 @@ class ModuleChartModuleBlock : public QWidget, public ModuleChartBlock
 	// Associated Module
 	Module* module_;
 	// List of keyword widgets displayed
-	RefList<KeywordWidgetBase,bool> keywordWidgets_;
+	RefList<KeywordWidgetBase> keywordWidgets_;
 
 	public:
 	// Return associated Module

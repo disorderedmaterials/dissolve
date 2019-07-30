@@ -207,7 +207,7 @@ bool Module::addTargetConfiguration(Configuration* cfg)
 	// Check how many Configurations we accept before we do anything else
 	if ((nTargetableConfigurations() == -1) || (targetConfigurations_.nItems() < nTargetableConfigurations()))
 	{
-		targetConfigurations_.add(cfg);
+		targetConfigurations_.append(cfg);
 		return true;
 	}
 	else
@@ -236,7 +236,7 @@ int Module::nTargetConfigurations() const
 }
 
 // Return first targeted Configuration
-const RefList<Configuration,bool>& Module::targetConfigurations() const
+const RefList<Configuration>& Module::targetConfigurations() const
 {
 	return targetConfigurations_;
 }
@@ -256,7 +256,7 @@ void Module::copyTargetConfigurations(Module* sourceModule)
 		Messenger::warn("Dependent Module '%s' does not accept Configuration targets, but the source Module '%s' lists %i.\n", type(), sourceModule->type());
 		return;
 	}
-	RefListIterator<Configuration,bool> configIterator(sourceModule->targetConfigurations());
+	RefListIterator<Configuration> configIterator(sourceModule->targetConfigurations());
 	while (Configuration* cfg = configIterator.iterate()) addTargetConfiguration(cfg);
 }
 

@@ -92,7 +92,7 @@ void ModuleChart::paintEvent(QPaintEvent* event)
 
 	int col = 0, row = 0;
 	QPoint p1, p2;
-	RefListIterator<ModuleChartBlock,ModuleChartModuleBlock*> blockIterator(displayBlocks_);
+	RefDataListIterator<ModuleChartBlock,ModuleChartModuleBlock*> blockIterator(displayBlocks_);
 	while (ModuleChartBlock* block = blockIterator.iterate())
 	{
 		// If this is the last block then there is nothing more to do
@@ -487,7 +487,7 @@ void ModuleChart::recreateDisplayWidgets()
 	ModuleChartHotSpot* hotSpot = currentHotSpotIndex_ != -1 ? hotSpots_[currentHotSpotIndex_] : NULL;
 	insertionWidget_->setVisible(hotSpot);
 
-	RefListIterator<ModuleChartModuleBlock,bool> moduleChartModuleBlockIterator(moduleWidgets_);
+	RefListIterator<ModuleChartModuleBlock> moduleChartModuleBlockIterator(moduleWidgets_);
 	while (ModuleChartModuleBlock* block = moduleChartModuleBlockIterator.iterate())
 	{
 		// If the block is excluded, make sure it is hidden
@@ -497,17 +497,17 @@ void ModuleChart::recreateDisplayWidgets()
 			// If there is a valid hotspot, check if this is the block before which it should appear.
 			if (hotSpot && (hotSpot->moduleBlockAfter() == block))
 			{
-				displayBlocks_.add(insertionWidget_, NULL);
+				displayBlocks_.append(insertionWidget_, NULL);
 			}
 
 			// Make the block visible, and add the original pointer to the block as the RefListItem data
 			block->setVisible(true);
-			displayBlocks_.add(block, block);
+			displayBlocks_.append(block, block);
 		}
 	}
 
 	// Hotspot might be after the last displayed widget, so check here...
-	if (hotSpot && (hotSpot->moduleBlockAfter() == NULL)) displayBlocks_.add(insertionWidget_, NULL);
+	if (hotSpot && (hotSpot->moduleBlockAfter() == NULL)) displayBlocks_.append(insertionWidget_, NULL);
 
 	// Set the icons in the insertionWidget_ to reflect the drop action
 	if (hotSpot)
@@ -518,9 +518,9 @@ void ModuleChart::recreateDisplayWidgets()
 }
 
 //  Find ModuleChartModuleBlock displaying specified Module
-RefListItem<ModuleChartModuleBlock,bool>* ModuleChart::moduleChartModuleBlockReference(Module* module)
+RefListItem<ModuleChartModuleBlock>* ModuleChart::moduleChartModuleBlockReference(Module* module)
 {
-	RefListIterator<ModuleChartModuleBlock,bool> moduleChartModuleBlockIterator(moduleWidgets_);
+	RefListIterator<ModuleChartModuleBlock> moduleChartModuleBlockIterator(moduleWidgets_);
 	while (ModuleChartModuleBlock* block = moduleChartModuleBlockIterator.iterate()) if (block->module() == module) return moduleChartModuleBlockIterator.currentItem();
 
 	return NULL;
@@ -529,7 +529,7 @@ RefListItem<ModuleChartModuleBlock,bool>* ModuleChart::moduleChartModuleBlockRef
 // Return the ModuleChartModuleBlock clicked on its header at the specified position (if any)
 ModuleChartModuleBlock* ModuleChart::moduleChartModuleBlockHeaderAt(QPoint globalPos)
 {
-	RefListIterator<ModuleChartModuleBlock,bool> moduleChartModuleBlockIterator(moduleWidgets_);
+	RefListIterator<ModuleChartModuleBlock> moduleChartModuleBlockIterator(moduleWidgets_);
 	while (ModuleChartModuleBlock* block = moduleChartModuleBlockIterator.iterate()) if (block->ui.HeaderFrame->geometry().contains(block->mapFromGlobal(globalPos))) return block;
 
 	return NULL;
@@ -539,30 +539,30 @@ ModuleChartModuleBlock* ModuleChart::moduleChartModuleBlockHeaderAt(QPoint globa
 void ModuleChart::updateControls()
 {
 	// Step through the Modules in the list, we'll construct a new RefList of current widgets in the process.
-	RefList<ModuleChartModuleBlock,bool> newModuleWidgets;
+	RefList<ModuleChartModuleBlock> newModuleWidgets;
 	ListIterator<Module> moduleIterator(modules_);
 	while (Module* module = moduleIterator.iterate())
 	{
 		// For this ModuleReference, does a current ModuleChartModuleBlock match?
-		RefListItem<ModuleChartModuleBlock,bool>* blockRef = moduleChartModuleBlockReference(module);
+		RefListItem<ModuleChartModuleBlock>* blockRef = moduleChartModuleBlockReference(module);
 		if (blockRef)
 		{
 			// Widget already exists, so remove the reference from the old list and add it to our new one
-			RefListItem<ModuleChartModuleBlock,bool>* newItem = newModuleWidgets.add(blockRef->item, blockRef->data);
+			RefListItem<ModuleChartModuleBlock>* newItem = newModuleWidgets.append(blockRef->item());
 			moduleWidgets_.remove(blockRef);
-			newItem->item->updateControls();
+			newItem->item()->updateControls();
 		}
 		else
 		{
 			// No current ModuleChartModuleBlock reference, so must create suitable widget
 			ModuleChartModuleBlock* mcmBlock = new ModuleChartModuleBlock(this, dissolveWindow_, module);
 			connect(mcmBlock, SIGNAL(settingsToggled()), this, SLOT(recalculateLayout()));
-			newModuleWidgets.add(mcmBlock);
+			newModuleWidgets.append(mcmBlock);
 		}
 	}
 
 	// For any items that remain in moduleWidgets_ we must now delete the widgets, as they are no longer used
-	RefListIterator<ModuleChartModuleBlock,bool> widgetRemover(moduleWidgets_);
+	RefListIterator<ModuleChartModuleBlock> widgetRemover(moduleWidgets_);
 	while (ModuleChartModuleBlock* block = widgetRemover.iterate()) delete block;
 
 	// Copy the new RefList
@@ -578,14 +578,14 @@ void ModuleChart::updateControls()
 // Disable sensitive controls within widget, ready for main code to run
 void ModuleChart::disableSensitiveControls()
 {
-	RefListIterator<ModuleChartModuleBlock,bool> moduleBlockIterator(moduleWidgets_);
+	RefListIterator<ModuleChartModuleBlock> moduleBlockIterator(moduleWidgets_);
 	while (ModuleChartModuleBlock* block = moduleBlockIterator.iterate()) block->disableSensitiveControls();
 }
 
 // Enable sensitive controls within widget, ready for main code to run
 void ModuleChart::enableSensitiveControls()
 {
-	RefListIterator<ModuleChartModuleBlock,bool> moduleBlockIterator(moduleWidgets_);
+	RefListIterator<ModuleChartModuleBlock> moduleBlockIterator(moduleWidgets_);
 	while (ModuleChartModuleBlock* block = moduleBlockIterator.iterate()) block->enableSensitiveControls();
 }
 
@@ -622,7 +622,7 @@ void ModuleChart::layOutWidgets(bool animateWidgets)
 		totalColumnWidth = 0;
 		widths_.clear();
 		minimumSizeHint_ = QSize(0,0);
-		RefListIterator<ModuleChartBlock,ModuleChartModuleBlock*> blockIterator(displayBlocks_);
+		RefDataListIterator<ModuleChartBlock,ModuleChartModuleBlock*> blockIterator(displayBlocks_);
 		while (ModuleChartBlock* block = blockIterator.iterate())
 		{
 			// Get the width of this block
@@ -688,7 +688,7 @@ void ModuleChart::layOutWidgets(bool animateWidgets)
 	hotSpots_.clear();
 	int top = metrics.chartMargin(), rowMaxHeight;
 	int blockCount = 0;
-	RefListIterator<ModuleChartBlock,ModuleChartModuleBlock*> blockIterator(displayBlocks_);
+	RefDataListIterator<ModuleChartBlock,ModuleChartModuleBlock*> blockIterator(displayBlocks_);
 	for (int row = 0; row < nRows_; ++row)
 	{
 		// Add the top coordinate of this row to our array

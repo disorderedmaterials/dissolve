@@ -73,7 +73,7 @@ void IsotopologueListKeywordWidget::autoButton_clicked(bool checked)
 	// First, assemble a list of all Species over all Configurations targeted by the Module that are currently missing from our definition
 	RefDataList<Species,Configuration*> missingSpecies;
 	List<IsotopologueReference>& topeReferences = keyword_->data();
-	RefListIterator<Configuration,bool> configurationIterator(keyword_->moduleParent()->targetConfigurations());
+	RefListIterator<Configuration> configurationIterator(keyword_->moduleParent()->targetConfigurations());
 	while (Configuration* cfg = configurationIterator.iterate())
 	{
 		ListIterator<SpeciesInfo> speciesIterator(cfg->usedSpecies());

@@ -25,7 +25,7 @@
 #include "base/lineparser.h"
 
 // Static Members (ObjectStore)
-template<class Data2D> RefList<Data2D,int> ObjectStore<Data2D>::objects_;
+template<class Data2D> RefDataList<Data2D,int> ObjectStore<Data2D>::objects_;
 template<class Data2D> int ObjectStore<Data2D>::objectCount_ = 0;
 template<class Data2D> int ObjectStore<Data2D>::objectType_ = ObjectInfo::Data2DObject;
 template<class Data2D> const char* ObjectStore<Data2D>::objectTypeName_ = "Data2D";

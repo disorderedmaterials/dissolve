@@ -58,11 +58,11 @@ bool EPSRModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Calculate representative rho
 		double averagedRho = 0.0;
-		RefList<Configuration,bool> configs;
-		RefListIterator<Module,ModuleGroup*> allTargetsIterator(groupedTargets_.modules());
+		RefList<Configuration> configs;
+		RefDataListIterator<Module,ModuleGroup*> allTargetsIterator(groupedTargets_.modules());
 		while (Module* module = allTargetsIterator.iterate())
 		{
-			RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
+			RefListIterator<Configuration> configIterator(module->targetConfigurations());
 			while (Configuration* cfg = configIterator.iterate())
 			{
 				configs.addUnique(cfg);
@@ -156,12 +156,12 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	/*
 	 * Make a list of all Configurations related to all targets
 	 */
-	RefList<Configuration,bool> configs;
-	RefListIterator<Module,ModuleGroup*> allTargetsIterator(groupedTargets_.modules());
+	RefList<Configuration> configs;
+	RefDataListIterator<Module,ModuleGroup*> allTargetsIterator(groupedTargets_.modules());
 	double averagedRho = 0.0;
 	while (Module* module = allTargetsIterator.iterate())
 	{
-		RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
+		RefListIterator<Configuration> configIterator(module->targetConfigurations());
 		while (Configuration* cfg = configIterator.iterate())
 		{
 			configs.addUnique(cfg);
@@ -396,8 +396,8 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		Messenger::print("Generating dPhiR from target group '%s'...\n", group->name());
 
 		// Grab Module list for this group and set up an iterator
-		const RefList<Module,bool>& targetModules = group->modules();
-		RefListIterator<Module,bool> targetIterator(targetModules);
+		const RefList<Module>& targetModules = group->modules();
+		RefListIterator<Module> targetIterator(targetModules);
 
 		/*
 		 * Create the full scattering matrix using all the reference (experimental) data we have.

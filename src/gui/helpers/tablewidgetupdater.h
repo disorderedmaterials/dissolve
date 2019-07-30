@@ -35,13 +35,13 @@ template <class T, class I> class TableWidgetUpdater
 
 	public:
 	// Constructor
-	TableWidgetUpdater(QTableWidget* table, const List<I>& data, T* functionParent, TableWidgetRowUpdateFunction updateRow)
+	TableWidgetUpdater(QTableWidget* table, const List<I>& list, T* functionParent, TableWidgetRowUpdateFunction updateRow)
 	{
 		QTableWidgetItem* tableItem;
 
 		int rowCount = 0;
 
-		ListIterator<I> dataIterator(data);
+		ListIterator<I> dataIterator(list);
 		while (I* dataItem = dataIterator.iterate())
 		{
 			// Our table may or may not be populated, and with different items to those in the list.
@@ -81,20 +81,20 @@ template <class T, class I> class TableWidgetUpdater
 };
 
 // TableWidgetRefListUpdater - Constructor-only template class to update contents of a QTableWidget from a RefList, preserving original items as much as possible
-template <class T, class I, class D> class TableWidgetRefListUpdater
+template <class T, class I> class TableWidgetRefListUpdater
 {
 	// Typedefs for passed functions
-	typedef void (T::*TableWidgetRowUpdateFunction)(int row, I* item, D data, bool createItems);
+	typedef void (T::*TableWidgetRowUpdateFunction)(int row, I* item, bool createItems);
 
 	public:
 	// Constructor
-	TableWidgetRefListUpdater(QTableWidget* table, const RefList<I,D>& data, T* functionParent, TableWidgetRowUpdateFunction updateRow)
+	TableWidgetRefListUpdater(QTableWidget* table, const RefList<I>& list, T* functionParent, TableWidgetRowUpdateFunction updateRow)
 	{
 		QTableWidgetItem* tableItem;
 
 		int rowCount = 0;
 
-		RefListIterator<I,D> itemIterator(data);
+		RefListIterator<I> itemIterator(list);
 		while (I* item = itemIterator.iterate())
 		{
 			// Our table may or may not be populated, and with different items to those in the list.
@@ -108,7 +108,7 @@ template <class T, class I, class D> class TableWidgetRefListUpdater
 				if (rowData == item)
 				{
 					// Update the current row and quit the loop
-					(functionParent->*updateRow)(rowCount, item, itemIterator.currentData(), false);
+					(functionParent->*updateRow)(rowCount, item, false);
 
 					break;
 				}
@@ -122,7 +122,7 @@ template <class T, class I, class D> class TableWidgetRefListUpdater
 				table->setRowCount(rowCount+1);
 
 				// Create new items
-				(functionParent->*updateRow)(rowCount, item, itemIterator.currentData(), true);
+				(functionParent->*updateRow)(rowCount, item, true);
 			}
 
 			++rowCount;
@@ -141,13 +141,13 @@ template <class T, class I, class D> class TableWidgetRefDataListUpdater
 
 	public:
 	// Constructor
-	TableWidgetRefDataListUpdater(QTableWidget* table, const RefDataList<I,D>& data, T* functionParent, TableWidgetRowUpdateFunction updateRow)
+	TableWidgetRefDataListUpdater(QTableWidget* table, const RefDataList<I,D>& list, T* functionParent, TableWidgetRowUpdateFunction updateRow)
 	{
 		QTableWidgetItem* tableItem;
 
 		int rowCount = 0;
 
-		RefDataListIterator<I,D> itemIterator(data);
+		RefDataListIterator<I,D> itemIterator(list);
 		while (I* item = itemIterator.iterate())
 		{
 			// Our table may or may not be populated, and with different items to those in the list.

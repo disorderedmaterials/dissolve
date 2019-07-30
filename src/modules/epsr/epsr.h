@@ -115,7 +115,7 @@ class EPSRModule : public Module
 
 	public:
 	// Return list of target Modules / data for refeinement
-	const RefList<Module,ModuleGroup*>& allTargets() const;
+	const RefDataList<Module,ModuleGroup*>& allTargets() const;
 	// Return grouped target Modules
 	const ModuleGroups& groupedTargets() const;
 	// Create / retrieve arrays for storage of empirical potential coefficients

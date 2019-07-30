@@ -58,7 +58,7 @@ void DataViewer::render2DOverlay()
 	 */
 
 	// Create RefList of legend entries
-	RefList<Renderable,double> legendEntries;
+	RefDataList<Renderable,double> legendEntries;
 
 	double maxTextWidth = -1.0;
 	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next)
@@ -66,7 +66,7 @@ void DataViewer::render2DOverlay()
 		if (!rend->isVisible()) continue;
 
 		double textWidth = fontInstance_.boundingBoxWidth(rend->name()) * overlayTextSize;
-		legendEntries.add(rend, textWidth);
+		legendEntries.append(rend, textWidth);
 		if (textWidth > maxTextWidth) maxTextWidth = textWidth;
 	}
 
@@ -77,7 +77,7 @@ void DataViewer::render2DOverlay()
 
 	// Loop over legend entries
 	GLfloat colour[4];
-	RefListIterator<Renderable,double> legendEntryIterator(legendEntries);
+	RefDataListIterator<Renderable,double> legendEntryIterator(legendEntries);
 	while (Renderable* rend = legendEntryIterator.iterate())
 	{
 		// Grab copy of the relevant colour definition for this Renderable

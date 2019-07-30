@@ -44,7 +44,7 @@ QString TMenuButtonGroup::name()
 // Add button to group
 void TMenuButtonGroup::addButton(TMenuButton* button)
 {
-	buttons_.add(button);
+	buttons_.append(button);
 }
 
 // Set specified button as checked button
@@ -52,9 +52,9 @@ void TMenuButtonGroup::setCurrentButton(TMenuButton* button)
 {
 	// Loop over buttons in group, unchecking all others except the one provided (which we will check)
 	TMenuButton* groupButton;
-	for (RefListItem<TMenuButton,int>* ri = buttons_.first(); ri != NULL; ri = ri->next)
+	for (RefListItem<TMenuButton>* ri = buttons_.first(); ri != NULL; ri = ri->next())
 	{
-		groupButton = ri->item;
+		groupButton = ri->item();
 		if (groupButton == button) groupButton->setChecked(true);
 		else
 		{
@@ -69,9 +69,9 @@ bool TMenuButtonGroup::setCurrentButton(QString buttonText)
 {
 	// Loop over buttons in group, unchecking all others except the one provided (which we will check)
 	TMenuButton* groupButton;
-	for (RefListItem<TMenuButton,int>* ri = buttons_.first(); ri != NULL; ri = ri->next)
+	for (RefListItem<TMenuButton>* ri = buttons_.first(); ri != NULL; ri = ri->next())
 	{
-		groupButton = ri->item;
+		groupButton = ri->item();
 		if (groupButton->text() == buttonText)
 		{
 			setCurrentButton(groupButton);
@@ -86,9 +86,9 @@ bool TMenuButtonGroup::setCurrentButton(int buttonIndex)
 {
 	// Loop over buttons in group, unchecking all others except the one provided (which we will check)
 	TMenuButton* groupButton;
-	for (RefListItem<TMenuButton,int>* ri = buttons_.first(); ri != NULL; ri = ri->next)
+	for (RefListItem<TMenuButton>* ri = buttons_.first(); ri != NULL; ri = ri->next())
 	{
-		groupButton = ri->item;
+		groupButton = ri->item();
 		if (groupButton->index() == buttonIndex)
 		{
 			setCurrentButton(groupButton);

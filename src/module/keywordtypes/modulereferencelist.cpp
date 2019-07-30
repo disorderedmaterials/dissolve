@@ -27,12 +27,12 @@
 #include "genericitems/listhelper.h"
 
 // Constructors
-ModuleReferenceListModuleKeyword::ModuleReferenceListModuleKeyword(RefList<Module,bool>& references, int maxModules) : ModuleKeywordData< RefList<Module,bool>& >(ModuleKeywordBase::ModuleReferenceListData, references)
+ModuleReferenceListModuleKeyword::ModuleReferenceListModuleKeyword(RefList<Module>& references, int maxModules) : ModuleKeywordData< RefList<Module>& >(ModuleKeywordBase::ModuleReferenceListData, references)
 {
 	maxModules_ = maxModules;
 }
 
-ModuleReferenceListModuleKeyword::ModuleReferenceListModuleKeyword(RefList<Module,bool>& references, CharStringList allowedModuleTypes, int maxModules) : ModuleKeywordData< RefList<Module,bool>& >(ModuleKeywordBase::ModuleReferenceListData, references)
+ModuleReferenceListModuleKeyword::ModuleReferenceListModuleKeyword(RefList<Module>& references, CharStringList allowedModuleTypes, int maxModules) : ModuleKeywordData< RefList<Module>& >(ModuleKeywordBase::ModuleReferenceListData, references)
 {
 	moduleTypes_ = allowedModuleTypes;
 	maxModules_ = maxModules;
@@ -102,7 +102,7 @@ bool ModuleReferenceListModuleKeyword::read(LineParser& parser, int startArg, co
 			return false;
 		}
 
-		data_.add(module);
+		data_.append(module);
 	}
 
 	set_ = true;
@@ -114,7 +114,7 @@ bool ModuleReferenceListModuleKeyword::read(LineParser& parser, int startArg, co
 bool ModuleReferenceListModuleKeyword::write(LineParser& parser, const char* prefix)
 {
 	// Loop over list of referenced Modules
-	RefListIterator<Module,bool> refIterator(data_);
+	RefListIterator<Module> refIterator(data_);
 	while (Module* module = refIterator.iterate())
 	{
 		if (!parser.writeLineF("%s%s  '%s'\n", prefix, keyword(), module->uniqueName())) return false;

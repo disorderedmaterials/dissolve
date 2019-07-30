@@ -142,7 +142,7 @@ class RefineModule : public Module
 
 	public:
 	// Return list of target Modules / data for fitting process
-	const RefList<Module,ModuleGroup*>& allTargets() const;
+	const RefDataList<Module,ModuleGroup*>& allTargets() const;
 	// Return grouped target Modules
 	const ModuleGroups& groupedTargets() const;
 

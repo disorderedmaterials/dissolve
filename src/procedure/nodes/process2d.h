@@ -72,9 +72,9 @@ class Process2DProcedureNode : public ProcedureNode
 	// Pointer to processed data (stored in processing data list)
 	Data2D* processedData_;
 	// Reference to sites against which we will normalise by population
-	RefList<SelectProcedureNode,double> sitePopulationNormalisers_;
+	RefList<SelectProcedureNode> sitePopulationNormalisers_;
 	// Reference to sites against which we will normalise by number density
-	RefList<SelectProcedureNode,double> numberDensityNormalisers_;
+	RefList<SelectProcedureNode> numberDensityNormalisers_;
 	// Whether to normalise by supplied factor
 	bool normaliseByFactor_;
 	// Normalisation factor to apply (if requested)

@@ -78,7 +78,7 @@ bool SpeciesGrain::containsAtom(SpeciesAtom* i) const
 // Add specified Atom to list
 void SpeciesGrain::addAtom(SpeciesAtom* i)
 {
-	atoms_.add(i);
+	atoms_.append(i);
 	i->setGrain(this);
 }
 
@@ -96,13 +96,13 @@ int SpeciesGrain::nAtoms() const
 }
 
 // Return first Atom reference in list
-RefListItem<SpeciesAtom,int>* SpeciesGrain::atoms() const
+RefListItem<SpeciesAtom>* SpeciesGrain::atoms() const
 {
 	return atoms_.first();
 }
 
 // Return nth Atom reference in list
-RefListItem<SpeciesAtom,int>* SpeciesGrain::atom(int n)
+RefListItem<SpeciesAtom>* SpeciesGrain::atom(int n)
 {
 	return atoms_[n];
 }
@@ -112,7 +112,7 @@ const char* SpeciesGrain::nameFromAtoms()
 {
 	static EmpiricalFormula formula;
 	formula.reset();
-	for (RefListItem<SpeciesAtom,int>* ri = atoms_.first(); ri != NULL; ri = ri->next) formula.add(ri->item->element());
+	for (RefListItem<SpeciesAtom>* ri = atoms_.first(); ri != NULL; ri = ri->next()) formula.add(ri->item()->element());
 	return formula.formula();
 }
 
@@ -132,11 +132,11 @@ void SpeciesGrain::clearConnections()
 // Add intra-Grain Bond
 void SpeciesGrain::addInternalBond(SpeciesBond* b)
 {
-	internalBonds_.add(b);
+	internalBonds_.append(b);
 }
 
 // Return first local intra-Grain Bond
-RefListItem<SpeciesBond, int>* SpeciesGrain::internalBonds() const
+RefListItem<SpeciesBond>* SpeciesGrain::internalBonds() const
 {
 	return internalBonds_.first();
 }
@@ -144,11 +144,11 @@ RefListItem<SpeciesBond, int>* SpeciesGrain::internalBonds() const
 // Add intra-Grain Angle
 void SpeciesGrain::addInternalAngle(SpeciesAngle* a)
 {
-	internalAngles_.add(a);
+	internalAngles_.append(a);
 }
 
 // Return first local intra-Grain Angle
-RefListItem<SpeciesAngle, int>* SpeciesGrain::internalAngles() const
+RefListItem<SpeciesAngle>* SpeciesGrain::internalAngles() const
 {
 	return internalAngles_.first();
 }
@@ -156,11 +156,11 @@ RefListItem<SpeciesAngle, int>* SpeciesGrain::internalAngles() const
 // Add Bond connection
 void SpeciesGrain::addBondConnection(SpeciesBond* b)
 {
-	bondConnections_.add(b);
+	bondConnections_.append(b);
 }
 
 // Return first Bond connection
-RefListItem<SpeciesBond, int>* SpeciesGrain::bondConnections() const
+RefListItem<SpeciesBond>* SpeciesGrain::bondConnections() const
 {
 	return bondConnections_.first();
 }
@@ -168,11 +168,11 @@ RefListItem<SpeciesBond, int>* SpeciesGrain::bondConnections() const
 // Add Angle connection
 void SpeciesGrain::addAngleConnection(SpeciesAngle* a)
 {
-	angleConnections_.add(a);
+	angleConnections_.append(a);
 }
 
 // Return first Angle connection
-RefListItem<SpeciesAngle, int>* SpeciesGrain::angleConnections() const
+RefListItem<SpeciesAngle>* SpeciesGrain::angleConnections() const
 {
 	return angleConnections_.first();
 }

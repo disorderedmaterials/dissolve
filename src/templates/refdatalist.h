@@ -61,13 +61,8 @@ template <class T, class D> class RefDataItem
 	{
 		return item_;
 	}
-	// Set associated data
-	void setData(D data)
-	{
-		data_ = data;
-	}
 	// Return associated data
-	const D& data() const
+	D& data()
 	{
 		return data_;
 	}
@@ -173,7 +168,7 @@ template <class T, class D> class RefDataList
 		listTail_ = NULL;
 		nItems_ = 0;
 
-		// Delete static items array if its there
+		// Delete static items array if it's there
 		if (items_ != NULL) delete[] items_;
 		items_ = NULL;
 		regenerate_ = true;
@@ -387,7 +382,7 @@ template <class T, class D> class RefDataList
 		regenerate_ = true;
 	}
 	// Prune items with specified data
-	void prune(D data)
+	void prune(const D data)
 	{
 		RefDataItem<T,D>* xitem = listHead_, *next;
 		while (xitem != NULL)
@@ -552,18 +547,18 @@ template <class T, class D> class RefDataListIterator
 	{
 		if (reverse_)
 		{
-			return (currentItem_ ? (currentItem_->prev_ ? currentItem_->prev->item : NULL) : NULL);
+			return (currentItem_ ? (currentItem_->prev_ ? currentItem_->prev_->item_ : NULL) : NULL);
 		}
-		else return (currentItem_ ? (currentItem_->next_ ? currentItem_->next->item : NULL) : NULL);
+		else return (currentItem_ ? (currentItem_->next_ ? currentItem_->next_->item_ : NULL) : NULL);
 	}
 	// Peek the previous item (if any)
 	T* peekPrevious()
 	{
 		if (reverse_)
 		{
-			return (currentItem_ ? (currentItem_->next_ ? currentItem_->next->item : NULL) : NULL);
+			return (currentItem_ ? (currentItem_->next_ ? currentItem_->next_->item_ : NULL) : NULL);
 		}
-		else return (currentItem_ ? (currentItem_->prev_ ? currentItem_->prev->item : NULL) : NULL);
+		else return (currentItem_ ? (currentItem_->prev_ ? currentItem_->prev_->item_ : NULL) : NULL);
 	}
 	// Peek the next data (if any)
 	D& peekData()
@@ -571,9 +566,9 @@ template <class T, class D> class RefDataListIterator
 		static D dummy;
 		if (reverse_)
 		{
-			return (currentItem_ ? (currentItem_->prev_ ? currentItem_->prev->data : dummy) : dummy);
+			return (currentItem_ ? (currentItem_->prev_ ? currentItem_->prev_->data_ : dummy) : dummy);
 		}
-		else return (currentItem_ ? (currentItem_->next_ ? currentItem_->next->data : dummy) : dummy);
+		else return (currentItem_ ? (currentItem_->next_ ? currentItem_->next_->data_ : dummy) : dummy);
 	}
 	// Peek the previous data (if any)
 	D& peekPreviousData()
@@ -581,9 +576,9 @@ template <class T, class D> class RefDataListIterator
 		static D dummy;
 		if (reverse_)
 		{
-			return (currentItem_ ? (currentItem_->next_ ? currentItem_->next->data : dummy) : dummy);
+			return (currentItem_ ? (currentItem_->next_ ? currentItem_->next_->data_ : dummy) : dummy);
 		}
-		else return (currentItem_ ? (currentItem_->prev_ ? currentItem_->prev->data : dummy) : dummy);
+		else return (currentItem_ ? (currentItem_->prev_ ? currentItem_->prev_->data_ : dummy) : dummy);
 	}
 	// Return current reference item
 	RefDataItem<T,D>* currentItem()
@@ -593,11 +588,11 @@ template <class T, class D> class RefDataListIterator
 	// Set current data
 	void setCurrentData(D data)
 	{
-		if (currentItem_) currentItem_->setData(data);
+		if (currentItem_) currentItem_->data_ = data;
 		else printf("No current item, so can't set data in RefDataListIterator.\n");
 	}
 	// Return reference to current data
-	const D& currentData() const
+	D& currentData()
 	{
 		static D dummy;
 

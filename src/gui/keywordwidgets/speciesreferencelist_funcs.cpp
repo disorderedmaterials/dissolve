@@ -56,7 +56,7 @@ SpeciesReferenceListKeywordWidget::SpeciesReferenceListKeywordWidget(QWidget* pa
 void SpeciesReferenceListKeywordWidget::updateSelectionRow(int row, Species* sp, bool createItem)
 {
 	// Grab the target reference list
-	RefList<Species,bool>& selection = keyword_->data();
+	RefList<Species>& selection = keyword_->data();
 
 	QListWidgetItem* item;
 	if (createItem)
@@ -116,11 +116,11 @@ void SpeciesReferenceListKeywordWidget::updateWidgetValues(const CoreData& coreD
 void SpeciesReferenceListKeywordWidget::updateKeywordData()
 {
 	// Loop over items in the QListWidget, adding the associated Speciess for any that are checked
-	RefList<Species,bool> newSelection;
+	RefList<Species> newSelection;
 	for (int n=0; n<ui.SelectionList->count(); ++n)
 	{
 		QListWidgetItem* item = ui.SelectionList->item(n);
-		if (item->checkState() == Qt::Checked) newSelection.add(VariantPointer<Species>(item->data(Qt::UserRole)));
+		if (item->checkState() == Qt::Checked) newSelection.append(VariantPointer<Species>(item->data(Qt::UserRole)));
 	}
 	keyword_->setData(newSelection);
 }
@@ -129,12 +129,12 @@ void SpeciesReferenceListKeywordWidget::updateKeywordData()
 void SpeciesReferenceListKeywordWidget::updateSummaryText()
 {
 	// Create summary text for the KeywordDropDown button
-	RefList<Species,bool>& selection = keyword_->data();
+	RefList<Species>& selection = keyword_->data();
 	if (selection.nItems() == 0) setSummaryText("<None>");
 	else
 	{
 		CharString summaryText;
-		RefListIterator<Species,bool> speciesIterator(selection);
+		RefListIterator<Species> speciesIterator(selection);
 		while (Species* sp = speciesIterator.iterate())
 		{
 			if (speciesIterator.isFirst()) summaryText = sp->name();

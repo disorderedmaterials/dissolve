@@ -100,13 +100,13 @@ const Data3D& Process3DProcedureNode::processedData() const
 // Add site population normaliser
 void Process3DProcedureNode::addSitePopulationNormaliser(SelectProcedureNode* selectNode)
 {
-	sitePopulationNormalisers_.add(selectNode, 1.0);
+	sitePopulationNormalisers_.append(selectNode);
 }
 
 // Add number density normaliser
 void Process3DProcedureNode::addNumberDensityNormaliser(SelectProcedureNode* selectNode)
 {
-	numberDensityNormalisers_.add(selectNode);
+	numberDensityNormalisers_.append(selectNode);
 }
 
 // Set whether to normalise by factor
@@ -210,11 +210,11 @@ bool Process3DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg,
 	data = node->accumulatedData();
 
 	// Normalisation by number of sites?
-	RefListIterator<SelectProcedureNode,double> siteNormaliserIterator(sitePopulationNormalisers_);
+	RefListIterator<SelectProcedureNode> siteNormaliserIterator(sitePopulationNormalisers_);
 	while (SelectProcedureNode* selectNode = siteNormaliserIterator.iterate()) data /= selectNode->nAverageSites();
 
 	// Normalisation by number density of sites?
-	RefListIterator<SelectProcedureNode,double> numberDensityIterator(numberDensityNormalisers_);
+	RefListIterator<SelectProcedureNode> numberDensityIterator(numberDensityNormalisers_);
 	while (SelectProcedureNode* selectNode = numberDensityIterator.iterate()) data /= (selectNode->nAverageSites() / cfg->box()->volume());
 
 	// Normalisation by factor?
@@ -284,7 +284,7 @@ bool Process3DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				{
 					SelectProcedureNode* selectNode = dynamic_cast<SelectProcedureNode*>(scopeStack.node(parser.argc(n), ProcedureNode::SelectNode));
 					if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(n), process3DNodeKeywords().keyword(Process3DProcedureNode::NSitesKeyword));
-					sitePopulationNormalisers_.add(selectNode, 1.0);
+					sitePopulationNormalisers_.append(selectNode);
 				}
 				break;
 			case (Process3DProcedureNode::NumberDensityKeyword):
@@ -292,7 +292,7 @@ bool Process3DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				{
 					SelectProcedureNode* selectNode = dynamic_cast<SelectProcedureNode*>(scopeStack.node(parser.argc(n), ProcedureNode::SelectNode));
 					if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(n), process3DNodeKeywords().keyword(Process3DProcedureNode::NumberDensityKeyword));
-					numberDensityNormalisers_.add(selectNode, 1.0);
+					numberDensityNormalisers_.append(selectNode);
 				}
 				break;
 			case (Process3DProcedureNode::SaveKeyword):

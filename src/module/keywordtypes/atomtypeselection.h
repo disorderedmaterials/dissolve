@@ -35,7 +35,7 @@ class AtomTypeSelectionModuleKeyword : public ModuleKeywordData<AtomTypeList&>
 {
 	public:
 	// Constructor
-	AtomTypeSelectionModuleKeyword(AtomTypeList& selection_, RefList<Configuration,bool>& sourceConfigurations);
+	AtomTypeSelectionModuleKeyword(AtomTypeList& selection_, RefList<Configuration>& sourceConfigurations);
 	// Destructor
 	~AtomTypeSelectionModuleKeyword();
 
@@ -45,7 +45,7 @@ class AtomTypeSelectionModuleKeyword : public ModuleKeywordData<AtomTypeList&>
 	 */
 	private:
 	// Source Configurations from which we take our valid AtomTypes
-	RefList<Configuration,bool>& sourceConfigurations_;
+	RefList<Configuration>& sourceConfigurations_;
 
 	public:
 	// Check selection and make sure it is consistent based on the source Configurations

@@ -129,7 +129,7 @@ class Molecule : public DynamicArrayObject<Molecule>
 	 */
 	public:
 	// Select Atoms along any path from the specified one
-	void selectFromAtom(Atom* i, RefList<Atom,bool>& selectedAtoms, Bond* excludedBond1 = NULL, Bond* excludedBond2 = NULL);
+	void selectFromAtom(Atom* i, RefList<Atom>& selectedAtoms, Bond* excludedBond1 = NULL, Bond* excludedBond2 = NULL);
 
 
 	/*

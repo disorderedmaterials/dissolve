@@ -55,7 +55,7 @@ ModuleGroupsKeywordWidget::ModuleGroupsKeywordWidget(QWidget* parent, ModuleKeyw
  */
 
 // Selection table update function
-void ModuleGroupsKeywordWidget::updateSelectionRow(int row, Module* module, bool data, bool create)
+void ModuleGroupsKeywordWidget::updateSelectionRow(int row, Module* module, bool create)
 {
 	// Grab the target groups
 	ModuleGroups& groups = keyword_->data();
@@ -120,10 +120,10 @@ void ModuleGroupsKeywordWidget::updateWidgetValues(const CoreData& coreData)
 	refreshing_ = true;
 
 	// Get a RefList of current Modules that are of the correct type
-	RefList<Module,bool> availableModules = coreData.findModules(keyword_->data().allowedModuleTypes());
+	RefList<Module> availableModules = coreData.findModules(keyword_->data().allowedModuleTypes());
 
 	// Update the list widget
-	TableWidgetRefListUpdater<ModuleGroupsKeywordWidget,Module,bool> tableUpdater(ui.SelectionTable, availableModules, this, &ModuleGroupsKeywordWidget::updateSelectionRow);
+	TableWidgetRefListUpdater<ModuleGroupsKeywordWidget,Module> tableUpdater(ui.SelectionTable, availableModules, this, &ModuleGroupsKeywordWidget::updateSelectionRow);
 
 	ui.SelectionTable->resizeColumnToContents(0);
 

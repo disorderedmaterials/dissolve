@@ -31,12 +31,12 @@
 class Module;
 
 // Keyword with Module reference list data
-class ModuleReferenceListModuleKeyword : public ModuleKeywordData< RefList<Module,bool>& >
+class ModuleReferenceListModuleKeyword : public ModuleKeywordData< RefList<Module>& >
 {
 	public:
 	// Constructors
-	ModuleReferenceListModuleKeyword(RefList<Module,bool>& references, int maxModules = -1);
-	ModuleReferenceListModuleKeyword(RefList<Module,bool>& references, CharStringList allowedModuleTypes, int maxModules = -1);
+	ModuleReferenceListModuleKeyword(RefList<Module>& references, int maxModules = -1);
+	ModuleReferenceListModuleKeyword(RefList<Module>& references, CharStringList allowedModuleTypes, int maxModules = -1);
 	// Destructor
 	~ModuleReferenceListModuleKeyword();
 

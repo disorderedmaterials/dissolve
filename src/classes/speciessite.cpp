@@ -67,7 +67,7 @@ bool SpeciesSite::addOriginAtom(SpeciesAtom* originAtom)
 	// If the SpeciesAtom already exists in the list, complain
 	if (originAtoms_.contains(originAtom)) return Messenger::error("Origin atom index %i specified twice for site '%s'.\n", originAtom->index(), name_.get());
 
-	originAtoms_.add(originAtom);
+	originAtoms_.append(originAtom);
 
 	return true;
 }
@@ -82,7 +82,7 @@ bool SpeciesSite::addOriginAtom(int atomIndex)
 }
 
 // Return list of origin atoms
-const RefList<SpeciesAtom,bool>& SpeciesSite::originAtoms()
+const RefList<SpeciesAtom>& SpeciesSite::originAtoms()
 {
 	return originAtoms_;
 }
@@ -91,7 +91,7 @@ const RefList<SpeciesAtom,bool>& SpeciesSite::originAtoms()
 Array<int> SpeciesSite::originAtomIndices() const
 {
 	Array<int> indices;
-	RefListIterator<SpeciesAtom,bool> atomIterator(originAtoms_);
+	RefListIterator<SpeciesAtom> atomIterator(originAtoms_);
 	while (SpeciesAtom* atom = atomIterator.iterate()) indices.add(atom->index());
 
 	return indices;
@@ -117,7 +117,7 @@ bool SpeciesSite::addXAxisAtom(SpeciesAtom* xAxisAtom)
 	// If the SpeciesAtom already exists in the list, complain
 	if (xAxisAtoms_.contains(xAxisAtom)) return Messenger::error("X-axis atom index %i specified twice for site '%s'.\n", xAxisAtom->index(), name_.get());
 
-	xAxisAtoms_.add(xAxisAtom);
+	xAxisAtoms_.append(xAxisAtom);
 
 	return true;
 }
@@ -132,7 +132,7 @@ bool SpeciesSite::addXAxisAtom(int atomIndex)
 }
 
 // Return list of x-axis atoms
-const RefList<SpeciesAtom,bool>& SpeciesSite::xAxisAtoms()
+const RefList<SpeciesAtom>& SpeciesSite::xAxisAtoms()
 {
 	return xAxisAtoms_;
 }
@@ -141,7 +141,7 @@ const RefList<SpeciesAtom,bool>& SpeciesSite::xAxisAtoms()
 Array<int> SpeciesSite::xAxisAtomIndices() const
 {
 	Array<int> indices;
-	RefListIterator<SpeciesAtom,bool> atomIterator(xAxisAtoms_);
+	RefListIterator<SpeciesAtom> atomIterator(xAxisAtoms_);
 	while (SpeciesAtom* atom = atomIterator.iterate()) indices.add(atom->index());
 
 	return indices;
@@ -155,7 +155,7 @@ bool SpeciesSite::addYAxisAtom(SpeciesAtom* yAxisAtom)
 	// If the SpeciesAtom already exists in the list, complain
 	if (yAxisAtoms_.contains(yAxisAtom)) return Messenger::error("Y-axis atom index %i specified twice for site '%s'.\n", yAxisAtom->index(), name_.get());
 
-	yAxisAtoms_.add(yAxisAtom);
+	yAxisAtoms_.append(yAxisAtom);
 
 	return true;
 }
@@ -170,7 +170,7 @@ bool SpeciesSite::addYAxisAtom(int atomIndex)
 }
 
 // Return list of y-axis atoms
-const RefList<SpeciesAtom,bool>& SpeciesSite::yAxisAtoms()
+const RefList<SpeciesAtom>& SpeciesSite::yAxisAtoms()
 {
 	return yAxisAtoms_;
 }
@@ -179,7 +179,7 @@ const RefList<SpeciesAtom,bool>& SpeciesSite::yAxisAtoms()
 Array<int> SpeciesSite::yAxisAtomIndices() const
 {
 	Array<int> indices;
-	RefListIterator<SpeciesAtom,bool> atomIterator(yAxisAtoms_);
+	RefListIterator<SpeciesAtom> atomIterator(yAxisAtoms_);
 	while (SpeciesAtom* atom = atomIterator.iterate()) indices.add(atom->index());
 
 	return indices;

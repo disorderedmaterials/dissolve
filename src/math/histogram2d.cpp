@@ -25,7 +25,7 @@
 #include "base/lineparser.h"
 
 // Static Members (ObjectStore)
-template<class Histogram2D> RefList<Histogram2D,int> ObjectStore<Histogram2D>::objects_;
+template<class Histogram2D> RefDataList<Histogram2D,int> ObjectStore<Histogram2D>::objects_;
 template<class Histogram2D> int ObjectStore<Histogram2D>::objectCount_ = 0;
 template<class Histogram2D> int ObjectStore<Histogram2D>::objectType_ = ObjectInfo::Histogram2DObject;
 template<class Histogram2D> const char* ObjectStore<Histogram2D>::objectTypeName_ = "Histogram2D";

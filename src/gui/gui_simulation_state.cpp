@@ -35,8 +35,8 @@ bool DissolveWindow::saveWindowLayout()
 	if (!stateParser.writeLineF("%i\n", ui.MainTabs->currentIndex())) return false;
 
 	// Write tab state
-	RefList<MainTab,bool> tabs = allTabs();
-	RefListIterator<MainTab,bool> tabIterator(tabs);
+	RefList<MainTab> tabs = allTabs();
+	RefListIterator<MainTab> tabIterator(tabs);
 	while (MainTab* tab = tabIterator.iterate())
 	{
 		// Write tab type and title

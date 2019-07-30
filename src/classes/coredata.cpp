@@ -254,7 +254,7 @@ Configuration* CoreData::findConfiguration(const char* name) const
  */
 
 // Set target Module instances list
-void CoreData::setModuleInstances(RefList<Module,bool>* moduleInstances)
+void CoreData::setModuleInstances(RefList<Module>* moduleInstances)
 {
 	moduleInstances_ = moduleInstances;
 }
@@ -264,34 +264,34 @@ Module* CoreData::findModule(const char* uniqueName) const
 {
 	if (!moduleInstances_)
 	{
-		printf("Error - RefList<Module,bool> pointer not set in CoreData.\n");
+		printf("Error - RefList<Module> pointer not set in CoreData.\n");
 		return NULL;
 	}
 
-	RefListIterator<Module,bool> moduleIterator(*moduleInstances_);
+	RefListIterator<Module> moduleIterator(*moduleInstances_);
 	while (Module* module = moduleIterator.iterate()) if (DissolveSys::sameString(module->uniqueName(), uniqueName)) return module;
 
 	return NULL;
 }
 
 // Search for and return any instance(s) of the specified Module type
-RefList<Module,bool> CoreData::findModules(const char* moduleType) const
+RefList<Module> CoreData::findModules(const char* moduleType) const
 {
-	RefList<Module,bool> modules;
+	RefList<Module> modules;
 
-	RefListIterator<Module,bool> moduleIterator(*moduleInstances_);
-	while (Module* module = moduleIterator.iterate()) if (DissolveSys::sameString(module->type(), moduleType)) modules.add(module);
+	RefListIterator<Module> moduleIterator(*moduleInstances_);
+	while (Module* module = moduleIterator.iterate()) if (DissolveSys::sameString(module->type(), moduleType)) modules.append(module);
 
 	return modules;
 }
 
 // Search for and return any instance(s) of the specified Module type
-RefList<Module,bool> CoreData::findModules(const CharStringList& moduleTypes) const
+RefList<Module> CoreData::findModules(const CharStringList& moduleTypes) const
 {
-	RefList<Module,bool> modules;
+	RefList<Module> modules;
 
-	RefListIterator<Module,bool> moduleIterator(*moduleInstances_);
-	while (Module* module = moduleIterator.iterate()) if (moduleTypes.contains(module->type())) modules.add(module);
+	RefListIterator<Module> moduleIterator(*moduleInstances_);
+	while (Module* module = moduleIterator.iterate()) if (moduleTypes.contains(module->type())) modules.append(module);
 
 	return modules;
 }

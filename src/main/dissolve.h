@@ -256,7 +256,7 @@ class Dissolve
 	 */
 	private:
 	// List of all instances of all used Modules
-	RefList<Module,bool> moduleInstances_;
+	RefList<Module> moduleInstances_;
 	// List of master Module instances
 	List<Module> masterModules_;
 

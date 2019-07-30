@@ -33,7 +33,7 @@
 // Constructors
 SelectProcedureNode::SelectProcedureNode(SpeciesSite* site) : ProcedureNode(ProcedureNode::SelectNode)
 {
-	if (site) speciesSites_.add(site);
+	if (site) speciesSites_.append(site);
 
 	sameMolecule_= NULL;
 	forEachBranch_ = NULL;
@@ -42,7 +42,7 @@ SelectProcedureNode::SelectProcedureNode(SpeciesSite* site) : ProcedureNode(Proc
 	nSelections_ = 0;
 }
 
-SelectProcedureNode::SelectProcedureNode(const RefList<SpeciesSite,bool>& sites) : ProcedureNode(ProcedureNode::SelectNode)
+SelectProcedureNode::SelectProcedureNode(const RefList<SpeciesSite>& sites) : ProcedureNode(ProcedureNode::SelectNode)
 {
 	speciesSites_ = sites;
 
@@ -60,7 +60,7 @@ SelectProcedureNode::~SelectProcedureNode()
 	if (forEachBranch_) delete forEachBranch_;
 
 	// Delete any dynamic site nodes (as we are the owner)
-	RefListIterator<DynamicSiteProcedureNode,bool> dynamicIterator(dynamicSites_);
+	RefListIterator<DynamicSiteProcedureNode> dynamicIterator(dynamicSites_);
 	while (DynamicSiteProcedureNode* dynamicNode = dynamicIterator.iterate()) delete dynamicNode;
 }
 
@@ -107,13 +107,13 @@ EnumOptions<SelectProcedureNode::SelectNodeKeyword> SelectProcedureNode::selectN
 bool SelectProcedureNode::addSameMoleculeExclusion(SelectProcedureNode* node)
 {
 	if (sameMoleculeExclusions_.contains(node)) return false;
-	else sameMoleculeExclusions_.add(node);
+	else sameMoleculeExclusions_.append(node);
 
 	return true;
 }
 
 // Return list of Molecules currently excluded from selection
-const RefList<const Molecule,bool>& SelectProcedureNode::excludedMolecules() const
+const RefList<const Molecule>& SelectProcedureNode::excludedMolecules() const
 {
 	return excludedMolecules_;
 }
@@ -122,13 +122,13 @@ const RefList<const Molecule,bool>& SelectProcedureNode::excludedMolecules() con
 bool SelectProcedureNode::addSameSiteExclusion(SelectProcedureNode* node)
 {
 	if (sameSiteExclusions_.contains(node)) return false;
-	else sameSiteExclusions_.add(node);
+	else sameSiteExclusions_.append(node);
 
 	return true;
 }
 
 // List of Sites currently excluded from selection
-const RefList<const Site,bool>& SelectProcedureNode::excludedSites() const
+const RefList<const Site>& SelectProcedureNode::excludedSites() const
 {
 	return excludedSites_;
 }
@@ -211,7 +211,7 @@ bool SelectProcedureNode::prepare(Configuration* cfg, const char* prefix, Generi
 	if (forEachBranch_ && (!forEachBranch_->prepare(cfg, prefix, targetList))) return false;
 
 	// Prepare any dynamic site nodes
-	RefListIterator<DynamicSiteProcedureNode,bool> dynamicIterator(dynamicSites_);
+	RefListIterator<DynamicSiteProcedureNode> dynamicIterator(dynamicSites_);
 	while (DynamicSiteProcedureNode* dynamicNode = dynamicIterator.iterate()) if (!dynamicNode->prepare(cfg, prefix, targetList)) return false;
 
 	return true;
@@ -225,11 +225,11 @@ ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool& pro
 
 	// Update our exclusion lists
 	excludedMolecules_.clear();
-	RefListIterator<SelectProcedureNode,bool> moleculeExclusionIterator(sameMoleculeExclusions_);
+	RefListIterator<SelectProcedureNode> moleculeExclusionIterator(sameMoleculeExclusions_);
 	while (SelectProcedureNode* node = moleculeExclusionIterator.iterate()) if (node->currentSite()) excludedMolecules_.addUnique(node->currentSite()->molecule());
 
 	excludedSites_.clear();
-	RefListIterator<SelectProcedureNode,bool> siteExclusionIterator(sameSiteExclusions_);
+	RefListIterator<SelectProcedureNode> siteExclusionIterator(sameSiteExclusions_);
 	while (SelectProcedureNode* node = siteExclusionIterator.iterate()) if (node->currentSite()) excludedSites_.addUnique(node->currentSite());
 
 	// Get required Molecule parent, if requested
@@ -238,7 +238,7 @@ ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool& pro
 	/*
 	 * Add sites from specified Species/Sites
 	 */
-	RefListIterator<SpeciesSite, bool> siteIterator(speciesSites_);
+	RefListIterator<SpeciesSite> siteIterator(speciesSites_);
 	while (SpeciesSite* site = siteIterator.iterate())
 	{
 		const SiteStack* siteStack = cfg->siteStack(site);
@@ -267,7 +267,7 @@ ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool& pro
 	 * Add dynamically-generated sites.
 	 * Call each DynamicSiteProcedureNode's execute function in turn, adding any generated sites to our reference array afterwards.
 	 */
-	RefListIterator<DynamicSiteProcedureNode,bool> dynamicIterator(dynamicSites_);
+	RefListIterator<DynamicSiteProcedureNode> dynamicIterator(dynamicSites_);
 	while (DynamicSiteProcedureNode* dynamicNode = dynamicIterator.iterate())
 	{
 		if (dynamicNode->execute(procPool, cfg, prefix, targetList) == ProcedureNode::Failure) return ProcedureNode::Failure;
@@ -302,7 +302,7 @@ bool SelectProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, co
 	if (forEachBranch_ && (!forEachBranch_->finalise(procPool, cfg, prefix, targetList))) return false;
 
 	// Finalise any dynamic site nodes
-	RefListIterator<DynamicSiteProcedureNode,bool> dynamicIterator(dynamicSites_);
+	RefListIterator<DynamicSiteProcedureNode> dynamicIterator(dynamicSites_);
 	while (DynamicSiteProcedureNode* dynamicNode = dynamicIterator.iterate()) if (!dynamicNode->finalise(procPool, cfg, prefix, targetList)) return false;
 
 	// Print out summary information
@@ -346,7 +346,7 @@ bool SelectProcedureNode::read(LineParser& parser, const CoreData& coreData, Nod
 		{
 			case (SelectProcedureNode::DynamicSiteKeyword):
 				dynamicSiteNode = new DynamicSiteProcedureNode(this);
-				dynamicSites_.add(dynamicSiteNode);
+				dynamicSites_.append(dynamicSiteNode);
 				if (!dynamicSiteNode->read(parser, coreData, scopeStack)) return false;
 				break;
 			case (SelectProcedureNode::EndSelectKeyword):
@@ -394,7 +394,7 @@ bool SelectProcedureNode::read(LineParser& parser, const CoreData& coreData, Nod
 
 					Messenger::printVerbose("Select node %p uses site label '%s' ('%s' in Species '%s').\n", this, name(), site->name(), sp->name());
 
-					speciesSites_.add(site);
+					speciesSites_.append(site);
 					break;
 				}
 				else return Messenger::error("Couldn't find named Species '%s'.\n", parser.argc(1));
@@ -417,21 +417,21 @@ bool SelectProcedureNode::write(LineParser& parser, const char* prefix)
 	if (!parser.writeLineF("%s%s\n", ProcedureNode::nodeTypes().keyword(type_))) return false;
 
 	// Normal Sites
-	RefListIterator<SpeciesSite,bool> siteIterator(speciesSites_);
+	RefListIterator<SpeciesSite> siteIterator(speciesSites_);
 	while (SpeciesSite* site = siteIterator.iterate())
 	{
 		if (!parser.writeLineF("%s  %s  '%s'  '%s'\n", prefix, selectNodeKeywords().keyword(SelectProcedureNode::SiteKeyword), site->name(), site->parent()->name())) return false;
 	}
 
 	// Dynamic Sites
-	RefListIterator<DynamicSiteProcedureNode,bool> dynamicSiteIterator(dynamicSites_);
+	RefListIterator<DynamicSiteProcedureNode> dynamicSiteIterator(dynamicSites_);
 	while (DynamicSiteProcedureNode* site = dynamicSiteIterator.iterate()) if (!site->write(parser, CharString("%s  ", prefix))) return false;
 
 	// Same Molecule Exclusions
 	if (sameMoleculeExclusions_.nItems() > 0)
 	{
 		CharString sameMolExclusions;
-		RefListIterator<SelectProcedureNode,bool> exclusionIterator(sameMoleculeExclusions_);
+		RefListIterator<SelectProcedureNode> exclusionIterator(sameMoleculeExclusions_);
 		while (SelectProcedureNode* node = exclusionIterator.iterate()) sameMolExclusions.strcatf("  %s", node->name());
 		if (!parser.writeLineF("%s  %s%s\n", prefix, selectNodeKeywords().keyword(SelectProcedureNode::ExcludeSameMoleculeKeyword), sameMolExclusions.get())) return false;
 	}
@@ -440,7 +440,7 @@ bool SelectProcedureNode::write(LineParser& parser, const char* prefix)
 	if (sameSiteExclusions_.nItems() > 0)
 	{
 		CharString sameSiteExclusions;
-		RefListIterator<SelectProcedureNode,bool> exclusionIterator(sameSiteExclusions_);
+		RefListIterator<SelectProcedureNode> exclusionIterator(sameSiteExclusions_);
 		while (SelectProcedureNode* node = exclusionIterator.iterate()) sameSiteExclusions.strcatf("  %s", node->name());
 		if (!parser.writeLineF("%s  %s%s\n", prefix, selectNodeKeywords().keyword(SelectProcedureNode::ExcludeSameSiteKeyword), sameSiteExclusions.get())) return false;
 	}

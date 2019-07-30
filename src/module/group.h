@@ -46,7 +46,7 @@ class ModuleGroup : public ListItem<ModuleGroup>
 	// Name of the group
 	CharString name_;
 	// RefList of Modules in this group
-	RefList<Module,bool> modules_;
+	RefList<Module> modules_;
 
 	public:
 	// Return name of group
@@ -60,7 +60,7 @@ class ModuleGroup : public ListItem<ModuleGroup>
 	// Return number of Modules in the group
 	int nModules() const;
 	// Return reflist of Modules
-	const RefList<Module,bool>& modules() const;
+	const RefList<Module>& modules() const;
 };
 
 #endif

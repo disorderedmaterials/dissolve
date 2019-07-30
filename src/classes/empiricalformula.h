@@ -68,7 +68,7 @@ class EmpiricalFormula
 	// Return empirical formula for supplied Species
 	static const char* formula(const Species* species, bool richText = false);
 	// Return empirical formula for supplied SpeciesAtom reflist
-	static const char* formula(const RefList<SpeciesAtom,bool>& atoms, bool richText = false);
+	static const char* formula(const RefList<SpeciesAtom>& atoms, bool richText = false);
 };
 
 #endif

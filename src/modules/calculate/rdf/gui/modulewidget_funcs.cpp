@@ -100,7 +100,7 @@ void CalculateRDFModuleWidget::setGraphDataTargets(CalculateRDFModule* module)
 	rdfGraph_->clearRenderables();
 
 	// Loop over Configuration targets in Module
-	RefListIterator<Configuration,bool> configIterator(module_->targetConfigurations());
+	RefListIterator<Configuration> configIterator(module_->targetConfigurations());
 	while (Configuration* cfg = configIterator.iterate())
 	{
 		// Calculated RDF

@@ -129,7 +129,7 @@ class SpeciesIntra
 	// Clear and delete all arrays
 	void deleteAttachedAtomArrays();
 	// Set attached SpeciesAtoms for terminus specified
-	void setAttachedAtoms(int terminus, const RefList<SpeciesAtom,bool>& atoms);
+	void setAttachedAtoms(int terminus, const RefList<SpeciesAtom>& atoms);
 	// Set attached SpeciesAtoms for terminus specified (single SpeciesAtom)
 	void setAttachedAtoms(int terminus, SpeciesAtom* atom);
 	// Return number of attached SpeciesAtoms for terminus specified

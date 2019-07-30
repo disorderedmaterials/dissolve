@@ -76,7 +76,7 @@ bool SQModule::sumUnweightedSQ(ProcessPool& procPool, Module* module, GenericLis
 {
 	// Create an AtomTypeList containing all AtomTypes present in all target configurations
 	AtomTypeList combinedAtomTypes;
-	RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
+	RefListIterator<Configuration> configIterator(module->targetConfigurations());
 	while (Configuration* cfg = configIterator.iterate()) combinedAtomTypes.add(cfg->usedAtomTypesList());
 	combinedAtomTypes.finalise();
 

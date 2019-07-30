@@ -119,17 +119,17 @@ class CoreData
 	 */
 	private:
 	// Pointer to Module instances list
-	RefList<Module,bool>* moduleInstances_;
+	RefList<Module>* moduleInstances_;
 
 	public:
 	// Set target Module instances list
-	void setModuleInstances(RefList<Module,bool>* moduleInstances);
+	void setModuleInstances(RefList<Module>* moduleInstances);
 	// Search for any instance of any module with the specified unique name
 	Module* findModule(const char* uniqueName) const;
 	// Search for and return any instance(s) of the specified Module type
-	RefList<Module,bool> findModules(const char* moduleType) const;
+	RefList<Module> findModules(const char* moduleType) const;
 	// Search for and return any instance(s) of the specified List of Module types
-	RefList<Module,bool> findModules(const CharStringList& moduleTypes) const;
+	RefList<Module> findModules(const CharStringList& moduleTypes) const;
 };
 
 #endif
