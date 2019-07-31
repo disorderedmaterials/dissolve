@@ -269,11 +269,11 @@ bool IsotopologueMix::broadcast(ProcessPool& procPool, const int root, const Cor
 		for (int n=0; n<nIso; ++n)
 		{
 			// Broadcast Isotopologue index data
-			topIndex = species_->indexOfIsotopologue(mix_[n]->item);
+			topIndex = species_->indexOfIsotopologue(mix_[n]->item());
 			if (!procPool.broadcast(topIndex, root)) return false;
 
 			// Broadcast relative population data
-			if (!procPool.broadcast(mix_[n]->data, root)) return false;
+			if (!procPool.broadcast(mix_[n]->data(), root)) return false;
 		}
 	}
 	else
@@ -289,7 +289,7 @@ bool IsotopologueMix::broadcast(ProcessPool& procPool, const int root, const Cor
 			if (!procPool.broadcast(relPop, root)) return false;
 
 			// Add mix data
-			mix_.add(species_->isotopologue(topIndex), relPop);
+			mix_.append(species_->isotopologue(topIndex), relPop);
 		}
 	}
 #endif
@@ -304,7 +304,7 @@ bool IsotopologueMix::equality(ProcessPool& procPool)
 	if (!procPool.equality(speciesPopulation_)) return Messenger::error("IsotopologueMix species population is not equivalent (process %i has %i).\n", procPool.poolRank(), speciesPopulation_);
 	// Check number of isotopologues in mix
 	if (!procPool.equality(mix_.nItems())) return Messenger::error("IsotopologueMix mix nItems is not equivalent (process %i has %i).\n", procPool.poolRank(), mix_.nItems());
-	RefListIterator<Isotopologue,double> mixIterator(mix_);
+	RefDataListIterator<Isotopologue,double> mixIterator(mix_);
 	int count = 0;
 	while (Isotopologue* top = mixIterator.iterate())
 	{

@@ -383,8 +383,8 @@ bool Configuration::broadcastCoordinates(ProcessPool& procPool, int rootRank)
 	delete[] y;
 	delete[] z;
 
-	// Update coordinate index
-	if (!procPool.broadcast(coordinateIndex_, rootRank)) return false;
+	// Broadcast contents version
+	if (!contentsVersion_.broadcast(procPool, rootRank)) return false;
 #endif
 	return true;
 }
