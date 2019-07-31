@@ -111,5 +111,5 @@ bool Data2DExportFileFormat::exportData(Data2D& data)
 	else if (data2DFormat() == Data2DExportFileFormat::CartesianData) result = exportCartesian(parser, data);
 	else Messenger::error("Unrecognised data format.\nKnown formats are: %s.\n", Data2DExportFileFormat().formats());
 
-	return false;
+	return result;
 }
