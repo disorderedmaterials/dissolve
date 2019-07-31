@@ -670,6 +670,9 @@ bool PartialSet::read(LineParser& parser, const CoreData& coreData)
 	partials_.initialise(nTypes, nTypes, true);
 	boundPartials_.initialise(nTypes, nTypes, true);
 	unboundPartials_.initialise(nTypes, nTypes, true);
+	emptyBoundPartials_.initialise(nTypes, nTypes, true);
+	emptyBoundPartials_ = false;
+
 	for (int typeI=0; typeI<nTypes; ++typeI)
 	{
 		for (int typeJ=typeI; typeJ<nTypes; ++typeJ)
