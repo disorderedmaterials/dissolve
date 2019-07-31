@@ -1716,6 +1716,8 @@ bool ProcessPool::allSum(int* source, int count, ProcessPool::CommunicatorType c
 #ifdef PARALLEL
 	timer_.start();
 	int buffer[count];
+	for (int n=0; n<count; ++n) buffer[n] = 0;
+
 	if ((commType == ProcessPool::GroupLeadersCommunicator) && (!groupLeader())) return true;
 	if (MPI_Allreduce(source, &buffer, count, MPI_INTEGER, MPI_SUM, communicator(commType)) != MPI_SUCCESS) return false;
 
