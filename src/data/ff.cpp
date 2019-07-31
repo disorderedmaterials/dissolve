@@ -60,7 +60,7 @@ ForcefieldAtomType* Forcefield::atomTypeByName(const char* name, Element* elemen
 	for (int Z=startZ; Z<=endZ; ++Z)
 	{
 		// Go through types associated to the Element
-		RefListIterator<ForcefieldAtomType> typeIterator(atomTypesByElementPrivate_.at(Z));
+		RefListIterator<ForcefieldAtomType> typeIterator(atomTypesByElementPrivate_.constAt(Z));
 		while (ForcefieldAtomType* type = typeIterator.iterate()) if (DissolveSys::sameString(type->typeName(), name)) return type;
 	}
 

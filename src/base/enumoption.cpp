@@ -115,13 +115,13 @@ const char* EnumOptionsBase::keywordByIndex(int index) const
 		return unrecognisedOption_.keyword();
 	}
 
-	return options_.at(index).keyword();
+	return options_.constAt(index).keyword();
 }
 
 // Return option by keyword
 const EnumOption& EnumOptionsBase::option(const char* keyword) const
 {
-	for (int n=0; n<options_.nItems(); ++n) if (DissolveSys::sameString(keyword, options_.at(n).keyword())) return options_.at(n);
+	for (int n=0; n<options_.nItems(); ++n) if (DissolveSys::sameString(keyword, options_.constAt(n).keyword())) return options_.constAt(n);
 	return unrecognisedOption_;
 }
 
@@ -130,7 +130,7 @@ const char* EnumOptionsBase::currentOptionKeyword() const
 {
 	if (currentOptionIndex_ == -1) return "UNDEFINED";
 
-	return options_.at(currentOptionIndex_).keyword();
+	return options_.constAt(currentOptionIndex_).keyword();
 }
 
 // Return current option
@@ -138,7 +138,7 @@ const EnumOption& EnumOptionsBase::currentOption() const
 {
 	if (currentOptionIndex_ == -1) return unrecognisedOption_;
 
-	return options_.at(currentOptionIndex_);
+	return options_.constAt(currentOptionIndex_);
 }
 
 // Return current option index
@@ -156,7 +156,7 @@ void EnumOptionsBase::setCurrentOptionIndex(int index)
 // Set current option from keyword
 bool EnumOptionsBase::setCurrentOption(const char* keyword)
 {
-	for (int n=0; n<options_.nItems(); ++n) if (DissolveSys::sameString(keyword, options_.at(n).keyword()))
+	for (int n=0; n<options_.nItems(); ++n) if (DissolveSys::sameString(keyword, options_.constAt(n).keyword()))
 	{
 		currentOptionIndex_ = n;
 		return true;
@@ -168,7 +168,7 @@ bool EnumOptionsBase::setCurrentOption(const char* keyword)
 // Return whether specified option keyword is valid
 bool EnumOptionsBase::isValid(const char* keyword) const
 {
-	for (int n=0; n<options_.nItems(); ++n) if (DissolveSys::sameString(keyword, options_.at(n).keyword())) return true;
+	for (int n=0; n<options_.nItems(); ++n) if (DissolveSys::sameString(keyword, options_.constAt(n).keyword())) return true;
 	return false;
 }
 
@@ -176,7 +176,7 @@ bool EnumOptionsBase::isValid(const char* keyword) const
 bool EnumOptionsBase::errorAndPrintValid(const char* badKeyword) const
 {
 	CharString validValueString;
-	for (int n=0; n<options_.nItems(); ++n) validValueString += CharString(n == 0 ? "%s" : ", %s", options_.at(n).keyword());
+	for (int n=0; n<options_.nItems(); ++n) validValueString += CharString(n == 0 ? "%s" : ", %s", options_.constAt(n).keyword());
 	Messenger::error("'%s' is not a valid %s.\nValid options are:  %s", badKeyword, name_, validValueString.get());
 
 	return false;

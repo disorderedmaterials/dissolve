@@ -77,13 +77,13 @@ int CharStringList::nItems() const
 // Return nth string in list
 const char* CharStringList::at(int index) const
 {
-	return strings_.at(index);
+	return strings_.constAt(index);
 }
 
 // Return whether specified string is currently in the list
 bool CharStringList::contains(const char* s, bool caseSensitive) const
 {
-	for (int n=0; n<strings_.nItems(); ++n) if (DissolveSys::sameString(strings_.at(n), s, caseSensitive)) return true;
+	for (int n=0; n<strings_.nItems(); ++n) if (DissolveSys::sameString(strings_.constAt(n), s, caseSensitive)) return true;
 
 	return false;
 }
@@ -97,8 +97,8 @@ const char* CharStringList::asCommaSeparatedList() const
 
 	for (int n=0; n<strings_.nItems(); ++n)
 	{
-		if (n == 0) result = strings_.at(n);
-		else result.strcatf(", %s", strings_.at(n).get());
+		if (n == 0) result = strings_.constAt(n);
+		else result.strcatf(", %s", strings_.constAt(n).get());
 	}
 
 	return result.get();

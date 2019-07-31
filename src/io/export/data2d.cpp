@@ -87,7 +87,7 @@ bool Data2DExportFileFormat::exportCartesian(LineParser& parser, Data2D& data)
 	const Array<double>& yAxis = data.constYAxis();
 	for (int x=0; x<values.nRows(); ++x)
 	{
-		for (int y=0; y<values.nColumns(); ++y) if (!parser.writeLineF("%15.9f %15.9f %15.9f\n", xAxis.at(x), yAxis.at(y), values.constAt(x,y))) return false;
+		for (int y=0; y<values.nColumns(); ++y) if (!parser.writeLineF("%15.9f %15.9f %15.9f\n", xAxis.constAt(x), yAxis.constAt(y), values.constAt(x,y))) return false;
 		if (!parser.writeLineF("\n")) return false;
 	}
 

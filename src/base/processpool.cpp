@@ -530,7 +530,7 @@ int ProcessPool::nProcessesInGroup(int groupId) const
 		return 0;
 	}
 #endif
-	return processGroups_.at(groupId).nProcesses();
+	return processGroups_.constAt(groupId).nProcesses();
 }
 
 // Return array of pool ranks in specified group
@@ -543,7 +543,7 @@ int* ProcessPool::poolRanksInGroup(int groupId) const
 		return 0;
 	}
 #endif
-	return processGroups_.at(groupId).poolRanks().array();
+	return processGroups_.constAt(groupId).poolRanks().array();
 }
 
 // Return whether group data is modifiable
@@ -2122,33 +2122,33 @@ bool ProcessPool::equality(double* array, int nx, ProcessPool::CommunicatorType 
 }
 
 // Check equality of Array<int> across involved processes
-bool ProcessPool::equality(Array<int> array, ProcessPool::CommunicatorType commType)
+bool ProcessPool::equality(const Array<int>& array, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	// Verify array size first
 	if (!equality(array.nItems(), commType)) return Messenger::error("Array<int> sizes are not equal (process %i has %i).\n", poolRank_, array.nItems());
 
 	// Keep it simple (and slow) and check/send one value at a time
-	for (int n=0; n<array.nItems(); ++n) if (!equality(array[n], commType)) return Messenger::error("Array<int> value %i is not equivalent (process %i has %e).\n", n, poolRank_, array[n]);
+	for (int n=0; n<array.nItems(); ++n) if (!equality(array.constAt(n), commType)) return Messenger::error("Array<int> value %i is not equivalent (process %i has %e).\n", n, poolRank_, array.constAt(n));
 #endif
 	return true;
 }
 
 // Check equality of Array<double> across involved processes
-bool ProcessPool::equality(Array<double> array, ProcessPool::CommunicatorType commType)
+bool ProcessPool::equality(const Array<double>& array, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	// Verify array size first
 	if (!equality(array.nItems(), commType)) return Messenger::error("Array<double> sizes are not equal (process %i has %i).\n", poolRank_, array.nItems());
 
 	// Keep it simple (and slow) and check/send one value at a time
-	for (int n=0; n<array.nItems(); ++n) if (!equality(array[n], commType)) return Messenger::error("Array<double> value %i is not equivalent (process %i has %e).\n", n, poolRank_, array[n]);
+	for (int n=0; n<array.nItems(); ++n) if (!equality(array.constAt(n), commType)) return Messenger::error("Array<double> value %i is not equivalent (process %i has %e).\n", n, poolRank_, array.constAt(n));
 #endif
 	return true;
 }
 
 // Check equality of Array2D<int> across involved processes
-bool ProcessPool::equality(Array2D<int> array, ProcessPool::CommunicatorType commType)
+bool ProcessPool::equality(const Array2D<int>& array, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	// Verify array size and state first
@@ -2157,13 +2157,13 @@ bool ProcessPool::equality(Array2D<int> array, ProcessPool::CommunicatorType com
 	if (!equality(array.halved(), commType)) return Messenger::error("Array2D<int> half-status are not equivalent (process %i has %i).\n", poolRank_, array.halved());
 
 	// Keep it simple (and slow) and check/send one value at a time
-	for (int n=0; n<array.linearArraySize(); ++n) if (!equality(array.linearArray()[n], commType)) return Messenger::error("Array2D<int> value %i is not equivalent (process %i has %e).\n", n, poolRank_, array.linearArray()[n]);
+	for (int n=0; n<array.linearArraySize(); ++n) if (!equality(array.constLinearValue(n), commType)) return Messenger::error("Array2D<int> value %i is not equivalent (process %i has %e).\n", n, poolRank_, array.constLinearValue(n));
 #endif
 	return true;
 }
 
 // Check equality of Array2D<double> across involved processes
-bool ProcessPool::equality(Array2D<double> array, ProcessPool::CommunicatorType commType)
+bool ProcessPool::equality(const Array2D<double>& array, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	// Verify array size and state first
@@ -2172,13 +2172,13 @@ bool ProcessPool::equality(Array2D<double> array, ProcessPool::CommunicatorType 
 	if (!equality(array.halved(), commType)) return Messenger::error("Array2D<double> half-status are not equivalent (process %i has %i).\n", poolRank_, array.halved());
 
 	// Keep it simple (and slow) and check/send one value at a time
-	for (int n=0; n<array.linearArraySize(); ++n) if (!equality(array.linearArray()[n], commType)) return Messenger::error("Array2D<double> value %i is not equivalent (process %i has %e).\n", n, poolRank_, array.linearArray()[n]);
+	for (int n=0; n<array.linearArraySize(); ++n) if (!equality(array.constLinearValue(n), commType)) return Messenger::error("Array2D<double> value %i is not equivalent (process %i has %e).\n", n, poolRank_, array.constLinearValue(n));
 #endif
 	return true;
 }
 
 // Check equality of Array2D<bool> across involved processes
-bool ProcessPool::equality(Array2D<bool> array, ProcessPool::CommunicatorType commType)
+bool ProcessPool::equality(const Array2D<bool>& array, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	// Verify array size and state first
@@ -2187,7 +2187,7 @@ bool ProcessPool::equality(Array2D<bool> array, ProcessPool::CommunicatorType co
 	if (!equality(array.halved(), commType)) return Messenger::error("Array2D<bool> half-status are not equivalent (process %i has %i).\n", poolRank_, array.halved());
 
 	// Keep it simple (and slow) and check/send one value at a time
-	for (int n=0; n<array.linearArraySize(); ++n) if (!equality(array.linearArray()[n], commType)) return Messenger::error("Array2D<bool> value %i is not equivalent (process %i has %i).\n", n, poolRank_, array.linearArray()[n]);
+	for (int n=0; n<array.linearArraySize(); ++n) if (!equality(array.constLinearValue(n), commType)) return Messenger::error("Array2D<bool> value %i is not equivalent (process %i has %i).\n", n, poolRank_, array.constLinearValue(n));
 #endif
 	return true;
 }

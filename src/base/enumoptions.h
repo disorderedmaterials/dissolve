@@ -45,7 +45,7 @@ template <class T> class EnumOptions : public EnumOptionsBase
 	// Return enumeration in T
 	T enumeration(const char* keyword) const
 	{
-		for (int n=0; n<options_.nItems(); ++n) if (DissolveSys::sameString(keyword, options_.at(n).keyword())) return (T) n;
+		for (int n=0; n<options_.nItems(); ++n) if (DissolveSys::sameString(keyword, options_.constAt(n).keyword())) return (T) n;
 		return (T) options_.nItems();
 	}
 	// Return current enumeration in T
@@ -58,18 +58,18 @@ template <class T> class EnumOptions : public EnumOptionsBase
 			return (T) -1;
 		}
 
-		return (T) options_.at(currentOptionIndex_).enumeration();
+		return (T) options_.constAt(currentOptionIndex_).enumeration();
 	}
 	// Return enumerated keyword
 	const char* keyword(T enumeration) const
 	{
-		for (int n=0; n<options_.nItems(); ++n) if (options_.at(n).enumeration() == enumeration) return options_.at(n).keyword();
+		for (int n=0; n<options_.nItems(); ++n) if (options_.constAt(n).enumeration() == enumeration) return options_.constAt(n).keyword();
 		return "ENUMERATION_NOT_VALID";
 	}
 	// Return option with enumeration specified
 	const EnumOption& option(T enumeration) const
 	{
-		for (int n=0; n<options_.nItems(); ++n) if (options_.at(n).enumeration() == enumeration) return options_.at(n);
+		for (int n=0; n<options_.nItems(); ++n) if (options_.constAt(n).enumeration() == enumeration) return options_.constAt(n);
 		return unrecognisedOption_;
 	}
 	// Return option with keyword specified
