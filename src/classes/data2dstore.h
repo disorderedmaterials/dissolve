@@ -25,6 +25,7 @@
 #include "math/data2d.h"
 #include "io/import/data2d.h"
 #include "templates/list.h"
+#include "templates/refdatalist.h"
 
 // Forward Declarations
 /* none */
@@ -46,7 +47,7 @@ class Data2DStore
 	// List of contained data
 	List<Data2D> data_;
 	// References for Data2D and associated file/format
-	RefList<Data2D,Data2DImportFileFormat> dataReferences_;
+	RefDataList<Data2D,Data2DImportFileFormat> dataReferences_;
 
 	public:
 	// Load  data into store
@@ -60,7 +61,7 @@ class Data2DStore
 	// Return list of all data
 	const List<Data2D>& data() const;
 	// Return list of all data references
-	const RefList<Data2D,Data2DImportFileFormat>& dataReferences() const;
+	const RefDataList<Data2D,Data2DImportFileFormat>& dataReferences() const;
 };
 
 #endif

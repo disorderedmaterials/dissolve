@@ -84,7 +84,7 @@ QToolButton* SuperTabWidget::addTabCloseButton(QWidget* pageWidget)
 	closeButton->setAutoRaise(true);
 	superTabBar_->setTabButton(tabIndex, QTabBar::RightSide	, closeButton);
 	connect(closeButton, SIGNAL(clicked(bool)), this, SLOT(tabCloseButtonClicked(bool)));
-	closeButtons_.add(closeButton, pageWidget);
+	closeButtons_.append(closeButton, pageWidget);
 
 	return closeButton;
 }
@@ -100,19 +100,19 @@ void SuperTabWidget::tabCloseButtonClicked(bool checked)
 	QToolButton* toolButton = dynamic_cast<QToolButton*>(sender());
 	if (!toolButton) return;
 
-	RefListItem<QToolButton,QWidget*>* item = closeButtons_.contains(toolButton);
+	RefDataItem<QToolButton,QWidget*>* item = closeButtons_.contains(toolButton);
 	if (item)
 	{
 		// Find the tab containing the page widget (stored as the RefListItem's data)
-		int tabIndex = indexOf(item->data);
+		int tabIndex = indexOf(item->data());
 		if (tabIndex == -1)
 		{
-			Messenger::error("SuperTabWidget::tabCloseButtonClicked - Failed to find tab containing widget %p.\n", item->data);
+			Messenger::error("SuperTabWidget::tabCloseButtonClicked - Failed to find tab containing widget %p.\n", item->data());
 			return;
 		}
 
 		// Grab the widget pointer before we delete the button item
-		QWidget* button = item->data;
+		QWidget* button = item->data();
 
 		// Remove the button item
 		closeButtons_.remove(item);

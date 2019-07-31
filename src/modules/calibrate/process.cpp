@@ -50,11 +50,11 @@ bool CalibrationModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		/*
 		 * Make a list of all Configurations related to all RDF module
 		 */
-		RefList<Configuration,bool> configs;
-		RefListIterator<Module,bool> rdfModuleIterator(intraBroadeningModules_);
+		RefList<Configuration> configs;
+		RefListIterator<Module> rdfModuleIterator(intraBroadeningModules_);
 		while (Module* module = rdfModuleIterator.iterate())
 		{
-			RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
+			RefListIterator<Configuration> configIterator(module->targetConfigurations());
 			while (Configuration* cfg = configIterator.iterate()) configs.addUnique(cfg);
 		}
 		Messenger::print("%i Configuration(s) are involved over all RDF Module targets.\n", configs.nItems());
@@ -78,18 +78,18 @@ bool CalibrationModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		/*
 		 * Create master reference lists of NeutronSQ modules over any specified S(Q) and/or G(r) data reference targets
 		 */
-		RefList<Module,CalibrationModule::IntraBroadeningFitTarget> neutronReferences;
+		RefDataList<Module,CalibrationModule::IntraBroadeningFitTarget> neutronReferences;
 
-		RefListIterator<Module,bool> neutronSQIterator(intraBroadeningNeutronSQReferences_);
+		RefListIterator<Module> neutronSQIterator(intraBroadeningNeutronSQReferences_);
 		while (Module* module = neutronSQIterator.iterate()) neutronReferences.addUnique(module, CalibrationModule::IntraBroadeningTargetSQ);
 
-		RefListIterator<Module,bool> neutronGRIterator(intraBroadeningNeutronGRReferences_);
+		RefListIterator<Module> neutronGRIterator(intraBroadeningNeutronGRReferences_);
 		while (Module* module = neutronGRIterator.iterate())
 		{
 			// If the Module target is already in the list, just set its data to 'both'
-			RefListItem<Module,CalibrationModule::IntraBroadeningFitTarget>* oldItem = neutronReferences.contains(module);
-			if (oldItem) oldItem->data = CalibrationModule::IntraBroadeningTargetBoth;
-			else neutronReferences.add(module, CalibrationModule::IntraBroadeningTargetGR);
+			RefDataItem<Module,CalibrationModule::IntraBroadeningFitTarget>* oldItem = neutronReferences.contains(module);
+			if (oldItem) oldItem->data() = CalibrationModule::IntraBroadeningTargetBoth;
+			else neutronReferences.append(module, CalibrationModule::IntraBroadeningTargetGR);
 		}
 
 
@@ -149,7 +149,7 @@ bool CalibrationModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 			// Recalculate the UnweightedGR for all Configurations targeted by the RDFModule
 			int smoothing = rdfModule->keywords().asInt("Smoothing");
-			RefListIterator<Configuration,bool> configIterator(rdfModule->targetConfigurations());
+			RefListIterator<Configuration> configIterator(rdfModule->targetConfigurations());
 			while (Configuration* cfg = configIterator.iterate())
 			{
 				const PartialSet& originalGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "OriginalGR");
@@ -162,11 +162,11 @@ bool CalibrationModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		}
 
 		// Go over NeutronSQ Modules and run the processing
-		RefListIterator<Module,CalibrationModule::IntraBroadeningFitTarget> neutronModuleIterator(neutronReferences);
+		RefDataListIterator<Module,CalibrationModule::IntraBroadeningFitTarget> neutronModuleIterator(neutronReferences);
 		while (Module* module = neutronModuleIterator.iterate())
 		{
 			// Make sure the structure factors will be updated by the NeutronSQ module - set flag in the target Configurations
-			RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
+			RefListIterator<Configuration> configIterator(module->targetConfigurations());
 			while (Configuration* cfg = configIterator.iterate()) GenericListHelper<bool>::realise(cfg->moduleData(), "_ForceNeutronSQ") = true;
 
 			// Run the NeutronSQModule (quietly)

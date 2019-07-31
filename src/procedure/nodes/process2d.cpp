@@ -103,13 +103,13 @@ const Data2D& Process2DProcedureNode::processedData() const
 // Add site population normaliser
 void Process2DProcedureNode::addSitePopulationNormaliser(SelectProcedureNode* selectNode)
 {
-	sitePopulationNormalisers_.add(selectNode, 1.0);
+	sitePopulationNormalisers_.append(selectNode);
 }
 
 // Add number density normaliser
 void Process2DProcedureNode::addNumberDensityNormaliser(SelectProcedureNode* selectNode)
 {
-	numberDensityNormalisers_.add(selectNode);
+	numberDensityNormalisers_.append(selectNode);
 }
 
 // Set whether to normalise by factor
@@ -213,11 +213,11 @@ bool Process2DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg,
 	data = node->accumulatedData();
 
 	// Normalisation by number of sites?
-	RefListIterator<SelectProcedureNode,double> siteNormaliserIterator(sitePopulationNormalisers_);
+	RefListIterator<SelectProcedureNode> siteNormaliserIterator(sitePopulationNormalisers_);
 	while (SelectProcedureNode* selectNode = siteNormaliserIterator.iterate()) data /= selectNode->nAverageSites();
 
 	// Normalisation by number density of sites?
-	RefListIterator<SelectProcedureNode,double> numberDensityIterator(numberDensityNormalisers_);
+	RefListIterator<SelectProcedureNode> numberDensityIterator(numberDensityNormalisers_);
 	while (SelectProcedureNode* selectNode = numberDensityIterator.iterate()) data /= (selectNode->nAverageSites() / cfg->box()->volume());
 
 	// Normalisation by factor?
@@ -232,13 +232,16 @@ bool Process2DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg,
 	}
 
 	// Save data?
-	if (saveData_ && procPool.isMaster())
+	if (saveData_)
 	{
-		Data2DExportFileFormat data2DFormat(CharString("%s_%s.txt", name(), cfg->name()), Data2DExportFileFormat::CartesianData);
-		if (data2DFormat.exportData(data)) procPool.decideTrue();
-		else return procPool.decideFalse();
+		if (procPool.isMaster())
+		{
+			Data2DExportFileFormat data2DFormat(CharString("%s_%s.txt", name(), cfg->name()), Data2DExportFileFormat::CartesianData);
+			if (data2DFormat.exportData(data)) procPool.decideTrue();
+			else return procPool.decideFalse();
+		}
+		else if (!procPool.decision()) return false;
 	}
-	else if (!procPool.decision()) return false;
 
 	return true;
 }
@@ -295,7 +298,7 @@ bool Process2DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				{
 					SelectProcedureNode* selectNode = dynamic_cast<SelectProcedureNode*>(scopeStack.node(parser.argc(n), ProcedureNode::SelectNode));
 					if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(n), process2DNodeKeywords().keyword(Process2DProcedureNode::NSitesKeyword));
-					sitePopulationNormalisers_.add(selectNode, 1.0);
+					sitePopulationNormalisers_.append(selectNode);
 				}
 				break;
 			case (Process2DProcedureNode::NumberDensityKeyword):
@@ -303,7 +306,7 @@ bool Process2DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				{
 					SelectProcedureNode* selectNode = dynamic_cast<SelectProcedureNode*>(scopeStack.node(parser.argc(n), ProcedureNode::SelectNode));
 					if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(n), process2DNodeKeywords().keyword(Process2DProcedureNode::NumberDensityKeyword));
-					numberDensityNormalisers_.add(selectNode, 1.0);
+					numberDensityNormalisers_.append(selectNode);
 				}
 				break;
 			case (Process2DProcedureNode::SaveKeyword):

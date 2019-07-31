@@ -24,7 +24,7 @@
 
 #include "base/charstringlist.h"
 #include "templates/list.h"
-#include "templates/reflist.h"
+#include "templates/refdatalist.h"
 
 // Forward Declarations
 class Module;
@@ -65,7 +65,7 @@ class ModuleGroups
 	// Current list of groups
 	List<ModuleGroup> groups_;
 	// RefList of all Modules present in all groups
-	RefList<Module,ModuleGroup*> allModules_;
+	RefDataList<Module,ModuleGroup*> allModules_;
 
 	public:
 	// Add Module to specified group, creating it if necessary
@@ -75,7 +75,7 @@ class ModuleGroups
 	// Return current list of groups
 	const List<ModuleGroup>& groups() const;
 	// Return reflist of all Modules present over all groups
-	const RefList<Module,ModuleGroup*>& modules() const;
+	const RefDataList<Module,ModuleGroup*>& modules() const;
 	// Return whether the specified Module is present (in any group)
 	bool contains(Module* module) const;
 	// Return name of group assigned to specified Module (if present)

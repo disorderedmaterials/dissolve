@@ -122,7 +122,7 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	 */
 	private:
 	// List of bonds which this atom participates in
-	RefList<SpeciesBond,int> bonds_;
+	RefList<SpeciesBond> bonds_;
 	
 	public:
 	// Add bond reference
@@ -136,7 +136,7 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	// Return specified bond
 	SpeciesBond* bond(int index);
 	// Return bonds list
-	const RefList<SpeciesBond,int>& bonds() const;
+	const RefList<SpeciesBond>& bonds() const;
 	// Return whether bond to specified atom exists
 	SpeciesBond* hasBond(SpeciesAtom* j);
 

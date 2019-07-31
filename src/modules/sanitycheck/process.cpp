@@ -81,4 +81,3 @@ bool SanityCheckModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 	return true;
 }
-

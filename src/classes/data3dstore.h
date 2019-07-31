@@ -25,6 +25,7 @@
 #include "math/data3d.h"
 #include "io/import/data3d.h"
 #include "templates/list.h"
+#include "templates/refdatalist.h"
 
 // Forward Declarations
 /* none */
@@ -46,7 +47,7 @@ class Data3DStore
 	// List of contained data
 	List<Data3D> data_;
 	// References for Data3D and associated file/format
-	RefList<Data3D,Data3DImportFileFormat> dataReferences_;
+	RefDataList<Data3D,Data3DImportFileFormat> dataReferences_;
 
 	public:
 	// Load  data into store
@@ -60,7 +61,7 @@ class Data3DStore
 	// Return list of all data
 	const List<Data3D>& data() const;
 	// Return list of all data references
-	const RefList<Data3D,Data3DImportFileFormat>& dataReferences() const;
+	const RefDataList<Data3D,Data3DImportFileFormat>& dataReferences() const;
 };
 
 #endif

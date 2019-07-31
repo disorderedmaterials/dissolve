@@ -70,7 +70,7 @@ bool Data3DStoreModuleKeyword::read(LineParser& parser, int startArg, const Core
 bool Data3DStoreModuleKeyword::write(LineParser& parser, const char* prefix)
 {
 	// Loop over list of one-dimensional data
-	RefListIterator<Data3D,Data3DImportFileFormat> dataIterator(data_.dataReferences());
+	RefDataListIterator<Data3D,Data3DImportFileFormat> dataIterator(data_.dataReferences());
 	while (Data3D* data = dataIterator.iterate())
 	{
 		Data3DImportFileFormat ff = dataIterator.currentData();

@@ -57,7 +57,7 @@ class ModuleGroupsKeywordWidget: public KeywordDropDown, public KeywordWidgetBas
 	 */
 	private:
 	// Selection table update function
-	void updateSelectionRow(int row, Module* module, bool data, bool create);
+	void updateSelectionRow(int row, Module* module, bool create);
 
 	private slots:
 	// Table item changed

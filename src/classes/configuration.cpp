@@ -33,7 +33,7 @@
 #include "modules/export/export.h"
 
 // Static Members (ObjectStore)
-template<class Configuration> RefList<Configuration,int> ObjectStore<Configuration>::objects_;
+template<class Configuration> RefDataList<Configuration,int> ObjectStore<Configuration>::objects_;
 template<class Configuration> int ObjectStore<Configuration>::objectCount_ = 0;
 template<class Configuration> int ObjectStore<Configuration>::objectType_ = ObjectInfo::ConfigurationObject;
 template<class Configuration> const char* ObjectStore<Configuration>::objectTypeName_ = "Configuration";
@@ -383,8 +383,8 @@ bool Configuration::broadcastCoordinates(ProcessPool& procPool, int rootRank)
 	delete[] y;
 	delete[] z;
 
-	// Update coordinate index
-	if (!procPool.broadcast(coordinateIndex_, rootRank)) return false;
+	// Broadcast contents version
+	if (!contentsVersion_.broadcast(procPool, rootRank)) return false;
 #endif
 	return true;
 }

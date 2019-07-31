@@ -55,11 +55,11 @@ class ModuleKeywordsWidget : public QToolBox
 	 */
 	private:
 	// List of keyword widgets displayed
-	RefList<KeywordWidgetBase,bool> keywordWidgets_;
+	RefList<KeywordWidgetBase> keywordWidgets_;
 
 	private:
 	// Create widget for specified keyword
-	QWidget* createKeywordWidget(DissolveWindow* dissolveWindow, RefList<KeywordWidgetBase,bool>& keywordWidgets, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* uniqueName);
+	QWidget* createKeywordWidget(DissolveWindow* dissolveWindow, RefList<KeywordWidgetBase>& keywordWidgets, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* uniqueName);
 
 	public:
 	// Set up keyword controls for specified Module

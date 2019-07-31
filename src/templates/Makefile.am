@@ -7,7 +7,7 @@ noinst_HEADERS += list.h listitem.h
 noinst_HEADERS += mpilistitem.h
 noinst_HEADERS += objectstore.h ordereddaoarray.h orderedlist.h orderedpointerdatalist.h orderedpointerlist.h
 noinst_HEADERS += pair.h
-noinst_HEADERS += reflist.h
+noinst_HEADERS += refdatalist.h reflist.h
 noinst_HEADERS += simplex.h
 noinst_HEADERS += variantpointer.h vector3.h vector4.h
 

@@ -77,7 +77,7 @@ bool NodeValue::set(double value)
 }
 
 // Set from expression text
-bool NodeValue::set(const char* expressionText, RefList<ExpressionVariable,bool> parameters)
+bool NodeValue::set(const char* expressionText, RefList<ExpressionVariable> parameters)
 {
 	// Is this just a plain number, rather than an equation.
 	bool isFloatingPoint;

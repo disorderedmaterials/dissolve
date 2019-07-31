@@ -32,7 +32,7 @@
 bool EnergyModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 {
 	// For each Configuration target, add a flag to its moduleData (which is *not* stored in the restart file) that we are targeting it
-	RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
+	RefListIterator<Configuration> configIterator(targetConfigurations_);
 	while (Configuration* cfg = configIterator.iterate()) GenericListHelper<bool>::realise(cfg->moduleData(), "_IsEnergyModuleTarget") = true;
 
 	return true;
@@ -54,10 +54,10 @@ bool EnergyModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		return true;
 	}
 	// Loop over target Configurations
-	for (RefListItem<Configuration,bool>* ri = targetConfigurations_.first(); ri != NULL; ri = ri->next)
+	for (RefListItem<Configuration>* ri = targetConfigurations_.first(); ri != NULL; ri = ri->next())
 	{
 		// Grab Configuration pointer
-		Configuration* cfg = ri->item;
+		Configuration* cfg = ri->item();
 
 		// Set up process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());

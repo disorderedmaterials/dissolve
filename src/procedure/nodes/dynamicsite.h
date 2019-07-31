@@ -25,6 +25,7 @@
 #include "procedure/nodes/node.h"
 #include "templates/array.h"
 #include "templates/reflist.h"
+#include "templates/refdatalist.h"
 
 // Forward Declarations
 class SelectProcedureNode;
@@ -69,9 +70,9 @@ class DynamicSiteProcedureNode : public ProcedureNode
 	// Parent Select node for context
 	SelectProcedureNode* parent_;
 	// Target Elements for selection as sites
-	RefList<Element,bool> elements_;
+	RefList<Element> elements_;
 	// Target AtomTypes for selection as sites
-	RefList<AtomType,int> atomTypes_;
+	RefDataList<AtomType,int> atomTypes_;
 
 
 	/*

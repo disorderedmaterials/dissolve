@@ -315,7 +315,7 @@ void Dissolve::printTiming()
 
 	// Determine format for timing information output, accounting for the longest Module name we have
 	int maxLength = 0, length;
-	RefListIterator<Module,bool> instanceIterator(moduleInstances_);
+	RefListIterator<Module> instanceIterator(moduleInstances_);
 	while (Module* module = instanceIterator.iterate())
 	{
 		length = strlen(module->uniqueName());

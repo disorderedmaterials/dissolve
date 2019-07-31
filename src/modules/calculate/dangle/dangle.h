@@ -87,11 +87,11 @@ class CalculateDAngleModule : public Module
 	// Analysis procedure to be run
 	Procedure analyser_;
 	// List of Sites 'A'
-	RefList<SpeciesSite,bool> aSites_;
+	RefList<SpeciesSite> aSites_;
 	// List of Sites 'B'
-	RefList<SpeciesSite,bool> bSites_;
+	RefList<SpeciesSite> bSites_;
 	// List of Sites 'C'
-	RefList<SpeciesSite,bool> cSites_;
+	RefList<SpeciesSite> cSites_;
 
 	public:
 	// Return name of B..C RDF

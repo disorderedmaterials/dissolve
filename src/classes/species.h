@@ -77,7 +77,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	// List of Atoms in the Species
 	List<SpeciesAtom> atoms_;
 	// List of selected Atoms
-	RefList<SpeciesAtom,bool> selectedAtoms_;
+	RefList<SpeciesAtom> selectedAtoms_;
 	// List of AtomTypes, and their populations, used in the Species
 	AtomTypeList usedAtomTypes_;
 	// Version of the atom selection
@@ -109,7 +109,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	// Select atoms along any path from the specified one, ignoring the bond(s) provided
 	void selectFromAtom(SpeciesAtom* i, SpeciesBond* exclude, SpeciesBond* excludeToo = NULL);
 	// Return current atom selection
-	const RefList<SpeciesAtom,bool>& selectedAtoms() const;
+	const RefList<SpeciesAtom>& selectedAtoms() const;
 	// Return nth selected atom
 	SpeciesAtom* selectedAtom(int n);
 	// Return number of selected atoms

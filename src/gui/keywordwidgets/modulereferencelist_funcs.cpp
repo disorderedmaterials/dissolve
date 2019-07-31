@@ -56,7 +56,7 @@ ModuleReferenceListKeywordWidget::ModuleReferenceListKeywordWidget(QWidget* pare
 void ModuleReferenceListKeywordWidget::updateSelectionRow(int row, Module* module, bool createItem)
 {
 	// Grab the target reference list
-	RefList<Module,bool>& selection = keyword_->data();
+	RefList<Module>& selection = keyword_->data();
 
 	QListWidgetItem* item;
 	if (createItem)
@@ -105,7 +105,7 @@ void ModuleReferenceListKeywordWidget::updateWidgetValues(const CoreData& coreDa
 	refreshing_ = true;
 
 	// Get a RefList of current Modules that are of the correct type
-	RefList<Module,bool> availableModules = coreData.findModules(keyword_->moduleTypes());
+	RefList<Module> availableModules = coreData.findModules(keyword_->moduleTypes());
 
 	// Update the list widget
 	ListWidgetUpdater<ModuleReferenceListKeywordWidget,Module> listUpdater(ui.SelectionList, availableModules, this, &ModuleReferenceListKeywordWidget::updateSelectionRow);
@@ -119,11 +119,11 @@ void ModuleReferenceListKeywordWidget::updateWidgetValues(const CoreData& coreDa
 void ModuleReferenceListKeywordWidget::updateKeywordData()
 {
 	// Loop over items in the QListWidget, adding the associated Modules for any that are checked
-	RefList<Module,bool> newSelection;
+	RefList<Module> newSelection;
 	for (int n=0; n<ui.SelectionList->count(); ++n)
 	{
 		QListWidgetItem* item = ui.SelectionList->item(n);
-		if (item->checkState() == Qt::Checked) newSelection.add(VariantPointer<Module>(item->data(Qt::UserRole)));
+		if (item->checkState() == Qt::Checked) newSelection.append(VariantPointer<Module>(item->data(Qt::UserRole)));
 	}
 
 	// Update the data
@@ -134,12 +134,12 @@ void ModuleReferenceListKeywordWidget::updateKeywordData()
 void ModuleReferenceListKeywordWidget::updateSummaryText()
 {
 	// Create summary text for the KeywordDropDown button
-	RefList<Module,bool>& selection = keyword_->data();
+	RefList<Module>& selection = keyword_->data();
 	if (selection.nItems() == 0) setSummaryText("<None>");
 	else
 	{
 		CharString summaryText;
-		RefListIterator<Module,bool> moduleIterator(selection);
+		RefListIterator<Module> moduleIterator(selection);
 		while (Module* module = moduleIterator.iterate())
 		{
 			if (moduleIterator.isFirst()) summaryText = module->uniqueName();

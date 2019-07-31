@@ -70,7 +70,7 @@ class SpeciesGrain : public ListItem<SpeciesGrain>
 	 */
 	private:
 	// List of Atoms (in parent Species)
-	RefList<SpeciesAtom,int> atoms_;
+	RefList<SpeciesAtom> atoms_;
 	
 	public:
 	// Search current list for Atom
@@ -82,9 +82,9 @@ class SpeciesGrain : public ListItem<SpeciesGrain>
 	// Return number of Atoms in the list
 	int nAtoms() const;
 	// Return first Atom reference in list
-	RefListItem<SpeciesAtom,int>* atoms() const;
+	RefListItem<SpeciesAtom>* atoms() const;
 	// Return nth Atom reference in list
-	RefListItem<SpeciesAtom,int>* atom(int n);
+	RefListItem<SpeciesAtom>* atom(int n);
 	// Create name for SpeciesGrain from constituent SpeciesAtoms
 	const char* nameFromAtoms();
 
@@ -98,13 +98,13 @@ class SpeciesGrain : public ListItem<SpeciesGrain>
 	 */
 	private:
 	// Pointers to local intra-Grain bonds
-	RefList<SpeciesBond,int> internalBonds_;
+	RefList<SpeciesBond> internalBonds_;
 	// Pointers to local intra-Grain angles
-	RefList<SpeciesAngle,int> internalAngles_;
+	RefList<SpeciesAngle> internalAngles_;
 	// Pointers to local inter-Grain bonds
-	RefList<SpeciesBond,int> bondConnections_;
+	RefList<SpeciesBond> bondConnections_;
 	// Pointers to local inter-Grain angles
-	RefList<SpeciesAngle,int> angleConnections_;
+	RefList<SpeciesAngle> angleConnections_;
 
 	public:
 	// Clear all intra- and inter-Grain terms
@@ -112,19 +112,19 @@ class SpeciesGrain : public ListItem<SpeciesGrain>
 	// Add intra-Grain Bond
 	void addInternalBond(SpeciesBond* b);
 	// Return first local intra-Grain Bond
-	RefListItem<SpeciesBond,int>* internalBonds() const;
+	RefListItem<SpeciesBond>* internalBonds() const;
 	// Add intra-Grain angle
 	void addInternalAngle(SpeciesAngle* a);
 	// Return first local intra-Grain angle
-	RefListItem<SpeciesAngle,int>* internalAngles() const;
+	RefListItem<SpeciesAngle>* internalAngles() const;
 	// Add bond connection
 	void addBondConnection(SpeciesBond* b);
 	// Return first bond connection
-	RefListItem<SpeciesBond,int>* bondConnections() const;
+	RefListItem<SpeciesBond>* bondConnections() const;
 	// Add angle connection
 	void addAngleConnection(SpeciesAngle* a);
 	// Return first angle connection
-	RefListItem<SpeciesAngle,int>* angleConnections() const;
+	RefListItem<SpeciesAngle>* angleConnections() const;
 
 
 	/*

@@ -324,7 +324,7 @@ void SpeciesTab::updateControls()
 
 	// Isotopologue AtomType/Isotopes Table
 	if (!isotopologue) ui.IsotopeTable->clearContents();
-	else TableWidgetRefListUpdater<SpeciesTab,AtomType,Isotope*> isotopeUpdater(ui.IsotopeTable, isotopologue->isotopes(), this, &SpeciesTab::updateIsotopeTableRow);
+	else TableWidgetRefDataListUpdater<SpeciesTab,AtomType,Isotope*> isotopeUpdater(ui.IsotopeTable, isotopologue->isotopes(), this, &SpeciesTab::updateIsotopeTableRow);
 	ui.IsotopeTable->resizeColumnsToContents();
 
 	// Intramolecular terms
@@ -686,7 +686,7 @@ void SpeciesTab::on_IsotopologueList_currentRowChanged(int row)
 
 	// Isotopologue AtomType/Isotopes Table
 	if (!isotopologue) ui.IsotopeTable->clearContents();
-	else TableWidgetRefListUpdater<SpeciesTab,AtomType,Isotope*> isotopeUpdater(ui.IsotopeTable, isotopologue->isotopes(), this, &SpeciesTab::updateIsotopeTableRow);
+	else TableWidgetRefDataListUpdater<SpeciesTab,AtomType,Isotope*> isotopeUpdater(ui.IsotopeTable, isotopologue->isotopes(), this, &SpeciesTab::updateIsotopeTableRow);
 
 	refreshing_ = false;
 }

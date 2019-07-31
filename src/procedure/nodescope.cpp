@@ -51,7 +51,7 @@ bool NodeScope::add(ProcedureNode* node)
 	// Before we add the node, check that our context allows it
 	if (!node->isContextRelevant(context_)) return Messenger::error("Node type '%s' is not allowed in the '%s' context.\n", ProcedureNode::nodeTypes().keyword(node->type()), ProcedureNode::nodeContexts().keyword(context_));
 
-	nodes_.add(node);
+	nodes_.append(node);
 
 	return true;
 }
@@ -63,7 +63,7 @@ bool NodeScope::add(ProcedureNode* node)
 // Return named node if known, and which matches the (optional) type given
 ProcedureNode* NodeScope::node(const char* name, ProcedureNode::NodeType nt) const
 {
-	RefListIterator<ProcedureNode,bool> nodeIterator(nodes_);
+	RefListIterator<ProcedureNode> nodeIterator(nodes_);
 	while (ProcedureNode* node = nodeIterator.iterate())
 	{
 		if (DissolveSys::sameString(node->name(), name))

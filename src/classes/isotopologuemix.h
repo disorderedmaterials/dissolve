@@ -24,7 +24,7 @@
 
 #include "genericitems/base.h"
 #include "templates/mpilistitem.h"
-#include "templates/reflist.h"
+#include "templates/refdatalist.h"
 
 // Forward Declarations
 class Species;
@@ -53,7 +53,7 @@ class IsotopologueMix : public MPIListItem<IsotopologueMix>, public GenericItemB
 	// Integer population of associated Species
 	int speciesPopulation_;
 	// Isotopologue List
-	RefList<Isotopologue,double> mix_;
+	RefDataList<Isotopologue,double> mix_;
 	
 	public:
 	// Set associated Species and population
@@ -73,13 +73,13 @@ class IsotopologueMix : public MPIListItem<IsotopologueMix>, public GenericItemB
 	// Remove Isotopologue component from list
 	bool removeIsotopologue(Isotopologue* iso);
 	// Return Isotopologue components
-	const RefList<Isotopologue,double>& isotopologues() const;
+	const RefDataList<Isotopologue,double>& isotopologues() const;
 	// Return nth Isotopologue component
-	RefListItem<Isotopologue,double>* isotopologue(int n);
+	RefDataItem<Isotopologue,double>* isotopologue(int n);
 	// Return number of Isotopologues in mix
 	int nIsotopologues() const;
 	// Return whether the mix contains the specified Isotopologue
-	RefListItem<Isotopologue,double>* hasIsotopologue(Isotopologue* iso) const;
+	RefDataItem<Isotopologue,double>* hasIsotopologue(Isotopologue* iso) const;
 	// Return total relative population
 	double totalRelative() const;
 	// Normalise total relative population to 1.0

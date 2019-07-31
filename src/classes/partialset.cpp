@@ -76,6 +76,7 @@ bool PartialSet::setUpPartials(const AtomTypeList& atomTypes, const char* prefix
 	boundPartials_.initialise(nTypes, nTypes, true);
 	unboundPartials_.initialise(nTypes, nTypes, true);
 	emptyBoundPartials_.initialise(nTypes, nTypes, true);
+	emptyBoundPartials_ = false;
 
 	// Set up array matrices for partials
 	CharString title;
@@ -669,6 +670,9 @@ bool PartialSet::read(LineParser& parser, const CoreData& coreData)
 	partials_.initialise(nTypes, nTypes, true);
 	boundPartials_.initialise(nTypes, nTypes, true);
 	unboundPartials_.initialise(nTypes, nTypes, true);
+	emptyBoundPartials_.initialise(nTypes, nTypes, true);
+	emptyBoundPartials_ = false;
+
 	for (int typeI=0; typeI<nTypes; ++typeI)
 	{
 		for (int typeJ=typeI; typeJ<nTypes; ++typeJ)

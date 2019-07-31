@@ -39,8 +39,8 @@ class TMenuButtonGroup : public ListItem<TMenuButtonGroup>
 	private:
 	// Name of group
 	QString name_;
-	// List of TMenuButtons (or TMenuButtons) in this group
-	RefList<TMenuButton,int> buttons_;
+	// List of TMenuButtons in this group
+	RefList<TMenuButton> buttons_;
 
 	public:
 	// Set name of group

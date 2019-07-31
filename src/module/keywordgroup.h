@@ -59,7 +59,7 @@ class ModuleKeywordGroup : public ListItem<ModuleKeywordGroup>
 	// Associated ModuleKeywordList
 	ModuleKeywordList& keywordList_;
 	// List of keywords (in the referenced ModuleKeywordList) that are in this group
-	RefList<ModuleKeywordBase,bool> keywords_;
+	RefList<ModuleKeywordBase> keywords_;
 
 	private:
 	// Add specified keyword to the group
@@ -71,7 +71,7 @@ class ModuleKeywordGroup : public ListItem<ModuleKeywordGroup>
 	// Add keyword (pass-thru to ModuleKeywordList)
 	bool add(ModuleKeywordBase* object, const char* keyword, const char* description, const char* arguments, int genericItemFlags = 0);
 	// Return reference list of keywords in group
-	RefList<ModuleKeywordBase,bool>& keywords();
+	RefList<ModuleKeywordBase>& keywords();
 };
 
 #endif

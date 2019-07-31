@@ -70,7 +70,7 @@ void ExpressionFunction::nodePrint(int offset, const char* prefix)
 // 	printf("Function id = %p\n", function_);
 	printf("[CN]%s%s (Function) (%i arguments)\n", tab.get(), ExpressionFunctions::data[function_].keyword, args_.nItems());
 	// Output Argument data
-	for (RefListItem<ExpressionNode,int>* ri = args_.first(); ri != NULL; ri = ri->next) ri->item->nodePrint(offset+1);
+	for (RefListItem<ExpressionNode>* ri = args_.first(); ri != NULL; ri = ri->next()) ri->item()->nodePrint(offset+1);
 }
 
 // Set from ExpressionValue

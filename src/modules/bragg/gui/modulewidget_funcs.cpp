@@ -126,7 +126,7 @@ void BraggModuleWidget::setGraphDataTargets()
 
 	// Add Configuration targets to the combo box
 	ui.TargetCombo->clear();
-	RefListIterator<Configuration,bool> configIterator(module_->targetConfigurations());
+	RefListIterator<Configuration> configIterator(module_->targetConfigurations());
 	while (Configuration* config = configIterator.iterate()) ui.TargetCombo->addItem(config->name(), VariantPointer<Configuration>(config));
 
 	// Loop over Configurations and add total Bragg F(Q)

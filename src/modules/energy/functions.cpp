@@ -164,11 +164,11 @@ double EnergyModule::interMolecularEnergy(ProcessPool& procPool, Configuration* 
 }
 
 // Check energy stability of specified Configurations, returning the number that failed, or -1 if stability could not be assessed
-int EnergyModule::checkStability(const RefList<Configuration,bool>& configurations)
+int EnergyModule::checkStability(const RefList<Configuration>& configurations)
 {
 	int nFailed = 0;
 
-	RefListIterator<Configuration,bool> configIterator(configurations);
+	RefListIterator<Configuration> configIterator(configurations);
 	while (Configuration* cfg = configIterator.iterate())
 	{
 		/*

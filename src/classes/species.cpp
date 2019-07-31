@@ -30,7 +30,7 @@
 #include <base/sysfunc.h>
 
 // Static Members (ObjectStore)
-template<class Species> RefList<Species,int> ObjectStore<Species>::objects_;
+template<class Species> RefDataList<Species,int> ObjectStore<Species>::objects_;
 template<class Species> int ObjectStore<Species>::objectCount_ = 0;
 template<class Species> int ObjectStore<Species>::objectType_ = ObjectInfo::SpeciesObject;
 template<class Species> const char* ObjectStore<Species>::objectTypeName_ = "Species";
@@ -106,31 +106,31 @@ bool Species::checkSetUp(const List<AtomType>& atomTypes)
 	 * GrainDefinitions
 	 * Each Atom must be in exactly one GrainDefinition
 	 */
-	RefList<SpeciesAtom,int> grainCount;
-	for (SpeciesAtom* sa = atoms_.first(); sa != NULL; sa = sa->next) grainCount.add(sa, 0);
+	RefDataList<SpeciesAtom,int> grainCount;
+	for (SpeciesAtom* sa = atoms_.first(); sa != NULL; sa = sa->next) grainCount.append(sa, 0);
 	for (SpeciesGrain* sg = grains_.first(); sg != NULL; sg = sg->next)
 	{
-		for (RefListItem<SpeciesAtom,int>* ri = sg->atoms(); ri != NULL; ri = ri->next)
+		for (RefListItem<SpeciesAtom>* ri = sg->atoms(); ri != NULL; ri = ri->next())
 		{
-			RefListItem<SpeciesAtom,int>* rj = grainCount.contains(ri->item);
+			RefDataItem<SpeciesAtom,int>* rj = grainCount.contains(ri->item());
 			if (rj == NULL)
 			{
 				Messenger::error("GrainDefinition '%s' references a non-existent Atom.\n", sg->name());
 				++nErrors;
 			}
-			else ++rj->data;
+			else ++rj->data();
 		}
 	}
-	for (RefListItem<SpeciesAtom,int>* ri = grainCount.first(); ri != NULL; ri = ri->next)
+	for (RefDataItem<SpeciesAtom,int>* ri = grainCount.first(); ri != NULL; ri = ri->next())
 	{
-		if (ri->data > 1)
+		if (ri->data() > 1)
 		{
-			Messenger::error("SpeciesAtom %i (%s) is present in more than one (%i) GrainDefinition.\n", ri->item->userIndex(), ri->item->element()->symbol(), ri->data);
+			Messenger::error("SpeciesAtom %i (%s) is present in more than one (%i) GrainDefinition.\n", ri->item()->userIndex(), ri->item()->element()->symbol(), ri->data());
 			++nErrors;
 		}
 // 		else if (ri->data == 0)
 // 		{
-// 			Messenger::error("SpeciesAtom %i (%s) is not present in any GrainDefinition.\n", ri->item->userIndex(), PeriodicTable::element(ri->item->element()).symbol());
+// 			Messenger::error("SpeciesAtom %i (%s) is not present in any GrainDefinition.\n", ri->item()->userIndex(), PeriodicTable::element(ri->item()->element()).symbol());
 // 			++nErrors;
 // 		}
 	}
@@ -148,7 +148,7 @@ bool Species::checkSetUp(const List<AtomType>& atomTypes)
 		}
 		
 		/* Check each Bond for two-way consistency */
-		RefListIterator<SpeciesBond,int> bondIterator(i->bonds());
+		RefListIterator<SpeciesBond> bondIterator(i->bonds());
 		while (SpeciesBond* bond = bondIterator.iterate())
 		{
 			SpeciesAtom* j = bond->partner(i);
@@ -171,7 +171,7 @@ bool Species::checkSetUp(const List<AtomType>& atomTypes)
 	}
 	else for (Isotopologue* iso = isotopologues_.first(); iso != NULL; iso = iso->next)
 	{
-		RefListIterator<AtomType,Isotope*> isotopeIterator(iso->isotopes());
+		RefDataListIterator<AtomType,Isotope*> isotopeIterator(iso->isotopes());
 		while (AtomType* atomType = isotopeIterator.iterate())
 		{
 			if (!atomTypes.contains(atomType))
@@ -265,7 +265,7 @@ void Species::print()
 		{
 			SpeciesGrain* grain = grains_[n];
 			CharString grainAtoms;
-			for (int m=0; m<grain->nAtoms(); ++m) grainAtoms.strcatf("%4i ", grain->atom(m)->item->userIndex());
+			for (int m=0; m<grain->nAtoms(); ++m) grainAtoms.strcatf("%4i ", grain->atom(m)->item()->userIndex());
 			Messenger::print("  %4i  '%s'\n", n+1, grain->name());
 			Messenger::print("       %2i atoms: %s\n", grain->nAtoms(), grainAtoms.get());
 		}

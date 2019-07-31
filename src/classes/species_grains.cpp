@@ -28,22 +28,22 @@
 void Species::updateGrains()
 {
 	// Construct a list of Atom references as we go along, so we can check for duplicates
-	RefList<SpeciesAtom,SpeciesGrain*> refAtoms;
+	RefDataList<SpeciesAtom,SpeciesGrain*> refAtoms;
 	for (SpeciesGrain* sg = grains_.first(); sg != NULL; sg = sg->next)
 	{
 		// Loop over Atoms in GrainDefinition
-		RefListItem<SpeciesAtom,int>* ri = sg->atoms(), *next;
-		RefListItem<SpeciesAtom,SpeciesGrain*>* rj;
+		RefListItem<SpeciesAtom>* ri = sg->atoms(), *next;
+		RefDataItem<SpeciesAtom,SpeciesGrain*>* rj;
 		while (ri != NULL)
 		{
-			next = ri->next;
-			rj = refAtoms.contains(ri->item);
+			next = ri->next();
+			rj = refAtoms.contains(ri->item());
 			if (rj)
 			{
-				sg->removeAtom(rj->item);
-				Messenger::print("Removed Atom %i from GrainDefinition '%s' since it already exists in '%s'.\n", rj->item->userIndex(), sg->name(), rj->data->name());
+				sg->removeAtom(rj->item());
+				Messenger::print("Removed Atom %i from GrainDefinition '%s' since it already exists in '%s'.\n", rj->item()->userIndex(), sg->name(), rj->data()->name());
 			}
-			else refAtoms.add(ri->item, sg);
+			else refAtoms.append(ri->item(), sg);
 
 			ri = next;
 		}
@@ -79,11 +79,11 @@ void Species::autoAddGrains()
 // 	grains_.clear();
 // 	
 	// Make a list of bonds for each atom
-	Array< RefList<SpeciesBond,int> > bondList(atoms_.nItems());
+	Array< RefDataList<SpeciesBond,int> > bondList(atoms_.nItems());
 	for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next)
 	{
-		bondList[b->indexI()].add(b,1);
-		bondList[b->indexJ()].add(b,1);
+		bondList[b->indexI()].append(b,1);
+		bondList[b->indexJ()].append(b,1);
 	}
 	
 	// Now loop over Atoms
@@ -107,9 +107,9 @@ void Species::autoAddGrains()
 			sg->setParent(this);
 			group[n] = 1;
 			sg->addAtom(atoms_[n]);
-			for (RefListItem<SpeciesBond,int>* ri = bondList[n].first(); ri != NULL; ri = ri->next)
+			for (RefDataItem<SpeciesBond,int>* ri = bondList[n].first(); ri != NULL; ri = ri->next())
 			{
-				m = ri->item->indexI() == n ? ri->item->indexJ() : ri->item->indexI();
+				m = ri->item()->indexI() == n ? ri->item()->indexJ() : ri->item()->indexI();
 				if ((bondList[m].nItems() != 1) || (group[m] == 1)) continue;
 				group[m] = 1;
 				sg->addAtom(atoms_[m]);
@@ -220,7 +220,7 @@ void Species::orderAtomsWithinGrains()
 	{
 		for (n=0; n<sg->nAtoms(); ++n)
 		{
-			oldIndex = atoms_.indexOf(sg->atom(n)->item);
+			oldIndex = atoms_.indexOf(sg->atom(n)->item());
 			atoms_.move(oldIndex, index - oldIndex);
 			++index;
 		}

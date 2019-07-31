@@ -24,7 +24,7 @@
 
 #include "base/charstring.h"
 #include "base/sysfunc.h"
-#include "templates/reflist.h"
+#include "templates/refdatalist.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -110,7 +110,7 @@ template <class T> class ObjectStore
 		object_ = object;
 		objectInfo_.set(objectType_, objectCount_++);
 		setObjectTag(CharString("%p", object_));
-		objects_.add(object_, objectInfo_.id());
+		objects_.append(object_, objectInfo_.id());
 	}
 	// Destructor
 	~ObjectStore<T>()
@@ -203,7 +203,7 @@ template <class T> class ObjectStore
 	 */
 	private:
 	// Master list of available objects
-	static RefList<T,int> objects_;
+	static RefDataList<T,int> objects_;
 	// Integer count for object IDs
 	static int objectCount_;
 
@@ -237,14 +237,14 @@ template <class T> class ObjectStore
 	// Return object with specified ID
 	static T* object(int id)
 	{
-		for (RefListItem<T,int>* ri = objects_.first(); ri != NULL; ri = ri->next) if (ri->data == id) return ri->item;
+		for (RefDataItem<T,int>* ri = objects_.first(); ri != NULL; ri = ri->next()) if (ri->data() == id) return ri->item();
 		return NULL;
 	}
 	// Set id of specified object, returning if we were successful
 	static bool setObjectId(T* target, int id)
 	{
-		// Find the RefItem object in the list
-		RefListItem<T,int>* targetRefItem = objects_.contains(target);
+		// Find the RefDataItem object in the list
+		RefDataItem<T,int>* targetRefItem = objects_.contains(target);
 		if (targetRefItem == NULL)
 		{
 			printf("Internal Error: Couldn't find specified object %p in object list.\n", target);
@@ -252,7 +252,7 @@ template <class T> class ObjectStore
 		}
 
 		// Can we find an object with the same id?
-		RefListItem<T,int>* rj = objects_.containsData(id);
+		RefDataItem<T,int>* rj = objects_.containsData(id);
 		if ((rj != NULL) && (rj != targetRefItem))
 		{
 			printf("Internal Error: Another object with id %i already exists in the ObjectStore, so refusing to duplicate it.\n", id);
@@ -286,10 +286,9 @@ template <class T> class ObjectStore
 		{
 			// No type prefix, so add ours and do the search
 			CharString tag("%s@%s", objectTypeName_, objectTag);
-			for (RefListItem<T,int>* ri = objects_.first(); ri != NULL; ri = ri->next)
+			for (RefDataItem<T,int>* ri = objects_.first(); ri != NULL; ri = ri->next())
 			{
-				T* item = ri->item;
-				if (item->objectTagIs(tag)) return item;
+				if (ri->item()->objectTagIs(tag)) return ri->item();
 			}
 		}
 		else
@@ -300,10 +299,9 @@ template <class T> class ObjectStore
 				Messenger::error("Searched for object '%s' in a store containing objects of type '%s'.\n", typePrefix.get(), objectTypeName_);
 				return NULL;
 			}
-			for (RefListItem<T,int>* ri = objects_.first(); ri != NULL; ri = ri->next)
+			for (RefDataItem<T,int>* ri = objects_.first(); ri != NULL; ri = ri->next())
 			{
-				T* item = ri->item;
-				if (item->objectTagIs(objectTag)) return item;
+				if (ri->item()->objectTagIs(objectTag)) return ri->item();
 			}
 		}
 		return NULL;

@@ -101,7 +101,7 @@ void Species::selectAtom(SpeciesAtom* i)
 	{
 		i->setSelected(true);
 
-		selectedAtoms_.add(i);
+		selectedAtoms_.append(i);
 
 		++atomSelectionVersion_;
 	}
@@ -133,7 +133,7 @@ void Species::selectFromAtom(SpeciesAtom* i, SpeciesBond* exclude, SpeciesBond* 
 	// Loop over Bonds on specified Atom
 	selectAtom(i);
 	SpeciesAtom* j;
-	RefListIterator<SpeciesBond,int> bondIterator(i->bonds());
+	RefListIterator<SpeciesBond> bondIterator(i->bonds());
 	while (SpeciesBond* bond = bondIterator.iterate())
 	{
 		// Is this either of the excluded bonds?
@@ -149,7 +149,7 @@ void Species::selectFromAtom(SpeciesAtom* i, SpeciesBond* exclude, SpeciesBond* 
 }
 
 // Return current atom selection
-const RefList<SpeciesAtom,bool>& Species::selectedAtoms() const
+const RefList<SpeciesAtom>& Species::selectedAtoms() const
 {
 	return selectedAtoms_;
 }
@@ -157,9 +157,9 @@ const RefList<SpeciesAtom,bool>& Species::selectedAtoms() const
 // Return nth selected Atom
 SpeciesAtom* Species::selectedAtom(int n)
 {
-	RefListItem<SpeciesAtom,bool>* ri = selectedAtoms_[n];
+	RefListItem<SpeciesAtom>* ri = selectedAtoms_[n];
 	if (ri == NULL) return NULL;
-	else return ri->item;
+	else return ri->item();
 }
 
 // Return number of selected Atoms

@@ -75,18 +75,18 @@ bool Procedure::execute(ProcessPool& procPool, Configuration* cfg, const char* p
 	if (context_ == ProcedureNode::AnalysisContext)
 	{
 		// Check that the Configuration has changed before we do any more analysis on it
-		RefListItem<Configuration,int>* ri = configurationPoints_.contains(cfg);
+		RefDataItem<Configuration,int>* ri = configurationPoints_.contains(cfg);
 		if (ri)
 		{
 			// A Configuration we've processed before - check the index
-			if (cfg->contentsVersion() == ri->data)
+			if (cfg->contentsVersion() == ri->data())
 			{
 				Messenger::warn("Refusing to analyse Configuration '%s' since it has not changed.\n", cfg->name());
 				return true;
 			}
-			else ri->data = cfg->contentsVersion();
+			else ri->data() = cfg->contentsVersion();
 		}
-		else configurationPoints_.add(cfg, cfg->contentsVersion());
+		else configurationPoints_.append(cfg, cfg->contentsVersion());
 	}
 
 	// Prepare the nodes

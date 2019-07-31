@@ -54,7 +54,7 @@ class RenderableGroup : public ListItem<RenderableGroup>
 	 */
 	private:
 	// Renderables using this group
-	RefList<Renderable,int> renderables_;
+	RefList<Renderable> renderables_;
 
 	public:
 	// Associate Renderable to group (if it isn't already)
@@ -64,7 +64,7 @@ class RenderableGroup : public ListItem<RenderableGroup>
 	// Return whether the group is used by the specified renderable
 	bool usedByRenderable(Renderable* renderable) const;
 	// Return list of Renderables using this group
-	const RefList<Renderable,int>& renderables() const;
+	const RefList<Renderable>& renderables() const;
 	// Return whether the group is empty
 	bool isEmpty() const;
 	// Empty the group, removing all Renderable targets

@@ -67,7 +67,7 @@ class ExpressionNode : public ListItem<ExpressionNode>
 	 */
 	protected:
 	// Arguments (if any) to leaf node operation
-	RefList<ExpressionNode,int> args_;
+	RefList<ExpressionNode> args_;
 
 	public:
 	// Return number of arguments currently assigned to node

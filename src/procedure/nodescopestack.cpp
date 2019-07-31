@@ -91,7 +91,7 @@ bool NodeScopeStack::add(ProcedureNode* node)
 	++nSelectNodesAdded_;
 
 	stack_.last()->add(node);
-	nodes_.add(node);
+	nodes_.append(node);
 
 	return true;
 }
@@ -140,7 +140,7 @@ ProcedureNode* NodeScopeStack::nodeInScope(const char* name, ProcedureNode::Node
 // Return named node if known, and which matches the (optional) type given
 ProcedureNode* NodeScopeStack::node(const char* name, ProcedureNode::NodeType nt) const
 {
-	RefListIterator<ProcedureNode,bool> nodeIterator(nodes_);
+	RefListIterator<ProcedureNode> nodeIterator(nodes_);
 	while (ProcedureNode* node = nodeIterator.iterate())
 	{
 		if (DissolveSys::sameString(node->name(), name))
@@ -170,13 +170,13 @@ ExpressionVariable* NodeScopeStack::addParameter(const char* name, ExpressionVal
 		return NULL;
 	}
 
-	parameterReferences_.add(parameter);
+	parameterReferences_.append(parameter);
 
 	return parameter;
 }
 
 // Return reference list of parameters (for passing to Expression::generate())
-RefList<ExpressionVariable,bool> NodeScopeStack::parameterReferences() const
+RefList<ExpressionVariable> NodeScopeStack::parameterReferences() const
 {
 	return parameterReferences_;
 }

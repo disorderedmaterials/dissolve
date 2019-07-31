@@ -25,7 +25,7 @@
 #include "base/lineparser.h"
 
 // Static Members (ObjectStore)
-template<class Histogram3D> RefList<Histogram3D,int> ObjectStore<Histogram3D>::objects_;
+template<class Histogram3D> RefDataList<Histogram3D,int> ObjectStore<Histogram3D>::objects_;
 template<class Histogram3D> int ObjectStore<Histogram3D>::objectCount_ = 0;
 template<class Histogram3D> int ObjectStore<Histogram3D>::objectType_ = ObjectInfo::Histogram3DObject;
 template<class Histogram3D> const char* ObjectStore<Histogram3D>::objectTypeName_ = "Histogram3D";

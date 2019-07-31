@@ -25,7 +25,7 @@
 #include "base/lineparser.h"
 
 // Constructor
-SpeciesReferenceListModuleKeyword::SpeciesReferenceListModuleKeyword(RefList<Species,bool>& references) : ModuleKeywordData< RefList<Species,bool>& >(ModuleKeywordBase::SpeciesReferenceListData, references)
+SpeciesReferenceListModuleKeyword::SpeciesReferenceListModuleKeyword(RefList<Species>& references) : ModuleKeywordData< RefList<Species>& >(ModuleKeywordBase::SpeciesReferenceListData, references)
 {
 }
 
@@ -69,7 +69,7 @@ bool SpeciesReferenceListModuleKeyword::read(LineParser& parser, int startArg, c
 		Species* sp = coreData.findSpecies(parser.argc(n));
 		if (!sp) return Messenger::error("Error defining Species targets - no Species named '%s' exists.\n", parser.argc(n));
 
-		data_.add(sp);
+		data_.append(sp);
 	}
 
 	set_ = true;
@@ -82,7 +82,7 @@ bool SpeciesReferenceListModuleKeyword::write(LineParser& parser, const char* pr
 {
 	// Loop over list of Species
 	CharString speciesString;
-	RefListIterator<Species,bool> speciesIterator(data_);
+	RefListIterator<Species> speciesIterator(data_);
 	while (Species* sp = speciesIterator.iterate()) speciesString.strcatf("  %s", sp->name());
 
 	if (!parser.writeLineF("%s%s  %s\n", prefix, keyword(), speciesString.get())) return false;

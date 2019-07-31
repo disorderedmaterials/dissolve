@@ -87,9 +87,9 @@ class CalculateRDFModule : public Module
 	// Analysis procedure to be run
 	Procedure analyser_;
 	// List of origin Sites
-	RefList<SpeciesSite,bool> originSites_;
+	RefList<SpeciesSite> originSites_;
 	// List of other Sites
-	RefList<SpeciesSite,bool> otherSites_;
+	RefList<SpeciesSite> otherSites_;
 
 	public:
 	// Return name of resulting RDF

@@ -184,7 +184,7 @@ Molecule* Configuration::addMolecule(Species* sp)
 		// Add Atoms to the Grain
 		for (int m=0; m<spg->nAtoms(); ++m)
 		{
-			g->addAtom(newMolecule->atom(spg->atom(m)->item->index()));
+			g->addAtom(newMolecule->atom(spg->atom(m)->item()->index()));
 		}
 	}
 

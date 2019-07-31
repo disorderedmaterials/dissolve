@@ -46,7 +46,7 @@ class NodeScope : public ListItem<NodeScope>
 	// Context for the scope
 	ProcedureNode::NodeContext context_;
 	// Nodes within the scope
-	RefList<ProcedureNode,bool> nodes_;
+	RefList<ProcedureNode> nodes_;
 
 	public:
 	// Return the current context

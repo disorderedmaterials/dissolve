@@ -41,7 +41,7 @@ bool Data1DStore::addData(Data1DImportFileFormat fileAndFormat, const char* name
 	data->setName(name);
 
 	// Add reference
-	dataReferences_.add(data, fileAndFormat);
+	dataReferences_.append(data, fileAndFormat);
 
 	// Load the data
 	return fileAndFormat.importData(*data);
@@ -55,7 +55,7 @@ bool Data1DStore::addData(ProcessPool& pool, Data1DImportFileFormat fileAndForma
 	data->setName(name);
 
 	// Add reference
-	dataReferences_.add(data, fileAndFormat);
+	dataReferences_.append(data, fileAndFormat);
 
 	// Load the data
 	return fileAndFormat.importData(*data, &pool);
@@ -88,7 +88,7 @@ const List<Data1D>& Data1DStore::data() const
 }
 
 // Return list of all data references
-const RefList<Data1D,Data1DImportFileFormat>& Data1DStore::dataReferences() const
+const RefDataList<Data1D,Data1DImportFileFormat>& Data1DStore::dataReferences() const
 {
 	return dataReferences_;
 }

@@ -98,11 +98,11 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	/*
 	 * Make a list of all Configurations related to all targets
 	 */
-	RefList<Configuration,bool> configs;
-	RefListIterator<Module,ModuleGroup*> allTargetsIterator(groupedTargets_.modules());
+	RefList<Configuration> configs;
+	RefDataListIterator<Module,ModuleGroup*> allTargetsIterator(groupedTargets_.modules());
 	while (Module* module = allTargetsIterator.iterate())
 	{
-		RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
+		RefListIterator<Configuration> configIterator(module->targetConfigurations());
 		while (Configuration* cfg = configIterator.iterate()) configs.addUnique(cfg);
 	}
 	Messenger::print("%i Configuration(s) are involved over all target data.\n", configs.nItems());
@@ -116,7 +116,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	while (ModuleGroup* group = groupIterator.iterate())
 	{
 		// Grab Module list for this group and set up an iterator
-		RefListIterator<Module,bool> targetIterator(group->modules());
+		RefListIterator<Module> targetIterator(group->modules());
 		while (Module* module = targetIterator.iterate())
 		{
 			// Realise the error array and make sure its object name is set
@@ -211,8 +211,8 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		Messenger::print("Generating dPhiR from target group '%s'...\n", group->name());
 
 		// Grab Module list for this group and set up an iterator
-		const RefList<Module,bool>& targetModules = group->modules();
-		RefListIterator<Module,bool> targetIterator(targetModules);
+		const RefList<Module>& targetModules = group->modules();
+		RefListIterator<Module> targetIterator(targetModules);
 
 		/*
 		 * Update our full scattering matrix, and use it to generate partials from the supplied reference data

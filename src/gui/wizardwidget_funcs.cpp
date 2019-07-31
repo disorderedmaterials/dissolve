@@ -284,7 +284,7 @@ void WizardWidget::goToPage(int index)
 	}
 
 	// Add this page to our history
-	history_.add(currentPage_);
+	history_.append(currentPage_);
 
 	// Update the header and footer
 	updateHeaderAndFooter(currentPage_);

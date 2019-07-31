@@ -70,7 +70,7 @@ class Expression
 	// Persistent node list, not removed by normal clear() function
 	List<ExpressionNode> persistentNodes_;
 	// Reflist of all statements in the Expression, to be executed sequentially
-	RefList<ExpressionNode,int> statements_;
+	RefList<ExpressionNode> statements_;
 	// Number of syntactic errors encountered
 	int nErrors_;
 
@@ -98,11 +98,11 @@ class Expression
 	 */
 	private:
 	// Reference list of variables
-	RefList<ExpressionVariable,bool> variables_;
+	RefList<ExpressionVariable> variables_;
 	// Reference list of constants
-	RefList<ExpressionVariable,bool> constants_;
+	RefList<ExpressionVariable> constants_;
 	// Reference list of external variables
-	RefList<ExpressionVariable,bool> externalVariables_;
+	RefList<ExpressionVariable> externalVariables_;
 
 	public:
 	// Add double constant
@@ -112,13 +112,13 @@ class Expression
 	// Add variable, with double as initial value source
 	ExpressionVariable* createVariableWithValue(const char* name, double initialValue, bool persistent = false);
 	// Set list of external variables
-	void setExternalVariables(RefList<ExpressionVariable,bool> externalVariables);
+	void setExternalVariables(RefList<ExpressionVariable> externalVariables);
 	// Search for variable
 	ExpressionVariable* variable(const char* name);
 	// Return list of variables
-	RefList<ExpressionVariable,bool>& variables();
+	RefList<ExpressionVariable>& variables();
 	// Return list of constants
-	RefList<ExpressionVariable,bool>& constants();
+	RefList<ExpressionVariable>& constants();
 
 
 	/*

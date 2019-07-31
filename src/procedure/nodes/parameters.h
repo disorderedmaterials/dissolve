@@ -62,7 +62,7 @@ class ParametersProcedureNode : public ProcedureNode
 	 */
 	private:
 	// Reference list of parameters
-	RefList<ExpressionVariable,bool> parameterReferences_;
+	RefList<ExpressionVariable> parameterReferences_;
 
 
 	/*

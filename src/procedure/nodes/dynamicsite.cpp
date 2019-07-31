@@ -114,7 +114,7 @@ ProcedureNode::NodeExecutionResult DynamicSiteProcedureNode::execute(ProcessPool
 	generatedSites_.clear();
 
 	// Grab exclusion lists and any specific Molecule parent
-	const RefList<const Molecule, bool>& excludedMolecules = parent_->excludedMolecules();
+	const RefList<const Molecule>& excludedMolecules = parent_->excludedMolecules();
 	const Molecule* moleculeParent = parent_->sameMoleculeMolecule();
 
 	/*
@@ -168,7 +168,7 @@ bool DynamicSiteProcedureNode::read(LineParser& parser, const CoreData& coreData
 					AtomType* at = coreData.findAtomType(parser.argc(n));
 					if (!at) return Messenger::error("Unrecognised AtomType '%s' given to %s keyword.\n", parser.argc(n), dynamicSiteNodeKeywords().keyword(nk));
 					if (atomTypes_.contains(at)) return Messenger::error("Duplicate AtomType target given to %s keyword.\n", dynamicSiteNodeKeywords().keyword(nk));
-					atomTypes_.add(at, coreData.constAtomTypes().indexOf(at));
+					atomTypes_.append(at, coreData.constAtomTypes().indexOf(at));
 				}
 				break;
 			case (DynamicSiteProcedureNode::ElementKeyword):
@@ -177,7 +177,7 @@ bool DynamicSiteProcedureNode::read(LineParser& parser, const CoreData& coreData
 					Element* el = Elements::elementPointer(parser.argc(n));
 					if (!el) return Messenger::error("Unrecognised element '%s' given to %s keyword.\n", parser.argc(n), dynamicSiteNodeKeywords().keyword(nk));
 					if (elements_.contains(el)) return Messenger::error("Duplicate Element target given to %s keyword.\n", dynamicSiteNodeKeywords().keyword(nk));
-					elements_.add(el);
+					elements_.append(el);
 				}
 				break;
 			case (DynamicSiteProcedureNode::EndDynamicSiteKeyword):
@@ -203,7 +203,7 @@ bool DynamicSiteProcedureNode::write(LineParser& parser, const char* prefix)
 	if (atomTypes_.nItems() > 0)
 	{
 		CharString s;
-		RefListIterator<AtomType,int> atomTypeIterator(atomTypes_);
+		RefDataListIterator<AtomType,int> atomTypeIterator(atomTypes_);
 		while (AtomType* at = atomTypeIterator.iterate()) s.strcatf("  %s", at->name());
 		if (!parser.writeLineF("%s  %s  '%s'\n", prefix, dynamicSiteNodeKeywords().keyword(DynamicSiteProcedureNode::AtomTypeKeyword), s.get())) return false;
 	}
@@ -212,7 +212,7 @@ bool DynamicSiteProcedureNode::write(LineParser& parser, const char* prefix)
 	if (elements_.nItems() > 0)
 	{
 		CharString s;
-		RefListIterator<Element,bool> elementsIterator(elements_);
+		RefListIterator<Element> elementsIterator(elements_);
 		while (Element* el = elementsIterator.iterate()) s.strcatf("  %s", el->symbol());
 		if (!parser.writeLineF("%s  %s  '%s'\n", prefix, dynamicSiteNodeKeywords().keyword(DynamicSiteProcedureNode::ElementKeyword), s.get())) return false;
 	}

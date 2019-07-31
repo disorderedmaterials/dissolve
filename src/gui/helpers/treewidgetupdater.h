@@ -117,20 +117,67 @@ template <class T, class I> class TreeWidgetUpdater
 };
 
 // TreeWidgetRefListUpdater - Constructor-only template class to update contents of a QTreeWidget from a RefList, preserving original items as much as possible
-template <class T, class I, class D> class TreeWidgetRefListUpdater
+template <class T, class I> class TreeWidgetRefListUpdater
 {
 	// Typedefs for passed functions
 	typedef void (T::*TreeWidgetChildUpdateFunction)(QTreeWidgetItem* parentItem, int childIndex, I* item, bool createItem);
 
 	public:
 	// Constructor
-	TreeWidgetRefListUpdater(QTreeWidgetItem* parentItem, const RefList<I,D>& data, T* functionParent, TreeWidgetChildUpdateFunction updateChild)
+	TreeWidgetRefListUpdater(QTreeWidgetItem* parentItem, const RefList<I>& list, T* functionParent, TreeWidgetChildUpdateFunction updateChild)
 	{
 		QTreeWidgetItem* treeItem;
 
 		int count = 0;
 
-		RefListIterator<I,D> itemIterator(data);
+		RefListIterator<I> itemIterator(list);
+		while (I* dataItem = itemIterator.iterate())
+		{
+			// Our QTreeWidgetItem may or may not be populated, and with different items to those in the list.
+
+			// If there is an item already at this child position, check it
+			// If it represents the current pointer data, just update it and move on. Otherwise, delete it and check again
+			while (count < parentItem->childCount())
+			{
+				treeItem = parentItem->child(count);
+				I* rowData = (treeItem ? VariantPointer<I>(treeItem->data(0, Qt::UserRole)) : NULL);
+				if (rowData == dataItem)
+				{
+					// Update the current row and quit the loop
+					(functionParent->*updateChild)(parentItem, count, dataItem, false);
+
+					break;
+				}
+				else parentItem->removeChild(parentItem->child(count));
+			}
+
+			// If the current child index is (now) out of range, add a new item to the parent
+			if (count == parentItem->childCount())
+			{
+				// Create new item
+				(functionParent->*updateChild)(parentItem, count, dataItem, true);
+			}
+
+			++count;
+		}
+	}
+};
+
+// TreeWidgetRefListUpdater - Constructor-only template class to update contents of a QTreeWidget from a RefDataList, preserving original items as much as possible
+template <class T, class I, class D> class TreeWidgetRefDataListUpdater
+{
+	// Typedefs for passed functions
+	typedef void (T::*TreeWidgetChildUpdateFunction)(QTreeWidgetItem* parentItem, int childIndex, I* item, bool createItem);
+
+	public:
+	// Constructor
+	TreeWidgetRefDataListUpdater(QTreeWidgetItem* parentItem, const RefDataList<I,D>& list, T* functionParent, TreeWidgetChildUpdateFunction updateChild)
+	{
+		QTreeWidgetItem* treeItem;
+
+		int count = 0;
+
+		RefDataListIterator<I,D> itemIterator(list);
 		while (I* dataItem = itemIterator.iterate())
 		{
 			// Our QTreeWidgetItem may or may not be populated, and with different items to those in the list.

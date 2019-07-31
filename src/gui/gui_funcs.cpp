@@ -230,8 +230,8 @@ bool DissolveWindow::openFileFromCLI(const char* inputFile, const char* restartF
 // Update all tabs
 void DissolveWindow::updateTabs()
 {
-	RefList<MainTab,bool> tabs = allTabs();
-	RefListIterator<MainTab,bool> tabIterator(tabs);
+	RefList<MainTab> tabs = allTabs();
+	RefListIterator<MainTab> tabIterator(tabs);
 	while (MainTab* tab = tabIterator.iterate()) tab->updateControls();
 }
 

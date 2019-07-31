@@ -30,11 +30,11 @@
 class SpeciesSite;
 
 // Keyword with SpeciesSiteReference Data
-class SpeciesSiteReferenceListModuleKeyword : public ModuleKeywordData< RefList<SpeciesSite,bool>& >
+class SpeciesSiteReferenceListModuleKeyword : public ModuleKeywordData< RefList<SpeciesSite>& >
 {
 	public:
 	// Constructor
-	SpeciesSiteReferenceListModuleKeyword(RefList<SpeciesSite,bool>& references);
+	SpeciesSiteReferenceListModuleKeyword(RefList<SpeciesSite>& references);
 	// Destructor
 	~SpeciesSiteReferenceListModuleKeyword();
 

@@ -76,8 +76,8 @@ void DissolveWindow::setWidgetsForRun()
 	ui.ControlPauseButton->setEnabled(true);
 
 	// Disable sensitive controls in all tabs
-	RefList<MainTab,bool> tabs = allTabs();
-	RefListIterator<MainTab,bool> tabIterator(tabs);
+	RefList<MainTab> tabs = allTabs();
+	RefListIterator<MainTab> tabIterator(tabs);
 	while (MainTab* tab = tabIterator.iterate()) tab->disableSensitiveControls();
 }
 
@@ -90,8 +90,8 @@ void DissolveWindow::setWidgetsAfterRun()
 	ui.ControlPauseButton->setEnabled(false);
 
 	// Enable necessary controls in all tabs
-	RefList<MainTab,bool> tabs = allTabs();
-	RefListIterator<MainTab,bool> tabIterator(tabs);
+	RefList<MainTab> tabs = allTabs();
+	RefListIterator<MainTab> tabIterator(tabs);
 	while (MainTab* tab = tabIterator.iterate()) tab->enableSensitiveControls();
 }
 

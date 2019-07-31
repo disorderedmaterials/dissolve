@@ -291,7 +291,7 @@ template <class A> class Array : public ListItem< Array<A> >
 		return array_[n];
 	}
 	// Return single value
-	A& at(int n) const
+	A& at(int n)
 	{
 #ifdef CHECKS
 		if ((n < 0) || (n >= nItems_))
@@ -317,7 +317,7 @@ template <class A> class Array : public ListItem< Array<A> >
 		return array_[n];
 	}
 	// Return first value in array
-	const A firstValue() const
+	A firstValue() const
 	{
 		if (nItems_ == 0)
 		{
@@ -327,7 +327,7 @@ template <class A> class Array : public ListItem< Array<A> >
 		return array_[0];
 	}
 	// Return last value in array
-	const A lastValue() const
+	A lastValue() const
 	{
 		if (nItems_ == 0)
 		{

@@ -49,7 +49,7 @@ Forcefield::~Forcefield()
 // Register specified atom type to given Element
 void Forcefield::registerAtomType(ForcefieldAtomType* atomType, int Z)
 {
-	atomTypesByElementPrivate_[Z].add(atomType);
+	atomTypesByElementPrivate_[Z].append(atomType);
 }
 
 // Return the named ForcefieldAtomType (if it exists)
@@ -60,7 +60,7 @@ ForcefieldAtomType* Forcefield::atomTypeByName(const char* name, Element* elemen
 	for (int Z=startZ; Z<=endZ; ++Z)
 	{
 		// Go through types associated to the Element
-		RefListIterator<ForcefieldAtomType,bool> typeIterator(atomTypesByElementPrivate_.at(Z));
+		RefListIterator<ForcefieldAtomType> typeIterator(atomTypesByElementPrivate_.constAt(Z));
 		while (ForcefieldAtomType* type = typeIterator.iterate()) if (DissolveSys::sameString(type->typeName(), name)) return type;
 	}
 
@@ -74,13 +74,13 @@ ForcefieldAtomType* Forcefield::atomTypeByName(const char* name, Element* elemen
 // Register specified bond term
 void Forcefield::registerBondTerm(ForcefieldBondTerm* bondTerm)
 {
-	bondTerms_.add(bondTerm);
+	bondTerms_.append(bondTerm);
 }
 
 // Return bond term for the supplied atom type pair (if it exists)
 ForcefieldBondTerm* Forcefield::bondTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j) const
 {
-	RefListIterator<ForcefieldBondTerm,bool> termIterator(bondTerms_);
+	RefListIterator<ForcefieldBondTerm> termIterator(bondTerms_);
 	while (ForcefieldBondTerm* term = termIterator.iterate()) if (term->matches(i, j)) return term;
 
 	return NULL;
@@ -89,13 +89,13 @@ ForcefieldBondTerm* Forcefield::bondTerm(const ForcefieldAtomType* i, const Forc
 // Register specified angle term
 void Forcefield::registerAngleTerm(ForcefieldAngleTerm* angleTerm)
 {
-	angleTerms_.add(angleTerm);
+	angleTerms_.append(angleTerm);
 }
 
 // Return angle term for the supplied atom type trio (if it exists)
 ForcefieldAngleTerm* Forcefield::angleTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k) const
 {
-	RefListIterator<ForcefieldAngleTerm,bool> termIterator(angleTerms_);
+	RefListIterator<ForcefieldAngleTerm> termIterator(angleTerms_);
 	while (ForcefieldAngleTerm* term = termIterator.iterate()) if (term->matches(i, j, k)) return term;
 
 	return NULL;
@@ -104,13 +104,13 @@ ForcefieldAngleTerm* Forcefield::angleTerm(const ForcefieldAtomType* i, const Fo
 // Register specified torsion term
 void Forcefield::registerTorsionTerm(ForcefieldTorsionTerm* torsionTerm)
 {
-	torsionTerms_.add(torsionTerm);
+	torsionTerms_.append(torsionTerm);
 }
 
 // Return torsion term for the supplied atom type quartet (if it exists)
 ForcefieldTorsionTerm* Forcefield::torsionTerm(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l) const
 {
-	RefListIterator<ForcefieldTorsionTerm,bool> termIterator(torsionTerms_);
+	RefListIterator<ForcefieldTorsionTerm> termIterator(torsionTerms_);
 	while (ForcefieldTorsionTerm* term = termIterator.iterate()) if (term->matches(i, j, k, l)) return term;
 
 	return NULL;
@@ -119,7 +119,6 @@ ForcefieldTorsionTerm* Forcefield::torsionTerm(const ForcefieldAtomType* i, cons
 /*
  * Term Assignment
  */
-
 
 // Assign intramolecular parameters to the supplied Species
 bool Forcefield::assignIntramolecular(Species* sp, bool useExistingTypes, bool assignBonds, bool assignAngles, bool assignTorsions) const
@@ -317,7 +316,7 @@ bool Forcefield::isAtomGeometry(SpeciesAtom* i, AtomGeometry geom) const
 bool Forcefield::isBondPattern(const SpeciesAtom* i, const int nSingle, const int nDouble, const int nTriple, const int nQuadruple, const int nAromatic) const
 {
 	int actualNSingle = 0, actualNDouble = 0, actualNTriple = 0, actualNQuadruple = 0, actualNAromatic = 0;
-	RefListIterator<SpeciesBond,int> bondIterator(i->bonds());
+	RefListIterator<SpeciesBond> bondIterator(i->bonds());
 	while (SpeciesBond* bond = bondIterator.iterate())
 	{
 		switch (bond->bondType())
@@ -363,7 +362,7 @@ bool Forcefield::isBoundTo(const SpeciesAtom* i, Element* element, const int cou
 {
 	int found = 0;
 
-	RefListIterator<SpeciesBond,int> bondIterator(i->bonds());
+	RefListIterator<SpeciesBond> bondIterator(i->bonds());
 	while (SpeciesBond* bond = bondIterator.iterate()) if (bond->partner(i)->element() == element) ++found;
 
 	return (found < count ? false : (found == count ? true : allowMoreThanCount));
@@ -383,7 +382,7 @@ int Forcefield::guessOxidationState(const SpeciesAtom* i) const
 	// Keep track of the number of bound elements that are the same as our own, as a crude check for elemental environments (OS == 0)
 	int nSameElement = 0;
 
-	RefListIterator<SpeciesBond,int> bondIterator(i->bonds());
+	RefListIterator<SpeciesBond> bondIterator(i->bonds());
 	while (SpeciesBond* bond = bondIterator.iterate())
 	{
 		Element* element = bond->partner(i)->element();

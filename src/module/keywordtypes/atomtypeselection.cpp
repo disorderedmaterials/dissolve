@@ -27,7 +27,7 @@
 #include "base/lineparser.h"
 
 // Constructor
-AtomTypeSelectionModuleKeyword::AtomTypeSelectionModuleKeyword(AtomTypeList& selection, RefList<Configuration,bool>& sourceConfigurations) : ModuleKeywordData<AtomTypeList&>(ModuleKeywordBase::AtomTypeSelectionData, selection), sourceConfigurations_(sourceConfigurations)
+AtomTypeSelectionModuleKeyword::AtomTypeSelectionModuleKeyword(AtomTypeList& selection, RefList<Configuration>& sourceConfigurations) : ModuleKeywordData<AtomTypeList&>(ModuleKeywordBase::AtomTypeSelectionData, selection), sourceConfigurations_(sourceConfigurations)
 {
 }
 
@@ -59,7 +59,7 @@ void AtomTypeSelectionModuleKeyword::checkSelection()
 	while (AtomTypeData* atd = typeIterator.iterate())
 	{
 		bool found = false;
-		RefListIterator<Configuration,bool> cfgIterator(sourceConfigurations_);
+		RefListIterator<Configuration> cfgIterator(sourceConfigurations_);
 		while (Configuration* cfg = cfgIterator.iterate())
 		{
 			if (cfg->usedAtomTypesList().contains(atd->atomType()))

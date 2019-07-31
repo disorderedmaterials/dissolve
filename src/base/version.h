@@ -22,6 +22,10 @@
 #ifndef DISSOLVE_VERSIONCOUNTER_H
 #define DISSOLVE_VERSIONCOUNTER_H
 
+// Forward Declarations
+class CoreData;
+class ProcessPool;
+
 // Version Counter
 class VersionCounter
 {
@@ -51,6 +55,14 @@ class VersionCounter
 	operator int() const;
 	// Prefix increment
 	int operator++();
+
+
+	/*
+	 * Parallel Comms
+	 */
+	public:
+	// Broadcast data from Master to all Slaves
+	bool broadcast(ProcessPool& procPool, const int root);
 };
 
 #endif

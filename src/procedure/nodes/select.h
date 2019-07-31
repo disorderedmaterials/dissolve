@@ -42,7 +42,7 @@ class SelectProcedureNode : public ProcedureNode
 	public:
 	// Constructors
 	SelectProcedureNode(SpeciesSite* site = NULL);
-	SelectProcedureNode(const RefList<SpeciesSite,bool>& sites);
+	SelectProcedureNode(const RefList<SpeciesSite>& sites);
 	// Destructor
 	~SelectProcedureNode();
 
@@ -70,9 +70,9 @@ class SelectProcedureNode : public ProcedureNode
 	 */
 	private:
 	// List of sites within Species to select
-	RefList<SpeciesSite, bool> speciesSites_;
+	RefList<SpeciesSite> speciesSites_;
 	// List of DynamicSites to select, if any
-	RefList<DynamicSiteProcedureNode, bool> dynamicSites_;
+	RefList<DynamicSiteProcedureNode> dynamicSites_;
 
 
 	/*
@@ -80,13 +80,13 @@ class SelectProcedureNode : public ProcedureNode
 	 */
 	private:
 	// List of other sites (nodes) which will exclude one of our sites if it has the same Molecule parent
-	RefList<SelectProcedureNode,bool> sameMoleculeExclusions_;
+	RefList<SelectProcedureNode> sameMoleculeExclusions_;
 	// List of Molecules currently excluded from selection
-	RefList<const Molecule,bool> excludedMolecules_;
+	RefList<const Molecule> excludedMolecules_;
 	// List of other sites (nodes) which will exclude one of our sites if it is the same site
-	RefList<SelectProcedureNode,bool> sameSiteExclusions_;
+	RefList<SelectProcedureNode> sameSiteExclusions_;
 	//List of Sites currently excluded from selection
-	RefList<const Site,bool> excludedSites_;
+	RefList<const Site> excludedSites_;
 	// Molecule (from site) in which the site must exist
 	SelectProcedureNode* sameMolecule_;
 
@@ -94,11 +94,11 @@ class SelectProcedureNode : public ProcedureNode
 	// Add "same molecule" exclusion
 	bool addSameMoleculeExclusion(SelectProcedureNode* node);
 	// Return list of Molecules currently excluded from selection
-	const RefList<const Molecule,bool>& excludedMolecules() const;
+	const RefList<const Molecule>& excludedMolecules() const;
 	// Add "same site" exclusion
 	bool addSameSiteExclusion(SelectProcedureNode* node);
 	// List of Sites currently excluded from selection
-	const RefList<const Site,bool>& excludedSites() const;
+	const RefList<const Site>& excludedSites() const;
 	// Set node containing molecule from which our site must also be contained within
 	bool setSameMolecule(SelectProcedureNode* node);
 	// Return Molecule (from site) in which the site must exist

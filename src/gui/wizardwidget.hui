@@ -82,7 +82,7 @@ class WizardWidget : public QWidget
 	// List of pages that we know about
 	List<WizardWidgetPageInfo> pages_;
 	// History of traversed pages
-	RefList<WizardWidgetPageInfo,bool> history_;
+	RefList<WizardWidgetPageInfo> history_;
 
 	public:
 	// Clear all registered pages

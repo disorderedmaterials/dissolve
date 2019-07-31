@@ -68,8 +68,7 @@ int ModuleGroup::nModules() const
 }
 
 // Return reflist of Modules
-const RefList<Module,bool>& ModuleGroup::modules() const
+const RefList<Module>& ModuleGroup::modules() const
 {
 	return modules_;
 }
-
