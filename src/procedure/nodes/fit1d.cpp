@@ -207,29 +207,32 @@ bool Fit1DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, con
 	}
 
 	// Save data?
-	if (saveData_ && procPool.isMaster())
+	if (saveData_)
 	{
-		LineParser parser;
-		if (!parser.openOutput(CharString("%s_%s.fit", name(), cfg->name()))) return procPool.decideFalse();
-		if (!parser.writeLineF("# Fit Equation : %s\n", equation_.asString())) return procPool.decideFalse();
-		RefListIterator<ExpressionVariable> variableIterator(equation_.variables());
-		while (ExpressionVariable* var = variableIterator.iterate())
+		if (procPool.isMaster())
 		{
-			if (var == xVariable_)
+			LineParser parser;
+			if (!parser.openOutput(CharString("%s_%s.fit", name(), cfg->name()))) return procPool.decideFalse();
+			if (!parser.writeLineF("# Fit Equation : %s\n", equation_.asString())) return procPool.decideFalse();
+			RefListIterator<ExpressionVariable> variableIterator(equation_.variables());
+			while (ExpressionVariable* var = variableIterator.iterate())
 			{
-				if (!parser.writeLineF("#  %10s                (axis variable)\n", var->name())) return procPool.decideFalse();
+				if (var == xVariable_)
+				{
+					if (!parser.writeLineF("#  %10s                (axis variable)\n", var->name())) return procPool.decideFalse();
+				}
+				else if (fitTargets_.contains(var))
+				{
+					if (!parser.writeLineF("#  %10s = %e (fit)\n", var->name(), var->value().asDouble())) return procPool.decideFalse();
+				}
+				else if (!parser.writeLineF("#  %10s = %e (constant)\n", var->name(), var->value().asDouble())) return procPool.decideFalse();
 			}
-			else if (fitTargets_.contains(var))
-			{
-				if (!parser.writeLineF("#  %10s = %e (fit)\n", var->name(), var->value().asDouble())) return procPool.decideFalse();
-			}
-			else if (!parser.writeLineF("#  %10s = %e (constant)\n", var->name(), var->value().asDouble())) return procPool.decideFalse();
-		}
-		if (!data.save(parser)) return procPool.decideFalse();
+			if (!data.save(parser)) return procPool.decideFalse();
 
-		procPool.decideTrue();
+			procPool.decideTrue();
+		}
+		else if (!procPool.decision()) return false;
 	}
-	else if (!procPool.decision()) return false;
 
 	return true;
 }

@@ -221,13 +221,15 @@ bool Process3DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg,
 	if (normaliseByFactor_) data /= normalisationFactor_;
 
 	// Save data?
-	if (saveData_ && procPool.isMaster())
+	if (saveData_)
 	{
-		return Messenger::error("Saving of 3D data is not yet implemented.\n");
-// 		if (data.save(CharString("%s_%s.txt", name(), cfg->name()))) procPool.decideTrue();
-// 		else return procPool.decideFalse();
+		if (procPool.isMaster())
+		{
+			Messenger::error("Saving of 3D data is not yet implemented.\n");
+			return procPool.decideFalse();
+		}
+		else if (!procPool.decision()) return false;
 	}
-	else if (!procPool.decision()) return false;
 
 	return true;
 }

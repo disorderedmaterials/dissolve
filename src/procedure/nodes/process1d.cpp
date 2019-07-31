@@ -235,12 +235,15 @@ bool Process1DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg,
 	}
 
 	// Save data?
-	if (saveData_ && procPool.isMaster())
+	if (saveData_)
 	{
-		if (data.save(CharString("%s_%s.txt", name(), cfg->name()))) procPool.decideTrue();
-		else return procPool.decideFalse();
+		if (procPool.isMaster())
+		{
+			if (data.save(CharString("%s_%s.txt", name(), cfg->name()))) procPool.decideTrue();
+			else return procPool.decideFalse();
+		}
+		else if (!procPool.decision()) return false;
 	}
-	else if (!procPool.decision()) return false;
 
 	return true;
 }

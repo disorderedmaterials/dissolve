@@ -232,13 +232,16 @@ bool Process2DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg,
 	}
 
 	// Save data?
-	if (saveData_ && procPool.isMaster())
+	if (saveData_)
 	{
-		Data2DExportFileFormat data2DFormat(CharString("%s_%s.txt", name(), cfg->name()), Data2DExportFileFormat::CartesianData);
-		if (data2DFormat.exportData(data)) procPool.decideTrue();
-		else return procPool.decideFalse();
+		if (procPool.isMaster())
+		{
+			Data2DExportFileFormat data2DFormat(CharString("%s_%s.txt", name(), cfg->name()), Data2DExportFileFormat::CartesianData);
+			if (data2DFormat.exportData(data)) procPool.decideTrue();
+			else return procPool.decideFalse();
+		}
+		else if (!procPool.decision()) return false;
 	}
-	else if (!procPool.decision()) return false;
 
 	return true;
 }
