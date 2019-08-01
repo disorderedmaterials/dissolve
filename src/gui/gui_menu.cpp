@@ -99,10 +99,6 @@ void DissolveWindow::on_SessionNewAction_triggered(bool checked)
 	startNew();
 }
 
-void DissolveWindow::on_SessionSetupWizardAction_triggered(bool checked)
-{
-}
-
 void DissolveWindow::on_SessionOpenLocalAction_triggered(bool checked)
 {
 	if (!checkSaveCurrentInput()) return;
@@ -157,7 +153,7 @@ void DissolveWindow::on_SessionOpenLocalAction_triggered(bool checked)
 	showMainStackPage(DissolveWindow::SimulationStackPage);
 }
 
-void DissolveWindow::on_SessionOpenRemoteAction_triggered(bool checked)
+void DissolveWindow::on_SessionConnectAction_triggered(bool checked)
 {
 	// TODO
 }
@@ -398,11 +394,11 @@ void DissolveWindow::on_WorkspaceAddNewAction_triggered(bool checked)
  * Help
  */
 
-void DissolveWindow::on_HelpViewQuickStartGuideAction_triggered(bool checked)
+void DissolveWindow::on_HelpOnlineManualAction_triggered(bool checked)
 {
 	QDesktopServices::openUrl(QUrl("https://trisyoungs.github.io/dissolve"));
 }
 
-void DissolveWindow::on_HelpRunATutorialAction_triggered(bool checked)
+void DissolveWindow::on_HelpOnlineTutorialsAction_triggered(bool checked)
 {
 }

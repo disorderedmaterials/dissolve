@@ -24,7 +24,6 @@
 
 #include "gui/ui_gui.h"
 #include "gui/widgets/subwindow.h"
-#include "gui/guide.h"
 #include "gui/outputhandler.hui"
 #include "gui/thread.hui"
 #include "gui/maintab.h"
@@ -130,10 +129,9 @@ class DissolveWindow : public QMainWindow
 	private slots:
 	// Session
 	void on_SessionNewAction_triggered(bool checked);
-	void on_SessionSetupWizardAction_triggered(bool checked);
 	void on_SessionOpenLocalAction_triggered(bool checked);
-	void on_SessionOpenRemoteAction_triggered(bool checked);
 	void on_SessionOpenRecentAction_triggered(bool checked);
+	void on_SessionConnectAction_triggered(bool checked);
 	void on_SessionCloseAction_triggered(bool checked);
 	void on_SessionSaveAction_triggered(bool checked);
 	void on_SessionSaveAsAction_triggered(bool checked);
@@ -152,8 +150,8 @@ class DissolveWindow : public QMainWindow
 	// Workspace
 	void on_WorkspaceAddNewAction_triggered(bool checked);
 	// Help
-	void on_HelpViewQuickStartGuideAction_triggered(bool checked);
-	void on_HelpRunATutorialAction_triggered(bool checked);
+	void on_HelpOnlineManualAction_triggered(bool checked);
+	void on_HelpOnlineTutorialsAction_triggered(bool checked);
 
 
 	/*
@@ -179,11 +177,13 @@ class DissolveWindow : public QMainWindow
 	private slots:
 	// 'Create' Group
 	void on_StartCreateNewButton_clicked(bool checked);
-	void on_StartSetupWizardButton_clicked(bool checked);
 	// 'Open / Connect' Group
 	void on_StartOpenLocalButton_clicked(bool checked);
-	void on_StartOpenRemoteButton_clicked(bool checked);
 	void on_StartOpenRecentButton_clicked(bool checked);
+	void on_StartConnectButton_clicked(bool checked);
+	// Help
+	void on_StartOnlineManualButton_clicked(bool checked);
+	void on_StartOnlineTutorialsButton_clicked(bool checked);
 
 
 	/*
