@@ -547,7 +547,7 @@
              </property>
              <property name="icon">
               <iconset resource="main.qrc">
-               <normaloff>:/file/icons/file_open.svg</normaloff>:/file/icons/file_open.svg</iconset>
+               <normaloff>:/menu/icons/menu_open.svg</normaloff>:/menu/icons/menu_open.svg</iconset>
              </property>
              <property name="iconSize">
               <size>
