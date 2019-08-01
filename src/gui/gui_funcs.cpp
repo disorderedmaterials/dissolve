@@ -32,6 +32,7 @@
 #include <QCloseEvent>
 #include <QDir>
 #include <QFontDatabase>
+#include <QLCDNumber>
 #include <QMdiSubWindow>
 #include <QFileInfo>
 
@@ -56,15 +57,30 @@ DissolveWindow::DissolveWindow(Dissolve& dissolve) : QMainWindow(NULL), dissolve
 	connect(ui.MainTabs, SIGNAL(tabBarDoubleClicked(int)), this, SLOT(mainTabsDoubleClicked(int)));
 	dissolveState_ = EditingState;
 
-	// Set up GuideWidget
-	ui.GuideWidget->setMainDissolveReference(&dissolve);
-	ui.GuideWidget->setDissolveWindow(this);
-	connect(ui.GuideWidget, SIGNAL(canceled()), this, SLOT(guideWidgetCanceled()));
-	connect(ui.GuideWidget, SIGNAL(finished()), this, SLOT(guideWidgetFinished()));
-
 	refreshing_ = false;
 	modified_ = false;
 	localSimulation_ = true;
+
+	// Create statusbar widgets
+	localSimulationIndicator_ = new QLabel;
+	localSimulationIndicator_->setPixmap(QPixmap(":/general/icons/general_local.svg"));
+	localSimulationIndicator_->setMaximumSize(QSize(20,20));
+	localSimulationIndicator_->setScaledContents(true);
+	restartFileIndicator_ = new QLabel;
+	restartFileIndicator_->setPixmap(QPixmap(":/general/icons/general_restartfile.svg"));
+	restartFileIndicator_->setMaximumSize(QSize(20,20));
+	restartFileIndicator_->setScaledContents(true);
+	heartbeatFileIndicator_ = new QLabel;
+	heartbeatFileIndicator_->setPixmap(QPixmap(":/general/icons/general_heartbeat.svg"));
+	heartbeatFileIndicator_->setMaximumSize(QSize(20,20));
+	heartbeatFileIndicator_->setScaledContents(true);
+	iterationNumberIndicator_ = new QLCDNumber;
+	iterationNumberIndicator_->setDigitCount(6);
+	iterationNumberIndicator_->setSegmentStyle(QLCDNumber::Flat);
+	statusBar()->addPermanentWidget(iterationNumberIndicator_);
+	statusBar()->addPermanentWidget(heartbeatFileIndicator_);
+	statusBar()->addPermanentWidget(restartFileIndicator_);
+	statusBar()->addPermanentWidget(localSimulationIndicator_);
 
 	addCoreTabs();
 
@@ -247,60 +263,27 @@ void DissolveWindow::updateWindowTitle()
 void DissolveWindow::updateControlsFrame()
 {
 	// Update ControlFrame to reflect Dissolve's current state
-	if (dissolveState_ == DissolveWindow::EditingState)
-	{
-		ui.ControlStateIcon->setPixmap(QPixmap(":/general/icons/general_edit.svg"));
-		ui.ControlStateLabel->setText("EDITING");
-		ui.ControlSetUpButton->setEnabled(!dissolve_.isSetUp());
-		ui.ControlSetUpButton->setIcon(dissolve_.isSetUp() ? QIcon(":/general/icons/general_true.svg") : QIcon(":/general/icons/general_false.svg"));
-		ui.ControlRunButton->setEnabled(dissolve_.isSetUp());
-		ui.ControlPauseButton->setEnabled(false);
-		ui.ControlReloadButton->setEnabled(false);
-	}
-	else if (dissolveState_ == DissolveWindow::RunningState)
-	{
-		ui.ControlStateIcon->setPixmap(QPixmap(":/general/icons/general_edit.svg"));
-		ui.ControlStateLabel->setText("RUNNING");
-		ui.ControlSetUpButton->setEnabled(false);
-		ui.ControlSetUpButton->setIcon(QIcon(":/general/icons/general_true.svg"));
-		ui.ControlRunButton->setEnabled(false);
-		ui.ControlPauseButton->setEnabled(true);
-		ui.ControlReloadButton->setEnabled(false);
-	}
-	else if (dissolveState_ == DissolveWindow::MonitoringState)
-	{
-		ui.ControlStateIcon->setPixmap(QPixmap(":/general/icons/general_monitor.svg"));
-		ui.ControlStateLabel->setText("MONITOR");
-		ui.ControlSetUpButton->setEnabled(false);
-		ui.ControlSetUpButton->setIcon(QIcon(":/general/icons/general_true.svg"));
-		ui.ControlRunButton->setEnabled(false);
-		ui.ControlPauseButton->setEnabled(false);
-		ui.ControlReloadButton->setEnabled(true);
-	}
+	ui.ControlRunButton->setEnabled(dissolveState_ == DissolveWindow::EditingState);
+	ui.ControlStepButton->setEnabled(dissolveState_ == DissolveWindow::EditingState);
+	ui.ControlPauseButton->setEnabled(dissolveState_ == DissolveWindow::RunningState);
+	ui.ControlReloadButton->setEnabled(dissolveState_ == DissolveWindow::MonitoringState);
 
 	// Set current iteration number
-	ui.ControlIterationNumberLCD->display(DissolveSys::itoa(dissolve_.iteration()));
+	iterationNumberIndicator_->display(DissolveSys::itoa(dissolve_.iteration()));
 
 	// Set relevant file locations
 	if (localSimulation_)
 	{
-		if (dissolve_.hasInputFilename())
-		{
-			ui.ControlLocationLabel->setText(QFileInfo(dissolve_.inputFilename()).absolutePath() + "  (Local)");
-			ui.ControlInputFileLabel->setText(dissolve_.inputFilename());
-		}
-		else
-		{
-			ui.ControlLocationLabel->setText(QDir::current().absolutePath() + " (Local)");
-			ui.ControlInputFileLabel->setText("<untitled>");
-		}
-		ui.ControlRestartFileLabel->setText(dissolve_.hasRestartFilename() ? dissolve_.restartFilename() : "<none>");
+		localSimulationIndicator_->setPixmap(QPixmap(":/general/icons/general_local.svg"));
+		restartFileIndicator_->setEnabled(dissolve_.hasRestartFilename());
+		restartFileIndicator_->setToolTip(dissolve_.hasRestartFilename() ? CharString("Current restart file is '%s'", dissolve_.restartFilename()).get() : "No restart file available");
+		heartbeatFileIndicator_->setEnabled(false);
+		heartbeatFileIndicator_->setToolTip("Heartbeat file not monitored.");
 	}
 	else
 	{
-		ui.ControlLocationLabel->setText("UNKNOWN NETWORK LOCATION");
-		ui.ControlInputFileLabel->setText(dissolve_.inputFilename());
-		ui.ControlRestartFileLabel->setText(dissolve_.hasRestartFilename() ? dissolve_.restartFilename() : "<none>");
+		localSimulationIndicator_->setPixmap(QPixmap(":/menu/icons/menu_connect.svg"));
+		// TODO!
 	}
 }
 
@@ -312,4 +295,19 @@ void DissolveWindow::fullUpdate()
 	updateTabs();
 	updateWindowTitle();
 	updateControlsFrame();
+}
+
+/*
+ * Stack
+ */
+
+// Set currently-visible main stack page
+void DissolveWindow::showMainStackPage(DissolveWindow::MainStackPage page)
+{
+	ui.MainStack->setCurrentIndex(page);
+
+	// Enable / disable main menu items as appropriate
+	ui.SimulationMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
+	ui.ControlMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
+	ui.WorkspaceMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
 }

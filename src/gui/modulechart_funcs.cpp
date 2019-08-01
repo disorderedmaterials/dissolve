@@ -24,6 +24,7 @@
 #include "gui/modulechartinsertionblock.h"
 #include "gui/widgets/mimestrings.h"
 #include "gui/gui.h"
+#include "main/dissolve.h"
 #include "module/list.h"
 #include "module/module.h"
 #include <QDrag>

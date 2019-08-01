@@ -73,7 +73,6 @@ if(WIN32)
   else(PARALLEL)
     set (target_name Dissolve-Serial)
     set (gui_target_name Dissolve-GUI)
-    set (ed_target_name DGuidEd)
   endif(PARALLEL)
 
   # Adjust external include directories for GUI
@@ -99,7 +98,6 @@ if(UNIX)
   else(PARALLEL)
     set (target_name dissolve-serial)
     set (gui_target_name dissolve-gui)
-    set (ed_target_name dguided)
   endif(PARALLEL)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 endif(UNIX)
@@ -114,7 +112,6 @@ if(APPLE)
   else(PARALLEL)
     set (target_name dissolve-serial)
     set (gui_target_name dissolve-gui)
-    set (ed_target_name dguided)
   endif(PARALLEL)
 
   set(CMAKE_OSX_ARCHITECTURES "x86_64")
@@ -173,22 +170,6 @@ if(GUI)
     ${Qt5Core_INCLUDE_DIRS}
     ${Qt5Gui_INCLUDE_DIRS}
     ${Qt5OpenGL_INCLUDE_DIRS}
-    ${Qt5Widgets_INCLUDE_DIRS}
-  )
-
-  # Dissolve Guide Editor (dguided)
-  add_executable(${ed_target_name}
-    MACOSX_BUNDLE
-    ${SRCS}/dguided.cpp 
-  )
-
-  # Set project-local include directories for target
-  target_include_directories(${ed_target_name} PRIVATE
-    ${PROJECT_SOURCE_DIR}/src
-    ${PROJECT_BINARY_DIR}/src
-    ${FREETYPE_INCLUDE_DIRS}
-    ${Qt5Core_INCLUDE_DIRS}
-    ${Qt5Gui_INCLUDE_DIRS}
     ${Qt5Widgets_INCLUDE_DIRS}
   )
 
@@ -298,50 +279,6 @@ if(GUI)
     keywordwidgets
     delegates
     gui
-
-    ${NO_WHOLE_ARCHIVE_FLAG}
-
-    # External libs
-    Qt5::Widgets Qt5::Core Qt5::PrintSupport
-    ${FTGL_LIBRARIES}
-    ${OPENGL_LIBRARIES}
-    ${FREETYPE_LIBRARIES}
-
-    ${EXTRA_LINK_LIBS}
-  )
-
-  # Dissolve Guide Editor
-  target_link_libraries( ${ed_target_name}
-    ${WHOLE_ARCHIVE_FLAG}
-
-    ${BASIC_LINK_LIBS}
-
-    # Module gui libs
-    analysemodulegui
-    atomshakemodulegui
-    braggsqmodulegui
-    calculatedanglemodulegui
-    calculaterdfmodulegui
-    calibratemodulegui
-    datatestmodulegui
-    energymodulegui
-    epsrmodulegui
-    geomoptmodulegui
-    neutronsqmodulegui
-    rdfmodulegui
-    refinemodulegui
-    skeletonmodulegui
-    sqmodulegui
-    testmodulegui
-
-    # Main gui libs
-    render
-    viewer
-    widgets
-    keywordwidgets
-    delegates
-    gui
-    ed
 
     ${NO_WHOLE_ARCHIVE_FLAG}
 

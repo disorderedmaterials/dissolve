@@ -29,7 +29,7 @@ noinst_HEADERS += mathfunc.h matrix3.h matrix4.h mc.h minimiser.h
 noinst_HEADERS += pairbroadeningfunction.h plottable.h poissonfit.h praxis.h
 noinst_HEADERS += regression.h
 noinst_HEADERS += transformer.h
-noinst_HEADERS += sampleddouble.h svd.h
+noinst_HEADERS += sampleddouble.h sd.h svd.h
 noinst_HEADERS += windowfunction.h
 
 AM_CPPFLAGS = -I../ @DISSOLVE_CFLAGS@

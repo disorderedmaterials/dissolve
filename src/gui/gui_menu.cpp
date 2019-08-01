@@ -27,6 +27,7 @@
 #include "gui/modulecontrolwidget.h"
 #include "main/dissolve.h"
 #include "templates/variantpointer.h"
+#include <QDesktopServices>
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QFileDialog>
@@ -98,10 +99,6 @@ void DissolveWindow::on_SessionNewAction_triggered(bool checked)
 	startNew();
 }
 
-void DissolveWindow::on_SessionSetupWizardAction_triggered(bool checked)
-{
-}
-
 void DissolveWindow::on_SessionOpenLocalAction_triggered(bool checked)
 {
 	if (!checkSaveCurrentInput()) return;
@@ -156,7 +153,7 @@ void DissolveWindow::on_SessionOpenLocalAction_triggered(bool checked)
 	showMainStackPage(DissolveWindow::SimulationStackPage);
 }
 
-void DissolveWindow::on_SessionOpenRemoteAction_triggered(bool checked)
+void DissolveWindow::on_SessionConnectAction_triggered(bool checked)
 {
 	// TODO
 }
@@ -397,28 +394,11 @@ void DissolveWindow::on_WorkspaceAddNewAction_triggered(bool checked)
  * Help
  */
 
-void DissolveWindow::on_HelpViewQuickStartGuideAction_triggered(bool checked)
+void DissolveWindow::on_HelpOnlineManualAction_triggered(bool checked)
 {
-	if (!checkSaveCurrentInput()) return;
-
-	startNew();
-
-	// If the quickstart guide hasn't been set up yet, set it up now...
-	if (!quickStartGuide_.isValid())
-	{
-		if (!quickStartGuide_.load(":/quickstart/guides/quickstart/quickstart.guide"))
-		{
-			Messenger::error("Failed to load QuickStart guide.\n");
-			return;
-		}
-		ui.GuideWidget->setContent(quickStartGuide_);
-	}
-
-	// Reset the guide wizard widget and set up the QuickStart guide in it
-	ui.GuideWidget->reset();
-	ui.GuideWidget->setVisible(true);
+	QDesktopServices::openUrl(QUrl("https://trisyoungs.github.io/dissolve"));
 }
 
-void DissolveWindow::on_HelpRunATutorialAction_triggered(bool checked)
+void DissolveWindow::on_HelpOnlineTutorialsAction_triggered(bool checked)
 {
 }

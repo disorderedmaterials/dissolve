@@ -1,6 +1,6 @@
-noinst_LTLIBRARIES = libgui.la libdguided.la
+noinst_LTLIBRARIES = libgui.la
 
-SUBDIRS = delegates keywordwidgets viewer widgets
+SUBDIRS = delegates helpers keywordwidgets viewer widgets
 
 SUFFIXES: .ui .hui .qrc
 
@@ -43,7 +43,7 @@ libgui_la_SOURCES += outputhandler.hui thread.hui
 libgui_la_SOURCES += addconfigurationdialog_funcs.cpp addconfigurationwizard_funcs.cpp addforcefieldtermsdialog_funcs.cpp addforcefieldtermswizard_funcs.cpp addprocessinglayerdialog_funcs.cpp addprocessinglayerwizard_funcs.cpp addspeciesdialog_funcs.cpp addspecieswizard_funcs.cpp
 libgui_la_SOURCES += configurationtab_funcs.cpp
 libgui_la_SOURCES += forcefieldtab_funcs.cpp
-libgui_la_SOURCES += guidewizard_funcs.cpp gui_funcs.cpp gui_menu.cpp gui_simulation_control.cpp gui_simulation_guide.cpp gui_simulation_state.cpp gui_simulation_tabs.cpp gui_stack.cpp gui_start.cpp guide.cpp guidepage.cpp guidepagehighlight.cpp
+libgui_la_SOURCES += guidewizard_funcs.cpp gui_funcs.cpp gui_menu.cpp gui_simulation_control.cpp gui_simulation_state.cpp gui_simulation_tabs.cpp gui_start.cpp guide.cpp guidepage.cpp guidepagehighlight.cpp
 libgui_la_SOURCES += layereditor_funcs.cpp
 libgui_la_SOURCES += maintab.cpp
 libgui_la_SOURCES += modulechart_funcs.cpp modulechartblock.cpp modulecharthotspot.cpp modulechartinsertionblock_funcs.cpp modulechartmoduleblock_funcs.cpp
@@ -55,14 +55,11 @@ libgui_la_SOURCES += thread_funcs.cpp
 libgui_la_SOURCES += tmdiarea.hui tmdiarea_funcs.cpp
 libgui_la_SOURCES += wizardwidget_funcs.cpp wizardwidgethighlight.cpp wizardwidgetpageinfo.cpp workspacetab_funcs.cpp
 
-# DGuidEd
-libdguided_la_SOURCES = dguided.ui dguided_funcs.cpp
-
 noinst_HEADERS = addconfigurationdialog.h addconfigurationwizard.h addforcefieldtermsdialog.h addforcefieldtermswizard.h addprocessinglayerdialog.h addprocessinglayerwizard.h addspeciesdialog.h addspecieswizard.h
 noinst_HEADERS += configurationtab.h
-noinst_HEADERS += dguided.h
 noinst_HEADERS += forcefieldtab.h
 noinst_HEADERS += guidewizard.h gui.h guide.h guidepage.h guidepagehighlight.h
+noinst_HEADERS += keywordwidgets.h
 noinst_HEADERS += layereditor.h
 noinst_HEADERS += maintab.h modulechartblock.h modulecharthotspot.h modulechartinsertionblock.h modulechartmetrics.h modulechartmoduleblock.h modulecontrolwidget.h modulekeywordswidget.h modulelayertab.h moduletab.h modulewidget.h
 noinst_HEADERS += pairpotentialwidget.h

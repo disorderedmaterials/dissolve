@@ -57,15 +57,6 @@ dissolve_gui_LDADD = libdissolvegui.la @GUI_LDLIBS@ @MPI_LDLIBS@
 
 dissolve_gui_CPPFLAGS = @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
 
-# Guide Editor
-bin_PROGRAMS += dguided
-
-dguided_SOURCES = dguided.cpp
-
-dguided_LDADD = gui/libdguided.la libdissolvegui.la @GUI_LDLIBS@ @MPI_LDLIBS@
-
-dguided_CPPFLAGS = @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
-
 endif
 
 # Add on the 'modules' subdirectory target last, so it gets built after the 'gui' target on which it depends

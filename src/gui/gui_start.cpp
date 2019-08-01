@@ -21,34 +21,44 @@
 
 #include "gui/gui.h"
 
-void DissolveWindow::on_StartOpenLocalButton_clicked(bool checked)
-{
-	ui.SessionOpenLocalAction->trigger();
-}
-
-void DissolveWindow::on_StartOpenRemoteButton_clicked(bool checked)
-{
-}
-
-void DissolveWindow::on_StartOpenRecentButton_clicked(bool checked)
-{
-}
+/*
+ * Create
+ */
 
 void DissolveWindow::on_StartCreateNewButton_clicked(bool checked)
 {
 	ui.SessionNewAction->trigger();
 }
 
-void DissolveWindow::on_StartSetupWizardButton_clicked(bool checked)
+/*
+ * Open / Connect
+ */
+
+void DissolveWindow::on_StartOpenLocalButton_clicked(bool checked)
 {
+	ui.SessionOpenLocalAction->trigger();
 }
 
-void DissolveWindow::on_StartQuickStartButton_clicked(bool checked)
+void DissolveWindow::on_StartOpenRecentButton_clicked(bool checked)
 {
-	ui.HelpViewQuickStartGuideAction->trigger();
+	ui.SessionOpenRecentAction->trigger();
 }
 
-void DissolveWindow::on_StartRunTutorialButton_clicked(bool checked)
+void DissolveWindow::on_StartConnectButton_clicked(bool checked)
 {
-	ui.HelpRunATutorialAction->trigger();
+	ui.SessionConnectAction->trigger();
+}
+
+/*
+ * Help
+ */
+
+void DissolveWindow::on_StartOnlineManualButton_clicked(bool checked)
+{
+	ui.HelpOnlineManualAction->trigger();
+}
+
+void DissolveWindow::on_StartOnlineTutorialsButton_clicked(bool checked)
+{
+	ui.HelpOnlineTutorialsAction->trigger();
 }
