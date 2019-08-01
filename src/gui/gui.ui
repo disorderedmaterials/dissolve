@@ -537,6 +537,9 @@ Remote Simulation</string>
               <bold>false</bold>
              </font>
             </property>
+            <property name="toolTip">
+             <string>Start running the current simulation</string>
+            </property>
             <property name="text">
              <string>Run</string>
             </property>
@@ -575,6 +578,9 @@ Remote Simulation</string>
               <bold>false</bold>
              </font>
             </property>
+            <property name="toolTip">
+             <string>Step the current simulation (perform one iteration)</string>
+            </property>
             <property name="text">
              <string>Step</string>
             </property>
@@ -611,7 +617,7 @@ Remote Simulation</string>
              </size>
             </property>
             <property name="toolTip">
-             <string>Pause the simulation</string>
+             <string>Stop (pause) the current simulation</string>
             </property>
             <property name="text">
              <string>Pause</string>
@@ -632,6 +638,13 @@ Remote Simulation</string>
            </widget>
           </item>
           <item>
+           <widget class="Line" name="line">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QToolButton" name="ControlReloadButton">
             <property name="enabled">
              <bool>false</bool>
@@ -647,6 +660,9 @@ Remote Simulation</string>
               <width>50</width>
               <height>50</height>
              </size>
+            </property>
+            <property name="toolTip">
+             <string/>
             </property>
             <property name="text">
              <string>Reload</string>

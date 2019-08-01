@@ -264,6 +264,7 @@ void DissolveWindow::updateControlsFrame()
 {
 	// Update ControlFrame to reflect Dissolve's current state
 	ui.ControlRunButton->setEnabled(dissolveState_ == DissolveWindow::EditingState);
+	ui.ControlStepButton->setEnabled(dissolveState_ == DissolveWindow::EditingState);
 	ui.ControlPauseButton->setEnabled(dissolveState_ == DissolveWindow::RunningState);
 	ui.ControlReloadButton->setEnabled(dissolveState_ == DissolveWindow::MonitoringState);
 
@@ -277,7 +278,7 @@ void DissolveWindow::updateControlsFrame()
 		restartFileIndicator_->setEnabled(dissolve_.hasRestartFilename());
 		restartFileIndicator_->setToolTip(dissolve_.hasRestartFilename() ? CharString("Current restart file is '%s'", dissolve_.restartFilename()).get() : "No restart file available");
 		heartbeatFileIndicator_->setEnabled(false);
-		restartFileIndicator_->setToolTip("Heartbeat file not monitored.");
+		heartbeatFileIndicator_->setToolTip("Heartbeat file not monitored.");
 	}
 	else
 	{
