@@ -9,7 +9,9 @@ AC_CONFIG_AUX_DIR(config)
 AC_CANONICAL_TARGET
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE
+
+# Initialise automake with the 'foreign' argument to stop it complaining about the lack of ChangeLog etc.
+AM_INIT_AUTOMAKE([foreign])
 
 
 # Set initial variable values
@@ -186,6 +188,7 @@ AC_CONFIG_FILES(src/templates/Makefile)
 if test "$with_gui" = "yes"; then
   AC_CONFIG_FILES(src/gui/Makefile)
   AC_CONFIG_FILES(src/gui/delegates/Makefile)
+  AC_CONFIG_FILES(src/gui/helpers/Makefile)
   AC_CONFIG_FILES(src/gui/keywordwidgets/Makefile)
   AC_CONFIG_FILES(src/gui/viewer/Makefile)
   AC_CONFIG_FILES(src/gui/viewer/render/Makefile)
