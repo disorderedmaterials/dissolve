@@ -39,31 +39,6 @@
     <file>fonts/FreeSerif.ttf</file>
     <file>fonts/SourceSansPro-Regular.ttf</file>
   </qresource>
-  <qresource prefix="dguided">
-    <file>icons/dguided_redo.svg</file>
-    <file>icons/dguided_clearformat.svg</file>
-    <file>icons/dguided_listcircle.svg</file>
-    <file>icons/dguided_listnone.svg</file>
-    <file>icons/dguided_listnumber.svg</file>
-    <file>icons/dguided_listsquare.svg</file>
-    <file>icons/dguided_undo.svg</file>
-    <file>icons/dguided_formatsteps.svg</file>
-    <file>icons/dguided_formatmodule.svg</file>
-    <file>icons/dguided_formatwidget.svg</file>
-    <file>icons/dguided_copy.svg</file>
-    <file>icons/dguided_angstrom.svg</file>
-    <file>icons/dguided_subscript.svg</file>
-    <file>icons/dguided_superscript.svg</file>
-    <file>icons/dguided_cut.svg</file>
-    <file>icons/dguided_paste.svg</file>
-    <file>icons/dguided_aligncentre.svg</file>
-    <file>icons/dguided_alignjustify.svg</file>
-    <file>icons/dguided_alignleft.svg</file>
-    <file>icons/dguided_alignright.svg</file>
-    <file>icons/dguided_bold.svg</file>
-    <file>icons/dguided_italic.svg</file>
-    <file>icons/dguided_underline.svg</file>
-  </qresource>
   <qresource prefix="modules">
     <file>icons/modules_export.svg</file>
     <file>icons/modules_molshake.svg</file>

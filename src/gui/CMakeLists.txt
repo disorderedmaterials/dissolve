@@ -171,39 +171,6 @@ target_include_directories(gui PRIVATE
   ${FREETYPE_INCLUDE_DIRS}
 )
 
-# ---------------------
-# Dissolve Guide Editor
-# ---------------------
-
-# Meta-Objects
-SET(ed_MOC_HDRS
-  dguided.h
-)
-QT5_WRAP_CPP(ed_MOC_SRCS ${ed_MOC_HDRS})
-
-# User Interface Files
-SET(ed_UIS
-  dguided.ui
-)
-QT5_WRAP_UI(ed_UIS_H ${ed_UIS})
-
-# Source files (not Qt UI files or custom .h [uih])
-SET(ed_SRCS
-  dguided_funcs.cpp
-)
-
-# Target 'ed'
-add_library(ed
-  ${ed_UIS_H}
-  ${ed_SRCS}
-  ${ed_MOC_SRCS}
-)
-target_include_directories(ed PRIVATE
-  ${PROJECT_SOURCE_DIR}/src
-  ${PROJECT_BINARY_DIR}/src
-  ${Qt5Widgets_INCLUDE_DIRS}
-)
-
 add_subdirectory(delegates)
 add_subdirectory(keywordwidgets)
 add_subdirectory(viewer)
