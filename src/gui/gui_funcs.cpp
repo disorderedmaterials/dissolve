@@ -307,3 +307,18 @@ void DissolveWindow::fullUpdate()
 	updateWindowTitle();
 	updateControlsFrame();
 }
+
+/*
+ * Stack
+ */
+
+// Set currently-visible main stack page
+void DissolveWindow::showMainStackPage(DissolveWindow::MainStackPage page)
+{
+	ui.MainStack->setCurrentIndex(page);
+
+	// Enable / disable main menu items as appropriate
+	ui.SimulationMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
+	ui.ControlMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
+	ui.WorkspaceMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
+}

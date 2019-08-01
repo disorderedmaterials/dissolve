@@ -164,7 +164,6 @@ class DissolveWindow : public QMainWindow
 	enum MainStackPage
 	{
 		StartStackPage,		/* Start Page - Routes to load, create, and monitor simulations */
-		WizardStackPage,	/* Wizard Page - Simulation creation wizard */
 		SimulationStackPage,	/* Simulation Page - Controls for current simulation */
 		nStackPages
 	};
@@ -177,10 +176,6 @@ class DissolveWindow : public QMainWindow
 	/*
 	 * 'Start' Stack Page
 	 */
-	private:
-	// Guide object for QuickStart
-	Guide quickStartGuide_;
-
 	private slots:
 	// 'Create' Group
 	void on_StartCreateNewButton_clicked(bool checked);
