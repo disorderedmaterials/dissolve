@@ -36,6 +36,7 @@ class Configuration;
 class ConfigurationTab;
 class Dissolve;
 class ForcefieldTab;
+class QLCDNumber;
 class QMdiSubWindow;
 class Species;
 class SpeciesTab;
@@ -93,6 +94,20 @@ class DissolveWindow : public QMainWindow
 	const Dissolve& constDissolve() const;
 	// Link the Messenger in to the GUI output device
 	void addOutputHandler();
+
+
+	/*
+	 * StatusBar
+	 */
+	private:
+	// Label for local / remote simulation indicator
+	QLabel* localSimulationIndicator_;
+	// Label for restart file indicator
+	QLabel* restartFileIndicator_;
+	// Label for heartbeat file indicator
+	QLabel* heartbeatFileIndicator_;
+	// Iteration number widget
+	QLCDNumber* iterationNumberIndicator_;
 
 
 	/*
