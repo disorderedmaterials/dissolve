@@ -34,20 +34,6 @@ DissolveWindow::DissolveState DissolveWindow::dissolveState() const
 	return dissolveState_;
 }
 
-void DissolveWindow::on_ControlSetUpButton_clicked(bool checked)
-{
-	// Are we already set-up?
-	if (dissolve_.isSetUp())
-	{
-		Messenger::print("Everything is already set-up and ready to go.\n");
-		return;
-	}
-
-	dissolve_.setUp();
-
-	updateControlsFrame();
-}
-
 void DissolveWindow::on_ControlRunButton_clicked(bool checked)
 {
 	ui.SimulationRunAction->trigger();
