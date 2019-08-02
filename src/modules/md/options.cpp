@@ -32,6 +32,7 @@ void MDModule::setUpKeywords()
 	group->add(new BoolModuleKeyword(false), "CapForces", "Control whether atomic forces are capped every step");
 	group->add(new DoubleModuleKeyword(1.0e7), "CapForcesAt", "Set cap on allowable force (kJ/mol) per atom");
 	group->add(new DoubleModuleKeyword(1.0e-4), "DeltaT", "Timestep (ps) to use in MD simulation");
+	group->add(new BoolModuleKeyword(true), "OnlyWhenEnergyStable", "Only run MD when target Configuration energies are stable");
 	group->add(new BoolModuleKeyword(true), "VariableTimestep", "Whether a variable timestep should be used, determined from the maximal force vector");
 	group->add(new BoolModuleKeyword(false), "RandomVelocities", "Whether random velocities should always be assigned before beginning MD simulation");
 	group->add(new SpeciesReferenceListModuleKeyword(restrictToSpecies_), "RestrictToSpecies", "Restrict the calculation to the specified Species");

@@ -61,6 +61,7 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	const int nSteps = keywords_.asInt("NSteps");
 	const int outputFrequency = keywords_.asInt("OutputFrequency");
 	bool randomVelocities = keywords_.asBool("RandomVelocities");
+	const bool onlyWhenEnergyStable = keywords_.asBool("OnlyWhenEnergyStable");
 	const int trajectoryFrequency = keywords_.asInt("TrajectoryFrequency");
 	const bool variableTimestep = keywords_.asBool("VariableTimestep");
 	bool writeTraj = trajectoryFrequency > 0;
@@ -68,6 +69,7 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	// Print argument/parameter summary
 	Messenger::print("MD: Cutoff distance is %f\n", cutoffDistance);
 	Messenger::print("MD: Number of steps = %i\n", nSteps);
+	if (onlyWhenEnergyStable) Messenger::print("MD: Only peform MD if target Configuration energies are stable.\n");
 	if (writeTraj) Messenger::print("MD: Trajectory file will be appended every %i step(s).\n", trajectoryFrequency);
 	else Messenger::print("MD: Trajectory file off.\n");
 	if (capForce) Messenger::print("MD: Forces will be capped to %10.3e kJ/mol per atom per axis.\n", maxForce / 100.0);
@@ -91,6 +93,14 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	{
 		// Set up process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());
+
+		int stabilityResult = EnergyModule::checkStability(cfg);
+		if (stabilityResult == -1) return false;
+		else if (stabilityResult == 1)
+		{
+			Messenger::print("Skipping MD for Configuration '%s'.\n", cfg->niceName());
+			continue;
+		}
 
 		// Determine target Molecules (if there are entries in the targetSpecies_ list)
 		Array<Molecule*> targetMolecules;

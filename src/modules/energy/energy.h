@@ -101,6 +101,8 @@ class EnergyModule : public Module
 	static double totalEnergy(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, double& interEnergy, double& bondEnergy, double& angleEnergy, double& torsionEnergy);
 	// Return total intermolecular energy
 	static double interMolecularEnergy(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap);
+	// Check energy stability of specified Configuration, returning 1 if the energy is not stable, or -1 if stability could not be assessed
+	static int checkStability(Configuration* cfg);
 	// Check energy stability of specified Configurations, returning the number that failed, or -1 if stability could not be assessed
 	static int checkStability(const RefList<Configuration>& configurations);
 

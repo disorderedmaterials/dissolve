@@ -163,6 +163,35 @@ double EnergyModule::interMolecularEnergy(ProcessPool& procPool, Configuration* 
 	return totalEnergy;
 }
 
+// Check energy stability of specified Configuration, returning 1 if the energy is not stable, or -1 if stability could not be assessed
+int EnergyModule::checkStability(Configuration* cfg)
+{
+	// First, check if the Configuration is targetted by an EnergyModule
+	if (!GenericListHelper<bool>::value(cfg->moduleData(), "_IsEnergyModuleTarget", NULL, false))
+	{
+		Messenger::error("Configuration '%s' is not targeted by any EnergyModule, so stability cannot be assessed. Check your setup!\n", cfg->name());
+		return -1;
+	}
+
+	// Retrieve the EnergyStable flag from the Configuration's module data
+	if (cfg->moduleData().contains("EnergyStable"))
+	{
+		bool stable = GenericListHelper<bool>::value(cfg->moduleData(), "EnergyStable");
+		if (!stable)
+		{
+			Messenger::print("Energy for Configuration '%s' is not yet stable.\n", cfg->name());
+			return 1;
+		}
+	}
+	else
+	{
+		Messenger::warn("No energy stability information is present in Configuration '%s' (yet) - check your setup.\n", cfg->name());
+		return -1;
+	}
+
+	return 0;
+}
+
 // Check energy stability of specified Configurations, returning the number that failed, or -1 if stability could not be assessed
 int EnergyModule::checkStability(const RefList<Configuration>& configurations)
 {
@@ -171,29 +200,11 @@ int EnergyModule::checkStability(const RefList<Configuration>& configurations)
 	RefListIterator<Configuration> configIterator(configurations);
 	while (Configuration* cfg = configIterator.iterate())
 	{
-		/*
-		 * First check is for the Configuration being targeted by any EnergyModule.
-		 * Then we probe the EnergyStable data.
-		 */
-		if (!GenericListHelper<bool>::value(cfg->moduleData(), "_IsEnergyModuleTarget", NULL, false))
-		{
-			Messenger::error("Configuration '%s' is not targeted by any EnergyModule, so stability cannot be assessed. Check your setup!\n", cfg->name());
-			return -1;
-		}
-		else if (cfg->moduleData().contains("EnergyStable"))
-		{
-			bool stable = GenericListHelper<bool>::value(cfg->moduleData(), "EnergyStable");
-			if (!stable)
-			{
-				Messenger::print("Energy for Configuration '%s' is not yet stable.\n", cfg->name());
-				++nFailed;
-			}
-		}
-		else
-		{
-			Messenger::warn("No energy stability information is present in Configuration '%s' (yet) - check your setup.\n", cfg->name());
-			++nFailed;
-		}
+		// Check the stability of this Configuration
+		int result = checkStability(cfg);
+
+		if (result == 1) ++nFailed;
+		else if (result == -1) return -1;
 	}
 
 	return nFailed;
