@@ -606,7 +606,7 @@ bool BaseViewer::writeRenderableBlock(LineParser& parser, Renderable* renderable
 	const Array<ColourScalePoint> customGradient = colourDef.customGradientPoints();
 	for (int n=0; n<customGradient.nItems(); ++n)
 	{
-		const ColourScalePoint& point = customGradient.at(n);
+		const ColourScalePoint& point = customGradient.constAt(n);
 		parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, BaseViewer::renderableKeyword(BaseViewer::ColourCustomGradientKeyword), point.value(), point.colour().red(), point.colour().green(), point.colour().blue(), point.colour().alpha());
 	}
 	// -- Alpha control

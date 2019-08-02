@@ -100,19 +100,19 @@ const Array<ColourScalePoint>& ColourScale::points() const
 // Return first point in ColourScale
 const ColourScalePoint& ColourScale::firstPoint() const
 {
-	return points_.at(0);
+	return points_.constAt(0);
 }
 
 // Return last point in ColourScale
 const ColourScalePoint& ColourScale::lastPoint() const
 {
-	return points_.at(points_.nItems()-1);
+	return points_.constAt(points_.nItems()-1);
 }
 
 // Return specific point in ColourScale
 const ColourScalePoint& ColourScale::point(int id) const
 {
-	return points_.at(id);
+	return points_.constAt(id);
 }
 
 // Set colour and value data for point
@@ -186,16 +186,16 @@ QColor ColourScale::colour(double value) const
 	if (points_.nItems() == 0) return QColor(0,0,0);
 
 	// Is supplied value less than the value at the first point?
-	if (value < points_.at(0).value()) return points_.at(0).colour();
-	else if (value > points_.at(nPoints()-1).value()) return points_.at(nPoints()-1).colour();
+	if (value < points_.constAt(0).value()) return points_.constAt(0).colour();
+	else if (value > points_.constAt(nPoints()-1).value()) return points_.constAt(nPoints()-1).colour();
 
 	// Find the correct delta to use
 	for (int n=0; n<deltas_.nItems(); ++n)
 	{
-		if (deltas_.at(n).containsValue(value))
+		if (deltas_.constAt(n).containsValue(value))
 		{
-			if (interpolated_) return deltas_.at(n).colour(value);
-			else return deltas_.at(n).startColour();
+			if (interpolated_) return deltas_.constAt(n).colour(value);
+			else return deltas_.constAt(n).startColour();
 		}
 	}
 
@@ -217,24 +217,24 @@ void ColourScale::colour(double value, GLfloat* rgba) const
 	}
 
 	// Is supplied value less than the value at the first point?
-	if (value < points_.at(0).value())
+	if (value < points_.constAt(0).value())
 	{
-		points_.at(0).colour(rgba);
+		points_.constAt(0).colour(rgba);
 		return;
 	}
-	else if (value > points_.at(nPoints()-1).value())
+	else if (value > points_.constAt(nPoints()-1).value())
 	{
-		points_.at(nPoints()-1).colour(rgba);
+		points_.constAt(nPoints()-1).colour(rgba);
 		return;
 	}
 	
 	// Find the correct delta to use
 	for (int n=0; n<deltas_.nItems(); ++n)
 	{
-		if (deltas_.at(n).containsValue(value))
+		if (deltas_.constAt(n).containsValue(value))
 		{
-			if (interpolated_) return deltas_.at(n).colour(value, rgba);
-			else return deltas_.at(n).startColour(rgba);
+			if (interpolated_) return deltas_.constAt(n).colour(value, rgba);
+			else return deltas_.constAt(n).startColour(rgba);
 			return;
 		}
 	}
