@@ -8,6 +8,14 @@
     <file>icons/menu_save.svg</file>
     <file>icons/menu_connect.svg</file>
   </qresource>
+  <qresource prefix="data">
+    <file>systemtemplates/simple_two/info.xml</file>
+    <file>systemtemplates/simple_two/icon.svg</file>
+    <file>systemtemplates/simple_two/input.txt</file>
+    <file>systemtemplates/simple_one/icon.svg</file>
+    <file>systemtemplates/simple_one/info.xml</file>
+    <file>systemtemplates/simple_one/input.txt</file>
+  </qresource>
   <qresource prefix="dissolve">
     <file>icons/dissolve.png</file>
   </qresource>

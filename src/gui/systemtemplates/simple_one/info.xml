@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<systemtemplate>
+	<name>One Component
+Liquid / Glass</name>
+	<description>Single species representing a liquid or glass</description>
+	<group>Simple</group>
+	<icon>icon.svg</icon>
+	<input>input.txt</input>
+</systemtemplate>

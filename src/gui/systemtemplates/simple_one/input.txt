@@ -1,0 +1,75 @@
+#------------------------------------------------------------------------------#
+#                                   Species                                    #
+#------------------------------------------------------------------------------#
+
+Species 'A'
+  Isotopologue  'Natural'
+EndSpecies
+
+#------------------------------------------------------------------------------#
+#                                Configurations                                #
+#------------------------------------------------------------------------------#
+
+Configuration  'Bulk'
+  Generator
+    Parameters
+      Integer  multiplier  1000
+      Double   density    1.0
+    EndParameters
+    Box
+      Angles  90.0  90.0  90.0
+      Lengths  1.0  1.0  1.0
+    EndBox
+    AddSpecies
+      Species  'A'
+      Population  multiplier
+      Density  density  g/cm3
+    EndAddSpecies
+  EndGenerator
+EndConfiguration
+
+#------------------------------------------------------------------------------#
+#                              Processing Layers                               #
+#------------------------------------------------------------------------------#
+
+Layer  'Evolve'
+
+  Module  MolShake
+    Configuration  'Bulk'
+  EndModule
+
+  Module  MD
+    Configuration  'Bulk'
+    OnlyWhenEnergyStable  True
+  EndModule
+
+  Module  Energy
+    Configuration  'Bulk'
+  EndModule
+
+EndLayer
+
+Layer  'Calculate'
+
+  Frequency  5
+
+  Module  RDF
+    Intrabroadening  Gaussian  0.18
+    Configuration  'Bulk'
+  EndModule
+
+  Module  NeutronSQ  'Natural'
+    Configuration  'Bulk'
+
+    Isotopologue  'Bulk'  'A'  'Natural'  1.000000
+  EndModule
+
+EndLayer
+
+Layer  'Refine'
+
+  Module  EPSR  'EPSR01'
+    Target  'Natural'  'Default'
+  EndModule
+
+EndLayer
