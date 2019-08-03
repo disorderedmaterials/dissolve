@@ -189,9 +189,18 @@ class DissolveWindow : public QMainWindow
 	/*
 	 * 'Start' Stack Page
 	 */
+	private:
+	// List of available SystemTemplates
+	List<SystemTemplate> systemTemplates_;
+
+	private:
+	// Add system templates to the Create group
+	void addSystemTemplates();
+
 	private slots:
 	// 'Create' Group
 	void on_StartCreateNewButton_clicked(bool checked);
+	void systemTemplateClicked(bool checked);
 	// 'Open / Connect' Group
 	void on_StartOpenLocalButton_clicked(bool checked);
 	void on_StartOpenRecentButton_clicked(bool checked);

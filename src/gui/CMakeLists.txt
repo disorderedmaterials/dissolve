@@ -53,6 +53,7 @@ SET(gui_MOC_HDRS
   guide.h
   guidepage.h
   guidepagehighlight.h
+  systemtemplate.h
 
   outputhandler.hui
   tmdiarea.hui
@@ -147,6 +148,7 @@ SET(gui_SRCS
   guidepage.cpp
   guidepagehighlight.cpp
   outputhandler_funcs.cpp
+  systemtemplate.cpp
   thread_funcs.cpp
   tmdiarea_funcs.cpp
 )
