@@ -335,7 +335,7 @@ Remote Simulation</string>
          </widget>
         </item>
         <item>
-         <widget class="QGroupBox" name="StartCreateGroup_2">
+         <widget class="QGroupBox" name="StartHelpGroup">
           <property name="title">
            <string>Help</string>
           </property>
