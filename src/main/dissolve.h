@@ -362,9 +362,15 @@ class Dissolve
 	// Accumulated timing information for saving restart file
 	SampledDouble saveRestartTimes_;
 
+	private:
+	// Load input file through supplied parser
+	bool loadInput(LineParser& parser);
+
 	public:
 	// Load input file
 	bool loadInput(const char* filename);
+	// Load input from supplied string
+	bool loadInputFromString(const char* inputString);
 	// Save input file
 	bool saveInput(const char* filename);
 	// Load restart file

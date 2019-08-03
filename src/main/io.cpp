@@ -30,13 +30,9 @@
 #include "version.h"
 #include <string.h>
 
-// Load input file
-bool Dissolve::loadInput(const char* filename)
+// Load input file through supplied parser
+bool Dissolve::loadInput(LineParser& parser)
 {
-	// Open file and check that we're OK to proceed reading from it (master only...)
-	LineParser parser(&worldPool());
-	if (!parser.openInput(filename)) return false;
-
 	// Clear all existing data before we begin
 	clear();
 
@@ -117,13 +113,10 @@ bool Dissolve::loadInput(const char* filename)
 		if (error) break;
 	}
 
-	if (!error) Messenger::print("Finished reading input file.\n");
-	inputFilename_ = filename;
-
 	// Error encountered?
 	if (error)
 	{
-		Messenger::print("\nErrors encountered while loading input file.\nLoad aborted.\n");
+		Messenger::print("\nErrors encountered while parsing input.\nLoad aborted.\n");
 		clear();
 	}
 	
@@ -131,6 +124,38 @@ bool Dissolve::loadInput(const char* filename)
 	parser.closeFiles();
 
 	return (!error);
+}
+
+// Load input from supplied string
+bool Dissolve::loadInputFromString(const char* inputString)
+{
+	// Set strings and check that we're OK to proceed reading from them
+	LineParser parser(&worldPool());
+	if (!parser.openInputString(inputString)) return false;
+
+	bool result = loadInput(parser);
+
+	if (!result) Messenger::print("Finished reading input.\n");
+
+	return result;
+}
+
+// Load input from supplied file
+bool Dissolve::loadInput(const char* filename)
+{
+	// Open file and check that we're OK to proceed reading from it
+	LineParser parser(&worldPool());
+	if (!parser.openInput(filename)) return false;
+
+	bool result = loadInput(parser);
+
+	if (!result)
+	{
+		Messenger::print("Finished reading input file.\n");
+		inputFilename_ = filename;
+	}
+
+	return result;
 }
 
 // Save input file
