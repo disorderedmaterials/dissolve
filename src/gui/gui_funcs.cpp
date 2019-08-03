@@ -88,6 +88,9 @@ DissolveWindow::DissolveWindow(Dissolve& dissolve) : QMainWindow(NULL), dissolve
 	updateWindowTitle();
 	updateControlsFrame();
 
+	// Add system templates to the Create group
+	addSystemTemplates();
+
 	// Show the Start stack page (we call this mostly to ensure correct availability of other controls)
 	showMainStackPage(DissolveWindow::StartStackPage);
 }
