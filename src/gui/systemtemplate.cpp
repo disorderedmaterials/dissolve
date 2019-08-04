@@ -147,7 +147,7 @@ QToolButton* SystemTemplate::createButton()
 	toolButton_->setText(name_);
 	toolButton_->setMaximumSize(QSize(200,200));
 	toolButton_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-	toolButton_->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+	toolButton_->setToolButtonStyle(Qt::ToolButtonIconOnly);
 	toolButton_->setIcon(QPixmap(iconResource_));
 	toolButton_->setIconSize(QSize(64,64));
 	toolButton_->setToolTip(description_);
