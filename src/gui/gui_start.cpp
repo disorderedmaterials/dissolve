@@ -1,6 +1,6 @@
 /*
-	*** Dissolve GUI - Main Stack Functions
-	*** src/gui/gui_stack.cpp
+	*** Dissolve GUI - Start Page Functions
+	*** src/gui/gui_start.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
