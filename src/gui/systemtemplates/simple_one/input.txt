@@ -39,6 +39,7 @@ Layer  'Evolve'
   EndModule
 
   Module  MD
+    Frequency  5
     Configuration  'Bulk'
     OnlyWhenEnergyStable  True
   EndModule
@@ -70,6 +71,7 @@ Layer  'Refine'
 
   Module  EPSR  'EPSR01'
     Target  'Natural'  'Default'
+    OnlyWhenEnergyStable  True
   EndModule
 
 EndLayer
