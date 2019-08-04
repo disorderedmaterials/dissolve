@@ -25,6 +25,7 @@
 #include "gui/ui_gui.h"
 #include "gui/widgets/subwindow.h"
 #include "gui/outputhandler.hui"
+#include "gui/systemtemplate.h"
 #include "gui/thread.hui"
 #include "gui/maintab.h"
 #include "base/charstring.h"
@@ -189,9 +190,18 @@ class DissolveWindow : public QMainWindow
 	/*
 	 * 'Start' Stack Page
 	 */
+	private:
+	// List of available SystemTemplates
+	List<SystemTemplate> systemTemplates_;
+
+	private:
+	// Add system templates to the Create group
+	void addSystemTemplates();
+
 	private slots:
 	// 'Create' Group
 	void on_StartCreateNewButton_clicked(bool checked);
+	void systemTemplateClicked(bool checked);
 	// 'Open / Connect' Group
 	void on_StartOpenLocalButton_clicked(bool checked);
 	void on_StartOpenRecentButton_clicked(bool checked);

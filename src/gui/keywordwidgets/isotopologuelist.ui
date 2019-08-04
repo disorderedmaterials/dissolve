@@ -52,7 +52,7 @@
        </property>
        <property name="icon">
         <iconset resource="../main.qrc">
-         <normaloff>:/special/icons/special_wizard.svg</normaloff>:/special/icons/special_wizard.svg</iconset>
+         <normaloff>:/menu/icons/menu_wizard.svg</normaloff>:/menu/icons/menu_wizard.svg</iconset>
        </property>
        <property name="iconSize">
         <size>

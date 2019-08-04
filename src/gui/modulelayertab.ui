@@ -126,7 +126,7 @@
      <item>
       <widget class="QLabel" name="FrequencylabelPost">
        <property name="text">
-        <string>Steps</string>
+        <string>Iterations</string>
        </property>
       </widget>
      </item>
