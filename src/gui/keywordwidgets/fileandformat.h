@@ -24,7 +24,7 @@
 
 #include "gui/keywordwidgets/ui_fileandformat.h"
 #include "gui/keywordwidgets/dropdown.h"
-#include "module/keywordtypes/fileandformat.h"
+#include "keywords/fileandformat.h"
 #include "gui/keywordwidgets/base.h"
 #include <QWidget>
 

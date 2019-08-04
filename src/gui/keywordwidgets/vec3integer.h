@@ -24,7 +24,7 @@
 
 #include "gui/keywordwidgets/ui_vec3integer.h"
 #include "gui/keywordwidgets/base.h"
-#include "module/keywordtypes/vec3integer.h"
+#include "keywords/vec3integer.h"
 #include <QWidget>
 
 // Forward Declarations

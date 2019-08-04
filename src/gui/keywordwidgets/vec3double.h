@@ -24,7 +24,7 @@
 
 #include "gui/keywordwidgets/ui_vec3double.h"
 #include "gui/keywordwidgets/base.h"
-#include "module/keywordtypes/vec3double.h"
+#include "keywords/vec3double.h"
 #include <QWidget>
 
 // Forward Declarations

@@ -24,7 +24,7 @@
 
 #include "gui/keywordwidgets/ui_pairbroadeningfunction.h"
 #include "gui/keywordwidgets/dropdown.h"
-#include "module/keywordtypes/pairbroadeningfunction.h"
+#include "keywords/pairbroadeningfunction.h"
 #include "gui/keywordwidgets/base.h"
 #include <QWidget>
 

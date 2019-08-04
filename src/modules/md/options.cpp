@@ -20,7 +20,7 @@
 */
 
 #include "modules/md/md.h"
-#include "module/keywordtypes.h"
+#include "keywords/types.h"
 
 // Set up keywords for Module
 void MDModule::setUpKeywords()

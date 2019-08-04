@@ -20,7 +20,7 @@
 */
 
 #include "modules/checks/checks.h"
-#include "module/keywordtypes.h"
+#include "keywords/types.h"
 #include "base/lineparser.h"
 
 // Set up keywords for Module

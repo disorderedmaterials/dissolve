@@ -20,7 +20,7 @@
 */
 
 #include "modules/datatest/datatest.h"
-#include "module/keywordtypes.h"
+#include "keywords/types.h"
 #include "math/error.h"
 
 // Set up keywords for Module

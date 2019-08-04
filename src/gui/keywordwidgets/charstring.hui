@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_CHARSTRINGKEYWORDWIDGET_H
 #define DISSOLVE_CHARSTRINGKEYWORDWIDGET_H
 
-#include "module/keywordtypes/charstring.h"
+#include "keywords/charstring.h"
 #include "gui/keywordwidgets/base.h"
 #include <QLineEdit>
 

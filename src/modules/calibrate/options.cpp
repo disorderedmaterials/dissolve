@@ -20,7 +20,7 @@
 */
 
 #include "modules/calibrate/calibrate.h"
-#include "module/keywordtypes.h"
+#include "keywords/types.h"
 #include "module/list.h"
 #include "genericitems/listhelper.h"
 

@@ -24,7 +24,7 @@
 
 #include "gui/keywordwidgets/ui_atomtypeselection.h"
 #include "gui/keywordwidgets/dropdown.h"
-#include "module/keywordtypes/atomtypeselection.h"
+#include "keywords/atomtypeselection.h"
 #include "gui/keywordwidgets/base.h"
 #include <QWidget>
 

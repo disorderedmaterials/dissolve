@@ -1,0 +1,63 @@
+add_library(keywords
+  atomtypeselection.cpp
+  base.cpp
+  bool.cpp
+  broadeningfunction.cpp
+  charstring.cpp
+  complex.cpp
+  data1dstore.cpp
+  data2dstore.cpp
+  data3dstore.cpp
+  double.cpp
+  fileandformat.cpp
+  group.cpp
+  integer.cpp
+  isotopologuelist.cpp
+  list.cpp
+  modulegroups.cpp
+  modulereferencelist.cpp
+  pairbroadeningfunction.cpp
+  procedure.cpp
+  speciesreferencelist.cpp
+  speciessite.cpp
+  speciessitereferencelist.cpp
+  vec3double.cpp
+  vec3integer.cpp
+  windowfunction.cpp
+
+  atomtypeselection.h
+  base.h
+  bool.h
+  broadeningfunction.h
+  charstring.h
+  complex.h
+  data.h
+  data1dstore.h
+  data2dstore.h
+  data3dstore.h
+  double.h
+  enumoptions.h
+  fileandformat.h
+  group.h
+  integer.h
+  isotopologuelist.h
+  list.h
+  modulegroups.h
+  modulereferencelist.h
+  pairbroadeningfunction.h
+  procedure.h
+  speciesreferencelist.h
+  speciessite.h
+  speciessitereferencelist.h
+  vec3double.h
+  vec3integer.h
+  windowfunction.h
+)
+
+include_directories(
+../
+${CMAKE_SOURCE_DIR}
+${CMAKE_BINARY_DIR}
+${CMAKE_BINARY_DIR}/src
+)
+

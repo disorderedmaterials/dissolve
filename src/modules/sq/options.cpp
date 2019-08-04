@@ -20,7 +20,7 @@
 */
 
 #include "modules/sq/sq.h"
-#include "module/keywordtypes.h"
+#include "keywords/types.h"
 #include "main/dissolve.h"
 #include "classes/species.h"
 #include "base/lineparser.h"

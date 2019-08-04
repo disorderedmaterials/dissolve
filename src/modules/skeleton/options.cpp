@@ -20,7 +20,7 @@
 */
 
 #include "modules/skeleton/skeleton.h"
-#include "module/keywordtypes.h"
+#include "keywords/types.h"
 
 // Set up keywords for Module
 void SkeletonModule::setUpKeywords()

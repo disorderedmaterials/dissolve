@@ -20,7 +20,7 @@
 */
 
 #include "modules/calculate/dangle/dangle.h"
-#include "module/keywordtypes.h"
+#include "keywords/types.h"
 
 // Set up keywords for Module
 void CalculateDAngleModule::setUpKeywords()

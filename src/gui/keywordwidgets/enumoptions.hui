@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_ENUMOPTIONSKEYWORDWIDGET_H
 #define DISSOLVE_ENUMOPTIONSKEYWORDWIDGET_H
 
-#include "module/keywordtypes/enumoptions.h"
+#include "keywords/enumoptions.h"
 #include "gui/keywordwidgets/base.h"
 #include <QComboBox>
 

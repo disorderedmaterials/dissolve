@@ -24,7 +24,7 @@
 
 #include "gui/keywordwidgets/ui_speciesreferencelist.h"
 #include "gui/keywordwidgets/dropdown.h"
-#include "module/keywordtypes/speciesreferencelist.h"
+#include "keywords/speciesreferencelist.h"
 #include "gui/keywordwidgets/base.h"
 #include <QWidget>
 

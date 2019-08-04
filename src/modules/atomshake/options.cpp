@@ -20,7 +20,7 @@
 */
 
 #include "modules/atomshake/atomshake.h"
-#include "module/keywordtypes.h"
+#include "keywords/types.h"
 
 // Set up options for Module
 void AtomShakeModule::setUpKeywords()

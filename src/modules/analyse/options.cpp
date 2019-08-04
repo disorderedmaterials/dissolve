@@ -20,7 +20,7 @@
 */
 
 #include "modules/analyse/analyse.h"
-#include "module/keywordtypes.h"
+#include "keywords/types.h"
 
 // Set up keywords for Module
 void AnalyseModule::setUpKeywords()

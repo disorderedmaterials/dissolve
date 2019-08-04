@@ -20,7 +20,7 @@
 */
 
 #include "modules/bragg/bragg.h"
-#include "module/keywordtypes.h"
+#include "keywords/types.h"
 #include "main/dissolve.h"
 #include "math/averaging.h"
 #include "classes/species.h"

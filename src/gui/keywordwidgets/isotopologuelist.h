@@ -24,7 +24,7 @@
 
 #include "gui/keywordwidgets/ui_isotopologuelist.h"
 #include "gui/keywordwidgets/dropdown.h"
-#include "module/keywordtypes/isotopologuelist.h"
+#include "keywords/isotopologuelist.h"
 #include "gui/keywordwidgets/base.h"
 #include <QWidget>
 

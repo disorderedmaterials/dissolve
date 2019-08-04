@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_BOOLKEYWORDWIDGET_H
 #define DISSOLVE_BOOLKEYWORDWIDGET_H
 
-#include "module/keywordtypes/bool.h"
+#include "keywords/bool.h"
 #include "gui/keywordwidgets/base.h"
 #include <QCheckBox>
 

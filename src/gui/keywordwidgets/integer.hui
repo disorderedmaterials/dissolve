@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_INTEGERKEYWORDWIDGET_H
 #define DISSOLVE_INTEGERKEYWORDWIDGET_H
 
-#include "module/keywordtypes/integer.h"
+#include "keywords/integer.h"
 #include "gui/keywordwidgets/base.h"
 #include <QSpinBox>
 

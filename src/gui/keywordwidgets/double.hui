@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_DOUBLEKEYWORDWIDGET_H
 #define DISSOLVE_DOUBLEKEYWORDWIDGET_H
 
-#include "module/keywordtypes/double.h"
+#include "keywords/double.h"
 #include "gui/keywordwidgets/base.h"
 #include "gui/widgets/exponentialspin.hui"
 

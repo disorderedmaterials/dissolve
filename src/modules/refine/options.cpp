@@ -21,7 +21,7 @@
 
 #include "modules/refine/refine.h"
 #include "module/list.h"
-#include "module/keywordtypes.h"
+#include "keywords/types.h"
 #include "base/lineparser.h"
 
 

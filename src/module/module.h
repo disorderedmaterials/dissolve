@@ -25,8 +25,8 @@
 #include "base/messenger.h"
 #include "genericitems/list.h"
 #include "math/sampleddouble.h"
-#include "module/keywordgroup.h"
-#include "module/keywordlist.h"
+#include "keywords/group.h"
+#include "keywords/list.h"
 #include "templates/reflist.h"
 
 // Forward Declarations

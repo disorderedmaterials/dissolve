@@ -21,7 +21,7 @@
 
 #include "modules/forces/forces.h"
 #include "modules/import/import.h"
-#include "module/keywordtypes.h"
+#include "keywords/types.h"
 #include "main/dissolve.h"
 #include "base/lineparser.h"
 #include "genericitems/listhelper.h"

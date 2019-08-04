@@ -20,7 +20,7 @@
 */
 
 #include "modules/export/export.h"
-#include "module/keywordtypes.h"
+#include "keywords/types.h"
 
 // Set up options for Module
 void ExportModule::setUpKeywords()

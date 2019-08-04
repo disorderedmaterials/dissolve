@@ -24,7 +24,7 @@
 
 #include "gui/keywordwidgets/ui_modulereferencelist.h"
 #include "gui/keywordwidgets/dropdown.h"
-#include "module/keywordtypes/modulereferencelist.h"
+#include "keywords/modulereferencelist.h"
 #include "gui/keywordwidgets/base.h"
 #include <QWidget>
 
