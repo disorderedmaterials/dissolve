@@ -26,40 +26,27 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Configuration Block Keywords
-KeywordData ConfigurationBlockData[] = {
-	{ "CellDivisionLength",		1,	"Requested side length for regions when partitioning the unit cell" },
-	{ "EndConfiguration",		0,	"Signals the end of the Configuration block" },
-	{ "Generator",			0,	"Define the generator procedure for the Configuration" },
-	{ "InputCoordinates",		2,	"Format and filename which contains the starting coordinates" },
-	{ "Module",			1,	"Starts the set up of a Module for this Configuration" },
-	{ "SizeFactor",			1,	"Scaling factor for Box lengths, Cell size, and Molecule centres-of-geometry" },
-	{ "Temperature",		1,	"Simulation temperature of the Configuration" }
-};
-
-// Convert text string to ConfigurationKeyword
-ConfigurationBlock::ConfigurationKeyword ConfigurationBlock::keyword(const char* s)
+// Return enum option info for ConfigurationKeyword
+EnumOptions<ConfigurationBlock::ConfigurationKeyword> ConfigurationBlock::keywords()
 {
-	for (int n=0; n<ConfigurationBlock::nConfigurationKeywords; ++n) if (DissolveSys::sameString(s,ConfigurationBlockData[n].name)) return (ConfigurationBlock::ConfigurationKeyword) n;
-	return ConfigurationBlock::nConfigurationKeywords;
-}
+	static EnumOptionsList ConfigurationKeywords = EnumOptionsList() <<
+		EnumOption(ConfigurationBlock::CellDivisionLengthKeyword, 	"CellDivisionLength",	1) <<
+		EnumOption(ConfigurationBlock::EndConfigurationKeyword, 	"EndConfiguration") <<
+		EnumOption(ConfigurationBlock::GeneratorKeyword,		"Generator") <<
+		EnumOption(ConfigurationBlock::InputCoordinatesKeyword,		"InputCoordinates",	2) <<
+		EnumOption(ConfigurationBlock::ModuleKeyword,			"Module",		EnumOption::OptionalSecondArgument) <<
+		EnumOption(ConfigurationBlock::SizeFactorKeyword,		"SizeFactor",		1) <<
+		EnumOption(ConfigurationBlock::TemperatureKeyword, 		"Temperature",		1);
 
-// Convert ConfigurationKeyword to text string
-const char* ConfigurationBlock::keyword(ConfigurationBlock::ConfigurationKeyword id)
-{
-	return ConfigurationBlockData[id].name;
-}
+	static EnumOptions<ConfigurationBlock::ConfigurationKeyword> options("ConfigurationKeyword", ConfigurationKeywords);
 
-// Return minimum number of expected arguments
-int ConfigurationBlock::nArguments(ConfigurationBlock::ConfigurationKeyword id)
-{
-	return ConfigurationBlockData[id].nArguments;
+	return options;
 }
 
 // Parse Configuration block
 bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configuration* cfg)
 {
-	Messenger::print("\nParsing %s block '%s'...\n", BlockKeywords::blockKeyword(BlockKeywords::ConfigurationBlockKeyword), cfg->name());
+	Messenger::print("\nParsing %s block '%s'...\n", BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword), cfg->name());
 
 	Species* sp;
 	Module* module;
@@ -71,20 +58,20 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 	{
 		// Read in a line, which should contain a keyword and a minimum number of arguments
 		if (parser.getArgsDelim() != LineParser::Success) return false;
-		ConfigurationBlock::ConfigurationKeyword conKeyword = ConfigurationBlock::keyword(parser.argc(0));
-		if ((conKeyword != ConfigurationBlock::nConfigurationKeywords) && ((parser.nArgs()-1) < ConfigurationBlock::nArguments(conKeyword)))
-		{
-			Messenger::error("Not enough arguments given to '%s' keyword.\n", ConfigurationBlock::keyword(conKeyword));
-			error = true;
-			break;
-		}
-		switch (conKeyword)
+
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!keywords().isValid(parser.argc(0))) return keywords().errorAndPrintValid(parser.argc(0));
+		ConfigurationKeyword kwd = keywords().enumeration(parser.argc(0));
+		if (!keywords().validNArgs(kwd, parser.nArgs()-1)) return false;
+
+		// All OK, so process the keyword
+		switch (kwd)
 		{
 			case (ConfigurationBlock::CellDivisionLengthKeyword):
 				cfg->setRequestedCellDivisionLength(parser.argd(1));
 				break;
 			case (ConfigurationBlock::EndConfigurationKeyword):
-				Messenger::print("Found end of %s block.\n", BlockKeywords::blockKeyword(BlockKeywords::ConfigurationBlockKeyword));
+				Messenger::print("Found end of %s block.\n", BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword));
 				blockDone = true;
 				break;
 			case (ConfigurationBlock::GeneratorKeyword):
@@ -159,13 +146,8 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 			case (ConfigurationBlock::TemperatureKeyword):
 				cfg->setTemperature(parser.argd(1));
 				break;
-			case (ConfigurationBlock::nConfigurationKeywords):
-				Messenger::error("Unrecognised %s block keyword '%s' found.\n", BlockKeywords::blockKeyword(BlockKeywords::ConfigurationBlockKeyword), parser.argc(0));
-				BlockKeywords::printValidKeywords(BlockKeywords::ConfigurationBlockKeyword);
-				error = true;
-				break;
 			default:
-				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BlockKeywords::blockKeyword(BlockKeywords::ConfigurationBlockKeyword), ConfigurationBlock::keyword(conKeyword));
+				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword), keywords().keyword(kwd));
 				error = true;
 				break;
 		}
@@ -180,7 +162,7 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 	// If there's no error and the blockDone flag isn't set, return an error
 	if (!error && !blockDone)
 	{
-		Messenger::error("Unterminated %s block found.\n", BlockKeywords::blockKeyword(BlockKeywords::ConfigurationBlockKeyword));
+		Messenger::error("Unterminated %s block found.\n", BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword));
 		error = true;
 	}
 

@@ -22,6 +22,8 @@
 #ifndef DISSOLVE_KEYWORDS_H
 #define DISSOLVE_KEYWORDS_H
 
+#include "base/enumoptions.h"
+
 // Forward Declarations
 class LineParser;
 class Dissolve;
@@ -35,26 +37,11 @@ class Data;
 class SpeciesInfo;
 class SpeciesSite;
 
-// Keyword Data
-class KeywordData
-{
-	public:
-	// Keyword name
-	const char* name;
-	// Number of arguments expected by keyword
-	int nArguments;
-	// Argument description
-	const char* argumentDescription;
-};
-
 /*
  * Block Keywords
  */
 namespace BlockKeywords
 {
-	/*
-	 * Block Keywords
-	 */
 	// Block Keyword Enum
 	enum BlockKeyword
 	{
@@ -68,12 +55,8 @@ namespace BlockKeywords
 		SpeciesBlockKeyword,			/* 'Species' - Begins a definition of a Species */
 		nBlockKeywords				/* Number of defined BlockKeyword keywords */
 	};
-	// Convert text string to BlockKeyword
-	BlockKeyword blockKeyword(const char* s);
-	// Convert BlockKeyword to text string
-	const char* blockKeyword(BlockKeyword id);
-	// Print list of valid keywords for the block specified
-	void printValidKeywords(BlockKeyword block);
+	// Return enum option info for BlockKeyword
+	EnumOptions<BlockKeywords::BlockKeyword> keywords();
 };
 
 
@@ -94,12 +77,8 @@ namespace ConfigurationBlock
 		TemperatureKeyword,		/* 'Temperature' - Defines the temperature of the simulation */
 		nConfigurationKeywords		/* Number of keywords defined for this block */
 	};
-	// Convert text string to ConfigurationKeyword
-	ConfigurationKeyword keyword(const char* s);
-	// Convert ConfigurationKeyword to text string
-	const char* keyword(ConfigurationKeyword id);
-	// Return expected number of expected arguments
-	int nArguments(ConfigurationKeyword id);
+	// Return enum option info for ConfigurationKeyword
+	EnumOptions<ConfigurationBlock::ConfigurationKeyword> keywords();
 	// Parse Configuration block
 	bool parse(LineParser& parser, Dissolve* dissolve, Configuration* cfg);
 };
@@ -119,12 +98,8 @@ namespace LayerBlock
 		ModuleKeyword,			/* 'Module' - Begin a Module definition within this layer */
 		nLayerKeywords			/* Number of keywords defined for this block */
 	};
-	// Convert text string to LayerKeyword
-	LayerKeyword keyword(const char* s);
-	// Convert LayerKeyword to text string
-	const char* keyword(LayerKeyword id);
-	// Return expected number of expected arguments
-	int nArguments(LayerKeyword id);
+	// Return enum option info for LayerKeyword
+	EnumOptions<LayerBlock::LayerKeyword> keywords();
 	// Parse Layer block
 	bool parse(LineParser& parser, Dissolve* dissolve, ModuleLayer* layer);
 };
@@ -144,12 +119,8 @@ namespace MasterBlock
 		TorsionKeyword,			/* 'Torsion' - Define master Torsion parameters that can be referred to */
 		nMasterKeywords			/* Number of keywords defined for this block */
 	};
-	// Convert text string to MasterKeyword
-	MasterKeyword keyword(const char* s);
-	// Convert MasterKeyword to text string
-	const char* keyword(MasterKeyword id);
-	// Return expected number of expected arguments
-	int nArguments(MasterKeyword id);
+	// Return enum option info for MasterKeyword
+	EnumOptions<MasterBlock::MasterKeyword> keywords();
 	// Parse Master block
 	bool parse(LineParser& parser, Dissolve* dissolve);
 };
@@ -169,12 +140,8 @@ namespace ModuleBlock
 		FrequencyKeyword,		/* 'Frequency' - Frequency at which the Module is run */
 		nModuleKeywords			/* Number of keywords defined for this block */
 	};
-	// Convert text string to ModuleKeyword
-	ModuleKeyword keyword(const char* s);
-	// Convert ModuleKeyword to text string
-	const char* keyword(ModuleKeyword id);
-	// Return expected number of expected arguments
-	int nArguments(ModuleKeyword id);
+	// Return enum option info for ModuleKeyword
+	EnumOptions<ModuleBlock::ModuleKeyword> keywords();
 	// Parse Module block
 	bool parse(LineParser& parser, Dissolve* dissolve, Module* module, GenericList& targetList, bool moduleInConfiguration);
 };
@@ -200,12 +167,8 @@ namespace PairPotentialsBlock
 		ShortRangeTruncationWidthKeyword,/* 'ShortRangeTruncationWidth' - Width of potential tail over which to reduce short-range term to zero */
 		nPairPotentialsKeywords		/* Number of keywords defined for this block */
 	};
-	// Convert text string to PairPotentialKeyword
-	PairPotentialsKeyword keyword(const char* s);
-	// Convert PairPotentialsKeyword to text string
-	const char* keyword(PairPotentialsKeyword id);
-	// Return expected number of expected arguments
-	int nArguments(PairPotentialsKeyword id);
+	// Return enum option info for PairPotentialsKeyword
+	EnumOptions<PairPotentialsBlock::PairPotentialsKeyword> keywords();
 	// Parse PairPotentials block
 	bool parse(LineParser& parser, Dissolve* dissolve);
 };
@@ -226,12 +189,8 @@ namespace SimulationBlock
 		SeedKeyword,			/* 'Seed' - Random seed to use */
 		nSimulationKeywords		/* Number of keywords defined for this block */
 	};
-	// Convert text string to SimulationKeyword
-	SimulationKeyword keyword(const char* s);
-	// Convert SimulationKeyword to text string
-	const char* keyword(SimulationKeyword id);
-	// Return expected number of expected arguments
-	int nArguments(SimulationKeyword id);
+	// Return enum option info for SimulationKeyword
+	EnumOptions<SimulationBlock::SimulationKeyword> keywords();
 	// Parse Simulation block
 	bool parse(LineParser& parser, Dissolve* dissolve);
 };
@@ -252,12 +211,8 @@ namespace SiteBlock
 		YAxisKeyword,			/* 'YAxis' - Define one or more atoms whose average coordinates reflect the direction of the y axis */
 		nSiteKeywords			/* Number of keywords defined for this block */
 	};
-	// Convert text string to SiteKeyword
-	SiteKeyword keyword(const char* s);
-	// Convert SiteKeyword to text string
-	const char* keyword(SiteKeyword id);
-	// Return expected number of expected arguments
-	int nArguments(SiteKeyword id);
+	// Return enum option info for SiteKeyword
+	EnumOptions<SiteBlock::SiteKeyword> keywords();
 	// Parse Site block
 	bool parse(LineParser& parser, Dissolve* dissolve, SpeciesSite* site);
 };
@@ -284,12 +239,8 @@ namespace SpeciesBlock
 		TorsionKeyword,			/* 'Torsion' - Define a Torsion interaction between four atoms */
 		nSpeciesKeywords		/* Number of keywords defined for this block */
 	};
-	// Convert text string to SpeciesKeyword
-	SpeciesKeyword keyword(const char* s);
-	// Convert SpeciesKeyword to text string
-	const char* keyword(SpeciesKeyword id);
-	// Return expected number of expected arguments
-	int nArguments(SpeciesKeyword id);
+	// Return enum option info for SpeciesKeyword
+	EnumOptions<SpeciesBlock::SpeciesKeyword> keywords();
 	// Parse Species block
 	bool parse(LineParser& parser, Dissolve* dissolve, Species* species);
 };

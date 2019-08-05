@@ -26,38 +26,25 @@
 #include "base/sysfunc.h"
 #include "base/lineparser.h"
 
-// Site Block Keywords
-KeywordData SiteBlockData[] = {
-	{ "EndSite",			0,	"Signals the end of the Site" },
-	{ "Origin",			1,	"Set the atom indices whose average coordinates reflect the site origin" },
-	{ "OriginMassWeighted",		1,	"Control whether the origin should be calculated with mass-weighted coordinates" },
-	{ "XAxis",			1,	"Define one or more atoms whose average coordinates reflect the direction of the x axis" },
-	{ "YAxis",			1,	"Define one or more atoms whose average coordinates reflect the direction of the y axis" }
-};
-
-// Convert text string to SiteKeyword
-SiteBlock::SiteKeyword SiteBlock::keyword(const char* s)
+// Return enum option info for SiteKeyword
+EnumOptions<SiteBlock::SiteKeyword> SiteBlock::keywords()
 {
-	for (int n=0; n<nSiteKeywords; ++n) if (DissolveSys::sameString(s,SiteBlockData[n].name)) return (SiteBlock::SiteKeyword) n;
-	return nSiteKeywords;
-}
+	static EnumOptionsList SiteKeywords = EnumOptionsList() <<
+		EnumOption(SiteBlock::EndSiteKeyword, 			"EndSite") <<
+		EnumOption(SiteBlock::OriginKeyword, 			"Origin",		EnumOption::OneOrMoreArguments) <<
+		EnumOption(SiteBlock::OriginMassWeightedKeyword,	"OriginMassWeighted",	1) <<
+		EnumOption(SiteBlock::XAxisKeyword,			"XAxis",		EnumOption::OneOrMoreArguments) <<
+		EnumOption(SiteBlock::YAxisKeyword, 			"YAxis",		EnumOption::OneOrMoreArguments);
 
-// Convert SiteKeyword to text string
-const char* SiteBlock::keyword(SiteBlock::SiteKeyword id)
-{
-	return SiteBlockData[id].name;
-}
+	static EnumOptions<SiteBlock::SiteKeyword> options("SiteKeyword", SiteKeywords);
 
-// Return minimum number of expected arguments
-int SiteBlock::nArguments(SiteBlock::SiteKeyword id)
-{
-	return SiteBlockData[id].nArguments;
+	return options;
 }
 
 // Parse Site block
 bool SiteBlock::parse(LineParser& parser, Dissolve* dissolve, SpeciesSite* site)
 {
-	Messenger::print("\nParsing %s block '%s'...\n", BlockKeywords::blockKeyword(BlockKeywords::SiteBlockKeyword), site->parent()->name());
+	Messenger::print("\nParsing %s block '%s'...\n", BlockKeywords::keywords().keyword(BlockKeywords::SiteBlockKeyword), site->parent()->name());
 
 	bool blockDone = false, error = false;
 
@@ -65,17 +52,17 @@ bool SiteBlock::parse(LineParser& parser, Dissolve* dissolve, SpeciesSite* site)
 	{
 		// Read in a line, which should contain a keyword and a minimum number of arguments
 		if (parser.getArgsDelim() != LineParser::Success) return false;
-		SiteBlock::SiteKeyword siteKeyword = SiteBlock::keyword(parser.argc(0));
-		if ((siteKeyword != SiteBlock::nSiteKeywords) && ((parser.nArgs()-1) < SiteBlock::nArguments(siteKeyword)))
-		{
-			Messenger::error("Not enough arguments given to '%s' keyword.\n", SiteBlock::keyword(siteKeyword));
-			error = true;
-			break;
-		}
-		switch (siteKeyword)
+
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!keywords().isValid(parser.argc(0))) return keywords().errorAndPrintValid(parser.argc(0));
+		SiteKeyword kwd = keywords().enumeration(parser.argc(0));
+		if (!keywords().validNArgs(kwd, parser.nArgs()-1)) return false;
+
+		// All OK, so process the keyword
+		switch (kwd)
 		{
 			case (SiteBlock::EndSiteKeyword):
-				Messenger::print("Found end of %s block.\n", BlockKeywords::blockKeyword(BlockKeywords::SiteBlockKeyword));
+				Messenger::print("Found end of %s block.\n", BlockKeywords::keywords().keyword(BlockKeywords::SiteBlockKeyword));
 				blockDone = true;
 				break;
 			case (SiteBlock::OriginKeyword):
@@ -91,11 +78,6 @@ bool SiteBlock::parse(LineParser& parser, Dissolve* dissolve, SpeciesSite* site)
 				break;
 			case (SiteBlock::OriginMassWeightedKeyword):
 				site->setOriginMassWeighted(parser.argb(1));
-				break;
-			case (SiteBlock::nSiteKeywords):
-				Messenger::error("Unrecognised %s block keyword '%s' found.\n", BlockKeywords::blockKeyword(BlockKeywords::SiteBlockKeyword), parser.argc(0));
-				BlockKeywords::printValidKeywords(BlockKeywords::SiteBlockKeyword);
-				error = true;
 				break;
 			case (SiteBlock::XAxisKeyword):
 				for (int n=1; n<parser.nArgs(); ++n)
@@ -120,7 +102,7 @@ bool SiteBlock::parse(LineParser& parser, Dissolve* dissolve, SpeciesSite* site)
 				}
 				break;
 			default:
-				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BlockKeywords::blockKeyword(BlockKeywords::SiteBlockKeyword), SiteBlock::keyword(siteKeyword));
+				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BlockKeywords::keywords().keyword(BlockKeywords::SiteBlockKeyword), keywords().keyword(kwd));
 				error = true;
 				break;
 		}
@@ -135,7 +117,7 @@ bool SiteBlock::parse(LineParser& parser, Dissolve* dissolve, SpeciesSite* site)
 	// If there's no error and the blockDone flag isn't set, return an error
 	if (!error && !blockDone)
 	{
-		Messenger::error("Unterminated %s block found.\n", BlockKeywords::blockKeyword(BlockKeywords::SiteBlockKeyword));
+		Messenger::error("Unterminated %s block found.\n", BlockKeywords::keywords().keyword(BlockKeywords::SiteBlockKeyword));
 		error = true;
 	}
 

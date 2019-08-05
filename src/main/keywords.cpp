@@ -23,60 +23,24 @@
 #include "base/sysfunc.h"
 #include "base/messenger.h"
 
-// Print list of valid keywords for the block specified
-void BlockKeywords::printValidKeywords(BlockKeywords::BlockKeyword block)
-{
-	Messenger::print("Valid Keywords for '%s' block are:\n", blockKeyword(block));
-	int n;
-	switch (block)
-	{
-		case (BlockKeywords::ConfigurationBlockKeyword):
-			for (n=0; n<ConfigurationBlock::nConfigurationKeywords; ++n) Messenger::print("  %s", ConfigurationBlock::keyword( (ConfigurationBlock::ConfigurationKeyword) n ));
-			break;
-		case (BlockKeywords::MasterBlockKeyword):
-			for (n=0; n<MasterBlock::nMasterKeywords; ++n) Messenger::print("  %s", MasterBlock::keyword( (MasterBlock::MasterKeyword) n ));
-			break;
-		case (BlockKeywords::ModuleBlockKeyword):
-			for (n=0; n<ModuleBlock::nModuleKeywords; ++n) Messenger::print("  %s", ModuleBlock::keyword( (ModuleBlock::ModuleKeyword) n ));
-			break;
-		case (BlockKeywords::PairPotentialsBlockKeyword):
-			for (n=0; n<PairPotentialsBlock::nPairPotentialsKeywords; ++n) Messenger::print("  %s", PairPotentialsBlock::keyword( (PairPotentialsBlock::PairPotentialsKeyword) n ));
-			break;
-		case (BlockKeywords::LayerBlockKeyword):
-			for (n=0; n<LayerBlock::nLayerKeywords; ++n) Messenger::print("  %s", LayerBlock::keyword( (LayerBlock::LayerKeyword) n ));
-			break;
-		case (BlockKeywords::SimulationBlockKeyword):
-			for (n=0; n<SimulationBlock::nSimulationKeywords; ++n) Messenger::print("  %s", SimulationBlock::keyword( (SimulationBlock::SimulationKeyword) n ));
-			break;
-		case (BlockKeywords::SiteBlockKeyword):
-			for (n=0; n<SiteBlock::nSiteKeywords; ++n) Messenger::print("  %s", SiteBlock::keyword( (SiteBlock::SiteKeyword) n ));
-			break;
-		case (BlockKeywords::SpeciesBlockKeyword):
-			for (n=0; n<SpeciesBlock::nSpeciesKeywords; ++n) Messenger::print("  %s", SpeciesBlock::keyword( (SpeciesBlock::SpeciesKeyword) n ));
-			break;
-		default:
-			Messenger::print("Unrecognised block given to BlockKeywords::printValidKeywords.\n");
-			break;
-	}
-	Messenger::print("\n");
-}
-
 /*
  * Block Keywords
  */
 
-// Block Keywords - Those beginning with an underscore are not meant to be used as a main block
-const char* BlockKeywordKeywords[] = { "Configuration", "Layer", "Master", "Module", "PairPotentials", "Simulation", "Site", "Species" };
-
-// Convert text string to MainInputKeyword
-BlockKeywords::BlockKeyword BlockKeywords::blockKeyword(const char* s)
+// Return enum option info for PairPotentialsKeyword
+EnumOptions<BlockKeywords::BlockKeyword> BlockKeywords::keywords()
 {
-	for (int n=0; n<BlockKeywords::nBlockKeywords; ++n) if (DissolveSys::sameString(s,BlockKeywordKeywords[n])) return (BlockKeywords::BlockKeyword) n;
-	return BlockKeywords::nBlockKeywords;
-}
+	static EnumOptionsList BlockKeywordOptions = EnumOptionsList() <<
+		EnumOption(BlockKeywords::ConfigurationBlockKeyword, 	"Configuration") << 
+		EnumOption(BlockKeywords::LayerBlockKeyword, 		"Layer") << 
+		EnumOption(BlockKeywords::MasterBlockKeyword,		"Master") <<
+		EnumOption(BlockKeywords::ModuleBlockKeyword, 		"Module") << 
+		EnumOption(BlockKeywords::PairPotentialsBlockKeyword, 	"PairPotentials") << 
+		EnumOption(BlockKeywords::SimulationBlockKeyword, 	"Simulation") << 
+		EnumOption(BlockKeywords::SiteBlockKeyword, 		"Site") << 
+		EnumOption(BlockKeywords::SpeciesBlockKeyword, 		"Species");
 
-// Convert MainInputKeyword to text string
-const char* BlockKeywords::blockKeyword(BlockKeywords::BlockKeyword id)
-{
-	return BlockKeywordKeywords[id];
+	static EnumOptions<BlockKeywords::BlockKeyword> options("BlockKeyword", BlockKeywordOptions);
+
+	return options;
 }

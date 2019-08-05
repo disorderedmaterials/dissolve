@@ -25,42 +25,30 @@
 #include "classes/atomtype.h"
 #include "base/lineparser.h"
 
-// PairPotentials Block Keywords
-KeywordData PairPotentialsBlockData[] = {
-	{ "CoulombTruncation",		1,	"Truncation scheme to apply to Coulomb potential" },
-	{ "Delta",			1,	"Delta (in r-squared) of tabulated potential" },
-	{ "EndPairPotentials",		0,	"Signals the end of the PairPotentials block" },
-	{ "Generate",			3,	"Generate a pair potential of the specified form and with the supplied parameters" },
-	{ "GenerateAll",		1,	"Generate all (remaining) potentials according to current AtomType parameters" },
-	{ "IncludeCoulomb",		1,	"Include Coulomb term in tabulated pair potentials" },
-	{ "Parameters",			4,	"Set the atomic charge and short-range interaction parameters for the named atomtype" },
-	{ "Range",			1,	"Maximal range of the pair potential (in r)" },
-	{ "ShortRangeTruncation",	1,	"Truncation scheme to apply to short-range potential" },
-	{ "ShortRangeTruncationWidth",	1,	"Width of the truncation region applied to the short-range potential (Cosine truncation only)" }
-};
-
-// Convert text string to PairPotentialsKeyword
-PairPotentialsBlock::PairPotentialsKeyword PairPotentialsBlock::keyword(const char* s)
+// Return enum option info for PairPotentialsKeyword
+EnumOptions<PairPotentialsBlock::PairPotentialsKeyword> PairPotentialsBlock::keywords()
 {
-	for (int n=0; n<PairPotentialsBlock::nPairPotentialsKeywords; ++n) if (DissolveSys::sameString(s,PairPotentialsBlockData[n].name)) return (PairPotentialsBlock::PairPotentialsKeyword) n;
-	return PairPotentialsBlock::nPairPotentialsKeywords;
+	static EnumOptionsList PairPotentialsKeywords = EnumOptionsList() <<
+		EnumOption(PairPotentialsBlock::CoulombTruncationKeyword, 	"CoulombTruncation",		1) <<
+		EnumOption(PairPotentialsBlock::DeltaKeyword, 			"Delta",			1) <<
+		EnumOption(PairPotentialsBlock::EndPairPotentialsKeyword,	"EndPairPotentials") <<
+		EnumOption(PairPotentialsBlock::GenerateKeyword, 		"Generate",			3,8) <<
+		EnumOption(PairPotentialsBlock::GenerateAllKeyword, 		"GenerateAll",			1) <<
+		EnumOption(PairPotentialsBlock::IncludeCoulombKeyword, 		"IncludeCoulomb",		1) <<
+		EnumOption(PairPotentialsBlock::ParametersKeyword, 		"Parameters",			4) <<
+		EnumOption(PairPotentialsBlock::RangeKeyword, 			"Range",			1) <<
+		EnumOption(PairPotentialsBlock::ShortRangeTruncationKeyword, 	"ShortRangeTruncation",		1) <<
+		EnumOption(PairPotentialsBlock::ShortRangeTruncationKeyword, 	"ShortRangeTruncationWidth",	1);
+
+	static EnumOptions<PairPotentialsBlock::PairPotentialsKeyword> options("PairPotentialsKeyword", PairPotentialsKeywords);
+
+	return options;
 }
 
-// Convert PairPotentialsKeyword to text string
-const char* PairPotentialsBlock::keyword(PairPotentialsBlock::PairPotentialsKeyword id)
-{
-	return PairPotentialsBlockData[id].name;
-}
-
-// Return minimum number of expected arguments
-int PairPotentialsBlock::nArguments(PairPotentialsBlock::PairPotentialsKeyword id)
-{
-	return PairPotentialsBlockData[id].nArguments;
-}
 // Parse PairPotentials block
 bool PairPotentialsBlock::parse(LineParser& parser, Dissolve* dissolve)
 {
-	Messenger::print("\nParsing %s block...\n", BlockKeywords::blockKeyword(BlockKeywords::PairPotentialsBlockKeyword));
+	Messenger::print("\nParsing %s block...\n", BlockKeywords::keywords().keyword(BlockKeywords::PairPotentialsBlockKeyword));
 
 	AtomType* at1, *at2;
 	PairPotential* pot;
@@ -73,14 +61,14 @@ bool PairPotentialsBlock::parse(LineParser& parser, Dissolve* dissolve)
 	{
 		// Read in a line, which should contain a keyword and a minimum number of arguments
 		if (parser.getArgsDelim() != LineParser::Success) return false;
-		PairPotentialsBlock::PairPotentialsKeyword ppKeyword = PairPotentialsBlock::keyword(parser.argc(0));
-		if ((ppKeyword != PairPotentialsBlock::nPairPotentialsKeywords) && ((parser.nArgs()-1) < PairPotentialsBlock::nArguments(ppKeyword)))
-		{
-			Messenger::error("Not enough arguments given to '%s' keyword.\n", PairPotentialsBlock::keyword(ppKeyword));
-			error = true;
-			break;
-		}
-		switch (ppKeyword)
+
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!keywords().isValid(parser.argc(0))) return keywords().errorAndPrintValid(parser.argc(0));
+		PairPotentialsKeyword kwd = keywords().enumeration(parser.argc(0));
+		if (!keywords().validNArgs(kwd, parser.nArgs()-1)) return false;
+
+		// All OK, so process the keyword
+		switch (kwd)
 		{
 			case (PairPotentialsBlock::CoulombTruncationKeyword):
 				cTrunc = PairPotential::coulombTruncationScheme(parser.argc(1));
@@ -96,7 +84,7 @@ bool PairPotentialsBlock::parse(LineParser& parser, Dissolve* dissolve)
 				dissolve->setPairPotentialDelta(parser.argd(1));
 				break;
 			case (PairPotentialsBlock::EndPairPotentialsKeyword):
-				Messenger::print("Found end of %s block.\n", BlockKeywords::blockKeyword(BlockKeywords::PairPotentialsBlockKeyword));
+				Messenger::print("Found end of %s block.\n", BlockKeywords::keywords().keyword(BlockKeywords::PairPotentialsBlockKeyword));
 				blockDone = true;
 				break;
 			case (PairPotentialsBlock::GenerateKeyword):
@@ -193,13 +181,8 @@ bool PairPotentialsBlock::parse(LineParser& parser, Dissolve* dissolve)
 			case (PairPotentialsBlock::ShortRangeTruncationWidthKeyword):
 				PairPotential::setShortRangeTruncationWidth(parser.argd(1));
 				break;
-			case (PairPotentialsBlock::nPairPotentialsKeywords):
-				Messenger::error("Unrecognised %s block keyword '%s' found.\n", BlockKeywords::blockKeyword(BlockKeywords::PairPotentialsBlockKeyword), parser.argc(0));
-				BlockKeywords::printValidKeywords(BlockKeywords::PairPotentialsBlockKeyword);
-				error = true;
-				break;
 			default:
-				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BlockKeywords::blockKeyword(BlockKeywords::PairPotentialsBlockKeyword), PairPotentialsBlock::keyword(ppKeyword));
+				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BlockKeywords::keywords().keyword(BlockKeywords::PairPotentialsBlockKeyword), keywords().keyword(kwd));
 				error = true;
 				break;
 		}
@@ -214,7 +197,7 @@ bool PairPotentialsBlock::parse(LineParser& parser, Dissolve* dissolve)
 	// If there's no error and the blockDone flag isn't set, return an error
 	if (!error && !blockDone)
 	{
-		Messenger::error("Unterminated %s block found.\n", BlockKeywords::blockKeyword(BlockKeywords::PairPotentialsBlockKeyword));
+		Messenger::error("Unterminated %s block found.\n", BlockKeywords::keywords().keyword(BlockKeywords::PairPotentialsBlockKeyword));
 		error = true;
 	}
 
