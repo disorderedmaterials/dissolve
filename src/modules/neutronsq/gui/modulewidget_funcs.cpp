@@ -227,11 +227,15 @@ void NeutronSQModuleWidget::setGraphDataTargets(NeutronSQModule* module)
 		// Add FT of reference data total G(r)
 		Renderable* refGR = totalGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//ReferenceDataFT", module_->uniqueName()), "Reference");
 		totalGRGraph_->addRenderableToGroup(refGR, "Reference");
-		refGR->setColour(ColourDefinition::RedStockColour);
 
 		// Add calculate total F(Q)
 		Renderable* refFQ = totalFQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//ReferenceData", module_->uniqueName()), "Reference");
 		totalFQGraph_->addRenderableToGroup(refFQ, "Reference");
-		refFQ->setColour(ColourDefinition::RedStockColour);
 	}
+
+	// Set group styling
+	totalGRGraph_->groupManager().setGroupColouring("Reference", RenderableGroup::FixedGroupColouring);
+	totalGRGraph_->groupManager().setGroupFixedColour("Reference", ColourDefinition::RedStockColour);
+	totalFQGraph_->groupManager().setGroupColouring("Reference", RenderableGroup::FixedGroupColouring);
+	totalFQGraph_->groupManager().setGroupFixedColour("Reference", ColourDefinition::RedStockColour);
 }
