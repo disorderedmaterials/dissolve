@@ -94,9 +94,10 @@ class RenderableGroup : public ListItem<RenderableGroup>
 	{
 		NoGroupColouring,		/* Renderables will use their own colour definition */
 		FixedGroupColouring,		/* Renderables will be coloured as per the group colour definition */
-		AutomaticIndividualColouring,	/* Renderables will be coloured individually by the group */
-		nGroupColourings
+		AutomaticIndividualColouring	/* Renderables will be coloured individually by the group */
 	};
+	// Return enum options for GroupColouring
+	static EnumOptions<RenderableGroup::GroupColouring> groupColourings();
 
 	private:
 	// Colouring style for the group
@@ -156,6 +157,8 @@ class RenderableGroup : public ListItem<RenderableGroup>
 		GroupVerticalShifting,			/* Data within the group will be shifted by the same amount */
 		IndividualVerticalShifting		/* Data within the group will be shifted individually and incrementally by the specified amount */
 	};
+	// Return enum options for VerticalShiftStyle
+	static EnumOptions<RenderableGroup::VerticalShiftStyle> verticalShiftStyles();
 
 	private:
 	// Vertical shifting style for this group

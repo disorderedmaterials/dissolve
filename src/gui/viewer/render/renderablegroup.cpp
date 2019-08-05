@@ -139,6 +139,19 @@ bool RenderableGroup::isVisible() const
  * Colouring
  */
 
+// Return enum options for GroupColouring
+EnumOptions<RenderableGroup::GroupColouring> RenderableGroup::groupColourings()
+{
+	static EnumOptionsList GroupColouringOptions = EnumOptionsList() <<
+		EnumOption(RenderableGroup::NoGroupColouring,			"None") <<
+		EnumOption(RenderableGroup::FixedGroupColouring,		"Fixed") <<
+		EnumOption(RenderableGroup::AutomaticIndividualColouring,	"Automatic");
+
+	static EnumOptions<RenderableGroup::GroupColouring> options("GroupColouring", GroupColouringOptions);
+
+	return options;
+}
+
 // Set colour information for the supplied Renderable, according to our settings
 void RenderableGroup::setRenderableColour(Renderable* rend)
 {
@@ -227,6 +240,19 @@ LineStipple::StippleType RenderableGroup::lineStipple() const
 /*
  * Vertical Shifting
  */
+
+// Return enum options for VerticalShiftStyle
+EnumOptions<RenderableGroup::VerticalShiftStyle> RenderableGroup::verticalShiftStyles()
+{
+	static EnumOptionsList VerticalShiftStyleOptions = EnumOptionsList() <<
+		EnumOption(RenderableGroup::PreventVerticalShifting,		"Prevent") <<
+		EnumOption(RenderableGroup::GroupVerticalShifting,		"Group") <<
+		EnumOption(RenderableGroup::IndividualVerticalShifting,		"Individual");	
+
+	static EnumOptions<RenderableGroup::VerticalShiftStyle> options("VerticalShiftStyle", VerticalShiftStyleOptions);
+
+	return options;
+}
 
 // Set vertical shift in specified Renderable
 void RenderableGroup::setRenderableVerticalShift(Renderable* renderable, int rendIndex)
