@@ -33,6 +33,7 @@ RenderableGroup::RenderableGroup(const char* name, ColourDefinition::StockColour
 	automaticStockColourUsageCount_.initialise(ColourDefinition::nStockColours);
 	automaticStockColourUsageCount_= 0;
 	setFixedStockColour(ColourDefinition::BlackStockColour);
+	lineStipple_ = LineStipple::NoStipple;
 
 	verticalShiftStyle_ = GroupVerticalShifting;
 	verticalShift_ = 0.0;
