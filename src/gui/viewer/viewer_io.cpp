@@ -37,7 +37,7 @@ EnumOptions<BaseViewer::InputBlock> BaseViewer::inputBlockKeywords()
 	static EnumOptionsList BaseViewerInputBlockOptions = EnumOptionsList() <<
 		EnumOption(BaseViewer::EndSessionBlock,		"EndSession") <<
 		EnumOption(BaseViewer::RenderableBlock,		"Renderable",		3) <<
-		EnumOption(BaseViewer::RenderableGroupBlock,	"RenderableGroup") <<
+		EnumOption(BaseViewer::RenderableGroupBlock,	"RenderableGroup",	1) <<
 		EnumOption(BaseViewer::ViewBlock, 		"View");
 
 	static EnumOptions<BaseViewer::InputBlock> options("InputBlock", BaseViewerInputBlockOptions);
@@ -50,6 +50,7 @@ bool BaseViewer::parseInputBlocks(LineParser& parser)
 {
 	// Read line from file and decide what to do with it
 	Renderable* renderable;
+	RenderableGroup* group;
 	Renderable::RenderableType rt;
 	bool success = true;
 	while (!parser.eofOrBlank())
@@ -76,6 +77,13 @@ bool BaseViewer::parseInputBlocks(LineParser& parser)
 				if (!renderable) return false;
 
 				success = readRenderableBlock(parser, renderable);
+				break;
+			// RenderableGroup Block
+			case (BaseViewer::RenderableGroupBlock):
+				group = groupManager_.createGroup(parser.argc(1));
+				if (!group) return false;
+
+				success = readRenderableGroupBlock(parser, group);
 				break;
 			// View
 			case (BaseViewer::ViewBlock):
@@ -599,7 +607,7 @@ EnumOptions<BaseViewer::RenderableGroupKeyword> BaseViewer::renderableGroupKeywo
 {
 	static EnumOptionsList BaseViewerRenderableGroupBlockOptions = EnumOptionsList() <<
 		EnumOption(BaseViewer::ColouringStyleKeyword,		"ColouringStyle", 	1) <<
-		EnumOption(BaseViewer::EndRenderableGroupKeyword,	"EndRenderableGroup"	 ) <<
+		EnumOption(BaseViewer::EndRenderableGroupKeyword,	"EndRenderableGroup") <<
 		EnumOption(BaseViewer::FixedStockColourKeyword,		"FixedStockColour",	1) <<
 		EnumOption(BaseViewer::GroupVisibleKeyword,		"Visible",		1) <<
 		EnumOption(BaseViewer::StippleKeyword,			"Stipple",		1) <<
@@ -613,6 +621,7 @@ EnumOptions<BaseViewer::RenderableGroupKeyword> BaseViewer::renderableGroupKeywo
 // Read RenderableGroupBlock keywords
 bool BaseViewer::readRenderableGroupBlock(LineParser& parser, RenderableGroup* group, bool strictBlockEnd)
 {
+	LineStipple::StippleType stipple;
 	while (!parser.eofOrBlank())
 	{
 		// Get line from file
@@ -626,6 +635,11 @@ bool BaseViewer::readRenderableGroupBlock(LineParser& parser, RenderableGroup* g
 		// All OK, so process the keyword
 		switch (kwd)
 		{
+			// Colouring Style
+			case (BaseViewer::ColouringStyleKeyword):
+				if (!RenderableGroup::groupColourings().isValid(parser.argc(1))) return RenderableGroup::groupColourings().errorAndPrintValid(parser.argc(1));
+				group->setColouringStyle(RenderableGroup::groupColourings().enumeration(parser.argc(1)));
+				break;
 			// End input block
 			case (BaseViewer::EndRenderableGroupKeyword):
 				return true;
@@ -638,6 +652,17 @@ bool BaseViewer::readRenderableGroupBlock(LineParser& parser, RenderableGroup* g
 			// Group visibility flag
 			case (BaseViewer::GroupVisibleKeyword):
 				group->setVisible(parser.argb(1));
+				break;
+			// Stipple type
+			case (BaseViewer::StippleKeyword):
+				stipple = LineStipple::stippleType(parser.argc(1));
+				if (stipple == LineStipple::nStippleTypes) return false;
+				group->setLineStipple(stipple);
+				break;
+			// Vertical Shift Style
+			case (BaseViewer::VerticalShiftingKeyword):
+				if (!RenderableGroup::verticalShiftStyles().isValid(parser.argc(1))) return RenderableGroup::verticalShiftStyles().errorAndPrintValid(parser.argc(1));
+				group->setVerticalShiftStyle(RenderableGroup::verticalShiftStyles().enumeration(parser.argc(1)));
 				break;
 			// Unrecognised Keyword
 			default:
@@ -664,9 +689,12 @@ bool BaseViewer::writeRenderableGroupBlock(LineParser& parser, RenderableGroup* 
 	for (int n=0; n<indentLevel*2; ++n) indent[n] = ' ';
 	indent[indentLevel*2] = '\0';
 
-	parser.writeLineF("%s%s  %s  '%s'\n", indent, BaseViewer::inputBlockKeywords().keyword(BaseViewer::RenderableGroupBlock), group->name());
+	parser.writeLineF("%s%s  '%s'\n", indent, BaseViewer::inputBlockKeywords().keyword(BaseViewer::RenderableGroupBlock), group->name());
 
-	
+	parser.writeLineF("%s  %s %s\n", indent, renderableGroupKeywords().keyword(BaseViewer::ColouringStyleKeyword), RenderableGroup::groupColourings().keyword(group->colouringStyle()));
+	parser.writeLineF("%s  %s %s\n", indent, renderableGroupKeywords().keyword(BaseViewer::FixedStockColourKeyword), ColourDefinition::stockColours().keyword(group->fixedStockColour()));
+	parser.writeLineF("%s  %s %s\n", indent, renderableGroupKeywords().keyword(BaseViewer::StippleKeyword), LineStipple::stippleType(group->lineStipple()));
+	parser.writeLineF("%s  %s %s\n", indent, renderableGroupKeywords().keyword(BaseViewer::VerticalShiftingKeyword), RenderableGroup::verticalShiftStyles().keyword(group->verticalShiftStyle()));
 	parser.writeLineF("%s  %s %s\n", indent, renderableGroupKeywords().keyword(BaseViewer::GroupVisibleKeyword), DissolveSys::btoa(group->isVisible()));
 
 	parser.writeLineF("%s%s\n", indent, renderableGroupKeywords().keyword(BaseViewer::EndRenderableGroupKeyword));
@@ -874,8 +902,13 @@ bool BaseViewer::readSession(LineParser& parser)
 // Write session through parser specified
 bool BaseViewer::writeSession(LineParser& parser)
 {
+	// Write RenderableGroup data
+	ListIterator<RenderableGroup> groupsIterator(groupManager_.groups());
+	while (RenderableGroup* group = groupsIterator.iterate()) if (!writeRenderableGroupBlock(parser, group)) return false;
+
 	// Write Renderable data
-	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next) if (!writeRenderableBlock(parser, rend)) return false;
+	ListIterator<Renderable> renderablesIterator(renderables_);
+	while (Renderable* renderable = renderablesIterator.iterate()) if (!writeRenderableBlock(parser, renderable)) return false;
 
 	// Write View Data
 	if (!writeViewBlock(parser)) return false;
