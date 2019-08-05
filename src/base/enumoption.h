@@ -29,7 +29,7 @@ class EnumOption
 {
 	public:
 	// Constructors
-	EnumOption(const int enumeration = 0, const char* keyword = NULL, int nArgs = 0);
+	EnumOption(const int enumeration = 0, const char* keyword = NULL, int minArgs = 0, int maxArgs = 0);
 
 
 	/*
@@ -46,8 +46,10 @@ class EnumOption
 	const char* keyword_;
 	// Whether the option has any associated arguments
 	bool hasArguments_;
-	// Number of arguments the option takes
-	int nArgs_;
+	// Minimum number of arguments the option takes
+	int minArgs_;
+	// Maximum number of arguments the option takes
+	int maxArgs_;
 
 	public:
 	// Return if the option is valid (true except in derived classes)
@@ -58,8 +60,10 @@ class EnumOption
 	const char* keyword() const;
 	// Return whether the option has any associated arguments
 	bool hasArguments() const;
-	// Return number of arguments the option takes
-	int nArgs() const;
+	// Return minimum number of arguments the option takes
+	int minArgs() const;
+	// Return maximum number of arguments the option takes
+	int maxArgs() const;
 };
 
 // Unrecognised Enum Option

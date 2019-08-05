@@ -31,11 +31,12 @@ UnrecognisedEnumOption EnumOptionsBase::unrecognisedOption_;
  * EnumOption
  */
 
-EnumOption::EnumOption(const int enumeration, const char* keyword, int nArgs)
+EnumOption::EnumOption(const int enumeration, const char* keyword, int minArgs, int maxArgs)
 {
 	enumeration_ = enumeration;
 	keyword_ = keyword;
-	nArgs_ = nArgs;
+	minArgs_ = minArgs;
+	maxArgs_ = (maxArgs == 0 ? minArgs : maxArgs);
 }
 
 // Return if the option is valid (true except in derived classes)
@@ -59,13 +60,19 @@ const char* EnumOption::keyword() const
 // Return whether the option has any associated arguments
 bool EnumOption::hasArguments() const
 {
-	return (nArgs_ > 0);
+	return (minArgs_ != 0);
 }
 
-// Return number of arguments the option takes
-int EnumOption::nArgs() const
+// Return minimum number of arguments the option takes
+int EnumOption::minArgs() const
 {
-	return nArgs_;
+	return minArgs_;
+}
+
+// Return maximum number of arguments the option takes
+int EnumOption::maxArgs() const
+{
+	return maxArgs_;
 }
 
 /*

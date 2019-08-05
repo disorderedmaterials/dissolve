@@ -83,7 +83,7 @@ template <class T> class EnumOptions : public EnumOptionsBase
 		// Retrieve the relevant EnumOption
 		const EnumOption& opt = option(enumeration);
 
-		switch (opt.nArgs())
+		switch (opt.minArgs())
 		{
 			case (EnumOption::NoArguments):
 				if (nArgsProvided == 0) return true;
@@ -99,8 +99,8 @@ template <class T> class EnumOptions : public EnumOptionsBase
 				break;
 			default:
 				// Specific number of arguments required
-				if (opt.nArgs() == nArgsProvided) return true;
-				else return Messenger::error("'%s' keyword '%s' requires %i arguments, but %i %s provided.\n", name(), opt.keyword(), opt.nArgs(), nArgsProvided, nArgsProvided == 1 ? "was" : "were");
+				if ((nArgsProvided >= opt.minArgs()) && (nArgsProvided <= opt.maxArgs())) return true;
+				else return Messenger::error("'%s' keyword '%s' requires %i arguments, but %i %s provided.\n", name(), opt.keyword(), opt.minArgs(), nArgsProvided, nArgsProvided == 1 ? "was" : "were");
 				break;
 		}
 
