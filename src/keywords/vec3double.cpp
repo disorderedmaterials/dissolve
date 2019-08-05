@@ -1,5 +1,5 @@
 /*
-	*** Module Keyword - Double Triplet
+	*** Keyword - Double Triplet
 	*** src/module/keywordtypes/vec3double.cpp
 	Copyright T. Youngs 2012-2019
 

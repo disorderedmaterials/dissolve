@@ -1,5 +1,5 @@
 /*
-	*** Module Keyword - EnumOptions
+	*** Keyword - EnumOptions
 	*** src/module/keywordtypes/enumoptions.h
 	Copyright T. Youngs 2012-2019
 

@@ -1,6 +1,6 @@
 /*
-	*** Module Keyword - AtomType Selection
-	*** src/modules/keywordtypes/atomtypeselection.cpp
+	*** Keyword - AtomType Selection
+	*** src/keywords/atomtypeselection.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.

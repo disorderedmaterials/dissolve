@@ -1,6 +1,6 @@
 /*
-	*** Module Keyword - Data1D Store
-	*** src/modules/keywordtypes/data1dstore.cpp
+	*** Keyword - Data1D Store
+	*** src/keywords/data1dstore.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.

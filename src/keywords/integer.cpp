@@ -1,5 +1,5 @@
 /*
-	*** Module Keyword - Integer
+	*** Keyword - Integer
 	*** src/module/keywordtypes/integer.cpp
 	Copyright T. Youngs 2012-2019
 

@@ -1,6 +1,6 @@
 /*
-	*** Module Keyword - Species Site
-	*** src/modules/keywordtypes/speciessite.cpp
+	*** Keyword - Species Site
+	*** src/keywords/speciessite.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.

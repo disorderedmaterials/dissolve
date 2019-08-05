@@ -1,5 +1,5 @@
 /*
-	*** Module Keyword - CharString
+	*** Keyword - CharString
 	*** src/module/keywordtypes/charstring.cpp
 	Copyright T. Youngs 2012-2019
 

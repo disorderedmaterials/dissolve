@@ -1,5 +1,5 @@
 /*
-	*** Module Keyword - Bool
+	*** Keyword - Bool
 	*** src/module/keywordtypes/bool.h
 	Copyright T. Youngs 2012-2019
 
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEKEYWORD_BOOL_H
-#define DISSOLVE_MODULEKEYWORD_BOOL_H
+#ifndef DISSOLVE_KEYWORD_BOOL_H
+#define DISSOLVE_KEYWORD_BOOL_H
 
 #include "keywords/data.h"
 #include "keywords/base.h"

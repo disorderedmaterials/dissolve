@@ -1,5 +1,5 @@
 /*
-	*** Module Keyword - Integer Triplet
+	*** Keyword - Integer Triplet
 	*** src/module/keywordtypes/vec3integer.cpp
 	Copyright T. Youngs 2012-2019
 

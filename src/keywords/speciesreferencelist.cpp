@@ -1,6 +1,6 @@
 /*
-	*** Module Keyword - Species Reference List
-	*** src/modules/keywordtypes/speciesreferencelist.cpp
+	*** Keyword - Species Reference List
+	*** src/keywords/speciesreferencelist.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.

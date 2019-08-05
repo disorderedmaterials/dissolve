@@ -1,6 +1,6 @@
 /*
-	*** Module Keyword - Module Groups
-	*** src/modules/keywordtypes/modulegroups.h
+	*** Keyword - Module Groups
+	*** src/keywords/modulegroups.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEKEYWORD_MODULEGROUPS_H
-#define DISSOLVE_MODULEKEYWORD_MODULEGROUPS_H
+#ifndef DISSOLVE_KEYWORD_MODULEGROUPS_H
+#define DISSOLVE_KEYWORD_MODULEGROUPS_H
 
 #include "base/charstringlist.h"
 #include "keywords/data.h"

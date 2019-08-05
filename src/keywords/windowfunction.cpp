@@ -1,6 +1,6 @@
 /*
-	*** Module Keyword - Window Function
-	*** src/modules/keywordtypes/windowfunction.cpp
+	*** Keyword - Window Function
+	*** src/keywords/windowfunction.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.

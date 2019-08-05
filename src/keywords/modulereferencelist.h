@@ -1,6 +1,6 @@
 /*
-	*** Module Keyword - Module Reference List
-	*** src/modules/keywordtypes/modulereferencelist.h
+	*** Keyword - Module Reference List
+	*** src/keywords/modulereferencelist.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEKEYWORD_MODULEREFERENCELIST_H
-#define DISSOLVE_MODULEKEYWORD_MODULEREFERENCELIST_H
+#ifndef DISSOLVE_KEYWORD_MODULEREFERENCELIST_H
+#define DISSOLVE_KEYWORD_MODULEREFERENCELIST_H
 
 #include "base/charstringlist.h"
 #include "keywords/data.h"

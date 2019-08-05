@@ -1,6 +1,6 @@
 /*
-	*** Module Keyword - Procedure
-	*** src/modules/keywordtypes/procedure.cpp
+	*** Keyword - Procedure
+	*** src/keywords/procedure.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.

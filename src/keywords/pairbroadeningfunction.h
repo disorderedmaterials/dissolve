@@ -1,6 +1,6 @@
 /*
-	*** Module Keyword - Pair Broadening Function
-	*** src/modules/keywordtypes/pairbroadeningfunction.h
+	*** Keyword - Pair Broadening Function
+	*** src/keywords/pairbroadeningfunction.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEKEYWORD_PAIRBROADENINGFUNCTION_H
-#define DISSOLVE_MODULEKEYWORD_PAIRBROADENINGFUNCTION_H
+#ifndef DISSOLVE_KEYWORD_PAIRBROADENINGFUNCTION_H
+#define DISSOLVE_KEYWORD_PAIRBROADENINGFUNCTION_H
 
 #include "keywords/data.h"
 #include "keywords/base.h"

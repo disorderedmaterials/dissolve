@@ -1,6 +1,6 @@
 /*
-	*** Module Keyword - File and Format
-	*** src/modules/keywordtypes/fileandformat.cpp
+	*** Keyword - File and Format
+	*** src/keywords/fileandformat.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.

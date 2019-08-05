@@ -1,6 +1,6 @@
 /*
-	*** Module Keyword - SpeciesSite
-	*** src/modules/keywordtypes/speciessite.h
+	*** Keyword - SpeciesSite
+	*** src/keywords/speciessite.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEKEYWORD_SPECIESSITE_H
-#define DISSOLVE_MODULEKEYWORD_SPECIESSITE_H
+#ifndef DISSOLVE_KEYWORD_SPECIESSITE_H
+#define DISSOLVE_KEYWORD_SPECIESSITE_H
 
 #include "keywords/data.h"
 #include "keywords/base.h"

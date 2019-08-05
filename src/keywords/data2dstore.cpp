@@ -1,6 +1,6 @@
 /*
-	*** Module Keyword - Data2D Store
-	*** src/modules/keywordtypes/data2dstore.cpp
+	*** Keyword - Data2D Store
+	*** src/keywords/data2dstore.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.

@@ -1,6 +1,6 @@
 /*
-	*** Module Keyword - Window Function
-	*** src/modules/keywordtypes/windowfunction.h
+	*** Keyword - Window Function
+	*** src/keywords/windowfunction.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEKEYWORD_WINDOWFUNCTION_H
-#define DISSOLVE_MODULEKEYWORD_WINDOWFUNCTION_H
+#ifndef DISSOLVE_KEYWORD_WINDOWFUNCTION_H
+#define DISSOLVE_KEYWORD_WINDOWFUNCTION_H
 
 #include "keywords/data.h"
 #include "keywords/base.h"

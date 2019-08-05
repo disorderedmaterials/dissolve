@@ -1,6 +1,6 @@
 /*
-	*** Module Keyword - File Format
-	*** src/modules/keywordtypes/fileformat.h
+	*** Keyword - File Format
+	*** src/keywords/fileformat.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEKEYWORD_FILEANDFORMAT_H
-#define DISSOLVE_MODULEKEYWORD_FILEANDFORMAT_H
+#ifndef DISSOLVE_KEYWORD_FILEANDFORMAT_H
+#define DISSOLVE_KEYWORD_FILEANDFORMAT_H
 
 #include "keywords/data.h"
 #include "keywords/base.h"

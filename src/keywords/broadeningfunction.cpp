@@ -1,6 +1,6 @@
 /*
-	*** Module Keyword - Broadening Function
-	*** src/modules/keywordtypes/broadeningfunction.cpp
+	*** Keyword - Broadening Function
+	*** src/keywords/broadeningfunction.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.

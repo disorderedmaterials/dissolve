@@ -1,6 +1,6 @@
 /*
-	*** Module Keyword - Data3D Store
-	*** src/modules/keywordtypes/data3dstore.cpp
+	*** Keyword - Data3D Store
+	*** src/keywords/data3dstore.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.

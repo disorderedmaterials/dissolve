@@ -1,6 +1,6 @@
 /*
-	*** Module Keyword - Broadening Function
-	*** src/modules/keywordtypes/broadeningfunction.h
+	*** Keyword - Broadening Function
+	*** src/keywords/broadeningfunction.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEKEYWORD_BROADENINGFUNCTION_H
-#define DISSOLVE_MODULEKEYWORD_BROADENINGFUNCTION_H
+#ifndef DISSOLVE_KEYWORD_BROADENINGFUNCTION_H
+#define DISSOLVE_KEYWORD_BROADENINGFUNCTION_H
 
 #include "keywords/data.h"
 #include "keywords/base.h"

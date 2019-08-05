@@ -1,5 +1,5 @@
 /*
-	*** Module Keyword - Integer Triplet
+	*** Keyword - Integer Triplet
 	*** src/module/keywordtypes/vec3integer.h
 	Copyright T. Youngs 2012-2019
 
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEKEYWORD_VEC3INTEGER_H
-#define DISSOLVE_MODULEKEYWORD_VEC3INTEGER_H
+#ifndef DISSOLVE_KEYWORD_VEC3INTEGER_H
+#define DISSOLVE_KEYWORD_VEC3INTEGER_H
 
 #include "keywords/data.h"
 #include "keywords/base.h"

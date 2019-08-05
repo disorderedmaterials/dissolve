@@ -1,5 +1,5 @@
 /*
-	*** Module Keyword - Bool
+	*** Keyword - Bool
 	*** src/module/keywordtypes/bool.cpp
 	Copyright T. Youngs 2012-2019
 

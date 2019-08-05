@@ -1,5 +1,5 @@
 /*
-	*** Module Keyword - Complex
+	*** Keyword - Complex
 	*** src/module/keywordtypes/complex.h
 	Copyright T. Youngs 2012-2019
 

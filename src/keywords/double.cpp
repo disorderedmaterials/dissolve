@@ -1,5 +1,5 @@
 /*
-	*** Module Keyword - Double
+	*** Keyword - Double
 	*** src/module/keywordtypes/double.cpp
 	Copyright T. Youngs 2012-2019
 
