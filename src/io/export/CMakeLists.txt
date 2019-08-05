@@ -1,10 +1,12 @@
 add_library(export
   coordinates.cpp
+  data1d.cpp
   data2d.cpp
   pairpotential.cpp
   trajectory.cpp
 
   coordinates.h
+  data1d.h
   data2d.h
   pairpotential.h
   trajectory.h

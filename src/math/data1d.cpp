@@ -454,43 +454,6 @@ void Data1D::operator/=(const double factor)
 }
 
 /*
- * File I/O
- */
-
-// Save data to specified file
-bool Data1D::save(const char* filename) const
-{
-	// Open file and check that we're OK to proceed writing to it
-	LineParser parser;
-
-	parser.openOutput(filename, true);
-	if (!parser.isFileGoodForWriting())
-	{
-		Messenger::error("Couldn't open file '%s' for writing.\n", filename);
-		return false;
-	}
-
-	// Write the data
-	bool result = save(parser);
-
-	parser.closeFiles();
-
-	return result;
-}
-
-// Save data to specified file
-bool Data1D::save(LineParser& parser) const
-{
-	if (hasError_)
-	{
-		for (int n = 0; n<x_.nItems(); ++n) if (!parser.writeLineF("%16.10e  %16.10e  %16.10e\n", x_.constAt(n), values_.constAt(n), errors_.constAt(n))) return false;
-	}
-	else for (int n = 0; n<x_.nItems(); ++n) if (!parser.writeLineF("%16.10e  %16.10e\n", x_.constAt(n), values_.constAt(n))) return false;
-
-	return true;
-}
-
-/*
  * GenericItemBase Implementations
  */
 

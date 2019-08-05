@@ -25,6 +25,7 @@
 #include "procedure/nodescopestack.h"
 #include "modules/analyse/analyse.h"
 #include "math/integrator.h"
+#include "io/export/data1d.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "base/lineparser.h"
@@ -239,7 +240,8 @@ bool Process1DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg,
 	{
 		if (procPool.isMaster())
 		{
-			if (data.save(CharString("%s_%s.txt", name(), cfg->name()))) procPool.decideTrue();
+			Data1DExportFileFormat exportFormat(CharString("%s_%s.txt", name(), cfg->name()));
+			if (exportFormat.exportData(data)) procPool.decideTrue();
 			else return procPool.decideFalse();
 		}
 		else if (!procPool.decision()) return false;

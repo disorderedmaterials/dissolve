@@ -29,6 +29,7 @@
 #include "math/ft.h"
 #include "math/gaussfit.h"
 #include "math/poissonfit.h"
+#include "io/export/data1d.h"
 #include "classes/scatteringmatrix.h"
 #include "classes/weights.h"
 #include "classes/atomtype.h"
@@ -226,7 +227,16 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			// Calculate difference function
 			Interpolator::addInterpolated(differenceData, calcSQTotal, -1.0);
 
-			if (saveDifferences && (!differenceData.save(CharString("%s-Diff.q", module->uniqueName())))) return false;
+			if (saveDifferences)
+			{
+				if (procPool.isMaster())
+				{
+					Data1DExportFileFormat exportFormat(CharString("%s-Diff.q", module->uniqueName()));
+					if (exportFormat.exportData(differenceData)) procPool.decideTrue();
+					else return procPool.decideFalse();
+				}
+				else if (!procPool.decision()) return true;
+			}
 		}
 		else return Messenger::error("Unrecognised Module type '%s', so can't calculate error.", module->type());
 
@@ -365,7 +375,16 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		Fourier::sineFT(simulatedFR, 1.0 / (2*PI*PI*GenericListHelper<double>::value(dissolve.processingModuleData(), "EffectiveRho", module->uniqueName(), 0.0)), 0.0, 0.03, 30.0, WindowFunction(WindowFunction::Lorch0Window));
 
 		// Save data?
-		if (saveDifferences && (!deltaFQFit.save(CharString("%s-DiffFit.q", module->uniqueName())))) return false;
+		if (saveDifferences)
+		{
+			if (procPool.isMaster())
+			{
+				Data1DExportFileFormat exportFormat(CharString("%s-DiffFit.q", module->uniqueName()));
+				if (exportFormat.exportData(deltaFQFit)) procPool.decideTrue();
+				else return procPool.decideFalse();
+			}
+			else if (!procPool.decision()) return true;
+		}
 
 		// Test Mode
 		if (testMode)
@@ -533,8 +552,18 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Save data?
 		if (saveEstimatedPartials)
 		{
-			Data1D* generatedArray = generatedSQ.linearArray();
-			for (int n=0; n<generatedSQ.linearArraySize(); ++n) generatedArray[n].save(generatedArray[n].name());
+			if (procPool.isMaster())
+			{
+				Data1D* generatedArray = generatedSQ.linearArray();
+				for (int n=0; n<generatedSQ.linearArraySize(); ++n)
+				{
+					//generatedArray[n].save(generatedArray[n].name());
+					Data1DExportFileFormat exportFormat(generatedArray[n].name());
+					if (!exportFormat.exportData(generatedArray[n])) return procPool.decideFalse();
+				}
+				procPool.decideTrue();
+			}
+			else if (!procPool.decision()) return true;
 		}
 
 		// Test Mode
@@ -698,18 +727,24 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	// Save data?
 	if (saveEmpiricalPotentials)
 	{
-		i = 0;
-		for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
+		if (procPool.isMaster())
 		{
-			j = i;
-			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
+			i = 0;
+			for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
 			{
-				// Grab pointer to the relevant pair potential
-				PairPotential* pp = dissolve.pairPotential(at1, at2);
+				j = i;
+				for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
+				{
+					// Grab pointer to the relevant pair potential
+					PairPotential* pp = dissolve.pairPotential(at1, at2);
 
-				if (!pp->uAdditional().save(CharString("EP-%s-%s.txt", at1->name(), at2->name()))) return false;
+					Data1DExportFileFormat exportFormat(CharString("EP-%s-%s.txt", at1->name(), at2->name()));
+					if (!exportFormat.exportData(pp->uAdditional())) return procPool.decideFalse();
+				}
 			}
+			procPool.decideTrue();
 		}
+		else if (!procPool.decision()) return false;
 	}
 
 	// Realise the phiMag array and make sure its object name is set

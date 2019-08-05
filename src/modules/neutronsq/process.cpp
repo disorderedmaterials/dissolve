@@ -28,6 +28,7 @@
 #include "classes/weights.h"
 #include "math/filters.h"
 #include "math/ft.h"
+#include "io/export/data1d.h"
 #include "modules/import/import.h"
 #include "modules/bragg/bragg.h"
 #include "modules/rdf/rdf.h"
@@ -103,8 +104,15 @@ bool NeutronSQModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 		// Save data?
 		if (keywords_.asBool("SaveReference"))
 		{
-			if (!storedData.save(CharString("%s-ReferenceData.q", uniqueName()))) return false;
-			if (!storedDataFT.save(CharString("%s-ReferenceData.r", uniqueName()))) return false;
+			if (procPool.isMaster())
+			{
+				Data1DExportFileFormat exportFormat(CharString("%s-ReferenceData.q", uniqueName()));
+				if (!exportFormat.exportData(storedData)) return procPool.decideFalse();
+				Data1DExportFileFormat exportFormatFT(CharString("%s-ReferenceData.r", uniqueName()));
+				if (!exportFormatFT.exportData(storedDataFT)) return procPool.decideFalse();
+				procPool.decideTrue();
+			}
+			else if (!procPool.decision()) return false;
 		}
 	}
 

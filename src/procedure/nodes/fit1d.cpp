@@ -26,6 +26,7 @@
 #include "classes/configuration.h"
 #include "expression/generator.h"
 #include "expression/variable.h"
+#include "io/export/data1d.h"
 #include "math/mc.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
@@ -227,9 +228,10 @@ bool Fit1DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, con
 				}
 				else if (!parser.writeLineF("#  %10s = %e (constant)\n", var->name(), var->value().asDouble())) return procPool.decideFalse();
 			}
-			if (!data.save(parser)) return procPool.decideFalse();
 
-			procPool.decideTrue();
+			Data1DExportFileFormat exportFormat(name());
+			if (exportFormat.exportData(data)) procPool.decideTrue();
+			else return procPool.decideFalse();
 		}
 		else if (!procPool.decision()) return false;
 	}

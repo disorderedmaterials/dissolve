@@ -135,16 +135,6 @@ class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore
 
 
 	/*
-	 * File I/O
-	 */
-	public:
-	// Save data to specified file
-	bool save(const char* filename) const;
-	// Save data through specified parser
-	bool save(LineParser& parser) const;
-
-
-	/*
 	 * GenericItemBase Implementations
 	 */
 	public:

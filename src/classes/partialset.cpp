@@ -24,6 +24,7 @@
 #include "classes/partialset.h"
 #include "classes/configuration.h"
 #include "classes/box.h"
+#include "io/export/data1d.h"
 #include "genericitems/array2dbool.h"
 
 // Constructor
@@ -390,7 +391,8 @@ bool PartialSet::save()
 	}
 
 	Messenger::printVerbose("Writing total file '%s'...\n", total_.name());
-	return total_.save(total_.name());
+	Data1DExportFileFormat exportFormat(total_.name());
+	return exportFormat.exportData(total_);
 }
 
 // Name all object based on the supplied prefix
