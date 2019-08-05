@@ -36,7 +36,7 @@ EnumOptions<BaseViewer::InputBlock> BaseViewer::inputBlockKeywords()
 {
 	static EnumOptionsList BaseViewerInputBlockOptions = EnumOptionsList() <<
 		EnumOption(BaseViewer::EndSessionBlock,		"EndSession") <<
-		EnumOption(BaseViewer::RenderableBlock,		"Renderable") <<
+		EnumOption(BaseViewer::RenderableBlock,		"Renderable",		3) <<
 		EnumOption(BaseViewer::RenderableGroupBlock,	"RenderableGroup") <<
 		EnumOption(BaseViewer::ViewBlock, 		"View");
 
@@ -58,6 +58,7 @@ bool BaseViewer::parseInputBlocks(LineParser& parser)
 
 		if (!inputBlockKeywords().isValid(parser.argc(0))) return inputBlockKeywords().errorAndPrintValid(parser.argc(0));
 		BaseViewer::InputBlock block = inputBlockKeywords().enumeration(parser.argc(0));
+		if (!inputBlockKeywords().validNArgs(block, parser.nArgs()-1)) return false;
 
 		switch (block)
 		{
@@ -67,14 +68,11 @@ bool BaseViewer::parseInputBlocks(LineParser& parser)
 				break;
 			// Renderable Block
 			case (BaseViewer::RenderableBlock):
-				// Check that two arguments have been given (type and object tag)
-				if (!parser.hasArg(2)) return Messenger::error("Type and object tag for Renderable expected, but none found.\n");
-
 				// Determine Renderable type
 				rt = Renderable::renderableType(parser.argc(1));
 				if (rt == Renderable::nRenderableTypes) return Messenger::error("Unknown Renderable type '%s' found.\n", parser.argc(1));
 
-				renderable = createRenderable(rt, parser.argc(2), parser.argc(3), parser.argc(4));
+				renderable = createRenderable(rt, parser.argc(2), parser.argc(3));
 				if (!renderable) return false;
 
 				success = readRenderableBlock(parser, renderable);
