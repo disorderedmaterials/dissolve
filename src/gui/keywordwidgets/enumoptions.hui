@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ENUMOPTIONSKEYWORDWIDGET_H
-#define DISSOLVE_ENUMOPTIONSKEYWORDWIDGET_H
+#ifndef DISSOLVE_KEYWORDWIDGET_ENUMOPTIONS_H
+#define DISSOLVE_KEYWORDWIDGET_ENUMOPTIONS_H
 
 #include "keywords/enumoptions.h"
 #include "gui/keywordwidgets/base.h"

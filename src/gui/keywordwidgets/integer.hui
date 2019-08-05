@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_INTEGERKEYWORDWIDGET_H
-#define DISSOLVE_INTEGERKEYWORDWIDGET_H
+#ifndef DISSOLVE_KEYWORDWIDGET_INTEGER_H
+#define DISSOLVE_KEYWORDWIDGET_INTEGER_H
 
 #include "keywords/integer.h"
 #include "gui/keywordwidgets/base.h"

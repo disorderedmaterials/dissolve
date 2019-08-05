@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_WINDOWFUNCTIONKEYWORDWIDGET_H
-#define DISSOLVE_WINDOWFUNCTIONKEYWORDWIDGET_H
+#ifndef DISSOLVE_KEYWORDWIDGET_WINDOWFUNCTION_H
+#define DISSOLVE_KEYWORDWIDGET_WINDOWFUNCTION_H
 
 #include "keywords/windowfunction.h"
 #include "gui/keywordwidgets/base.h"

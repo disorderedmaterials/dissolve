@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_BOOLKEYWORDWIDGET_H
-#define DISSOLVE_BOOLKEYWORDWIDGET_H
+#ifndef DISSOLVE_KEYWORDWIDGET_BOOL_H
+#define DISSOLVE_KEYWORDWIDGET_BOOL_H
 
 #include "keywords/bool.h"
 #include "gui/keywordwidgets/base.h"

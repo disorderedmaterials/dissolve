@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CHARSTRINGKEYWORDWIDGET_H
-#define DISSOLVE_CHARSTRINGKEYWORDWIDGET_H
+#ifndef DISSOLVE_KEYWORDWIDGET_CHARSTRING_H
+#define DISSOLVE_KEYWORDWIDGET_CHARSTRING_H
 
 #include "keywords/charstring.h"
 #include "gui/keywordwidgets/base.h"
