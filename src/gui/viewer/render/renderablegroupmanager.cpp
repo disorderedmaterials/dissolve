@@ -154,6 +154,14 @@ void RenderableGroupManager::setGroupColouring(const char* groupName, Renderable
 	else g->setColouringStyle(colouringStyle);
 }
 
+// Set fixed colour for named group
+void RenderableGroupManager::setGroupFixedColour(const char* groupName, ColourDefinition::StockColour stockColour)
+{
+	RenderableGroup* g = group(groupName);
+	if (!g) Messenger::warn("RenderableGroup '%s' does not exist, so can't set its fixed colour.\n", groupName);
+	else g->setFixedStockColour(stockColour);
+}
+
 /*
  * Line Styling
  */
