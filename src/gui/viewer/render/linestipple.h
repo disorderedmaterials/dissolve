@@ -71,7 +71,7 @@ class LineStipple
 	 * Singleton
 	 */
 	public:
-	// Static list of fit line stipples
+	// Static list of line stipples
 	static LineStipple stipple[];
 };
 
