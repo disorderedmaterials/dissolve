@@ -101,7 +101,7 @@ bool NeutronSQModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 		Fourier::sineFT(storedDataFT, 1.0 / (2.0 * PI * PI * RDFModule::summedRho(this, dissolve.processingModuleData())), 0.0, 0.05, 30.0, WindowFunction(WindowFunction::Lorch0Window));
 
 		// Save data?
-		if (keywords_.asBool("SaveReferenceData"))
+		if (keywords_.asBool("SaveReference"))
 		{
 			if (!storedData.save(CharString("%s-ReferenceData.q", uniqueName()))) return false;
 			if (!storedDataFT.save(CharString("%s-ReferenceData.r", uniqueName()))) return false;
