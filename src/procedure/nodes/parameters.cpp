@@ -138,16 +138,16 @@ bool ParametersProcedureNode::write(LineParser& parser, const char* prefix)
 	{
 		if (parameter->value().isInteger())
 		{
-			if (!parser.writeLineF("%s  %s  '%s'  %i\n", prefix, parametersNodeKeywords().keyword(ParametersNodeKeyword::IntegerKeyword), parameter->name(), parameter->value().asInteger())) return false;
+			if (!parser.writeLineF("%s  %s  '%s'  %i\n", prefix, parametersNodeKeywords().keyword(ParametersProcedureNode::IntegerKeyword), parameter->name(), parameter->value().asInteger())) return false;
 		}
 		else
 		{
-			if (!parser.writeLineF("%s  %s  '%s'  %12.6e\n", prefix, parametersNodeKeywords().keyword(ParametersNodeKeyword::DoubleKeyword), parameter->name(), parameter->value().asDouble())) return false;
+			if (!parser.writeLineF("%s  %s  '%s'  %12.6e\n", prefix, parametersNodeKeywords().keyword(ParametersProcedureNode::DoubleKeyword), parameter->name(), parameter->value().asDouble())) return false;
 		}
 	}
 
 	// Block End
-	if (!parser.writeLineF("%s%s\n", parametersNodeKeywords().keyword(ParametersNodeKeyword::EndParametersKeyword))) return false;
+	if (!parser.writeLineF("%s%s\n", parametersNodeKeywords().keyword(ParametersProcedureNode::EndParametersKeyword))) return false;
 
 	return true;
 }

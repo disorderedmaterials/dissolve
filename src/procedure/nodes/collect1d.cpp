@@ -215,7 +215,7 @@ bool Collect1DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 		{
 			case (Collect1DProcedureNode::EndCollect1DKeyword):
 				// Check that valid Observable was set
-				if (!observable_) return Messenger::error("A target %s must be specified in %s.\n", collect1DNodeKeywords().keyword(Collect1DNodeKeyword::QuantityXKeyword), ProcedureNode::nodeTypes().keyword(type_));
+				if (!observable_) return Messenger::error("A target %s must be specified in %s.\n", collect1DNodeKeywords().keyword(Collect1DProcedureNode::QuantityXKeyword), ProcedureNode::nodeTypes().keyword(type_));
 				return true;
 			case (Collect1DProcedureNode::QuantityXKeyword):
 				// Determine observable from supplied argument
