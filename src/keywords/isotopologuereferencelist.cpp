@@ -21,18 +21,29 @@
 
 #include "keywords/isotopologuereferencelist.h"
 #include "classes/configuration.h"
+#include "classes/coredata.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
 #include "genericitems/listhelper.h"
 
 // Constructor
-IsotopologueReferenceListKeyword::IsotopologueReferenceListKeyword(List<IsotopologueReference>& references) : KeywordData<IsotopologueReference>(RefList<SpeciesSite>&, references)
+IsotopologueReferenceListKeyword::IsotopologueReferenceListKeyword(List<IsotopologueReference>& references, const RefList<Configuration>& associatedConfigurations) : KeywordData< List<IsotopologueReference>& >(KeywordBase::IsotopologueListData, references), associatedConfigurations_(associatedConfigurations)
 {
 }
 
 // Destructor
 IsotopologueReferenceListKeyword::~IsotopologueReferenceListKeyword()
 {
+}
+
+/*
+ * Associated Configurations
+ */
+
+// Return associated Configurations, to which the IsotopologueList refers 
+const RefList<Configuration>& IsotopologueReferenceListKeyword::associatedConfigurations() const
+{
+	return associatedConfigurations_;
 }
 
 /*
@@ -55,26 +66,23 @@ int IsotopologueReferenceListKeyword::maxArguments()
 bool IsotopologueReferenceListKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	// Find target Configuration (first argument)
-	Configuration* cfg = NULL;
-	for (cfg = List<Configuration>::masterInstance().first(); cfg != NULL; cfg = cfg->next) if (DissolveSys::sameString(parser.argc(startArg), cfg->name())) break;
+	Configuration* cfg = coreData.findConfiguration(parser.argc(startArg));
 	if (!cfg)
 	{
 		Messenger::error("Error defining Isotopologue reference - no Configuration named '%s' exists.\n", parser.argc(startArg));
 		return false;
 	}
 
-	// Find specified Species (second argument) - must be present in the target Configuration
-	Species* sp = NULL;
-	for (sp = List<Species>::masterInstance().first(); sp != NULL; sp = sp->next) if (DissolveSys::sameString(parser.argc(startArg+1), sp->name())) break;
+	// Find specified Species (second argument)
+	Species* sp = coreData.findSpecies(parser.argc(startArg+1));
 	if (!sp) return Messenger::error("Error defining Isotopologue reference - no Species named '%s' exists.\n", parser.argc(startArg+1));
-	if (!cfg->hasUsedSpecies(sp))return Messenger::error("Error defining Isotopologue reference - Species '%s' is not present in Configuration '%s'.\n", sp->name(), cfg->name());
 
-	// Finally, locate isotopologue definition for species
+	// Finally, locate isotopologue definition for species (third argument)
 	Isotopologue* iso = sp->findIsotopologue(parser.argc(startArg+2));
 	if (!iso) return Messenger::error("Error defining Isotopologue reference - no Isotopologue named '%s' exists for Species '%s'.\n", parser.argc(startArg+2), sp->name());
 
 	// Add the data to the list
-	IsotopologueReference* isoRef = references_.add();
+	IsotopologueReference* isoRef = data_.add();
 	isoRef->set(cfg, sp, iso, parser.argd(startArg+3));
 	
 	set_ = true;
@@ -86,21 +94,11 @@ bool IsotopologueReferenceListKeyword::read(LineParser& parser, int startArg, co
 bool IsotopologueReferenceListKeyword::write(LineParser& parser, const char* prefix)
 {
 	// Loop over list of IsotopologueReferences
-	ListIterator<IsotopologueReference> refIterator(references_);
+	ListIterator<IsotopologueReference> refIterator(data_);
 	while (IsotopologueReference* ref = refIterator.iterate())
 	{
 		if (!parser.writeLineF("%s%s  '%s'  '%s'  '%s'  %f\n", prefix, keyword(), ref->configuration()->name(), ref->species()->name(), ref->isotopologue()->name(), ref->weight())) return false;
 	}
 
-	return true;
-}
-
-/*
- * Validation
- */
-
-// Validate supplied value
-bool IsotopologueReferenceListKeyword::isValid(IsotopologueReference value)
-{
 	return true;
 }

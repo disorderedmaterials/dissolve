@@ -26,26 +26,31 @@
 #include "keywords/base.h"
 #include "classes/isotopologuereference.h"
 #include "templates/list.h"
+#include "templates/reflist.h"
 
 // Forward Declarations
 /* none */
 
 // Keyword with IsotopologueReference Data
-class IsotopologueReferenceListKeyword : public KeywordData<IsotopologueReference>
+class IsotopologueReferenceListKeyword : public KeywordData< List<IsotopologueReference>& >
 {
 	public:
 	// Constructor
-	IsotopologueReferenceListKeyword(List<IsotopologueReference>& references);
+	IsotopologueReferenceListKeyword(List<IsotopologueReference>& references, const RefList<Configuration>& associatedConfigurations);
 	// Destructor
 	~IsotopologueReferenceListKeyword();
 
 
 	/*
-	 * Data Validation
+	 * Associated Configurations
 	 */
+	private:
+	// Associated Configurations, to which the IsotopologueList refers 
+	const RefList<Configuration>& associatedConfigurations_;
+
 	public:
-	// Validate supplied value
-	bool isValid(IsotopologueReference value);
+	// Return associated Configurations, to which the IsotopologueList refers 
+	const RefList<Configuration>& associatedConfigurations() const;
 
 
 	/*

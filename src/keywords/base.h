@@ -47,20 +47,6 @@ class KeywordBase : public ListItem<KeywordBase>
 
 
 	/*
-	 * Module Parent
-	 */
-	private:
-	// Module to which this keyword belongs
-	const Module* moduleParent_;
-
-	public:
-	// Set Module to which this keyword belongs
-	void setModuleParent(const Module* parent);
-	// Return Module to which this keyword belongs
-	const Module* moduleParent() const;
-
-
-	/*
 	 * Keyword Description
 	 */
 	private:

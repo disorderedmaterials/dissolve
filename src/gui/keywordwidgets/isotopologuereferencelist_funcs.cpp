@@ -1,6 +1,6 @@
 /*
-	*** Keyword Widget - IsotopologueList
-	*** src/gui/keywordwidgets/isotopologuelist_funcs.cpp
+	*** Keyword Widget - Isotopologue Reference List
+	*** src/gui/keywordwidgets/isotopologuereferencelist_funcs.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/keywordwidgets/isotopologuelist.h"
+#include "gui/keywordwidgets/isotopologuereferencelist.h"
 #include "gui/keywordwidgets/dropdown.h"
 #include "gui/delegates/combolist.hui"
 #include "gui/delegates/exponentialspin.hui"
@@ -34,7 +34,7 @@
 #include "templates/variantpointer.h"
 
 // Constructor
-IsotopologueListKeywordWidget::IsotopologueListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : KeywordDropDown(this), KeywordWidgetBase(coreData, moduleData, prefix)
+IsotopologueReferenceListKeywordWidget::IsotopologueReferenceListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : KeywordDropDown(this), KeywordWidgetBase(coreData, moduleData, prefix)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container
 	ui_.setupUi(dropWidget());
@@ -52,8 +52,8 @@ IsotopologueListKeywordWidget::IsotopologueListKeywordWidget(QWidget* parent, Ke
 	connect(ui_.IsotopologueTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(isotopologueTable_itemChanged(QTableWidgetItem*)));
 
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<IsotopologueListKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into IsotopologueListKeyword.\n", keyword->keyword());
+	keyword_ = dynamic_cast<IsotopologueReferenceListKeyword*>(keyword);
+	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into IsotopologueReferenceListKeyword.\n", keyword->keyword());
 	else
 	{
 		// Set current information
@@ -68,12 +68,12 @@ IsotopologueListKeywordWidget::IsotopologueListKeywordWidget(QWidget* parent, Ke
  * Widgets
  */
 
-void IsotopologueListKeywordWidget::autoButton_clicked(bool checked)
+void IsotopologueReferenceListKeywordWidget::autoButton_clicked(bool checked)
 {
 	// First, assemble a list of all Species over all Configurations targeted by the Module that are currently missing from our definition
 	RefDataList<Species,Configuration*> missingSpecies;
 	List<IsotopologueReference>& topeReferences = keyword_->data();
-	RefListIterator<Configuration> configurationIterator(keyword_->moduleParent()->targetConfigurations());
+	RefListIterator<Configuration> configurationIterator(keyword_->associatedConfigurations());
 	while (Configuration* cfg = configurationIterator.iterate())
 	{
 		ListIterator<SpeciesInfo> speciesIterator(cfg->usedSpecies());
@@ -109,12 +109,12 @@ void IsotopologueListKeywordWidget::autoButton_clicked(bool checked)
 	}
 }
 
-void IsotopologueListKeywordWidget::addButton_clicked(bool checked)
+void IsotopologueReferenceListKeywordWidget::addButton_clicked(bool checked)
 {
 	IsotopologueReference* isoRef = keyword_->data().add();
 
 	// Try to set some sensible default values
-	isoRef->setConfiguration(keyword_->moduleParent()->targetConfigurations().firstItem());
+	isoRef->setConfiguration(keyword_->associatedConfigurations().firstItem());
 	if (isoRef->configuration())
 	{
 		SpeciesInfo* spInfo = isoRef->configuration()->usedSpecies().first();
@@ -133,7 +133,7 @@ void IsotopologueListKeywordWidget::addButton_clicked(bool checked)
 	emit(keywordValueChanged());
 }
 
-void IsotopologueListKeywordWidget::removeButton_clicked(bool checked)
+void IsotopologueReferenceListKeywordWidget::removeButton_clicked(bool checked)
 {
 	if (!ui_.IsotopologueTable->currentItem()) return;
 
@@ -151,7 +151,7 @@ void IsotopologueListKeywordWidget::removeButton_clicked(bool checked)
 	emit(keywordValueChanged());
 }
 
-void IsotopologueListKeywordWidget::isotopologueTable_itemChanged(QTableWidgetItem* w)
+void IsotopologueReferenceListKeywordWidget::isotopologueTable_itemChanged(QTableWidgetItem* w)
 {
 	if (refreshing_) return;
 
@@ -261,7 +261,7 @@ void IsotopologueListKeywordWidget::isotopologueTable_itemChanged(QTableWidgetIt
  */
 
 // Table row update function
-void IsotopologueListKeywordWidget::updateTableRow(int row, IsotopologueReference* isoRef, bool createItems)
+void IsotopologueReferenceListKeywordWidget::updateTableRow(int row, IsotopologueReference* isoRef, bool createItems)
 {
 	QTableWidgetItem* item;
 
@@ -306,18 +306,18 @@ void IsotopologueListKeywordWidget::updateTableRow(int row, IsotopologueReferenc
 }
 
 // Update value displayed in widget, using specified source if necessary
-void IsotopologueListKeywordWidget::updateValue()
+void IsotopologueReferenceListKeywordWidget::updateValue()
 {
 	updateWidgetValues(coreData_);
 }
 
 // Update widget values data based on keyword data
-void IsotopologueListKeywordWidget::updateWidgetValues(const CoreData& coreData)
+void IsotopologueReferenceListKeywordWidget::updateWidgetValues(const CoreData& coreData)
 {
 	refreshing_ = true;
 
 	// Update the table
-	TableWidgetUpdater<IsotopologueListKeywordWidget,IsotopologueReference> tableUpdater(ui_.IsotopologueTable, keyword_->data(), this, &IsotopologueListKeywordWidget::updateTableRow);
+	TableWidgetUpdater<IsotopologueReferenceListKeywordWidget,IsotopologueReference> tableUpdater(ui_.IsotopologueTable, keyword_->data(), this, &IsotopologueReferenceListKeywordWidget::updateTableRow);
 	ui_.IsotopologueTable->resizeColumnsToContents();
 
 	ui_.RemoveButton->setEnabled(ui_.IsotopologueTable->currentRow());
@@ -326,7 +326,7 @@ void IsotopologueListKeywordWidget::updateWidgetValues(const CoreData& coreData)
 }
 
 // Update keyword data based on widget values
-void IsotopologueListKeywordWidget::updateKeywordData()
+void IsotopologueReferenceListKeywordWidget::updateKeywordData()
 {
 	// Not used
 }

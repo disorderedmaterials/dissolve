@@ -42,7 +42,7 @@
 #include "keywords/data3dstore.h"
 #include "keywords/enumoptions.h"
 #include "keywords/fileandformat.h"
-#include "keywords/isotopologuelist.h"
+#include "keywords/isotopologuereferencelist.h"
 #include "keywords/modulegroups.h"
 #include "keywords/modulereferencelist.h"
 #include "keywords/pairbroadeningfunction.h"

@@ -1,6 +1,6 @@
 /*
-	*** Keyword Widget - IsotopologueList
-	*** src/gui/keywordwidgets/isotopologuelist.h
+	*** Keyword Widget - Isotopologue Reference List
+	*** src/gui/keywordwidgets/isotopologuereferencelist.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,26 +19,26 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORDWIDGET_ISOTOPOLOGUELIST_H
-#define DISSOLVE_KEYWORDWIDGET_ISOTOPOLOGUELIST_H
+#ifndef DISSOLVE_KEYWORDWIDGET_ISOTOPOLOGUEREFERENCELIST_H
+#define DISSOLVE_KEYWORDWIDGET_ISOTOPOLOGUEREFERENCELIST_H
 
-#include "gui/keywordwidgets/ui_isotopologuelist.h"
+#include "gui/keywordwidgets/ui_isotopologuereferencelist.h"
 #include "gui/keywordwidgets/dropdown.h"
-#include "keywords/isotopologuelist.h"
+#include "keywords/isotopologuereferencelist.h"
 #include "gui/keywordwidgets/base.h"
 #include <QWidget>
 
 // Forward Declarations
 class QComboBox;
 
-class IsotopologueListKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
+class IsotopologueReferenceListKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
 {
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
 	public:
 	// Constructor
-	IsotopologueListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
+	IsotopologueReferenceListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
 
 
 	/*
@@ -46,7 +46,7 @@ class IsotopologueListKeywordWidget : public KeywordDropDown, public KeywordWidg
 	 */
 	private:
 	// Associated keyword
-	IsotopologueListKeyword* keyword_;
+	IsotopologueReferenceListKeyword* keyword_;
 
 
 	/*
@@ -54,7 +54,7 @@ class IsotopologueListKeywordWidget : public KeywordDropDown, public KeywordWidg
 	 */
 	private:
         // Main form declaration
-        Ui::IsotopologueListWidget ui_;
+        Ui::IsotopologueReferenceListWidget ui_;
 
 	private slots:
 	void autoButton_clicked(bool checked);

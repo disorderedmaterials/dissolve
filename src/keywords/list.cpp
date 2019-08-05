@@ -50,9 +50,6 @@ bool KeywordList::add(KeywordBase* object, const char* keyword, const char* desc
 	keywords_.own(object);
 	object->set(keyword, description, arguments, genericItemFlags);
 
-	// Set the parent of the keyword
-	object->setModuleParent(moduleParent_);
-
 	return true;
 }
 

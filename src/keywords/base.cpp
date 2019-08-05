@@ -42,21 +42,6 @@ const char* KeywordBase::keywordDataType(KeywordDataType kdt)
 	return KeywordDataTypeKeywords[kdt];
 }
 
-/*
- * Module Parent
- */
-
-// Set Module parent to which this keyword belongs
-void KeywordBase::setModuleParent(const Module* parent)
-{
-	moduleParent_ = parent;
-}
-
-// Return Module to which this keyword belongs
-const Module* KeywordBase::moduleParent() const
-{
-	return moduleParent_;
-}
 
 /*
  * Keyword Description

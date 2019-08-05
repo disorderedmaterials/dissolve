@@ -12,7 +12,7 @@ add_library(keywords
   fileandformat.cpp
   group.cpp
   integer.cpp
-  isotopologuelist.cpp
+  isotopologuereferencelist.cpp
   list.cpp
   modulegroups.cpp
   modulereferencelist.cpp
@@ -40,7 +40,7 @@ add_library(keywords
   fileandformat.h
   group.h
   integer.h
-  isotopologuelist.h
+  isotopologuereferencelist.h
   list.h
   modulegroups.h
   modulereferencelist.h

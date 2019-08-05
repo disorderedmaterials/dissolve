@@ -108,10 +108,10 @@ QWidget* ModuleKeywordsWidget::createKeywordWidget(DissolveWindow* dissolveWindo
 	}
 	else if (keyword->type() == KeywordBase::IsotopologueListData)
 	{
-		IsotopologueListKeywordWidget* isotopologueListWidget = new IsotopologueListKeywordWidget(NULL, keyword, coreData, moduleData, uniqueName);
-		connect(isotopologueListWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
-		widget = isotopologueListWidget;
-		base = isotopologueListWidget;
+		IsotopologueReferenceListKeywordWidget* isotopologueReferenceListWidget = new IsotopologueReferenceListKeywordWidget(NULL, keyword, coreData, moduleData, uniqueName);
+		connect(isotopologueReferenceListWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
+		widget = isotopologueReferenceListWidget;
+		base = isotopologueReferenceListWidget;
 	}
 	else if (keyword->type() == KeywordBase::ModuleGroupsData)
 	{
