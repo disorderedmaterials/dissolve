@@ -7,7 +7,7 @@ SET(keywordwidgets_MOC_HDRS
   broadeningfunction.h
   dropdown.h
   fileandformat.h
-  isotopologuelist.h
+  isotopologuereferencelist.h
   modulegroups.h
   modulereferencelist.h
   pairbroadeningfunction.h
@@ -31,7 +31,7 @@ SET(keywordwidgets_UIS
   broadeningfunction.ui
   dropdown.ui
   fileandformat.ui
-  isotopologuelist.ui
+  isotopologuereferencelist.ui
   modulegroups.ui
   modulereferencelist.ui
   pairbroadeningfunction.ui
@@ -55,7 +55,7 @@ SET(keywordwidgets_SRCS
   enumoptions_funcs.cpp
   fileandformat_funcs.cpp
   integer_funcs.cpp
-  isotopologuelist_funcs.cpp
+  isotopologuereferencelist_funcs.cpp
   modulegroups_funcs.cpp
   modulereferencelist_funcs.cpp
   pairbroadeningfunction_funcs.cpp

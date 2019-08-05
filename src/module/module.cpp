@@ -63,15 +63,15 @@ const char* Module::uniqueName() const
  */
 
 // Create and return named keyword group
-ModuleKeywordGroup* Module::addKeywordGroup(const char* name)
+KeywordGroup* Module::addKeywordGroup(const char* name)
 {
 	// Check that a group with the specified name doesn't already exist
-	ModuleKeywordGroup* group = NULL;
+	KeywordGroup* group = NULL;
 	for (group = keywordGroups_.first(); group != NULL; group = group->next) if (DissolveSys::sameString(name, group->name())) break;
 
 	if (!group)
 	{
-		group = new ModuleKeywordGroup(keywords_);
+		group = new KeywordGroup(keywords_);
 		group->setName(name);
 		keywordGroups_.own(group);
 	}
@@ -80,13 +80,13 @@ ModuleKeywordGroup* Module::addKeywordGroup(const char* name)
 }
 
 // Return list of recognised keywords
-ModuleKeywordList& Module::keywords()
+KeywordList& Module::keywords()
 {
 	return keywords_;
 }
 
 // Return list of defined keyword groups
-const List<ModuleKeywordGroup>& Module::keywordGroups() const
+const List<KeywordGroup>& Module::keywordGroups() const
 {
 	return keywordGroups_;
 }
@@ -97,11 +97,11 @@ int Module::parseKeyword(LineParser& parser, Dissolve* dissolve, GenericList& ta
 	// The LineParser currently contains a parsed line from the input file...
 
 	// Do we recognise the first item (the 'keyword')?
-	ModuleKeywordBase* keyword = keywords_.find(parser.argc(0));
+	KeywordBase* keyword = keywords_.find(parser.argc(0));
 	if (!keyword) return -1;
 
 	// We recognised the keyword - what should we try to do with it?
-	if (keyword->type() == ModuleKeywordBase::ComplexData)
+	if (keyword->type() == KeywordBase::ComplexData)
 	{
 		// It's a 'complex' keyword, one that either sets up a complicated object, or does something specific within the Module
 		return parseComplexKeyword(keyword, parser, dissolve, targetList, prefix);
@@ -137,8 +137,8 @@ void Module::printValidKeywords()
 {
 	Messenger::print("Valid keywords for '%s' Module are:\n", type());
 
-	ListIterator<ModuleKeywordBase> keywordIterator(keywords_.keywords());
-	while (ModuleKeywordBase* keyword = keywordIterator.iterate()) Messenger::print("  %30s  %s\n", keyword->keyword(), keyword->description());
+	ListIterator<KeywordBase> keywordIterator(keywords_.keywords());
+	while (KeywordBase* keyword = keywordIterator.iterate()) Messenger::print("  %30s  %s\n", keyword->keyword(), keyword->description());
 }
 
 /*

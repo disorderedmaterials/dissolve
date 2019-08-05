@@ -24,7 +24,7 @@
 
 #include "gui/keywordwidgets/ui_vec3integer.h"
 #include "gui/keywordwidgets/base.h"
-#include "module/keywordtypes/vec3integer.h"
+#include "keywords/vec3integer.h"
 #include <QWidget>
 
 // Forward Declarations
@@ -37,7 +37,7 @@ class Vec3IntegerKeywordWidget : public QWidget, public KeywordWidgetBase
 
 	public:
 	// Constructor
-	Vec3IntegerKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
+	Vec3IntegerKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
         // Main form declaration
         Ui::Vec3IntegerWidget ui_;
 
@@ -47,7 +47,7 @@ class Vec3IntegerKeywordWidget : public QWidget, public KeywordWidgetBase
 	 */
 	private:
 	// Associated keyword
-	Vec3IntegerModuleKeyword* keyword_;
+	Vec3IntegerKeyword* keyword_;
 
 
 	/*

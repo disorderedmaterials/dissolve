@@ -23,11 +23,11 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-CharStringKeywordWidget::CharStringKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QLineEdit(parent), KeywordWidgetBase(coreData, moduleData, prefix)
+CharStringKeywordWidget::CharStringKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QLineEdit(parent), KeywordWidgetBase(coreData, moduleData, prefix)
 {
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<CharStringModuleKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into CharStringModuleKeyword.\n", keyword->keyword());
+	keyword_ = dynamic_cast<CharStringKeyword*>(keyword);
+	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into CharStringKeyword.\n", keyword->keyword());
 	else
 	{
 		setText(keyword_->asString());

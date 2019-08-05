@@ -29,8 +29,8 @@
 // Forward Declarations
 class Dissolve;
 class DissolveWindow;
+class KeywordBase;
 class Module;
-class ModuleKeywordBase;
 class ModuleReference;
 
 // Module Keywords Widget
@@ -59,7 +59,7 @@ class ModuleKeywordsWidget : public QToolBox
 
 	private:
 	// Create widget for specified keyword
-	QWidget* createKeywordWidget(DissolveWindow* dissolveWindow, RefList<KeywordWidgetBase>& keywordWidgets, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* uniqueName);
+	QWidget* createKeywordWidget(DissolveWindow* dissolveWindow, RefList<KeywordWidgetBase>& keywordWidgets, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* uniqueName);
 
 	public:
 	// Set up keyword controls for specified Module

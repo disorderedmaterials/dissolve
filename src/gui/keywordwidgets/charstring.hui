@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_CHARSTRINGKEYWORDWIDGET_H
 #define DISSOLVE_CHARSTRINGKEYWORDWIDGET_H
 
-#include "module/keywordtypes/charstring.h"
+#include "keywords/charstring.h"
 #include "gui/keywordwidgets/base.h"
 #include <QLineEdit>
 
@@ -36,7 +36,7 @@ class CharStringKeywordWidget : public QLineEdit, public KeywordWidgetBase
 
 	public:
 	// Constructor
-	CharStringKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
+	CharStringKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
 
 
 	/*
@@ -44,7 +44,7 @@ class CharStringKeywordWidget : public QLineEdit, public KeywordWidgetBase
 	 */
 	private:
 	// Associated keyword
-	CharStringModuleKeyword* keyword_;
+	CharStringKeyword* keyword_;
 
 
 	/*

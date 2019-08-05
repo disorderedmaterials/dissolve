@@ -24,7 +24,7 @@
 
 #include "gui/keywordwidgets/ui_vec3double.h"
 #include "gui/keywordwidgets/base.h"
-#include "module/keywordtypes/vec3double.h"
+#include "keywords/vec3double.h"
 #include <QWidget>
 
 // Forward Declarations
@@ -37,7 +37,7 @@ class Vec3DoubleKeywordWidget : public QWidget, public KeywordWidgetBase
 
 	public:
 	// Constructor
-	Vec3DoubleKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
+	Vec3DoubleKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
         // Main form declaration
         Ui::Vec3DoubleWidget ui_;
 
@@ -47,7 +47,7 @@ class Vec3DoubleKeywordWidget : public QWidget, public KeywordWidgetBase
 	 */
 	private:
 	// Associated keyword
-	Vec3DoubleModuleKeyword* keyword_;
+	Vec3DoubleKeyword* keyword_;
 
 
 	/*

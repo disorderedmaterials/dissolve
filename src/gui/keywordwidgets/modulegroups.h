@@ -24,7 +24,7 @@
 
 #include "gui/keywordwidgets/ui_modulegroups.h"
 #include "gui/keywordwidgets/dropdown.h"
-#include "module/keywordtypes/modulegroups.h"
+#include "keywords/modulegroups.h"
 #include "gui/keywordwidgets/base.h"
 #include <QWidget>
 
@@ -39,7 +39,7 @@ class ModuleGroupsKeywordWidget: public KeywordDropDown, public KeywordWidgetBas
 
 	public:
 	// Constructor
-	ModuleGroupsKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
+	ModuleGroupsKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
         // Main form declaration
         Ui::ModuleGroupsWidget ui;
 
@@ -49,7 +49,7 @@ class ModuleGroupsKeywordWidget: public KeywordDropDown, public KeywordWidgetBas
 	 */
 	private:
 	// Associated keyword
-	ModuleGroupsModuleKeyword* keyword_;
+	ModuleGroupsKeyword* keyword_;
 
 
 	/*

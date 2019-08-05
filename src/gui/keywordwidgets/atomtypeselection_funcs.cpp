@@ -31,7 +31,7 @@
 #include <QString>
 
 // Constructor
-AtomTypeSelectionKeywordWidget::AtomTypeSelectionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : KeywordDropDown(this), KeywordWidgetBase(coreData, moduleData, prefix)
+AtomTypeSelectionKeywordWidget::AtomTypeSelectionKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : KeywordDropDown(this), KeywordWidgetBase(coreData, moduleData, prefix)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container
 	ui.setupUi(dropWidget());
@@ -40,8 +40,8 @@ AtomTypeSelectionKeywordWidget::AtomTypeSelectionKeywordWidget(QWidget* parent, 
 	connect(ui.SelectionList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(itemChanged(QListWidgetItem*)));
 
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<AtomTypeSelectionModuleKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into AtomTypeSelectionModuleKeyword.\n", keyword->keyword());
+	keyword_ = dynamic_cast<AtomTypeSelectionKeyword*>(keyword);
+	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into AtomTypeSelectionKeyword.\n", keyword->keyword());
 	else
 	{
 		// Set current information

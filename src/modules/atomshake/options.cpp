@@ -20,26 +20,26 @@
 */
 
 #include "modules/atomshake/atomshake.h"
-#include "module/keywordtypes.h"
+#include "keywords/types.h"
 
 // Set up options for Module
 void AtomShakeModule::setUpKeywords()
 {
 	// Calculation
-	ModuleKeywordGroup* group = addKeywordGroup("Calculation");
-	group->add(new DoubleModuleKeyword(-1.0, -1.0), "CutoffDistance", "Interatomic cutoff distance to employ");
-	group->add(new IntegerModuleKeyword(1, 1, 1000), "ShakesPerAtom", "Number of shakes per Atom to attempt");
-	group->add(new DoubleModuleKeyword(0.33, 0.01, 1.0), "TargetAcceptanceRate", "Target acceptance rate for Monte Carlo moves");
+	KeywordGroup* group = addKeywordGroup("Calculation");
+	group->add(new DoubleKeyword(-1.0, -1.0), "CutoffDistance", "Interatomic cutoff distance to employ");
+	group->add(new IntegerKeyword(1, 1, 1000), "ShakesPerAtom", "Number of shakes per Atom to attempt");
+	group->add(new DoubleKeyword(0.33, 0.01, 1.0), "TargetAcceptanceRate", "Target acceptance rate for Monte Carlo moves");
 
 	// Translations
 	group = addKeywordGroup("Translations");
-	group->add(new DoubleModuleKeyword(0.05), "StepSize", "Step size for translational component of Monte Carlo move (Angstroms)", "<stepsize>", GenericItem::InRestartFileFlag);
-	group->add(new DoubleModuleKeyword(1.0), "StepSizeMax", "Maximum step size for translations (Angstroms)", "<stepsize>");
-	group->add(new DoubleModuleKeyword(0.001), "StepSizeMin", "Minimum step size for translations (Angstroms)", "<stepsize>");
+	group->add(new DoubleKeyword(0.05), "StepSize", "Step size for translational component of Monte Carlo move (Angstroms)", "<stepsize>", GenericItem::InRestartFileFlag);
+	group->add(new DoubleKeyword(1.0), "StepSizeMax", "Maximum step size for translations (Angstroms)", "<stepsize>");
+	group->add(new DoubleKeyword(0.001), "StepSizeMin", "Minimum step size for translations (Angstroms)", "<stepsize>");
 }
 
 // Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int AtomShakeModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
+int AtomShakeModule::parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
 	return -1;
 }

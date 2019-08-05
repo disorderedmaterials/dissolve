@@ -27,44 +27,31 @@
 #include "base/sysfunc.h"
 #include "base/lineparser.h"
 
-// Species Block Keywords
-KeywordData SpeciesBlockData[] = {
-	{ "Angle",			4,	"Define an angle interaction within the Species" },
-	{ "Atom",			6,	"Define an Atom in the Species" },
-	{ "AutoAddGrains",		0,	"Automatically add Grains to cover all atoms in the Species" },
-	{ "Bond",			3,	"Define a bond interaction within the Species" },
-	{ "BondType",			3,	"Sets the type of a specific bond" },
-	{ "Charge",			2,	"Specify the atomic charge for an individual atom" },
-	{ "EndSpecies",			0,	"Ends the current Species definition" },
-	{ "Grain",			1,	"Define a Grain within the Species " },
-	{ "Isotopologue",		1,	"Add an isotopologue to the Species" },
-	{ "Site",			1,	"Define an analysis site for the Species" },
-	{ "Torsion",			5,	"Define a torsion interaction within the Species" }
-};
-
-// Convert text string to SpeciesKeyword
-SpeciesBlock::SpeciesKeyword SpeciesBlock::keyword(const char* s)
+// Return enum option info for SpeciesKeyword
+EnumOptions<SpeciesBlock::SpeciesKeyword> SpeciesBlock::keywords()
 {
-	for (int n=0; n<nSpeciesKeywords; ++n) if (DissolveSys::sameString(s,SpeciesBlockData[n].name)) return (SpeciesBlock::SpeciesKeyword) n;
-	return nSpeciesKeywords;
-}
+	static EnumOptionsList SpeciesKeywords = EnumOptionsList() <<
+		EnumOption(SpeciesBlock::AngleKeyword,	 		"Angle",		4,6) <<
+		EnumOption(SpeciesBlock::AtomKeyword, 			"Atom",			6,7) <<
+		EnumOption(SpeciesBlock::AutoAddGrainsKeyword,		"AutoAddGrains") <<
+		EnumOption(SpeciesBlock::BondKeyword,			"Bond",			3,5) <<
+		EnumOption(SpeciesBlock::BondTypeKeyword,		"BondType",		3) <<
+		EnumOption(SpeciesBlock::ChargeKeyword,			"Charge",		2) <<
+		EnumOption(SpeciesBlock::EndSpeciesKeyword,		"EndSpecies") <<
+		EnumOption(SpeciesBlock::GrainKeyword,			"Grain",		1) <<
+		EnumOption(SpeciesBlock::IsotopologueKeyword,		"Isotopologue",		EnumOption::OneOrMoreArguments) <<
+		EnumOption(SpeciesBlock::SiteKeyword,			"Site",			1) <<
+		EnumOption(SpeciesBlock::TorsionKeyword, 		"Torsion",		5,9);
 
-// Convert SpeciesKeyword to text string
-const char* SpeciesBlock::keyword(SpeciesBlock::SpeciesKeyword id)
-{
-	return SpeciesBlockData[id].name;
-}
+	static EnumOptions<SpeciesBlock::SpeciesKeyword> options("SpeciesKeyword", SpeciesKeywords);
 
-// Return minimum number of expected arguments
-int SpeciesBlock::nArguments(SpeciesBlock::SpeciesKeyword id)
-{
-	return SpeciesBlockData[id].nArguments;
+	return options;
 }
 
 // Parse Species block
 bool SpeciesBlock::parse(LineParser& parser, Dissolve* dissolve, Species* species)
 {
-	Messenger::print("\nParsing %s '%s'\n", BlockKeywords::blockKeyword(BlockKeywords::SpeciesBlockKeyword), species->name());
+	Messenger::print("\nParsing %s '%s'\n", BlockKeywords::keywords().keyword(BlockKeywords::SpeciesBlockKeyword), species->name());
 
 	Element* el;
 	CharString arg1, arg2;
@@ -87,14 +74,14 @@ bool SpeciesBlock::parse(LineParser& parser, Dissolve* dissolve, Species* specie
 	{
 		// Read in a line, which should contain a keyword and a minimum number of arguments
 		if (parser.getArgsDelim() != LineParser::Success) return false;
-		SpeciesBlock::SpeciesKeyword spKeyword = SpeciesBlock::keyword(parser.argc(0));
-		if ((spKeyword != SpeciesBlock::nSpeciesKeywords) && ((parser.nArgs()-1) < SpeciesBlock::nArguments(spKeyword)))
-		{
-			Messenger::error("Not enough arguments given to '%s' keyword.\n", SpeciesBlock::keyword(spKeyword));
-			error = true;
-			break;
-		}
-		switch (spKeyword)
+
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!keywords().isValid(parser.argc(0))) return keywords().errorAndPrintValid(parser.argc(0));
+		SpeciesKeyword kwd = keywords().enumeration(parser.argc(0));
+		if (!keywords().validNArgs(kwd, parser.nArgs()-1)) return false;
+
+		// All OK, so process the keyword
+		switch (kwd)
 		{
 			case (SpeciesBlock::AngleKeyword):
 				// Check the functional form specified - if it starts with '@' it is a reference to master parameters
@@ -155,7 +142,7 @@ bool SpeciesBlock::parse(LineParser& parser, Dissolve* dissolve, Species* specie
 				el = Elements::elementPointer(parser.argc(2));
 				if (el->Z() == 0)
 				{
-					Messenger::error("Unrecognised element symbol '%s' found in %s keyword.\n", parser.argc(2), SpeciesBlock::keyword(SpeciesBlock::AtomKeyword));
+					Messenger::error("Unrecognised element symbol '%s' found in %s keyword.\n", parser.argc(2), SpeciesBlock::keywords().keyword(SpeciesBlock::AtomKeyword));
 					el = NULL;
 					error = true;
 					break;
@@ -398,13 +385,8 @@ bool SpeciesBlock::parse(LineParser& parser, Dissolve* dissolve, Species* specie
 				// Perform any final setup on the Torsion
 				t->setUp();
 				break;
-			case (SpeciesBlock::nSpeciesKeywords):
-				Messenger::error("Unrecognised %s block keyword '%s' found.\n", BlockKeywords::blockKeyword(BlockKeywords::SpeciesBlockKeyword), parser.argc(0));
-				BlockKeywords::printValidKeywords(BlockKeywords::SpeciesBlockKeyword);
-				error = true;
-				break;
 			default:
-				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BlockKeywords::blockKeyword(BlockKeywords::SpeciesBlockKeyword), SpeciesBlock::keyword(spKeyword));
+				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BlockKeywords::keywords().keyword(BlockKeywords::SpeciesBlockKeyword), keywords().keyword(kwd));
 				error = true;
 				break;
 		}
@@ -419,7 +401,7 @@ bool SpeciesBlock::parse(LineParser& parser, Dissolve* dissolve, Species* specie
 	// If there's no error and the blockDone flag isn't set, return an error
 	if (!error && !blockDone)
 	{
-		Messenger::error("Unterminated %s block found.\n", BlockKeywords::blockKeyword(BlockKeywords::SpeciesBlockKeyword));
+		Messenger::error("Unterminated %s block found.\n", BlockKeywords::keywords().keyword(BlockKeywords::SpeciesBlockKeyword));
 		error = true;
 	}
 

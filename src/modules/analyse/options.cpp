@@ -20,16 +20,16 @@
 */
 
 #include "modules/analyse/analyse.h"
-#include "module/keywordtypes.h"
+#include "keywords/types.h"
 
 // Set up keywords for Module
 void AnalyseModule::setUpKeywords()
 {
-	keywords_.add(new ProcedureModuleKeyword(analyser_), "Analyser", "Analysis procedure to run");
+	keywords_.add(new ProcedureKeyword(analyser_), "Analyser", "Analysis procedure to run");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int AnalyseModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
+int AnalyseModule::parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
 	return -1;
 }

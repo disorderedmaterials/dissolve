@@ -24,7 +24,7 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-Vec3DoubleKeywordWidget::Vec3DoubleKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QWidget(parent), KeywordWidgetBase(coreData, moduleData, prefix)
+Vec3DoubleKeywordWidget::Vec3DoubleKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QWidget(parent), KeywordWidgetBase(coreData, moduleData, prefix)
 {
 	// Setup our UI
 	ui_.setupUi(this);
@@ -32,8 +32,8 @@ Vec3DoubleKeywordWidget::Vec3DoubleKeywordWidget(QWidget* parent, ModuleKeywordB
 	refreshing_ = true;
 
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<Vec3DoubleModuleKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into Vec3DoubleModuleKeyword.\n", keyword->keyword());
+	keyword_ = dynamic_cast<Vec3DoubleKeyword*>(keyword);
+	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into Vec3DoubleKeyword.\n", keyword->keyword());
 	else
 	{
 		// Set minimum and maximum values for each component

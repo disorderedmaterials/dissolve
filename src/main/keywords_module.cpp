@@ -26,38 +26,24 @@
 #include "base/sysfunc.h"
 #include "genericitems/listhelper.h"
 
-// Module Block Keywords
-KeywordData ModuleBlockData[] = {
-	{ "Configuration",		1,	"Associates the named Configuration to this Module, with optional weight" },
-	{ "Disabled",			0,	"Specifies that the Module should never be run" },
-	{ "EndModule",			0,	"Marks the end of a Module block" },
-	{ "Frequency",			1,	"Frequency, relative to the processing layer in which it exists, at which this Module is run" },
-	{ "Isotopologue",		3,	"Sets the relative population of a Species Isotopologue for a specific Configuration" }
-};
-
-// Convert text string to ModuleKeyword
-ModuleBlock::ModuleKeyword ModuleBlock::keyword(const char* s)
+// Return enum option info for ModuleKeyword
+EnumOptions<ModuleBlock::ModuleKeyword> ModuleBlock::keywords()
 {
-	for (int n=0; n<ModuleBlock::nModuleKeywords; ++n) if (DissolveSys::sameString(s,ModuleBlockData[n].name)) return (ModuleBlock::ModuleKeyword) n;
-	return ModuleBlock::nModuleKeywords;
-}
+	static EnumOptionsList ModuleKeywords = EnumOptionsList() <<
+		EnumOption(ModuleBlock::ConfigurationKeyword, 		"Configuration",	1) <<
+		EnumOption(ModuleBlock::DisableKeyword, 		"Disabled") <<
+		EnumOption(ModuleBlock::EndModuleKeyword,		"EndModule") <<
+		EnumOption(ModuleBlock::FrequencyKeyword, 		"Frequency",		1);
 
-// Convert ModuleKeyword to text string
-const char* ModuleBlock::keyword(ModuleBlock::ModuleKeyword id)
-{
-	return ModuleBlockData[id].name;
-}
+	static EnumOptions<ModuleBlock::ModuleKeyword> options("ModuleKeyword", ModuleKeywords);
 
-// Return minimum number of expected arguments
-int ModuleBlock::nArguments(ModuleBlock::ModuleKeyword id)
-{
-	return ModuleBlockData[id].nArguments;
+	return options;
 }
 
 // Parse Module block
 bool ModuleBlock::parse(LineParser& parser, Dissolve* dissolve, Module* module, GenericList& targetList, bool moduleInConfiguration)
 {
-	Messenger::print("\nParsing %s block '%s'...\n", BlockKeywords::blockKeyword(BlockKeywords::ModuleBlockKeyword), module->type());
+	Messenger::print("\nParsing %s block '%s'...\n", BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword), module->type());
 
 	Configuration* targetCfg;
 	CharString varName, dataName;
@@ -67,53 +53,55 @@ bool ModuleBlock::parse(LineParser& parser, Dissolve* dissolve, Module* module, 
 	{
 		// Read in a line, which should contain a keyword and a minimum number of arguments
 		if (parser.getArgsDelim() != LineParser::Success) return false;
-		ModuleBlock::ModuleKeyword modKeyword = ModuleBlock::keyword(parser.argc(0));
-		if ((modKeyword != ModuleBlock::nModuleKeywords) && ((parser.nArgs()-1) < ModuleBlock::nArguments(modKeyword)))
+
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (keywords().isValid(parser.argc(0)))
 		{
-			Messenger::error("Not enough arguments given to '%s' keyword.\n", ModuleBlock::keyword(modKeyword));
-			error = true;
-			break;
-		}
-		else if (modKeyword != ModuleBlock::nModuleKeywords) switch (modKeyword)
-		{
-			case (ModuleBlock::ConfigurationKeyword):
-				// Find the named Configuration
-				targetCfg = dissolve->findConfiguration(parser.argc(1));
-				if (!targetCfg)
-				{
-					Messenger::error("Can't associate Configuration '%s' to the Module '%s', since no Configuration by this name exists.\n", parser.argc(1), module->type());
+			ModuleKeyword kwd = keywords().enumeration(parser.argc(0));
+			if (!keywords().validNArgs(kwd, parser.nArgs()-1)) return false;
+
+			// All OK, so process the keyword
+			switch (kwd)
+			{
+				case (ModuleBlock::ConfigurationKeyword):
+					// Find the named Configuration
+					targetCfg = dissolve->findConfiguration(parser.argc(1));
+					if (!targetCfg)
+					{
+						Messenger::error("Can't associate Configuration '%s' to the Module '%s', since no Configuration by this name exists.\n", parser.argc(1), module->type());
+						error = true;
+						break;
+					}
+
+					// Add it as a target
+					if (!module->addTargetConfiguration(targetCfg))
+					{
+						Messenger::error("Failed to add Configuration target in Module '%s'.\n", module->type());
+						error = true;
+						break;
+					}
+
+					// Create weight data if a second argument was provided
+					if (parser.hasArg(2)) GenericListHelper<double>::add(targetList, CharString("ConfigurationWeight_%s", targetCfg->niceName()), module->uniqueName()) = parser.argd(2);
+					break;
+				case (ModuleBlock::DisableKeyword):
+					module->setEnabled(false);
+					break;
+				case (ModuleBlock::EndModuleKeyword):
+					Messenger::print("Found end of %s block.\n", BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword));
+					blockDone = true;
+					break;
+				case (ModuleBlock::FrequencyKeyword):
+					module->setFrequency(parser.argi(1));
+					break;
+				case (ModuleBlock::nModuleKeywords):
+					// Never used, since it is accounted for in the beginning 'if'
+					break;
+				default:
+					printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword), keywords().keyword(kwd));
 					error = true;
 					break;
-				}
-
-				// Add it as a target
-				if (!module->addTargetConfiguration(targetCfg))
-				{
-					Messenger::error("Failed to add Configuration target in Module '%s'.\n", module->type());
-					error = true;
-					break;
-				}
-
-				// Create weight data if a second argument was provided
-				if (parser.hasArg(2)) GenericListHelper<double>::add(targetList, CharString("ConfigurationWeight_%s", targetCfg->niceName()), module->uniqueName()) = parser.argd(2);
-				break;
-			case (ModuleBlock::DisableKeyword):
-				module->setEnabled(false);
-				break;
-			case (ModuleBlock::EndModuleKeyword):
-				Messenger::print("Found end of %s block.\n", BlockKeywords::blockKeyword(BlockKeywords::ModuleBlockKeyword));
-				blockDone = true;
-				break;
-			case (ModuleBlock::FrequencyKeyword):
-				module->setFrequency(parser.argi(1));
-				break;
-			case (ModuleBlock::nModuleKeywords):
-				// Never used, since it is accounted for in the beginning 'if'
-				break;
-			default:
-				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BlockKeywords::blockKeyword(BlockKeywords::ModuleBlockKeyword), ModuleBlock::keyword(modKeyword));
-				error = true;
-				break;
+			}
 		}
 		else
 		{
@@ -122,7 +110,8 @@ bool ModuleBlock::parse(LineParser& parser, Dissolve* dissolve, Module* module, 
 			if (result == 0) error = true;
 			else if (result == -1)
 			{
-				Messenger::error("Unrecognised %s block keyword '%s' found, and the Module '%s' contains no option with this name.\n", BlockKeywords::blockKeyword(BlockKeywords::ModuleBlockKeyword), parser.argc(0), module->type());
+				Messenger::error("Unrecognised %s block keyword '%s' found, and the Module '%s' contains no option with this name.\n", BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword), parser.argc(0), module->type());
+				keywords().errorAndPrintValid(parser.argc(0));
 				module->printValidKeywords();
 				error = true;
 			}
@@ -138,7 +127,7 @@ bool ModuleBlock::parse(LineParser& parser, Dissolve* dissolve, Module* module, 
 	// If there's no error and the blockDone flag isn't set, return an error
 	if (!error && !blockDone)
 	{
-		Messenger::error("Unterminated %s block found.\n", BlockKeywords::blockKeyword(BlockKeywords::ModuleBlockKeyword));
+		Messenger::error("Unterminated %s block found.\n", BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword));
 		error = true;
 	}
 

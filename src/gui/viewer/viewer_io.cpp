@@ -31,27 +31,24 @@
  * Input Block Keywords
  */
 
-// Input File Block Keywords
-const char* BaseViewerInputBlockKeywords[] = { "EndSession", "Renderable", "RenderableGroup", "View" };
-
-// Convert text string to InputBlock
-BaseViewer::InputBlock BaseViewer::inputBlock(const char* s)
+// Return enum options for InputBlock
+EnumOptions<BaseViewer::InputBlock> BaseViewer::inputBlockKeywords()
 {
-	for (int n=0; n<BaseViewer::nInputBlocks; ++n) if (DissolveSys::sameString(s, BaseViewerInputBlockKeywords[n])) return (BaseViewer::InputBlock) n;
-	return BaseViewer::nInputBlocks;
-}
+	static EnumOptionsList BaseViewerInputBlockOptions = EnumOptionsList() <<
+		EnumOption(BaseViewer::EndSessionBlock,		"EndSession") <<
+		EnumOption(BaseViewer::RenderableBlock,		"Renderable") <<
+		EnumOption(BaseViewer::RenderableGroupBlock,	"RenderableGroup") <<
+		EnumOption(BaseViewer::ViewBlock, 		"View");
 
-// Convert InputBlock to text string
-const char* BaseViewer::inputBlock(BaseViewer::InputBlock id)
-{
-	return BaseViewerInputBlockKeywords[id];
+	static EnumOptions<BaseViewer::InputBlock> options("InputBlock", BaseViewerInputBlockOptions);
+
+	return options;
 }
 
 // Parse main input blocks through specified parser
 bool BaseViewer::parseInputBlocks(LineParser& parser)
 {
 	// Read line from file and decide what to do with it
-	BaseViewer::InputBlock block;
 	Renderable* renderable;
 	Renderable::RenderableType rt;
 	bool success = true;
@@ -59,8 +56,9 @@ bool BaseViewer::parseInputBlocks(LineParser& parser)
 	{
 		if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success) return false;
 
-		// We expect a block keyword in this loop...
-		block = BaseViewer::inputBlock(parser.argc(0));
+		if (!inputBlockKeywords().isValid(parser.argc(0))) return inputBlockKeywords().errorAndPrintValid(parser.argc(0));
+		BaseViewer::InputBlock block = inputBlockKeywords().enumeration(parser.argc(0));
+
 		switch (block)
 		{
 			// End of BaseViewer Input
@@ -107,55 +105,38 @@ bool BaseViewer::parseInputBlocks(LineParser& parser)
  * Axis Keywords
  */
 
-// Axis Block Keywords
-const char* BaseViewerAxisBlockKeywords[] = {
-	"AutoScale", "AutoTicks",
-	"EndAxis",
-	"FirstTick", "FractionalPositioning",
-	"GridLines", "GridLineMajorStyle", "GridLineMinorStyle",
-	"Invert",
-	"LabelAnchor", "LabelOrientation", "Limits", "Logarithmic",
-	"MinorTicks",
-	"NumberFormat",
-	"PositionFractional", "PositionReal",
-	"Stretch",
-	"TickDelta", "TickDirection", "Title", "TitleAnchor", "TitleOrientation",
-	"Visible"
-};
-
-// Axis Block NArguments
-int BaseViewerAxisKeywordNArguments[] = {
-	1, 1,
-	0,
-	1, 1,
-	3, 6, 6,
-	1,
-	1, 3, 2, 1,
-	1,
-	4,
-	3, 3,
-	1,
-	1, 3, 1, 1, 4,
-	1
-};
-
-// Convert text string to AxisKeyword
-BaseViewer::AxisKeyword BaseViewer::axisKeyword(const char* s)
+// Return enum options for AxisKeyword
+EnumOptions<BaseViewer::AxisKeyword> BaseViewer::axisKeywords()
 {
-	for (int n=0; n<nAxisKeywords; ++n) if (DissolveSys::sameString(s, BaseViewerAxisBlockKeywords[n])) return (BaseViewer::AxisKeyword) n;
-	return nAxisKeywords;
-}
+	static EnumOptionsList BaseViewerAxisBlockOptions = EnumOptionsList() <<
+		EnumOption(BaseViewer::AutoScaleKeyword,		"AutoScale", 			1) <<
+		EnumOption(BaseViewer::AutoTicksKeyword,		"AutoTicks",			1) <<
+		EnumOption(BaseViewer::EndAxisKeyword,			"EndAxis") <<
+		EnumOption(BaseViewer::FirstTickKeyword,		"FirstTick",			1) <<
+		EnumOption(BaseViewer::FractionalPositioningKeyword,	"FractionalPositioning",	1) <<
+		EnumOption(BaseViewer::GridLinesKeyword,		"GridLines",			3) <<
+		EnumOption(BaseViewer::GridLineMajorStyleKeyword,	"GridLineMajorStyle",		6) <<
+		EnumOption(BaseViewer::GridLineMinorStyleKeyword,	"GridLineMinorStyle",		6) <<
+		EnumOption(BaseViewer::InvertKeyword,			"Invert",			1) <<
+		EnumOption(BaseViewer::LabelAnchorKeyword,		"LabelAnchor",			1) <<
+		EnumOption(BaseViewer::LabelOrientationKeyword,		"LabelOrientation",		3) <<
+		EnumOption(BaseViewer::LimitsKeyword,			"Limits",			2) <<
+		EnumOption(BaseViewer::LogarithmicKeyword,		"Logarithmic",			1) <<
+		EnumOption(BaseViewer::MinorTicksKeyword, 		"MinorTicks",			1) <<
+		EnumOption(BaseViewer::NumberFormatKeyword, 		"NumberFormat",			4) <<
+		EnumOption(BaseViewer::PositionFractionalKeyword, 	"PositionFractional",		3) <<
+		EnumOption(BaseViewer::PositionRealKeyword, 		"PositionReal",			3) <<
+		EnumOption(BaseViewer::StretchKeyword, 			"Stretch",			1) <<
+		EnumOption(BaseViewer::TickDeltaKeyword, 		"TickDelta",			1) <<
+		EnumOption(BaseViewer::TickDirectionKeyword, 		"TickDirection",		3) <<
+		EnumOption(BaseViewer::TitleKeyword, 			"Title",			1) <<
+		EnumOption(BaseViewer::TitleAnchorKeyword, 		"TitleAnchor",			1) <<
+		EnumOption(BaseViewer::TitleOrientationKeyword, 	"TitleOrientation",		4) <<
+		EnumOption(BaseViewer::VisibleAxisKeyword, 		"Visible",			1);
 
-// Convert BaseViewerAxisBlockKeywords to text string
-const char* BaseViewer::axisKeyword(BaseViewer::AxisKeyword kwd)
-{
-	return BaseViewerAxisBlockKeywords[kwd];
-}
+	static EnumOptions<BaseViewer::AxisKeyword> options("AxisKeyword", BaseViewerAxisBlockOptions);
 
-// Return minimum number of expected arguments
-int BaseViewer::axisKeywordNArguments(BaseViewer::AxisKeyword kwd)
-{
-	return BaseViewerAxisKeywordNArguments[kwd];
+	return options;
 }
 
 // Parse AxisBlock keywords
@@ -171,14 +152,13 @@ bool BaseViewer::readAxisBlock(LineParser& parser, Axes& axes, int axis, bool st
 		// Get line from file
 		if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success) return false;
 
-		// Get keyword and check number of arguments provided
-		BaseViewer::AxisKeyword axisKwd = BaseViewer::axisKeyword(parser.argc(0));
-		if ((axisKwd != BaseViewer::nAxisKeywords) && (BaseViewer::axisKeywordNArguments(axisKwd) > (parser.nArgs()-1)))
-		{
-			Messenger::print("Error : Axis keyword '%s' requires %i arguments, but only %i have been provided.\n", BaseViewer::axisKeyword(axisKwd), BaseViewer::axisKeywordNArguments(axisKwd), parser.nArgs()-1);
-			return false;
-		}
-		switch (axisKwd)
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!axisKeywords().isValid(parser.argc(0))) return axisKeywords().errorAndPrintValid(parser.argc(0));
+		AxisKeyword kwd = axisKeywords().enumeration(parser.argc(0));
+		if (!axisKeywords().validNArgs(kwd, parser.nArgs()-1)) return false;
+
+		// All OK, so process the keyword
+		switch (kwd)
 		{
 			// Autoscale method
 			case (BaseViewer::AutoScaleKeyword):
@@ -359,34 +339,34 @@ bool BaseViewer::readAxisBlock(LineParser& parser, Axes& axes, int axis, bool st
 // Write AxisBlock keywords
 bool BaseViewer::writeAxisBlock(LineParser& parser, Axes& axes, int axis)
 {
-	parser.writeLineF("    %s %i\n", BaseViewer::viewKeyword(BaseViewer::AxisBlockKeyword), axis);
-	parser.writeLineF("      %s %s\n", BaseViewer::axisKeyword(BaseViewer::AutoScaleKeyword), Axes::autoScaleMethod(axes.autoScale(axis)));
-	parser.writeLineF("      %s %s\n", BaseViewer::axisKeyword(BaseViewer::AutoTicksKeyword), DissolveSys::btoa(axes.autoTicks(axis)));
-	parser.writeLineF("      %s %f\n", BaseViewer::axisKeyword(BaseViewer::FirstTickKeyword), axes.tickFirst(axis));
-	parser.writeLineF("      %s %s\n", BaseViewer::axisKeyword(BaseViewer::FractionalPositioningKeyword), DissolveSys::btoa(axes.positionIsFractional(axis)));
-	parser.writeLineF("      %s %s %s %s\n", BaseViewer::axisKeyword(BaseViewer::GridLinesKeyword), DissolveSys::btoa(axes.gridLinesMajor(axis)), DissolveSys::btoa(axes.gridLinesMinor(axis)), DissolveSys::btoa(axes.gridLinesFull(axis)));
+	parser.writeLineF("    %s %i\n", BaseViewer::viewKeywords().keyword(BaseViewer::AxisBlockKeyword), axis);
+	parser.writeLineF("      %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::AutoScaleKeyword), Axes::autoScaleMethod(axes.autoScale(axis)));
+	parser.writeLineF("      %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::AutoTicksKeyword), DissolveSys::btoa(axes.autoTicks(axis)));
+	parser.writeLineF("      %s %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::FirstTickKeyword), axes.tickFirst(axis));
+	parser.writeLineF("      %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::FractionalPositioningKeyword), DissolveSys::btoa(axes.positionIsFractional(axis)));
+	parser.writeLineF("      %s %s %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::GridLinesKeyword), DissolveSys::btoa(axes.gridLinesMajor(axis)), DissolveSys::btoa(axes.gridLinesMinor(axis)), DissolveSys::btoa(axes.gridLinesFull(axis)));
 	LineStyle style = axes.gridLineMajorStyle(axis);
-	parser.writeLineF("      %s %f '%s' %f %f %f %f\n", BaseViewer::axisKeyword(BaseViewer::GridLineMajorStyleKeyword), style.width(), LineStipple::stipple[style.stipple()].name, style.colour()[0], style.colour()[1], style.colour()[2], style.colour()[3]);
+	parser.writeLineF("      %s %f '%s' %f %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::GridLineMajorStyleKeyword), style.width(), LineStipple::stipple[style.stipple()].name, style.colour()[0], style.colour()[1], style.colour()[2], style.colour()[3]);
 	style = axes.gridLineMinorStyle(axis);
-	parser.writeLineF("      %s %f '%s' %f %f %f %f\n", BaseViewer::axisKeyword(BaseViewer::GridLineMinorStyleKeyword), style.width(), LineStipple::stipple[style.stipple()].name, style.colour()[0], style.colour()[1], style.colour()[2], style.colour()[3]);
-	parser.writeLineF("      %s %s\n", BaseViewer::axisKeyword(BaseViewer::InvertKeyword), DissolveSys::btoa(axes.inverted(axis)));
-	parser.writeLineF("      %s %s\n", BaseViewer::axisKeyword(BaseViewer::LabelAnchorKeyword), TextPrimitive::textAnchor(axes.labelAnchor(axis)));
-	parser.writeLineF("      %s %f %f %f\n", BaseViewer::axisKeyword(BaseViewer::LabelOrientationKeyword), axes.labelOrientation(axis).x, axes.labelOrientation(axis).y, axes.labelOrientation(axis).z);
-	parser.writeLineF("      %s %f %f\n", BaseViewer::axisKeyword(BaseViewer::LimitsKeyword), axes.min(axis), axes.max(axis));
-	parser.writeLineF("      %s %s\n", BaseViewer::axisKeyword(BaseViewer::LogarithmicKeyword), DissolveSys::btoa(axes.logarithmic(axis)));
-	parser.writeLineF("      %s %i\n", BaseViewer::axisKeyword(BaseViewer::MinorTicksKeyword), axes.minorTicks(axis));
+	parser.writeLineF("      %s %f '%s' %f %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::GridLineMinorStyleKeyword), style.width(), LineStipple::stipple[style.stipple()].name, style.colour()[0], style.colour()[1], style.colour()[2], style.colour()[3]);
+	parser.writeLineF("      %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::InvertKeyword), DissolveSys::btoa(axes.inverted(axis)));
+	parser.writeLineF("      %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::LabelAnchorKeyword), TextPrimitive::textAnchor(axes.labelAnchor(axis)));
+	parser.writeLineF("      %s %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::LabelOrientationKeyword), axes.labelOrientation(axis).x, axes.labelOrientation(axis).y, axes.labelOrientation(axis).z);
+	parser.writeLineF("      %s %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::LimitsKeyword), axes.min(axis), axes.max(axis));
+	parser.writeLineF("      %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::LogarithmicKeyword), DissolveSys::btoa(axes.logarithmic(axis)));
+	parser.writeLineF("      %s %i\n", BaseViewer::axisKeywords().keyword(BaseViewer::MinorTicksKeyword), axes.minorTicks(axis));
 	NumberFormat fmt = axes.numberFormat(axis);
-	parser.writeLineF("      %s '%s' %i %s %s\n", BaseViewer::axisKeyword(BaseViewer::NumberFormatKeyword), NumberFormat::formatType(fmt.type()), fmt.nDecimals(), DissolveSys::btoa(fmt.useUpperCaseExponent()), DissolveSys::btoa(fmt.forcePrecedingPlus()));
-	parser.writeLineF("      %s %f %f %f\n", BaseViewer::axisKeyword(BaseViewer::PositionFractionalKeyword), axes.positionFractional(axis).x, axes.positionFractional(axis).y, axes.positionFractional(axis).z);
-	parser.writeLineF("      %s %f %f %f\n", BaseViewer::axisKeyword(BaseViewer::PositionRealKeyword), axes.positionReal(axis).x, axes.positionReal(axis).y, axes.positionReal(axis).z);
-	parser.writeLineF("      %s %f\n", BaseViewer::axisKeyword(BaseViewer::StretchKeyword), axes.stretch(axis));
-	parser.writeLineF("      %s %f\n", BaseViewer::axisKeyword(BaseViewer::TickDeltaKeyword), axes.tickDelta(axis));
-	parser.writeLineF("      %s %f %f %f\n", BaseViewer::axisKeyword(BaseViewer::TickDirectionKeyword), axes.tickDirection(axis).x, axes.tickDirection(axis).y, axes.tickDirection(axis).z);
-	parser.writeLineF("      %s %s\n", BaseViewer::axisKeyword(BaseViewer::TitleAnchorKeyword), TextPrimitive::textAnchor(axes.titleAnchor(axis)));
-	parser.writeLineF("      %s '%s'\n", BaseViewer::axisKeyword(BaseViewer::TitleKeyword), axes.title(axis));
-	parser.writeLineF("      %s %f %f %f %f\n", BaseViewer::axisKeyword(BaseViewer::TitleOrientationKeyword), axes.titleOrientation(axis).x, axes.titleOrientation(axis).y, axes.titleOrientation(axis).z, axes.titleOrientation(axis).w);
-	parser.writeLineF("      %s %s\n", BaseViewer::axisKeyword(BaseViewer::VisibleAxisKeyword), DissolveSys::btoa(axes.visible(axis)));
-	parser.writeLineF("    %s\n", BaseViewer::axisKeyword(BaseViewer::EndAxisKeyword));
+	parser.writeLineF("      %s '%s' %i %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::NumberFormatKeyword), NumberFormat::formatType(fmt.type()), fmt.nDecimals(), DissolveSys::btoa(fmt.useUpperCaseExponent()), DissolveSys::btoa(fmt.forcePrecedingPlus()));
+	parser.writeLineF("      %s %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::PositionFractionalKeyword), axes.positionFractional(axis).x, axes.positionFractional(axis).y, axes.positionFractional(axis).z);
+	parser.writeLineF("      %s %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::PositionRealKeyword), axes.positionReal(axis).x, axes.positionReal(axis).y, axes.positionReal(axis).z);
+	parser.writeLineF("      %s %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::StretchKeyword), axes.stretch(axis));
+	parser.writeLineF("      %s %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::TickDeltaKeyword), axes.tickDelta(axis));
+	parser.writeLineF("      %s %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::TickDirectionKeyword), axes.tickDirection(axis).x, axes.tickDirection(axis).y, axes.tickDirection(axis).z);
+	parser.writeLineF("      %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::TitleAnchorKeyword), TextPrimitive::textAnchor(axes.titleAnchor(axis)));
+	parser.writeLineF("      %s '%s'\n", BaseViewer::axisKeywords().keyword(BaseViewer::TitleKeyword), axes.title(axis));
+	parser.writeLineF("      %s %f %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::TitleOrientationKeyword), axes.titleOrientation(axis).x, axes.titleOrientation(axis).y, axes.titleOrientation(axis).z, axes.titleOrientation(axis).w);
+	parser.writeLineF("      %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::VisibleAxisKeyword), DissolveSys::btoa(axes.visible(axis)));
+	parser.writeLineF("    %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::EndAxisKeyword));
 
 	return true;
 }
@@ -395,45 +375,31 @@ bool BaseViewer::writeAxisBlock(LineParser& parser, Axes& axes, int axis)
  * Renderable Keywords
  */
 
-// Renderable Block Keywords
-const char* BaseViewerRenderableBlockKeywords[] = {
-	"ColourAlphaIsGlobal", "ColourCustom", "ColourGlobalAlpha", "ColourHSVEnd", "ColourHSVStart", "ColourRGBEnd", "ColourRGBStart", "ColourSingle", "ColourStyle",
-	"EndRenderable",
-	"Group",
-	"LineStyle",
-	"Style",
-	"TransformX", "TransformY", "TransformZ",
-	"Visible"
-};
-
-// Renderable Block NArguments
-int BaseViewerRenderableKeywordNArguments[] = {
-	1, 5, 1, 5, 5, 5, 5, 4, 1,
-	0,	
-	1,
-	2,
-	1,
-	2, 2, 2,
-	1
-};
-
-// Convert text string to RenderableKeyword
-BaseViewer::RenderableKeyword BaseViewer::renderableKeyword(const char* s)
+// Return enum options for RenderableKeyword
+EnumOptions<BaseViewer::RenderableKeyword> BaseViewer::renderableKeywords()
 {
-	for (int n=0; n<nRenderableKeywords; ++n) if (DissolveSys::sameString(s, BaseViewerRenderableBlockKeywords[n])) return (BaseViewer::RenderableKeyword) n;
-	return nRenderableKeywords;
-}
+	static EnumOptionsList BaseViewerRenderableBlockOptions = EnumOptionsList() <<
+		EnumOption(BaseViewer::ColourAlphaIsGlobalKeyword,	"ColourAlphaIsGlobal", 	1) <<
+		EnumOption(BaseViewer::ColourCustomGradientKeyword,	"ColourCustom",		5) <<
+		EnumOption(BaseViewer::ColourGlobalAlphaKeyword,	"ColourGlobalAlpha",	1) <<
+		EnumOption(BaseViewer::ColourHSVGradientEndKeyword,	"ColourHSVEnd",		5) <<
+		EnumOption(BaseViewer::ColourHSVGradientStartKeyword,	"ColourHSVStart",	5) <<
+		EnumOption(BaseViewer::ColourRGBGradientEndKeyword,	"ColourRGBEnd",		5) <<
+		EnumOption(BaseViewer::ColourRGBGradientStartKeyword,	"ColourRGBStart",	5) <<
+		EnumOption(BaseViewer::ColourSingleKeyword,		"ColourSingle",		4) <<
+		EnumOption(BaseViewer::ColourStyleKeyword,		"ColourStyle",		1) <<
+		EnumOption(BaseViewer::EndRenderableKeyword,		"EndRenderable") <<
+		EnumOption(BaseViewer::GroupKeyword,			"Group",		1) <<
+		EnumOption(BaseViewer::LineStyleKeyword,		"LineStyle",		2) <<
+		EnumOption(BaseViewer::StyleKeyword,			"Style",		1) <<
+		EnumOption(BaseViewer::TransformXKeyword, 		"TransformX",		2) <<
+		EnumOption(BaseViewer::TransformYKeyword, 		"TransformY",		2) <<
+		EnumOption(BaseViewer::TransformZKeyword, 		"TransformZ",		2) <<
+		EnumOption(BaseViewer::VisibleKeyword, 			"Visible",		1);
 
-// Convert RenderableKeyword to text string
-const char* BaseViewer::renderableKeyword(BaseViewer::RenderableKeyword kwd)
-{
-	return BaseViewerRenderableBlockKeywords[kwd];
-}
+	static EnumOptions<BaseViewer::RenderableKeyword> options("RenderableKeyword", BaseViewerRenderableBlockOptions);
 
-// Return minimum number of expected arguments
-int BaseViewer::renderableKeywordNArguments(BaseViewer::RenderableKeyword kwd)
-{
-	return BaseViewerRenderableKeywordNArguments[kwd];
+	return options;
 }
 
 // Read RenderableBlock keywords
@@ -452,14 +418,13 @@ bool BaseViewer::readRenderableBlock(LineParser& parser, Renderable* renderable,
 		// Get line from file
 		if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success) return false;
 
-		// Get keyword and check number of arguments provided
-		BaseViewer::RenderableKeyword renderableKwd = renderableKeyword(parser.argc(0));
-		if ((renderableKwd != BaseViewer::nRenderableKeywords) && (renderableKeywordNArguments(renderableKwd) > (parser.nArgs()-1)))
-		{
-			Messenger::error("Renderable keyword '%s' requires %i arguments, but only %i have been provided.\n", renderableKeyword(renderableKwd), renderableKeywordNArguments(renderableKwd), parser.nArgs()-1);
-			return false;
-		}
-		switch (renderableKwd)
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!renderableKeywords().isValid(parser.argc(0))) return renderableKeywords().errorAndPrintValid(parser.argc(0));
+		RenderableKeyword kwd = renderableKeywords().enumeration(parser.argc(0));
+		if (!renderableKeywords().validNArgs(kwd, parser.nArgs()-1)) return false;
+
+		// All OK, so process the keyword
+		switch (kwd)
 		{
 			// Colour alpha control
 			case (BaseViewer::ColourAlphaIsGlobalKeyword):
@@ -474,7 +439,7 @@ bool BaseViewer::readRenderableBlock(LineParser& parser, Renderable* renderable,
 				alpha = parser.argd(1);
 				if ((alpha < 0.0) || (alpha > 1.0))
 				{
-					Messenger::warn("Alpha value (%f) is out of range for %s keyword - it will be reset to 1.0.\n", alpha, renderableKeyword(renderableKwd));
+					Messenger::warn("Alpha value (%f) is out of range for %s keyword - it will be reset to 1.0.\n", alpha, renderableKeywords().keyword(kwd));
 					alpha = 1.0;
 				}
 				colourDefinition.setGlobalAlpha(alpha);
@@ -540,7 +505,7 @@ bool BaseViewer::readRenderableBlock(LineParser& parser, Renderable* renderable,
 			case (BaseViewer::TransformXKeyword):
 			case (BaseViewer::TransformYKeyword):
 			case (BaseViewer::TransformZKeyword):
-				xyz = renderableKwd - BaseViewer::TransformXKeyword;
+				xyz = kwd - BaseViewer::TransformXKeyword;
 				renderable->setTransformEnabled(xyz, parser.argb(1));
 				renderable->setTransformEquation(xyz,  parser.argc(2));
 				break;
@@ -573,55 +538,55 @@ bool BaseViewer::writeRenderableBlock(LineParser& parser, Renderable* renderable
 	for (int n=0; n<indentLevel*2; ++n) indent[n] = ' ';
 	indent[indentLevel*2] = '\0';
 
-	parser.writeLineF("%s%s  %s  '%s'  '%s'  '%s'\n", indent, BaseViewer::inputBlock(BaseViewer::RenderableBlock), Renderable::renderableType(renderable->type()), renderable->objectTag(), renderable->name());
+	parser.writeLineF("%s%s  %s  '%s'  '%s'  '%s'\n", indent, BaseViewer::inputBlockKeywords().keyword(BaseViewer::RenderableBlock), Renderable::renderableType(renderable->type()), renderable->objectTag(), renderable->name());
 
 	// -- Transforms
-	parser.writeLineF("%s  %s %s %s\n", indent, BaseViewer::renderableKeyword(BaseViewer::TransformXKeyword), DissolveSys::btoa(renderable->transformEnabled(0)), renderable->transformEquation(0));
-	parser.writeLineF("%s  %s %s %s\n", indent, BaseViewer::renderableKeyword(BaseViewer::TransformYKeyword), DissolveSys::btoa(renderable->transformEnabled(1)), renderable->transformEquation(1));
-	parser.writeLineF("%s  %s %s %s\n", indent, BaseViewer::renderableKeyword(BaseViewer::TransformZKeyword), DissolveSys::btoa(renderable->transformEnabled(2)), renderable->transformEquation(2));
+	parser.writeLineF("%s  %s %s %s\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::TransformXKeyword), DissolveSys::btoa(renderable->transformEnabled(0)), renderable->transformEquation(0));
+	parser.writeLineF("%s  %s %s %s\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::TransformYKeyword), DissolveSys::btoa(renderable->transformEnabled(1)), renderable->transformEquation(1));
+	parser.writeLineF("%s  %s %s %s\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::TransformZKeyword), DissolveSys::btoa(renderable->transformEnabled(2)), renderable->transformEquation(2));
 
 	// Colour Setup
 	const ColourDefinition& colourDef = renderable->colour();
-	parser.writeLineF("%s  %s '%s'\n", indent, BaseViewer::renderableKeyword(BaseViewer::ColourStyleKeyword), ColourDefinition::colourStyle(colourDef.style()));
+	parser.writeLineF("%s  %s '%s'\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::ColourStyleKeyword), ColourDefinition::colourStyle(colourDef.style()));
 	QColor colour;
 	double value;
 	// -- Single Colour
 	colour = colourDef.singleColour();
-	parser.writeLineF("%s  %s %i %i %i %i\n", indent, BaseViewer::renderableKeyword(BaseViewer::ColourSingleKeyword), colour.red(), colour.green(), colour.blue(), colour.alpha());
+	parser.writeLineF("%s  %s %i %i %i %i\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::ColourSingleKeyword), colour.red(), colour.green(), colour.blue(), colour.alpha());
 	// -- RGB Gradient
 	colour = colourDef.rgbGradientStartColour();
 	value = colourDef.rgbGradientStartValue();
-	parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, BaseViewer::renderableKeyword(BaseViewer::ColourRGBGradientStartKeyword), value, colour.red(), colour.green(), colour.blue(), colour.alpha());
+	parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::ColourRGBGradientStartKeyword), value, colour.red(), colour.green(), colour.blue(), colour.alpha());
 	colour = colourDef.rgbGradientEndColour();
 	value = colourDef.rgbGradientEndValue();
-	parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, BaseViewer::renderableKeyword(BaseViewer::ColourRGBGradientEndKeyword), value, colour.red(), colour.green(), colour.blue(), colour.alpha());
+	parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::ColourRGBGradientEndKeyword), value, colour.red(), colour.green(), colour.blue(), colour.alpha());
 	// -- HSV Gradient
 	colour = colourDef.hsvGradientStartColour();
 	value = colourDef.hsvGradientStartValue();
-	parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, BaseViewer::renderableKeyword(BaseViewer::ColourHSVGradientStartKeyword), value, colour.hue(), colour.saturation(), colour.value(), colour.alpha());
+	parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::ColourHSVGradientStartKeyword), value, colour.hue(), colour.saturation(), colour.value(), colour.alpha());
 	colour = colourDef.hsvGradientEndColour();
 	value = colourDef.hsvGradientEndValue();
-	parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, BaseViewer::renderableKeyword(BaseViewer::ColourHSVGradientEndKeyword), value, colour.hue(), colour.saturation(), colour.value(), colour.alpha());
+	parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::ColourHSVGradientEndKeyword), value, colour.hue(), colour.saturation(), colour.value(), colour.alpha());
 	// -- Custom Gradient
 	const Array<ColourScalePoint> customGradient = colourDef.customGradientPoints();
 	for (int n=0; n<customGradient.nItems(); ++n)
 	{
 		const ColourScalePoint& point = customGradient.constAt(n);
-		parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, BaseViewer::renderableKeyword(BaseViewer::ColourCustomGradientKeyword), point.value(), point.colour().red(), point.colour().green(), point.colour().blue(), point.colour().alpha());
+		parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::ColourCustomGradientKeyword), point.value(), point.colour().red(), point.colour().green(), point.colour().blue(), point.colour().alpha());
 	}
 	// -- Alpha control
-	parser.writeLineF("%s  %s %s\n", indent, BaseViewer::renderableKeyword(BaseViewer::ColourAlphaIsGlobalKeyword), DissolveSys::btoa(colourDef.useGlobalAlpha()));
-	parser.writeLineF("%s  %s %f\n", indent, BaseViewer::renderableKeyword(BaseViewer::ColourGlobalAlphaKeyword), colourDef.globalAlpha());
+	parser.writeLineF("%s  %s %s\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::ColourAlphaIsGlobalKeyword), DissolveSys::btoa(colourDef.useGlobalAlpha()));
+	parser.writeLineF("%s  %s %f\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::ColourGlobalAlphaKeyword), colourDef.globalAlpha());
 
 	// Display
-	parser.writeLineF("%s  %s %f '%s'\n", indent, BaseViewer::renderableKeyword(BaseViewer::LineStyleKeyword), renderable->lineStyle().width(), LineStipple::stipple[renderable->lineStyle().stipple()].name);
-	parser.writeLineF("%s  %s %s\n", indent, BaseViewer::renderableKeyword(BaseViewer::StyleKeyword), renderable->displayStyle(renderable->displayStyle()));
-	parser.writeLineF("%s  %s %s\n", indent, BaseViewer::renderableKeyword(BaseViewer::VisibleKeyword), DissolveSys::btoa(renderable->isVisible()));
+	parser.writeLineF("%s  %s %f '%s'\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::LineStyleKeyword), renderable->lineStyle().width(), LineStipple::stipple[renderable->lineStyle().stipple()].name);
+	parser.writeLineF("%s  %s %s\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::StyleKeyword), renderable->displayStyle(renderable->displayStyle()));
+	parser.writeLineF("%s  %s %s\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::VisibleKeyword), DissolveSys::btoa(renderable->isVisible()));
 
 	// Write Group if set
-	if (renderable->group()) parser.writeLineF("%s  %s '%s'\n", indent, BaseViewer::renderableKeyword(BaseViewer::GroupKeyword), renderable->group()->name());
+	if (renderable->group()) parser.writeLineF("%s  %s '%s'\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::GroupKeyword), renderable->group()->name());
 
-	parser.writeLineF("%s%s\n", indent, BaseViewer::renderableKeyword(BaseViewer::EndRenderableKeyword));
+	parser.writeLineF("%s%s\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::EndRenderableKeyword));
 
 	return true;
 }
@@ -655,14 +620,13 @@ bool BaseViewer::readRenderableGroupBlock(LineParser& parser, RenderableGroup* g
 		// Get line from file
 		if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success) return false;
 
-		// Get keyword and check number of arguments provided
-		const EnumOption& groupKwd = renderableGroupKeywords().option(parser.argc(0));
-		if (groupKwd.isValid() && (groupKwd.nArgs() > (parser.nArgs()-1)))
-		{
-			Messenger::error("RenderableGroup keyword '%s' requires %i arguments, but only %i have been provided.\n", groupKwd.keyword(), groupKwd.nArgs(), parser.nArgs()-1);
-			return false;
-		}
-		switch (groupKwd.enumeration())
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!renderableGroupKeywords().isValid(parser.argc(0))) return renderableGroupKeywords().errorAndPrintValid(parser.argc(0));
+		BaseViewer::RenderableGroupKeyword kwd = renderableGroupKeywords().enumeration(parser.argc(0));
+		if (!renderableGroupKeywords().validNArgs(kwd, parser.nArgs()-1)) return false;
+
+		// All OK, so process the keyword
+		switch (kwd)
 		{
 			// End input block
 			case (BaseViewer::EndRenderableGroupKeyword):
@@ -679,7 +643,7 @@ bool BaseViewer::readRenderableGroupBlock(LineParser& parser, RenderableGroup* g
 				break;
 			// Unrecognised Keyword
 			default:
-				Messenger::warn("Unrecognised renderable keyword: %s\n", parser.argc(0));
+				Messenger::error("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BaseViewer::inputBlockKeywords().keyword(BaseViewer::RenderableBlock), renderableGroupKeywords().keyword(kwd));
 				return false;
 				break;
 		}
@@ -702,7 +666,7 @@ bool BaseViewer::writeRenderableGroupBlock(LineParser& parser, RenderableGroup* 
 	for (int n=0; n<indentLevel*2; ++n) indent[n] = ' ';
 	indent[indentLevel*2] = '\0';
 
-	parser.writeLineF("%s%s  %s  '%s'\n", indent, BaseViewer::inputBlock(BaseViewer::RenderableGroupBlock), group->name());
+	parser.writeLineF("%s%s  %s  '%s'\n", indent, BaseViewer::inputBlockKeywords().keyword(BaseViewer::RenderableGroupBlock), group->name());
 
 	
 	parser.writeLineF("%s  %s %s\n", indent, renderableGroupKeywords().keyword(BaseViewer::GroupVisibleKeyword), DissolveSys::btoa(group->isVisible()));
@@ -716,51 +680,31 @@ bool BaseViewer::writeRenderableGroupBlock(LineParser& parser, RenderableGroup* 
  * View Keywords
  */
 
-// View Block Keywords
-const char* BaseViewerViewBlockKeywords[] = {
-	"AutoFollowType", "AutoPositionTitles", "Axis",
-	"BoundingBox", "BoundingBoxPlaneY",
-	"EndView",
-	"FlatLabels",
-	"LabelPointSize",
-	"Perspective",
-	"RotationX", "RotationY", "RotationZ",
-	"TitlePointSize", "Translation",
-	"UseBestFlatView",
-	"VerticalShift", "ViewType"
-};
-
-// View Block NArguments
-int BaseViewerViewKeywordNArguments[] = {
-	1, 1, 1, 
-	1, 1,
-	0,
-	1,
-	1,
-	1,
-	3, 3, 3,
-	1, 3,
-	1,
-	1, 1
-};
-
-// Convert text string to ViewKeyword
-BaseViewer::ViewKeyword BaseViewer::viewKeyword(const char* s)
+// Return enum options for ViewKeyword
+EnumOptions<BaseViewer::ViewKeyword> BaseViewer::viewKeywords()
 {
-	for (int n=0; n<nViewKeywords; ++n) if (DissolveSys::sameString(s, BaseViewerViewBlockKeywords[n])) return (BaseViewer::ViewKeyword) n;
-	return nViewKeywords;
-}
+	static EnumOptionsList ViewKeywords = EnumOptionsList() <<
+		EnumOption(BaseViewer::AutoFollowTypeKeyword, 		"AutoFollowType",		1) <<
+		EnumOption(BaseViewer::AutoPositionTitlesKeyword, 	"AutoPositionTitles",		1) <<
+		EnumOption(BaseViewer::AxisBlockKeyword,		"Axis",				1) <<
+		EnumOption(BaseViewer::BoundingBoxKeyword,		"BoundingBox",			1) <<
+		EnumOption(BaseViewer::BoundingBoxPlaneYKeyword,	"BoundingBoxPlaneY",		1) <<
+		EnumOption(BaseViewer::EndViewKeyword,			"EndView") <<
+		EnumOption(BaseViewer::FlatLabelsKeyword,		"FlatLabels",			1) <<
+		EnumOption(BaseViewer::LabelPointSizeKeyword,		"LabelPointSize",		1) <<
+		EnumOption(BaseViewer::PerspectiveKeyword,		"Perspective",			1) <<
+		EnumOption(BaseViewer::RotationXKeyword,		"RotationX",			3) <<
+		EnumOption(BaseViewer::RotationYKeyword, 		"RotationY",			3) <<
+		EnumOption(BaseViewer::RotationZKeyword, 		"RotationZ",			3) <<
+		EnumOption(BaseViewer::TitlePointSizeKeyword, 		"TitlePointSize",		1) <<
+		EnumOption(BaseViewer::TranslationKeyword, 		"Translation",			3) <<
+		EnumOption(BaseViewer::UseBestFlatViewKeyword, 		"UseBestFlatView",		1) <<
+		EnumOption(BaseViewer::VerticalShiftKeyword, 		"VerticalShift",		1) <<
+		EnumOption(BaseViewer::ViewTypeKeyword, 		"ViewType",			1);
 
-// Convert ViewKeyword to text string
-const char* BaseViewer::viewKeyword(BaseViewer::ViewKeyword kwd)
-{
-	return BaseViewerViewBlockKeywords[kwd];
-}
+	static EnumOptions<BaseViewer::ViewKeyword> options("ViewKeyword", ViewKeywords);
 
-// Return minimum number of expected arguments
-int BaseViewer::viewKeywordNArguments(BaseViewer::ViewKeyword kwd)
-{
-	return BaseViewerViewKeywordNArguments[kwd];
+	return options;
 }
 
 // Read ViewBlock keywords
@@ -776,14 +720,13 @@ bool BaseViewer::readViewBlock(LineParser& parser, bool strictBlockEnd)
 		// Get line from file
 		if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success) return false;
 
-		// Get keyword and check number of arguments provided
-		BaseViewer::ViewKeyword viewKwd = BaseViewer::viewKeyword(parser.argc(0));
-		if ((viewKwd != BaseViewer::nViewKeywords) && (BaseViewer::viewKeywordNArguments(viewKwd) > (parser.nArgs()-1)))
-		{
-			Messenger::print("Error : View keyword '%s' requires %i arguments, but only %i have been provided.\n", BaseViewer::viewKeyword(viewKwd), BaseViewer::viewKeywordNArguments(viewKwd), parser.nArgs()-1);
-			return false;
-		}
-		switch (viewKwd)
+		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+		if (!viewKeywords().isValid(parser.argc(0))) return viewKeywords().errorAndPrintValid(parser.argc(0));
+		ViewKeyword kwd = viewKeywords().enumeration(parser.argc(0));
+		if (!viewKeywords().validNArgs(kwd, parser.nArgs()-1)) return false;
+
+		// All OK, so process the keyword
+		switch (kwd)
 		{
 			// Auto-follow type
 			case (BaseViewer::AutoFollowTypeKeyword):
@@ -822,7 +765,7 @@ bool BaseViewer::readViewBlock(LineParser& parser, bool strictBlockEnd)
 			case (BaseViewer::RotationXKeyword):
 			case (BaseViewer::RotationYKeyword):
 			case (BaseViewer::RotationZKeyword):
-				xyz = viewKwd - BaseViewer::RotationXKeyword;
+				xyz = kwd - BaseViewer::RotationXKeyword;
 				view_.setViewRotationColumn(xyz, parser.argd(1), parser.argd(2), parser.argd(3));
 				break;
 			// Perspective
@@ -877,24 +820,24 @@ bool BaseViewer::readViewBlock(LineParser& parser, bool strictBlockEnd)
 // Write ViewBlock keywords
 bool BaseViewer::writeViewBlock(LineParser& parser)
 {
-	parser.writeLineF("  %s\n", BaseViewer::inputBlock(BaseViewer::ViewBlock));
-	parser.writeLineF("    %s %s\n", BaseViewer::viewKeyword(BaseViewer::AutoFollowTypeKeyword), View::autoFollowType(view_.autoFollowType()));
-	parser.writeLineF("    %s %s\n", BaseViewer::viewKeyword(BaseViewer::AutoPositionTitlesKeyword), DissolveSys::btoa(view_.axes().autoPositionTitles()));
+	parser.writeLineF("  %s\n", BaseViewer::inputBlockKeywords().keyword(BaseViewer::ViewBlock));
+	parser.writeLineF("    %s %s\n", BaseViewer::viewKeywords().keyword(BaseViewer::AutoFollowTypeKeyword), View::autoFollowType(view_.autoFollowType()));
+	parser.writeLineF("    %s %s\n", BaseViewer::viewKeywords().keyword(BaseViewer::AutoPositionTitlesKeyword), DissolveSys::btoa(view_.axes().autoPositionTitles()));
 	for (int axis=0; axis < 3; ++axis) writeAxisBlock(parser, view_.axes(), axis);
-	parser.writeLineF("    %s %s\n", BaseViewer::viewKeyword(BaseViewer::FlatLabelsKeyword), DissolveSys::btoa(view_.flatLabelsIn3D()));
-	parser.writeLineF("    %s %f\n", BaseViewer::viewKeyword(BaseViewer::LabelPointSizeKeyword), view_.labelPointSize());
-	parser.writeLineF("    %s %f\n", BaseViewer::viewKeyword(BaseViewer::TitlePointSizeKeyword), view_.titlePointSize());
+	parser.writeLineF("    %s %s\n", BaseViewer::viewKeywords().keyword(BaseViewer::FlatLabelsKeyword), DissolveSys::btoa(view_.flatLabelsIn3D()));
+	parser.writeLineF("    %s %f\n", BaseViewer::viewKeywords().keyword(BaseViewer::LabelPointSizeKeyword), view_.labelPointSize());
+	parser.writeLineF("    %s %f\n", BaseViewer::viewKeywords().keyword(BaseViewer::TitlePointSizeKeyword), view_.titlePointSize());
 	Matrix4 mat = view_.viewRotation();
 	Vec3<double> trans = view_.viewTranslation();
-	parser.writeLineF("    %s %f %f %f\n", BaseViewer::viewKeyword(BaseViewer::RotationXKeyword), mat[0], mat[1], mat[2]);
-	parser.writeLineF("    %s %f %f %f\n", BaseViewer::viewKeyword(BaseViewer::RotationYKeyword), mat[4], mat[5], mat[6]);
-	parser.writeLineF("    %s %f %f %f\n", BaseViewer::viewKeyword(BaseViewer::RotationZKeyword), mat[8], mat[9], mat[10]);
-	parser.writeLineF("    %s %f %f %f\n", BaseViewer::viewKeyword(BaseViewer::TranslationKeyword), trans.x, trans.y, trans.z);
-	parser.writeLineF("    %s %s\n", BaseViewer::viewKeyword(BaseViewer::PerspectiveKeyword), DissolveSys::btoa(view_.hasPerspective()));
-	parser.writeLineF("    %s %s\n", BaseViewer::viewKeyword(BaseViewer::UseBestFlatViewKeyword), DissolveSys::btoa(view_.axes().useBestFlatView()));
-	parser.writeLineF("    %s %i\n", BaseViewer::viewKeyword(BaseViewer::VerticalShiftKeyword), groupManager_.verticalShiftAmount());
-	parser.writeLineF("    %s '%s'\n", BaseViewer::viewKeyword(BaseViewer::ViewTypeKeyword), View::viewType(view_.viewType()));
-	parser.writeLineF("  %s\n", BaseViewer::viewKeyword(BaseViewer::EndViewKeyword));
+	parser.writeLineF("    %s %f %f %f\n", BaseViewer::viewKeywords().keyword(BaseViewer::RotationXKeyword), mat[0], mat[1], mat[2]);
+	parser.writeLineF("    %s %f %f %f\n", BaseViewer::viewKeywords().keyword(BaseViewer::RotationYKeyword), mat[4], mat[5], mat[6]);
+	parser.writeLineF("    %s %f %f %f\n", BaseViewer::viewKeywords().keyword(BaseViewer::RotationZKeyword), mat[8], mat[9], mat[10]);
+	parser.writeLineF("    %s %f %f %f\n", BaseViewer::viewKeywords().keyword(BaseViewer::TranslationKeyword), trans.x, trans.y, trans.z);
+	parser.writeLineF("    %s %s\n", BaseViewer::viewKeywords().keyword(BaseViewer::PerspectiveKeyword), DissolveSys::btoa(view_.hasPerspective()));
+	parser.writeLineF("    %s %s\n", BaseViewer::viewKeywords().keyword(BaseViewer::UseBestFlatViewKeyword), DissolveSys::btoa(view_.axes().useBestFlatView()));
+	parser.writeLineF("    %s %i\n", BaseViewer::viewKeywords().keyword(BaseViewer::VerticalShiftKeyword), groupManager_.verticalShiftAmount());
+	parser.writeLineF("    %s '%s'\n", BaseViewer::viewKeywords().keyword(BaseViewer::ViewTypeKeyword), View::viewType(view_.viewType()));
+	parser.writeLineF("  %s\n", BaseViewer::viewKeywords().keyword(BaseViewer::EndViewKeyword));
 
 	return true;
 }

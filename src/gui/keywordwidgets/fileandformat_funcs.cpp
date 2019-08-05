@@ -31,16 +31,16 @@
 #include <QFileInfo>
 
 // Constructor
-FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const Dissolve& dissolve, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QWidget(parent), dissolve_(dissolve), KeywordWidgetBase(coreData, moduleData, prefix)
+FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget* parent, KeywordBase* keyword, const Dissolve& dissolve, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QWidget(parent), dissolve_(dissolve), KeywordWidgetBase(coreData, moduleData, prefix)
 {
 	// Create and set up our UI
 	ui.setupUi(this);
 
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<FileAndFormatModuleKeyword*>(keyword);
+	keyword_ = dynamic_cast<FileAndFormatKeyword*>(keyword);
 	if (!keyword_)
 	{
-		Messenger::error("Couldn't cast base module keyword '%s' into FileAndFormatModuleKeyword.\n", keyword->keyword());
+		Messenger::error("Couldn't cast base module keyword '%s' into FileAndFormatKeyword.\n", keyword->keyword());
 		return;
 	}
 

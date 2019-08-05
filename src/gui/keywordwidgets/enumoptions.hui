@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_ENUMOPTIONSKEYWORDWIDGET_H
 #define DISSOLVE_ENUMOPTIONSKEYWORDWIDGET_H
 
-#include "module/keywordtypes/enumoptions.h"
+#include "keywords/enumoptions.h"
 #include "gui/keywordwidgets/base.h"
 #include <QComboBox>
 
@@ -36,7 +36,7 @@ class EnumOptionsKeywordWidget : public QComboBox, public KeywordWidgetBase
 
 	public:
 	// Constructor
-	EnumOptionsKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
+	EnumOptionsKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
 
 
 	/*
@@ -44,7 +44,7 @@ class EnumOptionsKeywordWidget : public QComboBox, public KeywordWidgetBase
 	 */
 	private:
 	// Associated keyword
-	EnumOptionsBaseModuleKeyword* keyword_;
+	EnumOptionsBaseKeyword* keyword_;
 
 
 	/*

@@ -24,11 +24,11 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-IntegerKeywordWidget::IntegerKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QSpinBox(parent), KeywordWidgetBase(coreData, moduleData, prefix)
+IntegerKeywordWidget::IntegerKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QSpinBox(parent), KeywordWidgetBase(coreData, moduleData, prefix)
 {
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<IntegerModuleKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into IntegerModuleKeyword.\n", keyword->keyword());
+	keyword_ = dynamic_cast<IntegerKeyword*>(keyword);
+	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into IntegerKeyword.\n", keyword->keyword());
 	else
 	{
 		// Set minimum and maximum values

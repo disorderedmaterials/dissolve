@@ -20,19 +20,19 @@
 */
 
 #include "modules/import/import.h"
-#include "module/keywordtypes.h"
+#include "keywords/types.h"
 
 // Set up keywords for Module
 void ImportModule::setUpKeywords()
 {
 	// Trajectory Import
-	ModuleKeywordGroup* group = addKeywordGroup("Trajectory");
-	group->add(new BoolModuleKeyword(true), "ReadTrajectory", "Read sequential frames from a trajectory file", "<True|False>");
-	group->add(new FileAndFormatModuleKeyword(trajectoryFile_), "TrajectoryFile", "Source trajectory file for frames (if ReadTrajectory == True)");
+	KeywordGroup* group = addKeywordGroup("Trajectory");
+	group->add(new BoolKeyword(true), "ReadTrajectory", "Read sequential frames from a trajectory file", "<True|False>");
+	group->add(new FileAndFormatKeyword(trajectoryFile_), "TrajectoryFile", "Source trajectory file for frames (if ReadTrajectory == True)");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int ImportModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
+int ImportModule::parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
 	return -1;
 }

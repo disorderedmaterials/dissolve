@@ -20,16 +20,16 @@
 */
 
 #include "modules/test/test.h"
-#include "module/keywordtypes.h"
+#include "keywords/types.h"
 
 // Set up keywords for Module
 void TestModule::setUpKeywords()
 {
-// 	keywords_.add(new BoolModuleKeyword(true), "ExampleKeyword", "Example keyword description", "<args>");
+// 	keywords_.add(new BoolKeyword(true), "ExampleKeyword", "Example keyword description", "<args>");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int TestModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
+int TestModule::parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
 	return -1;
 }

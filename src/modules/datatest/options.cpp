@@ -20,23 +20,23 @@
 */
 
 #include "modules/datatest/datatest.h"
-#include "module/keywordtypes.h"
+#include "keywords/types.h"
 #include "math/error.h"
 
 // Set up keywords for Module
 void DataTestModule::setUpKeywords()
 {
 	// Test
-	ModuleKeywordGroup* group = addKeywordGroup("Test");
-	group->add(new Data1DStoreModuleKeyword(test1DData_), "Data1D", "Specify one-dimensional test reference data", "<target> <fileformat> <filename> [options...]");
-	group->add(new Data2DStoreModuleKeyword(test2DData_), "Data2D", "Specify two-dimensional test reference data", "<target> <fileformat> <filename> [options...]");
-	group->add(new EnumOptionsModuleKeyword<Error::ErrorType>(Error::errorTypes() = Error::PercentError), "ErrorType", "Type of error calculation to use");
-	group->add(new ModuleReferenceListModuleKeyword(targetModule_, 1), "Target", "Module containing target data", "<Module>");
-	group->add(new DoubleModuleKeyword(0.1, 1.0e-5), "Threshold", "Test threshold (%%error) above which test fails", "<threshold[0.1]>");
+	KeywordGroup* group = addKeywordGroup("Test");
+	group->add(new Data1DStoreKeyword(test1DData_), "Data1D", "Specify one-dimensional test reference data", "<target> <fileformat> <filename> [options...]");
+	group->add(new Data2DStoreKeyword(test2DData_), "Data2D", "Specify two-dimensional test reference data", "<target> <fileformat> <filename> [options...]");
+	group->add(new EnumOptionsKeyword<Error::ErrorType>(Error::errorTypes() = Error::PercentError), "ErrorType", "Type of error calculation to use");
+	group->add(new ModuleReferenceListKeyword(targetModule_, 1), "Target", "Module containing target data", "<Module>");
+	group->add(new DoubleKeyword(0.1, 1.0e-5), "Threshold", "Test threshold (%%error) above which test fails", "<threshold[0.1]>");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int DataTestModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
+int DataTestModule::parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
 	return -1;
 }

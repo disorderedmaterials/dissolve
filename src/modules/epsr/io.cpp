@@ -20,7 +20,7 @@
 */
 
 #include "main/dissolve.h"
-#include "module/keywordtypes.h"
+#include "keywords/types.h"
 #include "modules/epsr/epsr.h"
 #include "classes/atomtype.h"
 #include "genericitems/listhelper.h"

@@ -354,16 +354,11 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 		ViewBlock,
 		nInputBlocks
 	};
-	// Convert text string to InputBlock
-	InputBlock inputBlock(const char* s);
-	// Convert InputBlock to text string
-	const char* inputBlock(InputBlock id);
-	// Print list of valid keywords for InputBlock specified
-	void printValidKeywords(InputBlock block);
+	// Return enum option info for InputBlock
+	EnumOptions<BaseViewer::InputBlock> inputBlockKeywords();
 	// Parse main input blocks through specified parser
 	bool parseInputBlocks(LineParser& parser);
 
-	private:
 	// Axis Block Keyword Enum
 	enum AxisKeyword
 	{
@@ -393,18 +388,13 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 		VisibleAxisKeyword,
 		nAxisKeywords
 	};
-	// Convert text string to AxisKeyword
-	AxisKeyword axisKeyword(const char* s);
-	// Convert AxisKeyword to text string
-	const char* axisKeyword(AxisKeyword kwd);
-	// Return minimum number of expected arguments
-	int axisKeywordNArguments(AxisKeyword kwd);
+	// Return enum option info for AxisKeyword
+	EnumOptions<BaseViewer::AxisKeyword> axisKeywords();
 	// Read AxisBlock keywords
 	bool readAxisBlock(LineParser& parser, Axes& axes, int axis, bool strictBlockEnd = true);
 	// Write AxisBlock keywords
 	bool writeAxisBlock(LineParser& parser, Axes& axes, int axis);
 
-	private:
 	// Renderable Block Keyword Enum
 	enum RenderableKeyword
 	{
@@ -427,18 +417,13 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 		VisibleKeyword,
 		nRenderableKeywords
 	};
-	// Convert text string to RenderableKeyword
-	RenderableKeyword renderableKeyword(const char* s);
-	// Convert RenderableKeyword to text string
-	const char* renderableKeyword(RenderableKeyword kwd);
-	// Return minimum number of expected arguments
-	int renderableKeywordNArguments(RenderableKeyword kwd);
+	// Return enum option info for RenderableKeyword
+	EnumOptions<BaseViewer::RenderableKeyword> renderableKeywords();
 	// Read RenderableBlock keywords
 	bool readRenderableBlock(LineParser& parser, Renderable* renderable, bool strictBlockEnd = true);
 	// Write RenderableBlock keywords
 	bool writeRenderableBlock(LineParser& parser, Renderable* renderable, int indentLevel = 0);
 
-	public:
 	// RenderableGroup Block Keyword Enum
 	enum RenderableGroupKeyword
 	{
@@ -453,14 +438,11 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	};
 	// Return enum options for RenderableGroupKeyword
 	static EnumOptions<BaseViewer::RenderableGroupKeyword> renderableGroupKeywords();
-
-	private:
 	// Read RenderableGroup block keywords
 	bool readRenderableGroupBlock(LineParser& parser, RenderableGroup* group, bool strictBlockEnd = true);
 	// Write RenderableGroup block keywords
 	bool writeRenderableGroupBlock(LineParser& parser, RenderableGroup* group, int indentLevel = 0);
 
-	private:
 	// View Block Keyword Enum
 	enum ViewKeyword
 	{
@@ -483,12 +465,8 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 		ViewTypeKeyword,
 		nViewKeywords
 	};
-	// Convert text string to ViewKeyword
-	ViewKeyword viewKeyword(const char* s);
-	// Convert ViewKeyword to text string
-	const char* viewKeyword(ViewKeyword kwd);
-	// Return minimum number of expected arguments
-	int viewKeywordNArguments(ViewKeyword kwd);
+	// Return enum options for ViewKeyword
+	static EnumOptions<BaseViewer::ViewKeyword> viewKeywords();
 	// Read ViewBlock keywords
 	bool readViewBlock(LineParser& parser, bool strictBlockEnd = true);
 	// Write ViewBlock keywords

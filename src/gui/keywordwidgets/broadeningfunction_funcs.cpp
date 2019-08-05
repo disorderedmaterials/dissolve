@@ -26,7 +26,7 @@
 #include <QComboBox>
 
 // Constructor
-BroadeningFunctionKeywordWidget::BroadeningFunctionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : KeywordDropDown(this), KeywordWidgetBase(coreData, moduleData, prefix)
+BroadeningFunctionKeywordWidget::BroadeningFunctionKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : KeywordDropDown(this), KeywordWidgetBase(coreData, moduleData, prefix)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container
 	ui.setupUi(dropWidget());
@@ -52,8 +52,8 @@ BroadeningFunctionKeywordWidget::BroadeningFunctionKeywordWidget(QWidget* parent
 	connect(ui.Parameter5Spin, SIGNAL(valueChanged(double)), this, SLOT(parameterSpin_valueChanged(double)));
 
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<BroadeningFunctionModuleKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into BroadeningFunctionModuleKeyword.\n", keyword->keyword());
+	keyword_ = dynamic_cast<BroadeningFunctionKeyword*>(keyword);
+	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into BroadeningFunctionKeyword.\n", keyword->keyword());
 	else
 	{
 		// Set current information

@@ -24,7 +24,7 @@
 
 #include "gui/keywordwidgets/ui_speciesreferencelist.h"
 #include "gui/keywordwidgets/dropdown.h"
-#include "module/keywordtypes/speciesreferencelist.h"
+#include "keywords/speciesreferencelist.h"
 #include "gui/keywordwidgets/base.h"
 #include <QWidget>
 
@@ -38,7 +38,7 @@ class SpeciesReferenceListKeywordWidget: public KeywordDropDown, public KeywordW
 
 	public:
 	// Constructor
-	SpeciesReferenceListKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
+	SpeciesReferenceListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
         // Main form declaration
         Ui::SpeciesReferenceListWidget ui;
 
@@ -48,7 +48,7 @@ class SpeciesReferenceListKeywordWidget: public KeywordDropDown, public KeywordW
 	 */
 	private:
 	// Associated keyword
-	SpeciesReferenceListModuleKeyword* keyword_;
+	SpeciesReferenceListKeyword* keyword_;
 
 
 	/*

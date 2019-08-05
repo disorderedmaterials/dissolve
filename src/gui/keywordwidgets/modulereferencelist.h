@@ -24,7 +24,7 @@
 
 #include "gui/keywordwidgets/ui_modulereferencelist.h"
 #include "gui/keywordwidgets/dropdown.h"
-#include "module/keywordtypes/modulereferencelist.h"
+#include "keywords/modulereferencelist.h"
 #include "gui/keywordwidgets/base.h"
 #include <QWidget>
 
@@ -38,7 +38,7 @@ class ModuleReferenceListKeywordWidget: public KeywordDropDown, public KeywordWi
 
 	public:
 	// Constructor
-	ModuleReferenceListKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
+	ModuleReferenceListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
         // Main form declaration
         Ui::ModuleReferenceListWidget ui;
 
@@ -48,7 +48,7 @@ class ModuleReferenceListKeywordWidget: public KeywordDropDown, public KeywordWi
 	 */
 	private:
 	// Associated keyword
-	ModuleReferenceListModuleKeyword* keyword_;
+	ModuleReferenceListKeyword* keyword_;
 
 
 	/*

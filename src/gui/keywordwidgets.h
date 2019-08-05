@@ -30,7 +30,7 @@
 #include "gui/keywordwidgets/enumoptions.hui"
 #include "gui/keywordwidgets/fileandformat.h"
 #include "gui/keywordwidgets/integer.hui"
-#include "gui/keywordwidgets/isotopologuelist.h"
+#include "gui/keywordwidgets/isotopologuereferencelist.h"
 #include "gui/keywordwidgets/modulegroups.h"
 #include "gui/keywordwidgets/modulereferencelist.h"
 #include "gui/keywordwidgets/pairbroadeningfunction.h"

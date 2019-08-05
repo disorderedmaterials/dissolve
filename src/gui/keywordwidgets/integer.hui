@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_INTEGERKEYWORDWIDGET_H
 #define DISSOLVE_INTEGERKEYWORDWIDGET_H
 
-#include "module/keywordtypes/integer.h"
+#include "keywords/integer.h"
 #include "gui/keywordwidgets/base.h"
 #include <QSpinBox>
 
@@ -36,7 +36,7 @@ class IntegerKeywordWidget : public QSpinBox, public KeywordWidgetBase
 
 	public:
 	// Constructor
-	IntegerKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
+	IntegerKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
 
 
 	/*
@@ -44,7 +44,7 @@ class IntegerKeywordWidget : public QSpinBox, public KeywordWidgetBase
 	 */
 	private:
 	// Associated keyword
-	IntegerModuleKeyword* keyword_;
+	IntegerKeyword* keyword_;
 
 
 	/*

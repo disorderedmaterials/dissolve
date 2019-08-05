@@ -30,7 +30,7 @@
 #include <QString>
 
 // Constructor
-ModuleReferenceListKeywordWidget::ModuleReferenceListKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : KeywordDropDown(this), KeywordWidgetBase(coreData, moduleData, prefix)
+ModuleReferenceListKeywordWidget::ModuleReferenceListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : KeywordDropDown(this), KeywordWidgetBase(coreData, moduleData, prefix)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container
 	ui.setupUi(dropWidget());
@@ -39,8 +39,8 @@ ModuleReferenceListKeywordWidget::ModuleReferenceListKeywordWidget(QWidget* pare
 	connect(ui.SelectionList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(itemChanged(QListWidgetItem*)));
 
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<ModuleReferenceListModuleKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base module keyword into ModuleReferenceListModuleKeyword.\n");
+	keyword_ = dynamic_cast<ModuleReferenceListKeyword*>(keyword);
+	if (!keyword_) Messenger::error("Couldn't cast base module keyword into ModuleReferenceListKeyword.\n");
 	else
 	{
 		// Set current information
