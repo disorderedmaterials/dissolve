@@ -1,5 +1,5 @@
 /*
-	*** Module Keyword List
+	*** Keyword List
 	*** src/module/keywordlist.cpp
 	Copyright T. Youngs 2012-2019
 

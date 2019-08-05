@@ -23,7 +23,7 @@
 #define DISSOLVE_KEYWORDTYPES_H
 
 /*
- * This file should be included if the use of Module Keywords is required.
+ * This file should be included if the use of Keywords is required.
  * It simply includes all other derived classes and specialisations.
  */
 

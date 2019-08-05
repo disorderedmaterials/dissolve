@@ -1,5 +1,5 @@
 /*
-	*** Module Keyword List
+	*** Keyword List
 	*** src/module/keywordlist.h
 	Copyright T. Youngs 2012-2019
 
@@ -30,7 +30,7 @@
 // Forward Declarations
 class Module;
 
-// Module Keyword List
+// Keyword List
 class KeywordList
 {
 	public:

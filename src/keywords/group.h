@@ -1,5 +1,5 @@
 /*
-	*** Module Keyword Group
+	*** Keyword Group
 	*** src/module/keywordgroup.h
 	Copyright T. Youngs 2012-2019
 
@@ -30,7 +30,7 @@
 class KeywordBase;
 class KeywordList;
 
-// Module Keyword Group
+// Keyword Group
 class KeywordGroup : public ListItem<KeywordGroup>
 {
 	public:

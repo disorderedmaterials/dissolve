@@ -1,5 +1,5 @@
 /*
-	*** Module Keyword Group
+	*** Keyword Group
 	*** src/module/keywordgroup.cpp
 	Copyright T. Youngs 2012-2019
 

@@ -1,5 +1,5 @@
 /*
-	*** Module Keyword Base Class
+	*** Keyword Base Class
 	*** src/module/keywordbase.cpp
 	Copyright T. Youngs 2012-2019
 

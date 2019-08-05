@@ -1,5 +1,5 @@
 /*
-	*** Module Keyword Data
+	*** Keyword Data
 	*** src/module/keyworddata.h
 	Copyright T. Youngs 2012-2019
 
@@ -29,7 +29,7 @@
 class GenericList;
 class LineParser;
 
-// Module Keyword Interface
+// Keyword Interface
 template <class T> class KeywordData : public KeywordBase
 {
 	public:
