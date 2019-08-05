@@ -24,12 +24,12 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-CharStringModuleKeyword::CharStringModuleKeyword(CharString value) : ModuleKeywordData<CharString>(ModuleKeywordBase::CharStringData, value)
+CharStringKeyword::CharStringKeyword(CharString value) : KeywordData<CharString>(KeywordBase::CharStringData, value)
 {
 }
 
 // Destructor
-CharStringModuleKeyword::~CharStringModuleKeyword()
+CharStringKeyword::~CharStringKeyword()
 {
 }
 
@@ -38,19 +38,19 @@ CharStringModuleKeyword::~CharStringModuleKeyword()
  */
 
 // Return minimum number of arguments accepted
-int CharStringModuleKeyword::minArguments()
+int CharStringKeyword::minArguments()
 {
 	return 1;
 }
 
 // Return minimum number of arguments accepted
-int CharStringModuleKeyword::maxArguments()
+int CharStringKeyword::maxArguments()
 {
 	return 1;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool CharStringModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+bool CharStringKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	if (parser.hasArg(startArg))
 	{
@@ -63,7 +63,7 @@ bool CharStringModuleKeyword::read(LineParser& parser, int startArg, const CoreD
 }
 
 // Write keyword data to specified LineParser
-bool CharStringModuleKeyword::write(LineParser& parser, const char* prefix)
+bool CharStringKeyword::write(LineParser& parser, const char* prefix)
 {
 	return parser.writeLineF("%s%s  '%s'\n", prefix, keyword(), data_.get());
 }
@@ -73,25 +73,25 @@ bool CharStringModuleKeyword::write(LineParser& parser, const char* prefix)
  */
 
 // Return value (as bool)
-bool CharStringModuleKeyword::asBool()
+bool CharStringKeyword::asBool()
 {
 	return DissolveSys::atob(data_);
 }
 
 // Return value (as int)
-int CharStringModuleKeyword::asInt()
+int CharStringKeyword::asInt()
 {
 	return atoi(data_);
 }
 
 // Return value (as double)
-double CharStringModuleKeyword::asDouble()
+double CharStringKeyword::asDouble()
 {
 	return atof(data_);
 }
 
 // Return value (as string)
-const char* CharStringModuleKeyword::asString()
+const char* CharStringKeyword::asString()
 {
 	return data_;
 }

@@ -24,20 +24,20 @@
 #include "genericitems/listhelper.h"
 
 // Constructors
-DoubleModuleKeyword::DoubleModuleKeyword(double value) : ModuleKeywordData<double>(ModuleKeywordBase::DoubleData, value)
+DoubleKeyword::DoubleKeyword(double value) : KeywordData<double>(KeywordBase::DoubleData, value)
 {
 	minimumLimit_ = false;
 	maximumLimit_ = false;
 }
 
-DoubleModuleKeyword::DoubleModuleKeyword(double value, double minValue) : ModuleKeywordData<double>(ModuleKeywordBase::DoubleData, value)
+DoubleKeyword::DoubleKeyword(double value, double minValue) : KeywordData<double>(KeywordBase::DoubleData, value)
 {
 	minimumLimit_ = true;
 	min_ = minValue;
 	maximumLimit_ = false;
 }
 
-DoubleModuleKeyword::DoubleModuleKeyword(double value, double minValue, double maxValue) : ModuleKeywordData<double>(ModuleKeywordBase::DoubleData, value)
+DoubleKeyword::DoubleKeyword(double value, double minValue, double maxValue) : KeywordData<double>(KeywordBase::DoubleData, value)
 {
 	minimumLimit_ = true;
 	min_ = minValue;
@@ -46,7 +46,7 @@ DoubleModuleKeyword::DoubleModuleKeyword(double value, double minValue, double m
 }
 
 // Destructor
-DoubleModuleKeyword::~DoubleModuleKeyword()
+DoubleKeyword::~DoubleKeyword()
 {
 }
 
@@ -55,31 +55,31 @@ DoubleModuleKeyword::~DoubleModuleKeyword()
  */
 
 // Return whether a minimum validation limit has been set
-bool DoubleModuleKeyword::hasValidationMin()
+bool DoubleKeyword::hasValidationMin()
 {
 	return minimumLimit_;
 }
 
 // Return validation minimum limit
-double DoubleModuleKeyword::validationMin()
+double DoubleKeyword::validationMin()
 {
 	return min_;
 }
 
 // Return whether a maximum validation limit has been set
-bool DoubleModuleKeyword::hasValidationMax()
+bool DoubleKeyword::hasValidationMax()
 {
 	return maximumLimit_;
 }
 
 // Return validation maximum limit
-double DoubleModuleKeyword::validationMax()
+double DoubleKeyword::validationMax()
 {
 	return max_;
 }
 
 // Validate supplied value
-bool DoubleModuleKeyword::isValid(double value)
+bool DoubleKeyword::isValid(double value)
 {
 	// Check minimum limit
 	if (minimumLimit_)
@@ -101,19 +101,19 @@ bool DoubleModuleKeyword::isValid(double value)
  */
 
 // Return minimum number of arguments accepted
-int DoubleModuleKeyword::minArguments()
+int DoubleKeyword::minArguments()
 {
 	return 1;
 }
 
 // Return maximum number of arguments accepted
-int DoubleModuleKeyword::maxArguments()
+int DoubleKeyword::maxArguments()
 {
 	return 1;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool DoubleModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+bool DoubleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	if (parser.hasArg(startArg))
 	{
@@ -132,7 +132,7 @@ bool DoubleModuleKeyword::read(LineParser& parser, int startArg, const CoreData&
 }
 
 // Write keyword data to specified LineParser
-bool DoubleModuleKeyword::write(LineParser& parser, const char* prefix)
+bool DoubleKeyword::write(LineParser& parser, const char* prefix)
 {
 	return parser.writeLineF("%s%s  %12.5e\n", prefix, keyword(), data_);
 }
@@ -142,25 +142,25 @@ bool DoubleModuleKeyword::write(LineParser& parser, const char* prefix)
  */
 
 // Return value (as bool)
-bool DoubleModuleKeyword::asBool()
+bool DoubleKeyword::asBool()
 {
 	return data_;
 }
 
 // Return value (as int)
-int DoubleModuleKeyword::asInt()
+int DoubleKeyword::asInt()
 {
 	return data_;
 }
 
 // Return value (as double)
-double DoubleModuleKeyword::asDouble()
+double DoubleKeyword::asDouble()
 {
 	return data_;
 }
 
 // Return value (as string)
-const char* DoubleModuleKeyword::asString()
+const char* DoubleKeyword::asString()
 {
 	return DissolveSys::ftoa(data_);
 }

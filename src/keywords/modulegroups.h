@@ -31,13 +31,13 @@
 class ModuleGroups;
 
 // Keyword with ModuleGroups data
-class ModuleGroupsModuleKeyword : public ModuleKeywordData<ModuleGroups&>
+class ModuleGroupsKeyword : public KeywordData<ModuleGroups&>
 {
 	public:
 	// Constructor
-	ModuleGroupsModuleKeyword(ModuleGroups& groups);
+	ModuleGroupsKeyword(ModuleGroups& groups);
 	// Destructor
-	~ModuleGroupsModuleKeyword();
+	~ModuleGroupsKeyword();
 
 
 	/*

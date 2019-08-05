@@ -24,11 +24,11 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-DoubleKeywordWidget::DoubleKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : ExponentialSpin(parent), KeywordWidgetBase(coreData, moduleData, prefix)
+DoubleKeywordWidget::DoubleKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : ExponentialSpin(parent), KeywordWidgetBase(coreData, moduleData, prefix)
 {
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<DoubleModuleKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into DoubleModuleKeyword.\n", keyword->keyword());
+	keyword_ = dynamic_cast<DoubleKeyword*>(keyword);
+	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into DoubleKeyword.\n", keyword->keyword());
 	else
 	{
 		// Set minimum and maximum values

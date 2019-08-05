@@ -23,12 +23,12 @@
 #include "base/lineparser.h"
 
 // Constructor
-Data1DStoreModuleKeyword::Data1DStoreModuleKeyword(Data1DStore& data1DStore) : ModuleKeywordData<Data1DStore&>(ModuleKeywordBase::Data1DStoreData, data1DStore)
+Data1DStoreKeyword::Data1DStoreKeyword(Data1DStore& data1DStore) : KeywordData<Data1DStore&>(KeywordBase::Data1DStoreData, data1DStore)
 {
 }
 
 // Destructor
-Data1DStoreModuleKeyword::~Data1DStoreModuleKeyword()
+Data1DStoreKeyword::~Data1DStoreKeyword()
 {
 }
 
@@ -37,21 +37,21 @@ Data1DStoreModuleKeyword::~Data1DStoreModuleKeyword()
  */
 
 // Return minimum number of arguments accepted
-int Data1DStoreModuleKeyword::minArguments()
+int Data1DStoreKeyword::minArguments()
 {
 	// Must have reference data name and format as a minimum
 	return 2;
 }
 
 // Return maximum number of arguments accepted
-int Data1DStoreModuleKeyword::maxArguments()
+int Data1DStoreKeyword::maxArguments()
 {
 	// Filename, name of data, and other args
 	return 99;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool Data1DStoreModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+bool Data1DStoreKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	Messenger::print("Reading test data '%s' from file '%s' (format=%s)...\n", parser.argc(startArg), parser.argc(startArg+2), parser.argc(startArg+1));
 
@@ -67,7 +67,7 @@ bool Data1DStoreModuleKeyword::read(LineParser& parser, int startArg, const Core
 }
 
 // Write keyword data to specified LineParser
-bool Data1DStoreModuleKeyword::write(LineParser& parser, const char* prefix)
+bool Data1DStoreKeyword::write(LineParser& parser, const char* prefix)
 {
 	// Loop over list of one-dimensional data
 	RefDataListIterator<Data1D,Data1DImportFileFormat> dataIterator(data_.dataReferences());

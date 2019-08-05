@@ -36,7 +36,7 @@ class BoolKeywordWidget : public QCheckBox, public KeywordWidgetBase
 
 	public:
 	// Constructor
-	BoolKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
+	BoolKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
 
 
 	/*
@@ -44,7 +44,7 @@ class BoolKeywordWidget : public QCheckBox, public KeywordWidgetBase
 	 */
 	private:
 	// Associated keyword
-	BoolModuleKeyword* keyword_;
+	BoolKeyword* keyword_;
 
 
 	/*

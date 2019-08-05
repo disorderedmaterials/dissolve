@@ -26,27 +26,27 @@
 void MolShakeModule::setUpKeywords()
 {
 	// Calculation
-	ModuleKeywordGroup* group = addKeywordGroup("Calculation");
-	group->add(new DoubleModuleKeyword(-1.0), "CutoffDistance", "Interatomic cutoff distance to employ", "<rcut>");
-	group->add(new IntegerModuleKeyword(1), "ShakesPerMolecule", "Number of shakes per Molecule", "<n>");
-	group->add(new DoubleModuleKeyword(0.33), "TargetAcceptanceRate", "Target acceptance rate for Monte Carlo moves", "<rate (0.0 - 1.0)>");
+	KeywordGroup* group = addKeywordGroup("Calculation");
+	group->add(new DoubleKeyword(-1.0), "CutoffDistance", "Interatomic cutoff distance to employ", "<rcut>");
+	group->add(new IntegerKeyword(1), "ShakesPerMolecule", "Number of shakes per Molecule", "<n>");
+	group->add(new DoubleKeyword(0.33), "TargetAcceptanceRate", "Target acceptance rate for Monte Carlo moves", "<rate (0.0 - 1.0)>");
 
 	// Rotations
 	group = addKeywordGroup("Rotations");
-	group->add(new DoubleModuleKeyword(1.0), "RotationStepSize", "Step size for rotational component of Monte Carlo move (degrees)", "<stepsize>", GenericItem::InRestartFileFlag);
-	group->add(new DoubleModuleKeyword(0.01), "RotationStepSizeMin", "Minimum step size for rotations (degrees)", "<stepsize>");
-	group->add(new DoubleModuleKeyword(90.0), "RotationStepSizeMax", "Maximum step size for rotations (degrees)", "<stepsize>");
+	group->add(new DoubleKeyword(1.0), "RotationStepSize", "Step size for rotational component of Monte Carlo move (degrees)", "<stepsize>", GenericItem::InRestartFileFlag);
+	group->add(new DoubleKeyword(0.01), "RotationStepSizeMin", "Minimum step size for rotations (degrees)", "<stepsize>");
+	group->add(new DoubleKeyword(90.0), "RotationStepSizeMax", "Maximum step size for rotations (degrees)", "<stepsize>");
 
 
 	// Translations
 	group = addKeywordGroup("Translations");
-	group->add(new DoubleModuleKeyword(0.05), "TranslationStepSize", "Step size for translational component of Monte Carlo move (Angstroms)", "<stepsize>", GenericItem::InRestartFileFlag);
-	group->add(new DoubleModuleKeyword(0.001), "TranslationStepSizeMin", "Minimum step size for translations (Angstroms)", "<stepsize>");
-	group->add(new DoubleModuleKeyword(3.0), "TranslationStepSizeMax", "Maximum step size for translations (Angstroms)", "<stepsize>");
+	group->add(new DoubleKeyword(0.05), "TranslationStepSize", "Step size for translational component of Monte Carlo move (Angstroms)", "<stepsize>", GenericItem::InRestartFileFlag);
+	group->add(new DoubleKeyword(0.001), "TranslationStepSizeMin", "Minimum step size for translations (Angstroms)", "<stepsize>");
+	group->add(new DoubleKeyword(3.0), "TranslationStepSizeMax", "Maximum step size for translations (Angstroms)", "<stepsize>");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int MolShakeModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
+int MolShakeModule::parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
 	return -1;
 }

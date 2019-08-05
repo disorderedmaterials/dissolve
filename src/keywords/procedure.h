@@ -30,13 +30,13 @@
 /* none */
 
 // Keyword with Procedure data
-class ProcedureModuleKeyword : public ModuleKeywordData<Procedure&>
+class ProcedureKeyword : public KeywordData<Procedure&>
 {
 	public:
 	// Constructor
-	ProcedureModuleKeyword(Procedure& procedure);
+	ProcedureKeyword(Procedure& procedure);
 	// Destructor
-	~ProcedureModuleKeyword();
+	~ProcedureKeyword();
 
 
 	/*

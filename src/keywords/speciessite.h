@@ -30,13 +30,13 @@
 class SpeciesSite;
 
 // Keyword with Site Data
-class SpeciesSiteModuleKeyword : public ModuleKeywordData<SpeciesSite*>
+class SpeciesSiteKeyword : public KeywordData<SpeciesSite*>
 {
 	public:
 	// Constructor
-	SpeciesSiteModuleKeyword(SpeciesSite* site = NULL);
+	SpeciesSiteKeyword(SpeciesSite* site = NULL);
 	// Destructor
-	~SpeciesSiteModuleKeyword();
+	~SpeciesSiteKeyword();
 
 
 	/*

@@ -24,20 +24,20 @@
 #include "genericitems/listhelper.h"
 
 // Constructors
-IntegerModuleKeyword::IntegerModuleKeyword(int value) : ModuleKeywordData<int>(ModuleKeywordBase::IntegerData, value)
+IntegerKeyword::IntegerKeyword(int value) : KeywordData<int>(KeywordBase::IntegerData, value)
 {
 	minimumLimit_ = false;
 	maximumLimit_ = false;
 }
 
-IntegerModuleKeyword::IntegerModuleKeyword(int value, int minValue) : ModuleKeywordData<int>(ModuleKeywordBase::IntegerData, value)
+IntegerKeyword::IntegerKeyword(int value, int minValue) : KeywordData<int>(KeywordBase::IntegerData, value)
 {
 	minimumLimit_ = true;
 	min_ = minValue;
 	maximumLimit_ = false;
 }
 
-IntegerModuleKeyword::IntegerModuleKeyword(int value, int minValue, int maxValue) : ModuleKeywordData<int>(ModuleKeywordBase::IntegerData, value)
+IntegerKeyword::IntegerKeyword(int value, int minValue, int maxValue) : KeywordData<int>(KeywordBase::IntegerData, value)
 {
 	minimumLimit_ = true;
 	min_ = minValue;
@@ -46,7 +46,7 @@ IntegerModuleKeyword::IntegerModuleKeyword(int value, int minValue, int maxValue
 }
 
 // Destructor
-IntegerModuleKeyword::~IntegerModuleKeyword()
+IntegerKeyword::~IntegerKeyword()
 {
 }
 
@@ -55,31 +55,31 @@ IntegerModuleKeyword::~IntegerModuleKeyword()
  */
 
 // Return whether a minimum validation limit has been set
-bool IntegerModuleKeyword::hasValidationMin()
+bool IntegerKeyword::hasValidationMin()
 {
 	return minimumLimit_;
 }
 
 // Return validation minimum limit
-int IntegerModuleKeyword::validationMin()
+int IntegerKeyword::validationMin()
 {
 	return min_;
 }
 
 // Return whether a maximum validation limit has been set
-bool IntegerModuleKeyword::hasValidationMax()
+bool IntegerKeyword::hasValidationMax()
 {
 	return maximumLimit_;
 }
 
 // Return validation maximum limit
-int IntegerModuleKeyword::validationMax()
+int IntegerKeyword::validationMax()
 {
 	return max_;
 }
 
 // Validate supplied value
-bool IntegerModuleKeyword::isValid(int value)
+bool IntegerKeyword::isValid(int value)
 {
 	// Check minimum limit
 	if (minimumLimit_)
@@ -101,19 +101,19 @@ bool IntegerModuleKeyword::isValid(int value)
  */
 
 // Return minimum number of arguments accepted
-int IntegerModuleKeyword::minArguments()
+int IntegerKeyword::minArguments()
 {
 	return 1;
 }
 
 // Return maximum number of arguments accepted
-int IntegerModuleKeyword::maxArguments()
+int IntegerKeyword::maxArguments()
 {
 	return 1;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool IntegerModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+bool IntegerKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	if (parser.hasArg(startArg))
 	{
@@ -132,7 +132,7 @@ bool IntegerModuleKeyword::read(LineParser& parser, int startArg, const CoreData
 }
 
 // Write keyword data to specified LineParser
-bool IntegerModuleKeyword::write(LineParser& parser, const char* prefix)
+bool IntegerKeyword::write(LineParser& parser, const char* prefix)
 {
 	return parser.writeLineF("%s%s  %i\n", prefix, keyword(), data_);
 }
@@ -142,25 +142,25 @@ bool IntegerModuleKeyword::write(LineParser& parser, const char* prefix)
  */
 
 // Return value (as bool)
-bool IntegerModuleKeyword::asBool()
+bool IntegerKeyword::asBool()
 {
 	return data_;
 }
 
 // Return value (as int)
-int IntegerModuleKeyword::asInt()
+int IntegerKeyword::asInt()
 {
 	return data_;
 }
 
 // Return value (as double)
-double IntegerModuleKeyword::asDouble()
+double IntegerKeyword::asDouble()
 {
 	return data_*1.0;
 }
 
 // Return value (as string)
-const char* IntegerModuleKeyword::asString()
+const char* IntegerKeyword::asString()
 {
 	return DissolveSys::itoa(data_);
 }

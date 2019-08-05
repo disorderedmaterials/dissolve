@@ -29,15 +29,15 @@
 /* none */
 
 // Keyword with Integer Triplet Data
-class Vec3IntegerModuleKeyword : public ModuleKeywordData< Vec3<int> >
+class Vec3IntegerKeyword : public KeywordData< Vec3<int> >
 {
 	public:
 	// Constructors
-	Vec3IntegerModuleKeyword(Vec3<int> value);
-	Vec3IntegerModuleKeyword(Vec3<int> value, Vec3<int> minValue);
-	Vec3IntegerModuleKeyword(Vec3<int> value, Vec3<int> minValue, Vec3<int> maxValue);
+	Vec3IntegerKeyword(Vec3<int> value);
+	Vec3IntegerKeyword(Vec3<int> value, Vec3<int> minValue);
+	Vec3IntegerKeyword(Vec3<int> value, Vec3<int> minValue, Vec3<int> maxValue);
 	// Destructor
-	~Vec3IntegerModuleKeyword();
+	~Vec3IntegerKeyword();
 
 
 	/*

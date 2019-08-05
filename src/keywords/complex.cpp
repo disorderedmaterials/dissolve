@@ -22,14 +22,14 @@
 #include "keywords/complex.h"
 
 // Constructors
-ComplexModuleKeyword::ComplexModuleKeyword(int minArgs, int maxArgs) : ModuleKeywordData<int>(ModuleKeywordBase::ComplexData, 0)
+ComplexKeyword::ComplexKeyword(int minArgs, int maxArgs) : KeywordData<int>(KeywordBase::ComplexData, 0)
 {
 	minArguments_ = minArgs;
 	maxArguments_ = maxArgs;
 }
 
 // Destructor
-ComplexModuleKeyword::~ComplexModuleKeyword()
+ComplexKeyword::~ComplexKeyword()
 {
 }
 
@@ -38,7 +38,7 @@ ComplexModuleKeyword::~ComplexModuleKeyword()
  */
 
 // Validate supplied value
-bool ComplexModuleKeyword::isValid(int value)
+bool ComplexKeyword::isValid(int value)
 {
 	return false;
 }
@@ -48,26 +48,26 @@ bool ComplexModuleKeyword::isValid(int value)
  */
 
 // Return minimum number of arguments accepted
-int ComplexModuleKeyword::minArguments()
+int ComplexKeyword::minArguments()
 {
 	return minArguments_;
 }
 
 // Return maximum number of arguments accepted
-int ComplexModuleKeyword::maxArguments()
+int ComplexKeyword::maxArguments()
 {
 	return maxArguments_;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool ComplexModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+bool ComplexKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	return false;
 }
 
 // Write keyword data to specified LineParser
-bool ComplexModuleKeyword::write(LineParser& parser, const char* prefix)
+bool ComplexKeyword::write(LineParser& parser, const char* prefix)
 {
-	Messenger::print("Tried to write a ComplexModuleKeyword - remove this horrible class!\n");
+	Messenger::print("Tried to write a ComplexKeyword - remove this horrible class!\n");
 	return true;
 }

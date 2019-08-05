@@ -24,12 +24,12 @@
 #include "base/lineparser.h"
 
 // Constructor
-FileAndFormatModuleKeyword::FileAndFormatModuleKeyword(FileAndFormat& fileAndFormat) : ModuleKeywordData<FileAndFormat&>(ModuleKeywordBase::FileAndFormatData, fileAndFormat)
+FileAndFormatKeyword::FileAndFormatKeyword(FileAndFormat& fileAndFormat) : KeywordData<FileAndFormat&>(KeywordBase::FileAndFormatData, fileAndFormat)
 {
 }
 
 // Destructor
-FileAndFormatModuleKeyword::~FileAndFormatModuleKeyword()
+FileAndFormatKeyword::~FileAndFormatKeyword()
 {
 }
 
@@ -38,21 +38,21 @@ FileAndFormatModuleKeyword::~FileAndFormatModuleKeyword()
  */
 
 // Return minimum number of arguments accepted
-int FileAndFormatModuleKeyword::minArguments()
+int FileAndFormatKeyword::minArguments()
 {
 	// Must have data format as bare minimum
 	return 1;
 }
 
 // Return maximum number of arguments accepted
-int FileAndFormatModuleKeyword::maxArguments()
+int FileAndFormatKeyword::maxArguments()
 {
 	// Data format and filename, plus some number of optional arguments
 	return 99;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool FileAndFormatModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+bool FileAndFormatKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	if (!data_.read(parser, startArg)) return Messenger::error("Failed to read file/format.\n");
 
@@ -62,7 +62,7 @@ bool FileAndFormatModuleKeyword::read(LineParser& parser, int startArg, const Co
 }
 
 // Write keyword data to specified LineParser
-bool FileAndFormatModuleKeyword::write(LineParser& parser, const char* prefix)
+bool FileAndFormatKeyword::write(LineParser& parser, const char* prefix)
 {
 	if (!parser.writeLineF("%s%s  %s\n", prefix, keyword(), data_.asString())) return false;
 

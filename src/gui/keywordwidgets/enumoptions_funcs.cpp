@@ -24,11 +24,11 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-EnumOptionsKeywordWidget::EnumOptionsKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QComboBox(parent), KeywordWidgetBase(coreData, moduleData, prefix)
+EnumOptionsKeywordWidget::EnumOptionsKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QComboBox(parent), KeywordWidgetBase(coreData, moduleData, prefix)
 {
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<EnumOptionsBaseModuleKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into EnumOptionsBaseModuleKeyword.\n", keyword->keyword());
+	keyword_ = dynamic_cast<EnumOptionsBaseKeyword*>(keyword);
+	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into EnumOptionsBaseKeyword.\n", keyword->keyword());
 	else
 	{
 		// Get the underlying EnumOptionsBase
@@ -61,7 +61,7 @@ void EnumOptionsKeywordWidget::myCurrentIndexChanged(int index)
 {
 	if (refreshing_) return;
 
-	// Use the virtual EnumOptionsBaseModuleKeyword::setOptionByIndex() to set the new option and inform the underlying keyword structure that it has been modified
+	// Use the virtual EnumOptionsBaseKeyword::setOptionByIndex() to set the new option and inform the underlying keyword structure that it has been modified
 	keyword_->setOptionByIndex(index);
 
 	emit(keywordValueChanged());

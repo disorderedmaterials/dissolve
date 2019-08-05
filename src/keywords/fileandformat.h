@@ -29,13 +29,13 @@
 class FileAndFormat;
 
 // Keyword with a file format 
-class FileAndFormatModuleKeyword : public ModuleKeywordData<FileAndFormat&>
+class FileAndFormatKeyword : public KeywordData<FileAndFormat&>
 {
 	public:
 	// Constructor
-	FileAndFormatModuleKeyword(FileAndFormat& fileAndFormat);
+	FileAndFormatKeyword(FileAndFormat& fileAndFormat);
 	// Destructor
-	~FileAndFormatModuleKeyword();
+	~FileAndFormatKeyword();
 
 
 	/*

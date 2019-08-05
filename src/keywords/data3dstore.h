@@ -30,13 +30,13 @@
 /* none */
 
 // Keyword with a store of Data3D
-class Data3DStoreModuleKeyword : public ModuleKeywordData<Data3DStore&>
+class Data3DStoreKeyword : public KeywordData<Data3DStore&>
 {
 	public:
 	// Constructor
-	Data3DStoreModuleKeyword(Data3DStore& dataStore);
+	Data3DStoreKeyword(Data3DStore& dataStore);
 	// Destructor
-	~Data3DStoreModuleKeyword();
+	~Data3DStoreKeyword();
 
 
 	/*

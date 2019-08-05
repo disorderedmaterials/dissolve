@@ -24,20 +24,20 @@
 #include "genericitems/listhelper.h"
 
 // Constructors
-Vec3IntegerModuleKeyword::Vec3IntegerModuleKeyword(Vec3<int> value) : ModuleKeywordData< Vec3<int> >(ModuleKeywordBase::Vec3IntegerData, value)
+Vec3IntegerKeyword::Vec3IntegerKeyword(Vec3<int> value) : KeywordData< Vec3<int> >(KeywordBase::Vec3IntegerData, value)
 {
 	minimumLimit_ = false;
 	maximumLimit_ = false;
 }
 
-Vec3IntegerModuleKeyword::Vec3IntegerModuleKeyword(Vec3<int> value, Vec3<int> minValue) : ModuleKeywordData< Vec3<int> >(ModuleKeywordBase::Vec3IntegerData, value)
+Vec3IntegerKeyword::Vec3IntegerKeyword(Vec3<int> value, Vec3<int> minValue) : KeywordData< Vec3<int> >(KeywordBase::Vec3IntegerData, value)
 {
 	minimumLimit_ = true;
 	min_ = minValue;
 	maximumLimit_ = false;
 }
 
-Vec3IntegerModuleKeyword::Vec3IntegerModuleKeyword(Vec3<int> value, Vec3<int> minValue, Vec3<int> maxValue) : ModuleKeywordData< Vec3<int> >(ModuleKeywordBase::Vec3IntegerData, value)
+Vec3IntegerKeyword::Vec3IntegerKeyword(Vec3<int> value, Vec3<int> minValue, Vec3<int> maxValue) : KeywordData< Vec3<int> >(KeywordBase::Vec3IntegerData, value)
 {
 	minimumLimit_ = true;
 	min_ = minValue;
@@ -46,7 +46,7 @@ Vec3IntegerModuleKeyword::Vec3IntegerModuleKeyword(Vec3<int> value, Vec3<int> mi
 }
 
 // Destructor
-Vec3IntegerModuleKeyword::~Vec3IntegerModuleKeyword()
+Vec3IntegerKeyword::~Vec3IntegerKeyword()
 {
 }
 
@@ -55,31 +55,31 @@ Vec3IntegerModuleKeyword::~Vec3IntegerModuleKeyword()
  */
 
 // Return whether a minimum validation limit has been set for supplied index
-bool Vec3IntegerModuleKeyword::hasValidationMin(int index)
+bool Vec3IntegerKeyword::hasValidationMin(int index)
 {
 	return minimumLimit_[index];
 }
 
 // Return validation minimum limit for supplied index
-int Vec3IntegerModuleKeyword::validationMin(int index)
+int Vec3IntegerKeyword::validationMin(int index)
 {
 	return min_[index];
 }
 
 // Return whether a maximum validation limit has been set for supplied index
-bool Vec3IntegerModuleKeyword::hasValidationMax(int index)
+bool Vec3IntegerKeyword::hasValidationMax(int index)
 {
 	return maximumLimit_[index];
 }
 
 // Return validation maximum limit for supplied index
-int Vec3IntegerModuleKeyword::validationMax(int index)
+int Vec3IntegerKeyword::validationMax(int index)
 {
 	return max_[index];
 }
 
 // Validate supplied value
-bool Vec3IntegerModuleKeyword::isValid(Vec3<int> value)
+bool Vec3IntegerKeyword::isValid(Vec3<int> value)
 {
 	if (!isValid(0, value.x)) return false;
 	if (!isValid(1, value.y)) return false;
@@ -89,7 +89,7 @@ bool Vec3IntegerModuleKeyword::isValid(Vec3<int> value)
 }
 
 // Validate supplied value
-bool Vec3IntegerModuleKeyword::isValid(int index, int value)
+bool Vec3IntegerKeyword::isValid(int index, int value)
 {
 	// Check minimum limit
 	if (minimumLimit_[index])
@@ -111,19 +111,19 @@ bool Vec3IntegerModuleKeyword::isValid(int index, int value)
  */
 
 // Return minimum number of arguments accepted
-int Vec3IntegerModuleKeyword::minArguments()
+int Vec3IntegerKeyword::minArguments()
 {
 	return 3;
 }
 
 // Return maximum number of arguments accepted
-int Vec3IntegerModuleKeyword::maxArguments()
+int Vec3IntegerKeyword::maxArguments()
 {
 	return 3;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool Vec3IntegerModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+bool Vec3IntegerKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	if (parser.hasArg(startArg+2))
 	{
@@ -148,7 +148,7 @@ bool Vec3IntegerModuleKeyword::read(LineParser& parser, int startArg, const Core
 }
 
 // Write keyword data to specified LineParser
-bool Vec3IntegerModuleKeyword::write(LineParser& parser, const char* prefix)
+bool Vec3IntegerKeyword::write(LineParser& parser, const char* prefix)
 {
 	return parser.writeLineF("%s%s  %i  %i  %i\n", prefix, keyword(), data_.x, data_.y, data_.z);
 }
@@ -158,13 +158,13 @@ bool Vec3IntegerModuleKeyword::write(LineParser& parser, const char* prefix)
  */
 
 // Return value (as Vec3<int>)
-Vec3<int> Vec3IntegerModuleKeyword::asVec3Int()
+Vec3<int> Vec3IntegerKeyword::asVec3Int()
 {
 	return data_;
 }
 
 // Return value (as Vec3<int>)
-Vec3<double> Vec3IntegerModuleKeyword::asVec3Double()
+Vec3<double> Vec3IntegerKeyword::asVec3Double()
 {
 	return Vec3<double>(data_.x, data_.y, data_.z);
 }

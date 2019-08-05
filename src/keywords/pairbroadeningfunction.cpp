@@ -24,12 +24,12 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-PairBroadeningFunctionModuleKeyword::PairBroadeningFunctionModuleKeyword(PairBroadeningFunction value) : ModuleKeywordData<PairBroadeningFunction>(ModuleKeywordBase::PairBroadeningFunctionData, value)
+PairBroadeningFunctionKeyword::PairBroadeningFunctionKeyword(PairBroadeningFunction value) : KeywordData<PairBroadeningFunction>(KeywordBase::PairBroadeningFunctionData, value)
 {
 }
 
 // Destructor
-PairBroadeningFunctionModuleKeyword::~PairBroadeningFunctionModuleKeyword()
+PairBroadeningFunctionKeyword::~PairBroadeningFunctionKeyword()
 {
 }
 
@@ -38,19 +38,19 @@ PairBroadeningFunctionModuleKeyword::~PairBroadeningFunctionModuleKeyword()
  */
 
 // Return minimum number of arguments accepted
-int PairBroadeningFunctionModuleKeyword::minArguments()
+int PairBroadeningFunctionKeyword::minArguments()
 {
 	return 1;
 }
 
 // Return maximum number of arguments accepted
-int PairBroadeningFunctionModuleKeyword::maxArguments()
+int PairBroadeningFunctionKeyword::maxArguments()
 {
 	return 2;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool PairBroadeningFunctionModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+bool PairBroadeningFunctionKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	if (data_.readAsKeyword(parser, startArg, coreData)) set_ = true;
 	else return false;
@@ -59,7 +59,7 @@ bool PairBroadeningFunctionModuleKeyword::read(LineParser& parser, int startArg,
 }
 
 // Write keyword data to specified LineParser
-bool PairBroadeningFunctionModuleKeyword::write(LineParser& parser, const char* prefix)
+bool PairBroadeningFunctionKeyword::write(LineParser& parser, const char* prefix)
 {
 	if (!parser.writeLineF("%s%s", prefix, keyword())) return false;
 
@@ -71,7 +71,7 @@ bool PairBroadeningFunctionModuleKeyword::write(LineParser& parser, const char* 
  */
 
 // Validate supplied value
-bool PairBroadeningFunctionModuleKeyword::isValid(PairBroadeningFunction value)
+bool PairBroadeningFunctionKeyword::isValid(PairBroadeningFunction value)
 {
 	return true;
 }

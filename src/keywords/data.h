@@ -30,11 +30,11 @@ class GenericList;
 class LineParser;
 
 // Module Keyword Interface
-template <class T> class ModuleKeywordData : public ModuleKeywordBase
+template <class T> class KeywordData : public KeywordBase
 {
 	public:
 	// Constructor
-	ModuleKeywordData(ModuleKeywordBase::KeywordDataType type, T data) : ModuleKeywordBase(type), data_(data)
+	KeywordData(KeywordBase::KeywordDataType type, T data) : KeywordBase(type), data_(data)
 	{
 	}
 

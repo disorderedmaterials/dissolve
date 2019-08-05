@@ -27,12 +27,12 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-IsotopologueListModuleKeyword::IsotopologueListModuleKeyword(List<IsotopologueReference>& references) : ModuleKeywordData< List<IsotopologueReference>& >(ModuleKeywordBase::IsotopologueListData, references)
+IsotopologueListKeyword::IsotopologueListKeyword(List<IsotopologueReference>& references) : KeywordData< List<IsotopologueReference>& >(KeywordBase::IsotopologueListData, references)
 {
 }
 
 // Destructor
-IsotopologueListModuleKeyword::~IsotopologueListModuleKeyword()
+IsotopologueListKeyword::~IsotopologueListKeyword()
 {
 }
 
@@ -41,19 +41,19 @@ IsotopologueListModuleKeyword::~IsotopologueListModuleKeyword()
  */
 
 // Return minimum number of arguments accepted
-int IsotopologueListModuleKeyword::minArguments()
+int IsotopologueListKeyword::minArguments()
 {
 	return 4;
 }
 
 // Return maximum number of arguments accepted
-int IsotopologueListModuleKeyword::maxArguments()
+int IsotopologueListKeyword::maxArguments()
 {
 	return 4;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool IsotopologueListModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+bool IsotopologueListKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	// Find target Configuration (first argument)
 	Configuration* cfg = coreData.findConfiguration(parser.argc(startArg));
@@ -81,7 +81,7 @@ bool IsotopologueListModuleKeyword::read(LineParser& parser, int startArg, const
 }
 
 // Write keyword data to specified LineParser
-bool IsotopologueListModuleKeyword::write(LineParser& parser, const char* prefix)
+bool IsotopologueListKeyword::write(LineParser& parser, const char* prefix)
 {
 	// Loop over list of IsotopologueReferences
 	ListIterator<IsotopologueReference> refIterator(data_);

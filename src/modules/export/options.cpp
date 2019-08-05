@@ -26,14 +26,14 @@
 void ExportModule::setUpKeywords()
 {
 	// Export
-	ModuleKeywordGroup* group = addKeywordGroup("Export");
-	group->add(new FileAndFormatModuleKeyword(coordinatesFormat_), "WriteCoordinates", "Write coordinates for the Configuration targets");
-	group->add(new FileAndFormatModuleKeyword(pairPotentialFormat_), "WritePairPotentials", "Write all pair potentials to supplied basename");
-	group->add(new FileAndFormatModuleKeyword(trajectoryFormat_), "WriteTrajectory", "Write coordinate trajectories for the Configuration targets");
+	KeywordGroup* group = addKeywordGroup("Export");
+	group->add(new FileAndFormatKeyword(coordinatesFormat_), "WriteCoordinates", "Write coordinates for the Configuration targets");
+	group->add(new FileAndFormatKeyword(pairPotentialFormat_), "WritePairPotentials", "Write all pair potentials to supplied basename");
+	group->add(new FileAndFormatKeyword(trajectoryFormat_), "WriteTrajectory", "Write coordinate trajectories for the Configuration targets");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int ExportModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
+int ExportModule::parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
 	return -1;
 }

@@ -31,12 +31,12 @@
 class Module;
 
 // Module Keyword List
-class ModuleKeywordList
+class KeywordList
 {
 	public:
 	// Constructor / Destructor
-	ModuleKeywordList(const Module* moduleParent);
-	~ModuleKeywordList();
+	KeywordList(const Module* moduleParent);
+	~KeywordList();
 
 	private:
 	// Module parent
@@ -48,17 +48,17 @@ class ModuleKeywordList
 	 */
 	private:
 	// List of defined keywords
-	List<ModuleKeywordBase> keywords_;
+	List<KeywordBase> keywords_;
 
 	public:
 	// Add keyword
-	bool add(ModuleKeywordBase* object, const char* keyword, const char* description, int genericItemFlags = 0);
+	bool add(KeywordBase* object, const char* keyword, const char* description, int genericItemFlags = 0);
 	// Add keyword
-	bool add(ModuleKeywordBase* object, const char* keyword, const char* description, const char* arguments, int genericItemFlags = 0);
+	bool add(KeywordBase* object, const char* keyword, const char* description, const char* arguments, int genericItemFlags = 0);
 	// Find named keyword
-	ModuleKeywordBase* find(const char* keyword) const;
+	KeywordBase* find(const char* keyword) const;
 	// Return keywords list
-	List<ModuleKeywordBase>& keywords();
+	List<KeywordBase>& keywords();
 
 
 	/*
@@ -86,10 +86,10 @@ template <class T> class KeywordListHelper
 {
 	public:
 	// Retrieve named item from specified list as template-guided type
-	static T& retrieve(ModuleKeywordList& sourceList, const char* name, T defaultValue = T(), bool* found = NULL)
+	static T& retrieve(KeywordList& sourceList, const char* name, T defaultValue = T(), bool* found = NULL)
 	{
 		// Find item in the list
-		ModuleKeywordBase* item = sourceList.find(name);
+		KeywordBase* item = sourceList.find(name);
 		if (!item)
 		{
 			Messenger::printVerbose("No item named '%s' in the keyword list - default value item will be returned.\n", name);
@@ -100,7 +100,7 @@ template <class T> class KeywordListHelper
 		}
 
 		// Attempt to cast to specified type
-		ModuleKeywordData<T>* castItem = dynamic_cast<ModuleKeywordData<T>*>(item);
+		KeywordData<T>* castItem = dynamic_cast<KeywordData<T>*>(item);
 		if (!castItem)
 		{
 			printf("That didn't work, because it's of the wrong type.\n");
@@ -113,10 +113,10 @@ template <class T> class KeywordListHelper
 		return castItem->data();
 	}
 	// Set named item from specified list as a template-guided type
-	static bool set(ModuleKeywordList& sourceList, const char* name, T value)
+	static bool set(KeywordList& sourceList, const char* name, T value)
 	{
 		// Find item in the list
-		ModuleKeywordBase* item = sourceList.find(name);
+		KeywordBase* item = sourceList.find(name);
 		if (!item)
 		{
 			Messenger::warn("No item named '%s' in the keyword list - cannot set it's value.\n", name);
@@ -124,7 +124,7 @@ template <class T> class KeywordListHelper
 		}
 
 		// Attempt to cast to specified type
-		ModuleKeywordData<T>* castItem = dynamic_cast<ModuleKeywordData<T>*>(item);
+		KeywordData<T>* castItem = dynamic_cast<KeywordData<T>*>(item);
 		if (!castItem)
 		{
 			printf("That didn't work, because it's of the wrong type.\n");
@@ -143,10 +143,10 @@ template <class E> class KeywordEnumHelper
 {
 	public:
 	// Retrieve named EnumOptions item from specified list as template-guided type, and return the current enumeration
-	static E enumeration(ModuleKeywordList& sourceList, const char* name, bool* found = NULL)
+	static E enumeration(KeywordList& sourceList, const char* name, bool* found = NULL)
 	{
 		// Find item in the list
-		ModuleKeywordBase* item = sourceList.find(name);
+		KeywordBase* item = sourceList.find(name);
 		if (!item)
 		{
 			Messenger::error("No item named '%s' in the keyword list - default enumeration of -1 will be returned.\n", name);
@@ -155,7 +155,7 @@ template <class E> class KeywordEnumHelper
 		}
 
 		// Attempt to cast to EnumOptionsBase
-		ModuleKeywordData< EnumOptions<E> >* castItem = dynamic_cast<ModuleKeywordData< EnumOptions<E> >*>(item);
+		KeywordData< EnumOptions<E> >* castItem = dynamic_cast<KeywordData< EnumOptions<E> >*>(item);
 		if (!castItem)
 		{
 			Messenger::error("Failed to cast keyword '%s' into EnumOptions<E> because it's of a different type.\n", name);

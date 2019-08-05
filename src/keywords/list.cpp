@@ -23,13 +23,13 @@
 #include "base/sysfunc.h"
 
 // Constructor
-ModuleKeywordList::ModuleKeywordList(const Module* moduleParent)
+KeywordList::KeywordList(const Module* moduleParent)
 {
 	moduleParent_ = moduleParent;
 }
 
 // Destructor
-ModuleKeywordList::~ModuleKeywordList()
+KeywordList::~KeywordList()
 {
 }
 
@@ -38,13 +38,13 @@ ModuleKeywordList::~ModuleKeywordList()
  */
 
 // Add keyword
-bool ModuleKeywordList::add(ModuleKeywordBase* object, const char* keyword, const char* description, int genericItemFlags)
+bool KeywordList::add(KeywordBase* object, const char* keyword, const char* description, int genericItemFlags)
 {
 	return add(object, keyword, description, "", genericItemFlags);
 }
 
 // Add keyword
-bool ModuleKeywordList::add(ModuleKeywordBase* object, const char* keyword, const char* description, const char* arguments, int genericItemFlags)
+bool KeywordList::add(KeywordBase* object, const char* keyword, const char* description, const char* arguments, int genericItemFlags)
 {
 	// Take ownership of the passed object, and set its basic information
 	keywords_.own(object);
@@ -57,15 +57,15 @@ bool ModuleKeywordList::add(ModuleKeywordBase* object, const char* keyword, cons
 }
 
 // Find named keyword
-ModuleKeywordBase* ModuleKeywordList::find(const char* keyword) const
+KeywordBase* KeywordList::find(const char* keyword) const
 {
-	for (ModuleKeywordBase* kwd = keywords_.first(); kwd != NULL; kwd = kwd->next) if (DissolveSys::sameString(keyword, kwd->keyword())) return kwd;
+	for (KeywordBase* kwd = keywords_.first(); kwd != NULL; kwd = kwd->next) if (DissolveSys::sameString(keyword, kwd->keyword())) return kwd;
 
 	return NULL;
 }
 
 // Return first keyword in list
-List<ModuleKeywordBase>& ModuleKeywordList::keywords()
+List<KeywordBase>& KeywordList::keywords()
 {
 	return keywords_;
 }
@@ -75,10 +75,10 @@ List<ModuleKeywordBase>& ModuleKeywordList::keywords()
  */
 
 // Return simple keyword value (as bool)
-bool ModuleKeywordList::asBool(const char* keywordName) const
+bool KeywordList::asBool(const char* keywordName) const
 {
 	// Find the named keyword
-	ModuleKeywordBase* keyword = find(keywordName);
+	KeywordBase* keyword = find(keywordName);
 	if (!keyword)
 	{
 		Messenger::warn("No Module keyword named '%s' exists to return as a bool. Returning 'false'...\n", keywordName);
@@ -89,10 +89,10 @@ bool ModuleKeywordList::asBool(const char* keywordName) const
 }
 
 // Return simple keyword value (as int)
-int ModuleKeywordList::asInt(const char* keywordName) const
+int KeywordList::asInt(const char* keywordName) const
 {
 	// Find the named keyword
-	ModuleKeywordBase* keyword = find(keywordName);
+	KeywordBase* keyword = find(keywordName);
 	if (!keyword)
 	{
 		Messenger::warn("No Module keyword named '%s' exists to return as an int. Returning '0'...\n", keywordName);
@@ -103,10 +103,10 @@ int ModuleKeywordList::asInt(const char* keywordName) const
 }
 
 // Return simple keyword value (as double)
-double ModuleKeywordList::asDouble(const char* keywordName) const
+double KeywordList::asDouble(const char* keywordName) const
 {
 	// Find the named keyword
-	ModuleKeywordBase* keyword = find(keywordName);
+	KeywordBase* keyword = find(keywordName);
 	if (!keyword)
 	{
 		Messenger::warn("No Module keyword named '%s' exists to return as a double. Returning '0.0'...\n", keywordName);
@@ -117,10 +117,10 @@ double ModuleKeywordList::asDouble(const char* keywordName) const
 }
 
 // Return simple keyword value (as string)
-const char* ModuleKeywordList::asString(const char* keywordName) const
+const char* KeywordList::asString(const char* keywordName) const
 {
 	// Find the named keyword
-	ModuleKeywordBase* keyword = find(keywordName);
+	KeywordBase* keyword = find(keywordName);
 	if (!keyword)
 	{
 		Messenger::warn("No Module keyword named '%s' exists to return as a string. Returning 'NULL'...\n", keywordName);
@@ -131,10 +131,10 @@ const char* ModuleKeywordList::asString(const char* keywordName) const
 }
 
 // Return simple keyword value (as Vec3<int>)
-Vec3<int> ModuleKeywordList::asVec3Int(const char* keywordName) const
+Vec3<int> KeywordList::asVec3Int(const char* keywordName) const
 {
 	// Find the named keyword
-	ModuleKeywordBase* keyword = find(keywordName);
+	KeywordBase* keyword = find(keywordName);
 	if (!keyword)
 	{
 		Messenger::warn("No Module keyword named '%s' exists to return as a Vec3<int>. Returning '(0,0,0)'...\n", keywordName);
@@ -145,10 +145,10 @@ Vec3<int> ModuleKeywordList::asVec3Int(const char* keywordName) const
 }
 
 // Return simple keyword value (as Vec3<double>)
-Vec3<double> ModuleKeywordList::asVec3Double(const char* keywordName) const
+Vec3<double> KeywordList::asVec3Double(const char* keywordName) const
 {
 	// Find the named keyword
-	ModuleKeywordBase* keyword = find(keywordName);
+	KeywordBase* keyword = find(keywordName);
 	if (!keyword)
 	{
 		Messenger::warn("No Module keyword named '%s' exists to return as a Vec3<double>. Returning '(0.0,0.0,0.0)'...\n", keywordName);
@@ -159,10 +159,10 @@ Vec3<double> ModuleKeywordList::asVec3Double(const char* keywordName) const
 }
 
 // Return whether the specified keyword data has ever been set
-bool ModuleKeywordList::isSet(const char* keywordName) const
+bool KeywordList::isSet(const char* keywordName) const
 {
 	// Find the named keyword
-	ModuleKeywordBase* keyword = find(keywordName);
+	KeywordBase* keyword = find(keywordName);
 	if (!keyword)
 	{
 		Messenger::warn("No Module keyword named '%s' exists to probe for its default value. Returning 'false'...\n", keywordName);

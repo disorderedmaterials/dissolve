@@ -29,13 +29,13 @@
 /* none */
 
 // Keyword with Complex Data
-class ComplexModuleKeyword : public ModuleKeywordData<int>
+class ComplexKeyword : public KeywordData<int>
 {
 	public:
 	// Constructors
-	ComplexModuleKeyword(int minArgs, int maxArgs = -1);
+	ComplexKeyword(int minArgs, int maxArgs = -1);
 	// Destructor
-	~ComplexModuleKeyword();
+	~ComplexKeyword();
 
 
 	/*

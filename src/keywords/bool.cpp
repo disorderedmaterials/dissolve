@@ -24,12 +24,12 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-BoolModuleKeyword::BoolModuleKeyword(bool value) : ModuleKeywordData<bool>(ModuleKeywordBase::BoolData, value)
+BoolKeyword::BoolKeyword(bool value) : KeywordData<bool>(KeywordBase::BoolData, value)
 {
 }
 
 // Destructor
-BoolModuleKeyword::~BoolModuleKeyword()
+BoolKeyword::~BoolKeyword()
 {
 }
 
@@ -38,19 +38,19 @@ BoolModuleKeyword::~BoolModuleKeyword()
  */
 
 // Return minimum number of arguments accepted
-int BoolModuleKeyword::minArguments()
+int BoolKeyword::minArguments()
 {
 	return 1;
 }
 
 // Return maximum number of arguments accepted
-int BoolModuleKeyword::maxArguments()
+int BoolKeyword::maxArguments()
 {
 	return 1;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool BoolModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+bool BoolKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	if (parser.hasArg(startArg))
 	{
@@ -62,7 +62,7 @@ bool BoolModuleKeyword::read(LineParser& parser, int startArg, const CoreData& c
 }
 
 // Write keyword data to specified LineParser
-bool BoolModuleKeyword::write(LineParser& parser, const char* prefix)
+bool BoolKeyword::write(LineParser& parser, const char* prefix)
 {
 	return parser.writeLineF("%s%s  %s\n", prefix, keyword(), DissolveSys::btoa(data_));
 }
@@ -72,25 +72,25 @@ bool BoolModuleKeyword::write(LineParser& parser, const char* prefix)
  */
 
 // Return value (as bool)
-bool BoolModuleKeyword::asBool()
+bool BoolKeyword::asBool()
 {
 	return data_;
 }
 
 // Return value (as int)
-int BoolModuleKeyword::asInt()
+int BoolKeyword::asInt()
 {
 	return data_ ? 1 : 0;
 }
 
 // Return value (as double)
-double BoolModuleKeyword::asDouble()
+double BoolKeyword::asDouble()
 {
 	return data_ ? 1.0 : 0.0;
 }
 
 // Return value (as string)
-const char* BoolModuleKeyword::asString()
+const char* BoolKeyword::asString()
 {
 	return DissolveSys::btoa(data_);
 }

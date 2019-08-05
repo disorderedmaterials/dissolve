@@ -23,13 +23,13 @@
 #include "base/messenger.h"
 
 // Constructor
-ModuleKeywordBase::ModuleKeywordBase(KeywordDataType type) : ListItem<ModuleKeywordBase>(), type_(type)
+KeywordBase::KeywordBase(KeywordDataType type) : ListItem<KeywordBase>(), type_(type)
 {
 	set_ = false;
 }
 
 // Destructor
-ModuleKeywordBase::~ModuleKeywordBase()
+KeywordBase::~KeywordBase()
 {
 }
 
@@ -37,7 +37,7 @@ ModuleKeywordBase::~ModuleKeywordBase()
 const char* KeywordDataTypeKeywords[] = { "AtomTypeSelection", "Bool", "BroadeningFunction", "CharString", "Complex", "Data1DStore", "Data2DStore", "Data3DStore", "Double", "EnumOptions", "EnumString", "FileAndFormat", "Integer", "IsotopologueList", "ModuleGroups", "ModuleReferenceList", "PairBroadeningFunction", "Procedure", "SpeciesReferenceList", "SpeciesSite", "SpeciesSiteReferenceList", "Vec3<Double>", "Vec3<Integer>", "WindowFunction" };
 
 // Return ValueType name
-const char* ModuleKeywordBase::keywordDataType(KeywordDataType kdt)
+const char* KeywordBase::keywordDataType(KeywordDataType kdt)
 {
 	return KeywordDataTypeKeywords[kdt];
 }
@@ -47,13 +47,13 @@ const char* ModuleKeywordBase::keywordDataType(KeywordDataType kdt)
  */
 
 // Set Module parent to which this keyword belongs
-void ModuleKeywordBase::setModuleParent(const Module* parent)
+void KeywordBase::setModuleParent(const Module* parent)
 {
 	moduleParent_ = parent;
 }
 
 // Return Module to which this keyword belongs
-const Module* ModuleKeywordBase::moduleParent() const
+const Module* KeywordBase::moduleParent() const
 {
 	return moduleParent_;
 }
@@ -63,7 +63,7 @@ const Module* ModuleKeywordBase::moduleParent() const
  */
 
 // Set name, description, and item flags
-void ModuleKeywordBase::set(const char* keyword, const char* description, const char* arguments, int genericItemFlags)
+void KeywordBase::set(const char* keyword, const char* description, const char* arguments, int genericItemFlags)
 {
 	keyword_ = keyword;
 	arguments_ = arguments;
@@ -72,31 +72,31 @@ void ModuleKeywordBase::set(const char* keyword, const char* description, const 
 }
 
 // Return data type stored by keyword
-ModuleKeywordBase::KeywordDataType ModuleKeywordBase::type()
+KeywordBase::KeywordDataType KeywordBase::type()
 {
 	return type_;
 }
 
 // Return keyword name
-const char* ModuleKeywordBase::keyword()
+const char* KeywordBase::keyword()
 {
 	return keyword_.get();
 }
 
 // Return keyword description
-const char* ModuleKeywordBase::description()
+const char* KeywordBase::description()
 {
 	return description_.get();
 }
 
 // Return flags to apply if reinstated as a GenericListItem (i.e. in a Module)
-int ModuleKeywordBase::genericItemFlags()
+int KeywordBase::genericItemFlags()
 {
 	return genericItemFlags_;
 }
 
 // Return whether the data has ever been set
-bool ModuleKeywordBase::isSet()
+bool KeywordBase::isSet()
 {
 	return set_;
 }
@@ -106,43 +106,43 @@ bool ModuleKeywordBase::isSet()
  */
 
 // Return value (as bool)
-bool ModuleKeywordBase::asBool()
+bool KeywordBase::asBool()
 {
-	Messenger::warn("No suitable conversion to bool from KeywordDataType %i (%s) exists. Returning 'false'.\n", type_, ModuleKeywordBase::keywordDataType(type_));
+	Messenger::warn("No suitable conversion to bool from KeywordDataType %i (%s) exists. Returning 'false'.\n", type_, KeywordBase::keywordDataType(type_));
 	return false;
 }
 
 // Return value (as int)
-int ModuleKeywordBase::asInt()
+int KeywordBase::asInt()
 {
-	Messenger::warn("No suitable conversion to int from KeywordDataType %i (%s) exists. Returning '0'.\n", type_, ModuleKeywordBase::keywordDataType(type_));
+	Messenger::warn("No suitable conversion to int from KeywordDataType %i (%s) exists. Returning '0'.\n", type_, KeywordBase::keywordDataType(type_));
 	return 0;
 }
 
 // Return value (as double)
-double ModuleKeywordBase::asDouble()
+double KeywordBase::asDouble()
 {
-	Messenger::warn("No suitable conversion to double from KeywordDataType %i (%s) exists. Returning '0.0'.\n", type_, ModuleKeywordBase::keywordDataType(type_));
+	Messenger::warn("No suitable conversion to double from KeywordDataType %i (%s) exists. Returning '0.0'.\n", type_, KeywordBase::keywordDataType(type_));
 	return 0.0;
 }
 
 // Return value (as string)
-const char* ModuleKeywordBase::asString()
+const char* KeywordBase::asString()
 {
-	Messenger::warn("No suitable conversion to string from KeywordDataType %i (%s) exists. Returning 'NULL'.\n", type_, ModuleKeywordBase::keywordDataType(type_));
+	Messenger::warn("No suitable conversion to string from KeywordDataType %i (%s) exists. Returning 'NULL'.\n", type_, KeywordBase::keywordDataType(type_));
 	return "NULL";
 }
 
 // Return value as Vec3<int>
-Vec3<int> ModuleKeywordBase::asVec3Int()
+Vec3<int> KeywordBase::asVec3Int()
 {
-	Messenger::warn("No suitable conversion to Vec3<int> from KeywordDataType %i (%s) exists. Returning '(0,0,0)'.\n", type_, ModuleKeywordBase::keywordDataType(type_));
+	Messenger::warn("No suitable conversion to Vec3<int> from KeywordDataType %i (%s) exists. Returning '(0,0,0)'.\n", type_, KeywordBase::keywordDataType(type_));
 	return Vec3<int>(0,0,0);
 }
 
 // Return value as Vec3<double>
-Vec3<double> ModuleKeywordBase::asVec3Double()
+Vec3<double> KeywordBase::asVec3Double()
 {
-	Messenger::warn("No suitable conversion to Vec3<double> from KeywordDataType %i (%s) exists. Returning '(0.0,0.0,0.0)'.\n", type_, ModuleKeywordBase::keywordDataType(type_));
+	Messenger::warn("No suitable conversion to Vec3<double> from KeywordDataType %i (%s) exists. Returning '(0.0,0.0,0.0)'.\n", type_, KeywordBase::keywordDataType(type_));
 	return Vec3<double>(0.0,0.0,0.0);
 }

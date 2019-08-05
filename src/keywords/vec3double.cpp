@@ -24,20 +24,20 @@
 #include "genericitems/listhelper.h"
 
 // Constructors
-Vec3DoubleModuleKeyword::Vec3DoubleModuleKeyword(Vec3<double> value) : ModuleKeywordData< Vec3<double> >(ModuleKeywordBase::Vec3DoubleData, value)
+Vec3DoubleKeyword::Vec3DoubleKeyword(Vec3<double> value) : KeywordData< Vec3<double> >(KeywordBase::Vec3DoubleData, value)
 {
 	minimumLimit_ = false;
 	maximumLimit_ = false;
 }
 
-Vec3DoubleModuleKeyword::Vec3DoubleModuleKeyword(Vec3<double> value, Vec3<double> minValue) : ModuleKeywordData< Vec3<double> >(ModuleKeywordBase::Vec3DoubleData, value)
+Vec3DoubleKeyword::Vec3DoubleKeyword(Vec3<double> value, Vec3<double> minValue) : KeywordData< Vec3<double> >(KeywordBase::Vec3DoubleData, value)
 {
 	minimumLimit_ = true;
 	min_ = minValue;
 	maximumLimit_ = false;
 }
 
-Vec3DoubleModuleKeyword::Vec3DoubleModuleKeyword(Vec3<double> value, Vec3<double> minValue, Vec3<double> maxValue) : ModuleKeywordData< Vec3<double> >(ModuleKeywordBase::Vec3DoubleData, value)
+Vec3DoubleKeyword::Vec3DoubleKeyword(Vec3<double> value, Vec3<double> minValue, Vec3<double> maxValue) : KeywordData< Vec3<double> >(KeywordBase::Vec3DoubleData, value)
 {
 	minimumLimit_ = true;
 	min_ = minValue;
@@ -46,7 +46,7 @@ Vec3DoubleModuleKeyword::Vec3DoubleModuleKeyword(Vec3<double> value, Vec3<double
 }
 
 // Destructor
-Vec3DoubleModuleKeyword::~Vec3DoubleModuleKeyword()
+Vec3DoubleKeyword::~Vec3DoubleKeyword()
 {
 }
 
@@ -55,31 +55,31 @@ Vec3DoubleModuleKeyword::~Vec3DoubleModuleKeyword()
  */
 
 // Return whether a minimum validation limit has been set for supplied index
-bool Vec3DoubleModuleKeyword::hasValidationMin(int index)
+bool Vec3DoubleKeyword::hasValidationMin(int index)
 {
 	return minimumLimit_[index];
 }
 
 // Return validation minimum limit for supplied index
-double Vec3DoubleModuleKeyword::validationMin(int index)
+double Vec3DoubleKeyword::validationMin(int index)
 {
 	return min_[index];
 }
 
 // Return whether a maximum validation limit has been set for supplied index
-bool Vec3DoubleModuleKeyword::hasValidationMax(int index)
+bool Vec3DoubleKeyword::hasValidationMax(int index)
 {
 	return maximumLimit_[index];
 }
 
 // Return validation maximum limit for supplied index
-double Vec3DoubleModuleKeyword::validationMax(int index)
+double Vec3DoubleKeyword::validationMax(int index)
 {
 	return max_[index];
 }
 
 // Validate supplied value
-bool Vec3DoubleModuleKeyword::isValid(Vec3<double> value)
+bool Vec3DoubleKeyword::isValid(Vec3<double> value)
 {
 	if (!isValid(0, value.x)) return false;
 	if (!isValid(1, value.y)) return false;
@@ -89,7 +89,7 @@ bool Vec3DoubleModuleKeyword::isValid(Vec3<double> value)
 }
 
 // Validate supplied value
-bool Vec3DoubleModuleKeyword::isValid(int index, double value)
+bool Vec3DoubleKeyword::isValid(int index, double value)
 {
 	// Check minimum limit
 	if (minimumLimit_[index])
@@ -111,19 +111,19 @@ bool Vec3DoubleModuleKeyword::isValid(int index, double value)
  */
 
 // Return minimum number of arguments accepted
-int Vec3DoubleModuleKeyword::minArguments()
+int Vec3DoubleKeyword::minArguments()
 {
 	return 3;
 }
 
 // Return maximum number of arguments accepted
-int Vec3DoubleModuleKeyword::maxArguments()
+int Vec3DoubleKeyword::maxArguments()
 {
 	return 3;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool Vec3DoubleModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+bool Vec3DoubleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	if (parser.hasArg(startArg+2))
 	{
@@ -148,7 +148,7 @@ bool Vec3DoubleModuleKeyword::read(LineParser& parser, int startArg, const CoreD
 }
 
 // Write keyword data to specified LineParser
-bool Vec3DoubleModuleKeyword::write(LineParser& parser, const char* prefix)
+bool Vec3DoubleKeyword::write(LineParser& parser, const char* prefix)
 {
 	return parser.writeLineF("%s%s  %i  %i  %i\n", prefix, keyword(), data_.x, data_.y, data_.z);
 }
@@ -158,13 +158,13 @@ bool Vec3DoubleModuleKeyword::write(LineParser& parser, const char* prefix)
  */
 
 // Return value (as Vec3<int>)
-Vec3<int> Vec3DoubleModuleKeyword::asVec3Int()
+Vec3<int> Vec3DoubleKeyword::asVec3Int()
 {
 	return Vec3<int>(data_.x, data_.y, data_.z);
 }
 
 // Return value (as Vec3<double>)
-Vec3<double> Vec3DoubleModuleKeyword::asVec3Double()
+Vec3<double> Vec3DoubleKeyword::asVec3Double()
 {
 	return data_;
 }

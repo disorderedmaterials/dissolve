@@ -36,7 +36,7 @@ class WindowFunctionKeywordWidget : public QWidget, public KeywordWidgetBase
 
 	public:
 	// Constructor
-	WindowFunctionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
+	WindowFunctionKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
 
 
 	/*
@@ -44,7 +44,7 @@ class WindowFunctionKeywordWidget : public QWidget, public KeywordWidgetBase
 	 */
 	private:
 	// Associated keyword
-	WindowFunctionModuleKeyword* keyword_;
+	WindowFunctionKeyword* keyword_;
 
 
 	/*

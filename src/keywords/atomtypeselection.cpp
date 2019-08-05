@@ -27,12 +27,12 @@
 #include "base/lineparser.h"
 
 // Constructor
-AtomTypeSelectionModuleKeyword::AtomTypeSelectionModuleKeyword(AtomTypeList& selection, RefList<Configuration>& sourceConfigurations) : ModuleKeywordData<AtomTypeList&>(ModuleKeywordBase::AtomTypeSelectionData, selection), sourceConfigurations_(sourceConfigurations)
+AtomTypeSelectionKeyword::AtomTypeSelectionKeyword(AtomTypeList& selection, RefList<Configuration>& sourceConfigurations) : KeywordData<AtomTypeList&>(KeywordBase::AtomTypeSelectionData, selection), sourceConfigurations_(sourceConfigurations)
 {
 }
 
 // Destructor
-AtomTypeSelectionModuleKeyword::~AtomTypeSelectionModuleKeyword()
+AtomTypeSelectionKeyword::~AtomTypeSelectionKeyword()
 {
 }
 
@@ -41,7 +41,7 @@ AtomTypeSelectionModuleKeyword::~AtomTypeSelectionModuleKeyword()
  */
 
 // Return list of AtomTpe/bool references
-AtomTypeList& AtomTypeSelectionModuleKeyword::selection()
+AtomTypeList& AtomTypeSelectionKeyword::selection()
 {
 	// Update the list first, in case a Configuration has changed
 	checkSelection();
@@ -50,7 +50,7 @@ AtomTypeList& AtomTypeSelectionModuleKeyword::selection()
 }
 
 // Check AtomType selection and make sure it is consistent based on the source Configurations
-void AtomTypeSelectionModuleKeyword::checkSelection()
+void AtomTypeSelectionKeyword::checkSelection()
 {
 	AtomTypeList newSelection;
 
@@ -81,19 +81,19 @@ void AtomTypeSelectionModuleKeyword::checkSelection()
  */
 
 // Return minimum number of arguments accepted
-int AtomTypeSelectionModuleKeyword::minArguments()
+int AtomTypeSelectionKeyword::minArguments()
 {
 	return 1;
 }
 
 // Return maximum number of arguments accepted
-int AtomTypeSelectionModuleKeyword::maxArguments()
+int AtomTypeSelectionKeyword::maxArguments()
 {
 	return 999;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool AtomTypeSelectionModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+bool AtomTypeSelectionKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	// Make sure our list is up-to-date
 	checkSelection();
@@ -120,7 +120,7 @@ bool AtomTypeSelectionModuleKeyword::read(LineParser& parser, int startArg, cons
 }
 
 // Write keyword data to specified LineParser
-bool AtomTypeSelectionModuleKeyword::write(LineParser& parser, const char* prefix)
+bool AtomTypeSelectionKeyword::write(LineParser& parser, const char* prefix)
 {
 	// Loop over the AtomType selection list
 	CharString selection;

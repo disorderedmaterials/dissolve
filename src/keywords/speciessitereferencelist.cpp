@@ -26,12 +26,12 @@
 #include "base/lineparser.h"
 
 // Constructor
-SpeciesSiteReferenceListModuleKeyword::SpeciesSiteReferenceListModuleKeyword(RefList<SpeciesSite>& references) : ModuleKeywordData< RefList<SpeciesSite>& >(ModuleKeywordData::SpeciesSiteReferenceListData, references)
+SpeciesSiteReferenceListKeyword::SpeciesSiteReferenceListKeyword(RefList<SpeciesSite>& references) : KeywordData< RefList<SpeciesSite>& >(KeywordData::SpeciesSiteReferenceListData, references)
 {
 }
 
 // Destructor
-SpeciesSiteReferenceListModuleKeyword::~SpeciesSiteReferenceListModuleKeyword()
+SpeciesSiteReferenceListKeyword::~SpeciesSiteReferenceListKeyword()
 {
 }
 
@@ -40,19 +40,19 @@ SpeciesSiteReferenceListModuleKeyword::~SpeciesSiteReferenceListModuleKeyword()
  */
 
 // Return minimum number of arguments accepted
-int SpeciesSiteReferenceListModuleKeyword::minArguments()
+int SpeciesSiteReferenceListKeyword::minArguments()
 {
 	return 2;
 }
 
 // Return maximum number of arguments accepted
-int SpeciesSiteReferenceListModuleKeyword::maxArguments()
+int SpeciesSiteReferenceListKeyword::maxArguments()
 {
 	return 99;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool SpeciesSiteReferenceListModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+bool SpeciesSiteReferenceListKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	// Loop over arguments
 	for (int n=startArg; n<parser.nArgs()-1; n += 2)
@@ -79,7 +79,7 @@ bool SpeciesSiteReferenceListModuleKeyword::read(LineParser& parser, int startAr
 }
 
 // Write keyword data to specified LineParser
-bool SpeciesSiteReferenceListModuleKeyword::write(LineParser& parser, const char* prefix)
+bool SpeciesSiteReferenceListKeyword::write(LineParser& parser, const char* prefix)
 {
 	// Loop over list of SpeciesSiteReferences
 	CharString sites;

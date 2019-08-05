@@ -31,13 +31,13 @@
 /* none */
 
 // Keyword with IsotopologueReference Data
-class IsotopologueListModuleKeyword : public ModuleKeywordData< List<IsotopologueReference>& >
+class IsotopologueListKeyword : public KeywordData< List<IsotopologueReference>& >
 {
 	public:
 	// Constructor
-	IsotopologueListModuleKeyword(List<IsotopologueReference>& references);
+	IsotopologueListKeyword(List<IsotopologueReference>& references);
 	// Destructor
-	~IsotopologueListModuleKeyword();
+	~IsotopologueListKeyword();
 
 
 	/*

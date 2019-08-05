@@ -30,12 +30,12 @@
 // Forward Declarations
 /* none */
 
-// EnumOptionsModuleKeyword base class
-class EnumOptionsBaseModuleKeyword
+// EnumOptionsKeyword base class
+class EnumOptionsBaseKeyword
 {
 	public:
 	// Constructor
-	EnumOptionsBaseModuleKeyword(EnumOptionsBase& baseOptions) : baseOptions_(baseOptions)
+	EnumOptionsBaseKeyword(EnumOptionsBase& baseOptions) : baseOptions_(baseOptions)
 	{
 	}
 
@@ -59,22 +59,22 @@ class EnumOptionsBaseModuleKeyword
 	 * Set
 	 */
 	public:
-	// Set new option index, informing ModuleKeywordBase
+	// Set new option index, informing KeywordBase
 	virtual void setOptionByIndex(int optionIndex) = 0;
 };
 
 // Keyword based on EnumOptions
-template <class E> class EnumOptionsModuleKeyword : public EnumOptionsBaseModuleKeyword, public ModuleKeywordData< EnumOptions<E> >
+template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, public KeywordData< EnumOptions<E> >
 {
 	public:
 	// Constructor
-	EnumOptionsModuleKeyword(EnumOptions<E> options) : ModuleKeywordData< EnumOptions<E> >(ModuleKeywordBase::EnumOptionsData, options), EnumOptionsBaseModuleKeyword(ModuleKeywordData< EnumOptions<E> >::data_)
+	EnumOptionsKeyword(EnumOptions<E> options) : KeywordData< EnumOptions<E> >(KeywordBase::EnumOptionsData, options), EnumOptionsBaseKeyword(KeywordData< EnumOptions<E> >::data_)
 	{
 		// Set our array of valid values
-		for (int n=0; n<ModuleKeywordData< EnumOptions<E> >::data_.nOptions(); ++n) validKeywords_.add(ModuleKeywordData< EnumOptions<E> >::data_.keywordByIndex(n));
+		for (int n=0; n<KeywordData< EnumOptions<E> >::data_.nOptions(); ++n) validKeywords_.add(KeywordData< EnumOptions<E> >::data_.keywordByIndex(n));
 	}
 	// Destructor
-	~EnumOptionsModuleKeyword()
+	~EnumOptionsKeyword()
 	{
 	}
 
@@ -95,7 +95,7 @@ template <class E> class EnumOptionsModuleKeyword : public EnumOptionsBaseModule
 	// Validate supplied value
 	bool isValid(CharString value)
 	{
-		return ModuleKeywordData< EnumOptions<E> >::data_.isValid(value.get());
+		return KeywordData< EnumOptions<E> >::data_.isValid(value.get());
 	}
 
 
@@ -119,12 +119,12 @@ template <class E> class EnumOptionsModuleKeyword : public EnumOptionsBaseModule
 		if (parser.hasArg(startArg))
 		{
 			// Check validity of the supplied keyword...
-			if (!ModuleKeywordData< EnumOptions<E> >::data_.isValid(parser.argc(startArg))) return ModuleKeywordData< EnumOptions<E> >::data_.errorAndPrintValid(parser.argc(startArg));
+			if (!KeywordData< EnumOptions<E> >::data_.isValid(parser.argc(startArg))) return KeywordData< EnumOptions<E> >::data_.errorAndPrintValid(parser.argc(startArg));
 
 			// Keyword recognised...
-			EnumOptions<E> newOptions(ModuleKeywordData< EnumOptions<E> >::data_);
+			EnumOptions<E> newOptions(KeywordData< EnumOptions<E> >::data_);
 			newOptions.setCurrentOption(parser.argc(startArg));
-			if (!ModuleKeywordData< EnumOptions<E> >::setData(newOptions)) return Messenger::error("An odd thing happened....\n");
+			if (!KeywordData< EnumOptions<E> >::setData(newOptions)) return Messenger::error("An odd thing happened....\n");
 
 			return true;
 		}
@@ -133,7 +133,7 @@ template <class E> class EnumOptionsModuleKeyword : public EnumOptionsBaseModule
 	// Write keyword data to specified LineParser
 	bool write(LineParser& parser, const char* prefix)
 	{
-		return parser.writeLineF("%s%s  '%s'\n", prefix, ModuleKeywordData< EnumOptions<E> >::keyword(), ModuleKeywordData< EnumOptions<E> >::data_.currentOptionKeyword());
+		return parser.writeLineF("%s%s  '%s'\n", prefix, KeywordData< EnumOptions<E> >::keyword(), KeywordData< EnumOptions<E> >::data_.currentOptionKeyword());
 	}
 
 
@@ -144,19 +144,19 @@ template <class E> class EnumOptionsModuleKeyword : public EnumOptionsBaseModule
 	// Return value (as string)
 	const char* asString()
 	{
-		return ModuleKeywordData< EnumOptions<E> >::data_.currentOptionKeyword();
+		return KeywordData< EnumOptions<E> >::data_.currentOptionKeyword();
 	}
 
 
 	/*
-	 * Set (implementing pure virtual from EnumOptionsBaseModuleKeyword)
+	 * Set (implementing pure virtual from EnumOptionsBaseKeyword)
 	 */
 	public:
-	// Set new option index, informing ModuleKeywordBase
+	// Set new option index, informing KeywordBase
 	void setOptionByIndex(int optionIndex)
 	{
-		ModuleKeywordData< EnumOptions<E> >::data_.setCurrentOptionIndex(optionIndex);
-		ModuleKeywordData< EnumOptions<E> >::dataHasBeenSet();
+		KeywordData< EnumOptions<E> >::data_.setCurrentOptionIndex(optionIndex);
+		KeywordData< EnumOptions<E> >::dataHasBeenSet();
 	}
 };
 

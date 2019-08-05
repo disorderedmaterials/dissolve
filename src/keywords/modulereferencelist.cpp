@@ -27,19 +27,19 @@
 #include "genericitems/listhelper.h"
 
 // Constructors
-ModuleReferenceListModuleKeyword::ModuleReferenceListModuleKeyword(RefList<Module>& references, int maxModules) : ModuleKeywordData< RefList<Module>& >(ModuleKeywordBase::ModuleReferenceListData, references)
+ModuleReferenceListKeyword::ModuleReferenceListKeyword(RefList<Module>& references, int maxModules) : KeywordData< RefList<Module>& >(KeywordBase::ModuleReferenceListData, references)
 {
 	maxModules_ = maxModules;
 }
 
-ModuleReferenceListModuleKeyword::ModuleReferenceListModuleKeyword(RefList<Module>& references, CharStringList allowedModuleTypes, int maxModules) : ModuleKeywordData< RefList<Module>& >(ModuleKeywordBase::ModuleReferenceListData, references)
+ModuleReferenceListKeyword::ModuleReferenceListKeyword(RefList<Module>& references, CharStringList allowedModuleTypes, int maxModules) : KeywordData< RefList<Module>& >(KeywordBase::ModuleReferenceListData, references)
 {
 	moduleTypes_ = allowedModuleTypes;
 	maxModules_ = maxModules;
 }
 
 // Destructor
-ModuleReferenceListModuleKeyword::~ModuleReferenceListModuleKeyword()
+ModuleReferenceListKeyword::~ModuleReferenceListKeyword()
 {
 }
 
@@ -48,19 +48,19 @@ ModuleReferenceListModuleKeyword::~ModuleReferenceListModuleKeyword()
  */
 
 // Determine whether current data is actually 'set'
-bool ModuleReferenceListModuleKeyword::currentDataIsSet() const
+bool ModuleReferenceListKeyword::currentDataIsSet() const
 {
 	return data_.nItems() > 0;
 }
 
 // Return the Module type(s) to allow
-const CharStringList& ModuleReferenceListModuleKeyword::moduleTypes() const
+const CharStringList& ModuleReferenceListKeyword::moduleTypes() const
 {
 	return moduleTypes_;
 }
 
 // Return maximum number of Modules to allow in the list
-int ModuleReferenceListModuleKeyword::maxModules() const
+int ModuleReferenceListKeyword::maxModules() const
 {
 	return maxModules_;
 }
@@ -70,19 +70,19 @@ int ModuleReferenceListModuleKeyword::maxModules() const
  */
 
 // Return minimum number of arguments accepted
-int ModuleReferenceListModuleKeyword::minArguments()
+int ModuleReferenceListKeyword::minArguments()
 {
 	return 1;
 }
 
 // Return maximum number of arguments accepted
-int ModuleReferenceListModuleKeyword::maxArguments()
+int ModuleReferenceListKeyword::maxArguments()
 {
 	return (maxModules_ == -1 ? 99 : maxModules_);
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool ModuleReferenceListModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+bool ModuleReferenceListKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	// Loop over arguments provided to the keyword
 	for (int n = startArg; n<parser.nArgs(); ++n)
@@ -111,7 +111,7 @@ bool ModuleReferenceListModuleKeyword::read(LineParser& parser, int startArg, co
 }
 
 // Write keyword data to specified LineParser
-bool ModuleReferenceListModuleKeyword::write(LineParser& parser, const char* prefix)
+bool ModuleReferenceListKeyword::write(LineParser& parser, const char* prefix)
 {
 	// Loop over list of referenced Modules
 	RefListIterator<Module> refIterator(data_);

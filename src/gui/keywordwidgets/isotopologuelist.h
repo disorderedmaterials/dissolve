@@ -38,7 +38,7 @@ class IsotopologueListKeywordWidget : public KeywordDropDown, public KeywordWidg
 
 	public:
 	// Constructor
-	IsotopologueListKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
+	IsotopologueListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
 
 
 	/*
@@ -46,7 +46,7 @@ class IsotopologueListKeywordWidget : public KeywordDropDown, public KeywordWidg
 	 */
 	private:
 	// Associated keyword
-	IsotopologueListModuleKeyword* keyword_;
+	IsotopologueListKeyword* keyword_;
 
 
 	/*

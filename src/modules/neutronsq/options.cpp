@@ -46,39 +46,39 @@ void NeutronSQModule::setUpKeywords()
 	frequency_ = 5;
 
 	// Q range
-	ModuleKeywordGroup* group = addKeywordGroup("Q Range");
-	group->add(new DoubleModuleKeyword(0.05, 1.0e-5), "QDelta", "Step size in Q for S(Q) calculation");
-	group->add(new DoubleModuleKeyword(-1.0, -1.0), "QMax", "Maximum Q for calculated S(Q) (and limit at which reference data will be truncated)");
-	group->add(new DoubleModuleKeyword(0.01, 0.0), "QMin", "Minimum Q for calculated S(Q)");
-	group->add(new BroadeningFunctionModuleKeyword(BroadeningFunction()), "QBroadening", "Broadening function to apply when calculating S(Q)");
-	group->add(new WindowFunctionModuleKeyword(WindowFunction(WindowFunction::Lorch0Window)), "WindowFunction", "Window function to apply when Fourier-transforming g(r) to S(Q)");
+	KeywordGroup* group = addKeywordGroup("Q Range");
+	group->add(new DoubleKeyword(0.05, 1.0e-5), "QDelta", "Step size in Q for S(Q) calculation");
+	group->add(new DoubleKeyword(-1.0, -1.0), "QMax", "Maximum Q for calculated S(Q) (and limit at which reference data will be truncated)");
+	group->add(new DoubleKeyword(0.01, 0.0), "QMin", "Minimum Q for calculated S(Q)");
+	group->add(new BroadeningFunctionKeyword(BroadeningFunction()), "QBroadening", "Broadening function to apply when calculating S(Q)");
+	group->add(new WindowFunctionKeyword(WindowFunction(WindowFunction::Lorch0Window)), "WindowFunction", "Window function to apply when Fourier-transforming g(r) to S(Q)");
 
 	// Neutron Isotopes
 	group = addKeywordGroup("Neutron Isotopes");
-	group->add(new AtomTypeSelectionModuleKeyword(exchangeableTypes_, targetConfigurations_), "Exchangeable", "Specify AtomTypes that are exchangeable", "<AtomType> [AtomType...]");
-	group->add(new IsotopologueListModuleKeyword(isotopologues_), "Isotopologue", "Set Isotopologue (and its population) to use for a particular Species in a given Configuration");
-	group->add(new EnumOptionsModuleKeyword<NeutronSQModule::NormalisationType>(NeutronSQModule::normalisationTypes() = NeutronSQModule::NoNormalisation), "Normalisation", "Normalisation to apply to total weighted F(Q)");
+	group->add(new AtomTypeSelectionKeyword(exchangeableTypes_, targetConfigurations_), "Exchangeable", "Specify AtomTypes that are exchangeable", "<AtomType> [AtomType...]");
+	group->add(new IsotopologueListKeyword(isotopologues_), "Isotopologue", "Set Isotopologue (and its population) to use for a particular Species in a given Configuration");
+	group->add(new EnumOptionsKeyword<NeutronSQModule::NormalisationType>(NeutronSQModule::normalisationTypes() = NeutronSQModule::NoNormalisation), "Normalisation", "Normalisation to apply to total weighted F(Q)");
 
 	// Bragg Scattering
 	group = addKeywordGroup("Bragg Scattering");
-	group->add(new BoolModuleKeyword(false), "IncludeBragg", "Include Bragg scattering (if reflection data are present in the Configuration)");
-	group->add(new BroadeningFunctionModuleKeyword(BroadeningFunction()), "BraggQBroadening", "Broadening function to apply, on top of any QBroadening, to Bragg scattering");
+	group->add(new BoolKeyword(false), "IncludeBragg", "Include Bragg scattering (if reflection data are present in the Configuration)");
+	group->add(new BroadeningFunctionKeyword(BroadeningFunction()), "BraggQBroadening", "Broadening function to apply, on top of any QBroadening, to Bragg scattering");
 
 	// Reference Data
 	group = addKeywordGroup("Reference Data");
-	group->add(new FileAndFormatModuleKeyword(referenceFQ_), "Reference", "F(Q) reference data", "<format> <filename>");
-	group->add(new EnumOptionsModuleKeyword<NeutronSQModule::NormalisationType>(NeutronSQModule::normalisationTypes() = NeutronSQModule::NoNormalisation), "ReferenceNormalisation", "Normalisation to remove from reference data before use");
-	group->add(new BoolModuleKeyword(false), "ReferenceIgnoreFirst", "Ignore the first point in the supplied reference data");
+	group->add(new FileAndFormatKeyword(referenceFQ_), "Reference", "F(Q) reference data", "<format> <filename>");
+	group->add(new EnumOptionsKeyword<NeutronSQModule::NormalisationType>(NeutronSQModule::normalisationTypes() = NeutronSQModule::NoNormalisation), "ReferenceNormalisation", "Normalisation to remove from reference data before use");
+	group->add(new BoolKeyword(false), "ReferenceIgnoreFirst", "Ignore the first point in the supplied reference data");
 
 	// Export
 	group = addKeywordGroup("Export");
-	group->add(new BoolModuleKeyword(false), "SaveReferenceData", "Whether to save the reference data and its Fourier transform", "<True|False>");
-	group->add(new BoolModuleKeyword(false), "SaveUnweighted", "Whether to save unweighted totals / partials to disk after calculation", "<True|False>");
-	group->add(new BoolModuleKeyword(false), "SaveWeighted", "Whether to save weighted totals / partials to disk after calculation", "<True|False>");
+	group->add(new BoolKeyword(false), "SaveReferenceData", "Whether to save the reference data and its Fourier transform", "<True|False>");
+	group->add(new BoolKeyword(false), "SaveUnweighted", "Whether to save unweighted totals / partials to disk after calculation", "<True|False>");
+	group->add(new BoolKeyword(false), "SaveWeighted", "Whether to save weighted totals / partials to disk after calculation", "<True|False>");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int NeutronSQModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
+int NeutronSQModule::parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
 	return -1;
 }

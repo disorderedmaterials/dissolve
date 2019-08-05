@@ -39,7 +39,7 @@ class FileAndFormatKeywordWidget : public QWidget, public KeywordWidgetBase
 
 	public:
 	// Constructor
-	FileAndFormatKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const Dissolve& dissolve, const CoreData& coreData, GenericList& moduleData, const char* prefix);
+	FileAndFormatKeywordWidget(QWidget* parent, KeywordBase* keyword, const Dissolve& dissolve, const CoreData& coreData, GenericList& moduleData, const char* prefix);
         // Main form declaration
         Ui::FileAndFormatWidget ui;
 
@@ -57,7 +57,7 @@ class FileAndFormatKeywordWidget : public QWidget, public KeywordWidgetBase
 	 */
 	private:
 	// Associated keyword
-	FileAndFormatModuleKeyword* keyword_;
+	FileAndFormatKeyword* keyword_;
 
 
 	/*

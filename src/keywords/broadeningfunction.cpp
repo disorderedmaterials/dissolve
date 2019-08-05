@@ -24,12 +24,12 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-BroadeningFunctionModuleKeyword::BroadeningFunctionModuleKeyword(BroadeningFunction value) : ModuleKeywordData<BroadeningFunction>(ModuleKeywordBase::BroadeningFunctionData, value)
+BroadeningFunctionKeyword::BroadeningFunctionKeyword(BroadeningFunction value) : KeywordData<BroadeningFunction>(KeywordBase::BroadeningFunctionData, value)
 {
 }
 
 // Destructor
-BroadeningFunctionModuleKeyword::~BroadeningFunctionModuleKeyword()
+BroadeningFunctionKeyword::~BroadeningFunctionKeyword()
 {
 }
 
@@ -38,19 +38,19 @@ BroadeningFunctionModuleKeyword::~BroadeningFunctionModuleKeyword()
  */
 
 // Return minimum number of arguments accepted
-int BroadeningFunctionModuleKeyword::minArguments()
+int BroadeningFunctionKeyword::minArguments()
 {
 	return 1;
 }
 
 // Return maximum number of arguments accepted
-int BroadeningFunctionModuleKeyword::maxArguments()
+int BroadeningFunctionKeyword::maxArguments()
 {
 	return MAXBROADENINGFUNCTIONPARAMS;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool BroadeningFunctionModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+bool BroadeningFunctionKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	bool result = data_.set(parser, startArg);
 	if (result) set_ = true;
@@ -59,7 +59,7 @@ bool BroadeningFunctionModuleKeyword::read(LineParser& parser, int startArg, con
 }
 
 // Write keyword data to specified LineParser
-bool BroadeningFunctionModuleKeyword::write(LineParser& parser, const char* prefix)
+bool BroadeningFunctionKeyword::write(LineParser& parser, const char* prefix)
 {
 	CharString params;
 	for (int n=0; n<BroadeningFunction::nFunctionParameters(data_.function()); ++n) params.strcatf("  %f", data_.parameter(n));

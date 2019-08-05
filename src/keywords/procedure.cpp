@@ -26,12 +26,12 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-ProcedureModuleKeyword::ProcedureModuleKeyword(Procedure& procedure) : ModuleKeywordData<Procedure&>(ModuleKeywordBase::ProcedureData, procedure)
+ProcedureKeyword::ProcedureKeyword(Procedure& procedure) : KeywordData<Procedure&>(KeywordBase::ProcedureData, procedure)
 {
 }
 
 // Destructor
-ProcedureModuleKeyword::~ProcedureModuleKeyword()
+ProcedureKeyword::~ProcedureKeyword()
 {
 }
 
@@ -40,19 +40,19 @@ ProcedureModuleKeyword::~ProcedureModuleKeyword()
  */
 
 // Return minimum number of arguments accepted
-int ProcedureModuleKeyword::minArguments()
+int ProcedureKeyword::minArguments()
 {
 	return 0;
 }
 
 // Return maximum number of arguments accepted
-int ProcedureModuleKeyword::maxArguments()
+int ProcedureKeyword::maxArguments()
 {
 	return 0;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool ProcedureModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+bool ProcedureKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	if (!data_.read(parser, coreData)) return false;
 
@@ -62,7 +62,7 @@ bool ProcedureModuleKeyword::read(LineParser& parser, int startArg, const CoreDa
 }
 
 // Write keyword data to specified LineParser
-bool ProcedureModuleKeyword::write(LineParser& parser, const char* prefix)
+bool ProcedureKeyword::write(LineParser& parser, const char* prefix)
 {
 	return data_.write(parser, prefix);
 }

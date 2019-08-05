@@ -25,14 +25,14 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-EnumOptionsModuleKeyword::EnumOptionsModuleKeyword(EnumOptionsBase options) : ModuleKeywordData<EnumOptionsBase>(ModuleKeywordBase::EnumOptionsData, options)
+EnumOptionsKeyword::EnumOptionsKeyword(EnumOptionsBase options) : KeywordData<EnumOptionsBase>(KeywordBase::EnumOptionsData, options)
 {
 	// Set our array of valid values
 	for (int n=0; n<data_.nOptions(); ++n) validKeywords_.add(data_.keywordByIndex(n));
 }
 
 // Destructor
-EnumOptionsModuleKeyword::~EnumOptionsModuleKeyword()
+EnumOptionsKeyword::~EnumOptionsKeyword()
 {
 }
 
@@ -41,19 +41,19 @@ EnumOptionsModuleKeyword::~EnumOptionsModuleKeyword()
  */
 
 // Return minimum number of arguments accepted
-int EnumOptionsModuleKeyword::minArguments()
+int EnumOptionsKeyword::minArguments()
 {
 	return 1;
 }
 
 // Return minimum number of arguments accepted
-int EnumOptionsModuleKeyword::maxArguments()
+int EnumOptionsKeyword::maxArguments()
 {
 	return 1;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool EnumOptionsModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+bool EnumOptionsKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	if (parser.hasArg(startArg))
 	{
@@ -71,7 +71,7 @@ bool EnumOptionsModuleKeyword::read(LineParser& parser, int startArg, const Core
 }
 
 // Write keyword data to specified LineParser
-bool EnumOptionsModuleKeyword::write(LineParser& parser, const char* prefix)
+bool EnumOptionsKeyword::write(LineParser& parser, const char* prefix)
 {
 	return parser.writeLineF("%s%s  '%s'\n", prefix, keyword(), data_.currentOptionKeyword());
 }
@@ -81,19 +81,19 @@ bool EnumOptionsModuleKeyword::write(LineParser& parser, const char* prefix)
  */
 
 // Return whether a validation list has been set
-bool EnumOptionsModuleKeyword::hasValidationList()
+bool EnumOptionsKeyword::hasValidationList()
 {
 	return true;
 }
 
 // Return validation list
-const Array<CharString>& EnumOptionsModuleKeyword::validationList()
+const Array<CharString>& EnumOptionsKeyword::validationList()
 {
 	return validKeywords_;
 }
 
 // Validate supplied value
-bool EnumOptionsModuleKeyword::isValid(CharString value)
+bool EnumOptionsKeyword::isValid(CharString value)
 {
 	return data_.isValid(value.get());
 }
@@ -103,7 +103,7 @@ bool EnumOptionsModuleKeyword::isValid(CharString value)
  */
 
 // Return value (as string)
-const char* EnumOptionsModuleKeyword::asString()
+const char* EnumOptionsKeyword::asString()
 {
 	return data_.currentOptionKeyword();
 }

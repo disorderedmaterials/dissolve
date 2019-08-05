@@ -24,7 +24,7 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-Vec3IntegerKeywordWidget::Vec3IntegerKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QWidget(parent), KeywordWidgetBase(coreData, moduleData, prefix)
+Vec3IntegerKeywordWidget::Vec3IntegerKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QWidget(parent), KeywordWidgetBase(coreData, moduleData, prefix)
 {
 	// Setup our UI
 	ui_.setupUi(this);
@@ -32,8 +32,8 @@ Vec3IntegerKeywordWidget::Vec3IntegerKeywordWidget(QWidget* parent, ModuleKeywor
 	refreshing_ = true;
 
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<Vec3IntegerModuleKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into Vec3IntegerModuleKeyword.\n", keyword->keyword());
+	keyword_ = dynamic_cast<Vec3IntegerKeyword*>(keyword);
+	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into Vec3IntegerKeyword.\n", keyword->keyword());
 	else
 	{
 		// Set minimum and maximum values for each component

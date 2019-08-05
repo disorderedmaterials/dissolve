@@ -30,13 +30,13 @@
 /* none */
 
 // Keyword with a store of Data2D
-class Data2DStoreModuleKeyword : public ModuleKeywordData<Data2DStore&>
+class Data2DStoreKeyword : public KeywordData<Data2DStore&>
 {
 	public:
 	// Constructor
-	Data2DStoreModuleKeyword(Data2DStore& dataStore);
+	Data2DStoreKeyword(Data2DStore& dataStore);
 	// Destructor
-	~Data2DStoreModuleKeyword();
+	~Data2DStoreKeyword();
 
 
 	/*

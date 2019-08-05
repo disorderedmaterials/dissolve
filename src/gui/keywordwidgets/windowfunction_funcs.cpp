@@ -25,7 +25,7 @@
 #include <QComboBox>
 
 // Constructor
-WindowFunctionKeywordWidget::WindowFunctionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QWidget(parent), KeywordWidgetBase(coreData, moduleData, prefix)
+WindowFunctionKeywordWidget::WindowFunctionKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QWidget(parent), KeywordWidgetBase(coreData, moduleData, prefix)
 {
 	// Create the necessary subwidgets
 	QHBoxLayout* layout = new QHBoxLayout(this);
@@ -37,8 +37,8 @@ WindowFunctionKeywordWidget::WindowFunctionKeywordWidget(QWidget* parent, Module
 	connect(functionCombo_, SIGNAL(currentTextChanged(QString)), this, SLOT(functionComboChanged(QString)));
 
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<WindowFunctionModuleKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into WindowFunctionModuleKeyword.\n", keyword->keyword());
+	keyword_ = dynamic_cast<WindowFunctionKeyword*>(keyword);
+	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into WindowFunctionKeyword.\n", keyword->keyword());
 	else
 	{
 		// Set current information

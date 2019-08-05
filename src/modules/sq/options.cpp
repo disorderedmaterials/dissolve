@@ -33,20 +33,20 @@ void SQModule::setUpKeywords()
 	frequency_ = 5;
 
 	// Q range
-	ModuleKeywordGroup* group = addKeywordGroup("Q Range");
-	group->add(new DoubleModuleKeyword(0.05, 1.0e-5), "QDelta", "Step size in Q for S(Q) calculation");
-	group->add(new DoubleModuleKeyword(-1.0, -1.0), "QMax", "Maximum Q for calculated S(Q)");
-	group->add(new DoubleModuleKeyword(0.01, 0.0), "QMin", "Minimum Q for calculated S(Q)");
-	group->add(new BroadeningFunctionModuleKeyword(BroadeningFunction()), "QBroadening", "Instrument broadening function to apply when calculating S(Q)");
-	group->add(new WindowFunctionModuleKeyword(WindowFunction(WindowFunction::Lorch0Window)), "WindowFunction", "Window function to apply in Fourier-transform of g(r) to S(Q)");
+	KeywordGroup* group = addKeywordGroup("Q Range");
+	group->add(new DoubleKeyword(0.05, 1.0e-5), "QDelta", "Step size in Q for S(Q) calculation");
+	group->add(new DoubleKeyword(-1.0, -1.0), "QMax", "Maximum Q for calculated S(Q)");
+	group->add(new DoubleKeyword(0.01, 0.0), "QMin", "Minimum Q for calculated S(Q)");
+	group->add(new BroadeningFunctionKeyword(BroadeningFunction()), "QBroadening", "Instrument broadening function to apply when calculating S(Q)");
+	group->add(new WindowFunctionKeyword(WindowFunction(WindowFunction::Lorch0Window)), "WindowFunction", "Window function to apply in Fourier-transform of g(r) to S(Q)");
 
 	// Export
 	group = addKeywordGroup("Export");
-	group->add(new BoolModuleKeyword(false), "Save", "Whether to save partials to disk after calculation", "<True|False>");
+	group->add(new BoolKeyword(false), "Save", "Whether to save partials to disk after calculation", "<True|False>");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int SQModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
+int SQModule::parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
 	return -1;
 }

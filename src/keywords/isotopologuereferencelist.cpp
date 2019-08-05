@@ -26,12 +26,12 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-IsotopologueReferenceListModuleKeyword::IsotopologueReferenceListModuleKeyword(List<IsotopologueReference>& references) : ModuleKeywordData<IsotopologueReference>(RefList<SpeciesSite>&, references)
+IsotopologueReferenceListKeyword::IsotopologueReferenceListKeyword(List<IsotopologueReference>& references) : KeywordData<IsotopologueReference>(RefList<SpeciesSite>&, references)
 {
 }
 
 // Destructor
-IsotopologueReferenceListModuleKeyword::~IsotopologueReferenceListModuleKeyword()
+IsotopologueReferenceListKeyword::~IsotopologueReferenceListKeyword()
 {
 }
 
@@ -40,19 +40,19 @@ IsotopologueReferenceListModuleKeyword::~IsotopologueReferenceListModuleKeyword(
  */
 
 // Return minimum number of arguments accepted
-int IsotopologueReferenceListModuleKeyword::minArguments()
+int IsotopologueReferenceListKeyword::minArguments()
 {
 	return 4;
 }
 
 // Return maximum number of arguments accepted
-int IsotopologueReferenceListModuleKeyword::maxArguments()
+int IsotopologueReferenceListKeyword::maxArguments()
 {
 	return 4;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool IsotopologueReferenceListModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+bool IsotopologueReferenceListKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	// Find target Configuration (first argument)
 	Configuration* cfg = NULL;
@@ -83,7 +83,7 @@ bool IsotopologueReferenceListModuleKeyword::read(LineParser& parser, int startA
 }
 
 // Write keyword data to specified LineParser
-bool IsotopologueReferenceListModuleKeyword::write(LineParser& parser, const char* prefix)
+bool IsotopologueReferenceListKeyword::write(LineParser& parser, const char* prefix)
 {
 	// Loop over list of IsotopologueReferences
 	ListIterator<IsotopologueReference> refIterator(references_);
@@ -100,7 +100,7 @@ bool IsotopologueReferenceListModuleKeyword::write(LineParser& parser, const cha
  */
 
 // Validate supplied value
-bool IsotopologueReferenceListModuleKeyword::isValid(IsotopologueReference value)
+bool IsotopologueReferenceListKeyword::isValid(IsotopologueReference value)
 {
 	return true;
 }

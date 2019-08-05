@@ -27,18 +27,18 @@
 void ChecksModule::setUpKeywords()
 {
 	// Distance
-	ModuleKeywordGroup* group = addKeywordGroup("Distance");
-	group->add(new ComplexModuleKeyword(3,3), "Distance", "Define a distance between Atoms to be checked", "<i> <j> <referenceDistance>");
-	group->add(new DoubleModuleKeyword(0.001, 1.0e-5), "DistanceThreshold", "Threshold at which distance checks will fail (Angstroms)", "<threshold[0.001]>");
+	KeywordGroup* group = addKeywordGroup("Distance");
+	group->add(new ComplexKeyword(3,3), "Distance", "Define a distance between Atoms to be checked", "<i> <j> <referenceDistance>");
+	group->add(new DoubleKeyword(0.001, 1.0e-5), "DistanceThreshold", "Threshold at which distance checks will fail (Angstroms)", "<threshold[0.001]>");
 
 	// Angle
 	group = addKeywordGroup("Angle");
-	group->add(new ComplexModuleKeyword(4,4), "Angle", "Define an angle between Atoms to be checked", "<i> <j> <k> <referenceAngle>");
-	group->add(new DoubleModuleKeyword(0.05, 1.0e-5), "AngleThreshold", "Threshold at which angle checks will fail", "<threshold[0.05]>");
+	group->add(new ComplexKeyword(4,4), "Angle", "Define an angle between Atoms to be checked", "<i> <j> <k> <referenceAngle>");
+	group->add(new DoubleKeyword(0.05, 1.0e-5), "AngleThreshold", "Threshold at which angle checks will fail", "<threshold[0.05]>");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int ChecksModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
+int ChecksModule::parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
 	if (DissolveSys::sameString(parser.argc(0), "Angle"))
 	{

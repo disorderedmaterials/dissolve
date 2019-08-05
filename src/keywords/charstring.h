@@ -29,13 +29,13 @@
 /* none */
 
 // Keyword with CharString Data
-class CharStringModuleKeyword : public ModuleKeywordData<CharString>
+class CharStringKeyword : public KeywordData<CharString>
 {
 	public:
 	// Constructor
-	CharStringModuleKeyword(CharString value = CharString());
+	CharStringKeyword(CharString value = CharString());
 	// Destructor
-	~CharStringModuleKeyword();
+	~CharStringKeyword();
 
 
 	/*

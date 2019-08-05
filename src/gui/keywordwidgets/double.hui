@@ -36,7 +36,7 @@ class DoubleKeywordWidget : public ExponentialSpin, public KeywordWidgetBase
 
 	public:
 	// Constructor
-	DoubleKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
+	DoubleKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
 
 
 	/*
@@ -44,7 +44,7 @@ class DoubleKeywordWidget : public ExponentialSpin, public KeywordWidgetBase
 	 */
 	private:
 	// Associated keyword
-	DoubleModuleKeyword* keyword_;
+	DoubleKeyword* keyword_;
 
 
 	/*

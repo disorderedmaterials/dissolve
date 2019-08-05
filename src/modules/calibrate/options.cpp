@@ -28,21 +28,21 @@
 void CalibrationModule::setUpKeywords()
 {
 	// Calculation
-	ModuleKeywordGroup* group = addKeywordGroup("Calculation");
-	group->add(new BoolModuleKeyword(true), "OnlyWhenEnergyStable", "Only perform calibrations when all related Configuration energies are stable");
+	KeywordGroup* group = addKeywordGroup("Calculation");
+	group->add(new BoolKeyword(true), "OnlyWhenEnergyStable", "Only perform calibrations when all related Configuration energies are stable");
 
 	// RDF Calibration
 	group = addKeywordGroup("RDF Calibration");
-	group->add(new ModuleReferenceListModuleKeyword(intraBroadeningModules_, "RDF"), "AdjustIntraBroadening", "Add specified RDF module as a target for IntraBroadening adjustment", "<RDFModule>");
+	group->add(new ModuleReferenceListKeyword(intraBroadeningModules_, "RDF"), "AdjustIntraBroadening", "Add specified RDF module as a target for IntraBroadening adjustment", "<RDFModule>");
 
 	// NeutronSQ Calibration
 	group = addKeywordGroup("NeutronSQ Calibration");
-	group->add(new ModuleReferenceListModuleKeyword(intraBroadeningNeutronGRReferences_, "NeutronSQ"), "IntraBroadeningNeutronGRReference", "Add G(r) data in the specified NeutronSQ module as a reference for IntraBroadening adjustment", "<NeutronSQModule>");
-	group->add(new ModuleReferenceListModuleKeyword(intraBroadeningNeutronSQReferences_, "NeutronSQ"), "IntraBroadeningNeutronSQReference", "Add S(Q) data in the specified NeutronSQ module as a reference for IntraBroadening adjustment", "<NeutronSQModule>");
+	group->add(new ModuleReferenceListKeyword(intraBroadeningNeutronGRReferences_, "NeutronSQ"), "IntraBroadeningNeutronGRReference", "Add G(r) data in the specified NeutronSQ module as a reference for IntraBroadening adjustment", "<NeutronSQModule>");
+	group->add(new ModuleReferenceListKeyword(intraBroadeningNeutronSQReferences_, "NeutronSQ"), "IntraBroadeningNeutronSQReference", "Add S(Q) data in the specified NeutronSQ module as a reference for IntraBroadening adjustment", "<NeutronSQModule>");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int CalibrationModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
+int CalibrationModule::parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
 	return -1;
 }

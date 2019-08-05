@@ -26,12 +26,12 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-SpeciesSiteModuleKeyword::SpeciesSiteModuleKeyword(SpeciesSite* site) : ModuleKeywordData<SpeciesSite*>(ModuleKeywordBase::SpeciesSiteData, site)
+SpeciesSiteKeyword::SpeciesSiteKeyword(SpeciesSite* site) : KeywordData<SpeciesSite*>(KeywordBase::SpeciesSiteData, site)
 {
 }
 
 // Destructor
-SpeciesSiteModuleKeyword::~SpeciesSiteModuleKeyword()
+SpeciesSiteKeyword::~SpeciesSiteKeyword()
 {
 }
 
@@ -40,19 +40,19 @@ SpeciesSiteModuleKeyword::~SpeciesSiteModuleKeyword()
  */
 
 // Return minimum number of arguments accepted
-int SpeciesSiteModuleKeyword::minArguments()
+int SpeciesSiteKeyword::minArguments()
 {
 	return 2;
 }
 
 // Return maximum number of arguments accepted
-int SpeciesSiteModuleKeyword::maxArguments()
+int SpeciesSiteKeyword::maxArguments()
 {
 	return 2;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool SpeciesSiteModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+bool SpeciesSiteKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	// Find target Species (first argument)
 	Species* sp = coreData.findSpecies(parser.argc(startArg));
@@ -72,7 +72,7 @@ bool SpeciesSiteModuleKeyword::read(LineParser& parser, int startArg, const Core
 }
 
 // Write keyword data to specified LineParser
-bool SpeciesSiteModuleKeyword::write(LineParser& parser, const char* prefix)
+bool SpeciesSiteKeyword::write(LineParser& parser, const char* prefix)
 {
 	if (data_)
 	{

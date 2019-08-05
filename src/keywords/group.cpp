@@ -23,7 +23,7 @@
 #include "keywords/list.h"
 
 // Constructor
-ModuleKeywordGroup::ModuleKeywordGroup(ModuleKeywordList& keywordList) : ListItem<ModuleKeywordGroup>(), keywordList_(keywordList)
+KeywordGroup::KeywordGroup(KeywordList& keywordList) : ListItem<KeywordGroup>(), keywordList_(keywordList)
 {
 }
 
@@ -32,13 +32,13 @@ ModuleKeywordGroup::ModuleKeywordGroup(ModuleKeywordList& keywordList) : ListIte
  */
 
 // Set name of group
-void ModuleKeywordGroup::setName(const char* name)
+void KeywordGroup::setName(const char* name)
 {
 	name_ = name;
 }
 
 // Return name of group
-const char* ModuleKeywordGroup::name() const
+const char* KeywordGroup::name() const
 {
 	return name_.get();
 }
@@ -48,13 +48,13 @@ const char* ModuleKeywordGroup::name() const
  */
 
 // Add specified keyword to the group
-void ModuleKeywordGroup::addKeywordToGroup(ModuleKeywordBase* object)
+void KeywordGroup::addKeywordToGroup(KeywordBase* object)
 {
 	keywords_.append(object);
 }
 
-// Add keyword (pass-thru to ModuleKeywordList)
-bool ModuleKeywordGroup::add(ModuleKeywordBase* object, const char* keyword, const char* description, int genericItemFlags)
+// Add keyword (pass-thru to KeywordList)
+bool KeywordGroup::add(KeywordBase* object, const char* keyword, const char* description, int genericItemFlags)
 {
 	if (!keywordList_.add(object, keyword, description, "", genericItemFlags)) return false;
 	
@@ -63,8 +63,8 @@ bool ModuleKeywordGroup::add(ModuleKeywordBase* object, const char* keyword, con
 	return false;
 }
 
-// Add keyword (pass-thru to ModuleKeywordList)
-bool ModuleKeywordGroup::add(ModuleKeywordBase* object, const char* keyword, const char* description, const char* arguments, int genericItemFlags)
+// Add keyword (pass-thru to KeywordList)
+bool KeywordGroup::add(KeywordBase* object, const char* keyword, const char* description, const char* arguments, int genericItemFlags)
 {
 	if (!keywordList_.add(object, keyword, description, arguments, genericItemFlags)) return false;
 
@@ -74,7 +74,7 @@ bool ModuleKeywordGroup::add(ModuleKeywordBase* object, const char* keyword, con
 }
 
 // Return first keyword in list
-RefList<ModuleKeywordBase>& ModuleKeywordGroup::keywords()
+RefList<KeywordBase>& KeywordGroup::keywords()
 {
 	return keywords_;
 }

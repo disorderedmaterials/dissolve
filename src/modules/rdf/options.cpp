@@ -48,30 +48,30 @@ void RDFModule::setUpKeywords()
 	frequency_ = 5;
 
 	// Calculation
-	ModuleKeywordGroup* group = addKeywordGroup("Calculation");
-	group->add(new DoubleModuleKeyword(0.025, 0.001), "BinWidth", "Specific RDF range to use (if UseHalfCellRange == false)");
-	group->add(new DoubleModuleKeyword(15.0, 0.1), "Range", "Specific RDF range to use (if UseHalfCellRange == false)");
-	group->add(new BoolModuleKeyword(true), "UseHalfCellRange", "Use the maximal RDF range possible, avoiding periodic images", "<True|False>");
-	group->add(new IntegerModuleKeyword(5, 1), "Averaging", "Number of historical partial sets to combine into final partials", "<5>");
-	group->add(new EnumOptionsModuleKeyword<Averaging::AveragingScheme>(Averaging::averagingSchemes() = Averaging::LinearAveraging), "AveragingScheme", "Weighting scheme to use when averaging partials", "<Linear>");
-	group->add(new PairBroadeningFunctionModuleKeyword(PairBroadeningFunction()), "IntraBroadening", "Type of broadening to apply to intramolecular g(r)");
-	group->add(new EnumOptionsModuleKeyword<RDFModule::PartialsMethod>(RDFModule::partialsMethods() = RDFModule::AutoMethod), "Method", "Calculation method for partial radial distribution functions");
-	group->add(new IntegerModuleKeyword(0, 0, 100), "Smoothing", "Specifies the degree of smoothing 'n' to apply to calculated g(r), where 2n+1 controls the length in the applied Spline smooth");
+	KeywordGroup* group = addKeywordGroup("Calculation");
+	group->add(new DoubleKeyword(0.025, 0.001), "BinWidth", "Specific RDF range to use (if UseHalfCellRange == false)");
+	group->add(new DoubleKeyword(15.0, 0.1), "Range", "Specific RDF range to use (if UseHalfCellRange == false)");
+	group->add(new BoolKeyword(true), "UseHalfCellRange", "Use the maximal RDF range possible, avoiding periodic images", "<True|False>");
+	group->add(new IntegerKeyword(5, 1), "Averaging", "Number of historical partial sets to combine into final partials", "<5>");
+	group->add(new EnumOptionsKeyword<Averaging::AveragingScheme>(Averaging::averagingSchemes() = Averaging::LinearAveraging), "AveragingScheme", "Weighting scheme to use when averaging partials", "<Linear>");
+	group->add(new PairBroadeningFunctionKeyword(PairBroadeningFunction()), "IntraBroadening", "Type of broadening to apply to intramolecular g(r)");
+	group->add(new EnumOptionsKeyword<RDFModule::PartialsMethod>(RDFModule::partialsMethods() = RDFModule::AutoMethod), "Method", "Calculation method for partial radial distribution functions");
+	group->add(new IntegerKeyword(0, 0, 100), "Smoothing", "Specifies the degree of smoothing 'n' to apply to calculated g(r), where 2n+1 controls the length in the applied Spline smooth");
 
 	// Test
 	group = addKeywordGroup("Test");
-	group->add(new BoolModuleKeyword(false), "InternalTest", "Perform internal check of calculated partials (relative to Test method)");
-	group->add(new BoolModuleKeyword(false), "Test", "Test calculated total and partials against supplied reference data", "<True|False>");
-	group->add(new Data1DStoreModuleKeyword(testData_), "TestReference", "Specify test reference data", "<target> <fileformat> <filename> [x=1] [y=2]");
-	group->add(new DoubleModuleKeyword(0.1, 1.0e-5), "TestThreshold", "Test threshold (%%error) above which test fails", "<threshold[0.1]>");
+	group->add(new BoolKeyword(false), "InternalTest", "Perform internal check of calculated partials (relative to Test method)");
+	group->add(new BoolKeyword(false), "Test", "Test calculated total and partials against supplied reference data", "<True|False>");
+	group->add(new Data1DStoreKeyword(testData_), "TestReference", "Specify test reference data", "<target> <fileformat> <filename> [x=1] [y=2]");
+	group->add(new DoubleKeyword(0.1, 1.0e-5), "TestThreshold", "Test threshold (%%error) above which test fails", "<threshold[0.1]>");
 
 	// Export
 	group = addKeywordGroup("Export");
-	group->add(new BoolModuleKeyword(false), "Save", "Whether to save partials to disk after calculation", "<True|False>");
+	group->add(new BoolKeyword(false), "Save", "Whether to save partials to disk after calculation", "<True|False>");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int RDFModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
+int RDFModule::parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
 	return -1;
 }

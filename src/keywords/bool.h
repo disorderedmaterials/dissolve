@@ -29,13 +29,13 @@
 /* none */
 
 // Keyword with Bool Data
-class BoolModuleKeyword : public ModuleKeywordData<bool>
+class BoolKeyword : public KeywordData<bool>
 {
 	public:
 	// Constructor
-	BoolModuleKeyword(bool value);
+	BoolKeyword(bool value);
 	// Destructor
-	~BoolModuleKeyword();
+	~BoolKeyword();
 
 
 	/*

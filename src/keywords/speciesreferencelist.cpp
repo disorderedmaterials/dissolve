@@ -25,12 +25,12 @@
 #include "base/lineparser.h"
 
 // Constructor
-SpeciesReferenceListModuleKeyword::SpeciesReferenceListModuleKeyword(RefList<Species>& references) : ModuleKeywordData< RefList<Species>& >(ModuleKeywordBase::SpeciesReferenceListData, references)
+SpeciesReferenceListKeyword::SpeciesReferenceListKeyword(RefList<Species>& references) : KeywordData< RefList<Species>& >(KeywordBase::SpeciesReferenceListData, references)
 {
 }
 
 // Destructor
-SpeciesReferenceListModuleKeyword::~SpeciesReferenceListModuleKeyword()
+SpeciesReferenceListKeyword::~SpeciesReferenceListKeyword()
 {
 }
 
@@ -39,7 +39,7 @@ SpeciesReferenceListModuleKeyword::~SpeciesReferenceListModuleKeyword()
  */
 
 // Determine whether current data is actually 'set'
-bool SpeciesReferenceListModuleKeyword::currentDataIsSet() const
+bool SpeciesReferenceListKeyword::currentDataIsSet() const
 {
 	return data_.nItems() > 0;
 }
@@ -49,19 +49,19 @@ bool SpeciesReferenceListModuleKeyword::currentDataIsSet() const
  */
 
 // Return minimum number of arguments accepted
-int SpeciesReferenceListModuleKeyword::minArguments()
+int SpeciesReferenceListKeyword::minArguments()
 {
 	return 1;
 }
 
 // Return maximum number of arguments accepted
-int SpeciesReferenceListModuleKeyword::maxArguments()
+int SpeciesReferenceListKeyword::maxArguments()
 {
 	return 99;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool SpeciesReferenceListModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+bool SpeciesReferenceListKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	// Each argument is the name of a Species that we will add to our list
 	for (int n=startArg; n < parser.nArgs(); ++n)
@@ -78,7 +78,7 @@ bool SpeciesReferenceListModuleKeyword::read(LineParser& parser, int startArg, c
 }
 
 // Write keyword data to specified LineParser
-bool SpeciesReferenceListModuleKeyword::write(LineParser& parser, const char* prefix)
+bool SpeciesReferenceListKeyword::write(LineParser& parser, const char* prefix)
 {
 	// Loop over list of Species
 	CharString speciesString;

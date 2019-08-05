@@ -33,21 +33,21 @@ void BraggModule::setUpKeywords()
 {
 	frequency_ = 5;
 
-	ModuleKeywordGroup* group = addKeywordGroup("Calculation");
-	group->add(new IntegerModuleKeyword(5, 1), "Averaging", "Number of historical data sets to combine into final reflection data", "<5>");
-	group->add(new EnumOptionsModuleKeyword<Averaging::AveragingScheme>(Averaging::averagingSchemes() = Averaging::LinearAveraging), "AveragingScheme", "Weighting scheme to use when averaging reflection data", "<Linear>");
-	group->add(new DoubleModuleKeyword(0.001), "QDelta", "Resolution (binwidth) in Q space to use when calculating Bragg reflections", "<0.001>");
-	group->add(new DoubleModuleKeyword(1.0), "QMax", "Maximum Q value for Bragg calculation", "<1.0>");
-	group->add(new DoubleModuleKeyword(0.01), "QMin", "Minimum Q value for Bragg calculation", "<0.01>");
-	group->add(new Vec3IntegerModuleKeyword(Vec3<int>(1,1,1), Vec3<int>(1,1,1)), "Multiplicity", "Bragg intensity scaling factor accounting for number of repeat units in Configuration", "<1 1 1>");
+	KeywordGroup* group = addKeywordGroup("Calculation");
+	group->add(new IntegerKeyword(5, 1), "Averaging", "Number of historical data sets to combine into final reflection data", "<5>");
+	group->add(new EnumOptionsKeyword<Averaging::AveragingScheme>(Averaging::averagingSchemes() = Averaging::LinearAveraging), "AveragingScheme", "Weighting scheme to use when averaging reflection data", "<Linear>");
+	group->add(new DoubleKeyword(0.001), "QDelta", "Resolution (binwidth) in Q space to use when calculating Bragg reflections", "<0.001>");
+	group->add(new DoubleKeyword(1.0), "QMax", "Maximum Q value for Bragg calculation", "<1.0>");
+	group->add(new DoubleKeyword(0.01), "QMin", "Minimum Q value for Bragg calculation", "<0.01>");
+	group->add(new Vec3IntegerKeyword(Vec3<int>(1,1,1), Vec3<int>(1,1,1)), "Multiplicity", "Bragg intensity scaling factor accounting for number of repeat units in Configuration", "<1 1 1>");
 
 	group = addKeywordGroup("Export");
-	group->add(new BoolModuleKeyword(false), "SavePartials", "Whether to save Bragg partials to disk after calculation", "<True|False>");
-	group->add(new BoolModuleKeyword(false), "SaveReflections", "Whether to save Bragg reflection data to disk", "<True|False>");
+	group->add(new BoolKeyword(false), "SavePartials", "Whether to save Bragg partials to disk after calculation", "<True|False>");
+	group->add(new BoolKeyword(false), "SaveReflections", "Whether to save Bragg reflection data to disk", "<True|False>");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int BraggModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
+int BraggModule::parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
 	return -1;
 }

@@ -31,13 +31,13 @@
 class Configuration;
 
 // Keyword with IsotopologueReference Data
-class AtomTypeSelectionModuleKeyword : public ModuleKeywordData<AtomTypeList&>
+class AtomTypeSelectionKeyword : public KeywordData<AtomTypeList&>
 {
 	public:
 	// Constructor
-	AtomTypeSelectionModuleKeyword(AtomTypeList& selection_, RefList<Configuration>& sourceConfigurations);
+	AtomTypeSelectionKeyword(AtomTypeList& selection_, RefList<Configuration>& sourceConfigurations);
 	// Destructor
-	~AtomTypeSelectionModuleKeyword();
+	~AtomTypeSelectionKeyword();
 
 
 	/*

@@ -29,15 +29,15 @@
 /* none */
 
 // Keyword with Double Triplet Data
-class Vec3DoubleModuleKeyword : public ModuleKeywordData< Vec3<double> >
+class Vec3DoubleKeyword : public KeywordData< Vec3<double> >
 {
 	public:
 	// Constructors
-	Vec3DoubleModuleKeyword(Vec3<double> value);
-	Vec3DoubleModuleKeyword(Vec3<double> value, Vec3<double> minValue);
-	Vec3DoubleModuleKeyword(Vec3<double> value, Vec3<double> minValue, Vec3<double> maxValue);
+	Vec3DoubleKeyword(Vec3<double> value);
+	Vec3DoubleKeyword(Vec3<double> value, Vec3<double> minValue);
+	Vec3DoubleKeyword(Vec3<double> value, Vec3<double> minValue, Vec3<double> maxValue);
 	// Destructor
-	~Vec3DoubleModuleKeyword();
+	~Vec3DoubleKeyword();
 
 
 	/*

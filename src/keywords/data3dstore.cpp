@@ -23,12 +23,12 @@
 #include "base/lineparser.h"
 
 // Constructor
-Data3DStoreModuleKeyword::Data3DStoreModuleKeyword(Data3DStore& data3DStore) : ModuleKeywordData<Data3DStore&>(ModuleKeywordBase::Data3DStoreData, data3DStore)
+Data3DStoreKeyword::Data3DStoreKeyword(Data3DStore& data3DStore) : KeywordData<Data3DStore&>(KeywordBase::Data3DStoreData, data3DStore)
 {
 }
 
 // Destructor
-Data3DStoreModuleKeyword::~Data3DStoreModuleKeyword()
+Data3DStoreKeyword::~Data3DStoreKeyword()
 {
 }
 
@@ -37,21 +37,21 @@ Data3DStoreModuleKeyword::~Data3DStoreModuleKeyword()
  */
 
 // Return minimum number of arguments accepted
-int Data3DStoreModuleKeyword::minArguments()
+int Data3DStoreKeyword::minArguments()
 {
 	// Must have reference data name and format as a minimum
 	return 2;
 }
 
 // Return maximum number of arguments accepted
-int Data3DStoreModuleKeyword::maxArguments()
+int Data3DStoreKeyword::maxArguments()
 {
 	// Filename, name of data, and other args
 	return 99;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool Data3DStoreModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+bool Data3DStoreKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	Messenger::print("Reading test data '%s' from file '%s' (format=%s)...\n", parser.argc(startArg), parser.argc(startArg+2), parser.argc(startArg+1));
 
@@ -67,7 +67,7 @@ bool Data3DStoreModuleKeyword::read(LineParser& parser, int startArg, const Core
 }
 
 // Write keyword data to specified LineParser
-bool Data3DStoreModuleKeyword::write(LineParser& parser, const char* prefix)
+bool Data3DStoreKeyword::write(LineParser& parser, const char* prefix)
 {
 	// Loop over list of one-dimensional data
 	RefDataListIterator<Data3D,Data3DImportFileFormat> dataIterator(data_.dataReferences());

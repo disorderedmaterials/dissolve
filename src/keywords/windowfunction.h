@@ -30,13 +30,13 @@
 /* none */
 
 // Keyword with WindowFunction Data
-class WindowFunctionModuleKeyword : public ModuleKeywordData<WindowFunction>
+class WindowFunctionKeyword : public KeywordData<WindowFunction>
 {
 	public:
 	// Constructor
-	WindowFunctionModuleKeyword(WindowFunction value);
+	WindowFunctionKeyword(WindowFunction value);
 	// Destructor
-	~WindowFunctionModuleKeyword();
+	~WindowFunctionKeyword();
 
 
 	/*

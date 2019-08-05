@@ -82,23 +82,23 @@ class Module : public ListItem<Module>
 	 */
 	protected:
 	// Keywords recognised by Module
-	ModuleKeywordList keywords_;
+	KeywordList keywords_;
 	// Keywords organised by group
-	List<ModuleKeywordGroup> keywordGroups_;
+	List<KeywordGroup> keywordGroups_;
 
 	protected:
 	// Create and return named keyword group
-	ModuleKeywordGroup* addKeywordGroup(const char* name);
+	KeywordGroup* addKeywordGroup(const char* name);
 	// Set up keywords for Module
 	virtual void setUpKeywords() = 0;
 	// Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-	virtual int parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix) = 0;
+	virtual int parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix) = 0;
 
 	public:
 	// Return list of recognised keywords
-	ModuleKeywordList& keywords();
+	KeywordList& keywords();
 	// Return list of defined keyword groups
-	const List<ModuleKeywordGroup>& keywordGroups() const;
+	const List<KeywordGroup>& keywordGroups() const;
 	// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 	int parseKeyword(LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix);
 	// Print valid keywords

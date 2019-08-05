@@ -27,15 +27,15 @@
 #include "templates/listitem.h"
 
 // Forward Declarations
-class ModuleKeywordBase;
-class ModuleKeywordList;
+class KeywordBase;
+class KeywordList;
 
 // Module Keyword Group
-class ModuleKeywordGroup : public ListItem<ModuleKeywordGroup>
+class KeywordGroup : public ListItem<KeywordGroup>
 {
 	public:
 	// Constructor
-	ModuleKeywordGroup(ModuleKeywordList& keywordList);
+	KeywordGroup(KeywordList& keywordList);
 
 
 	/*
@@ -56,22 +56,22 @@ class ModuleKeywordGroup : public ListItem<ModuleKeywordGroup>
 	 * Keyword Group
 	 */
 	private:
-	// Associated ModuleKeywordList
-	ModuleKeywordList& keywordList_;
-	// List of keywords (in the referenced ModuleKeywordList) that are in this group
-	RefList<ModuleKeywordBase> keywords_;
+	// Associated KeywordList
+	KeywordList& keywordList_;
+	// List of keywords (in the referenced KeywordList) that are in this group
+	RefList<KeywordBase> keywords_;
 
 	private:
 	// Add specified keyword to the group
-	void addKeywordToGroup(ModuleKeywordBase* object);
+	void addKeywordToGroup(KeywordBase* object);
 
 	public:
-	// Add keyword (pass-thru to ModuleKeywordList)
-	bool add(ModuleKeywordBase* object, const char* keyword, const char* description, int genericItemFlags = 0);
-	// Add keyword (pass-thru to ModuleKeywordList)
-	bool add(ModuleKeywordBase* object, const char* keyword, const char* description, const char* arguments, int genericItemFlags = 0);
+	// Add keyword (pass-thru to KeywordList)
+	bool add(KeywordBase* object, const char* keyword, const char* description, int genericItemFlags = 0);
+	// Add keyword (pass-thru to KeywordList)
+	bool add(KeywordBase* object, const char* keyword, const char* description, const char* arguments, int genericItemFlags = 0);
 	// Return reference list of keywords in group
-	RefList<ModuleKeywordBase>& keywords();
+	RefList<KeywordBase>& keywords();
 };
 
 #endif

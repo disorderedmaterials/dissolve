@@ -29,15 +29,15 @@
 /* none */
 
 // Keyword with Double Data
-class DoubleModuleKeyword : public ModuleKeywordData<double>
+class DoubleKeyword : public KeywordData<double>
 {
 	public:
 	// Constructors
-	DoubleModuleKeyword(double value);
-	DoubleModuleKeyword(double value, double minValue);
-	DoubleModuleKeyword(double value, double minValue, double maxValue);
+	DoubleKeyword(double value);
+	DoubleKeyword(double value, double minValue);
+	DoubleKeyword(double value, double minValue, double maxValue);
 	// Destructor
-	~DoubleModuleKeyword();
+	~DoubleKeyword();
 
 
 	/*

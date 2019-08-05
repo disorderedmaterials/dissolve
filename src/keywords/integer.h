@@ -29,15 +29,15 @@
 /* none */
 
 // Keyword with Integer Data
-class IntegerModuleKeyword : public ModuleKeywordData<int>
+class IntegerKeyword : public KeywordData<int>
 {
 	public:
 	// Constructors
-	IntegerModuleKeyword(int value);
-	IntegerModuleKeyword(int value, int minValue);
-	IntegerModuleKeyword(int value, int minValue, int maxValue);
+	IntegerKeyword(int value);
+	IntegerKeyword(int value, int minValue);
+	IntegerKeyword(int value, int minValue, int maxValue);
 	// Destructor
-	~IntegerModuleKeyword();
+	~IntegerKeyword();
 
 
 	/*

@@ -26,14 +26,14 @@
 void GeometryOptimisationModule::setUpKeywords()
 {
 	// Method Control
-	ModuleKeywordGroup* group = addKeywordGroup("Method Control");
-	group->add(new IntegerModuleKeyword(200, 1), "NCycles", "Number of minimisation cycles to perform");
-	group->add(new DoubleModuleKeyword(1.0e-5, 1.0e-10), "StepSize", "Initial step size to employ");
-	group->add(new DoubleModuleKeyword(1.0e-4, 1.0e-10), "Tolerance", "Tolerance controlling convergence of algorithm)");
+	KeywordGroup* group = addKeywordGroup("Method Control");
+	group->add(new IntegerKeyword(200, 1), "NCycles", "Number of minimisation cycles to perform");
+	group->add(new DoubleKeyword(1.0e-5, 1.0e-10), "StepSize", "Initial step size to employ");
+	group->add(new DoubleKeyword(1.0e-4, 1.0e-10), "Tolerance", "Tolerance controlling convergence of algorithm)");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int GeometryOptimisationModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
+int GeometryOptimisationModule::parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
 	return -1;
 }

@@ -28,12 +28,12 @@
 #include "base/sysfunc.h"
 
 // Constructor
-ModuleGroupsModuleKeyword::ModuleGroupsModuleKeyword(ModuleGroups& groups) : ModuleKeywordData<ModuleGroups&>(ModuleKeywordBase::ModuleGroupsData, groups)
+ModuleGroupsKeyword::ModuleGroupsKeyword(ModuleGroups& groups) : KeywordData<ModuleGroups&>(KeywordBase::ModuleGroupsData, groups)
 {
 }
 
 // Destructor
-ModuleGroupsModuleKeyword::~ModuleGroupsModuleKeyword()
+ModuleGroupsKeyword::~ModuleGroupsKeyword()
 {
 }
 
@@ -42,20 +42,20 @@ ModuleGroupsModuleKeyword::~ModuleGroupsModuleKeyword()
  */
 
 // Return minimum number of arguments accepted
-int ModuleGroupsModuleKeyword::minArguments()
+int ModuleGroupsKeyword::minArguments()
 {
 	return 1;
 }
 
 // Return maximum number of arguments accepted
-int ModuleGroupsModuleKeyword::maxArguments()
+int ModuleGroupsKeyword::maxArguments()
 {
 	// Module name plus group name
 	return 2;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool ModuleGroupsModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+bool ModuleGroupsKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	// Find specified Module by its unique name
 	Module* module = coreData.findModule(parser.argc(startArg));
@@ -81,7 +81,7 @@ bool ModuleGroupsModuleKeyword::read(LineParser& parser, int startArg, const Cor
 }
 
 // Write keyword data to specified LineParser
-bool ModuleGroupsModuleKeyword::write(LineParser& parser, const char* prefix)
+bool ModuleGroupsKeyword::write(LineParser& parser, const char* prefix)
 {
 	// Loop over defined groups
 	ListIterator<ModuleGroup> groupIterator(data_.groups());

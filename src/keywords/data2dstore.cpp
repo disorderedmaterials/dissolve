@@ -24,12 +24,12 @@
 #include "templates/refdatalist.h"
 
 // Constructor
-Data2DStoreModuleKeyword::Data2DStoreModuleKeyword(Data2DStore& data2DStore) : ModuleKeywordData<Data2DStore&>(ModuleKeywordBase::Data2DStoreData, data2DStore)
+Data2DStoreKeyword::Data2DStoreKeyword(Data2DStore& data2DStore) : KeywordData<Data2DStore&>(KeywordBase::Data2DStoreData, data2DStore)
 {
 }
 
 // Destructor
-Data2DStoreModuleKeyword::~Data2DStoreModuleKeyword()
+Data2DStoreKeyword::~Data2DStoreKeyword()
 {
 }
 
@@ -38,21 +38,21 @@ Data2DStoreModuleKeyword::~Data2DStoreModuleKeyword()
  */
 
 // Return minimum number of arguments accepted
-int Data2DStoreModuleKeyword::minArguments()
+int Data2DStoreKeyword::minArguments()
 {
 	// Must have reference data name and format as a minimum
 	return 2;
 }
 
 // Return maximum number of arguments accepted
-int Data2DStoreModuleKeyword::maxArguments()
+int Data2DStoreKeyword::maxArguments()
 {
 	// Filename, name of data, and other args
 	return 99;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool Data2DStoreModuleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+bool Data2DStoreKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
 {
 	Messenger::print("Reading test data '%s' from file '%s' (format=%s)...\n", parser.argc(startArg), parser.argc(startArg+2), parser.argc(startArg+1));
 
@@ -68,7 +68,7 @@ bool Data2DStoreModuleKeyword::read(LineParser& parser, int startArg, const Core
 }
 
 // Write keyword data to specified LineParser
-bool Data2DStoreModuleKeyword::write(LineParser& parser, const char* prefix)
+bool Data2DStoreKeyword::write(LineParser& parser, const char* prefix)
 {
 	// Loop over list of one-dimensional data
 	RefDataListIterator<Data2D,Data2DImportFileFormat> dataIterator(data_.dataReferences());

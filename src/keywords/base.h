@@ -33,15 +33,15 @@ class LineParser;
 class ProcessPool;
 
 // Module Keyword Base Class
-class ModuleKeywordBase : public ListItem<ModuleKeywordBase>
+class KeywordBase : public ListItem<KeywordBase>
 {
 	public:
 	// Keyword Data Type
 	enum KeywordDataType { AtomTypeSelectionData, BoolData, BroadeningFunctionData, CharStringData, ComplexData, Data1DStoreData, Data2DStoreData, Data3DStoreData, DoubleData, EnumOptionsData, EnumStringData, FileAndFormatData, IntegerData, IsotopologueListData, ModuleGroupsData, ModuleReferenceListData, PairBroadeningFunctionData, ProcedureData, SpeciesReferenceListData, SpeciesSiteData, SpeciesSiteReferenceListData, Vec3DoubleData, Vec3IntegerData, WindowFunctionData };
 	// Constructor
-	ModuleKeywordBase(KeywordDataType type);
+	KeywordBase(KeywordDataType type);
 	// Destructor
-	virtual ~ModuleKeywordBase();
+	virtual ~KeywordBase();
 	// Return DataType name
 	static const char* keywordDataType(KeywordDataType kdt);
 

@@ -30,13 +30,13 @@
 /* none */
 
 // Keyword with BroadeningFunction Data
-class BroadeningFunctionModuleKeyword : public ModuleKeywordData<BroadeningFunction>
+class BroadeningFunctionKeyword : public KeywordData<BroadeningFunction>
 {
 	public:
 	// Constructor
-	BroadeningFunctionModuleKeyword(BroadeningFunction value);
+	BroadeningFunctionKeyword(BroadeningFunction value);
 	// Destructor
-	~BroadeningFunctionModuleKeyword();
+	~BroadeningFunctionKeyword();
 
 
 	/*
