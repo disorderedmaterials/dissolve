@@ -32,10 +32,10 @@ EnumOptions<PairPotentialsBlock::PairPotentialsKeyword> PairPotentialsBlock::key
 		EnumOption(PairPotentialsBlock::CoulombTruncationKeyword, 	"CoulombTruncation",		1) <<
 		EnumOption(PairPotentialsBlock::DeltaKeyword, 			"Delta",			1) <<
 		EnumOption(PairPotentialsBlock::EndPairPotentialsKeyword,	"EndPairPotentials") <<
-		EnumOption(PairPotentialsBlock::GenerateKeyword, 		"Generate",			3,8) <<
+		EnumOption(PairPotentialsBlock::GenerateKeyword, 		"Generate",			3,9) <<
 		EnumOption(PairPotentialsBlock::GenerateAllKeyword, 		"GenerateAll",			1) <<
 		EnumOption(PairPotentialsBlock::IncludeCoulombKeyword, 		"IncludeCoulomb",		1) <<
-		EnumOption(PairPotentialsBlock::ParametersKeyword, 		"Parameters",			4) <<
+		EnumOption(PairPotentialsBlock::ParametersKeyword, 		"Parameters",			4,6) <<
 		EnumOption(PairPotentialsBlock::RangeKeyword, 			"Range",			1) <<
 		EnumOption(PairPotentialsBlock::ShortRangeTruncationKeyword, 	"ShortRangeTruncation",		1) <<
 		EnumOption(PairPotentialsBlock::ShortRangeTruncationKeyword, 	"ShortRangeTruncationWidth",	1);
