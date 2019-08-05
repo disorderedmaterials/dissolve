@@ -337,34 +337,34 @@ bool BaseViewer::readAxisBlock(LineParser& parser, Axes& axes, int axis, bool st
 // Write AxisBlock keywords
 bool BaseViewer::writeAxisBlock(LineParser& parser, Axes& axes, int axis)
 {
-	parser.writeLineF("    %s %i\n", BaseViewer::viewKeywords().keyword(BaseViewer::AxisBlockKeyword), axis);
-	parser.writeLineF("      %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::AutoScaleKeyword), Axes::autoScaleMethod(axes.autoScale(axis)));
-	parser.writeLineF("      %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::AutoTicksKeyword), DissolveSys::btoa(axes.autoTicks(axis)));
-	parser.writeLineF("      %s %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::FirstTickKeyword), axes.tickFirst(axis));
-	parser.writeLineF("      %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::FractionalPositioningKeyword), DissolveSys::btoa(axes.positionIsFractional(axis)));
-	parser.writeLineF("      %s %s %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::GridLinesKeyword), DissolveSys::btoa(axes.gridLinesMajor(axis)), DissolveSys::btoa(axes.gridLinesMinor(axis)), DissolveSys::btoa(axes.gridLinesFull(axis)));
+	parser.writeLineF("  %s %i\n", BaseViewer::viewKeywords().keyword(BaseViewer::AxisBlockKeyword), axis);
+	parser.writeLineF("    %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::AutoScaleKeyword), Axes::autoScaleMethod(axes.autoScale(axis)));
+	parser.writeLineF("    %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::AutoTicksKeyword), DissolveSys::btoa(axes.autoTicks(axis)));
+	parser.writeLineF("    %s %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::FirstTickKeyword), axes.tickFirst(axis));
+	parser.writeLineF("    %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::FractionalPositioningKeyword), DissolveSys::btoa(axes.positionIsFractional(axis)));
+	parser.writeLineF("    %s %s %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::GridLinesKeyword), DissolveSys::btoa(axes.gridLinesMajor(axis)), DissolveSys::btoa(axes.gridLinesMinor(axis)), DissolveSys::btoa(axes.gridLinesFull(axis)));
 	LineStyle style = axes.gridLineMajorStyle(axis);
-	parser.writeLineF("      %s %f '%s' %f %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::GridLineMajorStyleKeyword), style.width(), LineStipple::stipple[style.stipple()].name, style.colour()[0], style.colour()[1], style.colour()[2], style.colour()[3]);
+	parser.writeLineF("    %s %f '%s' %f %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::GridLineMajorStyleKeyword), style.width(), LineStipple::stipple[style.stipple()].name, style.colour()[0], style.colour()[1], style.colour()[2], style.colour()[3]);
 	style = axes.gridLineMinorStyle(axis);
-	parser.writeLineF("      %s %f '%s' %f %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::GridLineMinorStyleKeyword), style.width(), LineStipple::stipple[style.stipple()].name, style.colour()[0], style.colour()[1], style.colour()[2], style.colour()[3]);
-	parser.writeLineF("      %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::InvertKeyword), DissolveSys::btoa(axes.inverted(axis)));
-	parser.writeLineF("      %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::LabelAnchorKeyword), TextPrimitive::textAnchor(axes.labelAnchor(axis)));
-	parser.writeLineF("      %s %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::LabelOrientationKeyword), axes.labelOrientation(axis).x, axes.labelOrientation(axis).y, axes.labelOrientation(axis).z);
-	parser.writeLineF("      %s %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::LimitsKeyword), axes.min(axis), axes.max(axis));
-	parser.writeLineF("      %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::LogarithmicKeyword), DissolveSys::btoa(axes.logarithmic(axis)));
-	parser.writeLineF("      %s %i\n", BaseViewer::axisKeywords().keyword(BaseViewer::MinorTicksKeyword), axes.minorTicks(axis));
+	parser.writeLineF("    %s %f '%s' %f %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::GridLineMinorStyleKeyword), style.width(), LineStipple::stipple[style.stipple()].name, style.colour()[0], style.colour()[1], style.colour()[2], style.colour()[3]);
+	parser.writeLineF("    %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::InvertKeyword), DissolveSys::btoa(axes.inverted(axis)));
+	parser.writeLineF("    %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::LabelAnchorKeyword), TextPrimitive::textAnchor(axes.labelAnchor(axis)));
+	parser.writeLineF("    %s %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::LabelOrientationKeyword), axes.labelOrientation(axis).x, axes.labelOrientation(axis).y, axes.labelOrientation(axis).z);
+	parser.writeLineF("    %s %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::LimitsKeyword), axes.min(axis), axes.max(axis));
+	parser.writeLineF("    %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::LogarithmicKeyword), DissolveSys::btoa(axes.logarithmic(axis)));
+	parser.writeLineF("    %s %i\n", BaseViewer::axisKeywords().keyword(BaseViewer::MinorTicksKeyword), axes.minorTicks(axis));
 	NumberFormat fmt = axes.numberFormat(axis);
-	parser.writeLineF("      %s '%s' %i %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::NumberFormatKeyword), NumberFormat::formatType(fmt.type()), fmt.nDecimals(), DissolveSys::btoa(fmt.useUpperCaseExponent()), DissolveSys::btoa(fmt.forcePrecedingPlus()));
-	parser.writeLineF("      %s %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::PositionFractionalKeyword), axes.positionFractional(axis).x, axes.positionFractional(axis).y, axes.positionFractional(axis).z);
-	parser.writeLineF("      %s %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::PositionRealKeyword), axes.positionReal(axis).x, axes.positionReal(axis).y, axes.positionReal(axis).z);
-	parser.writeLineF("      %s %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::StretchKeyword), axes.stretch(axis));
-	parser.writeLineF("      %s %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::TickDeltaKeyword), axes.tickDelta(axis));
-	parser.writeLineF("      %s %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::TickDirectionKeyword), axes.tickDirection(axis).x, axes.tickDirection(axis).y, axes.tickDirection(axis).z);
-	parser.writeLineF("      %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::TitleAnchorKeyword), TextPrimitive::textAnchor(axes.titleAnchor(axis)));
-	parser.writeLineF("      %s '%s'\n", BaseViewer::axisKeywords().keyword(BaseViewer::TitleKeyword), axes.title(axis));
-	parser.writeLineF("      %s %f %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::TitleOrientationKeyword), axes.titleOrientation(axis).x, axes.titleOrientation(axis).y, axes.titleOrientation(axis).z, axes.titleOrientation(axis).w);
-	parser.writeLineF("      %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::VisibleAxisKeyword), DissolveSys::btoa(axes.visible(axis)));
-	parser.writeLineF("    %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::EndAxisKeyword));
+	parser.writeLineF("    %s '%s' %i %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::NumberFormatKeyword), NumberFormat::formatType(fmt.type()), fmt.nDecimals(), DissolveSys::btoa(fmt.useUpperCaseExponent()), DissolveSys::btoa(fmt.forcePrecedingPlus()));
+	parser.writeLineF("    %s %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::PositionFractionalKeyword), axes.positionFractional(axis).x, axes.positionFractional(axis).y, axes.positionFractional(axis).z);
+	parser.writeLineF("    %s %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::PositionRealKeyword), axes.positionReal(axis).x, axes.positionReal(axis).y, axes.positionReal(axis).z);
+	parser.writeLineF("    %s %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::StretchKeyword), axes.stretch(axis));
+	parser.writeLineF("    %s %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::TickDeltaKeyword), axes.tickDelta(axis));
+	parser.writeLineF("    %s %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::TickDirectionKeyword), axes.tickDirection(axis).x, axes.tickDirection(axis).y, axes.tickDirection(axis).z);
+	parser.writeLineF("    %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::TitleAnchorKeyword), TextPrimitive::textAnchor(axes.titleAnchor(axis)));
+	parser.writeLineF("    %s '%s'\n", BaseViewer::axisKeywords().keyword(BaseViewer::TitleKeyword), axes.title(axis));
+	parser.writeLineF("    %s %f %f %f %f\n", BaseViewer::axisKeywords().keyword(BaseViewer::TitleOrientationKeyword), axes.titleOrientation(axis).x, axes.titleOrientation(axis).y, axes.titleOrientation(axis).z, axes.titleOrientation(axis).w);
+	parser.writeLineF("    %s %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::VisibleAxisKeyword), DissolveSys::btoa(axes.visible(axis)));
+	parser.writeLineF("  %s\n", BaseViewer::axisKeywords().keyword(BaseViewer::EndAxisKeyword));
 
 	return true;
 }
@@ -818,24 +818,24 @@ bool BaseViewer::readViewBlock(LineParser& parser, bool strictBlockEnd)
 // Write ViewBlock keywords
 bool BaseViewer::writeViewBlock(LineParser& parser)
 {
-	parser.writeLineF("  %s\n", BaseViewer::inputBlockKeywords().keyword(BaseViewer::ViewBlock));
-	parser.writeLineF("    %s %s\n", BaseViewer::viewKeywords().keyword(BaseViewer::AutoFollowTypeKeyword), View::autoFollowType(view_.autoFollowType()));
-	parser.writeLineF("    %s %s\n", BaseViewer::viewKeywords().keyword(BaseViewer::AutoPositionTitlesKeyword), DissolveSys::btoa(view_.axes().autoPositionTitles()));
+	parser.writeLineF("%s\n", BaseViewer::inputBlockKeywords().keyword(BaseViewer::ViewBlock));
+	parser.writeLineF("  %s %s\n", BaseViewer::viewKeywords().keyword(BaseViewer::AutoFollowTypeKeyword), View::autoFollowType(view_.autoFollowType()));
+	parser.writeLineF("  %s %s\n", BaseViewer::viewKeywords().keyword(BaseViewer::AutoPositionTitlesKeyword), DissolveSys::btoa(view_.axes().autoPositionTitles()));
 	for (int axis=0; axis < 3; ++axis) writeAxisBlock(parser, view_.axes(), axis);
-	parser.writeLineF("    %s %s\n", BaseViewer::viewKeywords().keyword(BaseViewer::FlatLabelsKeyword), DissolveSys::btoa(view_.flatLabelsIn3D()));
-	parser.writeLineF("    %s %f\n", BaseViewer::viewKeywords().keyword(BaseViewer::LabelPointSizeKeyword), view_.labelPointSize());
-	parser.writeLineF("    %s %f\n", BaseViewer::viewKeywords().keyword(BaseViewer::TitlePointSizeKeyword), view_.titlePointSize());
+	parser.writeLineF("  %s %s\n", BaseViewer::viewKeywords().keyword(BaseViewer::FlatLabelsKeyword), DissolveSys::btoa(view_.flatLabelsIn3D()));
+	parser.writeLineF("  %s %f\n", BaseViewer::viewKeywords().keyword(BaseViewer::LabelPointSizeKeyword), view_.labelPointSize());
+	parser.writeLineF("  %s %f\n", BaseViewer::viewKeywords().keyword(BaseViewer::TitlePointSizeKeyword), view_.titlePointSize());
 	Matrix4 mat = view_.viewRotation();
 	Vec3<double> trans = view_.viewTranslation();
-	parser.writeLineF("    %s %f %f %f\n", BaseViewer::viewKeywords().keyword(BaseViewer::RotationXKeyword), mat[0], mat[1], mat[2]);
-	parser.writeLineF("    %s %f %f %f\n", BaseViewer::viewKeywords().keyword(BaseViewer::RotationYKeyword), mat[4], mat[5], mat[6]);
-	parser.writeLineF("    %s %f %f %f\n", BaseViewer::viewKeywords().keyword(BaseViewer::RotationZKeyword), mat[8], mat[9], mat[10]);
-	parser.writeLineF("    %s %f %f %f\n", BaseViewer::viewKeywords().keyword(BaseViewer::TranslationKeyword), trans.x, trans.y, trans.z);
-	parser.writeLineF("    %s %s\n", BaseViewer::viewKeywords().keyword(BaseViewer::PerspectiveKeyword), DissolveSys::btoa(view_.hasPerspective()));
-	parser.writeLineF("    %s %s\n", BaseViewer::viewKeywords().keyword(BaseViewer::UseBestFlatViewKeyword), DissolveSys::btoa(view_.axes().useBestFlatView()));
-	parser.writeLineF("    %s %i\n", BaseViewer::viewKeywords().keyword(BaseViewer::VerticalShiftKeyword), groupManager_.verticalShiftAmount());
-	parser.writeLineF("    %s '%s'\n", BaseViewer::viewKeywords().keyword(BaseViewer::ViewTypeKeyword), View::viewType(view_.viewType()));
-	parser.writeLineF("  %s\n", BaseViewer::viewKeywords().keyword(BaseViewer::EndViewKeyword));
+	parser.writeLineF("  %s %f %f %f\n", BaseViewer::viewKeywords().keyword(BaseViewer::RotationXKeyword), mat[0], mat[1], mat[2]);
+	parser.writeLineF("  %s %f %f %f\n", BaseViewer::viewKeywords().keyword(BaseViewer::RotationYKeyword), mat[4], mat[5], mat[6]);
+	parser.writeLineF("  %s %f %f %f\n", BaseViewer::viewKeywords().keyword(BaseViewer::RotationZKeyword), mat[8], mat[9], mat[10]);
+	parser.writeLineF("  %s %f %f %f\n", BaseViewer::viewKeywords().keyword(BaseViewer::TranslationKeyword), trans.x, trans.y, trans.z);
+	parser.writeLineF("  %s %s\n", BaseViewer::viewKeywords().keyword(BaseViewer::PerspectiveKeyword), DissolveSys::btoa(view_.hasPerspective()));
+	parser.writeLineF("  %s %s\n", BaseViewer::viewKeywords().keyword(BaseViewer::UseBestFlatViewKeyword), DissolveSys::btoa(view_.axes().useBestFlatView()));
+	parser.writeLineF("  %s %i\n", BaseViewer::viewKeywords().keyword(BaseViewer::VerticalShiftKeyword), groupManager_.verticalShiftAmount());
+	parser.writeLineF("  %s '%s'\n", BaseViewer::viewKeywords().keyword(BaseViewer::ViewTypeKeyword), View::viewType(view_.viewType()));
+	parser.writeLineF("%s\n", BaseViewer::viewKeywords().keyword(BaseViewer::EndViewKeyword));
 
 	return true;
 }
