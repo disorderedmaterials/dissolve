@@ -26,5 +26,32 @@
 // Read simple XY data using specified parser
 bool Data1DImportFileFormat::importXY(LineParser& parser, Data1D& data)
 {
-	return data.load(parser);
+	// Clear the structure, and initialise error arrays if necessary
+	data.clear();
+	if (errorColumn_ != -1) data.addErrors();
+
+	while (!parser.eofOrBlank())
+	{
+		if (parser.getArgsDelim() != LineParser::Success) return Messenger::error("Failed to read Data1D data from file.\n");
+
+		// Check columns provided
+		if ((xColumn_ >= parser.nArgs()) || (yColumn_ >= parser.nArgs()))
+		{
+			return Messenger::error("Error reading from '%s', as one or both columns specified (%i and %i) are not present.\n", parser.inputFilename(), xColumn_+1, yColumn_+1);
+		}
+
+		// Are we reading errors too?
+		if (errorColumn_ == -1) data.addPoint(parser.argd(xColumn_), parser.argd(yColumn_));
+		else
+		{
+			if (errorColumn_ >= parser.nArgs())
+			{
+				return Messenger::error("Error reading from '%s', as the error column specified (%i) is not present.\n", parser.inputFilename(), errorColumn_+1);
+			}
+
+			data.addPoint(parser.argd(xColumn_), parser.argd(yColumn_), parser.argd(errorColumn_));
+		}
+	}
+
+	return true;
 }

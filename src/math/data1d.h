@@ -138,12 +138,6 @@ class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore
 	 * File I/O
 	 */
 	public:
-	// Load data from specified LineParser, using columns specified
-	bool load(LineParser& parser, int xcol = 0, int ycol = 1);
-	// Load data from specified file, using columns specified
-	bool load(const char* filename, int xcol = 0, int ycol = 1);
-	// Load data from specified file through ProcessPool, using columns specified
-	bool load(ProcessPool& pool, const char* filename, int xcol = 0, int ycol = 1);
 	// Save data to specified file
 	bool save(const char* filename) const;
 	// Save data through specified parser

@@ -28,7 +28,7 @@
 bool Data1DImportFileFormat::importHistogram(LineParser& parser, Data1D& data)
 {
 	// Read in the data first (assuming simple XY format)
-	if (!data.load(parser)) return false;
+	if (!importXY(parser, data)) return false;
 
 	// Convert bin boundaries to centre-bin values
 	Filters::convertBinBoundaries(data);
