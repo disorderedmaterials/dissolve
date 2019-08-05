@@ -136,7 +136,7 @@ bool Dissolve::loadInputFromString(const char* inputString)
 
 	bool result = loadInput(parser);
 
-	if (!result) Messenger::print("Finished reading input.\n");
+	if (result) Messenger::print("Finished reading input.\n");
 
 	return result;
 }
@@ -150,7 +150,7 @@ bool Dissolve::loadInput(const char* filename)
 
 	bool result = loadInput(parser);
 
-	if (!result)
+	if (result)
 	{
 		Messenger::print("Finished reading input file.\n");
 		inputFilename_ = filename;
