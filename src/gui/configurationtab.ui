@@ -562,19 +562,33 @@
          <property name="title">
           <string>Generator</string>
          </property>
-         <widget class="QPushButton" name="GeneratorGenerateButton">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>30</y>
-            <width>92</width>
-            <height>28</height>
-           </rect>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <property name="spacing">
+           <number>4</number>
           </property>
-          <property name="text">
-           <string>Generate</string>
+          <property name="leftMargin">
+           <number>4</number>
           </property>
-         </widget>
+          <property name="topMargin">
+           <number>4</number>
+          </property>
+          <property name="rightMargin">
+           <number>4</number>
+          </property>
+          <property name="bottomMargin">
+           <number>4</number>
+          </property>
+          <item>
+           <widget class="QPushButton" name="GeneratorGenerateButton">
+            <property name="text">
+             <string>Generate</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="ProcedureEditor" name="widget" native="true"/>
+          </item>
+         </layout>
         </widget>
        </item>
        <item>
@@ -641,6 +655,12 @@
    <class>ConfigurationWidget</class>
    <extends>QWidget</extends>
    <header>gui/viewer/configurationwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ProcedureEditor</class>
+   <extends>QWidget</extends>
+   <header>gui/editors/procedure.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

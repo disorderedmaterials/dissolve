@@ -174,9 +174,10 @@ target_include_directories(gui PRIVATE
 )
 
 add_subdirectory(delegates)
+add_subdirectory(editors)
 add_subdirectory(keywordwidgets)
 add_subdirectory(viewer)
 add_subdirectory(widgets)
 
-target_link_libraries(gui keywordwidgets delegates viewer widgets)
+target_link_libraries(gui keywordwidgets delegates editors viewer widgets)
 

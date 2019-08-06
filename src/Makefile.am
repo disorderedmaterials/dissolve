@@ -49,7 +49,7 @@ SUBDIRS += gui
 
 noinst_LTLIBRARIES += libdissolvegui.la
 libdissolvegui_la_SOURCES =
-libdissolvegui_la_LIBADD = libdissolve.la modules/libmodulewidgets.la io/libimportexport.la gui/libgui.la gui/delegates/libdelegates.la gui/keywordwidgets/libkeywordwidgets.la gui/viewer/libviewer.la gui/viewer/render/librender.la gui/widgets/libwidgets.la libdissolve.la
+libdissolvegui_la_LIBADD = libdissolve.la modules/libmodulewidgets.la io/libimportexport.la gui/libgui.la gui/delegates/libdelegates.la gui/editors/libeditors.la gui/keywordwidgets/libkeywordwidgets.la gui/viewer/libviewer.la gui/viewer/render/librender.la gui/widgets/libwidgets.la libdissolve.la
 libdissolvegui_la_LDFLAGS = -static
 libdissolvegui_la_CPPFLAGS = @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
 

@@ -191,6 +191,7 @@ AC_CONFIG_FILES(src/templates/Makefile)
 if test "$with_gui" = "yes"; then
   AC_CONFIG_FILES(src/gui/Makefile)
   AC_CONFIG_FILES(src/gui/delegates/Makefile)
+  AC_CONFIG_FILES(src/gui/editors/Makefile)
   AC_CONFIG_FILES(src/gui/helpers/Makefile)
   AC_CONFIG_FILES(src/gui/keywordwidgets/Makefile)
   AC_CONFIG_FILES(src/gui/viewer/Makefile)
