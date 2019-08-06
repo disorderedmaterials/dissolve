@@ -275,6 +275,8 @@ class Dissolve
 	Module* createModuleInstance(const char* moduleType);
 	// Search for any instance of any module with the specified unique name
 	Module* findModuleInstance(const char* uniqueName);
+	// Delete specified Module instance
+	bool deleteModuleInstance(Module* instance);
 
 
 	/*

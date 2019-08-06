@@ -163,3 +163,17 @@ Module* Dissolve::findModuleInstance(const char* uniqueName)
 
 	return NULL;
 }
+
+// Delete specified Module instance
+bool Dissolve::deleteModuleInstance(Module* instance)
+{
+	if (!moduleInstances_.contains(instance)) return Messenger::error("Can't find Module instance to remove.\n");
+
+	// Remove the reference from our list
+	moduleInstances_.remove(instance);
+
+	// Delete the actual Module - we assume that it has been removed from any ModuleList
+	delete instance;
+
+	return true;
+}
