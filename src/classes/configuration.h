@@ -282,8 +282,8 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	GenericList moduleData_;
 
 	public:
-	// Add Module to the Configuration
-	bool addModule(Module* module);
+	// Associate Module to the Configuration
+	bool ownModule(Module* module);
 	// Return number of Modules associated to this Configuration
 	int nModules() const;
 	// Return Module layer for this Configuration

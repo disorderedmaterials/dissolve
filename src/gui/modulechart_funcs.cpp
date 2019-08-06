@@ -419,12 +419,12 @@ void ModuleChart::dropEvent(QDropEvent* event)
 		if (hotSpot->moduleBlockAfter() == NULL)
 		{
 			// No next block, so add the new Module to the end of the current list
-			modules_.add(newModule);
+			modules_.own(newModule);
 		}
 		else
 		{
 			// Insert the new Module before the next block
-			modules_.add(newModule, hotSpot->moduleBlockAfter()->module());
+			modules_.own(newModule, hotSpot->moduleBlockAfter()->module());
 		}
 
 		updateControls();

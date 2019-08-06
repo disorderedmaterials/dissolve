@@ -100,7 +100,7 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 				}
 
 				// Add the new instance to the current Configuration
-				if (cfg->addModule(module))
+				if (cfg->ownModule(module))
 				{
 					// Add our pointer to the Module's list of associated Configurations
 					if (!module->addTargetConfiguration(cfg))

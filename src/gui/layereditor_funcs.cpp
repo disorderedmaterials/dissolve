@@ -163,7 +163,7 @@ void LayerEditor::on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* ite
 		}
 	}
 
-	moduleLayer_->add(newInstance);
+	moduleLayer_->own(newInstance);
 
 	updateControls();
 

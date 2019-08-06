@@ -205,10 +205,10 @@ double Configuration::temperature()
  * Modules
  */
 
-// Add Module to the Configuration
-bool Configuration::addModule(Module* module)
+// Associate Module to the Configuration
+bool Configuration::ownModule(Module* module)
 {
-	return moduleLayer_.add(module);
+	return moduleLayer_.own(module);
 }
 
 // Return number of Modules associated to this Configuration

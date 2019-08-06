@@ -50,8 +50,8 @@ void ModuleList::clear()
 	modules_.clear();
 }
 
-// Add module to list
-bool ModuleList::add(Module* module, Module* addBeforeThis)
+// Associate module to list
+bool ModuleList::own(Module* module, Module* addBeforeThis)
 {
 	// Add the module pointer to the list
 	if (addBeforeThis)

@@ -50,8 +50,8 @@ class ModuleList
 	public:
 	// Clear list
 	void clear();
-	// Associate Module to list
-	bool add(Module* module, Module* addBeforeThis = NULL);
+	// Associate Module to the list
+	bool own(Module* module, Module* addBeforeThis = NULL);
 	// Remove specified Module from list (but don't delete it)
 	void cut(Module* module);
 	// Find associated Module by unique name
