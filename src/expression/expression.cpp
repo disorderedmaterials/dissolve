@@ -379,7 +379,7 @@ int Expression::asInteger()
 }
 
 // Execute and return as double
-int Expression::asDouble()
+double Expression::asDouble()
 {
 	ExpressionValue result;
 	if (!execute(result)) return 0.0;

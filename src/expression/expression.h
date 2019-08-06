@@ -130,7 +130,7 @@ class Expression
 	// Execute and return as integer
 	int asInteger();
 	// Execute and return as double
-	int asDouble();
+	double asDouble();
 };
 
 #endif
