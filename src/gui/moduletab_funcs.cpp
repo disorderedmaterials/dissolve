@@ -105,7 +105,7 @@ void ModuleTab::initialiseControls(Module* module)
 		splitter_->setStretchFactor(1, 5);
 
 		// Connect signals/slots between the controlsWidget_ and the moduleWidget_
-		connect(controlsWidget_, SIGNAL(moduleRun()), this, SLOT(updateModuleWidget()));
+		connect(controlsWidget_, SIGNAL(run()), this, SLOT(updateModuleWidget()));
 	}
 }
 
