@@ -107,8 +107,6 @@ class DissolveWindow : public QMainWindow
 	QLabel* restartFileIndicator_;
 	// Label for heartbeat file indicator
 	QLabel* heartbeatFileIndicator_;
-	// Iteration number widget
-	QLCDNumber* iterationNumberIndicator_;
 
 
 	/*
