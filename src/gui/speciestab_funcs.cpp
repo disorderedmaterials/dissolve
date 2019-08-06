@@ -37,7 +37,7 @@
 // Constructor / Destructor
 SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, Species* species) : ListItem<SpeciesTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Species: %s", title), this)
 {
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	refreshing_ = true;
 
@@ -45,25 +45,25 @@ SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabW
 
 	// Set item delegates in tables
 	// -- SpeciesAtomTable
-	ui.AtomTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboNameListItems<AtomType>(dissolve_.atomTypes())));
-	for (int n=2; n<6; ++n) ui.AtomTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
-	ui.AtomTable->horizontalHeader()->setFont(font());
+	ui_.AtomTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboNameListItems<AtomType>(dissolve_.atomTypes())));
+	for (int n=2; n<6; ++n) ui_.AtomTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
+	ui_.AtomTable->horizontalHeader()->setFont(font());
 	// -- Bond Table
-	for (int n=0; n<2; ++n) ui.BondTable->setItemDelegateForColumn(n, new IntegerSpinDelegate(this, 1, 1e9));
-	ui.BondTable->setItemDelegateForColumn(2, new IntraFormComboDelegate(this, SpeciesBond::nBondFunctions, SpeciesBond::bondFunctions(), dissolve_.masterBonds()));
+	for (int n=0; n<2; ++n) ui_.BondTable->setItemDelegateForColumn(n, new IntegerSpinDelegate(this, 1, 1e9));
+	ui_.BondTable->setItemDelegateForColumn(2, new IntraFormComboDelegate(this, SpeciesBond::nBondFunctions, SpeciesBond::bondFunctions(), dissolve_.masterBonds()));
 	// -- Angle Table
-	for (int n=0; n<3; ++n) ui.AngleTable->setItemDelegateForColumn(n, new IntegerSpinDelegate(this, 1, 1e9));
+	for (int n=0; n<3; ++n) ui_.AngleTable->setItemDelegateForColumn(n, new IntegerSpinDelegate(this, 1, 1e9));
 	// -- Torsion Table
-	for (int n=0; n<4; ++n) ui.TorsionTable->setItemDelegateForColumn(n, new IntegerSpinDelegate(this, 1, 1e9));
+	for (int n=0; n<4; ++n) ui_.TorsionTable->setItemDelegateForColumn(n, new IntegerSpinDelegate(this, 1, 1e9));
 	// -- Isotope Table
-	ui.IsotopeTable->setItemDelegateForColumn(1, new IsotopeComboDelegate(this));
+	ui_.IsotopeTable->setItemDelegateForColumn(1, new IsotopeComboDelegate(this));
 
 	// Set target for SpeciesViewer
-	ui.ViewerWidget->speciesViewer()->setSpecies(species_);
+	ui_.ViewerWidget->speciesViewer()->setSpecies(species_);
 
 	// Connect signals / slots
-	connect(ui.ViewerWidget->speciesViewer(), SIGNAL(dataChanged()), this, SLOT(updateControls()));
-	connect(ui.ViewerWidget->speciesViewer(), SIGNAL(dataModified(bool)), dissolveWindow_, SLOT(setModified(bool)));
+	connect(ui_.ViewerWidget->speciesViewer(), SIGNAL(dataChanged()), this, SLOT(updateControls()));
+	connect(ui_.ViewerWidget->speciesViewer(), SIGNAL(dataModified(bool)), dissolveWindow_, SLOT(setModified(bool)));
 
 	refreshing_ = false;
 }
@@ -106,9 +106,9 @@ void SpeciesTab::updateAtomTableRow(int row, SpeciesAtom* speciesAtom, bool crea
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<SpeciesAtom>(speciesAtom));
-		ui.AtomTable->setItem(row, 0, item);
+		ui_.AtomTable->setItem(row, 0, item);
 	}
-	else item = ui.AtomTable->item(row, 0);
+	else item = ui_.AtomTable->item(row, 0);
 	item->setText(speciesAtom->element()->name());
 
 	// AtomType
@@ -116,9 +116,9 @@ void SpeciesTab::updateAtomTableRow(int row, SpeciesAtom* speciesAtom, bool crea
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<SpeciesAtom>(speciesAtom));
-		ui.AtomTable->setItem(row, 1, item);
+		ui_.AtomTable->setItem(row, 1, item);
 	}
-	else item = ui.AtomTable->item(row, 1);
+	else item = ui_.AtomTable->item(row, 1);
 	item->setText(speciesAtom->atomType() ? speciesAtom->atomType()->name() : "");
 
 	// Coordinates
@@ -128,9 +128,9 @@ void SpeciesTab::updateAtomTableRow(int row, SpeciesAtom* speciesAtom, bool crea
 		{
 			item = new QTableWidgetItem;
 			item->setData(Qt::UserRole, VariantPointer<SpeciesAtom>(speciesAtom));
-			ui.AtomTable->setItem(row, n+2, item);
+			ui_.AtomTable->setItem(row, n+2, item);
 		}
-		else item = ui.AtomTable->item(row, n+2);
+		else item = ui_.AtomTable->item(row, n+2);
 		item->setText(QString::number(speciesAtom->r().get(n)));
 	}
 
@@ -139,9 +139,9 @@ void SpeciesTab::updateAtomTableRow(int row, SpeciesAtom* speciesAtom, bool crea
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<SpeciesAtom>(speciesAtom));
-		ui.AtomTable->setItem(row, 5, item);
+		ui_.AtomTable->setItem(row, 5, item);
 	}
-	else item = ui.AtomTable->item(row, 5);
+	else item = ui_.AtomTable->item(row, 5);
 	item->setText(QString::number(speciesAtom->charge()));
 }
 
@@ -157,9 +157,9 @@ void SpeciesTab::updateBondTableRow(int row, SpeciesBond* speciesBond, bool crea
 		{
 			item = new QTableWidgetItem;
 			item->setData(Qt::UserRole, VariantPointer<SpeciesBond>(speciesBond));
-			ui.BondTable->setItem(row, n, item);
+			ui_.BondTable->setItem(row, n, item);
 		}
-		else item = ui.BondTable->item(row, n);
+		else item = ui_.BondTable->item(row, n);
 		item->setText(QString::number(speciesBond->index(n)+1));
 	}
 
@@ -168,9 +168,9 @@ void SpeciesTab::updateBondTableRow(int row, SpeciesBond* speciesBond, bool crea
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<SpeciesBond>(speciesBond));
-		ui.BondTable->setItem(row, 2, item);
+		ui_.BondTable->setItem(row, 2, item);
 	}
-	else item = ui.BondTable->item(row, 2);
+	else item = ui_.BondTable->item(row, 2);
 	item->setText(speciesBond->masterParameters() ? QString("@%1").arg(speciesBond->masterParameters()->name()) : SpeciesBond::bondFunction( (SpeciesBond::BondFunction) speciesBond->form()));
 
 	// Interaction Parameters
@@ -180,9 +180,9 @@ void SpeciesTab::updateBondTableRow(int row, SpeciesBond* speciesBond, bool crea
 		{
 			item = new QTableWidgetItem;
 			item->setData(Qt::UserRole, VariantPointer<SpeciesBond>(speciesBond));
-			ui.BondTable->setItem(row, n+3, item);
+			ui_.BondTable->setItem(row, n+3, item);
 		}
-		else item = ui.BondTable->item(row, n+3);
+		else item = ui_.BondTable->item(row, n+3);
 		item->setText(QString::number(speciesBond->parameter(n)));
 		item->setFlags(speciesBond->masterParameters() ? Qt::NoItemFlags : Qt::ItemIsEnabled | Qt::ItemIsEditable );
 	}
@@ -200,9 +200,9 @@ void SpeciesTab::updateAngleTableRow(int row, SpeciesAngle* speciesAngle, bool c
 		{
 			item = new QTableWidgetItem;
 			item->setData(Qt::UserRole, VariantPointer<SpeciesAngle>(speciesAngle));
-			ui.AngleTable->setItem(row, n, item);
+			ui_.AngleTable->setItem(row, n, item);
 		}
-		else item = ui.AngleTable->item(row, n);
+		else item = ui_.AngleTable->item(row, n);
 		item->setText(QString::number(speciesAngle->index(n)+1));
 	}
 
@@ -211,9 +211,9 @@ void SpeciesTab::updateAngleTableRow(int row, SpeciesAngle* speciesAngle, bool c
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<SpeciesAngle>(speciesAngle));
-		ui.AngleTable->setItem(row, 3, item);
+		ui_.AngleTable->setItem(row, 3, item);
 	}
-	else item = ui.AngleTable->item(row, 3);
+	else item = ui_.AngleTable->item(row, 3);
 	item->setText(speciesAngle->masterParameters() ? QString("@%1").arg(speciesAngle->masterParameters()->name()) : SpeciesAngle::angleFunction( (SpeciesAngle::AngleFunction) speciesAngle->form()));
 
 	// Interaction Parameters
@@ -223,9 +223,9 @@ void SpeciesTab::updateAngleTableRow(int row, SpeciesAngle* speciesAngle, bool c
 		{
 			item = new QTableWidgetItem;
 			item->setData(Qt::UserRole, VariantPointer<SpeciesAngle>(speciesAngle));
-			ui.AngleTable->setItem(row, n+4, item);
+			ui_.AngleTable->setItem(row, n+4, item);
 		}
-		else item = ui.AngleTable->item(row, n+4);
+		else item = ui_.AngleTable->item(row, n+4);
 		item->setText(QString::number(speciesAngle->parameter(n)));
 		item->setFlags(speciesAngle->masterParameters() ? Qt::NoItemFlags : Qt::ItemIsEnabled | Qt::ItemIsEditable );
 	}
@@ -243,9 +243,9 @@ void SpeciesTab::updateTorsionTableRow(int row, SpeciesTorsion* speciesTorsion, 
 		{
 			item = new QTableWidgetItem;
 			item->setData(Qt::UserRole, VariantPointer<SpeciesTorsion>(speciesTorsion));
-			ui.TorsionTable->setItem(row, n, item);
+			ui_.TorsionTable->setItem(row, n, item);
 		}
-		else item = ui.TorsionTable->item(row, n);
+		else item = ui_.TorsionTable->item(row, n);
 		item->setText(QString::number(speciesTorsion->index(n)+1));
 	}
 
@@ -254,9 +254,9 @@ void SpeciesTab::updateTorsionTableRow(int row, SpeciesTorsion* speciesTorsion, 
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<SpeciesTorsion>(speciesTorsion));
-		ui.TorsionTable->setItem(row, 4, item);
+		ui_.TorsionTable->setItem(row, 4, item);
 	}
-	else item = ui.TorsionTable->item(row, 4);
+	else item = ui_.TorsionTable->item(row, 4);
 	item->setText(speciesTorsion->masterParameters() ? QString("@%1").arg(speciesTorsion->masterParameters()->name()) : SpeciesTorsion::torsionFunction( (SpeciesTorsion::TorsionFunction) speciesTorsion->form()));
 
 	// Interaction Parameters
@@ -266,9 +266,9 @@ void SpeciesTab::updateTorsionTableRow(int row, SpeciesTorsion* speciesTorsion, 
 		{
 			item = new QTableWidgetItem;
 			item->setData(Qt::UserRole, VariantPointer<SpeciesTorsion>(speciesTorsion));
-			ui.TorsionTable->setItem(row, n+5, item);
+			ui_.TorsionTable->setItem(row, n+5, item);
 		}
-		else item = ui.TorsionTable->item(row, n+5);
+		else item = ui_.TorsionTable->item(row, n+5);
 		item->setText(QString::number(speciesTorsion->parameter(n)));
 		item->setFlags(speciesTorsion->masterParameters() ? Qt::NoItemFlags : Qt::ItemIsEnabled | Qt::ItemIsEditable );
 	}
@@ -285,9 +285,9 @@ void SpeciesTab::updateIsotopeTableRow(int row, AtomType* atomType, Isotope* iso
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<AtomType>(atomType));
 		item->setFlags(Qt::NoItemFlags);
-		ui.IsotopeTable->setItem(row, 0, item);
+		ui_.IsotopeTable->setItem(row, 0, item);
 	}
-	else item = ui.IsotopeTable->item(row, 0);
+	else item = ui_.IsotopeTable->item(row, 0);
 	item->setText(atomType->name());
 
 	// Isotope
@@ -295,9 +295,9 @@ void SpeciesTab::updateIsotopeTableRow(int row, AtomType* atomType, Isotope* iso
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<Isotope>(isotope));
-		ui.IsotopeTable->setItem(row, 1, item);
+		ui_.IsotopeTable->setItem(row, 1, item);
 	}
-	else item = ui.IsotopeTable->item(row, 1);
+	else item = ui_.IsotopeTable->item(row, 1);
 	item->setText(IsotopeComboDelegate::textForIsotope(isotope));
 }
 
@@ -306,46 +306,51 @@ void SpeciesTab::updateControls()
 {
 	refreshing_ = true;
 
-	// SpeciesAtom Table
-	if (!species_) ui.AtomTable->clearContents();
-	else TableWidgetUpdater<SpeciesTab,SpeciesAtom> speciesAtomUpdater(ui.AtomTable, species_->atoms(), this, &SpeciesTab::updateAtomTableRow);
+	// Definition
+	ui_.NameEdit->setText(species_->name());
 
 	// Isotopologues List
-	if (!species_) ui.IsotopologueList->clear();
+	if (!species_) ui_.IsotopologueList->clear();
 	else
 	{
-		ListWidgetUpdater<SpeciesTab,Isotopologue> isotopologueUpdater(ui.IsotopologueList, species_->isotopologues(), Qt::ItemIsEditable);
+		ListWidgetUpdater<SpeciesTab,Isotopologue> isotopologueUpdater(ui_.IsotopologueList, species_->isotopologues(), Qt::ItemIsEditable);
 
 		// If there is no current isotopologue selected, try to select the first
-		if (!currentIsotopologue()) ui.IsotopologueList->setCurrentRow(0);
+		if (!currentIsotopologue()) ui_.IsotopologueList->setCurrentRow(0);
 	}
 
 	Isotopologue* isotopologue = currentIsotopologue();
 
 	// Isotopologue AtomType/Isotopes Table
-	if (!isotopologue) ui.IsotopeTable->clearContents();
-	else TableWidgetRefDataListUpdater<SpeciesTab,AtomType,Isotope*> isotopeUpdater(ui.IsotopeTable, isotopologue->isotopes(), this, &SpeciesTab::updateIsotopeTableRow);
-	ui.IsotopeTable->resizeColumnsToContents();
+	if (!isotopologue) ui_.IsotopeTable->clearContents();
+	else TableWidgetRefDataListUpdater<SpeciesTab,AtomType,Isotope*> isotopeUpdater(ui_.IsotopeTable, isotopologue->isotopes(), this, &SpeciesTab::updateIsotopeTableRow);
+	ui_.IsotopeTable->resizeColumnsToContents();
 
-	// Intramolecular terms
+	// -- View / Generate Tab
+	ui_.ViewerWidget->speciesViewer()->postRedisplay();
+
+	// Geometry Tab
+
+	// -- SpeciesAtom Table
+	if (!species_) ui_.AtomTable->clearContents();
+	else TableWidgetUpdater<SpeciesTab,SpeciesAtom> speciesAtomUpdater(ui_.AtomTable, species_->atoms(), this, &SpeciesTab::updateAtomTableRow);
+
+	// -- Intramolecular terms
 	if (!species_)
 	{
-		ui.BondTable->clearContents();
-		ui.AngleTable->clearContents();
-		ui.TorsionTable->clearContents();
+		ui_.BondTable->clearContents();
+		ui_.AngleTable->clearContents();
+		ui_.TorsionTable->clearContents();
 	}
 	else
 	{
-		TableWidgetUpdater<SpeciesTab,SpeciesBond> bondUpdater(ui.BondTable, species_->bonds(), this, &SpeciesTab::updateBondTableRow);
-		TableWidgetUpdater<SpeciesTab,SpeciesAngle> angleUpdater(ui.AngleTable, species_->angles(), this, &SpeciesTab::updateAngleTableRow);
-		TableWidgetUpdater<SpeciesTab,SpeciesTorsion> torsionUpdater(ui.TorsionTable, species_->torsions(), this, &SpeciesTab::updateTorsionTableRow);
+		TableWidgetUpdater<SpeciesTab,SpeciesBond> bondUpdater(ui_.BondTable, species_->bonds(), this, &SpeciesTab::updateBondTableRow);
+		TableWidgetUpdater<SpeciesTab,SpeciesAngle> angleUpdater(ui_.AngleTable, species_->angles(), this, &SpeciesTab::updateAngleTableRow);
+		TableWidgetUpdater<SpeciesTab,SpeciesTorsion> torsionUpdater(ui_.TorsionTable, species_->torsions(), this, &SpeciesTab::updateTorsionTableRow);
 	}
-	ui.BondTable->resizeColumnsToContents();
-	ui.AngleTable->resizeColumnsToContents();
-	ui.TorsionTable->resizeColumnsToContents();
-
-	// Viewer
-	ui.ViewerWidget->speciesViewer()->postRedisplay();
+	ui_.BondTable->resizeColumnsToContents();
+	ui_.AngleTable->resizeColumnsToContents();
+	ui_.TorsionTable->resizeColumnsToContents();
 
 	refreshing_ = false;
 }
@@ -369,9 +374,96 @@ void SpeciesTab::enableSensitiveControls()
 // Return currently-selected Isotopologue
 Isotopologue* SpeciesTab::currentIsotopologue()
 {
-	QListWidgetItem* item = ui.IsotopologueList->currentItem();
+	QListWidgetItem* item = ui_.IsotopologueList->currentItem();
 	if (!item) return NULL;
 	return VariantPointer<Isotopologue>(item->data(Qt::UserRole));
+}
+
+void SpeciesTab::on_NameEdit_textChanged(QString text)
+{
+	if (refreshing_) return;
+
+	species_->setName(qPrintable(text));
+
+	dissolveWindow_->setModified();
+}
+
+void SpeciesTab::on_IsotopologueAddButton_clicked(bool checked)
+{
+	printf("NOT IMPLEMENTED YET!\n");
+}
+
+void SpeciesTab::on_IsotopologueRemoveButton_clicked(bool checked)
+{
+	printf("NOT IMPLEMENTED YET!\n");
+}
+
+void SpeciesTab::on_IsotopologueList_currentRowChanged(int row)
+{
+	if (refreshing_) return;
+
+	Isotopologue* isotopologue = currentIsotopologue();
+
+	refreshing_ = true;
+
+	// Isotopologue AtomType/Isotopes Table
+	if (!isotopologue) ui_.IsotopeTable->clearContents();
+	else TableWidgetRefDataListUpdater<SpeciesTab,AtomType,Isotope*> isotopeUpdater(ui_.IsotopeTable, isotopologue->isotopes(), this, &SpeciesTab::updateIsotopeTableRow);
+
+	refreshing_ = false;
+}
+
+void SpeciesTab::on_IsotopologueList_itemChanged(QListWidgetItem* item)
+{
+	if (refreshing_) return;
+
+	// Get Isotopologue pointer
+	Isotopologue* isotopologue = VariantPointer<Isotopologue>(item->data(Qt::UserRole));
+	if (!isotopologue) return;
+
+	// Need to ensure new name is unique within the Species
+	isotopologue->setName(species_->uniqueIsotopologueName(qPrintable(item->text()), isotopologue));
+
+	// Make sure the item text is consistent with the Isotopologue name
+	item->setText(isotopologue->name());
+
+	dissolveWindow_->setModified();
+}
+
+void SpeciesTab::on_IsotopeTable_itemChanged(QTableWidgetItem* w)
+{
+	if (refreshing_) return;
+
+	// Get current Isotopologue
+	Isotopologue* iso = currentIsotopologue();
+	if (!iso) return;
+
+	// Get row from the passed widget, and get target AtomType from column 0
+	QTableWidgetItem* item = ui_.IsotopeTable->item(w->row(), 0);
+	if (!item) return;
+	
+	AtomType* atomType = VariantPointer<AtomType>(item->data(Qt::UserRole));
+	if (!atomType) return;
+
+	// Column of passed item tells us the type of data we need to change
+	Isotope* isotope;
+	switch (w->column())
+	{
+		// Element
+		case (0):
+			// Should never be called
+			break;
+		// Isotope
+		case (1):
+			// The new Isotope should have been set in the model data for the column
+			isotope = VariantPointer<Isotope>(w->data(Qt::UserRole));
+			if (isotope) iso->setAtomTypeIsotope(atomType, isotope);
+			dissolveWindow_->setModified();
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of Isotopes table.\n", w->column());
+			break;
+	}
 }
 
 void SpeciesTab::on_AtomAddButton_clicked(bool checked)
@@ -380,7 +472,7 @@ void SpeciesTab::on_AtomAddButton_clicked(bool checked)
 
 	refreshing_ = true;
 
-	TableWidgetUpdater<SpeciesTab,SpeciesAtom> speciesAtomUpdater(ui.AtomTable, species_->atoms(), this, &SpeciesTab::updateAtomTableRow);
+	TableWidgetUpdater<SpeciesTab,SpeciesAtom> speciesAtomUpdater(ui_.AtomTable, species_->atoms(), this, &SpeciesTab::updateAtomTableRow);
 
 	refreshing_ = false;
 
@@ -465,8 +557,8 @@ void SpeciesTab::on_BondTable_itemChanged(QTableWidgetItem* w)
 		case (0):
 		case (1):
 			// Get both atom indices and set the atoms in the interaction
-			i = ui.BondTable->item(w->row(), 0)->text().toInt() - 1;
-			j = ui.BondTable->item(w->row(), 1)->text().toInt() - 1;
+			i = ui_.BondTable->item(w->row(), 0)->text().toInt() - 1;
+			j = ui_.BondTable->item(w->row(), 1)->text().toInt() - 1;
 			if (species_->reconnectBond(speciesBond, i, j))
 			{
 				updateRow = true;
@@ -540,9 +632,9 @@ void SpeciesTab::on_AngleTable_itemChanged(QTableWidgetItem* w)
 		case (1):
 		case (2):
 			// Get all atom indices and set the atoms in the interaction
-			i = ui.BondTable->item(w->row(), 0)->text().toInt() - 1;
-			j = ui.BondTable->item(w->row(), 1)->text().toInt() - 1;
-			k = ui.BondTable->item(w->row(), 2)->text().toInt() - 1;
+			i = ui_.BondTable->item(w->row(), 0)->text().toInt() - 1;
+			j = ui_.BondTable->item(w->row(), 1)->text().toInt() - 1;
+			k = ui_.BondTable->item(w->row(), 2)->text().toInt() - 1;
 			if (species_->reconnectAngle(speciesAngle, i, j, k))
 			{
 				updateRow = true;
@@ -617,10 +709,10 @@ void SpeciesTab::on_TorsionTable_itemChanged(QTableWidgetItem* w)
 		case (2):
 		case (3):
 			// Get all atom indices and set the atoms in the interaction
-			i = ui.BondTable->item(w->row(), 0)->text().toInt() - 1;
-			j = ui.BondTable->item(w->row(), 1)->text().toInt() - 1;
-			k = ui.BondTable->item(w->row(), 2)->text().toInt() - 1;
-			l = ui.BondTable->item(w->row(), 3)->text().toInt() - 1;
+			i = ui_.BondTable->item(w->row(), 0)->text().toInt() - 1;
+			j = ui_.BondTable->item(w->row(), 1)->text().toInt() - 1;
+			k = ui_.BondTable->item(w->row(), 2)->text().toInt() - 1;
+			l = ui_.BondTable->item(w->row(), 3)->text().toInt() - 1;
 			if (species_->reconnectTorsion(speciesTorsion, i, j, k, l))
 			{
 				updateRow = true;
@@ -663,84 +755,6 @@ void SpeciesTab::on_TorsionTable_itemChanged(QTableWidgetItem* w)
 		refreshing_ = true;
 		updateTorsionTableRow(w->row(), speciesTorsion, false);
 		refreshing_ = false;
-	}
-}
-
-void SpeciesTab::on_IsotopologueAddButton_clicked(bool checked)
-{
-	printf("NOT IMPLEMENTED YET!\n");
-}
-
-void SpeciesTab::on_IsotopologueRemoveButton_clicked(bool checked)
-{
-	printf("NOT IMPLEMENTED YET!\n");
-}
-
-void SpeciesTab::on_IsotopologueList_currentRowChanged(int row)
-{
-	if (refreshing_) return;
-
-	Isotopologue* isotopologue = currentIsotopologue();
-
-	refreshing_ = true;
-
-	// Isotopologue AtomType/Isotopes Table
-	if (!isotopologue) ui.IsotopeTable->clearContents();
-	else TableWidgetRefDataListUpdater<SpeciesTab,AtomType,Isotope*> isotopeUpdater(ui.IsotopeTable, isotopologue->isotopes(), this, &SpeciesTab::updateIsotopeTableRow);
-
-	refreshing_ = false;
-}
-
-void SpeciesTab::on_IsotopologueList_itemChanged(QListWidgetItem* item)
-{
-	if (refreshing_) return;
-
-	// Get Isotopologue pointer
-	Isotopologue* isotopologue = VariantPointer<Isotopologue>(item->data(Qt::UserRole));
-	if (!isotopologue) return;
-
-	// Need to ensure new name is unique within the Species
-	isotopologue->setName(species_->uniqueIsotopologueName(qPrintable(item->text()), isotopologue));
-
-	// Make sure the item text is consistent with the Isotopologue name
-	item->setText(isotopologue->name());
-
-	dissolveWindow_->setModified();
-}
-
-void SpeciesTab::on_IsotopeTable_itemChanged(QTableWidgetItem* w)
-{
-	if (refreshing_) return;
-
-	// Get current Isotopologue
-	Isotopologue* iso = currentIsotopologue();
-	if (!iso) return;
-
-	// Get row from the passed widget, and get target AtomType from column 0
-	QTableWidgetItem* item = ui.IsotopeTable->item(w->row(), 0);
-	if (!item) return;
-	
-	AtomType* atomType = VariantPointer<AtomType>(item->data(Qt::UserRole));
-	if (!atomType) return;
-
-	// Column of passed item tells us the type of data we need to change
-	Isotope* isotope;
-	switch (w->column())
-	{
-		// Element
-		case (0):
-			// Should never be called
-			break;
-		// Isotope
-		case (1):
-			// The new Isotope should have been set in the model data for the column
-			isotope = VariantPointer<Isotope>(w->data(Qt::UserRole));
-			if (isotope) iso->setAtomTypeIsotope(atomType, isotope);
-			dissolveWindow_->setModified();
-			break;
-		default:
-			Messenger::error("Don't know what to do with data from column %i of Isotopes table.\n", w->column());
-			break;
 	}
 }
 
