@@ -227,7 +227,7 @@ void ModuleChartModuleBlock::on_ToggleSettingsButton_clicked(bool checked)
 
 void ModuleChartModuleBlock::on_RemoveButton_clicked(bool checked)
 {
-	emit (removeModule(module_));
+	emit (remove(module_->uniqueName()));
 }
 
 void ModuleChartModuleBlock::on_RunButton_clicked(bool checked)
@@ -238,7 +238,7 @@ void ModuleChartModuleBlock::on_RunButton_clicked(bool checked)
 
 	updateControls();
 
-	emit moduleRun();
+	emit run();
 }
 
 void ModuleChartModuleBlock::on_EnabledButton_clicked(bool checked)

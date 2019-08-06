@@ -28,6 +28,7 @@
 #include "module/list.h"
 #include "module/module.h"
 #include <QDrag>
+#include <QMessageBox>
 #include <QMimeData>
 #include <QMouseEvent>
 #include <QPainter>
@@ -558,6 +559,7 @@ void ModuleChart::updateControls()
 			// No current ModuleChartModuleBlock reference, so must create suitable widget
 			ModuleChartModuleBlock* mcmBlock = new ModuleChartModuleBlock(this, dissolveWindow_, module);
 			connect(mcmBlock, SIGNAL(settingsToggled()), this, SLOT(recalculateLayout()));
+			connect(mcmBlock, SIGNAL(remove(QString)), this, SLOT(removeModule(QString)));
 			newModuleWidgets.append(mcmBlock);
 		}
 	}
@@ -793,6 +795,37 @@ void ModuleChart::layOutWidgets(bool animateWidgets)
 void ModuleChart::recalculateLayout()
 {
 	layOutWidgets(false);
+}
+
+/*
+ * Module Management
+ */
+
+// Remove Module with specified uniqueName
+void ModuleChart::removeModule(QString uniqueName)
+{
+	// Find the named Module in our list
+	Module* module = modules_.find(qPrintable(uniqueName));
+	if (!module)
+	{
+		Messenger::error("Can't find module to remove (%s) in our target list!\n", qPrintable(uniqueName));
+		return;
+	}
+
+	// Are we sure that's what we want to do?
+	QMessageBox queryBox;
+	queryBox.setText(QString("This will delete the Module '%1'.").arg(uniqueName));
+	queryBox.setInformativeText("This cannot be undone. Proceed?");
+	queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+	queryBox.setDefaultButton(QMessageBox::No);
+	int ret = queryBox.exec();
+
+	if (ret == QMessageBox::Yes)
+	{
+		modules_.cut(module);
+		dissolveWindow_->dissolve().deleteModuleInstance(module);
+		updateControls();
+	}
 }
 
 /*

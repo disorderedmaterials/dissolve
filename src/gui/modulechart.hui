@@ -185,6 +185,14 @@ class ModuleChart : public QWidget
 
 
 	/*
+	 * Module Management
+	 */
+	private slots:
+	// Remove Module with specified uniqueName
+	void removeModule(QString uniqueName);
+
+
+	/*
 	 * State I/O
 	 */
 	public:

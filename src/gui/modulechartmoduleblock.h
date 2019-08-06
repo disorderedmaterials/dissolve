@@ -105,8 +105,8 @@ class ModuleChartModuleBlock : public QWidget, public ModuleChartBlock
 
 	signals:
 	void settingsToggled();
-	void removeModule(void* module);
-	void moduleRun();
+	void remove(QString myUniqueName);
+	void run();
 
 
 	/*
