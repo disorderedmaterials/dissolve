@@ -35,6 +35,9 @@ ConfigurationViewer::ConfigurationViewer(QWidget* parent) : BaseViewer(parent)
 
 	// Set up the view
 	view_.setViewType(View::NormalView);
+	view_.axes().setTitle(0, "X");
+	view_.axes().setTitle(1, "Y");
+	view_.axes().setTitle(2, "Z");
 
 	// Tweak the options of the underlying BaseViewer
 	setClipToAxesVolume(false);
