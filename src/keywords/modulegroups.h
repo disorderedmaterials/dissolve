@@ -52,6 +52,14 @@ class ModuleGroupsKeyword : public KeywordData<ModuleGroups&>
 	bool read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool);
 	// Write keyword data to specified LineParser
 	bool write(LineParser& parser, const char* prefix);
+
+
+	/*
+	 * Object Management
+	 */
+	protected:
+	// Prune any references to the supplied Module in the contained data
+	void removeReferencesTo(Module* module);
 };
 
 #endif

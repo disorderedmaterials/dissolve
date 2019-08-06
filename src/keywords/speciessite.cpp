@@ -82,3 +82,19 @@ bool SpeciesSiteKeyword::write(LineParser& parser, const char* prefix)
 
 	return true;
 }
+
+/*
+ * Object Management
+ */
+
+// Prune any references to the supplied Species in the contained data
+void SpeciesSiteKeyword::removeReferencesTo(Species* sp)
+{
+	if (data_ && (data_->parent() == sp)) data_ = NULL;
+}
+
+// Prune any references to the supplied Site in the contained data
+void SpeciesSiteKeyword::removeReferencesTo(SpeciesSite* spSite)
+{
+	if (data_ == spSite) data_ = NULL;
+}

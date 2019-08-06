@@ -90,3 +90,25 @@ bool SpeciesSiteReferenceListKeyword::write(LineParser& parser, const char* pref
 
 	return true;
 }
+
+/*
+ * Object Management
+ */
+
+// Prune any references to the supplied Species in the contained data
+void SpeciesSiteReferenceListKeyword::removeReferencesTo(Species* sp)
+{
+	RefListItem<SpeciesSite>* ri = data_.first(), *nextItem;
+	while (ri)
+	{
+		nextItem = ri->next();
+		if (ri->item()->parent() == sp) data_.remove(ri);
+		ri = nextItem;
+	}
+}
+
+// Prune any references to the supplied SpeciesSite in the contained data
+void SpeciesSiteReferenceListKeyword::removeReferencesTo(SpeciesSite* spSite)
+{
+	data_.remove(spSite);
+}

@@ -122,3 +122,13 @@ bool ModuleReferenceListKeyword::write(LineParser& parser, const char* prefix)
 
 	return true;
 }
+
+/*
+ * Object Management
+ */
+
+// Prune any references to the supplied Module in the contained data
+void ModuleReferenceListKeyword::removeReferencesTo(Module* module)
+{
+	data_.remove(module);
+}

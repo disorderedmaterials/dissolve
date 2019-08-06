@@ -24,12 +24,18 @@
 
 #include "base/charstring.h"
 #include "templates/listitem.h"
+#include "templates/reflist.h"
 #include "templates/vector3.h"
 
 // Forward Declarations
+class AtomType;
+class Configuration;
 class CoreData;
-class Module;
+class Isotopologue;
 class LineParser;
+class Module;
+class Species;
+class SpeciesSite;
 class ProcessPool;
 
 // Keyword Base Class
@@ -112,7 +118,37 @@ class KeywordBase : public ListItem<KeywordBase>
 	virtual Vec3<int> asVec3Int();
 	// Return value as Vec3<double>
 	virtual Vec3<double> asVec3Double();
+
+
+	/*
+	 * Object Management
+	 */
+	private:
+	// References to all keyword objects
+	static RefList<KeywordBase> allKeywords_;
+
+	protected:
+	// Prune any references to the supplied AtomType in the contained data
+	virtual void removeReferencesTo(AtomType* at);
+	// Prune any references to the supplied Configuration in the contained data
+	virtual void removeReferencesTo(Configuration* cfg);
+	// Prune any references to the supplied Isotopologue in the contained data
+	virtual void removeReferencesTo(Isotopologue* iso);
+	// Prune any references to the supplied Module in the contained data
+	virtual void removeReferencesTo(Module* module);
+	// Prune any references to the supplied Species in the contained data
+	virtual void removeReferencesTo(Species* sp);
+	// Prune any references to the supplied SpeciesSite in the contained data
+	virtual void removeReferencesTo(SpeciesSite* spSite);
+
+	public:
+	// Gracefully deal with the specified object no longer being valid
+	template <class O> static void objectNoLongerValid(O* object)
+	{
+		// Loop over all keyword objects and call their local functions
+		RefListIterator<KeywordBase> keywordIterator(allKeywords_);
+		while (KeywordBase* kwd = keywordIterator.iterate()) kwd->removeReferencesTo(object);
+	}
 };
 
 #endif
-

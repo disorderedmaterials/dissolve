@@ -102,3 +102,31 @@ bool IsotopologueReferenceListKeyword::write(LineParser& parser, const char* pre
 
 	return true;
 }
+
+/*
+ * Data Management
+ */
+
+// Prune any references to the supplied Species in the contained data
+void IsotopologueReferenceListKeyword::removeReferencesTo(Species* sp)
+{
+	IsotopologueReference* isoRef = data_.first(), *isoNext;
+	while (isoRef)
+	{
+		isoNext = isoRef->next;
+		if (isoRef->species() == sp) data_.remove(isoRef);
+		isoRef = isoNext;
+	}
+}
+
+// Prune any references to the supplied Isotopologue in the contained data
+void IsotopologueReferenceListKeyword::removeReferencesTo(Isotopologue* iso)
+{
+	IsotopologueReference* isoRef = data_.first(), *isoNext;
+	while (isoRef)
+	{
+		isoNext = isoRef->next;
+		if (isoRef->isotopologue() == iso) data_.remove(isoRef);
+		isoRef = isoNext;
+	}
+}

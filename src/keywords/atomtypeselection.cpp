@@ -27,7 +27,7 @@
 #include "base/lineparser.h"
 
 // Constructor
-AtomTypeSelectionKeyword::AtomTypeSelectionKeyword(AtomTypeList& selection, RefList<Configuration>& sourceConfigurations) : KeywordData<AtomTypeList&>(KeywordBase::AtomTypeSelectionData, selection), sourceConfigurations_(sourceConfigurations)
+AtomTypeSelectionKeyword::AtomTypeSelectionKeyword(AtomTypeList& selection, const RefList<Configuration>& sourceConfigurations) : KeywordData<AtomTypeList&>(KeywordBase::AtomTypeSelectionData, selection), sourceConfigurations_(sourceConfigurations)
 {
 }
 
@@ -130,4 +130,14 @@ bool AtomTypeSelectionKeyword::write(LineParser& parser, const char* prefix)
 	if (!parser.writeLineF("%s%s%s\n", prefix, keyword(), selection.get())) return false;
 
 	return true;
+}
+
+/*
+ * Object Management
+ */
+
+// Prune any references to the supplied AtomType in the contained data
+void AtomTypeSelectionKeyword::removeReferencesTo(AtomType* at)
+{
+	data_.remove(at);
 }

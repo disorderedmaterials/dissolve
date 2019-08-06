@@ -51,6 +51,16 @@ class SpeciesSiteReferenceListKeyword : public KeywordData< RefList<SpeciesSite>
 	bool read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool);
 	// Write keyword data to specified LineParser
 	bool write(LineParser& parser, const char* prefix);
+
+
+	/*
+	 * Object Management
+	 */
+	protected:
+	// Prune any references to the supplied Species in the contained data
+	void removeReferencesTo(Species* sp);
+	// Prune any references to the supplied SpeciesSite in the contained data
+	void removeReferencesTo(SpeciesSite* spSite);
 };
 
 #endif

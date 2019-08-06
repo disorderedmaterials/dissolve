@@ -97,3 +97,18 @@ bool ModuleGroupsKeyword::write(LineParser& parser, const char* prefix)
 
 	return true;
 }
+
+/*
+ * Object Management
+ */
+
+// Prune any references to the supplied Module in the contained data
+void ModuleGroupsKeyword::removeReferencesTo(Module* module)
+{
+	// Loop over defined groups
+	ListIterator<ModuleGroup> groupIterator(data_.groups());
+	while (ModuleGroup* group = groupIterator.iterate())
+	{
+		if (group->contains(module)) group->remove(module);
+	}
+}
