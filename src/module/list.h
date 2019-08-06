@@ -52,6 +52,8 @@ class ModuleList
 	void clear();
 	// Associate Module to list
 	bool add(Module* module, Module* addBeforeThis = NULL);
+	// Remove specified Module from list (but don't delete it)
+	void cut(Module* module);
 	// Find associated Module by unique name
 	Module* find(const char* uniqueName) const;
 	// Return whether specified Module is present in the list
