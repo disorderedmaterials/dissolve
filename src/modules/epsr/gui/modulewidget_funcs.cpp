@@ -38,10 +38,9 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	refreshing_ = true;
 
 	// F(Q) Graph
-
 	FQGraph_ = ui_.FQPlotWidget->dataViewer();
 
-	// Start a new, empty session
+	// -- Set view
 	FQGraph_->view().setViewType(View::FlatXYView);
 	FQGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
 	FQGraph_->view().axes().setMax(0, 10.0);
@@ -50,12 +49,20 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	FQGraph_->view().axes().setMax(1, 1.0);
 	FQGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::HalfVerticalShift);
 	FQGraph_->view().setAutoFollowType(View::AllAutoFollow);
+	// -- Set group styling
+	FQGraph_->groupManager().setGroupColouring("Exp", RenderableGroup::AutomaticIndividualColouring);
+	FQGraph_->groupManager().setGroupVerticalShifting("Exp", RenderableGroup::IndividualVerticalShifting);
+	FQGraph_->groupManager().setGroupColouring("Calc", RenderableGroup::AutomaticIndividualColouring);
+	FQGraph_->groupManager().setGroupVerticalShifting("Calc", RenderableGroup::IndividualVerticalShifting);
+	FQGraph_->groupManager().setGroupStipple("Calc", LineStipple::QuarterDashStipple);
+	FQGraph_->groupManager().setGroupColouring("Delta", RenderableGroup::AutomaticIndividualColouring);
+	FQGraph_->groupManager().setGroupVerticalShifting("Delta", RenderableGroup::IndividualVerticalShifting);
+	FQGraph_->groupManager().setGroupStipple("Delta", LineStipple::DotStipple);
 
 	// F(Q) Fitting Graph
-
 	FQFitGraph_ = ui_.FQFitPlotWidget->dataViewer();
 
-	// Start a new, empty session
+	// -- Set view
 	FQFitGraph_->view().setViewType(View::FlatXYView);
 	FQFitGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
 	FQFitGraph_->view().axes().setMax(0, 10.0);
@@ -66,10 +73,9 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	FQFitGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Partial S(Q) Graph
-	
 	SQGraph_ = ui_.SQPlotWidget->dataViewer();
 
-	// Start a new, empty session
+	// -- Set view
 	SQGraph_->view().setViewType(View::FlatXYView);
 	SQGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
 	SQGraph_->view().axes().setMax(0, 10.0);
@@ -78,12 +84,20 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	SQGraph_->view().axes().setMax(1, 1.0);
 	SQGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 	SQGraph_->view().setAutoFollowType(View::AllAutoFollow);
+	// -- Set group styling
+	SQGraph_->groupManager().setGroupColouring("Exp", RenderableGroup::AutomaticIndividualColouring);
+	SQGraph_->groupManager().setGroupVerticalShifting("Exp", RenderableGroup::IndividualVerticalShifting);
+	SQGraph_->groupManager().setGroupColouring("Calc", RenderableGroup::AutomaticIndividualColouring);
+	SQGraph_->groupManager().setGroupVerticalShifting("Calc", RenderableGroup::IndividualVerticalShifting);
+	SQGraph_->groupManager().setGroupStipple("Calc", LineStipple::QuarterDashStipple);
+	SQGraph_->groupManager().setGroupColouring("Delta", RenderableGroup::AutomaticIndividualColouring);
+	SQGraph_->groupManager().setGroupVerticalShifting("Delta", RenderableGroup::IndividualVerticalShifting);
+	SQGraph_->groupManager().setGroupStipple("Delta", LineStipple::DotStipple);
 
 	// g(r) Graph
-	
 	GRGraph_ = ui_.GRPlotWidget->dataViewer();
 
-	// Start a new, empty session
+	// -- Set view
 	GRGraph_->view().setViewType(View::FlatXYView);
 	GRGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	GRGraph_->view().axes().setMax(0, 10.0);
@@ -92,12 +106,16 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	GRGraph_->view().axes().setMax(1, 1.0);
 	GRGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 	GRGraph_->view().setAutoFollowType(View::AllAutoFollow);
+	// -- Set group styling
+	GRGraph_->groupManager().setGroupColouring("Exp", RenderableGroup::AutomaticIndividualColouring);
+	GRGraph_->groupManager().setGroupVerticalShifting("Exp", RenderableGroup::IndividualVerticalShifting);
+	GRGraph_->groupManager().setGroupColouring("Calc", RenderableGroup::AutomaticIndividualColouring);
+	GRGraph_->groupManager().setGroupVerticalShifting("Calc", RenderableGroup::IndividualVerticalShifting);
+	GRGraph_->groupManager().setGroupStipple("Calc", LineStipple::QuarterDashStipple);
 
 	// F(r) Graph
-	
 	FRGraph_ = ui_.FRPlotWidget->dataViewer();
-
-	// Start a new, empty session
+	// -- Set view
 	FRGraph_->view().setViewType(View::FlatXYView);
 	FRGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	FRGraph_->view().axes().setMax(0, 10.0);
@@ -106,12 +124,16 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	FRGraph_->view().axes().setMax(1, 1.0);
 	FRGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 	FRGraph_->view().setAutoFollowType(View::AllAutoFollow);
+	// -- Set group styling
+	FRGraph_->groupManager().setGroupColouring("Exp", RenderableGroup::AutomaticIndividualColouring);
+	FRGraph_->groupManager().setGroupVerticalShifting("Exp", RenderableGroup::IndividualVerticalShifting);
+	FRGraph_->groupManager().setGroupColouring("Calc", RenderableGroup::AutomaticIndividualColouring);
+	FRGraph_->groupManager().setGroupVerticalShifting("Calc", RenderableGroup::IndividualVerticalShifting);
+	FRGraph_->groupManager().setGroupStipple("Calc", LineStipple::QuarterDashStipple);
 
 	// Phi(r) (Empirical Potentials) Graph
-
 	phiRGraph_ = ui_.PhiRPlotWidget->dataViewer();
-
-	// Start a new, empty session
+	// -- Set view
 	phiRGraph_->view().setViewType(View::FlatXYView);
 	phiRGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	phiRGraph_->view().axes().setMax(0, 10.0);
@@ -120,12 +142,12 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	phiRGraph_->view().axes().setMax(1, 1.0);
 	phiRGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 	phiRGraph_->view().setAutoFollowType(View::AllAutoFollow);
+	// -- Set group styling
+	phiRGraph_->groupManager().setGroupColouring("Phi", RenderableGroup::AutomaticIndividualColouring);
 
 	// phi(r) Magnitude Graph
-
 	phiMagGraph_ = ui_.PhiMagPlotWidget->dataViewer();
-
-	// Start a new, empty session
+	// -- Set view
 	phiMagGraph_->view().setViewType(View::FlatXYView);
 	phiMagGraph_->view().axes().setTitle(0, "Iteration");
 	phiMagGraph_->view().axes().numberFormat(0).setType(NumberFormat::IntegerFormat);
@@ -136,10 +158,8 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	phiMagGraph_->view().setAutoFollowType(View::XAutoFollow);
 
 	// R-Factor Graph
-
 	rFactorGraph_ = ui_.RFactorPlotWidget->dataViewer();
-
-	// Start a new, empty session
+	// -- Set view
 	rFactorGraph_->view().setViewType(View::FlatXYView);
 	rFactorGraph_->view().axes().setTitle(0, "Iteration");
 	rFactorGraph_->view().axes().numberFormat(0).setType(NumberFormat::IntegerFormat);
@@ -153,10 +173,8 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	setGraphDataTargets(module_);
 
 	// Debug Tab - EP Functions Graph
-
 	DataViewer* epView = ui_.DebugEPFunctionsPlotWidget->dataViewer();
-
-	// Start a new, empty session
+	// -- Set view
 	epView->view().setViewType(View::FlatXYView);
 	epView->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	epView->view().axes().setMax(0, 10.0);
@@ -165,6 +183,22 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	epView->view().axes().setMax(1, 1.0);
 	epView->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 
+
+	// -- Set group styling
+	rFactorGraph_->groupManager().setGroupColouring("RFactor", RenderableGroup::AutomaticIndividualColouring);
+	// -- Set group styling
+	FQFitGraph_->groupManager().setGroupColouring("Delta", RenderableGroup::AutomaticIndividualColouring);
+	FQFitGraph_->groupManager().setGroupVerticalShifting("Delta", RenderableGroup::IndividualVerticalShifting);
+	FQFitGraph_->groupManager().setGroupColouring("Fit", RenderableGroup::AutomaticIndividualColouring);
+	FQFitGraph_->groupManager().setGroupVerticalShifting("Fit", RenderableGroup::IndividualVerticalShifting);
+	FQFitGraph_->groupManager().setGroupStipple("Fit", LineStipple::QuarterDashStipple);
+
+
+
+
+
+
+	
 	updateControls();
 
 	refreshing_ = false;
@@ -348,47 +382,6 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 
 	// Add phi magnitude data
 	phiMagGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//EPMag", module_->uniqueName()), "EReq", "EReq");
-
-	// Set group styling
-	FQGraph_->groupManager().setGroupColouring("Exp", RenderableGroup::AutomaticIndividualColouring);
-	FQGraph_->groupManager().setGroupVerticalShifting("Exp", RenderableGroup::IndividualVerticalShifting);
-	FQGraph_->groupManager().setGroupColouring("Calc", RenderableGroup::AutomaticIndividualColouring);
-	FQGraph_->groupManager().setGroupVerticalShifting("Calc", RenderableGroup::IndividualVerticalShifting);
-	FQGraph_->groupManager().setGroupStipple("Calc", LineStipple::QuarterDashStipple);
-	FQGraph_->groupManager().setGroupColouring("Delta", RenderableGroup::AutomaticIndividualColouring);
-	FQGraph_->groupManager().setGroupVerticalShifting("Delta", RenderableGroup::IndividualVerticalShifting);
-	FQGraph_->groupManager().setGroupStipple("Delta", LineStipple::DotStipple);
-
-	rFactorGraph_->groupManager().setGroupColouring("RFactor", RenderableGroup::AutomaticIndividualColouring);
-
-	FQFitGraph_->groupManager().setGroupColouring("Delta", RenderableGroup::AutomaticIndividualColouring);
-	FQFitGraph_->groupManager().setGroupVerticalShifting("Delta", RenderableGroup::IndividualVerticalShifting);
-	FQFitGraph_->groupManager().setGroupColouring("Fit", RenderableGroup::AutomaticIndividualColouring);
-	FQFitGraph_->groupManager().setGroupVerticalShifting("Fit", RenderableGroup::IndividualVerticalShifting);
-	FQFitGraph_->groupManager().setGroupStipple("Fit", LineStipple::QuarterDashStipple);
-
-	FRGraph_->groupManager().setGroupColouring("Exp", RenderableGroup::AutomaticIndividualColouring);
-	FRGraph_->groupManager().setGroupVerticalShifting("Exp", RenderableGroup::IndividualVerticalShifting);
-	FRGraph_->groupManager().setGroupColouring("Calc", RenderableGroup::AutomaticIndividualColouring);
-	FRGraph_->groupManager().setGroupVerticalShifting("Calc", RenderableGroup::IndividualVerticalShifting);
-	FRGraph_->groupManager().setGroupStipple("Calc", LineStipple::QuarterDashStipple);
-
-	GRGraph_->groupManager().setGroupColouring("Exp", RenderableGroup::AutomaticIndividualColouring);
-	GRGraph_->groupManager().setGroupVerticalShifting("Exp", RenderableGroup::IndividualVerticalShifting);
-	GRGraph_->groupManager().setGroupColouring("Calc", RenderableGroup::AutomaticIndividualColouring);
-	GRGraph_->groupManager().setGroupVerticalShifting("Calc", RenderableGroup::IndividualVerticalShifting);
-	GRGraph_->groupManager().setGroupStipple("Calc", LineStipple::QuarterDashStipple);
-
-	SQGraph_->groupManager().setGroupColouring("Exp", RenderableGroup::AutomaticIndividualColouring);
-	SQGraph_->groupManager().setGroupVerticalShifting("Exp", RenderableGroup::IndividualVerticalShifting);
-	SQGraph_->groupManager().setGroupColouring("Calc", RenderableGroup::AutomaticIndividualColouring);
-	SQGraph_->groupManager().setGroupVerticalShifting("Calc", RenderableGroup::IndividualVerticalShifting);
-	SQGraph_->groupManager().setGroupStipple("Calc", LineStipple::QuarterDashStipple);
-	SQGraph_->groupManager().setGroupColouring("Delta", RenderableGroup::AutomaticIndividualColouring);
-	SQGraph_->groupManager().setGroupVerticalShifting("Delta", RenderableGroup::IndividualVerticalShifting);
-	SQGraph_->groupManager().setGroupStipple("Delta", LineStipple::DotStipple);
-
-	phiRGraph_->groupManager().setGroupColouring("Phi", RenderableGroup::AutomaticIndividualColouring);
 }
 
 /*

@@ -35,9 +35,8 @@ BraggModuleWidget::BraggModuleWidget(QWidget* parent, Module* module, Dissolve& 
 	ui.setupUi(this);
 
 	// Set up Bragg reflections graph
-
 	reflectionsGraph_ = ui.ReflectionsPlotWidget->dataViewer();
-
+	// -- Set view
 	reflectionsGraph_->view().setViewType(View::FlatXYView);
 	reflectionsGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
 	reflectionsGraph_->view().axes().setMax(0, 10.0);
@@ -47,9 +46,8 @@ BraggModuleWidget::BraggModuleWidget(QWidget* parent, Module* module, Dissolve& 
 	reflectionsGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Set up total G(r) graph
-
 	totalsGraph_ = ui.TotalsPlotWidget->dataViewer();
-
+	// -- Set view
 	totalsGraph_->view().setViewType(View::FlatXYView);
 	totalsGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
 	totalsGraph_->view().axes().setMax(0, 10.0);
@@ -57,6 +55,8 @@ BraggModuleWidget::BraggModuleWidget(QWidget* parent, Module* module, Dissolve& 
 	totalsGraph_->view().axes().setMin(1, -1.0);
 	totalsGraph_->view().axes().setMax(1, 1.0);
 	totalsGraph_->view().setAutoFollowType(View::AllAutoFollow);
+	// -- Set group styling
+	totalsGraph_->groupManager().setGroupColouring("Totals", RenderableGroup::AutomaticIndividualColouring);
 
 	refreshing_ = false;
 
@@ -136,9 +136,7 @@ void BraggModuleWidget::setGraphDataTargets()
 	{
 		// Original F(Q)
 		Renderable* originalFQ = totalsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//OriginalBragg//Total", cfg->niceName()), cfg->niceName(), "Totals");
-// 		totalsGraph_->addRenderableToGroup(originalFQ, cfg->niceName());
 	}
-	totalsGraph_->groupManager().setGroupColouring("Totals", RenderableGroup::AutomaticIndividualColouring);
 }
 
 void BraggModuleWidget::on_TargetCombo_currentIndexChanged(int index)
