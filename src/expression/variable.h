@@ -30,7 +30,7 @@ class ExpressionVariable : public ExpressionNode
 {
 	public:
 	// Constructor / Destructor
-	ExpressionVariable(double value = 0.0, bool readOnly = false);
+	ExpressionVariable(ExpressionValue value = ExpressionValue(), bool readOnly = false);
 	~ExpressionVariable();
 
 

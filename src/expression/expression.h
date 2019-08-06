@@ -105,12 +105,14 @@ class Expression
 	RefList<ExpressionVariable> externalVariables_;
 
 	public:
-	// Add double constant
-	ExpressionVariable* createConstant(double d, bool persistent = false);
-	// Add variable, with ExpressionNode as initial value source
-	ExpressionVariable* createVariable(const char* name, bool persistent = false, ExpressionNode* initialValue = NULL);
-	// Add variable, with double as initial value source
-	ExpressionVariable* createVariableWithValue(const char* name, double initialValue, bool persistent = false);
+	// Create numeric constant
+	ExpressionVariable* createConstant(ExpressionValue value, bool persistent = false);
+	// Create integer variable, with optional ExpressionNode as initial value source
+	ExpressionVariable* createIntegerVariable(const char* name, bool persistent = false, ExpressionNode* initialValue = NULL);
+	// Create double variable, with optional ExpressionNode as initial value source
+	ExpressionVariable* createDoubleVariable(const char* name, bool persistent = false, ExpressionNode* initialValue = NULL);
+	// Create variable with supplied initial value
+	ExpressionVariable* createVariableWithValue(const char* name, ExpressionValue initialValue, bool persistent = false);
 	// Set list of external variables
 	void setExternalVariables(RefList<ExpressionVariable> externalVariables);
 	// Search for variable

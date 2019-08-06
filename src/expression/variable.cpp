@@ -24,7 +24,7 @@
 #include <string.h>
 
 // Constructor
-ExpressionVariable::ExpressionVariable(double value, bool readOnly) : ExpressionNode()
+ExpressionVariable::ExpressionVariable(ExpressionValue value, bool readOnly) : ExpressionNode()
 {
 	// Private variables
 	static int count = 0;

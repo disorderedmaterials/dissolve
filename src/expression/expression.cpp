@@ -255,11 +255,11 @@ ExpressionNode* Expression::joinCommands(ExpressionNode* node1, ExpressionNode* 
  * Variables / Constants
  */
 
-// Add double constant
-ExpressionVariable* Expression::createConstant(double d, bool persistent)
+// Create numeric constant
+ExpressionVariable* Expression::createConstant(ExpressionValue value, bool persistent)
 {
 	ExpressionVariable* var = new ExpressionVariable();
-	var->set(d);
+	var->set(value);
 	var->setReadOnly();
 
 	// If persistent, add to the persistent nodes list
@@ -272,17 +272,17 @@ ExpressionVariable* Expression::createConstant(double d, bool persistent)
 	return var;
 }
 
-// Add variable to topmost scope
-ExpressionVariable* Expression::createVariable(const char* name, bool persistent, ExpressionNode* initialValue)
+// Create integer variable, with optional ExpressionNode as initial value source
+ExpressionVariable* Expression::createIntegerVariable(const char* name, bool persistent, ExpressionNode* initialValue)
 {
-	Messenger::printVerbose("A new variable '%s' is being created.\n", name);
+	Messenger::printVerbose("A new integer variable '%s' is being created.\n", name);
 
-	ExpressionVariable* var = new ExpressionVariable;
+	ExpressionVariable* var = new ExpressionVariable(ExpressionValue(0));
 	var->setName(name);
 	if (!var->setInitialValue(initialValue))
 	{
 		delete var;
-		Messenger::print("Failed to set initial value for variable.\n");
+		Messenger::print("Failed to set initial value for integer variable.\n");
 		return NULL;
 	}
 
@@ -293,18 +293,51 @@ ExpressionVariable* Expression::createVariable(const char* name, bool persistent
 	// Store reference
 	variables_.append(var);
 
-	Messenger::printVerbose("Created variable '%s'.\n", name);
+	Messenger::printVerbose("Created integer variable '%s'.\n", name);
 
 	return var;
 }
 
-// Add variable, with double as initial value source
-ExpressionVariable* Expression::createVariableWithValue(const char* name, double initialValue, bool persistent)
+// Create double variable, with optional ExpressionNode as initial value source
+ExpressionVariable* Expression::createDoubleVariable(const char* name, bool persistent, ExpressionNode* initialValue)
 {
-	ExpressionVariable* var = createVariable(name, persistent);
+	Messenger::printVerbose("A new double variable '%s' is being created.\n", name);
 
-	Messenger::printVerbose("Setting initial value of variable '%s' to '%e'.\n", name, initialValue);
-	var->set(initialValue);
+	ExpressionVariable* var = new ExpressionVariable(ExpressionValue(0.0));
+	var->setName(name);
+	if (!var->setInitialValue(initialValue))
+	{
+		delete var;
+		Messenger::print("Failed to set initial value for double variable.\n");
+		return NULL;
+	}
+
+	// If persistent, add to the persistent nodes list
+	if (persistent) persistentNodes_.own(var);
+	else nodes_.own(var);
+
+	// Store reference
+	variables_.append(var);
+
+	Messenger::printVerbose("Created double variable '%s'.\n", name);
+
+	return var;
+}
+
+// Create variable with supplied initial value
+ExpressionVariable* Expression::createVariableWithValue(const char* name, ExpressionValue initialValue, bool persistent)
+{
+	ExpressionVariable* var = new ExpressionVariable(initialValue);
+	var->setName(name);
+
+	// If persistent, add to the persistent nodes list
+	if (persistent) persistentNodes_.own(var);
+	else nodes_.own(var);
+
+	// Store reference
+	variables_.append(var);
+
+	Messenger::printVerbose("Created %s variable '%s'.\n", initialValue.isInteger() ? "integer" : "double", name);
 
 	return var;
 }

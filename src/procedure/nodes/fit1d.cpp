@@ -38,7 +38,7 @@ Fit1DProcedureNode::Fit1DProcedureNode(Collect1DProcedureNode* target) : Procedu
 	dataNode_.addAllowableNodeType(ProcedureNode::Process1DNode);
 
 	// Create persistent 'x' variable for Expression
-	xVariable_ = equation_.createVariable("x", true);
+	xVariable_ = equation_.createDoubleVariable("x", true);
 
 	dataNode_ = target;
 	saveData_ = false;
