@@ -30,7 +30,7 @@
 // Forward Declarations
 class Configuration;
 
-// Keyword with IsotopologueReference Data
+// Keyword with AtomTypeList Data
 class AtomTypeSelectionKeyword : public KeywordData<AtomTypeList&>
 {
 	public:
