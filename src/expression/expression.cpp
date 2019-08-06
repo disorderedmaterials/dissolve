@@ -173,11 +173,11 @@ ExpressionNode* Expression::addFunctionNodeWithArglist(ExpressionFunctions::Func
 	leaf->addJoinedArguments(arglist);
 	leaf->setParent(this);
 
-	// Check that the correct arguments were given to the command and run any prep functions
-	if (!leaf->checkArguments(ExpressionFunctions::data[func].arguments, ExpressionFunctions::data[func].keyword))
+	// Check that the correct number of arguments were given to the function
+	if (leaf->nArgs() != ExpressionFunctions::data[func].nArguments)
 	{
-		Messenger::printVerbose("Error: Function syntax is '%s(%s)'.\n", ExpressionFunctions::data[func].keyword, ExpressionFunctions::data[func].argText);
-		leaf = NULL;
+		Messenger::error("Function %s requires exactly %i %s.\n", ExpressionFunctions::data[func].keyword, ExpressionFunctions::data[func].nArguments, ExpressionFunctions::data[func].nArguments == 1 ? "argument" : "arguments");
+		return NULL;
 	}
 
 	return leaf;
@@ -197,11 +197,11 @@ ExpressionNode* Expression::addFunctionNode(ExpressionFunctions::Function func, 
 	if (a4 != NULL) leaf->addArgument(a4);
 	leaf->setParent(this);
 
-	// Check that the correct arguments were given to the command and run any prep functions
-	if (!leaf->checkArguments(ExpressionFunctions::data[func].arguments, ExpressionFunctions::data[func].keyword))
+	// Check that the correct number of arguments were given to the function
+	if (leaf->nArgs() != ExpressionFunctions::data[func].nArguments)
 	{
-		Messenger::printVerbose("Error: Function syntax is '%s(%s)'.\n", ExpressionFunctions::data[func].keyword, ExpressionFunctions::data[func].argText);
-		leaf = NULL;
+		Messenger::error("Function %s requires exactly %i %s.\n", ExpressionFunctions::data[func].keyword, ExpressionFunctions::data[func].nArguments, ExpressionFunctions::data[func].nArguments == 1 ? "argument" : "arguments");
+		return NULL;
 	}
 
 	return leaf;

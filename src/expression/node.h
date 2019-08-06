@@ -80,8 +80,6 @@ class ExpressionNode : public ListItem<ExpressionNode>
 	void addArguments(int nargs, ...);
 	// Add multiple arguments to node
 	void addArgument(ExpressionNode* arg);
-	// Check arguments stored in argument list
-	bool checkArguments(const char* arglist, const char* funcname);
 	// Return (execute) argument specified
 	bool arg(int i, ExpressionValue& result);
 	// Return (execute) argument specified as a bool

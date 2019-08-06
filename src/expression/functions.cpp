@@ -82,41 +82,41 @@ bool ExpressionFunctions::assumeDegrees()
 ExpressionFunctionData ExpressionFunctions::data[ExpressionFunctions::nFunctions] = {
 
 	// Operators
-	{ "+",			"..",		"",			"Operator (+)" },
-	{ "&&",			"..",		"",			"Operator (&&)" },
-	{ "/",			"..",		"",			"Operator (/)" },
-	{ "==",			"..",		"",			"Operator (==)" },
-	{ "",			"..",		"",			"Operator (>)" },
-	{ ">=",			"..",		"",			"Operator (>=)" },
-	{ "<",			"..",		"",			"Operator (<)" },
-	{ "<=",			"..",		"",			"Operator (<=)" },
-	{ "%",			"..",		"",			"Operator (%)" },
-	{ "*",			"..",		"",			"Operator (*)" },
-	{ "-NEG",		".",		"",			"Operator (negate)" },
-	{ "!",			"..",		"",			"Operator (!)" },
-	{ "!=",			"..",		"",			"Operator (!=)" },
-	{ "||",			"..",		"",			"Operator (||)" },
-	{ "^",			"..",		"",			"Operator (^)" },
-	{ "-",			"..",		"",			"Operator (-)" },
+	{ "+",			0,		"",			"Operator (+)" },
+	{ "&&",			0,		"",			"Operator (&&)" },
+	{ "/",			0,		"",			"Operator (/)" },
+	{ "==",			0,		"",			"Operator (==)" },
+	{ "",			0,		"",			"Operator (>)" },
+	{ ">=",			0,		"",			"Operator (>=)" },
+	{ "<",			0,		"",			"Operator (<)" },
+	{ "<=",			0,		"",			"Operator (<=)" },
+	{ "%",			0,		"",			"Operator (%)" },
+	{ "*",			0,		"",			"Operator (*)" },
+	{ "-NEG",		0,		"",			"Operator (negate)" },
+	{ "!",			0,		"",			"Operator (!)" },
+	{ "!=",			0,		"",			"Operator (!=)" },
+	{ "||",			0,		"",			"Operator (||)" },
+	{ "^",			0,		"",			"Operator (^)" },
+	{ "-",			0,		"",			"Operator (-)" },
 
 	// Flow control
-	{ "*nofunction*",	"",		"", 			"" },
-	{ "*joiner*",		"",		"", 			"" },
-	{ "if",			"_",		"", 			"Perform a conditional test between the supplied expressions (or variables or constants)" },
+	{ "*nofunction*",	0,		"", 			"" },
+	{ "*joiner*",		0,		"", 			"" },
+	{ "if",			0,		"", 			"Perform a conditional test between the supplied expressions (or variables or constants)" },
 
 	// Math Commands.
-	{ "abs",		"N",		"double number",	"Return absolute (i.e. positive) of value" },
-	{ "acos",		"N",		"double cosx",		"Return inverse cosine of supplied argument" },
-	{ "asin",		"N",		"double sinx",		"Return inverse sine of supplied argument" },
-	{ "atan",		"N",		"double tanx",		"Return inverse tangent of supplied argument" },
-	{ "cos",		"N",		"double angle",		"Return cosine of specified angle" },
-	{ "exp",		"N",		"double value",		"Return exponential of the argument" },
-	{ "ln",			"N",		"double value",		"Return natural (base-e) logarithm" },
-	{ "log",		"N",		"double value",		"Return base-10 logarithm" },
-	{ "nint",		"N",		"double number",	"Return nearest integer to supplied real value" },
-	{ "sin",		"N",		"double angle",		"Return sine of specified angle" },
-	{ "sqrt",		"N",		"double number",	"Return square root of number" },
-	{ "tan",		"N",		"double angle",		"Return tangent of specified angle" }
+	{ "abs",		1,		"double number",	"Return absolute (i.e. positive) of value" },
+	{ "acos",		1,		"double cosx",		"Return inverse cosine of supplied argument" },
+	{ "asin",		1,		"double sinx",		"Return inverse sine of supplied argument" },
+	{ "atan",		1,		"double tanx",		"Return inverse tangent of supplied argument" },
+	{ "cos",		1,		"double angle",		"Return cosine of specified angle" },
+	{ "exp",		1,		"double value",		"Return exponential of the argument" },
+	{ "ln",			1,		"double value",		"Return natural (base-e) logarithm" },
+	{ "log",		1,		"double value",		"Return base-10 logarithm" },
+	{ "nint",		1,		"double number",	"Return nearest integer to supplied real value" },
+	{ "sin",		1,		"double angle",		"Return sine of specified angle" },
+	{ "sqrt",		1,		"double number",	"Return square root of number" },
+	{ "tan",		1,		"double angle",		"Return tangent of specified angle" }
 };
 
 // Return enumerated command from string
@@ -503,30 +503,6 @@ bool ExpressionFunctions::function_Tan(ExpressionFunction* c, ExpressionValue& r
 /*
  * Commands
  */
-
-// Return specified command keyword
-const char* ExpressionFunctions::keyword(ExpressionFunctions::Function func)
-{
-	return ExpressionFunctions::data[func].keyword;
-}
-
-// Return specified command arguments
-const char* ExpressionFunctions::arguments(ExpressionFunctions::Function func)
-{
-	return ExpressionFunctions::data[func].arguments;
-}
-
-// Return specified command argument names
-const char* ExpressionFunctions::argText(ExpressionFunctions::Function func)
-{
-	return ExpressionFunctions::data[func].argText;
-}
-
-// Return specified command syntax
-const char* ExpressionFunctions::syntax(ExpressionFunctions::Function func)
-{
-	return ExpressionFunctions::data[func].syntax;
-}
 
 // Initialise Command Pointers
 void ExpressionFunctions::initPointers()

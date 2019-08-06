@@ -37,12 +37,12 @@ class ExpressionFunctionData
 	public:
 	// Function keyword
 	const char* keyword;
-	// Function arguments
-	const char* arguments;
+	// Number of arguments required by the function
+	int nArguments;
 	// Function argument names
 	const char* argText;
-	// Function syntax
-	const char* syntax;
+	// Function description
+	const char* description;
 };
 
 // Expression Functions
@@ -169,16 +169,6 @@ class ExpressionFunctions
 	public:
 	// Function data
 	static ExpressionFunctionData data[ExpressionFunctions::nFunctions];
-	// Return specified function keyword
-	static const char* keyword(ExpressionFunctions::Function func);
-	// Return specified function arguments
-	static const char* arguments(ExpressionFunctions::Function func);
-	// Return whether specified function returns a number
-	static bool returnsNumber(ExpressionFunctions::Function func);
-	// Return specified function argument names
-	static const char* argText(ExpressionFunctions::Function func);
-	// Return specified function syntax
-	static const char* syntax(ExpressionFunctions::Function func);
 	// Initialise function pointers
 	void initPointers();
 	// Execute specified function
