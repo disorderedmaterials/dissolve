@@ -320,6 +320,7 @@ void SpeciesTab::updateControls()
 	}
 
 	Isotopologue* isotopologue = currentIsotopologue();
+	ui_.IsotopologueRemoveButton->setEnabled(isotopologue != NULL);
 
 	// Isotopologue AtomType/Isotopes Table
 	if (!isotopologue) ui_.IsotopeTable->clearContents();
@@ -390,27 +391,31 @@ void SpeciesTab::on_NameEdit_textChanged(QString text)
 
 void SpeciesTab::on_IsotopologueAddButton_clicked(bool checked)
 {
-	printf("NOT IMPLEMENTED YET!\n");
+	species_->addIsotopologue("NewIsotopologue", dissolveWindow_->dissolve().atomTypes());
+
+	updateControls();
 }
 
 void SpeciesTab::on_IsotopologueRemoveButton_clicked(bool checked)
 {
-	printf("NOT IMPLEMENTED YET!\n");
+	// Get current Isotopologue
+	Isotopologue* iso = currentIsotopologue();
+	if (!iso) return;
+
+	// Notify all keywords that our Isotopologue is about to be removed
+	KeywordBase::objectNoLongerValid<Isotopologue>(iso);
+
+	// Finally, remove the Isotopologue from the Species
+	species_->removeIsotopologue(iso);
+
+	updateControls();
 }
 
 void SpeciesTab::on_IsotopologueList_currentRowChanged(int row)
 {
 	if (refreshing_) return;
 
-	Isotopologue* isotopologue = currentIsotopologue();
-
-	refreshing_ = true;
-
-	// Isotopologue AtomType/Isotopes Table
-	if (!isotopologue) ui_.IsotopeTable->clearContents();
-	else TableWidgetRefDataListUpdater<SpeciesTab,AtomType,Isotope*> isotopeUpdater(ui_.IsotopeTable, isotopologue->isotopes(), this, &SpeciesTab::updateIsotopeTableRow);
-
-	refreshing_ = false;
+	updateControls();
 }
 
 void SpeciesTab::on_IsotopologueList_itemChanged(QListWidgetItem* item)

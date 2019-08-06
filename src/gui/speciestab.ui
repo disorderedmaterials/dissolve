@@ -77,7 +77,11 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="NameEdit"/>
+         <widget class="QLineEdit" name="NameEdit">
+          <property name="focusPolicy">
+           <enum>Qt::StrongFocus</enum>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -132,6 +136,9 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
             <property name="text">
              <string>Remove</string>
             </property>
@@ -148,6 +155,9 @@
             <property name="shortcut">
              <string>Return</string>
             </property>
+            <property name="autoExclusive">
+             <bool>false</bool>
+            </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextBesideIcon</enum>
             </property>
@@ -160,6 +170,9 @@
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
             </property>
             <property name="text">
              <string>Add</string>
