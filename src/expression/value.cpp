@@ -28,6 +28,7 @@ ExpressionValue::ExpressionValue()
 	valueI_ = 0;
 	valueD_ = 0.0;
 	type_ = IntegerType;
+	typeFixed_ = false;
 }
 
 ExpressionValue::ExpressionValue(int value)
@@ -35,6 +36,7 @@ ExpressionValue::ExpressionValue(int value)
 	valueI_ = value;
 	valueD_ = 0.0;
 	type_ = IntegerType;
+	typeFixed_ = true;
 }
 
 ExpressionValue::ExpressionValue(double value)
@@ -42,6 +44,7 @@ ExpressionValue::ExpressionValue(double value)
 	valueI_ = 0;
 	valueD_ = value;
 	type_ = DoubleType;
+	typeFixed_ = true;
 }
 
 // Destructor
@@ -49,22 +52,61 @@ ExpressionValue::~ExpressionValue()
 {
 }
 
+// Copy constructor
+ExpressionValue::ExpressionValue(const ExpressionValue& source)
+{
+	(*this) = source;
+}
+
+// Assignment operator
+void ExpressionValue::operator=(const ExpressionValue& source)
+{
+	if (typeFixed_)
+	{
+		if (type_ == IntegerType)
+		{
+			if (source.type_ == IntegerType) valueI_ = source.valueI_;
+			else valueI_ = int(source.valueD_);
+		}
+		else
+		{
+			if (source.type_ == IntegerType) valueD_ = source.valueI_;
+			else valueD_ = source.valueD_;
+		}
+	}
+	else
+	{
+		// Take on the source type
+		valueI_ = source.valueI_;
+		valueD_ = source.valueD_;
+		type_ = source.type_;
+	}
+}
+
 /*
  * Data
  */
+
+// Return the current result type
+ExpressionValue::ValueType ExpressionValue::type() const
+{
+	return type_;
+}
 
 // Assignment operator (integer)
 void ExpressionValue::operator=(int i)
 {
 	valueI_ = i;
-	type_ = IntegerType;
+	valueD_ = i;
+	if (!typeFixed_) type_ = IntegerType;
 }
 
 // Assignment operator (double)
 void ExpressionValue::operator=(double d)
 {
+	valueI_ = int(d);
 	valueD_ = d;
-	type_ = DoubleType;
+	if (!typeFixed_) type_ = DoubleType;
 }
 
 // Return result as integer (regardless of current type)
