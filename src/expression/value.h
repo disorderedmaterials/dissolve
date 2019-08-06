@@ -59,6 +59,8 @@ class ExpressionValue
 	int asInteger() const;
 	// Return as double (regardless of current type)
 	double asDouble() const;
+	// Return result as a string
+	const char* asString() const;
 	// Return pointer to integer value
 	int* integerPointer();
 	// Return pointer to double value
