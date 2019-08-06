@@ -30,7 +30,7 @@
 // Constructor
 PartialSet::PartialSet() : ListItem<PartialSet>()
 {
-	fingerprint_.clear();
+	fingerprint_ = "NO_FINGERPRINT";
 }
 
 // Destructor
@@ -59,7 +59,7 @@ bool PartialSet::setUp(const AtomTypeList& atomTypes, double rdfRange, double bi
 	// Initialise histograms for g(r) calcultion
 	setUpHistograms(rdfRange, binWidth);
 
-	fingerprint_.clear();
+	fingerprint_ = "NO_FINGERPRINT";
 
 	return true;
 }
@@ -99,7 +99,7 @@ bool PartialSet::setUpPartials(const AtomTypeList& atomTypes, const char* prefix
 	total_.setName(title);
 	total_.clear();
 
-	fingerprint_.clear();
+	fingerprint_ = "NO_FINGERPRINT";
 
 	return true;
 }
@@ -148,7 +148,7 @@ void PartialSet::reset()
 	}
 	total_.values() = 0.0;
 
-	fingerprint_.clear();
+	fingerprint_ = "NO_FINGERPRINT";
 }
 
 // Return number of AtomTypes used to generate matrices

@@ -33,6 +33,9 @@ template<class Data1D> const char* ObjectStore<Data1D>::objectTypeName_ = "Data1
 // Constructor
 Data1D::Data1D() : PlottableData(PlottableData::OneAxisPlottable), ListItem<Data1D>(), ObjectStore<Data1D>(this)
 {
+	static int count = 0;
+	name_ = CharString("Data1D_%i", ++count);
+
 	hasError_ = false;
 
 	clear();
