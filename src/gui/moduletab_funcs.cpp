@@ -92,6 +92,7 @@ void ModuleTab::initialiseControls(Module* module)
 	controlsWidget_ = new ModuleChartModuleBlock(NULL, dissolveWindow_, module);
 	controlsWidget_->setSettingsExpanded(true, true);
 	controlsWidget_->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+	controlsWidget_->hideRemoveButton();
 	splitter_->addWidget(controlsWidget_);
 
 	// Create a module widget if there are additional GUI elements available for the Module

@@ -84,6 +84,8 @@ class ModuleChartModuleBlock : public QWidget, public ModuleChartBlock
 	QWidget* widget();
 	// Set whether the settings are expanded or not, and whether this is permanent
 	void setSettingsExpanded(bool expanded, bool permanent = false);
+	// Hide the remove button (e.g. when shown in a ModuleTab)
+	void hideRemoveButton();
 	// Update controls within widget
 	void updateControls();
 	// Return suitable QPixmap for supplied Module

@@ -131,6 +131,12 @@ void ModuleChartModuleBlock::setSettingsExpanded(bool expanded, bool permanent)
 	ui.ToggleSettingsButton->setDisabled(permanent);
 }
 
+// Hide the remove button (e.g. when shown in a ModuleTab)
+void ModuleChartModuleBlock::hideRemoveButton()
+{
+	ui.RemoveButton->setVisible(false);
+}
+
 // Update controls within widget
 void ModuleChartModuleBlock::updateControls()
 {
