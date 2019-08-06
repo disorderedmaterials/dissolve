@@ -77,8 +77,6 @@ class ExpressionGenerator
 	int stringPos_, stringLength_, tokenStart_, functionStart_;
 	// Whether to use additional pre-defined constants
 	bool useAdditionalConstants_;
-	// Flag to specify that missing variables should be generated
-	bool generateMissingVariables_;
 
 	private:
 	// Set string source for lexer
