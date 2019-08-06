@@ -75,6 +75,13 @@ template <class T, class I> class ListWidgetUpdater
 
 			++currentRow;
 		}
+
+		// If there are still rows remaining in the widget, delete them now
+		while (currentRow < listWidget->count())
+		{
+			QListWidgetItem* oldItem = listWidget->takeItem(currentRow);
+			if (oldItem) delete oldItem;
+		}
 	}
 
 	// Update widget from supplied List, assuming that the name() function in class I is the desired text to show in the list
@@ -122,6 +129,13 @@ template <class T, class I> class ListWidgetUpdater
 
 			++currentRow;
 		}
+
+		// If there are still rows remaining in the widget, delete them now
+		while (currentRow < listWidget->count())
+		{
+			QListWidgetItem* oldItem = listWidget->takeItem(currentRow);
+			if (oldItem) delete oldItem;
+		}
 	}
 
 	// Update widget from supplied RefList, calling supplied function to create / modify data
@@ -164,6 +178,13 @@ template <class T, class I> class ListWidgetUpdater
 			}
 
 			++currentRow;
+		}
+
+		// If there are still rows remaining in the widget, delete them now
+		while (currentRow < listWidget->count())
+		{
+			QListWidgetItem* oldItem = listWidget->takeItem(currentRow);
+			if (oldItem) delete oldItem;
 		}
 	}
 };
