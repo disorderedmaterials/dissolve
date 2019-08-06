@@ -40,8 +40,14 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
 	// Constructor / Destructor
 	ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, Configuration* cfg);
 	~ConfigurationTab();
+
+
+	/*
+	 * UI
+	 */
+	private:
 	// Main form declaration
-	Ui::ConfigurationTab ui;
+	Ui::ConfigurationTab ui_;
 
 
 	/*

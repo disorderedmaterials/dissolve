@@ -37,22 +37,22 @@
 // Constructor / Destructor
 ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, Configuration* cfg) : ListItem<ConfigurationTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Configuration: %s", title), this)
 {
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	refreshing_ = true;
 
 	configuration_ = cfg;
 
 	// Populate coordinates file format combo
-	ComboPopulator(ui.CoordinatesFileFormatCombo, cfg->inputCoordinates().nFormats(), cfg->inputCoordinates().niceFormats());
+	ComboPopulator(ui_.CoordinatesFileFormatCombo, cfg->inputCoordinates().nFormats(), cfg->inputCoordinates().niceFormats());
 
 	// Set target for ConfigurationViewer
-	ui.ViewerWidget->configurationViewer()->setConfiguration(configuration_);
+	ui_.ViewerWidget->configurationViewer()->setConfiguration(configuration_);
 
 	refreshing_ = false;
 
 	// Set up the ModuleEditor
-	ui.ModulePanel->setUp(dissolveWindow, &cfg->moduleLayer(), configuration_);
+	ui_.ModulePanel->setUp(dissolveWindow, &cfg->moduleLayer(), configuration_);
 }
 
 ConfigurationTab::~ConfigurationTab()
@@ -89,30 +89,30 @@ void ConfigurationTab::updateControls()
 	refreshing_ = true;
 
 	// Definition
-	ui.NameEdit->setText(configuration_->name());
-	ui.TemperatureSpin->setValue(configuration_->temperature());
+	ui_.NameEdit->setText(configuration_->name());
+	ui_.TemperatureSpin->setValue(configuration_->temperature());
 
 	// Size Factor
-	ui.RequestedSizeFactorSpin->setValue(configuration_->requestedSizeFactor()); 
-	ui.AppliedSizeFactorSpin->setValue(configuration_->appliedSizeFactor());
+	ui_.RequestedSizeFactorSpin->setValue(configuration_->requestedSizeFactor()); 
+	ui_.AppliedSizeFactorSpin->setValue(configuration_->appliedSizeFactor());
 
 	// Box
 	const Box* box = configuration_->box();
-	ui.CurrentBoxTypeLabel->setText(Box::boxTypes().keyword(box->type()));
-	ui.CurrentBoxALabel->setText(QString::number(box->axisLengths().x));
-	ui.CurrentBoxBLabel->setText(QString::number(box->axisLengths().y));
-	ui.CurrentBoxCLabel->setText(QString::number(box->axisLengths().z));
-	ui.CurrentBoxAlphaLabel->setText(QString::number(box->axisAngles().x));
-	ui.CurrentBoxBetaLabel->setText(QString::number(box->axisAngles().y));
-	ui.CurrentBoxGammaLabel->setText(QString::number(box->axisAngles().z));
+	ui_.CurrentBoxTypeLabel->setText(Box::boxTypes().keyword(box->type()));
+	ui_.CurrentBoxALabel->setText(QString::number(box->axisLengths().x));
+	ui_.CurrentBoxBLabel->setText(QString::number(box->axisLengths().y));
+	ui_.CurrentBoxCLabel->setText(QString::number(box->axisLengths().z));
+	ui_.CurrentBoxAlphaLabel->setText(QString::number(box->axisAngles().x));
+	ui_.CurrentBoxBetaLabel->setText(QString::number(box->axisAngles().y));
+	ui_.CurrentBoxGammaLabel->setText(QString::number(box->axisAngles().z));
 
 	// Input Coordinates
-	ui.CoordinatesFileEdit->setText(configuration_->inputCoordinates().filename());
-	ui.CoordinatesFileFormatCombo->setCurrentIndex(configuration_->inputCoordinates().formatIndex());
-// 	ui.CoordinatesFromFileGroup->setChecked(configuration_->inputCoordinates().is);
+	ui_.CoordinatesFileEdit->setText(configuration_->inputCoordinates().filename());
+	ui_.CoordinatesFileFormatCombo->setCurrentIndex(configuration_->inputCoordinates().formatIndex());
+// 	ui_.CoordinatesFromFileGroup->setChecked(configuration_->inputCoordinates().is);
 
 	// Viewer
-	ui.ViewerWidget->configurationViewer()->postRedisplay();
+	ui_.ViewerWidget->configurationViewer()->postRedisplay();
 
 	refreshing_ = false;
 }
@@ -120,15 +120,15 @@ void ConfigurationTab::updateControls()
 // Disable sensitive controls within tab, ready for main code to run
 void ConfigurationTab::disableSensitiveControls()
 {
-	ui.DefinitionGroup->setEnabled(false);
-	ui.SizeFactorGroup->setEnabled(false);
+	ui_.DefinitionGroup->setEnabled(false);
+	ui_.SizeFactorGroup->setEnabled(false);
 }
 
 // Enable sensitive controls within tab, ready for main code to run
 void ConfigurationTab::enableSensitiveControls()
 {
-	ui.DefinitionGroup->setEnabled(true);
-	ui.SizeFactorGroup->setEnabled(true);
+	ui_.DefinitionGroup->setEnabled(true);
+	ui_.SizeFactorGroup->setEnabled(true);
 }
 
 /*

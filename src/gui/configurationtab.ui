@@ -531,9 +531,9 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="ContentTab">
+     <widget class="QWidget" name="ViewGenerateTab">
       <attribute name="title">
-       <string>Content</string>
+       <string>View / Generate</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <property name="spacing">
