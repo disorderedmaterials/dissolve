@@ -39,8 +39,6 @@ class ExpressionFunctionData
 	const char* keyword;
 	// Function arguments
 	const char* arguments;
-	// Whether function returns a number
-	bool returnsNumber;
 	// Function argument names
 	const char* argText;
 	// Function syntax

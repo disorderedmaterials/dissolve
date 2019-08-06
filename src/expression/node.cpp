@@ -34,7 +34,6 @@ const int MAXNODEARGS = 10;
 ExpressionNode::ExpressionNode() : ListItem<ExpressionNode>()
 {
 	// Private variables
-	returnsNumber_ = false;
 	readOnly_ = true;
 	parent_ = NULL;
 	nextArgument = NULL;
@@ -53,7 +52,6 @@ void ExpressionNode::copy(ExpressionNode* source)
 	nodeType_ = source->nodeType_;
 	parent_ = source->parent_;
 	args_ = source->args_;
-	returnsNumber_ = source->returnsNumber_;
 	readOnly_ = source->readOnly_;
 }
 
@@ -75,18 +73,6 @@ Expression* ExpressionNode::parent() const
 	return parent_;
 }
 
-// Set whether node returns a number
-void ExpressionNode::setReturnsNumber(bool b)
-{
-	returnsNumber_ = b;
-}
-
-// Return whether node returns a number
-bool ExpressionNode::returnsNumber()
-{
-	return returnsNumber_;
-}
-
 // Set the readonly status of the variable to true
 void ExpressionNode::setReadOnly()
 {
@@ -103,17 +89,6 @@ bool ExpressionNode::readOnly() const
 int ExpressionNode::nArgs() const
 {
 	return args_.nItems();
-}
-
-// Return whether nth argument returns a number
-bool ExpressionNode::isArgNumeric(int i)
-{
-	if ((i < 0) || (i >= args_.nItems()))
-	{
-		Messenger::printVerbose("ExpressionNode::argType : Argument index %i is out of range (node = %p).\n", i, this);
-		return false;
-	}
-	return args_[i]->item()->returnsNumber();
 }
 
 // Set argument specified
@@ -316,12 +291,12 @@ bool ExpressionNode::checkArguments(const char* arglist, const char* funcname)
 		{
 			// Number
 			case ('N'):
-				if (!isArgNumeric(count))
-				{
-					if (altargs != NULL) { reset = true; continue; }
-					Messenger::error("Argument %i to function '%s' must be a number.\n", count+1, funcname);
-					result = false;
-				}
+// 				if (!isArgNumeric(count))
+// 				{
+// 					if (altargs != NULL) { reset = true; continue; }
+// 					Messenger::error("Argument %i to function '%s' must be a number.\n", count+1, funcname);
+// 					result = false;
+// 				}
 				break;
 		}
 

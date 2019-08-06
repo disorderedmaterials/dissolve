@@ -148,9 +148,6 @@ bool Expression::addStatement(ExpressionNode* leaf)
 // Add an operator to the Expression
 ExpressionNode* Expression::addOperator(ExpressionFunctions::Function func, ExpressionNode* arg1, ExpressionNode* arg2)
 {
-	if (arg1 && (!arg1->returnsNumber())) return NULL;
-	if (arg2 && (!arg2->returnsNumber())) return NULL;
-
 	// Create new command node
 	ExpressionFunction* leaf = new ExpressionFunction(func);
 	nodes_.own(leaf);
@@ -160,7 +157,6 @@ ExpressionNode* Expression::addOperator(ExpressionFunctions::Function func, Expr
 	leaf->addArguments(1,arg1);
 	leaf->setParent(this);
 	if (arg2 != NULL) leaf->addArguments(1,arg2);
-	leaf->setReturnsNumber(ExpressionFunctions::data[func].returnsNumber);
 
 	return leaf;
 }
@@ -176,9 +172,6 @@ ExpressionNode* Expression::addFunctionNodeWithArglist(ExpressionFunctions::Func
 	// Add argument list to node and set parent
 	leaf->addJoinedArguments(arglist);
 	leaf->setParent(this);
-
-	// Store the function's return type
-	leaf->setReturnsNumber(ExpressionFunctions::data[func].returnsNumber);
 
 	// Check that the correct arguments were given to the command and run any prep functions
 	if (!leaf->checkArguments(ExpressionFunctions::data[func].arguments, ExpressionFunctions::data[func].keyword))
@@ -203,9 +196,6 @@ ExpressionNode* Expression::addFunctionNode(ExpressionFunctions::Function func, 
 	if (a3 != NULL) leaf->addArgument(a3);
 	if (a4 != NULL) leaf->addArgument(a4);
 	leaf->setParent(this);
-
-	// Store the function's return type
-	leaf->setReturnsNumber(ExpressionFunctions::data[func].returnsNumber);
 
 	// Check that the correct arguments were given to the command and run any prep functions
 	if (!leaf->checkArguments(ExpressionFunctions::data[func].arguments, ExpressionFunctions::data[func].keyword))

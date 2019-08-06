@@ -72,8 +72,6 @@ class ExpressionNode : public ListItem<ExpressionNode>
 	public:
 	// Return number of arguments currently assigned to node
 	int nArgs() const;
-	// Return if nth argument is numeric
-	bool isArgNumeric(int i);
 	// Add list of arguments formas as a plain List<Node>, beginning from supplied list head
 	void addListArguments(ExpressionNode* leaf);
 	// Add list of arguments joined by parser, probably with list tail supplied
@@ -104,16 +102,10 @@ class ExpressionNode : public ListItem<ExpressionNode>
 	 * Node Character
 	 */
 	protected:
-	// Whether node returns a number
-	bool returnsNumber_;
 	// Whether node is read-only
 	bool readOnly_;
 
 	public:
-	// Set whether node returns a number
-	void setReturnsNumber(bool b);
-	// Return whether node returns a number
-	bool returnsNumber();
 	// Set the readonly status of the node to true
 	void setReadOnly();
 	// Return the readonly status of the node

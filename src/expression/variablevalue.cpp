@@ -29,7 +29,6 @@ ExpressionVariableValue::ExpressionVariableValue(ExpressionVariable* var) : Expr
 	// Private variables
 	readOnly_ = false;
 	nodeType_ = ExpressionNode::VariableValueNode;
-	if (variable_ != NULL) returnsNumber_ = var->returnsNumber();
 }
 
 // Destructor

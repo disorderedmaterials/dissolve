@@ -82,85 +82,41 @@ bool ExpressionFunctions::assumeDegrees()
 ExpressionFunctionData ExpressionFunctions::data[ExpressionFunctions::nFunctions] = {
 
 	// Operators
-	{ "+",			"..",		true, "",
-		"Internal Operator (+)" },
-	{ "&&",			"..",		true, "",
-		"Internal Operator (&&)" },
-	{ "/",			"..",		true, "",
-		"Internal Operator (/)" },
-	{ "==",			"..",		true, "",
-		"Internal Operator (==)" },
-	{ "",			"..",		true, "",
-		"Internal Operator (>)" },
-	{ ">=",			"..",		true, "",
-		"Internal Operator (>=)" },
-	{ "<",			"..",		true, "",
-		"Internal Operator (<)" },
-	{ "<=",			"..",		true, "",
-		"Internal Operator (<=)" },
-	{ "%",			"..",		true, "",
-		"Internal Operator (%)" },
-	{ "*",			"..",		true, "",
-		"Internal Operator (*)" },
-	{ "-NEG",		".",		true, "",
-		"Internal Operator (negate)" },
-	{ "!",			"..",		true, "",
-		"Internal Operator (!)" },
-	{ "!=",			"..",		true, "",
-		"Internal Operator (!=)" },
-	{ "||",			"..",		true, "",
-		"Internal Operator (||)" },
-	{ "^",			"..",		true, "",
-		"Internal Operator (^)" },
-	{ "-",			"..",		true, "",
-		"Internal Operator (-)" },
+	{ "+",			"..",		"",			"Operator (+)" },
+	{ "&&",			"..",		"",			"Operator (&&)" },
+	{ "/",			"..",		"",			"Operator (/)" },
+	{ "==",			"..",		"",			"Operator (==)" },
+	{ "",			"..",		"",			"Operator (>)" },
+	{ ">=",			"..",		"",			"Operator (>=)" },
+	{ "<",			"..",		"",			"Operator (<)" },
+	{ "<=",			"..",		"",			"Operator (<=)" },
+	{ "%",			"..",		"",			"Operator (%)" },
+	{ "*",			"..",		"",			"Operator (*)" },
+	{ "-NEG",		".",		"",			"Operator (negate)" },
+	{ "!",			"..",		"",			"Operator (!)" },
+	{ "!=",			"..",		"",			"Operator (!=)" },
+	{ "||",			"..",		"",			"Operator (||)" },
+	{ "^",			"..",		"",			"Operator (^)" },
+	{ "-",			"..",		"",			"Operator (-)" },
 
 	// Flow control
-	{ "*nofunction*",	"",		false, "",
-		"" },
-	{ "*joiner*",		"",		false, "",
-		"" },
-	{ "if",			"_",		false,
-		"",
-		"Perform a conditional test between the supplied expressions (or variables or constants)" },
-	
+	{ "*nofunction*",	"",		"", 			"" },
+	{ "*joiner*",		"",		"", 			"" },
+	{ "if",			"_",		"", 			"Perform a conditional test between the supplied expressions (or variables or constants)" },
+
 	// Math Commands.
-	{ "abs",		"N",		true,
-		"double number",
-		"Return absolute (i.e. positive) of value" },
-	{ "acos",		"N",		true,
-		"double cosx",
-		"Return inverse cosine of supplied argument" },
-	{ "asin",		"N",		true,
-		"double sinx",
-		"Return inverse sine of supplied argument" },
-	{ "atan",		"N",		true,
-		"double tanx",
-		"Return inverse tangent of supplied argument" },
-	{ "cos",		"N",		true,
-		"double angle",
-		"Return cosine of specified angle" },
-	{ "exp",		"N",		true,
-		"double value",
-		"Return exponential of the argument" },
-	{ "ln",			"N",		true,
-		"double value",
-		"Return natural (base-e) logarithm" },
-	{ "log",		"N",		true,
-		"double value",
-		"Return base-10 logarithm" },
-	{ "nint",		"N",		true,
-		"double number",
-		"Return nearest integer to supplied real value" },
-	{ "sin",		"N",		true,
-		"double angle",
-		"Return sine of specified angle" },
-	{ "sqrt",		"N",		true,
-		"double number",
-		"Return square root of number" },
-	{ "tan",		"N",		true,
-		"double angle",
-		"Return tangent of specified angle" }
+	{ "abs",		"N",		"double number",	"Return absolute (i.e. positive) of value" },
+	{ "acos",		"N",		"double cosx",		"Return inverse cosine of supplied argument" },
+	{ "asin",		"N",		"double sinx",		"Return inverse sine of supplied argument" },
+	{ "atan",		"N",		"double tanx",		"Return inverse tangent of supplied argument" },
+	{ "cos",		"N",		"double angle",		"Return cosine of specified angle" },
+	{ "exp",		"N",		"double value",		"Return exponential of the argument" },
+	{ "ln",			"N",		"double value",		"Return natural (base-e) logarithm" },
+	{ "log",		"N",		"double value",		"Return base-10 logarithm" },
+	{ "nint",		"N",		"double number",	"Return nearest integer to supplied real value" },
+	{ "sin",		"N",		"double angle",		"Return sine of specified angle" },
+	{ "sqrt",		"N",		"double number",	"Return square root of number" },
+	{ "tan",		"N",		"double angle",		"Return tangent of specified angle" }
 };
 
 // Return enumerated command from string
@@ -560,12 +516,6 @@ const char* ExpressionFunctions::arguments(ExpressionFunctions::Function func)
 	return ExpressionFunctions::data[func].arguments;
 }
 
-// Return whether specified function returns a number
-bool ExpressionFunctions::returnsNumber(ExpressionFunctions::Function func)
-{
-	return ExpressionFunctions::data[func].returnsNumber;
-}
-
 // Return specified command argument names
 const char* ExpressionFunctions::argText(ExpressionFunctions::Function func)
 {
@@ -627,6 +577,5 @@ void ExpressionFunctions::initPointers()
 // Execute command
 bool ExpressionFunctions::call(ExpressionFunctions::Function cf, ExpressionFunction* node, ExpressionValue& result)
 {
-// 	printf("Calling command '%s' (node is %p)...\n", data[cf].keyword, node);
 	return (this->pointers_[cf])(node, result);
 }

@@ -32,7 +32,6 @@ ExpressionVariable::ExpressionVariable(ExpressionValue value, bool readOnly) : E
 	initialValue_ = NULL;
 	nodeType_ = ExpressionNode::VariableNode;
 	value_ = value;
-	returnsNumber_ = true;
 	readOnly_ = readOnly;
 }
 
@@ -79,13 +78,6 @@ bool ExpressionVariable::setInitialValue(ExpressionNode* node)
 {
 	initialValue_ = node;
 	if (initialValue_ == NULL) return true;
-
-	// Check return type
-	if (!node->returnsNumber())
-	{
-		printf("Error: Initial value for '%s' does not return a number.\n", name_.get());
-		return false;
-	}
 
 	return true;
 }
