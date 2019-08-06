@@ -114,6 +114,18 @@ void AtomTypeList::add(const AtomTypeList& source)
 	}
 }
 
+// Remove specified AtomType from the list
+void AtomTypeList::remove(AtomType* atomType)
+{
+	AtomTypeData* atd = types_.first(), *atdNext;
+	while (atd)
+	{
+		atdNext = atd->next;
+		if (atd->atomType() == atomType) types_.remove(atd);
+		atd = atdNext;
+	}
+}
+
 // Add/increase this AtomType/Isotope pair
 void AtomTypeList::addIsotope(AtomType* atomType, Isotope* tope, double popAdd)
 {
