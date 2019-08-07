@@ -1,4 +1,4 @@
-noinst_LTLIBRARIES = libeditors.la
+noinst_LTLIBRARIES = libcharts.la
 
 SUFFIXES: .ui .hui .qrc
 
@@ -21,8 +21,13 @@ SUFFIXES: .ui .hui .qrc
 clean-local:
 	-rm -f ui_* *.o moc_*.cpp
 
-libeditors_la_SOURCES = procedure.ui procedure_funcs.cpp
+# UI Files
+libcharts_la_SOURCES = procedurenode.ui
 
-noinst_HEADERS = procedure.h
+# Implementations
+libcharts_la_SOURCES += chartblock.cpp charthotspot.cpp
+libcharts_la_SOURCES += procedure.hui procedure_funcs.cpp procedurenode_funcs.cpp
+
+noinst_HEADERS = chartblock.h charthotspot.h proceduremetrics.h procedurenode.h
 
 AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@

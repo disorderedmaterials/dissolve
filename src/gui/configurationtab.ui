@@ -660,7 +660,7 @@
   <customwidget>
    <class>ProcedureEditor</class>
    <extends>QWidget</extends>
-   <header>gui/editors/procedure.h</header>
+   <header>gui/procedureeditor.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

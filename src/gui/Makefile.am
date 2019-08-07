@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = libgui.la
 
-SUBDIRS = delegates editors helpers keywordwidgets viewer widgets
+SUBDIRS = charts delegates helpers keywordwidgets viewer widgets
 
 SUFFIXES: .ui .hui .qrc
 
@@ -29,6 +29,8 @@ libgui_la_SOURCES = main.qrc
 libgui_la_SOURCES += layereditor.ui
 libgui_la_SOURCES += modulechartinsertionblock.ui modulechartmoduleblock.ui modulecontrolwidget.ui
 libgui_la_SOURCES += modulechart.hui
+# UI - Editors
+libgui_la_SOURCES += procedureeditor.ui
 # UI - Widgets
 libgui_la_SOURCES += wizardwidgetfooter.ui wizardwidgetheader.ui wizardwidget.hui
 libgui_la_SOURCES += addconfigurationwizard.ui addforcefieldtermswizard.ui addprocessinglayerwizard.ui addspecieswizard.ui guidewizard.ui pairpotentialwidget.ui
@@ -49,7 +51,7 @@ libgui_la_SOURCES += maintab.cpp
 libgui_la_SOURCES += modulechart_funcs.cpp modulechartblock.cpp modulecharthotspot.cpp modulechartinsertionblock_funcs.cpp modulechartmoduleblock_funcs.cpp
 libgui_la_SOURCES += modulecontrolwidget_funcs.cpp modulekeywordswidget_funcs.cpp modulelayertab_funcs.cpp moduletab_funcs.cpp modulewidget.cpp
 libgui_la_SOURCES += outputhandler_funcs.cpp
-libgui_la_SOURCES += pairpotentialwidget_funcs.cpp
+libgui_la_SOURCES += pairpotentialwidget_funcs.cpp procedureeditor_funcs.cpp
 libgui_la_SOURCES += speciestab_funcs.cpp systemtemplate.cpp
 libgui_la_SOURCES += thread_funcs.cpp
 libgui_la_SOURCES += tmdiarea.hui tmdiarea_funcs.cpp

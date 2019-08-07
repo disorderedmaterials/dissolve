@@ -1,6 +1,6 @@
 /*
 	*** Procedure Editor Functions
-	*** src/gui/layereditor_funcs.cpp
+	*** src/gui/procedureeditor_funcs.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,9 +19,9 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/layereditor.h"
+#include "gui/procedureeditor.h"
 #include "gui/gui.h"
-#include "gui/modulechart.hui"
+#include "gui/charts/procedure.hui"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "base/lineparser.h"
@@ -30,9 +30,9 @@
 // Constructor / Destructor
 ProcedureEditor::ProcedureEditor(QWidget* parent) : QWidget(parent)
 {
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
-	chartWidget_ = NULL;
+	procedure_ = NULL;
 
 	refreshing_ = false;
 }
@@ -42,62 +42,63 @@ ProcedureEditor::~ProcedureEditor()
 }
 
 /*
- * Setup
+ * Procedure Target
  */
 
-// Setup up the ProcedureEditor for the specified Module list
-bool ProcedureEditor::setUp(DissolveWindow* dissolveWindow, ModuleProcedure* moduleProcedure, Configuration* localConfiguration)
+// Set the target procedure to edit
+bool ProcedureEditor::setProcedure(Procedure* procedure)
 {
-	dissolveWindow_ = dissolveWindow;
-	moduleProcedure_ = moduleProcedure;
-	localConfiguration_ = localConfiguration;
+	procedure_ = procedure;
 
-	// Create a ModuleChart widget and set its source list
-	chartWidget_ = new ModuleChart(dissolveWindow, *moduleProcedure_, localConfiguration_);
-	chartWidget_->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
-	ui.ProcedureScrollArea->setWidget(chartWidget_);
+	ui_.Chart->setProcedure(procedure_);
+}
 
-	// Add MimeTreeWidgetItems for each Module, adding them to a parent category item
-	moduleCategories_.clear();
-	ListIterator<Module> moduleIterator(dissolveWindow->dissolve().masterModules());
-	while (const Module* module = moduleIterator.iterate())
-	{
-		// Check that the category is not 'HIDDEN' (in which case we don't show it)
-		if (DissolveSys::sameString("HIDDEN", module->category())) continue;
+// 	// Create a ModuleChart widget and set its source list
+// 	chartWidget_ = new ProcedureChart(dissolveWindow, *moduleProcedure_, localConfiguration_);
+// 	chartWidget_->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
+// 	ui_.ProcedureScrollArea->setWidget(chartWidget_);
 
-		// Find category for this Module (if it exists) or create a new one
-		MimeTreeWidgetItem* categoryItem = NULL;
-		RefDataListIterator<MimeTreeWidgetItem,CharString> categoryIterator(moduleCategories_);
-		while (categoryItem = categoryIterator.iterate()) if (DissolveSys::sameString(module->category(), categoryIterator.currentData())) break;
-		if (categoryItem == NULL)
-		{
-			categoryItem = new MimeTreeWidgetItem((QTreeWidget*)NULL, 1000);
-			categoryItem->setText(0, module->category());
-			categoryItem->setFlags(Qt::ItemIsEnabled);
-			moduleCategories_.append(categoryItem, module->category());
-		}
-
-		// Create item for the Module
-		MimeTreeWidgetItem* item = new MimeTreeWidgetItem(categoryItem, 1000);
-		item->setIcon(0, ModuleChartModuleBlock::modulePixmap(module));
-		item->setText(0, module->type());
-		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsDragEnabled);
-		item->setData(0, Qt::UserRole, VariantPointer<const Module>(module));
-		item->setToolTip(0, module->brief());
-		item->addMimeString(MimeString::ModuleType, module->type());
-	}
-
-	// Populate the available Modules tree with the categories we now have
-	ui.AvailableModulesTree->clear();
-	RefDataListIterator<MimeTreeWidgetItem,CharString> categoryIterator(moduleCategories_);
-	while (MimeTreeWidgetItem* categoryItem = categoryIterator.iterate()) ui.AvailableModulesTree->addTopLevelItem(categoryItem);
-	ui.AvailableModulesTree->resizeColumnToContents(0);
-	ui.AvailableModulesTree->sortByColumn(0, Qt::AscendingOrder);
-	ui.AvailableModulesTree->setSortingEnabled(true);
-	ui.AvailableModulesTree->expandAll();
+// 	// Add MimeTreeWidgetItems for each Module, adding them to a parent category item
+// 	moduleCategories_.clear();
+// 	ListIterator<Module> moduleIterator(dissolveWindow->dissolve().masterModules());
+// 	while (const Module* module = moduleIterator.iterate())
+// 	{
+// 		// Check that the category is not 'HIDDEN' (in which case we don't show it)
+// 		if (DissolveSys::sameString("HIDDEN", module->category())) continue;
+// 
+// 		// Find category for this Module (if it exists) or create a new one
+// 		MimeTreeWidgetItem* categoryItem = NULL;
+// 		RefDataListIterator<MimeTreeWidgetItem,CharString> categoryIterator(moduleCategories_);
+// 		while (categoryItem = categoryIterator.iterate()) if (DissolveSys::sameString(module->category(), categoryIterator.currentData())) break;
+// 		if (categoryItem == NULL)
+// 		{
+// 			categoryItem = new MimeTreeWidgetItem((QTreeWidget*)NULL, 1000);
+// 			categoryItem->setText(0, module->category());
+// 			categoryItem->setFlags(Qt::ItemIsEnabled);
+// 			moduleCategories_.append(categoryItem, module->category());
+// 		}
+// 
+// 		// Create item for the Module
+// 		MimeTreeWidgetItem* item = new MimeTreeWidgetItem(categoryItem, 1000);
+// 		item->setIcon(0, ModuleChartModuleBlock::modulePixmap(module));
+// 		item->setText(0, module->type());
+// 		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsDragEnabled);
+// 		item->setData(0, Qt::UserRole, VariantPointer<const Module>(module));
+// 		item->setToolTip(0, module->brief());
+// 		item->addMimeString(MimeString::ModuleType, module->type());
+// 	}
+// 
+// 	// Populate the available Modules tree with the categories we now have
+// 	ui_.AvailableModulesTree->clear();
+// 	RefDataListIterator<MimeTreeWidgetItem,CharString> categoryIterator(moduleCategories_);
+// 	while (MimeTreeWidgetItem* categoryItem = categoryIterator.iterate()) ui_.AvailableModulesTree->addTopLevelItem(categoryItem);
+// 	ui_.AvailableModulesTree->resizeColumnToContents(0);
+// 	ui_.AvailableModulesTree->sortByColumn(0, Qt::AscendingOrder);
+// 	ui_.AvailableModulesTree->setSortingEnabled(true);
+// 	ui_.AvailableModulesTree->expandAll();
 
 	// Hide palette group initially
-// 	ui.PaletteGroup->setVisible(false);
+// 	ui_.PaletteGroup->setVisible(false);
 
 	updateControls();
 }
@@ -113,7 +114,7 @@ void ProcedureEditor::updateControls()
 
 	refreshing_ = true;
 
-	chartWidget_->updateControls();
+	ui_.Chart->updateControls();
 
 	refreshing_ = false;
 }
@@ -121,55 +122,55 @@ void ProcedureEditor::updateControls()
 // Disable sensitive controls within tab, ready for main code to run
 void ProcedureEditor::disableSensitiveControls()
 {
-	ui.AvailableModulesTree->setEnabled(false);
-	chartWidget_->disableSensitiveControls();
+// 	ui_.AvailableModulesTree->setEnabled(false);
+	ui_.Chart->disableSensitiveControls();
 }
 
 // Enable sensitive controls within tab, ready for main code to run
 void ProcedureEditor::enableSensitiveControls()
 {
-	ui.AvailableModulesTree->setEnabled(true);
-	chartWidget_->enableSensitiveControls();
+// 	ui_.AvailableModulesTree->setEnabled(true);
+	ui_.Chart->enableSensitiveControls();
 }
 
 /*
  * Widget Functions
  */
 
-void ProcedureEditor::on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* item)
-{
-	if (!moduleProcedure_) return;
-
-	// Get the Module associated to the double-clicked item
-	const Module* module = VariantPointer<const Module>(item->data(0, Qt::UserRole));
-	if (!module) return;
-
-	// Create a new instance of the Module
-	Module* newInstance = dissolveWindow_->dissolve().createModuleInstance(module->type());
-	newInstance->setConfigurationLocal(localConfiguration_);
-
-	// Set Configuration targets as appropriate
-	if (newInstance->nTargetableConfigurations() != 0)
-	{
-		if (localConfiguration_) newInstance->addTargetConfiguration(localConfiguration_);
-		else
-		{
-			ListIterator<Configuration> configIterator(dissolveWindow_->dissolve().configurations());
-			while (Configuration* cfg = configIterator.iterate())
-			{
-				newInstance->addTargetConfiguration(cfg);
-				if ((newInstance->nTargetableConfigurations() != -1) && (newInstance->nTargetableConfigurations() == newInstance->nTargetConfigurations())) break;
-			}
-		}
-	}
-
-	moduleProcedure_->own(newInstance);
-
-	updateControls();
-
-	// Flag that the current data has changed
-	dissolveWindow_->setModified();
-}
+// void ProcedureEditor::on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* item)
+// {
+// 	if (!moduleProcedure_) return;
+// 
+// 	// Get the Module associated to the double-clicked item
+// 	const Module* module = VariantPointer<const Module>(item->data(0, Qt::UserRole));
+// 	if (!module) return;
+// 
+// 	// Create a new instance of the Module
+// 	Module* newInstance = dissolveWindow_->dissolve().createModuleInstance(module->type());
+// 	newInstance->setConfigurationLocal(localConfiguration_);
+// 
+// 	// Set Configuration targets as appropriate
+// 	if (newInstance->nTargetableConfigurations() != 0)
+// 	{
+// 		if (localConfiguration_) newInstance->addTargetConfiguration(localConfiguration_);
+// 		else
+// 		{
+// 			ListIterator<Configuration> configIterator(dissolveWindow_->dissolve().configurations());
+// 			while (Configuration* cfg = configIterator.iterate())
+// 			{
+// 				newInstance->addTargetConfiguration(cfg);
+// 				if ((newInstance->nTargetableConfigurations() != -1) && (newInstance->nTargetableConfigurations() == newInstance->nTargetConfigurations())) break;
+// 			}
+// 		}
+// 	}
+// 
+// 	moduleProcedure_->own(newInstance);
+// 
+// 	updateControls();
+// 
+// 	// Flag that the current data has changed
+// 	dissolveWindow_->setModified();
+// }
 
 /*
  * State

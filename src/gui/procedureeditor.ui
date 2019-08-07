@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>353</width>
-    <height>220</height>
+    <width>578</width>
+    <height>374</height>
    </rect>
   </property>
   <property name="font">
@@ -138,10 +138,30 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>73</width>
-          <height>216</height>
+          <width>298</width>
+          <height>370</height>
          </rect>
         </property>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="ProcedureChart" name="Chart" native="true"/>
+         </item>
+        </layout>
        </widget>
       </widget>
      </item>
@@ -154,6 +174,12 @@
    <class>MimeTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>gui/widgets/mimetreewidget.hui</header>
+  </customwidget>
+  <customwidget>
+   <class>ProcedureChart</class>
+   <extends>QWidget</extends>
+   <header>gui/charts/procedurechart.hui</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

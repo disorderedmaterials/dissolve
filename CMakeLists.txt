@@ -278,6 +278,7 @@ if(GUI)
     widgets
     keywordwidgets
     delegates
+    charts
     gui
 
     ${NO_WHOLE_ARCHIVE_FLAG}

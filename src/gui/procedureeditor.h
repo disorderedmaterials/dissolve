@@ -1,6 +1,6 @@
 /*
 	*** Procedure Editor
-	*** src/gui/layereditor.h
+	*** src/gui/procedureeditor.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,20 +19,19 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_LAYEREDITOR_H
-#define DISSOLVE_LAYEREDITOR_H
+#ifndef DISSOLVE_PROCEDUREEDITOR_H
+#define DISSOLVE_PROCEDUREEDITOR_H
 
-#include "gui/ui_layereditor.h"
+#include "gui/ui_procedureeditor.h"
 #include "base/charstring.h"
 #include "templates/refdatalist.h"
 
 // Forward Declarations
-class Configuration;
 class DissolveWindow;
 class LineParser;
 class MimeTreeWidgetItem;
-class ModuleChart;
-class ModuleProcedure;
+class Procedure;
+class ProcedureChart;
 class ModulePalette;
 
 // Procedure Editor
@@ -45,26 +44,28 @@ class ProcedureEditor : public QWidget
 	// Constructor / Destructor
 	ProcedureEditor(QWidget* parent = NULL);
 	~ProcedureEditor();
-	// Main form declaration
-	Ui::ProcedureEditor ui;
 
 
 	/*
-	 * Setup
+	 * UI
 	 */
 	private:
-	// Pointer to main window
-	DissolveWindow* dissolveWindow_;
-	// Target ModuleProcedure
-	ModuleProcedure* moduleProcedure_;
-	// Parent Configuration (if we are local to one)
-	Configuration* localConfiguration_;
+	// Main form declaration
+	Ui::ProcedureEditor ui_;
+
+
+	/*
+	 * Procedure Target
+	 */
+	private:
+	// Procedure to be edited
+	Procedure* procedure_;
 	// Module categories and their associated MimeTreeWidgetItems
 	RefDataList<MimeTreeWidgetItem,CharString> moduleCategories_;
 
 	public:
-	// Set up the ProcedureEditor for the specified ModuleProcedure
-	bool setUp(DissolveWindow* dissolveWindow, ModuleProcedure* moduleProcedure, Configuration* localConfiguration = NULL);
+	// Set the target procedure to edit
+	bool setProcedure(Procedure* procedure);
 
 
 	/*
@@ -84,14 +85,10 @@ class ProcedureEditor : public QWidget
 
 
 	/*
-	 * Widget Functions
+	 * Signals / Slots
 	 */
-	private:
-	// Chart widget being displayed
-	ModuleChart* chartWidget_;
-
 	private slots:
-	void on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* item);
+// 	void on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* item);
 
 
 	/*

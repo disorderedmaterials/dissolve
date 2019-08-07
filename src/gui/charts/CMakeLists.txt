@@ -2,29 +2,37 @@
 # the UI file won't be wrapped!
 
 # Meta-Objects
-SET(editors_MOC_HDRS
-  procedure.h
+SET(charts_MOC_HDRS
+  procedure.hui
 )
-QT5_WRAP_CPP(editors_MOC_SRCS ${editors_MOC_HDRS})
+QT5_WRAP_CPP(charts_MOC_SRCS ${charts_MOC_HDRS})
 
 # User Interface Files
-SET(editors_UIS
-  procedure.ui
+SET(charts_UIS
+  procedurenode.ui
 )
-QT5_WRAP_UI(editors_UIS_H ${editors_UIS})
+QT5_WRAP_UI(charts_UIS_H ${charts_UIS})
 
 # Source files (not Qt UI files or custom .h [uih])
-SET(editors_SRCS
-  procedures_funcs.cpp
+SET(charts_SRCS
+  chartblock.cpp
+  charthotspot.cpp
+  procedure_funcs.cpp
+  procedurenode_funcs.cpp
+
+  chartblock.h
+  charthotspot.h
+  proceduremetrics.h
+  procedurenode.h
 )
 
-# Target 'editors'
-add_library(editors
-  ${editors_UIS_H}
-  ${editors_SRCS}
-  ${editors_MOC_SRCS}
+# Target 'charts'
+add_library(charts
+  ${charts_UIS_H}
+  ${charts_SRCS}
+  ${charts_MOC_SRCS}
 )
-target_include_directories(editors PRIVATE
+target_include_directories(charts PRIVATE
   ${PROJECT_SOURCE_DIR}/src
   ${PROJECT_BINARY_DIR}/src
   ${Qt5Widgets_INCLUDE_DIRS}
