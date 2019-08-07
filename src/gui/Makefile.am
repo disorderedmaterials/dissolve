@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = libgui.la
 
-SUBDIRS = charts delegates helpers keywordwidgets viewer widgets
+SUBDIRS = delegates helpers keywordwidgets widgets viewer charts
 
 SUFFIXES: .ui .hui .qrc
 
