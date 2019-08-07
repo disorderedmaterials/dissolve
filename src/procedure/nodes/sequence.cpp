@@ -82,6 +82,12 @@ void SequenceProcedureNode::addNode(ProcedureNode* node)
 	sequence_.own(node);
 }
 
+// Return sSequential node list
+const List<ProcedureNode>& SequenceProcedureNode::sequence() const
+{
+	return sequence_;
+}
+
 /*
  * Execute
  */
