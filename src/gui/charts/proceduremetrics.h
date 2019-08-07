@@ -22,6 +22,8 @@
 #ifndef DISSOLVE_CHARTS_PROCEDUREMETRICS_H
 #define DISSOLVE_CHARTS_PROCEDUREMETRICS_H
 
+#include <QMargins>
+
 // Forward Declarations
 /* none */
 

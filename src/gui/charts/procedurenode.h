@@ -53,9 +53,11 @@ class ProcedureChartNodeBlock : public QWidget, public ChartBlock
 	// List of keyword widgets displayed
 	RefList<KeywordWidgetBase> keywordWidgets_;
 	// Widgets that exist in the branch of our Procedure node
-	RefList<ProcedureChartNodeBlock> nodeWidgets_;
+	RefList<ProcedureChartNodeBlock> branchWidgets_;
 
 	public:
+	// Return displayed node
+	ProcedureNode* node() const;
 	// Set whether the settings are expanded or not, and whether this is permanent
 	void setSettingsExpanded(bool expanded, bool permanent = false);
 	// Hide the remove button

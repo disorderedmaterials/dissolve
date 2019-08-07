@@ -1,6 +1,6 @@
 /*
-	*** ModuleChart Module Block Widget - Functions
-	*** src/gui/modulechartmoduleblock_funcs.cpp
+	*** Procedure Node Block Widget - Functions
+	*** src/gui/charts/procedurenode_funcs.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,39 +19,36 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/modulechartmoduleblock.h"
-#include "gui/modulechartmetrics.h"
-#include "gui/gui.h"
+#include "gui/charts/procedurenode.h"
+#include "gui/charts/proceduremetrics.h"
 #include "gui/keywordwidgets.h"
-#include "main/dissolve.h"
-#include "classes/configuration.h"
+#include "procedure/nodes/node.h"
 #include "templates/variantpointer.h"
 #include <QFile>
 #include <QPainter>
 
 // Constructor
-ProcedureChartNodeBlock::ProcedureChartNodeBlock(QWidget* parent, DissolveWindow* dissolveWindow, Module* module) : QWidget(parent), ModuleChartBlock(dissolveWindow, dissolveWindow->dissolve())
+ProcedureChartNodeBlock::ProcedureChartNodeBlock(QWidget* parent, ProcedureNode* node) : QWidget(parent), ChartBlock()
 {
 	// Set up user interface
 	ui.setupUi(this);
 
-	refreshing_ = false;
-
 	// Set necessary values on the widget itself
-	ModuleChartMetrics metrics;
+	ProcedureChartMetrics metrics;
 	setContentsMargins(metrics.blockMargins());
 
 	// Hide the keywords control frame to start with
 	ui.KeywordsControlWidget->setVisible(false);
 
 	// Set Module pointers
-	module_ = module;
+	node_ = node;
 
-	// Set up our keywords widget
+// 	// Set up our keywords widget
+	// TODO Have to remove dependency on DissolveWindow from KeywordsWidget
 	ui.KeywordsWidget->setUp(dissolveWindow_, module_);
 
 	// Set the icon label
-	ui.IconLabel->setPixmap(modulePixmap(module_));
+// 	ui.IconLabel->setPixmap(modulePixmap(module_));
 
 	// Update our controls
 	updateControls();
@@ -62,13 +59,48 @@ ProcedureChartNodeBlock::~ProcedureChartNodeBlock()
 }
 
 /*
- * Module
+ * Node Target
  */
 
-// Return associated Module
-Module* ProcedureChartNodeBlock::module()
+// Return displayed node
+ProcedureNode* ProcedureChartNodeBlock::node() const
 {
-	return module_;
+	return node_;
+}
+
+// Set whether the settings are expanded or not, and whether this is permanent
+void ProcedureChartNodeBlock::setSettingsExpanded(bool expanded, bool permanent)
+{
+	on_ToggleSettingsButton_clicked(expanded);
+
+	ui.ToggleSettingsButton->setDisabled(permanent);
+}
+
+// Hide the remove button (e.g. when shown in a ModuleTab)
+void ProcedureChartNodeBlock::hideRemoveButton()
+{
+	ui.RemoveButton->setVisible(false);
+}
+
+// Return RefList of widgets that exist in the branch of our Procedure node
+RefList<ProcedureChartNodeBlock>& ProcedureChartNodeBlock::nodeWidgets()
+{
+	return nodeWidgets_;
+}
+
+void ProcedureChartNodeBlock::on_ToggleSettingsButton_clicked(bool checked)
+{
+	ui.KeywordsControlWidget->setVisible(checked);
+
+	adjustSize();
+	updateGeometry();
+
+	emit(settingsToggled());
+}
+
+void ProcedureChartNodeBlock::on_RemoveButton_clicked(bool checked)
+{
+	emit (remove(module_->uniqueName()));
 }
 
 /*
@@ -104,17 +136,17 @@ void ProcedureChartNodeBlock::paintEvent(QPaintEvent* event)
 }
 
 /*
- * Block Type
+ * Type (ChartBlock Reimplementations)
  */
 
 // Return type of this block
-ModuleChartBlock::ModuleChartBlockType ProcedureChartNodeBlock::blockType()
+const char* ProcedureChartNodeBlock::blockType()
 {
-	return ModuleChartBlock::ModuleBlockType;
+	return "Node";
 }
 
 /*
- * Widget Functions
+ * Widget (ChartBlock Reimplementations)
  */
 
 // Return underlying widget
@@ -123,24 +155,39 @@ QWidget* ProcedureChartNodeBlock::widget()
 	return this;
 }
 
-// Set whether the settings are expanded or not, and whether this is permanent
-void ProcedureChartNodeBlock::setSettingsExpanded(bool expanded, bool permanent)
+// Return width of underlying widget
+int ProcedureChartNodeBlock::widgetWidth() const
 {
-	on_ToggleSettingsButton_clicked(expanded);
-
-	ui.ToggleSettingsButton->setDisabled(permanent);
+	return minimumSize().width();
 }
 
-// Hide the remove button (e.g. when shown in a ModuleTab)
-void ProcedureChartNodeBlock::hideRemoveButton()
+// Return height of underlying widget
+int ProcedureChartNodeBlock::widgetHeight() const
 {
-	ui.RemoveButton->setVisible(false);
+	return minimumSize().height();
 }
+
+// Set underlying widget geometry
+void ProcedureChartNodeBlock::setWidgetGeometry(int left, int top, int width, int height)
+{
+	setGeometry(left, top, width, height);
+}
+
+// Return whether the supplied point (in local widget coordinates) allows a drag operation to begin
+bool ProcedureChartNodeBlock::isDragPoint(QPoint point) const
+{
+	// -- Use something like: if (geometry_.contains(widget()->mapFromGlobal(globalPos))) ...
+	return true;
+}
+
+/*
+ * Update (ChartBlock Reimplementations)
+ */
 
 // Update controls within widget
 void ProcedureChartNodeBlock::updateControls()
 {
-	if (!module_) return;
+	if (!node_) return;
 
 	refreshing_ = true;
 
@@ -183,24 +230,6 @@ void ProcedureChartNodeBlock::updateControls()
 	refreshing_ = false;
 }
 
-// Return suitable QPixmap for supplied Module
-QPixmap ProcedureChartNodeBlock::modulePixmap(const Module* module)
-{
-	if (module) return modulePixmap(module->type());
-
-	return QPixmap(":/modules/icons/modules_generic.svg");
-}
-
-// Return suitable QPixmap for supplied Module type
-QPixmap ProcedureChartNodeBlock::modulePixmap(QString moduleType)
-{
-	// Construct the name of the icon for this module in our resource file
-	QString iconName = QString(":/modules/icons/modules_%1.svg").arg(moduleType.toLower());
-	if (QFile::exists(iconName)) return QPixmap(iconName);
-
-	return QPixmap(":/modules/icons/modules_generic.svg");
-}
-
 // Disable sensitive controls, ready for main code to run
 void ProcedureChartNodeBlock::disableSensitiveControls()
 {
@@ -219,91 +248,4 @@ void ProcedureChartNodeBlock::enableSensitiveControls()
 	ui.EnabledButton->setEnabled(true);
 	ui.FrequencySpin->setEnabled(true);
 	ui.RemoveButton->setEnabled(true);
-}
-
-void ProcedureChartNodeBlock::on_ToggleSettingsButton_clicked(bool checked)
-{
-	ui.KeywordsControlWidget->setVisible(checked);
-
-	adjustSize();
-	updateGeometry();
-
-	emit(settingsToggled());
-}
-
-void ProcedureChartNodeBlock::on_RemoveButton_clicked(bool checked)
-{
-	emit (remove(module_->uniqueName()));
-}
-
-void ProcedureChartNodeBlock::on_RunButton_clicked(bool checked)
-{
-	if (!module_) return;
-
-	module_->executeProcessing(dissolve_, dissolve_.worldPool());
-
-	updateControls();
-
-	emit run();
-}
-
-void ProcedureChartNodeBlock::on_EnabledButton_clicked(bool checked)
-{
-	if (refreshing_) return;
-
-	if (!module_) return;
-
-	module_->setEnabled(checked);
-
-	dissolveWindow_->setModified();
-}
-
-void ProcedureChartNodeBlock::on_FrequencySpin_valueChanged(int value)
-{
-	if (refreshing_) return;
-
-	module_->setFrequency(value);
-
-	ui.FrequencyLabel->setText(QString("(%1)").arg(module_->frequencyDetails(dissolve_.iteration())));
-}
-
-void ProcedureChartNodeBlock::on_ConfigurationTargetList_itemChanged(QListWidgetItem* item)
-{
-	if (refreshing_) return;
-
-	// Get Configuration for item
-	Configuration* cfg = VariantPointer<Configuration>(item->data(Qt::UserRole));
-
-	// If the item is unchecked, make sure it is not present in the Module's Configuration targets
-	if (item->checkState() == Qt::Checked) module_->removeTargetConfiguration(cfg);
-	else module_->addTargetConfiguration(cfg);
-}
-
-/*
- * Geometry
- */
-
-// Return width of underlying widget
-int ProcedureChartNodeBlock::widgetWidth() const
-{
-	return minimumSize().width();
-}
-
-// Return height of underlying widget
-int ProcedureChartNodeBlock::widgetHeight() const
-{
-	return minimumSize().height();
-}
-
-// Set underlying widget geometry
-void ProcedureChartNodeBlock::setWidgetGeometry(int left, int top, int width, int height)
-{
-	setGeometry(left, top, width, height);
-}
-
-// Return whether the supplied point (in local widget coordinates) allows a drag operation to begin
-bool ProcedureChartNodeBlock::isDragPoint(QPoint point) const
-{
-	// -- Use something like: if (geometry_.contains(widget()->mapFromGlobal(globalPos))) ...
-	return true;
 }

@@ -21,11 +21,11 @@
 
 #include "gui/charts/procedure.hui"
 #include "gui/charts/proceduremetrics.h"
+#include "gui/charts/procedurenode.h"
 #include "gui/widgets/mimestrings.h"
-#include "gui/gui.h"
-#include "main/dissolve.h"
-#include "module/list.h"
-#include "module/module.h"
+#include "procedure/procedure.h"
+#include "procedure/nodes/sequence.h"
+#include <QApplication>
 #include <QDrag>
 #include <QMessageBox>
 #include <QMimeData>
@@ -411,7 +411,7 @@ ChartHotSpot* ProcedureChart::hotSpotAt(QPoint pos)
 }
 
 // Reset after drop
-void ProcedureChart::resetAfterDrop(bool animateWidgets)
+void ProcedureChart::resetAfterDrop(bool animate)
 {
 	currentHotSpotIndex_ = -1;
 	draggedBlock_ = NULL;
@@ -420,7 +420,7 @@ void ProcedureChart::resetAfterDrop(bool animateWidgets)
 
 // 	recreateDisplayWidgets();
 
-	layOutWidgets(animateWidgets);
+	layOutWidgets(animate);
 
 	repaint();
 }
@@ -475,12 +475,204 @@ void ProcedureChart::resetAfterDrop(bool animateWidgets)
 // }
 
 
+
+// Recalculate layout (after widget size change etc.)
+void ProcedureChart::recalculateLayout()
+{
+	layOutWidgets(false);
+}
+
+/*
+ * State I/O
+ */
+
+// Write widget state through specified LineParser
+bool ProcedureChart::writeState(LineParser& parser)
+{
+	return true;
+}
+
+// Read widget state through specified LineParser
+bool ProcedureChart::readState(LineParser& parser)
+{
+	return true;
+}
+
+/*
+ * Specific SHIT
+ */
+
+// Update the content block widgets against the current target data for the supplied SequenceNode
+void ProcedureChart::updateContentBlocks(const SequenceProcedureNode* sequence, RefList<ProcedureChartNodeBlock>& newWidgets)
+{
+	// Iterate through the nodes in this sequence, searching for their widgets in the oldWidgetsList
+	ListIterator<ProcedureNode> nodeIterator(sequence->sequence());
+	while (ProcedureNode* node = nodeIterator.iterate())
+	{
+		// Does this node have an existing widget?
+		ProcedureChartNodeBlock* oldBlock = nodeBlock(node);
+		if (oldBlock)
+		{
+			// Widget already exists, so remove the reference from nodeWidgets_ and add it to the new list
+			newWidgets.append(oldBlock);
+			nodeWidgets_.remove(oldBlock);
+		}
+		else
+		{
+			// No current widget, so must create one
+			ProcedureChartNodeBlock* newBlock = new ProcedureChartNodeBlock(this, node);
+// 			connect(mcmBlock, SIGNAL(settingsToggled()), this, SLOT(recalculateLayout()));
+// 			connect(mcmBlock, SIGNAL(remove(QString)), this, SLOT(removeModule(QString)));
+			newWidgets.append(newBlock);
+		}
+
+		// If the node has branches, deal with them here
+		// TODO
+	}
+}
+
+// Update the content block widgets against the current target data
+void ProcedureChart::updateContentBlocks()
+{
+	// Create a temporart list that will store our widgets to be 'reused'
+	RefList<ProcedureChartNodeBlock> newWidgets;
+
+	// Start with the root sequence node of the Procedure - we deal recursively with the rest
+	updateContentBlocks(&procedure_->rootSequence(), newWidgets);
+
+	// Any widgets remaining in nodeWidgets_ are no longer used, and can thus be deleted
+	RefListIterator<ProcedureChartNodeBlock> widgetRemover(nodeWidgets_);
+	while (ProcedureChartNodeBlock* block = widgetRemover.iterate()) delete block;
+
+	// Copy the new list
+	nodeWidgets_ = newWidgets;
+}
+
+// Find ProcedureChartNodeBlock displaying specified ProcedureNode
+ProcedureChartNodeBlock* ProcedureChart::nodeBlock(ProcedureNode* node)
+{
+	RefListIterator<ProcedureChartNodeBlock> nodeBlockIterator(nodeWidgets_);
+	while (ProcedureChartNodeBlock* nodeBlock = nodeBlockIterator.iterate()) if (nodeBlock->node() == node) return nodeBlock;
+
+	return NULL;
+}
+
+/*
+ * Drag / Drop
+ */
+
+// Drop event
+void ProcedureChart::dropEvent(QDropEvent* event)
+{
+	if (event->mimeData()->hasFormat("image/x-dissolve-moduleblock"))
+	{
+		// Check for a current hot spot and ensure we have a current draggedBlock_
+		ChartHotSpot* hotSpot = (currentHotSpotIndex_ == -1 ? NULL : hotSpots_[currentHotSpotIndex_]);
+		if ((!hotSpot) || (!draggedBlock_))
+		{
+			event->ignore();
+			resetAfterDrop();
+			return;
+		}
+
+		// Assume that we are operating on Modules belonging to the same list
+		Module* targetModule = draggedBlock_->module();
+
+		// Get the Module before which we are going to move the targetModule
+		Module* beforeModule = hotSpot->moduleBlockAfter() ? hotSpot->moduleBlockAfter()->module() : NULL;
+
+		// Check if the dragged Module is back in its original position (in which case we don't flag a change)
+		if (targetModule->next != beforeModule)
+		{
+			modules_.modules().moveBefore(targetModule, beforeModule);
+
+			// Flag that the current data has changed
+			dissolveWindow_->setModified();
+		}
+
+		updateControls();
+
+		// Widgets are almost in the right place, so don't animate anything
+		resetAfterDrop(false);
+	}
+	else if (event->mimeData()->hasFormat("dissolve/mimestrings"))
+	{
+		// Cast into a MimeStrings object
+		const MimeStrings* mimeStrings = dynamic_cast<const MimeStrings*>(event->mimeData());
+		if (!mimeStrings) return;
+		if (!mimeStrings->hasData(MimeString::ModuleType))
+		{
+			event->ignore();
+			resetAfterDrop();
+			return;
+		}
+
+		// Check for a current hot spot and ensure we have a current palette Module
+		ChartHotSpot* hotSpot = (currentHotSpotIndex_ == -1 ? NULL : hotSpots_[currentHotSpotIndex_]);
+		if ((!hotSpot) || (!externalObjectDragged_))
+		{
+			event->ignore();
+			resetAfterDrop();
+			return;
+		}
+
+		// Create the new module
+		Module* newModule = dissolveWindow_->dissolve().createModuleInstance(qPrintable(externalDragObjectData_));
+		newModule->setConfigurationLocal(localConfiguration_);
+
+		// Set Configuration targets as appropriate
+		if (newModule->nTargetableConfigurations() != 0)
+		{
+			if (localConfiguration_) newModule->addTargetConfiguration(localConfiguration_);
+			else
+			{
+				ListIterator<Configuration> configIterator(dissolveWindow_->dissolve().configurations());
+				while (Configuration* cfg = configIterator.iterate())
+				{
+					newModule->addTargetConfiguration(cfg);
+					if ((newModule->nTargetableConfigurations() != -1) && (newModule->nTargetableConfigurations() == newModule->nTargetConfigurations())) break;
+				}
+			}
+		}
+
+		// Get the ModuleReference before which we are going to move the targetReference
+		if (hotSpot->moduleBlockAfter() == NULL)
+		{
+			// No next block, so add the new Module to the end of the current list
+			modules_.own(newModule);
+		}
+		else
+		{
+			// Insert the new Module before the next block
+			modules_.own(newModule, hotSpot->moduleBlockAfter()->module());
+		}
+
+		updateControls();
+
+		// Widgets are almost in the right place, so don't animate anything
+		resetAfterDrop(false);
+
+		// Flag that the current data has changed
+		dissolveWindow_->setModified();
+	}
+	else
+	{
+		event->ignore();
+
+		resetAfterDrop();
+	}
+}
+
+/*
+ * Widget Layout
+ */
+
 /*
  * Widget Layout
 */
 
 // Lay out widgets snaking horizontally
-void ProcedureChart::layOutWidgets(bool animateWidgets)
+void ProcedureChart::layOutWidgets(bool animate)
 {
 	/*
 	 * Determine how many columns we can fit across our current geometry, obeying a minimum spacing between widgets.
@@ -602,7 +794,7 @@ void ProcedureChart::layOutWidgets(bool animateWidgets)
 				if (blockHeight > rowMaxHeight) rowMaxHeight = blockHeight;
 
 				// Set the widget's geometry based on these coordinates and its SizeHint - we give it all the space it needs
-				if (animateWidgets && (block->blockType() != ProcedureChartBlock::InsertionBlockType))
+				if (animate && (block->blockType() != ProcedureChartBlock::InsertionBlockType))
 				{
 					QPropertyAnimation *animation = new QPropertyAnimation(block->widget(), "geometry");
 					animation->setDuration(100);
@@ -672,180 +864,4 @@ void ProcedureChart::layOutWidgets(bool animateWidgets)
 	updateGeometry();
 
 	repaint();
-}
-
-// Recalculate layout (after widget size change etc.)
-void ProcedureChart::recalculateLayout()
-{
-	layOutWidgets(false);
-}
-
-/*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool ProcedureChart::writeState(LineParser& parser)
-{
-	return true;
-}
-
-// Read widget state through specified LineParser
-bool ProcedureChart::readState(LineParser& parser)
-{
-	return true;
-}
-
-/*
- * Specific SHIT
- */
-
-// Update the chart block widgets against the current target  (REIMPLEMENTATION)
-void ProcedureChart::updateChartBlocks()
-{
-	// Make sure our list of node widgets is consistent with the ProcedureNodes that we want to display
-	RefList<ChartBlock> newModuleWidgets;
-	ListIterator<Module> moduleIterator(procedure_->rootSequence().nodes());
-	while (Module* module = moduleIterator.iterate())
-	{
-		// For this ModuleReference, does a current ChartBlock match?
-		RefListItem<ChartBlock>* blockRef = moduleChartModuleBlockReference(module);
-		if (blockRef)
-		{
-			// Widget already exists, so remove the reference from the old list and add it to our new one
-			RefListItem<ChartBlock>* newItem = newModuleWidgets.append(blockRef->item());
-			moduleWidgets_.remove(blockRef);
-			newItem->item()->updateControls();
-		}
-		else
-		{
-			// No current ChartBlock reference, so must create suitable widget
-			ChartBlock* mcmBlock = new ChartBlock(this, dissolveWindow_, module);
-			connect(mcmBlock, SIGNAL(settingsToggled()), this, SLOT(recalculateLayout()));
-			connect(mcmBlock, SIGNAL(remove(QString)), this, SLOT(removeModule(QString)));
-			newModuleWidgets.append(mcmBlock);
-		}
-	}
-
-	// For any items that remain in moduleWidgets_ we must now delete the widgets, as they are no longer used
-	RefListIterator<ChartBlock> widgetRemover(moduleWidgets_);
-	while (ChartBlock* block = widgetRemover.iterate()) delete block;
-
-	// Copy the new RefList
-	moduleWidgets_ = newModuleWidgets;
-}
-
-// Find ProcedureChartNodeBlock displaying specified ProcedureNode
-ProcedureChartNodeBlock* ProcedureChart::nodeBlock(ProcedureNode* node)
-{
-	RefListIterator<ProcedureChartNodeBlock> nodeBlockIterator(nodeWidgets_);
-	while (ProcedureChartNodeBlock* nodeBlock = nodeBlockIterator.iterate()) if (nodeBlock->node() == node) return nodeBlock;
-
-	return NULL;
-}
-
-/*
- * Drag / Drop
- */
-
-// Drop event
-void ProcedureChart::dropEvent(QDropEvent* event)
-{
-	if (event->mimeData()->hasFormat("image/x-dissolve-moduleblock"))
-	{
-		// Check for a current hot spot and ensure we have a current draggedBlock_
-		ChartHotSpot* hotSpot = (currentHotSpotIndex_ == -1 ? NULL : hotSpots_[currentHotSpotIndex_]);
-		if ((!hotSpot) || (!draggedBlock_))
-		{
-			event->ignore();
-			resetAfterDrop();
-			return;
-		}
-
-		// Assume that we are operating on Modules belonging to the same list
-		Module* targetModule = draggedBlock_->module();
-
-		// Get the Module before which we are going to move the targetModule
-		Module* beforeModule = hotSpot->moduleBlockAfter() ? hotSpot->moduleBlockAfter()->module() : NULL;
-
-		// Check if the dragged Module is back in its original position (in which case we don't flag a change)
-		if (targetModule->next != beforeModule)
-		{
-			modules_.modules().moveBefore(targetModule, beforeModule);
-
-			// Flag that the current data has changed
-			dissolveWindow_->setModified();
-		}
-
-		updateControls();
-
-		// Widgets are almost in the right place, so don't animate anything
-		resetAfterDrop(false);
-	}
-	else if (event->mimeData()->hasFormat("dissolve/mimestrings"))
-	{
-		// Cast into a MimeStrings object
-		const MimeStrings* mimeStrings = dynamic_cast<const MimeStrings*>(event->mimeData());
-		if (!mimeStrings) return;
-		if (!mimeStrings->hasData(MimeString::ModuleType))
-		{
-			event->ignore();
-			resetAfterDrop();
-			return;
-		}
-
-		// Check for a current hot spot and ensure we have a current palette Module
-		ChartHotSpot* hotSpot = (currentHotSpotIndex_ == -1 ? NULL : hotSpots_[currentHotSpotIndex_]);
-		if ((!hotSpot) || (!externalObjectDragged_))
-		{
-			event->ignore();
-			resetAfterDrop();
-			return;
-		}
-
-		// Create the new module
-		Module* newModule = dissolveWindow_->dissolve().createModuleInstance(qPrintable(externalDragObjectData_));
-		newModule->setConfigurationLocal(localConfiguration_);
-
-		// Set Configuration targets as appropriate
-		if (newModule->nTargetableConfigurations() != 0)
-		{
-			if (localConfiguration_) newModule->addTargetConfiguration(localConfiguration_);
-			else
-			{
-				ListIterator<Configuration> configIterator(dissolveWindow_->dissolve().configurations());
-				while (Configuration* cfg = configIterator.iterate())
-				{
-					newModule->addTargetConfiguration(cfg);
-					if ((newModule->nTargetableConfigurations() != -1) && (newModule->nTargetableConfigurations() == newModule->nTargetConfigurations())) break;
-				}
-			}
-		}
-
-		// Get the ModuleReference before which we are going to move the targetReference
-		if (hotSpot->moduleBlockAfter() == NULL)
-		{
-			// No next block, so add the new Module to the end of the current list
-			modules_.own(newModule);
-		}
-		else
-		{
-			// Insert the new Module before the next block
-			modules_.own(newModule, hotSpot->moduleBlockAfter()->module());
-		}
-
-		updateControls();
-
-		// Widgets are almost in the right place, so don't animate anything
-		resetAfterDrop(false);
-
-		// Flag that the current data has changed
-		dissolveWindow_->setModified();
-	}
-	else
-	{
-		event->ignore();
-
-		resetAfterDrop();
-	}
 }
