@@ -50,7 +50,7 @@ class Procedure
 	NodeScopeStack scopeStack_;
 	// Context for the main Procedure
 	ProcedureNode::NodeContext context_;
-	// Sequence node from which the procedure starts
+	// Sequence node from which the Procedure starts
 	SequenceProcedureNode rootSequence_;
 
 	public:
@@ -58,6 +58,8 @@ class Procedure
 	void clear();
 	// Add (own) specified node to root sequence
 	void addRootSequenceNode(ProcedureNode* node);
+	// Return root sequence
+	const SequenceProcedureNode& rootSequence() const;
 	// Return context for the main Procedure
 	ProcedureNode::NodeContext context() const;
 	// Return the scope stack

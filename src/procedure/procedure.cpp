@@ -52,6 +52,12 @@ void Procedure::addRootSequenceNode(ProcedureNode* node)
 	rootSequence_.addNode(node);
 }
 
+// Return root sequence
+const SequenceProcedureNode& Procedure::rootSequence() const
+{
+	return rootSequence_;
+}
+
 // Return the scope stack
 const NodeScopeStack& Procedure::scopeStack() const
 {
