@@ -759,7 +759,7 @@ void ProcedureChart::layOutWidgets(bool animate)
 	ProcedureChartMetrics metrics;
 
 	// Reset our minimum size hint
-	minimumSizeHint_ = QSize();
+	minimumSizeHint_ = QSize(0,0);
 
 	// Determine the new sizes / positions of all widgets
 	calculateNewWidgetGeometry(minimumSizeHint_);
@@ -771,19 +771,8 @@ void ProcedureChart::layOutWidgets(bool animate)
 		block->setNewGeometry(animate);
 	}
 
-	// Update our minimum size hint
-
-	// Calculate size hint
-	// Our requested width is the left-most edge of the left-most column, plus the width of the column, plus the spacing.
-	// Our requested height is the top-most edge of the last row, plus the height of the row, plus the spacing.
-// 	if (displayBlocks_.nItems() == 0) sizeHint_ = QSize(0,0);
-// 	else sizeHint_ = QSize(metrics.chartMargin() + lefts_.last() + widths_.last(), metrics.chartMargin() + tops_.last() + heights_.last());
-
 	// Finalise minimum size hint - we just need to add on the surrounding margins
-// 	minimumSizeHint_ += QSize(2*metrics.chartMargin(), 2*metrics.chartMargin());
-	printf("MINSIZE1 = %i x %i  %i\n", minimumSizeHint_.width(), minimumSizeHint_.height(), minimumSizeHint_.isValid());
-// 	minimumSizeHint_ = QSize(198, minimumSizeHint_.height());
-	printf("MINSIZE2 = %i x %i  %i\n", minimumSizeHint_.width(), minimumSizeHint_.height(), minimumSizeHint_.isValid());
+	minimumSizeHint_ += QSize(2*metrics.chartMargin(), 2*metrics.chartMargin());
 	sizeHint_ = minimumSizeHint_;
 
 	updateGeometry();
