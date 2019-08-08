@@ -19,7 +19,7 @@ SUFFIXES: .ui .hui .qrc
 	rm $*.cpp
 
 clean-local:
-	-rm -f ui_* *.o moc_*.cpp
+	-rm -f ui_* *.o moc_*.cpp procedure.cpp
 
 # UI Files
 libcharts_la_SOURCES = procedurenode.ui
