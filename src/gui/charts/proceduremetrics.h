@@ -39,52 +39,26 @@ class ProcedureChartMetrics
 	{
 		return 2;
 	}
-	// Border external radius
-	static int blockBorderRadius()
-	{
-		return 6;
-	}
-	// Border mid-point
-	static double blockBorderMidPoint()
-	{
-		return blockBorderWidth() / 2;
-	}
-	// Widget margins (to contain border line)
-	static QMargins blockMargins()
-	{
-		int innerGap = 4;
-		return QMargins(blockBorderWidth()+innerGap+blockDentRadius(), blockBorderWidth()+innerGap, blockBorderWidth()+innerGap, blockBorderWidth()+innerGap);
-	}
-	// Vertical offset at which dent begins on left-hand side
-	static int blockDentOffset()
+	// Indent width
+	static int indentWidth()
 	{
 		return 16;
-	}
-	// Radius of the dent
-	static int blockDentRadius()
-	{
-		return 9;
 	}
 
 
 	/*
-	 * Module Chart
+	 * Procedure Chart
 	 */
 	public:
 	// Inner margin around widgets
 	static int chartMargin()
 	{
-		return 32;
-	}
-	// Minimum spacing between columns
-	static int chartMinimumColumnSpacing()
-	{
-		return 32;
+		return 0;
 	}
 	// Spacing between rows
 	static int chartRowSpacing()
 	{
-		return 32;
+		return 0;
 	}
 };
 
