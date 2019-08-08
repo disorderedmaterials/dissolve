@@ -86,6 +86,8 @@ class AnalyseModule : public Module
 	Procedure analyser_;
 
 	public:
+	// Return the analyser
+	Procedure& analyser();
 	// Return the analyser's scope stack
 	const NodeScopeStack& analyserScopeStack() const;
 
