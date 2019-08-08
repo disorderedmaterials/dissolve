@@ -63,7 +63,7 @@ class ProcedureChartNodeBlock : public QWidget, public ChartBlock
 	// Hide the remove button
 	void hideRemoveButton();
 	// Return RefList of widgets that exist in the branch of our Procedure node
-	RefList<ProcedureChartNodeBlock>& nodeWidgets();
+	RefList<ProcedureChartNodeBlock>& branchWidgets();
 
 	public slots:
 	void on_ToggleSettingsButton_clicked(bool checked);

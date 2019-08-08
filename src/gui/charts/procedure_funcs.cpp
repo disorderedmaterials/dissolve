@@ -503,8 +503,11 @@ bool ProcedureChart::readState(LineParser& parser)
  */
 
 // Update the content block widgets against the current target data for the supplied SequenceNode
-void ProcedureChart::updateContentBlocks(const SequenceProcedureNode* sequence, RefList<ProcedureChartNodeBlock>& newWidgets)
+void ProcedureChart::updateContentBlocks(const SequenceProcedureNode* sequence, RefList<ProcedureChartNodeBlock>& oldSequenceWidgets)
 {
+	// Create a temporary list that will store our widgets to be 'reused'
+	RefList<ProcedureChartNodeBlock> newSequenceWidgets;
+
 	// Iterate through the nodes in this sequence, searching for their widgets in the oldWidgetsList
 	ListIterator<ProcedureNode> nodeIterator(sequence->sequence());
 	while (ProcedureNode* node = nodeIterator.iterate())
@@ -514,8 +517,8 @@ void ProcedureChart::updateContentBlocks(const SequenceProcedureNode* sequence, 
 		if (oldBlock)
 		{
 			// Widget already exists, so remove the reference from nodeWidgets_ and add it to the new list
-			newWidgets.append(oldBlock);
-			nodeWidgets_.remove(oldBlock);
+			newSequenceWidgets.append(oldBlock);
+			oldSequenceWidgets.remove(oldBlock);
 		}
 		else
 		{
@@ -523,36 +526,48 @@ void ProcedureChart::updateContentBlocks(const SequenceProcedureNode* sequence, 
 			ProcedureChartNodeBlock* newBlock = new ProcedureChartNodeBlock(this, node);
 // 			connect(mcmBlock, SIGNAL(settingsToggled()), this, SLOT(recalculateLayout()));
 // 			connect(mcmBlock, SIGNAL(remove(QString)), this, SLOT(removeModule(QString)));
-			newWidgets.append(newBlock);
+			newSequenceWidgets.append(newBlock);
 		}
 
 		// If the node has branches, deal with them here
-		// TODO
+		if (node->hasBranch())
+		{
+		}
 	}
+
+	// Any widgets remaining in oldSequenceWidgets are no longer used, and can thus be deleted
+	RefListIterator<ProcedureChartNodeBlock> widgetRemover(oldSequenceWidgets);
+	while (ProcedureChartNodeBlock* block = widgetRemover.iterate()) delete block;
+
+	// Copy the new list
+	oldSequenceWidgets = newSequenceWidgets;
 }
 
 // Update the content block widgets against the current target data
 void ProcedureChart::updateContentBlocks()
 {
-	// Create a temporart list that will store our widgets to be 'reused'
-	RefList<ProcedureChartNodeBlock> newWidgets;
-
 	// Start with the root sequence node of the Procedure - we deal recursively with the rest
-	updateContentBlocks(&procedure_->rootSequence(), newWidgets);
-
-	// Any widgets remaining in nodeWidgets_ are no longer used, and can thus be deleted
-	RefListIterator<ProcedureChartNodeBlock> widgetRemover(nodeWidgets_);
-	while (ProcedureChartNodeBlock* block = widgetRemover.iterate()) delete block;
-
-	// Copy the new list
-	nodeWidgets_ = newWidgets;
+	updateContentBlocks(&procedure_->rootSequence(), rootSequenceNodeWidgets_);
 }
 
-// Find ProcedureChartNodeBlock displaying specified ProcedureNode
+// Find ProcedureChartNodeBlock displaying specified ProcedureNode anywhere in the heirarchy of nodes
 ProcedureChartNodeBlock* ProcedureChart::nodeBlock(ProcedureNode* node)
 {
-	RefListIterator<ProcedureChartNodeBlock> nodeBlockIterator(nodeWidgets_);
-	while (ProcedureChartNodeBlock* nodeBlock = nodeBlockIterator.iterate()) if (nodeBlock->node() == node) return nodeBlock;
+	return nodeBlock(node, rootSequenceNodeWidgets_);
+}
+
+// Find ProcedureChartNodeBlock displaying specified ProcedureNode in the supplied list
+ProcedureChartNodeBlock* ProcedureChart::nodeBlock(ProcedureNode* node, const RefList<ProcedureChartNodeBlock>& list)
+{
+	RefListIterator<ProcedureChartNodeBlock> nodeBlockIterator(list);
+	while (ProcedureChartNodeBlock* block = nodeBlockIterator.iterate())
+	{
+		if (block->node() == node) return block;
+
+		// Search the branch list of this node
+		ProcedureChartNodeBlock* branchBlock = nodeBlock(node, block->branchWidgets());
+		if (block) return block;
+	}
 
 	return NULL;
 }
@@ -575,20 +590,24 @@ void ProcedureChart::dropEvent(QDropEvent* event)
 			return;
 		}
 
-		// Assume that we are operating on Modules belonging to the same list
-		Module* targetModule = draggedBlock_->module();
+		// Cast the dragged block up to a ProcedureChartNodeBlock
+		ProcedureChartNodeBlock* block = dynamic_cast<ProcedureChartNodeBlock*>(draggedBlock_);
+		if (!block) return;
 
-		// Get the Module before which we are going to move the targetModule
-		Module* beforeModule = hotSpot->moduleBlockAfter() ? hotSpot->moduleBlockAfter()->module() : NULL;
-
-		// Check if the dragged Module is back in its original position (in which case we don't flag a change)
-		if (targetModule->next != beforeModule)
-		{
-			modules_.modules().moveBefore(targetModule, beforeModule);
-
-			// Flag that the current data has changed
-			dissolveWindow_->setModified();
-		}
+		// TODO
+// 		Module* targetModule = draggedBlock_->module();
+// 
+// 		// Get the Module before which we are going to move the targetModule
+// 		Module* beforeModule = hotSpot->moduleBlockAfter() ? hotSpot->moduleBlockAfter()->module() : NULL;
+// 
+// 		// Check if the dragged Module is back in its original position (in which case we don't flag a change)
+// 		if (targetModule->next != beforeModule)
+// 		{
+// 			modules_.modules().moveBefore(targetModule, beforeModule);
+// 
+// 			// Flag that the current data has changed
+// // 			dissolveWindow_->setModified();
+// 		}
 
 		updateControls();
 
@@ -616,36 +635,21 @@ void ProcedureChart::dropEvent(QDropEvent* event)
 			return;
 		}
 
-		// Create the new module
-		Module* newModule = dissolveWindow_->dissolve().createModuleInstance(qPrintable(externalDragObjectData_));
-		newModule->setConfigurationLocal(localConfiguration_);
+		// Create the new node
+		// TODO
+// 		Module* newModule = dissolveWindow_->dissolve().createModuleInstance(qPrintable(externalDragObjectData_));
 
-		// Set Configuration targets as appropriate
-		if (newModule->nTargetableConfigurations() != 0)
-		{
-			if (localConfiguration_) newModule->addTargetConfiguration(localConfiguration_);
-			else
-			{
-				ListIterator<Configuration> configIterator(dissolveWindow_->dissolve().configurations());
-				while (Configuration* cfg = configIterator.iterate())
-				{
-					newModule->addTargetConfiguration(cfg);
-					if ((newModule->nTargetableConfigurations() != -1) && (newModule->nTargetableConfigurations() == newModule->nTargetConfigurations())) break;
-				}
-			}
-		}
-
-		// Get the ModuleReference before which we are going to move the targetReference
-		if (hotSpot->moduleBlockAfter() == NULL)
-		{
-			// No next block, so add the new Module to the end of the current list
-			modules_.own(newModule);
-		}
-		else
-		{
-			// Insert the new Module before the next block
-			modules_.own(newModule, hotSpot->moduleBlockAfter()->module());
-		}
+// 		// Get the ModuleReference before which we are going to move the targetReference
+// 		if (hotSpot->moduleBlockAfter() == NULL)
+// 		{
+// 			// No next block, so add the new Module to the end of the current list
+// 			modules_.own(newModule);
+// 		}
+// 		else
+// 		{
+// 			// Insert the new Module before the next block
+// 			modules_.own(newModule, hotSpot->moduleBlockAfter()->module());
+// 		}
 
 		updateControls();
 
@@ -653,7 +657,7 @@ void ProcedureChart::dropEvent(QDropEvent* event)
 		resetAfterDrop(false);
 
 		// Flag that the current data has changed
-		dissolveWindow_->setModified();
+// 		dissolveWindow_->setModified();
 	}
 	else
 	{
@@ -662,10 +666,6 @@ void ProcedureChart::dropEvent(QDropEvent* event)
 		resetAfterDrop();
 	}
 }
-
-/*
- * Widget Layout
- */
 
 /*
  * Widget Layout
