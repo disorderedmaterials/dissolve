@@ -82,6 +82,7 @@ class ProcedureEditor : public QWidget
 	private:
 	// Main form declaration
 	Ui::ProcedureEditor ui_;
+	ProcedureChart* chart_;
 
 	private slots:
 // 	void on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* item);

@@ -34,6 +34,9 @@ ProcedureEditor::ProcedureEditor(QWidget* parent) : QWidget(parent)
 
 	procedure_ = NULL;
 
+	chart_ = new ProcedureChart();
+	ui_.ProcedureScrollArea->setWidget(chart_);
+
 	refreshing_ = false;
 }
 
@@ -50,7 +53,7 @@ bool ProcedureEditor::setProcedure(Procedure* procedure)
 {
 	procedure_ = procedure;
 
-	ui_.Chart->setProcedure(procedure_);
+	chart_->setProcedure(procedure_);
 
 	updateControls();
 }
@@ -111,7 +114,7 @@ void ProcedureEditor::updateControls()
 {
 	refreshing_ = true;
 
-	ui_.Chart->updateControls();
+	chart_->updateControls();
 
 	refreshing_ = false;
 }
@@ -120,14 +123,14 @@ void ProcedureEditor::updateControls()
 void ProcedureEditor::disableSensitiveControls()
 {
 // 	ui_.AvailableModulesTree->setEnabled(false);
-	ui_.Chart->disableSensitiveControls();
+	chart_->disableSensitiveControls();
 }
 
 // Enable sensitive controls within tab, ready for main code to run
 void ProcedureEditor::enableSensitiveControls()
 {
 // 	ui_.AvailableModulesTree->setEnabled(true);
-	ui_.Chart->enableSensitiveControls();
+	chart_->enableSensitiveControls();
 }
 
 /*
@@ -176,7 +179,7 @@ void ProcedureEditor::enableSensitiveControls()
 // Write widget state through specified LineParser
 bool ProcedureEditor::writeState(LineParser& parser)
 {
-	if (!ui_.Chart->writeState(parser)) return false;
+	if (!chart_->writeState(parser)) return false;
 
 	return true;
 }
@@ -184,7 +187,7 @@ bool ProcedureEditor::writeState(LineParser& parser)
 // Read widget state through specified LineParser
 bool ProcedureEditor::readState(LineParser& parser)
 {
-	if (!ui_.Chart->readState(parser)) return false;
+	if (!chart_->readState(parser)) return false;
 
 	return true;
 }
