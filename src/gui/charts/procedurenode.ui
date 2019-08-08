@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ModuleChartModuleWidget</class>
- <widget class="QWidget" name="ModuleChartModuleWidget">
+ <class>ProcedureChartNodeWidget</class>
+ <widget class="QWidget" name="ProcedureChartNodeWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>200</width>
+    <width>239</width>
     <height>100</height>
    </rect>
   </property>
@@ -320,7 +320,7 @@
  </customwidgets>
  <resources>
   <include location="../main.qrc"/>
-  <include location="main.qrc"/>
+  <include location="../main.qrc"/>
  </resources>
  <connections/>
 </ui>

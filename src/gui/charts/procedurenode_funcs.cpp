@@ -24,7 +24,6 @@
 #include "gui/keywordwidgets.h"
 #include "procedure/nodes/node.h"
 #include "templates/variantpointer.h"
-#include <QFile>
 #include <QPainter>
 
 // Constructor
@@ -43,7 +42,7 @@ ProcedureChartNodeBlock::ProcedureChartNodeBlock(QWidget* parent, ProcedureNode*
 	node_ = node;
 
 	// Hide the keywords control frame to start with
-	ui_.KeywordsControlWidget->setVisible(false);
+// 	ui_.KeywordsControlWidget->setVisible(false);
 
 
 	// Set up our keywords widget

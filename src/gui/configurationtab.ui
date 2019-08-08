@@ -586,7 +586,7 @@
            </widget>
           </item>
           <item>
-           <widget class="ProcedureEditor" name="widget" native="true"/>
+           <widget class="ProcedureEditor" name="ProcedureWidget" native="true"/>
           </item>
          </layout>
         </widget>

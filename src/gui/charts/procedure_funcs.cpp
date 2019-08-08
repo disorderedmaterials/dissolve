@@ -45,6 +45,8 @@ ProcedureChart::ProcedureChart(QWidget* parent) : QWidget(parent)
 
 	refreshing_ = false;
 
+	procedure_ = NULL;
+
 	// Drag / Drop
 	setAcceptDrops(true);
 	draggedBlock_ = NULL;
@@ -70,7 +72,7 @@ ProcedureChart::~ProcedureChart()
 // Return if a ChartBlock can be dragged from the current position
 ChartBlock* ProcedureChart::dragBlockAt(QPoint globalPos)
 {
-	// Check through all the defined ChartBlocks and see if we grab on
+	// Check through all the defined ChartBlocks and see if we grab one
 	RefListIterator<ChartBlock> chartBlockIterator(chartBlocks_);
 	while (ChartBlock* block = chartBlockIterator.iterate()) if (block->isDragPoint(globalPos)) return block;
 
@@ -502,6 +504,24 @@ bool ProcedureChart::readState(LineParser& parser)
  * Specific SHIT
  */
 
+/*
+ * Target Procedure
+ */
+
+// Target Procedure for display
+void ProcedureChart::setProcedure(Procedure* procedure)
+{
+	procedure_ = procedure;
+
+	updateContentBlocks();
+
+	recalculateLayout();
+}
+
+/*
+ * Chart Blocks
+ */
+
 // Update the content block widgets against the current target data for the supplied SequenceNode
 void ProcedureChart::updateContentBlocks(const SequenceProcedureNode* sequence, RefList<ProcedureChartNodeBlock>& oldSequenceWidgets)
 {
@@ -532,6 +552,7 @@ void ProcedureChart::updateContentBlocks(const SequenceProcedureNode* sequence, 
 		// If the node has branches, deal with them here
 		if (node->hasBranch())
 		{
+			printf("NEED TO IMPLEMENT BRANCH HANDLING!\n");
 		}
 	}
 
@@ -546,6 +567,8 @@ void ProcedureChart::updateContentBlocks(const SequenceProcedureNode* sequence, 
 // Update the content block widgets against the current target data
 void ProcedureChart::updateContentBlocks()
 {
+	if (!procedure_) return;
+
 	// Start with the root sequence node of the Procedure - we deal recursively with the rest
 	updateContentBlocks(&procedure_->rootSequence(), rootSequenceNodeWidgets_);
 }

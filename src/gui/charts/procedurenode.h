@@ -64,7 +64,7 @@ class ProcedureChartNodeBlock : public QWidget, public ChartBlock
 	 */
 	private:
 	// Main form declaration
-	Ui::ModuleChartModuleWidget ui_;
+	Ui::ProcedureChartNodeWidget ui_;
 	// Whether the widget is currently refreshing
 	bool refreshing_;
 	// List of keyword widgets displayed

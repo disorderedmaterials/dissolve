@@ -49,6 +49,9 @@ ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dis
 	// Set target for ConfigurationViewer
 	ui_.ViewerWidget->configurationViewer()->setConfiguration(configuration_);
 
+	// Set target for ProcedureEditor
+	ui_.ProcedureWidget->setProcedure(&configuration_->generator());
+
 	refreshing_ = false;
 
 	// Set up the ModuleEditor

@@ -57,7 +57,7 @@ class ProcedureChart : public QWidget
 
 
 	/*
-	 * Chart Display
+	 * Chart Blocks
 	 */
 	private:
 	// RefList of ChartBlocks present in the widget
@@ -180,7 +180,7 @@ class ProcedureChart : public QWidget
 
 
 	/*
-	 * Node Widgets
+	 * Chart Blocks
 	 */
 	private:
 	// Widgets for our root sequence Procedure nodes
