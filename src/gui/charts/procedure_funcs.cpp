@@ -521,33 +521,31 @@ void ProcedureChart::updateContentBlocks(const SequenceProcedureNode* sequence, 
 	// Create a temporary list that will store our widgets to be 'reused'
 	RefList<ProcedureChartNodeBlock> newSequenceWidgets;
 
+	printf("DOING SEQUENCE %p\n", sequence);
 	// Iterate through the nodes in this sequence, searching for their widgets in the oldWidgetsList
 	ListIterator<ProcedureNode> nodeIterator(sequence->sequence());
 	while (ProcedureNode* node = nodeIterator.iterate())
 	{
 		// Does this node have an existing widget?
-		ProcedureChartNodeBlock* oldBlock = nodeBlock(node);
-		if (oldBlock)
+		ProcedureChartNodeBlock* block = nodeBlock(node);
+		if (block)
 		{
 			// Widget already exists, so remove the reference from nodeWidgets_ and add it to the new list
-			newSequenceWidgets.append(oldBlock);
-			oldSequenceWidgets.remove(oldBlock);
+			newSequenceWidgets.append(block);
+			oldSequenceWidgets.remove(block);
 		}
 		else
 		{
 			// No current widget, so must create one
-			ProcedureChartNodeBlock* newBlock = new ProcedureChartNodeBlock(this, node);
+			block = new ProcedureChartNodeBlock(this, node);
 // 			connect(mcmBlock, SIGNAL(settingsToggled()), this, SLOT(recalculateLayout()));
 // 			connect(mcmBlock, SIGNAL(remove(QString)), this, SLOT(removeModule(QString)));
-			newSequenceWidgets.append(newBlock);
-			chartBlocks_.append(newBlock);
+			newSequenceWidgets.append(block);
+			chartBlocks_.append(block);
 		}
 
-		// If the node has branches, deal with them here
-		if (node->hasBranch())
-		{
-			printf("NEED TO IMPLEMENT BRANCH HANDLING!\n");
-		}
+		// If the node has a branch, deal with it here
+		if (node->hasBranch()) updateContentBlocks(node->branch(), block->branchWidgets());
 	}
 
 	// Any widgets remaining in oldSequenceWidgets are no longer used, and can thus be deleted
