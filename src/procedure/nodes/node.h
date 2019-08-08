@@ -84,7 +84,7 @@ class ProcedureNode : public ListItem<ProcedureNode>
 	 */
 	public:
 	// Return whether this node has a branch
-	virtual bool hasBranch();
+	virtual bool hasBranch() const;
 	// Return SequenceNode for the branch (if it exists)
 	virtual SequenceProcedureNode* branch();
 

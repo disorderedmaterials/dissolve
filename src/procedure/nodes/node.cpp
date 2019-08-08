@@ -113,7 +113,7 @@ const char* ProcedureNode::niceName() const
  */
 
 // Return whether this node has a branch
-bool ProcedureNode::hasBranch()
+bool ProcedureNode::hasBranch() const
 {
 	return false;
 }
