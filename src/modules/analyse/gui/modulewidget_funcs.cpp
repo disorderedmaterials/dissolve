@@ -20,12 +20,16 @@
 */
 
 #include "modules/analyse/gui/modulewidget.h"
+#include "modules/analyse/analyse.h"
 
 // Constructor
-AnalyseModuleWidget::AnalyseModuleWidget(QWidget* parent, Module* module) : ModuleWidget(parent), module_(module)
+AnalyseModuleWidget::AnalyseModuleWidget(QWidget* parent, Module* module) : ModuleWidget(parent), module_(dynamic_cast<AnalyseModule*>(module))
 {
 	// Set up user interface
 	ui.setupUi(this);
+
+	// Set Procedure target
+	ui.EditorWidget->setProcedure(&module_->analyser());
 
 	refreshing_ = false;
 }

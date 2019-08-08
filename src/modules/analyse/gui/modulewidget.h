@@ -26,6 +26,7 @@
 #include "gui/modulewidget.h"
 
 // Forward Declarations
+class AnalyseModule;
 class Module;
 
 // Module Widget
@@ -36,7 +37,7 @@ class AnalyseModuleWidget : public ModuleWidget
 
 	private:
 	// Associated Module
-	Module* module_;
+	AnalyseModule* module_;
 
 	public:
 	// Constructor
