@@ -52,7 +52,7 @@ class ProcedureChart : public QWidget
 
 	public:
 	// Constructor / Destructor
-	ProcedureChart(QWidget* parent);
+	ProcedureChart(QWidget* parent = NULL);
 	~ProcedureChart();
 
 
