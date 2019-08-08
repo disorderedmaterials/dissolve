@@ -189,6 +189,17 @@ const Site* SelectProcedureNode::currentSite() const
  * Branch
  */
 
+// Return whether this node has a branch
+bool SelectProcedureNode::hasBranch() const
+{
+	return (forEachBranch_ != NULL);
+}
+// Return SequenceNode for the branch (if it exists)
+SequenceProcedureNode* SelectProcedureNode::branch()
+{
+	return forEachBranch_;
+}
+
 // Add and return ForEach sequence
 SequenceProcedureNode* SelectProcedureNode::addForEachBranch(ProcedureNode::NodeContext context_)
 {

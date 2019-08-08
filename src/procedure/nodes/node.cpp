@@ -109,7 +109,7 @@ const char* ProcedureNode::niceName() const
 }
 
 /*
- * Branching
+ * Branch
  */
 
 // Return whether this node has a branch

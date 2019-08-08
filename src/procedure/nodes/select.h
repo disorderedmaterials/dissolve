@@ -137,6 +137,10 @@ class SelectProcedureNode : public ProcedureNode
 	SequenceProcedureNode* forEachBranch_;
 
 	public:
+	// Return whether this node has a branch
+	bool hasBranch() const;
+	// Return SequenceNode for the branch (if it exists)
+	SequenceProcedureNode* branch();
 	// Add and return ForEach sequence
 	SequenceProcedureNode* addForEachBranch(ProcedureNode::NodeContext context);
 

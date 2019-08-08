@@ -80,7 +80,7 @@ class ProcedureNode : public ListItem<ProcedureNode>
 
 
 	/*
-	 * Branching
+	 * Branch
 	 */
 	public:
 	// Return whether this node has a branch
