@@ -40,8 +40,6 @@ class ProcedureChartNodeBlock : public QWidget, public ChartBlock
 	// Constructor / Destructor
 	ProcedureChartNodeBlock(QWidget* parent, ProcedureNode* node);
 	~ProcedureChartNodeBlock();
-	// Main form declaration
-	Ui::ModuleChartModuleWidget ui;
 
 
 	/*
@@ -50,20 +48,33 @@ class ProcedureChartNodeBlock : public QWidget, public ChartBlock
 	private:
 	// Displayed node
 	ProcedureNode* node_;
-	// List of keyword widgets displayed
-	RefList<KeywordWidgetBase> keywordWidgets_;
+
 	// Widgets that exist in the branch of our Procedure node
 	RefList<ProcedureChartNodeBlock> branchWidgets_;
 
 	public:
 	// Return displayed node
 	ProcedureNode* node() const;
+	// Return RefList of widgets that exist in the branch of our Procedure node
+	RefList<ProcedureChartNodeBlock>& branchWidgets();
+
+
+	/*
+	 * Controls
+	 */
+	private:
+	// Main form declaration
+	Ui::ModuleChartModuleWidget ui_;
+	// Whether the widget is currently refreshing
+	bool refreshing_;
+	// List of keyword widgets displayed
+	RefList<KeywordWidgetBase> keywordWidgets_;
+
+	public:
 	// Set whether the settings are expanded or not, and whether this is permanent
 	void setSettingsExpanded(bool expanded, bool permanent = false);
 	// Hide the remove button
 	void hideRemoveButton();
-	// Return RefList of widgets that exist in the branch of our Procedure node
-	RefList<ProcedureChartNodeBlock>& branchWidgets();
 
 	public slots:
 	void on_ToggleSettingsButton_clicked(bool checked);
@@ -71,7 +82,7 @@ class ProcedureChartNodeBlock : public QWidget, public ChartBlock
 
 	signals:
 	void settingsToggled();
-	void remove(QString myUniqueName);
+	void remove(void* nodePointer);
 
 
 	/*

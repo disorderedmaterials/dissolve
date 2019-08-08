@@ -671,8 +671,8 @@ void ProcedureChart::dropEvent(QDropEvent* event)
  * Widget Layout
 */
 
-// Lay out widgets in the supplied sequence list
-void ProcedureChart::layOutWidgets(RefList<ProcedureChartNodeBlock>& nodeWidgets, QSize& requiredSize, int& indentLevel)
+// Calculate geometries for the widgets in the supplied sequence list
+void ProcedureChart::calculateGeometries(RefList<ProcedureChartNodeBlock>& nodeWidgets, QSize& requiredSize, int& indentLevel)
 {
 	// Precalculate some useful metrics
 	ProcedureChartMetrics metrics;
@@ -699,7 +699,7 @@ void ProcedureChart::layOutWidgets(RefList<ProcedureChartNodeBlock>& nodeWidgets
 			++indentLevel;
 
 			// Lay out the branch widgets
-			layOutWidgets(block->branchWidgets(), requiredSize, indentLevel);
+			calculateGeometries(block->branchWidgets(), requiredSize, indentLevel);
 
 			// Decrease the indent level
 			--indentLevel;
@@ -707,7 +707,7 @@ void ProcedureChart::layOutWidgets(RefList<ProcedureChartNodeBlock>& nodeWidgets
 	}
 }
 
-// Lay out widgets
+// Calculate new widget geometry according to the layout requirements
 void ProcedureChart::calculateNewWidgetGeometry(QSize& minumumRequiredSize)
 {
 	/*
@@ -718,32 +718,27 @@ void ProcedureChart::calculateNewWidgetGeometry(QSize& minumumRequiredSize)
 	int indentLevel = 0;
 
 	// Begin by calling the layout function for the root sequence - we recurse from there
-	calculateNewWidgetGeometry(rootSequenceNodeWidgets_, minimumRequiredSize, indentLevel);
+	calculateGeometries(rootSequenceNodeWidgets_, minumumRequiredSize, indentLevel);
 }
 
-// Lay out widgets NOT A VIRTUAL ANUYMORE
+// Lay out widgets
 void ProcedureChart::layOutWidgets(bool animate)
 {
-	QSize minmumRequiredSize(0,0);
+	ProcedureChartMetrics metrics;
+
+	// Reset our minimum size hint
+	minimumSizeHint_ = QSize(0,0);
 
 	// Determine the new sizes / positions of all widgets
-	calculateNewWidgetGeometry(minmumRequiredSize);
+	calculateNewWidgetGeometry(minimumSizeHint_);
 
-				// Set the widget's geometry based on these coordinates and its SizeHint - we give it all the space it needs
-				if (animate && (block->blockType() != ProcedureChartBlock::InsertionBlockType))
-				{
-					QPropertyAnimation *animation = new QPropertyAnimation(block->widget(), "geometry");
-					animation->setDuration(100);
-					animation->setEndValue(QRect(left, top, blockWidth, blockHeight));
-					animation->start();
-				}
-				else block->setWidgetGeometry(left, top, blockWidth, blockHeight);
+	// Update our minimum size hint
 
 	// Calculate size hint
 	// Our requested width is the left-most edge of the left-most column, plus the width of the column, plus the spacing.
 	// Our requested height is the top-most edge of the last row, plus the height of the row, plus the spacing.
-	if (displayBlocks_.nItems() == 0) sizeHint_ = QSize(0,0);
-	else sizeHint_ = QSize(metrics.chartMargin() + lefts_.last() + widths_.last(), metrics.chartMargin() + tops_.last() + heights_.last());
+// 	if (displayBlocks_.nItems() == 0) sizeHint_ = QSize(0,0);
+// 	else sizeHint_ = QSize(metrics.chartMargin() + lefts_.last() + widths_.last(), metrics.chartMargin() + tops_.last() + heights_.last());
 
 	// Finalise minimum size hint - we just need to add on the surrounding margins
 	minimumSizeHint_ += QSize(2*metrics.chartMargin(), 2*metrics.chartMargin());

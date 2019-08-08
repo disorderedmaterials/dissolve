@@ -39,6 +39,17 @@ class ProcedureChartMetrics
 	{
 		return 2;
 	}
+	// Border mid-point
+	static double blockBorderMidPoint()
+	{
+		return blockBorderWidth() / 2;
+	}
+	// Widget margins (to contain border line)
+	static QMargins blockMargins()
+	{
+		int innerGap = 4;
+		return QMargins(blockBorderWidth()+innerGap, blockBorderWidth()+innerGap, blockBorderWidth()+innerGap, blockBorderWidth()+innerGap);
+	}
 	// Indent width
 	static int indentWidth()
 	{

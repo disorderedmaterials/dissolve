@@ -31,24 +31,27 @@
 ProcedureChartNodeBlock::ProcedureChartNodeBlock(QWidget* parent, ProcedureNode* node) : QWidget(parent), ChartBlock()
 {
 	// Set up user interface
-	ui.setupUi(this);
+	ui_.setupUi(this);
+
+	refreshing_ = false;
 
 	// Set necessary values on the widget itself
 	ProcedureChartMetrics metrics;
 	setContentsMargins(metrics.blockMargins());
 
-	// Hide the keywords control frame to start with
-	ui.KeywordsControlWidget->setVisible(false);
-
-	// Set Module pointers
+	// Set the node pointer
 	node_ = node;
 
-// 	// Set up our keywords widget
+	// Hide the keywords control frame to start with
+	ui_.KeywordsControlWidget->setVisible(false);
+
+
+	// Set up our keywords widget
 	// TODO Have to remove dependency on DissolveWindow from KeywordsWidget
-	ui.KeywordsWidget->setUp(dissolveWindow_, module_);
+// 	ui_.KeywordsWidget->setUp(dissolveWindow_, module_);
 
 	// Set the icon label
-// 	ui.IconLabel->setPixmap(modulePixmap(module_));
+// 	ui_.IconLabel->setPixmap(modulePixmap(module_));
 
 	// Update our controls
 	updateControls();
@@ -73,24 +76,24 @@ void ProcedureChartNodeBlock::setSettingsExpanded(bool expanded, bool permanent)
 {
 	on_ToggleSettingsButton_clicked(expanded);
 
-	ui.ToggleSettingsButton->setDisabled(permanent);
+	ui_.ToggleSettingsButton->setDisabled(permanent);
 }
 
 // Hide the remove button (e.g. when shown in a ModuleTab)
 void ProcedureChartNodeBlock::hideRemoveButton()
 {
-	ui.RemoveButton->setVisible(false);
+	ui_.RemoveButton->setVisible(false);
 }
 
 // Return RefList of widgets that exist in the branch of our Procedure node
-RefList<ProcedureChartNodeBlock>& ProcedureChartNodeBlock::nodeWidgets()
+RefList<ProcedureChartNodeBlock>& ProcedureChartNodeBlock::branchWidgets()
 {
-	return nodeWidgets_;
+	return branchWidgets_;
 }
 
 void ProcedureChartNodeBlock::on_ToggleSettingsButton_clicked(bool checked)
 {
-	ui.KeywordsControlWidget->setVisible(checked);
+	ui_.KeywordsControlWidget->setVisible(checked);
 
 	adjustSize();
 	updateGeometry();
@@ -100,7 +103,7 @@ void ProcedureChartNodeBlock::on_ToggleSettingsButton_clicked(bool checked)
 
 void ProcedureChartNodeBlock::on_RemoveButton_clicked(bool checked)
 {
-	emit (remove(module_->uniqueName()));
+	emit (remove(node_));
 }
 
 /*
@@ -110,9 +113,9 @@ void ProcedureChartNodeBlock::on_RemoveButton_clicked(bool checked)
 // Paint event
 void ProcedureChartNodeBlock::paintEvent(QPaintEvent* event)
 {
-	if (!module_) return;
+	if (!node_) return;
 
-	ModuleChartMetrics metrics;
+	ProcedureChartMetrics metrics;
 
 	QPainter painter(this);
 	
@@ -122,8 +125,6 @@ void ProcedureChartNodeBlock::paintEvent(QPaintEvent* event)
 
 	QPainterPath borderPath;
 	borderPath.moveTo(metrics.blockBorderMidPoint(), metrics.blockBorderMidPoint());
-	borderPath.lineTo(metrics.blockBorderMidPoint(), metrics.blockDentOffset());
-	borderPath.arcTo(metrics.blockBorderMidPoint() - metrics.blockDentRadius(), metrics.blockDentOffset()+metrics.blockBorderMidPoint(), metrics.blockDentRadius()*2, metrics.blockDentRadius()*2, 90, -180);
 	borderPath.lineTo(metrics.blockBorderMidPoint(), height() - metrics.blockBorderWidth());
 	borderPath.lineTo(width()-metrics.blockBorderWidth(), height() - metrics.blockBorderWidth());
 	borderPath.lineTo(width()-metrics.blockBorderWidth(), metrics.blockBorderMidPoint());
@@ -198,15 +199,10 @@ void ProcedureChartNodeBlock::updateControls()
 	refreshing_ = true;
 
 	// Set information panel contents
-	CharString topText("%s (%s)", module_->type(), module_->uniqueName());
-	ui.TopLabel->setText(topText.get());
-	ui.FrequencyLabel->setText(QString("(%1)").arg(module_->frequencyDetails(dissolve_.iteration())));
-
-	// Set 'enabled' button status
-	ui.EnabledButton->setChecked(module_->enabled());
+	ui_.TopLabel->setText(node_->name());
 
 	// Update keywords
-	ui.KeywordsWidget->updateControls();
+	ui_.KeywordsWidget->updateControls();
 
 	refreshing_ = false;
 }
@@ -214,19 +210,13 @@ void ProcedureChartNodeBlock::updateControls()
 // Disable sensitive controls, ready for main code to run
 void ProcedureChartNodeBlock::disableSensitiveControls()
 {
-	ui.KeywordsControlWidget->setEnabled(false);
-	ui.RunButton->setEnabled(false);
-	ui.EnabledButton->setEnabled(false);
-	ui.FrequencySpin->setEnabled(false);
-	ui.RemoveButton->setEnabled(false);
+	ui_.KeywordsControlWidget->setEnabled(false);
+	ui_.RemoveButton->setEnabled(false);
 }
 
 // Enable sensitive controls, ready for main code to run
 void ProcedureChartNodeBlock::enableSensitiveControls()
 {
-	ui.KeywordsControlWidget->setEnabled(true);
-	ui.RunButton->setEnabled(true);
-	ui.EnabledButton->setEnabled(true);
-	ui.FrequencySpin->setEnabled(true);
-	ui.RemoveButton->setEnabled(true);
+	ui_.KeywordsControlWidget->setEnabled(true);
+	ui_.RemoveButton->setEnabled(true);
 }
