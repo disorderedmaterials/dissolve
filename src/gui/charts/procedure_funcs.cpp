@@ -32,6 +32,7 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPropertyAnimation>
+#include <QWidget>
 
 // Constructor
 ProcedureChart::ProcedureChart(QWidget* parent) : QWidget(parent)
@@ -231,7 +232,6 @@ void ProcedureChart::paintEvent(QPaintEvent* event)
 // Geometry changed
 void ProcedureChart::resizeEvent(QResizeEvent* event)
 {
-	// Work out the new number of columns / rows in the layout, and adjust widget positions to suit
 	layOutWidgets();
 
 	repaint();
@@ -547,6 +547,7 @@ void ProcedureChart::updateContentBlocks(const SequenceProcedureNode* sequence, 
 // 			connect(mcmBlock, SIGNAL(settingsToggled()), this, SLOT(recalculateLayout()));
 // 			connect(mcmBlock, SIGNAL(remove(QString)), this, SLOT(removeModule(QString)));
 			newSequenceWidgets.append(newBlock);
+			chartBlocks_.append(newBlock);
 		}
 
 		// If the node has branches, deal with them here
@@ -558,7 +559,11 @@ void ProcedureChart::updateContentBlocks(const SequenceProcedureNode* sequence, 
 
 	// Any widgets remaining in oldSequenceWidgets are no longer used, and can thus be deleted
 	RefListIterator<ProcedureChartNodeBlock> widgetRemover(oldSequenceWidgets);
-	while (ProcedureChartNodeBlock* block = widgetRemover.iterate()) delete block;
+	while (ProcedureChartNodeBlock* block = widgetRemover.iterate())
+	{
+		chartBlocks_.remove(block);
+		delete block;
+	}
 
 	// Copy the new list
 	oldSequenceWidgets = newSequenceWidgets;
@@ -706,7 +711,11 @@ void ProcedureChart::calculateGeometries(RefList<ProcedureChartNodeBlock>& nodeW
 	while (ProcedureChartNodeBlock* block = widgetIterator.iterate())
 	{
 		// Set basic position of the block, accounting for the indent
-		block->setWidgetPosition(leftIndent, requiredSize.height());
+		block->setNewPosition(leftIndent, requiredSize.height());
+
+		// Try to give our block its preferred (minimum) size
+		QSize minSize = block->widget()->minimumSizeHint();
+		block->setNewSize(minSize.width(), minSize.height());
 
 		// Update the maximum width if necessary
 		int blockWidth = block->widgetWidth() + leftIndent;
@@ -750,10 +759,17 @@ void ProcedureChart::layOutWidgets(bool animate)
 	ProcedureChartMetrics metrics;
 
 	// Reset our minimum size hint
-	minimumSizeHint_ = QSize(0,0);
+	minimumSizeHint_ = QSize();
 
 	// Determine the new sizes / positions of all widgets
 	calculateNewWidgetGeometry(minimumSizeHint_);
+
+	// Commit new block geometries
+	RefListIterator<ChartBlock> chartBlockIterator(chartBlocks_);
+	while (ChartBlock* block = chartBlockIterator.iterate())
+	{
+		block->setNewGeometry(animate);
+	}
 
 	// Update our minimum size hint
 
@@ -764,7 +780,11 @@ void ProcedureChart::layOutWidgets(bool animate)
 // 	else sizeHint_ = QSize(metrics.chartMargin() + lefts_.last() + widths_.last(), metrics.chartMargin() + tops_.last() + heights_.last());
 
 	// Finalise minimum size hint - we just need to add on the surrounding margins
-	minimumSizeHint_ += QSize(2*metrics.chartMargin(), 2*metrics.chartMargin());
+// 	minimumSizeHint_ += QSize(2*metrics.chartMargin(), 2*metrics.chartMargin());
+	printf("MINSIZE1 = %i x %i  %i\n", minimumSizeHint_.width(), minimumSizeHint_.height(), minimumSizeHint_.isValid());
+// 	minimumSizeHint_ = QSize(198, minimumSizeHint_.height());
+	printf("MINSIZE2 = %i x %i  %i\n", minimumSizeHint_.width(), minimumSizeHint_.height(), minimumSizeHint_.isValid());
+	sizeHint_ = minimumSizeHint_;
 
 	updateGeometry();
 
