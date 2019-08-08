@@ -671,127 +671,63 @@ void ProcedureChart::dropEvent(QDropEvent* event)
  * Widget Layout
 */
 
-// Lay out widgets snaking horizontally
-void ProcedureChart::layOutWidgets(bool animate)
+// Lay out widgets in the supplied sequence list
+void ProcedureChart::layOutWidgets(RefList<ProcedureChartNodeBlock>& nodeWidgets, QSize& requiredSize, int& indentLevel)
+{
+	// Precalculate some useful metrics
+	ProcedureChartMetrics metrics;
+	const int leftIndent = indentLevel * metrics.indentWidth();
+
+	// Loop over widgets in this sequence
+	RefListIterator<ProcedureChartNodeBlock> widgetIterator(nodeWidgets);
+	while (ProcedureChartNodeBlock* block = widgetIterator.iterate())
+	{
+		// Set basic position of the block, accounting for the indent
+		block->setWidgetPosition(leftIndent, requiredSize.height());
+
+		// Update the maximum width if necessary
+		int blockWidth = block->widgetWidth() + leftIndent;
+		if (blockWidth > requiredSize.width()) requiredSize.setWidth(blockWidth);
+
+		// Increase the required height
+		requiredSize.setHeight(requiredSize.height() + block->widgetHeight());
+
+		// If this block has sub-blocks (i.e. the node has a branch), recurse in to it
+		if (block->branchWidgets().nItems() > 0)
+		{
+			// Increase the indent level
+			++indentLevel;
+
+			// Lay out the branch widgets
+			layOutWidgets(block->branchWidgets(), requiredSize, indentLevel);
+
+			// Decrease the indent level
+			--indentLevel;
+		}
+	}
+}
+
+// Lay out widgets
+void ProcedureChart::calculateNewWidgetGeometry(QSize& minumumRequiredSize)
 {
 	/*
-	 * Determine how many columns we can fit across our current geometry, obeying a minimum spacing between widgets.
-	 * 
-	 * Start by trying to lay out everything on one line. If this doesn't fit, decrease the number of columns and try again.
+	 * ProcedureNode layout is a single vertical column, with branches incrementally indented
 	 */
 
-	ProcedureChartMetrics metrics;
+	// Set initial indent level and widget size
+	int indentLevel = 0;
 
-	// Reset column spacing before we begin
-	columnSpacing_ = metrics.chartMinimumColumnSpacing();
+	// Begin by calling the layout function for the root sequence - we recurse from there
+	calculateNewWidgetGeometry(rootSequenceNodeWidgets_, minimumRequiredSize, indentLevel);
+}
 
-	const int maxWidth = width() - metrics.chartMargin()*2;
-	int colCount, totalColumnWidth;
-	const int maxColumns = displayBlocks_.nItems();
+// Lay out widgets NOT A VIRTUAL ANUYMORE
+void ProcedureChart::layOutWidgets(bool animate)
+{
+	QSize minmumRequiredSize(0,0);
 
-	for (nColumns_ = maxColumns; nColumns_ >= 1; --nColumns_)
-	{
-		/*
-		 * Loop over FlowBlocks, summing their widths as we go for each row.
-		 * Also keep track of total column width over all rows - if we exceed this at any point we must continue the outer loop (reduce nColumns_).
-		 */
-		nRows_ = 1;
-		colCount = 0;
-		totalColumnWidth = 0;
-		widths_.clear();
-		minimumSizeHint_ = QSize(0,0);
-		RefDataListIterator<ProcedureChartBlock,ChartBlock*> blockIterator(displayBlocks_);
-		while (ProcedureChartBlock* block = blockIterator.iterate())
-		{
-			// Get the width of this block
-			int blockWidth = block->widgetWidth();
-
-			// If this is the first row, add our width to the widths_ array, and increase totalColumnWidth
-			if (nRows_ == 1)
-			{
-				widths_.add(blockWidth);
-				totalColumnWidth += blockWidth;
-				if (colCount > 0) totalColumnWidth += columnSpacing_;
-
-				// Store max width in our minimum size hint
-				if (blockWidth > minimumSizeHint_.width()) minimumSizeHint_ = QSize(blockWidth, 0);
-			}
-			else
-			{
-				// Not the first row, so check this width against the one stored for the current column.
-				if (blockWidth > widths_[colCount])
-				{
-					// The current widget is wider than any other in this column. Need to adjust the totalColumnWidth taking account of the difference
-					totalColumnWidth += (blockWidth - widths_[colCount]);
-					widths_[colCount] = blockWidth;
-				}
-			}
-
-			// Check if we have exceeded the available width. However, don't break if the number of columns is 1, since we still need to assess the full column width
-			if ((totalColumnWidth > maxWidth) && (nColumns_ > 1)) break;
-
-			// Added this widget OK - if it was the last one in the list, we have found a suitable number of columns
-			if (blockIterator.isLast()) break;
-			
-			// Not the end of the list, so increase column count and check against the current nColumns_
-			++colCount;
-			if (colCount == nColumns_)
-			{
-				colCount = 0;
-				++nRows_;
-			}
-		}
-
-		// If we get to here and we haven't failed, we must have succeeded!
-		if (totalColumnWidth <= maxWidth) break;
-	}
-
-	// If we get to this point and there are zero columns, there wasn't enough width to fit a single column of widgets in, but we still need one!
-	// nRows should always be correct
-	if (nColumns_ == 0)
-	{
-		nColumns_ = 1;
-		widths_.add(width() - 2*metrics.chartMargin());
-	}
-
-	// Determine new spacing between columns
-	totalColumnWidth = 0;
-	for (int n = 0; n<nColumns_; ++n) totalColumnWidth += widths_[n];
-	columnSpacing_ = nColumns_ == 1 ? 0 : (maxWidth - totalColumnWidth) / (nColumns_ - 1);
-
-	// Work out row / column top-lefts, and adjust spacing between widgets to fill entire horizontal space
-	tops_.clear();
-	lefts_.clear();
-	heights_.clear();
-	hotSpots_.clear();
-	int top = metrics.chartMargin(), rowMaxHeight;
-	int blockCount = 0;
-	RefDataListIterator<ProcedureChartBlock,ChartBlock*> blockIterator(displayBlocks_);
-	for (int row = 0; row < nRows_; ++row)
-	{
-		// Add the top coordinate of this row to our array
-		tops_.add(top);
-
-		int left = metrics.chartMargin();
-		rowMaxHeight = 0;
-		for (int col = 0; col < nColumns_; ++col)
-		{
-			// Store this column left-hand position
-			if (row == 0) lefts_.add(left);
-
-			// Do we still have a valid display widget to consider?
-			if (ProcedureChartBlock* block = blockIterator.iterate())
-			{
-				// Set next block and get its ChartBlock pointer
-				ProcedureChartBlock* nextBlock = blockIterator.peek();
-				ChartBlock* nextModuleBlock = nextBlock ? blockIterator.peekData() : NULL;
-
-				// Get the width and height of this block
-				int blockWidth = block->widgetWidth();
-				int blockHeight = block->widgetHeight();
-
-				// Check the current height against the required height for this block's widget (if we still have a current one) and update if necessary
-				if (blockHeight > rowMaxHeight) rowMaxHeight = blockHeight;
+	// Determine the new sizes / positions of all widgets
+	calculateNewWidgetGeometry(minmumRequiredSize);
 
 				// Set the widget's geometry based on these coordinates and its SizeHint - we give it all the space it needs
 				if (animate && (block->blockType() != ProcedureChartBlock::InsertionBlockType))
@@ -801,56 +737,7 @@ void ProcedureChart::layOutWidgets(bool animate)
 					animation->setEndValue(QRect(left, top, blockWidth, blockHeight));
 					animation->start();
 				}
-				else if (block->blockType() == ProcedureChartBlock::InsertionBlockType)
-				{
-					/*
-					 * If the insertion point is not the first block on the row, set its height to be the same as the previous block.
-					 * If it is the first block on the line, and there is a valid block after, set its height to be the same as the next block.
-					 * Otherwise, set to its minimum height.
-					 */
-					if (col > 0) block->setWidgetGeometry(left, top, widths_[col], blockIterator.peekPrevious()->widgetHeight());
-					else if ((col < (nColumns_-1)) && blockIterator.peek()) block->setWidgetGeometry(left, top, widths_[col], blockIterator.peek()->widgetHeight());
-					else block->setWidgetGeometry(left, top, widths_[col], 64);
-				}
 				else block->setWidgetGeometry(left, top, blockWidth, blockHeight);
-
-				// Store max width in our minimum size hint
-				if (rowMaxHeight > minimumSizeHint_.height()) minimumSizeHint_ = QSize(0, rowMaxHeight);
-
-				/*
-				 * Work out hot spot for insertion before this block.
-				 * If the current block is a ProcedureChartInsertionBlock, extend the hotspot to cover the area including this block.
-				 */
-				ChartHotSpot* hotSpot = hotSpots_.add();
-				if (block->blockType() == ProcedureChartBlock::InsertionBlockType) hotSpot->set(row, ChartHotSpot::ModuleInsertionHotSpot, QRect(left-columnSpacing_, top, columnSpacing_+widths_[col], rowMaxHeight), nextModuleBlock);
-				else hotSpot->set(row, ChartHotSpot::ModuleInsertionHotSpot, QRect(left-columnSpacing_, top, columnSpacing_, rowMaxHeight), blockIterator.currentData());
-
-				// If this is the last block (but not an insertion block) add on a final hotspot
-				if (blockIterator.isLast() && (block->blockType() != ProcedureChartBlock::InsertionBlockType))
-				{
-					ChartHotSpot* hotSpot = hotSpots_.add();
-					if (col == (nColumns_-1)) hotSpot->set(row, ChartHotSpot::ModuleInsertionHotSpot, QRect(left+widths_[col], top, columnSpacing_, blockHeight), NULL);
-					else hotSpot->set(row, ChartHotSpot::ModuleInsertionHotSpot, QRect(left+widths_[col], top, columnSpacing_+widths_[col+1], blockHeight), NULL);
-				}
-			}
-
-			// Increase left-hand coordinate
-			left += widths_[col] + columnSpacing_;
-		}
-
-		// Store the row height
-		heights_.add(rowMaxHeight);
-
-		// Increase top-side coordinate
-		top += rowMaxHeight + metrics.chartRowSpacing();
-	}
-
-	// Loop over defined hotspots and set the correct heights based on their row indices
-	for (ChartHotSpot* hotSpot = hotSpots_.first(); hotSpot != NULL; hotSpot = hotSpot->next) hotSpot->setAreaHeight(heights_[hotSpot->row()]);
-
-	// Add on a default hotspot covering the whole widget
-	ChartHotSpot* hotSpot = hotSpots_.add();
-	hotSpot->set(0, ChartHotSpot::ModuleInsertionHotSpot, QRect(metrics.chartMargin(), metrics.chartMargin(), width() - metrics.chartMargin(), height() - metrics.chartMargin()), blockIterator.currentData());
 
 	// Calculate size hint
 	// Our requested width is the left-most edge of the left-most column, plus the width of the column, plus the spacing.

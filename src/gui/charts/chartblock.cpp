@@ -20,6 +20,8 @@
 */
 
 #include "gui/charts/chartblock.h"
+#include <QPropertyAnimation>
+#include <QWidget>
 
 // Constructor
 ChartBlock::ChartBlock() : ListItem<ChartBlock>()
@@ -30,3 +32,34 @@ ChartBlock::~ChartBlock()
 {
 }
 
+/*
+ * Widget
+ */
+
+// Set underlying widget position
+void ChartBlock::setNewPosition(int left, int top)
+{
+	newGeometry_.setLeft(left);
+	newGeometry_.setTop(top);
+}
+
+// Set underlying widget geometry
+void ChartBlock::setNewSize(int width, int height)
+{
+	newGeometry_.setWidth(width);
+	newGeometry_.setHeight(height);
+}
+
+// Commit new geometry for widget
+void ChartBlock::setNewGeometry(bool animate)
+{
+	// Set the widget's geometry based on these coordinates and its SizeHint - we give it all the space it needs
+	if (animate)
+	{
+		QPropertyAnimation* animation = new QPropertyAnimation(widget(), "geometry");
+		animation->setDuration(100);
+		animation->setEndValue(newGeometry_);
+		animation->start();
+	}
+	else widget()->setGeometry(newGeometry_);
+}

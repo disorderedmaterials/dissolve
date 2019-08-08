@@ -229,7 +229,9 @@ class ProcedureChart : public QWidget
 	QSize minimumSizeHint_;
 
 	private:
-	// Lay out widgets snaking horizontally     TO BE PURE VIRTUAL IN BASE CLASS
+	// Lay out widgets in the supplied sequence list
+	void layOutWidgets(RefList<ProcedureChartNodeBlock>& nodeWidgets, QSize& requiredSize, int& indentLevel);
+	// Lay out widgets
 	void layOutWidgets(bool animate = false);
 
 	public slots:

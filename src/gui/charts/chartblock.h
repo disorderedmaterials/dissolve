@@ -24,6 +24,7 @@
 
 #include "templates/listitem.h"
 #include <QPoint>
+#include <QRect>
 
 // Forward Declarations
 class QWidget;
@@ -48,6 +49,10 @@ class ChartBlock : public ListItem<ChartBlock>
 	/*
 	 * Widget
 	 */
+	private:
+	// Proposed new geometry of the widget
+	QRect newGeometry_;
+	
 	public:
 	// Return underlying widget
 	virtual QWidget* widget() = 0;
@@ -55,8 +60,12 @@ class ChartBlock : public ListItem<ChartBlock>
 	virtual int widgetWidth() const = 0;
 	// Return height of underlying widget
 	virtual int widgetHeight() const = 0;
+	// Set underlying widget position
+	void setNewPosition(int left, int top);
 	// Set underlying widget geometry
-	virtual void setWidgetGeometry(int left, int top, int width, int height) = 0;
+	void setNewSize(int width, int height);
+	// Commit new geometry for widget
+	void setNewGeometry(bool animate);
 	// Return whether the supplied point (in global coordinates) allows a drag operation to begin
 	virtual bool isDragPoint(QPoint globalPos) const = 0;
 

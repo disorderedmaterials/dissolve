@@ -167,6 +167,12 @@ int ProcedureChartNodeBlock::widgetHeight() const
 	return minimumSize().height();
 }
 
+// Set underlying widget position
+void ProcedureChartNodeBlock::setWidgetPosition(int left, int top)
+{
+	move(left, top);
+}
+
 // Set underlying widget geometry
 void ProcedureChartNodeBlock::setWidgetGeometry(int left, int top, int width, int height)
 {
@@ -198,31 +204,6 @@ void ProcedureChartNodeBlock::updateControls()
 
 	// Set 'enabled' button status
 	ui.EnabledButton->setChecked(module_->enabled());
-
-	// Set frequency spin
-	ui.FrequencySpin->setValue(module_->frequency());
-
-	// Update Configuration list and HeaderFrame tooltip
-	ui.ConfigurationTargetList->clear();
-	CharString toolTip("Targets: ");
-	ListIterator<Configuration> configIterator(dissolveWindow_->dissolve().configurations());
-	while (Configuration* cfg = configIterator.iterate())
-	{
-		QListWidgetItem* item = new QListWidgetItem(cfg->name(), ui.ConfigurationTargetList);
-		item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
-		item->setData(Qt::UserRole, VariantPointer<Configuration>(cfg));
-
-		if (module_->isTargetConfiguration(cfg))
-		{
-			item->setCheckState(Qt::Checked);
-
-			if (configIterator.isFirst()) toolTip.strcatf("%s", cfg->name());
-			else toolTip.strcatf(", %s", cfg->name());
-		}
-		else item->setCheckState(Qt::Unchecked);
-	}
-	ui.ConfigurationTargetGroup->setVisible(!module_->configurationLocal());
-	ui.HeaderFrame->setToolTip(toolTip.get());
 
 	// Update keywords
 	ui.KeywordsWidget->updateControls();
