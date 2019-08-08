@@ -34,6 +34,7 @@ class LineParser;
 class NodeScopeStack;
 class Procedure;
 class ProcessPool;
+class SequenceProcedureNode;
 class Site;
 
 // Procedure Node
@@ -76,6 +77,16 @@ class ProcedureNode : public ListItem<ProcedureNode>
 	const char* name() const;
 	// Return node nice name
 	const char* niceName() const;
+
+
+	/*
+	 * Branching
+	 */
+	public:
+	// Return whether this node has a branch
+	virtual bool hasBranch();
+	// Return SequenceNode for the branch (if it exists)
+	virtual SequenceProcedureNode* branch();
 
 
 	/*

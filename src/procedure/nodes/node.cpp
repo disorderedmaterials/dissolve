@@ -109,6 +109,22 @@ const char* ProcedureNode::niceName() const
 }
 
 /*
+ * Branching
+ */
+
+// Return whether this node has a branch
+bool ProcedureNode::hasBranch()
+{
+	return false;
+}
+
+// Return SequenceNode for the branch (if it exists)
+SequenceProcedureNode* ProcedureNode::branch()
+{
+	return NULL;
+}
+
+/*
  * Execution
  */
 
