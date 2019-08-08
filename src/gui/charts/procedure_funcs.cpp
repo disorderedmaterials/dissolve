@@ -39,6 +39,8 @@ ProcedureChart::ProcedureChart(QWidget* parent) : QWidget(parent)
 {
 	refreshing_ = false;
 
+	resizeToWidgets_ = true;
+
 	// Target Procedure
 	procedure_ = NULL;
 
@@ -730,27 +732,38 @@ void ProcedureChart::calculateGeometries(RefList<ProcedureChartNodeBlock>& nodeW
 }
 
 // Calculate new widget geometry according to the layout requirements
-void ProcedureChart::calculateNewWidgetGeometry(QSize& minumumRequiredSize)
+QSize ProcedureChart::calculateNewWidgetGeometry(QSize currentSize)
 {
 	/*
 	 * ProcedureNode layout is a single vertical column, with branches incrementally indented
 	 */
 
-	// Set initial indent level and widget size
+	// Set initial indent level and widget position
 	int indentLevel = 0;
+	QSize requiredSize(0, metrics_.blockBorderMidPoint());
 
 	// Begin by calling the layout function for the root sequence - we recurse from there
-	calculateGeometries(rootSequenceNodeWidgets_, minumumRequiredSize, indentLevel);
+	calculateGeometries(rootSequenceNodeWidgets_, requiredSize, indentLevel);
+
+	return requiredSize;
 }
 
 // Lay out widgets
 void ProcedureChart::layOutWidgets(bool animate)
 {
-	// Reset our minimum size hint
-	minimumSizeHint_ = QSize(0,0);
-
 	// Determine the new sizes / positions of all widgets
-	calculateNewWidgetGeometry(minimumSizeHint_);
+	QSize requiredSize = calculateNewWidgetGeometry(minimumSizeHint_);
+
+	// Alter our minimum size hint if requested
+	if (resizeToWidgets_)
+	{
+		// Finalise minimum size hint - we just need to add on the surrounding margins
+		requiredSize += QSize(2*metrics_.chartMargin(), 2*metrics_.chartMargin());
+		minimumSizeHint_ = requiredSize;
+		sizeHint_ = minimumSizeHint_;
+
+		updateGeometry();
+	}
 
 	// Commit new block geometries
 	RefListIterator<ChartBlock> chartBlockIterator(chartBlocks_);
@@ -758,12 +771,6 @@ void ProcedureChart::layOutWidgets(bool animate)
 	{
 		block->setNewGeometry(animate);
 	}
-
-	// Finalise minimum size hint - we just need to add on the surrounding margins
-	minimumSizeHint_ += QSize(2*metrics_.chartMargin(), 2*metrics_.chartMargin());
-	sizeHint_ = minimumSizeHint_;
-
-	updateGeometry();
 
 	repaint();
 }

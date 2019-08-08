@@ -147,8 +147,12 @@ class ProcedureChart : public QWidget
 	private:
 	// Lay out widgets
 	void layOutWidgets(bool animate = false);
-	// Calculate new widget geometry according to the layout requirements
-// 	virtual void calculateNewWidgetGeometry(QSize& minumumRequiredSize) = 0;
+	// Calculate new widget geometry according to the layout requirements, returning the entire area required
+// 	virtual QSize calculateNewWidgetGeometry(QSize currentSize) = 0;
+
+	protected:
+	// Whether to resize chart to accommodate widgets
+	bool resizeToWidgets_;
 
 	public slots:
 	// Recalculate layout (after widget size change etc.)
@@ -222,8 +226,8 @@ class ProcedureChart : public QWidget
 	private:
 	// // Calculate geometries for the widgets in the supplied sequence list
 	void calculateGeometries(RefList<ProcedureChartNodeBlock>& nodeWidgets, QSize& requiredSize, int& indentLevel);
-	// Calculate new widget geometry according to the layout requirements
-	void calculateNewWidgetGeometry(QSize& minumumRequiredSize);
+	// Calculate new widget geometry according to the layout requirements, returning the entire area required
+	QSize calculateNewWidgetGeometry(QSize currentSize);
 };
 
 #endif
