@@ -37,15 +37,9 @@
 // Constructor
 ProcedureChart::ProcedureChart(QWidget* parent) : QWidget(parent)
 {
-	// Layout
-	columnSpacing_ = 32;
-	nColumns_ = 1;
-	nRows_ = 0;
-	horizontalSpacing_ = 0;
-	verticalSpacing_ = 0;
-
 	refreshing_ = false;
 
+	// Target Procedure
 	procedure_ = NULL;
 
 	// Drag / Drop

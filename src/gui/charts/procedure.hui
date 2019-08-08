@@ -211,24 +211,6 @@ class ProcedureChart : public QWidget
 	 * Widget Layout
 	 */
 	private:
-	// Spacing between widgets / extremes of chart view
-	int columnSpacing_;
-	// Current number of columns of widgets
-	int nColumns_;
-	// Current number of rows of widgets
-	int nRows_;
-	// Current horizontal spacing between columns / edges
-	int horizontalSpacing_;
-	// Current vertical spacing between rows / edges
-	int verticalSpacing_;
-	// Left-hand-side coordinates of columns
-	Array<int> lefts_;
-	// Top-side coordinates of rows
-	Array<int> tops_;
-	// Pixel widths of columns
-	Array<int> widths_;
-	// Pixel heights of rows
-	Array<int> heights_;
 	// Size hint for current number of columns / rows
 	QSize sizeHint_;
 	// Minimum size hint (for single column)
