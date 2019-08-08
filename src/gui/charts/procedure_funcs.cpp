@@ -128,9 +128,6 @@ void ProcedureChart::enableSensitiveControls()
 // Paint event
 void ProcedureChart::paintEvent(QPaintEvent* event)
 {
-	// Create a metrics object
-	ProcedureChartMetrics metrics;
-
 	// Draw suitable connecting lines between widgets, illustrating the execution path of the code
 	QPainter painter(this);
 
@@ -140,9 +137,9 @@ void ProcedureChart::paintEvent(QPaintEvent* event)
 
 	// Set up some QPens
 	QPen solidPen(Qt::black);
-	solidPen.setWidth(metrics.blockBorderWidth());
+	solidPen.setWidth(metrics_.blockBorderWidth());
 	QPen dottedPen(Qt::gray);
-	dottedPen.setWidth(metrics.blockBorderWidth());
+	dottedPen.setWidth(metrics_.blockBorderWidth());
 	dottedPen.setStyle(Qt::DotLine);
 	dottedPen.setCapStyle(Qt::RoundCap);
 
@@ -697,8 +694,7 @@ void ProcedureChart::dropEvent(QDropEvent* event)
 void ProcedureChart::calculateGeometries(RefList<ProcedureChartNodeBlock>& nodeWidgets, QSize& requiredSize, int& indentLevel)
 {
 	// Precalculate some useful metrics
-	ProcedureChartMetrics metrics;
-	const int leftIndent = indentLevel * metrics.indentWidth();
+	const int leftIndent = indentLevel * metrics_.indentWidth();
 
 	// Loop over widgets in this sequence
 	RefListIterator<ProcedureChartNodeBlock> widgetIterator(nodeWidgets);
@@ -750,8 +746,6 @@ void ProcedureChart::calculateNewWidgetGeometry(QSize& minumumRequiredSize)
 // Lay out widgets
 void ProcedureChart::layOutWidgets(bool animate)
 {
-	ProcedureChartMetrics metrics;
-
 	// Reset our minimum size hint
 	minimumSizeHint_ = QSize(0,0);
 
@@ -766,7 +760,7 @@ void ProcedureChart::layOutWidgets(bool animate)
 	}
 
 	// Finalise minimum size hint - we just need to add on the surrounding margins
-	minimumSizeHint_ += QSize(2*metrics.chartMargin(), 2*metrics.chartMargin());
+	minimumSizeHint_ += QSize(2*metrics_.chartMargin(), 2*metrics_.chartMargin());
 	sizeHint_ = minimumSizeHint_;
 
 	updateGeometry();

@@ -24,6 +24,7 @@
 
 #include "gui/charts/chartblock.h"
 #include "gui/charts/charthotspot.h"
+#include "gui/charts/proceduremetrics.h"
 #include "templates/array.h"
 #include "templates/list.h"
 #include "templates/refdatalist.h"
@@ -211,6 +212,8 @@ class ProcedureChart : public QWidget
 	 * Widget Layout
 	 */
 	private:
+	// Chart metrics
+	ProcedureChartMetrics metrics_;
 	// Size hint for current number of columns / rows
 	QSize sizeHint_;
 	// Minimum size hint (for single column)
