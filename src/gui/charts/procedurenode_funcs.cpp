@@ -54,6 +54,8 @@ ProcedureChartNodeBlock::ProcedureChartNodeBlock(QWidget* parent, ProcedureNode*
 
 	// Update our controls
 	updateControls();
+
+	updateGeometry();
 }
 
 ProcedureChartNodeBlock::~ProcedureChartNodeBlock()
@@ -158,25 +160,13 @@ QWidget* ProcedureChartNodeBlock::widget()
 // Return width of underlying widget
 int ProcedureChartNodeBlock::widgetWidth() const
 {
-	return minimumSize().width();
+	return sizeHint().width();
 }
 
 // Return height of underlying widget
 int ProcedureChartNodeBlock::widgetHeight() const
 {
-	return minimumSize().height();
-}
-
-// Set underlying widget position
-void ProcedureChartNodeBlock::setWidgetPosition(int left, int top)
-{
-	move(left, top);
-}
-
-// Set underlying widget geometry
-void ProcedureChartNodeBlock::setWidgetGeometry(int left, int top, int width, int height)
-{
-	setGeometry(left, top, width, height);
+	return sizeHint().height();
 }
 
 // Return whether the supplied point (in local widget coordinates) allows a drag operation to begin
