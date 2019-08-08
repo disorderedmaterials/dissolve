@@ -178,7 +178,7 @@
   <customwidget>
    <class>ProcedureChart</class>
    <extends>QWidget</extends>
-   <header>gui/charts/procedurechart.hui</header>
+   <header>gui/charts/procedure.hui</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

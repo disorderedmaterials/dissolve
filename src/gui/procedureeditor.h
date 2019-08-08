@@ -47,14 +47,6 @@ class ProcedureEditor : public QWidget
 
 
 	/*
-	 * UI
-	 */
-	private:
-	// Main form declaration
-	Ui::ProcedureEditor ui_;
-
-
-	/*
 	 * Procedure Target
 	 */
 	private:
@@ -85,8 +77,12 @@ class ProcedureEditor : public QWidget
 
 
 	/*
-	 * Signals / Slots
+	 * Controls
 	 */
+	private:
+	// Main form declaration
+	Ui::ProcedureEditor ui_;
+
 	private slots:
 // 	void on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* item);
 

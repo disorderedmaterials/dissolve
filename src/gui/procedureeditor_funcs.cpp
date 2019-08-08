@@ -51,6 +51,8 @@ bool ProcedureEditor::setProcedure(Procedure* procedure)
 	procedure_ = procedure;
 
 	ui_.Chart->setProcedure(procedure_);
+
+	updateControls();
 }
 
 // 	// Create a ModuleChart widget and set its source list
@@ -100,9 +102,6 @@ bool ProcedureEditor::setProcedure(Procedure* procedure)
 	// Hide palette group initially
 // 	ui_.PaletteGroup->setVisible(false);
 
-	updateControls();
-}
-
 /*
  * Update
  */
@@ -110,8 +109,6 @@ bool ProcedureEditor::setProcedure(Procedure* procedure)
 // Update controls in tab
 void ProcedureEditor::updateControls()
 {
-	if (!chartWidget_) return;
-
 	refreshing_ = true;
 
 	ui_.Chart->updateControls();
@@ -179,7 +176,7 @@ void ProcedureEditor::enableSensitiveControls()
 // Write widget state through specified LineParser
 bool ProcedureEditor::writeState(LineParser& parser)
 {
-	if ((!chartWidget_) || (!chartWidget_->writeState(parser))) return false;
+	if (!ui_.Chart->writeState(parser)) return false;
 
 	return true;
 }
@@ -187,7 +184,7 @@ bool ProcedureEditor::writeState(LineParser& parser)
 // Read widget state through specified LineParser
 bool ProcedureEditor::readState(LineParser& parser)
 {
-	if ((!chartWidget_) || (!chartWidget_->readState(parser))) return false;
+	if (!ui_.Chart->readState(parser)) return false;
 
 	return true;
 }
