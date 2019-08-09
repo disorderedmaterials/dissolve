@@ -24,6 +24,7 @@
 
 #include "gui/viewer/render/colourdefinition.h"
 #include "gui/viewer/render/linestipple.h"
+#include "gui/stockcolours.h"
 #include "base/charstring.h"
 
 // Forward declarations
@@ -34,7 +35,7 @@ class RenderableGroup : public ListItem<RenderableGroup>
 {
 	public:
 	// Constructor
-	RenderableGroup(const char* name, ColourDefinition::StockColour colour);
+	RenderableGroup(const char* name, StockColours::StockColour colour);
 
 
 	/*
@@ -103,7 +104,7 @@ class RenderableGroup : public ListItem<RenderableGroup>
 	// Colouring style for the group
 	GroupColouring colouringStyle_;
 	// Stock colour associated to this group
-	ColourDefinition::StockColour fixedStockColour_;
+	StockColours::StockColour fixedStockColour_;
 	// Usage counters for stock colours when colouringStyle_ == AutomaticIndividualColouring
 	Array<int> automaticStockColourUsageCount_;
 
@@ -119,9 +120,9 @@ class RenderableGroup : public ListItem<RenderableGroup>
 	// Return colouring style for the group
 	GroupColouring colouringStyle() const;
 	// Set fixed stock colour for the group
-	void setFixedStockColour(ColourDefinition::StockColour stockColour);
+	void setFixedStockColour(StockColours::StockColour stockColour);
 	// Return fixed stock colour associated to the group
-	ColourDefinition::StockColour fixedStockColour() const;
+	StockColours::StockColour fixedStockColour() const;
 	// Return fixed colour definition for the group
 	const ColourDefinition& fixedColour() const;
 

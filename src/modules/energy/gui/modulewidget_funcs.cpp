@@ -167,16 +167,16 @@ void EnergyModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 	Renderable* rend;
 	energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Total", currentConfiguration_->niceName(), module_->uniqueName()), "Total", "Totals");
 	rend = energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Inter", currentConfiguration_->niceName(), module_->uniqueName()), "Inter", "Totals");
-	rend->setColour(ColourDefinition::RedStockColour);
+	rend->setColour(StockColours::RedStockColour);
 	rend = energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Intra", currentConfiguration_->niceName(), module_->uniqueName()), "Intra", "Totals");
-	rend->setColour(ColourDefinition::BlueStockColour);
+	rend->setColour(StockColours::BlueStockColour);
 
 	rend = energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Bond", currentConfiguration_->niceName(), module_->uniqueName()), "Bond", "Intramolecular");
-	rend->setColour(ColourDefinition::GreenStockColour);
+	rend->setColour(StockColours::GreenStockColour);
 	rend = energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Angle", currentConfiguration_->niceName(), module_->uniqueName()), "Angle", "Intramolecular");
-	rend->setColour(ColourDefinition::PurpleStockColour);
+	rend->setColour(StockColours::PurpleStockColour);
 	rend = energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D@%s//%s//Torsion", currentConfiguration_->niceName(), module_->uniqueName()), "Torsion", "Intramolecular");
-	rend->setColour(ColourDefinition::OrangeStockColour);
+	rend->setColour(StockColours::OrangeStockColour);
 
 	updateControls();
 }

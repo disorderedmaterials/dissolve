@@ -26,7 +26,7 @@
 // Constructor
 RenderableGroupManager::RenderableGroupManager()
 {
-	stockColourUsageCount_.initialise(ColourDefinition::nStockColours);
+	stockColourUsageCount_.initialise(StockColours::nStockColours);
 
 	clear();
 }
@@ -56,12 +56,12 @@ RenderableGroup* RenderableGroupManager::createGroup(const char* name)
 		// No existing group, so must add a new one
 		// First, find the StockColour with the lowest usage count
 		int lowestId = 0;
-		for (int colourId = 0; colourId < ColourDefinition::nStockColours; ++colourId)
+		for (int colourId = 0; colourId < StockColours::nStockColours; ++colourId)
 		{
 			if (stockColourUsageCount_[colourId] < stockColourUsageCount_[lowestId]) lowestId = colourId;
 		}
 
-		renderableGroup = new RenderableGroup(name, (ColourDefinition::StockColour) lowestId);
+		renderableGroup = new RenderableGroup(name, (StockColours::StockColour) lowestId);
 		groups_.own(renderableGroup);
 		++stockColourUsageCount_[lowestId];
 
@@ -160,7 +160,7 @@ void RenderableGroupManager::setGroupColouring(const char* groupName, Renderable
 }
 
 // Set fixed colour for named group
-void RenderableGroupManager::setGroupFixedColour(const char* groupName, ColourDefinition::StockColour stockColour)
+void RenderableGroupManager::setGroupFixedColour(const char* groupName, StockColours::StockColour stockColour)
 {
 	RenderableGroup* g = group(groupName);
 	if (!g)

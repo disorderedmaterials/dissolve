@@ -26,6 +26,7 @@
 #include "gui/viewer/render/primitivelist.h"
 #include "gui/viewer/render/colourdefinition.h"
 #include "gui/viewer/render/linestyle.h"
+#include "gui/stockcolours.h"
 #include "math/transformer.h"
 #include "base/charstring.h"
 
@@ -173,7 +174,7 @@ class Renderable : public ListItem<Renderable>
 	// Set basic colour
 	void setColour(int r, int g, int b, int a = 255);
 	// Set basic colour
-	void setColour(ColourDefinition::StockColour stockColour);
+	void setColour(StockColours::StockColour stockColour);
 	// Return local colour definition for display
 	ColourDefinition& colour();
 	// Return local colour definition for display (const)

@@ -105,6 +105,6 @@ void CalculateRDFModuleWidget::setGraphDataTargets(CalculateRDFModule* module)
 	{
 		// Calculated RDF
 		Renderable* rdf = rdfGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//%s", module_->uniqueName(), cfg->niceName(), module_->resultName()), CharString("RDF//%s", cfg->niceName()), cfg->niceName());
-		rdf->setColour(ColourDefinition::BlackStockColour);
+		rdf->setColour(StockColours::BlackStockColour);
 	}
 }

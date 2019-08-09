@@ -112,18 +112,18 @@ void PairPotentialWidget::setDataTargets(PairPotential* pp)
 	if (pp)
 	{
 		Renderable* fullPotential = dataView_->createRenderable(Renderable::Data1DRenderable, pp->uFull().objectTag(), "Full");
-		fullPotential->setColour(ColourDefinition::BlackStockColour);
+		fullPotential->setColour(StockColours::BlackStockColour);
 
 		Renderable* originalPotential = dataView_->createRenderable(Renderable::Data1DRenderable, pp->uOriginal().objectTag(), "Original");
-		originalPotential->setColour(ColourDefinition::RedStockColour);
+		originalPotential->setColour(StockColours::RedStockColour);
 		originalPotential->lineStyle().set(1.0, LineStipple::HalfDashStipple);
 
 		Renderable* additionalPotential = dataView_->createRenderable(Renderable::Data1DRenderable, pp->uAdditional().objectTag(), "Additional");
-		additionalPotential->setColour(ColourDefinition::BlueStockColour);
+		additionalPotential->setColour(StockColours::BlueStockColour);
 		additionalPotential->lineStyle().set(1.0, LineStipple::DotStipple);
 
 		Renderable* dUFull = dataView_->createRenderable(Renderable::Data1DRenderable, pp->dUFull().objectTag(), "Force");
-		dUFull->setColour(ColourDefinition::GreenStockColour);
+		dUFull->setColour(StockColours::GreenStockColour);
 	}
 }
 

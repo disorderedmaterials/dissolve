@@ -89,7 +89,7 @@ NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget* parent, Module* module, Di
 	totalGRGraph_->view().setAutoFollowType(View::AllAutoFollow);
 	// -- Set group styling
 	totalGRGraph_->groupManager().setGroupColouring("Reference", RenderableGroup::FixedGroupColouring);
-	totalGRGraph_->groupManager().setGroupFixedColour("Reference", ColourDefinition::RedStockColour);
+	totalGRGraph_->groupManager().setGroupFixedColour("Reference", StockColours::RedStockColour);
 
 	// Set up total S(Q) graph
 	totalFQGraph_ = ui.TotalSQPlotWidget->dataViewer();
@@ -104,7 +104,7 @@ NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget* parent, Module* module, Di
 	totalFQGraph_->view().setAutoFollowType(View::AllAutoFollow);
 	// -- Set group styling
 	totalFQGraph_->groupManager().setGroupColouring("Reference", RenderableGroup::FixedGroupColouring);
-	totalFQGraph_->groupManager().setGroupFixedColour("Reference", ColourDefinition::RedStockColour);
+	totalFQGraph_->groupManager().setGroupFixedColour("Reference", StockColours::RedStockColour);
 
 	setGraphDataTargets(module_);
 
