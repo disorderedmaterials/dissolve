@@ -67,6 +67,8 @@ class ProcedureChartNodeBlock : public QWidget, public ChartBlock
 	Ui::ProcedureChartNodeWidget ui_;
 	// Whether the widget is currently refreshing
 	bool refreshing_;
+	// QRect representing drag handle
+	QRect dragHandleRect_;
 	// List of keyword widgets displayed
 	RefList<KeywordWidgetBase> keywordWidgets_;
 

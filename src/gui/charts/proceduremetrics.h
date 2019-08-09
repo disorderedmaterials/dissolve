@@ -48,12 +48,17 @@ class ProcedureChartMetrics
 	static QMargins blockMargins()
 	{
 		int innerGap = 4;
-		return QMargins(blockBorderWidth()+innerGap, blockBorderWidth()+innerGap, blockBorderWidth()+innerGap, blockBorderWidth()+innerGap);
+		return QMargins(blockBorderWidth()+innerGap+dragHandleWidth(), blockBorderWidth()+innerGap, blockBorderWidth()+innerGap, blockBorderWidth()+innerGap);
 	}
 	// Indent width
 	static int indentWidth()
 	{
 		return 16;
+	}
+	// Drag handle width
+	static int dragHandleWidth()
+	{
+		return 10;
 	}
 
 

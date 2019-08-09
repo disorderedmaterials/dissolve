@@ -37,20 +37,17 @@ ProcedureChartNodeBlock::ProcedureChartNodeBlock(QWidget* parent, ProcedureNode*
 	// Set necessary values on the widget itself
 	ProcedureChartMetrics metrics;
 	setContentsMargins(metrics.blockMargins());
+	dragHandleRect_ = QRect(0, 0, metrics.dragHandleWidth(), 1);
 
 	// Set the node pointer
 	node_ = node;
 
 	// Hide the keywords control frame to start with
-// 	ui_.KeywordsControlWidget->setVisible(false);
-
+	ui_.KeywordsControlWidget->setVisible(false);
 
 	// Set up our keywords widget
 	// TODO Have to remove dependency on DissolveWindow from KeywordsWidget
 // 	ui_.KeywordsWidget->setUp(dissolveWindow_, module_);
-
-	// Set the icon label
-// 	ui_.IconLabel->setPixmap(modulePixmap(module_));
 
 	// Update our controls
 	updateControls();
@@ -131,10 +128,15 @@ void ProcedureChartNodeBlock::paintEvent(QPaintEvent* event)
 	borderPath.lineTo(width()-metrics.blockBorderWidth(), metrics.blockBorderMidPoint());
 	borderPath.closeSubpath();
 
-	painter.setBrush(Qt::white);
-
 	// Ready - draw the border + fill!
+	painter.setBrush(Qt::white);
 	painter.drawPath(borderPath);
+
+	// Draw the drag handle, updating its height first
+	painter.setBrush(Qt::black);
+	borderPen.setWidth(1);
+	dragHandleRect_.setHeight(height()-2);
+	painter.drawRect(dragHandleRect_);
 }
 
 /*
@@ -172,7 +174,7 @@ int ProcedureChartNodeBlock::widgetHeight() const
 // Return whether the supplied point (on the parent chart) allows a drag operation to begin
 bool ProcedureChartNodeBlock::isDragPoint(QPoint point) const
 {
-	if (geometry().contains(point)) return true;
+	if (dragHandleRect_.translated(geometry().left(), geometry().top()).contains(point)) return true;
 
 	return false;
 }
@@ -190,6 +192,7 @@ void ProcedureChartNodeBlock::updateControls()
 
 	// Set information panel contents
 	ui_.TopLabel->setText(node_->name());
+	ui_.BottomLabel->setText(ProcedureNode::nodeTypes().keyword(node_->type()));
 
 	// Update keywords
 	ui_.KeywordsWidget->updateControls();
