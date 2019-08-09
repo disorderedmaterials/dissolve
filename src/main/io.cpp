@@ -493,15 +493,16 @@ bool Dissolve::loadRestart(const char* filename)
 		// First component of line indicates the destination for the module data
 		if (DissolveSys::sameString(parser.argc(0), "Local"))
  		{
+			// Let the user know what we are doing
+			Messenger::print("Reading item '%s' (%s) into Configuration '%s'...\n", parser.argc(2), parser.argc(3), parser.argc(1));
+
+			// Local processing data - find the parent Configuration...
 			cfg = findConfiguration(parser.argc(1));
 			if (!cfg)
 			{
 				Messenger::error("No Configuration named '%s' exists.\n", parser.argc(1));
 				error = true;
 			}
-
-			// Let the user know what we are doing
-			Messenger::print("Reading item '%s' (%s) into Configuration '%s'...\n", parser.argc(2), parser.argc(3), cfg->name());
 
 			// Realise the item in the list
 			GenericItem* item = cfg->moduleData().create(parser.argc(2), parser.argc(3));
