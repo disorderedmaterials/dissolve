@@ -44,7 +44,7 @@ ModuleKeywordsWidget::~ModuleKeywordsWidget()
  */
 
 // Create widget for specified keyword
-QWidget* ModuleKeywordsWidget::createKeywordWidget(DissolveWindow* dissolveWindow, RefList<KeywordWidgetBase>& keywordWidgets, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* uniqueName)
+QWidget* ModuleKeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& keywordWidgets, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* uniqueName)
 {
 	QWidget* widget = NULL;
 	KeywordWidgetBase* base = NULL;
@@ -94,7 +94,7 @@ QWidget* ModuleKeywordsWidget::createKeywordWidget(DissolveWindow* dissolveWindo
 	}
 	else if (keyword->type() == KeywordBase::FileAndFormatData)
 	{
-		FileAndFormatKeywordWidget* fileAndFormatWidget = new FileAndFormatKeywordWidget(NULL, keyword, dissolveWindow->constDissolve(), coreData, moduleData, uniqueName);
+		FileAndFormatKeywordWidget* fileAndFormatWidget = new FileAndFormatKeywordWidget(NULL, keyword, dissolveWindow_->constDissolve(), coreData, moduleData, uniqueName);
 		connect(fileAndFormatWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
 		widget = fileAndFormatWidget;
 		base = fileAndFormatWidget;
@@ -204,7 +204,7 @@ void ModuleKeywordsWidget::setUp(DissolveWindow* dissolveWindow, Module* module)
 		while (KeywordBase* keyword = groupKeywordIterator.iterate())
 		{
 			// Create / setup the keyword widget
-			QWidget* widget = createKeywordWidget(dissolveWindow_, keywordWidgets_, keyword, coreData, moduleData, module->uniqueName());
+			QWidget* widget = createKeywordWidget(keywordWidgets_, keyword, coreData, moduleData, module->uniqueName());
 
 			// Can now remove this keyword from our reference list
 			remainingKeywords.remove(keyword);
@@ -236,7 +236,7 @@ void ModuleKeywordsWidget::setUp(DissolveWindow* dissolveWindow, Module* module)
 		while (KeywordBase* keyword = remainingKeywordsIterator.iterate())
 		{
 			// Create / setup the keyword widget
-			QWidget* widget = createKeywordWidget(dissolveWindow_, keywordWidgets_, keyword, coreData, moduleData, module->uniqueName());
+			QWidget* widget = createKeywordWidget(keywordWidgets_, keyword, coreData, moduleData, module->uniqueName());
 
 			if (!widget)
 			{
