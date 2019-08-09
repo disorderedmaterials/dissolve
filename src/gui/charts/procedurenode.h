@@ -69,10 +69,14 @@ class ProcedureChartNodeBlock : public QWidget, public ChartBlock
 	bool refreshing_;
 	// QRect representing drag handle
 	QRect dragHandleRect_;
+	// Colour to use for drawing
+	QColor displayColour_;
 	// List of keyword widgets displayed
 	RefList<KeywordWidgetBase> keywordWidgets_;
 
 	public:
+	// Set display colour for widget
+	void setDisplayColour(QColor colour);
 	// Set whether the settings are expanded or not, and whether this is permanent
 	void setSettingsExpanded(bool expanded, bool permanent = false);
 	// Hide the remove button

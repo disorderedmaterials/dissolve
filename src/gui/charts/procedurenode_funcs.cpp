@@ -69,6 +69,16 @@ ProcedureNode* ProcedureChartNodeBlock::node() const
 	return node_;
 }
 
+/*
+ * Controls
+ */
+
+// Set display colour for widget
+void ProcedureChartNodeBlock::setDisplayColour(QColor colour)
+{
+	displayColour_ = colour;
+}
+
 // Set whether the settings are expanded or not, and whether this is permanent
 void ProcedureChartNodeBlock::setSettingsExpanded(bool expanded, bool permanent)
 {
@@ -117,9 +127,11 @@ void ProcedureChartNodeBlock::paintEvent(QPaintEvent* event)
 
 	QPainter painter(this);
 	
-	QPen borderPen;
-	borderPen.setWidth(metrics.blockBorderWidth());
-	painter.setPen(borderPen);
+	// Set up the basic pen
+	QPen pen;
+	pen.setWidth(metrics.blockBorderWidth());
+	pen.setColor(displayColour_);
+	painter.setPen(pen);
 
 	QPainterPath borderPath;
 	borderPath.moveTo(metrics.blockBorderMidPoint(), metrics.blockBorderMidPoint());
@@ -133,9 +145,10 @@ void ProcedureChartNodeBlock::paintEvent(QPaintEvent* event)
 	painter.drawPath(borderPath);
 
 	// Draw the drag handle, updating its height first
-	painter.setBrush(Qt::black);
-	borderPen.setWidth(1);
-	dragHandleRect_.setHeight(height()-2);
+	painter.setBrush(displayColour_);
+	pen.setWidth(1);
+	painter.setPen(pen);
+	dragHandleRect_.setHeight(height());
 	painter.drawRect(dragHandleRect_);
 }
 

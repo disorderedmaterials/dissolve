@@ -193,7 +193,7 @@ class ProcedureChart : public QWidget
 
 	private:
 	// Create / own chart block widgets for the specified sequence
-	void updateContentBlocks(const SequenceProcedureNode* sequenceNode, RefList<ProcedureChartNodeBlock>& oldSequenceWidgets);
+	void updateContentBlocks(const SequenceProcedureNode* sequenceNode, RefList<ProcedureChartNodeBlock>& oldSequenceWidgets, int& indentLevel);
 	// Find ProcedureChartNodeBlock displaying specified ProcedureNode anywhere in the heirarchy of nodes
 	ProcedureChartNodeBlock* nodeBlock(ProcedureNode* node);
 	// Find ProcedureChartNodeBlock displaying specified ProcedureNode in the supplied list

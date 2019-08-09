@@ -23,6 +23,7 @@
 #include "gui/charts/proceduremetrics.h"
 #include "gui/charts/procedurenode.h"
 #include "gui/widgets/mimestrings.h"
+#include "gui/stockcolours.h"
 #include "procedure/procedure.h"
 #include "procedure/nodes/sequence.h"
 #include <QApplication>
@@ -516,7 +517,7 @@ void ProcedureChart::setProcedure(Procedure* procedure)
  */
 
 // Update the content block widgets against the current target data for the supplied SequenceNode
-void ProcedureChart::updateContentBlocks(const SequenceProcedureNode* sequence, RefList<ProcedureChartNodeBlock>& oldSequenceWidgets)
+void ProcedureChart::updateContentBlocks(const SequenceProcedureNode* sequence, RefList<ProcedureChartNodeBlock>& oldSequenceWidgets, int& indentLevel)
 {
 	// Create a temporary list that will store our widgets to be 'reused'
 	RefList<ProcedureChartNodeBlock> newSequenceWidgets;
@@ -545,8 +546,18 @@ void ProcedureChart::updateContentBlocks(const SequenceProcedureNode* sequence, 
 			Messenger::printVerbose("Creating new ProcedureChartNodeBlock %p for node %p (%s).\n", block, node, node->name());
 		}
 
+		// Set the colour of the widget according to the current indent level
+		block->setDisplayColour(StockColours::stockColourByIndex(indentLevel));
+
 		// If the node has a branch, deal with it here
-		if (node->hasBranch()) updateContentBlocks(node->branch(), block->branchWidgets());
+		if (node->hasBranch())
+		{
+			++indentLevel;
+
+			updateContentBlocks(node->branch(), block->branchWidgets(), indentLevel);
+
+			--indentLevel;
+		}
 	}
 
 	// Any widgets remaining in oldSequenceWidgets are no longer used, and can thus be deleted
@@ -566,8 +577,11 @@ void ProcedureChart::updateContentBlocks()
 {
 	if (!procedure_) return;
 
+	// Set initial indent level
+	int indentLevel = 0;
+
 	// Start with the root sequence node of the Procedure - we deal recursively with the rest
-	updateContentBlocks(&procedure_->rootSequence(), rootSequenceNodeWidgets_);
+	updateContentBlocks(&procedure_->rootSequence(), rootSequenceNodeWidgets_, indentLevel);
 }
 
 // Find ProcedureChartNodeBlock displaying specified ProcedureNode anywhere in the heirarchy of nodes
