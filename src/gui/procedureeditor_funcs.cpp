@@ -35,6 +35,7 @@ ProcedureEditor::ProcedureEditor(QWidget* parent) : QWidget(parent)
 	procedure_ = NULL;
 
 	chart_ = new ProcedureChart();
+	chart_->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
 	ui_.ProcedureScrollArea->setWidget(chart_);
 
 	refreshing_ = false;
@@ -57,11 +58,6 @@ bool ProcedureEditor::setProcedure(Procedure* procedure)
 
 	updateControls();
 }
-
-// 	// Create a ModuleChart widget and set its source list
-// 	chartWidget_ = new ProcedureChart(dissolveWindow, *moduleProcedure_, localConfiguration_);
-// 	chartWidget_->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
-// 	ui_.ProcedureScrollArea->setWidget(chartWidget_);
 
 // 	// Add MimeTreeWidgetItems for each Module, adding them to a parent category item
 // 	moduleCategories_.clear();
