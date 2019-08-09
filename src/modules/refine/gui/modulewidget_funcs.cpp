@@ -161,12 +161,12 @@ void RefineModuleWidget::updateControls()
 	refreshing_ = false;
 }
 
-// Disable sensitive controls within widget, ready for main code to run
+// Disable sensitive controls within widget
 void RefineModuleWidget::disableSensitiveControls()
 {
 }
 
-// Enable sensitive controls within widget, ready for main code to run
+// Enable sensitive controls within widget
 void RefineModuleWidget::enableSensitiveControls()
 {
 }

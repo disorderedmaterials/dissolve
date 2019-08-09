@@ -578,14 +578,14 @@ void ModuleChart::updateControls()
 	layOutWidgets();
 }
 
-// Disable sensitive controls within widget, ready for main code to run
+// Disable sensitive controls within widget
 void ModuleChart::disableSensitiveControls()
 {
 	RefListIterator<ModuleChartModuleBlock> moduleBlockIterator(moduleWidgets_);
 	while (ModuleChartModuleBlock* block = moduleBlockIterator.iterate()) block->disableSensitiveControls();
 }
 
-// Enable sensitive controls within widget, ready for main code to run
+// Enable sensitive controls within widget
 void ModuleChart::enableSensitiveControls()
 {
 	RefListIterator<ModuleChartModuleBlock> moduleBlockIterator(moduleWidgets_);

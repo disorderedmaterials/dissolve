@@ -35,12 +35,12 @@ void TestModuleWidget::updateControls()
 {
 }
 
-// Disable sensitive controls within widget, ready for main code to run
+// Disable sensitive controls within widget
 void TestModuleWidget::disableSensitiveControls()
 {
 }
 
-// Enable sensitive controls within widget, ready for main code to run
+// Enable sensitive controls within widget
 void TestModuleWidget::enableSensitiveControls()
 {
 }

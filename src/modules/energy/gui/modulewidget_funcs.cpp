@@ -107,12 +107,12 @@ void EnergyModuleWidget::updateControls()
 	energyGraph_->postRedisplay();
 }
 
-// Disable sensitive controls within widget, ready for main code to run
+// Disable sensitive controls within widget
 void EnergyModuleWidget::disableSensitiveControls()
 {
 }
 
-// Enable sensitive controls within widget, ready for main code to run
+// Enable sensitive controls within widget
 void EnergyModuleWidget::enableSensitiveControls()
 {
 }

@@ -81,12 +81,12 @@ void BraggModuleWidget::updateControls()
 	totalsGraph_->postRedisplay();
 }
 
-// Disable sensitive controls within widget, ready for main code to run
+// Disable sensitive controls within widget
 void BraggModuleWidget::disableSensitiveControls()
 {
 }
 
-// Enable sensitive controls within widget, ready for main code to run
+// Enable sensitive controls within widget
 void BraggModuleWidget::enableSensitiveControls()
 {
 }

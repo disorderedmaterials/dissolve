@@ -131,12 +131,12 @@ void NeutronSQModuleWidget::updateControls()
 	totalFQGraph_->postRedisplay();
 }
 
-// Disable sensitive controls within widget, ready for main code to run
+// Disable sensitive controls within widget
 void NeutronSQModuleWidget::disableSensitiveControls()
 {
 }
 
-// Enable sensitive controls within widget, ready for main code to run
+// Enable sensitive controls within widget
 void NeutronSQModuleWidget::enableSensitiveControls()
 {
 }

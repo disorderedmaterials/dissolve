@@ -57,12 +57,12 @@ void CalculateDAngleModuleWidget::updateControls()
 	rdfGraph_->postRedisplay();
 }
 
-// Disable sensitive controls within widget, ready for main code to run
+// Disable sensitive controls within widget
 void CalculateDAngleModuleWidget::disableSensitiveControls()
 {
 }
 
-// Enable sensitive controls within widget, ready for main code to run
+// Enable sensitive controls within widget
 void CalculateDAngleModuleWidget::enableSensitiveControls()
 {
 }

@@ -73,14 +73,14 @@ void ChartBase::updateControls()
 	layOutWidgets();
 }
 
-// Disable sensitive controls within widget, ready for main code to run
+// Disable sensitive controls within widget
 void ChartBase::disableSensitiveControls()
 {
 	RefListIterator<ChartBlock> chartBlockIterator(chartBlocks_);
 	while (ChartBlock* block = chartBlockIterator.iterate()) block->disableSensitiveControls();
 }
 
-// Enable sensitive controls within widget, ready for main code to run
+// Enable sensitive controls within widget
 void ChartBase::enableSensitiveControls()
 {
 	RefListIterator<ChartBlock> chartBlockIterator(chartBlocks_);

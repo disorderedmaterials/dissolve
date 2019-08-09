@@ -70,9 +70,9 @@ class ProcedureEditor : public QWidget
 	public:
 	// Update controls
 	void updateControls();
-	// Disable sensitive controls within widget, ready for main code to run
+	// Disable sensitive controls within widget
 	void disableSensitiveControls();
-	// Enable sensitive controls within widget, ready for main code to run
+	// Enable sensitive controls within widget
 	void enableSensitiveControls();
 
 

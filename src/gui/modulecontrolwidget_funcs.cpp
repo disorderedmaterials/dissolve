@@ -112,7 +112,7 @@ void ModuleControlWidget::updateControls()
 	refreshing_ = false;
 }
 
-// Disable sensitive controls within widget, ready for main code to run
+// Disable sensitive controls within widget
 void ModuleControlWidget::disableSensitiveControls()
 {
 	if (controlsWidget_) controlsWidget_->disableSensitiveControls();
@@ -120,7 +120,7 @@ void ModuleControlWidget::disableSensitiveControls()
 	if (moduleWidget_) moduleWidget_->disableSensitiveControls();
 }
 
-// Enable sensitive controls within widget, ready for main code to run
+// Enable sensitive controls within widget
 void ModuleControlWidget::enableSensitiveControls()
 {
 	if (controlsWidget_) controlsWidget_->enableSensitiveControls();

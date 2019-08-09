@@ -39,12 +39,12 @@ void AnalyseModuleWidget::updateControls()
 {
 }
 
-// Disable sensitive controls within widget, ready for main code to run
+// Disable sensitive controls within widget
 void AnalyseModuleWidget::disableSensitiveControls()
 {
 }
 
-// Enable sensitive controls within widget, ready for main code to run
+// Enable sensitive controls within widget
 void AnalyseModuleWidget::enableSensitiveControls()
 {
 }
