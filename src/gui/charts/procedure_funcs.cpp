@@ -727,7 +727,7 @@ void ProcedureChart::calculateGeometries(RefList<ProcedureChartNodeBlock>& nodeW
 		if (blockWidth > requiredSize.width()) requiredSize.setWidth(blockWidth);
 
 		// Increase the required height
-		requiredSize.setHeight(requiredSize.height() + block->widgetHeight());
+		requiredSize.setHeight(requiredSize.height() + block->widgetHeight() + metrics_.blockVerticalSpacing());
 
 		// If this block has sub-blocks (i.e. the node has a branch), recurse in to it
 		if (block->branchWidgets().nItems() > 0)
