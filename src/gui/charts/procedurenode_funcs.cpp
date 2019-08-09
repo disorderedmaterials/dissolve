@@ -169,11 +169,12 @@ int ProcedureChartNodeBlock::widgetHeight() const
 	return sizeHint().height();
 }
 
-// Return whether the supplied point (in local widget coordinates) allows a drag operation to begin
+// Return whether the supplied point (on the parent chart) allows a drag operation to begin
 bool ProcedureChartNodeBlock::isDragPoint(QPoint point) const
 {
-	// -- Use something like: if (geometry_.contains(widget()->mapFromGlobal(globalPos))) ...
-	return true;
+	if (geometry().contains(point)) return true;
+
+	return false;
 }
 
 /*

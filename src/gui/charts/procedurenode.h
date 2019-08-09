@@ -111,7 +111,7 @@ class ProcedureChartNodeBlock : public QWidget, public ChartBlock
 	int widgetWidth() const;
 	// Return height of underlying widget
 	int widgetHeight() const;
-	// Return whether the supplied point (in local widget coordinates) allows a drag operation to begin
+	// Return whether the supplied point (on the parent chart) allows a drag operation to begin
 	bool isDragPoint(QPoint point) const;
 
 

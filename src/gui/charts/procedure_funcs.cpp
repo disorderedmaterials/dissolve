@@ -67,11 +67,11 @@ ProcedureChart::~ProcedureChart()
  */
 
 // Return if a ChartBlock can be dragged from the current position
-ChartBlock* ProcedureChart::dragBlockAt(QPoint globalPos)
+ChartBlock* ProcedureChart::dragBlockAt(QPoint point)
 {
 	// Check through all the defined ChartBlocks and see if we grab one
 	RefListIterator<ChartBlock> chartBlockIterator(chartBlocks_);
-	while (ChartBlock* block = chartBlockIterator.iterate()) if (block->isDragPoint(globalPos)) return block;
+	while (ChartBlock* block = chartBlockIterator.iterate()) if (block->isDragPoint(point)) return block;
 
 	return NULL;
 }
@@ -258,7 +258,7 @@ void ProcedureChart::mouseMoveEvent(QMouseEvent* event)
 	if ((event->pos() - mouseDownPosition_).manhattanLength() < QApplication::startDragDistance()) return;
 
 	// If a ChartBlock header was clicked on at the original position, begin the drag
-	draggedBlock_ = dragBlockAt(mapToGlobal(mouseDownPosition_));
+	draggedBlock_ = dragBlockAt(mouseDownPosition_);
 	if (!draggedBlock_) return;
 
 	// Generate mime data for the event
@@ -309,8 +309,8 @@ void ProcedureChart::mouseDoubleClickEvent(QMouseEvent* event)
 	if (!(event->buttons() & Qt::LeftButton)) return;
 
 	// Was a ChartBlock's header was under the mouse?
-	ChartBlock* moduleBlock = dragBlockAt(mapToGlobal(event->pos()));
-	if (!moduleBlock) return;
+	ChartBlock* chartBlock = dragBlockAt(event->pos());
+	if (!chartBlock) return;
 
 	// Attempt to open the Module in a ModuleTab
 // 	dissolveWindow_->addModuleTab(moduleBlock->module());
