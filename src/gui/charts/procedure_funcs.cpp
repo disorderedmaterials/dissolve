@@ -521,7 +521,6 @@ void ProcedureChart::updateContentBlocks(const SequenceProcedureNode* sequence, 
 	// Create a temporary list that will store our widgets to be 'reused'
 	RefList<ProcedureChartNodeBlock> newSequenceWidgets;
 
-	printf("DOING SEQUENCE %p\n", sequence);
 	// Iterate through the nodes in this sequence, searching for their widgets in the oldWidgetsList
 	ListIterator<ProcedureNode> nodeIterator(sequence->sequence());
 	while (ProcedureNode* node = nodeIterator.iterate())
@@ -533,6 +532,7 @@ void ProcedureChart::updateContentBlocks(const SequenceProcedureNode* sequence, 
 			// Widget already exists, so remove the reference from nodeWidgets_ and add it to the new list
 			newSequenceWidgets.append(block);
 			oldSequenceWidgets.remove(block);
+			Messenger::printVerbose("Using existing ProcedureChartNodeBlock %p for node %p (%s).\n", block, node, node->name());
 		}
 		else
 		{
@@ -542,6 +542,7 @@ void ProcedureChart::updateContentBlocks(const SequenceProcedureNode* sequence, 
 // 			connect(mcmBlock, SIGNAL(remove(QString)), this, SLOT(removeModule(QString)));
 			newSequenceWidgets.append(block);
 			chartBlocks_.append(block);
+			Messenger::printVerbose("Creating new ProcedureChartNodeBlock %p for node %p (%s).\n", block, node, node->name());
 		}
 
 		// If the node has a branch, deal with it here
@@ -585,7 +586,7 @@ ProcedureChartNodeBlock* ProcedureChart::nodeBlock(ProcedureNode* node, const Re
 
 		// Search the branch list of this node
 		ProcedureChartNodeBlock* branchBlock = nodeBlock(node, block->branchWidgets());
-		if (block) return block;
+		if (branchBlock) return branchBlock;
 	}
 
 	return NULL;
