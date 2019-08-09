@@ -758,6 +758,10 @@ QSize ProcedureChart::calculateNewWidgetGeometry(QSize currentSize)
 	// Begin by calling the layout function for the root sequence - we recurse from there
 	calculateGeometries(rootSequenceNodeWidgets_, requiredSize, indentLevel);
 
+	// Set the widths of all widgets so their right edges are aligned
+	RefListIterator<ChartBlock> chartBlockIterator(chartBlocks_);
+	while (ChartBlock* block = chartBlockIterator.iterate()) block->setNewRightEdge(requiredSize.width());
+
 	return requiredSize;
 }
 

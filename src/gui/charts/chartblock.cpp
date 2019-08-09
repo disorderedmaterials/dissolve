@@ -43,6 +43,12 @@ void ChartBlock::setNewPosition(int left, int top)
 	newGeometry_.setTop(top);
 }
 
+// Set right-hand side position of widget, adjusting its width
+void ChartBlock::setNewRightEdge(int right)
+{
+	newGeometry_.setWidth(right - newGeometry_.left());
+}
+
 // Set underlying widget geometry
 void ChartBlock::setNewSize(int width, int height)
 {

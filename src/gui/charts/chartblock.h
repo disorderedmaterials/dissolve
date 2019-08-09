@@ -62,6 +62,8 @@ class ChartBlock : public ListItem<ChartBlock>
 	virtual int widgetHeight() const = 0;
 	// Set underlying widget position
 	void setNewPosition(int left, int top);
+	// Set right-hand side position of widget, adjusting its width
+	void setNewRightEdge(int right);
 	// Set underlying widget geometry
 	void setNewSize(int width, int height);
 	// Commit new geometry for widget
