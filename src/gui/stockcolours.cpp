@@ -67,3 +67,8 @@ QColor StockColours::stockColour(StockColours::StockColour colour)
 	return StockQColors[colour];
 }
 
+// Return stock colour (as QColor) given (wrapped) index supplied
+QColor StockColours::stockColourByIndex(int index)
+{
+	return StockQColors[index%stockColours().nOptions()];
+}

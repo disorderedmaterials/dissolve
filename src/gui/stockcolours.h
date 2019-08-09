@@ -38,6 +38,8 @@ class StockColours
 	static EnumOptions<StockColours::StockColour> stockColours();
 	// Return stock colour (as QColor)
 	static QColor stockColour(StockColour colour);
+	// Return stock colour (as QColor) given (wrapped) index supplied
+	static QColor stockColourByIndex(int index);
 };
 
 #endif
