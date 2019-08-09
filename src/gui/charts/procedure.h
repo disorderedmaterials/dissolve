@@ -96,7 +96,7 @@ class ProcedureChart : public ChartBase
 	ProcedureChartMetrics metrics_;
 
 	private:
-	// // Calculate geometries for the widgets in the supplied sequence list
+	// Calculate geometries for the widgets in the supplied sequence list
 	void calculateGeometries(RefList<ProcedureChartNodeBlock>& nodeWidgets, QSize& requiredSize, int& indentLevel);
 	// Calculate new widget geometry according to the layout requirements, returning the entire area required
 	QSize calculateNewWidgetGeometry(QSize currentSize);
