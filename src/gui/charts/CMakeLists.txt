@@ -3,7 +3,7 @@
 
 # Meta-Objects
 SET(charts_MOC_HDRS
-  procedure.hui
+  chart.hui
 )
 QT5_WRAP_CPP(charts_MOC_SRCS ${charts_MOC_HDRS})
 
@@ -15,13 +15,15 @@ QT5_WRAP_UI(charts_UIS_H ${charts_UIS})
 
 # Source files (not Qt UI files or custom .h [uih])
 SET(charts_SRCS
+  chart_funcs.cpp
   chartblock.cpp
   charthotspot.cpp
-  procedure_funcs.cpp
+  procedure.cpp
   procedurenode_funcs.cpp
 
   chartblock.h
   charthotspot.h
+  procedure.h
   proceduremetrics.h
   procedurenode.h
 )

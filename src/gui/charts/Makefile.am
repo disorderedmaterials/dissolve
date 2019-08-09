@@ -19,15 +19,15 @@ SUFFIXES: .ui .hui .qrc
 	rm $*.cpp
 
 clean-local:
-	-rm -f ui_* *.o moc_*.cpp procedure.cpp
+	-rm -f ui_* *.o moc_*.cpp chart.cpp
 
 # UI Files
 libcharts_la_SOURCES = procedurenode.ui
 
 # Implementations
-libcharts_la_SOURCES += chartblock.cpp charthotspot.cpp
-libcharts_la_SOURCES += procedure.hui procedure_funcs.cpp procedurenode_funcs.cpp
+libcharts_la_SOURCES += chart.hui chart_funcs.cpp chartblock.cpp charthotspot.cpp
+libcharts_la_SOURCES += procedure.cpp procedurenode_funcs.cpp
 
-noinst_HEADERS = chartblock.h charthotspot.h proceduremetrics.h procedurenode.h
+noinst_HEADERS = chartblock.h charthotspot.h procedure.h proceduremetrics.h procedurenode.h
 
 AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@

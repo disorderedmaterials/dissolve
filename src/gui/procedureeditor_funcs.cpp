@@ -21,7 +21,7 @@
 
 #include "gui/procedureeditor.h"
 #include "gui/gui.h"
-#include "gui/charts/procedure.hui"
+#include "gui/charts/procedure.h"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "base/lineparser.h"

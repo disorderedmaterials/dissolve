@@ -1,6 +1,6 @@
 /*
-	*** Procedure Chart
-	*** src/gui/charts/procedure.hui
+	*** Chart Base Class
+	*** src/gui/charts/chart.hui
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,64 +19,51 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CHARTS_PROCEDURE_H
-#define DISSOLVE_CHARTS_PROCEDURE_H
+#ifndef DISSOLVE_CHARTS_CHARTBASE_H
+#define DISSOLVE_CHARTS_CHARTBASE_H
 
 #include "gui/charts/chartblock.h"
 #include "gui/charts/charthotspot.h"
-#include "gui/charts/proceduremetrics.h"
-#include "templates/array.h"
 #include "templates/list.h"
-#include "templates/refdatalist.h"
 #include "templates/reflist.h"
 #include <QWidget>
 
 // Forward Declarations
-class Configuration;
-class DissolveWindow;
-class FlowLayout;
 class LineParser;
-class Procedure;
-class ProcedureChartNodeBlock;
-class ProcedureList;
-class ProcedureNode;
 class QDragEnterEvent;
 class QDragLeaveEvent;
 class QDropEvent;
 class QMouseEvent;
-class SequenceProcedureNode;
 
-// Procedure Chart - Manages display of a sequence of nodes in a Procedure
-class ProcedureChart : public QWidget
+// Chart - Display blocks according to some layout (determined by the derived class)
+class ChartBase : public QWidget
 {
 	Q_OBJECT
 
 	public:
 	// Constructor / Destructor
-	ProcedureChart(QWidget* parent = NULL);
-	~ProcedureChart();
+	ChartBase(QWidget* parent = NULL);
+	~ChartBase();
 
 
 	/*
 	 * Chart Blocks
 	 */
-	private:
+	protected:
 	// RefList of ChartBlocks present in the widget
 	RefList<ChartBlock> chartBlocks_;
-// 	// RefList of blocks to lay out
-// 	RefList<ChartBlock> displayBlocks_;
 
 	protected:
 	// Update the content block widgets against the current target data
-// 	virtual void updateContentBlocks() = 0;
-	// Return if a ChartBlock can be dragged from the supplied global position
-	ChartBlock* dragBlockAt(QPoint globalPos);
+	virtual void updateContentBlocks() = 0;
+	// Return if a ChartBlock can be dragged from the supplied position
+	ChartBlock* dragBlockAt(QPoint point);
 
 
 	/*
 	 * Update
 	 */
-	private:
+	protected:
 	// Whether widget is currently refreshing
 	bool refreshing_;
 
@@ -93,8 +80,7 @@ class ProcedureChart : public QWidget
 	 * QWidget Reimplementations
 	 */
 	protected:
-	// Paint event
-	void paintEvent(QPaintEvent* event);
+
 	// Geometry changed
 	void resizeEvent(QResizeEvent* event);
 	// Size hint
@@ -115,12 +101,14 @@ class ProcedureChart : public QWidget
 	void dragMoveEvent(QDragMoveEvent* event);
 	// Drag leave event
 	void dragLeaveEvent(QDragLeaveEvent* event);
+	// Drop event
+	void dropEvent(QDropEvent* event);
 
 
 	/*
 	 * Drag / Drop
 	 */
-	private:
+	protected:
 	// Position of last mouse click
 	QPoint mouseDownPosition_;
 	// Data of object dragged from external source
@@ -136,7 +124,7 @@ class ProcedureChart : public QWidget
 
 	private:
 	// Return hotspot under specified point
-	ChartHotSpot* hotSpotAt(QPoint pos);
+	ChartHotSpot* hotSpotAt(QPoint point);
 	// Reset after drop
 	void resetAfterDrop(bool animateWidgets = true);
 
@@ -145,10 +133,16 @@ class ProcedureChart : public QWidget
 	 * Widget Layout
 	 */
 	private:
+	// Size hint for current number of columns / rows
+	QSize sizeHint_;
+	// Minimum size hint (for single column)
+	QSize minimumSizeHint_;
+
+	private:
 	// Lay out widgets
 	void layOutWidgets(bool animate = false);
 	// Calculate new widget geometry according to the layout requirements, returning the entire area required
-// 	virtual QSize calculateNewWidgetGeometry(QSize currentSize) = 0;
+	virtual QSize calculateNewWidgetGeometry(QSize currentSize) = 0;
 
 	protected:
 	// Whether to resize chart to accommodate widgets
@@ -164,70 +158,9 @@ class ProcedureChart : public QWidget
 	 */
 	public:
 	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser);
+	virtual bool writeState(LineParser& parser) = 0;
 	// Read widget state through specified LineParser
-	bool readState(LineParser& parser);
-
-	// ================================
-	// ====== SPECIFICS / REIMPLEMENTATIONS BEGIN HERE
-	// ================================
-
-	/*
-	 * Target Procedure
-	 */
-	private:
-	// Target Procedure for display
-	Procedure* procedure_;
-
-	public:
-	// Target Procedure for display
-	void setProcedure(Procedure* procedure);
-
-
-	/*
-	 * Chart Blocks
-	 */
-	private:
-	// Widgets for our root sequence Procedure nodes
-	RefList<ProcedureChartNodeBlock> rootSequenceNodeWidgets_;
-
-	private:
-	// Create / own chart block widgets for the specified sequence
-	void updateContentBlocks(const SequenceProcedureNode* sequenceNode, RefList<ProcedureChartNodeBlock>& oldSequenceWidgets, int& indentLevel);
-	// Find ProcedureChartNodeBlock displaying specified ProcedureNode anywhere in the heirarchy of nodes
-	ProcedureChartNodeBlock* nodeBlock(ProcedureNode* node);
-	// Find ProcedureChartNodeBlock displaying specified ProcedureNode in the supplied list
-	ProcedureChartNodeBlock* nodeBlock(ProcedureNode* node, const RefList<ProcedureChartNodeBlock>& list);
-
-	protected:
-	// Update the content block widgets against the current target data
-	void updateContentBlocks();
-
-
-	/*
-	 * Drag / Drop
-	 */
-	protected:
-	// Object dropped event
-	void dropEvent(QDropEvent* event);
-
-
-	/*
-	 * Widget Layout
-	 */
-	private:
-	// Chart metrics
-	ProcedureChartMetrics metrics_;
-	// Size hint for current number of columns / rows
-	QSize sizeHint_;
-	// Minimum size hint (for single column)
-	QSize minimumSizeHint_;
-
-	private:
-	// // Calculate geometries for the widgets in the supplied sequence list
-	void calculateGeometries(RefList<ProcedureChartNodeBlock>& nodeWidgets, QSize& requiredSize, int& indentLevel);
-	// Calculate new widget geometry according to the layout requirements, returning the entire area required
-	QSize calculateNewWidgetGeometry(QSize currentSize);
+	virtual bool readState(LineParser& parser) = 0;
 };
 
 #endif
