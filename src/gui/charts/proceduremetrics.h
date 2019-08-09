@@ -42,7 +42,7 @@ class ProcedureChartMetrics
 	// Border mid-point
 	static double blockBorderMidPoint()
 	{
-		return blockBorderWidth() / 2;
+		return (blockBorderWidth() / 2.0);
 	}
 	// Widget margins (to contain border line)
 	static QMargins blockMargins()
@@ -50,10 +50,15 @@ class ProcedureChartMetrics
 		int innerGap = 4;
 		return QMargins(blockBorderWidth()+innerGap+dragHandleWidth(), blockBorderWidth()+innerGap, blockBorderWidth()+innerGap, blockBorderWidth()+innerGap);
 	}
+	// Vertical spacing between blocks
+	static int blockVerticalSpacing()
+	{
+		return 2;
+	}
 	// Indent width
 	static int indentWidth()
 	{
-		return 16;
+		return 30;
 	}
 	// Drag handle width
 	static int dragHandleWidth()
