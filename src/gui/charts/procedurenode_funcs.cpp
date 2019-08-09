@@ -135,8 +135,8 @@ void ProcedureChartNodeBlock::paintEvent(QPaintEvent* event)
 
 	QPainterPath borderPath;
 	borderPath.moveTo(metrics.blockBorderMidPoint(), metrics.blockBorderMidPoint());
-	borderPath.lineTo(metrics.blockBorderMidPoint(), height() - metrics.blockBorderWidth());
-	borderPath.lineTo(width()-metrics.blockBorderWidth(), height() - metrics.blockBorderWidth());
+	borderPath.lineTo(metrics.blockBorderMidPoint(), height() - metrics.blockBorderMidPoint());
+	borderPath.lineTo(width()-metrics.blockBorderWidth(), height() - metrics.blockBorderMidPoint());
 	borderPath.lineTo(width()-metrics.blockBorderWidth(), metrics.blockBorderMidPoint());
 	borderPath.closeSubpath();
 

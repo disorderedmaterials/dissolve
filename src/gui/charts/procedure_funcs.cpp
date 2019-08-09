@@ -753,7 +753,7 @@ QSize ProcedureChart::calculateNewWidgetGeometry(QSize currentSize)
 
 	// Set initial indent level and widget position
 	int indentLevel = 0;
-	QSize requiredSize(0, metrics_.blockBorderMidPoint());
+	QSize requiredSize(0,0);
 
 	// Begin by calling the layout function for the root sequence - we recurse from there
 	calculateGeometries(rootSequenceNodeWidgets_, requiredSize, indentLevel);
