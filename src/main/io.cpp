@@ -607,7 +607,7 @@ bool Dissolve::saveRestart(const char* filename)
 			// If it is not flagged to be saved in the restart file, skip it
 			if (!(item->flags()&GenericItem::InRestartFileFlag)) continue;
 
-			parser.writeLineF("Local  %s  %s  %s  %i\n", cfg->name(), item->name(), item->itemClassName(), item->version());
+			if (!parser.writeLineF("Local  %s  %s  %s  %i\n", cfg->name(), item->name(), item->itemClassName(), item->version())) return false;
 			if (!item->write(parser)) return false;
 		}
 	}
