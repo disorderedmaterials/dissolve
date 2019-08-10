@@ -23,9 +23,8 @@
 #include "base/sysfunc.h"
 
 // Constructor
-KeywordList::KeywordList(const Module* moduleParent)
+KeywordList::KeywordList()
 {
-	moduleParent_ = moduleParent;
 }
 
 // Destructor

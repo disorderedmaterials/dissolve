@@ -35,12 +35,8 @@ class KeywordList
 {
 	public:
 	// Constructor / Destructor
-	KeywordList(const Module* moduleParent);
+	KeywordList();
 	~KeywordList();
-
-	private:
-	// Module parent
-	const Module* moduleParent_;
 
 
 	/*

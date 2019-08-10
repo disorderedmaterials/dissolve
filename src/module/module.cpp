@@ -26,7 +26,7 @@
 #include "base/sysfunc.h"
 
 // Constructor
-Module::Module() : keywords_(this)
+Module::Module()
 {
 	frequency_ = 1;
 	enabled_ = true;
