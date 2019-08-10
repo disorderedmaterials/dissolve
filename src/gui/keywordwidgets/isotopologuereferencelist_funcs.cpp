@@ -305,7 +305,7 @@ void IsotopologueReferenceListKeywordWidget::updateTableRow(int row, Isotopologu
 	item->setText(QString::number(isoRef->weight()));
 }
 
-// Update value displayed in widget, using specified source if necessary
+// Update value displayed in widget
 void IsotopologueReferenceListKeywordWidget::updateValue()
 {
 	updateWidgetValues(coreData_);

@@ -96,19 +96,12 @@ void Vec3IntegerKeywordWidget::on_Spin3_valueChanged(int value)
  * Update
  */
 
-// Update value displayed in widget, using specified source if necessary
+// Update value displayed in widget
 void Vec3IntegerKeywordWidget::updateValue()
 {
 	refreshing_ = true;
 
-	// Check to see if the associated Keyword may have been stored/updated in the specified moduleData
-	Vec3<int> v;
-	if ((keyword_->genericItemFlags()&GenericItem::InRestartFileFlag) && moduleData_.contains(keyword_->keyword(), modulePrefix_))
-	{
-		// Retrieve the item from the list
-		v = GenericListHelper< Vec3<int> >::value(moduleData_, keyword_->keyword(), modulePrefix_);
-	}
-	else v = keyword_->asVec3Int();
+	Vec3<int> v = keyword_->asVec3Int();
 
 	ui_.Spin1->setValue(v.x);
 	ui_.Spin2->setValue(v.y);

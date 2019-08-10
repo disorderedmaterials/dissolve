@@ -96,19 +96,12 @@ void Vec3DoubleKeywordWidget::on_Spin3_valueChanged(double value)
  * Update
  */
 
-// Update value displayed in widget, using specified source if necessary
+// Update value displayed in widget
 void Vec3DoubleKeywordWidget::updateValue()
 {
 	refreshing_ = true;
 
-	// Check to see if the associated Keyword may have been stored/updated in the specified moduleData
-	Vec3<double> v;
-	if ((keyword_->genericItemFlags()&GenericItem::InRestartFileFlag) && moduleData_.contains(keyword_->keyword(), modulePrefix_))
-	{
-		// Retrieve the item from the list
-		v = GenericListHelper< Vec3<double> >::value(moduleData_, keyword_->keyword(), modulePrefix_);
-	}
-	else v = keyword_->asVec3Double();
+	Vec3<double> v = keyword_->asVec3Double();
 
 	ui_.Spin1->setValue(v.x);
 	ui_.Spin2->setValue(v.y);

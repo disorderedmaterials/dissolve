@@ -68,7 +68,7 @@ class Vec3DoubleKeywordWidget : public QWidget, public KeywordWidgetBase
 	 * Update
 	 */
 	public:
-	// Update value displayed in widget, using specified source if necessary
+	// Update value displayed in widget
 	void updateValue();
 };
 

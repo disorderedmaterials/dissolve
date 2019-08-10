@@ -69,16 +69,10 @@ void WindowFunctionKeywordWidget::functionComboChanged(const QString& text)
  * Update
  */
 
-// Update value displayed in widget, using specified source if necessary
+// Update value displayed in widget
 void WindowFunctionKeywordWidget::updateValue()
 {
-	// Check to see if the associated Keyword may have been stored/updated in the specified moduleData
-	if ((keyword_->genericItemFlags()&GenericItem::InRestartFileFlag) && moduleData_.contains(keyword_->keyword(), modulePrefix_))
-	{
-		// Retrieve the item from the list and set our widgets
-		setWidgets(GenericListHelper<WindowFunction>::value(moduleData_, keyword_->keyword(), modulePrefix_));
-	}
-	else setWidgets(keyword_->data());
+	setWidgets(keyword_->data());
 }
 
 // Set widgets from supplied object

@@ -144,7 +144,7 @@ void FileAndFormatKeywordWidget::checkFileValidity()
 	}
 }
 
-// Update value displayed in widget, using specified source if necessary
+// Update value displayed in widget
 void FileAndFormatKeywordWidget::updateValue()
 {
 	refreshing_ = true;

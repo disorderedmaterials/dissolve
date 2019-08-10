@@ -86,7 +86,7 @@ void SpeciesReferenceListKeywordWidget::itemChanged(QListWidgetItem* item)
  * Update
  */
 
-// Update value displayed in widget, using specified source if necessary
+// Update value displayed in widget
 void SpeciesReferenceListKeywordWidget::updateValue()
 {
 	refreshing_ = true;

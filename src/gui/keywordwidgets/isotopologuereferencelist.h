@@ -75,7 +75,7 @@ class IsotopologueReferenceListKeywordWidget : public KeywordDropDown, public Ke
 	void updateTableRow(int row, IsotopologueReference* isoRef, bool createItems);
 
 	public:
-	// Update value displayed in widget, using specified source if necessary
+	// Update value displayed in widget
 	void updateValue();
 	// Update widget values data based on keyword data
 	void updateWidgetValues(const CoreData& coreData);

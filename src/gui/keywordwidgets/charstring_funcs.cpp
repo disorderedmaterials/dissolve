@@ -55,19 +55,12 @@ void CharStringKeywordWidget::myTextChanged(const QString& text)
  * Update
  */
 
-// Update value displayed in widget, using specified source if necessary
+// Update value displayed in widget
 void CharStringKeywordWidget::updateValue()
 {
 	refreshing_ = true;
 
-	// Check to see if the associated Keyword may have been stored/updated in the specified moduleData
-	CharString newValue;
-	if ((keyword_->genericItemFlags()&GenericItem::InRestartFileFlag) && moduleData_.contains(keyword_->keyword(), modulePrefix_))
-	{
-		// Retrieve the item from the list
-		newValue = GenericListHelper<double>::value(moduleData_, keyword_->keyword(), modulePrefix_);
-	}
-	else newValue = keyword_->asString();
+	setText(keyword_->asString());
 
 	refreshing_ = false;
 }

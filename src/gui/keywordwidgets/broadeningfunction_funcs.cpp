@@ -91,20 +91,9 @@ void BroadeningFunctionKeywordWidget::parameterSpin_valueChanged(double value)
  * Update
  */
 
-// Update value displayed in widget, using specified source if necessary
+// Update value displayed in widget
 void BroadeningFunctionKeywordWidget::updateValue()
 {
-	refreshing_ = true;
-
-	// Check to see if the associated Keyword may have been stored/updated in the specified moduleData
-	if ((keyword_->genericItemFlags()&GenericItem::InRestartFileFlag) && moduleData_.contains(keyword_->keyword(), modulePrefix_))
-	{
-		// Retrieve the item from the list and set our widgets
-		keyword_->data() = GenericListHelper<BroadeningFunction>::value(moduleData_, keyword_->keyword(), modulePrefix_);
-	}
-
-	refreshing_ = false;
-
 	updateWidgetValues(coreData_);
 }
 

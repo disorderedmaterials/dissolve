@@ -71,7 +71,7 @@ void EnumOptionsKeywordWidget::myCurrentIndexChanged(int index)
  * Update
  */
 
-// Update value displayed in widget, using specified source if necessary
+// Update value displayed in widget
 void EnumOptionsKeywordWidget::updateValue()
 {
 	refreshing_ = true;

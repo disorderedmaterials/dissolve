@@ -63,7 +63,7 @@ class CharStringKeywordWidget : public QLineEdit, public KeywordWidgetBase
 	 * Update
 	 */
 	public:
-	// Update value displayed in widget, using specified source if necessary
+	// Update value displayed in widget
 	void updateValue();
 };
 

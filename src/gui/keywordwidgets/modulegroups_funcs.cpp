@@ -101,7 +101,7 @@ void ModuleGroupsKeywordWidget::itemChanged(QTableWidgetItem* item)
  * Update
  */
 
-// Update value displayed in widget, using specified source if necessary
+// Update value displayed in widget
 void ModuleGroupsKeywordWidget::updateValue()
 {
 	refreshing_ = true;
