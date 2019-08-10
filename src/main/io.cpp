@@ -532,6 +532,7 @@ bool Dissolve::loadRestart(const char* filename)
 			{
 				Messenger::error("No Configuration named '%s' exists.\n", parser.argc(1));
 				error = true;
+				break;
 			}
 
 			// Realise the item in the list
@@ -542,6 +543,7 @@ bool Dissolve::loadRestart(const char* filename)
 			{
 				Messenger::error("Failed to read item data '%s' from restart file.\n", item->name());
 				error = true;
+				break;
 			}
 		}
 		else if (DissolveSys::sameString(parser.argc(0), "Processing"))
@@ -557,6 +559,7 @@ bool Dissolve::loadRestart(const char* filename)
 			{
 				Messenger::error("Failed to read item data '%s' from restart file.\n", item->name());
 				error = true;
+				break;
 			}
 		}
 		else if (DissolveSys::sameString(parser.argc(0), "Configuration"))
@@ -570,6 +573,7 @@ bool Dissolve::loadRestart(const char* filename)
 			{
 				Messenger::error("No Configuration named '%s' exists.\n", parser.argc(1));
 				error = true;
+				break;
 			}
 			else if (!readConfiguration(cfg, parser)) error = true;
 		}
