@@ -56,7 +56,7 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	const double maxForce = keywords_.asDouble("CapForcesAt") * 100.0;	// To convert from kJ/mol to 10 J/mol
 	double cutoffDistance = keywords_.asDouble("CutoffDistance");
 	if (cutoffDistance < 0.0) cutoffDistance = dissolve.pairPotentialRange();
-	double deltaT = GenericListHelper<double>::value(moduleData, "DeltaT", uniqueName(), keywords_.asDouble("DeltaT"));
+	double deltaT = keywords_.asDouble("DeltaT");
 	const int energyFrequency = keywords_.asInt("EnergyFrequency");
 	const int nSteps = keywords_.asInt("NSteps");
 	const int outputFrequency = keywords_.asInt("OutputFrequency");

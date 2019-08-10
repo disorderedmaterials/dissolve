@@ -55,13 +55,13 @@ const char* KeywordBase::keywordDataType(KeywordDataType kdt)
  * Keyword Description
  */
 
-// Set name, description, and item flags
-void KeywordBase::set(const char* keyword, const char* description, const char* arguments, int genericItemFlags)
+// Set name, description, arguments, and option mask
+void KeywordBase::set(const char* keyword, const char* description, const char* arguments, int optionMask)
 {
 	keyword_ = keyword;
 	arguments_ = arguments;
 	description_ = description;
-	genericItemFlags_ = genericItemFlags;
+	optionMask_ = optionMask;
 }
 
 // Return data type stored by keyword
@@ -82,10 +82,10 @@ const char* KeywordBase::description()
 	return description_.get();
 }
 
-// Return flags to apply if reinstated as a GenericListItem (i.e. in a Module)
-int KeywordBase::genericItemFlags()
+// Return whether to save keyword value in the restart file
+bool KeywordBase::saveInRestart() const
 {
-	return genericItemFlags_;
+	return (optionMask_&KeywordBase::InRestartFileOption);
 }
 
 // Return whether the data has ever been set

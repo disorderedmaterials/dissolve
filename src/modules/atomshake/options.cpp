@@ -33,7 +33,7 @@ void AtomShakeModule::setUpKeywords()
 
 	// Translations
 	group = addKeywordGroup("Translations");
-	group->add(new DoubleKeyword(0.05), "StepSize", "Step size for translational component of Monte Carlo move (Angstroms)", "<stepsize>", GenericItem::InRestartFileFlag);
+	group->add(new DoubleKeyword(0.05), "StepSize", "Step size for translational component of Monte Carlo move (Angstroms)", "<stepsize>", KeywordBase::InRestartFileOption);
 	group->add(new DoubleKeyword(1.0), "StepSizeMax", "Maximum step size for translations (Angstroms)", "<stepsize>");
 	group->add(new DoubleKeyword(0.001), "StepSizeMin", "Minimum step size for translations (Angstroms)", "<stepsize>");
 }

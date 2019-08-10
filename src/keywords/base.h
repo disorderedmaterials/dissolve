@@ -55,6 +55,10 @@ class KeywordBase : public ListItem<KeywordBase>
 	/*
 	 * Keyword Description
 	 */
+	public:
+	// Keyword Options
+	enum KeywordOption { NoOptions = 0, InRestartFileOption = 1 };
+
 	private:
 	// Data type stored by keyword
 	KeywordDataType type_;
@@ -64,16 +68,16 @@ class KeywordBase : public ListItem<KeywordBase>
 	CharString arguments_;
 	// Description of keyword, if any
 	CharString description_;
-	// Flags to apply if reinstated as a GenericListItem (i.e. in a Module)
-	int genericItemFlags_;
+	// Keyword option mask
+	int optionMask_;
 
 	protected:
 	// Whether the current data value has ever been set
 	bool set_;
 
 	public:
-	// Set name, description, and item flags
-	void set(const char* keyword, const char* description, const char* arguments, int genericItemFlags);
+	// Set name, description, arguments, and option mask
+	void set(const char* keyword, const char* description, const char* arguments, int optionMask = NoOptions);
 	// Return data type stored by keyword
 	KeywordDataType type();
 	// Return keyword name
@@ -82,8 +86,8 @@ class KeywordBase : public ListItem<KeywordBase>
 	const char* arguments();
 	// Return keyword description
 	const char* description();
-	// Return flags to apply if reinstated as a GenericListItem (i.e. in a Module)
-	int genericItemFlags();
+	// Return whether to save keyword value in the restart file
+	bool saveInRestart() const;
 	// Return whether the data has ever been set
 	bool isSet();
 

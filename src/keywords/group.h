@@ -22,6 +22,7 @@
 #ifndef DISSOLVE_KEYWORDGROUP_H
 #define DISSOLVE_KEYWORDGROUP_H
 
+#include "keywords/base.h"
 #include "base/charstring.h"
 #include "templates/reflist.h"
 #include "templates/listitem.h"
@@ -67,9 +68,9 @@ class KeywordGroup : public ListItem<KeywordGroup>
 
 	public:
 	// Add keyword (pass-thru to KeywordList)
-	bool add(KeywordBase* object, const char* keyword, const char* description, int genericItemFlags = 0);
+	bool add(KeywordBase* object, const char* keyword, const char* description, int optionMask = KeywordBase::NoOptions);
 	// Add keyword (pass-thru to KeywordList)
-	bool add(KeywordBase* object, const char* keyword, const char* description, const char* arguments, int genericItemFlags = 0);
+	bool add(KeywordBase* object, const char* keyword, const char* description, const char* arguments, int optionMask = KeywordBase::NoOptions);
 	// Return reference list of keywords in group
 	RefList<KeywordBase>& keywords();
 };

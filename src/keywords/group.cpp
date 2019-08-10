@@ -54,9 +54,9 @@ void KeywordGroup::addKeywordToGroup(KeywordBase* object)
 }
 
 // Add keyword (pass-thru to KeywordList)
-bool KeywordGroup::add(KeywordBase* object, const char* keyword, const char* description, int genericItemFlags)
+bool KeywordGroup::add(KeywordBase* object, const char* keyword, const char* description, int optionMask)
 {
-	if (!keywordList_.add(object, keyword, description, "", genericItemFlags)) return false;
+	if (!keywordList_.add(object, keyword, description, "", optionMask)) return false;
 	
 	addKeywordToGroup(object);
 
@@ -64,9 +64,9 @@ bool KeywordGroup::add(KeywordBase* object, const char* keyword, const char* des
 }
 
 // Add keyword (pass-thru to KeywordList)
-bool KeywordGroup::add(KeywordBase* object, const char* keyword, const char* description, const char* arguments, int genericItemFlags)
+bool KeywordGroup::add(KeywordBase* object, const char* keyword, const char* description, const char* arguments, int optionMask)
 {
-	if (!keywordList_.add(object, keyword, description, arguments, genericItemFlags)) return false;
+	if (!keywordList_.add(object, keyword, description, arguments, optionMask)) return false;
 
 	addKeywordToGroup(object);
 

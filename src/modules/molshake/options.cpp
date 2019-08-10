@@ -33,14 +33,14 @@ void MolShakeModule::setUpKeywords()
 
 	// Rotations
 	group = addKeywordGroup("Rotations");
-	group->add(new DoubleKeyword(1.0), "RotationStepSize", "Step size for rotational component of Monte Carlo move (degrees)", "<stepsize>", GenericItem::InRestartFileFlag);
+	group->add(new DoubleKeyword(1.0), "RotationStepSize", "Step size for rotational component of Monte Carlo move (degrees)", "<stepsize>", KeywordBase::InRestartFileOption);
 	group->add(new DoubleKeyword(0.01), "RotationStepSizeMin", "Minimum step size for rotations (degrees)", "<stepsize>");
 	group->add(new DoubleKeyword(90.0), "RotationStepSizeMax", "Maximum step size for rotations (degrees)", "<stepsize>");
 
 
 	// Translations
 	group = addKeywordGroup("Translations");
-	group->add(new DoubleKeyword(0.05), "TranslationStepSize", "Step size for translational component of Monte Carlo move (Angstroms)", "<stepsize>", GenericItem::InRestartFileFlag);
+	group->add(new DoubleKeyword(0.05), "TranslationStepSize", "Step size for translational component of Monte Carlo move (Angstroms)", "<stepsize>", KeywordBase::InRestartFileOption);
 	group->add(new DoubleKeyword(0.001), "TranslationStepSizeMin", "Minimum step size for translations (Angstroms)", "<stepsize>");
 	group->add(new DoubleKeyword(3.0), "TranslationStepSizeMax", "Maximum step size for translations (Angstroms)", "<stepsize>");
 }

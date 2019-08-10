@@ -491,7 +491,37 @@ bool Dissolve::loadRestart(const char* filename)
 		if (parser.getArgsDelim() != 0) break;
 
 		// First component of line indicates the destination for the module data
-		if (DissolveSys::sameString(parser.argc(0), "Local"))
+		if (DissolveSys::sameString(parser.argc(0), "Keyword"))
+		{
+			// Let the user know what we are doing
+			Messenger::print("Reading keyword '%s' into Module '%s'...\n", parser.argc(2), parser.argc(1), cfg->name());
+
+			// Find the referenced Module
+			Module* module = findModuleInstance(parser.argc(1));
+			if (!module)
+			{
+				Messenger::error("No Module named '%s' exists.\n", parser.argc(1));
+				error = true;
+				break;
+			}
+
+			// Does the Module have a keyword by this name?
+			KeywordBase* keyword = module->keywords().find(parser.argc(2));
+			if (!keyword)
+			{
+				Messenger::error("Module '%s' has no keyword '%s'.\n", parser.argc(2));
+				error = true;
+				break;
+			}
+
+			if (!keyword->read(parser, 3, coreData_, worldPool()))
+			{
+				Messenger::error("Failed to read keyword data '%s' from restart file.\n", keyword->keyword());
+				error = true;
+				break;
+			}
+		}
+		else if (DissolveSys::sameString(parser.argc(0), "Local"))
  		{
 			// Let the user know what we are doing
 			Messenger::print("Reading item '%s' (%s) into Configuration '%s'...\n", parser.argc(2), parser.argc(3), parser.argc(1));
@@ -599,6 +629,20 @@ bool Dissolve::saveRestart(const char* filename)
 	// Write title comment
 	if (!parser.writeLineF("# Restart file written by Dissolve v%s at %s.\n", DISSOLVEVERSION, DissolveSys::currentTimeAndDate())) return false;
 
+	// Module Keyword Data
+	RefListIterator<Module> moduleIterator(moduleInstances_);
+	while (Module* module = moduleIterator.iterate())
+	{
+		ListIterator<KeywordBase> keywordIterator(module->keywords().keywords());
+		while (KeywordBase* keyword = keywordIterator.iterate())
+		{
+			// If the keyword is not flagged to be saved in the restart file, skip it
+			if (!keyword->saveInRestart()) continue;
+
+			if (!keyword->write(parser, CharString("Keyword  %s  ", module->uniqueName()).get())) return false;
+		}
+	}
+
 	// Configuration Module Data
 	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next)
 	{
@@ -631,7 +675,7 @@ bool Dissolve::saveRestart(const char* filename)
 	}
 
 	// Module timing information
-	RefListIterator<Module> moduleIterator(moduleInstances_);
+	moduleIterator.restart();
 	while (Module* module = moduleIterator.iterate())
 	{
 		if (!parser.writeLineF("Timing  %s\n", module->uniqueName())) return false;
