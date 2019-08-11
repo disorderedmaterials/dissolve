@@ -38,7 +38,7 @@ class SpeciesReferenceListKeywordWidget: public KeywordDropDown, public KeywordW
 
 	public:
 	// Constructor
-	SpeciesReferenceListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
+	SpeciesReferenceListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
         // Main form declaration
         Ui::SpeciesReferenceListWidget ui;
 

@@ -24,7 +24,7 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-Vec3DoubleKeywordWidget::Vec3DoubleKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QWidget(parent), KeywordWidgetBase(coreData, moduleData, prefix)
+Vec3DoubleKeywordWidget::Vec3DoubleKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : QWidget(parent), KeywordWidgetBase(coreData)
 {
 	// Setup our UI
 	ui_.setupUi(this);

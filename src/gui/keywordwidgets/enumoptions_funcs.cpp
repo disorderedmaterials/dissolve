@@ -24,7 +24,7 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-EnumOptionsKeywordWidget::EnumOptionsKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QComboBox(parent), KeywordWidgetBase(coreData, moduleData, prefix)
+EnumOptionsKeywordWidget::EnumOptionsKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : QComboBox(parent), KeywordWidgetBase(coreData)
 {
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<EnumOptionsBaseKeyword*>(keyword);

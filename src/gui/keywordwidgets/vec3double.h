@@ -37,7 +37,7 @@ class Vec3DoubleKeywordWidget : public QWidget, public KeywordWidgetBase
 
 	public:
 	// Constructor
-	Vec3DoubleKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
+	Vec3DoubleKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
         // Main form declaration
         Ui::Vec3DoubleWidget ui_;
 

@@ -48,7 +48,7 @@ ModuleChartModuleBlock::ModuleChartModuleBlock(QWidget* parent, DissolveWindow* 
 	module_ = module;
 
 	// Set up our keywords widget
-	ui.KeywordsWidget->setUp(dissolveWindow_, module_);
+	ui.KeywordsWidget->setUp(dissolveWindow_, module_->keywords().keywords(), module_->keywordGroups());
 
 	// Set the icon label
 	ui.IconLabel->setPixmap(modulePixmap(module_));

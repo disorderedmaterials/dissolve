@@ -23,7 +23,7 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-CharStringKeywordWidget::CharStringKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QLineEdit(parent), KeywordWidgetBase(coreData, moduleData, prefix)
+CharStringKeywordWidget::CharStringKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : QLineEdit(parent), KeywordWidgetBase(coreData)
 {
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<CharStringKeyword*>(keyword);

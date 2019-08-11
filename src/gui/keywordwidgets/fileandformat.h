@@ -39,17 +39,9 @@ class FileAndFormatKeywordWidget : public QWidget, public KeywordWidgetBase
 
 	public:
 	// Constructor
-	FileAndFormatKeywordWidget(QWidget* parent, KeywordBase* keyword, const Dissolve& dissolve, const CoreData& coreData, GenericList& moduleData, const char* prefix);
+	FileAndFormatKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
         // Main form declaration
         Ui::FileAndFormatWidget ui;
-
-
-	/*
-	 * Reference to Dissolve
-	 */
-	private:
-	// Reference to Dissolve (used to get input file dir in order to generate relative path names)
-	const Dissolve& dissolve_;
 
 
 	/*

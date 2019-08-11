@@ -24,7 +24,7 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-DoubleKeywordWidget::DoubleKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : ExponentialSpin(parent), KeywordWidgetBase(coreData, moduleData, prefix)
+DoubleKeywordWidget::DoubleKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : ExponentialSpin(parent), KeywordWidgetBase(coreData)
 {
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<DoubleKeyword*>(keyword);

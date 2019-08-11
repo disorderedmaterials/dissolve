@@ -40,11 +40,11 @@ ModuleKeywordsWidget::~ModuleKeywordsWidget()
 }
 
 /*
- * Keywords
+ * Controls
  */
 
 // Create widget for specified keyword
-QWidget* ModuleKeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& keywordWidgets, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* uniqueName)
+QWidget* ModuleKeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& keywordWidgets, KeywordBase* keyword, const CoreData& coreData)
 {
 	QWidget* widget = NULL;
 	KeywordWidgetBase* base = NULL;
@@ -52,112 +52,112 @@ QWidget* ModuleKeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& k
 	// The widget to create here depends on the data type of the keyword
 	if (keyword->type() == KeywordBase::AtomTypeSelectionData)
 	{
-		AtomTypeSelectionKeywordWidget* atomTypeSelectionWidget = new AtomTypeSelectionKeywordWidget(NULL, keyword, coreData, moduleData, uniqueName);
+		AtomTypeSelectionKeywordWidget* atomTypeSelectionWidget = new AtomTypeSelectionKeywordWidget(NULL, keyword, coreData);
 		connect(atomTypeSelectionWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
 		widget = atomTypeSelectionWidget;
 		base = atomTypeSelectionWidget;
 	}
 	else if (keyword->type() == KeywordBase::BoolData)
 	{
-		BoolKeywordWidget* boolWidget = new BoolKeywordWidget(NULL, keyword, coreData, moduleData, uniqueName);
+		BoolKeywordWidget* boolWidget = new BoolKeywordWidget(NULL, keyword, coreData);
 		connect(boolWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
 		widget = boolWidget;
 		base = boolWidget;
 	}
 	else if (keyword->type() == KeywordBase::BroadeningFunctionData)
 	{
-		BroadeningFunctionKeywordWidget* broadeningFunctionWidget = new BroadeningFunctionKeywordWidget(NULL, keyword, coreData, moduleData, uniqueName);
+		BroadeningFunctionKeywordWidget* broadeningFunctionWidget = new BroadeningFunctionKeywordWidget(NULL, keyword, coreData);
 		connect(broadeningFunctionWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
 		widget = broadeningFunctionWidget;
 		base = broadeningFunctionWidget;
 	}
 	else if (keyword->type() == KeywordBase::CharStringData)
 	{
-		CharStringKeywordWidget* charWidget = new CharStringKeywordWidget(NULL, keyword, coreData, moduleData, uniqueName);
+		CharStringKeywordWidget* charWidget = new CharStringKeywordWidget(NULL, keyword, coreData);
 		connect(charWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
 		widget = charWidget;
 		base = charWidget;
 	}
 	else if (keyword->type() == KeywordBase::DoubleData)
 	{
-		DoubleKeywordWidget* doubleWidget = new DoubleKeywordWidget(NULL, keyword, coreData, moduleData, uniqueName);
+		DoubleKeywordWidget* doubleWidget = new DoubleKeywordWidget(NULL, keyword, coreData);
 		connect(doubleWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
 		widget = doubleWidget;
 		base = doubleWidget;
 	}
 	else if (keyword->type() == KeywordBase::EnumOptionsData)
 	{
-		EnumOptionsKeywordWidget* enumOptionsWidget = new EnumOptionsKeywordWidget(NULL, keyword, coreData, moduleData, uniqueName);
+		EnumOptionsKeywordWidget* enumOptionsWidget = new EnumOptionsKeywordWidget(NULL, keyword, coreData);
 		connect(enumOptionsWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
 		widget = enumOptionsWidget;
 		base = enumOptionsWidget;
 	}
 	else if (keyword->type() == KeywordBase::FileAndFormatData)
 	{
-		FileAndFormatKeywordWidget* fileAndFormatWidget = new FileAndFormatKeywordWidget(NULL, keyword, dissolveWindow_->constDissolve(), coreData, moduleData, uniqueName);
+		FileAndFormatKeywordWidget* fileAndFormatWidget = new FileAndFormatKeywordWidget(NULL, keyword, coreData);
 		connect(fileAndFormatWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
 		widget = fileAndFormatWidget;
 		base = fileAndFormatWidget;
 	}
 	else if (keyword->type() == KeywordBase::IntegerData)
 	{
-		IntegerKeywordWidget* intWidget = new IntegerKeywordWidget(NULL, keyword, coreData, moduleData, uniqueName);
+		IntegerKeywordWidget* intWidget = new IntegerKeywordWidget(NULL, keyword, coreData);
 		connect(intWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
 		widget = intWidget;
 		base = intWidget;
 	}
 	else if (keyword->type() == KeywordBase::IsotopologueListData)
 	{
-		IsotopologueReferenceListKeywordWidget* isotopologueReferenceListWidget = new IsotopologueReferenceListKeywordWidget(NULL, keyword, coreData, moduleData, uniqueName);
+		IsotopologueReferenceListKeywordWidget* isotopologueReferenceListWidget = new IsotopologueReferenceListKeywordWidget(NULL, keyword, coreData);
 		connect(isotopologueReferenceListWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
 		widget = isotopologueReferenceListWidget;
 		base = isotopologueReferenceListWidget;
 	}
 	else if (keyword->type() == KeywordBase::ModuleGroupsData)
 	{
-		ModuleGroupsKeywordWidget* moduleGroupsWidget = new ModuleGroupsKeywordWidget(NULL, keyword, coreData, moduleData, uniqueName);
+		ModuleGroupsKeywordWidget* moduleGroupsWidget = new ModuleGroupsKeywordWidget(NULL, keyword, coreData);
 		connect(moduleGroupsWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
 		widget = moduleGroupsWidget;
 		base = moduleGroupsWidget;
 	}
 	else if (keyword->type() == KeywordBase::ModuleReferenceListData)
 	{
-		ModuleReferenceListKeywordWidget* moduleReferenceListWidget = new ModuleReferenceListKeywordWidget(NULL, keyword, coreData, moduleData, uniqueName);
+		ModuleReferenceListKeywordWidget* moduleReferenceListWidget = new ModuleReferenceListKeywordWidget(NULL, keyword, coreData);
 		connect(moduleReferenceListWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
 		widget = moduleReferenceListWidget;
 		base = moduleReferenceListWidget;
 	}
 	else if (keyword->type() == KeywordBase::PairBroadeningFunctionData)
 	{
-		PairBroadeningFunctionKeywordWidget* pairBroadeningFunctionWidget = new PairBroadeningFunctionKeywordWidget(NULL, keyword, coreData, moduleData, uniqueName);
+		PairBroadeningFunctionKeywordWidget* pairBroadeningFunctionWidget = new PairBroadeningFunctionKeywordWidget(NULL, keyword, coreData);
 		connect(pairBroadeningFunctionWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
 		widget = pairBroadeningFunctionWidget;
 		base = pairBroadeningFunctionWidget;
 	}
 	else if (keyword->type() == KeywordBase::SpeciesReferenceListData)
 	{
-		SpeciesReferenceListKeywordWidget* speciesReferenceListWidget = new SpeciesReferenceListKeywordWidget(NULL, keyword, coreData, moduleData, uniqueName);
+		SpeciesReferenceListKeywordWidget* speciesReferenceListWidget = new SpeciesReferenceListKeywordWidget(NULL, keyword, coreData);
 		connect(speciesReferenceListWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
 		widget = speciesReferenceListWidget;
 		base = speciesReferenceListWidget;
 	}
 	else if (keyword->type() == KeywordBase::WindowFunctionData)
 	{
-		WindowFunctionKeywordWidget* windowFunctionWidget = new WindowFunctionKeywordWidget(NULL, keyword, coreData, moduleData, uniqueName);
+		WindowFunctionKeywordWidget* windowFunctionWidget = new WindowFunctionKeywordWidget(NULL, keyword, coreData);
 		connect(windowFunctionWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
 		widget = windowFunctionWidget;
 		base = windowFunctionWidget;
 	}
 	else if (keyword->type() == KeywordBase::Vec3DoubleData)
 	{
-		Vec3DoubleKeywordWidget* vec3DoubleWidget = new Vec3DoubleKeywordWidget(NULL, keyword, coreData, moduleData, uniqueName);
+		Vec3DoubleKeywordWidget* vec3DoubleWidget = new Vec3DoubleKeywordWidget(NULL, keyword, coreData);
 		connect(vec3DoubleWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
 		widget = vec3DoubleWidget;
 		base = vec3DoubleWidget;
 	}
 	else if (keyword->type() == KeywordBase::Vec3IntegerData)
 	{
-		Vec3IntegerKeywordWidget* vec3IntWidget = new Vec3IntegerKeywordWidget(NULL, keyword, coreData, moduleData, uniqueName);
+		Vec3IntegerKeywordWidget* vec3IntWidget = new Vec3IntegerKeywordWidget(NULL, keyword, coreData);
 		connect(vec3IntWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
 		widget = vec3IntWidget;
 		base = vec3IntWidget;
@@ -173,26 +173,20 @@ QWidget* ModuleKeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& k
 	return widget;
 }
 
-// Set up keyword controls for specified Module
-void ModuleKeywordsWidget::setUp(DissolveWindow* dissolveWindow, Module* module)
+// Set up keyword controls for specified keyword list
+void ModuleKeywordsWidget::setUp(DissolveWindow* dissolveWindow, const List<KeywordBase>& keywords, const List<KeywordGroup>& groups)
 {
-	if (!module) return;
-
-	module_ = module;
 	dissolveWindow_ = dissolveWindow;
-
-	// Select source list for keywords that have potentially been replicated / updated there
-	GenericList& moduleData = module->configurationLocal() ? module->targetConfigurations().firstItem()->moduleData() : dissolveWindow_->dissolve().processingModuleData();
 
 	// Get reference to Dissolve's core data for convenience
 	const CoreData& coreData = dissolveWindow_->dissolve().coreData();
 
 	// Loop over keyword groups first - we'll keep track of which keywords are not part of a group, and these in an 'Other' tab at the end
 	RefList<KeywordBase> remainingKeywords;
-	ListIterator<KeywordBase> keywordIterator(module->keywords().keywords());
+	ListIterator<KeywordBase> keywordIterator(keywords);
 	while (KeywordBase* keyword = keywordIterator.iterate()) remainingKeywords.append(keyword);
 
-	ListIterator<KeywordGroup> groupIterator(module->keywordGroups());
+	ListIterator<KeywordGroup> groupIterator(groups);
 	while (KeywordGroup* group = groupIterator.iterate())
 	{
 		// Create a new QWidget and layout for our widgets
@@ -204,7 +198,7 @@ void ModuleKeywordsWidget::setUp(DissolveWindow* dissolveWindow, Module* module)
 		while (KeywordBase* keyword = groupKeywordIterator.iterate())
 		{
 			// Create / setup the keyword widget
-			QWidget* widget = createKeywordWidget(keywordWidgets_, keyword, coreData, moduleData, module->uniqueName());
+			QWidget* widget = createKeywordWidget(keywordWidgets_, keyword, coreData);
 
 			// Can now remove this keyword from our reference list
 			remainingKeywords.remove(keyword);
@@ -236,7 +230,7 @@ void ModuleKeywordsWidget::setUp(DissolveWindow* dissolveWindow, Module* module)
 		while (KeywordBase* keyword = remainingKeywordsIterator.iterate())
 		{
 			// Create / setup the keyword widget
-			QWidget* widget = createKeywordWidget(keywordWidgets_, keyword, coreData, moduleData, module->uniqueName());
+			QWidget* widget = createKeywordWidget(keywordWidgets_, keyword, coreData);
 
 			if (!widget)
 			{
@@ -258,8 +252,6 @@ void ModuleKeywordsWidget::setUp(DissolveWindow* dissolveWindow, Module* module)
 // Update controls within widget
 void ModuleKeywordsWidget::updateControls()
 {
-	if (!module_) return;
-
 	refreshing_ = true;
 
 	// Update all our keyword widgets

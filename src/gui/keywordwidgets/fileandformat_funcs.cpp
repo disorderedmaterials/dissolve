@@ -31,7 +31,7 @@
 #include <QFileInfo>
 
 // Constructor
-FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget* parent, KeywordBase* keyword, const Dissolve& dissolve, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QWidget(parent), dissolve_(dissolve), KeywordWidgetBase(coreData, moduleData, prefix)
+FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : QWidget(parent), KeywordWidgetBase(coreData)
 {
 	// Create and set up our UI
 	ui.setupUi(this);
@@ -114,7 +114,7 @@ void FileAndFormatKeywordWidget::on_FileSelectButton_clicked(bool checked)
 	if (!filename.isEmpty())
 	{
 		// Set relative path to file, using the current input file as the reference point
-		QFileInfo fileInfo(dissolve_.inputFilename());
+		QFileInfo fileInfo(coreData_.inputFilename());
 		ui.FileEdit->setText(fileInfo.dir().relativeFilePath(filename));
 		updateKeywordData();
 		updateWidgetValues(coreData_);

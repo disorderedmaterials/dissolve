@@ -32,7 +32,7 @@ class KeywordWidgetBase
 {
 	public:
 	// Constructor
-	KeywordWidgetBase(const CoreData& coreData, GenericList& moduleData, const char* prefix);
+	KeywordWidgetBase(const CoreData& coreData);
 
 
 	/*
@@ -41,10 +41,6 @@ class KeywordWidgetBase
 	protected:
 	// CoreData source
 	const CoreData& coreData_;
-	// Module data list to be searched for reading/setting existing widget value
-	GenericList& moduleData_;
-	// Module prefix to use when searching module data list
-	const char* modulePrefix_;
 
 
 	/*

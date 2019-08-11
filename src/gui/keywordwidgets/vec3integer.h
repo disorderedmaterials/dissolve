@@ -37,7 +37,7 @@ class Vec3IntegerKeywordWidget : public QWidget, public KeywordWidgetBase
 
 	public:
 	// Constructor
-	Vec3IntegerKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
+	Vec3IntegerKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
         // Main form declaration
         Ui::Vec3IntegerWidget ui_;
 

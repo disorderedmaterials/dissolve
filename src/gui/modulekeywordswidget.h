@@ -23,6 +23,7 @@
 #define DISSOLVE_MODULEKEYWORDSWIDGET_H
 
 #include "gui/keywordwidgets/base.h"
+#include "templates/list.h"
 #include "templates/reflist.h"
 #include <QToolBox>
 
@@ -30,20 +31,12 @@
 class Dissolve;
 class DissolveWindow;
 class KeywordBase;
-class Module;
-class ModuleReference;
+class KeywordGroup;
+class KeywordList;
 
 // Module Keywords Widget
 class ModuleKeywordsWidget : public QToolBox
 {
-	private:
-	// Whether the widget is currently refreshing
-	bool refreshing_;
-	// Module whose keywords we are displaying
-	Module* module_;
-	// Pointer to DissolveWindow
-	DissolveWindow* dissolveWindow_;
-
 	public:
 	// Constructor / Destructor
 	ModuleKeywordsWidget(QWidget* parent);
@@ -51,19 +44,23 @@ class ModuleKeywordsWidget : public QToolBox
 
 
 	/*
-	 * Keywords
+	 * Controls
 	 */
 	private:
+	// Whether the widget is currently refreshing
+	bool refreshing_;
+	// Pointer to DissolveWindow
+	DissolveWindow* dissolveWindow_;
 	// List of keyword widgets displayed
 	RefList<KeywordWidgetBase> keywordWidgets_;
 
 	private:
 	// Create widget for specified keyword
-	QWidget* createKeywordWidget(RefList<KeywordWidgetBase>& keywordWidgets, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* uniqueName);
+	QWidget* createKeywordWidget(RefList<KeywordWidgetBase>& keywordWidgets, KeywordBase* keyword, const CoreData& coreData);
 
 	public:
-	// Set up keyword controls for specified Module
-	void setUp(DissolveWindow* dissolveWindow, Module* module);
+	// Set up controls for specified keyword list
+	void setUp(DissolveWindow* dissolveWindow, const List<KeywordBase>& keywords, const List<KeywordGroup>& groups);
 	// Update controls within widget
 	void updateControls();
 };

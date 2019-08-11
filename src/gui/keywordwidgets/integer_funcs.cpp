@@ -24,7 +24,7 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-IntegerKeywordWidget::IntegerKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QSpinBox(parent), KeywordWidgetBase(coreData, moduleData, prefix)
+IntegerKeywordWidget::IntegerKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : QSpinBox(parent), KeywordWidgetBase(coreData)
 {
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<IntegerKeyword*>(keyword);

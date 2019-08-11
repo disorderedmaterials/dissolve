@@ -38,7 +38,7 @@ class ModuleReferenceListKeywordWidget: public KeywordDropDown, public KeywordWi
 
 	public:
 	// Constructor
-	ModuleReferenceListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
+	ModuleReferenceListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
         // Main form declaration
         Ui::ModuleReferenceListWidget ui;
 

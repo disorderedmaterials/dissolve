@@ -39,7 +39,7 @@ class ModuleGroupsKeywordWidget: public KeywordDropDown, public KeywordWidgetBas
 
 	public:
 	// Constructor
-	ModuleGroupsKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
+	ModuleGroupsKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
         // Main form declaration
         Ui::ModuleGroupsWidget ui;
 

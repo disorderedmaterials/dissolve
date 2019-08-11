@@ -38,7 +38,7 @@ class IsotopologueReferenceListKeywordWidget : public KeywordDropDown, public Ke
 
 	public:
 	// Constructor
-	IsotopologueReferenceListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
+	IsotopologueReferenceListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
 
 
 	/*

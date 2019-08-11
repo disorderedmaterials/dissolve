@@ -38,7 +38,7 @@ class PairBroadeningFunctionKeywordWidget : public KeywordDropDown, public Keywo
 
 	public:
 	// Constructor
-	PairBroadeningFunctionKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
+	PairBroadeningFunctionKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
         // Main form declaration
         Ui::PairBroadeningFunctionWidget ui;
 
