@@ -1,5 +1,5 @@
 /*
-	*** Dissolve Module Interface
+	*** Module Interface
 	*** src/module/module.cpp
 	Copyright T. Youngs 2012-2019
 
