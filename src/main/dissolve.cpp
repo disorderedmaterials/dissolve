@@ -37,6 +37,9 @@ Dissolve::Dissolve(CoreData& coreData) : coreData_(coreData)
 	// Set Module instances list in our core data
 	coreData_.setModuleInstances(&moduleInstances_);
 
+	// Set pointer to the input filename
+	coreData_.setInputFilename(&inputFilename_);
+
 	// Clear everything
 	clear();
 

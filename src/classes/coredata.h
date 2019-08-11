@@ -119,7 +119,7 @@ class CoreData
 	 */
 	private:
 	// Pointer to Module instances list
-	RefList<Module>* moduleInstances_;
+	const RefList<Module>* moduleInstances_;
 
 	public:
 	// Set target Module instances list
@@ -130,6 +130,20 @@ class CoreData
 	RefList<Module> findModules(const char* moduleType) const;
 	// Search for and return any instance(s) of the specified List of Module types
 	RefList<Module> findModules(const CharStringList& moduleTypes) const;
+
+
+	/*
+	 * Input Filename
+	 */
+	private:
+	// Pointer to the current input filename (from Dissolve)
+	const CharString* inputFilename_;
+
+	public:
+	// Set pointer to the current input filename
+	void setInputFilename(const CharString* inputFilePtr);
+	// Return the current input filename (from Dissolve)
+	const char* inputFilename() const;
 };
 
 #endif

@@ -31,6 +31,7 @@
 CoreData::CoreData()
 {
 	moduleInstances_ = NULL;
+	inputFilename_ = NULL;
 }
 
 // Destructor
@@ -294,4 +295,20 @@ RefList<Module> CoreData::findModules(const CharStringList& moduleTypes) const
 	while (Module* module = moduleIterator.iterate()) if (moduleTypes.contains(module->type())) modules.append(module);
 
 	return modules;
+}
+
+/*
+ * Input Filename
+ */
+
+// Set pointer to the current input filename
+void CoreData::setInputFilename(const CharString* inputFilePtr)
+{
+	inputFilename_ = inputFilePtr;
+}
+
+// Return the current input filename (from Dissolve)
+const char* CoreData::inputFilename() const
+{
+	return (inputFilename_ ? inputFilename_->get() : "NO_INPUTFILENAME_SET");
 }
