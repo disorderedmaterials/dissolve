@@ -208,7 +208,7 @@ void ProcedureChartNodeBlock::updateControls()
 	ui_.BottomLabel->setText(ProcedureNode::nodeTypes().keyword(node_->type()));
 
 	// Update keywords
-	ui_.KeywordsWidget->updateControls();
+	ui_.NodeKeywordsWidget->updateControls();
 
 	refreshing_ = false;
 }

@@ -1,6 +1,6 @@
 /*
-	*** Module Keywords Widget - Functions
-	*** src/gui/modulekeywordswidget_funcs.cpp
+	*** Keywords Widget - Functions
+	*** src/gui/keywordswidget_funcs.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/modulekeywordswidget.h"
+#include "gui/keywordswidget.h"
 #include "gui/gui.h"
 #include "gui/keywordwidgets.h"
 #include "module/module.h"
@@ -30,12 +30,12 @@
 #include <QLabel>
 
 // Constructor
-ModuleKeywordsWidget::ModuleKeywordsWidget(QWidget* parent) : QToolBox(parent)
+KeywordsWidget::KeywordsWidget(QWidget* parent) : QToolBox(parent)
 {
 	refreshing_ = false;
 }
 
-ModuleKeywordsWidget::~ModuleKeywordsWidget()
+KeywordsWidget::~KeywordsWidget()
 {
 }
 
@@ -44,7 +44,7 @@ ModuleKeywordsWidget::~ModuleKeywordsWidget()
  */
 
 // Create widget for specified keyword
-QWidget* ModuleKeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& keywordWidgets, KeywordBase* keyword, const CoreData& coreData)
+QWidget* KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& keywordWidgets, KeywordBase* keyword, const CoreData& coreData)
 {
 	QWidget* widget = NULL;
 	KeywordWidgetBase* base = NULL;
@@ -174,7 +174,7 @@ QWidget* ModuleKeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& k
 }
 
 // Set up keyword controls for specified keyword list
-void ModuleKeywordsWidget::setUp(DissolveWindow* dissolveWindow, const List<KeywordBase>& keywords, const List<KeywordGroup>& groups)
+void KeywordsWidget::setUp(DissolveWindow* dissolveWindow, const List<KeywordBase>& keywords, const List<KeywordGroup>& groups)
 {
 	dissolveWindow_ = dissolveWindow;
 
@@ -250,7 +250,7 @@ void ModuleKeywordsWidget::setUp(DissolveWindow* dissolveWindow, const List<Keyw
 }
 
 // Update controls within widget
-void ModuleKeywordsWidget::updateControls()
+void KeywordsWidget::updateControls()
 {
 	refreshing_ = true;
 

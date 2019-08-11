@@ -1,6 +1,6 @@
 /*
-	*** Module Keywords Widget
-	*** src/gui/modulekeywordswidget.h
+	*** Keywords Widget
+	*** src/gui/keywordswidget.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEKEYWORDSWIDGET_H
-#define DISSOLVE_MODULEKEYWORDSWIDGET_H
+#ifndef DISSOLVE_KEYWORDSWIDGET_H
+#define DISSOLVE_KEYWORDSWIDGET_H
 
 #include "gui/keywordwidgets/base.h"
 #include "templates/list.h"
@@ -34,13 +34,13 @@ class KeywordBase;
 class KeywordGroup;
 class KeywordList;
 
-// Module Keywords Widget
-class ModuleKeywordsWidget : public QToolBox
+// Keywords Widget
+class KeywordsWidget : public QToolBox
 {
 	public:
 	// Constructor / Destructor
-	ModuleKeywordsWidget(QWidget* parent);
-	~ModuleKeywordsWidget();
+	KeywordsWidget(QWidget* parent);
+	~KeywordsWidget();
 
 
 	/*

@@ -14,7 +14,6 @@ SET(gui_MOC_HDRS
   modulechartinsertionblock.h
   modulechartmetrics.h
   modulechartmoduleblock.h
-  modulekeywordswidget.h
   modulecontrolwidget.h
   modulelayertab.h
   moduletab.h
@@ -29,6 +28,7 @@ SET(gui_MOC_HDRS
   addprocessinglayerwizard.h
   addspecieswizard.h
   guidewizard.h
+  keywordswidget.h
   pairpotentialwidget.h
   wizardwidget.hui
   wizardwidgetfooter.h
@@ -111,7 +111,6 @@ SET(gui_SRCS
   modulechartinsertionblock_funcs.cpp
   modulechartmoduleblock_funcs.cpp
   modulecontrolwidget_funcs.cpp
-  modulekeywordswidget_funcs.cpp
   modulelayertab_funcs.cpp
   moduletab_funcs.cpp
   modulewidget.cpp
@@ -123,6 +122,7 @@ SET(gui_SRCS
   addprocessinglayerwizard_funcs.cpp
   addspecieswizard_funcs.cpp
   guidewizard_funcs.cpp
+  keywordswidget_funcs.cpp
   pairpotentialwidget_funcs.cpp
   wizardwidget_funcs.cpp
   wizardwidgethighlight.cpp
