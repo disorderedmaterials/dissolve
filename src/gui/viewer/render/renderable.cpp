@@ -255,7 +255,7 @@ void Renderable::setColour(int r, int g, int b, int a)
 // Set basic colour
 void Renderable::setColour(StockColours::StockColour stockColour)
 {
-	colour_.setSingleColour(StockColours::StockColour(stockColour));
+	colour_.setSingleColour(StockColours::stockColour(stockColour));
 }
 
 // Return local colour definition for display
