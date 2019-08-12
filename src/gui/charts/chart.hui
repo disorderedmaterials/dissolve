@@ -80,7 +80,6 @@ class ChartBase : public QWidget
 	 * QWidget Reimplementations
 	 */
 	protected:
-
 	// Geometry changed
 	void resizeEvent(QResizeEvent* event);
 	// Size hint
