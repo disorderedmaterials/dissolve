@@ -47,7 +47,7 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(const Array<double>& 
 	while (Module* rdfModule = rdfModuleIterator.iterate())
 	{
 		// Retrieve the PairBroadeningFunction - new test values will already have been set (pokeBeforeCost = true)
-		PairBroadeningFunction& broadening = KeywordListHelper<PairBroadeningFunction>::retrieve(rdfModule->keywords(), "IntraBroadening", PairBroadeningFunction());
+		PairBroadeningFunction& broadening = rdfModule->keywords().retrieve<PairBroadeningFunction>("IntraBroadening", PairBroadeningFunction());
 
 		// Recalculate the UnweightedGR for all Configurations targeted by the RDFModule
 		int smoothing = rdfModule->keywords().asInt("Smoothing");

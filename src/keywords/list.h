@@ -58,34 +58,14 @@ class KeywordList
 
 
 	/*
-	 * Conversion
+	 * Set / Get
 	 */
 	public:
-	// Return simple keyword value (as bool)
-	bool asBool(const char* keywordName) const;
-	// Return simple keyword value (as int)
-	int asInt(const char* keywordName) const;
-	// Return simple keyword value (as double)
-	double asDouble(const char* keywordName) const;
-	// Return simple keyword value (as string)
-	const char* asString(const char* keywordName) const;
-	// Return simple keyword value (as Vec3<int>)
-	Vec3<int> asVec3Int(const char* keywordName) const;
-	// Return simple keyword value (as Vec3<double>)
-	Vec3<double> asVec3Double(const char* keywordName) const;
-	// Return whether the specified keyword data has ever been set
-	bool isSet(const char* keywordName) const;
-};
-
-// Keyword List Helper
-template <class T> class KeywordListHelper
-{
-	public:
 	// Retrieve named item from specified list as template-guided type
-	static T& retrieve(KeywordList& sourceList, const char* name, T defaultValue = T(), bool* found = NULL)
+	template <class T> T& retrieve(const char* name, T defaultValue = T(), bool* found = NULL)
 	{
 		// Find item in the list
-		KeywordBase* item = sourceList.find(name);
+		KeywordBase* item = find(name);
 		if (!item)
 		{
 			Messenger::printVerbose("No item named '%s' in the keyword list - default value item will be returned.\n", name);
@@ -109,10 +89,10 @@ template <class T> class KeywordListHelper
 		return castItem->data();
 	}
 	// Set named item from specified list as a template-guided type
-	static bool set(KeywordList& sourceList, const char* name, T value)
+	template <class T> bool set(const char* name, T value)
 	{
 		// Find item in the list
-		KeywordBase* item = sourceList.find(name);
+		KeywordBase* item = find(name);
 		if (!item)
 		{
 			Messenger::warn("No item named '%s' in the keyword list - cannot set it's value.\n", name);
@@ -132,17 +112,11 @@ template <class T> class KeywordListHelper
 
 		return true;
 	}
-};
-
-// Keyword Enum Helper
-template <class E> class KeywordEnumHelper
-{
-	public:
-	// Retrieve named EnumOptions item from specified list as template-guided type, and return the current enumeration
-	static E enumeration(KeywordList& sourceList, const char* name, bool* found = NULL)
+	// Retrieve named EnumOptions with specified class, and return its current enumeration
+	template <class E> E enumeration(const char* name, bool* found = NULL)
 	{
 		// Find item in the list
-		KeywordBase* item = sourceList.find(name);
+		KeywordBase* item = find(name);
 		if (!item)
 		{
 			Messenger::error("No item named '%s' in the keyword list - default enumeration of -1 will be returned.\n", name);
@@ -162,6 +136,26 @@ template <class E> class KeywordEnumHelper
 		if (found != NULL) (*found) = true;
 		return castItem->data().enumeration();
 	}
+
+
+	/*
+	 * Conversion
+	 */
+	public:
+	// Return simple keyword value (as bool)
+	bool asBool(const char* keywordName) const;
+	// Return simple keyword value (as int)
+	int asInt(const char* keywordName) const;
+	// Return simple keyword value (as double)
+	double asDouble(const char* keywordName) const;
+	// Return simple keyword value (as string)
+	const char* asString(const char* keywordName) const;
+	// Return simple keyword value (as Vec3<int>)
+	Vec3<int> asVec3Int(const char* keywordName) const;
+	// Return simple keyword value (as Vec3<double>)
+	Vec3<double> asVec3Double(const char* keywordName) const;
+	// Return whether the specified keyword data has ever been set
+	bool isSet(const char* keywordName) const;
 };
 
 #endif

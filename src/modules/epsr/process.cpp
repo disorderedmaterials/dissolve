@@ -74,7 +74,7 @@ bool EPSRModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 		if (configs.nItems() == 0) return Messenger::error("Can't generate empirical potential from supplied coefficients as there are no associated Configurations from which to retrieve a density.\n");
 
 		// Set up the additional potentials - reconstruct them from the current coefficients
-		ExpansionFunctionType functionType = KeywordEnumHelper<EPSRModule::ExpansionFunctionType>::enumeration(keywords_, "ExpansionFunction");
+		ExpansionFunctionType functionType = keywords_.enumeration<EPSRModule::ExpansionFunctionType>("ExpansionFunction");
 		if (functionType == EPSRModule::GaussianExpansionFunction)
 		{
 			const double gsigma1 = keywords_.asDouble("GSigma1");
@@ -102,7 +102,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	 * Get Keyword Options
 	 */
 	const double ereq = keywords_.asDouble("EReq");
-	ExpansionFunctionType functionType = KeywordEnumHelper<EPSRModule::ExpansionFunctionType>::enumeration(keywords_, "ExpansionFunction");
+	ExpansionFunctionType functionType = keywords_.enumeration<EPSRModule::ExpansionFunctionType>("ExpansionFunction");
 	const double feedback = keywords_.asDouble("Feedback");
 	const double gsigma1 = keywords_.asDouble("GSigma1");
 	const double gsigma2 = keywords_.asDouble("GSigma2");

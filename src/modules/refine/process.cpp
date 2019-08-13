@@ -47,7 +47,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	/*
 	 * Get Keyword Options
 	 */
-	const RefineModule::MatrixAugmentationStyle augmentationStyle = KeywordEnumHelper<RefineModule::MatrixAugmentationStyle>::enumeration(keywords_, "Augmentation");
+	const RefineModule::MatrixAugmentationStyle augmentationStyle = keywords_.enumeration<RefineModule::MatrixAugmentationStyle>("Augmentation");
 	const double augmentationParam = keywords_.asDouble("AugmentationParam");
 	const bool autoMinimumRadii = keywords_.asBool("AutoMinimumRadius");
 	const bool smoothPhiR = keywords_.asBool("DeltaPhiRSmoothing");
@@ -56,7 +56,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	const double errorStabilityThreshold = keywords_.asDouble("ErrorStabilityThreshold");
 	const int errorStabilityWindow = keywords_.asInt("ErrorStabilityWindow");
 	//const double gaussianAccuracy = keywords_.asDouble("GaussianAccuracy");
-	const RefineModule::PotentialInversionMethod inversionMethod = KeywordEnumHelper<RefineModule::PotentialInversionMethod>::enumeration(keywords_, "InversionMethod");
+	const RefineModule::PotentialInversionMethod inversionMethod = keywords_.enumeration<RefineModule::PotentialInversionMethod>("InversionMethod");
 	const double globalMinimumRadius = keywords_.asDouble("MinimumRadius");
 	const double globalMaximumRadius = keywords_.asDouble("MaximumRadius");
 // 	const bool modifyBonds = keywords_.asBool("ModifyBonds");
@@ -67,7 +67,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	const double qMax = keywords_.asDouble("QMax");
 	const double qMin = keywords_.asDouble("QMin");
 	const double truncationWidth = keywords_.asDouble("TruncationWidth");
-	const WindowFunction& windowFunction = KeywordListHelper<WindowFunction>::retrieve(keywords_, "WindowFunction", WindowFunction());
+	const WindowFunction& windowFunction = keywords_.retrieve<WindowFunction>("WindowFunction", WindowFunction());
 
 	// Print option summary
 	if (augmentationStyle == RefineModule::NoAugmentation) Messenger::print("Refine: No augmentation of scattering matrix will be performed.\n");

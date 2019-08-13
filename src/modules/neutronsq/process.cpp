@@ -64,7 +64,7 @@ bool NeutronSQModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 		}
 
 		// Remove normalisation factor from data
-		NeutronSQModule::NormalisationType normType = KeywordEnumHelper<NeutronSQModule::NormalisationType>::enumeration(keywords_, "ReferenceNormalisation");
+		NeutronSQModule::NormalisationType normType = keywords_.enumeration<NeutronSQModule::NormalisationType>("ReferenceNormalisation");
 		if (normType != NeutronSQModule::NoNormalisation)
 		{
 			// We need the summed Weights in order to do the normalisation
@@ -139,16 +139,16 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	CharString varName;
 
 	const bool includeBragg = keywords_.asBool("IncludeBragg");
-	const BroadeningFunction& braggQBroadening = KeywordListHelper<BroadeningFunction>::retrieve(keywords_, "BraggQBroadening", BroadeningFunction());
-	NeutronSQModule::NormalisationType normalisation = KeywordEnumHelper<NeutronSQModule::NormalisationType>::enumeration(keywords_, "Normalisation");
-	const BroadeningFunction& qBroadening = KeywordListHelper<BroadeningFunction>::retrieve(keywords_, "QBroadening", BroadeningFunction());
+	const BroadeningFunction& braggQBroadening = keywords_.retrieve<BroadeningFunction>("BraggQBroadening", BroadeningFunction());
+	NeutronSQModule::NormalisationType normalisation = keywords_.enumeration<NeutronSQModule::NormalisationType>("Normalisation");
+	const BroadeningFunction& qBroadening = keywords_.retrieve<BroadeningFunction>("QBroadening", BroadeningFunction());
 	const double qDelta = keywords_.asDouble("QDelta");
 	const double qMin = keywords_.asDouble("QMin");
 	double qMax = keywords_.asDouble("QMax");
 	if (qMax < 0.0) qMax = 30.0;
 	const bool saveUnweighted = keywords_.asBool("SaveUnweighted");
 	const bool saveWeighted = keywords_.asBool("SaveWeighted");
-	const WindowFunction& windowFunction = KeywordListHelper<WindowFunction>::retrieve(keywords_, "WindowFunction", WindowFunction());
+	const WindowFunction& windowFunction = keywords_.retrieve<WindowFunction>("WindowFunction", WindowFunction());
 
 	// Print argument/parameter summary
 	Messenger::print("NeutronSQ: Calculating S(Q)/F(Q) over %f < Q < %f Angstroms**-1 using step size of %f Angstroms**-1.\n", qMin, qMax, qDelta);

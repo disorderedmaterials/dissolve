@@ -108,7 +108,7 @@ bool CalibrationModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		while (Module* module = rdfModuleIterator.iterate())
 		{
 			// Retrieve the PairBroadeningFunction
-			PairBroadeningFunction& broadening = KeywordListHelper<PairBroadeningFunction>::retrieve(module->keywords(), "IntraBroadening", PairBroadeningFunction());
+			PairBroadeningFunction& broadening = module->keywords().retrieve<PairBroadeningFunction>("IntraBroadening", PairBroadeningFunction());
 
 			// Add its parameters to our minimiser - only add broadening functions with global parameters once
 			switch (broadening.function())
@@ -143,7 +143,7 @@ bool CalibrationModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		while (Module* rdfModule = rdfModuleIterator.iterate())
 		{
 			// Retrieve the PairBroadeningFunction
-			PairBroadeningFunction& broadening = KeywordListHelper<PairBroadeningFunction>::retrieve(rdfModule->keywords(), "IntraBroadening", PairBroadeningFunction());
+			PairBroadeningFunction& broadening = rdfModule->keywords().retrieve<PairBroadeningFunction>("IntraBroadening", PairBroadeningFunction());
 
 			Messenger::print("Optimal IntraBroadening parameters for '%s' are now: %s\n", rdfModule->uniqueName(), broadening.summary().get());
 

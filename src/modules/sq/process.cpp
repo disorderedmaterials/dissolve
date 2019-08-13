@@ -46,13 +46,13 @@ bool SQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 	GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : dissolve.processingModuleData();
 
-	const BroadeningFunction& qBroadening = KeywordListHelper<BroadeningFunction>::retrieve(keywords_, "QBroadening", BroadeningFunction());
+	const BroadeningFunction& qBroadening = keywords_.retrieve<BroadeningFunction>("QBroadening", BroadeningFunction());
 	const double qDelta = keywords_.asDouble("QDelta");
 	const double qMin = keywords_.asDouble("QMin");
 	double qMax = keywords_.asDouble("QMax");
 	if (qMax < 0.0) qMax = 30.0;
 	const bool saveData = keywords_.asBool("Save");
-	const WindowFunction& windowFunction = KeywordListHelper<WindowFunction>::retrieve(keywords_, "WindowFunction", WindowFunction());
+	const WindowFunction& windowFunction = keywords_.retrieve<WindowFunction>("WindowFunction", WindowFunction());
 
 	// Print argument/parameter summary
 	Messenger::print("SQ: Calculating S(Q)/F(Q) over %f < Q < %f Angstroms**-1 using step size of %f Angstroms**-1.\n", qMin, qMax, qDelta);

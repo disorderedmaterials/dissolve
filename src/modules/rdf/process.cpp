@@ -49,9 +49,9 @@ bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 	const int averaging = keywords_.asInt("Averaging");
 	if (!Averaging::averagingSchemes().isValid(keywords_.asString("AveragingScheme"))) return Averaging::averagingSchemes().errorAndPrintValid(keywords_.asString("AveragingScheme"));
-	Averaging::AveragingScheme averagingScheme = KeywordEnumHelper<Averaging::AveragingScheme>::enumeration(keywords_, "AveragingScheme");
-	PairBroadeningFunction& intraBroadening = KeywordListHelper<PairBroadeningFunction>::retrieve(keywords_, "IntraBroadening", PairBroadeningFunction());
-	RDFModule::PartialsMethod method = KeywordEnumHelper<RDFModule::PartialsMethod>::enumeration(keywords_, "Method");
+	Averaging::AveragingScheme averagingScheme = keywords_.enumeration<Averaging::AveragingScheme>("AveragingScheme");
+	PairBroadeningFunction& intraBroadening = keywords_.retrieve<PairBroadeningFunction>("IntraBroadening", PairBroadeningFunction());
+	RDFModule::PartialsMethod method = keywords_.enumeration<RDFModule::PartialsMethod>("Method");
 	const double useHalfCellRange = keywords_.asBool("UseHalfCellRange");
 	const double specifiedRange = keywords_.asDouble("Range");
 	const double binWidth = keywords_.asDouble("BinWidth");

@@ -112,7 +112,7 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve& dissolve, EPSRModule::Exp
 Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve& dissolve, int i, int j, int n)
 {
 	const int nAtomTypes = dissolve.nAtomTypes();
-	ExpansionFunctionType functionType = KeywordEnumHelper<EPSRModule::ExpansionFunctionType>::enumeration(keywords_, "ExpansionFunction");
+	ExpansionFunctionType functionType = keywords_.enumeration<EPSRModule::ExpansionFunctionType>("ExpansionFunction");
 	const double gsigma1 = keywords_.asDouble("GSigma1");
 	const double gsigma2 = keywords_.asDouble("GSigma2");
 	int ncoeffp = keywords_.asInt("NCoeffP");
