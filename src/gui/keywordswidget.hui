@@ -1,6 +1,6 @@
 /*
 	*** Keywords Widget
-	*** src/gui/keywordswidget.h
+	*** src/gui/keywordswidget.hui
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -36,6 +36,8 @@ class KeywordList;
 // Keywords Widget
 class KeywordsWidget : public QToolBox
 {
+	Q_OBJECT
+
 	public:
 	// Constructor / Destructor
 	KeywordsWidget(QWidget* parent);
@@ -62,6 +64,18 @@ class KeywordsWidget : public QToolBox
 	void setUp(DissolveWindow* dissolveWindow, const KeywordList& keywords);
 	// Update controls within widget
 	void updateControls();
+
+
+	/*
+	 * Signals / Slots
+	 */
+	private slots:
+	// Keyword data changed
+	void keywordDataChanged();
+
+	signals:
+	// Displayed keyword widget value / data changed
+	void dataChanged();
 };
 
 #endif

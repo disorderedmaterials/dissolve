@@ -256,7 +256,7 @@
   <customwidget>
    <class>KeywordsWidget</class>
    <extends>QWidget</extends>
-   <header>gui/keywordswidget.h</header>
+   <header>gui/keywordswidget.hui</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

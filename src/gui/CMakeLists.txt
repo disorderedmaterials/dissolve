@@ -28,7 +28,7 @@ SET(gui_MOC_HDRS
   addprocessinglayerwizard.h
   addspecieswizard.h
   guidewizard.h
-  keywordswidget.h
+  keywordswidget.hui
   pairpotentialwidget.h
   wizardwidget.hui
   wizardwidgetfooter.h

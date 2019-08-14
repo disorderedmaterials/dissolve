@@ -32,7 +32,9 @@ libgui_la_SOURCES += modulechart.hui
 # UI - Editors
 libgui_la_SOURCES += procedureeditor.ui
 # UI - Widgets
+libgui_la_SOURCES += keywordswidget.hui
 libgui_la_SOURCES += wizardwidgetfooter.ui wizardwidgetheader.ui wizardwidget.hui
+# UI - Wizards
 libgui_la_SOURCES += addconfigurationwizard.ui addforcefieldtermswizard.ui addprocessinglayerwizard.ui addspecieswizard.ui guidewizard.ui pairpotentialwidget.ui
 # UI - Dialogs
 libgui_la_SOURCES += addconfigurationdialog.ui addforcefieldtermsdialog.ui addprocessinglayerdialog.ui addspeciesdialog.ui
@@ -62,7 +64,7 @@ noinst_HEADERS = addconfigurationdialog.h addconfigurationwizard.h addforcefield
 noinst_HEADERS += configurationtab.h
 noinst_HEADERS += forcefieldtab.h
 noinst_HEADERS += guidewizard.h gui.h guide.h guidepage.h guidepagehighlight.h
-noinst_HEADERS += keywordswidget.h keywordwidgets.h
+noinst_HEADERS += keywordwidgets.h
 noinst_HEADERS += layereditor.h
 noinst_HEADERS += maintab.h modulechartblock.h modulecharthotspot.h modulechartinsertionblock.h modulechartmetrics.h modulechartmoduleblock.h modulecontrolwidget.h modulelayertab.h moduletab.h modulewidget.h
 noinst_HEADERS += pairpotentialwidget.h
