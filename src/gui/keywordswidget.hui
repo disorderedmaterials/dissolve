@@ -50,8 +50,6 @@ class KeywordsWidget : public QToolBox
 	private:
 	// Whether the widget is currently refreshing
 	bool refreshing_;
-	// Pointer to DissolveWindow
-	DissolveWindow* dissolveWindow_;
 	// List of keyword widgets displayed
 	RefList<KeywordWidgetBase> keywordWidgets_;
 
@@ -61,7 +59,7 @@ class KeywordsWidget : public QToolBox
 
 	public:
 	// Set up controls for specified keyword list
-	void setUp(DissolveWindow* dissolveWindow, const KeywordList& keywords);
+	void setUp(const KeywordList& keywords, const CoreData& coreData);
 	// Update controls within widget
 	void updateControls();
 

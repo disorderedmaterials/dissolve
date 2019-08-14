@@ -174,13 +174,8 @@ QWidget* KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& keyword
 }
 
 // Set up keyword controls for specified keyword list
-void KeywordsWidget::setUp(DissolveWindow* dissolveWindow, const KeywordList& keywords)
+void KeywordsWidget::setUp(const KeywordList& keywords, const CoreData& coreData)
 {
-	dissolveWindow_ = dissolveWindow;
-
-	// Get reference to Dissolve's core data for convenience
-	const CoreData& coreData = dissolveWindow_->dissolve().coreData();
-
 	// Loop over keyword groups first - we'll keep track of which keywords are not part of a group, and these in an 'Other' tab at the end
 	RefList<KeywordBase> remainingKeywords;
 	ListIterator<KeywordBase> keywordIterator(keywords.keywords());
