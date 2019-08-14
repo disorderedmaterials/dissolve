@@ -56,6 +56,10 @@ class DynamicSiteProcedureNode : public ProcedureNode
 	/*
 	 * Node Keywords
 	 */
+	private:
+	// Set up keywords for node
+	void setUpKeywords();
+
 	public:
 	// Node Keywords
 	enum DynamicSiteNodeKeyword { AtomTypeKeyword, ElementKeyword, EndDynamicSiteKeyword, nDynamicSiteNodeKeywords };

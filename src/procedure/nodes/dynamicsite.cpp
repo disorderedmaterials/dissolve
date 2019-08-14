@@ -58,6 +58,11 @@ bool DynamicSiteProcedureNode::isContextRelevant(ProcedureNode::NodeContext cont
  * Node Keywords
  */
 
+// Set up keywords for node
+void DynamicSiteProcedureNode::setUpKeywords()
+{
+}
+
 // Return enum option info for DynamicSiteNodeKeyword
 EnumOptions<DynamicSiteProcedureNode::DynamicSiteNodeKeyword> DynamicSiteProcedureNode::dynamicSiteNodeKeywords()
 {

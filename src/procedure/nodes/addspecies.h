@@ -50,6 +50,10 @@ class AddSpeciesProcedureNode : public ProcedureNode
 	/*
 	 * Node Keywords
 	 */
+	private:
+	// Set up keywords for node
+	void setUpKeywords();
+
 	public:
 	// Node Keywords
 	enum AddSpeciesNodeKeyword { DensityKeyword, EndAddSpeciesKeyword, NoRotationKeyword, PopulationKeyword, PositionKeyword, SpeciesKeyword, nAddSpeciesNodeKeywords };

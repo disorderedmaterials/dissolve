@@ -109,6 +109,16 @@ const char* ProcedureNode::niceName() const
 }
 
 /*
+ * Keywords
+ */
+
+// Return keywords for this node
+const KeywordList& ProcedureNode::keywords() const
+{
+	return keywords_;
+}
+
+/*
  * Branch
  */
 

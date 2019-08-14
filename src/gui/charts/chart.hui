@@ -160,6 +160,14 @@ class ChartBase : public QWidget
 	virtual bool writeState(LineParser& parser) = 0;
 	// Read widget state through specified LineParser
 	virtual bool readState(LineParser& parser) = 0;
+
+
+	/*
+	 * Signals / Slots
+	 */
+	signals:
+	// Notify that the underlying data displayed by the chart has changed
+	void dataModified();
 };
 
 #endif

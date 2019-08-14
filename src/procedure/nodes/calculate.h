@@ -68,6 +68,10 @@ class CalculateProcedureNode : public ProcedureNode
 	/*
 	 * Node Keywords
 	 */
+	private:
+	// Set up keywords for node
+	void setUpKeywords();
+
 	public:
 	// Node Keywords
 	enum CalculateNodeKeyword { AngleKeyword, DistanceKeyword, EndCalculateKeyword, VectorKeyword, nCalculateNodeKeywords };

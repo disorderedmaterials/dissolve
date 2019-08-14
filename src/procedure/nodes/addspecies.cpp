@@ -58,6 +58,11 @@ bool AddSpeciesProcedureNode::isContextRelevant(ProcedureNode::NodeContext conte
  * Node Keywords
  */
 
+// Set up keywords for node
+void AddSpeciesProcedureNode::setUpKeywords()
+{
+}
+
 // Return enum option info for AddSpeciesNodeKeyword
 EnumOptions<AddSpeciesProcedureNode::AddSpeciesNodeKeyword> AddSpeciesProcedureNode::addSpeciesNodeKeywords()
 {

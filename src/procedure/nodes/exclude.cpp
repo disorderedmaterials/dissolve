@@ -52,6 +52,11 @@ bool ExcludeProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
  * Node Keywords
  */
 
+// Set up keywords for node
+void ExcludeProcedureNode::setUpKeywords()
+{
+}
+
 // Return enum option info for ExcludeNodeKeyword
 EnumOptions<ExcludeProcedureNode::ExcludeNodeKeyword> ExcludeProcedureNode::excludeNodeKeywords()
 {

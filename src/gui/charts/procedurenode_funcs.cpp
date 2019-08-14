@@ -46,8 +46,8 @@ ProcedureChartNodeBlock::ProcedureChartNodeBlock(QWidget* parent, ProcedureNode*
 	ui_.KeywordsControlWidget->setVisible(false);
 
 	// Set up our keywords widget
-// 	ui_.NodeKeywordsWidget->setUp();
-// 	connect(ui_.KeywordsWidget, SIGNAL(dataChanged()), dissolveWindow_, SLOT(setModified()));
+	ui_.NodeKeywordsWidget->setUp(node->keywords(), coreData);
+// 	connect(ui_.NodeKeywordsWidget, SIGNAL(dataChanged()), dissolveWindow_, SLOT(setModified()));
 
 	// Update our controls
 	updateControls();
@@ -225,4 +225,14 @@ void ProcedureChartNodeBlock::enableSensitiveControls()
 {
 	ui_.KeywordsControlWidget->setEnabled(true);
 	ui_.RemoveButton->setEnabled(true);
+}
+
+/*
+ * Signals / Slots
+ */
+
+// Keyword data for node has changed
+void ProcedureChartNodeBlock::keywordDataChanged()
+{
+	emit(dataChanged());
 }

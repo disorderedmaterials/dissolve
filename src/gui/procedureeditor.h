@@ -82,6 +82,7 @@ class ProcedureEditor : public QWidget
 	private:
 	// Main form declaration
 	Ui::ProcedureEditor ui_;
+	// Pointer to created ProcedureChart
 	ProcedureChart* chart_;
 
 	private slots:
@@ -96,6 +97,18 @@ class ProcedureEditor : public QWidget
 	bool writeState(LineParser& parser);
 	// Read widget state through specified LineParser
 	bool readState(LineParser& parser);
+
+
+	/*
+	 * Signals / Slots
+	 */
+	private slots:
+	// Data displayed in the chart has been modified
+	void chartDataModified();
+
+	signals:
+	// Notify that the Procedure's data has changed
+	void dataModified();
 };
 
 #endif

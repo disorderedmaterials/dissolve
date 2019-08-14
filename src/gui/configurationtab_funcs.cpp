@@ -49,8 +49,9 @@ ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dis
 	// Set target for ConfigurationViewer
 	ui_.ViewerWidget->configurationViewer()->setConfiguration(configuration_);
 
-	// Set target for ProcedureEditor
+	// Set target for ProcedureEditor, and connect signals
 	ui_.ProcedureWidget->setUp(&configuration_->generator(), dissolve.coreData());
+	connect(ui_.ProcedureWidget, SIGNAL(dataModified()), dissolveWindow, SLOT(setModified()));
 
 	refreshing_ = false;
 

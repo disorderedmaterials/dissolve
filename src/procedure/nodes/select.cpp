@@ -23,6 +23,7 @@
 #include "procedure/nodes/dynamicsite.h"
 #include "procedure/nodes/sequence.h"
 #include "procedure/nodescopestack.h"
+#include "keywords/types.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 #include "classes/sitereference.h"
@@ -77,6 +78,11 @@ bool SelectProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
 /*
  * Node Keywords
  */
+
+// Set up keywords for node
+void SelectProcedureNode::setUpKeywords()
+{
+}
 
 // Return enum option info for SelectNodeKeyword
 EnumOptions<SelectProcedureNode::SelectNodeKeyword> SelectProcedureNode::selectNodeKeywords()

@@ -56,6 +56,10 @@ class Process1DProcedureNode : public ProcedureNode
 	/*
 	 * Node Keywords
 	 */
+	private:
+	// Set up keywords for node
+	void setUpKeywords();
+
 	public:
 	// Node Keywords
 	enum Process1DNodeKeyword { EndProcess1DKeyword, FactorKeyword, LabelValueKeyword, LabelXKeyword, NormaliseToOneKeyword, NSitesKeyword, NumberDensityKeyword, SaveKeyword, SourceDataKeyword, SphericalShellVolumeKeyword, nProcess1DNodeKeywords };

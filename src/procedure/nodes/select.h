@@ -58,6 +58,10 @@ class SelectProcedureNode : public ProcedureNode
 	/*
 	 * Node Keywords
 	 */
+	private:
+	// Set up keywords for node
+	void setUpKeywords();
+
 	public:
 	// Node Keywords
 	enum SelectNodeKeyword { DynamicSiteKeyword, EndSelectKeyword, ExcludeSameMoleculeKeyword, ExcludeSameSiteKeyword, ForEachKeyword, SameMoleculeAsSiteKeyword, SiteKeyword, nSelectNodeKeywords };

@@ -58,6 +58,11 @@ bool CalculateProcedureNode::isContextRelevant(ProcedureNode::NodeContext contex
  * Node Keywords
  */
 
+// Set up keywords for node
+void CalculateProcedureNode::setUpKeywords()
+{
+}
+
 // Return enum option info for CalculateNodeKeyword
 EnumOptions<CalculateProcedureNode::CalculateNodeKeyword> CalculateProcedureNode::calculateNodeKeywords()
 {

@@ -132,6 +132,18 @@ class ProcedureChartNodeBlock : public QWidget, public ChartBlock
 	void disableSensitiveControls();
 	// Enable sensitive controls
 	void enableSensitiveControls();
+
+
+	/*
+	 * Signals / Slots
+	 */
+	private slots:
+	// Keyword data for node has changed
+	void keywordDataChanged();
+
+	signals:
+	// Notify that the node's keyword data has been modified
+	void dataChanged();
 };
 
 #endif

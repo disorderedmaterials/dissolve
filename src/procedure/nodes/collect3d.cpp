@@ -93,6 +93,11 @@ bool Collect3DProcedureNode::isContextRelevant(ProcedureNode::NodeContext contex
  * Node Keywords
  */
 
+// Set up keywords for node
+void Collect3DProcedureNode::setUpKeywords()
+{
+}
+
 // Return enum option info for Collect3DNodeKeyword
 EnumOptions<Collect3DProcedureNode::Collect3DNodeKeyword> Collect3DProcedureNode::collect3DNodeKeywords()
 {

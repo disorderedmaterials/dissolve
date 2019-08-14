@@ -57,6 +57,10 @@ class Fit1DProcedureNode : public ProcedureNode
 	/*
 	 * Node Keywords
 	 */
+	private:
+	// Set up keywords for node
+	void setUpKeywords();
+
 	public:
 	// Node Keywords
 	enum Fit1DNodeKeyword { ConstantKeyword, EndFit1DKeyword, EquationKeyword, FitKeyword, MethodKeyword, SaveKeyword, SourceDataKeyword, nFit1DNodeKeywords };

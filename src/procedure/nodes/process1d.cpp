@@ -65,6 +65,11 @@ bool Process1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext contex
  * Node Keywords
  */
 
+// Set up keywords for node
+void Process1DProcedureNode::setUpKeywords()
+{
+}
+
 // Return enum option info for Process1DNodeKeyword
 EnumOptions<Process1DProcedureNode::Process1DNodeKeyword> Process1DProcedureNode::process1DNodeKeywords()
 {

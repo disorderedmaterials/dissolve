@@ -50,6 +50,10 @@ class SequenceProcedureNode : public ProcedureNode
 	/*
 	 * Node Keywords
 	 */
+	private:
+	// Set up keywords for node
+	void setUpKeywords();
+
 	public:
 	// Node Keywords
 	enum SequenceNodeKeyword { nSequenceNodeKeywords };

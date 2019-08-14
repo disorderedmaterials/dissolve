@@ -22,6 +22,7 @@
 #ifndef DISSOLVE_PROCEDURENODE_H
 #define DISSOLVE_PROCEDURENODE_H
 
+#include "keywords/list.h"
 #include "base/charstring.h"
 #include "base/enumoptions.h"
 #include "templates/listitem.h"
@@ -77,6 +78,22 @@ class ProcedureNode : public ListItem<ProcedureNode>
 	const char* name() const;
 	// Return node nice name
 	const char* niceName() const;
+
+
+	/*
+	 * Keywords
+	 */
+	protected:
+	// Keywords for this node
+	KeywordList keywords_;
+
+	private:
+	// Set-up keywords for this node
+	virtual void setUpKeywords() = 0;
+
+	public:
+	// Return keywords for this node
+	const KeywordList& keywords() const;
 
 
 	/*

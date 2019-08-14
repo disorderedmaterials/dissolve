@@ -51,9 +51,13 @@ void ProcedureEditor::setUp(Procedure* procedure, const CoreData& coreData)
 {
 	procedure_ = procedure;
 
+	// Create the ProcedureChart and add it to the scroll area
 	chart_ = new ProcedureChart(procedure, coreData);
 	chart_->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
 	ui_.ProcedureScrollArea->setWidget(chart_);
+
+	// Connect signals / slots
+	connect(chart_, SIGNAL(dataModified()), this, SLOT(chartDataModified()));
 
 	updateControls();
 }
@@ -185,4 +189,14 @@ bool ProcedureEditor::readState(LineParser& parser)
 	if (!chart_->readState(parser)) return false;
 
 	return true;
+}
+
+/*
+ * Signals / Slots
+ */
+
+// Data displayed in the chart has been modified
+void ProcedureEditor::chartDataModified()
+{
+	emit(dataModified());
 }
