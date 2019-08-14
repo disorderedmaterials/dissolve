@@ -73,7 +73,7 @@ class KeywordsWidget : public QToolBox
 
 	signals:
 	// Displayed keyword widget value / data changed
-	void dataChanged();
+	void dataModified();
 };
 
 #endif

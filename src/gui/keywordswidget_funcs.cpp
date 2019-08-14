@@ -263,5 +263,5 @@ void KeywordsWidget::updateControls()
 // Keyword data changed
 void KeywordsWidget::keywordDataChanged()
 {
-	emit dataChanged();
+	emit dataModified();
 }
