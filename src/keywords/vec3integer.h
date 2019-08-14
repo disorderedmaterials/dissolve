@@ -1,6 +1,6 @@
 /*
 	*** Keyword - Integer Triplet
-	*** src/module/keywordtypes/vec3integer.h
+	*** src/keywords/vec3integer.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.

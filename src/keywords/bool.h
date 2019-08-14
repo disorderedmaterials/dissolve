@@ -1,6 +1,6 @@
 /*
 	*** Keyword - Bool
-	*** src/module/keywordtypes/bool.h
+	*** src/keywords/bool.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.

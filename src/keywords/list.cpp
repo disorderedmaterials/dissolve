@@ -1,6 +1,6 @@
 /*
 	*** Keyword List
-	*** src/module/keywordlist.cpp
+	*** src/keywords/list.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.

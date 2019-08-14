@@ -1,6 +1,6 @@
 /*
-	*** Keywords
-	*** src/module/keywords.h
+	*** Keyword Types
+	*** src/keywords/types.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORDTYPES_H
-#define DISSOLVE_KEYWORDTYPES_H
+#ifndef DISSOLVE_KEYWORD_TYPES_H
+#define DISSOLVE_KEYWORD_TYPES_H
 
 /*
  * This file should be included if the use of Keywords is required.

@@ -1,6 +1,6 @@
 /*
 	*** Keyword Base Class
-	*** src/module/keywordbase.cpp
+	*** src/keywords/base.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.

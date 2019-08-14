@@ -1,6 +1,6 @@
 /*
 	*** Keyword - Integer
-	*** src/module/keywordtypes/integer.h
+	*** src/keywords/integer.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.

@@ -1,6 +1,6 @@
 /*
 	*** Keyword Base Class
-	*** src/module/keywordbase.h
+	*** src/keywords/base.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORDBASE_H
-#define DISSOLVE_KEYWORDBASE_H
+#ifndef DISSOLVE_KEYWORD_BASE_H
+#define DISSOLVE_KEYWORD_BASE_H
 
 #include "base/charstring.h"
 #include "templates/listitem.h"

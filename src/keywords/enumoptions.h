@@ -1,6 +1,6 @@
 /*
 	*** Keyword - EnumOptions
-	*** src/module/keywordtypes/enumoptions.h
+	*** src/keywords/enumoptions.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.

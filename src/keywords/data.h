@@ -1,6 +1,6 @@
 /*
 	*** Keyword Data
-	*** src/module/keyworddata.h
+	*** src/keywords/data.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORDDATA_H
-#define DISSOLVE_KEYWORDDATA_H
+#ifndef DISSOLVE_KEYWORD_DATA_H
+#define DISSOLVE_KEYWORD_DATA_H
 
 #include "templates/array.h"
 #include "keywords/base.h"

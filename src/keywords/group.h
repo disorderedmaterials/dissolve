@@ -1,6 +1,6 @@
 /*
 	*** Keyword Group
-	*** src/module/keywordgroup.h
+	*** src/keywords/group.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORDGROUP_H
-#define DISSOLVE_KEYWORDGROUP_H
+#ifndef DISSOLVE_KEYWORD_GROUP_H
+#define DISSOLVE_KEYWORD_GROUP_H
 
 #include "keywords/base.h"
 #include "base/charstring.h"

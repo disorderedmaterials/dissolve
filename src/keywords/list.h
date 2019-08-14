@@ -1,6 +1,6 @@
 /*
 	*** Keyword List
-	*** src/module/keywordlist.h
+	*** src/keywords/list.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORDLIST_H
-#define DISSOLVE_KEYWORDLIST_H
+#ifndef DISSOLVE_KEYWORD_LIST_H
+#define DISSOLVE_KEYWORD_LIST_H
 
 #include "keywords/base.h"
 #include "keywords/data.h"
