@@ -33,10 +33,7 @@ ProcedureEditor::ProcedureEditor(QWidget* parent) : QWidget(parent)
 	ui_.setupUi(this);
 
 	procedure_ = NULL;
-
-	chart_ = new ProcedureChart();
-	chart_->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
-	ui_.ProcedureScrollArea->setWidget(chart_);
+	chart_ = NULL;
 
 	refreshing_ = false;
 }
@@ -49,12 +46,14 @@ ProcedureEditor::~ProcedureEditor()
  * Procedure Target
  */
 
-// Set the target procedure to edit
-bool ProcedureEditor::setProcedure(Procedure* procedure)
+// Set up to display / edit the target Procedure
+void ProcedureEditor::setUp(Procedure* procedure, const CoreData& coreData)
 {
 	procedure_ = procedure;
 
-	chart_->setProcedure(procedure_);
+	chart_ = new ProcedureChart(procedure, coreData);
+	chart_->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
+	ui_.ProcedureScrollArea->setWidget(chart_);
 
 	updateControls();
 }

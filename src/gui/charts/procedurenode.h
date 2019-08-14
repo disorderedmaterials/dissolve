@@ -27,6 +27,7 @@
 #include "templates/reflist.h"
 
 // Forward Declarations
+class CoreData;
 class KeywordWidgetBase;
 class ProcedureNode;
 
@@ -38,7 +39,7 @@ class ProcedureChartNodeBlock : public QWidget, public ChartBlock
 
 	public:
 	// Constructor / Destructor
-	ProcedureChartNodeBlock(QWidget* parent, ProcedureNode* node);
+	ProcedureChartNodeBlock(QWidget* parent, ProcedureNode* node, const CoreData& coreData);
 	~ProcedureChartNodeBlock();
 
 

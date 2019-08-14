@@ -27,7 +27,7 @@
 #include <QPainter>
 
 // Constructor
-ProcedureChartNodeBlock::ProcedureChartNodeBlock(QWidget* parent, ProcedureNode* node) : QWidget(parent), ChartBlock()
+ProcedureChartNodeBlock::ProcedureChartNodeBlock(QWidget* parent, ProcedureNode* node, const CoreData& coreData) : QWidget(parent), ChartBlock()
 {
 	// Set up user interface
 	ui_.setupUi(this);
@@ -46,8 +46,8 @@ ProcedureChartNodeBlock::ProcedureChartNodeBlock(QWidget* parent, ProcedureNode*
 	ui_.KeywordsControlWidget->setVisible(false);
 
 	// Set up our keywords widget
-	// TODO Have to remove dependency on DissolveWindow from KeywordsWidget
-// 	ui_.KeywordsWidget->setUp(dissolveWindow_, module_);
+// 	ui_.NodeKeywordsWidget->setUp();
+// 	connect(ui_.KeywordsWidget, SIGNAL(dataChanged()), dissolveWindow_, SLOT(setModified()));
 
 	// Update our controls
 	updateControls();

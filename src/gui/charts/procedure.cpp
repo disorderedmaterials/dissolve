@@ -36,14 +36,18 @@
 #include <QWidget>
 
 // Constructor
-ProcedureChart::ProcedureChart() : ChartBase()
+ProcedureChart::ProcedureChart(Procedure* procedure, const CoreData& coreData) : ChartBase(), coreData_(coreData)
 {
 	refreshing_ = false;
 
 	resizeToWidgets_ = true;
 
 	// Target Procedure
-	procedure_ = NULL;
+	procedure_ = procedure;
+
+	updateContentBlocks();
+
+	recalculateLayout();
 
 	// Create the insertion widget if we don't already have one
 // 	insertionWidget_ = new ProcedureChartInsertionBlock(this, dissolveWindow_);
@@ -54,20 +58,6 @@ ProcedureChart::ProcedureChart() : ChartBase()
 
 ProcedureChart::~ProcedureChart()
 {
-}
-
-/*
- * Target Procedure
- */
-
-// Target Procedure for display
-void ProcedureChart::setProcedure(Procedure* procedure)
-{
-	procedure_ = procedure;
-
-	updateContentBlocks();
-
-	recalculateLayout();
 }
 
 /*
@@ -126,7 +116,7 @@ void ProcedureChart::updateContentBlocks(const SequenceProcedureNode* sequence, 
 		else
 		{
 			// No current widget, so must create one
-			block = new ProcedureChartNodeBlock(this, node);
+			block = new ProcedureChartNodeBlock(this, node, coreData_);
 // 			connect(mcmBlock, SIGNAL(settingsToggled()), this, SLOT(recalculateLayout()));
 // 			connect(mcmBlock, SIGNAL(remove(QString)), this, SLOT(removeModule(QString)));
 			newSequenceWidgets.append(block);

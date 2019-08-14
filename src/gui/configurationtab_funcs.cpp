@@ -50,7 +50,7 @@ ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dis
 	ui_.ViewerWidget->configurationViewer()->setConfiguration(configuration_);
 
 	// Set target for ProcedureEditor
-	ui_.ProcedureWidget->setProcedure(&configuration_->generator());
+	ui_.ProcedureWidget->setUp(&configuration_->generator(), dissolve.coreData());
 
 	refreshing_ = false;
 

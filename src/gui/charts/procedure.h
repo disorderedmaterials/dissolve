@@ -27,6 +27,7 @@
 #include <QWidget>
 
 // Forward Declarations
+class CoreData;
 class Procedure;
 class ProcedureChartNodeBlock;
 class ProcedureNode;
@@ -37,8 +38,16 @@ class ProcedureChart : public ChartBase
 {
 	public:
 	// Constructor / Destructor
-	ProcedureChart();
+	ProcedureChart(Procedure* procedure, const CoreData& coreData);
 	~ProcedureChart();
+
+
+	/*
+	 * CoreData Reference
+	 */
+	private:
+	// CoreData reference
+	const CoreData& coreData_;
 
 
 	/*
@@ -47,10 +56,6 @@ class ProcedureChart : public ChartBase
 	private:
 	// Target Procedure for display
 	Procedure* procedure_;
-
-	public:
-	// Target Procedure for display
-	void setProcedure(Procedure* procedure);
 
 
 	/*

@@ -27,7 +27,7 @@
 #include "templates/refdatalist.h"
 
 // Forward Declarations
-class DissolveWindow;
+class CoreData;
 class LineParser;
 class MimeTreeWidgetItem;
 class Procedure;
@@ -56,8 +56,8 @@ class ProcedureEditor : public QWidget
 	RefDataList<MimeTreeWidgetItem,CharString> moduleCategories_;
 
 	public:
-	// Set the target procedure to edit
-	bool setProcedure(Procedure* procedure);
+	// Set up to display / edit the target Procedure
+	void setUp(Procedure* procedure, const CoreData& coreData);
 
 
 	/*

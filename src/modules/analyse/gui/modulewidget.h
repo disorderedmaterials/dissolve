@@ -27,6 +27,7 @@
 
 // Forward Declarations
 class AnalyseModule;
+class CoreData;
 class Module;
 
 // Module Widget
@@ -41,7 +42,7 @@ class AnalyseModuleWidget : public ModuleWidget
 
 	public:
 	// Constructor
-	AnalyseModuleWidget(QWidget* parent, Module* module);
+	AnalyseModuleWidget(QWidget* parent, Module* module, const CoreData& coreData);
 	// Main form declaration
 	Ui::AnalyseModuleWidget ui;
 	// Update controls within widget
