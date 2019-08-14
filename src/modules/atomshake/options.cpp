@@ -26,16 +26,14 @@
 void AtomShakeModule::setUpKeywords()
 {
 	// Calculation
-	KeywordGroup* group = addKeywordGroup("Calculation");
-	group->add(new DoubleKeyword(-1.0, -1.0), "CutoffDistance", "Interatomic cutoff distance to employ");
-	group->add(new IntegerKeyword(1, 1, 1000), "ShakesPerAtom", "Number of shakes per Atom to attempt");
-	group->add(new DoubleKeyword(0.33, 0.01, 1.0), "TargetAcceptanceRate", "Target acceptance rate for Monte Carlo moves");
+	keywords_.add("Calculation", new DoubleKeyword(-1.0, -1.0), "CutoffDistance", "Interatomic cutoff distance to employ");
+	keywords_.add("Calculation", new IntegerKeyword(1, 1, 1000), "ShakesPerAtom", "Number of shakes per Atom to attempt");
+	keywords_.add("Calculation", new DoubleKeyword(0.33, 0.01, 1.0), "TargetAcceptanceRate", "Target acceptance rate for Monte Carlo moves");
 
 	// Translations
-	group = addKeywordGroup("Translations");
-	group->add(new DoubleKeyword(0.05), "StepSize", "Step size for translational component of Monte Carlo move (Angstroms)", "<stepsize>", KeywordBase::InRestartFileOption);
-	group->add(new DoubleKeyword(1.0), "StepSizeMax", "Maximum step size for translations (Angstroms)", "<stepsize>");
-	group->add(new DoubleKeyword(0.001), "StepSizeMin", "Minimum step size for translations (Angstroms)", "<stepsize>");
+	keywords_.add("Translations", new DoubleKeyword(0.05), "StepSize", "Step size for translational component of Monte Carlo move (Angstroms)", "<stepsize>", KeywordBase::InRestartFileOption);
+	keywords_.add("Translations", new DoubleKeyword(1.0), "StepSizeMax", "Maximum step size for translations (Angstroms)", "<stepsize>");
+	keywords_.add("Translations", new DoubleKeyword(0.001), "StepSizeMin", "Minimum step size for translations (Angstroms)", "<stepsize>");
 }
 
 // Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised

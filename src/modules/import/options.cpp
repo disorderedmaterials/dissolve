@@ -26,9 +26,8 @@
 void ImportModule::setUpKeywords()
 {
 	// Trajectory Import
-	KeywordGroup* group = addKeywordGroup("Trajectory");
-	group->add(new BoolKeyword(true), "ReadTrajectory", "Read sequential frames from a trajectory file", "<True|False>");
-	group->add(new FileAndFormatKeyword(trajectoryFile_), "TrajectoryFile", "Source trajectory file for frames (if ReadTrajectory == True)");
+	keywords_.add("Trajectory", new BoolKeyword(true), "ReadTrajectory", "Read sequential frames from a trajectory file", "<True|False>");
+	keywords_.add("Trajectory", new FileAndFormatKeyword(trajectoryFile_), "TrajectoryFile", "Source trajectory file for frames (if ReadTrajectory == True)");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised

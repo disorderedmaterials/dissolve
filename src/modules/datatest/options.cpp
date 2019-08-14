@@ -27,12 +27,11 @@
 void DataTestModule::setUpKeywords()
 {
 	// Test
-	KeywordGroup* group = addKeywordGroup("Test");
-	group->add(new Data1DStoreKeyword(test1DData_), "Data1D", "Specify one-dimensional test reference data", "<target> <fileformat> <filename> [options...]");
-	group->add(new Data2DStoreKeyword(test2DData_), "Data2D", "Specify two-dimensional test reference data", "<target> <fileformat> <filename> [options...]");
-	group->add(new EnumOptionsKeyword<Error::ErrorType>(Error::errorTypes() = Error::PercentError), "ErrorType", "Type of error calculation to use");
-	group->add(new ModuleReferenceListKeyword(targetModule_, 1), "Target", "Module containing target data", "<Module>");
-	group->add(new DoubleKeyword(0.1, 1.0e-5), "Threshold", "Test threshold (%%error) above which test fails", "<threshold[0.1]>");
+	keywords_.add("Test", new Data1DStoreKeyword(test1DData_), "Data1D", "Specify one-dimensional test reference data", "<target> <fileformat> <filename> [options...]");
+	keywords_.add("Test", new Data2DStoreKeyword(test2DData_), "Data2D", "Specify two-dimensional test reference data", "<target> <fileformat> <filename> [options...]");
+	keywords_.add("Test", new EnumOptionsKeyword<Error::ErrorType>(Error::errorTypes() = Error::PercentError), "ErrorType", "Type of error calculation to use");
+	keywords_.add("Test", new ModuleReferenceListKeyword(targetModule_, 1), "Target", "Module containing target data", "<Module>");
+	keywords_.add("Test", new DoubleKeyword(0.1, 1.0e-5), "Threshold", "Test threshold (%%error) above which test fails", "<threshold[0.1]>");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised

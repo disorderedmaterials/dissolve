@@ -31,7 +31,6 @@
 class Dissolve;
 class DissolveWindow;
 class KeywordBase;
-class KeywordGroup;
 class KeywordList;
 
 // Keywords Widget
@@ -60,7 +59,7 @@ class KeywordsWidget : public QToolBox
 
 	public:
 	// Set up controls for specified keyword list
-	void setUp(DissolveWindow* dissolveWindow, const List<KeywordBase>& keywords, const List<KeywordGroup>& groups);
+	void setUp(DissolveWindow* dissolveWindow, const KeywordList& keywords);
 	// Update controls within widget
 	void updateControls();
 };

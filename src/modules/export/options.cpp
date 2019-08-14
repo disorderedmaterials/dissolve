@@ -26,10 +26,9 @@
 void ExportModule::setUpKeywords()
 {
 	// Export
-	KeywordGroup* group = addKeywordGroup("Export");
-	group->add(new FileAndFormatKeyword(coordinatesFormat_), "WriteCoordinates", "Write coordinates for the Configuration targets");
-	group->add(new FileAndFormatKeyword(pairPotentialFormat_), "WritePairPotentials", "Write all pair potentials to supplied basename");
-	group->add(new FileAndFormatKeyword(trajectoryFormat_), "WriteTrajectory", "Write coordinate trajectories for the Configuration targets");
+	keywords_.add("Export", new FileAndFormatKeyword(coordinatesFormat_), "WriteCoordinates", "Write coordinates for the Configuration targets");
+	keywords_.add("Export", new FileAndFormatKeyword(pairPotentialFormat_), "WritePairPotentials", "Write all pair potentials to supplied basename");
+	keywords_.add("Export", new FileAndFormatKeyword(trajectoryFormat_), "WriteTrajectory", "Write coordinate trajectories for the Configuration targets");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised

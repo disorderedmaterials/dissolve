@@ -26,10 +26,9 @@
 void GeometryOptimisationModule::setUpKeywords()
 {
 	// Method Control
-	KeywordGroup* group = addKeywordGroup("Method Control");
-	group->add(new IntegerKeyword(200, 1), "NCycles", "Number of minimisation cycles to perform");
-	group->add(new DoubleKeyword(1.0e-5, 1.0e-10), "StepSize", "Initial step size to employ");
-	group->add(new DoubleKeyword(1.0e-4, 1.0e-10), "Tolerance", "Tolerance controlling convergence of algorithm)");
+	keywords_.add("Calculation", new IntegerKeyword(200, 1), "NCycles", "Number of minimisation cycles to perform");
+	keywords_.add("Calculation", new DoubleKeyword(1.0e-5, 1.0e-10), "StepSize", "Initial step size to employ");
+	keywords_.add("Calculation", new DoubleKeyword(1.0e-4, 1.0e-10), "Tolerance", "Tolerance controlling convergence of algorithm)");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised

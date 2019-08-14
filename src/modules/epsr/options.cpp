@@ -43,41 +43,37 @@ void EPSRModule::setUpKeywords()
 	groupedTargets_.addAllowedModuleType("NeutronSQ");
 
 	// Calculation
-	KeywordGroup* group = addKeywordGroup("Calculation");
-	group->add(new BoolKeyword(true), "OnlyWhenEnergyStable", "Assesses the energy of all involved Configurations, refining the potential only when all their total energies are stable");
-	group->add(new DoubleKeyword(3.0, -1.0), "EReq", "Limit of magnitude of additional potential for any one pair potential");
-	group->add(new DoubleKeyword(0.9), "Feedback", "Confidence factor");
-	group->add(new BoolKeyword(true), "ModifyPotential", "Whether to apply generated perturbations to interatomic potentials");
-	group->add(new ModuleGroupsKeyword(groupedTargets_), "Target", "Add specified Module (and it's Reference data) as a refinement target", "<ModuleName> [GroupName]");
-	group->add(new DoubleKeyword(30.0, -1.0), "QMax", "Maximum Q value over which to generate potentials from total scattering data");
-	group->add(new DoubleKeyword(0.5, -1.0), "QMin", "Minimum Q value over which to generate potentials from total scattering data");
-	group->add(new DoubleKeyword(1.0, 0.0, 10.0), "Weighting", "Factor used when adding fluctuation coefficients to pair potentials");
+	keywords_.add("Calculation", new BoolKeyword(true), "OnlyWhenEnergyStable", "Assesses the energy of all involved Configurations, refining the potential only when all their total energies are stable");
+	keywords_.add("Calculation", new DoubleKeyword(3.0, -1.0), "EReq", "Limit of magnitude of additional potential for any one pair potential");
+	keywords_.add("Calculation", new DoubleKeyword(0.9), "Feedback", "Confidence factor");
+	keywords_.add("Calculation", new BoolKeyword(true), "ModifyPotential", "Whether to apply generated perturbations to interatomic potentials");
+	keywords_.add("Calculation", new ModuleGroupsKeyword(groupedTargets_), "Target", "Add specified Module (and it's Reference data) as a refinement target", "<ModuleName> [GroupName]");
+	keywords_.add("Calculation", new DoubleKeyword(30.0, -1.0), "QMax", "Maximum Q value over which to generate potentials from total scattering data");
+	keywords_.add("Calculation", new DoubleKeyword(0.5, -1.0), "QMin", "Minimum Q value over which to generate potentials from total scattering data");
+	keywords_.add("Calculation", new DoubleKeyword(1.0, 0.0, 10.0), "Weighting", "Factor used when adding fluctuation coefficients to pair potentials");
 
 	// Expansion Function
-	group = addKeywordGroup("Expansion Function");
-	group->add(new EnumOptionsKeyword<EPSRModule::ExpansionFunctionType>(EPSRModule::expansionFunctionTypes() = EPSRModule::PoissonExpansionFunction), "ExpansionFunction", "Form of expansion function to use when fitting difference data");
-	group->add(new DoubleKeyword(0.1, 0.001, 1.0), "GSigma1", "Width for Gaussian function in reciprocal space");
-	group->add(new DoubleKeyword(0.2, 0.001, 1.0), "GSigma2", "Width for Gaussian function in real space");
-	group->add(new IntegerKeyword(-1, -1), "NCoeffP", "Number of coefficients user to define the empirical potential (-1 for automatic)");
-	group->add(new IntegerKeyword(1000, 0), "NPItSs", "Number of steps for refining the potential");
-	group->add(new CharStringKeyword(""), "PCofFile", "EPSR pcof file from which to read starting coefficients from");
-	group->add(new DoubleKeyword(0.01, 0.001, 1.0), "PSigma1", "Width for Poisson functions in reciprocal space (N.B. this is psigma2 in EPSR)");
-	group->add(new DoubleKeyword(0.01, 0.001, 1.0), "PSigma2", "Width for Poisson functions in real space");
-	group->add(new DoubleKeyword(-1.0), "RMaxPT", "Radius at which potential truncation goes to zero (-1.0 to use pair potential maximum range)");
-	group->add(new DoubleKeyword(-1.0), "RMinPT", "Radius at which potential truncation begins (-1.0 to set to 2.0 Angstroms under rmaxpt)");
+	keywords_.add("Expansion Function", new EnumOptionsKeyword<EPSRModule::ExpansionFunctionType>(EPSRModule::expansionFunctionTypes() = EPSRModule::PoissonExpansionFunction), "ExpansionFunction", "Form of expansion function to use when fitting difference data");
+	keywords_.add("Expansion Function", new DoubleKeyword(0.1, 0.001, 1.0), "GSigma1", "Width for Gaussian function in reciprocal space");
+	keywords_.add("Expansion Function", new DoubleKeyword(0.2, 0.001, 1.0), "GSigma2", "Width for Gaussian function in real space");
+	keywords_.add("Expansion Function", new IntegerKeyword(-1, -1), "NCoeffP", "Number of coefficients user to define the empirical potential (-1 for automatic)");
+	keywords_.add("Expansion Function", new IntegerKeyword(1000, 0), "NPItSs", "Number of steps for refining the potential");
+	keywords_.add("Expansion Function", new CharStringKeyword(""), "PCofFile", "EPSR pcof file from which to read starting coefficients from");
+	keywords_.add("Expansion Function", new DoubleKeyword(0.01, 0.001, 1.0), "PSigma1", "Width for Poisson functions in reciprocal space (N.B. this is psigma2 in EPSR)");
+	keywords_.add("Expansion Function", new DoubleKeyword(0.01, 0.001, 1.0), "PSigma2", "Width for Poisson functions in real space");
+	keywords_.add("Expansion Function", new DoubleKeyword(-1.0), "RMaxPT", "Radius at which potential truncation goes to zero (-1.0 to use pair potential maximum range)");
+	keywords_.add("Expansion Function", new DoubleKeyword(-1.0), "RMinPT", "Radius at which potential truncation begins (-1.0 to set to 2.0 Angstroms under rmaxpt)");
 
 	// Test
-	group = addKeywordGroup("Test");
-	group->add(new BoolKeyword(false), "Test", "Test against supplied reference data", "<True|False>");
-	group->add(new Data1DStoreKeyword(testData_), "TestReference", "Specify test reference data", "<target> <fileformat> <filename> [x=1] [y=2]");
-	group->add(new DoubleKeyword(0.1, 1.0e-5), "TestThreshold", "Test threshold (%%error) above which test fails", "<threshold[0.1]>");
-	group->add(new BoolKeyword(false), "OverwritePotentials", "Overwrite potentials each time rather than summing them", "<True|False>");
+	keywords_.add("Test", new BoolKeyword(false), "Test", "Test against supplied reference data", "<True|False>");
+	keywords_.add("Test", new Data1DStoreKeyword(testData_), "TestReference", "Specify test reference data", "<target> <fileformat> <filename> [x=1] [y=2]");
+	keywords_.add("Test", new DoubleKeyword(0.1, 1.0e-5), "TestThreshold", "Test threshold (%%error) above which test fails", "<threshold[0.1]>");
+	keywords_.add("Test", new BoolKeyword(false), "OverwritePotentials", "Overwrite potentials each time rather than summing them", "<True|False>");
 
 	// Export
-	group = addKeywordGroup("Export");
-	group->add(new BoolKeyword(false), "SaveDifferenceFunctions", "Whether to save difference function and fit", "<True|False>");
-	group->add(new BoolKeyword(false), "SaveEmpiricalPotentials", "Whether to save empirical potentials", "<True|False>");
-	group->add(new BoolKeyword(false), "SaveEstimatedPartials", "Whether to save estimated partials", "<True|False>");
+	keywords_.add("Export", new BoolKeyword(false), "SaveDifferenceFunctions", "Whether to save difference function and fit", "<True|False>");
+	keywords_.add("Export", new BoolKeyword(false), "SaveEmpiricalPotentials", "Whether to save empirical potentials", "<True|False>");
+	keywords_.add("Export", new BoolKeyword(false), "SaveEstimatedPartials", "Whether to save estimated partials", "<True|False>");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised

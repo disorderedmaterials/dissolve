@@ -174,7 +174,7 @@ QWidget* KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& keyword
 }
 
 // Set up keyword controls for specified keyword list
-void KeywordsWidget::setUp(DissolveWindow* dissolveWindow, const List<KeywordBase>& keywords, const List<KeywordGroup>& groups)
+void KeywordsWidget::setUp(DissolveWindow* dissolveWindow, const KeywordList& keywords)
 {
 	dissolveWindow_ = dissolveWindow;
 
@@ -183,10 +183,10 @@ void KeywordsWidget::setUp(DissolveWindow* dissolveWindow, const List<KeywordBas
 
 	// Loop over keyword groups first - we'll keep track of which keywords are not part of a group, and these in an 'Other' tab at the end
 	RefList<KeywordBase> remainingKeywords;
-	ListIterator<KeywordBase> keywordIterator(keywords);
+	ListIterator<KeywordBase> keywordIterator(keywords.keywords());
 	while (KeywordBase* keyword = keywordIterator.iterate()) remainingKeywords.append(keyword);
 
-	ListIterator<KeywordGroup> groupIterator(groups);
+	ListIterator<KeywordGroup> groupIterator(keywords.groups());
 	while (KeywordGroup* group = groupIterator.iterate())
 	{
 		// Create a new QWidget and layout for our widgets

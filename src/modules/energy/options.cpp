@@ -26,21 +26,18 @@
 void EnergyModule::setUpKeywords()
 {
 	// Calculation
-	KeywordGroup* group = addKeywordGroup("Calculation");
-	group->add(new DoubleKeyword(0.001), "StabilityThreshold", "Threshold value at which energy is deemed stable over the defined windowing period", "<value[0.0-1.0]>");
-	group->add(new IntegerKeyword(10), "StabilityWindow", "Number of points over which to assess the stability of the energy (per Configuration)");
+	keywords_.add("Calculation", new DoubleKeyword(0.001), "StabilityThreshold", "Threshold value at which energy is deemed stable over the defined windowing period", "<value[0.0-1.0]>");
+	keywords_.add("Calculation", new IntegerKeyword(10), "StabilityWindow", "Number of points over which to assess the stability of the energy (per Configuration)");
 
 	// Test
-	group = addKeywordGroup("Test");
-	group->add(new BoolKeyword(false), "Test", "Test parallel energy routines against simplified, serial ones");
-	group->add(new BoolKeyword(false), "TestAnalytic", "Compare parallel energy routines against exact (analytic) energy rather than tabulated values");
-	group->add(new DoubleKeyword(0.0), "TestReferenceInter", "Reference value for interatomic energy against which to test calculated value");
-	group->add(new DoubleKeyword(0.0), "TestReferenceIntra", "Reference value for intramolecular energy against which to test calculated value");
-	group->add(new DoubleKeyword(0.1), "TestThreshold", "Threshold of energy at which test comparison will fail");
+	keywords_.add("Test", new BoolKeyword(false), "Test", "Test parallel energy routines against simplified, serial ones");
+	keywords_.add("Test", new BoolKeyword(false), "TestAnalytic", "Compare parallel energy routines against exact (analytic) energy rather than tabulated values");
+	keywords_.add("Test", new DoubleKeyword(0.0), "TestReferenceInter", "Reference value for interatomic energy against which to test calculated value");
+	keywords_.add("Test", new DoubleKeyword(0.0), "TestReferenceIntra", "Reference value for intramolecular energy against which to test calculated value");
+	keywords_.add("Test", new DoubleKeyword(0.1), "TestThreshold", "Threshold of energy at which test comparison will fail");
 
 	// Export
-	group = addKeywordGroup("Export");
-	group->add(new BoolKeyword(false), "Save", "Save calculate energy points to the file '<name>.energy.txt'");
+	keywords_.add("Export", new BoolKeyword(false), "Save", "Save calculate energy points to the file '<name>.energy.txt'");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised

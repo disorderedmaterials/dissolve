@@ -52,6 +52,20 @@ bool KeywordList::add(KeywordBase* object, const char* keyword, const char* desc
 	return true;
 }
 
+// Add keyword to named group
+bool KeywordList::add(const char* groupName, KeywordBase* object, const char* keyword, const char* description, int genericItemFlags)
+{
+	KeywordGroup* group = addGroup(groupName);
+	return group->add(object, keyword, description, genericItemFlags);
+}
+
+// Add keyword to named group
+bool KeywordList::add(const char* groupName, KeywordBase* object, const char* keyword, const char* description, const char* arguments, int genericItemFlags)
+{
+	KeywordGroup* group = addGroup(groupName);
+	return group->add(object, keyword, description, arguments, genericItemFlags);
+}
+
 // Find named keyword
 KeywordBase* KeywordList::find(const char* keyword) const
 {
@@ -61,9 +75,36 @@ KeywordBase* KeywordList::find(const char* keyword) const
 }
 
 // Return first keyword in list
-List<KeywordBase>& KeywordList::keywords()
+const List<KeywordBase>& KeywordList::keywords() const
 {
 	return keywords_;
+}
+
+/*
+ * Groups
+ */
+
+// Create and/or return named keyword group
+KeywordGroup* KeywordList::addGroup(const char* name)
+{
+	// Check that a group with the specified name doesn't already exist
+	KeywordGroup* group = NULL;
+	for (group = groups_.first(); group != NULL; group = group->next) if (DissolveSys::sameString(name, group->name())) break;
+
+	if (!group)
+	{
+		group = new KeywordGroup(*this);
+		group->setName(name);
+		groups_.own(group);
+	}
+
+	return group;
+}
+
+// Return defined groups
+const List<KeywordGroup>& KeywordList::groups() const
+{
+	return groups_;
 }
 
 /*

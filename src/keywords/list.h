@@ -24,6 +24,7 @@
 
 #include "keywords/base.h"
 #include "keywords/data.h"
+#include "keywords/group.h"
 #include "base/enumoptions.h"
 #include "templates/list.h"
 
@@ -51,10 +52,30 @@ class KeywordList
 	bool add(KeywordBase* object, const char* keyword, const char* description, int genericItemFlags = 0);
 	// Add keyword
 	bool add(KeywordBase* object, const char* keyword, const char* description, const char* arguments, int genericItemFlags = 0);
+	// Add keyword to named group
+	bool add(const char* groupName, KeywordBase* object, const char* keyword, const char* description, int genericItemFlags = 0);
+	// Add keyword to named group
+	bool add(const char* groupName, KeywordBase* object, const char* keyword, const char* description, const char* arguments, int genericItemFlags = 0);
 	// Find named keyword
 	KeywordBase* find(const char* keyword) const;
 	// Return keywords list
-	List<KeywordBase>& keywords();
+	const List<KeywordBase>& keywords() const;
+
+
+	/*
+	 * Groups
+	 */
+	private:
+	// Keywords organised by group
+	List<KeywordGroup> groups_;
+
+	private:
+	// Create and/or return named keyword group
+	KeywordGroup* addGroup(const char* name);
+
+	public:
+	// Return defined groups
+	const List<KeywordGroup>& groups() const;
 
 
 	/*
