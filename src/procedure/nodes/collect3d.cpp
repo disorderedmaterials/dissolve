@@ -201,6 +201,17 @@ SequenceProcedureNode* Collect3DProcedureNode::addSubCollectBranch(ProcedureNode
 	return subCollectBranch_;
 }
 
+// Return whether this node has a branch
+bool Collect3DProcedureNode::hasBranch() const
+{
+	return (subCollectBranch_ != NULL);
+}
+// Return SequenceNode for the branch (if it exists)
+SequenceProcedureNode* Collect3DProcedureNode::branch()
+{
+	return subCollectBranch_;
+}
+
 /*
  * Execute
  */

@@ -132,6 +132,10 @@ class Collect3DProcedureNode : public ProcedureNode
 	public:
 	// Add and return subcollection sequence branch
 	SequenceProcedureNode* addSubCollectBranch(ProcedureNode::NodeContext context);
+	// Return whether this node has a branch
+	bool hasBranch() const;
+	// Return SequenceNode for the branch (if it exists)
+	SequenceProcedureNode* branch();
 
 
 	/*
