@@ -1,5 +1,5 @@
 /*
-	*** Procedure Node - Node Sequence
+	*** Procedure Node - Sequence
 	*** src/procedure/nodes/sequence.cpp
 	Copyright T. Youngs 2012-2019
 
