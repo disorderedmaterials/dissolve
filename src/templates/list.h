@@ -503,7 +503,7 @@ template <class T> class List
 	 */
 	public:
 	// Return whether the item is owned by the list
-	bool contains(T* searchItem) const
+	bool contains(const T* searchItem) const
 	{
 		T* item;
 		for (item = listHead_; item != NULL; item = item->next) if (searchItem == item) break;
