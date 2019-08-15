@@ -53,8 +53,9 @@ void ProcedureEditor::setUp(Procedure* procedure, const CoreData& coreData)
 
 	// Create the ProcedureChart and add it to the scroll area
 	chart_ = new ProcedureChart(procedure, coreData);
-	chart_->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
+	chart_->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Ignored);
 	ui_.ProcedureScrollArea->setWidget(chart_);
+	ui_.ProcedureScrollArea->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
 
 	// Connect signals / slots
 	connect(chart_, SIGNAL(dataModified()), this, SLOT(chartDataModified()));
