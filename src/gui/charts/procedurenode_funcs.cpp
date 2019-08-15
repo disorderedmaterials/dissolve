@@ -50,6 +50,7 @@ ProcedureChartNodeBlock::ProcedureChartNodeBlock(QWidget* parent, ProcedureNode*
 	connect(ui_.NodeKeywordsWidget, SIGNAL(dataModified()), this, SLOT(keywordDataModified()));
 
 	// Update our controls
+	ui_.TopLabel->setText(ProcedureNode::nodeTypes().keyword(node_->type()));
 	updateControls();
 
 	updateGeometry();
@@ -204,8 +205,7 @@ void ProcedureChartNodeBlock::updateControls()
 	refreshing_ = true;
 
 	// Set information panel contents
-	ui_.TopLabel->setText(node_->name());
-	ui_.BottomLabel->setText(ProcedureNode::nodeTypes().keyword(node_->type()));
+	ui_.BottomLabel->setText(node_->name());
 
 	// Update keywords
 	ui_.NodeKeywordsWidget->updateControls();
