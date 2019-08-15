@@ -117,6 +117,12 @@ template <class T> class RefList
 		clear();
 		for (RefListItem<T>* ri = source.first(); ri != NULL; ri = ri->next_) append(ri->item_);
 	}
+	// Operator +=
+	void operator+=(const RefList<T>& source)
+	{
+		// Add unique items in the source list to our own
+		for (RefListItem<T>* ri = source.first(); ri != NULL; ri = ri->next_) addUnique(ri->item_);
+	}
 	// Element access operator
 	RefListItem<T>* operator[](int index)
 	{
