@@ -138,12 +138,12 @@ class ProcedureChartNodeBlock : public QWidget, public ChartBlock
 	 * Signals / Slots
 	 */
 	private slots:
-	// Keyword data for node has changed
-	void keywordDataChanged();
+	// Keyword data for node has been modified
+	void keywordDataModified();
 
 	signals:
 	// Notify that the node's keyword data has been modified
-	void dataChanged();
+	void dataModified();
 };
 
 #endif

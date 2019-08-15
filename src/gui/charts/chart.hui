@@ -165,6 +165,10 @@ class ChartBase : public QWidget
 	/*
 	 * Signals / Slots
 	 */
+	private slots:
+	// Displayed chart data has been modified in some way
+	void chartDataModified();
+
 	signals:
 	// Notify that the underlying data displayed by the chart has changed
 	void dataModified();

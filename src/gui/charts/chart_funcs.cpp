@@ -400,3 +400,13 @@ void ChartBase::recalculateLayout()
 {
 	layOutWidgets(false);
 }
+
+/*
+ * Signals / Slots
+ */
+
+// Displayed chart data has been modified in some way
+void ChartBase::chartDataModified()
+{
+	emit(dataModified());
+}
