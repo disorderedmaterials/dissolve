@@ -123,7 +123,7 @@ int Vec3DoubleKeyword::maxArguments()
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool Vec3DoubleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+bool Vec3DoubleKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	if (parser.hasArg(startArg+2))
 	{

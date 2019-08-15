@@ -53,7 +53,7 @@ class Data1DStore
 	// Load  data into store
 	bool addData(Data1DImportFileFormat fileAndFormat, const char* name);
 	// Load data into store using specified pool
-	bool addData(ProcessPool& pool, Data1DImportFileFormat fileAndFormat, const char* name);
+	bool addData(ProcessPool* pool, Data1DImportFileFormat fileAndFormat, const char* name);
 	// Check to see if the named data is present in the store
 	bool containsData(const char* name) const;
 	// Return named data

@@ -48,7 +48,7 @@ bool Data1DStore::addData(Data1DImportFileFormat fileAndFormat, const char* name
 }
 
 // Load data into store using specified pool
-bool Data1DStore::addData(ProcessPool& pool, Data1DImportFileFormat fileAndFormat, const char* name)
+bool Data1DStore::addData(ProcessPool* pool, Data1DImportFileFormat fileAndFormat, const char* name)
 {
 	// Create new data
 	Data1D* data = data_.add();
@@ -58,7 +58,7 @@ bool Data1DStore::addData(ProcessPool& pool, Data1DImportFileFormat fileAndForma
 	dataReferences_.append(data, fileAndFormat);
 
 	// Load the data
-	return fileAndFormat.importData(*data, &pool);
+	return fileAndFormat.importData(*data, pool);
 }
 
 // Check to see if the named data is present in the store

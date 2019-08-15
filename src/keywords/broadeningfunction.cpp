@@ -50,7 +50,7 @@ int BroadeningFunctionKeyword::maxArguments()
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool BroadeningFunctionKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+bool BroadeningFunctionKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	bool result = data_.set(parser, startArg);
 	if (result) set_ = true;

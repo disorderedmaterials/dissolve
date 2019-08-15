@@ -55,7 +55,7 @@ int ModuleGroupsKeyword::maxArguments()
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool ModuleGroupsKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+bool ModuleGroupsKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	// Find specified Module by its unique name
 	Module* module = coreData.findModule(parser.argc(startArg));

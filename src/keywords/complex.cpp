@@ -60,7 +60,7 @@ int ComplexKeyword::maxArguments()
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool ComplexKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+bool ComplexKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	return false;
 }

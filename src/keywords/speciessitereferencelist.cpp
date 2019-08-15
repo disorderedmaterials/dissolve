@@ -52,7 +52,7 @@ int SpeciesSiteReferenceListKeyword::maxArguments()
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool SpeciesSiteReferenceListKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+bool SpeciesSiteReferenceListKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	// Loop over arguments
 	for (int n=startArg; n<parser.nArgs()-1; n += 2)

@@ -514,7 +514,7 @@ bool Dissolve::loadRestart(const char* filename)
 				break;
 			}
 
-			if (!keyword->read(parser, 3, coreData_, worldPool()))
+			if (!keyword->read(parser, 3, coreData_))
 			{
 				Messenger::error("Failed to read keyword data '%s' from restart file.\n", keyword->keyword());
 				error = true;

@@ -51,7 +51,7 @@ int Data1DStoreKeyword::maxArguments()
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool Data1DStoreKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+bool Data1DStoreKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	Messenger::print("Reading test data '%s' from file '%s' (format=%s)...\n", parser.argc(startArg), parser.argc(startArg+2), parser.argc(startArg+1));
 
@@ -59,7 +59,7 @@ bool Data1DStoreKeyword::read(LineParser& parser, int startArg, const CoreData& 
 	Data1DImportFileFormat ff;
 	if (!ff.read(parser, startArg+1)) return false;
 
-	if (!data_.addData(procPool, ff, parser.argc(startArg))) return Messenger::error("Failed to add data.\n");
+	if (!data_.addData(parser.processPool(), ff, parser.argc(startArg))) return Messenger::error("Failed to add data.\n");
 
 	set_ = true;
 

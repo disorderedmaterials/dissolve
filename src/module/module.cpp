@@ -99,7 +99,7 @@ int Module::parseKeyword(LineParser& parser, Dissolve* dissolve, GenericList& ta
 		}
 
 		// All OK, so parse the keyword
-		if (!keyword->read(parser, 1, dissolve->coreData(), dissolve->worldPool()))
+		if (!keyword->read(parser, 1, dissolve->coreData()))
 		{
 			Messenger::error("Failed to parse arguments for Module keyword '%s'.\n", keyword->keyword());
 			return 0;

@@ -50,7 +50,7 @@ int WindowFunctionKeyword::maxArguments()
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool WindowFunctionKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+bool WindowFunctionKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	bool result = data_.set(parser, startArg);
 	if (result) set_ = true;
