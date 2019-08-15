@@ -36,7 +36,7 @@ SelectProcedureNode::SelectProcedureNode(SpeciesSite* site) : ProcedureNode(Proc
 {
 	if (site) speciesSites_.append(site);
 
-	sameMolecule_= NULL;
+	sameMolecule_ = NULL;
 	forEachBranch_ = NULL;
 	currentSiteIndex_ = -1;
 	nCumulativeSites_ = 0;
@@ -47,7 +47,7 @@ SelectProcedureNode::SelectProcedureNode(const RefList<SpeciesSite>& sites) : Pr
 {
 	speciesSites_ = sites;
 
-	sameMolecule_= NULL;
+	sameMolecule_ = NULL;
 	forEachBranch_ = NULL;
 	currentSiteIndex_ = -1;
 	nCumulativeSites_ = 0;
