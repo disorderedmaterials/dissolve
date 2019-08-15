@@ -21,7 +21,6 @@
 
 #include "procedure/nodes/dynamicsite.h"
 #include "procedure/nodes/select.h"
-#include "procedure/nodescopestack.h"
 #include "classes/atom.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
@@ -151,7 +150,7 @@ ProcedureNode::NodeExecutionResult DynamicSiteProcedureNode::execute(ProcessPool
  */
 
 // Read structure from specified LineParser
-bool DynamicSiteProcedureNode::read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack)
+bool DynamicSiteProcedureNode::read(LineParser& parser, const CoreData& coreData)
 {
 	// Read until we encounter the EndExclude keyword, or we fail for some reason
 	while (!parser.eofOrBlank())

@@ -20,7 +20,6 @@
 */
 
 #include "procedure/nodes/box.h"
-#include "procedure/nodescopestack.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "base/lineparser.h"
@@ -107,8 +106,10 @@ ProcedureNode::NodeExecutionResult BoxProcedureNode::execute(ProcessPool& procPo
  */
 
 // Read structure from specified LineParser
-bool BoxProcedureNode::read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack)
+bool BoxProcedureNode::read(LineParser& parser, const CoreData& coreData)
 {
+	RefList<ExpressionVariable> availableParameters;
+
 	// Read until we encounter the EndBox keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
 	{
@@ -124,15 +125,17 @@ bool BoxProcedureNode::read(LineParser& parser, const CoreData& coreData, NodeSc
 		switch (nk)
 		{
 			case (BoxProcedureNode::AnglesKeyword):
-				if (!angleAlpha_.set(parser.argc(1), scopeStack.parameterReferences())) return Messenger::error("Failed to parse expression '%s' for angle 'alpha'.\n", parser.argc(1));
-				if (!angleBeta_.set(parser.argc(2), scopeStack.parameterReferences())) return Messenger::error("Failed to parse expression '%s' for angle 'beta'.\n", parser.argc(2));
-				if (!angleGamma_.set(parser.argc(3), scopeStack.parameterReferences())) return Messenger::error("Failed to parse expression '%s' for angle 'gamma'.\n", parser.argc(3));				break;
+				availableParameters = parametersInScope();
+				if (!angleAlpha_.set(parser.argc(1), availableParameters)) return Messenger::error("Failed to parse expression '%s' for angle 'alpha'.\n", parser.argc(1));
+				if (!angleBeta_.set(parser.argc(2), availableParameters)) return Messenger::error("Failed to parse expression '%s' for angle 'beta'.\n", parser.argc(2));
+				if (!angleGamma_.set(parser.argc(3), availableParameters)) return Messenger::error("Failed to parse expression '%s' for angle 'gamma'.\n", parser.argc(3));				break;
 			case (BoxProcedureNode::EndBoxKeyword):
 				return true;
 			case (BoxProcedureNode::LengthsKeyword):
-				if (!lengthA_.set(parser.argc(1), scopeStack.parameterReferences())) return Messenger::error("Failed to parse expression '%s' for length 'A'.\n", parser.argc(1));
-				if (!lengthB_.set(parser.argc(2), scopeStack.parameterReferences())) return Messenger::error("Failed to parse expression '%s' for length 'B'.\n", parser.argc(2));
-				if (!lengthC_.set(parser.argc(3), scopeStack.parameterReferences())) return Messenger::error("Failed to parse expression '%s' for length 'C'.\n", parser.argc(3));
+				availableParameters = parametersInScope();
+				if (!lengthA_.set(parser.argc(1), availableParameters)) return Messenger::error("Failed to parse expression '%s' for length 'A'.\n", parser.argc(1));
+				if (!lengthB_.set(parser.argc(2), availableParameters)) return Messenger::error("Failed to parse expression '%s' for length 'B'.\n", parser.argc(2));
+				if (!lengthC_.set(parser.argc(3), availableParameters)) return Messenger::error("Failed to parse expression '%s' for length 'C'.\n", parser.argc(3));
 				break;
 			case (BoxProcedureNode::NonPeriodicKeyword):
 				nonPeriodic_ = parser.argb(1);

@@ -21,14 +21,15 @@
 
 #include "procedure/nodes/sequence.h"
 #include "procedure/nodes/nodes.h"
-#include "procedure/nodescopestack.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
 // Constructor
-SequenceProcedureNode::SequenceProcedureNode(ProcedureNode::NodeContext context, const char* blockTerminationKeyword) : ProcedureNode(ProcedureNode::SequenceNode)
+SequenceProcedureNode::SequenceProcedureNode(ProcedureNode::NodeContext context, const Procedure* procedure, ProcedureNode* parentNode, const char* blockTerminationKeyword) : ProcedureNode(ProcedureNode::SequenceNode)
 {
 	context_ = context;
+	procedure_ = procedure;
+	parentNode_ = parentNode;
 	blockTerminationKeyword_ = blockTerminationKeyword;
 }
 
@@ -94,6 +95,122 @@ const List<ProcedureNode>& SequenceProcedureNode::sequence() const
 }
 
 /*
+ * Scope
+ */
+
+// Return parent Procedure to which this sequence belongs
+const Procedure* SequenceProcedureNode::procedure() const
+{
+	return procedure_;
+}
+
+// Return the context of the sequence
+ProcedureNode::NodeContext SequenceProcedureNode::sequenceContext() const
+{
+	return context_;
+}
+
+// Return named node if present in this sequence, and which matches the (optional) type given
+ProcedureNode* SequenceProcedureNode::node(const char* name, ProcedureNode::NodeType nt) const
+{
+	ListIterator<ProcedureNode> nodeIterator(sequence_);
+	while (ProcedureNode* node = nodeIterator.iterate())
+	{
+		if (DissolveSys::sameString(node->name(), name))
+		{
+			// Check type
+			if (nt == ProcedureNode::nNodeTypes) return node;
+			else if (node->type() == nt) return node;
+		}
+
+		// If the node has a branch, recurse in to that
+		if (node->hasBranch())
+		{
+			ProcedureNode* branchNode = node->branch()->node(name, nt);
+			if (branchNode) return branchNode;
+		}
+	}
+
+	return NULL;
+}
+
+// Return named node if it is currently in scope, and optionally matches the type given
+ProcedureNode* SequenceProcedureNode::nodeInScope(ProcedureNode* queryingNode, const char* name, ProcedureNode::NodeType nt)
+{
+	// Is this node present in our own sequence?
+	if (queryingNode && (!sequence_.contains(queryingNode)))
+	{
+		Messenger::error("INTERNAL ERROR: Querying node passed to SequenceProcedureNode::nodeInScope() is not a member of this sequence.\n");
+		return NULL;
+	}
+
+	// Start from the target node and work backwards...
+	for (ProcedureNode* node = queryingNode; node != NULL; node = node->prev)
+	{
+		if (DissolveSys::sameString(node->name(), name))
+		{
+			// Check type
+			if (nt == ProcedureNode::nNodeTypes) return node;
+			else if (node->type() == nt) return node;
+		}
+	}
+
+	// Not in our list. Recursively check our parent(s)
+	if (parentNode_) return parentNode_->nodeInScope(name, nt);
+
+	// Not found
+	return NULL;
+}
+
+// Return whether the named parameter is currently in scope
+ExpressionVariable* SequenceProcedureNode::parameterInScope(ProcedureNode* queryingNode, const char* name)
+{
+	// Is this node present in our own sequence?
+	if (queryingNode && (!sequence_.contains(queryingNode)))
+	{
+		Messenger::error("INTERNAL ERROR: Querying node passed to SequenceProcedureNode::parameterInScope() is not a member of this sequence.\n");
+		return NULL;
+	}
+
+	// Start from the target node and work backwards...
+	for (ProcedureNode* node = queryingNode; node != NULL; node = node->prev)
+	{
+		ExpressionVariable* param = node->hasParameter(name);
+		if (param) return param;
+	}
+
+	// Not in our list. Recursively check our parent(s)
+	if (parentNode_) return parentNode_->parameterInScope(name);
+
+	// Not found
+	return NULL;
+}
+
+// Create and return reference list of parameters in scope
+RefList<ExpressionVariable> SequenceProcedureNode::parametersInScope(ProcedureNode* queryingNode)
+{
+	RefList<ExpressionVariable> parameters;
+
+	// Is this node present in our own sequence?
+	if (queryingNode && (!sequence_.contains(queryingNode)))
+	{
+		Messenger::error("INTERNAL ERROR: Querying node passed to SequenceProcedureNode::parametersInScope() is not a member of this sequence.\n");
+		return parameters;
+	}
+
+	// Start from the target node and work backwards...
+	for (ProcedureNode* node = queryingNode; node != NULL; node = node->prev)
+	{
+		parameters += node->parameterReferences();
+	}
+
+	// Recursively check our parent(s)
+	if (parentNode_) parameters += parentNode_->parametersInScope();
+
+	return parameters;
+}
+
+/*
  * Execute
  */
 
@@ -153,11 +270,8 @@ const char* SequenceProcedureNode::blockTerminationKeyword() const
 }
 
 // Read structure from specified LineParser
-bool SequenceProcedureNode::read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack)
+bool SequenceProcedureNode::read(LineParser& parser, const CoreData& coreData)
 {
-	// The sequence node now pushes a new scope (mirroring our own context)
-	scopeStack.push(context_);
-
 	// Read until we encounter the block-ending keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
 	{
@@ -221,7 +335,7 @@ bool SequenceProcedureNode::read(LineParser& parser, const CoreData& coreData, N
 				break;
 			case (ProcedureNode::SequenceNode):
 				/* This should never be called */
-				newNode = new SequenceProcedureNode(ProcedureNode::NoContext);
+				newNode = new SequenceProcedureNode(ProcedureNode::NoContext, procedure(), this);
 				break;
 			case (ProcedureNode::nNodeTypes):
 				return Messenger::error("Unrecognised procedure node type '%s' found.\n", parser.argc(0));
@@ -230,21 +344,25 @@ bool SequenceProcedureNode::read(LineParser& parser, const CoreData& coreData, N
 				return Messenger::error("Epic Developer Fail - Don't know how to create a node of type '%s'.\n", parser.argc(0));
 		}
 
-		// Is the new node permitted in the context of the current scope?
-		if (!newNode->isContextRelevant(scopeStack.currentContext()))
+		// Check for clash of names with existing node in scope
+		if (nodeInScope(sequence_.last(), parser.hasArg(1) ? parser.argc(1) : newNode->name()))
+		{
+			return Messenger::error("A node named '%s' is already in scope.\n", parser.hasArg(1) ? parser.argc(1) : newNode->name());
+		}
+
+		// Is the new node permitted in our context?
+		if (!newNode->isContextRelevant(context_))
 		{
 			return Messenger::error("'%s' node not allowed / relevant in '%s' context.\n", ProcedureNode::nodeTypes().keyword(newNode->type()), ProcedureNode::nodeContexts().keyword(context_));
 		}
 
-		// Add the new node to our list
+		// Add the new node to our list, and set ourself as its scope
 		sequence_.own(newNode);
+		newNode->setScope(this);
 
 		// Read the new node
-		if (!newNode->read(parser, coreData, scopeStack)) return Messenger::error("Failed to read node sequence.\n");
+		if (!newNode->read(parser, coreData)) return Messenger::error("Failed to read node sequence.\n");
 	}
-
-	// Remove our context, since it is now 'out-of-scope'
-	if (!scopeStack.pop()) return Messenger::error("Internal error while removing context layer for SequenceProcedureNode.\n");
 
 	return true;
 }

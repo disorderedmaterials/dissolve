@@ -62,11 +62,23 @@ class ParametersProcedureNode : public ProcedureNode
 
 
 	/*
-	 * Data
+	 * Parameters
 	 */
 	private:
-	// Reference list of parameters
+	// List of defined parameters (as base ExpressionNode type)
+	List<ExpressionNode> parameters_;
+	// Reference list of parameres (as ExpressionVariables)
 	RefList<ExpressionVariable> parameterReferences_;
+
+	private:
+	// Add new parameter for Procedure
+	bool addParameter(const char* name, ExpressionValue value);
+
+	public:
+	// Return whether this node has the named parameter specified
+	ExpressionVariable* hasParameter(const char* name);
+	// Return references to all parameters for this node
+	RefList<ExpressionVariable> parameterReferences() const;
 
 
 	/*
@@ -84,7 +96,7 @@ class ParametersProcedureNode : public ProcedureNode
 	 */
 	public:
 	// Read structure from specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack);
+	bool read(LineParser& parser, const CoreData& coreData);
 	// Write structure to specified LineParser
 	bool write(LineParser& parser, const char* prefix);
 };

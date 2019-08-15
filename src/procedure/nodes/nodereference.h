@@ -79,7 +79,7 @@ class ProcedureNodeReference : public ListItem<ProcedureNodeReference>
 	 */
 	public:
 	// Read structure from specified LineParser
-	bool read(LineParser& parser, int startArg, const CoreData& coreData, NodeScopeStack& localStack);
+	bool read(LineParser& parser, int startArg, const CoreData& coreData, const Procedure* procedure);
 	// Write structure to specified LineParser
 	bool write(LineParser& parser, const char* prefix);
 };

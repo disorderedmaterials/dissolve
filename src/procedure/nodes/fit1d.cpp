@@ -22,7 +22,6 @@
 #include "procedure/nodes/fit1d.h"
 #include "procedure/nodes/collect1d.h"
 #include "procedure/nodes/process1d.h"
-#include "procedure/nodescopestack.h"
 #include "classes/configuration.h"
 #include "expression/generator.h"
 #include "expression/variable.h"
@@ -249,13 +248,10 @@ bool Fit1DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, con
  */
 
 // Read structure from specified LineParser
-bool Fit1DProcedureNode::read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack)
+bool Fit1DProcedureNode::read(LineParser& parser, const CoreData& coreData)
 {
 	// The current line in the parser may contain a node name for us
 	if (parser.nArgs() == 2) setName(parser.argc(1));
-
-	// Add ourselves to the scope stack
-	if (!scopeStack.add(this)) return Messenger::error("Error adding Fit1D node '%s' to scope stack.\n", name());
 
 	ExpressionVariable* var;
 
@@ -295,7 +291,7 @@ bool Fit1DProcedureNode::read(LineParser& parser, const CoreData& coreData, Node
 				saveData_ = parser.argb(1);
 				break;
 			case (Fit1DProcedureNode::SourceDataKeyword):
-				if (!dataNode_.read(parser, 1, coreData, scopeStack)) return Messenger::error("Couldn't set source data for node.\n");
+				if (!dataNode_.read(parser, 1, coreData, procedure())) return Messenger::error("Couldn't set source data for node.\n");
 				break;
 			case (Fit1DProcedureNode::nFit1DNodeKeywords):
 				return Messenger::error("Unrecognised Fit1D node keyword '%s' found.\n", parser.argc(0));

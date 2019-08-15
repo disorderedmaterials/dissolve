@@ -20,7 +20,6 @@
 */
 
 #include "procedure/nodes/collect1d.h"
-#include "procedure/nodescopestack.h"
 #include "procedure/nodes/calculate.h"
 #include "procedure/nodes/sequence.h"
 #include "math/data1d.h"
@@ -121,7 +120,7 @@ double Collect1DProcedureNode::binWidth() const
 // Add and return subcollection sequence branch
 SequenceProcedureNode* Collect1DProcedureNode::addSubCollectBranch(ProcedureNode::NodeContext context)
 {
-	if (!subCollectBranch_) subCollectBranch_ = new SequenceProcedureNode(context);
+	if (!subCollectBranch_) subCollectBranch_ = new SequenceProcedureNode(context, procedure());
 
 	return subCollectBranch_;
 }
@@ -206,14 +205,11 @@ bool Collect1DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg,
  */
 
 // Read structure from specified LineParser
-bool Collect1DProcedureNode::read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack)
+bool Collect1DProcedureNode::read(LineParser& parser, const CoreData& coreData)
 {
 	// The current line in the parser must also contain a node name (which is not necessarily unique...)
 	if (parser.nArgs() != 2) return Messenger::error("A Collect1D node must be given a suitable name.\n");
 	setName(parser.argc(1));
-
-	// Add ourselves to the scope stack
-	if (!scopeStack.add(this)) return Messenger::error("Error adding Collect1D node '%s' to scope stack.\n", name());
 
 	// Read until we encounter the EndCollect1D keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
@@ -235,7 +231,7 @@ bool Collect1DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				return true;
 			case (Collect1DProcedureNode::QuantityXKeyword):
 				// Determine observable from supplied argument
-				observable_ = dynamic_cast<CalculateProcedureNode*>(scopeStack.nodeInScope(parser.argc(1), ProcedureNode::CalculateNode));
+				observable_ = dynamic_cast<CalculateProcedureNode*>(nodeInScope(parser.argc(1), ProcedureNode::CalculateNode));
 				if (!observable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect1DNodeKeywords().keyword(nk));
 				break;
 			case (Collect1DProcedureNode::RangeXKeyword):
@@ -248,8 +244,8 @@ bool Collect1DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				if (subCollectBranch_) return Messenger::error("Only one SubCollect branch may be defined in a Collect1D node.\n");
 
 				// Create and parse a new branch
-				subCollectBranch_ = new SequenceProcedureNode(scopeStack.currentContext(), "EndSubCollect");
-				if (!subCollectBranch_->read(parser, coreData, scopeStack)) return false;
+				subCollectBranch_ = new SequenceProcedureNode(scopeContext(), procedure(), this, "EndSubCollect");
+				if (!subCollectBranch_->read(parser, coreData)) return false;
 				break;
 			case (Collect1DProcedureNode::nCollect1DNodeKeywords):
 				return Messenger::error("Unrecognised Collect1D node keyword '%s' found.\n", parser.argc(0));

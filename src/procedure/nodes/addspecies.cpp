@@ -20,7 +20,7 @@
 */
 
 #include "procedure/nodes/addspecies.h"
-#include "procedure/nodescopestack.h"
+#include "keywords/types.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
@@ -37,6 +37,8 @@ AddSpeciesProcedureNode::AddSpeciesProcedureNode(Species* sp, int population, do
 	densityUnits_ = Units::AtomsPerAngstromUnits;
 	rotate_ = true;
 	positioning_ = RandomPositioning;
+
+	setUpKeywords();
 }
 
 // Destructor
@@ -61,6 +63,8 @@ bool AddSpeciesProcedureNode::isContextRelevant(ProcedureNode::NodeContext conte
 // Set up keywords for node
 void AddSpeciesProcedureNode::setUpKeywords()
 {
+	keywords_.add("Basic", new NodeValueKeyword(0), "Population", "Population of the specified Species to add");
+// 	keywords_.add("Basic", new 
 }
 
 // Return enum option info for AddSpeciesNodeKeyword
@@ -199,7 +203,7 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool&
  */
 
 // Read structure from specified LineParser
-bool AddSpeciesProcedureNode::read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack)
+bool AddSpeciesProcedureNode::read(LineParser& parser, const CoreData& coreData)
 {
 	// Read until we encounter the EndAddSpecies keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
@@ -216,7 +220,7 @@ bool AddSpeciesProcedureNode::read(LineParser& parser, const CoreData& coreData,
 		switch (nk)
 		{
 			case (AddSpeciesProcedureNode::DensityKeyword):
-				if (!density_.set(parser.argc(1), scopeStack.parameterReferences())) return Messenger::error("Failed to parse expression '%s' for %s.\n", parser.argc(1), addSpeciesNodeKeywords().keyword(nk));
+				if (!density_.set(parser.argc(1), parametersInScope())) return Messenger::error("Failed to parse expression '%s' for %s.\n", parser.argc(1), addSpeciesNodeKeywords().keyword(nk));
 				if (!Units::densityUnits().isValid(parser.argc(2))) return Units::densityUnits().errorAndPrintValid(parser.argc(2));
 				densityUnits_ = Units::densityUnits().enumeration(parser.argc(2));
 				break;
@@ -228,7 +232,7 @@ bool AddSpeciesProcedureNode::read(LineParser& parser, const CoreData& coreData,
 				rotate_ = false;
 				break;
 			case (AddSpeciesProcedureNode::PopulationKeyword):
-				if (!population_.set(parser.argc(1), scopeStack.parameterReferences())) return Messenger::error("Failed to parse expression '%s' for %s.\n", parser.argc(1), addSpeciesNodeKeywords().keyword(nk));
+				if (!population_.set(parser.argc(1), parametersInScope())) return Messenger::error("Failed to parse expression '%s' for %s.\n", parser.argc(1), addSpeciesNodeKeywords().keyword(nk));
 				break;
 			case (AddSpeciesProcedureNode::PositionKeyword):
 				if (!positioningTypes().isValid(parser.argc(1))) return positioningTypes().errorAndPrintValid(parser.argc(1));

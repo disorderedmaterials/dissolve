@@ -20,6 +20,7 @@
 */
 
 #include "procedure/nodes/node.h"
+#include "procedure/nodes/sequence.h"
 #include "classes/site.h"
 #include "base/messenger.h"
 #include "base/sysfunc.h"
@@ -66,6 +67,7 @@ EnumOptions<ProcedureNode::NodeContext> ProcedureNode::nodeContexts()
 ProcedureNode::ProcedureNode(ProcedureNode::NodeType nodeType) : ListItem<ProcedureNode>()
 {
 	type_ = nodeType;
+	scope_ = NULL;
 
 	// Assign default, unique name to the node
 	static int nodeCount = 0;
@@ -119,6 +121,56 @@ const KeywordList& ProcedureNode::keywords() const
 }
 
 /*
+ * Scope
+ */
+
+// Set scope
+void ProcedureNode::setScope(SequenceProcedureNode* scopeNode)
+{
+	scope_ = scopeNode;
+}
+
+// Return Procedure in which this node exists
+const Procedure* ProcedureNode::procedure() const
+{
+	if (!scope_) return NULL;
+
+	return scope_->procedure();
+}
+
+// Return context of scope in which this node exists
+ProcedureNode::NodeContext ProcedureNode::scopeContext() const
+{
+	if (!scope_) return ProcedureNode::NoContext;
+
+	return scope_->sequenceContext();
+}
+
+// Return named node if it is currently in scope, and optionally matches the type given
+ProcedureNode* ProcedureNode::nodeInScope(const char* name, ProcedureNode::NodeType nt)
+{
+	if (!scope_) return NULL;
+
+	return scope_->nodeInScope(this, name, nt);
+}
+
+// Return whether the named parameter is currently in scope
+ExpressionVariable* ProcedureNode::parameterInScope(const char* name)
+{
+	if (!scope_) return NULL;
+
+	return scope_->parameterInScope(this, name);
+}
+
+// Create and return reference list of parameters in scope
+RefList<ExpressionVariable> ProcedureNode::parametersInScope()
+{
+	if (!scope_) return RefList<ExpressionVariable>();
+
+	return scope_->parametersInScope(this);
+}
+
+/*
  * Branch
  */
 
@@ -132,6 +184,22 @@ bool ProcedureNode::hasBranch() const
 SequenceProcedureNode* ProcedureNode::branch()
 {
 	return NULL;
+}
+
+/*
+ * Parameters
+ */
+
+// Return whether this node has the named parameter specified
+ExpressionVariable* ProcedureNode::hasParameter(const char* name)
+{
+	return NULL;
+}
+
+// Return references to all parameters for this node
+RefList<ExpressionVariable> ProcedureNode::parameterReferences() const
+{
+	return RefList<ExpressionVariable>();
 }
 
 /*

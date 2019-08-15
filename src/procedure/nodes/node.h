@@ -30,6 +30,7 @@
 // Forward Declarations
 class Configuration;
 class CoreData;
+class ExpressionVariable;
 class GenericList;
 class LineParser;
 class NodeScopeStack;
@@ -97,6 +98,28 @@ class ProcedureNode : public ListItem<ProcedureNode>
 
 
 	/*
+	 * Scope
+	 */
+	private:
+	// Scope (SequenceNode) in which this node exists
+	SequenceProcedureNode* scope_;
+
+	public:
+	// Set scope
+	void setScope(SequenceProcedureNode* scopeNode);
+	// Return Procedure in which this node exists
+	const Procedure* procedure() const;
+	// Return context of scope in which this node exists
+	ProcedureNode::NodeContext scopeContext() const;
+	// Return named node if it is currently in scope, and optionally matches the type given
+	ProcedureNode* nodeInScope(const char* name, ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes);
+	// Return whether the named parameter is currently in scope
+	ExpressionVariable* parameterInScope(const char* name);
+	// Create and return reference list of parameters in scope
+	RefList<ExpressionVariable> parametersInScope();
+
+
+	/*
 	 * Branch
 	 */
 	public:
@@ -104,6 +127,16 @@ class ProcedureNode : public ListItem<ProcedureNode>
 	virtual bool hasBranch() const;
 	// Return SequenceNode for the branch (if it exists)
 	virtual SequenceProcedureNode* branch();
+
+
+	/*
+	 * Parameters
+	 */
+	public:
+	// Return whether this node has the named parameter specified
+	virtual ExpressionVariable* hasParameter(const char* name);
+	// Return references to all parameters for this node
+	virtual RefList<ExpressionVariable> parameterReferences() const;
 
 
 	/*
@@ -125,7 +158,7 @@ class ProcedureNode : public ListItem<ProcedureNode>
 	 */
 	public:
 	// Read structure from specified LineParser
-	virtual bool read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack) = 0;
+	virtual bool read(LineParser& parser, const CoreData& coreData) = 0;
 	// Write structure to specified LineParser
 	virtual bool write(LineParser& parser, const char* prefix) = 0;
 };

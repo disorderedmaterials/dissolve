@@ -20,7 +20,6 @@
 */
 
 #include "procedure/nodes/parameters.h"
-#include "procedure/nodescopestack.h"
 #include "expression/variable.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
@@ -67,6 +66,43 @@ EnumOptions<ParametersProcedureNode::ParametersNodeKeyword> ParametersProcedureN
 	return options;
 }
 
+/*
+ * Parameters
+ */
+
+// Add new parameter for Procedure
+bool ParametersProcedureNode::addParameter(const char* name, ExpressionValue value)
+{
+	// Is a parameter of this name already in scope?
+	ExpressionVariable* parameter = parameterInScope(name);
+	if (parameter) return Messenger::error("A parameter with the name '%s' is already in scope, and cannot be redefined.\n", name);
+
+	// Create a new one
+	parameter = new ExpressionVariable;
+	parameters_.own(parameter);
+	parameter->setName(name);
+	if (!parameter->set(value)) return Messenger::error("Failed to set initial value for parameter '%s'.\n", name);
+
+	parameterReferences_.append(parameter);
+
+	return true;
+}
+
+// Return whether this node has the named parameter specified
+ExpressionVariable* ParametersProcedureNode::hasParameter(const char* name)
+{
+	RefListIterator<ExpressionVariable> parameterIterator(parameterReferences_);
+	while (ExpressionVariable* var = parameterIterator.iterate()) if (DissolveSys::sameString(var->name(), name)) return var;
+
+	return NULL;
+}
+
+// Return references to all parameters for this node
+RefList<ExpressionVariable> ParametersProcedureNode::parameterReferences() const
+{
+	return parameterReferences_;
+}
+
 /* 
  * Execute
  */
@@ -88,7 +124,7 @@ ProcedureNode::NodeExecutionResult ParametersProcedureNode::execute(ProcessPool&
  */
 
 // Read structure from specified LineParser
-bool ParametersProcedureNode::read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack)
+bool ParametersProcedureNode::read(LineParser& parser, const CoreData& coreData)
 {
 	ExpressionVariable* parameter;
 
@@ -107,18 +143,10 @@ bool ParametersProcedureNode::read(LineParser& parser, const CoreData& coreData,
 		switch (nk)
 		{
 			case (ParametersProcedureNode::DoubleKeyword):
-				parameter = scopeStack.addParameter(parser.argc(1), parser.argd(2));
-				if (!parameter) return false;
-
-				// Add the parameter to our own RefList so we can write out its info
-				parameterReferences_.append(parameter);
+				if (!addParameter(parser.argc(1), parser.argd(2))) return false;
 				break;
 			case (ParametersProcedureNode::IntegerKeyword):
-				parameter = scopeStack.addParameter(parser.argc(1), parser.argi(2));
-				if (!parameter) return false;
-
-				// Add the parameter to our own RefList so we can write out its info
-				parameterReferences_.append(parameter);
+				if (!addParameter(parser.argc(1), parser.argi(2))) return false;
 				break;
 			case (ParametersProcedureNode::EndParametersKeyword):
 				return true;

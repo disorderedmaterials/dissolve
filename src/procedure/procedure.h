@@ -24,7 +24,6 @@
 
 #include "procedure/nodes/node.h"
 #include "procedure/nodes/sequence.h"
-#include "procedure/nodescopestack.h"
 #include "templates/refdatalist.h"
 
 // Forward Declarations
@@ -46,8 +45,6 @@ class Procedure
 	 * Data
 	 */
 	private:
-	// Scope stack
-	NodeScopeStack scopeStack_;
 	// Context for the main Procedure
 	ProcedureNode::NodeContext context_;
 	// Sequence node from which the Procedure starts
@@ -60,12 +57,10 @@ class Procedure
 	void addRootSequenceNode(ProcedureNode* node);
 	// Return root sequence
 	const SequenceProcedureNode& rootSequence() const;
-	// Return context for the main Procedure
-	ProcedureNode::NodeContext context() const;
-	// Return the scope stack
-	const NodeScopeStack& scopeStack() const;
 	// Return the block termination keyword for the Procedure
 	const char* blockTerminationKeyword() const;
+	// Return named node if present, and which matches the (optional) type given
+	ProcedureNode* node(const char* name, ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
 
 
 	/*

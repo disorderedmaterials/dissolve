@@ -25,7 +25,7 @@
 #include "base/sysfunc.h"
 
 // Constructor
-Procedure::Procedure(ProcedureNode::NodeContext context, const char* blockTerminationKeyword) : rootSequence_(context, blockTerminationKeyword)
+Procedure::Procedure(ProcedureNode::NodeContext context, const char* blockTerminationKeyword) : rootSequence_(context, this, NULL, blockTerminationKeyword)
 {
 	context_ = context;
 }
@@ -42,7 +42,6 @@ Procedure::~Procedure()
 // Clear all data
 void Procedure::clear()
 {
-	scopeStack_.clear();
 	rootSequence_.clear();
 }
 
@@ -58,16 +57,16 @@ const SequenceProcedureNode& Procedure::rootSequence() const
 	return rootSequence_;
 }
 
-// Return the scope stack
-const NodeScopeStack& Procedure::scopeStack() const
-{
-	return scopeStack_;
-}
-
 // Return the block termination keyword for the Procedure
 const char* Procedure::blockTerminationKeyword() const
 {
 	return rootSequence_.blockTerminationKeyword();
+}
+
+// Return named node if present, and which matches the (optional) type given
+ProcedureNode* Procedure::node(const char* name, ProcedureNode::NodeType nt) const
+{
+	return rootSequence_.node(name, nt);
 }
 
 /*
@@ -116,7 +115,7 @@ bool Procedure::read(LineParser& parser, const CoreData& coreData)
 {
 	clear();
 
-	return rootSequence_.read(parser, coreData, scopeStack_);
+	return rootSequence_.read(parser, coreData);
 }
 
 // Write structure to specified LineParser

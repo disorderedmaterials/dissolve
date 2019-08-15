@@ -23,18 +23,19 @@
 #define DISSOLVE_PROCEDURENODE_SEQUENCE_H
 
 #include "procedure/nodes/node.h"
+#include "expression/expression.h"
 #include "base/charstring.h"
 #include "templates/list.h"
 
 // Forward Declarations
-/* none */
+class Procedure;
 
 // Sequence Node
 class SequenceProcedureNode : public ProcedureNode
 {
 	public:
 	// Constructor
-	SequenceProcedureNode(ProcedureNode::NodeContext context, const char* blockTerminationKeyword = NULL);
+	SequenceProcedureNode(ProcedureNode::NodeContext context, const Procedure* procedure, ProcedureNode* parentNode = NULL, const char* blockTerminationKeyword = NULL);
 	// Destructor
 	~SequenceProcedureNode();
 
@@ -67,8 +68,6 @@ class SequenceProcedureNode : public ProcedureNode
 	protected:
 	// Sequential node list
 	List<ProcedureNode> sequence_;
-	// Context of the sequence
-	ProcedureNode::NodeContext context_;
 
 	public:
 	// Clear all data
@@ -77,6 +76,32 @@ class SequenceProcedureNode : public ProcedureNode
 	void addNode(ProcedureNode* node);
 	// Return sequential node list
 	const List<ProcedureNode>& sequence() const;
+
+
+	/*
+	 * Scope
+	 */
+	private:
+	// Parent Procedure to which this sequence belongs
+	const Procedure* procedure_;
+	// Parent ProcedureNode in which this sequence exists
+	ProcedureNode* parentNode_;
+	// Context of the sequence
+	ProcedureNode::NodeContext context_;
+
+	public:
+	// Return parent Procedure to which this sequence belongs
+	const Procedure* procedure() const;
+	// Return the context of the sequence
+	ProcedureNode::NodeContext sequenceContext() const;
+	// Return named node if present, and which matches the (optional) type given
+	ProcedureNode* node(const char* name, ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
+	// Return named node if it is currently in scope, and optionally matches the type given
+	ProcedureNode* nodeInScope(ProcedureNode* queryingNode, const char* name, ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes);
+	// Return whether the named parameter is currently in scope
+	ExpressionVariable* parameterInScope(ProcedureNode* queryingNode, const char* name);
+	// Create and return reference list of parameters in scope
+	RefList<ExpressionVariable> parametersInScope(ProcedureNode* queryingNode);
 
 
 	/*
@@ -104,7 +129,7 @@ class SequenceProcedureNode : public ProcedureNode
 	// Return block termination keyword for current context
 	const char* blockTerminationKeyword() const;
 	// Read structure from specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack);
+	bool read(LineParser& parser, const CoreData& coreData);
 	// Write structure to specified LineParser
 	bool write(LineParser& parser, const char* prefix);
 };

@@ -20,7 +20,6 @@
 */
 
 #include "procedure/nodes/collect2d.h"
-#include "procedure/nodescopestack.h"
 #include "procedure/nodes/calculate.h"
 #include "procedure/nodes/sequence.h"
 #include "math/data2d.h"
@@ -145,7 +144,7 @@ double Collect2DProcedureNode::yBinWidth() const
 // Add and return subcollection sequence branch
 SequenceProcedureNode* Collect2DProcedureNode::addSubCollectBranch(ProcedureNode::NodeContext context)
 {
-	if (!subCollectBranch_) subCollectBranch_ = new SequenceProcedureNode(context);
+	if (!subCollectBranch_) subCollectBranch_ = new SequenceProcedureNode(context, procedure());
 
 	return subCollectBranch_;
 }
@@ -235,14 +234,11 @@ bool Collect2DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg,
  */
 
 // Read structure from specified LineParser
-bool Collect2DProcedureNode::read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack)
+bool Collect2DProcedureNode::read(LineParser& parser, const CoreData& coreData)
 {
 	// The current line in the parser must also contain a node name (which is not necessarily unique...)
 	if (parser.nArgs() != 2) return Messenger::error("A Collect2D node must be given a suitable name.\n");
 	setName(parser.argc(1));
-
-	// Add ourselves to the scope stack
-	if (!scopeStack.add(this)) return Messenger::error("Error adding Collect2D node '%s' to scope stack.\n", name());
 
 	// Read until we encounter the EndCollect2D keyword, or we fail for some reason
 	while (!parser.eofOrBlank())
@@ -262,12 +258,12 @@ bool Collect2DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				return true;
 			case (Collect2DProcedureNode::QuantityXKeyword):
 				// Determine observable from supplied argument
-				xObservable_ = dynamic_cast<CalculateProcedureNode*>(scopeStack.nodeInScope(parser.argc(1), ProcedureNode::CalculateNode));
+				xObservable_ = dynamic_cast<CalculateProcedureNode*>(nodeInScope(parser.argc(1), ProcedureNode::CalculateNode));
 				if (!xObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect2DNodeKeywords().keyword(nk));
 				break;
 			case (Collect2DProcedureNode::QuantityYKeyword):
 				// Determine observable from supplied argument
-				yObservable_ = dynamic_cast<CalculateProcedureNode*>(scopeStack.nodeInScope(parser.argc(1), ProcedureNode::CalculateNode));
+				yObservable_ = dynamic_cast<CalculateProcedureNode*>(nodeInScope(parser.argc(1), ProcedureNode::CalculateNode));
 				if (!yObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect2DNodeKeywords().keyword(nk));
 				break;
 			case (Collect2DProcedureNode::RangeXKeyword):
@@ -285,8 +281,8 @@ bool Collect2DProcedureNode::read(LineParser& parser, const CoreData& coreData, 
 				if (subCollectBranch_) return Messenger::error("Only one SubCollect branch may be defined in a Collect2D node.\n");
 
 				// Create and parse a new branch
-				subCollectBranch_ = new SequenceProcedureNode(scopeStack.currentContext(), "EndSubCollect");
-				if (!subCollectBranch_->read(parser, coreData, scopeStack)) return false;
+				subCollectBranch_ = new SequenceProcedureNode(scopeContext(), procedure(), this, "EndSubCollect");
+				if (!subCollectBranch_->read(parser, coreData)) return false;
 				break;
 			case (Collect2DProcedureNode::nCollect2DNodeKeywords):
 				return Messenger::error("Unrecognised Collect2D node keyword '%s' found.\n", parser.argc(0));
