@@ -75,7 +75,7 @@ class SequenceProcedureNode : public ProcedureNode
 	void clear();
 	// Add (own) node into sequence
 	void addNode(ProcedureNode* node);
-	// Return sSequential node list
+	// Return sequential node list
 	const List<ProcedureNode>& sequence() const;
 
 
