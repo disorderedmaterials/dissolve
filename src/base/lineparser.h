@@ -101,6 +101,8 @@ class LineParser
 	public:
 	// Reset data
 	void reset();
+	// Return associated process pool (if any)
+	ProcessPool* processPool() const;
 	// Return filename of current inputFile (if any)
 	const char* inputFilename() const;
 	// Return filename of current outputFile (if any)

@@ -54,6 +54,10 @@ istream* LineParser::inputStream() const
 	return inputStrings_;
 }
 
+/*
+ * Source line/file and read options
+ */
+
 // Reset data
 void LineParser::reset()
 {
@@ -72,9 +76,11 @@ void LineParser::reset()
 	arguments_.clear();
 }
 
-/*
- * Source line/file and read options
- */
+// Return associated process pool (if any)
+ProcessPool* LineParser::processPool() const
+{
+	return processPool_;
+}
 
 // Return filename of current input file (if any)
 const char* LineParser::inputFilename() const
