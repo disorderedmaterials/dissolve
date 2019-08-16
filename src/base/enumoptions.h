@@ -45,8 +45,11 @@ template <class T> class EnumOptions : public EnumOptionsBase
 	// Return enumeration in T
 	T enumeration(const char* keyword) const
 	{
-		for (int n=0; n<options_.nItems(); ++n) if (DissolveSys::sameString(keyword, options_.constAt(n).keyword())) return (T) n;
-		return (T) options_.nItems();
+		for (int n=0; n<options_.nItems(); ++n) if (DissolveSys::sameString(keyword, options_.constAt(n).keyword())) return (T) options_.constAt(n).enumeration();
+
+		Messenger::warn("Option '%s' is not recognised, so can't return its enumeration.\n", keyword);
+
+		return (T) -1;
 	}
 	// Return current enumeration in T
 	T enumeration() const
