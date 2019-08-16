@@ -81,7 +81,7 @@ int ModuleReferenceListKeyword::maxArguments()
 	return (maxModules_ == -1 ? 99 : maxModules_);
 }
 
-// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
+// Parse arguments from supplied LineParser, starting at given argument offset
 bool ModuleReferenceListKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	// Loop over arguments provided to the keyword

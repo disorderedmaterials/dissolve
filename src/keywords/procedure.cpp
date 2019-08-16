@@ -51,7 +51,7 @@ int ProcedureKeyword::maxArguments()
 	return 0;
 }
 
-// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
+// Parse arguments from supplied LineParser, starting at given argument offset
 bool ProcedureKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	if (!data_.read(parser, coreData)) return false;

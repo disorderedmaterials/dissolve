@@ -92,7 +92,7 @@ int AtomTypeSelectionKeyword::maxArguments()
 	return 999;
 }
 
-// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
+// Parse arguments from supplied LineParser, starting at given argument offset
 bool AtomTypeSelectionKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	// Make sure our list is up-to-date

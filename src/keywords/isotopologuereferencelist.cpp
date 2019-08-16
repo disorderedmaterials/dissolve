@@ -62,7 +62,7 @@ int IsotopologueReferenceListKeyword::maxArguments()
 	return 4;
 }
 
-// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
+// Parse arguments from supplied LineParser, starting at given argument offset
 bool IsotopologueReferenceListKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	// Find target Configuration (first argument)

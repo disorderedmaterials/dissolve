@@ -112,7 +112,7 @@ int IntegerKeyword::maxArguments()
 	return 1;
 }
 
-// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
+// Parse arguments from supplied LineParser, starting at given argument offset
 bool IntegerKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	if (parser.hasArg(startArg))

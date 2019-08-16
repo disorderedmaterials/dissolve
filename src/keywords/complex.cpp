@@ -59,7 +59,7 @@ int ComplexKeyword::maxArguments()
 	return maxArguments_;
 }
 
-// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
+// Parse arguments from supplied LineParser, starting at given argument offset
 bool ComplexKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	return false;
