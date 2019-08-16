@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEKEYWORDENUMOPTIONS_H
-#define DISSOLVE_MODULEKEYWORDENUMOPTIONS_H
+#ifndef DISSOLVE_KEYWORD_ENUMOPTIONS_H
+#define DISSOLVE_KEYWORD_ENUMOPTIONS_H
 
 #include "keywords/data.h"
 #include "keywords/base.h"
