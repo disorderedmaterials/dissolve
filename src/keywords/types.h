@@ -45,6 +45,7 @@
 #include "keywords/isotopologuereferencelist.h"
 #include "keywords/modulegroups.h"
 #include "keywords/modulereferencelist.h"
+#include "keywords/nodevalue.h"
 #include "keywords/pairbroadeningfunction.h"
 #include "keywords/procedure.h"
 #include "keywords/speciesreferencelist.h"
