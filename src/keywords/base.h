@@ -102,6 +102,8 @@ class KeywordBase : public ListItem<KeywordBase>
 	virtual int minArguments() = 0;
 	// Return maximum number of arguments accepted
 	virtual int maxArguments() = 0;
+	// Check number of arguments provided to keyword
+	bool validNArgs(int nArgsProvided);
 	// Parse arguments from supplied LineParser, starting at given argument offset
 	virtual bool read(LineParser& parser, int startArg, const CoreData& coreData) = 0;
 	// Write keyword data to specified LineParser

@@ -101,6 +101,27 @@ bool KeywordBase::isSet()
 }
 
 /*
+ * Arguments
+ */
+
+// Check number of arguments provided to keyword
+bool KeywordBase::validNArgs(int nArgsProvided)
+{
+	if (nArgsProvided < minArguments())
+	{
+		Messenger::error("Not enough arguments given to %s keyword '%s'.\n", typeName(), keyword());
+		return false;
+	}
+	if ((maxArguments() >= 0) && (nArgsProvided > maxArguments()))
+	{
+		Messenger::error("Too many arguments given to %s keyword '%s'.\n", typeName(), keyword());
+		return false;
+	}
+
+	return true;
+}
+
+/*
  * Conversion
  */
 

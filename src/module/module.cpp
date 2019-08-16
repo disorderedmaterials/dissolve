@@ -85,18 +85,8 @@ KeywordBase::ParseResult Module::parseKeyword(LineParser& parser, Dissolve* diss
 	}
 	else
 	{
-		// It's a keyword that sets a simple POD or class
 		// Check the number of arguments we have against the min / max for the keyword
-		if ((parser.nArgs() - 1) < keyword->minArguments())
-		{
-			Messenger::error("Not enough arguments given to Module keyword '%s'.\n", keyword->keyword());
-			return KeywordBase::Failed;
-		}
-		if ((keyword->maxArguments() >= 0) && ((parser.nArgs() - 1) > keyword->maxArguments()))
-		{
-			Messenger::error("Too many arguments given to Module keyword '%s'.\n", keyword->keyword());
-			return KeywordBase::Failed;
-		}
+		if (!keyword->validNArgs(parser.nArgs() - 1)) return KeywordBase::Failed;
 
 		// All OK, so parse the keyword
 		if (!keyword->read(parser, 1, dissolve->coreData()))
