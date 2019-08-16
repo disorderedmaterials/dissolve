@@ -11,7 +11,7 @@ libkeywords_la_SOURCES += list.cpp
 libkeywords_la_SOURCES += modulegroups.cpp modulereferencelist.cpp
 libkeywords_la_SOURCES += nodevalue.cpp
 libkeywords_la_SOURCES += pairbroadeningfunction.cpp procedure.cpp
-libkeywords_la_SOURCES += speciesreferencelist.cpp speciessite.cpp speciessitereferencelist.cpp
+libkeywords_la_SOURCES += species.cpp speciesreferencelist.cpp speciessite.cpp speciessitereferencelist.cpp
 libkeywords_la_SOURCES += vec3double.cpp vec3integer.cpp
 libkeywords_la_SOURCES += windowfunction.cpp
 
@@ -27,7 +27,7 @@ noinst_HEADERS += list.h
 noinst_HEADERS += modulegroups.h modulereferencelist.h
 noinst_HEADERS += nodevalue.h
 noinst_HEADERS += pairbroadeningfunction.h procedure.h
-noinst_HEADERS += speciesreferencelist.h speciessite.h speciessitereferencelist.h
+noinst_HEADERS += species.h speciesreferencelist.h speciessite.h speciessitereferencelist.h
 noinst_HEADERS += types.h
 noinst_HEADERS += vec3double.h vec3integer.h
 noinst_HEADERS += windowfunction.h

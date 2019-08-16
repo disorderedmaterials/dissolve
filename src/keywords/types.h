@@ -48,6 +48,7 @@
 #include "keywords/nodevalue.h"
 #include "keywords/pairbroadeningfunction.h"
 #include "keywords/procedure.h"
+#include "keywords/species.h"
 #include "keywords/speciesreferencelist.h"
 #include "keywords/speciessite.h"
 #include "keywords/speciessitereferencelist.h"

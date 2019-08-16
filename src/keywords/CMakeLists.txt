@@ -19,6 +19,7 @@ add_library(keywords
   nodevalue.cpp
   pairbroadeningfunction.cpp
   procedure.cpp
+  species.cpp
   speciesreferencelist.cpp
   speciessite.cpp
   speciessitereferencelist.cpp
@@ -48,6 +49,7 @@ add_library(keywords
   nodevalue.h
   pairbroadeningfunction.h
   procedure.h
+  species.h
   speciesreferencelist.h
   speciessite.h
   speciessitereferencelist.h
