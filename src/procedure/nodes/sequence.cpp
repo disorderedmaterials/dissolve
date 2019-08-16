@@ -282,11 +282,14 @@ bool SequenceProcedureNode::read(LineParser& parser, const CoreData& coreData)
 		if (DissolveSys::sameString(parser.argc(0), blockTerminationKeyword_)) break;
 
 		// Is the first argument on the current line a valid control keyword?
-		SequenceNodeKeyword nk = sequenceNodeKeywords().enumeration(parser.argc(0));
-		switch (nk)
+		if (sequenceNodeKeywords().isValid(parser.argc(0)))
 		{
-			case (SequenceProcedureNode::nSequenceNodeKeywords):
-				break;
+			SequenceNodeKeyword nk = sequenceNodeKeywords().enumeration(parser.argc(0));
+			switch (nk)
+			{
+				case (SequenceProcedureNode::nSequenceNodeKeywords):
+					break;
+			}
 		}
 
 		// Not a control keyword, so must be a node type
