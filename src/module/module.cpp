@@ -69,13 +69,13 @@ KeywordList& Module::keywords()
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int Module::parseKeyword(LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
+KeywordBase::ParseResult Module::parseKeyword(LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
 	// The LineParser currently contains a parsed line from the input file...
 
 	// Do we recognise the first item (the 'keyword')?
 	KeywordBase* keyword = keywords_.find(parser.argc(0));
-	if (!keyword) return -1;
+	if (!keyword) return KeywordBase::Unrecognised;
 
 	// We recognised the keyword - what should we try to do with it?
 	if (keyword->type() == KeywordBase::ComplexData)
@@ -90,23 +90,23 @@ int Module::parseKeyword(LineParser& parser, Dissolve* dissolve, GenericList& ta
 		if ((parser.nArgs() - 1) < keyword->minArguments())
 		{
 			Messenger::error("Not enough arguments given to Module keyword '%s'.\n", keyword->keyword());
-			return 0;
+			return KeywordBase::Failed;
 		}
 		if ((keyword->maxArguments() >= 0) && ((parser.nArgs() - 1) > keyword->maxArguments()))
 		{
 			Messenger::error("Too many arguments given to Module keyword '%s'.\n", keyword->keyword());
-			return 0;
+			return KeywordBase::Failed;
 		}
 
 		// All OK, so parse the keyword
 		if (!keyword->read(parser, 1, dissolve->coreData()))
 		{
 			Messenger::error("Failed to parse arguments for Module keyword '%s'.\n", keyword->keyword());
-			return 0;
+			return KeywordBase::Failed;
 		}
 	}
 
-	return true;
+	return KeywordBase::Success;
 }
 
 // Print valid keywords

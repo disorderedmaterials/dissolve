@@ -107,6 +107,14 @@ class KeywordBase : public ListItem<KeywordBase>
 
 
 	/*
+	 * Parse Result
+	 */
+	public:
+	// Keyword Parse Result
+	enum ParseResult { Unrecognised = -1, Failed = 0, Success = 1 };
+
+
+	/*
 	 * Conversion
 	 */
 	public:

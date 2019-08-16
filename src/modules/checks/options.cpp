@@ -36,32 +36,32 @@ void ChecksModule::setUpKeywords()
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int ChecksModule::parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
+KeywordBase::ParseResult ChecksModule::parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
 	if (DissolveSys::sameString(parser.argc(0), "Angle"))
 	{
 		if (parser.nArgs() != 5)
 		{
 			Messenger::error("Wrong number of arguments given to 'Angle' keyword.\n");
-			return 0;
+			return KeywordBase::Failed;
 		}
 		Geometry* g = angles_.add();
 		g->set(parser.argd(4), parser.argi(1)-1, parser.argi(2)-1, parser.argi(3)-1);
 
-		return 1;
+		return KeywordBase::Success;
 	}
 	else if (DissolveSys::sameString(parser.argc(0), "Distance"))
 	{
 		if (parser.nArgs() != 4)
 		{
 			Messenger::error("Wrong number of arguments given to 'Distance' keyword.\n");
-			return 0;
+			return KeywordBase::Failed;
 		}
 		Geometry* g = distances_.add();
 		g->set(parser.argd(3), parser.argi(1)-1, parser.argi(2)-1);
 
-		return 1;
+		return KeywordBase::Success;
 	}
 
-	return -1;
+	return KeywordBase::Unrecognised;
 }
