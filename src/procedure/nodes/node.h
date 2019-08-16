@@ -157,10 +157,10 @@ class ProcedureNode : public ListItem<ProcedureNode>
 	 * Read / Write
 	 */
 	public:
-	// Read structure from specified LineParser
-	virtual bool read(LineParser& parser, const CoreData& coreData) = 0;
-	// Write structure to specified LineParser
-	virtual bool write(LineParser& parser, const char* prefix) = 0;
+	// Read node data from specified LineParser
+	virtual bool read(LineParser& parser, const CoreData& coreData);
+	// Write node data to specified LineParser
+	virtual bool write(LineParser& parser, const char* prefix);
 };
 
 #endif

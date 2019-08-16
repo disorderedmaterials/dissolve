@@ -22,6 +22,7 @@
 #include "procedure/nodes/node.h"
 #include "procedure/nodes/sequence.h"
 #include "classes/site.h"
+#include "base/lineparser.h"
 #include "base/messenger.h"
 #include "base/sysfunc.h"
 
@@ -216,4 +217,57 @@ bool ProcedureNode::prepare(Configuration* cfg, const char* prefix, GenericList&
 bool ProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 	return ProcedureNode::Success;
+}
+
+/*
+ * Read / Write
+ */
+
+// Read node data from specified LineParser
+bool ProcedureNode::read(LineParser& parser, const CoreData& coreData)
+{
+	// Read until we encounter the EndAddSpecies keyword, or we fail for some reason
+	while (!parser.eofOrBlank())
+	{
+		// Read and parse the next line
+		if (parser.getArgsDelim() != LineParser::Success) return false;
+
+		// Is this the end of the node block?
+		if (DissolveSys::sameString(parser.argc(0), CharString("End%s", nodeTypes().keyword(type_)))) return true;
+
+		// Try to parse this line as a keyword
+		KeywordBase::ParseResult result = keywords_.parse(parser, coreData);
+		if (result == KeywordBase::Failed) return Messenger::error("Failed to parse keyword '%s'.\n", parser.argc(0));
+		else if (result == KeywordBase::Success) continue;
+		else if (result == KeywordBase::Unrecognised) return Messenger::error("Unrecognised keyword '%s' found.\n", parser.argc(0));
+	}
+
+	return true;
+}
+
+// Write node data to specified LineParser
+bool ProcedureNode::write(LineParser& parser, const char* prefix)
+{
+	// Block Start
+	if (!parser.writeLineF("%s%s\n", prefix, ProcedureNode::nodeTypes().keyword(type_))) return false;
+
+	// Create new prefix
+	CharString newPrefix("  %s", prefix);
+
+	// Loop over keyword groups
+	ListIterator<KeywordGroup> groupsIterator(keywords_.groups());
+	while (KeywordGroup* group = groupsIterator.iterate())
+	{
+		// Loop over keywords in group
+		RefListIterator<KeywordBase> keywordIterator(group->keywords());
+		while (KeywordBase* keyword = keywordIterator.iterate())
+		{
+			if (!keyword->write(parser, newPrefix)) return false;
+		}
+	}
+
+	// Block End
+	if (!parser.writeLineF("%sEnd%s\n", nodeTypes().keyword(type_))) return false;
+
+	return true;
 }
