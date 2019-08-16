@@ -80,6 +80,8 @@ class KeywordBase : public ListItem<KeywordBase>
 	void set(const char* keyword, const char* description, const char* arguments, int optionMask = NoOptions);
 	// Return data type stored by keyword
 	KeywordDataType type();
+	// Return name of data type stored by keyword
+	const char* typeName() const;
 	// Return keyword name
 	const char* keyword();
 	// Return arguments string

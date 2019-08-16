@@ -70,6 +70,12 @@ KeywordBase::KeywordDataType KeywordBase::type()
 	return type_;
 }
 
+// Return name of data type stored by keyword
+const char* KeywordBase::typeName() const
+{
+	return KeywordDataTypeKeywords[type_];
+}
+
 // Return keyword name
 const char* KeywordBase::keyword()
 {
