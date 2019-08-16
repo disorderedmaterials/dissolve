@@ -20,6 +20,7 @@
 */
 
 #include "keywords/list.h"
+#include "base/lineparser.h"
 #include "base/sysfunc.h"
 
 // Constructor
@@ -207,4 +208,28 @@ bool KeywordList::isSet(const char* keywordName) const
 	}
 
 	return keyword->isSet();
+}
+
+/*
+ * Read / Write
+ */
+
+// Try to parse node keyword in specified LineParser
+KeywordBase::ParseResult KeywordList::parse(LineParser& parser, const CoreData& coreData)
+{
+	// Do we recognise the first item (the 'keyword')?
+	KeywordBase* keyword = find(parser.argc(0));
+	if (!keyword) return KeywordBase::Unrecognised;
+
+	// We recognised the keyword - check the number of arguments we have against the min / max for the keyword
+	if (!keyword->validNArgs(parser.nArgs() - 1)) return KeywordBase::Failed;
+
+	// All OK, so parse the keyword
+	if (!keyword->read(parser, 1, coreData))
+	{
+		Messenger::error("Failed to parse arguments for keyword '%s'.\n", keyword->keyword());
+		return KeywordBase::Failed;
+	}
+
+	return KeywordBase::Success;
 }

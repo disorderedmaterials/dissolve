@@ -201,6 +201,14 @@ class KeywordList
 	Vec3<double> asVec3Double(const char* keywordName) const;
 	// Return whether the specified keyword data has ever been set
 	bool isSet(const char* keywordName) const;
+
+
+	/*
+	 * Read / Write
+	 */
+	public:
+	// Try to parse keyword in specified LineParser
+	KeywordBase::ParseResult parse(LineParser& parser, const CoreData& coreData);
 };
 
 #endif
