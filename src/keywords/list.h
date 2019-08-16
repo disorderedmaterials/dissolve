@@ -133,6 +133,30 @@ class KeywordList
 
 		return true;
 	}
+	// Set named EnumOptions from specified list as a template-guided type
+	template <class E> bool setEnumeration(const char* name, E value)
+	{
+		// Find item in the list
+		KeywordBase* item = find(name);
+		if (!item)
+		{
+			Messenger::warn("No item named '%s' in the keyword list - cannot set it's value.\n", name);
+			return false;
+		}
+
+		// Attempt to cast to specified type
+		KeywordData< EnumOptions<E> >* castItem = dynamic_cast<KeywordData< EnumOptions<E> >*>(item);
+		if (!castItem)
+		{
+			printf("That didn't work, because it's of the wrong type.\n");
+			return false;
+		}
+
+		// Set the new value
+		castItem->data() = value;
+
+		return true;
+	}
 	// Retrieve named EnumOptions with specified class, and return its current enumeration
 	template <class E> E enumeration(const char* name, bool* found = NULL)
 	{
