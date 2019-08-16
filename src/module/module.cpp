@@ -112,13 +112,13 @@ void Module::printValidKeywords()
  * Control
  */
 
-// Frequency with which to run Module (relative to master simulation loop counter)
+// Set frequency at which to run Module (relative to master simulation loop counter)
 void Module::setFrequency(int freq)
 {
 	frequency_ = freq;
 }
 
-// Frequency with which to run Module (relative to master simulation loop counter)
+// Return frequency at which to run Module (relative to master simulation loop counter)
 int Module::frequency() const
 {
 	return frequency_;
