@@ -98,7 +98,7 @@ class KeywordBase : public ListItem<KeywordBase>
 	public:
 	// Return minimum number of arguments accepted
 	virtual int minArguments() = 0;
-	// Return maxnimum number of arguments accepted
+	// Return maximum number of arguments accepted
 	virtual int maxArguments() = 0;
 	// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
 	virtual bool read(LineParser& parser, int startArg, const CoreData& coreData) = 0;
