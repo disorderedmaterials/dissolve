@@ -33,8 +33,10 @@ class LineParser;
 class NodeValue
 {
 	public:
-	// Constructor
+	// Constructors
 	NodeValue();
+	NodeValue(const int i);
+	NodeValue(const double d);
 	// Destructor
 	~NodeValue();
 	// Assignment from integer

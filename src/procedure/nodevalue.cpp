@@ -23,11 +23,23 @@
 #include "expression/generator.h"
 #include "base/sysfunc.h"
 
-// Constructor
+// Constructors
 NodeValue::NodeValue()
 {
 	valueI_ = 0;
 	valueD_ = 0.0;
+	type_ = DoubleNodeValue;
+}
+NodeValue::NodeValue(const int i)
+{
+	valueI_ = i;
+	valueD_ = 0.0;
+	type_ = IntegerNodeValue;
+}
+NodeValue::NodeValue(const double d)
+{
+	valueI_ = 0;
+	valueD_ = d;
 	type_ = DoubleNodeValue;
 }
 
