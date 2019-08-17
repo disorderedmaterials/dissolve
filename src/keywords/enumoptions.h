@@ -128,6 +128,7 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
 
 			return true;
 		}
+
 		return false;
 	}
 	// Write keyword data to specified LineParser
