@@ -48,20 +48,6 @@ class AddSpeciesProcedureNode : public ProcedureNode
 
 
 	/*
-	 * Node Keywords
-	 */
-	private:
-	// Set up keywords for node
-	void setUpKeywords();
-
-	public:
-	// Node Keywords
-	enum AddSpeciesNodeKeyword { DensityKeyword, EndAddSpeciesKeyword, NoRotationKeyword, PopulationKeyword, PositionKeyword, SpeciesKeyword, nAddSpeciesNodeKeywords };
-	// Return enum option info for AddSpeciesNodeKeyword
-	static EnumOptions<AddSpeciesNodeKeyword> addSpeciesNodeKeywords();
-
-
-	/*
 	 * Node Data
 	 */
 	public:
@@ -76,26 +62,6 @@ class AddSpeciesProcedureNode : public ProcedureNode
 	// Return enum option info for PositioningType
 	static EnumOptions<PositioningType> positioningTypes();
 
-	private:
-	// Target Species to add
-	Species* species_;
-	// Integer population of the Species to add
-	NodeValue population_;
-	// Density at which to add the specified Species
-	NodeValue density_;
-	// Units of the supplied density
-	Units::DensityUnits densityUnits_;
-	// Whether to rotate molecules randomly on addition
-	bool rotate_;
-	// Positioning of individual molecules
-	PositioningType positioning_;
-
-	public:
-	// Set whether to rotate molecules randomly on addition
-	void setRotate(bool rotate);
-	// Set positioning of individual molecules
-	void setPositioning(PositioningType posType);
-
 
 	/*
 	 * Execute
@@ -105,16 +71,6 @@ class AddSpeciesProcedureNode : public ProcedureNode
 	bool prepare(Configuration* cfg, const char* prefix, GenericList& targetList);
 	// Execute node, targetting the supplied Configuration
 	ProcedureNode::NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
-
-
-	/*
-	 * Read / Write
-	 */
-	public:
-	// Read structure from specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData);
-	// Write structure to specified LineParser
-	bool write(LineParser& parser, const char* prefix);
 };
 
 #endif

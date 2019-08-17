@@ -125,8 +125,8 @@ void SpeciesWidget::on_ToolsMinimiseButton_clicked(bool checked)
 	Procedure& generator = temporaryCfg->generator();
 	generator.addRootSequenceNode(new BoxProcedureNode(Vec3<double>(), Vec3<double>(), true));
 	AddSpeciesProcedureNode* addSpeciesNode = new AddSpeciesProcedureNode(temporarySpecies, 1, 0.0001);
-	addSpeciesNode->setRotate(false);
-	addSpeciesNode->setPositioning(AddSpeciesProcedureNode::CentralPositioning);
+	addSpeciesNode->setKeyword<bool>("Rotate", false);
+	addSpeciesNode->setEnumeration<AddSpeciesProcedureNode::PositioningType>("Positioning", AddSpeciesProcedureNode::CentralPositioning);
 	generator.addRootSequenceNode(addSpeciesNode);
 	if (!temporaryCfg->generate(temporaryDissolve.worldPool(), 15.0)) return;
 
