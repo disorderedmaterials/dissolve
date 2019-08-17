@@ -46,6 +46,7 @@
 #include "keywords/modulegroups.h"
 #include "keywords/modulereferencelist.h"
 #include "keywords/nodevalue.h"
+#include "keywords/nodevalueenumoptions.h"
 #include "keywords/pairbroadeningfunction.h"
 #include "keywords/procedure.h"
 #include "keywords/species.h"
