@@ -95,6 +95,16 @@ class ProcedureNode : public ListItem<ProcedureNode>
 	public:
 	// Return keywords for this node
 	const KeywordList& keywords() const;
+	// Set specified keyword (pass-thru to KeywordList::set<D>())
+	template <class D> bool setKeyword(const char* name, D value)
+	{
+		return keywords_.set<D>(name, value);
+	}
+	// Set specified enum keyword (pass-thru to KeywordList::setEnumeration<D>())
+	template <class E> bool setEnumeration(const char* name, E enumeration)
+	{
+		return keywords_.setEnumeration<E>(name, enumeration);
+	}
 
 
 	/*
