@@ -30,6 +30,9 @@ template <class T> class EnumOptions : public EnumOptionsBase
 {
 	public:
 	// Constructors
+	EnumOptions() : EnumOptionsBase()
+	{
+	}
 	EnumOptions(const char* name, const EnumOptionsList& options) : EnumOptionsBase(name, options)
 	{
 	}

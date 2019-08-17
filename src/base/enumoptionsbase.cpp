@@ -25,6 +25,13 @@
 #include <stddef.h>
 
 // Constructors
+EnumOptionsBase::EnumOptionsBase()
+{
+	name_ = "DummyOptions";
+
+	currentOptionIndex_ = -1;
+}
+
 EnumOptionsBase::EnumOptionsBase(const char* name, const EnumOptionsList& options)
 {
 	name_ = name;
