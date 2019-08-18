@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORDWIDGETBASE_H
-#define DISSOLVE_KEYWORDWIDGETBASE_H
+#ifndef DISSOLVE_KEYWORDWIDGET_BASE_H
+#define DISSOLVE_KEYWORDWIDGET_BASE_H
 
 #include "templates/listitem.h"
 

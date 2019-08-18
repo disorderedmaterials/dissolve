@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_VEC3INTEGERKEYWORDWIDGET_H
-#define DISSOLVE_VEC3INTEGERKEYWORDWIDGET_H
+#ifndef DISSOLVE_KEYWORDWIDGET_VEC3INTEGER_H
+#define DISSOLVE_KEYWORDWIDGET_VEC3INTEGER_H
 
 #include "gui/keywordwidgets/ui_vec3integer.h"
 #include "gui/keywordwidgets/base.h"

@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORDDROPDOWN_H
-#define DISSOLVE_KEYWORDDROPDOWN_H
+#ifndef DISSOLVE_KEYWORDWIDGET_DROPDOWN_H
+#define DISSOLVE_KEYWORDWIDGET_DROPDOWN_H
 
 #include "gui/keywordwidgets/ui_dropdown.h"
 #include "gui/keywordwidgets/dropwidget.hui"
