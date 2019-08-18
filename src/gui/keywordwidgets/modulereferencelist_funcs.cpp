@@ -40,7 +40,7 @@ ModuleReferenceListKeywordWidget::ModuleReferenceListKeywordWidget(QWidget* pare
 
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<ModuleReferenceListKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base module keyword into ModuleReferenceListKeyword.\n");
+	if (!keyword_) Messenger::error("Couldn't cast base keyword into ModuleReferenceListKeyword.\n");
 	else
 	{
 		// Set current information

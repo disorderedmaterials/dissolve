@@ -53,7 +53,7 @@ BroadeningFunctionKeywordWidget::BroadeningFunctionKeywordWidget(QWidget* parent
 
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<BroadeningFunctionKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into BroadeningFunctionKeyword.\n", keyword->keyword());
+	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into BroadeningFunctionKeyword.\n", keyword->keyword());
 	else
 	{
 		// Set current information

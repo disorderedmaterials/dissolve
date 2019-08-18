@@ -42,7 +42,7 @@ ModuleGroupsKeywordWidget::ModuleGroupsKeywordWidget(QWidget* parent, KeywordBas
 
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<ModuleGroupsKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base module keyword into ModuleGroupsKeyword.\n");
+	if (!keyword_) Messenger::error("Couldn't cast base keyword into ModuleGroupsKeyword.\n");
 	else
 	{
 		// Set current information
