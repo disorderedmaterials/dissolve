@@ -28,6 +28,7 @@
 class CoreData;
 class GenericList;
 
+// Keyword Widget Base Class
 class KeywordWidgetBase
 {
 	public:
@@ -36,7 +37,7 @@ class KeywordWidgetBase
 
 
 	/*
-	 * Module List
+	 * CoreData Reference
 	 */
 	protected:
 	// CoreData source
