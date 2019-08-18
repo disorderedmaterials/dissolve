@@ -63,11 +63,6 @@ bool Collect2DProcedureNode::isContextRelevant(ProcedureNode::NodeContext contex
  * Node Keywords
  */
 
-// Set up keywords for node
-void Collect2DProcedureNode::setUpKeywords()
-{
-}
-
 // Return enum option info for Collect2DNodeKeyword
 EnumOptions<Collect2DProcedureNode::Collect2DNodeKeyword> Collect2DProcedureNode::collect2DNodeKeywords()
 {

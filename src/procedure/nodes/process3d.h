@@ -56,10 +56,6 @@ class Process3DProcedureNode : public ProcedureNode
 	/*
 	 * Node Keywords
 	 */
-	private:
-	// Set up keywords for node
-	void setUpKeywords();
-
 	public:
 	// Node Keywords
 	enum Process3DNodeKeyword { EndProcess3DKeyword, FactorKeyword, LabelValueKeyword, LabelXKeyword, LabelYKeyword, LabelZKeyword, NSitesKeyword, NumberDensityKeyword, SaveKeyword, SourceDataKeyword, nProcess3DNodeKeywords };

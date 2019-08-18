@@ -48,11 +48,6 @@ bool ParametersProcedureNode::isContextRelevant(ProcedureNode::NodeContext conte
  * Node Keywords
  */
 
-// Set up keywords for node
-void ParametersProcedureNode::setUpKeywords()
-{
-}
-
 // Return enum option info for ParametersNodeKeyword
 EnumOptions<ParametersProcedureNode::ParametersNodeKeyword> ParametersProcedureNode::parametersNodeKeywords()
 {

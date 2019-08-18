@@ -62,11 +62,6 @@ bool Process2DProcedureNode::isContextRelevant(ProcedureNode::NodeContext contex
  * Node Keywords
  */
 
-// Set up keywords for node
-void Process2DProcedureNode::setUpKeywords()
-{
-}
-
 // Return enum option info for Process2DNodeKeyword
 EnumOptions<Process2DProcedureNode::Process2DNodeKeyword> Process2DProcedureNode::process2DNodeKeywords()
 {

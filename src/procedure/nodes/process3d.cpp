@@ -59,11 +59,6 @@ bool Process3DProcedureNode::isContextRelevant(ProcedureNode::NodeContext contex
  * Node Keywords
  */
 
-// Set up keywords for node
-void Process3DProcedureNode::setUpKeywords()
-{
-}
-
 // Return enum option info for Process3DNodeKeyword
 EnumOptions<Process3DProcedureNode::Process3DNodeKeyword> Process3DProcedureNode::process3DNodeKeywords()
 {

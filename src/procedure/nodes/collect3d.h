@@ -55,10 +55,6 @@ class Collect3DProcedureNode : public ProcedureNode
 	/*
 	 * Node Keywords
 	 */
-	private:
-	// Set up keywords for node
-	void setUpKeywords();
-
 	public:
 	// Node Keywords
 	enum Collect3DNodeKeyword { EndCollect3DKeyword, QuantityXYZKeyword, QuantityXKeyword, QuantityYKeyword, QuantityZKeyword, RangeXKeyword, RangeYKeyword, RangeZKeyword, SubCollectKeyword, nCollect3DNodeKeywords };

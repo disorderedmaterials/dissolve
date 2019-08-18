@@ -53,11 +53,6 @@ bool SequenceProcedureNode::isContextRelevant(ProcedureNode::NodeContext context
  * Node Keywords
  */
 
-// Set up keywords for node
-void SequenceProcedureNode::setUpKeywords()
-{
-}
-
 // Return enum option info for SequenceNodeKeyword
 EnumOptions<SequenceProcedureNode::SequenceNodeKeyword> SequenceProcedureNode::sequenceNodeKeywords()
 {

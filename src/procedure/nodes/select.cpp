@@ -78,11 +78,6 @@ bool SelectProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
  * Node Keywords
  */
 
-// Set up keywords for node
-void SelectProcedureNode::setUpKeywords()
-{
-}
-
 // Return enum option info for SelectNodeKeyword
 EnumOptions<SelectProcedureNode::SelectNodeKeyword> SelectProcedureNode::selectNodeKeywords()
 {

@@ -59,11 +59,6 @@ bool Collect1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext contex
  * Node Keywords
  */
 
-// Set up keywords for node
-void Collect1DProcedureNode::setUpKeywords()
-{
-}
-
 // Return enum option info for Collect1DNodeKeyword
 EnumOptions<Collect1DProcedureNode::Collect1DNodeKeyword> Collect1DProcedureNode::collect1DNodeKeywords()
 {

@@ -62,11 +62,6 @@ bool Fit1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
  * Node Keywords
  */
 
-// Set up keywords for node
-void Fit1DProcedureNode::setUpKeywords()
-{
-}
-
 // Return enum option info for Fit1DNodeKeyword
 EnumOptions<Fit1DProcedureNode::Fit1DNodeKeyword> Fit1DProcedureNode::fit1DNodeKeywords()
 {

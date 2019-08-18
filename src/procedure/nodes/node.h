@@ -88,10 +88,6 @@ class ProcedureNode : public ListItem<ProcedureNode>
 	// Keywords for this node
 	KeywordList keywords_;
 
-	private:
-	// Set-up keywords for this node
-	virtual void setUpKeywords() = 0;
-
 	public:
 	// Return keywords for this node
 	const KeywordList& keywords() const;

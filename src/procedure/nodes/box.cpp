@@ -56,11 +56,6 @@ bool BoxProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
  * Node Keywords
  */
 
-// Set up keywords for node
-void BoxProcedureNode::setUpKeywords()
-{
-}
-
 // Return enum option info for BoxNodeKeyword
 EnumOptions<BoxProcedureNode::BoxNodeKeyword> BoxProcedureNode::boxNodeKeywords()
 {

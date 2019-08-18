@@ -54,10 +54,6 @@ class Collect2DProcedureNode : public ProcedureNode
 	/*
 	 * Node Keywords
 	 */
-	private:
-	// Set up keywords for node
-	void setUpKeywords();
-
 	public:
 	// Node Keywords
 	enum Collect2DNodeKeyword { EndCollect2DKeyword, QuantityXKeyword, QuantityYKeyword, RangeXKeyword, RangeYKeyword, SubCollectKeyword, nCollect2DNodeKeywords };
