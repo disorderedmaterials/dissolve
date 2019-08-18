@@ -89,13 +89,6 @@ void SpeciesReferenceListKeywordWidget::itemChanged(QListWidgetItem* item)
 // Update value displayed in widget
 void SpeciesReferenceListKeywordWidget::updateValue()
 {
-	refreshing_ = true;
-
-	// Check to see if the associated Keyword may have been stored/updated in the specified moduleData
-	/* Not Relevant */
-
-	refreshing_ = false;
-
 	updateWidgetValues(coreData_);
 }
 
