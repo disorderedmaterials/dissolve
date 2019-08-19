@@ -28,8 +28,8 @@
 #include "templates/list.h"
 
 // Forward declarations
-class Node;
 class ExpressionVariable;
+class Node;
 
 // Mathematical Expression
 class Expression
