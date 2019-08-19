@@ -136,7 +136,7 @@ const char* NodeValue::asString()
 
 	if (type_ == IntegerNodeValue) result = DissolveSys::itoa(valueI_);
 	else if (type_ == DoubleNodeValue) result = DissolveSys::ftoa(valueD_, "%12.6e");
-	else result = CharString("'%s'", expression_.asString());
+	else result = CharString("'%s'", expression_.expressionString());
 
 	return result.get();
 }

@@ -100,7 +100,7 @@ bool Expression::isValid()
 }
 
 // Return original generating string`
-const char* Expression::asString() const
+const char* Expression::expressionString() const
 {
 	return expressionString_.get();
 }

@@ -58,7 +58,7 @@ class Expression
 	// Return whether current expression is valid (contains at least one node)
 	bool isValid();
 	// Return original generating string`
-	const char* asString() const;
+	const char* expressionString() const;
 
 
 	/*
