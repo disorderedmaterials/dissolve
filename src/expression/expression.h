@@ -56,7 +56,7 @@ class Expression
 	// Clear all expression data
 	void clear();
 	// Return whether current expression is valid (contains at least one node)
-	bool isValid();
+	bool isValid() const;
 	// Set Expression from supplied string
 	bool set(const char* expressionString);
 	// Set Expression from supplied string and external variables

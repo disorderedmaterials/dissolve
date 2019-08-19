@@ -69,6 +69,8 @@ class NodeValue
 	bool set(double value);
 	// Set from expression text
 	bool set(const char* expressionText, RefList<ExpressionVariable> parameters);
+	// Return whether value is currently valid
+	bool isValid() const;
 
 
 	/*

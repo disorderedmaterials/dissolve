@@ -109,6 +109,12 @@ bool NodeValue::set(const char* expressionText, RefList<ExpressionVariable> para
 	return true;
 }
 
+// Return whether value is currently valid
+bool NodeValue::isValid() const
+{
+	return (type_ == ExpressionNodeValue ? expression_.isValid() : true);
+}
+
 /*
  * Value Retrieval
  */

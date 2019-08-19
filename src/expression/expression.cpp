@@ -90,7 +90,7 @@ void Expression::clear()
 }
 
 // Return whether current expression is valid
-bool Expression::isValid()
+bool Expression::isValid() const
 {
 	return (statements_.nItems() != 0); 
 }
