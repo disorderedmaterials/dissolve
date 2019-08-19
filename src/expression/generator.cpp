@@ -42,7 +42,7 @@ ExpressionGenerator::ExpressionGenerator(Expression& expression, const char* exp
 	generator_ = this;
 
 	// Initialise Expression and generator
-	expression.clear();
+	expression_->clear();
 	setSource(expressionText);
 }
 
