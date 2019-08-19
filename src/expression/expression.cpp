@@ -67,7 +67,6 @@ void Expression::operator=(const Expression& source)
  * Data
  */
 
-
 // Clear contents of expression
 void Expression::clear()
 {
