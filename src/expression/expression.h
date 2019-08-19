@@ -71,8 +71,6 @@ class Expression
 	List<ExpressionNode> persistentNodes_;
 	// Reflist of all statements in the Expression, to be executed sequentially
 	RefList<ExpressionNode> statements_;
-	// Number of syntactic errors encountered
-	int nErrors_;
 
 	public:
 	// Add a node representing a whole statement to the execution list
