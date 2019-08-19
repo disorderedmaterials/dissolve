@@ -53,17 +53,27 @@ int NodeValueKeyword::maxArguments()
 // Parse arguments from supplied LineParser, starting at given argument offset
 bool NodeValueKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
-	if (!data_.set(parser.argc(startArg), parentNode_->parametersInScope())) return false;
-
-	set_ = true;
-
-	return true;
+	return setValue(parser.argc(startArg));
 }
 
 // Write keyword data to specified LineParser
 bool NodeValueKeyword::write(LineParser& parser, const char* prefix)
 {
 	if (!parser.writeLineF("%s%s  '%s'\n", prefix, keyword(), data_.asString())) return false;
+
+	return true;
+}
+
+/*
+ * Set
+ */
+
+// Set the value from supplied expression text
+bool NodeValueKeyword::setValue(const char* expressionText)
+{
+	if (!data_.set(expressionText, parentNode_->parametersInScope())) return false;
+
+	set_ = true;
 
 	return true;
 }

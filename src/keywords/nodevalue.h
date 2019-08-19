@@ -63,6 +63,14 @@ class NodeValueKeyword : public KeywordData<NodeValue>
 
 
 	/*
+	 * Set
+	 */
+	public:
+	// Set the value from supplied expression text
+	bool setValue(const char* expressionText);
+
+
+	/*
 	 * Conversion
 	 */
 	public:
