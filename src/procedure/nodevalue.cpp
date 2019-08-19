@@ -103,7 +103,7 @@ bool NodeValue::set(const char* expressionText, RefList<ExpressionVariable> para
 	{
 		// Parse the supplied expression
 		type_ = ExpressionNodeValue;
-		return ExpressionGenerator::generate(expression_, expressionText, parameters);
+		return expression_.set(expressionText, parameters);
 	}
 
 	return true;

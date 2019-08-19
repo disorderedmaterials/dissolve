@@ -272,7 +272,7 @@ bool Fit1DProcedureNode::read(LineParser& parser, const CoreData& coreData)
 			case (Fit1DProcedureNode::EndFit1DKeyword):
 				return true;
 			case (Fit1DProcedureNode::EquationKeyword):
-				if (!ExpressionGenerator::generate(equation_, parser.argc(1))) return Messenger::error("Failed to create expression.\n");
+				if (!equation_.set(parser.argc(1))) return Messenger::error("Failed to create expression.\n");
 				break;
 			case (Fit1DProcedureNode::FitKeyword):
 				var = equation_.createVariableWithValue(parser.argc(1), parser.argd(2), true);

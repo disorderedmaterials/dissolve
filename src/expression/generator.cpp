@@ -356,10 +356,10 @@ int ExpressionGenerator::lex()
  */
 
 // Static generation functions
-bool ExpressionGenerator::generate(Expression& expression, const char* expressionText)
+bool ExpressionGenerator::generate(Expression& expression)
 {
 	// Create a generator
-	ExpressionGenerator generator(expression, expressionText);
+	ExpressionGenerator generator(expression, expression.expressionString());
 
 	// Generate expression
 	bool result = ExpressionGenerator_parse() == 0;
@@ -368,10 +368,10 @@ bool ExpressionGenerator::generate(Expression& expression, const char* expressio
 	return result;
 }
 
-bool ExpressionGenerator::generate(Expression& expression, const char* expressionText, RefList<ExpressionVariable> externalVariables)
+bool ExpressionGenerator::generate(Expression& expression, RefList<ExpressionVariable> externalVariables)
 {
 	// Create a generator
-	ExpressionGenerator generator(expression, expressionText);
+	ExpressionGenerator generator(expression, expression.expressionString());
 
 	// Set the external variable source
 	expression.setExternalVariables(externalVariables);

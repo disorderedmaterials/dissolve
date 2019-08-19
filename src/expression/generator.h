@@ -98,8 +98,8 @@ class ExpressionGenerator
 	 */
 	public:
 	// Static generation functions
-	static bool generate(Expression& expression, const char* expressionText);
-	static bool generate(Expression& expression, const char* expressionText, RefList<ExpressionVariable> externalVariables);
+	static bool generate(Expression& expression);
+	static bool generate(Expression& expression, RefList<ExpressionVariable> externalVariables);
 };
 
 #endif
