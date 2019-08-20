@@ -10,6 +10,7 @@ SET(keywordwidgets_MOC_HDRS
   isotopologuereferencelist.h
   modulegroups.h
   modulereferencelist.h
+  nodevalue.h
   pairbroadeningfunction.h
   speciesreferencelist.h
   vec3double.h
@@ -34,6 +35,7 @@ SET(keywordwidgets_UIS
   isotopologuereferencelist.ui
   modulegroups.ui
   modulereferencelist.ui
+  nodevalue.ui
   pairbroadeningfunction.ui
   speciesreferencelist.ui
   vec3double.ui
@@ -58,6 +60,7 @@ SET(keywordwidgets_SRCS
   isotopologuereferencelist_funcs.cpp
   modulegroups_funcs.cpp
   modulereferencelist_funcs.cpp
+  nodevalue_funcs.cpp
   pairbroadeningfunction_funcs.cpp
   speciesreferencelist_funcs.cpp
   windowfunction_funcs.cpp

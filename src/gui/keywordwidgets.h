@@ -33,6 +33,7 @@
 #include "gui/keywordwidgets/isotopologuereferencelist.h"
 #include "gui/keywordwidgets/modulegroups.h"
 #include "gui/keywordwidgets/modulereferencelist.h"
+#include "gui/keywordwidgets/nodevalue.h"
 #include "gui/keywordwidgets/pairbroadeningfunction.h"
 #include "gui/keywordwidgets/speciesreferencelist.h"
 #include "gui/keywordwidgets/windowfunction.hui"

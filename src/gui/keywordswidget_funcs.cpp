@@ -127,6 +127,13 @@ QWidget* KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& keyword
 		widget = moduleReferenceListWidget;
 		base = moduleReferenceListWidget;
 	}
+	else if (keyword->type() == KeywordBase::NodeValueData)
+	{
+		NodeValueKeywordWidget* nodeValueFunctionWidget = new NodeValueKeywordWidget(NULL, keyword, coreData);
+		connect(nodeValueFunctionWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
+		widget = nodeValueFunctionWidget;
+		base = nodeValueFunctionWidget;
+	}
 	else if (keyword->type() == KeywordBase::PairBroadeningFunctionData)
 	{
 		PairBroadeningFunctionKeywordWidget* pairBroadeningFunctionWidget = new PairBroadeningFunctionKeywordWidget(NULL, keyword, coreData);
