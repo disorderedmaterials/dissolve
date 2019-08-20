@@ -60,7 +60,7 @@ class EnumOptionsBaseKeyword
 	 */
 	public:
 	// Set new option index, informing KeywordBase
-	virtual void setOptionByIndex(int optionIndex) = 0;
+	virtual void setEnumerationByIndex(int optionIndex) = 0;
 };
 
 // Keyword based on EnumOptions
@@ -154,7 +154,7 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
 	 */
 	public:
 	// Set new option index, informing KeywordBase
-	void setOptionByIndex(int optionIndex)
+	void setEnumerationByIndex(int optionIndex)
 	{
 		KeywordData< EnumOptions<E> >::data_.setCurrentOptionIndex(optionIndex);
 		KeywordData< EnumOptions<E> >::dataHasBeenSet();

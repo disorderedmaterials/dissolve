@@ -61,8 +61,8 @@ void EnumOptionsKeywordWidget::myCurrentIndexChanged(int index)
 {
 	if (refreshing_) return;
 
-	// Use the virtual EnumOptionsBaseKeyword::setOptionByIndex() to set the new option and inform the underlying keyword structure that it has been modified
-	keyword_->setOptionByIndex(index);
+	// Use the virtual EnumOptionsBaseKeyword::setEnumerationByIndex() to set the new option and inform the underlying keyword structure that it has been modified
+	keyword_->setEnumerationByIndex(index);
 
 	emit(keywordValueChanged());
 }
