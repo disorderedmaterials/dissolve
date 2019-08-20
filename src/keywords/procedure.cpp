@@ -23,7 +23,6 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
-#include "genericitems/listhelper.h"
 
 // Constructor
 ProcedureKeyword::ProcedureKeyword(Procedure& procedure) : KeywordData<Procedure&>(KeywordBase::ProcedureData, procedure)

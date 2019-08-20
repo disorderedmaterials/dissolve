@@ -24,7 +24,6 @@
 #include "module/module.h"
 #include "classes/coredata.h"
 #include "base/lineparser.h"
-#include "genericitems/listhelper.h"
 
 // Constructors
 ModuleReferenceListKeyword::ModuleReferenceListKeyword(RefList<Module>& references, int maxModules) : KeywordData< RefList<Module>& >(KeywordBase::ModuleReferenceListData, references)

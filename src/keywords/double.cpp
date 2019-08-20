@@ -21,7 +21,7 @@
 
 #include "keywords/double.h"
 #include "base/lineparser.h"
-#include "genericitems/listhelper.h"
+#include "base/sysfunc.h"
 
 // Constructors
 DoubleKeyword::DoubleKeyword(double value) : KeywordData<double>(KeywordBase::DoubleData, value)

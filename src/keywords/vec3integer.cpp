@@ -21,7 +21,6 @@
 
 #include "keywords/vec3integer.h"
 #include "base/lineparser.h"
-#include "genericitems/listhelper.h"
 
 // Constructors
 Vec3IntegerKeyword::Vec3IntegerKeyword(Vec3<int> value) : KeywordData< Vec3<int> >(KeywordBase::Vec3IntegerData, value)

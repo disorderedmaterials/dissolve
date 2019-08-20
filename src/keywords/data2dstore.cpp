@@ -21,7 +21,6 @@
 
 #include "keywords/data2dstore.h"
 #include "base/lineparser.h"
-#include "templates/refdatalist.h"
 
 // Constructor
 Data2DStoreKeyword::Data2DStoreKeyword(Data2DStore& data2DStore) : KeywordData<Data2DStore&>(KeywordBase::Data2DStoreData, data2DStore)

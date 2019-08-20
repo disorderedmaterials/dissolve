@@ -21,7 +21,7 @@
 
 #include "keywords/charstring.h"
 #include "base/lineparser.h"
-#include "genericitems/listhelper.h"
+#include "base/sysfunc.h"
 
 // Constructor
 CharStringKeyword::CharStringKeyword(CharString value) : KeywordData<CharString>(KeywordBase::CharStringData, value)

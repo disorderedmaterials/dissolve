@@ -21,7 +21,6 @@
 
 #include "keywords/vec3double.h"
 #include "base/lineparser.h"
-#include "genericitems/listhelper.h"
 
 // Constructors
 Vec3DoubleKeyword::Vec3DoubleKeyword(Vec3<double> value) : KeywordData< Vec3<double> >(KeywordBase::Vec3DoubleData, value)

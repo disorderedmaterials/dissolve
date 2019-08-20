@@ -21,7 +21,7 @@
 
 #include "keywords/bool.h"
 #include "base/lineparser.h"
-#include "genericitems/listhelper.h"
+#include "base/sysfunc.h"
 
 // Constructor
 BoolKeyword::BoolKeyword(bool value) : KeywordData<bool>(KeywordBase::BoolData, value)

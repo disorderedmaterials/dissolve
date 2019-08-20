@@ -22,7 +22,6 @@
 #include "keywords/enumoptions.h"
 #include "base/enumoptions.h"
 #include "base/lineparser.h"
-#include "genericitems/listhelper.h"
 
 // Constructor
 EnumOptionsKeyword::EnumOptionsKeyword(EnumOptionsBase options) : KeywordData<EnumOptionsBase>(KeywordBase::EnumOptionsData, options)

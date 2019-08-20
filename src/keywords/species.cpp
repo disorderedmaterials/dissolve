@@ -23,7 +23,6 @@
 #include "classes/coredata.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
-#include "genericitems/listhelper.h"
 
 // Constructor
 SpeciesKeyword::SpeciesKeyword(Species* sp) : KeywordData<Species*>(KeywordBase::SpeciesData, sp)
