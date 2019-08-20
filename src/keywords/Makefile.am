@@ -12,7 +12,7 @@ libkeywords_la_SOURCES += modulegroups.cpp modulereferencelist.cpp
 libkeywords_la_SOURCES += nodevalue.cpp nodevalueenumoptions.cpp
 libkeywords_la_SOURCES += pairbroadeningfunction.cpp procedure.cpp
 libkeywords_la_SOURCES += species.cpp speciesreferencelist.cpp speciessite.cpp speciessitereferencelist.cpp
-libkeywords_la_SOURCES += vec3double.cpp vec3integer.cpp
+libkeywords_la_SOURCES += vec3double.cpp vec3integer.cpp vec3nodevalue.cpp
 libkeywords_la_SOURCES += windowfunction.cpp
 
 noinst_HEADERS = atomtypeselection.h
@@ -29,7 +29,7 @@ noinst_HEADERS += nodevalue.h nodevalueenumoptions.h
 noinst_HEADERS += pairbroadeningfunction.h procedure.h
 noinst_HEADERS += species.h speciesreferencelist.h speciessite.h speciessitereferencelist.h
 noinst_HEADERS += types.h
-noinst_HEADERS += vec3double.h vec3integer.h
+noinst_HEADERS += vec3double.h vec3integer.h vec3nodevalue.h
 noinst_HEADERS += windowfunction.h
 
 AM_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@
