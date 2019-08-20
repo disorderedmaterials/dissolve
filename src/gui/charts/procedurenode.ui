@@ -124,7 +124,7 @@
            </size>
           </property>
           <property name="toolTip">
-           <string>Remove this module</string>
+           <string>Remove this node</string>
           </property>
           <property name="text">
            <string>...</string>
@@ -162,7 +162,7 @@
            </size>
           </property>
           <property name="toolTip">
-           <string>Toggle module keyword controls</string>
+           <string>Toggle keyword controls</string>
           </property>
           <property name="text">
            <string/>
