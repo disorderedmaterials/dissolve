@@ -27,16 +27,59 @@
 #include "procedure/nodes/node.h"
 #include "procedure/nodevalue.h"
 #include "templates/venum.h"
+#include "base/lineparser.h"
 
 // Forward Declarations
 class ProcedureNode;
 
-// Keyword with NodeValue
-template <class E> class NodeValueEnumOptionsKeyword : public KeywordData< Venum<NodeValue,E> >
+// Keyword with NodeValue and EnumOptions base class
+class NodeValueEnumOptionsBaseKeyword
 {
 	public:
 	// Constructor
-	NodeValueEnumOptionsKeyword(ProcedureNode* parentNode, NodeValue value, EnumOptions<E> enumOptions) : KeywordData< Venum<NodeValue,E> >(KeywordBase::NodeValueEnumOptionsData, Venum<NodeValue,E>(value,enumOptions))
+	NodeValueEnumOptionsBaseKeyword(NodeValue& nodeValue, EnumOptionsBase& baseOptions) : nodeValue_(nodeValue), baseOptions_(baseOptions)
+	{
+	}
+
+
+	/*
+	 * Source Data
+	 */
+	private:
+	// Source NodeValue
+	NodeValue& nodeValue_;
+	// Source EnumBaseOptions
+	EnumOptionsBase& baseOptions_;
+
+	public:
+	// Return NodeValue
+	const NodeValue& value() const
+	{
+		return nodeValue_;
+	}
+	// Return EnumBaseOptions
+	const EnumOptionsBase& baseOptions() const
+	{
+		return baseOptions_;
+	}
+
+
+	/*
+	 * Set
+	 */
+	public:
+	// Set node value from expression text, informing KeywordBase
+	virtual bool setValue(const char* expressionText) = 0;
+	// Set new option index, informing KeywordBase
+	virtual void setOptionByIndex(int optionIndex) = 0;
+};
+
+// Keyword with NodeValue and EnumOptions
+template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptionsBaseKeyword, public KeywordData< Venum<NodeValue,E> >
+{
+	public:
+	// Constructor
+	NodeValueEnumOptionsKeyword(ProcedureNode* parentNode, NodeValue value, EnumOptions<E> enumOptions) : KeywordData< Venum<NodeValue,E> >(KeywordBase::NodeValueEnumOptionsData, Venum<NodeValue,E>(value,enumOptions)), NodeValueEnumOptionsBaseKeyword(KeywordData< Venum<NodeValue,E> >::data_.value(), KeywordData< Venum<NodeValue,E> >::data_.baseOptions())
 	{
 		parentNode_ = parentNode;
 	}
@@ -92,6 +135,29 @@ template <class E> class NodeValueEnumOptionsKeyword : public KeywordData< Venum
 	bool write(LineParser& parser, const char* prefix)
 	{
 		return parser.writeLineF("%s%s  '%s'  %s\n", prefix, KeywordData< Venum<NodeValue,E> >::keyword(), KeywordData< Venum<NodeValue,E> >::data_.value().asString(), KeywordData< Venum<NodeValue,E> >::data_.enumerationAsString());
+	}
+
+
+	/*
+	 * Set (implementing pure virtuals from NodeValueEnumOptionsBaseKeyword)
+	 */
+	public:
+	// Set node value from expression text, informing KeywordBase
+	bool setValue(const char* expressionText)
+	{
+		if (!parentNode_) return false;
+
+		bool result = KeywordData< Venum<NodeValue,E> >::data_.value().set(expressionText, parentNode_->parametersInScope());
+
+		KeywordData< Venum<NodeValue,E> >::dataHasBeenSet();
+
+		return result;
+	}
+	// Set new option index, informing KeywordBase
+	void setOptionByIndex(int optionIndex)
+	{
+		KeywordData< Venum<NodeValue,E> >::data_.setEnumerationByIndex(optionIndex);
+		KeywordData< Venum<NodeValue,E> >::dataHasBeenSet();
 	}
 
 
