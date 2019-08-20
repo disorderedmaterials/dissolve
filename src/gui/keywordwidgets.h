@@ -35,6 +35,7 @@
 #include "gui/keywordwidgets/modulereferencelist.h"
 #include "gui/keywordwidgets/nodevalue.h"
 #include "gui/keywordwidgets/pairbroadeningfunction.h"
+#include "gui/keywordwidgets/species.hui"
 #include "gui/keywordwidgets/speciesreferencelist.h"
 #include "gui/keywordwidgets/windowfunction.hui"
 #include "gui/keywordwidgets/vec3double.h"

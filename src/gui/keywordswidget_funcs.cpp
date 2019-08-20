@@ -141,6 +141,13 @@ QWidget* KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& keyword
 		widget = pairBroadeningFunctionWidget;
 		base = pairBroadeningFunctionWidget;
 	}
+	else if (keyword->type() == KeywordBase::SpeciesData)
+	{
+		SpeciesKeywordWidget* speciesWidget = new SpeciesKeywordWidget(NULL, keyword, coreData);
+		connect(speciesWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
+		widget = speciesWidget;
+		base = speciesWidget;
+	}
 	else if (keyword->type() == KeywordBase::SpeciesReferenceListData)
 	{
 		SpeciesReferenceListKeywordWidget* speciesReferenceListWidget = new SpeciesReferenceListKeywordWidget(NULL, keyword, coreData);

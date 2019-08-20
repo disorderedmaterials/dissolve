@@ -22,6 +22,7 @@ SET(keywordwidgets_MOC_HDRS
   dropwidget.hui
   enumoptions.hui
   integer.hui
+  species.hui
   windowfunction.hui
 )
 QT5_WRAP_CPP(keywordwidgets_MOC_SRCS ${keywordwidgets_MOC_HDRS})
@@ -62,6 +63,7 @@ SET(keywordwidgets_SRCS
   modulereferencelist_funcs.cpp
   nodevalue_funcs.cpp
   pairbroadeningfunction_funcs.cpp
+  species_funcs.cpp
   speciesreferencelist_funcs.cpp
   windowfunction_funcs.cpp
   vec3double_funcs.cpp
