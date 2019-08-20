@@ -20,7 +20,6 @@
 */
 
 #include "gui/keywordwidgets/speciesreferencelist.h"
-#include "gui/keywordwidgets/dropdown.h"
 #include "gui/helpers/listwidgetupdater.h"
 #include "classes/coredata.h"
 #include "classes/species.h"
