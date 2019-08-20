@@ -107,9 +107,13 @@ int EnumOptionsBase::currentOptionIndex() const
 }
 
 // Set current option index
-void EnumOptionsBase::setCurrentOptionIndex(int index)
+bool EnumOptionsBase::setCurrentOptionIndex(int index)
 {
+	if ((index < 0) || (index >= options_.nItems())) return Messenger::error("EnumOptions index %i is out of range for '%s'.\n", index, name());
+
 	currentOptionIndex_ = index;
+
+	return true;
 }
 
 // Set current option from keyword

@@ -73,7 +73,7 @@ class EnumOptionsBase
 	// Return current option index
 	int currentOptionIndex() const;
 	// Set current option index
-	void setCurrentOptionIndex(int index);
+	bool setCurrentOptionIndex(int index);
 	// Set current option from keyword
 	bool setCurrentOption(const char* keyword);
 	// Return whether specified option keyword is valid
