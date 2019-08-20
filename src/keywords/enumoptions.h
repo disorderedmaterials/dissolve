@@ -49,7 +49,7 @@ class EnumOptionsBaseKeyword
 
 	public:
 	// Return EnumBaseOptions
-	EnumOptionsBase& baseOptions()
+	const EnumOptionsBase& baseOptions() const
 	{
 		return baseOptions_;
 	}

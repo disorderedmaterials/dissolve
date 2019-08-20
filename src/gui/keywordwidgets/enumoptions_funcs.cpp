@@ -32,7 +32,7 @@ EnumOptionsKeywordWidget::EnumOptionsKeywordWidget(QWidget* parent, KeywordBase*
 	else
 	{
 		// Get the underlying EnumOptionsBase
-		EnumOptionsBase& options = keyword_->baseOptions();
+		const EnumOptionsBase& options = keyword_->baseOptions();
 
 		// Populate the combo with the available keywords
 		for (int n=0; n<options.nOptions(); ++n)
@@ -76,11 +76,8 @@ void EnumOptionsKeywordWidget::updateValue()
 {
 	refreshing_ = true;
 
-	// Get the underlying EnumOptionsBase
-	EnumOptionsBase& options = keyword_->baseOptions();
-
 	// Set the combo box index
-	setCurrentIndex(options.currentOptionIndex());
+	setCurrentIndex(keyword_->baseOptions().currentOptionIndex());
 
 	refreshing_ = false;
 }
