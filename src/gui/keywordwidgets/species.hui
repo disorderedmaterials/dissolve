@@ -52,7 +52,7 @@ class SpeciesKeywordWidget : public QComboBox, public KeywordWidgetBase
 	 */
 	private slots:
 	// Combo box item changed
-	void currentIndexChanged(int index);
+	void myIndexChanged(int index);
 
 	signals:
 	// Keyword value changed
