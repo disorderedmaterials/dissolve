@@ -136,13 +136,17 @@ double NodeValue::asDouble()
 }
 
 // Return value represented as a string
-const char* NodeValue::asString()
+const char* NodeValue::asString(bool addQuotesIfRequired)
 {
 	static CharString result;
 
 	if (type_ == IntegerNodeValue) result = DissolveSys::itoa(valueI_);
 	else if (type_ == DoubleNodeValue) result = DissolveSys::ftoa(valueD_, "%12.6e");
-	else result = CharString("'%s'", expression_.expressionString());
+	else
+	{
+		if (addQuotesIfRequired) result = CharString("'%s'", expression_.expressionString());
+		else result = CharString("%s", expression_.expressionString());
+	}
 
 	return result.get();
 }

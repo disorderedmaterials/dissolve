@@ -150,10 +150,10 @@ bool BoxProcedureNode::write(LineParser& parser, const char* prefix)
 	if (!parser.writeLineF("%s%s\n", ProcedureNode::nodeTypes().keyword(type_))) return false;
 
 	// Lengths
-	if (!parser.writeLineF("%s  %s  %s  %s  %s\n", prefix, boxNodeKeywords().keyword(BoxProcedureNode::LengthsKeyword), lengthA_.asString(), lengthB_.asString(), lengthC_.asString())) return false;
+	if (!parser.writeLineF("%s  %s  %s  %s  %s\n", prefix, boxNodeKeywords().keyword(BoxProcedureNode::LengthsKeyword), lengthA_.asString(true), lengthB_.asString(true), lengthC_.asString(true))) return false;
 
 	// Angles
-	if (!parser.writeLineF("%s  %s  %s  %s  %s\n", prefix, boxNodeKeywords().keyword(BoxProcedureNode::AnglesKeyword), angleAlpha_.asString(), angleBeta_.asString(), angleGamma_.asString())) return false;
+	if (!parser.writeLineF("%s  %s  %s  %s  %s\n", prefix, boxNodeKeywords().keyword(BoxProcedureNode::AnglesKeyword), angleAlpha_.asString(true), angleBeta_.asString(true), angleGamma_.asString(true))) return false;
 
 	// Options
 	if (nonPeriodic_ && (!parser.writeLineF("%s  %s  True\n", prefix, boxNodeKeywords().keyword(BoxProcedureNode::NonPeriodicKeyword)))) return false;
