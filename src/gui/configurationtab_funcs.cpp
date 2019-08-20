@@ -180,8 +180,8 @@ void ConfigurationTab::on_GeneratorGenerateButton_clicked(bool checked)
 
 	if (ret == QMessageBox::Yes)
 	{
-		// TODO
-// 		configuration_->initialise(dissolve_.worldPool(), true, dissolve_.pairPotentialRange(), dissolve_.nBoxNormalisationPoints());
+		configuration_->generate(dissolve_.worldPool(), dissolve_.pairPotentialRange());
+		updateControls();
 	}
 }
 
