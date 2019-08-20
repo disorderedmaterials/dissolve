@@ -72,8 +72,6 @@ class ProcedureChartNodeBlock : public QWidget, public ChartBlock
 	QRect dragHandleRect_;
 	// Colour to use for drawing
 	QColor displayColour_;
-	// List of keyword widgets displayed
-	RefList<KeywordWidgetBase> keywordWidgets_;
 
 	public:
 	// Set display colour for widget
