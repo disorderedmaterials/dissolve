@@ -34,6 +34,7 @@
 #include "gui/keywordwidgets/modulegroups.h"
 #include "gui/keywordwidgets/modulereferencelist.h"
 #include "gui/keywordwidgets/nodevalue.h"
+#include "gui/keywordwidgets/nodevalueenumoptions.h"
 #include "gui/keywordwidgets/pairbroadeningfunction.h"
 #include "gui/keywordwidgets/species.hui"
 #include "gui/keywordwidgets/speciesreferencelist.h"

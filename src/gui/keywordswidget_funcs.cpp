@@ -134,6 +134,13 @@ QWidget* KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& keyword
 		widget = nodeValueFunctionWidget;
 		base = nodeValueFunctionWidget;
 	}
+	else if (keyword->type() == KeywordBase::NodeValueEnumOptionsData)
+	{
+		NodeValueEnumOptionsKeywordWidget* nodeValueEnumOptionsFunctionWidget = new NodeValueEnumOptionsKeywordWidget(NULL, keyword, coreData);
+		connect(nodeValueEnumOptionsFunctionWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
+		widget = nodeValueEnumOptionsFunctionWidget;
+		base = nodeValueEnumOptionsFunctionWidget;
+	}
 	else if (keyword->type() == KeywordBase::PairBroadeningFunctionData)
 	{
 		PairBroadeningFunctionKeywordWidget* pairBroadeningFunctionWidget = new PairBroadeningFunctionKeywordWidget(NULL, keyword, coreData);

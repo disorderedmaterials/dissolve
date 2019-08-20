@@ -11,6 +11,7 @@ SET(keywordwidgets_MOC_HDRS
   modulegroups.h
   modulereferencelist.h
   nodevalue.h
+  nodevalueenumoptions.h
   pairbroadeningfunction.h
   speciesreferencelist.h
   vec3double.h
@@ -37,6 +38,7 @@ SET(keywordwidgets_UIS
   modulegroups.ui
   modulereferencelist.ui
   nodevalue.ui
+  nodevalueenumoptions.ui
   pairbroadeningfunction.ui
   speciesreferencelist.ui
   vec3double.ui
@@ -62,6 +64,7 @@ SET(keywordwidgets_SRCS
   modulegroups_funcs.cpp
   modulereferencelist_funcs.cpp
   nodevalue_funcs.cpp
+  nodevalueenumoptions_funcs.cpp
   pairbroadeningfunction_funcs.cpp
   species_funcs.cpp
   speciesreferencelist_funcs.cpp
