@@ -67,7 +67,7 @@ template <class V, class E> class Venum
 	V value_;
 
 	public:
-	// Return value (const)
+	// Return value
 	V& value()
 	{
 		return value_;
@@ -92,6 +92,16 @@ template <class V, class E> class Venum
 	EnumOptions<E> enumOptions_;
 
 	public:
+	// Return EnumOptionsBase
+	EnumOptionsBase& baseOptions()
+	{
+		return enumOptions_;
+	}
+	// Return EnumOptionsBase (const)
+	const EnumOptionsBase& constBaseOptions() const
+	{
+		return enumOptions_;
+	}
 	// Return enumeration
 	E enumeration() const
 	{
@@ -101,6 +111,11 @@ template <class V, class E> class Venum
 	const char* enumerationAsString() const
 	{
 		return enumOptions_.currentOption().keyword();
+	}
+	// Set enumeration by index
+	bool setEnumerationByIndex(int index)
+	{
+		return enumOptions_.setCurrentOptionIndex(index);
 	}
 	// Set enumeration from string
 	bool setEnumeration(const char* option)
