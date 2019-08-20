@@ -136,7 +136,7 @@ double NodeValue::asDouble()
 }
 
 // Return value represented as a string
-const char* NodeValue::asString(bool addQuotesIfRequired)
+const char* NodeValue::asString(bool addQuotesIfRequired) const
 {
 	static CharString result;
 

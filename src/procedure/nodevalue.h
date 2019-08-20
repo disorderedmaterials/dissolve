@@ -82,7 +82,7 @@ class NodeValue
 	// Return contained value as double
 	double asDouble();
 	// Return value represented as a string
-	const char* asString(bool addQuotesIfRequired = false);
+	const char* asString(bool addQuotesIfRequired = false) const;
 };
 
 #endif
