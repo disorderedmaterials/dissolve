@@ -80,12 +80,12 @@ void ProcedureChartNodeBlock::setDisplayColour(QColor colour)
 	displayColour_ = colour;
 }
 
-// Set whether the settings are expanded or not, and whether this is permanent
-void ProcedureChartNodeBlock::setSettingsExpanded(bool expanded, bool permanent)
+// Set whether the keywords widget is expanded or not, and whether this is permanent
+void ProcedureChartNodeBlock::setKeywordsExpanded(bool expanded, bool permanent)
 {
-	on_ToggleSettingsButton_clicked(expanded);
+	on_ToggleKeywordsButton_clicked(expanded);
 
-	ui_.ToggleSettingsButton->setDisabled(permanent);
+	ui_.ToggleKeywordsButton->setDisabled(permanent);
 }
 
 // Hide the remove button (e.g. when shown in a ModuleTab)
@@ -100,14 +100,14 @@ RefList<ProcedureChartNodeBlock>& ProcedureChartNodeBlock::branchWidgets()
 	return branchWidgets_;
 }
 
-void ProcedureChartNodeBlock::on_ToggleSettingsButton_clicked(bool checked)
+void ProcedureChartNodeBlock::on_ToggleKeywordsButton_clicked(bool checked)
 {
 	ui_.KeywordsControlWidget->setVisible(checked);
 
 	adjustSize();
 	updateGeometry();
 
-	emit(settingsToggled());
+	emit(keywordsToggled());
 }
 
 void ProcedureChartNodeBlock::on_RemoveButton_clicked(bool checked)

@@ -4,6 +4,7 @@
 # Meta-Objects
 SET(charts_MOC_HDRS
   chart.hui
+  chartscrollarea.hui
 )
 QT5_WRAP_CPP(charts_MOC_SRCS ${charts_MOC_HDRS})
 
@@ -18,6 +19,7 @@ SET(charts_SRCS
   chart_funcs.cpp
   chartblock.cpp
   charthotspot.cpp
+  chartscrollarea_funcs.cpp
   procedure.cpp
   procedurenode_funcs.cpp
 

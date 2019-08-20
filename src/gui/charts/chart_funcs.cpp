@@ -376,20 +376,21 @@ void ChartBase::layOutWidgets(bool animate)
 	// Determine the new sizes / positions of all widgets
 	QSize requiredSize = calculateNewWidgetGeometry(minimumSizeHint_);
 
-	// Alter our minimum size hint if requested
-	if (resizeToWidgets_)
-	{
-		minimumSizeHint_ = requiredSize;
-		sizeHint_ = minimumSizeHint_;
-
-		updateGeometry();
-	}
-
 	// Commit new block geometries
 	RefListIterator<ChartBlock> chartBlockIterator(chartBlocks_);
 	while (ChartBlock* block = chartBlockIterator.iterate())
 	{
 		block->setNewGeometry(animate);
+	}
+
+	// Alter our minimum size hint if requested
+	if (resizeToWidgets_)
+	{
+		minimumSizeHint_ = requiredSize;
+		sizeHint_ = minimumSizeHint_;
+		updateGeometry();
+
+		emit(requiredSizeChanged());
 	}
 
 	repaint();

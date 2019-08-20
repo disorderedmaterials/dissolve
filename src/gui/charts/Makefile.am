@@ -25,7 +25,7 @@ clean-local:
 libcharts_la_SOURCES = procedurenode.ui
 
 # Implementations
-libcharts_la_SOURCES += chart.hui chart_funcs.cpp chartblock.cpp charthotspot.cpp
+libcharts_la_SOURCES += chart.hui chart_funcs.cpp chartblock.cpp charthotspot.cpp chartscrollarea.hui chartscrollarea_funcs.cpp
 libcharts_la_SOURCES += procedure.cpp procedurenode_funcs.cpp
 
 noinst_HEADERS = chartblock.h charthotspot.h procedure.h proceduremetrics.h procedurenode.h

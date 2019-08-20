@@ -78,17 +78,17 @@ class ProcedureChartNodeBlock : public QWidget, public ChartBlock
 	public:
 	// Set display colour for widget
 	void setDisplayColour(QColor colour);
-	// Set whether the settings are expanded or not, and whether this is permanent
-	void setSettingsExpanded(bool expanded, bool permanent = false);
+	// Set whether the keywords widget is expanded or not, and whether this is permanent
+	void setKeywordsExpanded(bool expanded, bool permanent = false);
 	// Hide the remove button
 	void hideRemoveButton();
 
 	public slots:
-	void on_ToggleSettingsButton_clicked(bool checked);
+	void on_ToggleKeywordsButton_clicked(bool checked);
 	void on_RemoveButton_clicked(bool checked);
 
 	signals:
-	void settingsToggled();
+	void keywordsToggled();
 	void remove(void* nodePointer);
 
 

@@ -105,6 +105,8 @@ class ProcedureEditor : public QWidget
 	private slots:
 	// Data displayed in the chart has been modified
 	void chartDataModified();
+	// Required size of the chart widget has changed
+	void chartSizeChanged();
 
 	signals:
 	// Notify that the Procedure's data has changed

@@ -59,7 +59,6 @@ void ChartBlock::setNewSize(int width, int height)
 // Commit new geometry for widget
 void ChartBlock::setNewGeometry(bool animate)
 {
-	// Set the widget's geometry based on these coordinates and its SizeHint - we give it all the space it needs
 	if (animate)
 	{
 		QPropertyAnimation* animation = new QPropertyAnimation(widget(), "geometry");

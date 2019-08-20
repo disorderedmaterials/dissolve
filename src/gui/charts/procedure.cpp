@@ -118,7 +118,7 @@ void ProcedureChart::updateContentBlocks(const SequenceProcedureNode* sequence, 
 			// No current widget, so must create one
 			block = new ProcedureChartNodeBlock(this, node, coreData_);
 			connect(block, SIGNAL(dataModified()), this, SLOT(chartDataModified()));
-// 			connect(mcmBlock, SIGNAL(settingsToggled()), this, SLOT(recalculateLayout()));
+			connect(block, SIGNAL(keywordsToggled()), this, SLOT(recalculateLayout()));
 // 			connect(mcmBlock, SIGNAL(remove(QString)), this, SLOT(removeModule(QString)));
 			newSequenceWidgets.append(block);
 			chartBlocks_.append(block);

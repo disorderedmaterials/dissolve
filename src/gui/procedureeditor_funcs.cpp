@@ -55,10 +55,12 @@ void ProcedureEditor::setUp(Procedure* procedure, const CoreData& coreData)
 	chart_ = new ProcedureChart(procedure, coreData);
 	chart_->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Ignored);
 	ui_.ProcedureScrollArea->setWidget(chart_);
+	ui_.ProcedureScrollArea->setWidgetResizable(true);
 	ui_.ProcedureScrollArea->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
 
 	// Connect signals / slots
 	connect(chart_, SIGNAL(dataModified()), this, SLOT(chartDataModified()));
+	connect(chart_, SIGNAL(requiredSizeChanged()), this, SLOT(chartSizeChanged()));
 
 	updateControls();
 }
@@ -200,4 +202,10 @@ bool ProcedureEditor::readState(LineParser& parser)
 void ProcedureEditor::chartDataModified()
 {
 	emit(dataModified());
+}
+
+// Required size of the chart widget has changed
+void ProcedureEditor::chartSizeChanged()
+{
+	ui_.ProcedureScrollArea->updateGeometry();
 }
