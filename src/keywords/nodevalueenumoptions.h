@@ -71,7 +71,7 @@ class NodeValueEnumOptionsBaseKeyword
 	// Set node value from expression text, informing KeywordBase
 	virtual bool setValue(const char* expressionText) = 0;
 	// Set new option index, informing KeywordBase
-	virtual void setEnumerationByIndex(int optionIndex) = 0;
+	virtual bool setEnumerationByIndex(int optionIndex) = 0;
 };
 
 // Keyword with NodeValue and EnumOptions
@@ -154,10 +154,13 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
 		return result;
 	}
 	// Set new option index, informing KeywordBase
-	void setEnumerationByIndex(int optionIndex)
+	bool setEnumerationByIndex(int optionIndex)
 	{
-		KeywordData< Venum<NodeValue,E> >::data_.setEnumerationByIndex(optionIndex);
+		bool result = KeywordData< Venum<NodeValue,E> >::data_.setEnumerationByIndex(optionIndex);
+
 		KeywordData< Venum<NodeValue,E> >::dataHasBeenSet();
+
+		return result;
 	}
 
 
