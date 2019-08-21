@@ -9,6 +9,7 @@ add_library(keywords
   data2dstore.cpp
   data3dstore.cpp
   double.cpp
+  expressionvariablelist.cpp
   fileandformat.cpp
   group.cpp
   integer.cpp
@@ -41,6 +42,7 @@ add_library(keywords
   data3dstore.h
   double.h
   enumoptions.h
+  expressionvariablelist.h
   fileandformat.h
   group.h
   integer.h

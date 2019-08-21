@@ -41,6 +41,7 @@
 #include "keywords/data2dstore.h"
 #include "keywords/data3dstore.h"
 #include "keywords/enumoptions.h"
+#include "keywords/expressionvariablelist.h"
 #include "keywords/fileandformat.h"
 #include "keywords/isotopologuereferencelist.h"
 #include "keywords/modulegroups.h"
