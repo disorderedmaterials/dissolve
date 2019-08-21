@@ -16,6 +16,7 @@ SET(keywordwidgets_MOC_HDRS
   speciesreferencelist.h
   vec3double.h
   vec3integer.h
+  vec3nodevalue.h
 
   bool.hui
   charstring.hui
@@ -43,6 +44,7 @@ SET(keywordwidgets_UIS
   speciesreferencelist.ui
   vec3double.ui
   vec3integer.ui
+  vec3nodevalue.ui
 )
 QT5_WRAP_UI(keywordwidgets_UIS_H ${keywordwidgets_UIS})
 
@@ -71,6 +73,7 @@ SET(keywordwidgets_SRCS
   windowfunction_funcs.cpp
   vec3double_funcs.cpp
   vec3integer_funcs.cpp
+  vec3nodevalue_funcs.cpp
 
   base.h
 )

@@ -183,6 +183,13 @@ QWidget* KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& keyword
 		widget = vec3IntWidget;
 		base = vec3IntWidget;
 	}
+	else if (keyword->type() == KeywordBase::Vec3NodeValueData)
+	{
+		Vec3NodeValueKeywordWidget* vec3NodeValueWidget = new Vec3NodeValueKeywordWidget(NULL, keyword, coreData);
+		connect(vec3NodeValueWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
+		widget = vec3NodeValueWidget;
+		base = vec3NodeValueWidget;
+	}
 
 	// Set tooltip on widget, and add to the layout and our list of controls
 	if (widget)

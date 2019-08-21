@@ -41,3 +41,4 @@
 #include "gui/keywordwidgets/windowfunction.hui"
 #include "gui/keywordwidgets/vec3double.h"
 #include "gui/keywordwidgets/vec3integer.h"
+#include "gui/keywordwidgets/vec3nodevalue.h"
