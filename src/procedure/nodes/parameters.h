@@ -48,32 +48,18 @@ class ParametersProcedureNode : public ProcedureNode
 
 
 	/*
-	 * Node Keywords
-	 */
-	public:
-	// Node Keywords
-	enum ParametersNodeKeyword { DoubleKeyword, IntegerKeyword, EndParametersKeyword, nParametersNodeKeywords };
-	// Return enum option info for ParametersNodeKeyword
-	static EnumOptions<ParametersNodeKeyword> parametersNodeKeywords();
-
-
-	/*
 	 * Parameters
 	 */
 	private:
-	// List of defined parameters (as base ExpressionNode type)
-	List<ExpressionNode> parameters_;
-	// Reference list of parameres (as ExpressionVariables)
-	RefList<ExpressionVariable> parameterReferences_;
-
-	private:
-	// Add new parameter for Procedure
-	bool addParameter(const char* name, ExpressionValue value);
+	// List of defined integer parameters (as base ExpressionNode type)
+	List<ExpressionNode> integerParameters_;
+	// List of defined double parameters (as base ExpressionNode type)
+	List<ExpressionNode> doubleParameters_;
 
 	public:
 	// Return whether this node has the named parameter specified
 	ExpressionVariable* hasParameter(const char* name);
-	// Return references to all parameters for this node
+	// Return list of all parameters for this node
 	RefList<ExpressionVariable> parameterReferences() const;
 
 
@@ -85,16 +71,6 @@ class ParametersProcedureNode : public ProcedureNode
 	bool prepare(Configuration* cfg, const char* prefix, GenericList& targetList);
 	// Execute node, targetting the supplied Configuration
 	ProcedureNode::NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
-
-
-	/*
-	 * Read / Write
-	 */
-	public:
-	// Read structure from specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData);
-	// Write structure to specified LineParser
-	bool write(LineParser& parser, const char* prefix);
 };
 
 #endif
