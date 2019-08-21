@@ -65,7 +65,7 @@ class SpeciesReferenceListKeyword : public KeywordData< RefList<Species>& >
 	 * Object Management
 	 */
 	protected:
-	// Prune any references to the supplied Speciesin the contained data
+	// Prune any references to the supplied Species in the contained data
 	void removeReferencesTo(Species* sp);
 };
 

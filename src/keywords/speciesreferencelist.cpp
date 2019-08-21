@@ -94,7 +94,7 @@ bool SpeciesReferenceListKeyword::write(LineParser& parser, const char* prefix)
  * Object Management
  */
 
-// Prune any references to the supplied Speciesin the contained data
+// Prune any references to the supplied Species in the contained data
 void SpeciesReferenceListKeyword::removeReferencesTo(Species* sp)
 {
 	data_.remove(sp);
