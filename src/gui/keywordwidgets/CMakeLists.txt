@@ -16,6 +16,7 @@ SET(keywordwidgets_MOC_HDRS
   speciesreferencelist.h
   vec3double.h
   vec3integer.h
+  vec3labels.h
   vec3nodevalue.h
 
   bool.hui
@@ -73,6 +74,7 @@ SET(keywordwidgets_SRCS
   windowfunction_funcs.cpp
   vec3double_funcs.cpp
   vec3integer_funcs.cpp
+  vec3labels.cpp
   vec3nodevalue_funcs.cpp
 
   base.h
