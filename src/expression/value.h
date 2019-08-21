@@ -44,9 +44,11 @@ class ExpressionValue
 	/*
 	 * Data
 	 */
-	private:
+	public:
 	// Value Type
 	enum ValueType { IntegerType, DoubleType };
+
+	private:
 	// Current result type
 	ValueType type_;
 	// Whether current result type is fixed
