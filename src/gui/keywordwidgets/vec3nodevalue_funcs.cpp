@@ -20,6 +20,7 @@
 */
 
 #include "gui/keywordwidgets/vec3nodevalue.h"
+#include "gui/keywordwidgets/vec3labels.h"
 
 // Constructor
 Vec3NodeValueKeywordWidget::Vec3NodeValueKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : QWidget(parent), KeywordWidgetBase(coreData)
@@ -33,6 +34,11 @@ Vec3NodeValueKeywordWidget::Vec3NodeValueKeywordWidget(QWidget* parent, KeywordB
 	keyword_ = dynamic_cast<Vec3NodeValueKeyword*>(keyword);
 	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into Vec3NodeValueKeyword.\n", keyword->keyword());
 	else updateValue();
+
+	// Set appropriate labels
+	Vec3WidgetLabels::set(ui_.ValueALabel, keyword_->labelType(), 0);
+	Vec3WidgetLabels::set(ui_.ValueBLabel, keyword_->labelType(), 1);
+	Vec3WidgetLabels::set(ui_.ValueCLabel, keyword_->labelType(), 2);
 
 	refreshing_ = false;
 }
