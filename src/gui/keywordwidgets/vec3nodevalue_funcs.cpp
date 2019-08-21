@@ -20,7 +20,6 @@
 */
 
 #include "gui/keywordwidgets/vec3nodevalue.h"
-#include "genericitems/listhelper.h"
 
 // Constructor
 Vec3NodeValueKeywordWidget::Vec3NodeValueKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : QWidget(parent), KeywordWidgetBase(coreData)
