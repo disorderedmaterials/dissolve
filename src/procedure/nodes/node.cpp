@@ -239,7 +239,7 @@ bool ProcedureNode::read(LineParser& parser, const CoreData& coreData)
 		KeywordBase::ParseResult result = keywords_.parse(parser, coreData);
 		if (result == KeywordBase::Failed) return Messenger::error("Failed to parse keyword '%s'.\n", parser.argc(0));
 		else if (result == KeywordBase::Success) continue;
-		else if (result == KeywordBase::Unrecognised) return Messenger::error("Unrecognised keyword '%s' found.\n", parser.argc(0));
+		else if (result == KeywordBase::Unrecognised) return Messenger::error("Unrecognised keyword '%s' found while parsing %s node.\n", parser.argc(0), nodeTypes().keyword(type_));
 	}
 
 	return true;
