@@ -76,7 +76,7 @@ void WorkspaceTab::updateControls()
 	while (SubWindow* subWindow = subWindowIterator.iterate()) subWindow->subWidget()->updateControls();
 }
 
-// Disable sensitive controls within tab, ready for main code to run
+// Disable sensitive controls within tab
 void WorkspaceTab::disableSensitiveControls()
 {
 	// Disable sensitive controls in subwindows
@@ -84,7 +84,7 @@ void WorkspaceTab::disableSensitiveControls()
 	while (SubWindow* subWindow = subWindowIterator.iterate()) subWindow->subWidget()->disableSensitiveControls();
 }
 
-// Enable sensitive controls within tab, ready for main code to run
+// Enable sensitive controls within tab
 void WorkspaceTab::enableSensitiveControls()
 {
 	// Enable sensitive controls in subwindows

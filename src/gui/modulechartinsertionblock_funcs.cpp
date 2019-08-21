@@ -96,12 +96,12 @@ void ModuleChartInsertionBlock::updateControls()
 {
 }
 
-// Disable sensitive controls, ready for main code to run
+// Disable sensitive controls
 void ModuleChartInsertionBlock::disableSensitiveControls()
 {
 }
 
-// Enable sensitive controls, ready for main code to run
+// Enable sensitive controls
 void ModuleChartInsertionBlock::enableSensitiveControls()
 {
 }

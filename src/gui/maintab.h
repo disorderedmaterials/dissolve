@@ -84,9 +84,9 @@ class MainTab
 	public:
 	// Update controls in tab
 	virtual void updateControls() = 0;
-	// Disable sensitive controls within the tab, ready for main code to run
+	// Disable sensitive controls within the tab
 	virtual void disableSensitiveControls() = 0;
-	// Enable sensitive controls within the tab, ready for main code to run
+	// Enable sensitive controls within the tab
 	virtual void enableSensitiveControls() = 0;
 
 

@@ -118,14 +118,14 @@ void LayerEditor::updateControls()
 	refreshing_ = false;
 }
 
-// Disable sensitive controls within tab, ready for main code to run
+// Disable sensitive controls within tab
 void LayerEditor::disableSensitiveControls()
 {
 	ui.AvailableModulesTree->setEnabled(false);
 	chartWidget_->disableSensitiveControls();
 }
 
-// Enable sensitive controls within tab, ready for main code to run
+// Enable sensitive controls within tab
 void LayerEditor::enableSensitiveControls()
 {
 	ui.AvailableModulesTree->setEnabled(true);

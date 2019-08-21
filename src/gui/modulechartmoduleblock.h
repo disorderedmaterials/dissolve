@@ -92,9 +92,9 @@ class ModuleChartModuleBlock : public QWidget, public ModuleChartBlock
 	static QPixmap modulePixmap(const Module* module);
 	// Return suitable QPixmap for supplied Module type
 	static QPixmap modulePixmap(QString moduleType);
-	// Disable sensitive controls, ready for main code to run
+	// Disable sensitive controls
 	void disableSensitiveControls();
-	// Enable sensitive controls, ready for main code to run
+	// Enable sensitive controls
 	void enableSensitiveControls();
 
 	public slots:

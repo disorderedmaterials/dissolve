@@ -121,14 +121,14 @@ void ProcedureEditor::updateControls()
 	refreshing_ = false;
 }
 
-// Disable sensitive controls within tab, ready for main code to run
+// Disable sensitive controls within tab
 void ProcedureEditor::disableSensitiveControls()
 {
 // 	ui_.AvailableModulesTree->setEnabled(false);
 	chart_->disableSensitiveControls();
 }
 
-// Enable sensitive controls within tab, ready for main code to run
+// Enable sensitive controls within tab
 void ProcedureEditor::enableSensitiveControls()
 {
 // 	ui_.AvailableModulesTree->setEnabled(true);

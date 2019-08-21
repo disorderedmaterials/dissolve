@@ -126,7 +126,7 @@ void ModuleTab::updateControls()
 	refreshing_ = false;
 }
 
-// Disable sensitive controls within tab, ready for main code to run
+// Disable sensitive controls within tab
 void ModuleTab::disableSensitiveControls()
 {
 	if (controlsWidget_) controlsWidget_->disableSensitiveControls();
@@ -134,7 +134,7 @@ void ModuleTab::disableSensitiveControls()
 	if (moduleWidget_) moduleWidget_->disableSensitiveControls();
 }
 
-// Enable sensitive controls within tab, ready for main code to run
+// Enable sensitive controls within tab
 void ModuleTab::enableSensitiveControls()
 {
 	if (controlsWidget_) controlsWidget_->enableSensitiveControls();

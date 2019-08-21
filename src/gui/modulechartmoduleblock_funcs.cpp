@@ -202,7 +202,7 @@ QPixmap ModuleChartModuleBlock::modulePixmap(QString moduleType)
 	return QPixmap(":/modules/icons/modules_generic.svg");
 }
 
-// Disable sensitive controls, ready for main code to run
+// Disable sensitive controls
 void ModuleChartModuleBlock::disableSensitiveControls()
 {
 	ui.KeywordsControlWidget->setEnabled(false);
@@ -212,7 +212,7 @@ void ModuleChartModuleBlock::disableSensitiveControls()
 	ui.RemoveButton->setEnabled(false);
 }
 
-// Enable sensitive controls, ready for main code to run
+// Enable sensitive controls
 void ModuleChartModuleBlock::enableSensitiveControls()
 {
 	ui.KeywordsControlWidget->setEnabled(true);

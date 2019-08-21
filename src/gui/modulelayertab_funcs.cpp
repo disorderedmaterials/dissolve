@@ -103,7 +103,7 @@ void ModuleLayerTab::updateControls()
 	refreshing_ = false;
 }
 
-// Disable sensitive controls within tab, ready for main code to run
+// Disable sensitive controls within tab
 void ModuleLayerTab::disableSensitiveControls()
 {
 	ui.EnabledButton->setEnabled(false);
@@ -111,7 +111,7 @@ void ModuleLayerTab::disableSensitiveControls()
 	ui.ModulePanel->disableSensitiveControls();
 }
 
-// Enable sensitive controls within tab, ready for main code to run
+// Enable sensitive controls within tab
 void ModuleLayerTab::enableSensitiveControls()
 {
 	ui.EnabledButton->setEnabled(true);

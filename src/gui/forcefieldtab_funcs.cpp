@@ -386,13 +386,13 @@ void ForcefieldTab::updateControls()
 	refreshing_ = false;
 }
 
-// Disable sensitive controls within tab, ready for main code to run
+// Disable sensitive controls within tab
 void ForcefieldTab::disableSensitiveControls()
 {
 	setEnabled(false);
 }
 
-// Enable sensitive controls within tab, ready for main code to run
+// Enable sensitive controls within tab
 void ForcefieldTab::enableSensitiveControls()
 {
 	setEnabled(true);

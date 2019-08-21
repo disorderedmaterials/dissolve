@@ -121,14 +121,14 @@ void ConfigurationTab::updateControls()
 	refreshing_ = false;
 }
 
-// Disable sensitive controls within tab, ready for main code to run
+// Disable sensitive controls within tab
 void ConfigurationTab::disableSensitiveControls()
 {
 	ui_.DefinitionGroup->setEnabled(false);
 	ui_.SizeFactorGroup->setEnabled(false);
 }
 
-// Enable sensitive controls within tab, ready for main code to run
+// Enable sensitive controls within tab
 void ConfigurationTab::enableSensitiveControls()
 {
 	ui_.DefinitionGroup->setEnabled(true);
