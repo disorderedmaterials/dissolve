@@ -62,6 +62,14 @@ class Vec3NodeValueKeyword : public KeywordData< Vec3<NodeValue> >
 
 
 	/*
+	 * Set
+	 */
+	public:
+	// Set the specified value from supplied expression text
+	bool setValue(int index, const char* expressionText);
+
+
+	/*
 	 * Conversion
 	 */
 	public:

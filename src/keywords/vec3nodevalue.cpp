@@ -76,6 +76,22 @@ bool Vec3NodeValueKeyword::write(LineParser& parser, const char* prefix)
 }
 
 /*
+ * Set
+ */
+
+// Set the value from supplied expression text
+bool Vec3NodeValueKeyword::setValue(int index, const char* expressionText)
+{
+	if ((index < 0) || (index > 2)) return Messenger::error("Index %i out of range in Vec3NodeValueKeyword::setValue().\n", index);
+
+	if (!data_[index].set(expressionText, parentNode_->parametersInScope())) return false;
+
+	set_ = true;
+
+	return true;
+}
+
+/*
  * Conversion
  */
 
