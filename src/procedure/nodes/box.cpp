@@ -20,6 +20,7 @@
 */
 
 #include "procedure/nodes/box.h"
+#include "keywords/types.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "base/lineparser.h"
@@ -28,13 +29,9 @@
 // Constructor
 BoxProcedureNode::BoxProcedureNode(Vec3<double> lengths, Vec3<double> angles, bool nonPeriodic) : ProcedureNode(ProcedureNode::BoxNode)
 {
-	lengthA_ = lengths.x;
-	lengthB_ = lengths.y;
-	lengthC_ = lengths.z;
-	angleAlpha_ = angles.x;
-	angleBeta_ = angles.y;
-	angleGamma_ = angles.z;
-	nonPeriodic_ = nonPeriodic;
+	keywords_.add("Definition", new Vec3NodeValueKeyword(this, lengths, Vec3Labels::ABCLabels), "Lengths", "Box lengths");
+	keywords_.add("Definition", new Vec3NodeValueKeyword(this, angles, Vec3Labels::AlphaBetaGammaLabels), "Angles", "Box angles");
+	keywords_.add("Definition", new BoolKeyword(false), "NonPeriodic", "Whether the box is non-periodic");
 }
 
 // Destructor
@@ -52,24 +49,6 @@ bool BoxProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
 	return (context == ProcedureNode::GenerationContext);
 }
 
-/*
- * Node Keywords
- */
-
-// Return enum option info for BoxNodeKeyword
-EnumOptions<BoxProcedureNode::BoxNodeKeyword> BoxProcedureNode::boxNodeKeywords()
-{
-	static EnumOptionsList BoxNodeTypeKeywords = EnumOptionsList() <<
-		EnumOption(BoxProcedureNode::AnglesKeyword,		"Angles",	3) <<
-		EnumOption(BoxProcedureNode::EndBoxKeyword,		"EndBox") <<
-		EnumOption(BoxProcedureNode::LengthsKeyword,		"Lengths",	3) <<
-		EnumOption(BoxProcedureNode::NonPeriodicKeyword,	"NonPeriodic",	1);
-
-	static EnumOptions<BoxProcedureNode::BoxNodeKeyword> options("BoxNodeKeyword", BoxNodeTypeKeywords);
-
-	return options;
-}
-
 /* 
  * Execute
  */
@@ -83,10 +62,13 @@ bool BoxProcedureNode::prepare(Configuration* cfg, const char* prefix, GenericLi
 // Execute node, targetting the supplied Configuration
 ProcedureNode::NodeExecutionResult BoxProcedureNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
+	// Retrieve necessary parameters
+	Vec3<double> lengths = keywords_.asVec3Double("Lengths");
+	Vec3<double> angles = keywords_.asVec3Double("Angles");
+	bool nonPeriodic = keywords_.asBool("NonPeriodic");
+
 	// Create a Box in the target Configuration with our lengths and angles
-	Vec3<double> lengths(lengthA_.asDouble(), lengthB_.asDouble(), lengthC_.asDouble());
-	Vec3<double> angles(angleAlpha_.asDouble(), angleBeta_.asDouble(), angleGamma_.asDouble());
-	if (!cfg->createBox(lengths, angles, nonPeriodic_)) return ProcedureNode::Failure;
+	if (!cfg->createBox(lengths, angles, nonPeriodic)) return ProcedureNode::Failure;
 
 	Messenger::print("[Box] Volume is %f cubic Angstroms (reciprocal volume = %e)\n", cfg->box()->volume(), cfg->box()->reciprocalVolume());
 	lengths = cfg->box()->axisLengths();
@@ -94,72 +76,4 @@ ProcedureNode::NodeExecutionResult BoxProcedureNode::execute(ProcessPool& procPo
 	Messenger::print("[Box] Type is %s: A = %10.4e B = %10.4e C = %10.4e, alpha = %10.4e beta = %10.4e gamma = %10.4e\n", Box::boxTypes().keyword(cfg->box()->type()), lengths.x, lengths.y, lengths.z, angles.x, angles.y, angles.z);
 
 	return ProcedureNode::Success;
-}
-
-/*
- * Read / Write
- */
-
-// Read structure from specified LineParser
-bool BoxProcedureNode::read(LineParser& parser, const CoreData& coreData)
-{
-	RefList<ExpressionVariable> availableParameters;
-
-	// Read until we encounter the EndBox keyword, or we fail for some reason
-	while (!parser.eofOrBlank())
-	{
-		// Read and parse the next line
-		if (parser.getArgsDelim() != LineParser::Success) return false;
-
-		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
-		if (!boxNodeKeywords().isValid(parser.argc(0))) return boxNodeKeywords().errorAndPrintValid(parser.argc(0));
-		BoxNodeKeyword nk = boxNodeKeywords().enumeration(parser.argc(0));
-		if (!boxNodeKeywords().validNArgs(nk, parser.nArgs()-1)) return false;
-
-		// All OK, so process it
-		switch (nk)
-		{
-			case (BoxProcedureNode::AnglesKeyword):
-				availableParameters = parametersInScope();
-				if (!angleAlpha_.set(parser.argc(1), availableParameters)) return Messenger::error("Failed to parse expression '%s' for angle 'alpha'.\n", parser.argc(1));
-				if (!angleBeta_.set(parser.argc(2), availableParameters)) return Messenger::error("Failed to parse expression '%s' for angle 'beta'.\n", parser.argc(2));
-				if (!angleGamma_.set(parser.argc(3), availableParameters)) return Messenger::error("Failed to parse expression '%s' for angle 'gamma'.\n", parser.argc(3));				break;
-			case (BoxProcedureNode::EndBoxKeyword):
-				return true;
-			case (BoxProcedureNode::LengthsKeyword):
-				availableParameters = parametersInScope();
-				if (!lengthA_.set(parser.argc(1), availableParameters)) return Messenger::error("Failed to parse expression '%s' for length 'A'.\n", parser.argc(1));
-				if (!lengthB_.set(parser.argc(2), availableParameters)) return Messenger::error("Failed to parse expression '%s' for length 'B'.\n", parser.argc(2));
-				if (!lengthC_.set(parser.argc(3), availableParameters)) return Messenger::error("Failed to parse expression '%s' for length 'C'.\n", parser.argc(3));
-				break;
-			case (BoxProcedureNode::NonPeriodicKeyword):
-				nonPeriodic_ = parser.argb(1);
-				break;
-			default:
-				return Messenger::error("Epic Developer Fail - Don't know how to deal with the Box node keyword '%s'.\n", parser.argc(0));
-		}
-	}
-
-	return true;
-}
-
-// Write structure to specified LineParser
-bool BoxProcedureNode::write(LineParser& parser, const char* prefix)
-{
-	// Block Start
-	if (!parser.writeLineF("%s%s\n", ProcedureNode::nodeTypes().keyword(type_))) return false;
-
-	// Lengths
-	if (!parser.writeLineF("%s  %s  %s  %s  %s\n", prefix, boxNodeKeywords().keyword(BoxProcedureNode::LengthsKeyword), lengthA_.asString(true), lengthB_.asString(true), lengthC_.asString(true))) return false;
-
-	// Angles
-	if (!parser.writeLineF("%s  %s  %s  %s  %s\n", prefix, boxNodeKeywords().keyword(BoxProcedureNode::AnglesKeyword), angleAlpha_.asString(true), angleBeta_.asString(true), angleGamma_.asString(true))) return false;
-
-	// Options
-	if (nonPeriodic_ && (!parser.writeLineF("%s  %s  True\n", prefix, boxNodeKeywords().keyword(BoxProcedureNode::NonPeriodicKeyword)))) return false;
-
-	// Block End
-	if (!parser.writeLineF("%s%s\n", boxNodeKeywords().keyword(BoxProcedureNode::EndBoxKeyword))) return false;
-
-	return true;
 }
