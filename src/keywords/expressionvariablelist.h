@@ -55,6 +55,10 @@ class ExpressionVariableListKeyword : public KeywordData< List<ExpressionNode>& 
 	// Assumed type for variables in the list
 	ExpressionValue::ValueType variableType_;
 
+	public:
+	// Return assumed type for variables in the list
+	ExpressionValue::ValueType variableType() const;
+
 
 	/*
 	 * Data

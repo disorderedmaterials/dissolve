@@ -38,6 +38,16 @@ ExpressionVariableListKeyword::~ExpressionVariableListKeyword()
 }
 
 /*
+ * Variable Type
+ */
+
+// Return assumed type for variables in the list
+ExpressionValue::ValueType ExpressionVariableListKeyword::variableType() const
+{
+	return variableType_;
+}
+
+/*
  * Data
  */
 
