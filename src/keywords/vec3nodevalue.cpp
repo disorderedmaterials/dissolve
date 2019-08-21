@@ -24,9 +24,10 @@
 #include "base/lineparser.h"
 
 // Constructors
-Vec3NodeValueKeyword::Vec3NodeValueKeyword(ProcedureNode* parentNode, Vec3<double> value) : KeywordData< Vec3<NodeValue> >(KeywordBase::Vec3NodeValueData, Vec3<NodeValue>(value.x, value.y, value.z))
+Vec3NodeValueKeyword::Vec3NodeValueKeyword(ProcedureNode* parentNode, Vec3<double> value, Vec3Labels::LabelType labelType) : KeywordData< Vec3<NodeValue> >(KeywordBase::Vec3NodeValueData, Vec3<NodeValue>(value.x, value.y, value.z))
 {
 	parentNode_ = parentNode;
+	labelType_ = labelType;
 }
 
 // Destructor

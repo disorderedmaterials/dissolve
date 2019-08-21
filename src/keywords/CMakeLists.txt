@@ -58,6 +58,7 @@ add_library(keywords
   speciessitereferencelist.h
   vec3double.h
   vec3integer.h
+  vec3labels.h
   vec3nodevalue.cpp
   windowfunction.h
 )

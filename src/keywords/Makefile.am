@@ -29,7 +29,7 @@ noinst_HEADERS += nodevalue.h nodevalueenumoptions.h
 noinst_HEADERS += pairbroadeningfunction.h procedure.h
 noinst_HEADERS += species.h speciesreferencelist.h speciessite.h speciessitereferencelist.h
 noinst_HEADERS += types.h
-noinst_HEADERS += vec3double.h vec3integer.h vec3nodevalue.h
+noinst_HEADERS += vec3double.h vec3integer.h vec3labels.h vec3nodevalue.h
 noinst_HEADERS += windowfunction.h
 
 AM_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@

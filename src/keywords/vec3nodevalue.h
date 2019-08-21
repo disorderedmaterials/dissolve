@@ -24,6 +24,7 @@
 
 #include "keywords/data.h"
 #include "keywords/base.h"
+#include "keywords/vec3labels.h"
 #include "procedure/nodevalue.h"
 
 // Forward Declarations
@@ -34,7 +35,7 @@ class Vec3NodeValueKeyword : public KeywordData< Vec3<NodeValue> >
 {
 	public:
 	// Constructors
-	Vec3NodeValueKeyword(ProcedureNode* parentNode, Vec3<double> value);
+	Vec3NodeValueKeyword(ProcedureNode* parentNode, Vec3<double> value, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
 	// Destructor
 	~Vec3NodeValueKeyword();
 
@@ -45,6 +46,18 @@ class Vec3NodeValueKeyword : public KeywordData< Vec3<NodeValue> >
 	private:
 	// Parent ProcedureNode
 	ProcedureNode* parentNode_;
+
+
+	/*
+	 * Label Type
+	 */
+	private:
+	// Label type to display in GUI
+	Vec3Labels::LabelType labelType_;
+
+	public:
+	// Label type to display in GUI
+	Vec3Labels::LabelType labelType() const;
 
 
 	/*
