@@ -36,6 +36,16 @@ Vec3NodeValueKeyword::~Vec3NodeValueKeyword()
 }
 
 /*
+ * Label Type
+ */
+
+// Label type to display in GUI
+Vec3Labels::LabelType Vec3NodeValueKeyword::labelType() const
+{
+	return labelType_;
+}
+
+/*
  * Arguments
  */
 
