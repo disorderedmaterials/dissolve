@@ -92,6 +92,13 @@ QWidget* KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& keyword
 		widget = enumOptionsWidget;
 		base = enumOptionsWidget;
 	}
+	else if (keyword->type() == KeywordBase::ExpressionVariableListData)
+	{
+		ExpressionVariableListKeywordWidget* expressionVariableListWidget = new ExpressionVariableListKeywordWidget(NULL, keyword, coreData);
+		connect(expressionVariableListWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
+		widget = expressionVariableListWidget;
+		base = expressionVariableListWidget;
+	}
 	else if (keyword->type() == KeywordBase::FileAndFormatData)
 	{
 		FileAndFormatKeywordWidget* fileAndFormatWidget = new FileAndFormatKeywordWidget(NULL, keyword, coreData);
