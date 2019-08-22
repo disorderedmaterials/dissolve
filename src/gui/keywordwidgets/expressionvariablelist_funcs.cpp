@@ -46,7 +46,7 @@ ExpressionVariableListKeywordWidget::ExpressionVariableListKeywordWidget(QWidget
 
 	// Add suitable delegate to the table
 	if (keyword_->variableType() == ExpressionValue::IntegerType) ui_.VariablesTable->setItemDelegateForColumn(1, new IntegerSpinDelegate(this));
-	else if (keyword_->variableType() == ExpressionValue::IntegerType) ui_.VariablesTable->setItemDelegateForColumn(1, new ExponentialSpinDelegate(this));
+	else if (keyword_->variableType() == ExpressionValue::DoubleType) ui_.VariablesTable->setItemDelegateForColumn(1, new ExponentialSpinDelegate(this));
 }
 
 /*
