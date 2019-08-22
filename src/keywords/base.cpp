@@ -205,3 +205,9 @@ void KeywordBase::removeReferencesTo(SpeciesSite* spSite)
 {
 	// Default action - ignore
 }
+
+// Prune any references to the supplied ProcedureNode in the contained data
+void KeywordBase::removeReferencesTo(ProcedureNode* node)
+{
+	// Default action - ignore
+}

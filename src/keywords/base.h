@@ -34,6 +34,7 @@ class CoreData;
 class Isotopologue;
 class LineParser;
 class Module;
+class ProcedureNode;
 class Species;
 class SpeciesSite;
 class ProcessPool;
@@ -156,6 +157,8 @@ class KeywordBase : public ListItem<KeywordBase>
 	virtual void removeReferencesTo(Species* sp);
 	// Prune any references to the supplied SpeciesSite in the contained data
 	virtual void removeReferencesTo(SpeciesSite* spSite);
+	// Prune any references to the supplied ProcedureNode in the contained data
+	virtual void removeReferencesTo(ProcedureNode* node);
 
 	public:
 	// Gracefully deal with the specified object no longer being valid
