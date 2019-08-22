@@ -417,6 +417,9 @@ bool SequenceProcedureNode::read(LineParser& parser, const CoreData& coreData)
 			return Messenger::error("A node named '%s' is already in scope.\n", parser.hasArg(1) ? parser.argc(1) : newNode->name());
 		}
 
+		// Set the name of the node if it was provided
+		if (parser.hasArg(1)) newNode->setName(parser.argc(1));
+
 		// Is the new node permitted in our context?
 		if (!newNode->isContextRelevant(context_))
 		{
