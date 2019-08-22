@@ -18,6 +18,7 @@ add_library(keywords
   modulegroups.cpp
   modulereferencelist.cpp
   node.cpp
+  nodebranch.cpp
   nodevalue.cpp
   nodevalueenumoptions.cpp
   pairbroadeningfunction.cpp
@@ -52,6 +53,7 @@ add_library(keywords
   modulegroups.h
   modulereferencelist.h
   node.h
+  nodebranch.h
   nodevalue.h
   nodevalueenumoptions.h
   pairbroadeningfunction.h
