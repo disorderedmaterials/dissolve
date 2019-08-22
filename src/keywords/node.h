@@ -25,6 +25,7 @@
 #include "keywords/data.h"
 #include "keywords/base.h"
 #include "procedure/nodes/node.h"
+#include "base/lineparser.h"
 
 // Forward Declarations
 class NodeValue;
