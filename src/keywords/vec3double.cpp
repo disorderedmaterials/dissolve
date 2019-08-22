@@ -129,11 +129,11 @@ bool Vec3DoubleKeyword::read(LineParser& parser, int startArg, const CoreData& c
 		// Check individual components of the vector
 		for (int n=0; n<3; ++n)
 		{
-			if (!isValid(n, parser.argd(startArg)))
+			if (!isValid(n, parser.argd(startArg+n)))
 			{
-				if (minimumLimit_[n] && maximumLimit_[n]) Messenger::error("Value %i is out of range for keyword. Valid range is %i <= n <= %i.\n", data_[n], min_[n], max_[n]);
-				else if (minimumLimit_[n]) Messenger::error("Value %i is out of range for keyword. Valid range is %i <= n.\n", data_[n], min_[n]);
-				else Messenger::error("Value %i is out of range for keyword. Valid range is n <= %i.\n", data_[n], max_[n]);
+				if (minimumLimit_[n] && maximumLimit_[n]) Messenger::error("Value %12.6e is out of range for keyword '%s'. Valid range is  <= n <= %12.6e.\n", data_[n], keyword(), min_[n], max_[n]);
+				else if (minimumLimit_[n]) Messenger::error("Value %12.6e is out of range for keyword '%s'. Valid range is %12.6e <= n.\n", data_[n], keyword(), min_[n]);
+				else Messenger::error("Value %12.6e is out of range for keywokjhrd '%s'. Valid range is n <= %12.6e.\n", data_[n], keyword(), max_[n]);
 
 				return false;
 			}
