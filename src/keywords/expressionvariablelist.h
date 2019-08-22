@@ -47,6 +47,10 @@ class ExpressionVariableListKeyword : public KeywordData< List<ExpressionNode>& 
 	// Parent ProcedureNode
 	ProcedureNode* parentNode_;
 
+	public:
+	// Parent ProcedureNode
+	const ProcedureNode* parentNode() const;
+
 
 	/*
 	 * Variable Type

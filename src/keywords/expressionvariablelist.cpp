@@ -38,6 +38,16 @@ ExpressionVariableListKeyword::~ExpressionVariableListKeyword()
 }
 
 /*
+ * Parent Node
+ */
+
+// Parent ProcedureNode
+const ProcedureNode* ExpressionVariableListKeyword::parentNode() const
+{
+	return parentNode_;
+}
+
+/*
  * Variable Type
  */
 
