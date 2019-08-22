@@ -113,6 +113,8 @@ class ProcedureNode : public ListItem<ProcedureNode>
 	public:
 	// Set scope
 	void setScope(SequenceProcedureNode* scopeNode);
+	// Return scope (SequenceNode) in which this node exists
+	SequenceProcedureNode* scope() const;
 	// Return Procedure in which this node exists
 	const Procedure* procedure() const;
 	// Return context of scope in which this node exists

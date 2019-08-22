@@ -21,6 +21,7 @@
 
 #include "procedure/nodes/node.h"
 #include "procedure/nodes/sequence.h"
+#include "procedure/procedure.h"
 #include "classes/site.h"
 #include "base/lineparser.h"
 #include "base/messenger.h"
@@ -129,6 +130,12 @@ const KeywordList& ProcedureNode::keywords() const
 void ProcedureNode::setScope(SequenceProcedureNode* scopeNode)
 {
 	scope_ = scopeNode;
+}
+
+// Return scope (SequenceNode) in which this node exists
+SequenceProcedureNode* ProcedureNode::scope() const
+{
+	return scope_;
 }
 
 // Return Procedure in which this node exists
