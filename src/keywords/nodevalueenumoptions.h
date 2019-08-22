@@ -134,7 +134,7 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
 	// Write keyword data to specified LineParser
 	bool write(LineParser& parser, const char* prefix)
 	{
-		return parser.writeLineF("%s%s  '%s'  %s\n", prefix, KeywordData< Venum<NodeValue,E> >::keyword(), KeywordData< Venum<NodeValue,E> >::data_.value().asString(), KeywordData< Venum<NodeValue,E> >::data_.enumerationAsString());
+		return parser.writeLineF("%s%s  '%s'  %s\n", prefix, KeywordBase::keyword(), KeywordData< Venum<NodeValue,E> >::data_.value().asString(), KeywordData< Venum<NodeValue,E> >::data_.enumerationAsString());
 	}
 
 
@@ -145,7 +145,7 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
 	// Set node value from expression text, informing KeywordBase
 	bool setValue(const char* expressionText)
 	{
-		if (!parentNode_) return false;
+		if (!parentNode_) return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n", KeywordBase::keyword());
 
 		bool result = KeywordData< Venum<NodeValue,E> >::data_.value().set(expressionText, parentNode_->parametersInScope());
 
