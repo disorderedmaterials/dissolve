@@ -30,14 +30,14 @@
 class NodeValue;
 class ProcedureNode;
 
-// Keyword with NodeValue
-class NodeKeyword : public KeywordData<ProcedureNode*>
+// Keyword with ProcedureNode base class
+class NodeKeywordBase
 {
 	public:
 	// Constructor
-	NodeKeyword(ProcedureNode* parentNode, ProcedureNode::NodeType nodeType, ProcedureNode* node);
+	NodeKeywordBase(ProcedureNode* parentNode, ProcedureNode::NodeType nodeType);
 	// Destructor
-	~NodeKeyword();
+	virtual ~NodeKeywordBase();
 
 
 	/*
@@ -49,7 +49,7 @@ class NodeKeyword : public KeywordData<ProcedureNode*>
 
 	public:
 	// Parent ProcedureNode
-	const ProcedureNode* parentNode() const;
+	ProcedureNode* parentNode() const;
 
 
 	/*
@@ -59,22 +59,9 @@ class NodeKeyword : public KeywordData<ProcedureNode*>
 	// Target node type to allow
 	ProcedureNode::NodeType nodeType_;
 
+	public:
 	// Return target node type to allow
 	ProcedureNode::NodeType nodeType() const;
-
-
-	/*
-	 * Arguments
-	 */
-	public:
-	// Return minimum number of arguments accepted
-	int minArguments();
-	// Return maximum number of arguments accepted
-	int maxArguments();
-	// Parse arguments from supplied LineParser, starting at given argument offset
-	bool read(LineParser& parser, int startArg, const CoreData& coreData);
-	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* prefix);
 
 
 	/*
@@ -82,7 +69,74 @@ class NodeKeyword : public KeywordData<ProcedureNode*>
 	 */
 	public:
 	// Set the target node
-	bool setNode(ProcedureNode* node);
+	virtual bool setNode(ProcedureNode* node) = 0;
+};
+
+// Keyword with ProcedureNode
+template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordData<N*>
+{
+	public:
+	// Constructor
+	NodeKeyword(ProcedureNode* parentNode, ProcedureNode::NodeType nodeType, N* node) : NodeKeywordBase(parentNode, nodeType), KeywordData<N*>(KeywordBase::NodeData, node)
+	{
+	}
+	// Destructor
+	~NodeKeyword()
+	{
+	}
+
+
+	/*
+	 * Arguments
+	 */
+	public:
+	// Return minimum number of arguments accepted
+	int minArguments()
+	{
+		return 1;
+	}
+	// Return maximum number of arguments accepted
+	int maxArguments()
+	{
+		return 1;
+	}
+	// Parse arguments from supplied LineParser, starting at given argument offset
+	bool read(LineParser& parser, int startArg, const CoreData& coreData)
+	{
+		if (!parentNode()) return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n", KeywordBase::keyword());
+
+		// Locate the named node in scope - don't prune by type yet (we'll check that in setNode())
+		ProcedureNode* node = parentNode()->nodeInScope(parser.argc(startArg));
+		if (!node) return Messenger::error("Node '%s' given to keyword %s doesn't exist.\n", parser.argc(startArg), KeywordBase::keyword());
+
+		return setNode(node);
+	}
+	// Write keyword data to specified LineParser
+	bool write(LineParser& parser, const char* prefix)
+	{
+		if (!parser.writeLineF("%s%s  '%s'\n", prefix, KeywordBase::keyword(), KeywordData<N*>::data_->name())) return false;
+
+		return true;
+	}
+
+
+	/*
+	 * Set
+	 */
+	public:
+	// Set the target node
+	bool setNode(ProcedureNode* node)
+	{
+		if (!node) return false;
+
+		if (node->type() != nodeType()) return Messenger::error("Node '%s' is of type %s, but the %s keyword requires a node of type %s.\n", node->name(), ProcedureNode::nodeTypes().keyword(node->type()), KeywordBase::keyword(), ProcedureNode::nodeTypes().keyword(nodeType()));
+
+		KeywordData<N*>::data_ = dynamic_cast<N*>(node);
+
+		KeywordData<N*>::set_ = true;
+
+		return true;
+	}
 
 
 	/*

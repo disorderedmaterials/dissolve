@@ -21,17 +21,16 @@
 
 #include "keywords/node.h"
 #include "procedure/nodes/node.h"
-#include "base/lineparser.h"
 
 // Constructor
-NodeKeyword::NodeKeyword(ProcedureNode* parentNode, ProcedureNode::NodeType nodeType, ProcedureNode* node) : KeywordData<ProcedureNode*>(KeywordData::NodeValueData, node)
+NodeKeywordBase::NodeKeywordBase(ProcedureNode* parentNode, ProcedureNode::NodeType nodeType)
 {
 	parentNode_ = parentNode;
 	nodeType_ = nodeType;
 }
 
 // Destructor
-NodeKeyword::~NodeKeyword()
+NodeKeywordBase::~NodeKeywordBase()
 {
 }
 
@@ -40,7 +39,7 @@ NodeKeyword::~NodeKeyword()
  */
 
 // Parent ProcedureNode
-const ProcedureNode* NodeKeyword::parentNode() const
+ProcedureNode* NodeKeywordBase::parentNode() const
 {
 	return parentNode_;
 }
@@ -50,65 +49,7 @@ const ProcedureNode* NodeKeyword::parentNode() const
  */
 
 // Return target node type to allow
-ProcedureNode::NodeType NodeKeyword::nodeType() const
+ProcedureNode::NodeType NodeKeywordBase::nodeType() const
 {
 	return nodeType_;
 }
-
-/*
- * Arguments
- */
-
-// Return minimum number of arguments accepted
-int NodeKeyword::minArguments()
-{
-	return 1;
-}
-
-// Return maximum number of arguments accepted
-int NodeKeyword::maxArguments()
-{
-	return 1;
-}
-
-// Parse arguments from supplied LineParser, starting at given argument offset
-bool NodeKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
-{
-	if (!parentNode_) return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n", keyword());
-
-	// Locate the named node in scope - don't prune by type yet (we'll check that in setNode())
-	ProcedureNode* node = parentNode_->nodeInScope(parser.argc(startArg));
-	if (!node) return Messenger::error("Node '%s' given to keyword %s doesn't exist.\n", parser.argc(startArg), keyword());
-
-	return setNode(node);
-}
-
-// Write keyword data to specified LineParser
-bool NodeKeyword::write(LineParser& parser, const char* prefix)
-{
-	if (!parser.writeLineF("%s%s  '%s'\n", prefix, keyword(), data_->name())) return false;
-
-	return true;
-}
-
-/*
- * Set
- */
-
-// Set the target node
-bool NodeKeyword::setNode(ProcedureNode* node)
-{
-	if (!node) return false;
-
-	if (node->type() != nodeType_) return Messenger::error("Node '%s' is of type %s, but the %s keyword requires a node of type %s.\n", node->name(), ProcedureNode::nodeTypes().keyword(node->type()), keyword(), ProcedureNode::nodeTypes().keyword(nodeType_));
-
-	data_ = node;
-
-	set_ = true;
-
-	return true;
-}
-
-/*
- * Object Management
- */
