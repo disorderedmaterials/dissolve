@@ -58,7 +58,7 @@ class ParametersProcedureNode : public ProcedureNode
 
 	public:
 	// Return whether this node has the named parameter specified
-	ExpressionVariable* hasParameter(const char* name);
+	ExpressionVariable* hasParameter(const char* name, ExpressionVariable* excludeParameter);
 	// Return list of all parameters for this node
 	RefList<ExpressionVariable> parameterReferences() const;
 

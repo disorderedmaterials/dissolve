@@ -162,12 +162,28 @@ ProcedureNode* ProcedureNode::nodeInScope(const char* name, ProcedureNode::NodeT
 	return scope_->nodeInScope(this, name, nt);
 }
 
-// Return whether the named parameter is currently in scope
-ExpressionVariable* ProcedureNode::parameterInScope(const char* name)
+// Return named node if it exists anywhere in the same Procedure, and optionally matches the type given
+ProcedureNode* ProcedureNode::nodeExists(const char* name, ProcedureNode* excludeNode, ProcedureNode::NodeType nt) const
 {
 	if (!scope_) return NULL;
 
-	return scope_->parameterInScope(this, name);
+	return scope_->nodeExists(name, excludeNode, nt);
+}
+
+// Return whether the named parameter is currently in scope
+ExpressionVariable* ProcedureNode::parameterInScope(const char* name, ExpressionVariable* excludeParameter)
+{
+	if (!scope_) return NULL;
+
+	return scope_->parameterInScope(this, name, excludeParameter);
+}
+
+// Return whether the named parameter exists anywhere in the same Procedure
+ExpressionVariable* ProcedureNode::parameterExists(const char* name, ExpressionVariable* excludeParameter) const
+{
+	if (!scope_) return NULL;
+
+	return scope_->parameterExists(name, excludeParameter);
 }
 
 // Create and return reference list of parameters in scope
@@ -199,7 +215,7 @@ SequenceProcedureNode* ProcedureNode::branch()
  */
 
 // Return whether this node has the named parameter specified
-ExpressionVariable* ProcedureNode::hasParameter(const char* name)
+ExpressionVariable* ProcedureNode::hasParameter(const char* name, ExpressionVariable* excludeParameter)
 {
 	return NULL;
 }

@@ -93,6 +93,55 @@ const List<ProcedureNode>& SequenceProcedureNode::sequence() const
  * Scope
  */
 
+// Return named node if it exists anywhere in our sequence or below, and optionally matches the type given
+ProcedureNode* SequenceProcedureNode::searchNodes(const char* name, ProcedureNode* excludeNode, ProcedureNode::NodeType nt) const
+{
+	ListIterator<ProcedureNode> nodeIterator(sequence_);
+	while (ProcedureNode* node = nodeIterator.iterate())
+	{
+		// Does this node match the supplied name?
+		if (node != excludeNode)
+		{
+			if (DissolveSys::sameString(node->name(), name))
+			{
+				// Check type
+				if (nt == ProcedureNode::nNodeTypes) return node;
+				else if (node->type() == nt) return node;
+			}
+		}
+
+		// If the node has a branch, descend into it
+		if (node->hasBranch())
+		{
+			ProcedureNode* result = node->branch()->nodeExists(name, excludeNode, nt);
+			if (result) return result;
+		}
+	}
+
+	return NULL;
+}
+
+// Search through the Procedure for the named parameter
+ExpressionVariable* SequenceProcedureNode::searchParameters(const char* name, ExpressionVariable* excludeParameter) const
+{
+	ListIterator<ProcedureNode> nodeIterator(sequence_);
+	while (ProcedureNode* node = nodeIterator.iterate())
+	{
+		// Does this node have a parameter by this name?
+		ExpressionVariable* result = node->hasParameter(name, excludeParameter);
+		if (result) return result;
+	
+		// If the node has a branch, descend into it
+		if (node->hasBranch())
+		{
+			result = node->branch()->parameterExists(name, excludeParameter);
+			if (result) return result;
+		}
+	}
+
+	return NULL;
+}
+
 // Return parent Procedure to which this sequence belongs
 const Procedure* SequenceProcedureNode::procedure() const
 {
@@ -157,8 +206,18 @@ ProcedureNode* SequenceProcedureNode::nodeInScope(ProcedureNode* queryingNode, c
 	return NULL;
 }
 
+// Return named node if it exists anywhere in the same Procedure, and optionally matches the type given
+ProcedureNode* SequenceProcedureNode::nodeExists(const char* name, ProcedureNode* excludeNode, ProcedureNode::NodeType nt) const
+{
+	// First, bubble up to the topmost sequence (which should be the Procedure's rootSequence_)
+	if (parentNode_) return parentNode_->scope()->nodeExists(name, excludeNode, nt);
+
+	// No parent node, so we must be the topmost sequence - run the search from here
+	return searchNodes(name, excludeNode, nt);
+}
+
 // Return whether the named parameter is currently in scope
-ExpressionVariable* SequenceProcedureNode::parameterInScope(ProcedureNode* queryingNode, const char* name)
+ExpressionVariable* SequenceProcedureNode::parameterInScope(ProcedureNode* queryingNode, const char* name, ExpressionVariable* excludeParameter)
 {
 	// Is this node present in our own sequence?
 	if (queryingNode && (!sequence_.contains(queryingNode)))
@@ -170,15 +229,25 @@ ExpressionVariable* SequenceProcedureNode::parameterInScope(ProcedureNode* query
 	// Start from the target node and work backwards...
 	for (ProcedureNode* node = queryingNode; node != NULL; node = node->prev)
 	{
-		ExpressionVariable* param = node->hasParameter(name);
+		ExpressionVariable* param = node->hasParameter(name, excludeParameter);
 		if (param) return param;
 	}
 
 	// Not in our list. Recursively check our parent(s)
-	if (parentNode_) return parentNode_->parameterInScope(name);
+	if (parentNode_) return parentNode_->parameterInScope(name, excludeParameter);
 
 	// Not found
 	return NULL;
+}
+
+// Return whether the named parameter exists in this sequence or its children (branches)
+ExpressionVariable* SequenceProcedureNode::parameterExists(const char* name, ExpressionVariable* excludeParameter) const
+{
+	// First, bubble up to the topmost sequence (which should be the Procedure's rootSequence_)
+	if (parentNode_) return parentNode_->scope()->parameterExists(name, excludeParameter);
+
+	// No parent node, so we must be the topmost sequence - run the search from here
+	return searchParameters(name, excludeParameter);
 }
 
 // Create and return reference list of parameters in scope

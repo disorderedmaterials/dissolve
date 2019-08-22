@@ -48,7 +48,7 @@ bool ParametersProcedureNode::isContextRelevant(ProcedureNode::NodeContext conte
 }
 
 // Return whether this node has the named parameter specified
-ExpressionVariable* ParametersProcedureNode::hasParameter(const char* name)
+ExpressionVariable* ParametersProcedureNode::hasParameter(const char* name, ExpressionVariable* excludeParameter)
 {
 	// Search integer parameters
 	ListIterator<ExpressionNode> integerIterator(integerParameters_);
@@ -56,7 +56,8 @@ ExpressionVariable* ParametersProcedureNode::hasParameter(const char* name)
 	{
 		// Cast up the node into an ExpressionVariable
 		ExpressionVariable* var = dynamic_cast<ExpressionVariable*>(node);
-		if (var && (DissolveSys::sameString(var->name(), name))) return var;
+		if (!var) continue;
+		if ((var != excludeParameter) && (DissolveSys::sameString(var->name(), name))) return var;
 	}
 
 	// Search double parameters
@@ -65,7 +66,8 @@ ExpressionVariable* ParametersProcedureNode::hasParameter(const char* name)
 	{
 		// Cast up the node into an ExpressionVariable
 		ExpressionVariable* var = dynamic_cast<ExpressionVariable*>(node);
-		if (var && (DissolveSys::sameString(var->name(), name))) return var;
+		if (!var) continue;
+		if ((var != excludeParameter) && (DissolveSys::sameString(var->name(), name))) return var;
 	}
 
 	return NULL;

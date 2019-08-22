@@ -121,8 +121,12 @@ class ProcedureNode : public ListItem<ProcedureNode>
 	ProcedureNode::NodeContext scopeContext() const;
 	// Return named node if it is currently in scope, and optionally matches the type given
 	ProcedureNode* nodeInScope(const char* name, ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes);
+	// Return named node if it exists anywhere in the same Procedure, and optionally matches the type given
+	ProcedureNode* nodeExists(const char* name, ProcedureNode* excludeNode = NULL, ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
 	// Return whether the named parameter is currently in scope
-	ExpressionVariable* parameterInScope(const char* name);
+	ExpressionVariable* parameterInScope(const char* name, ExpressionVariable* excludeParameter = NULL);
+	// Return whether the named parameter exists anywhere in the same Procedure
+	ExpressionVariable* parameterExists(const char* name, ExpressionVariable* excludeParameter = NULL) const;
 	// Create and return reference list of parameters in scope
 	RefList<ExpressionVariable> parametersInScope();
 
@@ -142,7 +146,7 @@ class ProcedureNode : public ListItem<ProcedureNode>
 	 */
 	public:
 	// Return whether this node has the named parameter specified
-	virtual ExpressionVariable* hasParameter(const char* name);
+	virtual ExpressionVariable* hasParameter(const char* name, ExpressionVariable* excludeParameter = NULL);
 	// Return references to all parameters for this node
 	virtual RefList<ExpressionVariable> parameterReferences() const;
 

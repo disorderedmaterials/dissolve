@@ -85,6 +85,12 @@ class SequenceProcedureNode : public ProcedureNode
 	// Context of the sequence
 	ProcedureNode::NodeContext context_;
 
+	private:
+	// Return named node if it exists anywhere in our sequence or below, and optionally matches the type given
+	ProcedureNode* searchNodes(const char* name, ProcedureNode* excludeNode = NULL, ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
+	// Search through the Procedure for the named parameter
+	ExpressionVariable* searchParameters(const char* name, ExpressionVariable* excludeParameter = NULL) const;
+
 	public:
 	// Return parent Procedure to which this sequence belongs
 	const Procedure* procedure() const;
@@ -94,8 +100,12 @@ class SequenceProcedureNode : public ProcedureNode
 	ProcedureNode* node(const char* name, ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
 	// Return named node if it is currently in scope, and optionally matches the type given
 	ProcedureNode* nodeInScope(ProcedureNode* queryingNode, const char* name, ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes);
+	// Return named node if it exists anywhere in the same Procedure, and optionally matches the type given
+	ProcedureNode* nodeExists(const char* name, ProcedureNode* excludeNode = NULL, ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
 	// Return whether the named parameter is currently in scope
-	ExpressionVariable* parameterInScope(ProcedureNode* queryingNode, const char* name);
+	ExpressionVariable* parameterInScope(ProcedureNode* queryingNode, const char* name, ExpressionVariable* excludeParameter = NULL);
+	// Return whether the named parameter exists in this sequence or its children (branches)
+	ExpressionVariable* parameterExists(const char* name, ExpressionVariable* excludeParameter = NULL) const;
 	// Create and return reference list of parameters in scope
 	RefList<ExpressionVariable> parametersInScope(ProcedureNode* queryingNode);
 
