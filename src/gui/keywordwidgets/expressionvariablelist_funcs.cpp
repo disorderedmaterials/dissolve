@@ -23,6 +23,7 @@
 #include "gui/helpers/tablewidgetupdater.h"
 #include "gui/delegates/integerspin.hui"
 #include "gui/delegates/exponentialspin.hui"
+#include "procedure/nodes/node.h"
 #include "expression/variable.h"
 #include "classes/coredata.h"
 #include <QHBoxLayout>
@@ -97,13 +98,20 @@ void ExpressionVariableListKeywordWidget::on_VariablesTable_itemChanged(QTableWi
 	{
 		// Variable name
 		case (0):
-			// Check that the name is not currently in scope
-			// TODO
+			// Check that the name is not currently in use anywhere in the Procedure
+			if (keyword_->parentNode()->parameterExists(qPrintable(w->text()), var))
+			{
+				Messenger::error("A Node with name '%s' already exists elsewhere in the Procedure.\n", qPrintable(w->text()));
+				w->setText(var->name());
+				return;
+			}
+			else var->setName(qPrintable(w->text()));
 			break;
 		// Variable value
 		case (1):
 			// Set the new value
-			var->set(w->text().toInt());
+			if (keyword_->variableType() == ExpressionValue::IntegerType) var->set(w->text().toInt());
+			else if (keyword_->variableType() == ExpressionValue::DoubleType) var->set(w->text().toDouble());
 			break;
 	}
 
