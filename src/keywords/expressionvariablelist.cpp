@@ -98,7 +98,14 @@ bool ExpressionVariableListKeyword::read(LineParser& parser, int startArg, const
 	parameter->setName(parser.argc(startArg));
 
 	// Set the initial value
-	if (!parameter->set(variableType_ == ExpressionValue::IntegerType ? parser.argi(startArg+1) : parser.argd(startArg+1))) return Messenger::error("Failed to set initial value for parameter '%s'.\n", parser.argc(startArg));
+	if (variableType_ == ExpressionValue::IntegerType)
+	{
+		if (!parameter->set(parser.argi(startArg+1))) return Messenger::error("Failed to set initial value for parameter '%s'.\n", parser.argc(startArg));
+	}
+	else if (variableType_ == ExpressionValue::DoubleType)
+	{
+		if (!parameter->set(parser.argd(startArg+1))) return Messenger::error("Failed to set initial value for parameter '%s'.\n", parser.argc(startArg));
+	}
 
 	set_ = true;
 
