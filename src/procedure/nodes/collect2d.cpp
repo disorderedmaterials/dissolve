@@ -22,6 +22,7 @@
 #include "procedure/nodes/collect2d.h"
 #include "procedure/nodes/calculate.h"
 #include "procedure/nodes/sequence.h"
+#include "keywords/types.h"
 #include "math/data2d.h"
 #include "classes/configuration.h"
 #include "base/lineparser.h"
@@ -31,16 +32,13 @@
 // Constructor
 Collect2DProcedureNode::Collect2DProcedureNode(CalculateProcedureNode* xObservable, CalculateProcedureNode* yObservable, double xMin, double xMax, double xBinWidth, double yMin, double yMax, double yBinWidth) : ProcedureNode(ProcedureNode::Collect2DNode)
 {
-	xObservable_ = xObservable;
-	yObservable_ = yObservable;
-	xMinimum_ = xMin;
-	xMaximum_ = xMax;
-	xBinWidth_ = xBinWidth;
-	yMinimum_ = yMin;
-	yMaximum_ = yMax;
-	yBinWidth_ = yBinWidth;
+	keywords_.add("Target", new NodeKeyword<CalculateProcedureNode>(this, ProcedureNode::ProcedureNode::CalculateNode, xObservable), "QuantityX", "Calculated observable to collect for x axis");
+	keywords_.add("Target", new NodeKeyword<CalculateProcedureNode>(this, ProcedureNode::ProcedureNode::CalculateNode, yObservable), "QuantityY", "Calculated observable to collect for y axis");
+	keywords_.add("Target", new Vec3DoubleKeyword(Vec3<double>(xMin, xMax, xBinWidth), Vec3<double>(0.0, 0.0, 1.0e-5)), "RangeX", "Range of calculation for the specified x observable");
+	keywords_.add("Target", new Vec3DoubleKeyword(Vec3<double>(yMin, yMax, yBinWidth), Vec3<double>(0.0, 0.0, 1.0e-5)), "RangeY", "Range of calculation for the specified y observable");
+	keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect", "Branch which runs if the target quantities were binned successfully");
 
-	// Branches
+	// Initialise branch
 	subCollectBranch_ = NULL;
 }
 
@@ -57,26 +55,6 @@ Collect2DProcedureNode::~Collect2DProcedureNode()
 bool Collect2DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
 {
 	return (context == ProcedureNode::AnalysisContext);
-}
-
-/*
- * Node Keywords
- */
-
-// Return enum option info for Collect2DNodeKeyword
-EnumOptions<Collect2DProcedureNode::Collect2DNodeKeyword> Collect2DProcedureNode::collect2DNodeKeywords()
-{
-	static EnumOptionsList Collect2DNodeTypeKeywords = EnumOptionsList() <<
-		EnumOption(Collect2DProcedureNode::EndCollect2DKeyword,		"EndCollect2D") <<
-		EnumOption(Collect2DProcedureNode::QuantityXKeyword,		"QuantityX",	1) <<
-		EnumOption(Collect2DProcedureNode::QuantityYKeyword,		"QuantityY",	1) <<
-		EnumOption(Collect2DProcedureNode::RangeXKeyword,		"RangeX",	3) <<
-		EnumOption(Collect2DProcedureNode::RangeYKeyword,		"RangeY",	3) <<
-		EnumOption(Collect2DProcedureNode::SubCollectKeyword,		"SubCollect");
-
-	static EnumOptions<Collect2DProcedureNode::Collect2DNodeKeyword> options("Collect2DNodeKeyword", Collect2DNodeTypeKeywords);
-
-	return options;
 }
 
 /*
@@ -99,37 +77,37 @@ const Data2D& Collect2DProcedureNode::accumulatedData() const
 // Return x range minimum
 double Collect2DProcedureNode::xMinimum() const
 {
-	return xMinimum_;
+	return keywords_.asVec3Double("RangeX").x;
 }
 
 // Return x range maximum
 double Collect2DProcedureNode::xMaximum() const
 {
-	return xMaximum_;
+	return keywords_.asVec3Double("RangeX").y;
 }
 
 // Return x bin width
 double Collect2DProcedureNode::xBinWidth() const
 {
-	return xBinWidth_;
+	return keywords_.asVec3Double("RangeX").z;
 }
 
 // Return y range minimum
 double Collect2DProcedureNode::yMinimum() const
 {
-	return yMinimum_;
+	return keywords_.asVec3Double("RangeY").x;
 }
 
 // Return y range maximum
 double Collect2DProcedureNode::yMaximum() const
 {
-	return yMaximum_;
+	return keywords_.asVec3Double("RangeY").y;
 }
 
 // Return y bin width
 double Collect2DProcedureNode::yBinWidth() const
 {
-	return yBinWidth_;
+	return keywords_.asVec3Double("RangeY").z;
 }
 
 /*
@@ -169,7 +147,7 @@ bool Collect2DProcedureNode::prepare(Configuration* cfg, const char* prefix, Gen
 	if (created)
 	{
 		Messenger::printVerbose("Two-dimensional histogram data for '%s' was not in the target list, so it will now be initialised...\n", name());
-		target.initialise(xMinimum_, xMaximum_, xBinWidth_, yMinimum_, yMaximum_, yBinWidth_);
+		target.initialise(xMinimum(), xMaximum(), xBinWidth(), yMinimum(), yMaximum(), yBinWidth());
 	}
 
 	// Zero the current bins, ready for the new pass
@@ -177,6 +155,12 @@ bool Collect2DProcedureNode::prepare(Configuration* cfg, const char* prefix, Gen
 
 	// Store a pointer to the data
 	histogram_ = &target;
+
+	// Retrieve the observable
+	xObservable_ = keywords_.retrieve<CalculateProcedureNode*>("QuantityX");
+	if (!xObservable_) return Messenger::error("No valid x quantity set in '%s'.\n", name());
+	yObservable_ = keywords_.retrieve<CalculateProcedureNode*>("QuantityY");
+	if (!yObservable_) return Messenger::error("No valid y quantity set in '%s'.\n", name());
 
 	// Prepare any branches
 	if (subCollectBranch_ && (!subCollectBranch_->prepare(cfg, prefix, targetList))) return false;
@@ -220,95 +204,6 @@ bool Collect2DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg,
 
 	// Finalise any branches
 	if (subCollectBranch_ && (!subCollectBranch_->finalise(procPool, cfg, prefix, targetList))) return false;
-
-	return true;
-}
-
-/*
- * Read / Write
- */
-
-// Read structure from specified LineParser
-bool Collect2DProcedureNode::read(LineParser& parser, const CoreData& coreData)
-{
-	// The current line in the parser must also contain a node name (which is not necessarily unique...)
-	if (parser.nArgs() != 2) return Messenger::error("A Collect2D node must be given a suitable name.\n");
-	setName(parser.argc(1));
-
-	// Read until we encounter the EndCollect2D keyword, or we fail for some reason
-	while (!parser.eofOrBlank())
-	{
-		// Read and parse the next line
-		if (parser.getArgsDelim() != LineParser::Success) return false;
-
-		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
-		if (!collect2DNodeKeywords().isValid(parser.argc(0))) return collect2DNodeKeywords().errorAndPrintValid(parser.argc(0));
-		Collect2DNodeKeyword nk = collect2DNodeKeywords().enumeration(parser.argc(0));
-		if (!collect2DNodeKeywords().validNArgs(nk, parser.nArgs()-1)) return false;
-
-		// All OK, so process it
-		switch (nk)
-		{
-			case (Collect2DProcedureNode::EndCollect2DKeyword):
-				return true;
-			case (Collect2DProcedureNode::QuantityXKeyword):
-				// Determine observable from supplied argument
-				xObservable_ = dynamic_cast<CalculateProcedureNode*>(nodeInScope(parser.argc(1), ProcedureNode::CalculateNode));
-				if (!xObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect2DNodeKeywords().keyword(nk));
-				break;
-			case (Collect2DProcedureNode::QuantityYKeyword):
-				// Determine observable from supplied argument
-				yObservable_ = dynamic_cast<CalculateProcedureNode*>(nodeInScope(parser.argc(1), ProcedureNode::CalculateNode));
-				if (!yObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect2DNodeKeywords().keyword(nk));
-				break;
-			case (Collect2DProcedureNode::RangeXKeyword):
-				xMinimum_ = parser.argd(1);
-				xMaximum_ = parser.argd(2);
-				xBinWidth_ = parser.argd(3);
-				break;
-			case (Collect2DProcedureNode::RangeYKeyword):
-				yMinimum_ = parser.argd(1);
-				yMaximum_ = parser.argd(2);
-				yBinWidth_ = parser.argd(3);
-				break;
-			case (Collect2DProcedureNode::SubCollectKeyword):
-				// Check that a SubCollect branch hasn't already been defined
-				if (subCollectBranch_) return Messenger::error("Only one SubCollect branch may be defined in a Collect2D node.\n");
-
-				// Create and parse a new branch
-				subCollectBranch_ = new SequenceProcedureNode(scopeContext(), procedure(), this, "EndSubCollect");
-				if (!subCollectBranch_->read(parser, coreData)) return false;
-				break;
-			case (Collect2DProcedureNode::nCollect2DNodeKeywords):
-				return Messenger::error("Unrecognised Collect2D node keyword '%s' found.\n", parser.argc(0));
-				break;
-			default:
-				return Messenger::error("Epic Developer Fail - Don't know how to deal with the Collect2D node keyword '%s'.\n", parser.argc(0));
-		}
-	}
-
-	return true;
-}
-
-// Write structure to specified LineParser
-bool Collect2DProcedureNode::write(LineParser& parser, const char* prefix)
-{
-	// Block Start
-	if (!parser.writeLineF("%s%s\n", ProcedureNode::nodeTypes().keyword(type_))) return false;
-
-	// X Quantity / Range
-	if (xObservable_ && !parser.writeLineF("%s  %s  '%s'\n", prefix, collect2DNodeKeywords().keyword(Collect2DProcedureNode::QuantityXKeyword), xObservable_->name())) return false;
-	if (!parser.writeLineF("%s  %s  %12.6e  %12.6e  %12.6e\n", prefix, collect2DNodeKeywords().keyword(Collect2DProcedureNode::RangeXKeyword), xMinimum_, xMaximum_, xBinWidth_)) return false;
-
-	// Y Quantity / Range
-	if (yObservable_ && !parser.writeLineF("%s  %s  '%s'\n", prefix, collect2DNodeKeywords().keyword(Collect2DProcedureNode::QuantityYKeyword), yObservable_->name())) return false;
-	if (!parser.writeLineF("%s  %s  %12.6e  %12.6e  %12.6e\n", prefix, collect2DNodeKeywords().keyword(Collect2DProcedureNode::RangeYKeyword), yMinimum_, yMaximum_, yBinWidth_)) return false;
-
-	// Subcollect Branch
-	if (subCollectBranch_ && (!subCollectBranch_->write(parser, CharString("%s  ", prefix)))) return false;
-
-	// Block End
-	if (!parser.writeLineF("%s%s\n", collect2DNodeKeywords().keyword(Collect2DProcedureNode::EndCollect2DKeyword))) return false;
 
 	return true;
 }

@@ -25,7 +25,6 @@
 #include "procedure/nodes/node.h"
 #include "base/charstring.h"
 #include "math/histogram2d.h"
-#include "templates/reflist.h"
 
 // Forward Declarations
 class CalculateProcedureNode;
@@ -52,37 +51,15 @@ class Collect2DProcedureNode : public ProcedureNode
 
 
 	/*
-	 * Node Keywords
-	 */
-	public:
-	// Node Keywords
-	enum Collect2DNodeKeyword { EndCollect2DKeyword, QuantityXKeyword, QuantityYKeyword, RangeXKeyword, RangeYKeyword, SubCollectKeyword, nCollect2DNodeKeywords };
-	// Return enum option info for Collect2DNodeKeyword
-	static EnumOptions<Collect2DNodeKeyword> collect2DNodeKeywords();
-
-
-	/*
 	 * Data
 	 */
 	private:
-	// Observable to bin along x
+	// Observable to bin along x (retrieved from keyword)
 	CalculateProcedureNode* xObservable_;
-	// Observable to bin along y
+	// Observable to bin along y (retrieved from keyword)
 	CalculateProcedureNode* yObservable_;
 	// Histogram in which to accumulate data
 	Histogram2D* histogram_;
-	// X range minimum
-	double xMinimum_;
-	// X range maximum
-	double xMaximum_;
-	// X bin width
-	double xBinWidth_;
-	// Y range minimum
-	double yMinimum_;
-	// Y range maximum
-	double yMaximum_;
-	// Y bin width
-	double yBinWidth_;
 
 	public:
 	// Return accumulated data
@@ -127,16 +104,6 @@ class Collect2DProcedureNode : public ProcedureNode
 	ProcedureNode::NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
 	// Finalise any necessary data after execution
 	bool finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
-
-
-	/*
-	 * Read / Write
-	 */
-	public:
-	// Read structure from specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData);
-	// Write structure to specified LineParser
-	bool write(LineParser& parser, const char* prefix);
 };
 
 #endif

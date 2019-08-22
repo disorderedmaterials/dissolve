@@ -22,6 +22,7 @@
 #include "procedure/nodes/collect1d.h"
 #include "procedure/nodes/calculate.h"
 #include "procedure/nodes/sequence.h"
+#include "keywords/types.h"
 #include "math/data1d.h"
 #include "classes/configuration.h"
 #include "base/lineparser.h"
@@ -31,12 +32,11 @@
 // Constructor
 Collect1DProcedureNode::Collect1DProcedureNode(CalculateProcedureNode* observable, double rMin, double rMax, double binWidth) : ProcedureNode(ProcedureNode::Collect1DNode)
 {
-	observable_ = observable;
-	minimum_ = rMin;
-	maximum_ = rMax;
-	binWidth_ = binWidth;
+	keywords_.add("Target", new NodeKeyword<CalculateProcedureNode>(this, ProcedureNode::ProcedureNode::CalculateNode, observable), "QuantityX", "Calculated observable to collect");
+	keywords_.add("Target", new Vec3DoubleKeyword(Vec3<double>(rMin, rMax, binWidth), Vec3<double>(0.0, 0.0, 1.0e-5)), "RangeX", "Range of calculation for the specified observable");
+	keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect", "Branch which runs if the target quantity was binned successfully");
 
-	// Branches
+	// Initialise branch
 	subCollectBranch_ = NULL;
 }
 
@@ -53,24 +53,6 @@ Collect1DProcedureNode::~Collect1DProcedureNode()
 bool Collect1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
 {
 	return (context == ProcedureNode::AnalysisContext);
-}
-
-/*
- * Node Keywords
- */
-
-// Return enum option info for Collect1DNodeKeyword
-EnumOptions<Collect1DProcedureNode::Collect1DNodeKeyword> Collect1DProcedureNode::collect1DNodeKeywords()
-{
-	static EnumOptionsList Collect1DNodeTypeKeywords = EnumOptionsList() <<
-		EnumOption(Collect1DProcedureNode::EndCollect1DKeyword,		"EndCollect1D") <<
-		EnumOption(Collect1DProcedureNode::QuantityXKeyword,		"QuantityX",	1) <<
-		EnumOption(Collect1DProcedureNode::RangeXKeyword,		"RangeX",	3) <<
-		EnumOption(Collect1DProcedureNode::SubCollectKeyword,		"SubCollect");
-
-	static EnumOptions<Collect1DProcedureNode::Collect1DNodeKeyword> options("Collect1DNodeKeyword", Collect1DNodeTypeKeywords);
-
-	return options;
 }
 
 /*
@@ -93,19 +75,19 @@ const Data1D& Collect1DProcedureNode::accumulatedData() const
 // Return range minimum
 double Collect1DProcedureNode::minimum() const
 {
-	return minimum_;
+	return keywords_.asVec3Double("RangeX").x;
 }
 
 // Return range maximum
 double Collect1DProcedureNode::maximum() const
 {
-	return maximum_;
+	return keywords_.asVec3Double("RangeX").y;
 }
 
 // Return bin width
 double Collect1DProcedureNode::binWidth() const
 {
-	return binWidth_;
+	return keywords_.asVec3Double("RangeX").z;
 }
 
 /*
@@ -145,7 +127,7 @@ bool Collect1DProcedureNode::prepare(Configuration* cfg, const char* prefix, Gen
 	if (created)
 	{
 		Messenger::printVerbose("One-dimensional histogram data for '%s' was not in the target list, so it will now be initialised...\n", name());
-		target.initialise(minimum_, maximum_, binWidth_);
+		target.initialise(minimum(), maximum(), binWidth());
 	}
 
 	// Zero the current bins, ready for the new pass
@@ -153,6 +135,10 @@ bool Collect1DProcedureNode::prepare(Configuration* cfg, const char* prefix, Gen
 
 	// Store a pointer to the data
 	histogram_ = &target;
+
+	// Retrieve the observable
+	observable_ = keywords_.retrieve<CalculateProcedureNode*>("QuantityX");
+	if (!observable_) return Messenger::error("No valid quantity set in '%s'.\n", name());
 
 	// Prepare any branches
 	if (subCollectBranch_ && (!subCollectBranch_->prepare(cfg, prefix, targetList))) return false;
@@ -191,85 +177,6 @@ bool Collect1DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg,
 
 	// Finalise any branches
 	if (subCollectBranch_ && (!subCollectBranch_->finalise(procPool, cfg, prefix, targetList))) return false;
-
-	return true;
-}
-
-/*
- * Read / Write
- */
-
-// Read structure from specified LineParser
-bool Collect1DProcedureNode::read(LineParser& parser, const CoreData& coreData)
-{
-	// The current line in the parser must also contain a node name (which is not necessarily unique...)
-	if (parser.nArgs() != 2) return Messenger::error("A Collect1D node must be given a suitable name.\n");
-	setName(parser.argc(1));
-
-	// Read until we encounter the EndCollect1D keyword, or we fail for some reason
-	while (!parser.eofOrBlank())
-	{
-		// Read and parse the next line
-		if (parser.getArgsDelim() != LineParser::Success) return false;
-
-		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
-		if (!collect1DNodeKeywords().isValid(parser.argc(0))) return collect1DNodeKeywords().errorAndPrintValid(parser.argc(0));
-		Collect1DNodeKeyword nk = collect1DNodeKeywords().enumeration(parser.argc(0));
-		if (!collect1DNodeKeywords().validNArgs(nk, parser.nArgs()-1)) return false;
-
-		// All OK, so process it
-		switch (nk)
-		{
-			case (Collect1DProcedureNode::EndCollect1DKeyword):
-				// Check that valid Observable was set
-				if (!observable_) return Messenger::error("A target %s must be specified in %s.\n", collect1DNodeKeywords().keyword(Collect1DProcedureNode::QuantityXKeyword), ProcedureNode::nodeTypes().keyword(type_));
-				return true;
-			case (Collect1DProcedureNode::QuantityXKeyword):
-				// Determine observable from supplied argument
-				observable_ = dynamic_cast<CalculateProcedureNode*>(nodeInScope(parser.argc(1), ProcedureNode::CalculateNode));
-				if (!observable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect1DNodeKeywords().keyword(nk));
-				break;
-			case (Collect1DProcedureNode::RangeXKeyword):
-				minimum_ = parser.argd(1);
-				maximum_ = parser.argd(2);
-				binWidth_ = parser.argd(3);
-				break;
-			case (Collect1DProcedureNode::SubCollectKeyword):
-				// Check that a SubCollect branch hasn't already been defined
-				if (subCollectBranch_) return Messenger::error("Only one SubCollect branch may be defined in a Collect1D node.\n");
-
-				// Create and parse a new branch
-				subCollectBranch_ = new SequenceProcedureNode(scopeContext(), procedure(), this, "EndSubCollect");
-				if (!subCollectBranch_->read(parser, coreData)) return false;
-				break;
-			case (Collect1DProcedureNode::nCollect1DNodeKeywords):
-				return Messenger::error("Unrecognised Collect1D node keyword '%s' found.\n", parser.argc(0));
-				break;
-			default:
-				return Messenger::error("Epic Developer Fail - Don't know how to deal with the Collect1D node keyword '%s'.\n", parser.argc(0));
-		}
-	}
-
-	return true;
-}
-
-// Write structure to specified LineParser
-bool Collect1DProcedureNode::write(LineParser& parser, const char* prefix)
-{
-	// Block Start
-	if (!parser.writeLineF("%s%s\n", ProcedureNode::nodeTypes().keyword(type_))) return false;
-
-	// Quantity
-	if (observable_ && !parser.writeLineF("%s  %s  '%s'\n", prefix, collect1DNodeKeywords().keyword(Collect1DProcedureNode::QuantityXKeyword), observable_->name())) return false;
-
-	// Calculation Range
-	if (!parser.writeLineF("%s  %s  %12.6e  %12.6e  %12.6e\n", prefix, collect1DNodeKeywords().keyword(Collect1DProcedureNode::RangeXKeyword), minimum_, maximum_, binWidth_)) return false;
-
-	// Subcollect Branch
-	if (subCollectBranch_ && (!subCollectBranch_->write(parser, CharString("%s  ", prefix)))) return false;
-
-	// Block End
-	if (!parser.writeLineF("%s%s\n", collect1DNodeKeywords().keyword(Collect1DProcedureNode::EndCollect1DKeyword))) return false;
 
 	return true;
 }

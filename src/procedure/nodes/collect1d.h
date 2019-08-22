@@ -25,7 +25,6 @@
 #include "procedure/nodes/node.h"
 #include "base/charstring.h"
 #include "math/histogram1d.h"
-#include "templates/reflist.h"
 
 // Forward Declarations
 class CalculateProcedureNode;
@@ -52,29 +51,13 @@ class Collect1DProcedureNode : public ProcedureNode
 
 
 	/*
-	 * Node Keywords
-	 */
-	public:
-	// Node Keywords
-	enum Collect1DNodeKeyword { EndCollect1DKeyword, QuantityXKeyword, RangeXKeyword, SubCollectKeyword, nCollect1DNodeKeywords };
-	// Return enum option info for Collect1DNodeKeyword
-	static EnumOptions<Collect1DNodeKeyword> collect1DNodeKeywords();
-
-
-	/*
 	 * Data
 	 */
 	private:
-	// Observable to bin
+	// Observable (retrieved from keyword)
 	CalculateProcedureNode* observable_;
 	// Histogram in which to accumulate data
 	Histogram1D* histogram_;
-	// Range minimum
-	double minimum_;
-	// Range maximum
-	double maximum_;
-	// Bin width
-	double binWidth_;
 
 	public:
 	// Return accumulated data
@@ -113,16 +96,6 @@ class Collect1DProcedureNode : public ProcedureNode
 	ProcedureNode::NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
 	// Finalise any necessary data after execution
 	bool finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
-
-
-	/*
-	 * Read / Write
-	 */
-	public:
-	// Read structure from specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData);
-	// Write structure to specified LineParser
-	bool write(LineParser& parser, const char* prefix);
 };
 
 #endif
