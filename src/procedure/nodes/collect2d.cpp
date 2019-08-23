@@ -32,8 +32,8 @@
 // Constructor
 Collect2DProcedureNode::Collect2DProcedureNode(CalculateProcedureNode* xObservable, CalculateProcedureNode* yObservable, double xMin, double xMax, double xBinWidth, double yMin, double yMax, double yBinWidth) : ProcedureNode(ProcedureNode::Collect2DNode)
 {
-	keywords_.add("Target", new NodeKeyword<CalculateProcedureNode>(this, ProcedureNode::ProcedureNode::CalculateNode, xObservable), "QuantityX", "Calculated observable to collect for x axis");
-	keywords_.add("Target", new NodeKeyword<CalculateProcedureNode>(this, ProcedureNode::ProcedureNode::CalculateNode, yObservable), "QuantityY", "Calculated observable to collect for y axis");
+	keywords_.add("Target", new NodeAndIntegerKeyword<CalculateProcedureNode>(this, ProcedureNode::ProcedureNode::CalculateNode, xObservable, 0), "QuantityX", "Calculated observable to collect for x axis");
+	keywords_.add("Target", new NodeAndIntegerKeyword<CalculateProcedureNode>(this, ProcedureNode::ProcedureNode::CalculateNode, yObservable, 0), "QuantityY", "Calculated observable to collect for y axis");
 	keywords_.add("Target", new Vec3DoubleKeyword(Vec3<double>(xMin, xMax, xBinWidth), Vec3<double>(0.0, 0.0, 1.0e-5)), "RangeX", "Range of calculation for the specified x observable");
 	keywords_.add("Target", new Vec3DoubleKeyword(Vec3<double>(yMin, yMax, yBinWidth), Vec3<double>(0.0, 0.0, 1.0e-5)), "RangeY", "Range of calculation for the specified y observable");
 	keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect", "Branch which runs if the target quantities were binned successfully");
@@ -156,10 +156,14 @@ bool Collect2DProcedureNode::prepare(Configuration* cfg, const char* prefix, Gen
 	// Store a pointer to the data
 	histogram_ = &target;
 
-	// Retrieve the observable
-	xObservable_ = keywords_.retrieve<CalculateProcedureNode*>("QuantityX");
+	// Retrieve the observables
+	Pair<CalculateProcedureNode*,int> xObs = keywords_.retrieve< Pair<CalculateProcedureNode*,int> >("QuantityX");
+	xObservable_ = xObs.a();
+	xObservableIndex_ = xObs.b();
 	if (!xObservable_) return Messenger::error("No valid x quantity set in '%s'.\n", name());
-	yObservable_ = keywords_.retrieve<CalculateProcedureNode*>("QuantityY");
+	Pair<CalculateProcedureNode*,int> yObs = keywords_.retrieve< Pair<CalculateProcedureNode*,int> >("QuantityY");
+	yObservable_ = yObs.a();
+	yObservableIndex_ = yObs.b();
 	if (!yObservable_) return Messenger::error("No valid y quantity set in '%s'.\n", name());
 
 	// Prepare any branches
@@ -184,7 +188,7 @@ ProcedureNode::NodeExecutionResult Collect2DProcedureNode::execute(ProcessPool& 
 	}
 #endif
 	// Bin the current value of the observable
-	if (histogram_->bin(xObservable_->value(0), yObservable_->value(0)) && subCollectBranch_) return subCollectBranch_->execute(procPool, cfg, prefix, targetList);
+	if (histogram_->bin(xObservable_->value(xObservableIndex_), yObservable_->value(yObservableIndex_)) && subCollectBranch_) return subCollectBranch_->execute(procPool, cfg, prefix, targetList);
 
 	return ProcedureNode::Success;
 }

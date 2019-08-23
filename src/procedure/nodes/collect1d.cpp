@@ -32,7 +32,7 @@
 // Constructor
 Collect1DProcedureNode::Collect1DProcedureNode(CalculateProcedureNode* observable, double rMin, double rMax, double binWidth) : ProcedureNode(ProcedureNode::Collect1DNode)
 {
-	keywords_.add("Target", new NodeKeyword<CalculateProcedureNode>(this, ProcedureNode::ProcedureNode::CalculateNode, observable), "QuantityX", "Calculated observable to collect");
+	keywords_.add("Target", new NodeAndIntegerKeyword<CalculateProcedureNode>(this, ProcedureNode::CalculateNode, observable, 0), "QuantityX", "Calculated observable to collect");
 	keywords_.add("Target", new Vec3DoubleKeyword(Vec3<double>(rMin, rMax, binWidth), Vec3<double>(0.0, 0.0, 1.0e-5)), "RangeX", "Range of calculation for the specified observable");
 	keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect", "Branch which runs if the target quantity was binned successfully");
 
@@ -137,8 +137,10 @@ bool Collect1DProcedureNode::prepare(Configuration* cfg, const char* prefix, Gen
 	histogram_ = &target;
 
 	// Retrieve the observable
-	observable_ = keywords_.retrieve<CalculateProcedureNode*>("QuantityX");
-	if (!observable_) return Messenger::error("No valid quantity set in '%s'.\n", name());
+	Pair<CalculateProcedureNode*,int> xObs = keywords_.retrieve< Pair<CalculateProcedureNode*,int> >("QuantityX");
+	xObservable_ = xObs.a();
+	xObservableIndex_ = xObs.b();
+	if (!xObservable_) return Messenger::error("No valid x quantity set in '%s'.\n", name());
 
 	// Prepare any branches
 	if (subCollectBranch_ && (!subCollectBranch_->prepare(cfg, prefix, targetList))) return false;
@@ -150,14 +152,14 @@ bool Collect1DProcedureNode::prepare(Configuration* cfg, const char* prefix, Gen
 ProcedureNode::NodeExecutionResult Collect1DProcedureNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 #ifdef CHECKS
-	if (!observable_)
+	if (!xObservable_)
 	{
 		Messenger::error("No CalculateProcedureNode pointer set in Collect1DProcedureNode '%s'.\n", name());
 		return ProcedureNode::Failure;
 	}
 #endif
 	// Bin the current value of the observable, and execute sub-collection branch on success
-	if (histogram_->bin(observable_->value(0)) && subCollectBranch_) return subCollectBranch_->execute(procPool, cfg, prefix, targetList);
+	if (histogram_->bin(xObservable_->value(xObservableIndex_)) && subCollectBranch_) return subCollectBranch_->execute(procPool, cfg, prefix, targetList);
 
 	return ProcedureNode::Success;
 }

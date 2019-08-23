@@ -54,8 +54,10 @@ class Collect1DProcedureNode : public ProcedureNode
 	 * Data
 	 */
 	private:
-	// Observable (retrieved from keyword)
-	CalculateProcedureNode* observable_;
+	// Observable to bin along x (retrieved from keyword)
+	CalculateProcedureNode* xObservable_;
+	// Index of x observable data to use (retrieved from keyword)
+	int xObservableIndex_;
 	// Histogram in which to accumulate data
 	Histogram1D* histogram_;
 

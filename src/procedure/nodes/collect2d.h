@@ -56,8 +56,12 @@ class Collect2DProcedureNode : public ProcedureNode
 	private:
 	// Observable to bin along x (retrieved from keyword)
 	CalculateProcedureNode* xObservable_;
+	// Index of x observable data to use (retrieved from keyword)
+	int xObservableIndex_;
 	// Observable to bin along y (retrieved from keyword)
 	CalculateProcedureNode* yObservable_;
+	// Index of y observable data to use (retrieved from keyword)
+	int yObservableIndex_;
 	// Histogram in which to accumulate data
 	Histogram2D* histogram_;
 
