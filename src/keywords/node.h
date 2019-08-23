@@ -54,7 +54,7 @@ class NodeKeywordBase
 
 
 	/*
-	 * Target Node Type
+	 * Target Node
 	 */
 	private:
 	// Target node type to allow
@@ -63,12 +63,6 @@ class NodeKeywordBase
 	public:
 	// Return target node type to allow
 	ProcedureNode::NodeType nodeType() const;
-
-
-	/*
-	 * Set
-	 */
-	public:
 	// Set the target node
 	virtual bool setNode(ProcedureNode* node) = 0;
 };
@@ -122,7 +116,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
 
 
 	/*
-	 * Set
+	 * Target Node
 	 */
 	public:
 	// Set the target node
