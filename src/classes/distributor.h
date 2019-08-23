@@ -26,7 +26,6 @@
 #include "base/processpool.h"
 #include "templates/array.h"
 #include "templates/dynamicarray.h"
-#include "templates/pair.h"
 
 // Forward Declarations
 class ProcessPool;
