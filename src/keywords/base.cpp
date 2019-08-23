@@ -42,7 +42,7 @@ KeywordBase::~KeywordBase()
 }
 
 // Value Keyword Data Type Keywords
-const char* KeywordDataTypeKeywords[] = { "AtomTypeSelection", "Bool", "BroadeningFunction", "CharString", "Complex", "Data1DStore", "Data2DStore", "Data3DStore", "Double", "EnumOptions", "ExpressionVariableList", "FileAndFormat", "Integer", "IsotopologueList", "ModuleGroups", "ModuleReferenceList", "Node", "NodeBranch", "NodeValue", "NodeValueEnumOptions", "PairBroadeningFunction", "Procedure", "Species", "SpeciesReferenceList", "SpeciesSite", "SpeciesSiteReferenceList", "Vec3<Double>", "Vec3<Integer>", "Vec3<NodeValue>", "WindowFunction" };
+const char* KeywordDataTypeKeywords[] = { "AtomTypeSelection", "Bool", "BroadeningFunction", "CharString", "Complex", "Data1DStore", "Data2DStore", "Data3DStore", "Double", "EnumOptions", "ExpressionVariableList", "FileAndFormat", "Integer", "IsotopologueList", "ModuleGroups", "ModuleReferenceList", "Node", "NodeAndInteger", "NodeBranch", "NodeValue", "NodeValueEnumOptions", "PairBroadeningFunction", "Procedure", "Species", "SpeciesReferenceList", "SpeciesSite", "SpeciesSiteReferenceList", "Vec3<Double>", "Vec3<Integer>", "Vec3<NodeValue>", "WindowFunction" };
 
 // Return ValueType name
 const char* KeywordBase::keywordDataType(KeywordDataType kdt)

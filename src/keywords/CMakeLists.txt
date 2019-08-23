@@ -18,6 +18,7 @@ add_library(keywords
   modulegroups.cpp
   modulereferencelist.cpp
   node.cpp
+  nodeandinteger.cpp
   nodebranch.cpp
   nodevalue.cpp
   nodevalueenumoptions.cpp
@@ -53,6 +54,7 @@ add_library(keywords
   modulegroups.h
   modulereferencelist.h
   node.h
+  nodeandinteger.h
   nodebranch.h
   nodevalue.h
   nodevalueenumoptions.h
