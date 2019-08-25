@@ -30,14 +30,14 @@
 using namespace std;
 
 // Array Chunk
-template <class T> class ArrayChunk
+template <class T> class ArrayChunk : public ListItem< ArrayChunk<T> >
 {
 	/*
 	 * Chunk of objects, maintained by a DynamicArray
 	 */
 	public:
 	// Constructor
-	ArrayChunk<T>(int nObjects = 512)
+	ArrayChunk<T>(int nObjects = 512) : ListItem< ArrayChunk<T> >()
 	{
 		nObjects_ = nObjects;
 		objectSize_ = 0;
@@ -45,9 +45,6 @@ template <class T> class ArrayChunk
 		objectUsed_ = NULL;
 		nextAvailableObject_ = -1;
 		nUnusedObjects_ = 0;
-		
-		prev = NULL;
-		next = NULL;
 	}
 	// Destructor
 	~ArrayChunk()
@@ -55,8 +52,6 @@ template <class T> class ArrayChunk
 		if (objectArray_) delete[] objectArray_;
 		if (objectUsed_) delete[] objectUsed_;
 	}
-	// List pointers
-	ArrayChunk<T>* prev, *next;
 
 
 	/*
@@ -237,7 +232,7 @@ template <class T> class DynamicArray
 		else
 		{
 			// Must search current chunk list to see if any current chunks have available space. If not, we will create a new one
-			for (ArrayChunk<T>* chunk = arrayChunks_.first(); chunk != NULL; chunk = chunk->next)
+			for (ArrayChunk<T>* chunk = arrayChunks_.first(); chunk != NULL; chunk = chunk->next())
 			{
 				if (chunk == currentChunk_) continue;
 				if (chunk->hasUnusedObjects())
@@ -261,7 +256,7 @@ template <class T> class DynamicArray
 	void returnObject(T* object)
 	{
 		// Must find chunk which owns this object
-		for (ArrayChunk<T>* chunk = arrayChunks_.first(); chunk != NULL; chunk = chunk->next)
+		for (ArrayChunk<T>* chunk = arrayChunks_.first(); chunk != NULL; chunk = chunk->next())
 		{
 			if (chunk->returnObject(object))
 			{
@@ -290,7 +285,7 @@ template <class T> class DynamicArray
 		array_.clear();
 
 		// Clear chunks
-		for (ArrayChunk<T>* chunk = arrayChunks_.first(); chunk != NULL; chunk = chunk->next) chunk->clear();
+		for (ArrayChunk<T>* chunk = arrayChunks_.first(); chunk != NULL; chunk = chunk->next()) chunk->clear();
 		currentChunk_ = arrayChunks_.first();
 	}
 	// Initialise array to specified size, creating objects from factory
