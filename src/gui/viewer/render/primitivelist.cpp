@@ -40,7 +40,7 @@ void PrimitiveList::clear()
 // Forget all data, leaving arrays intact
 void PrimitiveList::forgetAll()
 {
-	for (Primitive* prim = primitives_.first(); prim != NULL; prim = prim->next) prim->forgetAll();
+	for (Primitive* prim = primitives_.first(); prim != NULL; prim = prim->next()) prim->forgetAll();
 }
 
 // Resize list so it is large enough to accommodate specified number of Primitives
@@ -57,7 +57,7 @@ void PrimitiveList::reinitialise(int newSize, bool allowShrink, GLenum type, boo
 	}
 
 	// Loop over all current primitives and set information
-	for (Primitive* prim = primitives_.first(); prim != NULL; prim = prim->next)
+	for (Primitive* prim = primitives_.first(); prim != NULL; prim = prim->next())
 	{
 		prim->initialise(type, colourData);
 	}
@@ -88,7 +88,7 @@ void PrimitiveList::remove(Primitive* primitive)
 int PrimitiveList::nDefinedVertices()
 {
 	int totalVertices = 0;
-	for (Primitive* prim = primitives_.first(); prim != NULL; prim = prim->next) totalVertices += prim->nDefinedVertices();
+	for (Primitive* prim = primitives_.first(); prim != NULL; prim = prim->next()) totalVertices += prim->nDefinedVertices();
 	return totalVertices;
 }
 
@@ -96,20 +96,20 @@ int PrimitiveList::nDefinedVertices()
 int PrimitiveList::nDefinedIndices()
 {
 	int totalIndices = 0;
-	for (Primitive* prim = primitives_.first(); prim != NULL; prim = prim->next) totalIndices += prim->nDefinedIndices();
+	for (Primitive* prim = primitives_.first(); prim != NULL; prim = prim->next()) totalIndices += prim->nDefinedIndices();
 	return totalIndices;
 }
 
 // Push instance layer
 void PrimitiveList::pushInstance(const QOpenGLContext* context)
 {
-	for (Primitive* prim = primitives_.first(); prim != NULL; prim = prim->next) prim->pushInstance(context);
+	for (Primitive* prim = primitives_.first(); prim != NULL; prim = prim->next()) prim->pushInstance(context);
 }
 
 // Pop topmost instance layer
 void PrimitiveList::popInstance(const QOpenGLContext* context)
 {
-	for (Primitive* prim = primitives_.first(); prim != NULL; prim = prim->next) prim->popInstance(context);
+	for (Primitive* prim = primitives_.first(); prim != NULL; prim = prim->next()) prim->popInstance(context);
 }
 
 // Return number of instances of topmost primitive
@@ -122,7 +122,7 @@ int PrimitiveList::nInstances()
 // Send to OpenGL (i.e. render)
 void PrimitiveList::sendToGL()
 {
-	for (Primitive* prim = primitives_.first(); prim != NULL; prim = prim->next) prim->sendToGL();
+	for (Primitive* prim = primitives_.first(); prim != NULL; prim = prim->next()) prim->sendToGL();
 }
 
 /*

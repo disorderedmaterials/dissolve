@@ -305,10 +305,10 @@ bool BraggModule::calculateBraggTerms(ProcessPool& procPool, Configuration* cfg,
 	// Normalise intensities against number of atoms and unit cell multiplicity
 	AtomTypeData* atd1 = cfg->usedAtomTypes();
 	const double divisor = 1.0 / (nAtoms * multiplicity.x * multiplicity.y * multiplicity.z);
-	for (int i = 0; i<cfg->nUsedAtomTypes(); ++i, atd1 = atd1->next)
+	for (int i = 0; i<cfg->nUsedAtomTypes(); ++i, atd1 = atd1->next())
 	{
 		AtomTypeData* atd2 = atd1;
-		for (int j = i; j<cfg->nUsedAtomTypes(); ++j, atd2 = atd2->next)
+		for (int j = i; j<cfg->nUsedAtomTypes(); ++j, atd2 = atd2->next())
 		{
 			for (m=0; m<nReflections; ++m) reflections[m].scaleIntensity(i, j, divisor);
 		}
@@ -361,10 +361,10 @@ bool BraggModule::formReflectionFunctions(ProcessPool& procPool, Configuration* 
 	double qCentre, factor;
 	int bin;
 	AtomTypeData* atd1 = cfg->usedAtomTypes();
-	for (int typeI = 0; typeI < nTypes; ++typeI, atd1 = atd1->next)
+	for (int typeI = 0; typeI < nTypes; ++typeI, atd1 = atd1->next())
 	{
 		AtomTypeData* atd2 = atd1;
-		for (int typeJ = typeI; typeJ < nTypes; ++typeJ, atd2 = atd2->next)
+		for (int typeJ = typeI; typeJ < nTypes; ++typeJ, atd2 = atd2->next())
 		{
 			// Retrieve partial container and make sure its object tag is set
 			Data1D& partial = braggPartials.at(typeI, typeJ);
@@ -424,10 +424,10 @@ bool BraggModule::reBinReflections(ProcessPool& procPool, Configuration* cfg, Ar
 
 		// Loop over pairs of atom types, binning intensity contributions from this reflection
 		AtomTypeData* atd1 = cfg->usedAtomTypes();
-		for (int typeI = 0; typeI < nTypes; ++typeI, atd1 = atd1->next)
+		for (int typeI = 0; typeI < nTypes; ++typeI, atd1 = atd1->next())
 		{
 			AtomTypeData* atd2 = atd1;
-			for (int typeJ = typeI; typeJ < nTypes; ++typeJ, atd2 = atd2->next)
+			for (int typeJ = typeI; typeJ < nTypes; ++typeJ, atd2 = atd2->next())
 			{
 				braggPartials.at(typeI, typeJ).value(bin) += braggReflections.constAt(n).intensity(typeI, typeJ);
 			}

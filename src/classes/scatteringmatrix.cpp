@@ -44,7 +44,7 @@ int ScatteringMatrix::nPairs() const
 int ScatteringMatrix::pairIndex(AtomType* typeI, AtomType* typeJ) const
 {
 	int index = 0;
-	for (Pair<AtomType*,AtomType*>* pair = typePairs_.first(); pair != NULL; pair = pair->next)
+	for (Pair<AtomType*,AtomType*>* pair = typePairs_.first(); pair != NULL; pair = pair->next())
 	{
 		if ((pair->a() == typeI) && (pair->b() == typeJ)) return index;
 		if ((pair->a() == typeJ) && (pair->b() == typeI)) return index;
@@ -71,7 +71,7 @@ void ScatteringMatrix::print() const
 {
 	// Write header
 	CharString text, line;
-	for (Pair<AtomType*,AtomType*>* pair = typePairs_.first(); pair != NULL; pair = pair->next)
+	for (Pair<AtomType*,AtomType*>* pair = typePairs_.first(); pair != NULL; pair = pair->next())
 	{
 		text.sprintf("%s-%s", pair->a()->name(), pair->b()->name());
 		line.strcatf("%10s ", text.get());
@@ -92,7 +92,7 @@ void ScatteringMatrix::printInverse() const
 {
 	// Write header
 	CharString text, line;
-	for (Pair<AtomType*,AtomType*>* pair = typePairs_.first(); pair != NULL; pair = pair->next)
+	for (Pair<AtomType*,AtomType*>* pair = typePairs_.first(); pair != NULL; pair = pair->next())
 	{
 		text.sprintf("%s-%s", pair->a()->name(), pair->b()->name());
 		line.strcatf("%10s ", text.get());
@@ -167,9 +167,9 @@ void ScatteringMatrix::initialise(const List<AtomType>& types, Array2D<Data1D>& 
 	typePairs_.clear();
 
 	// Copy atom types
-	for (AtomType* at1 = types.first(); at1 != NULL; at1 = at1->next)
+	for (AtomType* at1 = types.first(); at1 != NULL; at1 = at1->next())
 	{
-		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next)
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next())
 		{
 			Pair<AtomType*, AtomType*>* pair = typePairs_.add();
 			pair->set(at1, at2);
@@ -180,7 +180,7 @@ void ScatteringMatrix::initialise(const List<AtomType>& types, Array2D<Data1D>& 
 	generatedSQ.initialise(types.nItems(), types.nItems(), true);
 	Data1D* partials = generatedSQ.linearArray();
 	int index = 0;
-	for (Pair<AtomType*,AtomType*>* pair = typePairs_.first(); pair != NULL; pair = pair->next)
+	for (Pair<AtomType*,AtomType*>* pair = typePairs_.first(); pair != NULL; pair = pair->next())
 	{
 		partials[index].setName(CharString("GeneratedSQ-%s-%s-%s.sq", pair->a()->name(), pair->b()->name(), groupName));
 		partials[index].setObjectTag(CharString("%s//GeneratedSQ//%s//%s-%s", objectNamePrefix, groupName, pair->a()->name(), pair->b()->name()));

@@ -208,11 +208,11 @@ MainTab* DissolveWindow::findTab(const char* title)
 {
 	if (DissolveSys::sameString(title, "Forcefield")) return forcefieldTab_;
 
-	for (SpeciesTab* tab = speciesTabs_.first(); tab != NULL; tab = tab->next) if (DissolveSys::sameString(title, tab->title())) return tab;
-	for (ConfigurationTab* tab = configurationTabs_.first(); tab != NULL; tab = tab->next) if (DissolveSys::sameString(title, tab->title())) return tab;
-	for (ModuleLayerTab* tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next) if (DissolveSys::sameString(title, tab->title())) return tab;
-	for (ModuleTab* tab = moduleTabs_.first(); tab != NULL; tab = tab->next) if (DissolveSys::sameString(title, tab->title())) return tab;
-	for (WorkspaceTab* tab = workspaceTabs_.first(); tab != NULL; tab = tab->next) if (DissolveSys::sameString(title, tab->title())) return tab;
+	for (SpeciesTab* tab = speciesTabs_.first(); tab != NULL; tab = tab->next()) if (DissolveSys::sameString(title, tab->title())) return tab;
+	for (ConfigurationTab* tab = configurationTabs_.first(); tab != NULL; tab = tab->next()) if (DissolveSys::sameString(title, tab->title())) return tab;
+	for (ModuleLayerTab* tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next()) if (DissolveSys::sameString(title, tab->title())) return tab;
+	for (ModuleTab* tab = moduleTabs_.first(); tab != NULL; tab = tab->next()) if (DissolveSys::sameString(title, tab->title())) return tab;
+	for (WorkspaceTab* tab = workspaceTabs_.first(); tab != NULL; tab = tab->next()) if (DissolveSys::sameString(title, tab->title())) return tab;
 
 	return NULL;
 }
@@ -234,7 +234,7 @@ MainTab* DissolveWindow::findTab(QWidget* page)
 // Find SpeciesTab containing specified page widget
 SpeciesTab* DissolveWindow::speciesTab(QWidget* page)
 {
-	for (SpeciesTab* tab = speciesTabs_.first(); tab != NULL; tab = tab->next) if (tab->page() == page) return tab;
+	for (SpeciesTab* tab = speciesTabs_.first(); tab != NULL; tab = tab->next()) if (tab->page() == page) return tab;
 
 	return NULL;
 }
@@ -242,7 +242,7 @@ SpeciesTab* DissolveWindow::speciesTab(QWidget* page)
 // Find ConfigurationTab containing specified page widget
 ConfigurationTab* DissolveWindow::configurationTab(QWidget* page)
 {
-	for (ConfigurationTab* tab = configurationTabs_.first(); tab != NULL; tab = tab->next) if (tab->page() == page) return tab;
+	for (ConfigurationTab* tab = configurationTabs_.first(); tab != NULL; tab = tab->next()) if (tab->page() == page) return tab;
 
 	return NULL;
 }
@@ -250,7 +250,7 @@ ConfigurationTab* DissolveWindow::configurationTab(QWidget* page)
 // Find ModuleLayerTab containing specified page widget
 ModuleLayerTab* DissolveWindow::processingLayerTab(QWidget* page)
 {
-	for (ModuleLayerTab* tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next) if (tab->page() == page) return tab;
+	for (ModuleLayerTab* tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next()) if (tab->page() == page) return tab;
 
 	return NULL;
 }
@@ -258,7 +258,7 @@ ModuleLayerTab* DissolveWindow::processingLayerTab(QWidget* page)
 // Find ModuleTab containing specified page widget
 ModuleTab* DissolveWindow::moduleTab(QWidget* page)
 {
-	for (ModuleTab* tab = moduleTabs_.first(); tab != NULL; tab = tab->next) if (tab->page() == page) return tab;
+	for (ModuleTab* tab = moduleTabs_.first(); tab != NULL; tab = tab->next()) if (tab->page() == page) return tab;
 
 	return NULL;
 }
@@ -266,7 +266,7 @@ ModuleTab* DissolveWindow::moduleTab(QWidget* page)
 // Find ModuleTab containing specified Module
 ModuleTab* DissolveWindow::moduleTab(Module* module)
 {
-	for (ModuleTab* tab = moduleTabs_.first(); tab != NULL; tab = tab->next) if (tab->module() == module) return tab;
+	for (ModuleTab* tab = moduleTabs_.first(); tab != NULL; tab = tab->next()) if (tab->module() == module) return tab;
 
 	return NULL;
 }
@@ -274,7 +274,7 @@ ModuleTab* DissolveWindow::moduleTab(Module* module)
 // Find WorkspaceTab containing specified page widget
 WorkspaceTab* DissolveWindow::workspaceTab(QWidget* page)
 {
-	for (WorkspaceTab* tab = workspaceTabs_.first(); tab != NULL; tab = tab->next) if (tab->page() == page) return tab;
+	for (WorkspaceTab* tab = workspaceTabs_.first(); tab != NULL; tab = tab->next()) if (tab->page() == page) return tab;
 
 	return NULL;
 }
@@ -319,7 +319,7 @@ void DissolveWindow::setCurrentTab(Species* species)
 {
 	if (!species) return;
 
-	for (SpeciesTab* tab = speciesTabs_.first(); tab != NULL; tab = tab->next) if (tab->species() == species)
+	for (SpeciesTab* tab = speciesTabs_.first(); tab != NULL; tab = tab->next()) if (tab->species() == species)
 	{
 		ui.MainTabs->setCurrentWidget(tab->page());
 		return;
@@ -333,7 +333,7 @@ void DissolveWindow::setCurrentTab(Configuration* cfg)
 {
 	if (!cfg) return;
 
-	for (ConfigurationTab* tab = configurationTabs_.first(); tab != NULL; tab = tab->next) if (tab->configuration() == cfg)
+	for (ConfigurationTab* tab = configurationTabs_.first(); tab != NULL; tab = tab->next()) if (tab->configuration() == cfg)
 	{
 		ui.MainTabs->setCurrentWidget(tab->page());
 		return;
@@ -347,7 +347,7 @@ void DissolveWindow::setCurrentTab(ModuleLayer* layer)
 {
 	if (!layer) return;
 
-	for (ModuleLayerTab* tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next) if (tab->moduleLayer() == layer)
+	for (ModuleLayerTab* tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next()) if (tab->moduleLayer() == layer)
 	{
 		ui.MainTabs->setCurrentWidget(tab->page());
 		return;
@@ -362,11 +362,11 @@ RefList<MainTab> DissolveWindow::allTabs() const
 	RefList<MainTab> tabs;
 
 	tabs.append(forcefieldTab_);
-	for (SpeciesTab* tab = speciesTabs_.first(); tab != NULL; tab = tab->next) tabs.append(tab);
-	for (ConfigurationTab* tab = configurationTabs_.first(); tab != NULL; tab = tab->next) tabs.append(tab);
-	for (ModuleLayerTab* tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next) tabs.append(tab);
-	for (ModuleTab* tab = moduleTabs_.first(); tab != NULL; tab = tab->next) tabs.append(tab);
-	for (WorkspaceTab* tab = workspaceTabs_.first(); tab != NULL; tab = tab->next) tabs.append(tab);
+	for (SpeciesTab* tab = speciesTabs_.first(); tab != NULL; tab = tab->next()) tabs.append(tab);
+	for (ConfigurationTab* tab = configurationTabs_.first(); tab != NULL; tab = tab->next()) tabs.append(tab);
+	for (ModuleLayerTab* tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next()) tabs.append(tab);
+	for (ModuleTab* tab = moduleTabs_.first(); tab != NULL; tab = tab->next()) tabs.append(tab);
+	for (WorkspaceTab* tab = workspaceTabs_.first(); tab != NULL; tab = tab->next()) tabs.append(tab);
 
 	return tabs;
 }

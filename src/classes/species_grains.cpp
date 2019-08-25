@@ -29,7 +29,7 @@ void Species::updateGrains()
 {
 	// Construct a list of Atom references as we go along, so we can check for duplicates
 	RefDataList<SpeciesAtom,SpeciesGrain*> refAtoms;
-	for (SpeciesGrain* sg = grains_.first(); sg != NULL; sg = sg->next)
+	for (SpeciesGrain* sg = grains_.first(); sg != NULL; sg = sg->next())
 	{
 		// Loop over Atoms in GrainDefinition
 		RefListItem<SpeciesAtom>* ri = sg->atoms(), *next;
@@ -53,7 +53,7 @@ void Species::updateGrains()
 	SpeciesGrain* sg = grains_.first(), *next;
 	while (sg != NULL)
 	{
-		next = sg->next;
+		next = sg->next();
 		if (sg->nAtoms() == 0)
 		{
 			Messenger::print("Removing grain '%s' since it no longer contains any atoms.\n", sg->name());
@@ -68,7 +68,7 @@ void Species::addDefaultGrain()
 {
 	SpeciesGrain* sg = grains_.add();
 	
-	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next) sg->addAtom(i);
+	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next()) sg->addAtom(i);
 	
 	sg->setName(sg->nameFromAtoms());
 }
@@ -80,7 +80,7 @@ void Species::autoAddGrains()
 // 	
 	// Make a list of bonds for each atom
 	Array< RefDataList<SpeciesBond,int> > bondList(atoms_.nItems());
-	for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next)
+	for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next())
 	{
 		bondList[b->indexI()].append(b,1);
 		bondList[b->indexJ()].append(b,1);
@@ -119,7 +119,7 @@ void Species::autoAddGrains()
 	delete[] group;
 
 	// Name each grain....
-	for (SpeciesGrain* sg = grains_.first(); sg != NULL; sg = sg->next) sg->setName(uniqueGrainName(sg->nameFromAtoms()));
+	for (SpeciesGrain* sg = grains_.first(); sg != NULL; sg = sg->next()) sg->setName(uniqueGrainName(sg->nameFromAtoms()));
 }
 
 // Add new GrainDefinition for this Species
@@ -164,7 +164,7 @@ SpeciesGrain* Species::grain(int n)
 void Species::addAtomToGrain(SpeciesAtom* i, SpeciesGrain* gd)
 {
 	// Check for presence of Atom in another definition - if it exists there, remove it...
-	for (SpeciesGrain* def = grains_.first(); def != NULL; def = def->next)
+	for (SpeciesGrain* def = grains_.first(); def != NULL; def = def->next())
 	{
 		if (def->containsAtom(i))
 		{
@@ -193,7 +193,7 @@ const char* Species::uniqueGrainName(const char* base, SpeciesGrain* exclude) co
 	if (baseName.isEmpty()) baseName = "Unnamed";
 
 	// Find all existing names which are the same as 'baseName' up to the first '_', and get the highest appended number
-	for (sg = grains_.first(); sg != NULL; sg = sg->next)
+	for (sg = grains_.first(); sg != NULL; sg = sg->next())
 	{
 		if (sg == exclude) continue;
 		if (strcmp(baseName, sg->name()) == 0) highest = 0;
@@ -216,7 +216,7 @@ void Species::orderAtomsWithinGrains()
 	// Loop over Grains.
 	// The variable 'index' will represent the target position in the Atom list of the next Atom to be considered within a grain.
 	int n, index = 0, oldIndex;
-	for (SpeciesGrain* sg = grains_.first(); sg != NULL; sg = sg->next)
+	for (SpeciesGrain* sg = grains_.first(); sg != NULL; sg = sg->next())
 	{
 		for (n=0; n<sg->nAtoms(); ++n)
 		{
@@ -228,5 +228,5 @@ void Species::orderAtomsWithinGrains()
 	
 	// Now need to renumber Atoms
 	index = 0;
-	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next) i->setIndex(index++);
+	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next()) i->setIndex(index++);
 }

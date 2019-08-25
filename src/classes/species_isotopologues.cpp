@@ -26,7 +26,7 @@
 // Update current Isotopologues
 void Species::updateIsotopologues(const List<AtomType>& atomTypes)
 {
-	for (Isotopologue* iso = isotopologues_.first(); iso != NULL; iso = iso->next) iso->update(atomTypes);
+	for (Isotopologue* iso = isotopologues_.first(); iso != NULL; iso = iso->next()) iso->update(atomTypes);
 }
 
 // Add a new Isotopologue to this species
@@ -107,7 +107,7 @@ const char* Species::uniqueIsotopologueName(const char* base, Isotopologue* excl
 	if (baseName.isEmpty()) baseName = "Unnamed";
 
 	// Find all existing names which are the same as 'baseName' up to the first '_', and get the highest appended number
-	for (iso = isotopologues_.first(); iso != NULL; iso = iso->next)
+	for (iso = isotopologues_.first(); iso != NULL; iso = iso->next())
 	{
 		if (iso == exclude) continue;
 		if (strcmp(baseName, iso->name()) == 0) highest = 0;
@@ -122,7 +122,7 @@ const char* Species::uniqueIsotopologueName(const char* base, Isotopologue* excl
 // Search for Isotopologue by name
 Isotopologue* Species::findIsotopologue(const char* name) const
 {
-	for (Isotopologue *iso = isotopologues_.first(); iso != NULL; iso = iso->next) if (DissolveSys::sameString(name, iso->name())) return iso;
+	for (Isotopologue *iso = isotopologues_.first(); iso != NULL; iso = iso->next()) if (DissolveSys::sameString(name, iso->name())) return iso;
 	return NULL;
 }
 

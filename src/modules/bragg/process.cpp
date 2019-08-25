@@ -112,10 +112,10 @@ bool BraggModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 			// Save intensity data
 			int i = 0;
-			for (AtomTypeData* atd1 = cfg->usedAtomTypes(); atd1 != NULL; atd1 = atd1->next, ++i)
+			for (AtomTypeData* atd1 = cfg->usedAtomTypes(); atd1 != NULL; atd1 = atd1->next(), ++i)
 			{
 				int j = i;
-				for (AtomTypeData* atd2 = atd1; atd2 != NULL; atd2 = atd2->next, ++j)
+				for (AtomTypeData* atd2 = atd1; atd2 != NULL; atd2 = atd2->next(), ++j)
 				{
 					LineParser intensityParser(&procPool);
 					if (!intensityParser.openOutput(CharString("%s-Bragg-%s-%s.txt", cfg->niceName(), atd1->atomTypeName(), atd2->atomTypeName()))) return false;

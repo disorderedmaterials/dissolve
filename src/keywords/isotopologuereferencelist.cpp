@@ -112,7 +112,7 @@ void IsotopologueReferenceListKeyword::removeReferencesTo(Species* sp)
 	IsotopologueReference* isoRef = data_.first(), *isoNext;
 	while (isoRef)
 	{
-		isoNext = isoRef->next;
+		isoNext = isoRef->next();
 		if (isoRef->species() == sp) data_.remove(isoRef);
 		isoRef = isoNext;
 	}
@@ -124,7 +124,7 @@ void IsotopologueReferenceListKeyword::removeReferencesTo(Isotopologue* iso)
 	IsotopologueReference* isoRef = data_.first(), *isoNext;
 	while (isoRef)
 	{
-		isoNext = isoRef->next;
+		isoNext = isoRef->next();
 		if (isoRef->isotopologue() == iso) data_.remove(isoRef);
 		isoRef = isoNext;
 	}

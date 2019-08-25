@@ -47,7 +47,7 @@ template <class T> class BroadcastList
 			// Broadcast number of items in list, then list items...
 			count = items.nItems();
 			if (!procPool.broadcast(count, root)) return;
-			for (MPIListItem<T>* item = items.first(); item != NULL; item = item->next) if (!item->broadcast(procPool, root, coreData)) return;
+			for (MPIListItem<T>* item = items.first(); item != NULL; item = item->next()) if (!item->broadcast(procPool, root, coreData)) return;
 		}
 		else
 		{

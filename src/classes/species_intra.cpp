@@ -140,7 +140,7 @@ SpeciesBond* Species::bond(int n)
 // Return whether SpeciesBond between specified SpeciesAtoms exists
 SpeciesBond* Species::hasBond(SpeciesAtom* i, SpeciesAtom* j) const
 {
-	for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next) if (b->matches(i, j)) return b;
+	for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next()) if (b->matches(i, j)) return b;
 	return NULL;
 }
 
@@ -291,7 +291,7 @@ SpeciesAngle* Species::angle(int n)
 // Return whether SpeciesAngle between SpeciesAtoms exists
 bool Species::hasAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const
 {
-	for (SpeciesAngle* a = angles_.first(); a != NULL; a = a->next) if (a->matches(i, j, k)) return true;
+	for (SpeciesAngle* a = angles_.first(); a != NULL; a = a->next()) if (a->matches(i, j, k)) return true;
 	return false;
 }
 
@@ -441,7 +441,7 @@ SpeciesTorsion* Species::torsion(int n)
 // Return whether SpeciesTorsion between SpeciesAtoms exists
 bool Species::hasTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const
 {
-	for (SpeciesTorsion* t = torsions_.first(); t != NULL; t = t->next) if (t->matches(i, j, k, l)) return true;
+	for (SpeciesTorsion* t = torsions_.first(); t != NULL; t = t->next()) if (t->matches(i, j, k, l)) return true;
 	return false;
 }
 
@@ -570,7 +570,7 @@ void Species::generateAttachedAtomLists()
 // Detach master term links for all interaction types, copying parameters to local SpeciesIntra
 void Species::detachFromMasterTerms()
 {
-	for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next) b->detachFromMasterIntra(); 
-	for (SpeciesAngle* a = angles_.first(); a != NULL; a = a->next) a->detachFromMasterIntra();
-	for (SpeciesTorsion* t = torsions_.first(); t != NULL; t = t->next) t->detachFromMasterIntra();
+	for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next()) b->detachFromMasterIntra();
+	for (SpeciesAngle* a = angles_.first(); a != NULL; a = a->next()) a->detachFromMasterIntra();
+	for (SpeciesTorsion* t = torsions_.first(); t != NULL; t = t->next()) t->detachFromMasterIntra();
 }

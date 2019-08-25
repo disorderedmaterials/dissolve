@@ -72,13 +72,13 @@ template <class T> class List
 		// Clear any current data in the list...
 		clear();
 		T *newitem, *olditem;
-		for (olditem = source.first(); olditem != NULL; olditem = olditem->next)
+		for (olditem = source.first(); olditem != NULL; olditem = olditem->next_)
 		{
 			// To ensure that we don't mess around with the pointers of the old list, copy the object and then own it
 			newitem = new T;
 			*newitem = *olditem;
-			newitem->prev = NULL;
-			newitem->next = NULL;
+			newitem->prev_ = NULL;
+			newitem->next_ = NULL;
 			own(newitem);
 		}
 
@@ -147,7 +147,7 @@ template <class T> class List
 	// Returns the second item in the list
 	T* second() const
 	{
-		return (listHead_ == NULL ? NULL : listHead_->next);
+		return (listHead_ == NULL ? NULL : listHead_->next_);
 	}
 	// Returns the list tail
 	T* last() const
@@ -170,8 +170,8 @@ template <class T> class List
 	{
 		T* newItem = new T;
 		// Add the pointer to the list
-		listHead_ == NULL ? listHead_ = newItem : listTail_->next = newItem;
-		newItem->prev = listTail_;
+		listHead_ == NULL ? listHead_ = newItem : listTail_->next_ = newItem;
+		newItem->prev_ = listTail_;
 		listTail_ = newItem;
 		++nItems_;
 		regenerate_ = true;
@@ -183,8 +183,8 @@ template <class T> class List
 		T* newItem = new T;
 		
 		// Add the pointer to the start of the list
-		newItem->next = listHead_;
-		listHead_ == NULL ? listTail_ = newItem : listHead_->prev = newItem;
+		newItem->next_ = listHead_;
+		listHead_ == NULL ? listTail_ = newItem : listHead_->prev_ = newItem;
 		listHead_ = newItem;
 		++nItems_;
 		regenerate_ = true;
@@ -210,14 +210,14 @@ template <class T> class List
 
 		T* newItem = new T;
 		// Get pointer to next item after the supplied item (our newnext)
-		T* newNext = item->next;
+		T* newNext = item->next_;
 		// Re-point newprev and the new item
-		item->next = newItem;
-		newItem->prev = item;
+		item->next_ = newItem;
+		newItem->prev_ = item;
 		// Re-point newnext and the new item
-		if (newNext != NULL) newNext->prev = newItem;
+		if (newNext != NULL) newNext->prev_ = newItem;
 		else listTail_ = newItem;
-		newItem->next = newNext;
+		newItem->next_ = newNext;
 		++nItems_;
 		regenerate_ = true;
 		return newItem;
@@ -232,14 +232,14 @@ template <class T> class List
 		}
 		T* newItem = new T;
 		// Get pointer to next item after the supplied item (our newprev)
-		T* newPrev = item->prev;
+		T* newPrev = item->prev_;
 		// Re-point newnext and the new item
-		item->prev = newItem;
-		newItem->next = item;
+		item->prev_ = newItem;
+		newItem->next_ = item;
 		// Re-point newprev and the new item
-		if (newPrev != NULL) newPrev->next = newItem;
+		if (newPrev != NULL) newPrev->next_ = newItem;
 		else listHead_ = newItem;
-		newItem->prev = newPrev;
+		newItem->prev_ = newPrev;
 		++nItems_;
 		regenerate_ = true;
 		return newItem;
@@ -253,14 +253,14 @@ template <class T> class List
 			return;
 		}
 		// In the interests of 'pointer etiquette', refuse to own the item if its pointers are not NULL
-		if ((oldItem->next != NULL) || (oldItem->prev != NULL))
+		if ((oldItem->next_ != NULL) || (oldItem->prev_ != NULL))
 		{
 			Messenger::error("List::own() <<<< Refused to own an item that still had links to other items >>>>\n");
 			return;
 		}
-		listHead_ == NULL ? listHead_ = oldItem : listTail_->next = oldItem;
-		oldItem->prev = listTail_;
-		oldItem->next = NULL;
+		listHead_ == NULL ? listHead_ = oldItem : listTail_->next_ = oldItem;
+		oldItem->prev_ = listTail_;
+		oldItem->next_ = NULL;
 		listTail_ = oldItem;
 		++nItems_;
 		regenerate_ = true;
@@ -279,20 +279,20 @@ template <class T> class List
 			return;
 		}
 		// In the interests of 'pointer etiquette', refuse to own the item if its pointers are not NULL
-		if ((oldItem->next != NULL) || (oldItem->prev != NULL))
+		if ((oldItem->next_ != NULL) || (oldItem->prev_ != NULL))
 		{
 			Messenger::error("List::own() <<<< Refused to own an item that still had links to other items >>>>\n");
 			return;
 		}
 		// Get pointer to next item after the supplied item (our newprev)
-		T* newPrev = beforeItem->prev;
+		T* newPrev = beforeItem->prev_;
 		// Re-point newnext and the new item
-		beforeItem->prev = oldItem;
-		oldItem->next = beforeItem;
+		beforeItem->prev_ = oldItem;
+		oldItem->next_ = beforeItem;
 		// Re-point newprev and the new item
-		if (newPrev != NULL) newPrev->next = oldItem;
+		if (newPrev != NULL) newPrev->next_ = oldItem;
 		else listHead_ = oldItem;
-		oldItem->prev = newPrev;
+		oldItem->prev_ = newPrev;
 		++nItems_;
 		regenerate_ = true;
 	}
@@ -310,10 +310,10 @@ template <class T> class List
 			Messenger::error("Internal Error: NULL pointer passed to List<T>::disown().\n");
 			return;
 		}
-		item->prev == NULL ? listHead_ = item->next : item->prev->next = item->next;
-		item->next == NULL ? listTail_ = item->prev : item->next->prev = item->prev;
-		item->next = NULL;
-		item->prev = NULL;
+		item->prev_ == NULL ? listHead_ = item->next_ : item->prev_->next_ = item->next_;
+		item->next_ == NULL ? listTail_ = item->prev_ : item->next_->prev_ = item->prev_;
+		item->next_ = NULL;
+		item->prev_ = NULL;
 
 		--nItems_;
 		regenerate_ = true;
@@ -347,8 +347,8 @@ template <class T> class List
 			return;
 		}
 		// Delete a specific item from the list
-		item->prev == NULL ? listHead_ = item->next : item->prev->next = item->next;
-		item->next == NULL ? listTail_ = item->prev : item->next->prev = item->prev;
+		item->prev_ == NULL ? listHead_ = item->next_ : item->prev_->next_ = item->next_;
+		item->next_ == NULL ? listTail_ = item->prev_ : item->next_->prev_ = item->prev_;
 		delete item;
 		--nItems_;
 		regenerate_ = true;
@@ -374,8 +374,8 @@ template <class T> class List
 		
 		// Delete a first item from the list
 		T *xitem = listHead_;
-		xitem->next == NULL ? listTail_ = xitem->prev : xitem->next->prev = xitem->prev;
-		listHead_ = xitem->next;
+		xitem->next_ == NULL ? listTail_ = xitem->prev_ : xitem->next_->prev_ = xitem->prev_;
+		listHead_ = xitem->next_;
 		delete xitem;
 		--nItems_;
 		regenerate_ = true;
@@ -390,8 +390,8 @@ template <class T> class List
 		}
 		// Delete the last item from the list
 		T *xitem = listTail_;
-		xitem->prev == NULL ? listHead_ = xitem->next : xitem->prev->next = xitem->next;
-		listTail_ = xitem->prev;
+		xitem->prev_ == NULL ? listHead_ = xitem->next_ : xitem->prev_->next_ = xitem->next_;
+		listTail_ = xitem->prev_;
 		delete xitem;
 		--nItems_;
 		regenerate_ = true;
@@ -405,9 +405,9 @@ template <class T> class List
 			return NULL;
 		}
 		// Delete a specific item from the list, and return the next in the list
-		T* result = item->next;
-		item->prev == NULL ? listHead_ = item->next : item->prev->next = item->next;
-		item->next == NULL ? listTail_ = item->prev : item->next->prev = item->prev;
+		T* result = item->next_;
+		item->prev_ == NULL ? listHead_ = item->next_ : item->prev_->next_ = item->next_;
+		item->next_ == NULL ? listTail_ = item->prev_ : item->next_->prev_ = item->prev_;
 		delete item;
 		--nItems_;
 		regenerate_ = true;
@@ -422,14 +422,14 @@ template <class T> class List
 			return;
 		}
 		T *prev, *next;
-		prev = item->prev;
-		next = item->next;
+		prev = item->prev_;
+		next = item->next_;
 		if (prev == NULL) listHead_ = next;
-		else prev->next = next;
+		else prev->next_ = next;
 		if (next == NULL) listTail_ = prev;
-		else next->prev = prev;
-		item->next = NULL;
-		item->prev = NULL;
+		else next->prev_ = prev;
+		item->next_ = NULL;
+		item->prev_ = NULL;
 		regenerate_ = true;
 	}
 
@@ -442,7 +442,7 @@ template <class T> class List
 	int indexOf(const T* item) const
 	{
 		int result = 0;
-		for (T* i = listHead_; i != NULL; i = i->next)
+		for (T* i = listHead_; i != NULL; i = i->next_)
 		{
 			if (item == i) return result;
 			++result;
@@ -459,7 +459,7 @@ template <class T> class List
 			return NULL;
 		}
 		int count = -1;
-		for (T* item = listHead_; item != NULL; item = item->next) if (++count == n) return item;
+		for (T* item = listHead_; item != NULL; item = item->next_) if (++count == n) return item;
 		return NULL;
 	}
 	// Fills the supplied array with pointer values to the list items
@@ -472,7 +472,7 @@ template <class T> class List
 			itemArray[count] = i->item;
 			++count;
 			if (count == nItems) break;
-			i = i->next;
+			i = i->next_;
 			if (i == NULL) Messenger::error("List::fillArray <<<< Not enough items in list - requested %i, had %i >>>>\n", nItems ,nItems_);
 		}
 	}
@@ -492,7 +492,7 @@ template <class T> class List
 		
 		// Fill in pointers
 		int count = 0;
-		for (T* i = listHead_; i != NULL; i = i->next) items_[count++] = i;
+		for (T* i = listHead_; i != NULL; i = i->next_) items_[count++] = i;
 		regenerate_ = false;
 		return items_;
 	}
@@ -506,7 +506,7 @@ template <class T> class List
 	bool contains(const T* searchItem) const
 	{
 		T* item;
-		for (item = listHead_; item != NULL; item = item->next) if (searchItem == item) break;
+		for (item = listHead_; item != NULL; item = item->next_) if (searchItem == item) break;
 		return (item != NULL);
 	}
 
@@ -525,55 +525,55 @@ template <class T> class List
 		}
 		// If the items are adjacent, swap the pointers 'outside' the pair and swap the next/prev between them
 		T *n1, *n2, *p1, *p2;
-		if ((item1->next == item2) || (item2->next == item1))
+		if ((item1->next_ == item2) || (item2->next_ == item1))
 		{
-			// Order the pointers so that item1->next == item2
-			if (item2->next == item1)
+			// Order the pointers so that item1->next_ == item2
+			if (item2->next_ == item1)
 			{
 				n1 = item2;
 				item2 = item1;
 				item1 = n1;
 			}
-			p1 = item1->prev; 
-			n2 = item2->next;
-			item2->prev = p1;
-			item2->next = item1;
-			if (p1 != NULL) p1->next = item2;
+			p1 = item1->prev_; 
+			n2 = item2->next_;
+			item2->prev_ = p1;
+			item2->next_ = item1;
+			if (p1 != NULL) p1->next_ = item2;
 			else listHead_ = item2;
-			item1->prev = item2;
-			item1->next = n2;
-			if (n2 != NULL) n2->prev = item1;
+			item1->prev_ = item2;
+			item1->next_ = n2;
+			if (n2 != NULL) n2->prev_ = item1;
 			else listTail_ = item1;
 		}
 		else
 		{
 			// Store the list pointers of the two items
-			//printf("Item 1 %p next %p prev %p\n",item1,item1->next,item1->prev);
-			//printf("Item 2 %p next %p prev %p\n",item2,item2->next,item2->prev);
-			//printf("Item 1 nextprev %p prevnext %p\n",item1->next->prev,item1->prev->next);
-			//printf("Item 2 nextprev %p prevnext %p\n",item2->next->prev,item2->prev->next);
-			n1 = item1->next;
-			p1 = item1->prev;
-			n2 = item2->next;
-			p2 = item2->prev;
+			//printf("Item 1 %p next %p prev %p\n",item1,item1->next_,item1->prev_);
+			//printf("Item 2 %p next %p prev %p\n",item2,item2->next_,item2->prev_);
+			//printf("Item 1 nextprev %p prevnext %p\n",item1->next_->prev_,item1->prev_->next_);
+			//printf("Item 2 nextprev %p prevnext %p\n",item2->next_->prev_,item2->prev_->next_);
+			n1 = item1->next_;
+			p1 = item1->prev_;
+			n2 = item2->next_;
+			p2 = item2->prev_;
 			// Set new values of swapped items
-			item1->next = n2;
-			item1->prev = p2;
-			item2->next = n1;
-			item2->prev = p1;
-			//printf("Item 1 next %p prev %p\n",item1->next,item1->prev);
-			//printf("Item 2 next %p prev %p\n",item2->next,item2->prev);
+			item1->next_ = n2;
+			item1->prev_ = p2;
+			item2->next_ = n1;
+			item2->prev_ = p1;
+			//printf("Item 1 next %p prev %p\n",item1->next_,item1->prev_);
+			//printf("Item 2 next %p prev %p\n",item2->next_,item2->prev_);
 			// Set new values of items around swapped items
-			if (item1->next != NULL) item1->next->prev = item1;
+			if (item1->next_ != NULL) item1->next_->prev_ = item1;
 			else listTail_ = item1;
-			if (item1->prev != NULL) item1->prev->next = item1;
+			if (item1->prev_ != NULL) item1->prev_->next_ = item1;
 			else listHead_ = item1;
-			if (item2->next != NULL) item2->next->prev = item2;
+			if (item2->next_ != NULL) item2->next_->prev_ = item2;
 			else listTail_ = item2;
-			if (item2->prev != NULL) item2->prev->next = item2;
+			if (item2->prev_ != NULL) item2->prev_->next_ = item2;
 			else listHead_ = item2;
-			//printf("Item 1 nextprev %p prevnext %p\n",item1->next->prev,item1->prev->next);
-			//printf("Item 2 nextprev %p prevnext %p\n",item2->next->prev,item2->prev->next);
+			//printf("Item 1 nextprev %p prevnext %p\n",item1->next_->prev_,item1->prev_->next_);
+			//printf("Item 2 nextprev %p prevnext %p\n",item2->next_->prev_,item2->prev_->next_);
 		}
 		regenerate_ = true;
 	}
@@ -589,7 +589,7 @@ template <class T> class List
 		}
 		// If the item is already at the head of the list, return NULL.
 		if (listHead_ == item) return;
-		swap(item->prev,item);
+		swap(item->prev_,item);
 		regenerate_ = true;
 	}
 	// Shift item down (towards tail)
@@ -603,7 +603,7 @@ template <class T> class List
 
 		// If the item is already at the tail of the list, return.
 		if (listTail_ == item) return;
-		swap(item->next,item);
+		swap(item->next_,item);
 		regenerate_ = true;
 	}
 	// Move item at position 'old' by 'delta' positions (+/-)
@@ -638,9 +638,9 @@ template <class T> class List
 		// If the item is already at the tail, exit
 		if (listTail_ == item) return;
 		cut(item);
-		item->prev = listTail_;
-		item->next = NULL;
-		if (listTail_ != NULL) listTail_->next = item;
+		item->prev_ = listTail_;
+		item->next_ = NULL;
+		if (listTail_ != NULL) listTail_->next_ = item;
 		listTail_ = item;
 		regenerate_ = true;
 	}
@@ -655,9 +655,9 @@ template <class T> class List
 		// If the item is already at the head, exit
 		if (listHead_ == item) return;
 		cut(item);
-		item->prev = NULL;
-		item->next = listHead_;
-		if (listHead_ != NULL) listHead_->prev = item;
+		item->prev_ = NULL;
+		item->next_ = listHead_;
+		if (listHead_ != NULL) listHead_->prev_ = item;
 		listHead_ = item;
 		regenerate_ = true;
 	}
@@ -673,24 +673,24 @@ template <class T> class List
 
 		// Cut item out of list...
 		T *prev, *next;
-		prev = item->prev;
-		next = item->next;
+		prev = item->prev_;
+		next = item->next_;
 		if (prev == NULL) listHead_ = next;
-		else prev->next = next;
+		else prev->next_ = next;
 		if (next == NULL) listTail_ = prev;
-		else next->prev = prev;
+		else next->prev_ = prev;
 
 		// ...and then re-insert it
 		// Get pointer to next item after newprev (our newnext)
-		T *newnext = (reference == NULL ? listHead_ : reference->next);
+		T *newnext = (reference == NULL ? listHead_ : reference->next_);
 		// Re-point reference and the new item
-		if (reference != NULL) reference->next = item;
+		if (reference != NULL) reference->next_ = item;
 		else listHead_ = item;
-		item->prev = reference;
+		item->prev_ = reference;
 		// Re-point newnext and the new item
-		if (newnext != NULL) newnext->prev = item;
+		if (newnext != NULL) newnext->prev_ = item;
 		else listTail_ = item;
-		item->next = newnext;
+		item->next_ = newnext;
 		regenerate_ = true;
 	}
 	// Move item so it is before specified item
@@ -705,26 +705,26 @@ template <class T> class List
 
 		// Cut item out of list
 		T *prev, *next;
-		prev = item->prev;
-		next = item->next;
+		prev = item->prev_;
+		next = item->next_;
 		if (prev == NULL) listHead_ = next;
-		else prev->next = next;
+		else prev->next_ = next;
 		if (next == NULL) listTail_ = prev;
-		else next->prev = prev;
+		else next->prev_ = prev;
 
 		// ...and then re-insert it
 		// Get pointer to item before the reference (our newPrev)
-		T* newPrev = (reference == NULL ? listTail_ : reference->prev);
+		T* newPrev = (reference == NULL ? listTail_ : reference->prev_);
 
 		// Re-point reference and the new item
-		if (reference != NULL) reference->prev = item;
+		if (reference != NULL) reference->prev_ = item;
 		else listTail_ = item;
-		item->next = reference;
+		item->next_ = reference;
 
 		// Re-point newPrev and the new item
-		if (newPrev != NULL) newPrev->next = item;
+		if (newPrev != NULL) newPrev->next_ = item;
 		else listHead_ = item;
-		item->prev = newPrev;
+		item->prev_ = newPrev;
 
 		regenerate_ = true;
 	}
@@ -770,13 +770,13 @@ template <class T, class P> class ParentList : public List<T>
 		// Clear any current data in the list...
 		List<T>::clear();
 		T *newitem, *olditem;
-		for (olditem = source.first(); olditem != NULL; olditem = olditem->next)
+		for (olditem = source.first(); olditem != NULL; olditem = olditem->next_)
 		{
 			// To ensure that we don't mess around with the pointers of the old list, copy the object and then own it
 			newitem = new T(olditem->parent());
 			*newitem = *olditem;
-			newitem->prev = NULL;
-			newitem->next = NULL;
+			newitem->prev_ = NULL;
+			newitem->next_ = NULL;
 			List<T>::own(newitem);
 		}
 		// Don't deep-copy the static list, just flag that it must be regenerated if required.
@@ -815,7 +815,7 @@ template <class T> class ListIterator
 
 		// Go to initial / next item
 		if (currentItem_ == NULL) currentItem_ = reverse_ ? targetList_.last() : targetList_.first();
-		else currentItem_ = reverse_ ? currentItem_->prev : currentItem_->next;
+		else currentItem_ = reverse_ ? currentItem_->prev_ : currentItem_->next_;
 
 		// Check for end of list
 		if (currentItem_ == NULL) finished_ = true;
@@ -843,18 +843,18 @@ template <class T> class ListIterator
         {
                 if (reverse_)
                 {
-                        return (currentItem_ ? currentItem_->prev : NULL);
+                        return (currentItem_ ? currentItem_->prev_ : NULL);
                 }
-                else return (currentItem_ ? currentItem_->next : NULL);
+                else return (currentItem_ ? currentItem_->next_ : NULL);
         }
         // Peek the previous item (if any)
         T* peekPrevious()
         {
                 if (reverse_)
                 {
-                        return (currentItem_ ? currentItem_->next : NULL);
+                        return (currentItem_ ? currentItem_->next_ : NULL);
                 }
-                else return (currentItem_ ? currentItem_->prev : NULL);
+                else return (currentItem_ ? currentItem_->prev_ : NULL);
         }
 
 };

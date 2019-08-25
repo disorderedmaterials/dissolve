@@ -25,24 +25,40 @@
 #include <stdlib.h>     // To get NULL
 
 // Forward Declarations
-/* none */
+template <class T> class List;
+template <class T> class ListIterator;
 
-/*
- * ListItem Class
- * Basic class providing linked list pointers. Any class which is required to be contained in a linked list must
- * subclass ListItem or MPIListItem
- */
+// ListItem Class
 template <class T> class ListItem
 {
 	public:
 	// Constructor
 	ListItem<T>()
 	{
-		prev = NULL;
-		next = NULL;
+		prev_ = NULL;
+		next_ = NULL;
 	}
-	// List pointers
-	T *prev, *next;
+
+	private:
+	// Pointer to previous item in list
+	T* prev_;
+	// Pointer to next item in list
+	T* next_;
+
+	public:
+	// Return previous item in list
+	T* prev() const
+	{
+		return prev_;
+	}
+	// Return next item in list
+	T* next() const
+	{
+		return next_;
+	}
+	// Declare the list and iterator as friends
+	friend class List<T>;
+	friend class ListIterator<T>;
 };
 
 #endif

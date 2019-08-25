@@ -82,10 +82,10 @@ bool PartialSet::setUpPartials(const AtomTypeList& atomTypes, const char* prefix
 	// Set up array matrices for partials
 	CharString title;
 	AtomTypeData* at1 = atomTypes_.first(), *at2;
-	for (int n=0; n<nTypes; ++n, at1 = at1->next)
+	for (int n=0; n<nTypes; ++n, at1 = at1->next())
 	{
 		at2 = at1;
-		for (int m=n; m<nTypes; ++m, at2 = at2->next)
+		for (int m=n; m<nTypes; ++m, at2 = at2->next())
 		{
 			title.sprintf("%s-%s-%s-%s.%s", prefix, tag, at1->atomTypeName(), at2->atomTypeName(), suffix);
 			partials_.at(n,m).setName(title.get());
@@ -304,10 +304,10 @@ Data1D PartialSet::boundTotal(bool applyConcentrationWeights) const
 
 	int typeI, typeJ;
 	AtomTypeData* atd1 = atomTypes_.first();
-	for (typeI=0; typeI<nTypes; ++typeI, atd1 = atd1->next)
+	for (typeI=0; typeI<nTypes; ++typeI, atd1 = atd1->next())
 	{
 		AtomTypeData* atd2 = atd1;
-		for (typeJ=typeI; typeJ<nTypes; ++typeJ, atd2 = atd2->next)
+		for (typeJ=typeI; typeJ<nTypes; ++typeJ, atd2 = atd2->next())
 		{
 			// Calculate weighting factor if requested
 			double factor = 1.0;
@@ -337,10 +337,10 @@ Data1D PartialSet::unboundTotal(bool applyConcentrationWeights) const
 
 	int typeI, typeJ;
 	AtomTypeData* atd1 = atomTypes_.first();
-	for (typeI=0; typeI<nTypes; ++typeI, atd1 = atd1->next)
+	for (typeI=0; typeI<nTypes; ++typeI, atd1 = atd1->next())
 	{
 		AtomTypeData* atd2 = atd1;
-		for (typeJ=typeI; typeJ<nTypes; ++typeJ, atd2 = atd2->next)
+		for (typeJ=typeI; typeJ<nTypes; ++typeJ, atd2 = atd2->next())
 		{
 			// Calculate weighting factor if requested
 			double factor = 1.0;
@@ -407,10 +407,10 @@ void PartialSet::setObjectTags(const char* prefix, const char* suffix)
 	int typeI, typeJ;
 	int nTypes = atomTypes_.nItems();
 	AtomTypeData* at1 = atomTypes_.first(), *at2;
-	for (typeI=0; typeI<nTypes; ++typeI, at1 = at1->next)
+	for (typeI=0; typeI<nTypes; ++typeI, at1 = at1->next())
 	{
 		at2 = at1;
-		for (typeJ=typeI; typeJ<nTypes; ++typeJ, at2 = at2->next)
+		for (typeJ=typeI; typeJ<nTypes; ++typeJ, at2 = at2->next())
 		{
 			partials_.at(typeI,typeJ).setObjectTag(CharString("%s//%s-%s//Full%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
 			boundPartials_.at(typeI,typeJ).setObjectTag(CharString("%s//%s-%s//Bound%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
@@ -435,10 +435,10 @@ void PartialSet::setFileNames(const char* prefix, const char* tag, const char* s
 	// Set titles for partials
 	CharString title;
 	AtomTypeData* at1 = atomTypes_.first(), *at2;
-	for (int n=0; n<nTypes; ++n, at1 = at1->next)
+	for (int n=0; n<nTypes; ++n, at1 = at1->next())
 	{
 		at2 = at1;
-		for (int m=n; m<nTypes; ++m, at2 = at2->next)
+		for (int m=n; m<nTypes; ++m, at2 = at2->next())
 		{
 			title.sprintf("%s-%s-%s-%s.%s", prefix, tag, at1->atomTypeName(), at2->atomTypeName(), suffix);
 			partials_.at(n,m).setName(title.get());
@@ -463,10 +463,10 @@ void PartialSet::adjust(double delta)
 	int nTypes = atomTypes_.nItems();
 
 	AtomTypeData* at1 = atomTypes_.first(), *at2;
-	for (n=0; n<nTypes; ++n, at1 = at1->next)
+	for (n=0; n<nTypes; ++n, at1 = at1->next())
 	{
 		at2 = at1;
-		for (m=n; m<nTypes; ++m, at2 = at2->next)
+		for (m=n; m<nTypes; ++m, at2 = at2->next())
 		{
 			partials_.at(n, m).values() += delta;
 			boundPartials_.at(n, m).values() += delta;
@@ -484,10 +484,10 @@ void PartialSet::formPartials(double boxVolume)
 	int nTypes = atomTypes_.nItems();
 
 	AtomTypeData* at1 = atomTypes_.first(), *at2;
-	for (n=0; n<nTypes; ++n, at1 = at1->next)
+	for (n=0; n<nTypes; ++n, at1 = at1->next())
 	{
 		at2 = at1;
-		for (m=n; m<nTypes; ++m, at2 = at2->next)
+		for (m=n; m<nTypes; ++m, at2 = at2->next())
 		{
 			// Calculate RDFs from histogram data
 			calculateRDF(partials_.at(n, m), fullHistograms_.at(n, m), boxVolume, at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0);
@@ -589,7 +589,7 @@ void PartialSet::operator+=(const PartialSet& source)
 
 	// Loop over partials in source set
 	AtomTypeData* atd1 = source.atomTypes().first();
-	for (typeI=0; typeI<sourceNTypes; ++typeI, atd1 = atd1->next)
+	for (typeI=0; typeI<sourceNTypes; ++typeI, atd1 = atd1->next())
 	{
 		AtomType* atI = atd1->atomType();
 		localI = atomTypes_.indexOf(atI);
@@ -600,7 +600,7 @@ void PartialSet::operator+=(const PartialSet& source)
 		}
 
 		AtomTypeData* atd2 = atd1;
-		for (typeJ=typeI; typeJ<sourceNTypes; ++typeJ, atd2 = atd2->next)
+		for (typeJ=typeI; typeJ<sourceNTypes; ++typeJ, atd2 = atd2->next())
 		{
 			AtomType* atJ = atd2->atomType();
 			localJ = atomTypes_.indexOf(atJ);

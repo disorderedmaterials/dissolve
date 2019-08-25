@@ -176,7 +176,7 @@ bool AddSpeciesWizard::prepareForNextPage(int currentIndex)
 			}
 			// Update the Species and AtomTypes lists
 			ui_.SpeciesList->clear();
-			for (Species* sp = temporaryDissolve_.species().first(); sp != NULL; sp = sp->next)
+			for (Species* sp = temporaryDissolve_.species().first(); sp != NULL; sp = sp->next())
 			{
 				QListWidgetItem* item = new QListWidgetItem(sp->name());
 				item->setData(Qt::UserRole, VariantPointer<Species>(sp));

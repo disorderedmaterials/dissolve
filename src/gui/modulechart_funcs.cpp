@@ -362,7 +362,7 @@ void ModuleChart::dropEvent(QDropEvent* event)
 		Module* beforeModule = hotSpot->moduleBlockAfter() ? hotSpot->moduleBlockAfter()->module() : NULL;
 
 		// Check if the dragged Module is back in its original position (in which case we don't flag a change)
-		if (targetModule->next != beforeModule)
+		if (targetModule->next() != beforeModule)
 		{
 			modules_.modules().moveBefore(targetModule, beforeModule);
 
@@ -450,7 +450,7 @@ void ModuleChart::dropEvent(QDropEvent* event)
 // Return drop hotspot, if any, under specified point
 ModuleChartHotSpot* ModuleChart::hotSpotAt(QPoint pos)
 {
-	for (ModuleChartHotSpot* hotSpot = hotSpots_.first(); hotSpot != NULL; hotSpot = hotSpot->next) if (hotSpot->contains(pos)) return hotSpot;
+	for (ModuleChartHotSpot* hotSpot = hotSpots_.first(); hotSpot != NULL; hotSpot = hotSpot->next()) if (hotSpot->contains(pos)) return hotSpot;
 
 	return NULL;
 }
@@ -771,7 +771,7 @@ void ModuleChart::layOutWidgets(bool animateWidgets)
 	}
 
 	// Loop over defined hotspots and set the correct heights based on their row indices
-	for (ModuleChartHotSpot* hotSpot = hotSpots_.first(); hotSpot != NULL; hotSpot = hotSpot->next) hotSpot->setAreaHeight(heights_[hotSpot->row()]);
+	for (ModuleChartHotSpot* hotSpot = hotSpots_.first(); hotSpot != NULL; hotSpot = hotSpot->next()) hotSpot->setAreaHeight(heights_[hotSpot->row()]);
 
 	// Add on a default hotspot covering the whole widget
 	ModuleChartHotSpot* hotSpot = hotSpots_.add();

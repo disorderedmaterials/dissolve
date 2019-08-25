@@ -334,10 +334,10 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 	{
 		// Add experimentally-determined partial S(Q), calculated partial S(Q), and delta S(Q) to the SQGraph_
 		n = 0;
-		for (AtomType* at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next, ++n)
+		for (AtomType* at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++n)
 		{
 			m = n;
-			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
+			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next(), ++m)
 			{
 				CharString id("%s-%s [%s]", at1->name(), at2->name(), group->name());
 
@@ -368,10 +368,10 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 	}
 
 	n = 0;
-	for (AtomType* at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next, ++n)
+	for (AtomType* at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++n)
 	{
 		m = n;
-		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next(), ++m)
 		{
 			CharString id("%s-%s", at1->name(), at2->name());
 
@@ -398,10 +398,10 @@ void EPSRModuleWidget::updateDebugEPFunctionsGraph(int from, int to)
 	if (!module_) return;
 
 	int i = 0;
-	for (AtomType* at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
+	for (AtomType* at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
 	{
 		int j = i;
-		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
 		{
 			CharString id("%s-%s", at1->name(), at2->name());
 

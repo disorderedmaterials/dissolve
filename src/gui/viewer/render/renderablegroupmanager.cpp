@@ -101,14 +101,14 @@ RenderableGroup* RenderableGroupManager::addToGroup(Renderable* renderable, cons
 // Return named group, if it exists
 RenderableGroup* RenderableGroupManager::group(const char* name)
 {
-	for (RenderableGroup* group = groups_.first(); group != NULL; group = group->next) if (DissolveSys::sameString(group->name(), name)) return group;
+	for (RenderableGroup* group = groups_.first(); group != NULL; group = group->next()) if (DissolveSys::sameString(group->name(), name)) return group;
 	return NULL;
 }
 
 // Return group for specified Renderable, if one has been assigned
 RenderableGroup* RenderableGroupManager::group(Renderable* renderable)
 {
-	for (RenderableGroup* group = groups_.first(); group != NULL; group = group->next) if (group->usedByRenderable(renderable)) return group;
+	for (RenderableGroup* group = groups_.first(); group != NULL; group = group->next()) if (group->usedByRenderable(renderable)) return group;
 	return NULL;
 }
 
@@ -139,7 +139,7 @@ void RenderableGroupManager::removeFromGroup(Renderable* renderable)
 // Empty all groups of Renderables
 void RenderableGroupManager::emptyGroups()
 {
-	for (RenderableGroup* group = groups_.first(); group != NULL; group = group->next) group->empty();
+	for (RenderableGroup* group = groups_.first(); group != NULL; group = group->next()) group->empty();
 }
 
 /*
@@ -201,7 +201,7 @@ void RenderableGroupManager::setRenderableGroupShifts()
 {
 	// Loop over RenderableGroups
 	int groupIndex = 0;
-	for (RenderableGroup* group = groups_.first(); group != NULL; group = group->next)
+	for (RenderableGroup* group = groups_.first(); group != NULL; group = group->next())
 	{
 		group->applyVerticalShift(VerticalShiftAmounts[verticalShiftAmount_], groupIndex++);
 	}

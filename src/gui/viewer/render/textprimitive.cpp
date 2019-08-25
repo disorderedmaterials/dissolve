@@ -175,7 +175,7 @@ void TextPrimitive::boundingBox(FontInstance& fontInstance, Vec3<double>& lowerL
 	// Loop over remaining fragments, keeping track of the total width of the primitive and the max/min y values
 	Vec3<double> ll, ur;
 // 	double width = upperRight.x - lowerLeft.x;
-	for (TextFragment* fragment = fragments_.first()->next; fragment != NULL; fragment = fragment->next)
+	for (TextFragment* fragment = fragments_.first()->next(); fragment != NULL; fragment = fragment->next())
 	{
 		// Get bounding box for this fragment
 		fontInstance.boundingBox(fragment->text(), ll, ur);
@@ -201,7 +201,7 @@ void TextPrimitive::render(FontInstance& fontInstance, const Matrix4& viewMatrix
 	Matrix4 textMatrix;
 
 	// Loop over fragments
-	for (TextFragment* fragment = fragments_.first(); fragment != NULL; fragment = fragment->next)
+	for (TextFragment* fragment = fragments_.first(); fragment != NULL; fragment = fragment->next())
 	{
 		textMatrix = viewMatrix * transformationMatrix(fontInstance, viewMatrixInverse, baseFontSize, fragment);
 		glLoadMatrixd(textMatrix.matrix());

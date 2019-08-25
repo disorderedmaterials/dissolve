@@ -66,7 +66,7 @@ MasterIntra* Dissolve::hasMasterBond(const char* name) const
 	// Remove leading '@' if necessary
 	const char* trimmedName = name[0] == '@' ? &name[1] : name;
 
-	for (MasterIntra* b = masterBonds_.first(); b != NULL; b = b->next) if (DissolveSys::sameString(trimmedName, b->name())) return b;
+	for (MasterIntra* b = masterBonds_.first(); b != NULL; b = b->next()) if (DissolveSys::sameString(trimmedName, b->name())) return b;
 	return NULL;
 }
 
@@ -112,7 +112,7 @@ MasterIntra* Dissolve::hasMasterAngle(const char* name) const
 	// Remove leading '@' if necessary
 	const char* trimmedName = name[0] == '@' ? &name[1] : name;
 
-	for (MasterIntra* a = masterAngles_.first(); a != NULL; a = a->next) if (DissolveSys::sameString(trimmedName, a->name())) return a;
+	for (MasterIntra* a = masterAngles_.first(); a != NULL; a = a->next()) if (DissolveSys::sameString(trimmedName, a->name())) return a;
 	return NULL;
 }
 
@@ -158,7 +158,7 @@ MasterIntra* Dissolve::hasMasterTorsion(const char* name) const
 	// Remove leading '@' if necessary
 	const char* trimmedName = name[0] == '@' ? &name[1] : name;
 
-	for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next) if (DissolveSys::sameString(trimmedName, t->name())) return t;
+	for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next()) if (DissolveSys::sameString(trimmedName, t->name())) return t;
 	return NULL;
 }
 
@@ -168,9 +168,9 @@ MasterIntra* Dissolve::findMasterTerm(const char* name) const
 	// Remove leading '@' if necessary
 	const char* trimmedName = name[0] == '@' ? &name[1] : name;
 
-	for (MasterIntra* b = masterBonds_.first(); b != NULL; b = b->next) if (DissolveSys::sameString(trimmedName, b->name())) return b;
-	for (MasterIntra* a = masterAngles_.first(); a != NULL; a = a->next) if (DissolveSys::sameString(trimmedName, a->name())) return a;
-	for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next) if (DissolveSys::sameString(trimmedName, t->name())) return t;
+	for (MasterIntra* b = masterBonds_.first(); b != NULL; b = b->next()) if (DissolveSys::sameString(trimmedName, b->name())) return b;
+	for (MasterIntra* a = masterAngles_.first(); a != NULL; a = a->next()) if (DissolveSys::sameString(trimmedName, a->name())) return a;
+	for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next()) if (DissolveSys::sameString(trimmedName, t->name())) return t;
 
 	return NULL;
 }

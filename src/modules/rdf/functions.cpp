@@ -77,7 +77,7 @@ bool RDFModule::calculateGRSimple(ProcessPool& procPool, Configuration* cfg, Par
 	int* binss[nTypes], *bins;
 
 	n = 0;
-	for (AtomTypeData* atd = cfg->usedAtomTypes(); atd != NULL; atd = atd->next)
+	for (AtomTypeData* atd = cfg->usedAtomTypes(); atd != NULL; atd = atd->next())
 	{
 		maxr[n] = atd->population();
 		nr[n] = 0;
@@ -443,10 +443,10 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 	if ((intraBroadening.function() == PairBroadeningFunction::GaussianFunction) || (intraBroadening.function() == PairBroadeningFunction::GaussianElementPairFunction))
 	{
 		typeI = unweightedgr.atomTypes().first();
-		for (int i=0; i<unweightedgr.nAtomTypes(); ++i, typeI = typeI->next)
+		for (int i=0; i<unweightedgr.nAtomTypes(); ++i, typeI = typeI->next())
 		{
 			typeJ = typeI;
-			for (int j=i; j<unweightedgr.nAtomTypes(); ++j, typeJ = typeJ->next)
+			for (int j=i; j<unweightedgr.nAtomTypes(); ++j, typeJ = typeJ->next())
 			{
 				// Set up the broadening function for these AtomTypes
 				BroadeningFunction function = intraBroadening.broadeningFunction(typeI->atomType(), typeJ->atomType());
@@ -480,10 +480,10 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 
 		// Make sure bound g(r) are zeroed
 		typeI = broadgr.atomTypes().first();
-		for (int i=0; i<broadgr.nAtomTypes(); ++i, typeI = typeI->next)
+		for (int i=0; i<broadgr.nAtomTypes(); ++i, typeI = typeI->next())
 		{
 			typeJ = typeI;
-			for (int j=i; j<broadgr.nAtomTypes(); ++j, typeJ = typeJ->next) broadgr.boundPartial(i,j).values() = 0.0;
+			for (int j=i; j<broadgr.nAtomTypes(); ++j, typeJ = typeJ->next()) broadgr.boundPartial(i,j).values() = 0.0;
 		}
 
 		/*
@@ -533,10 +533,10 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 
 			// Broaden our g(r) (after subtracting it from the original full partial) and sum into our broadened partial set
 			typeI = tempgr.atomTypes().first();
-			for (int i=0; i<tempgr.nAtomTypes(); ++i, typeI = typeI->next)
+			for (int i=0; i<tempgr.nAtomTypes(); ++i, typeI = typeI->next())
 			{
 				typeJ = typeI;
-				for (int j=i; j<tempgr.nAtomTypes(); ++j, typeJ = typeJ->next)
+				for (int j=i; j<tempgr.nAtomTypes(); ++j, typeJ = typeJ->next())
 				{
 					if (tempgr.isBoundPartialEmpty(i, j)) continue;
 
@@ -604,10 +604,10 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 
 			// Broaden our g(r) (after subtracting it from the original full partial) and sum into our broadened partial set
 			typeI = tempgr.atomTypes().first();
-			for (int i=0; i<tempgr.nAtomTypes(); ++i, typeI = typeI->next)
+			for (int i=0; i<tempgr.nAtomTypes(); ++i, typeI = typeI->next())
 			{
 				typeJ = typeI;
-				for (int j=i; j<tempgr.nAtomTypes(); ++j, typeJ = typeJ->next)
+				for (int j=i; j<tempgr.nAtomTypes(); ++j, typeJ = typeJ->next())
 				{
 					if (tempgr.isBoundPartialEmpty(i, j)) continue;
 
@@ -633,29 +633,29 @@ bool RDFModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg,
 		// TODO FIXME There is serious limitation for Frequency-broadening which means that it cannot be used with RDF averaging (as we are calculating the intramolecular RDFs afresh).
 
 		typeI = broadgr.atomTypes().first();
-		for (int i=0; i<broadgr.nAtomTypes(); ++i, typeI = typeI->next)
+		for (int i=0; i<broadgr.nAtomTypes(); ++i, typeI = typeI->next())
 		{
 			typeJ = typeI;
-			for (int j=i; j<broadgr.nAtomTypes(); ++j, typeJ = typeJ->next) unweightedgr.boundPartial(i,j) += broadgr.boundPartial(i,j);
+			for (int j=i; j<broadgr.nAtomTypes(); ++j, typeJ = typeJ->next()) unweightedgr.boundPartial(i,j) += broadgr.boundPartial(i,j);
 		}
 	}
 
 	// Add broadened bound partials back in to full partials
 	typeI = unweightedgr.atomTypes().first();
-	for (int i=0; i<unweightedgr.nAtomTypes(); ++i, typeI = typeI->next)
+	for (int i=0; i<unweightedgr.nAtomTypes(); ++i, typeI = typeI->next())
 	{
 		typeJ = typeI;
-		for (int j=i; j<unweightedgr.nAtomTypes(); ++j, typeJ = typeJ->next) unweightedgr.partial(i, j) += unweightedgr.constBoundPartial(i, j);
+		for (int j=i; j<unweightedgr.nAtomTypes(); ++j, typeJ = typeJ->next()) unweightedgr.partial(i, j) += unweightedgr.constBoundPartial(i, j);
 	}
 
 	// Apply smoothing if requested
 	if (smoothing > 0)
 	{
 		AtomTypeData* typeI = unweightedgr.atomTypes().first();
-		for (int i=0; i<unweightedgr.nAtomTypes(); ++i, typeI = typeI->next)
+		for (int i=0; i<unweightedgr.nAtomTypes(); ++i, typeI = typeI->next())
 		{
 			AtomTypeData* typeJ = typeI;
-			for (int j=i; j<unweightedgr.nAtomTypes(); ++j, typeJ = typeJ->next)
+			for (int j=i; j<unweightedgr.nAtomTypes(); ++j, typeJ = typeJ->next())
 			{
 				Filters::movingAverage(unweightedgr.partial(i,j), smoothing);
 				Filters::movingAverage(unweightedgr.boundPartial(i,j), smoothing);
@@ -826,10 +826,10 @@ bool RDFModule::testReferencePartials(PartialSet& setA, PartialSet& setB, double
 	AtomTypeList atomTypes = setA.atomTypes();
 	AtomTypeData* typeI = atomTypes.first();
 	double error;
-	for (int n=0; n<atomTypes.nItems(); ++n, typeI = typeI->next)
+	for (int n=0; n<atomTypes.nItems(); ++n, typeI = typeI->next())
 	{
 		AtomTypeData* typeJ = typeI;
-		for (int m = n; m <atomTypes.nItems(); ++m, typeJ = typeJ->next)
+		for (int m = n; m <atomTypes.nItems(); ++m, typeJ = typeJ->next())
 		{
 			// Full partial
 			error = Error::percent(setA.partial(n,m), setB.partial(n,m));

@@ -82,7 +82,7 @@ bool Dissolve::iterate(int nIterations)
 		double thisTime = 0.0;
 
 		Messenger::print("Configuration Processing\n");
-		for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next)
+		for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
 		{
 			Messenger::print("   * '%s'\n", cfg->name());
 			if (cfg->nModules() == 0) Messenger::print("  (( No Tasks ))\n");
@@ -131,7 +131,7 @@ bool Dissolve::iterate(int nIterations)
 		Messenger::banner("Configuration Processing");
 
 		bool result = true;
-		for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next)
+		for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
 		{
 			// Check for failure of one or more processes / processing tasks
 			if (!worldPool().allTrue(result))
@@ -177,7 +177,7 @@ bool Dissolve::iterate(int nIterations)
 		 */
 		Messenger::banner("Reassemble Data");
 		// Loop over Configurations
-		for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next)
+		for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
 		{
 			Messenger::printVerbose("Broadcasting data for Configuration '%s'...\n", cfg->name());
 			if (!cfg->broadcastCoordinates(worldPool(), cfg->processPool().rootWorldRank())) return false;
@@ -240,7 +240,7 @@ bool Dissolve::iterate(int nIterations)
 			GenericListHelper<int>::realise(processingModuleData_, "Iteration", "Dissolve", GenericItem::InRestartFileFlag) = iteration_;
 
 			// Pair Potentials
-			for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next)
+			for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next())
 			{
 				GenericListHelper<Data1D>::realise(processingModuleData_, CharString("Potential_%s-%s_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ()), "Dissolve", GenericItem::InRestartFileFlag) = pot->uAdditional();
 			}
@@ -324,7 +324,7 @@ void Dissolve::printTiming()
 	CharString timingFormat("      --> %%20s  %%-%is  %%7.2f s/iteration (%%i iterations)\n", maxLength+2);
 	CharString restartFormat("      --> %%20s  %%-%is  %%7.2f s/write     (%%i writes)\n", maxLength+2);
 
-	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next)
+	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
 	{
 		if (cfg->nModules() == 0) continue;
 

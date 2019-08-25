@@ -494,7 +494,7 @@ void TMenuButton::setGroup(QString groupName, int index)
 {
 	// Search for this group...
 	TMenuButtonGroup* group;
-	for (group = groups_.first(); group != NULL; group = group->next) if (group->name() == groupName) break;
+	for (group = groups_.first(); group != NULL; group = group->next()) if (group->name() == groupName) break;
 	if (group == NULL)
 	{
 		group = groups_.add();
@@ -511,7 +511,7 @@ bool TMenuButton::setGroupButtonChecked(QString groupName, int buttonIndex)
 {
 	// First, find named group
 	TMenuButtonGroup* group;
-	for (group = groups_.first(); group != NULL; group = group->next) if (group->name() == groupName) break;
+	for (group = groups_.first(); group != NULL; group = group->next()) if (group->name() == groupName) break;
 	if (!group)
 	{
 		Messenger::print("Internal error: No TMenuButton group named '%s'\n", qPrintable(groupName));

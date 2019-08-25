@@ -32,7 +32,7 @@ bool Dissolve::setUpSimulation()
 	 */
 
 	Messenger::print("*** Checking Species definitions...\n");
-	for (Species* sp = species().first(); sp != NULL; sp = sp->next)
+	for (Species* sp = species().first(); sp != NULL; sp = sp->next())
 	{
 		Messenger::print("--- Species '%s'...\n", sp->name());
 		if (!sp->checkSetUp(coreData_.atomTypes())) return false;
@@ -45,7 +45,7 @@ bool Dissolve::setUpSimulation()
 	Messenger::print("\n");
 	Messenger::print("*** Setting up Configurations...\n");
 	int index = 0;
-	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next, ++index)
+	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next(), ++index)
 	{
 		Messenger::print("*** Configuration %2i: '%s'\n", index, cfg->name());
 
@@ -92,9 +92,9 @@ bool Dissolve::setUpSimulation()
 	Messenger::print("\n");
 	Messenger::print("*** Setting up PairPotentials...\n");
 	int nMissingPots = 0;
-	for (AtomType* at1 = coreData_.atomTypes().first(); at1 != NULL; at1 = at1->next)
+	for (AtomType* at1 = coreData_.atomTypes().first(); at1 != NULL; at1 = at1->next())
 	{
-		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next)
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next())
 		{
 			PairPotential* pot = pairPotential(at1, at2);
 			if (pot == NULL)
@@ -132,12 +132,12 @@ bool Dissolve::setUpSimulation()
 	Messenger::print("*** Setting up Master Intramolecular Terms...\n");
 
 	// All master intramolecular terms must first be initialised with the number of AtomTypes present in the system
-	for (MasterIntra* b = masterBonds_.first(); b != NULL; b = b->next) b->initialiseUsageArray(coreData_.nAtomTypes());
-	for (MasterIntra* a = masterAngles_.first(); a != NULL; a = a->next) a->initialiseUsageArray(coreData_.nAtomTypes());
-	for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next) t->initialiseUsageArray(coreData_.nAtomTypes());
+	for (MasterIntra* b = masterBonds_.first(); b != NULL; b = b->next()) b->initialiseUsageArray(coreData_.nAtomTypes());
+	for (MasterIntra* a = masterAngles_.first(); a != NULL; a = a->next()) a->initialiseUsageArray(coreData_.nAtomTypes());
+	for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next()) t->initialiseUsageArray(coreData_.nAtomTypes());
 
 	// Loop over Configurations, flagging any initial usage of master terms in the relevant MasterIntra usage array
-	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next, ++index)
+	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next(), ++index)
 	{
 		// Bonds
 		DynamicArrayIterator<Bond> bondIterator(cfg->bonds());
@@ -157,7 +157,7 @@ bool Dissolve::setUpSimulation()
 		Messenger::print("\n  Bond Masters:\n");
 		Messenger::print("     Name        Form            Parameters\n");
 		Messenger::print("    --------------------------------------------------------------------------\n");
-		for (MasterIntra* b = masterBonds_.first(); b != NULL; b = b->next)
+		for (MasterIntra* b = masterBonds_.first(); b != NULL; b = b->next())
 		{
 			CharString s("     %-10s  %-12s", b->name(), SpeciesBond::bondFunction( (SpeciesBond::BondFunction) b->form()));
 			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", b->parameter(n));
@@ -166,7 +166,7 @@ bool Dissolve::setUpSimulation()
 
 		Messenger::print("\n     Name        Usage Count\n");
 		Messenger::print("    --------------------------------------------------------------------------\n");
-		for (MasterIntra* b = masterBonds_.first(); b != NULL; b = b->next)
+		for (MasterIntra* b = masterBonds_.first(); b != NULL; b = b->next())
 		{
 			bool first = true;
 			for (int n=0; n<nAtomTypes(); ++n)
@@ -188,7 +188,7 @@ bool Dissolve::setUpSimulation()
 		Messenger::print("\n  Angle Masters:\n");
 		Messenger::print("     Name        Form            Parameters\n");
 		Messenger::print("    --------------------------------------------------------------------------\n");
-		for (MasterIntra* a = masterAngles_.first(); a != NULL; a = a->next)
+		for (MasterIntra* a = masterAngles_.first(); a != NULL; a = a->next())
 		{
 			CharString s("     %-10s  %-12s", a->name(), SpeciesAngle::angleFunction( (SpeciesAngle::AngleFunction) a->form()));
 			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", a->parameter(n));
@@ -197,7 +197,7 @@ bool Dissolve::setUpSimulation()
 
 		Messenger::print("\n     Name        Usage Count\n");
 		Messenger::print("    --------------------------------------------------------------------------\n");
-		for (MasterIntra* a = masterAngles_.first(); a != NULL; a = a->next)
+		for (MasterIntra* a = masterAngles_.first(); a != NULL; a = a->next())
 		{
 			bool first = true;
 			for (int n=0; n<nAtomTypes(); ++n)
@@ -219,7 +219,7 @@ bool Dissolve::setUpSimulation()
 		Messenger::print("\n  Torsion Masters:\n");
 		Messenger::print("     Name        Form            Parameters\n");
 		Messenger::print("    --------------------------------------------------------------------------\n");
-		for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next)
+		for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next())
 		{
 			CharString s("     %-10s  %-12s", t->name(), SpeciesTorsion::torsionFunction( (SpeciesTorsion::TorsionFunction) t->form()));
 			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", t->parameter(n));
@@ -228,7 +228,7 @@ bool Dissolve::setUpSimulation()
 
 		Messenger::print("\n     Name        Usage Count\n");
 		Messenger::print("    --------------------------------------------------------------------------\n");
-		for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next)
+		for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next())
 		{
 			bool first = true;
 			for (int n=0; n<nAtomTypes(); ++n)
@@ -286,7 +286,7 @@ bool Dissolve::setUpSimulation()
 	 */
 
 	Messenger::print("*** Defined Species\n");
-	for (Species* sp = species().first(); sp != NULL; sp = sp->next)
+	for (Species* sp = species().first(); sp != NULL; sp = sp->next())
 	{
 		Messenger::print("--- Species '%s'...\n", sp->name());
 		sp->print();

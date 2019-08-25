@@ -69,7 +69,7 @@ bool ChecksModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		 */
 
 		// Loop over distances to check
-		for (Geometry* d = distances_.first(); d != NULL; d = d->next)
+		for (Geometry* d = distances_.first(); d != NULL; d = d->next())
 		{
 			actual = cfg->box()->minimumDistance(atoms[d->a()], atoms[d->b()]);
 			delta = fabs(actual - d->value());
@@ -89,7 +89,7 @@ bool ChecksModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		 */
 
 		// Loop over angles to check
-		for (Geometry* a = angles_.first(); a != NULL; a = a->next)
+		for (Geometry* a = angles_.first(); a != NULL; a = a->next())
 		{
 			actual = cfg->box()->angleInDegrees(atoms[a->a()], atoms[a->b()], atoms[a->c()]);
 			delta = fabs(actual - a->value());

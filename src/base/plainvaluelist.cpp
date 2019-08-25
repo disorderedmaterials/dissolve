@@ -127,7 +127,7 @@ const char* PlainValueList::valueAsString(const char* name)
 // Return named value
 PlainValue* PlainValueList::value(const char* name)
 {
-	for (PlainValue* oldValue = values_.first(); oldValue != NULL; oldValue = oldValue->next) if (DissolveSys::sameString(name, oldValue->name())) return oldValue;
+	for (PlainValue* oldValue = values_.first(); oldValue != NULL; oldValue = oldValue->next()) if (DissolveSys::sameString(name, oldValue->name())) return oldValue;
 
 	return NULL;
 }

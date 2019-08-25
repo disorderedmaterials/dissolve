@@ -109,7 +109,7 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve& dissolve)
 		dissolve.copyAtomType(modifiedI, i);
 
 		// Move to next modified atom
-		modifiedI = modifiedI->next;
+		modifiedI = modifiedI->next();
 	}
 
 	// Copy bond terms

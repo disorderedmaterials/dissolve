@@ -70,7 +70,7 @@ bool KeywordList::add(const char* groupName, KeywordBase* object, const char* ke
 // Find named keyword
 KeywordBase* KeywordList::find(const char* keyword) const
 {
-	for (KeywordBase* kwd = keywords_.first(); kwd != NULL; kwd = kwd->next) if (DissolveSys::sameString(keyword, kwd->keyword())) return kwd;
+	for (KeywordBase* kwd = keywords_.first(); kwd != NULL; kwd = kwd->next()) if (DissolveSys::sameString(keyword, kwd->keyword())) return kwd;
 
 	return NULL;
 }
@@ -90,7 +90,7 @@ KeywordGroup* KeywordList::addGroup(const char* name)
 {
 	// Check that a group with the specified name doesn't already exist
 	KeywordGroup* group = NULL;
-	for (group = groups_.first(); group != NULL; group = group->next) if (DissolveSys::sameString(name, group->name())) break;
+	for (group = groups_.first(); group != NULL; group = group->next()) if (DissolveSys::sameString(name, group->name())) break;
 
 	if (!group)
 	{

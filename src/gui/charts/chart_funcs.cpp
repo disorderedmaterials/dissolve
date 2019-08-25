@@ -348,7 +348,7 @@ void ChartBase::dropEvent(QDropEvent* event)
 // Return drop hotspot, if any, under specified point
 ChartHotSpot* ChartBase::hotSpotAt(QPoint point)
 {
-	for (ChartHotSpot* hotSpot = hotSpots_.first(); hotSpot != NULL; hotSpot = hotSpot->next) if (hotSpot->contains(point)) return hotSpot;
+	for (ChartHotSpot* hotSpot = hotSpots_.first(); hotSpot != NULL; hotSpot = hotSpot->next()) if (hotSpot->contains(point)) return hotSpot;
 
 	return NULL;
 }

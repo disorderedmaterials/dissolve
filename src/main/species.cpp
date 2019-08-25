@@ -73,7 +73,7 @@ void Dissolve::updateIsotopologues(Species* species, Isotopologue* iso)
 {
 	if (iso) iso->update(coreData_.atomTypes());
 	else if (species) species->updateIsotopologues(coreData_.atomTypes());
-	else for (species = coreData_.species().first(); species != NULL; species = species->next) species->updateIsotopologues(coreData_.atomTypes());
+	else for (species = coreData_.species().first(); species != NULL; species = species->next()) species->updateIsotopologues(coreData_.atomTypes());
 }
 
 // Remove Isotopologue from Species

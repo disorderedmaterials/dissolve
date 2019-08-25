@@ -107,7 +107,7 @@ const char* CoreData::uniqueAtomTypeName(const char* base) const
 // Search for AtomType by name
 AtomType* CoreData::findAtomType(const char* name) const
 {
-	for (AtomType* at = atomTypes_.first(); at != NULL; at = at->next) if (DissolveSys::sameString(at->name(),name)) return at;
+	for (AtomType* at = atomTypes_.first(); at != NULL; at = at->next()) if (DissolveSys::sameString(at->name(),name)) return at;
 
 	return NULL;
 }
@@ -176,7 +176,7 @@ const char* CoreData::uniqueSpeciesName(const char* base) const
 // Search for Species by name
 Species* CoreData::findSpecies(const char* name) const
 {
-	for (Species* sp = species_.first(); sp != NULL; sp = sp->next) if (DissolveSys::sameString(sp->name(),name)) return sp;
+	for (Species* sp = species_.first(); sp != NULL; sp = sp->next()) if (DissolveSys::sameString(sp->name(),name)) return sp;
 
 	return NULL;
 }
@@ -245,7 +245,7 @@ const char* CoreData::uniqueConfigurationName(const char* base) const
 // Search for Configuration by name
 Configuration* CoreData::findConfiguration(const char* name) const
 {
-	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next) if (DissolveSys::sameString(cfg->name(),name)) return cfg;
+	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next()) if (DissolveSys::sameString(cfg->name(),name)) return cfg;
 
 	return NULL;
 }
