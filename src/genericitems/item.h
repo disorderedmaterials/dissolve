@@ -31,7 +31,7 @@ class CoreData;
 /*
  * GenericItem - Base class for all GenericItemContainers
  */
-class GenericItem
+class GenericItem : public ListItem<GenericItem>
 {
 	public:
 	// Constructor
@@ -43,8 +43,6 @@ class GenericItem
 		NoFlag				= -1,	/* Null flag */
 		InRestartFileFlag		= 1	/* The item should be written to the restart file */
 	};
-	// List Pointers
-	GenericItem* prev, *next;
 
 
 	/*
