@@ -98,8 +98,12 @@ class SequenceProcedureNode : public ProcedureNode
 	ProcedureNode::NodeContext sequenceContext() const;
 	// Return named node if present, and which matches the (optional) type given
 	ProcedureNode* node(const char* name, ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
+	// Return list of nodes of specified type present in the Procedure
+	RefList<ProcedureNode> nodes(ProcedureNode* queryingNode, ProcedureNode::NodeType nt);
 	// Return named node if it is currently in scope, and optionally matches the type given
 	ProcedureNode* nodeInScope(ProcedureNode* queryingNode, const char* name, ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes);
+	// Return list of nodes of specified type present in scope
+	RefList<ProcedureNode> nodesInScope(ProcedureNode* queryingNode, ProcedureNode::NodeType nt);
 	// Return named node if it exists anywhere in the same Procedure, and optionally matches the type given
 	ProcedureNode* nodeExists(const char* name, ProcedureNode* excludeNode = NULL, ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
 	// Return whether the named parameter is currently in scope

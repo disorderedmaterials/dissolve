@@ -121,8 +121,12 @@ class ProcedureNode : public ListItem<ProcedureNode>
 	ProcedureNode::NodeContext scopeContext() const;
 	// Return named node if it is currently in scope, and optionally matches the type given
 	ProcedureNode* nodeInScope(const char* name, ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes);
+	// Return list of nodes of specified type present in this node's scope
+	RefList<ProcedureNode> nodesInScope(ProcedureNode::NodeType nt);
 	// Return named node if it exists anywhere in the same Procedure, and optionally matches the type given
 	ProcedureNode* nodeExists(const char* name, ProcedureNode* excludeNode = NULL, ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
+	// Return list of nodes of specified type present in the Procedure
+	RefList<ProcedureNode> nodes(ProcedureNode::NodeType nt);
 	// Return whether the named parameter is currently in scope
 	ExpressionVariable* parameterInScope(const char* name, ExpressionVariable* excludeParameter = NULL);
 	// Return whether the named parameter exists anywhere in the same Procedure

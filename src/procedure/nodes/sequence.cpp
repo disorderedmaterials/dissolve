@@ -178,6 +178,29 @@ ProcedureNode* SequenceProcedureNode::node(const char* name, ProcedureNode::Node
 	return NULL;
 }
 
+// Return list of nodes of specified type present in the Procedure
+RefList<ProcedureNode> SequenceProcedureNode::nodes(ProcedureNode* queryingNode, ProcedureNode::NodeType nt)
+{
+	RefList<ProcedureNode> matches;
+
+	ListIterator<ProcedureNode> nodeIterator(sequence_);
+	while (ProcedureNode* node = nodeIterator.iterate())
+	{
+		// Check type
+		if (nt == ProcedureNode::nNodeTypes) matches.append(node);
+		else if (node->type() == nt) matches.append(node);
+
+		// If the node has a branch, recurse in to that
+		if (node->hasBranch())
+		{
+			RefList<ProcedureNode> branchNodes = node->branch()->nodes(node, nt);
+			matches += branchNodes;
+		}
+	}
+
+	return matches;
+}
+
 // Return named node if it is currently in scope, and optionally matches the type given
 ProcedureNode* SequenceProcedureNode::nodeInScope(ProcedureNode* queryingNode, const char* name, ProcedureNode::NodeType nt)
 {
@@ -204,6 +227,32 @@ ProcedureNode* SequenceProcedureNode::nodeInScope(ProcedureNode* queryingNode, c
 
 	// Not found
 	return NULL;
+}
+
+// Return list of nodes of specified type present in scope
+RefList<ProcedureNode> SequenceProcedureNode::nodesInScope(ProcedureNode* queryingNode, ProcedureNode::NodeType nt)
+{
+	// Is this node present in our own sequence?
+	if (queryingNode && (!sequence_.contains(queryingNode)))
+	{
+		Messenger::error("INTERNAL ERROR: Querying node passed to SequenceProcedureNode::nodesInScope() is not a member of this sequence.\n");
+		return RefList<ProcedureNode>();
+	}
+
+	RefList<ProcedureNode> matches;
+
+	// Start from the target node and work backwards...
+	for (ProcedureNode* node = queryingNode; node != NULL; node = node->prev())
+	{
+		// Check type
+		if (nt == ProcedureNode::nNodeTypes) matches.append(node);
+		else if (node->type() == nt) matches.append(node);
+	}
+
+	// Not in our list. Recursively check our parent(s)
+	if (parentNode_) matches += parentNode_->nodesInScope(nt);
+
+	return matches;
 }
 
 // Return named node if it exists anywhere in the same Procedure, and optionally matches the type given

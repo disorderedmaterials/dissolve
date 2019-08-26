@@ -162,12 +162,28 @@ ProcedureNode* ProcedureNode::nodeInScope(const char* name, ProcedureNode::NodeT
 	return scope_->nodeInScope(this, name, nt);
 }
 
+// Return list of nodes of specified type present in this node's scope
+RefList<ProcedureNode> ProcedureNode::nodesInScope(ProcedureNode::NodeType nt)
+{
+	if (!scope_) return RefList<ProcedureNode>();
+
+	return scope_->nodesInScope(this, nt);
+}
+
 // Return named node if it exists anywhere in the same Procedure, and optionally matches the type given
 ProcedureNode* ProcedureNode::nodeExists(const char* name, ProcedureNode* excludeNode, ProcedureNode::NodeType nt) const
 {
 	if (!scope_) return NULL;
 
 	return scope_->nodeExists(name, excludeNode, nt);
+}
+
+// Return list of nodes of specified type present in the Procedure
+RefList<ProcedureNode> ProcedureNode::nodes(ProcedureNode::NodeType nt)
+{
+	if (!scope_) return RefList<ProcedureNode>();
+
+	return scope_->nodes(this, nt);
 }
 
 // Return whether the named parameter is currently in scope
