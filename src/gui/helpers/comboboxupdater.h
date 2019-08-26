@@ -29,9 +29,6 @@
 // ComboBoxUpdater - Constructor-only template class to update items in a QComboBox, preserving original items as much as possible
 template <class I> class ComboBoxUpdater
 {
-	// Typedefs for passed functions
-// 	typedef void (T::*ListWidgetRowUpdateFunction)(int row, I* item, bool createItem);
-
 	public:
 	// Update QComboBox from supplied List, assuming that class I implements a name() function for the item
 	ComboBoxUpdater(QComboBox* comboBox, const List<I>& data, const I* currentItem)
@@ -41,8 +38,11 @@ template <class I> class ComboBoxUpdater
 		ListIterator<I> dataIterator(data);
 		while (I* dataItem = dataIterator.iterate())
 		{
-			// If there is an item already on this row, check it
-			// If it represents the current pointer data, just update it and move on. Otherwise, delete it and check again
+			/*
+			 * If there is an item already on this row, check it
+			 * If it represents the current pointer data, just update it and move on.
+			 * Otherwise, delete it and check again.
+			 */
 			while (currentIndex < comboBox->count())
 			{
 				I* oldData = VariantPointer<I>(comboBox->itemData(currentIndex, Qt::UserRole));
