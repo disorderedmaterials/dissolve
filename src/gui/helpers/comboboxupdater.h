@@ -73,6 +73,50 @@ template <class I> class ComboBoxUpdater
 		// If there are still rows remaining in the widget, delete them now
 		while (currentIndex < comboBox->count()) comboBox->removeItem(currentIndex);
 	}
+
+	// Update QComboBox from supplied List, assuming that class I implements a name() function for the item
+	ComboBoxUpdater(QComboBox* comboBox, const RefList<I>& data, const I* currentItem)
+	{
+		int currentIndex = 0;
+
+		RefListIterator<I> dataIterator(data);
+		while (I* dataItem = dataIterator.iterate())
+		{
+			/*
+			 * If there is an item already on this row, check it
+			 * If it represents the current pointer data, just update it and move on.
+			 * Otherwise, delete it and check again.
+			 */
+			while (currentIndex < comboBox->count())
+			{
+				I* oldData = VariantPointer<I>(comboBox->itemData(currentIndex, Qt::UserRole));
+				if (oldData == dataItem)
+				{
+					// Data pointer matches - make sure the text is up to date
+					comboBox->setItemText(currentIndex, dataItem->name());
+
+					break;
+				}
+				else
+				{
+					// Data pointer does not match - remove the offending item
+					comboBox->removeItem(currentIndex);
+				}
+			}
+
+			// If the current row index is (now) out of range, add a new row to the list
+			if (currentIndex == comboBox->count())
+			{
+				// Create new item
+				comboBox->addItem(dataItem->name(), VariantPointer<I>(dataItem));
+			}
+
+			++currentIndex;
+		}
+
+		// If there are still rows remaining in the widget, delete them now
+		while (currentIndex < comboBox->count()) comboBox->removeItem(currentIndex);
+	}
 };
 
 #endif
