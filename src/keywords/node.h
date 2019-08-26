@@ -36,7 +36,7 @@ class NodeKeywordBase
 {
 	public:
 	// Constructor
-	NodeKeywordBase(ProcedureNode* parentNode, ProcedureNode::NodeType nodeType);
+	NodeKeywordBase(ProcedureNode* parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope);
 	// Destructor
 	virtual ~NodeKeywordBase();
 
@@ -59,12 +59,18 @@ class NodeKeywordBase
 	private:
 	// Target node type to allow
 	ProcedureNode::NodeType nodeType_;
+	// Whether to accept nodes within scope only
+	bool onlyInScope_;
 
 	public:
 	// Return target node type to allow
 	ProcedureNode::NodeType nodeType() const;
+	// Return whether to accept nodes within scope only
+	bool onlyInScope() const;
 	// Set the target node
 	virtual bool setNode(ProcedureNode* node) = 0;
+	// Return the current target node
+	virtual ProcedureNode* node() const = 0;
 };
 
 // Keyword with ProcedureNode
@@ -72,7 +78,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
 {
 	public:
 	// Constructor
-	NodeKeyword(ProcedureNode* parentNode, ProcedureNode::NodeType nodeType, N* node) : NodeKeywordBase(parentNode, nodeType), KeywordData<N*>(KeywordBase::NodeData, node)
+	NodeKeyword(ProcedureNode* parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, N* node) : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<N*>(KeywordBase::NodeData, node)
 	{
 	}
 	// Destructor
@@ -100,8 +106,8 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
 	{
 		if (!parentNode()) return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n", KeywordBase::keyword());
 
-		// Locate the named node in scope - don't prune by type yet (we'll check that in setNode())
-		ProcedureNode* node = parentNode()->nodeInScope(parser.argc(startArg));
+		// Locate the named node - don't prune by type yet (we'll check that in setNode())
+		ProcedureNode* node = onlyInScope_ ? parentNode()->nodeInScope(parser.argc(startArg)) : parentNode()->nodeExists(parser.argc(startArg));
 		if (!node) return Messenger::error("Node '%s' given to keyword %s doesn't exist.\n", parser.argc(startArg), KeywordBase::keyword());
 
 		return setNode(node);
@@ -131,6 +137,11 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
 		KeywordData<N*>::set_ = true;
 
 		return true;
+	}
+	// Return the current target node
+	ProcedureNode* node() const
+	{
+		return KeywordData<N*>::data_;
 	}
 
 
