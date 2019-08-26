@@ -136,17 +136,17 @@ QWidget* KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& keyword
 	}
 	else if (keyword->type() == KeywordBase::NodeValueData)
 	{
-		NodeValueKeywordWidget* nodeValueFunctionWidget = new NodeValueKeywordWidget(NULL, keyword, coreData);
-		connect(nodeValueFunctionWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
-		widget = nodeValueFunctionWidget;
-		base = nodeValueFunctionWidget;
+		NodeValueKeywordWidget* nodeValueWidget = new NodeValueKeywordWidget(NULL, keyword, coreData);
+		connect(nodeValueWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
+		widget = nodeValueWidget;
+		base = nodeValueWidget;
 	}
 	else if (keyword->type() == KeywordBase::NodeValueEnumOptionsData)
 	{
-		NodeValueEnumOptionsKeywordWidget* nodeValueEnumOptionsFunctionWidget = new NodeValueEnumOptionsKeywordWidget(NULL, keyword, coreData);
-		connect(nodeValueEnumOptionsFunctionWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
-		widget = nodeValueEnumOptionsFunctionWidget;
-		base = nodeValueEnumOptionsFunctionWidget;
+		NodeValueEnumOptionsKeywordWidget* nodeValueEnumOptionsWidget = new NodeValueEnumOptionsKeywordWidget(NULL, keyword, coreData);
+		connect(nodeValueEnumOptionsWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
+		widget = nodeValueEnumOptionsWidget;
+		base = nodeValueEnumOptionsWidget;
 	}
 	else if (keyword->type() == KeywordBase::PairBroadeningFunctionData)
 	{
