@@ -37,7 +37,7 @@ class NodeAndIntegerKeywordBase
 {
 	public:
 	// Constructor
-	NodeAndIntegerKeywordBase(ProcedureNode* parentNode, ProcedureNode::NodeType nodeType);
+	NodeAndIntegerKeywordBase(ProcedureNode* parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope);
 	// Destructor
 	virtual ~NodeAndIntegerKeywordBase();
 
@@ -60,12 +60,18 @@ class NodeAndIntegerKeywordBase
 	private:
 	// Target node type to allow
 	ProcedureNode::NodeType nodeType_;
+	// Whether to accept nodes within scope only
+	bool onlyInScope_;
 
 	public:
 	// Return target node type to allow
 	ProcedureNode::NodeType nodeType() const;
+	// Return whether to accept nodes within scope only
+	bool onlyInScope() const;
 	// Set the target node
 	virtual bool setNode(ProcedureNode* node) = 0;
+	// Return the current target node
+	virtual ProcedureNode* node() const = 0;
 
 
 	/*
@@ -85,10 +91,10 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
 {
 	public:
 	// Constructors
-	NodeAndIntegerKeyword(ProcedureNode* parentNode, ProcedureNode::NodeType nodeType, N* node) : NodeAndIntegerKeywordBase(parentNode, nodeType), KeywordData< Pair<N*,int> >(KeywordBase::NodeAndIntegerData, Pair<N*,int>(node))
+	NodeAndIntegerKeyword(ProcedureNode* parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, N* node) : NodeAndIntegerKeywordBase(parentNode, nodeType, onlyInScope), KeywordData< Pair<N*,int> >(KeywordBase::NodeAndIntegerData, Pair<N*,int>(node))
 	{
 	}
-	NodeAndIntegerKeyword(ProcedureNode* parentNode, ProcedureNode::NodeType nodeType, N* node, int index) : NodeAndIntegerKeywordBase(parentNode, nodeType), KeywordData< Pair<N*,int> >(KeywordBase::NodeAndIntegerData, Pair<N*,int>(node, index))
+	NodeAndIntegerKeyword(ProcedureNode* parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, N* node, int index) : NodeAndIntegerKeywordBase(parentNode, nodeType, onlyInScope), KeywordData< Pair<N*,int> >(KeywordBase::NodeAndIntegerData, Pair<N*,int>(node, index))
 	{
 	}
 	// Destructor
@@ -159,12 +165,17 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
 
 		return true;
 	}
+	// Return the current target node
+	ProcedureNode* node() const
+	{
+		return KeywordData< Pair<N*,int> >::data_.a();
+	}
 
 
 	/*
 	* Associated Index
 	*/
-
+	public:
 	// Set target index
 	void setIndex(int index)
 	{
@@ -184,6 +195,7 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
 	{
 		return KeywordData< Pair<N*,int> >::data_.isBSet();
 	}
+
 
 	/*
 	 * Object Management

@@ -32,8 +32,8 @@
 // Constructor
 Collect2DProcedureNode::Collect2DProcedureNode(CalculateProcedureNode* xObservable, CalculateProcedureNode* yObservable, double xMin, double xMax, double xBinWidth, double yMin, double yMax, double yBinWidth) : ProcedureNode(ProcedureNode::Collect2DNode)
 {
-	keywords_.add("Target", new NodeAndIntegerKeyword<CalculateProcedureNode>(this, ProcedureNode::ProcedureNode::CalculateNode, xObservable, 0), "QuantityX", "Calculated observable to collect for x axis");
-	keywords_.add("Target", new NodeAndIntegerKeyword<CalculateProcedureNode>(this, ProcedureNode::ProcedureNode::CalculateNode, yObservable, 0), "QuantityY", "Calculated observable to collect for y axis");
+	keywords_.add("Target", new NodeAndIntegerKeyword<CalculateProcedureNode>(this, ProcedureNode::ProcedureNode::CalculateNode, true, xObservable, 0), "QuantityX", "Calculated observable to collect for x axis");
+	keywords_.add("Target", new NodeAndIntegerKeyword<CalculateProcedureNode>(this, ProcedureNode::ProcedureNode::CalculateNode, true, yObservable, 0), "QuantityY", "Calculated observable to collect for y axis");
 	keywords_.add("Target", new Vec3DoubleKeyword(Vec3<double>(xMin, xMax, xBinWidth), Vec3<double>(0.0, 0.0, 1.0e-5)), "RangeX", "Range of calculation for the specified x observable");
 	keywords_.add("Target", new Vec3DoubleKeyword(Vec3<double>(yMin, yMax, yBinWidth), Vec3<double>(0.0, 0.0, 1.0e-5)), "RangeY", "Range of calculation for the specified y observable");
 	keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect", "Branch which runs if the target quantities were binned successfully");

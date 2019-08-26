@@ -32,9 +32,9 @@
 // Constructors
 Collect3DProcedureNode::Collect3DProcedureNode(CalculateProcedureNode* xObservable, CalculateProcedureNode* yObservable, CalculateProcedureNode* zObservable, double xMin, double xMax, double xBinWidth, double yMin, double yMax, double yBinWidth, double zMin, double zMax, double zBinWidth) : ProcedureNode(ProcedureNode::Collect3DNode)
 {
-	keywords_.add("Target", new NodeAndIntegerKeyword<CalculateProcedureNode>(this, ProcedureNode::ProcedureNode::CalculateNode, xObservable, 0), "QuantityX", "Calculated observable to collect for x axis");
-	keywords_.add("Target", new NodeAndIntegerKeyword<CalculateProcedureNode>(this, ProcedureNode::ProcedureNode::CalculateNode, yObservable, 0), "QuantityY", "Calculated observable to collect for y axis");
-	keywords_.add("Target", new NodeAndIntegerKeyword<CalculateProcedureNode>(this, ProcedureNode::ProcedureNode::CalculateNode, zObservable, 0), "QuantityZ", "Calculated observable to collect for z axis");
+	keywords_.add("Target", new NodeAndIntegerKeyword<CalculateProcedureNode>(this, ProcedureNode::ProcedureNode::CalculateNode, true, xObservable, 0), "QuantityX", "Calculated observable to collect for x axis");
+	keywords_.add("Target", new NodeAndIntegerKeyword<CalculateProcedureNode>(this, ProcedureNode::ProcedureNode::CalculateNode, true, yObservable, 0), "QuantityY", "Calculated observable to collect for y axis");
+	keywords_.add("Target", new NodeAndIntegerKeyword<CalculateProcedureNode>(this, ProcedureNode::ProcedureNode::CalculateNode, true, zObservable, 0), "QuantityZ", "Calculated observable to collect for z axis");
 	keywords_.add("Target", new Vec3DoubleKeyword(Vec3<double>(xMin, xMax, xBinWidth), Vec3<double>(0.0, 0.0, 1.0e-5)), "RangeX", "Range of calculation for the specified x observable");
 	keywords_.add("Target", new Vec3DoubleKeyword(Vec3<double>(yMin, yMax, yBinWidth), Vec3<double>(0.0, 0.0, 1.0e-5)), "RangeY", "Range of calculation for the specified y observable");
 	keywords_.add("Target", new Vec3DoubleKeyword(Vec3<double>(zMin, zMax, zBinWidth), Vec3<double>(0.0, 0.0, 1.0e-5)), "RangeZ", "Range of calculation for the specified z observable");
