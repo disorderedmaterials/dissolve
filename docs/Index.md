@@ -27,8 +27,9 @@ Basic overviews and referencing.
 
 Obtaining, installing, and building Dissolve, and setting up and running your first simulation.
 
-[Where to get Dissolve](GettingStarted/GettingDissolve.md){: .btn .btn-blue}
-[Building Dissolve](GettingStarted/BuildingDissolve.md){: .btn .btn-blue}
+[Where to get Dissolve](GettingStarted/GettingDissolve.md){: .btn}
+[Building Dissolve](GettingStarted/BuildingDissolve.md){: .btn}
+[CLI Options](GettingStarted/CLIOptions.md){: .btn}
 
 
 * * *
@@ -38,7 +39,7 @@ Dissolve's file format and syntax, and output file roles.
 
 TODO
 {: .label .label-red }
-[Overview](Files/InputFile/Index.md){: .btn .btn-blue}
+[Main Input File](Files/InputFile/Index.md){: .btn .btn-blue}
 [Configuration Block](Files/InputFile/Configuration.md){: .btn .btn-outline}
 [Layer Block](Files/InputFile/Layer.md){: .btn .btn-outline}
 [Master Block](Files/InputFile/Master.md){: .btn .btn-outline}
