@@ -52,7 +52,7 @@ Vec3DoubleKeywordWidget::Vec3DoubleKeywordWidget(QWidget* parent, KeywordBase* k
 	ui_.Spin2->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.Spin2));
 	ui_.Spin3->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.Spin3));
 
-	refreshing_ = true;
+	refreshing_ = false;
 }
 
 /*
