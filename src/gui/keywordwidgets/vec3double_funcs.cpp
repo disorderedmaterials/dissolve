@@ -48,7 +48,9 @@ Vec3DoubleKeywordWidget::Vec3DoubleKeywordWidget(QWidget* parent, KeywordBase* k
 	}
 
 	// Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a QScrollArea)
-	installEventFilter(new MouseWheelWidgetAdjustmentGuard(this));
+	ui_.Spin1->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.Spin1));
+	ui_.Spin2->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.Spin2));
+	ui_.Spin3->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.Spin3));
 
 	refreshing_ = true;
 }
@@ -102,6 +104,7 @@ void Vec3DoubleKeywordWidget::updateValue()
 	refreshing_ = true;
 
 	Vec3<double> v = keyword_->asVec3Double();
+	v.print();
 
 	ui_.Spin1->setValue(v.x);
 	ui_.Spin2->setValue(v.y);
