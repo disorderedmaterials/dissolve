@@ -43,7 +43,7 @@ NodeValueKeywordWidget::NodeValueKeywordWidget(QWidget* parent, KeywordBase* key
 }
 
 /*
- * Signals / Slots
+ * Widgets
  */
 
 void NodeValueKeywordWidget::on_ValueEdit_editingFinished()

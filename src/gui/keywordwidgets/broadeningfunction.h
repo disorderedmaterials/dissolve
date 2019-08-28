@@ -39,8 +39,6 @@ class BroadeningFunctionKeywordWidget : public KeywordDropDown, public KeywordWi
 	public:
 	// Constructor
 	BroadeningFunctionKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
-        // Main form declaration
-        Ui::BroadeningFunctionWidget ui;
 
 
 	/*
@@ -52,8 +50,12 @@ class BroadeningFunctionKeywordWidget : public KeywordDropDown, public KeywordWi
 
 
 	/*
-	 * Signals / Slots
+	 * Widgets
 	 */
+	private:
+	// Main form declaration
+	Ui::BroadeningFunctionWidget ui_;
+
 	private slots:
 	// Function type combo changed
 	void functionCombo_currentIndexChanged(int index);

@@ -39,8 +39,6 @@ class ModuleReferenceListKeywordWidget: public KeywordDropDown, public KeywordWi
 	public:
 	// Constructor
 	ModuleReferenceListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
-        // Main form declaration
-        Ui::ModuleReferenceListWidget ui;
 
 
 	/*
@@ -52,8 +50,12 @@ class ModuleReferenceListKeywordWidget: public KeywordDropDown, public KeywordWi
 
 
 	/*
-	 * Signals / Slots
+	 * Widgets
 	 */
+	private:
+	// Main form declaration
+	Ui::ModuleReferenceListWidget ui_;
+
 	private:
 	// Selection list update function
 	void updateSelectionRow(int row, Module* module, bool createItem);

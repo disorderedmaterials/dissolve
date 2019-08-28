@@ -35,10 +35,10 @@
 ModuleGroupsKeywordWidget::ModuleGroupsKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : KeywordDropDown(this), KeywordWidgetBase(coreData)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container
-	ui.setupUi(dropWidget());
+	ui_.setupUi(dropWidget());
 
 	// Connect signals / slots
-	connect(ui.SelectionTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(itemChanged(QTableWidgetItem*)));
+	connect(ui_.SelectionTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(itemChanged(QTableWidgetItem*)));
 
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<ModuleGroupsKeyword*>(keyword);
@@ -51,7 +51,7 @@ ModuleGroupsKeywordWidget::ModuleGroupsKeywordWidget(QWidget* parent, KeywordBas
 }
 
 /*
- * Signals / Slots
+ * Widgets
  */
 
 // Selection table update function
@@ -68,9 +68,9 @@ void ModuleGroupsKeywordWidget::updateSelectionRow(int row, Module* module, bool
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<Module>(module));
 		item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-		ui.SelectionTable->setItem(row, 0, item);
+		ui_.SelectionTable->setItem(row, 0, item);
 	}
-	else item = ui.SelectionTable->item(row, 0);
+	else item = ui_.SelectionTable->item(row, 0);
 	item->setText(module->uniqueName());
 	item->setCheckState(groups.contains(module) ? Qt::Checked : Qt::Unchecked);
 
@@ -79,9 +79,9 @@ void ModuleGroupsKeywordWidget::updateSelectionRow(int row, Module* module, bool
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<Module>(module));
-		ui.SelectionTable->setItem(row, 1, item);
+		ui_.SelectionTable->setItem(row, 1, item);
 	}
-	else item = ui.SelectionTable->item(row, 1);
+	else item = ui_.SelectionTable->item(row, 1);
 	item->setText(groups.groupName(module));
 }
 
@@ -116,9 +116,9 @@ void ModuleGroupsKeywordWidget::updateWidgetValues(const CoreData& coreData)
 	RefList<Module> availableModules = coreData.findModules(keyword_->data().allowedModuleTypes());
 
 	// Update the list widget
-	TableWidgetRefListUpdater<ModuleGroupsKeywordWidget,Module> tableUpdater(ui.SelectionTable, availableModules, this, &ModuleGroupsKeywordWidget::updateSelectionRow);
+	TableWidgetRefListUpdater<ModuleGroupsKeywordWidget,Module> tableUpdater(ui_.SelectionTable, availableModules, this, &ModuleGroupsKeywordWidget::updateSelectionRow);
 
-	ui.SelectionTable->resizeColumnToContents(0);
+	ui_.SelectionTable->resizeColumnToContents(0);
 
 	updateSummaryText();
 
@@ -131,15 +131,15 @@ void ModuleGroupsKeywordWidget::updateKeywordData()
 	// Loop over items in the QListWidget, adding the associated Modules/groups for any that are checked
 	ModuleGroups newGroups;
 	newGroups.setAllowedModuleTypes(keyword_->data().allowedModuleTypes());
-	for (int n=0; n<ui.SelectionTable->rowCount(); ++n)
+	for (int n=0; n<ui_.SelectionTable->rowCount(); ++n)
 	{
 		// Get selection status and Module pointer from first column
-		QTableWidgetItem* item = ui.SelectionTable->item(n, 0);
+		QTableWidgetItem* item = ui_.SelectionTable->item(n, 0);
 		Module* module = VariantPointer<Module>(item->data(Qt::UserRole));
 		if ((!module) || (item->checkState() != Qt::Checked)) continue;
 
 		// Second column contains group name
-		QString group = ui.SelectionTable->item(n, 1)->text();
+		QString group = ui_.SelectionTable->item(n, 1)->text();
 		newGroups.addModule(module, qPrintable(group));
 	}
 

@@ -33,10 +33,10 @@
 ModuleReferenceListKeywordWidget::ModuleReferenceListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : KeywordDropDown(this), KeywordWidgetBase(coreData)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container
-	ui.setupUi(dropWidget());
+	ui_.setupUi(dropWidget());
 
 	// Connect signals / slots
-	connect(ui.SelectionList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(itemChanged(QListWidgetItem*)));
+	connect(ui_.SelectionList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(itemChanged(QListWidgetItem*)));
 
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<ModuleReferenceListKeyword*>(keyword);
@@ -49,7 +49,7 @@ ModuleReferenceListKeywordWidget::ModuleReferenceListKeywordWidget(QWidget* pare
 }
 
 /*
- * Signals / Slots
+ * Widgets
  */
 
 // Selection list update function
@@ -64,9 +64,9 @@ void ModuleReferenceListKeywordWidget::updateSelectionRow(int row, Module* modul
 		item = new QListWidgetItem(module->uniqueName());
 		item->setData(Qt::UserRole, VariantPointer<Module>(module));
 		item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-		ui.SelectionList->insertItem(row, item);
+		ui_.SelectionList->insertItem(row, item);
 	}
-	else item = ui.SelectionList->item(row);
+	else item = ui_.SelectionList->item(row);
 	item->setCheckState(selection.contains(module) ? Qt::Checked : Qt::Unchecked);
 }
 
@@ -101,7 +101,7 @@ void ModuleReferenceListKeywordWidget::updateWidgetValues(const CoreData& coreDa
 	RefList<Module> availableModules = coreData.findModules(keyword_->moduleTypes());
 
 	// Update the list widget
-	ListWidgetUpdater<ModuleReferenceListKeywordWidget,Module> listUpdater(ui.SelectionList, availableModules, this, &ModuleReferenceListKeywordWidget::updateSelectionRow);
+	ListWidgetUpdater<ModuleReferenceListKeywordWidget,Module> listUpdater(ui_.SelectionList, availableModules, this, &ModuleReferenceListKeywordWidget::updateSelectionRow);
 
 	updateSummaryText();
 
@@ -113,9 +113,9 @@ void ModuleReferenceListKeywordWidget::updateKeywordData()
 {
 	// Loop over items in the QListWidget, adding the associated Modules for any that are checked
 	RefList<Module> newSelection;
-	for (int n=0; n<ui.SelectionList->count(); ++n)
+	for (int n=0; n<ui_.SelectionList->count(); ++n)
 	{
-		QListWidgetItem* item = ui.SelectionList->item(n);
+		QListWidgetItem* item = ui_.SelectionList->item(n);
 		if (item->checkState() == Qt::Checked) newSelection.append(VariantPointer<Module>(item->data(Qt::UserRole)));
 	}
 

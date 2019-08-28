@@ -56,7 +56,7 @@ Vec3DoubleKeywordWidget::Vec3DoubleKeywordWidget(QWidget* parent, KeywordBase* k
 }
 
 /*
- * Signals / Slots
+ * Widgets
  */
 
 // Spin box value changed

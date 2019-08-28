@@ -44,7 +44,7 @@ Vec3NodeValueKeywordWidget::Vec3NodeValueKeywordWidget(QWidget* parent, KeywordB
 }
 
 /*
- * Signals / Slots
+ * Widgets
  */
 
 void Vec3NodeValueKeywordWidget::on_ValueAEdit_editingFinished()

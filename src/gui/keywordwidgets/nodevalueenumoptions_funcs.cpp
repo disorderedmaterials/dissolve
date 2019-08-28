@@ -56,7 +56,7 @@ NodeValueEnumOptionsKeywordWidget::NodeValueEnumOptionsKeywordWidget(QWidget* pa
 }
 
 /*
- * Signals / Slots
+ * Widgets
  */
 
 void NodeValueEnumOptionsKeywordWidget::on_ValueEdit_editingFinished()

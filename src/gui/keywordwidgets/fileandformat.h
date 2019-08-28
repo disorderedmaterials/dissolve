@@ -40,8 +40,6 @@ class FileAndFormatKeywordWidget : public QWidget, public KeywordWidgetBase
 	public:
 	// Constructor
 	FileAndFormatKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
-        // Main form declaration
-        Ui::FileAndFormatWidget ui;
 
 
 	/*
@@ -53,8 +51,12 @@ class FileAndFormatKeywordWidget : public QWidget, public KeywordWidgetBase
 
 
 	/*
-	 * Signals / Slots
+	 * Widgets
 	 */
+	private:
+	// Main form declaration
+	Ui::FileAndFormatWidget ui_;
+
 	private slots:
 	void on_FileEdit_editingFinished();
 	void on_FileEdit_returnPressed();

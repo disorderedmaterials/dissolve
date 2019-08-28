@@ -38,8 +38,6 @@ class NodeValueKeywordWidget : public QWidget, public KeywordWidgetBase
 	public:
 	// Constructor
 	NodeValueKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
-        // Main form declaration
-        Ui::NodeValueWidget ui_;
 
 
 	/*
@@ -51,8 +49,12 @@ class NodeValueKeywordWidget : public QWidget, public KeywordWidgetBase
 
 
 	/*
-	 * Signals / Slots
+	 * Widgets
 	 */
+	private:
+        // Main form declaration
+        Ui::NodeValueWidget ui_;
+
 	private slots:
 	// Value edited
 	void on_ValueEdit_editingFinished();

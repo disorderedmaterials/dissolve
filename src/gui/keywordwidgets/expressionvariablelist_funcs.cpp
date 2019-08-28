@@ -51,7 +51,7 @@ ExpressionVariableListKeywordWidget::ExpressionVariableListKeywordWidget(QWidget
 }
 
 /*
- * Signals / Slots
+ * Widgets
  */
 
 // Variable table update function

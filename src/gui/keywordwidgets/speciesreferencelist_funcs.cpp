@@ -32,10 +32,10 @@
 SpeciesReferenceListKeywordWidget::SpeciesReferenceListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : KeywordDropDown(this), KeywordWidgetBase(coreData)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container
-	ui.setupUi(dropWidget());
+	ui_.setupUi(dropWidget());
 
 	// Connect signals / slots
-	connect(ui.SelectionList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(itemChanged(QListWidgetItem*)));
+	connect(ui_.SelectionList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(itemChanged(QListWidgetItem*)));
 
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<SpeciesReferenceListKeyword*>(keyword);
@@ -48,7 +48,7 @@ SpeciesReferenceListKeywordWidget::SpeciesReferenceListKeywordWidget(QWidget* pa
 }
 
 /*
- * Signals / Slots
+ * Widgets
  */
 
 // Selection list update function
@@ -63,9 +63,9 @@ void SpeciesReferenceListKeywordWidget::updateSelectionRow(int row, Species* sp,
 		item = new QListWidgetItem(sp->name());
 		item->setData(Qt::UserRole, VariantPointer<Species>(sp));
 		item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-		ui.SelectionList->insertItem(row, item);
+		ui_.SelectionList->insertItem(row, item);
 	}
-	else item = ui.SelectionList->item(row);
+	else item = ui_.SelectionList->item(row);
 	item->setCheckState(selection.contains(sp) ? Qt::Checked : Qt::Unchecked);
 }
 
@@ -97,7 +97,7 @@ void SpeciesReferenceListKeywordWidget::updateWidgetValues(const CoreData& coreD
 	refreshing_ = true;
 	
 	// Update the list against the global Species list
-	ListWidgetUpdater<SpeciesReferenceListKeywordWidget,Species> listUpdater(ui.SelectionList, coreData_.constSpecies(), this, &SpeciesReferenceListKeywordWidget::updateSelectionRow);
+	ListWidgetUpdater<SpeciesReferenceListKeywordWidget,Species> listUpdater(ui_.SelectionList, coreData_.constSpecies(), this, &SpeciesReferenceListKeywordWidget::updateSelectionRow);
 
 	updateSummaryText();
 
@@ -109,9 +109,9 @@ void SpeciesReferenceListKeywordWidget::updateKeywordData()
 {
 	// Loop over items in the QListWidget, adding the associated Speciess for any that are checked
 	RefList<Species> newSelection;
-	for (int n=0; n<ui.SelectionList->count(); ++n)
+	for (int n=0; n<ui_.SelectionList->count(); ++n)
 	{
-		QListWidgetItem* item = ui.SelectionList->item(n);
+		QListWidgetItem* item = ui_.SelectionList->item(n);
 		if (item->checkState() == Qt::Checked) newSelection.append(VariantPointer<Species>(item->data(Qt::UserRole)));
 	}
 	keyword_->setData(newSelection);

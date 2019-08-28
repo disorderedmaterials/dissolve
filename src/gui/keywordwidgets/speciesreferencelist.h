@@ -39,8 +39,6 @@ class SpeciesReferenceListKeywordWidget: public KeywordDropDown, public KeywordW
 	public:
 	// Constructor
 	SpeciesReferenceListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
-        // Main form declaration
-        Ui::SpeciesReferenceListWidget ui;
 
 
 	/*
@@ -52,8 +50,12 @@ class SpeciesReferenceListKeywordWidget: public KeywordDropDown, public KeywordW
 
 
 	/*
-	 * Signals / Slots
+	 * Widgets
 	 */
+	private:
+	// Main form declaration
+	Ui::SpeciesReferenceListWidget ui_;
+
 	private:
 	// Selection list update function
 	void updateSelectionRow(int row, Species* sp, bool createItem);
