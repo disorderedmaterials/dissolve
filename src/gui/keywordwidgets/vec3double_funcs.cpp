@@ -104,7 +104,6 @@ void Vec3DoubleKeywordWidget::updateValue()
 	refreshing_ = true;
 
 	Vec3<double> v = keyword_->asVec3Double();
-	v.print();
 
 	ui_.Spin1->setValue(v.x);
 	ui_.Spin2->setValue(v.y);
