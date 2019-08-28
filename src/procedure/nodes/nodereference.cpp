@@ -31,6 +31,8 @@ ProcedureNodeReference::ProcedureNodeReference(ProcedureNode* node) : ListItem<P
 {
 	node_ = node;
 	for (int n=0; n<ProcedureNode::nNodeTypes; ++n) allowedTypes_[n] = false;
+
+	analyseModuleParent_ = NULL;
 }
 
 // Destructor
