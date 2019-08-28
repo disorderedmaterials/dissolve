@@ -55,6 +55,7 @@ int main(int argc, char **argv)
 			{
 				case ('h'):
 					printf("Dissolve version %s\n\nAvailable CLI options are:\n\n", DISSOLVEVERSION);
+					printf("\t-h\t\tPrint what you're reading now\n");
 					printf("\t-i\t\tIgnore restart file\n");
 					printf("\t-I\t\tIgnore GUI state file\n");
 					printf("\t-q\t\tQuiet mode - print no output\n");
