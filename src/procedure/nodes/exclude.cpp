@@ -127,13 +127,13 @@ bool ExcludeProcedureNode::read(LineParser& parser, const CoreData& coreData)
 bool ExcludeProcedureNode::write(LineParser& parser, const char* prefix)
 {
 	// Block Start
-	if (!parser.writeLineF("%s%s\n", ProcedureNode::nodeTypes().keyword(type_))) return false;
+	if (!parser.writeLineF("%s%s\n", prefix, ProcedureNode::nodeTypes().keyword(type_))) return false;
 
 	// Same Site Exclusion
 	if (sameSiteA_ && sameSiteB_ && (!parser.writeLineF("%s  %s  '%s'  '%s'\n", prefix, excludeNodeKeywords().keyword(ExcludeProcedureNode::SameSiteKeyword), sameSiteA_->name(), sameSiteB_->name()))) return false;
 
 	// Block End
-	if (!parser.writeLineF("%s%s\n", excludeNodeKeywords().keyword(ExcludeProcedureNode::EndExcludeKeyword))) return false;
+	if (!parser.writeLineF("%s%s\n", prefix, excludeNodeKeywords().keyword(ExcludeProcedureNode::EndExcludeKeyword))) return false;
 
 	return true;
 }

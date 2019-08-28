@@ -422,7 +422,7 @@ bool SelectProcedureNode::read(LineParser& parser, const CoreData& coreData)
 bool SelectProcedureNode::write(LineParser& parser, const char* prefix)
 {
 	// Block Start
-	if (!parser.writeLineF("%s%s\n", ProcedureNode::nodeTypes().keyword(type_))) return false;
+	if (!parser.writeLineF("%s%s\n", prefix, ProcedureNode::nodeTypes().keyword(type_))) return false;
 
 	// Normal Sites
 	RefListIterator<SpeciesSite> siteIterator(speciesSites_);
@@ -460,7 +460,7 @@ bool SelectProcedureNode::write(LineParser& parser, const char* prefix)
 	if (forEachBranch_ && (!forEachBranch_->write(parser, CharString("%s  ", prefix)))) return false;
 
 	// Block End
-	if (!parser.writeLineF("%s%s\n", selectNodeKeywords().keyword(SelectProcedureNode::EndSelectKeyword))) return false;
+	if (!parser.writeLineF("%s%s\n", prefix, selectNodeKeywords().keyword(SelectProcedureNode::EndSelectKeyword))) return false;
 
 	return true;
 }

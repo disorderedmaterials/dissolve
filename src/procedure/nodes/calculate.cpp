@@ -252,7 +252,7 @@ bool CalculateProcedureNode::read(LineParser& parser, const CoreData& coreData)
 bool CalculateProcedureNode::write(LineParser& parser, const char* prefix)
 {
 	// Block Start
-	if (!parser.writeLineF("%s%s\n", ProcedureNode::nodeTypes().keyword(type_))) return false;
+	if (!parser.writeLineF("%s%s\n", prefix, ProcedureNode::nodeTypes().keyword(type_))) return false;
 
 	// Observable target
 	if (observable_ == CalculateProcedureNode::AngleObservable)
@@ -269,7 +269,7 @@ bool CalculateProcedureNode::write(LineParser& parser, const char* prefix)
 	}
 
 	// Block End
-	if (!parser.writeLineF("%s%s\n", calculateNodeKeywords().keyword(CalculateProcedureNode::EndCalculateKeyword))) return false;
+	if (!parser.writeLineF("%s%s\n", prefix, calculateNodeKeywords().keyword(CalculateProcedureNode::EndCalculateKeyword))) return false;
 
 	return true;
 }

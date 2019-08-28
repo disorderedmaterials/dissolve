@@ -330,7 +330,7 @@ bool Process1DProcedureNode::read(LineParser& parser, const CoreData& coreData)
 bool Process1DProcedureNode::write(LineParser& parser, const char* prefix)
 {
 	// Block Start
-	if (!parser.writeLineF("%s%s  '%s'\n", ProcedureNode::nodeTypes().keyword(type_), name())) return false;
+	if (!parser.writeLineF("%s%s  '%s'\n", prefix, ProcedureNode::nodeTypes().keyword(type_), name())) return false;
 
 	// Source data
 	if (!collectNode_.write(parser, CharString("%s  %s", prefix, process1DNodeKeywords().keyword(Process1DProcedureNode::SourceDataKeyword)))) return false;
@@ -346,7 +346,7 @@ bool Process1DProcedureNode::write(LineParser& parser, const char* prefix)
 	if (saveData_ && !parser.writeLineF("%s  %s  On\n", prefix, process1DNodeKeywords().keyword(Process1DProcedureNode::SaveKeyword))) return false;
 
 	// Block End
-	if (!parser.writeLineF("%s%s\n", process1DNodeKeywords().keyword(Process1DProcedureNode::EndProcess1DKeyword))) return false;
+	if (!parser.writeLineF("%s%s\n", prefix, process1DNodeKeywords().keyword(Process1DProcedureNode::EndProcess1DKeyword))) return false;
 
 	return true;
 }

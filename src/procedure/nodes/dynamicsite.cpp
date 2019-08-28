@@ -196,7 +196,7 @@ bool DynamicSiteProcedureNode::read(LineParser& parser, const CoreData& coreData
 bool DynamicSiteProcedureNode::write(LineParser& parser, const char* prefix)
 {
 	// Block Start
-	if (!parser.writeLineF("%s%s\n", ProcedureNode::nodeTypes().keyword(type_))) return false;
+	if (!parser.writeLineF("%s%s\n", prefix, ProcedureNode::nodeTypes().keyword(type_))) return false;
 
 	// Atom Types
 	if (atomTypes_.nItems() > 0)
@@ -217,7 +217,7 @@ bool DynamicSiteProcedureNode::write(LineParser& parser, const char* prefix)
 	}
 
 	// Block End
-	if (!parser.writeLineF("%s%s\n", dynamicSiteNodeKeywords().keyword(DynamicSiteProcedureNode::EndDynamicSiteKeyword))) return false;
+	if (!parser.writeLineF("%s%s\n", prefix, dynamicSiteNodeKeywords().keyword(DynamicSiteProcedureNode::EndDynamicSiteKeyword))) return false;
 
 	return true;
 }

@@ -317,7 +317,7 @@ bool Process3DProcedureNode::read(LineParser& parser, const CoreData& coreData)
 bool Process3DProcedureNode::write(LineParser& parser, const char* prefix)
 {
 	// Block Start
-	if (!parser.writeLineF("%s%s  '%s'\n", ProcedureNode::nodeTypes().keyword(type_), name())) return false;
+	if (!parser.writeLineF("%s%s  '%s'\n", prefix, ProcedureNode::nodeTypes().keyword(type_), name())) return false;
 
 	// Source Data
 	if (!collectNode_.write(parser, CharString("%s  %s", prefix, process3DNodeKeywords().keyword(Process3DProcedureNode::SourceDataKeyword)))) return false;
@@ -335,5 +335,7 @@ bool Process3DProcedureNode::write(LineParser& parser, const char* prefix)
 	if (saveData_ && !parser.writeLineF("%s  %s  On\n", prefix, process3DNodeKeywords().keyword(Process3DProcedureNode::SaveKeyword))) return false;
 
 	// Block End
-	if (!parser.writeLineF("%s%s\n", process3DNodeKeywords().keyword(Process3DProcedureNode::EndProcess3DKeyword))) return false;
+	if (!parser.writeLineF("%s%s\n", prefix, process3DNodeKeywords().keyword(Process3DProcedureNode::EndProcess3DKeyword))) return false;
+
+	return true;
 }

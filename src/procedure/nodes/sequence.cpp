@@ -496,7 +496,7 @@ bool SequenceProcedureNode::write(LineParser& parser, const char* prefix)
 	while (ProcedureNode* node = nodeIterator.iterate()) if (!node->write(parser, prefix)) return false;
 
 	// Block End
-	if (!parser.writeLineF("%s%s\n", blockTerminationKeyword_.get())) return false;
+	if (!parser.writeLineF("%s%s\n", prefix, blockTerminationKeyword_.get())) return false;
 
 	return true;
 }

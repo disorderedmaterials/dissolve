@@ -303,7 +303,7 @@ bool Fit1DProcedureNode::read(LineParser& parser, const CoreData& coreData)
 bool Fit1DProcedureNode::write(LineParser& parser, const char* prefix)
 {
 	// Block Start
-	if (!parser.writeLineF("%s%s\n", ProcedureNode::nodeTypes().keyword(type_))) return false;
+	if (!parser.writeLineF("%s%s\n", prefix, ProcedureNode::nodeTypes().keyword(type_))) return false;
 
 	// Constants
 	RefListIterator<ExpressionVariable> constantsIterator(constants_);
@@ -323,7 +323,7 @@ bool Fit1DProcedureNode::write(LineParser& parser, const char* prefix)
 	if (saveData_ && !parser.writeLineF("%s  %s  On\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::SaveKeyword))) return false;
 
 	// Block End
-	if (!parser.writeLineF("%s%s\n", fit1DNodeKeywords().keyword(Fit1DProcedureNode::EndFit1DKeyword))) return false;
+	if (!parser.writeLineF("%s%s\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::EndFit1DKeyword))) return false;
 
 	return true;
 }
