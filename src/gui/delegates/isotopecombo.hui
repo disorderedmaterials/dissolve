@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ISOTOPECOMBODELEGATE_H
-#define DISSOLVE_ISOTOPECOMBODELEGATE_H
+#ifndef DISSOLVE_DELEGATES_ISOTOPECOMBO_H
+#define DISSOLVE_DELEGATES_ISOTOPECOMBO_H
 
 #include "data/isotopes.h"
 #include <QtWidgets/QItemDelegate>
