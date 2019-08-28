@@ -40,7 +40,7 @@ int main(int argc, char **argv)
 
 	// Parse CLI options...
 	int n = 1;
-	CharString inputFile, redirectFileName, restartDataFile;
+	CharString inputFile, redirectFileName, restartDataFile, outputInputFile;
 	int nIterations = 5;
 	bool ignoreRestart = false, dontWriteRestart = false;
 	while (n < argc)
@@ -66,6 +66,7 @@ int main(int argc, char **argv)
 					printf("\t-s\t\tPerform single main loop iteration and then quit\n");
 					printf("\t-t <file>\tLoad restart data from specified file (but still write to associated restart file)\n");
 					printf("\t-v\t\tVerbose mode - be a little more descriptive throughout\n");
+					printf("\t-w <file>\tWrite input to specified file after reading it, and then quit\n");
 					printf("\t-x\t\tDon't write any restart information (but still read in the restart file if present)\n");
 					ProcessPool::finalise();
 					Messenger::ceaseRedirect();
@@ -128,6 +129,18 @@ int main(int argc, char **argv)
 					Messenger::setVerbose(true);
 					Messenger::printVerbose("Verbose mode enabled.\n");
 					break;
+				case ('w'):
+					// Next argument is filename
+					++n;
+					if (n == argc)
+					{
+						Messenger::error("Expected input filename to write.\n");
+						Messenger::ceaseRedirect();
+						return 1;
+					}
+					outputInputFile = argv[n];
+					Messenger::print("Input file will be written to '%s' once read.\n", outputInputFile.get());
+					break;
 				case ('x'):
 					dontWriteRestart = true;
 					Messenger::print("No restart file will be written.\n");
@@ -177,8 +190,7 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	// Load input file
-	// If no input file was provided, exit here
+	// Load input file - if no input file was provided, exit here
 	Messenger::banner("Parse Input File");
 	if (inputFile.isEmpty())
 	{
@@ -192,6 +204,24 @@ int main(int argc, char **argv)
 		ProcessPool::finalise();
 		Messenger::ceaseRedirect();
 		return 1;
+	}
+
+	// Save input file to new output filename and quit?
+	if (!outputInputFile.isEmpty())
+	{
+		Messenger::print("Saving input file to '%s'...\n", outputInputFile.get());
+		bool result;
+		if (dissolve.worldPool().isMaster())
+		{
+			result = dissolve.saveInput(outputInputFile);
+			if (result) dissolve.worldPool().decideTrue();
+			else dissolve.worldPool().decideFalse();
+		}
+		else result = dissolve.worldPool().decision();
+		if (!result) Messenger::error("Failed to save input file to '%s'.\n", outputInputFile.get());
+		ProcessPool::finalise();
+		Messenger::ceaseRedirect();
+		return result ? 0 : 1;
 	}
 
 	// Load restart file if it exists
