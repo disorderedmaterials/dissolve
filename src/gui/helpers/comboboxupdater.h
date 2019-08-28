@@ -67,11 +67,17 @@ template <class I> class ComboBoxUpdater
 				comboBox->addItem(dataItem->name(), VariantPointer<I>(dataItem));
 			}
 
+			// Select this item if it is the current one
+			if (currentItem == dataItem) comboBox->setCurrentIndex(currentIndex);
+
 			++currentIndex;
 		}
 
 		// If there are still rows remaining in the widget, delete them now
 		while (currentIndex < comboBox->count()) comboBox->removeItem(currentIndex);
+
+		// If there is no valid current item, make sure this is reflected in the combobox
+		if (currentItem == NULL) comboBox->setCurrentIndex(-1);
 	}
 
 	// Update QComboBox from supplied List, assuming that class I implements a name() function for the item
@@ -111,11 +117,17 @@ template <class I> class ComboBoxUpdater
 				comboBox->addItem(dataItem->name(), VariantPointer<I>(dataItem));
 			}
 
+			// Select this item if it is the current one
+			if (currentItem == dataItem) comboBox->setCurrentIndex(currentIndex);
+
 			++currentIndex;
 		}
 
 		// If there are still rows remaining in the widget, delete them now
 		while (currentIndex < comboBox->count()) comboBox->removeItem(currentIndex);
+
+		// If there is no valid current item, make sure this is reflected in the combobox
+		if (currentItem == NULL) comboBox->setCurrentIndex(-1);
 	}
 };
 
