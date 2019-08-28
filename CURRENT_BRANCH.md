@@ -4,6 +4,7 @@
 - Fix writing of 'end' keywords for Collect1DProcedureNode and Collect2DProcedureNode (and 3D? Any others? Looks like AddSpecies and Box may have the same issue)
 - Fix formatting of written Element and AtomType lists by DynamicSiteProcedureNode (remove quotes around lists, and remove spaces before first item)
 - Indentation for the Configuration's Generator data (a Procedure) written by Dissolve::saveInput() is incorrect.
+- Make the '-x' option also turn off writing of the heartbeat file (update CLIOptions.md doc accordingly, and adjust help text printed out by program).
 
 ## Moderate
 - Convert BinWidth/RMax/RMin keywords in CalculateRDFModule::setUpKeyword() to use same keyword type as Calculate1DProcedureNode does for 'RangeX'
