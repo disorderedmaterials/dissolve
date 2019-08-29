@@ -36,7 +36,7 @@ libkeywordwidgets_la_SOURCES += isotopologuereferencelist.ui isotopologuereferen
 libkeywordwidgets_la_SOURCES += modulegroups.ui modulegroups_funcs.cpp modulereferencelist.ui modulereferencelist_funcs.cpp
 libkeywordwidgets_la_SOURCES += nodevalue.ui nodevalue_funcs.cpp nodevalueenumoptions.ui nodevalueenumoptions_funcs.cpp
 libkeywordwidgets_la_SOURCES += pairbroadeningfunction.ui pairbroadeningfunction_funcs.cpp
-libkeywordwidgets_la_SOURCES += species.hui species_funcs.cpp speciesreferencelist.ui speciesreferencelist_funcs.cpp
+libkeywordwidgets_la_SOURCES += species.hui species_funcs.cpp speciesreferencelist.ui speciesreferencelist_funcs.cpp speciessitereferencelist.ui speciessitereferencelist_funcs.cpp
 libkeywordwidgets_la_SOURCES += vec3double.ui vec3double_funcs.cpp vec3integer.ui vec3integer_funcs.cpp vec3labels.cpp vec3nodevalue.ui vec3nodevalue_funcs.cpp
 libkeywordwidgets_la_SOURCES += windowfunction.hui windowfunction_funcs.cpp
 
@@ -49,7 +49,7 @@ noinst_HEADERS += isotopologuereferencelist.h
 noinst_HEADERS += modulegroups.h modulereferencelist.h
 noinst_HEADERS += nodevalue.h nodevalueenumoptions.h
 noinst_HEADERS += pairbroadeningfunction.h
-noinst_HEADERS += speciesreferencelist.h
+noinst_HEADERS += speciesreferencelist.h speciessitereferencelist.h
 noinst_HEADERS += vec3double.h vec3integer.h vec3labels.h vec3nodevalue.h
 
 AM_CPPFLAGS = -I$(top_srcdir)/src @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@

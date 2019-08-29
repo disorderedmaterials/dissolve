@@ -169,6 +169,13 @@ QWidget* KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& keyword
 		widget = speciesReferenceListWidget;
 		base = speciesReferenceListWidget;
 	}
+	else if (keyword->type() == KeywordBase::SpeciesSiteReferenceListData)
+	{
+		SpeciesSiteReferenceListKeywordWidget* speciesSiteReferenceListWidget = new SpeciesSiteReferenceListKeywordWidget(NULL, keyword, coreData);
+		connect(speciesSiteReferenceListWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
+		widget = speciesSiteReferenceListWidget;
+		base = speciesSiteReferenceListWidget;
+	}
 	else if (keyword->type() == KeywordBase::WindowFunctionData)
 	{
 		WindowFunctionKeywordWidget* windowFunctionWidget = new WindowFunctionKeywordWidget(NULL, keyword, coreData);
