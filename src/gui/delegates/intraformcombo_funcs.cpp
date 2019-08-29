@@ -24,7 +24,6 @@
 #include "classes/speciesbond.h"
 #include "templates/list.h"
 #include "templates/variantpointer.h"
-#include <QTableWidgetItem>
 
 IntraFormComboDelegate::IntraFormComboDelegate(QObject* parent, int nFunctions, const char** functionTexts, const List<MasterIntra>& masterTerms) : QItemDelegate(parent), masterTerms_(masterTerms)
 {

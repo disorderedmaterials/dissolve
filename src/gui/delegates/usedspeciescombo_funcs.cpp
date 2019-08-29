@@ -23,9 +23,7 @@
 #include "gui/helpers/combopopulator.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
-#include "templates/list.h"
 #include "templates/variantpointer.h"
-#include <QTableWidgetItem>
 
 UsedSpeciesComboDelegate::UsedSpeciesComboDelegate(QObject* parent) : QItemDelegate(parent)
 {
