@@ -226,6 +226,16 @@ void KeywordsWidget::setUp(const KeywordList& keywords, const CoreData& coreData
 	ListIterator<KeywordGroup> groupIterator(keywords.groups());
 	while (KeywordGroup* group = groupIterator.iterate())
 	{
+		// If this is the 'HIDDEN' group, don't display any of its widgets
+		if (DissolveSys::sameString(group->name(), "HIDDEN"))
+		{
+			// Remove all keywords in this group from the remainingKeywords list
+			RefListIterator<KeywordBase> groupKeywordIterator(group->keywords());
+			while (KeywordBase* keyword = groupKeywordIterator.iterate()) remainingKeywords.remove(keyword);
+
+			continue;
+		}
+
 		// Create a new QWidget and layout for our widgets
 		QWidget* groupWidget = new QWidget;
 		QFormLayout* groupLayout = new QFormLayout(groupWidget);
