@@ -1,6 +1,6 @@
 /*
-	*** Calculate RDF Module - Options
-	*** src/modules/calculate/rdf/options.cpp
+	*** Calculate RDF Module - Initialisation
+	*** src/modules/calculate/rdf/init.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -22,8 +22,8 @@
 #include "modules/calculate/rdf/rdf.h"
 #include "keywords/types.h"
 
-// Set up keywords for Module
-void CalculateRDFModule::setUpKeywords()
+// Perform any necessary initialisation for the Module
+void CalculateRDFModule::initialise()
 {
 	// Quantity Name
 	keywords_.add("Quantity Name", new CharStringKeyword(), "Name", "Set the name of the calculated RDF", "<name>");

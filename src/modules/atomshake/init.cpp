@@ -1,6 +1,6 @@
 /*
-	*** AtomShake Module - Options
-	*** src/modules/atomshake/options.cpp
+	*** AtomShake Module - Initialisation
+	*** src/modules/atomshake/init.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -22,8 +22,8 @@
 #include "modules/atomshake/atomshake.h"
 #include "keywords/types.h"
 
-// Set up options for Module
-void AtomShakeModule::setUpKeywords()
+// Perform any necessary initialisation for the Module
+void AtomShakeModule::initialise()
 {
 	// Calculation
 	keywords_.add("Calculation", new DoubleKeyword(-1.0, -1.0), "CutoffDistance", "Interatomic cutoff distance to employ");

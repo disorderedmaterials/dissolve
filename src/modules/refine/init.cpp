@@ -1,6 +1,6 @@
 /*
-	*** Refine Module - Options
-	*** src/modules/refine/options.cpp
+	*** Refine Module - Initialisation
+	*** src/modules/refine/init.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -52,8 +52,8 @@ EnumOptions<RefineModule::MatrixAugmentationStyle> RefineModule::matrixAugmentat
 	return options;
 }
 
-// Set up keywords for Module
-void RefineModule::setUpKeywords()
+// Perform any necessary initialisation for the Module
+void RefineModule::initialise()
 {
 	frequency_ = 5;
 	groupedTargets_.addAllowedModuleType("NeutronSQ");

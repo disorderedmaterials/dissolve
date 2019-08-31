@@ -1,6 +1,6 @@
 /*
-	*** Forces Module - Options
-	*** src/modules/forces/options.cpp
+	*** Forces Module - Initialisation
+	*** src/modules/forces/init.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -26,8 +26,8 @@
 #include "base/lineparser.h"
 #include "genericitems/listhelper.h"
 
-// Set up keywords for Module
-void ForcesModule::setUpKeywords()
+// Perform any necessary initialisation for the Module
+void ForcesModule::initialise()
 {
 	// Test
 	keywords_.add("Test", new BoolKeyword(false), "Test", "Test parallel force routines against simplified, serial ones");

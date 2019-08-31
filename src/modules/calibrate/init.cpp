@@ -1,6 +1,6 @@
 /*
-	*** Calibration Module - Options
-	*** src/modules/calibration/options.cpp
+	*** Calibration Module - Initialisation
+	*** src/modules/calibration/init.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -24,8 +24,8 @@
 #include "module/list.h"
 #include "genericitems/listhelper.h"
 
-// Set up keywords for Module
-void CalibrationModule::setUpKeywords()
+// Perform any necessary initialisation for the Module
+void CalibrationModule::initialise()
 {
 	// Calculation
 	keywords_.add("Calculation", new BoolKeyword(true), "OnlyWhenEnergyStable", "Only perform calibrations when all related Configuration energies are stable");

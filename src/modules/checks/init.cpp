@@ -1,6 +1,6 @@
 /*
-	*** Checks Module - Options
-	*** src/modules/checks/options.cpp
+	*** Checks Module - Initialisation
+	*** src/modules/checks/init.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -23,8 +23,8 @@
 #include "keywords/types.h"
 #include "base/lineparser.h"
 
-// Set up keywords for Module
-void ChecksModule::setUpKeywords()
+// Perform any necessary initialisation for the Module
+void ChecksModule::initialise()
 {
 	// Distance
 	keywords_.add("Distance", new ComplexKeyword(3,3), "Distance", "Define a distance between Atoms to be checked", "<i> <j> <referenceDistance>");

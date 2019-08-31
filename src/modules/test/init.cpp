@@ -1,6 +1,6 @@
 /*
-	*** Skeleton Module - Options
-	*** src/modules/skeleton/options.cpp
+	*** Test Module - Initialisation
+	*** src/modules/test/init.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,17 +19,17 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/skeleton/skeleton.h"
+#include "modules/test/test.h"
 #include "keywords/types.h"
 
-// Set up keywords for Module
-void SkeletonModule::setUpKeywords()
+// Perform any necessary initialisation for the Module
+void TestModule::initialise()
 {
 // 	keywords_.add(new BoolKeyword(true), "ExampleKeyword", "Example keyword description", "<args>");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-KeywordBase::ParseResult SkeletonModule::parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
+KeywordBase::ParseResult TestModule::parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
 	return KeywordBase::Unrecognised;
 }

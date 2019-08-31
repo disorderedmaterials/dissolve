@@ -1,6 +1,6 @@
 /*
-	*** Bragg Module - Options
-	*** src/modules/bragg/options.cpp
+	*** Bragg Module - Initialisation
+	*** src/modules/bragg/init.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -28,8 +28,8 @@
 #include "templates/enumhelpers.h"
 #include "genericitems/listhelper.h"
 
-// Set up keywords for Module
-void BraggModule::setUpKeywords()
+// Perform any necessary initialisation for the Module
+void BraggModule::initialise()
 {
 	frequency_ = 5;
 

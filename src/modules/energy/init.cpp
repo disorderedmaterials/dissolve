@@ -1,6 +1,6 @@
 /*
-	*** Energy Module - Options
-	*** src/modules/energy/options.cpp
+	*** Energy Module - Initialisation
+	*** src/modules/energy/init.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -22,8 +22,8 @@
 #include "modules/energy/energy.h"
 #include "keywords/types.h"
 
-// Set up keywords for Module
-void EnergyModule::setUpKeywords()
+// Perform any necessary initialisation for the Module
+void EnergyModule::initialise()
 {
 	// Calculation
 	keywords_.add("Calculation", new DoubleKeyword(0.001), "StabilityThreshold", "Threshold value at which energy is deemed stable over the defined windowing period", "<value[0.0-1.0]>");

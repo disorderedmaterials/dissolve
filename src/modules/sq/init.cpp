@@ -1,6 +1,6 @@
 /*
-	*** SQ Module - Options
-	*** src/modules/sq/options.cpp
+	*** SQ Module - Initialisation
+	*** src/modules/sq/init.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -27,8 +27,8 @@
 #include "templates/enumhelpers.h"
 #include "genericitems/listhelper.h"
 
-// Set up keywords for Module
-void SQModule::setUpKeywords()
+// Perform any necessary initialisation for the Module
+void SQModule::initialise()
 {
 	frequency_ = 5;
 

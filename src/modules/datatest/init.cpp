@@ -1,6 +1,6 @@
 /*
-	*** DataTest Module - Options
-	*** src/modules/datatest/options.cpp
+	*** DataTest Module - Initialisation
+	*** src/modules/datatest/init.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -23,8 +23,8 @@
 #include "keywords/types.h"
 #include "math/error.h"
 
-// Set up keywords for Module
-void DataTestModule::setUpKeywords()
+// Perform any necessary initialisation for the Module
+void DataTestModule::initialise()
 {
 	// Test
 	keywords_.add("Test", new Data1DStoreKeyword(test1DData_), "Data1D", "Specify one-dimensional test reference data", "<target> <fileformat> <filename> [options...]");

@@ -1,6 +1,6 @@
 /*
-	*** RDF Module - Options
-	*** src/modules/rdf/options.cpp
+	*** RDF Module - Initialisation
+	*** src/modules/rdf/init.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -42,8 +42,8 @@ EnumOptions<RDFModule::PartialsMethod> RDFModule::partialsMethods()
 	return options;
 }
 
-// Set up keywords for Module
-void RDFModule::setUpKeywords()
+// Perform any necessary initialisation for the Module
+void RDFModule::initialise()
 {
 	frequency_ = 5;
 

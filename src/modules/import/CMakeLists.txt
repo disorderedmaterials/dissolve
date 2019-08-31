@@ -2,7 +2,7 @@
 add_library(importmodule
   core.cpp
   definition.cpp
-  options.cpp
+  init.cpp
   process.cpp
 
   import.h

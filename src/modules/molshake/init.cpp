@@ -1,6 +1,6 @@
 /*
-	*** MolShake Module - Options
-	*** src/modules/molshake/options.cpp
+	*** MolShake Module - Initialisation
+	*** src/modules/molshake/init.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -22,8 +22,8 @@
 #include "modules/molshake/molshake.h"
 #include "keywords/types.h"
 
-// Set up options for Module
-void MolShakeModule::setUpKeywords()
+// Perform any necessary initialisation for the Module
+void MolShakeModule::initialise()
 {
 	// Calculation
 	keywords_.add("Calculation", new DoubleKeyword(-1.0), "CutoffDistance", "Interatomic cutoff distance to employ", "<rcut>");

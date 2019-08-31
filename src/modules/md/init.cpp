@@ -1,6 +1,6 @@
 /*
-	*** MD Module - Options
-	*** src/modules/md/options.cpp
+	*** MD Module - Initialisation
+	*** src/modules/md/init.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -22,8 +22,8 @@
 #include "modules/md/md.h"
 #include "keywords/types.h"
 
-// Set up keywords for Module
-void MDModule::setUpKeywords()
+// Perform any necessary initialisation for the Module
+void MDModule::initialise()
 {
 	// Calculation
 	keywords_.add("Calculation", new DoubleKeyword(-1.0), "CutoffDistance", "Interatomic cutoff distance to employ");

@@ -1,6 +1,6 @@
 /*
-	*** Import Module - Options
-	*** src/modules/import/options.cpp
+	*** Import Module - Initialisation
+	*** src/modules/import/init.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -22,8 +22,8 @@
 #include "modules/import/import.h"
 #include "keywords/types.h"
 
-// Set up keywords for Module
-void ImportModule::setUpKeywords()
+// Perform any necessary initialisation for the Module
+void ImportModule::initialise()
 {
 	// Trajectory Import
 	keywords_.add("Trajectory", new BoolKeyword(true), "ReadTrajectory", "Read sequential frames from a trajectory file", "<True|False>");

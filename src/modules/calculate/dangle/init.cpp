@@ -1,6 +1,6 @@
 /*
-	*** Calculate Distance-Angle Module - Options
-	*** src/modules/calculate/dangle/options.cpp
+	*** Calculate Distance-Angle Module - Initialisation
+	*** src/modules/calculate/dangle/init.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -22,8 +22,8 @@
 #include "modules/calculate/dangle/dangle.h"
 #include "keywords/types.h"
 
-// Set up keywords for Module
-void CalculateDAngleModule::setUpKeywords()
+// Perform any necessary initialisation for the Module
+void CalculateDAngleModule::initialise()
 {
 	// Quantity Name
 	keywords_.add("Quantity Name", new CharStringKeyword(), "Name", "Set the name of the calculated distance-angle map", "<name>");

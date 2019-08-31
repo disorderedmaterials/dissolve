@@ -2,7 +2,7 @@
 add_library(exportmodule
   core.cpp
   definition.cpp
-  options.cpp
+  init.cpp
   process.cpp
 
   export.h

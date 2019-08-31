@@ -1,6 +1,6 @@
 /*
-	*** Test Module - Options
-	*** src/modules/test/options.cpp
+	*** Analyse Module - Initialisation
+	*** src/modules/analyse/init.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,17 +19,17 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/test/test.h"
+#include "modules/analyse/analyse.h"
 #include "keywords/types.h"
 
-// Set up keywords for Module
-void TestModule::setUpKeywords()
+// Perform any necessary initialisation for the Module
+void AnalyseModule::initialise()
 {
-// 	keywords_.add(new BoolKeyword(true), "ExampleKeyword", "Example keyword description", "<args>");
+	keywords_.add(new ProcedureKeyword(analyser_), "Analyser", "Analysis procedure to run");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-KeywordBase::ParseResult TestModule::parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
+KeywordBase::ParseResult AnalyseModule::parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
 	return KeywordBase::Unrecognised;
 }

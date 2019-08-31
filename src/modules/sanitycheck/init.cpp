@@ -1,6 +1,6 @@
 /*
-	*** SanityCheck Module - Options
-	*** src/modules/sanitycheck/options.cpp
+	*** SanityCheck Module - Initialisation
+	*** src/modules/sanitycheck/init.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -22,8 +22,8 @@
 #include "modules/sanitycheck/sanitycheck.h"
 #include "keywords/types.h"
 
-// Set up keywords for Module
-void SanityCheckModule::setUpKeywords()
+// Perform any necessary initialisation for the Module
+void SanityCheckModule::initialise()
 {
 // 	keywords_.add(new BoolKeyword(true), "ExampleKeyword", "Example keyword description", "<args>");
 }

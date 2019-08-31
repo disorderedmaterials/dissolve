@@ -1,6 +1,6 @@
 /*
-	*** Geometry Optimisation Module - Options
-	*** src/modules/geomopt/options.cpp
+	*** Export Module - Initialisation
+	*** src/modules/export/init.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,20 +19,20 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/geomopt/geomopt.h"
+#include "modules/export/export.h"
 #include "keywords/types.h"
 
-// Set up keywords for Module
-void GeometryOptimisationModule::setUpKeywords()
+// Perform any necessary initialisation for the Module
+void ExportModule::initialise()
 {
-	// Method Control
-	keywords_.add("Calculation", new IntegerKeyword(200, 1), "NCycles", "Number of minimisation cycles to perform");
-	keywords_.add("Calculation", new DoubleKeyword(1.0e-5, 1.0e-10), "StepSize", "Initial step size to employ");
-	keywords_.add("Calculation", new DoubleKeyword(1.0e-4, 1.0e-10), "Tolerance", "Tolerance controlling convergence of algorithm)");
+	// Export
+	keywords_.add("Export", new FileAndFormatKeyword(coordinatesFormat_), "WriteCoordinates", "Write coordinates for the Configuration targets");
+	keywords_.add("Export", new FileAndFormatKeyword(pairPotentialFormat_), "WritePairPotentials", "Write all pair potentials to supplied basename");
+	keywords_.add("Export", new FileAndFormatKeyword(trajectoryFormat_), "WriteTrajectory", "Write coordinate trajectories for the Configuration targets");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-KeywordBase::ParseResult GeometryOptimisationModule::parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
+KeywordBase::ParseResult ExportModule::parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
 	return KeywordBase::Unrecognised;
 }

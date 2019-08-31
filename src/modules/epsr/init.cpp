@@ -1,6 +1,6 @@
 /*
-	*** EPSR Module - Options
-	*** src/modules/epsr/options.cpp
+	*** EPSR Module - Initialisation
+	*** src/modules/epsr/init.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -36,8 +36,8 @@ EnumOptions<EPSRModule::ExpansionFunctionType> EPSRModule::expansionFunctionType
 	return options;
 }
 
-// Set up keywords for Module
-void EPSRModule::setUpKeywords()
+// Perform any necessary initialisation for the Module
+void EPSRModule::initialise()
 {
 	frequency_ = 5;
 	groupedTargets_.addAllowedModuleType("NeutronSQ");

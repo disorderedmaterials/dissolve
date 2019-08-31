@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = libcalculaterdf.la libmodulewidget.la
 
-libcalculaterdf_la_SOURCES = core.cpp definition.cpp functions.cpp options.cpp process.cpp
+libcalculaterdf_la_SOURCES = core.cpp definition.cpp functions.cpp init.cpp process.cpp
 libmodulewidget_la_SOURCES = nogui.cpp
 
 noinst_HEADERS = rdf.h

@@ -32,8 +32,8 @@ CalculateRDFModule::CalculateRDFModule() : Module(), analyser_(ProcedureNode::An
 	static int instanceId = 0;
 	uniqueName_.sprintf("%s%02i", type(), instanceId++);
 
-	// Set up variables / control parameters
-	setUpKeywords();
+	// Initialise Module - set up keywords etc.
+	initialise();
 }
 
 // Destructor
