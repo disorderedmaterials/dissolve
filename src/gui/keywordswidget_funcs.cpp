@@ -252,12 +252,12 @@ void KeywordsWidget::setUp(const KeywordList& keywords, const CoreData& coreData
 
 			if (!widget)
 			{
-				Messenger::error("Can't create widget for keyword '%s' (%s).\n", keyword->keyword(), KeywordBase::keywordDataType(keyword->type()));
+				Messenger::error("Can't create widget for keyword '%s' (%s).\n", keyword->name(), KeywordBase::keywordDataType(keyword->type()));
 				continue;
 			}
 
 			// Create a label and add it and the widget to our layout
-			QLabel* nameLabel = new QLabel(keyword->keyword());
+			QLabel* nameLabel = new QLabel(keyword->name());
 			nameLabel->setToolTip(keyword->description());
 			groupLayout->addRow(nameLabel, widget);
 		}
@@ -281,12 +281,12 @@ void KeywordsWidget::setUp(const KeywordList& keywords, const CoreData& coreData
 
 			if (!widget)
 			{
-				Messenger::error("Can't create widget for keyword '%s'.\n", keyword->keyword());
+				Messenger::error("Can't create widget for keyword '%s'.\n", keyword->name());
 				continue;
 			}
 
 			// Create a label and add it and the widget to our layout
-			QLabel* nameLabel = new QLabel(keyword->keyword());
+			QLabel* nameLabel = new QLabel(keyword->name());
 			nameLabel->setToolTip(keyword->description());
 			groupLayout->addRow(nameLabel, widget);
 		}

@@ -63,8 +63,8 @@ class KeywordBase : public ListItem<KeywordBase>
 	private:
 	// Data type stored by keyword
 	KeywordDataType type_;
-	// Keyword string
-	CharString keyword_;
+	// Keyword name
+	CharString name_;
 	// Arguments string (for information)
 	CharString arguments_;
 	// Description of keyword, if any
@@ -78,13 +78,13 @@ class KeywordBase : public ListItem<KeywordBase>
 
 	public:
 	// Set name, description, arguments, and option mask
-	void set(const char* keyword, const char* description, const char* arguments, int optionMask = NoOptions);
+	void set(const char* name, const char* description, const char* arguments, int optionMask = NoOptions);
 	// Return data type stored by keyword
 	KeywordDataType type();
 	// Return name of data type stored by keyword
 	const char* typeName() const;
 	// Return keyword name
-	const char* keyword();
+	const char* name();
 	// Return arguments string
 	const char* arguments();
 	// Return keyword description

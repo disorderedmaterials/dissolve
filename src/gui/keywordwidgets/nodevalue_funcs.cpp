@@ -31,7 +31,7 @@ NodeValueKeywordWidget::NodeValueKeywordWidget(QWidget* parent, KeywordBase* key
 
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<NodeValueKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into NodeValueKeyword.\n", keyword->keyword());
+	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into NodeValueKeyword.\n", keyword->name());
 	else
 	{
 		// Set expression text

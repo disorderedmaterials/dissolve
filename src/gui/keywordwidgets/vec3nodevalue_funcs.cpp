@@ -32,7 +32,7 @@ Vec3NodeValueKeywordWidget::Vec3NodeValueKeywordWidget(QWidget* parent, KeywordB
 
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<Vec3NodeValueKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into Vec3NodeValueKeyword.\n", keyword->keyword());
+	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into Vec3NodeValueKeyword.\n", keyword->name());
 	else updateValue();
 
 	// Set appropriate labels

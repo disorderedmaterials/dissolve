@@ -70,7 +70,7 @@ bool KeywordList::add(const char* groupName, KeywordBase* object, const char* ke
 // Find named keyword
 KeywordBase* KeywordList::find(const char* keyword) const
 {
-	for (KeywordBase* kwd = keywords_.first(); kwd != NULL; kwd = kwd->next()) if (DissolveSys::sameString(keyword, kwd->keyword())) return kwd;
+	for (KeywordBase* kwd = keywords_.first(); kwd != NULL; kwd = kwd->next()) if (DissolveSys::sameString(keyword, kwd->name())) return kwd;
 
 	return NULL;
 }
@@ -227,7 +227,7 @@ KeywordBase::ParseResult KeywordList::parse(LineParser& parser, const CoreData& 
 	// All OK, so parse the keyword
 	if (!keyword->read(parser, 1, coreData))
 	{
-		Messenger::error("Failed to parse arguments for keyword '%s'.\n", keyword->keyword());
+		Messenger::error("Failed to parse arguments for keyword '%s'.\n", keyword->name());
 		return KeywordBase::Failed;
 	}
 

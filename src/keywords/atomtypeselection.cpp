@@ -127,7 +127,7 @@ bool AtomTypeSelectionKeyword::write(LineParser& parser, const char* prefix)
 	ListIterator<AtomTypeData> typeIterator(data_.types());
 	while (AtomTypeData* atd = typeIterator.iterate()) selection.strcatf("  %s", atd->atomTypeName());
 
-	if (!parser.writeLineF("%s%s%s\n", prefix, keyword(), selection.get())) return false;
+	if (!parser.writeLineF("%s%s%s\n", prefix, name(), selection.get())) return false;
 
 	return true;
 }

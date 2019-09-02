@@ -124,11 +124,11 @@ bool ExpressionVariableListKeyword::write(LineParser& parser, const char* prefix
 		if (!var) Messenger::error("Failed to cast ExpressionNode to ExpressionVariable when writing ExpressionVariableList data.\n");
 		else if (variableType_ == ExpressionValue::IntegerType)
 		{
-			if (!parser.writeLineF("%s%s  %s  %i\n", prefix, keyword(), var->name(), var->value().asInteger())) return false;
+			if (!parser.writeLineF("%s%s  %s  %i\n", prefix, name(), var->name(), var->value().asInteger())) return false;
 		}
 		else if (variableType_ == ExpressionValue::DoubleType)
 		{
-			if (!parser.writeLineF("%s%s  %s  %12.6e\n", prefix, keyword(), var->name(), var->value().asDouble())) return false;
+			if (!parser.writeLineF("%s%s  %s  %12.6e\n", prefix, name(), var->name(), var->value().asDouble())) return false;
 		}
 	}
 

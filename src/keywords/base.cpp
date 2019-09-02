@@ -55,9 +55,9 @@ const char* KeywordBase::keywordDataType(KeywordDataType kdt)
  */
 
 // Set name, description, arguments, and option mask
-void KeywordBase::set(const char* keyword, const char* description, const char* arguments, int optionMask)
+void KeywordBase::set(const char* name, const char* description, const char* arguments, int optionMask)
 {
-	keyword_ = keyword;
+	name_ = name;
 	arguments_ = arguments;
 	description_ = description;
 	optionMask_ = optionMask;
@@ -76,9 +76,9 @@ const char* KeywordBase::typeName() const
 }
 
 // Return keyword name
-const char* KeywordBase::keyword()
+const char* KeywordBase::name()
 {
-	return keyword_.get();
+	return name_.get();
 }
 
 // Return keyword description
@@ -108,12 +108,12 @@ bool KeywordBase::validNArgs(int nArgsProvided)
 {
 	if (nArgsProvided < minArguments())
 	{
-		Messenger::error("Not enough arguments given to %s keyword '%s'.\n", typeName(), keyword());
+		Messenger::error("Not enough arguments given to %s keyword '%s'.\n", typeName(), name());
 		return false;
 	}
 	if ((maxArguments() >= 0) && (nArgsProvided > maxArguments()))
 	{
-		Messenger::error("Too many arguments given to %s keyword '%s'.\n", typeName(), keyword());
+		Messenger::error("Too many arguments given to %s keyword '%s'.\n", typeName(), name());
 		return false;
 	}
 

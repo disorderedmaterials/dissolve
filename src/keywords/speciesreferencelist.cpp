@@ -85,7 +85,7 @@ bool SpeciesReferenceListKeyword::write(LineParser& parser, const char* prefix)
 	RefListIterator<Species> speciesIterator(data_);
 	while (Species* sp = speciesIterator.iterate()) speciesString.strcatf("  %s", sp->name());
 
-	if (!parser.writeLineF("%s%s  %s\n", prefix, keyword(), speciesString.get())) return false;
+	if (!parser.writeLineF("%s%s  %s\n", prefix, name(), speciesString.get())) return false;
 
 	return true;
 }

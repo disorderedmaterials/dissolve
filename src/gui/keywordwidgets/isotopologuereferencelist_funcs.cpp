@@ -53,7 +53,7 @@ IsotopologueReferenceListKeywordWidget::IsotopologueReferenceListKeywordWidget(Q
 
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<IsotopologueReferenceListKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into IsotopologueReferenceListKeyword.\n", keyword->keyword());
+	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into IsotopologueReferenceListKeyword.\n", keyword->name());
 	else
 	{
 		// Set current information

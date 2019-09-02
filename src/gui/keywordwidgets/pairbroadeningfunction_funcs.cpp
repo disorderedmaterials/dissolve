@@ -45,7 +45,7 @@ PairBroadeningFunctionKeywordWidget::PairBroadeningFunctionKeywordWidget(QWidget
 
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<PairBroadeningFunctionKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into PairBroadeningFunctionKeyword.\n", keyword->keyword());
+	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into PairBroadeningFunctionKeyword.\n", keyword->name());
 	else
 	{
 		// Set current information

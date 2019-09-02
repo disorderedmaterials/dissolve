@@ -39,7 +39,7 @@ SpeciesSiteReferenceListKeywordWidget::SpeciesSiteReferenceListKeywordWidget(QWi
 
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<SpeciesSiteReferenceListKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into SpeciesSiteReferenceListKeyword.\n", keyword->keyword());
+	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into SpeciesSiteReferenceListKeyword.\n", keyword->name());
 	else
 	{
 		// Set current information

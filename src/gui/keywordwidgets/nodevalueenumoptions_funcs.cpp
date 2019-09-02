@@ -32,7 +32,7 @@ NodeValueEnumOptionsKeywordWidget::NodeValueEnumOptionsKeywordWidget(QWidget* pa
 
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<NodeValueEnumOptionsBaseKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into NodeValueEnumOptionsBaseKeyword.\n", keyword->keyword());
+	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into NodeValueEnumOptionsBaseKeyword.\n", keyword->name());
 	else
 	{
 		// Get the underlying EnumOptionsBase

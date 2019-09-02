@@ -116,7 +116,7 @@ bool ModuleReferenceListKeyword::write(LineParser& parser, const char* prefix)
 	RefListIterator<Module> refIterator(data_);
 	while (Module* module = refIterator.iterate())
 	{
-		if (!parser.writeLineF("%s%s  '%s'\n", prefix, keyword(), module->uniqueName())) return false;
+		if (!parser.writeLineF("%s%s  '%s'\n", prefix, name(), module->uniqueName())) return false;
 	}
 
 	return true;

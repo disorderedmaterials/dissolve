@@ -134,7 +134,7 @@ bool IntegerKeyword::read(LineParser& parser, int startArg, const CoreData& core
 // Write keyword data to specified LineParser
 bool IntegerKeyword::write(LineParser& parser, const char* prefix)
 {
-	return parser.writeLineF("%s%s  %i\n", prefix, keyword(), data_);
+	return parser.writeLineF("%s%s  %i\n", prefix, name(), data_);
 }
 
 /*

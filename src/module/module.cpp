@@ -91,7 +91,7 @@ KeywordBase::ParseResult Module::parseKeyword(LineParser& parser, Dissolve* diss
 		// All OK, so parse the keyword
 		if (!keyword->read(parser, 1, dissolve->coreData()))
 		{
-			Messenger::error("Failed to parse arguments for Module keyword '%s'.\n", keyword->keyword());
+			Messenger::error("Failed to parse arguments for Module keyword '%s'.\n", keyword->name());
 			return KeywordBase::Failed;
 		}
 	}
@@ -105,7 +105,7 @@ void Module::printValidKeywords()
 	Messenger::print("Valid keywords for '%s' Module are:\n", type());
 
 	ListIterator<KeywordBase> keywordIterator(keywords_.keywords());
-	while (KeywordBase* keyword = keywordIterator.iterate()) Messenger::print("  %30s  %s\n", keyword->keyword(), keyword->description());
+	while (KeywordBase* keyword = keywordIterator.iterate()) Messenger::print("  %30s  %s\n", keyword->name(), keyword->description());
 }
 
 /*

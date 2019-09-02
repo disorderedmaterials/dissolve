@@ -86,7 +86,7 @@ bool SpeciesSiteReferenceListKeyword::write(LineParser& parser, const char* pref
 	RefListIterator<SpeciesSite> refIterator(data_);
 	while (SpeciesSite* site = refIterator.iterate()) sites.strcatf("  '%s'  '%s'", site->parent()->name(), site->name());
 
-	if (!parser.writeLineF("%s%s%s\n", prefix, keyword(), sites.get())) return false;
+	if (!parser.writeLineF("%s%s%s\n", prefix, name(), sites.get())) return false;
 
 	return true;
 }

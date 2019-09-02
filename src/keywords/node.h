@@ -104,18 +104,18 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
 	// Parse arguments from supplied LineParser, starting at given argument offset
 	bool read(LineParser& parser, int startArg, const CoreData& coreData)
 	{
-		if (!parentNode()) return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n", KeywordBase::keyword());
+		if (!parentNode()) return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n", KeywordBase::name());
 
 		// Locate the named node - don't prune by type yet (we'll check that in setNode())
 		ProcedureNode* node = onlyInScope_ ? parentNode()->nodeInScope(parser.argc(startArg)) : parentNode()->nodeExists(parser.argc(startArg));
-		if (!node) return Messenger::error("Node '%s' given to keyword %s doesn't exist.\n", parser.argc(startArg), KeywordBase::keyword());
+		if (!node) return Messenger::error("Node '%s' given to keyword %s doesn't exist.\n", parser.argc(startArg), KeywordBase::name());
 
 		return setNode(node);
 	}
 	// Write keyword data to specified LineParser
 	bool write(LineParser& parser, const char* prefix)
 	{
-		if (!parser.writeLineF("%s%s  '%s'\n", prefix, KeywordBase::keyword(), KeywordData<N*>::data_->name())) return false;
+		if (!parser.writeLineF("%s%s  '%s'\n", prefix, KeywordBase::name(), KeywordData<N*>::data_->name())) return false;
 
 		return true;
 	}
@@ -130,7 +130,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
 	{
 		if (!node) return false;
 
-		if (node->type() != nodeType()) return Messenger::error("Node '%s' is of type %s, but the %s keyword requires a node of type %s.\n", node->name(), ProcedureNode::nodeTypes().keyword(node->type()), KeywordBase::keyword(), ProcedureNode::nodeTypes().keyword(nodeType()));
+		if (node->type() != nodeType()) return Messenger::error("Node '%s' is of type %s, but the %s keyword requires a node of type %s.\n", node->name(), ProcedureNode::nodeTypes().keyword(node->type()), KeywordBase::name(), ProcedureNode::nodeTypes().keyword(nodeType()));
 
 		KeywordData<N*>::data_ = dynamic_cast<N*>(node);
 

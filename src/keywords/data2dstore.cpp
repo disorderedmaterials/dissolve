@@ -74,7 +74,7 @@ bool Data2DStoreKeyword::write(LineParser& parser, const char* prefix)
 	while (Data2D* data = dataIterator.iterate())
 	{
 		Data2DImportFileFormat ff = dataIterator.currentData();
-		if (!parser.writeLineF("%s%s  '%s'  %s\n", prefix, keyword(), data->name(), ff.asString())) return false;
+		if (!parser.writeLineF("%s%s  '%s'  %s\n", prefix, name(), data->name(), ff.asString())) return false;
 	}
 
 	return true;
