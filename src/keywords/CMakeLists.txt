@@ -20,6 +20,7 @@ add_library(keywords
   node.cpp
   nodeandinteger.cpp
   nodebranch.cpp
+  nodereflist.cpp
   nodevalue.cpp
   nodevalueenumoptions.cpp
   pairbroadeningfunction.cpp
@@ -56,6 +57,7 @@ add_library(keywords
   node.h
   nodeandinteger.h
   nodebranch.h
+  nodereflist.h
   nodevalue.h
   nodevalueenumoptions.h
   pairbroadeningfunction.h

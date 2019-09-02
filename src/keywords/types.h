@@ -49,6 +49,7 @@
 #include "keywords/node.h"
 #include "keywords/nodeandinteger.h"
 #include "keywords/nodebranch.h"
+#include "keywords/nodereflist.h"
 #include "keywords/nodevalue.h"
 #include "keywords/nodevalueenumoptions.h"
 #include "keywords/pairbroadeningfunction.h"
