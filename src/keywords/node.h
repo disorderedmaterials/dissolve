@@ -77,7 +77,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
 {
 	public:
 	// Constructor
-	NodeKeyword(ProcedureNode* parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, N* node) : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<N*>(KeywordBase::NodeData, node)
+	NodeKeyword(ProcedureNode* parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, N* node = NULL) : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<N*>(KeywordBase::NodeData, node)
 	{
 	}
 	// Destructor
