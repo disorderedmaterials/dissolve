@@ -50,6 +50,17 @@ const char* KeywordBase::keywordDataType(KeywordDataType kdt)
 	return KeywordDataTypeKeywords[kdt];
 }
 
+
+/*
+ * Base Pointer Return
+ */
+
+// Return base pointer for this (may be overloaded to provide access to other KeywordBase instance)
+KeywordBase* KeywordBase::base()
+{
+	return this;
+}
+
 /*
  * Keyword Description
  */

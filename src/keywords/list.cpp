@@ -70,7 +70,7 @@ bool KeywordList::add(const char* groupName, KeywordBase* object, const char* na
 // Find named keyword
 KeywordBase* KeywordList::find(const char* name) const
 {
-	for (KeywordBase* kwd = keywords_.first(); kwd != NULL; kwd = kwd->next()) if (DissolveSys::sameString(name, kwd->name())) return kwd;
+	for (KeywordBase* kwd = keywords_.first(); kwd != NULL; kwd = kwd->next()) if (DissolveSys::sameString(name, kwd->base()->name())) return kwd;
 
 	return NULL;
 }

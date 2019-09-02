@@ -54,6 +54,14 @@ class KeywordBase : public ListItem<KeywordBase>
 
 
 	/*
+	 * Base Pointer Return
+	 */
+	public:
+	// Return base pointer for this (may be overloaded to provide access to other KeywordBase instance)
+	virtual KeywordBase* base();
+
+
+	/*
 	 * Keyword Description
 	 */
 	public:
