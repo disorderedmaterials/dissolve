@@ -23,7 +23,6 @@
 #define DISSOLVE_KEYWORD_NODEVALUEENUMOPTIONS_H
 
 #include "keywords/data.h"
-#include "keywords/base.h"
 #include "procedure/nodes/node.h"
 #include "procedure/nodevalue.h"
 #include "templates/venum.h"

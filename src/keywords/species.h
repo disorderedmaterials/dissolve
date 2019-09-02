@@ -23,7 +23,6 @@
 #define DISSOLVE_KEYWORD_SPECIES_H
 
 #include "keywords/data.h"
-#include "keywords/base.h"
 #include "templates/list.h"
 
 // Forward Declarations

@@ -23,7 +23,6 @@
 #define DISSOLVE_KEYWORD_SPECIESSITEREFERENCELIST_H
 
 #include "keywords/data.h"
-#include "keywords/base.h"
 #include "templates/reflist.h"
 
 // Forward Declarations

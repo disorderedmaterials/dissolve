@@ -23,7 +23,6 @@
 #define DISSOLVE_KEYWORD_ATOMTYPESELECTION_H
 
 #include "keywords/data.h"
-#include "keywords/base.h"
 #include "classes/atomtypelist.h"
 #include "templates/reflist.h"
 

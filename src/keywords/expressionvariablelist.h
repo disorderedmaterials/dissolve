@@ -23,7 +23,6 @@
 #define DISSOLVE_KEYWORD_EXPRESSIONVARIABLELIST_H
 
 #include "keywords/data.h"
-#include "keywords/base.h"
 #include "expression/node.h"
 #include "templates/list.h"
 

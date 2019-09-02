@@ -22,7 +22,6 @@
 #ifndef DISSOLVE_KEYWORD_LIST_H
 #define DISSOLVE_KEYWORD_LIST_H
 
-#include "keywords/base.h"
 #include "keywords/data.h"
 #include "keywords/group.h"
 #include "base/enumoptions.h"

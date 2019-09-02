@@ -23,7 +23,6 @@
 #define DISSOLVE_KEYWORD_NODEANDINTEGER_H
 
 #include "keywords/data.h"
-#include "keywords/base.h"
 #include "procedure/nodes/node.h"
 #include "base/lineparser.h"
 #include "templates/pair.h"

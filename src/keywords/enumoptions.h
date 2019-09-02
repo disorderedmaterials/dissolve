@@ -23,7 +23,6 @@
 #define DISSOLVE_KEYWORD_ENUMOPTIONS_H
 
 #include "keywords/data.h"
-#include "keywords/base.h"
 #include "base/enumoptions.h"
 #include "base/lineparser.h"
 

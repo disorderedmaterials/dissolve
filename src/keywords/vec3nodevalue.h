@@ -23,7 +23,6 @@
 #define DISSOLVE_KEYWORD_VEC3NODEVALUE_H
 
 #include "keywords/data.h"
-#include "keywords/base.h"
 #include "keywords/vec3labels.h"
 #include "procedure/nodevalue.h"
 

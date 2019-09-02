@@ -23,7 +23,6 @@
 #define DISSOLVE_KEYWORD_FILEANDFORMAT_H
 
 #include "keywords/data.h"
-#include "keywords/base.h"
 
 // Forward Declarations
 class FileAndFormat;
