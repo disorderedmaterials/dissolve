@@ -216,7 +216,7 @@ SequenceProcedureNode* SelectProcedureNode::addForEachBranch(ProcedureNode::Node
 bool SelectProcedureNode::prepare(Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 	// Check for at least one site being defined
-	if ((sites_.nItems() == 0) && (dynamicSites_.nItems() == 0)) return Messenger::error("No sites are defined in the Select node '%s'.\n", name());
+	if ((speciesSites_.nItems() == 0) && (dynamicSites_.nItems() == 0)) return Messenger::error("No sites are defined in the Select node '%s'.\n", name());
 
 	// Prep some variables
 	nSelections_ = 0;
