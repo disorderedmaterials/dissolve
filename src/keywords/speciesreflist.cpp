@@ -1,6 +1,6 @@
 /*
-	*** Keyword - Species Reference List
-	*** src/keywords/speciesreferencelist.cpp
+	*** Keyword - Species RefList
+	*** src/keywords/speciesreflist.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,18 +19,18 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "keywords/speciesreferencelist.h"
+#include "keywords/speciesreflist.h"
 #include "classes/coredata.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
 
 // Constructor
-SpeciesReferenceListKeyword::SpeciesReferenceListKeyword(RefList<Species>& references) : KeywordData< RefList<Species>& >(KeywordBase::SpeciesReferenceListData, references)
+SpeciesRefListKeyword::SpeciesRefListKeyword(RefList<Species>& references) : KeywordData< RefList<Species>& >(KeywordBase::SpeciesRefListData, references)
 {
 }
 
 // Destructor
-SpeciesReferenceListKeyword::~SpeciesReferenceListKeyword()
+SpeciesRefListKeyword::~SpeciesRefListKeyword()
 {
 }
 
@@ -39,7 +39,7 @@ SpeciesReferenceListKeyword::~SpeciesReferenceListKeyword()
  */
 
 // Determine whether current data is actually 'set'
-bool SpeciesReferenceListKeyword::currentDataIsSet() const
+bool SpeciesRefListKeyword::currentDataIsSet() const
 {
 	return data_.nItems() > 0;
 }
@@ -49,19 +49,19 @@ bool SpeciesReferenceListKeyword::currentDataIsSet() const
  */
 
 // Return minimum number of arguments accepted
-int SpeciesReferenceListKeyword::minArguments()
+int SpeciesRefListKeyword::minArguments()
 {
 	return 1;
 }
 
 // Return maximum number of arguments accepted
-int SpeciesReferenceListKeyword::maxArguments()
+int SpeciesRefListKeyword::maxArguments()
 {
 	return 99;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool SpeciesReferenceListKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
+bool SpeciesRefListKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	// Each argument is the name of a Species that we will add to our list
 	for (int n=startArg; n < parser.nArgs(); ++n)
@@ -78,7 +78,7 @@ bool SpeciesReferenceListKeyword::read(LineParser& parser, int startArg, const C
 }
 
 // Write keyword data to specified LineParser
-bool SpeciesReferenceListKeyword::write(LineParser& parser, const char* prefix)
+bool SpeciesRefListKeyword::write(LineParser& parser, const char* prefix)
 {
 	// Loop over list of Species
 	CharString speciesString;
@@ -95,7 +95,7 @@ bool SpeciesReferenceListKeyword::write(LineParser& parser, const char* prefix)
  */
 
 // Prune any references to the supplied Species in the contained data
-void SpeciesReferenceListKeyword::removeReferencesTo(Species* sp)
+void SpeciesRefListKeyword::removeReferencesTo(Species* sp)
 {
 	data_.remove(sp);
 }

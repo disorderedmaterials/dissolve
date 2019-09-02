@@ -1,6 +1,6 @@
 /*
-	*** Keyword - Module Reference List
-	*** src/keywords/modulereferencelist.cpp
+	*** Keyword - Module RefList
+	*** src/keywords/modulereflist.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,26 +19,26 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "keywords/modulereferencelist.h"
+#include "keywords/modulereflist.h"
 #include "module/list.h"
 #include "module/module.h"
 #include "classes/coredata.h"
 #include "base/lineparser.h"
 
 // Constructors
-ModuleReferenceListKeyword::ModuleReferenceListKeyword(RefList<Module>& references, int maxModules) : KeywordData< RefList<Module>& >(KeywordBase::ModuleReferenceListData, references)
+ModuleRefListKeyword::ModuleRefListKeyword(RefList<Module>& references, int maxModules) : KeywordData< RefList<Module>& >(KeywordBase::ModuleRefListData, references)
 {
 	maxModules_ = maxModules;
 }
 
-ModuleReferenceListKeyword::ModuleReferenceListKeyword(RefList<Module>& references, CharStringList allowedModuleTypes, int maxModules) : KeywordData< RefList<Module>& >(KeywordBase::ModuleReferenceListData, references)
+ModuleRefListKeyword::ModuleRefListKeyword(RefList<Module>& references, CharStringList allowedModuleTypes, int maxModules) : KeywordData< RefList<Module>& >(KeywordBase::ModuleRefListData, references)
 {
 	moduleTypes_ = allowedModuleTypes;
 	maxModules_ = maxModules;
 }
 
 // Destructor
-ModuleReferenceListKeyword::~ModuleReferenceListKeyword()
+ModuleRefListKeyword::~ModuleRefListKeyword()
 {
 }
 
@@ -47,19 +47,19 @@ ModuleReferenceListKeyword::~ModuleReferenceListKeyword()
  */
 
 // Determine whether current data is actually 'set'
-bool ModuleReferenceListKeyword::currentDataIsSet() const
+bool ModuleRefListKeyword::currentDataIsSet() const
 {
 	return data_.nItems() > 0;
 }
 
 // Return the Module type(s) to allow
-const CharStringList& ModuleReferenceListKeyword::moduleTypes() const
+const CharStringList& ModuleRefListKeyword::moduleTypes() const
 {
 	return moduleTypes_;
 }
 
 // Return maximum number of Modules to allow in the list
-int ModuleReferenceListKeyword::maxModules() const
+int ModuleRefListKeyword::maxModules() const
 {
 	return maxModules_;
 }
@@ -69,19 +69,19 @@ int ModuleReferenceListKeyword::maxModules() const
  */
 
 // Return minimum number of arguments accepted
-int ModuleReferenceListKeyword::minArguments()
+int ModuleRefListKeyword::minArguments()
 {
 	return 1;
 }
 
 // Return maximum number of arguments accepted
-int ModuleReferenceListKeyword::maxArguments()
+int ModuleRefListKeyword::maxArguments()
 {
 	return (maxModules_ == -1 ? 99 : maxModules_);
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool ModuleReferenceListKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
+bool ModuleRefListKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	// Loop over arguments provided to the keyword
 	for (int n = startArg; n<parser.nArgs(); ++n)
@@ -110,7 +110,7 @@ bool ModuleReferenceListKeyword::read(LineParser& parser, int startArg, const Co
 }
 
 // Write keyword data to specified LineParser
-bool ModuleReferenceListKeyword::write(LineParser& parser, const char* prefix)
+bool ModuleRefListKeyword::write(LineParser& parser, const char* prefix)
 {
 	// Loop over list of referenced Modules
 	RefListIterator<Module> refIterator(data_);
@@ -127,7 +127,7 @@ bool ModuleReferenceListKeyword::write(LineParser& parser, const char* prefix)
  */
 
 // Prune any references to the supplied Module in the contained data
-void ModuleReferenceListKeyword::removeReferencesTo(Module* module)
+void ModuleRefListKeyword::removeReferencesTo(Module* module)
 {
 	data_.remove(module);
 }

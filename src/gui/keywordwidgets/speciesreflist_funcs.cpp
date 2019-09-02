@@ -1,6 +1,6 @@
 /*
-	*** Keyword Widget - Module Reference List
-	*** src/gui/keywordwidgets/modulereferencelist_funcs.cpp
+	*** Keyword Widget - Species RefList
+	*** src/gui/keywordwidgets/speciesreflist_funcs.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,18 +19,17 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/keywordwidgets/modulereferencelist.h"
-#include "gui/keywordwidgets/dropdown.h"
+#include "gui/keywordwidgets/speciesreflist.h"
 #include "gui/helpers/listwidgetupdater.h"
-#include "module/module.h"
 #include "classes/coredata.h"
+#include "classes/species.h"
 #include "genericitems/listhelper.h"
 #include <QHBoxLayout>
 #include <QComboBox>
 #include <QString>
 
 // Constructor
-ModuleReferenceListKeywordWidget::ModuleReferenceListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : KeywordDropDown(this), KeywordWidgetBase(coreData)
+SpeciesRefListKeywordWidget::SpeciesRefListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : KeywordDropDown(this), KeywordWidgetBase(coreData)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container
 	ui_.setupUi(dropWidget());
@@ -39,8 +38,8 @@ ModuleReferenceListKeywordWidget::ModuleReferenceListKeywordWidget(QWidget* pare
 	connect(ui_.SelectionList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(itemChanged(QListWidgetItem*)));
 
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<ModuleReferenceListKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base keyword into ModuleReferenceListKeyword.\n");
+	keyword_ = dynamic_cast<SpeciesRefListKeyword*>(keyword);
+	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into SpeciesRefListKeyword.\n", keyword->name());
 	else
 	{
 		// Set current information
@@ -53,25 +52,25 @@ ModuleReferenceListKeywordWidget::ModuleReferenceListKeywordWidget(QWidget* pare
  */
 
 // Selection list update function
-void ModuleReferenceListKeywordWidget::updateSelectionRow(int row, Module* module, bool createItem)
+void SpeciesRefListKeywordWidget::updateSelectionRow(int row, Species* sp, bool createItem)
 {
 	// Grab the target reference list
-	RefList<Module>& selection = keyword_->data();
+	RefList<Species>& selection = keyword_->data();
 
 	QListWidgetItem* item;
 	if (createItem)
 	{
-		item = new QListWidgetItem(module->uniqueName());
-		item->setData(Qt::UserRole, VariantPointer<Module>(module));
+		item = new QListWidgetItem(sp->name());
+		item->setData(Qt::UserRole, VariantPointer<Species>(sp));
 		item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
 		ui_.SelectionList->insertItem(row, item);
 	}
 	else item = ui_.SelectionList->item(row);
-	item->setCheckState(selection.contains(module) ? Qt::Checked : Qt::Unchecked);
+	item->setCheckState(selection.contains(sp) ? Qt::Checked : Qt::Unchecked);
 }
 
 // Function type combo changed
-void ModuleReferenceListKeywordWidget::itemChanged(QListWidgetItem* item)
+void SpeciesRefListKeywordWidget::itemChanged(QListWidgetItem* item)
 {
 	if (refreshing_) return;
 
@@ -87,21 +86,18 @@ void ModuleReferenceListKeywordWidget::itemChanged(QListWidgetItem* item)
  */
 
 // Update value displayed in widget
-void ModuleReferenceListKeywordWidget::updateValue()
+void SpeciesRefListKeywordWidget::updateValue()
 {
 	updateWidgetValues(coreData_);
 }
 
 // Update widget values data based on keyword data
-void ModuleReferenceListKeywordWidget::updateWidgetValues(const CoreData& coreData)
+void SpeciesRefListKeywordWidget::updateWidgetValues(const CoreData& coreData)
 {
 	refreshing_ = true;
-
-	// Get a RefList of current Modules that are of the correct type
-	RefList<Module> availableModules = coreData.findModules(keyword_->moduleTypes());
-
-	// Update the list widget
-	ListWidgetUpdater<ModuleReferenceListKeywordWidget,Module> listUpdater(ui_.SelectionList, availableModules, this, &ModuleReferenceListKeywordWidget::updateSelectionRow);
+	
+	// Update the list against the global Species list
+	ListWidgetUpdater<SpeciesRefListKeywordWidget,Species> listUpdater(ui_.SelectionList, coreData_.constSpecies(), this, &SpeciesRefListKeywordWidget::updateSelectionRow);
 
 	updateSummaryText();
 
@@ -109,34 +105,32 @@ void ModuleReferenceListKeywordWidget::updateWidgetValues(const CoreData& coreDa
 }
 
 // Update keyword data based on widget values
-void ModuleReferenceListKeywordWidget::updateKeywordData()
+void SpeciesRefListKeywordWidget::updateKeywordData()
 {
-	// Loop over items in the QListWidget, adding the associated Modules for any that are checked
-	RefList<Module> newSelection;
+	// Loop over items in the QListWidget, adding the associated Speciess for any that are checked
+	RefList<Species> newSelection;
 	for (int n=0; n<ui_.SelectionList->count(); ++n)
 	{
 		QListWidgetItem* item = ui_.SelectionList->item(n);
-		if (item->checkState() == Qt::Checked) newSelection.append(VariantPointer<Module>(item->data(Qt::UserRole)));
+		if (item->checkState() == Qt::Checked) newSelection.append(VariantPointer<Species>(item->data(Qt::UserRole)));
 	}
-
-	// Update the data
 	keyword_->setData(newSelection);
 }
 
 // Update summary text
-void ModuleReferenceListKeywordWidget::updateSummaryText()
+void SpeciesRefListKeywordWidget::updateSummaryText()
 {
 	// Create summary text for the KeywordDropDown button
-	RefList<Module>& selection = keyword_->data();
+	RefList<Species>& selection = keyword_->data();
 	if (selection.nItems() == 0) setSummaryText("<None>");
 	else
 	{
 		CharString summaryText;
-		RefListIterator<Module> moduleIterator(selection);
-		while (Module* module = moduleIterator.iterate())
+		RefListIterator<Species> speciesIterator(selection);
+		while (Species* sp = speciesIterator.iterate())
 		{
-			if (moduleIterator.isFirst()) summaryText = module->uniqueName();
-			else summaryText.strcatf(", %s", module->uniqueName());
+			if (speciesIterator.isFirst()) summaryText = sp->name();
+			else summaryText.strcatf(", %s", sp->name());
 		}
 		setSummaryText(summaryText);
 	}

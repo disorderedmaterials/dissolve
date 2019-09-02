@@ -1,6 +1,6 @@
 /*
-	*** Keyword Widget - Species Site Reference List
-	*** src/gui/keywordwidgets/speciessitereferencelist.h
+	*** Keyword Widget - Module RefList
+	*** src/gui/keywordwidgets/modulereflist.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,26 +19,26 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORDWIDGET_SPECIESSITEREFERENCELIST_H
-#define DISSOLVE_KEYWORDWIDGET_SPECIESSITEREFERENCELIST_H
+#ifndef DISSOLVE_KEYWORDWIDGET_MODULEREFLIST_H
+#define DISSOLVE_KEYWORDWIDGET_MODULEREFLIST_H
 
-#include "gui/keywordwidgets/ui_speciessitereferencelist.h"
+#include "gui/keywordwidgets/ui_modulereflist.h"
 #include "gui/keywordwidgets/dropdown.h"
+#include "keywords/modulereflist.h"
 #include "gui/keywordwidgets/base.h"
-#include "keywords/speciessitereferencelist.h"
 #include <QWidget>
 
 // Forward Declarations
-class Species;
+class Module;
 
-class SpeciesSiteReferenceListKeywordWidget: public KeywordDropDown, public KeywordWidgetBase
+class ModuleRefListKeywordWidget: public KeywordDropDown, public KeywordWidgetBase
 {
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
 	public:
 	// Constructor
-	SpeciesSiteReferenceListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
+	ModuleRefListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
 
 
 	/*
@@ -46,7 +46,7 @@ class SpeciesSiteReferenceListKeywordWidget: public KeywordDropDown, public Keyw
 	 */
 	private:
 	// Associated keyword
-	SpeciesSiteReferenceListKeyword* keyword_;
+	ModuleRefListKeyword* keyword_;
 
 
 	/*
@@ -54,10 +54,15 @@ class SpeciesSiteReferenceListKeywordWidget: public KeywordDropDown, public Keyw
 	 */
 	private:
 	// Main form declaration
-	Ui::SpeciesSiteReferenceListWidget ui_;
+	Ui::ModuleReferenceListWidget ui_;
+
+	private:
+	// Selection list update function
+	void updateSelectionRow(int row, Module* module, bool createItem);
 
 	private slots:
-	void siteCheckBox_clicked(bool checked);
+	// List item changed
+	void itemChanged(QListWidgetItem* item);
 
 	signals:
 	// Keyword value changed

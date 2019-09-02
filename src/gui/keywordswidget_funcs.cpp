@@ -127,9 +127,9 @@ QWidget* KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& keyword
 		widget = moduleGroupsWidget;
 		base = moduleGroupsWidget;
 	}
-	else if (keyword->type() == KeywordBase::ModuleReferenceListData)
+	else if (keyword->type() == KeywordBase::ModuleRefListData)
 	{
-		ModuleReferenceListKeywordWidget* moduleReferenceListWidget = new ModuleReferenceListKeywordWidget(NULL, keyword, coreData);
+		ModuleRefListKeywordWidget* moduleReferenceListWidget = new ModuleRefListKeywordWidget(NULL, keyword, coreData);
 		connect(moduleReferenceListWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
 		widget = moduleReferenceListWidget;
 		base = moduleReferenceListWidget;
@@ -162,16 +162,16 @@ QWidget* KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& keyword
 		widget = speciesWidget;
 		base = speciesWidget;
 	}
-	else if (keyword->type() == KeywordBase::SpeciesReferenceListData)
+	else if (keyword->type() == KeywordBase::SpeciesRefListData)
 	{
-		SpeciesReferenceListKeywordWidget* speciesReferenceListWidget = new SpeciesReferenceListKeywordWidget(NULL, keyword, coreData);
+		SpeciesRefListKeywordWidget* speciesReferenceListWidget = new SpeciesRefListKeywordWidget(NULL, keyword, coreData);
 		connect(speciesReferenceListWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
 		widget = speciesReferenceListWidget;
 		base = speciesReferenceListWidget;
 	}
-	else if (keyword->type() == KeywordBase::SpeciesSiteReferenceListData)
+	else if (keyword->type() == KeywordBase::SpeciesSiteRefListData)
 	{
-		SpeciesSiteReferenceListKeywordWidget* speciesSiteReferenceListWidget = new SpeciesSiteReferenceListKeywordWidget(NULL, keyword, coreData);
+		SpeciesSiteRefListKeywordWidget* speciesSiteReferenceListWidget = new SpeciesSiteRefListKeywordWidget(NULL, keyword, coreData);
 		connect(speciesSiteReferenceListWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
 		widget = speciesSiteReferenceListWidget;
 		base = speciesSiteReferenceListWidget;

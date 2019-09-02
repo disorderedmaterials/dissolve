@@ -1,6 +1,6 @@
 /*
-	*** Keyword - SpeciesSite Reference List
-	*** src/keywords/speciessitereferencelist.cpp
+	*** Keyword - SpeciesSite RefList
+	*** src/keywords/speciessitereflist.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,19 +19,19 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "keywords/speciessitereferencelist.h"
+#include "keywords/speciessitereflist.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "classes/coredata.h"
 #include "base/lineparser.h"
 
 // Constructor
-SpeciesSiteReferenceListKeyword::SpeciesSiteReferenceListKeyword(RefList<SpeciesSite>& references) : KeywordData< RefList<SpeciesSite>& >(KeywordData::SpeciesSiteReferenceListData, references)
+SpeciesSiteRefListKeyword::SpeciesSiteRefListKeyword(RefList<SpeciesSite>& references) : KeywordData< RefList<SpeciesSite>& >(KeywordData::SpeciesSiteRefListData, references)
 {
 }
 
 // Destructor
-SpeciesSiteReferenceListKeyword::~SpeciesSiteReferenceListKeyword()
+SpeciesSiteRefListKeyword::~SpeciesSiteRefListKeyword()
 {
 }
 
@@ -40,19 +40,19 @@ SpeciesSiteReferenceListKeyword::~SpeciesSiteReferenceListKeyword()
  */
 
 // Return minimum number of arguments accepted
-int SpeciesSiteReferenceListKeyword::minArguments()
+int SpeciesSiteRefListKeyword::minArguments()
 {
 	return 2;
 }
 
 // Return maximum number of arguments accepted
-int SpeciesSiteReferenceListKeyword::maxArguments()
+int SpeciesSiteRefListKeyword::maxArguments()
 {
 	return 99;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool SpeciesSiteReferenceListKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
+bool SpeciesSiteRefListKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	// Loop over arguments
 	for (int n=startArg; n<parser.nArgs()-1; n += 2)
@@ -79,7 +79,7 @@ bool SpeciesSiteReferenceListKeyword::read(LineParser& parser, int startArg, con
 }
 
 // Write keyword data to specified LineParser
-bool SpeciesSiteReferenceListKeyword::write(LineParser& parser, const char* prefix)
+bool SpeciesSiteRefListKeyword::write(LineParser& parser, const char* prefix)
 {
 	// Loop over list of SpeciesSiteReferences
 	CharString sites;
@@ -96,7 +96,7 @@ bool SpeciesSiteReferenceListKeyword::write(LineParser& parser, const char* pref
  */
 
 // Prune any references to the supplied Species in the contained data
-void SpeciesSiteReferenceListKeyword::removeReferencesTo(Species* sp)
+void SpeciesSiteRefListKeyword::removeReferencesTo(Species* sp)
 {
 	RefListItem<SpeciesSite>* ri = data_.first(), *nextItem;
 	while (ri)
@@ -108,7 +108,7 @@ void SpeciesSiteReferenceListKeyword::removeReferencesTo(Species* sp)
 }
 
 // Prune any references to the supplied SpeciesSite in the contained data
-void SpeciesSiteReferenceListKeyword::removeReferencesTo(SpeciesSite* spSite)
+void SpeciesSiteRefListKeyword::removeReferencesTo(SpeciesSite* spSite)
 {
 	data_.remove(spSite);
 }

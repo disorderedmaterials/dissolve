@@ -1,6 +1,6 @@
 /*
-	*** Keyword - Module Reference List
-	*** src/keywords/modulereferencelist.h
+	*** Keyword - Species RefList
+	*** src/keywords/speciesreflist.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,45 +19,31 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_MODULEREFERENCELIST_H
-#define DISSOLVE_KEYWORD_MODULEREFERENCELIST_H
+#ifndef DISSOLVE_KEYWORD_SPECIESREFLIST_H
+#define DISSOLVE_KEYWORD_SPECIESREFLIST_H
 
-#include "base/charstringlist.h"
 #include "keywords/data.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
-class Module;
+class Species;
 
-// Keyword with Module reference list data
-class ModuleReferenceListKeyword : public KeywordData< RefList<Module>& >
+// Keyword with Species RefList Data
+class SpeciesRefListKeyword : public KeywordData< RefList<Species>& >
 {
 	public:
-	// Constructors
-	ModuleReferenceListKeyword(RefList<Module>& references, int maxModules = -1);
-	ModuleReferenceListKeyword(RefList<Module>& references, CharStringList allowedModuleTypes, int maxModules = -1);
+	// Constructor
+	SpeciesRefListKeyword(RefList<Species>& references);
 	// Destructor
-	~ModuleReferenceListKeyword();
+	~SpeciesRefListKeyword();
 
 
 	/*
 	 * Data
 	 */
-	private:
-	// Module type(s) to allow
-	CharStringList moduleTypes_;
-	// Maximum number of modules to allow in list (-1 for any number)
-	int maxModules_;
-
 	protected:
 	// Determine whether current data is actually 'set'
 	bool currentDataIsSet() const;
-
-	public:
-	// Return the Module type(s) to allow
-	const CharStringList& moduleTypes() const;
-	// Return maximum number of Modules to allow in the list
-	int maxModules() const;
 
 
 	/*
@@ -78,8 +64,9 @@ class ModuleReferenceListKeyword : public KeywordData< RefList<Module>& >
 	 * Object Management
 	 */
 	protected:
-	// Prune any references to the supplied Module in the contained data
-	void removeReferencesTo(Module* module);
+	// Prune any references to the supplied Species in the contained data
+	void removeReferencesTo(Species* sp);
 };
 
 #endif
+

@@ -16,7 +16,7 @@ add_library(keywords
   isotopologuereferencelist.cpp
   list.cpp
   modulegroups.cpp
-  modulereferencelist.cpp
+  modulereflist.cpp
   node.cpp
   nodeandinteger.cpp
   nodebranch.cpp
@@ -25,9 +25,9 @@ add_library(keywords
   pairbroadeningfunction.cpp
   procedure.cpp
   species.cpp
-  speciesreferencelist.cpp
+  speciesreflist.cpp
   speciessite.cpp
-  speciessitereferencelist.cpp
+  speciessitereflist.cpp
   vec3double.cpp
   vec3integer.cpp
   vec3nodevalue.cpp
@@ -52,7 +52,7 @@ add_library(keywords
   isotopologuereferencelist.h
   list.h
   modulegroups.h
-  modulereferencelist.h
+  modulereflist.h
   node.h
   nodeandinteger.h
   nodebranch.h
@@ -61,9 +61,9 @@ add_library(keywords
   pairbroadeningfunction.h
   procedure.h
   species.h
-  speciesreferencelist.h
+  speciesreflist.h
   speciessite.h
-  speciessitereferencelist.h
+  speciessitereflist.h
   vec3double.h
   vec3integer.h
   vec3labels.h

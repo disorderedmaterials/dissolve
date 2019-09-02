@@ -10,12 +10,12 @@ SET(keywordwidgets_MOC_HDRS
   fileandformat.h
   isotopologuereferencelist.h
   modulegroups.h
-  modulereferencelist.h
+  modulereflist.h
   nodevalue.h
   nodevalueenumoptions.h
   pairbroadeningfunction.h
-  speciesreferencelist.h
-  speciessitereferencelist.h
+  speciesreflist.h
+  speciessitereflist.h
   vec3double.h
   vec3integer.h
   vec3labels.h
@@ -39,14 +39,14 @@ SET(keywordwidgets_UIS
   dropdown.ui
   expressionvariablelist.ui
   fileandformat.ui
-  isotopologuereferencelist.ui
+  isotopologuereflist.ui
   modulegroups.ui
-  modulereferencelist.ui
+  modulereflist.ui
   nodevalue.ui
   nodevalueenumoptions.ui
   pairbroadeningfunction.ui
-  speciesreferencelist.ui
-  speciessitereferencelist.ui
+  speciesreflist.ui
+  speciessitereflist.ui
   vec3double.ui
   vec3integer.ui
   vec3nodevalue.ui
@@ -70,13 +70,13 @@ SET(keywordwidgets_SRCS
   integer_funcs.cpp
   isotopologuereferencelist_funcs.cpp
   modulegroups_funcs.cpp
-  modulereferencelist_funcs.cpp
+  modulereflist_funcs.cpp
   nodevalue_funcs.cpp
   nodevalueenumoptions_funcs.cpp
   pairbroadeningfunction_funcs.cpp
   species_funcs.cpp
-  speciesreferencelist_funcs.cpp
-  speciessitereferencelist_funcs.cpp
+  speciesreflist_funcs.cpp
+  speciessitereflist_funcs.cpp
   windowfunction_funcs.cpp
   vec3double_funcs.cpp
   vec3integer_funcs.cpp

@@ -34,8 +34,8 @@ void CalculateRDFModule::initialise()
 	keywords_.add("Calculation", new DoubleKeyword(0.0, 0.0), "RMin", "Minimum distance to bin in RDF", "<r, Angstroms>");
 
 	// Sites
-	keywords_.add("Sites", new SpeciesSiteReferenceListKeyword(originSites_), "OriginSite", "Set the site(s) which are to represent the origin of the RDF", "<Species> <Site>");
-	keywords_.add("Sites", new SpeciesSiteReferenceListKeyword(otherSites_), "OtherSite", "Set the site(s) for which the distribution around the origin site should be calculated", "<Species> <Site>");
+	keywords_.add("Sites", new SpeciesSiteRefListKeyword(originSites_), "OriginSite", "Set the site(s) which are to represent the origin of the RDF", "<Species> <Site>");
+	keywords_.add("Sites", new SpeciesSiteRefListKeyword(otherSites_), "OtherSite", "Set the site(s) for which the distribution around the origin site should be calculated", "<Species> <Site>");
 	keywords_.add("Sites", new BoolKeyword(false), "ExcludeSameMolecule", "Whether to exclude correlations between sites on the same molecule", "<True|False>");
 
 	// Export

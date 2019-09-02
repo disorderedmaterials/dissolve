@@ -1,6 +1,6 @@
 /*
-	*** Keyword - SpeciesSite Reference List
-	*** src/keywords/speciessitereferencelist.h
+	*** Keyword - Module RefList
+	*** src/keywords/modulereflist.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,23 +19,45 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_SPECIESSITEREFERENCELIST_H
-#define DISSOLVE_KEYWORD_SPECIESSITEREFERENCELIST_H
+#ifndef DISSOLVE_KEYWORD_MODULEREFLIST_H
+#define DISSOLVE_KEYWORD_MODULEREFLIST_H
 
+#include "base/charstringlist.h"
 #include "keywords/data.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
-class SpeciesSite;
+class Module;
 
-// Keyword with SpeciesSiteReference Data
-class SpeciesSiteReferenceListKeyword : public KeywordData< RefList<SpeciesSite>& >
+// Keyword with Module RefList data
+class ModuleRefListKeyword : public KeywordData< RefList<Module>& >
 {
 	public:
-	// Constructor
-	SpeciesSiteReferenceListKeyword(RefList<SpeciesSite>& references);
+	// Constructors
+	ModuleRefListKeyword(RefList<Module>& references, int maxModules = -1);
+	ModuleRefListKeyword(RefList<Module>& references, CharStringList allowedModuleTypes, int maxModules = -1);
 	// Destructor
-	~SpeciesSiteReferenceListKeyword();
+	~ModuleRefListKeyword();
+
+
+	/*
+	 * Data
+	 */
+	private:
+	// Module type(s) to allow
+	CharStringList moduleTypes_;
+	// Maximum number of modules to allow in list (-1 for any number)
+	int maxModules_;
+
+	protected:
+	// Determine whether current data is actually 'set'
+	bool currentDataIsSet() const;
+
+	public:
+	// Return the Module type(s) to allow
+	const CharStringList& moduleTypes() const;
+	// Return maximum number of Modules to allow in the list
+	int maxModules() const;
 
 
 	/*
@@ -56,11 +78,8 @@ class SpeciesSiteReferenceListKeyword : public KeywordData< RefList<SpeciesSite>
 	 * Object Management
 	 */
 	protected:
-	// Prune any references to the supplied Species in the contained data
-	void removeReferencesTo(Species* sp);
-	// Prune any references to the supplied SpeciesSite in the contained data
-	void removeReferencesTo(SpeciesSite* spSite);
+	// Prune any references to the supplied Module in the contained data
+	void removeReferencesTo(Module* module);
 };
 
 #endif
-

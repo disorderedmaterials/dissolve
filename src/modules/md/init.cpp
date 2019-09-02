@@ -34,7 +34,7 @@ void MDModule::initialise()
 	keywords_.add("Calculation", new BoolKeyword(true), "OnlyWhenEnergyStable", "Only run MD when target Configuration energies are stable");
 	keywords_.add("Calculation", new BoolKeyword(true), "VariableTimestep", "Whether a variable timestep should be used, determined from the maximal force vector");
 	keywords_.add("Calculation", new BoolKeyword(false), "RandomVelocities", "Whether random velocities should always be assigned before beginning MD simulation");
-	keywords_.add("Calculation", new SpeciesReferenceListKeyword(restrictToSpecies_), "RestrictToSpecies", "Restrict the calculation to the specified Species");
+	keywords_.add("Calculation", new SpeciesRefListKeyword(restrictToSpecies_), "RestrictToSpecies", "Restrict the calculation to the specified Species");
 
 	// Output
 	keywords_.add("Output", new IntegerKeyword(10), "EnergyFrequency", "Frequency at which to calculate total system energy (or 0 to inhibit)");

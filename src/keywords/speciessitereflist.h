@@ -1,6 +1,6 @@
 /*
-	*** Keyword - Species Reference
-	*** src/keywords/speciesreference.h
+	*** Keyword - SpeciesSite RefList
+	*** src/keywords/speciessitereflist.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,31 +19,23 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_SPECIESREFERENCELIST_H
-#define DISSOLVE_KEYWORD_SPECIESREFERENCELIST_H
+#ifndef DISSOLVE_KEYWORD_SPECIESSITEREFLIST_H
+#define DISSOLVE_KEYWORD_SPECIESSITEREFLIST_H
 
 #include "keywords/data.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
-class Species;
+class SpeciesSite;
 
-// Keyword with SpeciesReference Data
-class SpeciesReferenceListKeyword : public KeywordData< RefList<Species>& >
+// Keyword with SpeciesSiteReference Data
+class SpeciesSiteRefListKeyword : public KeywordData< RefList<SpeciesSite>& >
 {
 	public:
 	// Constructor
-	SpeciesReferenceListKeyword(RefList<Species>& references);
+	SpeciesSiteRefListKeyword(RefList<SpeciesSite>& references);
 	// Destructor
-	~SpeciesReferenceListKeyword();
-
-
-	/*
-	 * Data
-	 */
-	protected:
-	// Determine whether current data is actually 'set'
-	bool currentDataIsSet() const;
+	~SpeciesSiteRefListKeyword();
 
 
 	/*
@@ -66,6 +58,8 @@ class SpeciesReferenceListKeyword : public KeywordData< RefList<Species>& >
 	protected:
 	// Prune any references to the supplied Species in the contained data
 	void removeReferencesTo(Species* sp);
+	// Prune any references to the supplied SpeciesSite in the contained data
+	void removeReferencesTo(SpeciesSite* spSite);
 };
 
 #endif

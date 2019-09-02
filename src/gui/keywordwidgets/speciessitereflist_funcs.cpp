@@ -1,6 +1,6 @@
 /*
-	*** Keyword Widget - Species Reference List
-	*** src/gui/keywordwidgets/speciessitereferencelist_funcs.cpp
+	*** Keyword Widget - SpeciesSite RefList
+	*** src/gui/keywordwidgets/speciessitereflist_funcs.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/keywordwidgets/speciessitereferencelist.h"
+#include "gui/keywordwidgets/speciessitereflist.h"
 #include "gui/helpers/tablewidgetupdater.h"
 #include "gui/delegates/combolist.hui"
 #include "classes/coredata.h"
@@ -32,14 +32,14 @@
 #include <QSpacerItem>
 
 // Constructor
-SpeciesSiteReferenceListKeywordWidget::SpeciesSiteReferenceListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : KeywordDropDown(this), KeywordWidgetBase(coreData)
+SpeciesSiteRefListKeywordWidget::SpeciesSiteRefListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : KeywordDropDown(this), KeywordWidgetBase(coreData)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container
 	ui_.setupUi(dropWidget());
 
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<SpeciesSiteReferenceListKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into SpeciesSiteReferenceListKeyword.\n", keyword->name());
+	keyword_ = dynamic_cast<SpeciesSiteRefListKeyword*>(keyword);
+	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into SpeciesSiteRefListKeyword.\n", keyword->name());
 	else
 	{
 		// Set current information
@@ -53,7 +53,7 @@ SpeciesSiteReferenceListKeywordWidget::SpeciesSiteReferenceListKeywordWidget(QWi
 /*
  * Widgets
  */
-void SpeciesSiteReferenceListKeywordWidget::siteCheckBox_clicked(bool checked)
+void SpeciesSiteRefListKeywordWidget::siteCheckBox_clicked(bool checked)
 {
 	if (refreshing_) return;
 
@@ -75,13 +75,13 @@ void SpeciesSiteReferenceListKeywordWidget::siteCheckBox_clicked(bool checked)
  */
 
 // Update value displayed in widget
-void SpeciesSiteReferenceListKeywordWidget::updateValue()
+void SpeciesSiteRefListKeywordWidget::updateValue()
 {
 	updateWidgetValues(coreData_);
 }
 
 // Update widget values data based on keyword data
-void SpeciesSiteReferenceListKeywordWidget::updateWidgetValues(const CoreData& coreData)
+void SpeciesSiteRefListKeywordWidget::updateWidgetValues(const CoreData& coreData)
 {
 	refreshing_ = true;
 
@@ -132,13 +132,13 @@ void SpeciesSiteReferenceListKeywordWidget::updateWidgetValues(const CoreData& c
 }
 
 // Update keyword data based on widget values
-void SpeciesSiteReferenceListKeywordWidget::updateKeywordData()
+void SpeciesSiteRefListKeywordWidget::updateKeywordData()
 {
 	// Not relevant - Handled via checkbox callbacks
 }
 
 // Update summary text
-void SpeciesSiteReferenceListKeywordWidget::updateSummaryText()
+void SpeciesSiteRefListKeywordWidget::updateSummaryText()
 {
 	// TODO
 }

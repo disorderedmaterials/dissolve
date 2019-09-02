@@ -1,6 +1,6 @@
 /*
-	*** Keyword Widget - Species Reference List
-	*** src/gui/keywordwidgets/speciesreferencelist.h
+	*** Keyword Widget - Species Site RefList
+	*** src/gui/keywordwidgets/speciessitereflist.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,26 +19,26 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORDWIDGET_SPECIESREFERENCELIST_H
-#define DISSOLVE_KEYWORDWIDGET_SPECIESREFERENCELIST_H
+#ifndef DISSOLVE_KEYWORDWIDGET_SPECIESSITEREFLIST_H
+#define DISSOLVE_KEYWORDWIDGET_SPECIESSITEREFLIST_H
 
-#include "gui/keywordwidgets/ui_speciesreferencelist.h"
+#include "gui/keywordwidgets/ui_speciessitereflist.h"
 #include "gui/keywordwidgets/dropdown.h"
-#include "keywords/speciesreferencelist.h"
 #include "gui/keywordwidgets/base.h"
+#include "keywords/speciessitereflist.h"
 #include <QWidget>
 
 // Forward Declarations
 class Species;
 
-class SpeciesReferenceListKeywordWidget: public KeywordDropDown, public KeywordWidgetBase
+class SpeciesSiteRefListKeywordWidget: public KeywordDropDown, public KeywordWidgetBase
 {
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
 	public:
 	// Constructor
-	SpeciesReferenceListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
+	SpeciesSiteRefListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
 
 
 	/*
@@ -46,7 +46,7 @@ class SpeciesReferenceListKeywordWidget: public KeywordDropDown, public KeywordW
 	 */
 	private:
 	// Associated keyword
-	SpeciesReferenceListKeyword* keyword_;
+	SpeciesSiteRefListKeyword* keyword_;
 
 
 	/*
@@ -54,15 +54,10 @@ class SpeciesReferenceListKeywordWidget: public KeywordDropDown, public KeywordW
 	 */
 	private:
 	// Main form declaration
-	Ui::SpeciesReferenceListWidget ui_;
-
-	private:
-	// Selection list update function
-	void updateSelectionRow(int row, Species* sp, bool createItem);
+	Ui::SpeciesSiteReferenceListWidget ui_;
 
 	private slots:
-	// List item changed
-	void itemChanged(QListWidgetItem* item);
+	void siteCheckBox_clicked(bool checked);
 
 	signals:
 	// Keyword value changed
