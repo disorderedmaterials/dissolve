@@ -51,6 +51,7 @@ add_library(keywords
   group.h
   integer.h
   isotopologuereferencelist.h
+  linkto.h
   list.h
   modulegroups.h
   modulereflist.h

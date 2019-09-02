@@ -44,6 +44,7 @@
 #include "keywords/expressionvariablelist.h"
 #include "keywords/fileandformat.h"
 #include "keywords/isotopologuereferencelist.h"
+#include "keywords/linkto.h"
 #include "keywords/modulegroups.h"
 #include "keywords/modulereflist.h"
 #include "keywords/node.h"
