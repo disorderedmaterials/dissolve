@@ -106,7 +106,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
 		if (!parentNode()) return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n", KeywordBase::name());
 
 		// Locate the named node - don't prune by type yet (we'll check that in setNode())
-		ProcedureNode* node = onlyInScope_ ? parentNode()->nodeInScope(parser.argc(startArg)) : parentNode()->nodeExists(parser.argc(startArg));
+		ProcedureNode* node = onlyInScope() ? parentNode()->nodeInScope(parser.argc(startArg)) : parentNode()->nodeExists(parser.argc(startArg));
 		if (!node) return Messenger::error("Node '%s' given to keyword %s doesn't exist.\n", parser.argc(startArg), KeywordBase::name());
 
 		return setNode(node);
