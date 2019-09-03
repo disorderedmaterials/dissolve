@@ -11,6 +11,8 @@ SET(keywordwidgets_MOC_HDRS
   isotopologuereferencelist.h
   modulegroups.h
   modulereflist.h
+  node.h
+  nodeandinteger.h
   nodevalue.h
   nodevalueenumoptions.h
   pairbroadeningfunction.h
@@ -42,6 +44,8 @@ SET(keywordwidgets_UIS
   isotopologuereflist.ui
   modulegroups.ui
   modulereflist.ui
+  node.ui
+  nodeandinteger.ui
   nodevalue.ui
   nodevalueenumoptions.ui
   pairbroadeningfunction.ui
@@ -71,6 +75,8 @@ SET(keywordwidgets_SRCS
   isotopologuereferencelist_funcs.cpp
   modulegroups_funcs.cpp
   modulereflist_funcs.cpp
+  node_funcs.cpp
+  nodeandinteger_funcs.cpp
   nodevalue_funcs.cpp
   nodevalueenumoptions_funcs.cpp
   pairbroadeningfunction_funcs.cpp

@@ -134,6 +134,20 @@ QWidget* KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& keyword
 		widget = moduleReferenceListWidget;
 		base = moduleReferenceListWidget;
 	}
+	else if (keyword->type() == KeywordBase::NodeData)
+	{
+		NodeKeywordWidget* nodeWidget = new NodeKeywordWidget(NULL, keyword, coreData);
+		connect(nodeWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
+		widget = nodeWidget;
+		base = nodeWidget;
+	}
+	else if (keyword->type() == KeywordBase::NodeAndIntegerData)
+	{
+		NodeAndIntegerKeywordWidget* nodeAndIntegerWidget = new NodeAndIntegerKeywordWidget(NULL, keyword, coreData);
+		connect(nodeAndIntegerWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
+		widget = nodeAndIntegerWidget;
+		base = nodeAndIntegerWidget;
+	}
 	else if (keyword->type() == KeywordBase::NodeValueData)
 	{
 		NodeValueKeywordWidget* nodeValueWidget = new NodeValueKeywordWidget(NULL, keyword, coreData);
