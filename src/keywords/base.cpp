@@ -97,10 +97,16 @@ const char* KeywordBase::description()
 	return description_.get();
 }
 
-// Return whether to save keyword value in the restart file
-bool KeywordBase::saveInRestart() const
+// Return keyword option mask
+int KeywordBase::optionMask() const
 {
-	return (optionMask_&KeywordBase::InRestartFileOption);
+	return optionMask_;
+}
+
+// Return whether specified option is set
+bool KeywordBase::isOptionSet(KeywordOption opt) const
+{
+	return (optionMask_&opt);
 }
 
 // Return whether the data has ever been set

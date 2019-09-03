@@ -97,8 +97,10 @@ class KeywordBase : public ListItem<KeywordBase>
 	const char* arguments();
 	// Return keyword description
 	const char* description();
-	// Return whether to save keyword value in the restart file
-	bool saveInRestart() const;
+	// Return keyword option mask
+	int optionMask() const;
+	// Return whether specified option is set
+	bool isOptionSet(KeywordOption opt) const;
 	// Return whether the data has ever been set
 	bool isSet();
 
