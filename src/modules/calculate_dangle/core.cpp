@@ -1,6 +1,6 @@
 /*
-	*** Calculate RDF Module - Definition
-	*** src/modules/calculate/rdf/definition.cpp
+	*** Calculate Distance-Angle Module - Core
+	*** src/modules/calculate_dangle/core.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,28 +19,34 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calculate/rdf/rdf.h"
+#include "modules/calculate_dangle/dangle.h"
 
-// Return type of module
-const char* CalculateRDFModule::type() const	
+/*
+ * Constructor / Destructor
+ */
+
+// Constructor
+CalculateDAngleModule::CalculateDAngleModule() : Module(), analyser_(ProcedureNode::AnalysisContext)
 {
-	return "CalculateRDF";
+	// Set unique name for this instance of the Module
+	static int instanceId = 0;
+	uniqueName_.sprintf("%s%02i", type(), instanceId++);
+
+	// Initialise Module - set up keywords etc.
+	initialise();
 }
 
-// Return category for module
-const char* CalculateRDFModule::category() const
+// Destructor
+CalculateDAngleModule::~CalculateDAngleModule()
 {
-	return "Analysis";
 }
 
-// Return brief description of module
-const char* CalculateRDFModule::brief() const
-{
-	return "Calculate radial distribution functions between sites";
-}
+/*
+ * Instances
+ */
 
-// Return the maximum number of Configurations the Module can target (or -1 for any number)
-int CalculateRDFModule::nTargetableConfigurations() const
+// Create instance of this module
+Module* CalculateDAngleModule::createInstance() const
 {
-	return 1;
+	return new CalculateDAngleModule;
 }

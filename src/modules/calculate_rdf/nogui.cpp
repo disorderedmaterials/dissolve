@@ -1,6 +1,6 @@
 /*
-	*** Calculate Distance-Angle Module - Definition
-	*** src/modules/calculate/dangle/definition.cpp
+	*** Calculate RDF Module - GUI
+	*** src/modules/calculate_rdf/nogui.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,28 +19,11 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calculate/dangle/dangle.h"
+#include "modules/calculate_rdf/rdf.h"
 
-// Return type of module
-const char* CalculateDAngleModule::type() const	
+// Return a new widget controlling this Module
+ModuleWidget* CalculateRDFModule::createWidget(QWidget* parent, Dissolve& dissolve)
 {
-	return "CalculateDAngle";
+	return NULL;
 }
 
-// Return category for module
-const char* CalculateDAngleModule::category() const
-{
-	return "Analysis";
-}
-
-// Return brief description of module
-const char* CalculateDAngleModule::brief() const
-{
-	return "Calculate distance/angle maps";
-}
-
-// Return the maximum number of Configurations the Module can target (or -1 for any number)
-int CalculateDAngleModule::nTargetableConfigurations() const
-{
-	return 1;
-}

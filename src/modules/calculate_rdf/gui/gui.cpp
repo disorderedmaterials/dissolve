@@ -1,6 +1,6 @@
 /*
-	*** Calculate RDF Module - Core
-	*** src/modules/calculate/rdf/core.cpp
+	*** CalculateRDF Module - GUI
+	*** src/modules/calculate_rdf/gui/gui.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,34 +19,12 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calculate/rdf/rdf.h"
+#include "modules/calculate_rdf/rdf.h"
+#include "modules/calculate_rdf/gui/modulewidget.h"
 
-/*
- * Constructor / Destructor
- */
-
-// Constructor
-CalculateRDFModule::CalculateRDFModule() : Module(), analyser_(ProcedureNode::AnalysisContext)
+// Return a new widget controlling this Module
+ModuleWidget* CalculateRDFModule::createWidget(QWidget* parent, Dissolve& dissolve)
 {
-	// Set unique name for this instance of the Module
-	static int instanceId = 0;
-	uniqueName_.sprintf("%s%02i", type(), instanceId++);
-
-	// Initialise Module - set up keywords etc.
-	initialise();
+	return new CalculateRDFModuleWidget(parent, this);
 }
 
-// Destructor
-CalculateRDFModule::~CalculateRDFModule()
-{
-}
-
-/*
- * Instances
- */
-
-// Create instance of this module
-Module* CalculateRDFModule::createInstance() const
-{
-	return new CalculateRDFModule;
-}

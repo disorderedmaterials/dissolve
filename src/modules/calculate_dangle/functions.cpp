@@ -1,6 +1,6 @@
 /*
-	*** Calculate RDF Module - Functions
-	*** src/modules/calculate/rdf/functions.cpp
+	*** Calculate Distance-Angle Module - Functions
+	*** src/modules/calculate_dangle/functions.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,14 +19,14 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calculate/rdf/rdf.h"
+#include "modules/calculate_dangle/dangle.h"
+#include "procedure/nodes/process1d.h"
+#include "procedure/nodes/process2d.h"
 
-// Return name of resulting RDF
-const char* CalculateRDFModule::resultName() const
+// Update names of processed quantities
+void CalculateDAngleModule::updateNodeNames()
 {
-	static CharString result;
-	result = keywords_.asString("Name");
-	if (result.isEmpty()) result = uniqueName();
-
-	return result.get();
+	if (processDistance_) processDistance_->setName(CharString("%s_RDF(BC)", uniqueName()));
+	if (processAngle_) processAngle_->setName(CharString("%s_ANGLE(ABC)", uniqueName()));
+	if (processDAngle_) processDAngle_->setName(uniqueName());
 }

@@ -1,6 +1,6 @@
 /*
-	*** Calculate Distance-Angle Module - Core
-	*** src/modules/calculate/dangle/core.cpp
+	*** Calculate Distance-Angle Module - Definition
+	*** src/modules/calculate_dangle/definition.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,34 +19,28 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calculate/dangle/dangle.h"
+#include "modules/calculate_dangle/dangle.h"
 
-/*
- * Constructor / Destructor
- */
-
-// Constructor
-CalculateDAngleModule::CalculateDAngleModule() : Module(), analyser_(ProcedureNode::AnalysisContext)
+// Return type of module
+const char* CalculateDAngleModule::type() const	
 {
-	// Set unique name for this instance of the Module
-	static int instanceId = 0;
-	uniqueName_.sprintf("%s%02i", type(), instanceId++);
-
-	// Initialise Module - set up keywords etc.
-	initialise();
+	return "CalculateDAngle";
 }
 
-// Destructor
-CalculateDAngleModule::~CalculateDAngleModule()
+// Return category for module
+const char* CalculateDAngleModule::category() const
 {
+	return "Analysis";
 }
 
-/*
- * Instances
- */
-
-// Create instance of this module
-Module* CalculateDAngleModule::createInstance() const
+// Return brief description of module
+const char* CalculateDAngleModule::brief() const
 {
-	return new CalculateDAngleModule;
+	return "Calculate distance/angle maps";
+}
+
+// Return the maximum number of Configurations the Module can target (or -1 for any number)
+int CalculateDAngleModule::nTargetableConfigurations() const
+{
+	return 1;
 }

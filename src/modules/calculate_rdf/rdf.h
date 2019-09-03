@@ -1,6 +1,6 @@
 /*
-	*** Calculate Distance-Angle Module
-	*** src/modules/calculate/dangle/dangle.h
+	*** Calculate RDF Module
+	*** src/modules/calculate_rdf/rdf.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,28 +19,23 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CALCULATEMODULE_DANGLE_H
-#define DISSOLVE_CALCULATEMODULE_DANGLE_H
+#ifndef DISSOLVE_CALCULATEMODULE_RDF_H
+#define DISSOLVE_CALCULATEMODULE_RDF_H
 
 #include "module/module.h"
 #include "procedure/procedure.h"
 
 // Forward Declarations
-class Collect1DProcedureNode;
-class Collect2DProcedureNode;
-class Process1DProcedureNode;
-class Process2DProcedureNode;
-class SelectProcedureNode;
 class SpeciesSite;
 
-// Calculate Distance-Angle Module
-class CalculateDAngleModule : public Module
+// Calculate RDF Module
+class CalculateRDFModule : public Module
 {
 	public:
 	// Constructor
-	CalculateDAngleModule();
+	CalculateRDFModule();
 	// Destructor
-	~CalculateDAngleModule();
+	~CalculateRDFModule();
 
 
 	/*
@@ -91,28 +86,14 @@ class CalculateDAngleModule : public Module
 	private:
 	// Analysis procedure to be run
 	Procedure analyser_;
-	// SelectNode for site A
-	SelectProcedureNode* selectA_;
-	// SelectNode for site B
-	SelectProcedureNode* selectB_;
-	// SelectNode for site C
-	SelectProcedureNode* selectC_;
-	// Collect1DNode for B-C RDF
-	Collect1DProcedureNode* collectDistance_;
-	// Collect1DNode for A-B-C angle histogram
-	Collect1DProcedureNode* collectAngle_;
-	// Collect2DNode for distance-angle data
-	Collect2DProcedureNode* collectDAngle_;
-	// Process1DNode for B-C RDF
-	Process1DProcedureNode* processDistance_;
-	// Process1DNode for A-B-C angle histogram
-	Process1DProcedureNode* processAngle_;
-	// Process2DNode for distance-angle data
-	Process2DProcedureNode* processDAngle_;
+	// List of origin Sites
+	RefList<SpeciesSite> originSites_;
+	// List of other Sites
+	RefList<SpeciesSite> otherSites_;
 
-	private:
-	// Update names of processed quantities
-	void updateNodeNames();
+	public:
+	// Return name of resulting RDF
+	const char* resultName() const;
 
 
 	/*

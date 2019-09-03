@@ -1,6 +1,6 @@
 /*
-	*** CalculateRDF Module - GUI
-	*** src/modules/calculate/rdf/gui/gui.cpp
+	*** Calculate Distance-Angle Module - GUI
+	*** src/modules/calculate_dangle/nogui.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,12 +19,11 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calculate/rdf/rdf.h"
-#include "modules/calculate/rdf/gui/modulewidget.h"
+#include "modules/calculate_dangle/dangle.h"
 
 // Return a new widget controlling this Module
-ModuleWidget* CalculateRDFModule::createWidget(QWidget* parent, Dissolve& dissolve)
+ModuleWidget* CalculateDAngleModule::createWidget(QWidget* parent, Dissolve& dissolve)
 {
-	return new CalculateRDFModuleWidget(parent, this);
+	return NULL;
 }
 

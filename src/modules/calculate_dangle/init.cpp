@@ -1,6 +1,6 @@
 /*
 	*** Calculate Distance-Angle Module - Initialisation
-	*** src/modules/calculate/dangle/init.cpp
+	*** src/modules/calculate_dangle/init.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calculate/dangle/dangle.h"
+#include "modules/calculate_dangle/dangle.h"
 #include "keywords/types.h"
 #include "procedure/nodes/calculate.h"
 #include "procedure/nodes/collect1d.h"

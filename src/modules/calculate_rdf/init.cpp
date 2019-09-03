@@ -1,6 +1,6 @@
 /*
 	*** Calculate RDF Module - Initialisation
-	*** src/modules/calculate/rdf/init.cpp
+	*** src/modules/calculate_rdf/init.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calculate/rdf/rdf.h"
+#include "modules/calculate_rdf/rdf.h"
 #include "keywords/types.h"
 
 // Perform any necessary initialisation for the Module

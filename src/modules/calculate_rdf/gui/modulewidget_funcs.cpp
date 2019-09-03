@@ -1,6 +1,6 @@
 /*
 	*** CalculateRDF Module Widget - Functions
-	*** src/modules/calculate/dangle/gui/modulewidget_funcs.cpp
+	*** src/modules/calculate_rdf/gui/modulewidget_funcs.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,12 +19,12 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calculate/dangle/gui/modulewidget.h"
-#include "modules/calculate/dangle/dangle.h"
+#include "modules/calculate_rdf/gui/modulewidget.h"
+#include "modules/calculate_rdf/rdf.h"
 #include "classes/configuration.h"
 
 // Constructor
-CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget* parent, CalculateDAngleModule* module) : ModuleWidget(parent), module_(module)
+CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget* parent, CalculateRDFModule* module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
 	ui.setupUi(this);
@@ -50,7 +50,7 @@ CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget* parent, Calcul
 }
 
 // Update controls within widget
-void CalculateDAngleModuleWidget::updateControls()
+void CalculateRDFModuleWidget::updateControls()
 {
 	ui.RDFPlotWidget->updateToolbar();
 
@@ -58,12 +58,12 @@ void CalculateDAngleModuleWidget::updateControls()
 }
 
 // Disable sensitive controls within widget
-void CalculateDAngleModuleWidget::disableSensitiveControls()
+void CalculateRDFModuleWidget::disableSensitiveControls()
 {
 }
 
 // Enable sensitive controls within widget
-void CalculateDAngleModuleWidget::enableSensitiveControls()
+void CalculateRDFModuleWidget::enableSensitiveControls()
 {
 }
 
@@ -72,7 +72,7 @@ void CalculateDAngleModuleWidget::enableSensitiveControls()
  */
 
 // Write widget state through specified LineParser
-bool CalculateDAngleModuleWidget::writeState(LineParser& parser)
+bool CalculateRDFModuleWidget::writeState(LineParser& parser)
 {
 	// Write DataViewer sessions
 	if (!rdfGraph_->writeSession(parser)) return false;
@@ -81,7 +81,7 @@ bool CalculateDAngleModuleWidget::writeState(LineParser& parser)
 }
 
 // Read widget state through specified LineParser
-bool CalculateDAngleModuleWidget::readState(LineParser& parser)
+bool CalculateRDFModuleWidget::readState(LineParser& parser)
 {
 	// Read DataViewer sessions
 	if (!rdfGraph_->readSession(parser)) return false;
@@ -94,7 +94,7 @@ bool CalculateDAngleModuleWidget::readState(LineParser& parser)
  */
 
 // Set data targets in graphs
-void CalculateDAngleModuleWidget::setGraphDataTargets(CalculateDAngleModule* module)
+void CalculateRDFModuleWidget::setGraphDataTargets(CalculateRDFModule* module)
 {
 	// Remove any current data
 	rdfGraph_->clearRenderables();
@@ -103,8 +103,8 @@ void CalculateDAngleModuleWidget::setGraphDataTargets(CalculateDAngleModule* mod
 	RefListIterator<Configuration> configIterator(module_->targetConfigurations());
 	while (Configuration* cfg = configIterator.iterate())
 	{
-		// Calculated B...C RDF
-		Renderable* rdf = rdfGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//%s_RDF(BC)", module_->uniqueName(), cfg->niceName(), module_->uniqueName()), CharString("RDF//%s", cfg->niceName()), cfg->niceName());
+		// Calculated RDF
+		Renderable* rdf = rdfGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//%s", module_->uniqueName(), cfg->niceName(), module_->resultName()), CharString("RDF//%s", cfg->niceName()), cfg->niceName());
 		rdf->setColour(StockColours::BlackStockColour);
 	}
 }

@@ -1,6 +1,6 @@
 /*
 	*** Calculate Distance-Angle Module - Processing
-	*** src/modules/calculate/dangle/process.cpp
+	*** src/modules/calculate_dangle/process.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calculate/dangle/dangle.h"
+#include "modules/calculate_dangle/dangle.h"
 #include "procedure/nodes/collect1d.h"
 #include "procedure/nodes/collect2d.h"
 #include "procedure/nodes/select.h"

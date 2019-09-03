@@ -1,6 +1,6 @@
 /*
 	*** Calculate RDF Module - Processing
-	*** src/modules/calculate/rdf/process.cpp
+	*** src/modules/calculate_rdf/process.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calculate/rdf/rdf.h"
+#include "modules/calculate_rdf/rdf.h"
 #include "main/dissolve.h"
 #include "procedure/nodes/calculate.h"
 #include "procedure/nodes/collect1d.h"
@@ -77,16 +77,18 @@ bool CalculateRDFModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	 */
 
 	// Select: Site 'A' (@originSites)
-	SelectProcedureNode* selectA = new SelectProcedureNode(originSites_);
+	SelectProcedureNode* selectA = new SelectProcedureNode();
 	selectA->setName("A");
 	SequenceProcedureNode* forEachA = selectA->addForEachBranch(ProcedureNode::AnalysisContext);
 	analyser_.addRootSequenceNode(selectA);
 
 	// -- Select: Site 'B' (@otherSite)
-	SelectProcedureNode* selectB = new SelectProcedureNode(otherSites_);
+	SelectProcedureNode* selectB = new SelectProcedureNode();
 	selectB->setName("B");
-	selectB->addSameSiteExclusion(selectA);
-	if (excludeSameMolecule) selectB->addSameMoleculeExclusion(selectA);
+	RefList<SelectProcedureNode> sameSiteExclusions;
+	sameSiteExclusions.append(selectA);
+	selectB->setKeyword< RefList<SelectProcedureNode>& >("ExcludeSameSite", sameSiteExclusions);
+// 	if (excludeSameMolecule) selectB->addSameMoleculeExclusion(selectA);
 	SequenceProcedureNode* forEachB = selectB->addForEachBranch(ProcedureNode::AnalysisContext);
 	forEachA->addNode(selectB);
 

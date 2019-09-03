@@ -1,6 +1,6 @@
 /*
 	*** Module Widget
-	*** src/modules/calculate/rdf/gui/modulewidget.h
+	*** src/modules/calculate_rdf/gui/modulewidget.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_CALCULATERDFMODULEWIDGET_H
 #define DISSOLVE_CALCULATERDFMODULEWIDGET_H
 
-#include "modules/calculate/rdf/gui/ui_modulewidget.h"
+#include "modules/calculate_rdf/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
 
 // Forward Declarations

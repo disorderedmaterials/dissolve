@@ -23,6 +23,12 @@ libmoduledummywidgets_la_LIBADD += atomshake/libmodulewidget.la
 SUBDIRS += bragg
 libmodules_la_LIBADD += bragg/libbragg.la
 libmoduledummywidgets_la_LIBADD += bragg/libmodulewidget.la
+SUBDIRS += calculate_dangle
+libmodules_la_LIBADD += calculate_dangle/libcalculatedangle.la
+libmoduledummywidgets_la_LIBADD += calculate_dangle/libmodulewidget.la
+SUBDIRS += calculate_rdf
+libmodules_la_LIBADD += calculate_rdf/libcalculaterdf.la
+libmoduledummywidgets_la_LIBADD += calculate_rdf/libmodulewidget.la
 SUBDIRS += calibrate
 libmodules_la_LIBADD += calibrate/libcalibrate.la
 libmoduledummywidgets_la_LIBADD += calibrate/libmodulewidget.la
@@ -73,11 +79,6 @@ SUBDIRS += test
 libmodules_la_LIBADD += test/libtest.la
 libmoduledummywidgets_la_LIBADD += test/libmodulewidget.la
 
-# Include modules in Calculate directory
-SUBDIRS += calculate
-libmodules_la_LIBADD += calculate/libcalculatemodules.la
-libmoduledummywidgets_la_LIBADD += calculate/libcalculatemodulesdummywidgets.la
-
 # GUI targets for modules
 if BUILDGUI
 
@@ -92,6 +93,8 @@ libmodulewidgets_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@ @GUI_INCLUDES@
 libmodulewidgets_la_LIBADD += analyse/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += atomshake/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += bragg/gui/libmodulewidget.la
+libmodulewidgets_la_LIBADD += calculate_dangle/gui/libmodulewidget.la
+libmodulewidgets_la_LIBADD += calculate_rdf/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += calibrate/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += datatest/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += energy/gui/libmodulewidget.la
@@ -103,9 +106,6 @@ libmodulewidgets_la_LIBADD += refine/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += skeleton/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += sq/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += test/gui/libmodulewidget.la
-
-# Add calculate modules GUI widgets
-libmodulewidgets_la_LIBADD += calculate/libcalculatemoduleswidgets.la
 
 endif
 
