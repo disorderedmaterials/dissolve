@@ -7,11 +7,11 @@
 - Make the '-x' option also turn off writing of the heartbeat file (update CLIOptions.md doc accordingly, and adjust help text printed out by program).
 
 ## Moderate
-- Convert BinWidth/RMax/RMin keywords in CalculateRDFModule::setUpKeyword() to use same keyword type as Calculate1DProcedureNode does for 'RangeX'
-  - Will need to change CalculateRDFModule::process() to search for and retrieve the new keyword value, instead of search for "BinWidth", "RMin", and "RMax".
-  - Will need to change tests/calculate_rdf to use new keywords.
-- Do same conversion for CalculateDAngleModule
+- Add option for Min/Max/Delta labels in Vec3Labels (and Vec3WidgetLabels), and set the Range keywords of Calculate1DProcedureNode and others to use them.
+  - Need to add constructor argument to Vec3DoubleKeyword to take option for label type (see Vec3NodeKeyword for an example)
+  - Update the Vec3DoubleKeywordWidget to have labels according to the specified labels type given to the Vec3DoubleKeyword (again, see Vec3NodeKeywordWidget ui for inspiration!)
 
 ## Main
 - Convert ProcedureNodes to use keywords
   - Implement keyword types / widgets as necessary
+- Run Module::setUp() when Module is finished being read, rather than in the main set-up call (which we are trying to avoid using).
