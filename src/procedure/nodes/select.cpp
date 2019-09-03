@@ -21,6 +21,7 @@
 
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/dynamicsite.h"
+#include "procedure/nodes/select.h"
 #include "procedure/nodes/sequence.h"
 #include "keywords/types.h"
 #include "classes/configuration.h"
@@ -35,22 +36,19 @@ SelectProcedureNode::SelectProcedureNode(SpeciesSite* site) : ProcedureNode(Proc
 {
 	if (site) speciesSites_.append(site);
 
-	sameMolecule_ = NULL;
+	keywords_.add("Target", new SpeciesSiteRefListKeyword(speciesSites_), "Site", "Add target site(s) to the selection");
+	keywords_.add("Target", new DynamicSiteNodesKeyword(this, dynamicSites_), "DynamicSite", "Add a new dynamic site to the selection");
+	keywords_.add("Target", new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true), "SameMoleculeAsSite", "Request that the selected site comes from the molecule containing the current site in the specified SelectNode");
+	keywords_.add("Target", new NodeRefListKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true, sameMoleculeExclusions_), "ExcludeSameMolecule", "Exclude sites from selection if they are present in the same molecule as the current site in the specified SelectNode(s)");
+	keywords_.add("Target", new NodeRefListKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true, sameSiteExclusions_), "ExcludeSameSite", "Exclude sites from selection if they are the current site in the specified SelectNode(s)");
+	keywords_.add("HIDDEN", new NodeBranchKeyword(this, &forEachBranch_, ProcedureNode::AnalysisContext), "ForEach", "Branch to run on each site selected");
+
 	forEachBranch_ = NULL;
+
 	currentSiteIndex_ = -1;
 	nCumulativeSites_ = 0;
 	nSelections_ = 0;
-}
-
-SelectProcedureNode::SelectProcedureNode(const RefList<SpeciesSite>& sites) : ProcedureNode(ProcedureNode::SelectNode)
-{
-	speciesSites_ = sites;
-
 	sameMolecule_ = NULL;
-	forEachBranch_ = NULL;
-	currentSiteIndex_ = -1;
-	nCumulativeSites_ = 0;
-	nSelections_ = 0;
 }
 
 // Destructor
@@ -75,42 +73,8 @@ bool SelectProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
 }
 
 /*
- * Node Keywords
- */
-
-// Return enum option info for SelectNodeKeyword
-EnumOptions<SelectProcedureNode::SelectNodeKeyword> SelectProcedureNode::selectNodeKeywords()
-{
-	static EnumOptionsList SelectNodeTypeKeywords = EnumOptionsList() <<
-		EnumOption(SelectProcedureNode::DynamicSiteKeyword,		"DynamicSite") <<
-		EnumOption(SelectProcedureNode::EndSelectKeyword,		"EndSelect") <<
-		EnumOption(SelectProcedureNode::ExcludeSameMoleculeKeyword,	"ExcludeSameMolecule",	EnumOption::OneOrMoreArguments) <<
-		EnumOption(SelectProcedureNode::ExcludeSameSiteKeyword,		"ExcludeSameSite",	EnumOption::OneOrMoreArguments) <<
-		EnumOption(SelectProcedureNode::ForEachKeyword,			"ForEach") <<
-		EnumOption(SelectProcedureNode::SameMoleculeAsSiteKeyword,	"SameMoleculeAsSite",	1) <<
-		EnumOption(SelectProcedureNode::SiteKeyword,			"Site",			2);
-
-	static EnumOptions<SelectProcedureNode::SelectNodeKeyword> options("SelectNodeKeyword", SelectNodeTypeKeywords);
-
-	return options;
-}
-
-/*
- * Selection Targets
- */
-
-/*
  * Selection Control
  */
-
-// Add "same molecule" exclusion
-bool SelectProcedureNode::addSameMoleculeExclusion(SelectProcedureNode* node)
-{
-	if (sameMoleculeExclusions_.contains(node)) return false;
-	else sameMoleculeExclusions_.append(node);
-
-	return true;
-}
 
 // Return list of Molecules currently excluded from selection
 const RefList<const Molecule>& SelectProcedureNode::excludedMolecules() const
@@ -118,28 +82,10 @@ const RefList<const Molecule>& SelectProcedureNode::excludedMolecules() const
 	return excludedMolecules_;
 }
 
-// Add "same site" exclusion
-bool SelectProcedureNode::addSameSiteExclusion(SelectProcedureNode* node)
-{
-	if (sameSiteExclusions_.contains(node)) return false;
-	else sameSiteExclusions_.append(node);
-
-	return true;
-}
-
 // List of Sites currently excluded from selection
 const RefList<const Site>& SelectProcedureNode::excludedSites() const
 {
 	return excludedSites_;
-}
-
-// Set node containing molecule from which our site must also be contained within
-bool SelectProcedureNode::setSameMolecule(SelectProcedureNode* node)
-{
-	if (sameMolecule_) return Messenger::error("Same molecule restriction has already been set, and cannot be set again.\n");
-	sameMolecule_ = node;
-
-	return true;
 }
 
 // Return Molecule (from site) in which the site must exist
@@ -228,6 +174,9 @@ bool SelectProcedureNode::prepare(Configuration* cfg, const char* prefix, Generi
 	// Prepare any dynamic site nodes
 	RefListIterator<DynamicSiteProcedureNode> dynamicIterator(dynamicSites_);
 	while (DynamicSiteProcedureNode* dynamicNode = dynamicIterator.iterate()) if (!dynamicNode->prepare(cfg, prefix, targetList)) return false;
+
+	// Retrieve data from keywords
+	sameMolecule_ = keywords_.retrieve<SelectProcedureNode*>("SameMoleculeAsSite");
 
 	return true;
 }
@@ -324,147 +273,6 @@ bool SelectProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, co
 	Messenger::print("Select - Site '%s': Number of selections made = %i (last contained %i sites).\n", name(), nSelections_ , sites_.nItems());
 	Messenger::print("Select - Site '%s': Average number of sites selected per selection = %.2f.\n", name(), nSelections_ == 0 ? 0 : double(nCumulativeSites_)/nSelections_);
 	Messenger::print("Select - Site '%s': Cumulative number of sites selected = %i.\n", name(), nCumulativeSites_);
-
-	return true;
-}
-
-/*
- * Read / Write
- */
-
-// Read structure from specified LineParser
-bool SelectProcedureNode::read(LineParser& parser, const CoreData& coreData)
-{
-	// The current line in the parser may contain a specific label for the sites we are to select, which we set as our node name
-	if (parser.nArgs() == 2) setName(parser.argc(1));
-
-	DynamicSiteProcedureNode* dynamicSiteNode;
-	SelectProcedureNode* selectNode;
-	Species* sp;
-
-	// Read until we encounter the EndSelect keyword, or we fail for some reason
-	while (!parser.eofOrBlank())
-	{
-		// Read and parse the next line
-		if (parser.getArgsDelim() != LineParser::Success) return false;
-
-		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
-		if (!selectNodeKeywords().isValid(parser.argc(0))) return selectNodeKeywords().errorAndPrintValid(parser.argc(0));
-		SelectNodeKeyword nk = selectNodeKeywords().enumeration(parser.argc(0));
-		if (!selectNodeKeywords().validNArgs(nk, parser.nArgs()-1)) return false;
-
-		// All OK, so process it
-		switch (nk)
-		{
-			case (SelectProcedureNode::DynamicSiteKeyword):
-				dynamicSiteNode = new DynamicSiteProcedureNode(this);
-				dynamicSites_.append(dynamicSiteNode);
-				if (!dynamicSiteNode->read(parser, coreData)) return false;
-				break;
-			case (SelectProcedureNode::EndSelectKeyword):
-				return true;
-			case (SelectProcedureNode::ExcludeSameMoleculeKeyword):
-				for (int n=1; n<parser.nArgs(); ++n)
-				{
-					SelectProcedureNode* otherNode = dynamic_cast<SelectProcedureNode*>(nodeInScope(parser.argc(n), ProcedureNode::SelectNode));
-					if (!otherNode) return Messenger::error("Unrecognised selection node '%s' given to %s keyword.\n", parser.argc(n), selectNodeKeywords().keyword(nk));
-					if (!addSameMoleculeExclusion(otherNode)) return Messenger::error("Duplicate site given to %s keyword.\n", selectNodeKeywords().keyword(nk));
-				}
-				break;
-			case (SelectProcedureNode::ExcludeSameSiteKeyword):
-				for (int n=1; n<parser.nArgs(); ++n)
-				{
-					SelectProcedureNode* otherNode = dynamic_cast<SelectProcedureNode*>(nodeInScope(parser.argc(n), ProcedureNode::SelectNode));
-					if (!otherNode) return Messenger::error("Unrecognised selection node '%s' given to %s keyword.\n", parser.argc(n), selectNodeKeywords().keyword(nk));
-					if (!addSameSiteExclusion(otherNode)) return Messenger::error("Duplicate site given to %s keyword.\n", selectNodeKeywords().keyword(nk));
-				}
-				break;
-			case (SelectProcedureNode::ForEachKeyword):
-				// Check that a ForEach branch hasn't already been defined
-				if (forEachBranch_) return Messenger::error("Only one ForEach branch may be defined in a selection node.\n");
-
-				// Create and parse a new branch
-				forEachBranch_ = new SequenceProcedureNode(scopeContext(), procedure(), this, "EndForEach");
-				if (!forEachBranch_->read(parser, coreData)) return false;
-				break;
-			case (SelectProcedureNode::SameMoleculeAsSiteKeyword):
-				selectNode = dynamic_cast<SelectProcedureNode*>(nodeInScope(parser.argc(1), ProcedureNode::SelectNode));
-				if (!selectNode) return Messenger::error("Unrecognised selection node '%s' given to %s keyword.\n", parser.argc(1), selectNodeKeywords().keyword(nk));
-				if (!setSameMolecule(selectNode)) return Messenger::error("Failed to set same molecule specification.\n");
-				break;
-			case (SelectProcedureNode::SiteKeyword):
-				// First argument is the target Species, second is a site within it
-				sp = coreData.findSpecies(parser.argc(1));
-
-				// Did we find the named Species?
-				if (sp)
-				{
-					// Found the Species, so see if it has a site with the correct name
-					SpeciesSite* site = sp->findSite(parser.argc(2));
-					if (!site) return Messenger::error("Species '%s' contains no site named '%s'.\n", sp->name(), parser.argc(2));
-					if (speciesSites_.contains(site)) return Messenger::error("Site '%s' on Species '%s' specified twice in Select node.\n", site->name(), sp->name());
-
-					Messenger::printVerbose("Select node %p uses site label '%s' ('%s' in Species '%s').\n", this, name(), site->name(), sp->name());
-
-					speciesSites_.append(site);
-					break;
-				}
-				else return Messenger::error("Couldn't find named Species '%s'.\n", parser.argc(1));
-				break;
-			case (SelectProcedureNode::nSelectNodeKeywords):
-				return Messenger::error("Unrecognised Select node keyword '%s' found.\n", parser.argc(0));
-				break;
-			default:
-				return Messenger::error("Epic Developer Fail - Don't know how to deal with the Select node keyword '%s'.\n", parser.argc(0));
-		}
-	}
-
-	return true;
-}
-
-// Write structure to specified LineParser
-bool SelectProcedureNode::write(LineParser& parser, const char* prefix)
-{
-	// Block Start
-	if (!parser.writeLineF("%s%s\n", prefix, ProcedureNode::nodeTypes().keyword(type_))) return false;
-
-	// Normal Sites
-	RefListIterator<SpeciesSite> siteIterator(speciesSites_);
-	while (SpeciesSite* site = siteIterator.iterate())
-	{
-		if (!parser.writeLineF("%s  %s  '%s'  '%s'\n", prefix, selectNodeKeywords().keyword(SelectProcedureNode::SiteKeyword), site->name(), site->parent()->name())) return false;
-	}
-
-	// Dynamic Sites
-	RefListIterator<DynamicSiteProcedureNode> dynamicSiteIterator(dynamicSites_);
-	while (DynamicSiteProcedureNode* site = dynamicSiteIterator.iterate()) if (!site->write(parser, CharString("%s  ", prefix))) return false;
-
-	// Same Molecule Exclusions
-	if (sameMoleculeExclusions_.nItems() > 0)
-	{
-		CharString sameMolExclusions;
-		RefListIterator<SelectProcedureNode> exclusionIterator(sameMoleculeExclusions_);
-		while (SelectProcedureNode* node = exclusionIterator.iterate()) sameMolExclusions.strcatf("  %s", node->name());
-		if (!parser.writeLineF("%s  %s%s\n", prefix, selectNodeKeywords().keyword(SelectProcedureNode::ExcludeSameMoleculeKeyword), sameMolExclusions.get())) return false;
-	}
-
-	// Same Site Exclusions
-	if (sameSiteExclusions_.nItems() > 0)
-	{
-		CharString sameSiteExclusions;
-		RefListIterator<SelectProcedureNode> exclusionIterator(sameSiteExclusions_);
-		while (SelectProcedureNode* node = exclusionIterator.iterate()) sameSiteExclusions.strcatf("  %s", node->name());
-		if (!parser.writeLineF("%s  %s%s\n", prefix, selectNodeKeywords().keyword(SelectProcedureNode::ExcludeSameSiteKeyword), sameSiteExclusions.get())) return false;
-	}
-
-	// Same Molecule As Site?
-	if (sameMolecule_ && (!parser.writeLineF("%s  %s  %s\n", prefix, selectNodeKeywords().keyword(SelectProcedureNode::SameMoleculeAsSiteKeyword), sameMolecule_->name()))) return false;
-
-	// ForEach Branch
-	if (forEachBranch_ && (!forEachBranch_->write(parser, CharString("%s  ", prefix)))) return false;
-
-	// Block End
-	if (!parser.writeLineF("%s%s\n", prefix, selectNodeKeywords().keyword(SelectProcedureNode::EndSelectKeyword))) return false;
 
 	return true;
 }
