@@ -20,37 +20,13 @@
 */
 
 #include "modules/calculate/dangle/dangle.h"
+#include "procedure/nodes/process1d.h"
+#include "procedure/nodes/process2d.h"
 
-// Return name of B..C RDF
-const char* CalculateDAngleModule::rdfBCResultName() const
+// Update names of processed quantities
+void CalculateDAngleModule::updateNodeNames()
 {
-	static CharString result;
-	result = keywords_.asString("Name");
-	if (result.isEmpty()) result = uniqueName();
-
-	result += "_RDF(BC)";
-
-	return result.get();
-}
-
-// Return name of A-B...C angle distribution
-const char* CalculateDAngleModule::angleABCResultName() const
-{
-	static CharString result;
-	result = keywords_.asString("Name");
-	if (result.isEmpty()) result = uniqueName();
-
-	result += "_ANGLE(ABC)";
-
-	return result.get();
-}
-
-// Return name of resulting distance-angle map
-const char* CalculateDAngleModule::resultName() const
-{
-	static CharString result;
-	result = keywords_.asString("Name");
-	if (result.isEmpty()) result = uniqueName();
-
-	return result.get();
+	if (processDistance_) processDistance_->setName(CharString("%s_RDF(BC)", uniqueName()));
+	if (processAngle_) processAngle_->setName(CharString("%s_ANGLE(ABC)", uniqueName()));
+	if (processDAngle_) processDAngle_->setName(uniqueName());
 }

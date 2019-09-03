@@ -111,12 +111,8 @@ Module  CalculateDAngle  'DAngle(X-H...O)'
   SiteA  Water  'O'
   SiteB  Water  'H1'  Water  'H2'
   SiteC  Water  'O'
-  DistanceMin  0.0
-  DistanceMax  5.0
-  DistanceBin  0.01
-  AngleMin  0.0
-  AngleMax  180.0
-  AngleBin  1.0
+  DistanceRange  0.0  5.0  0.01
+  AngleRange  0.0  180.0  1.0
   ExcludeSameMolecule  true
 EndModule
 
