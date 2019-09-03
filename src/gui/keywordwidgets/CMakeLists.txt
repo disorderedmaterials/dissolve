@@ -41,7 +41,7 @@ SET(keywordwidgets_UIS
   dropdown.ui
   expressionvariablelist.ui
   fileandformat.ui
-  isotopologuereflist.ui
+  isotopologuereferencelist.ui
   modulegroups.ui
   modulereflist.ui
   node.ui

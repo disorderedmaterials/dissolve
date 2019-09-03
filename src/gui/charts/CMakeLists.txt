@@ -41,4 +41,3 @@ target_include_directories(charts PRIVATE
   ${PROJECT_BINARY_DIR}/src
   ${Qt5Widgets_INCLUDE_DIRS}
 )
-

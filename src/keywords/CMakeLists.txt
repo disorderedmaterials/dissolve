@@ -24,7 +24,6 @@ add_library(keywords
   nodebranch.cpp
   nodereflist.cpp
   nodevalue.cpp
-  nodevalueenumoptions.cpp
   pairbroadeningfunction.cpp
   procedure.cpp
   species.cpp
