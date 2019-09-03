@@ -41,7 +41,7 @@ ExpressionVariableListKeyword::~ExpressionVariableListKeyword()
  * Parent Node
  */
 
-// Parent ProcedureNode
+// Return parent ProcedureNode
 const ProcedureNode* ExpressionVariableListKeyword::parentNode() const
 {
 	return parentNode_;

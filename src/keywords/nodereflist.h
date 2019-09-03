@@ -48,7 +48,7 @@ class NodeRefListKeywordBase
 	ProcedureNode* parentNode_;
 
 	public:
-	// Parent ProcedureNode
+	// Return parent ProcedureNode
 	ProcedureNode* parentNode() const;
 
 

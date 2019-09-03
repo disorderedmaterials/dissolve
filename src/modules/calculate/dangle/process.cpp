@@ -199,7 +199,7 @@ bool CalculateDAngleModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		procPool.assignProcessesToGroups(cfg->processPool());
 
 		// Execute the analysis
-		if (!analyser_.execute(procPool, cfg, uniqueName(), dissolve.processingModuleData())) return Messenger::error("CalculateDAngle experience problems with its analysis.\n");
+		if (!analyser_.execute(procPool, cfg, uniqueName(), dissolve.processingModuleData())) return Messenger::error("CalculateDAngle experienced problems with its analysis.\n");
 	}
 
 	return true;

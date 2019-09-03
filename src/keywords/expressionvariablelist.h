@@ -47,7 +47,7 @@ class ExpressionVariableListKeyword : public KeywordData< List<ExpressionNode>& 
 	ProcedureNode* parentNode_;
 
 	public:
-	// Parent ProcedureNode
+	// Return parent ProcedureNode
 	const ProcedureNode* parentNode() const;
 
 

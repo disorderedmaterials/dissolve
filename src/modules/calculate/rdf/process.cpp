@@ -133,7 +133,7 @@ bool CalculateRDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		procPool.assignProcessesToGroups(cfg->processPool());
 
 		// Execute the analysis
-		if (!analyser_.execute(procPool, cfg, uniqueName(), dissolve.processingModuleData())) return Messenger::error("CalculateRDF experience problems with its analysis.\n");
+		if (!analyser_.execute(procPool, cfg, uniqueName(), dissolve.processingModuleData())) return Messenger::error("CalculateRDF experienced problems with its analysis.\n");
 	}
 
 	return true;
