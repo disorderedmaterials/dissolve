@@ -1,16 +1,16 @@
 # Main Module Library
-add_library(calibratemodule
+add_library(calibrationmodule
   core.cpp
   definition.cpp
   functions.cpp
   init.cpp
   process.cpp
 
-  calibrate.h
+  calibration.h
 )
 
 # 'nogui' library
-add_library(calibratemodulenogui
+add_library(calibrationmodulenogui
   nogui.cpp
 )
 

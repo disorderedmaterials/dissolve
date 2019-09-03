@@ -1,6 +1,6 @@
 /*
-	*** Calibration Module - GUI
-	*** src/modules/calibrate/gui/gui.cpp
+	*** Calibration Module - Core
+	*** src/modules/calibration/core.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,12 +19,30 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calibrate/calibrate.h"
-#include "modules/calibrate/gui/modulewidget.h"
+#include "modules/calibration/calibration.h"
 
-// Return a new widget controlling this Module
-ModuleWidget* CalibrationModule::createWidget(QWidget* parent, Dissolve& dissolve)
+/*
+ * Constructor / Destructor
+ */
+
+// Constructor
+CalibrationModule::CalibrationModule() : Module()
 {
-	return new CalibrationModuleWidget(parent, this, dissolve);
+	// Initialise Module - set up keywords etc.
+	initialise();
 }
 
+// Destructor
+CalibrationModule::~CalibrationModule()
+{
+}
+
+/*
+ * Instances
+ */
+
+// Create instance of this module
+Module* CalibrationModule::createInstance() const
+{
+	return new CalibrationModule;
+}

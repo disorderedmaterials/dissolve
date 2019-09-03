@@ -1,6 +1,6 @@
 /*
 	*** Calibration Module
-	*** src/modules/calibrate/calibrate.h
+	*** src/modules/calibration/calibration.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.

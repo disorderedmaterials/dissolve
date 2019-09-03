@@ -1,6 +1,6 @@
 /*
 	*** Calibration Module Widget - Functions
-	*** src/modules/calibrate/gui/modulewidget_funcs.cpp
+	*** src/modules/calibration/gui/modulewidget_funcs.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,11 +19,11 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calibrate/gui/modulewidget.h"
+#include "modules/calibration/gui/modulewidget.h"
 #include "gui/viewer/dataviewer.hui"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
-#include "modules/calibrate/calibrate.h"
+#include "modules/calibration/calibration.h"
 #include "classes/atomtype.h"
 #include "templates/variantpointer.h"
 #include "genericitems/listhelper.h"

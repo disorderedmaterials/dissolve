@@ -25,7 +25,7 @@
 #include "modules/bragg/bragg.h"
 #include "modules/calculate_dangle/dangle.h"
 #include "modules/calculate_rdf/rdf.h"
-#include "modules/calibrate/calibrate.h"
+#include "modules/calibration/calibration.h"
 #include "modules/checks/checks.h"
 #include "modules/datatest/datatest.h"
 #include "modules/energy/energy.h"

@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calibrate/calibrate.h"
+#include "modules/calibration/calibration.h"
 #include "main/dissolve.h"
 #include "modules/energy/energy.h"
 #include "modules/rdf/rdf.h"

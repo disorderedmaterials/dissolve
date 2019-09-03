@@ -1,6 +1,6 @@
 /*
 	*** Calibration Module Widget
-	*** src/modules/calibrate/gui/modulewidget.h
+	*** src/modules/calibration/gui/modulewidget.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_CALIBRATIONMODULEWIDGET_H
 #define DISSOLVE_CALIBRATIONMODULEWIDGET_H
 
-#include "modules/calibrate/gui/ui_modulewidget.h"
+#include "modules/calibration/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
 
 // Forward Declarations

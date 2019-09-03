@@ -1,6 +1,6 @@
 /*
-	*** Calibration Module - Definition
-	*** src/modules/calibration/definition.cpp
+	*** Calibration Module - GUI
+	*** src/modules/calibration/nogui.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,28 +19,11 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calibrate/calibrate.h"
+#include "modules/calibration/calibration.h"
 
-// Return type of module
-const char* CalibrationModule::type() const
+// Return a new widget controlling this Module
+ModuleWidget* CalibrationModule::createWidget(QWidget* parent, Dissolve& dissolve)
 {
-	return "Calibrate";
+	return NULL;
 }
 
-// Return category for module
-const char* CalibrationModule::category() const
-{
-	return "Optimisation";
-}
-
-// Return brief description of module
-const char* CalibrationModule::brief() const
-{
-	return "Calibrate various parameters";
-}
-
-// Return the maximum number of Configurations the Module can target (or -1 for any number)
-int CalibrationModule::nTargetableConfigurations() const
-{
-	return 0;
-}
