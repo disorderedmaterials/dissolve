@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_GEOMETRYOPTIMISATIONMODULE_H
-#define DISSOLVE_GEOMETRYOPTIMISATIONMODULE_H
+#ifndef DISSOLVE_MODULE_GEOMETRYOPTIMISATION_H
+#define DISSOLVE_MODULE_GEOMETRYOPTIMISATION_H
 
 #include "module/module.h"
 

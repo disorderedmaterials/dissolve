@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_BRAGGMODULE_H
-#define DISSOLVE_BRAGGMODULE_H
+#ifndef DISSOLVE_MODULE_BRAGG_H
+#define DISSOLVE_MODULE_BRAGG_H
 
 #include "module/module.h"
 #include "math/broadeningfunction.h"

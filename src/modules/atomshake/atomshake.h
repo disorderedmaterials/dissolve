@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ATOMSHAKEMODULE_H
-#define DISSOLVE_ATOMSHAKEMODULE_H
+#ifndef DISSOLVE_MODULE_ATOMSHAKE_H
+#define DISSOLVE_MODULE_ATOMSHAKE_H
 
 #include "module/module.h"
 

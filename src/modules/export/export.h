@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_EXPORTMODULE_H
-#define DISSOLVE_EXPORTMODULE_H
+#ifndef DISSOLVE_MODULE_EXPORT_H
+#define DISSOLVE_MODULE_EXPORT_H
 
 #include "module/module.h"
 #include "io/export/coordinates.h"

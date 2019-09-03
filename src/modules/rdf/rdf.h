@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RDFMODULE_H
-#define DISSOLVE_RDFMODULE_H
+#ifndef DISSOLVE_MODULE_RDF_H
+#define DISSOLVE_MODULE_RDF_H
 
 #include "module/module.h"
 #include "classes/partialset.h"

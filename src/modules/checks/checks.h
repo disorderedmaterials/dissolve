@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CHECKSMODULE_H
-#define DISSOLVE_CHECKSMODULE_H
+#ifndef DISSOLVE_MODULE_CHECKS_H
+#define DISSOLVE_MODULE_CHECKS_H
 
 #include "module/module.h"
 #include "base/geometry.h"

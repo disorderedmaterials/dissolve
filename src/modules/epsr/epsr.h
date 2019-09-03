@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_EPSRMODULE_H
-#define DISSOLVE_EPSRMODULE_H
+#ifndef DISSOLVE_MODULE_EPSR_H
+#define DISSOLVE_MODULE_EPSR_H
 
 #include "module/module.h"
 #include "module/groups.h"

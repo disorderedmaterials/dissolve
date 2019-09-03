@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SQMODULE_H
-#define DISSOLVE_SQMODULE_H
+#ifndef DISSOLVE_MODULE_SQ_H
+#define DISSOLVE_MODULE_SQ_H
 
 #include "module/module.h"
 #include "math/broadeningfunction.h"

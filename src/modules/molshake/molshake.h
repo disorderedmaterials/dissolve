@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MOLSHAKEMODULE_H
-#define DISSOLVE_MOLSHAKEMODULE_H
+#ifndef DISSOLVE_MODULE_MOLSHAKE_H
+#define DISSOLVE_MODULE_MOLSHAKE_H
 
 #include "module/module.h"
 

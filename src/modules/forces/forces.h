@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FORCESMODULE_H
-#define DISSOLVE_FORCESMODULE_H
+#ifndef DISSOLVE_MODULE_FORCES_H
+#define DISSOLVE_MODULE_FORCES_H
 
 #include "module/module.h"
 #include "io/import/forces.h"

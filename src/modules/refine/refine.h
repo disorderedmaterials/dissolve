@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_REFINEMODULE_H
-#define DISSOLVE_REFINEMODULE_H
+#ifndef DISSOLVE_MODULE_REFINE_H
+#define DISSOLVE_MODULE_REFINE_H
 
 #include "module/module.h"
 #include "module/groups.h"

@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DATATESTMODULE_H
-#define DISSOLVE_DATATESTMODULE_H
+#ifndef DISSOLVE_MODULE_DATATEST_H
+#define DISSOLVE_MODULE_DATATEST_H
 
 #include "module/module.h"
 #include "classes/data1dstore.h"

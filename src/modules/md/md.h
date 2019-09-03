@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MDMODULE_H
-#define DISSOLVE_MDMODULE_H
+#ifndef DISSOLVE_MODULE_MD_H
+#define DISSOLVE_MODULE_MD_H
 
 #include "module/module.h"
 

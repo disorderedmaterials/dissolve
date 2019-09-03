@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CALCULATEMODULE_DANGLE_H
-#define DISSOLVE_CALCULATEMODULE_DANGLE_H
+#ifndef DISSOLVE_MODULE_CALCULATEDANGLE_H
+#define DISSOLVE_MODULE_CALCULATEDANGLE_H
 
 #include "module/module.h"
 #include "procedure/procedure.h"

@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_INTRASHAKEMODULE_H
-#define DISSOLVE_INTRASHAKEMODULE_H
+#ifndef DISSOLVE_MODULE_INTRASHAKE_H
+#define DISSOLVE_MODULE_INTRASHAKE_H
 
 #include "module/module.h"
 

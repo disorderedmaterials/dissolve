@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ENERGYMODULE_H
-#define DISSOLVE_ENERGYMODULE_H
+#ifndef DISSOLVE_MODULE_ENERGY_H
+#define DISSOLVE_MODULE_ENERGY_H
 
 #include "module/module.h"
 

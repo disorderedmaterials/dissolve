@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CALCULATEMODULE_RDF_H
-#define DISSOLVE_CALCULATEMODULE_RDF_H
+#ifndef DISSOLVE_MODULE_CALCULATERDF_H
+#define DISSOLVE_MODULE_CALCULATERDF_H
 
 #include "module/module.h"
 #include "procedure/procedure.h"

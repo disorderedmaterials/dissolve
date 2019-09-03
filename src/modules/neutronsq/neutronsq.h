@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_NEUTRONSQMODULE_H
-#define DISSOLVE_NEUTRONSQMODULE_H
+#ifndef DISSOLVE_MODULE_NEUTRONSQ_H
+#define DISSOLVE_MODULE_NEUTRONSQ_H
 
 #include "module/module.h"
 #include "io/import/data1d.h"

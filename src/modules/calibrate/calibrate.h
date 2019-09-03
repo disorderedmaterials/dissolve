@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_CALIBRATIONMODULE_H
-#define DISSOLVE_CALIBRATIONMODULE_H
+#ifndef DISSOLVE_MODULE_CALIBRATION_H
+#define DISSOLVE_MODULE_CALIBRATION_H
 
 #include "module/module.h"
 #include "templates/refdatalist.h"

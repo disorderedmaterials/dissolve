@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SKELETONMODULE_H
-#define DISSOLVE_SKELETONMODULE_H
+#ifndef DISSOLVE_MODULE_SKELETON_H
+#define DISSOLVE_MODULE_SKELETON_H
 
 #include "module/module.h"
 

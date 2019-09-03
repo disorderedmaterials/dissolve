@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SANITYCHECKMODULE_H
-#define DISSOLVE_SANITYCHECKMODULE_H
+#ifndef DISSOLVE_MODULE_SANITYCHECK_H
+#define DISSOLVE_MODULE_SANITYCHECK_H
 
 #include "module/module.h"
 
