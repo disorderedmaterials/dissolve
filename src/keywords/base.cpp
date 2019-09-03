@@ -46,7 +46,7 @@ const char* KeywordDataTypeKeywords[] = {
 	"AtomTypeSelection",
 	"Bool", "BroadeningFunction",
 	"CharString", "Complex",
-	"Data1DStore", "Data2DStore", "Data3DStore", "Double",
+	"Data1DStore", "Data2DStore", "Data3DStore", "Double", "DynamicSites",
 	"EnumOptions", "ExpressionVariableList",
 	"FileAndFormat",
 	"Integer", "IsotopologueList",

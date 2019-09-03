@@ -9,6 +9,7 @@ add_library(keywords
   data2dstore.cpp
   data3dstore.cpp
   double.cpp
+  dynamicsitenodes.cpp
   expressionvariablelist.cpp
   fileandformat.cpp
   group.cpp
@@ -46,6 +47,7 @@ add_library(keywords
   data2dstore.h
   data3dstore.h
   double.h
+  dynamicsitenodes.h
   enumoptions.h
   expressionvariablelist.h
   fileandformat.h
