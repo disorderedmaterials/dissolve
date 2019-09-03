@@ -48,13 +48,13 @@ class KeywordList
 
 	public:
 	// Add keyword
-	bool add(KeywordBase* object, const char* name, const char* description, int genericItemFlags = 0);
+	bool add(KeywordBase* object, const char* name, const char* description, int optionMask = KeywordBase::NoOptions);
 	// Add keyword
-	bool add(KeywordBase* object, const char* name, const char* description, const char* arguments, int genericItemFlags = 0);
+	bool add(KeywordBase* object, const char* name, const char* description, const char* arguments, int optionMask = KeywordBase::NoOptions);
 	// Add keyword to named group
-	bool add(const char* groupName, KeywordBase* object, const char* name, const char* description, int genericItemFlags = 0);
+	bool add(const char* groupName, KeywordBase* object, const char* name, const char* description, int optionMask = KeywordBase::NoOptions);
 	// Add keyword to named group
-	bool add(const char* groupName, KeywordBase* object, const char* name, const char* description, const char* arguments, int genericItemFlags = 0);
+	bool add(const char* groupName, KeywordBase* object, const char* name, const char* description, const char* arguments, int optionMask = KeywordBase::NoOptions);
 	// Add link to specified keyword that exists elsewhere
 	template <class D> bool link(const char* groupName, KeywordData<D>* object)
 	{

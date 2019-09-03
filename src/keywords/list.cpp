@@ -38,33 +38,33 @@ KeywordList::~KeywordList()
  */
 
 // Add keyword
-bool KeywordList::add(KeywordBase* object, const char* name, const char* description, int genericItemFlags)
+bool KeywordList::add(KeywordBase* object, const char* name, const char* description, int optionMask)
 {
-	return add(object, name, description, "", genericItemFlags);
+	return add(object, name, description, "", optionMask);
 }
 
 // Add keyword
-bool KeywordList::add(KeywordBase* object, const char* name, const char* description, const char* arguments, int genericItemFlags)
+bool KeywordList::add(KeywordBase* object, const char* name, const char* description, const char* arguments, int optionMask)
 {
 	// Take ownership of the passed object, and set its basic information
 	keywords_.own(object);
-	object->set(name, description, arguments, genericItemFlags);
+	object->set(name, description, arguments, optionMask);
 
 	return true;
 }
 
 // Add keyword to named group
-bool KeywordList::add(const char* groupName, KeywordBase* object, const char* name, const char* description, int genericItemFlags)
+bool KeywordList::add(const char* groupName, KeywordBase* object, const char* name, const char* description, int optionMask)
 {
 	KeywordGroup* group = addGroup(groupName);
-	return group->add(object, name, description, genericItemFlags);
+	return group->add(object, name, description, optionMask);
 }
 
 // Add keyword to named group
-bool KeywordList::add(const char* groupName, KeywordBase* object, const char* name, const char* description, const char* arguments, int genericItemFlags)
+bool KeywordList::add(const char* groupName, KeywordBase* object, const char* name, const char* description, const char* arguments, int optionMask)
 {
 	KeywordGroup* group = addGroup(groupName);
-	return group->add(object, name, description, arguments, genericItemFlags);
+	return group->add(object, name, description, arguments, optionMask);
 }
 
 // Find named keyword
