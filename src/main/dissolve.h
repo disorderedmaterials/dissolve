@@ -356,7 +356,7 @@ class Dissolve
 	/*
 	 * I/O
 	 */
-	private:
+	private:  
 	// Filename of current input file
 	CharString inputFilename_;
 	// Filename of current restart file
@@ -381,6 +381,8 @@ class Dissolve
 	bool saveRestart(const char* filename);
 	// Save heartbeat file
 	bool saveHeartBeat(const char* filename, double estimatedNSecs);
+    // write heartbeat file
+    bool dontWriteOutput = false;
 	// Return whether an input filename has been set
 	bool hasInputFilename() const;
 	// Set current input filenamea

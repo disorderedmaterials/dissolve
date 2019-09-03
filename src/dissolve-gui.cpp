@@ -59,7 +59,7 @@ int main(int argc, char **argv)
 					printf("\t-I\t\tIgnore GUI state file\n");
 					printf("\t-q\t\tQuiet mode - print no output\n");
 					printf("\t-v\t\tVerbose mode - be a little more descriptive throughout\n");
-					printf("\t-x\t\tDon't write any restart information (but still read in the restart file if present)\n");
+					printf("\t-x\t\tDon't write any restart information and heartbeat file(but still read in the restart file if present)\n");
 					ProcessPool::finalise();
 					return 0;
 					break;
@@ -103,7 +103,8 @@ int main(int argc, char **argv)
 					break;
 				case ('x'):
 					dontWriteRestart = true;
-					Messenger::print("No restart file will be written.\n");
+                    dissolve.dontWriteOutput = true;
+					Messenger::print("No restart file or output file will be written.\n");
 					break;
 				default:
 					printf("Unrecognised command-line switch '%s'.\n", argv[n]);
@@ -144,6 +145,7 @@ int main(int argc, char **argv)
 
 	// Set restart file frequency to 0 if 'dontWriteRestart' is set
 	if (dontWriteRestart) dissolve.setRestartFileFrequency(0);
+    
 
 	/*
 	 * Create and launch GUI

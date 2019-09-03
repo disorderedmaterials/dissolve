@@ -1,0 +1,215 @@
+# Input file written by Dissolve v0.4.3 at 14:23:14 on 02-09-2019.
+
+#------------------------------------------------------------------------------#
+#                                 Master Terms                                 #
+#------------------------------------------------------------------------------#
+
+Master
+  Bond  'OH'  Harmonic  4431.530     1.000
+  Angle  'HOH'  Harmonic   317.566   113.240
+EndMaster
+
+#------------------------------------------------------------------------------#
+#                                   Species                                    #
+#------------------------------------------------------------------------------#
+
+Species 'Water'
+  # Atoms
+  Atom    1    H     0.757     0.013     0.217  'HW'
+  Atom    2    O     0.015    -0.009    -0.373  'OW'
+  Atom    3    H    -0.771    -0.003     0.157  'HW'
+
+  # Bonds
+  Bond    1    2  @OH
+  Bond    3    2  @OH
+
+  # Angles
+  Angle    1    2    3  @HOH
+
+  # Isotopologues
+  Isotopologue  'Natural'  
+  Isotopologue  'Deuteriated'    HW=2
+EndSpecies
+
+#------------------------------------------------------------------------------#
+#                               Pair Potentials                                #
+#------------------------------------------------------------------------------#
+
+PairPotentials
+  # Atom Type Parameters
+  # Note: These are for reference only (unless GenerateAll is used).
+  # If you wish to modify the potential, change the relevant Generate lines below.
+  Parameters  HW  4.100000e-01  0.000000e+00  0.000000e+00  0.000000e+00  0.000000e+00
+  Parameters  OW  -8.200000e-01  6.500000e-01  3.165492e+00  0.000000e+00  0.000000e+00
+  GenerateAll  LJ
+  Range  9.000000
+  Delta  0.050000
+  CoulombTruncation  Shifted
+  ShortRangeTruncation  Shifted
+  Generate  LJ  HW  HW  4.100000e-01  4.100000e-01  0.000000e+00  0.000000e+00  0.000000e+00  0.000000e+00
+  Generate  LJ  HW  OW  4.100000e-01  -8.200000e-01  0.000000e+00  1.582746e+00  0.000000e+00  0.000000e+00
+  Generate  LJ  OW  OW  -8.200000e-01  -8.200000e-01  6.500000e-01  3.165492e+00  0.000000e+00  0.000000e+00
+EndPairPotentials
+
+#------------------------------------------------------------------------------#
+#                                Configurations                                #
+#------------------------------------------------------------------------------#
+
+Configuration  'Bulk'
+  Generator
+  AddSpecies
+    Species  'Water'
+    Population  '267'
+    Density  '9.999996e-02'  atoms/A3
+    Rotate  True
+    Positioning  'Random'
+  EndAddSpecies
+  EndGenerator
+
+  Temperature  300.000000
+
+  # Modules
+  # -- None
+EndConfiguration
+
+#------------------------------------------------------------------------------#
+#                              Processing Layers                               #
+#------------------------------------------------------------------------------#
+
+Layer  'Processing'
+
+  Module  Import  'Import01'
+    Frequency  1
+
+    Configuration  'Bulk'
+
+    ReadTrajectory  True
+    TrajectoryFile  xyz  '../_data/water267-dlpoly/water-267-298K.xyz'
+  EndModule
+
+  Module  CalculateDAngle  'DAngle(X-H...O)'
+    Frequency  1
+
+    Configuration  'Bulk'
+
+    AngleBin   1.00000e+00
+    AngleMax   1.80000e+02
+    AngleMin   0.00000e+00
+    DistanceBin   1.00000e-02
+    DistanceMax   5.00000e+00
+    DistanceMin   0.00000e+00
+    SiteA  'Water'  'O'
+    SiteB  'Water'  'H1'  'Water'  'H2'
+    SiteC  'Water'  'O'
+    ExcludeSameMolecule  True
+  EndModule
+
+  Module  Analyse  'DAngle(X-H...O)-Analyser'
+    Frequency  1
+
+    Configuration  'Bulk'
+
+    Select
+      Site  'O'  'Water'
+      Select
+        DynamicSite
+          Element  H 
+        EndDynamicSite
+        SameMoleculeAsSite  X
+        Select
+          Site  'O'  'Water'
+          ExcludeSameMolecule  X
+          Calculate
+            Distance  'H'  'O'
+          EndCalculate
+          Calculate
+            Angle  'X'  'H'  'O'
+          EndCalculate
+          Collect2D
+            QuantityX  'rHO'
+            QuantityY  'aXHO'
+            RangeX  0.000000e+00  5.000000e+00  1.000000e-02
+            RangeY  0.000000e+00  1.800000e+02  1.000000e+00
+              Collect1D
+                QuantityX  'rHO'
+                RangeX  0.000000e+00  5.000000e+00  1.000000e-02
+              EndCollect1D
+              Collect1D
+                QuantityX  'aXHO'
+                RangeX  0.000000e+00  1.800000e+02  1.000000e+00
+              EndCollect1D
+              EndSubCollect
+          EndCollect2D
+          EndForEach
+        EndSelect
+        EndForEach
+      EndSelect
+      EndForEach
+    EndSelect
+    Process1D  'RDF'
+      SourceData  'RDF(BC)'
+      LabelValue  'gBC(r)'
+      LabelX  'r, Angstroms'
+    EndProcess1D
+    Process1D  'Angle'
+      SourceData  'ANGLE(ABC)'
+      LabelValue  'Probability'
+      LabelX  'Angle, \\sym{degree}'
+    EndProcess1D
+    Process2D  'DAngle(X-HO)'
+      SourceData  'DAngle(X-HO)'
+      LabelValue  'Probability'
+      LabelX  '\\it{r}, \\sym{Angstrom}'
+      LabelY  'Angle, \\sym{degree}'
+    EndProcess2D
+    EndAnalyser
+  EndModule
+
+  Module  DataTest  'DataTest01'
+    Frequency  95
+
+    Data1D  'DAngle(X-H...O)_RDF(BC)_Bulk'  xy  '../_data/water267-dlpoly/water-267-298K.aardf_21_23_inter_sum'  
+    Target  'DAngle(X-H...O)'
+    Threshold   1.02000e+00
+  EndModule
+
+  Module  DataTest  'DataTest02'
+    Frequency  95
+
+    Data1D  'DAngle(X-H...O)-Analyser//Process1D//Bulk//RDF'  xy  '../_data/water267-dlpoly/water-267-298K.aardf_21_23_inter_sum'  
+    Target  'DAngle(X-H...O)-Analyser'
+    Threshold   1.02000e+00
+  EndModule
+
+  Module  DataTest  'DataTest03'
+    Frequency  95
+
+    Data1D  'DAngle(X-H...O)_ANGLE(ABC)_Bulk'  xy  '../_data/water267-dlpoly/water-267-298K.dahist1_02_1_01_02.angle'  
+    Target  'DAngle(X-H...O)'
+    Threshold   3.00000e-01
+  EndModule
+
+  Module  DataTest  'DataTest04'
+    Frequency  95
+
+    Data1D  'DAngle(X-H...O)-Analyser//Process1D//Bulk//Angle'  xy  '../_data/water267-dlpoly/water-267-298K.dahist1_02_1_01_02.angle'  
+    Target  'DAngle(X-H...O)-Analyser'
+    Threshold   3.00000e-01
+  EndModule
+
+  Module  DataTest  'DataTest05'
+    Frequency  95
+
+    Target  'DAngle(X-H...O)'
+    Threshold   3.00000e-01
+  EndModule
+EndLayer
+
+#------------------------------------------------------------------------------#
+#                                  Simulation                                  #
+#------------------------------------------------------------------------------#
+
+Simulation
+  Seed  -1
+EndSimulation
+

@@ -143,7 +143,8 @@ int main(int argc, char **argv)
 					break;
 				case ('x'):
 					dontWriteRestart = true;
-					Messenger::print("No restart file will be written.\n");
+                    dissolve.dontWriteOutput = true;
+					Messenger::print("No restart or output file will be written.\n");
 					break;
 				default:
 					printf("Unrecognised command-line switch '%s'.\n", argv[n]);

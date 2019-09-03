@@ -18,5 +18,5 @@ parent: Getting Started
 |	-t &lt;file&gt;		|&#10004;|	  | Load restart data from specified `file` (but still write to associated restart file) |
 |	-v			|&#10004;|&#10004;| Verbose mode - be a little more descriptive throughout |
 |	-w &lt;file&gt;		|&#10004;|	  | Write input to specified `file` after reading it, and then quit. Mostly used for testing consistency between read / written input files |
-|	-x			|&#10004;|&#10004;| Don't write a restart file (but still read in the restart file if present) |
+|	-x			|&#10004;|&#10004;| Don't write a restart or output file (but still read in the restart file if present) |
 
