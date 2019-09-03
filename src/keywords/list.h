@@ -56,12 +56,7 @@ class KeywordList
 	// Add keyword to named group
 	bool add(const char* groupName, KeywordBase* object, const char* name, const char* description, const char* arguments, int optionMask = KeywordBase::NoOptions);
 	// Add link to specified keyword that exists elsewhere
-	template <class D> bool link(const char* groupName, KeywordData<D>* object)
-	{
-		if (!object) return Messenger::error("NULL KeywordData<D>* passed to KeywordList::link().\n");
-
-		return add(groupName, object, object->name(), object->description, object->arguments(), object->genericItemFlags());
-	}
+	bool link(const char* groupName, KeywordBase* object, const char* name, const char* description, const char* arguments, int optionMask = KeywordBase::NoOptions);
 	// Find named keyword
 	KeywordBase* find(const char* name) const;
 	// Return keywords list

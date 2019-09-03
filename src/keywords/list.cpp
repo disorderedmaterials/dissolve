@@ -20,6 +20,7 @@
 */
 
 #include "keywords/list.h"
+#include "keywords/linkto.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
@@ -67,10 +68,19 @@ bool KeywordList::add(const char* groupName, KeywordBase* object, const char* na
 	return group->add(object, name, description, arguments, optionMask);
 }
 
+// Add link to specified keyword that exists elsewhere
+bool KeywordList::link(const char* groupName, KeywordBase* object, const char* name, const char* description, const char* arguments, int optionMask)
+{
+	if (!object) return Messenger::error("NULL KeywordBase* passed to KeywordList::link().\n");
+
+	// Create a new LinkToKeyword
+	return add(groupName, new LinkToKeyword(object), name, description, arguments, optionMask);
+}
+
 // Find named keyword
 KeywordBase* KeywordList::find(const char* name) const
 {
-	for (KeywordBase* kwd = keywords_.first(); kwd != NULL; kwd = kwd->next()) if (DissolveSys::sameString(name, kwd->base()->name())) return kwd;
+	for (KeywordBase* kwd = keywords_.first(); kwd != NULL; kwd = kwd->next()) if (DissolveSys::sameString(name, kwd->name())) return kwd->base();
 
 	return NULL;
 }

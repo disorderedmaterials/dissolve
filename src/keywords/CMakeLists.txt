@@ -14,6 +14,7 @@ add_library(keywords
   group.cpp
   integer.cpp
   isotopologuereferencelist.cpp
+  linkto.cpp
   list.cpp
   modulegroups.cpp
   modulereflist.cpp

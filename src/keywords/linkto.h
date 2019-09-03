@@ -28,28 +28,20 @@
 /* none */
 
 // Keyword with Link to Other Keyword
-template <class D> class LinkToKeyword : public KeywordData<D>
+class LinkToKeyword : public KeywordData<KeywordBase*>
 {
 	public:
-	// Constructors
-	LinkToKeyword(KeywordData<D>* keywordData) : KeywordData< KeywordData<D>* >(KeywordBase::LinkToKeywordData, keywordData)
-	{
-	}
-	// Destructor
-	~LinkToKeyword()
-	{
-	}
+	// Constructor / Destructor
+	LinkToKeyword(KeywordBase* keywordData);
+	~LinkToKeyword();
 
 
 	/*
-	 * Base Pointer Return
+	 * Base Pointer Return (Overloading KeywordBase virtual)z
 	 */
 	public:
 	// Return base pointer for this (may be overloaded to provide access to other KeywordBase instance)
-	KeywordBase* base()
-	{
-		return KeywordData< KeywordData<D>* >::data_;
-	}
+	KeywordBase* base();
 
 
 	/*
@@ -57,102 +49,13 @@ template <class D> class LinkToKeyword : public KeywordData<D>
 	 */
 	public:
 	// Return minimum number of arguments accepted
-	int minArguments()
-	{
-		return KeywordData< KeywordData<D>* >::data_->minArguments();
-	}
+	int minArguments();
 	// Return maximum number of arguments accepted
-	int maxArguments()
-	{
-		return KeywordData< KeywordData<D>* >::data_->maxArguments();
-	}
+	int maxArguments();
 	// Parse arguments from supplied LineParser, starting at given argument offset
-	bool read(LineParser& parser, int startArg, const CoreData& coreData)
-	{
-		return KeywordData< KeywordData<D>* >::data_->read(parser, startArg, coreData);
-	}
+	bool read(LineParser& parser, int startArg, const CoreData& coreData);
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* prefix)
-	{
-		return KeywordData< KeywordData<D>* >::data_->write(parser, prefix);
-	}
-
-
-	/*
-	 * Conversion
-	 */
-	public:
-	// Return value (as bool)
-	bool asBool()
-	{
-		return KeywordData< KeywordData<D>* >::data_->asBool();
-	}
-	// Return value (as int)
-	int asInt()
-	{
-		return KeywordData< KeywordData<D>* >::data_->asInt();
-	}
-	// Return value (as double)
-	double asDouble()
-	{
-		return KeywordData< KeywordData<D>* >::data_->asDouble();
-	}
-	// Return value (as string)
-	const char* asString()
-	{
-		return KeywordData< KeywordData<D>* >::data_->asString();
-	}
-	// Return value as Vec3<int>
-	Vec3<int> asVec3Int()
-	{
-		return KeywordData< KeywordData<D>* >::data_->asVec3Int();
-	}
-	// Return value as Vec3<double>
-	Vec3<double> asVec3Double()
-	{
-		return KeywordData< KeywordData<D>* >::data_->asVec3Double();
-	}
-
-
-	/*
-	 * Object Management
-	 */
-	protected:
-	// Prune any references to the supplied AtomType in the contained data
-	void removeReferencesTo(AtomType* at)
-	{
-		KeywordData< KeywordData<D>* >::data_->removeReferencesTo(at);
-	}
-	// Prune any references to the supplied Configuration in the contained data
-	void removeReferencesTo(Configuration* cfg)
-	{
-		KeywordData< KeywordData<D>* >::data_->removeReferencesTo(cfg);
-	}
-	// Prune any references to the supplied Isotopologue in the contained data
-	void removeReferencesTo(Isotopologue* iso)
-	{
-		KeywordData< KeywordData<D>* >::data_->removeReferencesTo(iso);
-	}
-	// Prune any references to the supplied Module in the contained data
-	void removeReferencesTo(Module* module)
-	{
-		KeywordData< KeywordData<D>* >::data_->removeReferencesTo(module);
-	}
-	// Prune any references to the supplied Species in the contained data
-	void removeReferencesTo(Species* sp)
-	{
-		KeywordData< KeywordData<D>* >::data_->removeReferencesTo(sp);
-	}
-	// Prune any references to the supplied SpeciesSite in the contained data
-	void removeReferencesTo(SpeciesSite* spSite)
-	{
-		KeywordData< KeywordData<D>* >::data_->removeReferencesTo(spSite);
-	}
-	// Prune any references to the supplied ProcedureNode in the contained data
-	void removeReferencesTo(ProcedureNode* node)
-	{
-		KeywordData< KeywordData<D>* >::data_->removeReferencesTo(node);
-	}
+	bool write(LineParser& parser, const char* prefix);
 };
 
 #endif

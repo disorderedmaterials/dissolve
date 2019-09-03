@@ -301,7 +301,8 @@ bool ProcedureNode::write(LineParser& parser, const char* prefix)
 		RefListIterator<KeywordBase> keywordIterator(group->keywords());
 		while (KeywordBase* keyword = keywordIterator.iterate())
 		{
-			if (!keyword->write(parser, newPrefix)) return false;
+			// Make sure we are calling the base() keyword class...
+			if (!keyword->base()->write(parser, newPrefix)) return false;
 		}
 	}
 
