@@ -68,7 +68,7 @@ int main(int argc, char **argv)
 					printf("\t-t <file>\tLoad restart data from specified file (but still write to associated restart file)\n");
 					printf("\t-v\t\tVerbose mode - be a little more descriptive throughout\n");
 					printf("\t-w <file>\tWrite input to specified file after reading it, and then quit\n");
-					printf("\t-x\t\tDon't write any restart or heartbeat files (but still read in the restart file if present)\n");
+					printf("\t-x\t\tDon't write restart or heartbeat files (but still read in the restart file if present)\n");
 					ProcessPool::finalise();
 					Messenger::ceaseRedirect();
 					return 1;
