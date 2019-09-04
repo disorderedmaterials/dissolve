@@ -755,7 +755,7 @@ bool Dissolve::hasRestartFilename() const
 	return (!restartFilename_.isEmpty());
 }
 
-// Set boolean for heartbeat file
+// Set whether to write the heartbeat file
 void Dissolve::setWriteHeartBeat(bool b)
 {
         writeHeartBeat_ = b;
