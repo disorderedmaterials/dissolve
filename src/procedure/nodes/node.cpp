@@ -307,7 +307,7 @@ bool ProcedureNode::write(LineParser& parser, const char* prefix)
 	}
 
 	// Block End
-	if (!parser.writeLineF("%sEnd%s\n", nodeTypes().keyword(type_))) return false;
+	if (!parser.writeLineF("%sEnd%s\n", prefix, nodeTypes().keyword(type_))) return false;
 
 	return true;
 }
