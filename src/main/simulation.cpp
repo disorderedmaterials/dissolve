@@ -113,8 +113,9 @@ bool Dissolve::iterate(int nIterations)
 			Messenger::print("\n");
 		}
 
-		// Write heartbeat file
-		if (worldPool().isMaster())
+		// Write heartbeat file or display appropriate message
+		
+		if (worldPool().isMaster() && (writeHeartBeat()))
 		{
 			Messenger::print("Write heartbeat file...");
 
@@ -122,6 +123,11 @@ bool Dissolve::iterate(int nIterations)
 
 			saveHeartBeat(heartBeatFile, thisTime);
 		}
+		if (!writeHeartBeat())
+		{
+			Messenger::print("No Heartbeat file will be written.");
+		}
+		
 
 
 		/*

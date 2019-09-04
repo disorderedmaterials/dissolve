@@ -203,8 +203,8 @@ bool DynamicSiteProcedureNode::write(LineParser& parser, const char* prefix)
 	{
 		CharString s;
 		RefDataListIterator<AtomType,int> atomTypeIterator(atomTypes_);
-		while (AtomType* at = atomTypeIterator.iterate()) s.strcatf("  %s", at->name());
-		if (!parser.writeLineF("%s  %s  '%s'\n", prefix, dynamicSiteNodeKeywords().keyword(DynamicSiteProcedureNode::AtomTypeKeyword), s.get())) return false;
+		while (AtomType* at = atomTypeIterator.iterate()) s.strcatf("%s", at->name());
+		if (!parser.writeLineF("%s  %s  %s\n", prefix, dynamicSiteNodeKeywords().keyword(DynamicSiteProcedureNode::AtomTypeKeyword), s.get())) return false;
 	}
 
 	// Elements
@@ -212,8 +212,8 @@ bool DynamicSiteProcedureNode::write(LineParser& parser, const char* prefix)
 	{
 		CharString s;
 		RefListIterator<Element> elementsIterator(elements_);
-		while (Element* el = elementsIterator.iterate()) s.strcatf("  %s", el->symbol());
-		if (!parser.writeLineF("%s  %s  '%s'\n", prefix, dynamicSiteNodeKeywords().keyword(DynamicSiteProcedureNode::ElementKeyword), s.get())) return false;
+		while (Element* el = elementsIterator.iterate()) s.strcatf("%s", el->symbol());
+		if (!parser.writeLineF("%s  %s  %s \n", prefix, dynamicSiteNodeKeywords().keyword(DynamicSiteProcedureNode::ElementKeyword), s.get())) return false;
 	}
 
 	// Block End
