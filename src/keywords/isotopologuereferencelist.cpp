@@ -96,7 +96,7 @@ bool IsotopologueReferenceListKeyword::write(LineParser& parser, const char* pre
 	ListIterator<IsotopologueReference> refIterator(data_);
 	while (IsotopologueReference* ref = refIterator.iterate())
 	{
-		if (!parser.writeLineF("%s%s  '%s'  '%s'  '%s'  %f\n", prefix, keyword(), ref->configuration()->name(), ref->species()->name(), ref->isotopologue()->name(), ref->weight())) return false;
+		if (!parser.writeLineF("%s%s  '%s'  '%s'  '%s'  %f\n", prefix, name(), ref->configuration()->name(), ref->species()->name(), ref->isotopologue()->name(), ref->weight())) return false;
 	}
 
 	return true;

@@ -3,7 +3,7 @@ add_library(datatestmodule
   core.cpp
   definition.cpp
   functions.cpp
-  options.cpp
+  init.cpp
   process.cpp
 
   datatest.h

@@ -516,7 +516,7 @@ bool Dissolve::loadRestart(const char* filename)
 
 			if (!keyword->read(parser, 3, coreData_))
 			{
-				Messenger::error("Failed to read keyword data '%s' from restart file.\n", keyword->keyword());
+				Messenger::error("Failed to read keyword data '%s' from restart file.\n", keyword->name());
 				error = true;
 				break;
 			}
@@ -641,7 +641,7 @@ bool Dissolve::saveRestart(const char* filename)
 		while (KeywordBase* keyword = keywordIterator.iterate())
 		{
 			// If the keyword is not flagged to be saved in the restart file, skip it
-			if (!keyword->saveInRestart()) continue;
+			if (!keyword->isOptionSet(KeywordBase::InRestartFileOption)) continue;
 
 			if (!keyword->write(parser, CharString("Keyword  %s  ", module->uniqueName()).get())) return false;
 		}

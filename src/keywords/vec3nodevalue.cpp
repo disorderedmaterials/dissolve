@@ -64,7 +64,7 @@ int Vec3NodeValueKeyword::maxArguments()
 // Parse arguments from supplied LineParser, starting at given argument offset
 bool Vec3NodeValueKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
-	if (!parentNode_) return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n", keyword());
+	if (!parentNode_) return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n", name());
 
 	if (parser.hasArg(startArg+2))
 	{
@@ -83,7 +83,7 @@ bool Vec3NodeValueKeyword::read(LineParser& parser, int startArg, const CoreData
 // Write keyword data to specified LineParser
 bool Vec3NodeValueKeyword::write(LineParser& parser, const char* prefix)
 {
-	return parser.writeLineF("%s%s  %s  %s  %s\n", prefix, keyword(), data_.x.asString(true), data_.y.asString(true), data_.z.asString(true));
+	return parser.writeLineF("%s%s  %s  %s  %s\n", prefix, name(), data_.x.asString(true), data_.y.asString(true), data_.z.asString(true));
 }
 
 /*

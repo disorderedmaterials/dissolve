@@ -30,7 +30,7 @@ SpeciesKeywordWidget::SpeciesKeywordWidget(QWidget* parent, KeywordBase* keyword
 {
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<SpeciesKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into SpeciesKeyword.\n", keyword->keyword());
+	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into SpeciesKeyword.\n", keyword->name());
 	else
 	{
 		// Set current information

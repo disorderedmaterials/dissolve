@@ -23,7 +23,6 @@
 #define DISSOLVE_KEYWORD_PROCEDURE_H
 
 #include "keywords/data.h"
-#include "keywords/base.h"
 #include "procedure/procedure.h"
 
 // Forward Declarations

@@ -58,6 +58,7 @@ int main(int argc, char **argv)
 #endif
 					printf("Recognised CLI options are:\n\n");
 					printf("\t-c\t\tCheck input and set-up only - don't perform any main-loop iterations\n");
+					printf("\t-h\t\tPrint what you're reading now\n");
 					printf("\t-i\t\tIgnore restart file\n");
 					printf("\t-m\t\tRestrict output to be from the master process alone (parallel code only)\n");
 					printf("\t-n <iterations>\tRun for the specified number of main loop iterations, then stop\n");

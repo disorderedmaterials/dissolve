@@ -131,9 +131,9 @@ bool Vec3IntegerKeyword::read(LineParser& parser, int startArg, const CoreData& 
 		{
 			if (!isValid(n, parser.argi(startArg+n)))
 			{
-				if (minimumLimit_[n] && maximumLimit_[n]) Messenger::error("Value %i is out of range for keyword '%s'. Valid range is %i <= n <= %i.\n", data_[n], keyword(), min_[n], max_[n]);
-				else if (minimumLimit_[n]) Messenger::error("Value %i is out of range for keyword '%s'. Valid range is %i <= n.\n", data_[n], keyword(), min_[n]);
-				else Messenger::error("Value %i is out of range for keyword '%s'. Valid range is n <= %i.\n", data_[n], keyword(), max_[n]);
+				if (minimumLimit_[n] && maximumLimit_[n]) Messenger::error("Value %i is out of range for keyword '%s'. Valid range is %i <= n <= %i.\n", data_[n], name(), min_[n], max_[n]);
+				else if (minimumLimit_[n]) Messenger::error("Value %i is out of range for keyword '%s'. Valid range is %i <= n.\n", data_[n], name(), min_[n]);
+				else Messenger::error("Value %i is out of range for keyword '%s'. Valid range is n <= %i.\n", data_[n], name(), max_[n]);
 
 				return false;
 			}
@@ -149,7 +149,7 @@ bool Vec3IntegerKeyword::read(LineParser& parser, int startArg, const CoreData& 
 // Write keyword data to specified LineParser
 bool Vec3IntegerKeyword::write(LineParser& parser, const char* prefix)
 {
-	return parser.writeLineF("%s%s  %i  %i  %i\n", prefix, keyword(), data_.x, data_.y, data_.z);
+	return parser.writeLineF("%s%s  %i  %i  %i\n", prefix, name(), data_.x, data_.y, data_.z);
 }
 
 /*

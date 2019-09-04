@@ -23,7 +23,6 @@
 #define DISSOLVE_KEYWORD_DATA1DSTORE_H
 
 #include "keywords/data.h"
-#include "keywords/base.h"
 #include "classes/data1dstore.h"
 
 // Forward Declarations

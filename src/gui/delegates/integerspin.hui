@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_INTEGERSPINDELEGATE_H
-#define DISSOLVE_INTEGERSPINDELEGATE_H
+#ifndef DISSOLVE_DELEGATES_INTEGERSPIN_H
+#define DISSOLVE_DELEGATES_INTEGERSPIN_H
 
 #include <QtWidgets/QItemDelegate>
 #include <QModelIndex>

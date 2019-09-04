@@ -23,7 +23,6 @@
 #define DISSOLVE_KEYWORD_NODEVALUE_H
 
 #include "keywords/data.h"
-#include "keywords/base.h"
 #include "procedure/nodevalue.h"
 
 // Forward Declarations

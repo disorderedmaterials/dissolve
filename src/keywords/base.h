@@ -44,13 +44,36 @@ class KeywordBase : public ListItem<KeywordBase>
 {
 	public:
 	// Keyword Data Type
-	enum KeywordDataType { AtomTypeSelectionData, BoolData, BroadeningFunctionData, CharStringData, ComplexData, Data1DStoreData, Data2DStoreData, Data3DStoreData, DoubleData, EnumOptionsData, ExpressionVariableListData, FileAndFormatData, IntegerData, IsotopologueListData, ModuleGroupsData, ModuleReferenceListData, NodeData, NodeAndIntegerData, NodeBranchData, NodeValueData, NodeValueEnumOptionsData, PairBroadeningFunctionData, ProcedureData, SpeciesData, SpeciesReferenceListData, SpeciesSiteData, SpeciesSiteReferenceListData, Vec3DoubleData, Vec3IntegerData, Vec3NodeValueData, WindowFunctionData };
+	enum KeywordDataType {
+		AtomTypeSelectionData,
+		BoolData, BroadeningFunctionData,
+		CharStringData, ComplexData,
+		Data1DStoreData, Data2DStoreData, Data3DStoreData, DoubleData, DynamicSiteNodesData,
+		EnumOptionsData, ExpressionVariableListData,
+		FileAndFormatData,
+		IntegerData, IsotopologueListData,
+		LinkToKeywordData,
+		ModuleGroupsData, ModuleRefListData,
+		NodeData, NodeAndIntegerData, NodeBranchData, NodeRefListData, NodeValueData, NodeValueEnumOptionsData,
+		PairBroadeningFunctionData, ProcedureData,
+		SpeciesData, SpeciesRefListData, SpeciesSiteData, SpeciesSiteRefListData,
+		Vec3DoubleData, Vec3IntegerData, Vec3NodeValueData,
+		WindowFunctionData
+	};
 	// Constructor
 	KeywordBase(KeywordDataType type);
 	// Destructor
 	virtual ~KeywordBase();
 	// Return DataType name
 	static const char* keywordDataType(KeywordDataType kdt);
+
+
+	/*
+	 * Base Pointer Return
+	 */
+	public:
+	// Return base pointer for this (may be overloaded to provide access to other KeywordBase instance)
+	virtual KeywordBase* base();
 
 
 	/*
@@ -63,8 +86,8 @@ class KeywordBase : public ListItem<KeywordBase>
 	private:
 	// Data type stored by keyword
 	KeywordDataType type_;
-	// Keyword string
-	CharString keyword_;
+	// Keyword name
+	CharString name_;
 	// Arguments string (for information)
 	CharString arguments_;
 	// Description of keyword, if any
@@ -78,19 +101,21 @@ class KeywordBase : public ListItem<KeywordBase>
 
 	public:
 	// Set name, description, arguments, and option mask
-	void set(const char* keyword, const char* description, const char* arguments, int optionMask = NoOptions);
+	void set(const char* name, const char* description, const char* arguments, int optionMask = NoOptions);
 	// Return data type stored by keyword
 	KeywordDataType type();
 	// Return name of data type stored by keyword
 	const char* typeName() const;
 	// Return keyword name
-	const char* keyword();
+	const char* name();
 	// Return arguments string
 	const char* arguments();
 	// Return keyword description
 	const char* description();
-	// Return whether to save keyword value in the restart file
-	bool saveInRestart() const;
+	// Return keyword option mask
+	int optionMask() const;
+	// Return whether specified option is set
+	bool isOptionSet(KeywordOption opt) const;
 	// Return whether the data has ever been set
 	bool isSet();
 

@@ -33,7 +33,7 @@ Vec3IntegerKeywordWidget::Vec3IntegerKeywordWidget(QWidget* parent, KeywordBase*
 
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<Vec3IntegerKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into Vec3IntegerKeyword.\n", keyword->keyword());
+	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into Vec3IntegerKeyword.\n", keyword->name());
 	else
 	{
 		// Set minimum and maximum values for each component
@@ -48,13 +48,15 @@ Vec3IntegerKeywordWidget::Vec3IntegerKeywordWidget(QWidget* parent, KeywordBase*
 	}
 
 	// Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a QScrollArea)
-	installEventFilter(new MouseWheelWidgetAdjustmentGuard(this));
+	ui_.Spin1->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.Spin1));
+	ui_.Spin2->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.Spin2));
+	ui_.Spin3->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.Spin3));
 
 	refreshing_ = false;
 }
 
 /*
- * Signals / Slots
+ * Widgets
  */
 
 // Spin box value changed

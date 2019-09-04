@@ -127,12 +127,26 @@ QWidget* KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& keyword
 		widget = moduleGroupsWidget;
 		base = moduleGroupsWidget;
 	}
-	else if (keyword->type() == KeywordBase::ModuleReferenceListData)
+	else if (keyword->type() == KeywordBase::ModuleRefListData)
 	{
-		ModuleReferenceListKeywordWidget* moduleReferenceListWidget = new ModuleReferenceListKeywordWidget(NULL, keyword, coreData);
+		ModuleRefListKeywordWidget* moduleReferenceListWidget = new ModuleRefListKeywordWidget(NULL, keyword, coreData);
 		connect(moduleReferenceListWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
 		widget = moduleReferenceListWidget;
 		base = moduleReferenceListWidget;
+	}
+	else if (keyword->type() == KeywordBase::NodeData)
+	{
+		NodeKeywordWidget* nodeWidget = new NodeKeywordWidget(NULL, keyword, coreData);
+		connect(nodeWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
+		widget = nodeWidget;
+		base = nodeWidget;
+	}
+	else if (keyword->type() == KeywordBase::NodeAndIntegerData)
+	{
+		NodeAndIntegerKeywordWidget* nodeAndIntegerWidget = new NodeAndIntegerKeywordWidget(NULL, keyword, coreData);
+		connect(nodeAndIntegerWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
+		widget = nodeAndIntegerWidget;
+		base = nodeAndIntegerWidget;
 	}
 	else if (keyword->type() == KeywordBase::NodeValueData)
 	{
@@ -162,12 +176,19 @@ QWidget* KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& keyword
 		widget = speciesWidget;
 		base = speciesWidget;
 	}
-	else if (keyword->type() == KeywordBase::SpeciesReferenceListData)
+	else if (keyword->type() == KeywordBase::SpeciesRefListData)
 	{
-		SpeciesReferenceListKeywordWidget* speciesReferenceListWidget = new SpeciesReferenceListKeywordWidget(NULL, keyword, coreData);
+		SpeciesRefListKeywordWidget* speciesReferenceListWidget = new SpeciesRefListKeywordWidget(NULL, keyword, coreData);
 		connect(speciesReferenceListWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
 		widget = speciesReferenceListWidget;
 		base = speciesReferenceListWidget;
+	}
+	else if (keyword->type() == KeywordBase::SpeciesSiteRefListData)
+	{
+		SpeciesSiteRefListKeywordWidget* speciesSiteReferenceListWidget = new SpeciesSiteRefListKeywordWidget(NULL, keyword, coreData);
+		connect(speciesSiteReferenceListWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
+		widget = speciesSiteReferenceListWidget;
+		base = speciesSiteReferenceListWidget;
 	}
 	else if (keyword->type() == KeywordBase::WindowFunctionData)
 	{
@@ -219,6 +240,16 @@ void KeywordsWidget::setUp(const KeywordList& keywords, const CoreData& coreData
 	ListIterator<KeywordGroup> groupIterator(keywords.groups());
 	while (KeywordGroup* group = groupIterator.iterate())
 	{
+		// If this is the 'HIDDEN' group, don't display any of its widgets
+		if (DissolveSys::sameString(group->name(), "HIDDEN"))
+		{
+			// Remove all keywords in this group from the remainingKeywords list
+			RefListIterator<KeywordBase> groupKeywordIterator(group->keywords());
+			while (KeywordBase* keyword = groupKeywordIterator.iterate()) remainingKeywords.remove(keyword);
+
+			continue;
+		}
+
 		// Create a new QWidget and layout for our widgets
 		QWidget* groupWidget = new QWidget;
 		QFormLayout* groupLayout = new QFormLayout(groupWidget);
@@ -235,12 +266,12 @@ void KeywordsWidget::setUp(const KeywordList& keywords, const CoreData& coreData
 
 			if (!widget)
 			{
-				Messenger::error("Can't create widget for keyword '%s' (%s).\n", keyword->keyword(), KeywordBase::keywordDataType(keyword->type()));
+				Messenger::error("Can't create widget for keyword '%s' (%s).\n", keyword->name(), KeywordBase::keywordDataType(keyword->type()));
 				continue;
 			}
 
 			// Create a label and add it and the widget to our layout
-			QLabel* nameLabel = new QLabel(keyword->keyword());
+			QLabel* nameLabel = new QLabel(keyword->name());
 			nameLabel->setToolTip(keyword->description());
 			groupLayout->addRow(nameLabel, widget);
 		}
@@ -264,12 +295,12 @@ void KeywordsWidget::setUp(const KeywordList& keywords, const CoreData& coreData
 
 			if (!widget)
 			{
-				Messenger::error("Can't create widget for keyword '%s'.\n", keyword->keyword());
+				Messenger::error("Can't create widget for keyword '%s'.\n", keyword->name());
 				continue;
 			}
 
 			// Create a label and add it and the widget to our layout
-			QLabel* nameLabel = new QLabel(keyword->keyword());
+			QLabel* nameLabel = new QLabel(keyword->name());
 			nameLabel->setToolTip(keyword->description());
 			groupLayout->addRow(nameLabel, widget);
 		}

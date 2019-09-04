@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MDMODULE_H
-#define DISSOLVE_MDMODULE_H
+#ifndef DISSOLVE_MODULE_MD_H
+#define DISSOLVE_MODULE_MD_H
 
 #include "module/module.h"
 
@@ -64,15 +64,15 @@ class MDModule : public Module
 
 
 	/*
-	 * Options
+	 * Initialisation
 	 */
 	private:
 	// Species types to restrict calculation to (if any)
 	RefList<Species> restrictToSpecies_;
 
 	protected:
-	// Set up options for Module
-	void setUpKeywords();
+	// Perform any necessary initialisation for the Module
+	void initialise();
 	// Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 	KeywordBase::ParseResult parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix);
 

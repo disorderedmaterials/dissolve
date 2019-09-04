@@ -29,31 +29,31 @@
 BroadeningFunctionKeywordWidget::BroadeningFunctionKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : KeywordDropDown(this), KeywordWidgetBase(coreData)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container
-	ui.setupUi(dropWidget());
+	ui_.setupUi(dropWidget());
 
 	// Add BroadeningFunction types to Combo
-	for (int n=0; n<BroadeningFunction::nFunctionTypes; ++n) ui.FunctionCombo->addItem(BroadeningFunction::functionType( (BroadeningFunction::FunctionType) n));
+	for (int n=0; n<BroadeningFunction::nFunctionTypes; ++n) ui_.FunctionCombo->addItem(BroadeningFunction::functionType( (BroadeningFunction::FunctionType) n));
 
 	// Set deltas on spinboxes
-	ui.Parameter0Spin->setSingleStep(0.01);
-	ui.Parameter1Spin->setSingleStep(0.01);
-	ui.Parameter2Spin->setSingleStep(0.01);
-	ui.Parameter3Spin->setSingleStep(0.01);
-	ui.Parameter4Spin->setSingleStep(0.01);
-	ui.Parameter5Spin->setSingleStep(0.01);
+	ui_.Parameter0Spin->setSingleStep(0.01);
+	ui_.Parameter1Spin->setSingleStep(0.01);
+	ui_.Parameter2Spin->setSingleStep(0.01);
+	ui_.Parameter3Spin->setSingleStep(0.01);
+	ui_.Parameter4Spin->setSingleStep(0.01);
+	ui_.Parameter5Spin->setSingleStep(0.01);
 
 	// Connect signals / slots
-	connect(ui.FunctionCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(functionCombo_currentIndexChanged(int)));
-	connect(ui.Parameter0Spin, SIGNAL(valueChanged(double)), this, SLOT(parameterSpin_valueChanged(double)));
-	connect(ui.Parameter1Spin, SIGNAL(valueChanged(double)), this, SLOT(parameterSpin_valueChanged(double)));
-	connect(ui.Parameter2Spin, SIGNAL(valueChanged(double)), this, SLOT(parameterSpin_valueChanged(double)));
-	connect(ui.Parameter3Spin, SIGNAL(valueChanged(double)), this, SLOT(parameterSpin_valueChanged(double)));
-	connect(ui.Parameter4Spin, SIGNAL(valueChanged(double)), this, SLOT(parameterSpin_valueChanged(double)));
-	connect(ui.Parameter5Spin, SIGNAL(valueChanged(double)), this, SLOT(parameterSpin_valueChanged(double)));
+	connect(ui_.FunctionCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(functionCombo_currentIndexChanged(int)));
+	connect(ui_.Parameter0Spin, SIGNAL(valueChanged(double)), this, SLOT(parameterSpin_valueChanged(double)));
+	connect(ui_.Parameter1Spin, SIGNAL(valueChanged(double)), this, SLOT(parameterSpin_valueChanged(double)));
+	connect(ui_.Parameter2Spin, SIGNAL(valueChanged(double)), this, SLOT(parameterSpin_valueChanged(double)));
+	connect(ui_.Parameter3Spin, SIGNAL(valueChanged(double)), this, SLOT(parameterSpin_valueChanged(double)));
+	connect(ui_.Parameter4Spin, SIGNAL(valueChanged(double)), this, SLOT(parameterSpin_valueChanged(double)));
+	connect(ui_.Parameter5Spin, SIGNAL(valueChanged(double)), this, SLOT(parameterSpin_valueChanged(double)));
 
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<BroadeningFunctionKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into BroadeningFunctionKeyword.\n", keyword->keyword());
+	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into BroadeningFunctionKeyword.\n", keyword->name());
 	else
 	{
 		// Set current information
@@ -62,7 +62,7 @@ BroadeningFunctionKeywordWidget::BroadeningFunctionKeywordWidget(QWidget* parent
 }
 
 /*
- * Signals / Slots
+ * Widgets
  */
 
 // Function type combo changed
@@ -109,34 +109,34 @@ void BroadeningFunctionKeywordWidget::updateWidgetValues(const CoreData& coreDat
 	setSummaryText(BroadeningFunction::functionType(broadeningFunction.function()));
 
 	// Widgets
-	ui.FunctionCombo->setCurrentIndex(broadeningFunction.function());
-	ui.FunctionDescriptionLabel->setText(BroadeningFunction::functionDescription(broadeningFunction.function()));
+	ui_.FunctionCombo->setCurrentIndex(broadeningFunction.function());
+	ui_.FunctionDescriptionLabel->setText(BroadeningFunction::functionDescription(broadeningFunction.function()));
 
 	int nParams = BroadeningFunction::nFunctionParameters(broadeningFunction.function());
-	ui.Parameter0Spin->setValue(nParams > 0 ? broadeningFunction.parameter(0) : 0.0);
-	ui.Parameter0Label->setText(nParams > 0 ? broadeningFunction.parameterName(0) : "N/A");
-	ui.Parameter0Spin->setEnabled(nParams > 0);
-	ui.Parameter0Label->setEnabled(nParams > 0);
-	ui.Parameter1Spin->setValue(nParams > 1 ? broadeningFunction.parameter(1) : 0.0);
-	ui.Parameter1Label->setText(nParams > 1 ? broadeningFunction.parameterName(1) : "N/A");
-	ui.Parameter1Spin->setEnabled(nParams > 1);
-	ui.Parameter1Label->setEnabled(nParams > 1);
-	ui.Parameter2Spin->setValue(nParams > 2 ? broadeningFunction.parameter(2) : 0.0);
-	ui.Parameter2Label->setText(nParams > 2 ? broadeningFunction.parameterName(2) : "N/A");
-	ui.Parameter2Spin->setEnabled(nParams > 2);
-	ui.Parameter2Label->setEnabled(nParams > 2);
-	ui.Parameter3Spin->setValue(nParams > 3 ? broadeningFunction.parameter(3) : 0.0);
-	ui.Parameter3Label->setText(nParams > 3 ? broadeningFunction.parameterName(3) : "N/A");
-	ui.Parameter3Spin->setEnabled(nParams > 3);
-	ui.Parameter3Label->setEnabled(nParams > 3);
-	ui.Parameter4Spin->setValue(nParams > 4 ? broadeningFunction.parameter(4) : 0.0);
-	ui.Parameter4Label->setText(nParams > 4 ? broadeningFunction.parameterName(4) : "N/A");
-	ui.Parameter4Spin->setEnabled(nParams > 4);
-	ui.Parameter4Label->setEnabled(nParams > 4);
-	ui.Parameter5Spin->setValue(nParams > 5 ? broadeningFunction.parameter(5) : 0.0);
-	ui.Parameter5Label->setText(nParams > 5 ? broadeningFunction.parameterName(5) : "N/A");
-	ui.Parameter5Spin->setEnabled(nParams > 5);
-	ui.Parameter5Label->setEnabled(nParams > 5);
+	ui_.Parameter0Spin->setValue(nParams > 0 ? broadeningFunction.parameter(0) : 0.0);
+	ui_.Parameter0Label->setText(nParams > 0 ? broadeningFunction.parameterName(0) : "N/A");
+	ui_.Parameter0Spin->setEnabled(nParams > 0);
+	ui_.Parameter0Label->setEnabled(nParams > 0);
+	ui_.Parameter1Spin->setValue(nParams > 1 ? broadeningFunction.parameter(1) : 0.0);
+	ui_.Parameter1Label->setText(nParams > 1 ? broadeningFunction.parameterName(1) : "N/A");
+	ui_.Parameter1Spin->setEnabled(nParams > 1);
+	ui_.Parameter1Label->setEnabled(nParams > 1);
+	ui_.Parameter2Spin->setValue(nParams > 2 ? broadeningFunction.parameter(2) : 0.0);
+	ui_.Parameter2Label->setText(nParams > 2 ? broadeningFunction.parameterName(2) : "N/A");
+	ui_.Parameter2Spin->setEnabled(nParams > 2);
+	ui_.Parameter2Label->setEnabled(nParams > 2);
+	ui_.Parameter3Spin->setValue(nParams > 3 ? broadeningFunction.parameter(3) : 0.0);
+	ui_.Parameter3Label->setText(nParams > 3 ? broadeningFunction.parameterName(3) : "N/A");
+	ui_.Parameter3Spin->setEnabled(nParams > 3);
+	ui_.Parameter3Label->setEnabled(nParams > 3);
+	ui_.Parameter4Spin->setValue(nParams > 4 ? broadeningFunction.parameter(4) : 0.0);
+	ui_.Parameter4Label->setText(nParams > 4 ? broadeningFunction.parameterName(4) : "N/A");
+	ui_.Parameter4Spin->setEnabled(nParams > 4);
+	ui_.Parameter4Label->setEnabled(nParams > 4);
+	ui_.Parameter5Spin->setValue(nParams > 5 ? broadeningFunction.parameter(5) : 0.0);
+	ui_.Parameter5Label->setText(nParams > 5 ? broadeningFunction.parameterName(5) : "N/A");
+	ui_.Parameter5Spin->setEnabled(nParams > 5);
+	ui_.Parameter5Label->setEnabled(nParams > 5);
 
 	refreshing_ = false;
 }
@@ -146,8 +146,8 @@ void BroadeningFunctionKeywordWidget::updateKeywordData()
 {
 	// Get widget data
 	BroadeningFunction broadeningFunction;
-	BroadeningFunction::FunctionType func = (BroadeningFunction::FunctionType) ui.FunctionCombo->currentIndex();
-	broadeningFunction.set(func, ui.Parameter0Spin->value(), ui.Parameter1Spin->value(), ui.Parameter2Spin->value(), ui.Parameter3Spin->value(), ui.Parameter4Spin->value(), ui.Parameter5Spin->value());
+	BroadeningFunction::FunctionType func = (BroadeningFunction::FunctionType) ui_.FunctionCombo->currentIndex();
+	broadeningFunction.set(func, ui_.Parameter0Spin->value(), ui_.Parameter1Spin->value(), ui_.Parameter2Spin->value(), ui_.Parameter3Spin->value(), ui_.Parameter4Spin->value(), ui_.Parameter5Spin->value());
 
 	keyword_->setData(broadeningFunction);
 }

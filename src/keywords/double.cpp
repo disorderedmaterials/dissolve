@@ -134,7 +134,7 @@ bool DoubleKeyword::read(LineParser& parser, int startArg, const CoreData& coreD
 // Write keyword data to specified LineParser
 bool DoubleKeyword::write(LineParser& parser, const char* prefix)
 {
-	return parser.writeLineF("%s%s  %12.5e\n", prefix, keyword(), data_);
+	return parser.writeLineF("%s%s  %12.5e\n", prefix, name(), data_);
 }
 
 /*

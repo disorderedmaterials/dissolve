@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_REFINEMODULE_H
-#define DISSOLVE_REFINEMODULE_H
+#ifndef DISSOLVE_MODULE_REFINE_H
+#define DISSOLVE_MODULE_REFINE_H
 
 #include "module/module.h"
 #include "module/groups.h"
@@ -70,7 +70,7 @@ class RefineModule : public Module
 
 
 	/*
-	 * Options
+	 * Initialisation
 	 */
 	public:
 	// Potential Inversion Method Enum
@@ -95,8 +95,8 @@ class RefineModule : public Module
 	static EnumOptions<RefineModule::MatrixAugmentationStyle> matrixAugmentationStyles();
 
 	protected:
-	// Set up options for Module
-	void setUpKeywords();
+	// Perform any necessary initialisation for the Module
+	void initialise();
 	// Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 	KeywordBase::ParseResult parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix);
 

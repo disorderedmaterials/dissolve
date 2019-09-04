@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_INTRAFORMCOMBODELEGATE_H
-#define DISSOLVE_INTRAFORMCOMBODELEGATE_H
+#ifndef DISSOLVE_DELEGATES_INTRAFORMCOMBO_H
+#define DISSOLVE_DELEGATES_INTRAFORMCOMBO_H
 
 #include <QtWidgets/QItemDelegate>
 #include <QModelIndex>

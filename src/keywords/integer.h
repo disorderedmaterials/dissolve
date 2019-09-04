@@ -23,7 +23,6 @@
 #define DISSOLVE_KEYWORD_INTEGER_H
 
 #include "keywords/data.h"
-#include "keywords/base.h"
 
 // Forward Declarations
 /* none */

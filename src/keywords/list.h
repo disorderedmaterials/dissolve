@@ -22,7 +22,6 @@
 #ifndef DISSOLVE_KEYWORD_LIST_H
 #define DISSOLVE_KEYWORD_LIST_H
 
-#include "keywords/base.h"
 #include "keywords/data.h"
 #include "keywords/group.h"
 #include "base/enumoptions.h"
@@ -49,15 +48,17 @@ class KeywordList
 
 	public:
 	// Add keyword
-	bool add(KeywordBase* object, const char* keyword, const char* description, int genericItemFlags = 0);
+	bool add(KeywordBase* object, const char* name, const char* description, int optionMask = KeywordBase::NoOptions);
 	// Add keyword
-	bool add(KeywordBase* object, const char* keyword, const char* description, const char* arguments, int genericItemFlags = 0);
+	bool add(KeywordBase* object, const char* name, const char* description, const char* arguments, int optionMask = KeywordBase::NoOptions);
 	// Add keyword to named group
-	bool add(const char* groupName, KeywordBase* object, const char* keyword, const char* description, int genericItemFlags = 0);
+	bool add(const char* groupName, KeywordBase* object, const char* name, const char* description, int optionMask = KeywordBase::NoOptions);
 	// Add keyword to named group
-	bool add(const char* groupName, KeywordBase* object, const char* keyword, const char* description, const char* arguments, int genericItemFlags = 0);
+	bool add(const char* groupName, KeywordBase* object, const char* name, const char* description, const char* arguments, int optionMask = KeywordBase::NoOptions);
+	// Add link to specified keyword that exists elsewhere
+	bool link(const char* groupName, KeywordBase* object, const char* name, const char* description, const char* arguments, int optionMask = KeywordBase::NoOptions);
 	// Find named keyword
-	KeywordBase* find(const char* keyword) const;
+	KeywordBase* find(const char* name) const;
 	// Return keywords list
 	const List<KeywordBase>& keywords() const;
 
@@ -188,19 +189,19 @@ class KeywordList
 	 */
 	public:
 	// Return simple keyword value (as bool)
-	bool asBool(const char* keywordName) const;
+	bool asBool(const char* name) const;
 	// Return simple keyword value (as int)
-	int asInt(const char* keywordName) const;
+	int asInt(const char* name) const;
 	// Return simple keyword value (as double)
-	double asDouble(const char* keywordName) const;
+	double asDouble(const char* name) const;
 	// Return simple keyword value (as string)
-	const char* asString(const char* keywordName) const;
+	const char* asString(const char* name) const;
 	// Return simple keyword value (as Vec3<int>)
-	Vec3<int> asVec3Int(const char* keywordName) const;
+	Vec3<int> asVec3Int(const char* name) const;
 	// Return simple keyword value (as Vec3<double>)
-	Vec3<double> asVec3Double(const char* keywordName) const;
+	Vec3<double> asVec3Double(const char* name) const;
 	// Return whether the specified keyword data has ever been set
-	bool isSet(const char* keywordName) const;
+	bool isSet(const char* name) const;
 
 
 	/*

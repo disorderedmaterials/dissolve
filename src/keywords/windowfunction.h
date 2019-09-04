@@ -23,7 +23,6 @@
 #define DISSOLVE_KEYWORD_WINDOWFUNCTION_H
 
 #include "keywords/data.h"
-#include "keywords/base.h"
 #include "math/windowfunction.h"
 
 // Forward Declarations

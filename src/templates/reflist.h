@@ -85,7 +85,7 @@ template <class T> class RefListItem
 template <class T> class RefList
 {
 	public:
-	// Constructor
+	// Constructors
 	RefList<T>()
 	{
 		listHead_ = NULL;
@@ -93,6 +93,16 @@ template <class T> class RefList
 		items_ = NULL;
 		regenerate_ = true;
 		nItems_ = 0;
+	}
+	RefList<T>(T* singleItem)
+	{
+		listHead_ = NULL;
+		listTail_ = NULL;
+		items_ = NULL;
+		regenerate_ = true;
+		nItems_ = 0;
+
+		append(singleItem);
 	}
 
 	// Destructor

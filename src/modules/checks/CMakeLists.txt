@@ -3,7 +3,7 @@ add_library(checksmodule
   core.cpp
   definition.cpp
   functions.cpp
-  options.cpp
+  init.cpp
   process.cpp
 
   checks.h

@@ -23,7 +23,6 @@
 #define DISSOLVE_KEYWORD_NODEBRANCH_H
 
 #include "keywords/data.h"
-#include "keywords/base.h"
 #include "procedure/nodes/node.h"
 
 // Forward Declarations

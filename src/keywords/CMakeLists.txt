@@ -9,25 +9,28 @@ add_library(keywords
   data2dstore.cpp
   data3dstore.cpp
   double.cpp
+  dynamicsitenodes.cpp
   expressionvariablelist.cpp
   fileandformat.cpp
   group.cpp
   integer.cpp
   isotopologuereferencelist.cpp
+  linkto.cpp
   list.cpp
   modulegroups.cpp
-  modulereferencelist.cpp
+  modulereflist.cpp
   node.cpp
   nodeandinteger.cpp
   nodebranch.cpp
+  nodereflist.cpp
   nodevalue.cpp
   nodevalueenumoptions.cpp
   pairbroadeningfunction.cpp
   procedure.cpp
   species.cpp
-  speciesreferencelist.cpp
+  speciesreflist.cpp
   speciessite.cpp
-  speciessitereferencelist.cpp
+  speciessitereflist.cpp
   vec3double.cpp
   vec3integer.cpp
   vec3nodevalue.cpp
@@ -44,26 +47,29 @@ add_library(keywords
   data2dstore.h
   data3dstore.h
   double.h
+  dynamicsitenodes.h
   enumoptions.h
   expressionvariablelist.h
   fileandformat.h
   group.h
   integer.h
   isotopologuereferencelist.h
+  linkto.h
   list.h
   modulegroups.h
-  modulereferencelist.h
+  modulereflist.h
   node.h
   nodeandinteger.h
   nodebranch.h
+  nodereflist.h
   nodevalue.h
   nodevalueenumoptions.h
   pairbroadeningfunction.h
   procedure.h
   species.h
-  speciesreferencelist.h
+  speciesreflist.h
   speciessite.h
-  speciessitereferencelist.h
+  speciessitereflist.h
   vec3double.h
   vec3integer.h
   vec3labels.h

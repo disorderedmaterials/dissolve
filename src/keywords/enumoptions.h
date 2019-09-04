@@ -23,7 +23,6 @@
 #define DISSOLVE_KEYWORD_ENUMOPTIONS_H
 
 #include "keywords/data.h"
-#include "keywords/base.h"
 #include "base/enumoptions.h"
 #include "base/lineparser.h"
 
@@ -134,7 +133,7 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
 	// Write keyword data to specified LineParser
 	bool write(LineParser& parser, const char* prefix)
 	{
-		return parser.writeLineF("%s%s  '%s'\n", prefix, KeywordData< EnumOptions<E> >::keyword(), KeywordData< EnumOptions<E> >::data_.currentOptionKeyword());
+		return parser.writeLineF("%s%s  '%s'\n", prefix, KeywordData< EnumOptions<E> >::name(), KeywordData< EnumOptions<E> >::data_.currentOptionKeyword());
 	}
 
 

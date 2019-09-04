@@ -33,10 +33,10 @@ libkeywordwidgets_la_SOURCES += enumoptions.hui enumoptions_funcs.cpp expression
 libkeywordwidgets_la_SOURCES += fileandformat.ui fileandformat_funcs.cpp
 libkeywordwidgets_la_SOURCES += integer.hui integer_funcs.cpp
 libkeywordwidgets_la_SOURCES += isotopologuereferencelist.ui isotopologuereferencelist_funcs.cpp
-libkeywordwidgets_la_SOURCES += modulegroups.ui modulegroups_funcs.cpp modulereferencelist.ui modulereferencelist_funcs.cpp
-libkeywordwidgets_la_SOURCES += nodevalue.ui nodevalue_funcs.cpp nodevalueenumoptions.ui nodevalueenumoptions_funcs.cpp
+libkeywordwidgets_la_SOURCES += modulegroups.ui modulegroups_funcs.cpp modulereflist.ui modulereflist_funcs.cpp
+libkeywordwidgets_la_SOURCES += node.ui node_funcs.cpp nodeandinteger.ui nodeandinteger_funcs.cpp nodevalue.ui nodevalue_funcs.cpp nodevalueenumoptions.ui nodevalueenumoptions_funcs.cpp
 libkeywordwidgets_la_SOURCES += pairbroadeningfunction.ui pairbroadeningfunction_funcs.cpp
-libkeywordwidgets_la_SOURCES += species.hui species_funcs.cpp speciesreferencelist.ui speciesreferencelist_funcs.cpp
+libkeywordwidgets_la_SOURCES += species.hui species_funcs.cpp speciesreflist.ui speciesreflist_funcs.cpp speciessitereflist.ui speciessitereflist_funcs.cpp
 libkeywordwidgets_la_SOURCES += vec3double.ui vec3double_funcs.cpp vec3integer.ui vec3integer_funcs.cpp vec3labels.cpp vec3nodevalue.ui vec3nodevalue_funcs.cpp
 libkeywordwidgets_la_SOURCES += windowfunction.hui windowfunction_funcs.cpp
 
@@ -46,10 +46,10 @@ noinst_HEADERS += dropdown.h
 noinst_HEADERS += expressionvariablelist.h
 noinst_HEADERS += fileandformat.h
 noinst_HEADERS += isotopologuereferencelist.h
-noinst_HEADERS += modulegroups.h modulereferencelist.h
-noinst_HEADERS += nodevalue.h nodevalueenumoptions.h
+noinst_HEADERS += modulegroups.h modulereflist.h
+noinst_HEADERS += node.h nodeandinteger.h nodevalue.h nodevalueenumoptions.h
 noinst_HEADERS += pairbroadeningfunction.h
-noinst_HEADERS += speciesreferencelist.h
+noinst_HEADERS += speciesreflist.h speciessitereflist.h
 noinst_HEADERS += vec3double.h vec3integer.h vec3labels.h vec3nodevalue.h
 
 AM_CPPFLAGS = -I$(top_srcdir)/src @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@

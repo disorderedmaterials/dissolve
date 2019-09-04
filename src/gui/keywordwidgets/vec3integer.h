@@ -38,8 +38,6 @@ class Vec3IntegerKeywordWidget : public QWidget, public KeywordWidgetBase
 	public:
 	// Constructor
 	Vec3IntegerKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
-        // Main form declaration
-        Ui::Vec3IntegerWidget ui_;
 
 
 	/*
@@ -51,8 +49,12 @@ class Vec3IntegerKeywordWidget : public QWidget, public KeywordWidgetBase
 
 
 	/*
-	 * Signals / Slots
+	 * Widgets
 	 */
+	private:
+	// Main form declaration
+	Ui::Vec3IntegerWidget ui_;
+
 	private slots:
 	// Spin box value changed
 	void on_Spin1_valueChanged(int value);

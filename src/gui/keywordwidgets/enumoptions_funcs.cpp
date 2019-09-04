@@ -28,7 +28,7 @@ EnumOptionsKeywordWidget::EnumOptionsKeywordWidget(QWidget* parent, KeywordBase*
 {
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<EnumOptionsBaseKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into EnumOptionsBaseKeyword.\n", keyword->keyword());
+	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into EnumOptionsBaseKeyword.\n", keyword->name());
 	else
 	{
 		// Get the underlying EnumOptionsBase

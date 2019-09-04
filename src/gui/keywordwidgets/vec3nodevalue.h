@@ -49,7 +49,7 @@ class Vec3NodeValueKeywordWidget : public QWidget, public KeywordWidgetBase
 
 
 	/*
-	 * Signals / Slots
+	 * Widgets
 	 */
 	private:
 	// Main form declaration

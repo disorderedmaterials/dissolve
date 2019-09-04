@@ -38,7 +38,7 @@ WindowFunctionKeywordWidget::WindowFunctionKeywordWidget(QWidget* parent, Keywor
 
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<WindowFunctionKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into WindowFunctionKeyword.\n", keyword->keyword());
+	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into WindowFunctionKeyword.\n", keyword->name());
 	else
 	{
 		// Set current information

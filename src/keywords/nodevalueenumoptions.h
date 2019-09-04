@@ -23,7 +23,6 @@
 #define DISSOLVE_KEYWORD_NODEVALUEENUMOPTIONS_H
 
 #include "keywords/data.h"
-#include "keywords/base.h"
 #include "procedure/nodes/node.h"
 #include "procedure/nodevalue.h"
 #include "templates/venum.h"
@@ -115,7 +114,7 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
 	bool read(LineParser& parser, int startArg, const CoreData& coreData)
 	{
 		// Check that the parent node has been set
-		if (!parentNode_) return Messenger::error("Parent node in NodeValueEnumOptions keyword '%s' not set. Can't read data.\n", KeywordData< Venum<NodeValue,E> >::keyword());
+		if (!parentNode_) return Messenger::error("Parent node in NodeValueEnumOptions keyword '%s' not set. Can't read data.\n", KeywordData< Venum<NodeValue,E> >::name());
 
 		// Need two args...
 		if (parser.hasArg(startArg+1))
@@ -134,7 +133,7 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
 	// Write keyword data to specified LineParser
 	bool write(LineParser& parser, const char* prefix)
 	{
-		return parser.writeLineF("%s%s  '%s'  %s\n", prefix, KeywordBase::keyword(), KeywordData< Venum<NodeValue,E> >::data_.value().asString(), KeywordData< Venum<NodeValue,E> >::data_.enumerationAsString());
+		return parser.writeLineF("%s%s  '%s'  %s\n", prefix, KeywordBase::name(), KeywordData< Venum<NodeValue,E> >::data_.value().asString(), KeywordData< Venum<NodeValue,E> >::data_.enumerationAsString());
 	}
 
 
@@ -145,7 +144,7 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
 	// Set node value from expression text, informing KeywordBase
 	bool setValue(const char* expressionText)
 	{
-		if (!parentNode_) return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n", KeywordBase::keyword());
+		if (!parentNode_) return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n", KeywordBase::name());
 
 		bool result = KeywordData< Venum<NodeValue,E> >::data_.value().set(expressionText, parentNode_->parametersInScope());
 

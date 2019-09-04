@@ -42,7 +42,6 @@ class SelectProcedureNode : public ProcedureNode
 	public:
 	// Constructors
 	SelectProcedureNode(SpeciesSite* site = NULL);
-	SelectProcedureNode(const RefList<SpeciesSite>& sites);
 	// Destructor
 	~SelectProcedureNode();
 
@@ -53,16 +52,6 @@ class SelectProcedureNode : public ProcedureNode
 	public:
 	// Return whether specified context is relevant for this node type
 	bool isContextRelevant(ProcedureNode::NodeContext context);
-
-
-	/*
-	 * Node Keywords
-	 */
-	public:
-	// Node Keywords
-	enum SelectNodeKeyword { DynamicSiteKeyword, EndSelectKeyword, ExcludeSameMoleculeKeyword, ExcludeSameSiteKeyword, ForEachKeyword, SameMoleculeAsSiteKeyword, SiteKeyword, nSelectNodeKeywords };
-	// Return enum option info for SelectNodeKeyword
-	static EnumOptions<SelectNodeKeyword> selectNodeKeywords();
 
 
 	/*
@@ -85,22 +74,16 @@ class SelectProcedureNode : public ProcedureNode
 	RefList<const Molecule> excludedMolecules_;
 	// List of other sites (nodes) which will exclude one of our sites if it is the same site
 	RefList<SelectProcedureNode> sameSiteExclusions_;
-	//List of Sites currently excluded from selection
+	// List of Sites currently excluded from selection
 	RefList<const Site> excludedSites_;
-	// Molecule (from site) in which the site must exist
+	// Molecule (from site) in which the site must exist (retrieved from keyword data)
 	SelectProcedureNode* sameMolecule_;
 
 	public:
-	// Add "same molecule" exclusion
-	bool addSameMoleculeExclusion(SelectProcedureNode* node);
 	// Return list of Molecules currently excluded from selection
 	const RefList<const Molecule>& excludedMolecules() const;
-	// Add "same site" exclusion
-	bool addSameSiteExclusion(SelectProcedureNode* node);
 	// List of Sites currently excluded from selection
 	const RefList<const Site>& excludedSites() const;
-	// Set node containing molecule from which our site must also be contained within
-	bool setSameMolecule(SelectProcedureNode* node);
 	// Return Molecule (from site) in which the site must exist
 	const Molecule* sameMoleculeMolecule();
 
@@ -155,16 +138,6 @@ class SelectProcedureNode : public ProcedureNode
 	ProcedureNode::NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
 	// Finalise any necessary data after execution
 	bool finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
-
-
-	/*
-	 * Read / Write
-	 */
-	public:
-	// Read structure from specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData);
-	// Write structure to specified LineParser
-	bool write(LineParser& parser, const char* prefix);
 };
 
 #endif

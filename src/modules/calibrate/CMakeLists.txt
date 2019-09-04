@@ -3,7 +3,7 @@ add_library(calibratemodule
   core.cpp
   definition.cpp
   functions.cpp
-  options.cpp
+  init.cpp
   process.cpp
 
   calibrate.h

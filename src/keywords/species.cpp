@@ -71,9 +71,9 @@ bool SpeciesKeyword::write(LineParser& parser, const char* prefix)
 {
 	if (data_)
 	{
-		if (!parser.writeLineF("%s%s  '%s'\n", prefix, keyword(), data_->name())) return false;
+		if (!parser.writeLineF("%s%s  '%s'\n", prefix, name(), data_->name())) return false;
 	}
-	else if (!parser.writeLineF("%s%s  '?_?'\n", prefix, keyword())) return false;
+	else if (!parser.writeLineF("%s%s  '?_?'\n", prefix, name())) return false;
 
 	return true;
 }

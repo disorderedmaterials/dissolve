@@ -23,7 +23,6 @@
 #define DISSOLVE_KEYWORD_ISOTOPOLOGUEREFERENCELIST_H
 
 #include "keywords/data.h"
-#include "keywords/base.h"
 #include "classes/isotopologuereference.h"
 #include "templates/list.h"
 #include "templates/reflist.h"

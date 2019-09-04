@@ -23,7 +23,6 @@
 #define DISSOLVE_KEYWORD_BROADENINGFUNCTION_H
 
 #include "keywords/data.h"
-#include "keywords/base.h"
 #include "math/broadeningfunction.h"
 
 // Forward Declarations

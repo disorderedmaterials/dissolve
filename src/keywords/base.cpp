@@ -42,7 +42,22 @@ KeywordBase::~KeywordBase()
 }
 
 // Value Keyword Data Type Keywords
-const char* KeywordDataTypeKeywords[] = { "AtomTypeSelection", "Bool", "BroadeningFunction", "CharString", "Complex", "Data1DStore", "Data2DStore", "Data3DStore", "Double", "EnumOptions", "ExpressionVariableList", "FileAndFormat", "Integer", "IsotopologueList", "ModuleGroups", "ModuleReferenceList", "Node", "NodeAndInteger", "NodeBranch", "NodeValue", "NodeValueEnumOptions", "PairBroadeningFunction", "Procedure", "Species", "SpeciesReferenceList", "SpeciesSite", "SpeciesSiteReferenceList", "Vec3<Double>", "Vec3<Integer>", "Vec3<NodeValue>", "WindowFunction" };
+const char* KeywordDataTypeKeywords[] = {
+	"AtomTypeSelection",
+	"Bool", "BroadeningFunction",
+	"CharString", "Complex",
+	"Data1DStore", "Data2DStore", "Data3DStore", "Double", "DynamicSites",
+	"EnumOptions", "ExpressionVariableList",
+	"FileAndFormat",
+	"Integer", "IsotopologueList",
+	"LinkToKeyword",
+	"ModuleGroups", "ModuleRefList",
+	"Node", "NodeAndInteger", "NodeBranch", "NodeRefList", "NodeValue", "NodeValueEnumOptions",
+	"PairBroadeningFunction", "Procedure",
+	"Species", "SpeciesRefList", "SpeciesSite", "SpeciesSiteRefList",
+	"Vec3<Double>", "Vec3<Integer>", "Vec3<NodeValue>",
+	"WindowFunction"
+};
 
 // Return ValueType name
 const char* KeywordBase::keywordDataType(KeywordDataType kdt)
@@ -51,13 +66,23 @@ const char* KeywordBase::keywordDataType(KeywordDataType kdt)
 }
 
 /*
+ * Base Pointer Return
+ */
+
+// Return base pointer for this (may be overloaded to provide access to other KeywordBase instance)
+KeywordBase* KeywordBase::base()
+{
+	return this;
+}
+
+/*
  * Keyword Description
  */
 
 // Set name, description, arguments, and option mask
-void KeywordBase::set(const char* keyword, const char* description, const char* arguments, int optionMask)
+void KeywordBase::set(const char* name, const char* description, const char* arguments, int optionMask)
 {
-	keyword_ = keyword;
+	name_ = name;
 	arguments_ = arguments;
 	description_ = description;
 	optionMask_ = optionMask;
@@ -76,9 +101,9 @@ const char* KeywordBase::typeName() const
 }
 
 // Return keyword name
-const char* KeywordBase::keyword()
+const char* KeywordBase::name()
 {
-	return keyword_.get();
+	return name_.get();
 }
 
 // Return keyword description
@@ -87,10 +112,16 @@ const char* KeywordBase::description()
 	return description_.get();
 }
 
-// Return whether to save keyword value in the restart file
-bool KeywordBase::saveInRestart() const
+// Return keyword option mask
+int KeywordBase::optionMask() const
 {
-	return (optionMask_&KeywordBase::InRestartFileOption);
+	return optionMask_;
+}
+
+// Return whether specified option is set
+bool KeywordBase::isOptionSet(KeywordOption opt) const
+{
+	return (optionMask_&opt);
 }
 
 // Return whether the data has ever been set
@@ -108,12 +139,12 @@ bool KeywordBase::validNArgs(int nArgsProvided)
 {
 	if (nArgsProvided < minArguments())
 	{
-		Messenger::error("Not enough arguments given to %s keyword '%s'.\n", typeName(), keyword());
+		Messenger::error("Not enough arguments given to %s keyword '%s'.\n", typeName(), name());
 		return false;
 	}
 	if ((maxArguments() >= 0) && (nArgsProvided > maxArguments()))
 	{
-		Messenger::error("Too many arguments given to %s keyword '%s'.\n", typeName(), keyword());
+		Messenger::error("Too many arguments given to %s keyword '%s'.\n", typeName(), name());
 		return false;
 	}
 

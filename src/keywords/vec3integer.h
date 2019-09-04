@@ -23,7 +23,6 @@
 #define DISSOLVE_KEYWORD_VEC3INTEGER_H
 
 #include "keywords/data.h"
-#include "keywords/base.h"
 
 // Forward Declarations
 /* none */

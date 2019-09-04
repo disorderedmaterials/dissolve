@@ -56,10 +56,10 @@ int NodeBranchKeyword::maxArguments()
 bool NodeBranchKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	// Check that a branch hasn't already been defined
-	if (*data_) return Messenger::error("Only one %s branch may be defined in a %s node.\n", keyword(), ProcedureNode::nodeTypes().keyword(parentNode_->type()));
+	if (*data_) return Messenger::error("Only one %s branch may be defined in a %s node.\n", name(), ProcedureNode::nodeTypes().keyword(parentNode_->type()));
 
 	// Create and parse a new branch
-	(*data_) = new SequenceProcedureNode(branchContext_, parentNode_->scope()->procedure(), parentNode_, CharString("End%s", keyword()));
+	(*data_) = new SequenceProcedureNode(branchContext_, parentNode_->scope()->procedure(), parentNode_, CharString("End%s", name()));
 	if (!(*data_)->read(parser, coreData)) return false;
 
 	return true;

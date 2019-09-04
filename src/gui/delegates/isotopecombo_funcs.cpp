@@ -23,7 +23,6 @@
 #include "data/isotopes.h"
 #include "templates/list.h"
 #include "templates/variantpointer.h"
-#include <QTableWidgetItem>
 
 IsotopeComboDelegate::IsotopeComboDelegate(QObject* parent) : QItemDelegate(parent)
 {

@@ -34,21 +34,21 @@
 FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : QWidget(parent), KeywordWidgetBase(coreData)
 {
 	// Create and set up our UI
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<FileAndFormatKeyword*>(keyword);
 	if (!keyword_)
 	{
-		Messenger::error("Couldn't cast base keyword '%s' into FileAndFormatKeyword.\n", keyword->keyword());
+		Messenger::error("Couldn't cast base keyword '%s' into FileAndFormatKeyword.\n", keyword->name());
 		return;
 	}
 
 	refreshing_ = true;
 
 	// Populate combo with the file formats available
-	ui.FileFormatCombo->clear();
-	for (int n=0; n < keyword_->data().nFormats(); ++n) ui.FileFormatCombo->addItem(keyword_->data().format(n));
+	ui_.FileFormatCombo->clear();
+	for (int n=0; n < keyword_->data().nFormats(); ++n) ui_.FileFormatCombo->addItem(keyword_->data().format(n));
 
 	// Set current information
 	updateWidgetValues(coreData_);
@@ -57,7 +57,7 @@ FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget* parent, KeywordB
 }
 
 /*
- * Signals / Slots
+ * Widgets
  */
 
 void FileAndFormatKeywordWidget::on_FileEdit_editingFinished()
@@ -115,7 +115,7 @@ void FileAndFormatKeywordWidget::on_FileSelectButton_clicked(bool checked)
 	{
 		// Set relative path to file, using the current input file as the reference point
 		QFileInfo fileInfo(coreData_.inputFilename());
-		ui.FileEdit->setText(fileInfo.dir().relativeFilePath(filename));
+		ui_.FileEdit->setText(fileInfo.dir().relativeFilePath(filename));
 		updateKeywordData();
 		updateWidgetValues(coreData_);
 		emit(keywordValueChanged());
@@ -135,12 +135,12 @@ void FileAndFormatKeywordWidget::checkFileValidity()
 	// If this is an export FileAndFormat, no need to show the indicator or check if the file exists
 	if (fileAndFormat.fileMustExist())
 	{
-		ui.FileExistsIndicator->setVisible(true);
-		ui.FileExistsIndicator->setOK(fileAndFormat.hasFilename() ? QFile::exists(fileAndFormat.filename()) : false);
+		ui_.FileExistsIndicator->setVisible(true);
+		ui_.FileExistsIndicator->setOK(fileAndFormat.hasFilename() ? QFile::exists(fileAndFormat.filename()) : false);
 	}
 	else
 	{
-		ui.FileExistsIndicator->setVisible(false);
+		ui_.FileExistsIndicator->setVisible(false);
 	}
 }
 
@@ -159,8 +159,8 @@ void FileAndFormatKeywordWidget::updateWidgetValues(const CoreData& coreData)
 	FileAndFormat& fileAndFormat = keyword_->data();
 
 	// Widgets
-	ui.FileEdit->setText(fileAndFormat.filename());
-	ui.FileFormatCombo->setCurrentIndex(fileAndFormat.formatIndex());
+	ui_.FileEdit->setText(fileAndFormat.filename());
+	ui_.FileFormatCombo->setCurrentIndex(fileAndFormat.formatIndex());
 	checkFileValidity();
 
 	refreshing_ = false;
@@ -172,8 +172,8 @@ void FileAndFormatKeywordWidget::updateKeywordData()
 	// Grab the target FileAndFormat
 	FileAndFormat& fileAndFormat = keyword_->data();
 
-	fileAndFormat.setFilename(qPrintable(ui.FileEdit->text()));
-	fileAndFormat.setFormatIndex(ui.FileFormatCombo->currentIndex());
+	fileAndFormat.setFilename(qPrintable(ui_.FileEdit->text()));
+	fileAndFormat.setFormatIndex(ui_.FileFormatCombo->currentIndex());
 
 	keyword_->dataHasBeenSet();
 }

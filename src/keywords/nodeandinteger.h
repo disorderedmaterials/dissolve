@@ -23,7 +23,6 @@
 #define DISSOLVE_KEYWORD_NODEANDINTEGER_H
 
 #include "keywords/data.h"
-#include "keywords/base.h"
 #include "procedure/nodes/node.h"
 #include "base/lineparser.h"
 #include "templates/pair.h"
@@ -50,7 +49,7 @@ class NodeAndIntegerKeywordBase
 	ProcedureNode* parentNode_;
 
 	public:
-	// Parent ProcedureNode
+	// Return parent ProcedureNode
 	ProcedureNode* parentNode() const;
 
 
@@ -120,11 +119,11 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
 	// Parse arguments from supplied LineParser, starting at given argument offset
 	bool read(LineParser& parser, int startArg, const CoreData& coreData)
 	{
-		if (!parentNode()) return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n", KeywordBase::keyword());
+		if (!parentNode()) return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n", KeywordBase::name());
 
 		// Locate the named node in scope - don't prune by type yet (we'll check that in setNode())
-		ProcedureNode* node = parentNode()->nodeInScope(parser.argc(startArg));
-		if (!node) return Messenger::error("Node '%s' given to keyword %s doesn't exist.\n", parser.argc(startArg), KeywordBase::keyword());
+		ProcedureNode* node = onlyInScope() ? parentNode()->nodeInScope(parser.argc(startArg)) : parentNode()->nodeExists(parser.argc(startArg));
+		if (!node) return Messenger::error("Node '%s' given to keyword %s doesn't exist.\n", parser.argc(startArg), KeywordBase::name());
 
 		return setNode(node);
 	}
@@ -137,11 +136,11 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
 		// If an index was set, write it after the node name
 		if (KeywordData< Pair<N*,int> >::data_.isBSet())
 		{
-			if (!parser.writeLineF("%s%s  '%s'\n", prefix, KeywordBase::keyword(), node ? node->name() : "???")) return false;
+			if (!parser.writeLineF("%s%s  '%s'\n", prefix, KeywordBase::name(), node ? node->name() : "???")) return false;
 		}
 		else
 		{
-			if (!parser.writeLineF("%s%s  '%s'  %i\n", prefix, KeywordBase::keyword(), node ? node->name() : "???", KeywordData< Pair<N*,int> >::data_.b())) return false;
+			if (!parser.writeLineF("%s%s  '%s'  %i\n", prefix, KeywordBase::name(), node ? node->name() : "???", KeywordData< Pair<N*,int> >::data_.b())) return false;
 		}
 
 		return true;
@@ -157,7 +156,7 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
 	{
 		if (!node) return false;
 
-		if (node->type() != nodeType()) return Messenger::error("Node '%s' is of type %s, but the %s keyword requires a node of type %s.\n", node->name(), ProcedureNode::nodeTypes().keyword(node->type()), KeywordBase::keyword(), ProcedureNode::nodeTypes().keyword(nodeType()));
+		if (node->type() != nodeType()) return Messenger::error("Node '%s' is of type %s, but the %s keyword requires a node of type %s.\n", node->name(), ProcedureNode::nodeTypes().keyword(node->type()), KeywordBase::name(), ProcedureNode::nodeTypes().keyword(nodeType()));
 
 		KeywordData< Pair<N*,int> >::data_.setA(dynamic_cast<N*>(node));
 

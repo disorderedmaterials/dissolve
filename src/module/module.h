@@ -85,8 +85,6 @@ class Module : public ListItem<Module>
 	KeywordList keywords_;
 
 	protected:
-	// Set up keywords for Module
-	virtual void setUpKeywords() = 0;
 	// Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 	virtual KeywordBase::ParseResult parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix) = 0;
 
@@ -97,6 +95,14 @@ class Module : public ListItem<Module>
 	KeywordBase::ParseResult parseKeyword(LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix);
 	// Print valid keywords
 	void printValidKeywords();
+
+
+	/*
+	 * Initialisation
+	 */
+	public:
+	// Perform any necessary initialisation for the Module
+	virtual void initialise() = 0;
 
 
 	/*

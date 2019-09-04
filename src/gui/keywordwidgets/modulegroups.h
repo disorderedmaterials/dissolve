@@ -1,6 +1,6 @@
 /*
-	*** Keyword Widget - Module Reference List
-	*** src/gui/keywordwidgets/modulereferencelist.h
+	*** Keyword Widget - Module Groups
+	*** src/gui/keywordwidgets/modulegroups.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -40,8 +40,6 @@ class ModuleGroupsKeywordWidget: public KeywordDropDown, public KeywordWidgetBas
 	public:
 	// Constructor
 	ModuleGroupsKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
-        // Main form declaration
-        Ui::ModuleGroupsWidget ui;
 
 
 	/*
@@ -53,8 +51,12 @@ class ModuleGroupsKeywordWidget: public KeywordDropDown, public KeywordWidgetBas
 
 
 	/*
-	 * Signals / Slots
+	 * Widgets
 	 */
+	private:
+	// Main form declaration
+	Ui::ModuleGroupsWidget ui_;
+
 	private:
 	// Selection table update function
 	void updateSelectionRow(int row, Module* module, bool create);
