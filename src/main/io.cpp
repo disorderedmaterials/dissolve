@@ -38,11 +38,9 @@ bool Dissolve::loadInput(LineParser& parser)
 
 	// Variables
 	Configuration* cfg;
-	Module* module;
 	ModuleLayer* layer = NULL;
 	CharString niceName;
 	Species* sp;
-	BlockKeywords::BlockKeyword kwd;
 	bool error = false;
 
 	while (!parser.eofOrBlank())
