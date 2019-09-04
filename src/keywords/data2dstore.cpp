@@ -37,14 +37,14 @@ Data2DStoreKeyword::~Data2DStoreKeyword()
  */
 
 // Return minimum number of arguments accepted
-int Data2DStoreKeyword::minArguments()
+int Data2DStoreKeyword::minArguments() const
 {
 	// Must have reference data name and format as a minimum
 	return 2;
 }
 
 // Return maximum number of arguments accepted
-int Data2DStoreKeyword::maxArguments()
+int Data2DStoreKeyword::maxArguments() const
 {
 	// Filename, name of data, and other args
 	return 99;

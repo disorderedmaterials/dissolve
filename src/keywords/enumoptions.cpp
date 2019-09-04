@@ -40,13 +40,13 @@ EnumOptionsKeyword::~EnumOptionsKeyword()
  */
 
 // Return minimum number of arguments accepted
-int EnumOptionsKeyword::minArguments()
+int EnumOptionsKeyword::minArguments() const
 {
 	return 1;
 }
 
 // Return minimum number of arguments accepted
-int EnumOptionsKeyword::maxArguments()
+int EnumOptionsKeyword::maxArguments() const
 {
 	return 1;
 }

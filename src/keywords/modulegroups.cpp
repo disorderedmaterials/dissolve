@@ -42,13 +42,13 @@ ModuleGroupsKeyword::~ModuleGroupsKeyword()
  */
 
 // Return minimum number of arguments accepted
-int ModuleGroupsKeyword::minArguments()
+int ModuleGroupsKeyword::minArguments() const
 {
 	return 1;
 }
 
 // Return maximum number of arguments accepted
-int ModuleGroupsKeyword::maxArguments()
+int ModuleGroupsKeyword::maxArguments() const
 {
 	// Module name plus group name
 	return 2;

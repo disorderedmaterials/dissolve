@@ -37,13 +37,13 @@ PairBroadeningFunctionKeyword::~PairBroadeningFunctionKeyword()
  */
 
 // Return minimum number of arguments accepted
-int PairBroadeningFunctionKeyword::minArguments()
+int PairBroadeningFunctionKeyword::minArguments() const
 {
 	return 1;
 }
 
 // Return maximum number of arguments accepted
-int PairBroadeningFunctionKeyword::maxArguments()
+int PairBroadeningFunctionKeyword::maxArguments() const
 {
 	return 2;
 }

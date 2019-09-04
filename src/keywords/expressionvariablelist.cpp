@@ -72,13 +72,13 @@ bool ExpressionVariableListKeyword::currentDataIsSet() const
  */
 
 // Return minimum number of arguments accepted
-int ExpressionVariableListKeyword::minArguments()
+int ExpressionVariableListKeyword::minArguments() const
 {
 	return 2;
 }
 
 // Return maximum number of arguments accepted
-int ExpressionVariableListKeyword::maxArguments()
+int ExpressionVariableListKeyword::maxArguments() const
 {
 	return 2;
 }

@@ -44,9 +44,9 @@ class ModuleGroupsKeyword : public KeywordData<ModuleGroups&>
 	 */
 	public:
 	// Return minimum number of arguments accepted
-	int minArguments();
+	int minArguments() const;
 	// Return maximum number of arguments accepted
-	int maxArguments();
+	int maxArguments() const;
 	// Parse arguments from supplied LineParser, starting at given argument offset
 	bool read(LineParser& parser, int startArg, const CoreData& coreData);
 	// Write keyword data to specified LineParser

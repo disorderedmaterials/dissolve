@@ -89,7 +89,7 @@ void KeywordBase::set(const char* name, const char* description, const char* arg
 }
 
 // Return data type stored by keyword
-KeywordBase::KeywordDataType KeywordBase::type()
+KeywordBase::KeywordDataType KeywordBase::type() const
 {
 	return type_;
 }
@@ -101,13 +101,13 @@ const char* KeywordBase::typeName() const
 }
 
 // Return keyword name
-const char* KeywordBase::name()
+const char* KeywordBase::name() const
 {
 	return name_.get();
 }
 
 // Return keyword description
-const char* KeywordBase::description()
+const char* KeywordBase::description() const
 {
 	return description_.get();
 }
@@ -125,7 +125,7 @@ bool KeywordBase::isOptionSet(KeywordOption opt) const
 }
 
 // Return whether the data has ever been set
-bool KeywordBase::isSet()
+bool KeywordBase::isSet() const
 {
 	return set_;
 }
@@ -135,7 +135,7 @@ bool KeywordBase::isSet()
  */
 
 // Check number of arguments provided to keyword
-bool KeywordBase::validNArgs(int nArgsProvided)
+bool KeywordBase::validNArgs(int nArgsProvided) const
 {
 	if (nArgsProvided < minArguments())
 	{

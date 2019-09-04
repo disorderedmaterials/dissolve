@@ -48,13 +48,13 @@ bool ComplexKeyword::isValid(int value)
  */
 
 // Return minimum number of arguments accepted
-int ComplexKeyword::minArguments()
+int ComplexKeyword::minArguments() const
 {
 	return minArguments_;
 }
 
 // Return maximum number of arguments accepted
-int ComplexKeyword::maxArguments()
+int ComplexKeyword::maxArguments() const
 {
 	return maxArguments_;
 }

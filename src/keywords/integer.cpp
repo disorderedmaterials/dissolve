@@ -101,13 +101,13 @@ bool IntegerKeyword::isValid(int value)
  */
 
 // Return minimum number of arguments accepted
-int IntegerKeyword::minArguments()
+int IntegerKeyword::minArguments() const
 {
 	return 1;
 }
 
 // Return maximum number of arguments accepted
-int IntegerKeyword::maxArguments()
+int IntegerKeyword::maxArguments() const
 {
 	return 1;
 }

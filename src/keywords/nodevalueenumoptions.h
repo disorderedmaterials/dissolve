@@ -101,12 +101,12 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
 	 */
 	public:
 	// Return minimum number of arguments accepted
-	int minArguments()
+	int minArguments() const
 	{
 		return 2;
 	}
 	// Return maximum number of arguments accepted
-	int maxArguments()
+	int maxArguments() const
 	{
 		return 2;
 	}

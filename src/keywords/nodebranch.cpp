@@ -41,13 +41,13 @@ NodeBranchKeyword::~NodeBranchKeyword()
  */
 
 // Return minimum number of arguments accepted
-int NodeBranchKeyword::minArguments()
+int NodeBranchKeyword::minArguments() const
 {
 	return 0;
 }
 
 // Return maximum number of arguments accepted
-int NodeBranchKeyword::maxArguments()
+int NodeBranchKeyword::maxArguments() const
 {
 	return 0;
 }

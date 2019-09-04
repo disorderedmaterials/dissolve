@@ -46,14 +46,14 @@ KeywordBase* LinkToKeyword::base()
  */
 
 // Return minimum number of arguments accepted
-int LinkToKeyword::minArguments()
+int LinkToKeyword::minArguments() const
 {
 	Messenger::warn("Don't call LinkToKeyword::minArguments() - go through base().\n");
 	return data_->minArguments();
 }
 
 // Return maximum number of arguments accepted
-int LinkToKeyword::maxArguments()
+int LinkToKeyword::maxArguments() const
 {
 	Messenger::warn("Don't call LinkToKeyword::maxArguments() - go through base().\n");
 	return data_->maxArguments();

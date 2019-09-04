@@ -37,13 +37,13 @@ BroadeningFunctionKeyword::~BroadeningFunctionKeyword()
  */
 
 // Return minimum number of arguments accepted
-int BroadeningFunctionKeyword::minArguments()
+int BroadeningFunctionKeyword::minArguments() const
 {
 	return 1;
 }
 
 // Return maximum number of arguments accepted
-int BroadeningFunctionKeyword::maxArguments()
+int BroadeningFunctionKeyword::maxArguments() const
 {
 	return MAXBROADENINGFUNCTIONPARAMS;
 }

@@ -50,13 +50,13 @@ const RefList<Configuration>& IsotopologueReferenceListKeyword::associatedConfig
  */
 
 // Return minimum number of arguments accepted
-int IsotopologueReferenceListKeyword::minArguments()
+int IsotopologueReferenceListKeyword::minArguments() const
 {
 	return 4;
 }
 
 // Return maximum number of arguments accepted
-int IsotopologueReferenceListKeyword::maxArguments()
+int IsotopologueReferenceListKeyword::maxArguments() const
 {
 	return 4;
 }

@@ -110,13 +110,13 @@ bool Vec3DoubleKeyword::isValid(int index, double value)
  */
 
 // Return minimum number of arguments accepted
-int Vec3DoubleKeyword::minArguments()
+int Vec3DoubleKeyword::minArguments() const
 {
 	return 3;
 }
 
 // Return maximum number of arguments accepted
-int Vec3DoubleKeyword::maxArguments()
+int Vec3DoubleKeyword::maxArguments() const
 {
 	return 3;
 }

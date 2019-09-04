@@ -81,13 +81,13 @@ void AtomTypeSelectionKeyword::checkSelection()
  */
 
 // Return minimum number of arguments accepted
-int AtomTypeSelectionKeyword::minArguments()
+int AtomTypeSelectionKeyword::minArguments() const
 {
 	return 1;
 }
 
 // Return maximum number of arguments accepted
-int AtomTypeSelectionKeyword::maxArguments()
+int AtomTypeSelectionKeyword::maxArguments() const
 {
 	return 999;
 }

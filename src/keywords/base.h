@@ -103,21 +103,21 @@ class KeywordBase : public ListItem<KeywordBase>
 	// Set name, description, arguments, and option mask
 	void set(const char* name, const char* description, const char* arguments, int optionMask = NoOptions);
 	// Return data type stored by keyword
-	KeywordDataType type();
+	KeywordDataType type() const;
 	// Return name of data type stored by keyword
 	const char* typeName() const;
 	// Return keyword name
-	const char* name();
+	const char* name() const;
 	// Return arguments string
-	const char* arguments();
+	const char* arguments() const;
 	// Return keyword description
-	const char* description();
+	const char* description() const;
 	// Return keyword option mask
 	int optionMask() const;
 	// Return whether specified option is set
 	bool isOptionSet(KeywordOption opt) const;
 	// Return whether the data has ever been set
-	bool isSet();
+	bool isSet() const;
 
 
 	/*
@@ -125,11 +125,11 @@ class KeywordBase : public ListItem<KeywordBase>
 	 */
 	public:
 	// Return minimum number of arguments accepted
-	virtual int minArguments() = 0;
+	virtual int minArguments() const = 0;
 	// Return maximum number of arguments accepted
-	virtual int maxArguments() = 0;
+	virtual int maxArguments() const = 0;
 	// Check number of arguments provided to keyword
-	bool validNArgs(int nArgsProvided);
+	bool validNArgs(int nArgsProvided) const;
 	// Parse arguments from supplied LineParser, starting at given argument offset
 	virtual bool read(LineParser& parser, int startArg, const CoreData& coreData) = 0;
 	// Write keyword data to specified LineParser

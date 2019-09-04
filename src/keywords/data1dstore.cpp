@@ -37,14 +37,14 @@ Data1DStoreKeyword::~Data1DStoreKeyword()
  */
 
 // Return minimum number of arguments accepted
-int Data1DStoreKeyword::minArguments()
+int Data1DStoreKeyword::minArguments() const
 {
 	// Must have reference data name and format as a minimum
 	return 2;
 }
 
 // Return maximum number of arguments accepted
-int Data1DStoreKeyword::maxArguments()
+int Data1DStoreKeyword::maxArguments() const
 {
 	// Filename, name of data, and other args
 	return 99;

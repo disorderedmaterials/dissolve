@@ -38,13 +38,13 @@ CharStringKeyword::~CharStringKeyword()
  */
 
 // Return minimum number of arguments accepted
-int CharStringKeyword::minArguments()
+int CharStringKeyword::minArguments() const
 {
 	return 1;
 }
 
 // Return minimum number of arguments accepted
-int CharStringKeyword::maxArguments()
+int CharStringKeyword::maxArguments() const
 {
 	return 1;
 }

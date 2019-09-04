@@ -50,13 +50,13 @@ Vec3Labels::LabelType Vec3NodeValueKeyword::labelType() const
  */
 
 // Return minimum number of arguments accepted
-int Vec3NodeValueKeyword::minArguments()
+int Vec3NodeValueKeyword::minArguments() const
 {
 	return 3;
 }
 
 // Return maximum number of arguments accepted
-int Vec3NodeValueKeyword::maxArguments()
+int Vec3NodeValueKeyword::maxArguments() const
 {
 	return 3;
 }

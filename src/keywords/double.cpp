@@ -101,13 +101,13 @@ bool DoubleKeyword::isValid(double value)
  */
 
 // Return minimum number of arguments accepted
-int DoubleKeyword::minArguments()
+int DoubleKeyword::minArguments() const
 {
 	return 1;
 }
 
 // Return maximum number of arguments accepted
-int DoubleKeyword::maxArguments()
+int DoubleKeyword::maxArguments() const
 {
 	return 1;
 }

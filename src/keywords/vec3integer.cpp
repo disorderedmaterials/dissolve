@@ -110,13 +110,13 @@ bool Vec3IntegerKeyword::isValid(int index, int value)
  */
 
 // Return minimum number of arguments accepted
-int Vec3IntegerKeyword::minArguments()
+int Vec3IntegerKeyword::minArguments() const
 {
 	return 3;
 }
 
 // Return maximum number of arguments accepted
-int Vec3IntegerKeyword::maxArguments()
+int Vec3IntegerKeyword::maxArguments() const
 {
 	return 3;
 }

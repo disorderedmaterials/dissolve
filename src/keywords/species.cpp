@@ -39,13 +39,13 @@ SpeciesKeyword::~SpeciesKeyword()
  */
 
 // Return minimum number of arguments accepted
-int SpeciesKeyword::minArguments()
+int SpeciesKeyword::minArguments() const
 {
 	return 1;
 }
 
 // Return maximum number of arguments accepted
-int SpeciesKeyword::maxArguments()
+int SpeciesKeyword::maxArguments() const
 {
 	return 1;
 }

@@ -69,13 +69,13 @@ int ModuleRefListKeyword::maxModules() const
  */
 
 // Return minimum number of arguments accepted
-int ModuleRefListKeyword::minArguments()
+int ModuleRefListKeyword::minArguments() const
 {
 	return 1;
 }
 
 // Return maximum number of arguments accepted
-int ModuleRefListKeyword::maxArguments()
+int ModuleRefListKeyword::maxArguments() const
 {
 	return (maxModules_ == -1 ? 99 : maxModules_);
 }

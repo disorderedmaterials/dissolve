@@ -38,13 +38,13 @@ BoolKeyword::~BoolKeyword()
  */
 
 // Return minimum number of arguments accepted
-int BoolKeyword::minArguments()
+int BoolKeyword::minArguments() const
 {
 	return 1;
 }
 
 // Return maximum number of arguments accepted
-int BoolKeyword::maxArguments()
+int BoolKeyword::maxArguments() const
 {
 	return 1;
 }

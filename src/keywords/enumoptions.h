@@ -103,12 +103,12 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
 	 */
 	public:
 	// Return minimum number of arguments accepted
-	int minArguments()
+	int minArguments() const
 	{
 		return 1;
 	}
 	// Return maximum number of arguments accepted
-	int maxArguments()
+	int maxArguments() const
 	{
 		return 1;
 	}

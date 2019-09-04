@@ -61,13 +61,13 @@ bool DynamicSiteNodesKeyword::currentDataIsSet() const
  */
 
 // Return minimum number of arguments accepted
-int DynamicSiteNodesKeyword::minArguments()
+int DynamicSiteNodesKeyword::minArguments() const
 {
 	return 0;
 }
 
 // Return maximum number of arguments accepted
-int DynamicSiteNodesKeyword::maxArguments()
+int DynamicSiteNodesKeyword::maxArguments() const
 {
 	return 0;
 }

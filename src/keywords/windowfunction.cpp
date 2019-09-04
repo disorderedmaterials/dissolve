@@ -37,13 +37,13 @@ WindowFunctionKeyword::~WindowFunctionKeyword()
  */
 
 // Return minimum number of arguments accepted
-int WindowFunctionKeyword::minArguments()
+int WindowFunctionKeyword::minArguments() const
 {
 	return 1;
 }
 
 // Return maximum number of arguments accepted
-int WindowFunctionKeyword::maxArguments()
+int WindowFunctionKeyword::maxArguments() const
 {
 	return MAXWINDOWFUNCTIONPARAMS;
 }

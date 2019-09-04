@@ -38,14 +38,14 @@ FileAndFormatKeyword::~FileAndFormatKeyword()
  */
 
 // Return minimum number of arguments accepted
-int FileAndFormatKeyword::minArguments()
+int FileAndFormatKeyword::minArguments() const
 {
 	// Must have data format as bare minimum
 	return 1;
 }
 
 // Return maximum number of arguments accepted
-int FileAndFormatKeyword::maxArguments()
+int FileAndFormatKeyword::maxArguments() const
 {
 	// Data format and filename, plus some number of optional arguments
 	return 99;

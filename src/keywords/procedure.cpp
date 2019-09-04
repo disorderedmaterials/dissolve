@@ -39,13 +39,13 @@ ProcedureKeyword::~ProcedureKeyword()
  */
 
 // Return minimum number of arguments accepted
-int ProcedureKeyword::minArguments()
+int ProcedureKeyword::minArguments() const
 {
 	return 0;
 }
 
 // Return maximum number of arguments accepted
-int ProcedureKeyword::maxArguments()
+int ProcedureKeyword::maxArguments() const
 {
 	return 0;
 }

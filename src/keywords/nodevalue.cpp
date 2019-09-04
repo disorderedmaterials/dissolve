@@ -39,13 +39,13 @@ NodeValueKeyword::~NodeValueKeyword()
  */
 
 // Return minimum number of arguments accepted
-int NodeValueKeyword::minArguments()
+int NodeValueKeyword::minArguments() const
 {
 	return 1;
 }
 
 // Return maximum number of arguments accepted
-int NodeValueKeyword::maxArguments()
+int NodeValueKeyword::maxArguments() const
 {
 	return 1;
 }

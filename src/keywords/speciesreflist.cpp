@@ -49,13 +49,13 @@ bool SpeciesRefListKeyword::currentDataIsSet() const
  */
 
 // Return minimum number of arguments accepted
-int SpeciesRefListKeyword::minArguments()
+int SpeciesRefListKeyword::minArguments() const
 {
 	return 1;
 }
 
 // Return maximum number of arguments accepted
-int SpeciesRefListKeyword::maxArguments()
+int SpeciesRefListKeyword::maxArguments() const
 {
 	return 99;
 }
