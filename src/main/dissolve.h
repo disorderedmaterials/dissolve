@@ -363,13 +363,13 @@ class Dissolve
 	CharString restartFilename_;
 	// Accumulated timing information for saving restart file
 	SampledDouble saveRestartTimes_;
+	// Check if heartbeat file needs to be written or not
+	bool writeHeartBeat_;
 
 	private:
 	// Load input file through supplied parser
 	bool loadInput(LineParser& parser);
-	// Check if heartbeat file needs to be written or not
-	bool writeHeartBeat_;
-    
+	
 	public:
 	// Load input file
 	bool loadInput(const char* filename);
