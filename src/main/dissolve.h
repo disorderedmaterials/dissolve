@@ -333,7 +333,7 @@ class Dissolve
 	void setSeed(int seed);
 	// Return random seed
 	int seed() const;
-	// Set frequency with which to write various iteration data
+	// Set frequency with which to write various iteration data	
 	void setRestartFileFrequency(int n);
 	// Return frequency with which to write restart file
 	int restartFileFrequency() const;
@@ -367,7 +367,9 @@ class Dissolve
 	private:
 	// Load input file through supplied parser
 	bool loadInput(LineParser& parser);
-
+	// Check if heartbeat file needs to be written or not
+	bool writeHeartBeat_;
+    
 	public:
 	// Load input file
 	bool loadInput(const char* filename);
@@ -381,8 +383,10 @@ class Dissolve
 	bool saveRestart(const char* filename);
 	// Save heartbeat file
 	bool saveHeartBeat(const char* filename, double estimatedNSecs);
-    // write heartbeat file
-    bool dontWriteOutput = false;
+	// Set bool for heartbeat file to be written
+	void setWriteHeartBeat(bool b);
+	// write heartbeat file
+	bool writeHeartBeat() const;
 	// Return whether an input filename has been set
 	bool hasInputFilename() const;
 	// Set current input filenamea

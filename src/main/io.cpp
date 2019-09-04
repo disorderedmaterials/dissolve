@@ -377,7 +377,7 @@ bool Dissolve::saveInput(const char* filename)
 		if (!parser.writeLineF("\n%s  '%s'\n", BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword), cfg->name())) return false;
 
 		if (!parser.writeLineF("  %s\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::GeneratorKeyword))) return false;
-		if (!cfg->generator().write(parser, "    ")) return false;
+		if (!cfg->generator().write(parser, "   ")) return false;
  
 		if (cfg->inputCoordinates().hasValidFileAndFormat() && (!parser.writeLineF("  %s  '%s'\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::InputCoordinatesKeyword), cfg->inputCoordinates().asString()))) return false;
 
@@ -753,4 +753,16 @@ const char* Dissolve::restartFilename() const
 bool Dissolve::hasRestartFilename() const
 {
 	return (!restartFilename_.isEmpty());
+}
+
+// Set boolean for heartbeat file
+void Dissolve::setWriteHeartBeat(bool b)
+{
+        writeHeartBeat_ = b;
+}
+
+// Return whether a heartbeat file needs to be written
+bool Dissolve::writeHeartBeat() const
+{
+	return writeHeartBeat_;
 }
