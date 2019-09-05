@@ -126,6 +126,7 @@ void CalculateDAngleModule::initialise()
 
 	// Process1D: 'RDF(BC)'
 	processDistance_ = new Process1DProcedureNode(collectDistance_);
+	processDistance_->setName("RDF(BC)");
 	processDistance_->addSitePopulationNormaliser(selectA_);
 	processDistance_->addSitePopulationNormaliser(selectB_);
 	processDistance_->addNumberDensityNormaliser(selectC_);
@@ -136,6 +137,7 @@ void CalculateDAngleModule::initialise()
 
 	// Process1D: 'ANGLE(ABC)'
 	processAngle_ = new Process1DProcedureNode(collectAngle_);
+	processAngle_->setName("Angle(ABC)");
 	processAngle_->setNormaliseToOne(true);
 	processAngle_->setValueLabel("Normalised Frequency");
 	processAngle_->setXAxisLabel("\\symbol{theta}, \\symbol{degrees}");
@@ -143,14 +145,12 @@ void CalculateDAngleModule::initialise()
 
 	// Process2D: 'DAngle'
 	processDAngle_ = new Process2DProcedureNode(collectDAngle_);
+	processDAngle_->setName("DAngle");
 	processDAngle_->setNormaliseToOne(true);
 	processDAngle_->setValueLabel("g(r)");
 	processDAngle_->setXAxisLabel("r, \\symbol{Angstrom}");
 	processDAngle_->setYAxisLabel("\\symbol{theta}, \\symbol{degrees}");
 	analyser_.addRootSequenceNode(processDAngle_);
-
-	// Update names for the nodes
-	updateNodeNames();
 
 	/*
 	 * Keywords (including those exposed from the ProcedureNodes)
@@ -165,9 +165,6 @@ void CalculateDAngleModule::initialise()
 	keywords_.link("Sites", selectB_->keywords().find("Site"), "SiteB", "Add site(s) which represent 'B' in the interaction A-B...C", "<Species> <Site> [<Species> <Site> ... ]");
 	keywords_.link("Sites", selectC_->keywords().find("Site"), "SiteC", "Add site(s) which represent 'C' in the interaction A-B...C", "<Species> <Site> [<Species> <Site> ... ]");
 	keywords_.add("Sites", new BoolKeyword(false), "ExcludeSameMolecule", "Whether to exclude correlations between B and C sites on the same molecule", "<True|False>");
-
-	// Export
-	keywords_.add("Export", new BoolKeyword(false), "Save", "Save calculated data to disk", "<True|False>");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised

@@ -53,7 +53,6 @@ bool CalculateDAngleModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	RefList<SelectProcedureNode> sameMoleculeExclusions;
 	if (excludeSameMolecule) sameMoleculeExclusions.append(selectA_);
 	selectC_->setKeyword< RefList<SelectProcedureNode>& >("ExcludeSameMolecule", sameMoleculeExclusions);
-	updateNodeNames();
 
 	// Loop over target Configurations
 	for (RefListItem<Configuration>* ri = targetConfigurations_.first(); ri != NULL; ri = ri->next())
