@@ -75,6 +75,9 @@ bool AtomTypeRefListKeyword::read(LineParser& parser, int startArg, const CoreDa
 // Write keyword data to specified LineParser
 bool AtomTypeRefListKeyword::write(LineParser& parser, const char* prefix)
 {
+	// Don't write anything if there are no items in the list
+	if (data_.nItems() == 0) return true;
+
 	// Loop over the AtomType selection list
 	CharString atomTypes;
 	RefListIterator<AtomType> typeIterator(data_);
