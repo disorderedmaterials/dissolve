@@ -21,7 +21,6 @@
 
 #include "keywords/atomtypereflist.h"
 #include "classes/atomtype.h"
-#include "classes/configuration.h"
 #include "classes/coredata.h"
 #include "base/lineparser.h"
 
