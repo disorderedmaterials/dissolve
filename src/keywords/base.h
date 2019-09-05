@@ -49,7 +49,7 @@ class KeywordBase : public ListItem<KeywordBase>
 		BoolData, BroadeningFunctionData,
 		CharStringData, ComplexData,
 		Data1DStoreData, Data2DStoreData, Data3DStoreData, DoubleData, DynamicSiteNodesData,
-		EnumOptionsData, ExpressionVariableListData,
+		ElementRefListData, EnumOptionsData, ExpressionVariableListData,
 		FileAndFormatData,
 		IntegerData, IsotopologueListData,
 		LinkToKeywordData,
