@@ -114,6 +114,9 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
 	// Write keyword data to specified LineParser
 	bool write(LineParser& parser, const char* prefix)
 	{
+		// No need to write the keyword if the node pointer is null
+		if (KeywordData<N*>::data_ == NULL) return true;
+
 		if (!parser.writeLineF("%s%s  '%s'\n", prefix, KeywordBase::name(), KeywordData<N*>::data_->name())) return false;
 
 		return true;
