@@ -108,11 +108,9 @@ EndModule
 # Oxygen-oxygen radial distribution function
 Module  CalculateRDF  'RDF(OW-OW)'
   Configuration  'Bulk'
-  OriginSite  Water  'O'
-  OtherSite  Water  'O'
-  RMin  0.0
-  RMax  20.0
-  BinWidth  0.01
+  SiteA  Water  'O'
+  SiteB  Water  'O'
+  DistanceRange  0.0  20.0  0.01
 EndModule
 
 # Oxygen-oxygen radial distribution function (using Analysis module)
@@ -151,26 +149,24 @@ EndModule
 Module DataTest
   Frequency  95
   Target  'RDF(OW-OW)'
-  Data1D  RDF(OW-OW)_Bulk  xy  '../_data/water267-dlpoly/water-267-298K.aardf1_02_02'
+  Data1D  'RDF_Bulk'  xy  '../_data/water267-dlpoly/water-267-298K.aardf1_02_02'
   Threshold  1.4
 EndModule
 
 Module DataTest
   Frequency  95
   Target  'RDF(OW-OW)-Analyser'
-  Data1D  'RDF(OW-OW)-Analyser//Process1D//Bulk//RDF'  xy  '../_data/water267-dlpoly/water-267-298K.aardf1_02_02'
+  Data1D  'RDF_Bulk'  xy  '../_data/water267-dlpoly/water-267-298K.aardf1_02_02'
   Threshold  1.4
 EndModule
 
 # Hydrogen-hydrogen (H1-H2, 1-3) radial distribution function, excluding intramolecular correlations
 Module  CalculateRDF  'RDF(H1-H2)'
   Configuration  'Bulk'
-  OriginSite  Water  'H1'
-  OtherSite  Water  'H2'
+  SiteA  Water  'H1'
+  SiteB  Water  'H2'
   ExcludeSameMolecule  On
-  RMin  0.0
-  RMax  20.0
-  BinWidth  0.01
+  DistanceRange  0.0  20.0  0.01
 EndModule
 
 # Hydrogen-hydrogen (H1-H2, 1-3) radial distribution function, excluding intramolecular correlations, using analyser
@@ -209,26 +205,24 @@ EndModule
 Module DataTest
   Frequency  95
   Target  'RDF(H1-H2)'
-  Data1D  RDF(H1-H2)_Bulk  xy  '../_data/water267-dlpoly/water-267-298K.aardf1_01_03'
+  Data1D  RDF_Bulk  xy  '../_data/water267-dlpoly/water-267-298K.aardf1_01_03'
   Threshold  1.1
 EndModule
 
 Module DataTest
   Frequency  95
   Target  'RDF(H1-H2)-Analyser'
-  Data1D  'RDF(H1-H2)-Analyser//Process1D//Bulk//RDF'  xy  '../_data/water267-dlpoly/water-267-298K.aardf1_01_03'
+  Data1D  'RDF_Bulk'  xy  '../_data/water267-dlpoly/water-267-298K.aardf1_01_03'
   Threshold  1.1
 EndModule
 
 # Center-of-mass radial distribution function
 Module  CalculateRDF  'RDF(COM-COM)'
   Configuration  'Bulk'
-  OriginSite  Water  'COM'
-  OtherSite  Water  'COM'
+  SiteA  Water  'COM'
+  SiteB  Water  'COM'
   ExcludeSameMolecule  On
-  RMin  0.0
-  RMax  20.0
-  BinWidth  0.05
+  DistanceRange  0.0  20.0  0.05
 EndModule
 
 # Center-of-mass radial distribution function, with analyser
@@ -267,21 +261,15 @@ EndModule
 Module DataTest
   Frequency  95
   Target  'RDF(COM-COM)'
-  Data1D  RDF(COM-COM)_Bulk  xy  '../_data/water267-dlpoly/water-267-298K.rdf11'
+  Data1D  RDF_Bulk  xy  '../_data/water267-dlpoly/water-267-298K.rdf11'
   Threshold  0.5
 EndModule
 
 Module DataTest
   Frequency  95
   Target  'RDF(COM-COM)-Analyser'
-  Data1D  'RDF(COM-COM)-Analyser//Process1D//Bulk//RDF'  xy  '../_data/water267-dlpoly/water-267-298K.rdf11'
+  Data1D  'RDF_Bulk'  xy  '../_data/water267-dlpoly/water-267-298K.rdf11'
   Threshold  0.5
 EndModule
 
 EndLayer
-
-Simulation
-  # Prevent writing of restart file
-  RestartFileFrequency  100
-EndSimulation
-
