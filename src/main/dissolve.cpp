@@ -27,6 +27,8 @@
 #include "classes/partialset.h"
 #include "classes/weights.h"
 #include "math/histogram1d.h"
+#include "math/histogram2d.h"
+#include "math/histogram3d.h"
 #include "math/pairbroadeningfunction.h"
 #include "genericitems/item.h"
 #include "genericitems/items.h"
@@ -148,7 +150,11 @@ void Dissolve::registerGenericItems()
 
 	GenericItem::addItemClass(new GenericItemContainer<BraggReflection>(BraggReflection::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<Data1D>(Data1D::itemClassName()));
+	GenericItem::addItemClass(new GenericItemContainer<Data2D>(Data2D::itemClassName()));
+	GenericItem::addItemClass(new GenericItemContainer<Data3D>(Data3D::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<Histogram1D>(Histogram1D::itemClassName()));
+	GenericItem::addItemClass(new GenericItemContainer<Histogram2D>(Histogram2D::itemClassName()));
+	GenericItem::addItemClass(new GenericItemContainer<Histogram3D>(Histogram3D::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<IsotopologueMix>(IsotopologueMix::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<KVector>(KVector::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<PairBroadeningFunction>(PairBroadeningFunction::itemClassName()));
