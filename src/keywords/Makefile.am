@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = libkeywords.la
 
-libkeywords_la_SOURCES = atomtypeselection.cpp
+libkeywords_la_SOURCES = atomtypereflist.cpp atomtypeselection.cpp
 libkeywords_la_SOURCES += base.cpp bool.cpp broadeningfunction.cpp
 libkeywords_la_SOURCES += charstring.cpp complex.cpp
 libkeywords_la_SOURCES += data1dstore.cpp data2dstore.cpp data3dstore.cpp double.cpp dynamicsitenodes.cpp
@@ -16,7 +16,7 @@ libkeywords_la_SOURCES += species.cpp speciesreflist.cpp speciessite.cpp species
 libkeywords_la_SOURCES += vec3double.cpp vec3integer.cpp vec3nodevalue.cpp
 libkeywords_la_SOURCES += windowfunction.cpp
 
-noinst_HEADERS = atomtypeselection.h
+noinst_HEADERS = atomtypereflist.h atomtypeselection.h
 noinst_HEADERS += base.h bool.h broadeningfunction.h
 noinst_HEADERS += charstring.h complex.h
 noinst_HEADERS += data.h data1dstore.h data2dstore.h data3dstore.h double.h dynamicsitenodes.h

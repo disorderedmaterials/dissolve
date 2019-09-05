@@ -33,6 +33,7 @@
 #include "keywords/integer.h"
 
 // Classes
+#include "keywords/atomtypereflist.h"
 #include "keywords/atomtypeselection.h"
 #include "keywords/broadeningfunction.h"
 #include "keywords/charstring.h"

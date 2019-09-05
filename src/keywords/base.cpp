@@ -43,7 +43,7 @@ KeywordBase::~KeywordBase()
 
 // Value Keyword Data Type Keywords
 const char* KeywordDataTypeKeywords[] = {
-	"AtomTypeSelection",
+	"AtomTypeRefList", "AtomTypeSelection",
 	"Bool", "BroadeningFunction",
 	"CharString", "Complex",
 	"Data1DStore", "Data2DStore", "Data3DStore", "Double", "DynamicSites",

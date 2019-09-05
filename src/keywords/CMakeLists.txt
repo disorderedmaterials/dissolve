@@ -1,4 +1,5 @@
 add_library(keywords
+  atomtypereflist.cpp
   atomtypeselection.cpp
   base.cpp
   bool.cpp
@@ -35,6 +36,7 @@ add_library(keywords
   vec3nodevalue.cpp
   windowfunction.cpp
 
+  atomtypereflist.h
   atomtypeselection.h
   base.h
   bool.h
