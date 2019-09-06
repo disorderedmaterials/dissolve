@@ -322,7 +322,7 @@ bool Dissolve::saveInput(const char* filename)
 
 			for (Isotopologue* iso = sp->isotopologues().first(); iso != NULL; iso = iso->next())
 			{
-				if (!parser.writeLineF("  %s  '%s'  ", SpeciesBlock::keywords().keyword(SpeciesBlock::IsotopologueKeyword), iso->name())) return false;
+				if (!parser.writeLineF("  %s  '%s'", SpeciesBlock::keywords().keyword(SpeciesBlock::IsotopologueKeyword), iso->name())) return false;
 				RefDataListIterator<AtomType,Isotope*> isotopeIterator(iso->isotopes());
 				while (AtomType* atomType = isotopeIterator.iterate())
 				{
