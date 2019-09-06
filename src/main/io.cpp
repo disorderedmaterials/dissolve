@@ -394,19 +394,8 @@ bool Dissolve::saveInput(const char* filename)
 			if (!parser.writeLineF("    Frequency  %i\n", module->frequency())) return false;
 			if (!module->enabled() && (!parser.writeLineF("    Disabled\n"))) return false;
 
-			// Print keyword options
-			bool isFirstOption = true;
-			ListIterator<KeywordBase> keywordIterator(module->keywords().keywords());
-			while (KeywordBase* keyword = keywordIterator.iterate())
-			{
-				// If the keyword has never been set (i.e. it still has its default value) don't bother to write it
-				if (!keyword->isSet()) continue;
-
-				if (isFirstOption && (!parser.writeLineF("\n"))) return false;
-				if (!keyword->write(parser, "    ")) return false;
-
-				isFirstOption = false;
-			}
+			// Write keyword options
+			if (!module->keywords().write(parser, "    ")) return false;
 
 			if (!parser.writeLineF("  %s\n", ModuleBlock::keywords().keyword(ModuleBlock::EndModuleKeyword))) return false;
 		}
@@ -438,19 +427,8 @@ bool Dissolve::saveInput(const char* filename)
 				if (!parser.writeLineF("    %s  '%s'\n", ModuleBlock::keywords().keyword(ModuleBlock::ConfigurationKeyword), cfg->name())) return false;
 			}
 
-			// Print keyword options
-			bool isFirstOption = true;
-			ListIterator<KeywordBase> keywordIterator(module->keywords().keywords());
-			while (KeywordBase* keyword = keywordIterator.iterate())
-			{
-				// If the keyword has never been set (i.e. it still has its default value) don't bother to write it
-				if (!keyword->isSet()) continue;
-
-				if (isFirstOption && (!parser.writeLineF("\n"))) return false;
-				if (!keyword->write(parser, "    ")) return false;
-
-				isFirstOption = false;
-			}
+			// Write keyword options
+			if (!module->keywords().write(parser, "    ")) return false;
 
 			if (!parser.writeLineF("  %s\n", ModuleBlock::keywords().keyword(ModuleBlock::EndModuleKeyword))) return false;
 		}
