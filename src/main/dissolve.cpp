@@ -77,21 +77,9 @@ const CoreData& Dissolve::coreData() const
 void Dissolve::clear()
 {
 	// Core
+	Messenger::printVerbose("Clearing Core Data...\n");
 	setUp_ = false;
-
-	// Atom Types
-	Messenger::printVerbose("Clearing Atom Types...\n");
-	atomTypes().clear();
-
-	// Master Terms
-	Messenger::printVerbose("Clearing Master Terms...\n");
-	masterBonds_.clear();
-	masterAngles_.clear();
-	masterTorsions_.clear();
-
-	// Species
-	Messenger::printVerbose("Clearing Species...\n");
-	species().clear();
+	coreData_.clear();
 
 	// PairPotentials
 	Messenger::printVerbose("Clearing Pair Potentials...\n");
@@ -101,10 +89,6 @@ void Dissolve::clear()
 	pairPotentialsIncludeCoulomb_ = true;
 	pairPotentials_.clear();
 	potentialMap_.clear();
-
-	// Configurations
-	Messenger::printVerbose("Clearing Configurations...\n");
-	configurations().clear();
 
 	// Modules
 	Messenger::printVerbose("Clearing Modules...\n");

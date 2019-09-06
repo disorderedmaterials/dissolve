@@ -26,6 +26,7 @@
 
 // Forward Declarations
 class LineParser;
+class CoreData;
 class Dissolve;
 class Sample;
 class Configuration;
@@ -122,7 +123,7 @@ namespace MasterBlock
 	// Return enum option info for MasterKeyword
 	EnumOptions<MasterBlock::MasterKeyword> keywords();
 	// Parse Master block
-	bool parse(LineParser& parser, Dissolve* dissolve);
+	bool parse(LineParser& parser, CoreData& coreData);
 };
 
 
@@ -193,34 +194,6 @@ namespace SimulationBlock
 	EnumOptions<SimulationBlock::SimulationKeyword> keywords();
 	// Parse Simulation block
 	bool parse(LineParser& parser, Dissolve* dissolve);
-};
-
-
-/*
- * Species Block Keywords
- */
-namespace SpeciesBlock
-{
-	// Species Block Keyword Enum
-	enum SpeciesKeyword
-	{
-		AngleKeyword,			/* 'Angle' - Defines an Angle joining three atoms */
-		AtomKeyword,			/* 'Atom' - Specifies an Atom in the Species */
-		AutoAddGrainsKeyword,		/* 'AutoAddGrains' - Automatically add Grains to cover all atoms in the Species */
-		BondKeyword,			/* 'Bond' - Defines a Bond joining two atoms */
-		BondTypeKeyword,		/* 'BondType' - Sets the type of a specific bond */
-		ChargeKeyword,			/* 'Charge' - Specifies the atomic charge for an individual atom */
-		EndSpeciesKeyword,		/* 'EndSpecies' - Signals the end of the current Species */
-		GrainKeyword,			/* 'Grain' - Defines a Grain containing a number of Atoms */
-		IsotopologueKeyword,		/* 'Isotopologue' - Add an isotopologue to the Species */
-		SiteKeyword,			/* 'Site' - Define an analysis site within the Species */
-		TorsionKeyword,			/* 'Torsion' - Define a Torsion interaction between four atoms */
-		nSpeciesKeywords		/* Number of keywords defined for this block */
-	};
-	// Return enum option info for SpeciesKeyword
-	EnumOptions<SpeciesBlock::SpeciesKeyword> keywords();
-	// Parse Species block
-	bool parse(LineParser& parser, Dissolve* dissolve, Species* species);
 };
 
 #endif

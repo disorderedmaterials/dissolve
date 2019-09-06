@@ -40,7 +40,7 @@ EnumOptions<MasterBlock::MasterKeyword> MasterBlock::keywords()
 }
 
 // Parse Master block
-bool MasterBlock::parse(LineParser& parser, Dissolve* dissolve)
+bool MasterBlock::parse(LineParser& parser, CoreData& coreData)
 {
 	Messenger::print("\nParsing %s block...\n", BlockKeywords::keywords().keyword(BlockKeywords::MasterBlockKeyword));
 
@@ -74,7 +74,7 @@ bool MasterBlock::parse(LineParser& parser, Dissolve* dissolve)
 					break;
 				}
 				// Create a new master angle definition
-				masterIntra= dissolve->addMasterAngle(parser.argc(1));
+				masterIntra = coreData.addMasterAngle(parser.argc(1));
 				if (masterIntra)
 				{
 					masterIntra->setName(parser.argc(1));
@@ -102,7 +102,7 @@ bool MasterBlock::parse(LineParser& parser, Dissolve* dissolve)
 					break;
 				}
 				// Create a new master bond definition
-				masterIntra = dissolve->addMasterBond(parser.argc(1));
+				masterIntra = coreData.addMasterBond(parser.argc(1));
 				if (masterIntra)
 				{
 					masterIntra->setForm(bf);
@@ -133,7 +133,7 @@ bool MasterBlock::parse(LineParser& parser, Dissolve* dissolve)
 					break;
 				}
 				// Create a new master torsion definition
-				masterIntra = dissolve->addMasterTorsion(parser.argc(1));
+				masterIntra = coreData.addMasterTorsion(parser.argc(1));
 				if (masterIntra)
 				{
 					masterIntra->setForm(tf);
