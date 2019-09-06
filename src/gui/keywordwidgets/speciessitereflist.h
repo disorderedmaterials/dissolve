@@ -1,5 +1,5 @@
 /*
-	*** Keyword Widget - Species Site RefList
+	*** Keyword Widget - SpeciesSite RefList
 	*** src/gui/keywordwidgets/speciessitereflist.h
 	Copyright T. Youngs 2012-2019
 
