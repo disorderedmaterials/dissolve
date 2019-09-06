@@ -81,6 +81,9 @@ bool SpeciesSiteRefListKeyword::read(LineParser& parser, int startArg, const Cor
 // Write keyword data to specified LineParser
 bool SpeciesSiteRefListKeyword::write(LineParser& parser, const char* prefix)
 {
+	// If there are no sites in the list, no need to write anything
+	if (data_.nItems() == 0) return true;
+
 	// Loop over list of SpeciesSiteReferences
 	CharString sites;
 	RefListIterator<SpeciesSite> refIterator(data_);
