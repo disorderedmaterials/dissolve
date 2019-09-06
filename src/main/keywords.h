@@ -197,28 +197,6 @@ namespace SimulationBlock
 
 
 /*
- * Site Block Keywords
- */
-namespace SiteBlock
-{
-	// Site Block Keyword Enum
-	enum SiteKeyword
-	{
-		EndSiteKeyword,			/* 'EndSite' - Signals the end of the Site */
-		OriginKeyword,			/* 'Origin' - Set the atom indices whose average coordinates reflect the site origin */
-		OriginMassWeightedKeyword,	/* 'OriginMassWeighted' - Control whether the origin should be calculated with mass-weighted coordinates */
-		XAxisKeyword,			/* 'XAxis' - Define one or more atoms whose average coordinates reflect the direction of the x axis */
-		YAxisKeyword,			/* 'YAxis' - Define one or more atoms whose average coordinates reflect the direction of the y axis */
-		nSiteKeywords			/* Number of keywords defined for this block */
-	};
-	// Return enum option info for SiteKeyword
-	EnumOptions<SiteBlock::SiteKeyword> keywords();
-	// Parse Site block
-	bool parse(LineParser& parser, Dissolve* dissolve, SpeciesSite* site);
-};
-
-
-/*
  * Species Block Keywords
  */
 namespace SpeciesBlock

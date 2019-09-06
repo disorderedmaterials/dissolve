@@ -23,18 +23,18 @@
 #define DISSOLVE_SPECIESSITE_H
 
 #include "base/charstring.h"
+#include "base/enumoptions.h"
 #include "templates/array.h"
 #include "templates/listitem.h"
 #include "templates/vector3.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
+class LineParser;
 class Species;
 class SpeciesAtom;
 
-/*
- * Species Site Definition
- */
+// Species Site Definition
 class SpeciesSite : public ListItem<SpeciesSite>
 {
 	public:
@@ -100,6 +100,28 @@ class SpeciesSite : public ListItem<SpeciesSite>
 	Array<int> yAxisAtomIndices() const;
 	// Return whether the site has defined axes sites
 	bool hasAxes() const;
+
+
+	/*
+	 * Read / Write
+	 */
+	public:
+	// Site Block Keyword Enum
+	enum SiteKeyword
+	{
+		EndSiteKeyword,			/* 'EndSite' - Signals the end of the Site */
+		OriginKeyword,			/* 'Origin' - Set the atom indices whose average coordinates reflect the site origin */
+		OriginMassWeightedKeyword,	/* 'OriginMassWeighted' - Control whether the origin should be calculated with mass-weighted coordinates */
+		XAxisKeyword,			/* 'XAxis' - Define one or more atoms whose average coordinates reflect the direction of the x axis */
+		YAxisKeyword,			/* 'YAxis' - Define one or more atoms whose average coordinates reflect the direction of the y axis */
+		nSiteKeywords			/* Number of keywords defined for this block */
+	};
+	// Return enum option info for SiteKeyword
+	static EnumOptions<SpeciesSite::SiteKeyword> keywords();
+	// Read site definition from specified LineParser
+	bool read(LineParser& parser);
+	// Write site definition to specified LineParser
+	bool write(LineParser& parser, const char* prefix);
 };
 
 #endif

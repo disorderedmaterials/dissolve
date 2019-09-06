@@ -327,7 +327,7 @@ bool SpeciesBlock::parse(LineParser& parser, Dissolve* dissolve, Species* specie
 				}
 
 				site = species->addSite(parser.argc(1));
-				if (!SiteBlock::parse(parser, dissolve, site)) error = true;
+				if (!site->read(parser)) error = true;
 				break;
 			case (SpeciesBlock::TorsionKeyword):
 				// Check the functional form specified - if it starts with '@' it is a reference to master parameters

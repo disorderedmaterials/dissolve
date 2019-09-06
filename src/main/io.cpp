@@ -335,6 +335,15 @@ bool Dissolve::saveInput(const char* filename)
 			}
 		}
 
+		// Sites
+		if (sp->nSites() > 0)
+		{
+			if (!parser.writeLineF("\n  # Sites\n")) return false;
+
+			ListIterator<SpeciesSite> siteIterator(sp->sites());
+			while (SpeciesSite* site = siteIterator.iterate()) if (!site->write(parser, "  ")) return false;
+		}
+
 		// Done with this species
 		if (!parser.writeLineF("%s\n", SpeciesBlock::keywords().keyword(SpeciesBlock::EndSpeciesKeyword))) return false;
 	}
