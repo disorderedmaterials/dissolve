@@ -43,7 +43,7 @@ class SpeciesRefListKeyword : public KeywordData< RefList<Species>& >
 	 */
 	protected:
 	// Determine whether current data is actually 'set'
-	bool currentDataIsSet() const;
+	bool isSet() const;
 
 
 	/*

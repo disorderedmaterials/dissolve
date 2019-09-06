@@ -52,7 +52,7 @@ class NodeBranchKeyword : public KeywordData<SequenceProcedureNode**>
 	 */
 	protected:
 	// Determine whether current data is actually 'set'
-	bool currentDataIsSet() const;
+	bool isSet() const;
 	
 
 	/*

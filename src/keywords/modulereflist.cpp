@@ -47,7 +47,7 @@ ModuleRefListKeyword::~ModuleRefListKeyword()
  */
 
 // Determine whether current data is actually 'set'
-bool ModuleRefListKeyword::currentDataIsSet() const
+bool ModuleRefListKeyword::isSet() const
 {
 	return data_.nItems() > 0;
 }

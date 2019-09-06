@@ -117,7 +117,7 @@ class KeywordBase : public ListItem<KeywordBase>
 	// Return whether specified option is set
 	bool isOptionSet(KeywordOption opt) const;
 	// Return whether the data has ever been set
-	bool isSet() const;
+	virtual bool isSet() const;
 
 
 	/*

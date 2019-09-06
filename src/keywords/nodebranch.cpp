@@ -41,7 +41,7 @@ NodeBranchKeyword::~NodeBranchKeyword()
  */
 
 // Determine whether current data is actually 'set'
-bool NodeBranchKeyword::currentDataIsSet() const
+bool NodeBranchKeyword::isSet() const
 {
 	return ((*data_) ? (*data_)->nNodes() > 0 : false);
 }

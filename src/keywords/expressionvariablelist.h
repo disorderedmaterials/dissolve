@@ -68,7 +68,7 @@ class ExpressionVariableListKeyword : public KeywordData< List<ExpressionNode>& 
 	 */
 	protected:
 	// Determine whether current data is actually 'set'
-	bool currentDataIsSet() const;
+	bool isSet() const;
 
 
 	/*

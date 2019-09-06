@@ -57,7 +57,7 @@ class DynamicSiteNodesKeyword : public KeywordData< RefList<DynamicSiteProcedure
 	 */
 	protected:
 	// Determine whether current data is actually 'set'
-	bool currentDataIsSet() const;
+	bool isSet() const;
 
 
 	/*

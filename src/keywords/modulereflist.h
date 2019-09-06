@@ -51,7 +51,7 @@ class ModuleRefListKeyword : public KeywordData< RefList<Module>& >
 
 	protected:
 	// Determine whether current data is actually 'set'
-	bool currentDataIsSet() const;
+	bool isSet() const;
 
 	public:
 	// Return the Module type(s) to allow

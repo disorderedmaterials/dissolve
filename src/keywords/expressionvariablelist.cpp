@@ -62,7 +62,7 @@ ExpressionValue::ValueType ExpressionVariableListKeyword::variableType() const
  */
 
 // Determine whether current data is actually 'set'
-bool ExpressionVariableListKeyword::currentDataIsSet() const
+bool ExpressionVariableListKeyword::isSet() const
 {
 	return data_.nItems() > 0;
 }

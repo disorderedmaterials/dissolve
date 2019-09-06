@@ -48,7 +48,7 @@ template <class T> class KeywordData : public KeywordBase
 
 	protected:
 	// Determine whether current data is actually 'set'
-	virtual bool currentDataIsSet() const
+	virtual bool isSet() const
 	{
 		/*
 		 * Return true if data_ represents a non-default value.
@@ -64,7 +64,7 @@ template <class T> class KeywordData : public KeywordBase
 		if (isValid(value))
 		{
 			data_ = value;
-			set_ = currentDataIsSet();
+			set_ = isSet();
 			return true;
 		}
 
