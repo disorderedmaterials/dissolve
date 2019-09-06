@@ -78,9 +78,16 @@ bool NodeBranchKeyword::read(LineParser& parser, int startArg, const CoreData& c
 // Write keyword data to specified LineParser
 bool NodeBranchKeyword::write(LineParser& parser, const char* prefix)
 {
-	if (!(*data_)) return true;
+	if (!(*data_) || ((*data_)->nNodes() == 0)) return true;
 
+	// Write keyword name as the start of the branch
+	if (!parser.writeLineF("%s%s\n", prefix, name())) return false;
+
+	// Write branch information
 	if (!(*data_)->write(parser, CharString("%s  ", prefix))) return false;
+
+	// Write end keyword based on the name
+	if (!parser.writeLineF("%sEnd%s\n", prefix, name())) return false;
 
 	return true;
 }
