@@ -288,7 +288,7 @@ bool ProcedureNode::read(LineParser& parser, const CoreData& coreData)
 bool ProcedureNode::write(LineParser& parser, const char* prefix)
 {
 	// Block Start
-	if (!parser.writeLineF("%s%s\n", prefix, ProcedureNode::nodeTypes().keyword(type_))) return false;
+	if (!parser.writeLineF("%s%s  '%s'\n", prefix, ProcedureNode::nodeTypes().keyword(type_), name())) return false;
 
 	// Create new prefix
 	CharString newPrefix("  %s", prefix);
