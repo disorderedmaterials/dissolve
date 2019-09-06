@@ -251,7 +251,7 @@ bool KeywordList::write(LineParser& parser, const char* prefix, bool onlyIfSet)
 	while (KeywordBase* keyword = keywordIterator.iterate())
 	{
 		// If the keyword has never been set (i.e. it still has its default value) don't bother to write it
-		if (onlyIfSet && (!keyword->isSet())) continue;
+		if (onlyIfSet && (!keyword->base()->isSet())) continue;
 
 		// Make sure we are calling the write() function of the base() keyword class...
 		if (!keyword->base()->write(parser, prefix)) return false;
@@ -274,7 +274,7 @@ bool KeywordList::writeGroups(LineParser& parser, const char* prefix, bool onlyI
 		while (KeywordBase* keyword = keywordIterator.iterate())
 		{
 			// If the keyword has never been set (i.e. it still has its default value) don't bother to write it
-			if (onlyIfSet && (!keyword->isSet())) continue;
+			if (onlyIfSet && (!keyword->base()->isSet())) continue;
 
 			// If this is the first keyword to be written in the group, write the group name first as a comment
 			if (firstWritten)
