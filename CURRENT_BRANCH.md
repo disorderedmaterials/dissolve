@@ -1,7 +1,6 @@
 # Current Branch Worklist
 
 ## Minor 
-- Indentation for the Configuration's Generator data (a Procedure) written by Dissolve::saveInput() is incorrect.
 
 ## Moderate
 - Add option for Min/Max/Delta labels in Vec3Labels (and Vec3WidgetLabels), and set the Range keywords of Calculate1DProcedureNode and others to use them.
