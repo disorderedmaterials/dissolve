@@ -293,8 +293,8 @@ bool ProcedureNode::write(LineParser& parser, const char* prefix)
 	// Create new prefix
 	CharString newPrefix("  %s", prefix);
 
-	// Write keywords in groups
-	if (!keywords_.writeGroups(parser, newPrefix)) return false;
+	// Write keywords
+	if (!keywords_.write(parser, newPrefix)) return false;
 
 	// Block End
 	if (!parser.writeLineF("%sEnd%s\n", prefix, nodeTypes().keyword(type_))) return false;
