@@ -24,7 +24,6 @@
 
 #include "base/charstring.h"
 #include "templates/array.h"
-#include "templates/list.h"
 #include "templates/listitem.h"
 #include "templates/vector3.h"
 #include "templates/reflist.h"
