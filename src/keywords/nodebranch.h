@@ -48,6 +48,14 @@ class NodeBranchKeyword : public KeywordData<SequenceProcedureNode**>
 
 
 	/*
+	 * Data
+	 */
+	protected:
+	// Determine whether current data is actually 'set'
+	bool currentDataIsSet() const;
+	
+
+	/*
 	 * Branch Specification
 	 */
 	private:
