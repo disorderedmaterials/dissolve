@@ -21,7 +21,6 @@
 
 #include "gui/keywordwidgets/speciessitereflist.h"
 #include "gui/helpers/tablewidgetupdater.h"
-#include "gui/delegates/combolist.hui"
 #include "classes/coredata.h"
 #include "classes/species.h"
 #include "classes/speciessite.h"
@@ -67,7 +66,6 @@ void SpeciesSiteRefListKeywordWidget::siteCheckBox_clicked(bool checked)
 	// If the box is checked, we need to add the site to the list. If not, remove it.
 	if (checked) keyword_->data().addUnique(site);
 	else keyword_->data().remove(site);
-	printf("DID SOMETHING FOR SITE %s %i\n", site->name(), checked);
 }
 
 /*
