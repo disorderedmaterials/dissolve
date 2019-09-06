@@ -54,7 +54,7 @@ class SpeciesRefListKeywordWidget: public KeywordDropDown, public KeywordWidgetB
 	 */
 	private:
 	// Main form declaration
-	Ui::SpeciesReferenceListWidget ui_;
+	Ui::SpeciesRefListWidget ui_;
 
 	private:
 	// Selection list update function

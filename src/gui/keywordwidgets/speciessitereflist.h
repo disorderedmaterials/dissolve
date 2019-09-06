@@ -54,7 +54,7 @@ class SpeciesSiteRefListKeywordWidget: public KeywordDropDown, public KeywordWid
 	 */
 	private:
 	// Main form declaration
-	Ui::SpeciesSiteReferenceListWidget ui_;
+	Ui::SpeciesSiteRefListWidget ui_;
 
 	private slots:
 	void siteCheckBox_clicked(bool checked);

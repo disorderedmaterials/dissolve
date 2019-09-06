@@ -54,7 +54,7 @@ class IsotopologueReferenceListKeywordWidget : public KeywordDropDown, public Ke
 	 */
 	private:
         // Main form declaration
-        Ui::IsotopologueReferenceListWidget ui_;
+        Ui::IsotopologueRefListWidget ui_;
 
 	private slots:
 	void autoButton_clicked(bool checked);
