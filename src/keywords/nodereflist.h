@@ -70,6 +70,10 @@ class NodeRefListKeywordBase
 	virtual bool addNode(ProcedureNode* node) = 0;
 	// Return the current list (as ProcedureNodes)
 	virtual RefList<ProcedureNode> nodes() const = 0;
+	// Return if the specified node is in the current list
+	virtual bool hasNode(ProcedureNode* node) = 0;
+	// Remove the specified node from the list
+	virtual bool removeNode(ProcedureNode* node) = 0;
 };
 
 // Keyword with ProcedureNode RefList
@@ -166,6 +170,32 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
 		while (N* node = nodeIterator.iterate()) nodes.append(node);
 	
 		return nodes;
+	}
+	// Return if the specified node is in the current list
+	bool hasNode(ProcedureNode* node)
+	{
+		RefListIterator<N> nodeIterator(KeywordData< RefList<N>& >::data_);
+		while (N* existingNode = nodeIterator.iterate()) if (existingNode == node) return true;
+
+		return false;
+	}
+	// Remove the specified node from the list
+	bool removeNode(ProcedureNode* node)
+	{
+		if (!node) return false;
+
+		if (node->type() != nodeType()) return Messenger::error("Node '%s' is of type %s, but the %s keyword stores nodes of type %s, so not attempting to remove it.\n", node->name(), ProcedureNode::nodeTypes().keyword(node->type()), KeywordBase::name(), ProcedureNode::nodeTypes().keyword(nodeType()));
+
+		// Cast up the node
+		N* castNode = dynamic_cast<N*>(node);
+		if (!castNode) return false;
+
+		// Check that the list actually contains the specifeidi node
+		if (!KeywordData< RefList<N>& >::data_.contains(castNode)) return Messenger::error("Node '%s' is not in this keyword's (%s) list of nodes, so can't remove it.\n", castNode->name(), KeywordBase::name());
+
+		KeywordData< RefList<N>& >::data_.remove(castNode);
+
+		return true;
 	}
 
 
