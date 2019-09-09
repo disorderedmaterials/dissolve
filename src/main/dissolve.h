@@ -29,7 +29,6 @@
 #include "classes/coredata.h"
 #include "classes/pairpotential.h"
 #include "classes/potentialmap.h"
-#include "classes/masterintra.h"
 
 // Forward Declarations
 class Atom;
@@ -91,54 +90,6 @@ class Dissolve
 	AtomType* findAtomType(const char* name) const;
 	// Clear all AtomTypes
 	void clearAtomTypes();
-
-
-	/*
-	 * Master Terms for Species
-	 */
-	private:
-	// List of master Bond parameters for Species
-	List<MasterIntra> masterBonds_;
-	// List of master Angles parameters for Species
-	List<MasterIntra> masterAngles_;
-	// List of master Torsions parameters for Species
-	List<MasterIntra> masterTorsions_;
-
-	public:
-	// Add new master Bond parameters
-	MasterIntra* addMasterBond(const char* name);
-	// Return number of master Bond parameters in list
-	int nMasterBonds() const;
-	// Return list of master Bond parameters
-	const List<MasterIntra>& masterBonds() const;
-	// Return nth master Bond 
-	MasterIntra* masterBond(int n);
-	// Return whether named master Bond parameters exist
-	MasterIntra* hasMasterBond(const char* name) const;
-	// Add new master Angle parameters
-	MasterIntra* addMasterAngle(const char* name);
-	// Return number of master Angles parameters in list
-	int nMasterAngles() const;
-	// Return list of master Angle parameters
-	const List<MasterIntra>& masterAngles() const;
-	// Return nth master Angle parameters
-	MasterIntra* masterAngle(int n);
-	// Return whether named master Angle parameters exist
-	MasterIntra* hasMasterAngle(const char* name) const;
-	// Add new master Torsion parameters
-	MasterIntra* addMasterTorsion(const char* name);
-	// Return number of master Torsions parameters in list
-	int nMasterTorsions() const;
-	// Return list of master Torsion parameters
-	const List<MasterIntra>& masterTorsions() const;
-	// Return nth master Torsion parameters
-	MasterIntra* masterTorsion(int n);
-	// Return whether named master Torsion parameters exist
-	MasterIntra* hasMasterTorsion(const char* name) const;
-	// Return the named master term (of any form) if it exists
-	MasterIntra* findMasterTerm(const char* name) const;
-	// Clear all MasterTerms
-	void clearMasterTerms();
 
 
 	/*

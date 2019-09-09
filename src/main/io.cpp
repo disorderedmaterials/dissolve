@@ -82,7 +82,7 @@ bool Dissolve::loadInput(LineParser& parser)
 				if (!LayerBlock::parse(parser, this, layer)) error = true;
 				break;
 			case (BlockKeywords::MasterBlockKeyword):
-				if (!MasterBlock::parse(parser, this)) error = true;
+				if (!MasterBlock::parse(parser, coreData_)) error = true;
 				break;
 			case (BlockKeywords::PairPotentialsBlockKeyword):
 				if (!PairPotentialsBlock::parse(parser, this)) error = true;
@@ -100,7 +100,7 @@ bool Dissolve::loadInput(LineParser& parser)
 				}
 				sp = addSpecies();
 				sp->setName(parser.argc(1));
-				if (!SpeciesBlock::parse(parser, this, sp)) error = true;
+				if (!sp->read(parser, coreData_)) error = true;
 				break;
 			default:
 				Messenger::error("Block keyword '%s' is not relevant in this context.\n", BlockKeywords::keywords().keyword(kwd));
@@ -173,26 +173,26 @@ bool Dissolve::saveInput(const char* filename)
 	if (!parser.writeLineF("# Input file written by Dissolve v%s at %s.\n", DISSOLVEVERSION, DissolveSys::currentTimeAndDate())) return false;
 
 	// Write master terms
-	if (masterBonds_.nItems() || masterAngles_.nItems() || masterTorsions_.nItems())
+	if (coreData_.nMasterBonds() || coreData_.nMasterAngles() || coreData_.nMasterTorsions())
 	{
 		if (!parser.writeBannerComment("Master Terms")) return false;
 		if (!parser.writeLineF("\n%s\n", BlockKeywords::keywords().keyword(BlockKeywords::MasterBlockKeyword))) return false;
 				  
-		for (MasterIntra* b = masterBonds_.first(); b != NULL; b = b->next())
+		for (MasterIntra* b = coreData_.masterBonds().first(); b != NULL; b = b->next())
 		{
 			CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::BondKeyword), b->name(), SpeciesBond::bondFunction( (SpeciesBond::BondFunction) b->form()));
 			for (int n=0; n<SpeciesBond::nFunctionParameters( (SpeciesBond::BondFunction) b->form()); ++n) s.strcatf("  %8.3f", b->parameter(n));
 			if (!parser.writeLineF("%s\n", s.get())) return false;
 		}
 
-		for (MasterIntra* a = masterAngles_.first(); a != NULL; a = a->next())
+		for (MasterIntra* a = coreData_.masterAngles().first(); a != NULL; a = a->next())
 		{
 			CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::AngleKeyword), a->name(), SpeciesAngle::angleFunction( (SpeciesAngle::AngleFunction) a->form()));
 			for (int n=0; n<SpeciesAngle::nFunctionParameters( (SpeciesAngle::AngleFunction) a->form()); ++n) s.strcatf("  %8.3f", a->parameter(n));
 			if (!parser.writeLineF("%s\n", s.get())) return false;
 		}
 
-		for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next())
+		for (MasterIntra* t = coreData_.masterTorsions().first(); t != NULL; t = t->next())
 		{
 			CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::TorsionKeyword), t->name(), SpeciesTorsion::torsionFunction( (SpeciesTorsion::TorsionFunction) t->form()));
 			for (int n=0; n<SpeciesTorsion::nFunctionParameters( (SpeciesTorsion::TorsionFunction) t->form()); ++n) s.strcatf("  %8.3f", t->parameter(n));
@@ -207,136 +207,8 @@ bool Dissolve::saveInput(const char* filename)
 	parser.writeBannerComment("Species");
 	for (Species* sp = species().first(); sp != NULL; sp = sp->next())
 	{
-		if (!parser.writeLineF("\n%s '%s'\n", BlockKeywords::keywords().keyword(BlockKeywords::SpeciesBlockKeyword), sp->name())) return false;
-		
-		// Atoms
-		parser.writeLineF("  # Atoms\n");
-		int count = 0;
-		for (SpeciesAtom* i = sp->firstAtom(); i != NULL; i = i->next())
-		{
-			++count;
-			if (pairPotentialsIncludeCoulomb_)
-			{
-				if (!parser.writeLineF("  %s  %3i  %3s  %8.3f  %8.3f  %8.3f  '%s'\n", SpeciesBlock::keywords().keyword(SpeciesBlock::AtomKeyword), count, i->element()->symbol(), i->r().x, i->r().y, i->r().z, i->atomType() == NULL ? "???" : i->atomType()->name())) return false;
-			}
-			else
-			{
-				if (!parser.writeLineF("  %s  %3i  %3s  %8.3f  %8.3f  %8.3f  '%s'  %8.3f\n", SpeciesBlock::keywords().keyword(SpeciesBlock::AtomKeyword), count, i->element()->symbol(), i->r().x, i->r().y, i->r().z, i->atomType() == NULL ? "???" : i->atomType()->name(), i->charge())) return false;
-			}
-		}
-
-		// Bonds
-		RefList<SpeciesBond> bondTypes[SpeciesBond::nBondTypes];
-		if (sp->nBonds() > 0)
-		{
-			if (!parser.writeLineF("\n  # Bonds\n")) return false;
-			for (SpeciesBond* b = sp->bonds().first(); b != NULL; b = b->next())
-			{
-				if (b->masterParameters())
-				{
-					if (!parser.writeLineF("  %s  %3i  %3i  @%s\n", SpeciesBlock::keywords().keyword(SpeciesBlock::BondKeyword), b->indexI()+1, b->indexJ()+1, b->masterParameters()->name())) return false;
-				}
-				else
-				{
-					CharString s("  %s  %3i  %3i  %s", SpeciesBlock::keywords().keyword(SpeciesBlock::BondKeyword), b->indexI()+1, b->indexJ()+1, SpeciesBond::bondFunction( (SpeciesBond::BondFunction) b->form()));
-					for (int n=0; n<SpeciesBond::nFunctionParameters( (SpeciesBond::BondFunction) b->form()); ++n) s.strcatf("  %8.3f", b->parameter(n));
-					if (!parser.writeLineF("%s\n", s.get())) return false;
-				}
-
-				// Add the bond to the reflist corresponding to its indicated bond type (unless it is a SingleBond, which we will ignore as this is the default)
-				if (b->bondType() != SpeciesBond::SingleBond) bondTypes[b->bondType()].append(b);
-			}
-
-			// Any bond type information to write?
-			bool bondTypeHeaderWritten = false;
-			for (int bt=1; bt<SpeciesBond::nBondTypes; ++bt) if (bondTypes[bt].nItems() > 0)
-			{
-				// Write header if it hasn't been written already
-				if (!bondTypeHeaderWritten)
-				{
-					if (!parser.writeLineF("\n  # Bond Types\n")) return false;
-					bondTypeHeaderWritten = true;
-				}
-				RefListIterator<SpeciesBond> bondIterator(bondTypes[bt]);
-				while (SpeciesBond* bond = bondIterator.iterate()) if (!parser.writeLineF("  %s  %3i  %3i  %s\n", SpeciesBlock::keywords().keyword(SpeciesBlock::BondTypeKeyword), bond->indexI()+1, bond->indexJ()+1, SpeciesBond::bondType((SpeciesBond::BondType) bt))) return false;
-			}
-		}
-
-		// Angles
-		if (sp->nAngles() > 0)
-		{
-			if (!parser.writeLineF("\n  # Angles\n")) return false;
-			for (SpeciesAngle* a = sp->angles().first(); a != NULL; a = a->next())
-			{
-				if (a->masterParameters())
-				{
-					if (!parser.writeLineF("  %s  %3i  %3i  %3i  @%s\n", SpeciesBlock::keywords().keyword(SpeciesBlock::AngleKeyword), a->indexI()+1, a->indexJ()+1, a->indexK()+1, a->masterParameters()->name())) return false;
-				}
-				else
-				{
-					CharString s("  %s  %3i  %3i  %3i  %s", SpeciesBlock::keywords().keyword(SpeciesBlock::AngleKeyword), a->indexI()+1, a->indexJ()+1, a->indexK()+1, SpeciesAngle::angleFunction( (SpeciesAngle::AngleFunction) a->form()));
-					for (int n=0; n<SpeciesAngle::nFunctionParameters( (SpeciesAngle::AngleFunction) a->form()); ++n) s.strcatf("  %8.3f", a->parameter(n));
-					if (!parser.writeLineF("%s\n", s.get())) return false;
-				}
-			}
-		}
-
-		// Torsions
-		if (sp->nTorsions() > 0)
-		{
-			if (!parser.writeLineF("\n  # Torsions\n")) return false;
-			for (SpeciesTorsion* t = sp->torsions().first(); t != NULL; t = t->next())
-			{
-				if (t->masterParameters())
-				{
-					if (!parser.writeLineF("  %s  %3i  %3i  %3i  %3i  @%s\n", SpeciesBlock::keywords().keyword(SpeciesBlock::TorsionKeyword), t->indexI()+1, t->indexJ()+1, t->indexK()+1, t->indexL()+1, t->masterParameters()->name())) return false;
-				}
-				else
-				{
-					CharString s("  %s  %3i  %3i  %3i  %s", SpeciesBlock::keywords().keyword(SpeciesBlock::TorsionKeyword), t->indexI()+1, t->indexJ()+1, t->indexK()+1, t->indexL()+1, SpeciesTorsion::torsionFunction( (SpeciesTorsion::TorsionFunction) t->form()));
-					for (int n=0; n<SpeciesTorsion::nFunctionParameters( (SpeciesTorsion::TorsionFunction) t->form()); ++n) s.strcatf("  %8.3f", t->parameter(n));
-					if (!parser.writeLineF("%s\n", s.get())) return false;
-				}
-			}
-		}
-
-		// Grains
-		if (sp->nGrains() > 0)
-		{
-			if (!parser.writeLineF("\n  # Grain Definitions\n")) return false;
-			for (SpeciesGrain* sg = sp->grains(); sg != NULL; sg = sg->next())
-			{
-				if (!parser.writeLineF("  %s  '%s'", SpeciesBlock::keywords().keyword(SpeciesBlock::GrainKeyword), sg->name())) return false;
-				for (RefListItem<SpeciesAtom>* ri = sg->atoms(); ri != NULL; ri = ri->next())
-				{
-					if (!parser.writeLineF("  %i", ri->item()->userIndex())) return false;
-				}
-				if (!parser.writeLineF("\n")) return false;
-			}
-		}
-
-		// Isotopologues
-		if (sp->nIsotopologues() > 0)
-		{
-			if (!parser.writeLineF("\n  # Isotopologues\n")) return false;
-
-			for (Isotopologue* iso = sp->isotopologues().first(); iso != NULL; iso = iso->next())
-			{
-				if (!parser.writeLineF("  %s  '%s'  ", SpeciesBlock::keywords().keyword(SpeciesBlock::IsotopologueKeyword), iso->name())) return false;
-				RefDataListIterator<AtomType,Isotope*> isotopeIterator(iso->isotopes());
-				while (AtomType* atomType = isotopeIterator.iterate())
-				{
-					// No need to write anything that's the natural isotope...
-					if (isotopeIterator.currentData()->A() == 0) continue;
-
-					if (!parser.writeLineF("  %s=%i", atomType->name(), isotopeIterator.currentData()->A())) return false;
-				}
-				if (!parser.writeLineF("\n")) return false;
-			}
-		}
-
-		// Done with this species
-		if (!parser.writeLineF("%s\n", SpeciesBlock::keywords().keyword(SpeciesBlock::EndSpeciesKeyword))) return false;
+		if (!parser.writeLineF("\n")) return false;
+		if (!sp->write(parser, "")) return false;
 	}
 
 	// Write PairPotentials block
@@ -394,19 +266,8 @@ bool Dissolve::saveInput(const char* filename)
 			if (!parser.writeLineF("    Frequency  %i\n", module->frequency())) return false;
 			if (!module->enabled() && (!parser.writeLineF("    Disabled\n"))) return false;
 
-			// Print keyword options
-			bool isFirstOption = true;
-			ListIterator<KeywordBase> keywordIterator(module->keywords().keywords());
-			while (KeywordBase* keyword = keywordIterator.iterate())
-			{
-				// If the keyword has never been set (i.e. it still has its default value) don't bother to write it
-				if (!keyword->isSet()) continue;
-
-				if (isFirstOption && (!parser.writeLineF("\n"))) return false;
-				if (!keyword->write(parser, "    ")) return false;
-
-				isFirstOption = false;
-			}
+			// Write keyword options
+			if (!module->keywords().write(parser, "    ")) return false;
 
 			if (!parser.writeLineF("  %s\n", ModuleBlock::keywords().keyword(ModuleBlock::EndModuleKeyword))) return false;
 		}
@@ -438,19 +299,8 @@ bool Dissolve::saveInput(const char* filename)
 				if (!parser.writeLineF("    %s  '%s'\n", ModuleBlock::keywords().keyword(ModuleBlock::ConfigurationKeyword), cfg->name())) return false;
 			}
 
-			// Print keyword options
-			bool isFirstOption = true;
-			ListIterator<KeywordBase> keywordIterator(module->keywords().keywords());
-			while (KeywordBase* keyword = keywordIterator.iterate())
-			{
-				// If the keyword has never been set (i.e. it still has its default value) don't bother to write it
-				if (!keyword->isSet()) continue;
-
-				if (isFirstOption && (!parser.writeLineF("\n"))) return false;
-				if (!keyword->write(parser, "    ")) return false;
-
-				isFirstOption = false;
-			}
+			// Write keyword options
+			if (!module->keywords().write(parser, "    ")) return false;
 
 			if (!parser.writeLineF("  %s\n", ModuleBlock::keywords().keyword(ModuleBlock::EndModuleKeyword))) return false;
 		}

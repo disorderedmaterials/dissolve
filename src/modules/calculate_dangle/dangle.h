@@ -110,10 +110,6 @@ class CalculateDAngleModule : public Module
 	// Process2DNode for distance-angle data
 	Process2DProcedureNode* processDAngle_;
 
-	private:
-	// Update names of processed quantities
-	void updateNodeNames();
-
 
 	/*
 	 * GUI Widget

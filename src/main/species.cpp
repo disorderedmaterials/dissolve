@@ -131,28 +131,28 @@ void Dissolve::copySpeciesIntra(SpeciesIntra* sourceIntra, SpeciesIntra* destInt
 		MasterIntra* master = NULL;
 		if (sourceIntra->type() == SpeciesIntra::IntramolecularBond)
 		{
-			master = hasMasterBond(sourceIntra->masterParameters()->name());
+			master = coreData_.hasMasterBond(sourceIntra->masterParameters()->name());
 			if (!master)
 			{
-				master = addMasterBond(sourceIntra->masterParameters()->name());
+				master = coreData_.addMasterBond(sourceIntra->masterParameters()->name());
 				master->setParameters(sourceIntra->parametersAsArray());
 			}
 		}
 		else if (sourceIntra->type() == SpeciesIntra::IntramolecularAngle)
 		{
-			master = hasMasterAngle(sourceIntra->masterParameters()->name());
+			master = coreData_.hasMasterAngle(sourceIntra->masterParameters()->name());
 			if (!master)
 			{
-				master = addMasterAngle(sourceIntra->masterParameters()->name());
+				master = coreData_.addMasterAngle(sourceIntra->masterParameters()->name());
 				master->setParameters(sourceIntra->parametersAsArray());
 			}
 		}
 		else if (sourceIntra->type() == SpeciesIntra::IntramolecularTorsion)
 		{
-			master = hasMasterTorsion(sourceIntra->masterParameters()->name());
+			master = coreData_.hasMasterTorsion(sourceIntra->masterParameters()->name());
 			if (!master)
 			{
-				master = addMasterTorsion(sourceIntra->masterParameters()->name());
+				master = coreData_.addMasterTorsion(sourceIntra->masterParameters()->name());
 				master->setParameters(sourceIntra->parametersAsArray());
 			}
 		}

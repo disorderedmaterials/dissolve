@@ -21,11 +21,13 @@
 
 #include "procedure/nodes/dynamicsite.h"
 #include "procedure/nodes/select.h"
+#include "keywords/types.h"
 #include "classes/atom.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 #include "classes/molecule.h"
 #include "classes/site.h"
+#include "classes/species.h"
 #include "data/elements.h"
 #include "classes/atomtype.h"
 #include "base/lineparser.h"
@@ -36,6 +38,9 @@
 DynamicSiteProcedureNode::DynamicSiteProcedureNode(SelectProcedureNode* parent) : ProcedureNode(ProcedureNode::DynamicSiteNode)
 {
 	parent_ = parent;
+
+	keywords_.add("Definition", new AtomTypeRefListKeyword(atomTypes_), "AtomType", "Define one or more AtomTypes to include in this site");
+	keywords_.add("Definition", new ElementRefListKeyword(elements_), "Element", "Define one or more Elements to include in this site");
 }
 
 // Destructor
@@ -51,23 +56,6 @@ DynamicSiteProcedureNode::~DynamicSiteProcedureNode()
 bool DynamicSiteProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
 {
 	return (context == ProcedureNode::AnalysisContext);
-}
-
-/*
- * Node Keywords
- */
-
-// Return enum option info for DynamicSiteNodeKeyword
-EnumOptions<DynamicSiteProcedureNode::DynamicSiteNodeKeyword> DynamicSiteProcedureNode::dynamicSiteNodeKeywords()
-{
-	static EnumOptionsList DynamicSiteNodeTypeKeywords = EnumOptionsList() <<
-		EnumOption(DynamicSiteProcedureNode::AtomTypeKeyword,		"AtomType",	EnumOption::OneOrMoreArguments) <<
-		EnumOption(DynamicSiteProcedureNode::ElementKeyword,		"Element",	EnumOption::OneOrMoreArguments) <<
-		EnumOption(DynamicSiteProcedureNode::EndDynamicSiteKeyword,	"EndDynamicSite");
-
-	static EnumOptions<DynamicSiteProcedureNode::DynamicSiteNodeKeyword> options("DynamicSiteNodeKeyword", DynamicSiteNodeTypeKeywords);
-
-	return options;
 }
 
 /*
@@ -88,7 +76,7 @@ void DynamicSiteProcedureNode::generateSites(const Molecule* molecule)
 		}
 
 		// If the Atom's AtomType is listed in our target AtomType list, add this atom as a site
-		if (atomTypes_.containsData(molecule->atom(n)->masterTypeIndex()))
+		if (atomTypes_.contains(molecule->species()->atom(n)->atomType()))
 		{
 			generatedSites_.add(Site(molecule, molecule->atom(n)->r()));
 			continue;
@@ -138,86 +126,4 @@ ProcedureNode::NodeExecutionResult DynamicSiteProcedureNode::execute(ProcessPool
 	}
 
 	return ProcedureNode::Success;
-}
-
-/*
- * Read / Write
- */
-
-// Read structure from specified LineParser
-bool DynamicSiteProcedureNode::read(LineParser& parser, const CoreData& coreData)
-{
-	// Read until we encounter the EndExclude keyword, or we fail for some reason
-	while (!parser.eofOrBlank())
-	{
-		// Read and parse the next line
-		if (parser.getArgsDelim() != LineParser::Success) return false;
-
-		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
-		if (!dynamicSiteNodeKeywords().isValid(parser.argc(0))) return dynamicSiteNodeKeywords().errorAndPrintValid(parser.argc(0));
-		DynamicSiteNodeKeyword nk = dynamicSiteNodeKeywords().enumeration(parser.argc(0));
-		if (!dynamicSiteNodeKeywords().validNArgs(nk, parser.nArgs()-1)) return false;
-
-		// All OK, so process it
-		switch (nk)
-		{
-			case (DynamicSiteProcedureNode::AtomTypeKeyword):
-				for (int n=1; n<parser.nArgs(); ++n)
-				{
-					AtomType* at = coreData.findAtomType(parser.argc(n));
-					if (!at) return Messenger::error("Unrecognised AtomType '%s' given to %s keyword.\n", parser.argc(n), dynamicSiteNodeKeywords().keyword(nk));
-					if (atomTypes_.contains(at)) return Messenger::error("Duplicate AtomType target given to %s keyword.\n", dynamicSiteNodeKeywords().keyword(nk));
-					atomTypes_.append(at, coreData.constAtomTypes().indexOf(at));
-				}
-				break;
-			case (DynamicSiteProcedureNode::ElementKeyword):
-				for (int n=1; n<parser.nArgs(); ++n)
-				{
-					Element* el = Elements::elementPointer(parser.argc(n));
-					if (!el) return Messenger::error("Unrecognised element '%s' given to %s keyword.\n", parser.argc(n), dynamicSiteNodeKeywords().keyword(nk));
-					if (elements_.contains(el)) return Messenger::error("Duplicate Element target given to %s keyword.\n", dynamicSiteNodeKeywords().keyword(nk));
-					elements_.append(el);
-				}
-				break;
-			case (DynamicSiteProcedureNode::EndDynamicSiteKeyword):
-				return true;
-			case (DynamicSiteProcedureNode::nDynamicSiteNodeKeywords):
-				return Messenger::error("Unrecognised DynamicSite node keyword '%s' found.\n", parser.argc(0));
-				break;
-			default:
-				return Messenger::error("Epic Developer Fail - Don't know how to deal with the DynamicSite node keyword '%s'.\n", parser.argc(0));
-		}
-	}
-
-	return true;
-}
-
-// Write structure to specified LineParser
-bool DynamicSiteProcedureNode::write(LineParser& parser, const char* prefix)
-{
-	// Block Start
-	if (!parser.writeLineF("%s%s\n", prefix, ProcedureNode::nodeTypes().keyword(type_))) return false;
-
-	// Atom Types
-	if (atomTypes_.nItems() > 0)
-	{
-		CharString s;
-		RefDataListIterator<AtomType,int> atomTypeIterator(atomTypes_);
-		while (AtomType* at = atomTypeIterator.iterate()) s.strcatf("%s", at->name());
-		if (!parser.writeLineF("%s  %s  %s\n", prefix, dynamicSiteNodeKeywords().keyword(DynamicSiteProcedureNode::AtomTypeKeyword), s.get())) return false;
-	}
-
-	// Elements
-	if (elements_.nItems() > 0)
-	{
-		CharString s;
-		RefListIterator<Element> elementsIterator(elements_);
-		while (Element* el = elementsIterator.iterate()) s.strcatf("%s", el->symbol());
-		if (!parser.writeLineF("%s  %s  %s \n", prefix, dynamicSiteNodeKeywords().keyword(DynamicSiteProcedureNode::ElementKeyword), s.get())) return false;
-	}
-
-	// Block End
-	if (!parser.writeLineF("%s%s\n", prefix, dynamicSiteNodeKeywords().keyword(DynamicSiteProcedureNode::EndDynamicSiteKeyword))) return false;
-
-	return true;
 }

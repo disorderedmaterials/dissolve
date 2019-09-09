@@ -39,7 +39,7 @@ SpeciesRefListKeyword::~SpeciesRefListKeyword()
  */
 
 // Determine whether current data is actually 'set'
-bool SpeciesRefListKeyword::currentDataIsSet() const
+bool SpeciesRefListKeyword::isSet() const
 {
 	return data_.nItems() > 0;
 }

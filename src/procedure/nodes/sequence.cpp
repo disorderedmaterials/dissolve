@@ -89,6 +89,12 @@ const List<ProcedureNode>& SequenceProcedureNode::sequence() const
 	return sequence_;
 }
 
+// Return number of nodes in sequence
+int SequenceProcedureNode::nNodes() const
+{
+	return sequence_.nItems();
+}
+
 /*
  * Scope
  */
@@ -341,6 +347,9 @@ bool SequenceProcedureNode::prepare(Configuration* cfg, const char* prefix, Gene
 ProcedureNode::NodeExecutionResult SequenceProcedureNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 	ProcedureNode::NodeExecutionResult result = ProcedureNode::Success;
+
+	// If there are no nodes, just exit now
+	if (sequence_.nItems() == 0) return ProcedureNode::Success;
 
 	// Loop over nodes in the list, executing each in turn
 	ListIterator<ProcedureNode> nodeIterator(sequence_);

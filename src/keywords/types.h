@@ -33,6 +33,7 @@
 #include "keywords/integer.h"
 
 // Classes
+#include "keywords/atomtypereflist.h"
 #include "keywords/atomtypeselection.h"
 #include "keywords/broadeningfunction.h"
 #include "keywords/charstring.h"
@@ -41,6 +42,7 @@
 #include "keywords/data2dstore.h"
 #include "keywords/data3dstore.h"
 #include "keywords/dynamicsitenodes.h"
+#include "keywords/elementreflist.h"
 #include "keywords/enumoptions.h"
 #include "keywords/expressionvariablelist.h"
 #include "keywords/fileandformat.h"

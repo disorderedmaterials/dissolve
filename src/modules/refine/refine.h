@@ -130,7 +130,7 @@ class RefineModule : public Module
 	// Calculate c(r) from supplied S(Q)
 	Data1D calculateCR(const Data1D& sq, double normFactor, double rMin, double rStep, double rMax, WindowFunction windowFunction = WindowFunction(), BroadeningFunction broadening = BroadeningFunction(), bool unbroaden = false);
 	// Determine modification to bonds based on supplied delta g(r)
-	bool modifyBondTerms(Dissolve& dissolve, const Data1D& deltaGR, AtomType* typeI, AtomType* typeJ, Data1D& deltaBond);
+	bool modifyBondTerms(CoreData& coreData, const Data1D& deltaGR, AtomType* typeI, AtomType* typeJ, Data1D& deltaBond);
 	// Return value of fit equation given specified parameters
 	inline double fitEquation(double x, double xCentre, double delta, double widthSquared, double AL, double AC, double AR);
 	// Two-exponential, 5-parameter cost function for modifyBondTerms() fitting

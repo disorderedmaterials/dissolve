@@ -314,6 +314,34 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	bool loadFromXYZ(const char* filename);
 	// Load Species from file
 	bool load(const char* filename);
+
+
+	/*
+	 * Read / Write
+	 */
+	public:
+	// Species Block Keyword Enum
+	enum SpeciesKeyword
+	{
+		AngleKeyword,			/* 'Angle' - Defines an Angle joining three atoms */
+		AtomKeyword,			/* 'Atom' - Specifies an Atom in the Species */
+		AutoAddGrainsKeyword,		/* 'AutoAddGrains' - Automatically add Grains to cover all atoms in the Species */
+		BondKeyword,			/* 'Bond' - Defines a Bond joining two atoms */
+		BondTypeKeyword,		/* 'BondType' - Sets the type of a specific bond */
+		ChargeKeyword,			/* 'Charge' - Specifies the atomic charge for an individual atom */
+		EndSpeciesKeyword,		/* 'EndSpecies' - Signals the end of the current Species */
+		GrainKeyword,			/* 'Grain' - Defines a Grain containing a number of Atoms */
+		IsotopologueKeyword,		/* 'Isotopologue' - Add an isotopologue to the Species */
+		SiteKeyword,			/* 'Site' - Define an analysis site within the Species */
+		TorsionKeyword,			/* 'Torsion' - Define a Torsion interaction between four atoms */
+		nSpeciesKeywords		/* Number of keywords defined for this block */
+	};
+	// Return enum option info for SiteKeyword
+	static EnumOptions<Species::SpeciesKeyword> keywords();
+	// Read Species definition from specified LineParser
+	bool read(LineParser& parser, CoreData& coreData);
+	// Write Species definition to specified LineParser
+	bool write(LineParser& parser, const char* prefix);
 };
 
 #endif

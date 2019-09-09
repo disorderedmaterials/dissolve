@@ -21,25 +21,89 @@
 
 #include "modules/calculate_rdf/rdf.h"
 #include "keywords/types.h"
+#include "procedure/nodes/calculate.h"
+#include "procedure/nodes/collect1d.h"
+#include "procedure/nodes/process1d.h"
+#include "procedure/nodes/select.h"
 
 // Perform any necessary initialisation for the Module
 void CalculateRDFModule::initialise()
 {
-	// Quantity Name
-	keywords_.add("Quantity Name", new CharStringKeyword(), "Name", "Set the name of the calculated RDF", "<name>");
+	/*
+	 * Assemble the following Procedure:
+	 *
+	 * Select  'A'
+	 *   Site  ...
+	 *   ForEach
+	 *     Select  'B'
+	 *       Site  ...
+	 *       ExcludeSameSite  'A'
+	 *       ExcludeSameMolecule  'A'
+	 *       ForEach
+	 *         Calculate  'rAB'
+	 *           Distance  'A'  'B'
+	 *         EndCalculate
+	 *         Collect1D  RDF
+	 *           QuantityX  'rAB'
+	 *           RangeX  0.0  10.0  0.05
+	 *         EndCollect1D
+	 *       EndForEach  'B'
+	 *     EndSelect  'B'
+	 *   EndForEach  'A'
+	 * EndSelect  'A'
+	 * Process1D  RDF
+	 *   NSites  'A'
+	 *   SphericalShellVolume  On
+	 *   NumberDensity  'B'
+	 *   LabelValue  'g(r)'
+	 *   LabelX  'r, Angstroms'
+	 * EndProcess1D
+	 */
+
+	// Select: Site 'A'
+	selectA_ = new SelectProcedureNode;
+	selectA_->setName("A");
+	SequenceProcedureNode* forEachA = selectA_->addForEachBranch(ProcedureNode::AnalysisContext);
+	analyser_.addRootSequenceNode(selectA_);
+
+	// -- Select: Site 'B'
+	selectB_ = new SelectProcedureNode();
+	selectB_->setName("B");
+	RefList<SelectProcedureNode> exclusions(selectA_);
+	selectB_->setKeyword< RefList<SelectProcedureNode>& >("ExcludeSameSite", exclusions);
+	selectB_->setKeyword< RefList<SelectProcedureNode>& >("ExcludeSameMolecule", exclusions);
+	SequenceProcedureNode* forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
+	forEachA->addNode(selectB_);
+
+	// -- -- Calculate: 'rAB'
+	CalculateProcedureNode* calcDistance = new CalculateProcedureNode(CalculateProcedureNode::DistanceObservable, selectA_, selectB_);
+	forEachB->addNode(calcDistance);
+
+	// -- -- Collect1D: 'RDF'
+	collectDistance_ = new Collect1DProcedureNode(calcDistance, 0.0, 10.0, 0.05);
+	forEachB->addNode(collectDistance_);
+
+	// Process1D: @dataName
+	processDistance_ = new Process1DProcedureNode(collectDistance_);
+	processDistance_->setName("RDF");
+	processDistance_->addSitePopulationNormaliser(selectA_);
+	processDistance_->addNumberDensityNormaliser(selectB_);
+	processDistance_->setNormaliseBySphericalShellVolume(true);
+	processDistance_->setValueLabel("g(r)");
+	processDistance_->setXAxisLabel("r, \\symbol{Angstrom}");
+	analyser_.addRootSequenceNode(processDistance_);
+
+	/*
+	 * Keywords (including those exposed from the ProcedureNodes)
+	 */
 
 	// Calculation
-	keywords_.add("Calculation", new DoubleKeyword(0.05, 0.0001), "BinWidth", "Width of bins in histogram (and spacing between points in resulting RDF)", "<r, Angstroms>");
-	keywords_.add("Calculation", new DoubleKeyword(10.0, 0.0), "RMax", "Maximum distance to bin in RDF", "<r, Angstroms>");
-	keywords_.add("Calculation", new DoubleKeyword(0.0, 0.0), "RMin", "Minimum distance to bin in RDF", "<r, Angstroms>");
+	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(0.0, 10.0, 0.05), Vec3<double>(0.0, 0.0, 1.0e-5)), "DistanceRange", "Range (min, max, delta) of distance axis", "<min> <max> <delta> (Angstroms)");
 
 	// Sites
-	keywords_.add("Sites", new SpeciesSiteRefListKeyword(originSites_), "OriginSite", "Set the site(s) which are to represent the origin of the RDF", "<Species> <Site>");
-	keywords_.add("Sites", new SpeciesSiteRefListKeyword(otherSites_), "OtherSite", "Set the site(s) for which the distribution around the origin site should be calculated", "<Species> <Site>");
+	keywords_.link("Sites", selectA_->keywords().find("Site"), "SiteA", "Set the site(s) 'A' which are to represent the origin of the RDF", "<Species> <Site>");
+	keywords_.link("Sites", selectB_->keywords().find("Site"), "SiteB", "Set the site(s) 'B' for which the distribution around the origin sites 'A' should be calculated", "<Species> <Site>");
 	keywords_.add("Sites", new BoolKeyword(false), "ExcludeSameMolecule", "Whether to exclude correlations between sites on the same molecule", "<True|False>");
-
-	// Export
-	keywords_.add("Export", new BoolKeyword(false), "Save", "Save calculated data to disk", "<True|False>");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised

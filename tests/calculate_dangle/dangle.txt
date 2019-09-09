@@ -246,9 +246,3 @@ Module DataTest
 EndModule
 
 EndLayer
-
-Simulation
-  # Prevent writing of restart file
-  RestartFileFrequency  100
-EndSimulation
-

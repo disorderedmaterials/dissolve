@@ -63,5 +63,17 @@ bool ProcedureKeyword::read(LineParser& parser, int startArg, const CoreData& co
 // Write keyword data to specified LineParser
 bool ProcedureKeyword::write(LineParser& parser, const char* prefix)
 {
-	return data_.write(parser, prefix);
+	// Write the keyword name as the start of the data
+	if (!parser.writeLineF("%s%s\n", prefix, name())) return false;
+
+	// Increase the indent
+	CharString newPrefix("%s  ", prefix);
+
+	// Write the node data
+	if (!data_.write(parser, newPrefix)) return false;
+
+	// Write the end keyword (based on our name)
+	if (!parser.writeLineF("%sEnd%s\n", prefix, name())) return false;
+
+	return true;
 }

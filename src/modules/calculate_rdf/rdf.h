@@ -26,6 +26,9 @@
 #include "procedure/procedure.h"
 
 // Forward Declarations
+class Collect1DProcedureNode;
+class Process1DProcedureNode;
+class SelectProcedureNode;
 class SpeciesSite;
 
 // Calculate RDF Module
@@ -86,14 +89,14 @@ class CalculateRDFModule : public Module
 	private:
 	// Analysis procedure to be run
 	Procedure analyser_;
-	// List of origin Sites
-	RefList<SpeciesSite> originSites_;
-	// List of other Sites
-	RefList<SpeciesSite> otherSites_;
-
-	public:
-	// Return name of resulting RDF
-	const char* resultName() const;
+	// SelectNode for site A
+	SelectProcedureNode* selectA_;
+	// SelectNode for site B
+	SelectProcedureNode* selectB_;
+	// Collect1DNode for B-C RDF
+	Collect1DProcedureNode* collectDistance_;
+	// Process1DNode for B-C RDF
+	Process1DProcedureNode* processDistance_;
 
 
 	/*

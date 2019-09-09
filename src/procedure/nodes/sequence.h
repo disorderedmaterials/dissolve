@@ -72,6 +72,8 @@ class SequenceProcedureNode : public ProcedureNode
 	void addNode(ProcedureNode* node);
 	// Return sequential node list
 	const List<ProcedureNode>& sequence() const;
+	// Return number of nodes in sequence
+	int nNodes() const;
 
 
 	/*

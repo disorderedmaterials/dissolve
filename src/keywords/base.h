@@ -45,11 +45,11 @@ class KeywordBase : public ListItem<KeywordBase>
 	public:
 	// Keyword Data Type
 	enum KeywordDataType {
-		AtomTypeSelectionData,
+		AtomTypeRefListData, AtomTypeSelectionData,
 		BoolData, BroadeningFunctionData,
 		CharStringData, ComplexData,
 		Data1DStoreData, Data2DStoreData, Data3DStoreData, DoubleData, DynamicSiteNodesData,
-		EnumOptionsData, ExpressionVariableListData,
+		ElementRefListData, EnumOptionsData, ExpressionVariableListData,
 		FileAndFormatData,
 		GeometryListData,
 		IntegerData, IsotopologueListData,
@@ -118,7 +118,7 @@ class KeywordBase : public ListItem<KeywordBase>
 	// Return whether specified option is set
 	bool isOptionSet(KeywordOption opt) const;
 	// Return whether the data has ever been set
-	bool isSet() const;
+	virtual bool isSet() const;
 
 
 	/*

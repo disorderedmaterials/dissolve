@@ -20,13 +20,3 @@
 */
 
 #include "modules/calculate_rdf/rdf.h"
-
-// Return name of resulting RDF
-const char* CalculateRDFModule::resultName() const
-{
-	static CharString result;
-	result = keywords_.asString("Name");
-	if (result.isEmpty()) result = uniqueName();
-
-	return result.get();
-}

@@ -22,11 +22,3 @@
 #include "modules/calculate_dangle/dangle.h"
 #include "procedure/nodes/process1d.h"
 #include "procedure/nodes/process2d.h"
-
-// Update names of processed quantities
-void CalculateDAngleModule::updateNodeNames()
-{
-	if (processDistance_) processDistance_->setName(CharString("%s_RDF(BC)", uniqueName()));
-	if (processAngle_) processAngle_->setName(CharString("%s_ANGLE(ABC)", uniqueName()));
-	if (processDAngle_) processDAngle_->setName(uniqueName());
-}

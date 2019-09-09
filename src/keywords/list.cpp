@@ -243,3 +243,56 @@ KeywordBase::ParseResult KeywordList::parse(LineParser& parser, const CoreData& 
 
 	return KeywordBase::Success;
 }
+
+// Write all keywords to specified LineParser
+bool KeywordList::write(LineParser& parser, const char* prefix, bool onlyIfSet)
+{
+	ListIterator<KeywordBase> keywordIterator(keywords_);
+	while (KeywordBase* keyword = keywordIterator.iterate())
+	{
+		// If the keyword has never been set (i.e. it still has its default value) don't bother to write it
+		if (onlyIfSet && (!keyword->base()->isSet())) continue;
+
+		// Make sure we are calling the write() function of the base() keyword class...
+		if (!keyword->base()->write(parser, prefix)) return false;
+	}
+
+	return true;
+}
+
+// Write all keywords in groups to specified LineParser
+bool KeywordList::writeGroups(LineParser& parser, const char* prefix, bool onlyIfSet)
+{
+	// Loop over keyword groups
+	bool firstGroup = true;
+	ListIterator<KeywordGroup> groupsIterator(groups_);
+	while (KeywordGroup* group = groupsIterator.iterate())
+	{
+		// Loop over keywords in group
+		bool firstWritten = true;
+		RefListIterator<KeywordBase> keywordIterator(group->keywords());
+		while (KeywordBase* keyword = keywordIterator.iterate())
+		{
+			// If the keyword has never been set (i.e. it still has its default value) don't bother to write it
+			if (onlyIfSet && (!keyword->base()->isSet())) continue;
+
+			// If this is the first keyword to be written in the group, write the group name first as a comment
+			if (firstWritten)
+			{
+				// If this is *not* the first group to be written, write a newline for formatting
+				if ((!firstGroup) && (!parser.writeLineF("\n"))) return false;
+
+				if (!parser.writeLineF("%s# %s\n", prefix, group->name())) return false;
+			}
+
+			// Make sure we are calling the write() function of the base() keyword class...
+			if (!keyword->base()->write(parser, prefix)) return false;
+
+			// Falsify flags
+			firstWritten = false;
+			firstGroup = false;
+		}
+	}
+
+	return true;
+}

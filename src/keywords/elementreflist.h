@@ -1,6 +1,6 @@
 /*
-	*** Keyword - NodeBranch
-	*** src/keywords/nodebranch.h
+	*** Keyword - Element RefList
+	*** src/keywords/elementreflist.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,48 +19,24 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_NODEBRANCH_H
-#define DISSOLVE_KEYWORD_NODEBRANCH_H
+#ifndef DISSOLVE_KEYWORD_ELEMENTREFLIST_H
+#define DISSOLVE_KEYWORD_ELEMENTREFLIST_H
 
 #include "keywords/data.h"
-#include "procedure/nodes/node.h"
+#include "classes/atomtype.h"
+#include "templates/reflist.h"
 
 // Forward Declarations
-class NodeValue;
-class SequenceProcedureNode;
+class Configuration;
 
-// Keyword with NodeValue
-class NodeBranchKeyword : public KeywordData<SequenceProcedureNode**>
+// Keyword with Element RefList Data
+class ElementRefListKeyword : public KeywordData< RefList<Element>& >
 {
 	public:
 	// Constructor
-	NodeBranchKeyword(ProcedureNode* parentNode, SequenceProcedureNode** branchPointer, ProcedureNode::NodeContext branchContext);
+	ElementRefListKeyword(RefList<Element>& targetRefList);
 	// Destructor
-	~NodeBranchKeyword();
-
-
-	/*
-	 * Parent Node
-	 */
-	private:
-	// Parent ProcedureNode
-	ProcedureNode* parentNode_;
-
-
-	/*
-	 * Data
-	 */
-	protected:
-	// Determine whether current data is actually 'set'
-	bool isSet() const;
-	
-
-	/*
-	 * Branch Specification
-	 */
-	private:
-	// Context for the target branch
-	ProcedureNode::NodeContext branchContext_;
+	~ElementRefListKeyword();
 
 
 	/*

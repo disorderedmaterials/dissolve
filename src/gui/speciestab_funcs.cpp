@@ -50,7 +50,7 @@ SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabW
 	ui_.AtomTable->horizontalHeader()->setFont(font());
 	// -- Bond Table
 	for (int n=0; n<2; ++n) ui_.BondTable->setItemDelegateForColumn(n, new IntegerSpinDelegate(this, 1, 1e9));
-	ui_.BondTable->setItemDelegateForColumn(2, new IntraFormComboDelegate(this, SpeciesBond::nBondFunctions, SpeciesBond::bondFunctions(), dissolve_.masterBonds()));
+	ui_.BondTable->setItemDelegateForColumn(2, new IntraFormComboDelegate(this, SpeciesBond::nBondFunctions, SpeciesBond::bondFunctions(), dissolve_.coreData().masterBonds()));
 	// -- Angle Table
 	for (int n=0; n<3; ++n) ui_.AngleTable->setItemDelegateForColumn(n, new IntegerSpinDelegate(this, 1, 1e9));
 	// -- Torsion Table
@@ -575,7 +575,7 @@ void SpeciesTab::on_BondTable_itemChanged(QTableWidgetItem* w)
 			// If the text starts with an '@' then its a reference to a master term
 			if (w->text().at(0) == '@')
 			{
-				MasterIntra* master = dissolve_.hasMasterBond(qPrintable(w->text()));
+				MasterIntra* master = dissolve_.coreData().hasMasterBond(qPrintable(w->text()));
 				speciesBond->setMasterParameters(master);
 			}
 			else
@@ -651,7 +651,7 @@ void SpeciesTab::on_AngleTable_itemChanged(QTableWidgetItem* w)
 			// If the text starts with an '@' then its a reference to a master term
 			if (w->text().at(0) == '@')
 			{
-				MasterIntra* master = dissolve_.hasMasterAngle(qPrintable(w->text()));
+				MasterIntra* master = dissolve_.coreData().hasMasterAngle(qPrintable(w->text()));
 				speciesAngle->setMasterParameters(master);
 			}
 			else
@@ -729,7 +729,7 @@ void SpeciesTab::on_TorsionTable_itemChanged(QTableWidgetItem* w)
 			// If the text starts with an '@' then its a reference to a master term
 			if (w->text().at(0) == '@')
 			{
-				MasterIntra* master = dissolve_.hasMasterTorsion(qPrintable(w->text()));
+				MasterIntra* master = dissolve_.coreData().hasMasterTorsion(qPrintable(w->text()));
 				speciesTorsion->setMasterParameters(master);
 			}
 			else

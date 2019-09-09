@@ -476,7 +476,7 @@ bool Data1D::read(LineParser& parser, const CoreData& coreData)
 	setObjectTag(parser.line());
 
 	// Read object name
-	if (parser.readNextLine(LineParser::Defaults) != LineParser::Success) return false;
+	if (parser.readNextLine(LineParser::KeepBlanks) != LineParser::Success) return false;
 	name_ = parser.line();
 
 	// Read number of points and whether errors are present

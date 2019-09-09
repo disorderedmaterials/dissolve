@@ -219,7 +219,7 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 			// Copy selected Species to our temporary instance, detach any MasterTerm references, and delete the MasterTerms
 			modifiedSpecies_ = temporaryDissolve_.copySpecies(currentSpecies());
 			modifiedSpecies_->detachFromMasterTerms();
-			temporaryDissolve_.clearMasterTerms();
+			temporaryCoreData_.clearMasterTerms();
 
 			// Assign AtomTypes
 			if (ui_.AtomTypesAssignAllRadio->isChecked())
@@ -251,7 +251,7 @@ int AddForcefieldTermsWizard::determineNextPage(int currentIndex)
 	{
 		case (AddForcefieldTermsWizard::AtomTypesPage):
 			// If there are master terms present, go to that page first. Otherwise, skip straight to naming
-			if (temporaryDissolve_.nMasterBonds() || temporaryDissolve_.nMasterAngles() || temporaryDissolve_.nMasterTorsions()) return AddForcefieldTermsWizard::MasterTermsPage;
+			if (temporaryCoreData_.nMasterBonds() || temporaryCoreData_.nMasterAngles() || temporaryCoreData_.nMasterTorsions()) return AddForcefieldTermsWizard::MasterTermsPage;
 			else return AddForcefieldTermsWizard::FinishPage;
 		default:
 			break;
@@ -495,33 +495,33 @@ void AddForcefieldTermsWizard::updateMasterTermsTreeChild(QTreeWidgetItem* paren
 
 	// Set item data
 	item->setText(0, masterIntra->name());
-	item->setIcon(0, QIcon(dissolveReference_->findMasterTerm(masterIntra->name()) ?  ":/general/icons/general_warn.svg" : ":/general/icons/general_true.svg"));
+	item->setIcon(0, QIcon(dissolveReference_->coreData().findMasterTerm(masterIntra->name()) ?  ":/general/icons/general_warn.svg" : ":/general/icons/general_true.svg"));
 }
 
 // Update page with MasterTerms in our temporary Dissolve reference
 void AddForcefieldTermsWizard::updateMasterTermsPage()
 {
 	// Update the list against the global MasterTerm tree
-	TreeWidgetUpdater<AddForcefieldTermsWizard,MasterIntra> bondUpdater(masterBondItemParent_, temporaryDissolve_.masterBonds(), this, &AddForcefieldTermsWizard::updateMasterTermsTreeChild);
-	TreeWidgetUpdater<AddForcefieldTermsWizard,MasterIntra> angleUpdater(masterAngleItemParent_, temporaryDissolve_.masterAngles(), this, &AddForcefieldTermsWizard::updateMasterTermsTreeChild);
-	TreeWidgetUpdater<AddForcefieldTermsWizard,MasterIntra> torsionUpdater(masterTorsionItemParent_, temporaryDissolve_.masterTorsions(), this, &AddForcefieldTermsWizard::updateMasterTermsTreeChild);
+	TreeWidgetUpdater<AddForcefieldTermsWizard,MasterIntra> bondUpdater(masterBondItemParent_, temporaryCoreData_.masterBonds(), this, &AddForcefieldTermsWizard::updateMasterTermsTreeChild);
+	TreeWidgetUpdater<AddForcefieldTermsWizard,MasterIntra> angleUpdater(masterAngleItemParent_, temporaryCoreData_.masterAngles(), this, &AddForcefieldTermsWizard::updateMasterTermsTreeChild);
+	TreeWidgetUpdater<AddForcefieldTermsWizard,MasterIntra> torsionUpdater(masterTorsionItemParent_, temporaryCoreData_.masterTorsions(), this, &AddForcefieldTermsWizard::updateMasterTermsTreeChild);
 
 	// Determine whether we have any naming conflicts
 	bool conflicts = false;
-	ListIterator<MasterIntra> bondIterator(temporaryDissolve_.masterBonds());
-	while (MasterIntra* intra = bondIterator.iterate()) if (dissolveReference_->findMasterTerm(intra->name()))
+	ListIterator<MasterIntra> bondIterator(temporaryCoreData_.masterBonds());
+	while (MasterIntra* intra = bondIterator.iterate()) if (dissolveReference_->coreData().findMasterTerm(intra->name()))
 	{
 		conflicts = true;
 		break;
 	}
-	ListIterator<MasterIntra> angleIterator(temporaryDissolve_.masterAngles());
-	while (MasterIntra* intra = angleIterator.iterate()) if (dissolveReference_->findMasterTerm(intra->name()))
+	ListIterator<MasterIntra> angleIterator(temporaryCoreData_.masterAngles());
+	while (MasterIntra* intra = angleIterator.iterate()) if (dissolveReference_->coreData().findMasterTerm(intra->name()))
 	{
 		conflicts = true;
 		break;
 	}
-	ListIterator<MasterIntra> torsionIterator(temporaryDissolve_.masterTorsions());
-	while (MasterIntra* intra = torsionIterator.iterate()) if (dissolveReference_->findMasterTerm(intra->name()))
+	ListIterator<MasterIntra> torsionIterator(temporaryCoreData_.masterTorsions());
+	while (MasterIntra* intra = torsionIterator.iterate()) if (dissolveReference_->coreData().findMasterTerm(intra->name()))
 	{
 		conflicts = true;
 		break;

@@ -70,10 +70,11 @@ bool GenericList::contains(const char* name, const char* prefix)
 	else varName.sprintf("%s_%s", prefix, name);
 
 	for (GenericItem* item = items_.first(); item != NULL; item = item->next()) if (DissolveSys::sameString(item->name(), varName.get())) return true;
+
 	return false;
 }
 
-// Return if named named item, if it exists, is of specified type
+// Return if named item, if it exists, is of specified type
 bool GenericList::isItemOfType(const char* type, const char* name, const char* prefix)
 {
 	GenericItem* item = find(name, prefix);

@@ -1,4 +1,5 @@
 add_library(keywords
+  atomtypereflist.cpp
   atomtypeselection.cpp
   base.cpp
   bool.cpp
@@ -10,6 +11,7 @@ add_library(keywords
   data3dstore.cpp
   double.cpp
   dynamicsitenodes.cpp
+  elementreflist.cpp
   expressionvariablelist.cpp
   fileandformat.cpp
   group.cpp
@@ -35,6 +37,7 @@ add_library(keywords
   vec3nodevalue.cpp
   windowfunction.cpp
 
+  atomtypereflist.h
   atomtypeselection.h
   base.h
   bool.h
@@ -47,6 +50,7 @@ add_library(keywords
   data3dstore.h
   double.h
   dynamicsitenodes.h
+  elementreflist.h
   enumoptions.h
   expressionvariablelist.h
   fileandformat.h

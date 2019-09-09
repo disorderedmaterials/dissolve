@@ -23,6 +23,9 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "classes/atomtype.h"
+#include "classes/speciesangle.h"
+#include "classes/speciesbond.h"
+#include "classes/speciestorsion.h"
 #include "module/list.h"
 #include "module/module.h"
 #include "base/sysfunc.h"
@@ -37,6 +40,17 @@ CoreData::CoreData()
 // Destructor
 CoreData::~CoreData()
 {
+}
+
+// Clear all data
+void CoreData::clear()
+{
+	configurations_.clear();
+	species_.clear();
+	masterBonds_.clear();
+	masterAngles_.clear();
+	masterTorsions_.clear();
+	atomTypes_.clear();
 }
 
 /*
@@ -110,6 +124,169 @@ AtomType* CoreData::findAtomType(const char* name) const
 	for (AtomType* at = atomTypes_.first(); at != NULL; at = at->next()) if (DissolveSys::sameString(at->name(),name)) return at;
 
 	return NULL;
+}
+
+/*
+ * Master Intramolecular Terms
+ */
+
+// Add new master Bond parameters
+MasterIntra* CoreData::addMasterBond(const char* name)
+{
+	// Check for existence of master Bond already
+	if (hasMasterBond(name))
+	{
+		Messenger::error("Refused to add a new master Bond named '%s' since one with the same name already exists.\n", name);
+		return NULL;
+	}
+
+	// OK to add new master Bond
+	MasterIntra* b = masterBonds_.add();
+	b->setName(name);
+	b->setType(SpeciesIntra::IntramolecularBond);
+
+	return b;
+}
+
+// Return number of master Bond parameters in list
+int CoreData::nMasterBonds() const
+{
+	return masterBonds_.nItems();
+}
+
+// Return list of master Bond parameters
+const List<MasterIntra>& CoreData::masterBonds() const
+{
+	return masterBonds_;
+}
+
+// Return nth master Bond parameters
+MasterIntra* CoreData::masterBond(int n)
+{
+	return masterBonds_[n];
+}
+
+// Return whether named master Bond parameters exist
+MasterIntra* CoreData::hasMasterBond(const char* name) const
+{
+	// Remove leading '@' if necessary
+	const char* trimmedName = name[0] == '@' ? &name[1] : name;
+
+	for (MasterIntra* b = masterBonds_.first(); b != NULL; b = b->next()) if (DissolveSys::sameString(trimmedName, b->name())) return b;
+	return NULL;
+}
+
+// Add new master Angle parameters
+MasterIntra* CoreData::addMasterAngle(const char* name)
+{
+	// Check for existence of master Angle already
+	if (hasMasterAngle(name))
+	{
+		Messenger::error("Refused to add a new master Angle named '%s' since one with the same name already exists.\n", name);
+		return NULL;
+	}
+
+	// OK to add new master Angle
+	MasterIntra* a = masterAngles_.add();
+	a->setName(name);
+	a->setType(SpeciesIntra::IntramolecularAngle);
+
+	return a;
+}
+
+// Return number of master Angle parameters in list
+int CoreData::nMasterAngles() const
+{
+	return masterAngles_.nItems();
+}
+
+// Return list of master Angle parameters
+const List<MasterIntra>& CoreData::masterAngles() const
+{
+	return masterAngles_;
+}
+
+// Return nth master Angle parameters
+MasterIntra* CoreData::masterAngle(int n)
+{
+	return masterAngles_[n];
+}
+
+// Return whether named master Angle parameters exist
+MasterIntra* CoreData::hasMasterAngle(const char* name) const
+{
+	// Remove leading '@' if necessary
+	const char* trimmedName = name[0] == '@' ? &name[1] : name;
+
+	for (MasterIntra* a = masterAngles_.first(); a != NULL; a = a->next()) if (DissolveSys::sameString(trimmedName, a->name())) return a;
+	return NULL;
+}
+
+// Add new master Torsion parameters
+MasterIntra* CoreData::addMasterTorsion(const char* name)
+{
+	// Check for existence of master Torsion already
+	if (hasMasterTorsion(name))
+	{
+		Messenger::error("Refused to add a new master Torsion named '%s' since one with the same name already exists.\n", name);
+		return NULL;
+	}
+
+	// OK to add new master Torsion
+	MasterIntra* t = masterTorsions_.add();
+	t->setName(name);
+	t->setType(SpeciesIntra::IntramolecularTorsion);
+
+	return t;
+}
+
+// Return number of master Torsion parameters in list
+int CoreData::nMasterTorsions() const
+{
+	return masterTorsions_.nItems();
+}
+
+// Return list of master Torsion parameters
+const List<MasterIntra>& CoreData::masterTorsions() const
+{
+	return masterTorsions_;
+}
+
+// Return nth master Torsion parameters
+MasterIntra* CoreData::masterTorsion(int n)
+{
+	return masterTorsions_[n];
+}
+
+// Return whether named master Torsion parameters exist
+MasterIntra* CoreData::hasMasterTorsion(const char* name) const
+{
+	// Remove leading '@' if necessary
+	const char* trimmedName = name[0] == '@' ? &name[1] : name;
+
+	for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next()) if (DissolveSys::sameString(trimmedName, t->name())) return t;
+	return NULL;
+}
+
+// Return the named master term (of any form) if it exists
+MasterIntra* CoreData::findMasterTerm(const char* name) const
+{
+	// Remove leading '@' if necessary
+	const char* trimmedName = name[0] == '@' ? &name[1] : name;
+
+	for (MasterIntra* b = masterBonds_.first(); b != NULL; b = b->next()) if (DissolveSys::sameString(trimmedName, b->name())) return b;
+	for (MasterIntra* a = masterAngles_.first(); a != NULL; a = a->next()) if (DissolveSys::sameString(trimmedName, a->name())) return a;
+	for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next()) if (DissolveSys::sameString(trimmedName, t->name())) return t;
+
+	return NULL;
+}
+
+// Clear all master terms
+void CoreData::clearMasterTerms()
+{
+	masterBonds_.clear();
+	masterAngles_.clear();
+	masterTorsions_.clear();
 }
 
 /*
