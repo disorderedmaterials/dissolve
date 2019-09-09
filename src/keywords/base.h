@@ -51,6 +51,7 @@ class KeywordBase : public ListItem<KeywordBase>
 		Data1DStoreData, Data2DStoreData, Data3DStoreData, DoubleData, DynamicSiteNodesData,
 		EnumOptionsData, ExpressionVariableListData,
 		FileAndFormatData,
+		GeometryListData,
 		IntegerData, IsotopologueListData,
 		LinkToKeywordData,
 		ModuleGroupsData, ModuleRefListData,

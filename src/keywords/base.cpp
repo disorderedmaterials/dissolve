@@ -49,6 +49,7 @@ const char* KeywordDataTypeKeywords[] = {
 	"Data1DStore", "Data2DStore", "Data3DStore", "Double", "DynamicSites",
 	"EnumOptions", "ExpressionVariableList",
 	"FileAndFormat",
+	"GeometryList"
 	"Integer", "IsotopologueList",
 	"LinkToKeyword",
 	"ModuleGroups", "ModuleRefList",

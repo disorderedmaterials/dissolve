@@ -8,6 +8,7 @@ SET(keywordwidgets_MOC_HDRS
   dropdown.h
   expressionvariablelist.h
   fileandformat.h
+  geometrylist.h
   isotopologuereferencelist.h
   modulegroups.h
   modulereflist.h
@@ -71,6 +72,7 @@ SET(keywordwidgets_SRCS
   enumoptions_funcs.cpp
   expressionvariablelist_funcs.cpp
   fileandformat_funcs.cpp
+  geometrylist.cpp
   integer_funcs.cpp
   isotopologuereferencelist_funcs.cpp
   modulegroups_funcs.cpp

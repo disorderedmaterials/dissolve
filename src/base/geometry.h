@@ -22,13 +22,15 @@
 #ifndef DISSOLVE_GEOMETRY_H
 #define DISSOLVE_GEOMETRY_H
 
-#include "templates/mpilistitem.h"
+
+#include "templates/listitem.h"
+
 
 // Forward Declarations
 /* none */
 
 // Geometry Definition
-class Geometry : public MPIListItem<Geometry>
+class Geometry : public ListItem<Geometry>
 {
 	public:
 	// Constructor

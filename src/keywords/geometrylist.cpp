@@ -19,78 +19,49 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "keywords/isotopologuereferencelist.h"
+#include "keywords/geometrylist.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
 
 // Constructor
-IsotopologueReferenceListKeyword::IsotopologueReferenceListKeyword(List<IsotopologueReference>& references, const RefList<Configuration>& associatedConfigurations) : KeywordData< List<IsotopologueReference>& >(KeywordBase::IsotopologueListData, references), associatedConfigurations_(associatedConfigurations)
+GeometryListKeyword:: GeometryListKeyword::GeometryListKeyword(List<Geometry>& data): KeywordData<List<Geometry>& >(KeywordBase::GeometryListData, data),
 {
 }
+ 
 
 // Destructor
-IsotopologueReferenceListKeyword::~IsotopologueReferenceListKeyword()
+GeometryListKeyword::~GeometryListKeyword()
 {
 }
 
-/*
- * Associated Configurations
- */
 
-// Return associated Configurations, to which the IsotopologueList refers 
-const RefList<Configuration>& IsotopologueReferenceListKeyword::associatedConfigurations() const
-{
-	return associatedConfigurations_;
-}
 
 /*
  * Arguments
  */
 
 // Return minimum number of arguments accepted
-int IsotopologueReferenceListKeyword::minArguments() const
+int GeometryListKeyword::minArguments() const
 {
-	return 4;
+	return 2;
 }
 
 // Return maximum number of arguments accepted
-int IsotopologueReferenceListKeyword::maxArguments() const
+int GeometryListKeyword::maxArguments() const
 {
-	return 4;
+	return 3;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool IsotopologueReferenceListKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
+bool GeometryListKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
-	// Find target Configuration (first argument)
-	Configuration* cfg = coreData.findConfiguration(parser.argc(startArg));
-	if (!cfg)
-	{
-		Messenger::error("Error defining Isotopologue reference - no Configuration named '%s' exists.\n", parser.argc(startArg));
-		return false;
-	}
-
-	// Find specified Species (second argument)
-	Species* sp = coreData.findSpecies(parser.argc(startArg+1));
-	if (!sp) return Messenger::error("Error defining Isotopologue reference - no Species named '%s' exists.\n", parser.argc(startArg+1));
-
-	// Finally, locate isotopologue definition for species (third argument)
-	Isotopologue* iso = sp->findIsotopologue(parser.argc(startArg+2));
-	if (!iso) return Messenger::error("Error defining Isotopologue reference - no Isotopologue named '%s' exists for Species '%s'.\n", parser.argc(startArg+2), sp->name());
-
-	// Add the data to the list
-	IsotopologueReference* isoRef = data_.add();
-	isoRef->set(cfg, sp, iso, parser.argd(startArg+3));
 	
-	set_ = true;
-
-	return true;
 }
 
 // Write keyword data to specified LineParser
-bool IsotopologueReferenceListKeyword::write(LineParser& parser, const char* prefix)
+bool GeometryListKeyword::write(LineParser& parser, const char* prefix)
 {
 	// Loop over list of IsotopologueReferences
 	ListIterator<IsotopologueReference> refIterator(data_);
@@ -102,30 +73,4 @@ bool IsotopologueReferenceListKeyword::write(LineParser& parser, const char* pre
 	return true;
 }
 
-/*
- * Data Management
- */
 
-// Prune any references to the supplied Species in the contained data
-void IsotopologueReferenceListKeyword::removeReferencesTo(Species* sp)
-{
-	IsotopologueReference* isoRef = data_.first(), *isoNext;
-	while (isoRef)
-	{
-		isoNext = isoRef->next();
-		if (isoRef->species() == sp) data_.remove(isoRef);
-		isoRef = isoNext;
-	}
-}
-
-// Prune any references to the supplied Isotopologue in the contained data
-void IsotopologueReferenceListKeyword::removeReferencesTo(Isotopologue* iso)
-{
-	IsotopologueReference* isoRef = data_.first(), *isoNext;
-	while (isoRef)
-	{
-		isoNext = isoRef->next();
-		if (isoRef->isotopologue() == iso) data_.remove(isoRef);
-		isoRef = isoNext;
-	}
-}

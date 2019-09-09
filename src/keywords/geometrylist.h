@@ -19,39 +19,28 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_ISOTOPOLOGUEREFERENCELIST_H
-#define DISSOLVE_KEYWORD_ISOTOPOLOGUEREFERENCELIST_H
+#ifndef DISSOLVE_KEYWORD_GEOMETRYLIST_H
+#define DISSOLVE_KEYWORD_GEOMETRYLIST_H
 
 #include "keywords/data.h"
-#include "classes/isotopologuereference.h"
+#include "base/geometry.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
 /* none */
 
-// Keyword with IsotopologueReference Data
-class IsotopologueReferenceListKeyword : public KeywordData< List<IsotopologueReference>& >
+// Keyword with Geometry Data
+class GeometryListKeyword : public KeywordData< List<Geometry>& >
 {
 	public:
 	// Constructor
-	IsotopologueReferenceListKeyword(List<IsotopologueReference>& references, const RefList<Configuration>& associatedConfigurations);
+	GeometryListKeyword(List<Geometry>&);
+	
 	// Destructor
-	~IsotopologueReferenceListKeyword();
-
-
-	/*
-	 * Associated Configurations
-	 */
-	private:
-	// Associated Configurations, to which the IsotopologueList refers 
-	const RefList<Configuration>& associatedConfigurations_;
-
-	public:
-	// Return associated Configurations, to which the IsotopologueList refers 
-	const RefList<Configuration>& associatedConfigurations() const;
-
-
+	~GeometryListKeyword();
+	
+	
 	/*
 	 * Arguments
 	 */
@@ -66,14 +55,6 @@ class IsotopologueReferenceListKeyword : public KeywordData< List<IsotopologueRe
 	bool write(LineParser& parser, const char* prefix);
 
 
-	/*
-	 * Object Management
-	 */
-	protected:
-	// Prune any references to the supplied Species in the contained data
-	void removeReferencesTo(Species* sp);
-	// Prune any references to the supplied Isotopologue in the contained data
-	void removeReferencesTo(Isotopologue* iso);
 };
 
 #endif
