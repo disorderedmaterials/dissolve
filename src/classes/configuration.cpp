@@ -94,13 +94,13 @@ void Configuration::setName(const char* name)
 }
 
 // Return name of the Configuration
-const char* Configuration::name()
+const char* Configuration::name() const
 {
 	return name_.get();
 }
 
 // Return nice name of the Configuration
-const char* Configuration::niceName()
+const char* Configuration::niceName() const
 {
 	return niceName_.get();
 }
@@ -196,7 +196,7 @@ void Configuration::setTemperature(double t)
 }
 
 // Return configuration temperature
-double Configuration::temperature()
+double Configuration::temperature() const
 {
 	return temperature_;
 }

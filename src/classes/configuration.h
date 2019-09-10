@@ -47,7 +47,6 @@
 #include "templates/dynamicarray.h"
 
 // Forward Declarations
-class Atom;
 class Box;
 class Cell;
 class Grain;
@@ -87,9 +86,9 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	// Set name of the Configuration
 	void setName(const char* name);
 	// Return name of the Configuration
-	const char* name();
+	const char* name() const;
 	// Return nice name of the Configuration
-	const char* niceName();
+	const char* niceName() const;
 	// Return the current generator
 	Procedure& generator();
 	// Generate the Configuration ready for use, including Box and associated Cells
@@ -103,7 +102,7 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	// Set configuration temperature
 	void setTemperature(double t);
 	// Return configuration temperature
-	double temperature();
+	double temperature() const;
 
 
 	/*
