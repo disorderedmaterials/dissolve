@@ -29,7 +29,7 @@
 #include <QWidget>
 
 // Forward Declarations
-class Species;
+/* none */
 
 class NodeRefListKeywordWidget: public KeywordDropDown, public KeywordWidgetBase
 {
