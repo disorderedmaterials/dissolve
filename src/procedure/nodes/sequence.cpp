@@ -416,6 +416,7 @@ bool SequenceProcedureNode::read(LineParser& parser, const CoreData& coreData)
 
 		// Not a control keyword, so must be a node type
 		ProcedureNode* newNode = NULL;
+		if (!ProcedureNode::nodeTypes().isValid(parser.argc(0))) return Messenger::error("Unrecognised node type '%s' found.\n", parser.argc(0));
 		ProcedureNode::NodeType nt = ProcedureNode::nodeTypes().enumeration(parser.argc(0));
 		switch (nt)
 		{
