@@ -68,8 +68,8 @@ class NodeKeywordBase
 	bool onlyInScope() const;
 	// Set the target node
 	virtual bool setNode(ProcedureNode* node) = 0;
-	// Return the current target node
-	virtual ProcedureNode* node() const = 0;
+	// Return the current target node as the base class
+	virtual ProcedureNode* procedureNode() const = 0;
 };
 
 // Keyword with ProcedureNode
@@ -140,8 +140,13 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
 
 		return true;
 	}
+	// Return the current target node as the base class
+	ProcedureNode* procedureNode() const
+	{
+		return KeywordData<N*>::data_;
+	}
 	// Return the current target node
-	ProcedureNode* node() const
+	N* node() const
 	{
 		return KeywordData<N*>::data_;
 	}
