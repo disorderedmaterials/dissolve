@@ -190,7 +190,7 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
 		N* castNode = dynamic_cast<N*>(node);
 		if (!castNode) return false;
 
-		// Check that the list actually contains the specifeidi node
+		// Check that the list actually contains the specifeid node
 		if (!KeywordData< RefList<N>& >::data_.contains(castNode)) return Messenger::error("Node '%s' is not in this keyword's (%s) list of nodes, so can't remove it.\n", castNode->name(), KeywordBase::name());
 
 		KeywordData< RefList<N>& >::data_.remove(castNode);
