@@ -21,7 +21,7 @@
 
 #include "modules/calculate_rdf/rdf.h"
 #include "keywords/types.h"
-#include "procedure/nodes/calculate.h"
+#include "procedure/nodes/calculatedistance.h"
 #include "procedure/nodes/collect1d.h"
 #include "procedure/nodes/process1d.h"
 #include "procedure/nodes/select.h"
@@ -76,7 +76,7 @@ void CalculateRDFModule::initialise()
 	forEachA->addNode(selectB_);
 
 	// -- -- Calculate: 'rAB'
-	CalculateProcedureNode* calcDistance = new CalculateProcedureNode(CalculateProcedureNode::DistanceObservable, selectA_, selectB_);
+	CalculateDistanceProcedureNode* calcDistance = new CalculateDistanceProcedureNode(selectA_, selectB_);
 	forEachB->addNode(calcDistance);
 
 	// -- -- Collect1D: 'RDF'

@@ -27,7 +27,7 @@
 #include "math/histogram2d.h"
 
 // Forward Declarations
-class CalculateProcedureNode;
+class CalculateProcedureNodeBase;
 class SequenceProcedureNode;
 class LineParser;
 class NodeScopeStack;
@@ -37,7 +37,7 @@ class Collect2DProcedureNode : public ProcedureNode
 {
 	public:
 	// Constructor
-	Collect2DProcedureNode(CalculateProcedureNode* xObservable = NULL, CalculateProcedureNode* yObservable = NULL, double xMin = 0.0, double xMax = 10.0, double xBinWidth = 0.05, double yMin = 0.0, double yMax = 10.0, double yBinWidth = 0.05);
+	Collect2DProcedureNode(CalculateProcedureNodeBase* xObservable = NULL, CalculateProcedureNodeBase* yObservable = NULL, double xMin = 0.0, double xMax = 10.0, double xBinWidth = 0.05, double yMin = 0.0, double yMax = 10.0, double yBinWidth = 0.05);
 	// Destructor
 	~Collect2DProcedureNode();
 
@@ -55,11 +55,11 @@ class Collect2DProcedureNode : public ProcedureNode
 	 */
 	private:
 	// Observable to bin along x (retrieved from keyword)
-	CalculateProcedureNode* xObservable_;
+	CalculateProcedureNodeBase* xObservable_;
 	// Index of x observable data to use (retrieved from keyword)
 	int xObservableIndex_;
 	// Observable to bin along y (retrieved from keyword)
-	CalculateProcedureNode* yObservable_;
+	CalculateProcedureNodeBase* yObservable_;
 	// Index of y observable data to use (retrieved from keyword)
 	int yObservableIndex_;
 	// Histogram in which to accumulate data

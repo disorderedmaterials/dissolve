@@ -44,7 +44,16 @@ class ProcedureNode : public ListItem<ProcedureNode>
 {
 	public:
 	// Node Types
-	enum NodeType { AddSpeciesNode, BoxNode, CalculateNode, Collect1DNode, Collect2DNode, Collect3DNode, DynamicSiteNode, ExcludeNode, Fit1DNode, ParametersNode, Process1DNode, Process2DNode, Process3DNode, SelectNode, SequenceNode, nNodeTypes };
+	enum NodeType {
+		AddSpeciesNode,
+		BoxNode,
+		CalculateAngleNode, CalculateDistanceNode, CalculateBaseNode, CalculateVectorNode, Collect1DNode, Collect2DNode, Collect3DNode,
+		DynamicSiteNode,
+		ExcludeNode,
+		Fit1DNode,
+		ParametersNode, Process1DNode, Process2DNode, Process3DNode,
+		SelectNode, SequenceNode,
+		nNodeTypes };
 	// Return enum option info for NodeType
 	static EnumOptions<NodeType> nodeTypes();
 	// Node Contexts
@@ -71,6 +80,8 @@ class ProcedureNode : public ListItem<ProcedureNode>
 	public:
 	// Return node type
 	NodeType type() const;
+	// Return whether the node is of the specified type (detecting derived node classes as well)
+	bool isType(NodeType thisType) const;
 	// Return whether specified context is relevant for this node type
 	virtual bool isContextRelevant(NodeContext context) = 0;
 	// Set node name (and nice name)

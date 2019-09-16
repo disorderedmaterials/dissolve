@@ -156,7 +156,7 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
 	{
 		if (!node) return false;
 
-		if (node->type() != nodeType()) return Messenger::error("Node '%s' is of type %s, but the %s keyword requires a node of type %s.\n", node->name(), ProcedureNode::nodeTypes().keyword(node->type()), KeywordBase::name(), ProcedureNode::nodeTypes().keyword(nodeType()));
+		if (!node->isType(nodeType())) return Messenger::error("Node '%s' is of type %s, but the %s keyword requires a node of type %s.\n", node->name(), ProcedureNode::nodeTypes().keyword(node->type()), KeywordBase::name(), ProcedureNode::nodeTypes().keyword(nodeType()));
 
 		KeywordData< Pair<N*,int> >::data_.setA(dynamic_cast<N*>(node));
 

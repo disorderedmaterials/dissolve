@@ -27,7 +27,7 @@
 #include "math/histogram1d.h"
 
 // Forward Declarations
-class CalculateProcedureNode;
+class CalculateProcedureNodeBase;
 class SequenceProcedureNode;
 class LineParser;
 class NodeScopeStack;
@@ -37,7 +37,7 @@ class Collect1DProcedureNode : public ProcedureNode
 {
 	public:
 	// Constructor
-	Collect1DProcedureNode(CalculateProcedureNode* observable = NULL, double rMin = 0.0, double rMax = 10.0, double binWidth = 0.05);
+	Collect1DProcedureNode(CalculateProcedureNodeBase* observable = NULL, double rMin = 0.0, double rMax = 10.0, double binWidth = 0.05);
 	// Destructor
 	~Collect1DProcedureNode();
 
@@ -55,7 +55,7 @@ class Collect1DProcedureNode : public ProcedureNode
 	 */
 	private:
 	// Observable to bin along x (retrieved from keyword)
-	CalculateProcedureNode* xObservable_;
+	CalculateProcedureNodeBase* xObservable_;
 	// Index of x observable data to use (retrieved from keyword)
 	int xObservableIndex_;
 	// Histogram in which to accumulate data

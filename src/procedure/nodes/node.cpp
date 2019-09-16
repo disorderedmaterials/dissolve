@@ -31,21 +31,24 @@
 EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
 {
 	static EnumOptionsList NodeTypeKeywords = EnumOptionsList() <<
-		EnumOption(ProcedureNode::AddSpeciesNode,	"AddSpecies") <<
-		EnumOption(ProcedureNode::BoxNode,		"Box") <<
-		EnumOption(ProcedureNode::CalculateNode,	"Calculate") <<
-		EnumOption(ProcedureNode::Collect1DNode,	"Collect1D") <<
-		EnumOption(ProcedureNode::Collect2DNode,	"Collect2D") <<
-		EnumOption(ProcedureNode::Collect3DNode,	"Collect3D") <<
-		EnumOption(ProcedureNode::DynamicSiteNode,	"DynamicSite") <<
-		EnumOption(ProcedureNode::ExcludeNode,		"Exclude") <<
-		EnumOption(ProcedureNode::Fit1DNode,		"Fit1D") <<
-		EnumOption(ProcedureNode::ParametersNode,	"Parameters") <<
-		EnumOption(ProcedureNode::Process1DNode,	"Process1D") <<
-		EnumOption(ProcedureNode::Process2DNode,	"Process2D") <<
-		EnumOption(ProcedureNode::Process3DNode,	"Process3D") <<
-		EnumOption(ProcedureNode::SelectNode,		"Select") <<
-		EnumOption(ProcedureNode::SequenceNode,		"Sequence");
+		EnumOption(ProcedureNode::AddSpeciesNode,		"AddSpecies") <<
+		EnumOption(ProcedureNode::BoxNode,			"Box") <<
+		EnumOption(ProcedureNode::CalculateAngleNode,		"CalculateAngle") <<
+		EnumOption(ProcedureNode::CalculateDistanceNode,	"CalculateDistance") <<
+		EnumOption(ProcedureNode::CalculateBaseNode,		"Calculate(Any)") <<
+		EnumOption(ProcedureNode::CalculateVectorNode,		"CalculateVector") <<
+		EnumOption(ProcedureNode::Collect1DNode,		"Collect1D") <<
+		EnumOption(ProcedureNode::Collect2DNode,		"Collect2D") <<
+		EnumOption(ProcedureNode::Collect3DNode,		"Collect3D") <<
+		EnumOption(ProcedureNode::DynamicSiteNode,		"DynamicSite") <<
+		EnumOption(ProcedureNode::ExcludeNode,			"Exclude") <<
+		EnumOption(ProcedureNode::Fit1DNode,			"Fit1D") <<
+		EnumOption(ProcedureNode::ParametersNode,		"Parameters") <<
+		EnumOption(ProcedureNode::Process1DNode,		"Process1D") <<
+		EnumOption(ProcedureNode::Process2DNode,		"Process2D") <<
+		EnumOption(ProcedureNode::Process3DNode,		"Process3D") <<
+		EnumOption(ProcedureNode::SelectNode,			"Select") <<
+		EnumOption(ProcedureNode::SequenceNode,			"Sequence");
 
 	static EnumOptions<ProcedureNode::NodeType> options("NodeType", NodeTypeKeywords, ProcedureNode::nNodeTypes);
 
@@ -89,6 +92,22 @@ ProcedureNode::~ProcedureNode()
 ProcedureNode::NodeType ProcedureNode::type() const
 {
 	return type_;
+}
+
+// Return whether the node is of the specified type (detecting derived node classes as well)
+bool ProcedureNode::isType(ProcedureNode::NodeType thisType) const
+{
+	// Handle nodes derived from CalculateBaseNode
+	if (thisType == ProcedureNode::CalculateBaseNode)
+	{
+		if (type_ == ProcedureNode::CalculateAngleNode) return true;
+		else if (type_ == ProcedureNode::CalculateDistanceNode) return true;
+		else if (type_ == ProcedureNode::CalculateVectorNode) return true;
+
+		return false;
+	}
+
+	return (thisType == type_);
 }
 
 // Set node name (and nice name)

@@ -426,8 +426,18 @@ bool SequenceProcedureNode::read(LineParser& parser, const CoreData& coreData)
 			case (ProcedureNode::BoxNode):
 				newNode = new BoxProcedureNode();
 				break;
-			case (ProcedureNode::CalculateNode):
-				newNode = new CalculateProcedureNode();
+			case (ProcedureNode::CalculateAngleNode):
+				newNode = new CalculateAngleProcedureNode();
+				break;
+			case (ProcedureNode::CalculateDistanceNode):
+				newNode = new CalculateDistanceProcedureNode();
+				break;
+			case (ProcedureNode::CalculateBaseNode):
+				/* This should never be called */
+				return Messenger::error("Can't create a node of this type directly - create the parent node instead.\n");
+				break;
+			case (ProcedureNode::CalculateVectorNode):
+				newNode = new CalculateVectorProcedureNode();
 				break;
 			case (ProcedureNode::Collect1DNode):
 				newNode = new Collect1DProcedureNode();

@@ -145,13 +145,16 @@ Module  Analyse  'DAngle(X-H...O)-Analyser'
 
               ForEach
 
-                Calculate  'rHO'
-                  Distance  'H'  'O'
-                EndCalculate
+                CalculateDistance  'rHO'
+                  I  'H'
+                  J  'O'
+                EndCalculateDistance
 
-                Calculate  'aXHO'
-                  Angle  'X'  'H'  'O'
-                EndCalculate
+                CalculateAngle  'aXHO'
+                  I  'X'
+                  J  'H'
+                  K  'O'
+                EndCalculateAngle
 
                 Collect2D  'DAngle(X-HO)'
                   QuantityX  'rHO'

@@ -21,7 +21,8 @@
 
 #include "modules/calculate_dangle/dangle.h"
 #include "keywords/types.h"
-#include "procedure/nodes/calculate.h"
+#include "procedure/nodes/calculateangle.h"
+#include "procedure/nodes/calculatedistance.h"
 #include "procedure/nodes/collect1d.h"
 #include "procedure/nodes/collect2d.h"
 #include "procedure/nodes/process1d.h"
@@ -104,11 +105,11 @@ void CalculateDAngleModule::initialise()
 	forEachB->addNode(selectC_);
 
 	// -- -- -- Calculate: 'rBC'
-	CalculateProcedureNode* calcDistance = new CalculateProcedureNode(CalculateProcedureNode::DistanceObservable, selectB_, selectC_);
+	CalculateDistanceProcedureNode* calcDistance = new CalculateDistanceProcedureNode(selectB_, selectC_);
 	forEachC->addNode(calcDistance);
 
 	// -- -- -- Calculate: 'aABC'
-	CalculateProcedureNode* calcAngle = new CalculateProcedureNode(CalculateProcedureNode::AngleObservable, selectA_, selectB_, selectC_);
+	CalculateAngleProcedureNode* calcAngle = new CalculateAngleProcedureNode(selectA_, selectB_, selectC_);
 	forEachC->addNode(calcAngle);
 
 	// -- -- -- Collect2D:  'Distance-Angle(B...C vs A-B...C)'
