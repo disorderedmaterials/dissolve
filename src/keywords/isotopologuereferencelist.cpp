@@ -83,7 +83,7 @@ bool IsotopologueReferenceListKeyword::read(LineParser& parser, int startArg, co
 	// Add the data to the list
 	IsotopologueReference* isoRef = data_.add();
 	isoRef->set(cfg, sp, iso, parser.argd(startArg+3));
-	
+
 	set_ = true;
 
 	return true;
