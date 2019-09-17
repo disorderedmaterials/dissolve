@@ -27,6 +27,7 @@
 #include "templates/list.h"
 #include "templates/reflist.h"
 
+
 // Forward Declarations
 /* none */
 
@@ -35,11 +36,19 @@ class GeometryListKeyword : public KeywordData< List<Geometry>& >
 {
 	public:
 	// Constructor
-	GeometryListKeyword(List<Geometry>&);
+	GeometryListKeyword(List<Geometry>&, Geometry::GeometryType t);
 	
 	// Destructor
 	~GeometryListKeyword();
 	
+	/*
+	 * Data
+	 */
+	private:
+	// enum variable
+	Geometry::GeometryType type_;
+	// number of arguments read from parser
+	int totalArgs_;
 	
 	/*
 	 * Arguments

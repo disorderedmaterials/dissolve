@@ -20,56 +20,90 @@
 */
 
 #include "keywords/geometrylist.h"
-#include "classes/configuration.h"
 #include "classes/coredata.h"
-#include "classes/species.h"
 #include "base/lineparser.h"
 
-// Constructor
-GeometryListKeyword:: GeometryListKeyword::GeometryListKeyword(List<Geometry>& data): KeywordData<List<Geometry>& >(KeywordBase::GeometryListData, data),
+// Constructorist<Geometry>& data
+GeometryListKeyword:: GeometryListKeyword::GeometryListKeyword(List<Geometry>& data, Geometry::GeometryType type) : KeywordData<List<Geometry>& >(KeywordBase::GeometryListData, data),
+type_(type)
 {
 }
  
-
 // Destructor
 GeometryListKeyword::~GeometryListKeyword()
 {
 }
 
-
-
-/*
- * Arguments
- */
-
 // Return minimum number of arguments accepted
 int GeometryListKeyword::minArguments() const
-{
-	return 2;
+{	
+	if (type_ == Geometry::GeometryType::Distance)
+		return 3;
+	
+	else if (type_ == Geometry::GeometryType::Angle)
+		return 4;
+	
+	else
+		return 5;
 }
 
 // Return maximum number of arguments accepted
 int GeometryListKeyword::maxArguments() const
 {
-	return 3;
+	if (type_ == Geometry::GeometryType::Distance)
+		return 3;
+	
+	else if (type_ == Geometry::GeometryType::Angle)
+		return 4;
+	
+	else
+		return 5;
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
 bool GeometryListKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
-	
+	totalArgs_ = parser.nArgs();
+	if (totalArgs_+1 != maxArguments())
+	{
+		Messenger::error("Error finding '%s' geometry data type", parser.argc(startArg));
+		return false;
+	}
+	if (parser.argd(maxArguments()-1) <=0)
+	{
+		Messenger::error("Values '%d' not correct for keyword",parser.argd(maxArguments()-1));
+		return false;
+	}
+	return true;
 }
 
 // Write keyword data to specified LineParser
 bool GeometryListKeyword::write(LineParser& parser, const char* prefix)
-{
-	// Loop over list of IsotopologueReferences
-	ListIterator<IsotopologueReference> refIterator(data_);
-	while (IsotopologueReference* ref = refIterator.iterate())
-	{
-		if (!parser.writeLineF("%s%s  '%s'  '%s'  '%s'  %f\n", prefix, name(), ref->configuration()->name(), ref->species()->name(), ref->isotopologue()->name(), ref->weight())) return false;
-	}
 
+{
+	/*
+	//print enum type;
+	parser.writeLineF("'%s'",type_);
+	
+	
+	ListIterator<Geometry> GeoIterator(data_);
+	while (Geometry* ref = GeoIterator.iterate())
+	{
+		
+		parser.writeLineF("'%i'", 
+		
+	}
+	*/
+	
+	if (type_ == Geometry::GeometryType::Distance)
+		parser.writeLineF("%sDistance  %i  %i  %d", prefix, parser.argi(1), parser.argi(2), parser.argd(3));
+	
+	else if (type_ == Geometry::GeometryType::Angle)
+		parser.writeLineF("%sAngle  %i  %i  %i  %d", prefix, parser.argi(1), parser.argi(2), parser.argi(3), parser.argd(4));  
+	
+	else
+		parser.writeLineF("%sTorsion  %i  %i  %i  %i  %d", prefix, parser.argi(1), parser.argi(2), parser.argi(3), parser.argi(4), parser.argd(5)); 
+		
 	return true;
 }
 

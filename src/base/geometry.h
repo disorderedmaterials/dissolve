@@ -24,14 +24,25 @@
 
 
 #include "templates/listitem.h"
-
+#include <map>
 
 // Forward Declarations
 /* none */
 
+
+
 // Geometry Definition
 class Geometry : public ListItem<Geometry>
 {
+	// enum for type of geometry data passed
+	public:
+	enum GeometryType { 
+		Angle,
+		Distance,
+		Torsion 
+	};
+	
+	
 	public:
 	// Constructor
 	Geometry();
@@ -43,30 +54,19 @@ class Geometry : public ListItem<Geometry>
 	 * Data
 	 */
 	private:
-	// Index 1
-	int a_;
-	// Index 2
-	int b_;
-	// Index 3
-	int c_;
-	// Index 4
-	int d_;
 	// Reference value
 	double value_;
+	//array for indices
+	int indices_[4];
 	
 	public:
 	// Set reference value and indices
 	void set(double value, int a, int b, int c = -1, int d = -1);
-	// Return index 1
-	int a();
-	// Return index 2
-	int b();
-	// Return index 3
-	int c();
-	// Return index 4
-	int d();
 	// Return reference value
 	double value();
+	// Return specified index
+	int indices(int i) const;
+	
 
 
 	/*
