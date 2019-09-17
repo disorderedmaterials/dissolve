@@ -84,10 +84,13 @@ class Module : public ListItem<Module>
 	// Keywords recognised by Module
 	KeywordList keywords_;
 
-	protected:
-	// Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-	virtual KeywordBase::ParseResult parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix) = 0;
-
+	
+	//paarsecomplexkeyword
+	
+	
+	
+	
+	
 	public:
 	// Return list of recognised keywords
 	KeywordList& keywords();

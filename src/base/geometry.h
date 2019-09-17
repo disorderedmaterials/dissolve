@@ -57,7 +57,7 @@ class Geometry : public ListItem<Geometry>
 	// Reference value
 	double value_;
 	//array for indices
-	int indices_[4];
+	int indices_[4] = {-1};
 	
 	public:
 	// Set reference value and indices
@@ -67,14 +67,6 @@ class Geometry : public ListItem<Geometry>
 	// Return specified index
 	int indices(int i) const;
 	
-
-
-	/*
-	 * Parallel Comms
-	 */
-	public:
-	// Broadcast data from Master to all Slaves
-	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
 };
 
 #endif

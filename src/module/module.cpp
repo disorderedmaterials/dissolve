@@ -77,12 +77,6 @@ KeywordBase::ParseResult Module::parseKeyword(LineParser& parser, Dissolve* diss
 	KeywordBase* keyword = keywords_.find(parser.argc(0));
 	if (!keyword) return KeywordBase::Unrecognised;
 
-	// We recognised the keyword - what should we try to do with it?
-	if (keyword->type() == KeywordBase::ComplexData)
-	{
-		// It's a 'complex' keyword, one that either sets up a complicated object, or does something specific within the Module
-		return parseComplexKeyword(keyword, parser, dissolve, targetList, prefix);
-	}
 	else
 	{
 		// Check the number of arguments we have against the min / max for the keyword

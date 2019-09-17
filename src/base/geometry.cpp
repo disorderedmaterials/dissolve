@@ -27,10 +27,6 @@
 // Constructor
 Geometry::Geometry()
 {
-	a_ = -1;
-	b_ = -1;
-	c_ = -1;
-	d_ = -1;
 	value_ = 0.0;
 }
 
@@ -65,13 +61,4 @@ int Geometry::indices(int i) const
 	return indices_[i];
 }
 
-/*
- * Parallel Comms
- */
-
-// Broadcast data from Master to all Slaves
-bool Geometry::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
-{
-	return false;
-}
 

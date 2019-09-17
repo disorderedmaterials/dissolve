@@ -64,7 +64,7 @@ int GeometryListKeyword::maxArguments() const
 bool GeometryListKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	totalArgs_ = parser.nArgs();
-	if (totalArgs_+1 != maxArguments())
+	if (totalArgs_-1 != maxArguments())
 	{
 		Messenger::error("Error finding '%s' geometry data type", parser.argc(startArg));
 		return false;
