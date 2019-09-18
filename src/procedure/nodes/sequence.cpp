@@ -519,8 +519,7 @@ bool SequenceProcedureNode::write(LineParser& parser, const char* prefix)
 	ListIterator<ProcedureNode> nodeIterator(sequence_);
 	while (ProcedureNode* node = nodeIterator.iterate()) if (!node->write(parser, prefix)) return false;
 
-	// Block End
-	if (!parser.writeLineF("%s%s\n", prefix, blockTerminationKeyword_.get())) return false;
+	// Block End - will be written by the calling function, since we don't know the keyword we are linked to
 
 	return true;
 }
