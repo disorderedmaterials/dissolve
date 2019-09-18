@@ -61,7 +61,7 @@ bool ProcedureKeyword::read(LineParser& parser, int startArg, const CoreData& co
 }
 
 // Write keyword data to specified LineParser
-bool ProcedureKeyword::write(LineParser& parser, const char* prefix)
+bool ProcedureKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
 	// Write the keyword name as the start of the data
 	if (!parser.writeLineF("%s%s\n", prefix, name())) return false;

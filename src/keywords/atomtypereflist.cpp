@@ -73,7 +73,7 @@ bool AtomTypeRefListKeyword::read(LineParser& parser, int startArg, const CoreDa
 }
 
 // Write keyword data to specified LineParser
-bool AtomTypeRefListKeyword::write(LineParser& parser, const char* prefix)
+bool AtomTypeRefListKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
 	// Don't write anything if there are no items in the list
 	if (data_.nItems() == 0) return true;
@@ -83,7 +83,7 @@ bool AtomTypeRefListKeyword::write(LineParser& parser, const char* prefix)
 	RefListIterator<AtomType> typeIterator(data_);
 	while (AtomType* at = typeIterator.iterate()) atomTypes.strcatf("  %s", at->name());
 
-	if (!parser.writeLineF("%s%s%s\n", prefix, name(), atomTypes.get())) return false;
+	if (!parser.writeLineF("%s%s%s\n", prefix, keywordName, atomTypes.get())) return false;
 
 	return true;
 }

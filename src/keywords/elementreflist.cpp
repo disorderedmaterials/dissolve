@@ -72,7 +72,7 @@ bool ElementRefListKeyword::read(LineParser& parser, int startArg, const CoreDat
 }
 
 // Write keyword data to specified LineParser
-bool ElementRefListKeyword::write(LineParser& parser, const char* prefix)
+bool ElementRefListKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
 	// Don't write anything if there are no items in the list
 	if (data_.nItems() == 0) return true;
@@ -82,7 +82,7 @@ bool ElementRefListKeyword::write(LineParser& parser, const char* prefix)
 	RefListIterator<Element> elementIterator(data_);
 	while (Element* el = elementIterator.iterate()) elements.strcatf("  %s", el->symbol());
 
-	if (!parser.writeLineF("%s%s%s\n", prefix, name(), elements.get())) return false;
+	if (!parser.writeLineF("%s%s%s\n", prefix, keywordName, elements.get())) return false;
 
 	return true;
 }

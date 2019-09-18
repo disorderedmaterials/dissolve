@@ -67,7 +67,7 @@ bool LinkToKeyword::read(LineParser& parser, int startArg, const CoreData& coreD
 }
 
 // Write keyword data to specified LineParser
-bool LinkToKeyword::write(LineParser& parser, const char* prefix)
+bool LinkToKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
 	Messenger::warn("Don't call LinkToKeyword::write() - go through base().\n");
 	return data_->write(parser, prefix);

@@ -90,7 +90,7 @@ bool DynamicSiteNodesKeyword::read(LineParser& parser, int startArg, const CoreD
 }
 
 // Write keyword data to specified LineParser
-bool DynamicSiteNodesKeyword::write(LineParser& parser, const char* prefix)
+bool DynamicSiteNodesKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
 	// Loop over list of dynamic sites in the RefList
 	RefListIterator<DynamicSiteProcedureNode> dynamicSiteIterator(data_);

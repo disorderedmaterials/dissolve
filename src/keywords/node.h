@@ -112,7 +112,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
 		return setNode(node);
 	}
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* prefix)
+	bool write(LineParser& parser, const char* keywordName, const char* prefix)
 	{
 		// No need to write the keyword if the node pointer is null
 		if (KeywordData<N*>::data_ == NULL) return true;

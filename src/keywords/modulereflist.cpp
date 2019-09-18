@@ -110,13 +110,13 @@ bool ModuleRefListKeyword::read(LineParser& parser, int startArg, const CoreData
 }
 
 // Write keyword data to specified LineParser
-bool ModuleRefListKeyword::write(LineParser& parser, const char* prefix)
+bool ModuleRefListKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
 	// Loop over list of referenced Modules
 	RefListIterator<Module> refIterator(data_);
 	while (Module* module = refIterator.iterate())
 	{
-		if (!parser.writeLineF("%s%s  '%s'\n", prefix, name(), module->uniqueName())) return false;
+		if (!parser.writeLineF("%s%s  '%s'\n", prefix, keywordName, module->uniqueName())) return false;
 	}
 
 	return true;

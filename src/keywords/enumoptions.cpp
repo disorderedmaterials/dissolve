@@ -70,7 +70,7 @@ bool EnumOptionsKeyword::read(LineParser& parser, int startArg, const CoreData& 
 }
 
 // Write keyword data to specified LineParser
-bool EnumOptionsKeyword::write(LineParser& parser, const char* prefix)
+bool EnumOptionsKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
 	return parser.writeLineF("%s%s  '%s'\n", prefix, keyword(), data_.currentOptionKeyword());
 }

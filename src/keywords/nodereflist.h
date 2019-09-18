@@ -122,7 +122,7 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
 		return true;
 	}
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* prefix)
+	bool write(LineParser& parser, const char* keywordName, const char* prefix)
 	{
 		if (KeywordData< RefList<N>& >::data_.nItems() == 0) return true;
 

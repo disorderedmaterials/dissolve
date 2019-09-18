@@ -57,7 +57,7 @@ class SpeciesRefListKeyword : public KeywordData< RefList<Species>& >
 	// Parse arguments from supplied LineParser, starting at given argument offset
 	bool read(LineParser& parser, int startArg, const CoreData& coreData);
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* prefix);
+	bool write(LineParser& parser, const char* keywordName, const char* prefix);
 
 
 	/*

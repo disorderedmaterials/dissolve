@@ -253,8 +253,8 @@ bool KeywordList::write(LineParser& parser, const char* prefix, bool onlyIfSet)
 		// If the keyword has never been set (i.e. it still has its default value) don't bother to write it
 		if (onlyIfSet && (!keyword->base()->isSet())) continue;
 
-		// Make sure we are calling the write() function of the base() keyword class...
-		if (!keyword->base()->write(parser, prefix)) return false;
+		// Make sure we are calling the write() function of the base() keyword class, but with the parent object's name()...
+		if (!keyword->base()->write(parser, keyword->name(), prefix)) return false;
 	}
 
 	return true;
@@ -286,7 +286,7 @@ bool KeywordList::writeGroups(LineParser& parser, const char* prefix, bool onlyI
 			}
 
 			// Make sure we are calling the write() function of the base() keyword class...
-			if (!keyword->base()->write(parser, prefix)) return false;
+			if (!keyword->base()->write(parser, keyword->name(), prefix)) return false;
 
 			// Falsify flags
 			firstWritten = false;

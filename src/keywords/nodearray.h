@@ -145,7 +145,7 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
 		return true;
 	}
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* prefix)
+	bool write(LineParser& parser, const char* keywordName, const char* prefix)
 	{
 		if (KeywordData< Array<N*>& >::data_.nItems() == 0) return true;
 

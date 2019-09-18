@@ -78,14 +78,14 @@ bool SpeciesRefListKeyword::read(LineParser& parser, int startArg, const CoreDat
 }
 
 // Write keyword data to specified LineParser
-bool SpeciesRefListKeyword::write(LineParser& parser, const char* prefix)
+bool SpeciesRefListKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
 	// Loop over list of Species
 	CharString speciesString;
 	RefListIterator<Species> speciesIterator(data_);
 	while (Species* sp = speciesIterator.iterate()) speciesString.strcatf("  %s", sp->name());
 
-	if (!parser.writeLineF("%s%s  %s\n", prefix, name(), speciesString.get())) return false;
+	if (!parser.writeLineF("%s%s  %s\n", prefix, keywordName, speciesString.get())) return false;
 
 	return true;
 }

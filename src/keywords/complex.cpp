@@ -66,7 +66,7 @@ bool ComplexKeyword::read(LineParser& parser, int startArg, const CoreData& core
 }
 
 // Write keyword data to specified LineParser
-bool ComplexKeyword::write(LineParser& parser, const char* prefix)
+bool ComplexKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
 	Messenger::print("Tried to write a ComplexKeyword - remove this horrible class!\n");
 	return true;
