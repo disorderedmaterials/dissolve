@@ -24,18 +24,18 @@
 #include "base/lineparser.h"
 
 // Constructorist<Geometry>& data
-GeometryListKeyword:: GeometryListKeyword::GeometryListKeyword(List<Geometry>& data, Geometry::GeometryType type) : KeywordData<List<Geometry>& >(KeywordBase::GeometryListData, data),
+GeometryKeyword:: GeometryKeyword::GeometryKeyword(List<Geometry>& data, Geometry::GeometryType type) : KeywordData<List<Geometry>& >(KeywordBase::GeometryListData, data),
 type_(type)
 {
 }
  
 // Destructor
-GeometryListKeyword::~GeometryListKeyword()
+GeometryKeyword::~GeometryKeyword()
 {
 }
 
 // Return minimum number of arguments accepted
-int GeometryListKeyword::minArguments() const
+int GeometryKeyword::minArguments() const
 {	
 	if (type_ == Geometry::GeometryType::Distance)
 		return 3;
@@ -48,7 +48,7 @@ int GeometryListKeyword::minArguments() const
 }
 
 // Return maximum number of arguments accepted
-int GeometryListKeyword::maxArguments() const
+int GeometryKeyword::maxArguments() const
 {
 	if (type_ == Geometry::GeometryType::Distance)
 		return 3;
@@ -61,40 +61,48 @@ int GeometryListKeyword::maxArguments() const
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool GeometryListKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
+bool GeometryKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	totalArgs_ = parser.nArgs();
+	Geometry g;
 	if (totalArgs_-1 != maxArguments())
 	{
 		Messenger::error("Error finding '%s' geometry data type", parser.argc(startArg));
 		return false;
 	}
-	if (parser.argd(maxArguments()-1) <=0)
+	if (parser.argd(maxArguments()) <=0)
 	{
-		Messenger::error("Values '%d' not correct for keyword",parser.argd(maxArguments()-1));
+		Messenger::error("Values '%d' not correct for keyword",parser.argd(maxArguments()));
 		return false;
 	}
+	
+	
+	if (maxArguments() == 3)
+		g.set(parser.argd(maxArguments()), parser.argi(1), parser.argi(2) );
+	
+	else if (maxArguments() == 4)
+		g.set(parser.argd(maxArguments()), parser.argi(1), parser.argi(2), parser.argi(3));
+	else
+		g.set(parser.argd(maxArguments()), parser.argi(1), parser.argi(2), parser.argi(3), parser.argi(4));
+	
 	return true;
 }
 
 // Write keyword data to specified LineParser
-bool GeometryListKeyword::write(LineParser& parser, const char* prefix)
+bool GeometryKeyword::write(LineParser& parser, const char* prefix)
 
 {
-	/*
-	//print enum type;
-	parser.writeLineF("'%s'",type_);
-	
-	
+	Geometry* g;
+	CharString index;
+	for (int n=0; n<maxArguments()-1; ++n) index.strcatf("  %i", g->indices(n));
 	ListIterator<Geometry> GeoIterator(data_);
 	while (Geometry* ref = GeoIterator.iterate())
 	{
-		
-		parser.writeLineF("'%i'", 
-		
+		if (!parser.writeLineF("%s%s%s  %d\n", prefix, name(), index.get(), g->value())) 
+		return false;
 	}
-	*/
-	
+
+	/*
 	if (type_ == Geometry::GeometryType::Distance)
 		parser.writeLineF("%sDistance  %i  %i  %d", prefix, parser.argi(1), parser.argi(2), parser.argd(3));
 	
@@ -103,7 +111,7 @@ bool GeometryListKeyword::write(LineParser& parser, const char* prefix)
 	
 	else
 		parser.writeLineF("%sTorsion  %i  %i  %i  %i  %d", prefix, parser.argi(1), parser.argi(2), parser.argi(3), parser.argi(4), parser.argd(5)); 
-		
+	*/
 	return true;
 }
 

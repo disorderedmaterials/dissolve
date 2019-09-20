@@ -85,12 +85,6 @@ class Module : public ListItem<Module>
 	KeywordList keywords_;
 
 	
-	//paarsecomplexkeyword
-	
-	
-	
-	
-	
 	public:
 	// Return list of recognised keywords
 	KeywordList& keywords();

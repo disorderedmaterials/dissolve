@@ -30,8 +30,3 @@ void ImportModule::initialise()
 	keywords_.add("Trajectory", new FileAndFormatKeyword(trajectoryFile_), "TrajectoryFile", "Source trajectory file for frames (if ReadTrajectory == True)");
 }
 
-// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-KeywordBase::ParseResult ImportModule::parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
-{
-	return KeywordBase::Unrecognised;
-}

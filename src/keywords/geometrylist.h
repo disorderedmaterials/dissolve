@@ -25,21 +25,21 @@
 #include "keywords/data.h"
 #include "base/geometry.h"
 #include "templates/list.h"
-#include "templates/reflist.h"
+
 
 
 // Forward Declarations
 /* none */
 
 // Keyword with Geometry Data
-class GeometryListKeyword : public KeywordData< List<Geometry>& >
+class GeometryKeyword : public KeywordData< List<Geometry>& >
 {
 	public:
 	// Constructor
-	GeometryListKeyword(List<Geometry>&, Geometry::GeometryType t);
+	GeometryKeyword(List<Geometry>&, Geometry::GeometryType t);
 	
 	// Destructor
-	~GeometryListKeyword();
+	~GeometryKeyword();
 	
 	/*
 	 * Data
