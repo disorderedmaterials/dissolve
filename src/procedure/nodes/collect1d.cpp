@@ -107,6 +107,7 @@ bool Collect1DProcedureNode::hasBranch() const
 {
 	return (subCollectBranch_ != NULL);
 }
+
 // Return SequenceNode for the branch (if it exists)
 SequenceProcedureNode* Collect1DProcedureNode::branch()
 {
