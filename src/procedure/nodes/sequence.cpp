@@ -119,7 +119,7 @@ ProcedureNode* SequenceProcedureNode::searchNodes(const char* name, ProcedureNod
 		// If the node has a branch, descend into it
 		if (node->hasBranch())
 		{
-			ProcedureNode* result = node->branch()->nodeExists(name, excludeNode, nt);
+			ProcedureNode* result = node->branch()->searchNodes(name, excludeNode, nt);
 			if (result) return result;
 		}
 	}
@@ -140,7 +140,7 @@ ExpressionVariable* SequenceProcedureNode::searchParameters(const char* name, Ex
 		// If the node has a branch, descend into it
 		if (node->hasBranch())
 		{
-			result = node->branch()->parameterExists(name, excludeParameter);
+			result = node->branch()->searchParameters(name, excludeParameter);
 			if (result) return result;
 		}
 	}
