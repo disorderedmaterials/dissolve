@@ -14,6 +14,7 @@ SET(keywordwidgets_MOC_HDRS
   modulereflist.h
   node.h
   nodeandinteger.h
+  nodereflist.h
   nodevalue.h
   nodevalueenumoptions.h
   pairbroadeningfunction.h
@@ -47,6 +48,7 @@ SET(keywordwidgets_UIS
   modulereflist.ui
   node.ui
   nodeandinteger.ui
+  nodereflist.ui
   nodevalue.ui
   nodevalueenumoptions.ui
   pairbroadeningfunction.ui
@@ -79,6 +81,7 @@ SET(keywordwidgets_SRCS
   modulereflist_funcs.cpp
   node_funcs.cpp
   nodeandinteger_funcs.cpp
+  nodereflist_funcs.cpp
   nodevalue_funcs.cpp
   nodevalueenumoptions_funcs.cpp
   pairbroadeningfunction_funcs.cpp

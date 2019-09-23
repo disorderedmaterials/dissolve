@@ -78,40 +78,31 @@ bool GeometryKeyword::read(LineParser& parser, int startArg, const CoreData& cor
 	
 	
 	if (maxArguments() == 3)
-		g.set(parser.argd(maxArguments()), parser.argi(1), parser.argi(2) );
+		g.set(parser.argd(2+startArg), parser.argi(0+startArg), parser.argi(1+startArg) );
 	
 	else if (maxArguments() == 4)
-		g.set(parser.argd(maxArguments()), parser.argi(1), parser.argi(2), parser.argi(3));
+		g.set(parser.argd(3+startArg), parser.argi(startArg), parser.argi(1+startArg), parser.argi(2+startArg));
 	else
-		g.set(parser.argd(maxArguments()), parser.argi(1), parser.argi(2), parser.argi(3), parser.argi(4));
+		g.set(parser.argd(4+startArg), parser.argi(startArg), parser.argi(1+startArg), parser.argi(2+startArg), parser.argi(3+startArg));
 	
 	return true;
 }
 
 // Write keyword data to specified LineParser
-bool GeometryKeyword::write(LineParser& parser, const char* prefix)
 
+bool GeometryKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
-	Geometry* g;
+	Geometry* g = data_.add();
 	CharString index;
 	for (int n=0; n<maxArguments()-1; ++n) index.strcatf("  %i", g->indices(n));
 	ListIterator<Geometry> GeoIterator(data_);
 	while (Geometry* ref = GeoIterator.iterate())
 	{
-		if (!parser.writeLineF("%s%s%s  %d\n", prefix, name(), index.get(), g->value())) 
+
+		if (!parser.writeLineF("%s%s%s  %d\n", prefix, keywordName, index.get(), g->value())) 
 		return false;
 	}
 
-	/*
-	if (type_ == Geometry::GeometryType::Distance)
-		parser.writeLineF("%sDistance  %i  %i  %d", prefix, parser.argi(1), parser.argi(2), parser.argd(3));
-	
-	else if (type_ == Geometry::GeometryType::Angle)
-		parser.writeLineF("%sAngle  %i  %i  %i  %d", prefix, parser.argi(1), parser.argi(2), parser.argi(3), parser.argd(4));  
-	
-	else
-		parser.writeLineF("%sTorsion  %i  %i  %i  %i  %d", prefix, parser.argi(1), parser.argi(2), parser.argi(3), parser.argi(4), parser.argd(5)); 
-	*/
 	return true;
 }
 

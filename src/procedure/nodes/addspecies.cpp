@@ -54,6 +54,12 @@ bool AddSpeciesProcedureNode::isContextRelevant(ProcedureNode::NodeContext conte
 	return (context == ProcedureNode::GenerationContext);
 }
 
+// Return whether a name for the node is required
+bool AddSpeciesProcedureNode::nameRequired() const
+{
+	return false;
+}
+
 /*
  * Node Data
  */

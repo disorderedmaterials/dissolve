@@ -76,7 +76,7 @@ bool NodeBranchKeyword::read(LineParser& parser, int startArg, const CoreData& c
 }
 
 // Write keyword data to specified LineParser
-bool NodeBranchKeyword::write(LineParser& parser, const char* prefix)
+bool NodeBranchKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
 	if (!(*data_) || ((*data_)->nNodes() == 0)) return true;
 

@@ -20,7 +20,7 @@
 */
 
 #include "procedure/nodes/collect2d.h"
-#include "procedure/nodes/calculate.h"
+#include "procedure/nodes/calculatebase.h"
 #include "procedure/nodes/sequence.h"
 #include "keywords/types.h"
 #include "math/data2d.h"
@@ -30,10 +30,10 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-Collect2DProcedureNode::Collect2DProcedureNode(CalculateProcedureNode* xObservable, CalculateProcedureNode* yObservable, double xMin, double xMax, double xBinWidth, double yMin, double yMax, double yBinWidth) : ProcedureNode(ProcedureNode::Collect2DNode)
+Collect2DProcedureNode::Collect2DProcedureNode(CalculateProcedureNodeBase* xObservable, CalculateProcedureNodeBase* yObservable, double xMin, double xMax, double xBinWidth, double yMin, double yMax, double yBinWidth) : ProcedureNode(ProcedureNode::Collect2DNode)
 {
-	keywords_.add("Target", new NodeAndIntegerKeyword<CalculateProcedureNode>(this, ProcedureNode::ProcedureNode::CalculateNode, true, xObservable, 0), "QuantityX", "Calculated observable to collect for x axis");
-	keywords_.add("Target", new NodeAndIntegerKeyword<CalculateProcedureNode>(this, ProcedureNode::ProcedureNode::CalculateNode, true, yObservable, 0), "QuantityY", "Calculated observable to collect for y axis");
+	keywords_.add("Target", new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, xObservable, 0), "QuantityX", "Calculated observable to collect for x axis");
+	keywords_.add("Target", new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, yObservable, 0), "QuantityY", "Calculated observable to collect for y axis");
 	keywords_.add("Target", new Vec3DoubleKeyword(Vec3<double>(xMin, xMax, xBinWidth), Vec3<double>(0.0, 0.0, 1.0e-5)), "RangeX", "Range of calculation for the specified x observable");
 	keywords_.add("Target", new Vec3DoubleKeyword(Vec3<double>(yMin, yMax, yBinWidth), Vec3<double>(0.0, 0.0, 1.0e-5)), "RangeY", "Range of calculation for the specified y observable");
 	keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect", "Branch which runs if the target quantities were binned successfully");
@@ -157,11 +157,11 @@ bool Collect2DProcedureNode::prepare(Configuration* cfg, const char* prefix, Gen
 	histogram_ = &target;
 
 	// Retrieve the observables
-	Pair<CalculateProcedureNode*,int> xObs = keywords_.retrieve< Pair<CalculateProcedureNode*,int> >("QuantityX");
+	Pair<CalculateProcedureNodeBase*,int> xObs = keywords_.retrieve< Pair<CalculateProcedureNodeBase*,int> >("QuantityX");
 	xObservable_ = xObs.a();
 	xObservableIndex_ = xObs.b();
 	if (!xObservable_) return Messenger::error("No valid x quantity set in '%s'.\n", name());
-	Pair<CalculateProcedureNode*,int> yObs = keywords_.retrieve< Pair<CalculateProcedureNode*,int> >("QuantityY");
+	Pair<CalculateProcedureNodeBase*,int> yObs = keywords_.retrieve< Pair<CalculateProcedureNodeBase*,int> >("QuantityY");
 	yObservable_ = yObs.a();
 	yObservableIndex_ = yObs.b();
 	if (!yObservable_) return Messenger::error("No valid y quantity set in '%s'.\n", name());
@@ -178,12 +178,12 @@ ProcedureNode::NodeExecutionResult Collect2DProcedureNode::execute(ProcessPool& 
 #ifdef CHECKS
 	if (!xObservable_)
 	{
-		Messenger::error("No CalculateProcedureNode pointer set for X observable in Collect2DProcedureNode '%s'.\n", name());
+		Messenger::error("No CalculateProcedureNodeBase pointer set for X observable in Collect2DProcedureNode '%s'.\n", name());
 		return ProcedureNode::Failure;
 	}
 	if (!yObservable_)
 	{
-		Messenger::error("No CalculateProcedureNode pointer set for Y observable in Collect2DProcedureNode '%s'.\n", name());
+		Messenger::error("No CalculateProcedureNodeBase pointer set for Y observable in Collect2DProcedureNode '%s'.\n", name());
 		return ProcedureNode::Failure;
 	}
 #endif

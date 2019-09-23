@@ -1,5 +1,5 @@
 /*
-	*** Keyword Widget - Species Site RefList
+	*** Keyword Widget - SpeciesSite RefList
 	*** src/gui/keywordwidgets/speciessitereflist.h
 	Copyright T. Youngs 2012-2019
 
@@ -54,7 +54,7 @@ class SpeciesSiteRefListKeywordWidget: public KeywordDropDown, public KeywordWid
 	 */
 	private:
 	// Main form declaration
-	Ui::SpeciesSiteReferenceListWidget ui_;
+	Ui::SpeciesSiteRefListWidget ui_;
 
 	private slots:
 	void siteCheckBox_clicked(bool checked);

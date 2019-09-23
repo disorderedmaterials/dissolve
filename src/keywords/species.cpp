@@ -67,11 +67,11 @@ bool SpeciesKeyword::read(LineParser& parser, int startArg, const CoreData& core
 }
 
 // Write keyword data to specified LineParser
-bool SpeciesKeyword::write(LineParser& parser, const char* prefix)
+bool SpeciesKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
 	if (data_)
 	{
-		if (!parser.writeLineF("%s%s  '%s'\n", prefix, name(), data_->name())) return false;
+		if (!parser.writeLineF("%s%s  '%s'\n", prefix, keywordName, data_->name())) return false;
 	}
 	else if (!parser.writeLineF("%s%s  '?_?'\n", prefix, name())) return false;
 

@@ -72,7 +72,7 @@ void NodeKeywordWidget::updateValue()
 
 	// Get the list of available nodes of the specified type
 	RefList<ProcedureNode> availableNodes = keyword_->onlyInScope() ? keyword_->parentNode()->nodesInScope(keyword_->nodeType()) : keyword_->parentNode()->nodes(keyword_->nodeType());
-	ComboBoxUpdater<ProcedureNode> comboUpdater(ui_.NodeCombo, availableNodes, keyword_->node());
+	ComboBoxUpdater<ProcedureNode> comboUpdater(ui_.NodeCombo, availableNodes, keyword_->procedureNode());
 
 	refreshing_ = false;
 }

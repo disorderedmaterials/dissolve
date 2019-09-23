@@ -31,21 +31,24 @@
 EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
 {
 	static EnumOptionsList NodeTypeKeywords = EnumOptionsList() <<
-		EnumOption(ProcedureNode::AddSpeciesNode,	"AddSpecies") <<
-		EnumOption(ProcedureNode::BoxNode,		"Box") <<
-		EnumOption(ProcedureNode::CalculateNode,	"Calculate") <<
-		EnumOption(ProcedureNode::Collect1DNode,	"Collect1D") <<
-		EnumOption(ProcedureNode::Collect2DNode,	"Collect2D") <<
-		EnumOption(ProcedureNode::Collect3DNode,	"Collect3D") <<
-		EnumOption(ProcedureNode::DynamicSiteNode,	"DynamicSite") <<
-		EnumOption(ProcedureNode::ExcludeNode,		"Exclude") <<
-		EnumOption(ProcedureNode::Fit1DNode,		"Fit1D") <<
-		EnumOption(ProcedureNode::ParametersNode,	"Parameters") <<
-		EnumOption(ProcedureNode::Process1DNode,	"Process1D") <<
-		EnumOption(ProcedureNode::Process2DNode,	"Process2D") <<
-		EnumOption(ProcedureNode::Process3DNode,	"Process3D") <<
-		EnumOption(ProcedureNode::SelectNode,		"Select") <<
-		EnumOption(ProcedureNode::SequenceNode,		"Sequence");
+		EnumOption(ProcedureNode::AddSpeciesNode,		"AddSpecies") <<
+		EnumOption(ProcedureNode::BoxNode,			"Box") <<
+		EnumOption(ProcedureNode::CalculateAngleNode,		"CalculateAngle") <<
+		EnumOption(ProcedureNode::CalculateDistanceNode,	"CalculateDistance") <<
+		EnumOption(ProcedureNode::CalculateBaseNode,		"Calculate(Any)") <<
+		EnumOption(ProcedureNode::CalculateVectorNode,		"CalculateVector") <<
+		EnumOption(ProcedureNode::Collect1DNode,		"Collect1D") <<
+		EnumOption(ProcedureNode::Collect2DNode,		"Collect2D") <<
+		EnumOption(ProcedureNode::Collect3DNode,		"Collect3D") <<
+		EnumOption(ProcedureNode::DynamicSiteNode,		"DynamicSite") <<
+		EnumOption(ProcedureNode::ExcludeNode,			"Exclude") <<
+		EnumOption(ProcedureNode::Fit1DNode,			"Fit1D") <<
+		EnumOption(ProcedureNode::ParametersNode,		"Parameters") <<
+		EnumOption(ProcedureNode::Process1DNode,		"Process1D") <<
+		EnumOption(ProcedureNode::Process2DNode,		"Process2D") <<
+		EnumOption(ProcedureNode::Process3DNode,		"Process3D") <<
+		EnumOption(ProcedureNode::SelectNode,			"Select") <<
+		EnumOption(ProcedureNode::SequenceNode,			"Sequence");
 
 	static EnumOptions<ProcedureNode::NodeType> options("NodeType", NodeTypeKeywords, ProcedureNode::nNodeTypes);
 
@@ -89,6 +92,28 @@ ProcedureNode::~ProcedureNode()
 ProcedureNode::NodeType ProcedureNode::type() const
 {
 	return type_;
+}
+
+// Return whether the node is of the specified type (detecting derived node classes as well)
+bool ProcedureNode::isType(ProcedureNode::NodeType thisType) const
+{
+	// Handle nodes derived from CalculateBaseNode
+	if (thisType == ProcedureNode::CalculateBaseNode)
+	{
+		if (type_ == ProcedureNode::CalculateAngleNode) return true;
+		else if (type_ == ProcedureNode::CalculateDistanceNode) return true;
+		else if (type_ == ProcedureNode::CalculateVectorNode) return true;
+
+		return false;
+	}
+
+	return (thisType == type_);
+}
+
+// Return whether a name for the node is required
+bool ProcedureNode::nameRequired() const
+{
+	return true;
 }
 
 // Set node name (and nice name)
@@ -265,7 +290,7 @@ bool ProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, const ch
 // Read node data from specified LineParser
 bool ProcedureNode::read(LineParser& parser, const CoreData& coreData)
 {
-	// Read until we encounter the EndAddSpecies keyword, or we fail for some reason
+	// Read until we encounter the ending keyword (derived from the node type), or we fail for some reason
 	while (!parser.eofOrBlank())
 	{
 		// Read and parse the next line
@@ -288,7 +313,14 @@ bool ProcedureNode::read(LineParser& parser, const CoreData& coreData)
 bool ProcedureNode::write(LineParser& parser, const char* prefix)
 {
 	// Block Start
-	if (!parser.writeLineF("%s%s  '%s'\n", prefix, ProcedureNode::nodeTypes().keyword(type_), name())) return false;
+	if (nameRequired())
+	{
+		if (!parser.writeLineF("%s%s  '%s'\n", prefix, ProcedureNode::nodeTypes().keyword(type_), name())) return false;
+	}
+	else
+	{
+		if (!parser.writeLineF("%s%s\n", prefix, ProcedureNode::nodeTypes().keyword(type_))) return false;
+	}
 
 	// Create new prefix
 	CharString newPrefix("  %s", prefix);

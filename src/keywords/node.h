@@ -68,8 +68,8 @@ class NodeKeywordBase
 	bool onlyInScope() const;
 	// Set the target node
 	virtual bool setNode(ProcedureNode* node) = 0;
-	// Return the current target node
-	virtual ProcedureNode* node() const = 0;
+	// Return the current target node as the base class
+	virtual ProcedureNode* procedureNode() const = 0;
 };
 
 // Keyword with ProcedureNode
@@ -112,7 +112,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
 		return setNode(node);
 	}
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* prefix)
+	bool write(LineParser& parser, const char* keywordName, const char* prefix)
 	{
 		// No need to write the keyword if the node pointer is null
 		if (KeywordData<N*>::data_ == NULL) return true;
@@ -132,7 +132,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
 	{
 		if (!node) return false;
 
-		if (node->type() != nodeType()) return Messenger::error("Node '%s' is of type %s, but the %s keyword requires a node of type %s.\n", node->name(), ProcedureNode::nodeTypes().keyword(node->type()), KeywordBase::name(), ProcedureNode::nodeTypes().keyword(nodeType()));
+		if (!node->isType(nodeType())) return Messenger::error("Node '%s' is of type %s, but the %s keyword requires a node of type %s.\n", node->name(), ProcedureNode::nodeTypes().keyword(node->type()), KeywordBase::name(), ProcedureNode::nodeTypes().keyword(nodeType()));
 
 		KeywordData<N*>::data_ = dynamic_cast<N*>(node);
 
@@ -140,8 +140,13 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
 
 		return true;
 	}
+	// Return the current target node as the base class
+	ProcedureNode* procedureNode() const
+	{
+		return KeywordData<N*>::data_;
+	}
 	// Return the current target node
-	ProcedureNode* node() const
+	N* node() const
 	{
 		return KeywordData<N*>::data_;
 	}

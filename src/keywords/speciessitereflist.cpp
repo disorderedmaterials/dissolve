@@ -79,7 +79,7 @@ bool SpeciesSiteRefListKeyword::read(LineParser& parser, int startArg, const Cor
 }
 
 // Write keyword data to specified LineParser
-bool SpeciesSiteRefListKeyword::write(LineParser& parser, const char* prefix)
+bool SpeciesSiteRefListKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
 	// If there are no sites in the list, no need to write anything
 	if (data_.nItems() == 0) return true;
@@ -89,7 +89,7 @@ bool SpeciesSiteRefListKeyword::write(LineParser& parser, const char* prefix)
 	RefListIterator<SpeciesSite> refIterator(data_);
 	while (SpeciesSite* site = refIterator.iterate()) sites.strcatf("  '%s'  '%s'", site->parent()->name(), site->name());
 
-	if (!parser.writeLineF("%s%s%s\n", prefix, name(), sites.get())) return false;
+	if (!parser.writeLineF("%s%s%s\n", prefix, keywordName, sites.get())) return false;
 
 	return true;
 }

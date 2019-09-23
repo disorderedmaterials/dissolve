@@ -83,20 +83,20 @@ bool IsotopologueReferenceListKeyword::read(LineParser& parser, int startArg, co
 	// Add the data to the list
 	IsotopologueReference* isoRef = data_.add();
 	isoRef->set(cfg, sp, iso, parser.argd(startArg+3));
-	
+
 	set_ = true;
 
 	return true;
 }
 
 // Write keyword data to specified LineParser
-bool IsotopologueReferenceListKeyword::write(LineParser& parser, const char* prefix)
+bool IsotopologueReferenceListKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
 	// Loop over list of IsotopologueReferences
 	ListIterator<IsotopologueReference> refIterator(data_);
 	while (IsotopologueReference* ref = refIterator.iterate())
 	{
-		if (!parser.writeLineF("%s%s  '%s'  '%s'  '%s'  %f\n", prefix, name(), ref->configuration()->name(), ref->species()->name(), ref->isotopologue()->name(), ref->weight())) return false;
+		if (!parser.writeLineF("%s%s  '%s'  '%s'  '%s'  %f\n", prefix, keywordName, ref->configuration()->name(), ref->species()->name(), ref->isotopologue()->name(), ref->weight())) return false;
 	}
 
 	return true;

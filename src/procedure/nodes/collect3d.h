@@ -27,7 +27,7 @@
 #include "math/histogram3d.h"
 
 // Forward Declarations
-class CalculateProcedureNode;
+class CalculateProcedureNodeBase;
 class SequenceProcedureNode;
 class LineParser;
 class NodeScopeStack;
@@ -37,8 +37,8 @@ class Collect3DProcedureNode : public ProcedureNode
 {
 	public:
 	// Constructors
-	Collect3DProcedureNode(CalculateProcedureNode* xObservable = NULL, CalculateProcedureNode* yObservable = NULL, CalculateProcedureNode* zObservable = NULL, double xMin = 0.0, double xMax = 10.0, double xBinWidth = 0.05, double yMin = 0.0, double yMax = 10.0, double yBinWidth = 0.05, double zMin = 0.0, double zMax = 10.0, double zBinWidth = 0.05);
-	Collect3DProcedureNode(CalculateProcedureNode* xyzObservable, double xMin = 0.0, double xMax = 10.0, double xBinWidth = 0.05, double yMin = 0.0, double yMax = 10.0, double yBinWidth = 0.05, double zMin = 0.0, double zMax = 10.0, double zBinWidth = 0.05);
+	Collect3DProcedureNode(CalculateProcedureNodeBase* xObservable = NULL, CalculateProcedureNodeBase* yObservable = NULL, CalculateProcedureNodeBase* zObservable = NULL, double xMin = 0.0, double xMax = 10.0, double xBinWidth = 0.05, double yMin = 0.0, double yMax = 10.0, double yBinWidth = 0.05, double zMin = 0.0, double zMax = 10.0, double zBinWidth = 0.05);
+	Collect3DProcedureNode(CalculateProcedureNodeBase* xyzObservable, double xMin = 0.0, double xMax = 10.0, double xBinWidth = 0.05, double yMin = 0.0, double yMax = 10.0, double yBinWidth = 0.05, double zMin = 0.0, double zMax = 10.0, double zBinWidth = 0.05);
 	// Destructor
 	~Collect3DProcedureNode();
 
@@ -56,15 +56,15 @@ class Collect3DProcedureNode : public ProcedureNode
 	 */
 	private:
 	// Observable to bin along x (retrieved from keyword)
-	CalculateProcedureNode* xObservable_;
+	CalculateProcedureNodeBase* xObservable_;
 	// Index of x observable data to use (retrieved from keyword)
 	int xObservableIndex_;
 	// Observable to bin along y (retrieved from keyword)
-	CalculateProcedureNode* yObservable_;
+	CalculateProcedureNodeBase* yObservable_;
 	// Index of y observable data to use (retrieved from keyword)
 	int yObservableIndex_;
 	// Observable to bin along z (retrieved from keyword)
-	CalculateProcedureNode* zObservable_;
+	CalculateProcedureNodeBase* zObservable_;
 	// Index of z observable data to use (retrieved from keyword)
 	int zObservableIndex_;
 	// Histogram in which to accumulate data

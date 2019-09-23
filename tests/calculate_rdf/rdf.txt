@@ -124,9 +124,10 @@ Module  Analyse  'RDF(OW-OW)-Analyser'
           Site  Water  'O'
           ExcludeSameMolecule  'O1'
           ForEach
-            Calculate  'rOO'
-              Distance  'O1'  'O2'
-            EndCalculate
+            CalculateDistance  'rOO'
+              I  'O1'
+              J  'O2'
+            EndCalculateDistance
             Collect1D  'HistoOO'
               QuantityX  'rOO'
               RangeX  0.0  20.0  0.01
@@ -180,9 +181,10 @@ Module  Analyse  'RDF(H1-H2)-Analyser'
           Site  Water  'H2'
           ExcludeSameMolecule  'A'
           ForEach
-            Calculate  'rHH'
-              Distance  'A'  'B'
-            EndCalculate
+            CalculateDistance  'rHH'
+              I  'A'
+              J  'B'
+            EndCalculateDistance
             Collect1D  'HistoHH'
               QuantityX  'rHH'
               RangeX  0.0  20.0  0.01
@@ -236,9 +238,10 @@ Module  Analyse  'RDF(COM-COM)-Analyser'
           Site  Water  'COM'
           ExcludeSameMolecule  'A'
           ForEach
-            Calculate  'rCOMCOM
-              Distance  'A'  'B'
-            EndCalculate
+            CalculateDistance  'rCOMCOM'
+              I  'A'
+              J  'B'
+            EndCalculateDistance
             Collect1D  'HistoCOMCOM'
               QuantityX  'rCOMCOM'
               RangeX  0.0  20.0  0.05

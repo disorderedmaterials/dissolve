@@ -416,6 +416,7 @@ bool SequenceProcedureNode::read(LineParser& parser, const CoreData& coreData)
 
 		// Not a control keyword, so must be a node type
 		ProcedureNode* newNode = NULL;
+		if (!ProcedureNode::nodeTypes().isValid(parser.argc(0))) return Messenger::error("Unrecognised node type '%s' found.\n", parser.argc(0));
 		ProcedureNode::NodeType nt = ProcedureNode::nodeTypes().enumeration(parser.argc(0));
 		switch (nt)
 		{
@@ -425,8 +426,18 @@ bool SequenceProcedureNode::read(LineParser& parser, const CoreData& coreData)
 			case (ProcedureNode::BoxNode):
 				newNode = new BoxProcedureNode();
 				break;
-			case (ProcedureNode::CalculateNode):
-				newNode = new CalculateProcedureNode();
+			case (ProcedureNode::CalculateAngleNode):
+				newNode = new CalculateAngleProcedureNode();
+				break;
+			case (ProcedureNode::CalculateDistanceNode):
+				newNode = new CalculateDistanceProcedureNode();
+				break;
+			case (ProcedureNode::CalculateBaseNode):
+				/* This should never be called */
+				return Messenger::error("Can't create a node of this type directly - create the parent node instead.\n");
+				break;
+			case (ProcedureNode::CalculateVectorNode):
+				newNode = new CalculateVectorProcedureNode();
 				break;
 			case (ProcedureNode::Collect1DNode):
 				newNode = new Collect1DProcedureNode();
@@ -475,8 +486,12 @@ bool SequenceProcedureNode::read(LineParser& parser, const CoreData& coreData)
 			return Messenger::error("A node named '%s' is already in scope.\n", parser.hasArg(1) ? parser.argc(1) : newNode->name());
 		}
 
-		// Set the name of the node if it was provided
-		if (parser.hasArg(1)) newNode->setName(parser.argc(1));
+		// Set the name of the node if it is required, and was provided
+		if (newNode->nameRequired())
+		{
+			if (!parser.hasArg(1)) Messenger::error("A name must be given explicitly to a node of type %s.\n", ProcedureNode::nodeTypes().keyword(newNode->type()));
+			else newNode->setName(parser.argc(1));
+		}
 
 		// Is the new node permitted in our context?
 		if (!newNode->isContextRelevant(context_))
@@ -504,8 +519,7 @@ bool SequenceProcedureNode::write(LineParser& parser, const char* prefix)
 	ListIterator<ProcedureNode> nodeIterator(sequence_);
 	while (ProcedureNode* node = nodeIterator.iterate()) if (!node->write(parser, prefix)) return false;
 
-	// Block End
-	if (!parser.writeLineF("%s%s\n", prefix, blockTerminationKeyword_.get())) return false;
+	// Block End - will be written by the calling function, since we don't know the keyword we are linked to
 
 	return true;
 }

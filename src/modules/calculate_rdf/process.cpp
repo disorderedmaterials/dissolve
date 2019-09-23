@@ -21,7 +21,6 @@
 
 #include "modules/calculate_rdf/rdf.h"
 #include "main/dissolve.h"
-#include "procedure/nodes/calculate.h"
 #include "procedure/nodes/collect1d.h"
 #include "procedure/nodes/process1d.h"
 #include "procedure/nodes/select.h"

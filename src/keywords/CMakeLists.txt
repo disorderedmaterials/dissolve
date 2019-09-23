@@ -23,6 +23,7 @@ add_library(keywords
   modulereflist.cpp
   node.cpp
   nodeandinteger.cpp
+  nodearray.cpp
   nodebranch.cpp
   nodereflist.cpp
   nodevalue.cpp
@@ -63,6 +64,7 @@ add_library(keywords
   modulereflist.h
   node.h
   nodeandinteger.h
+  nodearray.h
   nodebranch.h
   nodereflist.h
   nodevalue.h

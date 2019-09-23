@@ -20,7 +20,7 @@
 */
 
 #include "procedure/nodes/collect1d.h"
-#include "procedure/nodes/calculate.h"
+#include "procedure/nodes/calculatebase.h"
 #include "procedure/nodes/sequence.h"
 #include "keywords/types.h"
 #include "math/data1d.h"
@@ -30,9 +30,9 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-Collect1DProcedureNode::Collect1DProcedureNode(CalculateProcedureNode* observable, double rMin, double rMax, double binWidth) : ProcedureNode(ProcedureNode::Collect1DNode)
+Collect1DProcedureNode::Collect1DProcedureNode(CalculateProcedureNodeBase* observable, double rMin, double rMax, double binWidth) : ProcedureNode(ProcedureNode::Collect1DNode)
 {
-	keywords_.add("Target", new NodeAndIntegerKeyword<CalculateProcedureNode>(this, ProcedureNode::CalculateNode, true, observable, 0), "QuantityX", "Calculated observable to collect");
+	keywords_.add("Target", new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, observable, 0), "QuantityX", "Calculated observable to collect");
 	keywords_.add("Target", new Vec3DoubleKeyword(Vec3<double>(rMin, rMax, binWidth), Vec3<double>(0.0, 0.0, 1.0e-5)), "RangeX", "Range of calculation for the specified observable");
 	keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect", "Branch which runs if the target quantity was binned successfully");
 
@@ -137,7 +137,7 @@ bool Collect1DProcedureNode::prepare(Configuration* cfg, const char* prefix, Gen
 	histogram_ = &target;
 
 	// Retrieve the observable
-	Pair<CalculateProcedureNode*,int> xObs = keywords_.retrieve< Pair<CalculateProcedureNode*,int> >("QuantityX");
+	Pair<CalculateProcedureNodeBase*,int> xObs = keywords_.retrieve< Pair<CalculateProcedureNodeBase*,int> >("QuantityX");
 	xObservable_ = xObs.a();
 	xObservableIndex_ = xObs.b();
 	if (!xObservable_) return Messenger::error("No valid x quantity set in '%s'.\n", name());
@@ -154,7 +154,7 @@ ProcedureNode::NodeExecutionResult Collect1DProcedureNode::execute(ProcessPool& 
 #ifdef CHECKS
 	if (!xObservable_)
 	{
-		Messenger::error("No CalculateProcedureNode pointer set in Collect1DProcedureNode '%s'.\n", name());
+		Messenger::error("No CalculateProcedureNodeBase pointer set in Collect1DProcedureNode '%s'.\n", name());
 		return ProcedureNode::Failure;
 	}
 #endif

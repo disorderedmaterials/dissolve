@@ -113,7 +113,7 @@ bool ExpressionVariableListKeyword::read(LineParser& parser, int startArg, const
 }
 
 // Write keyword data to specified LineParser
-bool ExpressionVariableListKeyword::write(LineParser& parser, const char* prefix)
+bool ExpressionVariableListKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
 	// Loop over list of defined ExpressionNode's (ExpressionVariables)
 	ListIterator<ExpressionNode> nodeIterator(data_);
@@ -124,11 +124,11 @@ bool ExpressionVariableListKeyword::write(LineParser& parser, const char* prefix
 		if (!var) Messenger::error("Failed to cast ExpressionNode to ExpressionVariable when writing ExpressionVariableList data.\n");
 		else if (variableType_ == ExpressionValue::IntegerType)
 		{
-			if (!parser.writeLineF("%s%s  %s  %i\n", prefix, name(), var->name(), var->value().asInteger())) return false;
+			if (!parser.writeLineF("%s%s  %s  %i\n", prefix, keywordName, var->name(), var->value().asInteger())) return false;
 		}
 		else if (variableType_ == ExpressionValue::DoubleType)
 		{
-			if (!parser.writeLineF("%s%s  %s  %12.6e\n", prefix, name(), var->name(), var->value().asDouble())) return false;
+			if (!parser.writeLineF("%s%s  %s  %12.6e\n", prefix, keywordName, var->name(), var->value().asDouble())) return false;
 		}
 	}
 

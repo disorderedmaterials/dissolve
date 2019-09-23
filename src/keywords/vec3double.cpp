@@ -147,9 +147,9 @@ bool Vec3DoubleKeyword::read(LineParser& parser, int startArg, const CoreData& c
 }
 
 // Write keyword data to specified LineParser
-bool Vec3DoubleKeyword::write(LineParser& parser, const char* prefix)
+bool Vec3DoubleKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
-	return parser.writeLineF("%s%s  %12.6e  %12.6e  %12.6e\n", prefix, name(), data_.x, data_.y, data_.z);
+	return parser.writeLineF("%s%s  %12.6e  %12.6e  %12.6e\n", prefix, keywordName, data_.x, data_.y, data_.z);
 }
 
 /*

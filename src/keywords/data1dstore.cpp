@@ -67,14 +67,14 @@ bool Data1DStoreKeyword::read(LineParser& parser, int startArg, const CoreData& 
 }
 
 // Write keyword data to specified LineParser
-bool Data1DStoreKeyword::write(LineParser& parser, const char* prefix)
+bool Data1DStoreKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
 	// Loop over list of one-dimensional data
 	RefDataListIterator<Data1D,Data1DImportFileFormat> dataIterator(data_.dataReferences());
 	while (Data1D* data = dataIterator.iterate())
 	{
 		Data1DImportFileFormat ff = dataIterator.currentData();
-		if (!parser.writeLineF("%s%s  '%s'  %s\n", prefix, name(), data->name(), ff.asString())) return false;
+		if (!parser.writeLineF("%s%s  '%s'  %s\n", prefix, keywordName, data->name(), ff.asString())) return false;
 	}
 
 	return true;

@@ -62,9 +62,9 @@ bool FileAndFormatKeyword::read(LineParser& parser, int startArg, const CoreData
 }
 
 // Write keyword data to specified LineParser
-bool FileAndFormatKeyword::write(LineParser& parser, const char* prefix)
+bool FileAndFormatKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
-	if (!parser.writeLineF("%s%s  %s\n", prefix, name(), data_.asString())) return false;
+	if (!parser.writeLineF("%s%s  %s\n", prefix, keywordName, data_.asString())) return false;
 
 	return true;
 }

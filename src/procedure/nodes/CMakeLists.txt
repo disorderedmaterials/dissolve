@@ -1,7 +1,10 @@
 add_library(procedurenodes
   addspecies.cpp
   box.cpp
-  calculate.cpp
+  calculateangle.cpp
+  calculatebase.cpp
+  calculatedistance.cpp
+  calculatevector.cpp
   collect1d.cpp
   collect2d.cpp
   collect3d.cpp
@@ -19,7 +22,10 @@ add_library(procedurenodes
 
   addspecies.h
   box.h
-  calculate.h
+  calculateangle.h
+  calculatebase.h
+  calculatedistance.h
+  calculatevector.h
   collect1d.h
   collect2d.h
   collect3d.h

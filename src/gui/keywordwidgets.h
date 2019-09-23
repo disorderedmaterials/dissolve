@@ -36,6 +36,7 @@
 #include "gui/keywordwidgets/modulereflist.h"
 #include "gui/keywordwidgets/node.h"
 #include "gui/keywordwidgets/nodeandinteger.h"
+#include "gui/keywordwidgets/nodereflist.h"
 #include "gui/keywordwidgets/nodevalue.h"
 #include "gui/keywordwidgets/nodevalueenumoptions.h"
 #include "gui/keywordwidgets/pairbroadeningfunction.h"

@@ -81,7 +81,7 @@ bool ModuleGroupsKeyword::read(LineParser& parser, int startArg, const CoreData&
 }
 
 // Write keyword data to specified LineParser
-bool ModuleGroupsKeyword::write(LineParser& parser, const char* prefix)
+bool ModuleGroupsKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
 	// Loop over defined groups
 	ListIterator<ModuleGroup> groupIterator(data_.groups());
@@ -91,7 +91,7 @@ bool ModuleGroupsKeyword::write(LineParser& parser, const char* prefix)
 		RefListIterator<Module> refIterator(group->modules());
 		while (Module* module = refIterator.iterate())
 		{
-			if (!parser.writeLineF("%s%s  '%s'  '%s'\n", prefix, name(), module->uniqueName(), group->name())) return false;
+			if (!parser.writeLineF("%s%s  '%s'  '%s'\n", prefix, keywordName, module->uniqueName(), group->name())) return false;
 		}
 	}
 

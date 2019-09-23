@@ -115,10 +115,10 @@ QWidget* KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& keyword
 	}
 	else if (keyword->type() == KeywordBase::IsotopologueListData)
 	{
-		IsotopologueReferenceListKeywordWidget* isotopologueReferenceListWidget = new IsotopologueReferenceListKeywordWidget(NULL, keyword, coreData);
-		connect(isotopologueReferenceListWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
-		widget = isotopologueReferenceListWidget;
-		base = isotopologueReferenceListWidget;
+		IsotopologueReferenceListKeywordWidget* isotopologueRefListWidget = new IsotopologueReferenceListKeywordWidget(NULL, keyword, coreData);
+		connect(isotopologueRefListWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
+		widget = isotopologueRefListWidget;
+		base = isotopologueRefListWidget;
 	}
 	else if (keyword->type() == KeywordBase::ModuleGroupsData)
 	{
@@ -129,10 +129,10 @@ QWidget* KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& keyword
 	}
 	else if (keyword->type() == KeywordBase::ModuleRefListData)
 	{
-		ModuleRefListKeywordWidget* moduleReferenceListWidget = new ModuleRefListKeywordWidget(NULL, keyword, coreData);
-		connect(moduleReferenceListWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
-		widget = moduleReferenceListWidget;
-		base = moduleReferenceListWidget;
+		ModuleRefListKeywordWidget* moduleRefListWidget = new ModuleRefListKeywordWidget(NULL, keyword, coreData);
+		connect(moduleRefListWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
+		widget = moduleRefListWidget;
+		base = moduleRefListWidget;
 	}
 	else if (keyword->type() == KeywordBase::NodeData)
 	{
@@ -147,6 +147,13 @@ QWidget* KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& keyword
 		connect(nodeAndIntegerWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
 		widget = nodeAndIntegerWidget;
 		base = nodeAndIntegerWidget;
+	}
+	else if (keyword->type() == KeywordBase::NodeRefListData)
+	{
+		NodeRefListKeywordWidget* nodeRefListWidget = new NodeRefListKeywordWidget(NULL, keyword, coreData);
+		connect(nodeRefListWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
+		widget = nodeRefListWidget;
+		base = nodeRefListWidget;
 	}
 	else if (keyword->type() == KeywordBase::NodeValueData)
 	{
@@ -178,17 +185,17 @@ QWidget* KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& keyword
 	}
 	else if (keyword->type() == KeywordBase::SpeciesRefListData)
 	{
-		SpeciesRefListKeywordWidget* speciesReferenceListWidget = new SpeciesRefListKeywordWidget(NULL, keyword, coreData);
-		connect(speciesReferenceListWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
-		widget = speciesReferenceListWidget;
-		base = speciesReferenceListWidget;
+		SpeciesRefListKeywordWidget* speciesRefListWidget = new SpeciesRefListKeywordWidget(NULL, keyword, coreData);
+		connect(speciesRefListWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
+		widget = speciesRefListWidget;
+		base = speciesRefListWidget;
 	}
 	else if (keyword->type() == KeywordBase::SpeciesSiteRefListData)
 	{
-		SpeciesSiteRefListKeywordWidget* speciesSiteReferenceListWidget = new SpeciesSiteRefListKeywordWidget(NULL, keyword, coreData);
-		connect(speciesSiteReferenceListWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
-		widget = speciesSiteReferenceListWidget;
-		base = speciesSiteReferenceListWidget;
+		SpeciesSiteRefListKeywordWidget* speciesSiteRefListWidget = new SpeciesSiteRefListKeywordWidget(NULL, keyword, coreData);
+		connect(speciesSiteRefListWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
+		widget = speciesSiteRefListWidget;
+		base = speciesSiteRefListWidget;
 	}
 	else if (keyword->type() == KeywordBase::WindowFunctionData)
 	{

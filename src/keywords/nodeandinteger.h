@@ -128,7 +128,7 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
 		return setNode(node);
 	}
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* prefix)
+	bool write(LineParser& parser, const char* keywordName, const char* prefix)
 	{
 		// Grab the node pointer
 		const N* node = KeywordData< Pair<N*,int> >::data_.a();
@@ -156,7 +156,7 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
 	{
 		if (!node) return false;
 
-		if (node->type() != nodeType()) return Messenger::error("Node '%s' is of type %s, but the %s keyword requires a node of type %s.\n", node->name(), ProcedureNode::nodeTypes().keyword(node->type()), KeywordBase::name(), ProcedureNode::nodeTypes().keyword(nodeType()));
+		if (!node->isType(nodeType())) return Messenger::error("Node '%s' is of type %s, but the %s keyword requires a node of type %s.\n", node->name(), ProcedureNode::nodeTypes().keyword(node->type()), KeywordBase::name(), ProcedureNode::nodeTypes().keyword(nodeType()));
 
 		KeywordData< Pair<N*,int> >::data_.setA(dynamic_cast<N*>(node));
 

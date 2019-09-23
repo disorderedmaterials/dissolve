@@ -54,7 +54,7 @@ class ModuleRefListKeywordWidget: public KeywordDropDown, public KeywordWidgetBa
 	 */
 	private:
 	// Main form declaration
-	Ui::ModuleReferenceListWidget ui_;
+	Ui::ModuleRefListWidget ui_;
 
 	private:
 	// Selection list update function
