@@ -102,7 +102,7 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
 	// Return maximum number of arguments accepted
 	int maxArguments() const
 	{
-		return 1;
+		return 99;
 	}
 	// Parse arguments from supplied LineParser, starting at given argument offset
 	bool read(LineParser& parser, int startArg, const CoreData& coreData)
@@ -113,8 +113,8 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
 		for (int n=startArg; n<parser.nArgs(); ++n)
 		{
 			// Locate the named node - don't prune by type yet (we'll check that in setNode())
-			ProcedureNode* node = onlyInScope() ? parentNode()->nodeInScope(parser.argc(startArg)) : parentNode()->nodeExists(parser.argc(startArg));
-			if (!node) return Messenger::error("Node '%s' given to keyword %s doesn't exist.\n", parser.argc(startArg), KeywordBase::name());
+			ProcedureNode* node = onlyInScope() ? parentNode()->nodeInScope(parser.argc(n)) : parentNode()->nodeExists(parser.argc(n));
+			if (!node) return Messenger::error("Node '%s' given to keyword %s doesn't exist.\n", parser.argc(n), KeywordBase::name());
 
 			if (!addNode(node)) return false;
 		}
