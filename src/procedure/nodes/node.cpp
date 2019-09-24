@@ -31,24 +31,31 @@
 EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
 {
 	static EnumOptionsList NodeTypeKeywords = EnumOptionsList() <<
-		EnumOption(ProcedureNode::AddSpeciesNode,		"AddSpecies") <<
-		EnumOption(ProcedureNode::BoxNode,			"Box") <<
-		EnumOption(ProcedureNode::CalculateAngleNode,		"CalculateAngle") <<
-		EnumOption(ProcedureNode::CalculateDistanceNode,	"CalculateDistance") <<
-		EnumOption(ProcedureNode::CalculateBaseNode,		"Calculate(Any)") <<
-		EnumOption(ProcedureNode::CalculateVectorNode,		"CalculateVector") <<
-		EnumOption(ProcedureNode::Collect1DNode,		"Collect1D") <<
-		EnumOption(ProcedureNode::Collect2DNode,		"Collect2D") <<
-		EnumOption(ProcedureNode::Collect3DNode,		"Collect3D") <<
-		EnumOption(ProcedureNode::DynamicSiteNode,		"DynamicSite") <<
-		EnumOption(ProcedureNode::ExcludeNode,			"Exclude") <<
-		EnumOption(ProcedureNode::Fit1DNode,			"Fit1D") <<
-		EnumOption(ProcedureNode::ParametersNode,		"Parameters") <<
-		EnumOption(ProcedureNode::Process1DNode,		"Process1D") <<
-		EnumOption(ProcedureNode::Process2DNode,		"Process2D") <<
-		EnumOption(ProcedureNode::Process3DNode,		"Process3D") <<
-		EnumOption(ProcedureNode::SelectNode,			"Select") <<
-		EnumOption(ProcedureNode::SequenceNode,			"Sequence");
+		EnumOption(ProcedureNode::AddSpeciesNode,			"AddSpecies") <<
+		EnumOption(ProcedureNode::BoxNode,				"Box") <<
+		EnumOption(ProcedureNode::CalculateAngleNode,			"CalculateAngle") <<
+		EnumOption(ProcedureNode::CalculateDistanceNode,		"CalculateDistance") <<
+		EnumOption(ProcedureNode::CalculateBaseNode,			"Calculate(Any)") <<
+		EnumOption(ProcedureNode::CalculateVectorNode,			"CalculateVector") <<
+		EnumOption(ProcedureNode::Collect1DNode,			"Collect1D") <<
+		EnumOption(ProcedureNode::Collect2DNode,			"Collect2D") <<
+		EnumOption(ProcedureNode::Collect3DNode,			"Collect3D") <<
+		EnumOption(ProcedureNode::DynamicSiteNode,			"DynamicSite") <<
+		EnumOption(ProcedureNode::ExcludeNode,				"Exclude") <<
+		EnumOption(ProcedureNode::Fit1DNode,				"Fit1D") <<
+		EnumOption(ProcedureNode::OperateBaseNode,			"Operate(Any)") <<
+		EnumOption(ProcedureNode::OperateDivideNode,			"OperateDivide") <<
+		EnumOption(ProcedureNode::OperateMultiplyNode,			"OperateMultiply") <<
+		EnumOption(ProcedureNode::OperateNormaliseNode,			"OperateNormalise") <<
+		EnumOption(ProcedureNode::OperateNumberDensityNormaliseNode,	"OperateNumberDensityNormalise") <<
+		EnumOption(ProcedureNode::OperateSitePopulationNormaliseNode,	"OperateSitePopulationNormalise") <<
+		EnumOption(ProcedureNode::OperateSphericalShellNormaliseNode,	"OperateSphericalShellNormalise") <<
+		EnumOption(ProcedureNode::ParametersNode,			"Parameters") <<
+		EnumOption(ProcedureNode::Process1DNode,			"Process1D") <<
+		EnumOption(ProcedureNode::Process2DNode,			"Process2D") <<
+		EnumOption(ProcedureNode::Process3DNode,			"Process3D") <<
+		EnumOption(ProcedureNode::SelectNode,				"Select") <<
+		EnumOption(ProcedureNode::SequenceNode,				"Sequence");
 
 	static EnumOptions<ProcedureNode::NodeType> options("NodeType", NodeTypeKeywords, ProcedureNode::nNodeTypes);
 
@@ -61,7 +68,8 @@ EnumOptions<ProcedureNode::NodeContext> ProcedureNode::nodeContexts()
 	static EnumOptionsList NodeContextKeywords = EnumOptionsList() << 
 		EnumOption(ProcedureNode::NoContext,			"None") <<
 		EnumOption(ProcedureNode::AnalysisContext,		"Analysis") <<
-		EnumOption(ProcedureNode::GenerationContext,		"Generation");
+		EnumOption(ProcedureNode::GenerationContext,		"Generation") <<
+		EnumOption(ProcedureNode::OperateContext,		"Operate");
 
 	static EnumOptions<ProcedureNode::NodeContext> options("NodeContext", NodeContextKeywords, ProcedureNode::NoContext);
 
@@ -97,15 +105,9 @@ ProcedureNode::NodeType ProcedureNode::type() const
 // Return whether the node is of the specified type (detecting derived node classes as well)
 bool ProcedureNode::isType(ProcedureNode::NodeType thisType) const
 {
-	// Handle nodes derived from CalculateBaseNode
-	if (thisType == ProcedureNode::CalculateBaseNode)
-	{
-		if (type_ == ProcedureNode::CalculateAngleNode) return true;
-		else if (type_ == ProcedureNode::CalculateDistanceNode) return true;
-		else if (type_ == ProcedureNode::CalculateVectorNode) return true;
-
-		return false;
-	}
+	// Handle derived node types
+	if (thisType == ProcedureNode::CalculateBaseNode) return ((type_ > ProcedureNode::BEGIN_CalculateNodes) && (type_ < ProcedureNode::END_CalculateNodes));
+	else if (thisType == ProcedureNode::OperateBaseNode) return ((type_ > ProcedureNode::BEGIN_OperateNodes) && (type_ < ProcedureNode::END_OperateNodes));
 
 	return (thisType == type_);
 }

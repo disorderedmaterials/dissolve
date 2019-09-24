@@ -13,6 +13,13 @@ add_library(procedurenodes
   fit1d.cpp
   node.cpp
   nodereference.cpp
+  operatebase.cpp
+  operatedivide.cpp
+  operatemultiply.cpp
+  operatenormalise.cpp
+  operatenumberdensitynormalise.cpp
+  operatesitepopulationnormalise.cpp
+  operatesphericalshellnormalise.h
   parameters.cpp
   process1d.cpp
   process2d.cpp
@@ -35,6 +42,13 @@ add_library(procedurenodes
   node.h
   nodereference.h
   nodes.h
+  operatebase.h
+  operatedivide.h
+  operatemultiply.h
+  operatenormalise.h
+  operatenumberdensitynormalise.h
+  operatesitepopulationnormalise.h
+  operatesphericalshellnormalise.h
   parameters.h
   process1d.h
   process2d.h

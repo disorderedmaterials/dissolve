@@ -434,7 +434,7 @@ bool SequenceProcedureNode::read(LineParser& parser, const CoreData& coreData)
 				break;
 			case (ProcedureNode::CalculateBaseNode):
 				/* This should never be called */
-				return Messenger::error("Can't create a node of this type directly - create the parent node instead.\n");
+				return Messenger::error("Can't create a node of CalculateBase type directly - create the parent node instead.\n");
 				break;
 			case (ProcedureNode::CalculateVectorNode):
 				newNode = new CalculateVectorProcedureNode();
@@ -453,6 +453,28 @@ bool SequenceProcedureNode::read(LineParser& parser, const CoreData& coreData)
 				break;
 			case (ProcedureNode::Fit1DNode):
 				newNode = new Fit1DProcedureNode();
+				break;
+			case (ProcedureNode::OperateBaseNode):
+				/* This should never be called */
+				return Messenger::error("Can't create a node of OperateBase type directly - create the parent node instead.\n");
+				break;
+			case (ProcedureNode::OperateDivideNode):
+				newNode = new OperateDivideProcedureNode();
+				break;
+			case (ProcedureNode::OperateMultiplyNode):
+				newNode = new OperateMultiplyProcedureNode();
+				break;
+			case (ProcedureNode::OperateNormaliseNode):
+				newNode = new OperateNormaliseProcedureNode();
+				break;
+			case (ProcedureNode::OperateNumberDensityNormaliseNode):
+				newNode = new OperateNumberDensityNormaliseProcedureNode();
+				break;
+			case (ProcedureNode::OperateSitePopulationNormaliseNode):
+				newNode = new OperateSitePopulationNormaliseProcedureNode();
+				break;
+			case (ProcedureNode::OperateSphericalShellNormaliseNode):
+				newNode = new OperateSphericalShellNormaliseProcedureNode();
 				break;
 			case (ProcedureNode::ParametersNode):
 				newNode = new ParametersProcedureNode();

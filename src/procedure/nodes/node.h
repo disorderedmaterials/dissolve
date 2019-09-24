@@ -47,17 +47,18 @@ class ProcedureNode : public ListItem<ProcedureNode>
 	enum NodeType {
 		AddSpeciesNode,
 		BoxNode,
-		CalculateAngleNode, CalculateDistanceNode, CalculateBaseNode, CalculateVectorNode, Collect1DNode, Collect2DNode, Collect3DNode,
+		BEGIN_CalculateNodes, CalculateAngleNode, CalculateDistanceNode, CalculateBaseNode, CalculateVectorNode, Collect1DNode, Collect2DNode, Collect3DNode, END_CalculateNodes,
 		DynamicSiteNode,
 		ExcludeNode,
 		Fit1DNode,
+		BEGIN_OperateNodes, OperateBaseNode, OperateDivideNode, OperateMultiplyNode, OperateNormaliseNode, OperateNumberDensityNormaliseNode, OperateSitePopulationNormaliseNode, OperateSphericalShellNormaliseNode, END_OperateNodes,
 		ParametersNode, Process1DNode, Process2DNode, Process3DNode,
 		SelectNode, SequenceNode,
 		nNodeTypes };
 	// Return enum option info for NodeType
 	static EnumOptions<NodeType> nodeTypes();
 	// Node Contexts
-	enum NodeContext { NoContext = 0, AnalysisContext = 1, GenerationContext = 2 };
+	enum NodeContext { NoContext = 0, AnalysisContext = 1, GenerationContext = 2, OperateContext = 4 };
 	// Return enum option info for NodeContext
 	static EnumOptions<NodeContext> nodeContexts();
 	// Constructor
