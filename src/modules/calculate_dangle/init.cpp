@@ -183,8 +183,3 @@ void CalculateDAngleModule::initialise()
 	keywords_.link("Export", processDAngle_->keywords().find("Save"), "SaveDAngle", "Whether to save calculated A-B...C angle map to disk", "<True|False>");
 }
 
-// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-KeywordBase::ParseResult CalculateDAngleModule::parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
-{
-	return KeywordBase::Unrecognised;
-}

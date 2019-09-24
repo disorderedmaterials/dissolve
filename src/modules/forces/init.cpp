@@ -41,8 +41,3 @@ void ForcesModule::initialise()
 	keywords_.add("Export", new BoolKeyword(false), "Save", "Save forces for the Configuration to the file '<name>.forces.txt'");
 }
 
-// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-KeywordBase::ParseResult ForcesModule::parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
-{
-	return KeywordBase::Unrecognised;
-}

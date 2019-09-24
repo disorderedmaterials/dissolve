@@ -1,6 +1,6 @@
 /*
-	*** Keyword - Complex
-	*** src/keywords/complex.h
+	*** Keyword - Geometry List
+	*** src/keywords/geometrylist.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,40 +19,38 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORD_COMPLEX_H
-#define DISSOLVE_KEYWORD_COMPLEX_H
+#ifndef DISSOLVE_KEYWORD_GEOMETRYLIST_H
+#define DISSOLVE_KEYWORD_GEOMETRYLIST_H
 
 #include "keywords/data.h"
+#include "base/geometry.h"
+#include "templates/list.h"
+
+
 
 // Forward Declarations
 /* none */
 
-// Keyword with Complex Data
-class ComplexKeyword : public KeywordData<int>
+// Keyword with Geometry Data
+class GeometryListKeyword : public KeywordData< List<Geometry>& >
 {
 	public:
-	// Constructors
-	ComplexKeyword(int minArgs, int maxArgs = -1);
+	// Constructor
+	GeometryListKeyword(List<Geometry>&, Geometry::GeometryType t);
+	
 	// Destructor
-	~ComplexKeyword();
-
-
+	~GeometryListKeyword();
+	
 	/*
-	 * Data Validation
+	 * Data
 	 */
-	public:
-	// Validate supplied value
-	bool isValid(int value);
-
-
+	private:
+	// enum variable
+	Geometry::GeometryType type_;
+	
 	/*
 	 * Arguments
 	 */
-	private:
-	// Minimum number of arguments accepted
-	int minArguments_;
-	// Maximum number of arguments accepted
-	int maxArguments_;
 	public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
@@ -62,6 +60,8 @@ class ComplexKeyword : public KeywordData<int>
 	bool read(LineParser& parser, int startArg, const CoreData& coreData);
 	// Write keyword data to specified LineParser
 	bool write(LineParser& parser, const char* keywordName, const char* prefix);
+
+
 };
 
 #endif

@@ -42,8 +42,4 @@ void MDModule::initialise()
 	keywords_.add("Output", new IntegerKeyword(0), "TrajectoryFrequency", "Write frequency for trajectory file (or 0 to inhibit)");
 }
 
-// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-KeywordBase::ParseResult MDModule::parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
-{
-	return KeywordBase::Unrecognised;
-}
+

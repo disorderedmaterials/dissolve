@@ -27,9 +27,3 @@ void AnalyseModule::initialise()
 {
 	keywords_.add(new ProcedureKeyword(analyser_), "Analyser", "Analysis procedure to run");
 }
-
-// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-KeywordBase::ParseResult AnalyseModule::parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
-{
-	return KeywordBase::Unrecognised;
-}

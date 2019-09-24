@@ -86,9 +86,6 @@ class EPSRModule : public Module
 	protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
-	// Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-	KeywordBase::ParseResult parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix);
-
 
 	/*
 	 * Processing

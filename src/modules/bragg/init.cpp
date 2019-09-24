@@ -45,10 +45,3 @@ void BraggModule::initialise()
 	keywords_.add("Export", new BoolKeyword(false), "SavePartials", "Whether to save Bragg partials to disk after calculation", "<True|False>");
 	keywords_.add("Export", new BoolKeyword(false), "SaveReflections", "Whether to save Bragg reflection data to disk", "<True|False>");
 }
-
-// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-KeywordBase::ParseResult BraggModule::parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
-{
-	return KeywordBase::Unrecognised;
-}
-
