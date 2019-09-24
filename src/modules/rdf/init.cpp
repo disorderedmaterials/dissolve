@@ -67,8 +67,3 @@ void RDFModule::initialise()
 	keywords_.add("Export", new BoolKeyword(false), "Save", "Whether to save partials to disk after calculation", "<True|False>");
 }
 
-// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-KeywordBase::ParseResult RDFModule::parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
-{
-	return KeywordBase::Unrecognised;
-}

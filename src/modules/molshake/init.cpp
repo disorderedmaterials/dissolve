@@ -41,8 +41,3 @@ void MolShakeModule::initialise()
 	keywords_.add("Translations", new DoubleKeyword(3.0), "TranslationStepSizeMax", "Maximum step size for translations (Angstroms)", "<stepsize>");
 }
 
-// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-KeywordBase::ParseResult MolShakeModule::parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
-{
-	return KeywordBase::Unrecognised;
-}

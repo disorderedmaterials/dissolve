@@ -27,10 +27,6 @@
 // Constructor
 Geometry::Geometry()
 {
-	a_ = -1;
-	b_ = -1;
-	c_ = -1;
-	d_ = -1;
 	value_ = 0.0;
 }
 
@@ -46,35 +42,11 @@ Geometry::~Geometry()
 // Set reference value and indices
 void Geometry::set(double value, int a, int b, int c, int d)
 {
-	a_ = a;
-	b_ = b;
-	c_ = c;
-	d_ = d;
+	indices_[0] = a;
+	indices_[1] = b;
+	indices_[2] = c;
+	indices_[3] = d;
 	value_ = value;
-}
-
-// Return index 1
-int Geometry::a()
-{
-	return a_;
-}
-
-// Return index 2
-int Geometry::b()
-{
-	return b_;
-}
-
-// Return index 3
-int Geometry::c()
-{
-	return c_;
-}
-
-// Return index 4
-int Geometry::d()
-{
-	return d_;
 }
 
 // Return reference value
@@ -83,14 +55,10 @@ double Geometry::value()
 	return value_;
 }
 
-
-/*
- * Parallel Comms
- */
-
-// Broadcast data from Master to all Slaves
-bool Geometry::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
+// Return index value
+int Geometry::indices(int i) const
 {
-	return false;
+	return indices_[i];
 }
+
 

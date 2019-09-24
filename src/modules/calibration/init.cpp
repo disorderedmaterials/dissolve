@@ -37,9 +37,3 @@ void CalibrationModule::initialise()
 	keywords_.add("NeutronSQ Calibration", new ModuleRefListKeyword(intraBroadeningNeutronGRReferences_, "NeutronSQ"), "IntraBroadeningNeutronGRReference", "Add G(r) data in the specified NeutronSQ module as a reference for IntraBroadening adjustment", "<NeutronSQModule>");
 	keywords_.add("NeutronSQ Calibration", new ModuleRefListKeyword(intraBroadeningNeutronSQReferences_, "NeutronSQ"), "IntraBroadeningNeutronSQReference", "Add S(Q) data in the specified NeutronSQ module as a reference for IntraBroadening adjustment", "<NeutronSQModule>");
 }
-
-// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-KeywordBase::ParseResult CalibrationModule::parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
-{
-	return KeywordBase::Unrecognised;
-}
