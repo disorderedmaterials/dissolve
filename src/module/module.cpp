@@ -1,5 +1,5 @@
 /*
-	*** Dissolve Module Interface
+	*** Module Interface
 	*** src/module/module.cpp
 	Copyright T. Youngs 2012-2019
 
@@ -26,7 +26,7 @@
 #include "base/sysfunc.h"
 
 // Constructor
-Module::Module() : keywords_(this)
+Module::Module()
 {
 	frequency_ = 1;
 	enabled_ = true;
@@ -62,74 +62,35 @@ const char* Module::uniqueName() const
  * Keywords
  */
 
-// Create and return named keyword group
-KeywordGroup* Module::addKeywordGroup(const char* name)
-{
-	// Check that a group with the specified name doesn't already exist
-	KeywordGroup* group = NULL;
-	for (group = keywordGroups_.first(); group != NULL; group = group->next) if (DissolveSys::sameString(name, group->name())) break;
-
-	if (!group)
-	{
-		group = new KeywordGroup(keywords_);
-		group->setName(name);
-		keywordGroups_.own(group);
-	}
-
-	return group;
-}
-
 // Return list of recognised keywords
 KeywordList& Module::keywords()
 {
 	return keywords_;
 }
 
-// Return list of defined keyword groups
-const List<KeywordGroup>& Module::keywordGroups() const
-{
-	return keywordGroups_;
-}
-
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int Module::parseKeyword(LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
+KeywordBase::ParseResult Module::parseKeyword(LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
 	// The LineParser currently contains a parsed line from the input file...
 
 	// Do we recognise the first item (the 'keyword')?
 	KeywordBase* keyword = keywords_.find(parser.argc(0));
-	if (!keyword) return -1;
+	if (!keyword) return KeywordBase::Unrecognised;
 
-	// We recognised the keyword - what should we try to do with it?
-	if (keyword->type() == KeywordBase::ComplexData)
-	{
-		// It's a 'complex' keyword, one that either sets up a complicated object, or does something specific within the Module
-		return parseComplexKeyword(keyword, parser, dissolve, targetList, prefix);
-	}
 	else
 	{
-		// It's a keyword that sets a simple POD or class
 		// Check the number of arguments we have against the min / max for the keyword
-		if ((parser.nArgs() - 1) < keyword->minArguments())
-		{
-			Messenger::error("Not enough arguments given to Module keyword '%s'.\n", keyword->keyword());
-			return 0;
-		}
-		if ((keyword->maxArguments() >= 0) && ((parser.nArgs() - 1) > keyword->maxArguments()))
-		{
-			Messenger::error("Too many arguments given to Module keyword '%s'.\n", keyword->keyword());
-			return 0;
-		}
+		if (!keyword->validNArgs(parser.nArgs() - 1)) return KeywordBase::Failed;
 
 		// All OK, so parse the keyword
-		if (!keyword->read(parser, 1, dissolve->coreData(), dissolve->worldPool()))
+		if (!keyword->read(parser, 1, dissolve->coreData()))
 		{
-			Messenger::error("Failed to parse arguments for Module keyword '%s'.\n", keyword->keyword());
-			return 0;
+			Messenger::error("Failed to parse arguments for Module keyword '%s'.\n", keyword->name());
+			return KeywordBase::Failed;
 		}
 	}
 
-	return true;
+	return KeywordBase::Success;
 }
 
 // Print valid keywords
@@ -138,20 +99,20 @@ void Module::printValidKeywords()
 	Messenger::print("Valid keywords for '%s' Module are:\n", type());
 
 	ListIterator<KeywordBase> keywordIterator(keywords_.keywords());
-	while (KeywordBase* keyword = keywordIterator.iterate()) Messenger::print("  %30s  %s\n", keyword->keyword(), keyword->description());
+	while (KeywordBase* keyword = keywordIterator.iterate()) Messenger::print("  %30s  %s\n", keyword->name(), keyword->description());
 }
 
 /*
  * Control
  */
 
-// Frequency with which to run Module (relative to master simulation loop counter)
+// Set frequency at which to run Module (relative to master simulation loop counter)
 void Module::setFrequency(int freq)
 {
 	frequency_ = freq;
 }
 
-// Frequency with which to run Module (relative to master simulation loop counter)
+// Return frequency at which to run Module (relative to master simulation loop counter)
 int Module::frequency() const
 {
 	return frequency_;

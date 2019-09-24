@@ -1,3 +1,4 @@
 [Project]
-Manager=KDevCustomMakeManager
+CreatedFrom=CMakeLists.txt
+Manager=KDevCMakeManager
 Name=dissolve

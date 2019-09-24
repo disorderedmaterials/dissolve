@@ -1,5 +1,5 @@
 /*
-	*** Dissolve Module Interface
+	*** Module Interface
 	*** src/module/module.h
 	Copyright T. Youngs 2012-2019
 
@@ -83,41 +83,38 @@ class Module : public ListItem<Module>
 	protected:
 	// Keywords recognised by Module
 	KeywordList keywords_;
-	// Keywords organised by group
-	List<KeywordGroup> keywordGroups_;
 
-	protected:
-	// Create and return named keyword group
-	KeywordGroup* addKeywordGroup(const char* name);
-	// Set up keywords for Module
-	virtual void setUpKeywords() = 0;
-	// Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-	virtual int parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix) = 0;
-
+	
 	public:
 	// Return list of recognised keywords
 	KeywordList& keywords();
-	// Return list of defined keyword groups
-	const List<KeywordGroup>& keywordGroups() const;
 	// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-	int parseKeyword(LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix);
+	KeywordBase::ParseResult parseKeyword(LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix);
 	// Print valid keywords
 	void printValidKeywords();
+
+
+	/*
+	 * Initialisation
+	 */
+	public:
+	// Perform any necessary initialisation for the Module
+	virtual void initialise() = 0;
 
 
 	/*
 	 * Control
 	 */
 	protected:
-	// Frequency with which to run Module (relative to layer execution count)
+	// Frequency at which to run Module (relative to layer execution count)
 	int frequency_;
 	// Whether the Module is enabled
 	bool enabled_;
 
 	public:
-	// Set frequency with which to run Module (relative to layer execution count)
+	// Set frequency at which to run Module (relative to layer execution count)
 	void setFrequency(int freq);
-	// Return frequency with which to run Module (relative to layer execution count)
+	// Return frequency at which to run Module (relative to layer execution count)
 	int frequency() const;
 	// Return whether the Module should run this iteration
 	bool runThisIteration(int iteration) const;

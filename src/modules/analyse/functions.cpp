@@ -21,8 +21,8 @@
 
 #include "modules/analyse/analyse.h"
 
-// Return the analyser's scope stack
-const NodeScopeStack& AnalyseModule::analyserScopeStack() const
+// Return the analyser
+Procedure& AnalyseModule::analyser()
 {
-	return analyser_.scopeStack();
+	return analyser_;
 }

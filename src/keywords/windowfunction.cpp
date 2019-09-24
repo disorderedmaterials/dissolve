@@ -21,7 +21,6 @@
 
 #include "keywords/windowfunction.h"
 #include "base/lineparser.h"
-#include "genericitems/listhelper.h"
 
 // Constructor
 WindowFunctionKeyword::WindowFunctionKeyword(WindowFunction value) : KeywordData<WindowFunction>(KeywordBase::WindowFunctionData, value)
@@ -38,19 +37,19 @@ WindowFunctionKeyword::~WindowFunctionKeyword()
  */
 
 // Return minimum number of arguments accepted
-int WindowFunctionKeyword::minArguments()
+int WindowFunctionKeyword::minArguments() const
 {
 	return 1;
 }
 
 // Return maximum number of arguments accepted
-int WindowFunctionKeyword::maxArguments()
+int WindowFunctionKeyword::maxArguments() const
 {
 	return MAXWINDOWFUNCTIONPARAMS;
 }
 
-// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool WindowFunctionKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+// Parse arguments from supplied LineParser, starting at given argument offset
+bool WindowFunctionKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	bool result = data_.set(parser, startArg);
 	if (result) set_ = true;
@@ -59,9 +58,9 @@ bool WindowFunctionKeyword::read(LineParser& parser, int startArg, const CoreDat
 }
 
 // Write keyword data to specified LineParser
-bool WindowFunctionKeyword::write(LineParser& parser, const char* prefix)
+bool WindowFunctionKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
 	CharString params;
 	for (int n=0; n<WindowFunction::nFunctionParameters(data_.function()); ++n) params.strcatf("  %f", data_.parameter(n));
-	return parser.writeLineF("%s%s  '%s'%s\n", prefix, keyword(), WindowFunction::functionType(data_.function()), params.get());
+	return parser.writeLineF("%s%s  '%s'%s\n", prefix, keywordName, WindowFunction::functionType(data_.function()), params.get());
 }

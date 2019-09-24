@@ -23,16 +23,16 @@
 #include "gui/viewer/render/renderable.h"
 
 // Constructor
-RenderableGroup::RenderableGroup(const char* name, ColourDefinition::StockColour colour) : ListItem<RenderableGroup>()
+RenderableGroup::RenderableGroup(const char* name, StockColours::StockColour colour) : ListItem<RenderableGroup>()
 {
 	name_ = name;
 
 	visible_ = true;
 
 	colouringStyle_ = RenderableGroup::FixedGroupColouring;
-	automaticStockColourUsageCount_.initialise(ColourDefinition::nStockColours);
+	automaticStockColourUsageCount_.initialise(StockColours::nStockColours);
 	automaticStockColourUsageCount_= 0;
-	setFixedStockColour(ColourDefinition::BlackStockColour);
+	setFixedStockColour(StockColours::BlackStockColour);
 	lineStipple_ = LineStipple::NoStipple;
 
 	verticalShiftStyle_ = GroupVerticalShifting;
@@ -161,12 +161,12 @@ void RenderableGroup::setRenderableColour(Renderable* rend)
 	{
 		// Find the StockColour with the lowest usage count
 		int lowestId = 0;
-		for (int colourId = 0; colourId < ColourDefinition::nStockColours; ++colourId)
+		for (int colourId = 0; colourId < StockColours::nStockColours; ++colourId)
 		{
 			if (automaticStockColourUsageCount_[colourId] < automaticStockColourUsageCount_[lowestId]) lowestId = colourId;
 		}
 
-		rend->setColour((ColourDefinition::StockColour) lowestId);
+		rend->setColour((StockColours::StockColour) lowestId);
 
 		++automaticStockColourUsageCount_[lowestId];
 	}
@@ -194,7 +194,7 @@ RenderableGroup::GroupColouring RenderableGroup::colouringStyle() const
 }
 
 // Set fixed stock colour for the group
-void RenderableGroup::setFixedStockColour(ColourDefinition::StockColour stockColour)
+void RenderableGroup::setFixedStockColour(StockColours::StockColour stockColour)
 {
 	fixedStockColour_ = stockColour;
 
@@ -202,7 +202,7 @@ void RenderableGroup::setFixedStockColour(ColourDefinition::StockColour stockCol
 }
 
 // Return fixed stock colour associated to the group
-ColourDefinition::StockColour RenderableGroup::fixedStockColour() const
+StockColours::StockColour RenderableGroup::fixedStockColour() const
 {
 	return fixedStockColour_;
 }

@@ -74,7 +74,7 @@ classDiagram
   Module : + virtual brief() = 0 : const char*
   Module : + virtual category() = 0 : const char*
   Module : + virtual nTargetableConfigurations() = 0 : int
-  Module : # virtual setUpKeywords() = 0 : void
+  Module : # virtual initialise() = 0 : void
   Module : + virtual setUp(Dissolve& dissolve, ProcessPool& procPool) : bool
   Module : - virtual process(Dissolve& dissolve, ProcessPool& procPool) = 0 : bool
   Module : + virtual createWidget(QWidget* parent, Dissolve& dissolve) : ModuleWidget*
@@ -88,11 +88,9 @@ The `Module` class is abstract, and is the principal class from which to derive 
 
 Implements functions returning the type (i.e. general name) of the module (`const char* Module::type()`), a short description of its purpose (`const char* Module::brief()`), the name of the category it should be assigned to (`const char* Module::category()`), mainly for the purposes of grouping within the GUI, and the number of configurations the module can target (`int Module::nTargetableConfigurations()`). The latter can be zero to mean that the module cannot target configurations (in which case an error will be raised if this is attempted), a positive integer to state a fixed number that can / must be targeted, or -1 to indicate that any number can be targeted (even zero).
 
-### Options (`options.cpp`)
+### Initialisation (`init.cpp`)
 
-Controlling the behaviour of the module is achieved by defining a set of keyword options in `Module::setUpKeywords()`. These keywords are given a name by which they are referenced, a type with a default value, and a description. Each POD as well as a multitude of compound objects useful to Dissolve are represented by classes derived from `ModuleKeyword`, which take care of the storage, reading, writing, and limit / validation checking. In addition, each has its own associated UI representation class which is generated automatically when required, meaning that no additional effort is required to provide controls for modules within the GUI. See the document on [keyword options](KeywordOptions.md) for a more in-depth discussion and a list of available keyword classes.
-
-`Module::setUpKeywords()` should also be used to set the execution `frequency_` if it is required to do so.
+The `Module::initialise()` function is used to set up any complex data within the Module and, critically, any keywords that control the behaviour of the module. These keywords are given a name by which they are referenced, a type with a default value, and a description. Each POD as well as a multitude of compound objects useful to Dissolve are represented by classes derived from `ModuleKeyword`, which take care of the storage, reading, writing, and limit / validation checking. In addition, each has its own associated UI representation class which is generated automatically when required, meaning that no additional effort is required to provide controls for modules within the GUI. See the document on [keyword options](KeywordOptions.md) for a more in-depth discussion and a list of available keyword classes.
 
 Note that keywords are constructed for each instance of the module, and so are independent between modules of the same type.
 

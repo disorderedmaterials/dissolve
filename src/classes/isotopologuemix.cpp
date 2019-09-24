@@ -98,7 +98,7 @@ bool IsotopologueMix::addNextIsotopologue()
 	
 	// Find unique (unused) Isotopologue
 	Isotopologue* iso;
-	for (iso = species_->isotopologues().first(); iso != NULL; iso = iso->next) if (!mix_.contains(iso)) break;
+	for (iso = species_->isotopologues().first(); iso != NULL; iso = iso->next()) if (!mix_.contains(iso)) break;
 
 	if (iso == NULL)
 	{

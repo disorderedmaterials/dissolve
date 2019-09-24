@@ -85,52 +85,6 @@ const char* ColourDefinition::colourStyle(ColourStyle cs)
 	return ColourStyleKeywords[cs];
 }
 
-// Stock Colours
-QColor StockColours[] = {
-	QColor(0, 0, 0),	/* BlackStockColour */
-	QColor(200, 0, 0),	/* RedStockColour */
-	QColor(0, 200, 0),	/* GreenStockColour */
-	QColor(0, 0, 200),	/* BlueStockColour */
-	QColor(200, 0, 200),	/* PurpleStockColour */
-	QColor(0, 200, 200),	/* CyanStockColour */
-	QColor(255, 128, 0),	/* OrangeStockColour */
-	QColor(255, 100, 255),	/* PinkStockColour */
-	QColor(255, 100, 100),	/* LightRedStockColour */
-	QColor(100, 255, 100),	/* LightGreenStockColour */
-	QColor(100, 100, 255),	/* LightBlueStockColour */
-	QColor(128, 128, 128),	/* SilverStockColour */
-	QColor(128, 128, 50)	/* GoldStockColour */
-};
-
-// Return enum options for RenderableGroupKeyword
-EnumOptions<ColourDefinition::StockColour> ColourDefinition::stockColours()
-{
-	static EnumOptionsList StockColoursNew = EnumOptionsList() << 
-		EnumOption( ColourDefinition::BlackStockColour,		"Black" ) <<
-		EnumOption( ColourDefinition::RedStockColour,		"Red" ) <<
-		EnumOption( ColourDefinition::GreenStockColour,		"Green" ) <<
-		EnumOption( ColourDefinition::BlueStockColour,		"Blue" ) <<
-		EnumOption( ColourDefinition::PurpleStockColour,	"Purple" ) <<
-		EnumOption( ColourDefinition::CyanStockColour,		"Cyan" ) <<
-		EnumOption( ColourDefinition::OrangeStockColour,	"Orange" ) <<
-		EnumOption( ColourDefinition::PinkStockColour,		"Pink" ) <<
-		EnumOption( ColourDefinition::LightRedStockColour,	"LightRed" ) <<
-		EnumOption( ColourDefinition::LightGreenStockColour,	"LightGreen" ) <<
-		EnumOption( ColourDefinition::LightBlueStockColour,	"LightBlue" ) <<
-		EnumOption( ColourDefinition::SilverStockColour,	"Silver" ) <<
-		EnumOption( ColourDefinition::GoldStockColour,		"Gold" );
-
-	static EnumOptions<ColourDefinition::StockColour> options("StockColour", StockColoursNew);
-
-	return options;
-}
-
-// Return stock colour (as QColor)
-QColor ColourDefinition::stockColour(ColourDefinition::StockColour colour)
-{
-	return StockColours[colour];
-}
-
 /*
  * Style
  */

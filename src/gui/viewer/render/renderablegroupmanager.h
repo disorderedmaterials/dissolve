@@ -70,7 +70,7 @@ class RenderableGroupManager
 	// Set colouring style for named group
 	void setGroupColouring(const char* groupName, RenderableGroup::GroupColouring colouringStyle);
 	// Set fixed colour for named group
-	void setGroupFixedColour(const char* groupName, ColourDefinition::StockColour stockColour);
+	void setGroupFixedColour(const char* groupName, StockColours::StockColour stockColour);
 
 
 	/*

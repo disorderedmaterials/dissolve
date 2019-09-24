@@ -68,9 +68,9 @@ class ModuleChartInsertionBlock : public QWidget, public ModuleChartBlock
 	QWidget* widget();
 	// Update controls within widget
 	void updateControls();
-	// Disable sensitive controls, ready for main code to run
+	// Disable sensitive controls
 	void disableSensitiveControls();
-	// Enable sensitive controls, ready for main code to run
+	// Enable sensitive controls
 	void enableSensitiveControls();
 
 

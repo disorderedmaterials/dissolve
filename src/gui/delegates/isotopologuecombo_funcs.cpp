@@ -24,7 +24,6 @@
 #include "classes/species.h"
 #include "templates/list.h"
 #include "templates/variantpointer.h"
-#include <QTableWidgetItem>
 
 IsotopologueComboDelegate::IsotopologueComboDelegate(QObject* parent) : QItemDelegate(parent)
 {

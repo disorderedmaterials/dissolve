@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_VEC3DOUBLEKEYWORDWIDGET_H
-#define DISSOLVE_VEC3DOUBLEKEYWORDWIDGET_H
+#ifndef DISSOLVE_KEYWORDWIDGET_VEC3DOUBLE_H
+#define DISSOLVE_KEYWORDWIDGET_VEC3DOUBLE_H
 
 #include "gui/keywordwidgets/ui_vec3double.h"
 #include "gui/keywordwidgets/base.h"
@@ -37,9 +37,7 @@ class Vec3DoubleKeywordWidget : public QWidget, public KeywordWidgetBase
 
 	public:
 	// Constructor
-	Vec3DoubleKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
-        // Main form declaration
-        Ui::Vec3DoubleWidget ui_;
+	Vec3DoubleKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
 
 
 	/*
@@ -51,10 +49,13 @@ class Vec3DoubleKeywordWidget : public QWidget, public KeywordWidgetBase
 
 
 	/*
-	 * Signals / Slots
+	 * Widgets
 	 */
+	private:
+	// Main form declaration
+	Ui::Vec3DoubleWidget ui_;
+
 	private slots:
-	// Spin box value changed
 	void on_Spin1_valueChanged(double value);
 	void on_Spin2_valueChanged(double value);
 	void on_Spin3_valueChanged(double value);
@@ -68,7 +69,7 @@ class Vec3DoubleKeywordWidget : public QWidget, public KeywordWidgetBase
 	 * Update
 	 */
 	public:
-	// Update value displayed in widget, using specified source if necessary
+	// Update value displayed in widget
 	void updateValue();
 };
 

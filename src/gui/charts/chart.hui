@@ -1,0 +1,179 @@
+/*
+	*** Chart Base Class
+	*** src/gui/charts/chart.hui
+	Copyright T. Youngs 2012-2019
+
+	This file is part of Dissolve.
+
+	Dissolve is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	Dissolve is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef DISSOLVE_CHARTS_CHARTBASE_H
+#define DISSOLVE_CHARTS_CHARTBASE_H
+
+#include "gui/charts/chartblock.h"
+#include "gui/charts/charthotspot.h"
+#include "templates/list.h"
+#include "templates/reflist.h"
+#include <QWidget>
+
+// Forward Declarations
+class LineParser;
+class QDragEnterEvent;
+class QDragLeaveEvent;
+class QDropEvent;
+class QMouseEvent;
+
+// Chart - Display blocks according to some layout (determined by the derived class)
+class ChartBase : public QWidget
+{
+	Q_OBJECT
+
+	public:
+	// Constructor / Destructor
+	ChartBase(QWidget* parent = NULL);
+	~ChartBase();
+
+
+	/*
+	 * Chart Blocks
+	 */
+	protected:
+	// RefList of ChartBlocks present in the widget
+	RefList<ChartBlock> chartBlocks_;
+
+	protected:
+	// Update the content block widgets against the current target data
+	virtual void updateContentBlocks() = 0;
+	// Return if a ChartBlock can be dragged from the supplied position
+	ChartBlock* dragBlockAt(QPoint point);
+
+
+	/*
+	 * Update
+	 */
+	protected:
+	// Whether widget is currently refreshing
+	bool refreshing_;
+
+	public:
+	// Update controls within widget
+	void updateControls();
+	// Disable sensitive controls within widget
+	void disableSensitiveControls();
+	// Enable sensitive controls within widget
+	void enableSensitiveControls();
+
+
+	/*
+	 * QWidget Reimplementations
+	 */
+	protected:
+	// Geometry changed
+	void resizeEvent(QResizeEvent* event);
+	// Size hint
+	QSize sizeHint() const;
+	// Minimum size hint
+	QSize minimumSizeHint() const;
+	// Mouse press event
+	void mousePressEvent(QMouseEvent* event);
+	// Mouse move event
+	void mouseMoveEvent(QMouseEvent* event);
+	// Mouse release event
+	void mouseReleaseEvent(QMouseEvent* event);
+	// Mouse double-click event
+	void mouseDoubleClickEvent(QMouseEvent* event);
+	// Drag enter event
+	void dragEnterEvent(QDragEnterEvent* event);
+	// Draw move event
+	void dragMoveEvent(QDragMoveEvent* event);
+	// Drag leave event
+	void dragLeaveEvent(QDragLeaveEvent* event);
+	// Drop event
+	void dropEvent(QDropEvent* event);
+
+
+	/*
+	 * Drag / Drop
+	 */
+	protected:
+	// Position of last mouse click
+	QPoint mouseDownPosition_;
+	// Data of object dragged from external source
+	QString externalDragObjectData_;
+	// Whether an external object is currently being dragged over the widget
+	bool externalObjectDragged_;
+	// ChartBlock being dragged (if a local drag)
+	ChartBlock* draggedBlock_;
+	// Drop hotspots available on the chart
+	List<ChartHotSpot> hotSpots_;
+	// Index of the current hotspot the dragged object is over (if any)
+	int currentHotSpotIndex_;
+
+	private:
+	// Return hotspot under specified point
+	ChartHotSpot* hotSpotAt(QPoint point);
+	// Reset after drop
+	void resetAfterDrop(bool animateWidgets = true);
+
+
+	/*
+	 * Widget Layout
+	 */
+	private:
+	// Size hint for current number of columns / rows
+	QSize sizeHint_;
+	// Minimum size hint (for single column)
+	QSize minimumSizeHint_;
+
+	private:
+	// Lay out widgets
+	void layOutWidgets(bool animate = false);
+	// Calculate new widget geometry according to the layout requirements, returning the entire area required
+	virtual QSize calculateNewWidgetGeometry(QSize currentSize) = 0;
+
+	protected:
+	// Whether to resize chart to accommodate widgets
+	bool resizeToWidgets_;
+
+	public slots:
+	// Recalculate layout (after widget size change etc.)
+	void recalculateLayout();
+
+
+	/*
+	 * State I/O
+	 */
+	public:
+	// Write widget state through specified LineParser
+	virtual bool writeState(LineParser& parser) = 0;
+	// Read widget state through specified LineParser
+	virtual bool readState(LineParser& parser) = 0;
+
+
+	/*
+	 * Signals / Slots
+	 */
+	private slots:
+	// Displayed chart data has been modified in some way
+	void chartDataModified();
+
+	signals:
+	// Notify that the underlying data displayed by the chart has changed
+	void dataModified();
+	// Notify that our required size has changed
+	void requiredSizeChanged();
+};
+
+#endif

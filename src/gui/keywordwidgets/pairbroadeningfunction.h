@@ -38,9 +38,7 @@ class PairBroadeningFunctionKeywordWidget : public KeywordDropDown, public Keywo
 
 	public:
 	// Constructor
-	PairBroadeningFunctionKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
-        // Main form declaration
-        Ui::PairBroadeningFunctionWidget ui;
+	PairBroadeningFunctionKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
 
 
 	/*
@@ -52,8 +50,12 @@ class PairBroadeningFunctionKeywordWidget : public KeywordDropDown, public Keywo
 
 
 	/*
-	 * Signals / Slots
+	 * Widgets
 	 */
+	private:
+	// Main form declaration
+	Ui::PairBroadeningFunctionWidget ui_;
+
 	private slots:
 	// Function type radio changed
 	void functionRadioChanged(bool checked);
@@ -69,7 +71,7 @@ class PairBroadeningFunctionKeywordWidget : public KeywordDropDown, public Keywo
 	 * Update
 	 */
 	public:
-	// Update value displayed in widget, using specified source if necessary
+	// Update value displayed in widget
 	void updateValue();
 	// Update widget values data based on keyword data
 	void updateWidgetValues(const CoreData& coreData);

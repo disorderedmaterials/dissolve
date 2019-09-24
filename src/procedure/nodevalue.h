@@ -33,8 +33,10 @@ class LineParser;
 class NodeValue
 {
 	public:
-	// Constructor
+	// Constructors
 	NodeValue();
+	NodeValue(const int i);
+	NodeValue(const double d);
 	// Destructor
 	~NodeValue();
 	// Assignment from integer
@@ -67,6 +69,8 @@ class NodeValue
 	bool set(double value);
 	// Set from expression text
 	bool set(const char* expressionText, RefList<ExpressionVariable> parameters);
+	// Return whether value is currently valid
+	bool isValid() const;
 
 
 	/*
@@ -78,7 +82,7 @@ class NodeValue
 	// Return contained value as double
 	double asDouble();
 	// Return value represented as a string
-	const char* asString();
+	const char* asString(bool addQuotesIfRequired = false) const;
 };
 
 #endif

@@ -42,20 +42,20 @@ ModuleGroupsKeyword::~ModuleGroupsKeyword()
  */
 
 // Return minimum number of arguments accepted
-int ModuleGroupsKeyword::minArguments()
+int ModuleGroupsKeyword::minArguments() const
 {
 	return 1;
 }
 
 // Return maximum number of arguments accepted
-int ModuleGroupsKeyword::maxArguments()
+int ModuleGroupsKeyword::maxArguments() const
 {
 	// Module name plus group name
 	return 2;
 }
 
-// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool ModuleGroupsKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+// Parse arguments from supplied LineParser, starting at given argument offset
+bool ModuleGroupsKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	// Find specified Module by its unique name
 	Module* module = coreData.findModule(parser.argc(startArg));
@@ -81,7 +81,7 @@ bool ModuleGroupsKeyword::read(LineParser& parser, int startArg, const CoreData&
 }
 
 // Write keyword data to specified LineParser
-bool ModuleGroupsKeyword::write(LineParser& parser, const char* prefix)
+bool ModuleGroupsKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
 	// Loop over defined groups
 	ListIterator<ModuleGroup> groupIterator(data_.groups());
@@ -91,9 +91,24 @@ bool ModuleGroupsKeyword::write(LineParser& parser, const char* prefix)
 		RefListIterator<Module> refIterator(group->modules());
 		while (Module* module = refIterator.iterate())
 		{
-			if (!parser.writeLineF("%s%s  '%s'  '%s'\n", prefix, keyword(), module->uniqueName(), group->name())) return false;
+			if (!parser.writeLineF("%s%s  '%s'  '%s'\n", prefix, keywordName, module->uniqueName(), group->name())) return false;
 		}
 	}
 
 	return true;
+}
+
+/*
+ * Object Management
+ */
+
+// Prune any references to the supplied Module in the contained data
+void ModuleGroupsKeyword::removeReferencesTo(Module* module)
+{
+	// Loop over defined groups
+	ListIterator<ModuleGroup> groupIterator(data_.groups());
+	while (ModuleGroup* group = groupIterator.iterate())
+	{
+		if (group->contains(module)) group->remove(module);
+	}
 }

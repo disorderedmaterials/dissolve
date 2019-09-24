@@ -23,19 +23,18 @@
 #define DISSOLVE_KEYWORD_ATOMTYPESELECTION_H
 
 #include "keywords/data.h"
-#include "keywords/base.h"
 #include "classes/atomtypelist.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
 class Configuration;
 
-// Keyword with IsotopologueReference Data
+// Keyword with AtomTypeList Data
 class AtomTypeSelectionKeyword : public KeywordData<AtomTypeList&>
 {
 	public:
 	// Constructor
-	AtomTypeSelectionKeyword(AtomTypeList& selection_, RefList<Configuration>& sourceConfigurations);
+	AtomTypeSelectionKeyword(AtomTypeList& selection_, const RefList<Configuration>& sourceConfigurations);
 	// Destructor
 	~AtomTypeSelectionKeyword();
 
@@ -45,7 +44,7 @@ class AtomTypeSelectionKeyword : public KeywordData<AtomTypeList&>
 	 */
 	private:
 	// Source Configurations from which we take our valid AtomTypes
-	RefList<Configuration>& sourceConfigurations_;
+	const RefList<Configuration>& sourceConfigurations_;
 
 	public:
 	// Check selection and make sure it is consistent based on the source Configurations
@@ -59,13 +58,21 @@ class AtomTypeSelectionKeyword : public KeywordData<AtomTypeList&>
 	 */
 	public:
 	// Return minimum number of arguments accepted
-	int minArguments();
+	int minArguments() const;
 	// Return maximum number of arguments accepted
-	int maxArguments();
-	// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-	bool read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool);
+	int maxArguments() const;
+	// Parse arguments from supplied LineParser, starting at given argument offset
+	bool read(LineParser& parser, int startArg, const CoreData& coreData);
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* prefix);
+	bool write(LineParser& parser, const char* keywordName, const char* prefix);
+
+
+	/*
+	 * Object Management
+	 */
+	protected:
+	// Prune any references to the supplied AtomType in the contained data
+	void removeReferencesTo(AtomType* at);
 };
 
 #endif

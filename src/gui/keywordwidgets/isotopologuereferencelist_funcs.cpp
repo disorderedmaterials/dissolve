@@ -34,7 +34,7 @@
 #include "templates/variantpointer.h"
 
 // Constructor
-IsotopologueReferenceListKeywordWidget::IsotopologueReferenceListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : KeywordDropDown(this), KeywordWidgetBase(coreData, moduleData, prefix)
+IsotopologueReferenceListKeywordWidget::IsotopologueReferenceListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : KeywordDropDown(this), KeywordWidgetBase(coreData)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container
 	ui_.setupUi(dropWidget());
@@ -53,7 +53,7 @@ IsotopologueReferenceListKeywordWidget::IsotopologueReferenceListKeywordWidget(Q
 
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<IsotopologueReferenceListKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into IsotopologueReferenceListKeyword.\n", keyword->keyword());
+	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into IsotopologueReferenceListKeyword.\n", keyword->name());
 	else
 	{
 		// Set current information
@@ -305,7 +305,7 @@ void IsotopologueReferenceListKeywordWidget::updateTableRow(int row, Isotopologu
 	item->setText(QString::number(isoRef->weight()));
 }
 
-// Update value displayed in widget, using specified source if necessary
+// Update value displayed in widget
 void IsotopologueReferenceListKeywordWidget::updateValue()
 {
 	updateWidgetValues(coreData_);

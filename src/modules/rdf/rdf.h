@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_RDFMODULE_H
-#define DISSOLVE_RDFMODULE_H
+#ifndef DISSOLVE_MODULE_RDF_H
+#define DISSOLVE_MODULE_RDF_H
 
 #include "module/module.h"
 #include "classes/partialset.h"
@@ -66,13 +66,11 @@ class RDFModule : public Module
 
 
 	/*
-	 * Options
+	 * Initialisation
 	 */
 	protected:
-	// Set up keywords for Module
-	void setUpKeywords();
-	// Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-	int parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix);
+	// Perform any necessary initialisation for the Module
+	void initialise();
 
 	public:
 	// Partial Calculation Method enum

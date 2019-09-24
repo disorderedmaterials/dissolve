@@ -53,7 +53,7 @@ bool Dissolve::intraShake(Configuration& cfg, int nShakesPerMol)
 	// Loop over Molecules
 	Comm.resetAccumulatedTime();
 	timer.start();
-	for (Molecule* mol = cfg.molecules(); mol != NULL; mol = mol->next)
+	for (Molecule* mol = cfg.molecules(); mol != NULL; mol = mol->next())
 	{
 		// Add this Molecule's Grains to the ChangeStore
 		changeStore.add(mol);
@@ -69,7 +69,7 @@ bool Dissolve::intraShake(Configuration& cfg, int nShakesPerMol)
 		for (shake = 0; shake<nShakesPerMol; ++shake)
 		{
 			// Loop over Bonds
-			for (SpeciesBond* b = mol->species()->bonds(); b != NULL; b = b->next)
+			for (SpeciesBond* b = mol->species()->bonds(); b != NULL; b = b->next())
 			{
 				if (b->interGrain()) continue;
 				++nTries;
@@ -118,7 +118,7 @@ bool Dissolve::intraShake(Configuration& cfg, int nShakesPerMol)
 		for (shake = 0; shake<nShakesPerMol; ++shake)
 		{
 			// Loop over Angles
-			for (SpeciesAngle* a = mol->species()->angles(); a != NULL; a = a->next)
+			for (SpeciesAngle* a = mol->species()->angles(); a != NULL; a = a->next())
 			{
 				if (a->interGrain()) continue;
 				++nTries;
@@ -267,7 +267,7 @@ bool Dissolve::interShake(Configuration& cfg)
 			changeStore.add(grainI);
 
 			// Loop over Bond connections
-			for (RefListItem<SpeciesBond,int>* refBond = grainI->source()->bondConnections(); refBond != NULL; refBond = refBond->next)
+			for (RefListItem<SpeciesBond,int>* refBond = grainI->source()->bondConnections(); refBond != NULL; refBond = refBond->next())
 			{
 				b = refBond->item;
 				
@@ -399,7 +399,7 @@ bool Dissolve::termShake(Configuration& cfg, int nShakesPerTerm)
 	// Loop over Molecules	TODO Split with MPI
 	Comm.resetAccumulatedTime();
 	timer.start();
-	for (Molecule* mol = cfg.molecules(); mol != NULL; mol = mol->next)
+	for (Molecule* mol = cfg.molecules(); mol != NULL; mol = mol->next())
 	{
 		// Add this Molecule's Grains to the ChangeStore
 		changeStore.add(mol);
@@ -418,7 +418,7 @@ bool Dissolve::termShake(Configuration& cfg, int nShakesPerTerm)
 		for (shake = 0; shake<nShakesPerTerm; ++shake)
 		{
 			// Loop over Bonds
-			for (SpeciesBond* b = mol->species()->bonds(); b != NULL; b = b->next)
+			for (SpeciesBond* b = mol->species()->bonds(); b != NULL; b = b->next())
 			{
 				++nTries;
 
@@ -467,7 +467,7 @@ bool Dissolve::termShake(Configuration& cfg, int nShakesPerTerm)
 		for (shake = 0; shake<nShakesPerTerm; ++shake)
 		{
 			// Loop over angles
-			for (SpeciesAngle* a = mol->species()->angles(); a != NULL; a = a->next)
+			for (SpeciesAngle* a = mol->species()->angles(); a != NULL; a = a->next())
 			{
 				++nTries;
 

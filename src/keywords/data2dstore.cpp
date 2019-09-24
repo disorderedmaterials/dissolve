@@ -21,7 +21,6 @@
 
 #include "keywords/data2dstore.h"
 #include "base/lineparser.h"
-#include "templates/refdatalist.h"
 
 // Constructor
 Data2DStoreKeyword::Data2DStoreKeyword(Data2DStore& data2DStore) : KeywordData<Data2DStore&>(KeywordBase::Data2DStoreData, data2DStore)
@@ -38,21 +37,21 @@ Data2DStoreKeyword::~Data2DStoreKeyword()
  */
 
 // Return minimum number of arguments accepted
-int Data2DStoreKeyword::minArguments()
+int Data2DStoreKeyword::minArguments() const
 {
 	// Must have reference data name and format as a minimum
 	return 2;
 }
 
 // Return maximum number of arguments accepted
-int Data2DStoreKeyword::maxArguments()
+int Data2DStoreKeyword::maxArguments() const
 {
 	// Filename, name of data, and other args
 	return 99;
 }
 
-// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool Data2DStoreKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+// Parse arguments from supplied LineParser, starting at given argument offset
+bool Data2DStoreKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	Messenger::print("Reading test data '%s' from file '%s' (format=%s)...\n", parser.argc(startArg), parser.argc(startArg+2), parser.argc(startArg+1));
 
@@ -60,7 +59,7 @@ bool Data2DStoreKeyword::read(LineParser& parser, int startArg, const CoreData& 
 	Data2DImportFileFormat ff;
 	if (!ff.read(parser, startArg+1)) return false;
 
-	if (!data_.addData(procPool, ff, parser.argc(startArg))) return Messenger::error("Failed to add data.\n");
+	if (!data_.addData(parser.processPool(), ff, parser.argc(startArg))) return Messenger::error("Failed to add data.\n");
 
 	set_ = true;
 
@@ -68,14 +67,14 @@ bool Data2DStoreKeyword::read(LineParser& parser, int startArg, const CoreData& 
 }
 
 // Write keyword data to specified LineParser
-bool Data2DStoreKeyword::write(LineParser& parser, const char* prefix)
+bool Data2DStoreKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
 	// Loop over list of one-dimensional data
 	RefDataListIterator<Data2D,Data2DImportFileFormat> dataIterator(data_.dataReferences());
 	while (Data2D* data = dataIterator.iterate())
 	{
 		Data2DImportFileFormat ff = dataIterator.currentData();
-		if (!parser.writeLineF("%s%s  '%s'  %s\n", prefix, keyword(), data->name(), ff.asString())) return false;
+		if (!parser.writeLineF("%s%s  '%s'  %s\n", prefix, keywordName, data->name(), ff.asString())) return false;
 	}
 
 	return true;

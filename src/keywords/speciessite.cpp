@@ -23,7 +23,6 @@
 #include "classes/coredata.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
-#include "genericitems/listhelper.h"
 
 // Constructor
 SpeciesSiteKeyword::SpeciesSiteKeyword(SpeciesSite* site) : KeywordData<SpeciesSite*>(KeywordBase::SpeciesSiteData, site)
@@ -40,19 +39,19 @@ SpeciesSiteKeyword::~SpeciesSiteKeyword()
  */
 
 // Return minimum number of arguments accepted
-int SpeciesSiteKeyword::minArguments()
+int SpeciesSiteKeyword::minArguments() const
 {
 	return 2;
 }
 
 // Return maximum number of arguments accepted
-int SpeciesSiteKeyword::maxArguments()
+int SpeciesSiteKeyword::maxArguments() const
 {
 	return 2;
 }
 
-// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool SpeciesSiteKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+// Parse arguments from supplied LineParser, starting at given argument offset
+bool SpeciesSiteKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	// Find target Species (first argument)
 	Species* sp = coreData.findSpecies(parser.argc(startArg));
@@ -72,13 +71,29 @@ bool SpeciesSiteKeyword::read(LineParser& parser, int startArg, const CoreData& 
 }
 
 // Write keyword data to specified LineParser
-bool SpeciesSiteKeyword::write(LineParser& parser, const char* prefix)
+bool SpeciesSiteKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
 	if (data_)
 	{
-		if (!parser.writeLineF("%s%s  '%s'  '%s'\n", prefix, keyword(), data_->parent()->name(), data_->name())) return false;
+		if (!parser.writeLineF("%s%s  '%s'  '%s'\n", prefix, keywordName, data_->parent()->name(), data_->name())) return false;
 	}
-	else if (!parser.writeLineF("%s%s  '?_?'  '?_?'\n", prefix, keyword())) return false;
+	else if (!parser.writeLineF("%s%s  '?_?'  '?_?'\n", prefix, name())) return false;
 
 	return true;
+}
+
+/*
+ * Object Management
+ */
+
+// Prune any references to the supplied Species in the contained data
+void SpeciesSiteKeyword::removeReferencesTo(Species* sp)
+{
+	if (data_ && (data_->parent() == sp)) data_ = NULL;
+}
+
+// Prune any references to the supplied Site in the contained data
+void SpeciesSiteKeyword::removeReferencesTo(SpeciesSite* spSite)
+{
+	if (data_ == spSite) data_ = NULL;
 }

@@ -85,7 +85,7 @@ template <class T> class RefListItem
 template <class T> class RefList
 {
 	public:
-	// Constructor
+	// Constructors
 	RefList<T>()
 	{
 		listHead_ = NULL;
@@ -93,6 +93,16 @@ template <class T> class RefList
 		items_ = NULL;
 		regenerate_ = true;
 		nItems_ = 0;
+	}
+	RefList<T>(T* singleItem)
+	{
+		listHead_ = NULL;
+		listTail_ = NULL;
+		items_ = NULL;
+		regenerate_ = true;
+		nItems_ = 0;
+
+		append(singleItem);
 	}
 
 	// Destructor
@@ -116,6 +126,12 @@ template <class T> class RefList
 		// Clear any current data...
 		clear();
 		for (RefListItem<T>* ri = source.first(); ri != NULL; ri = ri->next_) append(ri->item_);
+	}
+	// Operator +=
+	void operator+=(const RefList<T>& source)
+	{
+		// Add unique items in the source list to our own
+		for (RefListItem<T>* ri = source.first(); ri != NULL; ri = ri->next_) addUnique(ri->item_);
 	}
 	// Element access operator
 	RefListItem<T>* operator[](int index)

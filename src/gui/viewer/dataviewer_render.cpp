@@ -61,7 +61,7 @@ void DataViewer::render2DOverlay()
 	RefDataList<Renderable,double> legendEntries;
 
 	double maxTextWidth = -1.0;
-	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next)
+	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next())
 	{
 		if (!rend->isVisible()) continue;
 

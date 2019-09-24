@@ -19,14 +19,13 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ISOTOPOLOGUECOMBODELEGATE_H
-#define DISSOLVE_ISOTOPOLOGUECOMBODELEGATE_H
+#ifndef DISSOLVE_DELEGATES_ISOTOPOLOGUECOMBO_H
+#define DISSOLVE_DELEGATES_ISOTOPOLOGUECOMBO_H
 
 #include <QtWidgets/QItemDelegate>
 #include <QModelIndex>
 #include <QObject>
 #include <QComboBox>
-#include "classes/species.h"
 #include "templates/list.h"
 
 // Forward Declarations

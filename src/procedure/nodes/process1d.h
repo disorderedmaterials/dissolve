@@ -23,8 +23,6 @@
 #define DISSOLVE_PROCEDURENODE_PROCESS1D_H
 
 #include "procedure/nodes/node.h"
-#include "procedure/nodes/nodereference.h"
-#include "math/data1d.h"
 #include "base/charstring.h"
 #include "templates/reflist.h"
 
@@ -54,67 +52,37 @@ class Process1DProcedureNode : public ProcedureNode
 
 
 	/*
-	 * Node Keywords
-	 */
-	public:
-	// Node Keywords
-	enum Process1DNodeKeyword { EndProcess1DKeyword, FactorKeyword, LabelValueKeyword, LabelXKeyword, NormaliseToOneKeyword, NSitesKeyword, NumberDensityKeyword, SaveKeyword, SourceDataKeyword, SphericalShellVolumeKeyword, nProcess1DNodeKeywords };
-	// Return enum option info for Process1DNodeKeyword
-	static EnumOptions<Process1DNodeKeyword> process1DNodeKeywords();
-
-
-	/*
 	 * Data
 	 */
 	private:
-	// Collect1D node that we are processing
-	ProcedureNodeReference collectNode_;
+	// Collect1D node that we are processing (retrieved from keyword 'SourceData')
+	Collect1DProcedureNode* collectNode_;
 	// Pointer to processed data (stored in processing data list)
 	Data1D* processedData_;
-	// Reference to sites against which we will normalise by population
-	RefList<SelectProcedureNode> sitePopulationNormalisers_;
-	// Reference to sites against which we will normalise by number density
-	RefList<SelectProcedureNode> numberDensityNormalisers_;
-	// Whether to normalise by supplied factor
-	bool normaliseByFactor_;
-	// Normalisation factor to apply (if requested)
-	double normalisationFactor_;
-	// Whether to normalise by spherical shell volume
-	bool normaliseBySphericalShellVolume_;
-	// Whether to normalise the data to one
-	bool normaliseToOne_;
-	// Whether to save data after normalisation
-	bool saveData_;
-	// Value label
-	CharString valueLabel_;
-	// Axis labels
-	CharString xAxisLabel_;
 
 	public:
 	// Return processed data
 	const Data1D& processedData() const;
-	// Add site population normaliser
-	void addSitePopulationNormaliser(SelectProcedureNode* selectNode);
-	// Add number density normaliser
-	void addNumberDensityNormaliser(SelectProcedureNode* selectNode);
-	// Set whether to normalise by factor
-	void setNormaliseByFactor(bool on);
-	// Set normalisation factor
-	void setNormalisationFactor(double factor);
-	// Set whether to normalise by spherical shell volume
-	void setNormaliseBySphericalShellVolume(bool on);
-	// Set whether to normalise to one
-	void setNormaliseToOne(bool on);
-	// Set whether to save processed data
-	void setSaveData(bool on);
-	// Set value label
-	void setValueLabel(const char* label);
 	// Return value label
 	const char* valueLabel() const;
-	// Set x axis label
-	void setXAxisLabel(const char* label);
 	// Return x axis label
 	const char* xAxisLabel() const;
+
+
+	/*
+	 * Branches
+	 */
+	private:
+	// Branch for normalisation of data (if defined)
+	SequenceProcedureNode* normalisationBranch_;
+
+	public:
+	// Add and return normalisation sequence branch
+	SequenceProcedureNode* addNormalisationBranch();
+	// Return whether this node has a branch
+	bool hasBranch() const;
+	// Return SequenceNode for the branch (if it exists)
+	SequenceProcedureNode* branch();
 
 
 	/*
@@ -127,16 +95,6 @@ class Process1DProcedureNode : public ProcedureNode
 	ProcedureNode::NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
 	// Finalise any necessary data after execution
 	bool finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
-
-
-	/*
-	 * Read / Write
-	 */
-	public:
-	// Read structure from specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack);
-	// Write structure to specified LineParser
-	bool write(LineParser& parser, const char* prefix);
 };
 
 #endif

@@ -179,15 +179,15 @@ endif(GUI)
 set(BASIC_LINK_LIBS
 
   # Main libs
-  main classes module export import procedure procedurenodes keywordtypes expression genericitems base math data ff 
+  main classes module export import procedure procedurenodes keywords expression genericitems base math data ff
 
   # Modules
   analysemodule
   atomshakemodule
-  braggsqmodule
+  braggmodule
   calculatedanglemodule
   calculaterdfmodule
-  calibratemodule
+  calibrationmodule
   checksmodule
   datatestmodule
   energymodule
@@ -226,10 +226,10 @@ target_link_libraries( ${target_name}
   # Module 'nogui' libs
   analysemodulenogui
   atomshakemodulenogui
-  braggsqmodulenogui
+  braggmodulenogui
   calculatedanglemodulenogui
   calculaterdfmodulenogui
-  calibratemodulenogui
+  calibrationmodulenogui
   datatestmodulenogui
   energymodulenogui
   epsrmodulenogui
@@ -257,10 +257,10 @@ if(GUI)
     # Module gui libs
     analysemodulegui
     atomshakemodulegui
-    braggsqmodulegui
+    braggmodulegui
     calculatedanglemodulegui
     calculaterdfmodulegui
-    calibratemodulegui
+    calibrationmodulegui
     datatestmodulegui
     energymodulegui
     epsrmodulegui
@@ -278,6 +278,7 @@ if(GUI)
     widgets
     keywordwidgets
     delegates
+    charts
     gui
 
     ${NO_WHOLE_ARCHIVE_FLAG}
@@ -291,18 +292,4 @@ if(GUI)
     ${EXTRA_LINK_LIBS}
   )
 endif(GUI)
-
-# Install target for unix
-#if(UNIX AND NOT APPLE)
-#  INSTALL_TARGET(${target_name} "")
-#  configure_file(${PROJECT_SOURCE_DIR}/desktop.cmake Dissolve.desktop)
-#  install(FILES ${PROJECT_SOURCE_DIR}/src/gui/icons/dissolve.png
-#        DESTINATION share/dissolve)
-#  install(FILES ${PROJECT_BINARY_DIR}/Dissolve.desktop
-#        DESTINATION share/applications)
-#  foreach(i ff filters fftesting fragments partitions scripts test includes)
-#    install(DIRECTORY ${PROJECT_SOURCE_DIR}/data/${i}
-#          DESTINATION share/dissolve)
-#  endforeach(i)
-#endif(UNIX AND NOT APPLE)
 

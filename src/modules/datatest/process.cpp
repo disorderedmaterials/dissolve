@@ -35,7 +35,7 @@ bool DataTestModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	// Get options and target Module
 	const double testThreshold = keywords_.asDouble("Threshold");
 	Module* targetModule = targetModule_.firstItem();
-	Error::ErrorType errorType = KeywordEnumHelper<Error::ErrorType>::enumeration(keywords_, "ErrorType");
+	Error::ErrorType errorType = keywords_.enumeration<Error::ErrorType>("ErrorType");
 
 	// Print summary
 	if (!targetModule) Messenger::print("DataTest: No target Module specified for data location - only tags will be searched.\n");

@@ -260,7 +260,7 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 		adjacentNeighbours.clear();
 
 		// Loop over list of (relative) neighbour cell indices
-		for (ListVec3<int>* item = neighbourIndices_.first(); item != NULL; item = item->next)
+		for (ListVec3<int>* item = neighbourIndices_.first(); item != NULL; item = item->next())
 		{
 			// Retrieve Cell pointers
 			nbr = cell(gridRef.x+item->x, gridRef.y+item->y, gridRef.z+item->z);

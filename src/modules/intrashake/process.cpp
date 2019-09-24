@@ -64,10 +64,10 @@ bool IntraShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		bool adjustAngles = keywords_.asBool("AdjustAngles");
 		bool adjustBonds = keywords_.asBool("AdjustBonds");
 		bool adjustTorsions = keywords_.asBool("AdjustTorsions");
-		double angleStepSize = GenericListHelper<double>::value(moduleData, "AngleStepSize", uniqueName(), keywords_.asDouble("AngleStepSize"));
+		double& angleStepSize = keywords_.retrieve<double>("AngleStepSize");
 		const double angleStepSizeMax = keywords_.asDouble("AngleStepSizeMax");
 		const double angleStepSizeMin = keywords_.asDouble("AngleStepSizeMin");
-		double bondStepSize = GenericListHelper<double>::value(moduleData, "BondStepSize", uniqueName(), keywords_.asDouble("BondStepSize"));
+		double& bondStepSize = keywords_.retrieve<double>("BondStepSize");
 		const double bondStepSizeMax = keywords_.asDouble("BondStepSizeMax");
 		const double bondStepSizeMin = keywords_.asDouble("BondStepSizeMin");
 		double cutoffDistance = keywords_.asDouble("CutoffDistance");
@@ -75,7 +75,7 @@ bool IntraShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		const int nShakesPerTerm = keywords_.asInt("ShakesPerTerm");
 		const double targetAcceptanceRate = keywords_.asDouble("TargetAcceptanceRate");
 		const bool termEnergyOnly = keywords_.asBool("TermEnergyOnly");
-		double torsionStepSize = GenericListHelper<double>::value(moduleData, "TorsionStepSize", uniqueName(), keywords_.asDouble("TorsionStepSize"));
+		double& torsionStepSize = keywords_.retrieve<double>("TorsionStepSize");
 		const double torsionStepSizeMax = keywords_.asDouble("TorsionStepSizeMax");
 		const double torsionStepSizeMin = keywords_.asDouble("TorsionStepSizeMin");
 		const double rRT = 1.0/(.008314472*cfg->temperature());
@@ -351,7 +351,6 @@ bool IntraShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			else if (bondStepSize > bondStepSizeMax) bondStepSize = bondStepSizeMax;
 
 			Messenger::print("IntraShake: Updated distance step size for bond adjustments is %f Angstroms.\n", bondStepSize); 
-			GenericListHelper<double>::realise(moduleData, "BondStepSize", uniqueName(), GenericItem::InRestartFileFlag) = bondStepSize;
 		}
 
 		if (adjustAngles && (nAngleAttempts > 0))
@@ -364,7 +363,6 @@ bool IntraShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			else if (angleStepSize > angleStepSizeMax) angleStepSize = angleStepSizeMax;
 
 			Messenger::print("IntraShake: Updated rotation step size for angle adjustments is %f degrees.\n", angleStepSize); 
-			GenericListHelper<double>::realise(moduleData, "AngleStepSize", uniqueName(), GenericItem::InRestartFileFlag) = angleStepSize;
 		}
 
 		if (adjustTorsions && (nTorsionAttempts > 0))
@@ -377,7 +375,6 @@ bool IntraShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			else if (torsionStepSize > torsionStepSizeMax) torsionStepSize = torsionStepSizeMax;
 
 			Messenger::print("IntraShake: Updated rotation step size for torsion adjustments is %f degrees.\n", torsionStepSize); 
-			GenericListHelper<double>::realise(moduleData, "TorsionStepSize", uniqueName(), GenericItem::InRestartFileFlag) = torsionStepSize;
 		}
 
 		// Increase contents version in Configuration

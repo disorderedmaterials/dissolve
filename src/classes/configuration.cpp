@@ -94,13 +94,13 @@ void Configuration::setName(const char* name)
 }
 
 // Return name of the Configuration
-const char* Configuration::name()
+const char* Configuration::name() const
 {
 	return name_.get();
 }
 
 // Return nice name of the Configuration
-const char* Configuration::niceName()
+const char* Configuration::niceName() const
 {
 	return niceName_.get();
 }
@@ -196,7 +196,7 @@ void Configuration::setTemperature(double t)
 }
 
 // Return configuration temperature
-double Configuration::temperature()
+double Configuration::temperature() const
 {
 	return temperature_;
 }
@@ -205,10 +205,10 @@ double Configuration::temperature()
  * Modules
  */
 
-// Add Module to the Configuration
-bool Configuration::addModule(Module* module)
+// Associate Module to the Configuration
+bool Configuration::ownModule(Module* module)
 {
-	return moduleLayer_.add(module);
+	return moduleLayer_.own(module);
 }
 
 // Return number of Modules associated to this Configuration

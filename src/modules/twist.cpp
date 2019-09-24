@@ -64,7 +64,7 @@ bool Dissolve::twist(Configuration& cfg, double cutoffDistance, int nTwistsPerTe
 	// Loop over Molecules in sequence - energy will be calculated in parallel
 	Comm.resetAccumulatedTime();
 	timer.start();
-	for (Molecule* mol = cfg.molecules(); mol != NULL; mol = mol->next)
+	for (Molecule* mol = cfg.molecules(); mol != NULL; mol = mol->next())
 	{
 		// Add this Molecule's Grains to the ChangeStore
 		changeStore.add(mol);
@@ -76,7 +76,7 @@ bool Dissolve::twist(Configuration& cfg, double cutoffDistance, int nTwistsPerTe
 		rootIndex = mol->atom(0)->index();
 
 		// Loop over Bonds
-		for (SpeciesBond* b = mol->species()->bonds(); b != NULL; b = b->next)
+		for (SpeciesBond* b = mol->species()->bonds(); b != NULL; b = b->next())
 		{
 			// Grab atom pointers involved in the bond
 			i = mol->atom(b->indexI());

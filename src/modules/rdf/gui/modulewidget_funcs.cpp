@@ -35,9 +35,8 @@ RDFModuleWidget::RDFModuleWidget(QWidget* parent, Module* module, Dissolve& diss
 	ui.setupUi(this);
 
 	// Set up partial g(r) graph
-
 	partialsGraph_ = ui.PartialsPlotWidget->dataViewer();
-
+	// -- Set view
 	partialsGraph_->view().setViewType(View::FlatXYView);
 	partialsGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	partialsGraph_->view().axes().setMax(0, 10.0);
@@ -46,11 +45,19 @@ RDFModuleWidget::RDFModuleWidget(QWidget* parent, Module* module, Dissolve& diss
 	partialsGraph_->view().axes().setMax(1, 1.0);
 	partialsGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 	partialsGraph_->view().setAutoFollowType(View::AllAutoFollow);
+	// -- Set group styling
+	partialsGraph_->groupManager().setGroupColouring("Full", RenderableGroup::AutomaticIndividualColouring);
+	partialsGraph_->groupManager().setGroupVerticalShifting("Full", RenderableGroup::IndividualVerticalShifting);
+	partialsGraph_->groupManager().setGroupColouring("Bound", RenderableGroup::AutomaticIndividualColouring);
+	partialsGraph_->groupManager().setGroupVerticalShifting("Bound", RenderableGroup::IndividualVerticalShifting);
+	partialsGraph_->groupManager().setGroupStipple("Bound", LineStipple::HalfDashStipple);
+	partialsGraph_->groupManager().setGroupColouring("Unbound", RenderableGroup::AutomaticIndividualColouring);
+	partialsGraph_->groupManager().setGroupVerticalShifting("Unbound", RenderableGroup::IndividualVerticalShifting);
+	partialsGraph_->groupManager().setGroupStipple("Unbound", LineStipple::DotStipple);
 
 	// Set up total G(r) graph
-
 	totalsGraph_ = ui.TotalsPlotWidget->dataViewer();
-
+	// -- Set view
 	totalsGraph_->view().setViewType(View::FlatXYView);
 	totalsGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	totalsGraph_->view().axes().setMax(0, 10.0);
@@ -59,6 +66,8 @@ RDFModuleWidget::RDFModuleWidget(QWidget* parent, Module* module, Dissolve& diss
 	totalsGraph_->view().axes().setMax(1, 1.0);
 	totalsGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::OneVerticalShift);
 	totalsGraph_->view().setAutoFollowType(View::AllAutoFollow);
+	// -- Set group styling
+	totalsGraph_->groupManager().setGroupColouring("Calc", RenderableGroup::AutomaticIndividualColouring);
 
 	refreshing_ = false;
 
@@ -83,12 +92,12 @@ void RDFModuleWidget::updateControls()
 	totalsGraph_->postRedisplay();
 }
 
-// Disable sensitive controls within widget, ready for main code to run
+// Disable sensitive controls within widget
 void RDFModuleWidget::disableSensitiveControls()
 {
 }
 
-// Enable sensitive controls within widget, ready for main code to run
+// Enable sensitive controls within widget
 void RDFModuleWidget::enableSensitiveControls()
 {
 }
@@ -139,9 +148,6 @@ void RDFModuleWidget::setGraphDataTargets(RDFModule* module)
 		// Add calculated total G(r)
 		totalsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//Total", cfg->niceName()), cfg->niceName(), "Calc");
 	}
-
-	// Set group styling
-	totalsGraph_->groupManager().setGroupColouring("Calc", RenderableGroup::AutomaticIndividualColouring);
 }
 
 void RDFModuleWidget::on_TargetCombo_currentIndexChanged(int index)
@@ -156,10 +162,10 @@ void RDFModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 	CharString blockData;
 	const AtomTypeList cfgTypes = currentConfiguration_->usedAtomTypesList();
 	int n = 0;
-	for (AtomType* at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next, ++n)
+	for (AtomType* at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++n)
 	{
 		int m = n;
-		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next(), ++m)
 		{
 			CharString id("%s-%s", at1->name(), at2->name());
 
@@ -173,14 +179,4 @@ void RDFModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 			partialsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s//Unbound", currentConfiguration_->niceName(), id.get()), CharString("%s (Unbound)", id.get()), "Unbound");
 		}
 	}
-
-	// Set group styling
-	partialsGraph_->groupManager().setGroupColouring("Full", RenderableGroup::AutomaticIndividualColouring);
-	partialsGraph_->groupManager().setGroupVerticalShifting("Full", RenderableGroup::IndividualVerticalShifting);
-	partialsGraph_->groupManager().setGroupColouring("Bound", RenderableGroup::AutomaticIndividualColouring);
-	partialsGraph_->groupManager().setGroupVerticalShifting("Bound", RenderableGroup::IndividualVerticalShifting);
-	partialsGraph_->groupManager().setGroupStipple("Bound", LineStipple::HalfDashStipple);
-	partialsGraph_->groupManager().setGroupColouring("Unbound", RenderableGroup::AutomaticIndividualColouring);
-	partialsGraph_->groupManager().setGroupVerticalShifting("Unbound", RenderableGroup::IndividualVerticalShifting);
-	partialsGraph_->groupManager().setGroupStipple("Unbound", LineStipple::DotStipple);
 }

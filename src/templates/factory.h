@@ -23,28 +23,26 @@
 #define DISSOLVE_FACTORY_H
 
 #include "templates/list.h"
+#include "templates/listitem.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
 
 // Object Chunk
-template <class T> class ObjectChunk
+template <class T> class ObjectChunk : public ListItem< ObjectChunk<T> >
 {
 	/*
 	 * Chunk of objects, maintained by an ObjectFactory
 	 */
 	public:
 	// Constructor
-	ObjectChunk<T>(int size) : nObjects_(size)
+	ObjectChunk<T>(int size) : ListItem< ObjectChunk<T> >(), nObjects_(size)
 	{
 		objectArray_ = new T[nObjects_];
 		objectUsed_ = new bool[nObjects_];
 		objectSize_ = sizeof(T);
 
 		markAllObjectsUnused();
-
-		prev = NULL;
-		next = NULL;
 	}
 	// Destructor
 	~ObjectChunk()
@@ -52,8 +50,6 @@ template <class T> class ObjectChunk
 		if (objectArray_) delete[] objectArray_;
 		if (objectUsed_) delete[] objectUsed_;
 	}
-	// List pointers
-	ObjectChunk<T>* prev, *next;
 
 
 	/*
@@ -211,7 +207,7 @@ template <class T> class ObjectFactory
 		else
 		{
 			// Must search current chunk list to see if any current chunks have available space. If not, we will create a new one
-			for (ObjectChunk<T>* chunk = objectChunks_.first(); chunk != NULL; chunk = chunk->next)
+			for (ObjectChunk<T>* chunk = objectChunks_.first(); chunk != NULL; chunk = chunk->next())
 			{
 				if (chunk == currentChunk_) continue;
 				if (chunk->hasUnusedObjects())
@@ -235,7 +231,7 @@ template <class T> class ObjectFactory
 	void returnObject(T* object)
 	{
 		// Must find chunk which owns this object
-		for (ObjectChunk<T>* chunk = objectChunks_.first(); chunk != NULL; chunk = chunk->next) if (chunk->returnObject(object)) return;
+		for (ObjectChunk<T>* chunk = objectChunks_.first(); chunk != NULL; chunk = chunk->next()) if (chunk->returnObject(object)) return;
 
 		// Couldn't find it!
 		printf("Internal Error - Tried to return an object to an ObjectFactory which didn't produce it.\n");
@@ -243,7 +239,7 @@ template <class T> class ObjectFactory
 	// Mark all objects as unused
 	void markAllObjectsUnused()
 	{
-		for (ObjectChunk<T>* chunk = objectChunks_.first(); chunk != NULL; chunk = chunk->next) chunk->markAllObjectsUnused();
+		for (ObjectChunk<T>* chunk = objectChunks_.first(); chunk != NULL; chunk = chunk->next()) chunk->markAllObjectsUnused();
 	}
 };
 

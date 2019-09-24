@@ -1,6 +1,6 @@
 /*
 	*** Keyword - EnumOptions
-	*** src/module/keywordtypes/enumoptions.cpp
+	*** src/keywords/enumoptions.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -22,7 +22,6 @@
 #include "keywords/enumoptions.h"
 #include "base/enumoptions.h"
 #include "base/lineparser.h"
-#include "genericitems/listhelper.h"
 
 // Constructor
 EnumOptionsKeyword::EnumOptionsKeyword(EnumOptionsBase options) : KeywordData<EnumOptionsBase>(KeywordBase::EnumOptionsData, options)
@@ -41,19 +40,19 @@ EnumOptionsKeyword::~EnumOptionsKeyword()
  */
 
 // Return minimum number of arguments accepted
-int EnumOptionsKeyword::minArguments()
+int EnumOptionsKeyword::minArguments() const
 {
 	return 1;
 }
 
 // Return minimum number of arguments accepted
-int EnumOptionsKeyword::maxArguments()
+int EnumOptionsKeyword::maxArguments() const
 {
 	return 1;
 }
 
-// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool EnumOptionsKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+// Parse arguments from supplied LineParser, starting at given argument offset
+bool EnumOptionsKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	if (parser.hasArg(startArg))
 	{
@@ -71,7 +70,7 @@ bool EnumOptionsKeyword::read(LineParser& parser, int startArg, const CoreData& 
 }
 
 // Write keyword data to specified LineParser
-bool EnumOptionsKeyword::write(LineParser& parser, const char* prefix)
+bool EnumOptionsKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
 	return parser.writeLineF("%s%s  '%s'\n", prefix, keyword(), data_.currentOptionKeyword());
 }

@@ -187,7 +187,7 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 	if (clipToAxesVolume_) enableClipping();
 
 	// Draw all Renderables
-	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next)
+	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next())
 	{
 		// If the Renderable is hidden, don't draw it!
 		if (!rend->isVisible()) continue;

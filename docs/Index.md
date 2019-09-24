@@ -9,6 +9,9 @@ permalink: /
 
 &copy; Dr Tristan Youngs 2012-2019
 
+### Contributors
+- Simona (2019-2020)
+
 _Current Version: 0.4.3, Wednesday 12th June 2019_
 
 Dissolve is a classical simulation code intended to help in analysing experimental scattering (diffraction) measurements through generating representative atomic configurations consistent with supplied reference data. Its primary use is for disordered systems such as those comprised of (or containing) liquids and glasses, but it can be applied to much more complex systems.
@@ -27,8 +30,9 @@ Basic overviews and referencing.
 
 Obtaining, installing, and building Dissolve, and setting up and running your first simulation.
 
-[Where to get Dissolve](GettingStarted/GettingDissolve.md){: .btn .btn-blue}
-[Building Dissolve](GettingStarted/BuildingDissolve.md){: .btn .btn-blue}
+[Where to get Dissolve](GettingStarted/GettingDissolve.md){: .btn}
+[Building Dissolve](GettingStarted/BuildingDissolve.md){: .btn}
+[CLI Options](GettingStarted/CLIOptions.md){: .btn}
 
 
 * * *
@@ -38,7 +42,7 @@ Dissolve's file format and syntax, and output file roles.
 
 TODO
 {: .label .label-red }
-[Overview](Files/InputFile/Index.md){: .btn .btn-blue}
+[Main Input File](Files/InputFile/Index.md){: .btn .btn-blue}
 [Configuration Block](Files/InputFile/Configuration.md){: .btn .btn-outline}
 [Layer Block](Files/InputFile/Layer.md){: .btn .btn-outline}
 [Master Block](Files/InputFile/Master.md){: .btn .btn-outline}

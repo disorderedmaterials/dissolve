@@ -111,12 +111,8 @@ Module  CalculateDAngle  'DAngle(X-H...O)'
   SiteA  Water  'O'
   SiteB  Water  'H1'  Water  'H2'
   SiteC  Water  'O'
-  DistanceMin  0.0
-  DistanceMax  5.0
-  DistanceBin  0.01
-  AngleMin  0.0
-  AngleMax  180.0
-  AngleBin  1.0
+  DistanceRange  0.0  5.0  0.01
+  AngleRange  0.0  180.0  1.0
   ExcludeSameMolecule  true
 EndModule
 
@@ -149,13 +145,16 @@ Module  Analyse  'DAngle(X-H...O)-Analyser'
 
               ForEach
 
-                Calculate  'rHO'
-                  Distance  'H'  'O'
-                EndCalculate
+                CalculateDistance  'rHO'
+                  I  'H'
+                  J  'O'
+                EndCalculateDistance
 
-                Calculate  'aXHO'
-                  Angle  'X'  'H'  'O'
-                EndCalculate
+                CalculateAngle  'aXHO'
+                  I  'X'
+                  J  'H'
+                  K  'O'
+                EndCalculateAngle
 
                 Collect2D  'DAngle(X-HO)'
                   QuantityX  'rHO'
@@ -188,23 +187,38 @@ Module  Analyse  'DAngle(X-H...O)-Analyser'
 
     Process1D  'RDF'
       SourceData  'RDF(BC)'
-      NSites  'X'  'H'
-      NumberDensity  'O'
-      SphericalShellVolume  On
       LabelValue  'gBC(r)'
       LabelX  'r, Angstroms'
+      Normalisation
+        OperateSitePopulationNormalise
+          Site  'X'  'H'
+        EndOperateSitePopulationNormalise
+        OperateNumberDensityNormalise
+          Site  'O'
+        EndOperateNumberDensityNormalise
+        OperateSphericalShellNormalise
+        EndOperateSphericalShellNormalise
+      EndNormalisation
     EndProcess1D
 
     Process1D  'Angle'
       SourceData  'ANGLE(ABC)'
-      NormaliseToOne
+      Normalisation
+        OperateNormalise
+          Value  1.0
+        EndOperateNormalise
+      EndNormalisation
       LabelValue  'Probability'
       LabelX  'Angle, \\sym{degree}'
     EndProcess1D
 
     Process2D  'DAngle(X-HO)'
       SourceData  'DAngle(X-HO)'
-      NormaliseToOne  On
+      Normalisation
+        OperateNormalise
+          Value  1.0
+        EndOperateNormalise
+      EndNormalisation
       LabelX  '\\it{r}, \\sym{Angstrom}'
       LabelY  'Angle, \\sym{degree}'
       LabelValue  'Probability'
@@ -245,14 +259,8 @@ EndModule
 Module DataTest
   Frequency  95
   Target  'DAngle(X-H...O)'
-  # Data2D  'DAngle(X-H...O)_DAngle(X-HO)_Bulk'  cartesian  '../_data/water267-dlpoly/water-267-298K.dahist1_02_1_01_02.surf'  xaxis=0.0,5.0,0.01  yaxis=0.0,180,1.0
+  #Data2D  'DAngle(X-H...O)_DAngle(A-BC)_Bulk'  cartesian  '../_data/water267-dlpoly/water-267-298K.dahist1_02_1_01_02.surf'  xaxis=0.0,5.0,0.01  yaxis=0.0,180,1.0
   Threshold  0.3
 EndModule
 
 EndLayer
-
-Simulation
-  # Prevent writing of restart file
-  RestartFileFrequency  100
-EndSimulation
-

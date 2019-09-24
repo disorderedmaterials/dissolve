@@ -23,11 +23,23 @@
 #include "expression/generator.h"
 #include "base/sysfunc.h"
 
-// Constructor
+// Constructors
 NodeValue::NodeValue()
 {
 	valueI_ = 0;
 	valueD_ = 0.0;
+	type_ = DoubleNodeValue;
+}
+NodeValue::NodeValue(const int i)
+{
+	valueI_ = i;
+	valueD_ = 0.0;
+	type_ = IntegerNodeValue;
+}
+NodeValue::NodeValue(const double d)
+{
+	valueI_ = 0;
+	valueD_ = d;
 	type_ = DoubleNodeValue;
 }
 
@@ -91,10 +103,16 @@ bool NodeValue::set(const char* expressionText, RefList<ExpressionVariable> para
 	{
 		// Parse the supplied expression
 		type_ = ExpressionNodeValue;
-		return ExpressionGenerator::generate(expression_, expressionText, parameters);
+		return expression_.set(expressionText, parameters);
 	}
 
 	return true;
+}
+
+// Return whether value is currently valid
+bool NodeValue::isValid() const
+{
+	return (type_ == ExpressionNodeValue ? expression_.isValid() : true);
 }
 
 /*
@@ -118,13 +136,17 @@ double NodeValue::asDouble()
 }
 
 // Return value represented as a string
-const char* NodeValue::asString()
+const char* NodeValue::asString(bool addQuotesIfRequired) const
 {
 	static CharString result;
 
 	if (type_ == IntegerNodeValue) result = DissolveSys::itoa(valueI_);
 	else if (type_ == DoubleNodeValue) result = DissolveSys::ftoa(valueD_, "%12.6e");
-	else result = CharString("'%s'", expression_.asString());
+	else
+	{
+		if (addQuotesIfRequired) result = CharString("'%s'", expression_.expressionString());
+		else result = CharString("%s", expression_.expressionString());
+	}
 
 	return result.get();
 }

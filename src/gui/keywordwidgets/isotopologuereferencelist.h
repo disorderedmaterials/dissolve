@@ -38,7 +38,7 @@ class IsotopologueReferenceListKeywordWidget : public KeywordDropDown, public Ke
 
 	public:
 	// Constructor
-	IsotopologueReferenceListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
+	IsotopologueReferenceListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
 
 
 	/*
@@ -54,7 +54,7 @@ class IsotopologueReferenceListKeywordWidget : public KeywordDropDown, public Ke
 	 */
 	private:
         // Main form declaration
-        Ui::IsotopologueReferenceListWidget ui_;
+        Ui::IsotopologueRefListWidget ui_;
 
 	private slots:
 	void autoButton_clicked(bool checked);
@@ -75,7 +75,7 @@ class IsotopologueReferenceListKeywordWidget : public KeywordDropDown, public Ke
 	void updateTableRow(int row, IsotopologueReference* isoRef, bool createItems);
 
 	public:
-	// Update value displayed in widget, using specified source if necessary
+	// Update value displayed in widget
 	void updateValue();
 	// Update widget values data based on keyword data
 	void updateWidgetValues(const CoreData& coreData);

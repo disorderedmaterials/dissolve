@@ -1,56 +1,84 @@
 add_library(keywords
+  atomtypereflist.cpp
   atomtypeselection.cpp
   base.cpp
   bool.cpp
   broadeningfunction.cpp
   charstring.cpp
-  complex.cpp
   data1dstore.cpp
   data2dstore.cpp
   data3dstore.cpp
   double.cpp
+  dynamicsitenodes.cpp
+  elementreflist.cpp
+  expressionvariablelist.cpp
   fileandformat.cpp
+  geometrylist.cpp
   group.cpp
   integer.cpp
   isotopologuereferencelist.cpp
+  linkto.cpp
   list.cpp
   modulegroups.cpp
-  modulereferencelist.cpp
+  modulereflist.cpp
+  node.cpp
+  nodeandinteger.cpp
+  nodearray.cpp
+  nodebranch.cpp
+  nodereflist.cpp
+  nodevalue.cpp
   pairbroadeningfunction.cpp
   procedure.cpp
-  speciesreferencelist.cpp
+  species.cpp
+  speciesreflist.cpp
   speciessite.cpp
-  speciessitereferencelist.cpp
+  speciessitereflist.cpp
   vec3double.cpp
   vec3integer.cpp
+  vec3nodevalue.cpp
   windowfunction.cpp
 
+  atomtypereflist.h
   atomtypeselection.h
   base.h
   bool.h
   broadeningfunction.h
   charstring.h
-  complex.h
   data.h
   data1dstore.h
   data2dstore.h
   data3dstore.h
   double.h
+  dynamicsitenodes.h
+  elementreflist.h
   enumoptions.h
+  expressionvariablelist.h
   fileandformat.h
+  geometrylist.h
   group.h
   integer.h
   isotopologuereferencelist.h
+  linkto.h
   list.h
   modulegroups.h
-  modulereferencelist.h
+  modulereflist.h
+  node.h
+  nodeandinteger.h
+  nodearray.h
+  nodebranch.h
+  nodereflist.h
+  nodevalue.h
+  nodevalueenumoptions.h
   pairbroadeningfunction.h
   procedure.h
-  speciesreferencelist.h
+  species.h
+  speciesreflist.h
   speciessite.h
-  speciessitereferencelist.h
+  speciessitereflist.h
   vec3double.h
   vec3integer.h
+  vec3labels.h
+  vec3nodevalue.cpp
   windowfunction.h
 )
 

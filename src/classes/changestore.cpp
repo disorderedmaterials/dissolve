@@ -82,7 +82,7 @@ void ChangeStore::reset()
 // Update all Atom positions
 void ChangeStore::updateAll()
 {
-	for (ChangeData* item = targetAtoms_.first(); item != NULL; item = item->next) item->updatePosition();
+	for (ChangeData* item = targetAtoms_.first(); item != NULL; item = item->next()) item->updatePosition();
 }
 
 // Update Atom positions using list indices
@@ -120,7 +120,7 @@ void ChangeStore::updateAtom(int id)
 void ChangeStore::revertAll()
 {
 // 	printf("In Revert...\n");
-	for (ChangeData* item = targetAtoms_.first(); item != NULL; item = item->next) item->revertPosition();
+	for (ChangeData* item = targetAtoms_.first(); item != NULL; item = item->next()) item->revertPosition();
 // 	printf("Done Revert.\n");
 }
 
@@ -146,7 +146,7 @@ void ChangeStore::storeAndReset()
 	while (item != NULL)
 	{
 		// Grab pointer to next item
-		nextItem = item->next;
+		nextItem = item->next();
 
 		// Has the position of this Atom been changed (i.e. updated)?
 		if (item->hasMoved())
@@ -217,7 +217,7 @@ bool ChangeStore::distributeAndApply(Configuration* cfg)
 	}
 #else
 	// Apply atom changes
-	for (ChangeData* data = changes_.first(); data != NULL; data = data->next)
+	for (ChangeData* data = changes_.first(); data != NULL; data = data->next())
 	{
 		// Set new coordinates and check cell position (Configuration::updateAtomInCell() will do all this)
 		data->revertPosition();

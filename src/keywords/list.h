@@ -1,6 +1,6 @@
 /*
 	*** Keyword List
-	*** src/module/keywordlist.h
+	*** src/keywords/list.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,11 +19,11 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORDLIST_H
-#define DISSOLVE_KEYWORDLIST_H
+#ifndef DISSOLVE_KEYWORD_LIST_H
+#define DISSOLVE_KEYWORD_LIST_H
 
-#include "keywords/base.h"
 #include "keywords/data.h"
+#include "keywords/group.h"
 #include "base/enumoptions.h"
 #include "templates/list.h"
 
@@ -35,12 +35,8 @@ class KeywordList
 {
 	public:
 	// Constructor / Destructor
-	KeywordList(const Module* moduleParent);
+	KeywordList();
 	~KeywordList();
-
-	private:
-	// Module parent
-	const Module* moduleParent_;
 
 
 	/*
@@ -52,44 +48,46 @@ class KeywordList
 
 	public:
 	// Add keyword
-	bool add(KeywordBase* object, const char* keyword, const char* description, int genericItemFlags = 0);
+	bool add(KeywordBase* object, const char* name, const char* description, int optionMask = KeywordBase::NoOptions);
 	// Add keyword
-	bool add(KeywordBase* object, const char* keyword, const char* description, const char* arguments, int genericItemFlags = 0);
+	bool add(KeywordBase* object, const char* name, const char* description, const char* arguments, int optionMask = KeywordBase::NoOptions);
+	// Add keyword to named group
+	bool add(const char* groupName, KeywordBase* object, const char* name, const char* description, int optionMask = KeywordBase::NoOptions);
+	// Add keyword to named group
+	bool add(const char* groupName, KeywordBase* object, const char* name, const char* description, const char* arguments, int optionMask = KeywordBase::NoOptions);
+	// Add link to specified keyword that exists elsewhere
+	bool link(const char* groupName, KeywordBase* object, const char* name, const char* description, const char* arguments, int optionMask = KeywordBase::NoOptions);
 	// Find named keyword
-	KeywordBase* find(const char* keyword) const;
+	KeywordBase* find(const char* name) const;
 	// Return keywords list
-	List<KeywordBase>& keywords();
+	const List<KeywordBase>& keywords() const;
 
 
 	/*
-	 * Conversion
+	 * Groups
+	 */
+	private:
+	// Keywords organised by group
+	List<KeywordGroup> groups_;
+
+	private:
+	// Create and/or return named keyword group
+	KeywordGroup* addGroup(const char* name);
+
+	public:
+	// Return defined groups
+	const List<KeywordGroup>& groups() const;
+
+
+	/*
+	 * Set / Get
 	 */
 	public:
-	// Return simple keyword value (as bool)
-	bool asBool(const char* keywordName) const;
-	// Return simple keyword value (as int)
-	int asInt(const char* keywordName) const;
-	// Return simple keyword value (as double)
-	double asDouble(const char* keywordName) const;
-	// Return simple keyword value (as string)
-	const char* asString(const char* keywordName) const;
-	// Return simple keyword value (as Vec3<int>)
-	Vec3<int> asVec3Int(const char* keywordName) const;
-	// Return simple keyword value (as Vec3<double>)
-	Vec3<double> asVec3Double(const char* keywordName) const;
-	// Return whether the specified keyword data has ever been set
-	bool isSet(const char* keywordName) const;
-};
-
-// Keyword List Helper
-template <class T> class KeywordListHelper
-{
-	public:
 	// Retrieve named item from specified list as template-guided type
-	static T& retrieve(KeywordList& sourceList, const char* name, T defaultValue = T(), bool* found = NULL)
+	template <class T> T& retrieve(const char* name, T defaultValue = T(), bool* found = NULL)
 	{
 		// Find item in the list
-		KeywordBase* item = sourceList.find(name);
+		KeywordBase* item = find(name);
 		if (!item)
 		{
 			Messenger::printVerbose("No item named '%s' in the keyword list - default value item will be returned.\n", name);
@@ -113,10 +111,10 @@ template <class T> class KeywordListHelper
 		return castItem->data();
 	}
 	// Set named item from specified list as a template-guided type
-	static bool set(KeywordList& sourceList, const char* name, T value)
+	template <class T> bool set(const char* name, T value)
 	{
 		// Find item in the list
-		KeywordBase* item = sourceList.find(name);
+		KeywordBase* item = find(name);
 		if (!item)
 		{
 			Messenger::warn("No item named '%s' in the keyword list - cannot set it's value.\n", name);
@@ -136,17 +134,35 @@ template <class T> class KeywordListHelper
 
 		return true;
 	}
-};
-
-// Keyword Enum Helper
-template <class E> class KeywordEnumHelper
-{
-	public:
-	// Retrieve named EnumOptions item from specified list as template-guided type, and return the current enumeration
-	static E enumeration(KeywordList& sourceList, const char* name, bool* found = NULL)
+	// Set named EnumOptions from specified list as a template-guided type
+	template <class E> bool setEnumeration(const char* name, E value)
 	{
 		// Find item in the list
-		KeywordBase* item = sourceList.find(name);
+		KeywordBase* item = find(name);
+		if (!item)
+		{
+			Messenger::warn("No item named '%s' in the keyword list - cannot set it's value.\n", name);
+			return false;
+		}
+
+		// Attempt to cast to specified type
+		KeywordData< EnumOptions<E> >* castItem = dynamic_cast<KeywordData< EnumOptions<E> >*>(item);
+		if (!castItem)
+		{
+			printf("That didn't work, because it's of the wrong type.\n");
+			return false;
+		}
+
+		// Set the new value
+		castItem->data() = value;
+
+		return true;
+	}
+	// Retrieve named EnumOptions with specified class, and return its current enumeration
+	template <class E> E enumeration(const char* name, bool* found = NULL)
+	{
+		// Find item in the list
+		KeywordBase* item = find(name);
 		if (!item)
 		{
 			Messenger::error("No item named '%s' in the keyword list - default enumeration of -1 will be returned.\n", name);
@@ -166,6 +182,38 @@ template <class E> class KeywordEnumHelper
 		if (found != NULL) (*found) = true;
 		return castItem->data().enumeration();
 	}
+
+
+	/*
+	 * Conversion
+	 */
+	public:
+	// Return simple keyword value (as bool)
+	bool asBool(const char* name) const;
+	// Return simple keyword value (as int)
+	int asInt(const char* name) const;
+	// Return simple keyword value (as double)
+	double asDouble(const char* name) const;
+	// Return simple keyword value (as string)
+	const char* asString(const char* name) const;
+	// Return simple keyword value (as Vec3<int>)
+	Vec3<int> asVec3Int(const char* name) const;
+	// Return simple keyword value (as Vec3<double>)
+	Vec3<double> asVec3Double(const char* name) const;
+	// Return whether the specified keyword data has ever been set
+	bool isSet(const char* name) const;
+
+
+	/*
+	 * Read / Write
+	 */
+	public:
+	// Try to parse keyword in specified LineParser
+	KeywordBase::ParseResult parse(LineParser& parser, const CoreData& coreData);
+	// Write all keywords to specified LineParser
+	bool write(LineParser& parser, const char* prefix, bool onlyIfSet = true);
+	// Write all keywords in groups to specified LineParser
+	bool writeGroups(LineParser& parser, const char* prefix, bool onlyIfSet = true);
 };
 
 #endif

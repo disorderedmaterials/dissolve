@@ -53,12 +53,6 @@ class ColourDefinition
 	static ColourStyle colourStyle(const char* s);
 	// Convert ColourStyle to text string
 	static const char* colourStyle(ColourDefinition::ColourStyle cs);
-	// Stock Colours
-	enum StockColour { BlackStockColour, RedStockColour, GreenStockColour, BlueStockColour, PurpleStockColour, CyanStockColour, OrangeStockColour, PinkStockColour, LightRedStockColour, LightGreenStockColour, LightBlueStockColour, SilverStockColour, GoldStockColour, nStockColours };
-	// Return enum options for AveragingScheme
-	static EnumOptions<ColourDefinition::StockColour> stockColours();
-	// Return stock colour (as QColor)
-	static QColor stockColour(StockColour colour);
 
 
 	/*

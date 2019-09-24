@@ -1,6 +1,6 @@
 /*
-	*** Keywords
-	*** src/module/keywords.h
+	*** Keyword Types
+	*** src/keywords/types.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KEYWORDTYPES_H
-#define DISSOLVE_KEYWORDTYPES_H
+#ifndef DISSOLVE_KEYWORD_TYPES_H
+#define DISSOLVE_KEYWORD_TYPES_H
 
 /*
  * This file should be included if the use of Keywords is required.
@@ -33,25 +33,39 @@
 #include "keywords/integer.h"
 
 // Classes
+#include "keywords/atomtypereflist.h"
 #include "keywords/atomtypeselection.h"
 #include "keywords/broadeningfunction.h"
 #include "keywords/charstring.h"
-#include "keywords/complex.h"
 #include "keywords/data1dstore.h"
 #include "keywords/data2dstore.h"
 #include "keywords/data3dstore.h"
+#include "keywords/dynamicsitenodes.h"
+#include "keywords/elementreflist.h"
 #include "keywords/enumoptions.h"
+#include "keywords/expressionvariablelist.h"
 #include "keywords/fileandformat.h"
+#include "keywords/geometrylist.h"
 #include "keywords/isotopologuereferencelist.h"
+#include "keywords/linkto.h"
 #include "keywords/modulegroups.h"
-#include "keywords/modulereferencelist.h"
+#include "keywords/modulereflist.h"
+#include "keywords/node.h"
+#include "keywords/nodeandinteger.h"
+#include "keywords/nodearray.h"
+#include "keywords/nodebranch.h"
+#include "keywords/nodereflist.h"
+#include "keywords/nodevalue.h"
+#include "keywords/nodevalueenumoptions.h"
 #include "keywords/pairbroadeningfunction.h"
 #include "keywords/procedure.h"
-#include "keywords/speciesreferencelist.h"
+#include "keywords/species.h"
+#include "keywords/speciesreflist.h"
 #include "keywords/speciessite.h"
-#include "keywords/speciessitereferencelist.h"
+#include "keywords/speciessitereflist.h"
 #include "keywords/vec3double.h"
 #include "keywords/vec3integer.h"
+#include "keywords/vec3nodevalue.h"
 #include "keywords/windowfunction.h"
 
 #endif

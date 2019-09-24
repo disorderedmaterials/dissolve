@@ -25,10 +25,9 @@
 #include "procedure/nodes/node.h"
 #include "base/charstring.h"
 #include "math/histogram1d.h"
-#include "templates/reflist.h"
 
 // Forward Declarations
-class CalculateProcedureNode;
+class CalculateProcedureNodeBase;
 class SequenceProcedureNode;
 class LineParser;
 class NodeScopeStack;
@@ -38,7 +37,7 @@ class Collect1DProcedureNode : public ProcedureNode
 {
 	public:
 	// Constructor
-	Collect1DProcedureNode(CalculateProcedureNode* observable = NULL, double rMin = 0.0, double rMax = 10.0, double binWidth = 0.05);
+	Collect1DProcedureNode(CalculateProcedureNodeBase* observable = NULL, double rMin = 0.0, double rMax = 10.0, double binWidth = 0.05);
 	// Destructor
 	~Collect1DProcedureNode();
 
@@ -52,29 +51,15 @@ class Collect1DProcedureNode : public ProcedureNode
 
 
 	/*
-	 * Node Keywords
-	 */
-	public:
-	// Node Keywords
-	enum Collect1DNodeKeyword { EndCollect1DKeyword, QuantityXKeyword, RangeXKeyword, SubCollectKeyword, nCollect1DNodeKeywords };
-	// Return enum option info for Collect1DNodeKeyword
-	static EnumOptions<Collect1DNodeKeyword> collect1DNodeKeywords();
-
-
-	/*
 	 * Data
 	 */
 	private:
-	// Observable to bin
-	CalculateProcedureNode* observable_;
+	// Observable to bin along x (retrieved from keyword)
+	CalculateProcedureNodeBase* xObservable_;
+	// Index of x observable data to use (retrieved from keyword)
+	int xObservableIndex_;
 	// Histogram in which to accumulate data
 	Histogram1D* histogram_;
-	// Range minimum
-	double minimum_;
-	// Range maximum
-	double maximum_;
-	// Bin width
-	double binWidth_;
 
 	public:
 	// Return accumulated data
@@ -97,6 +82,10 @@ class Collect1DProcedureNode : public ProcedureNode
 	public:
 	// Add and return subcollection sequence branch
 	SequenceProcedureNode* addSubCollectBranch(ProcedureNode::NodeContext context);
+	// Return whether this node has a branch
+	bool hasBranch() const;
+	// Return SequenceNode for the branch (if it exists)
+	SequenceProcedureNode* branch();
 
 
 	/*
@@ -109,16 +98,6 @@ class Collect1DProcedureNode : public ProcedureNode
 	ProcedureNode::NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
 	// Finalise any necessary data after execution
 	bool finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
-
-
-	/*
-	 * Read / Write
-	 */
-	public:
-	// Read structure from specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack);
-	// Write structure to specified LineParser
-	bool write(LineParser& parser, const char* prefix);
 };
 
 #endif

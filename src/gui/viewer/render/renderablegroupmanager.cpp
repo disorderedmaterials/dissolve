@@ -26,7 +26,7 @@
 // Constructor
 RenderableGroupManager::RenderableGroupManager()
 {
-	stockColourUsageCount_.initialise(ColourDefinition::nStockColours);
+	stockColourUsageCount_.initialise(StockColours::nStockColours);
 
 	clear();
 }
@@ -56,12 +56,12 @@ RenderableGroup* RenderableGroupManager::createGroup(const char* name)
 		// No existing group, so must add a new one
 		// First, find the StockColour with the lowest usage count
 		int lowestId = 0;
-		for (int colourId = 0; colourId < ColourDefinition::nStockColours; ++colourId)
+		for (int colourId = 0; colourId < StockColours::nStockColours; ++colourId)
 		{
 			if (stockColourUsageCount_[colourId] < stockColourUsageCount_[lowestId]) lowestId = colourId;
 		}
 
-		renderableGroup = new RenderableGroup(name, (ColourDefinition::StockColour) lowestId);
+		renderableGroup = new RenderableGroup(name, (StockColours::StockColour) lowestId);
 		groups_.own(renderableGroup);
 		++stockColourUsageCount_[lowestId];
 
@@ -101,14 +101,14 @@ RenderableGroup* RenderableGroupManager::addToGroup(Renderable* renderable, cons
 // Return named group, if it exists
 RenderableGroup* RenderableGroupManager::group(const char* name)
 {
-	for (RenderableGroup* group = groups_.first(); group != NULL; group = group->next) if (DissolveSys::sameString(group->name(), name)) return group;
+	for (RenderableGroup* group = groups_.first(); group != NULL; group = group->next()) if (DissolveSys::sameString(group->name(), name)) return group;
 	return NULL;
 }
 
 // Return group for specified Renderable, if one has been assigned
 RenderableGroup* RenderableGroupManager::group(Renderable* renderable)
 {
-	for (RenderableGroup* group = groups_.first(); group != NULL; group = group->next) if (group->usedByRenderable(renderable)) return group;
+	for (RenderableGroup* group = groups_.first(); group != NULL; group = group->next()) if (group->usedByRenderable(renderable)) return group;
 	return NULL;
 }
 
@@ -139,7 +139,7 @@ void RenderableGroupManager::removeFromGroup(Renderable* renderable)
 // Empty all groups of Renderables
 void RenderableGroupManager::emptyGroups()
 {
-	for (RenderableGroup* group = groups_.first(); group != NULL; group = group->next) group->empty();
+	for (RenderableGroup* group = groups_.first(); group != NULL; group = group->next()) group->empty();
 }
 
 /*
@@ -150,16 +150,26 @@ void RenderableGroupManager::emptyGroups()
 void RenderableGroupManager::setGroupColouring(const char* groupName, RenderableGroup::GroupColouring colouringStyle)
 {
 	RenderableGroup* g = group(groupName);
-	if (!g) Messenger::warn("RenderableGroup '%s' does not exist, so can't set its colouring style.\n", groupName);
-	else g->setColouringStyle(colouringStyle);
+	if (!g)
+	{
+		Messenger::printVerbose("Creating RenderableGroup '%s' so we can set its colouring style...\n", groupName);
+		g = createGroup(groupName);
+	}
+
+	g->setColouringStyle(colouringStyle);
 }
 
 // Set fixed colour for named group
-void RenderableGroupManager::setGroupFixedColour(const char* groupName, ColourDefinition::StockColour stockColour)
+void RenderableGroupManager::setGroupFixedColour(const char* groupName, StockColours::StockColour stockColour)
 {
 	RenderableGroup* g = group(groupName);
-	if (!g) Messenger::warn("RenderableGroup '%s' does not exist, so can't set its fixed colour.\n", groupName);
-	else g->setFixedStockColour(stockColour);
+	if (!g)
+	{
+		Messenger::printVerbose("Creating RenderableGroup '%s' so we can set its fixed colour...\n", groupName);
+		g = createGroup(groupName);
+	}
+
+	g->setFixedStockColour(stockColour);
 }
 
 /*
@@ -170,8 +180,13 @@ void RenderableGroupManager::setGroupFixedColour(const char* groupName, ColourDe
 void RenderableGroupManager::setGroupStipple(const char* groupName, LineStipple::StippleType stipple)
 {
 	RenderableGroup* g = group(groupName);
-	if (!g) Messenger::warn("RenderableGroup '%s' does not exist, so can't set its colouring style.\n", groupName);
-	else g->setLineStipple(stipple);
+	if (!g)
+	{
+		Messenger::printVerbose("Creating RenderableGroup '%s' so we can set its stipple...\n", groupName);
+		g = createGroup(groupName);
+	}
+
+	g->setLineStipple(stipple);
 }
 
 /*
@@ -186,7 +201,7 @@ void RenderableGroupManager::setRenderableGroupShifts()
 {
 	// Loop over RenderableGroups
 	int groupIndex = 0;
-	for (RenderableGroup* group = groups_.first(); group != NULL; group = group->next)
+	for (RenderableGroup* group = groups_.first(); group != NULL; group = group->next())
 	{
 		group->applyVerticalShift(VerticalShiftAmounts[verticalShiftAmount_], groupIndex++);
 	}
@@ -196,8 +211,13 @@ void RenderableGroupManager::setRenderableGroupShifts()
 void RenderableGroupManager::setGroupVerticalShifting(const char* groupName, RenderableGroup::VerticalShiftStyle shiftStyle)
 {
 	RenderableGroup* g = group(groupName);
-	if (!g) Messenger::warn("RenderableGroup '%s' does not exist, so can't set its vertical shifting style.\n", groupName);
-	else g->setVerticalShiftStyle(shiftStyle);
+	if (!g)
+	{
+		Messenger::printVerbose("Creating RenderableGroup '%s' so we can set its vertical shifting...\n", groupName);
+		g = createGroup(groupName);
+	}
+
+	g->setVerticalShiftStyle(shiftStyle);
 }
 
 // Cycle vertical shift amount applied to RenderableGroups

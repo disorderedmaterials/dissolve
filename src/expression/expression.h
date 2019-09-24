@@ -28,8 +28,8 @@
 #include "templates/list.h"
 
 // Forward declarations
-class Node;
 class ExpressionVariable;
+class Node;
 
 // Mathematical Expression
 class Expression
@@ -56,9 +56,13 @@ class Expression
 	// Clear all expression data
 	void clear();
 	// Return whether current expression is valid (contains at least one node)
-	bool isValid();
+	bool isValid() const;
+	// Set Expression from supplied string
+	bool set(const char* expressionString);
+	// Set Expression from supplied string and external variables
+	bool set(const char* expressionString, RefList<ExpressionVariable> externalVariables);
 	// Return original generating string`
-	const char* asString() const;
+	const char* expressionString() const;
 
 
 	/*
@@ -71,8 +75,6 @@ class Expression
 	List<ExpressionNode> persistentNodes_;
 	// Reflist of all statements in the Expression, to be executed sequentially
 	RefList<ExpressionNode> statements_;
-	// Number of syntactic errors encountered
-	int nErrors_;
 
 	public:
 	// Add a node representing a whole statement to the execution list

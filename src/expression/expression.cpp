@@ -33,11 +33,7 @@
 // Constructor
 Expression::Expression(const char* expressionText)
 {
-	clear();
-
-	expressionString_ = expressionText;
-
-	if (expressionText != NULL) ExpressionGenerator::generate(*this, expressionString_.get());
+	set(expressionText);
 }
 
 // Destructor
@@ -58,15 +54,14 @@ void Expression::operator=(const Expression& source)
 	// Reset our structure, and regenerate from the expression string
 	clear();
 
-	ExpressionGenerator::generate(*this, source.expressionString_.get(), source.externalVariables_);
-
 	expressionString_ = source.expressionString_;
+
+	ExpressionGenerator::generate(*this, source.externalVariables_);
 }
 
 /*
  * Data
  */
-
 
 // Clear contents of expression
 void Expression::clear()
@@ -95,13 +90,33 @@ void Expression::clear()
 }
 
 // Return whether current expression is valid
-bool Expression::isValid()
+bool Expression::isValid() const
 {
 	return (statements_.nItems() != 0); 
 }
 
+// Set Expression from supplied string
+bool Expression::set(const char* expressionString)
+{
+	clear();
+
+	expressionString_ = expressionString;
+
+	return (expressionString_.isEmpty() ? false : ExpressionGenerator::generate(*this));
+}
+
+// Set Expression from supplied string and external variables
+bool Expression::set(const char* expressionString, RefList<ExpressionVariable> externalVariables)
+{
+	clear();
+
+	expressionString_ = expressionString;
+
+	return (expressionString_.isEmpty() ? false : ExpressionGenerator::generate(*this, externalVariables));
+}
+
 // Return original generating string`
-const char* Expression::asString() const
+const char* Expression::expressionString() const
 {
 	return expressionString_.get();
 }

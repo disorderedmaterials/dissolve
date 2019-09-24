@@ -48,28 +48,6 @@ class BoxProcedureNode : public ProcedureNode
 
 
 	/*
-	 * Node Keywords
-	 */
-	public:
-	// Node Keywords
-	enum BoxNodeKeyword { AnglesKeyword, EndBoxKeyword, LengthsKeyword, NonPeriodicKeyword, nBoxNodeKeywords };
-	// Return enum option info for BoxNodeKeyword
-	static EnumOptions<BoxNodeKeyword> boxNodeKeywords();
-
-
-	/*
-	 * Box Geometry
-	 */
-	private:
-	// Box lengths
-	NodeValue lengthA_, lengthB_, lengthC_;
-	// Box angles
-	NodeValue angleAlpha_, angleBeta_, angleGamma_;
-	// Whether Box is non-periodic 
-	bool nonPeriodic_;
-
-
-	/*
 	 * Execute
 	 */
 	public:
@@ -77,16 +55,6 @@ class BoxProcedureNode : public ProcedureNode
 	bool prepare(Configuration* cfg, const char* prefix, GenericList& targetList);
 	// Execute node, targetting the supplied Configuration
 	ProcedureNode::NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
-
-
-	/*
-	 * Read / Write
-	 */
-	public:
-	// Read structure from specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack);
-	// Write structure to specified LineParser
-	bool write(LineParser& parser, const char* prefix);
 };
 
 #endif

@@ -25,7 +25,7 @@
 #include <QComboBox>
 
 // Constructor
-WindowFunctionKeywordWidget::WindowFunctionKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QWidget(parent), KeywordWidgetBase(coreData, moduleData, prefix)
+WindowFunctionKeywordWidget::WindowFunctionKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : QWidget(parent), KeywordWidgetBase(coreData)
 {
 	// Create the necessary subwidgets
 	QHBoxLayout* layout = new QHBoxLayout(this);
@@ -38,7 +38,7 @@ WindowFunctionKeywordWidget::WindowFunctionKeywordWidget(QWidget* parent, Keywor
 
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<WindowFunctionKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into WindowFunctionKeyword.\n", keyword->keyword());
+	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into WindowFunctionKeyword.\n", keyword->name());
 	else
 	{
 		// Set current information
@@ -69,16 +69,10 @@ void WindowFunctionKeywordWidget::functionComboChanged(const QString& text)
  * Update
  */
 
-// Update value displayed in widget, using specified source if necessary
+// Update value displayed in widget
 void WindowFunctionKeywordWidget::updateValue()
 {
-	// Check to see if the associated Keyword may have been stored/updated in the specified moduleData
-	if ((keyword_->genericItemFlags()&GenericItem::InRestartFileFlag) && moduleData_.contains(keyword_->keyword(), modulePrefix_))
-	{
-		// Retrieve the item from the list and set our widgets
-		setWidgets(GenericListHelper<WindowFunction>::value(moduleData_, keyword_->keyword(), modulePrefix_));
-	}
-	else setWidgets(keyword_->data());
+	setWidgets(keyword_->data());
 }
 
 // Set widgets from supplied object

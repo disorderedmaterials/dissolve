@@ -1,6 +1,6 @@
 /*
 	*** Keyword - EnumOptions
-	*** src/module/keywordtypes/enumoptions.h
+	*** src/keywords/enumoptions.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,11 +19,10 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULEKEYWORDENUMOPTIONS_H
-#define DISSOLVE_MODULEKEYWORDENUMOPTIONS_H
+#ifndef DISSOLVE_KEYWORD_ENUMOPTIONS_H
+#define DISSOLVE_KEYWORD_ENUMOPTIONS_H
 
 #include "keywords/data.h"
-#include "keywords/base.h"
 #include "base/enumoptions.h"
 #include "base/lineparser.h"
 
@@ -49,7 +48,7 @@ class EnumOptionsBaseKeyword
 
 	public:
 	// Return EnumBaseOptions
-	EnumOptionsBase& baseOptions()
+	const EnumOptionsBase& baseOptions() const
 	{
 		return baseOptions_;
 	}
@@ -60,7 +59,7 @@ class EnumOptionsBaseKeyword
 	 */
 	public:
 	// Set new option index, informing KeywordBase
-	virtual void setOptionByIndex(int optionIndex) = 0;
+	virtual void setEnumerationByIndex(int optionIndex) = 0;
 };
 
 // Keyword based on EnumOptions
@@ -104,17 +103,17 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
 	 */
 	public:
 	// Return minimum number of arguments accepted
-	int minArguments()
+	int minArguments() const
 	{
 		return 1;
 	}
 	// Return maximum number of arguments accepted
-	int maxArguments()
+	int maxArguments() const
 	{
 		return 1;
 	}
-	// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-	bool read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+	// Parse arguments from supplied LineParser, starting at given argument offset
+	bool read(LineParser& parser, int startArg, const CoreData& coreData)
 	{
 		if (parser.hasArg(startArg))
 		{
@@ -128,12 +127,13 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
 
 			return true;
 		}
+
 		return false;
 	}
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* prefix)
+	bool write(LineParser& parser, const char* keywordName, const char* prefix)
 	{
-		return parser.writeLineF("%s%s  '%s'\n", prefix, KeywordData< EnumOptions<E> >::keyword(), KeywordData< EnumOptions<E> >::data_.currentOptionKeyword());
+		return parser.writeLineF("%s%s  '%s'\n", prefix, KeywordData< EnumOptions<E> >::name(), KeywordData< EnumOptions<E> >::data_.currentOptionKeyword());
 	}
 
 
@@ -153,7 +153,7 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
 	 */
 	public:
 	// Set new option index, informing KeywordBase
-	void setOptionByIndex(int optionIndex)
+	void setEnumerationByIndex(int optionIndex)
 	{
 		KeywordData< EnumOptions<E> >::data_.setCurrentOptionIndex(optionIndex);
 		KeywordData< EnumOptions<E> >::dataHasBeenSet();

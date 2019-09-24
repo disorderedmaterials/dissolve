@@ -37,21 +37,21 @@ Data3DStoreKeyword::~Data3DStoreKeyword()
  */
 
 // Return minimum number of arguments accepted
-int Data3DStoreKeyword::minArguments()
+int Data3DStoreKeyword::minArguments() const
 {
 	// Must have reference data name and format as a minimum
 	return 2;
 }
 
 // Return maximum number of arguments accepted
-int Data3DStoreKeyword::maxArguments()
+int Data3DStoreKeyword::maxArguments() const
 {
 	// Filename, name of data, and other args
 	return 99;
 }
 
-// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool Data3DStoreKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+// Parse arguments from supplied LineParser, starting at given argument offset
+bool Data3DStoreKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	Messenger::print("Reading test data '%s' from file '%s' (format=%s)...\n", parser.argc(startArg), parser.argc(startArg+2), parser.argc(startArg+1));
 
@@ -59,7 +59,7 @@ bool Data3DStoreKeyword::read(LineParser& parser, int startArg, const CoreData& 
 	Data3DImportFileFormat ff;
 	if (!ff.read(parser, startArg+1)) return false;
 
-	if (!data_.addData(procPool, ff, parser.argc(startArg))) return Messenger::error("Failed to add data.\n");
+	if (!data_.addData(parser.processPool(), ff, parser.argc(startArg))) return Messenger::error("Failed to add data.\n");
 
 	set_ = true;
 
@@ -67,14 +67,14 @@ bool Data3DStoreKeyword::read(LineParser& parser, int startArg, const CoreData& 
 }
 
 // Write keyword data to specified LineParser
-bool Data3DStoreKeyword::write(LineParser& parser, const char* prefix)
+bool Data3DStoreKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
 	// Loop over list of one-dimensional data
 	RefDataListIterator<Data3D,Data3DImportFileFormat> dataIterator(data_.dataReferences());
 	while (Data3D* data = dataIterator.iterate())
 	{
 		Data3DImportFileFormat ff = dataIterator.currentData();
-		if (!parser.writeLineF("%s%s  '%s'  %s\n", prefix, keyword(), data->name(), ff.asString())) return false;
+		if (!parser.writeLineF("%s%s  '%s'  %s\n", prefix, keywordName, data->name(), ff.asString())) return false;
 	}
 
 	return true;

@@ -35,9 +35,8 @@ NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget* parent, Module* module, Di
 	ui.setupUi(this);
 
 	// Set up partial g(r) graph
-
 	partialGRGraph_ = ui.PartialGRPlotWidget->dataViewer();
-
+	// -- Set view
 	partialGRGraph_->view().setViewType(View::FlatXYView);
 	partialGRGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	partialGRGraph_->view().axes().setMax(0, 10.0);
@@ -46,11 +45,19 @@ NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget* parent, Module* module, Di
 	partialGRGraph_->view().axes().setMax(1, 1.0);
 	partialGRGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 	partialGRGraph_->view().setAutoFollowType(View::AllAutoFollow);
+	// -- Set group styling
+	partialGRGraph_->groupManager().setGroupColouring("Full", RenderableGroup::AutomaticIndividualColouring);
+	partialGRGraph_->groupManager().setGroupVerticalShifting("Full", RenderableGroup::IndividualVerticalShifting);
+	partialGRGraph_->groupManager().setGroupColouring("Bound", RenderableGroup::AutomaticIndividualColouring);
+	partialGRGraph_->groupManager().setGroupVerticalShifting("Bound", RenderableGroup::IndividualVerticalShifting);
+	partialGRGraph_->groupManager().setGroupStipple("Bound", LineStipple::HalfDashStipple);
+	partialGRGraph_->groupManager().setGroupColouring("Unbound", RenderableGroup::AutomaticIndividualColouring);
+	partialGRGraph_->groupManager().setGroupVerticalShifting("Unbound", RenderableGroup::IndividualVerticalShifting);
+	partialGRGraph_->groupManager().setGroupStipple("Unbound", LineStipple::DotStipple);
 
 	// Set up partial S(Q) graph
-
 	partialSQGraph_ = ui.PartialSQPlotWidget->dataViewer();
-
+	// -- Set view
 	partialSQGraph_->view().setViewType(View::FlatXYView);
 	partialSQGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
 	partialSQGraph_->view().axes().setMax(0, 10.0);
@@ -59,11 +66,19 @@ NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget* parent, Module* module, Di
 	partialSQGraph_->view().axes().setMax(1, 1.0);
 	partialSQGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 	partialSQGraph_->view().setAutoFollowType(View::AllAutoFollow);
+	// -- Set group styling
+	partialSQGraph_->groupManager().setGroupColouring("Full", RenderableGroup::AutomaticIndividualColouring);
+	partialSQGraph_->groupManager().setGroupVerticalShifting("Full", RenderableGroup::IndividualVerticalShifting);
+	partialSQGraph_->groupManager().setGroupColouring("Bound", RenderableGroup::AutomaticIndividualColouring);
+	partialSQGraph_->groupManager().setGroupVerticalShifting("Bound", RenderableGroup::IndividualVerticalShifting);
+	partialSQGraph_->groupManager().setGroupStipple("Bound", LineStipple::HalfDashStipple);
+	partialSQGraph_->groupManager().setGroupColouring("Unbound", RenderableGroup::AutomaticIndividualColouring);
+	partialSQGraph_->groupManager().setGroupVerticalShifting("Unbound", RenderableGroup::IndividualVerticalShifting);
+	partialSQGraph_->groupManager().setGroupStipple("Unbound", LineStipple::DotStipple);
 
 	// Set up total G(r) graph
-
 	totalGRGraph_ = ui.TotalGRPlotWidget->dataViewer();
-
+	// -- Set view
 	totalGRGraph_->view().setViewType(View::FlatXYView);
 	totalGRGraph_->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	totalGRGraph_->view().axes().setMax(0, 10.0);
@@ -72,11 +87,13 @@ NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget* parent, Module* module, Di
 	totalGRGraph_->view().axes().setMax(1, 1.0);
 	totalGRGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::NoVerticalShift);
 	totalGRGraph_->view().setAutoFollowType(View::AllAutoFollow);
+	// -- Set group styling
+	totalGRGraph_->groupManager().setGroupColouring("Reference", RenderableGroup::FixedGroupColouring);
+	totalGRGraph_->groupManager().setGroupFixedColour("Reference", StockColours::RedStockColour);
 
 	// Set up total S(Q) graph
-
 	totalFQGraph_ = ui.TotalSQPlotWidget->dataViewer();
-
+	// -- Set view
 	totalFQGraph_->view().setViewType(View::FlatXYView);
 	totalFQGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
 	totalFQGraph_->view().axes().setMax(0, 10.0);
@@ -85,6 +102,9 @@ NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget* parent, Module* module, Di
 	totalFQGraph_->view().axes().setMax(1, 1.0);
 	totalFQGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::NoVerticalShift);
 	totalFQGraph_->view().setAutoFollowType(View::AllAutoFollow);
+	// -- Set group styling
+	totalFQGraph_->groupManager().setGroupColouring("Reference", RenderableGroup::FixedGroupColouring);
+	totalFQGraph_->groupManager().setGroupFixedColour("Reference", StockColours::RedStockColour);
 
 	setGraphDataTargets(module_);
 
@@ -111,12 +131,12 @@ void NeutronSQModuleWidget::updateControls()
 	totalFQGraph_->postRedisplay();
 }
 
-// Disable sensitive controls within widget, ready for main code to run
+// Disable sensitive controls within widget
 void NeutronSQModuleWidget::disableSensitiveControls()
 {
 }
 
-// Enable sensitive controls within widget, ready for main code to run
+// Enable sensitive controls within widget
 void NeutronSQModuleWidget::enableSensitiveControls()
 {
 }
@@ -160,10 +180,10 @@ void NeutronSQModuleWidget::setGraphDataTargets(NeutronSQModule* module)
 
 	// Add partials
 	int n = 0;
-	for (AtomType* at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next, ++n)
+	for (AtomType* at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++n)
 	{
 		int m = n;
-		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next(), ++m)
 		{
 			CharString id("%s-%s", at1->name(), at2->name());
 
@@ -195,24 +215,6 @@ void NeutronSQModuleWidget::setGraphDataTargets(NeutronSQModule* module)
 		}
 	}
 
-	// Set group styling
-	partialGRGraph_->groupManager().setGroupColouring("Full", RenderableGroup::AutomaticIndividualColouring);
-	partialGRGraph_->groupManager().setGroupVerticalShifting("Full", RenderableGroup::IndividualVerticalShifting);
-	partialGRGraph_->groupManager().setGroupColouring("Bound", RenderableGroup::AutomaticIndividualColouring);
-	partialGRGraph_->groupManager().setGroupVerticalShifting("Bound", RenderableGroup::IndividualVerticalShifting);
-	partialGRGraph_->groupManager().setGroupStipple("Bound", LineStipple::HalfDashStipple);
-	partialGRGraph_->groupManager().setGroupColouring("Unbound", RenderableGroup::AutomaticIndividualColouring);
-	partialGRGraph_->groupManager().setGroupVerticalShifting("Unbound", RenderableGroup::IndividualVerticalShifting);
-	partialGRGraph_->groupManager().setGroupStipple("Unbound", LineStipple::DotStipple);
-	partialSQGraph_->groupManager().setGroupColouring("Full", RenderableGroup::AutomaticIndividualColouring);
-	partialSQGraph_->groupManager().setGroupVerticalShifting("Full", RenderableGroup::IndividualVerticalShifting);
-	partialSQGraph_->groupManager().setGroupColouring("Bound", RenderableGroup::AutomaticIndividualColouring);
-	partialSQGraph_->groupManager().setGroupVerticalShifting("Bound", RenderableGroup::IndividualVerticalShifting);
-	partialSQGraph_->groupManager().setGroupStipple("Bound", LineStipple::HalfDashStipple);
-	partialSQGraph_->groupManager().setGroupColouring("Unbound", RenderableGroup::AutomaticIndividualColouring);
-	partialSQGraph_->groupManager().setGroupVerticalShifting("Unbound", RenderableGroup::IndividualVerticalShifting);
-	partialSQGraph_->groupManager().setGroupStipple("Unbound", LineStipple::DotStipple);
-
 	// Add calculated total G(r)
 	Renderable* totalGR = totalGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedGR//Total", module_->uniqueName()), "Calculated");
 	totalGRGraph_->addRenderableToGroup(totalGR, "Calculated");
@@ -232,10 +234,4 @@ void NeutronSQModuleWidget::setGraphDataTargets(NeutronSQModule* module)
 		Renderable* refFQ = totalFQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//ReferenceData", module_->uniqueName()), "Reference");
 		totalFQGraph_->addRenderableToGroup(refFQ, "Reference");
 	}
-
-	// Set group styling
-	totalGRGraph_->groupManager().setGroupColouring("Reference", RenderableGroup::FixedGroupColouring);
-	totalGRGraph_->groupManager().setGroupFixedColour("Reference", ColourDefinition::RedStockColour);
-	totalFQGraph_->groupManager().setGroupColouring("Reference", RenderableGroup::FixedGroupColouring);
-	totalFQGraph_->groupManager().setGroupFixedColour("Reference", ColourDefinition::RedStockColour);
 }

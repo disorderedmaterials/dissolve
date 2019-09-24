@@ -26,6 +26,8 @@
 #include "gui/modulewidget.h"
 
 // Forward Declarations
+class AnalyseModule;
+class CoreData;
 class Module;
 
 // Module Widget
@@ -36,18 +38,18 @@ class AnalyseModuleWidget : public ModuleWidget
 
 	private:
 	// Associated Module
-	Module* module_;
+	AnalyseModule* module_;
 
 	public:
 	// Constructor
-	AnalyseModuleWidget(QWidget* parent, Module* module);
+	AnalyseModuleWidget(QWidget* parent, Module* module, const CoreData& coreData);
 	// Main form declaration
 	Ui::AnalyseModuleWidget ui;
 	// Update controls within widget
 	void updateControls();
-	// Disable sensitive controls within widget, ready for main code to run
+	// Disable sensitive controls within widget
 	void disableSensitiveControls();
-	// Enable sensitive controls within widget, ready for main code to run
+	// Enable sensitive controls within widget
 	void enableSensitiveControls();
 
 

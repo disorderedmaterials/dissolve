@@ -63,6 +63,8 @@ class AtomTypeList : public GenericItemBase
 	AtomTypeData* add(AtomType* atomType, double popAdd = 0);
 	// Add the AtomTypes in the supplied list into this one, increasing populations etc.
 	void add(const AtomTypeList& source);
+	// Remove specified AtomType from the list
+	void remove(AtomType* atomType);
 	// Add/increase this AtomType/Isotope pair, returning the index of the AtomType in the list
 	void addIsotope(AtomType* atomType, Isotope* tope = NULL, double popAdd = 0);
 	// Finalise list, calculating fractional populations etc.

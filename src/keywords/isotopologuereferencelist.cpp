@@ -24,7 +24,6 @@
 #include "classes/coredata.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
-#include "genericitems/listhelper.h"
 
 // Constructor
 IsotopologueReferenceListKeyword::IsotopologueReferenceListKeyword(List<IsotopologueReference>& references, const RefList<Configuration>& associatedConfigurations) : KeywordData< List<IsotopologueReference>& >(KeywordBase::IsotopologueListData, references), associatedConfigurations_(associatedConfigurations)
@@ -51,19 +50,19 @@ const RefList<Configuration>& IsotopologueReferenceListKeyword::associatedConfig
  */
 
 // Return minimum number of arguments accepted
-int IsotopologueReferenceListKeyword::minArguments()
+int IsotopologueReferenceListKeyword::minArguments() const
 {
 	return 4;
 }
 
 // Return maximum number of arguments accepted
-int IsotopologueReferenceListKeyword::maxArguments()
+int IsotopologueReferenceListKeyword::maxArguments() const
 {
 	return 4;
 }
 
-// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool IsotopologueReferenceListKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+// Parse arguments from supplied LineParser, starting at given argument offset
+bool IsotopologueReferenceListKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	// Find target Configuration (first argument)
 	Configuration* cfg = coreData.findConfiguration(parser.argc(startArg));
@@ -84,21 +83,49 @@ bool IsotopologueReferenceListKeyword::read(LineParser& parser, int startArg, co
 	// Add the data to the list
 	IsotopologueReference* isoRef = data_.add();
 	isoRef->set(cfg, sp, iso, parser.argd(startArg+3));
-	
+
 	set_ = true;
 
 	return true;
 }
 
 // Write keyword data to specified LineParser
-bool IsotopologueReferenceListKeyword::write(LineParser& parser, const char* prefix)
+bool IsotopologueReferenceListKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
 	// Loop over list of IsotopologueReferences
 	ListIterator<IsotopologueReference> refIterator(data_);
 	while (IsotopologueReference* ref = refIterator.iterate())
 	{
-		if (!parser.writeLineF("%s%s  '%s'  '%s'  '%s'  %f\n", prefix, keyword(), ref->configuration()->name(), ref->species()->name(), ref->isotopologue()->name(), ref->weight())) return false;
+		if (!parser.writeLineF("%s%s  '%s'  '%s'  '%s'  %f\n", prefix, keywordName, ref->configuration()->name(), ref->species()->name(), ref->isotopologue()->name(), ref->weight())) return false;
 	}
 
 	return true;
+}
+
+/*
+ * Data Management
+ */
+
+// Prune any references to the supplied Species in the contained data
+void IsotopologueReferenceListKeyword::removeReferencesTo(Species* sp)
+{
+	IsotopologueReference* isoRef = data_.first(), *isoNext;
+	while (isoRef)
+	{
+		isoNext = isoRef->next();
+		if (isoRef->species() == sp) data_.remove(isoRef);
+		isoRef = isoNext;
+	}
+}
+
+// Prune any references to the supplied Isotopologue in the contained data
+void IsotopologueReferenceListKeyword::removeReferencesTo(Isotopologue* iso)
+{
+	IsotopologueReference* isoRef = data_.first(), *isoNext;
+	while (isoRef)
+	{
+		isoNext = isoRef->next();
+		if (isoRef->isotopologue() == iso) data_.remove(isoRef);
+		isoRef = isoNext;
+	}
 }

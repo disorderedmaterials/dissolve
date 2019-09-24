@@ -36,7 +36,7 @@ class WindowFunctionKeywordWidget : public QWidget, public KeywordWidgetBase
 
 	public:
 	// Constructor
-	WindowFunctionKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
+	WindowFunctionKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
 
 
 	/*
@@ -67,7 +67,7 @@ class WindowFunctionKeywordWidget : public QWidget, public KeywordWidgetBase
 	 * Update
 	 */
 	public:
-	// Update value displayed in widget, using specified source if necessary
+	// Update value displayed in widget
 	void updateValue();
 	// Set widgets from supplied object
 	void setWidgets(const WindowFunction& windowFunction);

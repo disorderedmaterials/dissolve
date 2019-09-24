@@ -49,21 +49,11 @@ class ExcludeProcedureNode : public ProcedureNode
 
 
 	/*
-	 * Node Keywords
-	 */
-	public:
-	// Node Keywords
-	enum ExcludeNodeKeyword { EndExcludeKeyword, SameSiteKeyword, nExcludeNodeKeywords };
-	// Return enum option info for ExcludeNodeKeyword
-	static EnumOptions<ExcludeNodeKeyword> excludeNodeKeywords();
-
-
-	/*
 	 * Data
 	 */
 	private:
 	// Pair of nodes (sites) to compare when disallowing same Sites
-	SelectProcedureNode* sameSiteA_, *sameSiteB_;
+	Array<SelectProcedureNode*> sameSites_;
 
 
 	/*
@@ -72,16 +62,6 @@ class ExcludeProcedureNode : public ProcedureNode
 	public:
 	// Execute node, targetting the supplied Configuration
 	ProcedureNode::NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
-
-
-	/*
-	 * Read / Write
-	 */
-	public:
-	// Read structure from specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack);
-	// Write structure to specified LineParser
-	bool write(LineParser& parser, const char* prefix);
 };
 
 #endif

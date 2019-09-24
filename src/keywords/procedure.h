@@ -23,7 +23,6 @@
 #define DISSOLVE_KEYWORD_PROCEDURE_H
 
 #include "keywords/data.h"
-#include "keywords/base.h"
 #include "procedure/procedure.h"
 
 // Forward Declarations
@@ -44,13 +43,13 @@ class ProcedureKeyword : public KeywordData<Procedure&>
 	 */
 	public:
 	// Return minimum number of arguments accepted
-	int minArguments();
+	int minArguments() const;
 	// Return maximum number of arguments accepted
-	int maxArguments();
-	// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-	bool read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool);
+	int maxArguments() const;
+	// Parse arguments from supplied LineParser, starting at given argument offset
+	bool read(LineParser& parser, int startArg, const CoreData& coreData);
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* prefix);
+	bool write(LineParser& parser, const char* keywordName, const char* prefix);
 };
 
 #endif

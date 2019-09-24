@@ -36,7 +36,7 @@ class EnumOptionsKeywordWidget : public QComboBox, public KeywordWidgetBase
 
 	public:
 	// Constructor
-	EnumOptionsKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
+	EnumOptionsKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
 
 
 	/*
@@ -63,7 +63,7 @@ class EnumOptionsKeywordWidget : public QComboBox, public KeywordWidgetBase
 	 * Update
 	 */
 	public:
-	// Update value displayed in widget, using specified source if necessary
+	// Update value displayed in widget
 	void updateValue();
 };
 

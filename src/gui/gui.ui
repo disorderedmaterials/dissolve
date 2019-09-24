@@ -25,24 +25,24 @@
   <widget class="QWidget" name="Centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_3">
     <property name="spacing">
-     <number>4</number>
+     <number>0</number>
     </property>
     <property name="leftMargin">
-     <number>4</number>
+     <number>0</number>
     </property>
     <property name="topMargin">
-     <number>4</number>
+     <number>0</number>
     </property>
     <property name="rightMargin">
-     <number>4</number>
+     <number>0</number>
     </property>
     <property name="bottomMargin">
-     <number>4</number>
+     <number>0</number>
     </property>
     <item>
      <widget class="QStackedWidget" name="MainStack">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="StartPage">
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -593,6 +593,23 @@ Remote Simulation</string>
             </property>
             <property name="scaledContents">
              <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="ControlIterationLabel">
+            <property name="font">
+             <font>
+              <pointsize>9</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>000000</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
             </property>
            </widget>
           </item>

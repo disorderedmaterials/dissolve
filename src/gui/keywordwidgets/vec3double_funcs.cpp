@@ -24,7 +24,7 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-Vec3DoubleKeywordWidget::Vec3DoubleKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QWidget(parent), KeywordWidgetBase(coreData, moduleData, prefix)
+Vec3DoubleKeywordWidget::Vec3DoubleKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : QWidget(parent), KeywordWidgetBase(coreData)
 {
 	// Setup our UI
 	ui_.setupUi(this);
@@ -33,7 +33,7 @@ Vec3DoubleKeywordWidget::Vec3DoubleKeywordWidget(QWidget* parent, KeywordBase* k
 
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<Vec3DoubleKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into Vec3DoubleKeyword.\n", keyword->keyword());
+	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into Vec3DoubleKeyword.\n", keyword->name());
 	else
 	{
 		// Set minimum and maximum values for each component
@@ -48,13 +48,15 @@ Vec3DoubleKeywordWidget::Vec3DoubleKeywordWidget(QWidget* parent, KeywordBase* k
 	}
 
 	// Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a QScrollArea)
-	installEventFilter(new MouseWheelWidgetAdjustmentGuard(this));
+	ui_.Spin1->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.Spin1));
+	ui_.Spin2->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.Spin2));
+	ui_.Spin3->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.Spin3));
 
-	refreshing_ = true;
+	refreshing_ = false;
 }
 
 /*
- * Signals / Slots
+ * Widgets
  */
 
 // Spin box value changed
@@ -96,19 +98,12 @@ void Vec3DoubleKeywordWidget::on_Spin3_valueChanged(double value)
  * Update
  */
 
-// Update value displayed in widget, using specified source if necessary
+// Update value displayed in widget
 void Vec3DoubleKeywordWidget::updateValue()
 {
 	refreshing_ = true;
 
-	// Check to see if the associated Keyword may have been stored/updated in the specified moduleData
-	Vec3<double> v;
-	if ((keyword_->genericItemFlags()&GenericItem::InRestartFileFlag) && moduleData_.contains(keyword_->keyword(), modulePrefix_))
-	{
-		// Retrieve the item from the list
-		v = GenericListHelper< Vec3<double> >::value(moduleData_, keyword_->keyword(), modulePrefix_);
-	}
-	else v = keyword_->asVec3Double();
+	Vec3<double> v = keyword_->asVec3Double();
 
 	ui_.Spin1->setValue(v.x);
 	ui_.Spin2->setValue(v.y);

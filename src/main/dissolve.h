@@ -29,7 +29,6 @@
 #include "classes/coredata.h"
 #include "classes/pairpotential.h"
 #include "classes/potentialmap.h"
-#include "classes/masterintra.h"
 
 // Forward Declarations
 class Atom;
@@ -91,54 +90,6 @@ class Dissolve
 	AtomType* findAtomType(const char* name) const;
 	// Clear all AtomTypes
 	void clearAtomTypes();
-
-
-	/*
-	 * Master Terms for Species
-	 */
-	private:
-	// List of master Bond parameters for Species
-	List<MasterIntra> masterBonds_;
-	// List of master Angles parameters for Species
-	List<MasterIntra> masterAngles_;
-	// List of master Torsions parameters for Species
-	List<MasterIntra> masterTorsions_;
-
-	public:
-	// Add new master Bond parameters
-	MasterIntra* addMasterBond(const char* name);
-	// Return number of master Bond parameters in list
-	int nMasterBonds() const;
-	// Return list of master Bond parameters
-	const List<MasterIntra>& masterBonds() const;
-	// Return nth master Bond 
-	MasterIntra* masterBond(int n);
-	// Return whether named master Bond parameters exist
-	MasterIntra* hasMasterBond(const char* name) const;
-	// Add new master Angle parameters
-	MasterIntra* addMasterAngle(const char* name);
-	// Return number of master Angles parameters in list
-	int nMasterAngles() const;
-	// Return list of master Angle parameters
-	const List<MasterIntra>& masterAngles() const;
-	// Return nth master Angle parameters
-	MasterIntra* masterAngle(int n);
-	// Return whether named master Angle parameters exist
-	MasterIntra* hasMasterAngle(const char* name) const;
-	// Add new master Torsion parameters
-	MasterIntra* addMasterTorsion(const char* name);
-	// Return number of master Torsions parameters in list
-	int nMasterTorsions() const;
-	// Return list of master Torsion parameters
-	const List<MasterIntra>& masterTorsions() const;
-	// Return nth master Torsion parameters
-	MasterIntra* masterTorsion(int n);
-	// Return whether named master Torsion parameters exist
-	MasterIntra* hasMasterTorsion(const char* name) const;
-	// Return the named master term (of any form) if it exists
-	MasterIntra* findMasterTerm(const char* name) const;
-	// Clear all MasterTerms
-	void clearMasterTerms();
 
 
 	/*
@@ -275,6 +226,8 @@ class Dissolve
 	Module* createModuleInstance(const char* moduleType);
 	// Search for any instance of any module with the specified unique name
 	Module* findModuleInstance(const char* uniqueName);
+	// Delete specified Module instance
+	bool deleteModuleInstance(Module* instance);
 
 
 	/*
@@ -331,7 +284,7 @@ class Dissolve
 	void setSeed(int seed);
 	// Return random seed
 	int seed() const;
-	// Set frequency with which to write various iteration data
+	// Set frequency with which to write various iteration data	
 	void setRestartFileFrequency(int n);
 	// Return frequency with which to write restart file
 	int restartFileFrequency() const;
@@ -354,18 +307,20 @@ class Dissolve
 	/*
 	 * I/O
 	 */
-	private:
+	private:  
 	// Filename of current input file
 	CharString inputFilename_;
 	// Filename of current restart file
 	CharString restartFilename_;
 	// Accumulated timing information for saving restart file
 	SampledDouble saveRestartTimes_;
+	// Check if heartbeat file needs to be written or not
+	bool writeHeartBeat_;
 
 	private:
 	// Load input file through supplied parser
 	bool loadInput(LineParser& parser);
-
+	
 	public:
 	// Load input file
 	bool loadInput(const char* filename);
@@ -379,6 +334,10 @@ class Dissolve
 	bool saveRestart(const char* filename);
 	// Save heartbeat file
 	bool saveHeartBeat(const char* filename, double estimatedNSecs);
+	// Set bool for heartbeat file to be written
+	void setWriteHeartBeat(bool b);
+	// write heartbeat file
+	bool writeHeartBeat() const;
 	// Return whether an input filename has been set
 	bool hasInputFilename() const;
 	// Set current input filenamea

@@ -87,7 +87,7 @@ bool Species::checkSetUp(const List<AtomType>& atomTypes)
 	/*
 	 * AtomTypes
 	 */
-	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next)
+	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next())
 	{
 		if (i->atomType() == NULL)
 		{
@@ -107,8 +107,8 @@ bool Species::checkSetUp(const List<AtomType>& atomTypes)
 	 * Each Atom must be in exactly one GrainDefinition
 	 */
 	RefDataList<SpeciesAtom,int> grainCount;
-	for (SpeciesAtom* sa = atoms_.first(); sa != NULL; sa = sa->next) grainCount.append(sa, 0);
-	for (SpeciesGrain* sg = grains_.first(); sg != NULL; sg = sg->next)
+	for (SpeciesAtom* sa = atoms_.first(); sa != NULL; sa = sa->next()) grainCount.append(sa, 0);
+	for (SpeciesGrain* sg = grains_.first(); sg != NULL; sg = sg->next())
 	{
 		for (RefListItem<SpeciesAtom>* ri = sg->atoms(); ri != NULL; ri = ri->next())
 		{
@@ -139,7 +139,7 @@ bool Species::checkSetUp(const List<AtomType>& atomTypes)
 	/*
 	 * IntraMolecular Data
 	 */
-	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next)
+	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next())
 	{
 		if ((i->nBonds() == 0) && (atoms_.nItems() > 1))
 		{
@@ -169,7 +169,7 @@ bool Species::checkSetUp(const List<AtomType>& atomTypes)
 		Messenger::error("No Isotopologues defined in Species.\n");
 		++nErrors;
 	}
-	else for (Isotopologue* iso = isotopologues_.first(); iso != NULL; iso = iso->next)
+	else for (Isotopologue* iso = isotopologues_.first(); iso != NULL; iso = iso->next())
 	{
 		RefDataListIterator<AtomType,Isotope*> isotopeIterator(iso->isotopes());
 		while (AtomType* atomType = isotopeIterator.iterate())
@@ -212,7 +212,7 @@ void Species::print()
 		Messenger::print("\n  Bonds:\n");
 		Messenger::print("      I     J    Form            Parameters\n");
 		Messenger::print("    ---------------------------------------------------------------------------------\n");
-		for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next)
+		for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next())
 		{
 			if (b->masterParameters()) Messenger::print("   %4i  %4i    @%-12s\n", b->indexI()+1, b->indexJ()+1, b->masterParameters()->name());
 			else
@@ -229,7 +229,7 @@ void Species::print()
 		Messenger::print("\n  Angles:\n");
 		Messenger::print("      I     J     K    Form            Parameters\n");
 		Messenger::print("    ---------------------------------------------------------------------------------------\n");
-		for (SpeciesAngle* a = angles_.first(); a != NULL; a = a->next)
+		for (SpeciesAngle* a = angles_.first(); a != NULL; a = a->next())
 		{
 			if (a->masterParameters()) Messenger::print("   %4i  %4i  %4i    @%-12s\n", a->indexI()+1, a->indexJ()+1, a->indexK()+1, a->masterParameters()->name());
 			else
@@ -246,7 +246,7 @@ void Species::print()
 		Messenger::print("\n  Torsions:\n");
 		Messenger::print("      I     J     K     L    Form            Parameters\n");
 		Messenger::print("    ---------------------------------------------------------------------------------------------\n");
-		for (SpeciesTorsion* t = torsions_.first(); t != NULL; t = t->next)
+		for (SpeciesTorsion* t = torsions_.first(); t != NULL; t = t->next())
 		{
 			if (t->masterParameters()) Messenger::print("   %4i  %4i  %4i  %4i    %-12s", t->indexI()+1, t->indexJ()+1, t->indexK()+1, t->indexL()+1, t->masterParameters()->name());
 			else

@@ -31,24 +31,24 @@
 #include <QFileInfo>
 
 // Constructor
-FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget* parent, KeywordBase* keyword, const Dissolve& dissolve, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QWidget(parent), dissolve_(dissolve), KeywordWidgetBase(coreData, moduleData, prefix)
+FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : QWidget(parent), KeywordWidgetBase(coreData)
 {
 	// Create and set up our UI
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<FileAndFormatKeyword*>(keyword);
 	if (!keyword_)
 	{
-		Messenger::error("Couldn't cast base module keyword '%s' into FileAndFormatKeyword.\n", keyword->keyword());
+		Messenger::error("Couldn't cast base keyword '%s' into FileAndFormatKeyword.\n", keyword->name());
 		return;
 	}
 
 	refreshing_ = true;
 
 	// Populate combo with the file formats available
-	ui.FileFormatCombo->clear();
-	for (int n=0; n < keyword_->data().nFormats(); ++n) ui.FileFormatCombo->addItem(keyword_->data().format(n));
+	ui_.FileFormatCombo->clear();
+	for (int n=0; n < keyword_->data().nFormats(); ++n) ui_.FileFormatCombo->addItem(keyword_->data().format(n));
 
 	// Set current information
 	updateWidgetValues(coreData_);
@@ -57,7 +57,7 @@ FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget* parent, KeywordB
 }
 
 /*
- * Signals / Slots
+ * Widgets
  */
 
 void FileAndFormatKeywordWidget::on_FileEdit_editingFinished()
@@ -114,8 +114,8 @@ void FileAndFormatKeywordWidget::on_FileSelectButton_clicked(bool checked)
 	if (!filename.isEmpty())
 	{
 		// Set relative path to file, using the current input file as the reference point
-		QFileInfo fileInfo(dissolve_.inputFilename());
-		ui.FileEdit->setText(fileInfo.dir().relativeFilePath(filename));
+		QFileInfo fileInfo(coreData_.inputFilename());
+		ui_.FileEdit->setText(fileInfo.dir().relativeFilePath(filename));
 		updateKeywordData();
 		updateWidgetValues(coreData_);
 		emit(keywordValueChanged());
@@ -135,34 +135,18 @@ void FileAndFormatKeywordWidget::checkFileValidity()
 	// If this is an export FileAndFormat, no need to show the indicator or check if the file exists
 	if (fileAndFormat.fileMustExist())
 	{
-		ui.FileExistsIndicator->setVisible(true);
-		ui.FileExistsIndicator->setOK(fileAndFormat.hasFilename() ? QFile::exists(fileAndFormat.filename()) : false);
+		ui_.FileExistsIndicator->setVisible(true);
+		ui_.FileExistsIndicator->setOK(fileAndFormat.hasFilename() ? QFile::exists(fileAndFormat.filename()) : false);
 	}
 	else
 	{
-		ui.FileExistsIndicator->setVisible(false);
+		ui_.FileExistsIndicator->setVisible(false);
 	}
 }
 
-// Update value displayed in widget, using specified source if necessary
+// Update value displayed in widget
 void FileAndFormatKeywordWidget::updateValue()
 {
-	refreshing_ = true;
-
-	/*
-	 * We normally check in our moduleData to see if updated data exists there, however in the case of 
-	 * FileAndFormat keywords we store references to the derived classes. So, such searching in this way is not
-	 * possible.
-	 */
-// 	// Check to see if the associated Keyword may have been stored/updated in the specified moduleData
-// 	if ((keyword_->genericItemFlags()&GenericItem::InRestartFileFlag) && moduleData_.contains(keyword_->keyword(), modulePrefix_))
-// 	{
-// 		// Retrieve the item from the list and set our widgets
-// 		keyword_->data() = GenericListHelper<FileAndFormat>::value(moduleData_, keyword_->keyword(), modulePrefix_);
-// 	}
-
-	refreshing_ = false;
-
 	updateWidgetValues(coreData_);
 }
 
@@ -175,8 +159,8 @@ void FileAndFormatKeywordWidget::updateWidgetValues(const CoreData& coreData)
 	FileAndFormat& fileAndFormat = keyword_->data();
 
 	// Widgets
-	ui.FileEdit->setText(fileAndFormat.filename());
-	ui.FileFormatCombo->setCurrentIndex(fileAndFormat.formatIndex());
+	ui_.FileEdit->setText(fileAndFormat.filename());
+	ui_.FileFormatCombo->setCurrentIndex(fileAndFormat.formatIndex());
 	checkFileValidity();
 
 	refreshing_ = false;
@@ -188,8 +172,8 @@ void FileAndFormatKeywordWidget::updateKeywordData()
 	// Grab the target FileAndFormat
 	FileAndFormat& fileAndFormat = keyword_->data();
 
-	fileAndFormat.setFilename(qPrintable(ui.FileEdit->text()));
-	fileAndFormat.setFormatIndex(ui.FileFormatCombo->currentIndex());
+	fileAndFormat.setFilename(qPrintable(ui_.FileEdit->text()));
+	fileAndFormat.setFormatIndex(ui_.FileFormatCombo->currentIndex());
 
 	keyword_->dataHasBeenSet();
 }

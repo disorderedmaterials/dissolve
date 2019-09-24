@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = libneutronsq.la libmodulewidget.la
 
-libneutronsq_la_SOURCES = core.cpp definition.cpp functions.cpp options.cpp process.cpp
+libneutronsq_la_SOURCES = core.cpp definition.cpp functions.cpp init.cpp process.cpp
 libmodulewidget_la_SOURCES = nogui.cpp
 
 noinst_HEADERS = neutronsq.h

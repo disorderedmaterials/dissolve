@@ -646,8 +646,8 @@ bool BaseViewer::readRenderableGroupBlock(LineParser& parser, RenderableGroup* g
 				break;
 			// Fixed stock colour
 			case (BaseViewer::FixedStockColourKeyword):
-				if (!ColourDefinition::stockColours().isValid(parser.argc(1))) return ColourDefinition::stockColours().errorAndPrintValid(parser.argc(1));
-				group->setFixedStockColour(ColourDefinition::stockColours().enumeration(parser.argc(1)));
+				if (!StockColours::stockColours().isValid(parser.argc(1))) return StockColours::stockColours().errorAndPrintValid(parser.argc(1));
+				group->setFixedStockColour(StockColours::stockColours().enumeration(parser.argc(1)));
 				break;
 			// Group visibility flag
 			case (BaseViewer::GroupVisibleKeyword):
@@ -692,7 +692,7 @@ bool BaseViewer::writeRenderableGroupBlock(LineParser& parser, RenderableGroup* 
 	if (!parser.writeLineF("%s%s  '%s'\n", indent, BaseViewer::inputBlockKeywords().keyword(BaseViewer::RenderableGroupBlock), group->name())) return false;
 
 	if (!parser.writeLineF("%s  %s  %s\n", indent, renderableGroupKeywords().keyword(BaseViewer::ColouringStyleKeyword), RenderableGroup::groupColourings().keyword(group->colouringStyle()))) return false;
-	if (!parser.writeLineF("%s  %s  %s\n", indent, renderableGroupKeywords().keyword(BaseViewer::FixedStockColourKeyword), ColourDefinition::stockColours().keyword(group->fixedStockColour()))) return false;
+	if (!parser.writeLineF("%s  %s  %s\n", indent, renderableGroupKeywords().keyword(BaseViewer::FixedStockColourKeyword), StockColours::stockColours().keyword(group->fixedStockColour()))) return false;
 	if (!parser.writeLineF("%s  %s  '%s'\n", indent, renderableGroupKeywords().keyword(BaseViewer::StippleKeyword), LineStipple::stippleType(group->lineStipple()))) return false;
 	if (!parser.writeLineF("%s  %s  %s\n", indent, renderableGroupKeywords().keyword(BaseViewer::VerticalShiftingKeyword), RenderableGroup::verticalShiftStyles().keyword(group->verticalShiftStyle()))) return false;
 	if (!parser.writeLineF("%s  %s  %s\n", indent, renderableGroupKeywords().keyword(BaseViewer::GroupVisibleKeyword), DissolveSys::btoa(group->isVisible()))) return false;

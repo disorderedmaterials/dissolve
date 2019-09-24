@@ -142,9 +142,9 @@ class ModuleChart : public QWidget
 	public:
 	// Update controls within widget
 	void updateControls();
-	// Disable sensitive controls within widget, ready for main code to run
+	// Disable sensitive controls within widget
 	void disableSensitiveControls();
-	// Enable sensitive controls within widget, ready for main code to run
+	// Enable sensitive controls within widget
 	void enableSensitiveControls();
 
 
@@ -182,6 +182,14 @@ class ModuleChart : public QWidget
 	public slots:
 	// Recalculate layout (after widget size change etc.)
 	void recalculateLayout();
+
+
+	/*
+	 * Module Management
+	 */
+	private slots:
+	// Remove Module with specified uniqueName
+	void removeModule(QString uniqueName);
 
 
 	/*

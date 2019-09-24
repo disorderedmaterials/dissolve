@@ -505,7 +505,7 @@
        </widget>
       </item>
       <item>
-       <widget class="ModuleKeywordsWidget" name="KeywordsWidget" native="true">
+       <widget class="KeywordsWidget" name="ModuleKeywordsWidget" native="true">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -521,9 +521,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ModuleKeywordsWidget</class>
+   <class>KeywordsWidget</class>
    <extends>QWidget</extends>
-   <header>gui/modulekeywordswidget.h</header>
+   <header>gui/keywordswidget.hui</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

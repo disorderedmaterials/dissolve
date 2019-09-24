@@ -35,9 +35,8 @@ BraggModuleWidget::BraggModuleWidget(QWidget* parent, Module* module, Dissolve& 
 	ui.setupUi(this);
 
 	// Set up Bragg reflections graph
-
 	reflectionsGraph_ = ui.ReflectionsPlotWidget->dataViewer();
-
+	// -- Set view
 	reflectionsGraph_->view().setViewType(View::FlatXYView);
 	reflectionsGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
 	reflectionsGraph_->view().axes().setMax(0, 10.0);
@@ -47,9 +46,8 @@ BraggModuleWidget::BraggModuleWidget(QWidget* parent, Module* module, Dissolve& 
 	reflectionsGraph_->view().setAutoFollowType(View::AllAutoFollow);
 
 	// Set up total G(r) graph
-
 	totalsGraph_ = ui.TotalsPlotWidget->dataViewer();
-
+	// -- Set view
 	totalsGraph_->view().setViewType(View::FlatXYView);
 	totalsGraph_->view().axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
 	totalsGraph_->view().axes().setMax(0, 10.0);
@@ -57,6 +55,8 @@ BraggModuleWidget::BraggModuleWidget(QWidget* parent, Module* module, Dissolve& 
 	totalsGraph_->view().axes().setMin(1, -1.0);
 	totalsGraph_->view().axes().setMax(1, 1.0);
 	totalsGraph_->view().setAutoFollowType(View::AllAutoFollow);
+	// -- Set group styling
+	totalsGraph_->groupManager().setGroupColouring("Totals", RenderableGroup::AutomaticIndividualColouring);
 
 	refreshing_ = false;
 
@@ -81,12 +81,12 @@ void BraggModuleWidget::updateControls()
 	totalsGraph_->postRedisplay();
 }
 
-// Disable sensitive controls within widget, ready for main code to run
+// Disable sensitive controls within widget
 void BraggModuleWidget::disableSensitiveControls()
 {
 }
 
-// Enable sensitive controls within widget, ready for main code to run
+// Enable sensitive controls within widget
 void BraggModuleWidget::enableSensitiveControls()
 {
 }
@@ -136,9 +136,7 @@ void BraggModuleWidget::setGraphDataTargets()
 	{
 		// Original F(Q)
 		Renderable* originalFQ = totalsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//OriginalBragg//Total", cfg->niceName()), cfg->niceName(), "Totals");
-// 		totalsGraph_->addRenderableToGroup(originalFQ, cfg->niceName());
 	}
-	totalsGraph_->groupManager().setGroupColouring("Totals", RenderableGroup::AutomaticIndividualColouring);
 }
 
 void BraggModuleWidget::on_TargetCombo_currentIndexChanged(int index)
@@ -153,10 +151,10 @@ void BraggModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 	CharString blockData;
 	const AtomTypeList cfgTypes = currentConfiguration_->usedAtomTypesList();
 	int n = 0;
-	for (AtomType* at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next, ++n)
+	for (AtomType* at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++n)
 	{
 		int m = n;
-		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next(), ++m)
 		{
 			CharString id("%s-%s", at1->name(), at2->name());
 

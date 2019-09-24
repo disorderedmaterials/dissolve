@@ -21,7 +21,6 @@
 
 #include "keywords/pairbroadeningfunction.h"
 #include "base/lineparser.h"
-#include "genericitems/listhelper.h"
 
 // Constructor
 PairBroadeningFunctionKeyword::PairBroadeningFunctionKeyword(PairBroadeningFunction value) : KeywordData<PairBroadeningFunction>(KeywordBase::PairBroadeningFunctionData, value)
@@ -38,19 +37,19 @@ PairBroadeningFunctionKeyword::~PairBroadeningFunctionKeyword()
  */
 
 // Return minimum number of arguments accepted
-int PairBroadeningFunctionKeyword::minArguments()
+int PairBroadeningFunctionKeyword::minArguments() const
 {
 	return 1;
 }
 
 // Return maximum number of arguments accepted
-int PairBroadeningFunctionKeyword::maxArguments()
+int PairBroadeningFunctionKeyword::maxArguments() const
 {
 	return 2;
 }
 
-// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool PairBroadeningFunctionKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+// Parse arguments from supplied LineParser, starting at given argument offset
+bool PairBroadeningFunctionKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	if (data_.readAsKeyword(parser, startArg, coreData)) set_ = true;
 	else return false;
@@ -59,9 +58,9 @@ bool PairBroadeningFunctionKeyword::read(LineParser& parser, int startArg, const
 }
 
 // Write keyword data to specified LineParser
-bool PairBroadeningFunctionKeyword::write(LineParser& parser, const char* prefix)
+bool PairBroadeningFunctionKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
-	if (!parser.writeLineF("%s%s", prefix, keyword())) return false;
+	if (!parser.writeLineF("%s%s", prefix, name())) return false;
 
 	return data_.writeAsKeyword(parser, prefix, true);
 }

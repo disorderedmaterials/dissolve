@@ -24,11 +24,11 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-DoubleKeywordWidget::DoubleKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : ExponentialSpin(parent), KeywordWidgetBase(coreData, moduleData, prefix)
+DoubleKeywordWidget::DoubleKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : ExponentialSpin(parent), KeywordWidgetBase(coreData)
 {
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<DoubleKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into DoubleKeyword.\n", keyword->keyword());
+	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into DoubleKeyword.\n", keyword->name());
 	else
 	{
 		// Set minimum and maximum values
@@ -63,18 +63,12 @@ void DoubleKeywordWidget::myValueChanged(double newValue)
  * Update
  */
 
-// Update value displayed in widget, using specified source if necessary
+// Update value displayed in widget
 void DoubleKeywordWidget::updateValue()
 {
 	refreshing_ = true;
 
-	// Check to see if the associated Keyword may have been stored/updated in the specified moduleData
-	if ((keyword_->genericItemFlags()&GenericItem::InRestartFileFlag) && moduleData_.contains(keyword_->keyword(), modulePrefix_))
-	{
-		// Retrieve the item from the list
-		setValue(GenericListHelper<double>::value(moduleData_, keyword_->keyword(), modulePrefix_));
-	}
-	else setValue(keyword_->asDouble());
+	setValue(keyword_->asDouble());
 
 	refreshing_ = false;
 }

@@ -27,7 +27,7 @@
 #include "base/lineparser.h"
 
 // Constructor
-AtomTypeSelectionKeyword::AtomTypeSelectionKeyword(AtomTypeList& selection, RefList<Configuration>& sourceConfigurations) : KeywordData<AtomTypeList&>(KeywordBase::AtomTypeSelectionData, selection), sourceConfigurations_(sourceConfigurations)
+AtomTypeSelectionKeyword::AtomTypeSelectionKeyword(AtomTypeList& selection, const RefList<Configuration>& sourceConfigurations) : KeywordData<AtomTypeList&>(KeywordBase::AtomTypeSelectionData, selection), sourceConfigurations_(sourceConfigurations)
 {
 }
 
@@ -81,19 +81,19 @@ void AtomTypeSelectionKeyword::checkSelection()
  */
 
 // Return minimum number of arguments accepted
-int AtomTypeSelectionKeyword::minArguments()
+int AtomTypeSelectionKeyword::minArguments() const
 {
 	return 1;
 }
 
 // Return maximum number of arguments accepted
-int AtomTypeSelectionKeyword::maxArguments()
+int AtomTypeSelectionKeyword::maxArguments() const
 {
 	return 999;
 }
 
-// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool AtomTypeSelectionKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+// Parse arguments from supplied LineParser, starting at given argument offset
+bool AtomTypeSelectionKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	// Make sure our list is up-to-date
 	checkSelection();
@@ -120,14 +120,24 @@ bool AtomTypeSelectionKeyword::read(LineParser& parser, int startArg, const Core
 }
 
 // Write keyword data to specified LineParser
-bool AtomTypeSelectionKeyword::write(LineParser& parser, const char* prefix)
+bool AtomTypeSelectionKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
 	// Loop over the AtomType selection list
 	CharString selection;
 	ListIterator<AtomTypeData> typeIterator(data_.types());
 	while (AtomTypeData* atd = typeIterator.iterate()) selection.strcatf("  %s", atd->atomTypeName());
 
-	if (!parser.writeLineF("%s%s%s\n", prefix, keyword(), selection.get())) return false;
+	if (!parser.writeLineF("%s%s%s\n", prefix, keywordName, selection.get())) return false;
 
 	return true;
+}
+
+/*
+ * Object Management
+ */
+
+// Prune any references to the supplied AtomType in the contained data
+void AtomTypeSelectionKeyword::removeReferencesTo(AtomType* at)
+{
+	data_.remove(at);
 }

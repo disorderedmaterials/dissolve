@@ -27,6 +27,8 @@
 #include "classes/partialset.h"
 #include "classes/weights.h"
 #include "math/histogram1d.h"
+#include "math/histogram2d.h"
+#include "math/histogram3d.h"
 #include "math/pairbroadeningfunction.h"
 #include "genericitems/item.h"
 #include "genericitems/items.h"
@@ -36,6 +38,9 @@ Dissolve::Dissolve(CoreData& coreData) : coreData_(coreData)
 {
 	// Set Module instances list in our core data
 	coreData_.setModuleInstances(&moduleInstances_);
+
+	// Set pointer to the input filename
+	coreData_.setInputFilename(&inputFilename_);
 
 	// Clear everything
 	clear();
@@ -72,21 +77,9 @@ const CoreData& Dissolve::coreData() const
 void Dissolve::clear()
 {
 	// Core
+	Messenger::printVerbose("Clearing Core Data...\n");
 	setUp_ = false;
-
-	// Atom Types
-	Messenger::printVerbose("Clearing Atom Types...\n");
-	atomTypes().clear();
-
-	// Master Terms
-	Messenger::printVerbose("Clearing Master Terms...\n");
-	masterBonds_.clear();
-	masterAngles_.clear();
-	masterTorsions_.clear();
-
-	// Species
-	Messenger::printVerbose("Clearing Species...\n");
-	species().clear();
+	coreData_.clear();
 
 	// PairPotentials
 	Messenger::printVerbose("Clearing Pair Potentials...\n");
@@ -96,10 +89,6 @@ void Dissolve::clear()
 	pairPotentialsIncludeCoulomb_ = true;
 	pairPotentials_.clear();
 	potentialMap_.clear();
-
-	// Configurations
-	Messenger::printVerbose("Clearing Configurations...\n");
-	configurations().clear();
 
 	// Modules
 	Messenger::printVerbose("Clearing Modules...\n");
@@ -145,7 +134,11 @@ void Dissolve::registerGenericItems()
 
 	GenericItem::addItemClass(new GenericItemContainer<BraggReflection>(BraggReflection::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<Data1D>(Data1D::itemClassName()));
+	GenericItem::addItemClass(new GenericItemContainer<Data2D>(Data2D::itemClassName()));
+	GenericItem::addItemClass(new GenericItemContainer<Data3D>(Data3D::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<Histogram1D>(Histogram1D::itemClassName()));
+	GenericItem::addItemClass(new GenericItemContainer<Histogram2D>(Histogram2D::itemClassName()));
+	GenericItem::addItemClass(new GenericItemContainer<Histogram3D>(Histogram3D::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<IsotopologueMix>(IsotopologueMix::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<KVector>(KVector::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<PairBroadeningFunction>(PairBroadeningFunction::itemClassName()));

@@ -51,16 +51,8 @@ class DynamicSiteProcedureNode : public ProcedureNode
 	public:
 	// Return whether specified context is relevant for this node type
 	bool isContextRelevant(ProcedureNode::NodeContext context);
-
-
-	/*
-	 * Node Keywords
-	 */
-	public:
-	// Node Keywords
-	enum DynamicSiteNodeKeyword { AtomTypeKeyword, ElementKeyword, EndDynamicSiteKeyword, nDynamicSiteNodeKeywords };
-	// Return enum option info for DynamicSiteNodeKeyword
-	static EnumOptions<DynamicSiteNodeKeyword> dynamicSiteNodeKeywords();
+	// Return whether a name for the node is required
+	bool nameRequired() const;
 
 
 	/*
@@ -72,7 +64,7 @@ class DynamicSiteProcedureNode : public ProcedureNode
 	// Target Elements for selection as sites
 	RefList<Element> elements_;
 	// Target AtomTypes for selection as sites
-	RefDataList<AtomType,int> atomTypes_;
+	RefList<AtomType> atomTypes_;
 
 
 	/*
@@ -97,16 +89,6 @@ class DynamicSiteProcedureNode : public ProcedureNode
 	public:
 	// Execute node, targetting the supplied Configuration
 	ProcedureNode::NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
-
-
-	/*
-	 * Read / Write
-	 */
-	public:
-	// Read structure from specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack);
-	// Write structure to specified LineParser
-	bool write(LineParser& parser, const char* prefix);
 };
 
 #endif

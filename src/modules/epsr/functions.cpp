@@ -65,10 +65,10 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve& dissolve, EPSRModule::Exp
 	Array2D< Array<double> >& coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
 
 	i = 0;
-	for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
+	for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
 	{
 		j = i;
-		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
 		{
 			Array<double>& potCoeff = coefficients.at(i, j);
 
@@ -112,7 +112,7 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve& dissolve, EPSRModule::Exp
 Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve& dissolve, int i, int j, int n)
 {
 	const int nAtomTypes = dissolve.nAtomTypes();
-	ExpansionFunctionType functionType = KeywordEnumHelper<EPSRModule::ExpansionFunctionType>::enumeration(keywords_, "ExpansionFunction");
+	ExpansionFunctionType functionType = keywords_.enumeration<EPSRModule::ExpansionFunctionType>("ExpansionFunction");
 	const double gsigma1 = keywords_.asDouble("GSigma1");
 	const double gsigma2 = keywords_.asDouble("GSigma2");
 	int ncoeffp = keywords_.asInt("NCoeffP");
@@ -173,10 +173,10 @@ double EPSRModule::absEnergyEP(Dissolve& dissolve)
 	double absEnergyEP = 0.0;
 
 	int i = 0;
-	for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
+	for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
 	{
 		int j = i;
-		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
 		{
 			Array<double>& potCoeff = coefficients.at(i, j);
 

@@ -21,8 +21,9 @@
 
 #include "procedure/nodes/process3d.h"
 #include "procedure/nodes/collect3d.h"
+#include "procedure/nodes/operatebase.h"
 #include "procedure/nodes/select.h"
-#include "procedure/nodescopestack.h"
+#include "keywords/types.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "base/lineparser.h"
@@ -32,13 +33,19 @@
 // Constructor
 Process3DProcedureNode::Process3DProcedureNode(Collect3DProcedureNode* target) : ProcedureNode(ProcedureNode::Process3DNode)
 {
-	collectNode_.addAllowableNodeType(ProcedureNode::Collect3DNode);
+	keywords_.add("Target", new NodeKeyword<Collect3DProcedureNode>(this, ProcedureNode::Collect3DNode, false, target), "SourceData", "Collect3D node containing the data to process");
+	keywords_.add("Target", new CharStringKeyword("Y"), "LabelValue", "Label for the value axis");
+	keywords_.add("Target", new CharStringKeyword("X"), "LabelX", "Label for the x axis");
+	keywords_.add("Target", new CharStringKeyword("Y"), "LabelY", "Label for the y axis");
+	keywords_.add("Target", new CharStringKeyword("Z"), "LabelZ", "Label for the z axis");
+	keywords_.add("Export", new BoolKeyword(false), "Save", "Save processed data to disk");
+	keywords_.add("HIDDEN", new NodeBranchKeyword(this, &normalisationBranch_, ProcedureNode::OperateContext), "Normalisation", "Branch providing normalisation operations for the data");
 
-	collectNode_ = target;
+	// Initialise branch
+	normalisationBranch_ = NULL;
+
+	// Initialise data pointer
 	processedData_ = NULL;
-	saveData_ = false;
-	normalisationFactor_ = 0.0;
-	normaliseByFactor_ = false;
 }
 
 // Destructor
@@ -54,30 +61,6 @@ Process3DProcedureNode::~Process3DProcedureNode()
 bool Process3DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
 {
 	return (context == ProcedureNode::AnalysisContext);
-}
-
-/*
- * Node Keywords
- */
-
-// Return enum option info for Process3DNodeKeyword
-EnumOptions<Process3DProcedureNode::Process3DNodeKeyword> Process3DProcedureNode::process3DNodeKeywords()
-{
-	static EnumOptionsList Process3DNodeTypeKeywords = EnumOptionsList() <<
-		EnumOption(Process3DProcedureNode::EndProcess3DKeyword,			"EndProcess3D") <<
-		EnumOption(Process3DProcedureNode::FactorKeyword,			"Factor",		1) <<
-		EnumOption(Process3DProcedureNode::LabelValueKeyword,			"LabelValue",		1) <<
-		EnumOption(Process3DProcedureNode::LabelXKeyword,			"LabelX",		1) <<
-		EnumOption(Process3DProcedureNode::LabelYKeyword,			"LabelY",		1) <<
-		EnumOption(Process3DProcedureNode::LabelZKeyword,			"LabelZ",		1) <<
-		EnumOption(Process3DProcedureNode::NSitesKeyword,			"NSites",		EnumOption::OneOrMoreArguments) <<
-		EnumOption(Process3DProcedureNode::NumberDensityKeyword,		"NumberDensity",	EnumOption::OneOrMoreArguments) <<
-		EnumOption(Process3DProcedureNode::SaveKeyword,				"Save",			1) <<
-		EnumOption(Process3DProcedureNode::SourceDataKeyword,			"SourceData",		EnumOption::OptionalSecondArgument);
-
-	static EnumOptions<Process3DProcedureNode::Process3DNodeKeyword> options("Process3DNodeKeyword", Process3DNodeTypeKeywords);
-
-	return options;
 }
 
 /*
@@ -97,82 +80,52 @@ const Data3D& Process3DProcedureNode::processedData() const
 	return (*processedData_);
 }
 
-// Add site population normaliser
-void Process3DProcedureNode::addSitePopulationNormaliser(SelectProcedureNode* selectNode)
-{
-	sitePopulationNormalisers_.append(selectNode);
-}
-
-// Add number density normaliser
-void Process3DProcedureNode::addNumberDensityNormaliser(SelectProcedureNode* selectNode)
-{
-	numberDensityNormalisers_.append(selectNode);
-}
-
-// Set whether to normalise by factor
-void Process3DProcedureNode::setNormaliseByFactor(bool on)
-{
-	normaliseByFactor_ = on;
-}
-
-// Set normalisation factor
-void Process3DProcedureNode::setNormalisationFactor(double factor)
-{
-	normalisationFactor_ = factor;
-}
-
-// Set whether to save processed data
-void Process3DProcedureNode::setSaveData(bool on)
-{
-	saveData_ = on;
-}
-
-// Set value label
-void Process3DProcedureNode::setValueLabel(const char* label)
-{
-	valueLabel_ = label;
-}
-
 // Return value label
 const char* Process3DProcedureNode::valueLabel() const
 {
-	return valueLabel_.get();
-}
-
-// Set x axis label
-void Process3DProcedureNode::setXAxisLabel(const char* label)
-{
-	xAxisLabel_ = label;
+	return keywords_.asString("LabelValue");
 }
 
 // Return x axis label
 const char* Process3DProcedureNode::xAxisLabel() const
 {
-	return xAxisLabel_.get();
-}
-
-// Set y axis label
-void Process3DProcedureNode::setYAxisLabel(const char* label)
-{
-	yAxisLabel_ = label;
+	return keywords_.asString("LabelX");
 }
 
 // Return y axis label
 const char* Process3DProcedureNode::yAxisLabel() const
 {
-	return yAxisLabel_.get();
-}
-
-// Set z axis label
-void Process3DProcedureNode::setZAxisLabel(const char* label)
-{
-	zAxisLabel_ = label;
+	return keywords_.asString("LabelY");
 }
 
 // Return z axis label
 const char* Process3DProcedureNode::zAxisLabel() const
 {
-	return zAxisLabel_.get();
+	return keywords_.asString("LabelZ");
+}
+
+/*
+ * Branches
+ */
+
+// Add and return subcollection sequence branch
+SequenceProcedureNode* Process3DProcedureNode::addNormalisationBranch()
+{
+	if (!normalisationBranch_) normalisationBranch_ = new SequenceProcedureNode(ProcedureNode::OperateContext, procedure());
+
+	return normalisationBranch_;
+}
+
+// Return whether this node has a branch
+bool Process3DProcedureNode::hasBranch() const
+{
+	return (normalisationBranch_ != NULL);
+}
+
+// Return SequenceNode for the branch (if it exists)
+SequenceProcedureNode* Process3DProcedureNode::branch()
+{
+	return normalisationBranch_;
 }
 
 /*
@@ -182,6 +135,12 @@ const char* Process3DProcedureNode::zAxisLabel() const
 // Prepare any necessary data, ready for execution
 bool Process3DProcedureNode::prepare(Configuration* cfg, const char* prefix, GenericList& targetList)
 {
+	// Retrieve the Collect1D node target
+	collectNode_ = keywords_.retrieve<Collect3DProcedureNode*>("SourceData");
+	if (!collectNode_) return Messenger::error("No source Collect3D node set in '%s'.\n", name());
+
+	if (normalisationBranch_) normalisationBranch_->prepare(cfg, prefix, targetList);
+
 	return true;
 }
 
@@ -202,26 +161,29 @@ bool Process3DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg,
 	data.setName(name());
 	data.setObjectTag(CharString("%s//Process3D//%s//%s", prefix, cfg->name(), name()));
 
-	// Get the node pointer
-	Collect3DProcedureNode* node = dynamic_cast<Collect3DProcedureNode*>(collectNode_.node());
-	if (!node) return Messenger::error("No Collect3D node available in Process3DProcedureNode::finalise().\n");
+	// Copy the averaged data from the associated Collect3D node
+	data = collectNode_->accumulatedData();
 
-	// Copy the averaged data from the associated Collect3D node, and normalise it accordingly
-	data = node->accumulatedData();
+	// Run normalisation on the data
+	if (normalisationBranch_)
+	{
+		// Set data targets in the normalisation nodes  TODO Will not work for sub-branches, if they are ever required
+		ListIterator<ProcedureNode> nodeIterator(normalisationBranch_->sequence());
+		while (ProcedureNode* node = nodeIterator.iterate())
+		{
+			if (!node->isType(ProcedureNode::OperateBaseNode)) continue;
 
-	// Normalisation by number of sites?
-	RefListIterator<SelectProcedureNode> siteNormaliserIterator(sitePopulationNormalisers_);
-	while (SelectProcedureNode* selectNode = siteNormaliserIterator.iterate()) data /= selectNode->nAverageSites();
+			// Cast the node
+			OperateProcedureNodeBase* operateNode = dynamic_cast<OperateProcedureNodeBase*>(node);
+			operateNode->setTarget(processedData_);
+		}
 
-	// Normalisation by number density of sites?
-	RefListIterator<SelectProcedureNode> numberDensityIterator(numberDensityNormalisers_);
-	while (SelectProcedureNode* selectNode = numberDensityIterator.iterate()) data /= (selectNode->nAverageSites() / cfg->box()->volume());
-
-	// Normalisation by factor?
-	if (normaliseByFactor_) data /= normalisationFactor_;
+		ProcedureNode::NodeExecutionResult result = normalisationBranch_->execute(procPool, cfg, prefix, targetList);
+		if (result != ProcedureNode::Success) return result;
+	}
 
 	// Save data?
-	if (saveData_)
+	if (keywords_.asBool("Save"))
 	{
 		if (procPool.isMaster())
 		{
@@ -232,112 +194,4 @@ bool Process3DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg,
 	}
 
 	return true;
-}
-
-/*
- * Read / Write
- */
-
-// Read structure from specified LineParser
-bool Process3DProcedureNode::read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack)
-{
-	// The current line in the parser may contain a node name for us
-	if (parser.nArgs() == 2) setName(parser.argc(1));
-
-	// Add ourselves to the scope stack
-	if (!scopeStack.add(this)) return Messenger::error("Error adding Process3D node '%s' to scope stack.\n", name());
-
-	// Read until we encounter the EndProcess3D keyword, or we fail for some reason
-	while (!parser.eofOrBlank())
-	{
-		// Read and parse the next line
-		if (parser.getArgsDelim() != LineParser::Success) return false;
-
-		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
-		if (!process3DNodeKeywords().isValid(parser.argc(0))) return process3DNodeKeywords().errorAndPrintValid(parser.argc(0));
-		Process3DNodeKeyword nk = process3DNodeKeywords().enumeration(parser.argc(0));
-		if (!process3DNodeKeywords().validNArgs(nk, parser.nArgs()-1)) return false;
-
-		// All OK, so process it
-		switch (nk)
-		{
-			case (Process3DProcedureNode::EndProcess3DKeyword):
-				// Check that a valid collectNode_ has been set
-				if (collectNode_.isNull()) return Messenger::error("A valid Collect3D node must be set in the Process3D node '%s' using the '%s' keyword.\n", name(), process3DNodeKeywords().keyword(Process3DProcedureNode::SourceDataKeyword));
-				return true;
-			case (Process3DProcedureNode::FactorKeyword):
-				normalisationFactor_ = parser.argd(1);
-				normaliseByFactor_ = true;
-				break;
-			case (Process3DProcedureNode::LabelValueKeyword):
-				valueLabel_ = parser.argc(1);
-				break;
-			case (Process3DProcedureNode::LabelXKeyword):
-				xAxisLabel_ = parser.argc(1);
-				break;
-			case (Process3DProcedureNode::LabelYKeyword):
-				yAxisLabel_ = parser.argc(1);
-				break;
-			case (Process3DProcedureNode::LabelZKeyword):
-				zAxisLabel_ = parser.argc(1);
-				break;
-			case (Process3DProcedureNode::NSitesKeyword):
-				for (int n=1; n<parser.nArgs(); ++n)
-				{
-					SelectProcedureNode* selectNode = dynamic_cast<SelectProcedureNode*>(scopeStack.node(parser.argc(n), ProcedureNode::SelectNode));
-					if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(n), process3DNodeKeywords().keyword(Process3DProcedureNode::NSitesKeyword));
-					sitePopulationNormalisers_.append(selectNode);
-				}
-				break;
-			case (Process3DProcedureNode::NumberDensityKeyword):
-				for (int n=1; n<parser.nArgs(); ++n)
-				{
-					SelectProcedureNode* selectNode = dynamic_cast<SelectProcedureNode*>(scopeStack.node(parser.argc(n), ProcedureNode::SelectNode));
-					if (!selectNode) return Messenger::error("Unrecognised site name '%s' given to '%s' keyword.\n", parser.argc(n), process3DNodeKeywords().keyword(Process3DProcedureNode::NumberDensityKeyword));
-					numberDensityNormalisers_.append(selectNode);
-				}
-				break;
-			case (Process3DProcedureNode::SaveKeyword):
-				saveData_ = parser.argb(1);
-				break;
-			case (Process3DProcedureNode::SourceDataKeyword):
-				if (!collectNode_.read(parser, 1, coreData ,scopeStack)) return Messenger::error("Couldn't set source data for node.\n");
-				break;
-			case (Process3DProcedureNode::nProcess3DNodeKeywords):
-				return Messenger::error("Unrecognised Process3D node keyword '%s' found.\n", parser.argc(0));
-				break;
-			default:
-				return Messenger::error("Epic Developer Fail - Don't know how to deal with the Process3D node keyword '%s'.\n", parser.argc(0));
-		}
-	}
-
-	// Check that a valid collectNode_ has been set
-	if (collectNode_.isNull()) return Messenger::error("A valid Collect3D node must be set in the Process3D node '%s' using the '%s' keyword.\n", name(), process3DNodeKeywords().keyword(Process3DProcedureNode::SourceDataKeyword));
-
-	return true;
-}
-
-// Write structure to specified LineParser
-bool Process3DProcedureNode::write(LineParser& parser, const char* prefix)
-{
-	// Block Start
-	if (!parser.writeLineF("%s%s  '%s'\n", ProcedureNode::nodeTypes().keyword(type_), name())) return false;
-
-	// Source Data
-	if (!collectNode_.write(parser, CharString("%s  %s", prefix, process3DNodeKeywords().keyword(Process3DProcedureNode::SourceDataKeyword)))) return false;
-
-	// Labels
-	if (!parser.writeLineF("%s  %s  '%s'\n", prefix, process3DNodeKeywords().keyword(Process3DProcedureNode::LabelValueKeyword), valueLabel_.get())) return false;
-	if (!parser.writeLineF("%s  %s  '%s'\n", prefix, process3DNodeKeywords().keyword(Process3DProcedureNode::LabelXKeyword), xAxisLabel_.get())) return false;
-	if (!parser.writeLineF("%s  %s  '%s'\n", prefix, process3DNodeKeywords().keyword(Process3DProcedureNode::LabelYKeyword), yAxisLabel_.get())) return false;
-	if (!parser.writeLineF("%s  %s  '%s'\n", prefix, process3DNodeKeywords().keyword(Process3DProcedureNode::LabelZKeyword), zAxisLabel_.get())) return false;
-
-	// Normalisations
-	// TODO Save Normalisations - will be reimplemented in forthcoming commits.
-
-	// Control
-	if (saveData_ && !parser.writeLineF("%s  %s  On\n", prefix, process3DNodeKeywords().keyword(Process3DProcedureNode::SaveKeyword))) return false;
-
-	// Block End
-	if (!parser.writeLineF("%s%s\n", process3DNodeKeywords().keyword(Process3DProcedureNode::EndProcess3DKeyword))) return false;
 }

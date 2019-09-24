@@ -35,13 +35,13 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="ExponentialSpin" name="Spin3"/>
+    <widget class="ExponentialSpin" name="Spin1"/>
    </item>
    <item>
     <widget class="ExponentialSpin" name="Spin2"/>
    </item>
    <item>
-    <widget class="ExponentialSpin" name="Spin1"/>
+    <widget class="ExponentialSpin" name="Spin3"/>
    </item>
   </layout>
  </widget>

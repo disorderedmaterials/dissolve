@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_GEOMETRYOPTIMISATIONMODULE_H
-#define DISSOLVE_GEOMETRYOPTIMISATIONMODULE_H
+#ifndef DISSOLVE_MODULE_GEOMETRYOPTIMISATION_H
+#define DISSOLVE_MODULE_GEOMETRYOPTIMISATION_H
 
 #include "module/module.h"
 
@@ -60,15 +60,12 @@ class GeometryOptimisationModule : public Module
 
 
 	/*
-	 * Options
+	 * Initialisation
 	 */
 	protected:
-	// Set up options for Module
-	void setUpKeywords();
-	// Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-	int parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix);
-
-
+	// Perform any necessary initialisation for the Module
+	void initialise();
+	
 	/*
 	 * Processing
 	 */

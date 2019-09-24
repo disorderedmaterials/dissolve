@@ -77,7 +77,7 @@ Data1D RefineModule::calculateCR(const Data1D& sq, double normFactor, double rMi
 }
 
 // Determine modification to bonds based on supplied delta g(r), returning features extracted from deltaGR
-bool RefineModule::modifyBondTerms(Dissolve& dissolve, const Data1D& deltaGR, AtomType* typeI, AtomType* typeJ, Data1D& deltaBond)
+bool RefineModule::modifyBondTerms(CoreData& coreData, const Data1D& deltaGR, AtomType* typeI, AtomType* typeJ, Data1D& deltaBond)
 {
 	// exp(-(((x-r)-delta)**2)/width**2)-exp(-(((x-r)+delta)**2)/width**2) w l
 
@@ -85,7 +85,7 @@ bool RefineModule::modifyBondTerms(Dissolve& dissolve, const Data1D& deltaGR, At
 	const int idI = typeI->index();
 	const int idJ = typeJ->index();
 	RefList<MasterIntra> masterBonds;
-	for (MasterIntra* b = dissolve.masterBonds().first(); b != NULL; b = b->next) if (b->usageCount(idI, idJ) > 0) masterBonds.append(b);
+	for (MasterIntra* b = coreData.masterBonds().first(); b != NULL; b = b->next()) if (b->usageCount(idI, idJ) > 0) masterBonds.append(b);
 
 	/*
 	 * We now have a reference list of MasterIntra bond terms that involve these two AtomTypes.

@@ -109,7 +109,7 @@ PairPotential* Dissolve::pairPotential(int n)
 // Return whether specified PairPotential is defined
 PairPotential* Dissolve::pairPotential(AtomType* at1, AtomType* at2) const
 {
-	for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next)
+	for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next())
 	{
 		if ((pot->atomTypeI() == at1) && (pot->atomTypeJ() == at2)) return pot;
 		if ((pot->atomTypeI() == at2) && (pot->atomTypeJ() == at1)) return pot;
@@ -120,7 +120,7 @@ PairPotential* Dissolve::pairPotential(AtomType* at1, AtomType* at2) const
 // Return whether specified PairPotential is defined
 PairPotential* Dissolve::pairPotential(const char* at1, const char* at2) const
 {
-	for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next)
+	for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next())
 	{
 		if (DissolveSys::sameString(pot->atomTypeNameI(), at1) && DissolveSys::sameString(pot->atomTypeNameJ(), at2)) return pot;
 		if (DissolveSys::sameString(pot->atomTypeNameI(), at2) && DissolveSys::sameString(pot->atomTypeNameJ(), at1)) return pot;
@@ -146,16 +146,16 @@ void Dissolve::regeneratePairPotentials(PairPotential::ShortRangeType srType)
 // Update all currently-defined PairPotentials
 void Dissolve::updateCurrentPairPotentials()
 {
-	for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next) pot->setUp(pairPotentialRange_, pairPotentialDelta_, pairPotentialsIncludeCoulomb_);
+	for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next()) pot->setUp(pairPotentialRange_, pairPotentialDelta_, pairPotentialsIncludeCoulomb_);
 }
 
 // Generate any missing PairPotentials using the supplied short-range form
 bool Dissolve::generateMissingPairPotentials(PairPotential::ShortRangeType srType)
 {
 	// Loop over all atomtype pairs and generate any missing potentials
-	for (AtomType* at1 = coreData_.atomTypes().first(); at1 != NULL; at1 = at1->next)
+	for (AtomType* at1 = coreData_.atomTypes().first(); at1 != NULL; at1 = at1->next())
 	{
-		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next)
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next())
 		{
 			PairPotential* pot = pairPotential(at1, at2);
 			if (pot)

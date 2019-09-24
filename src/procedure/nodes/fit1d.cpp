@@ -22,7 +22,6 @@
 #include "procedure/nodes/fit1d.h"
 #include "procedure/nodes/collect1d.h"
 #include "procedure/nodes/process1d.h"
-#include "procedure/nodescopestack.h"
 #include "classes/configuration.h"
 #include "expression/generator.h"
 #include "expression/variable.h"
@@ -159,7 +158,7 @@ bool Fit1DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, con
 	}
 
 	// Print equation info
-	Messenger::print("Expression to fit is: %s\n", equation_.asString());
+	Messenger::print("Expression to fit is: %s\n", equation_.expressionString());
 	RefListIterator<ExpressionVariable> variableIterator(equation_.variables());
 	while (ExpressionVariable* var = variableIterator.iterate())
 	{
@@ -214,7 +213,7 @@ bool Fit1DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, con
 		{
 			LineParser parser;
 			if (!parser.openOutput(CharString("%s_%s.fit", name(), cfg->name()))) return procPool.decideFalse();
-			if (!parser.writeLineF("# Fit Equation : %s\n", equation_.asString())) return procPool.decideFalse();
+			if (!parser.writeLineF("# Fit Equation : %s\n", equation_.expressionString())) return procPool.decideFalse();
 			RefListIterator<ExpressionVariable> variableIterator(equation_.variables());
 			while (ExpressionVariable* var = variableIterator.iterate())
 			{
@@ -244,13 +243,10 @@ bool Fit1DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg, con
  */
 
 // Read structure from specified LineParser
-bool Fit1DProcedureNode::read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack)
+bool Fit1DProcedureNode::read(LineParser& parser, const CoreData& coreData)
 {
 	// The current line in the parser may contain a node name for us
 	if (parser.nArgs() == 2) setName(parser.argc(1));
-
-	// Add ourselves to the scope stack
-	if (!scopeStack.add(this)) return Messenger::error("Error adding Fit1D node '%s' to scope stack.\n", name());
 
 	ExpressionVariable* var;
 
@@ -276,7 +272,7 @@ bool Fit1DProcedureNode::read(LineParser& parser, const CoreData& coreData, Node
 			case (Fit1DProcedureNode::EndFit1DKeyword):
 				return true;
 			case (Fit1DProcedureNode::EquationKeyword):
-				if (!ExpressionGenerator::generate(equation_, parser.argc(1))) return Messenger::error("Failed to create expression.\n");
+				if (!equation_.set(parser.argc(1))) return Messenger::error("Failed to create expression.\n");
 				break;
 			case (Fit1DProcedureNode::FitKeyword):
 				var = equation_.createVariableWithValue(parser.argc(1), parser.argd(2), true);
@@ -290,7 +286,7 @@ bool Fit1DProcedureNode::read(LineParser& parser, const CoreData& coreData, Node
 				saveData_ = parser.argb(1);
 				break;
 			case (Fit1DProcedureNode::SourceDataKeyword):
-				if (!dataNode_.read(parser, 1, coreData, scopeStack)) return Messenger::error("Couldn't set source data for node.\n");
+				if (!dataNode_.read(parser, 1, coreData, procedure())) return Messenger::error("Couldn't set source data for node.\n");
 				break;
 			case (Fit1DProcedureNode::nFit1DNodeKeywords):
 				return Messenger::error("Unrecognised Fit1D node keyword '%s' found.\n", parser.argc(0));
@@ -307,7 +303,7 @@ bool Fit1DProcedureNode::read(LineParser& parser, const CoreData& coreData, Node
 bool Fit1DProcedureNode::write(LineParser& parser, const char* prefix)
 {
 	// Block Start
-	if (!parser.writeLineF("%s%s\n", ProcedureNode::nodeTypes().keyword(type_))) return false;
+	if (!parser.writeLineF("%s%s\n", prefix, ProcedureNode::nodeTypes().keyword(type_))) return false;
 
 	// Constants
 	RefListIterator<ExpressionVariable> constantsIterator(constants_);
@@ -318,7 +314,7 @@ bool Fit1DProcedureNode::write(LineParser& parser, const char* prefix)
 	while (ExpressionVariable* var = targetsIterator.iterate()) if (!parser.writeLineF("%s  %s  %s  %12.6e\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::FitKeyword), var->name(), var->value().asDouble())) return false;
 
 	// Equation
-	if (!parser.writeLineF("%s  %s  '%s'\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::EquationKeyword), equation_.asString())) return false;
+	if (!parser.writeLineF("%s  %s  '%s'\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::EquationKeyword), equation_.expressionString())) return false;
 
 	// Source data
 	if (!dataNode_.write(parser, CharString("%s  %s", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::SourceDataKeyword)))) return false;
@@ -327,7 +323,7 @@ bool Fit1DProcedureNode::write(LineParser& parser, const char* prefix)
 	if (saveData_ && !parser.writeLineF("%s  %s  On\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::SaveKeyword))) return false;
 
 	// Block End
-	if (!parser.writeLineF("%s%s\n", fit1DNodeKeywords().keyword(Fit1DProcedureNode::EndFit1DKeyword))) return false;
+	if (!parser.writeLineF("%s%s\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::EndFit1DKeyword))) return false;
 
 	return true;
 }

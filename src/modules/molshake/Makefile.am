@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = libmolshake.la
 
-libmolshake_la_SOURCES = core.cpp definition.cpp functions.cpp options.cpp process.cpp
+libmolshake_la_SOURCES = core.cpp definition.cpp functions.cpp init.cpp process.cpp
 
 noinst_HEADERS = molshake.h
 

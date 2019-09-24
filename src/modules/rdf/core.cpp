@@ -28,8 +28,8 @@
 // Constructor
 RDFModule::RDFModule() : Module()
 {
-	// Set up variables / control parameters
-	setUpKeywords();
+	// Initialise Module - set up keywords etc.
+	initialise();
 }
 
 // Destructor

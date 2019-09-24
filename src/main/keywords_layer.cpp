@@ -81,7 +81,7 @@ bool LayerBlock::parse(LineParser& parser, Dissolve* dissolve, ModuleLayer* laye
 				}
 
 				// Add the new instance to the processing list
-				if (!layer->add(module))
+				if (!layer->own(module))
 				{
 					Messenger::error("Failed to add Module '%s' as processing layer task.\n", parser.argc(1));
 					error = true;

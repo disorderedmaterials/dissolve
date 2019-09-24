@@ -36,7 +36,7 @@ class CharStringKeywordWidget : public QLineEdit, public KeywordWidgetBase
 
 	public:
 	// Constructor
-	CharStringKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix);
+	CharStringKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
 
 
 	/*
@@ -63,7 +63,7 @@ class CharStringKeywordWidget : public QLineEdit, public KeywordWidgetBase
 	 * Update
 	 */
 	public:
-	// Update value displayed in widget, using specified source if necessary
+	// Update value displayed in widget
 	void updateValue();
 };
 

@@ -74,10 +74,6 @@ DissolveWindow::DissolveWindow(Dissolve& dissolve) : QMainWindow(NULL), dissolve
 	heartbeatFileIndicator_->setPixmap(QPixmap(":/general/icons/general_heartbeat.svg"));
 	heartbeatFileIndicator_->setMaximumSize(QSize(20,20));
 	heartbeatFileIndicator_->setScaledContents(true);
-	iterationNumberIndicator_ = new QLCDNumber;
-	iterationNumberIndicator_->setDigitCount(6);
-	iterationNumberIndicator_->setSegmentStyle(QLCDNumber::Flat);
-	statusBar()->addPermanentWidget(iterationNumberIndicator_);
 	statusBar()->addPermanentWidget(heartbeatFileIndicator_);
 	statusBar()->addPermanentWidget(restartFileIndicator_);
 	statusBar()->addPermanentWidget(localSimulationIndicator_);
@@ -272,7 +268,7 @@ void DissolveWindow::updateControlsFrame()
 	ui.ControlReloadButton->setEnabled(dissolveState_ == DissolveWindow::MonitoringState);
 
 	// Set current iteration number
-	iterationNumberIndicator_->display(DissolveSys::itoa(dissolve_.iteration()));
+	ui.ControlIterationLabel->setText(CharString("%06i", dissolve_.iteration()).get());
 
 	// Set relevant file locations
 	if (localSimulation_)

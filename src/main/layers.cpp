@@ -109,7 +109,7 @@ Module* Dissolve::createModuleInLayer(const char* moduleType, const char* layerN
 	}
 
 	// Add the new Module to the layer
-	layer->add(module);
+	layer->own(module);
 
 	// Set Configuration target in the Module if specified
 	if (cfg) module->addTargetConfiguration(cfg);

@@ -55,6 +55,8 @@ class ModuleGroup : public ListItem<ModuleGroup>
 	bool isName(const char* queryName);
 	// Associate Module to group
 	void add(Module* module);
+	// Remove Module from group
+	void remove(Module* module);
 	// Return whether the specified Module is in the group
 	bool contains(Module* module) const;
 	// Return number of Modules in the group

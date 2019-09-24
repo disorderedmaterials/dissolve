@@ -20,9 +20,9 @@
 */
 
 #include "procedure/nodes/collect3d.h"
-#include "procedure/nodescopestack.h"
-#include "procedure/nodes/calculate.h"
+#include "procedure/nodes/calculatebase.h"
 #include "procedure/nodes/sequence.h"
+#include "keywords/types.h"
 #include "math/data3d.h"
 #include "classes/configuration.h"
 #include "base/lineparser.h"
@@ -30,48 +30,18 @@
 #include "genericitems/listhelper.h"
 
 // Constructors
-Collect3DProcedureNode::Collect3DProcedureNode(CalculateProcedureNode* xObservable, CalculateProcedureNode* yObservable, CalculateProcedureNode* zObservable, double xMin, double xMax, double xBinWidth, double yMin, double yMax, double yBinWidth, double zMin, double zMax, double zBinWidth) : ProcedureNode(ProcedureNode::Collect3DNode)
+Collect3DProcedureNode::Collect3DProcedureNode(CalculateProcedureNodeBase* xObservable, CalculateProcedureNodeBase* yObservable, CalculateProcedureNodeBase* zObservable, double xMin, double xMax, double xBinWidth, double yMin, double yMax, double yBinWidth, double zMin, double zMax, double zBinWidth) : ProcedureNode(ProcedureNode::Collect3DNode)
 {
-	xyzObservable_ = NULL;
+	keywords_.add("Target", new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, xObservable, 0), "QuantityX", "Calculated observable to collect for x axis");
+	keywords_.add("Target", new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, yObservable, 0), "QuantityY", "Calculated observable to collect for y axis");
+	keywords_.add("Target", new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, zObservable, 0), "QuantityZ", "Calculated observable to collect for z axis");
+	keywords_.add("Target", new Vec3DoubleKeyword(Vec3<double>(xMin, xMax, xBinWidth), Vec3<double>(0.0, 0.0, 1.0e-5)), "RangeX", "Range of calculation for the specified x observable");
+	keywords_.add("Target", new Vec3DoubleKeyword(Vec3<double>(yMin, yMax, yBinWidth), Vec3<double>(0.0, 0.0, 1.0e-5)), "RangeY", "Range of calculation for the specified y observable");
+	keywords_.add("Target", new Vec3DoubleKeyword(Vec3<double>(zMin, zMax, zBinWidth), Vec3<double>(0.0, 0.0, 1.0e-5)), "RangeZ", "Range of calculation for the specified z observable");
+	keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect", "Branch which runs if the target quantities were binned successfully");
 
-	xObservable_ = xObservable;
-	xMinimum_ = xMin;
-	xMaximum_ = xMax;
-	xBinWidth_ = xBinWidth;
-
-	yObservable_ = yObservable;
-	yMinimum_ = yMin;
-	yMaximum_ = yMax;
-	yBinWidth_ = yBinWidth;
-
-	zObservable_ = zObservable;
-	zMinimum_ = zMin;
-	zMaximum_ = zMax;
-	zBinWidth_ = zBinWidth;
-
-	// Branches
+	// Initialise branch
 	subCollectBranch_ = NULL;
-}
-
-Collect3DProcedureNode::Collect3DProcedureNode(CalculateProcedureNode* xyzObservable, double xMin, double xMax, double xBinWidth, double yMin, double yMax, double yBinWidth, double zMin, double zMax, double zBinWidth) : ProcedureNode(ProcedureNode::Collect3DNode)
-{
-	xObservable_ = NULL;
-	yObservable_ = NULL;
-	zObservable_ = NULL;
-
-	xyzObservable_ = xyzObservable;
-
-	xMinimum_ = xMin;
-	xMaximum_ = xMax;
-	xBinWidth_ = xBinWidth;
-
-	yMinimum_ = yMin;
-	yMaximum_ = yMax;
-	yBinWidth_ = yBinWidth;
-
-	zMinimum_ = zMin;
-	zMaximum_ = zMax;
-	zBinWidth_ = zBinWidth;
 }
 
 // Destructor
@@ -87,29 +57,6 @@ Collect3DProcedureNode::~Collect3DProcedureNode()
 bool Collect3DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
 {
 	return (context == ProcedureNode::AnalysisContext);
-}
-
-/*
- * Node Keywords
- */
-
-// Return enum option info for Collect3DNodeKeyword
-EnumOptions<Collect3DProcedureNode::Collect3DNodeKeyword> Collect3DProcedureNode::collect3DNodeKeywords()
-{
-	static EnumOptionsList Collect3DNodeTypeKeywords = EnumOptionsList() <<
-		EnumOption(Collect3DProcedureNode::EndCollect3DKeyword,		"EndCollect3D") <<
-		EnumOption(Collect3DProcedureNode::QuantityXYZKeyword,		"QuantityXYZ",	1) <<
-		EnumOption(Collect3DProcedureNode::QuantityXKeyword,		"QuantityX",	1) <<
-		EnumOption(Collect3DProcedureNode::QuantityYKeyword,		"QuantityY",	1) <<
-		EnumOption(Collect3DProcedureNode::QuantityZKeyword,		"QuantityZ",	1) <<
-		EnumOption(Collect3DProcedureNode::RangeXKeyword,		"RangeX",	3) <<
-		EnumOption(Collect3DProcedureNode::RangeYKeyword,		"RangeY",	3) <<
-		EnumOption(Collect3DProcedureNode::RangeZKeyword,		"RangeZ",	3) <<
-		EnumOption(Collect3DProcedureNode::SubCollectKeyword,		"SubCollect");
-
-	static EnumOptions<Collect3DProcedureNode::Collect3DNodeKeyword> options("Collect3DNodeKeyword", Collect3DNodeTypeKeywords);
-
-	return options;
 }
 
 /*
@@ -133,55 +80,55 @@ const Data3D& Collect3DProcedureNode::accumulatedData() const
 // Return x range minimum
 double Collect3DProcedureNode::xMinimum() const
 {
-	return xMinimum_;
+	return keywords_.asVec3Double("RangeX").x;
 }
 
 // Return x range maximum
 double Collect3DProcedureNode::xMaximum() const
 {
-	return xMaximum_;
+	return keywords_.asVec3Double("RangeX").y;
 }
 
 // Return x bin width
 double Collect3DProcedureNode::xBinWidth() const
 {
-	return xBinWidth_;
+	return keywords_.asVec3Double("RangeX").z;
 }
 
 // Return y range minimum
 double Collect3DProcedureNode::yMinimum() const
 {
-	return yMinimum_;
+	return keywords_.asVec3Double("RangeY").x;
 }
 
 // Return y range maximum
 double Collect3DProcedureNode::yMaximum() const
 {
-	return yMaximum_;
+	return keywords_.asVec3Double("RangeY").y;
 }
 
 // Return y bin width
 double Collect3DProcedureNode::yBinWidth() const
 {
-	return yBinWidth_;
+	return keywords_.asVec3Double("RangeY").z;
 }
 
 // Return z range minimum
 double Collect3DProcedureNode::zMinimum() const
 {
-	return zMinimum_;
+	return keywords_.asVec3Double("RangeZ").x;
 }
 
 // Return z range maximum
 double Collect3DProcedureNode::zMaximum() const
 {
-	return zMaximum_;
+	return keywords_.asVec3Double("RangeZ").y;
 }
 
 // Return z bin width
 double Collect3DProcedureNode::zBinWidth() const
 {
-	return zBinWidth_;
+	return keywords_.asVec3Double("RangeZ").z;
 }
 
 /*
@@ -191,8 +138,19 @@ double Collect3DProcedureNode::zBinWidth() const
 // Add and return subcollection sequence branch
 SequenceProcedureNode* Collect3DProcedureNode::addSubCollectBranch(ProcedureNode::NodeContext context)
 {
-	if (!subCollectBranch_) subCollectBranch_ = new SequenceProcedureNode(context);
+	if (!subCollectBranch_) subCollectBranch_ = new SequenceProcedureNode(context, procedure());
 
+	return subCollectBranch_;
+}
+
+// Return whether this node has a branch
+bool Collect3DProcedureNode::hasBranch() const
+{
+	return (subCollectBranch_ != NULL);
+}
+// Return SequenceNode for the branch (if it exists)
+SequenceProcedureNode* Collect3DProcedureNode::branch()
+{
 	return subCollectBranch_;
 }
 
@@ -210,7 +168,7 @@ bool Collect3DProcedureNode::prepare(Configuration* cfg, const char* prefix, Gen
 	if (created)
 	{
 		Messenger::printVerbose("One-dimensional histogram data for '%s' was not in the target list, so it will now be initialised...\n", name());
-		target.initialise(xMinimum_, xMaximum_, xBinWidth_, yMinimum_, yMaximum_, yBinWidth_, zMinimum_, zMaximum_, zBinWidth_);
+		target.initialise(xMinimum(), xMaximum(), xBinWidth(), yMinimum(), yMaximum(), yBinWidth(), zMinimum(), zMaximum(), zBinWidth());
 	}
 
 	// Zero the current bins, ready for the new pass
@@ -218,6 +176,20 @@ bool Collect3DProcedureNode::prepare(Configuration* cfg, const char* prefix, Gen
 
 	// Store a pointer to the data
 	histogram_ = &target;
+
+	// Retrieve the observables
+	Pair<CalculateProcedureNodeBase*,int> xObs = keywords_.retrieve< Pair<CalculateProcedureNodeBase*,int> >("QuantityX");
+	xObservable_ = xObs.a();
+	xObservableIndex_ = xObs.b();
+	if (!xObservable_) return Messenger::error("No valid x quantity set in '%s'.\n", name());
+	Pair<CalculateProcedureNodeBase*,int> yObs = keywords_.retrieve< Pair<CalculateProcedureNodeBase*,int> >("QuantityY");
+	yObservable_ = yObs.a();
+	yObservableIndex_ = yObs.b();
+	if (!yObservable_) return Messenger::error("No valid y quantity set in '%s'.\n", name());
+	Pair<CalculateProcedureNodeBase*,int> zObs = keywords_.retrieve< Pair<CalculateProcedureNodeBase*,int> >("QuantityZ");
+	zObservable_ = zObs.a();
+	zObservableIndex_ = zObs.b();
+	if (!zObservable_) return Messenger::error("No valid z quantity set in '%s'.\n", name());
 
 	// Prepare any branches
 	if (subCollectBranch_ && (!subCollectBranch_->prepare(cfg, prefix, targetList))) return false;
@@ -229,31 +201,24 @@ bool Collect3DProcedureNode::prepare(Configuration* cfg, const char* prefix, Gen
 ProcedureNode::NodeExecutionResult Collect3DProcedureNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
 #ifdef CHECKS
-	if (!xObservable_ && (!xyzObservable_))
+	if (!xObservable_)
 	{
-		Messenger::error("No CalculateProcedureNode pointer set for X observable in Collect3DProcedureNode '%s', and no XYZ observable set.\n", name());
+		Messenger::error("No CalculateProcedureNodeBase pointer set for X observable in Collect3DProcedureNode '%s'.\n", name());
 		return ProcedureNode::Failure;
 	}
-	if (!yObservable_ && (!xyzObservable_))
+	if (!yObservable_)
 	{
-		Messenger::error("No CalculateProcedureNode pointer set for Y observable in Collect3DProcedureNode '%s', and no XYZ observable set.\n", name());
+		Messenger::error("No CalculateProcedureNodeBase pointer set for Y observable in Collect3DProcedureNode '%s'.\n", name());
 		return ProcedureNode::Failure;
 	}
-	if (!zObservable_ && (!xyzObservable_))
+	if (!zObservable_)
 	{
-		Messenger::error("No CalculateProcedureNode pointer set for Z observable in Collect3DProcedureNode '%s', and no XYZ observable set.\n", name());
+		Messenger::error("No CalculateProcedureNodeBase pointer set for Z observable in Collect3DProcedureNode '%s'.\n", name());
 		return ProcedureNode::Failure;
 	}
 #endif
 	// Bin the current value of the observable
-	if (xyzObservable_)
-	{
-		if (histogram_->bin(xyzObservable_->values()) && subCollectBranch_) return subCollectBranch_->execute(procPool, cfg, prefix, targetList);
-	}
-	else
-	{
-		if (histogram_->bin(xObservable_->value(0), yObservable_->value(0), zObservable_->value(0)) && subCollectBranch_) return subCollectBranch_->execute(procPool, cfg, prefix, targetList);
-	}
+	if (histogram_->bin(xObservable_->value(xObservableIndex_), yObservable_->value(yObservableIndex_), zObservable_->value(zObservableIndex_)) && subCollectBranch_) return subCollectBranch_->execute(procPool, cfg, prefix, targetList);
 
 	return ProcedureNode::Success;
 }
@@ -273,125 +238,6 @@ bool Collect3DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg,
 
 	// Finalise any branches
 	if (subCollectBranch_ && (!subCollectBranch_->finalise(procPool, cfg, prefix, targetList))) return false;
-
-	return true;
-}
-
-/*
- * Read / Write
- */
-
-// Read structure from specified LineParser
-bool Collect3DProcedureNode::read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack)
-{
-	// The current line in the parser must also contain a node name (which is not necessarily unique...)
-	if (parser.nArgs() != 2) return Messenger::error("A Collect3D node must be given a suitable name.\n");
-	setName(parser.argc(1));
-
-	// Add ourselves to the scope stack
-	if (!scopeStack.add(this)) return Messenger::error("Error adding Collect3D node '%s' to scope stack.\n", name());
-
-	// Read until we encounter the EndCollect3D keyword, or we fail for some reason
-	while (!parser.eofOrBlank())
-	{
-		// Read and parse the next line
-		if (parser.getArgsDelim() != LineParser::Success) return false;
-
-		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
-		if (!collect3DNodeKeywords().isValid(parser.argc(0))) return collect3DNodeKeywords().errorAndPrintValid(parser.argc(0));
-		Collect3DNodeKeyword nk = collect3DNodeKeywords().enumeration(parser.argc(0));
-		if (!collect3DNodeKeywords().validNArgs(nk, parser.nArgs()-1)) return false;
-
-		// All OK, so process it
-		switch (nk)
-		{
-			case (Collect3DProcedureNode::EndCollect3DKeyword):
-				return true;
-			case (Collect3DProcedureNode::QuantityXYZKeyword):
-				if (xObservable_ || yObservable_ || zObservable_) return Messenger::error("Can't combine QuantityXYZ with one-dimensional Quantity commands.\n");
-
-				// Determine observable from supplied argument
-				xyzObservable_ = dynamic_cast<CalculateProcedureNode*>(scopeStack.nodeInScope(parser.argc(1), ProcedureNode::CalculateNode));
-				if (!xyzObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeywords().keyword(nk));
-				break;
-			case (Collect3DProcedureNode::QuantityXKeyword):
-				if (xyzObservable_) return Messenger::error("Can't combine QuantityXYZ with one-dimensional Quantity commands.\n");
-
-				// Determine observable from supplied argument
-				xObservable_ = dynamic_cast<CalculateProcedureNode*>(scopeStack.nodeInScope(parser.argc(1), ProcedureNode::CalculateNode));
-				if (!xObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeywords().keyword(nk));
-				break;
-			case (Collect3DProcedureNode::QuantityYKeyword):
-				if (xyzObservable_) return Messenger::error("Can't combine QuantityXYZ with one-dimensional Quantity commands.\n");
-
-				// Determine observable from supplied argument
-				yObservable_ = dynamic_cast<CalculateProcedureNode*>(scopeStack.nodeInScope(parser.argc(1), ProcedureNode::CalculateNode));
-				if (!yObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeywords().keyword(nk));
-				break;
-			case (Collect3DProcedureNode::QuantityZKeyword):
-				if (xyzObservable_) return Messenger::error("Can't combine QuantityXYZ with one-dimensional Quantity commands.\n");
-
-				// Determine observable from supplied argument
-				zObservable_ = dynamic_cast<CalculateProcedureNode*>(scopeStack.nodeInScope(parser.argc(1), ProcedureNode::CalculateNode));
-				if (!zObservable_) return Messenger::error("Unrecognised Calculate node '%s' given to %s keyword.\n", parser.argc(1), collect3DNodeKeywords().keyword(nk));
-				break;
-			case (Collect3DProcedureNode::RangeXKeyword):
-				xMinimum_ = parser.argd(1);
-				xMaximum_ = parser.argd(2);
-				xBinWidth_ = parser.argd(3);
-				break;
-			case (Collect3DProcedureNode::RangeYKeyword):
-				yMinimum_ = parser.argd(1);
-				yMaximum_ = parser.argd(2);
-				yBinWidth_ = parser.argd(3);
-				break;
-			case (Collect3DProcedureNode::RangeZKeyword):
-				zMinimum_ = parser.argd(1);
-				zMaximum_ = parser.argd(2);
-				zBinWidth_ = parser.argd(3);
-				break;
-			case (Collect3DProcedureNode::SubCollectKeyword):
-				// Check that a SubCollect branch hasn't already been defined
-				if (subCollectBranch_) return Messenger::error("Only one SubCollect branch may be defined in a Collect3D node.\n");
-
-				// Create and parse a new branch
-				subCollectBranch_ = new SequenceProcedureNode(scopeStack.currentContext(), "EndSubCollect");
-				if (!subCollectBranch_->read(parser, coreData, scopeStack)) return false;
-				break;
-			case (Collect3DProcedureNode::nCollect3DNodeKeywords):
-				return Messenger::error("Unrecognised Collect3D node keyword '%s' found.\n", parser.argc(0));
-				break;
-			default:
-				return Messenger::error("Epic Developer Fail - Don't know how to deal with the Collect3D node keyword '%s'.\n", parser.argc(0));
-		}
-	}
-
-	return true;
-}
-
-// Write structure to specified LineParser
-bool Collect3DProcedureNode::write(LineParser& parser, const char* prefix)
-{
-	// Block Start
-	if (!parser.writeLineF("%s%s\n", ProcedureNode::nodeTypes().keyword(type_))) return false;
-
-	// X Quantity / Range
-	if (xObservable_ && !parser.writeLineF("%s  %s  '%s'\n", prefix, collect3DNodeKeywords().keyword(Collect3DProcedureNode::QuantityXKeyword), xObservable_->name())) return false;
-	if (!parser.writeLineF("%s  %s  %12.6e  %12.6e  %12.6e\n", prefix, collect3DNodeKeywords().keyword(Collect3DProcedureNode::RangeXKeyword), xMinimum_, xMaximum_, xBinWidth_)) return false;
-
-	// Y Quantity / Range
-	if (yObservable_ && !parser.writeLineF("%s  %s  '%s'\n", prefix, collect3DNodeKeywords().keyword(Collect3DProcedureNode::QuantityYKeyword), yObservable_->name())) return false;
-	if (!parser.writeLineF("%s  %s  %12.6e  %12.6e  %12.6e\n", prefix, collect3DNodeKeywords().keyword(Collect3DProcedureNode::RangeYKeyword), yMinimum_, yMaximum_, yBinWidth_)) return false;
-
-	// Z Quantity / Range
-	if (zObservable_ && !parser.writeLineF("%s  %s  '%s'\n", prefix, collect3DNodeKeywords().keyword(Collect3DProcedureNode::QuantityZKeyword), zObservable_->name())) return false;
-	if (!parser.writeLineF("%s  %s  %12.6e  %12.6e  %12.6e\n", prefix, collect3DNodeKeywords().keyword(Collect3DProcedureNode::RangeZKeyword), zMinimum_, zMaximum_, zBinWidth_)) return false;
-
-	// Subcollect Branch
-	if (subCollectBranch_ && (!subCollectBranch_->write(parser, CharString("%s  ", prefix)))) return false;
-
-	// Block End
-	if (!parser.writeLineF("%s%s\n", collect3DNodeKeywords().keyword(Collect3DProcedureNode::EndCollect3DKeyword))) return false;
 
 	return true;
 }

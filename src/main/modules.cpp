@@ -23,9 +23,9 @@
 #include "modules/analyse/analyse.h"
 #include "modules/atomshake/atomshake.h"
 #include "modules/bragg/bragg.h"
-#include "modules/calculate/dangle/dangle.h"
-#include "modules/calculate/rdf/rdf.h"
-#include "modules/calibrate/calibrate.h"
+#include "modules/calculate_dangle/dangle.h"
+#include "modules/calculate_rdf/rdf.h"
+#include "modules/calibration/calibration.h"
 #include "modules/checks/checks.h"
 #include "modules/datatest/datatest.h"
 #include "modules/energy/energy.h"
@@ -162,4 +162,18 @@ Module* Dissolve::findModuleInstance(const char* uniqueName)
 	while (Module* module = moduleIterator.iterate()) if (DissolveSys::sameString(module->uniqueName(), uniqueName)) return module;
 
 	return NULL;
+}
+
+// Delete specified Module instance
+bool Dissolve::deleteModuleInstance(Module* instance)
+{
+	if (!moduleInstances_.contains(instance)) return Messenger::error("Can't find Module instance to remove.\n");
+
+	// Remove the reference from our list
+	moduleInstances_.remove(instance);
+
+	// Delete the actual Module - we assume that it has been removed from any ModuleList
+	delete instance;
+
+	return true;
 }

@@ -539,7 +539,7 @@ void Isotopes::registerIsotope(Isotope* isotope, int Z)
 // Return Isotope with specified A for given Element (if it exists)
 Isotope* Isotopes::isotope(int Z, int A)
 {
-	for (Isotope* isotope = isotopesByElement(Z).first(); isotope != NULL; isotope = isotope->next) if (isotope->A() == A) return isotope;
+	for (Isotope* isotope = isotopesByElement(Z).first(); isotope != NULL; isotope = isotope->next()) if (isotope->A() == A) return isotope;
 
 	return NULL;
 }

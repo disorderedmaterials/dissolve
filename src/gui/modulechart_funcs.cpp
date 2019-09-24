@@ -28,6 +28,7 @@
 #include "module/list.h"
 #include "module/module.h"
 #include <QDrag>
+#include <QMessageBox>
 #include <QMimeData>
 #include <QMouseEvent>
 #include <QPainter>
@@ -361,7 +362,7 @@ void ModuleChart::dropEvent(QDropEvent* event)
 		Module* beforeModule = hotSpot->moduleBlockAfter() ? hotSpot->moduleBlockAfter()->module() : NULL;
 
 		// Check if the dragged Module is back in its original position (in which case we don't flag a change)
-		if (targetModule->next != beforeModule)
+		if (targetModule->next() != beforeModule)
 		{
 			modules_.modules().moveBefore(targetModule, beforeModule);
 
@@ -418,12 +419,12 @@ void ModuleChart::dropEvent(QDropEvent* event)
 		if (hotSpot->moduleBlockAfter() == NULL)
 		{
 			// No next block, so add the new Module to the end of the current list
-			modules_.add(newModule);
+			modules_.own(newModule);
 		}
 		else
 		{
 			// Insert the new Module before the next block
-			modules_.add(newModule, hotSpot->moduleBlockAfter()->module());
+			modules_.own(newModule, hotSpot->moduleBlockAfter()->module());
 		}
 
 		updateControls();
@@ -449,7 +450,7 @@ void ModuleChart::dropEvent(QDropEvent* event)
 // Return drop hotspot, if any, under specified point
 ModuleChartHotSpot* ModuleChart::hotSpotAt(QPoint pos)
 {
-	for (ModuleChartHotSpot* hotSpot = hotSpots_.first(); hotSpot != NULL; hotSpot = hotSpot->next) if (hotSpot->contains(pos)) return hotSpot;
+	for (ModuleChartHotSpot* hotSpot = hotSpots_.first(); hotSpot != NULL; hotSpot = hotSpot->next()) if (hotSpot->contains(pos)) return hotSpot;
 
 	return NULL;
 }
@@ -558,6 +559,7 @@ void ModuleChart::updateControls()
 			// No current ModuleChartModuleBlock reference, so must create suitable widget
 			ModuleChartModuleBlock* mcmBlock = new ModuleChartModuleBlock(this, dissolveWindow_, module);
 			connect(mcmBlock, SIGNAL(settingsToggled()), this, SLOT(recalculateLayout()));
+			connect(mcmBlock, SIGNAL(remove(QString)), this, SLOT(removeModule(QString)));
 			newModuleWidgets.append(mcmBlock);
 		}
 	}
@@ -576,14 +578,14 @@ void ModuleChart::updateControls()
 	layOutWidgets();
 }
 
-// Disable sensitive controls within widget, ready for main code to run
+// Disable sensitive controls within widget
 void ModuleChart::disableSensitiveControls()
 {
 	RefListIterator<ModuleChartModuleBlock> moduleBlockIterator(moduleWidgets_);
 	while (ModuleChartModuleBlock* block = moduleBlockIterator.iterate()) block->disableSensitiveControls();
 }
 
-// Enable sensitive controls within widget, ready for main code to run
+// Enable sensitive controls within widget
 void ModuleChart::enableSensitiveControls()
 {
 	RefListIterator<ModuleChartModuleBlock> moduleBlockIterator(moduleWidgets_);
@@ -769,7 +771,7 @@ void ModuleChart::layOutWidgets(bool animateWidgets)
 	}
 
 	// Loop over defined hotspots and set the correct heights based on their row indices
-	for (ModuleChartHotSpot* hotSpot = hotSpots_.first(); hotSpot != NULL; hotSpot = hotSpot->next) hotSpot->setAreaHeight(heights_[hotSpot->row()]);
+	for (ModuleChartHotSpot* hotSpot = hotSpots_.first(); hotSpot != NULL; hotSpot = hotSpot->next()) hotSpot->setAreaHeight(heights_[hotSpot->row()]);
 
 	// Add on a default hotspot covering the whole widget
 	ModuleChartHotSpot* hotSpot = hotSpots_.add();
@@ -793,6 +795,37 @@ void ModuleChart::layOutWidgets(bool animateWidgets)
 void ModuleChart::recalculateLayout()
 {
 	layOutWidgets(false);
+}
+
+/*
+ * Module Management
+ */
+
+// Remove Module with specified uniqueName
+void ModuleChart::removeModule(QString uniqueName)
+{
+	// Find the named Module in our list
+	Module* module = modules_.find(qPrintable(uniqueName));
+	if (!module)
+	{
+		Messenger::error("Can't find module to remove (%s) in our target list!\n", qPrintable(uniqueName));
+		return;
+	}
+
+	// Are we sure that's what we want to do?
+	QMessageBox queryBox;
+	queryBox.setText(QString("This will delete the Module '%1'.").arg(uniqueName));
+	queryBox.setInformativeText("This cannot be undone. Proceed?");
+	queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+	queryBox.setDefaultButton(QMessageBox::No);
+	int ret = queryBox.exec();
+
+	if (ret == QMessageBox::Yes)
+	{
+		modules_.cut(module);
+		dissolveWindow_->dissolve().deleteModuleInstance(module);
+		updateControls();
+	}
 }
 
 /*

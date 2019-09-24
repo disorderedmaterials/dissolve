@@ -1,6 +1,6 @@
 /*
 	*** Keyword - Integer Triplet
-	*** src/module/keywordtypes/vec3integer.cpp
+	*** src/keywords/vec3integer.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -21,7 +21,6 @@
 
 #include "keywords/vec3integer.h"
 #include "base/lineparser.h"
-#include "genericitems/listhelper.h"
 
 // Constructors
 Vec3IntegerKeyword::Vec3IntegerKeyword(Vec3<int> value) : KeywordData< Vec3<int> >(KeywordBase::Vec3IntegerData, value)
@@ -111,30 +110,30 @@ bool Vec3IntegerKeyword::isValid(int index, int value)
  */
 
 // Return minimum number of arguments accepted
-int Vec3IntegerKeyword::minArguments()
+int Vec3IntegerKeyword::minArguments() const
 {
 	return 3;
 }
 
 // Return maximum number of arguments accepted
-int Vec3IntegerKeyword::maxArguments()
+int Vec3IntegerKeyword::maxArguments() const
 {
 	return 3;
 }
 
-// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool Vec3IntegerKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+// Parse arguments from supplied LineParser, starting at given argument offset
+bool Vec3IntegerKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	if (parser.hasArg(startArg+2))
 	{
 		// Check individual components of the vector
 		for (int n=0; n<3; ++n)
 		{
-			if (!isValid(n, parser.argi(startArg)))
+			if (!isValid(n, parser.argi(startArg+n)))
 			{
-				if (minimumLimit_[n] && maximumLimit_[n]) Messenger::error("Value %i is out of range for keyword. Valid range is %i <= n <= %i.\n", data_[n], min_[n], max_[n]);
-				else if (minimumLimit_[n]) Messenger::error("Value %i is out of range for keyword. Valid range is %i <= n.\n", data_[n], min_[n]);
-				else Messenger::error("Value %i is out of range for keyword. Valid range is n <= %i.\n", data_[n], max_[n]);
+				if (minimumLimit_[n] && maximumLimit_[n]) Messenger::error("Value %i is out of range for keyword '%s'. Valid range is %i <= n <= %i.\n", data_[n], name(), min_[n], max_[n]);
+				else if (minimumLimit_[n]) Messenger::error("Value %i is out of range for keyword '%s'. Valid range is %i <= n.\n", data_[n], name(), min_[n]);
+				else Messenger::error("Value %i is out of range for keyword '%s'. Valid range is n <= %i.\n", data_[n], name(), max_[n]);
 
 				return false;
 			}
@@ -148,9 +147,9 @@ bool Vec3IntegerKeyword::read(LineParser& parser, int startArg, const CoreData& 
 }
 
 // Write keyword data to specified LineParser
-bool Vec3IntegerKeyword::write(LineParser& parser, const char* prefix)
+bool Vec3IntegerKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
-	return parser.writeLineF("%s%s  %i  %i  %i\n", prefix, keyword(), data_.x, data_.y, data_.z);
+	return parser.writeLineF("%s%s  %i  %i  %i\n", prefix, keywordName, data_.x, data_.y, data_.z);
 }
 
 /*

@@ -48,7 +48,8 @@ ModuleChartModuleBlock::ModuleChartModuleBlock(QWidget* parent, DissolveWindow* 
 	module_ = module;
 
 	// Set up our keywords widget
-	ui.KeywordsWidget->setUp(dissolveWindow_, module_);
+	ui.ModuleKeywordsWidget->setUp(module_->keywords(), dissolveWindow_->dissolve().coreData());
+	connect(ui.ModuleKeywordsWidget, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
 
 	// Set the icon label
 	ui.IconLabel->setPixmap(modulePixmap(module_));
@@ -131,6 +132,12 @@ void ModuleChartModuleBlock::setSettingsExpanded(bool expanded, bool permanent)
 	ui.ToggleSettingsButton->setDisabled(permanent);
 }
 
+// Hide the remove button (e.g. when shown in a ModuleTab)
+void ModuleChartModuleBlock::hideRemoveButton()
+{
+	ui.RemoveButton->setVisible(false);
+}
+
 // Update controls within widget
 void ModuleChartModuleBlock::updateControls()
 {
@@ -172,7 +179,7 @@ void ModuleChartModuleBlock::updateControls()
 	ui.HeaderFrame->setToolTip(toolTip.get());
 
 	// Update keywords
-	ui.KeywordsWidget->updateControls();
+	ui.ModuleKeywordsWidget->updateControls();
 
 	refreshing_ = false;
 }
@@ -195,7 +202,7 @@ QPixmap ModuleChartModuleBlock::modulePixmap(QString moduleType)
 	return QPixmap(":/modules/icons/modules_generic.svg");
 }
 
-// Disable sensitive controls, ready for main code to run
+// Disable sensitive controls
 void ModuleChartModuleBlock::disableSensitiveControls()
 {
 	ui.KeywordsControlWidget->setEnabled(false);
@@ -205,7 +212,7 @@ void ModuleChartModuleBlock::disableSensitiveControls()
 	ui.RemoveButton->setEnabled(false);
 }
 
-// Enable sensitive controls, ready for main code to run
+// Enable sensitive controls
 void ModuleChartModuleBlock::enableSensitiveControls()
 {
 	ui.KeywordsControlWidget->setEnabled(true);
@@ -227,7 +234,7 @@ void ModuleChartModuleBlock::on_ToggleSettingsButton_clicked(bool checked)
 
 void ModuleChartModuleBlock::on_RemoveButton_clicked(bool checked)
 {
-	emit (removeModule(module_));
+	emit (remove(module_->uniqueName()));
 }
 
 void ModuleChartModuleBlock::on_RunButton_clicked(bool checked)
@@ -238,7 +245,7 @@ void ModuleChartModuleBlock::on_RunButton_clicked(bool checked)
 
 	updateControls();
 
-	emit moduleRun();
+	emit run();
 }
 
 void ModuleChartModuleBlock::on_EnabledButton_clicked(bool checked)

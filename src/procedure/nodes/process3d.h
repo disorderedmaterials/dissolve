@@ -24,7 +24,6 @@
 
 #include "procedure/nodes/node.h"
 #include "procedure/nodes/nodereference.h"
-#include "math/data3d.h"
 #include "base/charstring.h"
 #include "templates/reflist.h"
 
@@ -54,67 +53,41 @@ class Process3DProcedureNode : public ProcedureNode
 
 
 	/*
-	 * Node Keywords
-	 */
-	public:
-	// Node Keywords
-	enum Process3DNodeKeyword { EndProcess3DKeyword, FactorKeyword, LabelValueKeyword, LabelXKeyword, LabelYKeyword, LabelZKeyword, NSitesKeyword, NumberDensityKeyword, SaveKeyword, SourceDataKeyword, nProcess3DNodeKeywords };
-	// Return enum option info for Process3DNodeKeyword
-	static EnumOptions<Process3DNodeKeyword> process3DNodeKeywords();
-
-
-	/*
 	 * Data
 	 */
 	private:
 	// Collect3D node that we are processing
-	ProcedureNodeReference collectNode_;
+	Collect3DProcedureNode* collectNode_;
 	// Pointer to processed data (stored in processing data list)
 	Data3D* processedData_;
-	// Reference to sites against which we will normalise by population
-	RefList<SelectProcedureNode> sitePopulationNormalisers_;
-	// Reference to sites against which we will normalise by number density
-	RefList<SelectProcedureNode> numberDensityNormalisers_;
-	// Whether to normalise by supplied factor
-	bool normaliseByFactor_;
-	// Normalisation factor to apply (if requested)
-	double normalisationFactor_;
-	// Whether to save data after normalisation
-	bool saveData_;
-	// Value label
-	CharString valueLabel_;
-	// Axis labels
-	CharString xAxisLabel_, yAxisLabel_, zAxisLabel_;
 
 	public:
 	// Return processed data
 	const Data3D& processedData() const;
-	// Add site population normaliser
-	void addSitePopulationNormaliser(SelectProcedureNode* selectNode);
-	// Add number density normaliser
-	void addNumberDensityNormaliser(SelectProcedureNode* selectNode);
-	// Set whether to normalise by factor
-	void setNormaliseByFactor(bool on);
-	// Set normalisation factor
-	void setNormalisationFactor(double factor);
-	// Set whether to save processed data
-	void setSaveData(bool on);
-	// Set value label
-	void setValueLabel(const char* label);
 	// Return value label
 	const char* valueLabel() const;
-	// Set x axis label
-	void setXAxisLabel(const char* label);
 	// Return x axis label
 	const char* xAxisLabel() const;
-	// Set y axis label
-	void setYAxisLabel(const char* label);
 	// Return y axis label
 	const char* yAxisLabel() const;
-	// Set z axis label
-	void setZAxisLabel(const char* label);
 	// Return z axis label
 	const char* zAxisLabel() const;
+
+
+	/*
+	 * Branches
+	 */
+	private:
+	// Branch for normalisation of data (if defined)
+	SequenceProcedureNode* normalisationBranch_;
+
+	public:
+	// Add and return normalisation sequence branch
+	SequenceProcedureNode* addNormalisationBranch();
+	// Return whether this node has a branch
+	bool hasBranch() const;
+	// Return SequenceNode for the branch (if it exists)
+	SequenceProcedureNode* branch();
 
 
 	/*
@@ -127,16 +100,6 @@ class Process3DProcedureNode : public ProcedureNode
 	ProcedureNode::NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
 	// Finalise any necessary data after execution
 	bool finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
-
-
-	/*
-	 * Read / Write
-	 */
-	public:
-	// Read structure from specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack);
-	// Write structure to specified LineParser
-	bool write(LineParser& parser, const char* prefix);
 };
 
 #endif

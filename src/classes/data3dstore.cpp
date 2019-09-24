@@ -48,7 +48,7 @@ bool Data3DStore::addData(Data3DImportFileFormat fileAndFormat, const char* name
 }
 
 // Load data into store using specified pool
-bool Data3DStore::addData(ProcessPool& pool, Data3DImportFileFormat fileAndFormat, const char* name)
+bool Data3DStore::addData(ProcessPool* pool, Data3DImportFileFormat fileAndFormat, const char* name)
 {
 	// Create new data
 	Data3D* data = data_.add();
@@ -58,7 +58,7 @@ bool Data3DStore::addData(ProcessPool& pool, Data3DImportFileFormat fileAndForma
 	dataReferences_.append(data, fileAndFormat);
 
 	// Load the data
-	return fileAndFormat.importData(*data, &pool);
+	return fileAndFormat.importData(*data, pool);
 }
 
 // Check to see if the named data is present in the store

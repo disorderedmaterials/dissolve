@@ -39,17 +39,7 @@ class FileAndFormatKeywordWidget : public QWidget, public KeywordWidgetBase
 
 	public:
 	// Constructor
-	FileAndFormatKeywordWidget(QWidget* parent, KeywordBase* keyword, const Dissolve& dissolve, const CoreData& coreData, GenericList& moduleData, const char* prefix);
-        // Main form declaration
-        Ui::FileAndFormatWidget ui;
-
-
-	/*
-	 * Reference to Dissolve
-	 */
-	private:
-	// Reference to Dissolve (used to get input file dir in order to generate relative path names)
-	const Dissolve& dissolve_;
+	FileAndFormatKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
 
 
 	/*
@@ -61,8 +51,12 @@ class FileAndFormatKeywordWidget : public QWidget, public KeywordWidgetBase
 
 
 	/*
-	 * Signals / Slots
+	 * Widgets
 	 */
+	private:
+	// Main form declaration
+	Ui::FileAndFormatWidget ui_;
+
 	private slots:
 	void on_FileEdit_editingFinished();
 	void on_FileEdit_returnPressed();
@@ -82,7 +76,7 @@ class FileAndFormatKeywordWidget : public QWidget, public KeywordWidgetBase
 	void checkFileValidity();
 
 	public:
-	// Update value displayed in widget, using specified source if necessary
+	// Update value displayed in widget
 	void updateValue();
 	// Update widget values data based on keyword data
 	void updateWidgetValues(const CoreData& coreData);

@@ -25,10 +25,9 @@
 #include "procedure/nodes/node.h"
 #include "base/charstring.h"
 #include "math/histogram3d.h"
-#include "templates/reflist.h"
 
 // Forward Declarations
-class CalculateProcedureNode;
+class CalculateProcedureNodeBase;
 class SequenceProcedureNode;
 class LineParser;
 class NodeScopeStack;
@@ -38,8 +37,8 @@ class Collect3DProcedureNode : public ProcedureNode
 {
 	public:
 	// Constructors
-	Collect3DProcedureNode(CalculateProcedureNode* xObservable = NULL, CalculateProcedureNode* yObservable = NULL, CalculateProcedureNode* zObservable = NULL, double xMin = 0.0, double xMax = 10.0, double xBinWidth = 0.05, double yMin = 0.0, double yMax = 10.0, double yBinWidth = 0.05, double zMin = 0.0, double zMax = 10.0, double zBinWidth = 0.05);
-	Collect3DProcedureNode(CalculateProcedureNode* xyzObservable, double xMin = 0.0, double xMax = 10.0, double xBinWidth = 0.05, double yMin = 0.0, double yMax = 10.0, double yBinWidth = 0.05, double zMin = 0.0, double zMax = 10.0, double zBinWidth = 0.05);
+	Collect3DProcedureNode(CalculateProcedureNodeBase* xObservable = NULL, CalculateProcedureNodeBase* yObservable = NULL, CalculateProcedureNodeBase* zObservable = NULL, double xMin = 0.0, double xMax = 10.0, double xBinWidth = 0.05, double yMin = 0.0, double yMax = 10.0, double yBinWidth = 0.05, double zMin = 0.0, double zMax = 10.0, double zBinWidth = 0.05);
+	Collect3DProcedureNode(CalculateProcedureNodeBase* xyzObservable, double xMin = 0.0, double xMax = 10.0, double xBinWidth = 0.05, double yMin = 0.0, double yMax = 10.0, double yBinWidth = 0.05, double zMin = 0.0, double zMax = 10.0, double zBinWidth = 0.05);
 	// Destructor
 	~Collect3DProcedureNode();
 
@@ -53,47 +52,23 @@ class Collect3DProcedureNode : public ProcedureNode
 
 
 	/*
-	 * Node Keywords
-	 */
-	public:
-	// Node Keywords
-	enum Collect3DNodeKeyword { EndCollect3DKeyword, QuantityXYZKeyword, QuantityXKeyword, QuantityYKeyword, QuantityZKeyword, RangeXKeyword, RangeYKeyword, RangeZKeyword, SubCollectKeyword, nCollect3DNodeKeywords };
-	// Return enum option info for Collect3DNodeKeyword
-	static EnumOptions<Collect3DNodeKeyword> collect3DNodeKeywords();
-
-
-	/*
 	 * Data
 	 */
 	private:
-	// Observable to bin along x
-	CalculateProcedureNode* xObservable_;
-	// Observable to bin along y
-	CalculateProcedureNode* yObservable_;
-	// Observable to bin along z
-	CalculateProcedureNode* zObservable_;
-	// Observable to use for bins along x, y, and z
-	CalculateProcedureNode* xyzObservable_;
+	// Observable to bin along x (retrieved from keyword)
+	CalculateProcedureNodeBase* xObservable_;
+	// Index of x observable data to use (retrieved from keyword)
+	int xObservableIndex_;
+	// Observable to bin along y (retrieved from keyword)
+	CalculateProcedureNodeBase* yObservable_;
+	// Index of y observable data to use (retrieved from keyword)
+	int yObservableIndex_;
+	// Observable to bin along z (retrieved from keyword)
+	CalculateProcedureNodeBase* zObservable_;
+	// Index of z observable data to use (retrieved from keyword)
+	int zObservableIndex_;
 	// Histogram in which to accumulate data
 	Histogram3D* histogram_;
-	// X range minimum
-	double xMinimum_;
-	// X range maximum
-	double xMaximum_;
-	// X bin width
-	double xBinWidth_;
-	// Y range minimum
-	double yMinimum_;
-	// Y range maximum
-	double yMaximum_;
-	// Y bin width
-	double yBinWidth_;
-	// Z range minimum
-	double zMinimum_;
-	// Z range maximum
-	double zMaximum_;
-	// Z bin width
-	double zBinWidth_;
 
 	public:
 	// Return accumulated data
@@ -128,6 +103,10 @@ class Collect3DProcedureNode : public ProcedureNode
 	public:
 	// Add and return subcollection sequence branch
 	SequenceProcedureNode* addSubCollectBranch(ProcedureNode::NodeContext context);
+	// Return whether this node has a branch
+	bool hasBranch() const;
+	// Return SequenceNode for the branch (if it exists)
+	SequenceProcedureNode* branch();
 
 
 	/*
@@ -140,16 +119,6 @@ class Collect3DProcedureNode : public ProcedureNode
 	ProcedureNode::NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
 	// Finalise any necessary data after execution
 	bool finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
-
-
-	/*
-	 * Read / Write
-	 */
-	public:
-	// Read structure from specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack);
-	// Write structure to specified LineParser
-	bool write(LineParser& parser, const char* prefix);
 };
 
 #endif

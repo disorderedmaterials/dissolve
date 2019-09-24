@@ -79,9 +79,9 @@ class ModuleControlWidget : public SubWidget
 	public:
 	// Update controls within widget
 	void updateControls();
-	// Disable sensitive controls within widget, ready for main code to run
+	// Disable sensitive controls within widget
 	void disableSensitiveControls();
-	// Enable sensitive controls within widget, ready for main code to run
+	// Enable sensitive controls within widget
 	void enableSensitiveControls();
 	// Return string specifying widget type
 	const char* widgetType();

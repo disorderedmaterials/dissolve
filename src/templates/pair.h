@@ -28,9 +28,95 @@
 template <class T1, class T2> class Pair : public ListItem< Pair<T1,T2> >
 {
 	public:
-	// Data
-	T1 a;
-	T2 b;
+	// Constructors
+	Pair()
+	{
+		a_ = T1();
+		aSet_ = false;
+		b_ = T2();
+		bSet_ = false;
+	}
+	Pair(T1 a)
+	{
+		setA(a);
+		b_ = T2();
+		bSet_ = false;
+	}
+	Pair(T1 a, T2 b)
+	{
+		set(a,b);
+	}
+	// Destructor
+	~Pair()
+	{
+	}
+	// Copy constructor
+	Pair(const Pair<T1,T2>& source)
+	{
+		(*this) = source;
+	}
+	// Assignment operator
+	void operator=(const Pair<T1,T2>& source)
+	{
+		a_ = source.a_;
+		aSet_ = source.aSet_;
+		b_ = source.b_;
+		bSet_ = source.bSet_;
+	}
+
+
+	/*
+	 * Data
+	 */
+	private:
+	// Object A
+	T1 a_;
+	// Whether object A has been set
+	bool aSet_;
+	// Object B
+	T2 b_;
+	// Whether object B has been set
+	bool bSet_;
+
+	public:
+	// Set object A
+	void setA(T1 newA)
+	{
+		a_ = newA;
+		aSet_ = true;
+	}
+	// Return object A
+	const T1& a() const
+	{
+		return a_;
+	}
+	// Return whether object A has been set
+	bool isASet() const
+	{
+		return aSet_;
+	}
+	// Set object B
+	void setB(T2 newB)
+	{
+		b_ = newB;
+		bSet_ = true;
+	}
+	// Return object B
+	const T2& b() const
+	{
+		return b_;
+	}
+	// Return whether object B has been set
+	bool isBSet() const
+	{
+		return bSet_;
+	}
+	// Set both objects
+	void set(T1 newA, T2 newB)
+	{
+		setA(newA);
+		setB(newB);
+	}
 };
 
 #endif

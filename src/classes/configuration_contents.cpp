@@ -109,7 +109,7 @@ SpeciesInfo* Configuration::addUsedSpecies(Species* sp, int population)
 // Return SpeciesInfo for specified Species
 SpeciesInfo* Configuration::usedSpeciesInfo(Species* sp)
 {
-	for (SpeciesInfo* spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next) if (spInfo->species() == sp) return spInfo;
+	for (SpeciesInfo* spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next()) if (spInfo->species() == sp) return spInfo;
 
 	return NULL;
 }
@@ -123,7 +123,7 @@ List<SpeciesInfo>& Configuration::usedSpecies()
 // Return if the specified Species is present in the usedSpecies list
 bool Configuration::hasUsedSpecies(Species* sp)
 {
-	for (SpeciesInfo* spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next) if (spInfo->species() == sp) return true;
+	for (SpeciesInfo* spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next()) if (spInfo->species() == sp) return true;
 
 	return false;
 }
@@ -158,7 +158,7 @@ Molecule* Configuration::addMolecule(Species* sp)
 
 	// Add Atoms from Species to the Molecule
 	SpeciesAtom* spi = sp->firstAtom();
-	for (int n=0; n<sp->nAtoms(); ++n, spi = spi->next)
+	for (int n=0; n<sp->nAtoms(); ++n, spi = spi->next())
 	{
 		// Create new Atom
 		Atom* i = addAtom(newMolecule);
@@ -176,7 +176,7 @@ Molecule* Configuration::addMolecule(Species* sp)
 
 	// Add Grains from Species into the Molecule
 	SpeciesGrain* spg = sp->grains();
-	for (int n = 0; n<sp->nGrains(); ++n, spg = spg->next)
+	for (int n = 0; n<sp->nGrains(); ++n, spg = spg->next())
 	{
 		// Create new Grain
 		Grain* g = addGrain(newMolecule);
@@ -190,7 +190,7 @@ Molecule* Configuration::addMolecule(Species* sp)
 
 	// Add Bonds
 	SpeciesBond* spb = sp->bonds().first();
-	for (int n = 0; n<sp->nBonds(); ++n, spb = spb->next)
+	for (int n = 0; n<sp->nBonds(); ++n, spb = spb->next())
 	{
 		// Get Atom pointers involved in Bond
 		Atom* i = newMolecule->atom(spb->indexI());
@@ -203,7 +203,7 @@ Molecule* Configuration::addMolecule(Species* sp)
 
 	// Add Angles
 	SpeciesAngle* spa = sp->angles().first();
-	for (int n = 0; n<sp->nAngles(); ++n, spa = spa->next)
+	for (int n = 0; n<sp->nAngles(); ++n, spa = spa->next())
 	{
 		// Get Atom pointers involved in Angle
 		Atom* i = newMolecule->atom(spa->indexI());
@@ -217,7 +217,7 @@ Molecule* Configuration::addMolecule(Species* sp)
 
 	// Add Torsions
 	SpeciesTorsion* spt = sp->torsions().first();
-	for (int n = 0; n<sp->nTorsions(); ++n, spt = spt->next)
+	for (int n = 0; n<sp->nTorsions(); ++n, spt = spt->next())
 	{
 		// Get Atom pointers involved in Torsion
 		Atom* i = newMolecule->atom(spt->indexI());

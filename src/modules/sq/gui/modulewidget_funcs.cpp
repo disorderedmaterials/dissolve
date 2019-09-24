@@ -111,12 +111,12 @@ void SQModuleWidget::updateControls()
 	totalSQGraph_->postRedisplay();
 }
 
-// Disable sensitive controls within widget, ready for main code to run
+// Disable sensitive controls within widget
 void SQModuleWidget::disableSensitiveControls()
 {
 }
 
-// Enable sensitive controls within widget, ready for main code to run
+// Enable sensitive controls within widget
 void SQModuleWidget::enableSensitiveControls()
 {
 }
@@ -160,10 +160,10 @@ void SQModuleWidget::setGraphDataTargets(SQModule* module)
 
 	// Add partials
 	int n = 0;
-	for (AtomType* at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next, ++n)
+	for (AtomType* at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++n)
 	{
 		int m = n;
-		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next(), ++m)
 		{
 			CharString id("%s-%s", at1->name(), at2->name());
 

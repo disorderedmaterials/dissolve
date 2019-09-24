@@ -1,7 +1,10 @@
 add_library(procedurenodes
   addspecies.cpp
   box.cpp
-  calculate.cpp
+  calculateangle.cpp
+  calculatebase.cpp
+  calculatedistance.cpp
+  calculatevector.cpp
   collect1d.cpp
   collect2d.cpp
   collect3d.cpp
@@ -10,6 +13,13 @@ add_library(procedurenodes
   fit1d.cpp
   node.cpp
   nodereference.cpp
+  operatebase.cpp
+  operatedivide.cpp
+  operatemultiply.cpp
+  operatenormalise.cpp
+  operatenumberdensitynormalise.cpp
+  operatesitepopulationnormalise.cpp
+  operatesphericalshellnormalise.cpp
   parameters.cpp
   process1d.cpp
   process2d.cpp
@@ -19,7 +29,10 @@ add_library(procedurenodes
 
   addspecies.h
   box.h
-  calculate.h
+  calculateangle.h
+  calculatebase.h
+  calculatedistance.h
+  calculatevector.h
   collect1d.h
   collect2d.h
   collect3d.h
@@ -29,6 +42,13 @@ add_library(procedurenodes
   node.h
   nodereference.h
   nodes.h
+  operatebase.h
+  operatedivide.h
+  operatemultiply.h
+  operatenormalise.h
+  operatenumberdensitynormalise.h
+  operatesitepopulationnormalise.h
+  operatesphericalshellnormalise.h
   parameters.h
   process1d.h
   process2d.h

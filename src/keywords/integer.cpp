@@ -1,6 +1,6 @@
 /*
 	*** Keyword - Integer
-	*** src/module/keywordtypes/integer.cpp
+	*** src/keywords/integer.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -21,7 +21,7 @@
 
 #include "keywords/integer.h"
 #include "base/lineparser.h"
-#include "genericitems/listhelper.h"
+#include "base/sysfunc.h"
 
 // Constructors
 IntegerKeyword::IntegerKeyword(int value) : KeywordData<int>(KeywordBase::IntegerData, value)
@@ -101,19 +101,19 @@ bool IntegerKeyword::isValid(int value)
  */
 
 // Return minimum number of arguments accepted
-int IntegerKeyword::minArguments()
+int IntegerKeyword::minArguments() const
 {
 	return 1;
 }
 
 // Return maximum number of arguments accepted
-int IntegerKeyword::maxArguments()
+int IntegerKeyword::maxArguments() const
 {
 	return 1;
 }
 
-// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool IntegerKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+// Parse arguments from supplied LineParser, starting at given argument offset
+bool IntegerKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	if (parser.hasArg(startArg))
 	{
@@ -132,9 +132,9 @@ bool IntegerKeyword::read(LineParser& parser, int startArg, const CoreData& core
 }
 
 // Write keyword data to specified LineParser
-bool IntegerKeyword::write(LineParser& parser, const char* prefix)
+bool IntegerKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
-	return parser.writeLineF("%s%s  %i\n", prefix, keyword(), data_);
+	return parser.writeLineF("%s%s  %i\n", prefix, keywordName, data_);
 }
 
 /*

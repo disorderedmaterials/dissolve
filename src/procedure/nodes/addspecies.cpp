@@ -20,7 +20,7 @@
 */
 
 #include "procedure/nodes/addspecies.h"
-#include "procedure/nodescopestack.h"
+#include "keywords/types.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
@@ -31,12 +31,12 @@
 // Constructor
 AddSpeciesProcedureNode::AddSpeciesProcedureNode(Species* sp, int population, double atomicDensity) : ProcedureNode(ProcedureNode::AddSpeciesNode)
 {
-	species_ = sp;
-	population_ = population;
-	density_ = atomicDensity;
-	densityUnits_ = Units::AtomsPerAngstromUnits;
-	rotate_ = true;
-	positioning_ = RandomPositioning;
+	// Set up keywords
+	keywords_.add("Target", new SpeciesKeyword(sp), "Species", "Target Species to add");
+	keywords_.add("Target", new NodeValueKeyword(this, population), "Population", "Population of the target Species to add");
+	keywords_.add("Target", new NodeValueEnumOptionsKeyword<Units::DensityUnits>(this, atomicDensity, Units::densityUnits() = Units::AtomsPerAngstromUnits), "Density", "Density at which to add the target Species");
+	keywords_.add("Positioning", new BoolKeyword(true), "Rotate", "Whether to rotate molecules on insertion");
+	keywords_.add("Positioning", new EnumOptionsKeyword<AddSpeciesProcedureNode::PositioningType>(positioningTypes() = AddSpeciesProcedureNode::RandomPositioning), "Positioning", "Positioning type for individual molecules");
 }
 
 // Destructor
@@ -54,24 +54,10 @@ bool AddSpeciesProcedureNode::isContextRelevant(ProcedureNode::NodeContext conte
 	return (context == ProcedureNode::GenerationContext);
 }
 
-/*
- * Node Keywords
- */
-
-// Return enum option info for AddSpeciesNodeKeyword
-EnumOptions<AddSpeciesProcedureNode::AddSpeciesNodeKeyword> AddSpeciesProcedureNode::addSpeciesNodeKeywords()
+// Return whether a name for the node is required
+bool AddSpeciesProcedureNode::nameRequired() const
 {
-	static EnumOptionsList AddSpeciesNodeTypeKeywords = EnumOptionsList() <<
-		EnumOption(AddSpeciesProcedureNode::DensityKeyword,		"Density",	2) <<
-		EnumOption(AddSpeciesProcedureNode::EndAddSpeciesKeyword,	"EndAddSpecies") <<
-		EnumOption(AddSpeciesProcedureNode::NoRotationKeyword,		"NoRotation") <<
-		EnumOption(AddSpeciesProcedureNode::PopulationKeyword,		"Population",	1) <<
-		EnumOption(AddSpeciesProcedureNode::PositionKeyword,		"Positioning",	1) <<
-		EnumOption(AddSpeciesProcedureNode::SpeciesKeyword,		"Species",	1);
-
-	static EnumOptions<AddSpeciesProcedureNode::AddSpeciesNodeKeyword> options("AddSpeciesNodeKeyword", AddSpeciesNodeTypeKeywords);
-
-	return options;
+	return false;
 }
 
 /*
@@ -91,18 +77,6 @@ EnumOptions<AddSpeciesProcedureNode::PositioningType> AddSpeciesProcedureNode::p
 	return options;
 }
 
-// Set whether to rotate molecules randomly on addition
-void AddSpeciesProcedureNode::setRotate(bool rotate)
-{
-	rotate_ = rotate;
-}
-
-// Set positioning of individual molecules
-void AddSpeciesProcedureNode::setPositioning(PositioningType posType)
-{
-	positioning_ = posType;
-}
-
 /* 
  * Execute
  */
@@ -116,25 +90,35 @@ bool AddSpeciesProcedureNode::prepare(Configuration* cfg, const char* prefix, Ge
 // Execute node, targetting the supplied Configuration
 ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
 {
-	const int requestedPopulation = population_.asInteger();
-	const int nAtomsToAdd = requestedPopulation * species_->nAtoms();
+	const int requestedPopulation = keywords_.asInt("Population");
+	Species* sp = keywords_.retrieve<Species*>("Species");
+	if (!sp)
+	{
+		Messenger::error("No Species set in AddSpecies node.\n");
+		return ProcedureNode::Failure;
+	}
+	const int nAtomsToAdd = requestedPopulation * sp->nAtoms();
+
+	Messenger::print("[AddSpecies] Adding species '%s' - population is %i.\n", sp->name(), requestedPopulation);
 
 	// If a density was not given, just add new molecules to the current box without adjusting its size
-	if (density_ < 0.0)
+	Venum<NodeValue,Units::DensityUnits>& densityAndUnits = keywords_.retrieve< Venum<NodeValue,Units::DensityUnits> >("Density");
+	double density = densityAndUnits.value().asDouble();
+	if (density < 0.0)
 	{
 		Messenger::print("[AddSpecies] No density supplied - current box volume will remain unchanged.\n");
 	}
 	else
 	{
-		Messenger::print("[AddSpecies] Density for new species is %f %s.\n", density_.asDouble(), Units::densityUnits().keyword(densityUnits_));
+		Messenger::print("[AddSpecies] Density for new species is %f %s.\n", density, Units::densityUnits().keyword(densityAndUnits.enumeration()));
 
 		// Get current cell volume
 		double currentVolume = cfg->box()->volume();
 
 		// Determine volume required to contain the population of the specified Species at the requested density
 		double requiredVolume = 0.0;
-		if (densityUnits_ == Units::AtomsPerAngstromUnits) requiredVolume = nAtomsToAdd / density_;
-		else requiredVolume = ((species_->mass() * requestedPopulation) / AVOGADRO) / (density_ / 1.0E24);
+		if (densityAndUnits.enumeration() == Units::AtomsPerAngstromUnits) requiredVolume = nAtomsToAdd / density;
+		else requiredVolume = ((sp->mass() * requestedPopulation) / AVOGADRO) / (density / 1.0E24);
 
 		// If the current box has no atoms in it, absorb the current volume rather than adding to it
 		if (cfg->nAtoms() > 0) requiredVolume += currentVolume;
@@ -146,6 +130,12 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool&
 		Messenger::print("[AddSpecies] Current Box scaled by %f - new volume is %e cubic Angstroms.\n", scaleFactor, cfg->box()->volume());
 	}
 
+	// Get the positioning type and rotation flag
+	AddSpeciesProcedureNode::PositioningType positioning = keywords_.enumeration<AddSpeciesProcedureNode::PositioningType>("Positioning");
+	bool rotate = keywords_.asBool("Rotate");
+
+	Messenger::print("[AddSpecies] Positioning type is '%s' and rotation is %s.\n", AddSpeciesProcedureNode::positioningTypes().keyword(positioning), rotate ? "on" : "off");
+
 	// Now we add the molecules
 	procPool.initialiseRandomBuffer(ProcessPool::PoolProcessesCommunicator);
 	Vec3<double> r, cog, newCentre, fr;
@@ -154,10 +144,10 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool&
 	for (int n=0; n<requestedPopulation; ++n)
 	{
 		// Add the Molecule
-		Molecule* mol = cfg->addMolecule(species_);
+		Molecule* mol = cfg->addMolecule(sp);
 
 		// Set / generate position of Molecule
-		switch (positioning_)
+		switch (positioning)
 		{
 			case (AddSpeciesProcedureNode::RandomPositioning):
 				fr.set(procPool.random(), procPool.random(), procPool.random());
@@ -177,7 +167,7 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool&
 		}
 
 		// Generate and apply a random rotation matrix
-		if (rotate_)
+		if (rotate)
 		{
 			transform.createRotationXY(procPool.randomPlusMinusOne()*180.0, procPool.randomPlusMinusOne()*180.0);
 			mol->transform(box, transform);
@@ -187,79 +177,4 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool&
 	Messenger::print("[AddSpecies] New Configuration density is %f atoms/Angstrom3.\n", cfg->atomicDensity());
 
 	return ProcedureNode::Success;
-}
-
-/*
- * Read / Write
- */
-
-// Read structure from specified LineParser
-bool AddSpeciesProcedureNode::read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack)
-{
-	// Read until we encounter the EndAddSpecies keyword, or we fail for some reason
-	while (!parser.eofOrBlank())
-	{
-		// Read and parse the next line
-		if (parser.getArgsDelim() != LineParser::Success) return false;
-
-		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
-		if (!addSpeciesNodeKeywords().isValid(parser.argc(0))) return addSpeciesNodeKeywords().errorAndPrintValid(parser.argc(0));
-		AddSpeciesNodeKeyword nk = addSpeciesNodeKeywords().enumeration(parser.argc(0));
-		if (!addSpeciesNodeKeywords().validNArgs(nk, parser.nArgs()-1)) return false;
-
-		// All OK, so process it
-		switch (nk)
-		{
-			case (AddSpeciesProcedureNode::DensityKeyword):
-				if (!density_.set(parser.argc(1), scopeStack.parameterReferences())) return Messenger::error("Failed to parse expression '%s' for %s.\n", parser.argc(1), addSpeciesNodeKeywords().keyword(nk));
-				if (!Units::densityUnits().isValid(parser.argc(2))) return Units::densityUnits().errorAndPrintValid(parser.argc(2));
-				densityUnits_ = Units::densityUnits().enumeration(parser.argc(2));
-				break;
-			case (AddSpeciesProcedureNode::EndAddSpeciesKeyword):
-				// Check that a Species was provided
-				if (!species_) return Messenger::error("A target %s must be set in %s.\n", addSpeciesNodeKeywords().keyword(AddSpeciesProcedureNode::SpeciesKeyword), ProcedureNode::nodeTypes().keyword(type_));
-				return true;
-			case (AddSpeciesProcedureNode::NoRotationKeyword):
-				rotate_ = false;
-				break;
-			case (AddSpeciesProcedureNode::PopulationKeyword):
-				if (!population_.set(parser.argc(1), scopeStack.parameterReferences())) return Messenger::error("Failed to parse expression '%s' for %s.\n", parser.argc(1), addSpeciesNodeKeywords().keyword(nk));
-				break;
-			case (AddSpeciesProcedureNode::PositionKeyword):
-				if (!positioningTypes().isValid(parser.argc(1))) return positioningTypes().errorAndPrintValid(parser.argc(1));
-				positioning_ = positioningTypes().enumeration(parser.argc(1));
-				break;
-			case (AddSpeciesProcedureNode::SpeciesKeyword):
-				species_ = coreData.findSpecies(parser.argc(1));
-				if (!species_) return Messenger::error("Unrecognised Species '%s' given to %s keyword %s.\n", parser.argc(1), ProcedureNode::nodeTypes().keyword(type_), addSpeciesNodeKeywords().keyword(nk));
-				break;
-			default:
-				return Messenger::error("Epic Developer Fail - Don't know how to deal with the %s node keyword %s.\n", ProcedureNode::nodeTypes().keyword(type_), addSpeciesNodeKeywords().keyword(nk));
-		}
-	}
-
-	return true;
-}
-
-// Write structure to specified LineParser
-bool AddSpeciesProcedureNode::write(LineParser& parser, const char* prefix)
-{
-	// Block Start
-	if (!parser.writeLineF("%s%s\n", ProcedureNode::nodeTypes().keyword(type_))) return false;
-
-	// Species and Population
-	if (species_ && !parser.writeLineF("%s  %s  '%s'\n", prefix, addSpeciesNodeKeywords().keyword(AddSpeciesProcedureNode::SpeciesKeyword), species_->name())) return false;
-	if (!parser.writeLineF("%s  %s  %i\n", prefix, addSpeciesNodeKeywords().keyword(AddSpeciesProcedureNode::PopulationKeyword), population_.asInteger())) return false;
-
-	// Density, if provided
-	if ((density_ > 0.0) && (!parser.writeLineF("%s  %s  %e  %s\n", prefix, addSpeciesNodeKeywords().keyword(AddSpeciesProcedureNode::DensityKeyword), density_.asDouble(), Units::densityUnits().keyword(densityUnits_)))) return false;
-
-	// Control
-	if ((!rotate_) && (!parser.writeLineF("%s  %s\n", prefix, addSpeciesNodeKeywords().keyword(AddSpeciesProcedureNode::NoRotationKeyword)))) return false;
-	if ((positioning_ != AddSpeciesProcedureNode::RandomPositioning) && (!parser.writeLineF("%s  %s  %s\n", prefix, addSpeciesNodeKeywords().keyword(AddSpeciesProcedureNode::PositionKeyword), positioningTypes().keyword(positioning_)))) return false;
-
-	// Block End
-	if (!parser.writeLineF("%s%s\n", addSpeciesNodeKeywords().keyword(AddSpeciesProcedureNode::EndAddSpeciesKeyword))) return false;
-
-	return true;
 }

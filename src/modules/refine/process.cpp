@@ -47,7 +47,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	/*
 	 * Get Keyword Options
 	 */
-	const RefineModule::MatrixAugmentationStyle augmentationStyle = KeywordEnumHelper<RefineModule::MatrixAugmentationStyle>::enumeration(keywords_, "Augmentation");
+	const RefineModule::MatrixAugmentationStyle augmentationStyle = keywords_.enumeration<RefineModule::MatrixAugmentationStyle>("Augmentation");
 	const double augmentationParam = keywords_.asDouble("AugmentationParam");
 	const bool autoMinimumRadii = keywords_.asBool("AutoMinimumRadius");
 	const bool smoothPhiR = keywords_.asBool("DeltaPhiRSmoothing");
@@ -56,7 +56,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	const double errorStabilityThreshold = keywords_.asDouble("ErrorStabilityThreshold");
 	const int errorStabilityWindow = keywords_.asInt("ErrorStabilityWindow");
 	//const double gaussianAccuracy = keywords_.asDouble("GaussianAccuracy");
-	const RefineModule::PotentialInversionMethod inversionMethod = KeywordEnumHelper<RefineModule::PotentialInversionMethod>::enumeration(keywords_, "InversionMethod");
+	const RefineModule::PotentialInversionMethod inversionMethod = keywords_.enumeration<RefineModule::PotentialInversionMethod>("InversionMethod");
 	const double globalMinimumRadius = keywords_.asDouble("MinimumRadius");
 	const double globalMaximumRadius = keywords_.asDouble("MaximumRadius");
 // 	const bool modifyBonds = keywords_.asBool("ModifyBonds");
@@ -67,7 +67,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	const double qMax = keywords_.asDouble("QMax");
 	const double qMin = keywords_.asDouble("QMin");
 	const double truncationWidth = keywords_.asDouble("TruncationWidth");
-	const WindowFunction& windowFunction = KeywordListHelper<WindowFunction>::retrieve(keywords_, "WindowFunction", WindowFunction());
+	const WindowFunction& windowFunction = keywords_.retrieve<WindowFunction>("WindowFunction", WindowFunction());
 
 	// Print option summary
 	if (augmentationStyle == RefineModule::NoAugmentation) Messenger::print("Refine: No augmentation of scattering matrix will be performed.\n");
@@ -231,10 +231,10 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Set object names in combinedUnweightedSQ
 		i = 0;
-		for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
+		for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
 		{
 			j = i;
-			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j) combinedUnweightedSQ.at(i,j).setObjectTag(CharString("%s//UnweightedSQ//%s//%s-%s", uniqueName(), group->name(), at1->name(), at2->name()));
+			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next(), ++j) combinedUnweightedSQ.at(i,j).setObjectTag(CharString("%s//UnweightedSQ//%s//%s-%s", uniqueName(), group->name(), at1->name(), at2->name()));
 		}
 
 		// Realise storage for generated S(Q), and reinitialise the scattering matrix
@@ -266,10 +266,10 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			// Sum up the unweighted partials and density from this target
 			double factor = 1.0;
 			i = 0;
-			for (AtomTypeData* atd1 = unweightedSQ.atomTypes().first(); atd1 != NULL; atd1 = atd1->next, ++i)
+			for (AtomTypeData* atd1 = unweightedSQ.atomTypes().first(); atd1 != NULL; atd1 = atd1->next(), ++i)
 			{
 				j = i;
-				for (AtomTypeData* atd2 = atd1; atd2 != NULL; atd2 = atd2->next, ++j)
+				for (AtomTypeData* atd2 = atd1; atd2 != NULL; atd2 = atd2->next(), ++j)
 				{
 					double globalI = atd1->atomType()->index();
 					double globalJ = atd2->atomType()->index();
@@ -306,10 +306,10 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			// Create the array
 			simulatedReferenceData_.createEmpty(combinedUnweightedSQ.linearArraySize());
 			i = 0;
-			for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
+			for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
 			{
 				j = i;
-				for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
+				for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
 				{
 					// Weight in the matrix will be based on the natural isotope and the summed concentration weight
 					double factor = Isotopes::naturalIsotope(at1->element())->boundCoherent() * Isotopes::naturalIsotope(at2->element())->boundCoherent() * 0.01;
@@ -351,10 +351,10 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		Array2D<Data1D>& generatedGR = GenericListHelper< Array2D<Data1D> >::realise(dissolve.processingModuleData(), "GeneratedGR", uniqueName_, GenericItem::InRestartFileFlag);
 		generatedGR.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
 		i = 0;
-		for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
+		for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
 		{
 			j = i;
-			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
+			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
 			{
 				// Grab experimental g(r) contained and make sure its object name is set
 				Data1D& expGR = generatedGR.at(i,j);
@@ -381,10 +381,10 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		if (created) deltaSQ.initialise(nTypes, nTypes, true);
 
 		i = 0;
-		for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
+		for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
 		{
 			j = i;
-			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
+			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
 			{
 				// Grab difference partial and make sure its object name is set
 				Data1D& dSQ = deltaSQ.at(i, j);
@@ -444,10 +444,10 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			const double rFraction = 0.95;
 			const double thresholdValue = 0.1;
 			i = 0;
-			for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
+			for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
 			{
 				j = i;
-				for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
+				for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
 				{
 					// Grab unbound g(r)
 					Data1D& gr = summedUnweightedGR.unboundPartial(i, j);
@@ -477,10 +477,10 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		Data1D cr;
 		Array<double> crgr;
 		i = 0;
-		for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
+		for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
 		{
 			j = i;
-			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
+			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
 			{
 				// Grab potential perturbation container, clear it, and make sure its object name is set
 				Data1D& dPhiR = groupDeltaPhiR.at(i, j);
@@ -642,10 +642,10 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	 * Normalise and store our combined partial errors
 	 */
 	i = 0;
-	for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
+	for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
 	{
 		j = i;
-		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
 		{
 			Data1D& partialErrors = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), CharString("PartialError_%s-%s", at1->name(), at2->name()), uniqueName_, GenericItem::InRestartFileFlag);
 			// TODO This will be a straight sum of errors over groups, and may not be entirely representative? Needs to be weighted?
@@ -664,10 +664,10 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			const Array2D<Data1D>& groupDeltaPhiR = GenericListHelper< Array2D<Data1D> >::value(dissolve.processingModuleData(), CharString("DeltaPhiR_%s", group->name()), uniqueName_, Array2D<Data1D>());
 
 			i = 0;
-			for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
+			for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
 			{
 				j = i;
-				for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
+				for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
 				{
 					// Assess error of partial if requested, and decide whether to adjust potential
 					if (onlyWhenErrorStable)
@@ -705,10 +705,10 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	 */
 	double phiMagTot = 0.0;
 	i = 0;
-	for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next, ++i)
+	for (AtomType* at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
 	{
 		j = i;
-		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
 		{
 			// Grab pointer to the relevant pair potential
 			PairPotential* pp = dissolve.pairPotential(at1, at2);

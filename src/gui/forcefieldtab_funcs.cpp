@@ -355,15 +355,15 @@ void ForcefieldTab::updateControls()
 	refreshing_ = true;
 
 	// Master Bonds Table
-	TableWidgetUpdater<ForcefieldTab,MasterIntra> bondsUpdater(ui.MasterBondsTable, dissolve_.masterBonds(), this, &ForcefieldTab::updateBondsTableRow);
+	TableWidgetUpdater<ForcefieldTab,MasterIntra> bondsUpdater(ui.MasterBondsTable, dissolve_.coreData().masterBonds(), this, &ForcefieldTab::updateBondsTableRow);
 	ui.MasterBondsTable->resizeColumnsToContents();
 
 	// Master Angles Table
-	TableWidgetUpdater<ForcefieldTab,MasterIntra> anglesUpdater(ui.MasterAnglesTable, dissolve_.masterAngles(), this, &ForcefieldTab::updateAnglesTableRow);
+	TableWidgetUpdater<ForcefieldTab,MasterIntra> anglesUpdater(ui.MasterAnglesTable, dissolve_.coreData().masterAngles(), this, &ForcefieldTab::updateAnglesTableRow);
 	ui.MasterAnglesTable->resizeColumnsToContents();
 
 	// Torsions Table
-	TableWidgetUpdater<ForcefieldTab,MasterIntra> torsionsUpdater(ui.MasterTorsionsTable, dissolve_.masterTorsions(), this, &ForcefieldTab::updateTorsionsTableRow);
+	TableWidgetUpdater<ForcefieldTab,MasterIntra> torsionsUpdater(ui.MasterTorsionsTable, dissolve_.coreData().masterTorsions(), this, &ForcefieldTab::updateTorsionsTableRow);
 	ui.MasterTorsionsTable->resizeColumnsToContents();
 
 	// AtomTypes Table
@@ -386,13 +386,13 @@ void ForcefieldTab::updateControls()
 	refreshing_ = false;
 }
 
-// Disable sensitive controls within tab, ready for main code to run
+// Disable sensitive controls within tab
 void ForcefieldTab::disableSensitiveControls()
 {
 	setEnabled(false);
 }
 
-// Enable sensitive controls within tab, ready for main code to run
+// Enable sensitive controls within tab
 void ForcefieldTab::enableSensitiveControls()
 {
 	setEnabled(true);

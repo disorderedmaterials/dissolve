@@ -350,7 +350,7 @@ template <class T> OrderedListItem<T>* OrderedList<T>::nextHighestIndex(int obje
 // Remove all items in the list
 template <class T> void OrderedList<T>::clear()
 {
-	for (OrderedListItem<T>* item = listHead_; item != NULL; item = item->next) factory_.returnObject(item);
+	for (OrderedListItem<T>* item = listHead_; item != NULL; item = item->next()) factory_.returnObject(item);
 	nItems_ = 0;
 	listHead_ = NULL;
 	listTail_ = NULL;
@@ -462,7 +462,7 @@ template <class T> OrderedListItem<T>** OrderedList<T>::items()
 
 	// Fill in pointers
 	int count = 0;
-	for (OrderedListItem<T>* item = listHead_; item != NULL; item = item->next) items_[count++] = item;
+	for (OrderedListItem<T>* item = listHead_; item != NULL; item = item->next()) items_[count++] = item;
 	regenerateItemArray_ = 0;
 	return items_;
 }
@@ -485,7 +485,7 @@ template <class T> T** OrderedList<T>::objects()
 
 	// Fill in pointers
 	int count = 0;
-	for (OrderedListItem<T>* item = listHead_; item != NULL; item = item->next) objects_[count++] = &item->object();
+	for (OrderedListItem<T>* item = listHead_; item != NULL; item = item->next()) objects_[count++] = &item->object();
 	regenerateObjectArray_ = 0;
 	return objects_;
 }
@@ -564,7 +564,7 @@ template <class T> void OrderedList<T>::difference(OrderedList<T>& listB, Ordere
 template <class T> void OrderedList<T>::operator=(const OrderedList<T>& other)
 {
 	clear();
-	for (OrderedListItem<T>* item = other.listHead_; item != NULL; item = item->next) addAtEnd(item->object());
+	for (OrderedListItem<T>* item = other.listHead_; item != NULL; item = item->next()) addAtEnd(item->object());
 }
 
 // Element access operator

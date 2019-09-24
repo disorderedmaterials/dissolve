@@ -77,7 +77,7 @@ ModuleGroup* ModuleGroups::addModule(Module* module, const char* groupName)
 {
 	// Does the specified group exist?
 	ModuleGroup* moduleGroup;
-	for (moduleGroup = groups_.first(); moduleGroup != NULL; moduleGroup = moduleGroup->next) if (DissolveSys::sameString(moduleGroup->name(), groupName)) break;
+	for (moduleGroup = groups_.first(); moduleGroup != NULL; moduleGroup = moduleGroup->next()) if (DissolveSys::sameString(moduleGroup->name(), groupName)) break;
 	if (moduleGroup == NULL)
 	{
 		moduleGroup = new ModuleGroup(groupName);

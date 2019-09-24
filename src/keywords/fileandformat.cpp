@@ -38,21 +38,21 @@ FileAndFormatKeyword::~FileAndFormatKeyword()
  */
 
 // Return minimum number of arguments accepted
-int FileAndFormatKeyword::minArguments()
+int FileAndFormatKeyword::minArguments() const
 {
 	// Must have data format as bare minimum
 	return 1;
 }
 
 // Return maximum number of arguments accepted
-int FileAndFormatKeyword::maxArguments()
+int FileAndFormatKeyword::maxArguments() const
 {
 	// Data format and filename, plus some number of optional arguments
 	return 99;
 }
 
-// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool FileAndFormatKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+// Parse arguments from supplied LineParser, starting at given argument offset
+bool FileAndFormatKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	if (!data_.read(parser, startArg)) return Messenger::error("Failed to read file/format.\n");
 
@@ -62,9 +62,9 @@ bool FileAndFormatKeyword::read(LineParser& parser, int startArg, const CoreData
 }
 
 // Write keyword data to specified LineParser
-bool FileAndFormatKeyword::write(LineParser& parser, const char* prefix)
+bool FileAndFormatKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
-	if (!parser.writeLineF("%s%s  %s\n", prefix, keyword(), data_.asString())) return false;
+	if (!parser.writeLineF("%s%s  %s\n", prefix, keywordName, data_.asString())) return false;
 
 	return true;
 }

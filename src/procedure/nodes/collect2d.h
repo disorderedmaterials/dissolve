@@ -25,10 +25,9 @@
 #include "procedure/nodes/node.h"
 #include "base/charstring.h"
 #include "math/histogram2d.h"
-#include "templates/reflist.h"
 
 // Forward Declarations
-class CalculateProcedureNode;
+class CalculateProcedureNodeBase;
 class SequenceProcedureNode;
 class LineParser;
 class NodeScopeStack;
@@ -38,7 +37,7 @@ class Collect2DProcedureNode : public ProcedureNode
 {
 	public:
 	// Constructor
-	Collect2DProcedureNode(CalculateProcedureNode* xObservable = NULL, CalculateProcedureNode* yObservable = NULL, double xMin = 0.0, double xMax = 10.0, double xBinWidth = 0.05, double yMin = 0.0, double yMax = 10.0, double yBinWidth = 0.05);
+	Collect2DProcedureNode(CalculateProcedureNodeBase* xObservable = NULL, CalculateProcedureNodeBase* yObservable = NULL, double xMin = 0.0, double xMax = 10.0, double xBinWidth = 0.05, double yMin = 0.0, double yMax = 10.0, double yBinWidth = 0.05);
 	// Destructor
 	~Collect2DProcedureNode();
 
@@ -52,37 +51,19 @@ class Collect2DProcedureNode : public ProcedureNode
 
 
 	/*
-	 * Node Keywords
-	 */
-	public:
-	// Node Keywords
-	enum Collect2DNodeKeyword { EndCollect2DKeyword, QuantityXKeyword, QuantityYKeyword, RangeXKeyword, RangeYKeyword, SubCollectKeyword, nCollect2DNodeKeywords };
-	// Return enum option info for Collect2DNodeKeyword
-	static EnumOptions<Collect2DNodeKeyword> collect2DNodeKeywords();
-
-
-	/*
 	 * Data
 	 */
 	private:
-	// Observable to bin along x
-	CalculateProcedureNode* xObservable_;
-	// Observable to bin along y
-	CalculateProcedureNode* yObservable_;
+	// Observable to bin along x (retrieved from keyword)
+	CalculateProcedureNodeBase* xObservable_;
+	// Index of x observable data to use (retrieved from keyword)
+	int xObservableIndex_;
+	// Observable to bin along y (retrieved from keyword)
+	CalculateProcedureNodeBase* yObservable_;
+	// Index of y observable data to use (retrieved from keyword)
+	int yObservableIndex_;
 	// Histogram in which to accumulate data
 	Histogram2D* histogram_;
-	// X range minimum
-	double xMinimum_;
-	// X range maximum
-	double xMaximum_;
-	// X bin width
-	double xBinWidth_;
-	// Y range minimum
-	double yMinimum_;
-	// Y range maximum
-	double yMaximum_;
-	// Y bin width
-	double yBinWidth_;
 
 	public:
 	// Return accumulated data
@@ -111,6 +92,10 @@ class Collect2DProcedureNode : public ProcedureNode
 	public:
 	// Add and return subcollection sequence branch
 	SequenceProcedureNode* addSubCollectBranch(ProcedureNode::NodeContext context);
+	// Return whether this node has a branch
+	bool hasBranch() const;
+	// Return SequenceNode for the branch (if it exists)
+	SequenceProcedureNode* branch();
 
 
 	/*
@@ -123,16 +108,6 @@ class Collect2DProcedureNode : public ProcedureNode
 	ProcedureNode::NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
 	// Finalise any necessary data after execution
 	bool finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
-
-
-	/*
-	 * Read / Write
-	 */
-	public:
-	// Read structure from specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData, NodeScopeStack& scopeStack);
-	// Write structure to specified LineParser
-	bool write(LineParser& parser, const char* prefix);
 };
 
 #endif

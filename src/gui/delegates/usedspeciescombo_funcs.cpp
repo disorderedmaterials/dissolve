@@ -23,9 +23,7 @@
 #include "gui/helpers/combopopulator.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
-#include "templates/list.h"
 #include "templates/variantpointer.h"
-#include <QTableWidgetItem>
 
 UsedSpeciesComboDelegate::UsedSpeciesComboDelegate(QObject* parent) : QItemDelegate(parent)
 {
@@ -46,7 +44,7 @@ QWidget* UsedSpeciesComboDelegate::createEditor(QWidget* parent, const QStyleOpt
 	Configuration* cfg = VariantPointer<Configuration>(index.data(Qt::UserRole));
 	if (cfg)
 	{
-		for (SpeciesInfo* spInfo = cfg->usedSpecies().first(); spInfo != NULL; spInfo = spInfo->next)
+		for (SpeciesInfo* spInfo = cfg->usedSpecies().first(); spInfo != NULL; spInfo = spInfo->next())
 		{
 			editor->addItem(spInfo->species()->name(), VariantPointer<Species>(spInfo->species()));
 		}

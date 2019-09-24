@@ -78,9 +78,9 @@ class ModuleLayerTab : public QWidget, public ListItem<ModuleLayerTab>, public M
 	protected:
 	// Update controls in tab
 	void updateControls();
-	// Disable sensitive controls within tab, ready for main code to run
+	// Disable sensitive controls within tab
 	void disableSensitiveControls();
-	// Enable sensitive controls within tab, ready for main code to run
+	// Enable sensitive controls within tab
 	void enableSensitiveControls();
 
 

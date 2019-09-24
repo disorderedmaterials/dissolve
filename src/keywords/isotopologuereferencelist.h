@@ -23,7 +23,6 @@
 #define DISSOLVE_KEYWORD_ISOTOPOLOGUEREFERENCELIST_H
 
 #include "keywords/data.h"
-#include "keywords/base.h"
 #include "classes/isotopologuereference.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
@@ -58,13 +57,23 @@ class IsotopologueReferenceListKeyword : public KeywordData< List<IsotopologueRe
 	 */
 	public:
 	// Return minimum number of arguments accepted
-	int minArguments();
+	int minArguments() const;
 	// Return maximum number of arguments accepted
-	int maxArguments();
-	// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-	bool read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool);
+	int maxArguments() const;
+	// Parse arguments from supplied LineParser, starting at given argument offset
+	bool read(LineParser& parser, int startArg, const CoreData& coreData);
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* prefix);
+	bool write(LineParser& parser, const char* keywordName, const char* prefix);
+
+
+	/*
+	 * Object Management
+	 */
+	protected:
+	// Prune any references to the supplied Species in the contained data
+	void removeReferencesTo(Species* sp);
+	// Prune any references to the supplied Isotopologue in the contained data
+	void removeReferencesTo(Isotopologue* iso);
 };
 
 #endif

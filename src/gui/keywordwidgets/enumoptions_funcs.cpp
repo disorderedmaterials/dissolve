@@ -24,15 +24,15 @@
 #include "genericitems/listhelper.h"
 
 // Constructor
-EnumOptionsKeywordWidget::EnumOptionsKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData, GenericList& moduleData, const char* prefix) : QComboBox(parent), KeywordWidgetBase(coreData, moduleData, prefix)
+EnumOptionsKeywordWidget::EnumOptionsKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : QComboBox(parent), KeywordWidgetBase(coreData)
 {
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<EnumOptionsBaseKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base module keyword '%s' into EnumOptionsBaseKeyword.\n", keyword->keyword());
+	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into EnumOptionsBaseKeyword.\n", keyword->name());
 	else
 	{
 		// Get the underlying EnumOptionsBase
-		EnumOptionsBase& options = keyword_->baseOptions();
+		const EnumOptionsBase& options = keyword_->baseOptions();
 
 		// Populate the combo with the available keywords
 		for (int n=0; n<options.nOptions(); ++n)
@@ -61,8 +61,8 @@ void EnumOptionsKeywordWidget::myCurrentIndexChanged(int index)
 {
 	if (refreshing_) return;
 
-	// Use the virtual EnumOptionsBaseKeyword::setOptionByIndex() to set the new option and inform the underlying keyword structure that it has been modified
-	keyword_->setOptionByIndex(index);
+	// Use the virtual EnumOptionsBaseKeyword::setEnumerationByIndex() to set the new option and inform the underlying keyword structure that it has been modified
+	keyword_->setEnumerationByIndex(index);
 
 	emit(keywordValueChanged());
 }
@@ -71,16 +71,13 @@ void EnumOptionsKeywordWidget::myCurrentIndexChanged(int index)
  * Update
  */
 
-// Update value displayed in widget, using specified source if necessary
+// Update value displayed in widget
 void EnumOptionsKeywordWidget::updateValue()
 {
 	refreshing_ = true;
 
-	// Get the underlying EnumOptionsBase
-	EnumOptionsBase& options = keyword_->baseOptions();
-
 	// Set the combo box index
-	setCurrentIndex(options.currentOptionIndex());
+	setCurrentIndex(keyword_->baseOptions().currentOptionIndex());
 
 	refreshing_ = false;
 }

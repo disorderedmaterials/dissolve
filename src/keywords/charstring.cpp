@@ -1,6 +1,6 @@
 /*
 	*** Keyword - CharString
-	*** src/module/keywordtypes/charstring.cpp
+	*** src/keywords/charstring.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -21,7 +21,7 @@
 
 #include "keywords/charstring.h"
 #include "base/lineparser.h"
-#include "genericitems/listhelper.h"
+#include "base/sysfunc.h"
 
 // Constructor
 CharStringKeyword::CharStringKeyword(CharString value) : KeywordData<CharString>(KeywordBase::CharStringData, value)
@@ -38,19 +38,19 @@ CharStringKeyword::~CharStringKeyword()
  */
 
 // Return minimum number of arguments accepted
-int CharStringKeyword::minArguments()
+int CharStringKeyword::minArguments() const
 {
 	return 1;
 }
 
 // Return minimum number of arguments accepted
-int CharStringKeyword::maxArguments()
+int CharStringKeyword::maxArguments() const
 {
 	return 1;
 }
 
-// Parse arguments from supplied LineParser, starting at given argument offset, utilising specified ProcessPool if required
-bool CharStringKeyword::read(LineParser& parser, int startArg, const CoreData& coreData, ProcessPool& procPool)
+// Parse arguments from supplied LineParser, starting at given argument offset
+bool CharStringKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
 {
 	if (parser.hasArg(startArg))
 	{
@@ -63,9 +63,9 @@ bool CharStringKeyword::read(LineParser& parser, int startArg, const CoreData& c
 }
 
 // Write keyword data to specified LineParser
-bool CharStringKeyword::write(LineParser& parser, const char* prefix)
+bool CharStringKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
-	return parser.writeLineF("%s%s  '%s'\n", prefix, keyword(), data_.get());
+	return parser.writeLineF("%s%s  '%s'\n", prefix, keywordName, data_.get());
 }
 
 /*

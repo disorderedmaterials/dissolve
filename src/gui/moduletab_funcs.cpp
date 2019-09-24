@@ -92,6 +92,7 @@ void ModuleTab::initialiseControls(Module* module)
 	controlsWidget_ = new ModuleChartModuleBlock(NULL, dissolveWindow_, module);
 	controlsWidget_->setSettingsExpanded(true, true);
 	controlsWidget_->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+	controlsWidget_->hideRemoveButton();
 	splitter_->addWidget(controlsWidget_);
 
 	// Create a module widget if there are additional GUI elements available for the Module
@@ -104,7 +105,7 @@ void ModuleTab::initialiseControls(Module* module)
 		splitter_->setStretchFactor(1, 5);
 
 		// Connect signals/slots between the controlsWidget_ and the moduleWidget_
-		connect(controlsWidget_, SIGNAL(moduleRun()), this, SLOT(updateModuleWidget()));
+		connect(controlsWidget_, SIGNAL(run()), this, SLOT(updateModuleWidget()));
 	}
 }
 
@@ -125,7 +126,7 @@ void ModuleTab::updateControls()
 	refreshing_ = false;
 }
 
-// Disable sensitive controls within tab, ready for main code to run
+// Disable sensitive controls within tab
 void ModuleTab::disableSensitiveControls()
 {
 	if (controlsWidget_) controlsWidget_->disableSensitiveControls();
@@ -133,7 +134,7 @@ void ModuleTab::disableSensitiveControls()
 	if (moduleWidget_) moduleWidget_->disableSensitiveControls();
 }
 
-// Enable sensitive controls within tab, ready for main code to run
+// Enable sensitive controls within tab
 void ModuleTab::enableSensitiveControls()
 {
 	if (controlsWidget_) controlsWidget_->enableSensitiveControls();

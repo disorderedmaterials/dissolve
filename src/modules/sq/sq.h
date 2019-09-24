@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SQMODULE_H
-#define DISSOLVE_SQMODULE_H
+#ifndef DISSOLVE_MODULE_SQ_H
+#define DISSOLVE_MODULE_SQ_H
 
 #include "module/module.h"
 #include "math/broadeningfunction.h"
@@ -65,14 +65,11 @@ class SQModule : public Module
 
 
 	/*
-	 * Options
+	 * Initialisation
 	 */
 	protected:
-	// Set up keywords for Module
-	void setUpKeywords();
-	// Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-	int parseComplexKeyword(KeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix);
-
+	// Perform any necessary initialisation for the Module
+	void initialise();
 
 	/*
 	 * Processing
