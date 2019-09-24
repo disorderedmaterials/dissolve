@@ -62,8 +62,6 @@ class FontInstance
 	bool setUp(QString fontFileName = QString());
 	// Return whether font exists and is ready for use
 	bool fontOK() const;
-	// Return current font
-	FTFont* font() const;
 	// Return full height of font
 	double fontFullHeight() const;
 	// Return base height of font
@@ -72,6 +70,16 @@ class FontInstance
 	void setScaleFactor(double scaleFactor);
 	// Return general scaling factor for primitives rendered with this font instance
 	double scaleFactor() const;
+
+
+	/*
+	 * Rendering
+	 */
+	public:
+	// Set face size
+	bool setFaceSize(double faceSize);
+	// Render supplied text
+	bool renderText(const char* text) const;
 
 
 	/*

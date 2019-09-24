@@ -106,7 +106,7 @@ void DataViewer::render2DOverlay()
 		glPushMatrix();
 		glColor3d(0.0, 0.0, 0.0);
 		glScaled(overlayTextSize, overlayTextSize, overlayTextSize);
-		fontInstance_.font()->Render(rend->name());
+		fontInstance_.renderText(rend->name());
 		glPopMatrix();
 
 		// Shift to next position

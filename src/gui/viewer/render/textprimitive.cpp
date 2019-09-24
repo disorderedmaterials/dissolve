@@ -228,11 +228,11 @@ void TextPrimitive::render(FontInstance& fontInstance, const Matrix4& viewMatrix
 		{
 			// Render the text twice - once with lines, and once with polygon fill
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			fontInstance.font()->Render(fragment->text().toUtf8());
+			fontInstance.renderText(fragment->text().toUtf8());
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-			fontInstance.font()->Render(fragment->text().toUtf8());
+			fontInstance.renderText(fragment->text().toUtf8());
 		}
-		else fontInstance.font()->Render(fragment->text().toUtf8());
+		else fontInstance.renderText(fragment->text().toUtf8());
 	}
 }
 

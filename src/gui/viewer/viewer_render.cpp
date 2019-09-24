@@ -145,7 +145,7 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		if (fontInstance_.fontOK())
 		{
-			fontInstance_.font()->FaceSize(1);
+			fontInstance_.setFaceSize(1);
 			for (int axis=0; axis<3; ++axis) if (view_.axes().visible(axis) && (axis != skipAxis))
 			{
 				view_.axes().labelPrimitive(axis).renderAll(fontInstance_, viewMatrix, viewRotationInverse, view_.textZScale());
