@@ -25,6 +25,10 @@
 #include "procedure/nodes/calculatedistance.h"
 #include "procedure/nodes/collect1d.h"
 #include "procedure/nodes/collect2d.h"
+#include "procedure/nodes/operatenormalise.h"
+#include "procedure/nodes/operatenumberdensitynormalise.h"
+#include "procedure/nodes/operatesitepopulationnormalise.h"
+#include "procedure/nodes/operatesphericalshellnormalise.h"
 #include "procedure/nodes/process1d.h"
 #include "procedure/nodes/process2d.h"
 #include "procedure/nodes/select.h"
@@ -128,29 +132,35 @@ void CalculateDAngleModule::initialise()
 	// Process1D: 'RDF(BC)'
 	processDistance_ = new Process1DProcedureNode(collectDistance_);
 	processDistance_->setName("RDF(BC)");
-	processDistance_->addSitePopulationNormaliser(selectA_);
-	processDistance_->addSitePopulationNormaliser(selectB_);
-	processDistance_->addNumberDensityNormaliser(selectC_);
-	processDistance_->setNormaliseBySphericalShellVolume(true);
-	processDistance_->setValueLabel("g(r)");
-	processDistance_->setXAxisLabel("r, \\symbol{Angstrom}");
+	processDistance_->setKeyword<CharString>("LabelValue", "g(r)");
+	processDistance_->setKeyword<CharString>("LabelX", "r, \\symbol{Angstrom}");
+
+	SequenceProcedureNode* rdfNormalisation = processDistance_->addNormalisationBranch();
+	RefList<SelectProcedureNode> sitePopulationNormalisers;
+	sitePopulationNormalisers.append(selectA_);
+	sitePopulationNormalisers.append(selectB_);
+	rdfNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode(sitePopulationNormalisers));
+	rdfNormalisation->addNode(new OperateNumberDensityNormaliseProcedureNode(selectC_));
+	rdfNormalisation->addNode(new OperateSphericalShellNormaliseProcedureNode);
 	analyser_.addRootSequenceNode(processDistance_);
 
 	// Process1D: 'ANGLE(ABC)'
 	processAngle_ = new Process1DProcedureNode(collectAngle_);
 	processAngle_->setName("Angle(ABC)");
-	processAngle_->setNormaliseToOne(true);
-	processAngle_->setValueLabel("Normalised Frequency");
-	processAngle_->setXAxisLabel("\\symbol{theta}, \\symbol{degrees}");
+	processAngle_->setKeyword<CharString>("LabelValue", "Normalised Frequency");
+	processAngle_->setKeyword<CharString>("LabelX", "\\symbol{theta}, \\symbol{degrees}");
+	SequenceProcedureNode* angleNormalisation = processAngle_->addNormalisationBranch();
+	angleNormalisation->addNode(new OperateNormaliseProcedureNode(1.0));
 	analyser_.addRootSequenceNode(processAngle_);
 
 	// Process2D: 'DAngle'
 	processDAngle_ = new Process2DProcedureNode(collectDAngle_);
 	processDAngle_->setName("DAngle");
-	processDAngle_->setNormaliseToOne(true);
-	processDAngle_->setValueLabel("g(r)");
-	processDAngle_->setXAxisLabel("r, \\symbol{Angstrom}");
-	processDAngle_->setYAxisLabel("\\symbol{theta}, \\symbol{degrees}");
+	processDAngle_->setKeyword<CharString>("LabelValue", "g(r)");
+	processDAngle_->setKeyword<CharString>("LabelX", "r, \\symbol{Angstrom}");
+	processDAngle_->setKeyword<CharString>("LabelY", "\\symbol{theta}, \\symbol{degrees}");
+	SequenceProcedureNode* dAngleNormalisation = processDAngle_->addNormalisationBranch();
+	dAngleNormalisation->addNode(new OperateNormaliseProcedureNode(1.0));
 	analyser_.addRootSequenceNode(processDAngle_);
 
 	/*
@@ -166,6 +176,11 @@ void CalculateDAngleModule::initialise()
 	keywords_.link("Sites", selectB_->keywords().find("Site"), "SiteB", "Add site(s) which represent 'B' in the interaction A-B...C", "<Species> <Site> [<Species> <Site> ... ]");
 	keywords_.link("Sites", selectC_->keywords().find("Site"), "SiteC", "Add site(s) which represent 'C' in the interaction A-B...C", "<Species> <Site> [<Species> <Site> ... ]");
 	keywords_.add("Sites", new BoolKeyword(false), "ExcludeSameMolecule", "Whether to exclude correlations between B and C sites on the same molecule", "<True|False>");
+
+	// Export
+	keywords_.link("Export", processDistance_->keywords().find("Save"), "SaveRDF", "Whether to save calculated B-C RDF to disk", "<True|False>");
+	keywords_.link("Export", processAngle_->keywords().find("Save"), "SaveAngle", "Whether to save calculated A-B...C angle histrogram to disk", "<True|False>");
+	keywords_.link("Export", processDAngle_->keywords().find("Save"), "SaveDAngle", "Whether to save calculated A-B...C angle map to disk", "<True|False>");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised

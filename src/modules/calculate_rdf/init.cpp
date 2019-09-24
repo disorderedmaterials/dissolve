@@ -24,6 +24,9 @@
 #include "procedure/nodes/calculatedistance.h"
 #include "procedure/nodes/collect1d.h"
 #include "procedure/nodes/process1d.h"
+#include "procedure/nodes/operatenumberdensitynormalise.h"
+#include "procedure/nodes/operatesitepopulationnormalise.h"
+#include "procedure/nodes/operatesphericalshellnormalise.h"
 #include "procedure/nodes/select.h"
 
 // Perform any necessary initialisation for the Module
@@ -86,11 +89,13 @@ void CalculateRDFModule::initialise()
 	// Process1D: @dataName
 	processDistance_ = new Process1DProcedureNode(collectDistance_);
 	processDistance_->setName("RDF");
-	processDistance_->addSitePopulationNormaliser(selectA_);
-	processDistance_->addNumberDensityNormaliser(selectB_);
-	processDistance_->setNormaliseBySphericalShellVolume(true);
-	processDistance_->setValueLabel("g(r)");
-	processDistance_->setXAxisLabel("r, \\symbol{Angstrom}");
+	processDistance_->setKeyword<CharString>("LabelValue", "g(r)");
+	processDistance_->setKeyword<CharString>("LabelX", "r, \\symbol{Angstrom}");
+
+	SequenceProcedureNode* rdfNormalisation = processDistance_->addNormalisationBranch();
+	rdfNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode(selectA_));
+	rdfNormalisation->addNode(new OperateNumberDensityNormaliseProcedureNode(selectB_));
+	rdfNormalisation->addNode(new OperateSphericalShellNormaliseProcedureNode);
 	analyser_.addRootSequenceNode(processDistance_);
 
 	/*

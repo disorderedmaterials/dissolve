@@ -138,11 +138,18 @@ Module  Analyse  'RDF(OW-OW)-Analyser'
     EndSelect
     Process1D  'RDF'
       SourceData  'HistoOO'
-      NSites  'O1'
-      NumberDensity  'O2'
-      SphericalShellVolume  On
       LabelValue  'gOO(r)'
       LabelX  'r, Angstroms'
+      Normalisation
+        OperateSitePopulationNormalise
+          Site  'O1'
+        EndOperateSitePopulationNormalise
+        OperateNumberDensityNormalise
+          Site  'O2'
+        EndOperateNumberDensityNormalise
+        OperateSphericalShellNormalise
+        EndOperateSphericalShellNormalise
+      EndNormalisation
     EndProcess1D
   EndAnalyser
 EndModule
@@ -195,11 +202,18 @@ Module  Analyse  'RDF(H1-H2)-Analyser'
     EndSelect
     Process1D  'RDF'
       SourceData  'HistoHH'
-      NSites  'A'
-      NumberDensity  'B'
-      SphericalShellVolume  On
       LabelValue  'gHH(r)'
       LabelX  'r, Angstroms'
+      Normalisation
+        OperateSitePopulationNormalise
+          Site  'A'
+        EndOperateSitePopulationNormalise
+        OperateNumberDensityNormalise
+          Site  'B'
+        EndOperateNumberDensityNormalise
+        OperateSphericalShellNormalise
+        EndOperateSphericalShellNormalise
+      EndNormalisation
     EndProcess1D
   EndAnalyser
 EndModule
@@ -252,11 +266,18 @@ Module  Analyse  'RDF(COM-COM)-Analyser'
     EndSelect
     Process1D  'RDF'
       SourceData  'HistoCOMCOM'
-      NSites  'A'
-      NumberDensity  'B'
-      SphericalShellVolume  On
       LabelValue  'gCOMCOM(r)'
       LabelX  'r, Angstroms'
+      Normalisation
+        OperateSitePopulationNormalise
+          Site  'A'
+        EndOperateSitePopulationNormalise
+        OperateNumberDensityNormalise
+          Site  'B'
+        EndOperateNumberDensityNormalise
+        OperateSphericalShellNormalise
+        EndOperateSphericalShellNormalise
+      EndNormalisation
     EndProcess1D
   EndAnalyser
 EndModule

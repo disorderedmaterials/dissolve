@@ -187,23 +187,38 @@ Module  Analyse  'DAngle(X-H...O)-Analyser'
 
     Process1D  'RDF'
       SourceData  'RDF(BC)'
-      NSites  'X'  'H'
-      NumberDensity  'O'
-      SphericalShellVolume  On
       LabelValue  'gBC(r)'
       LabelX  'r, Angstroms'
+      Normalisation
+        OperateSitePopulationNormalise
+          Site  'X'  'H'
+        EndOperateSitePopulationNormalise
+        OperateNumberDensityNormalise
+          Site  'O'
+        EndOperateNumberDensityNormalise
+        OperateSphericalShellNormalise
+        EndOperateSphericalShellNormalise
+      EndNormalisation
     EndProcess1D
 
     Process1D  'Angle'
       SourceData  'ANGLE(ABC)'
-      NormaliseToOne
+      Normalisation
+        OperateNormalise
+          Value  1.0
+        EndOperateNormalise
+      EndNormalisation
       LabelValue  'Probability'
       LabelX  'Angle, \\sym{degree}'
     EndProcess1D
 
     Process2D  'DAngle(X-HO)'
       SourceData  'DAngle(X-HO)'
-      NormaliseToOne  On
+      Normalisation
+        OperateNormalise
+          Value  1.0
+        EndOperateNormalise
+      EndNormalisation
       LabelX  '\\it{r}, \\sym{Angstrom}'
       LabelY  'Angle, \\sym{degree}'
       LabelValue  'Probability'
