@@ -21,12 +21,7 @@
 
 #include "modules/rdf/rdf.h"
 #include "keywords/types.h"
-#include "main/dissolve.h"
 #include "math/averaging.h"
-#include "classes/species.h"
-#include "base/lineparser.h"
-#include "templates/enumhelpers.h"
-#include "genericitems/listhelper.h"
 
 // Return enum option info for NormalisationType
 EnumOptions<RDFModule::PartialsMethod> RDFModule::partialsMethods()

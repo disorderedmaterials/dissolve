@@ -21,11 +21,6 @@
 
 #include "modules/sq/sq.h"
 #include "keywords/types.h"
-#include "main/dissolve.h"
-#include "classes/species.h"
-#include "base/lineparser.h"
-#include "templates/enumhelpers.h"
-#include "genericitems/listhelper.h"
 
 // Perform any necessary initialisation for the Module
 void SQModule::initialise()

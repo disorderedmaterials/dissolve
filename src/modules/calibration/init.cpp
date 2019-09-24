@@ -21,8 +21,6 @@
 
 #include "modules/calibration/calibration.h"
 #include "keywords/types.h"
-#include "module/list.h"
-#include "genericitems/listhelper.h"
 
 // Perform any necessary initialisation for the Module
 void CalibrationModule::initialise()

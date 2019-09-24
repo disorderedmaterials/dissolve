@@ -21,9 +21,6 @@
 
 #include "modules/checks/checks.h"
 #include "keywords/types.h"
-#include "base/lineparser.h"
-#include "keywords/geometrylist.h"
-
 
 // Perform any necessary initialisation for the Module
 void ChecksModule::initialise()
@@ -36,4 +33,3 @@ void ChecksModule::initialise()
 	keywords_.add("Angle", new GeometryListKeyword(angles_, Geometry::GeometryType::Angle), "Angle", "Define an angle between Atoms to be checked", "<i> <j> <k> <referenceAngle>");
 	keywords_.add("Angle", new DoubleKeyword(0.05, 1.0e-5), "AngleThreshold", "Threshold at which angle checks will fail", "<threshold[0.05]>");
 }
-

@@ -20,9 +20,7 @@
 */
 
 #include "modules/epsr/epsr.h"
-#include "module/list.h"
 #include "keywords/types.h"
-#include "base/lineparser.h"
 
 // Return enum option info for ExpansionFunctionType
 EnumOptions<EPSRModule::ExpansionFunctionType> EPSRModule::expansionFunctionTypes()

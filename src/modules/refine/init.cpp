@@ -20,10 +20,7 @@
 */
 
 #include "modules/refine/refine.h"
-#include "module/list.h"
 #include "keywords/types.h"
-#include "base/lineparser.h"
-
 
 // Return enum options for PotentialInversionMethod
 EnumOptions<RefineModule::PotentialInversionMethod> RefineModule::potentialInversionMethods()

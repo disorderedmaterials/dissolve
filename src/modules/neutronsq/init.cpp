@@ -21,11 +21,6 @@
 
 #include "modules/neutronsq/neutronsq.h"
 #include "keywords/types.h"
-#include "main/dissolve.h"
-#include "classes/species.h"
-#include "base/lineparser.h"
-#include "templates/enumhelpers.h"
-#include "genericitems/listhelper.h"
 
 // Return enum option info for NormalisationType
 EnumOptions<NeutronSQModule::NormalisationType> NeutronSQModule::normalisationTypes()

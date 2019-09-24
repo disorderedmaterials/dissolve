@@ -20,11 +20,7 @@
 */
 
 #include "modules/forces/forces.h"
-#include "modules/import/import.h"
 #include "keywords/types.h"
-#include "main/dissolve.h"
-#include "base/lineparser.h"
-#include "genericitems/listhelper.h"
 
 // Perform any necessary initialisation for the Module
 void ForcesModule::initialise()

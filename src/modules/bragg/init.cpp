@@ -21,12 +21,7 @@
 
 #include "modules/bragg/bragg.h"
 #include "keywords/types.h"
-#include "main/dissolve.h"
 #include "math/averaging.h"
-#include "classes/species.h"
-#include "base/lineparser.h"
-#include "templates/enumhelpers.h"
-#include "genericitems/listhelper.h"
 
 // Perform any necessary initialisation for the Module
 void BraggModule::initialise()
