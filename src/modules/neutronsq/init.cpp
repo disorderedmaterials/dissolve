@@ -43,8 +43,6 @@ EnumOptions<NeutronSQModule::NormalisationType> NeutronSQModule::normalisationTy
 // Perform any necessary initialisation for the Module
 void NeutronSQModule::initialise()
 {
-	frequency_ = 5;
-
 	// Calculation
 	keywords_.add("Calculation", new DoubleKeyword(0.05, 1.0e-5), "QDelta", "Step size in Q for S(Q) calculation");
 	keywords_.add("Calculation", new DoubleKeyword(-1.0, -1.0), "QMax", "Maximum Q for calculated S(Q) (and limit at which reference data will be truncated)");

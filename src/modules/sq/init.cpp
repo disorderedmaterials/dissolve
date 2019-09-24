@@ -30,8 +30,6 @@
 // Perform any necessary initialisation for the Module
 void SQModule::initialise()
 {
-	frequency_ = 5;
-
 	// Q range
 	keywords_.add("Calculation", new DoubleKeyword(0.05, 1.0e-5), "QDelta", "Step size in Q for S(Q) calculation");
 	keywords_.add("Calculation", new DoubleKeyword(-1.0, -1.0), "QMax", "Maximum Q for calculated S(Q)");
@@ -42,4 +40,3 @@ void SQModule::initialise()
 	// Export
 	keywords_.add("Export", new BoolKeyword(false), "Save", "Whether to save partials to disk after calculation", "<True|False>");
 }
-

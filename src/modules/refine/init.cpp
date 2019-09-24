@@ -55,7 +55,6 @@ EnumOptions<RefineModule::MatrixAugmentationStyle> RefineModule::matrixAugmentat
 // Perform any necessary initialisation for the Module
 void RefineModule::initialise()
 {
-	frequency_ = 5;
 	groupedTargets_.addAllowedModuleType("NeutronSQ");
 
 	keywords_.add(new EnumOptionsKeyword<RefineModule::MatrixAugmentationStyle>(matrixAugmentationStyles() = RefineModule::PartialsAugmentation), "Augmentation", "Style used to augment (overdetermine) scattering matrix");

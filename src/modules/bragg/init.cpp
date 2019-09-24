@@ -31,8 +31,6 @@
 // Perform any necessary initialisation for the Module
 void BraggModule::initialise()
 {
-	frequency_ = 5;
-
 	// Calculation
 	keywords_.add("Calculation", new IntegerKeyword(5, 1), "Averaging", "Number of historical data sets to combine into final reflection data", "<5>");
 	keywords_.add("Calculation", new EnumOptionsKeyword<Averaging::AveragingScheme>(Averaging::averagingSchemes() = Averaging::LinearAveraging), "AveragingScheme", "Weighting scheme to use when averaging reflection data", "<Linear>");

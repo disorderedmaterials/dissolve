@@ -45,8 +45,6 @@ EnumOptions<RDFModule::PartialsMethod> RDFModule::partialsMethods()
 // Perform any necessary initialisation for the Module
 void RDFModule::initialise()
 {
-	frequency_ = 5;
-
 	// Calculation
 	keywords_.add("Calculation", new DoubleKeyword(0.025, 0.001), "BinWidth", "Specific RDF range to use (if UseHalfCellRange == false)");
 	keywords_.add("Calculation", new DoubleKeyword(15.0, 0.1), "Range", "Specific RDF range to use (if UseHalfCellRange == false)");

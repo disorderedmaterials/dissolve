@@ -13,7 +13,6 @@
 - Convert quickstart guide to page in docs.
 
 ## Other
-- [General] Make Module::frequency_ default to 1 in all cases?  Then suggests layers for shake / calc / refine, which is quite neat... Still allow adjusting.
 - [General] Harmonise command-line arguments between CLI and GUI versions (use gengetopt?)
 - [Workflow] Run Module::setUp() when Module is finished being read, rather than in the main set-up call (which we are trying to avoid using).
 

@@ -39,7 +39,6 @@ EnumOptions<EPSRModule::ExpansionFunctionType> EPSRModule::expansionFunctionType
 // Perform any necessary initialisation for the Module
 void EPSRModule::initialise()
 {
-	frequency_ = 5;
 	groupedTargets_.addAllowedModuleType("NeutronSQ");
 
 	// Calculation
