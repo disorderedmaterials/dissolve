@@ -8,8 +8,4 @@
   - Update the Vec3DoubleKeywordWidget to have labels according to the specified labels type given to the Vec3DoubleKeyword (again, see Vec3NodeKeywordWidget ui for inspiration!)
 
 ## Main
-- Convert ProcedureNodes to use keywords
-  - Implement keyword types / widgets as necessary
-  - De-virtualise ProcedureNode read() and write() functions.
-  - Implement pass-thru for widgets for LinkToKeyword
 - Run Module::setUp() when Module is finished being read, rather than in the main set-up call (which we are trying to avoid using).
