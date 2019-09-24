@@ -33,7 +33,7 @@ class ProcedureNode;
 class Vec3NodeValueKeyword : public KeywordData< Vec3<NodeValue> >
 {
 	public:
-	// Constructors
+	// Constructor
 	Vec3NodeValueKeyword(ProcedureNode* parentNode, Vec3<double> value, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
 	// Destructor
 	~Vec3NodeValueKeyword();
