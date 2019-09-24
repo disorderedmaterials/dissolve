@@ -3,6 +3,8 @@
 
 # Meta-Objects
 SET(charts_MOC_HDRS
+  procedurenode.h
+
   chart.hui
   chartscrollarea.hui
 )
@@ -27,7 +29,6 @@ SET(charts_SRCS
   charthotspot.h
   procedure.h
   proceduremetrics.h
-  procedurenode.h
 )
 
 # Target 'charts'

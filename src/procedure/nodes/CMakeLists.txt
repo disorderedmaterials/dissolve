@@ -19,7 +19,7 @@ add_library(procedurenodes
   operatenormalise.cpp
   operatenumberdensitynormalise.cpp
   operatesitepopulationnormalise.cpp
-  operatesphericalshellnormalise.h
+  operatesphericalshellnormalise.cpp
   parameters.cpp
   process1d.cpp
   process2d.cpp

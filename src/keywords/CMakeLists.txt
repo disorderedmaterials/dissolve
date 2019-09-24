@@ -5,7 +5,6 @@ add_library(keywords
   bool.cpp
   broadeningfunction.cpp
   charstring.cpp
-  complex.cpp
   data1dstore.cpp
   data2dstore.cpp
   data3dstore.cpp
@@ -14,6 +13,7 @@ add_library(keywords
   elementreflist.cpp
   expressionvariablelist.cpp
   fileandformat.cpp
+  geometrylist.cpp
   group.cpp
   integer.cpp
   isotopologuereferencelist.cpp
@@ -44,7 +44,6 @@ add_library(keywords
   bool.h
   broadeningfunction.h
   charstring.h
-  complex.h
   data.h
   data1dstore.h
   data2dstore.h
@@ -55,6 +54,7 @@ add_library(keywords
   enumoptions.h
   expressionvariablelist.h
   fileandformat.h
+  geometrylist.h
   group.h
   integer.h
   isotopologuereferencelist.h
