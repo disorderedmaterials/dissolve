@@ -47,7 +47,7 @@ class KeywordBase : public ListItem<KeywordBase>
 	enum KeywordDataType {
 		AtomTypeRefListData, AtomTypeSelectionData,
 		BoolData, BroadeningFunctionData,
-		CharStringData, ComplexData,
+		CharStringData,
 		Data1DStoreData, Data2DStoreData, Data3DStoreData, DoubleData, DynamicSiteNodesData,
 		ElementRefListData, EnumOptionsData, ExpressionVariableListData,
 		FileAndFormatData,

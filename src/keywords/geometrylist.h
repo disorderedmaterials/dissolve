@@ -1,6 +1,6 @@
 /*
-	*** Keyword - Isotopologue Reference List
-	*** src/keywords/isotopologuereferencelist.h
+	*** Keyword - Geometry List
+	*** src/keywords/geometrylist.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -32,14 +32,14 @@
 /* none */
 
 // Keyword with Geometry Data
-class GeometryKeyword : public KeywordData< List<Geometry>& >
+class GeometryListKeyword : public KeywordData< List<Geometry>& >
 {
 	public:
 	// Constructor
-	GeometryKeyword(List<Geometry>&, Geometry::GeometryType t);
+	GeometryListKeyword(List<Geometry>&, Geometry::GeometryType t);
 	
 	// Destructor
-	~GeometryKeyword();
+	~GeometryListKeyword();
 	
 	/*
 	 * Data
@@ -47,8 +47,6 @@ class GeometryKeyword : public KeywordData< List<Geometry>& >
 	private:
 	// enum variable
 	Geometry::GeometryType type_;
-	// number of arguments read from parser
-	int totalArgs_;
 	
 	/*
 	 * Arguments

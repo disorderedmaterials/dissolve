@@ -45,7 +45,7 @@ KeywordBase::~KeywordBase()
 const char* KeywordDataTypeKeywords[] = {
 	"AtomTypeRefList", "AtomTypeSelection",
 	"Bool", "BroadeningFunction",
-	"CharString", "Complex",
+	"CharString",
 	"Data1DStore", "Data2DStore", "Data3DStore", "Double", "DynamicSites",
 	"ElementRefList", "EnumOptions", "ExpressionVariableList",
 	"FileAndFormat",

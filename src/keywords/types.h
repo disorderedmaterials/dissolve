@@ -37,7 +37,6 @@
 #include "keywords/atomtypeselection.h"
 #include "keywords/broadeningfunction.h"
 #include "keywords/charstring.h"
-#include "keywords/complex.h"
 #include "keywords/data1dstore.h"
 #include "keywords/data2dstore.h"
 #include "keywords/data3dstore.h"
