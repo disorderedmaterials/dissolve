@@ -151,10 +151,10 @@ bool Process2DProcedureNode::finalise(ProcessPool& procPool, Configuration* cfg,
 	// Retrieve / realise the normalised data from the supplied list
 	bool created;
 	Data2D& data = GenericListHelper<Data2D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag, &created);
+	processedData_ = &data;
 
 	data.setName(name());
 	data.setObjectTag(CharString("%s//Process2D//%s//%s", prefix, cfg->name(), name()));
-	processedData_ = &data;
 
 	// Copy the averaged data from the associated Collect2D node
 	data = collectNode_->accumulatedData();

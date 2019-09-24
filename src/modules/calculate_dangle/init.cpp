@@ -56,7 +56,7 @@ void CalculateDAngleModule::initialise()
 	 *             Calculate  'aABC'
 	 *               Angle  'A'  'B'  'C'
 	 *             EndCalculate
-	 *             Collect2D  DAngle
+	 *             Collect2D  'DAngle(A-BC)'
 	 *               QuantityX  'rBC'
 	 *               QuantityY  'aABC'
 	 *               RangeX  0.0  10.0  0.05
@@ -155,7 +155,7 @@ void CalculateDAngleModule::initialise()
 
 	// Process2D: 'DAngle'
 	processDAngle_ = new Process2DProcedureNode(collectDAngle_);
-	processDAngle_->setName("DAngle");
+	processDAngle_->setName("DAngle(A-BC)");
 	processDAngle_->setKeyword<CharString>("LabelValue", "g(r)");
 	processDAngle_->setKeyword<CharString>("LabelX", "r, \\symbol{Angstrom}");
 	processDAngle_->setKeyword<CharString>("LabelY", "\\symbol{theta}, \\symbol{degrees}");
