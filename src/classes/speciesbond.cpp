@@ -168,8 +168,8 @@ double SpeciesBond::bondOrder() const
  */
 
 // Bond function keywords
-const char* BondFunctionKeywords[] = { "Harmonic", "EPSR", "SoftHarmonic" };
-int BondFunctionNParameters[] = { 2, 2, 3 };
+const char* BondFunctionKeywords[] = { "Harmonic", "EPSR" };
+int BondFunctionNParameters[] = { 2, 2 };
 
 // Convert string to functional form
 SpeciesBond::BondFunction SpeciesBond::bondFunction(const char* s)
@@ -214,13 +214,6 @@ void SpeciesBond::setUp()
 		double massJ = AtomicMass::mass(j_->element());
 		parameters_[2] = params[1] / sqrt((massI + massJ) / (massI * massJ));
 	}
-	else if (form() == SpeciesBond::SoftHarmonicForm)
-	{
-		// Work out omega-squared(ab) from mass of natural isotopes
-		double massI = AtomicMass::mass(i_->element());
-		double massJ = AtomicMass::mass(j_->element());
-		parameters_[3] = params[1] / sqrt((massI + massJ) / (massI * massJ));
-	}
 }
 
 // Return fundamental frequency for the interaction
@@ -232,7 +225,6 @@ double SpeciesBond::fundamentalFrequency(double reducedMass) const
 	double k = 0.0;
 	if (form() == SpeciesBond::HarmonicForm) k = params[0];
 	else if (form() == SpeciesBond::EPSRForm) k = params[0];
-	else if (form() == SpeciesBond::SoftHarmonicForm) k = params[0];
 	else
 	{
 		Messenger::error("Functional form of SpeciesBond term not set, or no force constant available, so can't determine fundamental frequency.\n");
@@ -241,15 +233,12 @@ double SpeciesBond::fundamentalFrequency(double reducedMass) const
 
 	// Convert force constant from (assumed) kJ mol-1 A-2 into J m-2 (kg s-2)
 	k *= 1000.0 * 1.0e20 / AVOGADRO;
-// 	printf("K = %f\n", k);
 
 	// Convert reduced mass from amu to kg
 	double mu = reducedMass / (AVOGADRO * 1000.0);
-// 	printf("mu = %e\n", mu);
 
 	// Calculate fundamental frequency
 	double v = (1.0 / TWOPI) * sqrt(k / mu);
-// 	printf("v = %e\n", v);
 
 	return v;
 }
@@ -289,22 +278,6 @@ double SpeciesBond::energy(double distance) const
 		double delta = distance - params[1];
 		return params[0] * (delta*delta) / parameters_[2];
 	}
-	else if (form() == SpeciesBond::SoftHarmonicForm)
-	{
-		/*
-		 * Around the equilibrium position (up to +/- range), it is a harmonic oscillator metered by the mass of the atoms
-		 * a la EPSR, but outside of this range we apply an additional harmonic potential a factor of 100 greater
-		 * 
-		 * Parameters:
-		 * 0 : general force constant C / 2.0
-		 * 1 : equilibrium distance
-		 * 2 : range
-		 * 3 : omega squared (LOCAL parameter)
-		 */
-		double delta = fabs(distance - params[1]);
-		if (delta < params[2]) return params[0] * (delta*delta) / parameters_[3];
-		else return params[0] * (delta*delta) / parameters_[3] + 3000.0 * ((delta - params[2])*(delta - params[2]));
-	}
 
 	Messenger::error("Functional form of SpeciesBond term not set, so can't calculate energy.\n");
 	return 0.0;
@@ -336,23 +309,6 @@ double SpeciesBond::force(double distance) const
 		 * 2 : omega squared (LOCAL parameter)
 		 */
 		return -2.0 * params[0] * (distance - params[1]);
-	}
-	else if (form() == SpeciesBond::SoftHarmonicForm)
-	{
-		/*
-		 * Around the equilibrium position (up to +/- range), it is a harmonic oscillator metered by the mass of the atoms
-		 * a la EPSR, but outside of this range we apply an additional harmonic potential a factor of 100 greater
-		 * 
-		 * Parameters:
-		 * 0 : general force constant C / 2.0
-		 * 1 : equilibrium distance
-		 * 2 : range
-		 * 3 : omega squared (LOCAL parameter)
-		 */
-		double delta = distance - params[1];
-		if (fabs(delta) < params[2]) return -params[0] * delta / parameters_[2];
-		else if (delta < 0) return -2.0 * ((params[0] * delta / parameters_[3]) + 3000.0 * params[0] * (delta + params[2]));
-		else return -2.0 * ((params[0] * delta / parameters_[3]) + 3000.0 * params[0] * (delta - params[2]));
 	}
 
 	Messenger::error("Functional form of SpeciesBond term not set, so can't calculate force.\n");

@@ -105,7 +105,6 @@ class SpeciesBond : public SpeciesIntra, public ListItem<SpeciesBond>
 	{
 		HarmonicForm,
 		EPSRForm,
-		SoftHarmonicForm,
 		nBondFunctions
 	};
 	// Convert string to functional form
