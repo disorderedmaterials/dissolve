@@ -41,6 +41,7 @@ SET(gui_MOC_HDRS
   addforcefieldtermsdialog.h
   addprocessinglayerdialog.h
   addspeciesdialog.h
+  selectsystemtemplatedialog.h
 
   # Main Tabs
   configurationtab.h
@@ -89,6 +90,7 @@ SET(gui_UIS
   addforcefieldtermsdialog.ui
   addprocessinglayerdialog.ui
   addspeciesdialog.ui
+  selectsystemtemplatedialog.ui
 
   # Main Tabs
   configurationtab.ui
@@ -133,6 +135,7 @@ SET(gui_SRCS
   addforcefieldtermsdialog_funcs.cpp
   addprocessinglayerdialog_funcs.cpp
   addspeciesdialog_funcs.cpp
+  selectsystemtemplatedialog_funcs.cpp
 
   # Main Tabs
   configurationtab_funcs.cpp
