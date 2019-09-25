@@ -18,8 +18,8 @@ Configuration  'Mix'
   Generator
     Parameters
       Integer  multiplier  1000
-      Double   ratioAtoB   1.0
-      Double   mixDensity    0.1
+      Real   ratioAtoB   1.0
+      Real   mixDensity    0.1
     EndParameters
     Box
       Angles  90.0  90.0  90.0

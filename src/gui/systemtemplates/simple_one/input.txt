@@ -14,7 +14,7 @@ Configuration  'Bulk'
   Generator
     Parameters
       Integer  multiplier  1000
-      Double   density    1.0
+      Real   density    1.0
     EndParameters
     Box
       Angles  90.0  90.0  90.0
