@@ -47,6 +47,16 @@ bool ParametersProcedureNode::isContextRelevant(ProcedureNode::NodeContext conte
 	return (context != ProcedureNode::NoContext);
 }
 
+// Return whether a name for the node must be provided
+bool ParametersProcedureNode::mustBeNamed() const
+{
+	return false;
+}
+
+/*
+ * Parameters
+ */
+
 // Return whether this node has the named parameter specified
 ExpressionVariable* ParametersProcedureNode::hasParameter(const char* name, ExpressionVariable* excludeParameter)
 {
