@@ -70,10 +70,9 @@ bool BaseViewer::parseInputBlocks(LineParser& parser)
 			// Renderable Block
 			case (BaseViewer::RenderableBlock):
 				// Determine Renderable type
-				rt = Renderable::renderableType(parser.argc(1));
-				if (rt == Renderable::nRenderableTypes) return Messenger::error("Unknown Renderable type '%s' found.\n", parser.argc(1));
+				if (!Renderable::renderableTypes().isValid(parser.argc(1))) return Renderable::renderableTypes().errorAndPrintValid(parser.argc(1));
 
-				renderable = createRenderable(rt, parser.argc(2), parser.argc(3));
+				renderable = createRenderable(Renderable::renderableTypes().enumeration(parser.argc(1)), parser.argc(2), parser.argc(3));
 				if (!renderable) return false;
 
 				success = readRenderableBlock(parser, renderable);
@@ -544,7 +543,7 @@ bool BaseViewer::writeRenderableBlock(LineParser& parser, Renderable* renderable
 	for (int n=0; n<indentLevel*2; ++n) indent[n] = ' ';
 	indent[indentLevel*2] = '\0';
 
-	if (!parser.writeLineF("%s%s  %s  '%s'  '%s'\n", indent, BaseViewer::inputBlockKeywords().keyword(BaseViewer::RenderableBlock), Renderable::renderableType(renderable->type()), renderable->objectTag(), renderable->name())) return false;
+	if (!parser.writeLineF("%s%s  %s  '%s'  '%s'\n", indent, BaseViewer::inputBlockKeywords().keyword(BaseViewer::RenderableBlock), Renderable::renderableTypes().keyword(renderable->type()), renderable->objectTag(), renderable->name())) return false;
 
 	// -- Transforms
 	if (!parser.writeLineF("%s  %s  %s %s\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::TransformXKeyword), DissolveSys::btoa(renderable->transformEnabled(0)), renderable->transformEquation(0))) return false;

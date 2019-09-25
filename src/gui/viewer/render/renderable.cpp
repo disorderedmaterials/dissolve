@@ -27,20 +27,19 @@
 #include "base/sysfunc.h"
 #include <limits>
 
-// Renderable Type
-const char* RenderableTypeKeywords[] = { "Configuration", "Data1D", "Species" };
-
-// Convert text string to RenderableType
-Renderable::RenderableType Renderable::renderableType(const char* s)
+// Return enum options for RenderableType
+EnumOptions<Renderable::RenderableType> Renderable::renderableTypes()
 {
-	for (int n=0; n<nRenderableTypes; ++n) if (DissolveSys::sameString(s, RenderableTypeKeywords[n])) return (Renderable::RenderableType) n;
-	return nRenderableTypes;
-}
+	static EnumOptionsList RenderableTypeOptions = EnumOptionsList() <<
+		EnumOption(Renderable::ConfigurationRenderable, 	"Configuration") <<
+		EnumOption(Renderable::Data1DRenderable, 		"Data1D") <<
+		EnumOption(Renderable::Data2DRenderable, 		"Data2D") <<
+		EnumOption(Renderable::Data3DRenderable, 		"Data3D") <<
+		EnumOption(Renderable::SpeciesRenderable, 		"Species");
 
-// Convert RenderableType to text string
-const char* Renderable::renderableType(RenderableType rt)
-{
-	return RenderableTypeKeywords[rt];
+	static EnumOptions<Renderable::RenderableType> options("ErrorType", RenderableTypeOptions);
+
+	return options;
 }
 
 // Constructor
