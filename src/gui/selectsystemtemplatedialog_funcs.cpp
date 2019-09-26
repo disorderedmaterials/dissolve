@@ -87,13 +87,20 @@ void SelectSystemTemplateDialog::on_TemplatesList_currentItemChanged(QListWidget
 		return;
 	}
 
-	// Get the select template
+	// Get the selected template
 	SystemTemplate* sysTemp = VariantPointer<SystemTemplate>(current->data(Qt::UserRole));
 
 	// Update the informational text
 	ui_.TemplateDetailsTextEdit->setText(sysTemp->description());
 
 	ui_.SelectButton->setEnabled(true);
+}
+
+void SelectSystemTemplateDialog::on_TemplatesList_itemDoubleClicked(QListWidgetItem* item)
+{
+	if (!item) return;
+
+	accept();
 }
 
 void SelectSystemTemplateDialog::on_SelectButton_clicked(bool checked)
