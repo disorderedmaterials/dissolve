@@ -128,7 +128,7 @@ void SpeciesWidget::on_ToolsMinimiseButton_clicked(bool checked)
 	addSpeciesNode->setKeyword<bool>("Rotate", false);
 	addSpeciesNode->setEnumeration<AddSpeciesProcedureNode::PositioningType>("Positioning", AddSpeciesProcedureNode::CentralPositioning);
 	generator.addRootSequenceNode(addSpeciesNode);
-	if (!temporaryCfg->generate(temporaryDissolve.worldPool(), 15.0)) return;
+	if (!temporaryCfg->generate(temporaryDissolve.worldPool())) return;
 
 
 	// Create an Geometry Optimisation Module in a new processing layer, and set everything up

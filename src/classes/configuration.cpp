@@ -108,8 +108,8 @@ Procedure& Configuration::generator()
 	return generator_;
 }
 
-// Generate the Configuration ready for use, including Box and associated Cells
-bool Configuration::generate(ProcessPool& procPool, double pairPotentialRange)
+// Create the Configuration according to its generator Procedure
+bool Configuration::generate(ProcessPool& procPool)
 {
 	// Empty the current contents
 	empty();
@@ -120,18 +120,11 @@ bool Configuration::generate(ProcessPool& procPool, double pairPotentialRange)
 	if (!result) return Messenger::error("Failed to generate Configuration '%s'.\n", niceName());
 	Messenger::print("\n");
 
-	// Check Box extent against pair potential range
-	if (pairPotentialRange > box_->inscribedSphereRadius())
-	{
-		Messenger::error("PairPotential range (%f) is longer than the shortest non-minimum image distance (%f).\n", pairPotentialRange, box_->inscribedSphereRadius());
-		return false;
-	}
-
 	// Finalise used AtomType list
 	usedAtomTypes_.finalise();
 
-	// Generation was successful, so set-up Cells for the Box
-	cells_.generate(box_, requestedCellDivisionLength_, pairPotentialRange, atomicDensity());
+	// Sanity check the contents - if we have zero atoms then there's a problem!
+	if (nAtoms() == 0) return Messenger::error("Generated contents for Configuration '%s' contains no atoms!\n", name());
 
 	return true;
 }
@@ -237,8 +230,25 @@ GenericList& Configuration::moduleData()
  */
 
 // Perform any pre-processing tasks for the Configuration
-bool Configuration::prepare(const PotentialMap& potentialMap)
+bool Configuration::prepare(const PotentialMap& potentialMap, double pairPotentialRange)
 {
+	/*
+	 * Cell Generation
+	 */
+
+	// Check Box extent against pair potential range
+	if (pairPotentialRange > box_->inscribedSphereRadius())
+	{
+		Messenger::error("PairPotential range (%f) is longer than the shortest non-minimum image distance (%f).\n", pairPotentialRange, box_->inscribedSphereRadius());
+		return false;
+	}
+
+	// OK, so set-up Cells for the Box if they don't already exist
+	if (cells_.nCells() == 0) cells_.generate(box_, requestedCellDivisionLength_, pairPotentialRange, atomicDensity());
+
+	// Make sure Cell contents / Atom locations are up-to-date
+	updateCellContents();
+
 	/*
 	 * Size Factor Scaling
 	 * 

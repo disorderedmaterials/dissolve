@@ -62,7 +62,8 @@ bool Dissolve::setUpSimulation()
 				if (cfg->nAtoms() == 0)
 				{
 					// No atoms (presumably no data was read from the restart file) so run the generator
-					if (!cfg->generate(worldPool(), pairPotentialRange_)) return false;
+					// TODO DANGER Will overwrite every time we tun the simulation (e.g. from the GUI), rather than be loaded on startup (which is what should happen) 
+					if (!cfg->generate(worldPool())) return false;
 				}
 
 				Messenger::print("Loading initial coordinates from file '%s'...\n", cfg->inputCoordinates().filename());
@@ -76,12 +77,9 @@ bool Dissolve::setUpSimulation()
 		else if (cfg->nAtoms() == 0)
 		{
 			// Set up the Configuration from its generator
-			if (!cfg->generate(worldPool(), pairPotentialRange_)) return false;
+			if (!cfg->generate(worldPool())) return false;
 		}
 		else Messenger::print("Configuration loaded from the restart file.\n");
-
-		// Update Cell contents / Atom locations
-		cfg->updateCellContents();
 	}
 
 	/*

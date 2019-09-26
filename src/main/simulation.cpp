@@ -114,7 +114,6 @@ bool Dissolve::iterate(int nIterations)
 		}
 
 		// Write heartbeat file or display appropriate message
-		
 		if (worldPool().isMaster() && (writeHeartBeat()))
 		{
 			Messenger::print("Write heartbeat file...");
@@ -127,7 +126,6 @@ bool Dissolve::iterate(int nIterations)
 		{
 			Messenger::print("No Heartbeat file will be written.");
 		}
-		
 
 
 		/*
@@ -156,7 +154,7 @@ bool Dissolve::iterate(int nIterations)
 			}
 
 			// Perform any necessary actions before we start processing this Configuration's Modules
-			if (!cfg->prepare(potentialMap_)) return false;
+			if (!cfg->prepare(potentialMap_, pairPotentialRange_)) return false;
 
 			// Loop over Modules defined in the Configuration
 			ListIterator<Module> moduleIterator(cfg->modules());

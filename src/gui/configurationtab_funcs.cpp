@@ -180,7 +180,7 @@ void ConfigurationTab::on_GeneratorGenerateButton_clicked(bool checked)
 
 	if (ret == QMessageBox::Yes)
 	{
-		configuration_->generate(dissolve_.worldPool(), dissolve_.pairPotentialRange());
+		configuration_->generate(dissolve_.worldPool());
 		updateControls();
 	}
 }
