@@ -58,8 +58,8 @@ bool DynamicSiteProcedureNode::isContextRelevant(ProcedureNode::NodeContext cont
 	return (context == ProcedureNode::AnalysisContext);
 }
 
-// Return whether a name for the node is required
-bool DynamicSiteProcedureNode::nameRequired() const
+// Return whether a name for the node must be provided
+bool DynamicSiteProcedureNode::mustBeNamed() const
 {
 	return false;
 }

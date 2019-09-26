@@ -37,7 +37,7 @@ libgui_la_SOURCES += wizardwidgetfooter.ui wizardwidgetheader.ui wizardwidget.hu
 # UI - Wizards
 libgui_la_SOURCES += addconfigurationwizard.ui addforcefieldtermswizard.ui addprocessinglayerwizard.ui addspecieswizard.ui guidewizard.ui pairpotentialwidget.ui
 # UI - Dialogs
-libgui_la_SOURCES += addconfigurationdialog.ui addforcefieldtermsdialog.ui addprocessinglayerdialog.ui addspeciesdialog.ui
+libgui_la_SOURCES += addconfigurationdialog.ui addforcefieldtermsdialog.ui addprocessinglayerdialog.ui addspeciesdialog.ui selectsystemtemplatedialog.ui
 # UI - Main Tabs
 libgui_la_SOURCES += gui.ui configurationtab.ui forcefieldtab.ui modulelayertab.ui moduletab.ui speciestab.ui workspacetab.ui
 # UI - Utility Classes
@@ -55,7 +55,7 @@ libgui_la_SOURCES += modulechart_funcs.cpp modulechartblock.cpp modulecharthotsp
 libgui_la_SOURCES += modulecontrolwidget_funcs.cpp modulelayertab_funcs.cpp moduletab_funcs.cpp modulewidget.cpp
 libgui_la_SOURCES += outputhandler_funcs.cpp
 libgui_la_SOURCES += pairpotentialwidget_funcs.cpp procedureeditor_funcs.cpp
-libgui_la_SOURCES += speciestab_funcs.cpp stockcolours.cpp systemtemplate.cpp
+libgui_la_SOURCES += selectsystemtemplatedialog_funcs.cpp speciestab_funcs.cpp stockcolours.cpp systemtemplate.cpp
 libgui_la_SOURCES += thread_funcs.cpp
 libgui_la_SOURCES += tmdiarea.hui tmdiarea_funcs.cpp
 libgui_la_SOURCES += wizardwidget_funcs.cpp wizardwidgethighlight.cpp wizardwidgetpageinfo.cpp workspacetab_funcs.cpp
@@ -68,7 +68,7 @@ noinst_HEADERS += keywordwidgets.h
 noinst_HEADERS += layereditor.h
 noinst_HEADERS += maintab.h modulechartblock.h modulecharthotspot.h modulechartinsertionblock.h modulechartmetrics.h modulechartmoduleblock.h modulecontrolwidget.h modulelayertab.h moduletab.h modulewidget.h
 noinst_HEADERS += pairpotentialwidget.h
-noinst_HEADERS += speciestab.h stockcolours.h systemtemplate.h
+noinst_HEADERS += selectsystemtemplatedialog.h speciestab.h stockcolours.h systemtemplate.h
 noinst_HEADERS += wizardwidgetfooter.h wizardwidgetheader.h wizardwidgethighlight.h wizardwidgetpageinfo.h workspacetab.h
 
 AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@

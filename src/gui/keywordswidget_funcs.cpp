@@ -49,184 +49,188 @@ QWidget* KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase>& keyword
 	QWidget* widget = NULL;
 	KeywordWidgetBase* base = NULL;
 
-	// The widget to create here depends on the data type of the keyword
-	if (keyword->type() == KeywordBase::AtomTypeSelectionData)
+	// Ensure that we have the base keyword pointer, and its datatype
+	KeywordBase* keywordBase = keyword->base();
+	KeywordBase::KeywordDataType type = keywordBase->type();
+
+	// Try to create a suitable widget	
+	if (type == KeywordBase::AtomTypeSelectionData)
 	{
-		AtomTypeSelectionKeywordWidget* atomTypeSelectionWidget = new AtomTypeSelectionKeywordWidget(NULL, keyword, coreData);
+		AtomTypeSelectionKeywordWidget* atomTypeSelectionWidget = new AtomTypeSelectionKeywordWidget(NULL, keywordBase, coreData);
 		connect(atomTypeSelectionWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
 		widget = atomTypeSelectionWidget;
 		base = atomTypeSelectionWidget;
 	}
-	else if (keyword->type() == KeywordBase::BoolData)
+	else if (type == KeywordBase::BoolData)
 	{
-		BoolKeywordWidget* boolWidget = new BoolKeywordWidget(NULL, keyword, coreData);
+		BoolKeywordWidget* boolWidget = new BoolKeywordWidget(NULL, keywordBase, coreData);
 		connect(boolWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
 		widget = boolWidget;
 		base = boolWidget;
 	}
-	else if (keyword->type() == KeywordBase::BroadeningFunctionData)
+	else if (type == KeywordBase::BroadeningFunctionData)
 	{
-		BroadeningFunctionKeywordWidget* broadeningFunctionWidget = new BroadeningFunctionKeywordWidget(NULL, keyword, coreData);
+		BroadeningFunctionKeywordWidget* broadeningFunctionWidget = new BroadeningFunctionKeywordWidget(NULL, keywordBase, coreData);
 		connect(broadeningFunctionWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
 		widget = broadeningFunctionWidget;
 		base = broadeningFunctionWidget;
 	}
-	else if (keyword->type() == KeywordBase::CharStringData)
+	else if (type == KeywordBase::CharStringData)
 	{
-		CharStringKeywordWidget* charWidget = new CharStringKeywordWidget(NULL, keyword, coreData);
+		CharStringKeywordWidget* charWidget = new CharStringKeywordWidget(NULL, keywordBase, coreData);
 		connect(charWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
 		widget = charWidget;
 		base = charWidget;
 	}
-	else if (keyword->type() == KeywordBase::DoubleData)
+	else if (type == KeywordBase::DoubleData)
 	{
-		DoubleKeywordWidget* doubleWidget = new DoubleKeywordWidget(NULL, keyword, coreData);
+		DoubleKeywordWidget* doubleWidget = new DoubleKeywordWidget(NULL, keywordBase, coreData);
 		connect(doubleWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
 		widget = doubleWidget;
 		base = doubleWidget;
 	}
-	else if (keyword->type() == KeywordBase::EnumOptionsData)
+	else if (type == KeywordBase::EnumOptionsData)
 	{
-		EnumOptionsKeywordWidget* enumOptionsWidget = new EnumOptionsKeywordWidget(NULL, keyword, coreData);
+		EnumOptionsKeywordWidget* enumOptionsWidget = new EnumOptionsKeywordWidget(NULL, keywordBase, coreData);
 		connect(enumOptionsWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
 		widget = enumOptionsWidget;
 		base = enumOptionsWidget;
 	}
-	else if (keyword->type() == KeywordBase::ExpressionVariableListData)
+	else if (type == KeywordBase::ExpressionVariableListData)
 	{
-		ExpressionVariableListKeywordWidget* expressionVariableListWidget = new ExpressionVariableListKeywordWidget(NULL, keyword, coreData);
+		ExpressionVariableListKeywordWidget* expressionVariableListWidget = new ExpressionVariableListKeywordWidget(NULL, keywordBase, coreData);
 		connect(expressionVariableListWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
 		widget = expressionVariableListWidget;
 		base = expressionVariableListWidget;
 	}
-	else if (keyword->type() == KeywordBase::FileAndFormatData)
+	else if (type == KeywordBase::FileAndFormatData)
 	{
-		FileAndFormatKeywordWidget* fileAndFormatWidget = new FileAndFormatKeywordWidget(NULL, keyword, coreData);
+		FileAndFormatKeywordWidget* fileAndFormatWidget = new FileAndFormatKeywordWidget(NULL, keywordBase, coreData);
 		connect(fileAndFormatWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
 		widget = fileAndFormatWidget;
 		base = fileAndFormatWidget;
 	}
-	else if (keyword->type() == KeywordBase::IntegerData)
+	else if (type == KeywordBase::IntegerData)
 	{
-		IntegerKeywordWidget* intWidget = new IntegerKeywordWidget(NULL, keyword, coreData);
+		IntegerKeywordWidget* intWidget = new IntegerKeywordWidget(NULL, keywordBase, coreData);
 		connect(intWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
 		widget = intWidget;
 		base = intWidget;
 	}
-	else if (keyword->type() == KeywordBase::IsotopologueListData)
+	else if (type == KeywordBase::IsotopologueListData)
 	{
-		IsotopologueReferenceListKeywordWidget* isotopologueRefListWidget = new IsotopologueReferenceListKeywordWidget(NULL, keyword, coreData);
+		IsotopologueReferenceListKeywordWidget* isotopologueRefListWidget = new IsotopologueReferenceListKeywordWidget(NULL, keywordBase, coreData);
 		connect(isotopologueRefListWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
 		widget = isotopologueRefListWidget;
 		base = isotopologueRefListWidget;
 	}
-	else if (keyword->type() == KeywordBase::ModuleGroupsData)
+	else if (type == KeywordBase::ModuleGroupsData)
 	{
-		ModuleGroupsKeywordWidget* moduleGroupsWidget = new ModuleGroupsKeywordWidget(NULL, keyword, coreData);
+		ModuleGroupsKeywordWidget* moduleGroupsWidget = new ModuleGroupsKeywordWidget(NULL, keywordBase, coreData);
 		connect(moduleGroupsWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
 		widget = moduleGroupsWidget;
 		base = moduleGroupsWidget;
 	}
-	else if (keyword->type() == KeywordBase::ModuleRefListData)
+	else if (type == KeywordBase::ModuleRefListData)
 	{
-		ModuleRefListKeywordWidget* moduleRefListWidget = new ModuleRefListKeywordWidget(NULL, keyword, coreData);
+		ModuleRefListKeywordWidget* moduleRefListWidget = new ModuleRefListKeywordWidget(NULL, keywordBase, coreData);
 		connect(moduleRefListWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
 		widget = moduleRefListWidget;
 		base = moduleRefListWidget;
 	}
-	else if (keyword->type() == KeywordBase::NodeData)
+	else if (type == KeywordBase::NodeData)
 	{
-		NodeKeywordWidget* nodeWidget = new NodeKeywordWidget(NULL, keyword, coreData);
+		NodeKeywordWidget* nodeWidget = new NodeKeywordWidget(NULL, keywordBase, coreData);
 		connect(nodeWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
 		widget = nodeWidget;
 		base = nodeWidget;
 	}
-	else if (keyword->type() == KeywordBase::NodeAndIntegerData)
+	else if (type == KeywordBase::NodeAndIntegerData)
 	{
-		NodeAndIntegerKeywordWidget* nodeAndIntegerWidget = new NodeAndIntegerKeywordWidget(NULL, keyword, coreData);
+		NodeAndIntegerKeywordWidget* nodeAndIntegerWidget = new NodeAndIntegerKeywordWidget(NULL, keywordBase, coreData);
 		connect(nodeAndIntegerWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
 		widget = nodeAndIntegerWidget;
 		base = nodeAndIntegerWidget;
 	}
-	else if (keyword->type() == KeywordBase::NodeRefListData)
+	else if (type == KeywordBase::NodeRefListData)
 	{
-		NodeRefListKeywordWidget* nodeRefListWidget = new NodeRefListKeywordWidget(NULL, keyword, coreData);
+		NodeRefListKeywordWidget* nodeRefListWidget = new NodeRefListKeywordWidget(NULL, keywordBase, coreData);
 		connect(nodeRefListWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
 		widget = nodeRefListWidget;
 		base = nodeRefListWidget;
 	}
-	else if (keyword->type() == KeywordBase::NodeValueData)
+	else if (type == KeywordBase::NodeValueData)
 	{
-		NodeValueKeywordWidget* nodeValueWidget = new NodeValueKeywordWidget(NULL, keyword, coreData);
+		NodeValueKeywordWidget* nodeValueWidget = new NodeValueKeywordWidget(NULL, keywordBase, coreData);
 		connect(nodeValueWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
 		widget = nodeValueWidget;
 		base = nodeValueWidget;
 	}
-	else if (keyword->type() == KeywordBase::NodeValueEnumOptionsData)
+	else if (type == KeywordBase::NodeValueEnumOptionsData)
 	{
-		NodeValueEnumOptionsKeywordWidget* nodeValueEnumOptionsWidget = new NodeValueEnumOptionsKeywordWidget(NULL, keyword, coreData);
+		NodeValueEnumOptionsKeywordWidget* nodeValueEnumOptionsWidget = new NodeValueEnumOptionsKeywordWidget(NULL, keywordBase, coreData);
 		connect(nodeValueEnumOptionsWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
 		widget = nodeValueEnumOptionsWidget;
 		base = nodeValueEnumOptionsWidget;
 	}
-	else if (keyword->type() == KeywordBase::PairBroadeningFunctionData)
+	else if (type == KeywordBase::PairBroadeningFunctionData)
 	{
-		PairBroadeningFunctionKeywordWidget* pairBroadeningFunctionWidget = new PairBroadeningFunctionKeywordWidget(NULL, keyword, coreData);
+		PairBroadeningFunctionKeywordWidget* pairBroadeningFunctionWidget = new PairBroadeningFunctionKeywordWidget(NULL, keywordBase, coreData);
 		connect(pairBroadeningFunctionWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
 		widget = pairBroadeningFunctionWidget;
 		base = pairBroadeningFunctionWidget;
 	}
-	else if (keyword->type() == KeywordBase::SpeciesData)
+	else if (type == KeywordBase::SpeciesData)
 	{
-		SpeciesKeywordWidget* speciesWidget = new SpeciesKeywordWidget(NULL, keyword, coreData);
+		SpeciesKeywordWidget* speciesWidget = new SpeciesKeywordWidget(NULL, keywordBase, coreData);
 		connect(speciesWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
 		widget = speciesWidget;
 		base = speciesWidget;
 	}
-	else if (keyword->type() == KeywordBase::SpeciesRefListData)
+	else if (type == KeywordBase::SpeciesRefListData)
 	{
-		SpeciesRefListKeywordWidget* speciesRefListWidget = new SpeciesRefListKeywordWidget(NULL, keyword, coreData);
+		SpeciesRefListKeywordWidget* speciesRefListWidget = new SpeciesRefListKeywordWidget(NULL, keywordBase, coreData);
 		connect(speciesRefListWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
 		widget = speciesRefListWidget;
 		base = speciesRefListWidget;
 	}
-	else if (keyword->type() == KeywordBase::SpeciesSiteRefListData)
+	else if (type == KeywordBase::SpeciesSiteRefListData)
 	{
-		SpeciesSiteRefListKeywordWidget* speciesSiteRefListWidget = new SpeciesSiteRefListKeywordWidget(NULL, keyword, coreData);
+		SpeciesSiteRefListKeywordWidget* speciesSiteRefListWidget = new SpeciesSiteRefListKeywordWidget(NULL, keywordBase, coreData);
 		connect(speciesSiteRefListWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
 		widget = speciesSiteRefListWidget;
 		base = speciesSiteRefListWidget;
 	}
-	else if (keyword->type() == KeywordBase::WindowFunctionData)
+	else if (type == KeywordBase::WindowFunctionData)
 	{
-		WindowFunctionKeywordWidget* windowFunctionWidget = new WindowFunctionKeywordWidget(NULL, keyword, coreData);
+		WindowFunctionKeywordWidget* windowFunctionWidget = new WindowFunctionKeywordWidget(NULL, keywordBase, coreData);
 		connect(windowFunctionWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
 		widget = windowFunctionWidget;
 		base = windowFunctionWidget;
 	}
-	else if (keyword->type() == KeywordBase::Vec3DoubleData)
+	else if (type == KeywordBase::Vec3DoubleData)
 	{
-		Vec3DoubleKeywordWidget* vec3DoubleWidget = new Vec3DoubleKeywordWidget(NULL, keyword, coreData);
+		Vec3DoubleKeywordWidget* vec3DoubleWidget = new Vec3DoubleKeywordWidget(NULL, keywordBase, coreData);
 		connect(vec3DoubleWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
 		widget = vec3DoubleWidget;
 		base = vec3DoubleWidget;
 	}
-	else if (keyword->type() == KeywordBase::Vec3IntegerData)
+	else if (type == KeywordBase::Vec3IntegerData)
 	{
-		Vec3IntegerKeywordWidget* vec3IntWidget = new Vec3IntegerKeywordWidget(NULL, keyword, coreData);
+		Vec3IntegerKeywordWidget* vec3IntWidget = new Vec3IntegerKeywordWidget(NULL, keywordBase, coreData);
 		connect(vec3IntWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
 		widget = vec3IntWidget;
 		base = vec3IntWidget;
 	}
-	else if (keyword->type() == KeywordBase::Vec3NodeValueData)
+	else if (type == KeywordBase::Vec3NodeValueData)
 	{
-		Vec3NodeValueKeywordWidget* vec3NodeValueWidget = new Vec3NodeValueKeywordWidget(NULL, keyword, coreData);
+		Vec3NodeValueKeywordWidget* vec3NodeValueWidget = new Vec3NodeValueKeywordWidget(NULL, keywordBase, coreData);
 		connect(vec3NodeValueWidget, SIGNAL(keywordValueChanged()), this, SLOT(keywordDataChanged()));
 		widget = vec3NodeValueWidget;
 		base = vec3NodeValueWidget;
 	}
 
-	// Set tooltip on widget, and add to the layout and our list of controls
+	// Set tooltip on widget (using the description from the keyword pointer passed, rather than its base) and add to the list of widgets
 	if (widget)
 	{
 		widget->setToolTip(keyword->description());

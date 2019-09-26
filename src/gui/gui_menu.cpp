@@ -25,6 +25,7 @@
 #include "gui/addprocessinglayerdialog.h"
 #include "gui/addspeciesdialog.h"
 #include "gui/modulecontrolwidget.h"
+#include "gui/selectsystemtemplatedialog.h"
 #include "main/dissolve.h"
 #include "templates/variantpointer.h"
 #include <QDesktopServices>
@@ -97,6 +98,35 @@ void DissolveWindow::on_SessionNewAction_triggered(bool checked)
 	if (!checkSaveCurrentInput()) return;
 
 	startNew();
+}
+
+void DissolveWindow::on_SessionNewFromTemplateAction_triggered(bool checked)
+{
+	// Make sure there is nothing to save before we try to start afresh
+	if (!checkSaveCurrentInput()) return;
+
+	// Create / run the create from template dialog
+	static SelectSystemTemplateDialog selectTemplateDialog(this, systemTemplates_);
+	SystemTemplate* sysTemp = selectTemplateDialog.selectTemplate();
+	if (!sysTemp) return;
+
+	// Clear any data-related tabs from the UI
+	clearTabs();
+
+	// Load the input data
+	if (!dissolve_.loadInputFromString(qPrintable(sysTemp->inputFileData())))
+	{
+		startNew();
+		return;
+	}
+
+	localSimulation_ = true;
+
+	// Fully update GUI
+	fullUpdate();
+
+	// Make sure we are now on the Simulation stack page
+	showMainStackPage(DissolveWindow::SimulationStackPage);
 }
 
 void DissolveWindow::on_SessionOpenLocalAction_triggered(bool checked)

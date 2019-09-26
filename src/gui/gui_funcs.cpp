@@ -31,6 +31,7 @@
 #include "base/lineparser.h"
 #include <QCloseEvent>
 #include <QDir>
+#include <QDirIterator>
 #include <QFontDatabase>
 #include <QLCDNumber>
 #include <QMdiSubWindow>
@@ -84,8 +85,8 @@ DissolveWindow::DissolveWindow(Dissolve& dissolve) : QMainWindow(NULL), dissolve
 	updateWindowTitle();
 	updateControlsFrame();
 
-	// Add system templates to the Create group
-	addSystemTemplates();
+	// Initialise the available system templates
+	initialiseSystemTemplates();
 
 	// Show the Start stack page (we call this mostly to ensure correct availability of other controls)
 	showMainStackPage(DissolveWindow::StartStackPage);
@@ -236,6 +237,30 @@ bool DissolveWindow::openFileFromCLI(const char* inputFile, const char* restartF
 	fullUpdate();
 
 	return true;
+}
+
+/*
+ * System Templates
+ */
+
+// Initialise system templates from the main resource
+void DissolveWindow::initialiseSystemTemplates()
+{
+	// Probe our main resource object for the templates, and create local data from them
+	QDirIterator templateIterator(":/data/systemtemplates/");
+	while (templateIterator.hasNext())
+	{
+		QDir dir = templateIterator.next();
+
+		// Open the associated xml file
+		SystemTemplate* sysTemp = systemTemplates_.add();
+		if (!sysTemp->read(dir))
+		{
+			Messenger::error("Error reading the template info file '%s'.\n", qPrintable(dir.filePath("info.xml")));
+			systemTemplates_.remove(sysTemp);
+			continue;
+		}
+	}
 }
 
 /*

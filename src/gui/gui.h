@@ -118,6 +118,18 @@ class DissolveWindow : public QMainWindow
 
 
 	/*
+	 * System Templates
+	 */
+	private:
+	// List of available SystemTemplates
+	List<SystemTemplate> systemTemplates_;
+
+	private:
+	// Initialise system templates from the main resource
+	void initialiseSystemTemplates();
+
+
+	/*
 	 * Update Functions
 	 */
 	public slots:
@@ -143,6 +155,7 @@ class DissolveWindow : public QMainWindow
 	private slots:
 	// Session
 	void on_SessionNewAction_triggered(bool checked);
+	void on_SessionNewFromTemplateAction_triggered(bool checked);
 	void on_SessionOpenLocalAction_triggered(bool checked);
 	void on_SessionOpenRecentAction_triggered(bool checked);
 	void on_SessionConnectAction_triggered(bool checked);
@@ -188,18 +201,10 @@ class DissolveWindow : public QMainWindow
 	/*
 	 * 'Start' Stack Page
 	 */
-	private:
-	// List of available SystemTemplates
-	List<SystemTemplate> systemTemplates_;
-
-	private:
-	// Add system templates to the Create group
-	void addSystemTemplates();
-
 	private slots:
 	// 'Create' Group
 	void on_StartCreateNewButton_clicked(bool checked);
-	void systemTemplateClicked(bool checked);
+	void on_StartCreateFromTemplateButton_clicked(bool checked);
 	// 'Open / Connect' Group
 	void on_StartOpenLocalButton_clicked(bool checked);
 	void on_StartOpenRecentButton_clicked(bool checked);

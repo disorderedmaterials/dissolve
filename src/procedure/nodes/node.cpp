@@ -112,8 +112,8 @@ bool ProcedureNode::isType(ProcedureNode::NodeType thisType) const
 	return (thisType == type_);
 }
 
-// Return whether a name for the node is required
-bool ProcedureNode::nameRequired() const
+// Return whether a name for the node must be provided
+bool ProcedureNode::mustBeNamed() const
 {
 	return true;
 }
@@ -314,8 +314,8 @@ bool ProcedureNode::read(LineParser& parser, const CoreData& coreData)
 // Write node data to specified LineParser
 bool ProcedureNode::write(LineParser& parser, const char* prefix)
 {
-	// Block Start
-	if (nameRequired())
+	// Block Start - does this node have a required name?
+	if (mustBeNamed())
 	{
 		if (!parser.writeLineF("%s%s  '%s'\n", prefix, ProcedureNode::nodeTypes().keyword(type_), name())) return false;
 	}
