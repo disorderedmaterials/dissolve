@@ -80,6 +80,8 @@ EndLayer
 
 Layer  'Refine'
 
+  Frequency  5
+
   Module  EPSR  'EPSR01'
     Target  'Natural'  'Default'
     OnlyWhenEnergyStable  True
