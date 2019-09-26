@@ -41,7 +41,7 @@ template<class Configuration> const char* ObjectStore<Configuration>::objectType
 // Constructor
 Configuration::Configuration() : ListItem<Configuration>(), ObjectStore<Configuration>(this), generator_(ProcedureNode::GenerationContext, "EndGenerator")
 {
-	box_ = new CubicBox(1.0);
+	box_ = NULL;
 
 	clear();
 }
@@ -63,9 +63,6 @@ void Configuration::clear()
 {
 	// Clear generated content
 	empty();
-
-	// Clear used species
-	usedSpecies_.clear();
 
 	// Reset composition
 	requestedSizeFactor_ = 1.0;
