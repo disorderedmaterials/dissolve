@@ -336,7 +336,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 		TorsionKeyword,			/* 'Torsion' - Define a Torsion interaction between four atoms */
 		nSpeciesKeywords		/* Number of keywords defined for this block */
 	};
-	// Return enum option info for SiteKeyword
+	// Return enum option info for SpeciesKeyword
 	static EnumOptions<Species::SpeciesKeyword> keywords();
 	// Read Species definition from specified LineParser
 	bool read(LineParser& parser, CoreData& coreData);
