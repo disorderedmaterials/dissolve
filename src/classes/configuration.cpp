@@ -236,10 +236,16 @@ bool Configuration::prepare(ProcessPool& procPool, const PotentialMap& potential
 	 * Content Initialisation
 	 */
 
-	// If the Configuation is currently empty, then try to load starting coordinates or run the generator Procedure
+	// If the Configuation is currently empty, run the generator Procedure and potentially load coordinates from file
 	if (nAtoms() == 0)
 	{
-		// If an input file was specified, load it. Otherwise, generate the Configuration
+		// Run the generator procedure (we will need species / atom info to load any coordinates in to anyway)
+		if (!generate(procPool)) return false;
+
+		// If there are still no atoms, complain.
+		if (nAtoms() == 0) return false;
+
+		// If an input file was specified, try to load it
 		if (inputCoordinates_.hasValidFileAndFormat())
 		{
 			if (DissolveSys::fileExists(inputCoordinates_))
@@ -252,10 +258,6 @@ bool Configuration::prepare(ProcessPool& procPool, const PotentialMap& potential
 			}
 			else return Messenger::error("Input coordinates file '%s' specified for Configuration '%s', but it does not exist.\n", name(), inputCoordinates_.filename());
 		}
-		else if (!generate(procPool)) return false;
-
-		// If there are still no atoms, complain.
-		if (nAtoms() == 0) return false;
 	}
 
 	/*
