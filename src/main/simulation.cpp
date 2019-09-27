@@ -146,15 +146,15 @@ bool Dissolve::iterate(int nIterations)
 
 			Messenger::heading("'%s'", cfg->name());
 
+			// Perform any necessary actions before we start processing this Configuration's Modules
+			if (!cfg->prepare(worldPool(), potentialMap_, pairPotentialRange_)) return false;
+
 			// Check involvement of this process
 			if (!cfg->processPool().involvesMe())
 			{
 				Messenger::print("Process rank %i not involved with this Configuration, so moving on...\n", ProcessPool::worldRank());
 				continue;
 			}
-
-			// Perform any necessary actions before we start processing this Configuration's Modules
-			if (!cfg->prepare(potentialMap_, pairPotentialRange_)) return false;
 
 			// Loop over Modules defined in the Configuration
 			ListIterator<Module> moduleIterator(cfg->modules());

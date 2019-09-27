@@ -298,7 +298,7 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	 */
 	public:
 	// Perform any preparative tasks for the Configuration, before Module processing begins
-	bool prepare(const PotentialMap& potentialMap, double pairPotentialRange);
+	bool prepare(ProcessPool& procPool, const PotentialMap& potentialMap, double pairPotentialRange);
 
 
 	/*

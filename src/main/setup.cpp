@@ -39,50 +39,6 @@ bool Dissolve::setUpSimulation()
 	}
 
 	/*
-	 * Set up Configurations
-	 */
-
-	Messenger::print("\n");
-	Messenger::print("*** Setting up Configurations...\n");
-	int index = 0;
-	for (Configuration* cfg = configurations().first(); cfg != NULL; cfg = cfg->next(), ++index)
-	{
-		Messenger::print("*** Configuration %2i: '%s'\n", index, cfg->name());
-
-		/*
-		 * If an input coordinates file has been specified and exists then this overrides our generator *and* any
-		 * coordinates that may be present in the restart file. If no restart file data was read in (nAtoms will currently
-		 * be zero) then we will need to run the generator() anyway on order to set up the species / atoms.
-		 */
-		if (cfg->inputCoordinates().hasValidFileAndFormat())
-		{
-			if (DissolveSys::fileExists(cfg->inputCoordinates()))
-			{
-				// Set up the Configuration from the Species populations, unless it has already been set up by reading the restart file
-				if (cfg->nAtoms() == 0)
-				{
-					// No atoms (presumably no data was read from the restart file) so run the generator
-					// TODO DANGER Will overwrite every time we tun the simulation (e.g. from the GUI), rather than be loaded on startup (which is what should happen) 
-					if (!cfg->generate(worldPool())) return false;
-				}
-
-				Messenger::print("Loading initial coordinates from file '%s'...\n", cfg->inputCoordinates().filename());
-				LineParser inputFileParser(&worldPool());
-				if (!inputFileParser.openInput(cfg->inputCoordinates())) return false;
-				if (!cfg->loadCoordinates(inputFileParser, cfg->inputCoordinates().coordinateFormat())) return false;
-				inputFileParser.closeFiles();
-			}
-			else return Messenger::error("Input coordinates file '%s' specified, but it does not exist.\n", cfg->inputCoordinates().filename());
-		}
-		else if (cfg->nAtoms() == 0)
-		{
-			// Set up the Configuration from its generator
-			if (!cfg->generate(worldPool())) return false;
-		}
-		else Messenger::print("Configuration loaded from the restart file.\n");
-	}
-
-	/*
 	 * Pair Potentials
 	 * We expect a PairPotential to have been defined for every combination of AtomType used in the system
 	 */

@@ -230,8 +230,34 @@ GenericList& Configuration::moduleData()
  */
 
 // Perform any pre-processing tasks for the Configuration
-bool Configuration::prepare(const PotentialMap& potentialMap, double pairPotentialRange)
+bool Configuration::prepare(ProcessPool& procPool, const PotentialMap& potentialMap, double pairPotentialRange)
 {
+	/*
+	 * Content Initialisation
+	 */
+
+	// If the Configuation is currently empty, then try to load starting coordinates or run the generator Procedure
+	if (nAtoms() == 0)
+	{
+		// If an input file was specified, load it. Otherwise, generate the Configuration
+		if (inputCoordinates_.hasValidFileAndFormat())
+		{
+			if (DissolveSys::fileExists(inputCoordinates_))
+			{
+				Messenger::print("Loading initial coordinates from file '%s'...\n", inputCoordinates_.filename());
+				LineParser inputFileParser(&procPool);
+				if (!inputFileParser.openInput(inputCoordinates_)) return false;
+				if (!loadCoordinates(inputFileParser, inputCoordinates_.coordinateFormat())) return false;
+				inputFileParser.closeFiles();
+			}
+			else return Messenger::error("Input coordinates file '%s' specified for Configuration '%s', but it does not exist.\n", name(), inputCoordinates_.filename());
+		}
+		else if (!generate(procPool)) return false;
+
+		// If there are still no atoms, complain.
+		if (nAtoms() == 0) return false;
+	}
+
 	/*
 	 * Cell Generation
 	 */
