@@ -130,8 +130,7 @@ void SpeciesWidget::on_ToolsMinimiseButton_clicked(bool checked)
 	generator.addRootSequenceNode(addSpeciesNode);
 	if (!temporaryCfg->generate(temporaryDissolve.worldPool())) return;
 
-
-	// Create an Geometry Optimisation Module in a new processing layer, and set everything up
+	// Create a Geometry Optimisation Module in a new processing layer, and set everything up
 	if (!temporaryDissolve.createModuleInLayer("GeometryOptimisation", "Processing", temporaryCfg)) return;
 	if (!temporaryDissolve.generateMissingPairPotentials(PairPotential::LennardJonesGeometricType)) return;
 	if (!temporaryDissolve.setUp()) return;

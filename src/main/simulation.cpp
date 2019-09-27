@@ -38,7 +38,7 @@ int Dissolve::seed() const
 	return seed_;
 }
 
-// Set frequency with which to write various iteration dat
+// Set frequency with which to write various iteration data
 void Dissolve::setRestartFileFrequency(int n)
 {
 	restartFileFrequency_ = n;
