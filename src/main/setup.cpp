@@ -78,19 +78,5 @@ bool Dissolve::setUpSimulation()
 	Messenger::print("Creating PairPotential matrix (%ix%i)...\n", coreData_.nAtomTypes(), coreData_.nAtomTypes());
 	if (!potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_, pairPotentialRange_)) return false;
 
-
-	/*
-	 * Perform Set-Up Steps in Modules
-	 */
-
-	Messenger::print("*** Performing Module set-up...\n");
-
-	// Loop over all used modules (in Configurations and ModuleLayers)
-	RefListIterator<Module> moduleIterator(moduleInstances_);
-	while (Module* module = moduleIterator.iterate())
-	{
-		if (!module->setUp(*this, worldPool())) return false;
-	}
-
 	return true;
 }

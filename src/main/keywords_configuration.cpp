@@ -139,6 +139,7 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 				// Parse rest of Module block
 				module->setConfigurationLocal(true);
 				if (!ModuleBlock::parse(parser, dissolve, module, cfg->moduleData(), true)) error = true;
+				else if (!module->setUp(*dissolve, dissolve->worldPool())) error = true;
 				break;
 			case (ConfigurationBlock::SizeFactorKeyword):
 				cfg->setRequestedSizeFactor(parser.argd(1));

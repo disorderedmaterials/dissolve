@@ -14,7 +14,6 @@
 
 ## Other
 - [General] Harmonise command-line arguments between CLI and GUI versions (use gengetopt?)
-- [Workflow] Run Module::setUp() when Module is finished being read, rather than in the main set-up call (which we are trying to avoid using).
 
 ## GUI
 - Add option for Min/Max/Delta labels in Vec3Labels (and Vec3WidgetLabels), and set the Range keywords of Calculate1DProcedureNode and others to use them.
