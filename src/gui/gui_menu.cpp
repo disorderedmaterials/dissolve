@@ -32,6 +32,7 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QFileInfo>
 
 /*
  * Main Menu
@@ -142,6 +143,10 @@ void DissolveWindow::on_SessionOpenLocalAction_triggered(bool checked)
 
 	// Clear Dissolve itself
 	dissolve_.clear();
+
+	// Set the current dir to the location of the new file
+	QFileInfo inputFileInfo(inputFile);
+	QDir::setCurrent(inputFileInfo.absoluteDir().absolutePath());
 
 	// Load the input file
 	if (!dissolve_.loadInput(qPrintable(inputFile))) QMessageBox::warning(this, "Input file contained errors.", "The input file failed to load correctly.\nCheck the simulation carefully, and see the messages for more details.", QMessageBox::Ok, QMessageBox::Ok);
