@@ -93,6 +93,21 @@ class Dissolve
 
 
 	/*
+	 * Master Terms
+	 * (Exposes lists in coreData_)
+	 */
+	public:
+	// Return list of master Bond parameters
+	const List<MasterIntra>& masterBonds() const;
+	// Return list of master Angle parameters
+	const List<MasterIntra>& masterAngles() const;
+	// Return list of master Torsion parameters
+	const List<MasterIntra>& masterTorsions() const;
+	// Check and print MasterTerm usage
+	void checkMasterTermUsage() const;
+
+
+	/*
 	 * Species Definitions
 	 * (Exposes List<Species> in coreData_)
 	 */

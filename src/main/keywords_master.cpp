@@ -73,12 +73,15 @@ bool MasterBlock::parse(LineParser& parser, CoreData& coreData)
 					error = true;
 					break;
 				}
+
 				// Create a new master angle definition
 				masterIntra = coreData.addMasterAngle(parser.argc(1));
 				if (masterIntra)
 				{
-					masterIntra->setName(parser.argc(1));
 					masterIntra->setForm(af);
+
+					CharString termInfo("     %-10s  %-12s", masterIntra->name(), SpeciesAngle::angleFunction( (SpeciesAngle::AngleFunction) masterIntra->form()));
+
 					for (int n=0; n<SpeciesAngle::nFunctionParameters(af); ++n)
 					{
 						if (!parser.hasArg(n+3))
@@ -88,7 +91,10 @@ bool MasterBlock::parse(LineParser& parser, CoreData& coreData)
 							break;
 						}
 						masterIntra->setParameter(n, parser.argd(n+3));
+						termInfo.strcatf("  %12.4e", masterIntra->parameter(n));
 					}
+
+					Messenger::print("Defined master angle term: %s\n", termInfo.get());
 				}
 				else error = true;
 				break;
@@ -101,11 +107,15 @@ bool MasterBlock::parse(LineParser& parser, CoreData& coreData)
 					error = true;
 					break;
 				}
+
 				// Create a new master bond definition
 				masterIntra = coreData.addMasterBond(parser.argc(1));
 				if (masterIntra)
 				{
 					masterIntra->setForm(bf);
+
+					CharString termInfo("%-10s  %-12s", masterIntra->name(), SpeciesBond::bondFunction( (SpeciesBond::BondFunction) masterIntra->form()));
+
 					for (int n=0; n<SpeciesBond::nFunctionParameters(bf); ++n)
 					{
 						if (!parser.hasArg(n+3))
@@ -115,7 +125,10 @@ bool MasterBlock::parse(LineParser& parser, CoreData& coreData)
 							break;
 						}
 						masterIntra->setParameter(n, parser.argd(n+3));
+						termInfo.strcatf("  %12.4e", masterIntra->parameter(n));
 					}
+
+					Messenger::print("Defined master bond term: %s\n", termInfo.get());
 				}
 				else error = true;
 				break;
@@ -132,11 +145,15 @@ bool MasterBlock::parse(LineParser& parser, CoreData& coreData)
 					error = true;
 					break;
 				}
+
 				// Create a new master torsion definition
 				masterIntra = coreData.addMasterTorsion(parser.argc(1));
 				if (masterIntra)
 				{
 					masterIntra->setForm(tf);
+
+					CharString termInfo("     %-10s  %-12s", masterIntra->name(), SpeciesTorsion::torsionFunction( (SpeciesTorsion::TorsionFunction) masterIntra->form()));
+
 					for (int n=0; n<SpeciesTorsion::nFunctionParameters(tf); ++n)
 					{
 						if (!parser.hasArg(n+3))
@@ -146,7 +163,10 @@ bool MasterBlock::parse(LineParser& parser, CoreData& coreData)
 							break;
 						}
 						masterIntra->setParameter(n, parser.argd(n+3));
+						termInfo.strcatf("  %12.4e", masterIntra->parameter(n));
 					}
+
+					Messenger::print("Defined master torsion term: %s\n", termInfo.get());
 				}
 				else error = true;
 				break;
