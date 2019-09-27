@@ -115,7 +115,7 @@ EnumOptions<Species::SpeciesKeyword> Species::keywords()
 // Read Species definition from specified LineParser
 bool Species::read(LineParser& parser, CoreData& coreData)
 {
-	Messenger::printVerbose("\nParsing Species '%s'\n", name());
+	Messenger::print("\nParsing Species '%s'\n", name());
 
 	Element* el;
 	CharString arg1, arg2;
@@ -218,7 +218,7 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 				at = coreData.findAtomType(parser.argc(6));
 				if (!at)
 				{
-					Messenger::print("Creating AtomType '%s'...\n", parser.argc(6));
+					Messenger::printVerbose("Creating AtomType '%s'...\n", parser.argc(6));
 					at = coreData.addAtomType(el);
 					at->setName(parser.argc(6));
 				}
@@ -332,7 +332,7 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 			case (Species::GrainKeyword):
 				sg = addGrain();
 				sg->setName(uniqueGrainName(parser.argc(1)));
-				Messenger::print("Added grain definition '%s' to Species '%s'\n", sg->name(), name());
+				Messenger::printVerbose("Added grain definition '%s' to Species '%s'\n", sg->name(), name());
 				for (int n=2; n<parser.nArgs(); ++n)
 				{
 					i = atom(parser.argi(n)-1);
@@ -346,7 +346,7 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 				break;
 			case (Species::IsotopologueKeyword):
 				iso = addIsotopologue(uniqueIsotopologueName(parser.argc(1)), coreData.atomTypes());
-				Messenger::print("Added Isotopologue '%s' to Species '%s'\n", iso->name(), name());
+				Messenger::printVerbose("Added Isotopologue '%s' to Species '%s'\n", iso->name(), name());
 				// Each parser argument is a string of the form ATOMTYPE=ISO
 				for (int n=2; n<parser.nArgs(); ++n)
 				{

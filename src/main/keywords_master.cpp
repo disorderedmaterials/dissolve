@@ -94,7 +94,7 @@ bool MasterBlock::parse(LineParser& parser, CoreData& coreData)
 						termInfo.strcatf("  %12.4e", masterIntra->parameter(n));
 					}
 
-					Messenger::print("Defined master angle term: %s\n", termInfo.get());
+					Messenger::printVerbose("Defined master angle term: %s\n", termInfo.get());
 				}
 				else error = true;
 				break;
@@ -128,7 +128,7 @@ bool MasterBlock::parse(LineParser& parser, CoreData& coreData)
 						termInfo.strcatf("  %12.4e", masterIntra->parameter(n));
 					}
 
-					Messenger::print("Defined master bond term: %s\n", termInfo.get());
+					Messenger::printVerbose("Defined master bond term: %s\n", termInfo.get());
 				}
 				else error = true;
 				break;
@@ -166,7 +166,7 @@ bool MasterBlock::parse(LineParser& parser, CoreData& coreData)
 						termInfo.strcatf("  %12.4e", masterIntra->parameter(n));
 					}
 
-					Messenger::print("Defined master torsion term: %s\n", termInfo.get());
+					Messenger::printVerbose("Defined master torsion term: %s\n", termInfo.get());
 				}
 				else error = true;
 				break;
