@@ -65,7 +65,7 @@ bool Dissolve::loadInput(LineParser& parser)
 				}
 				cfg = addConfiguration();
 				cfg->setName(parser.argc(1));
-				Messenger::print("\n[ Created Configuration '%s' ]\n", cfg->name());
+				Messenger::print("\n--> Created Configuration '%s'\n", cfg->name());
 				if (!ConfigurationBlock::parse(parser, this, cfg)) error = true;
 				break;
 			case (BlockKeywords::LayerBlockKeyword):
@@ -78,7 +78,7 @@ bool Dissolve::loadInput(LineParser& parser)
 				}
 				layer = addProcessingLayer();
 				layer->setName(parser.argc(1));
-				Messenger::print("\n[ Created processing layer '%s' ]\n", layer->name());
+				Messenger::print("\n--> Created processing layer '%s'\n", layer->name());
 				if (!LayerBlock::parse(parser, this, layer)) error = true;
 				break;
 			case (BlockKeywords::MasterBlockKeyword):
@@ -100,7 +100,7 @@ bool Dissolve::loadInput(LineParser& parser)
 				}
 				sp = addSpecies();
 				sp->setName(parser.argc(1));
-				Messenger::print("\n[ Created Species '%s' ]\n", sp->name());
+				Messenger::print("\n--> Created Species '%s'\n", sp->name());
 				if (!sp->read(parser, coreData_)) error = true;
 				else if (Messenger::isVerbose())
 				{
