@@ -22,12 +22,9 @@
 #include "classes/species.h"
 #include "classes/masterintra.h"
 #include "classes/atomtype.h"
-#include "classes/box.h"
 #include "data/isotopes.h"
 #include "base/lineparser.h"
 #include "base/processpool.h"
-#include <string.h>
-#include <base/sysfunc.h>
 
 // Static Members (ObjectStore)
 template<class Species> RefDataList<Species,int> ObjectStore<Species>::objects_;
