@@ -63,7 +63,7 @@ SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabW
 
 	// Connect signals / slots
 	connect(ui_.ViewerWidget->speciesViewer(), SIGNAL(dataChanged()), this, SLOT(updateControls()));
-	connect(ui_.ViewerWidget->speciesViewer(), SIGNAL(dataModified(bool)), dissolveWindow_, SLOT(setModified(bool)));
+	connect(ui_.ViewerWidget->speciesViewer(), SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
 
 	refreshing_ = false;
 }
@@ -481,7 +481,7 @@ void SpeciesTab::on_AtomAddButton_clicked(bool checked)
 
 	refreshing_ = false;
 
-	dissolveWindow_->setModifiedAndInvalidated();
+	dissolveWindow_->setModified();
 }
 
 void SpeciesTab::on_AtomRemoveButton_clicked(bool checked)
@@ -514,14 +514,14 @@ void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem* w)
 				atomType->setName(qPrintable(w->text()));
 			}
 			speciesAtom->setAtomType(atomType);
-			dissolveWindow_->setModifiedAndInvalidated();
+			dissolveWindow_->setModified();
 			break;
 		// Coordinates
 		case (2):
 		case (3):
 		case (4):
 			speciesAtom->setCoordinate(w->column()-1, w->text().toDouble());
-			dissolveWindow_->setModifiedAndInvalidated();
+			dissolveWindow_->setModified();
 			break;
 		// Charge
 		case (5):

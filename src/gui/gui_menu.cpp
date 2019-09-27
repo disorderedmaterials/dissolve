@@ -346,8 +346,8 @@ void DissolveWindow::on_SimulationSetRandomSeedAction_triggered(bool checked)
 
 void DissolveWindow::on_SimulationRunAction_triggered(bool checked)
 {
-	// Make sure everything is set-up
-	if ((!dissolve_.isSetUp()) && (!dissolve_.setUp())) return;
+	// Prepare the simulation
+	if (!dissolve_.prepare()) return;
 
 	// Prepare the GUI
 	setWidgetsForRun();
@@ -362,8 +362,8 @@ void DissolveWindow::on_SimulationRunAction_triggered(bool checked)
 
 void DissolveWindow::on_SimulationStepAction_triggered(bool checked)
 {
-	// Make sure everything is set-up
-	if ((!dissolve_.isSetUp()) && (!dissolve_.setUp())) return;
+	// Prepare the simulation
+	if (!dissolve_.prepare()) return;
 
 	// Prepare the GUI
 	setWidgetsForRun();
@@ -378,8 +378,8 @@ void DissolveWindow::on_SimulationStepAction_triggered(bool checked)
 
 void DissolveWindow::on_SimulationStepFiveAction_triggered(bool checked)
 {
-	// Make sure everything is set-up
-	if ((!dissolve_.isSetUp()) && (!dissolve_.setUp())) return;
+	// Prepare the simulation
+	if (!dissolve_.prepare()) return;
 
 	// Prepare the GUI
 	setWidgetsForRun();

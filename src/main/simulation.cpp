@@ -20,10 +20,11 @@
 */
 
 #include "main/dissolve.h"
-// #include "modules/export/export.h"
 #include "base/sysfunc.h"
 #include "base/lineparser.h"
 #include "genericitems/listhelper.h"
+#include "classes/atomtype.h"
+#include "classes/species.h"
 #include <cstdio>
 
 // Set random seed
@@ -50,6 +51,64 @@ int Dissolve::restartFileFrequency() const
 	return restartFileFrequency_;
 }
 
+// Prepare for main simulation
+bool Dissolve::prepare()
+{
+	Messenger::banner("Preparing Simulation");
+
+	// Initialise random seed
+	if (seed_ == -1) srand( (unsigned)time( NULL ) );
+	else srand(seed_);
+
+	// Check Species
+	for (Species* sp = species().first(); sp != NULL; sp = sp->next()) if (!sp->checkSetUp(coreData_.atomTypes())) return false;
+
+	/*
+	 * Pair Potentials
+	 * We expect a PairPotential to have been defined for every combination of AtomType used in the system
+	 */
+
+	Messenger::print("\n");
+	Messenger::print("*** Setting up PairPotentials...\n");
+	int nMissingPots = 0;
+	for (AtomType* at1 = coreData_.atomTypes().first(); at1 != NULL; at1 = at1->next())
+	{
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next())
+		{
+			PairPotential* pot = pairPotential(at1, at2);
+			if (pot == NULL)
+			{
+				Messenger::error("A PairPotential between AtomTypes '%s' and '%s' is required, but has not been defined.\n", at1->name(), at2->name());
+				++nMissingPots;
+				continue;
+			}
+
+			// Setup PairPotential
+			if (!pot->setUp(pairPotentialRange_, pairPotentialDelta_, pairPotentialsIncludeCoulomb_))
+			{
+				Messenger::error("Failed to set up PairPotential between AtomTypes '%s' and '%s'.\n", at1->name(), at2->name());
+				return false;
+			}
+
+			// Retrieve additional potential from the processing module data, if present
+			CharString itemName("Potential_%s-%s_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ());
+
+			if (!processingModuleData_.contains(itemName, "Dissolve")) continue;
+			pot->setUAdditional(GenericListHelper<Data1D>::retrieve(processingModuleData_, itemName, "Dissolve", Data1D()));
+		}
+	}
+	if (nMissingPots > 0) return false;
+
+	// Create PairPotential matrix
+	Messenger::print("Creating PairPotential matrix (%ix%i)...\n", coreData_.nAtomTypes(), coreData_.nAtomTypes());
+	if (!potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_, pairPotentialRange_)) return false;
+
+	// Set up parallel comms / limits etc.
+	if (!setUpMPIPools()) return Messenger::error("Failed to set up parallel communications.\n");
+
+	return true;
+}
+
 // Iterate main simulation
 bool Dissolve::iterate(int nIterations)
 {
@@ -62,8 +121,6 @@ bool Dissolve::iterate(int nIterations)
 	 *  4)	Run analysis processing Modules
 	 *  5)	Write restart file (master process only)
 	 */
-
-	if (!setUp_) return Messenger::error("Simulation has not been set up.\n");
 
 	mainLoopTimer_.zero();
 	mainLoopTimer_.start();

@@ -186,10 +186,11 @@ int main(int argc, char **argv)
 	if (nIterations > 0)
 	{
 		// Prepare for run
-		if (!dissolve.setUp()) return 1;
+		if (!dissolve.prepare()) return 1;
 
 		// Run main simulation
 		bool result = dissolve.iterate(nIterations);
+		if (!result) return 1;
 	}
 
 	// Update and show the main window

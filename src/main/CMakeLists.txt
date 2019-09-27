@@ -15,7 +15,6 @@ add_library(main
   masterterms.cpp
   modules.cpp
   pairpotentials.cpp
-  setup.cpp
   simulation.cpp
   species.cpp
 

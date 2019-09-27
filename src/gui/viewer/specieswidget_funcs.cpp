@@ -133,9 +133,9 @@ void SpeciesWidget::on_ToolsMinimiseButton_clicked(bool checked)
 	// Create a Geometry Optimisation Module in a new processing layer, and set everything up
 	if (!temporaryDissolve.createModuleInLayer("GeometryOptimisation", "Processing", temporaryCfg)) return;
 	if (!temporaryDissolve.generateMissingPairPotentials(PairPotential::LennardJonesGeometricType)) return;
-	if (!temporaryDissolve.setUp()) return;
 
 	// Run the calculation
+	if (!temporaryDissolve.prepare()) return;
 	temporaryDissolve.iterate(1);
 
 	// Copy the optimised coordinates from the temporary Configuration to the target Species
