@@ -92,17 +92,5 @@ bool Dissolve::setUpSimulation()
 		if (!module->setUp(*this, worldPool())) return false;
 	}
 
-
-	/*
-	 * Print Defined Species
-	 */
-
-	Messenger::print("*** Defined Species\n");
-	for (Species* sp = species().first(); sp != NULL; sp = sp->next())
-	{
-		Messenger::print("--- Species '%s'...\n", sp->name());
-		sp->print();
-	}
-
 	return true;
 }

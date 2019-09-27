@@ -102,6 +102,11 @@ bool Dissolve::loadInput(LineParser& parser)
 				sp->setName(parser.argc(1));
 				Messenger::print("\n[ Created Species '%s' ]\n", sp->name());
 				if (!sp->read(parser, coreData_)) error = true;
+				else if (Messenger::isVerbose())
+				{
+					Messenger::print("\n--- Species '%s'...\n", sp->name());
+					sp->print();
+				}
 				break;
 			default:
 				Messenger::error("Block keyword '%s' is not relevant in this context.\n", BlockKeywords::keywords().keyword(kwd));
