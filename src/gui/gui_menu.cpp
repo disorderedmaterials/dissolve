@@ -169,7 +169,7 @@ void DissolveWindow::on_SessionOpenLocalAction_triggered(bool checked)
 	dissolveState_ = EditingState;
 
 	// Check the beat file
-	CharString beatFile("%s.bet", qPrintable(inputFile));
+	CharString beatFile("%s.beat", qPrintable(inputFile));
 	if (DissolveSys::fileExists(beatFile))
 	{
 		// TODO
