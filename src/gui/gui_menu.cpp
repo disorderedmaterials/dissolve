@@ -144,11 +144,7 @@ void DissolveWindow::on_SessionOpenLocalAction_triggered(bool checked)
 	dissolve_.clear();
 
 	// Load the input file
-	if (!dissolve_.loadInput(qPrintable(inputFile)))
-	{
-		startNew();
-		return;
-	}
+	if (!dissolve_.loadInput(qPrintable(inputFile))) QMessageBox::warning(this, "Input file contained errors.", "The input file failed to load correctly.\nCheck the simulation carefully, and see the messages for more details.", QMessageBox::Ok, QMessageBox::Ok);
 
 	localSimulation_ = true;
 
@@ -157,12 +153,7 @@ void DissolveWindow::on_SessionOpenLocalAction_triggered(bool checked)
 	if (DissolveSys::fileExists(restartFile))
 	{
 		Messenger::print("\nRestart file '%s' exists and will be loaded.\n", restartFile.get());
-		if (!dissolve_.loadRestart(restartFile.get()))
-		{
-			Messenger::error("Restart file contained errors.\n");
-			startNew();
-			return;
-		}
+		if (!dissolve_.loadRestart(restartFile.get())) QMessageBox::warning(this, "Restart file contained errors.", "The restart file failed to load correctly.\nSee the messages for more details.", QMessageBox::Ok, QMessageBox::Ok);
 	}
 	else Messenger::print("\nRestart file '%s' does not exist.\n", restartFile.get());
 

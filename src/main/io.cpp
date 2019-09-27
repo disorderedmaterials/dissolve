@@ -119,11 +119,7 @@ bool Dissolve::loadInput(LineParser& parser)
 	}
 
 	// Error encountered?
-	if (error)
-	{
-		Messenger::print("\nErrors encountered while parsing input.\nLoad aborted.\n");
-		clear();
-	}
+	if (error) Messenger::error("Errors encountered while parsing input.");
 	
 	// Done
 	parser.closeFiles();
