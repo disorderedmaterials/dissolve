@@ -424,14 +424,17 @@ void SpeciesTab::on_IsotopologueRemoveButton_clicked(bool checked)
 
 void SpeciesTab::on_IsotopologueGenerateButton_clicked(bool checked)
 {
+	// TODO
 }
 
 void SpeciesTab::on_IsotopologueExpandAllButton_clicked(bool checked)
 {
+	ui_.IsotopologuesTree->expandAll();
 }
 
 void SpeciesTab::on_IsotopologueCollapseAllButton_clicked(bool checked)
 {
+	ui_.IsotopologuesTree->collapseAll();
 }
 
 void SpeciesTab::on_IsotopologuesTree_itemChanged(QTreeWidgetItem* item, int column)
