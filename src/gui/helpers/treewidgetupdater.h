@@ -73,7 +73,15 @@ template <class T, class I> class TreeWidgetUpdater
 
 			++count;
 		}
+
+		// If there are still items remaining in the widget, delete them now
+		while (count < treeWidget->topLevelItemCount())
+		{
+			QTreeWidgetItem* item = treeWidget->takeTopLevelItem(count);
+			delete item;
+		}
 	}
+
 	// Update the children of the specified parent QTreeWidgetItem
 	TreeWidgetUpdater(QTreeWidgetItem* parentItem, const List<I>& data, T* functionParent, TreeWidgetChildUpdateFunction updateChildFunction)
 	{
@@ -113,6 +121,9 @@ template <class T, class I> class TreeWidgetUpdater
 
 			++count;
 		}
+
+		// If there are still items remaining in the widget, delete them now
+		while (count < parentItem->childCount()) parentItem->removeChild(parentItem->child(count));
 	}
 };
 
@@ -160,6 +171,9 @@ template <class T, class I> class TreeWidgetRefListUpdater
 
 			++count;
 		}
+
+		// If there are still items remaining in the widget, delete them now
+		while (count < parentItem->childCount()) parentItem->removeChild(parentItem->child(count));
 	}
 };
 
@@ -207,6 +221,9 @@ template <class T, class I, class D> class TreeWidgetRefDataListUpdater
 
 			++count;
 		}
+
+		// If there are still items remaining in the widget, delete them now
+		while (count < parentItem->childCount()) parentItem->removeChild(parentItem->child(count));
 	}
 };
 
