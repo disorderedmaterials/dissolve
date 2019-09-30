@@ -1,6 +1,6 @@
 /*
-	*** Dissolve GUI - Simulation Page - Tabs
-	*** src/gui/gui_simulation_tabs.cpp
+	*** Dissolve GUI - Tabs
+	*** src/gui/gui_tabs.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.

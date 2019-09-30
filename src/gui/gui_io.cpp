@@ -1,6 +1,6 @@
 /*
-	*** Dissolve GUI - Simulation Widget State Functions
-	*** src/gui/gui_simulation_state.cpp
+	*** Dissolve GUI - I/O
+	*** src/gui/gui_io.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.

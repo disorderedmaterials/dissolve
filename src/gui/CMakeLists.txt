@@ -151,12 +151,12 @@ SET(gui_SRCS
   workspacetab_funcs.cpp
 
   # Main UI
+  gui_control.cpp
   gui_funcs.cpp
   gui_menu.cpp
-  gui_simulation_control.cpp
-  gui_simulation_state.cpp
-  gui_simulation_tabs.cpp
+  gui_io.cpp
   gui_start.cpp
+  gui_tabs.cpp
   guide.cpp
   guidepage.cpp
   guidepagehighlight.cpp
