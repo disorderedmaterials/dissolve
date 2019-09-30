@@ -40,7 +40,7 @@ bool DissolveWindow::saveWindowLayout()
 	while (MainTab* tab = tabIterator.iterate())
 	{
 		// Write tab type and title
-		if (!stateParser.writeLineF("'%s'  %s\n", tab->title(), tab->tabType())) return false;
+		if (!stateParser.writeLineF("'%s'  %s\n", tab->title(), MainTab::tabTypes().keyword(tab->type()))) return false;
 
 		// Write tab state
 		if (!tab->writeState(stateParser)) return false;

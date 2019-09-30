@@ -69,9 +69,9 @@ ConfigurationTab::~ConfigurationTab()
  */
 
 // Return tab type
-const char* ConfigurationTab::tabType() const
+MainTab::TabType ConfigurationTab::type() const
 {
-	return "ConfigurationTab";
+	return MainTab::ConfigurationTabType;
 }
 
 // Raise suitable dialog for entering / checking new tab name

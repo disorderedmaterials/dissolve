@@ -55,7 +55,7 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
 	 */
 	public:
 	// Return tab type
-	const char* tabType() const;
+	MainTab::TabType type() const;
 	// Raise suitable dialog for entering / checking new tab name
 	QString getNewTitle(bool& ok);
 	// Return whether the title of the tab can be changed

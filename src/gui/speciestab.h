@@ -60,7 +60,7 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	 */
 	public:
 	// Return tab type
-	const char* tabType() const;
+	MainTab::TabType type() const;
 	// Raise suitable dialog for entering / checking new tab name
 	QString getNewTitle(bool& ok);
 	// Return whether the title of the tab can be changed

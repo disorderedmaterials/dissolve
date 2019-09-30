@@ -25,6 +25,7 @@
 #include "gui/widgets/subwindow.h"
 #include "module/module.h"
 #include "base/charstring.h"
+#include "base/enumoptions.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
 #include <QString>
@@ -38,13 +39,17 @@ class QMdiArea;
 class QTabWidget;
 class QWidget;
 
-// Base 
+// Base Tab
 class MainTab
 {
 	public:
 	// Constructor / Destructor
 	MainTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, QWidget* page);
 	virtual ~MainTab();
+	// Tab Types
+	enum TabType { ConfigurationTabType, ForcefieldTabType, ModuleTabType, ModuleLayerTabType, SpeciesTabType, WorkspaceTabType };
+	// Return enum options for TabType
+	static EnumOptions<MainTab::TabType> tabTypes();
 
 
 	/*
@@ -68,7 +73,7 @@ class MainTab
 
 	public:
 	// Return tab type
-	virtual const char* tabType() const = 0;
+	virtual TabType type() const = 0;
 	// Return page widget
 	QWidget* page() const;
 	// Return whether the title of the tab can be changed

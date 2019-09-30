@@ -81,9 +81,9 @@ SpeciesTab::~SpeciesTab()
  */
 
 // Return tab type
-const char* SpeciesTab::tabType() const
+MainTab::TabType SpeciesTab::type() const
 {
-	return "SpeciesTab";
+	return MainTab::SpeciesTabType;
 }
 
 // Raise suitable dialog for entering / checking new tab name

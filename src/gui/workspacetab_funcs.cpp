@@ -49,13 +49,13 @@ WorkspaceTab::~WorkspaceTab()
 }
 
 /*
- * Data
+ * MainTab Reimplementations
  */
 
 // Return tab type
-const char* WorkspaceTab::tabType() const
+MainTab::TabType WorkspaceTab::type() const
 {
-	return "WorkspaceTab";
+	return MainTab::WorkspaceTabType;
 }
 
 // Return whether the title of the tab can be changed
