@@ -49,6 +49,9 @@ void DissolveWindow::on_MainTabs_currentChanged(int index)
 
 	// Update contents
 	currentTab->updateControls();
+
+	// Update menu items
+	updateMenus();
 }
 
 /*

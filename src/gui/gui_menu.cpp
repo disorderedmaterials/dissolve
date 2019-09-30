@@ -94,14 +94,14 @@ void DissolveWindow::startNew()
 	showMainStackPage(DissolveWindow::SimulationStackPage);
 }
 
-void DissolveWindow::on_SessionNewAction_triggered(bool checked)
+void DissolveWindow::on_FileNewAction_triggered(bool checked)
 {
 	if (!checkSaveCurrentInput()) return;
 
 	startNew();
 }
 
-void DissolveWindow::on_SessionNewFromTemplateAction_triggered(bool checked)
+void DissolveWindow::on_FileNewFromTemplateAction_triggered(bool checked)
 {
 	// Make sure there is nothing to save before we try to start afresh
 	if (!checkSaveCurrentInput()) return;
@@ -130,7 +130,7 @@ void DissolveWindow::on_SessionNewFromTemplateAction_triggered(bool checked)
 	showMainStackPage(DissolveWindow::SimulationStackPage);
 }
 
-void DissolveWindow::on_SessionOpenLocalAction_triggered(bool checked)
+void DissolveWindow::on_FileOpenLocalAction_triggered(bool checked)
 {
 	if (!checkSaveCurrentInput()) return;
 
@@ -179,17 +179,17 @@ void DissolveWindow::on_SessionOpenLocalAction_triggered(bool checked)
 	showMainStackPage(DissolveWindow::SimulationStackPage);
 }
 
-void DissolveWindow::on_SessionConnectAction_triggered(bool checked)
+void DissolveWindow::on_FileConnectAction_triggered(bool checked)
 {
 	// TODO
 }
 
-void DissolveWindow::on_SessionOpenRecentAction_triggered(bool checked)
+void DissolveWindow::on_FileOpenRecentAction_triggered(bool checked)
 {
 	// TODO
 }
 
-void DissolveWindow::on_SessionCloseAction_triggered(bool checked)
+void DissolveWindow::on_FileCloseAction_triggered(bool checked)
 {
 	if (!checkSaveCurrentInput()) return;
 
@@ -197,7 +197,7 @@ void DissolveWindow::on_SessionCloseAction_triggered(bool checked)
 	showMainStackPage(DissolveWindow::StartStackPage);
 }
 
-void DissolveWindow::on_SessionSaveAction_triggered(bool checked)
+void DissolveWindow::on_FileSaveAction_triggered(bool checked)
 {
 	// If the file is not modified, nothing to do.
 	if (!modified_) return;
@@ -221,7 +221,7 @@ void DissolveWindow::on_SessionSaveAction_triggered(bool checked)
 	updateWindowTitle();
 }
 
-void DissolveWindow::on_SessionSaveAsAction_triggered(bool checked)
+void DissolveWindow::on_FileSaveAsAction_triggered(bool checked)
 {
 	// Get a suitable input file name
 	QString newFile = QFileDialog::getSaveFileName(this, "Choose input file name to save", QDir().absolutePath(), "Dissolve input files (*.txt)");
@@ -239,7 +239,7 @@ void DissolveWindow::on_SessionSaveAsAction_triggered(bool checked)
 	updateWindowTitle();
 }
 
-void DissolveWindow::on_SessionQuitAction_triggered(bool checked)
+void DissolveWindow::on_FileQuitAction_triggered(bool checked)
 {
 	if (!checkSaveCurrentInput()) return;
 
@@ -248,96 +248,6 @@ void DissolveWindow::on_SessionQuitAction_triggered(bool checked)
 
 /*
  * Simulation
- */
-
-void DissolveWindow::on_SimulationAddSpeciesAction_triggered(bool checked)
-{
-	static AddSpeciesDialog addSpeciesDialog(this, dissolve_);
-
-	addSpeciesDialog.reset();
-
-	if (addSpeciesDialog.exec() == QDialog::Accepted)
-	{
-		Species* sp = addSpeciesDialog.importSpecies(dissolve_);
-
-		// Fully update GUI
-		setModified();
-		fullUpdate();
-
-		setCurrentTab(sp);
-	}
-}
-
-void DissolveWindow::on_SimulationAddConfigurationAction_triggered(bool checked)
-{
-	static AddConfigurationDialog addConfigurationDialog(this, dissolve_);
-
-	addConfigurationDialog.reset();
-
-	if (addConfigurationDialog.exec() == QDialog::Accepted)
-	{
-		Configuration* cfg = addConfigurationDialog.importConfiguration(dissolve_);
-
-		// Fully update GUI
-		setModified();
-		fullUpdate();
-
-		setCurrentTab(cfg);
-	}
-}
-
-void DissolveWindow::on_SimulationAddProcessingLayerAction_triggered(bool checked)
-{
-	static AddProcessingLayerDialog addProcessingLayerDialog(this, dissolve_);
-
-	addProcessingLayerDialog.reset();
-
-	if (addProcessingLayerDialog.exec() == QDialog::Accepted)
-	{
-		ModuleLayer* layer = addProcessingLayerDialog.importModuleLayer(dissolve_);
-
-		// Fully update GUI
-		setModified();
-		fullUpdate();
-
-		setCurrentTab(layer);
-	}
-}
-
-void DissolveWindow::on_SimulationAddForcefieldTermsAction_triggered(bool checked)
-{
-	static AddForcefieldTermsDialog addForcefieldTermsDialog(this, dissolve_);
-
-	addForcefieldTermsDialog.reset();
-
-	if (addForcefieldTermsDialog.exec() == QDialog::Accepted)
-	{
-		addForcefieldTermsDialog.applyForcefieldTerms(dissolve_);
-
-		// Fully update GUI
-		setModified();
-		fullUpdate();
-	}
-}
-
-void DissolveWindow::on_SimulationSetRandomSeedAction_triggered(bool checked)
-{
-	// Create an input dialog to get the new seed
-	bool ok;
-	dissolve_.seed();
-	int newSeed = QInputDialog::getInt(this, "Set random seed", "Enter the new value of the random seed, or -1 to remove set value", dissolve_.seed(), -1, 2147483647, 1, &ok);
-
-	if (!ok) return;
-
-	// Set and initialise random seed
-	dissolve_.setSeed(newSeed);
-
-	if (dissolve_.seed() == -1) srand( (unsigned)time( NULL ) );
-	else srand(dissolve_.seed());
-}
-
-/*
- * Control
  */
 
 void DissolveWindow::on_SimulationRunAction_triggered(bool checked)
@@ -400,6 +310,88 @@ void DissolveWindow::on_SimulationPauseAction_triggered(bool checked)
 	ui.ControlPauseButton->setEnabled(false);
 }
 
+void DissolveWindow::on_SimulationSetRandomSeedAction_triggered(bool checked)
+{
+	// Create an input dialog to get the new seed
+	bool ok;
+	dissolve_.seed();
+	int newSeed = QInputDialog::getInt(this, "Set random seed", "Enter the new value of the random seed, or -1 to remove set value", dissolve_.seed(), -1, 2147483647, 1, &ok);
+
+	if (!ok) return;
+
+	// Set and initialise random seed
+	dissolve_.setSeed(newSeed);
+
+	if (dissolve_.seed() == -1) srand( (unsigned)time( NULL ) );
+	else srand(dissolve_.seed());
+}
+
+/*
+ * Species
+ */
+
+void DissolveWindow::on_SpeciesAddAction_triggered(bool checked)
+{
+	static AddSpeciesDialog addSpeciesDialog(this, dissolve_);
+
+	addSpeciesDialog.reset();
+
+	if (addSpeciesDialog.exec() == QDialog::Accepted)
+	{
+		Species* sp = addSpeciesDialog.importSpecies(dissolve_);
+
+		// Fully update GUI
+		setModified();
+		fullUpdate();
+
+		setCurrentTab(sp);
+	}
+}
+
+/*
+ * Configuration
+ */
+
+void DissolveWindow::on_ConfigurationAddAction_triggered(bool checked)
+{
+	static AddConfigurationDialog addConfigurationDialog(this, dissolve_);
+
+	addConfigurationDialog.reset();
+
+	if (addConfigurationDialog.exec() == QDialog::Accepted)
+	{
+		Configuration* cfg = addConfigurationDialog.importConfiguration(dissolve_);
+
+		// Fully update GUI
+		setModified();
+		fullUpdate();
+
+		setCurrentTab(cfg);
+	}
+}
+
+/*
+ * Layer
+ */
+
+void DissolveWindow::on_LayerAddAction_triggered(bool checked)
+{
+	static AddProcessingLayerDialog addProcessingLayerDialog(this, dissolve_);
+
+	addProcessingLayerDialog.reset();
+
+	if (addProcessingLayerDialog.exec() == QDialog::Accepted)
+	{
+		ModuleLayer* layer = addProcessingLayerDialog.importModuleLayer(dissolve_);
+
+		// Fully update GUI
+		setModified();
+		fullUpdate();
+
+		setCurrentTab(layer);
+	}
+}
+
 /*
  * Workspace
  */
@@ -428,3 +420,24 @@ void DissolveWindow::on_HelpOnlineManualAction_triggered(bool checked)
 void DissolveWindow::on_HelpOnlineTutorialsAction_triggered(bool checked)
 {
 }
+
+/*
+ * OLD
+ */
+
+void DissolveWindow::on_SimulationAddForcefieldTermsAction_triggered(bool checked)
+{
+	static AddForcefieldTermsDialog addForcefieldTermsDialog(this, dissolve_);
+
+	addForcefieldTermsDialog.reset();
+
+	if (addForcefieldTermsDialog.exec() == QDialog::Accepted)
+	{
+		addForcefieldTermsDialog.applyForcefieldTerms(dissolve_);
+
+		// Fully update GUI
+		setModified();
+		fullUpdate();
+	}
+}
+

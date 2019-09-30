@@ -28,12 +28,12 @@
 
 void DissolveWindow::on_StartCreateNewButton_clicked(bool checked)
 {
-	ui.SessionNewAction->trigger();
+	ui.FileNewAction->trigger();
 }
 
 void DissolveWindow::on_StartCreateFromTemplateButton_clicked(bool checked)
 {
-	ui.SessionNewFromTemplateAction->trigger();
+	ui.FileNewFromTemplateAction->trigger();
 }
 
 /*
@@ -42,17 +42,17 @@ void DissolveWindow::on_StartCreateFromTemplateButton_clicked(bool checked)
 
 void DissolveWindow::on_StartOpenLocalButton_clicked(bool checked)
 {
-	ui.SessionOpenLocalAction->trigger();
+	ui.FileOpenLocalAction->trigger();
 }
 
 void DissolveWindow::on_StartOpenRecentButton_clicked(bool checked)
 {
-	ui.SessionOpenRecentAction->trigger();
+	ui.FileOpenRecentAction->trigger();
 }
 
 void DissolveWindow::on_StartConnectButton_clicked(bool checked)
 {
-	ui.SessionConnectAction->trigger();
+	ui.FileConnectAction->trigger();
 }
 
 /*
