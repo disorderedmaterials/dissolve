@@ -117,7 +117,7 @@ void ConfigurationTab::updateControls()
 {
 	refreshing_ = true;
 
-	// Definition
+	// Temperature
 	ui_.TemperatureSpin->setValue(configuration_->temperature());
 
 	// Size Factor
@@ -148,14 +148,14 @@ void ConfigurationTab::updateControls()
 // Disable sensitive controls within tab
 void ConfigurationTab::disableSensitiveControls()
 {
-	ui_.DefinitionGroup->setEnabled(false);
+	ui_.TemperatureGroup->setEnabled(false);
 	ui_.SizeFactorGroup->setEnabled(false);
 }
 
 // Enable sensitive controls within tab
 void ConfigurationTab::enableSensitiveControls()
 {
-	ui_.DefinitionGroup->setEnabled(true);
+	ui_.TemperatureGroup->setEnabled(true);
 	ui_.SizeFactorGroup->setEnabled(true);
 }
 
