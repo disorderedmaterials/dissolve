@@ -261,7 +261,7 @@ WorkspaceTab* DissolveWindow::workspaceTab(QWidget* page)
 }
 
 // Return current tab
-MainTab* DissolveWindow::currentTab()
+MainTab* DissolveWindow::currentTab() const
 {
 	if (ui.MainTabs->currentWidget() == NULL) return NULL;
 

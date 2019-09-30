@@ -302,7 +302,7 @@ class DissolveWindow : public QMainWindow
 	// Find WorkspaceTab containing specified page widget
 	WorkspaceTab* workspaceTab(QWidget* page);
 	// Return current tab
-	MainTab* currentTab();
+	MainTab* currentTab() const;
 	// Make specified tab the current one
 	void setCurrentTab(MainTab* tab);
 	// Make specified tab the current one (by index)
