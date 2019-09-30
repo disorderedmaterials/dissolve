@@ -51,28 +51,6 @@ void DissolveWindow::on_MainTabs_currentChanged(int index)
 	currentTab->updateControls();
 }
 
-void DissolveWindow::mainTabsDoubleClicked(int index)
-{
-	if (index == -1) return;
-
-// 	// We can only rename workspace-type tabs
-// 	MainTab* tab = tabs_[index];
-// 	if (!tab) return;
-// 	if (!tab->canChangeTitle()) return;
-// 
-// 	// Rename the current workspace
-// 	bool ok;
-// 	QString text = QInputDialog::getText(this, "Rename Workspace", "Enter the new name of the workspace", QLineEdit::Normal, tab->title(), &ok);
-// 	if (!ok || text.isEmpty()) return;
-// 
-// 	// Ensure that the name provided is unique
-// 	CharString newName = qPrintable(text);
-// 	int count = 0;
-// 	while (findTab(newName)) newName.sprintf("%s%02i", qPrintable(text), ++count);
-// 
-// 	tab->setTitle(newName);
-}
-
 /*
  * Private
  */

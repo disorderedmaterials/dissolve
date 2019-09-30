@@ -270,7 +270,6 @@ class DissolveWindow : public QMainWindow
 
 	private slots:
 	void on_MainTabs_currentChanged(int index);
-	void mainTabsDoubleClicked(int index);
 
 	private:
 	// Remove tabs related to the current data
