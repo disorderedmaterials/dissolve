@@ -23,6 +23,7 @@
 #include "gui/gui.h"
 #include "gui/delegates/combolist.hui"
 #include "gui/delegates/exponentialspin.hui"
+#include "gui/getconfigurationnamedialog.h"
 #include "gui/helpers/combopopulator.h"
 #include "gui/helpers/tablewidgetupdater.h"
 #include "main/dissolve.h"
@@ -64,13 +65,37 @@ ConfigurationTab::~ConfigurationTab()
 }
 
 /*
- * Data
+ * MainTab Reimplementations
  */
 
 // Return tab type
 const char* ConfigurationTab::tabType() const
 {
 	return "ConfigurationTab";
+}
+
+// Raise suitable dialog for entering / checking new tab name
+QString ConfigurationTab::getNewTitle(bool& ok)
+{
+	// Get a new, valid name for the Configuration
+	GetConfigurationNameDialog nameDialog(this, dissolve_.coreData());
+	ok = nameDialog.get(configuration_, configuration_->name());
+
+	if (ok)
+	{
+		// Rename our Configuration, and flag that our data has been modified
+		configuration_->setName(qPrintable(nameDialog.newName()));
+
+		dissolveWindow_->setModified();
+	}
+
+	return nameDialog.newName();
+}
+
+// Return whether the title of the tab can be changed
+bool ConfigurationTab::canChangeTitle() const
+{
+	return true;
 }
 
 /*
@@ -93,7 +118,6 @@ void ConfigurationTab::updateControls()
 	refreshing_ = true;
 
 	// Definition
-	ui_.NameEdit->setText(configuration_->name());
 	ui_.TemperatureSpin->setValue(configuration_->temperature());
 
 	// Size Factor
@@ -138,15 +162,6 @@ void ConfigurationTab::enableSensitiveControls()
 /*
  * Signals / Slots
  */
-
-void ConfigurationTab::on_NameEdit_textChanged(QString text)
-{
-	if (refreshing_) return;
-
-	configuration_->setName(qPrintable(text));
-
-	dissolveWindow_->setModified();
-}
 
 void ConfigurationTab::on_TemperatureSpin_valueChanged(double value)
 {

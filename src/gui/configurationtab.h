@@ -51,11 +51,15 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
 
 
 	/*
-	 * Data
+	 * MainTab Reimplementations
 	 */
 	public:
 	// Return tab type
 	const char* tabType() const;
+	// Raise suitable dialog for entering / checking new tab name
+	QString getNewTitle(bool& ok);
+	// Return whether the title of the tab can be changed
+	bool canChangeTitle() const;
 
 
 	/*
@@ -101,7 +105,6 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
 	 */
 	private slots:
 	// Definition
-	void on_NameEdit_textChanged(QString text);
 	void on_TemperatureSpin_valueChanged(double value);
 	// Initial Coordinates
 	void on_CoordinatesFileEdit_textChanged(QString text);
