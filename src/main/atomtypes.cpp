@@ -28,8 +28,6 @@ AtomType* Dissolve::addAtomType(Element* el)
 {
 	AtomType* newAtomType = coreData_.addAtomType(el);
 
-	setUp_ = false;
-
 	return newAtomType;
 }
 

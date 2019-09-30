@@ -1,6 +1,6 @@
 /*
-	*** Isotopologue Delegate
-	*** src/gui/delegates/userdspecies.hui
+	*** Isotopologue Combo Delegate
+	*** src/gui/delegates/isotopologuecombo.hui
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.

@@ -131,26 +131,6 @@ void DissolveWindow::setModified()
 	updateWindowTitle();
 }
 
-// Flag that data has been modified via the GUI, and whether this invalidates the current setup
-void DissolveWindow::setModified(bool invalidatesSetUp)
-{
-	modified_ = true;
-
-	if (invalidatesSetUp) dissolve_.invalidateSetUp();
-
-	updateWindowTitle();
-}
-
-// Flag that data has been modified via the GUI, and that the set up is now invalid
-void DissolveWindow::setModifiedAndInvalidated()
-{
-	modified_ = true;
-
-	dissolve_.invalidateSetUp();
-
-	updateWindowTitle();
-}
-
 // Return reference to Dissolve
 Dissolve& DissolveWindow::dissolve()
 {
@@ -214,9 +194,6 @@ bool DissolveWindow::openFileFromCLI(const char* inputFile, const char* restartF
 		else Messenger::print("\nRestart file '%s' does not exist.\n", actualRestartFile.get());
 	}
 	else Messenger::print("\nRestart file (if it exists) will be ignored.\n");
-
-	// Try to set-up simulation
-	dissolve_.setUp();
 
 	refreshing_ = true;
 

@@ -110,7 +110,7 @@ bool PairPotentialsBlock::parse(LineParser& parser, Dissolve* dissolve)
 				if (pot) Messenger::warn("Overwriting previous PairPotential parameters for interaction between '%s' and '%s'...\n", parser.argc(2), parser.argc(3));
 				else
 				{
-					Messenger::print("Adding PairPotential for interaction between '%s' and '%s'...\n", parser.argc(2), parser.argc(3));
+					Messenger::printVerbose("Adding PairPotential for interaction between '%s' and '%s'...\n", parser.argc(2), parser.argc(3));
 					pot = dissolve->addPairPotential(at1, at2);
 				}
 
@@ -120,7 +120,7 @@ bool PairPotentialsBlock::parse(LineParser& parser, Dissolve* dissolve)
 				// If more parameters were supplied, these will for the basis for the potential. Otherwise, generate from existing AtomType parameters.
 				if (parser.nArgs() == 4)
 				{
-					Messenger::print("No parameters supplied to Generate keyword for pair potential between '%s' and '%s', so AtomType parameters will be used.", at1->name(), at2->name());
+					Messenger::printVerbose("No parameters supplied to Generate keyword for pair potential between '%s' and '%s', so AtomType parameters will be used.", at1->name(), at2->name());
 					if (!pot->setParameters(at1, at2)) error = true;
 				}
 				else
@@ -131,11 +131,11 @@ bool PairPotentialsBlock::parse(LineParser& parser, Dissolve* dissolve)
 					for (int n=6; n<parser.nArgs(); ++n) pot->setParameter(n-6, parser.argd(n));
 					CharString s("q(I)=%f, q(J)=%f", pot->chargeI(), pot->chargeJ());
 					for (int n=0; n<MAXSRPARAMETERS; ++n) s.strcatf(", p%i=%f", n+1, pot->parameter(n));
-					Messenger::print("Pair potential between '%s' and '%s' will be generated from parameters : %s\n", at1->name(), at2->name(), s.get());
+					Messenger::printVerbose("Pair potential between '%s' and '%s' will be generated from parameters : %s\n", at1->name(), at2->name(), s.get());
 				}
 				break;
 			case (PairPotentialsBlock::GenerateAllKeyword):
-				Messenger::print("Generating all missing pair potentials...\n");
+				Messenger::printVerbose("Generating all missing pair potentials...\n");
 
 				// Get short-range type
 				srType = PairPotential::shortRangeType(parser.argc(1));

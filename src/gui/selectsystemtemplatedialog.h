@@ -54,6 +54,7 @@ class SelectSystemTemplateDialog : public QDialog
 	private slots:
 	void on_FilterEdit_textChanged(const QString& text);
 	void on_TemplatesList_currentItemChanged(QListWidgetItem* current, QListWidgetItem* previous);
+	void on_TemplatesList_itemDoubleClicked(QListWidgetItem* item);
 	void on_SelectButton_clicked(bool checked);
 	void on_CancelButton_clicked(bool checked);
 

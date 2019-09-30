@@ -30,8 +30,6 @@ Species* Dissolve::addSpecies()
 {
 	Species* newSpecies = coreData_.addSpecies();
 
-	setUp_ = false;
-
 	return newSpecies;
 }
 
@@ -40,8 +38,6 @@ void Dissolve::removeSpecies(Species* sp)
 {
 	// Remove Species
 	coreData_.species().remove(sp);
-
-	setUp_ = false;
 }
 
 // Return number of defined Species
@@ -92,8 +88,6 @@ void Dissolve::removeSpeciesIsotopologue(Species* species, Isotopologue* iso)
 	}
 	
 	species->removeIsotopologue(iso);
-
-	setUp_ = false;
 }
 
 // Copy AtomType, creating a new one if necessary

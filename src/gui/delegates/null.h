@@ -1,6 +1,6 @@
 /*
-	*** QSpinBox Delegate
-	*** src/gui/delegates/integerspin.h
+	*** Null Delegate
+	*** src/gui/delegates/null.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,33 +19,18 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DELEGATES_INTEGERSPIN_H
-#define DISSOLVE_DELEGATES_INTEGERSPIN_H
+#ifndef DISSOLVE_DELEGATES_NULL_H
+#define DISSOLVE_DELEGATES_NULL_H
 
-#include <QtWidgets/QItemDelegate>
-#include <QModelIndex>
-#include <QObject>
-#include <QSpinBox>
+#include <QtWidgets/QStyledItemDelegate>
 
-class IntegerSpinDelegate : public QItemDelegate
+class NullDelegate : public QStyledItemDelegate
 {
-	Q_OBJECT
-
-	private:
-	// Parameters for QSpinBox
-	int min_, max_, step_;
-
 	public:
 	// Constructor
-	IntegerSpinDelegate(QObject* parent = 0, int vmin = -1e6, int vmax = 1e6, int vstep = 1);
+	NullDelegate(QObject* parent = 0);
 	// Reimplemented virtual function to create editing widget
 	QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const;
-	// Set the data to appear when the editor is called
-	void setEditorData(QWidget* editor, const QModelIndex& index) const;
-	// Extract data from editor, and place back into source model
-	void setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const;
-	// Resize editor
-	void updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const;
 };
 
 #endif

@@ -128,15 +128,14 @@ void SpeciesWidget::on_ToolsMinimiseButton_clicked(bool checked)
 	addSpeciesNode->setKeyword<bool>("Rotate", false);
 	addSpeciesNode->setEnumeration<AddSpeciesProcedureNode::PositioningType>("Positioning", AddSpeciesProcedureNode::CentralPositioning);
 	generator.addRootSequenceNode(addSpeciesNode);
-	if (!temporaryCfg->generate(temporaryDissolve.worldPool(), 15.0)) return;
+	if (!temporaryCfg->generate(temporaryDissolve.worldPool())) return;
 
-
-	// Create an Geometry Optimisation Module in a new processing layer, and set everything up
+	// Create a Geometry Optimisation Module in a new processing layer, and set everything up
 	if (!temporaryDissolve.createModuleInLayer("GeometryOptimisation", "Processing", temporaryCfg)) return;
 	if (!temporaryDissolve.generateMissingPairPotentials(PairPotential::LennardJonesGeometricType)) return;
-	if (!temporaryDissolve.setUp()) return;
 
 	// Run the calculation
+	if (!temporaryDissolve.prepare()) return;
 	temporaryDissolve.iterate(1);
 
 	// Copy the optimised coordinates from the temporary Configuration to the target Species

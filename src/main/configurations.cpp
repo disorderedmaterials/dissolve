@@ -31,8 +31,6 @@ Configuration* Dissolve::addConfiguration()
 {
 	Configuration* cfg = coreData_.addConfiguration();
 
-	setUp_ = false;
-
 	return cfg;
 }
 
@@ -43,8 +41,6 @@ bool Dissolve::ownConfiguration(Configuration* cfg)
 	if (coreData_.configurations().contains(cfg)) return Messenger::error("Already own Configuration '%s', so nothing to do.\n", cfg->name());
 
 	coreData_.configurations().own(cfg);
-
-	setUp_ = false;
 
 	return true;
 }

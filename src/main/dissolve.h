@@ -55,8 +55,6 @@ class Dissolve
 	private:
 	// Reference to CoreData 
 	CoreData& coreData_;
-	// Whether we are set up, ready for simulation
-	bool setUp_;
 
 	public:
 	// Return reference to CoreData
@@ -65,12 +63,6 @@ class Dissolve
 	void clear();
 	// Register GenericItems
 	void registerGenericItems();
-	// Set up everything needed to run the simulation
-	bool setUp();
-	// Flag that the set up is no longer valid and should be done again
-	void invalidateSetUp();
-	// Return whether the simulation has been set up
-	bool isSetUp() const;
 
 
 	/*
@@ -90,6 +82,21 @@ class Dissolve
 	AtomType* findAtomType(const char* name) const;
 	// Clear all AtomTypes
 	void clearAtomTypes();
+
+
+	/*
+	 * Master Terms
+	 * (Exposes lists in coreData_)
+	 */
+	public:
+	// Return list of master Bond parameters
+	const List<MasterIntra>& masterBonds() const;
+	// Return list of master Angle parameters
+	const List<MasterIntra>& masterAngles() const;
+	// Return list of master Torsion parameters
+	const List<MasterIntra>& masterTorsions() const;
+	// Check and print MasterTerm usage
+	void checkMasterTermUsage() const;
 
 
 	/*
@@ -288,20 +295,14 @@ class Dissolve
 	void setRestartFileFrequency(int n);
 	// Return frequency with which to write restart file
 	int restartFileFrequency() const;
+	// Prepare for main simulation
+	bool prepare();
 	// Iterate main simulation
 	bool iterate(int nIterations = -1);
 	// Return current simulation step
 	int iteration() const;
 	// Print timing information
 	void printTiming();
-
-
-	/*
-	 * Setup
-	 */
-	public:
-	// Set up all simulation data, checking it as we go
-	bool setUpSimulation();
 
 
 	/*

@@ -32,6 +32,7 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QFileInfo>
 
 /*
  * Main Menu
@@ -143,12 +144,12 @@ void DissolveWindow::on_SessionOpenLocalAction_triggered(bool checked)
 	// Clear Dissolve itself
 	dissolve_.clear();
 
+	// Set the current dir to the location of the new file
+	QFileInfo inputFileInfo(inputFile);
+	QDir::setCurrent(inputFileInfo.absoluteDir().absolutePath());
+
 	// Load the input file
-	if (!dissolve_.loadInput(qPrintable(inputFile)))
-	{
-		startNew();
-		return;
-	}
+	if (!dissolve_.loadInput(qPrintable(inputFile))) QMessageBox::warning(this, "Input file contained errors.", "The input file failed to load correctly.\nCheck the simulation carefully, and see the messages for more details.", QMessageBox::Ok, QMessageBox::Ok);
 
 	localSimulation_ = true;
 
@@ -157,19 +158,14 @@ void DissolveWindow::on_SessionOpenLocalAction_triggered(bool checked)
 	if (DissolveSys::fileExists(restartFile))
 	{
 		Messenger::print("\nRestart file '%s' exists and will be loaded.\n", restartFile.get());
-		if (!dissolve_.loadRestart(restartFile.get()))
-		{
-			Messenger::error("Restart file contained errors.\n");
-			startNew();
-			return;
-		}
+		if (!dissolve_.loadRestart(restartFile.get())) QMessageBox::warning(this, "Restart file contained errors.", "The restart file failed to load correctly.\nSee the messages for more details.", QMessageBox::Ok, QMessageBox::Ok);
 	}
 	else Messenger::print("\nRestart file '%s' does not exist.\n", restartFile.get());
 
 	dissolveState_ = EditingState;
 
 	// Check the beat file
-	CharString beatFile("%s.bet", qPrintable(inputFile));
+	CharString beatFile("%s.beat", qPrintable(inputFile));
 	if (DissolveSys::fileExists(beatFile))
 	{
 		// TODO
@@ -346,8 +342,8 @@ void DissolveWindow::on_SimulationSetRandomSeedAction_triggered(bool checked)
 
 void DissolveWindow::on_SimulationRunAction_triggered(bool checked)
 {
-	// Make sure everything is set-up
-	if ((!dissolve_.isSetUp()) && (!dissolve_.setUp())) return;
+	// Prepare the simulation
+	if (!dissolve_.prepare()) return;
 
 	// Prepare the GUI
 	setWidgetsForRun();
@@ -362,8 +358,8 @@ void DissolveWindow::on_SimulationRunAction_triggered(bool checked)
 
 void DissolveWindow::on_SimulationStepAction_triggered(bool checked)
 {
-	// Make sure everything is set-up
-	if ((!dissolve_.isSetUp()) && (!dissolve_.setUp())) return;
+	// Prepare the simulation
+	if (!dissolve_.prepare()) return;
 
 	// Prepare the GUI
 	setWidgetsForRun();
@@ -378,8 +374,8 @@ void DissolveWindow::on_SimulationStepAction_triggered(bool checked)
 
 void DissolveWindow::on_SimulationStepFiveAction_triggered(bool checked)
 {
-	// Make sure everything is set-up
-	if ((!dissolve_.isSetUp()) && (!dissolve_.setUp())) return;
+	// Prepare the simulation
+	if (!dissolve_.prepare()) return;
 
 	// Prepare the GUI
 	setWidgetsForRun();

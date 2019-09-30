@@ -45,6 +45,9 @@ ProcedureChartNodeBlock::ProcedureChartNodeBlock(QWidget* parent, ProcedureNode*
 	// Hide the keywords control frame to start with
 	ui_.KeywordsControlWidget->setVisible(false);
 
+	// Hide the name label if it is not required
+	if (!node_->mustBeNamed()) ui_.BottomLabel->setVisible(false);
+
 	// Set up our keywords widget
 	ui_.NodeKeywordsWidget->setUp(node->keywords(), coreData);
 	connect(ui_.NodeKeywordsWidget, SIGNAL(dataModified()), this, SLOT(keywordDataModified()));

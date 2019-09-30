@@ -28,7 +28,7 @@
 #include "base/processpool.h"
 #include "modules/import/import.h"
 
-// Clear contents of Configuration, leaving core definitions intact
+// Clear contents of Configuration, leaving other definitions intact
 void Configuration::empty()
 {
 	bonds_.clear();
@@ -42,9 +42,8 @@ void Configuration::empty()
 	box_ = new CubicBox(1.0);
 	cells_.clear();
 
-	// Set the populations of SpeciesInfo to zero, but leave the list intact
-	ListIterator<SpeciesInfo> speciesInfoIterator(usedSpecies_);
-	while (SpeciesInfo* spInfo = speciesInfoIterator.iterate()) spInfo->zeroPopulation();
+	// Clear used species
+	usedSpecies_.clear();
 
 	++contentsVersion_;
 }

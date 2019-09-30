@@ -175,7 +175,7 @@ void ModuleChartModuleBlock::updateControls()
 		}
 		else item->setCheckState(Qt::Unchecked);
 	}
-	ui.ConfigurationTargetGroup->setVisible(!module_->configurationLocal());
+	ui.ConfigurationTargetGroup->setVisible((!module_->configurationLocal()) && (module_->nTargetableConfigurations() != 0));
 	ui.HeaderFrame->setToolTip(toolTip.get());
 
 	// Update keywords

@@ -26,8 +26,10 @@
 #include "gui/delegates/integerspin.hui"
 #include "gui/delegates/isotopecombo.hui"
 #include "gui/delegates/exponentialspin.hui"
+#include "gui/delegates/null.h"
 #include "gui/helpers/listwidgetupdater.h"
 #include "gui/helpers/tablewidgetupdater.h"
+#include "gui/helpers/treewidgetupdater.h"
 #include "main/dissolve.h"
 #include "classes/atomtype.h"
 #include "classes/species.h"
@@ -55,15 +57,16 @@ SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabW
 	for (int n=0; n<3; ++n) ui_.AngleTable->setItemDelegateForColumn(n, new IntegerSpinDelegate(this, 1, 1e9));
 	// -- Torsion Table
 	for (int n=0; n<4; ++n) ui_.TorsionTable->setItemDelegateForColumn(n, new IntegerSpinDelegate(this, 1, 1e9));
-	// -- Isotope Table
-	ui_.IsotopeTable->setItemDelegateForColumn(1, new IsotopeComboDelegate(this));
+	// -- Isotopologues Tree
+	ui_.IsotopologuesTree->setItemDelegateForColumn(1, new NullDelegate(this));
+	ui_.IsotopologuesTree->setItemDelegateForColumn(2, new IsotopeComboDelegate(this));
 
 	// Set target for SpeciesViewer
 	ui_.ViewerWidget->speciesViewer()->setSpecies(species_);
 
 	// Connect signals / slots
 	connect(ui_.ViewerWidget->speciesViewer(), SIGNAL(dataChanged()), this, SLOT(updateControls()));
-	connect(ui_.ViewerWidget->speciesViewer(), SIGNAL(dataModified(bool)), dissolveWindow_, SLOT(setModified(bool)));
+	connect(ui_.ViewerWidget->speciesViewer(), SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
 
 	refreshing_ = false;
 }
@@ -274,31 +277,43 @@ void SpeciesTab::updateTorsionTableRow(int row, SpeciesTorsion* speciesTorsion, 
 	}
 }
 
-// IsotopologuesIsotopesTable row update function
-void SpeciesTab::updateIsotopeTableRow(int row, AtomType* atomType, Isotope* isotope, bool createItems)
+// IsotopologuesTree top-level update function
+void SpeciesTab::updateIsotopologuesTreeTopLevelItem(QTreeWidget* treeWidget, int topLevelItemIndex, Isotopologue* data, bool createItem)
 {
-	QTableWidgetItem* item;
+	QTreeWidgetItem* item;
+	if (createItem)
+	{
+		item = new QTreeWidgetItem;
+		item->setData(0, Qt::UserRole, VariantPointer<Isotopologue>(data));
+		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
+		treeWidget->insertTopLevelItem(topLevelItemIndex, item);
+	}
+	else item = treeWidget->topLevelItem(topLevelItemIndex);
+
+	// Set item data
+	item->setText(0, data->name());
+
+	// Update child items
+	TreeWidgetRefDataListUpdater<SpeciesTab,AtomType,Isotope*> isotopeUpdater(item, data->isotopes(), this, &SpeciesTab::updateIsotopologuesTreeChildItem);
+}
+
+// IsotopologuesTree item update function
+void SpeciesTab::updateIsotopologuesTreeChildItem(QTreeWidgetItem* parentItem, int childIndex, AtomType* atomType, Isotope* isotope, bool createItem)
+{
+	QTreeWidgetItem* item;
 
 	// AtomType
-	if (createItems)
+	if (createItem)
 	{
-		item = new QTableWidgetItem;
-		item->setData(Qt::UserRole, VariantPointer<AtomType>(atomType));
-		item->setFlags(Qt::NoItemFlags);
-		ui_.IsotopeTable->setItem(row, 0, item);
+		item = new QTreeWidgetItem;
+		item->setData(1, Qt::UserRole, VariantPointer<AtomType>(atomType));
+		item->setData(2, Qt::UserRole, VariantPointer<Isotope>(isotope));
+		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
+		parentItem->insertChild(childIndex, item);
 	}
-	else item = ui_.IsotopeTable->item(row, 0);
-	item->setText(atomType->name());
-
-	// Isotope
-	if (createItems)
-	{
-		item = new QTableWidgetItem;
-		item->setData(Qt::UserRole, VariantPointer<Isotope>(isotope));
-		ui_.IsotopeTable->setItem(row, 1, item);
-	}
-	else item = ui_.IsotopeTable->item(row, 1);
-	item->setText(IsotopeComboDelegate::textForIsotope(isotope));
+	else item = parentItem->child(childIndex);
+	item->setText(1, atomType->name());
+	item->setText(2, IsotopeComboDelegate::textForIsotope(isotope));
 }
 
 // Update controls in tab
@@ -309,23 +324,17 @@ void SpeciesTab::updateControls()
 	// Definition
 	ui_.NameEdit->setText(species_->name());
 
-	// Isotopologues List
-	if (!species_) ui_.IsotopologueList->clear();
+	// Isotopologues Tree
+	if (!species_) ui_.IsotopologuesTree->clear();
 	else
 	{
-		ListWidgetUpdater<SpeciesTab,Isotopologue> isotopologueUpdater(ui_.IsotopologueList, species_->isotopologues(), Qt::ItemIsEditable);
+		TreeWidgetUpdater<SpeciesTab,Isotopologue> isotopologueUpdater(ui_.IsotopologuesTree, species_->isotopologues(), this, &SpeciesTab::updateIsotopologuesTreeTopLevelItem);
 
 		// If there is no current isotopologue selected, try to select the first
-		if (!currentIsotopologue()) ui_.IsotopologueList->setCurrentRow(0);
+		if (!currentIsotopologue()) ui_.IsotopologuesTree->setCurrentItem(ui_.IsotopologuesTree->topLevelItem(0));
 	}
-
 	Isotopologue* isotopologue = currentIsotopologue();
 	ui_.IsotopologueRemoveButton->setEnabled(isotopologue != NULL);
-
-	// Isotopologue AtomType/Isotopes Table
-	if (!isotopologue) ui_.IsotopeTable->clearContents();
-	else TableWidgetRefDataListUpdater<SpeciesTab,AtomType,Isotope*> isotopeUpdater(ui_.IsotopeTable, isotopologue->isotopes(), this, &SpeciesTab::updateIsotopeTableRow);
-	ui_.IsotopeTable->resizeColumnsToContents();
 
 	// -- View / Generate Tab
 	ui_.ViewerWidget->speciesViewer()->postRedisplay();
@@ -375,9 +384,11 @@ void SpeciesTab::enableSensitiveControls()
 // Return currently-selected Isotopologue
 Isotopologue* SpeciesTab::currentIsotopologue()
 {
-	QListWidgetItem* item = ui_.IsotopologueList->currentItem();
+	// Get current item from tree, and check the parent item
+	QTreeWidgetItem* item = ui_.IsotopologuesTree->currentItem();
 	if (!item) return NULL;
-	return VariantPointer<Isotopologue>(item->data(Qt::UserRole));
+	if (item->parent()) return VariantPointer<Isotopologue>(item->parent()->data(0, Qt::UserRole));
+	else return VariantPointer<Isotopologue>(item->data(0, Qt::UserRole));
 }
 
 void SpeciesTab::on_NameEdit_textChanged(QString text)
@@ -411,63 +422,59 @@ void SpeciesTab::on_IsotopologueRemoveButton_clicked(bool checked)
 	updateControls();
 }
 
-void SpeciesTab::on_IsotopologueList_currentRowChanged(int row)
+void SpeciesTab::on_IsotopologueGenerateButton_clicked(bool checked)
 {
-	if (refreshing_) return;
-
-	updateControls();
+	// TODO
 }
 
-void SpeciesTab::on_IsotopologueList_itemChanged(QListWidgetItem* item)
+void SpeciesTab::on_IsotopologueExpandAllButton_clicked(bool checked)
 {
-	if (refreshing_) return;
-
-	// Get Isotopologue pointer
-	Isotopologue* isotopologue = VariantPointer<Isotopologue>(item->data(Qt::UserRole));
-	if (!isotopologue) return;
-
-	// Need to ensure new name is unique within the Species
-	isotopologue->setName(species_->uniqueIsotopologueName(qPrintable(item->text()), isotopologue));
-
-	// Make sure the item text is consistent with the Isotopologue name
-	item->setText(isotopologue->name());
-
-	dissolveWindow_->setModified();
+	ui_.IsotopologuesTree->expandAll();
 }
 
-void SpeciesTab::on_IsotopeTable_itemChanged(QTableWidgetItem* w)
+void SpeciesTab::on_IsotopologueCollapseAllButton_clicked(bool checked)
 {
-	if (refreshing_) return;
+	ui_.IsotopologuesTree->collapseAll();
+}
 
-	// Get current Isotopologue
-	Isotopologue* iso = currentIsotopologue();
-	if (!iso) return;
+void SpeciesTab::on_IsotopologuesTree_itemChanged(QTreeWidgetItem* item, int column)
+{
+	if (refreshing_ || (!item)) return;
 
-	// Get row from the passed widget, and get target AtomType from column 0
-	QTableWidgetItem* item = ui_.IsotopeTable->item(w->row(), 0);
-	if (!item) return;
-	
-	AtomType* atomType = VariantPointer<AtomType>(item->data(Qt::UserRole));
-	if (!atomType) return;
+	Isotopologue* isotopologue = currentIsotopologue();
 
-	// Column of passed item tells us the type of data we need to change
-	Isotope* isotope;
-	switch (w->column())
+	// If a top-level item, then the only possibility is to edit the isotopologue name (column 0)
+	if (item->parent() == NULL)
 	{
-		// Element
-		case (0):
-			// Should never be called
-			break;
-		// Isotope
-		case (1):
-			// The new Isotope should have been set in the model data for the column
-			isotope = VariantPointer<Isotope>(w->data(Qt::UserRole));
-			if (isotope) iso->setAtomTypeIsotope(atomType, isotope);
-			dissolveWindow_->setModified();
-			break;
-		default:
-			Messenger::error("Don't know what to do with data from column %i of Isotopes table.\n", w->column());
-			break;
+		// Name of the isotopologue
+		if (column == 0)
+		{
+			// Name of the Isotopologue has been changed - make sure it doesn't exist in the Species already
+			ListIterator<Isotopologue> topeIterator(species_->isotopologues());
+			while (Isotopologue* tope = topeIterator.iterate())
+			{
+				if (isotopologue == tope) continue;
+
+				if (item->text(0) == tope->name())
+				{
+					isotopologue->setName(species_->uniqueIsotopologueName(qPrintable(item->text(0))));
+					Messenger::warn("An Isotopologue named '%s' already exists in the Species, so it has been renamed to '%s'.\n", qPrintable(item->text(0)), isotopologue->name());
+					break;
+				}
+			}
+		}
+	}
+	else if (column == 1)
+	{
+		// AtomType - no action to perform (not editable)
+	}
+	else if (column == 2)
+	{
+		// Set neutron isotope - need to get AtomType from column 1...
+		AtomType* atomType = VariantPointer<AtomType>(item->data(1, Qt::UserRole));
+		Isotope* isotope = VariantPointer<Isotope>(item->data(2, Qt::UserRole));
+		if (isotope) isotopologue->setAtomTypeIsotope(atomType, isotope);
+		dissolveWindow_->setModified();
 	}
 }
 
@@ -481,7 +488,7 @@ void SpeciesTab::on_AtomAddButton_clicked(bool checked)
 
 	refreshing_ = false;
 
-	dissolveWindow_->setModifiedAndInvalidated();
+	dissolveWindow_->setModified();
 }
 
 void SpeciesTab::on_AtomRemoveButton_clicked(bool checked)
@@ -514,14 +521,14 @@ void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem* w)
 				atomType->setName(qPrintable(w->text()));
 			}
 			speciesAtom->setAtomType(atomType);
-			dissolveWindow_->setModifiedAndInvalidated();
+			dissolveWindow_->setModified();
 			break;
 		// Coordinates
 		case (2):
 		case (3):
 		case (4):
 			speciesAtom->setCoordinate(w->column()-1, w->text().toDouble());
-			dissolveWindow_->setModifiedAndInvalidated();
+			dissolveWindow_->setModified();
 			break;
 		// Charge
 		case (5):
