@@ -27,7 +27,6 @@ SET(gui_MOC_HDRS
   addforcefieldtermswizard.h
   addprocessinglayerwizard.h
   addspecieswizard.h
-  guidewizard.h
   keywordswidget.hui
   pairpotentialwidget.h
   wizardwidget.hui
@@ -54,9 +53,6 @@ SET(gui_MOC_HDRS
 
   # Main UI
   gui.h
-  guide.h
-  guidepage.h
-  guidepagehighlight.h
   stockcolours.h
   systemtemplate.h
 
@@ -82,7 +78,6 @@ SET(gui_UIS
   addforcefieldtermswizard.ui
   addprocessinglayerwizard.ui
   addspecieswizard.ui
-  guidewizard.ui
   pairpotentialwidget.ui
   wizardwidgetfooter.ui
   wizardwidgetheader.ui
@@ -127,7 +122,6 @@ SET(gui_SRCS
   addforcefieldtermswizard_funcs.cpp
   addprocessinglayerwizard_funcs.cpp
   addspecieswizard_funcs.cpp
-  guidewizard_funcs.cpp
   keywordswidget_funcs.cpp
   pairpotentialwidget_funcs.cpp
   wizardwidget_funcs.cpp
@@ -157,9 +151,6 @@ SET(gui_SRCS
   gui_io.cpp
   gui_start.cpp
   gui_tabs.cpp
-  guide.cpp
-  guidepage.cpp
-  guidepagehighlight.cpp
   outputhandler_funcs.cpp
   stockcolours.cpp
   systemtemplate.cpp
