@@ -888,6 +888,8 @@ Remote Simulation</string>
      <string>&amp;Configuration</string>
     </property>
     <addaction name="ConfigurationAddAction"/>
+    <addaction name="separator"/>
+    <addaction name="ConfigurationRenameAction"/>
    </widget>
    <widget class="QMenu" name="LayerMenu">
     <property name="font">
@@ -1156,6 +1158,11 @@ Remote Simulation</string>
    </property>
    <property name="toolTip">
     <string>Start a new simulation from a system template</string>
+   </property>
+  </action>
+  <action name="ConfigurationRenameAction">
+   <property name="text">
+    <string>Rename...</string>
    </property>
   </action>
   <action name="SpeciesRenameAction">

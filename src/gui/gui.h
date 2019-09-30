@@ -169,9 +169,11 @@ class DissolveWindow : public QMainWindow
 	void on_SimulationSetRandomSeedAction_triggered(bool checked);
 	// Species
 	void on_SpeciesAddAction_triggered(bool checked);
+	void on_SpeciesRenameAction_triggered(bool checked);
 	void on_SpeciesAddForcefieldTermsAction_triggered(bool checked);
 	// Configuration
 	void on_ConfigurationAddAction_triggered(bool checked);
+	void on_ConfigurationRenameAction_triggered(bool checked);
 	// Layer
 	void on_LayerAddAction_triggered(bool checked);
 	// Workspace

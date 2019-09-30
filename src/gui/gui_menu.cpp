@@ -349,6 +349,14 @@ void DissolveWindow::on_SpeciesAddAction_triggered(bool checked)
 	}
 }
 
+void DissolveWindow::on_SpeciesRenameAction_triggered(bool checked)
+{
+	// Get the current tab - make sure it is a SpeciesTab, then call its rename() function
+	MainTab* tab = currentTab();
+	if ((!tab) || (tab->type() != MainTab::SpeciesTabType)) return;
+	tab->rename();
+}
+
 void DissolveWindow::on_SpeciesAddForcefieldTermsAction_triggered(bool checked)
 {
 	// Get the current Species (if a SpeciesTab is selected)
@@ -390,6 +398,14 @@ void DissolveWindow::on_ConfigurationAddAction_triggered(bool checked)
 
 		setCurrentTab(cfg);
 	}
+}
+
+void DissolveWindow::on_ConfigurationRenameAction_triggered(bool checked)
+{
+	// Get the current tab - make sure it is a ConfigurationTab, then call its rename() function
+	MainTab* tab = currentTab();
+	if ((!tab) || (tab->type() != MainTab::ConfigurationTabType)) return;
+	tab->rename();
 }
 
 /*

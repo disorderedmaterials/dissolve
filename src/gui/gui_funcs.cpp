@@ -297,6 +297,9 @@ void DissolveWindow::updateMenus()
 	// Species Menu
 	ui.SpeciesRenameAction->setEnabled(activeTab->type() == MainTab::SpeciesTabType);
 	ui.SpeciesAddForcefieldTermsAction->setEnabled(activeTab->type() == MainTab::SpeciesTabType);
+
+	// Configuration Menu
+	ui.ConfigurationRenameAction->setEnabled(activeTab->type() == MainTab::ConfigurationTabType);
 }
 
 // Perform full update of the GUI, including tab reconciliation
