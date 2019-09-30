@@ -115,12 +115,10 @@ bool SpeciesTab::canChangeTitle() const
  */
 
 // Return displayed Species
-const Species* SpeciesTab::species() const
+Species* SpeciesTab::species() const
 {
 	return species_;
 }
-
-
 
 /*
  * Update

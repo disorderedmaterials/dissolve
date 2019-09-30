@@ -76,7 +76,7 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 
 	public:
 	// Return displayed Species
-	const Species* species() const;
+	Species* species() const;
 
 
 	/*
