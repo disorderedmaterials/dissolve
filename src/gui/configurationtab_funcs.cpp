@@ -103,7 +103,7 @@ bool ConfigurationTab::canChangeTitle() const
  */
 
 // Return displayed Configuration
-const Configuration* ConfigurationTab::configuration() const
+Configuration* ConfigurationTab::configuration() const
 {
 	return configuration_;
 }

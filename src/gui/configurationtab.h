@@ -71,7 +71,7 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
 
 	public:
 	// Return displayed Configuration
-	const Configuration* configuration() const;
+	Configuration* configuration() const;
 
 
 	/*
