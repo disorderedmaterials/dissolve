@@ -169,6 +169,7 @@ class DissolveWindow : public QMainWindow
 	void on_SimulationSetRandomSeedAction_triggered(bool checked);
 	// Species
 	void on_SpeciesAddAction_triggered(bool checked);
+	void on_SpeciesAddForcefieldTermsAction_triggered(bool checked);
 	// Configuration
 	void on_ConfigurationAddAction_triggered(bool checked);
 	// Layer
@@ -178,8 +179,6 @@ class DissolveWindow : public QMainWindow
 	// Help
 	void on_HelpOnlineManualAction_triggered(bool checked);
 	void on_HelpOnlineTutorialsAction_triggered(bool checked);
-	// OLD
-	void on_SimulationAddForcefieldTermsAction_triggered(bool checked);
 
 
 	/*

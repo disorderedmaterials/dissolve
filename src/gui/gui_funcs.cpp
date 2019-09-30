@@ -292,10 +292,11 @@ void DissolveWindow::updateControlsFrame()
 void DissolveWindow::updateMenus()
 {
 	MainTab* activeTab = currentTab();
-	if (activeTab) return;
+	if (!activeTab) return;
 
 	// Species Menu
 	ui.SpeciesRenameAction->setEnabled(activeTab->type() == MainTab::SpeciesTabType);
+	ui.SpeciesAddForcefieldTermsAction->setEnabled(activeTab->type() == MainTab::SpeciesTabType);
 }
 
 // Perform full update of the GUI, including tab reconciliation

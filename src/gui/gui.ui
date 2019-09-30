@@ -798,7 +798,7 @@ Remote Simulation</string>
      <x>0</x>
      <y>0</y>
      <width>1041</width>
-     <height>24</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="SessionMenu">
@@ -852,18 +852,6 @@ Remote Simulation</string>
     <addaction name="separator"/>
     <addaction name="SimulationSetRandomSeedAction"/>
    </widget>
-   <widget class="QMenu" name="OLDMMenu">
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-     </font>
-    </property>
-    <property name="title">
-     <string>OLD</string>
-    </property>
-    <addaction name="SimulationAddForcefieldTermsAction"/>
-    <addaction name="separator"/>
-   </widget>
    <widget class="QMenu" name="HelpMenu">
     <property name="font">
      <font>
@@ -888,6 +876,7 @@ Remote Simulation</string>
     <addaction name="SpeciesAddAction"/>
     <addaction name="separator"/>
     <addaction name="SpeciesRenameAction"/>
+    <addaction name="SpeciesAddForcefieldTermsAction"/>
    </widget>
    <widget class="QMenu" name="ConfigurationMenu">
     <property name="font">
@@ -918,7 +907,6 @@ Remote Simulation</string>
    <addaction name="LayerMenu"/>
    <addaction name="WorkspaceMenu"/>
    <addaction name="HelpMenu"/>
-   <addaction name="OLDMMenu"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="FileOpenLocalAction">
@@ -1149,7 +1137,7 @@ Remote Simulation</string>
     <string>Add &amp;Processing Layer...</string>
    </property>
   </action>
-  <action name="SimulationAddForcefieldTermsAction">
+  <action name="SpeciesAddForcefieldTermsAction">
    <property name="icon">
     <iconset resource="main.qrc">
      <normaloff>:/tabs/icons/tabs_ff.svg</normaloff>:/tabs/icons/tabs_ff.svg</iconset>

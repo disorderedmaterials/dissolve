@@ -26,6 +26,7 @@
 #include "gui/addspeciesdialog.h"
 #include "gui/modulecontrolwidget.h"
 #include "gui/selectsystemtemplatedialog.h"
+#include "gui/speciestab.h"
 #include "main/dissolve.h"
 #include "templates/variantpointer.h"
 #include <QDesktopServices>
@@ -348,6 +349,27 @@ void DissolveWindow::on_SpeciesAddAction_triggered(bool checked)
 	}
 }
 
+void DissolveWindow::on_SpeciesAddForcefieldTermsAction_triggered(bool checked)
+{
+	// Get the current Species (if a SpeciesTab is selected)
+	Species* species = currentSpecies();
+	if (!species) return;
+
+	static AddForcefieldTermsDialog addForcefieldTermsDialog(this, dissolve_);
+
+	addForcefieldTermsDialog.reset();
+	addForcefieldTermsDialog.setTargetSpecies(species);
+
+	if (addForcefieldTermsDialog.exec() == QDialog::Accepted)
+	{
+		addForcefieldTermsDialog.applyForcefieldTerms(dissolve_);
+
+		// Fully update GUI
+		setModified();
+		fullUpdate();
+	}
+}
+
 /*
  * Configuration
  */
@@ -420,24 +442,3 @@ void DissolveWindow::on_HelpOnlineManualAction_triggered(bool checked)
 void DissolveWindow::on_HelpOnlineTutorialsAction_triggered(bool checked)
 {
 }
-
-/*
- * OLD
- */
-
-void DissolveWindow::on_SimulationAddForcefieldTermsAction_triggered(bool checked)
-{
-	static AddForcefieldTermsDialog addForcefieldTermsDialog(this, dissolve_);
-
-	addForcefieldTermsDialog.reset();
-
-	if (addForcefieldTermsDialog.exec() == QDialog::Accepted)
-	{
-		addForcefieldTermsDialog.applyForcefieldTerms(dissolve_);
-
-		// Fully update GUI
-		setModified();
-		fullUpdate();
-	}
-}
-
