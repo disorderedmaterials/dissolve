@@ -27,6 +27,7 @@
 #include "base/charstring.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
+#include <QString>
 
 // Forward Declarations
 class Dissolve;
@@ -61,17 +62,21 @@ class MainTab
 	// Unique title (name) of tab
 	CharString title_;
 
+	protected:
+	// Raise suitable dialog for entering / checking new tab name
+	virtual QString getNewTitle(bool& ok);
+
 	public:
 	// Return tab type
 	virtual const char* tabType() const = 0;
 	// Return page widget
 	QWidget* page() const;
-	// Set title of tab
-	void setTitle(const char* title);
-	// Return title of tab
-	const char* title() const;
 	// Return whether the title of the tab can be changed
 	virtual bool canChangeTitle() const;
+	// Rename tab through suitable dialog / widget
+	bool rename();
+	// Return title of tab
+	const char* title() const;
 
 
 	/*
