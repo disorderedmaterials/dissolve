@@ -317,6 +317,11 @@ class DissolveWindow : public QMainWindow
 	void setCurrentTab(ModuleLayer* layer);
 	// Return reference list of all current tabs
 	RefList<MainTab> allTabs() const;
+	// Return currently-selected Species (if a SpeciesTab is the current one)
+	Species* currentSpecies() const;
+	// Return currently-selected Configuration (if a ConfigurationTab is the current one)
+	Configuration* currentConfiguration() const;
+
 
 	public:
 	// Add tab for specified Module target

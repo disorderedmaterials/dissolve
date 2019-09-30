@@ -352,6 +352,28 @@ RefList<MainTab> DissolveWindow::allTabs() const
 	return tabs;
 }
 
+// Return currently-selected Species (if a SpeciesTab is the current one)
+Species* DissolveWindow::currentSpecies() const
+{
+	// Get the currently-selected tab, and make sure it's a SpeciesTab
+	MainTab* tab = currentTab();
+	if (tab->type() != MainTab::SpeciesTabType) return NULL;
+
+	SpeciesTab* speciesTab = dynamic_cast<SpeciesTab*>(tab);
+	return (speciesTab ? speciesTab->species() : NULL);
+}
+
+// Return currently-selected Configuration (if a ConfigurationTab is the current one)
+Configuration* DissolveWindow::currentConfiguration() const
+{
+	// Get the currently-selected tab, and make sure it's a SpeciesTab
+	MainTab* tab = currentTab();
+	if (tab->type() != MainTab::ConfigurationTabType) return NULL;
+
+	ConfigurationTab* configurationTab = dynamic_cast<ConfigurationTab*>(tab);
+	return (configurationTab ? configurationTab->configuration() : NULL);
+}
+
 /*
  * Public
  */
