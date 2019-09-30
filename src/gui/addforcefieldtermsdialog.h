@@ -46,6 +46,8 @@ class AddForcefieldTermsDialog : public QDialog
 	public:
 	// Reset, ready for adding a new Configuration
 	void reset();
+	// Set target Species that we are acquiring forcefield terms for
+	void setTargetSpecies(Species* sp);
 	// Apply Forcefield terms to the targetted Species within the specified Dissolve object
 	bool applyForcefieldTerms(Dissolve& dissolve);
 };
