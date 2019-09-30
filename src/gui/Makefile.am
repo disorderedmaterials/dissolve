@@ -35,11 +35,19 @@ libgui_la_SOURCES += procedureeditor.ui
 libgui_la_SOURCES += keywordswidget.hui
 libgui_la_SOURCES += wizardwidgetfooter.ui wizardwidgetheader.ui wizardwidget.hui
 # UI - Wizards
-libgui_la_SOURCES += addconfigurationwizard.ui addforcefieldtermswizard.ui addprocessinglayerwizard.ui addspecieswizard.ui guidewizard.ui pairpotentialwidget.ui
+libgui_la_SOURCES += addconfigurationwizard.ui addforcefieldtermswizard.ui addprocessinglayerwizard.ui addspecieswizard.ui
+libgui_la_SOURCES += guidewizard.ui
+libgui_la_SOURCES += pairpotentialwidget.ui
 # UI - Dialogs
-libgui_la_SOURCES += addconfigurationdialog.ui addforcefieldtermsdialog.ui addprocessinglayerdialog.ui addspeciesdialog.ui selectsystemtemplatedialog.ui
+libgui_la_SOURCES += addconfigurationdialog.ui addforcefieldtermsdialog.ui addprocessinglayerdialog.ui addspeciesdialog.ui
+libgui_la_SOURCES += selectsystemtemplatedialog.ui
 # UI - Main Tabs
-libgui_la_SOURCES += gui.ui configurationtab.ui forcefieldtab.ui modulelayertab.ui moduletab.ui speciestab.ui workspacetab.ui
+libgui_la_SOURCES += gui.ui
+libgui_la_SOURCES += configurationtab.ui
+libgui_la_SOURCES += forcefieldtab.ui
+libgui_la_SOURCES += modulelayertab.ui moduletab.ui
+libgui_la_SOURCES += speciestab.ui
+libgui_la_SOURCES += workspacetab.ui
 # UI - Utility Classes
 libgui_la_SOURCES += outputhandler.hui thread.hui
 
