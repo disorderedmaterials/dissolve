@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ADDFORCEFIELDTERMSDIALOG_H
-#define DISSOLVE_ADDFORCEFIELDTERMSDIALOG_H
+#ifndef DISSOLVE_DIALOG_ADDFORCEFIELDTERMS_H
+#define DISSOLVE_DIALOG_ADDFORCEFIELDTERMS_H
 
 #include "gui/ui_addforcefieldtermsdialog.h"
 #include <QDialog>

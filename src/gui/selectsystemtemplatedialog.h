@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_SELECTSYSTEMTEMPLATEDIALOG_H
-#define DISSOLVE_SELECTSYSTEMTEMPLATEDIALOG_H
+#ifndef DISSOLVE_DIALOG_SELECTSYSTEMTEMPLATE_H
+#define DISSOLVE_DIALOG_SELECTSYSTEMTEMPLATE_H
 
 #include "gui/ui_selectsystemtemplatedialog.h"
 #include "templates/list.h"
