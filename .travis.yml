@@ -19,9 +19,9 @@ addons:
 
 # Add updated Qt libs (serial build only)
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" = "linux" && "$PARALLEL" = "false" ]]; then sudo add-apt-repository ppa:beineri/opt-qt-5.10.1-trusty -y; fi
+  - if [[ "$TRAVIS_OS_NAME" = "linux" && "$PARALLEL" = "false" ]]; then sudo add-apt-repository ppa:beineri/opt-qt-5.12.3-xenial -y; fi
   - if [[ "$TRAVIS_OS_NAME" = "linux" && "$PARALLEL" = "false" ]]; then sudo apt-get update -q; fi
-  - if [[ "$TRAVIS_OS_NAME" = "linux" && "$PARALLEL" = "false" ]]; then sudo apt-get install qt510base -y; fi
+  - if [[ "$TRAVIS_OS_NAME" = "linux" && "$PARALLEL" = "false" ]]; then sudo apt-get install qt513base -y; fi
   - if [[ "$TRAVIS_OS_NAME" = "osx" && "$PARALLEL" = "false" ]]; then brew install qt5; fi
 
 # Build Stages
@@ -34,7 +34,7 @@ jobs:
       cache:
         directories:
           - artifacts
-      script: ./ci/ubuntu.trusty/ubuntu.build.serial.gui
+      script: ./ci/ubuntu.xenial/ubuntu.build.serial.gui
     - stage: Linux Build
       name: Parallel
       env: PARALLEL=true
@@ -42,7 +42,7 @@ jobs:
       cache:
         directories:
           - artifacts
-      script: ./ci/ubuntu.trusty/ubuntu.build.parallel
+      script: ./ci/ubuntu.xenial/ubuntu.build.parallel
     - stage: Test / Deploy
       name: Serial (also deploys GUI)
       env: PARALLEL=false
@@ -50,7 +50,7 @@ jobs:
       cache:
         directories:
           - artifacts
-      script: ./ci/ubuntu.trusty/ubuntu.test.serial
+      script: ./ci/ubuntu.xenial/ubuntu.test.serial
       before_deploy:
         - wget -q https://raw.githubusercontent.com/trisyoungs/scripts/master/travis-deploy -O travis-deploy
         - chmod u+x ./travis-deploy
@@ -67,7 +67,7 @@ jobs:
       cache:
         directories:
           - artifacts
-      script: ./ci/ubuntu.trusty/ubuntu.test.parallel
+      script: ./ci/ubuntu.xenial/ubuntu.test.parallel
       before_deploy:
         - wget -q https://raw.githubusercontent.com/trisyoungs/scripts/master/travis-deploy -O travis-deploy
         - chmod u+x ./travis-deploy
