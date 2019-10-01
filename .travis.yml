@@ -34,7 +34,7 @@ jobs:
       cache:
         directories:
           - artifacts
-      script: ./ci/ubuntu.xenial/ubuntu.build.serial.gui
+      script: ./ci/ubuntu/build.serial.gui
     - stage: Linux Build
       name: Parallel
       env: PARALLEL=true
@@ -42,7 +42,7 @@ jobs:
       cache:
         directories:
           - artifacts
-      script: ./ci/ubuntu.xenial/ubuntu.build.parallel
+      script: ./ci/ubuntu/build.parallel
     - stage: Test / Deploy
       name: Serial (also deploys GUI)
       env: PARALLEL=false
@@ -50,7 +50,7 @@ jobs:
       cache:
         directories:
           - artifacts
-      script: ./ci/ubuntu.xenial/ubuntu.test.serial
+      script: ./ci/ubuntu/test.serial
       before_deploy:
         - wget -q https://raw.githubusercontent.com/trisyoungs/scripts/master/travis-deploy -O travis-deploy
         - chmod u+x ./travis-deploy
@@ -67,7 +67,7 @@ jobs:
       cache:
         directories:
           - artifacts
-      script: ./ci/ubuntu.xenial/ubuntu.test.parallel
+      script: ./ci/ubuntu/test.parallel
       before_deploy:
         - wget -q https://raw.githubusercontent.com/trisyoungs/scripts/master/travis-deploy -O travis-deploy
         - chmod u+x ./travis-deploy
@@ -81,12 +81,12 @@ jobs:
       name: Serial, GUI
       env: PARALLEL=false
       os: osx
-      script: ./ci/osx.highsierra/osx.build.serial.gui
+      script: ./ci/osx.highsierra/build.serial.gui
     - stage: OSX Build / Deploy
       name: Parallel
       env: PARALLEL=true
       os: osx
-      script: ./ci/osx.highsierra/osx.build.parallel
+      script: ./ci/osx.highsierra/build.parallel
       before_deploy:
         - wget -q https://raw.githubusercontent.com/trisyoungs/scripts/master/travis-deploy -O travis-deploy
         - chmod u+x ./travis-deploy
