@@ -15,10 +15,10 @@ This overview provides basic information suitable for developers wishing to buil
 ## Basics
 
 ### Project Purpose
-Dissolve is a code to permit interrogation of scattering data through the classical simulation of underlying experimental systems. For more of an overview see the [project description](ProjectDescription.md) document.
+Dissolve is a code to permit interrogation of scattering data through the classical simulation of underlying experimental systems. For more of an overview see the [project description](description.md) document.
 
 ### Language
-Dissolve is written entirely in C++. For relevant conventions and guidelines regarding style see the [coding standards](CodingStandards.md) document.
+Dissolve is written entirely in C++. For relevant conventions and guidelines regarding style see the [coding standards](standards.md) document.
 
 ## Build System
 
@@ -59,10 +59,10 @@ All source files are contained within the `src/` directory which is laid out as 
 - `classes`: Classes providing core contextual objects used in the operation of Dissolve, and which depend only on other classes in the same directory or those in `base/`.
 - `data`: Objects providing static data such as the periodic table, scattering lengths, forcefield parameters etc.
 - `expression`: Mathematical expression parser / generator.
-- `genericitems`: Classes permitting storage of data in atype-agnostic way in order to enable suitable [data management](Overviews/DataManagement.md).
+- `genericitems`: Classes permitting storage of data in atype-agnostic way in order to enable suitable [data management](overviews/dataManagement.md).
 - `gui`: Qt-based GUI for `Dissolve`.
 - `main`: Main class providing Dissolve's core object.
 - `math`: Math-related classes, including classes containing (static) data operations and methods.
-- `module`: Base definition and associated helper classes for defining and handling [modules](Overviews/Modules.md).
+- `module`: Base definition and associated helper classes for defining and handling [modules](overviews/modules.md).
 - `modules`: Repository containing subdirectores defining individual modules.
 - `templates`: Template classes providing general, context-free functionality.

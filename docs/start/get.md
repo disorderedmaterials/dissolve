@@ -1,6 +1,7 @@
 ---
 title: Getting Dissolve
 parent: Getting Started
+nav_order: 20
 ---
 # Getting Dissolve
 
@@ -12,7 +13,7 @@ Dissolve is available in pre-built form for most platforms. You can find install
 
 ## Source Code
 
-The source code is available on GitHub as the [Dissolve project](https://github.com/trisyoungs/dissolve). See the [build instructions](BuildingDissolve.md) for more information.
+The source code is available on GitHub as the [Dissolve project](https://github.com/trisyoungs/dissolve). See the [build instructions](build.md) for more information.
 
 ## SCARF
 

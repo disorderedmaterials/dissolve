@@ -14,7 +14,7 @@ This document lists the high-level technical specifications for the Dissolve pro
 
 ## Background
 
-See the [project description](ProjectDescription.md) for an overview of the purpose and intention of Dissolve.
+See the [project description](description.md) for an overview of the purpose and intention of Dissolve.
 
 ## General Requirements
 
@@ -37,5 +37,5 @@ See the [project description](ProjectDescription.md) for an overview of the purp
 - The code should make use of human-readable, non-proprietary file formats for input wherever practically possible, so as to make setup and debugging as straightforward as possible.
 
 ### Consistency
-- The code should implement core algorithms of the existing [Empirical Potential Structure Refinement](../Introduction/EPSR.md) (EPSR) code so as to provide smooth transition in the user community.
+- The code should implement core algorithms of the existing [Empirical Potential Structure Refinement](../intro/EPSR.md) (EPSR) code so as to provide smooth transition in the user community.
 

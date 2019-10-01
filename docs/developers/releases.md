@@ -15,7 +15,7 @@ This document describes and defines the release cycle and versioning for the Dis
 
 ## Overview
 
-Dissolve is a scientific code with a well-defined underlying framework (which is likely to change slowly) upon which specific functionality is added in a [modular manner](Overviews/Modules.md). As such, the development cycle is likely to be fairly rapid. For these reasons, a three-month release cycle will be undertaken in the first instance, beginning from `version 1.0` planned for January 2020.
+Dissolve is a scientific code with a well-defined underlying framework (which is likely to change slowly) upon which specific functionality is added in a [modular manner](overviews/modules.md). As such, the development cycle is likely to be fairly rapid. For these reasons, a three-month release cycle will be undertaken in the first instance, beginning from `version 1.0` planned for January 2020.
 
 ```mermaid
 gantt
@@ -37,4 +37,4 @@ gantt
 	v1.3.x (Hotfixes) :       crit, v13hf, after v13, 10d
 ```
 
-Development priorities for each incremental version will be decided by the [project management committee](../Governance/ProjectManagementCommittee.md).
+Development priorities for each incremental version will be decided by the [project management committee](../governance/pmc.md).

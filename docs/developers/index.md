@@ -1,8 +1,7 @@
 ---
 title: Developer Documentation
 has_children: true
-permalink: /docs/Developers
-nav_order: 95
+nav_order: 80 
 ---
 # Developer Documentation
 
