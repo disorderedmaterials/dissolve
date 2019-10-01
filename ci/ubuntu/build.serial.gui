@@ -4,8 +4,8 @@
 set -ev
 
 # Source the new Qt installation
-# - Copied from /opt/qt510/bin/qt510-env.sh
-QT_BASE_DIR=/opt/qt510
+# - Copied from /opt/qt512/bin/qt512-env.sh
+QT_BASE_DIR=/opt/qt512
 export QTDIR=$QT_BASE_DIR
 export PATH=$QT_BASE_DIR/bin:$PATH
 
@@ -40,8 +40,5 @@ VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
 # Build AppImage for GUI
 ./build-appimage.sh -a Dissolve-GUI -v ${VERSION} -b src/dissolve-gui
 
-# Build AppImage for DGuidEd
-./build-appimage.sh -a DGuidEd -v ${VERSION} -b src/dguided
-
 # Store artifacts (the dir will have been created already by Travis)
-cp Dissolve*.AppImage DGuidEd*.AppImage artifacts/
+cp Dissolve*.AppImage artifacts/
