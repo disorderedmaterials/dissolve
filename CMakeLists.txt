@@ -48,7 +48,7 @@ if(GUI)
   # Add extra functions
   LIST(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
   include(FindFTGL)
-  include(FindGLEXT)
+
   find_package(Qt5Widgets 5.4 REQUIRED)
   find_package(Qt5Core 5.4 REQUIRED)
   find_package(Qt5Gui 5.4 REQUIRED)
@@ -56,7 +56,6 @@ if(GUI)
   find_package(OpenGL REQUIRED)
   find_package(FTGL REQUIRED)
   find_package(Freetype REQUIRED)
-  find_package(GLEXT REQUIRED)
 
   # Make sure CMake won't try to generate rules for moc (we will do it ourselves)
   set(CMAKE_AUTOMOC OFF)
@@ -79,7 +78,6 @@ if(WIN32)
   if(GUI)
     include_directories(
       ${FTGL_INCLUDE_DIRS}
-      ${GLEXT_INCLUDE_DIRS}
     )
   endif(GUI)
  
