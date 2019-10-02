@@ -173,6 +173,9 @@ bool Configuration::finaliseAfterLoad(ProcessPool& procPool, double pairPotentia
 	scaleBox(requestedSizeFactor_);
 	appliedSizeFactor_ = requestedSizeFactor_;
 
+	// Update Cell locations for Atoms
+	updateCellContents();
+
 	// Finalise used AtomType list
 	usedAtomTypes_.finalise();
 
