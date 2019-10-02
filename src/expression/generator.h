@@ -27,7 +27,7 @@
 #include "templates/reflist.h"
 
 // External declarations
-// extern int ExpressionGenerator_parse();
+extern int ExpressionGenerator_parse();
 
 // Forward declarations
 class Expression;

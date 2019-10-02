@@ -178,9 +178,9 @@ target_include_directories(gui PRIVATE
   ${FREETYPE_INCLUDE_DIRS}
 )
 
+add_subdirectory(keywordwidgets)
 add_subdirectory(charts)
 add_subdirectory(delegates)
-add_subdirectory(keywordwidgets)
 add_subdirectory(viewer)
 add_subdirectory(widgets)
 
