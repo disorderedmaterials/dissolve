@@ -2,7 +2,6 @@
 title: Overviews
 parent: Developer Documentation
 has_children: true
-permalink: /docs/Developers/Overviews
 nav_order: 99
 ---
 # Overviews

@@ -1,6 +1,7 @@
 ---
-parent: Introduction
 title: What is Dissolve?
+parent: Getting Started
+nav_order: 1
 ---
 # What is Dissolve?
 

@@ -1,7 +1,6 @@
 ---
 title: Input File
 parent: Input / Output Files
-permalink: /docs/InputOutput/InputFile
 nav_order: 1
 ---
 # Main Input File

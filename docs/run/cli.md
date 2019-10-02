@@ -1,6 +1,7 @@
 ---
 title: CLI Options
-parent: Getting Started
+parent: Running Dissolve
+nav_order: 20
 ---
 # CLI Options
 

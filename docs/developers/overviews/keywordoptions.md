@@ -21,7 +21,7 @@ This overview provides implementation details on the module keywords used to sto
 
 ### Brief
 
-[Modules](Modules.md) provide the core functionality of Dissolve, implementing algorithms, calculations, and processes that allow the main simulation workflow to be constructed. Each of these modules is typically controlled by a set of keyword options that are set in the input file in order to control or fine-tune the behaviour of the module. In order to provide consistency of style, input and output, and limit checking for these options a general framework for creating and defining options working on specific PODs or classes has been defined.  Related classes within the GUI provide interface widgets for all keyword types, allowing seamless editing of keyword options within the GUI without manual coding of the necessary controls.
+[rodules](modules.md) provide the core functionality of Dissolve, implementing algorithms, calculations, and processes that allow the main simulation workflow to be constructed. Each of these modules is typically controlled by a set of keyword options that are set in the input file in order to control or fine-tune the behaviour of the module. In order to provide consistency of style, input and output, and limit checking for these options a general framework for creating and defining options working on specific PODs or classes has been defined.  Related classes within the GUI provide interface widgets for all keyword types, allowing seamless editing of keyword options within the GUI without manual coding of the necessary controls.
 
 ### Rationale
 

@@ -1,6 +1,7 @@
 ---
 title: Building Dissolve
 parent: Getting Started
+nav_order: 40
 ---
 # Building Dissolve
 
