@@ -37,12 +37,10 @@ GeometryListKeyword::~GeometryListKeyword()
 // Return minimum number of arguments accepted
 int GeometryListKeyword::minArguments() const
 {	
-	if (type_ == Geometry::GeometryType::Distance)
+	if (type_ == Geometry::Distance)
 		return 3;
-	
-	else if (type_ == Geometry::GeometryType::Angle)
+	else if (type_ == Geometry::Angle)
 		return 4;
-	
 	else
 		return 5;
 }
@@ -50,12 +48,10 @@ int GeometryListKeyword::minArguments() const
 // Return maximum number of arguments accepted
 int GeometryListKeyword::maxArguments() const
 {
-	if (type_ == Geometry::GeometryType::Distance)
+	if (type_ == Geometry::Distance)
 		return 3;
-	
-	else if (type_ == Geometry::GeometryType::Angle)
+	else if (type_ == Geometry::Angle)
 		return 4;
-	
 	else
 		return 5;
 }
@@ -69,35 +65,29 @@ bool GeometryListKeyword::read(LineParser& parser, int startArg, const CoreData&
 		if (parser.argi(i) <0)
 			return Messenger::error("Index value, %i, not appropriate", parser.argi(i));
 	}
-	
+
 	if (maxArguments() == 3)
 		g->set(parser.argd(2+startArg), parser.argi(0+startArg), parser.argi(1+startArg) );
-	
 	else if (maxArguments() == 4)
 		g->set(parser.argd(3+startArg), parser.argi(startArg), parser.argi(1+startArg), parser.argi(2+startArg));
 	else
 		g->set(parser.argd(4+startArg), parser.argi(startArg), parser.argi(1+startArg), parser.argi(2+startArg), parser.argi(3+startArg));
-	
+
 	return true;
 }
 
 // Write keyword data to specified LineParser
-
 bool GeometryListKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
 {
-	
 	CharString index;
-	
+
 	ListIterator<Geometry> GeoIterator(data_);
 	while (Geometry* ref = GeoIterator.iterate())
 	{
 		index.clear();
 		for (int n=0; n<maxArguments()-1; ++n) index.strcatf("  %i", ref->indices(n));
-		if (!parser.writeLineF("%s%s%s  %d\n", prefix, keywordName, index.get(), ref->value())) 
-		return false;
+		if (!parser.writeLineF("%s%s%s  %12.4e\n", prefix, keywordName, index.get(), ref->value())) return false;
 	}
 
 	return true;
 }
-
-
