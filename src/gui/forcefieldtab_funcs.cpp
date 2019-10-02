@@ -98,13 +98,13 @@ ForcefieldTab::~ForcefieldTab()
 }
 
 /*
- * Data
+ * MainTab Reimplementations
  */
 
 // Return tab type
-const char* ForcefieldTab::tabType() const
+MainTab::TabType ForcefieldTab::type() const
 {
-	return "ForcefieldTab";
+	return MainTab::ForcefieldTabType;
 }
 
 /*

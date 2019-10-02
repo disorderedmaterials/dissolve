@@ -54,13 +54,13 @@ ModuleTab::~ModuleTab()
 }
 
 /*
- * Data
+ * MainTab Reimplementations
  */
 
 // Return tab type
-const char* ModuleTab::tabType() const
+MainTab::TabType ModuleTab::type() const
 {
-	return "ModuleTab";
+	return MainTab::ModuleTabType;
 }
 
 /*

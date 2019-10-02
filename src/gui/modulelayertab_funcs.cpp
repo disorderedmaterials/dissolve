@@ -43,13 +43,13 @@ ModuleLayerTab::~ModuleLayerTab()
 }
 
 /*
- * Data
+ * MainTab Reimplementations
  */
 
 // Return tab type
-const char* ModuleLayerTab::tabType() const
+MainTab::TabType ModuleLayerTab::type() const
 {
-	return "ModuleLayerTab";
+	return MainTab::ModuleLayerTabType;
 }
 
 /*

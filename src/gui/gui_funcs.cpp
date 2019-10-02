@@ -288,6 +288,20 @@ void DissolveWindow::updateControlsFrame()
 	}
 }
 
+// Update menus
+void DissolveWindow::updateMenus()
+{
+	MainTab* activeTab = currentTab();
+	if (!activeTab) return;
+
+	// Species Menu
+	ui.SpeciesRenameAction->setEnabled(activeTab->type() == MainTab::SpeciesTabType);
+	ui.SpeciesAddForcefieldTermsAction->setEnabled(activeTab->type() == MainTab::SpeciesTabType);
+
+	// Configuration Menu
+	ui.ConfigurationRenameAction->setEnabled(activeTab->type() == MainTab::ConfigurationTabType);
+}
+
 // Perform full update of the GUI, including tab reconciliation
 void DissolveWindow::fullUpdate()
 {
@@ -296,6 +310,7 @@ void DissolveWindow::fullUpdate()
 	updateTabs();
 	updateWindowTitle();
 	updateControlsFrame();
+	updateMenus();
 }
 
 /*
@@ -309,6 +324,8 @@ void DissolveWindow::showMainStackPage(DissolveWindow::MainStackPage page)
 
 	// Enable / disable main menu items as appropriate
 	ui.SimulationMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
-	ui.ControlMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
+	ui.SpeciesMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
+	ui.ConfigurationMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
+	ui.LayerMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
 	ui.WorkspaceMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
 }

@@ -23,6 +23,7 @@
 #include "gui/gui.h"
 #include "gui/delegates/combolist.hui"
 #include "gui/delegates/exponentialspin.hui"
+#include "gui/getconfigurationnamedialog.h"
 #include "gui/helpers/combopopulator.h"
 #include "gui/helpers/tablewidgetupdater.h"
 #include "main/dissolve.h"
@@ -64,13 +65,37 @@ ConfigurationTab::~ConfigurationTab()
 }
 
 /*
- * Data
+ * MainTab Reimplementations
  */
 
 // Return tab type
-const char* ConfigurationTab::tabType() const
+MainTab::TabType ConfigurationTab::type() const
 {
-	return "ConfigurationTab";
+	return MainTab::ConfigurationTabType;
+}
+
+// Raise suitable dialog for entering / checking new tab name
+QString ConfigurationTab::getNewTitle(bool& ok)
+{
+	// Get a new, valid name for the Configuration
+	GetConfigurationNameDialog nameDialog(this, dissolve_.coreData());
+	ok = nameDialog.get(configuration_, configuration_->name());
+
+	if (ok)
+	{
+		// Rename our Configuration, and flag that our data has been modified
+		configuration_->setName(qPrintable(nameDialog.newName()));
+
+		dissolveWindow_->setModified();
+	}
+
+	return nameDialog.newName();
+}
+
+// Return whether the title of the tab can be changed
+bool ConfigurationTab::canChangeTitle() const
+{
+	return true;
 }
 
 /*
@@ -78,7 +103,7 @@ const char* ConfigurationTab::tabType() const
  */
 
 // Return displayed Configuration
-const Configuration* ConfigurationTab::configuration() const
+Configuration* ConfigurationTab::configuration() const
 {
 	return configuration_;
 }
@@ -92,8 +117,7 @@ void ConfigurationTab::updateControls()
 {
 	refreshing_ = true;
 
-	// Definition
-	ui_.NameEdit->setText(configuration_->name());
+	// Temperature
 	ui_.TemperatureSpin->setValue(configuration_->temperature());
 
 	// Size Factor
@@ -124,29 +148,20 @@ void ConfigurationTab::updateControls()
 // Disable sensitive controls within tab
 void ConfigurationTab::disableSensitiveControls()
 {
-	ui_.DefinitionGroup->setEnabled(false);
+	ui_.TemperatureGroup->setEnabled(false);
 	ui_.SizeFactorGroup->setEnabled(false);
 }
 
 // Enable sensitive controls within tab
 void ConfigurationTab::enableSensitiveControls()
 {
-	ui_.DefinitionGroup->setEnabled(true);
+	ui_.TemperatureGroup->setEnabled(true);
 	ui_.SizeFactorGroup->setEnabled(true);
 }
 
 /*
  * Signals / Slots
  */
-
-void ConfigurationTab::on_NameEdit_textChanged(QString text)
-{
-	if (refreshing_) return;
-
-	configuration_->setName(qPrintable(text));
-
-	dissolveWindow_->setModified();
-}
 
 void ConfigurationTab::on_TemperatureSpin_valueChanged(double value)
 {

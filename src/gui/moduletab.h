@@ -46,11 +46,11 @@ class ModuleTab : public QWidget, public ListItem<ModuleTab>, public MainTab
 
 
 	/*
-	 * Data
+	 * MainTab Reimplementations
 	 */
 	public:
 	// Return tab type
-	const char* tabType() const;
+	MainTab::TabType type() const;
 
 
 	/*

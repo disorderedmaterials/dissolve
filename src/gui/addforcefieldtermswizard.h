@@ -51,12 +51,16 @@ class AddForcefieldTermsWizard : public WizardWidget
 	CoreData temporaryCoreData_;
 	// Temporary Dissolve reference for creating / importing layers
 	Dissolve temporaryDissolve_;
+	// Target Species that we are acquiring forcefield terms for
+	Species* targetSpecies_;
 	// Species pointer with newly-applied Forcefield terms
 	Species* modifiedSpecies_;
 
 	public:
 	// Set Dissolve reference
 	void setMainDissolveReference(const Dissolve* dissolveReference);
+	// Set target Species that we are acquiring forcefield terms for
+	void setTargetSpecies(Species* sp);
 	// Apply our Forcefield terms to the targetted Species within the specified Dissolve object
 	bool applyForcefieldTerms(Dissolve& dissolve);
 
@@ -72,7 +76,6 @@ class AddForcefieldTermsWizard : public WizardWidget
 	// Pages Enum
 	enum WidgetPage
 	{
-		SelectSpeciesPage,		/* Selection of target Species for Forcefield terms */
 		SelectForcefieldPage,		/* Select Forcefield to apply to Species */
 		SelectTermsPage,		/* Select terms to generate */
 		AtomTypesPage,			/* AtomTypes page - check / re-map AtomTypes */
@@ -94,23 +97,8 @@ class AddForcefieldTermsWizard : public WizardWidget
 	bool prepareForPreviousPage(int currentIndex);
 
 	public:
-	// Reset, ready for adding a new layer
+	// Reset, ready for adding new forcefield terms
 	void reset();
-
-
-	/*
-	 * Select Species Page
-	 */
-	private:
-	// SpeciesList row update function
-	void updateSpeciesListRow(int row, Species* sp, bool createItem);
-	// Update Select Species page
-	void updateSelectSpeciesPage();
-	// Return currently-selected Species
-	Species* currentSpecies() const;
-
-	private slots:
-	void on_SpeciesList_currentRowChanged(int row);
 
 
 	/*

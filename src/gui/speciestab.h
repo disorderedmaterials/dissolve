@@ -56,11 +56,15 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 
 
 	/*
-	 * Data
+	 * MainTab Reimplementations
 	 */
 	public:
 	// Return tab type
-	const char* tabType() const;
+	MainTab::TabType type() const;
+	// Raise suitable dialog for entering / checking new tab name
+	QString getNewTitle(bool& ok);
+	// Return whether the title of the tab can be changed
+	bool canChangeTitle() const;
 
 
 	/*
@@ -72,7 +76,7 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 
 	public:
 	// Return displayed Species
-	const Species* species() const;
+	Species* species() const;
 
 
 	/*
@@ -109,8 +113,6 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	Isotopologue* currentIsotopologue();
 
 	private slots:
-	// Definition
-	void on_NameEdit_textChanged(QString text);
 	// Isotopologues
 	void on_IsotopologueAddButton_clicked(bool checked);
 	void on_IsotopologueRemoveButton_clicked(bool checked);

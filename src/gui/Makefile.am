@@ -35,11 +35,19 @@ libgui_la_SOURCES += procedureeditor.ui
 libgui_la_SOURCES += keywordswidget.hui
 libgui_la_SOURCES += wizardwidgetfooter.ui wizardwidgetheader.ui wizardwidget.hui
 # UI - Wizards
-libgui_la_SOURCES += addconfigurationwizard.ui addforcefieldtermswizard.ui addprocessinglayerwizard.ui addspecieswizard.ui guidewizard.ui pairpotentialwidget.ui
+libgui_la_SOURCES += addconfigurationwizard.ui addforcefieldtermswizard.ui addprocessinglayerwizard.ui addspecieswizard.ui
+libgui_la_SOURCES += pairpotentialwidget.ui
 # UI - Dialogs
-libgui_la_SOURCES += addconfigurationdialog.ui addforcefieldtermsdialog.ui addprocessinglayerdialog.ui addspeciesdialog.ui selectsystemtemplatedialog.ui
+libgui_la_SOURCES += addconfigurationdialog.ui addforcefieldtermsdialog.ui addprocessinglayerdialog.ui addspeciesdialog.ui
+libgui_la_SOURCES += getconfigurationnamedialog.ui getspeciesnamedialog.ui
+libgui_la_SOURCES += selectsystemtemplatedialog.ui
 # UI - Main Tabs
-libgui_la_SOURCES += gui.ui configurationtab.ui forcefieldtab.ui modulelayertab.ui moduletab.ui speciestab.ui workspacetab.ui
+libgui_la_SOURCES += gui.ui
+libgui_la_SOURCES += configurationtab.ui
+libgui_la_SOURCES += forcefieldtab.ui
+libgui_la_SOURCES += modulelayertab.ui moduletab.ui
+libgui_la_SOURCES += speciestab.ui
+libgui_la_SOURCES += workspacetab.ui
 # UI - Utility Classes
 libgui_la_SOURCES += outputhandler.hui thread.hui
 
@@ -47,7 +55,8 @@ libgui_la_SOURCES += outputhandler.hui thread.hui
 libgui_la_SOURCES += addconfigurationdialog_funcs.cpp addconfigurationwizard_funcs.cpp addforcefieldtermsdialog_funcs.cpp addforcefieldtermswizard_funcs.cpp addprocessinglayerdialog_funcs.cpp addprocessinglayerwizard_funcs.cpp addspeciesdialog_funcs.cpp addspecieswizard_funcs.cpp
 libgui_la_SOURCES += configurationtab_funcs.cpp
 libgui_la_SOURCES += forcefieldtab_funcs.cpp
-libgui_la_SOURCES += guidewizard_funcs.cpp gui_funcs.cpp gui_menu.cpp gui_simulation_control.cpp gui_simulation_state.cpp gui_simulation_tabs.cpp gui_start.cpp guide.cpp guidepage.cpp guidepagehighlight.cpp
+libgui_la_SOURCES += getconfigurationnamedialog_funcs.cpp getspeciesnamedialog_funcs.cpp
+libgui_la_SOURCES += gui_control.cpp gui_funcs.cpp gui_io.cpp gui_menu.cpp gui_start.cpp gui_tabs.cpp
 libgui_la_SOURCES += keywordswidget_funcs.cpp
 libgui_la_SOURCES += layereditor_funcs.cpp
 libgui_la_SOURCES += maintab.cpp
@@ -63,7 +72,7 @@ libgui_la_SOURCES += wizardwidget_funcs.cpp wizardwidgethighlight.cpp wizardwidg
 noinst_HEADERS = addconfigurationdialog.h addconfigurationwizard.h addforcefieldtermsdialog.h addforcefieldtermswizard.h addprocessinglayerdialog.h addprocessinglayerwizard.h addspeciesdialog.h addspecieswizard.h
 noinst_HEADERS += configurationtab.h
 noinst_HEADERS += forcefieldtab.h
-noinst_HEADERS += guidewizard.h gui.h guide.h guidepage.h guidepagehighlight.h
+noinst_HEADERS += getconfigurationnamedialog.h getspeciesnamedialog.h gui.h
 noinst_HEADERS += keywordwidgets.h
 noinst_HEADERS += layereditor.h
 noinst_HEADERS += maintab.h modulechartblock.h modulecharthotspot.h modulechartinsertionblock.h modulechartmetrics.h modulechartmoduleblock.h modulecontrolwidget.h modulelayertab.h moduletab.h modulewidget.h

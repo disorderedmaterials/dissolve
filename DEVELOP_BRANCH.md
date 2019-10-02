@@ -6,7 +6,6 @@
 - 3D plotting of surfaces (marching cubes)
 
 ## Main
-- Fix documentation (include path for mermaid)
 - Add water example
 - Add benzene example (inc. sdf/slicing comparison between equilibrated / refined simulations)
 - Add silica example

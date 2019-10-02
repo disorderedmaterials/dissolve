@@ -34,6 +34,7 @@
 AddForcefieldTermsWizard::AddForcefieldTermsWizard(QWidget* parent) : temporaryDissolve_(temporaryCoreData_)
 {
 	dissolveReference_ = NULL;
+	targetSpecies_ = NULL;
 	modifiedSpecies_ = NULL;
 
 	// Set up our UI, and attach the wizard's widgets to placeholder widgets (if available)
@@ -55,7 +56,6 @@ AddForcefieldTermsWizard::AddForcefieldTermsWizard(QWidget* parent) : temporaryD
 	masterTorsionItemParent_->setExpanded(true);
 
 	// Register pages with the wizard
-	registerPage(AddForcefieldTermsWizard::SelectSpeciesPage, "Select Target Species", AddForcefieldTermsWizard::SelectForcefieldPage);
 	registerPage(AddForcefieldTermsWizard::SelectForcefieldPage, "Select Forcefield", AddForcefieldTermsWizard::SelectTermsPage);
 	registerPage(AddForcefieldTermsWizard::SelectTermsPage, "Select Terms", AddForcefieldTermsWizard::AtomTypesPage);
 	registerPage(AddForcefieldTermsWizard::AtomTypesPage, "Check AtomTypes", AddForcefieldTermsWizard::MasterTermsPage);
@@ -82,6 +82,12 @@ void AddForcefieldTermsWizard::setMainDissolveReference(const Dissolve* dissolve
 	dissolveReference_ = dissolveReference;
 }
 
+// Set target Species that we are acquiring forcefield terms for
+void AddForcefieldTermsWizard::setTargetSpecies(Species* sp)
+{
+	targetSpecies_ = sp;
+}
+
 // Apply our Forcefield terms to the targetted Species within the specified Dissolve object
 bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve& dissolve)
 {
@@ -97,11 +103,8 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve& dissolve)
 	 * 4) Loop over torsions and create / assign parameters / MasterTerms (if TorsionTermsCheck is checked)
 	 */
 
-	Species* originalSpecies = currentSpecies();
-	if (!originalSpecies) return false;
-
 	// 1) Set AtomTypes
-	ListIterator<SpeciesAtom> atomIterator(originalSpecies->atoms());
+	ListIterator<SpeciesAtom> atomIterator(targetSpecies_->atoms());
 	SpeciesAtom* modifiedI = modifiedSpecies_->atoms().first();
 	while (SpeciesAtom* i = atomIterator.iterate())
 	{
@@ -115,7 +118,7 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve& dissolve)
 	// Copy bond terms
 	if (ui_.BondTermsCheck->isChecked())
 	{
-		ListIterator<SpeciesBond> originalBondIterator(originalSpecies->bonds());
+		ListIterator<SpeciesBond> originalBondIterator(targetSpecies_->bonds());
 		ListIterator<SpeciesBond> modifiedBondIterator(modifiedSpecies_->bonds());
 		while (SpeciesBond* originalBond = originalBondIterator.iterate())
 		{
@@ -129,7 +132,7 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve& dissolve)
 	// Copy angle terms
 	if (ui_.AngleTermsCheck->isChecked())
 	{
-		ListIterator<SpeciesAngle> originalAngleIterator(originalSpecies->angles());
+		ListIterator<SpeciesAngle> originalAngleIterator(targetSpecies_->angles());
 		ListIterator<SpeciesAngle> modifiedAngleIterator(modifiedSpecies_->angles());
 		while (SpeciesAngle* originalAngle = originalAngleIterator.iterate())
 		{
@@ -143,7 +146,7 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve& dissolve)
 	// Copy torsion terms
 	if (ui_.TorsionTermsCheck->isChecked())
 	{
-		ListIterator<SpeciesTorsion> originalTorsionIterator(originalSpecies->torsions());
+		ListIterator<SpeciesTorsion> originalTorsionIterator(targetSpecies_->torsions());
 		ListIterator<SpeciesTorsion> modifiedTorsionIterator(modifiedSpecies_->torsions());
 		while (SpeciesTorsion* originalTorsion = originalTorsionIterator.iterate())
 		{
@@ -173,10 +176,6 @@ bool AddForcefieldTermsWizard::displayControlPage(int index)
 	// Update controls in the target page if necessary
 	switch (index)
 	{
-		case (AddForcefieldTermsWizard::SelectSpeciesPage):
-			updateSelectSpeciesPage();
-			if ((ui_.SpeciesList->currentRow() == -1) && (ui_.SpeciesList->count() > 0)) ui_.SpeciesList->setCurrentRow(0);
-			break;
 		case (AddForcefieldTermsWizard::SelectForcefieldPage):
 			updateSelectForcefieldPage();
 			if ((ui_.ForcefieldList->currentRow() == -1) && (ui_.ForcefieldList->count() > 0)) ui_.ForcefieldList->setCurrentRow(0);
@@ -194,8 +193,6 @@ bool AddForcefieldTermsWizard::progressionAllowed(int index) const
 	// Check widget validity in the specified page, returning if progression (i.e. pushing 'Next' or 'Finish') is allowed
 	switch (index)
 	{
-		case (AddForcefieldTermsWizard::SelectSpeciesPage):
-			return (currentSpecies());
 		case (AddForcefieldTermsWizard::SelectForcefieldPage):
 			return (currentForcefield());
 		default:
@@ -217,7 +214,7 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 			if (!ff) return false;
 
 			// Copy selected Species to our temporary instance, detach any MasterTerm references, and delete the MasterTerms
-			modifiedSpecies_ = temporaryDissolve_.copySpecies(currentSpecies());
+			modifiedSpecies_ = temporaryDissolve_.copySpecies(targetSpecies_);
 			modifiedSpecies_->detachFromMasterTerms();
 			temporaryCoreData_.clearMasterTerms();
 
@@ -283,49 +280,7 @@ bool AddForcefieldTermsWizard::prepareForPreviousPage(int currentIndex)
 void AddForcefieldTermsWizard::reset()
 {
 	// Reset the underlying WizardWidget
-	resetToPage(AddForcefieldTermsWizard::SelectSpeciesPage);
-}
-
-/*
- * Select Species Page
- */
-
-// SpeciesList row update function
-void AddForcefieldTermsWizard::updateSpeciesListRow(int row, Species* sp, bool createItem)
-{
-	QListWidgetItem* item;
-	if (createItem)
-	{
-		item = new QListWidgetItem;
-		item->setData(Qt::UserRole, VariantPointer<Species>(sp));
-		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-		ui_.SpeciesList->insertItem(row, item);
-	}
-	else item = ui_.SpeciesList->item(row);
-
-	// Set item data
-	item->setText(sp->name());
-}
-
-// Update Select Species page
-void AddForcefieldTermsWizard::updateSelectSpeciesPage()
-{
-	ListWidgetUpdater<AddForcefieldTermsWizard,Species> speciesUpdater(ui_.SpeciesList, dissolveReference_->coreData().constSpecies(), this, &AddForcefieldTermsWizard::updateSpeciesListRow);
-}
-
-// Return currently-selected Species
-Species* AddForcefieldTermsWizard::currentSpecies() const
-{
-	if (ui_.SpeciesList->currentRow() == -1) return NULL;
-
-	Species* sp = VariantPointer<Species>(ui_.SpeciesList->currentItem()->data(Qt::UserRole));
-
-	return sp;
-}
-
-void AddForcefieldTermsWizard::on_SpeciesList_currentRowChanged(int row)
-{
-	updateProgressionControls();
+	resetToPage(AddForcefieldTermsWizard::SelectForcefieldPage);
 }
 
 /*

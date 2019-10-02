@@ -27,6 +27,7 @@
 #include "gui/delegates/isotopecombo.hui"
 #include "gui/delegates/exponentialspin.hui"
 #include "gui/delegates/null.h"
+#include "gui/getspeciesnamedialog.h"
 #include "gui/helpers/listwidgetupdater.h"
 #include "gui/helpers/tablewidgetupdater.h"
 #include "gui/helpers/treewidgetupdater.h"
@@ -76,13 +77,37 @@ SpeciesTab::~SpeciesTab()
 }
 
 /*
- * Data
+ * MainTab Reimplementations
  */
 
 // Return tab type
-const char* SpeciesTab::tabType() const
+MainTab::TabType SpeciesTab::type() const
 {
-	return "SpeciesTab";
+	return MainTab::SpeciesTabType;
+}
+
+// Raise suitable dialog for entering / checking new tab name
+QString SpeciesTab::getNewTitle(bool& ok)
+{
+	// Get a new, valid name for the Species
+	GetSpeciesNameDialog nameDialog(this, dissolve_.coreData());
+	ok = nameDialog.get(species_, species_->name());
+
+	if (ok)
+	{
+		// Rename our Species, and flag that our data has been modified
+		species_->setName(qPrintable(nameDialog.newName()));
+
+		dissolveWindow_->setModified();
+	}
+
+	return nameDialog.newName();
+}
+
+// Return whether the title of the tab can be changed
+bool SpeciesTab::canChangeTitle() const
+{
+	return true;
 }
 
 /*
@@ -90,7 +115,7 @@ const char* SpeciesTab::tabType() const
  */
 
 // Return displayed Species
-const Species* SpeciesTab::species() const
+Species* SpeciesTab::species() const
 {
 	return species_;
 }
@@ -321,9 +346,6 @@ void SpeciesTab::updateControls()
 {
 	refreshing_ = true;
 
-	// Definition
-	ui_.NameEdit->setText(species_->name());
-
 	// Isotopologues Tree
 	if (!species_) ui_.IsotopologuesTree->clear();
 	else
@@ -391,14 +413,6 @@ Isotopologue* SpeciesTab::currentIsotopologue()
 	else return VariantPointer<Isotopologue>(item->data(0, Qt::UserRole));
 }
 
-void SpeciesTab::on_NameEdit_textChanged(QString text)
-{
-	if (refreshing_) return;
-
-	species_->setName(qPrintable(text));
-
-	dissolveWindow_->setModified();
-}
 
 void SpeciesTab::on_IsotopologueAddButton_clicked(bool checked)
 {

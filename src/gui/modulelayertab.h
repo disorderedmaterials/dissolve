@@ -49,7 +49,7 @@ class ModuleLayerTab : public QWidget, public ListItem<ModuleLayerTab>, public M
 	 */
 	public:
 	// Return tab type
-	const char* tabType() const;
+	MainTab::TabType type() const;
 
 
 	/*
