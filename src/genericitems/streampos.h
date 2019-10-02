@@ -104,7 +104,7 @@ template <> class GenericItemContainer<streampos> : public GenericItem
 	// Check item equality
 	bool equality(ProcessPool& procPool)
 	{
-		return procPool.equality(data_);
+		return procPool.equality( (long int) data_);
 	}
 };
 
