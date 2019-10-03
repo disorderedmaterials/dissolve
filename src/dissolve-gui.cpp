@@ -159,9 +159,10 @@ int main(int argc, char **argv)
 	QCoreApplication::setApplicationName("Dissolve-GUI");
 
 	// Tweak the default QSurfaceFormat
-	QSurfaceFormat surfaceFormat;
-	surfaceFormat.setSamples(4);
-	QSurfaceFormat::setDefaultFormat(surfaceFormat);
+// 	QSurfaceFormat surfaceFormat;
+// 	surfaceFormat.setSamples(0);
+// 	surfaceFormat.setAlphaBufferSize(1);
+// 	QSurfaceFormat::setDefaultFormat(surfaceFormat);
 
 	// Set native siblings attribute to prevent odd rendering artefacts on some systems
 	app.setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
