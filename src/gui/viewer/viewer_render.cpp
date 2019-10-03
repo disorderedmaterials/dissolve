@@ -35,6 +35,9 @@ void BaseViewer::initializeGL()
 	// Setup function pointers to OpenGL extension functions
 	initializeOpenGLFunctions();
 
+        // Set up the font instance
+	fontInstance_.setUp();
+
 	// Setup offscreen context
 	Messenger::printVerbose("Setting up offscreen context and surface...");
         offscreenContext_.setShareContext(context());
@@ -45,7 +48,7 @@ void BaseViewer::initializeGL()
 	Messenger::printVerbose("Done.");
 
 	// Check for vertex buffer extensions
-        if ((!hasOpenGLFeature(QOpenGLFunctions::Buffers)) && (PrimitiveInstance::globalInstanceType() == PrimitiveInstance::VBOInstance))
+	if ((!hasOpenGLFeature(QOpenGLFunctions::Buffers)) && (PrimitiveInstance::globalInstanceType() == PrimitiveInstance::VBOInstance))
 	{
 		printf("VBO extension is requested but not available, so reverting to display lists instead.\n");
 		PrimitiveInstance::setGlobalInstanceType(PrimitiveInstance::ListInstance);
@@ -328,7 +331,8 @@ void BaseViewer::checkGlError()
 			case (GL_STACK_OVERFLOW): Messenger::printVerbose("Command would cause a stack overflow\n"); break;
 			case (GL_STACK_UNDERFLOW): Messenger::printVerbose("Command would cause a stack underflow\n"); break;
 			case (GL_OUT_OF_MEMORY): Messenger::printVerbose("Not enough memory left to execute command\n"); break;
-			case (GL_NO_ERROR): Messenger::printVerbose("No GL error\n"); break;
+			case (GL_NO_ERROR): Messenger::printVerbose("No GL error\n"); return;
+			case (GL_CONTEXT_LOST): return;
 			default:
 				Messenger::printVerbose("Unknown GL error?\n");
 				break;
