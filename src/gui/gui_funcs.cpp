@@ -35,6 +35,7 @@
 #include <QFontDatabase>
 #include <QLCDNumber>
 #include <QMdiSubWindow>
+#include <QMessageBox>
 #include <QFileInfo>
 
 // Constructor
@@ -154,7 +155,7 @@ void DissolveWindow::addOutputHandler()
  */
 
 // Open specified input file from the CLI
-bool DissolveWindow::openFileFromCLI(const char* inputFile, const char* restartFile, bool ignoreRestartFile, bool ignoreLayoutFile)
+bool DissolveWindow::openLocalFile(const char* inputFile, const char* restartFile, bool ignoreRestartFile, bool ignoreLayoutFile)
 {
 	// Clear any existing tabs etc.
 	clearTabs();
@@ -162,29 +163,29 @@ bool DissolveWindow::openFileFromCLI(const char* inputFile, const char* restartF
 	// Clear Dissolve itself
 	dissolve_.clear();
 
+	// Set the current dir to the location of the new file
+	QFileInfo inputFileInfo(inputFile);
+	QDir::setCurrent(inputFileInfo.absoluteDir().absolutePath());
+
 	// Load the input file
 	Messenger::banner("Parse Input File");
-	if (!dissolve_.loadInput(inputFile))
+	if (DissolveSys::fileExists(qPrintable(inputFileInfo.fileName())))
 	{
-		dissolve_.clear();
-		return false;
+		if (!dissolve_.loadInput(qPrintable(inputFileInfo.fileName()))) QMessageBox::warning(this, "Input file contained errors.", "The input file failed to load correctly.\nCheck the simulation carefully, and see the messages for more details.", QMessageBox::Ok, QMessageBox::Ok);
 	}
+	else return Messenger::error("Input file does not exist.\n");
 
 	// Load restart file if it exists
 	Messenger::banner("Parse Restart File");
 	if (!ignoreRestartFile)
 	{
 		CharString actualRestartFile = restartFile;
-		if (actualRestartFile.isEmpty()) actualRestartFile.sprintf("%s.restart", inputFile);
+		if (actualRestartFile.isEmpty()) actualRestartFile.sprintf("%s.restart", qPrintable(inputFileInfo.fileName()));
 		
 		if (DissolveSys::fileExists(actualRestartFile))
 		{
 			Messenger::print("\nRestart file '%s' exists and will be loaded.\n", actualRestartFile.get());
-			if (!dissolve_.loadRestart(actualRestartFile))
-			{
-				ProcessPool::finalise();
-				return 1;
-			}
+			if (!dissolve_.loadRestart(actualRestartFile)) QMessageBox::warning(this, "Restart file contained errors.", "The restart file failed to load correctly.\nSee the messages for more details.", QMessageBox::Ok, QMessageBox::Ok);
 
 			// Reset the restart filename to be the standard one
 			dissolve_.setRestartFilename(CharString("%s.restart", inputFile));
@@ -205,11 +206,23 @@ bool DissolveWindow::openFileFromCLI(const char* inputFile, const char* restartF
 	// Try to load in the window state file
 	if (DissolveSys::fileExists(windowLayoutFilename_) && (!ignoreLayoutFile)) loadWindowLayout();
 
-	// Switch to the Simulation stack page
-	showMainStackPage(DissolveWindow::SimulationStackPage);
+	localSimulation_ = true;
+
+	// Check the beat file
+	CharString beatFile("%s.beat", qPrintable(inputFile));
+	if (DissolveSys::fileExists(beatFile))
+	{
+		// TODO
+// 		if (
+	}
+
+	dissolveState_ = EditingState;
 
 	// Fully update GUI
 	fullUpdate();
+
+	// Make sure we are now on the Simulation stack page
+	showMainStackPage(DissolveWindow::SimulationStackPage);
 
 	return true;
 }
@@ -303,12 +316,16 @@ void DissolveWindow::updateMenus()
 // Perform full update of the GUI, including tab reconciliation
 void DissolveWindow::fullUpdate()
 {
+	refreshing_ = true;
+
 	reconcileTabs();
 
 	updateTabs();
 	updateWindowTitle();
 	updateControlsFrame();
 	updateMenus();
+
+	refreshing_ = false;
 }
 
 /*

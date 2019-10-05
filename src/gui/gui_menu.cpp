@@ -139,45 +139,7 @@ void DissolveWindow::on_FileOpenLocalAction_triggered(bool checked)
 	QString inputFile = QFileDialog::getOpenFileName(this, "Choose input file to open", QDir().absolutePath(), "Dissolve input files (*.txt)");
 	if (inputFile.isEmpty()) return;
 
-	// Clear any data-related tabs from the UI
-	clearTabs();
-
-	// Clear Dissolve itself
-	dissolve_.clear();
-
-	// Set the current dir to the location of the new file
-	QFileInfo inputFileInfo(inputFile);
-	QDir::setCurrent(inputFileInfo.absoluteDir().absolutePath());
-
-	// Load the input file
-	if (!dissolve_.loadInput(qPrintable(inputFile))) QMessageBox::warning(this, "Input file contained errors.", "The input file failed to load correctly.\nCheck the simulation carefully, and see the messages for more details.", QMessageBox::Ok, QMessageBox::Ok);
-
-	localSimulation_ = true;
-
-	// Load restart file if it exists
-	CharString restartFile("%s.restart", qPrintable(inputFile));
-	if (DissolveSys::fileExists(restartFile))
-	{
-		Messenger::print("\nRestart file '%s' exists and will be loaded.\n", restartFile.get());
-		if (!dissolve_.loadRestart(restartFile.get())) QMessageBox::warning(this, "Restart file contained errors.", "The restart file failed to load correctly.\nSee the messages for more details.", QMessageBox::Ok, QMessageBox::Ok);
-	}
-	else Messenger::print("\nRestart file '%s' does not exist.\n", restartFile.get());
-
-	dissolveState_ = EditingState;
-
-	// Check the beat file
-	CharString beatFile("%s.beat", qPrintable(inputFile));
-	if (DissolveSys::fileExists(beatFile))
-	{
-		// TODO
-// 		if (
-	}
-
-	// Fully update GUI
-	fullUpdate();
-
-	// Make sure we are now on the Simulation stack page
-	showMainStackPage(DissolveWindow::SimulationStackPage);
+	openLocalFile(qPrintable(inputFile), "", false, false);
 }
 
 void DissolveWindow::on_FileConnectAction_triggered(bool checked)
