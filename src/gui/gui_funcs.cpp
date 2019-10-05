@@ -182,7 +182,6 @@ bool DissolveWindow::openFileFromCLI(const char* inputFile, const char* restartF
 			Messenger::print("\nRestart file '%s' exists and will be loaded.\n", actualRestartFile.get());
 			if (!dissolve_.loadRestart(actualRestartFile))
 			{
-				Messenger::error("Restart file contained errors.\n");
 				ProcessPool::finalise();
 				return 1;
 			}

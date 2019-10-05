@@ -457,12 +457,8 @@ bool Dissolve::loadRestart(const char* filename)
 	iteration_ = GenericListHelper<int>::value(processingModuleData_, "Iteration", "Dissolve", 0);
 
 	// Error encountered?
-	if (error)
-	{
-		Messenger::print("\nErrors encountered while loading restart file.\nLoad aborted.\n");
-		clear();
-	}
-	
+	if (error) Messenger::error("Errors encountered while loading restart file.\n");
+
 	// Done
 	if (worldPool().isWorldMaster()) parser.closeFiles();
 
