@@ -5,7 +5,7 @@ nav_order: 2
 ---
 # Dissolve's GUI
 
-5 minute read
+2 minute read
 {: .label .label-blue }
 
 ## Overview
@@ -27,6 +27,10 @@ The important content of the simulation - species, configurations, layers etc. -
 | ![Species tab](speciestab.png) | Species tabs - display / edit individual species |
 | ![Configuration tab](configurationtab.png) | Configuration tabs - display / edit individual configurations |
 | ![Layer tab](layertab.png) | Layer tabs - display / edit sequences of modules |
+| ![Module tab](moduletab.png) | Module tabs - show keyword options and output from indivdiual modules (the icon reflects the module type) |
+| ![Workspace tab](workspacetab.png) | Workspace tab - display a custom selection of modules and their options / output |
+
+To rename a tab, double-click on the tab itself. This also changes the name of any underlying object (e.g. the displayed Species).
 
 ### Messages Box
 
