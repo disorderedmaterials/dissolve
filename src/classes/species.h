@@ -214,11 +214,17 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	// Forcefield to source terms from
 	Forcefield* forcefield_;
 
+	private:
+	// Add missing higher order intramolecular terms from current bond connectivity
+	void completeIntramolecularTerms();
+
 	public:
 	// Set Forcefield to source terms from
 	void setForcefield(Forcefield* ff);
 	// Return Forcefield to source terms from
 	Forcefield* forcefield() const;
+	// Apply terms from source Forcefield
+	bool applyForcefieldTerms(CoreData& coreData);
 
 
 	/*

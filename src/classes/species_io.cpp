@@ -321,6 +321,7 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 				updateGrains();
 				centreAtOrigin();
 				orderAtomsWithinGrains();
+				if (!applyForcefieldTerms(coreData)) error = true;
 				Messenger::print("Found end of Species '%s'.\n", name());
 				blockDone = true;
 				break;
