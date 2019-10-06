@@ -303,7 +303,7 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 				bt = SpeciesBond::bondType(parser.argc(3));
 				if (bt == SpeciesBond::nBondTypes)
 				{
-					Messenger::error("Bond function type '%s' requires %i parameters\n", SpeciesBond::bondFunction(bf), SpeciesBond::nFunctionParameters(bf));
+					Messenger::error("Unrecognised bond type '%s'.\n", parser.argc(3));
 					error = true;
 					break;
 				}
