@@ -1,6 +1,6 @@
 /*
-	*** Species XYZ Import
-	*** src/classes/species_xyz.cpp
+	*** Species Input/Output
+	*** src/classes/species_io.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -27,10 +27,6 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include <string.h>
-
-/*
- * File Input / Output
- */
 
 // Load Species from file
 bool Species::load(const char* filename)
