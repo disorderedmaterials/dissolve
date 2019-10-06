@@ -36,6 +36,7 @@
 
 // Forward Declarations
 class Box;
+class Forcefield;
 
 //Species Definition
 class Species : public ListItem<Species>, public ObjectStore<Species>
@@ -207,6 +208,20 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 
 
 	/*
+	 * Source Forcefield (if any)
+	 */
+	private:
+	// Forcefield to source terms from
+	Forcefield* forcefield_;
+
+	public:
+	// Set Forcefield to source terms from
+	void setForcefield(Forcefield* ff);
+	// Return Forcefield to source terms from
+	Forcefield* forcefield() const;
+
+
+	/*
 	 * Grains
 	 */
 	private:
@@ -330,6 +345,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 		BondTypeKeyword,		/* 'BondType' - Sets the type of a specific bond */
 		ChargeKeyword,			/* 'Charge' - Specifies the atomic charge for an individual atom */
 		EndSpeciesKeyword,		/* 'EndSpecies' - Signals the end of the current Species */
+		ForcefieldKeyword,		/* 'Forcefield' - Sets the Forcefield from which to (re)generate or set terms */
 		GrainKeyword,			/* 'Grain' - Defines a Grain containing a number of Atoms */
 		IsotopologueKeyword,		/* 'Isotopologue' - Add an isotopologue to the Species */
 		SiteKeyword,			/* 'Site' - Define an analysis site within the Species */

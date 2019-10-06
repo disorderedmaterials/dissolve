@@ -22,6 +22,7 @@
 #include "classes/species.h"
 #include "classes/atomtype.h"
 #include "classes/coredata.h"
+#include "data/fflibrary.h"
 #include "data/elements.h"
 #include "data/isotopes.h"
 #include "base/lineparser.h"
@@ -97,6 +98,7 @@ EnumOptions<Species::SpeciesKeyword> Species::keywords()
 		EnumOption(Species::BondTypeKeyword,		"BondType",		3) <<
 		EnumOption(Species::ChargeKeyword,		"Charge",		2) <<
 		EnumOption(Species::EndSpeciesKeyword,		"EndSpecies") <<
+		EnumOption(Species::ForcefieldKeyword,		"Forcefield",		1) <<
 		EnumOption(Species::GrainKeyword,		"Grain",		1) <<
 		EnumOption(Species::IsotopologueKeyword,	"Isotopologue",		EnumOption::OneOrMoreArguments) <<
 		EnumOption(Species::SiteKeyword,		"Site",			1) <<
@@ -323,6 +325,9 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 				orderAtomsWithinGrains();
 				Messenger::print("Found end of Species '%s'.\n", name());
 				blockDone = true;
+				break;
+			case (Species::ForcefieldKeyword):
+				forcefield_ = ForcefieldLibrary::forcefield(parser.argc(1));
 				break;
 			case (Species::GrainKeyword):
 				sg = addGrain();
@@ -571,6 +576,12 @@ bool Species::write(LineParser& parser, const char* prefix)
 			}
 			if (!parser.writeLineF("\n")) return false;
 		}
+	}
+
+	// Forcefield
+	if (forcefield_)
+	{
+		if (!parser.writeLineF("%s%s  '%s'\n", newPrefix.get(), keywords().keyword(Species::ForcefieldKeyword), forcefield_->name())) return false;
 	}
 
 	// Isotopologues

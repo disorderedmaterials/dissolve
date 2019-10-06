@@ -12,7 +12,7 @@ libclasses_la_SOURCES += kvector.cpp
 libclasses_la_SOURCES += masterintra.cpp molecule.cpp moleculedistributor.cpp
 libclasses_la_SOURCES += pairpotential.cpp potentialmap.cpp partialset.cpp
 libclasses_la_SOURCES += regionaldistributor.cpp
-libclasses_la_SOURCES += scaledenergykernel.cpp scatteringmatrix.cpp site.cpp sitereference.cpp sitestack.cpp species.cpp species_atomic.cpp species_grains.cpp species_intra.cpp species_io.cpp species_isotopologues.cpp species_site.cpp species_transform.cpp speciesangle.cpp speciesatom.cpp speciesbond.cpp speciesgrain.cpp speciesinfo.cpp speciesintra.cpp speciessite.cpp speciestorsion.cpp species_io.cpp
+libclasses_la_SOURCES += scaledenergykernel.cpp scatteringmatrix.cpp site.cpp sitereference.cpp sitestack.cpp species.cpp species_atomic.cpp species_ff.cpp species_grains.cpp species_intra.cpp species_io.cpp species_isotopologues.cpp species_site.cpp species_transform.cpp speciesangle.cpp speciesatom.cpp speciesbond.cpp speciesgrain.cpp speciesinfo.cpp speciesintra.cpp speciessite.cpp speciestorsion.cpp species_io.cpp
 libclasses_la_SOURCES += torsion.cpp
 libclasses_la_SOURCES += weights.cpp
 
