@@ -289,10 +289,10 @@ SpeciesAngle* Species::angle(int n)
 }
 
 // Return whether SpeciesAngle between SpeciesAtoms exists
-bool Species::hasAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const
+SpeciesAngle* Species::hasAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const
 {
-	for (SpeciesAngle* a = angles_.first(); a != NULL; a = a->next()) if (a->matches(i, j, k)) return true;
-	return false;
+	for (SpeciesAngle* a = angles_.first(); a != NULL; a = a->next()) if (a->matches(i, j, k)) return a;
+	return NULL;
 }
 
 // Return index of specified SpeciesAngle
@@ -439,10 +439,10 @@ SpeciesTorsion* Species::torsion(int n)
 }
 
 // Return whether SpeciesTorsion between SpeciesAtoms exists
-bool Species::hasTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const
+SpeciesTorsion* Species::hasTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const
 {
-	for (SpeciesTorsion* t = torsions_.first(); t != NULL; t = t->next()) if (t->matches(i, j, k, l)) return true;
-	return false;
+	for (SpeciesTorsion* t = torsions_.first(); t != NULL; t = t->next()) if (t->matches(i, j, k, l)) return t;
+	return NULL;
 }
 
 // Return index of specified SpeciesTorsion

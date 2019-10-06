@@ -178,7 +178,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	// Return nth SpeciesAngle
 	SpeciesAngle* angle(int n);
 	// Return whether SpeciesAngle between SpeciesAtoms exists
-	bool hasAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const;
+	SpeciesAngle* hasAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const;
 	// Return index of specified SpeciesAngle
 	int angleIndex(SpeciesAngle* spa);
 	// Add new SpeciesTorsion definition (from SpeciesAtom*)
@@ -196,7 +196,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	// Return nth SpeciesTorsion
 	SpeciesTorsion* torsion(int n);
 	// Return whether SpeciesTorsion between SpeciesAtoms exists
-	bool hasTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const;
+	SpeciesTorsion* hasTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const;
 	// Return index of specified SpeciesTorsion
 	int torsionIndex(SpeciesTorsion* spt);
 	// Return whether the attached atoms lists have been created
