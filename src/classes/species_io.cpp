@@ -94,7 +94,7 @@ EnumOptions<Species::SpeciesKeyword> Species::keywords()
 		EnumOption(Species::AngleKeyword,	 	"Angle",		4,6) <<
 		EnumOption(Species::AtomKeyword, 		"Atom",			6,7) <<
 		EnumOption(Species::AutoAddGrainsKeyword,	"AutoAddGrains") <<
-		EnumOption(Species::BondKeyword,		"Bond",			3,5) <<
+		EnumOption(Species::BondKeyword,		"Bond",			2,5) <<
 		EnumOption(Species::BondTypeKeyword,		"BondType",		3) <<
 		EnumOption(Species::ChargeKeyword,		"Charge",		2) <<
 		EnumOption(Species::EndSpeciesKeyword,		"EndSpecies") <<
@@ -234,8 +234,20 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 				autoAddGrains();
 				break;
 			case (Species::BondKeyword):
-				// Check the functional form specified - if it starts with '@' it is a reference to master parameters
-				if (parser.argc(3)[0] == '@')
+				// Create a new bond definition between the specified atoms
+				b = addBond(parser.argi(1)-1, parser.argi(2)-1);
+				if (!b)
+				{
+					error = true;
+					break;
+				}
+
+				/*
+				 * If only the bond indices were given, create a bond without a specified functional form (a Forcefield is presumably going to be specified).
+				 * Otherwise, check the functional form specified - if it starts with '@' it is a reference to master parameters
+				 */
+				if (parser.nArgs() == 3) b->setForm(SpeciesBond::nBondFunctions);
+				else if (parser.argc(3)[0] == '@')
 				{
 					// Search through master Bond parameters to see if this name exists
 					MasterIntra* master = coreData.hasMasterBond(parser.argc(3));
@@ -246,13 +258,6 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 						break;
 					}
 
-					// Create a new bond definition
-					b = addBond(parser.argi(1)-1, parser.argi(2)-1);
-					if (!b)
-					{
-						error = true;
-						break;
-					}
 					b->setMasterParameters(master);
 				}
 				else
@@ -266,13 +271,6 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 						break;
 					}
 
-					// Create a new bond definition
-					b = addBond(parser.argi(1)-1, parser.argi(2)-1);
-					if (!b)
-					{
-						error = true;
-						break;
-					}
 					b->setForm(bf);
 					for (int n=0; n<SpeciesBond::nFunctionParameters(bf); ++n)
 					{
@@ -495,7 +493,11 @@ bool Species::write(LineParser& parser, const char* prefix)
 		if (!parser.writeLineF("\n%s# Bonds\n", newPrefix.get())) return false;
 		for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next())
 		{
-			if (b->masterParameters())
+			if (b->form() == SpeciesBond::nBondFunctions)
+			{
+				if (!parser.writeLineF("%s%s  %3i  %3i\n", newPrefix.get(), keywords().keyword(Species::BondKeyword), b->indexI()+1, b->indexJ()+1)) return false;
+			}
+			else if (b->masterParameters())
 			{
 				if (!parser.writeLineF("%s%s  %3i  %3i  @%s\n", newPrefix.get(), keywords().keyword(Species::BondKeyword), b->indexI()+1, b->indexJ()+1, b->masterParameters()->name())) return false;
 			}
