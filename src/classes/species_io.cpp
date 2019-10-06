@@ -26,7 +26,6 @@
 #include "data/isotopes.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include <string.h>
 
 // Load Species from file
 bool Species::load(const char* filename)
