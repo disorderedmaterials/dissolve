@@ -33,9 +33,9 @@ class Vec3IntegerKeyword : public KeywordData< Vec3<int> >
 {
 	public:
 	// Constructors
-	Vec3IntegerKeyword(Vec3<int> value);
-	Vec3IntegerKeyword(Vec3<int> value, Vec3<int> minValue);
-	Vec3IntegerKeyword(Vec3<int> value, Vec3<int> minValue, Vec3<int> maxValue);
+	Vec3IntegerKeyword(Vec3<int> value, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
+	Vec3IntegerKeyword(Vec3<int> value, Vec3<int> minValue, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
+	Vec3IntegerKeyword(Vec3<int> value, Vec3<int> minValue, Vec3<int> maxValue, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
 	// Destructor
 	~Vec3IntegerKeyword();
 
