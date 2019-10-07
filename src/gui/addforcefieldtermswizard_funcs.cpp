@@ -324,7 +324,7 @@ void AddForcefieldTermsWizard::on_ForcefieldList_currentRowChanged(int row)
 {
 	// Set the name and details of the current forcefield
 	Forcefield* ff = currentForcefield();
-// 	ui_.ForcefieldDetailsBrowser->setText(ff->description());
+	ui_.ForcefieldDetailsBrowser->setText(ff->description());
 
 	updateProgressionControls();
 }

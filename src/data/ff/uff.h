@@ -51,6 +51,8 @@ class Forcefield_UFF : public Forcefield
 	public:
 	// Return name of Forcefield
 	const char* name();
+	// Return description for Forcefield
+	const char* description();
 
 
 	/*

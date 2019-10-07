@@ -49,6 +49,8 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 	public:
 	// Return name of Forcefield
 	virtual const char* name() = 0;
+	// Return description of Forcefield
+	virtual const char* description() = 0;
 
 
 	/*
