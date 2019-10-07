@@ -107,7 +107,7 @@ void DissolveWindow::on_FileNewFromTemplateAction_triggered(bool checked)
 	// Make sure there is nothing to save before we try to start afresh
 	if (!checkSaveCurrentInput()) return;
 
-	// Create / run the create from template dialog
+	// Select the desired system template
 	static SelectSystemTemplateDialog selectTemplateDialog(this, systemTemplates_);
 	SystemTemplate* sysTemp = selectTemplateDialog.selectTemplate();
 	if (!sysTemp) return;
