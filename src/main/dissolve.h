@@ -58,7 +58,9 @@ class Dissolve
 
 	public:
 	// Return reference to CoreData
-	const CoreData& coreData() const;
+	CoreData& coreData();
+	// Return const reference to CoreData
+	const CoreData& constCoreData() const;
 	// Clear all data
 	void clear();
 	// Register GenericItems
