@@ -35,6 +35,7 @@ template<class Species> const char* ObjectStore<Species>::objectTypeName_ = "Spe
 // Constructor
 Species::Species() : ListItem<Species>(), ObjectStore<Species>(this)
 {
+	forcefield_ = NULL;
 	attachedAtomListsGenerated_ = false;
 }
 
