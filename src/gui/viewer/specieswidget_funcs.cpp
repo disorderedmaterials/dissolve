@@ -54,6 +54,12 @@ SpeciesWidget::~SpeciesWidget()
 {
 }
 
+// Set main CoreData pointer
+void SpeciesWidget::setCoreData(CoreData* coreData)
+{
+	coreData_ = coreData;
+}
+
 // Return contained SpeciesViewer
 SpeciesViewer* SpeciesWidget::speciesViewer()
 {
@@ -122,6 +128,12 @@ void SpeciesWidget::on_ToolsMinimiseButton_clicked(bool checked)
 	// Get displayed Species
 	Species* sp = speciesViewer()->species();
 	if (!sp) return;
+
+	// Apply forcefield terms now?
+	if (sp->forcefield())
+	{
+		sp->applyForcefieldTerms(*coreData_);
+	}
 
 	// Check that the Species set up is valid
 	if (!sp->checkSetUp()) return;

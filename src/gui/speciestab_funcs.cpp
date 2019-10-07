@@ -62,7 +62,8 @@ SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabW
 	ui_.IsotopologuesTree->setItemDelegateForColumn(1, new NullDelegate(this));
 	ui_.IsotopologuesTree->setItemDelegateForColumn(2, new IsotopeComboDelegate(this));
 
-	// Set target for SpeciesViewer
+	// Set up SpeciesViewer
+// 	ui_.ViewerWidget->setCoreData(&dissolve.coreData());
 	ui_.ViewerWidget->speciesViewer()->setSpecies(species_);
 
 	// Connect signals / slots
@@ -346,23 +347,10 @@ void SpeciesTab::updateControls()
 {
 	refreshing_ = true;
 
-	// Isotopologues Tree
-	if (!species_) ui_.IsotopologuesTree->clear();
-	else
-	{
-		TreeWidgetUpdater<SpeciesTab,Isotopologue> isotopologueUpdater(ui_.IsotopologuesTree, species_->isotopologues(), this, &SpeciesTab::updateIsotopologuesTreeTopLevelItem);
-
-		// If there is no current isotopologue selected, try to select the first
-		if (!currentIsotopologue()) ui_.IsotopologuesTree->setCurrentItem(ui_.IsotopologuesTree->topLevelItem(0));
-	}
-	Isotopologue* isotopologue = currentIsotopologue();
-	ui_.IsotopologueRemoveButton->setEnabled(isotopologue != NULL);
-
-	// -- View / Generate Tab
+	// View / Generate Tab
 	ui_.ViewerWidget->speciesViewer()->postRedisplay();
 
 	// Geometry Tab
-
 	// -- SpeciesAtom Table
 	if (!species_) ui_.AtomTable->clearContents();
 	else TableWidgetUpdater<SpeciesTab,SpeciesAtom> speciesAtomUpdater(ui_.AtomTable, species_->atoms(), this, &SpeciesTab::updateAtomTableRow);
@@ -383,6 +371,19 @@ void SpeciesTab::updateControls()
 	ui_.BondTable->resizeColumnsToContents();
 	ui_.AngleTable->resizeColumnsToContents();
 	ui_.TorsionTable->resizeColumnsToContents();
+
+	// Isotopologues Tab
+	// -- Isotopologues Tree
+	if (!species_) ui_.IsotopologuesTree->clear();
+	else
+	{
+		TreeWidgetUpdater<SpeciesTab,Isotopologue> isotopologueUpdater(ui_.IsotopologuesTree, species_->isotopologues(), this, &SpeciesTab::updateIsotopologuesTreeTopLevelItem);
+
+		// If there is no current isotopologue selected, try to select the first
+		if (!currentIsotopologue()) ui_.IsotopologuesTree->setCurrentItem(ui_.IsotopologuesTree->topLevelItem(0));
+	}
+	Isotopologue* isotopologue = currentIsotopologue();
+	ui_.IsotopologueRemoveButton->setEnabled(isotopologue != NULL);
 
 	refreshing_ = false;
 }
@@ -413,6 +414,16 @@ Isotopologue* SpeciesTab::currentIsotopologue()
 	else return VariantPointer<Isotopologue>(item->data(0, Qt::UserRole));
 }
 
+// View / Generate
+void SpeciesTab::on_ForcefieldButton_clicked(bool checked)
+{
+	// TODO
+}
+
+void SpeciesTab::on_ForcefieldAutoApplyCheck_clicked(bool checked)
+{
+	// TODO
+}
 
 void SpeciesTab::on_IsotopologueAddButton_clicked(bool checked)
 {
