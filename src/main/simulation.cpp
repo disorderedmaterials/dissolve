@@ -61,7 +61,7 @@ bool Dissolve::prepare()
 	else srand(seed_);
 
 	// Check Species
-	for (Species* sp = species().first(); sp != NULL; sp = sp->next()) if (!sp->checkSetUp(coreData_.atomTypes())) return false;
+	for (Species* sp = species().first(); sp != NULL; sp = sp->next()) if (!sp->checkSetUp()) return false;
 
 	/*
 	 * Pair Potentials

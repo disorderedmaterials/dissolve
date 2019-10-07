@@ -64,7 +64,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	// Return the name of the Species
 	const char* name() const;
 	// Check set-up of Species
-	bool checkSetUp(const List<AtomType>& atomTypes);
+	bool checkSetUp();
 	// Print Species information
 	void print();
 	// Return version

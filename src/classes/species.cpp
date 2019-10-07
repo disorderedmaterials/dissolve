@@ -71,7 +71,7 @@ const char* Species::name() const
 }
 
 // Check set-up of Species
-bool Species::checkSetUp(const List<AtomType>& atomTypes)
+bool Species::checkSetUp()
 {
 	int nErrors = 0;
 
@@ -90,11 +90,6 @@ bool Species::checkSetUp(const List<AtomType>& atomTypes)
 		if (i->atomType() == NULL)
 		{
 			Messenger::error("Atom %i (%s) has no associated AtomType.\n", i->userIndex(), i->element()->symbol());
-			++nErrors;
-		}
-		else if (!atomTypes.contains(i->atomType()))
-		{
-			Messenger::error("Atom %i (%s) references a non-existent AtomType.\n", i->userIndex(), i->element()->symbol());
 			++nErrors;
 		}
 	}
@@ -172,12 +167,7 @@ bool Species::checkSetUp(const List<AtomType>& atomTypes)
 		RefDataListIterator<AtomType,Isotope*> isotopeIterator(iso->isotopes());
 		while (AtomType* atomType = isotopeIterator.iterate())
 		{
-			if (!atomTypes.contains(atomType))
-			{
-				Messenger::error("Isotopologue '%s' refers to an unknown AtomType.\n", iso->name());
-				++nErrors;
-			}
-			else if (isotopeIterator.currentData() == NULL)
+			if (isotopeIterator.currentData() == NULL)
 			{
 				Messenger::error("Isotopologue '%s' does not refer to an elemental Isotope for AtomType '%s'.\n", iso->name(), atomType->name());
 				++nErrors;
