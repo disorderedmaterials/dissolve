@@ -235,7 +235,7 @@ const char* SpeciesViewer::interactionModeText() const
 		case (SpeciesViewer::TranslateViewInteraction):
 			return "Translate";
 		case (SpeciesViewer::DrawInteraction):
-			return "Draw: <b>Left</b> Draw; <b>Right</b> Rotate view";
+			return "Draw: <b>Left</b> Draw [+<i>Ctrl</i>: Transmute]; <b>Right</b> Rotate view";
 		default:
 			return "Unknown SpeciesViewerInteraction";
 	}
