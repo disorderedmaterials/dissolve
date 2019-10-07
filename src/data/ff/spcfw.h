@@ -48,9 +48,9 @@ class Forcefield_SPCFw : public Forcefield
 	 */
 	public:
 	// Return name of Forcefield
-	const char* name();
+	const char* name() const;
 	// Return description for Forcefield
-	const char* description();
+	const char* description() const;
 
 
 	/*
