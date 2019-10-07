@@ -123,6 +123,9 @@ void SpeciesWidget::on_ToolsMinimiseButton_clicked(bool checked)
 	Species* sp = speciesViewer()->species();
 	if (!sp) return;
 
+	// Check that the Species set up is valid
+	if (!sp->checkSetUp()) return;
+
 	// Create a temporary CoreData and Dissolve
 	CoreData temporaryCoreData;
 	Dissolve temporaryDissolve(temporaryCoreData);
