@@ -35,9 +35,9 @@ Collect3DProcedureNode::Collect3DProcedureNode(CalculateProcedureNodeBase* xObse
 	keywords_.add("Target", new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, xObservable, 0), "QuantityX", "Calculated observable to collect for x axis");
 	keywords_.add("Target", new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, yObservable, 0), "QuantityY", "Calculated observable to collect for y axis");
 	keywords_.add("Target", new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, zObservable, 0), "QuantityZ", "Calculated observable to collect for z axis");
-	keywords_.add("Target", new Vec3DoubleKeyword(Vec3<double>(xMin, xMax, xBinWidth), Vec3<double>(0.0, 0.0, 1.0e-5)), "RangeX", "Range of calculation for the specified x observable");
-	keywords_.add("Target", new Vec3DoubleKeyword(Vec3<double>(yMin, yMax, yBinWidth), Vec3<double>(0.0, 0.0, 1.0e-5)), "RangeY", "Range of calculation for the specified y observable");
-	keywords_.add("Target", new Vec3DoubleKeyword(Vec3<double>(zMin, zMax, zBinWidth), Vec3<double>(0.0, 0.0, 1.0e-5)), "RangeZ", "Range of calculation for the specified z observable");
+	keywords_.add("Target", new Vec3DoubleKeyword(Vec3<double>(xMin, xMax, xBinWidth), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxDeltaLabels), "RangeX", "Range of calculation for the specified x observable");
+	keywords_.add("Target", new Vec3DoubleKeyword(Vec3<double>(yMin, yMax, yBinWidth), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxDeltaLabels), "RangeY", "Range of calculation for the specified y observable");
+	keywords_.add("Target", new Vec3DoubleKeyword(Vec3<double>(zMin, zMax, zBinWidth), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxDeltaLabels), "RangeZ", "Range of calculation for the specified z observable");
 	keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect", "Branch which runs if the target quantities were binned successfully");
 
 	// Initialise branch

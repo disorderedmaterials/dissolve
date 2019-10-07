@@ -168,8 +168,8 @@ void CalculateDAngleModule::initialise()
 	 */
 
 	// Calculation
-	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(0.0, 10.0, 0.05), Vec3<double>(0.0, 0.0, 1.0e-5)), "DistanceRange", "Range (min, max, delta) of distance axis", "<min> <max> <delta> (Angstroms)");
-	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(0.0, 180.0, 1.0), Vec3<double>(0.0, 0.0, 1.0e-5)), "AngleRange", "Range (min, max, delta) of angle axis", "<min> <max> <delta> (degrees)");
+	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(0.0, 10.0, 0.05), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxDeltaLabels), "DistanceRange", "Range (min, max, delta) of distance axis", "<min> <max> <delta> (Angstroms)");
+	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(0.0, 180.0, 1.0), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxDeltaLabels), "AngleRange", "Range (min, max, delta) of angle axis", "<min> <max> <delta> (degrees)");
 
 	// Sites
 	keywords_.link("Sites", selectA_->keywords().find("Site"), "SiteA", "Add site(s) which represent 'A' in the interaction A-B...C", "<Species> <Site> [<Species> <Site> ... ]");
