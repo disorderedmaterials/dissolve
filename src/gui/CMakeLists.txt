@@ -43,6 +43,7 @@ SET(gui_MOC_HDRS
   getconfigurationnamedialog.h
   getspeciesnamedialog.h
   selectsystemtemplatedialog.h
+  selectforcefielddialog.h
 
   # Main Tabs
   configurationtab.h
@@ -90,6 +91,7 @@ SET(gui_UIS
   getconfigurationnamedialog.ui
   getspeciesnamedialog.ui
   selectsystemtemplatedialog.ui
+  selectforcefielddialog.ui
 
   # Main Tabs
   configurationtab.ui
@@ -136,6 +138,7 @@ SET(gui_SRCS
   getconfigurationnamedialog_funcs.cpp
   getspeciesnamedialog_funcs.cpp
   selectsystemtemplatedialog_funcs.cpp
+  selectforcefielddialog_funcs.cpp
 
   # Main Tabs
   configurationtab_funcs.cpp
