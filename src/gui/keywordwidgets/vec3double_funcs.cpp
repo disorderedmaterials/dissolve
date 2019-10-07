@@ -54,9 +54,9 @@ Vec3DoubleKeywordWidget::Vec3DoubleKeywordWidget(QWidget* parent, KeywordBase* k
 	ui_.Spin3->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.Spin3));
 
 	// Set appropriate labels
-	Vec3WidgetLabels::set(ui_.MinLabel, keyword_->labelType(), 0);
-	Vec3WidgetLabels::set(ui_.MaxLabel, keyword_->labelType(), 1);
-	Vec3WidgetLabels::set(ui_.DeltaLabel, keyword_->labelType(), 2);
+	Vec3WidgetLabels::set(ui_.Label1, keyword_->labelType(), 0);
+	Vec3WidgetLabels::set(ui_.Label2, keyword_->labelType(), 1);
+	Vec3WidgetLabels::set(ui_.Label3, keyword_->labelType(), 2);
 	
 	refreshing_ = false;
 }
