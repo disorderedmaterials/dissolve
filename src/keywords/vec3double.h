@@ -23,6 +23,7 @@
 #define DISSOLVE_KEYWORD_VEC3DOUBLE_H
 
 #include "keywords/data.h"
+#include "vec3labels.h"
 
 // Forward Declarations
 /* none */
@@ -63,6 +64,18 @@ class Vec3DoubleKeyword : public KeywordData< Vec3<double> >
 	bool isValid(int index, double value);
 
 
+	/*
+	 * Label Type
+	 */
+	private:
+	// Label type to display in GUI
+	Vec3Labels::LabelType labelType_;
+
+	public:
+	// Label type to display in GUI
+	Vec3Labels::LabelType labelType() const;
+
+	
 	/*
 	 * Arguments
 	 */

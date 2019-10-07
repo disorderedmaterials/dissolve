@@ -53,6 +53,7 @@ BaseViewer::BaseViewer(QWidget* parent) : QOpenGLWidget(parent), view_(renderabl
 	QSurfaceFormat surfaceFormat;
 	surfaceFormat.setSamples(4);
 	setFormat(surfaceFormat);
+	
 }
 
 // Destructor

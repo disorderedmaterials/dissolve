@@ -37,10 +37,10 @@ GeometryListKeyword::~GeometryListKeyword()
 // Return minimum number of arguments accepted
 int GeometryListKeyword::minArguments() const
 {	
-	if (type_ == Geometry::GeometryType::Distance)
+	if (type_ == Geometry::Distance)
 		return 3;
 	
-	else if (type_ == Geometry::GeometryType::Angle)
+	else if (type_ == Geometry::Angle)
 		return 4;
 	
 	else
@@ -50,10 +50,10 @@ int GeometryListKeyword::minArguments() const
 // Return maximum number of arguments accepted
 int GeometryListKeyword::maxArguments() const
 {
-	if (type_ == Geometry::GeometryType::Distance)
+	if (type_ == Geometry::Distance)
 		return 3;
 	
-	else if (type_ == Geometry::GeometryType::Angle)
+	else if (type_ == Geometry::Angle)
 		return 4;
 	
 	else
@@ -93,7 +93,7 @@ bool GeometryListKeyword::write(LineParser& parser, const char* keywordName, con
 	{
 		index.clear();
 		for (int n=0; n<maxArguments()-1; ++n) index.strcatf("  %i", ref->indices(n));
-		if (!parser.writeLineF("%s%s%s  %d\n", prefix, keywordName, index.get(), ref->value())) 
+		if (!parser.writeLineF("%s%s%s  %12.4e\n", prefix, keywordName, index.get(), ref->value())) 
 		return false;
 	}
 

@@ -30,7 +30,7 @@ class Vec3Labels
 {
 	public:
 	// Label Types
-	enum LabelType { NoLabels, ABCLabels, AlphaBetaGammaLabels, HKLLabels, XYZLabels };
+	enum LabelType { NoLabels, ABCLabels, AlphaBetaGammaLabels, HKLLabels, MinMaxDeltaLabels, XYZLabels };
 };
 
 #endif

@@ -50,6 +50,16 @@ Vec3DoubleKeyword::~Vec3DoubleKeyword()
 }
 
 /*
+ * Label Type
+ */
+
+// Label type to display in GUI
+Vec3Labels::LabelType Vec3DoubleKeyword::labelType() const
+{
+	return labelType_;
+}
+
+/*
  * Data Validation
  */
 

@@ -50,6 +50,16 @@ Vec3IntegerKeyword::~Vec3IntegerKeyword()
 }
 
 /*
+ * Label Type
+ */
+
+// Label type to display in GUI
+Vec3Labels::LabelType Vec3IntegerKeyword::labelType() const
+{
+	return labelType_;
+}
+
+/*
  * Data Validation
  */
 

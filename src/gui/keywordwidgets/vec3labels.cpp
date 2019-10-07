@@ -53,5 +53,10 @@ void Vec3WidgetLabels::set(QLabel* label, Vec3Labels::LabelType labelType, int i
 			else if (index == 1) label->setText("Y");
 			else if (index == 2) label->setText("Z");
 			break;
+		case (Vec3Labels::MinMaxDeltaLabels):
+			if (index == 0) label->setText("Min");
+			else if (index == 1) label->setText("Max");
+			else if (index == 2) label->setText("Delta");
+			break; 
 	}
 }

@@ -23,6 +23,7 @@
 #define DISSOLVE_KEYWORD_VEC3INTEGER_H
 
 #include "keywords/data.h"
+#include "vec3labels.h"
 
 // Forward Declarations
 /* none */
@@ -61,6 +62,17 @@ class Vec3IntegerKeyword : public KeywordData< Vec3<int> >
 	bool isValid(Vec3<int> value);
 	// Validate supplied single
 	bool isValid(int index, int value);
+	
+	/*
+	 * Label Type
+	 */
+	private:
+	// Label type to display in GUI
+	Vec3Labels::LabelType labelType_;
+
+	public:
+	// Label type to display in GUI
+	Vec3Labels::LabelType labelType() const;
 
 
 	/*
