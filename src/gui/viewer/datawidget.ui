@@ -74,8 +74,8 @@
         </property>
         <property name="maximumSize">
          <size>
-          <width>16</width>
-          <height>16</height>
+          <width>24</width>
+          <height>24</height>
          </size>
         </property>
         <property name="text">
@@ -93,14 +93,14 @@
        <widget class="QToolButton" name="InteractionViewButton">
         <property name="minimumSize">
          <size>
-          <width>26</width>
-          <height>26</height>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>26</width>
-          <height>26</height>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
         <property name="toolTip">
@@ -116,8 +116,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>20</width>
-          <height>20</height>
+          <width>24</width>
+          <height>24</height>
          </size>
         </property>
         <property name="checkable">
@@ -154,8 +154,8 @@
         </property>
         <property name="maximumSize">
          <size>
-          <width>16</width>
-          <height>16</height>
+          <width>24</width>
+          <height>24</height>
          </size>
         </property>
         <property name="text">
@@ -173,14 +173,14 @@
        <widget class="QToolButton" name="GraphResetButton">
         <property name="minimumSize">
          <size>
-          <width>26</width>
-          <height>26</height>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>26</width>
-          <height>26</height>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
         <property name="toolTip">
@@ -195,8 +195,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>20</width>
-          <height>20</height>
+          <width>24</width>
+          <height>24</height>
          </size>
         </property>
         <property name="checkable">
@@ -214,14 +214,14 @@
        <widget class="QToolButton" name="GraphFollowAllButton">
         <property name="minimumSize">
          <size>
-          <width>26</width>
-          <height>26</height>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>26</width>
-          <height>26</height>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
         <property name="toolTip">
@@ -237,8 +237,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>20</width>
-          <height>20</height>
+          <width>24</width>
+          <height>24</height>
          </size>
         </property>
         <property name="checkable">
@@ -250,14 +250,14 @@
        <widget class="QToolButton" name="GraphFollowXButton">
         <property name="minimumSize">
          <size>
-          <width>26</width>
-          <height>26</height>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>26</width>
-          <height>26</height>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
         <property name="toolTip">
@@ -273,8 +273,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>20</width>
-          <height>20</height>
+          <width>24</width>
+          <height>24</height>
          </size>
         </property>
         <property name="checkable">
@@ -286,7 +286,7 @@
        <widget class="ExponentialSpin" name="GraphFollowXLengthSpin">
         <property name="font">
          <font>
-          <pointsize>8</pointsize>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="toolTip">
@@ -323,8 +323,8 @@
         </property>
         <property name="maximumSize">
          <size>
-          <width>16</width>
-          <height>16</height>
+          <width>24</width>
+          <height>24</height>
          </size>
         </property>
         <property name="text">
@@ -342,14 +342,14 @@
        <widget class="QToolButton" name="ViewToggleDataButton">
         <property name="minimumSize">
          <size>
-          <width>26</width>
-          <height>26</height>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>26</width>
-          <height>26</height>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
         <property name="toolTip">
@@ -364,8 +364,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>20</width>
-          <height>20</height>
+          <width>24</width>
+          <height>24</height>
          </size>
         </property>
         <property name="checkable">
@@ -377,14 +377,14 @@
        <widget class="QToolButton" name="ViewAxesVisibleButton">
         <property name="minimumSize">
          <size>
-          <width>26</width>
-          <height>26</height>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>26</width>
-          <height>26</height>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
         <property name="toolTip">
@@ -400,8 +400,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>20</width>
-          <height>20</height>
+          <width>24</width>
+          <height>24</height>
          </size>
         </property>
         <property name="checkable">
@@ -419,14 +419,14 @@
        <widget class="QToolButton" name="ViewCopyToClipboardButton">
         <property name="minimumSize">
          <size>
-          <width>26</width>
-          <height>26</height>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>26</width>
-          <height>26</height>
+          <width>32</width>
+          <height>32</height>
          </size>
         </property>
         <property name="toolTip">
@@ -441,8 +441,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>20</width>
-          <height>20</height>
+          <width>24</width>
+          <height>24</height>
          </size>
         </property>
         <property name="checkable">

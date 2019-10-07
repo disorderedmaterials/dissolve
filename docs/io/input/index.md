@@ -1,6 +1,6 @@
 ---
 title: Input File
-parent: Input / Output Files
+parent: Input / Output
 nav_order: 1
 ---
 # Main Input File

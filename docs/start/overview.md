@@ -1,7 +1,7 @@
 ---
 title: What is Dissolve?
 parent: Getting Started
-nav_order: 1
+nav_order: 10
 ---
 # What is Dissolve?
 

@@ -2,3 +2,10 @@
 
 $body-font-family: "Nunito", "helvetica neue", helvetica, roboto, noto, "segoe ui", arial, sans-serif;
 // $mono-font-family: "SFMono-Regular", Menlo, Consolas, Monospace;
+
+// Centered image
+.img-center {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
