@@ -170,7 +170,7 @@ class Renderable : public ListItem<Renderable>
 	// Set display style index
 	void setDisplayStyle(int id);
 	// Return display style index
-	int displayStyle() const;
+	int displayStyleIndex() const;
 	// Set basic colour
 	void setColour(int r, int g, int b, int a = 255);
 	// Set basic colour
