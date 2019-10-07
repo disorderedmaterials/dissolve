@@ -94,6 +94,16 @@ void SpeciesWidget::on_ViewResetButton_clicked(bool checked)
 	speciesViewer()->postRedisplay();
 }
 
+void SpeciesWidget::on_ViewSpheresButton_clicked(bool checked)
+{
+	speciesViewer()->setRenderableDrawStyle(checked ? RenderableSpecies::SpheresStyle : RenderableSpecies::LinesStyle);
+
+	speciesViewer()->notifyDataModified();
+	speciesViewer()->notifyDataChanged();
+
+	speciesViewer()->postRedisplay();
+}
+
 void SpeciesWidget::on_ViewAxesVisibleButton_clicked(bool checked)
 {
 	speciesViewer()->setAxesVisible(checked);
@@ -176,6 +186,7 @@ void SpeciesWidget::updateToolbar()
 
 	// Set checkable buttons
 	ui_.ViewAxesVisibleButton->setChecked(speciesViewer()->axesVisible());
+	ui_.ViewSpheresButton->setChecked(speciesViewer()->renderableDrawStyle() != RenderableSpecies::LinesStyle);
 }
 
 // Update status bar
