@@ -148,6 +148,7 @@ void ConfigurationTab::updateControls()
 // Disable sensitive controls within tab
 void ConfigurationTab::disableSensitiveControls()
 {
+	ui_.GeneratorGroup->setEnabled(false);
 	ui_.TemperatureGroup->setEnabled(false);
 	ui_.SizeFactorGroup->setEnabled(false);
 }
@@ -155,6 +156,7 @@ void ConfigurationTab::disableSensitiveControls()
 // Enable sensitive controls within tab
 void ConfigurationTab::enableSensitiveControls()
 {
+	ui_.GeneratorGroup->setEnabled(true);
 	ui_.TemperatureGroup->setEnabled(true);
 	ui_.SizeFactorGroup->setEnabled(true);
 }
