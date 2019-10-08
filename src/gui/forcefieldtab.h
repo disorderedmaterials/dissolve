@@ -105,6 +105,7 @@ class ForcefieldTab : public QWidget, public MainTab
 	void on_CoulombTruncationCombo_currentIndexChanged(int index);
 	void on_RegenerateAllPairPotentialsButton_clicked(bool checked);
 	void on_UpdatePairPotentialsButton_clicked(bool checked);
+	void on_PairPotentialsTable_currentItemChanged(QTableWidgetItem* currentItem, QTableWidgetItem* previousItem);
 	void on_PairPotentialsTable_itemChanged(QTableWidgetItem* w);
 
 

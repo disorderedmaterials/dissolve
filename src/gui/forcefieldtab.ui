@@ -37,7 +37,7 @@
    <item>
     <widget class="QTabWidget" name="Tabs">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="AtomTypesTab">
       <attribute name="title">
@@ -528,6 +528,12 @@
                 <pointsize>10</pointsize>
                </font>
               </property>
+              <property name="selectionMode">
+               <enum>QAbstractItemView::SingleSelection</enum>
+              </property>
+              <property name="selectionBehavior">
+               <enum>QAbstractItemView::SelectRows</enum>
+              </property>
               <property name="columnCount">
                <number>9</number>
               </property>
@@ -590,7 +596,7 @@
         </layout>
        </item>
        <item>
-        <widget class="QFrame" name="PlotFrame">
+        <widget class="QFrame" name="PairPotentialsPlotFrame">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -620,7 +626,7 @@
            <number>4</number>
           </property>
           <item>
-           <widget class="DataViewer" name="PlotWidget" native="true"/>
+           <widget class="DataWidget" name="PairPotentialsPlotWidget" native="true"/>
           </item>
          </layout>
         </widget>
@@ -1110,7 +1116,7 @@
    <header>gui/widgets/exponentialspin.hui</header>
   </customwidget>
   <customwidget>
-   <class>DataViewer</class>
+   <class>DataWidget</class>
    <extends>QWidget</extends>
    <header>gui/viewer/datawidget.h</header>
    <container>1</container>

@@ -84,6 +84,11 @@ ForcefieldTab::ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve,
 	// -- Charges / Parameters
 	for (int n=3; n<9; ++n) ui.PairPotentialsTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
 
+	DataViewer* viewer = ui.PairPotentialsPlotWidget->dataViewer();
+	viewer->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+	viewer->view().axes().setTitle(1, "U, kj/mol");
+	viewer->view().axes().setRange(1, -100.0, 100.0);
+
 	refreshing_ = false;
 }
 
@@ -662,6 +667,35 @@ void ForcefieldTab::on_UpdatePairPotentialsButton_clicked(bool checked)
 	ui.PairPotentialsTable->resizeColumnsToContents();
 
 	refreshing_ = false;
+}
+
+void ForcefieldTab::on_PairPotentialsTable_currentItemChanged(QTableWidgetItem* currentItem, QTableWidgetItem* previousItem)
+{
+	// Clear all data in the graph
+	DataViewer* graph = ui.PairPotentialsPlotWidget->dataViewer();
+	graph->clearRenderables();
+
+	if (!currentItem) return;
+
+	// Get the selected pair potential
+	PairPotential* pp = VariantPointer<PairPotential>(currentItem->data(Qt::UserRole));
+	if (pp)
+	{
+		Renderable* fullPotential = graph->createRenderable(Renderable::Data1DRenderable, pp->uFull().objectTag(), "Full");
+		fullPotential->setColour(StockColours::BlackStockColour);
+
+		Renderable* originalPotential = graph->createRenderable(Renderable::Data1DRenderable, pp->uOriginal().objectTag(), "Original");
+		originalPotential->setColour(StockColours::RedStockColour);
+		originalPotential->lineStyle().set(1.0, LineStipple::HalfDashStipple);
+
+		Renderable* additionalPotential = graph->createRenderable(Renderable::Data1DRenderable, pp->uAdditional().objectTag(), "Additional");
+		additionalPotential->setColour(StockColours::BlueStockColour);
+		additionalPotential->lineStyle().set(1.0, LineStipple::DotStipple);
+
+		Renderable* dUFull = graph->createRenderable(Renderable::Data1DRenderable, pp->dUFull().objectTag(), "Force");
+		dUFull->setColour(StockColours::GreenStockColour);
+	}
+
 }
 
 void ForcefieldTab::on_PairPotentialsTable_itemChanged(QTableWidgetItem* w)
