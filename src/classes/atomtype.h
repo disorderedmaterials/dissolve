@@ -22,6 +22,7 @@
 #ifndef DISSOLVE_ATOMTYPE_H
 #define DISSOLVE_ATOMTYPE_H
 
+#include "data/ff.h"
 #include "base/charstring.h"
 #include "base/parameters.h"
 #include "templates/listitem.h"
@@ -29,9 +30,7 @@
 // Forward Declarations
 class Element;
 
-/*
- * AtomType Definition
- */
+// AtomType Definition
 class AtomType : public ListItem<AtomType>
 {
 	public:
@@ -42,19 +41,13 @@ class AtomType : public ListItem<AtomType>
 
 
 	/*
-	 * Properties
+	 * Character
 	 */
 	private:
 	// Name
 	CharString name_;
 	// Associated Element
 	Element* element_;
-	// Interaction Parameters
-	Parameters parameters_;
-	// Whether this AtomType is exchangeable
-	bool exchangeable_;
-	// Index of this type in the master type index
-	int index_;
 
 	public:
 	// Set name of AtomType
@@ -65,7 +58,27 @@ class AtomType : public ListItem<AtomType>
 	void setElement(Element* el);
 	// Return atomic Element
 	Element* element() const;
-	// Return interaction Parameters
+
+
+	/*
+	 * Interaction Parameters
+	 */
+	private:
+	// Short-range interaction type
+	Forcefield::ShortRangeType shortRangeType_;
+	// Short-range interaction parameters
+	Parameters parameters_;
+	// Whether this AtomType is exchangeable
+	bool exchangeable_;
+	// Index of this type in the master type index
+	int index_;
+
+	public:
+	// Set short-range interaction type
+	void setShortRangeType(Forcefield::ShortRangeType srType);
+	// Return short-range interaction type
+	Forcefield::ShortRangeType shortRangeType() const;
+	// Return short-range interaction parameters
 	Parameters& parameters();
 	// Set index of this type in the master type index
 	void setIndex(int id);
