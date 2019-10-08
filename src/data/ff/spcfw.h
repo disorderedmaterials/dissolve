@@ -61,18 +61,6 @@ class Forcefield_SPCFw : public Forcefield
 	public:
 	// Determine and return atom type for specified SpeciesAtom
 	ForcefieldAtomType* determineAtomType(SpeciesAtom* i) const;
-
-
-	/*
-	 * Term Generation
-	 */
-	private:
-	// Generate bond parameters for the supplied UFF atom types
-	bool generateBondTerm(const Species* sp, SpeciesBond* bondTerm, ForcefieldAtomType* i, ForcefieldAtomType* j) const;
-	// Generate angle parameters for the supplied UFF atom types
-	bool generateAngleTerm(const Species* sp, SpeciesAngle* angleTerm, ForcefieldAtomType* i, ForcefieldAtomType* j, ForcefieldAtomType* k) const;
-	// Generate torsion parameters for the supplied UFF atom types
-	bool generateTorsionTerm(const Species* sp, SpeciesTorsion* torsionTerm, ForcefieldAtomType* i, ForcefieldAtomType* j, ForcefieldAtomType* k, ForcefieldAtomType* l) const;
 };
 
 #endif
