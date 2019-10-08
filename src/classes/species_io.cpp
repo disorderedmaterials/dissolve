@@ -584,6 +584,7 @@ bool Species::write(LineParser& parser, const char* prefix)
 	// Forcefield
 	if (forcefield_)
 	{
+		if (!parser.writeLineF("\n%s# Forcefield\n", newPrefix.get())) return false;
 		if (!parser.writeLineF("%s%s  '%s'\n", newPrefix.get(), keywords().keyword(Species::ForcefieldKeyword), forcefield_->name())) return false;
 	}
 
