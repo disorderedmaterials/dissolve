@@ -311,9 +311,21 @@ Forcefield_UFF::~Forcefield_UFF()
  */
 
 // Return name of Forcefield
-const char* Forcefield_UFF::name()
+const char* Forcefield_UFF::name() const
 {
 	return "UFF";
+}
+
+// Return description for Forcefield
+const char* Forcefield_UFF::description() const
+{
+	return "Implements 'UFF, a Full Periodic Table Force Field for Molecular Mechanics and Molecular Dynamics Simulations', A. K. Rappe, C. J. Casewit, K. S. Colwell, W. A. Goddard III, and W. M. Skiff, <i>J. Am. Chem. Soc.</i> <b>114</b>, 10024-10039 (1992).\nNotes:<ul><li>Any inconsistencies between the forcefield as implemented here and the original work are the sole responsibility of TGAY</li><li>Generator data 8 (THyb) are used to quickly determine the method of torsional parameter generation.</li><li>Torsional parameters U(i) are assigned to the second through sixth periods, following M. G. Martin's implementation in MCCCS Towhee.</li><li>Other modifications from the original paper are made following the MCCCS Towhee implementation.</li></ul>";
+}
+
+// Return short-range interaction style for AtomTypes
+Forcefield::ShortRangeType Forcefield_UFF::shortRangeType() const
+{
+	return Forcefield::LennardJonesType;
 }
 
 /*

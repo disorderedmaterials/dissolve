@@ -50,8 +50,8 @@ class ModuleRefListKeyword : public KeywordData< RefList<Module>& >
 	int maxModules_;
 
 	protected:
-	// Determine whether current data is actually 'set'
-	bool isSet() const;
+	// Determine whether current data is 'empty', and should be considered as 'not set'
+	bool isDataEmpty() const;
 
 	public:
 	// Return the Module type(s) to allow

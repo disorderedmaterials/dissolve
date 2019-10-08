@@ -50,7 +50,11 @@ class Forcefield_UFF : public Forcefield
 	 */
 	public:
 	// Return name of Forcefield
-	const char* name();
+	const char* name() const;
+	// Return description for Forcefield
+	const char* description() const;
+	// Return short-range interaction style for AtomTypes
+	Forcefield::ShortRangeType shortRangeType() const;
 
 
 	/*

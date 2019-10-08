@@ -137,7 +137,6 @@ void ConfigurationTab::updateControls()
 	// Input Coordinates
 	ui_.CoordinatesFileEdit->setText(configuration_->inputCoordinates().filename());
 	ui_.CoordinatesFileFormatCombo->setCurrentIndex(configuration_->inputCoordinates().formatIndex());
-// 	ui_.CoordinatesFromFileGroup->setChecked(configuration_->inputCoordinates().is);
 
 	// Viewer
 	ui_.ViewerWidget->configurationViewer()->postRedisplay();
@@ -148,6 +147,7 @@ void ConfigurationTab::updateControls()
 // Disable sensitive controls within tab
 void ConfigurationTab::disableSensitiveControls()
 {
+	ui_.GeneratorGroup->setEnabled(false);
 	ui_.TemperatureGroup->setEnabled(false);
 	ui_.SizeFactorGroup->setEnabled(false);
 }
@@ -155,6 +155,7 @@ void ConfigurationTab::disableSensitiveControls()
 // Enable sensitive controls within tab
 void ConfigurationTab::enableSensitiveControls()
 {
+	ui_.GeneratorGroup->setEnabled(true);
 	ui_.TemperatureGroup->setEnabled(true);
 	ui_.SizeFactorGroup->setEnabled(true);
 }

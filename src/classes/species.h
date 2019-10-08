@@ -36,6 +36,7 @@
 
 // Forward Declarations
 class Box;
+class Forcefield;
 
 //Species Definition
 class Species : public ListItem<Species>, public ObjectStore<Species>
@@ -63,7 +64,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	// Return the name of the Species
 	const char* name() const;
 	// Check set-up of Species
-	bool checkSetUp(const List<AtomType>& atomTypes);
+	bool checkSetUp();
 	// Print Species information
 	void print();
 	// Return version
@@ -177,7 +178,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	// Return nth SpeciesAngle
 	SpeciesAngle* angle(int n);
 	// Return whether SpeciesAngle between SpeciesAtoms exists
-	bool hasAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const;
+	SpeciesAngle* hasAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const;
 	// Return index of specified SpeciesAngle
 	int angleIndex(SpeciesAngle* spa);
 	// Add new SpeciesTorsion definition (from SpeciesAtom*)
@@ -195,7 +196,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	// Return nth SpeciesTorsion
 	SpeciesTorsion* torsion(int n);
 	// Return whether SpeciesTorsion between SpeciesAtoms exists
-	bool hasTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const;
+	SpeciesTorsion* hasTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const;
 	// Return index of specified SpeciesTorsion
 	int torsionIndex(SpeciesTorsion* spt);
 	// Return whether the attached atoms lists have been created
@@ -204,6 +205,26 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	void generateAttachedAtomLists();
 	// Detach master term links for all interaction types, copying parameters to local SpeciesIntra
 	void detachFromMasterTerms();
+
+
+	/*
+	 * Source Forcefield (if any)
+	 */
+	private:
+	// Forcefield to source terms from
+	Forcefield* forcefield_;
+
+	private:
+	// Add missing higher order intramolecular terms from current bond connectivity
+	void completeIntramolecularTerms();
+
+	public:
+	// Set Forcefield to source terms from
+	void setForcefield(Forcefield* ff);
+	// Return Forcefield to source terms from
+	Forcefield* forcefield() const;
+	// Apply terms from source Forcefield
+	bool applyForcefieldTerms(CoreData& coreData);
 
 
 	/*
@@ -330,6 +351,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 		BondTypeKeyword,		/* 'BondType' - Sets the type of a specific bond */
 		ChargeKeyword,			/* 'Charge' - Specifies the atomic charge for an individual atom */
 		EndSpeciesKeyword,		/* 'EndSpecies' - Signals the end of the current Species */
+		ForcefieldKeyword,		/* 'Forcefield' - Sets the Forcefield from which to (re)generate or set terms */
 		GrainKeyword,			/* 'Grain' - Defines a Grain containing a number of Atoms */
 		IsotopologueKeyword,		/* 'Isotopologue' - Add an isotopologue to the Species */
 		SiteKeyword,			/* 'Site' - Define an analysis site within the Species */

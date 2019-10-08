@@ -21,6 +21,7 @@
 
 #include "main/dissolve.h"
 #include "classes/atomtype.h"
+#include "genericitems/listhelper.h"
 
 // Set maximum distance for tabulated PairPotentials
 void Dissolve::setPairPotentialRange(double range)
@@ -81,7 +82,7 @@ int Dissolve::nPairPotentials() const
 PairPotential* Dissolve::addPairPotential(AtomType* at1, AtomType* at2)
 {
 	PairPotential* pp = pairPotentials_.add();
-	pp->setAtomTypes(at1, at2);
+	pp->setUp(at1, at2);
 
 	return pp;
 }
@@ -126,25 +127,21 @@ const PotentialMap& Dissolve::potentialMap()
 	return potentialMap_;
 }
 
-// Regenerate all currently-defined PairPotentials
-void Dissolve::regeneratePairPotentials(PairPotential::ShortRangeType srType)
+// Clear and regenerate all PairPotentials, replacing those currently defined
+void Dissolve::regeneratePairPotentials()
 {
 	potentialMap_.clear();
 	pairPotentials_.clear();
 
-	generateMissingPairPotentials(srType);
+	generatePairPotentials();
 }
 
-// Update all currently-defined PairPotentials
-void Dissolve::updateCurrentPairPotentials()
+// Generate all necessary PairPotentials, adding missing terms where necessary
+bool Dissolve::generatePairPotentials()
 {
-	for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next()) pot->setUp(pairPotentialRange_, pairPotentialDelta_, pairPotentialsIncludeCoulomb_);
-}
+	int nUndefined = 0;
 
-// Generate any missing PairPotentials using the supplied short-range form
-bool Dissolve::generateMissingPairPotentials(PairPotential::ShortRangeType srType)
-{
-	// Loop over all atomtype pairs and generate any missing potentials
+	// Loop over all atomtype pairs and update / add pair potentials as necessary
 	for (AtomType* at1 = coreData_.atomTypes().first(); at1 != NULL; at1 = at1->next())
 	{
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next())
@@ -152,19 +149,25 @@ bool Dissolve::generateMissingPairPotentials(PairPotential::ShortRangeType srTyp
 			PairPotential* pot = pairPotential(at1, at2);
 			if (pot)
 			{
-				Messenger::print("PairPotential already exists for interaction between '%s' and '%s'...\n", at1->name(), at2->name());
-				continue;
+				Messenger::print("Updating existing PairPotential for interaction between '%s' and '%s'...\n", at1->name(), at2->name());
+				if (!pot->setUp(at1, at2)) return false;
 			}
 			else
 			{
-				Messenger::print("Adding PairPotential for interaction between '%s' and '%s'...\n", at1->name(), at2->name());
+				Messenger::print("Adding new PairPotential for interaction between '%s' and '%s'...\n", at1->name(), at2->name());
 				pot = addPairPotential(at1, at2);
 			}
 
-			pot->setShortRangeType(srType);
-			if (!pot->setParameters(at1, at2)) return false;
+			// Check the implied short-range form of the potential
+			if (pot->shortRangeType() == Forcefield::UndefinedType) ++nUndefined;
+			else if (!pot->tabulate(pairPotentialRange_, pairPotentialDelta_, pairPotentialsIncludeCoulomb_)) return false;
+
+			// Retrieve additional potential from the processing module data, if present
+			CharString itemName("Potential_%s-%s_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ());
+			if (!processingModuleData_.contains(itemName, "Dissolve")) continue;
+			pot->setUAdditional(GenericListHelper<Data1D>::retrieve(processingModuleData_, itemName, "Dissolve", Data1D()));
 		}
 	}
 
-	return true;
+	return (nUndefined == 0);
 }

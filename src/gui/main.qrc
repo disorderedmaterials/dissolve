@@ -37,6 +37,8 @@
     <file>icons/viewer_medic.svg</file>
     <file>icons/viewer_followx.svg</file>
     <file>icons/viewer_axes.svg</file>
+    <file>icons/viewer_spheres.svg</file>
+    <file>icons/viewer_spheres_on.svg</file>
     <file>icons/viewer_axes_on.svg</file>
     <file>icons/viewer_delete.svg</file>
     <file>icons/viewer_snapshot.svg</file>

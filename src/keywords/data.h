@@ -47,14 +47,11 @@ template <class T> class KeywordData : public KeywordBase
 	T data_;
 
 	protected:
-	// Determine whether current data is actually 'set'
-	virtual bool isSet() const
+	// Determine whether current data is 'empty', and should be considered as 'not set'
+	virtual bool isDataEmpty() const
 	{
-		/*
-		 * Return true if data_ represents a non-default value.
-		 * Override this function to handle cases where, for instance, checks for empty lists need to be made (in which case return 'false').
-		 */
-		return true;
+		// Override this function to handle cases where, for instance, checks for empty lists need to be made.
+		return false;
 	}
 
 	public:
@@ -63,8 +60,12 @@ template <class T> class KeywordData : public KeywordBase
 	{
 		if (isValid(value))
 		{
+			// Data is valid, so store it
 			data_ = value;
-			set_ = isSet();
+
+			// Check here if the data is 'empty', in which case it is not strictly 'set'
+			set_ = isDataEmpty() ? false : true;
+
 			return true;
 		}
 

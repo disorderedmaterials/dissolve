@@ -324,7 +324,7 @@ void AddForcefieldTermsWizard::on_ForcefieldList_currentRowChanged(int row)
 {
 	// Set the name and details of the current forcefield
 	Forcefield* ff = currentForcefield();
-// 	ui_.ForcefieldDetailsBrowser->setText(ff->description());
+	ui_.ForcefieldDetailsBrowser->setText(ff->description());
 
 	updateProgressionControls();
 }
@@ -450,7 +450,7 @@ void AddForcefieldTermsWizard::updateMasterTermsTreeChild(QTreeWidgetItem* paren
 
 	// Set item data
 	item->setText(0, masterIntra->name());
-	item->setIcon(0, QIcon(dissolveReference_->coreData().findMasterTerm(masterIntra->name()) ?  ":/general/icons/general_warn.svg" : ":/general/icons/general_true.svg"));
+	item->setIcon(0, QIcon(dissolveReference_->constCoreData().findMasterTerm(masterIntra->name()) ?  ":/general/icons/general_warn.svg" : ":/general/icons/general_true.svg"));
 }
 
 // Update page with MasterTerms in our temporary Dissolve reference
@@ -464,19 +464,19 @@ void AddForcefieldTermsWizard::updateMasterTermsPage()
 	// Determine whether we have any naming conflicts
 	bool conflicts = false;
 	ListIterator<MasterIntra> bondIterator(temporaryCoreData_.masterBonds());
-	while (MasterIntra* intra = bondIterator.iterate()) if (dissolveReference_->coreData().findMasterTerm(intra->name()))
+	while (MasterIntra* intra = bondIterator.iterate()) if (dissolveReference_->constCoreData().findMasterTerm(intra->name()))
 	{
 		conflicts = true;
 		break;
 	}
 	ListIterator<MasterIntra> angleIterator(temporaryCoreData_.masterAngles());
-	while (MasterIntra* intra = angleIterator.iterate()) if (dissolveReference_->coreData().findMasterTerm(intra->name()))
+	while (MasterIntra* intra = angleIterator.iterate()) if (dissolveReference_->constCoreData().findMasterTerm(intra->name()))
 	{
 		conflicts = true;
 		break;
 	}
 	ListIterator<MasterIntra> torsionIterator(temporaryCoreData_.masterTorsions());
-	while (MasterIntra* intra = torsionIterator.iterate()) if (dissolveReference_->coreData().findMasterTerm(intra->name()))
+	while (MasterIntra* intra = torsionIterator.iterate()) if (dissolveReference_->constCoreData().findMasterTerm(intra->name()))
 	{
 		conflicts = true;
 		break;

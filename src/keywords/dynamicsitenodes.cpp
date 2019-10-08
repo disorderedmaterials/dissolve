@@ -50,8 +50,8 @@ const SelectProcedureNode* DynamicSiteNodesKeyword::parentNode() const
  * Data
  */
 
-// Determine whether current data is actually 'set'
-bool DynamicSiteNodesKeyword::isSet() const
+// Determine whether current data is 'empty', and should be considered as 'not set'
+bool DynamicSiteNodesKeyword::isDataEmpty() const
 {
 	return data_.nItems() > 0;
 }

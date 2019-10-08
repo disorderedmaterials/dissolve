@@ -78,17 +78,16 @@ ForcefieldTab::ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve,
 	 * Pair Potentials
 	 */
 	
-	for (int n=0; n<PairPotential::nShortRangeTypes; ++n) ui.ShortRangeFormCombo->addItem(PairPotential::shortRangeType( (PairPotential::ShortRangeType) n));
 	for (int n=0; n<PairPotential::nCoulombTruncationSchemes; ++n) ui.CoulombTruncationCombo->addItem(PairPotential::coulombTruncationScheme( (PairPotential::CoulombTruncationScheme) n));
 	for (int n=0; n<PairPotential::nShortRangeTruncationSchemes; ++n) ui.ShortRangeTruncationCombo->addItem(PairPotential::shortRangeTruncationScheme( (PairPotential::ShortRangeTruncationScheme) n));
 
-
-	// Set delegates for table
-	// -- Functional Forms
-	ui.PairPotentialsTable->setItemDelegateForColumn(2, new ComboListDelegate(this, new ComboListEnumItems(PairPotential::nShortRangeTypes, PairPotential::shortRangeTypes())));
-
 	// -- Charges / Parameters
 	for (int n=3; n<9; ++n) ui.PairPotentialsTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
+
+	DataViewer* viewer = ui.PairPotentialsPlotWidget->dataViewer();
+	viewer->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+	viewer->view().axes().setTitle(1, "U, kj/mol");
+	viewer->view().axes().setRange(1, -100.0, 100.0);
 
 	refreshing_ = false;
 }
@@ -288,7 +287,7 @@ void ForcefieldTab::updatePairPotentialsTableRow(int row, PairPotential* pairPot
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<PairPotential>(pairPotential));
-		item->setFlags(Qt::ItemIsSelectable);
+		item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 		ui.PairPotentialsTable->setItem(row, 0, item);
 	}
 	else item = ui.PairPotentialsTable->item(row, 0);
@@ -299,7 +298,7 @@ void ForcefieldTab::updatePairPotentialsTableRow(int row, PairPotential* pairPot
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<PairPotential>(pairPotential));
-		item->setFlags(Qt::ItemIsSelectable);
+		item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 		ui.PairPotentialsTable->setItem(row, 1, item);
 	}
 	else item = ui.PairPotentialsTable->item(row, 1);
@@ -310,16 +309,18 @@ void ForcefieldTab::updatePairPotentialsTableRow(int row, PairPotential* pairPot
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<PairPotential>(pairPotential));
+		item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 		ui.PairPotentialsTable->setItem(row, 2, item);
 	}
 	else item = ui.PairPotentialsTable->item(row, 2);
-	item->setText(PairPotential::shortRangeType( (PairPotential::ShortRangeType) pairPotential->shortRangeType()));
+	item->setText(Forcefield::shortRangeTypes().keyword(pairPotential->shortRangeType()));
 
 	// Charge I
 	if (createItems)
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<PairPotential>(pairPotential));
+		item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 		ui.PairPotentialsTable->setItem(row, 3, item);
 	}
 	else item = ui.PairPotentialsTable->item(row, 3);
@@ -330,6 +331,7 @@ void ForcefieldTab::updatePairPotentialsTableRow(int row, PairPotential* pairPot
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<PairPotential>(pairPotential));
+		item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 		ui.PairPotentialsTable->setItem(row, 4, item);
 	}
 	else item = ui.PairPotentialsTable->item(row, 4);
@@ -342,6 +344,7 @@ void ForcefieldTab::updatePairPotentialsTableRow(int row, PairPotential* pairPot
 		{
 			item = new QTableWidgetItem;
 			item->setData(Qt::UserRole, VariantPointer<PairPotential>(pairPotential));
+			item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 			ui.PairPotentialsTable->setItem(row, n+5, item);
 		}
 		else item = ui.PairPotentialsTable->item(row, n+5);
@@ -373,7 +376,6 @@ void ForcefieldTab::updateControls()
 	// PairPotentials
 	ui.PairPotentialRangeSpin->setValue(dissolve_.pairPotentialRange());
 	ui.PairPotentialDeltaSpin->setValue(dissolve_.pairPotentialDelta());
-	ui.ShortRangeFormCombo->setCurrentIndex(PairPotential::LennardJonesType);
 	ui.CoulombIncludeCheck->setChecked(dissolve_.pairPotentialsIncludeCoulomb());
 	ui.ShortRangeTruncationCombo->setCurrentIndex(PairPotential::shortRangeTruncationScheme());
 	ui.ShortRangeTruncationWidthSpin->setValue(PairPotential::shortRangeTruncationWidth());
@@ -647,7 +649,7 @@ void ForcefieldTab::on_CoulombTruncationCombo_currentIndexChanged(int index)
 
 void ForcefieldTab::on_RegenerateAllPairPotentialsButton_clicked(bool checked)
 {
-	dissolve_.regeneratePairPotentials((PairPotential::ShortRangeType) ui.ShortRangeFormCombo->currentIndex());
+	dissolve_.regeneratePairPotentials();
 
 	refreshing_ = true;
 
@@ -659,7 +661,7 @@ void ForcefieldTab::on_RegenerateAllPairPotentialsButton_clicked(bool checked)
 
 void ForcefieldTab::on_UpdatePairPotentialsButton_clicked(bool checked)
 {
-	dissolve_.updateCurrentPairPotentials();
+	dissolve_.generatePairPotentials();
 
 	updateControls();
 
@@ -671,16 +673,33 @@ void ForcefieldTab::on_UpdatePairPotentialsButton_clicked(bool checked)
 	refreshing_ = false;
 }
 
-void ForcefieldTab::on_GenerateMissingPairPotentialsButton_clicked(bool checked)
+void ForcefieldTab::on_PairPotentialsTable_currentItemChanged(QTableWidgetItem* currentItem, QTableWidgetItem* previousItem)
 {
-	dissolve_.generateMissingPairPotentials((PairPotential::ShortRangeType) ui.ShortRangeFormCombo->currentIndex());
+	// Clear all data in the graph
+	DataViewer* graph = ui.PairPotentialsPlotWidget->dataViewer();
+	graph->clearRenderables();
 
-	refreshing_ = true;
+	if (!currentItem) return;
 
-	TableWidgetUpdater<ForcefieldTab,PairPotential> ppUpdater(ui.PairPotentialsTable, dissolve_.pairPotentials(), this, &ForcefieldTab::updatePairPotentialsTableRow);
-	ui.PairPotentialsTable->resizeColumnsToContents();
+	// Get the selected pair potential
+	PairPotential* pp = VariantPointer<PairPotential>(currentItem->data(Qt::UserRole));
+	if (pp)
+	{
+		Renderable* fullPotential = graph->createRenderable(Renderable::Data1DRenderable, pp->uFull().objectTag(), "Full");
+		fullPotential->setColour(StockColours::BlackStockColour);
 
-	refreshing_ = false;
+		Renderable* originalPotential = graph->createRenderable(Renderable::Data1DRenderable, pp->uOriginal().objectTag(), "Original");
+		originalPotential->setColour(StockColours::RedStockColour);
+		originalPotential->lineStyle().set(1.0, LineStipple::HalfDashStipple);
+
+		Renderable* additionalPotential = graph->createRenderable(Renderable::Data1DRenderable, pp->uAdditional().objectTag(), "Additional");
+		additionalPotential->setColour(StockColours::BlueStockColour);
+		additionalPotential->lineStyle().set(1.0, LineStipple::DotStipple);
+
+		Renderable* dUFull = graph->createRenderable(Renderable::Data1DRenderable, pp->dUFull().objectTag(), "Force");
+		dUFull->setColour(StockColours::GreenStockColour);
+	}
+
 }
 
 void ForcefieldTab::on_PairPotentialsTable_itemChanged(QTableWidgetItem* w)
@@ -696,7 +715,7 @@ void ForcefieldTab::on_PairPotentialsTable_itemChanged(QTableWidgetItem* w)
 	{
 		// Functional form
 		case (2):
-			pairPotential->setShortRangeType(PairPotential::shortRangeType(qPrintable(w->text())));
+// 			pairPotential->setShortRangeType(PairPotential::shortRangeType(qPrintable(w->text())));
 			dissolveWindow_->setModified();
 			break;
 		// Charge I

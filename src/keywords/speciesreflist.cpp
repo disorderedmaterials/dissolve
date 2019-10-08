@@ -38,8 +38,8 @@ SpeciesRefListKeyword::~SpeciesRefListKeyword()
  * Data
  */
 
-// Determine whether current data is actually 'set'
-bool SpeciesRefListKeyword::isSet() const
+// Determine whether current data is 'empty', and should be considered as 'not set'
+bool SpeciesRefListKeyword::isDataEmpty() const
 {
 	return data_.nItems() > 0;
 }

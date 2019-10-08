@@ -113,6 +113,9 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	Isotopologue* currentIsotopologue();
 
 	private slots:
+	// View / Generate
+	void on_ForcefieldButton_clicked(bool checked);
+	void on_ForcefieldAutoApplyCheck_clicked(bool checked);
 	// Isotopologues
 	void on_IsotopologueAddButton_clicked(bool checked);
 	void on_IsotopologueRemoveButton_clicked(bool checked);

@@ -28,6 +28,7 @@
 #include "gui/delegates/exponentialspin.hui"
 #include "gui/delegates/null.h"
 #include "gui/getspeciesnamedialog.h"
+#include "gui/selectforcefielddialog.h"
 #include "gui/helpers/listwidgetupdater.h"
 #include "gui/helpers/tablewidgetupdater.h"
 #include "gui/helpers/treewidgetupdater.h"
@@ -35,7 +36,9 @@
 #include "classes/atomtype.h"
 #include "classes/species.h"
 #include "classes/speciesbond.h"
+#include "data/fflibrary.h"
 #include <QListWidgetItem>
+#include <QMessageBox>
 
 // Constructor / Destructor
 SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, Species* species) : ListItem<SpeciesTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Species: %s", title), this)
@@ -62,7 +65,8 @@ SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabW
 	ui_.IsotopologuesTree->setItemDelegateForColumn(1, new NullDelegate(this));
 	ui_.IsotopologuesTree->setItemDelegateForColumn(2, new IsotopeComboDelegate(this));
 
-	// Set target for SpeciesViewer
+	// Set up SpeciesViewer
+	ui_.ViewerWidget->setCoreData(&dissolve.coreData());
 	ui_.ViewerWidget->speciesViewer()->setSpecies(species_);
 
 	// Connect signals / slots
@@ -346,23 +350,11 @@ void SpeciesTab::updateControls()
 {
 	refreshing_ = true;
 
-	// Isotopologues Tree
-	if (!species_) ui_.IsotopologuesTree->clear();
-	else
-	{
-		TreeWidgetUpdater<SpeciesTab,Isotopologue> isotopologueUpdater(ui_.IsotopologuesTree, species_->isotopologues(), this, &SpeciesTab::updateIsotopologuesTreeTopLevelItem);
-
-		// If there is no current isotopologue selected, try to select the first
-		if (!currentIsotopologue()) ui_.IsotopologuesTree->setCurrentItem(ui_.IsotopologuesTree->topLevelItem(0));
-	}
-	Isotopologue* isotopologue = currentIsotopologue();
-	ui_.IsotopologueRemoveButton->setEnabled(isotopologue != NULL);
-
-	// -- View / Generate Tab
+	// View / Generate Tab
+	ui_.ForcefieldButton->setText(species_ && species_->forcefield() ? species_->forcefield()->name() : "<None>");
 	ui_.ViewerWidget->speciesViewer()->postRedisplay();
 
 	// Geometry Tab
-
 	// -- SpeciesAtom Table
 	if (!species_) ui_.AtomTable->clearContents();
 	else TableWidgetUpdater<SpeciesTab,SpeciesAtom> speciesAtomUpdater(ui_.AtomTable, species_->atoms(), this, &SpeciesTab::updateAtomTableRow);
@@ -383,6 +375,19 @@ void SpeciesTab::updateControls()
 	ui_.BondTable->resizeColumnsToContents();
 	ui_.AngleTable->resizeColumnsToContents();
 	ui_.TorsionTable->resizeColumnsToContents();
+
+	// Isotopologues Tab
+	// -- Isotopologues Tree
+	if (!species_) ui_.IsotopologuesTree->clear();
+	else
+	{
+		TreeWidgetUpdater<SpeciesTab,Isotopologue> isotopologueUpdater(ui_.IsotopologuesTree, species_->isotopologues(), this, &SpeciesTab::updateIsotopologuesTreeTopLevelItem);
+
+		// If there is no current isotopologue selected, try to select the first
+		if (!currentIsotopologue()) ui_.IsotopologuesTree->setCurrentItem(ui_.IsotopologuesTree->topLevelItem(0));
+	}
+	Isotopologue* isotopologue = currentIsotopologue();
+	ui_.IsotopologueRemoveButton->setEnabled(isotopologue != NULL);
 
 	refreshing_ = false;
 }
@@ -413,6 +418,36 @@ Isotopologue* SpeciesTab::currentIsotopologue()
 	else return VariantPointer<Isotopologue>(item->data(0, Qt::UserRole));
 }
 
+// View / Generate
+void SpeciesTab::on_ForcefieldButton_clicked(bool checked)
+{
+	// Select the desired Forcefield
+	static SelectForcefieldDialog selectForcefieldDialog(this, ForcefieldLibrary::forcefields());
+	Forcefield* ff = selectForcefieldDialog.selectForcefield(species_->forcefield());
+	if (!ff) return;
+
+	// Confirm, and ask whether to overwrite existing forcefield terms
+	QMessageBox queryBox;
+	queryBox.setText("Would you like to clear current terms from the Species and reapply the selected forcefield?");
+	queryBox.setInformativeText("Reapply Terms?");
+	queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+	queryBox.setDefaultButton(QMessageBox::Cancel);
+	int ret = queryBox.exec();
+
+	if (ret == QMessageBox::Cancel) return;
+
+	// Set the new Forcefield on the Species
+	species_->setForcefield(ff);
+
+	if (ret == QMessageBox::Yes) species_->applyForcefieldTerms(dissolve_.coreData());
+
+	updateControls();
+}
+
+void SpeciesTab::on_ForcefieldAutoApplyCheck_clicked(bool checked)
+{
+	// TODO
+}
 
 void SpeciesTab::on_IsotopologueAddButton_clicked(bool checked)
 {

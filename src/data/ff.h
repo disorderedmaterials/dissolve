@@ -23,6 +23,7 @@
 #define DISSOLVE_FORCEFIELD_H
 
 #include "data/elements.h"
+#include "base/enumoptions.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
@@ -47,8 +48,23 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 	 * Definition
 	 */
 	public:
+	// ShortRange Interaction Type
+	enum ShortRangeType
+	{
+		UndefinedType,			/* Undefined short-range type */
+		NoInteractionType,		/* No short-range dispersive forces */
+		LennardJonesType,		/* Lennard-Jones 12-6 form with Lorentz-Berthelot combination rules */
+		LennardJonesGeometricType,	/* Lennard-Jones 12-6 form with Geometric combination rules */
+		nShortRangeTypes		/* Number of short-range interaction types */
+	};
+	// Return enum options for ShortRangeType
+	static EnumOptions<ShortRangeType> shortRangeTypes();
 	// Return name of Forcefield
-	virtual const char* name() = 0;
+	virtual const char* name() const = 0;
+	// Return description of Forcefield
+	virtual const char* description() const = 0;
+	// Return short-range interaction style for AtomTypes
+	virtual ShortRangeType shortRangeType() const = 0;
 
 
 	/*
@@ -100,7 +116,7 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 	 */
 	public:
 	// Assign suitable AtomTypes to the supplied Species
-	virtual bool assignAtomTypes(Species* sp, CoreData& coreData, bool keepExisting = false) const = 0;
+	virtual bool assignAtomTypes(Species* sp, CoreData& coreData, bool keepExisting = false) const;
 	// Assign intramolecular parameters to the supplied Species
 	virtual bool assignIntramolecular(Species* sp, bool useExistingTypes, bool assignBonds, bool assignAngles, bool assignTorsions) const;
 
