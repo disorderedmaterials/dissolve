@@ -266,7 +266,7 @@ bool Dissolve::saveInput(const char* filename)
 			if (!module->enabled() && (!parser.writeLineF("    Disabled\n"))) return false;
 
 			// Write keyword options
-			if (!module->keywords().write(parser, "    ")) return false;
+			if (!module->keywords().write(parser, "    ", true)) return false;
 
 			if (!parser.writeLineF("  %s\n", ModuleBlock::keywords().keyword(ModuleBlock::EndModuleKeyword))) return false;
 		}
@@ -299,7 +299,7 @@ bool Dissolve::saveInput(const char* filename)
 			}
 
 			// Write keyword options
-			if (!module->keywords().write(parser, "    ")) return false;
+			if (!module->keywords().write(parser, "    ", true)) return false;
 
 			if (!parser.writeLineF("  %s\n", ModuleBlock::keywords().keyword(ModuleBlock::EndModuleKeyword))) return false;
 		}
