@@ -287,7 +287,7 @@ void ForcefieldTab::updatePairPotentialsTableRow(int row, PairPotential* pairPot
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<PairPotential>(pairPotential));
-		item->setFlags(Qt::ItemIsSelectable);
+		item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 		ui.PairPotentialsTable->setItem(row, 0, item);
 	}
 	else item = ui.PairPotentialsTable->item(row, 0);
@@ -298,7 +298,7 @@ void ForcefieldTab::updatePairPotentialsTableRow(int row, PairPotential* pairPot
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<PairPotential>(pairPotential));
-		item->setFlags(Qt::ItemIsSelectable);
+		item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 		ui.PairPotentialsTable->setItem(row, 1, item);
 	}
 	else item = ui.PairPotentialsTable->item(row, 1);
@@ -309,6 +309,7 @@ void ForcefieldTab::updatePairPotentialsTableRow(int row, PairPotential* pairPot
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<PairPotential>(pairPotential));
+		item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 		ui.PairPotentialsTable->setItem(row, 2, item);
 	}
 	else item = ui.PairPotentialsTable->item(row, 2);
@@ -319,6 +320,7 @@ void ForcefieldTab::updatePairPotentialsTableRow(int row, PairPotential* pairPot
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<PairPotential>(pairPotential));
+		item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 		ui.PairPotentialsTable->setItem(row, 3, item);
 	}
 	else item = ui.PairPotentialsTable->item(row, 3);
@@ -329,6 +331,7 @@ void ForcefieldTab::updatePairPotentialsTableRow(int row, PairPotential* pairPot
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<PairPotential>(pairPotential));
+		item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 		ui.PairPotentialsTable->setItem(row, 4, item);
 	}
 	else item = ui.PairPotentialsTable->item(row, 4);
@@ -341,6 +344,7 @@ void ForcefieldTab::updatePairPotentialsTableRow(int row, PairPotential* pairPot
 		{
 			item = new QTableWidgetItem;
 			item->setData(Qt::UserRole, VariantPointer<PairPotential>(pairPotential));
+			item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 			ui.PairPotentialsTable->setItem(row, n+5, item);
 		}
 		else item = ui.PairPotentialsTable->item(row, n+5);
