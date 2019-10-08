@@ -178,12 +178,10 @@ class Dissolve
 	PairPotential* pairPotential(const char* at1, const char* at2) const;
 	// Return map for PairPotentials
 	const PotentialMap& potentialMap();
-	// Regenerate all PairPotentials, replacing those currently defined
-	void regeneratePairPotentials(PairPotential::ShortRangeType srType);
-	// Update all currently-defined PairPotentials
-	void updateCurrentPairPotentials();
-	// Generate any missing PairPotentials using the supplied short-range form
-	bool generateMissingPairPotentials(PairPotential::ShortRangeType srType);
+	// Clear and regenerate all PairPotentials, replacing those currently defined
+	void regeneratePairPotentials();
+	// Generate all necessary PairPotentials, adding missing terms where necessary
+	bool generatePairPotentials();
 
 
 	/*

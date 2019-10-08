@@ -63,41 +63,8 @@ bool Dissolve::prepare()
 	// Check Species
 	for (Species* sp = species().first(); sp != NULL; sp = sp->next()) if (!sp->checkSetUp()) return false;
 
-	/*
-	 * Pair Potentials
-	 * We expect a PairPotential to have been defined for every combination of AtomType used in the system
-	 */
-
-	Messenger::print("\n");
-	Messenger::print("*** Setting up PairPotentials...\n");
-	int nMissingPots = 0;
-	for (AtomType* at1 = coreData_.atomTypes().first(); at1 != NULL; at1 = at1->next())
-	{
-		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next())
-		{
-			PairPotential* pot = pairPotential(at1, at2);
-			if (pot == NULL)
-			{
-				Messenger::error("A PairPotential between AtomTypes '%s' and '%s' is required, but has not been defined.\n", at1->name(), at2->name());
-				++nMissingPots;
-				continue;
-			}
-
-			// Setup PairPotential
-			if (!pot->setUp(pairPotentialRange_, pairPotentialDelta_, pairPotentialsIncludeCoulomb_))
-			{
-				Messenger::error("Failed to set up PairPotential between AtomTypes '%s' and '%s'.\n", at1->name(), at2->name());
-				return false;
-			}
-
-			// Retrieve additional potential from the processing module data, if present
-			CharString itemName("Potential_%s-%s_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ());
-
-			if (!processingModuleData_.contains(itemName, "Dissolve")) continue;
-			pot->setUAdditional(GenericListHelper<Data1D>::retrieve(processingModuleData_, itemName, "Dissolve", Data1D()));
-		}
-	}
-	if (nMissingPots > 0) return false;
+	// Make sure pair potentials are up-to-date
+	if (!generatePairPotentials()) return false;
 
 	// Create PairPotential matrix
 	Messenger::print("Creating PairPotential matrix (%ix%i)...\n", coreData_.nAtomTypes(), coreData_.nAtomTypes());

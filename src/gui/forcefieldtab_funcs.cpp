@@ -78,14 +78,8 @@ ForcefieldTab::ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve,
 	 * Pair Potentials
 	 */
 	
-	for (int n=0; n<PairPotential::nShortRangeTypes; ++n) ui.ShortRangeFormCombo->addItem(PairPotential::shortRangeType( (PairPotential::ShortRangeType) n));
 	for (int n=0; n<PairPotential::nCoulombTruncationSchemes; ++n) ui.CoulombTruncationCombo->addItem(PairPotential::coulombTruncationScheme( (PairPotential::CoulombTruncationScheme) n));
 	for (int n=0; n<PairPotential::nShortRangeTruncationSchemes; ++n) ui.ShortRangeTruncationCombo->addItem(PairPotential::shortRangeTruncationScheme( (PairPotential::ShortRangeTruncationScheme) n));
-
-
-	// Set delegates for table
-	// -- Functional Forms
-	ui.PairPotentialsTable->setItemDelegateForColumn(2, new ComboListDelegate(this, new ComboListEnumItems(PairPotential::nShortRangeTypes, PairPotential::shortRangeTypes())));
 
 	// -- Charges / Parameters
 	for (int n=3; n<9; ++n) ui.PairPotentialsTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
@@ -313,7 +307,7 @@ void ForcefieldTab::updatePairPotentialsTableRow(int row, PairPotential* pairPot
 		ui.PairPotentialsTable->setItem(row, 2, item);
 	}
 	else item = ui.PairPotentialsTable->item(row, 2);
-	item->setText(PairPotential::shortRangeType( (PairPotential::ShortRangeType) pairPotential->shortRangeType()));
+	item->setText(Forcefield::shortRangeTypes().keyword(pairPotential->shortRangeType()));
 
 	// Charge I
 	if (createItems)
@@ -373,7 +367,6 @@ void ForcefieldTab::updateControls()
 	// PairPotentials
 	ui.PairPotentialRangeSpin->setValue(dissolve_.pairPotentialRange());
 	ui.PairPotentialDeltaSpin->setValue(dissolve_.pairPotentialDelta());
-	ui.ShortRangeFormCombo->setCurrentIndex(PairPotential::LennardJonesType);
 	ui.CoulombIncludeCheck->setChecked(dissolve_.pairPotentialsIncludeCoulomb());
 	ui.ShortRangeTruncationCombo->setCurrentIndex(PairPotential::shortRangeTruncationScheme());
 	ui.ShortRangeTruncationWidthSpin->setValue(PairPotential::shortRangeTruncationWidth());
@@ -647,7 +640,7 @@ void ForcefieldTab::on_CoulombTruncationCombo_currentIndexChanged(int index)
 
 void ForcefieldTab::on_RegenerateAllPairPotentialsButton_clicked(bool checked)
 {
-	dissolve_.regeneratePairPotentials((PairPotential::ShortRangeType) ui.ShortRangeFormCombo->currentIndex());
+	dissolve_.regeneratePairPotentials();
 
 	refreshing_ = true;
 
@@ -659,21 +652,9 @@ void ForcefieldTab::on_RegenerateAllPairPotentialsButton_clicked(bool checked)
 
 void ForcefieldTab::on_UpdatePairPotentialsButton_clicked(bool checked)
 {
-	dissolve_.updateCurrentPairPotentials();
+	dissolve_.generatePairPotentials();
 
 	updateControls();
-
-	refreshing_ = true;
-
-	TableWidgetUpdater<ForcefieldTab,PairPotential> ppUpdater(ui.PairPotentialsTable, dissolve_.pairPotentials(), this, &ForcefieldTab::updatePairPotentialsTableRow);
-	ui.PairPotentialsTable->resizeColumnsToContents();
-
-	refreshing_ = false;
-}
-
-void ForcefieldTab::on_GenerateMissingPairPotentialsButton_clicked(bool checked)
-{
-	dissolve_.generateMissingPairPotentials((PairPotential::ShortRangeType) ui.ShortRangeFormCombo->currentIndex());
 
 	refreshing_ = true;
 
@@ -696,7 +677,7 @@ void ForcefieldTab::on_PairPotentialsTable_itemChanged(QTableWidgetItem* w)
 	{
 		// Functional form
 		case (2):
-			pairPotential->setShortRangeType(PairPotential::shortRangeType(qPrintable(w->text())));
+// 			pairPotential->setShortRangeType(PairPotential::shortRangeType(qPrintable(w->text())));
 			dissolveWindow_->setModified();
 			break;
 		// Charge I

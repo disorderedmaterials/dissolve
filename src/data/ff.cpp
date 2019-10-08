@@ -43,6 +43,24 @@ Forcefield::~Forcefield()
 }
 
 /*
+ * Definition
+ */
+
+// Return enum options for ShortRangeType
+EnumOptions<Forcefield::ShortRangeType> Forcefield::shortRangeTypes()
+{
+	static EnumOptionsList ShortRangeTypeOptions = EnumOptionsList() <<
+		EnumOption(Forcefield::UndefinedType, 			"Undefined") <<
+		EnumOption(Forcefield::NoInteractionType, 		"None") <<
+		EnumOption(Forcefield::LennardJonesType, 		"LJ") <<
+		EnumOption(Forcefield::LennardJonesGeometricType, 	"LJGeometric");
+
+	static EnumOptions<Forcefield::ShortRangeType> options("ShortRangeType", ShortRangeTypeOptions);
+
+	return options;
+}
+
+/*
  * Atom Type Data
  */
 
