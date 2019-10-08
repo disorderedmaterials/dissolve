@@ -63,6 +63,10 @@ bool Dissolve::prepare()
 	// Check Species
 	for (Species* sp = species().first(); sp != NULL; sp = sp->next()) if (!sp->checkSetUp()) return false;
 
+	// Reassign AtomType indices (in case one or more have been added / removed)
+	int count = 0;
+	for (AtomType* at = atomTypes().first(); at != NULL; at = at->next(), ++count) at->setIndex(count);
+
 	// Make sure pair potentials are up-to-date
 	if (!generatePairPotentials()) return false;
 
