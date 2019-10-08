@@ -89,6 +89,12 @@ void KeywordBase::set(const char* name, const char* description, const char* arg
 	optionMask_ = optionMask;
 }
 
+// Return whether data has been set
+bool KeywordBase::isSet() const
+{
+	return set_;
+}
+
 // Return data type stored by keyword
 KeywordBase::KeywordDataType KeywordBase::type() const
 {
@@ -126,7 +132,7 @@ bool KeywordBase::isOptionSet(KeywordOption opt) const
 }
 
 // Return whether the data has ever been set
-bool KeywordBase::isSet() const
+bool KeywordBase::isDataEmpty() const
 {
 	return set_;
 }
