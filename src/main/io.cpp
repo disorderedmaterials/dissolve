@@ -219,16 +219,12 @@ bool Dissolve::saveInput(const char* filename)
 
 	// Atom Type Parameters
 	if (!parser.writeLineF("  # Atom Type Parameters\n")) return false;
-	if (!parser.writeLineF("  # Note: These are for reference only (unless GenerateAll is used).\n")) return false;
-	if (!parser.writeLineF("  # If you wish to modify the potential, change the relevant Generate lines below.\n")) return false;
 	for (AtomType* atomType = atomTypes().first(); atomType != NULL; atomType = atomType->next())
 	{
-		CharString s("  %s  %s  %12.6e", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ParametersKeyword), atomType->name(), atomType->parameters().charge());
+		CharString s("  %s  %s  %12.6e  %s", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ParametersKeyword), atomType->name(), atomType->parameters().charge(), Forcefield::shortRangeTypes().keyword(atomType->shortRangeType()));
 		for (int n=0; n<MAXSRPARAMETERS; ++n) s.strcatf("  %12.6e", atomType->parameters().parameter(n));
 		if (!parser.writeLineF("%s\n", s.get())) return false;
 	}
-	// TODO Default case is 'GenerateAll LJ', so we'll write that for now
-	if (!parser.writeLineF("  GenerateAll  LJ\n")) return false;
 
 	if (!parser.writeLineF("  %s  %f\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::RangeKeyword), pairPotentialRange_)) return false;
 	if (!parser.writeLineF("  %s  %f\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::DeltaKeyword), pairPotentialDelta_)) return false;
