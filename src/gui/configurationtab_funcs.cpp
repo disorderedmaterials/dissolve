@@ -137,7 +137,6 @@ void ConfigurationTab::updateControls()
 	// Input Coordinates
 	ui_.CoordinatesFileEdit->setText(configuration_->inputCoordinates().filename());
 	ui_.CoordinatesFileFormatCombo->setCurrentIndex(configuration_->inputCoordinates().formatIndex());
-// 	ui_.CoordinatesFromFileGroup->setChecked(configuration_->inputCoordinates().is);
 
 	// Viewer
 	ui_.ViewerWidget->configurationViewer()->postRedisplay();
