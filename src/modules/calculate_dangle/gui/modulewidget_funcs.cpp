@@ -32,15 +32,38 @@ CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget* parent, Calcul
 	// Set up RDF graph
 	rdfGraph_ = ui.RDFPlotWidget->dataViewer();
 
-	View& view = rdfGraph_->view();
-	view.setViewType(View::FlatXYView);
-	view.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
-	view.axes().setMax(0, 10.0);
-	view.axes().setTitle(1, "g(r)");
-	view.axes().setMin(1, 0.0);
-	view.axes().setMax(1, 1.0);
-	rdfGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
-	view.setAutoFollowType(View::AllAutoFollow);
+	View& rdfView = rdfGraph_->view();
+	rdfView.setViewType(View::FlatXYView);
+	rdfView.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+	rdfView.axes().setMax(0, 10.0);
+	rdfView.axes().setTitle(1, "g(r)");
+	rdfView.axes().setMin(1, 0.0);
+	rdfView.axes().setMax(1, 1.0);
+	rdfView.setAutoFollowType(View::AllAutoFollow);
+
+	// Set up Angle graph
+	angleGraph_ = ui.AnglePlotWidget->dataViewer();
+
+	View& angleView = angleGraph_->view();
+	angleView.setViewType(View::FlatXYView);
+	angleView.axes().setTitle(0, "Angle, \\sym{degrees}");
+	angleView.axes().setRange(0, 0.0, 180.0);
+	angleView.axes().setTitle(1, "Normalised Population");
+	angleView.axes().setRange(1, 0.0, 5.0);
+	angleView.setAutoFollowType(View::AllAutoFollow);
+
+	// Set up Distance-Angle graph
+	dAngleGraph_ = ui.DAnglePlotWidget->dataViewer();
+
+	View& dAngleView = dAngleGraph_->view();
+	dAngleView.setViewType(View::FlatXYView);
+	dAngleView.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+	dAngleView.axes().setRange(0, 0.0, 5.0);
+	dAngleView.axes().setTitle(1, "Angle, \\sym{degrees}");
+	dAngleView.axes().setRange(1, 0.0, 180.0);
+	dAngleView.axes().setTitle(2, "Normalised Population");
+	dAngleView.axes().setRange(2, 0.0, 0.01);
+	dAngleView.setAutoFollowType(View::AllAutoFollow);
 
 	setGraphDataTargets(module_);
 
@@ -53,8 +76,12 @@ CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget* parent, Calcul
 void CalculateDAngleModuleWidget::updateControls()
 {
 	ui.RDFPlotWidget->updateToolbar();
+	ui.AnglePlotWidget->updateToolbar();
+	ui.DAnglePlotWidget->updateToolbar();
 
 	rdfGraph_->postRedisplay();
+	angleGraph_->postRedisplay();
+	dAngleGraph_->postRedisplay();
 }
 
 // Disable sensitive controls within widget
@@ -104,7 +131,12 @@ void CalculateDAngleModuleWidget::setGraphDataTargets(CalculateDAngleModule* mod
 	while (Configuration* cfg = configIterator.iterate())
 	{
 		// Calculated B...C RDF
-		Renderable* rdf = rdfGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//%s_RDF(BC)", module_->uniqueName(), cfg->niceName(), module_->uniqueName()), CharString("RDF//%s", cfg->niceName()), cfg->niceName());
-		rdf->setColour(StockColours::BlackStockColour);
+		Renderable* rdf = rdfGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//RDF(BC)", module_->uniqueName(), cfg->niceName()), CharString("RDF//%s", cfg->niceName()));
+
+		// Calculated Angle histogram
+		Renderable* angle = angleGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//Angle(ABC)", module_->uniqueName(), cfg->niceName()), CharString("RDF//%s", cfg->niceName()));
+
+		// Calculated Angle histogram
+		Renderable* dAngle = dAngleGraph_->createRenderable(Renderable::Data2DRenderable, CharString("%s//Process2D//%s//DAngle(A-BC)", module_->uniqueName(), cfg->niceName()), CharString("RDF//%s", cfg->niceName()));
 	}
 }

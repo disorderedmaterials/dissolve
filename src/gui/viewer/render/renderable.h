@@ -40,12 +40,9 @@ class Renderable : public ListItem<Renderable>
 {
 	public:
 	// Renderable type
-	enum RenderableType { ConfigurationRenderable, Data1DRenderable, SpeciesRenderable, nRenderableTypes };
-	// Convert text string to RenderableType
-	static RenderableType renderableType(const char* s);
-	// Convert RenderableType to text string
-	static const char* renderableType(RenderableType rt);
-
+	enum RenderableType { ConfigurationRenderable, Data1DRenderable, Data2DRenderable, Data3DRenderable, SpeciesRenderable, nRenderableTypes };
+	// Return enum options for RenderableType
+	static EnumOptions<RenderableType> renderableTypes();
 	// Constructor / Destructor
 	Renderable(RenderableType type, const char* objectTag);
 	virtual ~Renderable();

@@ -38,8 +38,8 @@ class CalculateDAngleModuleWidget : public ModuleWidget
 	private:
 	// Associated Module
 	CalculateDAngleModule* module_;
-	// DataViewer contained within this widget
-	DataViewer* rdfGraph_;
+	// DataViewers contained within this widget
+	DataViewer* rdfGraph_, *angleGraph_, *dAngleGraph_;
 
 	public:
 	// Constructor

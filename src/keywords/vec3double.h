@@ -23,6 +23,7 @@
 #define DISSOLVE_KEYWORD_VEC3DOUBLE_H
 
 #include "keywords/data.h"
+#include "vec3labels.h"
 
 // Forward Declarations
 /* none */
@@ -32,9 +33,9 @@ class Vec3DoubleKeyword : public KeywordData< Vec3<double> >
 {
 	public:
 	// Constructors
-	Vec3DoubleKeyword(Vec3<double> value);
-	Vec3DoubleKeyword(Vec3<double> value, Vec3<double> minValue);
-	Vec3DoubleKeyword(Vec3<double> value, Vec3<double> minValue, Vec3<double> maxValue);
+	Vec3DoubleKeyword(Vec3<double> value, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
+	Vec3DoubleKeyword(Vec3<double> value, Vec3<double> minValue, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
+	Vec3DoubleKeyword(Vec3<double> value, Vec3<double> minValue, Vec3<double> maxValue, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
 	// Destructor
 	~Vec3DoubleKeyword();
 
@@ -63,6 +64,18 @@ class Vec3DoubleKeyword : public KeywordData< Vec3<double> >
 	bool isValid(int index, double value);
 
 
+	/*
+	 * Label Type
+	 */
+	private:
+	// Label type to display in GUI
+	Vec3Labels::LabelType labelType_;
+
+	public:
+	// Label type to display in GUI
+	Vec3Labels::LabelType labelType() const;
+
+	
 	/*
 	 * Arguments
 	 */
