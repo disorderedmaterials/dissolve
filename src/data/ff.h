@@ -116,7 +116,7 @@ class Forcefield : public Elements, public ListItem<Forcefield>
 	 */
 	public:
 	// Assign suitable AtomTypes to the supplied Species
-	virtual bool assignAtomTypes(Species* sp, CoreData& coreData, bool keepExisting = false) const = 0;
+	virtual bool assignAtomTypes(Species* sp, CoreData& coreData, bool keepExisting = false) const;
 	// Assign intramolecular parameters to the supplied Species
 	virtual bool assignIntramolecular(Species* sp, bool useExistingTypes, bool assignBonds, bool assignAngles, bool assignTorsions) const;
 

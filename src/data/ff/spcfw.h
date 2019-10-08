@@ -73,10 +73,6 @@ class Forcefield_SPCFw : public Forcefield
 	bool generateAngleTerm(const Species* sp, SpeciesAngle* angleTerm, ForcefieldAtomType* i, ForcefieldAtomType* j, ForcefieldAtomType* k) const;
 	// Generate torsion parameters for the supplied UFF atom types
 	bool generateTorsionTerm(const Species* sp, SpeciesTorsion* torsionTerm, ForcefieldAtomType* i, ForcefieldAtomType* j, ForcefieldAtomType* k, ForcefieldAtomType* l) const;
-
-	public:
-	// Assign suitable atom types to the supplied Species
-	bool assignAtomTypes(Species* sp, CoreData& coreData, bool keepExisting = false) const;
 };
 
 #endif
