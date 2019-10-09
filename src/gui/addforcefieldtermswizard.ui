@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>391</width>
-    <height>386</height>
+    <height>455</height>
    </rect>
   </property>
   <property name="font">
@@ -81,26 +81,13 @@
            <number>4</number>
           </property>
           <item>
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>51</width>
-              <height>300</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
            <layout class="QVBoxLayout" name="verticalLayout_3">
             <item>
              <widget class="QListWidget" name="ForcefieldList">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
-                <verstretch>2</verstretch>
+                <verstretch>0</verstretch>
                </sizepolicy>
               </property>
              </widget>
@@ -108,9 +95,9 @@
             <item>
              <widget class="QGroupBox" name="ForcefieldDetailsGroup">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
-                <verstretch>1</verstretch>
+                <verstretch>0</verstretch>
                </sizepolicy>
               </property>
               <property name="title">
@@ -136,19 +123,6 @@
              </widget>
             </item>
            </layout>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_3">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>50</width>
-              <height>300</height>
-             </size>
-            </property>
-           </spacer>
           </item>
          </layout>
         </widget>
@@ -547,6 +521,16 @@
              </layout>
             </item>
            </layout>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="AtomTypesOverwriteParametersCheck">
+            <property name="text">
+             <string>Overwrite parameters in existing AtomTypes</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_7">
