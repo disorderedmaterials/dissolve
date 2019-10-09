@@ -95,7 +95,6 @@ class ForcefieldTab : public QWidget, public MainTab
 	// Atom Types
 	void on_AtomTypeAddButton_clicked(bool checked);
 	void on_AtomTypeRemoveButton_clicked(bool checked);
-	void on_AtomTypeLibraryButton_clicked(bool checked);
 	void on_AtomTypesTable_itemChanged(QTableWidgetItem* w);
 	// Pair Potentials
 	void on_PairPotentialRangeSpin_valueChanged(double value);

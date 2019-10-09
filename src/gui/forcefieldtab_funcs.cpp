@@ -426,11 +426,6 @@ void ForcefieldTab::on_AtomTypeRemoveButton_clicked(bool checked)
 	printf("NOT IMPLEMENTED YET.\n");
 }
 
-void ForcefieldTab::on_AtomTypeLibraryButton_clicked(bool checked)
-{
-	printf("NOT IMPLEMENTED YET.\n");
-}
-
 void ForcefieldTab::on_MasterTermAddBondButton_clicked(bool checked)
 {
 	printf("NOT IMPLEMENTED YET.\n");
