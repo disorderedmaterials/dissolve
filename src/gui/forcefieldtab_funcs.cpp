@@ -58,10 +58,13 @@ ForcefieldTab::ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve,
 		ui.MasterTorsionsTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
 	}
 
-	// Ensure fonts for table headers are set correctly
+	// Ensure fonts for table headers are set correctly and the headers themselves are visible
 	ui.MasterBondsTable->horizontalHeader()->setFont(font());
+	ui.MasterBondsTable->horizontalHeader()->setVisible(true);
 	ui.MasterAnglesTable->horizontalHeader()->setFont(font());
+	ui.MasterAnglesTable->horizontalHeader()->setVisible(true);
 	ui.MasterTorsionsTable->horizontalHeader()->setFont(font());
+	ui.MasterTorsionsTable->horizontalHeader()->setVisible(true);
 
 	/*
 	 * Atom Types
@@ -71,8 +74,9 @@ ForcefieldTab::ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve,
 	// -- Charge / Parameters
 	for (int n=3; n<8; ++n) ui.AtomTypesTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
 
-	// Ensure fonts for table headers are set correctly
+	// Ensure fonts for table headers are set correctly and the headers themselves are visible
 	ui.AtomTypesTable->horizontalHeader()->setFont(font());
+	ui.AtomTypesTable->horizontalHeader()->setVisible(true);
 
 	/*
 	 * Pair Potentials
@@ -81,8 +85,12 @@ ForcefieldTab::ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve,
 	for (int n=0; n<PairPotential::nCoulombTruncationSchemes; ++n) ui.CoulombTruncationCombo->addItem(PairPotential::coulombTruncationScheme( (PairPotential::CoulombTruncationScheme) n));
 	for (int n=0; n<PairPotential::nShortRangeTruncationSchemes; ++n) ui.ShortRangeTruncationCombo->addItem(PairPotential::shortRangeTruncationScheme( (PairPotential::ShortRangeTruncationScheme) n));
 
-	// -- Charges / Parameters
-	for (int n=3; n<9; ++n) ui.PairPotentialsTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
+	// Ensure fonts for table headers are set correctly and the headers themselves are visible
+	ui.PairPotentialsTable->horizontalHeader()->setFont(font());
+	ui.PairPotentialsTable->horizontalHeader()->setVisible(true);
+
+	// -- Charges / Parameters delegates
+// 	for (int n=3; n<9; ++n) ui.PairPotentialsTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
 
 	DataViewer* viewer = ui.PairPotentialsPlotWidget->dataViewer();
 	viewer->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");

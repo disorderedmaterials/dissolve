@@ -65,6 +65,16 @@ SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabW
 	ui_.IsotopologuesTree->setItemDelegateForColumn(1, new NullDelegate(this));
 	ui_.IsotopologuesTree->setItemDelegateForColumn(2, new IsotopeComboDelegate(this));
 
+	// Ensure fonts for table headers are set correctly and the headers themselves are visible
+	ui_.AtomTable->horizontalHeader()->setFont(font());
+	ui_.AtomTable->horizontalHeader()->setVisible(true);
+	ui_.BondTable->horizontalHeader()->setFont(font());
+	ui_.BondTable->horizontalHeader()->setVisible(true);
+	ui_.AngleTable->horizontalHeader()->setFont(font());
+	ui_.AngleTable->horizontalHeader()->setVisible(true);
+	ui_.TorsionTable->horizontalHeader()->setFont(font());
+	ui_.TorsionTable->horizontalHeader()->setVisible(true);
+
 	// Set up SpeciesViewer
 	ui_.ViewerWidget->setCoreData(&dissolve.coreData());
 	ui_.ViewerWidget->speciesViewer()->setSpecies(species_);
