@@ -71,8 +71,10 @@ ForcefieldTab::ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve,
 	 */
 
 	// Set item delegates for tables
+	// -- Short Range Functional Forms
+	ui_.AtomTypesTable->setItemDelegateForColumn(3, new ComboListDelegate(this, new ComboEnumOptionsItems<Forcefield::ShortRangeType>(Forcefield::shortRangeTypes())));
 	// -- Charge / Parameters
-	for (int n=3; n<8; ++n) ui_.AtomTypesTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
+	for (int n=4; n<9; ++n) ui_.AtomTypesTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
 
 	// Ensure fonts for table headers are set correctly and the headers themselves are visible
 	ui_.AtomTypesTable->horizontalHeader()->setFont(font());
@@ -271,6 +273,16 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, AtomType* atomType, bool cr
 	else item = ui_.AtomTypesTable->item(row, 2);
 	item->setText(QString::number(atomType->parameters().charge()));
 
+	// Short-Range Form
+	if (createItems)
+	{
+		item = new QTableWidgetItem;
+		item->setData(Qt::UserRole, VariantPointer<AtomType>(atomType));
+		ui_.AtomTypesTable->setItem(row, 3, item);
+	}
+	else item = ui_.AtomTypesTable->item(row, 3);
+	item->setText(Forcefield::shortRangeTypes().keyword(atomType->shortRangeType()));
+
 	// Parameters
 	for (int n=0; n<MAXINTRAPARAMS; ++n)
 	{
@@ -278,9 +290,9 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, AtomType* atomType, bool cr
 		{
 			item = new QTableWidgetItem;
 			item->setData(Qt::UserRole, VariantPointer<AtomType>(atomType));
-			ui_.AtomTypesTable->setItem(row, n+3, item);
+			ui_.AtomTypesTable->setItem(row, n+4, item);
 		}
-		else item = ui_.AtomTypesTable->item(row, n+3);
+		else item = ui_.AtomTypesTable->item(row, n+4);
 		item->setText(QString::number(atomType->parameters().parameter(n)));
 	}
 }

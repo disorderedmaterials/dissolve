@@ -145,7 +145,7 @@
           </font>
          </property>
          <property name="columnCount">
-          <number>7</number>
+          <number>8</number>
          </property>
          <attribute name="horizontalHeaderVisible">
           <bool>false</bool>
@@ -166,6 +166,11 @@
          <column>
           <property name="text">
            <string>Charge</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>SR Form</string>
           </property>
          </column>
          <column>
