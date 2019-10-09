@@ -95,6 +95,9 @@ Species* AddSpeciesWizard::importSpecies(Dissolve& dissolve)
 		return NULL;
 	}
 
+	// Set the final name of the new Species
+	importTarget_->setName(qPrintable(ui_.SpeciesNameEdit->text()));
+
 	// Copy the importTarget_ over
 	Species* newSpecies = dissolve.copySpecies(importTarget_);
 
@@ -568,10 +571,4 @@ void AddSpeciesWizard::on_SpeciesNameEdit_textChanged(const QString text)
 
 	// Update state of progression controls
 	updateProgressionControls();
-}
-
-// Return name of new Species to be
-const char* AddSpeciesWizard::speciesName() const
-{
-	return qPrintable(ui_.SpeciesNameEdit->text());
 }

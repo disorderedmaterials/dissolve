@@ -167,10 +167,6 @@ class AddSpeciesWizard : public WizardWidget
 	 */
 	private slots:
 	void on_SpeciesNameEdit_textChanged(const QString text);
-
-	public:
-	// Return name of new Species to be
-	const char* speciesName() const;
 };
 
 #endif
