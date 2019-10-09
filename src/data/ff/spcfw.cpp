@@ -24,7 +24,7 @@
 #include "data/ffatomtype.h"
 #include "data/ffbondterm.h"
 #include "classes/atomtype.h"
-#include "classes/species.h"
+#include "classes/speciesatom.h"
 #include "base/sysfunc.h"
 
 /*

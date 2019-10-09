@@ -24,8 +24,6 @@
 
 #include "data/ff.h"
 #include "data/ff/uffatomtype.h"
-#include "templates/array.h"
-#include "templates/list.h"
 
 // Forward Declarations
 class CoreData;

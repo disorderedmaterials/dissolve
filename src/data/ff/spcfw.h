@@ -23,16 +23,10 @@
 #define DISSOLVE_FORCEFIELD_SPCFW_H
 
 #include "data/ff.h"
-#include "templates/array.h"
 
 // Forward Declarations
 class CoreData;
-class Species;
-class SpeciesAngle;
 class SpeciesAtom;
-class SpeciesBond;
-class SpeciesIntra;
-class SpeciesTorsion;
 
 // SPC/Fw Forcefield
 class Forcefield_SPCFw : public Forcefield
