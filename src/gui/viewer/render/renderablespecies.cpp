@@ -28,7 +28,7 @@
 RenderableSpecies::RenderableSpecies(const Species* source, const char* objectTag) : Renderable(Renderable::SpeciesRenderable, objectTag), source_(source)
 {
 	// Set defaults
-	displayStyle_ = LinesStyle;
+	displayStyle_ = SpheresStyle;
 	linesAtomRadius_ = 0.05;
 	spheresAtomRadius_ = 0.3;
 	spheresBondRadius_ = 0.1;
