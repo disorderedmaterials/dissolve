@@ -36,7 +36,7 @@
 // Constructor / Destructor
 ForcefieldTab::ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title) : MainTab(dissolveWindow, dissolve, parent, title, this)
 {
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	refreshing_ = true;
 
@@ -46,25 +46,25 @@ ForcefieldTab::ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve,
 	
 	// Set item delegates for tables
 	// -- Functional Forms
-	ui.MasterBondsTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboListEnumItems(SpeciesBond::nBondFunctions, SpeciesBond::bondFunctions())));
-	ui.MasterAnglesTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboListEnumItems(SpeciesAngle::nAngleFunctions, SpeciesAngle::angleFunctions())));
-	ui.MasterTorsionsTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboListEnumItems(SpeciesTorsion::nTorsionFunctions, SpeciesTorsion::torsionFunctions())));
+	ui_.MasterBondsTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboListEnumItems(SpeciesBond::nBondFunctions, SpeciesBond::bondFunctions())));
+	ui_.MasterAnglesTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboListEnumItems(SpeciesAngle::nAngleFunctions, SpeciesAngle::angleFunctions())));
+	ui_.MasterTorsionsTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboListEnumItems(SpeciesTorsion::nTorsionFunctions, SpeciesTorsion::torsionFunctions())));
 
 	// -- Parameters
 	for (int n=2; n<6; ++n)
 	{
-		ui.MasterBondsTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
-		ui.MasterAnglesTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
-		ui.MasterTorsionsTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
+		ui_.MasterBondsTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
+		ui_.MasterAnglesTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
+		ui_.MasterTorsionsTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
 	}
 
 	// Ensure fonts for table headers are set correctly and the headers themselves are visible
-	ui.MasterBondsTable->horizontalHeader()->setFont(font());
-	ui.MasterBondsTable->horizontalHeader()->setVisible(true);
-	ui.MasterAnglesTable->horizontalHeader()->setFont(font());
-	ui.MasterAnglesTable->horizontalHeader()->setVisible(true);
-	ui.MasterTorsionsTable->horizontalHeader()->setFont(font());
-	ui.MasterTorsionsTable->horizontalHeader()->setVisible(true);
+	ui_.MasterBondsTable->horizontalHeader()->setFont(font());
+	ui_.MasterBondsTable->horizontalHeader()->setVisible(true);
+	ui_.MasterAnglesTable->horizontalHeader()->setFont(font());
+	ui_.MasterAnglesTable->horizontalHeader()->setVisible(true);
+	ui_.MasterTorsionsTable->horizontalHeader()->setFont(font());
+	ui_.MasterTorsionsTable->horizontalHeader()->setVisible(true);
 
 	/*
 	 * Atom Types
@@ -72,27 +72,27 @@ ForcefieldTab::ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve,
 
 	// Set item delegates for tables
 	// -- Charge / Parameters
-	for (int n=3; n<8; ++n) ui.AtomTypesTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
+	for (int n=3; n<8; ++n) ui_.AtomTypesTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
 
 	// Ensure fonts for table headers are set correctly and the headers themselves are visible
-	ui.AtomTypesTable->horizontalHeader()->setFont(font());
-	ui.AtomTypesTable->horizontalHeader()->setVisible(true);
+	ui_.AtomTypesTable->horizontalHeader()->setFont(font());
+	ui_.AtomTypesTable->horizontalHeader()->setVisible(true);
 
 	/*
 	 * Pair Potentials
 	 */
 	
-	for (int n=0; n<PairPotential::nCoulombTruncationSchemes; ++n) ui.CoulombTruncationCombo->addItem(PairPotential::coulombTruncationScheme( (PairPotential::CoulombTruncationScheme) n));
-	for (int n=0; n<PairPotential::nShortRangeTruncationSchemes; ++n) ui.ShortRangeTruncationCombo->addItem(PairPotential::shortRangeTruncationScheme( (PairPotential::ShortRangeTruncationScheme) n));
+	for (int n=0; n<PairPotential::nCoulombTruncationSchemes; ++n) ui_.CoulombTruncationCombo->addItem(PairPotential::coulombTruncationScheme( (PairPotential::CoulombTruncationScheme) n));
+	for (int n=0; n<PairPotential::nShortRangeTruncationSchemes; ++n) ui_.ShortRangeTruncationCombo->addItem(PairPotential::shortRangeTruncationScheme( (PairPotential::ShortRangeTruncationScheme) n));
 
 	// Ensure fonts for table headers are set correctly and the headers themselves are visible
-	ui.PairPotentialsTable->horizontalHeader()->setFont(font());
-	ui.PairPotentialsTable->horizontalHeader()->setVisible(true);
+	ui_.PairPotentialsTable->horizontalHeader()->setFont(font());
+	ui_.PairPotentialsTable->horizontalHeader()->setVisible(true);
 
 	// -- Charges / Parameters delegates
-// 	for (int n=3; n<9; ++n) ui.PairPotentialsTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
+// 	for (int n=3; n<9; ++n) ui_.PairPotentialsTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
 
-	DataViewer* viewer = ui.PairPotentialsPlotWidget->dataViewer();
+	DataViewer* viewer = ui_.PairPotentialsPlotWidget->dataViewer();
 	viewer->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	viewer->view().axes().setTitle(1, "U, kj/mol");
 	viewer->view().axes().setRange(1, -100.0, 100.0);
@@ -128,9 +128,9 @@ void ForcefieldTab::updateBondsTableRow(int row, MasterIntra* masterBond, bool c
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<MasterIntra>(masterBond));
-		ui.MasterBondsTable->setItem(row, 0, item);
+		ui_.MasterBondsTable->setItem(row, 0, item);
 	}
-	else item = ui.MasterBondsTable->item(row, 0);
+	else item = ui_.MasterBondsTable->item(row, 0);
 	item->setText(masterBond->name());
 
 	// Functional Form
@@ -138,9 +138,9 @@ void ForcefieldTab::updateBondsTableRow(int row, MasterIntra* masterBond, bool c
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<MasterIntra>(masterBond));
-		ui.MasterBondsTable->setItem(row, 1, item);
+		ui_.MasterBondsTable->setItem(row, 1, item);
 	}
-	else item = ui.MasterBondsTable->item(row, 1);
+	else item = ui_.MasterBondsTable->item(row, 1);
 	item->setText(SpeciesBond::bondFunction( (SpeciesBond::BondFunction) masterBond->form()));
 
 	// Parameters
@@ -150,9 +150,9 @@ void ForcefieldTab::updateBondsTableRow(int row, MasterIntra* masterBond, bool c
 		{
 			item = new QTableWidgetItem;
 			item->setData(Qt::UserRole, VariantPointer<MasterIntra>(masterBond));
-			ui.MasterBondsTable->setItem(row, n+2, item);
+			ui_.MasterBondsTable->setItem(row, n+2, item);
 		}
-		else item = ui.MasterBondsTable->item(row, n+2);
+		else item = ui_.MasterBondsTable->item(row, n+2);
 		item->setText(QString::number(masterBond->parameter(n)));
 	}
 }
@@ -167,9 +167,9 @@ void ForcefieldTab::updateAnglesTableRow(int row, MasterIntra* masterAngle, bool
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<MasterIntra>(masterAngle));
-		ui.MasterAnglesTable->setItem(row, 0, item);
+		ui_.MasterAnglesTable->setItem(row, 0, item);
 	}
-	else item = ui.MasterAnglesTable->item(row, 0);
+	else item = ui_.MasterAnglesTable->item(row, 0);
 	item->setText(masterAngle->name());
 
 	// Functional Form
@@ -177,9 +177,9 @@ void ForcefieldTab::updateAnglesTableRow(int row, MasterIntra* masterAngle, bool
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<MasterIntra>(masterAngle));
-		ui.MasterAnglesTable->setItem(row, 1, item);
+		ui_.MasterAnglesTable->setItem(row, 1, item);
 	}
-	else item = ui.MasterAnglesTable->item(row, 1);
+	else item = ui_.MasterAnglesTable->item(row, 1);
 	item->setText(SpeciesAngle::angleFunction( (SpeciesAngle::AngleFunction) masterAngle->form()));
 
 	// Parameters
@@ -189,9 +189,9 @@ void ForcefieldTab::updateAnglesTableRow(int row, MasterIntra* masterAngle, bool
 		{
 			item = new QTableWidgetItem;
 			item->setData(Qt::UserRole, VariantPointer<MasterIntra>(masterAngle));
-			ui.MasterAnglesTable->setItem(row, n+2, item);
+			ui_.MasterAnglesTable->setItem(row, n+2, item);
 		}
-		else item = ui.MasterAnglesTable->item(row, n+2);
+		else item = ui_.MasterAnglesTable->item(row, n+2);
 		item->setText(QString::number(masterAngle->parameter(n)));
 	}
 }
@@ -206,9 +206,9 @@ void ForcefieldTab::updateTorsionsTableRow(int row, MasterIntra* masterTorsion, 
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<MasterIntra>(masterTorsion));
-		ui.MasterTorsionsTable->setItem(row, 0, item);
+		ui_.MasterTorsionsTable->setItem(row, 0, item);
 	}
-	else item = ui.MasterTorsionsTable->item(row, 0);
+	else item = ui_.MasterTorsionsTable->item(row, 0);
 	item->setText(masterTorsion->name());
 
 	// Functional Form
@@ -216,9 +216,9 @@ void ForcefieldTab::updateTorsionsTableRow(int row, MasterIntra* masterTorsion, 
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<MasterIntra>(masterTorsion));
-		ui.MasterTorsionsTable->setItem(row, 1, item);
+		ui_.MasterTorsionsTable->setItem(row, 1, item);
 	}
-	else item = ui.MasterTorsionsTable->item(row, 1);
+	else item = ui_.MasterTorsionsTable->item(row, 1);
 	item->setText(SpeciesTorsion::torsionFunction( (SpeciesTorsion::TorsionFunction) masterTorsion->form()));
 
 	// Parameters
@@ -228,9 +228,9 @@ void ForcefieldTab::updateTorsionsTableRow(int row, MasterIntra* masterTorsion, 
 		{
 			item = new QTableWidgetItem;
 			item->setData(Qt::UserRole, VariantPointer<MasterIntra>(masterTorsion));
-			ui.MasterTorsionsTable->setItem(row, n+2, item);
+			ui_.MasterTorsionsTable->setItem(row, n+2, item);
 		}
-		else item = ui.MasterTorsionsTable->item(row, n+2);
+		else item = ui_.MasterTorsionsTable->item(row, n+2);
 		item->setText(QString::number(masterTorsion->parameter(n)));
 	}
 }
@@ -245,9 +245,9 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, AtomType* atomType, bool cr
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<AtomType>(atomType));
-		ui.AtomTypesTable->setItem(row, 0, item);
+		ui_.AtomTypesTable->setItem(row, 0, item);
 	}
-	else item = ui.AtomTypesTable->item(row, 0);
+	else item = ui_.AtomTypesTable->item(row, 0);
 	item->setText(atomType->name());
 
 	// Target element
@@ -256,9 +256,9 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, AtomType* atomType, bool cr
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<AtomType>(atomType));
 		item->setFlags(Qt::NoItemFlags);
-		ui.AtomTypesTable->setItem(row, 1, item);
+		ui_.AtomTypesTable->setItem(row, 1, item);
 	}
-	else item = ui.AtomTypesTable->item(row, 1);
+	else item = ui_.AtomTypesTable->item(row, 1);
 	item->setText(atomType->element()->symbol());
 
 	// Charge
@@ -266,9 +266,9 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, AtomType* atomType, bool cr
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<AtomType>(atomType));
-		ui.AtomTypesTable->setItem(row, 2, item);
+		ui_.AtomTypesTable->setItem(row, 2, item);
 	}
-	else item = ui.AtomTypesTable->item(row, 2);
+	else item = ui_.AtomTypesTable->item(row, 2);
 	item->setText(QString::number(atomType->parameters().charge()));
 
 	// Parameters
@@ -278,9 +278,9 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, AtomType* atomType, bool cr
 		{
 			item = new QTableWidgetItem;
 			item->setData(Qt::UserRole, VariantPointer<AtomType>(atomType));
-			ui.AtomTypesTable->setItem(row, n+3, item);
+			ui_.AtomTypesTable->setItem(row, n+3, item);
 		}
-		else item = ui.AtomTypesTable->item(row, n+3);
+		else item = ui_.AtomTypesTable->item(row, n+3);
 		item->setText(QString::number(atomType->parameters().parameter(n)));
 	}
 }
@@ -296,9 +296,9 @@ void ForcefieldTab::updatePairPotentialsTableRow(int row, PairPotential* pairPot
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<PairPotential>(pairPotential));
 		item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-		ui.PairPotentialsTable->setItem(row, 0, item);
+		ui_.PairPotentialsTable->setItem(row, 0, item);
 	}
-	else item = ui.PairPotentialsTable->item(row, 0);
+	else item = ui_.PairPotentialsTable->item(row, 0);
 	item->setText(pairPotential->atomTypeNameI());
 
 	// Type J
@@ -307,9 +307,9 @@ void ForcefieldTab::updatePairPotentialsTableRow(int row, PairPotential* pairPot
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<PairPotential>(pairPotential));
 		item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-		ui.PairPotentialsTable->setItem(row, 1, item);
+		ui_.PairPotentialsTable->setItem(row, 1, item);
 	}
-	else item = ui.PairPotentialsTable->item(row, 1);
+	else item = ui_.PairPotentialsTable->item(row, 1);
 	item->setText(pairPotential->atomTypeNameJ());
 
 	// Short-Range Form
@@ -318,9 +318,9 @@ void ForcefieldTab::updatePairPotentialsTableRow(int row, PairPotential* pairPot
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<PairPotential>(pairPotential));
 		item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-		ui.PairPotentialsTable->setItem(row, 2, item);
+		ui_.PairPotentialsTable->setItem(row, 2, item);
 	}
-	else item = ui.PairPotentialsTable->item(row, 2);
+	else item = ui_.PairPotentialsTable->item(row, 2);
 	item->setText(Forcefield::shortRangeTypes().keyword(pairPotential->shortRangeType()));
 
 	// Charge I
@@ -329,9 +329,9 @@ void ForcefieldTab::updatePairPotentialsTableRow(int row, PairPotential* pairPot
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<PairPotential>(pairPotential));
 		item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-		ui.PairPotentialsTable->setItem(row, 3, item);
+		ui_.PairPotentialsTable->setItem(row, 3, item);
 	}
-	else item = ui.PairPotentialsTable->item(row, 3);
+	else item = ui_.PairPotentialsTable->item(row, 3);
 	item->setText(QString::number(pairPotential->chargeI()));
 
 	// Charge I
@@ -340,9 +340,9 @@ void ForcefieldTab::updatePairPotentialsTableRow(int row, PairPotential* pairPot
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<PairPotential>(pairPotential));
 		item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-		ui.PairPotentialsTable->setItem(row, 4, item);
+		ui_.PairPotentialsTable->setItem(row, 4, item);
 	}
-	else item = ui.PairPotentialsTable->item(row, 4);
+	else item = ui_.PairPotentialsTable->item(row, 4);
 	item->setText(QString::number(pairPotential->chargeJ()));
 
 	// Parameters
@@ -353,9 +353,9 @@ void ForcefieldTab::updatePairPotentialsTableRow(int row, PairPotential* pairPot
 			item = new QTableWidgetItem;
 			item->setData(Qt::UserRole, VariantPointer<PairPotential>(pairPotential));
 			item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-			ui.PairPotentialsTable->setItem(row, n+5, item);
+			ui_.PairPotentialsTable->setItem(row, n+5, item);
 		}
-		else item = ui.PairPotentialsTable->item(row, n+5);
+		else item = ui_.PairPotentialsTable->item(row, n+5);
 		item->setText(QString::number(pairPotential->parameter(n)));
 	}
 }
@@ -366,32 +366,32 @@ void ForcefieldTab::updateControls()
 	refreshing_ = true;
 
 	// Master Bonds Table
-	TableWidgetUpdater<ForcefieldTab,MasterIntra> bondsUpdater(ui.MasterBondsTable, dissolve_.coreData().masterBonds(), this, &ForcefieldTab::updateBondsTableRow);
-	ui.MasterBondsTable->resizeColumnsToContents();
+	TableWidgetUpdater<ForcefieldTab,MasterIntra> bondsUpdater(ui_.MasterBondsTable, dissolve_.coreData().masterBonds(), this, &ForcefieldTab::updateBondsTableRow);
+	ui_.MasterBondsTable->resizeColumnsToContents();
 
 	// Master Angles Table
-	TableWidgetUpdater<ForcefieldTab,MasterIntra> anglesUpdater(ui.MasterAnglesTable, dissolve_.coreData().masterAngles(), this, &ForcefieldTab::updateAnglesTableRow);
-	ui.MasterAnglesTable->resizeColumnsToContents();
+	TableWidgetUpdater<ForcefieldTab,MasterIntra> anglesUpdater(ui_.MasterAnglesTable, dissolve_.coreData().masterAngles(), this, &ForcefieldTab::updateAnglesTableRow);
+	ui_.MasterAnglesTable->resizeColumnsToContents();
 
 	// Torsions Table
-	TableWidgetUpdater<ForcefieldTab,MasterIntra> torsionsUpdater(ui.MasterTorsionsTable, dissolve_.coreData().masterTorsions(), this, &ForcefieldTab::updateTorsionsTableRow);
-	ui.MasterTorsionsTable->resizeColumnsToContents();
+	TableWidgetUpdater<ForcefieldTab,MasterIntra> torsionsUpdater(ui_.MasterTorsionsTable, dissolve_.coreData().masterTorsions(), this, &ForcefieldTab::updateTorsionsTableRow);
+	ui_.MasterTorsionsTable->resizeColumnsToContents();
 
 	// AtomTypes Table
-	TableWidgetUpdater<ForcefieldTab,AtomType> atomTypesUpdater(ui.AtomTypesTable, dissolve_.atomTypes(), this, &ForcefieldTab::updateAtomTypesTableRow);
-	ui.AtomTypesTable->resizeColumnsToContents();
+	TableWidgetUpdater<ForcefieldTab,AtomType> atomTypesUpdater(ui_.AtomTypesTable, dissolve_.atomTypes(), this, &ForcefieldTab::updateAtomTypesTableRow);
+	ui_.AtomTypesTable->resizeColumnsToContents();
 
 	// PairPotentials
-	ui.PairPotentialRangeSpin->setValue(dissolve_.pairPotentialRange());
-	ui.PairPotentialDeltaSpin->setValue(dissolve_.pairPotentialDelta());
-	ui.CoulombIncludeCheck->setChecked(dissolve_.pairPotentialsIncludeCoulomb());
-	ui.ShortRangeTruncationCombo->setCurrentIndex(PairPotential::shortRangeTruncationScheme());
-	ui.ShortRangeTruncationWidthSpin->setValue(PairPotential::shortRangeTruncationWidth());
-	ui.ShortRangeTruncationWidthSpin->setEnabled(PairPotential::shortRangeTruncationScheme() == PairPotential::CosineShortRangeTruncation);
-	ui.CoulombTruncationCombo->setCurrentIndex(PairPotential::coulombTruncationScheme());
+	ui_.PairPotentialRangeSpin->setValue(dissolve_.pairPotentialRange());
+	ui_.PairPotentialDeltaSpin->setValue(dissolve_.pairPotentialDelta());
+	ui_.CoulombIncludeCheck->setChecked(dissolve_.pairPotentialsIncludeCoulomb());
+	ui_.ShortRangeTruncationCombo->setCurrentIndex(PairPotential::shortRangeTruncationScheme());
+	ui_.ShortRangeTruncationWidthSpin->setValue(PairPotential::shortRangeTruncationWidth());
+	ui_.ShortRangeTruncationWidthSpin->setEnabled(PairPotential::shortRangeTruncationScheme() == PairPotential::CosineShortRangeTruncation);
+	ui_.CoulombTruncationCombo->setCurrentIndex(PairPotential::coulombTruncationScheme());
 	// -- Table
-	TableWidgetUpdater<ForcefieldTab,PairPotential> ppUpdater(ui.PairPotentialsTable, dissolve_.pairPotentials(), this, &ForcefieldTab::updatePairPotentialsTableRow);
-	ui.PairPotentialsTable->resizeColumnsToContents();
+	TableWidgetUpdater<ForcefieldTab,PairPotential> ppUpdater(ui_.PairPotentialsTable, dissolve_.pairPotentials(), this, &ForcefieldTab::updatePairPotentialsTableRow);
+	ui_.PairPotentialsTable->resizeColumnsToContents();
 
 	refreshing_ = false;
 }
@@ -423,8 +423,8 @@ void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
 
 	refreshing_ = true;
 
-	TableWidgetUpdater<ForcefieldTab,AtomType> atomTypesUpdater(ui.AtomTypesTable, dissolve_.atomTypes(), this, &ForcefieldTab::updateAtomTypesTableRow);
-	ui.AtomTypesTable->resizeColumnsToContents();
+	TableWidgetUpdater<ForcefieldTab,AtomType> atomTypesUpdater(ui_.AtomTypesTable, dissolve_.atomTypes(), this, &ForcefieldTab::updateAtomTypesTableRow);
+	ui_.AtomTypesTable->resizeColumnsToContents();
 
 	refreshing_ = false;
 }
@@ -636,7 +636,7 @@ void ForcefieldTab::on_ShortRangeTruncationCombo_currentIndexChanged(int index)
 	if (refreshing_) return;
 
 	PairPotential::setShortRangeTruncationScheme( (PairPotential::ShortRangeTruncationScheme) index );
-	ui.ShortRangeTruncationWidthSpin->setEnabled(PairPotential::shortRangeTruncationScheme() == PairPotential::CosineShortRangeTruncation);
+	ui_.ShortRangeTruncationWidthSpin->setEnabled(PairPotential::shortRangeTruncationScheme() == PairPotential::CosineShortRangeTruncation);
 	
 	dissolveWindow_->setModified();
 }
@@ -656,8 +656,8 @@ void ForcefieldTab::on_RegenerateAllPairPotentialsButton_clicked(bool checked)
 
 	refreshing_ = true;
 
-	TableWidgetUpdater<ForcefieldTab,PairPotential> ppUpdater(ui.PairPotentialsTable, dissolve_.pairPotentials(), this, &ForcefieldTab::updatePairPotentialsTableRow);
-	ui.PairPotentialsTable->resizeColumnsToContents();
+	TableWidgetUpdater<ForcefieldTab,PairPotential> ppUpdater(ui_.PairPotentialsTable, dissolve_.pairPotentials(), this, &ForcefieldTab::updatePairPotentialsTableRow);
+	ui_.PairPotentialsTable->resizeColumnsToContents();
 
 	refreshing_ = false;
 }
@@ -670,8 +670,8 @@ void ForcefieldTab::on_UpdatePairPotentialsButton_clicked(bool checked)
 
 	refreshing_ = true;
 
-	TableWidgetUpdater<ForcefieldTab,PairPotential> ppUpdater(ui.PairPotentialsTable, dissolve_.pairPotentials(), this, &ForcefieldTab::updatePairPotentialsTableRow);
-	ui.PairPotentialsTable->resizeColumnsToContents();
+	TableWidgetUpdater<ForcefieldTab,PairPotential> ppUpdater(ui_.PairPotentialsTable, dissolve_.pairPotentials(), this, &ForcefieldTab::updatePairPotentialsTableRow);
+	ui_.PairPotentialsTable->resizeColumnsToContents();
 
 	refreshing_ = false;
 }
@@ -679,7 +679,7 @@ void ForcefieldTab::on_UpdatePairPotentialsButton_clicked(bool checked)
 void ForcefieldTab::on_PairPotentialsTable_currentItemChanged(QTableWidgetItem* currentItem, QTableWidgetItem* previousItem)
 {
 	// Clear all data in the graph
-	DataViewer* graph = ui.PairPotentialsPlotWidget->dataViewer();
+	DataViewer* graph = ui_.PairPotentialsPlotWidget->dataViewer();
 	graph->clearRenderables();
 
 	if (!currentItem) return;

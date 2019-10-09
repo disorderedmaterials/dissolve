@@ -40,8 +40,14 @@ class ForcefieldTab : public QWidget, public MainTab
 	// Constructor / Destructor
 	ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title);
 	~ForcefieldTab();
+
+
+	/*
+	 * UI
+	 */
+	private:
 	// Main form declaration
-	Ui::ForcefieldTab ui;
+	Ui::ForcefieldTab ui_;
 
 
 	/*

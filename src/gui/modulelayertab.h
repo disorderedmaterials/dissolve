@@ -40,8 +40,14 @@ class ModuleLayerTab : public QWidget, public ListItem<ModuleLayerTab>, public M
 	// Constructor / Destructor
 	ModuleLayerTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, ModuleLayer* layer);
 	~ModuleLayerTab();
+
+
+	/*
+	 * UI
+	 */
+	private:
 	// Main form declaration
-	Ui::ModuleLayerTab ui;
+	Ui::ModuleLayerTab ui_;
 
 
 	/*

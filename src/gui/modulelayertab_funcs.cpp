@@ -28,12 +28,12 @@
 // Constructor / Destructor
 ModuleLayerTab::ModuleLayerTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, ModuleLayer* layer) : ListItem<ModuleLayerTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Layer: %s", title), this)
 {
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	moduleLayer_ = layer;
 
 	// Set up ModuleEditor
-	ui.ModulePanel->setUp(dissolveWindow, moduleLayer_);
+	ui_.ModulePanel->setUp(dissolveWindow, moduleLayer_);
 
 	refreshing_ = false;
 }
@@ -95,10 +95,10 @@ void ModuleLayerTab::updateControls()
 
 	refreshing_ = true;
 
-	ui.EnabledButton->setChecked(moduleLayer_->enabled());
-	ui.FrequencySpin->setValue(moduleLayer_->frequency());
+	ui_.EnabledButton->setChecked(moduleLayer_->enabled());
+	ui_.FrequencySpin->setValue(moduleLayer_->frequency());
 
-	ui.ModulePanel->updateControls();
+	ui_.ModulePanel->updateControls();
 
 	refreshing_ = false;
 }
@@ -106,17 +106,17 @@ void ModuleLayerTab::updateControls()
 // Disable sensitive controls within tab
 void ModuleLayerTab::disableSensitiveControls()
 {
-	ui.EnabledButton->setEnabled(false);
-	ui.FrequencySpin->setEnabled(false);
-	ui.ModulePanel->disableSensitiveControls();
+	ui_.EnabledButton->setEnabled(false);
+	ui_.FrequencySpin->setEnabled(false);
+	ui_.ModulePanel->disableSensitiveControls();
 }
 
 // Enable sensitive controls within tab
 void ModuleLayerTab::enableSensitiveControls()
 {
-	ui.EnabledButton->setEnabled(true);
-	ui.FrequencySpin->setEnabled(true);
-	ui.ModulePanel->enableSensitiveControls();
+	ui_.EnabledButton->setEnabled(true);
+	ui_.FrequencySpin->setEnabled(true);
+	ui_.ModulePanel->enableSensitiveControls();
 }
 
 /*
@@ -126,7 +126,7 @@ void ModuleLayerTab::enableSensitiveControls()
 // Read widget state through specified LineParser
 bool ModuleLayerTab::readState(LineParser& parser, const CoreData& coreData)
 {
-	if (!ui.ModulePanel->readState(parser)) return false;
+	if (!ui_.ModulePanel->readState(parser)) return false;
 
 	return true;
 }
@@ -134,7 +134,7 @@ bool ModuleLayerTab::readState(LineParser& parser, const CoreData& coreData)
 // Write widget state through specified LineParser
 bool ModuleLayerTab::writeState(LineParser& parser)
 {
-	if (!ui.ModulePanel->writeState(parser)) return false;
+	if (!ui_.ModulePanel->writeState(parser)) return false;
 
 	return true;
 }

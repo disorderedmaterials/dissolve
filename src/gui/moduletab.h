@@ -41,8 +41,14 @@ class ModuleTab : public QWidget, public ListItem<ModuleTab>, public MainTab
 	// Constructor / Destructor
 	ModuleTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, Module* module);
 	~ModuleTab();
+
+
+	/*
+	 * UI
+	 */
+	private:
 	// Main form declaration
-	Ui::ModuleTab ui;
+	Ui::ModuleTab ui_;
 
 
 	/*
