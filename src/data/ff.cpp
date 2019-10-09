@@ -139,7 +139,6 @@ ForcefieldTorsionTerm* Forcefield::torsionTerm(const ForcefieldAtomType* i, cons
  * Term Assignment
  */
 
-
 // Assign suitable atom types to the supplied Species
 bool Forcefield::assignAtomTypes(Species* sp, CoreData& coreData, bool keepExisting) const
 {
