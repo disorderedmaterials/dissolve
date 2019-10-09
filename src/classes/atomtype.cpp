@@ -30,6 +30,7 @@ AtomType::AtomType() : ListItem<AtomType>()
 	element_ = NULL;
 	name_ = "XX";
 	exchangeable_ = false;
+	shortRangeType_ = Forcefield::UndefinedType;
 }
 
 // Destructor
