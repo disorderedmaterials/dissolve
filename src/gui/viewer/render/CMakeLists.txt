@@ -19,6 +19,7 @@ SET(render_SRCS
   renderable.h
   renderableconfiguration.h
   renderabledata1d.h
+  renderabledata2d.h
   renderablefactory.h
   renderablegroup.h
   renderablegroupmanager.h
@@ -48,6 +49,7 @@ SET(render_SRCS
   renderable.cpp
   renderableconfiguration.cpp
   renderabledata1d.cpp
+  renderabledata2d.cpp
   renderablefactory.cpp
   renderablegroup.cpp
   renderablegroupmanager.cpp
