@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1041</width>
-    <height>790</height>
+    <width>807</width>
+    <height>663</height>
    </rect>
   </property>
   <property name="font">
@@ -42,7 +42,7 @@
     <item>
      <widget class="QStackedWidget" name="MainStack">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="StartPage">
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -511,7 +511,7 @@ Remote Simulation</string>
        </layout>
       </widget>
       <widget class="QWidget" name="SimulationPage">
-       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
         <property name="spacing">
          <number>4</number>
         </property>
@@ -532,10 +532,28 @@ Remote Simulation</string>
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
-          <widget class="QWidget" name="">
+          <widget class="QWidget" name="MainWidget" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>15</verstretch>
+            </sizepolicy>
+           </property>
            <layout class="QHBoxLayout" name="horizontalLayout">
             <property name="spacing">
              <number>4</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
             </property>
             <item>
              <layout class="QVBoxLayout" name="verticalLayout">
@@ -780,6 +798,12 @@ Remote Simulation</string>
            </layout>
           </widget>
           <widget class="QTextBrowser" name="MessagesBrowser">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="font">
             <font>
              <family>Courier</family>
@@ -800,8 +824,8 @@ Remote Simulation</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1041</width>
-     <height>24</height>
+     <width>807</width>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="SessionMenu">
