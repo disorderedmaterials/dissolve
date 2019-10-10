@@ -29,11 +29,6 @@
 SelectForcefieldDialog::SelectForcefieldDialog(QWidget* parent, const List<Forcefield>& forcefields)
 {
 	ui_.setupUi(this);
-
-	// Create and set up a SelectForcefieldWidget within our dialog
-	ffWidget_ = new SelectForcefieldWidget(ui_.ForcefieldWidget, forcefields);
-	connect(ffWidget_, SIGNAL(forcefieldSelectionChanged(bool)), this, SLOT(currentForcefieldChanged(bool)));
-	connect(ffWidget_, SIGNAL(forcefieldDoubleClicked()), this, SLOT(forcefieldDoubleClicked()));
 }
 
 // Destructor
@@ -41,14 +36,14 @@ SelectForcefieldDialog::~SelectForcefieldDialog()
 {
 }
 
-void SelectForcefieldDialog::currentForcefieldChanged(bool isValid)
+void SelectForcefieldDialog::on_ForcefieldWidget_forcefieldSelectionChanged(bool isValid)
 {
 	ui_.SelectButton->setEnabled(isValid);
 }
 
-void SelectForcefieldDialog::forcefieldDoubleClicked()
+void SelectForcefieldDialog::on_ForcefieldWidget_forcefieldDoubleClicked()
 {
-	if (!ffWidget_->currentForcefield()) return;
+	if (!ui_.ForcefieldWidget->currentForcefield()) return;
 
 	accept();
 }
@@ -66,10 +61,10 @@ void SelectForcefieldDialog::on_CancelButton_clicked(bool checked)
 // Run the dialog, returning the selected Forcefield
 Forcefield* SelectForcefieldDialog::selectForcefield(Forcefield* currentFF)
 {
-	ffWidget_->setCurrentForcefield(currentFF);
+	ui_.ForcefieldWidget->setCurrentForcefield(currentFF);
 
 	show();
 
-	if (exec() == QDialog::Accepted) return ffWidget_->currentForcefield();
+	if (exec() == QDialog::Accepted) return ui_.ForcefieldWidget->currentForcefield();
 	else return NULL;
 }

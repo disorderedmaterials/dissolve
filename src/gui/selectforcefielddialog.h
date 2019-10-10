@@ -45,12 +45,10 @@ class SelectForcefieldDialog : public QDialog
 	private:
 	// Main form declaration
 	Ui::SelectForcefieldDialog ui_;
-	// Forcefield widget
-	SelectForcefieldWidget* ffWidget_;
 
 	private slots:
-	void currentForcefieldChanged(bool isValid);
-	void forcefieldDoubleClicked();
+	void on_ForcefieldWidget_forcefieldSelectionChanged(bool isValid);
+	void on_ForcefieldWidget_forcefieldDoubleClicked();
 	void on_SelectButton_clicked(bool checked);
 	void on_CancelButton_clicked(bool checked);
 

@@ -23,6 +23,7 @@
 #define DISSOLVE_WIDGET_SELECTFORCEFIELD_H
 
 #include "gui/ui_selectforcefieldwidget.h"
+#include "data/fflibrary.h"
 #include "templates/list.h"
 #include <QWidget>
 
@@ -37,7 +38,7 @@ class SelectForcefieldWidget : public QWidget
 
 	public:
 	// Constructor
-	SelectForcefieldWidget(QWidget* parent, const List<Forcefield>& forcefields);
+	SelectForcefieldWidget(QWidget* parent, const List<Forcefield>& forcefields = ForcefieldLibrary::forcefields());
 	// Destructor
 	~SelectForcefieldWidget();
 
