@@ -202,17 +202,32 @@
        <string>Pair Potentials</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout_10">
+       <property name="spacing">
+        <number>4</number>
+       </property>
+       <property name="leftMargin">
+        <number>4</number>
+       </property>
+       <property name="topMargin">
+        <number>4</number>
+       </property>
+       <property name="rightMargin">
+        <number>4</number>
+       </property>
+       <property name="bottomMargin">
+        <number>4</number>
+       </property>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_3">
+        <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_9">
            <property name="spacing">
             <number>4</number>
            </property>
            <item>
-            <widget class="QGroupBox" name="PairPotentialRangeGroup">
+            <widget class="QGroupBox" name="PairPotentialControlGroup">
              <property name="title">
-              <string>Range</string>
+              <string>Control</string>
              </property>
              <layout class="QGridLayout" name="gridLayout">
               <property name="leftMargin">
@@ -282,21 +297,12 @@
                 </property>
                </widget>
               </item>
-              <item row="2" column="1">
-               <spacer name="verticalSpacer">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
+              <item row="2" column="0" colspan="2">
+               <widget class="QCheckBox" name="CoulombIncludeCheck">
+                <property name="text">
+                 <string>Include Coulomb terms</string>
                 </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Minimum</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>40</height>
-                 </size>
-                </property>
-               </spacer>
+               </widget>
               </item>
              </layout>
             </widget>
@@ -391,57 +397,16 @@
              </layout>
             </widget>
            </item>
-           <item>
-            <widget class="QGroupBox" name="ControlGroup">
-             <property name="title">
-              <string>Control</string>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_2">
-              <property name="spacing">
-               <number>4</number>
-              </property>
-              <property name="leftMargin">
-               <number>4</number>
-              </property>
-              <property name="topMargin">
-               <number>4</number>
-              </property>
-              <property name="rightMargin">
-               <number>4</number>
-              </property>
-              <property name="bottomMargin">
-               <number>4</number>
-              </property>
-              <item>
-               <widget class="QCheckBox" name="CoulombIncludeCheck">
-                <property name="text">
-                 <string>Include Coulomb terms</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="verticalSpacer_2">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Minimum</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>40</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </widget>
-           </item>
           </layout>
          </item>
          <item>
-          <widget class="QGroupBox" name="groupBox">
+          <widget class="QGroupBox" name="PairPotentialsGroup">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="title">
             <string>Pair Potentials</string>
            </property>
@@ -617,7 +582,7 @@
         <widget class="QFrame" name="PairPotentialsPlotFrame">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
+           <horstretch>1</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
