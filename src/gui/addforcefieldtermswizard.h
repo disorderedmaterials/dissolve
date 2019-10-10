@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ADDFORCEFIELDTERMSWIZARD_H
-#define DISSOLVE_ADDFORCEFIELDTERMSWIZARD_H
+#ifndef DISSOLVE_WIZARD_ADDFORCEFIELDTERMS_H
+#define DISSOLVE_WIZARD_ADDFORCEFIELDTERMS_H
 
 #include "gui/ui_addforcefieldtermswizard.h"
 #include "gui/wizardwidget.hui"

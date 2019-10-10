@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ADDPROCESSINGLAYERWIZARD_H
-#define DISSOLVE_ADDPROCESSINGLAYERWIZARD_H
+#ifndef DISSOLVE_WIZARD_ADDPROCESSINGLAYER_H
+#define DISSOLVE_WIZARD_ADDPROCESSINGLAYER_H
 
 #include "gui/ui_addprocessinglayerwizard.h"
 #include "gui/wizardwidget.hui"
