@@ -19,15 +19,18 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
 #ifndef DISSOLVE_TRANSFORMER_H
 #define DISSOLVE_TRANSFORMER_H
 
 #include "expression/expression.h"
 #include "base/charstring.h"
 #include "templates/array.h"
+#include "templates/array2d.h"
 
 // Forward Declarations
 class Data1D;
+class Data2D;
 class Variable;
 
 // Transformer
@@ -77,6 +80,7 @@ class Transformer
 	double transform(double x, double y, double z);
 	// Transform whole array, including application of pre/post transform shift
 	Array<double> transformArray(Array<double> sourceX, Array<double> sourceY, double z, int target);
+	Array2D<double> transformArray(Array2D<double> sourceXY, double z, int target);
 
 
 	/*
@@ -85,6 +89,7 @@ class Transformer
 	public:
 	// Transform Data1D with supplied transformers
 	static void transform(Data1D& data, Transformer& xTransformer, Transformer& yTransformer);
+	static void transform(Data2D& data, Array<double> value);
 };
 
 #endif

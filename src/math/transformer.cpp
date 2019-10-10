@@ -138,6 +138,59 @@ Array<double> Transformer::transformArray(Array<double> sourceX, Array<double> s
 	return newArray;
 }
 
+// Transform whole array, including application of pre/post transform shift
+Array2D<double> Transformer::transformArray(Array2D<double> sourceXY, double z, int target)
+{
+	// If transform is not enabled, return original array
+	if (!enabled_) return sourceXY;
+
+	// If equation is not valid, just return original array
+	if (!valid_)
+	{
+		Messenger::print("Equation is not valid, so returning original array.\n");
+		return (sourceXY);
+	}
+	
+	x_->set(0);
+	y_->set(0);
+	z_->set(0);
+
+	Array2D<double> newArray2D(sourceXY.nRows(), sourceXY.nColumns());
+	if (sourceXY.halved())
+	{
+		
+		for(int r=0; r<sourceXY.nRows(); ++r)
+			for(int c=r; c<sourceXY.nColumns(); c++)
+				newArray2D.at(r,c) = equation_.asDouble();
+	}
+	else
+	{	
+		for(int i=0; i<sourceXY.nRows(); ++i)
+			for(int j=0; j<sourceXY.nColumns(); ++j)
+				newArray2D.at(i,j) = equation_.asDouble();
+	}
+	
+	return newArray2D;
+	
+	/*
+
+	// Create new array, and create reference to target array
+	Array<double> newArray(sourceX.nItems());
+
+	z_->set(z);
+	// Loop over x points
+	for (int n=0; n<sourceX.nItems(); ++n)
+	{
+		// Set x and y values in equation
+		x_->set(sourceX[n]);
+		y_->set(sourceY[n]);
+		newArray[n] = equation_.asDouble();
+	}
+
+	return newArray;
+}
+*/
+
 /*
  * Static Functions
  */
