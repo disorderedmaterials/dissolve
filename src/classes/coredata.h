@@ -24,6 +24,7 @@
 
 #include "classes/masterintra.h"
 #include "base/charstringlist.h"
+#include "base/version.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
 
@@ -51,6 +52,8 @@ class CoreData
 	private:
 	// Core AtomTypes list
 	List<AtomType> atomTypes_;
+	// AtomTypes version
+	VersionCounter atomTypesVersion_;
 
 	public:
 	// Add new AtomType
@@ -67,6 +70,10 @@ class CoreData
 	const char* uniqueAtomTypeName(const char* baseName) const;
 	// Search for AtomType by name
 	AtomType* findAtomType(const char* name) const;
+	// Bump AtomTypes version
+	void bumpAtomTypesVersion();
+	// Return AtomTypes version
+	int atomTypesVersion() const;
 
 
 	/*
