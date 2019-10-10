@@ -60,7 +60,7 @@ const char* Forcefield_OPLSAA2005_NobleGases::name() const
 // Return description for Forcefield
 const char* Forcefield_OPLSAA2005_NobleGases::description() const
 {
-	static CharString desc("Noble gases from OPLS-AA (2005).\n\n%s", OPLSAA2005_AtomTypes::publicationReferences());
+	static CharString desc("Noble gases from OPLS-AA (2005).<br/><br/>References: %s", OPLSAA2005_AtomTypes::publicationReferences());
 	return desc.get();
 }
 
