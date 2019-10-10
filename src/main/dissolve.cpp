@@ -94,6 +94,7 @@ void Dissolve::clear()
 	pairPotentialsIncludeCoulomb_ = true;
 	pairPotentials_.clear();
 	potentialMap_.clear();
+	pairPotentialAtomTypeVersion_ = -1;
 
 	// Modules
 	Messenger::printVerbose("Clearing Modules...\n");

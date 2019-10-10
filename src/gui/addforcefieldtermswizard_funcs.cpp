@@ -117,6 +117,7 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve& dissolve)
 		{
 			i->atomType()->parameters() = modifiedI->atomType()->parameters();
 			i->atomType()->setShortRangeType(modifiedI->atomType()->shortRangeType());
+			dissolve.coreData().bumpAtomTypesVersion();
 		}
 
 		// Move to next modified atom

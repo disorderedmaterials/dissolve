@@ -132,6 +132,7 @@ void Dissolve::regeneratePairPotentials()
 {
 	potentialMap_.clear();
 	pairPotentials_.clear();
+	pairPotentialAtomTypeVersion_ = -1;
 
 	generatePairPotentials();
 }
@@ -139,6 +140,13 @@ void Dissolve::regeneratePairPotentials()
 // Generate all necessary PairPotentials, adding missing terms where necessary
 bool Dissolve::generatePairPotentials(AtomType* onlyInvolving)
 {
+	// Check current AtomTypes version against the last one we generated at
+	if (pairPotentialAtomTypeVersion_ == coreData_.atomTypesVersion())
+	{
+		Messenger::printVerbose("PairPotentials are up to date with AtomTypes, so nothing to do.\n");
+		return true;
+	}
+
 	int nUndefined = 0;
 
 	// Loop over all atomtype pairs and update / add pair potentials as necessary
@@ -172,6 +180,8 @@ bool Dissolve::generatePairPotentials(AtomType* onlyInvolving)
 			pot->setUAdditional(GenericListHelper<Data1D>::retrieve(processingModuleData_, itemName, "Dissolve", Data1D()));
 		}
 	}
+
+	pairPotentialAtomTypeVersion_ = coreData_.atomTypesVersion();
 
 	return (nUndefined == 0);
 }

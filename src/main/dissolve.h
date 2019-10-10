@@ -144,6 +144,8 @@ class Dissolve
 	bool pairPotentialsIncludeCoulomb_;
 	// Simulation PairPotentials
 	List<PairPotential> pairPotentials_;
+	// Version of AtomTypes at which PairPotential were last generated
+	int pairPotentialAtomTypeVersion_;
 	// Map for PairPotentials
 	PotentialMap potentialMap_;
 

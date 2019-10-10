@@ -86,18 +86,10 @@ class ForcefieldTab : public QWidget, public MainTab
 	 * Signals / Slots
 	 */
 	private:
+	// Signal that some AtomType parameter has been modified, so pair potentials should be regenerated
+	void atomTypeDataModified();
 
 	private slots:
-	// Master Terms
-	void on_MasterTermAddBondButton_clicked(bool checked);
-	void on_MasterTermRemoveBondButton_clicked(bool checked);
-	void on_MasterBondsTable_itemChanged(QTableWidgetItem* w);
-	void on_MasterTermAddAngleButton_clicked(bool checked);
-	void on_MasterTermRemoveAngleButton_clicked(bool checked);
-	void on_MasterAnglesTable_itemChanged(QTableWidgetItem* w);
-	void on_MasterTermAddTorsionButton_clicked(bool checked);
-	void on_MasterTermRemoveTorsionButton_clicked(bool checked);
-	void on_MasterTorsionsTable_itemChanged(QTableWidgetItem* w);
 	// Atom Types
 	void on_AtomTypeAddButton_clicked(bool checked);
 	void on_AtomTypeRemoveButton_clicked(bool checked);
@@ -110,8 +102,19 @@ class ForcefieldTab : public QWidget, public MainTab
 	void on_CoulombTruncationCombo_currentIndexChanged(int index);
 	void on_RegenerateAllPairPotentialsButton_clicked(bool checked);
 	void on_UpdatePairPotentialsButton_clicked(bool checked);
+	void on_AutoUpdatePairPotentialsCheck_clicked(bool checked);
 	void on_PairPotentialsTable_currentItemChanged(QTableWidgetItem* currentItem, QTableWidgetItem* previousItem);
 	void on_PairPotentialsTable_itemChanged(QTableWidgetItem* w);
+	// Master Terms
+	void on_MasterTermAddBondButton_clicked(bool checked);
+	void on_MasterTermRemoveBondButton_clicked(bool checked);
+	void on_MasterBondsTable_itemChanged(QTableWidgetItem* w);
+	void on_MasterTermAddAngleButton_clicked(bool checked);
+	void on_MasterTermRemoveAngleButton_clicked(bool checked);
+	void on_MasterAnglesTable_itemChanged(QTableWidgetItem* w);
+	void on_MasterTermAddTorsionButton_clicked(bool checked);
+	void on_MasterTermRemoveTorsionButton_clicked(bool checked);
+	void on_MasterTorsionsTable_itemChanged(QTableWidgetItem* w);
 
 
 	/*

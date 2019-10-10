@@ -394,6 +394,13 @@ void ForcefieldTab::updateControls()
 	ui_.AtomTypesTable->resizeColumnsToContents();
 
 	// PairPotentials
+	// Automatically regenerate pair potentials (quietly)
+	if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
+	{
+		Messenger::mute();
+		dissolve_.generatePairPotentials();
+		Messenger::unMute();
+	}
 	ui_.PairPotentialRangeSpin->setValue(dissolve_.pairPotentialRange());
 	ui_.PairPotentialDeltaSpin->setValue(dissolve_.pairPotentialDelta());
 	ui_.CoulombIncludeCheck->setChecked(dissolve_.pairPotentialsIncludeCoulomb());
@@ -424,6 +431,21 @@ void ForcefieldTab::enableSensitiveControls()
  * Signals / Slots
  */
 
+// Signal that some AtomType parameter has been modified, so pair potentials should be regenerated
+
+void ForcefieldTab::atomTypeDataModified()
+{
+	dissolve_.coreData().bumpAtomTypesVersion();
+
+	if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
+	{
+		Messenger::mute();
+		dissolve_.generatePairPotentials();
+		Messenger::unMute();
+	}
+
+}
+
 void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
 {
 	// First, need to get target element for the new AtomType
@@ -444,6 +466,212 @@ void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
 void ForcefieldTab::on_AtomTypeRemoveButton_clicked(bool checked)
 {
 	printf("NOT IMPLEMENTED YET.\n");
+}
+
+void ForcefieldTab::on_AtomTypesTable_itemChanged(QTableWidgetItem* w)
+{
+	if (refreshing_) return;
+
+	// Get target AtomType from the passed widget
+	AtomType* atomType = w ? VariantPointer<AtomType>(w->data(Qt::UserRole)) : NULL;
+	if (!atomType) return;
+
+	// Column of passed item tells us the type of data we need to change
+	switch (w->column())
+	{
+		// Name
+		case (0):
+			atomType->setName(qPrintable(w->text()));
+			dissolveWindow_->setModified();
+			break;
+		// Charge
+		case (2):
+			atomType->parameters().setCharge(w->text().toDouble());
+			atomTypeDataModified();
+			dissolveWindow_->setModified();
+			break;
+		// Short-range form
+		case (3):
+			atomType->setShortRangeType(Forcefield::shortRangeTypes().enumeration(qPrintable(w->text())));
+			atomTypeDataModified();
+			break;
+		// Parameters
+		case (4):
+		case (5):
+		case (6):
+		case (7):
+			atomType->parameters().setParameter(w->column()-4, w->text().toDouble());
+			atomTypeDataModified();
+			dissolveWindow_->setModified();
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of AtomTypes table.\n", w->column());
+			break;
+	}
+}
+
+void ForcefieldTab::on_PairPotentialRangeSpin_valueChanged(double value)
+{
+	if (refreshing_) return;
+
+	dissolve_.setPairPotentialRange(value);
+
+	if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
+	{
+		dissolve_.regeneratePairPotentials();
+		updateControls();
+	}
+
+	dissolveWindow_->setModified();
+}
+
+void ForcefieldTab::on_PairPotentialDeltaSpin_valueChanged(double value)
+{
+	if (refreshing_) return;
+
+	dissolve_.setPairPotentialDelta(value);
+
+	if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
+	{
+		dissolve_.regeneratePairPotentials();
+		updateControls();
+	}
+
+	dissolveWindow_->setModified();
+}
+
+void ForcefieldTab::on_CoulombIncludeCheck_clicked(bool checked)
+{
+	if (refreshing_) return;
+
+	dissolve_.setPairPotentialsIncludeCoulomb(checked);
+
+	if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
+	{
+		dissolve_.regeneratePairPotentials();
+		updateControls();
+	}
+
+	dissolveWindow_->setModified();
+}
+
+void ForcefieldTab::on_ShortRangeTruncationCombo_currentIndexChanged(int index)
+{
+	if (refreshing_) return;
+
+	PairPotential::setShortRangeTruncationScheme( (PairPotential::ShortRangeTruncationScheme) index );
+	ui_.ShortRangeTruncationWidthSpin->setEnabled(PairPotential::shortRangeTruncationScheme() == PairPotential::CosineShortRangeTruncation);
+
+	if (ui_.AutoUpdatePairPotentialsCheck->isChecked())
+	{
+		dissolve_.regeneratePairPotentials();
+		updateControls();
+	}
+
+	dissolveWindow_->setModified();
+}
+
+void ForcefieldTab::on_CoulombTruncationCombo_currentIndexChanged(int index)
+{
+	if (refreshing_) return;
+
+	PairPotential::setCoulombTruncationScheme( (PairPotential::CoulombTruncationScheme) index );
+
+	if (ui_.AutoUpdatePairPotentialsCheck->isChecked() && dissolve_.pairPotentialsIncludeCoulomb())
+	{
+		dissolve_.regeneratePairPotentials();
+		updateControls();
+	}
+
+	dissolveWindow_->setModified();
+}
+
+void ForcefieldTab::on_RegenerateAllPairPotentialsButton_clicked(bool checked)
+{
+	dissolve_.regeneratePairPotentials();
+
+	updateControls();
+}
+
+void ForcefieldTab::on_UpdatePairPotentialsButton_clicked(bool checked)
+{
+	dissolve_.generatePairPotentials();
+
+	updateControls();
+}
+
+void ForcefieldTab::on_AutoUpdatePairPotentialsCheck_clicked(bool checked)
+{
+	if (checked) on_UpdatePairPotentialsButton_clicked(false);
+}
+
+void ForcefieldTab::on_PairPotentialsTable_currentItemChanged(QTableWidgetItem* currentItem, QTableWidgetItem* previousItem)
+{
+	// Clear all data in the graph
+	DataViewer* graph = ui_.PairPotentialsPlotWidget->dataViewer();
+	graph->clearRenderables();
+
+	if (!currentItem) return;
+
+	// Get the selected pair potential
+	PairPotential* pp = VariantPointer<PairPotential>(currentItem->data(Qt::UserRole));
+	if (pp)
+	{
+		Renderable* fullPotential = graph->createRenderable(Renderable::Data1DRenderable, pp->uFull().objectTag(), "Full");
+		fullPotential->setColour(StockColours::BlackStockColour);
+
+		Renderable* originalPotential = graph->createRenderable(Renderable::Data1DRenderable, pp->uOriginal().objectTag(), "Original");
+		originalPotential->setColour(StockColours::RedStockColour);
+		originalPotential->lineStyle().set(1.0, LineStipple::HalfDashStipple);
+
+		Renderable* additionalPotential = graph->createRenderable(Renderable::Data1DRenderable, pp->uAdditional().objectTag(), "Additional");
+		additionalPotential->setColour(StockColours::BlueStockColour);
+		additionalPotential->lineStyle().set(1.0, LineStipple::DotStipple);
+
+		Renderable* dUFull = graph->createRenderable(Renderable::Data1DRenderable, pp->dUFull().objectTag(), "Force");
+		dUFull->setColour(StockColours::GreenStockColour);
+	}
+
+}
+
+void ForcefieldTab::on_PairPotentialsTable_itemChanged(QTableWidgetItem* w)
+{
+	if (refreshing_) return;
+
+	// Get target PairPotential from the passed widget
+	PairPotential* pairPotential = w ? VariantPointer<PairPotential>(w->data(Qt::UserRole)) : NULL;
+	if (!pairPotential) return;
+
+	// Column of passed item tells us the type of data we need to change
+	switch (w->column())
+	{
+		// Functional form
+		case (2):
+// 			pairPotential->setShortRangeType(PairPotential::shortRangeType(qPrintable(w->text())));
+			dissolveWindow_->setModified();
+			break;
+		// Charge I
+		case (3):
+			pairPotential->setChargeI(w->text().toDouble());
+			dissolveWindow_->setModified();
+			break;
+		// Charge J
+		case (4):
+			pairPotential->setChargeJ(w->text().toDouble());
+			dissolveWindow_->setModified();
+			break;
+		// Parameters
+		case (5):
+		case (6):
+		case (7):
+		case (8):
+			pairPotential->setParameter(w->column()-5, w->text().toDouble());
+			dissolveWindow_->setModified();
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of PairPotentials table.\n", w->column());
+			break;
+	}
 }
 
 void ForcefieldTab::on_MasterTermAddBondButton_clicked(bool checked)
@@ -550,7 +778,7 @@ void ForcefieldTab::on_MasterTorsionsTable_itemChanged(QTableWidgetItem* w)
 {
 	if (refreshing_) return;
 
-	// Get target MasterIntra from the passed widget
+	// Get target MasterIntra from the passed widgetmasterIntra->setForm(SpeciesBond::bondFunction(qPrintable(w->text())));
 	MasterIntra* masterIntra = w ? VariantPointer<MasterIntra>(w->data(Qt::UserRole)) : NULL;
 	if (!masterIntra) return;
 
@@ -577,186 +805,6 @@ void ForcefieldTab::on_MasterTorsionsTable_itemChanged(QTableWidgetItem* w)
 			break;
 		default:
 			Messenger::error("Don't know what to do with data from column %i of MasterIntra table.\n", w->column());
-			break;
-	}
-}
-
-void ForcefieldTab::on_AtomTypesTable_itemChanged(QTableWidgetItem* w)
-{
-	if (refreshing_) return;
-
-	// Get target AtomType from the passed widget
-	AtomType* atomType = w ? VariantPointer<AtomType>(w->data(Qt::UserRole)) : NULL;
-	if (!atomType) return;
-
-	// Column of passed item tells us the type of data we need to change
-	switch (w->column())
-	{
-		// Name
-		case (0):
-			atomType->setName(qPrintable(w->text()));
-			dissolveWindow_->setModified();
-			break;
-		// Charge
-		case (2):
-			atomType->parameters().setCharge(w->text().toDouble());
-			dissolveWindow_->setModified();
-			break;
-		// Short-range form
-		case (3):
-			atomType->setShortRangeType(Forcefield::shortRangeTypes().enumeration(qPrintable(w->text())));
-			break;
-		// Parameters
-		case (4):
-		case (5):
-		case (6):
-		case (7):
-			atomType->parameters().setParameter(w->column()-3, w->text().toDouble());
-			dissolveWindow_->setModified();
-			break;
-		default:
-			Messenger::error("Don't know what to do with data from column %i of AtomTypes table.\n", w->column());
-			break;
-	}
-}
-
-void ForcefieldTab::on_PairPotentialRangeSpin_valueChanged(double value)
-{
-	if (refreshing_) return;
-
-	dissolve_.setPairPotentialRange(value);
-	
-	dissolveWindow_->setModified();
-}
-
-void ForcefieldTab::on_PairPotentialDeltaSpin_valueChanged(double value)
-{
-	if (refreshing_) return;
-
-	dissolve_.setPairPotentialDelta(value);
-	
-	dissolveWindow_->setModified();
-}
-
-void ForcefieldTab::on_CoulombIncludeCheck_clicked(bool checked)
-{
-	if (refreshing_) return;
-
-	dissolve_.setPairPotentialsIncludeCoulomb(checked);
-	
-	dissolveWindow_->setModified();
-}
-
-void ForcefieldTab::on_ShortRangeTruncationCombo_currentIndexChanged(int index)
-{
-	if (refreshing_) return;
-
-	PairPotential::setShortRangeTruncationScheme( (PairPotential::ShortRangeTruncationScheme) index );
-	ui_.ShortRangeTruncationWidthSpin->setEnabled(PairPotential::shortRangeTruncationScheme() == PairPotential::CosineShortRangeTruncation);
-	
-	dissolveWindow_->setModified();
-}
-
-void ForcefieldTab::on_CoulombTruncationCombo_currentIndexChanged(int index)
-{
-	if (refreshing_) return;
-
-	PairPotential::setCoulombTruncationScheme( (PairPotential::CoulombTruncationScheme) index );
-
-	dissolveWindow_->setModified();
-}
-
-void ForcefieldTab::on_RegenerateAllPairPotentialsButton_clicked(bool checked)
-{
-	dissolve_.regeneratePairPotentials();
-
-	refreshing_ = true;
-
-	TableWidgetUpdater<ForcefieldTab,PairPotential> ppUpdater(ui_.PairPotentialsTable, dissolve_.pairPotentials(), this, &ForcefieldTab::updatePairPotentialsTableRow);
-	ui_.PairPotentialsTable->resizeColumnsToContents();
-
-	refreshing_ = false;
-}
-
-void ForcefieldTab::on_UpdatePairPotentialsButton_clicked(bool checked)
-{
-	dissolve_.generatePairPotentials();
-
-	updateControls();
-
-	refreshing_ = true;
-
-	TableWidgetUpdater<ForcefieldTab,PairPotential> ppUpdater(ui_.PairPotentialsTable, dissolve_.pairPotentials(), this, &ForcefieldTab::updatePairPotentialsTableRow);
-	ui_.PairPotentialsTable->resizeColumnsToContents();
-
-	refreshing_ = false;
-}
-
-void ForcefieldTab::on_PairPotentialsTable_currentItemChanged(QTableWidgetItem* currentItem, QTableWidgetItem* previousItem)
-{
-	// Clear all data in the graph
-	DataViewer* graph = ui_.PairPotentialsPlotWidget->dataViewer();
-	graph->clearRenderables();
-
-	if (!currentItem) return;
-
-	// Get the selected pair potential
-	PairPotential* pp = VariantPointer<PairPotential>(currentItem->data(Qt::UserRole));
-	if (pp)
-	{
-		Renderable* fullPotential = graph->createRenderable(Renderable::Data1DRenderable, pp->uFull().objectTag(), "Full");
-		fullPotential->setColour(StockColours::BlackStockColour);
-
-		Renderable* originalPotential = graph->createRenderable(Renderable::Data1DRenderable, pp->uOriginal().objectTag(), "Original");
-		originalPotential->setColour(StockColours::RedStockColour);
-		originalPotential->lineStyle().set(1.0, LineStipple::HalfDashStipple);
-
-		Renderable* additionalPotential = graph->createRenderable(Renderable::Data1DRenderable, pp->uAdditional().objectTag(), "Additional");
-		additionalPotential->setColour(StockColours::BlueStockColour);
-		additionalPotential->lineStyle().set(1.0, LineStipple::DotStipple);
-
-		Renderable* dUFull = graph->createRenderable(Renderable::Data1DRenderable, pp->dUFull().objectTag(), "Force");
-		dUFull->setColour(StockColours::GreenStockColour);
-	}
-
-}
-
-void ForcefieldTab::on_PairPotentialsTable_itemChanged(QTableWidgetItem* w)
-{
-	if (refreshing_) return;
-
-	// Get target PairPotential from the passed widget
-	PairPotential* pairPotential = w ? VariantPointer<PairPotential>(w->data(Qt::UserRole)) : NULL;
-	if (!pairPotential) return;
-
-	// Column of passed item tells us the type of data we need to change
-	switch (w->column())
-	{
-		// Functional form
-		case (2):
-// 			pairPotential->setShortRangeType(PairPotential::shortRangeType(qPrintable(w->text())));
-			dissolveWindow_->setModified();
-			break;
-		// Charge I
-		case (3):
-			pairPotential->setChargeI(w->text().toDouble());
-			dissolveWindow_->setModified();
-			break;
-		// Charge J
-		case (4):
-			pairPotential->setChargeJ(w->text().toDouble());
-			dissolveWindow_->setModified();
-			break;
-		// Parameters
-		case (5):
-		case (6):
-		case (7):
-		case (8):
-			pairPotential->setParameter(w->column()-5, w->text().toDouble());
-			dissolveWindow_->setModified();
-			break;
-		default:
-			Messenger::error("Don't know what to do with data from column %i of PairPotentials table.\n", w->column());
 			break;
 	}
 }

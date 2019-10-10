@@ -148,7 +148,7 @@
           <number>8</number>
          </property>
          <attribute name="horizontalHeaderVisible">
-          <bool>false</bool>
+          <bool>true</bool>
          </attribute>
          <attribute name="verticalHeaderVisible">
           <bool>false</bool>
@@ -499,7 +499,20 @@
                </spacer>
               </item>
               <item>
+               <widget class="QCheckBox" name="AutoUpdatePairPotentialsCheck">
+                <property name="text">
+                 <string>Auto</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
                <widget class="QToolButton" name="UpdatePairPotentialsButton">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -1130,5 +1143,22 @@
  <resources>
   <include location="main.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>AutoUpdatePairPotentialsCheck</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>UpdatePairPotentialsButton</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>382</x>
+     <y>212</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>467</x>
+     <y>220</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
