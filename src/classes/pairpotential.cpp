@@ -47,7 +47,7 @@ PairPotential::PairPotential() : ListItem<PairPotential>(), uFullInterpolation_(
 	delta_ = -1.0;
 	range_ = 0.0;
 	includeCoulomb_ = true;
-	shortRangeType_ = Forcefield::NoInteractionType;
+	shortRangeType_ = Forcefield::UndefinedType;
 }
 
 // Coulomb Truncation Scheme Keywords
