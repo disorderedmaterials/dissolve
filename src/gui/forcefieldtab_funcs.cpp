@@ -602,11 +602,15 @@ void ForcefieldTab::on_AtomTypesTable_itemChanged(QTableWidgetItem* w)
 			atomType->parameters().setCharge(w->text().toDouble());
 			dissolveWindow_->setModified();
 			break;
-		// Parameters
+		// Short-range form
 		case (3):
+			atomType->setShortRangeType(Forcefield::shortRangeTypes().enumeration(qPrintable(w->text())));
+			break;
+		// Parameters
 		case (4):
 		case (5):
 		case (6):
+		case (7):
 			atomType->parameters().setParameter(w->column()-3, w->text().toDouble());
 			dissolveWindow_->setModified();
 			break;
