@@ -33,6 +33,7 @@ libgui_la_SOURCES += modulechart.hui
 libgui_la_SOURCES += procedureeditor.ui
 # UI - Widgets
 libgui_la_SOURCES += keywordswidget.hui
+libgui_la_SOURCES += selectforcefieldwidget.ui 
 libgui_la_SOURCES += wizardwidgetfooter.ui wizardwidgetheader.ui wizardwidget.hui
 # UI - Wizards
 libgui_la_SOURCES += addconfigurationwizard.ui addforcefieldtermswizard.ui addprocessinglayerwizard.ui addspecieswizard.ui
@@ -64,7 +65,7 @@ libgui_la_SOURCES += modulechart_funcs.cpp modulechartblock.cpp modulecharthotsp
 libgui_la_SOURCES += modulecontrolwidget_funcs.cpp modulelayertab_funcs.cpp moduletab_funcs.cpp modulewidget.cpp
 libgui_la_SOURCES += outputhandler_funcs.cpp
 libgui_la_SOURCES += pairpotentialwidget_funcs.cpp procedureeditor_funcs.cpp
-libgui_la_SOURCES += selectforcefielddialog_funcs.cpp selectsystemtemplatedialog_funcs.cpp speciestab_funcs.cpp stockcolours.cpp systemtemplate.cpp
+libgui_la_SOURCES += selectforcefielddialog_funcs.cpp selectforcefieldwidget_funcs.cpp selectsystemtemplatedialog_funcs.cpp speciestab_funcs.cpp stockcolours.cpp systemtemplate.cpp
 libgui_la_SOURCES += thread_funcs.cpp
 libgui_la_SOURCES += tmdiarea.hui tmdiarea_funcs.cpp
 libgui_la_SOURCES += wizardwidget_funcs.cpp wizardwidgethighlight.cpp wizardwidgetpageinfo.cpp workspacetab_funcs.cpp
@@ -77,7 +78,7 @@ noinst_HEADERS += keywordwidgets.h
 noinst_HEADERS += layereditor.h
 noinst_HEADERS += maintab.h modulechartblock.h modulecharthotspot.h modulechartinsertionblock.h modulechartmetrics.h modulechartmoduleblock.h modulecontrolwidget.h modulelayertab.h moduletab.h modulewidget.h
 noinst_HEADERS += pairpotentialwidget.h
-noinst_HEADERS += selectforcefielddialog.h selectsystemtemplatedialog.h speciestab.h stockcolours.h systemtemplate.h
+noinst_HEADERS += selectforcefielddialog.h selectforcefieldwidget.h selectsystemtemplatedialog.h speciestab.h stockcolours.h systemtemplate.h
 noinst_HEADERS += wizardwidgetfooter.h wizardwidgetheader.h wizardwidgethighlight.h wizardwidgetpageinfo.h workspacetab.h
 
 AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@

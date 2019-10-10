@@ -29,6 +29,7 @@
 // Forward Declarations
 class Dissolve;
 class Forcefield;
+class SelectForcefieldWidget;
 
 // Select Forcefield Dialog
 class SelectForcefieldDialog : public QDialog
@@ -44,17 +45,12 @@ class SelectForcefieldDialog : public QDialog
 	private:
 	// Main form declaration
 	Ui::SelectForcefieldDialog ui_;
-	// Available forcefields
-	const List<Forcefield>& forcefields_;
-
-	private:
-	// Update the list of Forcefields, optionally filtering them by name and description
-	void updateForcefieldsList(Forcefield* current = NULL, QString filter = QString());
+	// Forcefield widget
+	SelectForcefieldWidget* ffWidget_;
 
 	private slots:
-	void on_FilterEdit_textChanged(const QString& text);
-	void on_ForcefieldsList_currentItemChanged(QListWidgetItem* current, QListWidgetItem* previous);
-	void on_ForcefieldsList_itemDoubleClicked(QListWidgetItem* item);
+	void currentForcefieldChanged(bool isValid);
+	void forcefieldDoubleClicked();
 	void on_SelectButton_clicked(bool checked);
 	void on_CancelButton_clicked(bool checked);
 

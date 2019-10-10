@@ -20,22 +20,20 @@
 */
 
 #include "gui/selectforcefielddialog.h"
+#include "gui/selectforcefieldwidget.h"
 #include "data/ff.h"
 #include "templates/variantpointer.h"
 #include <QRegExp>
 
 // Constructor
-SelectForcefieldDialog::SelectForcefieldDialog(QWidget* parent, const List<Forcefield>& forcefields) : forcefields_(forcefields)
+SelectForcefieldDialog::SelectForcefieldDialog(QWidget* parent, const List<Forcefield>& forcefields)
 {
 	ui_.setupUi(this);
 
-	// Populate the list with available templates
-	ListIterator<Forcefield> templateIterator(forcefields_);
-	while (Forcefield* ff = templateIterator.iterate())
-	{
-		QListWidgetItem* item = new QListWidgetItem(ff->name(), ui_.ForcefieldsList);
-		item->setData(Qt::UserRole, VariantPointer<Forcefield>(ff));
-	}
+	// Create and set up a SelectForcefieldWidget within our dialog
+	ffWidget_ = new SelectForcefieldWidget(ui_.ForcefieldWidget, forcefields);
+	connect(ffWidget_, SIGNAL(forcefieldSelectionChanged(bool)), this, SLOT(currentForcefieldChanged(bool)));
+	connect(ffWidget_, SIGNAL(forcefieldDoubleClicked()), this, SLOT(forcefieldDoubleClicked()));
 }
 
 // Destructor
@@ -43,65 +41,14 @@ SelectForcefieldDialog::~SelectForcefieldDialog()
 {
 }
 
-// Update the list of Forcefields, optionally filtering them by name and description
-void SelectForcefieldDialog::updateForcefieldsList(Forcefield* current, QString filter)
+void SelectForcefieldDialog::currentForcefieldChanged(bool isValid)
 {
-	// Loop over items in the list
-	for (int n=0; n<ui_.ForcefieldsList->count(); ++n)
-	{
-		QListWidgetItem* item = ui_.ForcefieldsList->item(n);
-		if (!item) continue;
-		Forcefield* ff = VariantPointer<Forcefield>(item->data(Qt::UserRole));
-		if (ff == current) ui_.ForcefieldsList->setCurrentRow(n);
-
-		// Check filtering
-		if (filter.isEmpty()) item->setHidden(false);
-		else
-		{
-			// Check name
-			QString name = ff->name();
-			bool inName = name.contains(QRegExp(filter, Qt::CaseInsensitive, QRegExp::Wildcard));
-
-			// Check description
-			QString description = ff->description();
-			bool inDescription = description.contains(QRegExp(filter, Qt::CaseInsensitive, QRegExp::Wildcard));
-
-			// Hide the item?
-			bool hide = (!inName) && (!inDescription);
-			item->setHidden(hide);
-
-			// If the item was hidden, and it was selected, reset the current index
-			if (hide && item->isSelected()) ui_.ForcefieldsList->setCurrentRow(-1);
-		}
-	}
+	ui_.SelectButton->setEnabled(isValid);
 }
 
-void SelectForcefieldDialog::on_FilterEdit_textChanged(const QString& text)
+void SelectForcefieldDialog::forcefieldDoubleClicked()
 {
-	updateForcefieldsList(NULL, text);
-}
-
-void SelectForcefieldDialog::on_ForcefieldsList_currentItemChanged(QListWidgetItem* current, QListWidgetItem* previous)
-{
-	if (!current)
-	{
-		ui_.ForcefieldDetailsTextEdit->clear();
-		ui_.SelectButton->setEnabled(false);
-		return;
-	}
-
-	// Get the selected template
-	Forcefield* ff = VariantPointer<Forcefield>(current->data(Qt::UserRole));
-
-	// Update the informational text
-	ui_.ForcefieldDetailsTextEdit->setText(ff->description());
-
-	ui_.SelectButton->setEnabled(true);
-}
-
-void SelectForcefieldDialog::on_ForcefieldsList_itemDoubleClicked(QListWidgetItem* item)
-{
-	if (!item) return;
+	if (!ffWidget_->currentForcefield()) return;
 
 	accept();
 }
@@ -119,15 +66,10 @@ void SelectForcefieldDialog::on_CancelButton_clicked(bool checked)
 // Run the dialog, returning the selected Forcefield
 Forcefield* SelectForcefieldDialog::selectForcefield(Forcefield* currentFF)
 {
-	updateForcefieldsList(currentFF, ui_.FilterEdit->text());
+	ffWidget_->setCurrentForcefield(currentFF);
 
 	show();
 
-	if (exec() == QDialog::Accepted)
-	{
-		QListWidgetItem* item = ui_.ForcefieldsList->currentItem();
-		if (item == NULL) return NULL;
-		return VariantPointer<Forcefield>(item->data(Qt::UserRole));
-	}
+	if (exec() == QDialog::Accepted) return ffWidget_->currentForcefield();
 	else return NULL;
 }
