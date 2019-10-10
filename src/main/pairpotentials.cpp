@@ -137,7 +137,7 @@ void Dissolve::regeneratePairPotentials()
 }
 
 // Generate all necessary PairPotentials, adding missing terms where necessary
-bool Dissolve::generatePairPotentials()
+bool Dissolve::generatePairPotentials(AtomType* onlyInvolving)
 {
 	int nUndefined = 0;
 
@@ -146,6 +146,10 @@ bool Dissolve::generatePairPotentials()
 	{
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next())
 		{
+			// If an AtomType was supplied, only generate the pair potential if one of its AtomTypes matches
+			if (onlyInvolving && (at1 != onlyInvolving) && (at2 != onlyInvolving)) continue;
+
+			// Does a PairPotential for this AtomType pair already exist?
 			PairPotential* pot = pairPotential(at1, at2);
 			if (pot)
 			{

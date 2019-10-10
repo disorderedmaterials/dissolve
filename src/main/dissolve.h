@@ -181,7 +181,7 @@ class Dissolve
 	// Clear and regenerate all PairPotentials, replacing those currently defined
 	void regeneratePairPotentials();
 	// Generate all necessary PairPotentials, adding missing terms where necessary
-	bool generatePairPotentials();
+	bool generatePairPotentials(AtomType* onlyInvolving = NULL);
 
 
 	/*
