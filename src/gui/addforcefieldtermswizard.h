@@ -28,6 +28,7 @@
 
 // Forward Declarations
 class Forcefield;
+class SelectForcefieldWidget;
 
 // Add Forcefield Terms Wizard
 class AddForcefieldTermsWizard : public WizardWidget
@@ -105,15 +106,8 @@ class AddForcefieldTermsWizard : public WizardWidget
 	 * Select Forcefield Page
 	 */
 	private slots:
-	// ForcefieldList row update function
-	void updateForcefieldListRow(int row, Forcefield* ff, bool createItem);
-	// Update Select Forcefield page
-	void updateSelectForcefieldPage();
-	// Return currently-selected Forcefield
-	Forcefield* currentForcefield() const;
-
-	private slots:
-	void on_ForcefieldList_currentRowChanged(int row);
+	void on_ForcefieldWidget_forcefieldSelectionChanged(bool isValid);
+	void on_ForcefieldWidget_forcefieldDoubleClicked();
 
 
 	/*

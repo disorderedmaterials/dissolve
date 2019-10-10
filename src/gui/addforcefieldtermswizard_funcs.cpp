@@ -20,6 +20,7 @@
 */
 
 #include "gui/addforcefieldtermswizard.h"
+#include "gui/selectforcefieldwidget.h"
 #include "gui/helpers/listwidgetupdater.h"
 #include "gui/helpers/treewidgetupdater.h"
 #include "main/dissolve.h"
@@ -179,10 +180,6 @@ bool AddForcefieldTermsWizard::displayControlPage(int index)
 	// Update controls in the target page if necessary
 	switch (index)
 	{
-		case (AddForcefieldTermsWizard::SelectForcefieldPage):
-			updateSelectForcefieldPage();
-			if ((ui_.ForcefieldList->currentRow() == -1) && (ui_.ForcefieldList->count() > 0)) ui_.ForcefieldList->setCurrentRow(0);
-			break;
 		default:
 			break;
 	}
@@ -197,7 +194,7 @@ bool AddForcefieldTermsWizard::progressionAllowed(int index) const
 	switch (index)
 	{
 		case (AddForcefieldTermsWizard::SelectForcefieldPage):
-			return (currentForcefield());
+			return (ui_.ForcefieldWidget->currentForcefield());
 		default:
 			break;
 	}
@@ -213,7 +210,7 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 	{
 		case (AddForcefieldTermsWizard::SelectTermsPage):
 			// Sanity check the current Forcefield
-			ff = currentForcefield();
+			ff = ui_.ForcefieldWidget->currentForcefield();
 			if (!ff) return false;
 
 			// Copy selected Species to our temporary instance, detach any MasterTerm references, and delete the MasterTerms
@@ -290,46 +287,15 @@ void AddForcefieldTermsWizard::reset()
  * Select Forcefield Page
  */
 
-// ForcefieldList row update function
-void AddForcefieldTermsWizard::updateForcefieldListRow(int row, Forcefield* ff, bool createItem)
+void AddForcefieldTermsWizard::on_ForcefieldWidget_forcefieldSelectionChanged(bool isValid)
 {
-	QListWidgetItem* item;
-	if (createItem)
-	{
-		item = new QListWidgetItem;
-		item->setData(Qt::UserRole, VariantPointer<Forcefield>(ff));
-		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-		ui_.ForcefieldList->insertItem(row, item);
-	}
-	else item = ui_.ForcefieldList->item(row);
-
-	// Set item data
-	item->setText(ff->name());
-}
-
-// Update Select Forcefield page
-void AddForcefieldTermsWizard::updateSelectForcefieldPage()
-{
-	ListWidgetUpdater<AddForcefieldTermsWizard,Forcefield> speciesUpdater(ui_.ForcefieldList, ForcefieldLibrary::forcefields(), this, &AddForcefieldTermsWizard::updateForcefieldListRow);
-}
-
-// Return currently-selected Forcefield
-Forcefield* AddForcefieldTermsWizard::currentForcefield() const
-{
-	if (ui_.ForcefieldList->currentRow() == -1) return NULL;
-
-	Forcefield* sp = VariantPointer<Forcefield>(ui_.ForcefieldList->currentItem()->data(Qt::UserRole));
-
-	return sp;
-}
-
-void AddForcefieldTermsWizard::on_ForcefieldList_currentRowChanged(int row)
-{
-	// Set the name and details of the current forcefield
-	Forcefield* ff = currentForcefield();
-	ui_.ForcefieldDetailsBrowser->setText(ff->description());
-
 	updateProgressionControls();
+}
+
+void AddForcefieldTermsWizard::on_ForcefieldWidget_forcefieldDoubleClicked()
+{
+	goToPage(AddForcefieldTermsWizard::SelectTermsPage);
+	if (!ui_.ForcefieldWidget->currentForcefield()) return;
 }
 
 /*
