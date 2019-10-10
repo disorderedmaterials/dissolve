@@ -107,6 +107,7 @@ void Dissolve::copyAtomType(SpeciesAtom* sourceAtom, SpeciesAtom* destAtom)
 		at = addAtomType(sourceAtom->element());
 		at->setName(sourceAtom->atomType()->name());
 		at->parameters() = sourceAtom->atomType()->parameters();
+		at->setShortRangeType(sourceAtom->atomType()->shortRangeType());
 	}
 
 	destAtom->setAtomType(at);

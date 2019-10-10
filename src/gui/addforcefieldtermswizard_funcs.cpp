@@ -113,7 +113,11 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve& dissolve)
 		dissolve.copyAtomType(modifiedI, i);
 
 		// Overwrite existing parameters?
-		if (ui_.AtomTypesOverwriteParametersCheck->isChecked()) i->atomType()->parameters() = modifiedI->atomType()->parameters();
+		if (ui_.AtomTypesOverwriteParametersCheck->isChecked())
+		{
+			i->atomType()->parameters() = modifiedI->atomType()->parameters();
+			i->atomType()->setShortRangeType(modifiedI->atomType()->shortRangeType());
+		}
 
 		// Move to next modified atom
 		modifiedI = modifiedI->next();
