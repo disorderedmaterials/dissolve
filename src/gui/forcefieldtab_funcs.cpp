@@ -83,9 +83,16 @@ ForcefieldTab::ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve,
 	/*
 	 * Pair Potentials
 	 */
-	
+
+	// Set up combo delegates
 	for (int n=0; n<PairPotential::nCoulombTruncationSchemes; ++n) ui_.CoulombTruncationCombo->addItem(PairPotential::coulombTruncationScheme( (PairPotential::CoulombTruncationScheme) n));
 	for (int n=0; n<PairPotential::nShortRangeTruncationSchemes; ++n) ui_.ShortRangeTruncationCombo->addItem(PairPotential::shortRangeTruncationScheme( (PairPotential::ShortRangeTruncationScheme) n));
+
+	// Set sensible lower limits and steps for range and delta
+	ui_.PairPotentialRangeSpin->setRange(true, 1.0);
+	ui_.PairPotentialRangeSpin->setSingleStep(1.0);
+	ui_.PairPotentialDeltaSpin->setRange(true, 0.001);
+	ui_.PairPotentialDeltaSpin->setSingleStep(0.001);
 
 	// Ensure fonts for table headers are set correctly and the headers themselves are visible
 	ui_.PairPotentialsTable->horizontalHeader()->setFont(font());
