@@ -269,6 +269,9 @@ void DissolveWindow::updateWindowTitle()
 	// Window Title
 	QString title = QString("Dissolve v%1 - %2%3").arg(DISSOLVEVERSION, dissolve_.hasInputFilename() ? dissolve_.inputFilename() : "<untitled>", modified_ ? "(*)" : "");
 	setWindowTitle(title);
+
+	// Update save menu item
+	ui.FileSaveAction->setEnabled(modified_);
 }
 
 // Update controls frame
