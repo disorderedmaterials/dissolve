@@ -129,28 +129,28 @@ const Data2D& RenderableData2D::transformedData()
 // Calculate min/max y value over specified x range (if possible in the underlying data)
 bool RenderableData2D::yRangeOverX(double xMin, double xMax, double& yMin, double& yMax)
 {
-	// Ensure transformed data is up-to-date
-	transformData();
-
-	// Grab reference to transformed data
-	const Data2D& data = transformedData();
-
-	for (int n=0; n<data.nValues(); ++n)
-	{
-		if (data.constXAxis(n) < xMin) continue;
-		else if (data.constXAxis(n) > xMax) break;
-
-		if (n == 0)
-		{
-			yMin = data.constValue(n);
-			yMax = yMin;
-		}
-		else
-		{
-			if (data.constValue(n) < yMin) yMin = data.constValue(n);
-			else if (data.constValue(n) > yMax) yMax = data.constValue(n);
-		}
-	}
+// 	// Ensure transformed data is up-to-date
+// 	transformData();
+// 
+// 	// Grab reference to transformed data
+// 	const Data2D& data = transformedData();
+// 
+// 	for (int n=0; n<data.nValues(); ++n)
+// 	{
+// 		if (data.constXAxis(n) < xMin) continue;
+// 		else if (data.constXAxis(n) > xMax) break;
+// 
+// 		if (n == 0)
+// 		{
+// 			yMin = data.constValue(n);
+// 			yMax = yMin;
+// 		}
+// 		else
+// 		{
+// 			if (data.constValue(n) < yMin) yMin = data.constValue(n);
+// 			else if (data.constValue(n) > yMax) yMax = data.constValue(n);
+// 		}
+// 	}
 
 	return true;
 }

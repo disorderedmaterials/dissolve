@@ -24,6 +24,8 @@
 #include "expression/variable.h"
 #include "math/data1d.h"
 #include "templates/array.h"
+#include "math/data2d.h"
+
 
 // Constructor
 Transformer::Transformer()
@@ -90,7 +92,7 @@ bool Transformer::valid() const
 double Transformer::transform(double x, double y, double z)
 {
 	// If equation is not valid, just return
-	if (!valid_)
+	if (!valid())
 	{
 		Messenger::print("Equation is not valid, so returning 0.0.\n");
 		return 0.0;
@@ -110,7 +112,7 @@ Array<double> Transformer::transformArray(Array<double> sourceX, Array<double> s
 	if (!enabled_) return (target == 0 ? sourceX : sourceY);
 
 	// If equation is not valid, just return original array
-	if (!valid_)
+	if (!valid())
 	{
 		Messenger::print("Equation is not valid, so returning original array.\n");
 		return (target == 0 ? sourceX : sourceY);
@@ -138,14 +140,14 @@ Array<double> Transformer::transformArray(Array<double> sourceX, Array<double> s
 	return newArray;
 }
 
-// Transform whole array, including application of pre/post transform shift
+// Transform 2D array
 Array2D<double> Transformer::transformArray(Array2D<double> sourceXY, double z, int target)
 {
 	// If transform is not enabled, return original array
 	if (!enabled_) return sourceXY;
 
 	// If equation is not valid, just return original array
-	if (!valid_)
+	if (!valid())
 	{
 		Messenger::print("Equation is not valid, so returning original array.\n");
 		return (sourceXY);
@@ -160,7 +162,7 @@ Array2D<double> Transformer::transformArray(Array2D<double> sourceXY, double z, 
 	{
 		
 		for(int r=0; r<sourceXY.nRows(); ++r)
-			for(int c=r; c<sourceXY.nColumns(); c++)
+			for(int c=r; c<sourceXY.nColumns(); ++c)
 				newArray2D.at(r,c) = equation_.asDouble();
 	}
 	else
@@ -171,25 +173,7 @@ Array2D<double> Transformer::transformArray(Array2D<double> sourceXY, double z, 
 	}
 	
 	return newArray2D;
-	
-	/*
-
-	// Create new array, and create reference to target array
-	Array<double> newArray(sourceX.nItems());
-
-	z_->set(z);
-	// Loop over x points
-	for (int n=0; n<sourceX.nItems(); ++n)
-	{
-		// Set x and y values in equation
-		x_->set(sourceX[n]);
-		y_->set(sourceY[n]);
-		newArray[n] = equation_.asDouble();
-	}
-
-	return newArray;
 }
-*/
 
 /*
  * Static Functions
@@ -204,3 +188,9 @@ void Transformer::transform(Data1D& data, Transformer& xTransformer, Transformer
 	// Y
 	if (yTransformer.enabled()) data.values() = yTransformer.transformArray(data.xAxis(), data.values(), 0.0, 1);
 }
+
+void Transformer::transform(Data2D& data,Transformer& transformerXY)
+{
+	if (transformerXY.enabled()) data.values() = transformerXY.transformArray(data.values(), 0.0, 0);
+}
+
