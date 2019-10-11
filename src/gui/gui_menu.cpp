@@ -270,7 +270,7 @@ void DissolveWindow::on_SimulationPauseAction_triggered(bool checked)
 	// Update the controls
 	updateControlsFrame();
 
-	ui.ControlPauseButton->setEnabled(false);
+	ui_.ControlPauseButton->setEnabled(false);
 }
 
 void DissolveWindow::on_SimulationSetRandomSeedAction_triggered(bool checked)

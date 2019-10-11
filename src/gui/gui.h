@@ -55,8 +55,14 @@ class DissolveWindow : public QMainWindow
 	// Constructor / Destructor
 	DissolveWindow(Dissolve& dissolve);
 	~DissolveWindow();
+
+
+	/*
+	 * UI
+	 */
+	private:
 	// Main form declaration
-	Ui::DissolveWindow ui;
+	Ui::DissolveWindow ui_;
 
 	protected:
 	void closeEvent(QCloseEvent* event);

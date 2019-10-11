@@ -28,12 +28,12 @@
 
 void DissolveWindow::on_StartCreateNewButton_clicked(bool checked)
 {
-	ui.FileNewAction->trigger();
+	ui_.FileNewAction->trigger();
 }
 
 void DissolveWindow::on_StartCreateFromTemplateButton_clicked(bool checked)
 {
-	ui.FileNewFromTemplateAction->trigger();
+	ui_.FileNewFromTemplateAction->trigger();
 }
 
 /*
@@ -42,17 +42,17 @@ void DissolveWindow::on_StartCreateFromTemplateButton_clicked(bool checked)
 
 void DissolveWindow::on_StartOpenLocalButton_clicked(bool checked)
 {
-	ui.FileOpenLocalAction->trigger();
+	ui_.FileOpenLocalAction->trigger();
 }
 
 void DissolveWindow::on_StartOpenRecentButton_clicked(bool checked)
 {
-	ui.FileOpenRecentAction->trigger();
+	ui_.FileOpenRecentAction->trigger();
 }
 
 void DissolveWindow::on_StartConnectButton_clicked(bool checked)
 {
-	ui.FileConnectAction->trigger();
+	ui_.FileConnectAction->trigger();
 }
 
 /*
@@ -61,10 +61,10 @@ void DissolveWindow::on_StartConnectButton_clicked(bool checked)
 
 void DissolveWindow::on_StartOnlineManualButton_clicked(bool checked)
 {
-	ui.HelpOnlineManualAction->trigger();
+	ui_.HelpOnlineManualAction->trigger();
 }
 
 void DissolveWindow::on_StartOnlineTutorialsButton_clicked(bool checked)
 {
-	ui.HelpOnlineTutorialsAction->trigger();
+	ui_.HelpOnlineTutorialsAction->trigger();
 }
