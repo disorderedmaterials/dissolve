@@ -95,6 +95,9 @@ Species* AddSpeciesWizard::importSpecies(Dissolve& dissolve)
 		return NULL;
 	}
 
+	// Set the final name of the new Species
+	importTarget_->setName(qPrintable(ui_.SpeciesNameEdit->text()));
+
 	// Copy the importTarget_ over
 	Species* newSpecies = dissolve.copySpecies(importTarget_);
 
@@ -161,12 +164,12 @@ bool AddSpeciesWizard::prepareForNextPage(int currentIndex)
 			if (ui_.CreateAtomicAddAtomTypeCheck->isChecked())
 			{
 				AtomType* at = temporaryDissolve_.addAtomType(ui_.CreateAtomicElementSelector->currentElement());
-				at->setName(dissolveReference_->coreData().uniqueAtomTypeName(ui_.CreateAtomicElementSelector->currentElement()->symbol()));
+				at->setName(dissolveReference_->constCoreData().uniqueAtomTypeName(ui_.CreateAtomicElementSelector->currentElement()->symbol()));
 				atomicAtom->setAtomType(at);
 			}
 
 			// Set a suitable name
-			ui_.SpeciesNameEdit->setText(dissolveReference_->coreData().uniqueSpeciesName(ui_.CreateAtomicElementSelector->currentElement()->symbol()));
+			ui_.SpeciesNameEdit->setText(dissolveReference_->constCoreData().uniqueSpeciesName(ui_.CreateAtomicElementSelector->currentElement()->symbol()));
 			break;
 		case (AddSpeciesWizard::ImportSpeciesSelectFilePage):
 			// Check that the input/species file exists, and can be read in successfully
@@ -243,7 +246,7 @@ void AddSpeciesWizard::reset()
 	temporaryDissolve_.clear();
 
 	// Set a new, unique name ready on the final page
-	ui_.SpeciesNameEdit->setText(dissolveReference_->coreData().uniqueSpeciesName("NewSpecies"));
+	ui_.SpeciesNameEdit->setText(dissolveReference_->constCoreData().uniqueSpeciesName("NewSpecies"));
 }
 
 /*
@@ -437,7 +440,7 @@ void AddSpeciesWizard::updateMasterTermsTreeChild(QTreeWidgetItem* parent, int c
 
 	// Set item data
 	item->setText(0, masterIntra->name());
-	item->setIcon(0, QIcon(dissolveReference_->coreData().findMasterTerm(masterIntra->name()) ?  ":/general/icons/general_warn.svg" : ":/general/icons/general_true.svg"));
+	item->setIcon(0, QIcon(dissolveReference_->constCoreData().findMasterTerm(masterIntra->name()) ?  ":/general/icons/general_warn.svg" : ":/general/icons/general_true.svg"));
 }
 
 // Update page with MasterTerms in our temporary Dissolve reference
@@ -451,19 +454,19 @@ void AddSpeciesWizard::updateMasterTermsPage()
 	// Determine whether we have any naming conflicts
 	bool conflicts = false;
 	ListIterator<MasterIntra> bondIterator(temporaryCoreData_.masterBonds());
-	while (MasterIntra* intra = bondIterator.iterate()) if (dissolveReference_->coreData().findMasterTerm(intra->name()))
+	while (MasterIntra* intra = bondIterator.iterate()) if (dissolveReference_->constCoreData().findMasterTerm(intra->name()))
 	{
 		conflicts = true;
 		break;
 	}
 	ListIterator<MasterIntra> angleIterator(temporaryCoreData_.masterAngles());
-	while (MasterIntra* intra = angleIterator.iterate()) if (dissolveReference_->coreData().findMasterTerm(intra->name()))
+	while (MasterIntra* intra = angleIterator.iterate()) if (dissolveReference_->constCoreData().findMasterTerm(intra->name()))
 	{
 		conflicts = true;
 		break;
 	}
 	ListIterator<MasterIntra> torsionIterator(temporaryCoreData_.masterTorsions());
-	while (MasterIntra* intra = torsionIterator.iterate()) if (dissolveReference_->coreData().findMasterTerm(intra->name()))
+	while (MasterIntra* intra = torsionIterator.iterate()) if (dissolveReference_->constCoreData().findMasterTerm(intra->name()))
 	{
 		conflicts = true;
 		break;
@@ -568,10 +571,4 @@ void AddSpeciesWizard::on_SpeciesNameEdit_textChanged(const QString text)
 
 	// Update state of progression controls
 	updateProgressionControls();
-}
-
-// Return name of new Species to be
-const char* AddSpeciesWizard::speciesName() const
-{
-	return qPrintable(ui_.SpeciesNameEdit->text());
 }

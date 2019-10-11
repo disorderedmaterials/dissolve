@@ -24,8 +24,6 @@
 
 #include "data/ff.h"
 #include "data/ff/uffatomtype.h"
-#include "templates/array.h"
-#include "templates/list.h"
 
 // Forward Declarations
 class CoreData;
@@ -50,7 +48,11 @@ class Forcefield_UFF : public Forcefield
 	 */
 	public:
 	// Return name of Forcefield
-	const char* name();
+	const char* name() const;
+	// Return description for Forcefield
+	const char* description() const;
+	// Return short-range interaction style for AtomTypes
+	Forcefield::ShortRangeType shortRangeType() const;
 
 
 	/*

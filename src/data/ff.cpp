@@ -26,6 +26,7 @@
 #include "data/fftorsionterm.h"
 #include "classes/atomtype.h"
 #include "classes/box.h"
+#include "classes/coredata.h"
 #include "classes/species.h"
 #include "classes/speciesatom.h"
 #include "classes/speciesbond.h"
@@ -40,6 +41,24 @@ Forcefield::Forcefield() : ListItem<Forcefield>()
 
 Forcefield::~Forcefield()
 {
+}
+
+/*
+ * Definition
+ */
+
+// Return enum options for ShortRangeType
+EnumOptions<Forcefield::ShortRangeType> Forcefield::shortRangeTypes()
+{
+	static EnumOptionsList ShortRangeTypeOptions = EnumOptionsList() <<
+		EnumOption(Forcefield::UndefinedType, 			"Undefined") <<
+		EnumOption(Forcefield::NoInteractionType, 		"None") <<
+		EnumOption(Forcefield::LennardJonesType, 		"LJ") <<
+		EnumOption(Forcefield::LennardJonesGeometricType, 	"LJGeometric");
+
+	static EnumOptions<Forcefield::ShortRangeType> options("ShortRangeType", ShortRangeTypeOptions);
+
+	return options;
 }
 
 /*
@@ -119,6 +138,38 @@ ForcefieldTorsionTerm* Forcefield::torsionTerm(const ForcefieldAtomType* i, cons
 /*
  * Term Assignment
  */
+
+// Assign suitable atom types to the supplied Species
+bool Forcefield::assignAtomTypes(Species* sp, CoreData& coreData, bool keepExisting) const
+{
+	// Loop over Species atoms
+	for (SpeciesAtom* i = sp->atoms().first(); i != NULL; i = i->next())
+	{
+		// If keepExisting == true, don't reassign a type to this atom if one already exists
+		if (keepExisting && i->atomType()) continue;
+
+		ForcefieldAtomType* atomType = determineAtomType(i);
+		if (!atomType) Messenger::print("No forcefield type available for Atom %i of Species (%s).\n", i->index()+1, i->element()->symbol());
+		else
+		{
+			// Check if an AtomType of the same name already exists - if it does, just use that one
+			AtomType* at = coreData.findAtomType(atomType->typeName());
+			if (!at)
+			{
+				at = coreData.addAtomType(i->element());
+				at->setName(atomType->typeName());
+
+				// Copy parameters from the Forcefield's atom type
+				at->parameters() = atomType->parameters();
+				at->setShortRangeType(shortRangeType());
+			}
+
+			i->setAtomType(at);
+		}
+	}
+
+	return true;
+}
 
 // Assign intramolecular parameters to the supplied Species
 bool Forcefield::assignIntramolecular(Species* sp, bool useExistingTypes, bool assignBonds, bool assignAngles, bool assignTorsions) const

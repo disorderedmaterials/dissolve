@@ -56,11 +56,15 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 
 
 	/*
-	 * Data
+	 * MainTab Reimplementations
 	 */
 	public:
 	// Return tab type
-	const char* tabType() const;
+	MainTab::TabType type() const;
+	// Raise suitable dialog for entering / checking new tab name
+	QString getNewTitle(bool& ok);
+	// Return whether the title of the tab can be changed
+	bool canChangeTitle() const;
 
 
 	/*
@@ -72,7 +76,7 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 
 	public:
 	// Return displayed Species
-	const Species* species() const;
+	Species* species() const;
 
 
 	/*
@@ -87,8 +91,10 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	void updateAngleTableRow(int row, SpeciesAngle* speciesAngle, bool createItems);
 	// SpeciesTorsionTable row update function
 	void updateTorsionTableRow(int row, SpeciesTorsion* speciesTorsion, bool createItems);
-	// IsotopologuesIsotopesTable row update function
-	void updateIsotopeTableRow(int row, AtomType* atomType, Isotope* isotope, bool createItems);
+	// IsotopologuesTree top-level update function
+	void updateIsotopologuesTreeTopLevelItem(QTreeWidget* treeWidget, int topLevelItemIndex, Isotopologue* data, bool createItem);
+	// IsotopologuesTree item update function
+	void updateIsotopologuesTreeChildItem(QTreeWidgetItem* parentItem, int childIndex, AtomType* item, Isotope* data, bool createItem);
 
 	protected slots:
 	// Update controls in tab
@@ -107,14 +113,16 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	Isotopologue* currentIsotopologue();
 
 	private slots:
-	// Definition
-	void on_NameEdit_textChanged(QString text);
+	// View / Generate
+	void on_ForcefieldButton_clicked(bool checked);
+	void on_ForcefieldAutoApplyCheck_clicked(bool checked);
 	// Isotopologues
 	void on_IsotopologueAddButton_clicked(bool checked);
 	void on_IsotopologueRemoveButton_clicked(bool checked);
-	void on_IsotopologueList_currentRowChanged(int row);
-	void on_IsotopologueList_itemChanged(QListWidgetItem* item);
-	void on_IsotopeTable_itemChanged(QTableWidgetItem* w);
+	void on_IsotopologueGenerateButton_clicked(bool checked);
+	void on_IsotopologueExpandAllButton_clicked(bool checked);
+	void on_IsotopologueCollapseAllButton_clicked(bool checked);
+	void on_IsotopologuesTree_itemChanged(QTreeWidgetItem* item, int column);
 	// Geometry Tab
 	void on_AtomAddButton_clicked(bool checked);
 	void on_AtomRemoveButton_clicked(bool checked);

@@ -24,8 +24,7 @@
 #include "data/ffatomtype.h"
 #include "data/ffbondterm.h"
 #include "classes/atomtype.h"
-#include "classes/coredata.h"
-#include "classes/species.h"
+#include "classes/speciesatom.h"
 #include "base/sysfunc.h"
 
 /*
@@ -74,9 +73,21 @@ Forcefield_SPCFw::~Forcefield_SPCFw()
  */
 
 // Return name of Forcefield
-const char* Forcefield_SPCFw::name()
+const char* Forcefield_SPCFw::name() const
 {
 	return "SPC/Fw";
+}
+
+// Return description for Forcefield
+const char* Forcefield_SPCFw::description() const
+{
+	return "Implements Yujie Wu, Harald L. Tepper and Gregory A. Voth, 'Flexible simple point-charge water model with improved liquid-state properties', <i>Journal of Chemical Physics</i> <b>124</b> 024503 (2006), http://dx.doi.org/10.1063/1.2136877";
+}
+
+// Return short-range interaction style for AtomTypes
+Forcefield::ShortRangeType Forcefield_SPCFw::shortRangeType() const
+{
+	return Forcefield::LennardJonesType;
 }
 
 /*
@@ -102,40 +113,4 @@ ForcefieldAtomType* Forcefield_SPCFw::determineAtomType(SpeciesAtom* i) const
 	}
 
 	return NULL;
-}
-
-/*
- * Term Assignment
- */
-
-
-// Assign suitable atom types to the supplied Species
-bool Forcefield_SPCFw::assignAtomTypes(Species* sp, CoreData& coreData, bool keepExisting) const
-{
-	// Loop over Species atoms
-	for (SpeciesAtom* i = sp->atoms().first(); i != NULL; i = i->next())
-	{
-		// If keepExisting == true, don't reassign a type to this atom if one already exists
-		if (keepExisting && i->atomType()) continue;
-
-		ForcefieldAtomType* atomType = determineAtomType(i);
-		if (!atomType) Messenger::print("No forcefield type available for Atom %i of Species (%s).\n", i->index()+1, i->element()->symbol());
-		else
-		{
-			// Check if an AtomType of the same name already exists - if it does, just use that one
-			AtomType* at = coreData.findAtomType(atomType->typeName());
-			if (!at)
-			{
-				at = coreData.addAtomType(i->element());
-				at->setName(atomType->typeName());
-
-				// Copy parameters from the Forcefield's atom type
-				at->parameters() = atomType->parameters();
-			}
-
-			i->setAtomType(at);
-		}
-	}
-
-	return true;
 }

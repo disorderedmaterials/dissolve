@@ -1,5 +1,5 @@
 /*
-	*** IntegerSpinDelegate Functions
+	*** IntegerSpin Delegate Functions
 	*** src/gui/delegates/integerspin_funcs.cpp
 	Copyright T. Youngs 2012-2019
 

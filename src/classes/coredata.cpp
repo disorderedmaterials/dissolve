@@ -69,6 +69,9 @@ AtomType* CoreData::addAtomType(Element* el)
 	newAtomType->setElement(el);
 	newAtomType->setIndex(nAtomTypes() - 1);
 
+	// Bump version
+	++atomTypesVersion_;
+
 	return newAtomType;
 }
 
@@ -124,6 +127,18 @@ AtomType* CoreData::findAtomType(const char* name) const
 	for (AtomType* at = atomTypes_.first(); at != NULL; at = at->next()) if (DissolveSys::sameString(at->name(),name)) return at;
 
 	return NULL;
+}
+
+// Bump AtomTypes version
+void CoreData::bumpAtomTypesVersion()
+{
+	++atomTypesVersion_;
+}
+
+// Return AtomTypes version
+int CoreData::atomTypesVersion() const
+{
+	return atomTypesVersion_;
 }
 
 /*

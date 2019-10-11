@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ADDSPECIESDIALOG_H
-#define DISSOLVE_ADDSPECIESDIALOG_H
+#ifndef DISSOLVE_DIALOG_ADDSPECIES_H
+#define DISSOLVE_DIALOG_ADDSPECIES_H
 
 #include "gui/ui_addspeciesdialog.h"
 #include <QDialog>

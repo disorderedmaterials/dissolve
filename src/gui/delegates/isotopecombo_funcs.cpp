@@ -1,5 +1,5 @@
 /*
-	*** IsotopeCombo Functions
+	*** Isotope Combo Functions
 	*** src/gui/delegates/isotopecombo_funcs.cpp
 	Copyright T. Youngs 2012-2019
 

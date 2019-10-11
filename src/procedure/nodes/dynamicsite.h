@@ -51,8 +51,8 @@ class DynamicSiteProcedureNode : public ProcedureNode
 	public:
 	// Return whether specified context is relevant for this node type
 	bool isContextRelevant(ProcedureNode::NodeContext context);
-	// Return whether a name for the node is required
-	bool nameRequired() const;
+	// Return whether a name for the node must be provided
+	bool mustBeNamed() const;
 
 
 	/*

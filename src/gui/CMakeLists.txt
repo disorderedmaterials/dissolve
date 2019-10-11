@@ -27,9 +27,9 @@ SET(gui_MOC_HDRS
   addforcefieldtermswizard.h
   addprocessinglayerwizard.h
   addspecieswizard.h
-  guidewizard.h
   keywordswidget.hui
   pairpotentialwidget.h
+  selectforcefieldwidget.h
   wizardwidget.hui
   wizardwidgetfooter.h
   wizardwidgetheader.h
@@ -41,6 +41,10 @@ SET(gui_MOC_HDRS
   addforcefieldtermsdialog.h
   addprocessinglayerdialog.h
   addspeciesdialog.h
+  getconfigurationnamedialog.h
+  getspeciesnamedialog.h
+  selectsystemtemplatedialog.h
+  selectforcefielddialog.h
 
   # Main Tabs
   configurationtab.h
@@ -51,9 +55,6 @@ SET(gui_MOC_HDRS
 
   # Main UI
   gui.h
-  guide.h
-  guidepage.h
-  guidepagehighlight.h
   stockcolours.h
   systemtemplate.h
 
@@ -79,8 +80,8 @@ SET(gui_UIS
   addforcefieldtermswizard.ui
   addprocessinglayerwizard.ui
   addspecieswizard.ui
-  guidewizard.ui
   pairpotentialwidget.ui
+  selectforcefieldwidget.ui
   wizardwidgetfooter.ui
   wizardwidgetheader.ui
 
@@ -89,6 +90,10 @@ SET(gui_UIS
   addforcefieldtermsdialog.ui
   addprocessinglayerdialog.ui
   addspeciesdialog.ui
+  getconfigurationnamedialog.ui
+  getspeciesnamedialog.ui
+  selectsystemtemplatedialog.ui
+  selectforcefielddialog.ui
 
   # Main Tabs
   configurationtab.ui
@@ -121,9 +126,9 @@ SET(gui_SRCS
   addforcefieldtermswizard_funcs.cpp
   addprocessinglayerwizard_funcs.cpp
   addspecieswizard_funcs.cpp
-  guidewizard_funcs.cpp
   keywordswidget_funcs.cpp
   pairpotentialwidget_funcs.cpp
+  selectforcefieldwidget_funcs.cpp
   wizardwidget_funcs.cpp
   wizardwidgethighlight.cpp
   wizardwidgetpageinfo.cpp
@@ -133,6 +138,10 @@ SET(gui_SRCS
   addforcefieldtermsdialog_funcs.cpp
   addprocessinglayerdialog_funcs.cpp
   addspeciesdialog_funcs.cpp
+  getconfigurationnamedialog_funcs.cpp
+  getspeciesnamedialog_funcs.cpp
+  selectsystemtemplatedialog_funcs.cpp
+  selectforcefielddialog_funcs.cpp
 
   # Main Tabs
   configurationtab_funcs.cpp
@@ -142,15 +151,12 @@ SET(gui_SRCS
   workspacetab_funcs.cpp
 
   # Main UI
+  gui_control.cpp
   gui_funcs.cpp
   gui_menu.cpp
-  gui_simulation_control.cpp
-  gui_simulation_state.cpp
-  gui_simulation_tabs.cpp
+  gui_io.cpp
   gui_start.cpp
-  guide.cpp
-  guidepage.cpp
-  guidepagehighlight.cpp
+  gui_tabs.cpp
   outputhandler_funcs.cpp
   stockcolours.cpp
   systemtemplate.cpp
@@ -178,9 +184,9 @@ target_include_directories(gui PRIVATE
   ${FREETYPE_INCLUDE_DIRS}
 )
 
+add_subdirectory(keywordwidgets)
 add_subdirectory(charts)
 add_subdirectory(delegates)
-add_subdirectory(keywordwidgets)
 add_subdirectory(viewer)
 add_subdirectory(widgets)
 

@@ -125,6 +125,8 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
 			// Now the enum option
 			if (!KeywordData< Venum<NodeValue,E> >::data_.setEnumeration(parser.argc(startArg+1))) return false;
 
+			KeywordData< Venum<NodeValue,E> >::dataHasBeenSet();
+
 			return true;
 		}
 

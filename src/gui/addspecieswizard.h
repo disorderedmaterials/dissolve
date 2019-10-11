@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ADDSPECIESWIZARD_H
-#define DISSOLVE_ADDSPECIESWIZARD_H
+#ifndef DISSOLVE_WIZARD_ADDSPECIES_H
+#define DISSOLVE_WIZARD_ADDSPECIES_H
 
 #include "gui/ui_addspecieswizard.h"
 #include "gui/wizardwidget.hui"
@@ -167,10 +167,6 @@ class AddSpeciesWizard : public WizardWidget
 	 */
 	private slots:
 	void on_SpeciesNameEdit_textChanged(const QString text);
-
-	public:
-	// Return name of new Species to be
-	const char* speciesName() const;
 };
 
 #endif

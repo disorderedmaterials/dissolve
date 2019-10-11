@@ -30,6 +30,7 @@ AtomType::AtomType() : ListItem<AtomType>()
 	element_ = NULL;
 	name_ = "XX";
 	exchangeable_ = false;
+	shortRangeType_ = Forcefield::UndefinedType;
 }
 
 // Destructor
@@ -38,7 +39,7 @@ AtomType::~AtomType()
 }
 
 /*
- * Properties
+ * Character
  */
 
 // Set name of AtomType
@@ -63,6 +64,22 @@ void AtomType::setElement(Element* el)
 Element* AtomType::element() const
 {
 	return element_;
+}
+
+/*
+ * Interaction Parameters
+ */
+
+// Set short-range interaction type
+void AtomType::setShortRangeType(Forcefield::ShortRangeType srType)
+{
+	shortRangeType_ = srType;
+}
+
+// Return short-range interaction type
+Forcefield::ShortRangeType AtomType::shortRangeType() const
+{
+	return shortRangeType_;
 }
 
 // Return interaction Parameters

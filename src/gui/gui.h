@@ -83,10 +83,6 @@ class DissolveWindow : public QMainWindow
 	public slots:
 	// Flag that data has been modified via the GUI
 	void setModified();
-	// Flag that data has been modified via the GUI, and whether this invalidates the current setup
-	void setModified(bool invalidatesSetUp);
-	// Flag that data has been modified via the GUI, and that the setup is now invalid
-	void setModifiedAndInvalidated();
 
 	public:
 	// Return reference to Dissolve
@@ -113,8 +109,20 @@ class DissolveWindow : public QMainWindow
 	 * File
 	 */
 	public:
-	// Open specified input file from the CLI
-	bool openFileFromCLI(const char* inputFile, const char* restartFile, bool ignoreRestartFile, bool ignoreLayoutFile);
+	// Open specified input file
+	bool openLocalFile(const char* inputFile, const char* restartFile, bool ignoreRestartFile, bool ignoreLayoutFile);
+
+
+	/*
+	 * System Templates
+	 */
+	private:
+	// List of available SystemTemplates
+	List<SystemTemplate> systemTemplates_;
+
+	private:
+	// Initialise system templates from the main resource
+	void initialiseSystemTemplates();
 
 
 	/*
@@ -127,6 +135,8 @@ class DissolveWindow : public QMainWindow
 	void updateWindowTitle();
 	// Update controls frame
 	void updateControlsFrame();
+	// Update menus
+	void updateMenus();
 	// Perform full update of the GUI, including tab reconciliation
 	void fullUpdate();
 
@@ -141,26 +151,31 @@ class DissolveWindow : public QMainWindow
 	void startNew();
 
 	private slots:
-	// Session
-	void on_SessionNewAction_triggered(bool checked);
-	void on_SessionOpenLocalAction_triggered(bool checked);
-	void on_SessionOpenRecentAction_triggered(bool checked);
-	void on_SessionConnectAction_triggered(bool checked);
-	void on_SessionCloseAction_triggered(bool checked);
-	void on_SessionSaveAction_triggered(bool checked);
-	void on_SessionSaveAsAction_triggered(bool checked);
-	void on_SessionQuitAction_triggered(bool checked);
+	// File
+	void on_FileNewAction_triggered(bool checked);
+	void on_FileNewFromTemplateAction_triggered(bool checked);
+	void on_FileOpenLocalAction_triggered(bool checked);
+	void on_FileOpenRecentAction_triggered(bool checked);
+	void on_FileConnectAction_triggered(bool checked);
+	void on_FileCloseAction_triggered(bool checked);
+	void on_FileSaveAction_triggered(bool checked);
+	void on_FileSaveAsAction_triggered(bool checked);
+	void on_FileQuitAction_triggered(bool checked);
 	// Simulation
-	void on_SimulationAddSpeciesAction_triggered(bool checked);
-	void on_SimulationAddConfigurationAction_triggered(bool checked);
-	void on_SimulationAddProcessingLayerAction_triggered(bool checked);
-	void on_SimulationAddForcefieldTermsAction_triggered(bool checked);
-	void on_SimulationSetRandomSeedAction_triggered(bool checked);
-	// Control
 	void on_SimulationRunAction_triggered(bool checked);
 	void on_SimulationStepAction_triggered(bool checked);
 	void on_SimulationStepFiveAction_triggered(bool checked);
 	void on_SimulationPauseAction_triggered(bool checked);
+	void on_SimulationSetRandomSeedAction_triggered(bool checked);
+	// Species
+	void on_SpeciesAddAction_triggered(bool checked);
+	void on_SpeciesRenameAction_triggered(bool checked);
+	void on_SpeciesAddForcefieldTermsAction_triggered(bool checked);
+	// Configuration
+	void on_ConfigurationAddAction_triggered(bool checked);
+	void on_ConfigurationRenameAction_triggered(bool checked);
+	// Layer
+	void on_LayerAddAction_triggered(bool checked);
 	// Workspace
 	void on_WorkspaceAddNewAction_triggered(bool checked);
 	// Help
@@ -188,18 +203,10 @@ class DissolveWindow : public QMainWindow
 	/*
 	 * 'Start' Stack Page
 	 */
-	private:
-	// List of available SystemTemplates
-	List<SystemTemplate> systemTemplates_;
-
-	private:
-	// Add system templates to the Create group
-	void addSystemTemplates();
-
 	private slots:
 	// 'Create' Group
 	void on_StartCreateNewButton_clicked(bool checked);
-	void systemTemplateClicked(bool checked);
+	void on_StartCreateFromTemplateButton_clicked(bool checked);
 	// 'Open / Connect' Group
 	void on_StartOpenLocalButton_clicked(bool checked);
 	void on_StartOpenRecentButton_clicked(bool checked);
@@ -269,7 +276,6 @@ class DissolveWindow : public QMainWindow
 
 	private slots:
 	void on_MainTabs_currentChanged(int index);
-	void mainTabsDoubleClicked(int index);
 
 	private:
 	// Remove tabs related to the current data
@@ -297,7 +303,7 @@ class DissolveWindow : public QMainWindow
 	// Find WorkspaceTab containing specified page widget
 	WorkspaceTab* workspaceTab(QWidget* page);
 	// Return current tab
-	MainTab* currentTab();
+	MainTab* currentTab() const;
 	// Make specified tab the current one
 	void setCurrentTab(MainTab* tab);
 	// Make specified tab the current one (by index)
@@ -312,6 +318,11 @@ class DissolveWindow : public QMainWindow
 	void setCurrentTab(ModuleLayer* layer);
 	// Return reference list of all current tabs
 	RefList<MainTab> allTabs() const;
+	// Return currently-selected Species (if a SpeciesTab is the current one)
+	Species* currentSpecies() const;
+	// Return currently-selected Configuration (if a ConfigurationTab is the current one)
+	Configuration* currentConfiguration() const;
+
 
 	public:
 	// Add tab for specified Module target

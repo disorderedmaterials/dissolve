@@ -26,6 +26,7 @@
 #include <QModelIndex>
 #include <QObject>
 #include <QComboBox>
+#include "base/enumoptions.h"
 #include "templates/list.h"
 
 // Base class for source List
@@ -150,6 +151,50 @@ template <class T> class ComboNameListItems : public ComboListItems
 	const char* currentItemText()
 	{
 		return (currentItem_ ? currentItem_->name() : "NULL");
+	}
+};
+
+// Templated EnumOptions Source for ComboList
+template <class E> class ComboEnumOptionsItems : public ComboListItems
+{
+	public:
+	// Constructor
+	ComboEnumOptionsItems(EnumOptions<E> enumOptions) : items_(enumOptions)
+	{
+		currentItemIndex_ = 0;
+	}
+
+	private:
+	// Associated item list
+	const EnumOptions<E> items_;
+	// Current iterator index
+	int currentItemIndex_;
+
+
+	/*
+	 * Access
+	 */
+	public:
+	// Return number of items in list
+	int nItems()
+	{
+		return items_.nOptions();
+	}
+	// Restart list iteration
+	void restartIterator()
+	{
+		currentItemIndex_ = -1;
+	}
+	// Move to next item in list
+	bool nextItem()
+	{
+		++currentItemIndex_;
+		return (currentItemIndex_ < nItems());
+	}
+	// Return text entry for nth item
+	const char* currentItemText()
+	{
+		return (currentItemIndex_ < nItems() ? items_.keywordByIndex(currentItemIndex_) : "NULL");
 	}
 };
 

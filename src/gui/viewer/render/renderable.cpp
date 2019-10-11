@@ -240,7 +240,7 @@ void Renderable::setDisplayStyle(int id)
 }
 
 // Return display style index
-int Renderable::displayStyle() const
+int Renderable::displayStyleIndex() const
 {
 	return displayStyle_;
 }

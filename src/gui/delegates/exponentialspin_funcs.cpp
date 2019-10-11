@@ -1,5 +1,5 @@
 /*
-	*** ExponentialSpinDelegate Functions
+	*** ExponentialSpin Delegate Functions
 	*** src/gui/delegates/exponentialspin_funcs.cpp
 	Copyright T. Youngs 2012-2019
 

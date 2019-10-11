@@ -103,6 +103,8 @@ class KeywordBase : public ListItem<KeywordBase>
 	public:
 	// Set name, description, arguments, and option mask
 	void set(const char* name, const char* description, const char* arguments, int optionMask = NoOptions);
+	// Return whether data has been set
+	bool isSet() const;
 	// Return data type stored by keyword
 	KeywordDataType type() const;
 	// Return name of data type stored by keyword
@@ -118,7 +120,7 @@ class KeywordBase : public ListItem<KeywordBase>
 	// Return whether specified option is set
 	bool isOptionSet(KeywordOption opt) const;
 	// Return whether the data has ever been set
-	virtual bool isSet() const;
+	virtual bool isDataEmpty() const;
 
 
 	/*

@@ -27,6 +27,7 @@ src/dissolve-serial
 src/dguided
 .kdev4/
 build/
+*.exe
 
 # Miscellaneous
 *swp

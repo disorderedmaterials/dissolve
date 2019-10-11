@@ -23,10 +23,10 @@
 #define DISSOLVE_SPECIESVIEWER_H
 
 #include "gui/viewer/viewer.hui"
+#include "gui/viewer/render/renderablespecies.h"
 
 // Forward Declarations
 class Element;
-class RenderableSpecies;
 class Species;
 class SpeciesAtom;
 
@@ -121,14 +121,26 @@ class SpeciesViewer : public BaseViewer
 	private:
 	// Source Species to display
 	Species* species_;
-	// Renderable for source Species
-	RenderableSpecies* speciesRenderable_;
 
 	public:
 	// Set target Species
 	void setSpecies(Species* sp);
 	// Return target Species
 	Species* species() const;
+
+
+	/*
+	 * Renderable
+	 */
+	private:
+	// Renderable for source Species
+	RenderableSpecies* speciesRenderable_;
+
+	public:
+	// Set renderable draw style
+	void setRenderableDrawStyle(RenderableSpecies::DisplayStyle ds);
+	// Return current renderable draw style
+	RenderableSpecies::DisplayStyle renderableDrawStyle() const;
 
 
 	/*

@@ -68,7 +68,13 @@ Dissolve::~Dissolve()
  */
 
 // Return reference to CoreData
-const CoreData& Dissolve::coreData() const
+CoreData& Dissolve::coreData()
+{
+	return coreData_;
+}
+
+// Return const reference to CoreData
+const CoreData& Dissolve::constCoreData() const
 {
 	return coreData_;
 }
@@ -78,7 +84,6 @@ void Dissolve::clear()
 {
 	// Core
 	Messenger::printVerbose("Clearing Core Data...\n");
-	setUp_ = false;
 	coreData_.clear();
 
 	// PairPotentials
@@ -89,6 +94,7 @@ void Dissolve::clear()
 	pairPotentialsIncludeCoulomb_ = true;
 	pairPotentials_.clear();
 	potentialMap_.clear();
+	pairPotentialAtomTypeVersion_ = -1;
 
 	// Modules
 	Messenger::printVerbose("Clearing Modules...\n");
@@ -144,46 +150,4 @@ void Dissolve::registerGenericItems()
 	GenericItem::addItemClass(new GenericItemContainer<PairBroadeningFunction>(PairBroadeningFunction::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<PartialSet>(PartialSet::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<Weights>(Weights::itemClassName()));
-}
-
-// Set up everything needed to run the simulation
-bool Dissolve::setUp()
-{
-	setUp_ = false;
-
-	// Initialise random seed
-	if (seed_ == -1) srand( (unsigned)time( NULL ) );
-	else srand(seed_);
-
-	// Perform simulation set up (all processes)
-	Messenger::banner("Setting Up Simulation");
-	if (!setUpSimulation())
-	{
-		Messenger::print("Failed to set up simulation.\n");
-		return false;
-	}
-
-	// Set up parallel comms / limits etc.
-	Messenger::banner("Setting Up Parallelism");
-	if (!setUpMPIPools())
-	{
-		Messenger::print("Failed to set up parallel communications.\n");
-		return false;
-	}
-
-	setUp_ = true;
-
-	return true;
-}
-
-// Flag that the set up is no longer valid and should be done again
-void Dissolve::invalidateSetUp()
-{
-	setUp_ = false;
-}
-
-// Return whether the simulation has been set up
-bool Dissolve::isSetUp() const
-{
-	return setUp_;
 }

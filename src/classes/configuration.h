@@ -91,8 +91,8 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	const char* niceName() const;
 	// Return the current generator
 	Procedure& generator();
-	// Generate the Configuration ready for use, including Box and associated Cells
-	bool generate(ProcessPool& procPool, double pairPotentialRange);
+	// Create the Configuration according to its generator Procedure
+	bool generate(ProcessPool& procPool);
 	// Return import coordinates file / format
 	CoordinateImportFileFormat& inputCoordinates();
 	// Load coordinates from specified parser
@@ -298,7 +298,7 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 	 */
 	public:
 	// Perform any preparative tasks for the Configuration, before Module processing begins
-	bool prepare(const PotentialMap& potentialMap);
+	bool prepare(ProcessPool& procPool, const PotentialMap& potentialMap, double pairPotentialRange);
 
 
 	/*

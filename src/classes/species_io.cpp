@@ -1,6 +1,6 @@
 /*
-	*** Species XYZ Import
-	*** src/classes/species_xyz.cpp
+	*** Species Input/Output
+	*** src/classes/species_io.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -22,15 +22,11 @@
 #include "classes/species.h"
 #include "classes/atomtype.h"
 #include "classes/coredata.h"
+#include "data/fflibrary.h"
 #include "data/elements.h"
 #include "data/isotopes.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include <string.h>
-
-/*
- * File Input / Output
- */
 
 // Load Species from file
 bool Species::load(const char* filename)
@@ -98,10 +94,11 @@ EnumOptions<Species::SpeciesKeyword> Species::keywords()
 		EnumOption(Species::AngleKeyword,	 	"Angle",		4,6) <<
 		EnumOption(Species::AtomKeyword, 		"Atom",			6,7) <<
 		EnumOption(Species::AutoAddGrainsKeyword,	"AutoAddGrains") <<
-		EnumOption(Species::BondKeyword,		"Bond",			3,5) <<
+		EnumOption(Species::BondKeyword,		"Bond",			2,5) <<
 		EnumOption(Species::BondTypeKeyword,		"BondType",		3) <<
 		EnumOption(Species::ChargeKeyword,		"Charge",		2) <<
 		EnumOption(Species::EndSpeciesKeyword,		"EndSpecies") <<
+		EnumOption(Species::ForcefieldKeyword,		"Forcefield",		1) <<
 		EnumOption(Species::GrainKeyword,		"Grain",		1) <<
 		EnumOption(Species::IsotopologueKeyword,	"Isotopologue",		EnumOption::OneOrMoreArguments) <<
 		EnumOption(Species::SiteKeyword,		"Site",			1) <<
@@ -115,7 +112,7 @@ EnumOptions<Species::SpeciesKeyword> Species::keywords()
 // Read Species definition from specified LineParser
 bool Species::read(LineParser& parser, CoreData& coreData)
 {
-	Messenger::printVerbose("\nParsing Species '%s'\n", name());
+	Messenger::print("\nParsing Species '%s'\n", name());
 
 	Element* el;
 	CharString arg1, arg2;
@@ -218,7 +215,7 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 				at = coreData.findAtomType(parser.argc(6));
 				if (!at)
 				{
-					Messenger::print("Creating AtomType '%s'...\n", parser.argc(6));
+					Messenger::printVerbose("Creating AtomType '%s'...\n", parser.argc(6));
 					at = coreData.addAtomType(el);
 					at->setName(parser.argc(6));
 				}
@@ -237,8 +234,20 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 				autoAddGrains();
 				break;
 			case (Species::BondKeyword):
-				// Check the functional form specified - if it starts with '@' it is a reference to master parameters
-				if (parser.argc(3)[0] == '@')
+				// Create a new bond definition between the specified atoms
+				b = addBond(parser.argi(1)-1, parser.argi(2)-1);
+				if (!b)
+				{
+					error = true;
+					break;
+				}
+
+				/*
+				 * If only the bond indices were given, create a bond without a specified functional form (a Forcefield is presumably going to be specified).
+				 * Otherwise, check the functional form specified - if it starts with '@' it is a reference to master parameters
+				 */
+				if (parser.nArgs() == 3) b->setForm(SpeciesBond::nBondFunctions);
+				else if (parser.argc(3)[0] == '@')
 				{
 					// Search through master Bond parameters to see if this name exists
 					MasterIntra* master = coreData.hasMasterBond(parser.argc(3));
@@ -249,13 +258,6 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 						break;
 					}
 
-					// Create a new bond definition
-					b = addBond(parser.argi(1)-1, parser.argi(2)-1);
-					if (!b)
-					{
-						error = true;
-						break;
-					}
 					b->setMasterParameters(master);
 				}
 				else
@@ -269,13 +271,6 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 						break;
 					}
 
-					// Create a new bond definition
-					b = addBond(parser.argi(1)-1, parser.argi(2)-1);
-					if (!b)
-					{
-						error = true;
-						break;
-					}
 					b->setForm(bf);
 					for (int n=0; n<SpeciesBond::nFunctionParameters(bf); ++n)
 					{
@@ -306,7 +301,7 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 				bt = SpeciesBond::bondType(parser.argc(3));
 				if (bt == SpeciesBond::nBondTypes)
 				{
-					Messenger::error("Bond function type '%s' requires %i parameters\n", SpeciesBond::bondFunction(bf), SpeciesBond::nFunctionParameters(bf));
+					Messenger::error("Unrecognised bond type '%s'.\n", parser.argc(3));
 					error = true;
 					break;
 				}
@@ -326,13 +321,17 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 				updateGrains();
 				centreAtOrigin();
 				orderAtomsWithinGrains();
+				if (forcefield_ && (!applyForcefieldTerms(coreData))) error = true;
 				Messenger::print("Found end of Species '%s'.\n", name());
 				blockDone = true;
+				break;
+			case (Species::ForcefieldKeyword):
+				forcefield_ = ForcefieldLibrary::forcefield(parser.argc(1));
 				break;
 			case (Species::GrainKeyword):
 				sg = addGrain();
 				sg->setName(uniqueGrainName(parser.argc(1)));
-				Messenger::print("Added grain definition '%s' to Species '%s'\n", sg->name(), name());
+				Messenger::printVerbose("Added grain definition '%s' to Species '%s'\n", sg->name(), name());
 				for (int n=2; n<parser.nArgs(); ++n)
 				{
 					i = atom(parser.argi(n)-1);
@@ -346,7 +345,7 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 				break;
 			case (Species::IsotopologueKeyword):
 				iso = addIsotopologue(uniqueIsotopologueName(parser.argc(1)), coreData.atomTypes());
-				Messenger::print("Added Isotopologue '%s' to Species '%s'\n", iso->name(), name());
+				Messenger::printVerbose("Added Isotopologue '%s' to Species '%s'\n", iso->name(), name());
 				// Each parser argument is a string of the form ATOMTYPE=ISO
 				for (int n=2; n<parser.nArgs(); ++n)
 				{
@@ -495,7 +494,11 @@ bool Species::write(LineParser& parser, const char* prefix)
 		if (!parser.writeLineF("\n%s# Bonds\n", newPrefix.get())) return false;
 		for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next())
 		{
-			if (b->masterParameters())
+			if (b->form() == SpeciesBond::nBondFunctions)
+			{
+				if (!parser.writeLineF("%s%s  %3i  %3i\n", newPrefix.get(), keywords().keyword(Species::BondKeyword), b->indexI()+1, b->indexJ()+1)) return false;
+			}
+			else if (b->masterParameters())
 			{
 				if (!parser.writeLineF("%s%s  %3i  %3i  @%s\n", newPrefix.get(), keywords().keyword(Species::BondKeyword), b->indexI()+1, b->indexJ()+1, b->masterParameters()->name())) return false;
 			}
@@ -576,6 +579,13 @@ bool Species::write(LineParser& parser, const char* prefix)
 			}
 			if (!parser.writeLineF("\n")) return false;
 		}
+	}
+
+	// Forcefield
+	if (forcefield_)
+	{
+		if (!parser.writeLineF("\n%s# Forcefield\n", newPrefix.get())) return false;
+		if (!parser.writeLineF("%s%s  '%s'\n", newPrefix.get(), keywords().keyword(Species::ForcefieldKeyword), forcefield_->name())) return false;
 	}
 
 	// Isotopologues

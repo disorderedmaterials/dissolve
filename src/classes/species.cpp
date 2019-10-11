@@ -22,12 +22,9 @@
 #include "classes/species.h"
 #include "classes/masterintra.h"
 #include "classes/atomtype.h"
-#include "classes/box.h"
 #include "data/isotopes.h"
 #include "base/lineparser.h"
 #include "base/processpool.h"
-#include <string.h>
-#include <base/sysfunc.h>
 
 // Static Members (ObjectStore)
 template<class Species> RefDataList<Species,int> ObjectStore<Species>::objects_;
@@ -38,6 +35,7 @@ template<class Species> const char* ObjectStore<Species>::objectTypeName_ = "Spe
 // Constructor
 Species::Species() : ListItem<Species>(), ObjectStore<Species>(this)
 {
+	forcefield_ = NULL;
 	attachedAtomListsGenerated_ = false;
 }
 
@@ -73,7 +71,7 @@ const char* Species::name() const
 }
 
 // Check set-up of Species
-bool Species::checkSetUp(const List<AtomType>& atomTypes)
+bool Species::checkSetUp()
 {
 	int nErrors = 0;
 
@@ -92,11 +90,6 @@ bool Species::checkSetUp(const List<AtomType>& atomTypes)
 		if (i->atomType() == NULL)
 		{
 			Messenger::error("Atom %i (%s) has no associated AtomType.\n", i->userIndex(), i->element()->symbol());
-			++nErrors;
-		}
-		else if (!atomTypes.contains(i->atomType()))
-		{
-			Messenger::error("Atom %i (%s) references a non-existent AtomType.\n", i->userIndex(), i->element()->symbol());
 			++nErrors;
 		}
 	}
@@ -174,12 +167,7 @@ bool Species::checkSetUp(const List<AtomType>& atomTypes)
 		RefDataListIterator<AtomType,Isotope*> isotopeIterator(iso->isotopes());
 		while (AtomType* atomType = isotopeIterator.iterate())
 		{
-			if (!atomTypes.contains(atomType))
-			{
-				Messenger::error("Isotopologue '%s' refers to an unknown AtomType.\n", iso->name());
-				++nErrors;
-			}
-			else if (isotopeIterator.currentData() == NULL)
+			if (isotopeIterator.currentData() == NULL)
 			{
 				Messenger::error("Isotopologue '%s' does not refer to an elemental Isotope for AtomType '%s'.\n", iso->name(), atomType->name());
 				++nErrors;
@@ -210,51 +198,39 @@ void Species::print()
 	if (nBonds() > 0)
 	{
 		Messenger::print("\n  Bonds:\n");
-		Messenger::print("      I     J    Form            Parameters\n");
+		Messenger::print("      I     J    Form             Parameters\n");
 		Messenger::print("    ---------------------------------------------------------------------------------\n");
 		for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next())
 		{
-			if (b->masterParameters()) Messenger::print("   %4i  %4i    @%-12s\n", b->indexI()+1, b->indexJ()+1, b->masterParameters()->name());
-			else
-			{
-				CharString s("   %4i  %4i    %-12s", b->indexI()+1, b->indexJ()+1, SpeciesBond::bondFunction( (SpeciesBond::BondFunction) b->form()));
-				for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", b->parameter(n));
-				Messenger::print("%s\n", s.get());
-			}
+			CharString s("   %4i  %4i    %c%-12s", b->indexI()+1, b->indexJ()+1, b->masterParameters() ? '@' : ' ', SpeciesBond::bondFunction( (SpeciesBond::BondFunction) b->form()));
+			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", b->parameter(n));
+			Messenger::print("%s\n", s.get());
 		}
 	}
 
 	if (nAngles() > 0)
 	{
 		Messenger::print("\n  Angles:\n");
-		Messenger::print("      I     J     K    Form            Parameters\n");
+		Messenger::print("      I     J     K    Form             Parameters\n");
 		Messenger::print("    ---------------------------------------------------------------------------------------\n");
 		for (SpeciesAngle* a = angles_.first(); a != NULL; a = a->next())
 		{
-			if (a->masterParameters()) Messenger::print("   %4i  %4i  %4i    @%-12s\n", a->indexI()+1, a->indexJ()+1, a->indexK()+1, a->masterParameters()->name());
-			else
-			{
-				CharString s("   %4i  %4i  %4i    %-12s", a->indexI()+1, a->indexJ()+1, a->indexK()+1, SpeciesAngle::angleFunction( (SpeciesAngle::AngleFunction) a->form()));
-				for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", a->parameter(n));
-				Messenger::print("%s\n", s.get());
-			}
+			CharString s("   %4i  %4i  %4i    %c%-12s", a->indexI()+1, a->indexJ()+1, a->indexK()+1, a->masterParameters() ? '@' : ' ', SpeciesAngle::angleFunction( (SpeciesAngle::AngleFunction) a->form()));
+			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", a->parameter(n));
+			Messenger::print("%s\n", s.get());
 		}
 	}
 
 	if (nTorsions() > 0)
 	{
 		Messenger::print("\n  Torsions:\n");
-		Messenger::print("      I     J     K     L    Form            Parameters\n");
+		Messenger::print("      I     J     K     L    Form             Parameters\n");
 		Messenger::print("    ---------------------------------------------------------------------------------------------\n");
 		for (SpeciesTorsion* t = torsions_.first(); t != NULL; t = t->next())
 		{
-			if (t->masterParameters()) Messenger::print("   %4i  %4i  %4i  %4i    %-12s", t->indexI()+1, t->indexJ()+1, t->indexK()+1, t->indexL()+1, t->masterParameters()->name());
-			else
-			{
-				CharString s("   %4i  %4i  %4i  %4i    %-12s", t->indexI()+1, t->indexJ()+1, t->indexK()+1, t->indexL()+1, SpeciesTorsion::torsionFunction( (SpeciesTorsion::TorsionFunction) t->form()));
-				for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", t->parameter(n));
-				Messenger::print("%s\n", s.get());
-			}
+			CharString s("   %4i  %4i  %4i  %4i    %c%-12s", t->indexI()+1, t->indexJ()+1, t->indexK()+1, t->indexL()+1, t->masterParameters() ? '@' : ' ', SpeciesTorsion::torsionFunction( (SpeciesTorsion::TorsionFunction) t->form()));
+			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", t->parameter(n));
+			Messenger::print("%s\n", s.get());
 		}
 	}
 

@@ -213,7 +213,7 @@ bool KeywordList::isSet(const char* name) const
 	KeywordBase* keyword = find(name);
 	if (!keyword)
 	{
-		Messenger::warn("No Module keyword named '%s' exists to probe for its default value. Returning 'false'...\n", name);
+		Messenger::warn("No Module keyword named '%s' exists to check whether it is set. Returning 'false'...\n", name);
 		return false;
 	}
 

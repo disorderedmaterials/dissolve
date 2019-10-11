@@ -25,7 +25,7 @@
 #include "gui/viewer/ui_specieswidget.h"
 
 // Forward Declarations
-/* none */
+class CoreData;
 
 // Species Widget
 class SpeciesWidget : public QWidget
@@ -41,8 +41,12 @@ class SpeciesWidget : public QWidget
 	private:
 	// Main form declaration
 	Ui::SpeciesWidget ui_;
+	// Main CoreData
+	CoreData* coreData_;
 
 	public:
+	// Set main CoreData pointer
+	void setCoreData(CoreData* coreData);
 	// Return contained SpeciesViewer
 	SpeciesViewer* speciesViewer();
 
@@ -57,6 +61,7 @@ class SpeciesWidget : public QWidget
 	void on_InteractionDrawElementButton_clicked(bool checked);
 	// View
 	void on_ViewResetButton_clicked(bool checked);
+	void on_ViewSpheresButton_clicked(bool checked);
 	void on_ViewAxesVisibleButton_clicked(bool checked);
 	void on_ViewCopyToClipboardButton_clicked(bool checked);
 	// Tools

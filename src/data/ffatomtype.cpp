@@ -22,7 +22,7 @@
 #include "data/ffatomtype.h"
 #include "data/ff.h"
 
-// Constructor / Destructor
+// Constructors
 ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int z, const char* symbol, int index, const char* name, const char* description, double q, double data0, double data1, double data2, double data3) : ElementReference(z, symbol), ListItem<ForcefieldAtomType>()
 {
 	index_ = index;
@@ -37,7 +37,20 @@ ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, int z, const char* sy
 	// Register this atom type with the parent forcefield
 	if (parent) parent->registerAtomType(this, z);
 }
+ForcefieldAtomType::ForcefieldAtomType(Forcefield* parent, const char* sanityName, const ForcefieldAtomType& sourceType) : ElementReference(sourceType.Z(), sourceType.symbol()), ListItem<ForcefieldAtomType>()
+{
+	// Copy data from the supplied source
+	index_ = sourceType.index_;
+	typeName_ = sourceType.typeName_;
+	if (!DissolveSys::sameString(typeName_, sanityName)) Messenger::warn("Sanity typename '%s' differs from the supplied data ('%s').\n", sanityName, sourceType.typeName());
+	typeDescription_ = sourceType.typeDescription_;
+	parameters_ = sourceType.parameters_;
 
+	// Register this atom type with the parent forcefield
+	if (parent) parent->registerAtomType(this, sourceType.Z());
+}
+
+// Destructor
 ForcefieldAtomType::~ForcefieldAtomType()
 {
 }

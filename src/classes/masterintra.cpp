@@ -59,35 +59,6 @@ void MasterIntra::setType(SpeciesIntra::IntramolecularType type)
 }
 
 /*
- * Usage Counting
- */
-
-// Initialise usage count array
-void MasterIntra::initialiseUsageArray(int nAtomTypes)
-{
-	usageCounts_.initialise(nAtomTypes, nAtomTypes, true);
-	usageCounts_ = 0;
-}
-
-// Return usage between specified pair of AtomType indices
-int MasterIntra::usageCount(int idI, int idJ)
-{
-	return usageCounts_.at(idI, idJ);
-}
-
-// Register single usage of this term by the specified AtomType pair
-void MasterIntra::registerUsage(int idI, int idJ)
-{
-	++usageCounts_.at(idI, idJ);
-}
-
-// Unregister single usage of this term by the specified AtomType pair
-void MasterIntra::unregisterUsage(int idI, int idJ)
-{
-	--usageCounts_.at(idI, idJ);
-}
-
-/*
  * Interaction Parameters
  */
 

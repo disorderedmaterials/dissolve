@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ADDPROCESSINGLAYERDIALOG_H
-#define DISSOLVE_ADDPROCESSINGLAYERDIALOG_H
+#ifndef DISSOLVE_DIALOG_ADDPROCESSINGLAYER_H
+#define DISSOLVE_DIALOG_ADDPROCESSINGLAYER_H
 
 #include "gui/ui_addprocessinglayerdialog.h"
 #include <QDialog>

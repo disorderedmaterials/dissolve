@@ -21,6 +21,7 @@
 
 #include "gui/widgets/supertabwidget.hui"
 #include "gui/widgets/supertabbar.hui"
+#include "gui/maintab.h"
 #include "base/messenger.h"
 #include <QToolButton>
 
@@ -30,6 +31,7 @@ SuperTabWidget::SuperTabWidget(QWidget* parent) : QTabWidget(parent)
 	// Create our own tab bar
 	superTabBar_ = new SuperTabBar(this);
 	setTabBar(superTabBar_);
+	connect(superTabBar_, SIGNAL(tabBarDoubleClicked(int)), this, SLOT(tabBarDoubleClicked(int)));
 }
 
 /*
@@ -121,4 +123,17 @@ void SuperTabWidget::tabCloseButtonClicked(bool checked)
 		emit(tabClosed(button));
 	}
 	else printf("Tabs received a close event from an unknown button...\n");
+}
+
+// Tab bar double-clicked
+void SuperTabWidget::tabBarDoubleClicked(int index)
+{
+	if (index == -1) return;
+
+	// Get the relevant widget (as a MainTab)
+	MainTab* tab = dynamic_cast<MainTab*>(widget(index));
+	if (!tab) return;
+
+	// Call the rename function in the tab
+	tab->rename();
 }

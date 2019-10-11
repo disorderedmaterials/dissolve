@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_ADDCONFIGURATIONWIZARD_H
-#define DISSOLVE_ADDCONFIGURATIONWIZARD_H
+#ifndef DISSOLVE_WIZARD_ADDCONFIGURATION_H
+#define DISSOLVE_WIZARD_ADDCONFIGURATION_H
 
 #include "gui/ui_addconfigurationwizard.h"
 #include "gui/wizardwidget.hui"

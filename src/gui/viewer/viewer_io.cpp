@@ -585,7 +585,7 @@ bool BaseViewer::writeRenderableBlock(LineParser& parser, Renderable* renderable
 
 	// Display
 	if (!parser.writeLineF("%s  %s  %f '%s'\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::LineStyleKeyword), renderable->lineStyle().width(), LineStipple::stipple[renderable->lineStyle().stipple()].name)) return false;
-	if (!parser.writeLineF("%s  %s  %s\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::StyleKeyword), renderable->displayStyle(renderable->displayStyle()))) return false;
+	if (!parser.writeLineF("%s  %s  %s\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::StyleKeyword), renderable->displayStyle(renderable->displayStyleIndex()))) return false;
 	if (!parser.writeLineF("%s  %s  %s\n", indent, BaseViewer::renderableKeywords().keyword(BaseViewer::VisibleKeyword), DissolveSys::btoa(renderable->isVisible()))) return false;
 
 	// Write Group if set

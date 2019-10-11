@@ -65,7 +65,7 @@ bool Dissolve::loadInput(LineParser& parser)
 				}
 				cfg = addConfiguration();
 				cfg->setName(parser.argc(1));
-				Messenger::print("Created Configuration '%s'...\n", cfg->name());
+				Messenger::print("\n--> Created Configuration '%s'\n", cfg->name());
 				if (!ConfigurationBlock::parse(parser, this, cfg)) error = true;
 				break;
 			case (BlockKeywords::LayerBlockKeyword):
@@ -78,7 +78,7 @@ bool Dissolve::loadInput(LineParser& parser)
 				}
 				layer = addProcessingLayer();
 				layer->setName(parser.argc(1));
-				Messenger::print("Created processing layer '%s'...\n", layer->name());
+				Messenger::print("\n--> Created processing layer '%s'\n", layer->name());
 				if (!LayerBlock::parse(parser, this, layer)) error = true;
 				break;
 			case (BlockKeywords::MasterBlockKeyword):
@@ -100,7 +100,13 @@ bool Dissolve::loadInput(LineParser& parser)
 				}
 				sp = addSpecies();
 				sp->setName(parser.argc(1));
+				Messenger::print("\n--> Created Species '%s'\n", sp->name());
 				if (!sp->read(parser, coreData_)) error = true;
+				else if (Messenger::isVerbose())
+				{
+					Messenger::print("\n--- Species '%s'...\n", sp->name());
+					sp->print();
+				}
 				break;
 			default:
 				Messenger::error("Block keyword '%s' is not relevant in this context.\n", BlockKeywords::keywords().keyword(kwd));
@@ -113,11 +119,7 @@ bool Dissolve::loadInput(LineParser& parser)
 	}
 
 	// Error encountered?
-	if (error)
-	{
-		Messenger::print("\nErrors encountered while parsing input.\nLoad aborted.\n");
-		clear();
-	}
+	if (error) Messenger::error("Errors encountered while parsing input.");
 	
 	// Done
 	parser.closeFiles();
@@ -217,16 +219,12 @@ bool Dissolve::saveInput(const char* filename)
 
 	// Atom Type Parameters
 	if (!parser.writeLineF("  # Atom Type Parameters\n")) return false;
-	if (!parser.writeLineF("  # Note: These are for reference only (unless GenerateAll is used).\n")) return false;
-	if (!parser.writeLineF("  # If you wish to modify the potential, change the relevant Generate lines below.\n")) return false;
 	for (AtomType* atomType = atomTypes().first(); atomType != NULL; atomType = atomType->next())
 	{
-		CharString s("  %s  %s  %12.6e", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ParametersKeyword), atomType->name(), atomType->parameters().charge());
+		CharString s("  %s  %s  %12.6e  %s", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ParametersKeyword), atomType->name(), atomType->parameters().charge(), Forcefield::shortRangeTypes().keyword(atomType->shortRangeType()));
 		for (int n=0; n<MAXSRPARAMETERS; ++n) s.strcatf("  %12.6e", atomType->parameters().parameter(n));
 		if (!parser.writeLineF("%s\n", s.get())) return false;
 	}
-	// TODO Default case is 'GenerateAll LJ', so we'll write that for now
-	if (!parser.writeLineF("  GenerateAll  LJ\n")) return false;
 
 	if (!parser.writeLineF("  %s  %f\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::RangeKeyword), pairPotentialRange_)) return false;
 	if (!parser.writeLineF("  %s  %f\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::DeltaKeyword), pairPotentialDelta_)) return false;
@@ -234,7 +232,7 @@ bool Dissolve::saveInput(const char* filename)
 	if (!parser.writeLineF("  %s  %s\n", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ShortRangeTruncationKeyword), PairPotential::shortRangeTruncationScheme(PairPotential::shortRangeTruncationScheme()))) return false;
 	for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next())
 	{
-		CharString s("  %s  %s  %s  %s  %12.6e  %12.6e", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::GenerateKeyword), PairPotential::shortRangeType(pot->shortRangeType()), pot->atomTypeI()->name(), pot->atomTypeJ()->name(), pot->chargeI(), pot->chargeJ());
+		CharString s("#  %s  %s  %s  %s  %12.6e  %12.6e", PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::GenerateKeyword), Forcefield::shortRangeTypes().keyword(pot->shortRangeType()), pot->atomTypeI()->name(), pot->atomTypeJ()->name(), pot->chargeI(), pot->chargeJ());
 		for (int n=0; n<MAXSRPARAMETERS; ++n) s.strcatf("  %12.6e", pot->parameter(n));
 		if (!parser.writeLineF("%s\n", s.get())) return false;
 	}
@@ -268,7 +266,7 @@ bool Dissolve::saveInput(const char* filename)
 			if (!module->enabled() && (!parser.writeLineF("    Disabled\n"))) return false;
 
 			// Write keyword options
-			if (!module->keywords().write(parser, "    ")) return false;
+			if (!module->keywords().write(parser, "    ", true)) return false;
 
 			if (!parser.writeLineF("  %s\n", ModuleBlock::keywords().keyword(ModuleBlock::EndModuleKeyword))) return false;
 		}
@@ -301,7 +299,7 @@ bool Dissolve::saveInput(const char* filename)
 			}
 
 			// Write keyword options
-			if (!module->keywords().write(parser, "    ")) return false;
+			if (!module->keywords().write(parser, "    ", true)) return false;
 
 			if (!parser.writeLineF("  %s\n", ModuleBlock::keywords().keyword(ModuleBlock::EndModuleKeyword))) return false;
 		}
@@ -455,12 +453,8 @@ bool Dissolve::loadRestart(const char* filename)
 	iteration_ = GenericListHelper<int>::value(processingModuleData_, "Iteration", "Dissolve", 0);
 
 	// Error encountered?
-	if (error)
-	{
-		Messenger::print("\nErrors encountered while loading restart file.\nLoad aborted.\n");
-		clear();
-	}
-	
+	if (error) Messenger::error("Errors encountered while loading restart file.\n");
+
 	// Done
 	if (worldPool().isWorldMaster()) parser.closeFiles();
 

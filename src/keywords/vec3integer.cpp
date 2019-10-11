@@ -23,21 +23,24 @@
 #include "base/lineparser.h"
 
 // Constructors
-Vec3IntegerKeyword::Vec3IntegerKeyword(Vec3<int> value) : KeywordData< Vec3<int> >(KeywordBase::Vec3IntegerData, value)
+Vec3IntegerKeyword::Vec3IntegerKeyword(Vec3<int> value, Vec3Labels::LabelType labelType) : KeywordData< Vec3<int> >(KeywordBase::Vec3IntegerData, value)
 {
+	labelType_ = labelType;
 	minimumLimit_ = false;
 	maximumLimit_ = false;
 }
 
-Vec3IntegerKeyword::Vec3IntegerKeyword(Vec3<int> value, Vec3<int> minValue) : KeywordData< Vec3<int> >(KeywordBase::Vec3IntegerData, value)
+Vec3IntegerKeyword::Vec3IntegerKeyword(Vec3<int> value, Vec3<int> minValue, Vec3Labels::LabelType labelType) : KeywordData< Vec3<int> >(KeywordBase::Vec3IntegerData, value)
 {
+	labelType_ = labelType;
 	minimumLimit_ = true;
 	min_ = minValue;
 	maximumLimit_ = false;
 }
 
-Vec3IntegerKeyword::Vec3IntegerKeyword(Vec3<int> value, Vec3<int> minValue, Vec3<int> maxValue) : KeywordData< Vec3<int> >(KeywordBase::Vec3IntegerData, value)
+Vec3IntegerKeyword::Vec3IntegerKeyword(Vec3<int> value, Vec3<int> minValue, Vec3<int> maxValue, Vec3Labels::LabelType labelType) : KeywordData< Vec3<int> >(KeywordBase::Vec3IntegerData, value)
 {
+	labelType_ = labelType;
 	minimumLimit_ = true;
 	min_ = minValue;
 	maximumLimit_ = true;
@@ -47,6 +50,16 @@ Vec3IntegerKeyword::Vec3IntegerKeyword(Vec3<int> value, Vec3<int> minValue, Vec3
 // Destructor
 Vec3IntegerKeyword::~Vec3IntegerKeyword()
 {
+}
+
+/*
+ * Label Type
+ */
+
+// Label type to display in GUI
+Vec3Labels::LabelType Vec3IntegerKeyword::labelType() const
+{
+	return labelType_;
 }
 
 /*

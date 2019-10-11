@@ -7,10 +7,13 @@
 #define MyAppURL "https://www.projectaten.com/"
 #define MyAppExeName "Dissolve-gui.exe"
 
-; Locations of bin directories of Qt, GnuWin(32), and MinGW(32)
-#define QtDir "C:\Qt\5.8\mingw53_32"
+; Locations of bin directories of Dissolve, Qt, GnuWin, MinGW etc.
+#define DissolveDir "..\..\..\..\..\build\dissolve"
+#define FreetypeDir "..\..\..\..\..\build\freetype"
+#define FTGLDir "..\..\..\..\..\build\ftgl"
+#define QtDir "C:\Qt\5.13.1\mingw73_64"
 #define GnuWinDir "C:\GnuWin32"
-#define MinGWDir "C:\Qt\Tools\mingw530_32"
+#define MinGWDir "C:\Qt\Tools\mingw730_64"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -40,15 +43,15 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "..\..\build\Dissolve-serial.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "..\..\build\Dissolve-gui.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#DissolveDir}\Dissolve-serial.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#DissolveDir}\Dissolve-gui.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "..\..\examples\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "Dissolve.ico"; DestDir: "{app}\bin"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
-Source: "{#GnuWinDir}\bin\freetype6.dll"; DestDir: "{app}\bin"
-Source: "{#GnuWinDir}\bin\zlib1.dll"; DestDir: "{app}\bin"
-Source: "{#GnuWinDir}\bin\libftgl.dll"; DestDir: "{app}\bin"
-Source: "{#MinGWDir}\bin\libgcc_s_dw2-1.dll"; DestDir: "{app}\bin"
+Source: "{#FreetypeDir}\libfreetype.dll"; DestDir: "{app}\bin"
+; Source: "{#GnuWinDir}\bin\zlib1.dll"; DestDir: "{app}\bin"
+Source: "{#FTGLDir}\src\libftgl.dll"; DestDir: "{app}\bin"
+Source: "{#MinGWDir}\bin\libgcc_s_seh-1.dll"; DestDir: "{app}\bin"
 Source: "{#MinGWDir}\bin\libstdc++-6.dll"; DestDir: "{app}\bin"
 Source: "{#MinGWDir}\bin\libwinpthread-1.dll"; DestDir: "{app}\bin"
 Source: "{#QtDir}\bin\Qt5Gui.dll"; DestDir: "{app}\bin"; Flags: ignoreversion

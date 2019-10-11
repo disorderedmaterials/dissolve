@@ -65,6 +65,8 @@ class SuperTabWidget : public QTabWidget
 	private slots:
 	// Tab close button clicked
 	void tabCloseButtonClicked(bool);
+	// Tab bar double-clicked
+	void tabBarDoubleClicked(int index);
 
 	signals:
 	void tabClosed(QWidget*);

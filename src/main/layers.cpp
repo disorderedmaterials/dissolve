@@ -48,8 +48,6 @@ bool Dissolve::ownProcessingLayer(ModuleLayer* layer)
 
 	processingLayers_.own(layer);
 
-	setUp_ = false;
-
 	return true;
 }
 

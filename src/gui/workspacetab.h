@@ -44,11 +44,11 @@ class WorkspaceTab : public QWidget, public ListItem<WorkspaceTab>, public MainT
 
 
 	/*
-	 * Data
+	 * MainTab Reimplementations
 	 */
 	public:
 	// Return tab type
-	const char* tabType() const;
+	MainTab::TabType type() const;
 	// Return whether the title of the tab can be changed
 	bool canChangeTitle() const;
 

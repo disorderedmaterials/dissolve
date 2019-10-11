@@ -30,7 +30,7 @@
 // Constructor / Destructor
 ModuleTab::ModuleTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, Module* module) : ListItem<ModuleTab>(), MainTab(dissolveWindow, dissolve, parent, module->uniqueName(), this), module_(module)
 {
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	controlsWidget_ = NULL;
 	moduleWidget_ = NULL;
@@ -54,13 +54,13 @@ ModuleTab::~ModuleTab()
 }
 
 /*
- * Data
+ * MainTab Reimplementations
  */
 
 // Return tab type
-const char* ModuleTab::tabType() const
+MainTab::TabType ModuleTab::type() const
 {
-	return "ModuleTab";
+	return MainTab::ModuleTabType;
 }
 
 /*

@@ -63,7 +63,7 @@ void PairPotentialWidget::initialiseWindow(PairPotential* pp)
 		CharString topText("%s-%s", pp->atomTypeNameI(), pp->atomTypeNameJ());
 		ui.TopLabel->setText(topText.get());
 
-		CharString bottomText("%s %s", PairPotential::shortRangeType(pp->shortRangeType()), pp->includeCoulomb() ? "+ charges" : "(no charges)");
+		CharString bottomText("%s %s", Forcefield::shortRangeTypes().keyword(pp->shortRangeType()), pp->includeCoulomb() ? "+ charges" : "(no charges)");
 		ui.BottomLabel->setText(bottomText.get());
 	}
 	else
