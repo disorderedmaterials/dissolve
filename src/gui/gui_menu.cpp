@@ -25,6 +25,7 @@
 #include "gui/addprocessinglayerdialog.h"
 #include "gui/addspeciesdialog.h"
 #include "gui/modulecontrolwidget.h"
+#include "gui/selectelementdialog.h"
 #include "gui/selectsystemtemplatedialog.h"
 #include "gui/speciestab.h"
 #include "main/dissolve.h"
@@ -293,7 +294,33 @@ void DissolveWindow::on_SimulationSetRandomSeedAction_triggered(bool checked)
  * Species
  */
 
-void DissolveWindow::on_SpeciesAddAction_triggered(bool checked)
+void DissolveWindow::on_SpeciesCreateEmptyAction_triggered(bool checked)
+{
+	Species* newSpecies = dissolve_.addSpecies();
+
+	setModified();
+	fullUpdate();
+	setCurrentTab(newSpecies);
+}
+
+void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
+{
+	// Raise an element selection dialog
+	static SelectElementDialog selectElementDialog(this);
+	Element* el = selectElementDialog.selectElement();
+	if (!el) return;
+
+	// Create the new Species, and add a single atom at {0,0,0}
+	Species* newSpecies = dissolve_.addSpecies();
+	newSpecies->addAtom(el, Vec3<double>());
+	newSpecies->setName(dissolve_.coreData().uniqueSpeciesName(el->symbol()));
+
+	setModified();
+	fullUpdate();
+	setCurrentTab(newSpecies);
+}
+
+void DissolveWindow::on_SpeciesImportDissolveAction_triggered(bool checked)
 {
 	static AddSpeciesDialog addSpeciesDialog(this, dissolve_);
 

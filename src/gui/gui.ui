@@ -900,9 +900,28 @@ Remote Simulation</string>
     <property name="title">
      <string>&amp;Species</string>
     </property>
-    <addaction name="SpeciesAddAction"/>
+    <widget class="QMenu" name="SpeciesCreateMenu">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="title">
+      <string>&amp;Create...</string>
+     </property>
+     <property name="icon">
+      <iconset resource="main.qrc">
+       <normaloff>:/tabs/icons/tabs_species.svg</normaloff>:/tabs/icons/tabs_species.svg</iconset>
+     </property>
+     <addaction name="SpeciesCreateEmptyAction"/>
+     <addaction name="SpeciesCreateAtomicAction"/>
+    </widget>
+    <addaction name="SpeciesCreateMenu"/>
+    <addaction name="SpeciesImportDissolveAction"/>
     <addaction name="separator"/>
     <addaction name="SpeciesRenameAction"/>
+    <addaction name="separator"/>
+    <addaction name="separator"/>
     <addaction name="SpeciesAddForcefieldTermsAction"/>
    </widget>
    <widget class="QMenu" name="ConfigurationMenu">
@@ -1107,18 +1126,6 @@ Remote Simulation</string>
     <string>&amp;New</string>
    </property>
   </action>
-  <action name="SpeciesAddAction">
-   <property name="icon">
-    <iconset resource="main.qrc">
-     <normaloff>:/menu/icons/menu_species.svg</normaloff>:/menu/icons/menu_species.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Add &amp;Species...</string>
-   </property>
-   <property name="toolTip">
-    <string>Add a new Species to the current simulation</string>
-   </property>
-  </action>
   <action name="FileCloseAction">
    <property name="icon">
     <iconset resource="main.qrc">
@@ -1194,7 +1201,31 @@ Remote Simulation</string>
   </action>
   <action name="SpeciesRenameAction">
    <property name="text">
-    <string>Rename...</string>
+    <string>&amp;Rename...</string>
+   </property>
+  </action>
+  <action name="SpeciesCreateEmptyAction">
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/menu/icons/menu_new.svg</normaloff>:/menu/icons/menu_new.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Empty</string>
+   </property>
+  </action>
+  <action name="actionldsjflksdf">
+   <property name="text">
+    <string>ldsjflksdf</string>
+   </property>
+  </action>
+  <action name="SpeciesCreateAtomicAction">
+   <property name="text">
+    <string>&amp;Atomic...</string>
+   </property>
+  </action>
+  <action name="SpeciesImportDissolveAction">
+   <property name="text">
+    <string>&amp;Import...</string>
    </property>
   </action>
  </widget>
