@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>539</width>
-    <height>424</height>
+    <width>542</width>
+    <height>486</height>
    </rect>
   </property>
   <property name="font">
@@ -39,6 +39,12 @@
    </property>
    <item>
     <widget class="QGroupBox" name="ForcefieldsGroup">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>3</verstretch>
+      </sizepolicy>
+     </property>
      <property name="title">
       <string>Available Forcefields</string>
      </property>
@@ -106,10 +112,16 @@
       </item>
       <item>
        <widget class="QListWidget" name="ForcefieldsList">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>200</height>
+          <height>16777215</height>
          </size>
         </property>
        </widget>
@@ -119,6 +131,12 @@
    </item>
    <item>
     <widget class="QGroupBox" name="ForcefieldDetailsGroup">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>2</verstretch>
+      </sizepolicy>
+     </property>
      <property name="title">
       <string>Forcefield Description</string>
      </property>
