@@ -23,7 +23,7 @@
 #include "gui/addconfigurationdialog.h"
 #include "gui/addforcefieldtermsdialog.h"
 #include "gui/addprocessinglayerdialog.h"
-#include "gui/addspeciesdialog.h"
+#include "gui/importspeciesdialog.h"
 #include "gui/modulecontrolwidget.h"
 #include "gui/selectelementdialog.h"
 #include "gui/selectsystemtemplatedialog.h"
@@ -322,7 +322,7 @@ void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
 
 void DissolveWindow::on_SpeciesImportDissolveAction_triggered(bool checked)
 {
-	static AddSpeciesDialog addSpeciesDialog(this, dissolve_);
+	static ImportSpeciesDialog addSpeciesDialog(this, dissolve_);
 
 	addSpeciesDialog.reset();
 

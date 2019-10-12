@@ -1,6 +1,6 @@
 /*
 	*** Add Species Wizard Functions
-	*** src/gui/addspecieswizard_funcs.cpp
+	*** src/gui/importspecieswizard_funcs.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/addspecieswizard.h"
+#include "gui/importspecieswizard.h"
 #include "gui/helpers/listwidgetupdater.h"
 #include "gui/helpers/treewidgetupdater.h"
 #include "main/dissolve.h"
@@ -30,7 +30,7 @@
 #include <QInputDialog>
 
 // Constructor / Destructor
-AddSpeciesWizard::AddSpeciesWizard(QWidget* parent) : temporaryDissolve_(temporaryCoreData_)
+ImportSpeciesWizard::ImportSpeciesWizard(QWidget* parent) : temporaryDissolve_(temporaryCoreData_)
 {
 	dissolveReference_ = NULL;
 	importTarget_ = NULL;
@@ -54,24 +54,20 @@ AddSpeciesWizard::AddSpeciesWizard(QWidget* parent) : temporaryDissolve_(tempora
 	masterTorsionItemParent_->setExpanded(true);
 
 	// Register pages with the wizard
-	registerChoicePage(AddSpeciesWizard::StartPage, "Create Species");
-	registerPage(AddSpeciesWizard::CreateAtomicPage, "Create Atomic Species", AddSpeciesWizard::SpeciesNamePage);
-	registerPage(AddSpeciesWizard::ImportSpeciesSelectFilePage, "Choose Input File", AddSpeciesWizard::ImportSpeciesSelectSpeciesPage);
-	registerPage(AddSpeciesWizard::ImportSpeciesSelectSpeciesPage, "Select Species", AddSpeciesWizard::AtomTypesPage);
-	registerPage(AddSpeciesWizard::AtomTypesPage, "Atom Types");
-	registerPage(AddSpeciesWizard::MasterTermsPage, "Master Terms", AddSpeciesWizard::SpeciesNamePage);
-	registerFinishPage(AddSpeciesWizard::SpeciesNamePage, "Species Name");
+	registerPage(ImportSpeciesWizard::SelectFilePage, "Choose Input File", ImportSpeciesWizard::SelectSpeciesPage);
+	registerPage(ImportSpeciesWizard::SelectSpeciesPage, "Select Species", ImportSpeciesWizard::AtomTypesPage);
+	registerPage(ImportSpeciesWizard::AtomTypesPage, "Atom Types");
+	registerPage(ImportSpeciesWizard::MasterTermsPage, "Master Terms", ImportSpeciesWizard::SpeciesNamePage);
+	registerFinishPage(ImportSpeciesWizard::SpeciesNamePage, "Species Name");
 
 	// Connect signals / slots
 	connect(ui_.AtomTypesList->itemDelegate(), SIGNAL(commitData(QWidget*)), this, SLOT(atomTypesListEdited(QWidget*)));
 	connect(ui_.MasterTermsTree->itemDelegate(), SIGNAL(commitData(QWidget*)), this, SLOT(masterTermsTreeEdited(QWidget*)));
-	connect(ui_.CreateAtomicElementSelector, SIGNAL(elementSelectionChanged()), this, SLOT(createAtomicElementChanged()));
-	if (footerAvailable()) connect(ui_.CreateAtomicElementSelector, SIGNAL(elementDoubleClicked()), this, SLOT(goToNextPage()));
 
 	lockedForRefresh_ = 0;
 }
 
-AddSpeciesWizard::~AddSpeciesWizard()
+ImportSpeciesWizard::~ImportSpeciesWizard()
 {
 }
 
@@ -80,13 +76,13 @@ AddSpeciesWizard::~AddSpeciesWizard()
  */
 
 // Set Dissolve reference
-void AddSpeciesWizard::setMainDissolveReference(const Dissolve* dissolveReference)
+void ImportSpeciesWizard::setMainDissolveReference(const Dissolve* dissolveReference)
 {
 	dissolveReference_ = dissolveReference;
 }
 
 // Copy imported Species over to the specified Dissolve object
-Species* AddSpeciesWizard::importSpecies(Dissolve& dissolve)
+Species* ImportSpeciesWizard::importSpecies(Dissolve& dissolve)
 {
 	// Check that we have a target Species (in temporaryDissolve_) to import
 	if (!importTarget_)
@@ -109,10 +105,10 @@ Species* AddSpeciesWizard::importSpecies(Dissolve& dissolve)
  */
 
 // Go to specified page index in the controls widget
-bool AddSpeciesWizard::displayControlPage(int index)
+bool ImportSpeciesWizard::displayControlPage(int index)
 {
 	// Check page index given
-	if ((index < 0) || (index >= AddSpeciesWizard::nPages)) return Messenger::error("Page index %i not recognised.\n", index);
+	if ((index < 0) || (index >= ImportSpeciesWizard::nPages)) return Messenger::error("Page index %i not recognised.\n", index);
 
 	// Page index is valid, so show it - no need to switch/case
 	ui_.MainStack->setCurrentIndex(index);
@@ -128,18 +124,16 @@ bool AddSpeciesWizard::displayControlPage(int index)
 }
 
 // Return whether progression to the next page from the current page is allowed
-bool AddSpeciesWizard::progressionAllowed(int index) const
+bool ImportSpeciesWizard::progressionAllowed(int index) const
 {
 	// Check widget validity in the specified page, returning if progression (i.e. pushing 'Next' or 'Finish') is allowed
 	switch (index)
 	{
-		case (AddSpeciesWizard::CreateAtomicPage):
-			return (ui_.CreateAtomicElementSelector->currentElement());
-		case (AddSpeciesWizard::ImportSpeciesSelectFilePage):
+		case (ImportSpeciesWizard::SelectFilePage):
 			return ((!ui_.InputFileEdit->text().isEmpty()) && (QFile::exists(ui_.InputFileEdit->text())));
-		case (AddSpeciesWizard::ImportSpeciesSelectSpeciesPage):
+		case (ImportSpeciesWizard::SelectSpeciesPage):
 			return (ui_.SpeciesList->currentRow() != -1);
-		case (AddSpeciesWizard::SpeciesNamePage):
+		case (ImportSpeciesWizard::SpeciesNamePage):
 			return (ui_.SpeciesNameIndicator->state() == CheckIndicator::OKState);
 		default:
 			break;
@@ -149,29 +143,13 @@ bool AddSpeciesWizard::progressionAllowed(int index) const
 }
 
 // Perform any necessary actions before moving to the next page
-bool AddSpeciesWizard::prepareForNextPage(int currentIndex)
+bool ImportSpeciesWizard::prepareForNextPage(int currentIndex)
 {
 	SpeciesAtom* atomicAtom;
 
 	switch (currentIndex)
 	{
-		case (AddSpeciesWizard::CreateAtomicPage):
-			// Create our atomic species here
-			importTarget_ = temporaryDissolve_.addSpecies();
-			atomicAtom = importTarget_->addAtom(ui_.CreateAtomicElementSelector->currentElement(), Vec3<double>());
-
-			// Add associated AtomType?
-			if (ui_.CreateAtomicAddAtomTypeCheck->isChecked())
-			{
-				AtomType* at = temporaryDissolve_.addAtomType(ui_.CreateAtomicElementSelector->currentElement());
-				at->setName(dissolveReference_->constCoreData().uniqueAtomTypeName(ui_.CreateAtomicElementSelector->currentElement()->symbol()));
-				atomicAtom->setAtomType(at);
-			}
-
-			// Set a suitable name
-			ui_.SpeciesNameEdit->setText(dissolveReference_->constCoreData().uniqueSpeciesName(ui_.CreateAtomicElementSelector->currentElement()->symbol()));
-			break;
-		case (AddSpeciesWizard::ImportSpeciesSelectFilePage):
+		case (ImportSpeciesWizard::SelectFilePage):
 			// Check that the input/species file exists, and can be read in successfully
 			if (!temporaryDissolve_.loadInput(qPrintable(ui_.InputFileEdit->text())))
 			{
@@ -202,14 +180,14 @@ bool AddSpeciesWizard::prepareForNextPage(int currentIndex)
 }
 
 // Determine next page for the current page, based on current data
-int AddSpeciesWizard::determineNextPage(int currentIndex)
+int ImportSpeciesWizard::determineNextPage(int currentIndex)
 {
 	switch (currentIndex)
 	{
-		case (AddSpeciesWizard::AtomTypesPage):
+		case (ImportSpeciesWizard::AtomTypesPage):
 			// If there are master terms present, go to that page first. Otherwise, skip straight to naming
-			if (temporaryCoreData_.nMasterBonds() || temporaryCoreData_.nMasterAngles() || temporaryCoreData_.nMasterTorsions()) return AddSpeciesWizard::MasterTermsPage;
-			else return AddSpeciesWizard::SpeciesNamePage;
+			if (temporaryCoreData_.nMasterBonds() || temporaryCoreData_.nMasterAngles() || temporaryCoreData_.nMasterTorsions()) return ImportSpeciesWizard::MasterTermsPage;
+			else return ImportSpeciesWizard::SpeciesNamePage;
 		default:
 			break;
 	}
@@ -218,11 +196,11 @@ int AddSpeciesWizard::determineNextPage(int currentIndex)
 }
 
 // Perform any necessary actions before moving to the previous page
-bool AddSpeciesWizard::prepareForPreviousPage(int currentIndex)
+bool ImportSpeciesWizard::prepareForPreviousPage(int currentIndex)
 {
 	switch (currentIndex)
 	{
-		case (AddSpeciesWizard::ImportSpeciesSelectSpeciesPage):
+		case (ImportSpeciesWizard::SelectSpeciesPage):
 			// Clear the temporary dissolve instance
 			temporaryDissolve_.clear();
 		default:
@@ -237,10 +215,10 @@ bool AddSpeciesWizard::prepareForPreviousPage(int currentIndex)
  */
 
 // Reset widget, ready for adding a new Species
-void AddSpeciesWizard::reset()
+void ImportSpeciesWizard::reset()
 {
 	// Reset the underlying WizardWidget
-	resetToPage(AddSpeciesWizard::StartPage);
+	resetToPage(ImportSpeciesWizard::SelectFilePage);
 
 	// Clear our temporary Dissolve instance
 	temporaryDissolve_.clear();
@@ -250,56 +228,15 @@ void AddSpeciesWizard::reset()
 }
 
 /*
- * Start Page
- */
-
-void AddSpeciesWizard::on_StartCreateEmptyButton_clicked(bool checked)
-{
-	// Create an empty Species in our temporary data
-	importTarget_ = temporaryCoreData_.addSpecies();
-
-	// Done - go to the final, naming page
-	goToPage(AddSpeciesWizard::SpeciesNamePage);
-}
-
-void AddSpeciesWizard::on_StartCreateAtomicButton_clicked(bool checked)
-{
-	goToPage(AddSpeciesWizard::CreateAtomicPage);
-}
-
-void AddSpeciesWizard::on_StartAddPredefinedButton_clicked(bool checked)
-{
-}
-
-void AddSpeciesWizard::on_StartImportCoordinatesButton_clicked(bool checked)
-{
-}
-
-void AddSpeciesWizard::on_StartImportSpeciesButton_clicked(bool checked)
-{
-	// Go to the input file selector
-	goToPage(AddSpeciesWizard::ImportSpeciesSelectFilePage);
-}
-
-/*
- * Create Atomic Page
- */
-
-void AddSpeciesWizard::createAtomicElementChanged()
-{
-	updateProgressionControls();
-}
-
-/*
  * Import Species Pages
  */
 
-void AddSpeciesWizard::on_InputFileEdit_textChanged(const QString text)
+void ImportSpeciesWizard::on_InputFileEdit_textChanged(const QString text)
 {
 	updateProgressionControls();
 }
 
-void AddSpeciesWizard::on_InputFileSelectButton_clicked(bool checked)
+void ImportSpeciesWizard::on_InputFileSelectButton_clicked(bool checked)
 {
 	QString inputFile = QFileDialog::getOpenFileName(this, "Choose species / input file to open", QDir().absolutePath(), "Dissolve input / species files (*.txt *.dsp)");
 	if (inputFile.isEmpty()) return;
@@ -310,7 +247,7 @@ void AddSpeciesWizard::on_InputFileSelectButton_clicked(bool checked)
 	updateProgressionControls();
 }
 
-void AddSpeciesWizard::on_SpeciesList_currentRowChanged(int currentRow)
+void ImportSpeciesWizard::on_SpeciesList_currentRowChanged(int currentRow)
 {
 	// Set import target from current row
 	if (currentRow == -1) importTarget_ = NULL;
@@ -328,7 +265,7 @@ void AddSpeciesWizard::on_SpeciesList_currentRowChanged(int currentRow)
  */
 
 // Row update function for AtomTypesList
-void AddSpeciesWizard::updateAtomTypesListRow(int row, AtomType* atomType, bool createItem)
+void ImportSpeciesWizard::updateAtomTypesListRow(int row, AtomType* atomType, bool createItem)
 {
 	QListWidgetItem* item;
 	if (createItem)
@@ -346,10 +283,10 @@ void AddSpeciesWizard::updateAtomTypesListRow(int row, AtomType* atomType, bool 
 }
 
 // Update page with AtomTypes in our temporary Dissolve reference
-void AddSpeciesWizard::updateAtomTypesPage()
+void ImportSpeciesWizard::updateAtomTypesPage()
 {
 	// Update the list against the global AtomType list
-	ListWidgetUpdater<AddSpeciesWizard,AtomType> listUpdater(ui_.AtomTypesList, temporaryCoreData_.constAtomTypes(), this, &AddSpeciesWizard::updateAtomTypesListRow);
+	ListWidgetUpdater<ImportSpeciesWizard,AtomType> listUpdater(ui_.AtomTypesList, temporaryCoreData_.constAtomTypes(), this, &ImportSpeciesWizard::updateAtomTypesListRow);
 
 	// Determine whether we have any naming conflicts
 	bool conflicts = false;
@@ -364,7 +301,7 @@ void AddSpeciesWizard::updateAtomTypesPage()
 	else ui_.AtomTypesIndicatorLabel->setText("There are no naming conflicts with the imported AtomTypes");
 }
 
-void AddSpeciesWizard::on_AtomTypesList_itemSelectionChanged()
+void ImportSpeciesWizard::on_AtomTypesList_itemSelectionChanged()
 {
 	// Enable / disable prefix and suffix buttons as appropriate
 	bool isSelection = ui_.AtomTypesList->selectedItems().count() > 0;
@@ -372,7 +309,7 @@ void AddSpeciesWizard::on_AtomTypesList_itemSelectionChanged()
 	ui_.AtomTypesSuffixButton->setEnabled(isSelection);
 }
 
-void AddSpeciesWizard::atomTypesListEdited(QWidget* lineEdit)
+void ImportSpeciesWizard::atomTypesListEdited(QWidget* lineEdit)
 {
 	// Since the signal that leads us here does not tell us the item that was edited, update all AtomType names here before updating the page
 	for (int n=0; n<ui_.AtomTypesList->count(); ++n)
@@ -387,7 +324,7 @@ void AddSpeciesWizard::atomTypesListEdited(QWidget* lineEdit)
 	updateAtomTypesPage();
 }
 
-void AddSpeciesWizard::on_AtomTypesPrefixButton_clicked(bool checked)
+void ImportSpeciesWizard::on_AtomTypesPrefixButton_clicked(bool checked)
 {
 	bool ok;
 	QString prefix = QInputDialog::getText(this, "Prefix AtomTypes", "Enter prefix to apply to all selected AtomTypes", QLineEdit::Normal, "", &ok);
@@ -404,7 +341,7 @@ void AddSpeciesWizard::on_AtomTypesPrefixButton_clicked(bool checked)
 	updateAtomTypesPage();
 }
 
-void AddSpeciesWizard::on_AtomTypesSuffixButton_clicked(bool checked)
+void ImportSpeciesWizard::on_AtomTypesSuffixButton_clicked(bool checked)
 {
 	bool ok;
 	QString suffix = QInputDialog::getText(this, "Suffix AtomTypes", "Enter suffix to apply to all selected AtomTypes", QLineEdit::Normal, "", &ok);
@@ -426,7 +363,7 @@ void AddSpeciesWizard::on_AtomTypesSuffixButton_clicked(bool checked)
  */
 
 // Row update function for MasterTermsList
-void AddSpeciesWizard::updateMasterTermsTreeChild(QTreeWidgetItem* parent, int childIndex, MasterIntra* masterIntra, bool createItem)
+void ImportSpeciesWizard::updateMasterTermsTreeChild(QTreeWidgetItem* parent, int childIndex, MasterIntra* masterIntra, bool createItem)
 {
 	QTreeWidgetItem* item;
 	if (createItem)
@@ -444,12 +381,12 @@ void AddSpeciesWizard::updateMasterTermsTreeChild(QTreeWidgetItem* parent, int c
 }
 
 // Update page with MasterTerms in our temporary Dissolve reference
-void AddSpeciesWizard::updateMasterTermsPage()
+void ImportSpeciesWizard::updateMasterTermsPage()
 {
 	// Update the list against the global MasterTerm tree
-	TreeWidgetUpdater<AddSpeciesWizard,MasterIntra> bondUpdater(masterBondItemParent_, temporaryCoreData_.masterBonds(), this, &AddSpeciesWizard::updateMasterTermsTreeChild);
-	TreeWidgetUpdater<AddSpeciesWizard,MasterIntra> angleUpdater(masterAngleItemParent_, temporaryCoreData_.masterAngles(), this, &AddSpeciesWizard::updateMasterTermsTreeChild);
-	TreeWidgetUpdater<AddSpeciesWizard,MasterIntra> torsionUpdater(masterTorsionItemParent_, temporaryCoreData_.masterTorsions(), this, &AddSpeciesWizard::updateMasterTermsTreeChild);
+	TreeWidgetUpdater<ImportSpeciesWizard,MasterIntra> bondUpdater(masterBondItemParent_, temporaryCoreData_.masterBonds(), this, &ImportSpeciesWizard::updateMasterTermsTreeChild);
+	TreeWidgetUpdater<ImportSpeciesWizard,MasterIntra> angleUpdater(masterAngleItemParent_, temporaryCoreData_.masterAngles(), this, &ImportSpeciesWizard::updateMasterTermsTreeChild);
+	TreeWidgetUpdater<ImportSpeciesWizard,MasterIntra> torsionUpdater(masterTorsionItemParent_, temporaryCoreData_.masterTorsions(), this, &ImportSpeciesWizard::updateMasterTermsTreeChild);
 
 	// Determine whether we have any naming conflicts
 	bool conflicts = false;
@@ -476,7 +413,7 @@ void AddSpeciesWizard::updateMasterTermsPage()
 	else ui_.MasterTermsIndicatorLabel->setText("There are no naming conflicts with the imported MasterTerms");
 }
 
-void AddSpeciesWizard::on_MasterTermsTree_itemSelectionChanged()
+void ImportSpeciesWizard::on_MasterTermsTree_itemSelectionChanged()
 {
 	// Enable / disable prefix and suffix buttons as appropriate
 	bool isSelection = ui_.MasterTermsTree->selectedItems().count() > 0;
@@ -484,7 +421,7 @@ void AddSpeciesWizard::on_MasterTermsTree_itemSelectionChanged()
 	ui_.MasterTermsSuffixButton->setEnabled(isSelection);
 }
 
-void AddSpeciesWizard::masterTermsTreeEdited(QWidget* lineEdit)
+void ImportSpeciesWizard::masterTermsTreeEdited(QWidget* lineEdit)
 {
 	// Since the signal that leads us here does not tell us the item that was edited, update all MasterTerm names here before updating the page
 	for (int n=0; n<masterBondItemParent_->childCount(); ++n)
@@ -515,7 +452,7 @@ void AddSpeciesWizard::masterTermsTreeEdited(QWidget* lineEdit)
 	updateMasterTermsPage();
 }
 
-void AddSpeciesWizard::on_MasterTermsPrefixButton_clicked(bool checked)
+void ImportSpeciesWizard::on_MasterTermsPrefixButton_clicked(bool checked)
 {
 	bool ok;
 	QString prefix = QInputDialog::getText(this, "Prefix MasterTerms", "Enter prefix to apply to all selected MasterTerms", QLineEdit::Normal, "", &ok);
@@ -532,7 +469,7 @@ void AddSpeciesWizard::on_MasterTermsPrefixButton_clicked(bool checked)
 	updateMasterTermsPage();
 }
 
-void AddSpeciesWizard::on_MasterTermsSuffixButton_clicked(bool checked)
+void ImportSpeciesWizard::on_MasterTermsSuffixButton_clicked(bool checked)
 {
 	bool ok;
 	QString suffix = QInputDialog::getText(this, "Suffix MasterTerms", "Enter suffix to apply to all selected MasterTerms", QLineEdit::Normal, "", &ok);
@@ -554,11 +491,11 @@ void AddSpeciesWizard::on_MasterTermsSuffixButton_clicked(bool checked)
  */
 
 // Species name edited
-void AddSpeciesWizard::on_SpeciesNameEdit_textChanged(const QString text)
+void ImportSpeciesWizard::on_SpeciesNameEdit_textChanged(const QString text)
 {
 	if (!dissolveReference_)
 	{
-		printf("Internal Error: Dissolve pointer has not been set in AddSpeciesWizard.\n");
+		printf("Internal Error: Dissolve pointer has not been set in ImportSpeciesWizard.\n");
 		return;
 	}
 

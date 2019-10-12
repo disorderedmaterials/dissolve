@@ -26,7 +26,7 @@ SET(gui_MOC_HDRS
   addconfigurationwizard.h
   addforcefieldtermswizard.h
   addprocessinglayerwizard.h
-  addspecieswizard.h
+  importspecieswizard.h
   keywordswidget.hui
   pairpotentialwidget.h
   selectforcefieldwidget.h
@@ -40,9 +40,9 @@ SET(gui_MOC_HDRS
   addconfigurationdialog.h
   addforcefieldtermsdialog.h
   addprocessinglayerdialog.h
-  addspeciesdialog.h
   getconfigurationnamedialog.h
   getspeciesnamedialog.h
+  importspeciesdialog.h
   selectelementdialog.h
   selectforcefielddialog.h
   selectsystemtemplatedialog.h
@@ -80,7 +80,7 @@ SET(gui_UIS
   addconfigurationwizard.ui
   addforcefieldtermswizard.ui
   addprocessinglayerwizard.ui
-  addspecieswizard.ui
+  importspecieswizard.ui
   pairpotentialwidget.ui
   selectforcefieldwidget.ui
   wizardwidgetfooter.ui
@@ -90,9 +90,9 @@ SET(gui_UIS
   addconfigurationdialog.ui
   addforcefieldtermsdialog.ui
   addprocessinglayerdialog.ui
-  addspeciesdialog.ui
   getconfigurationnamedialog.ui
   getspeciesnamedialog.ui
+  importspeciesdialog.ui
   selectelementdialog.ui
   selectforcefielddialog.ui
   selectsystemtemplatedialog.ui
@@ -127,7 +127,7 @@ SET(gui_SRCS
   addconfigurationwizard_funcs.cpp
   addforcefieldtermswizard_funcs.cpp
   addprocessinglayerwizard_funcs.cpp
-  addspecieswizard_funcs.cpp
+  importspecieswizard_funcs.cpp
   keywordswidget_funcs.cpp
   pairpotentialwidget_funcs.cpp
   selectforcefieldwidget_funcs.cpp
@@ -139,9 +139,9 @@ SET(gui_SRCS
   addconfigurationdialog_funcs.cpp
   addforcefieldtermsdialog_funcs.cpp
   addprocessinglayerdialog_funcs.cpp
-  addspeciesdialog_funcs.cpp
   getconfigurationnamedialog_funcs.cpp
   getspeciesnamedialog_funcs.cpp
+  importspeciesdialog_funcs.cpp
   selectelementdialog_funcs.cpp
   selectforcefielddialog_funcs.cpp
   selectsystemtemplatedialog_funcs.cpp

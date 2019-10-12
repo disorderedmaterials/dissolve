@@ -1,6 +1,6 @@
 /*
-	*** Add Species Dialog
-	*** src/gui/addspeciesdialog.h
+	*** Import Species Dialog
+	*** src/gui/importspeciesdialog.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,30 +19,30 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DIALOG_ADDSPECIES_H
-#define DISSOLVE_DIALOG_ADDSPECIES_H
+#ifndef DISSOLVE_DIALOG_IMPORTSPECIES_H
+#define DISSOLVE_DIALOG_IMPORTSPECIES_H
 
-#include "gui/ui_addspeciesdialog.h"
+#include "gui/ui_importspeciesdialog.h"
 #include <QDialog>
 
 // Forward Declarations
 class Dissolve;
 class Species;
 
-// Add Species Dialog
-class AddSpeciesDialog : public QDialog
+// Import Species Dialog
+class ImportSpeciesDialog : public QDialog
 {
 	Q_OBJECT
 
 	public:
 	// Constructor
-	AddSpeciesDialog(QWidget* parent, const Dissolve& mainDissolveInstance);
+	ImportSpeciesDialog(QWidget* parent, const Dissolve& mainDissolveInstance);
 	// Destructor
-	~AddSpeciesDialog();
+	~ImportSpeciesDialog();
 
 	private:
 	// Main form declaration
-	Ui::AddSpeciesDialog ui_;
+	Ui::ImportSpeciesDialog ui_;
 
 	public:
 	// Reset, ready for adding a new Species
