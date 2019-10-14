@@ -30,6 +30,7 @@ SET(gui_MOC_HDRS
   keywordswidget.hui
   pairpotentialwidget.h
   selectforcefieldwidget.h
+  selectspecieswidget.h
   wizardwidget.hui
   wizardwidgetfooter.h
   wizardwidgetheader.h
@@ -45,6 +46,7 @@ SET(gui_MOC_HDRS
   importspeciesdialog.h
   selectelementdialog.h
   selectforcefielddialog.h
+  selectspeciesdialog.h
   selectsystemtemplatedialog.h
 
   # Main Tabs
@@ -83,6 +85,7 @@ SET(gui_UIS
   importspecieswizard.ui
   pairpotentialwidget.ui
   selectforcefieldwidget.ui
+  selectspecieswidget.ui
   wizardwidgetfooter.ui
   wizardwidgetheader.ui
 
@@ -95,6 +98,7 @@ SET(gui_UIS
   importspeciesdialog.ui
   selectelementdialog.ui
   selectforcefielddialog.ui
+  selectspeciesdialog.ui
   selectsystemtemplatedialog.ui
 
   # Main Tabs
@@ -131,6 +135,7 @@ SET(gui_SRCS
   keywordswidget_funcs.cpp
   pairpotentialwidget_funcs.cpp
   selectforcefieldwidget_funcs.cpp
+  selectspecieswidget_funcs.cpp
   wizardwidget_funcs.cpp
   wizardwidgethighlight.cpp
   wizardwidgetpageinfo.cpp
@@ -144,6 +149,7 @@ SET(gui_SRCS
   importspeciesdialog_funcs.cpp
   selectelementdialog_funcs.cpp
   selectforcefielddialog_funcs.cpp
+  selectspeciesdialog_funcs.cpp
   selectsystemtemplatedialog_funcs.cpp
 
   # Main Tabs
