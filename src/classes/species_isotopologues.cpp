@@ -40,20 +40,6 @@ Isotopologue* Species::addIsotopologue(const char* baseName, const List<AtomType
 	return iso;
 }
 
-// Add natural isotopologue to this species, if it hasn't already been defined
-Isotopologue* Species::addNaturalIsotopologue(const List<AtomType>& masterAtomTypes)
-{
-	Isotopologue* natural = findIsotopologue("Natural");
-	if (natural)
-	{
-		Messenger::print("Natural isotopologue for Species '%s' is already defined, so we will not add our own.\n", name());
-		return natural;
-	}
-
-	// Create the new Isotopologue
-	return addIsotopologue("Natural", masterAtomTypes);
-}
-
 // Remove specified Isotopologue from this Species
 void Species::removeIsotopologue(Isotopologue* iso)
 {
