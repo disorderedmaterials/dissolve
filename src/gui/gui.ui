@@ -825,7 +825,7 @@ Remote Simulation</string>
      <x>0</x>
      <y>0</y>
      <width>807</width>
-     <height>25</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="SessionMenu">
@@ -933,7 +933,33 @@ Remote Simulation</string>
     <property name="title">
      <string>&amp;Configuration</string>
     </property>
-    <addaction name="ConfigurationAddAction"/>
+    <widget class="QMenu" name="ConfigurationCreateMenu">
+     <property name="geometry">
+      <rect>
+       <x>642</x>
+       <y>140</y>
+       <width>184</width>
+       <height>158</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="title">
+      <string>Create...</string>
+     </property>
+     <property name="icon">
+      <iconset resource="main.qrc">
+       <normaloff>:/tabs/icons/tabs_configuration.svg</normaloff>:/tabs/icons/tabs_configuration.svg</iconset>
+     </property>
+     <addaction name="ConfigurationCreateEmptyAction"/>
+     <addaction name="separator"/>
+     <addaction name="ConfigurationCreateSimpleRandomMixAction"/>
+     <addaction name="ConfigurationCreateRelativeRandomMixAction"/>
+    </widget>
+    <addaction name="ConfigurationCreateMenu"/>
     <addaction name="separator"/>
     <addaction name="ConfigurationRenameAction"/>
    </widget>
@@ -1009,15 +1035,6 @@ Remote Simulation</string>
     <font>
      <italic>true</italic>
     </font>
-   </property>
-  </action>
-  <action name="ConfigurationAddAction">
-   <property name="icon">
-    <iconset resource="main.qrc">
-     <normaloff>:/tabs/icons/tabs_configuration.svg</normaloff>:/tabs/icons/tabs_configuration.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Add &amp;Configuration...</string>
    </property>
   </action>
   <action name="WorkspaceAddWidgetGeneralAction">
@@ -1226,6 +1243,21 @@ Remote Simulation</string>
   <action name="SpeciesImportDissolveAction">
    <property name="text">
     <string>&amp;Import...</string>
+   </property>
+  </action>
+  <action name="ConfigurationCreateEmptyAction">
+   <property name="text">
+    <string>&amp;Empty</string>
+   </property>
+  </action>
+  <action name="ConfigurationCreateSimpleRandomMixAction">
+   <property name="text">
+    <string>Simple random mix</string>
+   </property>
+  </action>
+  <action name="ConfigurationCreateRelativeRandomMixAction">
+   <property name="text">
+    <string>Relative random mix</string>
    </property>
   </action>
  </widget>

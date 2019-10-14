@@ -180,7 +180,9 @@ class DissolveWindow : public QMainWindow
 	void on_SpeciesRenameAction_triggered(bool checked);
 	void on_SpeciesAddForcefieldTermsAction_triggered(bool checked);
 	// Configuration
-	void on_ConfigurationAddAction_triggered(bool checked);
+	void on_ConfigurationCreateEmptyAction_triggered(bool checked);
+	void on_ConfigurationCreateSimpleRandomMixAction_triggered(bool checked);
+	void on_ConfigurationCreateRelativeRandomMixAction_triggered(bool checked);
 	void on_ConfigurationRenameAction_triggered(bool checked);
 	// Layer
 	void on_LayerAddAction_triggered(bool checked);

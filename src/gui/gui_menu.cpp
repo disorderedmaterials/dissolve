@@ -26,9 +26,14 @@
 #include "gui/importspeciesdialog.h"
 #include "gui/modulecontrolwidget.h"
 #include "gui/selectelementdialog.h"
+#include "gui/selectspeciesdialog.h"
 #include "gui/selectsystemtemplatedialog.h"
 #include "gui/speciestab.h"
 #include "main/dissolve.h"
+#include "procedure/procedure.h"
+#include "procedure/nodes/addspecies.h"
+#include "procedure/nodes/box.h"
+#include "procedure/nodes/parameters.h"
 #include "templates/variantpointer.h"
 #include <QDesktopServices>
 #include <QInputDialog>
@@ -371,22 +376,77 @@ void DissolveWindow::on_SpeciesAddForcefieldTermsAction_triggered(bool checked)
  * Configuration
  */
 
-void DissolveWindow::on_ConfigurationAddAction_triggered(bool checked)
+void DissolveWindow::on_ConfigurationCreateEmptyAction_triggered(bool checked)
 {
-	static AddConfigurationDialog addConfigurationDialog(this, dissolve_);
+	Configuration* newConfiguration = dissolve_.addConfiguration();
 
-	addConfigurationDialog.reset();
+	setModified();
+	fullUpdate();
+	setCurrentTab(newConfiguration);
+}
 
-	if (addConfigurationDialog.exec() == QDialog::Accepted)
+void DissolveWindow::on_ConfigurationCreateSimpleRandomMixAction_triggered(bool checked)
+{
+	// Create a SpeciesSelectDialog and use it to get the Species to add to the mix
+	static SelectSpeciesDialog speciesSelectDialog(this, dissolve_.coreData(), "Select species to mix");
+
+	RefList<Species> mixSpecies = speciesSelectDialog.selectSpecies(1, -1);
+	if (mixSpecies.nItems() == 0) return;
+
+	// Create the Configuration and a suitable generator
+	Configuration* newConfiguration = dissolve_.addConfiguration();
+	Procedure& generator = newConfiguration->generator();
+	ParametersProcedureNode* paramsNode = new ParametersProcedureNode;
+	paramsNode->addParameter("rho", 0.1);
+	generator.addRootSequenceNode(paramsNode);
+	generator.addRootSequenceNode(new BoxProcedureNode);
+	RefListIterator<Species> mixIterator(mixSpecies);
+	while (Species* sp = mixIterator.iterate())
 	{
-		Configuration* cfg = addConfigurationDialog.importConfiguration(dissolve_);
-
-		// Fully update GUI
-		setModified();
-		fullUpdate();
-
-		setCurrentTab(cfg);
+		generator.addRootSequenceNode(new AddSpeciesProcedureNode(sp, 100, NodeValue("rho", paramsNode->parameterReferences())));
 	}
+
+	setModified();
+	fullUpdate();
+	setCurrentTab(newConfiguration);
+}
+
+void DissolveWindow::on_ConfigurationCreateRelativeRandomMixAction_triggered(bool checked)
+{
+	// Create a SpeciesSelectDialog and use it to get the Species to add to the mix
+	static SelectSpeciesDialog speciesSelectDialog(this, dissolve_.coreData(), "Select species to mix");
+
+	RefList<Species> mixSpecies = speciesSelectDialog.selectSpecies(1, -1);
+	if (mixSpecies.nItems() == 0) return;
+
+	// Create the Configuration and a suitable generator
+	Configuration* newConfiguration = dissolve_.addConfiguration();
+	Procedure& generator = newConfiguration->generator();
+	ParametersProcedureNode* paramsNode = new ParametersProcedureNode;
+	paramsNode->addParameter("populationA", 100);
+	paramsNode->addParameter("rho", 0.1);
+	generator.addRootSequenceNode(paramsNode);
+	generator.addRootSequenceNode(new BoxProcedureNode);
+	RefListIterator<Species> mixIterator(mixSpecies);
+	int count = 0;
+	while (Species* sp = mixIterator.iterate())
+	{
+		// Add a parameter for the ratio of this species to the first (or the population of the first)
+		if (mixIterator.isFirst()) generator.addRootSequenceNode(new AddSpeciesProcedureNode(sp, NodeValue("populationA", paramsNode->parameterReferences()), NodeValue("rho", paramsNode->parameterReferences())));
+		else
+		{
+			CharString parameterName("ratio%c", 65+count);
+			paramsNode->addParameter(parameterName, 1);
+
+			generator.addRootSequenceNode(new AddSpeciesProcedureNode(sp, NodeValue(CharString("%s*populationA", parameterName.get()), paramsNode->parameterReferences()), NodeValue("rho", paramsNode->parameterReferences())));
+		}
+
+		++count;
+	}
+
+	setModified();
+	fullUpdate();
+	setCurrentTab(newConfiguration);
 }
 
 void DissolveWindow::on_ConfigurationRenameAction_triggered(bool checked)
