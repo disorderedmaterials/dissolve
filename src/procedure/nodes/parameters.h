@@ -59,6 +59,10 @@ class ParametersProcedureNode : public ProcedureNode
 	List<ExpressionNode> doubleParameters_;
 
 	public:
+	// Add new integer parameter
+	bool addParameter(const char* name, int initialValue = 0);
+	// Add new double parameter
+	bool addParameter(const char* name, double initialValue = 0.0);
 	// Return whether this node has the named parameter specified
 	ExpressionVariable* hasParameter(const char* name, ExpressionVariable* excludeParameter);
 	// Return list of all parameters for this node
