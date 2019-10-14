@@ -99,6 +99,13 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool&
 	}
 	const int nAtomsToAdd = requestedPopulation * sp->nAtoms();
 
+	// Can't add the Species if it has any missing core information
+	if (!sp->checkSetUp())
+	{
+		Messenger::error("Can't add Species '%s' because it is not set up correctly.\n", sp->name());
+		return ProcedureNode::Failure;
+	}
+
 	Messenger::print("[AddSpecies] Adding species '%s' - population is %i.\n", sp->name(), requestedPopulation);
 
 	// If a density was not given, just add new molecules to the current box without adjusting its size
