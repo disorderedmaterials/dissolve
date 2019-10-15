@@ -45,6 +45,7 @@ void DissolveWindow::on_ControlPauseButton_clicked(bool checked)
 
 void DissolveWindow::on_ControlReloadButton_clicked(bool checked)
 {
+	// TODO
 }
 
 // Set widgets ready for the main code to be run
