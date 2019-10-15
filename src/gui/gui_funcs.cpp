@@ -48,14 +48,14 @@ DissolveWindow::DissolveWindow(Dissolve& dissolve) : QMainWindow(NULL), dissolve
 	QFontDatabase::addApplicationFont(":/fonts/fonts/SourceSansPro-Regular.ttf");
 
 	// Set up user interface
-	ui.setupUi(this);
+	ui_.setupUi(this);
 
 	// Connect signals to thread controller
 	connect(this, SIGNAL(iterate(int)), &threadController_, SLOT(iterate(int)));
 	connect(this, SIGNAL(stopIterating()), &threadController_, SLOT(stopIterating()));
 
 	// Connect signals from our main tab widget / bar
-	connect(ui.MainTabs, SIGNAL(tabClosed(QWidget*)), this, SLOT(removeTab(QWidget*)));
+	connect(ui_.MainTabs, SIGNAL(tabClosed(QWidget*)), this, SLOT(removeTab(QWidget*)));
 	dissolveState_ = EditingState;
 
 	refreshing_ = false;
@@ -147,7 +147,7 @@ const Dissolve& DissolveWindow::constDissolve() const
 void DissolveWindow::addOutputHandler()
 {
 	Messenger::setOutputHandler(&outputHandler_);
-	connect(&outputHandler_, SIGNAL(printText(const QString&)), ui.MessagesBrowser, SLOT(append(const QString&)));
+	connect(&outputHandler_, SIGNAL(printText(const QString&)), ui_.MessagesBrowser, SLOT(append(const QString&)));
 }
 
 /*
@@ -271,20 +271,20 @@ void DissolveWindow::updateWindowTitle()
 	setWindowTitle(title);
 
 	// Update save menu item
-	ui.FileSaveAction->setEnabled(modified_);
+	ui_.FileSaveAction->setEnabled(modified_);
 }
 
 // Update controls frame
 void DissolveWindow::updateControlsFrame()
 {
 	// Update ControlFrame to reflect Dissolve's current state
-	ui.ControlRunButton->setEnabled(dissolveState_ == DissolveWindow::EditingState);
-	ui.ControlStepButton->setEnabled(dissolveState_ == DissolveWindow::EditingState);
-	ui.ControlPauseButton->setEnabled(dissolveState_ == DissolveWindow::RunningState);
-	ui.ControlReloadButton->setEnabled(dissolveState_ == DissolveWindow::MonitoringState);
+	ui_.ControlRunButton->setEnabled(dissolveState_ == DissolveWindow::EditingState);
+	ui_.ControlStepButton->setEnabled(dissolveState_ == DissolveWindow::EditingState);
+	ui_.ControlPauseButton->setEnabled(dissolveState_ == DissolveWindow::RunningState);
+	ui_.ControlReloadButton->setEnabled(dissolveState_ == DissolveWindow::MonitoringState);
 
 	// Set current iteration number
-	ui.ControlIterationLabel->setText(CharString("%06i", dissolve_.iteration()).get());
+	ui_.ControlIterationLabel->setText(CharString("%06i", dissolve_.iteration()).get());
 
 	// Set relevant file locations
 	if (localSimulation_)
@@ -309,11 +309,11 @@ void DissolveWindow::updateMenus()
 	if (!activeTab) return;
 
 	// Species Menu
-	ui.SpeciesRenameAction->setEnabled(activeTab->type() == MainTab::SpeciesTabType);
-	ui.SpeciesAddForcefieldTermsAction->setEnabled(activeTab->type() == MainTab::SpeciesTabType);
+	ui_.SpeciesRenameAction->setEnabled(activeTab->type() == MainTab::SpeciesTabType);
+	ui_.SpeciesAddForcefieldTermsAction->setEnabled(activeTab->type() == MainTab::SpeciesTabType);
 
 	// Configuration Menu
-	ui.ConfigurationRenameAction->setEnabled(activeTab->type() == MainTab::ConfigurationTabType);
+	ui_.ConfigurationRenameAction->setEnabled(activeTab->type() == MainTab::ConfigurationTabType);
 }
 
 // Perform full update of the GUI, including tab reconciliation
@@ -338,12 +338,12 @@ void DissolveWindow::fullUpdate()
 // Set currently-visible main stack page
 void DissolveWindow::showMainStackPage(DissolveWindow::MainStackPage page)
 {
-	ui.MainStack->setCurrentIndex(page);
+	ui_.MainStack->setCurrentIndex(page);
 
 	// Enable / disable main menu items as appropriate
-	ui.SimulationMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
-	ui.SpeciesMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
-	ui.ConfigurationMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
-	ui.LayerMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
-	ui.WorkspaceMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
+	ui_.SimulationMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
+	ui_.SpeciesMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
+	ui_.ConfigurationMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
+	ui_.LayerMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
+	ui_.WorkspaceMenu->setEnabled(page == DissolveWindow::SimulationStackPage);
 }

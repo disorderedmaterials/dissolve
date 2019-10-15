@@ -29,12 +29,12 @@
 #include "base/sysfunc.h"
 
 // Constructor
-AddSpeciesProcedureNode::AddSpeciesProcedureNode(Species* sp, int population, double atomicDensity) : ProcedureNode(ProcedureNode::AddSpeciesNode)
+AddSpeciesProcedureNode::AddSpeciesProcedureNode(Species* sp, NodeValue population, NodeValue density, Units::DensityUnits densityUnits) : ProcedureNode(ProcedureNode::AddSpeciesNode)
 {
 	// Set up keywords
 	keywords_.add("Target", new SpeciesKeyword(sp), "Species", "Target Species to add");
 	keywords_.add("Target", new NodeValueKeyword(this, population), "Population", "Population of the target Species to add");
-	keywords_.add("Target", new NodeValueEnumOptionsKeyword<Units::DensityUnits>(this, atomicDensity, Units::densityUnits() = Units::AtomsPerAngstromUnits), "Density", "Density at which to add the target Species");
+	keywords_.add("Target", new NodeValueEnumOptionsKeyword<Units::DensityUnits>(this, density, Units::densityUnits() = densityUnits), "Density", "Density at which to add the target Species");
 	keywords_.add("Positioning", new BoolKeyword(true), "Rotate", "Whether to rotate molecules on insertion");
 	keywords_.add("Positioning", new EnumOptionsKeyword<AddSpeciesProcedureNode::PositioningType>(positioningTypes() = AddSpeciesProcedureNode::RandomPositioning), "Positioning", "Positioning type for individual molecules");
 }
@@ -98,6 +98,13 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool&
 		return ProcedureNode::Failure;
 	}
 	const int nAtomsToAdd = requestedPopulation * sp->nAtoms();
+
+	// Can't add the Species if it has any missing core information
+	if (!sp->checkSetUp())
+	{
+		Messenger::error("Can't add Species '%s' because it is not set up correctly.\n", sp->name());
+		return ProcedureNode::Failure;
+	}
 
 	Messenger::print("[AddSpecies] Adding species '%s' - population is %i.\n", sp->name(), requestedPopulation);
 

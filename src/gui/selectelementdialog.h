@@ -1,6 +1,6 @@
 /*
-	*** Add Species Dialog
-	*** src/gui/addspeciesdialog.h
+	*** Select Element Dialog
+	*** src/gui/selectelementdialog.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,36 +19,41 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DIALOG_ADDSPECIES_H
-#define DISSOLVE_DIALOG_ADDSPECIES_H
+#ifndef DISSOLVE_DIALOG_SELECTELEMENT_H
+#define DISSOLVE_DIALOG_SELECTELEMENT_H
 
-#include "gui/ui_addspeciesdialog.h"
+#include "gui/ui_selectelementdialog.h"
 #include <QDialog>
 
 // Forward Declarations
 class Dissolve;
-class Species;
+class Element;
+class SelectElementWidget;
 
-// Add Species Dialog
-class AddSpeciesDialog : public QDialog
+// Select Element Dialog
+class SelectElementDialog : public QDialog
 {
 	Q_OBJECT
 
 	public:
 	// Constructor
-	AddSpeciesDialog(QWidget* parent, const Dissolve& mainDissolveInstance);
+	SelectElementDialog(QWidget* parent);
 	// Destructor
-	~AddSpeciesDialog();
+	~SelectElementDialog();
 
 	private:
 	// Main form declaration
-	Ui::AddSpeciesDialog ui_;
+	Ui::SelectElementDialog ui_;
+
+	private slots:
+	void on_ElementWidget_elementSelected(bool dummy);
+	void on_ElementWidget_elementDoubleClicked();
+	void on_SelectButton_clicked(bool checked);
+	void on_CancelButton_clicked(bool checked);
 
 	public:
-	// Reset, ready for adding a new Species
-	void reset();
-	// Copy imported Species over to the specified Dissolve object
-	Species* importSpecies(Dissolve& dissolve);
+	// Run the dialog, returning the selected Element
+	Element* selectElement(Element* currentElement = NULL);
 };
 
 #endif

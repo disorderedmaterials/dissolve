@@ -40,7 +40,7 @@ void DissolveWindow::on_MainTabs_currentChanged(int index)
 	if (refreshing_) return;
 
 	// Retrieve the widget corresponding to the index provided - it will be a MainTab widget, from which all our tab widgets are derived
-	MainTab* currentTab = dynamic_cast<MainTab*>(ui.MainTabs->widget(index));
+	MainTab* currentTab = dynamic_cast<MainTab*>(ui_.MainTabs->widget(index));
 	if (!currentTab)
 	{
 		Messenger::print("Can't cast this tab widget (index %i) into a MainTab.\n", index);
@@ -88,11 +88,11 @@ void DissolveWindow::reconcileTabs()
 		// If the current tab index is (now) out of range, add a new one
 		if (currentTabIndex == speciesTabs_.nItems())
 		{
-			SpeciesTab* newTab = new SpeciesTab(this, dissolve_, ui.MainTabs, sp->name(), sp);
+			SpeciesTab* newTab = new SpeciesTab(this, dissolve_, ui_.MainTabs, sp->name(), sp);
 			speciesTabs_.own(newTab);
-			ui.MainTabs->insertTab(baseIndex + currentTabIndex, newTab, sp->name());
-			ui.MainTabs->setTabTextColour(newTab->page(), QColor(0, 81, 0));
-			ui.MainTabs->setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_species.svg"));
+			ui_.MainTabs->insertTab(baseIndex + currentTabIndex, newTab, sp->name());
+			ui_.MainTabs->setTabTextColour(newTab->page(), QColor(0, 81, 0));
+			ui_.MainTabs->setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_species.svg"));
 		}
 
 		++currentTabIndex;
@@ -115,11 +115,11 @@ void DissolveWindow::reconcileTabs()
 		// If the current tab index is (now) out of range, add a new one
 		if (currentTabIndex == configurationTabs_.nItems())
 		{
-			ConfigurationTab* newTab = new ConfigurationTab(this, dissolve_, ui.MainTabs, cfg->name(), cfg);
+			ConfigurationTab* newTab = new ConfigurationTab(this, dissolve_, ui_.MainTabs, cfg->name(), cfg);
 			configurationTabs_.own(newTab);
-			ui.MainTabs->insertTab(baseIndex + currentTabIndex, newTab, cfg->name());
-			ui.MainTabs->setTabTextColour(newTab->page(), QColor(0, 81, 0));
-			ui.MainTabs->setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_configuration.svg"));
+			ui_.MainTabs->insertTab(baseIndex + currentTabIndex, newTab, cfg->name());
+			ui_.MainTabs->setTabTextColour(newTab->page(), QColor(0, 81, 0));
+			ui_.MainTabs->setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_configuration.svg"));
 		}
 
 		++currentTabIndex;
@@ -142,11 +142,11 @@ void DissolveWindow::reconcileTabs()
 		// If the current tab index is (now) out of range, add a new one
 		if (currentTabIndex == processingLayerTabs_.nItems())
 		{
-			ModuleLayerTab* newTab = new ModuleLayerTab(this, dissolve_, ui.MainTabs, layer->name(), layer);
+			ModuleLayerTab* newTab = new ModuleLayerTab(this, dissolve_, ui_.MainTabs, layer->name(), layer);
 			processingLayerTabs_.own(newTab);
-			ui.MainTabs->insertTab(baseIndex + currentTabIndex, newTab, layer->name());
-			ui.MainTabs->setTabTextColour(newTab->page(), QColor(0, 81, 0));
-			ui.MainTabs->setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_modulelayer.svg"));
+			ui_.MainTabs->insertTab(baseIndex + currentTabIndex, newTab, layer->name());
+			ui_.MainTabs->setTabTextColour(newTab->page(), QColor(0, 81, 0));
+			ui_.MainTabs->setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_modulelayer.svg"));
 		}
 
 		++currentTabIndex;
@@ -158,9 +158,9 @@ void DissolveWindow::reconcileTabs()
 void DissolveWindow::addCoreTabs()
 {
 	// Forcefield
-	forcefieldTab_ = new ForcefieldTab(this, dissolve_, ui.MainTabs, "Forcefield");
-	ui.MainTabs->addTab(forcefieldTab_->page(), "Forcefield");
-	ui.MainTabs->setTabIcon(forcefieldTab_->page(), QIcon(":/tabs/icons/tabs_ff.svg"));
+	forcefieldTab_ = new ForcefieldTab(this, dissolve_, ui_.MainTabs, "Forcefield");
+	ui_.MainTabs->addTab(forcefieldTab_->page(), "Forcefield");
+	ui_.MainTabs->setTabIcon(forcefieldTab_->page(), QIcon(":/tabs/icons/tabs_ff.svg"));
 }
 
 // Add on an empty workspace tab
@@ -170,13 +170,13 @@ MainTab* DissolveWindow::addWorkspaceTab(const char* title)
 	MainTab* tab = findTab(title);
 	if (!tab)
 	{
-		WorkspaceTab* newWorkspace = new WorkspaceTab(this, dissolve_, ui.MainTabs, title);
+		WorkspaceTab* newWorkspace = new WorkspaceTab(this, dissolve_, ui_.MainTabs, title);
 		workspaceTabs_.own(newWorkspace);
 
 		// Add the new tab directly in to our tabs - it will not be managed in reconcileTabs().
-		ui.MainTabs->addTab(newWorkspace, title);
-		ui.MainTabs->addTabCloseButton(newWorkspace);
-		ui.MainTabs->setTabIcon(newWorkspace->page(), QIcon(":/tabs/icons/tabs_workspace.svg"));
+		ui_.MainTabs->addTab(newWorkspace, title);
+		ui_.MainTabs->addTabCloseButton(newWorkspace);
+		ui_.MainTabs->setTabIcon(newWorkspace->page(), QIcon(":/tabs/icons/tabs_workspace.svg"));
 		return newWorkspace;
 	}
 	else Messenger::printVerbose("Tab '%s' already exists, so returning that instead...\n", title);
@@ -263,13 +263,13 @@ WorkspaceTab* DissolveWindow::workspaceTab(QWidget* page)
 // Return current tab
 MainTab* DissolveWindow::currentTab() const
 {
-	if (ui.MainTabs->currentWidget() == NULL) return NULL;
+	if (ui_.MainTabs->currentWidget() == NULL) return NULL;
 
 	// Retrieve the widget corresponding to the index provided - it will be a MainTab widget, from which all our tab widgets are derived
-	MainTab* currentTab = dynamic_cast<MainTab*>(ui.MainTabs->currentWidget());
+	MainTab* currentTab = dynamic_cast<MainTab*>(ui_.MainTabs->currentWidget());
 	if (!currentTab)
 	{
-		Messenger::print("Can't cast current tab (index %i) into a MainTab.\n", ui.MainTabs->currentIndex());
+		Messenger::print("Can't cast current tab (index %i) into a MainTab.\n", ui_.MainTabs->currentIndex());
 		return NULL;
 	}
 
@@ -279,19 +279,19 @@ MainTab* DissolveWindow::currentTab() const
 // Make specified tab the current one
 void DissolveWindow::setCurrentTab(MainTab* tab)
 {
-	ui.MainTabs->setCurrentWidget(tab->page());
+	ui_.MainTabs->setCurrentWidget(tab->page());
 }
 
 // Make specified tab the current one (by index)
 void DissolveWindow::setCurrentTab(int tabIndex)
 {
-	ui.MainTabs->setCurrentIndex(tabIndex);
+	ui_.MainTabs->setCurrentIndex(tabIndex);
 }
 
 // Show forcefield tab
 void DissolveWindow::showForcefieldTab()
 {
-	if (forcefieldTab_) ui.MainTabs->setCurrentWidget(forcefieldTab_->page());
+	if (forcefieldTab_) ui_.MainTabs->setCurrentWidget(forcefieldTab_->page());
 	else Messenger::error("Can't show ForcefieldTab, since it doesn't exist!\n");
 }
 
@@ -302,7 +302,7 @@ void DissolveWindow::setCurrentTab(Species* species)
 
 	for (SpeciesTab* tab = speciesTabs_.first(); tab != NULL; tab = tab->next()) if (tab->species() == species)
 	{
-		ui.MainTabs->setCurrentWidget(tab->page());
+		ui_.MainTabs->setCurrentWidget(tab->page());
 		return;
 	}
 
@@ -316,7 +316,7 @@ void DissolveWindow::setCurrentTab(Configuration* cfg)
 
 	for (ConfigurationTab* tab = configurationTabs_.first(); tab != NULL; tab = tab->next()) if (tab->configuration() == cfg)
 	{
-		ui.MainTabs->setCurrentWidget(tab->page());
+		ui_.MainTabs->setCurrentWidget(tab->page());
 		return;
 	}
 
@@ -330,7 +330,7 @@ void DissolveWindow::setCurrentTab(ModuleLayer* layer)
 
 	for (ModuleLayerTab* tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next()) if (tab->moduleLayer() == layer)
 	{
-		ui.MainTabs->setCurrentWidget(tab->page());
+		ui_.MainTabs->setCurrentWidget(tab->page());
 		return;
 	}
 
@@ -386,12 +386,12 @@ MainTab* DissolveWindow::addModuleTab(Module* module)
 	if (!tab)
 	{
 		// Need to create a new ModuleTab
-		tab = new ModuleTab(this, dissolve_, ui.MainTabs, module->uniqueName(), module);
+		tab = new ModuleTab(this, dissolve_, ui_.MainTabs, module->uniqueName(), module);
 		moduleTabs_.own(tab);
-		ui.MainTabs->addTab(tab->page(), module->uniqueName());
+		ui_.MainTabs->addTab(tab->page(), module->uniqueName());
 
 		// Add a close button
-		ui.MainTabs->addTabCloseButton(tab->page());
+		ui_.MainTabs->addTabCloseButton(tab->page());
 	}
 
 	setCurrentTab(tab);
@@ -407,9 +407,9 @@ MainTab* DissolveWindow::addModuleTab(Module* module)
 void DissolveWindow::removeTab(QWidget* page)
 {
 	// Delete the tab from the tabwidget first - find its index (based on the page widget pointer) and remove that
-	int indexToRemove = ui.MainTabs->indexOf(page);
+	int indexToRemove = ui_.MainTabs->indexOf(page);
 	if (indexToRemove == -1) printf("Couldn't remove tab since its page widget (%p) could not be found.\n", page);
-	else ui.MainTabs->removeTab(indexToRemove);
+	else ui_.MainTabs->removeTab(indexToRemove);
 
 	// Now delete the tab from its list - this will delete the actual page widget
 	if (speciesTab(page)) speciesTabs_.remove(speciesTab(page));

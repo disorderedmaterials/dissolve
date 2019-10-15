@@ -825,7 +825,7 @@ Remote Simulation</string>
      <x>0</x>
      <y>0</y>
      <width>807</width>
-     <height>25</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="SessionMenu">
@@ -900,9 +900,28 @@ Remote Simulation</string>
     <property name="title">
      <string>&amp;Species</string>
     </property>
-    <addaction name="SpeciesAddAction"/>
+    <widget class="QMenu" name="SpeciesCreateMenu">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="title">
+      <string>&amp;Create...</string>
+     </property>
+     <property name="icon">
+      <iconset resource="main.qrc">
+       <normaloff>:/tabs/icons/tabs_species.svg</normaloff>:/tabs/icons/tabs_species.svg</iconset>
+     </property>
+     <addaction name="SpeciesCreateEmptyAction"/>
+     <addaction name="SpeciesCreateAtomicAction"/>
+    </widget>
+    <addaction name="SpeciesCreateMenu"/>
+    <addaction name="SpeciesImportDissolveAction"/>
     <addaction name="separator"/>
     <addaction name="SpeciesRenameAction"/>
+    <addaction name="separator"/>
+    <addaction name="separator"/>
     <addaction name="SpeciesAddForcefieldTermsAction"/>
    </widget>
    <widget class="QMenu" name="ConfigurationMenu">
@@ -914,7 +933,33 @@ Remote Simulation</string>
     <property name="title">
      <string>&amp;Configuration</string>
     </property>
-    <addaction name="ConfigurationAddAction"/>
+    <widget class="QMenu" name="ConfigurationCreateMenu">
+     <property name="geometry">
+      <rect>
+       <x>642</x>
+       <y>140</y>
+       <width>184</width>
+       <height>158</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="title">
+      <string>Create...</string>
+     </property>
+     <property name="icon">
+      <iconset resource="main.qrc">
+       <normaloff>:/tabs/icons/tabs_configuration.svg</normaloff>:/tabs/icons/tabs_configuration.svg</iconset>
+     </property>
+     <addaction name="ConfigurationCreateEmptyAction"/>
+     <addaction name="separator"/>
+     <addaction name="ConfigurationCreateSimpleRandomMixAction"/>
+     <addaction name="ConfigurationCreateRelativeRandomMixAction"/>
+    </widget>
+    <addaction name="ConfigurationCreateMenu"/>
     <addaction name="separator"/>
     <addaction name="ConfigurationRenameAction"/>
    </widget>
@@ -990,15 +1035,6 @@ Remote Simulation</string>
     <font>
      <italic>true</italic>
     </font>
-   </property>
-  </action>
-  <action name="ConfigurationAddAction">
-   <property name="icon">
-    <iconset resource="main.qrc">
-     <normaloff>:/tabs/icons/tabs_configuration.svg</normaloff>:/tabs/icons/tabs_configuration.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Add &amp;Configuration...</string>
    </property>
   </action>
   <action name="WorkspaceAddWidgetGeneralAction">
@@ -1107,18 +1143,6 @@ Remote Simulation</string>
     <string>&amp;New</string>
    </property>
   </action>
-  <action name="SpeciesAddAction">
-   <property name="icon">
-    <iconset resource="main.qrc">
-     <normaloff>:/menu/icons/menu_species.svg</normaloff>:/menu/icons/menu_species.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Add &amp;Species...</string>
-   </property>
-   <property name="toolTip">
-    <string>Add a new Species to the current simulation</string>
-   </property>
-  </action>
   <action name="FileCloseAction">
    <property name="icon">
     <iconset resource="main.qrc">
@@ -1194,7 +1218,46 @@ Remote Simulation</string>
   </action>
   <action name="SpeciesRenameAction">
    <property name="text">
-    <string>Rename...</string>
+    <string>&amp;Rename...</string>
+   </property>
+  </action>
+  <action name="SpeciesCreateEmptyAction">
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/menu/icons/menu_new.svg</normaloff>:/menu/icons/menu_new.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Empty</string>
+   </property>
+  </action>
+  <action name="actionldsjflksdf">
+   <property name="text">
+    <string>ldsjflksdf</string>
+   </property>
+  </action>
+  <action name="SpeciesCreateAtomicAction">
+   <property name="text">
+    <string>&amp;Atomic...</string>
+   </property>
+  </action>
+  <action name="SpeciesImportDissolveAction">
+   <property name="text">
+    <string>&amp;Import...</string>
+   </property>
+  </action>
+  <action name="ConfigurationCreateEmptyAction">
+   <property name="text">
+    <string>&amp;Empty</string>
+   </property>
+  </action>
+  <action name="ConfigurationCreateSimpleRandomMixAction">
+   <property name="text">
+    <string>Simple random mix</string>
+   </property>
+  </action>
+  <action name="ConfigurationCreateRelativeRandomMixAction">
+   <property name="text">
+    <string>Relative random mix</string>
    </property>
   </action>
  </widget>

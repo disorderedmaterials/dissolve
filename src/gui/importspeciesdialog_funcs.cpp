@@ -1,6 +1,6 @@
 /*
-	*** Add Species Dialog
-	*** src/gui/addspeciesdialog_funcs.cpp
+	*** Import Species Dialog
+	*** src/gui/importspeciesdialog_funcs.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,32 +19,32 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/addspeciesdialog.h"
+#include "gui/importspeciesdialog.h"
 
 // Constructor
-AddSpeciesDialog::AddSpeciesDialog(QWidget* parent, const Dissolve& mainDissolveInstance)
+ImportSpeciesDialog::ImportSpeciesDialog(QWidget* parent, const Dissolve& mainDissolveInstance)
 {
 	ui_.setupUi(this);
 
 	// Set up and connect the AddSpeciesWidget
-	ui_.AddSpeciesWidget->setMainDissolveReference(&mainDissolveInstance);
-	ui_.AddSpeciesWidget->setCloseButtonAvailable(false);
-	connect(ui_.AddSpeciesWidget, SIGNAL(finished()), this, SLOT(accept()));
+	ui_.ImportSpeciesWidget->setMainDissolveReference(&mainDissolveInstance);
+	ui_.ImportSpeciesWidget->setCloseButtonAvailable(false);
+	connect(ui_.ImportSpeciesWidget, SIGNAL(finished()), this, SLOT(accept()));
 }
 
 // Destructor
-AddSpeciesDialog::~AddSpeciesDialog()
+ImportSpeciesDialog::~ImportSpeciesDialog()
 {
 }
 
 // Reset, ready for adding a new Species
-void AddSpeciesDialog::reset()
+void ImportSpeciesDialog::reset()
 {
-	ui_.AddSpeciesWidget->reset();
+	ui_.ImportSpeciesWidget->reset();
 }
 
 // Copy imported Species over to the specified Dissolve object
-Species* AddSpeciesDialog::importSpecies(Dissolve& dissolve)
+Species* ImportSpeciesDialog::importSpecies(Dissolve& dissolve)
 {
-	return ui_.AddSpeciesWidget->importSpecies(dissolve);
+	return ui_.ImportSpeciesWidget->importSpecies(dissolve);
 }

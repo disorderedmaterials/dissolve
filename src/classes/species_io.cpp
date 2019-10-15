@@ -212,23 +212,20 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 				if (parser.hasArg(7)) i->setCharge(parser.argd(7));
 
 				// Locate the AtomType assigned to the Atom
-				at = coreData.findAtomType(parser.argc(6));
-				if (!at)
+				if (DissolveSys::sameString("None", parser.argc(6))) at = NULL;
+				else
 				{
-					Messenger::printVerbose("Creating AtomType '%s'...\n", parser.argc(6));
-					at = coreData.addAtomType(el);
-					at->setName(parser.argc(6));
+					at = coreData.findAtomType(parser.argc(6));
+					if (!at)
+					{
+						Messenger::printVerbose("Creating AtomType '%s'...\n", parser.argc(6));
+						at = coreData.addAtomType(el);
+						at->setName(parser.argc(6));
+					}
 				}
 
 				// Finally, set AtomType for the Atom
 				i->setAtomType(at);
-
-				// Check that the AtomType was successfully assigned, and raise an error if not
-				if (!i->atomType())
-				{
-					error = true;
-					break;
-				}
 				break;
 			case (Species::AutoAddGrainsKeyword):
 				autoAddGrains();
@@ -484,7 +481,7 @@ bool Species::write(LineParser& parser, const char* prefix)
 	int count = 0;
 	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next())
 	{
-		if (!parser.writeLineF("%s%s  %3i  %3s  %8.3f  %8.3f  %8.3f  '%s'  %8.3f\n", newPrefix.get(), keywords().keyword(Species::AtomKeyword), ++count, i->element()->symbol(), i->r().x, i->r().y, i->r().z, i->atomType() == NULL ? "???" : i->atomType()->name(), i->charge())) return false;
+		if (!parser.writeLineF("%s%s  %3i  %3s  %8.3f  %8.3f  %8.3f  '%s'  %8.3f\n", newPrefix.get(), keywords().keyword(Species::AtomKeyword), ++count, i->element()->symbol(), i->r().x, i->r().y, i->r().z, i->atomType() == NULL ? "None" : i->atomType()->name(), i->charge())) return false;
 	}
 
 	// Bonds

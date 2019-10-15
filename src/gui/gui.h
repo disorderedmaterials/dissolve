@@ -55,8 +55,14 @@ class DissolveWindow : public QMainWindow
 	// Constructor / Destructor
 	DissolveWindow(Dissolve& dissolve);
 	~DissolveWindow();
+
+
+	/*
+	 * UI
+	 */
+	private:
 	// Main form declaration
-	Ui::DissolveWindow ui;
+	Ui::DissolveWindow ui_;
 
 	protected:
 	void closeEvent(QCloseEvent* event);
@@ -168,11 +174,15 @@ class DissolveWindow : public QMainWindow
 	void on_SimulationPauseAction_triggered(bool checked);
 	void on_SimulationSetRandomSeedAction_triggered(bool checked);
 	// Species
-	void on_SpeciesAddAction_triggered(bool checked);
+	void on_SpeciesCreateEmptyAction_triggered(bool checked);
+	void on_SpeciesCreateAtomicAction_triggered(bool checked);
+	void on_SpeciesImportDissolveAction_triggered(bool checked);
 	void on_SpeciesRenameAction_triggered(bool checked);
 	void on_SpeciesAddForcefieldTermsAction_triggered(bool checked);
 	// Configuration
-	void on_ConfigurationAddAction_triggered(bool checked);
+	void on_ConfigurationCreateEmptyAction_triggered(bool checked);
+	void on_ConfigurationCreateSimpleRandomMixAction_triggered(bool checked);
+	void on_ConfigurationCreateRelativeRandomMixAction_triggered(bool checked);
 	void on_ConfigurationRenameAction_triggered(bool checked);
 	// Layer
 	void on_LayerAddAction_triggered(bool checked);

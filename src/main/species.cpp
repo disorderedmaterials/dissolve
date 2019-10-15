@@ -218,7 +218,6 @@ Species* Dissolve::copySpecies(const Species* species)
 
 	// Finalise the new Species
 	newSpecies->updateUsedAtomTypes();
-	newSpecies->addNaturalIsotopologue(atomTypes());
 	newSpecies->updateGrains();
 	newSpecies->centreAtOrigin();
 	newSpecies->orderAtomsWithinGrains();

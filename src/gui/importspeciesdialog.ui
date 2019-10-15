@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>AddSpeciesDialog</class>
- <widget class="QDialog" name="AddSpeciesDialog">
+ <class>ImportSpeciesDialog</class>
+ <widget class="QDialog" name="ImportSpeciesDialog">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>
@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Create Species</string>
+   <string>Import Species</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <property name="spacing">
@@ -33,15 +33,15 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="AddSpeciesWizard" name="AddSpeciesWidget" native="true"/>
+    <widget class="ImportSpeciesWizard" name="ImportSpeciesWidget" native="true"/>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>AddSpeciesWizard</class>
+   <class>ImportSpeciesWizard</class>
    <extends>QWidget</extends>
-   <header>gui/addspecieswizard.h</header>
+   <header>gui/importspecieswizard.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

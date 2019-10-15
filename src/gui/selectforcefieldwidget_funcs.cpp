@@ -31,9 +31,9 @@ SelectForcefieldWidget::SelectForcefieldWidget(QWidget* parent, const List<Force
 
 	refreshing_ = true;
 
-	// Populate the list with available templates
-	ListIterator<Forcefield> templateIterator(forcefields_);
-	while (Forcefield* ff = templateIterator.iterate())
+	// Populate the list with available forcefields
+	ListIterator<Forcefield> forcefieldIterator(forcefields_);
+	while (Forcefield* ff = forcefieldIterator.iterate())
 	{
 		QListWidgetItem* item = new QListWidgetItem(ff->name(), ui_.ForcefieldsList);
 		item->setData(Qt::UserRole, VariantPointer<Forcefield>(ff));

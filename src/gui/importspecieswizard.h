@@ -1,6 +1,6 @@
 /*
 	*** Add Species Wizard
-	*** src/gui/addspecieswizard.h
+	*** src/gui/importspecieswizard.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,10 +19,10 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_WIZARD_ADDSPECIES_H
-#define DISSOLVE_WIZARD_ADDSPECIES_H
+#ifndef DISSOLVE_WIZARD_IMPORTSPECIES_H
+#define DISSOLVE_WIZARD_IMPORTSPECIES_H
 
-#include "gui/ui_addspecieswizard.h"
+#include "gui/ui_importspecieswizard.h"
 #include "gui/wizardwidget.hui"
 #include "main/dissolve.h"
 
@@ -30,15 +30,15 @@
 class MasterIntra;
 
 // Add Species Wizard
-class AddSpeciesWizard : public WizardWidget
+class ImportSpeciesWizard : public WizardWidget
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
 	public:
 	// Constructor / Destructor
-	AddSpeciesWizard(QWidget* parent);
-	~AddSpeciesWizard();
+	ImportSpeciesWizard(QWidget* parent);
+	~ImportSpeciesWizard();
 
 
 	/*
@@ -66,16 +66,14 @@ class AddSpeciesWizard : public WizardWidget
 	 */
 	private:
 	// Main form declaration
-	Ui::AddSpeciesWizard ui_;
+	Ui::ImportSpeciesWizard ui_;
 	// Lock counter for the widget refreshing
 	int lockedForRefresh_;
 	// Pages Enum
 	enum WidgetPage
 	{
-		StartPage,			/* Starting page, offering choices of how to proceed */
-		CreateAtomicPage,		/* Create atomic Species, optionally with new AtomType */
-		ImportSpeciesSelectFilePage,	/* Import Species - select file */
-		ImportSpeciesSelectSpeciesPage,	/* Import Species - choose species */
+		SelectFilePage,			/* Select File (Dissolve input or species file) */
+		SelectSpeciesPage,		/* Choose Species */
 		AtomTypesPage,			/* AtomTypes page - check / re-map AtomTypes */
 		MasterTermsPage,		/* MasterTerms page - check / re-map MasterTerms */
 		SpeciesNamePage,		/* Final page, setting name for Species */
@@ -100,25 +98,7 @@ class AddSpeciesWizard : public WizardWidget
 
 
 	/*
-	 * Start Page
-	 */
-	private slots:
-	void on_StartCreateEmptyButton_clicked(bool checked);
-	void on_StartCreateAtomicButton_clicked(bool checked);
-	void on_StartAddPredefinedButton_clicked(bool checked);
-	void on_StartImportCoordinatesButton_clicked(bool checked);
-	void on_StartImportSpeciesButton_clicked(bool checked);
-
-
-	/*
-	 * Create Atomic Page
-	 */
-	private slots:
-	void createAtomicElementChanged();
-
-
-	/*
-	 * Import Species Pages
+	 * Select File Page
 	 */
 	private slots:
 	// Input File Page
