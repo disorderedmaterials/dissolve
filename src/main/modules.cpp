@@ -155,6 +155,18 @@ Module* Dissolve::createModuleInstance(const char* moduleType)
 	return instance;
 }
 
+// Create a Module instance for the named Module type, and add it to the specified layer
+Module* Dissolve::createModuleInstance(const char* moduleType, ModuleLayer* destinationLayer)
+{
+	Module* module = createModuleInstance(moduleType);
+	if (!module) return NULL;
+
+	// Add the new module instance to the specified destination layer
+	destinationLayer->own(module);
+
+	return module;
+}
+
 // Search for any instance of any module with the specified unique name
 Module* Dissolve::findModuleInstance(const char* uniqueName)
 {

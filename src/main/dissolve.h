@@ -233,6 +233,8 @@ class Dissolve
 	Module* findMasterModule(const char* moduleType) const;
 	// Create a Module instance for the named Module type
 	Module* createModuleInstance(const char* moduleType);
+	// Create a Module instance for the named Module type, and add it to the specified layer
+	Module* createModuleInstance(const char* moduleType, ModuleLayer* destinationLayer);
 	// Search for any instance of any module with the specified unique name
 	Module* findModuleInstance(const char* uniqueName);
 	// Delete specified Module instance
