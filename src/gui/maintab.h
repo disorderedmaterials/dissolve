@@ -47,7 +47,7 @@ class MainTab
 	MainTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, QWidget* page);
 	virtual ~MainTab();
 	// Tab Types
-	enum TabType { ConfigurationTabType, ForcefieldTabType, ModuleTabType, ModuleLayerTabType, SpeciesTabType, WorkspaceTabType };
+	enum TabType { ConfigurationTabType, ForcefieldTabType, LayerTabType, ModuleTabType, SpeciesTabType, WorkspaceTabType };
 	// Return enum options for TabType
 	static EnumOptions<MainTab::TabType> tabTypes();
 

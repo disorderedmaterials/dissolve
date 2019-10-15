@@ -49,7 +49,7 @@ ModuleLayerTab::~ModuleLayerTab()
 // Return tab type
 MainTab::TabType ModuleLayerTab::type() const
 {
-	return MainTab::ModuleLayerTabType;
+	return MainTab::LayerTabType;
 }
 
 /*
