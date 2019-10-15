@@ -162,10 +162,16 @@ SET(gui_SRCS
   # Main UI
   gui_control.cpp
   gui_funcs.cpp
-  gui_menu.cpp
   gui_io.cpp
   gui_start.cpp
   gui_tabs.cpp
+  menu_configuration.cpp
+  menu_file.cpp
+  menu_help.cpp
+  menu_layer.cpp
+  menu_simulation.cpp
+  menu_species.cpp
+  menu_workspace.cpp
   outputhandler_funcs.cpp
   stockcolours.cpp
   systemtemplate.cpp
