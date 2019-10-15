@@ -38,6 +38,7 @@ SET(gui_MOC_HDRS
   addconfigurationdialog.h
   addforcefieldtermsdialog.h
   getconfigurationnamedialog.h
+  getmodulelayernamedialog.h
   getspeciesnamedialog.h
   importspeciesdialog.h
   selectelementdialog.h
@@ -88,6 +89,7 @@ SET(gui_UIS
   addconfigurationdialog.ui
   addforcefieldtermsdialog.ui
   getconfigurationnamedialog.ui
+  getmodulelayernamedialog.ui
   getspeciesnamedialog.ui
   importspeciesdialog.ui
   selectelementdialog.ui
@@ -137,6 +139,7 @@ SET(gui_SRCS
   addconfigurationdialog_funcs.cpp
   addforcefieldtermsdialog_funcs.cpp
   getconfigurationnamedialog_funcs.cpp
+  getmodulelayernamedialog_funcs.cpp
   getspeciesnamedialog_funcs.cpp
   importspeciesdialog_funcs.cpp
   selectelementdialog_funcs.cpp
