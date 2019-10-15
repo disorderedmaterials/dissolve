@@ -34,6 +34,7 @@ AddSpeciesProcedureNode::AddSpeciesProcedureNode(Species* sp, NodeValue populati
 	// Set up keywords
 	keywords_.add("Target", new SpeciesKeyword(sp), "Species", "Target Species to add");
 	keywords_.add("Target", new NodeValueKeyword(this, population), "Population", "Population of the target Species to add");
+	keywords_.add("Target", new BoolKeyword(true), "ScaleBox", "Use the specified density to scale the box accordingly");
 	keywords_.add("Target", new NodeValueEnumOptionsKeyword<Units::DensityUnits>(this, density, Units::densityUnits() = densityUnits), "Density", "Density at which to add the target Species");
 	keywords_.add("Positioning", new BoolKeyword(true), "Rotate", "Whether to rotate molecules on insertion");
 	keywords_.add("Positioning", new EnumOptionsKeyword<AddSpeciesProcedureNode::PositioningType>(positioningTypes() = AddSpeciesProcedureNode::RandomPositioning), "Positioning", "Positioning type for individual molecules");
@@ -111,11 +112,8 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool&
 	// If a density was not given, just add new molecules to the current box without adjusting its size
 	Venum<NodeValue,Units::DensityUnits>& densityAndUnits = keywords_.retrieve< Venum<NodeValue,Units::DensityUnits> >("Density");
 	double density = densityAndUnits.value().asDouble();
-	if (density < 0.0)
-	{
-		Messenger::print("[AddSpecies] No density supplied - current box volume will remain unchanged.\n");
-	}
-	else
+	const bool scaleBox = keywords_.asBool("ScaleBox");
+	if (scaleBox)
 	{
 		Messenger::print("[AddSpecies] Density for new species is %f %s.\n", density, Units::densityUnits().keyword(densityAndUnits.enumeration()));
 
@@ -136,6 +134,7 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool&
 
 		Messenger::print("[AddSpecies] Current Box scaled by %f - new volume is %e cubic Angstroms.\n", scaleFactor, cfg->box()->volume());
 	}
+	else Messenger::print("[AddSpecies] Box will not be scaled to accommodate addition of the species.\n");
 
 	// Get the positioning type and rotation flag
 	AddSpeciesProcedureNode::PositioningType positioning = keywords_.enumeration<AddSpeciesProcedureNode::PositioningType>("Positioning");
