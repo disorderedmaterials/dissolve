@@ -43,7 +43,7 @@ class Species;
 class SpeciesTab;
 class ModuleTab;
 class ModuleLayer;
-class ModuleLayerTab;
+class LayerTab;
 class WorkspaceTab;
 
 class DissolveWindow : public QMainWindow
@@ -280,7 +280,7 @@ class DissolveWindow : public QMainWindow
 	// List of Configuration tabs
 	List<ConfigurationTab> configurationTabs_;
 	// List of processing layer tabs
-	List<ModuleLayerTab> processingLayerTabs_;
+	List<LayerTab> processingLayerTabs_;
 	// List of Module tabs
 	List<ModuleTab> moduleTabs_;
 	// List of Workspace tabs
@@ -306,8 +306,8 @@ class DissolveWindow : public QMainWindow
 	SpeciesTab* speciesTab(QWidget* page);
 	// Find ConfigurationTab containing specified page widget
 	ConfigurationTab* configurationTab(QWidget* page);
-	// Find ModuleLayerTab containing specified page widget
-	ModuleLayerTab* processingLayerTab(QWidget* page);
+	// Find LayerTab containing specified page widget
+	LayerTab* processingLayerTab(QWidget* page);
 	// Find ModuleTab containing specified page widget
 	ModuleTab* moduleTab(QWidget* page);
 	// Find ModuleTab containing specified Module

@@ -22,8 +22,8 @@
 #include "gui/gui.h"
 #include "gui/configurationtab.h"
 #include "gui/forcefieldtab.h"
+#include "gui/layertab.h"
 #include "gui/moduletab.h"
-#include "gui/modulelayertab.h"
 #include "gui/speciestab.h"
 #include "gui/workspacetab.h"
 #include "main/dissolve.h"
@@ -142,7 +142,7 @@ void DissolveWindow::reconcileTabs()
 		// If the current tab index is (now) out of range, add a new one
 		if (currentTabIndex == processingLayerTabs_.nItems())
 		{
-			ModuleLayerTab* newTab = new ModuleLayerTab(this, dissolve_, ui_.MainTabs, layer->name(), layer);
+			LayerTab* newTab = new LayerTab(this, dissolve_, ui_.MainTabs, layer->name(), layer);
 			processingLayerTabs_.own(newTab);
 			ui_.MainTabs->insertTab(baseIndex + currentTabIndex, newTab, layer->name());
 			ui_.MainTabs->setTabTextColour(newTab->page(), QColor(0, 81, 0));
@@ -191,7 +191,7 @@ MainTab* DissolveWindow::findTab(const char* title)
 
 	for (SpeciesTab* tab = speciesTabs_.first(); tab != NULL; tab = tab->next()) if (DissolveSys::sameString(title, tab->title())) return tab;
 	for (ConfigurationTab* tab = configurationTabs_.first(); tab != NULL; tab = tab->next()) if (DissolveSys::sameString(title, tab->title())) return tab;
-	for (ModuleLayerTab* tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next()) if (DissolveSys::sameString(title, tab->title())) return tab;
+	for (LayerTab* tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next()) if (DissolveSys::sameString(title, tab->title())) return tab;
 	for (ModuleTab* tab = moduleTabs_.first(); tab != NULL; tab = tab->next()) if (DissolveSys::sameString(title, tab->title())) return tab;
 	for (WorkspaceTab* tab = workspaceTabs_.first(); tab != NULL; tab = tab->next()) if (DissolveSys::sameString(title, tab->title())) return tab;
 
@@ -228,10 +228,10 @@ ConfigurationTab* DissolveWindow::configurationTab(QWidget* page)
 	return NULL;
 }
 
-// Find ModuleLayerTab containing specified page widget
-ModuleLayerTab* DissolveWindow::processingLayerTab(QWidget* page)
+// Find LayerTab containing specified page widget
+LayerTab* DissolveWindow::processingLayerTab(QWidget* page)
 {
-	for (ModuleLayerTab* tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next()) if (tab->page() == page) return tab;
+	for (LayerTab* tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next()) if (tab->page() == page) return tab;
 
 	return NULL;
 }
@@ -328,13 +328,13 @@ void DissolveWindow::setCurrentTab(ModuleLayer* layer)
 {
 	if (!layer) return;
 
-	for (ModuleLayerTab* tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next()) if (tab->moduleLayer() == layer)
+	for (LayerTab* tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next()) if (tab->moduleLayer() == layer)
 	{
 		ui_.MainTabs->setCurrentWidget(tab->page());
 		return;
 	}
 
-	Messenger::error("Can't display ModuleLayerTab for processing layer '%s' as it doesn't exist.\n", layer->name());
+	Messenger::error("Can't display LayerTab for processing layer '%s' as it doesn't exist.\n", layer->name());
 }
 
 // Return reference list of all current tabs
@@ -345,7 +345,7 @@ RefList<MainTab> DissolveWindow::allTabs() const
 	tabs.append(forcefieldTab_);
 	for (SpeciesTab* tab = speciesTabs_.first(); tab != NULL; tab = tab->next()) tabs.append(tab);
 	for (ConfigurationTab* tab = configurationTabs_.first(); tab != NULL; tab = tab->next()) tabs.append(tab);
-	for (ModuleLayerTab* tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next()) tabs.append(tab);
+	for (LayerTab* tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next()) tabs.append(tab);
 	for (ModuleTab* tab = moduleTabs_.first(); tab != NULL; tab = tab->next()) tabs.append(tab);
 	for (WorkspaceTab* tab = workspaceTabs_.first(); tab != NULL; tab = tab->next()) tabs.append(tab);
 

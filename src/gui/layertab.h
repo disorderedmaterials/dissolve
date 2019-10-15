@@ -1,6 +1,6 @@
 /*
-	*** Module Layer Tab
-	*** src/gui/moduleayertab.h
+	*** Layer Tab
+	*** src/gui/layertab.h
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,10 +19,10 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_MODULELAYERTAB_H
-#define DISSOLVE_MODULELAYERTAB_H
+#ifndef DISSOLVE_LAYERTAB_H
+#define DISSOLVE_LAYERTAB_H
 
-#include "gui/ui_modulelayertab.h"
+#include "gui/ui_layertab.h"
 #include "gui/maintab.h"
 #include "gui/widgets/subwidget.h"
 
@@ -30,16 +30,16 @@
 class ModuleChart;
 class ModulePalette;
 
-// Processing Tab
-class ModuleLayerTab : public QWidget, public ListItem<ModuleLayerTab>, public MainTab
+// Layer Tab
+class LayerTab : public QWidget, public ListItem<LayerTab>, public MainTab
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
 	public:
 	// Constructor / Destructor
-	ModuleLayerTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, ModuleLayer* layer);
-	~ModuleLayerTab();
+	LayerTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, ModuleLayer* layer);
+	~LayerTab();
 
 
 	/*
@@ -47,15 +47,19 @@ class ModuleLayerTab : public QWidget, public ListItem<ModuleLayerTab>, public M
 	 */
 	private:
 	// Main form declaration
-	Ui::ModuleLayerTab ui_;
+	Ui::LayerTab ui_;
 
 
 	/*
-	 * Data
+	 * MainTab Reimplementations
 	 */
 	public:
 	// Return tab type
 	MainTab::TabType type() const;
+	// Raise suitable dialog for entering / checking new tab name
+	QString getNewTitle(bool& ok);
+	// Return whether the title of the tab can be changed
+	bool canChangeTitle() const;
 
 
 	/*

@@ -1,6 +1,6 @@
 /*
-	*** ModuleLayerTab Functions
-	*** src/gui/modulelayertab_funcs.cpp
+	*** Layer Tab Functions
+	*** src/gui/layertab_funcs.cpp
 	Copyright T. Youngs 2012-2019
 
 	This file is part of Dissolve.
@@ -19,14 +19,14 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/modulelayertab.h"
+#include "gui/layertab.h"
 #include "gui/modulechart.hui"
 #include "gui/gui.h"
 #include "main/dissolve.h"
 #include "base/lineparser.h"
 
 // Constructor / Destructor
-ModuleLayerTab::ModuleLayerTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, ModuleLayer* layer) : ListItem<ModuleLayerTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Layer: %s", title), this)
+LayerTab::LayerTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, ModuleLayer* layer) : ListItem<LayerTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Layer: %s", title), this)
 {
 	ui_.setupUi(this);
 
@@ -38,7 +38,7 @@ ModuleLayerTab::ModuleLayerTab(DissolveWindow* dissolveWindow, Dissolve& dissolv
 	refreshing_ = false;
 }
 
-ModuleLayerTab::~ModuleLayerTab()
+LayerTab::~LayerTab()
 {
 }
 
@@ -47,9 +47,33 @@ ModuleLayerTab::~ModuleLayerTab()
  */
 
 // Return tab type
-MainTab::TabType ModuleLayerTab::type() const
+MainTab::TabType LayerTab::type() const
 {
 	return MainTab::LayerTabType;
+}
+
+// Raise suitable dialog for entering / checking new tab name
+QString LayerTab::getNewTitle(bool& ok)
+{
+// 	// Get a new, valid name for the layer
+// 	GetSpeciesNameDialog nameDialog(this, dissolve_.coreData());
+// 	ok = nameDialog.get(species_, species_->name());
+// 
+// 	if (ok)
+// 	{
+// 		// Rename our Species, and flag that our data has been modified
+// 		species_->setName(qPrintable(nameDialog.newName()));
+// 
+// 		dissolveWindow_->setModified();
+// 	}
+// 
+// 	return nameDialog.newName();
+}
+
+// Return whether the title of the tab can be changed
+bool LayerTab::canChangeTitle() const
+{
+	return true;
 }
 
 /*
@@ -57,7 +81,7 @@ MainTab::TabType ModuleLayerTab::type() const
  */
 
 // Return displayed ModuleLayer
-const ModuleLayer* ModuleLayerTab::moduleLayer() const
+const ModuleLayer* LayerTab::moduleLayer() const
 {
 	return moduleLayer_;
 }
@@ -66,7 +90,7 @@ const ModuleLayer* ModuleLayerTab::moduleLayer() const
  * Widgets
  */
 
-void ModuleLayerTab::on_EnabledButton_clicked(bool checked)
+void LayerTab::on_EnabledButton_clicked(bool checked)
 {
 	if (refreshing_ || (!moduleLayer_)) return;
 
@@ -75,7 +99,7 @@ void ModuleLayerTab::on_EnabledButton_clicked(bool checked)
 	dissolveWindow_->setModified();
 }
 
-void ModuleLayerTab::on_FrequencySpin_valueChanged(int value)
+void LayerTab::on_FrequencySpin_valueChanged(int value)
 {
 	if (refreshing_ || (!moduleLayer_)) return;
 
@@ -89,7 +113,7 @@ void ModuleLayerTab::on_FrequencySpin_valueChanged(int value)
  */
 
 // Update controls in tab
-void ModuleLayerTab::updateControls()
+void LayerTab::updateControls()
 {
 	if (!moduleLayer_) return;
 
@@ -104,7 +128,7 @@ void ModuleLayerTab::updateControls()
 }
 
 // Disable sensitive controls within tab
-void ModuleLayerTab::disableSensitiveControls()
+void LayerTab::disableSensitiveControls()
 {
 	ui_.EnabledButton->setEnabled(false);
 	ui_.FrequencySpin->setEnabled(false);
@@ -112,7 +136,7 @@ void ModuleLayerTab::disableSensitiveControls()
 }
 
 // Enable sensitive controls within tab
-void ModuleLayerTab::enableSensitiveControls()
+void LayerTab::enableSensitiveControls()
 {
 	ui_.EnabledButton->setEnabled(true);
 	ui_.FrequencySpin->setEnabled(true);
@@ -124,7 +148,7 @@ void ModuleLayerTab::enableSensitiveControls()
  */
 
 // Read widget state through specified LineParser
-bool ModuleLayerTab::readState(LineParser& parser, const CoreData& coreData)
+bool LayerTab::readState(LineParser& parser, const CoreData& coreData)
 {
 	if (!ui_.ModulePanel->readState(parser)) return false;
 
@@ -132,7 +156,7 @@ bool ModuleLayerTab::readState(LineParser& parser, const CoreData& coreData)
 }
 
 // Write widget state through specified LineParser
-bool ModuleLayerTab::writeState(LineParser& parser)
+bool LayerTab::writeState(LineParser& parser)
 {
 	if (!ui_.ModulePanel->writeState(parser)) return false;
 

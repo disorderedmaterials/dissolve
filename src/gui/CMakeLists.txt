@@ -15,8 +15,6 @@ SET(gui_MOC_HDRS
   modulechartmetrics.h
   modulechartmoduleblock.h
   modulecontrolwidget.h
-  modulelayertab.h
-  moduletab.h
   modulewidget.h
   procedureeditor.h
 
@@ -50,7 +48,9 @@ SET(gui_MOC_HDRS
   # Main Tabs
   configurationtab.h
   forcefieldtab.h
+  layertab.h
   maintab.h
+  moduletab.h
   speciestab.h
   workspacetab.h
 
@@ -72,8 +72,6 @@ SET(gui_UIS
   modulechartinsertionblock.ui
   modulechartmoduleblock.ui
   modulecontrolwidget.ui
-  modulelayertab.ui
-  moduletab.ui
   procedureeditor.ui
 
   # Widgets
@@ -100,6 +98,8 @@ SET(gui_UIS
   # Main Tabs
   configurationtab.ui
   forcefieldtab.ui
+  layertab.ui
+  moduletab.ui
   speciestab.ui
   workspacetab.ui
 
@@ -118,8 +118,6 @@ SET(gui_SRCS
   modulechartinsertionblock_funcs.cpp
   modulechartmoduleblock_funcs.cpp
   modulecontrolwidget_funcs.cpp
-  modulelayertab_funcs.cpp
-  moduletab_funcs.cpp
   modulewidget.cpp
   procedureeditor_funcs.cpp
 
@@ -149,7 +147,9 @@ SET(gui_SRCS
   # Main Tabs
   configurationtab_funcs.cpp
   forcefieldtab_funcs.cpp
+  layertab_funcs.cpp
   maintab.cpp
+  moduletab_funcs.cpp
   speciestab_funcs.cpp
   workspacetab_funcs.cpp
 
