@@ -21,12 +21,6 @@
 
 #include "main/dissolve.h"
 #include "gui/gui.h"
-#include "gui/configurationtab.h"
-#include "gui/forcefieldtab.h"
-#include "gui/moduletab.h"
-#include "gui/modulelayertab.h"
-#include "gui/speciestab.h"
-#include "gui/workspacetab.h"
 
 // Return current state of Dissolve
 DissolveWindow::DissolveState DissolveWindow::dissolveState() const
