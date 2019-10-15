@@ -22,20 +22,47 @@
 #include "gui/gui.h"
 #include "gui/addprocessinglayerdialog.h"
 
-void DissolveWindow::on_LayerAddAction_triggered(bool checked)
+void DissolveWindow::on_LayerCreateEvolutionStandardAction_triggered(bool checked)
 {
-	static AddProcessingLayerDialog addProcessingLayerDialog(this, dissolve_);
+	ModuleLayer* newLayer = dissolve_.addProcessingLayer();
 
-	addProcessingLayerDialog.reset();
+	// Add a Monte Carlo shake (MolShake) module
+	dissolve_.createModuleInstance("MolShake", newLayer);
 
-	if (addProcessingLayerDialog.exec() == QDialog::Accepted)
-	{
-		ModuleLayer* layer = addProcessingLayerDialog.importModuleLayer(dissolve_);
+	// Add some MD
+	Module* md = dissolve_.createModuleInstance("MD", newLayer);
+	md->setFrequency(5);
 
-		// Fully update GUI
-		setModified();
-		fullUpdate();
+	// Add energy calculation
+	dissolve_.createModuleInstance("Energy", newLayer);
 
-		setCurrentTab(layer);
-	}
+	setModified();
+	fullUpdate();
+	setCurrentTab(newLayer);
+}
+
+void DissolveWindow::on_LayerCreateEvolutionEPSRAction_triggered(bool checked)
+{
+	ModuleLayer* newLayer = dissolve_.addProcessingLayer();
+
+	// Add some Monte Carlo
+	dissolve_.createModuleInstance("MolShake", newLayer);
+
+	// Add an intramolecular shake
+	dissolve_.createModuleInstance("IntraShake", newLayer);
+
+	// Add energy calculation
+	dissolve_.createModuleInstance("Energy", newLayer);
+
+	setModified();
+	fullUpdate();
+	setCurrentTab(newLayer);
+}
+
+void DissolveWindow::on_LayerRenameAction_triggered(bool checked)
+{
+	// Get the current tab - make sure it is a LayerTab, then call its rename() function
+	MainTab* tab = currentTab();
+	if ((!tab) || (tab->type() != MainTab::LayerTabType)) return;
+	tab->rename();
 }

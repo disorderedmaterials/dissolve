@@ -185,7 +185,9 @@ class DissolveWindow : public QMainWindow
 	void on_ConfigurationCreateRelativeRandomMixAction_triggered(bool checked);
 	void on_ConfigurationRenameAction_triggered(bool checked);
 	// Layer
-	void on_LayerAddAction_triggered(bool checked);
+	void on_LayerCreateEvolutionStandardAction_triggered(bool checked);
+	void on_LayerCreateEvolutionEPSRAction_triggered(bool checked);
+	void on_LayerRenameAction_triggered(bool checked);
 	// Workspace
 	void on_WorkspaceAddNewAction_triggered(bool checked);
 	// Help

@@ -972,7 +972,38 @@ Remote Simulation</string>
     <property name="title">
      <string>&amp;Layer</string>
     </property>
-    <addaction name="LayerAddAction"/>
+    <widget class="QMenu" name="LayerCreateMenu">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="title">
+      <string>Create...</string>
+     </property>
+     <property name="icon">
+      <iconset resource="main.qrc">
+       <normaloff>:/tabs/icons/tabs_modulelayer.svg</normaloff>:/tabs/icons/tabs_modulelayer.svg</iconset>
+     </property>
+     <widget class="QMenu" name="LayerCreateEvolutionMenu">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="title">
+       <string>Evolution...</string>
+      </property>
+      <addaction name="LayerCreateEvolutionStandardAction"/>
+      <addaction name="LayerCreateEvolutionEPSRAction"/>
+     </widget>
+     <addaction name="LayerCreateEmpty"/>
+     <addaction name="separator"/>
+     <addaction name="LayerCreateEvolutionMenu"/>
+    </widget>
+    <addaction name="LayerCreateMenu"/>
+    <addaction name="separator"/>
+    <addaction name="LayerRenameAction"/>
    </widget>
    <addaction name="SessionMenu"/>
    <addaction name="SimulationMenu"/>
@@ -1258,6 +1289,35 @@ Remote Simulation</string>
   <action name="ConfigurationCreateRelativeRandomMixAction">
    <property name="text">
     <string>Relative random mix</string>
+   </property>
+  </action>
+  <action name="LayerCreateEmpty">
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/menu/icons/menu_new.svg</normaloff>:/menu/icons/menu_new.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Empty</string>
+   </property>
+  </action>
+  <action name="LayerRenameAction">
+   <property name="text">
+    <string>Rename</string>
+   </property>
+  </action>
+  <action name="LayerCreateEvolutionEPSRAction">
+   <property name="text">
+    <string>EPSR (MC Only)</string>
+   </property>
+  </action>
+  <action name="actionStandard_Dissolve">
+   <property name="text">
+    <string>Standard Dissolve</string>
+   </property>
+  </action>
+  <action name="LayerCreateEvolutionStandardAction">
+   <property name="text">
+    <string>Default (MC/MD)</string>
    </property>
   </action>
  </widget>
