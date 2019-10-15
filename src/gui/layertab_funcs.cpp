@@ -22,6 +22,7 @@
 #include "gui/layertab.h"
 #include "gui/modulechart.hui"
 #include "gui/gui.h"
+#include "gui/getmodulelayernamedialog.h"
 #include "main/dissolve.h"
 #include "base/lineparser.h"
 
@@ -55,19 +56,19 @@ MainTab::TabType LayerTab::type() const
 // Raise suitable dialog for entering / checking new tab name
 QString LayerTab::getNewTitle(bool& ok)
 {
-// 	// Get a new, valid name for the layer
-// 	GetSpeciesNameDialog nameDialog(this, dissolve_.coreData());
-// 	ok = nameDialog.get(species_, species_->name());
-// 
-// 	if (ok)
-// 	{
-// 		// Rename our Species, and flag that our data has been modified
-// 		species_->setName(qPrintable(nameDialog.newName()));
-// 
-// 		dissolveWindow_->setModified();
-// 	}
-// 
-// 	return nameDialog.newName();
+	// Get a new, valid name for the layer
+	GetModuleLayerNameDialog nameDialog(this, dissolve_.processingLayers());
+	ok = nameDialog.get(moduleLayer_, moduleLayer_->name());
+
+	if (ok)
+	{
+		// Rename our layer, and flag that our data has been modified
+		moduleLayer_->setName(qPrintable(nameDialog.newName()));
+
+		dissolveWindow_->setModified();
+	}
+
+	return nameDialog.newName();
 }
 
 // Return whether the title of the tab can be changed
