@@ -36,11 +36,11 @@ libgui_la_SOURCES += keywordswidget.hui
 libgui_la_SOURCES += selectforcefieldwidget.ui 
 libgui_la_SOURCES += wizardwidgetfooter.ui wizardwidgetheader.ui wizardwidget.hui
 # UI - Wizards
-libgui_la_SOURCES += addconfigurationwizard.ui addforcefieldtermswizard.ui addprocessinglayerwizard.ui
+libgui_la_SOURCES += addconfigurationwizard.ui addforcefieldtermswizard.ui
 libgui_la_SOURCES += importspecieswizard.ui
 libgui_la_SOURCES += pairpotentialwidget.ui
 # UI - Dialogs
-libgui_la_SOURCES += addconfigurationdialog.ui addforcefieldtermsdialog.ui addprocessinglayerdialog.ui
+libgui_la_SOURCES += addconfigurationdialog.ui addforcefieldtermsdialog.ui
 libgui_la_SOURCES += getconfigurationnamedialog.ui getspeciesnamedialog.ui
 libgui_la_SOURCES += importspeciesdialog.ui
 libgui_la_SOURCES += selectelementdialog.ui selectforcefielddialog.ui selectspeciesdialog.ui selectspecieswidget.ui selectsystemtemplatedialog.ui
@@ -55,7 +55,7 @@ libgui_la_SOURCES += workspacetab.ui
 libgui_la_SOURCES += outputhandler.hui thread.hui
 
 # Implementations
-libgui_la_SOURCES += addconfigurationdialog_funcs.cpp addconfigurationwizard_funcs.cpp addforcefieldtermsdialog_funcs.cpp addforcefieldtermswizard_funcs.cpp addprocessinglayerdialog_funcs.cpp addprocessinglayerwizard_funcs.cpp
+libgui_la_SOURCES += addconfigurationdialog_funcs.cpp addconfigurationwizard_funcs.cpp addforcefieldtermsdialog_funcs.cpp addforcefieldtermswizard_funcs.cpp
 libgui_la_SOURCES += configurationtab_funcs.cpp
 libgui_la_SOURCES += forcefieldtab_funcs.cpp
 libgui_la_SOURCES += getconfigurationnamedialog_funcs.cpp getspeciesnamedialog_funcs.cpp
@@ -74,7 +74,7 @@ libgui_la_SOURCES += thread_funcs.cpp
 libgui_la_SOURCES += tmdiarea.hui tmdiarea_funcs.cpp
 libgui_la_SOURCES += wizardwidget_funcs.cpp wizardwidgethighlight.cpp wizardwidgetpageinfo.cpp workspacetab_funcs.cpp
 
-noinst_HEADERS = addconfigurationdialog.h addconfigurationwizard.h addforcefieldtermsdialog.h addforcefieldtermswizard.h addprocessinglayerdialog.h addprocessinglayerwizard.h
+noinst_HEADERS = addconfigurationdialog.h addconfigurationwizard.h addforcefieldtermsdialog.h addforcefieldtermswizard.h
 noinst_HEADERS += configurationtab.h
 noinst_HEADERS += forcefieldtab.h
 noinst_HEADERS += getconfigurationnamedialog.h getspeciesnamedialog.h gui.h

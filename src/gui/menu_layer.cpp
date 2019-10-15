@@ -20,7 +20,7 @@
 */
 
 #include "gui/gui.h"
-#include "gui/addprocessinglayerdialog.h"
+#include "main/dissolve.h"
 
 void DissolveWindow::on_LayerCreateEvolutionStandardAction_triggered(bool checked)
 {

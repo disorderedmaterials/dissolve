@@ -25,7 +25,6 @@ SET(gui_MOC_HDRS
   # Widgets
   addconfigurationwizard.h
   addforcefieldtermswizard.h
-  addprocessinglayerwizard.h
   importspecieswizard.h
   keywordswidget.hui
   pairpotentialwidget.h
@@ -40,7 +39,6 @@ SET(gui_MOC_HDRS
   # Dialogs
   addconfigurationdialog.h
   addforcefieldtermsdialog.h
-  addprocessinglayerdialog.h
   getconfigurationnamedialog.h
   getspeciesnamedialog.h
   importspeciesdialog.h
@@ -81,7 +79,6 @@ SET(gui_UIS
   # Widgets
   addconfigurationwizard.ui
   addforcefieldtermswizard.ui
-  addprocessinglayerwizard.ui
   importspecieswizard.ui
   pairpotentialwidget.ui
   selectforcefieldwidget.ui
@@ -92,7 +89,6 @@ SET(gui_UIS
   # Dialogs
   addconfigurationdialog.ui
   addforcefieldtermsdialog.ui
-  addprocessinglayerdialog.ui
   getconfigurationnamedialog.ui
   getspeciesnamedialog.ui
   importspeciesdialog.ui
@@ -130,7 +126,6 @@ SET(gui_SRCS
   # Widgets
   addconfigurationwizard_funcs.cpp
   addforcefieldtermswizard_funcs.cpp
-  addprocessinglayerwizard_funcs.cpp
   importspecieswizard_funcs.cpp
   keywordswidget_funcs.cpp
   pairpotentialwidget_funcs.cpp
@@ -143,7 +138,6 @@ SET(gui_SRCS
   # Dialogs
   addconfigurationdialog_funcs.cpp
   addforcefieldtermsdialog_funcs.cpp
-  addprocessinglayerdialog_funcs.cpp
   getconfigurationnamedialog_funcs.cpp
   getspeciesnamedialog_funcs.cpp
   importspeciesdialog_funcs.cpp
