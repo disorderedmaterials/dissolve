@@ -195,6 +195,8 @@ class Dissolve
 	Configuration* addConfiguration();
 	// Own the specified Configuration
 	bool ownConfiguration(Configuration* cfg);
+	// Remove specified Configuration
+	void removeConfiguration(Configuration* cfg);
 	// Return number of defined Configurations
 	int nConfigurations() const;
 	// Return Configuration list

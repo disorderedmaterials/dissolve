@@ -179,11 +179,13 @@ class DissolveWindow : public QMainWindow
 	void on_SpeciesImportDissolveAction_triggered(bool checked);
 	void on_SpeciesRenameAction_triggered(bool checked);
 	void on_SpeciesAddForcefieldTermsAction_triggered(bool checked);
+	void on_SpeciesDeleteAction_triggered(bool checked);
 	// Configuration
 	void on_ConfigurationCreateEmptyAction_triggered(bool checked);
 	void on_ConfigurationCreateSimpleRandomMixAction_triggered(bool checked);
 	void on_ConfigurationCreateRelativeRandomMixAction_triggered(bool checked);
 	void on_ConfigurationRenameAction_triggered(bool checked);
+	void on_ConfigurationDeleteAction_triggered(bool checked);
 	// Layer
 	void on_LayerCreateEmptyAction_triggered(bool checked);
 	void on_LayerCreateEvolutionMolecularAction_triggered(bool checked);

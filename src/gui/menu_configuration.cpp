@@ -20,11 +20,13 @@
 */
 
 #include "gui/gui.h"
+#include "gui/configurationtab.h"
 #include "gui/selectspeciesdialog.h"
 #include "main/dissolve.h"
 #include "procedure/nodes/addspecies.h"
 #include "procedure/nodes/box.h"
 #include "procedure/nodes/parameters.h"
+#include <QMessageBox>
 
 void DissolveWindow::on_ConfigurationCreateEmptyAction_triggered(bool checked)
 {
@@ -105,4 +107,37 @@ void DissolveWindow::on_ConfigurationRenameAction_triggered(bool checked)
 	MainTab* tab = currentTab();
 	if ((!tab) || (tab->type() != MainTab::ConfigurationTabType)) return;
 	tab->rename();
+}
+
+void DissolveWindow::on_ConfigurationDeleteAction_triggered(bool checked)
+{
+	// Get the current tab - make sure it is a ConfigurationTab
+	MainTab* tab = currentTab();
+	if ((!tab) || (tab->type() != MainTab::ConfigurationTabType)) return;
+
+	// Cast up the tab to a ConfigurationTab so we can get the ModuleLayer pointer
+	ConfigurationTab* cfgTab = dynamic_cast<ConfigurationTab*>(tab);
+	if (!cfgTab) return;
+	Configuration* cfg = cfgTab->configuration();
+
+	// Check that we really want to delete this tab
+	QMessageBox queryBox;
+	queryBox.setText(QString("Really delete the configuration '%1'?").arg(cfg->name()));
+	queryBox.setInformativeText("Proceed?");
+	queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+	queryBox.setDefaultButton(QMessageBox::No);
+	int ret = queryBox.exec();
+
+	if (ret == QMessageBox::Yes)
+	{
+		// Remove the tab
+		removeTab(cfgTab);
+
+		// Remove the layer
+		dissolve_.removeConfiguration(cfg);
+
+		// Update the GUI
+		setModified();
+		fullUpdate();
+	}
 }

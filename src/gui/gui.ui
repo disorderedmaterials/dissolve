@@ -921,8 +921,9 @@ Remote Simulation</string>
     <addaction name="separator"/>
     <addaction name="SpeciesRenameAction"/>
     <addaction name="separator"/>
-    <addaction name="separator"/>
     <addaction name="SpeciesAddForcefieldTermsAction"/>
+    <addaction name="separator"/>
+    <addaction name="SpeciesDeleteAction"/>
    </widget>
    <widget class="QMenu" name="ConfigurationMenu">
     <property name="font">
@@ -962,6 +963,8 @@ Remote Simulation</string>
     <addaction name="ConfigurationCreateMenu"/>
     <addaction name="separator"/>
     <addaction name="ConfigurationRenameAction"/>
+    <addaction name="separator"/>
+    <addaction name="ConfigurationDeleteAction"/>
    </widget>
    <widget class="QMenu" name="LayerMenu">
     <property name="font">
@@ -1352,6 +1355,24 @@ Remote Simulation</string>
   <action name="LayerCreateEvolutionAtomicAction">
    <property name="text">
     <string>Standard &amp;Atomic (MC/MD)</string>
+   </property>
+  </action>
+  <action name="ConfigurationDeleteAction">
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/general/icons/general_trash.svg</normaloff>:/general/icons/general_trash.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Delete</string>
+   </property>
+  </action>
+  <action name="SpeciesDeleteAction">
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/general/icons/general_trash.svg</normaloff>:/general/icons/general_trash.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Delete</string>
    </property>
   </action>
  </widget>

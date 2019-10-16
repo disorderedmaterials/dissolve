@@ -20,10 +20,12 @@
 */
 
 #include "gui/gui.h"
+#include "gui/speciestab.h"
 #include "gui/addforcefieldtermsdialog.h"
 #include "gui/importspeciesdialog.h"
 #include "gui/selectelementdialog.h"
 #include "classes/species.h"
+#include <QMessageBox>
 
 void DissolveWindow::on_SpeciesCreateEmptyAction_triggered(bool checked)
 {
@@ -93,6 +95,39 @@ void DissolveWindow::on_SpeciesAddForcefieldTermsAction_triggered(bool checked)
 		addForcefieldTermsDialog.applyForcefieldTerms(dissolve_);
 
 		// Fully update GUI
+		setModified();
+		fullUpdate();
+	}
+}
+
+void DissolveWindow::on_SpeciesDeleteAction_triggered(bool checked)
+{
+	// Get the current tab - make sure it is a SpeciesTab
+	MainTab* tab = currentTab();
+	if ((!tab) || (tab->type() != MainTab::SpeciesTabType)) return;
+
+	// Cast up the tab to a SpeciesTab so we can get the ModuleLayer pointer
+	SpeciesTab* spTab = dynamic_cast<SpeciesTab*>(tab);
+	if (!spTab) return;
+	Species* sp = spTab->species();
+
+	// Check that we really want to delete this tab
+	QMessageBox queryBox;
+	queryBox.setText(QString("Really delete the species '%1'?").arg(sp->name()));
+	queryBox.setInformativeText("Proceed?");
+	queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+	queryBox.setDefaultButton(QMessageBox::No);
+	int ret = queryBox.exec();
+
+	if (ret == QMessageBox::Yes)
+	{
+		// Remove the tab
+		removeTab(spTab);
+
+		// Remove the layer
+		dissolve_.removeSpecies(sp);
+
+		// Update the GUI
 		setModified();
 		fullUpdate();
 	}

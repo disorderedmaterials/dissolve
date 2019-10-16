@@ -36,8 +36,13 @@ Species* Dissolve::addSpecies()
 // Remove the specified Species from the list
 void Dissolve::removeSpecies(Species* sp)
 {
-	// Remove Species
-	coreData_.species().remove(sp);
+	if (!sp) return;
+
+	// Remove references to the Species itself
+	removeReferencesTo(sp);
+
+	// Now safe to remove the Species
+	coreData_.removeSpecies(sp);
 }
 
 // Return number of defined Species
