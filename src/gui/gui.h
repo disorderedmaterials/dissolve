@@ -336,7 +336,8 @@ class DissolveWindow : public QMainWindow
 	Species* currentSpecies() const;
 	// Return currently-selected Configuration (if a ConfigurationTab is the current one)
 	Configuration* currentConfiguration() const;
-
+	// Return currently-selected ModuleLayer (if a LayerTab is the current one)
+	ModuleLayer* currentLayer() const;
 
 	public:
 	// Add tab for specified Module target

@@ -71,7 +71,7 @@ class LayerTab : public QWidget, public ListItem<LayerTab>, public MainTab
 
 	public:
 	// Return displayed ModuleLayer
-	const ModuleLayer* moduleLayer() const;
+	ModuleLayer* moduleLayer() const;
 
 
 	/*

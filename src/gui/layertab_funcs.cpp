@@ -82,7 +82,7 @@ bool LayerTab::canChangeTitle() const
  */
 
 // Return displayed ModuleLayer
-const ModuleLayer* LayerTab::moduleLayer() const
+ModuleLayer* LayerTab::moduleLayer() const
 {
 	return moduleLayer_;
 }

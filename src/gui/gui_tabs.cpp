@@ -374,6 +374,17 @@ Configuration* DissolveWindow::currentConfiguration() const
 	return (configurationTab ? configurationTab->configuration() : NULL);
 }
 
+// Return currently-selected ModuleLayer (if a LayerTab is the current one)
+ModuleLayer* DissolveWindow::currentLayer() const
+{
+	// Get the currently-selected tab, and make sure it's a SpeciesTab
+	MainTab* tab = currentTab();
+	if (tab->type() != MainTab::LayerTabType) return NULL;
+
+	LayerTab* layerTab = dynamic_cast<LayerTab*>(tab);
+	return (layerTab ? layerTab->moduleLayer() : NULL);
+}
+
 /*
  * Public
  */
