@@ -244,10 +244,13 @@ bool Dissolve::saveInput(const char* filename)
 	{
 		if (!parser.writeLineF("\n%s  '%s'\n", BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword), cfg->name())) return false;
 
+		// Generator
+		if (!parser.writeLineF("\n  # Modules\n")) return false;
 		if (!parser.writeLineF("  %s\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::GeneratorKeyword))) return false;
-		if (!cfg->generator().write(parser, "   ")) return false;
+		if (!cfg->generator().write(parser, "    ")) return false;
 		if (!parser.writeLineF("  End%s\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::GeneratorKeyword))) return false;
  
+		// Input Coordinates
 		if (cfg->inputCoordinates().hasValidFileAndFormat() && (!parser.writeLineF("  %s  '%s'\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::InputCoordinatesKeyword), cfg->inputCoordinates().asString()))) return false;
 
 		if (!parser.writeLineF("\n")) return false;
