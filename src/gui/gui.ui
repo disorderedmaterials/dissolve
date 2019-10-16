@@ -997,9 +997,16 @@ Remote Simulation</string>
       <addaction name="LayerCreateEvolutionStandardAction"/>
       <addaction name="LayerCreateEvolutionEPSRAction"/>
      </widget>
-     <addaction name="LayerCreateEmpty"/>
+     <widget class="QMenu" name="LayerCreateRefinementMenu">
+      <property name="title">
+       <string>Refinement...</string>
+      </property>
+      <addaction name="LayerCreateRefinementEPSRAction"/>
+     </widget>
+     <addaction name="LayerCreateEmptyAction"/>
      <addaction name="separator"/>
      <addaction name="LayerCreateEvolutionMenu"/>
+     <addaction name="LayerCreateRefinementMenu"/>
     </widget>
     <addaction name="LayerCreateMenu"/>
     <addaction name="separator"/>
@@ -1291,7 +1298,7 @@ Remote Simulation</string>
     <string>Relative random mix</string>
    </property>
   </action>
-  <action name="LayerCreateEmpty">
+  <action name="LayerCreateEmptyAction">
    <property name="icon">
     <iconset resource="main.qrc">
      <normaloff>:/menu/icons/menu_new.svg</normaloff>:/menu/icons/menu_new.svg</iconset>
@@ -1318,6 +1325,11 @@ Remote Simulation</string>
   <action name="LayerCreateEvolutionStandardAction">
    <property name="text">
     <string>Default (MC/MD)</string>
+   </property>
+  </action>
+  <action name="LayerCreateRefinementEPSRAction">
+   <property name="text">
+    <string>Standard EPSR</string>
    </property>
   </action>
  </widget>

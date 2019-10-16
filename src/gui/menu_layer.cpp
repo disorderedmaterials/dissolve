@@ -20,21 +20,36 @@
 */
 
 #include "gui/gui.h"
+#include "gui/selectconfigurationdialog.h"
 #include "main/dissolve.h"
+
+void DissolveWindow::on_LayerCreateEmptyAction_triggered(bool checked)
+{
+	ModuleLayer* newLayer = dissolve_.addProcessingLayer();
+
+	setModified();
+	fullUpdate();
+	setCurrentTab(newLayer);
+}
 
 void DissolveWindow::on_LayerCreateEvolutionStandardAction_triggered(bool checked)
 {
 	ModuleLayer* newLayer = dissolve_.addProcessingLayer();
 
+	Module* module;
+
 	// Add a Monte Carlo shake (MolShake) module
-	dissolve_.createModuleInstance("MolShake", newLayer);
+	module = dissolve_.createModuleInstance("MolShake", newLayer);
+	module->addTargetConfigurations(dissolve_.configurations());
 
 	// Add some MD
-	Module* md = dissolve_.createModuleInstance("MD", newLayer);
-	md->setFrequency(5);
+	module = dissolve_.createModuleInstance("MD", newLayer);
+	module->addTargetConfigurations(dissolve_.configurations());
+	module->setFrequency(5);
 
 	// Add energy calculation
-	dissolve_.createModuleInstance("Energy", newLayer);
+	module = dissolve_.createModuleInstance("Energy", newLayer);
+	module->addTargetConfigurations(dissolve_.configurations());
 
 	setModified();
 	fullUpdate();
@@ -45,14 +60,31 @@ void DissolveWindow::on_LayerCreateEvolutionEPSRAction_triggered(bool checked)
 {
 	ModuleLayer* newLayer = dissolve_.addProcessingLayer();
 
+	Module* module;
+
 	// Add some Monte Carlo
-	dissolve_.createModuleInstance("MolShake", newLayer);
+	module = dissolve_.createModuleInstance("MolShake", newLayer);
+	module->addTargetConfigurations(dissolve_.configurations());
 
 	// Add an intramolecular shake
-	dissolve_.createModuleInstance("IntraShake", newLayer);
+	module = dissolve_.createModuleInstance("IntraShake", newLayer);
+	module->addTargetConfigurations(dissolve_.configurations());
 
 	// Add energy calculation
-	dissolve_.createModuleInstance("Energy", newLayer);
+	module = dissolve_.createModuleInstance("Energy", newLayer);
+	module->addTargetConfigurations(dissolve_.configurations());
+
+	setModified();
+	fullUpdate();
+	setCurrentTab(newLayer);
+}
+
+void DissolveWindow::on_LayerCreateRefinementEPSRAction_triggered(bool checked)
+{
+	ModuleLayer* newLayer = dissolve_.addProcessingLayer();
+
+	// Add the EPSR module
+	dissolve_.createModuleInstance("EPSR", newLayer);
 
 	setModified();
 	fullUpdate();
