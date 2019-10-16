@@ -358,6 +358,18 @@ class Dissolve
 
 
 	/*
+	 * Object Management
+	 */
+	public:
+	// Remove all references to the specified Configuration
+	void removeReferencesTo(Configuration* cfg);
+	// Remove all references to the specified Module
+	void removeReferencesTo(Module* module);
+	// Remove all references to the specified Species
+	void removeReferencesTo(Species* sp);
+
+
+	/*
 	 * Parallel Comms
 	 */
 	public:

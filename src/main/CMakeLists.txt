@@ -14,6 +14,7 @@ add_library(main
   layers.cpp
   masterterms.cpp
   modules.cpp
+  objects.cpp
   pairpotentials.cpp
   simulation.cpp
   species.cpp
