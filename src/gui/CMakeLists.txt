@@ -26,6 +26,7 @@ SET(gui_MOC_HDRS
   importspecieswizard.h
   keywordswidget.hui
   pairpotentialwidget.h
+  selectconfigurationwidget.h
   selectforcefieldwidget.h
   selectspecieswidget.h
   wizardwidget.hui
@@ -41,6 +42,7 @@ SET(gui_MOC_HDRS
   getmodulelayernamedialog.h
   getspeciesnamedialog.h
   importspeciesdialog.h
+  selectconfigurationdialog.h
   selectelementdialog.h
   selectforcefielddialog.h
   selectspeciesdialog.h
@@ -80,6 +82,7 @@ SET(gui_UIS
   addforcefieldtermswizard.ui
   importspecieswizard.ui
   pairpotentialwidget.ui
+  selectconfigurationwidget.ui
   selectforcefieldwidget.ui
   selectspecieswidget.ui
   wizardwidgetfooter.ui
@@ -92,6 +95,7 @@ SET(gui_UIS
   getmodulelayernamedialog.ui
   getspeciesnamedialog.ui
   importspeciesdialog.ui
+  selectconfigurationdialog.ui
   selectelementdialog.ui
   selectforcefielddialog.ui
   selectspeciesdialog.ui
@@ -129,6 +133,7 @@ SET(gui_SRCS
   importspecieswizard_funcs.cpp
   keywordswidget_funcs.cpp
   pairpotentialwidget_funcs.cpp
+  selectconfigurationwidget_funcs.cpp
   selectforcefieldwidget_funcs.cpp
   selectspecieswidget_funcs.cpp
   wizardwidget_funcs.cpp
@@ -142,6 +147,7 @@ SET(gui_SRCS
   getmodulelayernamedialog_funcs.cpp
   getspeciesnamedialog_funcs.cpp
   importspeciesdialog_funcs.cpp
+  selectconfigurationdialog_funcs.cpp
   selectelementdialog_funcs.cpp
   selectforcefielddialog_funcs.cpp
   selectspeciesdialog_funcs.cpp

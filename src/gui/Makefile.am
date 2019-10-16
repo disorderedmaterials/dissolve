@@ -33,7 +33,7 @@ libgui_la_SOURCES += modulechart.hui
 libgui_la_SOURCES += procedureeditor.ui
 # UI - Widgets
 libgui_la_SOURCES += keywordswidget.hui
-libgui_la_SOURCES += selectforcefieldwidget.ui 
+libgui_la_SOURCES += selectconfigurationwidget.ui selectforcefieldwidget.ui selectspecieswidget.ui
 libgui_la_SOURCES += wizardwidgetfooter.ui wizardwidgetheader.ui wizardwidget.hui
 # UI - Wizards
 libgui_la_SOURCES += addconfigurationwizard.ui addforcefieldtermswizard.ui
@@ -43,7 +43,7 @@ libgui_la_SOURCES += pairpotentialwidget.ui
 libgui_la_SOURCES += addconfigurationdialog.ui addforcefieldtermsdialog.ui
 libgui_la_SOURCES += getconfigurationnamedialog.ui getmodulelayernamedialog.ui getspeciesnamedialog.ui
 libgui_la_SOURCES += importspeciesdialog.ui
-libgui_la_SOURCES += selectelementdialog.ui selectforcefielddialog.ui selectspeciesdialog.ui selectspecieswidget.ui selectsystemtemplatedialog.ui
+libgui_la_SOURCES += selectconfigurationdialog.ui selectelementdialog.ui selectforcefielddialog.ui selectspeciesdialog.ui selectsystemtemplatedialog.ui
 # UI - Main Tabs
 libgui_la_SOURCES += gui.ui
 libgui_la_SOURCES += configurationtab.ui
@@ -70,7 +70,7 @@ libgui_la_SOURCES += modulechart_funcs.cpp modulechartblock.cpp modulecharthotsp
 libgui_la_SOURCES += modulecontrolwidget_funcs.cpp moduletab_funcs.cpp modulewidget.cpp
 libgui_la_SOURCES += outputhandler_funcs.cpp
 libgui_la_SOURCES += pairpotentialwidget_funcs.cpp procedureeditor_funcs.cpp
-libgui_la_SOURCES += selectelementdialog_funcs.cpp selectforcefielddialog_funcs.cpp selectforcefieldwidget_funcs.cpp selectspeciesdialog_funcs.cpp selectspeciesdialog_funcs.cpp selectsystemtemplatedialog_funcs.cpp speciestab_funcs.cpp stockcolours.cpp systemtemplate.cpp
+libgui_la_SOURCES += selectconfigurationdialog_funcs.cpp selectconfigurationwidget_funcs.cpp selectelementdialog_funcs.cpp selectforcefielddialog_funcs.cpp selectforcefieldwidget_funcs.cpp selectspeciesdialog_funcs.cpp selectspeciesdialog_funcs.cpp selectsystemtemplatedialog_funcs.cpp speciestab_funcs.cpp stockcolours.cpp systemtemplate.cpp
 libgui_la_SOURCES += thread_funcs.cpp
 libgui_la_SOURCES += tmdiarea.hui tmdiarea_funcs.cpp
 libgui_la_SOURCES += wizardwidget_funcs.cpp wizardwidgethighlight.cpp wizardwidgetpageinfo.cpp workspacetab_funcs.cpp
@@ -84,7 +84,7 @@ noinst_HEADERS += keywordwidgets.h
 noinst_HEADERS += layereditor.h layertab.h
 noinst_HEADERS += maintab.h modulechartblock.h modulecharthotspot.h modulechartinsertionblock.h modulechartmetrics.h modulechartmoduleblock.h modulecontrolwidget.h moduletab.h modulewidget.h
 noinst_HEADERS += pairpotentialwidget.h
-noinst_HEADERS += selectelementdialog.h selectforcefielddialog.h selectforcefieldwidget.h selectspeciesdialog.h selectspecieswidget.h selectsystemtemplatedialog.h speciestab.h stockcolours.h systemtemplate.h
+noinst_HEADERS += selectconfigurationdialog.h selectconfigurationwidget.h selectelementdialog.h selectforcefielddialog.h selectforcefieldwidget.h selectspeciesdialog.h selectspecieswidget.h selectsystemtemplatedialog.h speciestab.h stockcolours.h systemtemplate.h
 noinst_HEADERS += wizardwidgetfooter.h wizardwidgetheader.h wizardwidgethighlight.h wizardwidgetpageinfo.h workspacetab.h
 
 AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
