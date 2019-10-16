@@ -33,6 +33,6 @@ Let's change the settings of our configuration and its generator to give us a su
 - Increase the _Population_{: .text-green-100} of the argon atom in the `AddSpecies` node to 1000
 - Set the _Temperature_{: .text-green-100} of the configuration 85 K to match that of the experimental measurement.
 
-If you want to, you can create your initial configuration now by hitting the _Generate_{: .text-green-100} button. If you don't, the generator procedure will be run automatically as the simulation starts up.
+If you want to, you can create your initial configuration now by hitting the _Generate_{: .text-green-100} button. If you don't, the generator procedure will be run automatically when the simulation starts up.
 
 [Previous Step](step2.md){: .btn }   [Next Step](step4.md){: .btn }
