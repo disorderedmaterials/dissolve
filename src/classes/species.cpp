@@ -157,12 +157,7 @@ bool Species::checkSetUp()
 	/*
 	 * Check Isotopologues
 	 */
-	if (isotopologues_.nItems() == 0)
-	{
-		Messenger::error("No Isotopologues defined in Species.\n");
-		++nErrors;
-	}
-	else for (Isotopologue* iso = isotopologues_.first(); iso != NULL; iso = iso->next())
+	for (Isotopologue* iso = isotopologues_.first(); iso != NULL; iso = iso->next())
 	{
 		RefDataListIterator<AtomType,Isotope*> isotopeIterator(iso->isotopes());
 		while (AtomType* atomType = isotopeIterator.iterate())
