@@ -1012,9 +1012,24 @@ Remote Simulation</string>
       </property>
       <addaction name="LayerCreateRefinementEPSRAction"/>
      </widget>
+     <widget class="QMenu" name="LayerCreateCalculateMenu">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="title">
+       <string>&amp;Calculate...</string>
+      </property>
+      <addaction name="LayerCreateCalculateRDFAction"/>
+      <addaction name="LayerCreateCalculateRDFStructureFactorAction"/>
+      <addaction name="LayerCreateCalculateRDFNeutronAction"/>
+      <addaction name="LayerCreateCalculateRDFNeutronXRayAction"/>
+     </widget>
      <addaction name="LayerCreateEmptyAction"/>
      <addaction name="separator"/>
      <addaction name="LayerCreateEvolutionMenu"/>
+     <addaction name="LayerCreateCalculateMenu"/>
      <addaction name="LayerCreateRefinementMenu"/>
     </widget>
     <addaction name="LayerCreateMenu"/>
@@ -1373,6 +1388,29 @@ Remote Simulation</string>
    </property>
    <property name="text">
     <string>Delete</string>
+   </property>
+  </action>
+  <action name="LayerCreateCalculateRDFNeutronAction">
+   <property name="text">
+    <string>RDF and &amp;Neutron S(Q)</string>
+   </property>
+  </action>
+  <action name="LayerCreateCalculateRDFNeutronXRayAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>RDF, Neutron S(Q), and &amp;X-ray S(Q)</string>
+   </property>
+  </action>
+  <action name="LayerCreateCalculateRDFStructureFactorAction">
+   <property name="text">
+    <string>RDF and &amp;Unweighted S(Q)</string>
+   </property>
+  </action>
+  <action name="LayerCreateCalculateRDFAction">
+   <property name="text">
+    <string>&amp;RDF Only</string>
    </property>
   </action>
  </widget>

@@ -192,6 +192,10 @@ class DissolveWindow : public QMainWindow
 	void on_LayerCreateEvolutionAtomicAction_triggered(bool checked);
 	void on_LayerCreateEvolutionEPSRAction_triggered(bool checked);
 	void on_LayerCreateRefinementEPSRAction_triggered(bool checked);
+	void on_LayerCreateCalculateRDFAction_triggered(bool checked);
+	void on_LayerCreateCalculateRDFStructureFactorAction_triggered(bool checked);
+	void on_LayerCreateCalculateRDFNeutronAction_triggered(bool checked);
+	void on_LayerCreateCalculateRDFNeutronXRayAction_triggered(bool checked);
 	void on_LayerRenameAction_triggered(bool checked);
 	void on_LayerDeleteAction_triggered(bool checked);
 	// Workspace

@@ -112,9 +112,78 @@ void DissolveWindow::on_LayerCreateRefinementEPSRAction_triggered(bool checked)
 {
 	ModuleLayer* newLayer = dissolve_.addProcessingLayer();
 	newLayer->setName(dissolve_.uniqueProcessingLayerName("Refine (EPSR)"));
+	newLayer->setFrequency(5);
 
 	// Add the EPSR module
 	dissolve_.createModuleInstance("EPSR", newLayer);
+
+	setModified();
+	fullUpdate();
+	setCurrentTab(newLayer);
+}
+
+void DissolveWindow::on_LayerCreateCalculateRDFAction_triggered(bool checked)
+{
+	ModuleLayer* newLayer = dissolve_.addProcessingLayer();
+	newLayer->setName(dissolve_.uniqueProcessingLayerName("RDF"));
+	newLayer->setFrequency(5);
+
+	// Add the RDF module
+	dissolve_.createModuleInstance("RDF", newLayer);
+
+	setModified();
+	fullUpdate();
+	setCurrentTab(newLayer);
+}
+
+void DissolveWindow::on_LayerCreateCalculateRDFStructureFactorAction_triggered(bool checked)
+{
+	ModuleLayer* newLayer = dissolve_.addProcessingLayer();
+	newLayer->setName(dissolve_.uniqueProcessingLayerName("RDF / Unweighted S(Q)"));
+	newLayer->setFrequency(5);
+
+	// Add the RDF module
+	dissolve_.createModuleInstance("RDF", newLayer);
+
+	// Add a plain structure factor module
+	dissolve_.createModuleInstance("SQ", newLayer);
+
+	setModified();
+	fullUpdate();
+	setCurrentTab(newLayer);
+}
+
+void DissolveWindow::on_LayerCreateCalculateRDFNeutronAction_triggered(bool checked)
+{
+	ModuleLayer* newLayer = dissolve_.addProcessingLayer();
+	newLayer->setName(dissolve_.uniqueProcessingLayerName("RDF / Neutron S(Q)"));
+	newLayer->setFrequency(5);
+
+	// Add the RDF module
+	dissolve_.createModuleInstance("RDF", newLayer);
+
+	// Add a NeutronSQ module
+	dissolve_.createModuleInstance("NeutronSQ", newLayer);
+
+	setModified();
+	fullUpdate();
+	setCurrentTab(newLayer);
+}
+
+void DissolveWindow::on_LayerCreateCalculateRDFNeutronXRayAction_triggered(bool checked)
+{
+	ModuleLayer* newLayer = dissolve_.addProcessingLayer();
+	newLayer->setName(dissolve_.uniqueProcessingLayerName("RDF / Neutron S(Q) / X-Ray S(Q)"));
+	newLayer->setFrequency(5);
+
+	// Add the RDF module
+	dissolve_.createModuleInstance("RDF", newLayer);
+
+	// Add a NeutronSQ module
+	dissolve_.createModuleInstance("NeutronSQ", newLayer);
+
+	// Add an XRaySQ module
+	dissolve_.createModuleInstance("XRaySQ", newLayer);
 
 	setModified();
 	fullUpdate();
