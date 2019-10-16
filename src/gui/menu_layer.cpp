@@ -34,7 +34,7 @@ void DissolveWindow::on_LayerCreateEmptyAction_triggered(bool checked)
 	setCurrentTab(newLayer);
 }
 
-void DissolveWindow::on_LayerCreateEvolutionStandardAction_triggered(bool checked)
+void DissolveWindow::on_LayerCreateEvolutionMolecularAction_triggered(bool checked)
 {
 	ModuleLayer* newLayer = dissolve_.addProcessingLayer();
 	newLayer->setName(dissolve_.uniqueProcessingLayerName("Evolve (Standard)"));
@@ -43,6 +43,31 @@ void DissolveWindow::on_LayerCreateEvolutionStandardAction_triggered(bool checke
 
 	// Add a Monte Carlo shake (MolShake) module
 	module = dissolve_.createModuleInstance("MolShake", newLayer);
+	module->addTargetConfigurations(dissolve_.configurations());
+
+	// Add some MD
+	module = dissolve_.createModuleInstance("MD", newLayer);
+	module->addTargetConfigurations(dissolve_.configurations());
+	module->setFrequency(5);
+
+	// Add energy calculation
+	module = dissolve_.createModuleInstance("Energy", newLayer);
+	module->addTargetConfigurations(dissolve_.configurations());
+
+	setModified();
+	fullUpdate();
+	setCurrentTab(newLayer);
+}
+
+void DissolveWindow::on_LayerCreateEvolutionAtomicAction_triggered(bool checked)
+{
+	ModuleLayer* newLayer = dissolve_.addProcessingLayer();
+	newLayer->setName(dissolve_.uniqueProcessingLayerName("Evolve (Atomic)"));
+
+	Module* module;
+
+	// Add some Monte Carlo
+	module = dissolve_.createModuleInstance("AtomShake", newLayer);
 	module->addTargetConfigurations(dissolve_.configurations());
 
 	// Add some MD

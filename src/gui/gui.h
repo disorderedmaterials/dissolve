@@ -186,7 +186,8 @@ class DissolveWindow : public QMainWindow
 	void on_ConfigurationRenameAction_triggered(bool checked);
 	// Layer
 	void on_LayerCreateEmptyAction_triggered(bool checked);
-	void on_LayerCreateEvolutionStandardAction_triggered(bool checked);
+	void on_LayerCreateEvolutionMolecularAction_triggered(bool checked);
+	void on_LayerCreateEvolutionAtomicAction_triggered(bool checked);
 	void on_LayerCreateEvolutionEPSRAction_triggered(bool checked);
 	void on_LayerCreateRefinementEPSRAction_triggered(bool checked);
 	void on_LayerRenameAction_triggered(bool checked);

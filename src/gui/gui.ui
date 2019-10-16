@@ -994,7 +994,8 @@ Remote Simulation</string>
       <property name="title">
        <string>E&amp;volution...</string>
       </property>
-      <addaction name="LayerCreateEvolutionStandardAction"/>
+      <addaction name="LayerCreateEvolutionMolecularAction"/>
+      <addaction name="LayerCreateEvolutionAtomicAction"/>
       <addaction name="LayerCreateEvolutionEPSRAction"/>
      </widget>
      <widget class="QMenu" name="LayerCreateRefinementMenu">
@@ -1329,9 +1330,9 @@ Remote Simulation</string>
     <string>Standard Dissolve</string>
    </property>
   </action>
-  <action name="LayerCreateEvolutionStandardAction">
+  <action name="LayerCreateEvolutionMolecularAction">
    <property name="text">
-    <string>&amp;Default (MC/MD)</string>
+    <string>Standard &amp;Molecular (MC/MD)</string>
    </property>
   </action>
   <action name="LayerCreateRefinementEPSRAction">
@@ -1346,6 +1347,11 @@ Remote Simulation</string>
    </property>
    <property name="text">
     <string>&amp;Delete</string>
+   </property>
+  </action>
+  <action name="LayerCreateEvolutionAtomicAction">
+   <property name="text">
+    <string>Standard &amp;Atomic (MC/MD)</string>
    </property>
   </action>
  </widget>
