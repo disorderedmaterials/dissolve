@@ -61,7 +61,7 @@ const char* BroadeningFunctionParameters[][MAXBROADENINGFUNCTIONPARAMS] = {
 	{ "FWHM", "", "", "", "", "",},
 	{ "A", "FWHM", "", "", "", "",},
 	{ "FWHM", "", "", "", "", "",},
-	{ "FWHM1", "FWHM2", "", "", "", "",}
+	{ "FWHM1 (independent)", "FWHM2 (dependent)", "", "", "", "",}
 };
 
 // Return FunctionType from supplied string
@@ -345,7 +345,7 @@ double BroadeningFunction::yActual(double x, double omega) const
 			break;
 		case (BroadeningFunction::GaussianC2Function):
 			/*
-			 * Unnormalised Gaussian with no prefactor, centred at zero, with variable FWHM
+			 * Unnormalised Gaussian with no prefactor, centred at zero, with constant and variable FWHM
 			 *
 			 * Parameters:  0 = FWHM1
 			 * 		1 = FWHM2
@@ -421,7 +421,7 @@ double BroadeningFunction::yFTActual(double x, double omega) const
 			break;
 		case (BroadeningFunction::GaussianC2Function):
 			/*
-			 * Unnormalised Gaussian with no prefactor, centred at zero, with variable FWHM
+			 * Unnormalised Gaussian with no prefactor, centred at zero, with constant and variable FWHM
 			 *
 			 * Parameters:  0 = FWHM1
 			 * 		1 = FWHM2
@@ -522,7 +522,7 @@ double BroadeningFunction::discreteKernelNormalisation(double deltaX) const
 			break;
 		case (BroadeningFunction::GaussianC2Function):
 			/*
-			 * Unnormalised Gaussian with no prefactor, centred at zero, with variable FWHM
+			 * Unnormalised Gaussian with no prefactor, centred at zero, with constant and variable FWHM
 			 *
 			 * Parameters:  0 = FWHM1
 			 * 		1 = FWHM2
@@ -600,7 +600,7 @@ double BroadeningFunction::discreteKernelNormalisation(double deltaX, double ome
 			break;
 		case (BroadeningFunction::GaussianC2Function):
 			/*
-			 * Unnormalised Gaussian with no prefactor, centred at zero, with variable FWHM
+			 * Unnormalised Gaussian with no prefactor, centred at zero, with constant and variable FWHM
 			 *
 			 * Parameters:  0 = FWHM1
 			 * 		1 = FWHM2
