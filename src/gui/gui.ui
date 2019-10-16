@@ -948,7 +948,7 @@ Remote Simulation</string>
       </font>
      </property>
      <property name="title">
-      <string>Create...</string>
+      <string>&amp;Create...</string>
      </property>
      <property name="icon">
       <iconset resource="main.qrc">
@@ -979,7 +979,7 @@ Remote Simulation</string>
       </font>
      </property>
      <property name="title">
-      <string>Create...</string>
+      <string>&amp;Create...</string>
      </property>
      <property name="icon">
       <iconset resource="main.qrc">
@@ -992,14 +992,19 @@ Remote Simulation</string>
        </font>
       </property>
       <property name="title">
-       <string>Evolution...</string>
+       <string>E&amp;volution...</string>
       </property>
       <addaction name="LayerCreateEvolutionStandardAction"/>
       <addaction name="LayerCreateEvolutionEPSRAction"/>
      </widget>
      <widget class="QMenu" name="LayerCreateRefinementMenu">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
       <property name="title">
-       <string>Refinement...</string>
+       <string>&amp;Refinement...</string>
       </property>
       <addaction name="LayerCreateRefinementEPSRAction"/>
      </widget>
@@ -1251,7 +1256,7 @@ Remote Simulation</string>
   </action>
   <action name="ConfigurationRenameAction">
    <property name="text">
-    <string>Rename...</string>
+    <string>&amp;Rename...</string>
    </property>
   </action>
   <action name="SpeciesRenameAction">
@@ -1290,12 +1295,12 @@ Remote Simulation</string>
   </action>
   <action name="ConfigurationCreateSimpleRandomMixAction">
    <property name="text">
-    <string>Simple random mix</string>
+    <string>&amp;Simple random mix</string>
    </property>
   </action>
   <action name="ConfigurationCreateRelativeRandomMixAction">
    <property name="text">
-    <string>Relative random mix</string>
+    <string>&amp;Relative random mix</string>
    </property>
   </action>
   <action name="LayerCreateEmptyAction">
@@ -1304,17 +1309,17 @@ Remote Simulation</string>
      <normaloff>:/menu/icons/menu_new.svg</normaloff>:/menu/icons/menu_new.svg</iconset>
    </property>
    <property name="text">
-    <string>Empty</string>
+    <string>&amp;Empty</string>
    </property>
   </action>
   <action name="LayerRenameAction">
    <property name="text">
-    <string>Rename</string>
+    <string>&amp;Rename...</string>
    </property>
   </action>
   <action name="LayerCreateEvolutionEPSRAction">
    <property name="text">
-    <string>EPSR (MC Only)</string>
+    <string>&amp;EPSR (MC Only)</string>
    </property>
   </action>
   <action name="actionStandard_Dissolve">
@@ -1324,12 +1329,12 @@ Remote Simulation</string>
   </action>
   <action name="LayerCreateEvolutionStandardAction">
    <property name="text">
-    <string>Default (MC/MD)</string>
+    <string>&amp;Default (MC/MD)</string>
    </property>
   </action>
   <action name="LayerCreateRefinementEPSRAction">
    <property name="text">
-    <string>Standard EPSR</string>
+    <string>Standard &amp;EPSR</string>
    </property>
   </action>
  </widget>
