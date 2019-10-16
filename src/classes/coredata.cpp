@@ -75,6 +75,12 @@ AtomType* CoreData::addAtomType(Element* el)
 	return newAtomType;
 }
 
+// Remove specified AtomType
+void CoreData::removeAtomType(AtomType* at)
+{
+	atomTypes_.remove(at);
+}
+
 // Return number of AtomTypes in list
 int CoreData::nAtomTypes() const
 {
@@ -319,6 +325,12 @@ Species* CoreData::addSpecies()
 	return newSpecies;
 }
 
+// Remove specified Species
+void CoreData::removeSpecies(Species* sp)
+{
+	species_.remove(sp);
+}
+
 // Return number of Species in list
 int CoreData::nSpecies() const
 {
@@ -386,6 +398,12 @@ Configuration* CoreData::addConfiguration()
 	newConfiguration->setName(uniqueConfigurationName("NewConfiguration"));
 
 	return newConfiguration;
+}
+
+// Remove specified Configuration
+void CoreData::removeConfiguration(Configuration* cfg)
+{
+	configurations_.remove(cfg);
 }
 
 // Return number of Configurations in list

@@ -58,6 +58,8 @@ class CoreData
 	public:
 	// Add new AtomType
 	AtomType* addAtomType(Element* el);
+	// Remove specified AtomType
+	void removeAtomType(AtomType* at);
 	// Return number of AtomTypes in list
 	int nAtomTypes() const;
 	// Return core AtomTypes list
@@ -134,6 +136,8 @@ class CoreData
 	public:
 	// Add new Species
 	Species* addSpecies();
+	// Remove specified Species
+	void removeSpecies(Species* sp);
 	// Return number of Species in list
 	int nSpecies() const;
 	// Return core Species list
@@ -158,6 +162,8 @@ class CoreData
 	public:
 	// Add new Configuration
 	Configuration* addConfiguration();
+	// Remove specified Configuration
+	void removeConfiguration(Configuration* cfg);
 	// Return number of Configuration in list
 	int nConfigurations() const;
 	// Return core Configuration list
