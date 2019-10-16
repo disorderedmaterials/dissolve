@@ -133,7 +133,7 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
 	// Write keyword data to specified LineParser
 	bool write(LineParser& parser, const char* keywordName, const char* prefix)
 	{
-		return parser.writeLineF("%s%s  '%s'\n", prefix, KeywordData< EnumOptions<E> >::name(), KeywordData< EnumOptions<E> >::data_.currentOptionKeyword());
+		return parser.writeLineF("%s%s  %s\n", prefix, KeywordData< EnumOptions<E> >::name(), KeywordData< EnumOptions<E> >::data_.currentOptionKeyword());
 	}
 
 
