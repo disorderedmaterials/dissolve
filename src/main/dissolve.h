@@ -253,6 +253,8 @@ class Dissolve
 	public:
 	// Add new processing layer
 	ModuleLayer* addProcessingLayer();
+	// Remove specified processing layer
+	void removeProcessingLayer(ModuleLayer* layer);
 	// Find named processing layer
 	ModuleLayer* findProcessingLayer(const char* name) const;
 	// Own the specified processing layer

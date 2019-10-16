@@ -31,6 +31,19 @@ ModuleLayer* Dissolve::addProcessingLayer()
 	return processingLayers_.add();
 }
 
+// Remove specified processing layer
+void Dissolve::removeProcessingLayer(ModuleLayer* layer)
+{
+	if (!layer) return;
+
+	// Remove any references to the Modules in the layer before we delete it
+	ListIterator<Module> moduleIterator(layer->modules());
+	while (Module* module = moduleIterator.iterate()) removeReferencesTo(module);
+
+	// Now safe to remove the layer
+	processingLayers_.remove(layer);
+}
+
 // Find named processing layer
 ModuleLayer* Dissolve::findProcessingLayer(const char* name) const
 {

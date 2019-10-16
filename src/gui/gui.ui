@@ -1016,6 +1016,8 @@ Remote Simulation</string>
     <addaction name="LayerCreateMenu"/>
     <addaction name="separator"/>
     <addaction name="LayerRenameAction"/>
+    <addaction name="separator"/>
+    <addaction name="LayerDeleteAction"/>
    </widget>
    <addaction name="SessionMenu"/>
    <addaction name="SimulationMenu"/>
@@ -1335,6 +1337,15 @@ Remote Simulation</string>
   <action name="LayerCreateRefinementEPSRAction">
    <property name="text">
     <string>Standard &amp;EPSR</string>
+   </property>
+  </action>
+  <action name="LayerDeleteAction">
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/general/icons/general_trash.svg</normaloff>:/general/icons/general_trash.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Delete</string>
    </property>
   </action>
  </widget>

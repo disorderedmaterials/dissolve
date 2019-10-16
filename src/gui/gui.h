@@ -190,6 +190,7 @@ class DissolveWindow : public QMainWindow
 	void on_LayerCreateEvolutionEPSRAction_triggered(bool checked);
 	void on_LayerCreateRefinementEPSRAction_triggered(bool checked);
 	void on_LayerRenameAction_triggered(bool checked);
+	void on_LayerDeleteAction_triggered(bool checked);
 	// Workspace
 	void on_WorkspaceAddNewAction_triggered(bool checked);
 	// Help

@@ -21,7 +21,9 @@
 
 #include "gui/gui.h"
 #include "gui/selectconfigurationdialog.h"
+#include "gui/layertab.h"
 #include "main/dissolve.h"
+#include <QMessageBox>
 
 void DissolveWindow::on_LayerCreateEmptyAction_triggered(bool checked)
 {
@@ -100,4 +102,37 @@ void DissolveWindow::on_LayerRenameAction_triggered(bool checked)
 	MainTab* tab = currentTab();
 	if ((!tab) || (tab->type() != MainTab::LayerTabType)) return;
 	tab->rename();
+}
+
+void DissolveWindow::on_LayerDeleteAction_triggered(bool checked)
+{
+	// Get the current tab - make sure it is a LayerTab
+	MainTab* tab = currentTab();
+	if ((!tab) || (tab->type() != MainTab::LayerTabType)) return;
+
+	// Check that we really want to delete this tab
+	QMessageBox queryBox;
+	queryBox.setText(QString("Really delete the layer '%1'?").arg(tab->title()));
+	queryBox.setInformativeText("Proceed?");
+	queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+	queryBox.setDefaultButton(QMessageBox::No);
+	int ret = queryBox.exec();
+
+	if (ret == QMessageBox::Yes)
+	{
+		// Cast up the tab to a LayerTab so we can get the ModuleLayer pointer
+		LayerTab* layerTab = dynamic_cast<LayerTab*>(tab);
+		if (!layerTab) return;
+		ModuleLayer* layer = layerTab->moduleLayer();
+
+		// Remove the tab
+		removeTab(layerTab);
+
+		// Remove the layer
+		dissolve_.removeProcessingLayer(layer);
+
+		// Update the GUI
+		setModified();
+		fullUpdate();
+	}
 }
