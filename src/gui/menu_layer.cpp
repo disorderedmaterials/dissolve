@@ -35,6 +35,7 @@ void DissolveWindow::on_LayerCreateEmptyAction_triggered(bool checked)
 void DissolveWindow::on_LayerCreateEvolutionStandardAction_triggered(bool checked)
 {
 	ModuleLayer* newLayer = dissolve_.addProcessingLayer();
+	newLayer->setName(dissolve_.uniqueProcessingLayerName("Evolve (Standard)"));
 
 	Module* module;
 
@@ -59,6 +60,7 @@ void DissolveWindow::on_LayerCreateEvolutionStandardAction_triggered(bool checke
 void DissolveWindow::on_LayerCreateEvolutionEPSRAction_triggered(bool checked)
 {
 	ModuleLayer* newLayer = dissolve_.addProcessingLayer();
+	newLayer->setName(dissolve_.uniqueProcessingLayerName("Evolve (EPSR)"));
 
 	Module* module;
 
@@ -82,6 +84,7 @@ void DissolveWindow::on_LayerCreateEvolutionEPSRAction_triggered(bool checked)
 void DissolveWindow::on_LayerCreateRefinementEPSRAction_triggered(bool checked)
 {
 	ModuleLayer* newLayer = dissolve_.addProcessingLayer();
+	newLayer->setName(dissolve_.uniqueProcessingLayerName("Refine (EPSR)"));
 
 	// Add the EPSR module
 	dissolve_.createModuleInstance("EPSR", newLayer);
