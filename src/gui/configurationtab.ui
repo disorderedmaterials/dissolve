@@ -98,11 +98,31 @@
              <number>4</number>
             </property>
             <item>
-             <widget class="QPushButton" name="GeneratorGenerateButton">
-              <property name="text">
-               <string>Generate</string>
+             <layout class="QHBoxLayout" name="horizontalLayout_5">
+              <property name="spacing">
+               <number>4</number>
               </property>
-             </widget>
+              <item>
+               <spacer name="horizontalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QPushButton" name="GeneratorGenerateButton">
+                <property name="text">
+                 <string>Generate</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item>
              <widget class="ProcedureEditor" name="ProcedureWidget" native="true">
