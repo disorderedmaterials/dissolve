@@ -110,7 +110,7 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
 	void on_CoordinatesFileEdit_textChanged(QString text);
 	void on_CoordinatesFileSelectButton_clicked(bool checked);
 	// Content
-	void on_GeneratorGenerateButton_clicked(bool checked);
+	void on_GeneratorRegenerateButton_clicked(bool checked);
 
 
 	/*

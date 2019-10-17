@@ -116,9 +116,13 @@
                </spacer>
               </item>
               <item>
-               <widget class="QPushButton" name="GeneratorGenerateButton">
+               <widget class="QPushButton" name="GeneratorRegenerateButton">
                 <property name="text">
-                 <string>Generate</string>
+                 <string>Regenerate</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="main.qrc">
+                  <normaloff>:/general/icons/general_repeat.svg</normaloff>:/general/icons/general_repeat.svg</iconset>
                 </property>
                </widget>
               </item>

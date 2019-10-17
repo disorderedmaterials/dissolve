@@ -184,7 +184,7 @@ void ConfigurationTab::on_CoordinatesFileSelectButton_clicked(bool checked)
 	if (refreshing_) return;
 }
 
-void ConfigurationTab::on_GeneratorGenerateButton_clicked(bool checked)
+void ConfigurationTab::on_GeneratorRegenerateButton_clicked(bool checked)
 {
 	// Are we sure that's what we want to do?
 	QMessageBox queryBox;
