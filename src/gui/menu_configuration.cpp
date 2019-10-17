@@ -58,6 +58,9 @@ void DissolveWindow::on_ConfigurationCreateSimpleRandomMixAction_triggered(bool 
 		generator.addRootSequenceNode(new AddSpeciesProcedureNode(sp, 100, NodeValue("rho", paramsNode->parameterReferences())));
 	}
 
+	// Run the generator
+	newConfiguration->generate(dissolve_.worldPool());
+
 	setModified();
 	fullUpdate();
 	setCurrentTab(newConfiguration);
@@ -95,6 +98,9 @@ void DissolveWindow::on_ConfigurationCreateRelativeRandomMixAction_triggered(boo
 
 		++count;
 	}
+
+	// Run the generator
+	newConfiguration->generate(dissolve_.worldPool());
 
 	setModified();
 	fullUpdate();
