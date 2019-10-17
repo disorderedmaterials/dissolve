@@ -17,7 +17,7 @@ Dissolve provides several standard generators for common-use cases, one of which
 - From the _Configuration_{: .text-green-100} menu choose _Create...→Simple random mix_{: .text-green-100}).
 - A random mix can contain any number of species. We only have one, so select the argon species from the dialog that appears.
 
-You will now see that the _Generator_{: .text-green-100} section has been populated with several steps.  We'll go through these one-by-one in the order they appear. To see the settings for any step, click the cog icon in its bottom-right corner.
+You will now see that the _Generator_{: .text-green-100} section has been populated with several steps, and a new configuration of atomic coordinates has been created based on these steps.  We'll go through these one-by-one in the order they appear. To see the settings for any step, click the cog icon in its bottom-right corner.
 
 | Node | Purpose |
 |------|---------|
@@ -30,9 +30,9 @@ In the `AddSpecies` node see how we have referenced the `rho` parameter for the 
 Let's change the settings of our configuration and its generator to give us a suitable system.
 
 - Change the value of `rho` in the `Parameters` node to 0.0213, and ensure that the units in the `AddSpecies` node are set to `atoms A-3`.
-- Increase the _Population_{: .text-green-100} of the argon atom in the `AddSpecies` node to 1000
+- Increase the _Population_{: .text-green-100} of the argon atom in the `AddSpecies` node to 1000.
 - Set the _Temperature_{: .text-green-100} of the configuration 85 K to match that of the experimental measurement.
 
-If you want to, you can create your initial configuration now by hitting the _Generate_{: .text-green-100} button. If you don't, the generator procedure will be run automatically when the simulation starts up.
+Because we've changed some settings, we need to hit the _Regenerate_{: .text-green-100} button to recreate our inital configuration.
 
 [Previous Step](step2.md){: .btn }   [Next Step](step4.md){: .btn }
