@@ -9,3 +9,50 @@ $body-font-family: "Nunito", "helvetica neue", helvetica, roboto, noto, "segoe u
 	margin-left: auto;
 	margin-right: auto;
 }
+
+/*
+ * Blockquote Basic Style
+ */
+
+blockquote {
+  width:60%;
+  margin:50px auto;
+  color: #555555;
+  padding:1.2em 30px 1.2em 75px;
+  border-left:8px solid #ddd ;
+  line-height:1.6;
+  position: relative;
+  background:#EDEDED;
+}
+
+blockquote::before{
+  font-family:Arial;
+  font-size:4em;
+  position: absolute;
+  color:#ddd;
+  left: 10px;
+  top:-10px;
+}
+
+blockquote::after{
+  content: '';
+}
+
+blockquote strong {
+  display:block;
+  color:#333333;
+  font-style: normal;
+  font-weight: bold;
+  margin-top:1em;
+}
+
+/*
+ * Blockquote Specific Stylings
+ */
+
+blockquote.tip {
+  border-left:8px solid #78C0A8;
+}
+blockquote.tip::before {
+  content: url(blocktip.svg);
+  }
