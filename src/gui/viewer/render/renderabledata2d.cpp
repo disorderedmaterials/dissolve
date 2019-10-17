@@ -55,6 +55,8 @@ int RenderableData2D::dataVersion() const
 	return (source_ ? source_->version() : -99);
 }
 
+
+
 /*
  * Transform / Limits
  */
@@ -68,12 +70,12 @@ void RenderableData2D::transformData()
 	// Copy original data and transform now. We do this even if the transformers are disabled, since they may have previously been active
 	if (!validateDataSource()) transformedData_.clear();
 	else transformedData_ = *source_;
-	Transformer::transform(transformedData_, transforms_[0], transforms_[1]);
+	////////////Transformer::transform(transformedData_, some 2Darray );
 
-	transformMin_ = 0.0;
-	transformMax_ = 0.0;
-	transformMinPositive_ = 0.1;
-	transformMaxPositive_ = -1.0;
+	transformMin_ = min(false);
+	transformMax_ = max(false);
+	transformMinPositive_ = min(true);
+	transformMaxPositive_ = max(true);
 
 	// Set initial limits if we can
 	if (transformedData_.nValues() > 0)

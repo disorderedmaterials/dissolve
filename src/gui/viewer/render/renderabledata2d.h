@@ -49,8 +49,8 @@ class RenderableData2D : public Renderable
 	bool validateDataSource();
 	// Return version of data
 	int dataVersion() const;
-	double min();
-	double max();
+	double min(bool flag);
+	double max(bool flag);
 	
 
 
