@@ -92,7 +92,7 @@ double Transformer::transform(double x, double y, double z)
 	// If equation is not valid, just return
 	if (!valid_)
 	{
-		Messenger::print("Equation is not valid, so returning 0.0.\n");
+		Messenger::printVerbose("Equation is not valid, so returning 0.0.\n");
 		return 0.0;
 	}
 
@@ -112,7 +112,7 @@ Array<double> Transformer::transformArray(Array<double> sourceX, Array<double> s
 	// If equation is not valid, just return original array
 	if (!valid_)
 	{
-		Messenger::print("Equation is not valid, so returning original array.\n");
+		Messenger::printVerbose("Equation is not valid, so returning original array.\n");
 		return (target == 0 ? sourceX : sourceY);
 	}
 
