@@ -1,6 +1,7 @@
 ---
 title: Liquid Argon
 parent: Learn Dissolve
+has_children: true
 nav_order: 3
 ---
 # Liquid Argon (Step-by-Step)
@@ -21,3 +22,4 @@ Steps:
 So, fire up the Dissolve GUI, choose _Create a New Simulation from Scratch_{: .text-green-100}, and we'll get started.
 
 [Let's begin!](step1.md){: .btn }
+

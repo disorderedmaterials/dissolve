@@ -35,4 +35,4 @@ Let's change the settings of our configuration and its generator to give us a su
 
 Because we've changed some settings, we need to hit the _Regenerate_{: .text-green-100} button to recreate our inital configuration.
 
-[Previous Step](step2.md){: .btn }   [Next Step](step4.md){: .btn }
+[Previous Step](step2.md){: .btn }   [Next Step](step4.md){: .btn .right}

@@ -22,4 +22,4 @@ If you now return to the _Forcefield_{: .text-green-100} you will see in the _At
 
 By default, Dissolve will generate all the necessary pair potentials for the current set of atom types automatically - these are listed in the _Pair Potentials_{: .text-green-100} section where you can select individual potentials and visualise them in the associated plot.
 
-[Previous Step](step1.md){: .btn }   [Next Step](step3.md){: .btn }
+[Previous Step](step1.md){: .btn }   [Next Step](step3.md){: .btn .right}
