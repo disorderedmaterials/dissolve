@@ -395,6 +395,8 @@ void SpeciesTab::updateControls()
 
 		// If there is no current isotopologue selected, try to select the first
 		if (!currentIsotopologue()) ui_.IsotopologuesTree->setCurrentItem(ui_.IsotopologuesTree->topLevelItem(0));
+
+		ui_.IsotopologuesTree->resizeColumnToContents(0);
 	}
 	Isotopologue* isotopologue = currentIsotopologue();
 	ui_.IsotopologueRemoveButton->setEnabled(isotopologue != NULL);
