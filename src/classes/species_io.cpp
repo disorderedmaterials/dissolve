@@ -341,7 +341,7 @@ bool Species::read(LineParser& parser, CoreData& coreData)
 				}
 				break;
 			case (Species::IsotopologueKeyword):
-				iso = addIsotopologue(uniqueIsotopologueName(parser.argc(1)), coreData.atomTypes());
+				iso = addIsotopologue(uniqueIsotopologueName(parser.argc(1)));
 				Messenger::printVerbose("Added Isotopologue '%s' to Species '%s'\n", iso->name(), name());
 				// Each parser argument is a string of the form ATOMTYPE=ISO
 				for (int n=2; n<parser.nArgs(); ++n)

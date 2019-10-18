@@ -461,7 +461,7 @@ void SpeciesTab::on_ForcefieldAutoApplyCheck_clicked(bool checked)
 
 void SpeciesTab::on_IsotopologueAddButton_clicked(bool checked)
 {
-	species_->addIsotopologue("Natural", dissolve_.atomTypes());
+	species_->addIsotopologue("NewIsotopologue");
 
 	updateControls();
 }

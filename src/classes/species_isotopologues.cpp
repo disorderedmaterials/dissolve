@@ -24,18 +24,31 @@
 #include <string.h>
 
 // Update current Isotopologues
-void Species::updateIsotopologues(const List<AtomType>& atomTypes)
+void Species::updateIsotopologues()
 {
-	for (Isotopologue* iso = isotopologues_.first(); iso != NULL; iso = iso->next()) iso->update(atomTypes);
+	for (Isotopologue* iso = isotopologues_.first(); iso != NULL; iso = iso->next()) iso->update();
+}
+
+// Update and return natural isotopologue
+Isotopologue* Species::naturalIsotopologue()
+{
+	if (naturalIsotopologuePoint_ != atomTypesVersion_)
+	{
+		naturalIsotopologue_.update();
+
+		naturalIsotopologuePoint_ = atomTypesVersion_;
+	}
+
+	return &naturalIsotopologue_;
 }
 
 // Add a new Isotopologue to this species
-Isotopologue* Species::addIsotopologue(const char* baseName, const List<AtomType>& masterAtomTypes)
+Isotopologue* Species::addIsotopologue(const char* baseName)
 {
 	Isotopologue* iso = isotopologues_.add();
 	iso->setParent(this);
 	iso->setName(uniqueIsotopologueName(baseName));
-	iso->update(masterAtomTypes);
+	iso->update();
 
 	return iso;
 }

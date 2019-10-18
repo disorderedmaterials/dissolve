@@ -268,9 +268,9 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 
 	public:
 	// Update current Isotopologues
-	void updateIsotopologues(const List<AtomType>& atomTypes);
+	void updateIsotopologues();
 	// Add a new Isotopologue to this Species
-	Isotopologue* addIsotopologue(const char* baseName, const List<AtomType>& masterAtomTypes);
+	Isotopologue* addIsotopologue(const char* baseName);
 	// Remove specified Isotopologue from this Species
 	void removeIsotopologue(Isotopologue* iso);
 	// Return number of defined Isotopologues
