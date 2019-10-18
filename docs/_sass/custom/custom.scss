@@ -5,9 +5,14 @@ $body-font-family: "Nunito", "helvetica neue", helvetica, roboto, noto, "segoe u
 
 // Centered image
 .img-center {
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+// Right-aligned button
+.btn.right {
+  float: right;
 }
 
 /*
@@ -15,35 +20,39 @@ $body-font-family: "Nunito", "helvetica neue", helvetica, roboto, noto, "segoe u
  */
 
 blockquote {
-  width:60%;
-  margin:50px auto;
+  width: 60%;
+  margin: 50px auto;
   color: #555555;
-  padding:1.2em 30px 1.2em 75px;
-  border-left:8px solid #ddd ;
-  line-height:1.6;
+  padding-left: 50px;
+  padding-top: 15px;
+  padding-bottom: 1px;
+  border-left: 8px solid #ddd ;
+  line-height: 1.6;
   position: relative;
-  background:#EDEDED;
+  background: #f9f9f9;
 }
 
-blockquote::before{
-  font-family:Arial;
-  font-size:4em;
+blockquote::before {
+  content: '';
+  width: 30px;
+  height: 30px;
   position: absolute;
-  color:#ddd;
-  left: 10px;
-  top:-10px;
+  color: #ddd;
+  left: 15px;
+  top: 12px;
+  background-repeat: no-repeat;
 }
 
-blockquote::after{
+blockquote::after {
   content: '';
 }
 
 blockquote strong {
-  display:block;
-  color:#333333;
+  display: block;
+  color: #333333;
   font-style: normal;
   font-weight: bold;
-  margin-top:1em;
+  margin-top: 1em;
 }
 
 /*
@@ -51,8 +60,15 @@ blockquote strong {
  */
 
 blockquote.tip {
-  border-left:8px solid #78C0A8;
+  border-left: 8px solid #78C0A8;
 }
 blockquote.tip::before {
-  content: url(blocktip.svg);
-  }
+  background-image: url(blocktip.svg);
+}
+
+blockquote.warn {
+  border-left: 8px solid #fb9a49;
+}
+blockquote.warn::before {
+  background-image: url(blockwarn.svg);
+}
