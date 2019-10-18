@@ -53,7 +53,7 @@ class IsotopologueMix : public MPIListItem<IsotopologueMix>, public GenericItemB
 	// Integer population of associated Species
 	int speciesPopulation_;
 	// Isotopologue List
-	RefDataList<Isotopologue,double> mix_;
+	RefDataList<const Isotopologue,double> mix_;
 	
 	public:
 	// Set associated Species and population
@@ -67,19 +67,19 @@ class IsotopologueMix : public MPIListItem<IsotopologueMix>, public GenericItemB
 	// Add next available Isotopologue to list
 	bool addNextIsotopologue();
 	// Add specific Isotopologue to list
-	bool addIsotopologue(Isotopologue* iso, double relPop);
+	bool addIsotopologue(const Isotopologue* iso, double relPop);
 	// Set Isotopologue component in list
-	bool setIsotopologue(Isotopologue* iso, double relPop);
+	bool setIsotopologue(const Isotopologue* iso, double relPop);
 	// Remove Isotopologue component from list
-	bool removeIsotopologue(Isotopologue* iso);
+	bool removeIsotopologue(const Isotopologue* iso);
 	// Return Isotopologue components
-	const RefDataList<Isotopologue,double>& isotopologues() const;
+	const RefDataList<const Isotopologue,double>& isotopologues() const;
 	// Return nth Isotopologue component
-	RefDataItem<Isotopologue,double>* isotopologue(int n);
+	RefDataItem<const Isotopologue,double>* isotopologue(int n);
 	// Return number of Isotopologues in mix
 	int nIsotopologues() const;
 	// Return whether the mix contains the specified Isotopologue
-	RefDataItem<Isotopologue,double>* hasIsotopologue(Isotopologue* iso) const;
+	RefDataItem<const Isotopologue,double>* hasIsotopologue(const Isotopologue* iso) const;
 	// Return total relative population
 	double totalRelative() const;
 	// Normalise total relative population to 1.0

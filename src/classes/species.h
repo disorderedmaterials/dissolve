@@ -287,12 +287,10 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 	int nIsotopologues() const;
 	// Return Isotopologue List
 	const List<Isotopologue>& isotopologues() const;
-	// Return nth Isotopologue defined
-	Isotopologue* isotopologue(int n);
 	// Return whether the specified Isotopologue exists
-	bool hasIsotopologue(Isotopologue* iso) const;
+	bool hasIsotopologue(const Isotopologue* iso) const;
 	// Generate unique Isotopologue name with base name provided
-	const char* uniqueIsotopologueName(const char* baseName, Isotopologue* exclude = NULL) const;
+	const char* uniqueIsotopologueName(const char* baseName, const Isotopologue* exclude = NULL) const;
 	// Search for Isotopologue by name
 	Isotopologue* findIsotopologue(const char* name);
 	// Return index of specified Isotopologue

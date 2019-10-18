@@ -83,20 +83,14 @@ const List<Isotopologue>& Species::isotopologues() const
 	return isotopologues_;
 }
 
-// Return nth Isotopologue defined
-Isotopologue* Species::isotopologue(int n)
-{
-	return isotopologues_[n];
-}
-
 // Return whether the specified Isotopologue exists
-bool Species::hasIsotopologue(Isotopologue* iso) const
+bool Species::hasIsotopologue(const Isotopologue* iso) const
 {
 	return isotopologues_.contains(iso);
 }
 
 // Generate unique Isotopologue name with base name provided
-const char* Species::uniqueIsotopologueName(const char* base, Isotopologue* exclude) const
+const char* Species::uniqueIsotopologueName(const char* base, const Isotopologue* exclude) const
 {
 	static CharString uniqueName;
 	CharString baseName = base;
